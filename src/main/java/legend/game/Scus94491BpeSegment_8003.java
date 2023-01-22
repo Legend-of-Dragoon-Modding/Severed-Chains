@@ -762,7 +762,7 @@ public final class Scus94491BpeSegment_8003 {
 
     displayRect_800c34c8.set((short)0, (short)0, (short)displayWidth, (short)displayHeight);
 
-    PSDCNT_800c34d0.setu(0x1L);
+    PSDCNT_800c34d0 = 1;
   }
 
   /**
@@ -877,9 +877,9 @@ public final class Scus94491BpeSegment_8003 {
     PutDispEnv(DISPENV_800c34b0);
 
     // GsIncFrame macro
-    PSDCNT_800c34d0.addu(0x1L);
-    if(PSDCNT_800c34d0.get() == 0) {
-      PSDCNT_800c34d0.setu(0x1L);
+    PSDCNT_800c34d0++;
+    if(PSDCNT_800c34d0 < 0) {
+      PSDCNT_800c34d0 = 1;
     }
 
     //LAB_8003c3bc
@@ -890,12 +890,12 @@ public final class Scus94491BpeSegment_8003 {
 
   @Method(0x8003c400L)
   public static void GsInitCoordinate2(@Nullable final GsCOORDINATE2 superCoord, final GsCOORDINATE2 newCoord) {
-    newCoord.flg.set(0);
+    newCoord.flg = 0;
     newCoord.coord.set(identityMatrix_800c3568);
-    newCoord.super_.setNullable(superCoord);
+    newCoord.super_ = superCoord;
 
     if(superCoord != null) {
-      superCoord.sub.set(newCoord);
+      superCoord.sub = newCoord;
     }
 
     //LAB_8003c468
@@ -1188,7 +1188,7 @@ public final class Scus94491BpeSegment_8003 {
 
     worldToScreenMatrix_800c3548.set(identityAspectMatrix_800c3588);
 
-    FUN_8003d5d0(worldToScreenMatrix_800c3548, -struct.viewpointTwist_18.get());
+    FUN_8003d5d0(worldToScreenMatrix_800c3548, -struct.viewpointTwist_18);
     final VECTOR[] sp10 = {new VECTOR(), new VECTOR()};
     FUN_8003d380(struct, sp10);
 
@@ -1239,9 +1239,9 @@ public final class Scus94491BpeSegment_8003 {
     //LAB_8003d230
     worldToScreenMatrix_800c3548.transfer.set(ApplyMatrixLV(worldToScreenMatrix_800c3548, new VECTOR().set(struct.viewpoint_00).negate()));
 
-    if(!struct.super_1c.isNull()) {
+    if(struct.super_1c != null) {
       final MATRIX lw = new MATRIX();
-      GsGetLw(struct.super_1c.deref(), lw);
+      GsGetLw(struct.super_1c, lw);
 
       final MATRIX transposedLw = new MATRIX();
       TransposeMatrix(lw, transposedLw);
@@ -1367,43 +1367,43 @@ public final class Scus94491BpeSegment_8003 {
 
     //LAB_8003d6c0
     do {
-      coord2s_800c35a8.get(s1).set(a3);
+      coord2s_800c35a8[s1] = a3;
 
-      if(a3.super_.isNull()) {
-        if(a3.flg.get() == 0 || a3.flg.get() == PSDCNT_800c34d0.get()) {
+      if(a3.super_ == null) {
+        if(a3.flg == 0 || a3.flg == PSDCNT_800c34d0) {
           //LAB_8003d6fc
           a3.workm.set(a3.coord);
           matrix.set(a3.workm);
-          a3.flg.set(PSDCNT_800c34d0.get());
+          a3.flg = PSDCNT_800c34d0;
           break;
         }
 
         //LAB_8003d78c
         if(a1_0 == 100) {
-          matrix.set(coord2s_800c35a8.get(0).deref().workm);
+          matrix.set(coord2s_800c35a8[0].workm);
           s1 = 0;
           break;
         }
 
         //LAB_8003d7e8
         s1 = a1_0 + 1;
-        matrix.set(coord2s_800c35a8.get(s1).deref().workm);
+        matrix.set(coord2s_800c35a8[s1].workm);
         break;
       }
 
       //LAB_8003d83c
-      if(a3.flg.get() == PSDCNT_800c34d0.get()) {
+      if(a3.flg == PSDCNT_800c34d0) {
         matrix.set(a3.workm);
         break;
       }
 
       //LAB_8003d898
-      if(a3.flg.get() == 0) {
+      if(a3.flg == 0) {
         a1_0 = s1;
       }
 
       //LAB_8003d8a4
-      a3 = a3.super_.deref();
+      a3 = a3.super_;
       s1++;
     } while(true);
 
@@ -1411,10 +1411,10 @@ public final class Scus94491BpeSegment_8003 {
     //LAB_8003d8c0
     while(s1 > 0) {
       s1--;
-      final GsCOORDINATE2 coord2 = coord2s_800c35a8.get(s1).deref();
+      final GsCOORDINATE2 coord2 = coord2s_800c35a8[s1];
       GsMulCoord3(matrix, coord2.coord);
       coord2.workm.set(matrix);
-      coord2.flg.set(PSDCNT_800c34d0.get());
+      coord2.flg = PSDCNT_800c34d0;
     }
 
     //LAB_8003d930
@@ -1455,13 +1455,13 @@ public final class Scus94491BpeSegment_8003 {
 
     //LAB_8003da00
     do {
-      coord2s_800c35a8.get(s1).set(a3);
-      if(a3.super_.isNull()) {
-        if(a3.flg.get() == 0 || a3.flg.get() == PSDCNT_800c34d0.get()) {
+      coord2s_800c35a8[s1] = a3;
+      if(a3.super_ == null) {
+        if(a3.flg == 0 || a3.flg == PSDCNT_800c34d0) {
           //LAB_8003da3c
           a3.workm.set(a3.coord);
           matrix.set(a3.workm);
-          a3.flg.set(PSDCNT_800c34d0.get());
+          a3.flg = PSDCNT_800c34d0;
           break;
         }
 
@@ -1469,29 +1469,29 @@ public final class Scus94491BpeSegment_8003 {
         s1 = a1 + 1;
 
         if(a1 == 100) {
-          matrix.set(coord2s_800c35a8.get(0).deref().workm);
+          matrix.set(coord2s_800c35a8[0].workm);
           s1 = 0;
           break;
         }
 
         //LAB_8003db28
-        matrix.set(coord2s_800c35a8.get(s1).deref().workm);
+        matrix.set(coord2s_800c35a8[s1].workm);
         break;
       }
 
       //LAB_8003db7c
-      if(a3.flg.get() == PSDCNT_800c34d0.get()) {
+      if(a3.flg == PSDCNT_800c34d0) {
         matrix.set(a3.workm);
         break;
       }
 
       //LAB_8003dbd8
-      if(a3.flg.get() == 0) {
+      if(a3.flg == 0) {
         a1 = s1;
       }
 
       //LAB_8003dbe4
-      a3 = a3.super_.deref();
+      a3 = a3.super_;
       s1++;
     } while(true);
 
@@ -1499,10 +1499,10 @@ public final class Scus94491BpeSegment_8003 {
     //LAB_8003dc00
     while(s1 > 0) {
       s1--;
-      final GsCOORDINATE2 coord2 = coord2s_800c35a8.get(s1).deref();
+      final GsCOORDINATE2 coord2 = coord2s_800c35a8[s1];
       GsMulCoord3(matrix, coord2.coord);
       coord2.workm.set(matrix);
-      coord2.flg.set(PSDCNT_800c34d0.get());
+      coord2.flg = PSDCNT_800c34d0;
     }
 
     //LAB_8003dc70
@@ -1526,12 +1526,12 @@ public final class Scus94491BpeSegment_8003 {
 
     //LAB_8003dcd8
     do {
-      coord2s_800c35a8.get(s1).set(coord);
+      coord2s_800c35a8[s1] = coord;
 
-      if(coord.super_.isNull()) {
-        if(coord.flg.get() == PSDCNT_800c34d0.get() || coord.flg.get() == 0) {
+      if(coord.super_ == null) {
+        if(coord.flg == PSDCNT_800c34d0 || coord.flg == 0) {
           //LAB_8003dd14
-          coord.flg.set((int)PSDCNT_800c34d0.get());
+          coord.flg = PSDCNT_800c34d0;
           coord.workm.set(coord.coord);
           lw.set(coord.workm);
           break;
@@ -1540,29 +1540,29 @@ public final class Scus94491BpeSegment_8003 {
         //LAB_8003dda4
         s1 = a + 1;
         if(a == 100) {
-          lw.set(coord2s_800c35a8.get(0).deref().workm);
+          lw.set(coord2s_800c35a8[0].workm);
           s1 = 0;
           break;
         }
 
         //LAB_8003de00
-        lw.set(coord2s_800c35a8.get(s1).deref().workm);
+        lw.set(coord2s_800c35a8[s1].workm);
         break;
       }
 
       //LAB_8003de54
-      if(coord.flg.get() == PSDCNT_800c34d0.get()) {
+      if(coord.flg == PSDCNT_800c34d0) {
         lw.set(coord.workm);
         break;
       }
 
       //LAB_8003deb0
-      if(coord.flg.get() == 0) {
+      if(coord.flg == 0) {
         a = s1;
       }
 
       //LAB_8003debc
-      coord = coord.super_.deref();
+      coord = coord.super_;
       s1++;
     } while(true);
 
@@ -1570,11 +1570,11 @@ public final class Scus94491BpeSegment_8003 {
     //LAB_8003ded8
     while(s1 > 0) {
       s1--;
-      final GsCOORDINATE2 c = coord2s_800c35a8.get(s1).deref();
+      final GsCOORDINATE2 c = coord2s_800c35a8[s1];
 
       GsMulCoord3(lw, c.coord);
 
-      c.flg.set((int)PSDCNT_800c34d0.get());
+      c.flg = PSDCNT_800c34d0;
       c.workm.set(lw);
     }
 
@@ -1607,7 +1607,7 @@ public final class Scus94491BpeSegment_8003 {
     int s3;
 
     worldToScreenMatrix_800c3548.set(identityAspectMatrix_800c3588);
-    FUN_8003d5d0(worldToScreenMatrix_800c3548, -s2.viewpointTwist_18.get());
+    FUN_8003d5d0(worldToScreenMatrix_800c3548, -s2.viewpointTwist_18);
 
     v0 = s2.refpoint_0c.getX() - s2.viewpoint_00.getX();
     a3 = v0 * v0;
@@ -1742,9 +1742,9 @@ public final class Scus94491BpeSegment_8003 {
     //LAB_8003e474
     worldToScreenMatrix_800c3548.transfer.set(ApplyMatrixLV(worldToScreenMatrix_800c3548, new VECTOR().set(s2.viewpoint_00).negate()));
 
-    if(!s2.super_1c.isNull()) {
+    if(s2.super_1c != null) {
       final MATRIX lw = new MATRIX();
-      GsGetLw(s2.super_1c.deref(), lw);
+      GsGetLw(s2.super_1c, lw);
 
       final MATRIX transposedLw = new MATRIX();
       TransposeMatrix(lw, transposedLw);
@@ -1770,7 +1770,7 @@ public final class Scus94491BpeSegment_8003 {
     long flag = 0;
 
     final TmdObjTable objTable = objTables.get(objIndex);
-    dobj2.tmd_08.set(objTable);
+    dobj2.tmd_08 = objTable;
 
     int packetIndex = 0;
     int packetStartIndex = 0;
@@ -2014,7 +2014,7 @@ public final class Scus94491BpeSegment_8003 {
     //LAB_8003eb4c
     t4 = t4 - 0x80L;
     t4 = t4 << 1;
-    t5 = 0x8005_0000L;
+    t5 = 0x8005_0000L; //TODO
     t5 = t5 + t4;
     t5 = MEMORY.ref(2, t5).offset(0x4870L).getSigned();
 
@@ -2426,7 +2426,7 @@ public final class Scus94491BpeSegment_8003 {
 
     return m1;
   }
-  
+
   @Method(0x8003f680L)
   public static VECTOR ApplyMatrix(final MATRIX a0, final SVECTOR a1, final VECTOR out) {
     CPU.CTC2(a0.getPacked(0), 0);

@@ -5,6 +5,7 @@ import legend.core.gte.VECTOR;
 import legend.core.memory.Value;
 import legend.core.memory.types.ByteRef;
 import legend.core.memory.types.IntRef;
+import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.QuadConsumerRef;
 import legend.core.memory.types.TriConsumerRef;
@@ -12,9 +13,13 @@ import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
+import legend.game.scripting.ScriptState;
 
-public class EffectData98 extends BttlScriptData6cSubBase1 {
-  public final IntRef _04;
+public class EffectData98 implements BttlScriptData6cSubBase1, MemoryRef {
+  private final Value ref;
+
+  public final IntRef scriptIndex_00;
+  public final IntRef scriptIndex_04;
   public final EffectData98Inner24 _08;
 
   public final Pointer<TmdObjTable> tmd_30;
@@ -41,15 +46,16 @@ public class EffectData98 extends BttlScriptData6cSubBase1 {
   public final VECTOR vec_70;
   public final IntRef _80;
   public final Pointer<TriConsumerRef<EffectManagerData6c, EffectData98, EffectData98Sub94>> _84;
-  public final Pointer<QuadConsumerRef<Long, EffectManagerData6c, EffectData98, EffectData98Sub94>> _88;
+  public final Pointer<QuadConsumerRef<ScriptState<EffectManagerData6c>, EffectManagerData6c, EffectData98, EffectData98Sub94>> _88;
   public final Pointer<QuadConsumerRef<EffectManagerData6c, EffectData98, EffectData98Sub94, EffectData98Inner24>> _8c;
-  public final Pointer<QuadConsumerRef<Long, EffectManagerData6c, EffectData98, EffectData98Sub94>> _90;
+  public final Pointer<QuadConsumerRef<ScriptState<EffectManagerData6c>, EffectManagerData6c, EffectData98, EffectData98Sub94>> _90;
   public final Pointer<EffectData98> _94;
 
   public EffectData98(final Value ref) {
-    super(ref);
+    this.ref = ref;
 
-    this._04 = ref.offset(4, 0x04L).cast(IntRef::new);
+    this.scriptIndex_00 = ref.offset(4, 0x00L).cast(IntRef::new);
+    this.scriptIndex_04 = ref.offset(4, 0x04L).cast(IntRef::new);
     this._08 = ref.offset(4, 0x08L).cast(EffectData98Inner24::new);
 
     this.tmd_30 = ref.offset(4, 0x30L).cast(Pointer.deferred(4, TmdObjTable::new));
@@ -79,5 +85,10 @@ public class EffectData98 extends BttlScriptData6cSubBase1 {
     this._8c = ref.offset(4, 0x8cL).cast(Pointer.deferred(4, QuadConsumerRef::new));
     this._90 = ref.offset(4, 0x90L).cast(Pointer.deferred(4, QuadConsumerRef::new));
     this._94 = ref.offset(4, 0x94L).cast(Pointer.deferred(4, EffectData98::new));
+  }
+
+  @Override
+  public long getAddress() {
+    return this.ref.getAddress();
   }
 }

@@ -1,7 +1,5 @@
 package legend.core.gte;
 
-import legend.core.gte.TmdHeader;
-import legend.core.gte.TmdObjTable;
 import legend.core.memory.Value;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.UnboundedArrayRef;
@@ -9,7 +7,7 @@ import legend.core.memory.types.UnboundedArrayRef;
 public class Tmd implements MemoryRef {
   private final Value ref;
 
-  public final legend.core.gte.TmdHeader header;
+  public final TmdHeader header;
   public final UnboundedArrayRef<TmdObjTable> objTable;
 
   public Tmd(final Value ref) {

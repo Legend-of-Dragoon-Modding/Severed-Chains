@@ -124,7 +124,7 @@ public class SpuStruct124 implements MemoryRef {
 
     this._03c = ref.offset(1, 0x03cL).cast(UnsignedByteRef::new);
 
-    this._03e = ref.offset(1, 0x03eL).cast(ArrayRef.of(ArrayRef.classFor(UnsignedByteRef.class), 10, 1, ArrayRef.of(UnsignedByteRef.class, 0x10, 1, UnsignedByteRef::new)));
+    this._03e = ref.offset(1, 0x03eL).cast(ArrayRef.of(ArrayRef.classFor(UnsignedByteRef.class), 10, 16, ArrayRef.of(UnsignedByteRef.class, 16, 1, UnsignedByteRef::new)));
     this.keyOnLo_0de = ref.offset(2, 0x0deL).cast(UnsignedShortRef::new);
     this.keyOnHi_0e0 = ref.offset(2, 0x0e0L).cast(UnsignedShortRef::new);
     this.keyOffLo_0e2 = ref.offset(2, 0x0e2L).cast(UnsignedShortRef::new);

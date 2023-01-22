@@ -278,7 +278,7 @@ public class ShopScreen extends MenuScreen {
         scriptStartEffect(2, 10);
         deallocateRenderables(0xff);
         free(gameOverMcq_800bdc3c.getPointer());
-        if(mainCallbackIndex_8004dd20.get() == 0x5L && loadingGameStateOverlay_8004dd08.get() == 0) {
+        if(mainCallbackIndex_8004dd20.get() == 5 && loadingGameStateOverlay_8004dd08.get() == 0) {
           FUN_800e3fac();
         }
 

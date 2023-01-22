@@ -1,7 +1,7 @@
 package legend.game.submap;
 
 import legend.game.tim.Tim;
-import legend.game.types.ScriptFile;
+import legend.game.scripting.ScriptFile;
 
 import java.util.ArrayList;
 import java.util.List;

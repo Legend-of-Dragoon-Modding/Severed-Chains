@@ -320,8 +320,8 @@ public class Gpu implements Runnable {
   public Runnable mainRenderer;
   public Runnable subRenderer = () -> { };
 
-  public long getVsyncCount() {
-    return (long)this.vsyncCount;
+  public int getVsyncCount() {
+    return (int)this.vsyncCount;
   }
 
   public boolean isReady() {
@@ -476,7 +476,7 @@ public class Gpu implements Runnable {
   }
 
   public void updateOrderingTableSize(final int size) {
-    final LinkedList[] list = new LinkedList[size];
+    final LinkedList<GpuCommand>[] list = new LinkedList[size];
     Arrays.setAll(list, key -> new LinkedList<>());
 
     this.zMax = size;

@@ -3,7 +3,6 @@ package legend.core.memory;
 import legend.core.MathHelper;
 import legend.core.memory.types.QuadConsumer;
 import legend.core.memory.types.QuintConsumer;
-import legend.core.memory.types.TriConsumer;
 
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -175,10 +174,6 @@ public class Value {
   }
 
   public <T, U> Value set(final BiConsumer<T, U> function) {
-    throw new RuntimeException("Can't store functions in registers");
-  }
-
-  public <T, U, V> Value set(final TriConsumer<T, U, V> function) {
     throw new RuntimeException("Can't store functions in registers");
   }
 

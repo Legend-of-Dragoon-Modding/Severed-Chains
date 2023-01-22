@@ -47,11 +47,13 @@ public class Unpacker {
   static {
     transformers.put(Unpacker::decompressDiscriminator, Unpacker::decompress);
     transformers.put(Unpacker::mrgDiscriminator, Unpacker::unmrg);
+    transformers.put(Unpacker::deffDiscriminator, Unpacker::undeff);
     transformers.put(Unpacker::drgn21_402_3_patcherDiscriminator, Unpacker::drgn21_402_3_patcher);
     transformers.put(Unpacker::playerCombatSoundEffectsDiscriminator, Unpacker::playerCombatSoundEffectsTransformer);
     transformers.put(Unpacker::playerCombatModelsAndTexturesDiscriminator, Unpacker::playerCombatModelsAndTexturesTransformer);
     transformers.put(Unpacker::dragoonCombatModelsAndTexturesDiscriminator, Unpacker::dragoonCombatModelsAndTexturesTransformer);
     transformers.put(Unpacker::skipPartyPermutationsDiscriminator, Unpacker::skipPartyPermutationsTransformer);
+    transformers.put(Unpacker::extractBtldDataDiscriminator, Unpacker::extractBtldDataTransformer);
   }
 
   public static void main(final String[] args) throws UnpackerException {
@@ -131,6 +133,8 @@ public class Unpacker {
   public static void unpack() throws UnpackerException {
     synchronized(IO_LOCK) {
       try {
+        final long start = System.nanoTime();
+
         final DirectoryEntry[] roots = new DirectoryEntry[4];
         final String[] ids = {"SCUS94491", "SCUS94584", "SCUS94585", "SCUS94586"};
 
@@ -151,6 +155,8 @@ public class Unpacker {
           .map(Unpacker::readFile)
           .map((Tuple<String, FileData> e) -> transform(e.a(), e.b()))
           .forEach(Unpacker::writeFiles);
+
+        LOGGER.info("Files unpacked in %d seconds", (System.nanoTime() - start) / 1_000_000_000L);
       } catch(final IOException e) {
         throw new UnpackerException(e);
       }
@@ -162,9 +168,11 @@ public class Unpacker {
     final ByteBuffer sectorBuffer = ByteBuffer.wrap(sectorData);
     sectorBuffer.order(ByteOrder.LITTLE_ENDIAN);
 
-    reader.seekSector(16);
-    reader.advance(12);
-    reader.read(sectorData);
+    synchronized(reader) {
+      reader.seekSector(16);
+      reader.advance(12);
+      reader.read(sectorData);
+    }
 
     if(sectorBuffer.get() != 1) {
       throw new UnpackerException("Invalid volume descriptor, expected primary");
@@ -194,9 +202,12 @@ public class Unpacker {
   private static void populateDirectoryTree(final DirectoryEntry source, final DirectoryEntry destinationTree) throws IOException {
     final byte[] sectorData = new byte[0x800];
 
-    source.reader().seekSector(source.sector());
-    source.reader().advance(12);
-    source.reader().read(sectorData);
+    synchronized(source.reader()) {
+      source.reader().seekSector(source.sector());
+      source.reader().advance(12);
+      source.reader().read(sectorData);
+    }
+
     int sectorOffset = 0;
 
     while(sectorData[sectorOffset] != 0) {
@@ -230,12 +241,15 @@ public class Unpacker {
 
   private static Tuple<String, FileData> readFile(final Map.Entry<String, DirectoryEntry> e) {
     final DirectoryEntry entry = e.getValue();
-    final byte[] fileData = entry.reader().readSectors(entry.sector(), entry.length(), e.getKey().endsWith(".IKI"));
-    return new Tuple<>(e.getKey(), new FileData(fileData));
+
+    synchronized(entry.reader()) {
+      final byte[] fileData = entry.reader().readSectors(entry.sector(), entry.length(), e.getKey().endsWith(".IKI"));
+      return new Tuple<>(e.getKey(), new FileData(fileData));
+    }
   }
 
   private static Map<String, FileData> transform(final String name, final FileData data) {
-    LOGGER.info("Unpacking %s...", name);
+//    LOGGER.info("Unpacking %s...", name);
 
     final Map<String, FileData> entries = new HashMap<>();
     boolean wasTransformed = false;
@@ -275,6 +289,27 @@ public class Unpacker {
 
   private static Map<String, FileData> unmrg(final String name, final FileData data) {
     final MrgArchive archive = new MrgArchive(data, name.matches("^SECT/DRGN(?:0|1|2[1234])?.BIN$"));
+
+    if(archive.getCount() == 0) {
+      return Map.of(name, EMPTY_DIRECTORY_SENTINEL);
+    }
+
+    final Map<String, FileData> files = new HashMap<>();
+    int i = 0;
+    for(final FileData entry : archive) {
+      files.put(name + '/' + i, entry);
+      i++;
+    }
+
+    return files;
+  }
+
+  private static boolean deffDiscriminator(final String name, final FileData data) {
+    return data.size() >= 8 && MathHelper.get(data.data(), data.offset(), 4) == 0x46464544;
+  }
+
+  private static Map<String, FileData> undeff(final String name, final FileData data) {
+    final DeffArchive archive = new DeffArchive(data);
 
     if(archive.getCount() == 0) {
       return Map.of(name, EMPTY_DIRECTORY_SENTINEL);
@@ -409,6 +444,21 @@ public class Unpacker {
 
   private static Map<String, FileData> skipPartyPermutationsTransformer(final String name, final FileData data) {
     return Map.of();
+  }
+
+  /** TODO this is pretty bad */
+  private static boolean btldDataDiscriminatorLatch = true;
+  /** Extracts table at 80102050 */
+  private static boolean extractBtldDataDiscriminator(final String name, final FileData data) {
+    return btldDataDiscriminatorLatch && "OVL/S_BTLD.OV_".equals(name);
+  }
+
+  private static Map<String, FileData> extractBtldDataTransformer(final String name, final FileData data) {
+    btldDataDiscriminatorLatch = false;
+    final Map<String, FileData> files = new HashMap<>();
+    files.put(name, data);
+    files.put("encounters", new FileData(data.data(), 0x68d8, 0x7000));
+    return files;
   }
 
   private static void writeFiles(final Map<String, FileData> files) {

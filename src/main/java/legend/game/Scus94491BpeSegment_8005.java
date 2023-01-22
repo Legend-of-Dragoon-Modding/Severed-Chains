@@ -33,7 +33,7 @@ public final class Scus94491BpeSegment_8005 {
   public static final ArrayRef<UnsignedByteRef> combatSoundEffectsTypes_8005019c = MEMORY.ref(1, 0x8005019cL, ArrayRef.of(UnsignedByteRef.class, 32, 1, UnsignedByteRef::new));
   public static final ArrayRef<UnsignedIntRef> combatMusicFileIndices_800501bc = MEMORY.ref(4, 0x800501bcL, ArrayRef.of(UnsignedIntRef.class, 32, 4, UnsignedIntRef::new));
 
-  public static final Value _80050274 = MEMORY.ref(4, 0x80050274L);
+  public static final IntRef _80050274 = MEMORY.ref(4, 0x80050274L, IntRef::new);
 
   public static final Value _8005027c = MEMORY.ref(4, 0x8005027cL);
 
@@ -68,7 +68,7 @@ public final class Scus94491BpeSegment_8005 {
   public static final ArrayRef<IntRef> textboxVramY_80052bf4 = MEMORY.ref(4, 0x80052bf4L, ArrayRef.of(IntRef.class, 11, 4, IntRef::new));
   public static final LodString _80052c20 = MEMORY.ref(2, 0x80052c20L, LodString::new);
   public static final IntRef submapCut_80052c30 = MEMORY.ref(4, 0x80052c30L, IntRef::new);
-  public static final Value submapScene_80052c34 = MEMORY.ref(4, 0x80052c34L);
+  public static final IntRef submapScene_80052c34 = MEMORY.ref(4, 0x80052c34L, IntRef::new);
   public static final IntRef index_80052c38 = MEMORY.ref(4, 0x80052c38L, IntRef::new);
   public static final IntRef submapCut_80052c3c = MEMORY.ref(4, 0x80052c3cL, IntRef::new);
   public static final Value _80052c40 = MEMORY.ref(4, 0x80052c40L);
@@ -136,7 +136,7 @@ public final class Scus94491BpeSegment_8005 {
   public static final Value heapHead_8005a2a0 = MEMORY.ref(4, 0x8005a2a0L);
   public static final Value heapTail_8005a2a4 = MEMORY.ref(4, 0x8005a2a4L);
   public static LoadingOverlay loadingOverlay_8005a2a8;
-  public static final Value standingInSavePoint_8005a368 = MEMORY.ref(1, 0x8005a368L);
+  public static final IntRef standingInSavePoint_8005a368 = MEMORY.ref(4, 0x8005a368L, IntRef::new);
 
-  public static final ArrayRef<CombatantStruct1a8> combatants_8005e398 = MEMORY.ref(4, 0x8005e398L, ArrayRef.of(CombatantStruct1a8.class, 10, 0x1a8, CombatantStruct1a8::new));
+  public static final CombatantStruct1a8[] combatants_8005e398 = new CombatantStruct1a8[10];
 }

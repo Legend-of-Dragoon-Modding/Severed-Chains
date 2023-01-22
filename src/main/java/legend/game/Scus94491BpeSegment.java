@@ -23,16 +23,9 @@ import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BiFunctionRef;
-import legend.core.memory.types.CString;
-import legend.core.memory.types.FunctionRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
-import legend.core.memory.types.Pointer;
-import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.ShortRef;
-import legend.core.memory.types.TriConsumerRef;
-import legend.core.memory.types.TriFunctionRef;
-import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.combat.Bttl_800c;
 import legend.game.combat.Bttl_800d;
@@ -46,9 +39,10 @@ import legend.game.combat.types.StageData10;
 import legend.game.debugger.Debugger;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.events.EventManager;
-import legend.game.modding.events.scripting.ScriptAllocatedEvent;
-import legend.game.modding.events.scripting.ScriptDeallocatedEvent;
-import legend.game.modding.events.scripting.ScriptTickEvent;
+import legend.game.scripting.FlowControl;
+import legend.game.scripting.Param;
+import legend.game.scripting.RunningScript;
+import legend.game.scripting.ScriptState;
 import legend.game.title.Ttle;
 import legend.game.types.CharacterData2c;
 import legend.game.types.DeferredReallocOrFree0c;
@@ -58,11 +52,7 @@ import legend.game.types.FileLoadedCallback;
 import legend.game.types.LoadingOverlay;
 import legend.game.types.McqHeader;
 import legend.game.types.MoonMusic08;
-import legend.game.types.MrgEntry;
 import legend.game.types.MrgFile;
-import legend.game.types.RunningScript;
-import legend.game.types.ScriptFile;
-import legend.game.types.ScriptState;
 import legend.game.types.SoundFile;
 import legend.game.types.SpuStruct08;
 import legend.game.types.SpuStruct10;
@@ -72,7 +62,6 @@ import legend.game.types.SssqFile;
 import legend.game.types.SubmapMusic08;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
-import legend.game.types.WorldObject210;
 import legend.game.unpacker.Unpacker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -89,8 +78,8 @@ import java.util.function.Function;
 
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
+import static legend.core.GameEngine.SCRIPTS;
 import static legend.core.GameEngine.SPU;
-import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.SMap.FUN_800e5934;
 import static legend.game.SMap.chapterTitleCardMrg_800c6710;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800201c8;
@@ -101,7 +90,6 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_8002bb38;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002bda4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002c178;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002c184;
-import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
 import static legend.game.Scus94491BpeSegment_8002.loadAndRenderMenus;
 import static legend.game.Scus94491BpeSegment_8002.rand;
 import static legend.game.Scus94491BpeSegment_8002.renderTextboxes;
@@ -155,12 +143,7 @@ import static legend.game.Scus94491BpeSegment_8004.overlaysLoadedCount_8004dd1c;
 import static legend.game.Scus94491BpeSegment_8004.overlays_8004db88;
 import static legend.game.Scus94491BpeSegment_8004.preloadingAudioAssets_8004ddcc;
 import static legend.game.Scus94491BpeSegment_8004.previousMainCallbackIndex_8004dd28;
-import static legend.game.Scus94491BpeSegment_8004.ratan2;
 import static legend.game.Scus94491BpeSegment_8004.reinitOrderingTableBits_8004dd38;
-import static legend.game.Scus94491BpeSegment_8004.scriptFunctions_8004e098;
-import static legend.game.Scus94491BpeSegment_8004.scriptPtrs_8004de58;
-import static legend.game.Scus94491BpeSegment_8004.scriptStateUpperBound_8004de4c;
-import static legend.game.Scus94491BpeSegment_8004.scriptSubFunctions_8004e29c;
 import static legend.game.Scus94491BpeSegment_8004.setMainVolume;
 import static legend.game.Scus94491BpeSegment_8004.setMono;
 import static legend.game.Scus94491BpeSegment_8004.setSpuDmaCompleteCallback;
@@ -194,7 +177,6 @@ import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
 import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.joypadRepeat_8007a3a0;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
-import static legend.game.Scus94491BpeSegment_800b.RunningScript_800bc070;
 import static legend.game.Scus94491BpeSegment_800b._800babc0;
 import static legend.game.Scus94491BpeSegment_800b._800bb104;
 import static legend.game.Scus94491BpeSegment_800b._800bb168;
@@ -236,8 +218,6 @@ import static legend.game.Scus94491BpeSegment_800b.musicLoaded_800bd782;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.scriptEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
-import static legend.game.Scus94491BpeSegment_800b.scriptsDisabled_800bc0b9;
-import static legend.game.Scus94491BpeSegment_800b.scriptsTickDisabled_800bc0b8;
 import static legend.game.Scus94491BpeSegment_800b.soundFileArr_800bcf80;
 import static legend.game.Scus94491BpeSegment_800b.spu10Arr_800bd610;
 import static legend.game.Scus94491BpeSegment_800b.spu28Arr_800bca78;
@@ -247,7 +227,6 @@ import static legend.game.Scus94491BpeSegment_800b.sssqTempoScale_800bd100;
 import static legend.game.Scus94491BpeSegment_800b.sssqTempo_800bd104;
 import static legend.game.Scus94491BpeSegment_800b.submapIndex_800bd808;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
-import static legend.game.Scus94491BpeSegment_800b.unusedScriptState_800bc0c0;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.DISPENV_800c34b0;
 import static legend.game.Scus94491BpeSegment_800c.PSDIDX_800c34d4;
@@ -322,7 +301,7 @@ public final class Scus94491BpeSegment {
   public static final UnsignedShortRef tmdGp0Tpage_1f8003ec = MEMORY.ref(2, 0x1f8003ecL, UnsignedShortRef::new);
   public static final UnsignedShortRef tmdGp0CommandId_1f8003ee = MEMORY.ref(2, 0x1f8003eeL, UnsignedShortRef::new);
 
-  public static final Pointer<BattleStruct18cb0> _1f8003f4 = MEMORY.ref(4, 0x1f8003f4L, Pointer.deferred(4, BattleStruct18cb0::new));
+  public static BattleStruct18cb0 _1f8003f4;
   public static final IntRef projectionPlaneDistance_1f8003f8 = MEMORY.ref(4, 0x1f8003f8L, IntRef::new);
   public static final Value _1f8003fc = MEMORY.ref(4, 0x1f8003fcL);
 
@@ -356,13 +335,13 @@ public final class Scus94491BpeSegment {
 
   public static boolean[] scriptLog = new boolean[0x48];
 
-  private static final Int2ObjectMap<Function<RunningScript, String>> scriptFunctionDescriptions = new Int2ObjectOpenHashMap<>();
+  public static final Int2ObjectMap<Function<RunningScript<?>, String>> scriptFunctionDescriptions = new Int2ObjectOpenHashMap<>();
 
   static {
     scriptFunctionDescriptions.put(0, r -> "pause;");
     scriptFunctionDescriptions.put(1, r -> "rewind;");
     scriptFunctionDescriptions.put(2, r -> {
-      final int waitFrames = r.params_20.get(0).deref().get();
+      final int waitFrames = r.params_20[0].get();
 
       if(waitFrames != 0) {
         return "wait %d (p0) frames;".formatted(waitFrames);
@@ -371,9 +350,9 @@ public final class Scus94491BpeSegment {
       }
     });
     scriptFunctionDescriptions.put(3, r -> {
-      final int operandA = r.params_20.get(0).deref().get();
-      final int operandB = r.params_20.get(1).deref().get();
-      final int op = (int)r.opParam_18.get();
+      final int operandA = r.params_20[0].get();
+      final int operandB = r.params_20[1].get();
+      final int op = r.opParam_18;
 
       return (switch(op) {
         case 0 -> "if 0x%x (p0) <= 0x%x (p1)? %s;";
@@ -385,11 +364,11 @@ public final class Scus94491BpeSegment {
         case 6 -> "if 0x%x (p0) & 0x%x (p1)? %s;";
         case 7 -> "if 0x%x (p0) !& 0x%x (p1)? %s;";
         default -> "illegal cmp 3";
-      }).formatted(operandA, operandB, scriptCompare(r, operandA, operandB, op) != 0 ? "yes - continue" : "no - rewind");
+      }).formatted(operandA, operandB, r.scriptState_04.scriptCompare(operandA, operandB, op) ? "yes - continue" : "no - rewind");
     });
     scriptFunctionDescriptions.put(4, r -> {
-      final int operandB = r.params_20.get(0).deref().get();
-      final int op = (int)r.opParam_18.get();
+      final int operandB = r.params_20[0].get();
+      final int op = r.opParam_18;
 
       return (switch(op) {
         case 0 -> "if 0 <= 0x%x (p1)? %s;";
@@ -401,43 +380,43 @@ public final class Scus94491BpeSegment {
         case 6 -> "if 0 & 0x%x (p1)? %s;";
         case 7 -> "if 0 !& 0x%x (p1)? %s;";
         default -> "illegal cmp 4";
-      }).formatted(operandB, scriptCompare(r, 0, operandB, op) != 0 ? "yes - continue" : "no - rewind");
+      }).formatted(operandB, r.scriptState_04.scriptCompare(0, operandB, op) ? "yes - continue" : "no - rewind");
     });
-    scriptFunctionDescriptions.put(8, r -> "*0x%08x (p1) = 0x%x (p0);".formatted(r.params_20.get(1).getPointer(), r.params_20.get(0).deref().get()));
-    scriptFunctionDescriptions.put(10, r -> "memcpy(0x%08x (p1), 0x%08x (p2), %d (p0));".formatted(r.params_20.get(1).getPointer(), r.params_20.get(2).getPointer(), r.params_20.get(0).deref().get()));
-    scriptFunctionDescriptions.put(12, r -> "*0x%08x (p0) = 0;".formatted(r.params_20.get(0).getPointer()));
-    scriptFunctionDescriptions.put(16, r -> "*0x%08x (p1) &= 0x%x (p0);".formatted(r.params_20.get(1).getPointer(), r.params_20.get(0).deref().get()));
-    scriptFunctionDescriptions.put(17, r -> "*0x%08x (p1) |= 0x%x (p0);".formatted(r.params_20.get(1).getPointer(), r.params_20.get(0).deref().get()));
-    scriptFunctionDescriptions.put(18, r -> "*0x%08x (p1) ^= 0x%x (p0);".formatted(r.params_20.get(1).getPointer(), r.params_20.get(0).deref().get()));
-    scriptFunctionDescriptions.put(19, r -> "*0x%08x (p2) &|= 0x%x (p0), 0x%x (p1);".formatted(r.params_20.get(2).getPointer(), r.params_20.get(0).deref().get(), r.params_20.get(1).deref().get()));
-    scriptFunctionDescriptions.put(20, r -> "~*0x%08x (p0);".formatted(r.params_20.get(0).getPointer()));
-    scriptFunctionDescriptions.put(21, r -> "*0x%08x (p1) <<= 0x%x (p0);".formatted(r.params_20.get(1).getPointer(), r.params_20.get(0).deref().get()));
-    scriptFunctionDescriptions.put(22, r -> "*0x%08x (p1) >>= 0x%x (p0);".formatted(r.params_20.get(1).getPointer(), r.params_20.get(0).deref().get()));
-    scriptFunctionDescriptions.put(24, r -> "*0x%08x (p1) += 0x%x (p0);".formatted(r.params_20.get(1).getPointer(), r.params_20.get(0).deref().get()));
-    scriptFunctionDescriptions.put(25, r -> "*0x%08x (p1) -= 0x%x (p0);".formatted(r.params_20.get(1).getPointer(), r.params_20.get(0).deref().get()));
-    scriptFunctionDescriptions.put(26, r -> "*0x%08x (p1) = 0x%x (p0) - 0x%x (p1);".formatted(r.params_20.get(1).getPointer(), r.params_20.get(0).deref().get(), r.params_20.get(1).deref().get()));
-    scriptFunctionDescriptions.put(27, r -> "*0x%08x (p0) ++;".formatted(r.params_20.get(0).getPointer()));
-    scriptFunctionDescriptions.put(28, r -> "*0x%08x (p0) --;".formatted(r.params_20.get(0).getPointer()));
-    scriptFunctionDescriptions.put(29, r -> "-*0x%08x (p0);".formatted(r.params_20.get(0).getPointer()));
-    scriptFunctionDescriptions.put(30, r -> "|*0x%08x| (p0);".formatted(r.params_20.get(0).getPointer()));
-    scriptFunctionDescriptions.put(32, r -> "*0x%08x (p1) *= 0x%x (p0);".formatted(r.params_20.get(1).getPointer(), r.params_20.get(0).deref().get()));
-    scriptFunctionDescriptions.put(33, r -> "*0x%08x (p1) /= 0x%x (p0);".formatted(r.params_20.get(1).getPointer(), r.params_20.get(0).deref().get()));
-    scriptFunctionDescriptions.put(34, r -> "*0x%08x (p1) = 0x%x (p0) / 0x%x (p1);".formatted(r.params_20.get(1).getPointer(), r.params_20.get(0).deref().get(), r.params_20.get(1).deref().get()));
-    scriptFunctionDescriptions.put(35, r -> "*0x%08x (p1) %%= 0x%x (p0);".formatted(r.params_20.get(1).getPointer(), r.params_20.get(0).deref().get()));
-    scriptFunctionDescriptions.put(36, r -> "*0x%08x (p1) = 0x%x (p0) %% 0x%x (p1);".formatted(r.params_20.get(1).getPointer(), r.params_20.get(0).deref().get(), r.params_20.get(1).deref().get()));
+    scriptFunctionDescriptions.put(8, r -> "*%s (p1) = 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(10, r -> "memcpy(%s (p1), %s (p2), %d (p0));".formatted(r.params_20[1], r.params_20[2], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(12, r -> "*%s (p0) = 0;".formatted(r.params_20[0]));
+    scriptFunctionDescriptions.put(16, r -> "*%s (p1) &= 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(17, r -> "*%s (p1) |= 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(18, r -> "*%s (p1) ^= 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(19, r -> "*%s (p2) &|= 0x%x (p0), 0x%x (p1);".formatted(r.params_20[2], r.params_20[0].get(), r.params_20[1].get()));
+    scriptFunctionDescriptions.put(20, r -> "~*%s (p0);".formatted(r.params_20[0]));
+    scriptFunctionDescriptions.put(21, r -> "*%s (p1) <<= 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(22, r -> "*%s (p1) >>= 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(24, r -> "*%s (p1) += 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(25, r -> "*%s (p1) -= 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(26, r -> "*%s (p1) = 0x%x (p0) - 0x%x (p1);".formatted(r.params_20[1], r.params_20[0].get(), r.params_20[1].get()));
+    scriptFunctionDescriptions.put(27, r -> "*%s (p0) ++;".formatted(r.params_20[0]));
+    scriptFunctionDescriptions.put(28, r -> "*%s (p0) --;".formatted(r.params_20[0]));
+    scriptFunctionDescriptions.put(29, r -> "-*%s (p0);".formatted(r.params_20[0]));
+    scriptFunctionDescriptions.put(30, r -> "|*%s| (p0);".formatted(r.params_20[0]));
+    scriptFunctionDescriptions.put(32, r -> "*%s (p1) *= 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(33, r -> "*%s (p1) /= 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(34, r -> "*%s (p1) = 0x%x (p0) / 0x%x (p1);".formatted(r.params_20[1], r.params_20[0].get(), r.params_20[1].get()));
+    scriptFunctionDescriptions.put(35, r -> "*%s (p1) %%= 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(36, r -> "*%s (p1) = 0x%x (p0) %% 0x%x (p1);".formatted(r.params_20[1], r.params_20[0].get(), r.params_20[1].get()));
     scriptFunctionDescriptions.put(43, scriptFunctionDescriptions.get(35));
     scriptFunctionDescriptions.put(44, scriptFunctionDescriptions.get(36));
-    scriptFunctionDescriptions.put(48, r -> "*0x%08x (p1) = sqrt(0x%x (p0));".formatted(r.params_20.get(1).getPointer(), r.params_20.get(0).deref().get()));
-    scriptFunctionDescriptions.put(50, r -> "*0x%08x (p1) = sin(0x%x (p0));".formatted(r.params_20.get(1).getPointer(), r.params_20.get(0).deref().get()));
-    scriptFunctionDescriptions.put(51, r -> "*0x%08x (p1) = cos(0x%x (p0));".formatted(r.params_20.get(1).getPointer(), r.params_20.get(0).deref().get()));
-    scriptFunctionDescriptions.put(52, r -> "*0x%08x (p2) = ratan2(0x%x (p0), 0x%x (p1));".formatted(r.params_20.get(2).getPointer(), r.params_20.get(0).deref().get(), r.params_20.get(1).deref().get()));
-    scriptFunctionDescriptions.put(56, r -> "subfunc(%d (pp) (%08x));".formatted(r.opParam_18.get(), scriptSubFunctions_8004e29c.get((int)r.opParam_18.get()).getPointer()));
-    scriptFunctionDescriptions.put(64, r -> "jmp 0x%x (p0);".formatted(r.params_20.get(0).getPointer() - r.scriptState_04.deref().scriptPtr_14.getPointer()));
+    scriptFunctionDescriptions.put(48, r -> "*%s (p1) = sqrt(0x%x (p0));".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(50, r -> "*%s (p1) = sin(0x%x (p0));".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(51, r -> "*%s (p1) = cos(0x%x (p0));".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(52, r -> "*%s (p2) = ratan2(0x%x (p0), 0x%x (p1));".formatted(r.params_20[2], r.params_20[0].get(), r.params_20[1].get()));
+    scriptFunctionDescriptions.put(56, r -> "subfunc(%d (pp));".formatted(r.opParam_18));
+    scriptFunctionDescriptions.put(64, r -> "jmp %s (p0);".formatted(r.params_20[0]));
     scriptFunctionDescriptions.put(65, r -> {
-      final int operandA = r.params_20.get(0).deref().get();
-      final int operandB = r.params_20.get(1).deref().get();
-      final int op = (int)r.opParam_18.get();
-      final long dest = r.params_20.get(2).getPointer() - r.scriptState_04.deref().scriptPtr_14.getPointer();
+      final int operandA = r.params_20[0].get();
+      final int operandB = r.params_20[1].get();
+      final int op = r.opParam_18;
+      final Param dest = r.params_20[2];
 
       return (switch(op) {
         case 0 -> "if 0x%x (p0) <= 0x%x (p1)? %s;";
@@ -449,12 +428,12 @@ public final class Scus94491BpeSegment {
         case 6 -> "if 0x%x (p0) & 0x%x (p1)? %s;";
         case 7 -> "if 0x%x (p0) !& 0x%x (p1)? %s;";
         default -> "illegal cmp 65";
-      }).formatted(operandA, operandB, scriptCompare(r, operandA, operandB, op) != 0 ? "yes - jmp 0x%x (p2)".formatted(dest) : "no - continue");
+      }).formatted(operandA, operandB, r.scriptState_04.scriptCompare(operandA, operandB, op) ? "yes - jmp %s (p2)".formatted(dest) : "no - continue");
     });
     scriptFunctionDescriptions.put(66, r -> {
-      final int operandB = r.params_20.get(0).deref().get();
-      final int op = (int)r.opParam_18.get();
-      final long dest = r.params_20.get(1).getPointer() - r.scriptState_04.deref().scriptPtr_14.getPointer();
+      final int operandB = r.params_20[0].get();
+      final int op = r.opParam_18;
+      final Param dest = r.params_20[1];
 
       return (switch(op) {
         case 0 -> "if 0 <= 0x%x (p0)? %s;";
@@ -466,15 +445,15 @@ public final class Scus94491BpeSegment {
         case 6 -> "if 0 & 0x%x (p0)? %s;";
         case 7 -> "if 0 !& 0x%x (p0)? %s;";
         default -> "illegal cmp 66";
-      }).formatted(operandB, scriptCompare(r, 0, operandB, op) != 0 ? "yes - jmp 0x%x (p1)".formatted(dest) : "no - continue");
+      }).formatted(operandB, r.scriptState_04.scriptCompare(0, operandB, op) ? "yes - jmp %s (p1)".formatted(dest) : "no - continue");
     });
-    scriptFunctionDescriptions.put(72, r -> "func 0x%x (p0);".formatted(r.params_20.get(0).getPointer() - r.scriptState_04.deref().scriptPtr_14.getPointer()));
+    scriptFunctionDescriptions.put(72, r -> "func %s (p0);".formatted(r.params_20[0]));
     scriptFunctionDescriptions.put(73, r -> "return;");
     scriptFunctionDescriptions.put(74, r -> {
-      final long a = r.params_20.get(1).getPointer();
-      final int b = r.params_20.get(0).deref().get();
-      final long ptr = a + MEMORY.ref(4, a + b * 4).getSigned() * 4;
-      return "func 0x%x (p1 + p1[p0 * 4] * 4);".formatted(ptr - r.scriptState_04.deref().scriptPtr_14.getPointer());
+      final Param a = r.params_20[1];
+      final Param b = r.params_20[0];
+      final Param ptr = a.array(a.array(b.get()).get());
+      return "func %s (p1[p1[p0]]);".formatted(ptr);
     });
   }
 
@@ -591,9 +570,9 @@ public final class Scus94491BpeSegment {
 
   private static void controllerPress(final int input) {
     if(!controllerEdgeTriggers.getOrDefault(input, false)) {
-      _800bee90.oru(input);
-      _800bee94.oru(input);
-      _800bee98.oru(input);
+      _800bee90.or(input);
+      _800bee94.or(input);
+      _800bee98.or(input);
       keyRepeat.put(input, 0);
       controllerEdgeTriggers.put(input, true);
     }
@@ -660,9 +639,9 @@ public final class Scus94491BpeSegment {
       final int input = gamepadKeyMap.get(key);
 
       if(input != 0) {
-        _800bee90.oru(input);
-        _800bee94.oru(input);
-        _800bee98.oru(input);
+        _800bee90.or(input);
+        _800bee94.or(input);
+        _800bee98.or(input);
 
         keyRepeat.put(input, 0);
       }
@@ -710,9 +689,9 @@ public final class Scus94491BpeSegment {
 
       handleControllerInput();
 
-      joypadPress_8007a398.setu(_800bee94);
-      joypadInput_8007a39c.setu(_800bee90);
-      joypadRepeat_8007a3a0.setu(_800bee98);
+      joypadPress_8007a398.setu(_800bee94.get());
+      joypadInput_8007a39c.setu(_800bee90.get());
+      joypadRepeat_8007a3a0.setu(_800bee98.get());
 
       if(mainCallbackIndex_8004dd20.get() == 3) {
         gameState_800babc8.timestamp_a0.set(0);
@@ -737,16 +716,16 @@ public final class Scus94491BpeSegment {
       renderTextboxes();
 
       FUN_80020ed8();
-      tickCount_800bb0fc.addu(0x1L);
+      tickCount_800bb0fc.incr();
       endFrame();
 
-      _800bee94.setu(0);
-      _800bee98.setu(0);
+      _800bee94.set(0);
+      _800bee98.set(0);
 
       if(inputPulse) {
         for(final var entry : keyRepeat.int2IntEntrySet()) {
           if(entry.getIntValue() >= 2) { //TODO adjust for frame rate
-            _800bee98.oru(entry.getIntKey());
+            _800bee98.or(entry.getIntKey());
           }
 
           entry.setValue(entry.getIntValue() + 1);
@@ -798,10 +777,8 @@ public final class Scus94491BpeSegment {
   @Method(0x80011ec8L)
   public static void executeLoadersAndScripts() {
     if(loadQueuedOverlay() != 0) {
-      gameStateCallbacks_8004dbc0.get((int)mainCallbackIndex_8004dd20.get()).callback_00.deref().run();
-
-      tickScripts();
-      renderScriptObjects();
+      gameStateCallbacks_8004dbc0.get(mainCallbackIndex_8004dd20.get()).callback_00.deref().run();
+      SCRIPTS.tick();
     }
   }
 
@@ -959,79 +936,6 @@ public final class Scus94491BpeSegment {
     //LAB_8001223c
     dumpHeap();
     throw new RuntimeException("Failed to allocate entry on linked list (size 0x" + Long.toHexString(size) + ')');
-  }
-
-  @Method(0x80012244L)
-  public static long realloc(long address, int newSize) {
-    address = address - 0xcL;
-    newSize = newSize + 0xf & 0xffff_fffc;
-    int blockSize = (int)MEMORY.ref(4, address).offset(0x4L).get();
-
-    long previousBlock = MEMORY.ref(4, address).get();
-    final long dest;
-    final int size;
-    if(MEMORY.ref(2, previousBlock).offset(0x8L).get() == 0) { // If free space
-      //LAB_800122a0
-      dest = previousBlock;
-      size = Math.min(newSize, blockSize);
-      blockSize += MEMORY.ref(4, previousBlock).offset(0x4L).get();
-    } else {
-      //LAB_800122b0
-      dest = address;
-      size = 0;
-    }
-
-    //LAB_800122b4
-    previousBlock = address + MEMORY.ref(4, address).offset(0x4L).get();
-    if(MEMORY.ref(2, previousBlock).offset(0x8L).get() == 0) {
-      blockSize += MEMORY.ref(4, previousBlock).offset(0x4L).get();
-    }
-
-    //LAB_800122e0
-    if(blockSize >= newSize) {
-      // If we expanded into the previous block, copy the data to the start
-      if(size != 0) {
-        memcpy(dest + 0xcL, address + 0xcL, size - 0xc);
-      }
-
-      //LAB_80012380
-      final int deltaSize = blockSize - newSize;
-      if(deltaSize >= 0xc) {
-        // If there's more than enough space, split the block and only use what's needed
-        MEMORY.ref(4, dest).offset(0x4L).setu(newSize);
-        MEMORY.ref(2, dest).offset(0x8L).setu(0x1L);
-        MEMORY.ref(2, dest).offset(newSize).offset(0x8L).setu(0);
-        MEMORY.ref(4, dest).offset(newSize).setu(dest);
-        MEMORY.ref(4, dest).offset(newSize).offset(0x4L).setu(deltaSize);
-        MEMORY.ref(4, dest).offset(newSize).offset(deltaSize).setu(dest + newSize);
-      } else {
-        //LAB_800123b0
-        // Otherwise, update the block
-        MEMORY.ref(4, dest).offset(0x4L).setu(blockSize);
-        MEMORY.ref(2, dest).offset(0x8L).setu(0x1L);
-        MEMORY.ref(4, dest).offset(blockSize).setu(dest);
-      }
-
-      //LAB_800123b8
-      return dest + 0xcL;
-    }
-
-    //LAB_800123c0
-    final long dataAddress = mallocHead(newSize - 0xc);
-    if(dataAddress == 0) {
-      //LAB_800123dc
-      return 0;
-    }
-
-    address += 0xcL;
-
-    //LAB_800123e4
-    //LAB_800123f8
-    memcpy(dataAddress, address, size - 0xc);
-    free(address);
-
-    //LAB_8001242c
-    return dataAddress;
   }
 
   @Method(0x80012444L)
@@ -1224,27 +1128,27 @@ public final class Scus94491BpeSegment {
 
     //LAB_800129c0
     //LAB_800129c4
-    if(mainCallbackIndexOnceLoaded_8004dd24.getSigned() != -1) {
+    if(mainCallbackIndexOnceLoaded_8004dd24.get() != -1) {
       if(loadingGameStateOverlay_8004dd08.get() != 0) {
         return 0;
       }
 
-      pregameLoadingStage_800bb10c.setu(0);
-      previousMainCallbackIndex_8004dd28.setu(mainCallbackIndex_8004dd20);
-      mainCallbackIndex_8004dd20.set(mainCallbackIndexOnceLoaded_8004dd24);
-      mainCallbackIndexOnceLoaded_8004dd24.setu(-1);
+      pregameLoadingStage_800bb10c.set(0);
+      previousMainCallbackIndex_8004dd28.set(mainCallbackIndex_8004dd20.get());
+      mainCallbackIndex_8004dd20.set(mainCallbackIndexOnceLoaded_8004dd24.get());
+      mainCallbackIndexOnceLoaded_8004dd24.set(-1);
       FUN_80019710();
       vsyncMode_8007a3b8.set(2);
-      loadGameStateOverlay((int)mainCallbackIndex_8004dd20.getSigned());
+      loadGameStateOverlay(mainCallbackIndex_8004dd20.get());
 
-      if(mainCallbackIndex_8004dd20.get() == 0x6L) { // Starting combat
+      if(mainCallbackIndex_8004dd20.get() == 6) { // Starting combat
         FUN_8001c4ec();
       }
     }
 
     //LAB_80012a34
     //LAB_80012a38
-    if(loadingGameStateOverlay_8004dd08.get() == 0 || (gameStateCallbacks_8004dbc0.get((int)mainCallbackIndex_8004dd20.get()).uint_0c.get() & 0xff00L) != 0) {
+    if(loadingGameStateOverlay_8004dd08.get() == 0 || (gameStateCallbacks_8004dbc0.get(mainCallbackIndex_8004dd20.get()).uint_0c.get() & 0xff00L) != 0) {
       //LAB_80012a6c
       return 1;
     }
@@ -1361,8 +1265,8 @@ public final class Scus94491BpeSegment {
     GPU.queueCommand(orderingTableSize_1f8003c8.get() - 1, new GpuCommandSetMaskBit(true, Gpu.DRAW_PIXELS.ALWAYS));
 
     //LAB_80012e8c
-    syncFrame_8004dd3c.deref().run();
-    swapDisplayBuffer_8004dd40.deref().run();
+    syncFrame_8004dd3c.run();
+    swapDisplayBuffer_8004dd40.run();
   }
 
   @Method(0x80012eccL)
@@ -1378,9 +1282,9 @@ public final class Scus94491BpeSegment {
     //LAB_80012f5c
     final int orderingTableBits = reinitOrderingTableBits_8004dd38.get();
 
-    _800babc0.setu(0);
-    _800bb104.setu(0);
-    _8007a3a8.setu(0);
+    _800babc0.set(0);
+    _800bb104.set(0);
+    _8007a3a8.set(0);
 
     final RECT rect1 = new RECT((short)0, (short)16, (short)width_8004dd34.get(), (short)240);
     final RECT rect2 = new RECT((short)0, (short)256, (short)width_8004dd34.get(), (short)240);
@@ -1407,21 +1311,21 @@ public final class Scus94491BpeSegment {
     FUN_8003c5e0();
     setProjectionPlaneDistance(320);
 
-    syncFrame_8004dd3c.set(MEMORY.ref(4, getMethodAddress(Scus94491BpeSegment.class, "syncFrame")).cast(RunnableRef::new));
-    swapDisplayBuffer_8004dd40.set(MEMORY.ref(4, getMethodAddress(Scus94491BpeSegment.class, "swapDisplayBuffer")).cast(RunnableRef::new));
+    syncFrame_8004dd3c = Scus94491BpeSegment::syncFrame;
+    swapDisplayBuffer_8004dd40 = Scus94491BpeSegment::swapDisplayBuffer;
   }
 
   @Method(0x80013148L)
   public static void swapDisplayBuffer() {
     GsSwapDispBuff();
-    GsSortClear((int)_8007a3a8.get(), (int)_800bb104.get(), (int)_800babc0.get());
+    GsSortClear(_8007a3a8.get(), _800bb104.get(), _800babc0.get());
   }
 
   @Method(0x80013200L)
   public static void setWidthAndFlags(final int width) {
     if(width != displayWidth_1f8003e0.get()) {
       // Change the syncFrame callback to the reinitializer for a frame to reinitialize everything with the new size/flags
-      syncFrame_8004dd3c.set(MEMORY.ref(4, getMethodAddress(Scus94491BpeSegment.class, "syncFrame_reinit")).cast(RunnableRef::new));
+      syncFrame_8004dd3c = Scus94491BpeSegment::syncFrame_reinit;
       width_8004dd34.setu(width);
     }
   }
@@ -1429,7 +1333,7 @@ public final class Scus94491BpeSegment {
   @Method(0x8001324cL)
   public static void setDepthResolution(final int orderingTableBits) {
     if(orderingTableBits_1f8003c0.get() != orderingTableBits) {
-      syncFrame_8004dd3c.set(MEMORY.ref(4, getMethodAddress(Scus94491BpeSegment.class, "syncFrame_reinit")).cast(RunnableRef::new));
+      syncFrame_8004dd3c = Scus94491BpeSegment::syncFrame_reinit;
       reinitOrderingTableBits_8004dd38.set(orderingTableBits);
     }
 
@@ -1539,13 +1443,13 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x800136dcL)
-  public static void scriptStartEffect(final long effectType, final long frames) {
+  public static void scriptStartEffect(final int effectType, final int frames) {
     //LAB_800136f4
     scriptEffect_800bb140.type_00.set(effectType);
-    scriptEffect_800bb140.totalFrames_08.set((int)frames > 0 ? frames : 0xfL);
+    scriptEffect_800bb140.totalFrames_08.set(frames > 0 ? frames : 15);
     scriptEffect_800bb140.startTime_04.set(GPU.getVsyncCount());
 
-    if(_8004dd48.offset(effectType * 2).get() == 0x2L) {
+    if(_8004dd48.offset(effectType * 2).get() == 2) {
       scriptEffect_800bb140.blue1_0c.set(0);
       scriptEffect_800bb140.green1_10.set(0);
       scriptEffect_800bb140.blue0_14.set(0);
@@ -1554,7 +1458,7 @@ public final class Scus94491BpeSegment {
       scriptEffect_800bb140.red0_20.set(0);
     }
 
-    scriptEffect_800bb140._24.set(_8004dd48.offset(effectType * 2).get());
+    scriptEffect_800bb140._24.set((int)_8004dd48.offset(effectType * 2).get());
 
     //LAB_80013768
   }
@@ -1564,49 +1468,43 @@ public final class Scus94491BpeSegment {
    */
   @Method(0x80013778L)
   public static void FUN_80013778() {
-    final long v1 = Math.min(scriptEffect_800bb140.totalFrames_08.get(), (GPU.getVsyncCount() - scriptEffect_800bb140.startTime_04.get()) / 2);
+    final int v1 = Math.min(scriptEffect_800bb140.totalFrames_08.get(), (GPU.getVsyncCount() - scriptEffect_800bb140.startTime_04.get()) / 2);
 
     //LAB_800137d0
-    final long colour;
+    final int colour;
     if(scriptEffect_800bb140.totalFrames_08.get() == 0) {
       colour = 0;
     } else {
-      final long a1 = scriptEffect_800bb140._24.get();
-      if(a1 == 0x1L) {
+      final int a1 = scriptEffect_800bb140._24.get();
+      if(a1 == 0) {
+        colour = 0;
+      } else if(a1 == 1) {
         //LAB_80013818
         colour = v1 * 255 / scriptEffect_800bb140.totalFrames_08.get();
-      } else if((int)a1 < 0x2L) {
-        if(a1 != 0) {
-          scriptEffect_800bb140.type_00.set(0);
-          scriptEffect_800bb140._24.set(0);
-        }
-
-        colour = 0;
-
         //LAB_80013808
-      } else if(a1 != 0x2L) {
-        scriptEffect_800bb140.type_00.set(0);
-        scriptEffect_800bb140._24.set(0);
-        colour = 0;
-      } else { // a1 == 2
+      } else if(a1 == 2) { // a1 == 2
         //LAB_8001383c
-        colour = v1 * 255 / scriptEffect_800bb140.totalFrames_08.get() ^ 0xffL;
+        colour = v1 * 255 / scriptEffect_800bb140.totalFrames_08.get() ^ 0xff;
 
         if(colour == 0) {
           //LAB_80013874
           scriptEffect_800bb140._24.set(0);
         }
+      } else {
+        scriptEffect_800bb140.type_00.set(0);
+        scriptEffect_800bb140._24.set(0);
+        colour = 0;
       }
     }
 
     //LAB_80013880
     //LAB_80013884
-    _800bb168.setu(colour);
+    _800bb168.set(colour);
 
     if(colour != 0) {
       //LAB_800138f0
       //LAB_80013948
-      switch((int)scriptEffect_800bb140.type_00.get()) {
+      switch(scriptEffect_800bb140.type_00.get()) {
         case 1, 2 -> drawFullScreenRect(colour, Translucency.B_MINUS_F);
         case 3, 4 -> drawFullScreenRect(colour, Translucency.B_PLUS_F);
 
@@ -1638,7 +1536,7 @@ public final class Scus94491BpeSegment {
       //LAB_800139c4
       GPU.queueCommand(39, new GpuCommandQuad()
         .translucent(Translucency.B_PLUS_F)
-        .rgb((int)scriptEffect_800bb140.red0_20.get(), (int)scriptEffect_800bb140.green0_1c.get(), (int)scriptEffect_800bb140.blue0_14.get())
+        .rgb(scriptEffect_800bb140.red0_20.get(), scriptEffect_800bb140.green0_1c.get(), scriptEffect_800bb140.blue0_14.get())
         .pos(-centreScreenX_1f8003dc.get(), -centreScreenY_1f8003de.get(), displayWidth_1f8003e0.get() + 1, displayHeight_1f8003e4.get() + 1)
       );
     }
@@ -1650,7 +1548,7 @@ public final class Scus94491BpeSegment {
       //LAB_80013b10
       GPU.queueCommand(39, new GpuCommandQuad()
         .translucent(Translucency.B_MINUS_F)
-        .rgb((int)scriptEffect_800bb140.red1_18.get(), (int)scriptEffect_800bb140.green1_10.get(), (int)scriptEffect_800bb140.blue1_0c.get())
+        .rgb(scriptEffect_800bb140.red1_18.get(), scriptEffect_800bb140.green1_10.get(), scriptEffect_800bb140.blue1_0c.get())
         .pos(-centreScreenX_1f8003dc.get(), -centreScreenY_1f8003de.get(), displayWidth_1f8003e0.get() + 1, displayHeight_1f8003e4.get() + 1)
       );
     }
@@ -1678,10 +1576,7 @@ public final class Scus94491BpeSegment {
     final String name = entry.name_04.deref().get();
     final int type = FUN_800155b8(fileTransferDest, (int)flags);
 
-    final StackWalker.StackFrame frame = StackWalker.getInstance().walk(frames -> frames
-      .skip(1)
-      .findFirst())
-      .get();
+    final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
 
     // Insta-load
     final byte[] data = Unpacker.loadFile(name);
@@ -1725,7 +1620,7 @@ public final class Scus94491BpeSegment {
     return 0;
   }
 
-  public static <Param> void loadFile(final String file, final Consumer<byte[]> onCompletion) {
+  public static void loadFile(final String file, final Consumer<byte[]> onCompletion) {
     final StackWalker.StackFrame frame = StackWalker.getInstance().walk(frames -> frames
       .skip(1)
       .findFirst())
@@ -1736,7 +1631,7 @@ public final class Scus94491BpeSegment {
     onCompletion.accept(Unpacker.loadFile(file));
   }
 
-  public static <Param> void loadDir(final String dir, final Consumer<List<byte[]>> onCompletion) {
+  public static void loadDir(final String dir, final Consumer<List<byte[]>> onCompletion) {
     final StackWalker.StackFrame frame = StackWalker.getInstance().walk(frames -> frames
       .skip(1)
       .findFirst())
@@ -1747,16 +1642,12 @@ public final class Scus94491BpeSegment {
     onCompletion.accept(Unpacker.loadDirectory(dir));
   }
 
-  public static <Param> void loadDrgnFiles(int drgnBinIndex, final Consumer<List<byte[]>> onCompletion, final String... files) {
+  public static void loadDrgnFiles(int drgnBinIndex, final Consumer<List<byte[]>> onCompletion, final String... files) {
     if(drgnBinIndex >= 2) {
       drgnBinIndex = 20 + drgnBinIndex_800bc058.get();
     }
 
-    final StackWalker.StackFrame frame = StackWalker.getInstance().walk(frames -> frames
-      .skip(1)
-      .findFirst())
-      .get();
-
+    final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
     LOGGER.info("Loading DRGN%d %s from %s.%s(%s:%d)", drgnBinIndex, String.join(", ", files), frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
     final List<byte[]> fileData = new ArrayList<>();
@@ -1769,31 +1660,36 @@ public final class Scus94491BpeSegment {
     onCompletion.accept(fileData);
   }
 
-  public static <Param> void loadDrgnDir(int drgnBinIndex, final int directory, final Consumer<List<byte[]>> onCompletion) {
+  public static void loadDrgnFile(int drgnBinIndex, final String file, final Consumer<byte[]> onCompletion) {
     if(drgnBinIndex >= 2) {
       drgnBinIndex = 20 + drgnBinIndex_800bc058.get();
     }
 
-    final StackWalker.StackFrame frame = StackWalker.getInstance().walk(frames -> frames
-      .skip(1)
-      .findFirst())
-      .get();
+    final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
+    LOGGER.info("Loading DRGN%d %s from %s.%s(%s:%d)", drgnBinIndex, file, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
+    final String path = "SECT/DRGN%d.BIN/%s".formatted(drgnBinIndex, file);
+    final byte[] data = Unpacker.loadFile(path);
+    onCompletion.accept(data);
+  }
+
+  public static void loadDrgnDir(int drgnBinIndex, final int directory, final Consumer<List<byte[]>> onCompletion) {
+    if(drgnBinIndex >= 2) {
+      drgnBinIndex = 20 + drgnBinIndex_800bc058.get();
+    }
+
+    final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
     LOGGER.info("Loading DRGN%d dir %d from %s.%s(%s:%d)", drgnBinIndex, directory, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
     onCompletion.accept(Unpacker.loadDirectory("SECT/DRGN%d.BIN/%d".formatted(drgnBinIndex, directory)));
   }
 
-  public static <Param> void loadDrgnDir(int drgnBinIndex, final String directory, final Consumer<List<byte[]>> onCompletion) {
+  public static void loadDrgnDir(int drgnBinIndex, final String directory, final Consumer<List<byte[]>> onCompletion) {
     if(drgnBinIndex >= 2) {
       drgnBinIndex = 20 + drgnBinIndex_800bc058.get();
     }
 
-    final StackWalker.StackFrame frame = StackWalker.getInstance().walk(frames -> frames
-      .skip(1)
-      .findFirst())
-      .get();
-
+    final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
     LOGGER.info("Loading DRGN%d dir %s from %s.%s(%s:%d)", drgnBinIndex, directory, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
     onCompletion.accept(Unpacker.loadDirectory("SECT/DRGN%d.BIN/%s".formatted(drgnBinIndex, directory)));
@@ -1815,11 +1711,7 @@ public final class Scus94491BpeSegment {
 
     final String path = "SECT/DRGN%d.BIN/%d".formatted(drgnIndex, fileIndex);
 
-    final StackWalker.StackFrame frame = StackWalker.getInstance().walk(frames -> frames
-      .skip(1)
-      .findFirst())
-      .get();
-
+    final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
     LOGGER.info("Loading %s from %s.%s(%s:%d)", path, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
     // Insta-load
@@ -1869,1221 +1761,34 @@ public final class Scus94491BpeSegment {
     preloadingAudioAssets_8004ddcc.set(loading);
   }
 
-  /** Gets the size of a MRG, truncated to a certain number of files */
-  @Method(0x80015704L)
-  public static int getMrgSize(final MrgFile mrg, final int count) {
-    int highestOffset = (mrg.count.get() + 1) * 8; // Position right after entries table
-
-    //LAB_80015724
-    for(int i = count - 1; i >= 0; i--) {
-      final MrgEntry entry = mrg.entries.get(i);
-      final int entryOffset = (int)entry.offset.get() + (entry.size.get() + 3 & 0xffff_fffc);
-
-      if(highestOffset < entryOffset) {
-        highestOffset = entryOffset;
-      }
-    }
-
-    //LAB_80015754
-    return highestOffset;
-  }
-
-  @Method(0x8001575cL)
-  public static void tickScripts() {
-    executeScriptFrame();
-    executeScriptTickers();
-    scriptStateUpperBound_8004de4c.set(9);
-  }
-
-  @Method(0x800157b8L)
-  public static void renderScriptObjects() {
-    executeScriptRenderers();
-  }
-
-  @Method(0x80015800L)
-  public static int findFreeScriptState() {
-    scriptStateUpperBound_8004de4c.incr();
-
-    if(scriptStateUpperBound_8004de4c.get() >= 72) {
-      scriptStateUpperBound_8004de4c.set(9);
-    }
-
-    //LAB_80015824
-    //LAB_8001584c
-    for(int i = scriptStateUpperBound_8004de4c.get(); i < 72; i++) {
-      if(scriptStatePtrArr_800bc1c0.get(i).getPointer() == unusedScriptState_800bc0c0.getAddress()) {
-        //LAB_800158c0
-        scriptStateUpperBound_8004de4c.set(i);
-        return i;
-      }
-    }
-
-    //LAB_8001586c
-    //LAB_80015898
-    for(int i = 9; i < scriptStateUpperBound_8004de4c.get(); i++) {
-      if(scriptStatePtrArr_800bc1c0.get(i).getPointer() == unusedScriptState_800bc0c0.getAddress()) {
-        //LAB_800158c0
-        scriptStateUpperBound_8004de4c.set(i);
-        return i;
-      }
-    }
-
-    //LAB_800158b8
-    return -1;
-  }
-
-  @Method(0x800158ccL)
-  public static <T extends MemoryRef> int allocateScriptState(final int innerStructSize, final Function<Value, T> type) {
-    final int index = findFreeScriptState();
-
-    if(index < 0) {
-      return -1;
-    }
-
-    return allocateScriptState(index, innerStructSize, false, null, 0, type);
-  }
-
-  /**
-   * @return index
-   */
-  @Method(0x80015918L)
-  public static <T extends MemoryRef> int allocateScriptState(final int index, final int innerStructSize, final boolean allocateOnHead, @Nullable final CString a3, final long a4, final Function<Value, T> type) {
-    LOGGER.info(SCRIPT_MARKER, "Allocating script index %d (0x%x bytes)", index, innerStructSize);
-
-    final long addr;
-    if(allocateOnHead) {
-      addr = mallocHead(innerStructSize + 0x100L);
-    } else {
-      //LAB_80015954
-      addr = mallocTail(innerStructSize + 0x100L);
-    }
-
-    //LAB_80015968
-    bzero(addr, innerStructSize + 0x100);
-
-    final ScriptState<T> scriptState = MEMORY.ref(4, addr, ScriptState.of(type));
-
-    //LAB_80015978
-    scriptStatePtrArr_800bc1c0.get(index).set(scriptState);
-
-    if(innerStructSize != 0) {
-      scriptState.innerStruct_00.setPointer(addr + 0x100L);
-    } else {
-      scriptState.innerStruct_00.clear();
-    }
-
-    //LAB_800159c0
-    scriptState.storage_44.get(0).set(index);
-    scriptState.storage_44.get(1).set(-1);
-    scriptState.storage_44.get(2).set(-1);
-    scriptState.storage_44.get(3).set(-1);
-    scriptState.storage_44.get(4).set(-1);
-    scriptState.storage_44.get(5).set(-1);
-    scriptState.storage_44.get(6).set(-1);
-    scriptState.ui_60.set(0x080f_0000L);
-    scriptState.storage_44.get(8).set(-1);
-    scriptState.storage_44.get(9).set(-1);
-    scriptState.storage_44.get(10).set(-1);
-    scriptState.storage_44.get(11).set(-1);
-    scriptState.storage_44.get(12).set(-1);
-    scriptState.storage_44.get(13).set(-1);
-    scriptState.storage_44.get(14).set(-1);
-    scriptState.storage_44.get(15).set(-1);
-    scriptState.storage_44.get(16).set(-1);
-    scriptState.storage_44.get(17).set(-1);
-    scriptState.storage_44.get(18).set(-1);
-    scriptState.storage_44.get(19).set(-1);
-    scriptState.storage_44.get(20).set(-1);
-    scriptState.storage_44.get(21).set(-1);
-    scriptState.storage_44.get(22).set(-1);
-    scriptState.storage_44.get(23).set(-1);
-    scriptState.storage_44.get(24).set(-1);
-
-    //LAB_800159f8
-    //LAB_80015a14
-    scriptState.typePtr_f8.setNullable(a3);
-    scriptState.ui_fc.set(a4);
-
-    EventManager.INSTANCE.postEvent(new ScriptAllocatedEvent(index));
-
-    //LAB_80015a34
-    return index;
-  }
-
-  @Method(0x80015a68L)
-  public static <T extends MemoryRef> void setScriptTicker(final int index, @Nullable final TriConsumerRef<Integer, ScriptState<T>, T> callback) {
-    final ScriptState<T> struct = (ScriptState<T>)scriptStatePtrArr_800bc1c0.get(index).deref();
-
-    if(callback == null) {
-      //LAB_80015aa0
-      struct.ticker_04.clear();
-      struct.ui_60.or(0x0004_0000L);
-    } else {
-      struct.ticker_04.set(callback);
-      struct.ui_60.and(0xfffb_ffffL);
-    }
-  }
-
-  @Method(0x80015ab4L)
-  public static <T extends MemoryRef> void setScriptRenderer(final int index, @Nullable final TriConsumerRef<Integer, ScriptState<T>, T> callback) {
-    final ScriptState<T> struct = (ScriptState<T>)scriptStatePtrArr_800bc1c0.get(index).deref();
-
-    if(callback == null) {
-      //LAB_80015aec
-      struct.renderer_08.clear();
-      struct.ui_60.or(0x0008_0000L);
-    } else {
-      struct.renderer_08.set(callback);
-      struct.ui_60.and(0xfff7_ffffL);
-    }
-  }
-
-  @Method(0x80015b00L)
-  public static <T extends MemoryRef> void setScriptDestructor(final int index, @Nullable final TriConsumerRef<Integer, ScriptState<T>, T> callback) {
-    final ScriptState<T> struct = (ScriptState<T>)scriptStatePtrArr_800bc1c0.get(index).deref();
-
-    if(callback == null) {
-      //LAB_80015b38
-      struct.destructor_0c.clear();
-      struct.ui_60.or(0x0800_0000L);
-    } else {
-      struct.destructor_0c.set(callback);
-      struct.ui_60.and(0xf7ff_ffffL);
-    }
-  }
-
-  @Method(0x80015b4cL)
-  public static <T extends MemoryRef> void setScriptTempTicker(final int index, @Nullable final TriFunctionRef<Integer, ScriptState<T>, T, Long> callback) {
-    final ScriptState<T> struct = (ScriptState<T>)scriptStatePtrArr_800bc1c0.get(index).deref();
-
-    if(callback == null) {
-      //LAB_80015b80
-      struct.tempTicker_10.clear();
-      struct.ui_60.and(0xfbff_ffffL);
-    } else {
-      struct.tempTicker_10.set(callback);
-      struct.ui_60.or(0x0400_0000L);
-    }
-  }
-
-  @Method(0x80015b98L)
-  public static void loadScriptFile(final int index, @Nullable final ScriptFile script) {
-    loadScriptFile(index, script, 0);
-  }
-
-  @Method(0x80015bb8L)
-  public static void loadScriptFile(final int index, @Nullable final ScriptFile script, final long offsetIndex) {
-    final ScriptState<?> struct = scriptStatePtrArr_800bc1c0.get(index).deref();
-
-    if(script != null) {
-      LOGGER.info(SCRIPT_MARKER, "Loading script index %d from 0x%08x (entry point 0x%x)", index, script.getAddress(), offsetIndex);
-
-      struct.scriptPtr_14.set(script);
-      struct.commandPtr_18.set(script.offsetArr_00.get((int)offsetIndex).deref());
-      struct.ui_60.and(0xfffd_ffffL);
-    } else {
-      LOGGER.info(SCRIPT_MARKER, "Clearing script index %d", index);
-
-      struct.scriptPtr_14.clear();
-      struct.commandPtr_18.clear();
-      struct.ui_60.or(0x2_0000L);
-    }
-  }
-
-  @Method(0x80015c20L)
-  public static void deallocateScriptState(final int scriptIndex) {
-    LOGGER.info(SCRIPT_MARKER, "Deallocating script state %d", scriptIndex);
-
-    EventManager.INSTANCE.postEvent(new ScriptDeallocatedEvent(scriptIndex));
-
-    final ScriptState<MemoryRef> scriptState = scriptStatePtrArr_800bc1c0.get(scriptIndex).derefAs(ScriptState.classFor(MemoryRef.class));
-    if((scriptState.ui_60.get() & 0x810_0000L) == 0) {
-      try {
-        scriptState.destructor_0c.deref().run(scriptIndex, scriptState, scriptState.innerStruct_00.derefNullableAs(MemoryRef.class));
-      } catch(final NullPointerException e) {
-        LOGGER.error("Script %d destructor was null", scriptIndex);
-        throw e;
-      }
-    }
-
-    //LAB_80015c70
-    scriptStatePtrArr_800bc1c0.get(scriptIndex).set(unusedScriptState_800bc0c0);
-    free(scriptState.getAddress());
-  }
-
-  @Method(0x80015c9cL)
-  public static void deallocateScriptChildren(final int scriptIndex) {
-    LOGGER.info(SCRIPT_MARKER, "Deallocating script %d children", scriptIndex);
-
-    final ScriptState<?> scriptState = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref();
-
-    int a0_0 = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().storage_44.get(6).get();
-
-    //LAB_80015cdc
-    while(a0_0 >= 0) {
-      final int s0 = scriptStatePtrArr_800bc1c0.get(a0_0).deref().storage_44.get(6).get();
-      deallocateScriptState(a0_0);
-      a0_0 = s0;
-    }
-
-    //LAB_80015d04
-    scriptState.storage_44.get(6).set(-1);
-    scriptState.ui_60.and(0xffdf_ffffL);
-  }
-
-  @Method(0x80015d38L)
-  public static void deallocateScriptAndChildren(final int scriptIndex) {
-    deallocateScriptChildren(scriptIndex);
-    deallocateScriptState(scriptIndex);
-  }
-
-  @Method(0x80015d74L)
-  public static int scriptFork(final int parentScriptIndex) {
-    final int childScriptIndex = findFreeScriptState();
-
-    LOGGER.info("Forking script %d to %d", parentScriptIndex, childScriptIndex);
-
-    if(childScriptIndex < 0 || allocateScriptState(childScriptIndex, 0, false, null, 0, null) < 0) {
-      //LAB_80015dd4
-      return -1;
-    }
-
-    //LAB_80015ddc
-    final ScriptState<?> parentScript = scriptStatePtrArr_800bc1c0.get(parentScriptIndex).deref();
-    final ScriptState<?> childScript = scriptStatePtrArr_800bc1c0.get(childScriptIndex).deref();
-    childScript.ui_60.set(parentScript.ui_60.get() | 0x10_0000L); // Child
-    parentScript.ui_60.or(0x20_0000L); // Parent
-
-    //LAB_80015e0c
-    for(int i = 0; i < 25; i++) {
-      childScript.storage_44.get(8 + i).set(parentScript.storage_44.get(8 + i).get());
-    }
-
-    childScript.storage_44.get(5).set(parentScriptIndex);
-    childScript.storage_44.get(6).set(parentScript.storage_44.get(6).get());
-    parentScript.storage_44.get(6).set(childScriptIndex);
-    childScript.scriptPtr_14.set(parentScript.scriptPtr_14.deref());
-    childScript.commandPtr_18.set(parentScript.commandPtr_18.deref());
-
-    //LAB_80015e4c
-    return childScriptIndex;
-  }
-
-  /** Deallocates child and assumes its identity? */
-  @Method(0x80015e68L)
-  public static IntRef scriptConsumeChild(final int scriptIndex) {
-    final ScriptState<?> a3 = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref();
-
-    final int childIndex = a3.storage_44.get(6).get();
-    if(childIndex < 0) {
-      throw new RuntimeException("Null command");
-    }
-
-    LOGGER.info("Consuming script %d child %d", scriptIndex, childIndex);
-
-    final ScriptState<?> child = scriptStatePtrArr_800bc1c0.get(childIndex).deref();
-    if((child.ui_60.get() & 0x20_0000L) != 0) { // Is parent
-      a3.ui_60.or(0x20_0000L);
-      a3.storage_44.get(6).set(child.storage_44.get(6).get());
-      scriptStatePtrArr_800bc1c0.get(child.storage_44.get(6).get()).deref().storage_44.get(5).set(scriptIndex);
-    } else {
-      //LAB_80015ef0
-      a3.storage_44.get(6).set(-1);
-      a3.ui_60.and(0xffdf_ffffL);
-    }
-
-    //LAB_80015f08
-    //LAB_80015f14
-    for(int i = 0; i < 25; i++) {
-      a3.storage_44.get(8 + i).set(child.storage_44.get(8 + i).get());
-    }
-
-    a3.scriptPtr_14.set(child.scriptPtr_14.deref());
-    a3.commandPtr_18.set(child.commandPtr_18.deref());
-    deallocateScriptState(childIndex);
-
-    //LAB_80015f54
-    return child.commandPtr_18.deref();
-  }
-
-  @Method(0x80015f64L)
-  public static long scriptNotImplemented(final RunningScript a0) {
-    assert false;
-    return 0x2L;
-  }
-
-  @Method(0x80015f6cL)
-  public static void executeScriptFrame() {
-    long v0;
-    long v1;
-
-    if(scriptsTickDisabled_800bc0b8.get() || scriptsDisabled_800bc0b9.get()) {
-      return;
-    }
-
-    RunningScript_800bc070.ui_1c.set(0);
-
-    //LAB_80015fd8
-    for(int index = 0; index < 0x48; index++) {
-      final ScriptState<WorldObject210> scriptState = scriptStatePtrArr_800bc1c0.get(index).derefAs(ScriptState.classFor(WorldObject210.class));
-
-      if(scriptState.getAddress() != unusedScriptState_800bc0c0.getAddress() && (scriptState.ui_60.get() & 0x12_0000L) == 0) {
-        RunningScript_800bc070.scriptStateIndex_00.set(index);
-        RunningScript_800bc070.scriptState_04.set(scriptState);
-        RunningScript_800bc070.commandPtr_0c.set(scriptState.commandPtr_18.deref());
-        RunningScript_800bc070.opPtr_08.set(scriptState.commandPtr_18.deref());
-
-        if(scriptLog[index]) {
-          System.err.printf("Exec script index %d (%08x)%n", index, RunningScript_800bc070.scriptState_04.deref().scriptPtr_14.getPointer());
-        }
-
-        long ret;
-        //LAB_80016018
-        do {
-          final long opCommand = RunningScript_800bc070.commandPtr_0c.deref().get();
-          RunningScript_800bc070.opIndex_10.set(opCommand & 0xffL);
-          RunningScript_800bc070.paramCount_14.set(opCommand >>> 8 & 0xffL);
-          RunningScript_800bc070.opParam_18.set(opCommand >>> 16);
-
-          if(scriptLog[index]) {
-            System.err.println(Long.toHexString(RunningScript_800bc070.commandPtr_0c.getPointer() - RunningScript_800bc070.scriptState_04.deref().scriptPtr_14.getPointer()) + " (" + RunningScript_800bc070.commandPtr_0c.deref() + ')');
-            System.err.printf("param[p] = %x%n", opCommand >>> 16);
-          }
-
-          RunningScript_800bc070.commandPtr_0c.incr();
-
-          //LAB_80016050
-          for(int paramIndex = 0; paramIndex < RunningScript_800bc070.paramCount_14.get(); paramIndex++) {
-            final int childCommand = RunningScript_800bc070.commandPtr_0c.deref().get();
-            final int paramType = childCommand >>> 24;
-            final int param0 = childCommand >>> 16 & 0xff;
-            final int param1 = childCommand >>> 8 & 0xff;
-            final int param2 = childCommand & 0xff;
-
-            RunningScript_800bc070.commandPtr_0c.incr();
-            final long commandPtr = RunningScript_800bc070.commandPtr_0c.getPointer();
-
-            if(paramType == 0x1) {
-              //LAB_800161f4
-              final IntRef p = RunningScript_800bc070.commandPtr_0c.deref();
-              RunningScript_800bc070.params_20.get(paramIndex).set(p);
-              RunningScript_800bc070.commandPtr_0c.incr();
-            } else if(paramType == 0x2) {
-              //LAB_80016200
-              final IntRef p = RunningScript_800bc070.scriptState_04.deref().storage_44.get(param2);
-              RunningScript_800bc070.params_20.get(paramIndex).set(p);
-            } else if(paramType == 0x3) {
-              //LAB_800160cc
-              //LAB_8001620c
-              final long a0_0 = RunningScript_800bc070.scriptState_04.deref().storage_44.get(param2).get();
-              final long a1_0 = scriptStatePtrArr_800bc1c0.get((int)a0_0).deref().storage_44.get(param1).get();
-              final IntRef p = scriptStatePtrArr_800bc1c0.get((int)a1_0).deref().storage_44.get(param0);
-              RunningScript_800bc070.params_20.get(paramIndex).set(p);
-            } else if(paramType == 0x4) {
-              //LAB_80016258
-              final long a0_0 = RunningScript_800bc070.scriptState_04.deref().storage_44.get(param2).get();
-              final long a1_0 = param1 + RunningScript_800bc070.scriptState_04.deref().storage_44.get(param0).get();
-              final IntRef p = scriptStatePtrArr_800bc1c0.get((int)a0_0).deref().storage_44.get((int)a1_0);
-              RunningScript_800bc070.params_20.get(paramIndex).set(p);
-            } else if(paramType == 0x5) {
-              //LAB_80016290
-              final IntRef p = scriptPtrs_8004de58.get(param2).deref();
-              RunningScript_800bc070.params_20.get(paramIndex).set(p);
-            } else if(paramType == 0x6) {
-              //LAB_800162a4
-              final IntRef p = scriptPtrs_8004de58.get(RunningScript_800bc070.scriptState_04.deref().storage_44.get(param1).get() + param2).deref();
-              RunningScript_800bc070.params_20.get(paramIndex).set(p);
-            } else if(paramType == 0x7) {
-              //LAB_800162d0
-              final long a0_0 = RunningScript_800bc070.scriptState_04.deref().storage_44.get(param1).get();
-              final IntRef p = MEMORY.ref(4, scriptPtrs_8004de58.get(param2).getPointer() + a0_0 * 0x4L, IntRef::new);
-              RunningScript_800bc070.params_20.get(paramIndex).set(p);
-            } else if(paramType == 0x8) {
-              //LAB_800160e8
-              //LAB_800162f4
-              v0 = RunningScript_800bc070.scriptState_04.deref().storage_44.get(param1).get();
-              final long a1_0 = RunningScript_800bc070.scriptState_04.deref().storage_44.get(param0).get();
-              final IntRef p = MEMORY.ref(4, scriptPtrs_8004de58.get((int)(param2 + v0)).getPointer() + a1_0 * 0x4L, IntRef::new);
-              RunningScript_800bc070.params_20.get(paramIndex).set(p);
-            } else if(paramType == 0x9) {
-              //LAB_80016328
-              v1 = RunningScript_800bc070.opPtr_08.getPointer() + (short)childCommand * 0x4L;
-              final IntRef p = MEMORY.ref(4, v1, IntRef::new);
-              RunningScript_800bc070.params_20.get(paramIndex).set(p);
-            } else if(paramType == 0xa) {
-              //LAB_80016118
-              //LAB_80016334
-              v0 = RunningScript_800bc070.opPtr_08.getPointer() + ((short)childCommand + RunningScript_800bc070.scriptState_04.deref().storage_44.get(param0).get()) * 0x4L;
-              final IntRef p = MEMORY.ref(4, v0, IntRef::new);
-              RunningScript_800bc070.params_20.get(paramIndex).set(p);
-            } else if(paramType == 0xb) {
-              //LAB_80016360
-              v0 = RunningScript_800bc070.opPtr_08.getPointer() + (RunningScript_800bc070.scriptState_04.deref().storage_44.get(param0).get() + (short)childCommand) * 0x4L;
-              final long a0_0 = RunningScript_800bc070.opPtr_08.getPointer() + (MEMORY.ref(4, v0).get() + (short)childCommand) * 0x4L;
-              final IntRef p = MEMORY.ref(4, a0_0, IntRef::new);
-              RunningScript_800bc070.params_20.get(paramIndex).set(p);
-            } else if(paramType == 0xc) {
-              //LAB_800163a0
-              RunningScript_800bc070.commandPtr_0c.incr();
-              v0 = commandPtr + MEMORY.ref(4, commandPtr).offset(RunningScript_800bc070.scriptState_04.deref().storage_44.get(param2).get() * 0x4L).get() * 0x4L + RunningScript_800bc070.scriptState_04.deref().storage_44.get(param1).get() * 0x4L;
-              final IntRef p = MEMORY.ref(4, v0, IntRef::new);
-              RunningScript_800bc070.params_20.get(paramIndex).set(p);
-            } else if(paramType == 0xd) {
-              //LAB_800163e8
-              final IntRef p = scriptStatePtrArr_800bc1c0.get(RunningScript_800bc070.scriptState_04.deref().storage_44.get(param2).get()).deref().storage_44.get(param1 + param0);
-              RunningScript_800bc070.params_20.get(paramIndex).set(p);
-            } else if(paramType == 0xe) {
-              //LAB_80016418
-              final IntRef p = scriptPtrs_8004de58.get(param1 + param2).deref();
-              RunningScript_800bc070.params_20.get(paramIndex).set(p);
-            } else if(paramType == 0xf) {
-              //LAB_8001642c
-              final IntRef p = MEMORY.ref(4, scriptPtrs_8004de58.get(param2).getPointer() + param1 * 0x4L, IntRef::new);
-              RunningScript_800bc070.params_20.get(paramIndex).set(p);
-            } else if(paramType == 0x10) {
-              //LAB_80016180
-              //LAB_8001643c
-              final IntRef p = MEMORY.ref(4, scriptPtrs_8004de58.get(param2 + RunningScript_800bc070.scriptState_04.deref().storage_44.get(param1).get()).getPointer() + param0 * 0x4L, IntRef::new);
-              RunningScript_800bc070.params_20.get(paramIndex).set(p);
-            } else if(paramType == 0x11) {
-              //LAB_80016468
-//              ScriptStruct_800bc070.params_20.get(paramIndex).set(scriptPtrs_8004de58.get(opCommand * 0x4L).deref(4).offset(ScriptStruct_800bc070.scriptState_04.deref().ui_44.get(param0).get() * 0x4L).cast(UnsignedIntRef::new));
-              assert false;
-            } else if(paramType == 0x12) {
-              //LAB_80016138
-              //LAB_8001648c
-//              ScriptStruct_800bc070.params_20.get(paramIndex).set(scriptPtrs_8004de58.offset((param2 + param1) * 0x4L).deref(4).offset(param0 * 0x4L).cast(UnsignedIntRef::new));
-              assert false;
-            } else if(paramType == 0x13) {
-              //LAB_800164a4
-              v1 = RunningScript_800bc070.opPtr_08.getPointer() + ((short)childCommand + param0) * 4;
-              final IntRef p = MEMORY.ref(4, v1, IntRef::new);
-              RunningScript_800bc070.params_20.get(paramIndex).set(p);
-            } else if(paramType == 0x14) {
-              //LAB_800164b4
-              v1 = RunningScript_800bc070.opPtr_08.getPointer() + (short)childCommand * 0x4L;
-
-              //LAB_800164cc
-              v0 = MEMORY.ref(4, v1).offset(param0 * 0x4L).getSigned() * 0x4L;
-
-              //LAB_800164d4
-              final IntRef p = MEMORY.ref(4, v1 + v0, IntRef::new);
-              RunningScript_800bc070.params_20.get(paramIndex).set(p);
-            } else if(paramType == 0x15) {
-              //LAB_800161a0
-              //LAB_800164e0
-              RunningScript_800bc070.commandPtr_0c.incr();
-              v0 = commandPtr + MEMORY.ref(4, commandPtr).offset(RunningScript_800bc070.scriptState_04.deref().storage_44.get(param2).get() * 0x4L).get() * 0x4L + param1 * 0x4L;
-
-              //LAB_80016580
-              final IntRef p = MEMORY.ref(4, v0, IntRef::new);
-              RunningScript_800bc070.params_20.get(paramIndex).set(p);
-            } else if(paramType == 0x16) {
-              //LAB_80016518
-              RunningScript_800bc070.commandPtr_0c.incr();
-              v0 = commandPtr + MEMORY.ref(4, commandPtr).offset(param2 * 0x4L).get() * 0x4L + RunningScript_800bc070.scriptState_04.deref().storage_44.get(param1).get() * 0x4L;
-              final IntRef p = MEMORY.ref(4, v0, IntRef::new);
-              RunningScript_800bc070.params_20.get(paramIndex).set(p);
-            } else if(paramType == 0x17) {
-              //LAB_800161d4
-              //LAB_8001654c
-              RunningScript_800bc070.commandPtr_0c.incr();
-              v0 = commandPtr + MEMORY.ref(4, commandPtr).offset(param2 * 0x4L).get() * 0x4L + param1 * 0x4L;
-              final IntRef p = MEMORY.ref(4, v0, IntRef::new);
-              RunningScript_800bc070.params_20.get(paramIndex).set(p);
-            } else { // Treated as an immediate if not a valid op
-              //LAB_80016574
-              final IntRef p = RunningScript_800bc070.commandPtr_0c.deref();
-              RunningScript_800bc070.params_20.get(paramIndex).set(p).decr();
-            }
-
-            if(scriptLog[index]) {
-              System.err.printf("params[%d] = %s%n", paramIndex, RunningScript_800bc070.params_20.get(paramIndex).deref());
-            }
-
-            //LAB_80016584
-          }
-
-          EventManager.INSTANCE.postEvent(new ScriptTickEvent(index));
-
-          final int opIndex = (int)RunningScript_800bc070.opIndex_10.get();
-          final FunctionRef<RunningScript, Long> callback = scriptFunctions_8004e098.get(opIndex).deref();
-
-          if(scriptLog[index]) {
-            if(scriptFunctionDescriptions.containsKey(opIndex)) {
-              System.err.println(scriptFunctionDescriptions.get(opIndex).apply(RunningScript_800bc070));
-            } else {
-              System.err.printf("Running callback %d (%08x)%n", opIndex, callback.getAddress());
-            }
-          }
-
-          //LAB_80016598
-          try {
-            ret = callback.run(RunningScript_800bc070);
-          } catch(final Throwable e) {
-            throw new RuntimeException("An error occurred while ticking script %d".formatted(index), e);
-          }
-
-          if(scriptLog[index]) {
-            if(ret == 1) {
-              System.err.println("Pausing");
-            } else if(ret != 0) {
-              System.err.println("Rewinding and pausing");
-            }
-          }
-
-          // Returning 0 continues execution
-          // Returning 1 pauses execution until the next frame
-          // Returning anything else pauses execution and repeats the same instruction next frame
-          if(ret == 0 || ret == 0x1L) {
-            //LAB_800165e8
-            RunningScript_800bc070.opPtr_08.set(RunningScript_800bc070.commandPtr_0c.deref());
-          }
-        } while(ret == 0);
-
-        //LAB_800165f4
-        if(scriptState.getAddress() != unusedScriptState_800bc0c0.getAddress()) {
-          scriptState.commandPtr_18.set(RunningScript_800bc070.opPtr_08.deref());
-        }
-      }
-
-      //LAB_80016614
-    }
-
-    //LAB_80016624
-  }
-
-  @Method(0x8001664cL)
-  public static long scriptCompare(final RunningScript a0, final long operandA, final long operandB, final long op) {
-    return switch((int)op) {
-      case 0x0 -> (int)operandA <= (int)operandB ? 1 : 0;
-      case 0x1 -> (int)operandA < (int)operandB ? 1 : 0;
-      case 0x2 -> operandA == operandB ? 1 : 0;
-      case 0x3 -> operandA != operandB ? 1 : 0;
-      case 0x4 -> (int)operandA > (int)operandB ? 1 : 0;
-      case 0x5 -> (int)operandA >= (int)operandB ? 1 : 0;
-      case 0x6 -> operandA & operandB;
-      case 0x7 -> (operandA & operandB) == 0 ? 1 : 0;
-      default -> 0;
-    };
-  }
-
-  /** Stop execution for this frame, resume next frame */
-  @Method(0x800166d0L)
-  public static long scriptPause(final RunningScript a0) {
-    return 0x1L;
-  }
-
-  /** Stop execution for this frame, resume next frame and repeat same command */
-  @Method(0x800166d8L)
-  public static long scriptRewindAndPause(final RunningScript a0) {
-    return 0x2L;
-  }
-
-  /**
-   * Subtracts 1 from work array value 0 if nonzero
-   *
-   * @return 0 if value is already 0; 2 if value was decremented
-   */
-  @Method(0x800166e0L)
-  public static long scriptWait(final RunningScript a0) {
-    if(a0.params_20.get(0).deref().get() != 0) {
-      a0.params_20.get(0).deref().decr();
-      return 0x2L;
-    }
-
-    return 0;
-  }
-
-  /**
-   * <p>Compares work array values 0 and 2 based on an operand stored in the parent param</p>
-   *
-   * <p>
-   *   Operations:
-   *   <ol start="0">
-   *     <li>Less than or equal to</li>
-   *     <li>Less than</li>
-   *     <li>Equal</li>
-   *     <li>Inequal</li>
-   *     <li>Greater than</li>
-   *     <li>Greater than or equal to</li>
-   *     <li>And</li>
-   *     <li>Nand</li>
-   *   </ol>
-   * </p>
-   *
-   * @return 0 if comparison succeeds, otherwise return 2
-   */
-  @Method(0x8001670cL)
-  public static long scriptCompare(final RunningScript a0) {
-    return scriptCompare(a0, a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.opParam_18.get()) == 0 ? 2 : 0;
-  }
-
-  /** Same as {@link Scus94491BpeSegment#scriptCompare(RunningScript)} with first param set to 0 */
-  @Method(0x80016744L)
-  public static long scriptCompare0(final RunningScript a0) {
-    return scriptCompare(a0, 0, a0.params_20.get(0).deref().get(), a0.opParam_18.get()) < 1 ? 2 : 0;
-  }
-
-  /**
-   * Set work array value 1 to value 0
-   *
-   * @return 0
-   */
-  @Method(0x80016774L)
-  public static long scriptMove(final RunningScript a0) {
-    a0.params_20.get(1).deref().set(a0.params_20.get(0).deref());
-    return 0;
-  }
-
-  /** Pretty sure this is _supposed_ to be a swap */
-  @Method(0x80016790L)
-  public static long FUN_80016790(final RunningScript a0) {
-    final int v1 = a0.params_20.get(0).deref().get();
-    a0.params_20.get(1).deref().set(v1);
-    a0.params_20.get(0).deref().set(v1);
-    return 0;
-  }
-
-  /**
-   * Copy block of memory at work array parameter 1 to block of memory at work array parameter 2. Word count is at work array parameter 0.
-   *
-   * @return 0
-   */
-  @Method(0x800167bcL)
-  public static long scriptMemCopy(final RunningScript a0) {
-    final Pointer<IntRef> dest = a0.params_20.get(2);
-    final Pointer<IntRef> src = a0.params_20.get(1);
-    long count = a0.params_20.get(0).deref().get() << 2 >> 2;
-
-    if(dest.getPointer() < src.getPointer()) {
-      count--;
-
-      //LAB_800167e8
-      while((int)count >= 0) {
-        dest.deref().set(src.deref());
-        src.incr();
-        dest.incr();
-        count--;
-      }
-
-      return 0;
-    }
-
-    //LAB_8001680c
-    if(src.getPointer() < dest.getPointer()) {
-      count--;
-
-      dest.add(count * 0x4L);
-      src.add(count * 0x4L);
-
-      //LAB_8001682c
-      while((int)count >= 0) {
-        dest.deref().set(src.deref());
-        src.decr();
-        dest.decr();
-        count--;
-      }
-    }
-
-    //LAB_80016848
-    return 0;
-  }
-
-  @Method(0x80016854L)
-  public static long scriptSetZero(final RunningScript a0) {
-    a0.params_20.get(0).deref().set(0);
-    return 0;
-  }
-
-  @Method(0x80016868L)
-  public static long scriptAnd(final RunningScript a0) {
-    a0.params_20.get(1).deref().and(a0.params_20.get(0).deref());
-    return 0;
-  }
-
-  @Method(0x8001688cL)
-  public static long scriptOr(final RunningScript a0) {
-    a0.params_20.get(1).deref().or(a0.params_20.get(0).deref());
-    return 0;
-  }
-
-  @Method(0x800168b0L)
-  public static long scriptXor(final RunningScript a0) {
-    a0.params_20.get(1).deref().xor(a0.params_20.get(0).deref().get());
-    return 0;
-  }
-
-  @Method(0x800168d4L)
-  public static long scriptAndOr(final RunningScript a0) {
-    a0.params_20.get(2).deref()
-      .and(a0.params_20.get(0).deref().get())
-      .or(a0.params_20.get(1).deref().get());
-    return 0;
-  }
-
-  @Method(0x80016900L)
-  public static long scriptNot(final RunningScript a0) {
-    a0.params_20.get(0).deref().not();
-    return 0;
-  }
-
-  /**
-   * Shift work array value 1 left by value 0 bits
-   *
-   * @return 0
-   */
-  @Method(0x80016920L)
-  public static long scriptShiftLeft(final RunningScript a0) {
-    a0.params_20.get(1).deref().shl(a0.params_20.get(0).deref());
-    return 0;
-  }
-
-  /**
-   * Shift work array value 1 right (arithmetic) by value 0 bits
-   *
-   * @return 0
-   */
-  @Method(0x80016944L)
-  public static long scriptShiftRightArithmetic(final RunningScript a0) {
-    a0.params_20.get(1).deref().set(a0.params_20.get(1).deref().get() >> a0.params_20.get(0).deref().get());
-    return 0;
-  }
-
-  /**
-   * Increment work array value 1 by value 0 (overflow allowed)
-   *
-   * @return 0
-   */
-  @Method(0x80016968L)
-  public static long scriptAdd(final RunningScript a0) {
-    a0.params_20.get(1).deref().add(a0.params_20.get(0).deref());
-    return 0;
-  }
-
-  /**
-   * Decrement work array value 1 by value 0 (overflow allowed)
-   *
-   * @return 0
-   */
-  @Method(0x8001698cL)
-  public static long scriptSubtract(final RunningScript a0) {
-    a0.params_20.get(1).deref().sub(a0.params_20.get(0).deref());
-    return 0;
-  }
-
-  @Method(0x800169b0L)
-  public static long scriptSubtract2(final RunningScript a0) {
-    a0.params_20.get(1).deref().set(a0.params_20.get(0).deref().get() - a0.params_20.get(1).deref().get());
-    return 0;
-  }
-
-  /**
-   * Increment work array value 0 by 1
-   *
-   * @return 0
-   */
-  @Method(0x800169d4L)
-  public static long scriptIncrementBy1(final RunningScript a0) {
-    a0.params_20.get(0).deref().incr();
-    return 0;
-  }
-
-  /**
-   * Decrement work array value 0 by 1
-   *
-   * @return 0
-   */
-  @Method(0x800169f4L)
-  public static long scriptDecrementBy1(final RunningScript a0) {
-    a0.params_20.get(0).deref().decr();
-    return 0;
-  }
-
-  @Method(0x80016a14L)
-  public static long scriptNegate(final RunningScript a0) {
-    a0.params_20.get(0).deref().set(-a0.params_20.get(0).deref().get());
-    return 0;
-  }
-
-  @Method(0x80016a34L)
-  public static long scriptAbs(final RunningScript a0) {
-    //LAB_80016a50
-    a0.params_20.get(0).deref().abs();
-    return 0;
-  }
-
-  /**
-   * Multiply work array value 1 by value 0 (overflow allowed)
-   *
-   * @return 0
-   */
-  @Method(0x80016a5cL)
-  public static long scriptMultiply(final RunningScript a0) {
-    a0.params_20.get(1).deref().mul(a0.params_20.get(0).deref());
-    return 0;
-  }
-
-  /**
-   * Divide work array value 1 by value 0
-   *
-   * @return 0
-   */
-  @Method(0x80016a84L)
-  public static long scriptDivide(final RunningScript a0) {
-    final int divisor = a0.params_20.get(0).deref().get();
-
-    if(divisor == 0) {
-      if(a0.params_20.get(1).deref().get() >= 0) {
-        a0.params_20.get(1).deref().set(-1);
-      } else {
-        a0.params_20.get(1).deref().set(1);
-      }
-
-      return 0;
-    }
-
-    a0.params_20.get(1).deref().div(divisor);
-    return 0;
-  }
-
-  @Method(0x80016ab0L)
-  public static long scriptDivide2(final RunningScript a0) {
-    a0.params_20.get(1).deref().set(MathHelper.safeDiv(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get()));
-    return 0;
-  }
-
-  @Method(0x80016adcL)
-  public static long scriptMod(final RunningScript a0) {
-    a0.params_20.get(1).deref().mod(a0.params_20.get(0).deref().get());
-    return 0;
-  }
-
-  @Method(0x80016b04L)
-  public static long scriptMod2(final RunningScript a0) {
-    a0.params_20.get(1).deref().set(a0.params_20.get(0).deref().get() % a0.params_20.get(1).deref().get());
-    return 0;
-  }
-
-  @Method(0x80016b2cL)
-  public static long FUN_80016b2c(final RunningScript a0) {
-    a0.params_20.get(1).deref().set((a0.params_20.get(1).deref().get() >> 4) * (a0.params_20.get(0).deref().get() >> 4) >> 4);
-    return 0;
-  }
-
-  @Method(0x80016b5cL)
-  public static long FUN_80016b5c(final RunningScript a0) {
-    a0.params_20.get(1).deref().set(((a0.params_20.get(1).deref().get() << 4) / a0.params_20.get(0).deref().get()) << 8);
-    return 0;
-  }
-
-  @Method(0x80016b8cL)
-  public static long FUN_80016b8c(final RunningScript a0) {
-    a0.params_20.get(1).deref().set(((a0.params_20.get(0).deref().get() << 4) / a0.params_20.get(1).deref().get()) << 8);
-    return 0;
-  }
-
-  /**
-   * Calculate square root of work array value 0 and store in value 1
-   *
-   * @return 0
-   */
-  @Method(0x80016bbcL)
-  public static long scriptSquareRoot(final RunningScript a0) {
-    a0.params_20.get(1).deref().set(SquareRoot0(a0.params_20.get(0).deref().get()));
-    return 0;
-  }
-
-  @Method(0x80016c00L)
-  public static long FUN_80016c00(final RunningScript a0) {
-    a0.params_20.get(1).deref().set(a0.params_20.get(0).deref().get() * simpleRand() >>> 16);
-    return 0;
-  }
-
-  @Method(0x80016c4cL)
-  public static long scriptSin(final RunningScript a0) {
-    a0.params_20.get(1).deref().set((int)sin_cos_80054d0c.offset(2, (a0.params_20.get(0).deref().get() & 0xfffL) * 0x4L).getSigned());
-    return 0;
-  }
-
-  @Method(0x80016c80L)
-  public static long scriptCos(final RunningScript a0) {
-    a0.params_20.get(1).deref().set((int)sin_cos_80054d0c.offset(2, (a0.params_20.get(0).deref().get() & 0xfffL) * 0x4L).offset(0x2L).getSigned());
-    return 0;
-  }
-
-  @Method(0x80016cb4L)
-  public static long scriptRatan2(final RunningScript a0) {
-    a0.params_20.get(2).deref().set(ratan2(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get()));
-    return 0;
-  }
-
-  /**
-   * Executes the sub-function at {@link legend.game.Scus94491BpeSegment_8004#scriptSubFunctions_8004e29c} denoted by the parent param
-   *
-   * @return The value that the sub-function returns
-   */
-  @Method(0x80016cfcL)
-  public static long scriptExecuteSubFunc(final RunningScript a0) {
-    try {
-      return scriptSubFunctions_8004e29c.get((int)a0.opParam_18.get()).deref().run(a0);
-    } catch(final UnsupportedOperationException e) {
-      throw new RuntimeException("Script subfunc %d error".formatted(a0.opParam_18.get()), e);
-    }
-  }
-
-  /**
-   * Jump to the value at work array element 0
-   *
-   * @return 0
-   */
-  @Method(0x80016d38L)
-  public static long scriptJump(final RunningScript a0) {
-    a0.commandPtr_0c.set(a0.params_20.get(0).deref());
-    return 0;
-  }
-
-  /**
-   * <p>Compares value at work array element 0 to element 1 using operation denoted by parent param. If true, jumps to value at element 2.</p>
-   *
-   * <p>
-   *   Operations:
-   *   <ol start="0">
-   *     <li>Less than or equal to</li>
-   *     <li>Less than</li>
-   *     <li>Equal</li>
-   *     <li>Inequal</li>
-   *     <li>Greater than</li>
-   *     <li>Greater than or equal to</li>
-   *     <li>And</li>
-   *     <li>Nand</li>
-   *   </ol>
-   * </p>
-   *
-   * @return 0
-   */
-  @Method(0x80016d4cL)
-  public static long scriptConditionalJump(final RunningScript a0) {
-    if(scriptCompare(a0, a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.opParam_18.get()) != 0) {
-      a0.commandPtr_0c.set(a0.params_20.get(2).deref());
-    }
-
-    //LAB_80016d8c
-    return 0;
-  }
-
-
-  /**
-   * <p>Compares constant 0 to work array element 0 using operation denoted by parent param. If true, jumps to value at element 1.</p>
-   *
-   * <p>
-   *   Operations:
-   *   <ol start="0">
-   *     <li>Less than or equal to</li>
-   *     <li>Less than</li>
-   *     <li>Equal</li>
-   *     <li>Inequal</li>
-   *     <li>Greater than</li>
-   *     <li>Greater than or equal to</li>
-   *     <li>And</li>
-   *     <li>Nand</li>
-   *   </ol>
-   * </p>
-   *
-   * @return 0
-   */
-  @Method(0x80016da0L)
-  public static long scriptConditionalJump0(final RunningScript a0) {
-    if(scriptCompare(a0, 0, a0.params_20.get(0).deref().get(), a0.opParam_18.get()) != 0) {
-      a0.commandPtr_0c.set(a0.params_20.get(1).deref());
-    }
-
-    //LAB_80016dd8
-    return 0;
-  }
-
-  /**
-   * Decrements param0 and jumps to param1 if param0 > 0... maybe used for do...while loops?
-   */
-  @Method(0x80016decL)
-  public static long FUN_80016dec(final RunningScript a0) {
-    a0.params_20.get(0).deref().decr();
-
-    if(a0.params_20.get(0).deref().get() != 0) {
-      a0.commandPtr_0c.set(a0.params_20.get(1).deref());
-    }
-
-    //LAB_80016e14
-    return 0;
-  }
-
-  @Method(0x80016e1cL)
-  public static long FUN_80016e1c(final RunningScript a0) {
-    a0.commandPtr_0c.set(MEMORY.ref(4, a0.params_20.get(1).getPointer()).offset(MEMORY.ref(4, a0.params_20.get(1).getPointer()).offset(a0.params_20.get(0).deref().get() * 0x4L).get() * 0x4L).cast(IntRef::new));
-    return 0;
-  }
-
-  /**
-   * Pushes the current command to the command stack and jumps to the value at work array element 0.
-   *
-   * @return 0
-   */
-  @Method(0x80016e50L)
-  public static long scriptJumpAndLink(final RunningScript a0) {
-    final ScriptState<?> struct = a0.scriptState_04.deref();
-
-    for(int i = struct.commandStack_1c.length() - 1; i > 0; i--) {
-      struct.commandStack_1c.get(i).setNullable(struct.commandStack_1c.get(i - 1).derefNullable());
-    }
-
-    struct.commandStack_1c.get(0).set(a0.commandPtr_0c.deref());
-    a0.commandPtr_0c.set(a0.params_20.get(0).deref());
-
-    return 0;
-  }
-
-  /**
-   * Return from a JumpAndLink
-   *
-   * @return 0
-   */
-  @Method(0x80016f28L)
-  public static long scriptJumpReturn(final RunningScript a0) {
-    final ScriptState<?> struct = a0.scriptState_04.deref();
-
-    a0.commandPtr_0c.set(struct.commandStack_1c.get(0).deref());
-
-    for(int i = 0; i < struct.commandStack_1c.length() - 1; i++) {
-      struct.commandStack_1c.get(i).setNullable(struct.commandStack_1c.get(i + 1).derefNullable());
-    }
-
-    struct.commandStack_1c.get(struct.commandStack_1c.length() - 1).clear();
-
-    return 0;
-  }
-
-  @Method(0x80016ffcL)
-  public static long scriptJumpAndLinkTable(final RunningScript a0) {
-    final ScriptState<?> struct = a0.scriptState_04.deref();
-
-    for(int i = struct.commandStack_1c.length() - 1; i > 0; i--) {
-      struct.commandStack_1c.get(i).setNullable(struct.commandStack_1c.get(i - 1).derefNullable());
-    }
-
-    struct.commandStack_1c.get(0).set(a0.commandPtr_0c.deref());
-
-    // Equivalent to a + a[b] * 4
-    final long v1 = a0.params_20.get(1).getPointer();
-    a0.commandPtr_0c.set(MEMORY.ref(4, v1 + MEMORY.ref(4, v1).offset(a0.params_20.get(0).deref().get() * 0x4L).getSigned() * 0x4L, IntRef::new));
-    return 0;
-  }
-
-  @Method(0x800170f4L)
-  public static long scriptDeallocateSelf(final RunningScript a0) {
-    deallocateScriptChildren(a0.scriptStateIndex_00.get());
-    deallocateScriptState(a0.scriptStateIndex_00.get());
-    return 0x2L;
-  }
-
-  @Method(0x80017138L)
-  public static long scriptDeallocateChildren(final RunningScript a0) {
-    deallocateScriptAndChildren(a0.scriptStateIndex_00.get());
-    return 2;
-  }
-
-  @Method(0x80017160L)
-  public static long scriptDeallocateOther(final RunningScript a0) {
-    deallocateScriptChildren(a0.params_20.get(0).deref().get());
-    deallocateScriptState(a0.params_20.get(0).deref().get());
-    return a0.params_20.get(0).deref().get() == a0.scriptStateIndex_00.get() ? 2 : 0;
-  }
-
-  /** Forks the script and jumps to an address */
-  @Method(0x800171c0L)
-  public static long scriptForkAndJump(final RunningScript a0) {
-    scriptFork(a0.params_20.get(0).deref().get());
-    final ScriptState<?> state = scriptStatePtrArr_800bc1c0.get(a0.params_20.get(0).deref().get()).deref();
-    state.commandPtr_18.set(a0.params_20.get(1).deref());
-    state._c4.set(a0.params_20.get(2).deref().get());
-    return 0;
-  }
-
-  /** Forks the script and jumps to an entry point */
-  @Method(0x80017234L)
-  public static long scriptForkAndReenter(final RunningScript s0) {
-    scriptFork(s0.params_20.get(0).deref().get());
-    final ScriptState<?> a0 = scriptStatePtrArr_800bc1c0.get(s0.params_20.get(0).deref().get()).deref();
-    a0.commandPtr_18.set(a0.scriptPtr_14.deref().offsetArr_00.get(s0.params_20.get(1).deref().get()).deref());
-    a0._c4.set(s0.params_20.get(2).deref().get());
-    return 0;
-  }
-
-  @Method(0x800172c0L)
-  public static long scriptConsumeChild(final RunningScript a0) {
-    a0.commandPtr_0c.set(scriptConsumeChild(a0.scriptStateIndex_00.get()));
-    return 0;
-  }
-
-  @Method(0x800172f4L)
-  public static long FUN_800172f4(final RunningScript a0) {
-    return 0;
-  }
-
-  @Method(0x800172fcL)
-  public static long FUN_800172fc(final RunningScript a0) {
-    return 0;
-  }
-
-  @Method(0x80017304L)
-  public static long FUN_80017304(final RunningScript a0) {
-    return 0;
-  }
-
-  @Method(0x8001730cL)
-  public static long FUN_8001730c(final RunningScript a0) {
-    //LAB_80017314
-    int i;
-    for(i = 0; i < 10; i++) {
-      if(a0.scriptState_04.deref().commandStack_1c.get(i).isNull()) {
-        break;
-      }
-    }
-
-    //LAB_80017338
-    a0.params_20.get(0).deref().set(i);
-    return 0;
-  }
-
   @Method(0x8001734cL)
-  public static long scriptRewindAndPause2(final RunningScript a0) {
-    return 2;
+  public static FlowControl scriptRewindAndPause2(final RunningScript<?> script) {
+    return FlowControl.PAUSE_AND_REWIND;
   }
 
   @Method(0x80017354L)
-  public static long FUN_80017354(final RunningScript a0) {
-    gameState_800babc8.indicatorsDisabled_4e3.set(a0.params_20.get(0).deref().get() != 0 ? 1 : 0);
-    return 0;
+  public static FlowControl FUN_80017354(final RunningScript<?> script) {
+    gameState_800babc8.indicatorsDisabled_4e3.set(script.params_20[0].get() != 0 ? 1 : 0);
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80017374L)
-  public static long FUN_80017374(final RunningScript a0) {
-    a0.params_20.get(0).deref().set(gameState_800babc8.indicatorsDisabled_4e3.get() != 0 ? 1 : 0);
-    return 0;
+  public static FlowControl FUN_80017374(final RunningScript<?> script) {
+    script.params_20[0].set(gameState_800babc8.indicatorsDisabled_4e3.get() != 0 ? 1 : 0);
+    return FlowControl.CONTINUE;
   }
 
   /**
    * <p>Sets or clears a bit in the flags 1 array at {@link Scus94491BpeSegment_800b#gameState_800babc8#scriptFlags1_13c}.</p>
    * <p>If work array element 1 is non-zero, the bit is set. If it's 0, the bit is cleared.</p>
    * <p>The lower 5 bits of work array element 0 is what bit to set (i.e. 1 << n), and the upper 3 bits is the index into the array.</p>
-   *
-   * @return 0
    */
   @Method(0x80017390L)
-  public static long scriptSetGlobalFlag1(final RunningScript a0) {
-    final long shift = a0.params_20.get(0).deref().get() & 0x1fL;
-    final int index = a0.params_20.get(0).deref().get() >>> 5;
+  public static FlowControl scriptSetGlobalFlag1(final RunningScript<?> script) {
+    final int shift = script.params_20[0].get() & 0x1f;
+    final int index = script.params_20[0].get() >>> 5;
 
-    final ArrayRef<UnsignedIntRef> flags;
+    final ArrayRef<IntRef> flags;
     if(index < 8) {
       flags = gameState_800babc8.scriptFlags1_13c;
     } else if(index < 16) {
@@ -3092,52 +1797,50 @@ public final class Scus94491BpeSegment {
       throw new RuntimeException("Are there more flags?");
     }
 
-    if(a0.params_20.get(1).deref().get() != 0) {
-      flags.get(index % 8).or(0x1L << shift);
+    if(script.params_20[1].get() != 0) {
+      flags.get(index % 8).or(0x1 << shift);
     } else {
       //LAB_800173dc
-      flags.get(index % 8).and(~(0x1L << shift));
+      flags.get(index % 8).and(~(0x1 << shift));
     }
 
     //LAB_800173f4
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   /**
    * <p>Reads a bit in the flags 1 array at {@link Scus94491BpeSegment_800b#gameState_800babc8#scriptFlags1_13c}.</p>
    * <p>If the flag is set, a 1 is stored as the value of the work array element 1; otherwise, 0 is stored.</p>
    * <p>The lower 5 bits of work array element 0 is what bit to read (i.e. 1 << n), and the upper 3 bits is the index into the array.</p>
-   *
-   * @return 0
    */
   @Method(0x800173fcL)
-  public static long scriptReadGlobalFlag1(final RunningScript a0) {
-    final int value = a0.params_20.get(0).deref().get();
+  public static FlowControl scriptReadGlobalFlag1(final RunningScript<?> script) {
+    final int value = script.params_20[0].get();
 
     // This is a fix for a bug in one of the game scripts - it ends up reading a flag that's massively out of bounds
     if(value == -1) {
-      a0.params_20.get(1).deref().set(0);
-      return 0;
+      script.params_20[1].set(0);
+      return FlowControl.CONTINUE;
     }
 
     final int shift = value & 0x1f;
     final int index = value >>> 5;
 
-    a0.params_20.get(1).deref().set((gameState_800babc8.scriptFlags1_13c.get(index).get() & 0x1L << shift) != 0 ? 1 : 0);
+    script.params_20[1].set((gameState_800babc8.scriptFlags1_13c.get(index).get() & 0x1 << shift) != 0 ? 1 : 0);
 
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80017440L)
-  public static long scriptSetGlobalFlag2(final RunningScript a0) {
-    final long a1 = a0.params_20.get(0).deref().get() & 0x1fL;
-    final long a2 = a0.params_20.get(0).deref().get() >>> 5;
+  public static FlowControl scriptSetGlobalFlag2(final RunningScript<?> script) {
+    final int shift = script.params_20[0].get() & 0x1f;
+    final int index = script.params_20[0].get() >>> 5;
 
-    if(a0.params_20.get(1).deref().get() != 0) {
-      gameState_800babc8.scriptFlags2_bc.get((int)a2).or(0x1L << a1);
+    if(script.params_20[1].get() != 0) {
+      gameState_800babc8.scriptFlags2_bc.get(index).or(0x1 << shift);
     } else {
       //LAB_8001748c
-      gameState_800babc8.scriptFlags2_bc.get((int)a2).and(~(0x1L << a1));
+      gameState_800babc8.scriptFlags2_bc.get(index).and(~(0x1 << shift));
     }
 
     //LAB_800174a4
@@ -3148,147 +1851,88 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_800174d0
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   /**
    * <p>Reads a bit in the flags 2 array at {@link Scus94491BpeSegment_800b#gameState_800babc8#scriptFlags2_bc}.</p>
    * <p>If the flag is set, a 1 is stored as the value of the work array element 1; otherwise, 0 is stored.</p>
    * <p>The lower 5 bits of work array element 0 is what bit to read (i.e. 1 << n), and the upper 3 bits is the index into the array.</p>
-   *
-   * @return 0
    */
   @Method(0x800174d8L)
-  public static long scriptReadGlobalFlag2(final RunningScript a0) {
-    final long shift = a0.params_20.get(0).deref().get() & 0x1fL;
-    final int index = a0.params_20.get(0).deref().get() >>> 5;
+  public static FlowControl scriptReadGlobalFlag2(final RunningScript<?> script) {
+    final int shift = script.params_20[0].get() & 0x1f;
+    final int index = script.params_20[0].get() >>> 5;
 
-    a0.params_20.get(1).deref().set((gameState_800babc8.scriptFlags2_bc.get(index).get() & 0x1L << shift) != 0 ? 1 : 0);
+    script.params_20[1].set((gameState_800babc8.scriptFlags2_bc.get(index).get() & 0x1L << shift) != 0 ? 1 : 0);
 
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001751cL)
-  public static long scriptStartEffect(final RunningScript a0) {
-    scriptStartEffect(a0.params_20.get(0).deref().get(), Math.max(1, a0.params_20.get(1).deref().get()));
-    return 0;
+  public static FlowControl scriptStartEffect(final RunningScript<?> script) {
+    scriptStartEffect(script.params_20[0].get(), Math.max(1, script.params_20[1].get()));
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80017564L)
-  public static long scriptWaitForFilesToLoad(final RunningScript script) {
-    return 1; // Don't need to do anything here, file loading is synchronous
+  public static FlowControl scriptWaitForFilesToLoad(final RunningScript<?> script) {
+    return FlowControl.PAUSE; // Don't need to do anything here, file loading is synchronous
   }
 
   @Method(0x80017584L)
-  public static long FUN_80017584(final RunningScript a0) {
-    FUN_8002bb38(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get());
-    return 0;
+  public static FlowControl FUN_80017584(final RunningScript<?> script) {
+    FUN_8002bb38(script.params_20[0].get(), script.params_20[1].get());
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800175b4L)
-  public static long FUN_800175b4(final RunningScript a0) {
-    final long shift = a0.params_20.get(1).deref().get() & 0x1fL;
-    final long index = a0.params_20.get(1).deref().get() >>> 5;
+  public static FlowControl FUN_800175b4(final RunningScript<?> script) {
+    final int shift = script.params_20[1].get() & 0x1f;
+    final int index = script.params_20[1].get() >>> 5;
 
-    if(a0.params_20.get(2).deref().get() != 0) {
-      MEMORY.ref(4, a0.params_20.get(0).getPointer()).offset(index * 0x4L).oru(0x1L << shift);
+    if(script.params_20[2].get() != 0) {
+      script.params_20[0].array(index).or(1 << shift);
     } else {
       //LAB_800175fc
-      MEMORY.ref(4, a0.params_20.get(0).getPointer()).offset(index * 0x4L).and(~(0x1L << shift));
+      script.params_20[0].array(index).and(~(1 << shift));
     }
 
     //LAB_80017614
-    if((int)gameState_800babc8.dragoonSpirits_19c.get(0).get() < 0) {
+    if(gameState_800babc8.dragoonSpirits_19c.get(0).get() < 0) {
       gameState_800babc8.charData_32c.get(0).dlevel_13.set(5);
       gameState_800babc8.charData_32c.get(0).dlevelXp_0e.set(0x7fff);
     }
 
     //LAB_80017640
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80017648L)
-  public static long FUN_80017648(final RunningScript a0) {
-    final long shift = a0.params_20.get(1).deref().get() & 0x1fL;
-    final long index = a0.params_20.get(1).deref().get() >>> 5;
+  public static FlowControl FUN_80017648(final RunningScript<?> script) {
+    final int shift = script.params_20[1].get() & 0x1f;
+    final int index = script.params_20[1].get() >>> 5;
 
-    a0.params_20.get(2).deref().set((MEMORY.ref(4, a0.params_20.get(0).getPointer()).offset(index * 0x4L).get() & 0x1L << shift) > 0 ? 1 : 0);
-
-    return 0;
+    script.params_20[2].set((script.params_20[0].array(index).get() & 1 << shift) > 0 ? 1 : 0);
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x80017688L)
-  public static long FUN_80017688(final RunningScript a0) {
-    FUN_8002bda4(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get());
-    return 0;
+  public static FlowControl FUN_80017688(final RunningScript<?> script) {
+    FUN_8002bda4(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get());
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800176c0L)
-  public static long FUN_800176c0(final RunningScript a0) {
-    FUN_8002c178(a0.params_20.get(0).deref().get());
-    return 0;
+  public static FlowControl FUN_800176c0(final RunningScript<?> script) {
+    FUN_8002c178(script.params_20[0].get());
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800176ecL)
-  public static long FUN_800176ec(final RunningScript a0) {
+  public static FlowControl FUN_800176ec(final RunningScript<?> script) {
     FUN_8002c184();
-    return 0;
-  }
-
-  @Method(0x8001770cL)
-  public static void executeScriptTickers() {
-    if(scriptsTickDisabled_800bc0b8.get() || scriptsDisabled_800bc0b9.get()) {
-      return;
-    }
-
-    //LAB_80017750
-    for(int i = 0; i < 0x48; i++) {
-      final ScriptState<MemoryRef> scriptState = (ScriptState<MemoryRef>)scriptStatePtrArr_800bc1c0.get(i).deref();
-      if(scriptState.getAddress() != unusedScriptState_800bc0c0.getAddress()) {
-        if((scriptState.ui_60.get() & 0x14_0000L) == 0) {
-          scriptState.ticker_04.deref().run(i, scriptState, scriptState.innerStruct_00.derefNullable());
-        }
-      }
-
-      //LAB_80017788
-    }
-
-    //LAB_800177ac
-    for(int i = 0; i < 0x48; i++) {
-      final ScriptState<MemoryRef> scriptState = (ScriptState<MemoryRef>)scriptStatePtrArr_800bc1c0.get(i).deref();
-      if(scriptState.getAddress() != unusedScriptState_800bc0c0.getAddress()) {
-        if((scriptState.ui_60.get() & 0x410_0000L) == 0x400_0000L) {
-          if(scriptState.tempTicker_10.deref().run(i, scriptState, scriptState.innerStruct_00.derefNullable()) != 0) {
-            setScriptTempTicker(i, null);
-          }
-        }
-      }
-
-      //LAB_800177f8
-    }
-
-    //LAB_80017808
-  }
-
-  @Method(0x80017820L)
-  public static void executeScriptRenderers() {
-    if(scriptsDisabled_800bc0b9.get()) {
-      return;
-    }
-
-    //LAB_80017854
-    for(int i = 0; i < 0x48; i++) {
-      final ScriptState<MemoryRef> scriptState = (ScriptState<MemoryRef>)scriptStatePtrArr_800bc1c0.get(i).deref();
-      if(scriptState.getAddress() != unusedScriptState_800bc0c0.getAddress()) {
-        if((scriptState.ui_60.get() & 0x18_0000L) == 0) {
-          scriptState.renderer_08.deref().run(i, scriptState, scriptState.innerStruct_00.derefNullable());
-        }
-      }
-
-      //LAB_80017888
-    }
-
-    //LAB_80017898
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800180c0L)
@@ -3380,10 +2024,10 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_8001852c
-    if(_800bc91c.get() != 0x5L || _800bc974.get() == 0x3L) {
+    if(_800bc91c.get() != 5 || _800bc974.get() == 3) {
       //LAB_80018550
       if(whichMenu_800bdc38 == WhichMenu.NONE_0) {
-        pregameLoadingStage_800bb10c.addu(0x1L);
+        pregameLoadingStage_800bb10c.incr();
       }
     } else {
       //LAB_80018574
@@ -3405,7 +2049,7 @@ public final class Scus94491BpeSegment {
         if(whichMenu_800bdc38 == WhichMenu.NONE_0) {
           _8004dd0c.setu(0x1L);
           _8004f2a8.setu(0);
-          pregameLoadingStage_800bb10c.addu(0x1L);
+          pregameLoadingStage_800bb10c.incr();
         }
       } else {
         //LAB_80018618
@@ -3426,14 +2070,14 @@ public final class Scus94491BpeSegment {
   public static void FUN_800186a0() {
     if(_800bc94c.get() != 0) {
       FUN_80018744();
-      _8004f5d4.get((int)pregameLoadingStage_800bb10c.get()).deref().run();
+      _8004f5d4.get(pregameLoadingStage_800bb10c.get()).deref().run();
 
       if(_800bc94c.get() != 0) {
         FUN_8001890c();
       }
     } else {
       //LAB_8001870c
-      _8004f5d4.get((int)pregameLoadingStage_800bb10c.get()).deref().run();
+      _8004f5d4.get(pregameLoadingStage_800bb10c.get()).deref().run();
     }
 
     //LAB_80018734
@@ -3441,14 +2085,14 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80018744L)
   public static void FUN_80018744() {
-    if((_800bc960.get() & 0x400L) != 0) {
-      if((_800bc960.get() & 0x8L) == 0 && FUN_800187cc() != 0) {
-        _800bc960.oru(0x8L);
+    if((_800bc960.get() & 0x400) != 0) {
+      if((_800bc960.get() & 0x8) == 0 && FUN_800187cc() != 0) {
+        _800bc960.or(0x8);
       }
 
       //LAB_80018790
-      if((_800bc960.get() & 0x4L) == 0 && FUN_8001886c() != 0) {
-        _800bc960.oru(0x4L);
+      if((_800bc960.get() & 0x4) == 0 && FUN_8001886c() != 0) {
+        _800bc960.or(0x4);
       }
     }
 
@@ -3460,7 +2104,7 @@ public final class Scus94491BpeSegment {
   public static long FUN_800187cc() {
     //LAB_80018800
     for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
-      if(FUN_800c90b0(scriptStatePtrArr_800bc1c0.get(_8006e398.charBobjIndices_e40.get(charSlot).get()).deref().innerStruct_00.derefAs(BattleObject27c.class).combatantIndex_26c.get()) == 0) {
+      if(FUN_800c90b0(_8006e398.charBobjIndices_e40[charSlot].innerStruct_00.combatantIndex_26c) == 0) {
         return 0;
       }
     }
@@ -3472,9 +2116,9 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001886cL)
   public static long FUN_8001886c() {
-    //LAB_800188a0
+    //LAB_800188a09
     for(int i = 0; i < monsterCount_800c6768.get(); i++) {
-      if(FUN_800c90b0(scriptStatePtrArr_800bc1c0.get(_8006e398.bobjIndices_e50.get(i).get()).deref().innerStruct_00.derefAs(BattleObject27c.class).combatantIndex_26c.get()) == 0) {
+      if(FUN_800c90b0(_8006e398.bobjIndices_e50[i].innerStruct_00.combatantIndex_26c) == 0) {
         return 0;
       }
     }
@@ -3495,7 +2139,7 @@ public final class Scus94491BpeSegment {
   @Method(0x80018944L)
   public static void waitForFilesToLoad() {
     if(!loadingOverlay_8004dd1e && loadingGameStateOverlay_8004dd08.get() == 0) {
-      pregameLoadingStage_800bb10c.addu(0x1L);
+      pregameLoadingStage_800bb10c.incr();
     }
 
     //LAB_80018990
@@ -3503,12 +2147,12 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80018998L)
   public static void FUN_80018998() {
-    pregameLoadingStage_800bb10c.addu(0x1L);
+    pregameLoadingStage_800bb10c.incr();
   }
 
   @Method(0x800189b0L)
   public static void FUN_800189b0() {
-    if(_800bc91c.get() == 0x5L && _800bc974.get() != 0x3L) {
+    if(_800bc91c.get() == 5 && _800bc974.get() != 3) {
       FUN_800e5934();
     }
 
@@ -3516,9 +2160,9 @@ public final class Scus94491BpeSegment {
     //LAB_800189e8
     if(!loadingOverlay_8004dd1e && loadingGameStateOverlay_8004dd08.get() == 0) {
       FUN_800201c8(6);
-      pregameLoadingStage_800bb10c.setu(0);
+      pregameLoadingStage_800bb10c.set(0);
       vsyncMode_8007a3b8.set(2);
-      mainCallbackIndexOnceLoaded_8004dd24.setu(_800bc91c.get());
+      mainCallbackIndexOnceLoaded_8004dd24.set(_800bc91c.get());
     }
 
     //LAB_80018a4c
@@ -3900,7 +2544,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80019710L)
   public static void FUN_80019710() {
-    if(mainCallbackIndex_8004dd20.get() != 0x5L && previousMainCallbackIndex_8004dd28.get() == 0x5L) {
+    if(mainCallbackIndex_8004dd20.get() != 5 && previousMainCallbackIndex_8004dd28.get() == 5) {
       sssqResetStuff();
       free(melbuSoundMrgSshdPtr_800bd784.getPointer());
       free(melbuSoundMrgSssqPtr_800bd788.getPointer());
@@ -3909,7 +2553,7 @@ public final class Scus94491BpeSegment {
 
     //LAB_8001978c
     //LAB_80019790
-    if(mainCallbackIndex_8004dd20.get() != 0x6L && previousMainCallbackIndex_8004dd28.get() == 0x6L) {
+    if(mainCallbackIndex_8004dd20.get() != 6 && previousMainCallbackIndex_8004dd28.get() == 6) {
       sssqResetStuff();
 
       //LAB_800197c0
@@ -3928,7 +2572,7 @@ public final class Scus94491BpeSegment {
 
     //LAB_80019824
     //LAB_80019828
-    switch((int)mainCallbackIndex_8004dd20.get()) {
+    switch(mainCallbackIndex_8004dd20.get()) {
       case 2 -> {
         setMainVolume(0x7f, 0x7f);
         sssqResetStuff();
@@ -3996,15 +2640,14 @@ public final class Scus94491BpeSegment {
         sssqResetStuff();
       }
 
-      case 4, 7, 8, 9, 0xb -> {
+      case 4, 7, 8, 9, 0xb ->
         sssqResetStuff();
-      }
     }
 
     //case 3, d, e
     //LAB_80019a20
     //LAB_80019a24
-    if(mainCallbackIndex_8004dd20.get() != 0x5L) {
+    if(mainCallbackIndex_8004dd20.get() != 5) {
       submapIndex_800bd808.set(-1);
     }
 
@@ -4029,14 +2672,14 @@ public final class Scus94491BpeSegment {
 
       case 8 -> {
         //LAB_80019bd4
-        if((loadedDrgnFiles_800bcf78.get() & 0x2L) != 0 || mainCallbackIndex_8004dd20.get() != 0x5L) {
+        if((loadedDrgnFiles_800bcf78.get() & 0x2L) != 0 || mainCallbackIndex_8004dd20.get() != 5) {
           return;
         }
       }
 
       case 9 -> {
         //LAB_80019bd4
-        if((loadedDrgnFiles_800bcf78.get() & 0x4L) != 0 || mainCallbackIndex_8004dd20.get() != 0x6L) {
+        if((loadedDrgnFiles_800bcf78.get() & 0x4L) != 0 || mainCallbackIndex_8004dd20.get() != 6) {
           return;
         }
       }
@@ -4049,7 +2692,7 @@ public final class Scus94491BpeSegment {
 
       case 0xc -> {
         //LAB_80019bd4
-        if((loadedDrgnFiles_800bcf78.get() & 0x8000L) != 0 || mainCallbackIndex_8004dd20.get() != 0x8L) {
+        if((loadedDrgnFiles_800bcf78.get() & 0x8000L) != 0 || mainCallbackIndex_8004dd20.get() != 8) {
           return;
         }
       }
@@ -4062,7 +2705,7 @@ public final class Scus94491BpeSegment {
     for(int i = 0; i < 32; i++) {
       if(spu28Arr_800bd110.get(i).type_00.get() == 0) {
         //LAB_80019b54
-        playSound(3, index, soundIndex, i, spu1c.playableSoundIndex_10.get(), spu1c.ptr_08.get() + soundIndex * 0x2L, index == 8 ? MEMORY.ref(1, spu1c.ptr_0c.get()).offset(soundIndex).get() : 0, (short)-1, (short)-1, (short)-1, a5, a4, -1);
+        playSound(3, index, soundIndex, i, spu1c.playableSoundIndex_10.get(), spu1c.ptr_08.get() + soundIndex * 0x2L, index == 8 ? MEMORY.ref(1, spu1c.ptr_0c.get()).offset(soundIndex).get() : 0, (short)-1, (short)-1, (short)-1, a5, a4, null);
         break;
       }
     }
@@ -4121,15 +2764,15 @@ public final class Scus94491BpeSegment {
    * @param type 1 - player, 2 - monster
    */
   @Method(0x80019e24L)
-  public static void playBobjSound(final int type, final int bobjIndex, final int soundIndex, final int a3, final int a4, final int a5, final int a6) {
-    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0.get(bobjIndex).deref().innerStruct_00.derefAs(BattleObject27c.class);
+  public static void playBobjSound(final int type, final ScriptState<BattleObject27c> state, final int soundIndex, final int a3, final int a4, final int a5, final int a6) {
+    final BattleObject27c bobj = state.innerStruct_00;
 
     int soundFileIndex = 0;
     if(type == 1) {
       //LAB_80019e68
       for(int charSlot = 0; charSlot < 3; charSlot++) {
         final int index = characterSoundFileIndices_800500f8.get(charSlot).get();
-        if(soundFileArr_800bcf80.get(index).charId_02.get() == bobj.charIndex_272.get()) {
+        if(soundFileArr_800bcf80.get(index).charId_02.get() == bobj.charIndex_272) {
           //LAB_80019ea4
           soundFileIndex = index;
           break;
@@ -4140,7 +2783,7 @@ public final class Scus94491BpeSegment {
       //LAB_80019f30
       for(int monsterSlot = 0; monsterSlot < 4; monsterSlot++) {
         final int index = monsterSoundFileIndices_800500e8.get(monsterSlot).get();
-        if(soundFileArr_800bcf80.get(index).charId_02.get() == bobj.charIndex_272.get()) {
+        if(soundFileArr_800bcf80.get(index).charId_02.get() == bobj.charIndex_272) {
           //LAB_80019ea4
           soundFileIndex = index;
           break;
@@ -4159,7 +2802,7 @@ public final class Scus94491BpeSegment {
       if(spu28Arr_800bd110.get(i).type_00.get() == 0) {
         //LAB_80019eac
         final SoundFile soundFile = soundFileArr_800bcf80.get(soundFileIndex);
-        playSound(type, soundFileIndex, soundIndex, i, soundFile.playableSoundIndex_10.get(), soundFile.ptr_08.get() + soundIndex * 0x2L, 0, (short)-1, (short)-1, (short)-1, (short)a6, (short)a5, bobjIndex);
+        playSound(type, soundFileIndex, soundIndex, i, soundFile.playableSoundIndex_10.get(), soundFile.ptr_08.get() + soundIndex * 0x2L, 0, (short)-1, (short)-1, (short)-1, (short)a6, (short)a5, state);
         break;
       }
     }
@@ -4171,15 +2814,15 @@ public final class Scus94491BpeSegment {
   @Method(0x80019facL)
   public static void playCombatantSound(final int type, final int charOrMonsterIndex, final int soundIndex, final short a3, final short a4) {
     int soundFileIndex = 0;
-    int bobjIndex = 0;
+    ScriptState<BattleObject27c> state = null;
 
     //LAB_80019fdc
     for(int i = 0; i < monsterCount_800c6768.get(); i++) {
-      final int index = _8006e398.bobjIndices_e50.get(i).get();
+      final ScriptState<BattleObject27c> state2 = _8006e398.bobjIndices_e50[i];
 
-      if(scriptStatePtrArr_800bc1c0.get(index).deref().innerStruct_00.derefAs(BattleObject27c.class).charIndex_272.get() == charOrMonsterIndex) {
+      if(state2.innerStruct_00.charIndex_272 == charOrMonsterIndex) {
         //LAB_8001a070
-        bobjIndex = index;
+        state = state2;
         break;
       }
     }
@@ -4216,7 +2859,7 @@ public final class Scus94491BpeSegment {
       if(spu28Arr_800bd110.get(i).type_00.get() == 0) {
         //LAB_8001a080
         final SoundFile soundFile = soundFileArr_800bcf80.get(soundFileIndex);
-        playSound(type, soundFileIndex, soundIndex, i, soundFile.playableSoundIndex_10.get(), soundFile.ptr_08.get() + soundIndex * 2, 0, (short)-1, (short)-1, (short)-1, a4, a3, bobjIndex);
+        playSound(type, soundFileIndex, soundIndex, i, soundFile.playableSoundIndex_10.get(), soundFile.ptr_08.get() + soundIndex * 2, 0, (short)-1, (short)-1, (short)-1, a4, a3, state);
         break;
       }
     }
@@ -4336,10 +2979,10 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001a714L)
-  public static void playSound(final int type, final int soundFileIndex, final int soundIndex, final int a3, final short playableSoundIndex, final long a5, final long a6, final short pitchShiftVolRight, final short pitchShiftVolLeft, final short pitch, final short a10, final short a11, final int bobjIndex) {
+  public static void playSound(final int type, final int soundFileIndex, final int soundIndex, final int a3, final short playableSoundIndex, final long a5, final long a6, final short pitchShiftVolRight, final short pitchShiftVolLeft, final short pitch, final short a10, final short a11, @Nullable final ScriptState<BattleObject27c> state) {
     final SpuStruct28 spu28 = spu28Arr_800bd110.get(a3);
     spu28.type_00.set(type);
-    spu28.bobjIndex_04.set(bobjIndex);
+    spu28.bobjIndex_04.set(state != null ? state.index : -1);
     spu28.soundFileIndex_08.set(soundFileIndex);
     spu28.soundIndex_0c.set(soundIndex);
     spu28.playableSoundIndex_10.set(playableSoundIndex);
@@ -4403,39 +3046,39 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001ab34L)
-  public static long scriptPlaySound(final RunningScript a0) {
-    playSound(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get(), a0.params_20.get(3).deref().get(), (short)a0.params_20.get(4).deref().get(), (short)a0.params_20.get(5).deref().get());
-    return 0;
+  public static FlowControl scriptPlaySound(final RunningScript<?> script) {
+    playSound(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get(), (short)script.params_20[4].get(), (short)script.params_20[5].get());
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001ab98L)
-  public static long FUN_8001ab98(final RunningScript a0) {
-    FUN_80019c80(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get());
-    return 0;
+  public static FlowControl FUN_8001ab98(final RunningScript<?> script) {
+    FUN_80019c80(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get());
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001abd0L)
-  public static long scriptPlayBobjSound(final RunningScript script) {
-    playBobjSound(script.params_20.get(0).deref().get(), script.params_20.get(1).deref().get(), script.params_20.get(2).deref().get(), script.params_20.get(3).deref().get(), script.params_20.get(4).deref().get(), script.params_20.get(5).deref().get(), script.params_20.get(6).deref().get());
-    return 0;
+  public static FlowControl scriptPlayBobjSound(final RunningScript<?> script) {
+    playBobjSound(script.params_20[0].get(), (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[script.params_20[1].get()], script.params_20[2].get(), script.params_20[3].get(), script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get());
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001ac48L)
-  public static long FUN_8001ac48(final RunningScript a0) {
-    FUN_8001a164(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get(), a0.params_20.get(3).deref().get());
-    return 0;
+  public static FlowControl FUN_8001ac48(final RunningScript<?> script) {
+    FUN_8001a164(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001ac88L)
-  public static long scriptPlayCombatantSound(final RunningScript script) {
-    playCombatantSound(script.params_20.get(0).deref().get(), script.params_20.get(1).deref().get(), script.params_20.get(2).deref().get(), (short)script.params_20.get(3).deref().get(), (short)script.params_20.get(4).deref().get());
-    return 0;
+  public static FlowControl scriptPlayCombatantSound(final RunningScript<?> script) {
+    playCombatantSound(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), (short)script.params_20[3].get(), (short)script.params_20[4].get());
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001acd8L)
-  public static long FUN_8001acd8(final RunningScript a0) {
-    FUN_8001a164(a0.params_20.get(0).deref().get(), a0.params_20.get(1).deref().get(), a0.params_20.get(2).deref().get(), a0.params_20.get(3).deref().get());
-    return 0;
+  public static FlowControl FUN_8001acd8(final RunningScript<?> script) {
+    FUN_8001a164(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001ad18L)
@@ -4450,7 +3093,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001ad5cL)
-  public static long FUN_8001ad5c(final RunningScript a0) {
+  public static FlowControl FUN_8001ad5c(final RunningScript<?> script) {
     //LAB_8001ad70
     for(int i = 0; i < 32; i++) {
       final SpuStruct28 struct = spu28Arr_800bd110.get(i);
@@ -4459,7 +3102,7 @@ public final class Scus94491BpeSegment {
     }
 
     FUN_8004d91c(0x1L);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001ada0L)
@@ -4468,21 +3111,21 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001adc8L)
-  public static long FUN_8001adc8(final RunningScript a0) {
+  public static FlowControl FUN_8001adc8(final RunningScript<?> script) {
     FUN_8004cf8c(sssqChannelIndex_800bd0f8.get());
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001ae18L)
-  public static long FUN_8001ae18(final RunningScript a0) {
+  public static FlowControl FUN_8001ae18(final RunningScript<?> script) {
     FUN_8004d034(sssqChannelIndex_800bd0f8.get(), 2);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001ae68L)
-  public static long FUN_8001ae68(final RunningScript a0) {
+  public static FlowControl FUN_8001ae68(final RunningScript<?> script) {
     FUN_8004d034(sssqChannelIndex_800bd0f8.get(), 2);
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001ae90L)
@@ -4493,13 +3136,13 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001aec8L)
-  public static long FUN_8001aec8(final RunningScript a0) {
+  public static FlowControl FUN_8001aec8(final RunningScript<?> script) {
     if(_800bd0f0.getSigned() == 0x2L) {
       FUN_8004d034(sssqChannelIndex_800bd0f8.get(), 0);
     }
 
     //LAB_8001aef0
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001af00L)
@@ -4507,43 +3150,63 @@ public final class Scus94491BpeSegment {
     FUN_8004cf8c(spu10Arr_800bd610[index].channelIndex_0c);
   }
 
+  @Method(0x8001af34L)
+  public static FlowControl FUN_8001af34(final RunningScript<?> script) {
+    throw new RuntimeException("Not implemented");
+  }
+
+  @Method(0x8001afa4L)
+  public static FlowControl FUN_8001afa4(final RunningScript<?> script) {
+    throw new RuntimeException("Not implemented");
+  }
+
+  @Method(0x8001b014L)
+  public static FlowControl FUN_8001b014(final RunningScript<?> script) {
+    throw new RuntimeException("Not implemented");
+  }
+
+  @Method(0x8001b094L)
+  public static FlowControl FUN_8001b094(final RunningScript<?> script) {
+    throw new RuntimeException("Not implemented");
+  }
+
   @Method(0x8001b0f0L)
-  public static long scriptGetSssqTempoScale(final RunningScript a0) {
-    a0.params_20.get(0).deref().set(sssqTempoScale_800bd100.get());
-    return 0;
+  public static FlowControl scriptGetSssqTempoScale(final RunningScript<?> script) {
+    script.params_20[0].set(sssqTempoScale_800bd100.get());
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001b118L)
-  public static long scriptSetSssqTempoScale(final RunningScript a0) {
-    sssqTempoScale_800bd100.set(a0.params_20.get(0).deref().get());
-    return 0;
+  public static FlowControl scriptSetSssqTempoScale(final RunningScript<?> script) {
+    sssqTempoScale_800bd100.set(script.params_20[0].get());
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001b134L)
-  public static long FUN_8001b134(final RunningScript a0) {
-    return 0;
+  public static FlowControl FUN_8001b134(final RunningScript<?> script) {
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001b13cL)
-  public static long FUN_8001b13c(final RunningScript a0) {
-    return 0;
+  public static FlowControl FUN_8001b13c(final RunningScript<?> script) {
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001b144L)
-  public static long FUN_8001b144(final RunningScript a0) {
-    return 0;
+  public static FlowControl FUN_8001b144(final RunningScript<?> script) {
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001b14cL)
-  public static long scriptSetMainVolume(final RunningScript a0) {
-    setMainVolume((short)a0.params_20.get(0).deref().get(), (short)a0.params_20.get(1).deref().get());
-    return 0;
+  public static FlowControl scriptSetMainVolume(final RunningScript<?> script) {
+    setMainVolume((short)script.params_20[0].get(), (short)script.params_20[1].get());
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001b17cL)
-  public static long FUN_8001b17c(final RunningScript a0) {
-    FUN_8001b1a8((short)a0.params_20.get(0).deref().get());
-    return 0;
+  public static FlowControl FUN_8001b17c(final RunningScript<?> script) {
+    FUN_8001b1a8((short)script.params_20[0].get());
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001b1a8L)
@@ -4553,70 +3216,70 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001b1ecL)
-  public static long FUN_8001b1ec(final RunningScript a0) {
-    a0.params_20.get(0).deref().set((int)_800bd108.getSigned());
-    return 0;
+  public static FlowControl FUN_8001b1ec(final RunningScript<?> script) {
+    script.params_20[0].set((int)_800bd108.getSigned());
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001b208L)
-  public static long FUN_8001b208(final RunningScript a0) {
+  public static FlowControl FUN_8001b208(final RunningScript<?> script) {
     //LAB_8001b22c
     for(int i = 0; i < 13; i++) {
       final SoundFile s0 = soundFileArr_800bcf80.get(i);
 
       if(s0.used_00.get()) {
-        FUN_8004cb0c(s0.playableSoundIndex_10.get(), (short)a0.params_20.get(0).deref().get());
+        FUN_8004cb0c(s0.playableSoundIndex_10.get(), (short)script.params_20[0].get());
       }
 
       //LAB_8001b250
     }
 
-    return 0;
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001b27cL)
-  public static long scriptSssqFadeIn(final RunningScript a0) {
-    sssqFadeIn((short)a0.params_20.get(0).deref().get(), (short)a0.params_20.get(1).deref().get());
-    return 0;
+  public static FlowControl scriptSssqFadeIn(final RunningScript<?> script) {
+    sssqFadeIn((short)script.params_20[0].get(), (short)script.params_20[1].get());
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001b2acL)
-  public static long FUN_8001b2ac(final RunningScript a0) {
+  public static FlowControl FUN_8001b2ac(final RunningScript<?> script) {
     //TODO GH#3 (re-enabling this causes code to fail later - after one fight, subsequent fights will have completely broken audio, repeatedly crashing the sound thread)
     if(true) {
-      return 0;
+      return FlowControl.CONTINUE;
     }
 
-    FUN_8004d2fc((int)_800bd0f0.offset(2, 0x8L).getSigned(), (short)a0.params_20.get(0).deref().get(), (short)a0.params_20.get(1).deref().get());
-    _800bd0f0.offset(2, 0x18L).setu(a0.params_20.get(1).deref().get());
-    return 0;
+    FUN_8004d2fc((int)_800bd0f0.offset(2, 0x8L).getSigned(), (short)script.params_20[0].get(), (short)script.params_20[1].get());
+    _800bd0f0.offset(2, 0x18L).setu(script.params_20[1].get());
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001b310L)
-  public static long scriptSssqFadeOut(final RunningScript a0) {
-    sssqFadeOut((short)a0.params_20.get(0).deref().get());
-    return 0;
+  public static FlowControl scriptSssqFadeOut(final RunningScript<?> script) {
+    sssqFadeOut((short)script.params_20[0].get());
+    return FlowControl.CONTINUE;
   }
 
   /**
    * Something to do with sequenced audio
    */
   @Method(0x8001b33cL)
-  public static long FUN_8001b33c(final RunningScript a0) {
+  public static FlowControl FUN_8001b33c(final RunningScript<?> script) {
     //TODO GH#3
     if(true) {
-      return 0;
+      return FlowControl.CONTINUE;
     }
 
-    FUN_8004d41c((int)_800bd0f0.offset(2, 0x8L).getSigned(), (short)a0.params_20.get(0).deref().get(), (short)a0.params_20.get(1).deref().get());
-    _800bd0f0.offset(2, 0x18L).setu(a0.params_20.get(1).deref().get());
-    return 0;
+    FUN_8004d41c((int)_800bd0f0.offset(2, 0x8L).getSigned(), (short)script.params_20[0].get(), (short)script.params_20[1].get());
+    _800bd0f0.offset(2, 0x18L).setu(script.params_20[1].get());
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001b3a0L)
-  public static long FUN_8001b3a0(final RunningScript a0) {
-    a0.params_20.get(0).deref().set((short)FUN_8004d52c(sssqChannelIndex_800bd0f8.get()));
-    return 0;
+  public static FlowControl FUN_8001b3a0(final RunningScript<?> script) {
+    script.params_20[0].set((short)FUN_8004d52c(sssqChannelIndex_800bd0f8.get()));
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001b3e4L)
@@ -4652,11 +3315,11 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_8001b480
-    if(_800bc960.get(0x2L) != 0) {
+    if((_800bc960.get() & 0x2) != 0) {
       if(_8004f6ec.get() == 0) {
         _8004f6ec.setu(0x1L);
         FUN_8001c594(0x1L, 0x6L);
-        scriptStartEffect(0x1L, 0x1L);
+        scriptStartEffect(1, 1);
       }
     }
 
@@ -4666,7 +3329,7 @@ public final class Scus94491BpeSegment {
       if(_8004f6ec.get() >= 0x7L) {
         if(loadingGameStateOverlay_8004dd08.get() == 0) {
           _8004f6e4.setu(-0x1L);
-          _800bc960.oru(0x1L);
+          _800bc960.or(0x1);
         }
       }
 
@@ -4786,7 +3449,6 @@ public final class Scus94491BpeSegment {
     FUN_8001b92c();
 
     final long s2 = _800bd700.getAddress();
-    long packet;
     if(doubleBufferFrame_800bb108.get() != 0) {
       //LAB_8001bf3c
       GPU.queueCommand(6, new GpuCommandPoly(4)
@@ -4919,9 +3581,9 @@ public final class Scus94491BpeSegment {
     _800bd708.setu(0x8000L);
     _800bd714.setu(0);
     _800bd710.setu(0);
-    _8007a3a8.setu(0);
-    _800bb104.setu(0);
-    _800babc0.setu(0);
+    _8007a3a8.set(0);
+    _800bb104.set(0);
+    _800babc0.set(0);
     _8004f6e4.setu(0x1L);
     _8004f6e8.setu(0);
   }
@@ -4944,6 +3606,16 @@ public final class Scus94491BpeSegment {
         _800bd700.setu(0);
       }
     }
+  }
+
+  @Method(0x8001c5fcL)
+  public static FlowControl FUN_8001c5fc(final RunningScript<?> script) {
+    throw new RuntimeException("Not implemented");
+  }
+
+  @Method(0x8001c604L)
+  public static FlowControl FUN_8001c604(final RunningScript<?> script) {
+    throw new RuntimeException("Not implemented");
   }
 
   @Method(0x8001c60cL)
@@ -5107,14 +3779,14 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001cce8L)
   public static void FUN_8001cce8(final int bobjIndex, final int type) {
-    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0.get(bobjIndex).deref().innerStruct_00.derefAs(BattleObject27c.class);
+    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[bobjIndex].innerStruct_00;
 
     //LAB_8001cd3c
     int charSlot;
     for(charSlot = 0; charSlot < 3; charSlot++) {
       final SoundFile soundFile = soundFileArr_800bcf80.get(characterSoundFileIndices_800500f8.get(charSlot).get());
 
-      if(soundFile.charId_02.get() == bobj.charIndex_272.get()) {
+      if(soundFile.charId_02.get() == bobj.charIndex_272) {
         break;
       }
     }
@@ -5129,10 +3801,10 @@ public final class Scus94491BpeSegment {
     final int fileIndex;
     if(type != 0) {
       //LAB_8001ce44
-      fileIndex = 1298 + bobj.charIndex_272.get();
-    } else if(bobj.charIndex_272.get() != 0 || (gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0xff) >>> 7 == 0) {
+      fileIndex = 1298 + bobj.charIndex_272;
+    } else if(bobj.charIndex_272 != 0 || (gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0xff) >>> 7 == 0) {
       //LAB_8001ce18
-      fileIndex = 1307 + bobj.charIndex_272.get();
+      fileIndex = 1307 + bobj.charIndex_272;
     } else {
       fileIndex = 1307;
     }
@@ -5195,8 +3867,8 @@ public final class Scus94491BpeSegment {
    * </ol>
    */
   @Method(0x8001d068L)
-  public static void FUN_8001d068(final int scriptIndex, final int type) {
-    final BattleObject27c bobj = scriptStatePtrArr_800bc1c0.get(scriptIndex).deref().innerStruct_00.derefAs(BattleObject27c.class);
+  public static void FUN_8001d068(final ScriptState<BattleObject27c> bobjState, final int type) {
+    final BattleObject27c bobj = bobjState.innerStruct_00;
 
     unloadSoundFile(3);
     unloadSoundFile(6);
@@ -5204,10 +3876,10 @@ public final class Scus94491BpeSegment {
     if(type == 0) {
       //LAB_8001d0e0
       loadedDrgnFiles_800bcf78.oru(0x40L);
-      if(bobj.charIndex_272.get() != 0 || (gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0xff) >>> 7 == 0) {
+      if(bobj.charIndex_272 != 0 || (gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0xff) >>> 7 == 0) {
         //LAB_8001d134
         // Regular dragoons
-        loadDrgnDir(0, 1317 + bobj.charIndex_272.get(), Scus94491BpeSegment::FUN_8001e98c);
+        loadDrgnDir(0, 1317 + bobj.charIndex_272, Scus94491BpeSegment::FUN_8001e98c);
       } else {
         // Divine dragoon
         loadDrgnDir(0, 1328, Scus94491BpeSegment::FUN_8001e98c);
@@ -5255,7 +3927,7 @@ public final class Scus94491BpeSegment {
     final int encounterId = encounterId_800bb0f8.get();
     if(encounterId == 390) { // Doel
       //LAB_8001d330
-      if(_8006e398.stageProgression_eec.get() == 0) {
+      if(_8006e398.stageProgression_eec == 0) {
         loadMonsterSounds(1290);
       } else {
         //LAB_8001d370
@@ -5264,7 +3936,7 @@ public final class Scus94491BpeSegment {
       //LAB_8001d31c
     } else if(encounterId == 431) { // Zackwell
       //LAB_8001d394
-      if(_8006e398.stageProgression_eec.get() == 0) {
+      if(_8006e398.stageProgression_eec == 0) {
         loadMonsterSounds(1296);
       } else {
         //LAB_8001d3d0
@@ -5272,7 +3944,7 @@ public final class Scus94491BpeSegment {
       }
     } else if(encounterId == 443) { // Melbu
       //LAB_8001d3f8
-      final int stageProgression = _8006e398.stageProgression_eec.get();
+      final int stageProgression = _8006e398.stageProgression_eec;
       if(stageProgression == 0) {
         //LAB_8001d43c
         loadMonsterSounds(1292);
@@ -5393,7 +4065,7 @@ public final class Scus94491BpeSegment {
     final SoundFile sound = soundFileArr_800bcf80.get(11);
     sound.used_00.set(true);
 
-    if(mainCallbackIndex_8004dd20.get() == 0x5L || mainCallbackIndex_8004dd20.get() == 0x6L && encounterId_800bb0f8.get() == 443) { // Melbu
+    if(mainCallbackIndex_8004dd20.get() == 5 || mainCallbackIndex_8004dd20.get() == 6 && encounterId_800bb0f8.get() == 443) { // Melbu
       //LAB_8001db1c
       MEMORY.setBytes(melbuSoundMrgSshdPtr_800bd784.getPointer(), files.get(3));
       MEMORY.setBytes(melbuSoundMrgSssqPtr_800bd788.getPointer(), files.get(2));
@@ -5761,6 +4433,11 @@ public final class Scus94491BpeSegment {
     loadedDrgnFiles_800bcf78.and(0xffff_fffeL);
   }
 
+  @Method(0x8001e640L)
+  public static FlowControl FUN_8001e640(final RunningScript<?> script) {
+    throw new RuntimeException("Not implemented");
+  }
+
   @Method(0x8001e8ccL)
   public static void FUN_8001e8cc() {
     // empty
@@ -5772,14 +4449,14 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001e918L)
-  public static long FUN_8001e918(final RunningScript a0) {
-    return 0;
+  public static FlowControl FUN_8001e918(final RunningScript<?> script) {
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001e920L)
-  public static long FUN_8001e920(final RunningScript script) {
-    FUN_8001cce8(script.params_20.get(0).deref().get(), script.params_20.get(1).deref().get());
-    return 0;
+  public static FlowControl FUN_8001e920(final RunningScript<?> script) {
+    FUN_8001cce8(script.params_20[0].get(), script.params_20[1].get());
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001e950L)
@@ -5814,6 +4491,11 @@ public final class Scus94491BpeSegment {
     loadDrgnDir(0, 5750 + submapIndex, Scus94491BpeSegment::submapSoundsLoaded);
   }
 
+  @Method(0x8001eb30L)
+  public static FlowControl FUN_8001eb30(final RunningScript<?> script) {
+    throw new RuntimeException("Not implemented");
+  }
+
   @Method(0x8001eb38L)
   public static void submapSoundsLoaded(final List<byte[]> files) {
     final MrgFile mrg = MrgFile.alloc(files, 4);
@@ -5840,16 +4522,16 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001ecccL)
-  public static long FUN_8001eccc(final RunningScript a0) {
+  public static FlowControl FUN_8001eccc(final RunningScript<?> script) {
     //TODO GH#3
     sssqResetStuff();
     musicLoaded_800bd782.incr();
-    if(true) return 0;
+    if(true) return FlowControl.CONTINUE;
 
     loadedDrgnFiles_800bcf78.oru(0x4L);
     sssqResetStuff();
-    loadDrgnBinFile(0, 2437 + a0.params_20.get(0).deref().get() * 3, 0, Scus94491BpeSegment::FUN_8001d8d8, 0, 0x4L);
-    return 0;
+    loadDrgnBinFile(0, 2437 + script.params_20[0].get() * 3, 0, Scus94491BpeSegment::FUN_8001d8d8, 0, 0x4L);
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001eea8L)
@@ -5881,11 +4563,11 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001f070L)
-  public static long FUN_8001f070(final RunningScript a0) {
+  public static FlowControl FUN_8001f070(final RunningScript<?> script) {
     loadedDrgnFiles_800bcf78.oru(0x20L);
     unloadSoundFile(6);
-    loadDrgnDir(0, 1841 + a0.params_20.get(0).deref().get(), Scus94491BpeSegment::FUN_8001f0dc);
-    return 0;
+    loadDrgnDir(0, 1841 + script.params_20[0].get(), Scus94491BpeSegment::FUN_8001f0dc);
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001f0dcL)
@@ -5907,11 +4589,11 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001f250L)
-  public static long FUN_8001f250(final RunningScript script) {
+  public static FlowControl FUN_8001f250(final RunningScript<?> script) {
     loadedDrgnFiles_800bcf78.oru(0x1_0000L);
     unloadSoundFile(7);
-    loadDrgnDir(0, 1897 + script.params_20.get(0).deref().get(), Scus94491BpeSegment::FUN_8001f2c0);
-    return 0;
+    loadDrgnDir(0, 1897 + script.params_20[0].get(), Scus94491BpeSegment::FUN_8001f2c0);
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001f2c0L)
@@ -5959,36 +4641,36 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001f450L)
-  public static long scriptLoadMusicPackage(final RunningScript a0) {
+  public static FlowControl scriptLoadMusicPackage(final RunningScript<?> script) {
     unloadSoundFile(8);
     //TODO GH#3
     musicLoaded_800bd782.incr();
 //    loadedDrgnFiles_800bcf78.oru(0x80L);
-//    final int fileIndex = 5815 + a0.params_20.get(0).deref().get() * 5;
-//    loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(Scus94491BpeSegment.class, "musicPackageLoadedCallback", long.class, long.class, long.class), fileIndex << 8 | a0.params_20.get(1).deref().get(), 0x4L);
-    return 0;
+//    final int fileIndex = 5815 + script.params_20.get(0).deref().get() * 5;
+//    loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(Scus94491BpeSegment.class, "musicPackageLoadedCallback", long.class, long.class, long.class), fileIndex << 8 | script.params_20.get(1).deref().get(), 0x4L);
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001f560L)
-  public static long FUN_8001f560(final RunningScript a0) {
+  public static FlowControl FUN_8001f560(final RunningScript<?> script) {
     unloadSoundFile(8);
     //TODO GH#3
     musicLoaded_800bd782.incr();
 //    loadedDrgnFiles_800bcf78.oru(0x80L);
-//    final int fileIndex = 732 + a0.params_20.get(0).deref().get() * 5;
-//    loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(Scus94491BpeSegment.class, "musicPackageLoadedCallback", long.class, long.class, long.class), fileIndex << 8 | a0.params_20.get(1).deref().get(), 0x4L);
-    return 0;
+//    final int fileIndex = 732 + script.params_20.get(0).deref().get() * 5;
+//    loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(Scus94491BpeSegment.class, "musicPackageLoadedCallback", long.class, long.class, long.class), fileIndex << 8 | script.params_20.get(1).deref().get(), 0x4L);
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001f674L)
-  public static long FUN_8001f674(final RunningScript a0) {
+  public static FlowControl FUN_8001f674(final RunningScript<?> script) {
     unloadSoundFile(8);
     //TODO GH#3
     musicLoaded_800bd782.incr();
 //    loadedDrgnFiles_800bcf78.oru(0x80L);
-//    final int fileIndex = 2353 + a0.params_20.get(0).deref().get() * 6;
-//    loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(Scus94491BpeSegment.class, "musicPackageLoadedCallback", long.class, long.class, long.class), fileIndex << 8 | a0.params_20.get(1).deref().get(), 0x4L);
-    return 0;
+//    final int fileIndex = 2353 + script.params_20.get(0).deref().get() * 6;
+//    loadDrgnBinFile(0, fileIndex, 0, getMethodAddress(Scus94491BpeSegment.class, "musicPackageLoadedCallback", long.class, long.class, long.class), fileIndex << 8 | script.params_20.get(1).deref().get(), 0x4L);
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001f708L)
@@ -6115,6 +4797,11 @@ public final class Scus94491BpeSegment {
     loadedDrgnFiles_800bcf78.and(0xffff_bfffL);
   }
 
+  @Method(0x8001fe28L)
+  public static FlowControl FUN_8001fe28(final RunningScript<?> script) {
+    throw new RuntimeException("Not implemented");
+  }
+
   @Method(0x8001ff74L)
   public static void btldLoadEncounterSoundEffectsAndMusic() {
     loadSupportOverlay(1, Scus94491BpeSegment::loadEncounterSoundsAndMusic);
@@ -6126,14 +4813,14 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001ffc0L)
-  public static long FUN_8001ffc0(final RunningScript a0) {
-    a0.params_20.get(0).deref().set((int)loadedDrgnFiles_800bcf78.get());
-    return 0;
+  public static FlowControl FUN_8001ffc0(final RunningScript<?> script) {
+    script.params_20[0].set((int)loadedDrgnFiles_800bcf78.get());
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001ffdcL)
-  public static long FUN_8001ffdc(final RunningScript a0) {
-    unloadSoundFile(a0.params_20.get(0).deref().get());
-    return 0;
+  public static FlowControl FUN_8001ffdc(final RunningScript<?> script) {
+    unloadSoundFile(script.params_20[0].get());
+    return FlowControl.CONTINUE;
   }
 }

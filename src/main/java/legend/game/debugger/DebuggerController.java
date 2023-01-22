@@ -115,7 +115,7 @@ public class DebuggerController {
       gameState_800babc8.dotIndex_4da.set(dotIndex_800c67ae.get());
       gameState_800babc8.dotOffset_4dc.set(dotOffset_800c67b0.get());
       gameState_800babc8.facing_4dd.set(facing_800c67b4.get());
-      pregameLoadingStage_800bb10c.setu(0x8L);
+      pregameLoadingStage_800bb10c.set(8);
     }
   }
 
@@ -142,7 +142,7 @@ public class DebuggerController {
 
   @FXML
   private void setSaveAnywhere(final ActionEvent event) {
-    standingInSavePoint_8005a368.set(0x1);
+    standingInSavePoint_8005a368.set(1);
   }
 
   @FXML

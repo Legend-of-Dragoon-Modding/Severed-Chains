@@ -53,7 +53,7 @@ public class GoodsScreen extends MenuScreen {
         //LAB_800fec7c
         this.menuItems.clear();
         for(int i = 0; i < 64; i++) {
-          if((gameState_800babc8.dragoonSpirits_19c.get(i >>> 5).get() & 0x1L << (i & 0x1fL)) != 0) {
+          if((gameState_800babc8.dragoonSpirits_19c.get(i >>> 5).get() & 0x1 << (i & 0x1f)) != 0) {
             final MenuItemStruct04 item = new MenuItemStruct04();
             item.itemId_00 = i;
             this.menuItems.add(item);

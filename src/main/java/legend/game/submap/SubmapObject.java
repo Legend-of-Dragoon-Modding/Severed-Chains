@@ -1,7 +1,7 @@
 package legend.game.submap;
 
 import legend.game.types.ExtendedTmd;
-import legend.game.types.ScriptFile;
+import legend.game.scripting.ScriptFile;
 import legend.game.types.TmdAnimationFile;
 
 import java.util.ArrayList;

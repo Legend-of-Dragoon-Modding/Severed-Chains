@@ -8,7 +8,6 @@ import legend.core.MathHelper;
 import legend.core.memory.segments.TempSegment;
 import legend.core.memory.types.QuadConsumer;
 import legend.core.memory.types.QuintConsumer;
-import legend.core.memory.types.TriConsumer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -124,9 +123,9 @@ public class Memory {
       final Segment segment = this.getSegment(address);
       final byte val = segment.get((int)(this.maskAddress(address) - segment.getAddress()));
 
-      if(watches.contains((int)address & 0xffffff)) {
-        LOGGER.error(Long.toHexString(address) + " read " + Long.toHexString(val), new Throwable());
-      }
+//      if(watches.contains((int)address & 0xffffff)) {
+//        LOGGER.error(Long.toHexString(address) + " read " + Long.toHexString(val), new Throwable());
+//      }
 
       return val;
     }
@@ -139,9 +138,9 @@ public class Memory {
       final Segment segment = this.getSegment(address);
       final long val = segment.get((int)(this.maskAddress(address) - segment.getAddress()), size);
 
-      if(watches.contains((int)address & 0xffffff)) {
-        LOGGER.error(Long.toHexString(address) + " read " + Long.toHexString(val), new Throwable());
-      }
+//      if(watches.contains((int)address & 0xffffff)) {
+//        LOGGER.error(Long.toHexString(address) + " read " + Long.toHexString(val), new Throwable());
+//      }
 
       return val;
     }
@@ -181,9 +180,9 @@ public class Memory {
   }
 
   public void getBytes(final long address, final byte[] dest, final int offset, final int size) {
-    if(watches.contains((int)address & 0xffffff)) {
-      LOGGER.error(Long.toHexString(address) + " read", new Throwable());
-    }
+//    if(watches.contains((int)address & 0xffffff)) {
+//      LOGGER.error(Long.toHexString(address) + " read", new Throwable());
+//    }
 
     synchronized(this.lock) {
       final Segment segment = this.getSegment(address);
@@ -203,7 +202,7 @@ public class Memory {
 
     for(final int watch : watches) {
       if(watch >= (address & 0xffffff) && watch < (address & 0xffffff) + size) {
-        LOGGER.error(Long.toHexString(address) + " set to " + Long.toHexString(this.get(address & 0xff00_0000L | watch, 4)), new Throwable());
+        LOGGER.error(Long.toHexString(address & 0xff00_0000L | watch) + " set to " + Long.toHexString(this.get(address & 0xff00_0000L | watch, 4)), new Throwable());
       }
     }
   }
@@ -236,7 +235,7 @@ public class Memory {
 
       for(final int watch : watches) {
         if(watch >= (dest & 0xffffff) && watch < (dest & 0xffffff) + length) {
-          LOGGER.error(Long.toHexString(dest) + " set to " + Long.toHexString(this.get(dest & 0xff00_0000L | watch, 4)), new Throwable());
+          LOGGER.error(Long.toHexString(dest & 0xff00_0000L | watch) + " set to " + Long.toHexString(this.get(dest & 0xff00_0000L | watch, 4)), new Throwable());
         }
       }
     }
@@ -253,7 +252,7 @@ public class Memory {
 
       for(final int watch : watches) {
         if(watch >= (addr & 0xffffff) && watch < (addr & 0xffffff) + length) {
-          LOGGER.error(Long.toHexString(addr) + " set to " + Long.toHexString(value), new Throwable());
+          LOGGER.error(Long.toHexString(addr & 0xff00_0000L | watch) + " set to " + Long.toHexString(value), new Throwable());
         }
       }
     }
@@ -419,9 +418,9 @@ public class Memory {
       synchronized(Memory.this.lock) {
         final long val = this.getSegment().get(this.segmentOffset, this.getSize());
 
-        if(watches.contains((int)this.address & 0xffffff)) {
-          LOGGER.error(Long.toHexString(this.address) + " read " + Long.toHexString(val), new Throwable());
-        }
+//        if(watches.contains((int)this.address & 0xffffff)) {
+//          LOGGER.error(Long.toHexString(this.address) + " read " + Long.toHexString(val), new Throwable());
+//        }
 
         return val;
       }
@@ -516,16 +515,6 @@ public class Memory {
     public <T, U> Value set(final BiConsumer<T, U> function) {
       try {
         this.getSegment().setFunction(this.segmentOffset, function.getClass().getMethod("accept", Object.class, Object.class), function, false);
-      } catch(final NoSuchMethodException e) {
-        throw new RuntimeException(e);
-      }
-      return this;
-    }
-
-    @Override
-    public <T, U, V> Value set(final TriConsumer<T, U, V> function) {
-      try {
-        this.getSegment().setFunction(this.segmentOffset, function.getClass().getMethod("accept", Object.class, Object.class, Object.class), function, false);
       } catch(final NoSuchMethodException e) {
         throw new RuntimeException(e);
       }

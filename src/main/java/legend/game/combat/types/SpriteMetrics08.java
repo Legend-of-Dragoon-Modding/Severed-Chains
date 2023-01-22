@@ -14,6 +14,16 @@ public class SpriteMetrics08 implements MemoryRef {
   public final UnsignedByteRef h_05;
   public final UnsignedShortRef clut_06;
 
+  public SpriteMetrics08() {
+    this.ref = null;
+
+    this.u_00 = new UnsignedShortRef();
+    this.v_02 = new UnsignedShortRef();
+    this.w_04 = new UnsignedByteRef();
+    this.h_05 = new UnsignedByteRef();
+    this.clut_06 = new UnsignedShortRef();
+  }
+
   public SpriteMetrics08(final Value ref) {
     this.ref = ref;
 

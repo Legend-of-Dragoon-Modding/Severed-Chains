@@ -1,22 +1,11 @@
 package legend.game.combat.types;
 
-import legend.core.memory.Value;
-import legend.core.memory.types.ArrayRef;
-import legend.core.memory.types.MemoryRef;
+import java.util.Arrays;
 
-public class EffeScriptData30 implements MemoryRef {
-  private final Value ref;
+public class EffeScriptData30 {
+  public final EffeScriptData30Sub06[] _00 = new EffeScriptData30Sub06[8];
 
-  public final ArrayRef<EffeScriptData30Sub06> _00;
-
-  public EffeScriptData30(final Value ref) {
-    this.ref = ref;
-
-    this._00 = ref.offset(1, 0x00L).cast(ArrayRef.of(EffeScriptData30Sub06.class, 8, 0x6, EffeScriptData30Sub06::new));
-  }
-
-  @Override
-  public long getAddress() {
-    return this.ref.getAddress();
+  public EffeScriptData30() {
+    Arrays.setAll(this._00, i -> new EffeScriptData30Sub06());
   }
 }
