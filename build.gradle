@@ -29,13 +29,13 @@ if (hasProperty("os")) {
   switch (os) {
     case "windows":
       project.ext.lwjglNatives = "natives-windows"
-      break;
+      break
     case "linux":
       project.ext.lwjglNatives = "natives-linux"
-      break;
+      break
     case "macos":
       project.ext.lwjglNatives = "natives-macos"
-      break;
+      break
   }
 }
 
@@ -50,6 +50,13 @@ dependencies {
   implementation group: 'org.fusesource.jansi', name: 'jansi', version: '2.3.2'
 
   implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
+
+  implementation 'com.google.apis:google-api-services-youtube:v3-rev20210915-1.32.1'
+  implementation 'com.google.api-client:google-api-client:1.33.0'
+  implementation "com.google.api-client:google-api-client-jackson2:2.1.3"
+  implementation group: 'com.google.http-client', name: 'google-http-client-jackson2', version: '1.42.3'
+  implementation group: 'com.google.apis', name: 'google-api-services-oauth2', version: 'v2-rev20200213-2.0.0'
+  implementation group: "com.google.http-client", name: 'google-http-client-extensions', version: '1.6.0-beta'
 
   implementation "org.lwjgl:lwjgl"
   implementation "org.lwjgl:lwjgl-glfw"
