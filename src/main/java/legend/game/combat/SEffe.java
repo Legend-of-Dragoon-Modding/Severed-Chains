@@ -128,6 +128,7 @@ import static legend.game.Scus94491BpeSegment_8002.rand;
 import static legend.game.Scus94491BpeSegment_8002.renderDobj2;
 import static legend.game.Scus94491BpeSegment_8003.ApplyMatrix;
 import static legend.game.Scus94491BpeSegment_8003.ApplyMatrixLV;
+import static legend.game.Scus94491BpeSegment_8003.FUN_8003ec90;
 import static legend.game.Scus94491BpeSegment_8003.GetClut;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
@@ -7453,10 +7454,10 @@ public final class SEffe {
     final long v0;
     long v1;
     final long a3;
-    final VECTOR sp0x30 = new VECTOR();
-    final VECTOR sp0x40 = new VECTOR();
-    final SVECTOR sp0x50 = new SVECTOR();
-    final MATRIX sp0x58 = new MATRIX();
+    final VECTOR trans = new VECTOR();
+    final VECTOR scale = new VECTOR();
+    final SVECTOR rot = new SVECTOR();
+    final MATRIX transforms = new MATRIX();
     final BattleScriptDataBase s0 = (BattleScriptDataBase)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
     if(BattleScriptDataBase.EM__.equals(s0.magic_00)) {
       final EffectManagerData6c effects = (EffectManagerData6c)s0;
@@ -7480,41 +7481,39 @@ public final class SEffe {
         coord2.flg = 0;
       } else if(v1 == 0) {
         //LAB_80111778
-        final BttlScriptData6cSub13c a2_0 = (BttlScriptData6cSub13c)effects.effect_44;
-        throw new RuntimeException("Need to figure out this code");
-/*
-        if((a2_0._00.get() & 0x7L) == 0) {
-          final long v1_0 = a2_0.anim_0c.getPointer();
+        final BttlScriptData6cSub5c a2_0 = (BttlScriptData6cSub5c)effects.effect_44;
+
+        if((a2_0.lmbType_00.get() & 0x7) == 0) {
+          final long v1_0 = a2_0.lmb_0c.derefAs(LmbType0.class).getAddress(); //TODO
 
           //LAB_801117ac
-          long a0_0 = Math.max(0, effects._10.flags_24) % (MEMORY.ref(4, a2_0).offset(0x8L).get() * 2);
-          final long a1_0 = a0_0 / 2;
+          final int a0_0 = Math.max(0, effects._10._24) % (a2_0._08.get() * 2);
+          final int a1_0 = a0_0 / 2;
           a3 = v1_0 + MEMORY.ref(4, v1_0).offset(0x10L).offset(a2 * 0xcL).get();
           v0 = a3 + a1_0 * 0x14L;
-          sp0x50.set((SVECTOR)MEMORY.ref(2, v0).offset(0xcL).cast(SVECTOR::new));
-          sp0x30.set((SVECTOR)MEMORY.ref(2, v0).offset(0x6L).cast(SVECTOR::new));
-          sp0x40.set((SVECTOR)MEMORY.ref(2, v0).offset(0x0L).cast(SVECTOR::new));
+          scale.set((SVECTOR)MEMORY.ref(2, v0).offset(0x0L).cast(SVECTOR::new));
+          trans.set((SVECTOR)MEMORY.ref(2, v0).offset(0x6L).cast(SVECTOR::new));
+          rot.set((SVECTOR)MEMORY.ref(2, v0).offset(0xcL).cast(SVECTOR::new));
 
           if((a0_0 & 0x1L) != 0) {
-            v1 = a1_0 + 0x1L;
+            v1 = a1_0 + 1;
 
-            if(v1 == MEMORY.ref(4, a2_0).offset(0x8L).get()) {
+            if(v1 == a2_0._08.get()) {
               v1 = 0;
             }
 
             //LAB_8011188c
-            a0_0 = a3 + v1 * 0x14L;
-            sp0x30.add((SVECTOR)MEMORY.ref(2, a0_0).offset(0x6L).cast(SVECTOR::new)).div(2);
-            sp0x40.add((SVECTOR)MEMORY.ref(2, a0_0).offset(0x0L).cast(SVECTOR::new)).div(2);
+            final long a0_1 = a3 + v1 * 0x14L;
+            scale.add((SVECTOR)MEMORY.ref(2, a0_1).offset(0x0L).cast(SVECTOR::new)).div(2);
+            trans.add((SVECTOR)MEMORY.ref(2, a0_1).offset(0x6L).cast(SVECTOR::new)).div(2);
           }
 
           //LAB_80111958
-          RotMatrix_80040010(sp0x50, sp0x58);
-          TransMatrix(sp0x58, sp0x30);
-          ScaleMatrixL(sp0x58, sp0x40);
-          FUN_8003ec90(sp0x10, sp0x58, a0);
+          RotMatrix_80040010(rot, transforms);
+          TransMatrix(transforms, trans);
+          ScaleMatrixL(transforms, scale);
+          FUN_8003ec90(sp0x10, transforms, a0);
         }
-*/
       }
     } else {
       final Model124 model = ((BattleObject27c)s0).model_148;
@@ -8362,7 +8361,8 @@ public final class SEffe {
       case 0 -> manager._10._24;
       case 1 -> manager._10._28;
       case 2 -> manager._10._2c;
-      default -> throw new RuntimeException("Invalid value (I think)");
+      case 3 -> manager._10._30;
+      default -> throw new RuntimeException("Invalid value (I think) " + script.params_20[1].get());
     };
 
     script.params_20[2].set(val);
@@ -8390,7 +8390,8 @@ public final class SEffe {
       case 0 -> manager._10._24 = script.params_20[2].get();
       case 1 -> manager._10._28 = script.params_20[2].get();
       case 2 -> manager._10._2c = script.params_20[2].get();
-      default -> throw new RuntimeException("Invalid value (I think)");
+      case 3 -> manager._10._30 = script.params_20[2].get();
+      default -> throw new RuntimeException("Invalid value (I think) " + script.params_20[1].get());
     }
 
     return FlowControl.CONTINUE;
@@ -8411,7 +8412,8 @@ public final class SEffe {
       case 0 -> state._10._24;
       case 1 -> state._10._28;
       case 2 -> state._10._2c;
-      default -> throw new RuntimeException("Invalid value (I think)");
+      case 3 -> state._10._30;
+      default -> throw new RuntimeException("Invalid value (I think) " + a1);
     };
 
     MEMORY.ref(4, v0.getAddress()).offset(0x0cL).setu(val << 8);
@@ -8432,7 +8434,8 @@ public final class SEffe {
       case 0 -> a0._10._24 = (int)MEMORY.ref(4, a1.getAddress()).offset(0xcL).getSigned() >> 8;
       case 1 -> a0._10._28 = (int)MEMORY.ref(4, a1.getAddress()).offset(0xcL).getSigned() >> 8;
       case 2 -> a0._10._2c = (int)MEMORY.ref(4, a1.getAddress()).offset(0xcL).getSigned() >> 8;
-      default -> throw new RuntimeException("Invalid value (I think)");
+      case 3 -> a0._10._30 = (int)MEMORY.ref(4, a1.getAddress()).offset(0xcL).getSigned() >> 8;
+      default -> throw new RuntimeException("Invalid value (I think) " + (MEMORY.ref(1, a1.getAddress()).offset(0x5L).getSigned() - 5));
     }
 
     if(MEMORY.ref(2, a1.getAddress()).offset(0x1aL).getSigned() == -1) {
@@ -8479,7 +8482,8 @@ public final class SEffe {
       case 0 -> s0._10._24;
       case 1 -> s0._10._28;
       case 2 -> s0._10._2c;
-      default -> throw new RuntimeException("Invalid value (I think)");
+      case 3 -> s0._10._30;
+      default -> throw new RuntimeException("Invalid value (I think) " + s1);
     };
 
     MEMORY.ref(4, v0).offset(0x0cL).setu(val << 8);
