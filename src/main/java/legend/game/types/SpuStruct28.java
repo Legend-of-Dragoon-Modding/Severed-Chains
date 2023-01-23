@@ -24,6 +24,7 @@ public class SpuStruct28 implements MemoryRef {
   public final IntRef bobjIndex_04;
   public final IntRef soundFileIndex_08;
   public final IntRef soundIndex_0c;
+  /** I think if this has flag 0x80 set it enables reverb? I don't think it's ever used? */
   public final ShortRef playableSoundIndex_10;
   public final ShortRef patchIndex_12;
   public final ShortRef sequenceIndex_14;

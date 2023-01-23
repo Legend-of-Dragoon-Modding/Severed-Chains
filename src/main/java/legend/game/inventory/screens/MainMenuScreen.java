@@ -123,7 +123,7 @@ public class MainMenuScreen extends MenuScreen {
               gameState_800babc8.vibrationEnabled_4e1.set(0);
             } else if(this.selectedItemSubmenuOption == 1) {
               gameState_800babc8.mono_4e0.set(0);
-              setMono(0);
+              setMono(false);
             } else if(this.selectedItemSubmenuOption == 2) {
               gameState_800babc8.morphMode_4e2.set(0);
             } else if(this.selectedItemSubmenuOption == 3) {
@@ -142,7 +142,7 @@ public class MainMenuScreen extends MenuScreen {
               FUN_8002bda4(0, 0, 60);
             } else if(this.selectedItemSubmenuOption == 1) {
               gameState_800babc8.mono_4e0.set(1);
-              setMono(1);
+              setMono(true);
             } else if(this.selectedItemSubmenuOption == 2) {
               gameState_800babc8.morphMode_4e2.set(1);
             } else if(this.selectedItemSubmenuOption == 3) {
@@ -409,11 +409,11 @@ public class MainMenuScreen extends MenuScreen {
       } else if(MathHelper.inBox(x, y, this.FUN_800fc7bc(1) - 28, this.menuOptionY(1), 56, 13)) {
         playSound(2);
         gameState_800babc8.mono_4e0.set(0);
-        setMono(0);
+        setMono(false);
       } else if(MathHelper.inBox(x, y, this.FUN_800fc7bc(2) - 28, this.menuOptionY(1), 56, 13)) {
         playSound(2);
         gameState_800babc8.mono_4e0.set(1);
-        setMono(1);
+        setMono(true);
       } else if(MathHelper.inBox(x, y, this.FUN_800fc7bc(1) - 28, this.menuOptionY(2), 56, 13)) {
         playSound(2);
         gameState_800babc8.morphMode_4e2.set(0);

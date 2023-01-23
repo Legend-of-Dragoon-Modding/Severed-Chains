@@ -67,7 +67,7 @@ public class LoadGameScreen extends SaveListScreen {
         submapScene_80052c34.set(53);
       }
 
-      setMono(gameState_800babc8.mono_4e0.get());
+      setMono(gameState_800babc8.mono_4e0.get() != 0);
 
       this.loadingStage = 2;
     }

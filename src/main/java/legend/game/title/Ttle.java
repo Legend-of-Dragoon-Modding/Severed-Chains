@@ -971,7 +971,7 @@ public final class Ttle {
 
         if(selectedConfigCategory == 0) {
           gameState_800babc8.mono_4e0.xor(0b1);
-          setMono(gameState_800babc8.mono_4e0.get());
+          setMono(gameState_800babc8.mono_4e0.get() != 0);
         } else {
           gameState_800babc8.vibrationEnabled_4e1.xor(0b1);
 

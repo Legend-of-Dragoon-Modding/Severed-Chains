@@ -2509,7 +2509,7 @@ public final class Scus94491BpeSegment {
     FUN_8004c3f0(8);
     sssqSetReverbType(3);
     SsSetRVol(0x30, 0x30);
-    setMono(gameState_800babc8.mono_4e0.get());
+    setMono(gameState_800babc8.mono_4e0.get() != 0);
 
     //LAB_80019654
     for(int i = 0; i < 13; i++) {

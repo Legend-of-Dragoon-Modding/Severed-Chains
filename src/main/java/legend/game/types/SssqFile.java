@@ -2,6 +2,7 @@ package legend.game.types;
 
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
+import legend.core.memory.types.ByteRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
@@ -13,7 +14,7 @@ public class SssqFile implements MemoryRef {
 
   private final Value ref;
 
-  public final UnsignedByteRef _00;
+  public final ByteRef volume_00;
 
   public final UnsignedShortRef deltaTime_02;
   public final UnsignedShortRef tempo_04;
@@ -25,7 +26,7 @@ public class SssqFile implements MemoryRef {
   public SssqFile(final Value ref) {
     this.ref = ref;
 
-    this._00 = ref.offset(1, 0x00L).cast(UnsignedByteRef::new);
+    this.volume_00 = ref.offset(1, 0x00L).cast(ByteRef::new);
 
     this.deltaTime_02 = ref.offset(2, 0x02L).cast(UnsignedShortRef::new);
     this.tempo_04 = ref.offset(2, 0x04L).cast(UnsignedShortRef::new);
@@ -33,6 +34,10 @@ public class SssqFile implements MemoryRef {
     this.magic_0c = ref.offset(4, 0x0cL).cast(UnsignedIntRef::new);
     this.entries_10 = ref.offset(4, 0x10L).cast(ArrayRef.of(SssqEntry.class, 0x10, 0x10, SssqEntry::new));
     this.data_110 = ref.offset(1, 0x110L).cast(UnboundedArrayRef.of(1, UnsignedByteRef::new));
+  }
+
+  public int getByte(final int offset) {
+    return (int)this.ref.offset(1, offset).get();
   }
 
   @Override

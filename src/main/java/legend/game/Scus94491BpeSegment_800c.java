@@ -21,6 +21,9 @@ import legend.game.types.SpuStruct66;
 import legend.game.types.SshdFile;
 import legend.game.types.SshdStruct10;
 import legend.game.types.SssqEntry;
+import legend.game.types.SssqFile;
+
+import java.util.Arrays;
 
 import static legend.core.GameEngine.MEMORY;
 
@@ -68,7 +71,7 @@ public final class Scus94491BpeSegment_800c {
   public static final ArrayRef<PlayableSoundStruct> playableSoundPtrArr_800c43d0 = MEMORY.ref(4, 0x800c43d0L, ArrayRef.of(PlayableSoundStruct.class, 127, 0xc, PlayableSoundStruct::new));
 
   /** NOTE: this pointer can be misaligned, hence being a Value */
-  public static final Value sssqPtr_800c4aa4 = MEMORY.ref(4, 0x800c4aa4L);
+  public static final Pointer<SssqFile> sssqPtr_800c4aa4 = MEMORY.ref(4, 0x800c4aa4L, Pointer.deferred(1, SssqFile::new));
   public static final Value _800c4aa8 = MEMORY.ref(4, 0x800c4aa8L);
   public static final Value _800c4aac = MEMORY.ref(4, 0x800c4aacL);
   public static final Pointer<VolumeRamp> volumeRamp_800c4ab0 = MEMORY.ref(4, 0x800c4ab0L, Pointer.deferred(2, VolumeRamp::new));
@@ -77,14 +80,17 @@ public final class Scus94491BpeSegment_800c {
   public static final Value _800c4abc = MEMORY.ref(4, 0x800c4abcL);
   public static final Pointer<SshdFile> sshdPtr_800c4ac0 = MEMORY.ref(4, 0x800c4ac0L, Pointer.deferred(4, SshdFile::new));
   public static final Pointer<Spu> voicePtr_800c4ac4 = MEMORY.ref(4, 0x800c4ac4L, Pointer.deferred(4, ref -> {throw new RuntimeException("Can't instantiate");}));
-  public static final ArrayRef<SpuStruct124> _800c4ac8 = MEMORY.ref(4, 0x800c4ac8L, ArrayRef.of(SpuStruct124.class, 24, 0x124, SpuStruct124::new));
+  public static final SpuStruct124[] _800c4ac8 = new SpuStruct124[24];
+  static {
+    Arrays.setAll(_800c4ac8, i -> new SpuStruct124());
+  }
   public static Runnable spuDmaCompleteCallback_800c6628;
 
-  public static final SpuStruct44 _800c6630 = MEMORY.ref(4, 0x800c6630L, SpuStruct44::new);
+  public static final SpuStruct44 _800c6630 = new SpuStruct44();
   public static final Value _800c6674 = MEMORY.ref(4, 0x800c6674L);
   public static final Pointer<SshdStruct10> sshd10Ptr_800c6678 = MEMORY.ref(4, 0x800c6678L, Pointer.deferred(1, SshdStruct10::new));
   public static final Value sssqPtr_800c667c = MEMORY.ref(4, 0x800c667cL);
-  public static final Pointer<SssqEntry> sssqDataPointer_800c6680 = MEMORY.ref(4, 0x800c6680L, Pointer.deferred(1, SssqEntry::new));
+  public static final Pointer<SssqEntry> sssqEntry_800c6680 = MEMORY.ref(4, 0x800c6680L, Pointer.deferred(1, SssqEntry::new));
 
   public static final Value timHeader_800c6748 = MEMORY.ref(4, 0x800c6748L);
 }
