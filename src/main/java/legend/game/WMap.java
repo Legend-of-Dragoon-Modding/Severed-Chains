@@ -7654,7 +7654,8 @@ public class WMap {
     //LAB_800ebf2c
     //LAB_800ebf30
     for(int i = 0; i < 12; i++) {
-      final WMapStruct258Sub60 sp18 = struct._24[i + 12];
+      final WMapStruct258Sub60 sp18 = new WMapStruct258Sub60();
+      struct._24[i + 12] = sp18;
       sp18.set(struct._24[i]);
       sp18.coord2_00.coord.transfer.setY(0);
     }
