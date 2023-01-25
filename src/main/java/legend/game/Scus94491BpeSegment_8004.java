@@ -1434,7 +1434,7 @@ public final class Scus94491BpeSegment_8004 {
 
                 case 0x60 -> { // Data increment (???)
                   FUN_80049e2c(spu44.channelIndex_01); // Seems to jump to a different part of the sequence
-                  FUN_8004a5e0(spu44.channelIndex_01);
+                  sssqReadDeltaTime(spu44.channelIndex_01);
                   break LAB_80045d40;
                 }
 
@@ -1463,7 +1463,7 @@ public final class Scus94491BpeSegment_8004 {
           }
 
           //LAB_80046010
-          FUN_8004a5e0(spu44.channelIndex_01);
+          sssqReadDeltaTime(spu44.channelIndex_01);
         }
 
         //LAB_8004602c
@@ -1588,7 +1588,7 @@ public final class Scus94491BpeSegment_8004 {
     struct66._30[1] = (int)_80059f3c.offset(FUN_80048b90(4, 0) / 0x2L & 0x7ffeL).offset(0x1L).get();
     struct66._34 = sssqEntry_800c6680.volume_03;
     struct66.cents_36 = sshd10_800c6678.cents_03;
-    struct66._38 = sssqEntry_800c6680.pitchBend_0a;
+    struct66.pitchBend_38 = sssqEntry_800c6680.pitchBend_0a;
     struct66._3a = sshd10_800c6678._0d;
     struct66.breath_3c = sssqEntry_800c6680.breath_0c;
     struct66._3e = spu124.param2_005;
@@ -1760,7 +1760,7 @@ public final class Scus94491BpeSegment_8004 {
           s1._30[1] = (int)_80059f3c.offset(FUN_80048b90(0, 0) / 0x2L & 0x7ffeL).offset(0x1L).get();
           s1._34 = sssqEntry_800c6680.volume_03;
           s1.cents_36 = sshd10_800c6678.cents_03;
-          s1._38 = sssqEntry_800c6680.pitchBend_0a;
+          s1.pitchBend_38 = sssqEntry_800c6680.pitchBend_0a;
           s1._3a = sshd10_800c6678._0d;
           s1.breath_3c = sssqEntry_800c6680.breath_0c;
           s1._3e = s2.param2_005;
@@ -1877,7 +1877,7 @@ public final class Scus94491BpeSegment_8004 {
             int cents = struct66.cents_36;
             int a1 = struct66.noteNumber_02;
             int rootKey = struct66.rootKey_40;
-            int pitchBend = struct66._38;
+            int pitchBend = struct66.pitchBend_38;
             int t3 = struct66._3a;
             if(struct66._14 == 1 || struct66.portamentoChanging_44) {
               //LAB_80047220
@@ -1930,15 +1930,15 @@ public final class Scus94491BpeSegment_8004 {
                 if(struct66._1c == 0) {
                   int v0;
                   int v1;
-                  if(struct66._38 >= 64) {
-                    v0 = (struct66._38 - 64) * struct66._3a;
+                  if(struct66.pitchBend_38 >= 64) {
+                    v0 = (struct66.pitchBend_38 - 64) * struct66._3a;
                     v1 = v0 / 64;
                     a1 = a1 + v1;
                     v0 = v0 / 4;
                     v1 = v1 * 16;
                   } else {
                     //LAB_80047454
-                    v0 = (64 - struct66._38) * struct66._3a;
+                    v0 = (64 - struct66.pitchBend_38) * struct66._3a;
                     final int a0_0 = v0 / 64;
                     a1 = a1 - a0_0;
                     v1 = v0 / 4;
@@ -2691,7 +2691,7 @@ public final class Scus94491BpeSegment_8004 {
       if(spu66.channelIndex_06 == channelIndex) {
         if(spu66._1a == 0) {
           spu66._14 = 0;
-          spu66._38 = 64;
+          spu66.pitchBend_38 = 64;
         }
       }
 
@@ -3247,7 +3247,7 @@ public final class Scus94491BpeSegment_8004 {
           if(spu66.channelIndex_06 == channelIndex) {
             if(spu66.used_00) {
               voicePtr_800c4ac4.deref().voices[voiceIndex].ADPCM_SAMPLE_RATE.set(calculateSampleRate(spu66.rootKey_40, spu66.noteNumber_02, spu66.cents_36, sssqEntry_800c6680.pitchBend_0a, spu66._3a));
-              spu66._38 = spu124.sssqReader_010.readByte(1);
+              spu66.pitchBend_38 = spu124.sssqReader_010.readByte(1);
             }
           }
         }
@@ -3260,7 +3260,7 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004a5e0L)
-  public static void FUN_8004a5e0(final int channelIndex) {
+  public static void sssqReadDeltaTime(final int channelIndex) {
     assert channelIndex >= 0;
 
     final SpuStruct124 spu124 = _800c4ac8[channelIndex];
@@ -4353,7 +4353,7 @@ public final class Scus94491BpeSegment_8004 {
                 if(struct66._1a == 0) {
                   struct66.used_00 = false;
                   struct66._08 = 1;
-                  struct66._38 = 64;
+                  struct66.pitchBend_38 = 64;
                   struct66._14 = 0;
                   struct66._16 = 0;
                   setKeyOff(voiceIndex, i);

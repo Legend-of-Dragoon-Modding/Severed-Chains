@@ -28,7 +28,7 @@ public class SpuStruct66 {
   public int[] _30 = new int[2];
   public int _34;
   public int cents_36;
-  public int _38;
+  public int pitchBend_38;
   public int _3a;
   public int breath_3c;
   public int _3e;
@@ -83,7 +83,7 @@ public class SpuStruct66 {
     this._30[1] = 0;
     this._34 = 0;
     this.cents_36 = 0;
-    this._38 = 0;
+    this.pitchBend_38 = 0;
     this._3a = 0;
     this.breath_3c = 0;
     this._3e = 0;
