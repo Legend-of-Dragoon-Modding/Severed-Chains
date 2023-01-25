@@ -50,8 +50,8 @@ import legend.game.types.Model124;
 import legend.game.types.ModelPartTransforms;
 import legend.game.types.Renderable58;
 import legend.game.types.RenderableMetrics14;
-import legend.game.types.SpuStruct10;
-import legend.game.types.SpuStruct28;
+import legend.game.sound.SpuStruct10;
+import legend.game.sound.SpuStruct28;
 import legend.game.types.Struct84;
 import legend.game.types.Textbox4c;
 import legend.game.types.TextboxArrow0c;
@@ -260,7 +260,6 @@ public final class Scus94491BpeSegment_8002 {
     if(struct10._00 != 0) {
       FUN_8004d034(struct10.channelIndex_0c, 1);
       FUN_8004c390(struct10.channelIndex_0c);
-      free(struct10.sssq_08.getAddress());
       struct10.sssq_08 = null;
       struct10._00 = 0;
     }

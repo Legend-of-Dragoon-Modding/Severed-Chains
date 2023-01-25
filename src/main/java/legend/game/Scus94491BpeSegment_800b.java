@@ -16,6 +16,10 @@ import legend.core.memory.types.UnsignedShortRef;
 import legend.game.combat.types.BattleStage;
 import legend.game.inventory.WhichMenu;
 import legend.game.scripting.ScriptState;
+import legend.game.sound.SoundFile;
+import legend.game.sound.SpuStruct08;
+import legend.game.sound.SpuStruct10;
+import legend.game.sound.SpuStruct28;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.Drgn0_6666File;
 import legend.game.types.EquipmentStats1c;
@@ -28,12 +32,6 @@ import legend.game.types.Model124;
 import legend.game.types.Renderable58;
 import legend.game.types.ScriptEffectStruct;
 import legend.game.types.SobjPos14;
-import legend.game.types.SoundFile;
-import legend.game.types.SpuStruct08;
-import legend.game.types.SpuStruct10;
-import legend.game.types.SpuStruct28;
-import legend.game.types.SshdFile;
-import legend.game.types.SssqFile;
 import legend.game.types.Struct84;
 import legend.game.types.TexPageY;
 import legend.game.types.Textbox4c;
@@ -141,9 +139,6 @@ public final class Scus94491BpeSegment_800b {
   public static final BoolRef melbuSoundsLoaded_800bd780 = MEMORY.ref(1, 0x800bd780L, BoolRef::new);
   public static final BoolRef melbuMusicLoaded_800bd781 = MEMORY.ref(1, 0x800bd781L, BoolRef::new);
   public static final UnsignedByteRef musicLoaded_800bd782 = MEMORY.ref(1, 0x800bd782L, UnsignedByteRef::new);
-
-  public static final Pointer<SshdFile> melbuSoundMrgSshdPtr_800bd784 = MEMORY.ref(4, 0x800bd784L, Pointer.deferred(4, SshdFile::new));
-  public static final Pointer<SssqFile> melbuSoundMrgSssqPtr_800bd788 = MEMORY.ref(4, 0x800bd788L, Pointer.deferred(4, SssqFile::new));
 
   public static final Value _800bd7ac = MEMORY.ref(4, 0x800bd7acL);
   public static final IntRef _800bd7b0 = MEMORY.ref(4, 0x800bd7b0L, IntRef::new);

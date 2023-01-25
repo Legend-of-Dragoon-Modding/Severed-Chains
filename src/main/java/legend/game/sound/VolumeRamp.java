@@ -1,26 +1,16 @@
 package legend.game.sound;
 
-import legend.core.memory.Value;
-import legend.core.memory.types.ArrayRef;
-import legend.core.memory.types.MemoryRef;
-import legend.core.memory.types.ShortRef;
-import legend.core.memory.types.UnsignedByteRef;
+import legend.core.MathHelper;
 
-public class VolumeRamp implements MemoryRef {
-  private final Value ref;
+import java.util.Arrays;
 
-  public final ShortRef _00;
-  public final ArrayRef<UnsignedByteRef> ramp_02;
+public class VolumeRamp implements Sshd.Subfile {
+  public int _00;
+  public final int[] ramp_02;
 
-  public VolumeRamp(final Value ref) {
-    this.ref = ref;
-
-    this._00 = ref.offset(2, 0x00L).cast(ShortRef::new);
-    this.ramp_02 = ref.offset(1, 0x02L).cast(ArrayRef.of(UnsignedByteRef.class, 0x80, 1, UnsignedByteRef::new));
-  }
-
-  @Override
-  public long getAddress() {
-    return this.ref.getAddress();
+  public VolumeRamp(final byte[] data, final int offset) {
+    this._00 = MathHelper.getUshort(data, offset);
+    this.ramp_02 = new int[0x80];
+    Arrays.setAll(this.ramp_02, i -> MathHelper.getUbyte(data, offset + 2 + i));
   }
 }

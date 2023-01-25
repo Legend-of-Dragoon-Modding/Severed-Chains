@@ -25,17 +25,22 @@ import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptFile;
 import legend.game.sound.PatchList;
+import legend.game.sound.PlayableSoundStruct;
+import legend.game.sound.SpuStruct124;
+import legend.game.sound.SpuStruct44;
+import legend.game.sound.SpuStruct66;
+import legend.game.sound.Sshd;
+import legend.game.sound.Sssq;
+import legend.game.sound.SssqReader;
+import legend.game.sound.Sssqish;
+import legend.game.sound.Subfile0;
+import legend.game.sound.VolumeRamp;
+import legend.game.sound.WaveformList;
 import legend.game.title.Ttle;
 import legend.game.types.CallbackStruct;
 import legend.game.types.FileEntry08;
 import legend.game.types.ItemStats0c;
 import legend.game.types.MoonMusic08;
-import legend.game.types.PlayableSoundStruct;
-import legend.game.types.SpuStruct124;
-import legend.game.types.SpuStruct44;
-import legend.game.types.SpuStruct66;
-import legend.game.types.SshdFile;
-import legend.game.types.SssqFile;
 import legend.game.types.SubmapMusic08;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -48,7 +53,6 @@ import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SPU;
 import static legend.game.Scus94491BpeSegment._80011db0;
-import static legend.game.Scus94491BpeSegment_8003.bzero;
 import static legend.game.Scus94491BpeSegment_8005._8005967c;
 import static legend.game.Scus94491BpeSegment_8005._80059b3c;
 import static legend.game.Scus94491BpeSegment_8005._80059f3c;
@@ -58,21 +62,23 @@ import static legend.game.Scus94491BpeSegment_8005.sin_cos_80054d0c;
 import static legend.game.Scus94491BpeSegment_8005.sssqFadeCurrent_8005a1ce;
 import static legend.game.Scus94491BpeSegment_8005.sssqStatus_8005a1d0;
 import static legend.game.Scus94491BpeSegment_800c._800c3a40;
-import static legend.game.Scus94491BpeSegment_800c._800c4aa8;
-import static legend.game.Scus94491BpeSegment_800c._800c4aac;
-import static legend.game.Scus94491BpeSegment_800c._800c4ab4;
-import static legend.game.Scus94491BpeSegment_800c._800c4ab8;
-import static legend.game.Scus94491BpeSegment_800c._800c4abc;
+import static legend.game.Scus94491BpeSegment_800c.sshd10Arr_800c6678;
+import static legend.game.Scus94491BpeSegment_800c.sshd10Index_800c6678;
+import static legend.game.Scus94491BpeSegment_800c.sssqish_800c4aa8;
+import static legend.game.Scus94491BpeSegment_800c.subfile0_800c4aa8;
+import static legend.game.Scus94491BpeSegment_800c.subfile0_800c4aac;
+import static legend.game.Scus94491BpeSegment_800c.waveforms_800c4ab4;
+import static legend.game.Scus94491BpeSegment_800c.waveforms_800c4ab8;
+import static legend.game.Scus94491BpeSegment_800c.patchList_800c4abc;
 import static legend.game.Scus94491BpeSegment_800c._800c4ac8;
 import static legend.game.Scus94491BpeSegment_800c._800c6630;
-import static legend.game.Scus94491BpeSegment_800c._800c6674;
+import static legend.game.Scus94491BpeSegment_800c.sublist_800c6674;
 import static legend.game.Scus94491BpeSegment_800c.playableSoundPtrArr_800c43d0;
 import static legend.game.Scus94491BpeSegment_800c.spuDmaCompleteCallback_800c6628;
-import static legend.game.Scus94491BpeSegment_800c.sshd10Ptr_800c6678;
+import static legend.game.Scus94491BpeSegment_800c.sshd10_800c6678;
 import static legend.game.Scus94491BpeSegment_800c.sshdPtr_800c4ac0;
 import static legend.game.Scus94491BpeSegment_800c.sssqEntry_800c6680;
-import static legend.game.Scus94491BpeSegment_800c.sssqPtr_800c4aa4;
-import static legend.game.Scus94491BpeSegment_800c.sssqPtr_800c667c;
+import static legend.game.Scus94491BpeSegment_800c.sssqReader_800c667c;
 import static legend.game.Scus94491BpeSegment_800c.voicePtr_800c4ac4;
 import static legend.game.Scus94491BpeSegment_800c.volumeRamp_800c4ab0;
 
@@ -1380,11 +1386,11 @@ public final class Scus94491BpeSegment_8004 {
         FUN_80047b38(spu44.channelIndex_01);
 
         LAB_80045d40:
-        while(spu124._118 == 0) {
+        while(spu124.deltaTime_118 == 0) {
           sssqReadEvent(spu44.channelIndex_01);
 
-          if(FUN_80047bd0(spu44.channelIndex_01) == 0) {
-            spu124.sssqOffset_00c += 3;
+          if(!FUN_80047bd0(spu44.channelIndex_01)) {
+            spu124.sssqReader_010.advance(3);
             spu44._04 = 0;
           } else {
             //LAB_80045d7c
@@ -1400,7 +1406,7 @@ public final class Scus94491BpeSegment_8004 {
               sssqHandleKeyOn(spu44.channelIndex_01);
             } else if(command == 0xa0) { // Polyphonic key pressure (aftertouch)
               //LAB_80045ff0
-              FUN_80046224(spu44.channelIndex_01);
+              sssqHandlePolyphonicKeyPressure(spu44.channelIndex_01);
               //LAB_80045dd4
             } else if(command == 0xb0) { // Control change
               //LAB_80045e60
@@ -1416,10 +1422,10 @@ public final class Scus94491BpeSegment_8004 {
                     sssqHandlePan(spu44.channelIndex_01);
                   } else if(spu124._028 == 0) {
                     //LAB_80045f30
-                    spu124.sssqOffset_00c += 6;
+                    spu124.sssqReader_010.advance(6);
                   } else {
-                    sssqEntry_800c6680.deref().pan_04.set(sssqPtr_800c4aa4.deref().getByte(spu124.sssqOffset_00c + 2));
-                    spu124.sssqOffset_00c += 3;
+                    sssqEntry_800c6680.pan_04 = spu124.sssqReader_010.readByte(2);
+                    spu124.sssqReader_010.advance(3);
                   }
                 }
 
@@ -1427,7 +1433,7 @@ public final class Scus94491BpeSegment_8004 {
                 case 0x41 -> sssqHandlePortamento(spu44.channelIndex_01); // Portamento
 
                 case 0x60 -> { // Data increment (???)
-                  FUN_80049e2c(spu44.channelIndex_01);
+                  FUN_80049e2c(spu44.channelIndex_01); // Seems to jump to a different part of the sequence
                   FUN_8004a5e0(spu44.channelIndex_01);
                   break LAB_80045d40;
                 }
@@ -1474,22 +1480,22 @@ public final class Scus94491BpeSegment_8004 {
         //LAB_800460a0
         if(spu124.tempo_108 != 0 || spu124._02a == 1) {
           //LAB_800460c0
-          if(spu124._118 != 0) {
-            spu124._118--;
+          if(spu124.deltaTime_118 != 0) {
+            spu124.deltaTime_118--;
           }
         }
 
         //LAB_800460d4
-        if(spu124.overrideCommand_037) {
-          spu124.command_000 = spu124._039;
-          spu124.previousCommand_001 = spu124._039;
-          spu124.sssqOffset_00c = spu124.sssqOffset_02c;
-          spu124.overrideCommand_037 = false;
+        if(spu124.jump_037) {
+          spu124.command_000 = spu124.jumpDestCommand_039;
+          spu124.previousCommand_001 = spu124.jumpDestCommand_039;
+          spu124.sssqReader_010.jump(spu124.sssqOffset_02c);
+          spu124.jump_037 = false;
 
           if(spu124._0e6 == 0) {
             //LAB_80046118
             spu124._028 = 1;
-            spu124._118 = 0;
+            spu124.deltaTime_118 = 0;
           } else {
             spu124._02a = 1;
             spu124._0e6 = 0;
@@ -1523,7 +1529,7 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x80046224L)
-  public static void FUN_80046224(final int channelIndex) {
+  public static void sssqHandlePolyphonicKeyPressure(final int channelIndex) {
     final SpuStruct124 spu124 = _800c4ac8[channelIndex];
     if(spu124.param1_003 == 0) {
       FUN_80048514(channelIndex);
@@ -1531,93 +1537,94 @@ public final class Scus94491BpeSegment_8004 {
     }
 
     //LAB_8004629c
-    final long sp18 = spu124.param0_002 - _800c6674.deref(1).offset(0x6L).get();
-    if((int)sp18 < 0) {
+    final int sp18 = spu124.param0_002 - sublist_800c6674._06;
+    if(sp18 < 0) {
       return;
     }
 
-    sshd10Ptr_800c6678.add(sp18 * 0x10L);
-    sssqEntry_800c6680.deref().pitchBend_0a.set(64);
+    sshd10Index_800c6678 += sp18;
+    sshd10_800c6678 = sshd10Arr_800c6678[sshd10Index_800c6678];
+    sssqEntry_800c6680.pitchBend_0a = 64;
 
-    final short voiceIndex = (short)FUN_80048000(sshd10Ptr_800c6678.deref()._00.get(), sshd10Ptr_800c6678.deref()._01.get(), spu124.playableSoundIndex_020);
+    final short voiceIndex = (short)FUN_80048000(sshd10_800c6678._00, sshd10_800c6678._01, spu124.playableSoundIndex_020);
     if(voiceIndex == -1) {
-      spu124.sssqOffset_00c += 4;
+      spu124.sssqReader_010.advance(4);
       _800c6630._04 = 0;
       return;
     }
 
     //LAB_8004632c
-    final SpuStruct66 struct66 = _800c3a40.get(voiceIndex);
-    if((sshd10Ptr_800c6678.deref()._0f.get() & 0x1) != 0) {
-      struct66._08.set(0);
-      struct66._0c.set(1);
+    final SpuStruct66 struct66 = _800c3a40[voiceIndex];
+    if((sshd10_800c6678.flags_0f & 0x1) != 0) {
+      struct66._08 = 0;
+      struct66._0c = 1;
     } else {
       //LAB_80046374
-      struct66._08.set(1);
-      struct66._0c.set(0);
+      struct66._08 = 1;
+      struct66._0c = 0;
     }
 
     //LAB_8004639c
-    struct66.used_00.set(true);
-    struct66._02.set(spu124.param0_002);
-    struct66.channel_04.set(spu124.command_000 & 0xf);
-    struct66.channelIndex_06.set((short)channelIndex);
-    struct66._0a.set(_800c6630.voiceIndex_00);
-    struct66._0e.set((int)sp18);
-    struct66._12.set(0);
-    struct66._18.set(0);
-    struct66._1a.set(1);
-    struct66._1c.set(4);
-    struct66._1e.set(sshd10Ptr_800c6678.deref()._01.get());
-    struct66._20.set(sshd10Ptr_800c6678.deref()._00.get());
-    struct66.playableSoundIndex_22.set(spu124.playableSoundIndex_020);
-    struct66._24.set(spu124.patchIndex_024);
-    struct66._26.set(spu124.sequenceIndex_022);
-    struct66._28.set(sssqEntry_800c6680.deref().volume_0e.get());
-    struct66._2a.set((int)_800c6674.deref(1).offset(0x1L).get());
-    struct66._2c.set(volumeRamp_800c4ab0.deref().ramp_02.get(spu124.param1_003).get());
-    struct66._2e.set(sshd10Ptr_800c6678.deref()._0b.get());
-    struct66._30.set((int)_80059f3c.offset(FUN_80048b90(4, 0) / 0x2L & 0x7ffeL).offset(0x0L).get());
-    struct66._32.set((int)_80059f3c.offset(FUN_80048b90(4, 0) / 0x2L & 0x7ffeL).offset(0x1L).get());
-    struct66._34.set(sssqEntry_800c6680.deref().volume_03.get());
+    struct66.used_00 = true;
+    struct66.noteNumber_02 = spu124.param0_002;
+    struct66.commandChannel_04 = spu124.command_000 & 0xf;
+    struct66.channelIndex_06 = channelIndex;
+    struct66.voiceIndex_0a = _800c6630.voiceIndex_00;
+    struct66._0e = sp18;
+    struct66._12 = 0;
+    struct66._18 = 0;
+    struct66._1a = 1;
+    struct66._1c = 4;
+    struct66._1e = sshd10_800c6678._01;
+    struct66._20 = sshd10_800c6678._00;
+    struct66.playableSoundIndex_22 = spu124.playableSoundIndex_020;
+    struct66._24 = spu124.patchIndex_024;
+    struct66._26 = spu124.sequenceIndex_022;
+    struct66.volume_28 = sssqEntry_800c6680.volume_0e;
+    struct66._2a = sublist_800c6674._01;
+    struct66._2c = volumeRamp_800c4ab0.ramp_02[spu124.param1_003];
+    struct66._2e = sshd10_800c6678._0b;
+    struct66._30[0] = (int)_80059f3c.offset(FUN_80048b90(4, 0) / 0x2L & 0x7ffeL).offset(0x0L).get();
+    struct66._30[1] = (int)_80059f3c.offset(FUN_80048b90(4, 0) / 0x2L & 0x7ffeL).offset(0x1L).get();
+    struct66._34 = sssqEntry_800c6680.volume_03;
 
-    int v1 = sshd10Ptr_800c6678.deref()._03.get();
+    int v1 = sshd10_800c6678._03;
     if((v1 & 0x80) != 0) {
       v1 = 0xff00 | v1;
     }
 
     //LAB_80046500
-    struct66._36.set((short)v1);
-    struct66._38.set(sssqEntry_800c6680.deref().pitchBend_0a.get());
-    struct66._3a.set(sshd10Ptr_800c6678.deref()._0d.get());
-    struct66.breath_3c.set(sssqEntry_800c6680.deref().breath_0c.get());
-    struct66._3e.set(spu124.param2_005);
-    struct66.sssqEntry_44.set(0);
-    struct66._40.set(sshd10Ptr_800c6678.deref()._02.get());
-    struct66._4a.set(sshd10Ptr_800c6678.deref()._0a.get());
-    struct66._4c.set(sshd10Ptr_800c6678.deref()._0c.get());
-    struct66._4e.set(120);
-    struct66._62.set(0);
+    struct66._36 = (short)v1;
+    struct66._38 = sssqEntry_800c6680.pitchBend_0a;
+    struct66._3a = sshd10_800c6678._0d;
+    struct66.breath_3c = sssqEntry_800c6680.breath_0c;
+    struct66._3e = spu124.param2_005;
+    struct66.sssqEntry_44 = 0;
+    struct66._40 = sshd10_800c6678._02;
+    struct66._4a = sshd10_800c6678._0a;
+    struct66._4c = sshd10_800c6678._0c;
+    struct66._4e = 120;
+    struct66._62 = 0;
 
     if(_800c6630.voiceIndex_00 < 24) {
       _800c6630.voiceIndex_00++;
     }
 
-    v1 = sshd10Ptr_800c6678.deref()._0f.get();
+    v1 = sshd10_800c6678.flags_0f;
     if((v1 & 0x20) != 0) {
       if((v1 & 0x40) != 0) {
-        struct66._10.set((int)_800c6674.deref(1).offset(0x5L).get());
+        struct66._10 = sublist_800c6674._05;
       } else {
         //LAB_800465a4
-        struct66._10.set(sshd10Ptr_800c6678.deref()._0e.get());
+        struct66._10 = sshd10_800c6678._0e;
       }
 
       //LAB_800465b0
-      struct66._14.set(1);
-      struct66._16.set(127);
+      struct66._14 = 1;
+      struct66._16 = 127;
     } else {
       //LAB_800465ec
-      struct66._14.set(0);
+      struct66._14 = 0;
     }
 
     //LAB_800465f0
@@ -1625,27 +1632,27 @@ public final class Scus94491BpeSegment_8004 {
     int r = FUN_80048ab8(channelIndex, FUN_80048b90(4, 0), 1);
 
     final long t0;
-    if((sshd10Ptr_800c6678.deref()._0f.get() & 0x10L) != 0) {
-      t0 = _800c6674.deref(1).offset(0x4L).get();
+    if((sshd10_800c6678.flags_0f & 0x10) != 0) {
+      t0 = sublist_800c6674._04;
     } else {
       //LAB_80046668
-      t0 = sshd10Ptr_800c6678.deref()._0d.get();
+      t0 = sshd10_800c6678._0d;
     }
 
     //LAB_8004666c
     if(spu124.pitchShifted_0e9 != 0) {
       //LAB_8004669c
-      voicePtr_800c4ac4.deref().voices[voiceIndex].ADPCM_SAMPLE_RATE.set(calculateSampleRate(sshd10Ptr_800c6678.deref()._02.get(), spu124.param0_002, sshd10Ptr_800c6678.deref()._03.get(), sssqEntry_800c6680.deref().pitchBend_0a.get(), t0) * spu124.pitch_0ec / 0x1000);
+      voicePtr_800c4ac4.deref().voices[voiceIndex].ADPCM_SAMPLE_RATE.set(calculateSampleRate(sshd10_800c6678._02, spu124.param0_002, sshd10_800c6678._03, sssqEntry_800c6680.pitchBend_0a, t0) * spu124.pitch_0ec / 0x1000);
       l = scaleValue12((short)l, (short)spu124.pitchShiftVolLeft_0ee);
       r = scaleValue12((short)r, (short)spu124.pitchShiftVolRight_0f0);
-      struct66._42.set(1);
+      struct66._42 = 1;
     } else {
       //LAB_80046730
       //LAB_80046750
-      voicePtr_800c4ac4.deref().voices[voiceIndex].ADPCM_SAMPLE_RATE.set(calculateSampleRate(sshd10Ptr_800c6678.deref()._02.get(), spu124.param0_002, sshd10Ptr_800c6678.deref()._03.get(), sssqEntry_800c6680.deref().pitchBend_0a.get(), t0));
+      voicePtr_800c4ac4.deref().voices[voiceIndex].ADPCM_SAMPLE_RATE.set(calculateSampleRate(sshd10_800c6678._02, spu124.param0_002, sshd10_800c6678._03, sssqEntry_800c6680.pitchBend_0a, t0));
       l = scaleValue12((short)l, (short)0x1000);
       r = scaleValue12((short)r, (short)0x1000);
-      struct66._42.set(0);
+      struct66._42 = 0;
     }
 
     //LAB_800467c8
@@ -1658,33 +1665,34 @@ public final class Scus94491BpeSegment_8004 {
     final Voice voice = voicePtr_800c4ac4.deref().voices[voiceIndex];
     voice.LEFT.set(l);
     voice.RIGHT.set(r);
-    voice.ADPCM_START_ADDR.set(playableSoundPtrArr_800c43d0.get(spu124.playableSoundIndex_020).soundBufferPtr_08.get() + sshd10Ptr_800c6678.deref()._04.get());
-    voice.ADSR_LO.set(sshd10Ptr_800c6678.deref().adsrLo_06.get());
-    voice.ADSR_HI.set(sshd10Ptr_800c6678.deref().adsrHi_08.get());
+    voice.ADPCM_START_ADDR.set(playableSoundPtrArr_800c43d0[spu124.playableSoundIndex_020].soundBufferPtr_08 + sshd10_800c6678.soundOffset_04);
+    voice.ADSR_LO.set(sshd10_800c6678.adsrLo_06);
+    voice.ADSR_HI.set(sshd10_800c6678.adsrHi_08);
     setKeyOn(channelIndex, voiceIndex);
 
-    if(spu124.reverbEnabled_0ea != 0 || (sshd10Ptr_800c6678.deref()._0f.get() & 0x80) != 0) {
+    if(spu124.reverbEnabled_0ea != 0 || (sshd10_800c6678.flags_0f & 0x80) != 0) {
       _800c6630.reverbMode_12 |= 1 << voiceIndex;
       //LAB_80046884
       //LAB_800468d8
-    } else if((sshd10Ptr_800c6678.deref()._0f.get() & 0x80) == 0) {
+    } else if((sshd10_800c6678.flags_0f & 0x80) == 0) {
       _800c6630.reverbMode_12 &= ~(1 << voiceIndex);
     }
 
     //LAB_80046914
-    if((sshd10Ptr_800c6678.deref()._0f.get() & 0x2) == 0) {
+    if((sshd10_800c6678.flags_0f & 0x2) == 0) {
       //LAB_80046964
       _800c6630.noiseMode_16 &= ~(1 << voiceIndex);
     } else {
       setNoiseMode(channelIndex, voiceIndex);
       voicePtr_800c4ac4.deref().SPUCNT
         .and(0xc0ff) // Mask off noise freq step/shift
-        .or(sshd10Ptr_800c6678.deref()._02.get() << 8);
+        .or(sshd10_800c6678._02 << 8);
     }
 
     //LAB_800469ac
-    sshd10Ptr_800c6678.sub(sp18 * 0x10L);
-    spu124.sssqOffset_00c += 4;
+    sshd10Index_800c6678 -= sp18;
+    sshd10_800c6678 = sshd10Arr_800c6678[sshd10Index_800c6678];
+    spu124.sssqReader_010.advance(4);
 
     //LAB_800469d4
   }
@@ -1698,10 +1706,10 @@ public final class Scus94491BpeSegment_8004 {
     }
 
     //LAB_80046a7c
-    if(sssqEntry_800c6680.deref().volume_03.get() != 0) {
-      final int v1 = (int)_800c6674.deref(1).get();
+    if(sssqEntry_800c6680.volume_03 != 0) {
+      final int v1 = sublist_800c6674.count_00;
       if(v1 == 0xff) {
-        final int v0 = s2.param0_002 - (int)_800c6674.deref(1).offset(0x6L).get();
+        final int v0 = s2.param0_002 - sublist_800c6674._06;
         s2._026 = v0;
         s2._01e = v0;
         //LAB_80046acc
@@ -1719,98 +1727,99 @@ public final class Scus94491BpeSegment_8004 {
       //LAB_80046af8
       //LAB_80046b24
       for(int s7 = s2._01e; s7 < s2._026 + 1; s7++) {
-        if(FUN_80048938(_800c6674.deref(1).get(), s7, s2.param0_002)) {
+        if(FUN_80048938(sublist_800c6674._01, s7, s2.param0_002)) {
           final int voiceIndex = FUN_80047e1c();
           if(voiceIndex == -1) {
             break;
           }
 
-          final SpuStruct66 s1 = _800c3a40.get(voiceIndex);
+          final SpuStruct66 s1 = _800c3a40[voiceIndex];
 
-          sshd10Ptr_800c6678.add(s7 * 0x10L);
-          if((sshd10Ptr_800c6678.deref()._0f.get() & 0x1) != 0) {
-            s1._08.set(0);
-            s1._0c.set(1);
+          sshd10Index_800c6678 += s7;
+          sshd10_800c6678 = sshd10Arr_800c6678[sshd10Index_800c6678];
+          if((sshd10_800c6678.flags_0f & 0x1) != 0) {
+            s1._08 = 0;
+            s1._0c = 1;
           } else {
             //LAB_80046bb4
-            s1._08.set(1);
-            s1._0c.set(0);
+            s1._08 = 1;
+            s1._0c = 0;
           }
 
           //LAB_80046bdc
-          s1.used_00.set(true);
-          s1._02.set(s2.param0_002);
-          s1.channelIndex_06.set((short)channelIndex);
-          s1.channel_04.set(s2.command_000 & 0xf);
-          s1._0a.set(_800c6630.voiceIndex_00);
-          s1._0e.set(s7);
-          s1._12.set(0);
-          s1._1a.set(0);
-          s1._1c.set(0);
-          s1._1e.set(0);
-          s1._20.set(0);
-          s1.playableSoundIndex_22.set(s2.playableSoundIndex_020);
-          s1._28.set(sssqEntry_800c6680.deref().volume_0e.get());
-          s1._2a.set((int)_800c6674.deref(1).offset(0x1L).get());
-          s1._2c.set(volumeRamp_800c4ab0.deref().ramp_02.get(s2.param1_003).get());
-          s1._2e.set(sshd10Ptr_800c6678.deref()._0b.get());
-          s1._30.set((int)_80059f3c.offset(FUN_80048b90(0, 0) / 0x2L & 0x7ffeL).offset(0x0L).get());
-          s1._32.set((int)_80059f3c.offset(FUN_80048b90(0, 0) / 0x2L & 0x7ffeL).offset(0x1L).get());
-          s1._34.set(sssqEntry_800c6680.deref().volume_03.get());
+          s1.used_00 = true;
+          s1.noteNumber_02 = s2.param0_002;
+          s1.channelIndex_06 = channelIndex;
+          s1.commandChannel_04 = s2.command_000 & 0xf;
+          s1.voiceIndex_0a = _800c6630.voiceIndex_00;
+          s1._0e = s7;
+          s1._12 = 0;
+          s1._1a = 0;
+          s1._1c = 0;
+          s1._1e = 0;
+          s1._20 = 0;
+          s1.playableSoundIndex_22 = s2.playableSoundIndex_020;
+          s1.volume_28 = sssqEntry_800c6680.volume_0e;
+          s1._2a = sublist_800c6674._01;
+          s1._2c = volumeRamp_800c4ab0.ramp_02[s2.param1_003];
+          s1._2e = sshd10_800c6678._0b;
+          s1._30[0] = (int)_80059f3c.offset(FUN_80048b90(0, 0) / 0x2L & 0x7ffeL).offset(0x0L).get();
+          s1._30[1] = (int)_80059f3c.offset(FUN_80048b90(0, 0) / 0x2L & 0x7ffeL).offset(0x1L).get();
+          s1._34 = sssqEntry_800c6680.volume_03;
 
-          int n = sshd10Ptr_800c6678.deref()._03.get();
+          int n = sshd10_800c6678._03;
           if((n & 0x80) != 0) {
             n |= 0xff00;
           }
 
           //LAB_80046d08
-          s1._36.set((short)n);
-          s1._38.set(sssqEntry_800c6680.deref().pitchBend_0a.get());
-          s1._3a.set(sshd10Ptr_800c6678.deref()._0d.get());
-          s1.breath_3c.set(sssqEntry_800c6680.deref().breath_0c.get());
-          s1._3e.set(s2.param2_005);
-          s1._40.set(sshd10Ptr_800c6678.deref()._02.get());
-          s1._42.set(0);
-          s1.sssqEntry_44.set(0);
-          s1._4a.set(sshd10Ptr_800c6678.deref()._0a.get());
-          s1._4c.set(sssqEntry_800c6680.deref().pan_04.get());
-          s1._4e.set(120);
+          s1._36 = (short)n;
+          s1._38 = sssqEntry_800c6680.pitchBend_0a;
+          s1._3a = sshd10_800c6678._0d;
+          s1.breath_3c = sssqEntry_800c6680.breath_0c;
+          s1._3e = s2.param2_005;
+          s1._40 = sshd10_800c6678._02;
+          s1._42 = 0;
+          s1.sssqEntry_44 = 0;
+          s1._4a = sshd10_800c6678._0a;
+          s1._4c = sssqEntry_800c6680.pan_04;
+          s1._4e = 120;
 
-          if(sssqEntry_800c6680.deref()._0b.get() == 0x7f) {
-            s1._18.set(1);
+          if(sssqEntry_800c6680._0b == 0x7f) {
+            s1._18 = 1;
           }
 
           //LAB_80046d80
-          if((sshd10Ptr_800c6678.deref()._0f.get() & 0x20) == 0 || sssqEntry_800c6680.deref().modulation_09.get() == 0) {
+          if((sshd10_800c6678.flags_0f & 0x20) == 0 || sssqEntry_800c6680.modulation_09 == 0) {
             //LAB_80046e1c
             //LAB_80046e20
-            s1._14.set(0);
-            s1._16.set(0);
+            s1._14 = 0;
+            s1._16 = 0;
           } else {
-            if((sshd10Ptr_800c6678.deref()._0f.get() & 0x40) != 0) {
-              s1._10.set((int)_800c6674.deref(1).offset(0x5L).get());
+            if((sshd10_800c6678.flags_0f & 0x40) != 0) {
+              s1._10 = sublist_800c6674._05;
             } else {
               //LAB_80046dd0
-              s1._10.set(sshd10Ptr_800c6678.deref()._0e.get());
+              s1._10 = sshd10_800c6678._0e;
             }
 
             //LAB_80046ddc
-            s1._14.set(1);
-            s1._16.set(sssqEntry_800c6680.deref().modulation_09.get());
+            s1._14 = 1;
+            s1._16 = sssqEntry_800c6680.modulation_09;
           }
 
           //LAB_80046e4c
           final long t0;
-          if((sshd10Ptr_800c6678.deref()._0f.get() & 0x10) != 0) {
-            t0 = _800c6674.deref(1).offset(0x4L).get();
+          if((sshd10_800c6678.flags_0f & 0x10) != 0) {
+            t0 = sublist_800c6674._04;
           } else {
             //LAB_80046e7c
-            t0 = sshd10Ptr_800c6678.deref()._0d.get();
+            t0 = sshd10_800c6678._0d;
           }
 
           //LAB_80046e80
           //LAB_80046ea0
-          voicePtr_800c4ac4.deref().voices[voiceIndex].ADPCM_SAMPLE_RATE.set(calculateSampleRate(sshd10Ptr_800c6678.deref()._02.get(), s2.param0_002, sshd10Ptr_800c6678.deref()._03.get(), sssqEntry_800c6680.deref().pitchBend_0a.get(), t0));
+          voicePtr_800c4ac4.deref().voices[voiceIndex].ADPCM_SAMPLE_RATE.set(calculateSampleRate(sshd10_800c6678._02, s2.param0_002, sshd10_800c6678._03, sssqEntry_800c6680.pitchBend_0a, t0));
           int l = FUN_80048ab8(channelIndex, FUN_80048b90(0, 0), 0);
           int r = FUN_80048ab8(channelIndex, FUN_80048b90(0, 0), 1);
 
@@ -1823,12 +1832,12 @@ public final class Scus94491BpeSegment_8004 {
           final Voice voice = voicePtr_800c4ac4.deref().voices[voiceIndex];
           voice.LEFT.set(l);
           voice.RIGHT.set(r);
-          voice.ADPCM_START_ADDR.set(sshd10Ptr_800c6678.deref()._04.get() + playableSoundPtrArr_800c43d0.get(s2.playableSoundIndex_020).soundBufferPtr_08.get());
-          voice.ADSR_LO.set(sshd10Ptr_800c6678.deref().adsrLo_06.get());
-          voice.ADSR_HI.set(sshd10Ptr_800c6678.deref().adsrHi_08.get());
+          voice.ADPCM_START_ADDR.set(sshd10_800c6678.soundOffset_04 + playableSoundPtrArr_800c43d0[s2.playableSoundIndex_020].soundBufferPtr_08);
+          voice.ADSR_LO.set(sshd10_800c6678.adsrLo_06);
+          voice.ADSR_HI.set(sshd10_800c6678.adsrHi_08);
           setKeyOn(channelIndex, voiceIndex);
 
-          if((sshd10Ptr_800c6678.deref()._0f.get() & 0x80) != 0) {
+          if((sshd10_800c6678.flags_0f & 0x80) != 0) {
             _800c6630.reverbMode_12 |= 1 << voiceIndex;
           } else {
             //LAB_80046fe8
@@ -1843,7 +1852,8 @@ public final class Scus94491BpeSegment_8004 {
             _800c6630.voiceIndex_00++;
           }
 
-          sshd10Ptr_800c6678.sub(s7 * 0x10L);
+          sshd10Index_800c6678 -= s7;
+          sshd10_800c6678 = sshd10Arr_800c6678[sshd10Index_800c6678];
 
           if(_800c6630._0c != 0) {
             //LAB_80046ae0
@@ -1857,7 +1867,7 @@ public final class Scus94491BpeSegment_8004 {
     }
 
     //LAB_800470bc
-    s2.sssqOffset_00c += 3;
+    s2.sssqReader_010.advance(3);
 
     //LAB_800470cc
   }
@@ -1869,23 +1879,23 @@ public final class Scus94491BpeSegment_8004 {
     //LAB_80047144
     for(short voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
       final Voice voice = voicePtr_800c4ac4.deref().voices[voiceIndex];
-      final SpuStruct66 struct66 = _800c3a40.get(voiceIndex);
+      final SpuStruct66 struct66 = _800c3a40[voiceIndex];
 
-      if(struct66.used_00.get()) {
-        if(struct66.channelIndex_06.get() >= 0 && struct66.channelIndex_06.get() < 24) {
-          final SpuStruct124 struct124 = _800c4ac8[struct66.channelIndex_06.get()];
+      if(struct66.used_00) {
+        if(struct66.channelIndex_06 >= 0 && struct66.channelIndex_06 < 24) {
+          final SpuStruct124 struct124 = _800c4ac8[struct66.channelIndex_06];
 
-          if(struct66._14.get() == 1 || struct66.sssqEntry_44.get() == 1 || struct124._104 == 1) {
+          if(struct66._14 == 1 || struct66.sssqEntry_44 == 1 || struct124._104 == 1) {
             //LAB_800471d0
             //LAB_800471d4
-            int a2 = struct66._36.get();
-            int a1 = struct66._02.get();
-            int t2 = struct66._40.get();
-            int a3 = struct66._38.get();
-            int t3 = struct66._3a.get();
-            if(struct66._14.get() == 1 || struct66.sssqEntry_44.get() == 1) {
+            int a2 = struct66._36;
+            int a1 = struct66.noteNumber_02;
+            int t2 = struct66._40;
+            int a3 = struct66._38;
+            int t3 = struct66._3a;
+            if(struct66._14 == 1 || struct66.sssqEntry_44 == 1) {
               //LAB_80047220
-              if((a1 & 0xffff) >= (t2 & 0xffff)) {
+              if(a1 >= t2) {
                 t2 = 120 - (a1 - t2);
               } else {
                 //LAB_80047244
@@ -1893,59 +1903,56 @@ public final class Scus94491BpeSegment_8004 {
               }
 
               //LAB_80047248
-              if(struct66._14.get() != 0) {
-                if(struct44.ticksPerSecond_42 != 60 || (struct66.breath_3c.get() & 0xfff) != 120) {
+              if(struct66._14 != 0) {
+                if(struct44.ticksPerSecond_42 != 60 || (struct66.breath_3c & 0xfff) != 120) {
                   //LAB_800472cc
                   //LAB_800472d0
-                  struct66._12.add(struct66.breath_3c.get() & 0xfff);
+                  struct66._12 += struct66.breath_3c & 0xfff;
                 } else {
-                  final int v0_0 = struct66.breath_3c.get() & 0xf000;
+                  final int v0_0 = struct66.breath_3c & 0xf000;
                   if(v0_0 != 0) {
-                    struct66.breath_3c.and(0xfff).or((v0_0 - 0x1000));
-                    struct66._12.add(struct66.breath_3c.get() & 0xfff);
+                    struct66.breath_3c = struct66.breath_3c & 0xfff | v0_0 - 0x1000;
+                    struct66._12 += struct66.breath_3c & 0xfff;
                   } else {
                     //LAB_800472c0
-                    struct66.breath_3c.or(0x6000);
+                    struct66.breath_3c |= 0x6000;
                   }
                 }
 
                 //LAB_80047300
-                final long a0 = playableSoundPtrArr_800c43d0.get(struct124.playableSoundIndex_020).sshdPtr_04.getPointer();
+                final Sshd sshd = playableSoundPtrArr_800c43d0[struct124.playableSoundIndex_020].sshdPtr_04;
 
                 a3 = 0x80;
-                if((a0 & 0x3) == 0) {
-                  sshdPtr_800c4ac0.setPointer(a0);
+                sshdPtr_800c4ac0 = sshd;
 
-                  final long a1_0 = a0 + MEMORY.ref(4, a0).offset(0x18L).get();
-                  if(a1_0 != -1 && (a1_0 & 0x1) == 0) {
-                    _800c4ab4.setu(a1_0);
-                    _800c4ab8.setu(a1_0);
+                if(sshd.hasSubfile(2)) {
+                  final WaveformList waveforms = sshd.getSubfile(2, WaveformList::new);
+                  waveforms_800c4ab4 = waveforms;
+                  waveforms_800c4ab8 = waveforms;
 
-                    if(struct66._12.get() >= 0xf0) {
-                      struct66._12.set((struct66.breath_3c.get() & 0xfff) >>> 1);
-                    }
-
-                    //LAB_800473a0
-                    final long v1 = _800c4ab8.get() + _800c4ab4.deref(2).offset(struct66._10.get() * 0x2L).offset(0x2L).get() + (struct66._12.get() >>> 2);
-                    a3 = (int)MEMORY.ref(1, v1).offset(0x0L).get();
+                  if(struct66._12 >= 0xf0) {
+                    struct66._12 = (struct66.breath_3c & 0xfff) >>> 1;
                   }
+
+                  //LAB_800473a0
+                  a3 = waveforms_800c4ab8.waveforms_02[struct66._10]._00[struct66._12 >>> 2];
                 }
 
                 //LAB_800473d4
                 //LAB_800473d8
-                a1 = struct66._4e.get();
-                if(struct66._1c.get() == 0) {
+                a1 = struct66._4e;
+                if(struct66._1c == 0) {
                   int v0;
                   int v1;
-                  if(struct66._38.get() >= 64) {
-                    v0 = (struct66._38.get() - 64) * struct66._3a.get();
+                  if(struct66._38 >= 64) {
+                    v0 = (struct66._38 - 64) * struct66._3a;
                     v1 = v0 / 64;
                     a1 = a1 + v1;
                     v0 = v0 / 4;
                     v1 = v1 * 16;
                   } else {
                     //LAB_80047454
-                    v0 = (64 - struct66._38.get()) * struct66._3a.get();
+                    v0 = (64 - struct66._38) * struct66._3a;
                     final int a0_0 = v0 / 64;
                     a1 = a1 - a0_0;
                     v1 = v0 / 4;
@@ -1959,42 +1966,42 @@ public final class Scus94491BpeSegment_8004 {
                 }
 
                 //LAB_80047498
-                a3 = a3 * struct66._16.get() / 255 - ((struct66._16.get() + 1) / 2 - 64);
+                a3 = a3 * struct66._16 / 255 - ((struct66._16 + 1) / 2 - 64);
               }
 
               //LAB_800474f0
-              if(struct66.sssqEntry_44.get() != 0) {
-                if(struct66._62.get() != 0) {
-                  struct66._62.decr();
+              if(struct66.sssqEntry_44 != 0) {
+                if(struct66._62 != 0) {
+                  struct66._62--;
 
                   final int a0;
-                  if((struct66._60.get() & 0x80) != 0) {
-                    a0 = struct66._64.get() - struct66._62.get();
-                    a1 = struct66._4e.get() - a0 * (0x100 - struct66._60.get()) / 10 / struct66._64.get();
-                    a2 = a2 - a0 * (-struct66._60.get() & 0xff) * 192 / (struct66._64.get() * 120) % 16;
+                  if((struct66._60 & 0x80) != 0) {
+                    a0 = struct66._64 - struct66._62;
+                    a1 = struct66._4e - a0 * (0x100 - struct66._60) / 10 / struct66._64;
+                    a2 = a2 - a0 * (-struct66._60 & 0xff) * 192 / (struct66._64 * 120) % 16;
                   } else {
                     //LAB_8004762c
-                    a0 = (struct66._64.get() - struct66._62.get()) * struct66._60.get();
-                    a1 = struct66._4e.get() + a0 / 10 / struct66._64.get();
-                    a2 = a2 + a0 * 192 / (struct66._64.get() * 120) % 16;
+                    a0 = (struct66._64 - struct66._62) * struct66._60;
+                    a1 = struct66._4e + a0 / 10 / struct66._64;
+                    a2 = a2 + a0 * 192 / (struct66._64 * 120) % 16;
                   }
 
                   //LAB_800476f4
-                  if((a1 & 0xffff) <= 0xc) {
+                  if(a1 <= 0xc) {
                     a1 = 0xc;
                   }
 
                   //LAB_8004770c
-                  if((a1 & 0xffff) >= 0xf3) {
+                  if(a1 >= 0xf3) {
                     a1 = 0xf3;
                   }
 
                   //LAB_8004771c
                   struct124._11c = a1;
 
-                  if(struct66._62.get() == 0) {
-                    struct66._4e.set(a1);
-                    struct66.sssqEntry_44.set(0);
+                  if(struct66._62 == 0) {
+                    struct66._4e = a1;
+                    struct66.sssqEntry_44 = 0;
                   }
                 }
               }
@@ -2003,7 +2010,7 @@ public final class Scus94491BpeSegment_8004 {
             //LAB_80047754
             //LAB_80047758
             final int pitch;
-            if(struct66._42.get() == 1 || struct124._104 == 1) {
+            if(struct66._42 == 1 || struct124._104 == 1) {
               //LAB_80047794
               pitch = struct124.pitch_0ec;
             } else {
@@ -2012,61 +2019,61 @@ public final class Scus94491BpeSegment_8004 {
 
             //LAB_800477a0
             //LAB_800477a4
-            voice.ADPCM_SAMPLE_RATE.set(pitch * (calculateSampleRate(t2, a1, (short)a2, a3 & 0xffff, t3) & 0xffff) >> 12);
+            voice.ADPCM_SAMPLE_RATE.set(pitch * calculateSampleRate(t2, a1, (short)a2, a3, t3) >> 12);
           }
 
           //LAB_800477ec
-          if(struct66._1a.get() == 1) {
-            if(struct66._46.get() == 1 || struct66._48.get() == 1 || struct124._105 == 1) {
+          if(struct66._1a == 1) {
+            if(struct66._46 == 1 || struct66._48 == 1 || struct124._105 == 1) {
               //LAB_80047844
               //LAB_80047848
-              if(struct66._46.get() != 0) {
-                final int v1 = struct66._50.get();
+              if(struct66._46 != 0) {
+                final int v1 = struct66._50;
 
-                if(v1 == struct66._52.get()) {
-                  struct66._46.set(0);
+                if(v1 == struct66._52) {
+                  struct66._46 = 0;
                 } else {
-                  if(struct66._54.get() != 0) {
-                    struct66._2c.set(FUN_8004af3c(struct66._50.get() & 0xff, struct66._52.get() & 0xff, struct66._56.get() & 0xff, struct66._54.get() & 0xff) & 0xff);
-                    struct66._54.decr();
+                  if(struct66._54 != 0) {
+                    struct66._2c = FUN_8004af3c(struct66._50 & 0xff, struct66._52 & 0xff, struct66._56 & 0xff, struct66._54 & 0xff) & 0xff;
+                    struct66._54--;
                   } else {
                     //LAB_800478c8
-                    struct66._2c.set(v1);
+                    struct66._2c = v1;
 
                     //LAB_800478cc
-                    struct66._46.set(0);
+                    struct66._46 = 0;
                   }
                 }
               }
 
               //LAB_800478d0
               //LAB_800478d4
-              if(struct66._48.get() != 0) {
-                final int v1 = struct66._58.get();
+              if(struct66._48 != 0) {
+                final int v1 = struct66._58;
 
-                if(v1 == struct66._5a.get()) {
-                  struct66._48.set(0);
+                if(v1 == struct66._5a) {
+                  struct66._48 = 0;
                 } else {
                   //LAB_8004791c
-                  if(struct66._5c.get() != 0) {
-                    struct66._4c.set(FUN_8004af3c(struct66._58.get() & 0xff, struct66._5a.get() & 0xff, struct66._5e.get() & 0xff, struct66._5c.get() & 0xff) & 0xff);
-                    struct66._5c.decr();
+                  if(struct66._5c != 0) {
+                    struct66._4c = FUN_8004af3c(struct66._58 & 0xff, struct66._5a & 0xff, struct66._5e & 0xff, struct66._5c & 0xff) & 0xff;
+                    struct66._5c--;
                   } else {
                     //LAB_8004795c
-                    struct66._4c.set(v1);
-                    struct66._48.set(0);
+                    struct66._4c = v1;
+                    struct66._48 = 0;
                   }
 
                   //LAB_80047964
-                  struct66._30.set((int)_80059f3c.offset((struct66._4c.get() >>> 2) * 0x2L).offset(0x0L).get());
-                  struct66._32.set((int)_80059f3c.offset((struct66._4c.get() >>> 2) * 0x2L).offset(0x1L).get());
+                  struct66._30[0] = (int)_80059f3c.offset((struct66._4c >>> 2) * 0x2L).offset(0x0L).get();
+                  struct66._30[1] = (int)_80059f3c.offset((struct66._4c >>> 2) * 0x2L).offset(0x1L).get();
                 }
               }
 
               //LAB_800479c4
-              int l = FUN_8004ae94(voiceIndex & 0xffff, 0);
-              int r = FUN_8004ae94(voiceIndex & 0xffff, 1);
-              if(struct66._42.get() == 1 || struct124._105 == 1) {
+              int l = FUN_8004ae94(voiceIndex, 0);
+              int r = FUN_8004ae94(voiceIndex, 1);
+              if(struct66._42 == 1 || struct124._105 == 1) {
                 //LAB_80047a24
                 l = scaleValue12((short)l, (short)struct124.pitchShiftVolLeft_0ee);
                 r = scaleValue12((short)r, (short)struct124.pitchShiftVolRight_0f0);
@@ -2096,69 +2103,94 @@ public final class Scus94491BpeSegment_8004 {
   @Method(0x80047b38L)
   public static void FUN_80047b38(final int channelIndex) {
     final SpuStruct124 spu124 = _800c4ac8[channelIndex];
-    final SshdFile sshd = playableSoundPtrArr_800c43d0.get(spu124.playableSoundIndex_020).sshdPtr_04.deref();
+    final Sshd sshd = playableSoundPtrArr_800c43d0[spu124.playableSoundIndex_020].sshdPtr_04;
 
     _800c6630.sshdPtr_08 = sshd;
-    sshdPtr_800c4ac0.set(sshd);
-    sssqPtr_800c4aa4.setPointer(spu124.sssqPtr_010);
-    volumeRamp_800c4ab0.setPointer(sshd.getAddress() + sshd.ptrs_10.get(1).get());
+    sshdPtr_800c4ac0 = sshd;
+    volumeRamp_800c4ab0 = sshd.getSubfile(1, VolumeRamp::new);
 
-    final long v1 = sshd.getAddress() + sshd.ptrs_10.get(spu124._02a * 4).get(); //TODO
+    final Sshd.Subfile subfile = sshd.getSubfile(spu124._02a * 4);
 
-    _800c4aa8.setu(v1);
-    _800c4aac.setu(v1);
+    if(subfile == null || subfile instanceof Subfile0) {
+      final Subfile0 v1 = sshd.getSubfile(spu124._02a * 4, Subfile0::new);
+      subfile0_800c4aa8 = v1;
+      subfile0_800c4aac = v1;
+      sssqish_800c4aa8 = null;
+    } else {
+      subfile0_800c4aa8 = null;
+      subfile0_800c4aac = null;
+      sssqish_800c4aa8 = (Sssqish)sshd.getSubfile(spu124._02a * 4);
+    }
   }
 
   @Method(0x80047bd0L)
-  public static long FUN_80047bd0(final int channelIndex) {
+  public static boolean FUN_80047bd0(final int channelIndex) {
     final SpuStruct124 struct124 = _800c4ac8[channelIndex];
 
-    if(struct124._028 == 0 && struct124._02a == 1) {
-      if(sshdPtr_800c4ac0.deref().ptrs_10.get(4).get() != -1) {
-        _800c6674.setu(_800c6630.sshdPtr_08.getAddress() + sshdPtr_800c4ac0.deref().ptrs_10.get(4).get() + _800c4aa8.deref(2).offset(sssqPtr_800c4aa4.deref().getByte(_800c4ac8[channelIndex].sssqOffset_00c + 3) * 0x2L).offset(0x192L).get() + 0x190L);
-        sshd10Ptr_800c6678.setPointer(_800c6630.sshdPtr_08.getAddress() + sshdPtr_800c4ac0.deref().ptrs_10.get(4).get() + _800c4aa8.deref(2).offset(sssqPtr_800c4aa4.deref().getByte(_800c4ac8[channelIndex].sssqOffset_00c + 3) * 0x2L).offset(0x192L).get() + 0x198L);
-        sssqPtr_800c667c.setu(_800c6630.sshdPtr_08.getAddress() + sshdPtr_800c4ac0.deref().ptrs_10.get(4).get());
-        sssqEntry_800c6680.setPointer(_800c6630.sshdPtr_08.getAddress() + sshdPtr_800c4ac0.deref().ptrs_10.get(4).get() + 0x10 + channelIndex * 0x10);
-        return 0x1L;
+    if(struct124._028 == 0 && struct124._02a == 1 && sshdPtr_800c4ac0.hasSubfile(4)) {
+      final Sssqish sssq = _800c6630.sshdPtr_08.getSubfile(4, (data, offset) -> new Sssqish(data, offset, _800c6630.sshdPtr_08.getSubfileSize(4)));
+      final int data = _800c4ac8[channelIndex].sssqReader_010.readByte(3);
+
+      if(data < sssqish_800c4aa8.entries2_190.entries_02.length) {
+        sublist_800c6674 = sssqish_800c4aa8.entries2_190.entries_02[data];
+        sshd10Arr_800c6678 = sublist_800c6674.entry_08;
+        sshd10Index_800c6678 = 0;
+        sshd10_800c6678 = sshd10Arr_800c6678[sshd10Index_800c6678];
+      } else {
+        sublist_800c6674 = null;
+        sshd10Arr_800c6678 = null;
+        sshd10Index_800c6678 = 0;
+        sshd10_800c6678 = null;
       }
+
+      sssqReader_800c667c = null; //sssq.reader(); TODO?
+      sssqEntry_800c6680 = sssq.entries_10[channelIndex];
+      return true;
     }
 
     //LAB_80047cd0
     if(struct124._028 == 0) {
-      return 0;
+      return false;
     }
 
     if(struct124._02a == 1) {
       //LAB_80047cf0
-      return 0;
+      return false;
     }
 
     //LAB_80047cf8
     final int command = struct124.command_000;
     final int channel = command & 0xf;
+    final int patchNumber = struct124.sssqReader_010.entry(channel).patchNumber_02;
+
     if(command < 0xa0) {
-      if(_800c4aa8.deref(2).offset(sssqPtr_800c4aa4.deref().entries_10.get(channel).patchNumber_02.get() * 0x2L).offset(0x2L).get() == 0xffff) {
-        return 0;
+      if(subfile0_800c4aa8.entries_02[patchNumber] == null) {
+        return false;
       }
 
-      if(_800c4aa8.deref(2).get() < sssqPtr_800c4aa4.deref().entries_10.get(channel).patchNumber_02.get()) {
-        return 0;
+      if(subfile0_800c4aa8.count_00 < patchNumber) {
+        return false;
       }
 
-      if(sshdPtr_800c4ac0.deref().ptrs_10.get(0).get() == -1) {
-        return 0;
+      if(!sshdPtr_800c4ac0.hasSubfile(0)) {
+        return false;
       }
     }
 
     //LAB_80047d7c
     //LAB_80047d80
-    _800c6674.setu(_800c6630.sshdPtr_08.getAddress() + sshdPtr_800c4ac0.deref().ptrs_10.get(0).get() + _800c4aa8.deref(2).offset(sssqPtr_800c4aa4.deref().entries_10.get(channel).patchNumber_02.get() * 0x2L).offset(0x2L).get());
-    sshd10Ptr_800c6678.setPointer(_800c6630.sshdPtr_08.getAddress() + sshdPtr_800c4ac0.deref().ptrs_10.get(0).get() + _800c4aa8.deref(2).offset(sssqPtr_800c4aa4.deref().entries_10.get(channel).patchNumber_02.get() * 0x2L).offset(0x2L).get() + 0x8L);
-    sssqPtr_800c667c.setu(struct124.sssqPtr_010);
-    sssqEntry_800c6680.setPointer(struct124.sssqPtr_010 + 0x10 + channel * 0x10);
+    if(patchNumber != -1) {
+      sublist_800c6674 = subfile0_800c4aa8.entries_02[patchNumber];
+      sshd10Arr_800c6678 = subfile0_800c4aa8.entries_02[patchNumber].entry_08;
+      sshd10Index_800c6678 = 0;
+      sshd10_800c6678 = sshd10Arr_800c6678[sshd10Index_800c6678];
+    }
+
+    sssqReader_800c667c = struct124.sssqReader_010;
+    sssqEntry_800c6680 = struct124.sssqReader_010.entry(channel);
 
     //LAB_80047e14
-    return 0x1L;
+    return true;
   }
 
   @Method(0x80047e1cL)
@@ -2172,7 +2204,7 @@ public final class Scus94491BpeSegment_8004 {
         _800c6630.voiceIndex_10 = 0;
       }
 
-      if(_800c3a40.get(_800c6630.voiceIndex_10)._10.get() == 0) {
+      if(_800c3a40[_800c6630.voiceIndex_10]._10 == 0) {
         return _800c6630.voiceIndex_10;
       }
     }
@@ -2180,8 +2212,8 @@ public final class Scus94491BpeSegment_8004 {
     //LAB_80047ea0
     int a1 = 24;
     for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
-      if(_800c3a40.get(voiceIndex)._1a.get() == 0 && _800c3a40.get(voiceIndex)._08.get() == 1) {
-        final int v1 = _800c3a40.get(voiceIndex)._0a.get();
+      if(_800c3a40[voiceIndex]._1a == 0 && _800c3a40[voiceIndex]._08 == 1) {
+        final int v1 = _800c3a40[voiceIndex].voiceIndex_0a;
 
         if(a1 > v1) {
           a1 = v1;
@@ -2195,8 +2227,8 @@ public final class Scus94491BpeSegment_8004 {
     if(a1 == 24) {
       //LAB_80047f28
       for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
-        if(_800c3a40.get(voiceIndex)._1a.get() == 0) {
-          final int v1 = _800c3a40.get(voiceIndex)._0a.get();
+        if(_800c3a40[voiceIndex]._1a == 0) {
+          final int v1 = _800c3a40[voiceIndex].voiceIndex_0a;
 
           if(a1 > v1) {
             //LAB_80047f84
@@ -2218,8 +2250,8 @@ public final class Scus94491BpeSegment_8004 {
     //LAB_80047f90
     //LAB_80047fa0
     for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
-      if((a1 & 0xffff) < _800c3a40.get(voiceIndex)._0a.get()) {
-        _800c3a40.get(voiceIndex)._0a.decr();
+      if(a1 < _800c3a40[voiceIndex].voiceIndex_0a) {
+        _800c3a40[voiceIndex].voiceIndex_0a--;
       }
 
       //LAB_80047fd0
@@ -2232,17 +2264,17 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x80048000L)
-  public static long FUN_80048000(final long a0, final long a1, final long playableSoundIndex) {
-    if((a0 & 0xffffL) != 0) {
+  public static long FUN_80048000(final int a0, final int a1, final long playableSoundIndex) {
+    if(a0 != 0) {
       //LAB_8004802c
       for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
-        if(_800c3a40.get(voiceIndex)._1a.get() == 1 && _800c3a40.get(voiceIndex)._20.get() == (a0 & 0xffffL) && _800c3a40.get(voiceIndex).playableSoundIndex_22.get() == (playableSoundIndex & 0xffffL)) {
+        if(_800c3a40[voiceIndex]._1a == 1 && _800c3a40[voiceIndex]._20 == a0 && _800c3a40[voiceIndex].playableSoundIndex_22 == playableSoundIndex) {
           //LAB_80048080
           for(int voiceIndex2 = 0; voiceIndex2 < 24; voiceIndex2++) {
-            final int v1 = _800c3a40.get(voiceIndex)._0a.get();
+            final int v1 = _800c3a40[voiceIndex].voiceIndex_0a;
 
-            if(v1 < _800c3a40.get(voiceIndex2)._0a.get() && v1 != 64) {
-              _800c3a40.get(voiceIndex2)._0a.decr();
+            if(v1 < _800c3a40[voiceIndex2].voiceIndex_0a && v1 != 64) {
+              _800c3a40[voiceIndex2].voiceIndex_0a--;
             }
 
             //LAB_800480cc
@@ -2258,18 +2290,19 @@ public final class Scus94491BpeSegment_8004 {
     }
 
     int t2 = 0;
-    int t1 = 24;
 
     //LAB_80048108
     if(_800c6630._0d >= _800c6630._03) {
       //LAB_80048134
       for(int i = 0; i < 24; i++) {
+        int t1 = 24;
+
         //LAB_80048144
         for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
-          if(_800c3a40.get(voiceIndex)._1a.get() == 1) {
-            final int v1 = _800c3a40.get(voiceIndex)._0a.get();
+          if(_800c3a40[voiceIndex]._1a == 1) {
+            final int v1 = _800c3a40[voiceIndex].voiceIndex_0a;
 
-            if(v1 >= i && v1 < (short)t1) {
+            if(v1 >= i && v1 < t1) {
               t1 = v1;
               t2 = voiceIndex;
             }
@@ -2278,13 +2311,13 @@ public final class Scus94491BpeSegment_8004 {
           //LAB_800481a0
         }
 
-        if(_800c3a40.get(t2)._1e.get() <= (a1 & 0xffffL)) {
+        if(_800c3a40[t2]._1e <= a1) {
           //LAB_800481fc
           for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
-            final int v1 = _800c3a40.get(voiceIndex)._0a.get();
+            final int v1 = _800c3a40[voiceIndex].voiceIndex_0a;
 
-            if(v1 > (short)t1 && v1 != 0xffffL) {
-              _800c3a40.get(voiceIndex)._0a.decr();
+            if(v1 > t1 && v1 != -1) {
+              _800c3a40[voiceIndex].voiceIndex_0a--;
             }
 
             //LAB_80048240
@@ -2296,7 +2329,6 @@ public final class Scus94491BpeSegment_8004 {
         }
 
         //LAB_8004826c
-        t1 = 24;
       }
 
       return -1;
@@ -2312,7 +2344,7 @@ public final class Scus94491BpeSegment_8004 {
       }
 
       //LAB_800482c0
-      if(!_800c3a40.get(_800c6630.voiceIndex_10).used_00.get()) {
+      if(!_800c3a40[_800c6630.voiceIndex_10].used_00) {
         //LAB_8004828c
         _800c6630._0d++;
         return _800c6630.voiceIndex_10;
@@ -2320,17 +2352,18 @@ public final class Scus94491BpeSegment_8004 {
     }
 
     int t3 = -1;
+    int t1 = 24;
 
     //LAB_80048320
     jmp_80048478:
     {
       for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
-        if(_800c3a40.get(voiceIndex)._08.get() == 1 && _800c3a40.get(voiceIndex)._1a.get() != 1) {
+        if(_800c3a40[voiceIndex]._08 == 1 && _800c3a40[voiceIndex]._1a != 1) {
           //LAB_8004836c
           for(int voiceIndex2 = voiceIndex; voiceIndex2 < 24; voiceIndex2++) {
-            if(_800c3a40.get(voiceIndex2)._08.get() == 1 && _800c3a40.get(voiceIndex2)._1a.get() != 1) {
-              final int v1 = _800c3a40.get(voiceIndex2)._0a.get();
-              if(v1 < (short)t1) {
+            if(_800c3a40[voiceIndex2]._08 == 1 && _800c3a40[voiceIndex2]._1a != 1) {
+              final int v1 = _800c3a40[voiceIndex2].voiceIndex_0a;
+              if(v1 < t1) {
                 t1 = v1;
                 t3 = voiceIndex2;
               }
@@ -2347,9 +2380,9 @@ public final class Scus94491BpeSegment_8004 {
 
       //LAB_80048414
       for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
-        if(_800c3a40.get(voiceIndex)._1a.get() != 1) {
-          final int v1 = _800c3a40.get(voiceIndex)._0a.get();
-          if(v1 < (short)t1) {
+        if(_800c3a40[voiceIndex]._1a != 1) {
+          final int v1 = _800c3a40[voiceIndex].voiceIndex_0a;
+          if(v1 < t1) {
             t1 = v1;
             t3 = voiceIndex;
           }
@@ -2363,10 +2396,10 @@ public final class Scus94491BpeSegment_8004 {
     //LAB_8004847c
     //LAB_80048494
     for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
-      final int v1 = _800c3a40.get(voiceIndex)._0a.get();
+      final int v1 = _800c3a40[voiceIndex].voiceIndex_0a;
 
-      if(v1 > (short)t1 && v1 != 0xffff) {
-        _800c3a40.get(voiceIndex)._0a.decr();
+      if(v1 > (short)t1 && v1 != -1) {
+        _800c3a40[voiceIndex].voiceIndex_0a--;
       }
 
       //LAB_800484d8
@@ -2386,13 +2419,13 @@ public final class Scus94491BpeSegment_8004 {
 
     //LAB_8004857c
     for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
-      if(_800c3a40.get(voiceIndex).used_00.get()) {
-        if(_800c3a40.get(voiceIndex)._1a.get() == 1) {
-          if(_800c3a40.get(voiceIndex).playableSoundIndex_22.get() == _800c4ac8[channelIndex].playableSoundIndex_020) {
-            if(_800c3a40.get(voiceIndex)._3e.get() == _800c4ac8[channelIndex].param2_005) {
-              if(_800c3a40.get(voiceIndex)._02.get() == _800c4ac8[channelIndex].param0_002) {
-                if(_800c3a40.get(voiceIndex)._0c.get() == 1) {
-                  if(_800c3a40.get(voiceIndex).channelIndex_06.get() == channelIndex) {
+      if(_800c3a40[voiceIndex].used_00) {
+        if(_800c3a40[voiceIndex]._1a == 1) {
+          if(_800c3a40[voiceIndex].playableSoundIndex_22 == _800c4ac8[channelIndex].playableSoundIndex_020) {
+            if(_800c3a40[voiceIndex]._3e == _800c4ac8[channelIndex].param2_005) {
+              if(_800c3a40[voiceIndex].noteNumber_02 == _800c4ac8[channelIndex].param0_002) {
+                if(_800c3a40[voiceIndex]._0c == 1) {
+                  if(_800c3a40[voiceIndex].channelIndex_06 == channelIndex) {
                     s3 |= 0x1L << voiceIndex;
                   } else {
                     //LAB_8004861c
@@ -2417,13 +2450,13 @@ public final class Scus94491BpeSegment_8004 {
     for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
       if((s3 & 0x1L << voiceIndex) != 0) {
         setKeyOff(channelIndex, voiceIndex);
-        _800c3a40.get(voiceIndex)._08.incr();
+        _800c3a40[voiceIndex]._08++;
       }
 
       //LAB_80048684
     }
 
-    _800c4ac8[channelIndex].sssqOffset_00c += 4;
+    _800c4ac8[channelIndex].sssqReader_010.advance(4);
   }
 
   @Method(0x800486d4L)
@@ -2432,23 +2465,23 @@ public final class Scus94491BpeSegment_8004 {
 
     //LAB_80048724
     for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
-      final SpuStruct66 spu66 = _800c3a40.get(voiceIndex);
-      if(spu66.used_00.get()) {
-        if(spu66._1a.get() == 0) {
-          if(spu66.channelIndex_06.get() == channelIndex) {
-            if(spu66.playableSoundIndex_22.get() == spu124.playableSoundIndex_020) {
-              if(spu66.channel_04.get() == (spu124.command_000 & 0xf)) {
-                if(spu66._02.get() == spu124.param0_002) {
-                  if(spu66._0c.get() == 0) {
+      final SpuStruct66 spu66 = _800c3a40[voiceIndex];
+      if(spu66.used_00) {
+        if(spu66._1a == 0) {
+          if(spu66.channelIndex_06 == channelIndex) {
+            if(spu66.playableSoundIndex_22 == spu124.playableSoundIndex_020) {
+              if(spu66.commandChannel_04 == (spu124.command_000 & 0xf)) {
+                if(spu66.noteNumber_02 == spu124.param0_002) {
+                  if(spu66._0c == 0) {
                     //LAB_800487d0
-                    spu66._08.set(1);
+                    spu66._08 = 1;
                     //LAB_800487d4
-                    spu66._18.set(0);
-                  } else if(spu66._18.get() == 0) {
-                    spu66._08.set(1);
+                    spu66._18 = 0;
+                  } else if(spu66._18 == 0) {
+                    spu66._08 = 1;
                   } else {
                     //LAB_800487d4
-                    spu66._18.set(0);
+                    spu66._18 = 0;
                   }
 
                   //LAB_800487d8
@@ -2463,7 +2496,7 @@ public final class Scus94491BpeSegment_8004 {
       //LAB_800487e4
     }
 
-    spu124.sssqOffset_00c += 3;
+    spu124.sssqReader_010.advance(3);
     return channelIndex;
   }
 
@@ -2489,17 +2522,19 @@ public final class Scus94491BpeSegment_8004 {
     }
 
     //LAB_80048950
-    sshd10Ptr_800c6678.add(a1 * 0x10L);
+    sshd10Index_800c6678 += a1;
+    sshd10_800c6678 = sshd10Arr_800c6678[sshd10Index_800c6678];
 
     final boolean ret;
-    if(a2 < sshd10Ptr_800c6678.deref()._00.get()) {
+    if(a2 < sshd10_800c6678._00) {
       ret = false;
     } else {
-      ret = sshd10Ptr_800c6678.deref()._01.get() >= a2;
+      ret = sshd10_800c6678._01 >= a2;
     }
 
     //LAB_80048988
-    sshd10Ptr_800c6678.sub(a1 * 0x10L);
+    sshd10Index_800c6678 -= a1;
+    sshd10_800c6678 = sshd10Arr_800c6678[sshd10Index_800c6678];
 
     //LAB_80048990
     return ret;
@@ -2522,79 +2557,73 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x80048ab8L) //TODO this appears to be calculating volume
   public static int FUN_80048ab8(final int channelIndex, final int a1, final int a2) {
-    final int t2 = (int)(sssqEntry_800c6680.deref().volume_0e.get()
-      * _800c6674.deref(1).offset(0x1L).get()
-      * volumeRamp_800c4ab0.deref().ramp_02.get(_800c4ac8[channelIndex].param1_003).get()
-      * sshd10Ptr_800c6678.deref()._0b.get()
+    final int t2 = (int)(sssqEntry_800c6680.volume_0e
+      * sublist_800c6674._01
+      * volumeRamp_800c4ab0.ramp_02[_800c4ac8[channelIndex].param1_003]
+      * sshd10_800c6678._0b
       / 0x4000
       * _80059f3c.offset(a2).offset(a1 / 2 & 0x7ffeL).get());
 
     final int v1;
-    if(sshd10Ptr_800c6678.deref()._0a.get() == 0) {
+    if(sshd10_800c6678._0a == 0) {
       v1 = t2 / 0x80;
     } else {
-      v1 = sshd10Ptr_800c6678.deref()._0a.get() << 8 | (short)(t2 / 0x80) / 0x80;
+      v1 = sshd10_800c6678._0a << 8 | (short)(t2 / 0x80) / 0x80;
     }
 
     //LAB_80048b88
-    return v1 & 0xffff;
+    return v1;
   }
 
   @Method(0x80048b90L)
   public static int FUN_80048b90(final int a0, final int a1) {
-    sshd10Ptr_800c6678.add(a1 * 0x10L);
+    sshd10Index_800c6678 += a1;
+    sshd10_800c6678 = sshd10Arr_800c6678[sshd10Index_800c6678];
 
     final int a1_0;
     if(a0 == 4) {
-      a1_0 = sshd10Ptr_800c6678.deref()._0c.get();
+      a1_0 = sshd10_800c6678._0c;
     } else {
       //LAB_80048bc4
-      a1_0 = (int)_80059b3c.offset(_80059b3c.offset(sshd10Ptr_800c6678.deref()._0c.get() / 4 + _800c6674.deref(1).offset(0x2L).get() / 4 * 0x20L).get() / 4 + sssqEntry_800c6680.deref().pan_04.get() / 4 * 0x20L).get();
+      a1_0 = (int)_80059b3c.offset(_80059b3c.offset(sshd10_800c6678._0c / 4 + sublist_800c6674._02 / 4 * 0x20L).get() / 4 + sssqEntry_800c6680.pan_04 / 4 * 0x20L).get();
     }
 
     //LAB_80048c1c
-    sshd10Ptr_800c6678.sub(a1 * 0x10L);
-    return a1_0 & 0xffff;
+    sshd10Index_800c6678 -= a1;
+    sshd10_800c6678 = sshd10Arr_800c6678[sshd10Index_800c6678];
+
+    return a1_0;
   }
 
-  @Method(0x80048c38L) //TODO return SssqFile
-  public static long FUN_80048c38(final int playableSoundIndex, final int patchIndex, final int sequenceIndex) {
+  @Method(0x80048c38L)
+  public static SssqReader FUN_80048c38(final int playableSoundIndex, final int patchIndex, final int sequenceIndex) {
     assert playableSoundIndex >= 0;
     assert patchIndex >= 0;
     assert sequenceIndex >= 0;
 
-    final PlayableSoundStruct sound = playableSoundPtrArr_800c43d0.get(playableSoundIndex);
+    final PlayableSoundStruct sound = playableSoundPtrArr_800c43d0[playableSoundIndex];
     final SpuStruct44 a3 = _800c6630;
-    final SshdFile sshd = sound.sshdPtr_04.derefNullable();
-
-    //TODO GH#3 this shouldn't be necessary
-    if(sshd == null) {
-      return 0;
-    }
-
+    final Sshd sshd = sound.sshdPtr_04;
     a3.sshdPtr_08 = sshd;
-    sshdPtr_800c4ac0.set(sshd);
-    final PatchList patchList = MEMORY.ref(2, sshd.getAddress() + sshd.ptrs_10.get(3).get(), PatchList::new);
+    sshdPtr_800c4ac0 = sshd;
+    final PatchList patchList = sshd.getSubfile(3, PatchList::new);
 
-    if((sshd.ptrs_10.get(3).get() & 0x1) != 0) {
-      LOGGER.error("PTR_1C HAS INVALID VALUE %08x".formatted(sshd.ptrs_10.get(3).get()), new Throwable());
-    }
+    patchList_800c4abc = patchList;
 
-    _800c4abc.setu(patchList.getAddress());
-
-    if(sshd.ptrs_10.get(4).get() != -1) {
+    if(sshd.hasSubfile(4)) {
       if((playableSoundIndex & 0x80) == 0) {
         if(a3._03 != 0) {
-          if(sound.used_00.get()) {
-            if(patchList.patchCount_00.get() >= patchIndex) {
-              if(!patchList.patches_02.get(patchIndex).isNull()) {
-                final PatchList.SequenceList sequenceList = patchList.patches_02.get(patchIndex).deref();
-                final int sequenceCount = sequenceList.sequenceCount_00.get();
+          if(sound.used_00) {
+            if(patchList.patchCount_00 >= patchIndex) {
+              if(patchList.patches_02[patchIndex] != null) {
+                final PatchList.SequenceList sequenceList = patchList.patches_02[patchIndex];
+                final int sequenceCount = sequenceList.sequenceCount_00;
 
                 if(sequenceCount >= sequenceIndex) {
-                  _800c4aa8.setu(sshd.getAddress() + sshd.ptrs_10.get(4).get());
-                  volumeRamp_800c4ab0.setPointer(sshd.getAddress() + sshd.ptrs_10.get(1).get());
-                  return sequenceList.sequences_02.get(sequenceIndex).deref().getAddress();
+//                  subfile0_800c4aa8 = sshd.getSubfile(4, Subfile0::new);
+                  sssqish_800c4aa8 = sshd.getSubfile(4, (data, offset) -> new Sssqish(data, offset, sshd.getSubfileSize(4)));
+                  volumeRamp_800c4ab0 = sshd.getSubfile(1, VolumeRamp::new);
+                  return sequenceList.sequences_02[sequenceIndex].reader();
                 }
               }
             }
@@ -2604,17 +2633,12 @@ public final class Scus94491BpeSegment_8004 {
     }
 
     //LAB_80048d3c
-    return 0;
+    throw new RuntimeException("Failed to find sequence");
   }
 
   @Method(0x80048d44L)
   public static long FUN_80048d44(final int playableSoundIndex, final int patchIndex, final int sequenceIndex) {
-    final long v0 = FUN_80048c38(playableSoundIndex, patchIndex, sequenceIndex);
-    if(v0 == 0) {
-//      assert false : "Error"; //TODO GH#3
-      return -0x1L;
-    }
-
+    final SssqReader reader = FUN_80048c38(playableSoundIndex, patchIndex, sequenceIndex);
     final SpuStruct44 spu44 = _800c6630;
 
     //LAB_80048dac
@@ -2625,10 +2649,9 @@ public final class Scus94491BpeSegment_8004 {
         spu124._02a = 1;
         spu124._028 = 0;
         spu124._027 = 0;
-        spu124._118 = 0;
+        spu124.deltaTime_118 = 0;
         spu124._0e7 = 0;
-        spu124.sssqPtr_010 = v0;
-        spu124.sssqOffset_00c = 0;
+        spu124.sssqReader_010 = reader;
         spu124.playableSoundIndex_020 = playableSoundIndex;
         spu124.sequenceIndex_022 = sequenceIndex;
         spu124.patchIndex_024 = patchIndex;
@@ -2640,7 +2663,7 @@ public final class Scus94491BpeSegment_8004 {
 
         //LAB_80048e10
         spu124._035 = 0;
-        spu124.overrideCommand_037 = false;
+        spu124.jump_037 = false;
         spu124._0e6 = 0;
         spu124.pitchShiftVolLeft_0ee = 0;
         spu124.pitchShifted_0e9 = 0;
@@ -2677,7 +2700,7 @@ public final class Scus94491BpeSegment_8004 {
 
     if(spu124._02a != 0) {
       spu124._0e7 = 1;
-      spu124._118 = 0;
+      spu124.deltaTime_118 = 0;
       spu124._02a = 0;
       spu124._104 = 0;
       spu124._105 = 0;
@@ -2685,19 +2708,19 @@ public final class Scus94491BpeSegment_8004 {
       spu124.reverbEnabled_0ea = 0;
     } else {
       //LAB_80048f0c
-      spu124.sssqOffset_00c = 0x110;
+      spu124.sssqReader_010.jump(0x110);
       spu124._028 = 0;
     }
 
     //LAB_80048f18
     //LAB_80048f30
     for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
-      final SpuStruct66 spu66 = _800c3a40.get(voiceIndex);
+      final SpuStruct66 spu66 = _800c3a40[voiceIndex];
 
-      if(spu66.channelIndex_06.get() == channelIndex) {
-        if(spu66._1a.get() == 0) {
-          spu66._14.set(0);
-          spu66._38.set(64);
+      if(spu66.channelIndex_06 == channelIndex) {
+        if(spu66._1a == 0) {
+          spu66._14 = 0;
+          spu66._38 = 64;
         }
       }
 
@@ -2712,9 +2735,8 @@ public final class Scus94491BpeSegment_8004 {
     assert channelIndex >= 0;
 
     final SpuStruct124 spu124 = _800c4ac8[channelIndex];
-    final long v1 = spu124.sssqPtr_010 + spu124.sssqOffset_00c;
-    spu124.tempo_108 = (int)(MEMORY.ref(1, v1).offset(0x3L).get() << 8 | MEMORY.ref(1, v1).offset(0x2L).get());
-    spu124.sssqOffset_00c += 4;
+    spu124.tempo_108 = spu124.sssqReader_010.readShort(2);
+    spu124.sssqReader_010.advance(4);
   }
 
   @Method(0x80048fecL)
@@ -2724,13 +2746,13 @@ public final class Scus94491BpeSegment_8004 {
     final SpuStruct124 spu124 = _800c4ac8[channelIndex];
 
     if(spu124._02a == 0) {
-      sssqEntry_800c6680.deref().patchNumber_02.set(sssqPtr_800c4aa4.deref().getByte(spu124.sssqOffset_00c + 1)); // Read patch number
-      sssqEntry_800c6680.deref().pitchBend_0a.set(0x40);
-      sssqEntry_800c6680.deref()._0b.set(0x40);
+      sssqEntry_800c6680.patchNumber_02 = spu124.sssqReader_010.readByte(1); // Read patch number
+      sssqEntry_800c6680.pitchBend_0a = 0x40;
+      sssqEntry_800c6680._0b = 0x40;
     }
 
     //LAB_80049058
-    spu124.sssqOffset_00c += 2;
+    spu124.sssqReader_010.advance(2);
   }
 
   @Method(0x8004906cL)
@@ -2742,16 +2764,16 @@ public final class Scus94491BpeSegment_8004 {
     if(spu124._02a != 0) {
       //LAB_800490b8
       for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
-        final SpuStruct66 spu66 = _800c3a40.get(voiceIndex);
+        final SpuStruct66 spu66 = _800c3a40[voiceIndex];
 
-        if(spu66._1a.get() == 1) {
-          if(spu66._3e.get() == sssqPtr_800c4aa4.deref().getByte(spu124.sssqOffset_00c + 3)) {
-            if(spu66._02.get() == sssqPtr_800c4aa4.deref().getByte(spu124.sssqOffset_00c + 4)) {
-              if(spu66.playableSoundIndex_22.get() == spu124.playableSoundIndex_020) {
-                if(spu66.channelIndex_06.get() == channelIndex) {
-                  if(spu66.used_00.get()) {
-                    spu66._14.set(1);
-                    spu66._16.set(sssqPtr_800c4aa4.deref().getByte(spu124.sssqOffset_00c + 2));
+        if(spu66._1a == 1) {
+          if(spu66._3e == spu124.sssqReader_010.readByte(3)) {
+            if(spu66.noteNumber_02 == spu124.sssqReader_010.readByte(4)) {
+              if(spu66.playableSoundIndex_22 == spu124.playableSoundIndex_020) {
+                if(spu66.channelIndex_06 == channelIndex) {
+                  if(spu66.used_00) {
+                    spu66._14 = 1;
+                    spu66._16 = spu124.sssqReader_010.readByte(2);
                   }
                 }
               }
@@ -2762,22 +2784,22 @@ public final class Scus94491BpeSegment_8004 {
         //LAB_80049150
       }
 
-      spu124.sssqOffset_00c += 5;
+      spu124.sssqReader_010.advance(5);
       return;
     }
 
     //LAB_80049178
-    sssqEntry_800c6680.deref().modulation_09.set(sssqPtr_800c4aa4.deref().getByte(spu124.sssqOffset_00c + 2));
+    sssqEntry_800c6680.modulation_09 = spu124.sssqReader_010.readByte(2);
 
     //LAB_800491b0
     for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
-      final SpuStruct66 spu66 = _800c3a40.get(voiceIndex);
-      if(spu66.channel_04.get() == (spu124.command_000 & 0xf)) {
-        if(spu66.playableSoundIndex_22.get() == spu124.playableSoundIndex_020) {
-          if(spu66.channelIndex_06.get() == channelIndex) {
-            if(spu66.used_00.get()) {
-              spu66._14.set(1);
-              spu66._16.set(sssqPtr_800c4aa4.deref().getByte(spu124.sssqOffset_00c + 2));
+      final SpuStruct66 spu66 = _800c3a40[voiceIndex];
+      if(spu66.commandChannel_04 == (spu124.command_000 & 0xf)) {
+        if(spu66.playableSoundIndex_22 == spu124.playableSoundIndex_020) {
+          if(spu66.channelIndex_06 == channelIndex) {
+            if(spu66.used_00) {
+              spu66._14 = 1;
+              spu66._16 = spu124.sssqReader_010.readByte(2);
             }
           }
         }
@@ -2786,7 +2808,7 @@ public final class Scus94491BpeSegment_8004 {
       //LAB_80049228
     }
 
-    spu124.sssqOffset_00c += 3;
+    spu124.sssqReader_010.advance(3);
   }
 
   @Method(0x80049250L)
@@ -2795,7 +2817,7 @@ public final class Scus94491BpeSegment_8004 {
 
     final SpuStruct124 spu124 = _800c4ac8[channelIndex];
 
-    final int breath = 240 / (60 - sssqPtr_800c4aa4.deref().getByte(spu124.sssqOffset_00c + 2) * 58 / 127);
+    final int breath = 240 / (60 - spu124.sssqReader_010.readByte(2) * 58 / 127);
 
     //LAB_800492dc
     //LAB_800492f4
@@ -2803,15 +2825,15 @@ public final class Scus94491BpeSegment_8004 {
     if(spu124._02a != 0) {
       //LAB_80049318
       for(int i = 0; i < 24; i++) {
-        final SpuStruct66 spu66 = _800c3a40.get(i);
+        final SpuStruct66 spu66 = _800c3a40[i];
 
-        if(spu66.channel_04.get() == (spu124.command_000 & 0xf)) {
-          if(spu66._3e.get() == sssqPtr_800c4aa4.deref().getByte(spu124.sssqOffset_00c + 3)) {
-            if(spu66._02.get() == sssqPtr_800c4aa4.deref().getByte(spu124.sssqOffset_00c + 4)) {
-              if(spu66.playableSoundIndex_22.get() == spu124.playableSoundIndex_020) {
-                if(spu66.channelIndex_06.get() == channelIndex) {
-                  if(spu66.used_00.get()) {
-                    spu66.breath_3c.set(breath);
+        if(spu66.commandChannel_04 == (spu124.command_000 & 0xf)) {
+          if(spu66._3e == spu124.sssqReader_010.readByte(3)) {
+            if(spu66.noteNumber_02 == spu124.sssqReader_010.readByte(4)) {
+              if(spu66.playableSoundIndex_22 == spu124.playableSoundIndex_020) {
+                if(spu66.channelIndex_06 == channelIndex) {
+                  if(spu66.used_00) {
+                    spu66.breath_3c = breath;
                   }
                 }
               }
@@ -2822,22 +2844,22 @@ public final class Scus94491BpeSegment_8004 {
         //LAB_800493ac
       }
 
-      spu124.sssqOffset_00c += 5;
+      spu124.sssqReader_010.advance(5);
       return;
     }
 
     //LAB_800493d4
-    sssqEntry_800c6680.deref().breath_0c.set(breath);
+    sssqEntry_800c6680.breath_0c = breath;
 
     //LAB_800493f4
     for(int i = 0; i < 24; i++) {
-      final SpuStruct66 spu66 = _800c3a40.get(i);
+      final SpuStruct66 spu66 = _800c3a40[i];
 
-      if(spu66.channel_04.get() == (spu124.command_000 & 0xf)) {
-        if(spu66.playableSoundIndex_22.get() == spu124.playableSoundIndex_020) {
-          if(spu66.channelIndex_06.get() == channelIndex) {
-            if(spu66.used_00.get()) {
-              spu66.breath_3c.set(breath);
+      if(spu66.commandChannel_04 == (spu124.command_000 & 0xf)) {
+        if(spu66.playableSoundIndex_22 == spu124.playableSoundIndex_020) {
+          if(spu66.channelIndex_06 == channelIndex) {
+            if(spu66.used_00) {
+              spu66.breath_3c = breath;
             }
           }
         }
@@ -2846,34 +2868,33 @@ public final class Scus94491BpeSegment_8004 {
       //LAB_80049458
     }
 
-    spu124.sssqOffset_00c += 3;
+    spu124.sssqReader_010.advance(3);
   }
 
   @Method(0x80049480L)
   public static void sssqHandlePortamento(final int channelIndex) {
     final SpuStruct44 struct44 = _800c6630;
     final SpuStruct124 struct124 = _800c4ac8[channelIndex];
-    final SssqFile sssq = sssqPtr_800c4aa4.deref();
 
     //LAB_800494d0
     for(int t2 = 0; t2 < 24; t2++) {
-      final SpuStruct66 struct66 = _800c3a40.get(t2);
+      final SpuStruct66 struct66 = _800c3a40[t2];
 
-      if(struct66.used_00.get()) {
-        if(struct66._1a.get() == 1) {
-          if(struct66.playableSoundIndex_22.get() == struct124.playableSoundIndex_020) {
-            if(struct66._3e.get() == sssq.getByte(struct124.sssqOffset_00c + 4)) {
-              if(struct66._02.get() == sssq.getByte(struct124.sssqOffset_00c + 5)) {
-                if(struct66.channelIndex_06.get() == channelIndex) {
-                  if(struct66._62.get() != 0) {
-                    struct66._4e.set(struct124._11c);
+      if(struct66.used_00) {
+        if(struct66._1a == 1) {
+          if(struct66.playableSoundIndex_22 == struct124.playableSoundIndex_020) {
+            if(struct66._3e == struct124.sssqReader_010.readByte(4)) {
+              if(struct66.noteNumber_02 == struct124.sssqReader_010.readByte(5)) {
+                if(struct66.channelIndex_06 == channelIndex) {
+                  if(struct66._62 != 0) {
+                    struct66._4e = struct124._11c;
                   }
 
                   //LAB_80049578
-                  struct66.sssqEntry_44.set(1);
-                  struct66._60.set(sssq.getByte(struct124.sssqOffset_00c + 3));
-                  struct66._62.set(sssq.getByte(struct124.sssqOffset_00c + 2) * 4 * struct44.ticksPerSecond_42 / 60);
-                  struct66._64.set(sssq.getByte(struct124.sssqOffset_00c + 2) * 4 * struct44.ticksPerSecond_42 / 60);
+                  struct66.sssqEntry_44 = 1;
+                  struct66._60 = struct124.sssqReader_010.readByte(3);
+                  struct66._62 = struct124.sssqReader_010.readByte(2) * 4 * struct44.ticksPerSecond_42 / 60;
+                  struct66._64 = struct124.sssqReader_010.readByte(2) * 4 * struct44.ticksPerSecond_42 / 60;
                 }
               }
             }
@@ -2882,7 +2903,7 @@ public final class Scus94491BpeSegment_8004 {
       }
     }
 
-    struct124.sssqOffset_00c += 6;
+    struct124.sssqReader_010.advance(6);
   }
 
   @Method(0x80049638L)
@@ -2895,19 +2916,19 @@ public final class Scus94491BpeSegment_8004 {
     if(spu124._02a != 0) {
       //LAB_800496bc
       for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
-        final SpuStruct66 spu66 = _800c3a40.get(voiceIndex);
+        final SpuStruct66 spu66 = _800c3a40[voiceIndex];
 
-        if(spu66.used_00.get()) {
-          if(spu66._1a.get() == 1) {
-            if(spu66.playableSoundIndex_22.get() == spu124.playableSoundIndex_020) {
-              if(spu66._3e.get() == sssqPtr_800c4aa4.deref().getByte(spu124.sssqOffset_00c + 4)) {
-                if(spu66._02.get() == sssqPtr_800c4aa4.deref().getByte(spu124.sssqOffset_00c + 5)) {
-                  if(spu66.channelIndex_06.get() == channelIndex) {
-                    spu66._46.incr();
-                    spu66._52.set(spu66._2c);
-                    spu66._50.set(sssqPtr_800c4aa4.deref().getByte(spu124.sssqOffset_00c + 3));
-                    spu66._54.set(sssqPtr_800c4aa4.deref().getByte(spu124.sssqOffset_00c + 2) * 4 * spu44.ticksPerSecond_42 / 60);
-                    spu66._56.set(sssqPtr_800c4aa4.deref().getByte(spu124.sssqOffset_00c + 2) * 4 * spu44.ticksPerSecond_42 / 60);
+        if(spu66.used_00) {
+          if(spu66._1a == 1) {
+            if(spu66.playableSoundIndex_22 == spu124.playableSoundIndex_020) {
+              if(spu66._3e == spu124.sssqReader_010.readByte(4)) {
+                if(spu66.noteNumber_02 == spu124.sssqReader_010.readByte(5)) {
+                  if(spu66.channelIndex_06 == channelIndex) {
+                    spu66._46++;
+                    spu66._52 = spu66._2c;
+                    spu66._50 = spu124.sssqReader_010.readByte(3);
+                    spu66._54 = spu124.sssqReader_010.readByte(2) * 4 * spu44.ticksPerSecond_42 / 60;
+                    spu66._56 = spu124.sssqReader_010.readByte(2) * 4 * spu44.ticksPerSecond_42 / 60;
                   }
                 }
               }
@@ -2919,24 +2940,24 @@ public final class Scus94491BpeSegment_8004 {
       }
 
       //LAB_80049950
-      spu124.sssqOffset_00c += 6;
+      spu124.sssqReader_010.advance(6);
     } else {
       //LAB_800497fc
-      sssqEntry_800c6680.deref().volume_03.set(sssqPtr_800c4aa4.deref().getByte(spu124.sssqOffset_00c + 2));
-      sssqEntry_800c6680.deref().volume_0e.set((int)sssqPtr_800c667c.deref(1).offset(0x0L).get() * sssqEntry_800c6680.deref().volume_03.get() / 0x80);
+      sssqEntry_800c6680.volume_03 = spu124.sssqReader_010.readByte(2);
+      sssqEntry_800c6680.volume_0e = sssqReader_800c667c.baseVolume() * sssqEntry_800c6680.volume_03 / 0x80;
 
       //LAB_8004985c
       for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
-        final SpuStruct66 spu66 = _800c3a40.get(voiceIndex);
+        final SpuStruct66 spu66 = _800c3a40[voiceIndex];
 
-        if(spu66.used_00.get()) {
-          if(spu66.channel_04.get() == (spu124.command_000 & 0xf)) {
-            if(spu66.playableSoundIndex_22.get() == spu124.playableSoundIndex_020) {
-              if(spu66._08.get() != 1) {
-                if(spu66.channelIndex_06.get() == channelIndex) {
-                  spu124.param1_003 = spu66._2c.get();
-                  voicePtr_800c4ac4.deref().voices[voiceIndex].LEFT.set(FUN_80048ab8(spu66.channelIndex_06.get(), FUN_80048b90(0, spu66._0e.get()), 0));
-                  voicePtr_800c4ac4.deref().voices[voiceIndex].RIGHT.set(FUN_80048ab8(spu66.channelIndex_06.get(), FUN_80048b90(0, spu66._0e.get()), 1));
+        if(spu66.used_00) {
+          if(spu66.commandChannel_04 == (spu124.command_000 & 0xf)) {
+            if(spu66.playableSoundIndex_22 == spu124.playableSoundIndex_020) {
+              if(spu66._08 != 1) {
+                if(spu66.channelIndex_06 == channelIndex) {
+                  spu124.param1_003 = spu66._2c;
+                  voicePtr_800c4ac4.deref().voices[voiceIndex].LEFT.set(FUN_80048ab8(spu66.channelIndex_06, FUN_80048b90(0, spu66._0e), 0));
+                  voicePtr_800c4ac4.deref().voices[voiceIndex].RIGHT.set(FUN_80048ab8(spu66.channelIndex_06, FUN_80048b90(0, spu66._0e), 1));
                 }
               }
             }
@@ -2947,7 +2968,7 @@ public final class Scus94491BpeSegment_8004 {
       }
 
       //LAB_80049950
-      spu124.sssqOffset_00c += 3;
+      spu124.sssqReader_010.advance(3);
     }
   }
 
@@ -2961,18 +2982,18 @@ public final class Scus94491BpeSegment_8004 {
     if(spu124._02a != 0) {
       //LAB_80049a08
       for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
-        final SpuStruct66 spu66 = _800c3a40.get(voiceIndex);
-        if(spu66.used_00.get()) {
-          if(spu66._1a.get() == 1) {
-            if(spu66.playableSoundIndex_22.get() == spu124.playableSoundIndex_020) {
-              if(spu66._3e.get() == sssqPtr_800c4aa4.deref().getByte(spu124.sssqOffset_00c + 4)) {
-                if(spu66._02.get() == sssqPtr_800c4aa4.deref().getByte(spu124.sssqOffset_00c + 5)) {
-                  if(spu66.channelIndex_06.get() == channelIndex) {
-                    spu66._48.set(1);
-                    spu66._5a.set(spu66._4c);
-                    spu66._58.set(sssqPtr_800c4aa4.deref().getByte(spu124.sssqOffset_00c + 3));
-                    spu66._5c.set(sssqPtr_800c4aa4.deref().getByte(spu124.sssqOffset_00c + 2) * 4 * spu44.ticksPerSecond_42 / 60);
-                    spu66._5e.set(sssqPtr_800c4aa4.deref().getByte(spu124.sssqOffset_00c + 2) * 4 * spu44.ticksPerSecond_42 / 60);
+        final SpuStruct66 spu66 = _800c3a40[voiceIndex];
+        if(spu66.used_00) {
+          if(spu66._1a == 1) {
+            if(spu66.playableSoundIndex_22 == spu124.playableSoundIndex_020) {
+              if(spu66._3e == spu124.sssqReader_010.readByte(4)) {
+                if(spu66.noteNumber_02 == spu124.sssqReader_010.readByte(5)) {
+                  if(spu66.channelIndex_06 == channelIndex) {
+                    spu66._48 = 1;
+                    spu66._5a = spu66._4c;
+                    spu66._58 = spu124.sssqReader_010.readByte(3);
+                    spu66._5c = spu124.sssqReader_010.readByte(2) * 4 * spu44.ticksPerSecond_42 / 60;
+                    spu66._5e = spu124.sssqReader_010.readByte(2) * 4 * spu44.ticksPerSecond_42 / 60;
                   }
                 }
               }
@@ -2984,23 +3005,23 @@ public final class Scus94491BpeSegment_8004 {
       }
 
       //LAB_80049c88
-      spu124.sssqOffset_00c += 6;
+      spu124.sssqReader_010.advance(6);
     } else {
       //LAB_80049b48
-      sssqEntry_800c6680.deref().pan_04.set(sssqPtr_800c4aa4.deref().getByte(spu124.sssqOffset_00c + 2));
+      sssqEntry_800c6680.pan_04 = spu124.sssqReader_010.readByte(2);
 
       //LAB_80049b80
       for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
-        final SpuStruct66 spu66 = _800c3a40.get(voiceIndex);
-        if(spu66.channel_04.get() == (spu124.command_000 & 0xf)) {
-          if(spu66.playableSoundIndex_22.get() == spu124.playableSoundIndex_020) {
-            if(spu66.channelIndex_06.get() == channelIndex) {
-              if(spu66._08.get() != 1) {
-                if(spu66.used_00.get()) {
-                  spu66._4c.set(sssqPtr_800c4aa4.deref().getByte(spu124.sssqOffset_00c + 2));
-                  spu124.param1_003 = spu66._2c.get();
-                  voicePtr_800c4ac4.deref().voices[voiceIndex].LEFT.set(FUN_80048ab8(channelIndex, FUN_80048b90(0, spu66._0e.get()), 0));
-                  voicePtr_800c4ac4.deref().voices[voiceIndex].RIGHT.set(FUN_80048ab8(channelIndex, FUN_80048b90(0, spu66._0e.get()), 1));
+        final SpuStruct66 spu66 = _800c3a40[voiceIndex];
+        if(spu66.commandChannel_04 == (spu124.command_000 & 0xf)) {
+          if(spu66.playableSoundIndex_22 == spu124.playableSoundIndex_020) {
+            if(spu66.channelIndex_06 == channelIndex) {
+              if(spu66._08 != 1) {
+                if(spu66.used_00) {
+                  spu66._4c = spu124.sssqReader_010.readByte(2);
+                  spu124.param1_003 = spu66._2c;
+                  voicePtr_800c4ac4.deref().voices[voiceIndex].LEFT.set(FUN_80048ab8(channelIndex, FUN_80048b90(0, spu66._0e), 0));
+                  voicePtr_800c4ac4.deref().voices[voiceIndex].RIGHT.set(FUN_80048ab8(channelIndex, FUN_80048b90(0, spu66._0e), 1));
                 }
               }
             }
@@ -3011,7 +3032,7 @@ public final class Scus94491BpeSegment_8004 {
       }
 
       //LAB_80049c88
-      spu124.sssqOffset_00c += 3;
+      spu124.sssqReader_010.advance(3);
     }
   }
 
@@ -3023,29 +3044,30 @@ public final class Scus94491BpeSegment_8004 {
   @Method(0x80049e2cL)
   public static void FUN_80049e2c(final int channelIndex) {
     final SpuStruct124 struct124 = _800c4ac8[channelIndex];
-    struct124.overrideCommand_037 = true;
-    struct124._0e6 = 1;
 
-    final SssqFile sssq = sssqPtr_800c4aa4.deref();
-    final int a0 = sssq.getByte(struct124.sssqOffset_00c + 4);
+    final int a0 = struct124.sssqReader_010.readByte(4);
 
     if(a0 == 0) {
       //LAB_80049ecc
-      struct124.sssqOffset_02c = sssq.getByte(struct124.sssqOffset_00c + 3) << 8 | sssq.getByte(struct124.sssqOffset_00c + 2);
-      struct124._039 = sssqPtr_800c4aa4.deref().getByte(struct124.sssqOffset_02c);
-    } else if(a0 == struct124._035) {
-      struct124._035 = 0;
-      struct124.overrideCommand_037 = false;
-      struct124._0e6 = 0;
-    } else {
+      struct124.sssqOffset_02c = struct124.sssqReader_010.readShort(2);
+      struct124.jumpDestCommand_039 = struct124.sssqReader_010.readByteAbsolute(struct124.sssqOffset_02c);
+      struct124.jump_037 = true;
+      struct124._0e6 = 1;
+    } else if(a0 != struct124._035) {
       //LAB_80049ea0
-      struct124.sssqOffset_02c = sssq.getByte(struct124.sssqOffset_00c + 3) << 8 | sssq.getByte(struct124.sssqOffset_00c + 2);
+      struct124.sssqOffset_02c = struct124.sssqReader_010.readShort(2);
+      struct124.jumpDestCommand_039 = struct124.sssqReader_010.readByteAbsolute(struct124.sssqOffset_02c);
       struct124._035++;
-      struct124._039 = sssqPtr_800c4aa4.deref().getByte(struct124.sssqOffset_02c);
+      struct124.jump_037 = true;
+      struct124._0e6 = 1;
+    } else {
+      struct124._035 = 0;
+      struct124.jump_037 = false;
+      struct124._0e6 = 0;
     }
 
     //LAB_80049f00
-    struct124.sssqOffset_00c += 5;
+    struct124.sssqReader_010.advance(5);
   }
 
   @Method(0x80049f14L)
@@ -3060,59 +3082,59 @@ public final class Scus94491BpeSegment_8004 {
         spu124._11d = spu124.param1_003;
 
         //LAB_8004a2a0
-        spu124.sssqOffset_00c += 3;
+        spu124.sssqReader_010.advance(3);
         return;
       }
 
       //LAB_8004a050
       case 4 ->
-        sshd10Ptr_800c6678.deref().adsrLo_06
-          .and(0xff)
-          .or(0x7f - spu124.param1_003 << 8);
+        sshd10_800c6678.adsrLo_06 = sshd10_800c6678.adsrLo_06
+          & 0xff
+          | 0x7f - spu124.param1_003 << 8;
 
       case 5 ->
-        sshd10Ptr_800c6678.deref().adsrLo_06
-          .and(0xff)
-          .or(0x7f - spu124.param1_003 << 8)
-          .or(0x8000);
+        sshd10_800c6678.adsrLo_06 = sshd10_800c6678.adsrLo_06
+          & 0xff
+          | 0x7f - spu124.param1_003 << 8
+          | 0x8000;
 
       case 6 ->
-        sshd10Ptr_800c6678.deref().adsrLo_06
-          .and(0xff0f)
-          .or((0x7f - spu124.param1_003) / 0x8 * 0x10);
+        sshd10_800c6678.adsrLo_06 = sshd10_800c6678.adsrLo_06
+          & 0xff0f
+          | (0x7f - spu124.param1_003) / 0x8 * 0x10;
 
       //LAB_8004a050
       case 7 ->
-        sshd10Ptr_800c6678.deref().adsrLo_06
-          .and(0xfff0)
-          .or(spu124.param1_003 / 0x8);
+        sshd10_800c6678.adsrLo_06 = sshd10_800c6678.adsrLo_06
+          & 0xfff0
+          | spu124.param1_003 / 0x8;
 
       //LAB_8004a114
       case 8 ->
-        sshd10Ptr_800c6678.deref().adsrHi_08
-          .and(0x3f)
-          .or((0x7f - spu124.param1_003) * 0x40)
-          .or(0x4000 - spu124._122);
+        sshd10_800c6678.adsrHi_08 = sshd10_800c6678.adsrHi_08
+          & 0x3f
+          | (0x7f - spu124.param1_003) * 0x40
+          | 0x4000 - spu124._122;
 
       //LAB_8004a114
       case 9 ->
-        sshd10Ptr_800c6678.deref().adsrHi_08
-          .and(0x3f)
-          .or((0x7f - spu124.param1_003) * 0x40)
-          .or(0x8000)
-          .or(0x4000 - spu124._122);
+        sshd10_800c6678.adsrHi_08 = sshd10_800c6678.adsrHi_08
+          & 0x3f
+          | (0x7f - spu124.param1_003) * 0x40
+          | 0x8000
+          | 0x4000 - spu124._122;
 
       //LAB_8004a114
       case 0xa ->
-        sshd10Ptr_800c6678.deref().adsrHi_08
-          .and(0xffc0)
-          .or((0x7f - spu124.param1_003) / 4);
+        sshd10_800c6678.adsrHi_08 = sshd10_800c6678.adsrHi_08
+          & 0xffc0
+          | (0x7f - spu124.param1_003) / 4;
 
       case 0xb ->
-        sshd10Ptr_800c6678.deref().adsrHi_08
-          .and(0xffc0)
-          .or((0x7f - spu124.param1_003) / 4)
-          .or(0x20);
+        sshd10_800c6678.adsrHi_08 = sshd10_800c6678.adsrHi_08
+          & 0xffc0
+          | (0x7f - spu124.param1_003) / 4
+          | 0x20;
 
       case 0xc -> {
         if(spu124.param1_003 > 0x40) {
@@ -3127,7 +3149,7 @@ public final class Scus94491BpeSegment_8004 {
         sssqSetReverbType(spu124.param1_003);
 
         //LAB_8004a2a0
-        spu124.sssqOffset_00c += 3;
+        spu124.sssqReader_010.advance(3);
         return;
       }
 
@@ -3135,7 +3157,7 @@ public final class Scus94491BpeSegment_8004 {
         SsSetRVol(spu124.param1_003, spu124.param1_003);
 
         //LAB_8004a2a0
-        spu124.sssqOffset_00c += 3;
+        spu124.sssqReader_010.advance(3);
         return;
       }
 
@@ -3143,7 +3165,7 @@ public final class Scus94491BpeSegment_8004 {
         FUN_8004c690(spu124.param1_003);
 
         //LAB_8004a2a0
-        spu124.sssqOffset_00c += 3;
+        spu124.sssqReader_010.advance(3);
         return;
       }
 
@@ -3151,7 +3173,7 @@ public final class Scus94491BpeSegment_8004 {
         FUN_8004c5e8(spu124.param1_003);
 
         //LAB_8004a2a0
-        spu124.sssqOffset_00c += 3;
+        spu124.sssqReader_010.advance(3);
         return;
       }
     }
@@ -3159,16 +3181,16 @@ public final class Scus94491BpeSegment_8004 {
     //LAB_8004a1d0
     //LAB_8004a1f0
     for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
-      final SpuStruct66 spu66 = _800c3a40.get(voiceIndex);
+      final SpuStruct66 spu66 = _800c3a40[voiceIndex];
 
-      if(spu66._02.get() == 1) {
-        if(spu66.channel_04.get() == (spu124.command_000 & 0xf)) {
-          if(spu66._1a.get() == 0) {
-            if(spu66.channelIndex_06.get() == channelIndex) {
-              if(spu124._120 == 0xff || spu66._0e.get() == spu124._120) {
+      if(spu66.noteNumber_02 == 1) {
+        if(spu66.commandChannel_04 == (spu124.command_000 & 0xf)) {
+          if(spu66._1a == 0) {
+            if(spu66.channelIndex_06 == channelIndex) {
+              if(spu124._120 == 0xff || spu66._0e == spu124._120) {
                 //LAB_8004a274
-                voicePtr_800c4ac4.deref().voices[voiceIndex].ADSR_LO.set(sshd10Ptr_800c6678.deref().adsrLo_06.get());
-                voicePtr_800c4ac4.deref().voices[voiceIndex].ADSR_HI.set(sshd10Ptr_800c6678.deref().adsrHi_08.get());
+                voicePtr_800c4ac4.deref().voices[voiceIndex].ADSR_LO.set(sshd10_800c6678.adsrLo_06);
+                voicePtr_800c4ac4.deref().voices[voiceIndex].ADSR_HI.set(sshd10_800c6678.adsrHi_08);
               }
             }
           }
@@ -3179,7 +3201,7 @@ public final class Scus94491BpeSegment_8004 {
     }
 
     //LAB_8004a2a0
-    spu124.sssqOffset_00c += 3;
+    spu124.sssqReader_010.advance(3);
   }
 
   @Method(0x8004a2c0L)
@@ -3193,36 +3215,36 @@ public final class Scus94491BpeSegment_8004 {
 
     final SpuStruct124 spu124 = _800c4ac8[channelIndex];
 
-    final long v1 = spu124.param1_003;
-    if(v1 >= 0 && v1 < 0x10L) {
+    final int v1 = spu124.param1_003;
+    if(v1 >= 0 && v1 < 0x10) {
       //LAB_8004a44c
       spu124._11e = 0x10;
       spu124._120 = spu124.param1_003;
-    } else if(v1 == 0x10L) {
+    } else if(v1 == 0x10) {
       //LAB_8004a430
       spu124._11e = 1;
       //LAB_8004a398
-    } else if(v1 == 0x14L) {
+    } else if(v1 == 0x14) {
       //LAB_8004a3cc
       spu124._11e = 0;
       spu124._11f = 0;
-      spu124._039 = spu124.command_000;
-      spu124.sssqOffset_02c = spu124.sssqOffset_00c;
-    } else if(v1 == 0x1eL) {
+      spu124.jumpDestCommand_039 = spu124.command_000;
+      spu124.sssqOffset_02c = spu124.sssqReader_010.offset();
+    } else if(v1 == 0x1e) {
       //LAB_8004a3e8
-      if(spu124._11d == 0x7fL) {
+      if(spu124._11d == 0x7f) {
         //LAB_8004a424
-        spu124.overrideCommand_037 = true;
-      } else if(spu124._035 >= spu124._11d) {
-        spu124.sssqOffset_02c = 0;
-        spu124.overrideCommand_037 = false;
-        spu124._035 = 0;
-      } else {
+        spu124.jump_037 = true;
+      } else if(spu124._035 < spu124._11d) {
         //LAB_8004a41c
         spu124._035++;
 
         //LAB_8004a424
-        spu124.overrideCommand_037 = true;
+        spu124.jump_037 = true;
+      } else {
+        spu124.sssqOffset_02c = 0;
+        spu124.jump_037 = false;
+        spu124._035 = 0;
       }
 
       //LAB_8004a428
@@ -3235,7 +3257,7 @@ public final class Scus94491BpeSegment_8004 {
     }
 
     //LAB_8004a458
-    spu124.sssqOffset_00c += 3;
+    spu124.sssqReader_010.advance(3);
   }
 
   @Method(0x8004a46cL)
@@ -3244,17 +3266,17 @@ public final class Scus94491BpeSegment_8004 {
 
     final SpuStruct124 spu124 = _800c4ac8[channelIndex];
 
-    sssqEntry_800c6680.deref().pitchBend_0a.set(sssqPtr_800c4aa4.deref().getByte(spu124.sssqOffset_00c + 1));
+    sssqEntry_800c6680.pitchBend_0a = spu124.sssqReader_010.readByte(1);
 
     //LAB_8004a4e4
     for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
-      final SpuStruct66 spu66 = _800c3a40.get(voiceIndex);
-      if(spu66.channel_04.get() == (spu124.command_000 & 0xf)) {
-        if(spu66.playableSoundIndex_22.get() == spu124.playableSoundIndex_020) {
-          if(spu66.channelIndex_06.get() == channelIndex) {
-            if(spu66.used_00.get()) {
-              voicePtr_800c4ac4.deref().voices[voiceIndex].ADPCM_SAMPLE_RATE.set(calculateSampleRate(spu66._40.get(), spu66._02.get(), spu66._36.get(), sssqEntry_800c6680.deref().pitchBend_0a.get(), spu66._3a.get()));
-              spu66._38.set(sssqPtr_800c4aa4.deref().getByte(spu124.sssqOffset_00c + 1));
+      final SpuStruct66 spu66 = _800c3a40[voiceIndex];
+      if(spu66.commandChannel_04 == (spu124.command_000 & 0xf)) {
+        if(spu66.playableSoundIndex_22 == spu124.playableSoundIndex_020) {
+          if(spu66.channelIndex_06 == channelIndex) {
+            if(spu66.used_00) {
+              voicePtr_800c4ac4.deref().voices[voiceIndex].ADPCM_SAMPLE_RATE.set(calculateSampleRate(spu66._40, spu66.noteNumber_02, spu66._36, sssqEntry_800c6680.pitchBend_0a, spu66._3a));
+              spu66._38 = spu124.sssqReader_010.readByte(1);
             }
           }
         }
@@ -3263,7 +3285,7 @@ public final class Scus94491BpeSegment_8004 {
       //LAB_8004a598
     }
 
-    spu124.sssqOffset_00c += 2;
+    spu124.sssqReader_010.advance(2);
   }
 
   @Method(0x8004a5e0L)
@@ -3275,63 +3297,64 @@ public final class Scus94491BpeSegment_8004 {
     //LAB_8004a618
     // Read varint
     for(int i = 0; i < 4; i++) {
-      final int varint = sssqPtr_800c4aa4.deref().getByte(spu124.sssqOffset_00c);
-      spu124.sssqOffset_00c++;
-      spu124._118 <<= 7;
+      final int varint = spu124.sssqReader_010.readByte(0);
+      spu124.sssqReader_010.advance();
+      spu124.deltaTime_118 <<= 7;
 
       if((varint & 0x80) == 0) {
         //LAB_8004a720
-        spu124._118 |= varint;
+        spu124.deltaTime_118 |= varint;
         break;
       }
 
-      spu124._118 |= varint & 0x7f;
+      spu124.deltaTime_118 |= varint & 0x7f;
     }
 
     //LAB_8004a664
     if(spu124._02a != 0) {
       spu124.tempo_108 = 60;
-      spu124.deltaTime_10a = 480;
+      spu124.ticksPerQuarterNote_10a = 480;
     }
 
     //LAB_8004a680
-    if(spu124.tempo_108 == 0) {
-      return;
+    if(spu124.tempo_108 != 0) {
+      spu124._114 = spu124.deltaTime_118 * 10;
+
+      //LAB_8004a6e8
+      //LAB_8004a700
+      // 1-decimal fixed-point
+      final int msPerTick = spu124.tempo_108 * spu124.ticksPerQuarterNote_10a * 10 / (_800c6630.ticksPerSecond_42 * 60);
+      int v1;
+      if(spu124._10c == 0) {
+        //LAB_8004a72c
+        v1 = spu124._110;
+      } else {
+        spu124._10c = 0;
+        v1 = -spu124._110 + msPerTick;
+      }
+
+      v1 += spu124._114;
+
+      //LAB_8004a738
+      //LAB_8004a748
+      //LAB_8004a760
+      final int a0 = v1 % msPerTick;
+
+      if(msPerTick < a0 * 2) {
+        spu124._114 = v1 + msPerTick - a0;
+        spu124._10c = 1;
+      } else {
+        //LAB_8004a78c
+        spu124._114 = v1 - a0;
+      }
+
+      //LAB_8004a794
+      //LAB_8004a7a4
+      //LAB_8004a7bc
+      //LAB_8004a7d8
+      spu124._110 = a0;
+      spu124.deltaTime_118 = spu124._114 / msPerTick;
     }
-
-    spu124._114 = spu124._118 * 10;
-
-    //LAB_8004a6e8
-    //LAB_8004a700
-    final int a2 = spu124.tempo_108 * spu124.deltaTime_10a * 10 / (_800c6630.ticksPerSecond_42 * 60);
-    final int v1;
-    if(spu124._10c != 0) {
-      spu124._10c = 0;
-      v1 = spu124._114 - (a2 - spu124._110);
-    } else {
-      //LAB_8004a72c
-      v1 = spu124._114 + spu124._110;
-    }
-
-    //LAB_8004a738
-    //LAB_8004a748
-    //LAB_8004a760
-    final int a0 = v1 % a2;
-
-    if(a2 < a0 * 2) {
-      spu124._114 = v1 + a2 - a0;
-      spu124._10c++;
-    } else {
-      //LAB_8004a78c
-      spu124._114 = v1 - a0;
-    }
-
-    //LAB_8004a794
-    //LAB_8004a7a4
-    //LAB_8004a7bc
-    //LAB_8004a7d8
-    spu124._110 = a0;
-    spu124._118 = spu124._114 / a2;
 
     //LAB_8004a7e4
   }
@@ -3342,20 +3365,20 @@ public final class Scus94491BpeSegment_8004 {
 
     final SpuStruct124 spu124 = _800c4ac8[channelIndex];
 
-    final int command = sssqPtr_800c4aa4.deref().getByte(spu124.sssqOffset_00c);
+    final int command = spu124.sssqReader_010.readByte(0);
     if((command & 0x80) != 0) { // If this is a command
       spu124.command_000 = command;
       spu124.previousCommand_001 = command;
     } else { // Otherwise, repeat the previous command with new parameters
       //LAB_8004a854
-      spu124.sssqOffset_00c--;
+      spu124.sssqReader_010.rewind();
       spu124.command_000 = spu124.previousCommand_001;
     }
 
     //LAB_8004a860
-    spu124.param0_002 = sssqPtr_800c4aa4.deref().getByte(spu124.sssqOffset_00c + 1);
-    spu124.param1_003 = sssqPtr_800c4aa4.deref().getByte(spu124.sssqOffset_00c + 2);
-    spu124.param2_005 = sssqPtr_800c4aa4.deref().getByte(spu124.sssqOffset_00c + 3);
+    spu124.param0_002 = spu124.sssqReader_010.readByte(1);
+    spu124.param1_003 = spu124.sssqReader_010.readByte(2);
+    spu124.param2_005 = spu124.sssqReader_010.readByte(3);
   }
 
   @Method(0x8004a8b8L)
@@ -3366,12 +3389,12 @@ public final class Scus94491BpeSegment_8004 {
       if(spu124._0e7 == 1 && spu124._029 == 1) {
         //LAB_8004a908
         for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
-          if(_800c3a40.get(voiceIndex).channelIndex_06.get() == channelIndex) {
+          if(_800c3a40[voiceIndex].channelIndex_06 == channelIndex) {
             continue LAB_8004a8dc;
           }
         }
 
-        spu124._118 = 0;
+        spu124.deltaTime_118 = 0;
         spu124._0e7 = 0;
         spu124.pitchShiftVolRight_0f0 = 0;
         spu124.pitchShiftVolLeft_0ee = 0;
@@ -3389,30 +3412,30 @@ public final class Scus94491BpeSegment_8004 {
     //LAB_8004a99c
     for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
       if((voicePtr_800c4ac4.deref().voices[voiceIndex].ADSR_CURR_VOL.get() & 0x7fff) < 16) {
-        final SpuStruct66 spu66 = _800c3a40.get(voiceIndex);
-        if(spu66._08.get() == 1) {
-          if(spu66._1a.get() != 0 && _800c6630._0d > 0) {
+        final SpuStruct66 spu66 = _800c3a40[voiceIndex];
+        if(spu66._08 == 1) {
+          if(spu66._1a != 0 && _800c6630._0d > 0) {
             _800c6630._0d--;
           }
 
           //LAB_8004aa04
           //LAB_8004aa0c
           for(int voiceIndex2 = 0; voiceIndex2 < 24; voiceIndex2++) {
-            if(_800c3a40.get(voiceIndex2)._0a.get() > spu66._0a.get() && _800c3a40.get(voiceIndex2)._0a.get() != 0xffff) {
-              _800c3a40.get(voiceIndex2)._0a.decr();
+            if(_800c3a40[voiceIndex2].voiceIndex_0a > spu66.voiceIndex_0a && _800c3a40[voiceIndex2].voiceIndex_0a != -1) {
+              _800c3a40[voiceIndex2].voiceIndex_0a--;
             }
 
             //LAB_8004aa48
           }
 
           //LAB_8004aa7c
-          bzero(spu66.getAddress(), 0x66);
-          spu66.channelIndex_06.set((short)-1);
-          spu66._26.set(0xffff);
-          spu66._24.set(0xffff);
-          spu66.playableSoundIndex_22.set(0xffff);
-          spu66._0a.set(0xffff);
-          spu66._4e.set(120);
+          spu66.clear();
+          spu66.channelIndex_06 = -1;
+          spu66._26 = -1;
+          spu66._24 = -1;
+          spu66.playableSoundIndex_22 = -1;
+          spu66.voiceIndex_0a = -1;
+          spu66._4e = 120;
 
           if(_800c6630.voiceIndex_00 > 0) {
             _800c6630.voiceIndex_00--;
@@ -3436,34 +3459,34 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x8004ad2cL)
   public static void FUN_8004ad2c(final int voiceIndex) {
-    final SpuStruct66 struct66 = _800c3a40.get(voiceIndex);
-    final SpuStruct124 struct124 = _800c4ac8[struct66._1a.get()];
+    final SpuStruct66 struct66 = _800c3a40[voiceIndex];
+    final SpuStruct124 struct124 = _800c4ac8[struct66._1a];
 
-    if(struct66._1a.get() != 0) {
-      final long a1 = playableSoundPtrArr_800c43d0.get(struct124.playableSoundIndex_020).sshdPtr_04.getPointer();
-      sshdPtr_800c4ac0.setPointer(a1);
-      sssqEntry_800c6680.setPointer(playableSoundPtrArr_800c43d0.get(struct124.playableSoundIndex_020).sshdPtr_04.getPointer() + MEMORY.ref(4, a1).offset(0x20L).get() + struct66.channel_04.get() * 0x10L + 0x10L);
+    if(struct66._1a != 0) {
+      final Sshd sshd = playableSoundPtrArr_800c43d0[struct124.playableSoundIndex_020].sshdPtr_04;
+      sshdPtr_800c4ac0 = sshd;
+      sssqEntry_800c6680 = sshd.getSubfile(4, (data, offset) -> new Sssq(data, offset)).entries_10[struct66.commandChannel_04];
     } else {
       //LAB_8004adf4
-      sssqEntry_800c6680.setPointer(struct124.sssqPtr_010 + 0x10 + struct66.channel_04.get() * 0x10);
+      sssqEntry_800c6680 = struct124.sssqReader_010.entry(struct66.commandChannel_04);
     }
 
     //LAB_8004ae10
-    _800c3a40.get(voiceIndex)._28.set(sssqEntry_800c6680.deref().volume_0e.get());
+    _800c3a40[voiceIndex].volume_28 = sssqEntry_800c6680.volume_0e;
     voicePtr_800c4ac4.deref().voices[voiceIndex].LEFT.set(FUN_8004ae94(voiceIndex, 0));
     voicePtr_800c4ac4.deref().voices[voiceIndex].RIGHT.set(FUN_8004ae94(voiceIndex, 1));
   }
 
   @Method(0x8004ae94L)
   public static int FUN_8004ae94(final int voiceIndex, final int a1) {
-    final SpuStruct66 struct66 = _800c3a40.get(voiceIndex);
+    final SpuStruct66 struct66 = _800c3a40[voiceIndex];
 
-    final short a0 = (short)((struct66._28.get() * struct66._2a.get() * struct66._2c.get() * struct66._2e.get() >> 14) * (int)MEMORY.ref(2, struct66._30.getAddress()).offset(a1 * 2).get() >> 7);
+    final short a0 = (short)((struct66.volume_28 * struct66._2a * struct66._2c * struct66._2e >> 14) * struct66._30[a1] >> 7);
     final short v0;
-    if(struct66._4a.get() == 0) {
+    if(struct66._4a == 0) {
       v0 = a0;
     } else {
-      v0 = (short)(struct66._4a.get() << 8 | a0 >> 7);
+      v0 = (short)(struct66._4a << 8 | a0 >> 7);
     }
 
     //LAB_8004af30
@@ -3485,45 +3508,42 @@ public final class Scus94491BpeSegment_8004 {
       int s4 = 0;
 
       if(spu124._03e[5][0] != 0) {
-        sssqPtr_800c667c.setu(spu124.sssqPtr_010);
+        sssqReader_800c667c = spu124.sssqReader_010;
 
-        if(sssqPtr_800c667c.deref(1).get() != spu124._03e[6][0]) {
+        if(sssqReader_800c667c.baseVolume() != spu124._03e[6][0]) {
           if(spu124._03e[7][0] != 0) {
-            sssqPtr_800c667c.deref(1).setu(FUN_8004af3c(spu124._03e[6][0], spu124._03e[9][0], spu124._03e[8][0], spu124._03e[7][0]));
+            sssqReader_800c667c.baseVolume(FUN_8004af3c(spu124._03e[6][0], spu124._03e[9][0], spu124._03e[8][0], spu124._03e[7][0]));
             spu124._03e[7][0]--;
           } else {
             //LAB_8004b064
-            sssqPtr_800c667c.deref(1).setu(spu124._03e[6][0]);
+            sssqReader_800c667c.baseVolume(spu124._03e[6][0]);
           }
 
           //LAB_8004b068
-          FUN_8004c8dc((short)channelIndex, (int)sssqPtr_800c667c.deref(1).get());
+          FUN_8004c8dc((short)channelIndex, sssqReader_800c667c.baseVolume());
           s4++;
         }
       }
 
       //LAB_8004b084
       //LAB_8004b088
-      sssqEntry_800c6680.setPointer(spu124.sssqPtr_010 + 0x10);
-
       //LAB_8004b0a0
       for(int i = 0; i < 16; i++) {
-        if(sssqEntry_800c6680.deref().volume_03.get() != spu124._03e[1][i] && spu124._03e[0][i] == 1) {
+        final Sssq.Entry entry = spu124.sssqReader_010.entry(i);
+
+        if(entry.volume_03 != spu124._03e[1][i] && spu124._03e[0][i] == 1) {
           if(spu124._03e[2][i] != 0) {
-            sssqEntry_800c6680.deref().volume_03.set(FUN_8004af3c(spu124._03e[1][i], spu124._03e[4][i], spu124._03e[3][i], spu124._03e[2][i]));
+            entry.volume_03 = FUN_8004af3c(spu124._03e[1][i], spu124._03e[4][i], spu124._03e[3][i], spu124._03e[2][i]);
             spu124._03e[2][i]--;
           } else {
             //LAB_8004b110
-            sssqEntry_800c6680.deref().volume_03.set(spu124._03e[1][i]);
+            entry.volume_03 = spu124._03e[1][i];
           }
 
           //LAB_8004b114
-          FUN_8004b464((short)channelIndex, (short)i, (short)sssqEntry_800c6680.deref().volume_03.get());
+          FUN_8004b464((short)channelIndex, (short)i, (short)entry.volume_03);
           s4++;
         }
-
-        //LAB_8004b130
-        sssqEntry_800c6680.add(0x10);
       }
 
       if(s4 == 0) {
@@ -3549,31 +3569,31 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004b1e8L)
-  public static short FUN_8004b1e8(final int channelIndex, final int a1, final short a2, final int a3) {
+  public static short FUN_8004b1e8(final int channelIndex, final int a1, final short channel, final int a3) {
     assert channelIndex >= 0;
 
     final SpuStruct124 spu124 = _800c4ac8[channelIndex];
 
     final short ret;
-    if(a2 == -1) {
-      sssqPtr_800c667c.setu(spu124.sssqPtr_010);
+    if(channel == -1) {
+      sssqReader_800c667c = spu124.sssqReader_010;
       spu124._03e[5][0] = 1;
       spu124._03e[6][0] = a3;
       spu124._03e[7][0] = a1;
       spu124._03e[8][0] = a1;
-      spu124._03e[9][0] = (int)sssqPtr_800c667c.deref(1).get();
+      spu124._03e[9][0] = sssqReader_800c667c.baseVolume();
 
-      ret = (short)sssqPtr_800c667c.deref(1).get();
+      ret = (short)sssqReader_800c667c.baseVolume();
     } else {
       //LAB_8004b268
-      sssqEntry_800c6680.setPointer(spu124.sssqPtr_010 + 0x10 + a2 * 0x10);
-      spu124._03e[0][a2] = 1;
-      spu124._03e[1][a2] = a3;
-      spu124._03e[2][a2] = a1;
-      spu124._03e[3][a2] = a1;
-      spu124._03e[4][a2] = sssqEntry_800c6680.deref().volume_03.get();
+      sssqEntry_800c6680 = spu124.sssqReader_010.entry(channel);
+      spu124._03e[0][channel] = 1;
+      spu124._03e[1][channel] = a3;
+      spu124._03e[2][channel] = a1;
+      spu124._03e[3][channel] = a1;
+      spu124._03e[4][channel] = sssqEntry_800c6680.volume_03;
 
-      ret = (short)sssqEntry_800c6680.deref().volume_03.get();
+      ret = (short)sssqEntry_800c6680.volume_03;
     }
 
     //LAB_8004b2b8
@@ -3621,24 +3641,23 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004b464L)
-  public static void FUN_8004b464(final short channelIndex, final short sssqEntry, final short a2) {
+  public static void FUN_8004b464(final short channelIndex, final short sssqEntry, final short volume) {
     final SpuStruct124 struct124 = _800c4ac8[channelIndex];
-    final long sssq = struct124.sssqPtr_010;
-    sssqPtr_800c667c.setu(sssq);
-    final long entry = sssq + 0x10 + sssqEntry * 0x10;
-    sssqEntry_800c6680.setPointer(entry);
-    MEMORY.ref(1, entry).offset(0x03L).setu(a2);
-    sssqEntry_800c6680.deref().volume_0e.set(a2 * (int)sssqPtr_800c667c.deref(1).get() >> 7);
+    sssqReader_800c667c = struct124.sssqReader_010;
+    final Sssq.Entry entry = struct124.sssqReader_010.entry(sssqEntry);
+    sssqEntry_800c6680 = entry;
+    entry.volume_03 = volume;
+    entry.volume_0e = volume * sssqReader_800c667c.baseVolume() >> 7;
 
     //LAB_8004b514
     for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
-      final SpuStruct66 struct66 = _800c3a40.get(voiceIndex);
+      final SpuStruct66 struct66 = _800c3a40[voiceIndex];
 
-      if(struct66.used_00.get()) {
-        if(struct66._1a.get() == 0) {
-          if(struct66.playableSoundIndex_22.get() == struct124.playableSoundIndex_020) {
-            if(struct66.channelIndex_06.get() == channelIndex) {
-              if(struct66.sssqEntry_44.get() == sssqEntry) {
+      if(struct66.used_00) {
+        if(struct66._1a == 0) {
+          if(struct66.playableSoundIndex_22 == struct124.playableSoundIndex_020) {
+            if(struct66.channelIndex_06 == channelIndex) {
+              if(struct66.sssqEntry_44 == sssqEntry) {
                 FUN_8004ad2c(voiceIndex);
               }
             }
@@ -3780,20 +3799,20 @@ public final class Scus94491BpeSegment_8004 {
     //LAB_8004ba58
     for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
       //LAB_8004ba74
-      bzero(_800c3a40.get(voiceIndex).getAddress(), 0x64); //Not sure why this wasn't clearing the last one
+      _800c3a40[voiceIndex].clear();
     }
 
     //LAB_8004bab8
     for(int soundIndex = 0; soundIndex < 127; soundIndex++) {
       //LAB_8004bacc
-      playableSoundPtrArr_800c43d0.get(soundIndex).used_00.set(false);
-      playableSoundPtrArr_800c43d0.get(soundIndex).sshdPtr_04.clear();
-      playableSoundPtrArr_800c43d0.get(soundIndex).soundBufferPtr_08.set(0);
+      playableSoundPtrArr_800c43d0[soundIndex].used_00 = false;
+      playableSoundPtrArr_800c43d0[soundIndex].sshdPtr_04 = null;
+      playableSoundPtrArr_800c43d0[soundIndex].soundBufferPtr_08 = 0;
     }
 
     //LAB_8004bb14
     for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
-      _800c3a40.get(voiceIndex)._4e.set(120);
+      _800c3a40[voiceIndex]._4e = 120;
     }
   }
 
@@ -3811,7 +3830,7 @@ public final class Scus94491BpeSegment_8004 {
    * @return Index into {@link Scus94491BpeSegment_800c#playableSoundPtrArr_800c43d0}, or -1 on error
    */
   @Method(0x8004bea4L)
-  public static short loadSshdAndSoundbank(final byte[] soundbank, final SshdFile sshd, final int addressInSoundBuffer) {
+  public static short loadSshdAndSoundbank(final byte[] soundbank, final Sshd sshd, final int addressInSoundBuffer) {
     if(addressInSoundBuffer > 0x8_0000) {
       assert false : "Error";
       return -1;
@@ -3822,13 +3841,8 @@ public final class Scus94491BpeSegment_8004 {
       return -1;
     }
 
-    if(sshd.magic_0c.get() != SshdFile.MAGIC) {
-      assert false : "Error";
-      return -1;
-    }
-
     //LAB_8004bfac
-    if(sshd.soundBankSize_04.get() != 0) {
+    if(sshd.soundBankSize_04 != 0) {
       spuDmaTransfer(0, soundbank, addressInSoundBuffer);
     }
 
@@ -3836,13 +3850,13 @@ public final class Scus94491BpeSegment_8004 {
     //LAB_8004bfe4
     //LAB_8004bff0
     for(short i = 0; i < 127; i++) {
-      final PlayableSoundStruct sound = playableSoundPtrArr_800c43d0.get(i);
+      final PlayableSoundStruct sound = playableSoundPtrArr_800c43d0[i];
 
-      if(!sound.used_00.get()) {
+      if(!sound.used_00) {
         //LAB_8004bfc8
-        sound.used_00.set(true);
-        sound.sshdPtr_04.set(sshd);
-        sound.soundBufferPtr_08.set(addressInSoundBuffer / 8);
+        sound.used_00 = true;
+        sound.sshdPtr_04 = sshd;
+        sound.soundBufferPtr_08 = addressInSoundBuffer / 8;
         return i;
       }
     }
@@ -3862,7 +3876,7 @@ public final class Scus94491BpeSegment_8004 {
       return -0x1L;
     }
 
-    if(!playableSoundPtrArr_800c43d0.get(playableSoundIndex).used_00.get()) {
+    if(!playableSoundPtrArr_800c43d0[playableSoundIndex].used_00) {
       //LAB_8004c1f0
       assert false : "Error";
       return -0x1L;
@@ -3870,9 +3884,9 @@ public final class Scus94491BpeSegment_8004 {
 
     //LAB_8004c160
     for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
-      final SpuStruct66 spu66 = _800c3a40.get(voiceIndex);
+      final SpuStruct66 spu66 = _800c3a40[voiceIndex];
 
-      if(spu66.used_00.get() && spu66.playableSoundIndex_22.get() == playableSoundIndex) {
+      if(spu66.used_00 && spu66.playableSoundIndex_22 == playableSoundIndex) {
         //LAB_8004c1e8
         LOGGER.error("Tried to unload PlayableSound %d while still in use", playableSoundIndex);
         LOGGER.error("", new Throwable());
@@ -3882,21 +3896,17 @@ public final class Scus94491BpeSegment_8004 {
       //LAB_8004c19c
     }
 
-    final PlayableSoundStruct sound = playableSoundPtrArr_800c43d0.get((short)playableSoundIndex);
-    sound.used_00.set(false);
-    sound.sshdPtr_04.clear();
-    sound.soundBufferPtr_08.set(0);
+    final PlayableSoundStruct sound = playableSoundPtrArr_800c43d0[playableSoundIndex];
+    sound.used_00 = false;
+    sound.sshdPtr_04 = null;
+    sound.soundBufferPtr_08 = 0;
     return 0;
   }
 
   @Method(0x8004c1f8L)
-  public static short FUN_8004c1f8(final int playableSoundIndex, final SssqFile sssq) {
+  public static short FUN_8004c1f8(final int playableSoundIndex, final Sssq sssq) {
     if((playableSoundIndex & 0xff80) != 0) {
       throw new IllegalArgumentException("Invalid playableSoundIndex " + playableSoundIndex);
-    }
-
-    if(sssq.magic_0c.get() != SssqFile.MAGIC) {
-      throw new IllegalArgumentException("Invalid magic " + sssq.magic_0c.get());
     }
 
     //LAB_8004c258
@@ -3905,31 +3915,29 @@ public final class Scus94491BpeSegment_8004 {
 
       if(spu124._027 == 0) {
         if(spu124._029 == 0) {
-          if(!playableSoundPtrArr_800c43d0.get(playableSoundIndex).used_00.get()) {
+          if(!playableSoundPtrArr_800c43d0[playableSoundIndex].used_00) {
             break;
           }
 
-          sssqPtr_800c4aa4.set(sssq);
           spu124._027 = 1;
           spu124._028 = 0;
           spu124._029 = 0;
           spu124._02a = 0;
-          spu124._118 = 0;
-          spu124.sssqPtr_010 = sssq.getAddress();
-          spu124.sssqOffset_00c = 0x110;
-          spu124.command_000 = sssqPtr_800c4aa4.deref().getByte(spu124.sssqOffset_00c);
+          spu124.deltaTime_118 = 0;
+          spu124.sssqReader_010 = sssq.reader();
+          spu124.command_000 = spu124.sssqReader_010.readByte(0);
           spu124.previousCommand_001 = spu124.command_000;
-          spu124.param0_002 = sssqPtr_800c4aa4.deref().getByte(spu124.sssqOffset_00c + 1);
-          spu124.param1_003 = sssqPtr_800c4aa4.deref().getByte(spu124.sssqOffset_00c + 2);
+          spu124.param0_002 = spu124.sssqReader_010.readByte(1);
+          spu124.param1_003 = spu124.sssqReader_010.readByte(2);
           spu124.playableSoundIndex_020 = playableSoundIndex;
 
           //LAB_8004c308
           for(int n = 0; n < 16; n++) {
-            sssqPtr_800c4aa4.deref().entries_10.get(n).volume_0e.set(sssqPtr_800c4aa4.deref().volume_00.get() * sssqPtr_800c4aa4.deref().entries_10.get(n).volume_03.get() / 0x100);
+            spu124.sssqReader_010.entry(n).volume_0e = sssq.volume_00 * spu124.sssqReader_010.entry(n).volume_03 / 0x100;
           }
 
-          spu124.deltaTime_10a = sssq.deltaTime_02.get();
-          spu124.tempo_108 = sssq.tempo_04.get();
+          spu124.ticksPerQuarterNote_10a = sssq.ticksPerQuarterNote_02;
+          spu124.tempo_108 = sssq.tempo_04;
           return (short)channelIndex;
         }
       }
@@ -3976,7 +3984,7 @@ public final class Scus94491BpeSegment_8004 {
     //LAB_8004c420
     int a1 = 0;
     for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
-      if(_800c3a40.get(voiceIndex)._1a.get() != 0) {
+      if(_800c3a40[voiceIndex]._1a != 0) {
         a1++;
       }
 
@@ -4084,7 +4092,7 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004c8dcL)
-  public static long FUN_8004c8dc(final int channelIndex, final int a1) {
+  public static long FUN_8004c8dc(final int channelIndex, final int volume) {
     assert channelIndex >= 0;
 
     if(channelIndex >= 24) {
@@ -4092,7 +4100,7 @@ public final class Scus94491BpeSegment_8004 {
       return -0x1L;
     }
 
-    if(a1 >= 128) {
+    if(volume >= 128) {
       assert false : "Error";
       return -0x1L;
     }
@@ -4105,22 +4113,21 @@ public final class Scus94491BpeSegment_8004 {
       return -0x1L;
     }
 
-    sssqPtr_800c667c.setu(struct124.sssqPtr_010);
-    final long ret = sssqPtr_800c667c.deref(1).offset(0x0L).get();
-    sssqPtr_800c667c.deref(1).offset(0x0L).setu(a1);
-    sssqEntry_800c6680.setPointer(struct124.sssqPtr_010 + 0x10);
+    sssqReader_800c667c = struct124.sssqReader_010;
+    final int ret = sssqReader_800c667c.baseVolume();
+    sssqReader_800c667c.baseVolume(volume);
 
     //LAB_8004c97c
     for(int i = 0; i < 16; i++) {
-      sssqEntry_800c6680.deref().volume_0e.set(sssqEntry_800c6680.deref().volume_03.get() * a1 >> 7);
-      sssqEntry_800c6680.add(0x10L);
+      final Sssq.Entry entry = struct124.sssqReader_010.entry(i);
+      entry.volume_0e = entry.volume_03 * volume >> 7;
     }
 
     //LAB_8004c9d8
     for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
-      final SpuStruct66 spu66 = _800c3a40.get(voiceIndex);
+      final SpuStruct66 spu66 = _800c3a40[voiceIndex];
 
-      if(spu66.used_00.get() && spu66.playableSoundIndex_22.get() == struct124.playableSoundIndex_020 && spu66._1a.get() == 0 && spu66.channelIndex_06.get() == channelIndex) {
+      if(spu66.used_00 && spu66.playableSoundIndex_22 == struct124.playableSoundIndex_020 && spu66._1a == 0 && spu66.channelIndex_06 == channelIndex) {
         FUN_8004ad2c(voiceIndex);
       }
 
@@ -4148,15 +4155,15 @@ public final class Scus94491BpeSegment_8004 {
 //      throw new RuntimeException("Negative a1");
     }
 
-    final PlayableSoundStruct sound = playableSoundPtrArr_800c43d0.get(playableSoundIndex);
-    sshdPtr_800c4ac0.set(sound.sshdPtr_04.deref());
+    final PlayableSoundStruct sound = playableSoundPtrArr_800c43d0[playableSoundIndex];
+    sshdPtr_800c4ac0 = sound.sshdPtr_04;
 
-    if(!sound.used_00.get()) {
+    if(!sound.used_00) {
       assert false : "Error";
       return -0x1L;
     }
 
-    if(sound.sshdPtr_04.deref().ptrs_10.get(4).get() == -1) {
+    if(!sound.sshdPtr_04.hasSubfile(4)) {
       assert false : "Error";
       return -0x1L;
     }
@@ -4171,22 +4178,22 @@ public final class Scus94491BpeSegment_8004 {
       return -0x1L;
     }
 
-    sssqPtr_800c667c.setu(sound.sshdPtr_04.getPointer() + sound.sshdPtr_04.deref().ptrs_10.get(4).get());
-    final long ret = sssqPtr_800c667c.deref(1).offset(0x0L).get();
-    sssqPtr_800c667c.deref(1).offset(0x0L).setu(volume);
-    sssqEntry_800c6680.setPointer(sound.sshdPtr_04.getPointer() + sshdPtr_800c4ac0.deref().ptrs_10.get(4).get() + 0x10L);
+    final Sssqish sssq = sound.sshdPtr_04.getSubfile(4, (data, offset) -> new Sssqish(data, offset, sound.sshdPtr_04.getSubfileSize(4)));
+    sssqReader_800c667c = null; //sssq.reader(); TODO?
+    final int ret = sssq.volume_00;
+    sssq.volume_00 = volume;
 
     //LAB_8004cbc8
     for(int i = 0; i < 24; i++) {
-      sssqEntry_800c6680.deref().volume_0e.set(sssqEntry_800c6680.deref().volume_03.get() * volume >> 7);
-      sssqEntry_800c6680.add(0x10L);
+      final Sssq.Entry entry = sssq.entries_10[i];
+      entry.volume_0e = entry.volume_03 * volume >> 7;
     }
 
     //LAB_8004cc1c
     for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
-      final SpuStruct66 spu66 = _800c3a40.get(voiceIndex);
+      final SpuStruct66 spu66 = _800c3a40[voiceIndex];
 
-      if(spu66.used_00.get() && spu66._1a.get() == 1 && spu66.playableSoundIndex_22.get() == playableSoundIndex) {
+      if(spu66.used_00 && spu66._1a == 1 && spu66.playableSoundIndex_22 == playableSoundIndex) {
         FUN_8004ad2c(voiceIndex);
       }
 
@@ -4289,13 +4296,13 @@ public final class Scus94491BpeSegment_8004 {
     assert channelIndex >= 0;
 
     final SpuStruct124 spu124 = _800c4ac8[channelIndex];
-    final PlayableSoundStruct sound = playableSoundPtrArr_800c43d0.get(spu124.playableSoundIndex_020);
+    final PlayableSoundStruct sound = playableSoundPtrArr_800c43d0[spu124.playableSoundIndex_020];
 
-    sshdPtr_800c4ac0.setNullable(sound.sshdPtr_04.derefNullable());
+    sshdPtr_800c4ac0 = sound.sshdPtr_04;
 
     if(spu124._027 == 1) {
-      if(sshdPtr_800c4ac0.deref().ptrs_10.get(0).get() != -1) {
-        if(sound.used_00.get()) {
+      if(sshdPtr_800c4ac0.hasSubfile(0)) {
+        if(sound.used_00) {
           spu124._028 = 1;
           spu124._0e8 = 0;
         }
@@ -4310,24 +4317,19 @@ public final class Scus94491BpeSegment_8004 {
   public static void FUN_8004d034(final int voiceIndex, final int a1) {
     boolean s5 = false;
     final SpuStruct124 spu124 = _800c4ac8[voiceIndex];
-    final PlayableSoundStruct playableSound = playableSoundPtrArr_800c43d0.get(spu124.playableSoundIndex_020);
-    final SshdFile sshd = playableSound.sshdPtr_04.derefNullable();
+    final PlayableSoundStruct playableSound = playableSoundPtrArr_800c43d0[spu124.playableSoundIndex_020];
+    final Sshd sshd = playableSound.sshdPtr_04;
 
-    //TODO GH#3 this shouldn't be necessary
-    if(sshd == null) {
-      return;
-    }
-
-    sshdPtr_800c4ac0.set(sshd);
+    sshdPtr_800c4ac0 = sshd;
 
     if(spu124._027 == 1) {
-      if(sshd.ptrs_10.get(0).get() != -1) {
-        if(playableSound.used_00.get()) {
+      if(sshd.hasSubfile(0)) {
+        if(playableSound.used_00) {
           boolean doIt = false;
 
           if(a1 == 0) {
             //LAB_8004d13c
-            spu124.sssqOffset_00c = 0x110;
+            spu124.sssqReader_010.jump(0x110);
             spu124._028 = 0;
             spu124._018 = 1;
             spu124._0e8 = 0;
@@ -4338,7 +4340,7 @@ public final class Scus94491BpeSegment_8004 {
             s5 = true;
 
             //LAB_8004d13c
-            spu124.sssqOffset_00c = 0x110;
+            spu124.sssqReader_010.jump(0x110);
             spu124._028 = 0;
             spu124._018 = 1;
             spu124._0e8 = 0;
@@ -4375,15 +4377,15 @@ public final class Scus94491BpeSegment_8004 {
             //LAB_8004d1c4
             //LAB_8004d1d8
             for(int i = 0; i < 24; i++) {
-              final SpuStruct66 struct66 = _800c3a40.get(i);
+              final SpuStruct66 struct66 = _800c3a40[i];
 
-              if(struct66.channelIndex_06.get() == voiceIndex) {
-                if(struct66._1a.get() == 0) {
-                  struct66.used_00.set(false);
-                  struct66._08.set(1);
-                  struct66._38.set(64);
-                  struct66._14.set(0);
-                  struct66._16.set(0);
+              if(struct66.channelIndex_06 == voiceIndex) {
+                if(struct66._1a == 0) {
+                  struct66.used_00 = false;
+                  struct66._08 = 1;
+                  struct66._38 = 64;
+                  struct66._14 = 0;
+                  struct66._16 = 0;
                   setKeyOff(voiceIndex, i);
 
                   if(s5) {
@@ -4395,12 +4397,9 @@ public final class Scus94491BpeSegment_8004 {
               }
             }
 
-            sssqEntry_800c6680.set(MEMORY.ref(4, spu124.sssqPtr_010, SssqFile::new).entries_10.get(0));
-
             //LAB_8004d27c
             for(int i = 0; i < 16; i++) {
-              sssqEntry_800c6680.deref().modulation_09.set(0);
-              sssqEntry_800c6680.add(0x10L);
+              spu124.sssqReader_010.entry(i).modulation_09 = 0;
             }
 
             voicePtr_800c4ac4.deref().VOICE_KEY_OFF.set(spu124.keyOff_0e2);
@@ -4416,8 +4415,7 @@ public final class Scus94491BpeSegment_8004 {
   @Method(0x8004d2fcL)
   public static short FUN_8004d2fc(final int channelIndex, final short a1, final short a2) {
     final SpuStruct124 struct124 = _800c4ac8[channelIndex];
-    final long sssq = struct124.sssqPtr_010; // Seems this can be 1-byte aligned, so we can't deref without causing alignment crashes
-    sssqPtr_800c667c.setu(sssq);
+    sssqReader_800c667c = struct124.sssqReader_010;
 
     short ret = -1;
 
@@ -4433,7 +4431,7 @@ public final class Scus94491BpeSegment_8004 {
 
       //LAB_8004d3c8
       ret = FUN_8004b1e8(channelIndex, a1, (short)-1, a2);
-    } else if(struct124._028 == 1 && MEMORY.ref(1, sssq).offset(0x0L).get() < a2) {
+    } else if(struct124._028 == 1 && struct124.sssqReader_010.baseVolume() < a2) {
       struct124._03a = 0;
       ret = FUN_8004b1e8(channelIndex, a1, (short)-1, a2);
     }
@@ -4548,15 +4546,15 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004d78cL)
-  public static void FUN_8004d78c(final short a0) {
+  public static void FUN_8004d78c(final short channelIndex) {
     if(sssqWaitForTickToFinish() == 0) {
-      final int v1 = a0 & 0x7fff;
+      final int v1 = channelIndex & 0x7fff;
 
-      if(v1 < 24 && a0 < 24) {
+      if(v1 < 24 && channelIndex < 24) {
         final SpuStruct124 struct124 = _800c4ac8[v1];
 
         if(struct124._029 != 0) {
-          struct124._118 = 0;
+          struct124.deltaTime_118 = 0;
           struct124._02a = 0;
           struct124._029 = 0;
           struct124._0e7 = 0;
@@ -4564,25 +4562,25 @@ public final class Scus94491BpeSegment_8004 {
           struct124._104 = 0;
           struct124._0e6 = 0;
           struct124._035 = 0;
-          struct124.overrideCommand_037 = false;
+          struct124.jump_037 = false;
         }
 
         //LAB_8004d824
         //LAB_8004d83c
         for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
-          final SpuStruct66 struct66 = _800c3a40.get(voiceIndex);
+          final SpuStruct66 struct66 = _800c3a40[voiceIndex];
 
-          if(struct66._1a.get() != 0 && (struct66.channelIndex_06.get() == a0 || struct66.channelIndex_06.get() == v1)) {
+          if(struct66._1a != 0 && (struct66.channelIndex_06 == channelIndex || struct66.channelIndex_06 == v1)) {
             //LAB_8004d880
-            if((a0 & 0x8000) != 0) {
+            if((channelIndex & 0x8000) != 0) {
               final Voice voice = voicePtr_800c4ac4.deref().voices[voiceIndex];
               voice.ADSR_LO.set(0);
               voice.ADSR_HI.set(0);
-              struct66.used_00.set(false);
+              struct66.used_00 = false;
             }
 
             //LAB_8004d8a0
-            struct66._08.set(1);
+            struct66._08 = 1;
 
             voicePtr_800c4ac4.deref().VOICE_KEY_OFF.set(1 << voiceIndex);
           }
@@ -4598,17 +4596,17 @@ public final class Scus94491BpeSegment_8004 {
     if(sssqWaitForTickToFinish() == 0) {
       //LAB_8004d96c
       for(int i = 0; i < 24; i++) {
-        final SpuStruct66 spu66 = _800c3a40.get(i);
+        final SpuStruct66 spu66 = _800c3a40[i];
         final SpuStruct124 spu124 = _800c4ac8[i];
 
-        if(spu66._1a.get() != 0) {
-          spu66._08.set(1);
+        if(spu66._1a != 0) {
+          spu66._08 = 1;
 
           if(a0 != 0) {
             final Voice voice = voicePtr_800c4ac4.deref().voices[i];
             voice.ADSR_LO.set(0);
             voice.ADSR_HI.set(0);
-            spu66.used_00.set(false);
+            spu66.used_00 = false;
           }
 
           //LAB_8004d9b8
@@ -4620,7 +4618,7 @@ public final class Scus94491BpeSegment_8004 {
 
         //LAB_8004d9f0
         if(spu124._029 != 0) {
-          spu124._118 = 0;
+          spu124.deltaTime_118 = 0;
           spu124._029 = 0;
           spu124._02a = 0;
           spu124._105 = 0;

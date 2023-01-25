@@ -7,21 +7,25 @@ import legend.core.gpu.RECT;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MATRIX;
 import legend.core.memory.Value;
-import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.EnumRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.core.spu.Spu;
+import legend.game.sound.PatchList;
+import legend.game.sound.PlayableSoundStruct;
+import legend.game.sound.SpuStruct124;
+import legend.game.sound.SpuStruct44;
+import legend.game.sound.SpuStruct66;
+import legend.game.sound.Sshd;
+import legend.game.sound.SshdStruct10;
+import legend.game.sound.Sssq;
+import legend.game.sound.SssqReader;
+import legend.game.sound.Sssqish;
+import legend.game.sound.SubList;
+import legend.game.sound.Subfile0;
 import legend.game.sound.VolumeRamp;
+import legend.game.sound.WaveformList;
 import legend.game.types.GsOffsetType;
-import legend.game.types.PlayableSoundStruct;
-import legend.game.types.SpuStruct124;
-import legend.game.types.SpuStruct44;
-import legend.game.types.SpuStruct66;
-import legend.game.types.SshdFile;
-import legend.game.types.SshdStruct10;
-import legend.game.types.SssqEntry;
-import legend.game.types.SssqFile;
 
 import java.util.Arrays;
 
@@ -66,19 +70,24 @@ public final class Scus94491BpeSegment_800c {
   public static final GsCOORDINATE2[] coord2s_800c35a8 = new GsCOORDINATE2[31];
 
   /** 0x990 bytes long, I think these map to voices, not channels */
-  public static final ArrayRef<SpuStruct66> _800c3a40 = MEMORY.ref(2, 0x800c3a40L, ArrayRef.of(SpuStruct66.class, 24, 0x66, SpuStruct66::new));
+  public static final SpuStruct66[] _800c3a40 = new SpuStruct66[24];
+  static {
+    Arrays.setAll(_800c3a40, i -> new SpuStruct66());
+  }
   /** 0x5f4 bytes long */
-  public static final ArrayRef<PlayableSoundStruct> playableSoundPtrArr_800c43d0 = MEMORY.ref(4, 0x800c43d0L, ArrayRef.of(PlayableSoundStruct.class, 127, 0xc, PlayableSoundStruct::new));
+  public static final PlayableSoundStruct[] playableSoundPtrArr_800c43d0 = new PlayableSoundStruct[127];
+  static {
+    Arrays.setAll(playableSoundPtrArr_800c43d0, i -> new PlayableSoundStruct());
+  }
 
-  /** NOTE: this pointer can be misaligned, hence being a Value */
-  public static final Pointer<SssqFile> sssqPtr_800c4aa4 = MEMORY.ref(4, 0x800c4aa4L, Pointer.deferred(1, SssqFile::new));
-  public static final Value _800c4aa8 = MEMORY.ref(4, 0x800c4aa8L);
-  public static final Value _800c4aac = MEMORY.ref(4, 0x800c4aacL);
-  public static final Pointer<VolumeRamp> volumeRamp_800c4ab0 = MEMORY.ref(4, 0x800c4ab0L, Pointer.deferred(2, VolumeRamp::new));
-  public static final Value _800c4ab4 = MEMORY.ref(4, 0x800c4ab4L);
-  public static final Value _800c4ab8 = MEMORY.ref(4, 0x800c4ab8L);
-  public static final Value _800c4abc = MEMORY.ref(4, 0x800c4abcL);
-  public static final Pointer<SshdFile> sshdPtr_800c4ac0 = MEMORY.ref(4, 0x800c4ac0L, Pointer.deferred(4, SshdFile::new));
+  public static Subfile0 subfile0_800c4aa8;
+  public static Sssqish sssqish_800c4aa8;
+  public static Subfile0 subfile0_800c4aac;
+  public static VolumeRamp volumeRamp_800c4ab0;
+  public static WaveformList waveforms_800c4ab4;
+  public static WaveformList waveforms_800c4ab8;
+  public static PatchList patchList_800c4abc;
+  public static Sshd sshdPtr_800c4ac0;
   public static final Pointer<Spu> voicePtr_800c4ac4 = MEMORY.ref(4, 0x800c4ac4L, Pointer.deferred(4, ref -> {throw new RuntimeException("Can't instantiate");}));
   public static final SpuStruct124[] _800c4ac8 = new SpuStruct124[24];
   static {
@@ -87,10 +96,12 @@ public final class Scus94491BpeSegment_800c {
   public static Runnable spuDmaCompleteCallback_800c6628;
 
   public static final SpuStruct44 _800c6630 = new SpuStruct44();
-  public static final Value _800c6674 = MEMORY.ref(4, 0x800c6674L);
-  public static final Pointer<SshdStruct10> sshd10Ptr_800c6678 = MEMORY.ref(4, 0x800c6678L, Pointer.deferred(1, SshdStruct10::new));
-  public static final Value sssqPtr_800c667c = MEMORY.ref(4, 0x800c667cL);
-  public static final Pointer<SssqEntry> sssqEntry_800c6680 = MEMORY.ref(4, 0x800c6680L, Pointer.deferred(1, SssqEntry::new));
+  public static SubList sublist_800c6674;
+  public static SshdStruct10[] sshd10Arr_800c6678;
+  public static SshdStruct10 sshd10_800c6678;
+  public static int sshd10Index_800c6678;
+  public static SssqReader sssqReader_800c667c;
+  public static Sssq.Entry sssqEntry_800c6680;
 
   public static final Value timHeader_800c6748 = MEMORY.ref(4, 0x800c6748L);
 }

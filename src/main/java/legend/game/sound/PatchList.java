@@ -1,45 +1,39 @@
 package legend.game.sound;
 
-import legend.core.memory.Value;
-import legend.core.memory.types.MemoryRef;
-import legend.core.memory.types.RelativePointer;
-import legend.core.memory.types.UnboundedArrayRef;
-import legend.core.memory.types.UnsignedShortRef;
+import legend.core.MathHelper;
 
-public class PatchList implements MemoryRef {
-  private final Value ref;
+public class PatchList implements Sshd.Subfile {
+  public final int patchCount_00;
+  public final SequenceList[] patches_02;
 
-  public final UnsignedShortRef patchCount_00;
-  public final UnboundedArrayRef<RelativePointer<SequenceList>> patches_02;
+  public PatchList(final byte[] data, final int offset) {
+    this.patchCount_00 = MathHelper.getUshort(data, offset);
+    this.patches_02 = new SequenceList[this.patchCount_00 + 1];
 
-  public PatchList(final Value ref) {
-    this.ref = ref;
+    for(int i = 0; i < this.patches_02.length; i++) {
+      final int patchOffset = MathHelper.getShort(data, offset + 2 + i * 2);
 
-    this.patchCount_00 = ref.offset(2, 0x00L).cast(UnsignedShortRef::new);
-    this.patches_02 = ref.offset(2, 0x02L).cast(UnboundedArrayRef.of(2, RelativePointer.deferred(2, ref.getAddress(), value -> new SequenceList(ref, value), -1), () -> this.patchCount_00.get() + 1));
-  }
-
-  @Override
-  public long getAddress() {
-    return this.ref.getAddress();
-  }
-
-  public static class SequenceList implements MemoryRef {
-    private final Value ref;
-
-    public final UnsignedShortRef sequenceCount_00;
-    public final UnboundedArrayRef<RelativePointer<Sequence>> sequences_02;
-
-    public SequenceList(final Value baseRef, final Value ref) {
-      this.ref = ref;
-
-      this.sequenceCount_00 = ref.offset(2, 0x00L).cast(UnsignedShortRef::new);
-      this.sequences_02 = ref.offset(2, 0x02L).cast(UnboundedArrayRef.of(2, RelativePointer.deferred(1, baseRef.getAddress(), Sequence::new, -1), () -> this.sequenceCount_00.get() + 1));
+      if(patchOffset != -1) {
+        this.patches_02[i] = new SequenceList(data, offset, offset + patchOffset);
+      }
     }
+  }
 
-    @Override
-    public long getAddress() {
-      return this.ref.getAddress();
+  public static class SequenceList {
+    public final int sequenceCount_00;
+    public final Sequence[] sequences_02;
+
+    public SequenceList(final byte[] data, final int baseOffset, final int offset) {
+      this.sequenceCount_00 = MathHelper.getUshort(data, offset);
+      this.sequences_02 = new Sequence[this.sequenceCount_00 + 1];
+
+      for(int i = 0; i < this.sequences_02.length; i++) {
+        final int sequenceOffset = MathHelper.getShort(data, offset + 2 + i * 2);
+
+        if(sequenceOffset != -1) {
+          this.sequences_02[i] = new Sequence(data, baseOffset + sequenceOffset);
+        }
+      }
     }
   }
 }

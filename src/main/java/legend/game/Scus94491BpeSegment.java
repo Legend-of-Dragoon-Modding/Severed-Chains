@@ -43,6 +43,13 @@ import legend.game.scripting.FlowControl;
 import legend.game.scripting.Param;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptState;
+import legend.game.sound.SoundFile;
+import legend.game.sound.SpuStruct08;
+import legend.game.sound.SpuStruct10;
+import legend.game.sound.SpuStruct28;
+import legend.game.sound.Sshd;
+import legend.game.sound.SshdFile;
+import legend.game.sound.Sssq;
 import legend.game.title.Ttle;
 import legend.game.types.CharacterData2c;
 import legend.game.types.DeferredReallocOrFree0c;
@@ -53,12 +60,6 @@ import legend.game.types.LoadingOverlay;
 import legend.game.types.McqHeader;
 import legend.game.types.MoonMusic08;
 import legend.game.types.MrgFile;
-import legend.game.types.SoundFile;
-import legend.game.types.SpuStruct08;
-import legend.game.types.SpuStruct10;
-import legend.game.types.SpuStruct28;
-import legend.game.types.SshdFile;
-import legend.game.types.SssqFile;
 import legend.game.types.SubmapMusic08;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
@@ -211,8 +212,6 @@ import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.loadedDrgnFiles_800bcf78;
 import static legend.game.Scus94491BpeSegment_800b.melbuMusicLoaded_800bd781;
-import static legend.game.Scus94491BpeSegment_800b.melbuSoundMrgSshdPtr_800bd784;
-import static legend.game.Scus94491BpeSegment_800b.melbuSoundMrgSssqPtr_800bd788;
 import static legend.game.Scus94491BpeSegment_800b.melbuSoundsLoaded_800bd780;
 import static legend.game.Scus94491BpeSegment_800b.musicLoaded_800bd782;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
@@ -2546,8 +2545,6 @@ public final class Scus94491BpeSegment {
   public static void FUN_80019710() {
     if(mainCallbackIndex_8004dd20.get() != 5 && previousMainCallbackIndex_8004dd28.get() == 5) {
       sssqResetStuff();
-      free(melbuSoundMrgSshdPtr_800bd784.getPointer());
-      free(melbuSoundMrgSssqPtr_800bd788.getPointer());
       melbuSoundsLoaded_800bd780.set(false);
     }
 
@@ -2564,8 +2561,6 @@ public final class Scus94491BpeSegment {
       }
 
       if(melbuSoundsLoaded_800bd780.get()) {
-        free(melbuSoundMrgSshdPtr_800bd784.getPointer());
-        free(melbuSoundMrgSssqPtr_800bd788.getPointer());
         melbuSoundsLoaded_800bd780.set(false);
       }
     }
@@ -2592,8 +2587,6 @@ public final class Scus94491BpeSegment {
 
         if(!melbuSoundsLoaded_800bd780.get()) {
           //LAB_80019978
-          melbuSoundMrgSshdPtr_800bd784.set(MEMORY.ref(4, mallocTail(0x650L), SshdFile::new));
-          melbuSoundMrgSssqPtr_800bd788.set(MEMORY.ref(4, mallocTail(0x5c30L), SssqFile::new));
           melbuSoundsLoaded_800bd780.set(true);
         }
       }
@@ -2614,8 +2607,6 @@ public final class Scus94491BpeSegment {
 
         if(!melbuSoundsLoaded_800bd780.get() && encounterId_800bb0f8.get() == 443) { // Melbu
           //LAB_80019978
-          melbuSoundMrgSshdPtr_800bd784.set(MEMORY.ref(4, mallocTail(0x650L), SshdFile::new));
-          melbuSoundMrgSssqPtr_800bd788.set(MEMORY.ref(4, mallocTail(0x5c30L), SssqFile::new));
           melbuSoundsLoaded_800bd780.set(true);
         }
       }
@@ -3745,6 +3736,7 @@ public final class Scus94491BpeSegment {
 
     sound.charId_02.set((short)charId);
     sound.soundMrgPtr_04.setPointer(_800bc980.offset(charSlot * 0xcL).offset(0x4L).get());
+    //TODO might be able to remove this now
     final MrgFile mrg = sound.soundMrgPtr_04.deref();
 
     mrg.count.set(3);
@@ -3760,7 +3752,6 @@ public final class Scus94491BpeSegment {
     MEMORY.setBytes(mrg.getFile(2), files.get(2));
 
     sound.ptr_08.set(mrg.getFile(1));
-    sound.charId_02.set((short)MEMORY.ref(2, mrg.getFile(0)).get());
 
     if(charSlot == 0 || charSlot == 1) {
       //LAB_8001cc30
@@ -3773,7 +3764,7 @@ public final class Scus94491BpeSegment {
 
     //LAB_8001cc48
     //LAB_8001cc50
-    sound.playableSoundIndex_10.set(loadSshdAndSoundbank(files.get(3), mrg.getFile(2, SshdFile::new), (int)_80050190.offset(charSlot * 0x4L).get()));
+    sound.playableSoundIndex_10.set(loadSshdAndSoundbank(files.get(3), new Sshd(files.get(2)), (int)_80050190.offset(charSlot * 0x4L).get()));
     sound.used_00.set(true);
   }
 
@@ -3836,6 +3827,7 @@ public final class Scus94491BpeSegment {
     final int size2 = MathHelper.roundUp(file2.length, 4);
     final int headerSize = 8 + 3 * 8;
 
+    //TODO might be able to remove this now
     final MrgFile mrg = sound.soundMrgPtr_04.deref();
 
     mrg.count.set(3);
@@ -3852,9 +3844,9 @@ public final class Scus94491BpeSegment {
 
     //LAB_8001cf2c
     sound.ptr_08.set(mrg.getFile(1));
-    sound.charId_02.set((short)MEMORY.ref(2, mrg.getFile(0)).get());
+    sound.charId_02.set((short)MathHelper.get(files.get(0), 0, 2));
     setSpuDmaCompleteCallback(Scus94491BpeSegment::FUN_8001e950);
-    sound.playableSoundIndex_10.set(loadSshdAndSoundbank(files.get(3), mrg.getFile(2, SshdFile::new), (int)_80050190.offset(charSlot * 0x4L).get()));
+    sound.playableSoundIndex_10.set(loadSshdAndSoundbank(files.get(3), new Sshd(files.get(2)), (int)_80050190.offset(charSlot * 0x4L).get()));
     FUN_8004cb0c(sound.playableSoundIndex_10.get(), 0x7f);
     sound.used_00.set(true);
   }
@@ -4007,16 +3999,17 @@ public final class Scus94491BpeSegment {
       final int soundFileIndex = monsterSoundFileIndices_800500e8.get(monsterSlot).get();
       final SoundFile s4 = soundFileArr_800bcf80.get(soundFileIndex);
 
+      //TODO might be able to remove this now
       s4.soundMrgPtr_04.set(MrgFile.alloc(files));
       final MrgFile s0 = s4.soundMrgPtr_04.deref();
 
       s4.ptr_08.set(s0.getFile(1));
-      s4.charId_02.set((short)MEMORY.ref(2, s0.getFile(0)).get());
+      s4.charId_02.set((short)MathHelper.get(files.get(0), 0, 2));
 
       setSpuDmaCompleteCallback(null);
 
       //LAB_8001d80c
-      s4.playableSoundIndex_10.set(loadSshdAndSoundbank(files.get(3), s0.getFile(2, SshdFile::new), 0x5_a1e0 + soundBufferOffset));
+      s4.playableSoundIndex_10.set(loadSshdAndSoundbank(files.get(3), new Sshd(files.get(2)), 0x5_a1e0 + soundBufferOffset));
       FUN_8004cb0c(s4.playableSoundIndex_10.get(), 0x7f);
       s4.used_00.set(true);
       soundBufferOffset += file3Size + (file3Size & 0xf);
@@ -4067,46 +4060,39 @@ public final class Scus94491BpeSegment {
 
     if(mainCallbackIndex_8004dd20.get() == 5 || mainCallbackIndex_8004dd20.get() == 6 && encounterId_800bb0f8.get() == 443) { // Melbu
       //LAB_8001db1c
-      MEMORY.setBytes(melbuSoundMrgSshdPtr_800bd784.getPointer(), files.get(3));
-      MEMORY.setBytes(melbuSoundMrgSssqPtr_800bd788.getPointer(), files.get(2));
-
       _800bd0fc.setu(a2);
       sound.spuRamOffset_14.set(0);
       sound.charId_02.set((short)MathHelper.get(files.get(0), 0, 2));
       sound._18.set((int)MathHelper.get(files.get(1), 0, 1) - 1);
       sound.spuRamOffset_14.add(files.get(4).length);
       setSpuDmaCompleteCallback(Scus94491BpeSegment::FUN_8001f810);
-      sound.playableSoundIndex_10.set(loadSshdAndSoundbank(files.get(4), melbuSoundMrgSshdPtr_800bd784.deref(), 0x2_1f70 + sound.spuRamOffset_14.get()));
-      sssqChannelIndex_800bd0f8.set(FUN_8004c1f8(sound.playableSoundIndex_10.get(), melbuSoundMrgSssqPtr_800bd788.deref()));
+      sound.playableSoundIndex_10.set(loadSshdAndSoundbank(files.get(4), new Sshd(files.get(3)), 0x2_1f70 + sound.spuRamOffset_14.get()));
+      sssqChannelIndex_800bd0f8.set(FUN_8004c1f8(sound.playableSoundIndex_10.get(), new Sssq(files.get(2))));
       melbuMusicLoaded_800bd781.set(true);
     } else {
       //LAB_8001dbf0
       if(files.size() == 5) {
+        //TODO might be able to remove this now
         sound.soundMrgPtr_04.set(MrgFile.alloc(files, 4));
-        final MrgFile mrg = sound.soundMrgPtr_04.deref();
 
         _800bd0fc.setu(a2);
         sound.spuRamOffset_14.set(0);
-        sound.charId_02.set((short)MEMORY.ref(2, mrg.getFile(0)).get());
-        sound._18.set((int)MEMORY.ref(1, mrg.getFile(1)).get() - 1);
+        sound.charId_02.set((short)MathHelper.get(files.get(0), 0, 2));
+        sound._18.set((int)MathHelper.get(files.get(1), 0, 1) - 1);
         sound.spuRamOffset_14.add(files.get(4).length);
         setSpuDmaCompleteCallback(Scus94491BpeSegment::FUN_8001f810);
-        sound.playableSoundIndex_10.set(loadSshdAndSoundbank(files.get(4), mrg.getFile(3, SshdFile::new), 0x2_1f70 + sound.spuRamOffset_14.get()));
-        sssqChannelIndex_800bd0f8.set(FUN_8004c1f8(sound.playableSoundIndex_10.get(), mrg.getFile(2, SssqFile::new)));
+        sound.playableSoundIndex_10.set(loadSshdAndSoundbank(files.get(4), new Sshd(files.get(3)), 0x2_1f70 + sound.spuRamOffset_14.get()));
+        sssqChannelIndex_800bd0f8.set(FUN_8004c1f8(sound.playableSoundIndex_10.get(), new Sssq(files.get(2))));
       } else {
         //LAB_8001dcdc
         sound.soundMrgPtr_04.set(MrgFile.alloc(files, 3));
-        final MrgFile mrg = sound.soundMrgPtr_04.deref();
 
         _800bd0fc.setu(a2);
-        sound.charId_02.set((short)MEMORY.ref(2, mrg.getFile(0)).get());
-
-        LOGGER.info("Loading SSHD to %08x", mrg.getFile(2));
-        LOGGER.info("Loading SSSQ to %08x", mrg.getFile(1));
+        sound.charId_02.set((short)MathHelper.get(files.get(0), 0, 2));
 
         //LAB_8001dd44
-        sound.playableSoundIndex_10.set(loadSshdAndSoundbank(files.get(3), mrg.getFile(2, SshdFile::new), 0x2_1f70));
-        sssqChannelIndex_800bd0f8.set(FUN_8004c1f8(sound.playableSoundIndex_10.get(), mrg.getFile(1, SssqFile::new)));
+        sound.playableSoundIndex_10.set(loadSshdAndSoundbank(files.get(3), new Sshd(files.get(2)), 0x2_1f70));
+        sssqChannelIndex_800bd0f8.set(FUN_8004c1f8(sound.playableSoundIndex_10.get(), new Sssq(files.get(1))));
 
         LOGGER.info("SSHD playable sound index %d", sound.playableSoundIndex_10.get());
         LOGGER.info("SSSQ channel index %d", sssqChannelIndex_800bd0f8.get());
@@ -4424,13 +4410,13 @@ public final class Scus94491BpeSegment {
 
     sound.soundMrgPtr_04.set(MrgFile.alloc(files, 3));
 
-    //TODO manually building MRG, get rid of MRG here
+    //TODO might be able to remove this now
     final MrgFile mrg = sound.soundMrgPtr_04.deref();
 
     sound.ptr_08.set(mrg.getFile(1));
     setSpuDmaCompleteCallback(Scus94491BpeSegment::unloadSoundbank_800bd778);
 
-    sound.playableSoundIndex_10.set(loadSshdAndSoundbank(files.get(3), mrg.getFile(2, SshdFile::new), 0x1010));
+    sound.playableSoundIndex_10.set(loadSshdAndSoundbank(files.get(3), new Sshd(files.get(2)), 0x1010));
 
     LOGGER.info("Menu sounds loaded to playable sound %d", sound.playableSoundIndex_10.get());
   }
@@ -4477,14 +4463,15 @@ public final class Scus94491BpeSegment {
     final SoundFile sound = soundFileArr_800bcf80.get(4);
     sound.used_00.set(true);
 
+    //TODO might be able to remove this now
     sound.soundMrgPtr_04.set(MrgFile.alloc(files, 3));
     final MrgFile mrg = sound.soundMrgPtr_04.deref();
 
     sound.ptr_08.set(mrg.getFile(1));
-    sound.charId_02.set((short)MEMORY.ref(2, mrg.getFile(0)).get());
+    sound.charId_02.set((short)MathHelper.get(files.get(0), 0, 2));
     setSpuDmaCompleteCallback(Scus94491BpeSegment::FUN_8001ea5c);
 
-    sound.playableSoundIndex_10.set(loadSshdAndSoundbank(files.get(3), sound.soundMrgPtr_04.deref().getFile(2, SshdFile::new), 0x5_a1e0));
+    sound.playableSoundIndex_10.set(loadSshdAndSoundbank(files.get(3), new Sshd(files.get(2)), 0x5_a1e0));
     FUN_8004cb0c(sound.playableSoundIndex_10.get(), 0x7f);
   }
 
@@ -4506,6 +4493,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001eb38L)
   public static void submapSoundsLoaded(final List<byte[]> files) {
+    //TODO might be able to remove this now
     final MrgFile mrg = MrgFile.alloc(files, 4);
     soundFileArr_800bcf80.get(8).soundMrgPtr_04.set(mrg);
 
@@ -4518,7 +4506,7 @@ public final class Scus94491BpeSegment {
       throw new RuntimeException("Size didn't match, need to resize array or something");
     }
 
-    soundFileArr_800bcf80.get(8).playableSoundIndex_10.set(loadSshdAndSoundbank(files.get(4), mrg.getFile(3, SshdFile::new), 0x4_de90));
+    soundFileArr_800bcf80.get(8).playableSoundIndex_10.set(loadSshdAndSoundbank(files.get(4), new Sshd(files.get(3)), 0x4_de90));
     FUN_8004cb0c(soundFileArr_800bcf80.get(8).playableSoundIndex_10.get(), 0x7f);
     soundFileArr_800bcf80.get(8).used_00.set(true);
   }
@@ -4553,14 +4541,15 @@ public final class Scus94491BpeSegment {
     final SoundFile sound = soundFileArr_800bcf80.get(12);
     sound.used_00.set(true);
 
+    //TODO might be able to remove this now
     sound.soundMrgPtr_04.set(MrgFile.alloc(files, 4));
     final MrgFile mrg = sound.soundMrgPtr_04.deref();
 
     sound.ptr_08.set(mrg.getFile(2));
-    sound.charId_02.set((short)MEMORY.ref(2, mrg.getFile(0)).get());
+    sound.charId_02.set((short)MathHelper.get(files.get(0), 0, 2));
 
     setSpuDmaCompleteCallback(Scus94491BpeSegment::FUN_8001efcc);
-    sound.playableSoundIndex_10.set(loadSshdAndSoundbank(files.get(4), mrg.getFile(3, SshdFile::new), 0x4_de90));
+    sound.playableSoundIndex_10.set(loadSshdAndSoundbank(files.get(4), new Sshd(files.get(3)), 0x4_de90));
 
     FUN_8004cb0c(sound.playableSoundIndex_10.get(), 0x7f);
   }
@@ -4583,14 +4572,15 @@ public final class Scus94491BpeSegment {
     final SoundFile sound = soundFileArr_800bcf80.get(10);
     sound.used_00.set(true);
 
+    //TODO might be able to remove this now
     sound.soundMrgPtr_04.set(MrgFile.alloc(files, 3));
     final MrgFile mrg = sound.soundMrgPtr_04.deref();
 
     sound.ptr_08.set(mrg.getFile(1));
-    sound.charId_02.set((short)MEMORY.ref(2, mrg.getFile(0)).get());
+    sound.charId_02.set((short)MathHelper.get(files.get(0), 0, 2));
 
     setSpuDmaCompleteCallback(null);
-    sound.playableSoundIndex_10.set(loadSshdAndSoundbank(files.get(3), mrg.getFile(2, SshdFile::new), 0x6_6930));
+    sound.playableSoundIndex_10.set(loadSshdAndSoundbank(files.get(3), new Sshd(files.get(2)), 0x6_6930));
 
     FUN_8004cb0c(sound.playableSoundIndex_10.get(), 0x7f);
     loadedDrgnFiles_800bcf78.and(0xffff_ffdfL);
@@ -4609,14 +4599,15 @@ public final class Scus94491BpeSegment {
     final SoundFile sound = soundFileArr_800bcf80.get(10);
     sound.used_00.set(true);
 
+    //TODO might be able to remove this now
     sound.soundMrgPtr_04.set(MrgFile.alloc(files, 3));
     final MrgFile mrg = sound.soundMrgPtr_04.deref();
 
     sound.ptr_08.set(mrg.getFile(1));
-    sound.charId_02.set((short)MEMORY.ref(2, mrg.getFile(0)).get());
+    sound.charId_02.set((short)MathHelper.get(files.get(0), 0, 2));
 
     setSpuDmaCompleteCallback(Scus94491BpeSegment::FUN_8001f390);
-    sound.playableSoundIndex_10.set(loadSshdAndSoundbank(files.get(3), mrg.getFile(2, SshdFile::new), 0x6_6930));
+    sound.playableSoundIndex_10.set(loadSshdAndSoundbank(files.get(3), new Sshd(files.get(2)), 0x6_6930));
 
     FUN_8004cb0c(sound.playableSoundIndex_10.get(), 0x7f);
   }
@@ -4740,7 +4731,7 @@ public final class Scus94491BpeSegment {
   public static void FUN_8001fa18() {
     FUN_8004cf8c(sssqChannelIndex_800bd0f8.get());
     sssqTempo_800bd104.set(sssqGetTempo(sssqChannelIndex_800bd0f8.get()) * sssqTempoScale_800bd100.get());
-    sssqSetTempo(sssqChannelIndex_800bd0f8.get(), sssqTempo_800bd104.get() << 8 >> 16);
+    sssqSetTempo(sssqChannelIndex_800bd0f8.get(), sssqTempo_800bd104.get() >> 8);
 
     musicLoaded_800bd782.incr();
     loadedDrgnFiles_800bcf78.and(0xffff_ff7fL);
@@ -4756,10 +4747,10 @@ public final class Scus94491BpeSegment {
     final SoundFile sound = soundFileArr_800bcf80.get(11);
     sound.used_00.set(true);
 
+    //TODO might be able to remove this now
     sound.soundMrgPtr_04.set(MrgFile.alloc(files, 3));
-    final MrgFile mrg = sound.soundMrgPtr_04.deref();
 
-    sound.charId_02.set((short)MEMORY.ref(2, mrg.getFile(0)).get());
+    sound.charId_02.set((short)MathHelper.get(files.get(0), 0, 2));
 
     if(param == 0) {
       setSpuDmaCompleteCallback(Scus94491BpeSegment::FUN_8001ddd8);
@@ -4769,8 +4760,8 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_8001fbcc
-    sound.playableSoundIndex_10.set(loadSshdAndSoundbank(files.get(3), mrg.getFile(2, SshdFile::new), 0x2_1f70));
-    _800bd0f0.offset(2, 0x8L).setu(FUN_8004c1f8(sound.playableSoundIndex_10.get(), mrg.getFile(1, SssqFile::new)));
+    sound.playableSoundIndex_10.set(loadSshdAndSoundbank(files.get(3), new Sshd(files.get(2)), 0x2_1f70));
+    _800bd0f0.offset(2, 0x8L).setu(FUN_8004c1f8(sound.playableSoundIndex_10.get(), new Sssq(files.get(1))));
     FUN_8001b1a8(40);
     melbuMusicLoaded_800bd781.set(false);
     _800bd0f0.setu(0x2L);
@@ -4795,8 +4786,7 @@ public final class Scus94491BpeSegment {
 
     struct10.unknown = (int)MathHelper.get(files.get(0), 0, 2);
     struct10.soundFileIndex = (int)MathHelper.get(files.get(1), 0, 2);
-    struct10.sssq_08 = MEMORY.ref(4, mallocTail(files.get(2).length), SssqFile::new);
-    MEMORY.setBytes(struct10.sssq_08.getAddress(), files.get(2));
+    struct10.sssq_08 = new Sssq(files.get(2));
 
     FUN_8004c8dc(struct10.channelIndex_0c, 40);
     struct10._00 = 2;

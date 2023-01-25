@@ -1,4 +1,4 @@
-package legend.game.types;
+package legend.game.sound;
 
 public class SpuStruct124 {
   /** ubyte Upper nibble is message, lower nibble is channel */
@@ -12,9 +12,8 @@ public class SpuStruct124 {
   /** ubyte */
   public int param2_005;
 
-  public int sssqOffset_00c;
   /** Can either be a full SSSQ file, or just a sequence */
-  public long sssqPtr_010;
+  public SssqReader sssqReader_010;
 
   public int _018;
 
@@ -43,17 +42,18 @@ public class SpuStruct124 {
   /** ubyte */
   public int _035;
 
-  /** If set, {@link #command_000} will get set to {@link #_039} at the end of this sound's tick */
-  public boolean overrideCommand_037;
+  /** If set, jump to a new position. {@link #command_000} will get set to {@link #jumpDestCommand_039} at the end of this sound's tick */
+  public boolean jump_037;
 
-  /** ubyte */
-  public int _039;
+  /** Pretty sure this is the command at the destination after jumping to a new position in the sequence(ubyte) */
+  public int jumpDestCommand_039;
   /** ubyte */
   public int _03a;
 
   /** ubyte */
   public int _03c;
 
+  /** Second index is channel */
   public final int[][] _03e = new int[10][16];
   /** Was two ushorts */
   public int keyOn_0de;
@@ -81,16 +81,17 @@ public class SpuStruct124 {
   /** ubyte */
   public int _105;
 
-  /** ushort */
+  /** Beats per minute (ushort) */
   public int tempo_108;
-  /** ushort */
-  public int deltaTime_10a;
+  /** How many ticks there are per quarter note (ushort) */
+  public int ticksPerQuarterNote_10a;
   /** ubyte */
   public int _10c;
 
   public int _110;
   public int _114;
-  public int _118;
+  /** How many ticks have passed since the last message (command) */
+  public int deltaTime_118;
   /** ubyte */
   public int _11c;
   /** ubyte */

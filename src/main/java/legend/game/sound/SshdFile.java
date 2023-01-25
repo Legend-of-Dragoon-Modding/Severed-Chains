@@ -1,12 +1,10 @@
-package legend.game.types;
+package legend.game.sound;
 
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.UnsignedIntRef;
-import legend.game.sound.PatchList;
-import legend.game.sound.VolumeRamp;
 
 public class SshdFile implements MemoryRef {
   public static final long MAGIC = 0x6468_5353L; //SShd

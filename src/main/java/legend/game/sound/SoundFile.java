@@ -1,4 +1,4 @@
-package legend.game.types;
+package legend.game.sound;
 
 import legend.core.memory.Value;
 import legend.core.memory.types.BoolRef;
@@ -8,6 +8,7 @@ import legend.core.memory.types.Pointer;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
+import legend.game.types.MrgFile;
 
 public class SoundFile implements MemoryRef {
   private final Value ref;

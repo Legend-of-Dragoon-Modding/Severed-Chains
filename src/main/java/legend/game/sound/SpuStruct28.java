@@ -1,4 +1,4 @@
-package legend.game.types;
+package legend.game.sound;
 
 import legend.core.memory.Value;
 import legend.core.memory.types.IntRef;

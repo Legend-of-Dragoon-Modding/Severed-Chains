@@ -1,4 +1,4 @@
-package legend.game.types;
+package legend.game.sound;
 
 public class SpuStruct44 {
   /** ubyte */
@@ -11,7 +11,7 @@ public class SpuStruct44 {
   /** ubyte */
   public int _04;
 
-  public SshdFile sshdPtr_08;
+  public Sshd sshdPtr_08;
   /** ubyte */
   public int _0c;
   /** ubyte */

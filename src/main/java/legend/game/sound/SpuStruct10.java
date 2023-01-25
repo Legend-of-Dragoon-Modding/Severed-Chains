@@ -1,4 +1,4 @@
-package legend.game.types;
+package legend.game.sound;
 
 public class SpuStruct10 {
   public int _00;
@@ -6,6 +6,6 @@ public class SpuStruct10 {
   public int unknown;
   public int soundFileIndex;
 
-  public SssqFile sssq_08;
+  public Sssq sssq_08;
   public int channelIndex_0c;
 }
