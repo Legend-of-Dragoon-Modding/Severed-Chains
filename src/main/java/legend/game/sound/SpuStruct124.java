@@ -18,7 +18,7 @@ public class SpuStruct124 {
   public int _018;
 
   /** ubyte */
-  public int _01e;
+  public int startingInstrument_01e;
 
   /** ushort */
   public int playableSoundIndex_020;
@@ -27,7 +27,7 @@ public class SpuStruct124 {
   /** ushort */
   public int patchIndex_024;
   /** ubyte */
-  public int _026;
+  public int endingInstrument_026;
   /** ubyte */
   public int _027;
   /** ubyte */
@@ -101,7 +101,7 @@ public class SpuStruct124 {
   /** ubyte */
   public int _11f;
   /** ubyte */
-  public int _120;
+  public int instrumentIndex_120;
 
   /** ushort */
   public int _122;

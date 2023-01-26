@@ -13,7 +13,7 @@ public class SpuStruct44 {
 
   public Sshd sshdPtr_08;
   /** ubyte */
-  public int _0c;
+  public boolean _0c;
   /** ubyte */
   public int _0d;
 
