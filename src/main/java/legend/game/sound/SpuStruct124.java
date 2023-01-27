@@ -37,16 +37,16 @@ public class SpuStruct124 {
   /** ubyte */
   public int _02a;
 
-  public int sssqOffset_02c;
+  public int repeatOffset_02c;
 
   /** ubyte */
-  public int _035;
+  public int repeatCounter_035;
 
-  /** If set, jump to a new position. {@link #command_000} will get set to {@link #jumpDestCommand_039} at the end of this sound's tick */
-  public boolean jump_037;
+  /** If set, jump to a new position. {@link #command_000} will get set to {@link #repeatDestCommand_039} at the end of this sound's tick */
+  public boolean repeat_037;
 
   /** Pretty sure this is the command at the destination after jumping to a new position in the sequence(ubyte) */
-  public int jumpDestCommand_039;
+  public int repeatDestCommand_039;
   /** ubyte */
   public int _03a;
 
@@ -95,11 +95,11 @@ public class SpuStruct124 {
   /** ubyte */
   public int _11c;
   /** ubyte */
-  public int _11d;
-  /** ubyte */
-  public int _11e;
-  /** ubyte */
-  public int _11f;
+  public int repeatCount_11d;
+  /** Set for NRPN commands that have an LSB so it knows which NRPN it's working with (ubyte) */
+  public int lsbType_11e;
+  /** The non-registered parameter number to use for the next data entry command (ubyte) */
+  public int nrpn_11f;
   /** ubyte */
   public int instrumentIndex_120;
 

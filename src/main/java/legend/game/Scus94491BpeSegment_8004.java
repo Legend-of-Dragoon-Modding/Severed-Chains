@@ -1411,10 +1411,14 @@ public final class Scus94491BpeSegment_8004 {
             } else if(command == 0xb0) { // Control change
               //LAB_80045e60
               switch(spu124.param0_002) { // Control number
-                case 0x1 -> sssqHandleModulationWheel(spu44.channelIndex_01); // Modulation wheel
-                case 0x2 -> sssqHandleBreathControl(spu44.channelIndex_01); // Breath control
-                case 0x6 -> sssqHandleDataEntry(spu44.channelIndex_01); // Data entry
-                case 0x7 -> sssqHandleVolume(spu44.channelIndex_01); // Volume
+                case 0x1 ->
+                  sssqHandleModulationWheel(spu44.channelIndex_01); // Modulation wheel
+                case 0x2 ->
+                  sssqHandleBreathControl(spu44.channelIndex_01); // Breath control
+                case 0x6 ->
+                  sssqHandleDataEntry(spu44.channelIndex_01); // Data entry
+                case 0x7 ->
+                  sssqHandleVolume(spu44.channelIndex_01); // Volume
 
                 case 0xa -> { // Pan
                   if(!spu44.mono_36) {
@@ -1429,8 +1433,10 @@ public final class Scus94491BpeSegment_8004 {
                   }
                 }
 
-                case 0x40 -> sssqHandleSustain(spu44.channelIndex_01); // Damper pedal (sustain)
-                case 0x41 -> sssqHandlePortamento(spu44.channelIndex_01); // Portamento
+                case 0x40 ->
+                  sssqHandleSustain(spu44.channelIndex_01); // Damper pedal (sustain)
+                case 0x41 ->
+                  sssqHandlePortamento(spu44.channelIndex_01); // Portamento
 
                 case 0x60 -> { // Data increment (???)
                   FUN_80049e2c(spu44.channelIndex_01); // Seems to jump to a different part of the sequence
@@ -1438,8 +1444,10 @@ public final class Scus94491BpeSegment_8004 {
                   break LAB_80045d40;
                 }
 
-                case 0x62 -> FUN_8004a2c0(spu44.channelIndex_01); // Non-registered parameter number LSB (???)
-                case 0x63 -> FUN_8004a34c(spu44.channelIndex_01); // Non-registered parameter number MSB (???)
+                case 0x62 ->
+                  sssqDataEntryLsb(spu44.channelIndex_01); // Non-registered parameter number LSB
+                case 0x63 ->
+                  sssqDataEntryMsb(spu44.channelIndex_01); // Non-registered parameter number MSB
               }
             } else if(command == 0xc0) { // Program change
               //LAB_80045e4c
@@ -1486,11 +1494,11 @@ public final class Scus94491BpeSegment_8004 {
         }
 
         //LAB_800460d4
-        if(spu124.jump_037) {
-          spu124.command_000 = spu124.jumpDestCommand_039;
-          spu124.previousCommand_001 = spu124.jumpDestCommand_039;
-          spu124.sssqReader_010.jump(spu124.sssqOffset_02c);
-          spu124.jump_037 = false;
+        if(spu124.repeat_037) {
+          spu124.command_000 = spu124.repeatDestCommand_039;
+          spu124.previousCommand_001 = spu124.repeatDestCommand_039;
+          spu124.sssqReader_010.jump(spu124.repeatOffset_02c);
+          spu124.repeat_037 = false;
 
           if(spu124._0e6 == 0) {
             //LAB_80046118
@@ -2634,8 +2642,8 @@ public final class Scus94491BpeSegment_8004 {
         }
 
         //LAB_80048e10
-        spu124._035 = 0;
-        spu124.jump_037 = false;
+        spu124.repeatCounter_035 = 0;
+        spu124.repeat_037 = false;
         spu124._0e6 = 0;
         spu124.pitchShiftVolLeft_0ee = 0;
         spu124.pitchShifted_0e9 = 0;
@@ -2666,8 +2674,6 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x80048eb8L)
   public static void sssqHandleEndOfTrack(final int channelIndex) {
-    assert channelIndex >= 0;
-
     final SpuStruct124 spu124 = _800c4ac8[channelIndex];
 
     if(spu124._02a != 0) {
@@ -2704,8 +2710,6 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x80048f98L)
   public static void sssqHandleTempo(final int channelIndex) {
-    assert channelIndex >= 0;
-
     final SpuStruct124 spu124 = _800c4ac8[channelIndex];
     spu124.tempo_108 = spu124.sssqReader_010.readShort(2);
     spu124.sssqReader_010.advance(4);
@@ -2713,8 +2717,6 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x80048fecL)
   public static void sssqHandleProgramChange(final int channelIndex) {
-    assert channelIndex >= 0;
-
     final SpuStruct124 spu124 = _800c4ac8[channelIndex];
 
     if(spu124._02a == 0) {
@@ -2729,8 +2731,6 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x8004906cL)
   public static void sssqHandleModulationWheel(final int channelIndex) {
-    assert channelIndex >= 0;
-
     final SpuStruct124 spu124 = _800c4ac8[channelIndex];
 
     if(spu124._02a != 0) {
@@ -2785,8 +2785,6 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x80049250L)
   public static void sssqHandleBreathControl(final int channelIndex) {
-    assert channelIndex >= 0;
-
     final SpuStruct124 spu124 = _800c4ac8[channelIndex];
 
     final int breath = 240 / (60 - spu124.sssqReader_010.readByte(2) * 58 / 127);
@@ -2880,8 +2878,6 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x80049638L)
   public static void sssqHandleVolume(final int channelIndex) {
-    assert channelIndex >= 0;
-
     final SpuStruct124 spu124 = _800c4ac8[channelIndex];
     final SpuStruct44 spu44 = _800c6630;
 
@@ -3021,20 +3017,20 @@ public final class Scus94491BpeSegment_8004 {
 
     if(a0 == 0) {
       //LAB_80049ecc
-      struct124.sssqOffset_02c = struct124.sssqReader_010.readShort(2);
-      struct124.jumpDestCommand_039 = struct124.sssqReader_010.readByteAbsolute(struct124.sssqOffset_02c);
-      struct124.jump_037 = true;
+      struct124.repeatOffset_02c = struct124.sssqReader_010.readShort(2);
+      struct124.repeatDestCommand_039 = struct124.sssqReader_010.readByteAbsolute(struct124.repeatOffset_02c);
+      struct124.repeat_037 = true;
       struct124._0e6 = 1;
-    } else if(a0 != struct124._035) {
+    } else if(a0 != struct124.repeatCounter_035) {
       //LAB_80049ea0
-      struct124.sssqOffset_02c = struct124.sssqReader_010.readShort(2);
-      struct124.jumpDestCommand_039 = struct124.sssqReader_010.readByteAbsolute(struct124.sssqOffset_02c);
-      struct124._035++;
-      struct124.jump_037 = true;
+      struct124.repeatOffset_02c = struct124.sssqReader_010.readShort(2);
+      struct124.repeatDestCommand_039 = struct124.sssqReader_010.readByteAbsolute(struct124.repeatOffset_02c);
+      struct124.repeatCounter_035++;
+      struct124.repeat_037 = true;
       struct124._0e6 = 1;
     } else {
-      struct124._035 = 0;
-      struct124.jump_037 = false;
+      struct124.repeatCounter_035 = 0;
+      struct124.repeat_037 = false;
       struct124._0e6 = 0;
     }
 
@@ -3044,65 +3040,60 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x80049f14L)
   public static void sssqHandleDataEntry(final int channelIndex) {
-    assert channelIndex >= 0;
-
     final SpuStruct124 spu124 = _800c4ac8[channelIndex];
 
-    switch(spu124._11f) {
+    switch(spu124.nrpn_11f) {
       case 0 -> {
-        spu124._11f = 0;
-        spu124._11d = spu124.param1_003;
-
-        //LAB_8004a2a0
+        spu124.repeatCount_11d = spu124.param1_003;
         spu124.sssqReader_010.advance(3);
         return;
       }
 
       //LAB_8004a050
-      case 4 ->
+      case 4 -> // Attack (linear)
         sshd10_800c6678.adsrLo_06 = sshd10_800c6678.adsrLo_06
           & 0xff
           | 0x7f - spu124.param1_003 << 8;
 
-      case 5 ->
+      case 5 -> // Attack (exponential)
         sshd10_800c6678.adsrLo_06 = sshd10_800c6678.adsrLo_06
           & 0xff
           | 0x7f - spu124.param1_003 << 8
           | 0x8000;
 
-      case 6 ->
+      case 6 -> // Decay shift
         sshd10_800c6678.adsrLo_06 = sshd10_800c6678.adsrLo_06
           & 0xff0f
-          | (0x7f - spu124.param1_003) / 0x8 * 0x10;
+          | (0x7f - spu124.param1_003) / 0x8 << 4;
 
       //LAB_8004a050
-      case 7 ->
+      case 7 -> // Sustain level
         sshd10_800c6678.adsrLo_06 = sshd10_800c6678.adsrLo_06
           & 0xfff0
           | spu124.param1_003 / 0x8;
 
       //LAB_8004a114
-      case 8 ->
+      case 8 -> // Sustain (linear) (everything but level)
         sshd10_800c6678.adsrHi_08 = sshd10_800c6678.adsrHi_08
           & 0x3f
-          | (0x7f - spu124.param1_003) * 0x40
-          | 0x4000 - spu124._122;
+          | (0x7f - spu124.param1_003) << 6
+          | 0x4000 - spu124._122; // Direction? (0 = increase, 1 = decrease)
 
       //LAB_8004a114
-      case 9 ->
+      case 9 -> // Sustain (exponential) (everything but level)
         sshd10_800c6678.adsrHi_08 = sshd10_800c6678.adsrHi_08
           & 0x3f
-          | (0x7f - spu124.param1_003) * 0x40
-          | 0x8000
-          | 0x4000 - spu124._122;
+          | (0x7f - spu124.param1_003) << 6
+          | 0x4000 - spu124._122 // Direction? (0 = increase, 1 = decrease)
+          | 0x8000;
 
       //LAB_8004a114
-      case 0xa ->
+      case 0xa -> // Release (linear)
         sshd10_800c6678.adsrHi_08 = sshd10_800c6678.adsrHi_08
           & 0xffc0
           | (0x7f - spu124.param1_003) / 4;
 
-      case 0xb ->
+      case 0xb -> // Release (exponential)
         sshd10_800c6678.adsrHi_08 = sshd10_800c6678.adsrHi_08
           & 0xffc0
           | (0x7f - spu124.param1_003) / 4
@@ -3177,17 +3168,17 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004a2c0L)
-  public static void FUN_8004a2c0(final int channelIndex) {
+  public static void sssqDataEntryLsb(final int channelIndex) {
     final SpuStruct124 spu124 = _800c4ac8[channelIndex];
-    final int a0 = _800c4ac8[channelIndex]._11e;
+    final int type = spu124.lsbType_11e;
 
-    if(a0 == 0) {
+    if(type == 0) {
       //LAB_8004a31c
-      spu124._11f = 0;
-      spu124._11d = spu124.param1_003;
-    } else if(a0 == 1 || a0 == 2) {
+      spu124.nrpn_11f = 0;
+      spu124.repeatCount_11d = spu124.param1_003;
+    } else if(type == 1 || type == 2) {
       //LAB_8004a32c
-      spu124._11f = spu124.param1_003;
+      spu124.nrpn_11f = spu124.param1_003;
     }
 
     //LAB_8004a338
@@ -3195,49 +3186,46 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004a34cL)
-  public static void FUN_8004a34c(final int channelIndex) {
-    assert channelIndex >= 0;
-
+  public static void sssqDataEntryMsb(final int channelIndex) {
     final SpuStruct124 spu124 = _800c4ac8[channelIndex];
 
-    final int v1 = spu124.param1_003;
-    if(v1 >= 0 && v1 < 0x10) {
+    final int nrpn = spu124.param1_003; // NRPN
+    if(nrpn >= 0 && nrpn < 0x10) {
       //LAB_8004a44c
-      spu124._11e = 0x10;
+      spu124.lsbType_11e = 0x10;
       spu124.instrumentIndex_120 = spu124.param1_003;
-    } else if(v1 == 0x10) {
+    } else if(nrpn == 0x10) {
       //LAB_8004a430
-      spu124._11e = 1;
+      spu124.lsbType_11e = 1;
       //LAB_8004a398
-    } else if(v1 == 0x14) {
+    } else if(nrpn == 0x14) { // Set repeat offset
       //LAB_8004a3cc
-      spu124._11e = 0;
-      spu124._11f = 0;
-      spu124.jumpDestCommand_039 = spu124.command_000;
-      spu124.sssqOffset_02c = spu124.sssqReader_010.offset();
-    } else if(v1 == 0x1e) {
-      //LAB_8004a3e8
-      if(spu124._11d == 0x7f) {
-        //LAB_8004a424
-        spu124.jump_037 = true;
-      } else if(spu124._035 < spu124._11d) {
-        //LAB_8004a41c
-        spu124._035++;
+      spu124.lsbType_11e = 0;
+      spu124.nrpn_11f = 0;
+      spu124.repeatDestCommand_039 = spu124.command_000;
+      spu124.repeatOffset_02c = spu124.sssqReader_010.offset();
+    } else if(nrpn == 0x1e) { // Repeat
+      spu124.lsbType_11e = 0;
 
+      //LAB_8004a3e8
+      if(spu124.repeatCount_11d == 0x7f) { // Simple repeat
         //LAB_8004a424
-        spu124.jump_037 = true;
-      } else {
-        spu124.sssqOffset_02c = 0;
-        spu124.jump_037 = false;
-        spu124._035 = 0;
+        spu124.repeat_037 = true;
+      } else if(spu124.repeatCounter_035 < spu124.repeatCount_11d) { // Repeat n times
+        //LAB_8004a41c
+        spu124.repeatCounter_035++;
+        spu124.repeat_037 = true;
+      } else { // Repeat finished
+        spu124.repeatOffset_02c = 0;
+        spu124.repeatCounter_035 = 0;
+        spu124.repeat_037 = false;
       }
 
       //LAB_8004a428
-      spu124._11e = 0;
       //LAB_8004a3b8
-    } else if(v1 == 0x7f) {
+    } else if(nrpn == 0x7f) {
       //LAB_8004a43c
-      spu124._11e = 2;
+      spu124.lsbType_11e = 2;
       spu124.instrumentIndex_120 = 0xff;
     }
 
@@ -3247,8 +3235,6 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x8004a46cL)
   public static void sssqHandlePitchBend(final int channelIndex) {
-    assert channelIndex >= 0;
-
     final SpuStruct124 spu124 = _800c4ac8[channelIndex];
 
     sssqEntry_800c6680.pitchBend_0a = spu124.sssqReader_010.readByte(1);
@@ -3275,8 +3261,6 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x8004a5e0L)
   public static void sssqReadDeltaTime(final int channelIndex) {
-    assert channelIndex >= 0;
-
     final SpuStruct124 spu124 = _800c4ac8[channelIndex];
 
     //LAB_8004a618
@@ -3346,8 +3330,6 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x8004a7ecL)
   public static void sssqReadEvent(final int channelIndex) {
-    assert channelIndex >= 0;
-
     final SpuStruct124 spu124 = _800c4ac8[channelIndex];
 
     final int command = spu124.sssqReader_010.readByte(0);
@@ -4321,7 +4303,7 @@ public final class Scus94491BpeSegment_8004 {
             spu124._028 = 0;
             spu124._018 = 1;
             spu124._0e8 = 0;
-            spu124._035 = 0;
+            spu124.repeatCounter_035 = 0;
             doIt = true;
           } else if(a1 == 1) {
             //LAB_8004d134
@@ -4332,7 +4314,7 @@ public final class Scus94491BpeSegment_8004 {
             spu124._028 = 0;
             spu124._018 = 1;
             spu124._0e8 = 0;
-            spu124._035 = 0;
+            spu124.repeatCounter_035 = 0;
             doIt = true;
             //LAB_8004d11c
           } else if(a1 == 2) {
@@ -4549,8 +4531,8 @@ public final class Scus94491BpeSegment_8004 {
           struct124._105 = 0;
           struct124._104 = 0;
           struct124._0e6 = 0;
-          struct124._035 = 0;
-          struct124.jump_037 = false;
+          struct124.repeatCounter_035 = 0;
+          struct124.repeat_037 = false;
         }
 
         //LAB_8004d824
