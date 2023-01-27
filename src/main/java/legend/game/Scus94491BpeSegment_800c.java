@@ -84,7 +84,6 @@ public final class Scus94491BpeSegment_800c {
   public static Sssqish sssqish_800c4aa8;
   public static Subfile0 subfile0_800c4aac;
   public static VolumeRamp volumeRamp_800c4ab0;
-  public static WaveformList waveforms_800c4ab4;
   public static WaveformList waveforms_800c4ab8;
   public static PatchList patchList_800c4abc;
   public static Sshd sshdPtr_800c4ac0;

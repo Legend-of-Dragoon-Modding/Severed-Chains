@@ -103,6 +103,6 @@ public class SpuStruct124 {
   /** ubyte */
   public int instrumentIndex_120;
 
-  /** ushort */
-  public int _122;
+  /** Opposite value from ADSR register - 0x4000 = increase, 0 = decrease (ushort) */
+  public int sustainDirection_122;
 }

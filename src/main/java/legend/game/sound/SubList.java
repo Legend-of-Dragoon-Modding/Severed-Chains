@@ -6,12 +6,12 @@ import legend.core.MathHelper;
 public class SubList {
   /**
    * <li>
-   *   <ul>When this is a subfile of a {@link legend.game.sound.Sssqish, it's always 0xff}.</ul>
+   *   <ul>When this is a subfile of a {@link Sssqish, it's always 0xff}.</ul>
    *   <ul>If flag 0x80 is set on the count, then all instruments in the preset are played at once.</ul>
    * </li>
    */
   public final int count_00;
-  /** If this value is 0xff, {@link legend.game.Scus94491BpeSegment_8004#instrumentCanPlayNote} always returns true */
+  /** If this value is 0xff, {@link Sequencer#instrumentCanPlayNote} always returns true */
   public final int patchVolume_01;
   public final int pan_02;
 

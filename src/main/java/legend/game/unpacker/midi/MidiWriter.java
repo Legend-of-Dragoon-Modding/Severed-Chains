@@ -18,116 +18,124 @@ public class MidiWriter {
   }
 
   public void write() {
-    try(final SeekableByteChannel channel = Files.newByteChannel(Paths.get("out.mid"), StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
-      final byte[] sssqRaw = Files.readAllBytes(Path.of("files/SECT/DRGN0.BIN/5820/1"));
+    for(int i = 0; i < 20; i++) {
+      try(final SeekableByteChannel channel = Files.newByteChannel(Paths.get("out.mid"), StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
+        final byte[] sssqRaw = Files.readAllBytes(Path.of("files/SECT/DRGN0.BIN/%d/1".formatted(5815 + i * 5)));
 
-      final ByteBuffer header = ByteBuffer.allocate(14);
-      IoHelper.write(header, 0x4d546864); // MThd
-      IoHelper.write(header, 6); // Header size (always 6)
-      IoHelper.write(header, (short)0); // Format
-      IoHelper.write(header, (short)1); // Number of tracks
-      IoHelper.write(header, (short)MathHelper.get(sssqRaw, 2, 2)); // Ticks per beat (+0x2 in SSSQ)
-      header.flip();
-      channel.write(header);
+        final ByteBuffer header = ByteBuffer.allocate(14);
+        IoHelper.write(header, 0x4d546864); // MThd
+        IoHelper.write(header, 6); // Header size (always 6)
+        IoHelper.write(header, (short)0); // Format
+        IoHelper.write(header, (short)1); // Number of tracks
+        IoHelper.write(header, (short)MathHelper.get(sssqRaw, 2, 2)); // Ticks per beat (+0x2 in SSSQ)
+        header.flip();
+        channel.write(header);
 
-      final ByteBuffer sssq = ByteBuffer.wrap(sssqRaw, 0x110, sssqRaw.length - 0x110);
-      sssq.order(ByteOrder.LITTLE_ENDIAN);
+        final ByteBuffer sssq = ByteBuffer.wrap(sssqRaw, 0x110, sssqRaw.length - 0x110);
+        sssq.order(ByteOrder.LITTLE_ENDIAN);
 
-      final ByteBuffer track = ByteBuffer.allocate(sssqRaw.length * 2); // Allocate a bit of extra room
-      IoHelper.write(track, 0x4d54726b); // MTrk
-      IoHelper.write(track, 0); // Will get replaced with chunk size
-      IoHelper.write(track, (byte)0); // Delta time - first event, so 0 (varint)
+        final ByteBuffer track = ByteBuffer.allocate(sssqRaw.length * 2); // Allocate a bit of extra room
+        IoHelper.write(track, 0x4d54726b); // MTrk
+        IoHelper.write(track, 0); // Will get replaced with chunk size
+        IoHelper.write(track, (byte)0); // Delta time - first event, so 0 (varint)
 
-      byte previousCommand = 0;
+        byte previousCommand = 0;
 
-      outer:
-      while(sssq.hasRemaining()) {
-        byte command = sssq.get();
-        System.out.printf("%x - %x%n", sssq.position() - 1, command);
+        outer:
+        while(sssq.hasRemaining()) {
+          byte command = sssq.get();
+          System.out.printf("%x - %x%n", sssq.position() - 1, command);
 
-        if((command & 0xff) < 0x80) {
-          command = previousCommand;
-          sssq.position(sssq.position() - 1);
-          System.out.printf("Continuation command - using command %x%n", command);
-        }
-
-        switch(command & 0xf0) {
-          // Key off, key on
-          case 0x80, 0x90 -> {
-            track.put(command);
-            track.put(sssq.get()); // Note
-            track.put(sssq.get()); // Velocity
+          if((command & 0xff) < 0x80) {
+            command = previousCommand;
+            sssq.position(sssq.position() - 1);
+            System.out.printf("Continuation command - using command %x%n", command);
           }
 
-          case 0xb0 -> {
-            final byte controlNumber = sssq.get();
+          switch(command & 0xf0) {
+            // Key off, key on
+            case 0x80, 0x90 -> {
+              track.put(command);
+              track.put(sssq.get()); // Note
+              track.put(sssq.get()); // Velocity
+            }
 
-            switch(controlNumber) {
-              // Modulation wheel, breath control, data entry (???), channel volume, pan, non-registered parameter number (NRPN) - MSB (???)
-              case 1, 2, 6, 7, 0xa, 0x63 -> {
-                track.put(command);
-                track.put(controlNumber);
-                track.put(sssq.get());
+            case 0xb0 -> {
+              final byte controlNumber = sssq.get();
+
+              switch(controlNumber) {
+                // Modulation wheel, breath control, data entry (???), channel volume, pan, non-registered parameter number (NRPN) - MSB (???)
+                case 1, 2, 6, 7, 0xa -> {
+                  track.put(command);
+                  track.put(controlNumber);
+                  track.put(sssq.get());
+                }
+
+                case 0x63 -> {
+                  track.put(command);
+                  track.put(controlNumber);
+                  track.put(sssq.get());
+                }
+
+                default -> throw new RuntimeException("Unknown control number %x".formatted(controlNumber));
               }
+            }
 
-              default -> throw new RuntimeException("Unknown control number %x".formatted(controlNumber));
+            case 0xc0 -> { // Program change (instrument)
+              track.put(command);
+              track.put(sssq.get());
+            }
+
+            case 0xe0 -> { // Pitch bend
+              track.put(command);
+              track.put(sssq.get()); // Coarse pitch
+              track.put((byte)0); // Fine pitch (not used in SSSQ)
+            }
+
+            case 0xf0 -> { // Meta
+              final byte metaEvent = sssq.get();
+
+              switch(metaEvent) {
+                case 0x2f -> {
+                  track.put((byte)0xff); // Meta
+                  track.put((byte)0x2f); // End of track
+                  track.put((byte)0); // Data length
+                  break outer;
+                }
+
+                case 0x51 -> {
+                  track.put((byte)0xff); // Meta
+                  track.put((byte)0x51); // Tempo change
+                  track.put((byte)3); // Data length
+                  IoHelper.write3(track, 60_000_000 / IoHelper.readShort(sssq));
+                }
+
+                default -> throw new RuntimeException("Unknown meta event %x".formatted(metaEvent));
+              }
+            }
+
+            default -> throw new RuntimeException("Unknown command %x".formatted(command));
+          }
+
+          // Copy elapsed time since last event (varint)
+          while(true) {
+            final byte varint = sssq.get();
+            track.put(varint);
+
+            if((varint & 0x80) == 0) {
+              break;
             }
           }
 
-          case 0xc0 -> { // Program change (instrument)
-            track.put(command);
-            track.put(sssq.get());
-          }
-
-          case 0xe0 -> { // Pitch bend
-            track.put(command);
-            track.put(sssq.get()); // Coarse pitch
-            track.put((byte)0); // Fine pitch (not used in SSSQ)
-          }
-
-          case 0xf0 -> { // Meta
-            final byte metaEvent = sssq.get();
-
-            switch(metaEvent) {
-              case 0x2f -> {
-                track.put((byte)0xff); // Meta
-                track.put((byte)0x2f); // End of track
-                track.put((byte)0); // Data length
-                break outer;
-              }
-
-              case 0x51 -> {
-                track.put((byte)0xff); // Meta
-                track.put((byte)0x51); // Tempo change
-                track.put((byte)3); // Data length
-                IoHelper.write3(track, 60_000_000 / IoHelper.readShort(sssq));
-              }
-
-              default -> throw new RuntimeException("Unknown meta event %x".formatted(metaEvent));
-            }
-          }
-
-          default -> throw new RuntimeException("Unknown command %x".formatted(command));
+          previousCommand = command;
         }
 
-        // Copy elapsed time since last event (varint)
-        while(true) {
-          final byte varint = sssq.get();
-          track.put(varint);
-
-          if((varint & 0x80) == 0) {
-            break;
-          }
-        }
-
-        previousCommand = command;
+        track.putInt(4, track.position() - 8); // Chunk size
+        track.flip();
+        channel.write(track);
+      } catch(final IOException e) {
+        throw new RuntimeException(e);
       }
-
-      track.putInt(4, track.position() - 8); // Chunk size
-      track.flip();
-      channel.write(track);
-    } catch(final IOException e) {
-      throw new RuntimeException(e);
     }
   }
 }

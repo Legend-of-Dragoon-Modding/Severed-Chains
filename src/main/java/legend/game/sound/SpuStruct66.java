@@ -28,6 +28,7 @@ public class SpuStruct66 {
   public int[] _30 = new int[2];
   public int volume_34;
   public int cents_36;
+  /** 0x40 is normal */
   public int pitchBend_38;
   public int _3a;
   public int breath_3c;
