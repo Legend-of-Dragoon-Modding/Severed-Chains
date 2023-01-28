@@ -1377,6 +1377,10 @@ public final class Bttl_800c {
       _800c6754.set(1);
       stageHasModel_800c66b8.set(true);
 
+      if(_1f8003f4.stageTmdMrg_63c != null) {
+        free(_1f8003f4.stageTmdMrg_63c.getAddress());
+      }
+
       _1f8003f4.stageTmdMrg_63c = MrgFile.alloc(files);
 
       final BattleStage stage = _1f8003f4.stage_963c;
@@ -1437,6 +1441,10 @@ public final class Bttl_800c {
   public static void loadStage(final int stage) {
     loadDrgnDir(0, 2497 + stage, files -> {
       if(files.get(0).length != 0) {
+        if(_1f8003f4.stageMcq_9cb0 != null) {
+          free(_1f8003f4.stageMcq_9cb0.getAddress());
+        }
+
         final McqHeader mcq = MEMORY.ref(4, mallocTail(files.get(0).length), McqHeader::new);
         MEMORY.setBytes(mcq.getAddress(), files.get(0));
         loadStageMcq(mcq);
