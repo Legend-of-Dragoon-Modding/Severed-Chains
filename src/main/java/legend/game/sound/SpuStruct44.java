@@ -2,7 +2,7 @@ package legend.game.sound;
 
 public class SpuStruct44 {
   /** ubyte */
-  public int voiceIndex_00;
+  public int _00;
   /** ubyte */
   public int channelIndex_01;
 

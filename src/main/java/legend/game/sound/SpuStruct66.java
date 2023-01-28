@@ -6,7 +6,7 @@ public class SpuStruct66 {
   public int commandChannel_04;
   public int channelIndex_06;
   public int _08;
-  public int voiceIndex_0a;
+  public int _0a;
   public int _0c;
   public int instrumentIndex_0e;
   public int _10;
@@ -30,7 +30,7 @@ public class SpuStruct66 {
   public int cents_36;
   /** 0x40 is normal */
   public int pitchBend_38;
-  public int _3a;
+  public int pitchBendMultiplier_3a;
   public int breath_3c;
   public int _3e;
   public int rootKey_40;
@@ -61,7 +61,7 @@ public class SpuStruct66 {
     this.commandChannel_04 = 0;
     this.channelIndex_06 = 0;
     this._08 = 0;
-    this.voiceIndex_0a = 0;
+    this._0a = 0;
     this._0c = 0;
     this.instrumentIndex_0e = 0;
     this._10 = 0;
@@ -85,7 +85,7 @@ public class SpuStruct66 {
     this.volume_34 = 0;
     this.cents_36 = 0;
     this.pitchBend_38 = 0;
-    this._3a = 0;
+    this.pitchBendMultiplier_3a = 0;
     this.breath_3c = 0;
     this._3e = 0;
     this.rootKey_40 = 0;

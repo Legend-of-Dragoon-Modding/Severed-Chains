@@ -1574,7 +1574,7 @@ public final class Scus94491BpeSegment_8004 {
     voicePtr_800c4ac4.set(SPU);
 
     spu44._03 = 8;
-    spu44.voiceIndex_00 = 0;
+    spu44._00 = 0;
     spu44._0d = 0;
     spu44.ticksPerSecond_42 = 60;
     voicePtr_800c4ac4.deref().SPUCNT.set(0xc000); // SPU control - unmute; enable

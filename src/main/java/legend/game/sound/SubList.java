@@ -15,7 +15,7 @@ public class SubList {
   public final int patchVolume_01;
   public final int pan_02;
 
-  public final int _04;
+  public final int pitchBendMultiplier_04;
   public final int _05;
   /** The starting key from which each instruments' min and max key range is relative */
   public final int startingKeyPosition_06;
@@ -27,7 +27,7 @@ public class SubList {
     this.patchVolume_01 = MathHelper.getUbyte(data, offset + 0x1);
     this.pan_02 = MathHelper.getUbyte(data, offset + 0x2);
 
-    this._04 = MathHelper.getUbyte(data, offset + 0x4);
+    this.pitchBendMultiplier_04 = MathHelper.getUbyte(data, offset + 0x4);
     this._05 = MathHelper.getUbyte(data, offset + 0x5);
     this.startingKeyPosition_06 = MathHelper.getUbyte(data, offset + 0x6);
 

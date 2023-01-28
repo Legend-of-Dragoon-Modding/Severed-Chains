@@ -14,7 +14,7 @@ public class SshdStruct10 implements Sshd.Subfile {
   public int _0a;
   public int volume_0b;
   public int pan_0c;
-  public int _0d;
+  public int pitchBendMultiplier_0d;
   public int _0e;
   /**
    * <ul>
@@ -36,7 +36,7 @@ public class SshdStruct10 implements Sshd.Subfile {
     this._0a = MathHelper.getUbyte(data, offset + 0xa);
     this.volume_0b = MathHelper.getUbyte(data, offset + 0xb);
     this.pan_0c = MathHelper.getUbyte(data, offset + 0xc);
-    this._0d = MathHelper.getUbyte(data, offset + 0xd);
+    this.pitchBendMultiplier_0d = MathHelper.getUbyte(data, offset + 0xd);
     this._0e = MathHelper.getUbyte(data, offset + 0xe);
     this.flags_0f = MathHelper.getUbyte(data, offset + 0xf);
   }
