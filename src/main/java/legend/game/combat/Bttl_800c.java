@@ -3885,7 +3885,7 @@ public final class Bttl_800c {
   public static FlowControl allocateWeaponTrailEffect(final RunningScript<? extends BattleScriptDataBase> script) {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       script.scriptState_04,
-      0x3c,
+      0,
       Bttl_800c::tickWeaponTrailEffect,
       Bttl_800c::renderWeaponTrailEffect,
       Bttl_800c::deallocateWeaponTrailEffect,
