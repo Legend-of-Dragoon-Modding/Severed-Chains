@@ -252,6 +252,13 @@ public class VECTOR implements MemoryRef {
     return this;
   }
 
+  public VECTOR shl(final int bits) {
+    this.x.shl(bits);
+    this.y.shl(bits);
+    this.z.shl(bits);
+    return this;
+  }
+
   public VECTOR shra(final int bits) {
     this.x.shra(bits);
     this.y.shra(bits);
