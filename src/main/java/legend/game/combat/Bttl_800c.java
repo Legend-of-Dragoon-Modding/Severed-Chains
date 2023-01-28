@@ -1272,15 +1272,15 @@ public final class Bttl_800c {
         final CombatantStruct1a8 combatant = combatants_8005e398[combatantIndex];
 
         //LAB_800c8418
-        if((combatant.flags_19e & 0x2) == 0) {
-          //LAB_800c8434
-          if(combatant.mrg_00 != null) {
-            free(combatant.mrg_00.getAddress());
-          }
+        //LAB_800c8434
+        if(combatant.mrg_00 != null) {
+          free(combatant.mrg_00.getAddress());
+          combatant.mrg_00 = null;
         }
 
         if(combatant.mrg_04 != null) {
           free(combatant.mrg_04.getAddress());
+          combatant.mrg_04 = null;
         }
 
         //LAB_800c8454
@@ -1624,15 +1624,13 @@ public final class Bttl_800c {
 
     //LAB_800c91bc
     if(combatant.mrg_00 != null) {
+      free(combatant.mrg_00.getAddress());
       combatant.mrg_00 = null;
     }
 
     if(combatant.mrg_04 != null) {
-      if((combatant.flags_19e & 0x2) == 0) {
-        //LAB_800c91e8
-        free(combatant.mrg_04.getAddress());
-      }
-
+      //LAB_800c91e8
+      free(combatant.mrg_04.getAddress());
       combatant.mrg_04 = null;
     }
 
