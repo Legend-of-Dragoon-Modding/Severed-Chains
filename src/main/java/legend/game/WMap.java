@@ -6492,7 +6492,7 @@ public class WMap {
     long sp4c = 0x1L << (sp1c & 0x1fL);
     long sp50 = sp1c >>> 5;
 
-    if((gameState_800babc8._15c.get((int)sp50).get() & sp4c) <= 0) {
+    if((gameState_800babc8._15c.get((int)sp50).get() & sp4c) == 0) {
       _800c685c.setu(0xdL);
       _800c685e.setu(0x11L);
       sp1c = 5;
@@ -7378,7 +7378,7 @@ public class WMap {
     }
 
     //LAB_800eb144
-    if((gameState_800babc8._15c.get(a0 >>> 5).get() & 0x1 << (a0 & 0x1f)) <= 0) {
+    if((gameState_800babc8._15c.get(a0 >>> 5).get() & 0x1 << (a0 & 0x1f)) == 0) {
       return 1;
     }
 
