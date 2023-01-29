@@ -8,14 +8,14 @@ import java.util.Arrays;
 public class Sssqish implements Sshd.Subfile {
   public int volume_00;
 
-  public final Sssq.Entry[] entries_10;
+  public final Sssq.ChannelInfo[] entries_10;
   public final Entry2List entries2_190;
 
   public Sssqish(final byte[] data, final int offset, final int size) {
     this.volume_00 = MathHelper.getUbyte(data, offset);
 
-    this.entries_10 = new Sssq.Entry[24];
-    Arrays.setAll(this.entries_10, i -> new Sssq.Entry(data, offset + 0x10 + i * 0x10));
+    this.entries_10 = new Sssq.ChannelInfo[24];
+    Arrays.setAll(this.entries_10, i -> new Sssq.ChannelInfo(data, offset + 0x10 + i * 0x10));
 
     this.entries2_190 = new Entry2List(data, offset + 0x190, size);
   }

@@ -11,7 +11,7 @@ public class Sssq implements Sshd.Subfile {
   public final int ticksPerQuarterNote_02;
   public final int tempo_04;
 
-  public final Entry[] entries_10;
+  public final ChannelInfo[] entries_10;
 
   private final byte[] data;
   private final int offset;
@@ -25,8 +25,8 @@ public class Sssq implements Sshd.Subfile {
     this.ticksPerQuarterNote_02 = MathHelper.getUshort(data, offset + 0x2);
     this.tempo_04 = MathHelper.getUshort(data, offset + 0x4);
 
-    this.entries_10 = new Entry[16];
-    Arrays.setAll(this.entries_10, i -> new Entry(data, offset + 0x10 + i * 0x10));
+    this.entries_10 = new ChannelInfo[16];
+    Arrays.setAll(this.entries_10, i -> new ChannelInfo(data, offset + 0x10 + i * 0x10));
 
     this.data = data;
     this.offset = offset;
@@ -40,7 +40,7 @@ public class Sssq implements Sshd.Subfile {
     return new Reader();
   }
 
-  public static class Entry {
+  public static class ChannelInfo {
     /** -1 means none */
     public int patchNumber_02;
     public int volume_03;
@@ -54,7 +54,7 @@ public class Sssq implements Sshd.Subfile {
 
     public int volume_0e;
 
-    public Entry(final byte[] data, final int offset) {
+    public ChannelInfo(final byte[] data, final int offset) {
       this.patchNumber_02 = MathHelper.getByte(data, offset + 0x2);
       this.volume_03 = MathHelper.getUbyte(data, offset + 0x3);
       this.pan_04 = MathHelper.getUbyte(data, offset + 0x4);
@@ -87,7 +87,7 @@ public class Sssq implements Sshd.Subfile {
     }
 
     @Override
-    public Entry entry(final int index) {
+    public ChannelInfo channelInfo(final int index) {
       return Sssq.this.entries_10[index];
     }
 

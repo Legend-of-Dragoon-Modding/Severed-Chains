@@ -18,7 +18,7 @@ public class MidiWriter {
   }
 
   public void write() {
-    for(int i = 0; i < 20; i++) {
+    for(int i = 1; i < 2; i++) {
       try(final SeekableByteChannel channel = Files.newByteChannel(Paths.get("out.mid"), StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
         final byte[] sssqRaw = Files.readAllBytes(Path.of("files/SECT/DRGN0.BIN/%d/1".formatted(5815 + i * 5)));
 

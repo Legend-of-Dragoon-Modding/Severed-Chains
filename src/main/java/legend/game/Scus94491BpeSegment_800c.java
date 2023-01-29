@@ -17,7 +17,7 @@ import legend.game.sound.SpuStruct124;
 import legend.game.sound.SpuStruct44;
 import legend.game.sound.SpuStruct66;
 import legend.game.sound.Sshd;
-import legend.game.sound.SshdStruct10;
+import legend.game.sound.Instrument10;
 import legend.game.sound.Sssq;
 import legend.game.sound.SssqReader;
 import legend.game.sound.Sssqish;
@@ -96,11 +96,11 @@ public final class Scus94491BpeSegment_800c {
 
   public static final SpuStruct44 _800c6630 = new SpuStruct44();
   public static SubList sublist_800c6674;
-  public static SshdStruct10[] sshd10Arr_800c6678;
-  public static SshdStruct10 sshd10_800c6678;
+  public static Instrument10[] sshd10Arr_800c6678;
+  public static Instrument10 sshd10_800c6678;
   public static int sshd10Index_800c6678;
   public static SssqReader sssqReader_800c667c;
-  public static Sssq.Entry sssqEntry_800c6680;
+  public static Sssq.ChannelInfo sssqChannelInfo_800C6680;
 
   public static final Value timHeader_800c6748 = MEMORY.ref(4, 0x800c6748L);
 }

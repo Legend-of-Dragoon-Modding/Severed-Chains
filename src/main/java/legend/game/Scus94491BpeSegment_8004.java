@@ -62,7 +62,7 @@ import static legend.game.Scus94491BpeSegment_800c.patchList_800c4abc;
 import static legend.game.Scus94491BpeSegment_800c.playableSoundPtrArr_800c43d0;
 import static legend.game.Scus94491BpeSegment_800c.spuDmaCompleteCallback_800c6628;
 import static legend.game.Scus94491BpeSegment_800c.sshdPtr_800c4ac0;
-import static legend.game.Scus94491BpeSegment_800c.sssqEntry_800c6680;
+import static legend.game.Scus94491BpeSegment_800c.sssqChannelInfo_800C6680;
 import static legend.game.Scus94491BpeSegment_800c.sssqReader_800c667c;
 import static legend.game.Scus94491BpeSegment_800c.sssqish_800c4aa8;
 import static legend.game.Scus94491BpeSegment_800c.voicePtr_800c4ac4;
@@ -1480,14 +1480,14 @@ public final class Scus94491BpeSegment_8004 {
     if(struct66._1a != 0) {
       final Sshd sshd = playableSoundPtrArr_800c43d0[struct124.playableSoundIndex_020].sshdPtr_04;
       sshdPtr_800c4ac0 = sshd;
-      sssqEntry_800c6680 = sshd.getSubfile(4, Sssq::new).entries_10[struct66.commandChannel_04];
+      sssqChannelInfo_800C6680 = sshd.getSubfile(4, Sssq::new).entries_10[struct66.commandChannel_04];
     } else {
       //LAB_8004adf4
-      sssqEntry_800c6680 = struct124.sssqReader_010.entry(struct66.commandChannel_04);
+      sssqChannelInfo_800C6680 = struct124.sssqReader_010.channelInfo(struct66.commandChannel_04);
     }
 
     //LAB_8004ae10
-    _800c3a40[voiceIndex].volume_28 = sssqEntry_800c6680.volume_0e;
+    _800c3a40[voiceIndex].volume_28 = sssqChannelInfo_800C6680.volume_0e;
     voicePtr_800c4ac4.deref().voices[voiceIndex].LEFT.set(FUN_8004ae94(voiceIndex, 0));
     voicePtr_800c4ac4.deref().voices[voiceIndex].RIGHT.set(FUN_8004ae94(voiceIndex, 1));
   }
@@ -1524,14 +1524,14 @@ public final class Scus94491BpeSegment_8004 {
       ret = (short)sssqReader_800c667c.baseVolume();
     } else {
       //LAB_8004b268
-      sssqEntry_800c6680 = spu124.sssqReader_010.entry(channel);
+      sssqChannelInfo_800C6680 = spu124.sssqReader_010.channelInfo(channel);
       spu124._03e[0][channel] = 1;
       spu124._03e[1][channel] = a3;
       spu124._03e[2][channel] = a1;
       spu124._03e[3][channel] = a1;
-      spu124._03e[4][channel] = sssqEntry_800c6680.volume_03;
+      spu124._03e[4][channel] = sssqChannelInfo_800C6680.volume_03;
 
-      ret = (short)sssqEntry_800c6680.volume_03;
+      ret = (short)sssqChannelInfo_800C6680.volume_03;
     }
 
     //LAB_8004b2b8
@@ -1732,7 +1732,7 @@ public final class Scus94491BpeSegment_8004 {
 
           //LAB_8004c308
           for(int n = 0; n < 16; n++) {
-            spu124.sssqReader_010.entry(n).volume_0e = sssq.volume_00 * spu124.sssqReader_010.entry(n).volume_03 / 0x100;
+            spu124.sssqReader_010.channelInfo(n).volume_0e = sssq.volume_00 * spu124.sssqReader_010.channelInfo(n).volume_03 / 0x100;
           }
 
           spu124.ticksPerQuarterNote_10a = sssq.ticksPerQuarterNote_02;
@@ -1908,8 +1908,8 @@ public final class Scus94491BpeSegment_8004 {
 
     //LAB_8004c97c
     for(int i = 0; i < 16; i++) {
-      final Sssq.Entry entry = struct124.sssqReader_010.entry(i);
-      entry.volume_0e = entry.volume_03 * volume >> 7;
+      final Sssq.ChannelInfo channelInfo = struct124.sssqReader_010.channelInfo(i);
+      channelInfo.volume_0e = channelInfo.volume_03 * volume >> 7;
     }
 
     //LAB_8004c9d8
@@ -1974,8 +1974,8 @@ public final class Scus94491BpeSegment_8004 {
 
     //LAB_8004cbc8
     for(int i = 0; i < 24; i++) {
-      final Sssq.Entry entry = sssq.entries_10[i];
-      entry.volume_0e = entry.volume_03 * volume >> 7;
+      final Sssq.ChannelInfo channelInfo = sssq.entries_10[i];
+      channelInfo.volume_0e = channelInfo.volume_03 * volume >> 7;
     }
 
     //LAB_8004cc1c
@@ -2188,7 +2188,7 @@ public final class Scus94491BpeSegment_8004 {
 
             //LAB_8004d27c
             for(int i = 0; i < 16; i++) {
-              spu124.sssqReader_010.entry(i).modulation_09 = 0;
+              spu124.sssqReader_010.channelInfo(i).modulation_09 = 0;
             }
 
             voicePtr_800c4ac4.deref().VOICE_KEY_OFF.set(spu124.keyOff_0e2);

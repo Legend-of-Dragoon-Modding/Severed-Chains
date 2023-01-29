@@ -20,7 +20,7 @@ public class SubList {
   /** The starting key from which each instruments' min and max key range is relative */
   public final int startingKeyPosition_06;
 
-  public final SshdStruct10[] entry_08;
+  public final Instrument10[] entry_08;
 
   public SubList(final byte[] data, final int offset, final int elementCount) {
     this.count_00 = MathHelper.getUbyte(data, offset);
@@ -31,10 +31,10 @@ public class SubList {
     this._05 = MathHelper.getUbyte(data, offset + 0x5);
     this.startingKeyPosition_06 = MathHelper.getUbyte(data, offset + 0x6);
 
-    this.entry_08 = new SshdStruct10[elementCount];
+    this.entry_08 = new Instrument10[elementCount];
 
     for(int i = 0; i < this.entry_08.length; i++) {
-      this.entry_08[i] = new SshdStruct10(data, offset + 0x8 + i * 0x10);
+      this.entry_08[i] = new Instrument10(data, offset + 0x8 + i * 0x10);
     }
   }
 }

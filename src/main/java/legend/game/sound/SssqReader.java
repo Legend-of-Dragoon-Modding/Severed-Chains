@@ -5,7 +5,7 @@ public interface SssqReader {
   int offset();
   void jump(final int offset);
 
-  default Sssq.Entry entry(final int index) { throw new UnsupportedOperationException(); }
+  default Sssq.ChannelInfo channelInfo(final int index) { throw new UnsupportedOperationException(); }
   default int baseVolume() { throw new UnsupportedOperationException(); }
   default void baseVolume(final int volume) { throw new UnsupportedOperationException(); }
 
