@@ -51,12 +51,8 @@ dependencies {
 
   implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
 
-  implementation 'com.google.apis:google-api-services-youtube:v3-rev20210915-1.32.1'
-  implementation 'com.google.api-client:google-api-client:1.33.0'
-  implementation "com.google.api-client:google-api-client-jackson2:2.1.3"
-  implementation group: 'com.google.http-client', name: 'google-http-client-jackson2', version: '1.42.3'
-  implementation group: 'com.google.apis', name: 'google-api-services-oauth2', version: 'v2-rev20200213-2.0.0'
-  implementation group: "com.google.http-client", name: 'google-http-client-extensions', version: '1.6.0-beta'
+  implementation "com.squareup.okhttp3:okhttp:4.10.0"
+  implementation 'com.google.code.gson:gson:2.10.1'
 
   implementation "org.lwjgl:lwjgl"
   implementation "org.lwjgl:lwjgl-glfw"
