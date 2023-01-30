@@ -25,7 +25,7 @@ import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptFile;
 import legend.game.sound.PatchList;
-import legend.game.sound.PlayableSoundStruct;
+import legend.game.sound.PlayableSound0c;
 import legend.game.sound.SpuStruct124;
 import legend.game.sound.SpuStruct44;
 import legend.game.sound.SpuStruct66;
@@ -59,7 +59,7 @@ import static legend.game.Scus94491BpeSegment_800c._800c3a40;
 import static legend.game.Scus94491BpeSegment_800c._800c4ac8;
 import static legend.game.Scus94491BpeSegment_800c._800c6630;
 import static legend.game.Scus94491BpeSegment_800c.patchList_800c4abc;
-import static legend.game.Scus94491BpeSegment_800c.playableSoundPtrArr_800c43d0;
+import static legend.game.Scus94491BpeSegment_800c.playableSounds_800c43d0;
 import static legend.game.Scus94491BpeSegment_800c.spuDmaCompleteCallback_800c6628;
 import static legend.game.Scus94491BpeSegment_800c.sshdPtr_800c4ac0;
 import static legend.game.Scus94491BpeSegment_800c.sssqChannelInfo_800C6680;
@@ -777,8 +777,6 @@ public final class Scus94491BpeSegment_8004 {
   public static final ScriptFile doNothingScript_8004f650 = new ScriptFile("Do nothing", new int[] {0x4, 0x1});
   public static final Value _8004f658 = MEMORY.ref(4, 0x8004f658L);
 
-  public static final Value _8004f6a4 = MEMORY.ref(4, 0x8004f6a4L);
-
   public static final Value _8004f6e4 = MEMORY.ref(4, 0x8004f6e4L);
   public static final Value _8004f6e8 = MEMORY.ref(4, 0x8004f6e8L);
   public static final Value _8004f6ec = MEMORY.ref(4, 0x8004f6ecL);
@@ -1372,7 +1370,7 @@ public final class Scus94491BpeSegment_8004 {
     assert patchIndex >= 0;
     assert sequenceIndex >= 0;
 
-    final PlayableSoundStruct sound = playableSoundPtrArr_800c43d0[playableSoundIndex];
+    final PlayableSound0c sound = playableSounds_800c43d0[playableSoundIndex];
     final SpuStruct44 a3 = _800c6630;
     final Sshd sshd = sound.sshdPtr_04;
     a3.sshdPtr_08 = sshd;
@@ -1478,9 +1476,9 @@ public final class Scus94491BpeSegment_8004 {
     final SpuStruct124 struct124 = _800c4ac8[struct66.channelIndex_06];
 
     if(struct66._1a != 0) {
-      final Sshd sshd = playableSoundPtrArr_800c43d0[struct124.playableSoundIndex_020].sshdPtr_04;
+      final Sshd sshd = playableSounds_800c43d0[struct124.playableSoundIndex_020].sshdPtr_04;
       sshdPtr_800c4ac0 = sshd;
-      sssqChannelInfo_800C6680 = sshd.getSubfile(4, Sssq::new).entries_10[struct66.commandChannel_04];
+      sssqChannelInfo_800C6680 = sshd.getSubfile(4, Sssq::new).channelInfo_10[struct66.commandChannel_04];
     } else {
       //LAB_8004adf4
       sssqChannelInfo_800C6680 = struct124.sssqReader_010.channelInfo(struct66.commandChannel_04);
@@ -1603,9 +1601,9 @@ public final class Scus94491BpeSegment_8004 {
     //LAB_8004bab8
     for(int soundIndex = 0; soundIndex < 127; soundIndex++) {
       //LAB_8004bacc
-      playableSoundPtrArr_800c43d0[soundIndex].used_00 = false;
-      playableSoundPtrArr_800c43d0[soundIndex].sshdPtr_04 = null;
-      playableSoundPtrArr_800c43d0[soundIndex].soundBufferPtr_08 = 0;
+      playableSounds_800c43d0[soundIndex].used_00 = false;
+      playableSounds_800c43d0[soundIndex].sshdPtr_04 = null;
+      playableSounds_800c43d0[soundIndex].soundBufferPtr_08 = 0;
     }
 
     //LAB_8004bb14
@@ -1625,26 +1623,16 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   /**
-   * @return Index into {@link Scus94491BpeSegment_800c#playableSoundPtrArr_800c43d0}, or -1 on error
+   * @return Index into {@link Scus94491BpeSegment_800c#playableSounds_800c43d0}, or -1 on error
    */
   @Method(0x8004bea4L)
   public static short loadSshdAndSoundbank(final byte[] soundbank, final Sshd sshd, final int addressInSoundBuffer) {
-    if(addressInSoundBuffer > 0x8_0000) {
-      assert false : "Error";
-      return -1;
+    if(addressInSoundBuffer > 0x8_0000 || (addressInSoundBuffer & 0xf) != 0) {
+      throw new IllegalArgumentException("Invalid sound buffer offset");
     }
 
-    if((addressInSoundBuffer & 0xf) != 0) {
-      assert false : "Error";
-      return -1;
-    }
-
-    //LAB_8004bfac
-    //LAB_8004bfe0
-    //LAB_8004bfe4
-    //LAB_8004bff0
     for(short i = 0; i < 127; i++) {
-      final PlayableSoundStruct sound = playableSoundPtrArr_800c43d0[i];
+      final PlayableSound0c sound = playableSounds_800c43d0[i];
 
       if(!sound.used_00) {
         //LAB_8004bfc8
@@ -1660,11 +1648,7 @@ public final class Scus94491BpeSegment_8004 {
       }
     }
 
-    //LAB_8004c024
-    //LAB_8004c02c
-    //LAB_8004c030
-    assert false : "Error";
-    return -1;
+    throw new RuntimeException("Ran out of playable sounds");
   }
 
   @Method(0x8004c114L)
@@ -1675,7 +1659,7 @@ public final class Scus94491BpeSegment_8004 {
       return -0x1L;
     }
 
-    if(!playableSoundPtrArr_800c43d0[playableSoundIndex].used_00) {
+    if(!playableSounds_800c43d0[playableSoundIndex].used_00) {
       //LAB_8004c1f0
       assert false : "Error";
       return -0x1L;
@@ -1695,7 +1679,7 @@ public final class Scus94491BpeSegment_8004 {
       //LAB_8004c19c
     }
 
-    final PlayableSoundStruct sound = playableSoundPtrArr_800c43d0[playableSoundIndex];
+    final PlayableSound0c sound = playableSounds_800c43d0[playableSoundIndex];
     sound.used_00 = false;
     sound.sshdPtr_04 = null;
     sound.soundBufferPtr_08 = 0;
@@ -1714,7 +1698,7 @@ public final class Scus94491BpeSegment_8004 {
 
       if(spu124._027 == 0) {
         if(spu124._029 == 0) {
-          if(!playableSoundPtrArr_800c43d0[playableSoundIndex].used_00) {
+          if(!playableSounds_800c43d0[playableSoundIndex].used_00) {
             throw new RuntimeException("Found sound but it wasn't used");
           }
 
@@ -1944,7 +1928,7 @@ public final class Scus94491BpeSegment_8004 {
 //      throw new RuntimeException("Negative a1");
     }
 
-    final PlayableSoundStruct sound = playableSoundPtrArr_800c43d0[playableSoundIndex];
+    final PlayableSound0c sound = playableSounds_800c43d0[playableSoundIndex];
     sshdPtr_800c4ac0 = sound.sshdPtr_04;
 
     if(!sound.used_00) {
@@ -2085,7 +2069,7 @@ public final class Scus94491BpeSegment_8004 {
     assert channelIndex >= 0;
 
     final SpuStruct124 spu124 = _800c4ac8[channelIndex];
-    final PlayableSoundStruct sound = playableSoundPtrArr_800c43d0[spu124.playableSoundIndex_020];
+    final PlayableSound0c sound = playableSounds_800c43d0[spu124.playableSoundIndex_020];
 
     sshdPtr_800c4ac0 = sound.sshdPtr_04;
 
@@ -2106,7 +2090,7 @@ public final class Scus94491BpeSegment_8004 {
   public static void FUN_8004d034(final int voiceIndex, final int a1) {
     boolean resetAdsr = false;
     final SpuStruct124 spu124 = _800c4ac8[voiceIndex];
-    final PlayableSoundStruct playableSound = playableSoundPtrArr_800c43d0[spu124.playableSoundIndex_020];
+    final PlayableSound0c playableSound = playableSounds_800c43d0[spu124.playableSoundIndex_020];
     final Sshd sshd = playableSound.sshdPtr_04;
 
     sshdPtr_800c4ac0 = sshd;

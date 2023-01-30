@@ -2,6 +2,7 @@ package legend.game.sound;
 
 import legend.core.MathHelper;
 
+/** TODO patch is the wrong name */
 public class PatchList implements Sshd.Subfile {
   public final int patchCount_00;
   public final SequenceList[] patches_02;

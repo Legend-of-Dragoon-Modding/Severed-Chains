@@ -11,7 +11,8 @@ public class Sssq implements Sshd.Subfile {
   public final int ticksPerQuarterNote_02;
   public final int tempo_04;
 
-  public final ChannelInfo[] entries_10;
+  /** One per MIDI channel */
+  public final ChannelInfo[] channelInfo_10;
 
   private final byte[] data;
   private final int offset;
@@ -25,8 +26,8 @@ public class Sssq implements Sshd.Subfile {
     this.ticksPerQuarterNote_02 = MathHelper.getUshort(data, offset + 0x2);
     this.tempo_04 = MathHelper.getUshort(data, offset + 0x4);
 
-    this.entries_10 = new ChannelInfo[16];
-    Arrays.setAll(this.entries_10, i -> new ChannelInfo(data, offset + 0x10 + i * 0x10));
+    this.channelInfo_10 = new ChannelInfo[16];
+    Arrays.setAll(this.channelInfo_10, i -> new ChannelInfo(data, offset + 0x10 + i * 0x10));
 
     this.data = data;
     this.offset = offset;
@@ -42,7 +43,7 @@ public class Sssq implements Sshd.Subfile {
 
   public static class ChannelInfo {
     /** -1 means none */
-    public int patchNumber_02;
+    public int instrumentIndex_02;
     public int volume_03;
     /** 0x40 seems to be middle - most common value. That would make 0 left, and 0x7f right. */
     public int pan_04;
@@ -55,7 +56,7 @@ public class Sssq implements Sshd.Subfile {
     public int volume_0e;
 
     public ChannelInfo(final byte[] data, final int offset) {
-      this.patchNumber_02 = MathHelper.getByte(data, offset + 0x2);
+      this.instrumentIndex_02 = MathHelper.getByte(data, offset + 0x2);
       this.volume_03 = MathHelper.getUbyte(data, offset + 0x3);
       this.pan_04 = MathHelper.getUbyte(data, offset + 0x4);
 
@@ -69,7 +70,7 @@ public class Sssq implements Sshd.Subfile {
   }
 
   public class Reader implements SssqReader {
-    private int offset = 0x10 + Sssq.this.entries_10.length * 0x10;
+    private int offset = 0x10 + Sssq.this.channelInfo_10.length * 0x10;
 
     @Override
     public int readByteAbsolute(final int absoluteOffset) {
@@ -88,7 +89,7 @@ public class Sssq implements Sshd.Subfile {
 
     @Override
     public ChannelInfo channelInfo(final int index) {
-      return Sssq.this.entries_10[index];
+      return Sssq.this.channelInfo_10[index];
     }
 
     @Override

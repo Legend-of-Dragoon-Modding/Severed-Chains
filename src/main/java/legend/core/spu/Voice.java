@@ -11,8 +11,6 @@ public class Voice implements MemoryRef {
   private static final int[] positiveXaAdpcmTable = {0, 60, 115, 98, 122};
   private static final int[] negativeXaAdpcmTable = {0, 0, -52, -55, -60};
 
-  private final int voiceIndex;
-
   /** 0x00 */
   public final UnsignedShortRef LEFT;
   /** 0x02 */
@@ -72,8 +70,6 @@ public class Voice implements MemoryRef {
     this.ADPCM_REPEAT_ADDR = memory.ref(2, 0x1f801c0eL).offset(voiceIndex * 0x10L).cast(UnsignedShortRef::new);
 
     this.adsrPhase = Phase.Off;
-
-    this.voiceIndex = voiceIndex;
   }
 
   public void keyOn() {

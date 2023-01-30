@@ -22,11 +22,11 @@ public class Sssqish implements Sshd.Subfile {
 
   public static class Entry2List {
     public final int count_00;
-    public final SubList[] entries_02;
+    public final Instrument[] entries_02;
 
     public Entry2List(final byte[] data, final int offset, final int size) {
       this.count_00 = MathHelper.getUshort(data, offset);
-      this.entries_02 = new SubList[this.count_00 + 1];
+      this.entries_02 = new Instrument[this.count_00 + 1];
 
       final int[] entryOffsets = new int[this.count_00 + 2];
       for(int i = 0; i < entryOffsets.length - 1; i++) {
@@ -48,7 +48,7 @@ public class Sssqish implements Sshd.Subfile {
             }
           }
 
-          this.entries_02[i] = new SubList(data, offset + entryOffset, (entrySize - 0x8) / 0x10);
+          this.entries_02[i] = new Instrument(data, offset + entryOffset, (entrySize - 0x8) / 0x10);
         }
       }
     }

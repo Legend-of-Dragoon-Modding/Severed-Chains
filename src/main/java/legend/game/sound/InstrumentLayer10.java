@@ -2,7 +2,7 @@ package legend.game.sound;
 
 import legend.core.MathHelper;
 
-public class Instrument10 implements Sshd.Subfile {
+public class InstrumentLayer10 implements Sshd.Subfile {
   public int minKeyRange_00;
   public int maxKeyRange_01;
   public int rootKey_02;
@@ -25,7 +25,7 @@ public class Instrument10 implements Sshd.Subfile {
    */
   public int flags_0f;
 
-  public Instrument10(final byte[] data, final int offset) {
+  public InstrumentLayer10(final byte[] data, final int offset) {
     this.minKeyRange_00 = MathHelper.getUbyte(data, offset);
     this.maxKeyRange_01 = MathHelper.getUbyte(data, offset + 0x1);
     this.rootKey_02 = MathHelper.getUbyte(data, offset + 0x2);

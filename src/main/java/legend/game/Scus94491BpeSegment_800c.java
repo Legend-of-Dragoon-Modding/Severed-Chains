@@ -12,17 +12,17 @@ import legend.core.memory.types.Pointer;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.core.spu.Spu;
 import legend.game.sound.PatchList;
-import legend.game.sound.PlayableSoundStruct;
+import legend.game.sound.PlayableSound0c;
 import legend.game.sound.SpuStruct124;
 import legend.game.sound.SpuStruct44;
 import legend.game.sound.SpuStruct66;
 import legend.game.sound.Sshd;
-import legend.game.sound.Instrument10;
+import legend.game.sound.InstrumentLayer10;
 import legend.game.sound.Sssq;
 import legend.game.sound.SssqReader;
 import legend.game.sound.Sssqish;
-import legend.game.sound.SubList;
-import legend.game.sound.Subfile0;
+import legend.game.sound.Instrument;
+import legend.game.sound.InstrumentsSubfile;
 import legend.game.sound.VolumeRamp;
 import legend.game.sound.WaveformList;
 import legend.game.types.GsOffsetType;
@@ -75,14 +75,13 @@ public final class Scus94491BpeSegment_800c {
     Arrays.setAll(_800c3a40, i -> new SpuStruct66());
   }
   /** 0x5f4 bytes long */
-  public static final PlayableSoundStruct[] playableSoundPtrArr_800c43d0 = new PlayableSoundStruct[127];
+  public static final PlayableSound0c[] playableSounds_800c43d0 = new PlayableSound0c[127];
   static {
-    Arrays.setAll(playableSoundPtrArr_800c43d0, i -> new PlayableSoundStruct());
+    Arrays.setAll(playableSounds_800c43d0, i -> new PlayableSound0c());
   }
 
-  public static Subfile0 subfile0_800c4aa8;
+  public static InstrumentsSubfile instruments_800c4aa8;
   public static Sssqish sssqish_800c4aa8;
-  public static Subfile0 subfile0_800c4aac;
   public static VolumeRamp volumeRamp_800c4ab0;
   public static WaveformList waveforms_800c4ab8;
   public static PatchList patchList_800c4abc;
@@ -95,10 +94,10 @@ public final class Scus94491BpeSegment_800c {
   public static Runnable spuDmaCompleteCallback_800c6628;
 
   public static final SpuStruct44 _800c6630 = new SpuStruct44();
-  public static SubList sublist_800c6674;
-  public static Instrument10[] sshd10Arr_800c6678;
-  public static Instrument10 sshd10_800c6678;
-  public static int sshd10Index_800c6678;
+  public static Instrument instrument_800c6674;
+  public static InstrumentLayer10[] instrumentLayers_800c6678;
+  public static InstrumentLayer10 instrumentLayer_800c6678;
+  public static int instrumentLayerIndex_800c6678;
   public static SssqReader sssqReader_800c667c;
   public static Sssq.ChannelInfo sssqChannelInfo_800C6680;
 

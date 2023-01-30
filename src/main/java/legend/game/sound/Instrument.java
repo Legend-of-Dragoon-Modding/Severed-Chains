@@ -2,8 +2,7 @@ package legend.game.sound;
 
 import legend.core.MathHelper;
 
-/** Note: values before the entry list can mean different things */
-public class SubList {
+public class Instrument {
   /**
    * <li>
    *   <ul>When this is a subfile of a {@link Sssqish, it's always 0xff}.</ul>
@@ -20,9 +19,10 @@ public class SubList {
   /** The starting key from which each instruments' min and max key range is relative */
   public final int startingKeyPosition_06;
 
-  public final Instrument10[] entry_08;
+  /** One instrument can be made up from multiple samples with different configurations */
+  public final InstrumentLayer10[] layers_08;
 
-  public SubList(final byte[] data, final int offset, final int elementCount) {
+  public Instrument(final byte[] data, final int offset, final int elementCount) {
     this.count_00 = MathHelper.getUbyte(data, offset);
     this.patchVolume_01 = MathHelper.getUbyte(data, offset + 0x1);
     this.pan_02 = MathHelper.getUbyte(data, offset + 0x2);
@@ -31,10 +31,10 @@ public class SubList {
     this._05 = MathHelper.getUbyte(data, offset + 0x5);
     this.startingKeyPosition_06 = MathHelper.getUbyte(data, offset + 0x6);
 
-    this.entry_08 = new Instrument10[elementCount];
+    this.layers_08 = new InstrumentLayer10[elementCount];
 
-    for(int i = 0; i < this.entry_08.length; i++) {
-      this.entry_08[i] = new Instrument10(data, offset + 0x8 + i * 0x10);
+    for(int i = 0; i < this.layers_08.length; i++) {
+      this.layers_08[i] = new InstrumentLayer10(data, offset + 0x8 + i * 0x10);
     }
   }
 }

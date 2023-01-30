@@ -51,7 +51,7 @@ import legend.game.types.ModelPartTransforms;
 import legend.game.types.Renderable58;
 import legend.game.types.RenderableMetrics14;
 import legend.game.sound.SpuStruct10;
-import legend.game.sound.SpuStruct28;
+import legend.game.sound.PlayingSound28;
 import legend.game.types.Struct84;
 import legend.game.types.Textbox4c;
 import legend.game.types.TextboxArrow0c;
@@ -289,18 +289,18 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80020360L)
-  public static void FUN_80020360(final ArrayRef<SpuStruct28> a0, final ArrayRef<SpuStruct28> a1) {
+  public static void copyPlayingSounds(final ArrayRef<PlayingSound28> sources, final ArrayRef<PlayingSound28> dests) {
     //LAB_8002036c
     for(int i = 0; i < 32; i++) {
-      final SpuStruct28 a0_0 = a0.get(i);
-      final SpuStruct28 a1_0 = a1.get(i);
+      final PlayingSound28 source = sources.get(i);
+      final PlayingSound28 dest = dests.get(i);
 
       //LAB_80020378
-      memcpy(a1_0.getAddress(), a0_0.getAddress(), 0x28);
+      memcpy(dest.getAddress(), source.getAddress(), 0x28);
 
-      if(a1_0.type_00.get() == 4) {
-        if(a1_0._1c.get() != 0) {
-          a1_0.type_00.set(3);
+      if(dest.type_00.get() == 4) {
+        if(dest._1c.get() != 0) {
+          dest.type_00.set(3);
         }
       }
 

@@ -22,17 +22,16 @@ import static legend.game.Scus94491BpeSegment_8005.sssqFadeCurrent_8005a1ce;
 import static legend.game.Scus94491BpeSegment_800c._800c3a40;
 import static legend.game.Scus94491BpeSegment_800c._800c4ac8;
 import static legend.game.Scus94491BpeSegment_800c._800c6630;
-import static legend.game.Scus94491BpeSegment_800c.playableSoundPtrArr_800c43d0;
-import static legend.game.Scus94491BpeSegment_800c.sshd10Arr_800c6678;
-import static legend.game.Scus94491BpeSegment_800c.sshd10Index_800c6678;
-import static legend.game.Scus94491BpeSegment_800c.sshd10_800c6678;
+import static legend.game.Scus94491BpeSegment_800c.instrumentLayerIndex_800c6678;
+import static legend.game.Scus94491BpeSegment_800c.instrumentLayer_800c6678;
+import static legend.game.Scus94491BpeSegment_800c.instrumentLayers_800c6678;
+import static legend.game.Scus94491BpeSegment_800c.instrument_800c6674;
+import static legend.game.Scus94491BpeSegment_800c.instruments_800c4aa8;
+import static legend.game.Scus94491BpeSegment_800c.playableSounds_800c43d0;
 import static legend.game.Scus94491BpeSegment_800c.sshdPtr_800c4ac0;
 import static legend.game.Scus94491BpeSegment_800c.sssqChannelInfo_800C6680;
 import static legend.game.Scus94491BpeSegment_800c.sssqReader_800c667c;
 import static legend.game.Scus94491BpeSegment_800c.sssqish_800c4aa8;
-import static legend.game.Scus94491BpeSegment_800c.subfile0_800c4aa8;
-import static legend.game.Scus94491BpeSegment_800c.subfile0_800c4aac;
-import static legend.game.Scus94491BpeSegment_800c.sublist_800c6674;
 import static legend.game.Scus94491BpeSegment_800c.voicePtr_800c4ac4;
 import static legend.game.Scus94491BpeSegment_800c.volumeRamp_800c4ab0;
 import static legend.game.Scus94491BpeSegment_800c.waveforms_800c4ab8;
@@ -213,16 +212,16 @@ public class Sequencer {
     }
 
     //LAB_8004629c
-    final int instrumentIndex = spu124.param0_002 - sublist_800c6674.startingKeyPosition_06;
+    final int instrumentIndex = spu124.param0_002 - instrument_800c6674.startingKeyPosition_06;
     if(instrumentIndex < 0) {
       return;
     }
 
-    sshd10Index_800c6678 += instrumentIndex;
-    sshd10_800c6678 = sshd10Arr_800c6678[sshd10Index_800c6678];
+    instrumentLayerIndex_800c6678 += instrumentIndex;
+    instrumentLayer_800c6678 = instrumentLayers_800c6678[instrumentLayerIndex_800c6678];
     sssqChannelInfo_800C6680.pitchBend_0a = 64;
 
-    final short voiceIndex = (short)this.FUN_80048000(sshd10_800c6678.minKeyRange_00, sshd10_800c6678.maxKeyRange_01, spu124.playableSoundIndex_020);
+    final short voiceIndex = (short)this.FUN_80048000(instrumentLayer_800c6678.minKeyRange_00, instrumentLayer_800c6678.maxKeyRange_01, spu124.playableSoundIndex_020);
     if(voiceIndex == -1) {
       spu124.sssqReader_010.advance(4);
       _800c6630._04 = 0;
@@ -231,7 +230,7 @@ public class Sequencer {
 
     //LAB_8004632c
     final SpuStruct66 struct66 = _800c3a40[voiceIndex];
-    if((sshd10_800c6678.flags_0f & 0x1) != 0) {
+    if((instrumentLayer_800c6678.flags_0f & 0x1) != 0) {
       struct66._08 = 0;
       struct66._0c = 1;
     } else {
@@ -251,27 +250,27 @@ public class Sequencer {
     struct66._18 = 0;
     struct66._1a = 1;
     struct66._1c = 4;
-    struct66.maxKeyRange_1e = sshd10_800c6678.maxKeyRange_01;
-    struct66.minKeyRange_20 = sshd10_800c6678.minKeyRange_00;
+    struct66.maxKeyRange_1e = instrumentLayer_800c6678.maxKeyRange_01;
+    struct66.minKeyRange_20 = instrumentLayer_800c6678.minKeyRange_00;
     struct66.playableSoundIndex_22 = spu124.playableSoundIndex_020;
     struct66.patchIndex_24 = spu124.patchIndex_024;
     struct66.sequenceIndex_26 = spu124.sequenceIndex_022;
     struct66.volume_28 = sssqChannelInfo_800C6680.volume_0e;
-    struct66._2a = sublist_800c6674.patchVolume_01;
+    struct66._2a = instrument_800c6674.patchVolume_01;
     struct66.volume_2c = volumeRamp_800c4ab0.ramp_02[spu124.param1_003];
-    struct66.volume_2e = sshd10_800c6678.volume_0b;
+    struct66.volume_2e = instrumentLayer_800c6678.volume_0b;
     struct66._30[0] = panVolume_80059f3c.get((this.calculatePan(4, 0) / 2 & 0x7ffe) / 2).left_00.get();
     struct66._30[1] = panVolume_80059f3c.get((this.calculatePan(4, 0) / 2 & 0x7ffe) / 2).right_01.get();
     struct66.volume_34 = sssqChannelInfo_800C6680.volume_03;
-    struct66.cents_36 = sshd10_800c6678.cents_03;
+    struct66.cents_36 = instrumentLayer_800c6678.cents_03;
     struct66.pitchBend_38 = sssqChannelInfo_800C6680.pitchBend_0a;
-    struct66.pitchBendMultiplier_3a = sshd10_800c6678.pitchBendMultiplier_0d;
+    struct66.pitchBendMultiplier_3a = instrumentLayer_800c6678.pitchBendMultiplier_0d;
     struct66.breath_3c = sssqChannelInfo_800C6680.breath_0c;
     struct66._3e = spu124.param2_005;
     struct66.portamentoChanging_44 = false;
-    struct66.rootKey_40 = sshd10_800c6678.rootKey_02;
-    struct66._4a = sshd10_800c6678._0a;
-    struct66.pan_4c = sshd10_800c6678.pan_0c;
+    struct66.rootKey_40 = instrumentLayer_800c6678.rootKey_02;
+    struct66._4a = instrumentLayer_800c6678._0a;
+    struct66.pan_4c = instrumentLayer_800c6678.pan_0c;
     struct66._4e = 120;
     struct66.portamentoTimeRemaining_62 = 0;
 
@@ -279,13 +278,13 @@ public class Sequencer {
       _800c6630._00++;
     }
 
-    final int flags = sshd10_800c6678.flags_0f;
+    final int flags = instrumentLayer_800c6678.flags_0f;
     if((flags & 0x20) != 0) { // Modulation on
       if((flags & 0x40) != 0) {
-        struct66._10 = sublist_800c6674._05;
+        struct66._10 = instrument_800c6674._05;
       } else {
         //LAB_800465a4
-        struct66._10 = sshd10_800c6678._0e;
+        struct66._10 = instrumentLayer_800c6678._0e;
       }
 
       //LAB_800465b0
@@ -301,24 +300,24 @@ public class Sequencer {
     int r = this.calculateVolume(channelIndex, this.calculatePan(4, 0), 1);
 
     final int pitchBendMultiplier;
-    if((sshd10_800c6678.flags_0f & 0x10) != 0) {
-      pitchBendMultiplier = sublist_800c6674.pitchBendMultiplier_04;
+    if((instrumentLayer_800c6678.flags_0f & 0x10) != 0) {
+      pitchBendMultiplier = instrument_800c6674.pitchBendMultiplier_04;
     } else {
       //LAB_80046668
-      pitchBendMultiplier = sshd10_800c6678.pitchBendMultiplier_0d;
+      pitchBendMultiplier = instrumentLayer_800c6678.pitchBendMultiplier_0d;
     }
 
     //LAB_8004666c
     if(spu124.pitchShifted_0e9 != 0) {
       //LAB_8004669c
-      voicePtr_800c4ac4.deref().voices[voiceIndex].ADPCM_SAMPLE_RATE.set(this.calculateSampleRate(sshd10_800c6678.rootKey_02, spu124.param0_002, sshd10_800c6678.cents_03, sssqChannelInfo_800C6680.pitchBend_0a, pitchBendMultiplier) * spu124.pitch_0ec / 0x1000);
+      voicePtr_800c4ac4.deref().voices[voiceIndex].ADPCM_SAMPLE_RATE.set(this.calculateSampleRate(instrumentLayer_800c6678.rootKey_02, spu124.param0_002, instrumentLayer_800c6678.cents_03, sssqChannelInfo_800C6680.pitchBend_0a, pitchBendMultiplier) * spu124.pitch_0ec / 0x1000);
       l = this.scaleValue12((short)l, (short)spu124.pitchShiftVolLeft_0ee);
       r = this.scaleValue12((short)r, (short)spu124.pitchShiftVolRight_0f0);
       struct66._42 = 1;
     } else {
       //LAB_80046730
       //LAB_80046750
-      voicePtr_800c4ac4.deref().voices[voiceIndex].ADPCM_SAMPLE_RATE.set(this.calculateSampleRate(sshd10_800c6678.rootKey_02, spu124.param0_002, sshd10_800c6678.cents_03, sssqChannelInfo_800C6680.pitchBend_0a, pitchBendMultiplier));
+      voicePtr_800c4ac4.deref().voices[voiceIndex].ADPCM_SAMPLE_RATE.set(this.calculateSampleRate(instrumentLayer_800c6678.rootKey_02, spu124.param0_002, instrumentLayer_800c6678.cents_03, sssqChannelInfo_800C6680.pitchBend_0a, pitchBendMultiplier));
       l = this.scaleValue12((short)l, (short)0x1000);
       r = this.scaleValue12((short)r, (short)0x1000);
       struct66._42 = 0;
@@ -334,33 +333,33 @@ public class Sequencer {
     final Voice voice = voicePtr_800c4ac4.deref().voices[voiceIndex];
     voice.LEFT.set(l);
     voice.RIGHT.set(r);
-    voice.ADPCM_START_ADDR.set(playableSoundPtrArr_800c43d0[spu124.playableSoundIndex_020].soundBufferPtr_08 + sshd10_800c6678.soundOffset_04);
-    voice.ADSR_LO.set(sshd10_800c6678.adsrLo_06);
-    voice.ADSR_HI.set(sshd10_800c6678.adsrHi_08);
+    voice.ADPCM_START_ADDR.set(playableSounds_800c43d0[spu124.playableSoundIndex_020].soundBufferPtr_08 + instrumentLayer_800c6678.soundOffset_04);
+    voice.ADSR_LO.set(instrumentLayer_800c6678.adsrLo_06);
+    voice.ADSR_HI.set(instrumentLayer_800c6678.adsrHi_08);
     setKeyOn(channelIndex, voiceIndex);
 
-    if(spu124.reverbEnabled_0ea != 0 || (sshd10_800c6678.flags_0f & 0x80) != 0) {
+    if(spu124.reverbEnabled_0ea != 0 || (instrumentLayer_800c6678.flags_0f & 0x80) != 0) {
       _800c6630.reverbMode_12 |= 1 << voiceIndex;
       //LAB_80046884
       //LAB_800468d8
-    } else if((sshd10_800c6678.flags_0f & 0x80) == 0) {
+    } else if((instrumentLayer_800c6678.flags_0f & 0x80) == 0) {
       _800c6630.reverbMode_12 &= ~(1 << voiceIndex);
     }
 
     //LAB_80046914
-    if((sshd10_800c6678.flags_0f & 0x2) == 0) {
+    if((instrumentLayer_800c6678.flags_0f & 0x2) == 0) {
       //LAB_80046964
       _800c6630.noiseMode_16 &= ~(1 << voiceIndex);
     } else {
       this.setNoiseMode(channelIndex, voiceIndex);
       voicePtr_800c4ac4.deref().SPUCNT
         .and(0xc0ff) // Mask off noise freq step/shift
-        .or(sshd10_800c6678.rootKey_02 << 8);
+        .or(instrumentLayer_800c6678.rootKey_02 << 8);
     }
 
     //LAB_800469ac
-    sshd10Index_800c6678 -= instrumentIndex;
-    sshd10_800c6678 = sshd10Arr_800c6678[sshd10Index_800c6678];
+    instrumentLayerIndex_800c6678 -= instrumentIndex;
+    instrumentLayer_800c6678 = instrumentLayers_800c6678[instrumentLayerIndex_800c6678];
     spu124.sssqReader_010.advance(4);
 
     //LAB_800469d4
@@ -376,9 +375,9 @@ public class Sequencer {
 
     //LAB_80046a7c
     if(sssqChannelInfo_800C6680.volume_03 != 0) {
-      final int count = sublist_800c6674.count_00;
+      final int count = instrument_800c6674.count_00;
       if(count == 0xff) {
-        final int v0 = s2.param0_002 - sublist_800c6674.startingKeyPosition_06;
+        final int v0 = s2.param0_002 - instrument_800c6674.startingKeyPosition_06;
         s2.endingInstrument_026 = v0;
         s2.startingInstrument_01e = v0;
         //LAB_80046acc
@@ -396,7 +395,7 @@ public class Sequencer {
       //LAB_80046af8
       //LAB_80046b24
       for(int instrumentIndex = s2.startingInstrument_01e; instrumentIndex < s2.endingInstrument_026 + 1; instrumentIndex++) {
-        if(this.instrumentCanPlayNote(sublist_800c6674.patchVolume_01, instrumentIndex, s2.param0_002)) {
+        if(this.instrumentCanPlayNote(instrument_800c6674.patchVolume_01, instrumentIndex, s2.param0_002)) {
           final int voiceIndex = this.FUN_80047e1c();
           if(voiceIndex == -1) {
             break;
@@ -404,9 +403,9 @@ public class Sequencer {
 
           final SpuStruct66 s1 = _800c3a40[voiceIndex];
 
-          sshd10Index_800c6678 += instrumentIndex;
-          sshd10_800c6678 = sshd10Arr_800c6678[sshd10Index_800c6678];
-          if((sshd10_800c6678.flags_0f & 0x1) != 0) {
+          instrumentLayerIndex_800c6678 += instrumentIndex;
+          instrumentLayer_800c6678 = instrumentLayers_800c6678[instrumentLayerIndex_800c6678];
+          if((instrumentLayer_800c6678.flags_0f & 0x1) != 0) {
             s1._08 = 0;
             s1._0c = 1;
           } else {
@@ -429,21 +428,21 @@ public class Sequencer {
           s1.minKeyRange_20 = 0;
           s1.playableSoundIndex_22 = s2.playableSoundIndex_020;
           s1.volume_28 = sssqChannelInfo_800C6680.volume_0e;
-          s1._2a = sublist_800c6674.patchVolume_01;
+          s1._2a = instrument_800c6674.patchVolume_01;
           s1.volume_2c = volumeRamp_800c4ab0.ramp_02[s2.param1_003];
-          s1.volume_2e = sshd10_800c6678.volume_0b;
+          s1.volume_2e = instrumentLayer_800c6678.volume_0b;
           s1._30[0] = panVolume_80059f3c.get((this.calculatePan(0, 0) / 2 & 0x7ffe) / 2).left_00.get();
           s1._30[1] = panVolume_80059f3c.get((this.calculatePan(0, 0) / 2 & 0x7ffe) / 2).right_01.get();
           s1.volume_34 = sssqChannelInfo_800C6680.volume_03;
-          s1.cents_36 = sshd10_800c6678.cents_03;
+          s1.cents_36 = instrumentLayer_800c6678.cents_03;
           s1.pitchBend_38 = sssqChannelInfo_800C6680.pitchBend_0a;
-          s1.pitchBendMultiplier_3a = sshd10_800c6678.pitchBendMultiplier_0d;
+          s1.pitchBendMultiplier_3a = instrumentLayer_800c6678.pitchBendMultiplier_0d;
           s1.breath_3c = sssqChannelInfo_800C6680.breath_0c;
           s1._3e = s2.param2_005;
-          s1.rootKey_40 = sshd10_800c6678.rootKey_02;
+          s1.rootKey_40 = instrumentLayer_800c6678.rootKey_02;
           s1._42 = 0;
           s1.portamentoChanging_44 = false;
-          s1._4a = sshd10_800c6678._0a;
+          s1._4a = instrumentLayer_800c6678._0a;
           s1.pan_4c = sssqChannelInfo_800C6680.pan_04;
           s1._4e = 120;
 
@@ -452,12 +451,12 @@ public class Sequencer {
           }
 
           //LAB_80046d80
-          if((sshd10_800c6678.flags_0f & 0x20) != 0 && sssqChannelInfo_800C6680.modulation_09 != 0) {
-            if((sshd10_800c6678.flags_0f & 0x40) != 0) {
-              s1._10 = sublist_800c6674._05;
+          if((instrumentLayer_800c6678.flags_0f & 0x20) != 0 && sssqChannelInfo_800C6680.modulation_09 != 0) {
+            if((instrumentLayer_800c6678.flags_0f & 0x40) != 0) {
+              s1._10 = instrument_800c6674._05;
             } else {
               //LAB_80046dd0
-              s1._10 = sshd10_800c6678._0e;
+              s1._10 = instrumentLayer_800c6678._0e;
             }
 
             //LAB_80046ddc
@@ -472,16 +471,16 @@ public class Sequencer {
 
           //LAB_80046e4c
           final int t0;
-          if((sshd10_800c6678.flags_0f & 0x10) != 0) {
-            t0 = sublist_800c6674.pitchBendMultiplier_04;
+          if((instrumentLayer_800c6678.flags_0f & 0x10) != 0) {
+            t0 = instrument_800c6674.pitchBendMultiplier_04;
           } else {
             //LAB_80046e7c
-            t0 = sshd10_800c6678.pitchBendMultiplier_0d;
+            t0 = instrumentLayer_800c6678.pitchBendMultiplier_0d;
           }
 
           //LAB_80046e80
           //LAB_80046ea0
-          voicePtr_800c4ac4.deref().voices[voiceIndex].ADPCM_SAMPLE_RATE.set(this.calculateSampleRate(sshd10_800c6678.rootKey_02, s2.param0_002, sshd10_800c6678.cents_03, sssqChannelInfo_800C6680.pitchBend_0a, t0));
+          voicePtr_800c4ac4.deref().voices[voiceIndex].ADPCM_SAMPLE_RATE.set(this.calculateSampleRate(instrumentLayer_800c6678.rootKey_02, s2.param0_002, instrumentLayer_800c6678.cents_03, sssqChannelInfo_800C6680.pitchBend_0a, t0));
           int l = this.calculateVolume(channelIndex, this.calculatePan(0, 0), 0);
           int r = this.calculateVolume(channelIndex, this.calculatePan(0, 0), 1);
 
@@ -494,12 +493,12 @@ public class Sequencer {
           final Voice voice = voicePtr_800c4ac4.deref().voices[voiceIndex];
           voice.LEFT.set(l);
           voice.RIGHT.set(r);
-          voice.ADPCM_START_ADDR.set(playableSoundPtrArr_800c43d0[s2.playableSoundIndex_020].soundBufferPtr_08 + sshd10_800c6678.soundOffset_04);
-          voice.ADSR_LO.set(sshd10_800c6678.adsrLo_06);
-          voice.ADSR_HI.set(sshd10_800c6678.adsrHi_08);
+          voice.ADPCM_START_ADDR.set(playableSounds_800c43d0[s2.playableSoundIndex_020].soundBufferPtr_08 + instrumentLayer_800c6678.soundOffset_04);
+          voice.ADSR_LO.set(instrumentLayer_800c6678.adsrLo_06);
+          voice.ADSR_HI.set(instrumentLayer_800c6678.adsrHi_08);
           setKeyOn(channelIndex, voiceIndex);
 
-          if((sshd10_800c6678.flags_0f & 0x80) != 0) {
+          if((instrumentLayer_800c6678.flags_0f & 0x80) != 0) {
             _800c6630.reverbMode_12 |= 1 << voiceIndex;
           } else {
             //LAB_80046fe8
@@ -514,8 +513,8 @@ public class Sequencer {
             _800c6630._00++;
           }
 
-          sshd10Index_800c6678 -= instrumentIndex;
-          sshd10_800c6678 = sshd10Arr_800c6678[sshd10Index_800c6678];
+          instrumentLayerIndex_800c6678 -= instrumentIndex;
+          instrumentLayer_800c6678 = instrumentLayers_800c6678[instrumentLayerIndex_800c6678];
 
           if(_800c6630._0c) {
             //LAB_80046ae0
@@ -582,7 +581,7 @@ public class Sequencer {
                 }
 
                 //LAB_80047300
-                final Sshd sshd = playableSoundPtrArr_800c43d0[struct124.playableSoundIndex_020].sshdPtr_04;
+                final Sshd sshd = playableSounds_800c43d0[struct124.playableSoundIndex_020].sshdPtr_04;
 
                 pitchBend = 0x80;
                 sshdPtr_800c4ac0 = sshd;
@@ -760,7 +759,7 @@ public class Sequencer {
   @Method(0x80047b38L)
   public void FUN_80047b38(final int channelIndex) {
     final SpuStruct124 spu124 = _800c4ac8[channelIndex];
-    final Sshd sshd = playableSoundPtrArr_800c43d0[spu124.playableSoundIndex_020].sshdPtr_04;
+    final Sshd sshd = playableSounds_800c43d0[spu124.playableSoundIndex_020].sshdPtr_04;
 
     _800c6630.sshdPtr_08 = sshd;
     sshdPtr_800c4ac0 = sshd;
@@ -768,14 +767,11 @@ public class Sequencer {
 
     final Sshd.Subfile subfile = sshd.getSubfile(spu124._02a * 4);
 
-    if(subfile == null || subfile instanceof Subfile0) {
-      final Subfile0 v1 = sshd.getSubfile(spu124._02a * 4, Subfile0::new);
-      subfile0_800c4aa8 = v1;
-      subfile0_800c4aac = v1;
+    if(subfile == null || subfile instanceof InstrumentsSubfile) {
+      instruments_800c4aa8 = sshd.getSubfile(spu124._02a * 4, InstrumentsSubfile::new);
       sssqish_800c4aa8 = null;
     } else {
-      subfile0_800c4aa8 = null;
-      subfile0_800c4aac = null;
+      instruments_800c4aa8 = null;
       sssqish_800c4aa8 = (Sssqish)sshd.getSubfile(spu124._02a * 4);
     }
   }
@@ -789,15 +785,15 @@ public class Sequencer {
       final int data = _800c4ac8[channelIndex].sssqReader_010.readByte(3);
 
       if(data < sssqish_800c4aa8.entries2_190.entries_02.length) {
-        sublist_800c6674 = sssqish_800c4aa8.entries2_190.entries_02[data];
-        sshd10Arr_800c6678 = sublist_800c6674.entry_08;
-        sshd10Index_800c6678 = 0;
-        sshd10_800c6678 = sshd10Arr_800c6678[sshd10Index_800c6678];
+        instrument_800c6674 = sssqish_800c4aa8.entries2_190.entries_02[data];
+        instrumentLayers_800c6678 = instrument_800c6674.layers_08;
+        instrumentLayerIndex_800c6678 = 0;
+        instrumentLayer_800c6678 = instrumentLayers_800c6678[instrumentLayerIndex_800c6678];
       } else {
-        sublist_800c6674 = null;
-        sshd10Arr_800c6678 = null;
-        sshd10Index_800c6678 = 0;
-        sshd10_800c6678 = null;
+        instrument_800c6674 = null;
+        instrumentLayers_800c6678 = null;
+        instrumentLayerIndex_800c6678 = 0;
+        instrumentLayer_800c6678 = null;
       }
 
       sssqReader_800c667c = null; //sssq.reader(); TODO?
@@ -818,14 +814,14 @@ public class Sequencer {
     //LAB_80047cf8
     final int command = struct124.command_000;
     final int channel = command & 0xf;
-    final int patchNumber = struct124.sssqReader_010.channelInfo(channel).patchNumber_02;
+    final int instrumentIndex = struct124.sssqReader_010.channelInfo(channel).instrumentIndex_02;
 
     if(command < 0xa0) {
-      if(subfile0_800c4aa8.patches_02[patchNumber] == null) {
+      if(instruments_800c4aa8.instruments_02[instrumentIndex] == null) {
         return false;
       }
 
-      if(subfile0_800c4aa8.count_00 < patchNumber) {
+      if(instruments_800c4aa8.count_00 < instrumentIndex) {
         return false;
       }
 
@@ -836,11 +832,11 @@ public class Sequencer {
 
     //LAB_80047d7c
     //LAB_80047d80
-    if(patchNumber != -1) {
-      sublist_800c6674 = subfile0_800c4aa8.patches_02[patchNumber];
-      sshd10Arr_800c6678 = subfile0_800c4aa8.patches_02[patchNumber].entry_08;
-      sshd10Index_800c6678 = 0;
-      sshd10_800c6678 = sshd10Arr_800c6678[sshd10Index_800c6678];
+    if(instrumentIndex != -1) {
+      instrument_800c6674 = instruments_800c4aa8.instruments_02[instrumentIndex];
+      instrumentLayers_800c6678 = instruments_800c4aa8.instruments_02[instrumentIndex].layers_08;
+      instrumentLayerIndex_800c6678 = 0;
+      instrumentLayer_800c6678 = instrumentLayers_800c6678[instrumentLayerIndex_800c6678];
     }
 
     sssqReader_800c667c = struct124.sssqReader_010;
@@ -1150,14 +1146,14 @@ public class Sequencer {
     }
 
     //LAB_80048950
-    sshd10Index_800c6678 += instrumentIndex;
-    sshd10_800c6678 = sshd10Arr_800c6678[sshd10Index_800c6678];
+    instrumentLayerIndex_800c6678 += instrumentIndex;
+    instrumentLayer_800c6678 = instrumentLayers_800c6678[instrumentLayerIndex_800c6678];
 
-    final boolean ret = note >= sshd10_800c6678.minKeyRange_00 && note <= sshd10_800c6678.maxKeyRange_01;
+    final boolean ret = note >= instrumentLayer_800c6678.minKeyRange_00 && note <= instrumentLayer_800c6678.maxKeyRange_01;
 
     //LAB_80048988
-    sshd10Index_800c6678 -= instrumentIndex;
-    sshd10_800c6678 = sshd10Arr_800c6678[sshd10Index_800c6678];
+    instrumentLayerIndex_800c6678 -= instrumentIndex;
+    instrumentLayer_800c6678 = instrumentLayers_800c6678[instrumentLayerIndex_800c6678];
 
     //LAB_80048990
     return ret;
@@ -1181,33 +1177,33 @@ public class Sequencer {
   @Method(0x80048ab8L)
   public int calculateVolume(final int channelIndex, final int pan, final int leftRight) {
     final int volume = sssqChannelInfo_800C6680.volume_0e
-      * sublist_800c6674.patchVolume_01
+      * instrument_800c6674.patchVolume_01
       * volumeRamp_800c4ab0.ramp_02[_800c4ac8[channelIndex].param1_003]
-      * sshd10_800c6678.volume_0b
+      * instrumentLayer_800c6678.volume_0b
       / 0x4000
       * panVolume_80059f3c.get((pan / 2 & 0x7ffe) / 2).val_00.get(leftRight).get()
       / 0x80;
 
     //LAB_80048b88
-    return sshd10_800c6678._0a == 0 ? volume : sshd10_800c6678._0a << 8 | volume >> 7;
+    return instrumentLayer_800c6678._0a == 0 ? volume : instrumentLayer_800c6678._0a << 8 | volume >> 7;
   }
 
   @Method(0x80048b90L)
   public int calculatePan(final int a0, final int instrumentIndex) {
-    sshd10Index_800c6678 += instrumentIndex;
-    sshd10_800c6678 = sshd10Arr_800c6678[sshd10Index_800c6678];
+    instrumentLayerIndex_800c6678 += instrumentIndex;
+    instrumentLayer_800c6678 = instrumentLayers_800c6678[instrumentLayerIndex_800c6678];
 
     final int pan;
     if(a0 == 4) {
-      pan = sshd10_800c6678.pan_0c;
+      pan = instrumentLayer_800c6678.pan_0c;
     } else {
       //LAB_80048bc4
-      pan = (int)_80059b3c.offset(_80059b3c.offset(sshd10_800c6678.pan_0c / 4 + sublist_800c6674.pan_02 / 4 * 0x20L).get() / 4 + sssqChannelInfo_800C6680.pan_04 / 4 * 0x20L).get();
+      pan = (int)_80059b3c.offset(_80059b3c.offset(instrumentLayer_800c6678.pan_0c / 4 + instrument_800c6674.pan_02 / 4 * 0x20L).get() / 4 + sssqChannelInfo_800C6680.pan_04 / 4 * 0x20L).get();
     }
 
     //LAB_80048c1c
-    sshd10Index_800c6678 -= instrumentIndex;
-    sshd10_800c6678 = sshd10Arr_800c6678[sshd10Index_800c6678];
+    instrumentLayerIndex_800c6678 -= instrumentIndex;
+    instrumentLayer_800c6678 = instrumentLayers_800c6678[instrumentLayerIndex_800c6678];
 
     return pan;
   }
@@ -1260,7 +1256,7 @@ public class Sequencer {
     final SpuStruct124 spu124 = _800c4ac8[channelIndex];
 
     if(spu124._02a == 0) {
-      sssqChannelInfo_800C6680.patchNumber_02 = spu124.sssqReader_010.readByte(1); // Read patch number
+      sssqChannelInfo_800C6680.instrumentIndex_02 = spu124.sssqReader_010.readByte(1); // Read instrument index
       sssqChannelInfo_800C6680.pitchBend_0a = 0x40;
       sssqChannelInfo_800C6680._0b = 0x40;
     }
@@ -1591,37 +1587,37 @@ public class Sequencer {
 
       //LAB_8004a050
       case 4 -> // Attack (linear)
-        sshd10_800c6678.adsrLo_06 = sshd10_800c6678.adsrLo_06
+        instrumentLayer_800c6678.adsrLo_06 = instrumentLayer_800c6678.adsrLo_06
           & 0xff
           | 0x7f - spu124.param1_003 << 8;
 
       case 5 -> // Attack (exponential)
-        sshd10_800c6678.adsrLo_06 = sshd10_800c6678.adsrLo_06
+        instrumentLayer_800c6678.adsrLo_06 = instrumentLayer_800c6678.adsrLo_06
           & 0xff
           | 0x7f - spu124.param1_003 << 8
           | 0x8000;
 
       case 6 -> // Decay shift
-        sshd10_800c6678.adsrLo_06 = sshd10_800c6678.adsrLo_06
+        instrumentLayer_800c6678.adsrLo_06 = instrumentLayer_800c6678.adsrLo_06
           & 0xff0f
           | (0x7f - spu124.param1_003) / 0x8 << 4;
 
       //LAB_8004a050
       case 7 -> // Sustain level
-        sshd10_800c6678.adsrLo_06 = sshd10_800c6678.adsrLo_06
+        instrumentLayer_800c6678.adsrLo_06 = instrumentLayer_800c6678.adsrLo_06
           & 0xfff0
           | spu124.param1_003 / 0x8;
 
       //LAB_8004a114
       case 8 -> // Sustain (linear) (everything but level)
-        sshd10_800c6678.adsrHi_08 = sshd10_800c6678.adsrHi_08
+        instrumentLayer_800c6678.adsrHi_08 = instrumentLayer_800c6678.adsrHi_08
           & 0x3f
           | (0x7f - spu124.param1_003) << 6
           | 0x4000 - spu124.sustainDirection_122; // Direction (0 = increase, 1 = decrease)
 
       //LAB_8004a114
       case 9 -> // Sustain (exponential) (everything but level)
-        sshd10_800c6678.adsrHi_08 = sshd10_800c6678.adsrHi_08
+        instrumentLayer_800c6678.adsrHi_08 = instrumentLayer_800c6678.adsrHi_08
           & 0x3f
           | (0x7f - spu124.param1_003) << 6
           | 0x4000 - spu124.sustainDirection_122 // Direction (0 = increase, 1 = decrease)
@@ -1629,12 +1625,12 @@ public class Sequencer {
 
       //LAB_8004a114
       case 0xa -> // Release (linear)
-        sshd10_800c6678.adsrHi_08 = sshd10_800c6678.adsrHi_08
+        instrumentLayer_800c6678.adsrHi_08 = instrumentLayer_800c6678.adsrHi_08
           & 0xffc0
           | (0x7f - spu124.param1_003) / 4;
 
       case 0xb -> // Release (exponential)
-        sshd10_800c6678.adsrHi_08 = sshd10_800c6678.adsrHi_08
+        instrumentLayer_800c6678.adsrHi_08 = instrumentLayer_800c6678.adsrHi_08
           & 0xffc0
           | (0x7f - spu124.param1_003) / 4
           | 0x20;
@@ -1684,8 +1680,8 @@ public class Sequencer {
             if(spu66.channelIndex_06 == channelIndex) {
               if(spu124.instrumentIndex_120 == 0xff || spu66.instrumentIndex_0e == spu124.instrumentIndex_120) {
                 //LAB_8004a274
-                voicePtr_800c4ac4.deref().voices[voiceIndex].ADSR_LO.set(sshd10_800c6678.adsrLo_06);
-                voicePtr_800c4ac4.deref().voices[voiceIndex].ADSR_HI.set(sshd10_800c6678.adsrHi_08);
+                voicePtr_800c4ac4.deref().voices[voiceIndex].ADSR_LO.set(instrumentLayer_800c6678.adsrLo_06);
+                voicePtr_800c4ac4.deref().voices[voiceIndex].ADSR_HI.set(instrumentLayer_800c6678.adsrHi_08);
               }
             }
           }
