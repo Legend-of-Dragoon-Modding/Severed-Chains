@@ -8,7 +8,8 @@ public class SoundFile {
   public byte[] ptr_0c;
   public int playableSoundIndex_10;
 
+  /** Only used if there are multiple soundbanks */
   public int spuRamOffset_14;
-  /** ubyte */
-  public int _18;
+  /** (ubyte) */
+  public int numberOfExtraSoundbanks_18;
 }

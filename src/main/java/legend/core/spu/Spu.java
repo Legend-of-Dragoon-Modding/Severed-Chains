@@ -309,28 +309,25 @@ public class Spu implements Runnable, MemoryRef {
     //this is why the latest 3 samples from the last block are saved because if index is 0
     //any subtraction is gonna be oob of the current voice adpcm array
     int interpolated;
-    interpolated = gaussTable[0x0FF - interpolationIndex] * voice.getSample(sampleIndex - 3);
+    interpolated  = gaussTable[0x0FF - interpolationIndex] * voice.getSample(sampleIndex - 3);
     interpolated += gaussTable[0x1FF - interpolationIndex] * voice.getSample(sampleIndex - 2);
     interpolated += gaussTable[0x100 + interpolationIndex] * voice.getSample(sampleIndex - 1);
     interpolated += gaussTable[0x000 + interpolationIndex] * voice.getSample(sampleIndex - 0);
     interpolated >>= 15;
 
-    //Todo adsr
-    //interpolated = (interpolated * voice.adsrVolume) >> 15;
-
     //Pitch modulation: Starts at voice 1 as it needs the last voice
     int step = voice.pitch;
-    if((this.channelFmMode & 0b1) << v != 0 && v > 0) {
+    if(v > 0 && (this.channelFmMode & 0b1 << v) != 0) {
       final int factor = this.voices[v - 1].latest + 0x8000; //From previous voice
       step = step * factor >> 15;
-      step &= 0xFFFF;
+      step &= 0xffff;
     }
-    if(step > 0x3FFF) {
+    if(step > 0x3fff) {
       step = 0x4000;
     }
 
     //Console.WriteLine("step u " + ((uint)step).ToString("x8") + "step i" + ((int)step).ToString("x8") + " " + voice.counter.register.ToString("x8"));
-    voice.counter.register += (short)step;
+    voice.counter.register += step;
 
     if(voice.counter.currentSampleIndex() >= 28) {
       //Beyond the current adpcm sample block prepare to decode next
@@ -345,15 +342,15 @@ public class Spu implements Runnable, MemoryRef {
 
       if(loopEnd) {
         this.channelOnOffStatus |= 1L << v;
-      }
-      if(loopEnd && !loopRepeat) {
-        voice.adsrPhase = Phase.Off;
-        voice.adsrVolume = 0;
-      }
-      if(loopEnd && loopRepeat) {
-        assert voice.adpcmRepeatAddress >= 0 : "Negative address";
-        assert voice.adpcmRepeatAddress < this.ram.length : "Address overflow";
-        voice.currentAddress = voice.adpcmRepeatAddress;
+
+        if(loopRepeat) {
+          assert voice.adpcmRepeatAddress >= 0 : "Negative address";
+          assert voice.adpcmRepeatAddress < this.ram.length : "Address overflow";
+          voice.currentAddress = voice.adpcmRepeatAddress;
+        } else {
+          voice.adsrPhase = Phase.Off;
+          voice.adsrVolume = 0;
+        }
       }
     }
 
