@@ -95,7 +95,10 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bc97c = MEMORY.ref(4, 0x800bc97cL);
 
   /** One per voice */
-  public static final ArrayRef<SpuStruct08> _800bc9a8 = MEMORY.ref(4, 0x800bc9a8L, ArrayRef.of(SpuStruct08.class, 24, 0x8, SpuStruct08::new));
+  public static final SpuStruct08[] _800bc9a8 = new SpuStruct08[24];
+  static {
+    Arrays.setAll(_800bc9a8, i -> new SpuStruct08());
+  }
 
   public static final Value _800bca68 = MEMORY.ref(1, 0x800bca68L);
 

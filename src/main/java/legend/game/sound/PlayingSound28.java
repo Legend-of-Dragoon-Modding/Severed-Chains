@@ -1,5 +1,7 @@
 package legend.game.sound;
 
+import legend.game.combat.types.BattleObject27c;
+
 public class PlayingSound28 {
   /**
    * <ol start="0">
@@ -13,8 +15,8 @@ public class PlayingSound28 {
    */
   public int type_00;
 
-  public int bobjIndex_04;
-  public int soundFileIndex_08;
+  public BattleObject27c bobj_04;
+  public SoundFile soundFile_08;
   public int soundIndex_0c;
   /** I think if this has flag 0x80 set it enables reverb? I don't think it's ever used? (short) */
   public PlayableSound0c playableSound_10;
@@ -38,8 +40,8 @@ public class PlayingSound28 {
 
   public PlayingSound28 set(final PlayingSound28 other) {
     this.type_00 = other.type_00;
-    this.bobjIndex_04 = other.bobjIndex_04;
-    this.soundFileIndex_08 = other.soundFileIndex_08;
+    this.bobj_04 = other.bobj_04;
+    this.soundFile_08 = other.soundFile_08;
     this.soundIndex_0c = other.soundIndex_0c;
     this.playableSound_10 = other.playableSound_10;
     this.patchIndex_12 = other.patchIndex_12;

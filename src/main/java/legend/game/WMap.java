@@ -150,6 +150,7 @@ import static legend.game.Scus94491BpeSegment_800b.doubleBufferFrame_800bb108;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
+import static legend.game.Scus94491BpeSegment_800b.soundFiles_800bcf80;
 import static legend.game.Scus94491BpeSegment_800b.texPages_800bb110;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static legend.game.Scus94491BpeSegment_800b.textboxes_800be358;
@@ -4175,7 +4176,7 @@ public class WMap {
         break;
 
       case 8:
-        FUN_80019c80(12, 1, 1);
+        FUN_80019c80(soundFiles_800bcf80[12], 1, 1);
 
         if(struct258.coolonWarpIndex_222 == 8) {
           sp60 = coolonWarpDest_800ef228.get(struct258.coolonWarpIndex_222)._10.get();
@@ -4218,7 +4219,7 @@ public class WMap {
         struct258.models_0c[2].scaleVector_fc.setZ((int)a0);
         struct258._220 = 11;
 
-        FUN_80019c80(12, 1, 1);
+        FUN_80019c80(soundFiles_800bcf80[12], 1, 1);
 
         // Fall through
 
@@ -6039,7 +6040,7 @@ public class WMap {
               final int soundIndex = places_800f0234.get(_800f0e34.get((int)_800c67a8.get()).placeIndex_02.get()).soundIndices_06.get(i).get();
 
               if(soundIndex > 0) {
-                FUN_80019c80(12, soundIndex, 1);
+                FUN_80019c80(soundFiles_800bcf80[12], soundIndex, 1);
               }
 
               //LAB_800e63ec
@@ -6061,7 +6062,7 @@ public class WMap {
               final int soundIndex = places_800f0234.get(_800f0e34.get((int)_800c67a8.get()).placeIndex_02.get()).soundIndices_06.get(i).get();
 
               if(soundIndex > 0) {
-                FUN_80019c80(12, soundIndex, 1);
+                FUN_80019c80(soundFiles_800bcf80[12], soundIndex, 1);
               }
 
               //LAB_800e6504
@@ -6080,7 +6081,7 @@ public class WMap {
               final int soundIndex = places_800f0234.get(_800f0e34.get((int)_800c67a8.get()).placeIndex_02.get()).soundIndices_06.get(i).get();
 
               if(soundIndex > 0) {
-                FUN_80019c80(12, soundIndex, 1);
+                FUN_80019c80(soundFiles_800bcf80[12], soundIndex, 1);
               }
 
               //LAB_800e65fc

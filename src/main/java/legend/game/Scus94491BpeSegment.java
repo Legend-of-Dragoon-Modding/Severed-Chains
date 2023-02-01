@@ -2631,14 +2631,14 @@ public final class Scus94491BpeSegment {
    * @param soundIndex 1: up/down, 2: choose menu option, 3: ...
    */
   @Method(0x80019a60L)
-  public static void playSound(final int index, final int soundIndex, final long a2, final long a3, final short a4, final short a5) {
-    final SoundFile soundFile = soundFiles_800bcf80[index];
+  public static void playSound(final int soundFileIndex, final int soundIndex, final long a2, final long a3, final short a4, final short a5) {
+    final SoundFile soundFile = soundFiles_800bcf80[soundFileIndex];
 
     if(!soundFile.used_00 || soundFile.playableSound_10 == null) {
       return;
     }
 
-    switch(index) {
+    switch(soundFileIndex) {
       case 0 -> {
         if((loadedDrgnFiles_800bcf78.get() & 0x1L) != 0) {
           return;
@@ -2680,7 +2680,7 @@ public final class Scus94491BpeSegment {
 
       if(playingSound.type_00 == 0) {
         //LAB_80019b54
-        playSound(3, index, soundIndex, playingSound, soundFile.playableSound_10, soundFile.indices_08[soundIndex], index == 8 ? (soundFile.ptr_0c[soundIndex] & 0xff) : 0, (short)-1, (short)-1, (short)-1, a5, a4, null);
+        playSound(3, soundFile, soundIndex, playingSound, soundFile.playableSound_10, soundFile.indices_08[soundIndex], soundFileIndex == 8 ? (soundFile.ptr_0c[soundIndex] & 0xff) : 0, (short)-1, (short)-1, (short)-1, a5, a4, null);
         break;
       }
     }
@@ -2689,14 +2689,14 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80019c80L)
-  public static void FUN_80019c80(final int soundFileIndex, final int soundIndex, final int a2) {
+  public static void FUN_80019c80(final SoundFile soundFile, final int soundIndex, final int a2) {
     final int s2 = a2 & 1;
 
     //LAB_80019cc4
     for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
-      final SpuStruct08 s0 = _800bc9a8.get(voiceIndex);
+      final SpuStruct08 s0 = _800bc9a8[voiceIndex];
 
-      if(s0.soundFileIndex_02.get() == soundFileIndex && s0.soundIndex_03.get() == soundIndex) {
+      if(s0.soundFile_02 == soundFile && s0.soundIndex_03 == soundIndex) {
         FUN_8004d78c(sequenceData_800c4ac8[voiceIndex], true);
 
         if(s2 == 0) {
@@ -2710,7 +2710,7 @@ public final class Scus94491BpeSegment {
     for(int playingSoundIndex = 0; playingSoundIndex < 32; playingSoundIndex++) {
       final PlayingSound28 playingSound = playingSounds_800bd110[playingSoundIndex];
 
-      if(playingSound.type_00 == 4 && playingSound.soundIndex_0c == soundIndex && playingSound.soundFileIndex_08 == soundFileIndex) {
+      if(playingSound.type_00 == 4 && playingSound.soundIndex_0c == soundIndex && playingSound.soundFile_08 == soundFile) {
         playingSound.type_00 = 0;
         playingSound._1c = 0;
       }
@@ -2724,7 +2724,7 @@ public final class Scus94491BpeSegment {
         //LAB_80019db4
         if(playingSound.type_00 == 3 && (playingSound._20 != 0 || playingSound._24 != 0) || playingSound._1c != 0) {
           //LAB_80019dc4
-          if(playingSound.soundIndex_0c == soundIndex && playingSound.soundFileIndex_08 == soundFileIndex) {
+          if(playingSound.soundIndex_0c == soundIndex && playingSound.soundFile_08 == soundFile) {
             playingSound.type_00 = 0;
             playingSound._1c = 0;
           }
@@ -2779,7 +2779,7 @@ public final class Scus94491BpeSegment {
       if(playingSound.type_00 == 0) {
         //LAB_80019eac
         final SoundFile soundFile = soundFiles_800bcf80[soundFileIndex];
-        playSound(type, soundFileIndex, soundIndex, playingSound, soundFile.playableSound_10, soundFile.indices_08[soundIndex], 0, (short)-1, (short)-1, (short)-1, (short)a6, (short)a5, state);
+        playSound(type, soundFile, soundIndex, playingSound, soundFile.playableSound_10, soundFile.indices_08[soundIndex], 0, (short)-1, (short)-1, (short)-1, (short)a6, (short)a5, state);
         break;
       }
     }
@@ -2838,7 +2838,7 @@ public final class Scus94491BpeSegment {
       if(playingSound.type_00 == 0) {
         //LAB_8001a080
         final SoundFile soundFile = soundFiles_800bcf80[soundFileIndex];
-        playSound(type, soundFileIndex, soundIndex, playingSound, soundFile.playableSound_10, soundFile.indices_08[soundIndex], 0, (short)-1, (short)-1, (short)-1, a4, a3, state);
+        playSound(type, soundFile, soundIndex, playingSound, soundFile.playableSound_10, soundFile.indices_08[soundIndex], 0, (short)-1, (short)-1, (short)-1, a4, a3, state);
         break;
       }
     }
@@ -2847,12 +2847,12 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001a164L)
-  public static void FUN_8001a164(final long a0, final int bobjIndex, final long soundIndex, final long a3) {
+  public static void FUN_8001a164(final long a0, final BattleObject27c bobj, final long soundIndex, final long a3) {
     //LAB_8001a1a8
     for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
-      final SpuStruct08 s0 = _800bc9a8.get(voiceIndex);
+      final SpuStruct08 s0 = _800bc9a8[voiceIndex];
 
-      if(s0.soundIndex_03.get() == soundIndex && s0.bobjIndex_04.get() == bobjIndex) {
+      if(s0.soundIndex_03 == soundIndex && s0.bobj_04 == bobj) {
         FUN_8004d78c(sequenceData_800c4ac8[voiceIndex], true);
 
         if((a3 & 0x1L) == 0) {
@@ -2869,7 +2869,7 @@ public final class Scus94491BpeSegment {
       for(int playingSoundIndex = 0; playingSoundIndex < 32; playingSoundIndex++) {
         final PlayingSound28 playingSound = playingSounds_800bd110[playingSoundIndex];
         //LAB_8001a238
-        if(playingSound.type_00 != 0 && (playingSound._20 != 0 || playingSound._24 != 0) && playingSound.soundIndex_0c == soundIndex && playingSound.bobjIndex_04 == bobjIndex) {
+        if(playingSound.type_00 != 0 && (playingSound._20 != 0 || playingSound._24 != 0) && playingSound.soundIndex_0c == soundIndex && playingSound.bobj_04 == bobj) {
           playingSound.type_00 = 0;
           playingSound._1c = 0;
         }
@@ -2931,16 +2931,16 @@ public final class Scus94491BpeSegment {
   /** Actually starts playing the sound */
   @Method(0x8001a5fcL)
   public static void startSound(final PlayingSound28 playingSound) {
-    final int channelIndex;
+    final int voiceIndex;
 
     if(playingSound.pitchShiftVolRight_16 == -1 && playingSound.pitchShiftVolLeft_18 == -1 && playingSound.pitch_1a == -1) {
-      channelIndex = FUN_8004d648(
+      voiceIndex = FUN_8004d648(
         playingSound.playableSound_10,
         playingSound.patchIndex_12,
         playingSound.sequenceIndex_14
       );
     } else {
-      channelIndex = sssqPitchShift(
+      voiceIndex = sssqPitchShift(
         playingSound.playableSound_10,
         playingSound.patchIndex_12,
         playingSound.sequenceIndex_14,
@@ -2950,18 +2950,19 @@ public final class Scus94491BpeSegment {
       );
     }
 
-    _800bc9a8.get(channelIndex).soundFileIndex_02.set((byte)playingSound.soundFileIndex_08);
-    _800bc9a8.get(channelIndex).soundIndex_03.set((byte)playingSound.soundIndex_0c);
-    _800bc9a8.get(channelIndex).bobjIndex_04.set(playingSound.bobjIndex_04);
+    final SpuStruct08 struct08 = _800bc9a8[voiceIndex];
+    struct08.soundFile_02 = playingSound.soundFile_08;
+    struct08.soundIndex_03 = playingSound.soundIndex_0c;
+    struct08.bobj_04 = playingSound.bobj_04;
 
     //LAB_8001a704
   }
 
   @Method(0x8001a714L)
-  public static void playSound(final int type, final int soundFileIndex, final int soundIndex, final PlayingSound28 playingSound, final PlayableSound0c playableSound, final SoundFileIndices a5, final int a6, final short pitchShiftVolRight, final short pitchShiftVolLeft, final short pitch, final short a10, final short a11, @Nullable final ScriptState<BattleObject27c> state) {
+  public static void playSound(final int type, final SoundFile soundFile, final int soundIndex, final PlayingSound28 playingSound, final PlayableSound0c playableSound, final SoundFileIndices a5, final int a6, final short pitchShiftVolRight, final short pitchShiftVolLeft, final short pitch, final short a10, final short a11, @Nullable final ScriptState<BattleObject27c> state) {
     playingSound.type_00 = type;
-    playingSound.bobjIndex_04 = state != null ? state.index : -1;
-    playingSound.soundFileIndex_08 = soundFileIndex;
+    playingSound.bobj_04 = state != null ? state.innerStruct_00 : null;
+    playingSound.soundFile_08 = soundFile;
     playingSound.soundIndex_0c = soundIndex;
     playingSound.playableSound_10 = playableSound;
     playingSound.patchIndex_12 = a5._00;
@@ -2996,7 +2997,7 @@ public final class Scus94491BpeSegment {
   public static void FUN_8001aa90() {
     //LAB_8001aaa4
     for(int i = 0; i < 24; i++) {
-      _800bc9a8.get(i)._00.set(0xffff);
+      _800bc9a8[i]._00 = 0xffff;
     }
   }
 
@@ -3008,7 +3009,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001ab98L)
   public static FlowControl FUN_8001ab98(final RunningScript<?> script) {
-    FUN_80019c80(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get());
+    FUN_80019c80(soundFiles_800bcf80[script.params_20[0].get()], script.params_20[1].get(), script.params_20[2].get());
     return FlowControl.CONTINUE;
   }
 
@@ -3020,7 +3021,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001ac48L)
   public static FlowControl FUN_8001ac48(final RunningScript<?> script) {
-    FUN_8001a164(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
+    FUN_8001a164(script.params_20[0].get(), (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00, script.params_20[2].get(), script.params_20[3].get());
     return FlowControl.CONTINUE;
   }
 
@@ -3032,7 +3033,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001acd8L)
   public static FlowControl FUN_8001acd8(final RunningScript<?> script) {
-    FUN_8001a164(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
+    FUN_8001a164(script.params_20[0].get(), (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00, script.params_20[2].get(), script.params_20[3].get());
     return FlowControl.CONTINUE;
   }
 
