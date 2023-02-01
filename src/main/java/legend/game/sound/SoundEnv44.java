@@ -1,6 +1,6 @@
 package legend.game.sound;
 
-public class SpuStruct44 {
+public class SoundEnv44 {
   /** ubyte */
   public int _00;
   /** ubyte */

@@ -27,7 +27,7 @@ import legend.game.scripting.ScriptFile;
 import legend.game.sound.PatchList;
 import legend.game.sound.PlayableSound0c;
 import legend.game.sound.SequenceData124;
-import legend.game.sound.SpuStruct44;
+import legend.game.sound.SoundEnv44;
 import legend.game.sound.SpuStruct66;
 import legend.game.sound.Sshd;
 import legend.game.sound.Sssq;
@@ -57,7 +57,7 @@ import static legend.game.Scus94491BpeSegment_8005.atanTable_80058d0c;
 import static legend.game.Scus94491BpeSegment_8005.sin_cos_80054d0c;
 import static legend.game.Scus94491BpeSegment_800c._800c3a40;
 import static legend.game.Scus94491BpeSegment_800c.sequenceData_800c4ac8;
-import static legend.game.Scus94491BpeSegment_800c._800c6630;
+import static legend.game.Scus94491BpeSegment_800c.soundEnv_800c6630;
 import static legend.game.Scus94491BpeSegment_800c.patchList_800c4abc;
 import static legend.game.Scus94491BpeSegment_800c.playableSounds_800c43d0;
 import static legend.game.Scus94491BpeSegment_800c.spuDmaCompleteCallback_800c6628;
@@ -1369,16 +1369,16 @@ public final class Scus94491BpeSegment_8004 {
     assert patchIndex >= 0;
     assert sequenceIndex >= 0;
 
-    final SpuStruct44 a3 = _800c6630;
+    final SoundEnv44 soundEnv = soundEnv_800c6630;
     final Sshd sshd = playableSound.sshdPtr_04;
-    a3.sshdPtr_08 = sshd;
+    soundEnv.sshdPtr_08 = sshd;
     sshdPtr_800c4ac0 = sshd;
     final PatchList patchList = sshd.getSubfile(3, PatchList::new);
 
     patchList_800c4abc = patchList;
 
     if(sshd.hasSubfile(4)) {
-      if(a3._03 != 0) {
+      if(soundEnv._03 != 0) {
         if(playableSound.used_00) {
           if(patchList.patchCount_00 >= patchIndex) {
             if(patchList.patches_02[patchIndex] != null) {
@@ -1403,7 +1403,7 @@ public final class Scus94491BpeSegment_8004 {
   @Method(0x80048d44L)
   public static int FUN_80048d44(final PlayableSound0c playableSound, final int patchIndex, final int sequenceIndex) {
     final SssqReader reader = FUN_80048c38(playableSound, patchIndex, sequenceIndex);
-    final SpuStruct44 spu44 = _800c6630;
+    final SoundEnv44 soundEnv = soundEnv_800c6630;
 
     //LAB_80048dac
     for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
@@ -1420,9 +1420,9 @@ public final class Scus94491BpeSegment_8004 {
         sequenceData.sequenceIndex_022 = sequenceIndex;
         sequenceData.patchIndex_024 = patchIndex;
 
-        if(spu44.reverbEnabled_23) {
+        if(soundEnv.reverbEnabled_23) {
           sequenceData.reverbEnabled_0ea = 1;
-          spu44.reverbEnabled_23 = false;
+          soundEnv.reverbEnabled_23 = false;
         }
 
         //LAB_80048e10
@@ -1433,15 +1433,15 @@ public final class Scus94491BpeSegment_8004 {
         sequenceData.pitchShifted_0e9 = 0;
         sequenceData.pitchShiftVolRight_0f0 = 0;
 
-        if(spu44.pitchShifted_22) {
+        if(soundEnv.pitchShifted_22) {
           sequenceData.pitchShifted_0e9 = 1;
-          sequenceData.pitch_0ec = spu44.pitch_24;
-          sequenceData.pitchShiftVolLeft_0ee = spu44.pitchShiftVolLeft_26;
-          sequenceData.pitchShiftVolRight_0f0 = spu44.pitchShiftVolRight_28;
-          spu44.pitchShifted_22 = false;
-          spu44.pitch_24 = 0;
-          spu44.pitchShiftVolLeft_26 = 0;
-          spu44.pitchShiftVolRight_28 = 0;
+          sequenceData.pitch_0ec = soundEnv.pitch_24;
+          sequenceData.pitchShiftVolLeft_0ee = soundEnv.pitchShiftVolLeft_26;
+          sequenceData.pitchShiftVolRight_0f0 = soundEnv.pitchShiftVolRight_28;
+          soundEnv.pitchShifted_22 = false;
+          soundEnv.pitch_24 = 0;
+          soundEnv.pitchShiftVolLeft_26 = 0;
+          soundEnv.pitchShiftVolRight_28 = 0;
         }
 
         return voiceIndex;
@@ -1460,7 +1460,7 @@ public final class Scus94491BpeSegment_8004 {
     voicePtr_800c4ac4.deref().SPUCNT.and(0xffcf);
 
     //LAB_8004ab5c
-    if(_800c6630.hasCallback_38) {
+    if(soundEnv_800c6630.hasCallback_38) {
       spuDmaCompleteCallback_800c6628.run();
     }
   }
@@ -1553,7 +1553,7 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x8004b834L)
   public static void initSpu() {
-    final SpuStruct44 spu44 = _800c6630;
+    final SoundEnv44 soundEnv = soundEnv_800c6630;
 
     //LAB_8004b8ac
     for(int registerIndex = 0; registerIndex < 0x100; registerIndex++) {
@@ -1564,10 +1564,10 @@ public final class Scus94491BpeSegment_8004 {
 
     voicePtr_800c4ac4.set(SPU);
 
-    spu44._03 = 8;
-    spu44._00 = 0;
-    spu44._0d = 0;
-    spu44.ticksPerSecond_42 = 60;
+    soundEnv._03 = 8;
+    soundEnv._00 = 0;
+    soundEnv._0d = 0;
+    soundEnv.ticksPerSecond_42 = 60;
     voicePtr_800c4ac4.deref().SPUCNT.set(0xc000); // SPU control - unmute; enable
     spuDmaTransfer(0, MEMORY.getBytes(_80011db0.getAddress(), 0x10), 0x1010);
 
@@ -1608,10 +1608,10 @@ public final class Scus94491BpeSegment_8004 {
   @Method(0x8004be7cL)
   public static void setSpuDmaCompleteCallback(@Nullable final Runnable callback) {
     if(callback == null) {
-      _800c6630.hasCallback_38 = false;
+      soundEnv_800c6630.hasCallback_38 = false;
     } else {
       spuDmaCompleteCallback_800c6628 = callback;
-      _800c6630.hasCallback_38 = true;
+      soundEnv_800c6630.hasCallback_38 = true;
     }
   }
 
@@ -1758,7 +1758,7 @@ public final class Scus94491BpeSegment_8004 {
       return -0x1L;
     }
 
-    _800c6630._03 = a0;
+    soundEnv_800c6630._03 = a0;
 
     //LAB_8004c488
     return 0;
@@ -1766,7 +1766,7 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x8004c494L)
   public static void sssqSetReverbType(final int type) {
-    _800c6630.reverbType_34 = type;
+    soundEnv_800c6630.reverbType_34 = type;
 
     if(type != 0) {
       SPU.VOICE_CHN_REVERB_MODE.set(0);
@@ -1794,10 +1794,10 @@ public final class Scus94491BpeSegment_8004 {
    */
   @Method(0x8004c558L)
   public static void sssqSetReverbVolume(final int left, final int right) {
-    if(_800c6630.reverbType_34 != 0 && left < 0x80 && right < 0x80) {
+    if(soundEnv_800c6630.reverbType_34 != 0 && left < 0x80 && right < 0x80) {
       final int r;
       final int l;
-      if(_800c6630.mono_36) {
+      if(soundEnv_800c6630.mono_36) {
         l = Math.max(left << 8, right << 8);
         r = l;
       } else {
@@ -1815,7 +1815,7 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x8004c6f8L)
   public static void setMono(final boolean mono) {
-    _800c6630.mono_36 = mono;
+    soundEnv_800c6630.mono_36 = mono;
   }
 
   @Method(0x8004c894L)
@@ -1941,7 +1941,7 @@ public final class Scus94491BpeSegment_8004 {
     assert fadeTime >= 0;
     assert maxVol >= 0;
 
-    final SpuStruct44 spu44 = _800c6630;
+    final SoundEnv44 soundEnv = soundEnv_800c6630;
 
     if(fadeTime >= 0x100) {
       assert false : "Error";
@@ -1953,15 +1953,15 @@ public final class Scus94491BpeSegment_8004 {
       return -0x1L;
     }
 
-    if(spu44.fadingOut_2b) {
+    if(soundEnv.fadingOut_2b) {
       assert false : "Error";
       return -0x1L;
     }
 
     setMainVolume(0, 0);
-    spu44.fadingIn_2a = true;
-    spu44.fadeTime_2c = fadeTime;
-    spu44.fadeInVol_2e = maxVol;
+    soundEnv.fadingIn_2a = true;
+    soundEnv.fadeTime_2c = fadeTime;
+    soundEnv.fadeInVol_2e = maxVol;
 
     //LAB_8004cd30
     //LAB_8004cd34
@@ -1970,12 +1970,12 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x8004cd50L)
   public static long sssqFadeOut(final short fadeTime) {
-    if(fadeTime < 256 && !_800c6630.fadingIn_2a) {
+    if(fadeTime < 256 && !soundEnv_800c6630.fadingIn_2a) {
       final Spu spu = voicePtr_800c4ac4.deref();
-      _800c6630.fadingOut_2b = true;
-      _800c6630.fadeTime_2c = fadeTime;
-      _800c6630.fadeOutVolL_30 = spu.CURR_MAIN_VOL_L.get() >>> 8;
-      _800c6630.fadeOutVolR_32 = spu.CURR_MAIN_VOL_R.get() >>> 8;
+      soundEnv_800c6630.fadingOut_2b = true;
+      soundEnv_800c6630.fadeTime_2c = fadeTime;
+      soundEnv_800c6630.fadeOutVolL_30 = spu.CURR_MAIN_VOL_L.get() >>> 8;
+      soundEnv_800c6630.fadeOutVolR_32 = spu.CURR_MAIN_VOL_R.get() >>> 8;
       return 0;
     }
 
@@ -2010,7 +2010,7 @@ public final class Scus94491BpeSegment_8004 {
   public static void setCdVolume(final int left, final int right) {
     final int l;
     final int r;
-    if(_800c6630.mono_36) {
+    if(soundEnv_800c6630.mono_36) {
       l = Math.max(left << 8, right << 8);
       r = l;
     } else {
@@ -2224,8 +2224,8 @@ public final class Scus94491BpeSegment_8004 {
     }
 
     //LAB_8004d59c
-    final SpuStruct44 spu44 = _800c6630;
-    return (spu44.fadingOut_2b ? 1 << 5 : 0) | (spu44.fadingIn_2a ? 1 << 4 : 1) | a0;
+    final SoundEnv44 soundEnv = soundEnv_800c6630;
+    return (soundEnv.fadingOut_2b ? 1 << 5 : 0) | (soundEnv.fadingIn_2a ? 1 << 4 : 1) | a0;
   }
 
   @Method(0x8004d648L)
@@ -2236,21 +2236,21 @@ public final class Scus94491BpeSegment_8004 {
   @Method(0x8004d6a8L)
   public static int sssqPitchShift(final PlayableSound0c playableSound, final int patchIndex, final int sequenceIndex, final int pitchShiftVolLeft, final int pitchShiftVolRight, final int pitch) {
     return SEQUENCER.waitForLock(() -> {
-      final SpuStruct44 s1 = _800c6630;
+      final SoundEnv44 soundEnv = soundEnv_800c6630;
       //TODO was this ever actually used? I didn't see anywhere upstream that flag 0x80 could have been set
 //      final int soundIndex;
 //      if((playableSound & 0x80) == 0) {
 //        soundIndex = playableSound;
 //      } else {
 //        soundIndex = playableSound & 0x7f;
-//        s1.reverbEnabled_23 = true;
+//        soundEnv.reverbEnabled_23 = true;
 //      }
 
       //LAB_8004d714
-      s1.pitchShiftVolLeft_26 = FUN_8004b5e4((short)0x1000, (short)pitchShiftVolLeft);
-      s1.pitchShiftVolRight_28 = FUN_8004b5e4((short)0x1000, (short)pitchShiftVolRight);
-      s1.pitch_24 = pitch;
-      s1.pitchShifted_22 = true;
+      soundEnv.pitchShiftVolLeft_26 = FUN_8004b5e4((short)0x1000, (short)pitchShiftVolLeft);
+      soundEnv.pitchShiftVolRight_28 = FUN_8004b5e4((short)0x1000, (short)pitchShiftVolRight);
+      soundEnv.pitch_24 = pitch;
+      soundEnv.pitchShifted_22 = true;
 
       //LAB_8004d760
       return FUN_80048d44(playableSound, patchIndex & 0xffff, sequenceIndex & 0xffff);

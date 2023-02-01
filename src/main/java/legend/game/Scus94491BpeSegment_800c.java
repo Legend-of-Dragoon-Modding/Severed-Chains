@@ -14,7 +14,7 @@ import legend.core.spu.Spu;
 import legend.game.sound.PatchList;
 import legend.game.sound.PlayableSound0c;
 import legend.game.sound.SequenceData124;
-import legend.game.sound.SpuStruct44;
+import legend.game.sound.SoundEnv44;
 import legend.game.sound.SpuStruct66;
 import legend.game.sound.Sshd;
 import legend.game.sound.InstrumentLayer10;
@@ -94,7 +94,7 @@ public final class Scus94491BpeSegment_800c {
   }
   public static Runnable spuDmaCompleteCallback_800c6628;
 
-  public static final SpuStruct44 _800c6630 = new SpuStruct44();
+  public static final SoundEnv44 soundEnv_800c6630 = new SoundEnv44();
   public static Instrument instrument_800c6674;
   public static InstrumentLayer10[] instrumentLayers_800c6678;
   public static InstrumentLayer10 instrumentLayer_800c6678;
