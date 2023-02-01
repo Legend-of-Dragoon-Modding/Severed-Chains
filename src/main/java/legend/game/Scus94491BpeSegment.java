@@ -3973,8 +3973,8 @@ public final class Scus94491BpeSegment {
       sound.spuRamOffset_14 = files.get(4).length;
       setSpuDmaCompleteCallback(null);
       sound.playableSoundIndex_10 = loadSshdAndSoundbank(files.get(4), new Sshd(files.get(3)), 0x2_1f70);
-      loadExtraSoundbanks();
       sssqChannelIndex_800bd0f8.set(FUN_8004c1f8(sound.playableSoundIndex_10, new Sssq(files.get(2))));
+      loadExtraSoundbanks();
       melbuMusicLoaded_800bd781.set(true);
     } else {
       //LAB_8001dbf0
@@ -3985,8 +3985,8 @@ public final class Scus94491BpeSegment {
         sound.spuRamOffset_14 = files.get(4).length;
         setSpuDmaCompleteCallback(null);
         sound.playableSoundIndex_10 = loadSshdAndSoundbank(files.get(4), new Sshd(files.get(3)), 0x2_1f70);
-        loadExtraSoundbanks();
         sssqChannelIndex_800bd0f8.set(FUN_8004c1f8(sound.playableSoundIndex_10, new Sssq(files.get(2))));
+        loadExtraSoundbanks();
       } else {
         //LAB_8001dcdc
         _800bd0fc.setu(a2);
