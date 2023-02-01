@@ -13,7 +13,7 @@ import legend.core.memory.types.UnsignedShortRef;
 import legend.core.spu.Spu;
 import legend.game.sound.PatchList;
 import legend.game.sound.PlayableSound0c;
-import legend.game.sound.SpuStruct124;
+import legend.game.sound.SequenceData124;
 import legend.game.sound.SpuStruct44;
 import legend.game.sound.SpuStruct66;
 import legend.game.sound.Sshd;
@@ -87,9 +87,9 @@ public final class Scus94491BpeSegment_800c {
   public static PatchList patchList_800c4abc;
   public static Sshd sshdPtr_800c4ac0;
   public static final Pointer<Spu> voicePtr_800c4ac4 = MEMORY.ref(4, 0x800c4ac4L, Pointer.deferred(4, ref -> {throw new RuntimeException("Can't instantiate");}));
-  public static final SpuStruct124[] _800c4ac8 = new SpuStruct124[24];
+  public static final SequenceData124[] sequenceData_800c4ac8 = new SequenceData124[24];
   static {
-    Arrays.setAll(_800c4ac8, i -> new SpuStruct124());
+    Arrays.setAll(sequenceData_800c4ac8, i -> new SequenceData124());
   }
   public static Runnable spuDmaCompleteCallback_800c6628;
 

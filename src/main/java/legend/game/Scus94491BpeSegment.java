@@ -104,7 +104,7 @@ import static legend.game.Scus94491BpeSegment_8003.GsSwapDispBuff;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.bzero;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
-import static legend.game.Scus94491BpeSegment_8004.FUN_8004c1f8;
+import static legend.game.Scus94491BpeSegment_8004.loadSssq;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004c390;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004c3f0;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004c8dc;
@@ -3973,7 +3973,7 @@ public final class Scus94491BpeSegment {
       sound.spuRamOffset_14 = files.get(4).length;
       setSpuDmaCompleteCallback(null);
       sound.playableSoundIndex_10 = loadSshdAndSoundbank(files.get(4), new Sshd(files.get(3)), 0x2_1f70);
-      sssqChannelIndex_800bd0f8.set(FUN_8004c1f8(sound.playableSoundIndex_10, new Sssq(files.get(2))));
+      sssqChannelIndex_800bd0f8.set(loadSssq(sound.playableSoundIndex_10, new Sssq(files.get(2))));
       loadExtraSoundbanks();
       melbuMusicLoaded_800bd781.set(true);
     } else {
@@ -3985,7 +3985,7 @@ public final class Scus94491BpeSegment {
         sound.spuRamOffset_14 = files.get(4).length;
         setSpuDmaCompleteCallback(null);
         sound.playableSoundIndex_10 = loadSshdAndSoundbank(files.get(4), new Sshd(files.get(3)), 0x2_1f70);
-        sssqChannelIndex_800bd0f8.set(FUN_8004c1f8(sound.playableSoundIndex_10, new Sssq(files.get(2))));
+        sssqChannelIndex_800bd0f8.set(loadSssq(sound.playableSoundIndex_10, new Sssq(files.get(2))));
         loadExtraSoundbanks();
       } else {
         //LAB_8001dcdc
@@ -3995,7 +3995,7 @@ public final class Scus94491BpeSegment {
         //LAB_8001dd44
         setSpuDmaCompleteCallback(null);
         sound.playableSoundIndex_10 = loadSshdAndSoundbank(files.get(3), new Sshd(files.get(2)), 0x2_1f70);
-        sssqChannelIndex_800bd0f8.set(FUN_8004c1f8(sound.playableSoundIndex_10, new Sssq(files.get(1))));
+        sssqChannelIndex_800bd0f8.set(loadSssq(sound.playableSoundIndex_10, new Sssq(files.get(1))));
 
         LOGGER.info("SSHD playable sound index %d", sound.playableSoundIndex_10);
         LOGGER.info("SSSQ channel index %d", sssqChannelIndex_800bd0f8.get());
@@ -4023,7 +4023,7 @@ public final class Scus94491BpeSegment {
 
     FUN_8004cf8c(sssqChannelIndex_800bd0f8.get());
     struct10._00 = 2;
-    struct10.channelIndex_0c = FUN_8004c1f8(soundFiles_800bcf80[struct10.soundFileIndex].playableSoundIndex_10, struct10.sssq_08);
+    struct10.channelIndex_0c = loadSssq(soundFiles_800bcf80[struct10.soundFileIndex].playableSoundIndex_10, struct10.sssq_08);
     musicLoaded_800bd782.incr();
     loadedDrgnFiles_800bcf78.and(0xffff_ff7fL);
   }
@@ -4625,7 +4625,7 @@ public final class Scus94491BpeSegment {
       FUN_8001fc54();
     }
 
-    sssqChannelIndex_800bd0f8.set(FUN_8004c1f8(sound.playableSoundIndex_10, new Sssq(files.get(1))));
+    sssqChannelIndex_800bd0f8.set(loadSssq(sound.playableSoundIndex_10, new Sssq(files.get(1))));
     FUN_8001b1a8(40);
     melbuMusicLoaded_800bd781.set(false);
     _800bd0f0.setu(0x2L);

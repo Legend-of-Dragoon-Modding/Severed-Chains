@@ -1,6 +1,6 @@
 package legend.game.sound;
 
-public class SpuStruct124 {
+public class SequenceData124 {
   /** ubyte Upper nibble is message, lower nibble is channel */
   public int command_000;
   public int previousCommand_001;
