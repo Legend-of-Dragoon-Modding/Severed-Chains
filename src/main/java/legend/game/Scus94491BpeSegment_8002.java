@@ -33,6 +33,8 @@ import legend.game.inventory.screens.ShopScreen;
 import legend.game.inventory.screens.TooManyItemsScreen;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
+import legend.game.sound.PlayingSound28;
+import legend.game.sound.SpuStruct10;
 import legend.game.tim.Tim;
 import legend.game.tmd.Renderer;
 import legend.game.types.ActiveStatsa0;
@@ -50,8 +52,6 @@ import legend.game.types.Model124;
 import legend.game.types.ModelPartTransforms;
 import legend.game.types.Renderable58;
 import legend.game.types.RenderableMetrics14;
-import legend.game.sound.SpuStruct10;
-import legend.game.sound.PlayingSound28;
 import legend.game.types.Struct84;
 import legend.game.types.Textbox4c;
 import legend.game.types.TextboxArrow0c;
@@ -114,7 +114,6 @@ import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.mallocHead;
-import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.rectArray28_80010770;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
@@ -289,19 +288,17 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80020360L)
-  public static void copyPlayingSounds(final ArrayRef<PlayingSound28> sources, final ArrayRef<PlayingSound28> dests) {
+  public static void copyPlayingSounds(final PlayingSound28[] sources, final PlayingSound28[] dests) {
     //LAB_8002036c
-    for(int i = 0; i < 32; i++) {
-      final PlayingSound28 source = sources.get(i);
-      final PlayingSound28 dest = dests.get(i);
+    for(int playingSoundIndex = 0; playingSoundIndex < 32; playingSoundIndex++) {
+      final PlayingSound28 source = sources[playingSoundIndex];
+      final PlayingSound28 dest = dests[playingSoundIndex];
 
       //LAB_80020378
-      memcpy(dest.getAddress(), source.getAddress(), 0x28);
+      dest.set(source);
 
-      if(dest.type_00.get() == 4) {
-        if(dest._1c.get() != 0) {
-          dest.type_00.set(3);
-        }
+      if(dest.type_00 == 4 && dest._1c != 0) {
+        dest.type_00 = 3;
       }
 
       //LAB_800203d8

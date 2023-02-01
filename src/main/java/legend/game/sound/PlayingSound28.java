@@ -1,15 +1,6 @@
 package legend.game.sound;
 
-import legend.core.memory.Value;
-import legend.core.memory.types.IntRef;
-import legend.core.memory.types.MemoryRef;
-import legend.core.memory.types.ShortRef;
-import legend.core.memory.types.UnsignedByteRef;
-import legend.core.memory.types.UnsignedIntRef;
-
-public class PlayingSound28 implements MemoryRef {
-  private final Value ref;
-
+public class PlayingSound28 {
   /**
    * <ol start="0">
    *   <li>unused</li>
@@ -18,46 +9,48 @@ public class PlayingSound28 implements MemoryRef {
    *   <li>sounds?</li>
    *   <li>?</li>
    * </ul>
+   * (ubyte)
    */
-  public final UnsignedByteRef type_00;
+  public int type_00;
 
-  public final IntRef bobjIndex_04;
-  public final IntRef soundFileIndex_08;
-  public final IntRef soundIndex_0c;
-  /** I think if this has flag 0x80 set it enables reverb? I don't think it's ever used? */
-  public final ShortRef playableSoundIndex_10;
-  public final ShortRef patchIndex_12;
-  public final ShortRef sequenceIndex_14;
-  public final ShortRef pitchShiftVolRight_16;
-  public final ShortRef pitchShiftVolLeft_18;
-  public final ShortRef pitch_1a;
-  public final UnsignedIntRef _1c;
-  public final ShortRef _20;
-  public final ShortRef _22;
-  public final ShortRef _24;
+  public int bobjIndex_04;
+  public int soundFileIndex_08;
+  public int soundIndex_0c;
+  /** I think if this has flag 0x80 set it enables reverb? I don't think it's ever used? (short) */
+  public PlayableSound0c playableSound_10;
+  /** short */
+  public int patchIndex_12;
+  /** short */
+  public int sequenceIndex_14;
+  /** short */
+  public int pitchShiftVolRight_16;
+  /** short */
+  public int pitchShiftVolLeft_18;
+  /** short */
+  public int pitch_1a;
+  public int _1c;
+  /** short */
+  public int _20;
+  /** short */
+  public int _22;
+  /** short */
+  public int _24;
 
-  public PlayingSound28(final Value ref) {
-    this.ref = ref;
-
-    this.type_00 = ref.offset(1, 0x00L).cast(UnsignedByteRef::new);
-
-    this.bobjIndex_04 = ref.offset(4, 0x04L).cast(IntRef::new);
-    this.soundFileIndex_08 = ref.offset(4, 0x08L).cast(IntRef::new);
-    this.soundIndex_0c = ref.offset(4, 0x0cL).cast(IntRef::new);
-    this.playableSoundIndex_10 = ref.offset(2, 0x10L).cast(ShortRef::new);
-    this.patchIndex_12 = ref.offset(2, 0x12L).cast(ShortRef::new);
-    this.sequenceIndex_14 = ref.offset(2, 0x14L).cast(ShortRef::new);
-    this.pitchShiftVolRight_16 = ref.offset(2, 0x16L).cast(ShortRef::new);
-    this.pitchShiftVolLeft_18 = ref.offset(2, 0x18L).cast(ShortRef::new);
-    this.pitch_1a = ref.offset(2, 0x1aL).cast(ShortRef::new);
-    this._1c = ref.offset(4, 0x1cL).cast(UnsignedIntRef::new);
-    this._20 = ref.offset(2, 0x20L).cast(ShortRef::new);
-    this._22 = ref.offset(2, 0x22L).cast(ShortRef::new);
-    this._24 = ref.offset(2, 0x24L).cast(ShortRef::new);
-  }
-
-  @Override
-  public long getAddress() {
-    return this.ref.getAddress();
+  public PlayingSound28 set(final PlayingSound28 other) {
+    this.type_00 = other.type_00;
+    this.bobjIndex_04 = other.bobjIndex_04;
+    this.soundFileIndex_08 = other.soundFileIndex_08;
+    this.soundIndex_0c = other.soundIndex_0c;
+    this.playableSound_10 = other.playableSound_10;
+    this.patchIndex_12 = other.patchIndex_12;
+    this.sequenceIndex_14 = other.sequenceIndex_14;
+    this.pitchShiftVolRight_16 = other.pitchShiftVolRight_16;
+    this.pitchShiftVolLeft_18 = other.pitchShiftVolLeft_18;
+    this.pitch_1a = other.pitch_1a;
+    this._1c = other._1c;
+    this._20 = other._20;
+    this._22 = other._22;
+    this._24 = other._24;
+    return this;
   }
 }

@@ -1365,14 +1365,12 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x80048c38L)
-  public static SssqReader FUN_80048c38(final int playableSoundIndex, final int patchIndex, final int sequenceIndex) {
-    assert playableSoundIndex >= 0;
+  public static SssqReader FUN_80048c38(final PlayableSound0c playableSound, final int patchIndex, final int sequenceIndex) {
     assert patchIndex >= 0;
     assert sequenceIndex >= 0;
 
-    final PlayableSound0c sound = playableSounds_800c43d0[playableSoundIndex];
     final SpuStruct44 a3 = _800c6630;
-    final Sshd sshd = sound.sshdPtr_04;
+    final Sshd sshd = playableSound.sshdPtr_04;
     a3.sshdPtr_08 = sshd;
     sshdPtr_800c4ac0 = sshd;
     final PatchList patchList = sshd.getSubfile(3, PatchList::new);
@@ -1380,19 +1378,17 @@ public final class Scus94491BpeSegment_8004 {
     patchList_800c4abc = patchList;
 
     if(sshd.hasSubfile(4)) {
-      if((playableSoundIndex & 0x80) == 0) {
-        if(a3._03 != 0) {
-          if(sound.used_00) {
-            if(patchList.patchCount_00 >= patchIndex) {
-              if(patchList.patches_02[patchIndex] != null) {
-                final PatchList.SequenceList sequenceList = patchList.patches_02[patchIndex];
-                final int sequenceCount = sequenceList.sequenceCount_00;
+      if(a3._03 != 0) {
+        if(playableSound.used_00) {
+          if(patchList.patchCount_00 >= patchIndex) {
+            if(patchList.patches_02[patchIndex] != null) {
+              final PatchList.SequenceList sequenceList = patchList.patches_02[patchIndex];
+              final int sequenceCount = sequenceList.sequenceCount_00;
 
-                if(sequenceCount >= sequenceIndex) {
-                  sssqish_800c4aa8 = sshd.getSubfile(4, (data, offset) -> new Sssqish(data, offset, sshd.getSubfileSize(4)));
-                  volumeRamp_800c4ab0 = sshd.getSubfile(1, VolumeRamp::new);
-                  return sequenceList.sequences_02[sequenceIndex].reader();
-                }
+              if(sequenceCount >= sequenceIndex) {
+                sssqish_800c4aa8 = sshd.getSubfile(4, (data, offset) -> new Sssqish(data, offset, sshd.getSubfileSize(4)));
+                volumeRamp_800c4ab0 = sshd.getSubfile(1, VolumeRamp::new);
+                return sequenceList.sequences_02[sequenceIndex].reader();
               }
             }
           }
@@ -1405,8 +1401,8 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x80048d44L)
-  public static int FUN_80048d44(final int playableSoundIndex, final int patchIndex, final int sequenceIndex) {
-    final SssqReader reader = FUN_80048c38(playableSoundIndex, patchIndex, sequenceIndex);
+  public static int FUN_80048d44(final PlayableSound0c playableSound, final int patchIndex, final int sequenceIndex) {
+    final SssqReader reader = FUN_80048c38(playableSound, patchIndex, sequenceIndex);
     final SpuStruct44 spu44 = _800c6630;
 
     //LAB_80048dac
@@ -1420,7 +1416,7 @@ public final class Scus94491BpeSegment_8004 {
         sequenceData.deltaTime_118 = 0;
         sequenceData._0e7 = 0;
         sequenceData.sssqReader_010 = reader;
-        sequenceData.playableSoundIndex_020 = playableSoundIndex;
+        sequenceData.playableSound_020 = playableSound;
         sequenceData.sequenceIndex_022 = sequenceIndex;
         sequenceData.patchIndex_024 = patchIndex;
 
@@ -1475,7 +1471,7 @@ public final class Scus94491BpeSegment_8004 {
     final SequenceData124 sequenceData = struct66.sequenceData_06;
 
     if(struct66._1a != 0) {
-      final Sshd sshd = playableSounds_800c43d0[sequenceData.playableSoundIndex_020].sshdPtr_04;
+      final Sshd sshd = sequenceData.playableSound_020.sshdPtr_04;
       sshdPtr_800c4ac0 = sshd;
       sssqChannelInfo_800C6680 = sshd.getSubfile(4, Sssq::new).channelInfo_10[struct66.commandChannel_04];
     } else {
@@ -1623,7 +1619,7 @@ public final class Scus94491BpeSegment_8004 {
    * @return Index into {@link Scus94491BpeSegment_800c#playableSounds_800c43d0}, or -1 on error
    */
   @Method(0x8004bea4L)
-  public static short loadSshdAndSoundbank(final byte[] soundbank, final Sshd sshd, final int addressInSoundBuffer) {
+  public static PlayableSound0c loadSshdAndSoundbank(final byte[] soundbank, final Sshd sshd, final int addressInSoundBuffer) {
     if(addressInSoundBuffer > 0x8_0000 || (addressInSoundBuffer & 0xf) != 0) {
       throw new IllegalArgumentException("Invalid sound buffer offset");
     }
@@ -1641,7 +1637,7 @@ public final class Scus94491BpeSegment_8004 {
           spuDmaTransfer(0, soundbank, addressInSoundBuffer);
         }
 
-        return i;
+        return sound;
       }
     }
 
@@ -1649,14 +1645,8 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004c114L)
-  public static long sssqUnloadPlayableSound(final int playableSoundIndex) {
-    if((playableSoundIndex & 0xff80) != 0) {
-      //LAB_8004c1f0
-      assert false : "Error";
-      return -0x1L;
-    }
-
-    if(!playableSounds_800c43d0[playableSoundIndex].used_00) {
+  public static long sssqUnloadPlayableSound(final PlayableSound0c playableSound) {
+    if(!playableSound.used_00) {
       //LAB_8004c1f0
       assert false : "Error";
       return -0x1L;
@@ -1666,9 +1656,9 @@ public final class Scus94491BpeSegment_8004 {
     for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
       final SpuStruct66 spu66 = _800c3a40[voiceIndex];
 
-      if(spu66.used_00 && spu66.playableSoundIndex_22 == playableSoundIndex) {
+      if(spu66.used_00 && spu66.playableSound_22 == playableSound) {
         //LAB_8004c1e8
-        LOGGER.error("Tried to unload PlayableSound %d while still in use", playableSoundIndex);
+        LOGGER.error("Tried to unload PlayableSound %d while still in use", playableSound);
         LOGGER.error("", new Throwable());
         return -0x1L;
       }
@@ -1676,26 +1666,21 @@ public final class Scus94491BpeSegment_8004 {
       //LAB_8004c19c
     }
 
-    final PlayableSound0c sound = playableSounds_800c43d0[playableSoundIndex];
-    sound.used_00 = false;
-    sound.sshdPtr_04 = null;
-    sound.soundBufferPtr_08 = 0;
+    playableSound.used_00 = false;
+    playableSound.sshdPtr_04 = null;
+    playableSound.soundBufferPtr_08 = 0;
     return 0;
   }
 
   @Method(0x8004c1f8L)
-  public static SequenceData124 loadSssq(final int playableSoundIndex, final Sssq sssq) {
-    if((playableSoundIndex & 0xff80) != 0) {
-      throw new IllegalArgumentException("Invalid playableSoundIndex " + playableSoundIndex);
-    }
-
+  public static SequenceData124 loadSssq(final PlayableSound0c playableSound, final Sssq sssq) {
     //LAB_8004c258
     for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
       final SequenceData124 sequenceData = sequenceData_800c4ac8[voiceIndex];
 
       if(sequenceData._027 == 0) {
         if(sequenceData._029 == 0) {
-          if(!playableSounds_800c43d0[playableSoundIndex].used_00) {
+          if(!playableSound.used_00) {
             throw new RuntimeException("Found sound but it wasn't used");
           }
 
@@ -1709,7 +1694,7 @@ public final class Scus94491BpeSegment_8004 {
           sequenceData.previousCommand_001 = sequenceData.command_000;
           sequenceData.param0_002 = sequenceData.sssqReader_010.readByte(1);
           sequenceData.param1_003 = sequenceData.sssqReader_010.readByte(2);
-          sequenceData.playableSoundIndex_020 = playableSoundIndex;
+          sequenceData.playableSound_020 = playableSound;
 
           //LAB_8004c308
           for(int n = 0; n < 16; n++) {
@@ -1884,7 +1869,7 @@ public final class Scus94491BpeSegment_8004 {
     for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
       final SpuStruct66 spu66 = _800c3a40[voiceIndex];
 
-      if(spu66.used_00 && spu66.playableSoundIndex_22 == sequenceData.playableSoundIndex_020 && spu66._1a == 0 && spu66.sequenceData_06 == sequenceData) {
+      if(spu66.used_00 && spu66.playableSound_22 == sequenceData.playableSound_020 && spu66._1a == 0 && spu66.sequenceData_06 == sequenceData) {
         FUN_8004ad2c(voiceIndex);
       }
 
@@ -1897,11 +1882,7 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004cb0cL)
-  public static long FUN_8004cb0c(final int playableSoundIndex, int volume) {
-    if(playableSoundIndex < 0) {
-      throw new IllegalArgumentException("Negative playableSoundIndex");
-    }
-
+  public static long FUN_8004cb0c(final PlayableSound0c playableSound, int volume) {
     if(volume < 0) {
       //TODO GH#3, GH#193
       // This happens during the killing blow in the first virage fight. In retail, a1 counts down from 0x7f to 0 (I'm assuming it's volume).
@@ -1912,20 +1893,14 @@ public final class Scus94491BpeSegment_8004 {
 //      throw new RuntimeException("Negative a1");
     }
 
-    final PlayableSound0c sound = playableSounds_800c43d0[playableSoundIndex];
-    sshdPtr_800c4ac0 = sound.sshdPtr_04;
+    sshdPtr_800c4ac0 = playableSound.sshdPtr_04;
 
-    if(!sound.used_00) {
+    if(!playableSound.used_00) {
       assert false : "Error";
       return -0x1L;
     }
 
-    if(!sound.sshdPtr_04.hasSubfile(4)) {
-      assert false : "Error";
-      return -0x1L;
-    }
-
-    if((playableSoundIndex & 0xff80L) != 0) {
+    if(!playableSound.sshdPtr_04.hasSubfile(4)) {
       assert false : "Error";
       return -0x1L;
     }
@@ -1935,7 +1910,7 @@ public final class Scus94491BpeSegment_8004 {
       return -0x1L;
     }
 
-    final Sssqish sssq = sound.sshdPtr_04.getSubfile(4, (data, offset) -> new Sssqish(data, offset, sound.sshdPtr_04.getSubfileSize(4)));
+    final Sssqish sssq = playableSound.sshdPtr_04.getSubfile(4, (data, offset) -> new Sssqish(data, offset, playableSound.sshdPtr_04.getSubfileSize(4)));
     sssqReader_800c667c = null; //sssq.reader(); TODO?
     final int ret = sssq.volume_00;
     sssq.volume_00 = volume;
@@ -1950,7 +1925,7 @@ public final class Scus94491BpeSegment_8004 {
     for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
       final SpuStruct66 spu66 = _800c3a40[voiceIndex];
 
-      if(spu66.used_00 && spu66._1a == 1 && spu66.playableSoundIndex_22 == playableSoundIndex) {
+      if(spu66.used_00 && spu66._1a == 1 && spu66.playableSound_22 == playableSound) {
         FUN_8004ad2c(voiceIndex);
       }
 
@@ -2050,13 +2025,13 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x8004cf8cL)
   public static void FUN_8004cf8c(final SequenceData124 sequenceData) {
-    final PlayableSound0c sound = playableSounds_800c43d0[sequenceData.playableSoundIndex_020];
+    final PlayableSound0c playableSound = sequenceData.playableSound_020;
 
-    sshdPtr_800c4ac0 = sound.sshdPtr_04;
+    sshdPtr_800c4ac0 = playableSound.sshdPtr_04;
 
     if(sequenceData._027 == 1) {
       if(sshdPtr_800c4ac0.hasSubfile(0)) {
-        if(sound.used_00) {
+        if(playableSound.used_00) {
           sequenceData._028 = 1;
           sequenceData._0e8 = 0;
         }
@@ -2070,7 +2045,7 @@ public final class Scus94491BpeSegment_8004 {
   @Method(0x8004d034L)
   public static void FUN_8004d034(final SequenceData124 sequenceData, final int a1) {
     boolean resetAdsr = false;
-    final PlayableSound0c playableSound = playableSounds_800c43d0[sequenceData.playableSoundIndex_020];
+    final PlayableSound0c playableSound = sequenceData.playableSound_020;
     final Sshd sshd = playableSound.sshdPtr_04;
 
     sshdPtr_800c4ac0 = sshd;
@@ -2254,30 +2229,31 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004d648L)
-  public static int FUN_8004d648(final int playableSoundIndex, final int patchIndex, final int sequenceIndex) {
-    return SEQUENCER.waitForLock(() -> FUN_80048d44(playableSoundIndex, patchIndex, sequenceIndex));
+  public static int FUN_8004d648(final PlayableSound0c playableSound, final int patchIndex, final int sequenceIndex) {
+    return SEQUENCER.waitForLock(() -> FUN_80048d44(playableSound, patchIndex, sequenceIndex));
   }
 
   @Method(0x8004d6a8L)
-  public static int sssqPitchShift(final int playableSoundIndex, final int patchIndex, final int sequenceIndex, final short pitchShiftVolLeft, final short pitchShiftVolRight, final short pitch) {
+  public static int sssqPitchShift(final PlayableSound0c playableSound, final int patchIndex, final int sequenceIndex, final int pitchShiftVolLeft, final int pitchShiftVolRight, final int pitch) {
     return SEQUENCER.waitForLock(() -> {
       final SpuStruct44 s1 = _800c6630;
-      final int soundIndex;
-      if((playableSoundIndex & 0x80) == 0) {
-        soundIndex = playableSoundIndex;
-      } else {
-        soundIndex = playableSoundIndex & 0x7f;
-        s1.reverbEnabled_23 = true;
-      }
+      //TODO was this ever actually used? I didn't see anywhere upstream that flag 0x80 could have been set
+//      final int soundIndex;
+//      if((playableSound & 0x80) == 0) {
+//        soundIndex = playableSound;
+//      } else {
+//        soundIndex = playableSound & 0x7f;
+//        s1.reverbEnabled_23 = true;
+//      }
 
       //LAB_8004d714
-      s1.pitchShiftVolLeft_26 = FUN_8004b5e4((short)0x1000, pitchShiftVolLeft);
-      s1.pitchShiftVolRight_28 = FUN_8004b5e4((short)0x1000, pitchShiftVolRight);
+      s1.pitchShiftVolLeft_26 = FUN_8004b5e4((short)0x1000, (short)pitchShiftVolLeft);
+      s1.pitchShiftVolRight_28 = FUN_8004b5e4((short)0x1000, (short)pitchShiftVolRight);
       s1.pitch_24 = pitch;
       s1.pitchShifted_22 = true;
 
       //LAB_8004d760
-      return FUN_80048d44(soundIndex, patchIndex & 0xffff, sequenceIndex & 0xffff);
+      return FUN_80048d44(playableSound, patchIndex & 0xffff, sequenceIndex & 0xffff);
     });
   }
 

@@ -69,7 +69,7 @@ public final class Scus94491BpeSegment_800c {
 
   public static final GsCOORDINATE2[] coord2s_800c35a8 = new GsCOORDINATE2[31];
 
-  /** 0x990 bytes long, I think these map to voices, not channels */
+  /** 0x990 bytes long, one per voice */
   public static final SpuStruct66[] _800c3a40 = new SpuStruct66[24];
   static {
     Arrays.setAll(_800c3a40, i -> new SpuStruct66());

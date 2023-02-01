@@ -20,14 +20,13 @@ import static legend.game.Scus94491BpeSegment_8005._80059b3c;
 import static legend.game.Scus94491BpeSegment_8005.panVolume_80059f3c;
 import static legend.game.Scus94491BpeSegment_8005.sssqFadeCurrent_8005a1ce;
 import static legend.game.Scus94491BpeSegment_800c._800c3a40;
-import static legend.game.Scus94491BpeSegment_800c.sequenceData_800c4ac8;
 import static legend.game.Scus94491BpeSegment_800c._800c6630;
 import static legend.game.Scus94491BpeSegment_800c.instrumentLayerIndex_800c6678;
 import static legend.game.Scus94491BpeSegment_800c.instrumentLayer_800c6678;
 import static legend.game.Scus94491BpeSegment_800c.instrumentLayers_800c6678;
 import static legend.game.Scus94491BpeSegment_800c.instrument_800c6674;
 import static legend.game.Scus94491BpeSegment_800c.instruments_800c4aa8;
-import static legend.game.Scus94491BpeSegment_800c.playableSounds_800c43d0;
+import static legend.game.Scus94491BpeSegment_800c.sequenceData_800c4ac8;
 import static legend.game.Scus94491BpeSegment_800c.sshdPtr_800c4ac0;
 import static legend.game.Scus94491BpeSegment_800c.sssqChannelInfo_800C6680;
 import static legend.game.Scus94491BpeSegment_800c.sssqReader_800c667c;
@@ -220,7 +219,7 @@ public class Sequencer {
     instrumentLayer_800c6678 = instrumentLayers_800c6678[instrumentLayerIndex_800c6678];
     sssqChannelInfo_800C6680.pitchBend_0a = 64;
 
-    final short voiceIndex = (short)this.FUN_80048000(instrumentLayer_800c6678.minKeyRange_00, instrumentLayer_800c6678.maxKeyRange_01, sequenceData.playableSoundIndex_020);
+    final short voiceIndex = (short)this.FUN_80048000(instrumentLayer_800c6678.minKeyRange_00, instrumentLayer_800c6678.maxKeyRange_01, sequenceData.playableSound_020);
     if(voiceIndex == -1) {
       sequenceData.sssqReader_010.advance(4);
       _800c6630._04 = 0;
@@ -251,7 +250,7 @@ public class Sequencer {
     struct66._1c = 4;
     struct66.maxKeyRange_1e = instrumentLayer_800c6678.maxKeyRange_01;
     struct66.minKeyRange_20 = instrumentLayer_800c6678.minKeyRange_00;
-    struct66.playableSoundIndex_22 = sequenceData.playableSoundIndex_020;
+    struct66.playableSound_22 = sequenceData.playableSound_020;
     struct66.patchIndex_24 = sequenceData.patchIndex_024;
     struct66.sequenceIndex_26 = sequenceData.sequenceIndex_022;
     struct66.volume_28 = sssqChannelInfo_800C6680.volume_0e;
@@ -332,7 +331,7 @@ public class Sequencer {
     final Voice voice = voicePtr_800c4ac4.deref().voices[voiceIndex];
     voice.LEFT.set(l);
     voice.RIGHT.set(r);
-    voice.ADPCM_START_ADDR.set(playableSounds_800c43d0[sequenceData.playableSoundIndex_020].soundBufferPtr_08 + instrumentLayer_800c6678.soundOffset_04);
+    voice.ADPCM_START_ADDR.set(sequenceData.playableSound_020.soundBufferPtr_08 + instrumentLayer_800c6678.soundOffset_04);
     voice.ADSR_LO.set(instrumentLayer_800c6678.adsrLo_06);
     voice.ADSR_HI.set(instrumentLayer_800c6678.adsrHi_08);
     setKeyOn(sequenceData, voiceIndex);
@@ -424,7 +423,7 @@ public class Sequencer {
           s1._1c = 0;
           s1.maxKeyRange_1e = 0;
           s1.minKeyRange_20 = 0;
-          s1.playableSoundIndex_22 = sequenceData.playableSoundIndex_020;
+          s1.playableSound_22 = sequenceData.playableSound_020;
           s1.volume_28 = sssqChannelInfo_800C6680.volume_0e;
           s1._2a = instrument_800c6674.patchVolume_01;
           s1.volume_2c = volumeRamp_800c4ab0.ramp_02[sequenceData.param1_003];
@@ -491,7 +490,7 @@ public class Sequencer {
           final Voice voice = voicePtr_800c4ac4.deref().voices[voiceIndex];
           voice.LEFT.set(l);
           voice.RIGHT.set(r);
-          voice.ADPCM_START_ADDR.set(playableSounds_800c43d0[sequenceData.playableSoundIndex_020].soundBufferPtr_08 + instrumentLayer_800c6678.soundOffset_04);
+          voice.ADPCM_START_ADDR.set(sequenceData.playableSound_020.soundBufferPtr_08 + instrumentLayer_800c6678.soundOffset_04);
           voice.ADSR_LO.set(instrumentLayer_800c6678.adsrLo_06);
           voice.ADSR_HI.set(instrumentLayer_800c6678.adsrHi_08);
           setKeyOn(sequenceData, voiceIndex);
@@ -579,7 +578,7 @@ public class Sequencer {
                 }
 
                 //LAB_80047300
-                final Sshd sshd = playableSounds_800c43d0[sequenceData.playableSoundIndex_020].sshdPtr_04;
+                final Sshd sshd = sequenceData.playableSound_020.sshdPtr_04;
 
                 pitchBend = 0x80;
                 sshdPtr_800c4ac0 = sshd;
@@ -756,7 +755,7 @@ public class Sequencer {
 
   @Method(0x80047b38L)
   public void FUN_80047b38(final SequenceData124 sequenceData) {
-    final Sshd sshd = playableSounds_800c43d0[sequenceData.playableSoundIndex_020].sshdPtr_04;
+    final Sshd sshd = sequenceData.playableSound_020.sshdPtr_04;
 
     _800c6630.sshdPtr_08 = sshd;
     sshdPtr_800c4ac0 = sshd;
@@ -915,11 +914,11 @@ public class Sequencer {
 
   /** This code has been verified */
   @Method(0x80048000L)
-  public int FUN_80048000(final int minKeyRange, final int maxKeyRange, final long playableSoundIndex) {
+  public int FUN_80048000(final int minKeyRange, final int maxKeyRange, final PlayableSound0c playableSound) {
     if(minKeyRange != 0) {
       //LAB_8004802c
       for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
-        if(_800c3a40[voiceIndex]._1a == 1 && _800c3a40[voiceIndex].minKeyRange_20 == minKeyRange && _800c3a40[voiceIndex].playableSoundIndex_22 == playableSoundIndex) {
+        if(_800c3a40[voiceIndex]._1a == 1 && _800c3a40[voiceIndex].minKeyRange_20 == minKeyRange && _800c3a40[voiceIndex].playableSound_22 == playableSound) {
           //LAB_80048080
           for(int voiceIndex2 = 0; voiceIndex2 < 24; voiceIndex2++) {
             final int v1 = _800c3a40[voiceIndex]._0a;
@@ -1052,7 +1051,7 @@ public class Sequencer {
     for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
       if(_800c3a40[voiceIndex].used_00) {
         if(_800c3a40[voiceIndex]._1a == 1) {
-          if(_800c3a40[voiceIndex].playableSoundIndex_22 == sequenceData.playableSoundIndex_020) {
+          if(_800c3a40[voiceIndex].playableSound_22 == sequenceData.playableSound_020) {
             if(_800c3a40[voiceIndex]._3e == sequenceData.param2_005) {
               if(_800c3a40[voiceIndex].noteNumber_02 == sequenceData.param0_002) {
                 if(_800c3a40[voiceIndex]._0c == 1) {
@@ -1098,7 +1097,7 @@ public class Sequencer {
       if(spu66.used_00) {
         if(spu66._1a == 0) {
           if(spu66.sequenceData_06 == sequenceData) {
-            if(spu66.playableSoundIndex_22 == sequenceData.playableSoundIndex_020) {
+            if(spu66.playableSound_22 == sequenceData.playableSound_020) {
               if(spu66.commandChannel_04 == (sequenceData.command_000 & 0xf)) {
                 if(spu66.noteNumber_02 == sequenceData.param0_002) {
                   if(spu66._0c == 0) {
@@ -1265,7 +1264,7 @@ public class Sequencer {
         if(spu66._1a == 1) {
           if(spu66._3e == sequenceData.sssqReader_010.readByte(3)) {
             if(spu66.noteNumber_02 == sequenceData.sssqReader_010.readByte(4)) {
-              if(spu66.playableSoundIndex_22 == sequenceData.playableSoundIndex_020) {
+              if(spu66.playableSound_22 == sequenceData.playableSound_020) {
                 if(spu66.sequenceData_06 == sequenceData) {
                   if(spu66.used_00) {
                     spu66.modulationEnabled_14 = true;
@@ -1291,7 +1290,7 @@ public class Sequencer {
     for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
       final SpuStruct66 spu66 = _800c3a40[voiceIndex];
       if(spu66.commandChannel_04 == (sequenceData.command_000 & 0xf)) {
-        if(spu66.playableSoundIndex_22 == sequenceData.playableSoundIndex_020) {
+        if(spu66.playableSound_22 == sequenceData.playableSound_020) {
           if(spu66.sequenceData_06 == sequenceData) {
             if(spu66.used_00) {
               spu66.modulationEnabled_14 = true;
@@ -1322,7 +1321,7 @@ public class Sequencer {
         if(spu66.commandChannel_04 == (sequenceData.command_000 & 0xf)) {
           if(spu66._3e == sequenceData.sssqReader_010.readByte(3)) {
             if(spu66.noteNumber_02 == sequenceData.sssqReader_010.readByte(4)) {
-              if(spu66.playableSoundIndex_22 == sequenceData.playableSoundIndex_020) {
+              if(spu66.playableSound_22 == sequenceData.playableSound_020) {
                 if(spu66.sequenceData_06 == sequenceData) {
                   if(spu66.used_00) {
                     spu66.breath_3c = breath;
@@ -1348,7 +1347,7 @@ public class Sequencer {
       final SpuStruct66 spu66 = _800c3a40[i];
 
       if(spu66.commandChannel_04 == (sequenceData.command_000 & 0xf)) {
-        if(spu66.playableSoundIndex_22 == sequenceData.playableSoundIndex_020) {
+        if(spu66.playableSound_22 == sequenceData.playableSound_020) {
           if(spu66.sequenceData_06 == sequenceData) {
             if(spu66.used_00) {
               spu66.breath_3c = breath;
@@ -1373,7 +1372,7 @@ public class Sequencer {
 
       if(struct66.used_00) {
         if(struct66._1a == 1) {
-          if(struct66.playableSoundIndex_22 == sequenceData.playableSoundIndex_020) {
+          if(struct66.playableSound_22 == sequenceData.playableSound_020) {
             if(struct66._3e == sequenceData.sssqReader_010.readByte(4)) {
               if(struct66.noteNumber_02 == sequenceData.sssqReader_010.readByte(5)) {
                 if(struct66.sequenceData_06 == sequenceData) {
@@ -1408,7 +1407,7 @@ public class Sequencer {
 
         if(spu66.used_00) {
           if(spu66._1a == 1) {
-            if(spu66.playableSoundIndex_22 == sequenceData.playableSoundIndex_020) {
+            if(spu66.playableSound_22 == sequenceData.playableSound_020) {
               if(spu66._3e == sequenceData.sssqReader_010.readByte(4)) {
                 if(spu66.noteNumber_02 == sequenceData.sssqReader_010.readByte(5)) {
                   if(spu66.sequenceData_06 == sequenceData) {
@@ -1440,7 +1439,7 @@ public class Sequencer {
 
         if(spu66.used_00) {
           if(spu66.commandChannel_04 == (sequenceData.command_000 & 0xf)) {
-            if(spu66.playableSoundIndex_22 == sequenceData.playableSoundIndex_020) {
+            if(spu66.playableSound_22 == sequenceData.playableSound_020) {
               if(spu66._08 != 1) {
                 if(spu66.sequenceData_06 == sequenceData) {
                   sequenceData.param1_003 = spu66.volume_2c;
@@ -1470,7 +1469,7 @@ public class Sequencer {
         final SpuStruct66 spu66 = _800c3a40[voiceIndex];
         if(spu66.used_00) {
           if(spu66._1a == 1) {
-            if(spu66.playableSoundIndex_22 == sequenceData.playableSoundIndex_020) {
+            if(spu66.playableSound_22 == sequenceData.playableSound_020) {
               if(spu66._3e == sequenceData.sssqReader_010.readByte(4)) {
                 if(spu66.noteNumber_02 == sequenceData.sssqReader_010.readByte(5)) {
                   if(spu66.sequenceData_06 == sequenceData) {
@@ -1499,7 +1498,7 @@ public class Sequencer {
       for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
         final SpuStruct66 spu66 = _800c3a40[voiceIndex];
         if(spu66.commandChannel_04 == (sequenceData.command_000 & 0xf)) {
-          if(spu66.playableSoundIndex_22 == sequenceData.playableSoundIndex_020) {
+          if(spu66.playableSound_22 == sequenceData.playableSound_020) {
             if(spu66.sequenceData_06 == sequenceData) {
               if(spu66._08 != 1) {
                 if(spu66.used_00) {
@@ -1746,7 +1745,7 @@ public class Sequencer {
     for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
       final SpuStruct66 spu66 = _800c3a40[voiceIndex];
       if(spu66.commandChannel_04 == (sequenceData.command_000 & 0xf)) {
-        if(spu66.playableSoundIndex_22 == sequenceData.playableSoundIndex_020) {
+        if(spu66.playableSound_22 == sequenceData.playableSound_020) {
           if(spu66.sequenceData_06 == sequenceData) {
             if(spu66.used_00) {
               voicePtr_800c4ac4.deref().voices[voiceIndex].ADPCM_SAMPLE_RATE.set(this.calculateSampleRate(spu66.rootKey_40, spu66.noteNumber_02, spu66.cents_36, sssqChannelInfo_800C6680.pitchBend_0a, spu66.pitchBendMultiplier_3a));
@@ -1873,7 +1872,7 @@ public class Sequencer {
         sequenceData.pitchShiftVolLeft_0ee = 0;
         sequenceData._104 = 0;
         sequenceData._105 = 0;
-        sequenceData.playableSoundIndex_020 = 0;
+        sequenceData.playableSound_020 = null;
         sequenceData._02a = 0;
         sequenceData._029 = 0;
         _800c6630.pitchShifted_22 = false;
@@ -1906,7 +1905,7 @@ public class Sequencer {
           spu66.sequenceData_06 = null;
           spu66.sequenceIndex_26 = -1;
           spu66.patchIndex_24 = -1;
-          spu66.playableSoundIndex_22 = -1;
+          spu66.playableSound_22 = null;
           spu66._0a = -1;
           spu66._4e = 120;
 
@@ -2044,7 +2043,7 @@ public class Sequencer {
 
       if(struct66.used_00) {
         if(struct66._1a == 0) {
-          if(struct66.playableSoundIndex_22 == sequenceData.playableSoundIndex_020) {
+          if(struct66.playableSound_22 == sequenceData.playableSound_020) {
             if(struct66.sequenceData_06 == sequenceData) {
               if(struct66.commandChannel_04 == commandChannel) {
                 FUN_8004ad2c(voiceIndex);

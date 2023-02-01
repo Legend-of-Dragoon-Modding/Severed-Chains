@@ -21,7 +21,7 @@ public class SequenceData124 {
   public int startingInstrument_01e;
 
   /** ushort */
-  public int playableSoundIndex_020;
+  public PlayableSound0c playableSound_020;
   /** ushort */
   public int sequenceIndex_022;
   /** ushort */

@@ -18,7 +18,7 @@ public class SpuStruct66 {
   public int _1c;
   public int maxKeyRange_1e;
   public int minKeyRange_20;
-  public int playableSoundIndex_22;
+  public PlayableSound0c playableSound_22;
   public int patchIndex_24;
   public int sequenceIndex_26;
   public int volume_28;
@@ -73,7 +73,7 @@ public class SpuStruct66 {
     this._1c = 0;
     this.maxKeyRange_1e = 0;
     this.minKeyRange_20 = 0;
-    this.playableSoundIndex_22 = 0;
+    this.playableSound_22 = null;
     this.patchIndex_24 = 0;
     this.sequenceIndex_26 = 0;
     this.volume_28 = 0;

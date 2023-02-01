@@ -6,7 +6,7 @@ public class SoundFile {
   public int charId_02;
   public SoundFileIndices[] indices_08;
   public byte[] ptr_0c;
-  public int playableSoundIndex_10;
+  public PlayableSound0c playableSound_10;
 
   /** Only used if there are multiple soundbanks */
   public int spuRamOffset_14;
