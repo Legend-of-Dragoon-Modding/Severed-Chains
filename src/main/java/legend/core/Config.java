@@ -2,6 +2,7 @@ package legend.core;
 
 import legend.game.combat.Bttl_800c;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -99,8 +100,8 @@ public final class Config {
     properties.setProperty("battle_ui_b", String.valueOf(rgbArray[1]));
   }
 
-  public static String getYouTubeLiveChatId() {
-    return properties.getProperty("youtubeChatId");
+  public static @Nonnull String getYouTubeLiveChatId() {
+    return properties.getProperty("youtubeChatId", "");
   }
 
   private static int readInt(final String key, final int defaultVal, final int min, final int max) {

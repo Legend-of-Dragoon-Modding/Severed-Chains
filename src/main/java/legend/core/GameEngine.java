@@ -19,6 +19,8 @@ import legend.game.modding.registries.Registries;
 import legend.game.scripting.ScriptManager;
 import legend.game.unpacker.Unpacker;
 import legend.game.unpacker.UnpackerException;
+import legend.integration.core.PlaySubscriber;
+import legend.integration.youtube.YouTubePublisher;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Matrix4f;
@@ -156,6 +158,14 @@ public final class GameEngine {
 
       Scus94491BpeSegment_8002.start();
       loading = false;
+
+      final String liveChatId = Config.getYouTubeLiveChatId();
+      if(!liveChatId.isBlank()) {
+        final PlaySubscriber sub = new PlaySubscriber();
+        final YouTubePublisher pub = new YouTubePublisher(liveChatId);
+        pub.subscribe(sub);
+        pub.play();
+      }
     }
   }
 
