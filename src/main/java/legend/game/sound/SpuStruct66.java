@@ -4,7 +4,7 @@ public class SpuStruct66 {
   public boolean used_00;
   public int noteNumber_02;
   public int commandChannel_04;
-  public int channelIndex_06;
+  public SequenceData124 sequenceData_06;
   public int _08;
   public int _0a;
   public int _0c;
@@ -59,7 +59,7 @@ public class SpuStruct66 {
     this.used_00 = false;
     this.noteNumber_02 = 0;
     this.commandChannel_04 = 0;
-    this.channelIndex_06 = 0;
+    this.sequenceData_06 = null;
     this._08 = 0;
     this._0a = 0;
     this._0c = 0;

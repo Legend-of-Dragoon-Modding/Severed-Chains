@@ -9,7 +9,6 @@ import legend.core.memory.types.EnumMapRef;
 import legend.core.memory.types.EnumRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.Pointer;
-import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
@@ -17,6 +16,7 @@ import legend.game.combat.types.BattleStage;
 import legend.game.inventory.WhichMenu;
 import legend.game.scripting.ScriptState;
 import legend.game.sound.PlayingSound28;
+import legend.game.sound.SequenceData124;
 import legend.game.sound.SoundFile;
 import legend.game.sound.SpuStruct08;
 import legend.game.sound.SpuStruct10;
@@ -94,6 +94,7 @@ public final class Scus94491BpeSegment_800b {
   public static final IntRef itemsDroppedByEnemiesCount_800bc978 = MEMORY.ref(4, 0x800bc978L, IntRef::new);
   public static final Value _800bc97c = MEMORY.ref(4, 0x800bc97cL);
 
+  /** One per voice */
   public static final ArrayRef<SpuStruct08> _800bc9a8 = MEMORY.ref(4, 0x800bc9a8L, ArrayRef.of(SpuStruct08.class, 24, 0x8, SpuStruct08::new));
 
   public static final Value _800bca68 = MEMORY.ref(1, 0x800bca68L);
@@ -115,7 +116,7 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bd0f0 = MEMORY.ref(2, 0x800bd0f0L);
 
-  public static final ShortRef sssqChannelIndex_800bd0f8 = MEMORY.ref(2, 0x800bd0f8L, ShortRef::new);
+  public static SequenceData124 currentSequenceData_800bd0f8;
 
   public static final Value _800bd0fc = MEMORY.ref(4, 0x800bd0fcL);
   public static final IntRef sssqTempoScale_800bd100 = MEMORY.ref(4, 0x800bd100L, IntRef::new);

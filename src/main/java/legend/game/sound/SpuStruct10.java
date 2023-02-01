@@ -7,5 +7,5 @@ public class SpuStruct10 {
   public int soundFileIndex;
 
   public Sssq sssq_08;
-  public int channelIndex_0c;
+  public SequenceData124 sequenceData_0c;
 }

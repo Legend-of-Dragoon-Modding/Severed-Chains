@@ -258,8 +258,8 @@ public final class Scus94491BpeSegment_8002 {
     final SpuStruct10 struct10 = spu10Arr_800bd610[index];
 
     if(struct10._00 != 0) {
-      FUN_8004d034(struct10.channelIndex_0c, 1);
-      FUN_8004c390(struct10.channelIndex_0c);
+      FUN_8004d034(struct10.sequenceData_0c, 1);
+      FUN_8004c390(struct10.sequenceData_0c);
       struct10.sssq_08 = null;
       struct10._00 = 0;
     }
