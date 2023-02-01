@@ -29,13 +29,13 @@ if (hasProperty("os")) {
   switch (os) {
     case "windows":
       project.ext.lwjglNatives = "natives-windows"
-      break;
+      break
     case "linux":
       project.ext.lwjglNatives = "natives-linux"
-      break;
+      break
     case "macos":
       project.ext.lwjglNatives = "natives-macos"
-      break;
+      break
   }
 }
 
@@ -50,6 +50,9 @@ dependencies {
   implementation group: 'org.fusesource.jansi', name: 'jansi', version: '2.3.2'
 
   implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
+
+  implementation "com.squareup.okhttp3:okhttp:4.10.0"
+  implementation 'com.google.code.gson:gson:2.10.1'
 
   implementation "org.lwjgl:lwjgl"
   implementation "org.lwjgl:lwjgl-glfw"
