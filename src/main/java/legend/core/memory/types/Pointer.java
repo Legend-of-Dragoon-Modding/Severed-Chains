@@ -90,12 +90,12 @@ public class Pointer<T extends MemoryRef> implements MemoryRef {
     return this.cache;
   }
 
-  public <U> U derefAs(final Class<U> cls) {
+  public <U extends T> U derefAs(final Class<U> cls) {
     return cls.cast(this.deref());
   }
 
   @Nullable
-  public <U> U derefNullableAs(final Class<U> cls) {
+  public <U extends T> U derefNullableAs(final Class<U> cls) {
     final T t = this.derefNullable();
 
     if(t == null) {

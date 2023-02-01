@@ -2145,9 +2145,9 @@ public class WMap {
           //LAB_800d2464
           //LAB_800d24d0
           //LAB_800d253c
-          light.r_0c.set((_800c66b0.colour_8c[i].getR() * _800c66b0._84) / 0x100);
-          light.g_0d.set((_800c66b0.colour_8c[i].getG() * _800c66b0._84) / 0x100);
-          light.b_0e.set((_800c66b0.colour_8c[i].getB() * _800c66b0._84) / 0x100);
+          light.r_0c.set(_800c66b0.colour_8c[i].getR() * _800c66b0._84 / 0x100);
+          light.g_0d.set(_800c66b0.colour_8c[i].getG() * _800c66b0._84 / 0x100);
+          light.b_0e.set(_800c66b0.colour_8c[i].getB() * _800c66b0._84 / 0x100);
           GsSetFlatLight(i, _800c66b0.lights_11c[i]);
         }
       }
@@ -2183,9 +2183,9 @@ public class WMap {
         //LAB_800d2710
         //LAB_800d277c
         //LAB_800d27e8
-        light.r_0c.set((_800c66b0.colour_8c[i].getR() * _800c66b0._84) / 0x100);
-        light.g_0d.set((_800c66b0.colour_8c[i].getG() * _800c66b0._84) / 0x100);
-        light.b_0e.set((_800c66b0.colour_8c[i].getB() * _800c66b0._84) / 0x100);
+        light.r_0c.set(_800c66b0.colour_8c[i].getR() * _800c66b0._84 / 0x100);
+        light.g_0d.set(_800c66b0.colour_8c[i].getG() * _800c66b0._84 / 0x100);
+        light.b_0e.set(_800c66b0.colour_8c[i].getB() * _800c66b0._84 / 0x100);
         GsSetFlatLight(i, _800c66b0.lights_11c[i]);
       }
     }
@@ -4743,6 +4743,7 @@ public class WMap {
       //LAB_800e05f4
       deallocateModel(struct258_800c66a8.models_0c[i]);
       free(struct258_800c66a8._1b4[i].getAddress());
+      struct258_800c66a8.models_0c[i] = null;
     }
 
     //LAB_800e06b4
@@ -4758,7 +4759,7 @@ public class WMap {
     if(struct258_800c66a8._250 == 0) {
       //LAB_800e0760
       FUN_800e8a10();
-    } else {
+    } else if(struct258_800c66a8._250 == 1) {
       //LAB_800e0770
       //LAB_800e0774
       int sp3c = 0;
@@ -4789,10 +4790,7 @@ public class WMap {
         //LAB_800e08b8
         renderWinglyTeleportScreenEffect();
 
-        final VECTOR sp0x28 = new VECTOR();
-        FUN_800e0e4c(sp0x28, sp0x18, sp0x20, 0x20L, struct258_800c66a8._24c);
-
-        struct258_800c66a8.vec_94.set(sp0x28);
+        FUN_800e0e4c(struct258_800c66a8.vec_94, sp0x18, sp0x20, 0x20, struct258_800c66a8._24c);
 
         struct258_800c66a8._24c++;
         if(struct258_800c66a8._24c > 32) {
@@ -4809,7 +4807,7 @@ public class WMap {
         gameState_800babc8._17c.get(sp3c >>> 5).or(0x1 << (sp3c & 0x1f));
 
         //LAB_800e0b64
-        at = 0x800f_0000L;
+        at = 0x800f_0000L; //TODO
         _800c6860.setu(MEMORY.ref(2, at).offset(0xe3cL).offset(sp3c * 0x14L).get());
         _800c6862.setu(MEMORY.ref(2, at).offset(0xe3eL).offset(sp3c * 0x14L).get());
         submapCut_80052c30.set((int)_800c6860.get());
@@ -4847,7 +4845,7 @@ public class WMap {
     //LAB_800e0d84
     for(int i = 0; i < 6; i++) {
       //LAB_800e0da0
-      long at = 0x800f_0000L; //TODO
+      final long at = 0x800f_0000L; //TODO
       if(a0 == MEMORY.ref(4, at).offset(-0x938L).offset(i * 0xc).get()) {
         final long a0_0 = 0x800f_0000L - 0x934L; //TODO
         a1.set((SVECTOR)MEMORY.ref(4, a0_0).offset(i * 0xc).cast(SVECTOR::new));
@@ -4859,40 +4857,14 @@ public class WMap {
   }
 
   @Method(0x800e0e4cL)
-  public static void FUN_800e0e4c(final VECTOR a0, final SVECTOR a1, final SVECTOR a2, final long a3, final long a4) {
-    long v0;
-    long v1;
-    long sp18;
-    final long sp10;
-
+  public static void FUN_800e0e4c(final VECTOR out, final SVECTOR a1, final SVECTOR a2, final int a3, final int a4) {
     if(a3 == a4) {
-      a0.setX(a2.getX() * 0x1000);
-      a0.setY(a2.getY() * 0x1000);
-      a0.setZ(a2.getZ() * 0x1000);
+      out.set(a2).shl(12);
     } else {
       //LAB_800e0ed8
-      sp18 = (long)((a2.getX() - a1.getX()) * 0x1000 / (int)a3) * (int)a4 & 0xffff_ffffL;
-
-      v1 = a1.getX() + (int)sp18 / 0x1000;
-      a0.setX((int)(v1 * 0x1000));
-
-      v1 = (a2.getY() - a1.getY()) * 0x1000 / (int)a3;
-      sp18 = (long)(int)v1 * (int)a4 & 0xffff_ffffL;
-
-      v1 = (int)sp18 >> 12;
-      v0 = a1.getY() + v1;
-      v1 = v0 << 12;
-      sp10 = v1;
-
-      v0 = 0x800L / (int)a3;
-      sp18 = (long)(int)v0 * (int)a4 & 0xffff_ffffL;
-
-      a0.setY((int)(sp10 + rsin(sp18) * -200));
-
-      sp18 = (long)((a2.getZ() - a1.getZ()) * 0x1000 / (int)a3) * (int)a4 & 0xffff_ffffL;
-
-      v1 = a1.getZ() + (int)sp18 / 0x1000;
-      a0.setZ((int)(v1 * 0x1000));
+      out.setX( a1.getX() + ((a2.getX() - a1.getX() << 12) / a3 * a4 >> 12) << 12);
+      out.setY((a1.getY() + ((a2.getY() - a1.getY() << 12) / a3 * a4 >> 12) << 12) + rsin(0x800 / a3 * a4) * -200);
+      out.setZ( a1.getZ() + ((a2.getZ() - a1.getZ() << 12) / a3 * a4 >> 12) << 12);
     }
 
     //LAB_800e108c
@@ -4907,7 +4879,7 @@ public class WMap {
     if(struct.vec_84.getX() != struct.vec_94.getX() || struct.vec_84.getY() != struct.vec_94.getY() || struct.vec_84.getZ() != struct.vec_94.getZ()) {
       //LAB_800e117c
       //LAB_800e11b0
-      if((joypadInput_8007a39c.get() & 0x40L) != 0) {
+      if((joypadInput_8007a39c.get() & 0x40) != 0) {
         //LAB_800e11d0
         struct.animIndex_b0 = 4;
         handleEncounters(2);
@@ -5172,19 +5144,19 @@ public class WMap {
 
   @Method(0x800e28dcL)
   public static void FUN_800e28dc(final int a0, final int a1) {
-    final int a3 = a0 * a1;
+    final int count = a0 * a1;
 
-    struct258_800c66a8.vecs_224 = MEMORY.ref(4, mallocTail(a3 * 0x10L), UnboundedArrayRef.of(0x10, VECTOR::new, () -> a3));
-    struct258_800c66a8.vecs_228 = MEMORY.ref(4, mallocTail(a3 * 0x10L), UnboundedArrayRef.of(0x10, VECTOR::new, () -> a3));
-    struct258_800c66a8.ptr_22c = mallocTail(a3 * 0x4L);
+    struct258_800c66a8.vecs_224 = MEMORY.ref(4, mallocTail(count * 0x10L), UnboundedArrayRef.of(0x10, VECTOR::new, () -> count));
+    struct258_800c66a8.vecs_228 = MEMORY.ref(4, mallocTail(count * 0x10L), UnboundedArrayRef.of(0x10, VECTOR::new, () -> count));
+    struct258_800c66a8.ptr_22c = mallocTail(count * 0x4L);
     struct258_800c66a8._230 = 0;
-    struct258_800c66a8._234 = a3 - 1;
-    struct258_800c66a8._238 = a3;
+    struct258_800c66a8._234 = count - 1;
+    struct258_800c66a8._238 = count;
     struct258_800c66a8._23c = a1;
 
     //LAB_800e29f8
     //NOTE: there's a bug in the original code, it just sets the first vector in the array over and over again
-    for(int i = 0; i < a3; i++) {
+    for(int i = 0; i < count; i++) {
       //LAB_800e2a18
       struct258_800c66a8.vecs_224.get(i).set(0, 0, 0);
       struct258_800c66a8.vecs_228.get(i).set(0, 0, 0);
@@ -5454,11 +5426,10 @@ public class WMap {
 
   @Method(0x800e406cL)
   public static void FUN_800e406c() {
-    long v0 = struct258_800c66a8._250;
-    if(v0 == 0x1L) {
+    if(struct258_800c66a8._250 == 1) {
       //LAB_800e442c
-      v0 = struct258_800c66a8._04;
-      if(v0 == 0x1L) {
+      final int v0 = struct258_800c66a8._04;
+      if(v0 == 1) {
         //LAB_800e4564
         struct258_800c66a8._00++;
 
@@ -5468,68 +5439,45 @@ public class WMap {
         }
 
         //LAB_800e45c0
-        return;
-      }
-
-      if((int)v0 < 0x2L) {
-        //LAB_800e4478
-        if(v0 == 0 && ((int)worldMapState_800c6698.get() >= 0x3L || (int)playerState_800c669c.get() >= 0x3L)) {//LAB_800e44b0
-          scriptStartEffect(2, 15);
-
-          _800c66b0._11a = 1;
-          _800c66b0.coord2_20.coord.transfer.setX(0);
-          _800c66b0.coord2_20.coord.transfer.setY(0);
-          _800c66b0.coord2_20.coord.transfer.setZ(0);
-          _800c66b0._9a = 0;
-          _800c66b0.mapRotation_70.setY((short)0);
-
-          FUN_800d4bc8(1);
-
-          _800c66b0._c4 = 0;
-          struct258_800c66a8.zoomState_1f8 = 0;
-          struct258_800c66a8._04 = 1;
-        }
-
-        //LAB_800e455c
-        //LAB_800e4684
-        //LAB_800e468c
-      } else {
         //LAB_800e4464
-        if(v0 == 0x2L) {
-          //LAB_800e45c8
-          if(playerState_800c669c.get() >= 3) {
-            struct258_800c66a8._00++;
+      } else if(v0 == 2) {
+        //LAB_800e45c8
+        if(playerState_800c669c.get() >= 3) {
+          struct258_800c66a8._00++;
 
-            if(struct258_800c66a8._00 >= 2) {
-              _800c686c.setu(0);
-            }
-          }
-
-          //LAB_800e4624
-          if(_800c66b0._c5 == 0 && _800c686c.get() == 0) {
-            _800c6868.setu(0);
-            struct258_800c66a8._05 = 0;
-            struct258_800c66a8._04 = 2;
+          if(struct258_800c66a8._00 >= 2) {
+            _800c686c.setu(0);
           }
         }
 
-        //LAB_800e467c
-      }
-    } else {
-      if((int)v0 < 0x2L) {
-        if(v0 != 0) {
-          return;
+        //LAB_800e4624
+        if(_800c66b0._c5 == 0 && _800c686c.get() == 0) {
+          _800c6868.setu(0);
+          struct258_800c66a8._05 = 0;
+          struct258_800c66a8._04 = 2;
         }
-      } else {
-        //LAB_800e40ac
-        if(v0 != 0x2L) {
-          return;
-        }
-      }
+        //LAB_800e4478
+      } else if(v0 == 0 && ((int)worldMapState_800c6698.get() >= 3 || (int)playerState_800c669c.get() >= 3)) {
+        //LAB_800e44b0
+        scriptStartEffect(2, 15);
 
+        _800c66b0._11a = 1;
+        _800c66b0.coord2_20.coord.transfer.setX(0);
+        _800c66b0.coord2_20.coord.transfer.setY(0);
+        _800c66b0.coord2_20.coord.transfer.setZ(0);
+        _800c66b0._9a = 0;
+        _800c66b0.mapRotation_70.setY((short)0);
+
+        FUN_800d4bc8(1);
+
+        _800c66b0._c4 = 0;
+        struct258_800c66a8.zoomState_1f8 = 0;
+        struct258_800c66a8._04 = 1;
+      }
+    } else if(struct258_800c66a8._250 == 0 || struct258_800c66a8._250 == 2) {
       //LAB_800e40c0
-      v0 = struct258_800c66a8._04;
-      if(v0 == 0x1L) {
+      final int v0 = struct258_800c66a8._04;
+      if(v0 == 1) {
         //LAB_800e4304
         struct258_800c66a8._00++;
 
@@ -5539,34 +5487,7 @@ public class WMap {
         }
 
         //LAB_800e4360
-      } else if((int)v0 < 0x2L) {
-        //LAB_800e410c
-        //LAB_800e42fc
-        if(v0 == 0 && ((int)worldMapState_800c6698.get() >= 0x3L || (int)playerState_800c669c.get() >= 0x3L)) {
-          //LAB_800e4144
-          scriptStartEffect(2, 15);
-
-          _800c66b0.rview2_00.viewpoint_00.setY(-9000);
-          _800c66b0.rview2_00.refpoint_0c.setY(9000);
-          _800c66b0._11a = 1;
-          _800c66b0.coord2_20.coord.transfer.set(0, 0, 0);
-          _800c66b0._9e = -300;
-          _800c66b0._9a = 0;
-          _800c66b0.mapRotation_70.setY((short)0);
-
-          FUN_800d4bc8(1);
-
-          _800c66b0.vec_a4.setX(struct258_800c66a8.coord2_34.coord.transfer.getX() * 0x100 / 30);
-          _800c66b0.vec_a4.setY(struct258_800c66a8.coord2_34.coord.transfer.getY() * 0x100 / 30);
-          _800c66b0.vec_a4.setZ(struct258_800c66a8.coord2_34.coord.transfer.getZ() * 0x100 / 30);
-
-          _800c66b0._c4 = 0;
-          struct258_800c66a8.zoomState_1f8 = 0;
-          _800c66b0._c5 = 2;
-          struct258_800c66a8._04 = 1;
-        }
-        //LAB_800e40f8
-      } else if(v0 == 0x2L) {
+      } else if(v0 == 2) {
         //LAB_800e4368
         if((int)playerState_800c669c.get() >= 3) {
           struct258_800c66a8._00++;
@@ -5585,6 +5506,30 @@ public class WMap {
 
         //LAB_800e441c
         //LAB_800e4424
+        //LAB_800e410c
+        //LAB_800e42fc
+      } else if(v0 == 0 && ((int)worldMapState_800c6698.get() >= 3 || (int)playerState_800c669c.get() >= 3)) {
+        //LAB_800e4144
+        scriptStartEffect(2, 15);
+
+        _800c66b0.rview2_00.viewpoint_00.setY(-9000);
+        _800c66b0.rview2_00.refpoint_0c.setY(9000);
+        _800c66b0._11a = 1;
+        _800c66b0.coord2_20.coord.transfer.set(0, 0, 0);
+        _800c66b0._9e = -300;
+        _800c66b0._9a = 0;
+        _800c66b0.mapRotation_70.setY((short)0);
+
+        FUN_800d4bc8(1);
+
+        _800c66b0.vec_a4.setX(struct258_800c66a8.coord2_34.coord.transfer.getX() * 0x100 / 30);
+        _800c66b0.vec_a4.setY(struct258_800c66a8.coord2_34.coord.transfer.getY() * 0x100 / 30);
+        _800c66b0.vec_a4.setZ(struct258_800c66a8.coord2_34.coord.transfer.getZ() * 0x100 / 30);
+
+        _800c66b0._c4 = 0;
+        struct258_800c66a8.zoomState_1f8 = 0;
+        _800c66b0._c5 = 2;
+        struct258_800c66a8._04 = 1;
       }
     }
   }
@@ -6547,7 +6492,7 @@ public class WMap {
     long sp4c = 0x1L << (sp1c & 0x1fL);
     long sp50 = sp1c >>> 5;
 
-    if((gameState_800babc8._15c.get((int)sp50).get() & sp4c) <= 0) {
+    if((gameState_800babc8._15c.get((int)sp50).get() & sp4c) == 0) {
       _800c685c.setu(0xdL);
       _800c685e.setu(0x11L);
       sp1c = 5;
@@ -7433,7 +7378,7 @@ public class WMap {
     }
 
     //LAB_800eb144
-    if((gameState_800babc8._15c.get(a0 >>> 5).get() & 0x1 << (a0 & 0x1f)) <= 0) {
+    if((gameState_800babc8._15c.get(a0 >>> 5).get() & 0x1 << (a0 & 0x1f)) == 0) {
       return 1;
     }
 
@@ -7654,7 +7599,8 @@ public class WMap {
     //LAB_800ebf2c
     //LAB_800ebf30
     for(int i = 0; i < 12; i++) {
-      final WMapStruct258Sub60 sp18 = struct._24[i + 12];
+      final WMapStruct258Sub60 sp18 = new WMapStruct258Sub60();
+      struct._24[i + 12] = sp18;
       sp18.set(struct._24[i]);
       sp18.coord2_00.coord.transfer.setY(0);
     }

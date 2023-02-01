@@ -3423,8 +3423,15 @@ public final class Bttl_800e {
     final StackWalker.StackFrame caller = DebugHelper.getCallerFrame();
 
     manager.size_08 = subStructSize;
-    if(subStructSize != 0) {
+    if(subStructSize != 0) { // Memulated
       manager.effect_44 = MEMORY.ref(4, mallocTail(subStructSize), subStructConstructor);
+      LOGGER.info(EFFECTS, "Allocating memulated effect manager %d for %s (parent: %d) @ %08x from %s.%s(%s:%d)", state.index, manager.effect_44.getClass().getSimpleName(), parentState != null ? parentState.index : -1, ((MemoryRef)manager.effect_44).getAddress(), caller.getClassName(), caller.getMethodName(), caller.getFileName(), caller.getLineNumber());
+
+      if(!(manager.effect_44 instanceof MemoryRef)) {
+        throw new RuntimeException("Size for non-memulated effect managers should be set to 0");
+      }
+    } else if(subStructConstructor != null) { // Not memulated
+      manager.effect_44 = subStructConstructor.apply(null);
       LOGGER.info(EFFECTS, "Allocating effect manager %d for %s (parent: %d) from %s.%s(%s:%d)", state.index, manager.effect_44.getClass().getSimpleName(), parentState != null ? parentState.index : -1, caller.getClassName(), caller.getMethodName(), caller.getFileName(), caller.getLineNumber());
     } else {
       manager.effect_44 = null;
@@ -3859,7 +3866,7 @@ public final class Bttl_800e {
   public static FlowControl FUN_800e9854(final RunningScript<? extends BattleScriptDataBase> script) {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       script.scriptState_04,
-      0x13c,
+      0,
       Bttl_800e::FUN_800ea3f8,
       Bttl_800e::FUN_800ea510,
       Bttl_800e::FUN_800ea5f4,
@@ -3892,7 +3899,7 @@ public final class Bttl_800e {
   public static FlowControl FUN_800e99bc(final RunningScript<? extends BattleScriptDataBase> script) {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       script.scriptState_04,
-      0x13c,
+      0,
       Bttl_800e::FUN_800ea3f8,
       Bttl_800e::FUN_800ea510,
       Bttl_800e::FUN_800ea5f4,
@@ -4021,7 +4028,7 @@ public final class Bttl_800e {
     final int s2 = script.params_20[1].get();
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       script.scriptState_04,
-      0x13c,
+      0,
       Bttl_800e::FUN_800ea3f8,
       Bttl_800e::FUN_800ea510,
       Bttl_800e::FUN_800ea5f4,
