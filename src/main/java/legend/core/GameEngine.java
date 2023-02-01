@@ -161,8 +161,9 @@ public final class GameEngine {
 
       final String liveChatId = Config.getYouTubeLiveChatId();
       if(!liveChatId.isBlank()) {
+        final String apiKey = Config.getYouTubeApiKey();
         final PlaySubscriber sub = new PlaySubscriber();
-        final YouTubePublisher pub = new YouTubePublisher(liveChatId);
+        final YouTubePublisher pub = new YouTubePublisher(liveChatId, apiKey);
         pub.subscribe(sub);
         pub.play();
       }

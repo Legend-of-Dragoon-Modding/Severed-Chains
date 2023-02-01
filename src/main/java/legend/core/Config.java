@@ -1,7 +1,5 @@
 package legend.core;
 
-import legend.game.combat.Bttl_800c;
-
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -28,7 +26,8 @@ public final class Config {
     properties.setProperty("battle_ui_r", "0");
     properties.setProperty("battle_ui_g", "41");
     properties.setProperty("battle_ui_b", "159");
-    properties.setProperty("youtubeChatId", "");
+    properties.setProperty("youtube_chat_id", "");
+    properties.setProperty("youtube_api_key", "");
   }
 
   public static int windowWidth() {
@@ -101,7 +100,11 @@ public final class Config {
   }
 
   public static @Nonnull String getYouTubeLiveChatId() {
-    return properties.getProperty("youtubeChatId", "");
+    return properties.getProperty("youtube_chat_id", "");
+  }
+
+  public static @Nonnull String getYouTubeApiKey() {
+    return properties.getProperty("youtube_api_key", "");
   }
 
   private static int readInt(final String key, final int defaultVal, final int min, final int max) {

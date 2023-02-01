@@ -11,75 +11,85 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Flow;
 
 public class YouTubePublisher implements LoDPlays {
-    private final String liveChatId;
-    private static final String baseUrl = "https://www.googleapis.com/youtube/v3/liveChat/messages";
-    List<Flow.Subscriber<? super PlayInput>> subscriptions;
-    private final Thread runner = new Thread(this);
-    private static final Logger LOGGER = LogManager.getFormatterLogger(YouTubePublisher.class);
-    private final OkHttpClient client = new OkHttpClient();
-    private final Gson gson = new Gson();
+  private static final Logger LOGGER = LogManager.getFormatterLogger(YouTubePublisher.class);
 
-    private String pageToken;
+  private static final String baseUrl = "https://www.googleapis.com/youtube/v3/liveChat/messages";
+  private final static Object monitor = new Object();
 
-    private final static Object monitor = new Object();
+  private final String liveChatId;
+  private final String apiKey;
+  private final List<Flow.Subscriber<? super PlayInput>> subscriptions = new ArrayList<>();
+  private final Thread runner = new Thread(this);
+  private final OkHttpClient client = new OkHttpClient();
+  private final Gson gson = new Gson();
 
-    public YouTubePublisher(String liveChatId) {
-        this.liveChatId = liveChatId;
-    }
+  private String pageToken;
 
-    @Override
-    public void subscribe(Flow.Subscriber<? super PlayInput> subscriber) {
-        subscriptions.add(subscriber);
-    }
+  public YouTubePublisher(final String liveChatId, final String apiKey) {
+    this.liveChatId = liveChatId;
+    this.apiKey = apiKey;
+  }
 
-    @Override
-    public void run() {
-        while (true) {
-            try {
-                synchronized (monitor) {
-                    HttpUrl.Builder urlBuilder = HttpUrl.parse(baseUrl).newBuilder().addQueryParameter("liveChatId", this.liveChatId);
-                    if(this.pageToken != null) {
-                        urlBuilder.addQueryParameter("pageToken", this.pageToken);
-                    }
+  @Override
+  public void subscribe(final Flow.Subscriber<? super PlayInput> subscriber) {
+    subscriptions.add(subscriber);
+  }
 
-                    Request request = new Request.Builder()
-                            .url(urlBuilder.build())
-                            .get()
-                            .addHeader("Content-Type", "application/json")
-                            .build();
+  @Override
+  public void run() {
+    while(true) {
+      try {
+        synchronized(monitor) {
+          final HttpUrl.Builder urlBuilder = HttpUrl
+            .parse(baseUrl)
+            .newBuilder()
+            .addQueryParameter("liveChatId", this.liveChatId)
+            .addQueryParameter("key", this.apiKey);
 
-                    try (Response response = client.newCall(request).execute()) {
-                        if (!response.isSuccessful() || response.body() == null)
-                            throw new IOException("Unexpected code " + response);
+          if(this.pageToken != null) {
+            urlBuilder.addQueryParameter("pageToken", this.pageToken);
+          }
 
-                        final String json = response.body().string();
-                        final LiveChatListResponse liveChat = this.gson.fromJson(json, LiveChatListResponse.class);
+          final Request request = new Request.Builder()
+            .url(urlBuilder.build())
+            .get()
+            .addHeader("Content-Type", "application/json")
+            .build();
 
-                        this.pageToken = liveChat.nextPageToken();
-
-                        for (LiveChatMessage item : liveChat.items()) {
-                            for (Flow.Subscriber<? super PlayInput> sub : this.subscriptions) {
-                                PlayInput input = PlayInput.parse(item.snippet().textMessageDetails().messageText());
-                                sub.onNext(input);
-                            }
-                        }
-
-                        monitor.wait(liveChat.pollingIntervalMillis());
-                    }
-                }
-            } catch (Exception e) {
-                LOGGER.error(e);
-                return;
+          try(final Response response = client.newCall(request).execute()) {
+            if(!response.isSuccessful() || response.body() == null) {
+              throw new IOException("Unexpected code " + response);
             }
-        }
-    }
 
-    @Override
-    public void play() {
-        this.runner.start();
+            final String json = response.body().string();
+            final LiveChatListResponse liveChat = this.gson.fromJson(json, LiveChatListResponse.class);
+
+            this.pageToken = liveChat.nextPageToken();
+
+            for(final LiveChatMessage item : liveChat.items()) {
+              for(final Flow.Subscriber<? super PlayInput> sub : this.subscriptions) {
+                final PlayInput input = PlayInput.parse(item.snippet().textMessageDetails().messageText());
+                sub.onNext(input);
+              }
+            }
+
+            monitor.wait(liveChat.pollingIntervalMillis());
+          }
+        }
+      } catch(final Exception e) {
+        LOGGER.error(e);
+        return;
+      }
     }
+  }
+
+  @Override
+  public void play() {
+    this.runner.start();
+  }
 }
