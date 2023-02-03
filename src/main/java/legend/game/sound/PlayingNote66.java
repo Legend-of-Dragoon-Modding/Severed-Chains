@@ -1,9 +1,10 @@
 package legend.game.sound;
 
-public class SpuStruct66 {
+/** A note from a sequence that is currently playing */
+public class PlayingNote66 {
   public boolean used_00;
   public int noteNumber_02;
-  public int commandChannel_04;
+  public int sequenceChannel_04;
   public SequenceData124 sequenceData_06;
   public int _08;
   public int _0a;
@@ -22,10 +23,10 @@ public class SpuStruct66 {
   public int patchIndex_24;
   public int sequenceIndex_26;
   public int volume_28;
-  public int _2a;
+  public int volume_2a;
   public int volume_2c;
   public int volume_2e;
-  public int[] _30 = new int[2];
+  public int[] volumeLeftRight_30 = new int[2];
   public int volume_34;
   public int cents_36;
   /** 0x40 is normal */
@@ -58,7 +59,7 @@ public class SpuStruct66 {
   public void clear() {
     this.used_00 = false;
     this.noteNumber_02 = 0;
-    this.commandChannel_04 = 0;
+    this.sequenceChannel_04 = 0;
     this.sequenceData_06 = null;
     this._08 = 0;
     this._0a = 0;
@@ -77,11 +78,11 @@ public class SpuStruct66 {
     this.patchIndex_24 = 0;
     this.sequenceIndex_26 = 0;
     this.volume_28 = 0;
-    this._2a = 0;
+    this.volume_2a = 0;
     this.volume_2c = 0;
     this.volume_2e = 0;
-    this._30[0] = 0;
-    this._30[1] = 0;
+    this.volumeLeftRight_30[0] = 0;
+    this.volumeLeftRight_30[1] = 0;
     this.volume_34 = 0;
     this.cents_36 = 0;
     this.pitchBend_38 = 0;

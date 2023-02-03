@@ -7,7 +7,7 @@ import org.lwjgl.system.MemoryStack;
 
 import java.nio.IntBuffer;
 
-import static legend.game.Scus94491BpeSegment_800c._800c3a40;
+import static legend.game.Scus94491BpeSegment_800c.playingNotes_800c3a40;
 import static legend.game.Scus94491BpeSegment_800c.sequenceData_800c4ac8;
 
 public class MusicDebuggerGui extends Gui {
@@ -48,9 +48,9 @@ public class MusicDebuggerGui extends Gui {
 
         for(int sequenceChannel = 0; sequenceChannel < 16; sequenceChannel++) {
           for(int playingNoteIndex = 0; playingNoteIndex < 24; playingNoteIndex++) {
-            final SpuStruct66 playingNote = _800c3a40[playingNoteIndex];
+            final PlayingNote66 playingNote = playingNotes_800c3a40[playingNoteIndex];
 
-            if(playingNote.sequenceData_06 == sequenceData && playingNote.commandChannel_04 == sequenceChannel) {
+            if(playingNote.sequenceData_06 == sequenceData && playingNote.sequenceChannel_04 == sequenceChannel) {
               final int finalSequenceChannel = sequenceChannel;
               this.row(manager, 24.0f, 2, row -> {
                 row.nextColumn(0.1f);

@@ -15,7 +15,7 @@ import legend.game.sound.PatchList;
 import legend.game.sound.PlayableSound0c;
 import legend.game.sound.SequenceData124;
 import legend.game.sound.SoundEnv44;
-import legend.game.sound.SpuStruct66;
+import legend.game.sound.PlayingNote66;
 import legend.game.sound.Sshd;
 import legend.game.sound.InstrumentLayer10;
 import legend.game.sound.Sssq;
@@ -70,9 +70,9 @@ public final class Scus94491BpeSegment_800c {
   public static final GsCOORDINATE2[] coord2s_800c35a8 = new GsCOORDINATE2[31];
 
   /** 0x990 bytes long, one per voice */
-  public static final SpuStruct66[] _800c3a40 = new SpuStruct66[24];
+  public static final PlayingNote66[] playingNotes_800c3a40 = new PlayingNote66[24];
   static {
-    Arrays.setAll(_800c3a40, i -> new SpuStruct66());
+    Arrays.setAll(playingNotes_800c3a40, i -> new PlayingNote66());
   }
   /** 0x5f4 bytes long */
   public static final PlayableSound0c[] playableSounds_800c43d0 = new PlayableSound0c[127];
