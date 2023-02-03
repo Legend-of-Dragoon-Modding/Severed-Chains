@@ -87,7 +87,7 @@ public final class Scus94491BpeSegment_800c {
   public static PatchList patchList_800c4abc;
   public static Sshd sshdPtr_800c4ac0;
   public static final Pointer<Spu> voicePtr_800c4ac4 = MEMORY.ref(4, 0x800c4ac4L, Pointer.deferred(4, ref -> {throw new RuntimeException("Can't instantiate");}));
-  /** One per voice */
+  /** One per loaded sequence */
   public static final SequenceData124[] sequenceData_800c4ac8 = new SequenceData124[24];
   static {
     Arrays.setAll(sequenceData_800c4ac8, i -> new SequenceData124());

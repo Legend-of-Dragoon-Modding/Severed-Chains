@@ -798,11 +798,7 @@ public class Sequencer {
     }
 
     //LAB_80047cd0
-    if(sequenceData._028 == 0) {
-      return false;
-    }
-
-    if(sequenceData._02a == 1) {
+    if(sequenceData._028 == 0 || sequenceData._02a == 1) {
       //LAB_80047cf0
       return false;
     }
@@ -1102,8 +1098,8 @@ public class Sequencer {
                 if(spu66.noteNumber_02 == sequenceData.param0_002) {
                   if(spu66._0c == 0) {
                     //LAB_800487d0
-                    spu66._08 = 1;
                     //LAB_800487d4
+                    spu66._08 = 1;
                     spu66._18 = 0;
                   } else if(spu66._18 == 0) {
                     spu66._08 = 1;

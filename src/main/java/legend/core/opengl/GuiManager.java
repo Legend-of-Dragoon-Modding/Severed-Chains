@@ -205,7 +205,7 @@ public class GuiManager {
     }));
   }
 
-  private final Deque<legend.core.opengl.Gui> guiStack = new LinkedList<>();
+  private final Deque<Gui> guiStack = new LinkedList<>();
 
   public final Window window;
   public final NkContext ctx;
@@ -255,18 +255,19 @@ public class GuiManager {
         final String string = window.getClipboardString();
 
         if(!string.isEmpty()) {
-          final MemoryStack stack = stackGet();
-          final int stackPointer = stack.getPointer();
-          final long text;
+          try(final MemoryStack stack = stackGet()) {
+            final int stackPointer = stack.getPointer();
+            final long text;
 
-          try {
-            stack.nUTF8(string, true);
-            text = stack.getPointerAddress();
-          } finally {
-            stack.setPointer(stackPointer);
+            try {
+              stack.nUTF8(string, true);
+              text = stack.getPointerAddress();
+            } finally {
+              stack.setPointer(stackPointer);
+            }
+
+            nnk_textedit_paste(edit, text, nnk_strlen(text));
           }
-
-          nnk_textedit_paste(edit, text, nnk_strlen(text));
         }
       });
 
@@ -390,7 +391,7 @@ public class GuiManager {
     nk_input_end(this.ctx);
   }
 
-  public <T extends legend.core.opengl.Gui> T pushGui(final T gui) {
+  public <T extends Gui> T pushGui(final T gui) {
     this.guiStack.push(gui);
     return gui;
   }
@@ -399,12 +400,12 @@ public class GuiManager {
     this.guiStack.pop();
   }
 
-  public void removeGui(final legend.core.opengl.Gui gui) {
+  public void removeGui(final Gui gui) {
     this.guiStack.remove(gui);
   }
 
   public void draw(final int displayWidth, final int displayHeight, final float width, final float height) {
-    for(final legend.core.opengl.Gui gui : this.guiStack) {
+    for(final Gui gui : this.guiStack) {
       gui.draw(this);
     }
 
@@ -595,7 +596,7 @@ public class GuiManager {
       }
     }
 
-    final legend.core.opengl.Gui gui = this.guiStack.peekFirst();
+    final Gui gui = this.guiStack.peekFirst();
     if(gui != null) {
       gui.keyPress(key, scancode, mods);
     }
