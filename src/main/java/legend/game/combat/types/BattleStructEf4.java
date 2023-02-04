@@ -271,16 +271,12 @@ public class BattleStructEf4 {
   public final BttlStruct08[] _580 = new BttlStruct08[0x100];
   public final int[] y_d80 = new int[3];
   public final BattleStructEf4Sub08[] _d8c = new BattleStructEf4Sub08[16];
-  public final ScriptState<BattleObject27c>[] bobjIndices_e0c = new ScriptState[12];
-
+  public final ScriptState<BattleObject27c>[] bobjIndices_e0c = new ScriptState[13];
   public final ScriptState<BattleObject27c>[] charBobjIndices_e40 = new ScriptState[4];
   public final ScriptState<BattleObject27c>[] bobjIndices_e50 = new ScriptState[10];
-
-  public final ScriptState<BattleObject27c>[] bobjIndices_e78 = new ScriptState[10];
-
+  public final ScriptState<BattleObject27c>[] bobjIndices_e78 = new ScriptState[13];
   public final ScriptState<BattleObject27c>[] bobjIndices_eac = new ScriptState[4];
   public final ScriptState<BattleObject27c>[] enemyBobjIndices_ebc = new ScriptState[10];
-
   public int morphMode_ee4;
 
   // nodart code no longer uses this

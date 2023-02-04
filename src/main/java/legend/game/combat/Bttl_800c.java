@@ -1274,16 +1274,18 @@ public final class Bttl_800c {
       for(int combatantIndex = 0; combatantIndex < combatantCount_800c66a0.get(); combatantIndex++) {
         final CombatantStruct1a8 combatant = combatants_8005e398[combatantIndex];
 
-        //LAB_800c8418
-        //LAB_800c8434
-        if(combatant.mrg_00 != null) {
-          free(combatant.mrg_00.getAddress());
-          combatant.mrg_00 = null;
-        }
+        if(combatant != null) {
+          //LAB_800c8418
+          //LAB_800c8434
+          if(combatant.mrg_00 != null) {
+            free(combatant.mrg_00.getAddress());
+            combatant.mrg_00 = null;
+          }
 
-        if(combatant.mrg_04 != null) {
-          free(combatant.mrg_04.getAddress());
-          combatant.mrg_04 = null;
+          if(combatant.mrg_04 != null) {
+            free(combatant.mrg_04.getAddress());
+            combatant.mrg_04 = null;
+          }
         }
 
         //LAB_800c8454
