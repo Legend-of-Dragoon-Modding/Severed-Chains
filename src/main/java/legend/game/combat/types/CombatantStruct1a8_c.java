@@ -20,7 +20,7 @@ public abstract class CombatantStruct1a8_c {
    * </ol>
    */
   public int type_0a;
-  public int _0b;
+  public int isLoaded_0b;
 
   /** Type 1/2 */
   public static class AnimType extends CombatantStruct1a8_c {
@@ -37,6 +37,15 @@ public abstract class CombatantStruct1a8_c {
 
     public IndexType(final int index) {
       this.index_00 = index;
+    }
+  }
+
+  /** Type 4/5 */
+  public static class BpeType extends CombatantStruct1a8_c {
+    public final long bpe_00;
+
+    public BpeType(final long bpe) {
+      this.bpe_00 = bpe;
     }
   }
 

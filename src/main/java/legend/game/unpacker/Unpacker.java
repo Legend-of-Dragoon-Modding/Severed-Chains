@@ -276,6 +276,13 @@ public class Unpacker {
   }
 
   private static boolean decompressDiscriminator(final String name, final FileData data) {
+    if(name.matches("^SECT/DRGN0\\.BIN/\\d{4}/\\d+$")) {
+      final int dirNum = Integer.parseInt(name.substring(15, 19));
+      if(dirNum >= 4031 && dirNum < 4103) {
+        return false;
+      }
+    }
+
     return data.size() >= 8 && MathHelper.get(data.data(), data.offset() + 4, 4) == 0x1a455042;
   }
 
