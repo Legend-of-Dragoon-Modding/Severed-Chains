@@ -1,0 +1,124 @@
+Controls for Severed Chains
+---------------------------
+
+While in menus, gamepad input will not work. The mouse is required to click on main-menu buttons. 
+On the Addition screen, use mouse wheel to scroll between characters. 
+On the Equip screen, use left/right arrow keys to change characters. "s" key to sort items/equips.
+For more information on how mouse controls work, please read below.
+
+~Keyboard~
+
+Controls are currently hardcoded to the keyboard.
+
+D-pad - arrow keys
+Shape buttons - WASD
+Start - enter
+Select - space
+L1 - Q
+L2 - 1
+L3 - Z
+R1 - E
+R2 - 3
+R3 - C
+
+
+~Gamepad~
+
+This is a temporary, hacky implementation. In the future we will have full controller support. 
+In general, Xbox controllers should work fine and mirror PS1 button mapping (A is X, B is circle, etc.). 
+
+Important Notes:
+
+- some controllers, such as old Wireless Xbox 360 controllers, do not have bluetooth and require a proprietary adapter to interface with PCs.
+- PS4 controllers currently have mixed reporting. If they work for you, note that some inputs are scrambled.
+
+
+~Mouse~
+
+Mouse wheel and buttons are used for most of the navigation inside the Menus.
+
+||| Main SC Window and Start FMV |||
+
+Right/Left Click - skip
+
+||| Main Menu |||
+
+Moving Mouse - Navigate Options
+Left Click - Select Option
+
+|| Select Continue ||
+To select your Continue file you must use entirely the Mouse
+Moving Mouse - move through the saves
+Mouse Wheel UP - Move save list UP
+Mouse Wheel DOWN - Move save list DOWN
+Left Click - Select save file
+
+||| In Game Menu |||
+Moving Mouse - move through options
+Right/Left Click - Select Option
+
+|| Status ||
+Mouse Wheel UP - Moving List to the Left
+Mouse Wheel Down - Moving List to the Right
+ESC - Return
+
+|| Armed ||
+Mouse Wheel UP/DOWN - Navigate Character Items
+Right/Left Click - Equip Item
+s - Sort Items
+Arrow Keys - Navigate characters list
+ESC - Return
+
+|| Addition ||
+Mouse Wheel UP - Moving List to the Left
+Mouse Wheel Down - Moving List to the Right
+Left Click - Select Addition
+ESC - Return
+
+|| Replace ||
+First you have to select with Left Click the character you want to replace
+then Moving Mouse and Left Click over it to get it replaced.
+NOTE: With No-Dart active you can change even Dart.
+ESC - Return
+
+|| Config ||
+Navigate Moving Mouse and Left Click over the option.
+ESC - Return
+
+|| Save ||
+To overwrite a save just select the save slot
+Moving Mouse - move through the saves
+Mouse Wheel UP - Move save list UP
+Mouse Wheel DOWN - Move save list DOWN
+Left Click - Select save file
+ESC - Return
+
+|| Items - Use It ||
+Mouse Wheel UP/DOWN - Navigate Items
+Left Click - Select Item
+Once Item Selected
+Apply Item hovering the mouse over the desired character and Left Click over it's portrait
+ESC - Return
+
+|| Items - List ||
+Moving Mouse - Select the list
+Mouse Wheel UP/DOWN - Navigate Items
+s - Sort Items
+Left Click - Over an Item will discard it
+ESC - Return
+
+|| Items - Goods ||
+Moving Mouse - Select the list
+Mouse Wheel UP/DOWN - Navigate Items
+Hovering Mouse - Show Item description
+ESC - Return
+
+|| Items - Diiig Dabas! ||
+NOT IMPLEMENTED YET
+
+NOTE: Each time you have to decide use/discard/equip items you only can accept or decline.
+Esc keyboard button won't work.
+
+---------------------------
+
+Press F12 for debug tools. Press Tab to view VRAM.
