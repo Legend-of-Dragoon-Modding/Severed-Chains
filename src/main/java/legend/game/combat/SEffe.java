@@ -4049,24 +4049,19 @@ public final class SEffe {
 
   @Method(0x801073d4L)
   public static void tickAdditionOverlaysEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    long v1;
-    final long a0;
-    long s0;
-    long s1;
-    long s2;
-    long s4;
     final AdditionOverlaysEffect44 s3 = (AdditionOverlaysEffect44)data.effect_44;
 
     if(s3._31.get() == 0) {
-      s4 = 0x1L;
-      s2 = s3._40.get();
+      long s4 = 0x1L;
+      long s2 = s3._40.get();
       s3._34.incr();
 
       //LAB_80107440
+      long s0;
       for(s0 = 0; s0 < s3.count_30.get(); s0++) {
-        if(s3._34.get() == MEMORY.ref(2, s2).offset(0x12L).getSigned() + 0x1L) {
+        if(s3._34.get() == MEMORY.ref(2, s2).offset(0x12L).getSigned() + 1) {
           if(_8011a014.offset(s0).getSigned() == 0) {
-            _8011a014.offset(s0).setu(-0x2L);
+            _8011a014.offset(s0).setu(-2);
             FUN_801071fc(s3, s2, s0);
 
             //LAB_80107478
@@ -4090,7 +4085,7 @@ public final class SEffe {
       }
 
       //LAB_801074bc
-      s1 = 0;
+      long s1 = 0;
       s2 = s3._40.get();
 
       //LAB_801074d0
@@ -4114,75 +4109,73 @@ public final class SEffe {
         state.deallocateWithChildren();
       } else {
         //LAB_8010756c
-        if(s3._34.get() >= 0x9L) {
+        if(s3._34.get() >= 9) {
           s2 = s3._40.get();
+          if(s3.count_30.get() != 0) {
+            //LAB_80107598
+            for(s0 = 0; s0 < s3.count_30.get(); s0++) {
+              if(_8011a014.offset(s0).getSigned() == 0) {
+                break;
+              }
 
-          //LAB_80107598
-          for(s0 = 0; s0 < s3.count_30.get(); s0++) {
-            if(_8011a014.offset(s0).getSigned() == 0) {
-              break;
+              s2 = s2 + 0x20L;
             }
 
-            s2 = s2 + 0x20L;
-          }
+            //LAB_801075bc
+            if(s0 < s3.count_30.get()) {
+              if(state.storage_44[8] != 0) {
+                MEMORY.ref(1, s2).offset(0x1cL).setu(1);
+                state.storage_44[8] = 0;
+              }
 
-          //LAB_801075bc
-          if(s0 < s3.count_30.get()) {
-            if(state.storage_44[8] != 0) {
-              MEMORY.ref(1, s2).offset(0x1cL).setu(0x1L);
-              state.storage_44[8] = 0;
-            }
+              //LAB_801075e8
+              if((s3._3a.get() - 1 & 0xffff_ffffL) >= 2) { // Unsigned comparison
 
-            //LAB_801075e8
-            if(s3._3a.get() > 0x2L) {
-              v1 = s3._3a.get() & 0xffL;
-
-              //LAB_8010763c
-              if(v1 != 0x1 && v1 != 0x3L) {
-                if(MEMORY.ref(1, s2).offset(0x1cL).getSigned() == 0) {
-                  a0 = 0x20L;
-                } else {
-                  a0 = 0x40L;
-                }
-
-                //LAB_80107664
-                v1 = joypadPress_8007a398.get();
-                if((v1 & 0x60L) != 0) {
-                  _8011a014.offset(1, s0).offset(0x0L).setu(-0x1L);
-                  if((v1 & a0) == 0 || (v1 & ~a0) != 0) {
-                    //LAB_801076d8
-                    //LAB_801076dc
-                    _8011a014.offset(s0).setu(-0x3L);
+                //LAB_8010763c
+                if(s3._3a.get() != 1 && s3._3a.get() != 3) {
+                  final long a0;
+                  if(MEMORY.ref(1, s2).offset(0x1cL).getSigned() == 0) {
+                    a0 = 0x20;
                   } else {
-                    v1 = s3._34.get();
+                    a0 = 0x40;
+                  }
 
-                    if(v1 >= MEMORY.ref(2, s2).offset(0x10L).getSigned() && v1 <= MEMORY.ref(2, s2).offset(0x12L).getSigned()) {
-                      _8011a014.offset(1, s0).offset(0x0L).setu(0x1L);
-                      MEMORY.ref(1, s2).offset(0x1L).setu(0x1L);
+                  //LAB_80107664
+                  final long v1 = joypadPress_8007a398.get();
+                  if((v1 & 0x60) != 0) {
+                    _8011a014.offset(s0).setu(-1);
+
+                    if((v1 & a0) == 0 || (v1 & ~a0) != 0) {
+                      //LAB_801076d8
+                      //LAB_801076dc
+                      _8011a014.offset(s0).setu(-3);
+                    } else if(s3._34.get() >= MEMORY.ref(2, s2).offset(0x10L).getSigned() && s3._34.get() <= MEMORY.ref(2, s2).offset(0x12L).getSigned()) {
+                      _8011a014.offset(s0).setu(1);
+                      MEMORY.ref(1, s2).offset(0x1L).setu(1);
                     }
-                  }
 
-                  //LAB_801076f0
-                  if(_8011a014.offset(s0).getSigned() < 0) {
-                    FUN_801071fc(s3, s2, s0);
-                  }
+                    //LAB_801076f0
+                    if(_8011a014.offset(s0).getSigned() < 0) {
+                      FUN_801071fc(s3, s2, s0);
+                    }
 
-                  //LAB_80107718
+                    //LAB_80107718
+                    //LAB_8010771c
+                    s3._38.set(2);
+                    s3._39.set((int)s0);
+                    s3._3c.set(s2);
+                  }
+                }
+              } else {
+                if(s3._34.get() >= MEMORY.ref(2, s2).offset(0x10L).getSigned() && s3._34.get() <= MEMORY.ref(2, s2).offset(0x12L).getSigned()) {
+                  _8011a014.offset(s0).setu(1);
+                  MEMORY.ref(1, s2).offset(0x1L).setu(1);
+
                   //LAB_8010771c
                   s3._38.set(2);
                   s3._39.set((int)s0);
                   s3._3c.set(s2);
                 }
-              }
-            } else {
-              v1 = s3._34.get();
-
-              if(v1 >= MEMORY.ref(2, s2).offset(0x10L).getSigned() && v1 <= MEMORY.ref(2, s2).offset(0x12L).getSigned()) {
-                _8011a014.offset(s0).setu(0x1L);
-                MEMORY.ref(1, s2).offset(0x1L).setu(0x1L);
-                s3._38.set(2);
-                s3._39.set((int)s0);
-                s3._3c.set(s2);
               }
             }
           }
@@ -10263,7 +10256,7 @@ public final class SEffe {
 
   @Method(0x80119484L)
   public static FlowControl FUN_80119484(final RunningScript<? extends BattleScriptDataBase> script) {
-    int s4 = script.params_20[1].get();
+    final int s4 = script.params_20[1].get();
     final int s2 = script.params_20[2].get();
     final int s6 = script.params_20[3].get();
     final int s0 = script.params_20[4].get();
