@@ -2757,8 +2757,12 @@ public final class SMap {
             final byte[] scriptData = submapScriptsMrg_800c68d8.get(objIndex + 1);
             final byte[] tmdData = submapAssetsMrg_800c6878.get(objIndex * 33);
 
+            final IntRef drgnIndex = new IntRef();
+            final IntRef fileIndex = new IntRef();
+            getDrgnFileFromNewRoot(submapCut_80052c30.get(), drgnIndex, fileIndex);
+
             final SubmapObject obj = new SubmapObject();
-            obj.script = new ScriptFile("Submap object " + objIndex, scriptData);
+            obj.script = new ScriptFile("Submap object %d (DRGN%d/%d/%d)".formatted(objIndex, drgnIndex.get(), fileIndex.get() + 2, objIndex + 1), scriptData);
             obj.model = MEMORY.ref(4, mallocTail(tmdData.length), ExtendedTmd::new);
 
             MEMORY.setBytes(obj.model.getAddress(), tmdData);
