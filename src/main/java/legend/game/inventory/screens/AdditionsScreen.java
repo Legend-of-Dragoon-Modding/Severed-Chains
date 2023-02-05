@@ -208,10 +208,41 @@ public class AdditionsScreen extends MenuScreen {
     if(this.loadingStage != 2 || mods != 0) {
       return;
     }
-
-    if(key == GLFW_KEY_ESCAPE) {
-      playSound(3);
-      this.loadingStage = 100;
+    switch (key)
+    {
+      case GLFW_KEY_LEFT:
+        this.scrollAccumulator += 1;
+        break;
+      case GLFW_KEY_RIGHT:
+        this.scrollAccumulator -= 1;
+        break;
+      case GLFW_KEY_DOWN:
+        if (this.selectedSlot < 6) this.selectedSlot++;
+        playSound(1);
+        this.additionHighlight.y_44 = this.getAdditionSlotY(this.selectedSlot) - 4;
+        break;
+      case GLFW_KEY_UP:
+        if (this.selectedSlot > 0) this.selectedSlot--;
+        playSound(1);
+        this.additionHighlight.y_44 = this.getAdditionSlotY(this.selectedSlot) - 4;
+        break;
+      case GLFW_KEY_S:
+        final int additionOffset = this.additions[this.selectedSlot].offset_00;
+        if(additionOffset != -1) {
+          gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.get(this.charSlot).get()).selectedAddition_19.set(additionOffset);
+          playSound(2);
+          unloadRenderable(this.additionHighlight);
+          this.loadingStage = 1;
+        } else {
+          playSound(40);
+        }
+        break;
+      case GLFW_KEY_ESCAPE:
+        playSound(3);
+        this.loadingStage = 100;
+        break;
+      default:
+        break;
     }
   }
 
