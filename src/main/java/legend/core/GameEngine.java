@@ -15,6 +15,8 @@ import legend.game.Scus94491BpeSegment_8003;
 import legend.game.Scus94491BpeSegment_8004;
 import legend.game.Scus94491BpeSegment_800e;
 import legend.game.fmv.Fmv;
+import legend.game.modding.ModManager;
+import legend.game.modding.events.EventManager;
 import legend.game.modding.registries.Registries;
 import legend.game.scripting.ScriptManager;
 import legend.game.unpacker.Unpacker;
@@ -47,6 +49,8 @@ public final class GameEngine {
   private static final Logger LOGGER = LogManager.getFormatterLogger(GameEngine.class);
 
   public static final Memory MEMORY = new Memory();
+
+  public static final ModManager MODS = new ModManager();
 
   public static final Registries REGISTRIES = new Registries();
   private static final Registries.Access REGISTRY_ACCESS = REGISTRIES.new Access();
@@ -121,13 +125,18 @@ public final class GameEngine {
 
   private static boolean loading;
 
-  public static void start() {
+  public static void start() throws IOException {
     gpuThread.start();
 
     LOGGER.info("--- Legend start ---");
 
     loading = true;
     GPU.mainRenderer = GameEngine::loadGfx;
+
+    MODS.loadMods();
+    MODS.instantiateMods();
+
+    EventManager.INSTANCE.getClass(); // Trigger load
 
     synchronized(LOCK) {
       try {

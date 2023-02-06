@@ -21,8 +21,6 @@ public final class Main {
 
   public static void main(final String[] args) {
     try {
-      EventManager.INSTANCE.getClass(); // Trigger load
-
       GameEngine.start();
     } catch(final Throwable e) {
       final List<String> messages = new ArrayList<>();
