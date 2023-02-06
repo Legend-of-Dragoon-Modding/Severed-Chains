@@ -63,6 +63,8 @@ public class ItemListScreen extends MenuScreen {
   private int currentIndex;
   private int currentItemId;
 
+  private boolean leftSide = true;
+
   private final List<MenuItemStruct04> equipment = new ArrayList<>();
   private final List<MenuItemStruct04> items = new ArrayList<>();
 
@@ -269,22 +271,84 @@ public class ItemListScreen extends MenuScreen {
     if(mods != 0) {
       return;
     }
+    if(this.loadingStage != 1) return;
 
-    if(this.loadingStage == 1) {
-      if(key == GLFW_KEY_ESCAPE) {
+    switch (key)
+    {
+      case GLFW_KEY_ESCAPE:
         this.loadingStage = 100;
-      }
-      if(key == GLFW_KEY_DOWN) {
-        this.scrollAccumulator--;
-      }
-      if(key == GLFW_KEY_UP) {
-        this.scrollAccumulator++;
-      }
-      if(key == GLFW_KEY_S) { // Sort items
+        break;
+      case GLFW_KEY_DOWN:
+        playSound(1);
+        if (this.leftSide) {
+          if (this.selectedSlotEquipment < 6) {
+            this.selectedSlotEquipment++;
+          } else if (this.slotScrollEquipment < gameState_800babc8.equipmentCount_1e4.get() + (int)this.equippedItemsCount - 7){
+            this.slotScrollEquipment++;
+          }
+          this.equipmentHighlight.y_44 = FUN_800fc814(this.selectedSlotEquipment) + 32;
+          this.setCurrent(gameState_800babc8.equipment_1e8, this.equipment, this.slotScrollEquipment + this.selectedSlotEquipment);
+        }
+        else {
+          if (this.selectedSlotItem < 6) {
+            this.selectedSlotItem++;
+          } else if (this.slotScrollItem < gameState_800babc8.itemCount_1e6.get() - 7){
+            this.slotScrollItem++;
+          }
+          this.itemHighlight.y_44 = FUN_800fc814(this.selectedSlotItem) + 32;
+          this.setCurrent(gameState_800babc8.items_2e9, this.items, this.slotScrollItem + this.selectedSlotItem);
+        }
+        break;
+      case GLFW_KEY_UP:
+        if (this.leftSide) {
+          if (this.selectedSlotEquipment > 0) {
+            this.selectedSlotEquipment--;
+          } else if (this.slotScrollEquipment > 0){
+            this.slotScrollEquipment--;
+          }
+          this.equipmentHighlight.y_44 = FUN_800fc814(this.selectedSlotEquipment) + 32;
+          this.setCurrent(gameState_800babc8.equipment_1e8, this.equipment, this.slotScrollEquipment + this.selectedSlotEquipment);
+        }
+        else {
+          if (this.selectedSlotItem > 0) {
+            this.selectedSlotItem--;
+          } else if (this.slotScrollItem > 0){
+            this.slotScrollItem--;
+          }
+          this.itemHighlight.y_44 = FUN_800fc814(this.selectedSlotItem) + 32;
+          this.setCurrent(gameState_800babc8.items_2e9, this.items, this.slotScrollItem + this.selectedSlotItem);
+        }
+        break;
+      case GLFW_KEY_LEFT:
+        this.leftSide = true;
+        break;
+      case GLFW_KEY_RIGHT:
+        this.leftSide = false;
+        break;
+      case GLFW_KEY_S:
+        if (this.leftSide)
+        {
+          if((this.currentDisplayList.get(this.currentIndex).flags_02 & 0x2000) != 0) {
+            playSound(40);
+          } else {
+            playSound(2);
+            menuStack.pushScreen(new MessageBoxScreen(new LodString("Discard?"), 2, this::discard));
+          }
+        }
+        else {
+          if((this.currentDisplayList.get(this.currentIndex).flags_02 & 0x2000) != 0) {
+            playSound(40);
+          } else {
+            playSound(2);
+            menuStack.pushScreen(new MessageBoxScreen(new LodString("Discard?"), 2, this::discard));
+          }
+        }
+        break;
+      case GLFW_KEY_W: // W is sort now...
         playSound(2);
         sortItems(this.equipment, gameState_800babc8.equipment_1e8, gameState_800babc8.equipmentCount_1e4.get() + this.equippedItemsCount);
         sortItems(this.items, gameState_800babc8.items_2e9, gameState_800babc8.itemCount_1e6.get());
-      }
+        break;
     }
   }
 
