@@ -36,10 +36,7 @@ import static legend.game.Scus94491BpeSegment_8002.takeEquipment;
 import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
+import static org.lwjgl.glfw.GLFW.*;
 
 public class EquipmentScreen extends MenuScreen {
   private int loadingStage;
@@ -244,6 +241,13 @@ public class EquipmentScreen extends MenuScreen {
     if(key == GLFW_KEY_ESCAPE) {
       playSound(3);
       this.loadingStage = 100;
+    }
+
+    if(key == GLFW_KEY_DOWN) {
+      this.scrollAccumulator--;
+    }
+    if(key == GLFW_KEY_UP) {
+      this.scrollAccumulator++;
     }
 
     if(key == GLFW_KEY_LEFT && this.charSlot > 0) {

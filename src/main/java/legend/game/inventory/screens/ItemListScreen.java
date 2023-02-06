@@ -39,9 +39,8 @@ import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
-import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
+import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
 
 public class ItemListScreen extends MenuScreen {
   private int loadingStage;
@@ -276,7 +275,12 @@ public class ItemListScreen extends MenuScreen {
       if(key == GLFW_KEY_ESCAPE) {
         this.loadingStage = 100;
       }
-
+      if(key == GLFW_KEY_DOWN) {
+        this.scrollAccumulator--;
+      }
+      if(key == GLFW_KEY_UP) {
+        this.scrollAccumulator++;
+      }
       if(key == GLFW_KEY_S) { // Sort items
         playSound(2);
         sortItems(this.equipment, gameState_800babc8.equipment_1e8, gameState_800babc8.equipmentCount_1e4.get() + this.equippedItemsCount);

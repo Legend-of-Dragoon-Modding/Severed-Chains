@@ -69,7 +69,7 @@ import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
 import static legend.game.Scus94491BpeSegment_800b.submapIndex_800bd808;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
+import static org.lwjgl.glfw.GLFW.*;
 
 public class MainMenuScreen extends MenuScreen {
   private int loadingStage;
@@ -79,6 +79,8 @@ public class MainMenuScreen extends MenuScreen {
   private int selectedItemSubmenuOption;
   private Renderable58 selectedMenuOptionRenderable;
   private Renderable58 selectedItemMenuOptionRenderable;
+
+  private boolean onLeftMenu = true;
 
   public MainMenuScreen(final Runnable unload) {
     this.unload = unload;
@@ -300,64 +302,7 @@ public class MainMenuScreen extends MenuScreen {
           this.selectedMenuOption = i;
           this.selectedMenuOptionRenderable.y_44 = getMenuOptionY(i);
 
-          switch(i) {
-            case 0 -> {
-              playSound(2);
-
-              menuStack.pushScreen(new StatusScreen(() -> {
-                menuStack.popScreen();
-                this.loadingStage = 0;
-              }));
-            }
-
-            case 1 -> {
-              playSound(2);
-
-              menuStack.pushScreen(new EquipmentScreen(() -> {
-                menuStack.popScreen();
-                this.loadingStage = 0;
-              }));
-            }
-
-            case 2 -> {
-              playSound(2);
-
-              menuStack.pushScreen(new AdditionsScreen(() -> {
-                menuStack.popScreen();
-                this.loadingStage = 0;
-              }));
-            }
-
-            case 3 -> {
-              playSound(2);
-
-              menuStack.pushScreen(new CharSwapScreen(() -> {
-                menuStack.popScreen();
-                this.loadingStage = 0;
-              }));
-            }
-
-            case 4 -> {
-              playSound(4);
-              this.selectedItemSubmenuOption = 0;
-              setMessageBoxText(messageBox_8011dc90, null, 0x1);
-              this.loadingStage = 3;
-            }
-
-            case 5 -> {
-              if(canSave_8011dc88.get() != 0) {
-                playSound(2);
-
-                menuStack.pushScreen(new SaveGameScreen(() -> {
-                  menuStack.popScreen();
-                  this.fadeOutArrows();
-                  this.loadingStage = 0;
-                }));
-              } else {
-                playSound(40);
-              }
-            }
-          }
+          openScreen(i, true);
         }
       }
 
@@ -365,36 +310,7 @@ public class MainMenuScreen extends MenuScreen {
         if(MathHelper.inBox(x, y, 114, this.getItemSubmenuOptionY(i), 55, 13)) {
           this.selectedItemSubmenuOption = i;
           this.selectedItemMenuOptionRenderable.y_44 = this.getItemSubmenuOptionY(i) - 2;
-
-          if(i == 0) {
-            playSound(2);
-
-            menuStack.pushScreen(new UseItemScreen(() -> {
-              menuStack.popScreen();
-              this.loadingStage = 0;
-            }));
-          } else if(i == 1) {
-            playSound(2);
-
-            menuStack.pushScreen(new ItemListScreen(() -> {
-              menuStack.popScreen();
-              this.loadingStage = 0;
-            }));
-          } else if(i == 2) {
-            playSound(2);
-
-            menuStack.pushScreen(new GoodsScreen(() -> {
-              menuStack.popScreen();
-              this.loadingStage = 0;
-            }));
-          } else {
-            playSound(2);
-
-            menuStack.pushScreen(new DabasScreen(() -> {
-              menuStack.popScreen();
-              this.loadingStage = 0;
-            }));
-          }
+          openScreen(i, false);
         }
       }
     } else if(this.loadingStage == 3) {
@@ -436,9 +352,69 @@ public class MainMenuScreen extends MenuScreen {
   @Override
   protected void keyPress(final int key, final int scancode, final int mods) {
     if(this.loadingStage == 2) {
-      if(key == GLFW_KEY_ESCAPE) {
-        playSound(3);
-        this.loadingStage = 100;
+      switch (key)
+      {
+        case GLFW_KEY_ESCAPE:
+          playSound(3);
+          this.loadingStage = 100;
+          break;
+        case GLFW_KEY_UP:
+          if (this.onLeftMenu) {
+            if (this.selectedMenuOption > 0) {
+              playSound(1);
+              this.selectedMenuOption--;
+              this.selectedMenuOptionRenderable.y_44 = getMenuOptionY(this.selectedMenuOption);
+            }
+          }
+          else {
+            if (this.selectedItemSubmenuOption > 0) {
+              playSound(1);
+              this.selectedItemSubmenuOption--;
+              this.selectedItemMenuOptionRenderable.y_44 = this.getItemSubmenuOptionY(this.selectedItemSubmenuOption) - 2;
+            }
+          }
+          break;
+        case GLFW_KEY_DOWN:
+          if (this.onLeftMenu) {
+            if (this.selectedMenuOption < 5) {
+              playSound(1);
+              this.selectedMenuOption++;
+              this.selectedMenuOptionRenderable.y_44 = getMenuOptionY(this.selectedMenuOption);
+            }
+          }
+          else {
+            if (this.selectedItemSubmenuOption < 3)
+            {
+              playSound(1);
+              this.selectedItemSubmenuOption++;
+              this.selectedItemMenuOptionRenderable.y_44 = this.getItemSubmenuOptionY(this.selectedItemSubmenuOption) - 2;
+            }
+          }
+          break;
+        case GLFW_KEY_LEFT:
+          if (!this.onLeftMenu)
+          {
+            this.onLeftMenu = true;
+            playSound(1);
+          }
+          break;
+        case GLFW_KEY_RIGHT:
+          if (this.onLeftMenu) {
+            playSound(1);
+            this.onLeftMenu = false;
+            this.selectedItemSubmenuOption = 0;
+            this.selectedItemMenuOptionRenderable.y_44 = this.getItemSubmenuOptionY(0) - 2;
+          }
+          break;
+        case GLFW_KEY_S:
+          if (this.onLeftMenu)
+          {
+            openScreen(this.selectedMenuOption, true);
+          }
+          else {
+            openScreen(this.selectedItemSubmenuOption, false);
+          }
+          break;
       }
     } else if(this.loadingStage == 3) {
       playSound(2);
@@ -469,6 +445,101 @@ public class MainMenuScreen extends MenuScreen {
     if(saveListDownArrow_800bdb98 != null) {
       fadeOutArrow(saveListDownArrow_800bdb98);
       saveListDownArrow_800bdb98 = null;
+    }
+  }
+
+  private void openScreen(final int index, boolean isLeft) {
+    if (isLeft) {
+      switch (index) {
+        case 0 -> {
+          playSound(2);
+
+          menuStack.pushScreen(new StatusScreen(() -> {
+            menuStack.popScreen();
+            this.loadingStage = 0;
+          }));
+        }
+        case 1 -> {
+          playSound(2);
+
+          menuStack.pushScreen(new EquipmentScreen(() -> {
+            menuStack.popScreen();
+            this.loadingStage = 0;
+          }));
+        }
+        case 2 -> {
+          playSound(2);
+
+          menuStack.pushScreen(new AdditionsScreen(() -> {
+            menuStack.popScreen();
+            this.loadingStage = 0;
+          }));
+        }
+        case 3 -> {
+          playSound(2);
+
+          menuStack.pushScreen(new CharSwapScreen(() -> {
+            menuStack.popScreen();
+            this.loadingStage = 0;
+          }));
+        }
+        case 4 -> {
+          playSound(4);
+          this.selectedItemSubmenuOption = 0;
+          setMessageBoxText(messageBox_8011dc90, null, 0x1);
+          this.loadingStage = 3;
+        }
+        case 5 -> {
+          if (canSave_8011dc88.get() != 0) {
+            playSound(2);
+
+            menuStack.pushScreen(new SaveGameScreen(() -> {
+              menuStack.popScreen();
+              this.fadeOutArrows();
+              this.loadingStage = 0;
+            }));
+          } else {
+            playSound(40);
+          }
+        }
+      }
+    } else {
+      switch (index) {
+        case 0:
+          playSound(2);
+
+          menuStack.pushScreen(new UseItemScreen(() -> {
+            menuStack.popScreen();
+            this.loadingStage = 0;
+          }));
+          break;
+        case 1:
+          playSound(2);
+
+          menuStack.pushScreen(new ItemListScreen(() -> {
+            menuStack.popScreen();
+            this.loadingStage = 0;
+          }));
+          break;
+        case 2:
+          playSound(2);
+
+          menuStack.pushScreen(new GoodsScreen(() -> {
+            menuStack.popScreen();
+            this.loadingStage = 0;
+          }));
+          break;
+        case 3:
+          playSound(2);
+
+          menuStack.pushScreen(new DabasScreen(() -> {
+            menuStack.popScreen();
+            this.loadingStage = 0;
+          }));
+          break;
+        default:
+          break;
+      }
     }
   }
 }

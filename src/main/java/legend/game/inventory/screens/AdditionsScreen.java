@@ -30,8 +30,7 @@ import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
 import static legend.game.Scus94491BpeSegment_8005.additionData_80052884;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
-import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
+import static org.lwjgl.glfw.GLFW.*;
 
 public class AdditionsScreen extends MenuScreen {
   private int loadingStage;
@@ -238,6 +237,7 @@ public class AdditionsScreen extends MenuScreen {
         }
         break;
       case GLFW_KEY_ESCAPE:
+      case GLFW_KEY_D:
         playSound(3);
         this.loadingStage = 100;
         break;
@@ -255,7 +255,6 @@ public class AdditionsScreen extends MenuScreen {
     if(this.scrollAccumulator < 0 && deltaY > 0 || this.scrollAccumulator > 0 && deltaY < 0) {
       this.scrollAccumulator = 0;
     }
-
     this.scrollAccumulator += deltaY;
   }
 }
