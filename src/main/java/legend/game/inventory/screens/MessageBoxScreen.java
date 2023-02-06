@@ -14,6 +14,7 @@ import static legend.game.SItem.messageBox;
 import static legend.game.SItem.setMessageBoxOptions;
 import static legend.game.SItem.setMessageBoxText;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
+import static org.lwjgl.glfw.GLFW.*;
 
 public class MessageBoxScreen extends MenuScreen {
   private final MessageBox20 messageBox = new MessageBox20();
@@ -103,6 +104,43 @@ public class MessageBoxScreen extends MenuScreen {
         this.result = MessageBoxResult.NO;
         this.messageBox.state_0c = 4;
       }
+    }
+  }
+
+  @Override
+  protected void keyPress(int key, int scancode, int mods) {
+    if(this.messageBox.state_0c != 3) {
+      return;
+    }
+    if(this.messageBox.type_15 != 2) return;
+
+    final int selectionY = this.messageBox.y_1e + 7 + this.messageBox.text_00.length * 14 + 7;
+
+    switch (key) {
+      case GLFW_KEY_UP:
+        playSound(1);
+        this.messageBox.menuIndex_18 = 0;
+        if(this.messageBox.renderable_04 != null) this.messageBox.renderable_04.y_44 = selectionY - 2;
+        break;
+      case GLFW_KEY_DOWN:
+        playSound(1);
+        this.messageBox.menuIndex_18 = 1;
+        if(this.messageBox.renderable_04 != null) this.messageBox.renderable_04.y_44 = selectionY + 12;
+        break;
+      case GLFW_KEY_S:
+        playSound(2);
+        if (this.messageBox.menuIndex_18 == 0)
+        {
+          this.result = MessageBoxResult.YES;
+          this.messageBox.state_0c = 4;
+        }
+        else {
+          this.result = MessageBoxResult.NO;
+          this.messageBox.state_0c = 4;
+        }
+        break;
+      default:
+        break;
     }
   }
 
