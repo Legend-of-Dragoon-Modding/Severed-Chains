@@ -237,35 +237,63 @@ public class EquipmentScreen extends MenuScreen {
       return;
     }
 
-    // Exit menu
-    if(key == GLFW_KEY_ESCAPE) {
-      playSound(3);
-      this.loadingStage = 100;
-    }
-
-    if(key == GLFW_KEY_DOWN) {
-      this.scrollAccumulator--;
-    }
-    if(key == GLFW_KEY_UP) {
-      this.scrollAccumulator++;
-    }
-
-    if(key == GLFW_KEY_LEFT && this.charSlot > 0) {
-      this.charSlot--;
-      this.loadingStage = 1;
-    }
-
-    if(key == GLFW_KEY_RIGHT && this.charSlot < characterCount_8011d7c4.get() - 1) {
-      this.charSlot++;
-      this.loadingStage = 1;
-    }
-
-    // Sort items
-    if(key == GLFW_KEY_S) {
-      playSound(2);
-      FUN_80104738(this.equipment, this.items, 1);
-      sortItems(this.equipment, gameState_800babc8.equipment_1e8, gameState_800babc8.equipmentCount_1e4.get());
-      this.loadingStage = 2;
+    switch (key)
+    {
+      case GLFW_KEY_ESCAPE:
+        playSound(3);
+        this.loadingStage = 100;
+        break;
+      case GLFW_KEY_DOWN:
+        playSound(1);
+        if (this.selectedSlot < 3) this.selectedSlot++;
+        else this.scrollAccumulator = -1;
+        this.itemHighlight.y_44 = this.FUN_800fc804(this.selectedSlot);
+        break;
+      case GLFW_KEY_UP:
+        playSound(1);
+        if (this.selectedSlot > 0) this.selectedSlot--;
+        else this.scrollAccumulator = 1;
+        this.itemHighlight.y_44 = this.FUN_800fc804(this.selectedSlot);
+        break;
+      case GLFW_KEY_LEFT:
+        if (this.charSlot > 0)
+        {
+          this.charSlot--;
+          this.loadingStage = 1;
+        }
+        break;
+      case GLFW_KEY_RIGHT:
+        if (this.charSlot < characterCount_8011d7c4.get() - 1)
+        {
+          this.charSlot++;
+          this.loadingStage = 1;
+        }
+        break;
+      case GLFW_KEY_S:
+        playSound(2);
+        final int itemIndex = this.selectedSlot + this.slotScroll;
+        if(itemIndex < gameState_800babc8.equipmentCount_1e4.get()) {
+          final int equipmentId = this.menuItems.get(itemIndex).itemId_00;
+          if(equipmentId != 0xff) {
+            final int previousEquipmentId = equipItem(equipmentId, characterIndices_800bdbb8.get(this.charSlot).get());
+            takeEquipment(this.menuItems.get(itemIndex).itemSlot_01);
+            giveItem(previousEquipmentId);
+            playSound(2);
+            loadCharacterStats(0);
+            addHp(characterIndices_800bdbb8.get(this.charSlot).get(), 0);
+            addMp(characterIndices_800bdbb8.get(this.charSlot).get(), 0);
+            this.loadingStage = 2;
+          } else {
+            playSound(40);
+          }
+        }
+        break;
+      case GLFW_KEY_W: // sort
+        playSound(2);
+        FUN_80104738(this.equipment, this.items, 1);
+        sortItems(this.equipment, gameState_800babc8.equipment_1e8, gameState_800babc8.equipmentCount_1e4.get());
+        this.loadingStage = 2;
+        break;
     }
   }
 }

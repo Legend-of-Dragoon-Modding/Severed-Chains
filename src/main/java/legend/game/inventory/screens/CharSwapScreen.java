@@ -24,7 +24,7 @@ import static legend.game.Scus94491BpeSegment_800b.drgn0_6666FilePtr_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.secondaryCharIndices_800bdbf8;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
+import static org.lwjgl.glfw.GLFW.*;
 
 public class CharSwapScreen extends MenuScreen {
   private int loadingStage;
@@ -210,15 +210,82 @@ public class CharSwapScreen extends MenuScreen {
     super.keyPress(key, scancode, mods);
 
     if(this.loadingStage == 2) {
-      if(key == GLFW_KEY_ESCAPE) {
-        playSound(3);
-        this.loadingStage = 100;
+      // primary character left side
+      switch (key)
+      {
+        case GLFW_KEY_ESCAPE:
+          playSound(3);
+          this.loadingStage = 100;
+          break;
+        case GLFW_KEY_DOWN:
+        {
+          playSound(1);
+          if (this.primaryCharIndex < 2) this.primaryCharIndex++;
+          this.primaryCharHighlight.y_44 = getSlotY(this.primaryCharIndex);
+        }
+          break;
+        case GLFW_KEY_UP:
+          playSound(1);
+          if (this.primaryCharIndex > 0) this.primaryCharIndex--;
+          this.primaryCharHighlight.y_44 = getSlotY(this.primaryCharIndex);
+          break;
+        case GLFW_KEY_S:
+          final int charIndex = gameState_800babc8.charIndex_88.get(this.primaryCharIndex).get();
+          if (Config.unlockParty() || charIndex == -1 || (gameState_800babc8.charData_32c.get(charIndex).partyFlags_04.get() & 0x20) == 0) {
+            playSound(2);
+            this.secondaryCharHighlight = allocateUiElement(0x80, 0x80, this.getSecondaryCharX(this.secondaryCharIndex), this.getSecondaryCharY(this.secondaryCharIndex));
+            FUN_80104b60(this.secondaryCharHighlight);
+            this.loadingStage = 3;
+          } else {
+            playSound(40);
+          }
+          break;
       }
     } else if(this.loadingStage == 3) {
-      if(key == GLFW_KEY_ESCAPE) {
-        playSound(3);
-        unloadRenderable(this.secondaryCharHighlight);
-        this.loadingStage = 2;
+
+      switch (key)
+      {
+        case GLFW_KEY_LEFT:
+          playSound(1);
+          if (this.secondaryCharIndex > 0) this.secondaryCharIndex--;
+          this.secondaryCharHighlight.x_40 = this.getSecondaryCharX(this.secondaryCharIndex);
+          this.secondaryCharHighlight.y_44 = this.getSecondaryCharY(this.secondaryCharIndex);
+          break;
+        case GLFW_KEY_RIGHT:
+          playSound(1);
+          if (this.secondaryCharIndex < 5) this.secondaryCharIndex++;
+          this.secondaryCharHighlight.x_40 = this.getSecondaryCharX(this.secondaryCharIndex);
+          this.secondaryCharHighlight.y_44 = this.getSecondaryCharY(this.secondaryCharIndex);
+          break;
+        case GLFW_KEY_ESCAPE:
+          playSound(3);
+          unloadRenderable(this.secondaryCharHighlight);
+          this.loadingStage = 2;
+          break;
+        case GLFW_KEY_S: {
+          this.secondaryCharHighlight.x_40 = this.getSecondaryCharX(this.secondaryCharIndex);
+          this.secondaryCharHighlight.y_44 = this.getSecondaryCharY(this.secondaryCharIndex);
+
+          int charCount = 0;
+          for (int charSlot = 0; charSlot < 3; charSlot++) {
+            if (gameState_800babc8.charIndex_88.get(charSlot).get() != -1) {
+              charCount++;
+            }
+          }
+
+          final int secondaryCharIndex = secondaryCharIndices_800bdbf8.get(this.secondaryCharIndex).get();
+
+          if (((Config.unlockParty() && charCount >= 2) || secondaryCharIndex != -1) && (secondaryCharIndex == -1 || (gameState_800babc8.charData_32c.get(secondaryCharIndex).partyFlags_04.get() & 0x2) != 0)) {
+            playSound(2);
+            final int charIndex = gameState_800babc8.charIndex_88.get(this.primaryCharIndex).get();
+            gameState_800babc8.charIndex_88.get(this.primaryCharIndex).set(secondaryCharIndex);
+            secondaryCharIndices_800bdbf8.get(this.secondaryCharIndex).set(charIndex);
+            this.loadingStage = 1;
+          } else {
+            playSound(40);
+          }
+          break;
+        }
       }
     }
   }
