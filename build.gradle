@@ -3,6 +3,8 @@ import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 plugins {
   id 'java'
   id 'org.openjfx.javafxplugin' version '0.0.13'
+  id 'java-library'
+  id 'maven-publish'
 }
 
 group 'legend'
@@ -25,8 +27,8 @@ if(DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX()) {
   project.ext.lwjglNatives = "natives-macos"
 }
 
-if (hasProperty("os")) {
-  switch (os) {
+if(hasProperty("os")) {
+  switch(os) {
     case "windows":
       project.ext.lwjglNatives = "natives-windows"
       break;
@@ -46,26 +48,26 @@ repositories {
 
 dependencies {
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.14.1'
-  implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.14.1'
+  implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.17.1'
   implementation group: 'org.fusesource.jansi', name: 'jansi', version: '2.3.2'
 
-  implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
+  api platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
 
-  implementation "org.lwjgl:lwjgl"
-  implementation "org.lwjgl:lwjgl-glfw"
-  implementation "org.lwjgl:lwjgl-nuklear"
-  implementation "org.lwjgl:lwjgl-opengl"
-  implementation "org.lwjgl:lwjgl-stb"
+  api "org.lwjgl:lwjgl"
+  api "org.lwjgl:lwjgl-glfw"
+  api "org.lwjgl:lwjgl-nuklear"
+  api "org.lwjgl:lwjgl-opengl"
+  api "org.lwjgl:lwjgl-stb"
   runtimeOnly "org.lwjgl:lwjgl::$lwjglNatives"
   runtimeOnly "org.lwjgl:lwjgl-glfw::$lwjglNatives"
   runtimeOnly "org.lwjgl:lwjgl-nuklear::$lwjglNatives"
   runtimeOnly "org.lwjgl:lwjgl-opengl::$lwjglNatives"
   runtimeOnly "org.lwjgl:lwjgl-stb::$lwjglNatives"
-  implementation "org.joml:joml:${jomlVersion}"
+  api "org.joml:joml:${jomlVersion}"
 
-  implementation group: 'com.github.slugify', name: 'slugify', version: '3.0.2'
+  api group: 'com.github.slugify', name: 'slugify', version: '3.0.2'
 
-  implementation group: 'it.unimi.dsi', name: 'fastutil', version: '8.5.9'
+  api group: 'it.unimi.dsi', name: 'fastutil', version: '8.5.9'
 
   implementation group: 'org.reflections', name: 'reflections', version: '0.10.2'
   // To quiet no logger found for reflections
@@ -117,6 +119,27 @@ task copySupportFiles(type: Copy) {
 
 jar.dependsOn(clearOutput, copyLibs, copySupportFiles)
 
+publishing {
+  publications {
+    mavenJava(MavenPublication) {
+      artifactId = 'lod'
+      from components.java
+      pom {
+        name = 'LoD Engine'
+      }
+    }
+  }
+}
+
 test {
   useJUnitPlatform()
+}
+
+sourceSets {
+  main {
+    java {
+      srcDirs = ["src/main/java"]
+      exclude ".gradle", "build", "files"
+    }
+  }
 }
