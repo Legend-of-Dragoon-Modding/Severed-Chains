@@ -1,0 +1,54 @@
+<component name="ProjectCodeStyleConfiguration">
+  <code_scheme name="Project" version="173">
+    <option name="LINE_SEPARATOR" value="&#10;" />
+    <option name="RIGHT_MARGIN" value="999" />
+    <JavaCodeStyleSettings>
+      <option name="REPLACE_INSTANCEOF_AND_CAST" value="true" />
+      <option name="CLASS_NAMES_IN_JAVADOC" value="3" />
+      <option name="CLASS_COUNT_TO_USE_IMPORT_ON_DEMAND" value="999" />
+      <option name="NAMES_COUNT_TO_USE_IMPORT_ON_DEMAND" value="999" />
+      <option name="RECORD_COMPONENTS_WRAP" value="0" />
+      <option name="MULTI_CATCH_TYPES_WRAP" value="0" />
+      <option name="JD_ADD_BLANK_AFTER_PARM_COMMENTS" value="true" />
+      <option name="JD_ADD_BLANK_AFTER_RETURN" value="true" />
+    </JavaCodeStyleSettings>
+    <codeStyleSettings language="Groovy">
+      <indentOptions>
+        <option name="INDENT_SIZE" value="2" />
+        <option name="CONTINUATION_INDENT_SIZE" value="2" />
+        <option name="TAB_SIZE" value="2" />
+      </indentOptions>
+    </codeStyleSettings>
+    <codeStyleSettings language="JAVA">
+      <option name="KEEP_FIRST_COLUMN_COMMENT" value="false" />
+      <option name="SPACE_AFTER_TYPE_CAST" value="false" />
+      <option name="SPACE_BEFORE_IF_PARENTHESES" value="false" />
+      <option name="SPACE_BEFORE_WHILE_PARENTHESES" value="false" />
+      <option name="SPACE_BEFORE_FOR_PARENTHESES" value="false" />
+      <option name="SPACE_BEFORE_TRY_PARENTHESES" value="false" />
+      <option name="SPACE_BEFORE_CATCH_PARENTHESES" value="false" />
+      <option name="SPACE_BEFORE_SWITCH_PARENTHESES" value="false" />
+      <option name="SPACE_BEFORE_SYNCHRONIZED_PARENTHESES" value="false" />
+      <option name="KEEP_SIMPLE_LAMBDAS_IN_ONE_LINE" value="true" />
+      <option name="IF_BRACE_FORCE" value="3" />
+      <option name="DOWHILE_BRACE_FORCE" value="3" />
+      <option name="WHILE_BRACE_FORCE" value="3" />
+      <option name="FOR_BRACE_FORCE" value="3" />
+      <indentOptions>
+        <option name="INDENT_SIZE" value="2" />
+        <option name="CONTINUATION_INDENT_SIZE" value="2" />
+        <option name="TAB_SIZE" value="2" />
+      </indentOptions>
+    </codeStyleSettings>
+    <codeStyleSettings language="Markdown">
+      <option name="RIGHT_MARGIN" value="999" />
+    </codeStyleSettings>
+    <codeStyleSettings language="kotlin">
+      <indentOptions>
+        <option name="INDENT_SIZE" value="2" />
+        <option name="CONTINUATION_INDENT_SIZE" value="2" />
+        <option name="TAB_SIZE" value="2" />
+      </indentOptions>
+    </codeStyleSettings>
+  </code_scheme>
+</component>
