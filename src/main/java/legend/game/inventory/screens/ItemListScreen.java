@@ -339,7 +339,7 @@ public class ItemListScreen extends MenuScreen {
                     }
                 }
                 break;
-            case GLFW_KEY_S: // W is sort now...
+            case GLFW_KEY_S:
                 playSound(2);
                 sortItems(this.equipment, gameState_800babc8.equipment_1e8, gameState_800babc8.equipmentCount_1e4.get() + this.equippedItemsCount);
                 sortItems(this.items, gameState_800babc8.items_2e9, gameState_800babc8.itemCount_1e6.get());
