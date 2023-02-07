@@ -22,59 +22,59 @@ import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 
 public class LoadGameScreen extends SaveListScreen {
-    private int slot;
+  private int slot;
 
-    public LoadGameScreen() {
-        super(() -> whichMenu_800bdc38 = WhichMenu.UNLOAD_LOAD_GAME_MENU_15);
+  public LoadGameScreen() {
+    super(() -> whichMenu_800bdc38 = WhichMenu.UNLOAD_LOAD_GAME_MENU_15);
+  }
+
+  @Override
+  protected int menuCount() {
+    return saves.size();
+  }
+
+  @Override
+  protected void onSelect(final int slot) {
+    playSound(2);
+    this.slot = slot;
+
+    menuStack.pushScreen(new MessageBoxScreen(Load_this_data_8011ca08, 2, this::onMessageboxResult));
+
+    if(saveListUpArrow_800bdb94 != null) {
+      fadeOutArrow(saveListUpArrow_800bdb94);
+      saveListUpArrow_800bdb94 = null;
     }
 
-    @Override
-    protected int menuCount() {
-        return saves.size();
+    //LAB_800ff3a4
+    if(saveListDownArrow_800bdb98 != null) {
+      fadeOutArrow(saveListDownArrow_800bdb98);
+      saveListDownArrow_800bdb98 = null;
     }
+  }
 
-    @Override
-    protected void onSelect(final int slot) {
-        playSound(2);
-        this.slot = slot;
+  @Override
+  protected void onMessageboxResult(final MessageBoxResult result) {
+    if(result == MessageBoxResult.YES) {
+      loadSaveFile(this.slot);
 
-        menuStack.pushScreen(new MessageBoxScreen(Load_this_data_8011ca08, 2, this::onMessageboxResult));
+      //LAB_800ff6ec
+      _800bdc34.setu(0x1L);
+      submapScene_80052c34.set(gameState_800babc8.submapScene_a4.get());
+      submapCut_80052c30.set(gameState_800babc8.submapCut_a8.get());
+      index_80052c38.set(gameState_800babc8.submapCut_a8.get());
 
-        if (saveListUpArrow_800bdb94 != null) {
-            fadeOutArrow(saveListUpArrow_800bdb94);
-            saveListUpArrow_800bdb94 = null;
-        }
+      if(gameState_800babc8.submapCut_a8.get() == 264) { // Somewhere in Home of Giganto
+        submapScene_80052c34.set(53);
+      }
 
-        //LAB_800ff3a4
-        if (saveListDownArrow_800bdb98 != null) {
-            fadeOutArrow(saveListDownArrow_800bdb98);
-            saveListDownArrow_800bdb98 = null;
-        }
+      setMono(gameState_800babc8.mono_4e0.get());
+
+      this.loadingStage = 2;
     }
+  }
 
-    @Override
-    protected void onMessageboxResult(final MessageBoxResult result) {
-        if (result == MessageBoxResult.YES) {
-            loadSaveFile(this.slot);
-
-            //LAB_800ff6ec
-            _800bdc34.setu(0x1L);
-            submapScene_80052c34.set(gameState_800babc8.submapScene_a4.get());
-            submapCut_80052c30.set(gameState_800babc8.submapCut_a8.get());
-            index_80052c38.set(gameState_800babc8.submapCut_a8.get());
-
-            if (gameState_800babc8.submapCut_a8.get() == 264) { // Somewhere in Home of Giganto
-                submapScene_80052c34.set(53);
-            }
-
-            setMono(gameState_800babc8.mono_4e0.get());
-
-            this.loadingStage = 2;
-        }
-    }
-
-    @Override
-    protected void renderSaveSlot(final int slot, final int fileIndex, final boolean allocate) {
-        renderSaveGameSlot(fileIndex, getSlotY(slot), allocate);
-    }
+  @Override
+  protected void renderSaveSlot(final int slot, final int fileIndex, final boolean allocate) {
+    renderSaveGameSlot(fileIndex, getSlotY(slot), allocate);
+  }
 }

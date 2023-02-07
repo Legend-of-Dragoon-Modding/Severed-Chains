@@ -255,7 +255,7 @@ public class DabasScreen extends MenuScreen {
     }
 
     if(equipmentCount != 0 && gameState_800babc8.equipmentCount_1e4.get() + equipmentCount >= 0x100 || itemCount != 0 && gameState_800babc8.itemCount_1e6.get() + itemCount > Config.inventorySize()) {
-      menuStack.pushScreen(new MessageBoxScreen(new LodString("Dabas has more items\nthan you can hold"), 0, result -> { }));
+      menuStack.pushScreen(new MessageBoxScreen(new LodString("Dabas has more items\nthan you can hold"), 0, result -> {}));
       return;
     }
 
