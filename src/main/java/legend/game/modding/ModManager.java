@@ -72,7 +72,11 @@ public class ModManager {
     });
   }
 
-  public ConfigurationBuilder addModsToReflectionsConfig(final ConfigurationBuilder builder) {
+  public ConfigurationBuilder addModsToReflectionsConfig(ConfigurationBuilder builder) {
+    if(!System.getProperty("scdk", "").isEmpty()) {
+      builder = builder.addUrls(this.getClass().getClassLoader().getResource(""));
+    }
+
     return builder.addClassLoaders(this.modClassLoader).addUrls(this.modUrls);
   }
 }
