@@ -658,8 +658,18 @@ public class ScriptState<T> {
    */
   @Method(0x800167bcL)
   public FlowControl scriptMemCopy() {
-    for(int i = 0; i < this.context.params_20[0].get(); i++) {
-      this.context.params_20[2].array(i).set(this.context.params_20[1].array(i).get());
+    // There are hundreds of nearly- (and sometimes entirely-) identical scripts that perform memcopies at the
+    // end of the script, running out of bounds. This is a retail bug and seems to be inconsequential. We're
+    // going to take the traditional LoD approach and just pretend it's not happening. I think these are generic
+    // NPC controller scripts, but I'm not sure. It tends to happen when NPCs are disappearing (walking into Dart,
+    // Lloyd walking into a cave in Snow Field, etc.)
+    // See: GH#230, GH#236, GH#237, GH#240
+    try {
+      for(int i = 0; i < this.context.params_20[0].get(); i++) {
+        this.context.params_20[2].array(i).set(this.context.params_20[1].array(i).get());
+      }
+    } catch(final IndexOutOfBoundsException e) {
+      LOGGER.warn(SCRIPT_MARKER, "Script %d attempted to read out of bounds", this.index);
     }
 
     return FlowControl.CONTINUE;
