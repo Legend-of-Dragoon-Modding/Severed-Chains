@@ -218,17 +218,17 @@ public class CharSwapScreen extends MenuScreen {
           break;
         case GLFW_KEY_DOWN: {
           playSound(1);
-            if(this.primaryCharIndex < 2) {
-                this.primaryCharIndex++;
-            }
+          if(this.primaryCharIndex < 2) {
+            this.primaryCharIndex++;
+          }
           this.primaryCharHighlight.y_44 = getSlotY(this.primaryCharIndex);
         }
         break;
         case GLFW_KEY_UP:
           playSound(1);
-            if(this.primaryCharIndex > 0) {
-                this.primaryCharIndex--;
-            }
+          if(this.primaryCharIndex > 0) {
+            this.primaryCharIndex--;
+          }
           this.primaryCharHighlight.y_44 = getSlotY(this.primaryCharIndex);
           break;
         case GLFW_KEY_S:
@@ -248,33 +248,33 @@ public class CharSwapScreen extends MenuScreen {
       switch(key) {
         case GLFW_KEY_DOWN:
           playSound(1);
-            if(this.secondaryCharIndex < 3) {
-                this.secondaryCharIndex += 3;
-            }
+          if(this.secondaryCharIndex < 3) {
+            this.secondaryCharIndex += 3;
+          }
           this.secondaryCharHighlight.x_40 = this.getSecondaryCharX(this.secondaryCharIndex);
           this.secondaryCharHighlight.y_44 = this.getSecondaryCharY(this.secondaryCharIndex);
           break;
         case GLFW_KEY_UP:
           playSound(1);
-            if(this.secondaryCharIndex > 2) {
-                this.secondaryCharIndex -= 3;
-            }
+          if(this.secondaryCharIndex > 2) {
+            this.secondaryCharIndex -= 3;
+          }
           this.secondaryCharHighlight.x_40 = this.getSecondaryCharX(this.secondaryCharIndex);
           this.secondaryCharHighlight.y_44 = this.getSecondaryCharY(this.secondaryCharIndex);
           break;
         case GLFW_KEY_LEFT:
           playSound(1);
-            if(this.secondaryCharIndex > 0) {
-                this.secondaryCharIndex--;
-            }
+          if(this.secondaryCharIndex > 0) {
+            this.secondaryCharIndex--;
+          }
           this.secondaryCharHighlight.x_40 = this.getSecondaryCharX(this.secondaryCharIndex);
           this.secondaryCharHighlight.y_44 = this.getSecondaryCharY(this.secondaryCharIndex);
           break;
         case GLFW_KEY_RIGHT:
           playSound(1);
-            if(this.secondaryCharIndex < 5) {
-                this.secondaryCharIndex++;
-            }
+          if(this.secondaryCharIndex < 5) {
+            this.secondaryCharIndex++;
+          }
           this.secondaryCharHighlight.x_40 = this.getSecondaryCharX(this.secondaryCharIndex);
           this.secondaryCharHighlight.y_44 = this.getSecondaryCharY(this.secondaryCharIndex);
           break;

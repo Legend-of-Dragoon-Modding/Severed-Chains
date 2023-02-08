@@ -444,16 +444,16 @@ public class UseItemScreen extends MenuScreen {
       switch(key) {
         case GLFW_KEY_LEFT:
           playSound(1);
-            if(this.charSlot > 0) {
-                this.charSlot--;
-            }
+          if(this.charSlot > 0) {
+            this.charSlot--;
+          }
           this.charHighlight.x_40 = getCharacterPortraitX(this.charSlot) - 3;
           break;
         case GLFW_KEY_RIGHT:
           playSound(1);
-            if(this.charSlot < characterCount_8011d7c4.get() - 1) {
-                this.charSlot++;
-            }
+          if(this.charSlot < characterCount_8011d7c4.get() - 1) {
+            this.charSlot++;
+          }
           this.charHighlight.x_40 = getCharacterPortraitX(this.charSlot) - 3;
           break;
         case GLFW_KEY_D:

@@ -244,20 +244,20 @@ public class EquipmentScreen extends MenuScreen {
         break;
       case GLFW_KEY_DOWN:
         playSound(1);
-          if(this.selectedSlot < 3) {
-              this.selectedSlot++;
-          } else {
-              this.scrollAccumulator = -1;
-          }
+        if(this.selectedSlot < 3) {
+          this.selectedSlot++;
+        } else {
+          this.scrollAccumulator = -1;
+        }
         this.itemHighlight.y_44 = this.FUN_800fc804(this.selectedSlot);
         break;
       case GLFW_KEY_UP:
         playSound(1);
-          if(this.selectedSlot > 0) {
-              this.selectedSlot--;
-          } else {
-              this.scrollAccumulator = 1;
-          }
+        if(this.selectedSlot > 0) {
+          this.selectedSlot--;
+        } else {
+          this.scrollAccumulator = 1;
+        }
         this.itemHighlight.y_44 = this.FUN_800fc804(this.selectedSlot);
         break;
       case GLFW_KEY_LEFT:

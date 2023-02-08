@@ -271,9 +271,9 @@ public class ItemListScreen extends MenuScreen {
     if(mods != 0) {
       return;
     }
-      if(this.loadingStage != 1) {
-          return;
-      }
+    if(this.loadingStage != 1) {
+      return;
+    }
 
     switch(key) {
       case GLFW_KEY_ESCAPE:

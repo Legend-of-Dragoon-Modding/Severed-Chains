@@ -215,16 +215,16 @@ public class AdditionsScreen extends MenuScreen {
         this.scrollAccumulator -= 1;
         break;
       case GLFW_KEY_DOWN:
-          if(this.selectedSlot < 6) {
-              this.selectedSlot++;
-          }
+        if(this.selectedSlot < 6) {
+          this.selectedSlot++;
+        }
         playSound(1);
         this.additionHighlight.y_44 = this.getAdditionSlotY(this.selectedSlot) - 4;
         break;
       case GLFW_KEY_UP:
-          if(this.selectedSlot > 0) {
-              this.selectedSlot--;
-          }
+        if(this.selectedSlot > 0) {
+          this.selectedSlot--;
+        }
         playSound(1);
         this.additionHighlight.y_44 = this.getAdditionSlotY(this.selectedSlot) - 4;
         break;

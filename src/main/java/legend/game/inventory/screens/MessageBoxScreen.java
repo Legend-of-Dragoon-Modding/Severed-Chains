@@ -119,9 +119,9 @@ public class MessageBoxScreen extends MenuScreen {
     if(this.messageBox.state_0c != 3) {
       return;
     }
-      if(this.messageBox.type_15 != 2) {
-          return;
-      }
+    if(this.messageBox.type_15 != 2) {
+      return;
+    }
 
     final int selectionY = this.messageBox.y_1e + 7 + this.messageBox.text_00.length * 14 + 7;
 
@@ -129,16 +129,16 @@ public class MessageBoxScreen extends MenuScreen {
       case GLFW_KEY_UP:
         playSound(1);
         this.messageBox.menuIndex_18 = 0;
-          if(this.messageBox.renderable_04 != null) {
-              this.messageBox.renderable_04.y_44 = selectionY - 2;
-          }
+        if(this.messageBox.renderable_04 != null) {
+          this.messageBox.renderable_04.y_44 = selectionY - 2;
+        }
         break;
       case GLFW_KEY_DOWN:
         playSound(1);
         this.messageBox.menuIndex_18 = 1;
-          if(this.messageBox.renderable_04 != null) {
-              this.messageBox.renderable_04.y_44 = selectionY + 12;
-          }
+        if(this.messageBox.renderable_04 != null) {
+          this.messageBox.renderable_04.y_44 = selectionY + 12;
+        }
         break;
       case GLFW_KEY_ENTER:
       case GLFW_KEY_S:
