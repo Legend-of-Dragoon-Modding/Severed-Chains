@@ -784,8 +784,6 @@ public class ShopScreen extends MenuScreen {
             playSound(3);
             this.FUN_8010a844(MenuState.UNLOAD_19);
             break;
-          default:
-            break;
         }
         break;
       }
@@ -862,8 +860,6 @@ public class ShopScreen extends MenuScreen {
             playSound(3);
             this.menuState = MenuState.INIT_2;
             break;
-          default:
-            break;
         }
         break;
       }
@@ -908,8 +904,6 @@ public class ShopScreen extends MenuScreen {
             this.menuState = MenuState.BUY_4;
             unloadRenderable(this.charHighlight);
             this.charHighlight = null;
-            break;
-          default:
             break;
         }
         break;
@@ -970,13 +964,9 @@ public class ShopScreen extends MenuScreen {
             unloadRenderable(this.selectedMenuOptionRenderablePtr_800bdbe4);
             this.menuState = MenuState.INIT_2;
             break;
-          default:
-            break;
         }
         break;
       }
-      default:
-        break;
     }
   }
 

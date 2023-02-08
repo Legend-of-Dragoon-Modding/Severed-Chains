@@ -141,9 +141,9 @@ public abstract class SaveListScreen extends MenuScreen {
 
   @Override
   protected void keyPress(final int key, final int scancode, final int mods) {
-      if(mods != 0) {
-          return; // preserving the old logic
-      }
+    if(mods != 0) {
+      return; // preserving the old logic
+    }
     switch(key) {
       case GLFW.GLFW_KEY_ESCAPE:
         playSound(3);

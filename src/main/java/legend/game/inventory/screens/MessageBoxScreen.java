@@ -151,8 +151,6 @@ public class MessageBoxScreen extends MenuScreen {
           this.messageBox.state_0c = 4;
         }
         break;
-      default:
-        break;
     }
   }
 

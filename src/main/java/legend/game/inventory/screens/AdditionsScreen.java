@@ -244,8 +244,6 @@ public class AdditionsScreen extends MenuScreen {
         playSound(3);
         this.loadingStage = 100;
         break;
-      default:
-        break;
     }
   }
 
