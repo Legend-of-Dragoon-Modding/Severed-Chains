@@ -815,9 +815,9 @@ public class ShopScreen extends MenuScreen {
               playSound(40);
               break;
             }
-            if(this.menuIndex_8011e0e0 < 5) {
+            if(this.menuIndex_8011e0e0 < 5 && this.menuIndex_8011e0e0 < this.itemCount - 1) {
               this.menuIndex_8011e0e0++;
-            } else if((this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0) < 32) {
+            } else if((this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0) < this.itemCount - 1) {
               this.menuScroll_8011e0e4++;
             }
             this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = FUN_8010a808(this.menuIndex_8011e0e0);
@@ -928,9 +928,16 @@ public class ShopScreen extends MenuScreen {
             break;
           case GLFW_KEY_DOWN:
             playSound(1);
+            int itemCount = 0;
+            if(this.shopType2 == 0) // equipment
+            {
+              itemCount = gameState_800babc8.equipmentCount_1e4.get();
+            } else { // items
+              itemCount = gameState_800babc8.itemCount_1e6.get();
+            }
             if(this.menuIndex_8011e0e0 < 5) {
               this.menuIndex_8011e0e0++;
-            } else if((this.menuIndex_8011e0e0 + this.menuScroll_8011e0e4) < 32) {
+            } else if((this.menuIndex_8011e0e0 + this.menuScroll_8011e0e4) < itemCount - 1) {
               this.menuScroll_8011e0e4++;
             } else {
               playSound(40);
