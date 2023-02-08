@@ -64,7 +64,6 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
 
 public class UseItemScreen extends MenuScreen {
   private int loadingStage;
@@ -469,7 +468,7 @@ public class UseItemScreen extends MenuScreen {
           }
           this.charHighlight.x_40 = getCharacterPortraitX(this.charSlot) - 3;
           break;
-        case GLFW_KEY_D:
+        case GLFW_KEY_ESCAPE:
           if((this.itemUseFlags & 0x2) == 0) {
             unloadRenderable(this.charHighlight);
           } else {

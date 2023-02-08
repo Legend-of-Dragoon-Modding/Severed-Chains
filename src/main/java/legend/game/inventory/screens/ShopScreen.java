@@ -784,6 +784,7 @@ public class ShopScreen extends MenuScreen {
             break;
           case GLFW_KEY_ENTER:
           case GLFW_KEY_S:
+            playSound(2);
             handleSelectedMenu(this.menuIndex_8011e0dc);
             break;
           case GLFW_KEY_ESCAPE:
