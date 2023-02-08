@@ -216,10 +216,10 @@ public class AdditionsScreen extends MenuScreen {
     }
     switch(key) {
       case GLFW_KEY_LEFT:
-        this.scrollAccumulator += 1;
+        this.scrollAccumulator++;
         break;
       case GLFW_KEY_RIGHT:
-        this.scrollAccumulator -= 1;
+        this.scrollAccumulator--;
         break;
       case GLFW_KEY_DOWN:
         if(this.selectedSlot < 6) {

@@ -415,7 +415,7 @@ public class UseItemScreen extends MenuScreen {
           }
           break;
         case GLFW_KEY_DOWN:
-          if((this.selectedSlot + this.slotScroll) < this.itemCount) {
+          if((this.selectedSlot + this.slotScroll) < this.itemCount -1) {
             playSound(1);
             if(this.selectedSlot == 4) {
               this.slotScroll++;

@@ -24,6 +24,10 @@ import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
 
 public class GoodsScreen extends MenuScreen {
   private int loadingStage;
@@ -183,9 +187,20 @@ public class GoodsScreen extends MenuScreen {
       return;
     }
 
-    if(key == GLFW_KEY_ESCAPE) {
-      playSound(3);
-      this.loadingStage = 100;
+    switch (key)
+    {
+      case GLFW_KEY_LEFT:
+        break;
+      case GLFW_KEY_RIGHT:
+        break;
+      case GLFW_KEY_DOWN:
+        break;
+      case GLFW_KEY_UP:
+        break;
+      case GLFW_KEY_ESCAPE:
+        playSound(3);
+        this.loadingStage = 100;
+        break;
     }
   }
 

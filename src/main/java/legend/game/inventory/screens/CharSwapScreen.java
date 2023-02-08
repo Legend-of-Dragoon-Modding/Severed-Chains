@@ -222,13 +222,12 @@ public class CharSwapScreen extends MenuScreen {
           playSound(3);
           this.loadingStage = 100;
           break;
-        case GLFW_KEY_DOWN: {
+        case GLFW_KEY_DOWN:
           playSound(1);
           if(this.primaryCharIndex < 2) {
             this.primaryCharIndex++;
           }
           this.primaryCharHighlight.y_44 = getSlotY(this.primaryCharIndex);
-        }
         break;
         case GLFW_KEY_UP:
           playSound(1);
