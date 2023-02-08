@@ -415,7 +415,7 @@ public class UseItemScreen extends MenuScreen {
           }
           break;
         case GLFW_KEY_DOWN:
-          if((this.selectedSlot + this.slotScroll) < this.itemCount -1) {
+          if((this.selectedSlot + this.slotScroll) < this.itemCount - 1) {
             playSound(1);
             if(this.selectedSlot == 4) {
               this.slotScroll++;
@@ -450,6 +450,9 @@ public class UseItemScreen extends MenuScreen {
     } else if(this.loadingStage == 3) {
       switch(key) {
         case GLFW_KEY_LEFT:
+          if((this.menuItems.get(this.selectedSlot + this.slotScroll).flags_02 & 0x4000) == 0) {
+            break;
+          }
           playSound(1);
           if(this.charSlot > 0) {
             this.charSlot--;
@@ -457,6 +460,9 @@ public class UseItemScreen extends MenuScreen {
           this.charHighlight.x_40 = getCharacterPortraitX(this.charSlot) - 3;
           break;
         case GLFW_KEY_RIGHT:
+          if((this.menuItems.get(this.selectedSlot + this.slotScroll).flags_02 & 0x4000) == 0) {
+            break;
+          }
           playSound(1);
           if(this.charSlot < characterCount_8011d7c4.get() - 1) {
             this.charSlot++;
