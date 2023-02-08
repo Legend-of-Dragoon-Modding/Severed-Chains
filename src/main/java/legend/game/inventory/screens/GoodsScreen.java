@@ -186,16 +186,45 @@ public class GoodsScreen extends MenuScreen {
     if(this.loadingStage != 1 || mods != 0) {
       return;
     }
-
-    switch (key)
-    {
+    switch(key) {
       case GLFW_KEY_LEFT:
+        if(this.selectedSlot % 2 == 0) {
+          break;
+        }
+        this.selectedSlot--;
+        this.highlight.x_40 = this.getSlotX(this.selectedSlot & 1);
+        this.highlight.y_44 = this.getSlotY(this.selectedSlot / 2) + 32;
         break;
       case GLFW_KEY_RIGHT:
+        if(this.selectedSlot % 2 != 0 || this.selectedSlot + this.slotScroll * 2 == this.menuItems.size() - 1) {
+          break;
+        }
+        this.selectedSlot++;
+        this.highlight.x_40 = this.getSlotX(this.selectedSlot & 1);
+        this.highlight.y_44 = this.getSlotY(this.selectedSlot / 2) + 32;
         break;
       case GLFW_KEY_DOWN:
+        if(this.selectedSlot >= 12) {
+          if((this.selectedSlot + this.slotScroll * 2) < this.menuItems.size()) {
+            this.slotScroll++;
+            break;
+          }
+          break;
+        }
+        this.selectedSlot += 2;
+        this.highlight.x_40 = this.getSlotX(this.selectedSlot & 1);
+        this.highlight.y_44 = this.getSlotY(this.selectedSlot / 2) + 32;
         break;
       case GLFW_KEY_UP:
+        if(this.selectedSlot < 2) {
+          if(this.slotScroll > 0) {
+            this.slotScroll--;
+          }
+          break;
+        }
+        this.selectedSlot -= 2;
+        this.highlight.x_40 = this.getSlotX(this.selectedSlot & 1);
+        this.highlight.y_44 = this.getSlotY(this.selectedSlot / 2) + 32;
         break;
       case GLFW_KEY_ESCAPE:
         playSound(3);
