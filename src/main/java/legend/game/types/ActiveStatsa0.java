@@ -23,6 +23,7 @@ public class ActiveStatsa0 implements MemoryRef {
   public final UnsignedByteRef dlevel_0f;
 
   public final ArrayRef<UnsignedByteRef> equipment_30;
+  /** Absolute addition index into the table of every addition for every character */
   public final ByteRef selectedAddition_35;
   public final ArrayRef<UnsignedByteRef> additionLevels_36;
   public final ArrayRef<UnsignedByteRef> additionXp_3e;

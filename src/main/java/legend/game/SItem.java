@@ -3012,10 +3012,10 @@ public final class SItem {
       stats.dragoonDefence_74.set(statsEvent.dragoonDefence);
       stats.dragoonMagicDefence_75.set(statsEvent.dragoonMagicDefence);
 
-      final int a2 = stats.selectedAddition_35.get();
-      if(a2 != -1) {
+      final int additionIndex = stats.selectedAddition_35.get();
+      if(additionIndex != -1) {
         //TODO straighten this out
-        a0 = ptrTable_80114070.offset(a2 * 0x4L).deref(4).offset(MEMORY.ref(1, stats.additionLevels_36.getAddress()).offset(a2 - additionOffsets_8004f5ac.get(charId).get()).get() * 0x4L).getAddress();
+        a0 = ptrTable_80114070.offset(additionIndex * 0x4L).deref(4).offset(stats.additionLevels_36.get(additionIndex - additionOffsets_8004f5ac.get(charId).get()).get() * 0x4L).getAddress();
 
         stats._9c.set((int)MEMORY.ref(2, a0).offset(0x0L).get());
         stats.additionSpMultiplier_9e.set((int)MEMORY.ref(1, a0).offset(0x2L).get());
