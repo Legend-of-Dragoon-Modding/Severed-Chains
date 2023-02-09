@@ -1249,9 +1249,9 @@ public final class Bttl_800f {
             final short y;
             final short z;
             if((state.storage_44[7] & 0x4) != 0) {
-              x = (short)(-bobj._78.getZ() * 100);
-              y = (short)(-bobj._78.getY() * 100);
-              z = (short)(-bobj._78.getX() * 100);
+              x = (short)(-bobj.targetArrowPos_78.getZ() * 100);
+              y = (short)(-bobj.targetArrowPos_78.getY() * 100);
+              z = (short)(-bobj.targetArrowPos_78.getX() * 100);
             } else {
               //LAB_800f3a3c
               x = 0;
@@ -1516,9 +1516,9 @@ public final class Bttl_800f {
     final short y;
     final short z;
     if((state.storage_44[7] & 0x4) != 0) {
-      x = (short)(-bobj._78.getZ() * 100);
-      y = (short)(-bobj._78.getY() * 100);
-      z = (short)(-bobj._78.getX() * 100);
+      x = (short)(-bobj.targetArrowPos_78.getZ() * 100);
+      y = (short)(-bobj.targetArrowPos_78.getY() * 100);
+      z = (short)(-bobj.targetArrowPos_78.getX() * 100);
     } else {
       //LAB_800f4314
       x = 0;

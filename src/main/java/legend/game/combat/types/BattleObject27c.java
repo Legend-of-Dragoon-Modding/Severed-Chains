@@ -168,7 +168,7 @@ public class BattleObject27c extends BattleScriptDataBase {
   public int monsterElementFlag_72;
   public int monsterElementalImmunityFlag_74;
   public int monsterStatusResistFlag_76;
-  public final SVECTOR _78 = new SVECTOR();
+  public final SVECTOR targetArrowPos_78 = new SVECTOR();
   public int _7e;
   public int _80;
   public int _82;
@@ -337,9 +337,9 @@ public class BattleObject27c extends BattleScriptDataBase {
       case 55 -> this.monsterElementFlag_72;
       case 56 -> this.monsterElementalImmunityFlag_74;
       case 57 -> this.monsterStatusResistFlag_76;
-      case 58 -> this._78.getX();
-      case 59 -> this._78.getY();
-      case 60 -> this._78.getZ();
+      case 58 -> this.targetArrowPos_78.getX();
+      case 59 -> this.targetArrowPos_78.getY();
+      case 60 -> this.targetArrowPos_78.getZ();
       case 61 -> this._7e;
       case 62 -> this._80;
       case 63 -> this._82;
@@ -488,9 +488,9 @@ public class BattleObject27c extends BattleScriptDataBase {
       case 55 -> this.monsterElementFlag_72 = value;
       case 56 -> this.monsterElementalImmunityFlag_74 = value;
       case 57 -> this.monsterStatusResistFlag_76 = value;
-      case 58 -> this._78.setX((short)value);
-      case 59 -> this._78.setY((short)value);
-      case 60 -> this._78.setZ((short)value);
+      case 58 -> this.targetArrowPos_78.setX((short)value);
+      case 59 -> this.targetArrowPos_78.setY((short)value);
+      case 60 -> this.targetArrowPos_78.setZ((short)value);
       case 61 -> this._7e = value;
       case 62 -> this._80 = value;
       case 63 -> this._82 = value;
