@@ -10,8 +10,11 @@ import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.BattleStruct18cb0;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.combat.types.EncounterData38;
+import legend.game.combat.types.EnemyRewards08;
 import legend.game.combat.types.MonsterStats1c;
 import legend.game.combat.types.StageData10;
+import legend.game.modding.events.EventManager;
+import legend.game.modding.events.combat.EnemyRewardsEvent;
 import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptState;
 import legend.game.types.LodString;
@@ -60,9 +63,7 @@ public class SBtld {
 
   public static final ArrayRef<Pointer<LodString>> enemyNames_80112068 = MEMORY.ref(4, 0x80112068L, ArrayRef.of(Pointer.classFor(LodString.class), 0x200, 4, Pointer.deferred(4, LodString::new)));
 
-  /** TODO 0x8-byte struct */
-  public static final Value enemyRewards_80112868 = MEMORY.ref(4, 0x80112868L);
-
+  public static final ArrayRef<EnemyRewards08> enemyRewards_80112868 = MEMORY.ref(4, 0x80112868L, ArrayRef.of(EnemyRewards08.class, 400, 0x8, EnemyRewards08::new));
   public static final Value _801134e8 = MEMORY.ref(2, 0x801134e8L);
 
   /** BattleStruct4c[71] */
@@ -236,17 +237,24 @@ public class SBtld {
   }
 
   @Method(0x80109808L)
-  public static void FUN_80109808(final int param) {
-    final int fileIndex = param & 0xffff;
-    final int s0 = param >>> 16;
-    final CombatantStruct1a8 v0 = getCombatant(s0);
-    final long v1 = enemyRewards_80112868.offset(fileIndex * 0x8L).getAddress(); //TODO
-    v0.xp_194 = (int)MEMORY.ref(2, v1).offset(0x0L).get();
-    v0.gold_196 = (int)MEMORY.ref(2, v1).offset(0x2L).get();
-    v0.itemChance_198 = (int)MEMORY.ref(1, v1).offset(0x4L).get();
-    v0.itemDrop_199 = (int)MEMORY.ref(1, v1).offset(0x5L).get();
-    v0._19a = (int)MEMORY.ref(2, v1).offset(0x6L).get();
-    loadDrgnFile(1, Integer.toString(fileIndex + 1), file -> FUN_8010989c(file, s0));
+  public static void FUN_80109808(final int enemyAndCombatantId) {
+    final int enemyId = enemyAndCombatantId & 0xffff;
+    final int combatantIndex = enemyAndCombatantId >>> 16;
+    final CombatantStruct1a8 combatant = getCombatant(combatantIndex);
+    final EnemyRewards08 rewards = enemyRewards_80112868.get(enemyId);
+
+    combatant.drops.clear();
+    if(rewards.itemDrop_05.get() != 0xff) {
+      combatant.drops.add(new CombatantStruct1a8.ItemDrop(rewards.itemChance_04.get(), rewards.itemDrop_05.get()));
+    }
+
+    final EnemyRewardsEvent event = EventManager.INSTANCE.postEvent(new EnemyRewardsEvent(enemyId, rewards.xp_00.get(), rewards.gold_02.get(), combatant.drops));
+
+    combatant.xp_194 = event.xp;
+    combatant.gold_196 = event.gold;
+    combatant._19a = rewards._06.get();
+
+    loadDrgnFile(1, Integer.toString(enemyId + 1), file -> FUN_8010989c(file, combatantIndex));
   }
 
   @Method(0x8010989cL)

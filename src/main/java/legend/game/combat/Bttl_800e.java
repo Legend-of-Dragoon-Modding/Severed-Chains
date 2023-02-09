@@ -61,6 +61,8 @@ import legend.game.combat.types.GuardHealEffect14;
 import legend.game.combat.types.MonsterStats1c;
 import legend.game.combat.types.Ptr;
 import legend.game.combat.types.SpriteMetrics08;
+import legend.game.modding.events.EventManager;
+import legend.game.modding.events.combat.EnemyStatsEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptFile;
@@ -5199,9 +5201,9 @@ public final class Bttl_800e {
     final int flags = state.storage_44[7];
     if((flags & 0x4) != 0) {
       // X and Z are swapped
-      x = -data._78.getZ() * 100;
-      y = -data._78.getY() * 100;
-      z = -data._78.getX() * 100;
+      x = -data.targetArrowPos_78.getZ() * 100;
+      y = -data.targetArrowPos_78.getY() * 100;
+      z = -data.targetArrowPos_78.getX() * 100;
     } else {
       //LAB_800ecd90
       if((flags & 0x2) != 0) {
@@ -5595,54 +5597,43 @@ public final class Bttl_800e {
 
     //LAB_800eefcc
     final MonsterStats1c monsterStats = monsterStats_8010ba98.get(monster.charIndex_272);
-    monster.hp_08 = monsterStats.hp_00.get();
-    monster.mp_0c = monsterStats.mp_02.get();
-    monster.maxHp_10 = monsterStats.hp_00.get();
-    monster.maxMp_12 = monsterStats.mp_02.get();
-    monster.specialEffectFlag_14 = monsterStats.specialEffectFlag_0d.get();
+
+    final EnemyStatsEvent statsEvent = EventManager.INSTANCE.postEvent(new EnemyStatsEvent(monster.charIndex_272));
+
+    monster.hp_08 = statsEvent.hp;
+    monster.mp_0c = statsEvent.mp;
+    monster.maxHp_10 = statsEvent.maxHp;
+    monster.maxMp_12 = statsEvent.maxMp;
+    monster.specialEffectFlag_14 = statsEvent.specialEffectFlag;
     monster._16 = 0;
     monster._18 = 0;
     monster._1a = 0;
-    monster.elementFlag_1c = monsterStats.elementFlag_0f.get();
+    monster.elementFlag_1c = statsEvent.elementFlag;
     monster._1e = monsterStats._0e.get();
     monster.elementalResistanceFlag_20 = 0;
-    monster.elementalImmunityFlag_22 = monsterStats.elementalImmunityFlag_10.get();
-    monster.statusResistFlag_24 = monsterStats.statusResistFlag_11.get();
+    monster.elementalImmunityFlag_22 = statsEvent.elementalImmunityFlag;
+    monster.statusResistFlag_24 = statsEvent.statusResistFlag;
     monster._26 = 0;
     monster._28 = 0;
     monster._2a = 0;
     monster._2c = 0;
     monster._2e = 0;
     monster._30 = 0;
-    monster.speed_32 = monsterStats.speed_08.get();
-    monster.attack_34 = monsterStats.attack_04.get();
-    monster.magicAttack_36 = monsterStats.magicAttack_06.get();
-    monster.defence_38 = monsterStats.defence_09.get();
-    monster.magicDefence_3a = monsterStats.magicDefence_0a.get();
+    monster.speed_32 = statsEvent.speed;
+    monster.attack_34 = statsEvent.attack;
+    monster.magicAttack_36 = statsEvent.magicAttack;
+    monster.defence_38 = statsEvent.defence;
+    monster.magicDefence_3a = statsEvent.magicDefence;
     monster.attackHit_3c = 0;
     monster.magicHit_3e = 0;
-    monster.attackAvoid_40 = monsterStats.attackAvoid_0b.get();
-    monster.magicAvoid_42 = monsterStats.magicAvoid_0c.get();
+    monster.attackAvoid_40 = statsEvent.attackAvoid;
+    monster.magicAvoid_42 = statsEvent.magicAvoid;
     monster.onHitStatusChance_44 = 0;
     monster._46 = 0;
     monster._48 = 0;
     monster.onHitStatus_4a = 0;
     monster.selectedAddition_58 = -1;
-    monster.originalHp_5c = monsterStats.hp_00.get();
-    monster.originalMp_5e = monsterStats.mp_02.get();
-    monster.originalAttack_60 = monsterStats.attack_04.get();
-    monster.originalMagicAttack_62 = monsterStats.magicAttack_06.get();
-    monster.originalSpeed_64 = monsterStats.speed_08.get();
-    monster.originalDefence_66 = monsterStats.defence_09.get();
-    monster.originalMagicDefence_68 = monsterStats.magicDefence_0a.get();
-    monster.originalAttackAvoid_6a = monsterStats.attackAvoid_0b.get();
-    monster.originalMagicAvoid_6c = monsterStats.magicAvoid_0c.get();
-    monster.damageReductionFlags_6e = monsterStats.specialEffectFlag_0d.get();
-    monster._70 = monsterStats._0e.get();
-    monster.monsterElementFlag_72 = monsterStats.elementFlag_0f.get();
-    monster.monsterElementalImmunityFlag_74 = monsterStats.elementalImmunityFlag_10.get();
-    monster.monsterStatusResistFlag_76 = monsterStats.statusResistFlag_11.get();
-    monster._78.set(monsterStats.x_12.get(), monsterStats.y_13.get(), monsterStats.z_14.get());
+    monster.targetArrowPos_78.set(monsterStats.targetArrowX_12.get(), monsterStats.targetArrowY_13.get(), monsterStats.targetArrowZ_14.get());
     monster._7e = monsterStats._15.get();
     monster._80 = monsterStats._16.get();
     monster._82 = monsterStats._17.get();
@@ -5650,6 +5641,21 @@ public final class Bttl_800e {
     monster._86 = monsterStats._19.get();
     monster._88 = monsterStats._1a.get();
     monster._8a = monsterStats._1b.get();
+
+    monster.originalHp_5c = monster.hp_08;
+    monster.originalMp_5e = monster.mpMulti_13e;
+    monster.originalAttack_60 = monster.attack_34;
+    monster.originalMagicAttack_62 = monster.magicAttack_36;
+    monster.originalSpeed_64 = monster.speed_32;
+    monster.originalDefence_66 = monster.defence_38;
+    monster.originalMagicDefence_68 = monster.magicDefence_3a;
+    monster.originalAttackAvoid_6a = monster.attackAvoid_40;
+    monster.originalMagicAvoid_6c = monster.magicAvoid_42;
+    monster.damageReductionFlags_6e = monster.specialEffectFlag_14;
+    monster._70 = monster._1e;
+    monster.monsterElementFlag_72 = monster.elementFlag_1c;
+    monster.monsterElementalImmunityFlag_74 = monster.elementalImmunityFlag_22;
+    monster.monsterStatusResistFlag_76 = monster.statusResistFlag_24;
 
     if((monster.damageReductionFlags_6e & 0x8) != 0) {
       monster.physicalImmunity_110 = 1;
@@ -5702,7 +5708,7 @@ public final class Bttl_800e {
       s0.hp_08 = stats.hp_04.get();
       s0.sp_0a = stats.sp_08.get();
       s0.mp_0c = stats.mp_06.get();
-      s0.status_0e = stats.dragoonFlag_0c.get();
+      s0.status_0e = stats.flags_0c.get();
       s0.maxHp_10 = stats.maxHp_66.get();
       s0.maxMp_12 = stats.maxMp_6e.get();
       s0.specialEffectFlag_14 = stats.specialEffectFlag_76.get();

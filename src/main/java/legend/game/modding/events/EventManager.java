@@ -91,12 +91,14 @@ public class EventManager {
     this.register(listener.getClass(), listener);
   }
 
-  public void postEvent(final Event event) {
+  public <T extends Event> T postEvent(final T event) {
     for(final var entry : this.listeners.entrySet()) {
       if(entry.getValue().isInstance(event)) {
         entry.getKey().accept(event);
       }
     }
+
+    return event;
   }
 
   public void clearStaleRefs() {
