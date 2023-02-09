@@ -13,6 +13,8 @@ import legend.game.combat.types.EncounterData38;
 import legend.game.combat.types.EnemyRewards08;
 import legend.game.combat.types.MonsterStats1c;
 import legend.game.combat.types.StageData10;
+import legend.game.modding.events.EventManager;
+import legend.game.modding.events.combat.DropsEvent;
 import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptState;
 import legend.game.types.LodString;
@@ -238,13 +240,19 @@ public class SBtld {
   public static void FUN_80109808(final int enemyAndCombatantId) {
     final int enemyId = enemyAndCombatantId & 0xffff;
     final int combatantIndex = enemyAndCombatantId >>> 16;
-    final CombatantStruct1a8 v0 = getCombatant(combatantIndex);
+    final CombatantStruct1a8 combatant = getCombatant(combatantIndex);
     final EnemyRewards08 rewards = enemyRewards_80112868.get(enemyId);
-    v0.xp_194 = rewards.xp_00.get();
-    v0.gold_196 = rewards.gold_02.get();
-    v0.itemChance_198 = rewards.itemChance_04.get();
-    v0.itemDrop_199 = rewards.itemDrop_05.get();
-    v0._19a = rewards._06.get();
+    combatant.xp_194 = rewards.xp_00.get();
+    combatant.gold_196 = rewards.gold_02.get();
+    combatant.drops.clear();
+
+    if(rewards.itemDrop_05.get() != 0xff) {
+      combatant.drops.add(new CombatantStruct1a8.ItemDrop(rewards.itemChance_04.get(), rewards.itemDrop_05.get()));
+    }
+
+    EventManager.INSTANCE.postEvent(new DropsEvent(enemyId, combatant.drops));
+
+    combatant._19a = rewards._06.get();
     loadDrgnFile(1, Integer.toString(enemyId + 1), file -> FUN_8010989c(file, combatantIndex));
   }
 

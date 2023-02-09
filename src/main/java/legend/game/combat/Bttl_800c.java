@@ -3349,14 +3349,12 @@ public final class Bttl_800c {
           totalXpFromCombat_800bc95c.add(enemyCombatant.xp_194);
 
           if((s0 & 0x2000) == 0) {
-            if(simpleRand() * 100 >> 16 < enemyCombatant.itemChance_198) {
-              if(enemyCombatant.itemDrop_199 != 0xff) {
-                itemsDroppedByEnemies_800bc928.get(itemsDroppedByEnemiesCount_800bc978.get()).set(enemyCombatant.itemDrop_199);
+            for(final CombatantStruct1a8.ItemDrop drop : enemyCombatant.drops) {
+              if(simpleRand() * 100 >> 16 < drop.chance()) {
+                itemsDroppedByEnemies_800bc928.get(itemsDroppedByEnemiesCount_800bc978.get()).set(drop.item());
                 itemsDroppedByEnemiesCount_800bc978.incr();
+                s0 = s0 | 0x2000;
               }
-
-              //LAB_800cd044
-              s0 = s0 | 0x2000;
             }
           }
         }
