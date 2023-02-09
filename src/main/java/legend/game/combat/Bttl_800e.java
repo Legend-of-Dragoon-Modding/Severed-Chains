@@ -5708,7 +5708,7 @@ public final class Bttl_800e {
       s0.hp_08 = stats.hp_04.get();
       s0.sp_0a = stats.sp_08.get();
       s0.mp_0c = stats.mp_06.get();
-      s0.status_0e = stats.dragoonFlag_0c.get();
+      s0.status_0e = stats.flags_0c.get();
       s0.maxHp_10 = stats.maxHp_66.get();
       s0.maxMp_12 = stats.maxMp_6e.get();
       s0.specialEffectFlag_14 = stats.specialEffectFlag_76.get();

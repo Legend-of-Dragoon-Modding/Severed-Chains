@@ -16,8 +16,9 @@ public class ActiveStatsa0 implements MemoryRef {
   public final UnsignedShortRef hp_04;
   public final UnsignedShortRef mp_06;
   public final UnsignedShortRef sp_08;
-  public final UnsignedShortRef _0a;
-  public final UnsignedShortRef dragoonFlag_0c;
+  public final UnsignedShortRef dxp_0a;
+  /** Status, dragoon, etc. */
+  public final UnsignedShortRef flags_0c;
   public final UnsignedByteRef level_0e;
   public final UnsignedByteRef dlevel_0f;
 
@@ -95,8 +96,8 @@ public class ActiveStatsa0 implements MemoryRef {
     this.hp_04 = ref.offset(2, 0x04L).cast(UnsignedShortRef::new);
     this.mp_06 = ref.offset(2, 0x06L).cast(UnsignedShortRef::new);
     this.sp_08 = ref.offset(2, 0x08L).cast(UnsignedShortRef::new);
-    this._0a = ref.offset(2, 0x0aL).cast(UnsignedShortRef::new);
-    this.dragoonFlag_0c = ref.offset(2, 0x0cL).cast(UnsignedShortRef::new);
+    this.dxp_0a = ref.offset(2, 0x0aL).cast(UnsignedShortRef::new);
+    this.flags_0c = ref.offset(2, 0x0cL).cast(UnsignedShortRef::new);
     this.level_0e = ref.offset(1, 0x0eL).cast(UnsignedByteRef::new);
     this.dlevel_0f = ref.offset(1, 0x0fL).cast(UnsignedByteRef::new);
 

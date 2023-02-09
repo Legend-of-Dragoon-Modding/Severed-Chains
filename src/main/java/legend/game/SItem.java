@@ -24,6 +24,8 @@ import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.MainMenuScreen;
 import legend.game.inventory.screens.MenuStack;
 import legend.game.inventory.screens.TooManyItemsScreen;
+import legend.game.modding.events.EventManager;
+import legend.game.modding.events.characters.CharacterStatsEvent;
 import legend.game.scripting.ScriptState;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CharacterData2c;
@@ -2958,25 +2960,27 @@ public final class SItem {
   }
 
   @Method(0x80110030L)
-  public static void loadCharacterStats(long a0) {
-    final long spc0 = a0;
+  public static void loadCharacterStats(final long spc0) {
+    long a0;
 
     clearCharacterStats();
 
     //LAB_80110174
-    for(int charIndex = 0; charIndex < 9; charIndex++) {
-      final ActiveStatsa0 stats = stats_800be5f8.get(charIndex);
+    for(int charId = 0; charId < 9; charId++) {
+      final ActiveStatsa0 stats = stats_800be5f8.get(charId);
 
-      final CharacterData2c charData = gameState_800babc8.charData_32c.get(charIndex);
+      final CharacterData2c charData = gameState_800babc8.charData_32c.get(charId);
 
-      stats.xp_00.set(charData.xp_00.get());
-      stats.hp_04.set(charData.hp_08.get());
-      stats.mp_06.set(charData.mp_0a.get());
-      stats.sp_08.set(charData.sp_0c.get());
-      stats._0a.set(charData.dlevelXp_0e.get());
-      stats.dragoonFlag_0c.set(charData.status_10.get());
-      stats.level_0e.set(charData.level_12.get());
-      stats.dlevel_0f.set(charData.dlevel_13.get());
+      final CharacterStatsEvent statsEvent = EventManager.INSTANCE.postEvent(new CharacterStatsEvent(charId));
+
+      stats.xp_00.set(statsEvent.xp);
+      stats.hp_04.set(statsEvent.hp);
+      stats.mp_06.set(statsEvent.mp);
+      stats.sp_08.set(statsEvent.sp);
+      stats.dxp_0a.set(statsEvent.dxp);
+      stats.flags_0c.set(statsEvent.flags);
+      stats.level_0e.set(statsEvent.level);
+      stats.dlevel_0f.set(statsEvent.dlevel);
 
       //LAB_801101e4
       for(int i = 0; i < 5; i++) {
@@ -2991,28 +2995,27 @@ public final class SItem {
         stats.additionXp_3e.get(i).set(charData.additionXp_22.get(i).get());
       }
 
-      final LevelStuff08 levelStuff = levelStuff_800fbd30.get(charIndex).deref().get(stats.level_0e.get());
-      stats.maxHp_66.set(levelStuff.hp_00.get());
-      stats.addition_68.set(levelStuff.addition_02.get());
-      stats.bodySpeed_69.set(levelStuff.bodySpeed_03.get());
-      stats.bodyAttack_6a.set(levelStuff.bodyAttack_04.get());
-      stats.bodyMagicAttack_6b.set(levelStuff.bodyMagicAttack_05.get());
-      stats.bodyDefence_6c.set(levelStuff.bodyDefence_06.get());
-      stats.bodyMagicDefence_6d.set(levelStuff.bodyMagicDefence_07.get());
+      stats.maxHp_66.set(statsEvent.maxHp);
+      stats.addition_68.set(statsEvent.addition);
+      stats.bodySpeed_69.set(statsEvent.bodySpeed);
+      stats.bodyAttack_6a.set(statsEvent.bodyAttack);
+      stats.bodyMagicAttack_6b.set(statsEvent.bodyMagicAttack);
+      stats.bodyDefence_6c.set(statsEvent.bodyDefence);
+      stats.bodyMagicDefence_6d.set(statsEvent.bodyMagicDefence);
 
-      final MagicStuff08 magicStuff = magicStuff_800fbd54.get(charIndex).deref().get(stats.dlevel_0f.get());
-      stats.maxMp_6e.set(magicStuff.mp_00.get());
-      stats.spellIndex_70.set(magicStuff.spellIndex_02.get());
+      final MagicStuff08 magicStuff = magicStuff_800fbd54.get(charId).deref().get(stats.dlevel_0f.get());
+      stats.maxMp_6e.set(statsEvent.maxMp);
+      stats.spellIndex_70.set(statsEvent.spellId);
       stats._71.set(magicStuff._03.get());
-      stats.dragoonAttack_72.set(magicStuff.dragoonAttack_04.get());
-      stats.dragoonMagicAttack_73.set(magicStuff.dragoonMagicAttack_05.get());
-      stats.dragoonDefence_74.set(magicStuff.dragoonDefence_06.get());
-      stats.dragoonMagicDefence_75.set(magicStuff.dragoonMagicDefence_07.get());
+      stats.dragoonAttack_72.set(statsEvent.dragoonAttack);
+      stats.dragoonMagicAttack_73.set(statsEvent.dragoonMagicAttack);
+      stats.dragoonDefence_74.set(statsEvent.dragoonDefence);
+      stats.dragoonMagicDefence_75.set(statsEvent.dragoonMagicDefence);
 
       final int a2 = stats.selectedAddition_35.get();
       if(a2 != -1) {
         //TODO straighten this out
-        a0 = ptrTable_80114070.offset(a2 * 0x4L).deref(4).offset(MEMORY.ref(1, stats.additionLevels_36.getAddress()).offset(a2 - additionOffsets_8004f5ac.get(charIndex).get()).get() * 0x4L).getAddress();
+        a0 = ptrTable_80114070.offset(a2 * 0x4L).deref(4).offset(MEMORY.ref(1, stats.additionLevels_36.getAddress()).offset(a2 - additionOffsets_8004f5ac.get(charId).get()).get() * 0x4L).getAddress();
 
         stats._9c.set((int)MEMORY.ref(2, a0).offset(0x0L).get());
         stats.additionSpMultiplier_9e.set((int)MEMORY.ref(1, a0).offset(0x2L).get());
@@ -3020,20 +3023,20 @@ public final class SItem {
       }
 
       //LAB_8011042c
-      FUN_8011085c(charIndex);
+      FUN_8011085c(charId);
 
-      long v0 = _800fbd08.get(charIndex).get();
+      long v0 = _800fbd08.get(charId).get();
       a0 = v0 & 0x1fL;
       v0 = v0 >>> 5;
       if((gameState_800babc8.dragoonSpirits_19c.get((int)v0).get() & 0x1 << a0) != 0) {
-        stats.dragoonFlag_0c.or(0x2000);
-        a0 = _800fbd08.get(charIndex).get();
+        stats.flags_0c.or(0x2000);
+        a0 = _800fbd08.get(charId).get();
 
         if((gameState_800babc8._4e6.get() >> a0 & 1) == 0) {
           gameState_800babc8._4e6.or(1 << a0);
 
-          stats.mp_06.set(magicStuff.mp_00.get());
-          stats.maxMp_6e.set(magicStuff.mp_00.get());
+          stats.mp_06.set(statsEvent.maxMp);
+          stats.maxMp_6e.set(statsEvent.maxMp);
         }
       } else {
         //LAB_801104ec
@@ -3043,20 +3046,20 @@ public final class SItem {
       }
 
       //LAB_801104f8
-      if(charIndex == 0) {
+      if(charId == 0) {
         v0 = _800fbd08.get(9).get();
 
         a0 = v0 & 0x1fL;
         v0 = v0 >>> 5;
         if((gameState_800babc8.dragoonSpirits_19c.get((int)v0).get() & 0x1 << a0) != 0) {
-          stats.dragoonFlag_0c.or(0x6000);
+          stats.flags_0c.or(0x6000);
 
           final long a1 = _800fbd08.get(0).get();
 
           if((gameState_800babc8._4e6.get() >> a1 & 1) == 0) {
             gameState_800babc8._4e6.or(1 << a1);
-            stats.mp_06.set(magicStuff.mp_00.get());
-            stats.maxMp_6e.set(magicStuff.mp_00.get());
+            stats.mp_06.set(statsEvent.maxMp);
+            stats.maxMp_6e.set(statsEvent.maxMp);
           } else {
             //LAB_80110590
             stats.mp_06.set(charData.mp_0a.get());

@@ -4977,8 +4977,8 @@ public final class Scus94491BpeSegment_8002 {
       stats.hp_04.set(0);
       stats.mp_06.set(0);
       stats.sp_08.set(0);
-      stats._0a.set(0);
-      stats.dragoonFlag_0c.set(0);
+      stats.dxp_0a.set(0);
+      stats.flags_0c.set(0);
       stats.level_0e.set(0);
       stats.dlevel_0f.set(0);
 
