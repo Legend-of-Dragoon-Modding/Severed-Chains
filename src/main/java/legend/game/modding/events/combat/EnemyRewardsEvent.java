@@ -5,13 +5,19 @@ import legend.game.modding.events.Event;
 
 import java.util.List;
 
-public class DropsEvent extends Event {
+public class EnemyRewardsEvent extends Event {
   public final int enemyId;
   private final List<CombatantStruct1a8.ItemDrop> drops;
 
-  public DropsEvent(final int enemyId, final List<CombatantStruct1a8.ItemDrop> drops) {
+  public int xp;
+  public int gold;
+
+  public EnemyRewardsEvent(final int enemyId, final int xp, final int gold, final List<CombatantStruct1a8.ItemDrop> drops) {
     this.enemyId = enemyId;
     this.drops = drops;
+
+    this.xp = xp;
+    this.gold = gold;
   }
 
   public void clear() {
