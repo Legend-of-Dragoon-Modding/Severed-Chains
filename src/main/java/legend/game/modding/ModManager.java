@@ -1,6 +1,5 @@
 package legend.game.modding;
 
-import legend.game.modding.events.EventManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.reflections.Reflections;
@@ -20,7 +19,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class ModManager {
-  private static final Logger LOGGER = LogManager.getFormatterLogger(EventManager.class);
+  private static final Logger LOGGER = LogManager.getFormatterLogger(ModManager.class);
 
   private ClassLoader modClassLoader;
   private URL[] modUrls;
@@ -67,7 +66,7 @@ public class ModManager {
         LOGGER.info("Loaded mod: %s", key);
       } catch(final InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException ex) {
         LOGGER.warn("FAILED TO LOAD MOD: %s", key);
-        LOGGER.warn(ex);
+        LOGGER.warn("Exception:", ex);
       }
     });
   }
