@@ -10,8 +10,9 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.CheckBox?>
 
-<VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="legend.game.debugger.DebuggerController">
+<VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="legend.game.debugger.DebuggerController">
    <MenuBar VBox.vgrow="NEVER">
       <Menu mnemonicParsing="false" text="Debuggers">
          <MenuItem fx:id="menuDebuggersScript" mnemonicParsing="false" onAction="#showScriptDebugger" text="Script" />
@@ -48,13 +49,12 @@
                   <Button fx:id="setVsyncMode" mnemonicParsing="false" onAction="#setVsyncMode" text="Set" />
                </children>
             </HBox>
-            <Label text="Save Anywhere" />
-            <Button mnemonicParsing="false" onAction="#setSaveAnywhere" text="Set" />
+            <CheckBox fx:id="saveAnywhere" mnemonicParsing="false" onAction="#toggleSaveAnywhere" text="Save Anywhere" />
          </VBox>
          <VBox prefHeight="374.0" prefWidth="213.0">
             <children>
                <Label text="Battle" textFill="RED" />
-               <Label text="UI Color" />
+               <CheckBox fx:id="battleUiColour" mnemonicParsing="false" onAction="#toggleBattleUiColour" text="UI Colour" />
                <HBox prefHeight="19.0" prefWidth="213.0">
                   <children>
                      <Spinner fx:id="battleUIColourR" editable="true" prefHeight="25.0" prefWidth="75.0" />
@@ -68,6 +68,8 @@
                      <Button mnemonicParsing="false" onAction="#setBattleUIRGB" text="Set" />
                   </children>
                </HBox>
+               <CheckBox fx:id="autoAddition" mnemonicParsing="false" onAction="#toggleAutoAddition" text="Auto Additions" />
+               <CheckBox fx:id="autoMeter" mnemonicParsing="false" onAction="#toggleAutoDragoonMeter" text="Auto Dragoon Meter" />
             </children>
          </VBox>
       </HBox>

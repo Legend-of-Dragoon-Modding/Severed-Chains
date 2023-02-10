@@ -1,7 +1,5 @@
 package legend.core;
 
-import legend.game.combat.Bttl_800c;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -27,6 +25,9 @@ public final class Config {
     properties.setProperty("battle_ui_r", "0");
     properties.setProperty("battle_ui_g", "41");
     properties.setProperty("battle_ui_b", "159");
+    properties.setProperty("save_anywhere", "false");
+    properties.setProperty("auto_addition", "false");
+    properties.setProperty("auto_dragoon_meter", "false");
   }
 
   public static int windowWidth() {
@@ -69,6 +70,34 @@ public final class Config {
     return readBool("battle_ui_colour_change", false);
   }
 
+  public static void toggleBattleUIColour() {
+    properties.setProperty("battle_ui_colour_change", String.valueOf(!changeBattleRGB()));
+  }
+
+  public static boolean saveAnywhere() {
+    return readBool("save_anywhere", false);
+  }
+
+  public static void toggleSaveAnywhere() {
+    properties.setProperty("save_anywhere", String.valueOf(!saveAnywhere()));
+  }
+
+  public static boolean autoAddition() {
+    return readBool("auto_addition", false);
+  }
+
+  public static void toggleAutoAddition() {
+    properties.setProperty("auto_addition", String.valueOf(!autoAddition()));
+  }
+
+  public static boolean autoDragoonMeter() {
+    return readBool("auto_dragoon_meter", false);
+  }
+
+  public static void toggleAutoDragoonMeter() {
+    properties.setProperty("auto_dragoon_meter", String.valueOf(!autoDragoonMeter()));
+  }
+
   public static int getBattleRGB() {
     int[] rgbArray = new int[] {
       readInt("battle_ui_r", 0, 0, 255),
@@ -79,23 +108,24 @@ public final class Config {
 
     return (
       (0xff & rgbArray[3]) << 24 |
-      (0xff & rgbArray[2]) << 16 |
-      (0xff & rgbArray[1]) << 8  |
-      (0xff & rgbArray[0]) << 0
+        (0xff & rgbArray[2]) << 16 |
+        (0xff & rgbArray[1]) << 8  |
+        (0xff & rgbArray[0]) << 0
     );
   }
 
   public static void setBattleRGB(int rgb) {
     int[] rgbArray = new int[] {
-            ((rgb >> 24) & 0xff),
-            ((rgb >> 16) & 0xff),
-            ((rgb >> 8)  & 0xff),
-            ((rgb >> 0)  & 0xff)
+      ((rgb >> 24) & 0xff),
+      ((rgb >> 16) & 0xff),
+      ((rgb >> 8)  & 0xff),
+      ((rgb >> 0)  & 0xff)
     };
 
     properties.setProperty("battle_ui_r", String.valueOf(rgbArray[3]));
     properties.setProperty("battle_ui_g", String.valueOf(rgbArray[2]));
     properties.setProperty("battle_ui_b", String.valueOf(rgbArray[1]));
+    properties.setProperty("battle_ui_colour_change", "true");
   }
 
   private static int readInt(final String key, final int defaultVal, final int min, final int max) {
