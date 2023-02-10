@@ -3,6 +3,7 @@ package legend.game.debugger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
@@ -15,7 +16,6 @@ import static legend.game.SMap.FUN_800e5534;
 import static legend.game.SMap.encounterData_800f64c4;
 import static legend.game.SMap.smapLoadingStage_800cb430;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
-import static legend.game.Scus94491BpeSegment_8005.standingInSavePoint_8005a368;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
@@ -59,19 +59,31 @@ public class DebuggerController {
   public Button setVsyncMode;
 
   @FXML
+  public CheckBox battleUiColour;
+  @FXML
   public Spinner<Integer> battleUIColourR;
   @FXML
   public Spinner<Integer> battleUIColourG;
   @FXML
   public Spinner<Integer> battleUIColourB;
+  @FXML
+  public CheckBox saveAnywhere;
+  @FXML
+  public CheckBox autoAddition;
+  @FXML
+  public CheckBox autoMeter;
 
   public void initialize() {
     this.encounterId.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0));
     this.mapId.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0));
     this.vsyncMode.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, Integer.MAX_VALUE, 1));
-    this.battleUIColourR.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, 0));
-    this.battleUIColourG.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, 41));
-    this.battleUIColourB.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, 159));
+    this.battleUiColour.setSelected(Config.changeBattleRGB());
+    this.saveAnywhere.setSelected(Config.saveAnywhere());
+    this.battleUIColourR.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (Config.getBattleRGB() & 0xff)));
+    this.battleUIColourG.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getBattleRGB() >> 8)  & 0xff)));
+    this.battleUIColourB.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getBattleRGB() >> 16)  & 0xff)));
+    this.autoAddition.setSelected(Config.autoAddition());
+    this.autoMeter.setSelected(Config.autoDragoonMeter());
   }
 
   @FXML
@@ -141,9 +153,10 @@ public class DebuggerController {
   }
 
   @FXML
-  private void setSaveAnywhere(final ActionEvent event) {
-    standingInSavePoint_8005a368.set(1);
-  }
+  private void toggleSaveAnywhere(final ActionEvent event) { Config.toggleSaveAnywhere(); }
+
+  @FXML
+  private void toggleBattleUiColour(final ActionEvent event) { Config.toggleBattleUIColour(); }
 
   @FXML
   private void getBattleUIRGB(final ActionEvent event) {
@@ -171,11 +184,22 @@ public class DebuggerController {
 
     final int rgb =
       (0xff & rgbArray[3]) << 24 |
-      (0xff & rgbArray[2]) << 16 |
-      (0xff & rgbArray[1]) << 8  |
-       0xff & rgbArray[0];
+        (0xff & rgbArray[2]) << 16 |
+        (0xff & rgbArray[1]) << 8  |
+        0xff & rgbArray[0];
 
     Config.setBattleRGB(rgb);
     Bttl_800c._800c7004.set(rgb);
+    this.battleUiColour.setSelected(true);
+  }
+
+  @FXML
+  private void toggleAutoAddition(final ActionEvent event) {
+    Config.toggleAutoAddition();
+  }
+
+  @FXML
+  private void toggleAutoDragoonMeter(final ActionEvent event) {
+    Config.toggleAutoDragoonMeter();
   }
 }
