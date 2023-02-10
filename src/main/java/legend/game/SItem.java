@@ -1,5 +1,6 @@
 package legend.game;
 
+import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.Tuple;
 import legend.core.gpu.GpuCommandPoly;
@@ -577,7 +578,7 @@ public final class SItem {
           canSave_8011dc88.setu(0x1L);
         } else {
           gameState_800babc8.isOnWorldMap_4e4.set(0);
-          canSave_8011dc88.setu(standingInSavePoint_8005a368.get());
+          canSave_8011dc88.setu(Config.saveAnywhere() ? 1 : standingInSavePoint_8005a368.get());
         }
 
         inventoryMenuState_800bdc28.set(InventoryMenuState.AWAIT_INIT_1);

@@ -1,5 +1,6 @@
 package legend.game.combat;
 
+import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.Gpu;
@@ -4142,6 +4143,11 @@ public final class SEffe {
 
                   //LAB_80107664
                   final long v1 = joypadPress_8007a398.get();
+                  if(Config.autoAddition()) {
+                    _8011a014.offset(s0).setu(1);
+                    MEMORY.ref(1, s2).offset(0x1L).setu(1);
+                  }
+
                   if((v1 & 0x60) != 0) {
                     _8011a014.offset(s0).setu(-1);
 
@@ -4463,13 +4469,13 @@ public final class SEffe {
 
           //LAB_801086bc
           //LAB_801086e0
-          if(FUN_80108460(data, 0) != 0 && data._13 == 1 || (joypadPress_8007a398.get() >>> 4 & 0x2L) != 0 && data._13 == 0) {
+          if(FUN_80108460(data, 0) != 0 && data._13 == 1 || (joypadPress_8007a398.get() >>> 4 & 0x2L) != 0 && data._13 == 0 || (Config.autoDragoonMeter() && FUN_80108460(data, 0) != 0)) {
             //LAB_8010870c
             data._11 = 4;
             data._0d = 0;
 
             final int v0 = FUN_80108460(data, 0);
-            if(v0 != 0) {
+            if(v0 != 0 || Config.autoDragoonMeter()) {
               data._07 = v0;
               data._0d = 4;
               _80119f40.setu(0);
