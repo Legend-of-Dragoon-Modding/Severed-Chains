@@ -107,8 +107,7 @@ public class TooManyItemsScreen extends MenuScreen {
         this.menuState = MenuState._5;
       }
 
-      case _5 ->
-        this.FUN_8010fd80(false, this.droppedItems.get(this.dropIndex).itemId_00, this.invIndex, this.invScroll, 0);
+      case _5 -> this.FUN_8010fd80(false, this.droppedItems.get(this.dropIndex).itemId_00, this.invIndex, this.invScroll, 0);
 
       case _6 -> {
         this.dropIndex = 0;
@@ -120,8 +119,7 @@ public class TooManyItemsScreen extends MenuScreen {
         this.menuState = MenuState._8;
       }
 
-      case _8 ->
-        this.FUN_8010fd80(false, this.droppedItems.get(this.dropIndex).itemId_00, this.invIndex, this.invScroll, 0x1L);
+      case _8 -> this.FUN_8010fd80(false, this.droppedItems.get(this.dropIndex).itemId_00, this.invIndex, this.invScroll, 0x1L);
 
       case _9 -> {
         final int slotCount;

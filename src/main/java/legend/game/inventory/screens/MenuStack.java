@@ -21,6 +21,8 @@ public class MenuStack {
   private Window.Events.Scroll onMouseScroll;
   private Window.Events.Key onKeyPress;
 
+  private Window.Events.Key onKeyRepeat;
+
   private final Int2ObjectMap<Point2D> mousePressCoords = new Int2ObjectOpenHashMap<>();
 
   public void pushScreen(final MenuScreen screen) {
@@ -78,6 +80,7 @@ public class MenuStack {
     this.onMouseRelease = GPU.window().events.onMouseRelease(this::mouseRelease);
     this.onMouseScroll = GPU.window().events.onMouseScroll(this::mouseScroll);
     this.onKeyPress = GPU.window().events.onKeyPress(this::keyPress);
+    this.onKeyRepeat = GPU.window().events.onKeyRepeat(this::keyPress);
   }
 
   public void removeInputHandlers() {
@@ -86,6 +89,7 @@ public class MenuStack {
     GPU.window().events.removeMouseRelease(this.onMouseRelease);
     GPU.window().events.removeMouseScroll(this.onMouseScroll);
     GPU.window().events.removeKeyPress(this.onKeyPress);
+    GPU.window().events.removeKeyRepeat(this.onKeyRepeat);
   }
 
   private void mouseMove(final Window window, final double x, final double y) {
@@ -144,5 +148,6 @@ public class MenuStack {
     this.input(screen -> screen.keyPress(key, scancode, mods));
   }
 
-  private record Point2D(double x, double y) { }
+  private record Point2D(double x, double y) {
+  }
 }

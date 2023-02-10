@@ -23,6 +23,7 @@ import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
 import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER;
 
 public abstract class SaveListScreen extends MenuScreen {
   protected int loadingStage;
@@ -140,9 +141,42 @@ public abstract class SaveListScreen extends MenuScreen {
 
   @Override
   protected void keyPress(final int key, final int scancode, final int mods) {
-    if(key == GLFW.GLFW_KEY_ESCAPE && mods == 0) {
-      playSound(3);
-      this.loadingStage = 2;
+    if(mods != 0) {
+      return; // preserving the old logic
+    }
+    switch(key) {
+      case GLFW.GLFW_KEY_ESCAPE:
+        playSound(3);
+        this.loadingStage = 2;
+        break;
+      case GLFW.GLFW_KEY_UP:
+        playSound(1);
+        if(this.selectedSlot > 0) {
+          this.selectedSlot--;
+          this.highlightLeftHalf.y_44 = getSlotY(this.selectedSlot);
+          this.highlightRightHalf.y_44 = getSlotY(this.selectedSlot);
+        } else {
+          this.scrollAccumulator++;
+          this.highlightLeftHalf.y_44 = getSlotY(this.selectedSlot);
+          this.highlightRightHalf.y_44 = getSlotY(this.selectedSlot);
+        }
+        break;
+      case GLFW.GLFW_KEY_DOWN:
+        playSound(1);
+        if(this.selectedSlot < 2) {
+          this.selectedSlot++;
+          this.highlightLeftHalf.y_44 = getSlotY(this.selectedSlot);
+          this.highlightRightHalf.y_44 = getSlotY(this.selectedSlot);
+        } else {
+          this.scrollAccumulator--;
+          this.highlightLeftHalf.y_44 = getSlotY(this.selectedSlot);
+          this.highlightRightHalf.y_44 = getSlotY(this.selectedSlot);
+        }
+        break;
+      case GLFW_KEY_ENTER:
+      case GLFW.GLFW_KEY_S:
+        this.onSelect(this.scroll + this.selectedSlot);
+        break;
     }
   }
 
@@ -217,7 +251,10 @@ public abstract class SaveListScreen extends MenuScreen {
   }
 
   protected abstract int menuCount();
+
   protected abstract void renderSaveSlot(final int slot, final int fileIndex, final boolean allocate);
+
   protected abstract void onSelect(final int slot);
+
   protected abstract void onMessageboxResult(final MessageBoxResult result);
 }
