@@ -271,81 +271,89 @@ public class ItemListScreen extends MenuScreen {
     if(mods != 0) {
       return;
     }
+
     if(this.loadingStage != 1) {
       return;
     }
 
     switch(key) {
-      case GLFW_KEY_ESCAPE:
-        this.loadingStage = 100;
-        break;
-      case GLFW_KEY_DOWN:
-        playSound(1);
+      case GLFW_KEY_ESCAPE -> this.loadingStage = 100;
+
+      case GLFW_KEY_DOWN -> {
         if(this.leftSide) {
           if(this.selectedSlotEquipment < 6) {
+            playSound(1);
             this.selectedSlotEquipment++;
           } else if(this.slotScrollEquipment < gameState_800babc8.equipmentCount_1e4.get() + (int)this.equippedItemsCount - 7) {
+            playSound(1);
             this.slotScrollEquipment++;
           }
+
           this.equipmentHighlight.y_44 = FUN_800fc814(this.selectedSlotEquipment) + 32;
           this.setCurrent(gameState_800babc8.equipment_1e8, this.equipment, this.slotScrollEquipment + this.selectedSlotEquipment);
         } else {
           if(this.selectedSlotItem < 6) {
+            playSound(1);
             this.selectedSlotItem++;
           } else if(this.slotScrollItem < gameState_800babc8.itemCount_1e6.get() - 7) {
+            playSound(1);
             this.slotScrollItem++;
           }
+
           this.itemHighlight.y_44 = FUN_800fc814(this.selectedSlotItem) + 32;
           this.setCurrent(gameState_800babc8.items_2e9, this.items, this.slotScrollItem + this.selectedSlotItem);
         }
-        break;
-      case GLFW_KEY_UP:
+      }
+      case GLFW_KEY_UP -> {
         if(this.leftSide) {
           if(this.selectedSlotEquipment > 0) {
+            playSound(1);
             this.selectedSlotEquipment--;
           } else if(this.slotScrollEquipment > 0) {
+            playSound(1);
             this.slotScrollEquipment--;
           }
+
           this.equipmentHighlight.y_44 = FUN_800fc814(this.selectedSlotEquipment) + 32;
           this.setCurrent(gameState_800babc8.equipment_1e8, this.equipment, this.slotScrollEquipment + this.selectedSlotEquipment);
         } else {
           if(this.selectedSlotItem > 0) {
+            playSound(1);
             this.selectedSlotItem--;
           } else if(this.slotScrollItem > 0) {
+            playSound(1);
             this.slotScrollItem--;
           }
+
           this.itemHighlight.y_44 = FUN_800fc814(this.selectedSlotItem) + 32;
           this.setCurrent(gameState_800babc8.items_2e9, this.items, this.slotScrollItem + this.selectedSlotItem);
         }
-        break;
-      case GLFW_KEY_LEFT:
+      }
+
+      case GLFW_KEY_LEFT -> {
+        playSound(1);
         this.leftSide = true;
-        break;
-      case GLFW_KEY_RIGHT:
+      }
+
+      case GLFW_KEY_RIGHT -> {
+        playSound(1);
         this.leftSide = false;
-        break;
-      case GLFW_KEY_ENTER:
-        if(this.leftSide) {
-          if((this.currentDisplayList.get(this.currentIndex).flags_02 & 0x2000) != 0) {
-            playSound(40);
-          } else {
-            playSound(2);
-            menuStack.pushScreen(new MessageBoxScreen(new LodString("Discard?"), 2, this::discard));
-          }
+      }
+
+      case GLFW_KEY_ENTER -> {
+        if((this.currentDisplayList.get(this.currentIndex).flags_02 & 0x2000) != 0) {
+          playSound(40);
         } else {
-          if((this.currentDisplayList.get(this.currentIndex).flags_02 & 0x2000) != 0) {
-            playSound(40);
-          } else {
-            playSound(2);
-            menuStack.pushScreen(new MessageBoxScreen(new LodString("Discard?"), 2, this::discard));
-          }
+          playSound(2);
+          menuStack.pushScreen(new MessageBoxScreen(new LodString("Discard?"), 2, this::discard));
         }
-        break;
-      case GLFW_KEY_S:
+      }
+
+      case GLFW_KEY_W -> {
         playSound(2);
         sortItems(this.equipment, gameState_800babc8.equipment_1e8, gameState_800babc8.equipmentCount_1e4.get() + this.equippedItemsCount);
         sortItems(this.items, gameState_800babc8.items_2e9, gameState_800babc8.itemCount_1e6.get());
-        break;
+      }
     }
   }
 

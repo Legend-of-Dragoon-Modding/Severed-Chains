@@ -308,7 +308,7 @@ public class MainMenuScreen extends MenuScreen {
           this.selectedMenuOption = i;
           this.selectedMenuOptionRenderable.y_44 = getMenuOptionY(i);
 
-          openScreen(i, true);
+          this.openScreen(i, true);
         }
       }
 
@@ -316,7 +316,7 @@ public class MainMenuScreen extends MenuScreen {
         if(MathHelper.inBox(x, y, 114, this.getItemSubmenuOptionY(i), 55, 13)) {
           this.selectedItemSubmenuOption = i;
           this.selectedItemMenuOptionRenderable.y_44 = this.getItemSubmenuOptionY(i) - 2;
-          openScreen(i, false);
+          this.openScreen(i, false);
         }
       }
     } else if(this.loadingStage == 3) {
@@ -359,62 +359,62 @@ public class MainMenuScreen extends MenuScreen {
   protected void keyPress(final int key, final int scancode, final int mods) {
     if(this.loadingStage == 2) {
       switch(key) {
-        case GLFW_KEY_ESCAPE:
+        case GLFW_KEY_ESCAPE -> {
           playSound(3);
           this.loadingStage = 100;
-          break;
-        case GLFW_KEY_UP:
+        }
+
+        case GLFW_KEY_UP -> {
           if(this.onLeftMenu) {
             if(this.selectedMenuOption > 0) {
               playSound(1);
               this.selectedMenuOption--;
               this.selectedMenuOptionRenderable.y_44 = getMenuOptionY(this.selectedMenuOption);
             }
-          } else {
-            if(this.selectedItemSubmenuOption > 0) {
-              playSound(1);
-              this.selectedItemSubmenuOption--;
-              this.selectedItemMenuOptionRenderable.y_44 = this.getItemSubmenuOptionY(this.selectedItemSubmenuOption) - 2;
-            }
+          } else if(this.selectedItemSubmenuOption > 0) {
+            playSound(1);
+            this.selectedItemSubmenuOption--;
+            this.selectedItemMenuOptionRenderable.y_44 = this.getItemSubmenuOptionY(this.selectedItemSubmenuOption) - 2;
           }
-          break;
-        case GLFW_KEY_DOWN:
+        }
+
+        case GLFW_KEY_DOWN -> {
           if(this.onLeftMenu) {
             if(this.selectedMenuOption < 5) {
               playSound(1);
               this.selectedMenuOption++;
               this.selectedMenuOptionRenderable.y_44 = getMenuOptionY(this.selectedMenuOption);
             }
-          } else {
-            if(this.selectedItemSubmenuOption < 3) {
-              playSound(1);
-              this.selectedItemSubmenuOption++;
-              this.selectedItemMenuOptionRenderable.y_44 = this.getItemSubmenuOptionY(this.selectedItemSubmenuOption) - 2;
-            }
+          } else if(this.selectedItemSubmenuOption < 3) {
+            playSound(1);
+            this.selectedItemSubmenuOption++;
+            this.selectedItemMenuOptionRenderable.y_44 = this.getItemSubmenuOptionY(this.selectedItemSubmenuOption) - 2;
           }
-          break;
-        case GLFW_KEY_LEFT:
+        }
+
+        case GLFW_KEY_LEFT -> {
           if(!this.onLeftMenu) {
             this.onLeftMenu = true;
             playSound(1);
           }
-          break;
-        case GLFW_KEY_RIGHT:
+        }
+
+        case GLFW_KEY_RIGHT -> {
           if(this.onLeftMenu) {
             playSound(1);
             this.onLeftMenu = false;
             this.selectedItemSubmenuOption = 0;
             this.selectedItemMenuOptionRenderable.y_44 = this.getItemSubmenuOptionY(0) - 2;
           }
-          break;
-        case GLFW_KEY_ENTER:
-        case GLFW_KEY_S:
+        }
+
+        case GLFW_KEY_ENTER, GLFW_KEY_S -> {
           if(this.onLeftMenu) {
-            openScreen(this.selectedMenuOption, true);
+            this.openScreen(this.selectedMenuOption, true);
           } else {
-            openScreen(this.selectedItemSubmenuOption, false);
+            this.openScreen(this.selectedItemSubmenuOption, false);
           }
-          break;
+        }
       }
     } else if(this.loadingStage == 3) {
       playSound(2);
@@ -448,7 +448,7 @@ public class MainMenuScreen extends MenuScreen {
     }
   }
 
-  private void openScreen(final int index, boolean isLeft) {
+  private void openScreen(final int index, final boolean isLeft) {
     if(isLeft) {
       switch(index) {
         case 0 -> {
@@ -459,6 +459,7 @@ public class MainMenuScreen extends MenuScreen {
             this.loadingStage = 0;
           }));
         }
+
         case 1 -> {
           playSound(2);
 
@@ -467,6 +468,7 @@ public class MainMenuScreen extends MenuScreen {
             this.loadingStage = 0;
           }));
         }
+
         case 2 -> {
           playSound(2);
 
@@ -475,6 +477,7 @@ public class MainMenuScreen extends MenuScreen {
             this.loadingStage = 0;
           }));
         }
+
         case 3 -> {
           playSound(2);
 
@@ -483,12 +486,14 @@ public class MainMenuScreen extends MenuScreen {
             this.loadingStage = 0;
           }));
         }
+
         case 4 -> {
           playSound(4);
           this.selectedItemSubmenuOption = 0;
           setMessageBoxText(messageBox_8011dc90, null, 0x1);
           this.loadingStage = 3;
         }
+
         case 5 -> {
           if(canSave_8011dc88.get() != 0) {
             playSound(2);
@@ -505,40 +510,37 @@ public class MainMenuScreen extends MenuScreen {
       }
     } else {
       switch(index) {
-        case 0:
+        case 0 -> {
           playSound(2);
-
           menuStack.pushScreen(new UseItemScreen(() -> {
             menuStack.popScreen();
             this.loadingStage = 0;
           }));
-          break;
-        case 1:
-          playSound(2);
+        }
 
+        case 1 -> {
+          playSound(2);
           menuStack.pushScreen(new ItemListScreen(() -> {
             menuStack.popScreen();
             this.loadingStage = 0;
           }));
-          break;
-        case 2:
-          playSound(2);
+        }
 
+        case 2 -> {
+          playSound(2);
           menuStack.pushScreen(new GoodsScreen(() -> {
             menuStack.popScreen();
             this.loadingStage = 0;
           }));
-          break;
-        case 3:
-          playSound(2);
+        }
 
+        case 3 -> {
+          playSound(2);
           menuStack.pushScreen(new DabasScreen(() -> {
             menuStack.popScreen();
             this.loadingStage = 0;
           }));
-          break;
-        default:
-          break;
+        }
       }
     }
   }

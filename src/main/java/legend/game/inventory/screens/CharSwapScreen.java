@@ -218,25 +218,30 @@ public class CharSwapScreen extends MenuScreen {
     if(this.loadingStage == 2) {
       // primary character left side
       switch(key) {
-        case GLFW_KEY_ESCAPE:
+        case GLFW_KEY_ESCAPE -> {
           playSound(3);
           this.loadingStage = 100;
-          break;
-        case GLFW_KEY_DOWN:
+        }
+
+        case GLFW_KEY_DOWN -> {
           playSound(1);
           if(this.primaryCharIndex < 2) {
             this.primaryCharIndex++;
           }
+
           this.primaryCharHighlight.y_44 = getSlotY(this.primaryCharIndex);
-        break;
-        case GLFW_KEY_UP:
+        }
+
+        case GLFW_KEY_UP -> {
           playSound(1);
           if(this.primaryCharIndex > 0) {
             this.primaryCharIndex--;
           }
+
           this.primaryCharHighlight.y_44 = getSlotY(this.primaryCharIndex);
-          break;
-        case GLFW_KEY_S:
+        }
+
+        case GLFW_KEY_S -> {
           final int charIndex = gameState_800babc8.charIndex_88.get(this.primaryCharIndex).get();
           if(Config.unlockParty() || charIndex == -1 || (gameState_800babc8.charData_32c.get(charIndex).partyFlags_04.get() & 0x20) == 0) {
             playSound(2);
@@ -246,50 +251,61 @@ public class CharSwapScreen extends MenuScreen {
           } else {
             playSound(40);
           }
-          break;
+        }
       }
     } else if(this.loadingStage == 3) {
-
       switch(key) {
-        case GLFW_KEY_DOWN:
+        case GLFW_KEY_DOWN -> {
           playSound(1);
+
           if(this.secondaryCharIndex < 3) {
             this.secondaryCharIndex += 3;
           }
+
           this.secondaryCharHighlight.x_40 = this.getSecondaryCharX(this.secondaryCharIndex);
           this.secondaryCharHighlight.y_44 = this.getSecondaryCharY(this.secondaryCharIndex);
-          break;
-        case GLFW_KEY_UP:
+        }
+
+        case GLFW_KEY_UP -> {
           playSound(1);
+
           if(this.secondaryCharIndex > 2) {
             this.secondaryCharIndex -= 3;
           }
+
           this.secondaryCharHighlight.x_40 = this.getSecondaryCharX(this.secondaryCharIndex);
           this.secondaryCharHighlight.y_44 = this.getSecondaryCharY(this.secondaryCharIndex);
-          break;
-        case GLFW_KEY_LEFT:
+        }
+
+        case GLFW_KEY_LEFT -> {
           playSound(1);
+
           if(this.secondaryCharIndex > 0) {
             this.secondaryCharIndex--;
           }
+
           this.secondaryCharHighlight.x_40 = this.getSecondaryCharX(this.secondaryCharIndex);
           this.secondaryCharHighlight.y_44 = this.getSecondaryCharY(this.secondaryCharIndex);
-          break;
-        case GLFW_KEY_RIGHT:
+        }
+
+        case GLFW_KEY_RIGHT -> {
           playSound(1);
+
           if(this.secondaryCharIndex < 5) {
             this.secondaryCharIndex++;
           }
+
           this.secondaryCharHighlight.x_40 = this.getSecondaryCharX(this.secondaryCharIndex);
           this.secondaryCharHighlight.y_44 = this.getSecondaryCharY(this.secondaryCharIndex);
-          break;
-        case GLFW_KEY_ESCAPE:
+        }
+
+        case GLFW_KEY_ESCAPE -> {
           playSound(3);
           unloadRenderable(this.secondaryCharHighlight);
           this.loadingStage = 2;
-          break;
-        case GLFW_KEY_ENTER:
-        case GLFW_KEY_S: {
+        }
+
+        case GLFW_KEY_ENTER, GLFW_KEY_S -> {
           this.secondaryCharHighlight.x_40 = this.getSecondaryCharX(this.secondaryCharIndex);
           this.secondaryCharHighlight.y_44 = this.getSecondaryCharY(this.secondaryCharIndex);
 
@@ -311,7 +327,6 @@ public class CharSwapScreen extends MenuScreen {
           } else {
             playSound(40);
           }
-          break;
         }
       }
     }

@@ -36,13 +36,13 @@ import static legend.game.Scus94491BpeSegment_8002.takeEquipment;
 import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
 
 public class EquipmentScreen extends MenuScreen {
   private int loadingStage;
@@ -244,45 +244,57 @@ public class EquipmentScreen extends MenuScreen {
     }
 
     switch(key) {
-      case GLFW_KEY_ESCAPE:
+      case GLFW_KEY_ESCAPE -> {
         playSound(3);
         this.loadingStage = 100;
-        break;
-      case GLFW_KEY_DOWN:
+      }
+
+      case GLFW_KEY_DOWN -> {
         playSound(1);
+
         if(this.selectedSlot < 3) {
           this.selectedSlot++;
         } else {
           this.scrollAccumulator = -1;
         }
+
         this.itemHighlight.y_44 = this.FUN_800fc804(this.selectedSlot);
-        break;
-      case GLFW_KEY_UP:
+      }
+
+      case GLFW_KEY_UP -> {
         playSound(1);
+
         if(this.selectedSlot > 0) {
           this.selectedSlot--;
         } else {
           this.scrollAccumulator = 1;
         }
+
         this.itemHighlight.y_44 = this.FUN_800fc804(this.selectedSlot);
-        break;
-      case GLFW_KEY_LEFT:
+      }
+
+      case GLFW_KEY_LEFT -> {
         if(this.charSlot > 0) {
           this.charSlot--;
           this.loadingStage = 1;
         }
-        break;
-      case GLFW_KEY_RIGHT:
+      }
+
+      case GLFW_KEY_RIGHT -> {
         if(this.charSlot < characterCount_8011d7c4.get() - 1) {
           this.charSlot++;
           this.loadingStage = 1;
         }
-        break;
-      case GLFW_KEY_ENTER:
+      }
+
+      case GLFW_KEY_ENTER -> {
         playSound(2);
+
         final int itemIndex = this.selectedSlot + this.slotScroll;
+
         if(itemIndex < gameState_800babc8.equipmentCount_1e4.get()) {
           final int equipmentId = this.menuItems.get(itemIndex).itemId_00;
+
           if(equipmentId != 0xff) {
             final int previousEquipmentId = equipItem(equipmentId, characterIndices_800bdbb8.get(this.charSlot).get());
             takeEquipment(this.menuItems.get(itemIndex).itemSlot_01);
@@ -296,13 +308,14 @@ public class EquipmentScreen extends MenuScreen {
             playSound(40);
           }
         }
-        break;
-      case GLFW_KEY_S: // sort
+      }
+
+      case GLFW_KEY_W -> { // sort
         playSound(2);
         FUN_80104738(this.equipment, this.items, 1);
         sortItems(this.equipment, gameState_800babc8.equipment_1e8, gameState_800babc8.equipmentCount_1e4.get());
         this.loadingStage = 2;
-        break;
+      }
     }
   }
 }

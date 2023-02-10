@@ -144,39 +144,40 @@ public abstract class SaveListScreen extends MenuScreen {
     if(mods != 0) {
       return; // preserving the old logic
     }
+
     switch(key) {
-      case GLFW.GLFW_KEY_ESCAPE:
+      case GLFW.GLFW_KEY_ESCAPE -> {
         playSound(3);
         this.loadingStage = 2;
-        break;
-      case GLFW.GLFW_KEY_UP:
+      }
+
+      case GLFW.GLFW_KEY_UP -> {
         playSound(1);
+
         if(this.selectedSlot > 0) {
           this.selectedSlot--;
-          this.highlightLeftHalf.y_44 = getSlotY(this.selectedSlot);
-          this.highlightRightHalf.y_44 = getSlotY(this.selectedSlot);
         } else {
           this.scrollAccumulator++;
-          this.highlightLeftHalf.y_44 = getSlotY(this.selectedSlot);
-          this.highlightRightHalf.y_44 = getSlotY(this.selectedSlot);
         }
-        break;
-      case GLFW.GLFW_KEY_DOWN:
+
+        this.highlightLeftHalf.y_44 = getSlotY(this.selectedSlot);
+        this.highlightRightHalf.y_44 = getSlotY(this.selectedSlot);
+      }
+
+      case GLFW.GLFW_KEY_DOWN -> {
         playSound(1);
+
         if(this.selectedSlot < 2) {
           this.selectedSlot++;
-          this.highlightLeftHalf.y_44 = getSlotY(this.selectedSlot);
-          this.highlightRightHalf.y_44 = getSlotY(this.selectedSlot);
         } else {
           this.scrollAccumulator--;
-          this.highlightLeftHalf.y_44 = getSlotY(this.selectedSlot);
-          this.highlightRightHalf.y_44 = getSlotY(this.selectedSlot);
         }
-        break;
-      case GLFW_KEY_ENTER:
-      case GLFW.GLFW_KEY_S:
-        this.onSelect(this.scroll + this.selectedSlot);
-        break;
+
+        this.highlightLeftHalf.y_44 = getSlotY(this.selectedSlot);
+        this.highlightRightHalf.y_44 = getSlotY(this.selectedSlot);
+      }
+
+      case GLFW_KEY_ENTER, GLFW.GLFW_KEY_S -> this.onSelect(this.scroll + this.selectedSlot);
     }
   }
 

@@ -9,7 +9,7 @@ public abstract class MenuScreen {
   protected void mouseClick(final int x, final int y, final int button, final int mods) {
   }
 
-  protected void mouseScroll(final double deltaX, double deltaY) {
+  protected void mouseScroll(final double deltaX, final double deltaY) {
   }
 
   protected void keyPress(final int key, final int scancode, final int mods) {

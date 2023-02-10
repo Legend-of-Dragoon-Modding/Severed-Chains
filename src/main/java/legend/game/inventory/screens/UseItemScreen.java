@@ -308,8 +308,7 @@ public class UseItemScreen extends MenuScreen {
           this.itemCount = this.getUsableItemsInMenu();
           loadCharacterStats(0);
           this.getItemResponseText(this.useItemResponse);
-          menuStack.pushScreen(new MessageBoxScreen(this.useItemResponse.string_08, 0, result -> {
-          }));
+          menuStack.pushScreen(new MessageBoxScreen(this.useItemResponse.string_08, 0, result -> { }));
           this.loadingStage = 1;
         }
       }
@@ -399,11 +398,12 @@ public class UseItemScreen extends MenuScreen {
 
     if(this.loadingStage == 2) {
       switch(key) {
-        case GLFW_KEY_ESCAPE:
+        case GLFW_KEY_ESCAPE -> {
           playSound(3);
           this.loadingStage = 100;
-          break;
-        case GLFW_KEY_UP:
+        }
+
+        case GLFW_KEY_UP -> {
           if(this.selectedSlot > 0) {
             playSound(1);
             this.selectedSlot--;
@@ -412,62 +412,76 @@ public class UseItemScreen extends MenuScreen {
             this.slotScroll--;
             this.itemHighlight.y_44 = getItemSlotY(this.selectedSlot);
           }
-          break;
-        case GLFW_KEY_DOWN:
+        }
+
+        case GLFW_KEY_DOWN -> {
           if((this.selectedSlot + this.slotScroll) < this.itemCount - 1) {
             playSound(1);
+
             if(this.selectedSlot == 4) {
               this.slotScroll++;
             } else {
               this.selectedSlot++;
             }
+
             this.itemHighlight.y_44 = getItemSlotY(this.selectedSlot);
           }
-          break;
-        case GLFW_KEY_ENTER:
-        case GLFW_KEY_S:
-          this.itemUseFlags = itemCanBeUsedInMenu(this.menuItems.get(this.selectedSlot + this.slotScroll).itemId_00);
-          if(this.itemUseFlags != 0 && (this.menuItems.get(this.selectedSlot + this.slotScroll).flags_02 & 0x4000) == 0) {
-            if((this.itemUseFlags & 0x2) != 0) {
-              for(int i = 0; i < 7; i++) {
-                this._8011d718[i] = allocateUiElement(0x7e, 0x7e, getCharacterPortraitX(i), 110);
-                FUN_80104b60(this._8011d718[i]);
-              }
-            } else {
-              this.charHighlight = allocateUiElement(0x7e, 0x7e, getCharacterPortraitX(this.charSlot), 110);
-              FUN_80104b60(this.charHighlight);
-            }
+        }
 
-            playSound(2);
-            this.loadingStage = 3;
-          } else {
+        case GLFW_KEY_ENTER, GLFW_KEY_S -> {
+          if(this.slotScroll + this.selectedSlot >= this.itemCount) {
             playSound(40);
+            break;
           }
-          break;
+
+          this.itemUseFlags = itemCanBeUsedInMenu(this.menuItems.get(this.selectedSlot + this.slotScroll).itemId_00);
+
+          if(this.itemUseFlags == 0 || (this.menuItems.get(this.selectedSlot + this.slotScroll).flags_02 & 0x4000) != 0) {
+            playSound(40);
+            break;
+          }
+
+          if((this.itemUseFlags & 0x2) != 0) {
+            for(int i = 0; i < 7; i++) {
+              this._8011d718[i] = allocateUiElement(0x7e, 0x7e, getCharacterPortraitX(i), 110);
+              FUN_80104b60(this._8011d718[i]);
+            }
+          } else {
+            this.charHighlight = allocateUiElement(0x7e, 0x7e, getCharacterPortraitX(this.charSlot), 110);
+            FUN_80104b60(this.charHighlight);
+          }
+
+          playSound(2);
+          this.loadingStage = 3;
+        }
       }
     } else if(this.loadingStage == 3) {
       switch(key) {
-        case GLFW_KEY_LEFT:
-          if((this.itemUseFlags & 0x2) != 0) {
-            break;
+        case GLFW_KEY_LEFT -> {
+          if((this.itemUseFlags & 0x2) == 0) {
+            playSound(1);
+
+            if(this.charSlot > 0) {
+              this.charSlot--;
+            }
+
+            this.charHighlight.x_40 = getCharacterPortraitX(this.charSlot) - 3;
           }
-          playSound(1);
-          if(this.charSlot > 0) {
-            this.charSlot--;
+        }
+
+        case GLFW_KEY_RIGHT -> {
+          if((this.itemUseFlags & 0x2) == 0) {
+            playSound(1);
+
+            if(this.charSlot < characterCount_8011d7c4.get() - 1) {
+              this.charSlot++;
+            }
+
+            this.charHighlight.x_40 = getCharacterPortraitX(this.charSlot) - 3;
           }
-          this.charHighlight.x_40 = getCharacterPortraitX(this.charSlot) - 3;
-          break;
-        case GLFW_KEY_RIGHT:
-          if((this.itemUseFlags & 0x2) != 0) {
-            break;
-          }
-          playSound(1);
-          if(this.charSlot < characterCount_8011d7c4.get() - 1) {
-            this.charSlot++;
-          }
-          this.charHighlight.x_40 = getCharacterPortraitX(this.charSlot) - 3;
-          break;
-        case GLFW_KEY_ESCAPE:
+        }
+
+        case GLFW_KEY_ESCAPE -> {
           if((this.itemUseFlags & 0x2) == 0) {
             unloadRenderable(this.charHighlight);
           } else {
@@ -475,11 +489,12 @@ public class UseItemScreen extends MenuScreen {
               unloadRenderable(this._8011d718[i]);
             }
           }
+
           playSound(3);
           this.loadingStage = 2;
-          break;
-        case GLFW_KEY_ENTER:
-        case GLFW_KEY_S:
+        }
+
+        case GLFW_KEY_ENTER, GLFW_KEY_S -> {
           if((this.itemUseFlags & 0x2) == 0) {
             useItemInMenu(this.useItemResponse, this.menuItems.get(this.selectedSlot + this.slotScroll).itemId_00, characterIndices_800bdbb8.get(this.charSlot).get());
           } else {
@@ -495,15 +510,15 @@ public class UseItemScreen extends MenuScreen {
 
             this.useItemResponse.value_04 = responseValue;
           }
+
           playSound(2);
           takeItem(this.menuItems.get(this.selectedSlot + this.slotScroll).itemId_00);
           this.itemCount = this.getUsableItemsInMenu();
           loadCharacterStats(0);
           this.getItemResponseText(this.useItemResponse);
-          menuStack.pushScreen(new MessageBoxScreen(this.useItemResponse.string_08, 0, result -> {
-          }));
+          menuStack.pushScreen(new MessageBoxScreen(this.useItemResponse.string_08, 0, result -> { }));
           this.loadingStage = 1;
-          break;
+        }
       }
     }
   }
