@@ -427,7 +427,6 @@ public class UseItemScreen extends MenuScreen {
         case GLFW_KEY_ENTER:
         case GLFW_KEY_S:
           this.itemUseFlags = itemCanBeUsedInMenu(this.menuItems.get(this.selectedSlot + this.slotScroll).itemId_00);
-
           if(this.itemUseFlags != 0 && (this.menuItems.get(this.selectedSlot + this.slotScroll).flags_02 & 0x4000) == 0) {
             if((this.itemUseFlags & 0x2) != 0) {
               for(int i = 0; i < 7; i++) {
@@ -449,7 +448,7 @@ public class UseItemScreen extends MenuScreen {
     } else if(this.loadingStage == 3) {
       switch(key) {
         case GLFW_KEY_LEFT:
-          if((this.menuItems.get(this.selectedSlot + this.slotScroll).flags_02 & 0x4000) == 0) {
+          if((this.itemUseFlags & 0x2) != 0) {
             break;
           }
           playSound(1);
@@ -459,7 +458,7 @@ public class UseItemScreen extends MenuScreen {
           this.charHighlight.x_40 = getCharacterPortraitX(this.charSlot) - 3;
           break;
         case GLFW_KEY_RIGHT:
-          if((this.menuItems.get(this.selectedSlot + this.slotScroll).flags_02 & 0x4000) == 0) {
+          if((this.itemUseFlags & 0x2) != 0) {
             break;
           }
           playSound(1);
