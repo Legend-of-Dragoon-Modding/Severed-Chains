@@ -21,7 +21,7 @@ public final class CtmdTransformer {
 
     // Check DEFF file type
     final int type = data.readByte(0);
-    if(type != 0 && type != 1 && type != 2) {
+    if(type != 0 && type != 1 && type != 2 && type != 3 && type != 4) {
       return false;
     }
 
@@ -35,7 +35,7 @@ public final class CtmdTransformer {
     final int nextOffset = data.readInt(0x10);
 
     // Invalid next file offset, probably not the right kind of file
-    if(nextOffset < containerOffset || nextOffset >= data.size()) {
+    if(nextOffset != 0 && nextOffset < containerOffset || nextOffset >= data.size()) {
       return false;
     }
 
@@ -215,7 +215,7 @@ public final class CtmdTransformer {
 
     // Adjust DEFF container pointers
     final int deffContainerPtr10 = (int)MathHelper.get(newData, 0x10, 2);
-    final int deffContainerPtr14 = (int)MathHelper.get(newData, 0x14, 2);
+    final int deffContainerPtr14 = (int)MathHelper.get(newData, 0x14, 2); // NOTE: for type 4 DEFF containers, this may be the 0xc container header, but that should be fine because 0xc will be < the offset
 
     if(deffContainerPtr10 > containerOffset) {
       MathHelper.set(newData, 0x10, 2, deffContainerPtr10 + containerSizeDifference);
@@ -245,32 +245,6 @@ public final class CtmdTransformer {
   }
 
   private static int primitivePacketSize(final int command) {
-/*
-    final int primitiveId = command >>> 16 & ~0x8; // Mask off "CTMD packet" bit
-
-    // 3v, light, gourad
-    if(primitiveId == 0x3004) {
-      return 0x18;
-    }
-
-    // 3v, light, tex, gourad
-    if(primitiveId == 0x3400) {
-      return 0x18;
-    }
-
-    // 4v, light, gourad
-    if(primitiveId == 0x3804) {
-      return 0x20;
-    }
-
-    // 4v, light, tex, gourad
-    if(primitiveId == 0x3c00) {
-      return 0x20;
-    }
-
-    assert false : "Unknown primitive " + Integer.toHexString(command);
-*/
-
     final int primitiveId = command >>> 24;
     final boolean gradated = (command & 0x4_0000) != 0;
     final boolean normals = (command & 0x1_0000) == 0;
