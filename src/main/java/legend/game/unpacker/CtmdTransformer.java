@@ -399,10 +399,6 @@ public final class CtmdTransformer {
           }
 
           final int vi = (int)MathHelper.get(primitives, readIndex, 2);
-//          if(vi >= table.vertexCount_04) {
-//            throw new RuntimeException("Invalid vertex index " + vi);
-//          }
-
           if(vi > highestIndex) {
             highestIndex = vi;
           }
