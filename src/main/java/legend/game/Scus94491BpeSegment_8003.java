@@ -965,6 +965,10 @@ public final class Scus94491BpeSegment_8003 {
    */
   @Method(0x8003c660L)
   public static void adjustTmdPointers(final Tmd tmd) {
+    if((tmd.header.flags.get() & 0x2) != 0) {
+      throw new RuntimeException("Found CTMD!");
+    }
+
     if((tmd.header.flags.get() & 0x1L) != 0) {
       return;
     }

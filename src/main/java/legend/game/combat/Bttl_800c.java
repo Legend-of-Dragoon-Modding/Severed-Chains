@@ -20,7 +20,6 @@ import legend.core.memory.types.CString;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.QuadConsumerRef;
-import legend.core.memory.types.QuadFunctionRef;
 import legend.core.memory.types.QuintConsumerRef;
 import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.ShortRef;
@@ -51,7 +50,6 @@ import legend.game.combat.types.BttlStruct08;
 import legend.game.combat.types.BttlStructa4;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.combat.types.CombatantStruct1a8_c;
-import legend.game.combat.types.CtmdUnpackingData50;
 import legend.game.combat.types.DragoonSpells09;
 import legend.game.combat.types.EffectManagerData6c;
 import legend.game.combat.types.FloatingNumberC4;
@@ -284,8 +282,6 @@ public final class Bttl_800c {
   public static final Value _800c6913 = MEMORY.ref(1, 0x800c6913L);
   public static ScriptState<BattleObject27c> scriptState_800c6914;
   public static final IntRef _800c6918 = MEMORY.ref(4, 0x800c6918L, IntRef::new);
-
-  public static CtmdUnpackingData50 ctmdUnpackingData_800c6920;
 
   public static final Value _800c6928 = MEMORY.ref(4, 0x800c6928L);
   public static BttlLightStruct84[] lights_800c692c;
@@ -688,78 +684,6 @@ public final class Bttl_800c {
    * </ol>
    */
   public static final Value _800fad9c = MEMORY.ref(4, 0x800fad9cL);
-  /**
-   * <ol start="0">
-   *   <li>{@link Bttl_800e#FUN_800e3f88}</li>
-   *   <li>{@link Bttl_800d#FUN_800df130}</li>
-   *   <li>{@link Bttl_800e#FUN_800e3f88}</li>
-   *   <li>{@link Bttl_800d#FUN_800df130}</li>
-   *   <li>{@link Bttl_800e#FUN_800e4184}</li>
-   *   <li>{@link Bttl_800d#FUN_800df6f0}</li>
-   *   <li>{@link Bttl_800e#FUN_800e4184}</li>
-   *   <li>{@link Bttl_800d#FUN_800df6f0}</li>
-   *   <li>{@link Bttl_800d#FUN_800de9bc}</li>
-   *   <li>{@link Bttl_800d#FUN_800dee8c}</li>
-   *   <li>{@link Bttl_800d#FUN_800de9bc}</li>
-   *   <li>{@link Bttl_800d#FUN_800dee8c}</li>
-   *   <li>{@link Bttl_800d#FUN_800dec14}</li>
-   *   <li>{@link Bttl_800d#FUN_800df370}</li>
-   *   <li>{@link Bttl_800d#FUN_800dec14}</li>
-   *   <li>{@link Bttl_800d#FUN_800df370}</li>
-   *   <li>?</li>
-   *   <li>?</li>
-   *   <li>{@link Bttl_800e#FUN_800e3f88}</li>
-   *   <li>{@link Bttl_800d#FUN_800df130}</li>
-   *   <li>?</li>
-   *   <li>?</li>
-   *   <li>{@link Bttl_800e#FUN_800e43a8}</li>
-   *   <li>{@link Bttl_800d#FUN_800dffe4}</li>
-   *   <li>?</li>
-   *   <li>?</li>
-   *   <li>{@link Bttl_800d#FUN_800de9bc}</li>
-   *   <li>{@link Bttl_800d#FUN_800dee8c}</li>
-   *   <li>?</li>
-   *   <li>?</li>
-   *   <li>{@link Bttl_800d#FUN_800df9e8}</li>
-   *   <li>{@link Bttl_800d#FUN_800dfc5c}</li>
-   *
-   *   <li>{@link Bttl_800e#FUN_800e0848}</li>
-   *   <li>{@link Bttl_800e#FUN_800e1c24}</li>
-   *   <li>{@link Bttl_800e#FUN_800e0848}</li>
-   *   <li>{@link Bttl_800e#FUN_800e1c24}</li>
-   *   <li>{@link Bttl_800e#FUN_800e121c}</li>
-   *   <li>{@link Bttl_800e#FUN_800e2620}</li>
-   *   <li>{@link Bttl_800e#FUN_800e121c}</li>
-   *   <li>{@link Bttl_800e#FUN_800e2620}</li>
-   *   <li>{@link Bttl_800e#FUN_800e02e8}</li>
-   *   <li>{@link Bttl_800e#FUN_800e16a0}</li>
-   *   <li>{@link Bttl_800e#FUN_800e02e8}</li>
-   *   <li>{@link Bttl_800e#FUN_800e16a0}</li>
-   *   <li>{@link Bttl_800e#FUN_800e0c98}</li>
-   *   <li>{@link Bttl_800e#FUN_800e20bc}</li>
-   *   <li>{@link Bttl_800e#FUN_800e0c98}</li>
-   *   <li>{@link Bttl_800e#FUN_800e20bc}</li>
-   *   <li>?</li>
-   *   <li>?</li>
-   *   <li>{@link Bttl_800e#FUN_800e0848}</li>
-   *   <li>{@link Bttl_800e#FUN_800e1c24}</li>
-   *   <li>?</li>
-   *   <li>?</li>
-   *   <li>{@link Bttl_800e#FUN_800e300c}</li>
-   *   <li>{@link Bttl_800e#FUN_800e39e8}</li>
-   *   <li>?</li>
-   *   <li>?</li>
-   *   <li>{@link Bttl_800e#FUN_800e02e8}</li>
-   *   <li>{@link Bttl_800e#FUN_800e16a0}</li>
-   *   <li>?</li>
-   *   <li>?</li>
-   *   <li>{@link Bttl_800e#FUN_800e2a98}</li>
-   *   <li>{@link Bttl_800e#FUN_800e3478}</li>
-   * </ol>
-   *
-   * Note: blank lines are probably impossible combinations
-   */
-  public static final ArrayRef<Pointer<QuadFunctionRef<Long, UnboundedArrayRef<SVECTOR>, Long, Long, Long>>> ctmdRenderers_800fadbc = MEMORY.ref(4, 0x800fadbcL, ArrayRef.of(Pointer.classFor(QuadFunctionRef.classFor(Long.class, UnboundedArrayRef.classFor(SVECTOR.class), Long.class, Long.class, Long.class)), 0x40, 4, Pointer.deferred(4, QuadFunctionRef::new)));
 
   public static final Value _800faec4 = MEMORY.ref(2, 0x800faec4L);
 

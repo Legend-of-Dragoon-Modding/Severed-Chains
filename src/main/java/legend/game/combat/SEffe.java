@@ -90,6 +90,7 @@ import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptState;
+import legend.game.tmd.Renderer;
 import legend.game.types.ExtendedTmd;
 import legend.game.types.Model124;
 import legend.game.types.Translucency;
@@ -206,7 +207,6 @@ import static legend.game.combat.Bttl_800e.allocateEffectManager;
 import static legend.game.combat.Bttl_800e.applyScreenDarkening;
 import static legend.game.combat.Bttl_800e.getDeffPart;
 import static legend.game.combat.Bttl_800e.perspectiveTransformXyz;
-import static legend.game.combat.Bttl_800e.renderCtmd;
 
 public final class SEffe {
   private SEffe() { }
@@ -1100,7 +1100,7 @@ public final class SEffe {
       final GsDOBJ2 sp0x60 = new GsDOBJ2();
       sp0x60.attribute_00 = (int)MEMORY.ref(4, a2).offset(0x0L).get();
       sp0x60.tmd_08 = tmd;
-      renderCtmd(sp0x60);
+      Renderer.renderDobj2(sp0x60, false);
       if((MEMORY.ref(4, a2).offset(0x0L).get() & 0x40L) == 0) {
         FUN_800e62a8();
       }
@@ -6761,7 +6761,7 @@ public final class SEffe {
 
           if(MEMORY.ref(1, s3).offset(0x01L).get() != 0) {
             sp0xf8.tmd_08 = MEMORY.ref(4, MEMORY.ref(4, s3).offset(0x98L).get(), TmdObjTable::new);
-            renderCtmd(sp0xf8);
+            Renderer.renderDobj2(sp0xf8, false);
           }
 
           //LAB_8010f5d0
@@ -6769,10 +6769,10 @@ public final class SEffe {
 
           if(v1 < 9) {
             sp0xf8.tmd_08 = MEMORY.ref(4, MEMORY.ref(4, s3).offset(0x94L).get(), TmdObjTable::new);
-            renderCtmd(sp0xf8);
+            Renderer.renderDobj2(sp0xf8, false);
           } else if(v1 >= 11) {
             sp0xf8.tmd_08 = MEMORY.ref(4, MEMORY.ref(4, s3).offset(0x9cL).get(), TmdObjTable::new);
-            renderCtmd(sp0xf8);
+            Renderer.renderDobj2(sp0xf8, false);
           }
 
           //LAB_8010f608
@@ -9832,7 +9832,7 @@ public final class SEffe {
         final GsDOBJ2 dobj2 = new GsDOBJ2();
         dobj2.attribute_00 = data._10.flags_00;
         dobj2.tmd_08 = s1.tmd_08.deref();
-        renderCtmd(dobj2);
+        Renderer.renderDobj2(dobj2, false);
       } else {
         //LAB_80118370
         FUN_800de3f4(s1.tmd_08.deref(), data._10, sp0x10);

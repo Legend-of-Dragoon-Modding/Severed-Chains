@@ -4,7 +4,6 @@ import legend.core.MathHelper;
 import legend.core.gte.BVEC4;
 import legend.core.gte.SVECTOR;
 import legend.core.memory.Method;
-import legend.game.combat.types.CtmdUnpackingData50;
 
 import java.util.Map;
 import java.util.Set;

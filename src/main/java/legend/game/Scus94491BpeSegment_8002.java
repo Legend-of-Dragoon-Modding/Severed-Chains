@@ -424,10 +424,6 @@ public final class Scus94491BpeSegment_8002 {
       }
     }
 
-    if((tmd.header.flags.get() & 0x2) != 0) {
-      System.out.println("CTMD");
-    }
-
     //LAB_80020838
     adjustTmdPointers(model.tmd_8c);
     initObjTable2(model.ObjTable_0c, model.dobj2ArrPtr_00, model.coord2ArrPtr_04, model.coord2ParamArrPtr_08, model.count_c8);

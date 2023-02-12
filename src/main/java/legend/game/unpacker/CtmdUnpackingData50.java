@@ -1,4 +1,4 @@
-package legend.game.combat.types;
+package legend.game.unpacker;
 
 public class CtmdUnpackingData50 {
   public int _00;
