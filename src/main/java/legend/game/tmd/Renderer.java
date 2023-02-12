@@ -193,7 +193,7 @@ public class Renderer {
       }
 
       if(translucent && !textured) {
-        cmd.translucent(Translucency.of((int)tmdGp0Tpage_1f8003ec.get() >>> 5 & 0b11));
+        cmd.translucent(Translucency.of(tmdGp0Tpage_1f8003ec.get() >>> 5 & 0b11));
       }
 
       GPU.queueCommand(z, cmd);

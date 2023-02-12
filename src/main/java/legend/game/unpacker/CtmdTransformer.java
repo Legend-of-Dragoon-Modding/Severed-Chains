@@ -20,7 +20,7 @@ public final class CtmdTransformer {
     }
 
     // Check DEFF file type
-    final int type = data.readByte(0);
+    final int type = data.readByte(3);
     if(type != 0 && type != 1 && type != 2 && type != 3 && type != 4) {
       return false;
     }
@@ -145,7 +145,7 @@ public final class CtmdTransformer {
     }
 
     final byte[] tmdData = new byte[tmdSize];
-    MathHelper.set(tmdData, 0, 4, 0x41);
+    MathHelper.set(tmdData, 0, 4, ctmdData.readInt(0));
     MathHelper.set(tmdData, 4, 4, ctmd.flags & ~0x2);
     MathHelper.set(tmdData, 8, 4, ctmd.objCount);
 
@@ -210,6 +210,7 @@ public final class CtmdTransformer {
     final int newSize = data.size() + containerSizeDifference;
     final byte[] newData = new byte[newSize];
 
+    // Copy data before what we modified
     data.copyTo(0, newData, 0, containerOffset);
     containerData.copyTo(0, newData, containerOffset, 0xc);
 
@@ -237,8 +238,13 @@ public final class CtmdTransformer {
       MathHelper.set(newData, containerOffset + 0x8, 2, cContainerPtr8 + tmdSizeDifference);
     }
 
+    // Copy new TMD data
     System.arraycopy(tmdData, 0, newData, containerOffset + 0xc, tmdData.length);
+
+    // Copy unmodified data at the end of the 0xc container
     containerData.copyTo(ctmdEnd, newData, containerOffset + 0xc + tmdData.length, containerData.size() - ctmdEnd);
+
+    // Copy unmodified data at the end of the DEFF container
     data.copyTo(containerOffset + containerData.size(), newData, containerOffset + newContainerSize, data.size() - containerOffset - containerData.size());
 
     return Map.of(name, new FileData(newData));

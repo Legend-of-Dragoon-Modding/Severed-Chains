@@ -93,6 +93,8 @@ import legend.game.scripting.ScriptState;
 import legend.game.types.ExtendedTmd;
 import legend.game.types.Model124;
 import legend.game.types.Translucency;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -208,6 +210,8 @@ import static legend.game.combat.Bttl_800e.renderCtmd;
 
 public final class SEffe {
   private SEffe() { }
+
+  public static final Logger LOGGER = LogManager.getFormatterLogger(SEffe.class);
 
   private static final Value _800fb794 = MEMORY.ref(2, 0x800fb794L);
 
@@ -1538,7 +1542,7 @@ public final class SEffe {
           .uv(2, (s2.u_58.get() & 0x3f) * 4,                    s2.v_5a.get() + s2.h_5f.get() - 1)
           .uv(3, (s2.u_58.get() & 0x3f) * 4 + s2.w_5e.get() - 1, s2.v_5a.get() + s2.h_5f.get() - 1);
 
-        if((data._10.flags_00 & 1) << 30 != 0) {
+        if((data._10.flags_00 & 1 << 30) != 0) {
           cmd1.translucent(Translucency.of(data._10.flags_00 >>> 28 & 0b11));
         }
 
@@ -8622,7 +8626,14 @@ public final class SEffe {
 
   @Method(0x8011578cL)
   public static FlowControl scriptSetEffectZ(final RunningScript<?> script) {
-    ((EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00)._10.z_22 = script.params_20[1].get();
+    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    manager._10.z_22 = script.params_20[1].get();
+
+    if(manager._10.z_22 < 0) {
+      LOGGER.warn("Negative Z value! %d", manager._10.z_22);
+      manager._10.z_22 = Math.abs(manager._10.z_22);
+    }
+
     return FlowControl.CONTINUE;
   }
 

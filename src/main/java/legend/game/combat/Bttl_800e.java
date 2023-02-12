@@ -1730,6 +1730,9 @@ public final class Bttl_800e {
   /** Render All method **/
   @Method(0x800e3e6cL)
   public static void renderCtmd(final GsDOBJ2 dobj2) {
+    Renderer.renderDobj2(dobj2, false);
+    if(true) return;
+
     final CtmdUnpackingData50 unpackingData = new CtmdUnpackingData50();
     ctmdUnpackingData_800c6920 = unpackingData;
     unpackingData._00 = 0;
