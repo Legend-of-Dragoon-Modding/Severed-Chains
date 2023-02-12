@@ -722,6 +722,7 @@ public final class Bttl_800c {
    *   <li>?</li>
    *   <li>{@link Bttl_800d#FUN_800df9e8}</li>
    *   <li>{@link Bttl_800d#FUN_800dfc5c}</li>
+   *
    *   <li>{@link Bttl_800e#FUN_800e0848}</li>
    *   <li>{@link Bttl_800e#FUN_800e1c24}</li>
    *   <li>{@link Bttl_800e#FUN_800e0848}</li>

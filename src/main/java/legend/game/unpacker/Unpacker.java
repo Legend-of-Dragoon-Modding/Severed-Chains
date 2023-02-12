@@ -18,18 +18,23 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Deque;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiFunction;
-import java.util.function.BiPredicate;
+import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.StreamSupport;
 
 import static legend.game.Scus94491BpeSegment.getCharacterName;
 
-public class Unpacker {
+public final class Unpacker {
+  private Unpacker() { }
+
+  private static final Pattern ROOT_MRG = Pattern.compile("^SECT/DRGN0\\.BIN/\\d{4}/\\d+$");
+
   static {
     System.setProperty("log4j.skipJansi", "false");
     System.setProperty("log4j2.configurationFile", "log4j2.xml");
@@ -43,7 +48,7 @@ public class Unpacker {
 
   private static final Object IO_LOCK = new Object();
 
-  private static final Map<BiPredicate<String, FileData>, BiFunction<String, FileData, Map<String, FileData>>> transformers = new LinkedHashMap<>();
+  private static final Map<Discriminator, Transformer> transformers = new LinkedHashMap<>();
   static {
     transformers.put(Unpacker::decompressDiscriminator, Unpacker::decompress);
     transformers.put(Unpacker::mrgDiscriminator, Unpacker::unmrg);
@@ -54,6 +59,7 @@ public class Unpacker {
     transformers.put(Unpacker::dragoonCombatModelsAndTexturesDiscriminator, Unpacker::dragoonCombatModelsAndTexturesTransformer);
     transformers.put(Unpacker::skipPartyPermutationsDiscriminator, Unpacker::skipPartyPermutationsTransformer);
     transformers.put(Unpacker::extractBtldDataDiscriminator, Unpacker::extractBtldDataTransformer);
+    transformers.put(CtmdTransformer::ctmdDiscriminator, CtmdTransformer::ctmdTransformer);
   }
 
   public static void main(final String[] args) throws UnpackerException {
@@ -120,7 +126,7 @@ public class Unpacker {
 
   private static String fixPath(String name) {
     if(name.contains(";")) {
-      name = name.substring(0, name.lastIndexOf(";"));
+      name = name.substring(0, name.lastIndexOf(';'));
     }
 
     if(name.startsWith("\\")) {
@@ -153,7 +159,7 @@ public class Unpacker {
           .stream()
           .filter(entry -> !Files.exists(ROOT.resolve(entry.getKey())))
           .map(Unpacker::readFile)
-          .map((Tuple<String, FileData> e) -> transform(e.a(), e.b()))
+          .map(e -> transform(e.a(), e.b(), EnumSet.noneOf(Flags.class)))
           .forEach(Unpacker::writeFiles);
 
         LOGGER.info("Files unpacked in %d seconds", (System.nanoTime() - start) / 1_000_000_000L);
@@ -248,7 +254,7 @@ public class Unpacker {
     }
   }
 
-  private static Map<String, FileData> transform(final String name, final FileData data) {
+  private static Map<String, FileData> transform(final String name, final FileData data, final Set<Flags> flags) {
 //    LOGGER.info("Unpacking %s...", name);
 
     final Map<String, FileData> entries = new HashMap<>();
@@ -258,11 +264,11 @@ public class Unpacker {
       final var discriminator = entry.getKey();
       final var transformer = entry.getValue();
 
-      if(discriminator.test(name, data)) {
+      if(discriminator.matches(name, data, flags)) {
         wasTransformed = true;
-        transformer.apply(name, data)
+        transformer.transform(name, data, flags)
           .entrySet().stream()
-          .map(e -> transform(e.getKey(), e.getValue()))
+          .map(e -> transform(e.getKey(), e.getValue(), flags))
           .forEach(entries::putAll);
         break;
       }
@@ -275,8 +281,8 @@ public class Unpacker {
     return entries;
   }
 
-  private static boolean decompressDiscriminator(final String name, final FileData data) {
-    if(name.matches("^SECT/DRGN0\\.BIN/\\d{4}/\\d+$")) {
+  private static boolean decompressDiscriminator(final String name, final FileData data, final Set<Flags> flags) {
+    if(ROOT_MRG.matcher(name).matches()) {
       final int dirNum = Integer.parseInt(name.substring(15, 19));
       if(dirNum >= 4031 && dirNum < 4103) {
         return false;
@@ -286,15 +292,15 @@ public class Unpacker {
     return data.size() >= 8 && MathHelper.get(data.data(), data.offset() + 4, 4) == 0x1a455042;
   }
 
-  private static Map<String, FileData> decompress(final String name, final FileData data) {
+  private static Map<String, FileData> decompress(final String name, final FileData data, final Set<Flags> flags) {
     return Map.of(name, new FileData(Unpacker.decompress(data.data(), data.offset())));
   }
 
-  private static boolean mrgDiscriminator(final String name, final FileData data) {
+  private static boolean mrgDiscriminator(final String name, final FileData data, final Set<Flags> flags) {
     return data.size() >= 8 && MathHelper.get(data.data(), data.offset(), 4) == 0x1a47524d;
   }
 
-  private static Map<String, FileData> unmrg(final String name, final FileData data) {
+  private static Map<String, FileData> unmrg(final String name, final FileData data, final Set<Flags> flags) {
     final MrgArchive archive = new MrgArchive(data, name.matches("^SECT/DRGN(?:0|1|2[1234])?.BIN$"));
 
     if(archive.getCount() == 0) {
@@ -311,11 +317,13 @@ public class Unpacker {
     return files;
   }
 
-  private static boolean deffDiscriminator(final String name, final FileData data) {
+  private static boolean deffDiscriminator(final String name, final FileData data, final Set<Flags> flags) {
     return data.size() >= 8 && MathHelper.get(data.data(), data.offset(), 4) == 0x46464544;
   }
 
-  private static Map<String, FileData> undeff(final String name, final FileData data) {
+  private static Map<String, FileData> undeff(final String name, final FileData data, final Set<Flags> flags) {
+    flags.add(Flags.DEFF);
+
     final DeffArchive archive = new DeffArchive(data);
 
     if(archive.getCount() == 0) {
@@ -340,20 +348,20 @@ public class Unpacker {
    * adjacent in a MRG file. This patch extends the script to be long enough to
    * contain the jump and just returns.
    */
-  private static boolean drgn21_402_3_patcherDiscriminator(final String name, final FileData data) {
+  private static boolean drgn21_402_3_patcherDiscriminator(final String name, final FileData data, final Set<Flags> flags) {
     return "SECT/DRGN21.BIN/402/3".equals(name) && data.size() == 0xee4;
   }
 
-  private static Map<String, FileData> drgn21_402_3_patcher(final String name, final FileData data) {
+  private static Map<String, FileData> drgn21_402_3_patcher(final String name, final FileData data, final Set<Flags> flags) {
     final byte[] newData = new byte[0x107c];
     System.arraycopy(data.data(), data.offset(), newData, 0, data.size());
     newData[0x1078] = 0x49;
     return Map.of(name, new FileData(newData));
   }
 
-  private static boolean playerCombatSoundEffectsDiscriminator(final String name, final FileData data) {
+  private static boolean playerCombatSoundEffectsDiscriminator(final String name, final FileData data, final Set<Flags> flags) {
     for(int i = 752; i <= 772; i++) {
-      if(name.startsWith("SECT/DRGN0.BIN/" + i + "/")) {
+      if(name.startsWith("SECT/DRGN0.BIN/" + i + '/')) {
         return true;
       }
     }
@@ -361,35 +369,35 @@ public class Unpacker {
     return false;
   }
 
-  private static Map<String, FileData> playerCombatSoundEffectsTransformer(final String name, final FileData data) {
+  private static Map<String, FileData> playerCombatSoundEffectsTransformer(final String name, final FileData data, final Set<Flags> flags) {
     final Map<String, FileData> files = new HashMap<>();
 
     if(name.startsWith("SECT/DRGN0.BIN/752/0/")) {
-      files.put("characters/dart/sounds/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
+      files.put("characters/dart/sounds/combat/" + name.substring(name.lastIndexOf('/') + 1), data);
     } else if(name.startsWith("SECT/DRGN0.BIN/752/1/")) {
-      files.put("characters/lavitz/sounds/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
+      files.put("characters/lavitz/sounds/combat/" + name.substring(name.lastIndexOf('/') + 1), data);
     } else if(name.startsWith("SECT/DRGN0.BIN/752/2/")) {
-      files.put("characters/shana/sounds/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
+      files.put("characters/shana/sounds/combat/" + name.substring(name.lastIndexOf('/') + 1), data);
     } else if(name.startsWith("SECT/DRGN0.BIN/753/2/")) {
-      files.put("characters/rose/sounds/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
+      files.put("characters/rose/sounds/combat/" + name.substring(name.lastIndexOf('/') + 1), data);
     } else if(name.startsWith("SECT/DRGN0.BIN/754/2/")) {
-      files.put("characters/haschel/sounds/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
+      files.put("characters/haschel/sounds/combat/" + name.substring(name.lastIndexOf('/') + 1), data);
     } else if(name.startsWith("SECT/DRGN0.BIN/755/2/")) {
-      files.put("characters/meru/sounds/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
+      files.put("characters/meru/sounds/combat/" + name.substring(name.lastIndexOf('/') + 1), data);
     } else if(name.startsWith("SECT/DRGN0.BIN/756/2/")) {
-      files.put("characters/kongol/sounds/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
+      files.put("characters/kongol/sounds/combat/" + name.substring(name.lastIndexOf('/') + 1), data);
     } else if(name.startsWith("SECT/DRGN0.BIN/757/2/")) {
-      files.put("characters/miranda/sounds/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
+      files.put("characters/miranda/sounds/combat/" + name.substring(name.lastIndexOf('/') + 1), data);
     } else if(name.startsWith("SECT/DRGN0.BIN/772/1/")) {
-      files.put("characters/albert/sounds/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
+      files.put("characters/albert/sounds/combat/" + name.substring(name.lastIndexOf('/') + 1), data);
     }
 
     return files;
   }
 
-  private static boolean playerCombatModelsAndTexturesDiscriminator(final String name, final FileData data) {
+  private static boolean playerCombatModelsAndTexturesDiscriminator(final String name, final FileData data, final Set<Flags> flags) {
     for(int i = 3993; i <= 4010; i++) {
-      if(name.startsWith("SECT/DRGN0.BIN/" + i + "/")) {
+      if(name.startsWith("SECT/DRGN0.BIN/" + i + '/')) {
         return true;
       }
     }
@@ -397,7 +405,7 @@ public class Unpacker {
     return false;
   }
 
-  private static Map<String, FileData> playerCombatModelsAndTexturesTransformer(final String name, final FileData data) {
+  private static Map<String, FileData> playerCombatModelsAndTexturesTransformer(final String name, final FileData data, final Set<Flags> flags) {
     final Map<String, FileData> files = new HashMap<>();
 
     for(int charId = 0; charId < 9; charId++) {
@@ -406,16 +414,16 @@ public class Unpacker {
       if(name.startsWith("SECT/DRGN0.BIN/%d".formatted(3993 + charId * 2))) {
         files.put("characters/%s/textures/combat".formatted(charName), data);
       } else if(name.startsWith("SECT/DRGN0.BIN/%d".formatted(3994 + charId * 2))) {
-        files.put("characters/%s/models/combat/%s".formatted(charName, name.substring(name.lastIndexOf("/") + 1)), data);
+        files.put("characters/%s/models/combat/%s".formatted(charName, name.substring(name.lastIndexOf('/') + 1)), data);
       }
     }
 
     return files;
   }
 
-  private static boolean dragoonCombatModelsAndTexturesDiscriminator(final String name, final FileData data) {
+  private static boolean dragoonCombatModelsAndTexturesDiscriminator(final String name, final FileData data, final Set<Flags> flags) {
     for(int i = 4011; i <= 4030; i++) {
-      if(name.startsWith("SECT/DRGN0.BIN/" + i + "/")) {
+      if(name.startsWith("SECT/DRGN0.BIN/" + i + '/')) {
         return true;
       }
     }
@@ -423,7 +431,7 @@ public class Unpacker {
     return false;
   }
 
-  private static Map<String, FileData> dragoonCombatModelsAndTexturesTransformer(final String name, final FileData data) {
+  private static Map<String, FileData> dragoonCombatModelsAndTexturesTransformer(final String name, final FileData data, final Set<Flags> flags) {
     final Map<String, FileData> files = new HashMap<>();
 
     for(int charId = 0; charId < 10; charId++) {
@@ -432,16 +440,16 @@ public class Unpacker {
       if(name.startsWith("SECT/DRGN0.BIN/%d".formatted(4011 + charId * 2))) {
         files.put("characters/%s/textures/dragoon".formatted(charName), data);
       } else if(name.startsWith("SECT/DRGN0.BIN/%d".formatted(4012 + charId * 2))) {
-        files.put("characters/%s/models/dragoon/%s".formatted(charName, name.substring(name.lastIndexOf("/") + 1)), data);
+        files.put("characters/%s/models/dragoon/%s".formatted(charName, name.substring(name.lastIndexOf('/') + 1)), data);
       }
     }
 
     return files;
   }
 
-  private static boolean skipPartyPermutationsDiscriminator(final String name, final FileData data) {
+  private static boolean skipPartyPermutationsDiscriminator(final String name, final FileData data, final Set<Flags> flags) {
     for(int i = 3537; i <= 3592; i++) {
-      if(name.startsWith("SECT/DRGN0.BIN/" + i + "/")) {
+      if(name.startsWith("SECT/DRGN0.BIN/" + i + '/')) {
         return true;
       }
     }
@@ -449,18 +457,18 @@ public class Unpacker {
     return false;
   }
 
-  private static Map<String, FileData> skipPartyPermutationsTransformer(final String name, final FileData data) {
+  private static Map<String, FileData> skipPartyPermutationsTransformer(final String name, final FileData data, final Set<Flags> flags) {
     return Map.of();
   }
 
   /** TODO this is pretty bad */
   private static boolean btldDataDiscriminatorLatch = true;
   /** Extracts table at 80102050 */
-  private static boolean extractBtldDataDiscriminator(final String name, final FileData data) {
+  private static boolean extractBtldDataDiscriminator(final String name, final FileData data, final Set<Flags> flags) {
     return btldDataDiscriminatorLatch && "OVL/S_BTLD.OV_".equals(name);
   }
 
-  private static Map<String, FileData> extractBtldDataTransformer(final String name, final FileData data) {
+  private static Map<String, FileData> extractBtldDataTransformer(final String name, final FileData data, final Set<Flags> flags) {
     btldDataDiscriminatorLatch = false;
     final Map<String, FileData> files = new HashMap<>();
     files.put(name, data);
@@ -609,5 +617,19 @@ public class Unpacker {
     LOGGER.info("Archive size: %d, decompressed size: %d", archiveOffset, totalSize);
 
     return dest;
+  }
+
+  public enum Flags {
+    DEFF,
+  }
+
+  @FunctionalInterface
+  public interface Discriminator {
+    boolean matches(final String name, final FileData data, final Set<Flags> flags);
+  }
+
+  @FunctionalInterface
+  public interface Transformer {
+    Map<String, FileData> transform(final String name, final FileData data, final Set<Flags> flags);
   }
 }
