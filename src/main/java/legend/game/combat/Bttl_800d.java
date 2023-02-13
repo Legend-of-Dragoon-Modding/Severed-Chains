@@ -4419,14 +4419,12 @@ public final class Bttl_800d {
     final int s2;
     if(a0.ub_a2 != 0) {
       s2 = a1 % ((short)a0.s_9a / 2);
-      a0.partTransforms_94 = a0.partTransforms_90;
       a0.partTransforms_94 = a0.partTransforms_90.slice(a0.animCount_98 * s2 * 3);
       applyModelPartTransforms(a0);
       v0 = (short)a0.s_9a >> 1;
     } else {
       //LAB_800dd568
       s2 = a1 % a0.s_9a;
-      a0.partTransforms_94 = a0.partTransforms_90;
       a0.partTransforms_94 = a0.partTransforms_90.slice(a0.animCount_98 * s2 / 2 * 3);
       applyModelPartTransforms(a0);
 
@@ -4457,7 +4455,6 @@ public final class Bttl_800d {
 
   @Method(0x800dd638L)
   public static int applyLmbAnimation(final Model124 a0, final int a1) {
-    int v0;
     final int s6;
     if(a0.ub_9c == 2) {
       return 2;
@@ -4471,6 +4468,7 @@ public final class Bttl_800d {
 
     final int a0_0;
     final int v1;
+    final int v0;
     if(a0.ub_a2 == 0) {
       //LAB_800dd6dc
       v1 = a1 % a0.s_9a;
@@ -4698,7 +4696,7 @@ public final class Bttl_800d {
     }
 
     //LAB_800dde60
-    if(a1_0 < t0) {
+    if(t0 > a1_0) {
       //LAB_800dde88
       for(int partIndex = 0; partIndex < modelPartCount; partIndex++) {
         final Cmb.Transforms0c fileTransforms = cmb.transforms_10.get(partIndex);

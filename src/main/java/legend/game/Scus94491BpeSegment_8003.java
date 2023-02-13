@@ -62,6 +62,7 @@ import static legend.game.Scus94491BpeSegment_8005._800546bc;
 import static legend.game.Scus94491BpeSegment_8005._800546bd;
 import static legend.game.Scus94491BpeSegment_8005._800546c0;
 import static legend.game.Scus94491BpeSegment_8005._800546c2;
+import static legend.game.Scus94491BpeSegment_8005._80054870;
 import static legend.game.Scus94491BpeSegment_8005.array_8005473c;
 import static legend.game.Scus94491BpeSegment_8005.array_80054748;
 import static legend.game.Scus94491BpeSegment_8005.gpu_debug;
@@ -1991,45 +1992,36 @@ public final class Scus94491BpeSegment_8003 {
 
   @Method(0x8003eae0L)
   public static void FUN_8003eae0(final IntRef t0, final IntRef t1, final IntRef t2) {
-    final long v0;
-    final long v1;
-    long t3;
+    CPU.MTC2(t0.get(),  9); // IR1
+    CPU.MTC2(t1.get(), 10); // IR2
+    CPU.MTC2(t2.get(), 11); // IR3
+    CPU.COP2(0xa00428L); // Square of vector IR
+    final long v0 = CPU.MFC2(25) + CPU.MFC2(26) + CPU.MFC2(27); // MAC1/2/3
+    CPU.MTC2(v0, 30); // Count leading zeroes
+    final long lzc = CPU.MFC2(31) & 0xffff_fffeL; // Leading zero count
+    final long t6 = (31 - lzc) / 2;
+    long t3 = lzc - 24;
     long t4;
-    long t5;
-    long t6;
-    CPU.MTC2(t0.get(),  9);
-    CPU.MTC2(t1.get(), 10);
-    CPU.MTC2(t2.get(), 11);
-    CPU.COP2(0xa00428L);
-    v0 = CPU.MFC2(25) + CPU.MFC2(26) + CPU.MFC2(27);
-    CPU.MTC2(v0, 30);
-    v1 = CPU.MFC2(31) & 0xffff_fffeL;
-    t6 = 31 - v1;
-    t6 = (int)t6 >> 1;
-    t3 = v1 - 24;
     if(t3 >= 0) {
       t4 = v0 << t3;
     } else {
       //LAB_8003eb40
-      t3 = 24 - v1;
+      t3 = 24 - lzc;
       t4 = (int)v0 >> t3;
     }
 
     //LAB_8003eb4c
-    t4 = t4 - 0x80L;
-    t4 = t4 << 1;
-    t5 = 0x8005_0000L; //TODO
-    t5 = t5 + t4;
-    t5 = MEMORY.ref(2, t5).offset(0x4870L).getSigned();
+    t4 = t4 - 0x40;
+    final int t5 = _80054870.get((int)t4).get();
 
-    CPU.MTC2(t5, 8);
-    CPU.MTC2(t0.get(), 9);
-    CPU.MTC2(t1.get(), 10);
-    CPU.MTC2(t2.get(), 11);
-    CPU.COP2(0x190003dL);
-    t0.set((int)(CPU.MFC2(25) >> t6));
-    t1.set((int)(CPU.MFC2(26) >> t6));
-    t2.set((int)(CPU.MFC2(27) >> t6));
+    CPU.MTC2(t5, 8); // IR0 (interpolate value)
+    CPU.MTC2(t0.get(),  9); // IR1
+    CPU.MTC2(t1.get(), 10); // IR2
+    CPU.MTC2(t2.get(), 11); // IR3
+    CPU.COP2(0x190003dL); // General purpose interpolation
+    t0.set((int)(CPU.MFC2(25) >> t6)); // MAC0
+    t1.set((int)(CPU.MFC2(26) >> t6)); // MAC1
+    t2.set((int)(CPU.MFC2(27) >> t6)); // MAC2
   }
 
   @Method(0x8003eba0L)
