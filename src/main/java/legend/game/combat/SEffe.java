@@ -91,7 +91,7 @@ import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptState;
 import legend.game.tmd.Renderer;
-import legend.game.types.ExtendedTmd;
+import legend.game.types.CContainer;
 import legend.game.types.Model124;
 import legend.game.types.Translucency;
 import org.apache.logging.log4j.LogManager;
@@ -2453,7 +2453,7 @@ public final class SEffe {
     } else {
       //LAB_80101d98
       final DeffPart.TmdType tmdType = (DeffPart.TmdType)getDeffPart(0x300_0000 | (int)flags & 0xf_ffff);
-      final ExtendedTmd extTmd = tmdType.tmd_0c.deref();
+      final CContainer extTmd = tmdType.tmd_0c.deref();
       final TmdWithId tmd = extTmd.tmdPtr_00.deref();
       a0.tmd_30.set(tmd.tmd.objTable.get(0));
       a0.tpage_56.set((int)((tmd.id.get() & 0xffff_0000L) >>> 11));

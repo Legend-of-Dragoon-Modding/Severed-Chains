@@ -6,11 +6,14 @@ import legend.core.gte.GsDOBJ2;
 import legend.core.gte.GsOBJTABLE2;
 import legend.core.gte.Tmd;
 import legend.core.gte.VECTOR;
+import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.game.combat.deff.Cmb;
 import legend.game.combat.deff.Lmb;
 
 public class Model124 {
+  public final String name;
+
   public GsDOBJ2[] dobj2ArrPtr_00;
   public GsCOORDINATE2[] coord2ArrPtr_04;
   public GsCOORD2PARAM[] coord2ParamArrPtr_08;
@@ -53,10 +56,10 @@ public class Model124 {
   public int ub_a2;
   /** ubyte */
   public int ub_a3;
-  /** Pointer to an address on the linked list, 0x30 bytes long, contains data copied from {@link ExtendedTmd#ext_04} */
+  /** Pointer to an address on the linked list, 0x30 bytes long, contains data copied from {@link CContainer#ext_04} */
   public SmallerStruct smallerStructPtr_a4;
-  /** TODO Pointer to whatever is pointed to by {@link ExtendedTmd#ptr_08} */
-  public long ptr_a8;
+  /** Pointer to the subfile pointed to by {@link CContainer#ptr_08} */
+  public CContainerSubfile2 ptr_a8;
   /** ushort */
   public final int[] usArr_ac = new int[7];
   /** ushort */
@@ -70,7 +73,7 @@ public class Model124 {
   /** byte */
   public int b_cd;
 
-  public final long[] ptrs_d0 = new long[7];
+  public final UnboundedArrayRef<ShortRef>[] ptrs_d0 = new UnboundedArrayRef[7];
   /** ubyte */
   public final int[] aub_ec = new int[7];
 
@@ -81,6 +84,15 @@ public class Model124 {
   public int tpage_108;
   public final VECTOR vector_10c = new VECTOR();
   public final VECTOR vector_118 = new VECTOR();
+
+  public Model124(final String name) {
+    this.name = name;
+  }
+
+  @Override
+  public String toString() {
+    return this.name + " (" + super.toString() + ')';
+  }
 
   public static class CmbAnim {
     public int _00;

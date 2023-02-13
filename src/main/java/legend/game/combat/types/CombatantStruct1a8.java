@@ -1,6 +1,6 @@
 package legend.game.combat.types;
 
-import legend.game.types.ExtendedTmd;
+import legend.game.types.CContainer;
 import legend.game.types.MrgFile;
 import legend.game.scripting.ScriptFile;
 
@@ -11,7 +11,7 @@ import java.util.List;
 public class CombatantStruct1a8 {
   public MrgFile mrg_00;
   public MrgFile mrg_04;
-  public ExtendedTmd tmd_08;
+  public CContainer tmd_08;
 
   public ScriptFile scriptPtr_10;
   public final CombatantStruct1a8_c[] _14 = new CombatantStruct1a8_c[32];

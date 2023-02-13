@@ -44,7 +44,7 @@ import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptState;
 import legend.game.tmd.Renderer;
-import legend.game.types.ExtendedTmd;
+import legend.game.types.CContainer;
 import legend.game.types.Model124;
 import legend.game.types.ModelPartTransforms;
 import legend.game.types.TmdAnimationFile;
@@ -4621,7 +4621,7 @@ public final class Bttl_800d {
   }
 
   @Method(0x800ddac8L)
-  public static void loadModelTmd(final Model124 model, final ExtendedTmd extTmd) {
+  public static void loadModelTmd(final Model124 model, final CContainer extTmd) {
     final VECTOR sp0x18 = new VECTOR().set(model.coord2_14.coord.transfer);
 
     //LAB_800ddb18

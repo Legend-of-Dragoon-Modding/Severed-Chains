@@ -5,7 +5,9 @@ import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.GsDOBJ2;
 import legend.core.gte.GsOBJTABLE2;
 import legend.core.gte.Tmd;
+import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnboundedArrayRef;
+import legend.game.types.CContainerSubfile2;
 import legend.game.types.ModelPartTransforms;
 
 import java.util.Arrays;
@@ -32,9 +34,8 @@ public class BattleStage {
   /** short */
   public int z_5e8;
 
-  /** TODO pointer to something? */
-  public long _5ec;
-  public final long[] _5f0 = new long[10];
+  public CContainerSubfile2 _5ec;
+  public final UnboundedArrayRef<ShortRef>[] _5f0 = new UnboundedArrayRef[10];
   /** ubyte */
   public final int[] _618 = new int[10];
   /** ushort */

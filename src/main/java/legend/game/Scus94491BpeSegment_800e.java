@@ -8,7 +8,7 @@ import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.GsDOBJ2;
 import legend.core.gte.Tmd;
 import legend.core.memory.Method;
-import legend.game.types.ExtendedTmd;
+import legend.game.types.CContainer;
 import legend.game.types.Model124;
 import legend.game.types.TexPageY;
 import legend.game.types.TmdAnimationFile;
@@ -17,7 +17,6 @@ import legend.game.types.Translucency;
 import java.util.Arrays;
 
 import static legend.core.GameEngine.GPU;
-import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Scus94491BpeSegment.FUN_80019500;
 import static legend.game.Scus94491BpeSegment._1f8003fc;
@@ -210,9 +209,9 @@ public final class Scus94491BpeSegment_800e {
     model_800bda10.b_cc = 0;
   }
 
-  /** Very similar to {@link Scus94491BpeSegment_8002#FUN_80020718(Model124, ExtendedTmd, TmdAnimationFile)} */
+  /** Very similar to {@link Scus94491BpeSegment_8002#FUN_80020718(Model124, CContainer, TmdAnimationFile)} */
   @Method(0x800e6b3cL)
-  public static void FUN_800e6b3c(final Model124 model, final ExtendedTmd extendedTmd, final TmdAnimationFile tmdAnimFile) {
+  public static void FUN_800e6b3c(final Model124 model, final CContainer cContainer, final TmdAnimationFile tmdAnimFile) {
     final int x = model.coord2_14.coord.transfer.getX();
     final int y = model.coord2_14.coord.transfer.getY();
     final int z = model.coord2_14.coord.transfer.getZ();
@@ -231,27 +230,26 @@ public final class Scus94491BpeSegment_800e {
     Arrays.setAll(model.coord2ArrPtr_04, i -> new GsCOORDINATE2());
     Arrays.setAll(model.coord2ParamArrPtr_08, i -> new GsCOORD2PARAM());
 
-    final Tmd tmd = extendedTmd.tmdPtr_00.deref().tmd;
+    final Tmd tmd = cContainer.tmdPtr_00.deref().tmd;
     model.tmd_8c = tmd;
     model.tmdNobj_ca = tmd.header.nobj.get();
-    model.scaleVector_fc.setPad((int)((extendedTmd.tmdPtr_00.deref().id.get() & 0xffff0000L) >>> 11));
+    model.scaleVector_fc.setPad((int)((cContainer.tmdPtr_00.deref().id.get() & 0xffff0000L) >>> 11));
 
-    final long v0 = extendedTmd.ptr_08.get();
-    if(v0 == 0) {
-      //LAB_800e6c44
-      model.ptr_a8 = extendedTmd.ptr_08.getAddress();
-
-      //LAB_800e6c54
-      for(int i = 0; i < 7; i++) {
-        model.ptrs_d0[i] = 0;
-      }
-    } else {
-      model.ptr_a8 = extendedTmd.getAddress() + v0 / 4 * 4;
+    if(!cContainer.ptr_08.isNull()) {
+      model.ptr_a8 = cContainer.ptr_08.deref();
 
       //LAB_800e6c00
       for(int i = 0; i < 7; i++) {
-        model.ptrs_d0[i] = model.ptr_a8 + MEMORY.ref(4, model.ptr_a8).offset(i * 0x4L).get() / 4 * 4;
+        model.ptrs_d0[i] = model.ptr_a8._00.get(i).deref();
         FUN_8002246c(model, i);
+      }
+    } else {
+      //LAB_800e6c44
+      model.ptr_a8 = null; //TODO was this needed? cContainer.ptr_08.getAddress();
+
+      //LAB_800e6c54
+      for(int i = 0; i < 7; i++) {
+        model.ptrs_d0[i] = null;
       }
     }
 

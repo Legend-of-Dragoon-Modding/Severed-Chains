@@ -21,6 +21,8 @@ import legend.core.memory.Value;
 import legend.core.memory.types.BiFunctionRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
+import legend.core.memory.types.ShortRef;
+import legend.core.memory.types.UnboundedArrayRef;
 import legend.game.combat.deff.Anim;
 import legend.game.combat.deff.Cmb;
 import legend.game.combat.deff.DeffManager7cc;
@@ -65,8 +67,9 @@ import legend.game.scripting.ScriptState;
 import legend.game.tim.Tim;
 import legend.game.tmd.Renderer;
 import legend.game.types.ActiveStatsa0;
+import legend.game.types.CContainerSubfile2;
 import legend.game.types.CharacterData2c;
-import legend.game.types.ExtendedTmd;
+import legend.game.types.CContainer;
 import legend.game.types.LodString;
 import legend.game.types.Model124;
 import legend.game.types.ModelPartTransforms;
@@ -2123,7 +2126,7 @@ public final class Bttl_800e {
       Bttl_800e::FUN_800ea3f8,
       Bttl_800e::FUN_800ea510,
       Bttl_800e::FUN_800ea5f4,
-      value -> new BttlScriptData6cSub13c()
+      value -> new BttlScriptData6cSub13c("Script " + script.scriptState_04.index)
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
@@ -2156,7 +2159,7 @@ public final class Bttl_800e {
       Bttl_800e::FUN_800ea3f8,
       Bttl_800e::FUN_800ea510,
       Bttl_800e::FUN_800ea5f4,
-      value -> new BttlScriptData6cSub13c()
+      value -> new BttlScriptData6cSub13c("Script " + script.scriptState_04.index)
     );
 
     final EffectManagerData6c data = state.innerStruct_00;
@@ -2285,7 +2288,7 @@ public final class Bttl_800e {
       Bttl_800e::FUN_800ea3f8,
       Bttl_800e::FUN_800ea510,
       Bttl_800e::FUN_800ea5f4,
-      value -> new BttlScriptData6cSub13c()
+      value -> new BttlScriptData6cSub13c("Script " + script.scriptState_04.index)
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
@@ -2485,7 +2488,7 @@ public final class Bttl_800e {
       final int type = deffPart.flags_00.get() & 0xff00_0000;
       if(type == 0x100_0000) {
         final DeffPart.TmdType tmdType = deffPart.reinterpret(DeffPart.TmdType::new);
-        final ExtendedTmd extTmd = tmdType.tmd_0c.deref();
+        final CContainer extTmd = tmdType.tmd_0c.deref();
         final TmdWithId tmd = extTmd.tmdPtr_00.deref();
 
         adjustTmdPointers(extTmd.tmdPtr_00.deref().tmd);
@@ -2495,7 +2498,7 @@ public final class Bttl_800e {
         }
       } else if(type == 0x300_0000) {
         final DeffPart.TmdType tmdType = deffPart.reinterpret(DeffPart.TmdType::new);
-        final ExtendedTmd extTmd = tmdType.tmd_0c.deref();
+        final CContainer extTmd = tmdType.tmd_0c.deref();
 
         adjustTmdPointers(extTmd.tmdPtr_00.deref().tmd);
         optimisePacketsIfNecessary(extTmd.tmdPtr_00.deref(), 0);
@@ -2503,7 +2506,7 @@ public final class Bttl_800e {
 
       if(type == 0x100_0000 || type == 0x200_0000 || type == 0x300_0000) {
         final DeffPart.TmdType tmdType = deffPart.reinterpret(DeffPart.TmdType::new);
-        final ExtendedTmd extTmd = tmdType.tmd_0c.deref();
+        final CContainer extTmd = tmdType.tmd_0c.deref();
 
         final long a2_0 = MEMORY.ref(4, deffPart.getAddress()).offset(0x8L).get(); //TODO
 
@@ -2820,45 +2823,45 @@ public final class Bttl_800e {
   }
 
   @Method(0x800eb308L)
-  public static void FUN_800eb308(final EffectManagerData6c a0, final ExtendedTmd extendedTmd, final long a2) {
-    if(extendedTmd.ptr_08.get() != 0) {
-      final long s2 = extendedTmd.getAddress() + extendedTmd.ptr_08.get(); //TODO
+  public static void FUN_800eb308(final EffectManagerData6c a0, final CContainer cContainer, final long a2) {
+    if(!cContainer.ptr_08.isNull()) {
+      final CContainerSubfile2 s2 = cContainer.ptr_08.deref();
 
       //LAB_800eb348
       for(int s1 = 0; s1 < 7; s1++) {
-        final long s0 = s2 + MEMORY.ref(4, s2).offset(s1 * 0x4L).get();
+        final UnboundedArrayRef<ShortRef> s0 = s2._00.get(s1).deref();
 
-        if((MEMORY.ref(2, s0).offset(0x0L).get() & 0x4000L) != 0) {
+        if((s0.get(0).get() & 0x4000) != 0) {
           final BttlScriptData6cSub1c sub = FUN_800e8dd4(a0, 0xaL, 0, MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800eaec8", EffectManagerData6c.class, BttlScriptData6cSub1c.class), BiFunctionRef::new), 0x1cL, BttlScriptData6cSub1c::new);
 
-          if((MEMORY.ref(2, s0).offset(0x2L).get() & 0x3c0L) == 0) {
-            sub._0c.x.set((short)(MEMORY.ref(2, a2).offset(0x0L).get() & 0x3c0L | MEMORY.ref(2, s0).offset(0x2L).get()));
-            sub._0c.y.set((short)(MEMORY.ref(2, a2).offset(0x2L).get() & 0x100L | MEMORY.ref(2, s0).offset(0x4L).get()));
+          if((s0.get(1).get() & 0x3c0) == 0) {
+            sub._0c.x.set((short)(MEMORY.ref(2, a2).offset(0x0L).get() & 0x3c0 | s0.get(1).get()));
+            sub._0c.y.set((short)(MEMORY.ref(2, a2).offset(0x2L).get() & 0x100 | s0.get(2).get()));
           } else {
             //LAB_800eb3cc
-            sub._0c.x.set((short)MEMORY.ref(2, s0).offset(0x2L).get());
-            sub._0c.y.set((short)MEMORY.ref(2, s0).offset(0x4L).get());
+            sub._0c.x.set(s0.get(1).get());
+            sub._0c.y.set(s0.get(2).get());
           }
 
           //LAB_800eb3dc
           //LAB_800eb3f8
-          sub._0c.w.set((short)(MEMORY.ref(2, s0).offset(0x6L).getSigned() / 4));
-          sub._0c.h.set((short)MEMORY.ref(2, s0).offset(0x8L).get());
+          sub._0c.w.set((short)(s0.get(3).get() / 4));
+          sub._0c.h.set(s0.get(4).get());
           sub._14.set(0);
 
-          final long v1 = MEMORY.ref(2, s0).offset(0xcL).get();
-          final long v0;
-          if(v1 >= 0x10L) {
-            v0 = v1 * 0x10L;
+          final int v0;
+          if(s0.get(6).get() >= 0x10) {
+            v0 = s0.get(6).get() * 0x10;
           } else {
             //LAB_800eb42c
-            v0 = 0x100L / (int)v1;
+            v0 = 0x100 / s0.get(6).get();
           }
 
           //LAB_800eb434
-          sub._18.set((int)v0);
-          if(MEMORY.ref(2, s0).offset(0xaL).get() == 0) {
-            sub._18.set(-sub._18.get());
+          sub._18.set(v0);
+
+          if(s0.get(5).get() == 0) {
+            sub._18.neg();
           }
         }
 
@@ -2947,7 +2950,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800eb9acL)
-  public static void loadStageTmd(final BattleStage stage, final ExtendedTmd extTmd, final TmdAnimationFile tmdAnim) {
+  public static void loadStageTmd(final BattleStage stage, final CContainer extTmd, final TmdAnimationFile tmdAnim) {
     final int x = stage.coord2_558.coord.transfer.getX();
     final int y = stage.coord2_558.coord.transfer.getY();
     final int z = stage.coord2_558.coord.transfer.getZ();
@@ -2961,19 +2964,19 @@ public final class Bttl_800e {
 
     stage.tmd_5d0 = extTmd.tmdPtr_00.deref().tmd;
 
-    if(extTmd.ptr_08.get() != 0) {
-      stage._5ec = extTmd.getAddress() + extTmd.ptr_08.get() / 0x4L * 0x4L; //TODO
+    if(!extTmd.ptr_08.isNull()) {
+      stage._5ec = extTmd.ptr_08.deref();
 
       //LAB_800eba38
       for(int i = 0; i < 10; i++) {
-        stage._5f0[i] = stage._5ec + MEMORY.ref(2, stage._5ec).offset(i * 0x4L).get();
+        stage._5f0[i] = stage._5ec._00.get(i).deref();
         FUN_800ec86c(stage, i);
       }
     } else {
       //LAB_800eba74
       //LAB_800eba7c
       for(int i = 0; i < 10; i++) {
-        stage._5f0[i] = 0;
+        stage._5f0[i] = null;
       }
     }
 
@@ -3042,34 +3045,28 @@ public final class Bttl_800e {
 
   @Method(0x800ebd34L)
   public static void FUN_800ebd34(final BattleStage struct, final int index) {
-    long v0;
-    long a2;
-    final int s1;
-    final int s4;
-    final int s6;
+    final UnboundedArrayRef<ShortRef> v0 = struct._5f0[index];
 
-    v0 = struct._5f0[index]; //TODO ptr to RECT?
-
-    if(v0 == 0) {
+    if(v0 == null) {
       struct._618[index] = 0;
       return;
     }
 
     //LAB_800ebd84
-    final int x = (short)MEMORY.ref(2, v0).offset(0x0L).get();
-    final int y = (short)MEMORY.ref(2, v0).offset(0x2L).get();
-    final int w = (short)(MEMORY.ref(2, v0).offset(0x4L).get() / 4);
-    final int h = (short)MEMORY.ref(2, v0).offset(0x6L).get();
+    final int x = v0.get(0).get();
+    final int y = v0.get(1).get();
+    final int w = (short)(v0.get(2).get() / 4);
+    final int h = v0.get(3).get();
 
     //LAB_800ebdcc
-    a2 = v0 + 0x8L;
+    int a2 = 4;
 
     // There was a loop here, but each iteration overwrote the results from the previous iteration... I collapsed it into a single iteration
-    a2 += (struct._65e[index] - 1) * 0x4L;
-    int s0 = (short)MEMORY.ref(2, a2).offset(0x2L).get();
-    final int t1 = (short)(MEMORY.ref(2, a2).offset(0x0L).get() & 1);
-    final int t0 = (short)(MEMORY.ref(2, a2).offset(0x0L).get() >>> 1);
-    a2 = a2 + 0x4L;
+    a2 += (struct._65e[index] - 1) * 2;
+    final int t1 = (short)(v0.get(a2).get() & 1);
+    final int t0 = (short)(v0.get(a2).get() >>> 1);
+    int s0 = v0.get(a2 + 1).get();
+    a2 += 2;
 
     //LAB_800ebdf0
     if((s0 & 0xf) != 0 && (struct._622[index] & 0xf) != 0) {
@@ -3090,7 +3087,7 @@ public final class Bttl_800e {
     if(struct._64a[index] >= (short)t0) {
       struct._64a[index] = 0;
 
-      if(MEMORY.ref(2, a2).offset(0x0L).get() != 0xffffL) {
+      if(v0.get(a2).get() != -1) {
         struct._65e[index]++;
       } else {
         //LAB_800ebe88
@@ -3100,9 +3097,10 @@ public final class Bttl_800e {
 
     //LAB_800ebe94
     if(s0 != 0) {
-      s1 = s0 / 16;
-      s4 = h - s1;
+      final int s1 = s0 / 16;
+      final int s4 = h - s1;
 
+      final int s6;
       if(t1 == 0) {
         s6 = 256 + s1;
 
@@ -3281,22 +3279,22 @@ public final class Bttl_800e {
 
   @Method(0x800ec86cL)
   public static void FUN_800ec86c(final BattleStage stage, final int index) {
-    final long a2 = stage._5f0[index];
+    final UnboundedArrayRef<ShortRef> a2 = stage._5f0[index];
 
-    if(a2 == 0) {
+    if(a2 == null) {
       stage._618[index] = 0;
       return;
     }
 
     //LAB_800ec890
-    if(MEMORY.ref(2, a2).get() == 0xffffL) {
-      stage._5f0[index] = 0;
+    if(a2.get(0).get() == -1) {
+      stage._5f0[index] = null;
       return;
     }
 
     //LAB_800ec8a8
     stage._618[index] = 1;
-    stage._622[index] = (int)MEMORY.ref(2, a2).offset(0xaL).get();
+    stage._622[index] = a2.get(5).get();
     stage._64a[index] = 0;
     stage._65e[index] = 1;
   }

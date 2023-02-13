@@ -46,7 +46,7 @@ import legend.game.scripting.ScriptState;
 import legend.game.title.Ttle;
 import legend.game.types.CharacterData2c;
 import legend.game.types.DeferredReallocOrFree0c;
-import legend.game.types.ExtendedTmd;
+import legend.game.types.CContainer;
 import legend.game.types.FileEntry08;
 import legend.game.types.FileLoadedCallback;
 import legend.game.types.LoadingOverlay;
@@ -314,7 +314,7 @@ public final class Scus94491BpeSegment {
   public static final Value _8001032c = MEMORY.ref(1, 0x8001032cL);
   public static final Value _80010334 = MEMORY.ref(1, 0x80010334L);
 
-  public static final ExtendedTmd extendedTmd_800103d0 = MEMORY.ref(4, 0x800103d0L, ExtendedTmd::new);
+  public static final CContainer extendedTmd_800103d0 = MEMORY.ref(4, 0x800103d0L, CContainer::new);
   public static final TmdAnimationFile tmdAnimFile_8001051c = MEMORY.ref(4, 0x8001051cL, TmdAnimationFile::new);
 
   /** TIM */

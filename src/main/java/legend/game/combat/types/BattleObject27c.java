@@ -267,7 +267,7 @@ public class BattleObject27c extends BattleScriptDataBase {
 
   public int _142;
   public CombatantStruct1a8 combatant_144;
-  public final Model124 model_148 = new Model124();
+  public final Model124 model_148;
   public int combatantIndex_26c;
   public int animIndex_26e;
   public int animIndex_270;
@@ -276,6 +276,10 @@ public class BattleObject27c extends BattleScriptDataBase {
   public int _274;
   public int charSlot_276;
   public int _278;
+
+  public BattleObject27c(final String name) {
+    this.model_148 = new Model124(name);
+  }
 
   public int getStat(final int statIndex) {
     return switch(statIndex) {

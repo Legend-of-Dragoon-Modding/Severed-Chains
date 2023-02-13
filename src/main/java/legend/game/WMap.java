@@ -29,7 +29,7 @@ import legend.game.tim.Tim;
 import legend.game.tmd.Renderer;
 import legend.game.types.CoolonWarpDestination20;
 import legend.game.types.Coord2AndThenSomeStruct_60;
-import legend.game.types.ExtendedTmd;
+import legend.game.types.CContainer;
 import legend.game.types.GameState52c;
 import legend.game.types.GsF_LIGHT;
 import legend.game.types.LodString;
@@ -2873,7 +2873,7 @@ public class WMap {
     struct258_800c66a8._1b4[whichFile] = mrg;
 
     if(mrg.entries.get(0).size.get() != 0) {
-      struct258_800c66a8._b4[whichFile].extendedTmd_00 = mrg.getFile(0, ExtendedTmd::new);
+      struct258_800c66a8._b4[whichFile].extendedTmd_00 = mrg.getFile(0, CContainer::new);
     }
 
     if(mrg.entries.get(1).size.get() != 0) {
@@ -4612,7 +4612,7 @@ public class WMap {
     //LAB_800dfacc
     for(int i = 0; i < 4; i++) {
       //LAB_800dfae8
-      struct258_800c66a8.models_0c[i] = new Model124();
+      struct258_800c66a8.models_0c[i] = new Model124("Player " + i);
       final int finalI = i;
       loadDrgnDir(0, 5714 + i, files -> WMap.FUN_800d5a30(files, finalI));
       struct258_800c66a8.models_0c[i].colourMap_9d = (int)_800ef694.offset(i).get() + 0x80;

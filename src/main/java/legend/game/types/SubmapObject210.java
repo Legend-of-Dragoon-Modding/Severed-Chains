@@ -3,7 +3,7 @@ package legend.game.types;
 import legend.core.gte.VECTOR;
 
 public class SubmapObject210 {
-  public final Model124 model_00 = new Model124();
+  public final Model124 model_00;
 
   public int s_128;
   public int us_12a;
@@ -80,4 +80,8 @@ public class SubmapObject210 {
   public int ambientGreen_1cc;
   public int ambientBlue_1ce;
   public final BigSubStruct _1d0 = new BigSubStruct();
+
+  public SubmapObject210(final String name) {
+    this.model_00 = new Model124(name);
+  }
 }

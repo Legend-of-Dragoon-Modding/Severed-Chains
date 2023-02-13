@@ -11,7 +11,7 @@ import legend.core.memory.types.UnsignedByteRef;
 public class SmallerStruct implements MemoryRef {
   private final Value ref;
 
-  public final Pointer<TmdExtension> tmdExt_00;
+  public final Pointer<CContainerSubfile1> tmdExt_00;
   public final ArrayRef<UnsignedByteRef> uba_04;
   public final ArrayRef<ShortRef> sa_08;
   public final ArrayRef<ShortRef> sa_10;
@@ -21,7 +21,7 @@ public class SmallerStruct implements MemoryRef {
   public SmallerStruct(final Value ref) {
     this.ref = ref;
 
-    this.tmdExt_00 = ref.offset(4, 0x00L).cast(Pointer.deferred(4, TmdExtension::new));
+    this.tmdExt_00 = ref.offset(4, 0x00L).cast(Pointer.deferred(4, CContainerSubfile1::new));
     this.uba_04 = ref.offset(1, 0x04L).cast(ArrayRef.of(UnsignedByteRef.class, 4, 1, UnsignedByteRef::new));
     this.sa_08 = ref.offset(2, 0x08L).cast(ArrayRef.of(ShortRef.class, 4, 2, ShortRef::new));
     this.sa_10 = ref.offset(2, 0x10L).cast(ArrayRef.of(ShortRef.class, 4, 2, ShortRef::new));

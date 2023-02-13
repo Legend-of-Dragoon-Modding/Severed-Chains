@@ -7,7 +7,7 @@ import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.RelativePointer;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedShortRef;
-import legend.game.types.ExtendedTmd;
+import legend.game.types.CContainer;
 import legend.game.types.TmdAnimationFile;
 
 public class DeffPart implements MemoryRef {
@@ -59,13 +59,13 @@ public class DeffPart implements MemoryRef {
 
   public static class TmdType extends DeffPart {
     public final RelativePointer<UnboundedArrayRef<TextureInfo>> textureInfo_08;
-    public final RelativePointer<ExtendedTmd> tmd_0c;
+    public final RelativePointer<CContainer> tmd_0c;
 
     public TmdType(final Value ref) {
       super(ref);
 
       this.textureInfo_08 = ref.offset(4, 0x08L).cast(RelativePointer.deferred(4, ref.getAddress(), UnboundedArrayRef.of(0x10, TextureInfo::new)));
-      this.tmd_0c = ref.offset(4, 0x0cL).cast(RelativePointer.deferred(4, ref.getAddress(), ExtendedTmd::new));
+      this.tmd_0c = ref.offset(4, 0x0cL).cast(RelativePointer.deferred(4, ref.getAddress(), CContainer::new));
     }
   }
 

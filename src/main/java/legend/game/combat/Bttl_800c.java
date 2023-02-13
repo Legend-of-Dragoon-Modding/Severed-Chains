@@ -65,7 +65,7 @@ import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptState;
 import legend.game.types.CharacterData2c;
-import legend.game.types.ExtendedTmd;
+import legend.game.types.CContainer;
 import legend.game.types.GsF_LIGHT;
 import legend.game.types.LodString;
 import legend.game.types.McqHeader;
@@ -1314,7 +1314,7 @@ public final class Bttl_800c {
       _1f8003f4.stageTmdMrg_63c = MrgFile.alloc(files);
 
       final BattleStage stage = _1f8003f4.stage_963c;
-      loadStageTmd(stage, _1f8003f4.stageTmdMrg_63c.getFile(0, ExtendedTmd::new), _1f8003f4.stageTmdMrg_63c.getFile(1, TmdAnimationFile::new));
+      loadStageTmd(stage, _1f8003f4.stageTmdMrg_63c.getFile(0, CContainer::new), _1f8003f4.stageTmdMrg_63c.getFile(1, TmdAnimationFile::new));
       stage.coord2_558.coord.transfer.set(0, 0, 0);
       stage.param_5a8.rotate.set((short)0, (short)0x400, (short)0);
     }
@@ -1675,13 +1675,13 @@ public final class Bttl_800c {
   public static void FUN_800c952c(final Model124 model, final int combatantIndex) {
     final CombatantStruct1a8 s0 = combatants_8005e398[combatantIndex];
 
-    final ExtendedTmd tmd;
+    final CContainer tmd;
     if(s0._1a4 >= 0) {
-      tmd = MEMORY.ref(4, FUN_800cad34(s0._1a4), ExtendedTmd::new);
+      tmd = MEMORY.ref(4, FUN_800cad34(s0._1a4), CContainer::new);
     } else {
       //LAB_800c9590
       if(s0.mrg_00 != null && s0.mrg_00.entries.get(32).size.get() != 0) {
-        tmd = s0.mrg_00.getFile(32, ExtendedTmd::new);
+        tmd = s0.mrg_00.getFile(32, CContainer::new);
       } else {
         throw new RuntimeException("anim undefined");
       }
@@ -3430,7 +3430,7 @@ public final class Bttl_800c {
 
   @Method(0x800cd5b4L)
   public static FlowControl FUN_800cd5b4(final RunningScript<?> script) {
-    final ScriptState<BattleObject27c> state = SCRIPTS.allocateScriptState(new BattleObject27c());
+    final ScriptState<BattleObject27c> state = SCRIPTS.allocateScriptState(new BattleObject27c("Bobj allocated by script " + script.scriptState_04.index));
     script.params_20[2].set(state.index);
     state.setTicker(Bttl_800c::bobjTicker);
     state.setDestructor(Bttl_800c::bobjDestructor);

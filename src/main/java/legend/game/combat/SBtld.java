@@ -204,7 +204,7 @@ public class SBtld {
       }
 
       final int combatantIndex = getCombatantIndex(charIndex);
-      final ScriptState<BattleObject27c> state = SCRIPTS.allocateScriptState(new BattleObject27c());
+      final ScriptState<BattleObject27c> state = SCRIPTS.allocateScriptState(new BattleObject27c("Enemy combatant index " + combatantIndex));
       state.setTicker(Bttl_800c::bobjTicker);
       state.setDestructor(Bttl_800c::bobjDestructor);
       _8006e398.bobjIndices_e0c[_800c66d0.get()] = state;

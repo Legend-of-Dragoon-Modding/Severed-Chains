@@ -55,7 +55,7 @@ import legend.game.types.DR_TPAGE;
 import legend.game.types.DustRenderData54;
 import legend.game.types.EnvironmentFile;
 import legend.game.types.EnvironmentStruct;
-import legend.game.types.ExtendedTmd;
+import legend.game.types.CContainer;
 import legend.game.types.GsF_LIGHT;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.MediumStruct;
@@ -81,7 +81,8 @@ import legend.game.types.SubmapObject210;
 import legend.game.types.TexPageY;
 import legend.game.types.TimFile;
 import legend.game.types.TmdAnimationFile;
-import legend.game.types.TmdExtension;
+import legend.game.types.CContainerSubfile1;
+import legend.game.types.TmdSubExtension;
 import legend.game.types.Translucency;
 import legend.game.types.TriangleIndicator140;
 import legend.game.types.TriangleIndicator44;
@@ -282,7 +283,7 @@ public final class SMap {
   public static final Value _800c673c = MEMORY.ref(4, 0x800c673cL);
   public static ScriptState<Void> submapControllerState_800c6740;
 
-  public static final Model124 model_800c6748 = new Model124();
+  public static final Model124 playerModel_800c6748 = new Model124("Player");
   public static final Value _800c686c = MEMORY.ref(2, 0x800c686cL);
   public static final Value _800c686e = MEMORY.ref(2, 0x800c686eL);
   public static final Value _800c6870 = MEMORY.ref(2, 0x800c6870L);
@@ -308,7 +309,7 @@ public final class SMap {
   public static final ArrayRef<IntRef> _800c6970 = MEMORY.ref(4, 0x800c6970L, ArrayRef.of(IntRef.class, 32, 4, IntRef::new));
 
   public static final Pointer<TriangleIndicator140> _800c69fc = MEMORY.ref(4, 0x800c69fcL, Pointer.deferred(4, TriangleIndicator140::new));
-  public static final UnboundedArrayRef<Pointer<ExtendedTmd>> submapObjectModels_800c6a00 = MEMORY.ref(4, 0x800c6a00L, UnboundedArrayRef.of(4, Pointer.deferred(4, ExtendedTmd::new)));
+  public static final UnboundedArrayRef<Pointer<CContainer>> submapObjectModels_800c6a00 = MEMORY.ref(4, 0x800c6a00L, UnboundedArrayRef.of(4, Pointer.deferred(4, CContainer::new)));
 
   /** TODO array, flags for submap objects - 0x80 means the model is the same as the previous one */
   public static final Value submapObjectFlags_800c6a50 = MEMORY.ref(4, 0x800c6a50L);
@@ -427,20 +428,20 @@ public final class SMap {
   public static final BoolRef submapCutModelAndAnimLoaded_800d4bdc = MEMORY.ref(4, 0x800d4bdcL, BoolRef::new);
   public static final BoolRef submapTextureAndMatrixLoaded_800d4be0 = MEMORY.ref(4, 0x800d4be0L, BoolRef::new);
   public static final BoolRef theEndTimLoaded_800d4be4 = MEMORY.ref(4, 0x800d4be4L, BoolRef::new);
-  public static ExtendedTmd submapCutModel;
+  public static CContainer submapCutModel;
   public static TmdAnimationFile submapCutAnim;
   public static Tim submapCutTexture;
   public static MATRIX submapCutMatrix;
   public static final Pointer<TimFile> theEndTim_800d4bf0 = MEMORY.ref(4, 0x800d4bf0L, Pointer.deferred(4, TimFile::new));
 
-  public static final Model124 model_800d4bf8 = new Model124();
+  public static final Model124 submapModel_800d4bf8 = new Model124("Submap");
 
   public static final Value _800d4d20 = MEMORY.ref(4, 0x800d4d20L);
 
   public static final IntRef _800d4d30 = MEMORY.ref(4, 0x800d4d30L, IntRef::new);
   public static final IntRef _800d4d34 = MEMORY.ref(4, 0x800d4d34L, IntRef::new);
 
-  public static final Model124 model_800d4d40 = new Model124();
+  public static final Model124 dustModel_800d4d40 = new Model124("Dust");
 
   public static final DustRenderData54 dust_800d4e68 = MEMORY.ref(4, 0x800d4e68L, DustRenderData54::new);
 
@@ -473,7 +474,7 @@ public final class SMap {
   public static final SVECTOR savePointPos_800d5622 = MEMORY.ref(2, 0x800d5622L, SVECTOR::new);
 
   public static final ArrayRef<SavePointRenderData44> savePoint_800d5630 = MEMORY.ref(4, 0x800d5630L, ArrayRef.of(SavePointRenderData44.class, 32, 0x44, SavePointRenderData44::new));
-  public static final Model124 savePointModel_800d5eb0 = new Model124();
+  public static final Model124 savePointModel_800d5eb0 = new Model124("Save point");
 
   public static final SMapStruct3c struct3c_800d5fd8 = MEMORY.ref(4, 0x800d5fd8L, SMapStruct3c::new);
 
@@ -1051,26 +1052,27 @@ public final class SMap {
     } else {
       //LAB_800ddeac
       final int v1 = (struct.colourMap_9d & 0x7f) * 2;
-      final int t2 = (int)_80050424.offset(v1).getSigned() + 112;
-      final int t1 = (int)_800503f8.offset(v1).getSigned();
+      final int y = (int)_80050424.offset(v1).getSigned() + 112;
+      final int x = (int)_800503f8.offset(v1).getSigned();
 
-      long a1 = smallerStruct.tmdSubExtensionArr_20.get(index).getPointer() + 0x4L; //TODO
+      final TmdSubExtension v = smallerStruct.tmdSubExtensionArr_20.get(index).deref();
+      int a1 = 0;
 
       //LAB_800ddef8
       for(int i = 0; i < smallerStruct.sa_08.get(index).get(); i++) {
-        a1 += 0x4L;
+        a1 += 2;
       }
 
       //LAB_800ddf08
-      final int t3 = (int)MEMORY.ref(2, a1).getSigned();
-      a1 += 0x2L;
+      final int sourceYOffset = v.sa_04.get(a1).get();
+      a1++;
 
       smallerStruct.sa_10.get(index).incr();
 
-      if(smallerStruct.sa_10.get(index).get() == (short)MEMORY.ref(2, a1).getSigned()) {
+      if(smallerStruct.sa_10.get(index).get() == v.sa_04.get(a1).get()) {
         smallerStruct.sa_10.get(index).set((short)0);
 
-        if(MEMORY.ref(2, a1).offset(0x2L).getSigned() == -1) {
+        if(v.sa_04.get(a1 + 1).get() == -1) {
           smallerStruct.sa_08.get(index).set((short)0);
         } else {
           //LAB_800ddf70
@@ -1079,15 +1081,15 @@ public final class SMap {
       }
 
       //LAB_800ddf8c
-      GPU.queueCommand(1, new GpuCommandCopyVramToVram(t1, t2 + t3, t1, smallerStruct.sa_18.get(index).get() + t2, 16, 1));
+      GPU.queueCommand(1, new GpuCommandCopyVramToVram(x, y + sourceYOffset, x, y + smallerStruct.sa_18.get(index).get(), 16, 1));
     }
 
     //LAB_800ddff4
   }
 
   @Method(0x800de004L)
-  public static void FUN_800de004(final Model124 model, final ExtendedTmd extendedTmd) {
-    if(extendedTmd.ext_04.isNull()) {
+  public static void FUN_800de004(final Model124 model, final CContainer CContainer) {
+    if(CContainer.ext_04.isNull()) {
       //LAB_800de120
       model.smallerStructPtr_a4 = null;
       return;
@@ -1096,7 +1098,7 @@ public final class SMap {
     final SmallerStruct smallerStruct = MEMORY.ref(4, mallocTail(0x30L), SmallerStruct::new);
     model.smallerStructPtr_a4 = smallerStruct;
 
-    final TmdExtension ext = extendedTmd.ext_04.deref();
+    final CContainerSubfile1 ext = CContainer.ext_04.deref();
     smallerStruct.tmdExt_00.set(ext);
 
     //LAB_800de05c
@@ -1108,7 +1110,7 @@ public final class SMap {
       } else {
         smallerStruct.sa_08.get(i).set((short)0);
         smallerStruct.sa_10.get(i).set((short)0);
-        smallerStruct.sa_18.get(i).set((short)smallerStruct.tmdSubExtensionArr_20.get(i).deref().us_02.get());
+        smallerStruct.sa_18.get(i).set(smallerStruct.tmdSubExtensionArr_20.get(i).deref().s_02.get());
 
         if(smallerStruct.sa_18.get(i).get() == -1) {
           //LAB_800de0f8
@@ -1137,7 +1139,7 @@ public final class SMap {
     //LAB_800de164
     smallerStruct.sa_08.get(index).set((short)0);
     smallerStruct.sa_10.get(index).set((short)0);
-    smallerStruct.sa_18.get(index).set((short)smallerStruct.tmdSubExtensionArr_20.get(index).deref().us_02.get());
+    smallerStruct.sa_18.get(index).set(smallerStruct.tmdSubExtensionArr_20.get(index).deref().s_02.get());
 
     if(smallerStruct.sa_18.get(index).get() == -1) {
       smallerStruct.uba_04.get(index).set(0);
@@ -1193,10 +1195,10 @@ public final class SMap {
   public static FlowControl FUN_800de334(final RunningScript<?> script) {
     final SVECTOR sp0x10 = new SVECTOR();
     get3dAverageOfSomething(script.params_20[0].get(), sp0x10);
-    model_800c6748.coord2_14.coord.transfer.set(sp0x10);
+    playerModel_800c6748.coord2_14.coord.transfer.set(sp0x10);
     final MATRIX lw = new MATRIX();
     final MATRIX ls = new MATRIX();
-    GsGetLws(model_800c6748.coord2_14, lw, ls);
+    GsGetLws(playerModel_800c6748.coord2_14, lw, ls);
     CPU.CTC2(ls.getPacked(0), 0);
     CPU.CTC2(ls.getPacked(2), 1);
     CPU.CTC2(ls.getPacked(4), 2);
@@ -1242,11 +1244,11 @@ public final class SMap {
     //LAB_800de4f8
     while(ints.array(s0).get() != -1) {
       get3dAverageOfSomething(ints.array(s0++).get(), sp0x10);
-      model_800c6748.coord2_14.coord.transfer.setX(sp0x10.getX());
-      model_800c6748.coord2_14.coord.transfer.setY(sp0x10.getY());
-      model_800c6748.coord2_14.coord.transfer.setZ(sp0x10.getZ());
+      playerModel_800c6748.coord2_14.coord.transfer.setX(sp0x10.getX());
+      playerModel_800c6748.coord2_14.coord.transfer.setY(sp0x10.getY());
+      playerModel_800c6748.coord2_14.coord.transfer.setZ(sp0x10.getZ());
 
-      GsGetLws(model_800c6748.coord2_14, sp0x48, sp0x28);
+      GsGetLws(playerModel_800c6748.coord2_14, sp0x48, sp0x28);
       CPU.CTC2(sp0x28.getPacked(0), 0);
       CPU.CTC2(sp0x28.getPacked(2), 1);
       CPU.CTC2(sp0x28.getPacked(4), 2);
@@ -2328,7 +2330,7 @@ public final class SMap {
   }
 
   @Method(0x800e0d18L)
-  public static void FUN_800e0d18(final Model124 model, final ExtendedTmd extendedTmd, final TmdAnimationFile tmdAnimFile) {
+  public static void FUN_800e0d18(final Model124 model, final CContainer cContainer, final TmdAnimationFile tmdAnimFile) {
     final int transferX = model.coord2_14.coord.transfer.getX();
     final int transferY = model.coord2_14.coord.transfer.getY();
     final int transferZ = model.coord2_14.coord.transfer.getZ();
@@ -2338,22 +2340,22 @@ public final class SMap {
       model.aub_ec[i] = 0;
     }
 
-    final int count = extendedTmd.tmdPtr_00.deref().tmd.header.nobj.get();
+    final int count = cContainer.tmdPtr_00.deref().tmd.header.nobj.get();
     model.count_c8 = count;
     model.dobj2ArrPtr_00 = new GsDOBJ2[count];
     model.coord2ArrPtr_04 = new GsCOORDINATE2[count];
     model.coord2ParamArrPtr_08 = new GsCOORD2PARAM[count];
-    model.tmd_8c = extendedTmd.tmdPtr_00.deref().tmd;
+    model.tmd_8c = cContainer.tmdPtr_00.deref().tmd;
     model.tmdNobj_ca = count;
 
     Arrays.setAll(model.dobj2ArrPtr_00, i -> new GsDOBJ2());
     Arrays.setAll(model.coord2ArrPtr_04, i -> new GsCOORDINATE2());
     Arrays.setAll(model.coord2ParamArrPtr_08, i -> new GsCOORD2PARAM());
 
-    if(!extendedTmd.ext_04.isNull()) {
+    if(!cContainer.ext_04.isNull()) {
       final SmallerStruct smallerStruct = MEMORY.ref(4, mallocTail(0x30L), SmallerStruct::new);
       model.smallerStructPtr_a4 = smallerStruct;
-      smallerStruct.tmdExt_00.set(extendedTmd.ext_04.deref());
+      smallerStruct.tmdExt_00.set(cContainer.ext_04.deref());
 
       //LAB_800e0e28
       for(int i = 0; i < 4; i++) {
@@ -2366,25 +2368,23 @@ public final class SMap {
     }
 
     //LAB_800e0e74
-    model.tpage_108 = (int)((extendedTmd.tmdPtr_00.deref().id.get() & 0xffff_0000L) >> 11);
-    final long v0_0 = extendedTmd.ptr_08.get();
-    if(v0_0 != 0) {
-      model.ptr_a8 = extendedTmd.getAddress() + v0_0 / 0x4L * 0x4L;
+    model.tpage_108 = (int)((cContainer.tmdPtr_00.deref().id.get() & 0xffff_0000L) >> 11);
+
+    if(!cContainer.ptr_08.isNull()) {
+      model.ptr_a8 = cContainer.ptr_08.deref();
 
       //LAB_800e0eac
       for(int i = 0; i < 7; i++) {
-        long v1 = model.ptr_a8;
-        v1 += MEMORY.ref(4, v1).offset(i * 0x4L).get() / 0x4L * 0x4L;
-        model.ptrs_d0[i] = v1;
+        model.ptrs_d0[i] = model.ptr_a8._00.get(i).deref();
         FUN_8002246c(model, i);
       }
     } else {
       //LAB_800e0ef0
-      model.ptr_a8 = extendedTmd.ptr_08.getAddress();
+      model.ptr_a8 = null; //TODO was this needed? cContainer.ptr_08.getAddress();
 
       //LAB_800e0f00
       for(int i = 0; i < 7; i++) {
-        model.ptrs_d0[i] = 0;
+        model.ptrs_d0[i] = null;
       }
     }
 
@@ -2763,7 +2763,7 @@ public final class SMap {
 
             final SubmapObject obj = new SubmapObject();
             obj.script = new ScriptFile("Submap object %d (DRGN%d/%d/%d)".formatted(objIndex, drgnIndex.get(), fileIndex.get() + 2, objIndex + 1), scriptData);
-            obj.model = MEMORY.ref(4, mallocTail(tmdData.length), ExtendedTmd::new);
+            obj.model = MEMORY.ref(4, mallocTail(tmdData.length), CContainer::new);
 
             MEMORY.setBytes(obj.model.getAddress(), tmdData);
 
@@ -2870,7 +2870,7 @@ public final class SMap {
         for(int i = 0; i < sobjCount_800c6730.get(); i++) {
           final SubmapObject obj = submapAssets.objects.get(i);
 
-          final ScriptState<SubmapObject210> state = SCRIPTS.allocateScriptState(new SubmapObject210());
+          final ScriptState<SubmapObject210> state = SCRIPTS.allocateScriptState(new SubmapObject210("Submap object " + i + " (file " + i * 33 + ')'));
           sobjs_800c6880[i] = state;
           state.setTicker(SMap::submapObjectTicker);
           state.setRenderer(SMap::submapObjectRenderer);
@@ -2880,14 +2880,14 @@ public final class SMap {
           final Model124 model = state.innerStruct_00.model_00;
           model.colourMap_9d = (int)submapObjectFlags_800c6a50.offset(1, i * 0x4L).get();
 
-          final ExtendedTmd tmd = submapObjectModels_800c6a00.get(i).deref();
+          final CContainer tmd = submapObjectModels_800c6a00.get(i).deref();
           final TmdAnimationFile anim = obj.animations.get(0);
           initModel(model, tmd, anim);
 
           if(i == 0) { // Player
-            FUN_800e0d18(model_800c6748, tmd, anim);
-            model_800c6748.coord2_14.coord.transfer.set(0, 0, 0);
-            model_800c6748.coord2Param_64.rotate.set((short)0, (short)0, (short)0);
+            FUN_800e0d18(playerModel_800c6748, tmd, anim);
+            playerModel_800c6748.coord2_14.coord.transfer.set(0, 0, 0);
+            playerModel_800c6748.coord2Param_64.rotate.set((short)0, (short)0, (short)0);
           }
 
           //LAB_800e1c50
@@ -3161,7 +3161,7 @@ public final class SMap {
 
     _800f9eac.set(-1);
     loadSmapMedia();
-    deallocateModel(model_800c6748);
+    deallocateModel(playerModel_800c6748);
     free(_800c6734.getPointer());
     free(_800c69fc.getPointer());
     loadTimImage(_80010544.getAddress());
@@ -3749,7 +3749,7 @@ public final class SMap {
     FUN_800f047c();
     FUN_800f3abc();
     FUN_800f4354();
-    applyModelRotationAndScale(model_800c6748);
+    applyModelRotationAndScale(playerModel_800c6748);
     callbackArr_800f5ad4.get((int)callbackIndex_800c6968.get()).deref().run();
   }
 
@@ -6573,7 +6573,7 @@ public final class SMap {
         }
 
         //LAB_800ee1b8
-        deallocateModel(model_800d4bf8);
+        deallocateModel(submapModel_800d4bf8);
 
         free(submapCutModel.getAddress());
         free(submapCutAnim.getAddress());
@@ -6619,7 +6619,7 @@ public final class SMap {
           loadDrgnDir(0, fileIndex, files -> {
             submapCutModelAndAnimLoaded_800d4bdc.set(true);
 
-            submapCutModel = MEMORY.ref(4, mallocTail(files.get(0).length), ExtendedTmd::new);
+            submapCutModel = MEMORY.ref(4, mallocTail(files.get(0).length), CContainer::new);
             submapCutAnim = MEMORY.ref(4, mallocTail(files.get(1).length), TmdAnimationFile::new);
 
             MEMORY.setBytes(submapCutModel.getAddress(), files.get(0));
@@ -6682,9 +6682,9 @@ public final class SMap {
       }
 
       case 0x4 -> {
-        model_800d4bf8.colourMap_9d = 0x91;
+        submapModel_800d4bf8.colourMap_9d = 0x91;
 
-        initModel(model_800d4bf8, submapCutModel, submapCutAnim);
+        initModel(submapModel_800d4bf8, submapCutModel, submapCutAnim);
 
         if(submapCut_80052c30.get() == 673) { // End cutscene
           FUN_800eef6c(_800d6b48, _800d4bd4.get(), _800d4bd0.get());
@@ -6936,17 +6936,17 @@ public final class SMap {
 
   @Method(0x800eece0L)
   public static void FUN_800eece0(final MATRIX matrix) {
-    model_800d4bf8.coord2_14.coord.transfer.setX(0);
-    model_800d4bf8.coord2_14.coord.transfer.setY(0);
-    model_800d4bf8.coord2_14.coord.transfer.setZ(0);
+    submapModel_800d4bf8.coord2_14.coord.transfer.setX(0);
+    submapModel_800d4bf8.coord2_14.coord.transfer.setY(0);
+    submapModel_800d4bf8.coord2_14.coord.transfer.setZ(0);
 
-    model_800d4bf8.coord2Param_64.rotate.setX((short)0);
-    model_800d4bf8.coord2Param_64.rotate.setY((short)0);
-    model_800d4bf8.coord2Param_64.rotate.setZ((short)0);
+    submapModel_800d4bf8.coord2Param_64.rotate.setX((short)0);
+    submapModel_800d4bf8.coord2Param_64.rotate.setY((short)0);
+    submapModel_800d4bf8.coord2Param_64.rotate.setZ((short)0);
 
-    applyModelRotationAndScale(model_800d4bf8);
-    animateModel(model_800d4bf8);
-    FUN_800eee48(model_800d4bf8, matrix);
+    applyModelRotationAndScale(submapModel_800d4bf8);
+    animateModel(submapModel_800d4bf8);
+    FUN_800eee48(submapModel_800d4bf8, matrix);
   }
 
   @Method(0x800eed44L)
@@ -7226,19 +7226,19 @@ public final class SMap {
         //LAB_800ef804
         s0.transfer.y.decr();
 
-        model_800d4d40.coord2_14.coord.transfer.set(s0.transfer);
+        dustModel_800d4d40.coord2_14.coord.transfer.set(s0.transfer);
 
         s0.scale_08.add(s0._04);
 
-        model_800d4d40.scaleVector_fc.setX(s0.scale_08.get());
-        model_800d4d40.scaleVector_fc.setY(s0.scale_08.get());
-        model_800d4d40.scaleVector_fc.setZ(s0.scale_08.get());
+        dustModel_800d4d40.scaleVector_fc.setX(s0.scale_08.get());
+        dustModel_800d4d40.scaleVector_fc.setY(s0.scale_08.get());
+        dustModel_800d4d40.scaleVector_fc.setZ(s0.scale_08.get());
 
-        applyModelRotationAndScale(model_800d4d40);
-        renderModel(model_800d4d40);
+        applyModelRotationAndScale(dustModel_800d4d40);
+        renderModel(dustModel_800d4d40);
 
-        model_800d4d40.s_9e = 0;
-        model_800d4d40.coord2ArrPtr_04[0].flg--;
+        dustModel_800d4d40.s_9e = 0;
+        dustModel_800d4d40.coord2ArrPtr_04[0].flg--;
         s0._00.incr();
 
         s1 = s0;
@@ -7505,7 +7505,7 @@ public final class SMap {
 
   @Method(0x800f0370L)
   public static void FUN_800f0370() {
-    initModel(model_800d4d40, mrg_800d6d1c.getFile(4, ExtendedTmd::new), mrg_800d6d1c.getFile(5, TmdAnimationFile::new));
+    initModel(dustModel_800d4d40, mrg_800d6d1c.getFile(4, CContainer::new), mrg_800d6d1c.getFile(5, TmdAnimationFile::new));
     dust_800d4e68.next_50.clear();
     _800d4ec0.next_1c.clear();
     FUN_800f0e60();
@@ -7529,7 +7529,7 @@ public final class SMap {
 
   @Method(0x800f0440L)
   public static void FUN_800f0440() {
-    deallocateModel(model_800d4d40);
+    deallocateModel(dustModel_800d4d40);
     FUN_800f058c();
     deallocateDust();
     FUN_800f0e7c();
@@ -8610,7 +8610,7 @@ public final class SMap {
 
   @Method(0x800f2788L)
   public static void initSavePoint() {
-    initModel(savePointModel_800d5eb0, mrg_800d6d1c.getFile(2, ExtendedTmd::new), mrg_800d6d1c.getFile(3, TmdAnimationFile::new));
+    initModel(savePointModel_800d5eb0, mrg_800d6d1c.getFile(2, CContainer::new), mrg_800d6d1c.getFile(3, TmdAnimationFile::new));
     savePoint_800d5598.get(0).rotation_28.set(0);
     savePoint_800d5598.get(0).colour_34.set(0x50);
     savePoint_800d5598.get(1).rotation_28.set(0);
