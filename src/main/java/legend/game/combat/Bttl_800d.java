@@ -4409,55 +4409,31 @@ public final class Bttl_800d {
   }
 
   @Method(0x800dd4ccL)
-  public static long applyStandardAnimation(final Model124 a0, final int a1) {
-    long v0;
-    long v1;
-    final long s2;
-    final long hi;
-    final long lo;
-    v1 = a0.ub_9c;
-    if(v1 == 2) {
-      return v1;
+  public static int applyStandardAnimation(final Model124 a0, final int a1) {
+    if(a0.ub_9c == 2) {
+      return 2;
     }
 
     //LAB_800dd4fc
-    v0 = a0.s_9a;
+    final int v0;
+    final int s2;
     if(a0.ub_a2 != 0) {
-      v0 = v0 << 16;
-      v0 = (int)v0 >> 17;
-      hi = (a1 & 0xffff_ffffL) % (v0 & 0xffff_ffffL);
-      s2 = hi;
-      v1 = a0.animCount_98;
-      v0 = s2 << 1;
-      v0 = v0 + s2;
-      lo = (long)(int)v1 * (int)v0 & 0xffff_ffffL;
+      s2 = a1 % ((short)a0.s_9a / 2);
       a0.partTransforms_94 = a0.partTransforms_90;
-      v1 = lo;
-      a0.partTransforms_94 = a0.partTransforms_90.slice((int)v1);
+      a0.partTransforms_94 = a0.partTransforms_90.slice(a0.animCount_98 * s2 * 3);
       applyModelPartTransforms(a0);
-      v0 = a0.s_9a;
-      v0 = v0 << 16;
-      v0 = (int)v0 >> 17;
+      v0 = (short)a0.s_9a >> 1;
     } else {
       //LAB_800dd568
-      hi = (a1 & 0xffff_ffffL) % (v0 & 0xffff_ffffL);
-      s2 = hi;
-      v1 = s2 >>> 1;
-      v0 = v1 << 1;
-      v0 = v0 + v1;
-      lo = a0.animCount_98 * (int)v0 & 0xffff_ffffL;
+      s2 = a1 % a0.s_9a;
       a0.partTransforms_94 = a0.partTransforms_90;
-      v1 = lo;
-      a0.partTransforms_94 = a0.partTransforms_90.slice((int)v1);
+      a0.partTransforms_94 = a0.partTransforms_90.slice(a0.animCount_98 * s2 / 2 * 3);
       applyModelPartTransforms(a0);
-      if((s2 & 0x1L) != 0) {
-        if(s2 != a0.s_9a - 1) {
-          if(a0.ub_a3 == 0) {
-            final UnboundedArrayRef<ModelPartTransforms> original = a0.partTransforms_94;
-            FUN_800213c4(a0);
-            a0.partTransforms_94 = original;
-          }
-        }
+
+      if((s2 & 0x1) != 0 && s2 != a0.s_9a - 1 && a0.ub_a3 == 0) {
+        final UnboundedArrayRef<ModelPartTransforms> original = a0.partTransforms_94;
+        FUN_800213c4(a0);
+        a0.partTransforms_94 = original;
       }
 
       //LAB_800dd5ec
@@ -4465,7 +4441,7 @@ public final class Bttl_800d {
     }
 
     //LAB_800dd5f0
-    a0.s_9e = (int)(v0 - s2 - 1);
+    a0.s_9e = v0 - s2 - 1;
 
     if(a0.s_9e == 0) {
       a0.ub_9c = 0;
@@ -4480,7 +4456,7 @@ public final class Bttl_800d {
   }
 
   @Method(0x800dd638L)
-  public static long applyLmbAnimation(final Model124 a0, final int a1) {
+  public static int applyLmbAnimation(final Model124 a0, final int a1) {
     int v0;
     final int s6;
     if(a0.ub_9c == 2) {
@@ -4491,23 +4467,20 @@ public final class Bttl_800d {
     final int count = Math.min(a0.count_c8, a0.animCount_98);
 
     //LAB_800dd69c
-    final LmbType0 lmb = (LmbType0) a0.lmbAnim_08.lmb_00;
+    final LmbType0 lmb = (LmbType0)a0.lmbAnim_08.lmb_00;
 
     final int a0_0;
     final int v1;
-    if(a0.ub_a2 != 0) {
-      v1 = a1 * 2 % a0.s_9a;
-      s6 = 0;
-      v0 = a0.s_9a >> 1;
-      a0_0 = v1 >>> 1;
-      v0 = v0 - a0_0;
-    } else {
+    if(a0.ub_a2 == 0) {
       //LAB_800dd6dc
       v1 = a1 % a0.s_9a;
-      v0 = a1 & 0x1;
-      s6 = v0 << 11;
+      s6 = (a1 & 0x1) << 11;
       a0_0 = v1 >>> 1;
       v0 = a0.s_9a - v1;
+    } else {
+      s6 = 0;
+      a0_0 = (a1 << 1) % a0.s_9a >>> 1;
+      v0 = (a0.s_9a >> 1) - a0_0;
     }
 
     //LAB_800dd700
@@ -4515,32 +4488,32 @@ public final class Bttl_800d {
 
     //LAB_800dd720
     for(int i = 0; i < count; i++) {
-      LmbTransforms14 a1_0 = lmb._08.get(i)._08.deref().get(a0_0);
-      final MATRIX s0 = a0.dobj2ArrPtr_00[i].coord2_04.coord;
+      LmbTransforms14 transforms = lmb._08.get(i)._08.deref().get(a0_0);
+      final MATRIX matrix = a0.dobj2ArrPtr_00[i].coord2_04.coord;
 
       final VECTOR trans = new VECTOR();
       final SVECTOR rot = new SVECTOR();
       final VECTOR scale = new VECTOR();
-      trans.set(a1_0.trans_06);
-      rot.set(a1_0.rot_0c);
-      scale.set(a1_0.scale_00);
+      trans.set(transforms.trans_06);
+      rot.set(transforms.rot_0c);
+      scale.set(transforms.scale_00);
 
       if(s6 != 0) {
         if(a1 == a0.s_9a - 1) {
-          a1_0 = lmb._08.get(i)._08.deref().get(0);
+          transforms = lmb._08.get(i)._08.deref().get(0);
         } else {
           //LAB_800dd7cc
-          a1_0 = lmb._08.get(i)._08.deref().get(a0_0 + 1);
+          transforms = lmb._08.get(i)._08.deref().get(a0_0 + 1);
         }
 
         //LAB_800dd7d0
-        trans.add(a1_0.trans_06).div(2);
+        trans.add(transforms.trans_06).div(2);
       }
 
       //LAB_800dd818
-      RotMatrix_80040010(rot, s0);
-      TransMatrix(s0, trans);
-      ScaleMatrixL(s0, scale);
+      RotMatrix_80040010(rot, matrix);
+      TransMatrix(matrix, trans);
+      ScaleMatrixL(matrix, scale);
     }
 
     //LAB_800dd84c
@@ -4689,11 +4662,10 @@ public final class Bttl_800d {
   }
 
   @Method(0x800ddd3cL)
-  public static long applyCmbAnimation(final Model124 a0, final int a1) {
+  public static int applyCmbAnimation(final Model124 a0, final int a1) {
     if(a0.ub_9c == 2) {
       return 2;
     }
-
 
     //LAB_800ddd9c
     final Model124.CmbAnim cmbAnim = a0.cmbAnim_08;
@@ -4884,8 +4856,7 @@ public final class Bttl_800d {
 
   @Method(0x800de3f4L)
   public static void FUN_800de3f4(final TmdObjTable a0, final EffectManagerData6cInner a1, final MATRIX a2) {
-    long s0 = deffManager_800c693c._20 & 0x4;
-    s0 = s0 >> 1 | s0 >> 2;
+    final int s0 = deffManager_800c693c._20 & 0x4;
 
     final MATRIX sp0x10 = new MATRIX();
     if((a1.flags_00 & 0x8) != 0) {
@@ -4900,11 +4871,11 @@ public final class Bttl_800d {
     MulMatrix0(worldToScreenMatrix_800c3548, a2, sp0x10);
     if((a1.flags_00 & 0x400_0000) == 0) {
       RotMatrix_8003faf0(a1.rot_10, sp0x10);
-      ScaleVectorL_SVEC(sp0x10, a1.scale_16);
+      ScaleMatrixL_SVEC(sp0x10, a1.scale_16);
     }
 
     //LAB_800de4a8
-    if((s0 & (sp0x10.transfer.getZ() ^ tickCount_800bb0fc.get())) == 0 || sp0x10.transfer.getZ() - sp0x10.transfer.getX() >= -0x800 && sp0x10.transfer.getZ() + sp0x10.transfer.getX() >= -0x800 && sp0x10.transfer.getZ() - sp0x10.transfer.getY() >= -0x800 && sp0x10.transfer.getZ() + sp0x10.transfer.getY() >= -0x800) {
+    if(((s0 >> 1 | s0 >> 2) & (sp0x10.transfer.getZ() ^ tickCount_800bb0fc.get())) == 0 || sp0x10.transfer.getZ() - sp0x10.transfer.getX() >= -0x800 && sp0x10.transfer.getZ() + sp0x10.transfer.getX() >= -0x800 && sp0x10.transfer.getZ() - sp0x10.transfer.getY() >= -0x800 && sp0x10.transfer.getZ() + sp0x10.transfer.getY() >= -0x800) {
       //LAB_800de50c
       setRotTransMatrix(sp0x10);
 
@@ -4941,7 +4912,7 @@ public final class Bttl_800d {
   }
 
   @Method(0x800de72cL)
-  public static void ScaleVectorL_SVEC(final MATRIX a0, final SVECTOR a1) {
+  public static void ScaleMatrixL_SVEC(final MATRIX a0, final SVECTOR a1) {
     ScaleMatrixL(a0, new VECTOR().set(a1));
   }
 

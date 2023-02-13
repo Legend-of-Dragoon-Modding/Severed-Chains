@@ -2,6 +2,7 @@ package legend.game.combat;
 
 import legend.core.Config;
 import legend.core.DebugHelper;
+import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandCopyVramToVram;
 import legend.core.gpu.GpuCommandPoly;
@@ -221,7 +222,7 @@ import static legend.game.combat.Bttl_800c.targeting_800fb36c;
 import static legend.game.combat.Bttl_800c.tmds_800c6944;
 import static legend.game.combat.Bttl_800c.usedRepeatItems_800c6c3c;
 import static legend.game.combat.Bttl_800d.FUN_800dd89c;
-import static legend.game.combat.Bttl_800d.ScaleVectorL_SVEC;
+import static legend.game.combat.Bttl_800d.ScaleMatrixL_SVEC;
 import static legend.game.combat.Bttl_800d.applyAnimation;
 import static legend.game.combat.Bttl_800d.loadModelAnim;
 import static legend.game.combat.Bttl_800d.loadModelTmd;
@@ -1533,15 +1534,8 @@ public final class Bttl_800e {
       final VECTOR sp0x18 = ApplyMatrixLV(worldToScreenMatrix_800c3548, trans);
       sp0x18.add(worldToScreenMatrix_800c3548.transfer);
 
-      final int x;
-      final int y;
-      if(sp0x18.getZ() != 0) {
-        x = sp0x18.getX() * projectionPlaneDistance_1f8003f8.get() / sp0x18.getZ();
-        y = sp0x18.getY() * projectionPlaneDistance_1f8003f8.get() / sp0x18.getZ();
-      } else {
-        x = 0;
-        y = 0;
-      }
+      final int x = MathHelper.safeDiv(sp0x18.getX() * projectionPlaneDistance_1f8003f8.get(), sp0x18.getZ());
+      final int y = MathHelper.safeDiv(sp0x18.getY() * projectionPlaneDistance_1f8003f8.get(), sp0x18.getZ());
 
       int z = a2 + (sp0x18.getZ() >> 2);
       if(z >= 0x28) {
@@ -1550,7 +1544,7 @@ public final class Bttl_800e {
         }
 
         //LAB_800e7a38
-        final int a1 = (projectionPlaneDistance_1f8003f8.get() << 10) / (sp0x18.getZ() >> 2);
+        final int a1 = MathHelper.safeDiv(projectionPlaneDistance_1f8003f8.get() << 10, sp0x18.getZ() >> 2);
         final int s5 = s1.x_04.get() * s1._1c.get() / 8 * a1 / 8 >> 12;
         final int s7 = s5 + (s1.w_08.get() * s1._1c.get() / 8 * a1 / 8 >> 12);
         final int s2 = s1.y_06.get() * s1._1e.get() / 8 * a1 / 8 >> 12;
@@ -1743,7 +1737,7 @@ public final class Bttl_800e {
   public static void FUN_800e8594(final MATRIX a0, final EffectManagerData6c a1) {
     RotMatrix_8003faf0(a1._10.rot_10, a0);
     TransMatrix(a0, a1._10.trans_04);
-    ScaleVectorL_SVEC(a0, a1._10.scale_16);
+    ScaleMatrixL_SVEC(a0, a1._10.scale_16);
 
     EffectManagerData6c s3 = a1;
     int scriptIndex = a1.scriptIndex_0c;
@@ -1764,7 +1758,7 @@ public final class Bttl_800e {
         final MATRIX sp0x10 = new MATRIX();
         RotMatrix_8003faf0(manager._10.rot_10, sp0x10);
         TransMatrix(sp0x10, manager._10.trans_04);
-        ScaleVectorL_SVEC(sp0x10, manager._10.scale_16);
+        ScaleMatrixL_SVEC(sp0x10, manager._10.scale_16);
         if(s3.coord2Index_0d != -1) {
           //LAB_800e866c
           MulMatrix0(sp0x10, FUN_800ea0f4(manager, s3.coord2Index_0d).coord, sp0x10);

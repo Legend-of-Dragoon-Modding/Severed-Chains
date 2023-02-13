@@ -187,7 +187,7 @@ import static legend.game.combat.Bttl_800d.FUN_800dc408;
 import static legend.game.combat.Bttl_800d.FUN_800de3f4;
 import static legend.game.combat.Bttl_800d.FUN_800de544;
 import static legend.game.combat.Bttl_800d.FUN_800de618;
-import static legend.game.combat.Bttl_800d.ScaleVectorL_SVEC;
+import static legend.game.combat.Bttl_800d.ScaleMatrixL_SVEC;
 import static legend.game.combat.Bttl_800d.loadModelAnim;
 import static legend.game.combat.Bttl_800d.optimisePacketsIfNecessary;
 import static legend.game.combat.Bttl_800e.FUN_800e60e0;
@@ -8942,7 +8942,7 @@ public final class SEffe {
     final MATRIX sp0x10 = new MATRIX();
     RotMatrix_80040010(manager._10.rot_10, sp0x10);
     TransMatrix(sp0x10, manager._10.trans_04);
-    ScaleVectorL_SVEC(sp0x10, manager._10.scale_16);
+    ScaleMatrixL_SVEC(sp0x10, manager._10.scale_16);
     MulMatrix0(matrix, sp0x10, sp0x10);
     final int s0 = manager._10._28;
     final VECTOR sp0x30 = new VECTOR().set(s0, s0, s0);
@@ -10225,7 +10225,7 @@ public final class SEffe {
             final MATRIX sp0x30 = new MATRIX().set(sp0x10);
             sp0x30.transfer.set(x >> 12, y >> 12, z >> 12);
 
-            ScaleVectorL_SVEC(sp0x30, sp0x50.scale_16);
+            ScaleMatrixL_SVEC(sp0x30, sp0x50.scale_16);
             if(s5 == 0x300_0000L) {
               //LAB_801193f0
               FUN_800de3f4(effect.tmd_24.deref(), sp0x50, sp0x30);
