@@ -1992,22 +1992,27 @@ public final class Scus94491BpeSegment_8003 {
 
   @Method(0x8003eae0L)
   public static void FUN_8003eae0(final IntRef t0, final IntRef t1, final IntRef t2) {
+    // Fix retail bug where inputs can all be 0. Would result in negative array index.
+    if(t0.get() == 0 && t1.get() == 0 && t2.get() == 0) {
+      return;
+    }
+
     CPU.MTC2(t0.get(),  9); // IR1
     CPU.MTC2(t1.get(), 10); // IR2
     CPU.MTC2(t2.get(), 11); // IR3
     CPU.COP2(0xa00428L); // Square of vector IR
-    final long v0 = CPU.MFC2(25) + CPU.MFC2(26) + CPU.MFC2(27); // MAC1/2/3
-    CPU.MTC2(v0, 30); // Count leading zeroes
+    final long vectorLength = CPU.MFC2(25) + CPU.MFC2(26) + CPU.MFC2(27); // MAC1/2/3
+    CPU.MTC2(vectorLength, 30); // Count leading zeroes
     final long lzc = CPU.MFC2(31) & 0xffff_fffeL; // Leading zero count
     final long t6 = (31 - lzc) / 2;
     long t3 = lzc - 24;
     long t4;
     if(t3 >= 0) {
-      t4 = v0 << t3;
+      t4 = vectorLength << t3;
     } else {
       //LAB_8003eb40
       t3 = 24 - lzc;
-      t4 = (int)v0 >> t3;
+      t4 = (int)vectorLength >> t3;
     }
 
     //LAB_8003eb4c
