@@ -46,7 +46,6 @@ import static legend.game.Scus94491BpeSegment_8003.InitGeom;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.ResetGraph;
 import static legend.game.Scus94491BpeSegment_8003.SetGraphDebug;
-import static legend.game.Scus94491BpeSegment_8003.adjustTmdPointers;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004._8004dd30;
@@ -221,22 +220,22 @@ public final class Scus94491BpeSegment_800e {
       model.aub_ec[i] = 0;
     }
 
-    model.dobj2ArrPtr_00 = new GsDOBJ2[tmdAnimFile.count_0c.get()];
-    model.coord2ArrPtr_04 = new GsCOORDINATE2[tmdAnimFile.count_0c.get()];
-    model.coord2ParamArrPtr_08 = new GsCOORD2PARAM[tmdAnimFile.count_0c.get()];
-    model.count_c8 = tmdAnimFile.count_0c.get();
+    model.dobj2ArrPtr_00 = new GsDOBJ2[tmdAnimFile.modelPartCount_0c];
+    model.coord2ArrPtr_04 = new GsCOORDINATE2[tmdAnimFile.modelPartCount_0c];
+    model.coord2ParamArrPtr_08 = new GsCOORD2PARAM[tmdAnimFile.modelPartCount_0c];
+    model.count_c8 = tmdAnimFile.modelPartCount_0c;
 
     Arrays.setAll(model.dobj2ArrPtr_00, i -> new GsDOBJ2());
     Arrays.setAll(model.coord2ArrPtr_04, i -> new GsCOORDINATE2());
     Arrays.setAll(model.coord2ParamArrPtr_08, i -> new GsCOORD2PARAM());
 
-    final Tmd tmd = cContainer.tmdPtr_00.deref().tmd;
+    final Tmd tmd = cContainer.tmdPtr_00.tmd;
     model.tmd_8c = tmd;
-    model.tmdNobj_ca = tmd.header.nobj.get();
-    model.scaleVector_fc.setPad((int)((cContainer.tmdPtr_00.deref().id.get() & 0xffff0000L) >>> 11));
+    model.tmdNobj_ca = tmd.header.nobj;
+    model.scaleVector_fc.setPad((int)((cContainer.tmdPtr_00.id & 0xffff0000L) >>> 11));
 
-    if(!cContainer.ptr_08.isNull()) {
-      model.ptr_a8 = cContainer.ptr_08.deref();
+    if(cContainer.ptr_08 != null) {
+      model.ptr_a8 = cContainer.ptr_08;
 
       //LAB_800e6c00
       for(int i = 0; i < 7; i++) {
@@ -254,7 +253,6 @@ public final class Scus94491BpeSegment_800e {
     }
 
     //LAB_800e6c64
-    adjustTmdPointers(model.tmd_8c);
     initObjTable2(model.ObjTable_0c, model.dobj2ArrPtr_00, model.coord2ArrPtr_04, model.coord2ParamArrPtr_08, model.count_c8);
     model.coord2_14.param = model.coord2Param_64;
     GsInitCoordinate2(null, model.coord2_14);

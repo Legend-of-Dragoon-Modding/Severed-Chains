@@ -1,39 +1,37 @@
 package legend.game.combat.deff;
 
-import legend.core.memory.Value;
-import legend.core.memory.types.MemoryRef;
-import legend.core.memory.types.RelativePointer;
-import legend.core.memory.types.ShortRef;
-import legend.core.memory.types.UnboundedArrayRef;
+import legend.core.IoHelper;
 
 public class LmbType0 extends Lmb {
-  public final UnboundedArrayRef<PartInfo0c> _08;
+  public final PartInfo0c[] _08;
 
-  /** TODO not sure if this actually belongs here */
-  public final ShortRef _0c;
+  public LmbType0(final byte[] data, final int offset) {
+    super(data, offset);
 
-  public LmbType0(final Value ref) {
-    super(ref);
+    this._08 = new PartInfo0c[this.count_04];
 
-    this._08 = ref.offset(4, 0x08L).cast(UnboundedArrayRef.of(0xc, value -> new PartInfo0c(value, this)));
-
-    this._0c = ref.offset(2, 0x0cL).cast(ShortRef::new);
+    for(int i = 0; i < this.count_04; i++) {
+      this._08[i] = new PartInfo0c(data, offset + 0x8 + i * 0xc, offset);
+    }
   }
 
-  public static class PartInfo0c implements MemoryRef {
-    private final Value ref;
+  public static class PartInfo0c {
+    public final short _00;
 
-    public final RelativePointer<UnboundedArrayRef<LmbTransforms14>> _08;
+    public final short count_04;
 
-    public PartInfo0c(final Value ref, final LmbType0 lmb) {
-      this.ref = ref;
+    public final LmbTransforms14[] _08;
 
-      this._08 = ref.offset(4, 0x08L).cast(RelativePointer.deferred(4, lmb.getAddress(), UnboundedArrayRef.of(0x14, LmbTransforms14::new)));
-    }
+    public PartInfo0c(final byte[] data, final int offset, final int baseOffset) {
+      this._00 = IoHelper.readShort(data, offset);
 
-    @Override
-    public long getAddress() {
-      return this.ref.get();
+      this.count_04 = IoHelper.readShort(data, offset + 0x4);
+
+      final int transformsOffset = baseOffset + IoHelper.readInt(data, offset + 0x8);
+      this._08 = new LmbTransforms14[this.count_04];
+      for(int i = 0; i < this._08.length; i++) {
+        this._08[i] = new LmbTransforms14(data, transformsOffset + i * 0x14);
+      }
     }
   }
 }

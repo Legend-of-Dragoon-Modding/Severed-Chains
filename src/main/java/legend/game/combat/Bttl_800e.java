@@ -2,6 +2,7 @@ package legend.game.combat;
 
 import legend.core.Config;
 import legend.core.DebugHelper;
+import legend.core.IoHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandCopyVramToVram;
 import legend.core.gpu.GpuCommandPoly;
@@ -24,7 +25,6 @@ import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.game.combat.deff.Anim;
-import legend.game.combat.deff.Cmb;
 import legend.game.combat.deff.DeffManager7cc;
 import legend.game.combat.deff.DeffPart;
 import legend.game.combat.types.AttackHitFlashEffect0c;
@@ -72,8 +72,7 @@ import legend.game.types.CharacterData2c;
 import legend.game.types.CContainer;
 import legend.game.types.LodString;
 import legend.game.types.Model124;
-import legend.game.types.ModelPartTransforms;
-import legend.game.types.MrgFile;
+import legend.game.types.ModelPartTransforms0c;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
 import legend.game.unpacker.Unpacker;
@@ -83,6 +82,7 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -113,7 +113,6 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_80023a88;
 import static legend.game.Scus94491BpeSegment_8002.SetRotMatrix;
 import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.checkForPsychBombX;
-import static legend.game.Scus94491BpeSegment_8002.deallocateModel;
 import static legend.game.Scus94491BpeSegment_8002.getUnlockedDragoonSpells;
 import static legend.game.Scus94491BpeSegment_8002.giveItem;
 import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
@@ -137,7 +136,6 @@ import static legend.game.Scus94491BpeSegment_8003.RotMatrix_8003faf0;
 import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
 import static legend.game.Scus94491BpeSegment_8003.TransMatrix;
 import static legend.game.Scus94491BpeSegment_8003.TransposeMatrix;
-import static legend.game.Scus94491BpeSegment_8003.adjustTmdPointers;
 import static legend.game.Scus94491BpeSegment_8003.getProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
 import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
@@ -913,10 +911,7 @@ public final class Bttl_800e {
   public static void FUN_800e6314(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
     final DeffManager7cc struct7cc = deffManager_800c693c;
 
-    if(struct7cc != null) {
-      free(struct7cc.deffPackage_5a8.getAddress());
-      struct7cc.deffPackage_5a8 = null;
-    }
+    struct7cc.deffPackage_5a8 = null;
 
     decrementOverlayCount();
     _800fafe8.setu(0x4L);
@@ -1273,11 +1268,8 @@ public final class Bttl_800e {
 
   @Method(0x800e7060L)
   public static void loadDeffPackage(final List<byte[]> files, final ScriptState<EffectManagerData6c> state) {
-    final MrgFile mrg = MrgFile.alloc(files);
-
-    deffManager_800c693c.deffPackage_5a8 = mrg;
-
-    FUN_800ea620(mrg, state);
+    deffManager_800c693c.deffPackage_5a8 = files;
+    FUN_800ea620(files, state);
   }
 
   @Method(0x800e70bcL)
@@ -2053,12 +2045,12 @@ public final class Bttl_800e {
     } else {
       //LAB_800e9658
       final DeffPart.SpriteType spriteType = (DeffPart.SpriteType)getDeffPart(a1 | 0x400_0000);
-      final DeffPart.SpriteMetrics deffMetrics = spriteType.metrics_08.deref();
-      a0.metrics_04.u_00.set(deffMetrics.u_00.get());
-      a0.metrics_04.v_02.set(deffMetrics.v_02.get());
-      a0.metrics_04.w_04.set(deffMetrics.w_04.get() * 4);
-      a0.metrics_04.h_05.set(deffMetrics.h_06.get());
-      a0.metrics_04.clut_06.set(deffMetrics.clutY_0a.get() << 6 | (deffMetrics.clutX_08.get() & 0x3f0) >>> 4);
+      final DeffPart.SpriteMetrics deffMetrics = spriteType.metrics_08;
+      a0.metrics_04.u_00.set(deffMetrics.u_00);
+      a0.metrics_04.v_02.set(deffMetrics.v_02);
+      a0.metrics_04.w_04.set(deffMetrics.w_04 * 4);
+      a0.metrics_04.h_05.set(deffMetrics.h_06);
+      a0.metrics_04.clut_06.set(deffMetrics.clutY_0a << 6 | (deffMetrics.clutX_08 & 0x3f0) >>> 4);
     }
 
     //LAB_800e96bc
@@ -2125,7 +2117,7 @@ public final class Bttl_800e {
       0,
       Bttl_800e::FUN_800ea3f8,
       Bttl_800e::FUN_800ea510,
-      Bttl_800e::FUN_800ea5f4,
+      null,
       value -> new BttlScriptData6cSub13c("Script " + script.scriptState_04.index)
     );
 
@@ -2136,9 +2128,9 @@ public final class Bttl_800e {
     final BttlScriptData6cSub13c effect = (BttlScriptData6cSub13c)manager.effect_44;
     effect._00 = 0;
     effect.tmdType_04 = animatedTmdType;
-    effect.extTmd_08 = animatedTmdType.tmd_0c.deref();
-    effect.anim_0c = animatedTmdType.anim_14.deref();
-    final DeffPart.TextureInfo textureInfo = animatedTmdType.textureInfo_08.deref().get(0);
+    effect.extTmd_08 = animatedTmdType.tmd_0c;
+    effect.anim_0c = animatedTmdType.anim_14;
+    final DeffPart.TextureInfo textureInfo = animatedTmdType.textureInfo_08[0];
     effect.model_134 = effect.model_10;
     final long tpage = GetTPage(Bpp.BITS_4, Translucency.HALF_B_PLUS_HALF_F, textureInfo.vramPos_00.x.get(), textureInfo.vramPos_00.y.get());
     final Model124 model = effect.model_134;
@@ -2158,7 +2150,7 @@ public final class Bttl_800e {
       0,
       Bttl_800e::FUN_800ea3f8,
       Bttl_800e::FUN_800ea510,
-      Bttl_800e::FUN_800ea5f4,
+      null,
       value -> new BttlScriptData6cSub13c("Script " + script.scriptState_04.index)
     );
 
@@ -2169,8 +2161,8 @@ public final class Bttl_800e {
     s0._00 = 0;
 
     s0.tmdType_04 = animatedTmdType;
-    s0.extTmd_08 = animatedTmdType.tmd_0c.deref();
-    s0.anim_0c = animatedTmdType.anim_14.deref();
+    s0.extTmd_08 = animatedTmdType.tmd_0c;
+    s0.anim_0c = animatedTmdType.anim_14;
     s0.model_10.colourMap_9d = 0;
     s0.model_134 = s0.model_10;
     loadModelTmd(s0.model_134, s0.extTmd_08);
@@ -2287,7 +2279,7 @@ public final class Bttl_800e {
       0,
       Bttl_800e::FUN_800ea3f8,
       Bttl_800e::FUN_800ea510,
-      Bttl_800e::FUN_800ea5f4,
+      null,
       value -> new BttlScriptData6cSub13c("Script " + script.scriptState_04.index)
     );
 
@@ -2359,7 +2351,7 @@ public final class Bttl_800e {
     final BttlScriptData6cSub13c effect = (BttlScriptData6cSub13c)manager.effect_44;
 
     final DeffPart.AnimatedTmdType animatedTmdType = (DeffPart.AnimatedTmdType)getDeffPart(script.params_20[1].get() | 0x200_0000);
-    final Anim cmb = animatedTmdType.anim_14.deref();
+    final Anim cmb = animatedTmdType.anim_14;
     effect.anim_0c = cmb;
     loadModelAnim(effect.model_134, cmb);
     manager._10._24 = 0;
@@ -2474,39 +2466,31 @@ public final class Bttl_800e {
     //LAB_800ea5dc
   }
 
-  @Method(0x800ea5f4L)
-  public static void FUN_800ea5f4(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
-    deallocateModel(((BttlScriptData6cSub13c)manager.effect_44).model_134);
-  }
-
   @Method(0x800ea620L)
-  public static void FUN_800ea620(final MrgFile deff, final ScriptState<EffectManagerData6c> deffManagerState) {
+  public static void FUN_800ea620(final List<byte[]> deff, final ScriptState<EffectManagerData6c> deffManagerState) {
     //LAB_800ea674
-    for(int i = 0; i < deff.count.get(); i++) {
+    for(int i = 0; i < deff.size(); i++) {
       final DeffPart deffPart = deff.getFile(i, DeffPart::new);
 
-      final int type = deffPart.flags_00.get() & 0xff00_0000;
+      final int type = IoHelper.readInt(deff.get(i), 0) & 0xff00_0000; // Flags
       if(type == 0x100_0000) {
-        final DeffPart.TmdType tmdType = deffPart.reinterpret(DeffPart.TmdType::new);
-        final CContainer extTmd = tmdType.tmd_0c.deref();
-        final TmdWithId tmd = extTmd.tmdPtr_00.deref();
+        final DeffPart.TmdType tmdType = new DeffPart.TmdType(deff.get(i), 0);
+        final CContainer extTmd = tmdType.tmd_0c;
+        final TmdWithId tmd = extTmd.tmdPtr_00;
 
-        adjustTmdPointers(extTmd.tmdPtr_00.deref().tmd);
-
-        for(int objectIndex = 0; objectIndex < tmd.tmd.header.nobj.get(); objectIndex++) {
+        for(int objectIndex = 0; objectIndex < tmd.tmd.header.nobj; objectIndex++) {
           optimisePacketsIfNecessary(tmd, objectIndex);
         }
       } else if(type == 0x300_0000) {
-        final DeffPart.TmdType tmdType = deffPart.reinterpret(DeffPart.TmdType::new);
-        final CContainer extTmd = tmdType.tmd_0c.deref();
+        final DeffPart.TmdType tmdType = new DeffPart.TmdType(deff.get(i), 0);
+        final CContainer extTmd = tmdType.tmd_0c;
 
-        adjustTmdPointers(extTmd.tmdPtr_00.deref().tmd);
-        optimisePacketsIfNecessary(extTmd.tmdPtr_00.deref(), 0);
+        optimisePacketsIfNecessary(extTmd.tmdPtr_00, 0);
       }
 
       if(type == 0x100_0000 || type == 0x200_0000 || type == 0x300_0000) {
-        final DeffPart.TmdType tmdType = deffPart.reinterpret(DeffPart.TmdType::new);
-        final CContainer extTmd = tmdType.tmd_0c.deref();
+        final DeffPart.TmdType tmdType = new DeffPart.TmdType(deff.get(i), 0);
+        final CContainer extTmd = tmdType.tmd_0c;
 
         final long a2_0 = MEMORY.ref(4, deffPart.getAddress()).offset(0x8L).get(); //TODO
 
@@ -2524,29 +2508,25 @@ public final class Bttl_800e {
 
   @Method(0x800ea7d0L)
   public static void hudDeffLoaded(final List<byte[]> files) {
-    // Temporary measure for memory management
-    final MrgFile deffMrg = MrgFile.alloc(files);
-
     final DeffManager7cc struct7cc = deffManager_800c693c;
-    FUN_800ea620(deffMrg, struct7cc.scriptState_1c);
+    FUN_800ea620(files, struct7cc.scriptState_1c);
 
     //LAB_800ea814
     int i;
-    for(i = 0; i < deffMrg.count.get(); i++) {
-      final DeffPart part = deffMrg.getFile(i, DeffPart::new);
-      final int flags = part.flags_00.get();
+    for(i = 0; i < files.size(); i++) {
+      final int flags = IoHelper.readInt(files.get(i), 0); // Flags
 
       if((flags & 0xff00_0000) != 0) {
         break;
       }
 
-      struct7cc.lmbs_390[flags & 0xff] = part.reinterpret(DeffPart.LmbType::new);
+      struct7cc.lmbs_390[flags & 0xff] = new DeffPart.LmbType(files.get(i), 0);
     }
 
     //LAB_800ea850
     //LAB_800ea874
-    for(; i < deffMrg.count.get(); i++) {
-      if((deffMrg.getFile(i, DeffPart::new).flags_00.get() & 0xff00_0000) != 0x100_0000) {
+    for(; i < files.size(); i++) {
+      if((IoHelper.readInt(files.get(i), 0) & 0xff00_0000) != 0x100_0000) { // Flags
         break;
       }
     }
@@ -2554,9 +2534,8 @@ public final class Bttl_800e {
     //LAB_800ea89c
     //LAB_800ea8a8
     //LAB_800ea8e0
-    for(; i < deffMrg.count.get(); i++) {
-      final DeffPart part = deffMrg.getFile(i, DeffPart::new);
-      final int flags = part.flags_00.get();
+    for(; i < files.size(); i++) {
+      final int flags = IoHelper.readInt(files.get(i), 0);
 
       if((flags & 0xff00_0000) != 0x300_0000) {
         break;
@@ -2564,8 +2543,8 @@ public final class Bttl_800e {
 
       final int index = flags & 0xff;
       if(index >= 5) {
-        final DeffPart.TmdType tmdType = part.reinterpret(DeffPart.TmdType::new);
-        struct7cc.tmds_2f8[index] = tmdType.tmd_0c.deref().tmdPtr_00.deref().tmd.objTable.get(0);
+        final DeffPart.TmdType tmdType = new DeffPart.TmdType(files.get(i), 0);
+        struct7cc.tmds_2f8[index] = tmdType.tmd_0c.tmdPtr_00.tmd.objTable[0];
       }
 
       //LAB_800ea928
@@ -2573,27 +2552,25 @@ public final class Bttl_800e {
 
     //LAB_800ea93c
     //LAB_800ea964
-    for(; i < deffMrg.count.get(); i++) {
-      final DeffPart part = deffMrg.getFile(i, DeffPart::new);
-      final int flags = part.flags_00.get();
+    for(; i < files.size(); i++) {
+      final int flags = IoHelper.readInt(files.get(i), 0);
 
       if((flags & 0xff00_0000) != 0x400_0000) {
         break;
       }
 
-      final DeffPart.SpriteType spriteType = part.reinterpret(DeffPart.SpriteType::new);
-      final DeffPart.SpriteMetrics deffMetrics = spriteType.metrics_08.deref();
+      final DeffPart.SpriteType spriteType = new DeffPart.SpriteType(files.get(i), 0);
+      final DeffPart.SpriteMetrics deffMetrics = spriteType.metrics_08;
       final SpriteMetrics08 metrics = struct7cc.spriteMetrics_39c[flags & 0xff];
-      metrics.u_00.set(deffMetrics.u_00.get());
-      metrics.v_02.set(deffMetrics.v_02.get());
-      metrics.w_04.set(deffMetrics.w_04.get() * 4);
-      metrics.h_05.set(deffMetrics.h_06.get());
-      metrics.clut_06.set(deffMetrics.clutY_0a.get() << 6 | (deffMetrics.clutX_08.get() & 0x3f0) >>> 4);
+      metrics.u_00.set(deffMetrics.u_00);
+      metrics.v_02.set(deffMetrics.v_02);
+      metrics.w_04.set(deffMetrics.w_04 * 4);
+      metrics.h_05.set(deffMetrics.h_06);
+      metrics.clut_06.set(deffMetrics.clutY_0a << 6 | (deffMetrics.clutX_08 & 0x3f0) >>> 4);
     }
 
     //LAB_800eaa00
     //LAB_800eaa04
-    struct7cc.deff_38 = deffMrg;
   }
 
   @Method(0x800eab8cL)
@@ -2614,11 +2591,6 @@ public final class Bttl_800e {
     }
 
     //LAB_800eabf4
-    if(struct7cc.deff_38 != null) {
-      free(struct7cc.deff_38.getAddress());
-      struct7cc.deff_38 = null;
-    }
-
     //LAB_800eac1c
     if(struct7cc.scripts_2c != null) {
       struct7cc.scripts_2c = null;
@@ -2630,29 +2602,25 @@ public final class Bttl_800e {
   /** See {@link DeffPart#flags_00} */
   @Method(0x800eac58L)
   public static DeffPart getDeffPart(final int flags) {
-    final MrgFile deff = deffManager_800c693c.deffPackage_5a8;
-
-    final Function<Value, ? extends DeffPart> ctor = switch(flags >>> 24) {
-      case 0 -> DeffPart.LmbType::new;
-      case 1, 2 -> DeffPart.AnimatedTmdType::new;
-      case 3 -> DeffPart.TmdType::new;
-      case 4 -> DeffPart.SpriteType::new;
-      case 5 -> value -> {
-        if(value.offset(4, 0x0).get() == Cmb.MAGIC) {
-          return new DeffPart.CmbType(value);
-        }
-
-        return new DeffPart.AnimatedTmdType(value);
-      };
-      default -> throw new IllegalArgumentException("Invalid DEFF type %x".formatted(flags & 0xff00_0000));
-    };
+    final List<byte[]> deff = deffManager_800c693c.deffPackage_5a8;
 
     //LAB_800eac84
-    for(int i = 0; i < deff.count.get(); i++) {
-      final DeffPart part = deff.getFile(i, DeffPart::new);
+    for(int i = 0; i < deff.size(); i++) {
+      if(IoHelper.readInt(deff.get(i), 0) == flags) {
+        return switch(flags >>> 24) {
+          case 0 -> new DeffPart.LmbType(deff.get(i), 0);
+          case 1, 2 -> new DeffPart.AnimatedTmdType(deff.get(i), 0);
+          case 3 -> new DeffPart.TmdType(deff.get(i), 0);
+          case 4 -> new DeffPart.SpriteType(deff.get(i), 0);
+          case 5 -> throw new RuntimeException("Not implemented yet")/*value -> {
+            if(value.offset(4, 0x0).get() == Cmb.MAGIC) {
+              return new DeffPart.CmbType(value);
+            }
 
-      if(part.flags_00.get() == flags) {
-        return part.reinterpret(ctor);
+            return new DeffPart.AnimatedTmdType(value);
+          }*/;
+          default -> throw new IllegalArgumentException("Invalid DEFF type %x".formatted(flags & 0xff00_0000));
+        };
       }
 
       //LAB_800eaca0
@@ -2739,8 +2707,8 @@ public final class Bttl_800e {
   public static FlowControl FUN_800eb01c(final RunningScript<?> script) {
     final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[(short)script.params_20[0].get()].innerStruct_00;
     final GuardHealEffect14 effect = (GuardHealEffect14)manager.effect_44;
-    final DeffPart.TmdType tmdType = effect.tmdType_04.deref();
-    final DeffPart.TextureInfo textureInfo = tmdType.textureInfo_08.deref().get((short)script.params_20[1].get());
+    final DeffPart.TmdType tmdType = effect.tmdType_04;
+    final DeffPart.TextureInfo textureInfo = tmdType.textureInfo_08[(short)script.params_20[1].get()];
 
     EffectManagerData6c v1_0 = manager;
 
@@ -2787,8 +2755,8 @@ public final class Bttl_800e {
     final EffectManagerData6c manager = (EffectManagerData6c)state.innerStruct_00;
     final GuardHealEffect14 effect = (GuardHealEffect14)manager.effect_44;
 
-    final DeffPart.TmdType tmdType = effect.tmdType_04.deref();
-    final DeffPart.TextureInfo textureInfo = tmdType.textureInfo_08.deref().get((short)script.params_20[1].get());
+    final DeffPart.TmdType tmdType = effect.tmdType_04;
+    final DeffPart.TextureInfo textureInfo = tmdType.textureInfo_08[(short)script.params_20[1].get()];
     final BttlScriptData6cSub1c a0 = FUN_800eaf54(manager, textureInfo.vramPos_00);
 
     if(a0 != null) {
@@ -2824,8 +2792,8 @@ public final class Bttl_800e {
 
   @Method(0x800eb308L)
   public static void FUN_800eb308(final EffectManagerData6c a0, final CContainer cContainer, final long a2) {
-    if(!cContainer.ptr_08.isNull()) {
-      final CContainerSubfile2 s2 = cContainer.ptr_08.deref();
+    if(cContainer.ptr_08 != null) {
+      final CContainerSubfile2 s2 = cContainer.ptr_08;
 
       //LAB_800eb348
       for(int s1 = 0; s1 < 7; s1++) {
@@ -2877,8 +2845,8 @@ public final class Bttl_800e {
     final ScriptState<?> state = scriptStatePtrArr_800bc1c0[scriptIndex];
     final EffectManagerData6c manager = (EffectManagerData6c)state.innerStruct_00;
     final GuardHealEffect14 effect = (GuardHealEffect14)manager.effect_44;
-    final DeffPart.TmdType tmdType = effect.tmdType_04.deref();
-    FUN_800eb280(manager, new RECT().set(tmdType.textureInfo_08.deref().get(a1).vramPos_00), a2);
+    final DeffPart.TmdType tmdType = effect.tmdType_04;
+    FUN_800eb280(manager, new RECT().set(tmdType.textureInfo_08[a1].vramPos_00), a2);
   }
 
   @Method(0x800eb518L)
@@ -2924,9 +2892,9 @@ public final class Bttl_800e {
   public static FlowControl FUN_800eb84c(final RunningScript<?> script) {
     EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final GuardHealEffect14 effect = (GuardHealEffect14)manager.effect_44;
-    final DeffPart.TmdType tmdType = effect.tmdType_04.deref();
-    final DeffPart.TextureInfo textureInfo1 = tmdType.textureInfo_08.deref().get(script.params_20[1].get());
-    final DeffPart.TextureInfo textureInfo2 = tmdType.textureInfo_08.deref().get(script.params_20[2].get());
+    final DeffPart.TmdType tmdType = effect.tmdType_04;
+    final DeffPart.TextureInfo textureInfo1 = tmdType.textureInfo_08[script.params_20[1].get()];
+    final DeffPart.TextureInfo textureInfo2 = tmdType.textureInfo_08[script.params_20[2].get()];
 
     //LAB_800eb8fc
     while((manager.flags_04 & 0x400) == 0) {
@@ -2962,10 +2930,10 @@ public final class Bttl_800e {
       stage._618[i] = 0;
     }
 
-    stage.tmd_5d0 = extTmd.tmdPtr_00.deref().tmd;
+    stage.tmd_5d0 = extTmd.tmdPtr_00.tmd;
 
-    if(!extTmd.ptr_08.isNull()) {
-      stage._5ec = extTmd.ptr_08.deref();
+    if(extTmd.ptr_08 != null) {
+      stage._5ec = extTmd.ptr_08;
 
       //LAB_800eba38
       for(int i = 0; i < 10; i++) {
@@ -2981,11 +2949,10 @@ public final class Bttl_800e {
     }
 
     //LAB_800eba8c
-    adjustTmdPointers(stage.tmd_5d0);
     initObjTable2(stage.objTable2_550, stage.dobj2s_00, stage.coord2s_a0, stage.params_3c0, 10);
     stage.coord2_558.param = stage.param_5a8;
     GsInitCoordinate2(null, stage.coord2_558);
-    prepareObjTable2(stage.objTable2_550, stage.tmd_5d0, stage.coord2_558, 10, extTmd.tmdPtr_00.deref().tmd.header.nobj.get() + 1);
+    prepareObjTable2(stage.objTable2_550, stage.tmd_5d0, stage.coord2_558, 10, extTmd.tmdPtr_00.tmd.header.nobj + 1);
     applyInitialStageTransforms(stage, tmdAnim);
 
     stage.coord2_558.coord.transfer.set(x, y, z);
@@ -3232,7 +3199,7 @@ public final class Bttl_800e {
   public static void applyStagePartAnimations(final BattleStage stage) {
     //LAB_800ec688
     for(int i = 0; i < stage.partCount_5dc; i++) {
-      final ModelPartTransforms rotTrans = stage.rotTrans_5d8.get(i);
+      final ModelPartTransforms0c rotTrans = stage.rotTrans_5d8[i];
       final GsCOORDINATE2 coord2 = stage.dobj2s_00[i].coord2_04;
       final GsCOORD2PARAM param = coord2.param;
 
@@ -3244,7 +3211,7 @@ public final class Bttl_800e {
     }
 
     //LAB_800ec710
-    stage.rotTrans_5d8 = stage.rotTrans_5d8.slice(stage.partCount_5dc);
+    stage.rotTrans_5d8 = Arrays.copyOfRange(stage.rotTrans_5d8, stage.partCount_5dc, stage.rotTrans_5d8.length);
   }
 
   @Method(0x800ec744L)
@@ -3257,8 +3224,8 @@ public final class Bttl_800e {
   public static void applyInitialStageTransforms(final BattleStage stage, final TmdAnimationFile anim) {
     stage.rotTrans_5d4 = anim.partTransforms_10;
     stage.rotTrans_5d8 = anim.partTransforms_10;
-    stage.partCount_5dc = anim.count_0c.get();
-    stage._5de = anim._0e.get();
+    stage.partCount_5dc = anim.modelPartCount_0c;
+    stage._5de = anim._0e;
     stage._5e0 = 0;
     applyStagePartAnimations(stage);
     stage._5e0 = 1;

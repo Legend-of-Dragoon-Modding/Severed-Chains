@@ -1,26 +1,25 @@
 package legend.game.combat.deff;
 
+import legend.core.IoHelper;
 import legend.core.gte.SVECTOR;
-import legend.core.memory.Value;
-import legend.core.memory.types.MemoryRef;
 
-public class LmbTransforms14 implements MemoryRef {
-  private final Value ref;
+public class LmbTransforms14 {
+  public final SVECTOR scale_00 = new SVECTOR();
+  public final SVECTOR trans_06 = new SVECTOR();
+  public final SVECTOR rot_0c = new SVECTOR();
 
-  public final SVECTOR scale_00;
-  public final SVECTOR trans_06;
-  public final SVECTOR rot_0c;
+  public LmbTransforms14() { }
 
-  public LmbTransforms14(final Value ref) {
-    this.ref = ref;
-
-    this.scale_00 = ref.offset(2, 0x00L).cast(SVECTOR::new);
-    this.trans_06 = ref.offset(2, 0x06L).cast(SVECTOR::new);
-    this.rot_0c = ref.offset(2, 0x0cL).cast(SVECTOR::new);
+  public LmbTransforms14(final byte[] data, final int offset) {
+    IoHelper.readSvec3(data, offset, this.scale_00);
+    IoHelper.readSvec3(data, offset + 0x6, this.trans_06);
+    IoHelper.readSvec3(data, offset + 0xc, this.rot_0c);
   }
 
-  @Override
-  public long getAddress() {
-    return this.ref.getAddress();
+  public LmbTransforms14 set(final LmbTransforms14 other) {
+    this.scale_00.set(other.scale_00);
+    this.trans_06.set(other.trans_06);
+    this.rot_0c.set(other.rot_0c);
+    return this;
   }
 }

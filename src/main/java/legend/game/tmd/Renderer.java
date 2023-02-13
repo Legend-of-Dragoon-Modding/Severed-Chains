@@ -5,7 +5,7 @@ import legend.core.gpu.GpuCommandPoly;
 import legend.core.gte.DVECTOR;
 import legend.core.gte.GsDOBJ2;
 import legend.core.gte.SVECTOR;
-import legend.core.gte.TmdObjTable;
+import legend.core.gte.TmdObjTable1c;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.game.types.Translucency;
 import org.apache.logging.log4j.LogManager;
@@ -27,26 +27,26 @@ public class Renderer {
    * @param useSpecialTranslucency Used in battle, some TMDs have translucency info in the upper 16 bits of their ID. Also enables backside culling.
    */
   public static void renderDobj2(final GsDOBJ2 dobj2, final boolean useSpecialTranslucency) {
-    final TmdObjTable objTable = dobj2.tmd_08;
-    final UnboundedArrayRef<SVECTOR> vertices = objTable.vert_top_00.deref();
-    final long normals = objTable.normal_top_08.get();
+    final TmdObjTable1c objTable = dobj2.tmd_08;
+    final SVECTOR[] vertices = objTable.vert_top_00;
+    final SVECTOR[] normals = objTable.normal_top_08;
     long primitives = objTable.primitives_10.getPointer();
-    long count = objTable.n_primitive_14.get();
+    int count = objTable.n_primitive_14;
 
     //LAB_800da2bc
     while(count > 0) {
-      final long length = MEMORY.ref(2, primitives).get();
+      final int length = (int)MEMORY.ref(2, primitives).get();
       count -= length;
 
       if(count < 0) {
         LOGGER.warn("DOBJ2 count less than 0! %d", count);
       }
 
-      primitives = renderTmdPrimitive(primitives, vertices, normals, (int)length, useSpecialTranslucency);
+      primitives = renderTmdPrimitive(primitives, vertices, normals, length, useSpecialTranslucency);
     }
   }
 
-  public static long renderTmdPrimitive(final long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long normals, final int count, final boolean useSpecialTranslucency) {
+  public static long renderTmdPrimitive(final long primitives, final SVECTOR[] vertices, final SVECTOR[] normals, final int count, final boolean useSpecialTranslucency) {
     // Read type info from command ---
     final long command = MEMORY.ref(4, primitives).get(0xff04_0000L);
     final int primitiveId = (int)(command >>> 24);
@@ -138,7 +138,7 @@ public class Renderer {
       }
 
       for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
-        final SVECTOR vert = vertices.get(poly.vertices[vertexIndex].vertexIndex);
+        final SVECTOR vert = vertices[poly.vertices[vertexIndex].vertexIndex];
         CPU.MTC2(vert.getXY(), 0);
         CPU.MTC2(vert.getZ(),  1);
         CPU.COP2(0x18_0001L); // Perspective transform single
@@ -184,7 +184,7 @@ public class Renderer {
       } else {
         for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
           CPU.MTC2(poly.vertices[vertexIndex].colour, 6);
-          final SVECTOR norm = MEMORY.ref(2, normals + poly.vertices[vertexIndex].normalIndex * 0x8L, SVECTOR::new);
+          final SVECTOR norm = normals[poly.vertices[vertexIndex].normalIndex];
           CPU.MTC2(norm.getXY(), 0);
           CPU.MTC2(norm.getZ(),  1);
           CPU.COP2(0x108_041bL); // Normal colour colour single vector

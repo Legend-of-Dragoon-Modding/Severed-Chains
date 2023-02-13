@@ -16,7 +16,7 @@ public class BattleStruct4c {
   public final BattleStruct14[] _10 = {new BattleStruct14(), new BattleStruct14(), new BattleStruct14()};
 
   public BattleStruct4c set(final ByteBuffer buffer) {
-    IoHelper.readSvec(buffer, this.ambientColour_00);
+    IoHelper.readSvec3(buffer, this.ambientColour_00);
     this._06 = IoHelper.readShort(buffer);
     this._08 = IoHelper.readShort(buffer);
     this._0a = IoHelper.readShort(buffer);
@@ -24,7 +24,7 @@ public class BattleStruct4c {
     this._0e = IoHelper.readShort(buffer);
 
     for(final BattleStruct14 struct : this._10) {
-      IoHelper.readSvec(buffer, struct.lightDirection_00);
+      IoHelper.readSvec3(buffer, struct.lightDirection_00);
       struct._06 = IoHelper.readShort(buffer);
       struct._08 = IoHelper.readShort(buffer);
       struct.lightColour_0a.r.set(IoHelper.readByte(buffer) & 0xff);

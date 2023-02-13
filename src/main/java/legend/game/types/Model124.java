@@ -26,9 +26,9 @@ public class Model124 {
   public final GsCOORDINATE2 coord2_14 = new GsCOORDINATE2();
   public final GsCOORD2PARAM coord2Param_64 = new GsCOORD2PARAM();
   public Tmd tmd_8c;
-  public UnboundedArrayRef<ModelPartTransforms> partTransforms_90;
+  public ModelPartTransforms0c[] partTransforms_90;
   /** One entry for each TMD object (tmdNobj_ca) */
-  public UnboundedArrayRef<ModelPartTransforms> partTransforms_94;
+  public ModelPartTransforms0c[] partTransforms_94;
   /**
    * Union with {@link #partTransforms_90}
    * <ul>
@@ -97,7 +97,7 @@ public class Model124 {
   public static class CmbAnim {
     public int _00;
     public Cmb cmb_04;
-    public Cmb.Transforms0c[] transforms_08;
+    public ModelPartTransforms0c[] transforms_08;
 
     public void set(final CmbAnim other) {
       this._00 = other._00;

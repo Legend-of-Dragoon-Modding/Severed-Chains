@@ -1,6 +1,6 @@
 package legend.game.combat.types;
 
-import legend.core.gte.TmdObjTable;
+import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.VECTOR;
 import legend.core.memory.Value;
 import legend.core.memory.types.ByteRef;
@@ -22,7 +22,7 @@ public class EffectData98 implements BttlScriptData6cSubBase1, MemoryRef {
   public final IntRef scriptIndex_04;
   public final EffectData98Inner24 _08;
 
-  public final Pointer<TmdObjTable> tmd_30;
+  public final Pointer<TmdObjTable1c> tmd_30;
   public final UnsignedShortRef _34;
   public final UnsignedShortRef _36;
 
@@ -58,7 +58,7 @@ public class EffectData98 implements BttlScriptData6cSubBase1, MemoryRef {
     this.scriptIndex_04 = ref.offset(4, 0x04L).cast(IntRef::new);
     this._08 = ref.offset(4, 0x08L).cast(EffectData98Inner24::new);
 
-    this.tmd_30 = ref.offset(4, 0x30L).cast(Pointer.deferred(4, TmdObjTable::new));
+    this.tmd_30 = ref.offset(4, 0x30L).cast(Pointer.deferred(4, TmdObjTable1c::new));
     this._34 = ref.offset(2, 0x34L).cast(UnsignedShortRef::new);
     this._36 = ref.offset(2, 0x36L).cast(UnsignedShortRef::new);
 

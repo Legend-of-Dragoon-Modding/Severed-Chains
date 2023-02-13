@@ -13,14 +13,12 @@ import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.GsDOBJ2;
 import legend.core.gte.MATRIX;
 import legend.core.gte.SVECTOR;
-import legend.core.gte.Tmd;
-import legend.core.gte.TmdObjTable;
+import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
 import legend.core.memory.Ref;
 import legend.core.memory.Value;
 import legend.core.memory.types.IntRef;
-import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.types.DR_TPAGE;
@@ -961,32 +959,6 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   /**
-   * TMDs can have either fixed pointers (fixp) or offset pointers. If it uses offsets, we need to add the base address to them.
-   */
-  @Method(0x8003c660L)
-  public static void adjustTmdPointers(final Tmd tmd) {
-    if((tmd.header.flags.get() & 0x2) != 0) {
-      throw new RuntimeException("Found CTMD!");
-    }
-
-    if((tmd.header.flags.get() & 0x1L) != 0) {
-      return;
-    }
-
-    tmd.header.flags.or(0x1L);
-
-    //LAB_8003c694
-    for(int i = 0; i < tmd.header.nobj.get(); i++) {
-      final TmdObjTable objTable = tmd.objTable.get(i);
-      objTable.vert_top_00.add(tmd.objTable.getAddress());
-      objTable.normal_top_08.add(tmd.objTable.getAddress());
-      objTable.primitives_10.add(tmd.objTable.getAddress());
-    }
-
-    //LAB_8003c6c8
-  }
-
-  /**
    * Set a parallel light source.
    * <p>
    * Sets the values for one of up to three parallel light sources. Light source data is specified in the GsF_LIGHT structure.
@@ -1768,32 +1740,32 @@ public final class Scus94491BpeSegment_8003 {
    * I think this method reads through all the packets and sort of "combines" ones that have the same MODE and FLAG for efficiency
    */
   @Method(0x8003e5d0L)
-  public static void updateTmdPacketIlen(final UnboundedArrayRef<TmdObjTable> objTables, final GsDOBJ2 dobj2, final int objIndex) {
-    long bytesSinceModeOrFlagChange = 0;
-    long mode = 0;
-    long flag = 0;
+  public static void updateTmdPacketIlen(final TmdObjTable1c[] objTables, final GsDOBJ2 dobj2, final int objIndex) {
+    int bytesSinceModeOrFlagChange = 0;
+    int mode = 0;
+    int flag = 0;
 
-    final TmdObjTable objTable = objTables.get(objIndex);
+    final TmdObjTable1c objTable = objTables[objIndex];
     dobj2.tmd_08 = objTable;
 
     int packetIndex = 0;
     int packetStartIndex = 0;
 
     //LAB_8003e638
-    for(int primitiveIndex = 0; primitiveIndex < objTable.n_primitive_14.get(); primitiveIndex++) {
+    for(int primitiveIndex = 0; primitiveIndex < objTable.n_primitive_14; primitiveIndex++) {
       final long previousMode = mode;
       final long previousFlag = flag;
 
       // Primitive: mode, flag, ilen, olen
-      final long primitive = objTable.primitives_10.deref().get(packetIndex / 4).get();
+      final int primitive = objTable.primitives_10[packetIndex / 4];
 
-      mode = primitive >>> 24 & 0xffL;
-      flag = primitive >>> 16 & 0xffL;
+      mode = primitive >>> 24 & 0xff;
+      flag = primitive >>> 16 & 0xff;
 
       if(previousMode != 0) {
         if(mode != previousMode || flag != previousFlag) {
           //LAB_8003e668
-          objTable.primitives_10.deref().get(packetStartIndex / 4).and(0xffff_0000L).or(bytesSinceModeOrFlagChange);
+          objTable.primitives_10[packetStartIndex / 4] = objTable.primitives_10[packetStartIndex / 4] & 0xffff_0000 | bytesSinceModeOrFlagChange;
           bytesSinceModeOrFlagChange = 0;
           packetStartIndex = packetIndex;
         }
@@ -1879,7 +1851,7 @@ public final class Scus94491BpeSegment_8003 {
     }
 
     //LAB_8003e724
-    objTable.primitives_10.deref().get(packetStartIndex / 4).and(0xffff_0000L).or(bytesSinceModeOrFlagChange);
+    objTable.primitives_10[packetStartIndex / 4] = objTable.primitives_10[packetStartIndex / 4] & 0xffff_0000 | bytesSinceModeOrFlagChange;
   }
 
   @Method(0x8003e760L) //TODO using div instead of shifting means some of these values are slightly off, does this matter?

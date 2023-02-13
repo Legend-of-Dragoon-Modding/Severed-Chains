@@ -9,7 +9,7 @@ import legend.core.gte.DVECTOR;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MATRIX;
 import legend.core.gte.SVECTOR;
-import legend.core.gte.TmdObjTable;
+import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
@@ -64,8 +64,8 @@ import legend.game.scripting.IntParam;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptState;
-import legend.game.types.CharacterData2c;
 import legend.game.types.CContainer;
+import legend.game.types.CharacterData2c;
 import legend.game.types.GsF_LIGHT;
 import legend.game.types.LodString;
 import legend.game.types.McqHeader;
@@ -119,7 +119,6 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_80029e04;
 import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
 import static legend.game.Scus94491BpeSegment_8002.animateModel;
 import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
-import static legend.game.Scus94491BpeSegment_8002.deallocateModel;
 import static legend.game.Scus94491BpeSegment_8002.initModel;
 import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
 import static legend.game.Scus94491BpeSegment_8002.renderModel;
@@ -291,7 +290,7 @@ public final class Bttl_800c {
   public static DeffManager7cc deffManager_800c693c;
   /** Dunno what this is for, it's set to a pointer but unused. I removed the set for now. */
   public static final Value _800c6940 = MEMORY.ref(4, 0x800c6940L);
-  public static TmdObjTable[] tmds_800c6944;
+  public static TmdObjTable1c[] tmds_800c6944;
   public static SpriteMetrics08[] spriteMetrics_800c6948;
 
   public static final Pointer<BattleStageDarkening1800> stageDarkening_800c6958 = MEMORY.ref(4, 0x800c6958L, Pointer.deferred(4, BattleStageDarkening1800::new));
@@ -1286,10 +1285,6 @@ public final class Bttl_800c {
 
   @Method(0x800c8748L)
   public static void FUN_800c8748() {
-    if(_1f8003f4.stageTmdMrg_63c != null) {
-      free(_1f8003f4.stageTmdMrg_63c.getAddress());
-    }
-
     if(_1f8003f4.stageMcq_9cb0 != null) {
       free(_1f8003f4.stageMcq_9cb0.getAddress());
     }
@@ -1307,14 +1302,8 @@ public final class Bttl_800c {
       _800c6754.set(1);
       stageHasModel_800c66b8.set(true);
 
-      if(_1f8003f4.stageTmdMrg_63c != null) {
-        free(_1f8003f4.stageTmdMrg_63c.getAddress());
-      }
-
-      _1f8003f4.stageTmdMrg_63c = MrgFile.alloc(files);
-
       final BattleStage stage = _1f8003f4.stage_963c;
-      loadStageTmd(stage, _1f8003f4.stageTmdMrg_63c.getFile(0, CContainer::new), _1f8003f4.stageTmdMrg_63c.getFile(1, TmdAnimationFile::new));
+      loadStageTmd(stage, new CContainer(files.get(0), 0), new TmdAnimationFile(files.get(1), 0));
       stage.coord2_558.coord.transfer.set(0, 0, 0);
       stage.param_5a8.rotate.set((short)0, (short)0x400, (short)0);
     }
@@ -1717,15 +1706,6 @@ public final class Bttl_800c {
     s0._14[0]._09++;
   }
 
-  @Method(0x800c96acL)
-  public static void deallocateModelIfMonster(final Model124 model, final int combatantIndex) {
-    if((combatants_8005e398[combatantIndex].flags_19e & 0x4) == 0) {
-      deallocateModel(model);
-    }
-
-    //LAB_800c96f8
-  }
-
   @Method(0x800c9708L)
   public static void loadAttackAnimations(final int combatantIndex) {
     final CombatantStruct1a8 combatant = combatants_8005e398[combatantIndex];
@@ -1836,7 +1816,7 @@ public final class Bttl_800c {
         bpe.isLoaded_0b = 0;
         s3 = bpe;
       } else {
-        final CombatantStruct1a8_c.AnimType anim = new CombatantStruct1a8_c.AnimType(MEMORY.ref(4, addr, TmdAnimationFile::new));
+        final CombatantStruct1a8_c.AnimType anim = new CombatantStruct1a8_c.AnimType(new TmdAnimationFile(MEMORY.getBytes(addr, size), 0));
         anim._08 = a3;
         anim.type_0a = 1;
         anim.isLoaded_0b = 0;
@@ -1853,7 +1833,7 @@ public final class Bttl_800c {
         bpe.isLoaded_0b = 0;
         s3 = bpe;
       } else {
-        final CombatantStruct1a8_c.AnimType anim = new CombatantStruct1a8_c.AnimType(MEMORY.ref(4, addr, TmdAnimationFile::new));
+        final CombatantStruct1a8_c.AnimType anim = new CombatantStruct1a8_c.AnimType(new TmdAnimationFile(MEMORY.getBytes(addr, size), 0));
         anim._08 = a3;
         anim.type_0a = 2;
         anim.isLoaded_0b = 0;
@@ -2505,10 +2485,6 @@ public final class Bttl_800c {
 
   @Method(0x800cb058L)
   public static void bobjDestructor(final ScriptState<BattleObject27c> state, final BattleObject27c bobj) {
-    if(bobj._278 != 0) {
-      deallocateModelIfMonster(bobj.model_148, bobj.combatantIndex_26c);
-    }
-
     //LAB_800cb088
     FUN_800ca194(bobj.combatantIndex_26c, bobj.animIndex_26e);
 
@@ -3163,7 +3139,6 @@ public final class Bttl_800c {
       }
 
       //LAB_800ccc24
-      deallocateModelIfMonster(bobj.model_148, combatantIndex);
       deallocateCombatant(combatantIndex);
 
       if(script.params_20[1].get() != 0) {
@@ -3572,10 +3547,6 @@ public final class Bttl_800c {
     //LAB_800cdacc
     bobj.combatant_144.charIndex_1a2 = -1;
 
-    if(bobj._278 != 0) {
-      deallocateModelIfMonster(bobj.model_148, bobj.combatantIndex_26c);
-    }
-
     //LAB_800cdaf4
     bobj.animIndex_26e = 0;
     FUN_800c952c(bobj.model_148, bobj.combatantIndex_26c);
@@ -3647,11 +3618,11 @@ public final class Bttl_800c {
     short smallest = -1;
     int largestIndex = 0;
     int smallestIndex = 0;
-    final TmdObjTable v0 = model.dobj2ArrPtr_00[dobjIndex].tmd_08;
+    final TmdObjTable1c v0 = model.dobj2ArrPtr_00[dobjIndex].tmd_08;
 
     //LAB_800cdd24
-    for(int i = 0; i < v0.n_vert_04.get(); i++) {
-      final SVECTOR vert = v0.vert_top_00.deref().get(i);
+    for(int i = 0; i < v0.n_vert_04; i++) {
+      final SVECTOR vert = v0.vert_top_00[i];
       final ShortRef component = vert.component(manager._10._24);
       final short val = component.get();
 

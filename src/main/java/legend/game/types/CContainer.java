@@ -1,30 +1,19 @@
 package legend.game.types;
 
+import legend.core.IoHelper;
 import legend.core.gte.TmdWithId;
-import legend.core.memory.Value;
-import legend.core.memory.types.MemoryRef;
-import legend.core.memory.types.RelativePointer;
 
 /**
  * @see <a href="https://github.com/Legend-of-Dragoon-Modding/Legend-of-Dragoon-Java/issues/2">more information</a>
  */
-public class CContainer implements MemoryRef {
-  private final Value ref;
+public class CContainer {
+  public final TmdWithId tmdPtr_00;
+  public final CContainerSubfile1 ext_04;
+  public final CContainerSubfile2 ptr_08;
 
-  public final RelativePointer<TmdWithId> tmdPtr_00;
-  public final RelativePointer<CContainerSubfile1> ext_04;
-  public final RelativePointer<CContainerSubfile2> ptr_08;
-
-  public CContainer(final Value ref) {
-    this.ref = ref;
-
-    this.tmdPtr_00 = ref.offset(4, 0x0L).cast(RelativePointer.deferred(4, TmdWithId::new));
-    this.ext_04 = ref.offset(4, 0x4L).cast(RelativePointer.deferred(4, ref.getAddress(), CContainerSubfile1::new));
-    this.ptr_08 = ref.offset(4, 0x8L).cast(RelativePointer.deferred(4, ref.getAddress(), CContainerSubfile2::new));
-  }
-
-  @Override
-  public long getAddress() {
-    return this.ref.getAddress();
+  public CContainer(final byte[] data, final int offset) {
+    this.tmdPtr_00 = new TmdWithId(data, offset + IoHelper.readInt(data, offset));
+    this.ext_04 = new CContainerSubfile1(data, offset + IoHelper.readInt(data, offset + 0x4));
+    this.ptr_08 = new CContainerSubfile1(data, offset + IoHelper.readInt(data, offset + 0x8));
   }
 }

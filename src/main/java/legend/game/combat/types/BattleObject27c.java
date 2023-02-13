@@ -275,6 +275,7 @@ public class BattleObject27c extends BattleScriptDataBase {
   public int charIndex_272;
   public int _274;
   public int charSlot_276;
+  /** Has model? Used to be used to free model, no longer used since it's managed by java */
   public int _278;
 
   public BattleObject27c(final String name) {

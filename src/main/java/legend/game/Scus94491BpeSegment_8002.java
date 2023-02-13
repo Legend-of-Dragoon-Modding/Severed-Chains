@@ -15,7 +15,7 @@ import legend.core.gte.GsOBJTABLE2;
 import legend.core.gte.MATRIX;
 import legend.core.gte.SVECTOR;
 import legend.core.gte.Tmd;
-import legend.core.gte.TmdObjTable;
+import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
@@ -47,7 +47,7 @@ import legend.game.types.LodString;
 import legend.game.types.MagicStuff08;
 import legend.game.types.MenuItemStruct04;
 import legend.game.types.Model124;
-import legend.game.types.ModelPartTransforms;
+import legend.game.types.ModelPartTransforms0c;
 import legend.game.types.Renderable58;
 import legend.game.types.RenderableMetrics14;
 import legend.game.types.SpuStruct10;
@@ -128,7 +128,6 @@ import static legend.game.Scus94491BpeSegment_8003.ScaleMatrix;
 import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
 import static legend.game.Scus94491BpeSegment_8003.TransMatrix;
 import static legend.game.Scus94491BpeSegment_8003.TransposeMatrix;
-import static legend.game.Scus94491BpeSegment_8003.adjustTmdPointers;
 import static legend.game.Scus94491BpeSegment_8003.bzero;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.updateTmdPacketIlen;
@@ -324,52 +323,51 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80020468L)
-  public static void FUN_80020468(final GsDOBJ2 dobj2, final long a1) {
-    final TmdObjTable objTable = dobj2.tmd_08;
-    long primitives = objTable.primitives_10.getPointer();
-    long count = objTable.n_primitive_14.get();
+  public static void FUN_80020468(final GsDOBJ2 dobj2, final int colourMap) {
+    final TmdObjTable1c objTable = dobj2.tmd_08;
+    final int[] primitives = objTable.primitives_10;
+    int count = objTable.n_primitive_14;
+
+    int primitiveIndex = 0;
 
     //LAB_80020494
     while(count != 0) {
-      final long command = MEMORY.ref(4, primitives).get() & 0xff04_0000L;
-      final long primitiveCount = MEMORY.ref(2, primitives).get();
+      final int header = primitives[primitiveIndex];
+      final int command = header & 0xff04_0000;
+      final int primitiveCount = header & 0xffff;
 
       //LAB_8002053c
       //LAB_8002058c
       //LAB_800205b0
-      if(command == 0x3c00_0000L || command == 0x3e00_0000L) {
+      if(command == 0x3c00_0000 || command == 0x3e00_0000) {
         //LAB_800206a0
-        FUN_800210c4(primitives, primitiveCount, a1);
+        FUN_800210c4(primitives, primitiveIndex, primitiveCount, colourMap);
         count -= primitiveCount;
-        primitives += primitiveCount * 0x24L;
-      } else if(command == 0x3d00_0000L || command == 0x3f00_0000L) {
-        FUN_8002117c(primitives, primitiveCount, a1);
+        primitiveIndex += primitiveCount * 0x24;
+      } else if(command == 0x3d00_0000 || command == 0x3f00_0000) {
+        FUN_8002117c(primitives, primitiveIndex, primitiveCount, colourMap);
         count -= primitiveCount;
-        primitives += primitiveCount * 0x2cL;
-      } else if(command == 0x3804_0000L || command == 0x3a04_0000L) {
-        FUN_80021060(primitives, primitiveCount);
+        primitiveIndex += primitiveCount * 0x2c;
+      } else if(command == 0x3804_0000 || command == 0x3a04_0000) {
         count -= primitiveCount;
-        primitives += primitiveCount * 0x24L;
-      } else if(command == 0x3800_0000L || command == 0x3a00_0000L) {
-        FUN_80021050(primitives, primitiveCount);
+        primitiveIndex += primitiveCount * 0x24;
+      } else if(command == 0x3800_0000 || command == 0x3a00_0000) {
         count -= primitiveCount;
-        primitives += primitiveCount * 0x18L;
-      } else if(command == 0x3500_0000L || command == 0x3700_0000L) {
-        FUN_80021120(primitives, primitiveCount, a1);
+        primitiveIndex += primitiveCount * 0x18;
+      } else if(command == 0x3500_0000 || command == 0x3700_0000) {
+        FUN_80021120(primitives, primitiveIndex, primitiveCount, colourMap);
         count -= primitiveCount;
-        primitives += primitiveCount * 0x24L;
-      } else if(command == 0x3400_0000L || command == 0x3600_0000L) {
-        FUN_80021068(primitives, primitiveCount, a1);
+        primitiveIndex += primitiveCount * 0x24;
+      } else if(command == 0x3400_0000 || command == 0x3600_0000) {
+        FUN_80021068(primitives, primitiveIndex, primitiveCount, colourMap);
         count -= primitiveCount;
-        primitives += primitiveCount * 0x1cL;
-      } else if(command == 0x3004_0000L || command == 0x3204_0000L) {
-        FUN_80021058(primitives, primitiveCount);
+        primitiveIndex += primitiveCount * 0x1c;
+      } else if(command == 0x3004_0000 || command == 0x3204_0000) {
         count -= primitiveCount;
-        primitives += primitiveCount * 0x1cL;
-      } else if(command == 0x3000_0000L || command == 0x3200_0000L) {
-        FUN_80021048(primitives, primitiveCount);
+        primitiveIndex += primitiveCount * 0x1c;
+      } else if(command == 0x3000_0000 || command == 0x3200_0000) {
         count -= primitiveCount;
-        primitives += primitiveCount * 0x14L;
+        primitiveIndex += primitiveCount * 0x14;
       }
 
       //LAB_800206f8
@@ -381,7 +379,7 @@ public final class Scus94491BpeSegment_8002 {
   /** Very similar to {@link Scus94491BpeSegment_800e#FUN_800e6b3c(Model124, CContainer, TmdAnimationFile)} */
   @Method(0x80020718L)
   public static void FUN_80020718(final Model124 model, final CContainer cContainer, final TmdAnimationFile tmdAnimFile) {
-    LOGGER.info("Loading scripted TMD %08x (animation %08x)", cContainer.getAddress(), tmdAnimFile.getAddress());
+    LOGGER.info("Loading scripted TMD %s (animation %s)", cContainer, tmdAnimFile);
 
     final int transferX = model.coord2_14.coord.transfer.getX();
     final int transferY = model.coord2_14.coord.transfer.getY();
@@ -392,19 +390,19 @@ public final class Scus94491BpeSegment_8002 {
       model.aub_ec[i] = 0;
     }
 
-    final Tmd tmd = cContainer.tmdPtr_00.deref().tmd;
+    final Tmd tmd = cContainer.tmdPtr_00.tmd;
     model.tmd_8c = tmd;
-    model.tmdNobj_ca = tmd.header.nobj.get();
+    model.tmdNobj_ca = tmd.header.nobj;
 
     if(mainCallbackIndex_8004dd20.get() == 5) { // SMAP
       FUN_800de004(model, cContainer);
     }
 
     //LAB_8002079c
-    model.tpage_108 = (int)((cContainer.tmdPtr_00.deref().id.get() & 0xffff_0000L) >>> 11); // LOD uses the upper 16 bits of TMD IDs as tpage (sans VRAM X/Y)
+    model.tpage_108 = (int)((cContainer.tmdPtr_00.id & 0xffff_0000L) >>> 11); // LOD uses the upper 16 bits of TMD IDs as tpage (sans VRAM X/Y)
 
-    if(!cContainer.ptr_08.isNull()) {
-      model.ptr_a8 = cContainer.ptr_08.deref();
+    if(cContainer.ptr_08 != null) {
+      model.ptr_a8 = cContainer.ptr_08;
 
       //LAB_800207d4
       for(int i = 0; i < 7; i++) {
@@ -422,7 +420,6 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80020838
-    adjustTmdPointers(model.tmd_8c);
     initObjTable2(model.ObjTable_0c, model.dobj2ArrPtr_00, model.coord2ArrPtr_04, model.coord2ParamArrPtr_08, model.count_c8);
     model.coord2_14.param = model.coord2Param_64;
     GsInitCoordinate2(null, model.coord2_14);
@@ -472,7 +469,7 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80020a00L)
   public static void initModel(final Model124 model, final CContainer CContainer, final TmdAnimationFile tmdAnimFile) {
-    model.count_c8 = CContainer.tmdPtr_00.deref().tmd.header.nobj.get();
+    model.count_c8 = CContainer.tmdPtr_00.tmd.header.nobj;
 
     model.dobj2ArrPtr_00 = new GsDOBJ2[model.count_c8];
     model.coord2ArrPtr_04 = new GsCOORDINATE2[model.count_c8];
@@ -526,7 +523,7 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_80020c90
     if((model.s_9e & 0x1) == 0 && model.ub_a2 == 0) {
-      final UnboundedArrayRef<ModelPartTransforms> transforms = model.partTransforms_94;
+      final ModelPartTransforms0c[] transforms = model.partTransforms_94;
 
       if(model.ub_a3 == 0) {
         //LAB_80020ce0
@@ -535,9 +532,9 @@ public final class Scus94491BpeSegment_8002 {
           final GsCOORD2PARAM params = coord2.param;
           RotMatrix_80040010(params.rotate, coord2.coord);
           params.trans.set(
-            (params.trans.getX() + transforms.get(i).translate_06.getX()) / 2,
-            (params.trans.getY() + transforms.get(i).translate_06.getY()) / 2,
-            (params.trans.getZ() + transforms.get(i).translate_06.getZ()) / 2
+            (params.trans.getX() + transforms[i].translate_06.getX()) / 2,
+            (params.trans.getY() + transforms[i].translate_06.getY()) / 2,
+            (params.trans.getZ() + transforms[i].translate_06.getZ()) / 2
           );
           TransMatrix(coord2.coord, params.trans);
         }
@@ -550,10 +547,10 @@ public final class Scus94491BpeSegment_8002 {
           final GsCOORDINATE2 coord2 = model.dobj2ArrPtr_00[i].coord2_04;
           final GsCOORD2PARAM params = coord2.param;
 
-          params.rotate.set(transforms.get(i).rotate_00);
+          params.rotate.set(transforms[i].rotate_00);
           RotMatrix_80040010(params.rotate, coord2.coord);
 
-          params.trans.set(transforms.get(i).translate_06);
+          params.trans.set(transforms[i].translate_06);
           TransMatrix(coord2.coord, params.trans);
         }
 
@@ -563,22 +560,22 @@ public final class Scus94491BpeSegment_8002 {
       //LAB_80020e00
     } else {
       //LAB_80020e0c
-      final UnboundedArrayRef<ModelPartTransforms> transforms = model.partTransforms_94;
+      final ModelPartTransforms0c[] transforms = model.partTransforms_94;
 
       //LAB_80020e24
       for(int i = 0; i < model.tmdNobj_ca; i++) {
         final GsCOORDINATE2 coord2 = model.dobj2ArrPtr_00[i].coord2_04;
         final GsCOORD2PARAM params = coord2.param;
 
-        params.rotate.set(transforms.get(i).rotate_00);
+        params.rotate.set(transforms[i].rotate_00);
         RotMatrix_80040010(params.rotate, coord2.coord);
 
-        params.trans.set(transforms.get(i).translate_06);
+        params.trans.set(transforms[i].translate_06);
         TransMatrix(coord2.coord, params.trans);
       }
 
       //LAB_80020e94
-      model.partTransforms_94 = transforms.slice(model.tmdNobj_ca);
+      model.partTransforms_94 = Arrays.copyOfRange(transforms, model.tmdNobj_ca, transforms.length);
     }
 
     //LAB_80020e98
@@ -639,87 +636,57 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80020fd0
   }
 
-  @Method(0x80020fe0L)
-  public static void deallocateModel(final Model124 model) {
-    //LAB_80021008
-    if(mainCallbackIndex_8004dd20.get() == 5 && model.smallerStructPtr_a4 != null) {
-      free(model.smallerStructPtr_a4.getAddress());
-    }
-
-    //LAB_80021034
-  }
-
-  @Method(0x80021048L)
-  public static void FUN_80021048(final long primitives, final long count) {
-    // empty
-  }
-
-  @Method(0x80021050L)
-  public static void FUN_80021050(final long primitives, final long count) {
-    // empty
-  }
-
-  @Method(0x80021058L)
-  public static void FUN_80021058(final long primitives, final long count) {
-    // empty
-  }
-
-  @Method(0x80021060L)
-  public static void FUN_80021060(final long primitives, final long count) {
-    // empty
-  }
-
   @Method(0x80021068L)
-  public static void FUN_80021068(long primitives, final long count, final long a2) {
-    final long a3 = _8005027c.offset(a2 * 0x10L).getAddress();
+  public static void FUN_80021068(final int[] primitives, int primitiveIndex, final int count, final int colourMap) {
+    final long a3 = _8005027c.offset(colourMap * 0x10L).getAddress();
 
     //LAB_80021080
     for(int i = 0; i < count; i++) {
-      MEMORY.ref(4, primitives).offset(0x4L).and(MEMORY.ref(4, a3).offset(0xcL).get()).oru(MEMORY.ref(4, a3).offset(0x8L).get());
-      MEMORY.ref(4, primitives).offset(0x8L).and(MEMORY.ref(4, a3).offset(0x4L).get()).oru(MEMORY.ref(4, a3).offset(0x0L).get());
-      primitives += 0x1cL;
+      primitives[primitiveIndex + 1] = primitives[primitiveIndex + 1] & (int)MEMORY.ref(4, a3).offset(0xcL).get() | (int)MEMORY.ref(4, a3).offset(0x8L).get();
+      primitives[primitiveIndex + 2] = primitives[primitiveIndex + 2] & (int)MEMORY.ref(4, a3).offset(0x4L).get() | (int)MEMORY.ref(4, a3).offset(0x0L).get();
+      primitiveIndex += 0x1c;
     }
 
     //LAB_800210bc
   }
 
   @Method(0x800210c4L)
-  public static void FUN_800210c4(long primitives, final long count, final long a2) {
-    final long a3 = _8005027c.offset(a2 * 0x10L).getAddress();
+  public static void FUN_800210c4(final int[] primitives, int primitiveIndex, final int count, final int colourMap) {
+    final long a3 = _8005027c.offset(colourMap * 0x10L).getAddress();
 
     //LAB_800210dc
     for(int i = 0; i < count; i++) {
-      MEMORY.ref(4, primitives).offset(0x4L).and(MEMORY.ref(4, a3).offset(0xcL).get()).oru(MEMORY.ref(4, a3).offset(0x8L).get());
-      MEMORY.ref(4, primitives).offset(0x8L).and(MEMORY.ref(4, a3).offset(0x4L).get()).oru(MEMORY.ref(4, a3).offset(0x0L).get());
-      primitives += 0x24L;
+      primitives[primitiveIndex + 1] = primitives[primitiveIndex + 1] & (int)MEMORY.ref(4, a3).offset(0xcL).get() | (int)MEMORY.ref(4, a3).offset(0x8L).get();
+      primitives[primitiveIndex + 2] = primitives[primitiveIndex + 2] & (int)MEMORY.ref(4, a3).offset(0x4L).get() | (int)MEMORY.ref(4, a3).offset(0x0L).get();
+      primitiveIndex += 0x24;
     }
 
     //LAB_80021118
   }
 
   @Method(0x8002117cL)
-  public static void FUN_8002117c(long primitives, final long count, final long a2) {
-    final long a3 = _8005027c.offset(a2 * 0x10L).getAddress();
+  public static void FUN_8002117c(final int[] primitives, int primitiveIndex, final int count, final int colourMap) {
+    final long a3 = _8005027c.offset(colourMap * 0x10L).getAddress();
 
     //LAB_80021194
     for(int i = 0; i < count; i++) {
-      MEMORY.ref(4, primitives).offset(0x4L).and(MEMORY.ref(4, a3).offset(0xcL).get()).oru(MEMORY.ref(4, a3).offset(0x8L).get());
-      MEMORY.ref(4, primitives).offset(0x8L).and(MEMORY.ref(4, a3).offset(0x4L).get()).oru(MEMORY.ref(4, a3).offset(0x0L).get());
-      primitives += 0x2cL;
+      primitives[primitiveIndex + 1] = primitives[primitiveIndex + 1] & (int)MEMORY.ref(4, a3).offset(0xcL).get() | (int)MEMORY.ref(4, a3).offset(0x8L).get();
+      primitives[primitiveIndex + 2] = primitives[primitiveIndex + 2] & (int)MEMORY.ref(4, a3).offset(0x4L).get() | (int)MEMORY.ref(4, a3).offset(0x0L).get();
+      primitiveIndex += 0x2c;
     }
 
     //LAB_800211d0
   }
 
   @Method(0x80021120L)
-  public static void FUN_80021120(long primitives, final long count, final long a2) {
-    final long a3 = _8005027c.offset(a2 * 0x10L).getAddress();
+  public static void FUN_80021120(final int[] primitives, int primitiveIndex, final int count, final int colourMap) {
+    final long a3 = _8005027c.offset(colourMap * 0x10L).getAddress();
 
     //LAB_80021138
     for(int i = 0; i < count; i++) {
-      MEMORY.ref(4, primitives).offset(0x4L).and(MEMORY.ref(4, a3).offset(0xcL).get()).oru(MEMORY.ref(4, a3).offset(0x8L).get());
-      MEMORY.ref(4, primitives).offset(0x8L).and(MEMORY.ref(4, a3).offset(0x4L).get()).oru(MEMORY.ref(4, a3).offset(0x0L).get());
-      primitives += 0x24L;
+      primitives[primitiveIndex + 1] = primitives[primitiveIndex + 1] & (int)MEMORY.ref(4, a3).offset(0xcL).get() | (int)MEMORY.ref(4, a3).offset(0x8L).get();
+      primitives[primitiveIndex + 2] = primitives[primitiveIndex + 2] & (int)MEMORY.ref(4, a3).offset(0x4L).get() | (int)MEMORY.ref(4, a3).offset(0x0L).get();
+      primitiveIndex += 0x24;
     }
 
     //LAB_80021174
@@ -773,7 +740,7 @@ public final class Scus94491BpeSegment_8002 {
       return;
     }
 
-    final UnboundedArrayRef<ModelPartTransforms> transforms = a0.partTransforms_94;
+    final ModelPartTransforms0c[] transforms = a0.partTransforms_94;
 
     //LAB_80021320
     for(int i = 0; i < count; i++) {
@@ -783,22 +750,22 @@ public final class Scus94491BpeSegment_8002 {
       final GsCOORD2PARAM params = coord2.param;
       final MATRIX matrix = coord2.coord;
 
-      params.rotate.set(transforms.get(i).rotate_00);
+      params.rotate.set(transforms[i].rotate_00);
       RotMatrix_80040010(params.rotate, matrix);
 
-      params.trans.set(transforms.get(i).translate_06);
+      params.trans.set(transforms[i].translate_06);
       TransMatrix(matrix, params.trans);
     }
 
     //LAB_80021390
-    a0.partTransforms_94 = transforms.slice(count);
+    a0.partTransforms_94 = Arrays.copyOfRange(transforms, count, transforms.length);
   }
 
   @Method(0x800213c4L)
   public static void FUN_800213c4(final Model124 a0) {
     //LAB_80021404
     for(int i = 0; i < a0.tmdNobj_ca; i++) {
-      final ModelPartTransforms transforms = a0.partTransforms_94.get(i);
+      final ModelPartTransforms0c transforms = a0.partTransforms_94[i];
       final GsCOORDINATE2 coord2 = a0.dobj2ArrPtr_00[i].coord2_04;
       final MATRIX coord = coord2.coord;
       final GsCOORD2PARAM params = coord2.param;
@@ -810,7 +777,7 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80021490
-    a0.partTransforms_94 = a0.partTransforms_94.slice(a0.tmdNobj_ca);
+    a0.partTransforms_94 = Arrays.copyOfRange(a0.partTransforms_94, a0.tmdNobj_ca, a0.partTransforms_94.length);
   }
 
   @Method(0x800214bcL)
@@ -837,8 +804,8 @@ public final class Scus94491BpeSegment_8002 {
     model.animType_90 = -1;
     model.partTransforms_90 = tmdAnimFile.partTransforms_10;
     model.partTransforms_94 = tmdAnimFile.partTransforms_10;
-    model.animCount_98 = tmdAnimFile.count_0c.get();
-    model.s_9a = tmdAnimFile._0e.get();
+    model.animCount_98 = tmdAnimFile.modelPartCount_0c;
+    model.s_9a = tmdAnimFile._0e;
     model.ub_9c = 0;
 
     applyModelPartTransforms(model);
@@ -1070,18 +1037,13 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80021c58L)
-  public static UnboundedArrayRef<TmdObjTable> getTmdObjTableOffset(final Tmd tmd, final long objId) {
-    long count = tmd.header.nobj.get();
-    int id = 1;
+  public static TmdObjTable1c[] getTmdObjTableOffset(final Tmd tmd, final int objId) {
     //LAB_80021c74
-    while(count > 0) {
+    for(int id = 1; id < tmd.header.nobj; id++) {
       if(id == objId) {
         //LAB_80021c8c
-        return tmd.objTable.slice(id - 1);
+        return Arrays.copyOfRange(tmd.objTable, id - 1, tmd.objTable.length);
       }
-
-      count--;
-      id++;
     }
 
     //LAB_80021c8c

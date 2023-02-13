@@ -1660,6 +1660,10 @@ public final class Scus94491BpeSegment {
     onCompletion.accept(fileData);
   }
 
+  public static void loadDrgnFile(final int drgnBinIndex, final int file, final Consumer<byte[]> onCompletion) {
+    loadDrgnFile(drgnBinIndex, String.valueOf(file), onCompletion);
+  }
+
   public static void loadDrgnFile(int drgnBinIndex, final String file, final Consumer<byte[]> onCompletion) {
     if(drgnBinIndex >= 2) {
       drgnBinIndex = 20 + drgnBinIndex_800bc058.get();

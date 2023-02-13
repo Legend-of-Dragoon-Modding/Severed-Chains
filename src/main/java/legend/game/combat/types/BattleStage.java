@@ -8,7 +8,7 @@ import legend.core.gte.Tmd;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.game.types.CContainerSubfile2;
-import legend.game.types.ModelPartTransforms;
+import legend.game.types.ModelPartTransforms0c;
 
 import java.util.Arrays;
 
@@ -20,8 +20,8 @@ public class BattleStage {
   public final GsCOORDINATE2 coord2_558 = new GsCOORDINATE2();
   public final GsCOORD2PARAM param_5a8 = new GsCOORD2PARAM();
   public Tmd tmd_5d0;
-  public UnboundedArrayRef<ModelPartTransforms> rotTrans_5d4;
-  public UnboundedArrayRef<ModelPartTransforms> rotTrans_5d8;
+  public ModelPartTransforms0c[] rotTrans_5d4;
+  public ModelPartTransforms0c[] rotTrans_5d8;
   /** short */
   public int partCount_5dc;
   /** short */

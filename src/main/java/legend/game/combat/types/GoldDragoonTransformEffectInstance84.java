@@ -1,6 +1,6 @@
 package legend.game.combat.types;
 
-import legend.core.gte.TmdObjTable;
+import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.VECTOR;
 import legend.core.memory.Value;
 import legend.core.memory.types.BoolRef;
@@ -24,7 +24,7 @@ public class GoldDragoonTransformEffectInstance84 implements MemoryRef {
   public final ByteRef _69;
   public final ByteRef _6a;
 
-  public final Pointer<TmdObjTable> tmd_70;
+  public final Pointer<TmdObjTable1c> tmd_70;
 
   public final ShortRef _7c;
   public final ShortRef _7e;
@@ -44,7 +44,7 @@ public class GoldDragoonTransformEffectInstance84 implements MemoryRef {
     this._69 = ref.offset(1, 0x69L).cast(ByteRef::new);
     this._6a = ref.offset(1, 0x6aL).cast(ByteRef::new);
 
-    this.tmd_70 = ref.offset(4, 0x70L).cast(Pointer.deferred(4, TmdObjTable::new));
+    this.tmd_70 = ref.offset(4, 0x70L).cast(Pointer.deferred(4, TmdObjTable1c::new));
 
     this._7c = ref.offset(2, 0x7cL).cast(ShortRef::new);
     this._7e = ref.offset(2, 0x7eL).cast(ShortRef::new);

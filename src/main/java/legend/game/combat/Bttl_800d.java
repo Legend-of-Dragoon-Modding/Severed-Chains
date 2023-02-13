@@ -10,14 +10,13 @@ import legend.core.gte.GsDOBJ2;
 import legend.core.gte.MATRIX;
 import legend.core.gte.SVECTOR;
 import legend.core.gte.Tmd;
-import legend.core.gte.TmdObjTable;
+import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.TmdWithId;
 import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
 import legend.core.memory.types.CString;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.ShortRef;
-import legend.core.memory.types.UnboundedArrayRef;
 import legend.game.combat.deff.Anim;
 import legend.game.combat.deff.Cmb;
 import legend.game.combat.deff.Lmb;
@@ -46,7 +45,7 @@ import legend.game.scripting.ScriptState;
 import legend.game.tmd.Renderer;
 import legend.game.types.CContainer;
 import legend.game.types.Model124;
-import legend.game.types.ModelPartTransforms;
+import legend.game.types.ModelPartTransforms0c;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
 
@@ -85,7 +84,6 @@ import static legend.game.Scus94491BpeSegment_8003.RotMatrix_8003faf0;
 import static legend.game.Scus94491BpeSegment_8003.RotTrans;
 import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
 import static legend.game.Scus94491BpeSegment_8003.TransMatrix;
-import static legend.game.Scus94491BpeSegment_8003.adjustTmdPointers;
 import static legend.game.Scus94491BpeSegment_8003.getProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.getScreenOffset;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
@@ -4433,7 +4431,7 @@ public final class Bttl_800d {
       lo = (long)(int)v1 * (int)v0 & 0xffff_ffffL;
       a0.partTransforms_94 = a0.partTransforms_90;
       v1 = lo;
-      a0.partTransforms_94 = a0.partTransforms_90.slice((int)v1);
+      a0.partTransforms_94 = Arrays.copyOfRange(a0.partTransforms_90, (int)v1, a0.partTransforms_90.length);
       applyModelPartTransforms(a0);
       v0 = a0.s_9a;
       v0 = v0 << 16;
@@ -4448,12 +4446,12 @@ public final class Bttl_800d {
       lo = a0.animCount_98 * (int)v0 & 0xffff_ffffL;
       a0.partTransforms_94 = a0.partTransforms_90;
       v1 = lo;
-      a0.partTransforms_94 = a0.partTransforms_90.slice((int)v1);
+      a0.partTransforms_94 = Arrays.copyOfRange(a0.partTransforms_90, (int)v1, a0.partTransforms_90.length);
       applyModelPartTransforms(a0);
       if((s2 & 0x1L) != 0) {
         if(s2 != a0.s_9a - 1) {
           if(a0.ub_a3 == 0) {
-            final UnboundedArrayRef<ModelPartTransforms> original = a0.partTransforms_94;
+            final ModelPartTransforms0c[] original = a0.partTransforms_94;
             FUN_800213c4(a0);
             a0.partTransforms_94 = original;
           }
@@ -4515,7 +4513,7 @@ public final class Bttl_800d {
 
     //LAB_800dd720
     for(int i = 0; i < count; i++) {
-      LmbTransforms14 a1_0 = lmb._08.get(i)._08.deref().get(a0_0);
+      LmbTransforms14 a1_0 = lmb._08[i]._08[a0_0];
       final MATRIX s0 = a0.dobj2ArrPtr_00[i].coord2_04.coord;
 
       final VECTOR trans = new VECTOR();
@@ -4527,10 +4525,10 @@ public final class Bttl_800d {
 
       if(s6 != 0) {
         if(a1 == a0.s_9a - 1) {
-          a1_0 = lmb._08.get(i)._08.deref().get(0);
+          a1_0 = lmb._08[i]._08[0];
         } else {
           //LAB_800dd7cc
-          a1_0 = lmb._08.get(i)._08.deref().get(a0_0 + 1);
+          a1_0 = lmb._08[i]._08[a0_0 + 1];
         }
 
         //LAB_800dd7d0
@@ -4629,11 +4627,11 @@ public final class Bttl_800d {
       model.aub_ec[i] = 0;
     }
 
-    final TmdWithId tmdWithId = extTmd.tmdPtr_00.deref();
+    final TmdWithId tmdWithId = extTmd.tmdPtr_00;
     final Tmd tmd = tmdWithId.tmd;
 
     model.tmd_8c = tmd;
-    final int count = tmd.header.nobj.get();
+    final int count = tmd.header.nobj;
     model.tmdNobj_ca = count;
     model.count_c8 = count;
     model.dobj2ArrPtr_00 = new GsDOBJ2[count];
@@ -4644,8 +4642,7 @@ public final class Bttl_800d {
     Arrays.setAll(model.coord2ArrPtr_04, i -> new GsCOORDINATE2());
     Arrays.setAll(model.coord2ParamArrPtr_08, i -> new GsCOORD2PARAM());
 
-    model.tpage_108 = (int)((tmdWithId.id.get() & 0xffff_0000L) >>> 11);
-    adjustTmdPointers(model.tmd_8c);
+    model.tpage_108 = (int)((tmdWithId.id & 0xffff_0000L) >>> 11);
     initObjTable2(model.ObjTable_0c, model.dobj2ArrPtr_00, model.coord2ArrPtr_04, model.coord2ParamArrPtr_08, model.count_c8);
     model.coord2_14.param = model.coord2Param_64;
     GsInitCoordinate2(null, model.coord2_14);
@@ -4653,8 +4650,8 @@ public final class Bttl_800d {
 
     //LAB_800ddc0c
     for(int i = 0; i < count; i++) {
-      if((tmd.header.flags.get() & 0x2) != 0) {
-        model.dobj2ArrPtr_00[i].tmd_08 = tmd.objTable.get(i);
+      if((tmd.header.flags & 0x2) != 0) {
+        model.dobj2ArrPtr_00[i].tmd_08 = tmd.objTable[i];
       } else {
         final GsDOBJ2 dobj2 = new GsDOBJ2();
         updateTmdPacketIlen(tmd.objTable, dobj2, i);
@@ -4677,7 +4674,7 @@ public final class Bttl_800d {
     model.zOffset_a0 = 0;
     model.coord2_14.coord.transfer.set(sp0x18);
 
-    if((model.tmd_8c.header.flags.get() & 0x2) == 0 && model.colourMap_9d != 0) {
+    if((model.tmd_8c.header.flags & 0x2) == 0 && model.colourMap_9d != 0) {
       FUN_80021628(model);
     }
 
@@ -4704,7 +4701,7 @@ public final class Bttl_800d {
     }
 
     // Note: these two variables _should_ be the same
-    final int modelPartCount = cmb.modelPartCount_0c.get();
+    final int modelPartCount = cmb.modelPartCount_0c;
     final int count = Math.min(a0.count_c8, a0.animCount_98);
 
     //LAB_800dddc4
@@ -4729,11 +4726,11 @@ public final class Bttl_800d {
     if(a1_0 < t0) {
       //LAB_800dde88
       for(int partIndex = 0; partIndex < modelPartCount; partIndex++) {
-        final Cmb.Transforms0c fileTransforms = cmb.transforms_10.get(partIndex);
-        final Cmb.Transforms0c modelTransforms = cmbAnim.transforms_08[partIndex];
+        final ModelPartTransforms0c fileTransforms = cmb.partTransforms_10[partIndex];
+        final ModelPartTransforms0c modelTransforms = cmbAnim.transforms_08[partIndex];
 
-        modelTransforms.rot_00.set(fileTransforms.rot_00);
-        modelTransforms.trans_06.set(fileTransforms.trans_06);
+        modelTransforms.rotate_00.set(fileTransforms.rotate_00);
+        modelTransforms.translate_06.set(fileTransforms.translate_06);
       }
 
       //LAB_800ddee0
@@ -4746,16 +4743,16 @@ public final class Bttl_800d {
     for(; t0 < a1_0; t0++) {
       //LAB_800ddf2c
       for(int partIndex = 0; partIndex < modelPartCount; partIndex++) {
-        final Cmb.SubTransforms08 subTransforms = cmb.subTransforms().get(t0 * modelPartCount + partIndex);
-        final Cmb.Transforms0c modelTransforms = cmbAnim.transforms_08[partIndex];
+        final Cmb.SubTransforms08 subTransforms = cmb.subTransforms[t0 * modelPartCount + partIndex];
+        final ModelPartTransforms0c modelTransforms = cmbAnim.transforms_08[partIndex];
 
-        modelTransforms.rot_00.x.add((short)(subTransforms.rot_01.getX() << subTransforms.rotScale_00.get()));
-        modelTransforms.rot_00.y.add((short)(subTransforms.rot_01.getY() << subTransforms.rotScale_00.get()));
-        modelTransforms.rot_00.z.add((short)(subTransforms.rot_01.getZ() << subTransforms.rotScale_00.get()));
+        modelTransforms.rotate_00.x.add((short)(subTransforms.rot_01.getX() << subTransforms.rotScale_00));
+        modelTransforms.rotate_00.y.add((short)(subTransforms.rot_01.getY() << subTransforms.rotScale_00));
+        modelTransforms.rotate_00.z.add((short)(subTransforms.rot_01.getZ() << subTransforms.rotScale_00));
 
-        modelTransforms.trans_06.x.add((short)(subTransforms.trans_05.getX() << subTransforms.transScale_04.get()));
-        modelTransforms.trans_06.y.add((short)(subTransforms.trans_05.getY() << subTransforms.transScale_04.get()));
-        modelTransforms.trans_06.z.add((short)(subTransforms.trans_05.getZ() << subTransforms.transScale_04.get()));
+        modelTransforms.translate_06.x.add((short)(subTransforms.trans_05.getX() << subTransforms.transScale_04));
+        modelTransforms.translate_06.y.add((short)(subTransforms.trans_05.getY() << subTransforms.transScale_04));
+        modelTransforms.translate_06.z.add((short)(subTransforms.trans_05.getZ() << subTransforms.transScale_04));
       }
 
       //LAB_800ddfd4
@@ -4766,31 +4763,31 @@ public final class Bttl_800d {
     if(t3 == 0 || a0.ub_a3 != 0 || a1_0 == (a0.s_9a >> 1) - 1) {
       //LAB_800de164
       for(int i = 0; i < count; i++) {
-        final Cmb.Transforms0c modelTransforms = cmbAnim.transforms_08[i];
+        final ModelPartTransforms0c modelTransforms = cmbAnim.transforms_08[i];
         final MATRIX modelPartMatrix = a0.dobj2ArrPtr_00[i].coord2_04.coord;
-        RotMatrix_80040010(modelTransforms.rot_00, modelPartMatrix);
-        modelPartMatrix.transfer.set(modelTransforms.trans_06);
+        RotMatrix_80040010(modelTransforms.rotate_00, modelPartMatrix);
+        modelPartMatrix.transfer.set(modelTransforms.translate_06);
       }
     } else {
       //LAB_800de050
       for(int i = 0; i < count; i++) {
-        final Cmb.SubTransforms08 subTransforms = cmb.subTransforms().get(a1_0 * modelPartCount + i);
-        final Cmb.Transforms0c modelTransforms = cmbAnim.transforms_08[i];
+        final Cmb.SubTransforms08 subTransforms = cmb.subTransforms[a1_0 * modelPartCount + i];
+        final ModelPartTransforms0c modelTransforms = cmbAnim.transforms_08[i];
 
         final MATRIX modelPartMatrix = a0.dobj2ArrPtr_00[i].coord2_04.coord;
-        RotMatrix_80040010(modelTransforms.rot_00, modelPartMatrix);
-        modelPartMatrix.transfer.set(modelTransforms.trans_06);
+        RotMatrix_80040010(modelTransforms.rotate_00, modelPartMatrix);
+        modelPartMatrix.transfer.set(modelTransforms.translate_06);
 
         final SVECTOR rotation = new SVECTOR();
-        rotation.setX((short)(modelTransforms.rot_00.getX() + (subTransforms.rot_01.getX() << subTransforms.rotScale_00.get())));
-        rotation.setY((short)(modelTransforms.rot_00.getY() + (subTransforms.rot_01.getY() << subTransforms.rotScale_00.get())));
-        rotation.setZ((short)(modelTransforms.rot_00.getZ() + (subTransforms.rot_01.getZ() << subTransforms.rotScale_00.get())));
+        rotation.setX((short)(modelTransforms.rotate_00.getX() + (subTransforms.rot_01.getX() << subTransforms.rotScale_00)));
+        rotation.setY((short)(modelTransforms.rotate_00.getY() + (subTransforms.rot_01.getY() << subTransforms.rotScale_00)));
+        rotation.setZ((short)(modelTransforms.rotate_00.getZ() + (subTransforms.rot_01.getZ() << subTransforms.rotScale_00)));
 
         final MATRIX translation = new MATRIX();
         RotMatrix_80040010(rotation, translation);
-        translation.transfer.setX(modelTransforms.trans_06.getX() + (subTransforms.trans_05.getX() << subTransforms.transScale_04.get()));
-        translation.transfer.setY(modelTransforms.trans_06.getY() + (subTransforms.trans_05.getY() << subTransforms.transScale_04.get()));
-        translation.transfer.setZ(modelTransforms.trans_06.getZ() + (subTransforms.trans_05.getZ() << subTransforms.transScale_04.get()));
+        translation.transfer.setX(modelTransforms.translate_06.getX() + (subTransforms.trans_05.getX() << subTransforms.transScale_04));
+        translation.transfer.setY(modelTransforms.translate_06.getY() + (subTransforms.trans_05.getY() << subTransforms.transScale_04));
+        translation.transfer.setZ(modelTransforms.translate_06.getZ() + (subTransforms.trans_05.getZ() << subTransforms.transScale_04));
 
         FUN_800dd15c(modelPartMatrix, translation, 0x800);
       }
@@ -4814,26 +4811,26 @@ public final class Bttl_800d {
   @Method(0x800de210L)
   public static void loadModelCmb(final Model124 model, final Cmb cmb) {
     final Model124.CmbAnim anim = model.cmbAnim_08;
-    final int count = cmb.modelPartCount_0c.get();
+    final int count = cmb.modelPartCount_0c;
 
     anim.cmb_04 = cmb;
-    anim.transforms_08 = new Cmb.Transforms0c[count];
+    anim.transforms_08 = new ModelPartTransforms0c[count];
 
-    Arrays.setAll(anim.transforms_08, i -> new Cmb.Transforms0c());
+    Arrays.setAll(anim.transforms_08, i -> new ModelPartTransforms0c());
 
     model.animType_90 = 2;
     model.lmbUnknown_94 = 0;
     model.animCount_98 = count;
-    model.s_9a = cmb._0e.get() * 2;
+    model.s_9a = cmb._0e * 2;
     model.ub_9c = 1;
-    model.s_9e = cmb._0e.get() * 2;
+    model.s_9e = cmb._0e * 2;
 
     //LAB_800de270
     for(int i = 0; i < count; i++) {
-      final Cmb.Transforms0c v1 = cmb.transforms_10.get(i);
-      final Cmb.Transforms0c a1_0 = anim.transforms_08[i];
-      a1_0.rot_00.set(v1.rot_00);
-      a1_0.trans_06.set(v1.trans_06);
+      final ModelPartTransforms0c v1 = cmb.partTransforms_10[i];
+      final ModelPartTransforms0c a1_0 = anim.transforms_08[i];
+      a1_0.rotate_00.set(v1.rotate_00);
+      a1_0.translate_06.set(v1.translate_06);
     }
 
     //LAB_800de2c8
@@ -4860,20 +4857,19 @@ public final class Bttl_800d {
 
   @Method(0x800de36cL)
   public static void loadModelAnim(final Model124 model, final Anim anim) {
-    final int magic = anim.magic_00.get();
-    if(magic == Cmb.MAGIC) { // "CMB "
+    if(anim.magic_00 == Cmb.MAGIC) { // "CMB "
       loadModelCmb(model, (Cmb)anim);
       //LAB_800de398
-    } else if(magic == Lmb.MAGIC) { // "LMB"
+    } else if(anim.magic_00 == Lmb.MAGIC) { // "LMB"
       final LmbType0 lmb = (LmbType0)anim;
 
       model.lmbAnim_08.lmb_00 = lmb;
       model.animType_90 = 1;
       model.lmbUnknown_94 = 0;
-      model.animCount_98 = lmb.count_04.get();
-      model.s_9a = lmb._0c.get() * 2;
+      model.animCount_98 = lmb.count_04;
+      model.s_9a = lmb._08[0].count_04 * 2;
       model.ub_9c = 1;
-      model.s_9e = lmb._0c.get() * 2;
+      model.s_9e = lmb._08[0].count_04 * 2;
     } else {
       //LAB_800de3dc
       loadModelStandardAnimation(model, (TmdAnimationFile)anim);
@@ -4883,7 +4879,7 @@ public final class Bttl_800d {
   }
 
   @Method(0x800de3f4L)
-  public static void FUN_800de3f4(final TmdObjTable a0, final EffectManagerData6cInner a1, final MATRIX a2) {
+  public static void FUN_800de3f4(final TmdObjTable1c a0, final EffectManagerData6cInner a1, final MATRIX a2) {
     long s0 = deffManager_800c693c._20 & 0x4;
     s0 = s0 >> 1 | s0 >> 2;
 
@@ -4946,8 +4942,8 @@ public final class Bttl_800d {
   }
 
   @Method(0x800de76cL)
-  public static TmdObjTable optimisePacketsIfNecessary(final TmdWithId tmd, final int objIndex) {
-    if((tmd.tmd.header.flags.get() & 0x2L) == 0) {
+  public static TmdObjTable1c optimisePacketsIfNecessary(final TmdWithId tmd, final int objIndex) {
+    if((tmd.tmd.header.flags & 0x2) == 0) {
       final GsDOBJ2 dobj2 = new GsDOBJ2();
       updateTmdPacketIlen(tmd.tmd.objTable, dobj2, objIndex);
       return dobj2.tmd_08;
@@ -4955,6 +4951,6 @@ public final class Bttl_800d {
 
     //LAB_800de7a0
     //LAB_800de7b4
-    return tmd.tmd.objTable.get(objIndex);
+    return tmd.tmd.objTable[objIndex];
   }
 }

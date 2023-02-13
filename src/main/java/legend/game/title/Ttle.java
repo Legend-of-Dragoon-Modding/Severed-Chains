@@ -48,6 +48,7 @@ import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
 import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
+import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
@@ -72,7 +73,6 @@ import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.RotMatrix_8003faf0;
 import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
 import static legend.game.Scus94491BpeSegment_8003.StoreImage;
-import static legend.game.Scus94491BpeSegment_8003.adjustTmdPointers;
 import static legend.game.Scus94491BpeSegment_8003.bzero;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
@@ -381,7 +381,7 @@ public final class Ttle {
     vsyncMode_8007a3b8.set(2);
 
     loadDrgnDir(0, 5718, Ttle::menuTexturesMrgLoaded);
-    loadDrgnBinFile(0, 5719, 0, Ttle::menuFireTmdLoaded, 0, 0x2L);
+    loadDrgnFile(0, 5719, Ttle::menuFireTmdLoaded);
 
     // Prepare fire animation struct
     //LAB_800c7d30
@@ -424,8 +424,8 @@ public final class Ttle {
   }
 
   @Method(0x800c7c18L)
-  public static void menuFireTmdLoaded(final long tmdAddressPtr, final int fileSize, final int unused) {
-    final TmdWithId tmd = MEMORY.ref(4, tmdAddressPtr).cast(TmdWithId::new);
+  public static void menuFireTmdLoaded(final byte[] file) {
+    final TmdWithId tmd = new TmdWithId(file, 0);
     _800c66d0 = parseTmdFile(tmd);
     FUN_800cc0b0(_800c66d0, null);
     _800c66d0.tmd_0c = tmd;
@@ -1338,7 +1338,6 @@ public final class Ttle {
 
   @Method(0x800cb69cL)
   public static void deallocateFire() {
-    deallocateTmdRenderer(_800c66d0);
     _800c66d0 = null;
 
     //LAB_800cb6bc
@@ -1444,30 +1443,23 @@ public final class Ttle {
     return tmdRenderer;
   }
 
-  @Method(0x800cbeb4L)
-  public static void deallocateTmdRenderer(final TmdRenderingStruct renderer) {
-    free(renderer.tmd_0c.getAddress());
-  }
-
   @Method(0x800cbf3cL)
   public static int prepareTmdRenderer(final TmdRenderingStruct tmdRenderer, final TmdWithId tmd) {
-    adjustTmdPointers(tmd.tmd);
-
-    tmdRenderer.dobj2s_00 = new GsDOBJ2[tmd.tmd.header.nobj.get()];
-    tmdRenderer.coord2s_04 = new GsCOORDINATE2[tmd.tmd.header.nobj.get()];
+    tmdRenderer.dobj2s_00 = new GsDOBJ2[tmd.tmd.header.nobj];
+    tmdRenderer.coord2s_04 = new GsCOORDINATE2[tmd.tmd.header.nobj];
 
     Arrays.setAll(tmdRenderer.dobj2s_00, i -> new GsDOBJ2());
     Arrays.setAll(tmdRenderer.coord2s_04, i -> new GsCOORDINATE2());
 
     //LAB_800cc02c
-    for(int objIndex = 0; objIndex < tmd.tmd.header.nobj.get(); objIndex++) {
+    for(int objIndex = 0; objIndex < tmd.tmd.header.nobj; objIndex++) {
       //LAB_800cc04c
       updateTmdPacketIlen(tmd.tmd.objTable, tmdRenderer.dobj2s_00[objIndex], objIndex);
     }
 
     //LAB_800cc088
     //LAB_800cc09c
-    return tmd.tmd.header.nobj.get();
+    return tmd.tmd.header.nobj;
   }
 
   @Method(0x800cc0b0L)
@@ -1510,15 +1502,15 @@ public final class Ttle {
 
   @Method(0x800cc388L)
   public static void FUN_800cc388(final GsDOBJ2 dobj2) {
-    final UnboundedArrayRef<SVECTOR> vertices = dobj2.tmd_08.vert_top_00.deref();
+    final SVECTOR[] vertices = dobj2.tmd_08.vert_top_00;
     long primitives = dobj2.tmd_08.primitives_10.getPointer();
-    long primitiveCount = dobj2.tmd_08.n_primitive_14.get();
+    long primitiveCount = dobj2.tmd_08.n_primitive_14;
 
     //LAB_800cc408
     while(primitiveCount != 0) {
       final long primitive = MEMORY.ref(4, primitives).get();
       final long command = primitive & 0xff04_0000L;
-      final long len = primitive & 0xffffL;
+      final int len = (int)(primitive & 0xffff);
 
       //LAB_800cc420
       primitiveCount -= len;
@@ -1539,16 +1531,16 @@ public final class Ttle {
   }
 
   @Method(0x800cc57cL)
-  public static long FUN_800cc57c(long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long count) {
+  public static long FUN_800cc57c(long primitives, final SVECTOR[] vertices, final int count) {
     //LAB_800cc5b0
     for(int i = 0; i < count; i++) {
       final GpuCommandPoly cmd = new GpuCommandPoly(3)
         .translucent(Translucency.of(((int)MEMORY.ref(2, primitives).offset(0x0aL).get() & 0b1100000) >>> 5));
 
       //LAB_800cc5c8
-      final SVECTOR vert0 = vertices.get((int)MEMORY.ref(2, primitives).offset(0x1cL).get());
-      final SVECTOR vert1 = vertices.get((int)MEMORY.ref(2, primitives).offset(0x1eL).get());
-      final SVECTOR vert2 = vertices.get((int)MEMORY.ref(2, primitives).offset(0x20L).get());
+      final SVECTOR vert0 = vertices[(int)MEMORY.ref(2, primitives).offset(0x1cL).get()];
+      final SVECTOR vert1 = vertices[(int)MEMORY.ref(2, primitives).offset(0x1eL).get()];
+      final SVECTOR vert2 = vertices[(int)MEMORY.ref(2, primitives).offset(0x20L).get()];
       CPU.MTC2(vert0.getXY(), 0); // VXY0
       CPU.MTC2(vert0.getZ(),  1); // VZ0
       CPU.MTC2(vert1.getXY(), 2); // VXY1
@@ -1616,16 +1608,16 @@ public final class Ttle {
   }
 
   @Method(0x800ccb78L)
-  public static long FUN_800ccb78(long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long count) {
+  public static long FUN_800ccb78(long primitives, final SVECTOR[] vertices, final int count) {
     //LAB_800ccbcc
     for(int i = 0; i < count; i++) {
       final GpuCommandPoly cmd = new GpuCommandPoly(4)
         .translucent(Translucency.of(((int)MEMORY.ref(2, primitives).offset(0x0aL).get() & 0b1100000) >>> 5));
 
       //LAB_800ccbe4
-      final SVECTOR vert0 = vertices.get((int)MEMORY.ref(2, primitives).offset(0x24L).get());
-      final SVECTOR vert1 = vertices.get((int)MEMORY.ref(2, primitives).offset(0x26L).get());
-      final SVECTOR vert2 = vertices.get((int)MEMORY.ref(2, primitives).offset(0x28L).get());
+      final SVECTOR vert0 = vertices[(int)MEMORY.ref(2, primitives).offset(0x24L).get()];
+      final SVECTOR vert1 = vertices[(int)MEMORY.ref(2, primitives).offset(0x26L).get()];
+      final SVECTOR vert2 = vertices[(int)MEMORY.ref(2, primitives).offset(0x28L).get()];
       CPU.MTC2(vert0.getXY(), 0); // VXY0
       CPU.MTC2(vert0.getZ(),  1); // VZ0
       CPU.MTC2(vert1.getXY(), 2); // VXY1
@@ -1656,7 +1648,7 @@ public final class Ttle {
           cmd.pos(1, v1.getX(), v1.getY());
           cmd.pos(2, v2.getX(), v2.getY());
 
-          final SVECTOR vert3 = vertices.get((int)MEMORY.ref(2, primitives).offset(0x2aL).get());
+          final SVECTOR vert3 = vertices[(int)MEMORY.ref(2, primitives).offset(0x2aL).get()];
           CPU.MTC2(vert3.getXY(), 0); // VXY0
           CPU.MTC2(vert3.getZ(),  1); // VZ0
           CPU.COP2(0x18_0001L); // Perspective transform single

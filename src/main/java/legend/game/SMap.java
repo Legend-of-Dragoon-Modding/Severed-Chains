@@ -13,7 +13,7 @@ import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.GsDOBJ2;
 import legend.core.gte.MATRIX;
 import legend.core.gte.SVECTOR;
-import legend.core.gte.TmdObjTable;
+import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.TmdWithId;
 import legend.core.gte.VECTOR;
 import legend.core.memory.Memory;
@@ -60,7 +60,7 @@ import legend.game.types.GsF_LIGHT;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.MediumStruct;
 import legend.game.types.Model124;
-import legend.game.types.ModelPartTransforms;
+import legend.game.types.ModelPartTransforms0c;
 import legend.game.types.MrgEntry;
 import legend.game.types.MrgFile;
 import legend.game.types.NewRootEntryStruct;
@@ -130,10 +130,6 @@ import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80021048;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80021050;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80021058;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80021060;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800217a4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800218f0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022018;
@@ -147,7 +143,6 @@ import static legend.game.Scus94491BpeSegment_8002.SetTransMatrix;
 import static legend.game.Scus94491BpeSegment_8002.animateModel;
 import static legend.game.Scus94491BpeSegment_8002.applyModelPartTransforms;
 import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
-import static legend.game.Scus94491BpeSegment_8002.deallocateModel;
 import static legend.game.Scus94491BpeSegment_8002.initModel;
 import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.loadAndRenderMenus;
@@ -182,7 +177,6 @@ import static legend.game.Scus94491BpeSegment_8003.SetDrawTPage;
 import static legend.game.Scus94491BpeSegment_8003.StoreImage;
 import static legend.game.Scus94491BpeSegment_8003.TransMatrix;
 import static legend.game.Scus94491BpeSegment_8003.TransposeMatrix;
-import static legend.game.Scus94491BpeSegment_8003.adjustTmdPointers;
 import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTransparency;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
@@ -309,7 +303,6 @@ public final class SMap {
   public static final ArrayRef<IntRef> _800c6970 = MEMORY.ref(4, 0x800c6970L, ArrayRef.of(IntRef.class, 32, 4, IntRef::new));
 
   public static final Pointer<TriangleIndicator140> _800c69fc = MEMORY.ref(4, 0x800c69fcL, Pointer.deferred(4, TriangleIndicator140::new));
-  public static final UnboundedArrayRef<Pointer<CContainer>> submapObjectModels_800c6a00 = MEMORY.ref(4, 0x800c6a00L, UnboundedArrayRef.of(4, Pointer.deferred(4, CContainer::new)));
 
   /** TODO array, flags for submap objects - 0x80 means the model is the same as the previous one */
   public static final Value submapObjectFlags_800c6a50 = MEMORY.ref(4, 0x800c6a50L);
@@ -404,8 +397,6 @@ public final class SMap {
 
   public static final UnboundedArrayRef<SomethingStructSub0c_1> SomethingStructSub0c_1_Arr_800cbe78 = MEMORY.ref(4, 0x800cbe78L, UnboundedArrayRef.of(0xc, SomethingStructSub0c_1::new));
   public static final UnboundedArrayRef<SomethingStructSub0c_2> SomethingStructSub0c_2_Arr_800cca78 = MEMORY.ref(4, 0x800cca78L, UnboundedArrayRef.of(0xc, SomethingStructSub0c_2::new));
-
-  public static final TmdWithId tmd_800cfa78 = MEMORY.ref(4, 0x800cfa78L, TmdWithId::new);
 
   public static final Value _800d1a78 = MEMORY.ref(4, 0x800d1a78L);
   public static final Value _800d1a7c = MEMORY.ref(4, 0x800d1a7cL);
@@ -757,49 +748,46 @@ public final class SMap {
   }
 
   @Method(0x800d9e64L)
-  public static void FUN_800d9e64(final GsDOBJ2 dobj2, final long a1) {
-    final TmdObjTable objTable = dobj2.tmd_08;
-    long count = objTable.n_primitive_14.get();
-    long primitives = objTable.primitives_10.getPointer();
-    final long s2 = a1 & 0x7fL;
+  public static void FUN_800d9e64(final GsDOBJ2 dobj2, final int colourMap) {
+    final TmdObjTable1c objTable = dobj2.tmd_08;
+    long count = objTable.n_primitive_14;
+    int[] primitives = objTable.primitives_10;
+    int primitiveIndex = 0;
 
     //LAB_800d9e90
     while(count != 0) {
-      final long id = MEMORY.ref(4, primitives).get(0xff04_0000L);
-      final long primitiveCount = MEMORY.ref(2, primitives).get();
+      final int header = primitives[primitiveIndex];
+      final int id = header & 0xff04_0000;
+      final int primitiveCount = header & 0xffff;
 
-      if(id == 0x3000_0000L || id == 0x3200_0000L) {
-        FUN_80021048(primitives, primitiveCount); // no-op
+      if(id == 0x3000_0000 || id == 0x3200_0000) {
         count -= primitiveCount;
-        primitives += primitiveCount * 0x14L;
-      } else if(id == 0x3004_0000L || id == 0x3204_0000L) {
-        FUN_80021058(primitives, primitiveCount); // no-op
+        primitiveIndex += primitiveCount * 0x14;
+      } else if(id == 0x3004_0000 || id == 0x3204_0000) {
         count -= primitiveCount;
-        primitives += primitiveCount * 0x1cL;
-      } else if(id == 0x3400_0000L || id == 0x3600_0000L) {
-        FUN_800da6c8(primitives, primitiveCount, s2);
+        primitiveIndex += primitiveCount * 0x1c;
+      } else if(id == 0x3400_0000 || id == 0x3600_0000) {
+        FUN_800da6c8(primitives, primitiveIndex, primitiveCount, colourMap & 0x7f);
         count -= primitiveCount;
-        primitives += primitiveCount * 0x1cL;
-      } else if(id == 0x3500_0000L || id == 0x3700_0000L) {
-        FUN_800da7f4(primitives, primitiveCount, s2);
+        primitiveIndex += primitiveCount * 0x1c;
+      } else if(id == 0x3500_0000 || id == 0x3700_0000) {
+        FUN_800da7f4(primitives, primitiveIndex, primitiveCount, colourMap & 0x7f);
         count -= primitiveCount;
-        primitives += primitiveCount * 0x24L;
-      } else if(id == 0x3800_0000L || id == 0x3a00_0000L) {
-        FUN_80021050(primitives, primitiveCount); // no-op
+        primitiveIndex += primitiveCount * 0x24;
+      } else if(id == 0x3800_0000 || id == 0x3a00_0000) {
         count -= primitiveCount;
-        primitives += primitiveCount * 0x18L;
-      } else if(id == 0x3804_0000L || id == 0x3a04_0000L) {
-        FUN_80021060(primitives, primitiveCount); // no-op
+        primitiveIndex += primitiveCount * 0x18;
+      } else if(id == 0x3804_0000 || id == 0x3a04_0000) {
         count -= primitiveCount;
-        primitives += primitiveCount * 0x24L;
-      } else if(id == 0x3c00_0000L || id == 0x3e00_0000L) {
-        FUN_800da754(primitives, primitiveCount, s2);
+        primitiveIndex += primitiveCount * 0x24;
+      } else if(id == 0x3c00_0000 || id == 0x3e00_0000) {
+        FUN_800da754(primitives, primitiveIndex, primitiveCount, colourMap & 0x7f);
         count -= primitiveCount;
-        primitives += primitiveCount * 0x24L;
-      } else if(id == 0x3d00_0000L || id == 0x3f00_0000L) {
-        FUN_800da880(primitives, primitiveCount, s2);
+        primitiveIndex += primitiveCount * 0x24;
+      } else if(id == 0x3d00_0000 || id == 0x3f00_0000) {
+        FUN_800da880(primitives, primitiveIndex, primitiveCount, colourMap & 0x7f);
         count -= primitiveCount;
-        primitives += primitiveCount * 0x2cL;
+        primitiveIndex += primitiveCount * 0x2c;
       }
     }
   }
@@ -809,7 +797,7 @@ public final class SMap {
     if(struct.smallerStructPtr_a4 != null) {
       //LAB_800da138
       for(int i = 0; i < 4; i++) {
-        if(struct.smallerStructPtr_a4.uba_04.get(i).get() != 0) {
+        if(struct.smallerStructPtr_a4.uba_04[i]) {
           FUN_800dde70(struct, i);
         }
 
@@ -847,7 +835,7 @@ public final class SMap {
 
     //LAB_800da1f8
     if((struct.s_9e & 0x1) == 0 && struct.ub_a2 == 0) {
-      final UnboundedArrayRef<ModelPartTransforms> old = struct.partTransforms_94;
+      final ModelPartTransforms0c[] old = struct.partTransforms_94;
 
       if(struct.ub_a3 == 0) {
         FUN_800da920(struct);
@@ -921,62 +909,62 @@ public final class SMap {
   }
 
   @Method(0x800da6c8L)
-  public static void FUN_800da6c8(long primitives, final long count, final long a2) {
-    final long a3 = _800f5930.offset(a2 * 0x14L).getAddress();
+  public static void FUN_800da6c8(final int[] primitives, int primitiveIndex, final int count, final int colourMap) {
+    final long a3 = _800f5930.offset(colourMap * 0x14L).getAddress();
 
     //LAB_800da6e8
     for(int i = 0; i < count; i++) {
-      MEMORY.ref(4, primitives).offset(0x4L).and(MEMORY.ref(4, a3).offset(0x4L).get()).oru(MEMORY.ref(4, a3).offset(0x0L).get()).addu(MEMORY.ref(4, a3).offset(0x10L).get());
-      MEMORY.ref(4, primitives).offset(0x8L).and(MEMORY.ref(4, a3).offset(0xcL).get()).oru(MEMORY.ref(4, a3).offset(0x8L).get()).addu(MEMORY.ref(4, a3).offset(0x10L).get());
-      MEMORY.ref(4, primitives).offset(0xcL).addu(MEMORY.ref(4, a3).offset(0x10L).get());
-      primitives += 0x1cL;
+      primitives[primitiveIndex + 1] = (primitives[primitiveIndex + 1] & (int)MEMORY.ref(4, a3).offset(0x4L).get() | (int)MEMORY.ref(4, a3).offset(0x0L).get()) + (int)MEMORY.ref(4, a3).offset(0x10L).get();
+      primitives[primitiveIndex + 2] = (primitives[primitiveIndex + 2] & (int)MEMORY.ref(4, a3).offset(0xcL).get() | (int)MEMORY.ref(4, a3).offset(0x8L).get()) + (int)MEMORY.ref(4, a3).offset(0x10L).get();
+      primitives[primitiveIndex + 3] += MEMORY.ref(4, a3).offset(0x10L).get();
+      primitiveIndex += 0x1c;
     }
 
     //LAB_800da74c
   }
 
   @Method(0x800da754L)
-  public static void FUN_800da754(long primitives, final long count, final long a2) {
-    final long a3 = _800f5930.offset(a2 * 0x14L).getAddress();
+  public static void FUN_800da754(final int[] primitives, int primitiveIndex, final int count, final int colourMap) {
+    final long a3 = _800f5930.offset(colourMap * 0x14L).getAddress();
 
     //LAB_800da774
     for(int i = 0; i < count; i++) {
-      MEMORY.ref(4, primitives).offset(0x04L).and(MEMORY.ref(4, a3).offset(0x4L).get()).oru(MEMORY.ref(4, a3).offset(0x0L).get()).addu(MEMORY.ref(4, a3).offset(0x10L).get());
-      MEMORY.ref(4, primitives).offset(0x08L).and(MEMORY.ref(4, a3).offset(0xcL).get()).oru(MEMORY.ref(4, a3).offset(0x8L).get()).addu(MEMORY.ref(4, a3).offset(0x10L).get());
-      MEMORY.ref(4, primitives).offset(0x0cL).addu(MEMORY.ref(4, a3).offset(0x10L));
-      MEMORY.ref(4, primitives).offset(0x10L).addu(MEMORY.ref(4, a3).offset(0x10L));
-      primitives += 0x24L;
+      primitives[primitiveIndex + 1] = (primitives[primitiveIndex + 1] & (int)MEMORY.ref(4, a3).offset(0x4L).get() | (int)MEMORY.ref(4, a3).offset(0x0L).get()) + (int)MEMORY.ref(4, a3).offset(0x10L).get();
+      primitives[primitiveIndex + 2] = (primitives[primitiveIndex + 2] & (int)MEMORY.ref(4, a3).offset(0xcL).get() | (int)MEMORY.ref(4, a3).offset(0x8L).get()) + (int)MEMORY.ref(4, a3).offset(0x10L).get();
+      primitives[primitiveIndex + 3] += MEMORY.ref(4, a3).offset(0x10L).get();
+      primitives[primitiveIndex + 4] += MEMORY.ref(4, a3).offset(0x10L).get();
+      primitiveIndex += 0x24;
     }
 
     //LAB_800da7ec
   }
 
   @Method(0x800da7f4L)
-  public static void FUN_800da7f4(long primitives, final long count, final long a2) {
-    final long a3 = _800f5930.offset(a2 * 0x14L).getAddress();
+  public static void FUN_800da7f4(final int[] primitives, int primitiveIndex, final int count, final int colourMap) {
+    final long a3 = _800f5930.offset(colourMap * 0x14L).getAddress();
 
     //LAB_800da814
     for(int i = 0; i < count; i++) {
-      MEMORY.ref(4, primitives).offset(0x4L).and(MEMORY.ref(4, a3).offset(0x4L).get()).oru(MEMORY.ref(4, a3).offset(0x0L).get()).addu(MEMORY.ref(4, a3).offset(0x10L).get());
-      MEMORY.ref(4, primitives).offset(0x8L).and(MEMORY.ref(4, a3).offset(0xcL).get()).oru(MEMORY.ref(4, a3).offset(0x8L).get()).addu(MEMORY.ref(4, a3).offset(0x10L).get());
-      MEMORY.ref(4, primitives).offset(0xcL).addu(MEMORY.ref(4, a3).offset(0x10L).get());
-      primitives += 0x24L;
+      primitives[primitiveIndex + 1] = (primitives[primitiveIndex + 1] & (int)MEMORY.ref(4, a3).offset(0x4L).get() | (int)MEMORY.ref(4, a3).offset(0x0L).get()) + (int)MEMORY.ref(4, a3).offset(0x10L).get();
+      primitives[primitiveIndex + 2] = (primitives[primitiveIndex + 2] & (int)MEMORY.ref(4, a3).offset(0xcL).get() | (int)MEMORY.ref(4, a3).offset(0x8L).get()) + (int)MEMORY.ref(4, a3).offset(0x10L).get();
+      primitives[primitiveIndex + 3] += MEMORY.ref(4, a3).offset(0x10L).get();
+      primitiveIndex += 0x24;
     }
 
     //LAB_800da878
   }
 
   @Method(0x800da880L)
-  public static void FUN_800da880(long primitives, final long count, final long a2) {
-    final long a3 = _800f5930.offset(a2 * 0x14L).getAddress();
+  public static void FUN_800da880(final int[] primitives, int primitiveIndex, final int count, final int colourMap) {
+    final long a3 = _800f5930.offset(colourMap * 0x14L).getAddress();
 
     //LAB_800da8a0
     for(int i = 0; i < count; i++) {
-      MEMORY.ref(4, primitives).offset(0x04L).and(MEMORY.ref(4, a3).offset(0x04L).get()).oru(MEMORY.ref(4, a3).offset(0x00L).get()).addu(MEMORY.ref(4, a3).offset(0x10L).get());
-      MEMORY.ref(4, primitives).offset(0x08L).and(MEMORY.ref(4, a3).offset(0x0cL).get()).oru(MEMORY.ref(4, a3).offset(0x08L).get()).addu(MEMORY.ref(4, a3).offset(0x10L).get());
-      MEMORY.ref(4, primitives).offset(0x0cL).addu(MEMORY.ref(4, a3).offset(0x10L).get());
-      MEMORY.ref(4, primitives).offset(0x10L).addu(MEMORY.ref(4, a3).offset(0x10L).get());
-      primitives += 0x2cL;
+      primitives[primitiveIndex + 1] = (primitives[primitiveIndex + 1] & (int)MEMORY.ref(4, a3).offset(0x04L).get() | (int)MEMORY.ref(4, a3).offset(0x00L).get()) + (int)MEMORY.ref(4, a3).offset(0x10L).get();
+      primitives[primitiveIndex + 2] = (primitives[primitiveIndex + 2] & (int)MEMORY.ref(4, a3).offset(0x0cL).get() | (int)MEMORY.ref(4, a3).offset(0x08L).get()) + (int)MEMORY.ref(4, a3).offset(0x10L).get();
+      primitives[primitiveIndex + 3] += MEMORY.ref(4, a3).offset(0x10L).get();
+      primitives[primitiveIndex + 4] += MEMORY.ref(4, a3).offset(0x10L).get();
+      primitiveIndex += 0x2c;
     }
 
     //LAB_800da918
@@ -984,7 +972,7 @@ public final class SMap {
 
   @Method(0x800da920L)
   public static void FUN_800da920(final Model124 a0) {
-    final UnboundedArrayRef<ModelPartTransforms> transforms = a0.partTransforms_94;
+    final ModelPartTransforms0c[] transforms = a0.partTransforms_94;
 
     //LAB_800da96c
     for(int i = 0; i < a0.tmdNobj_ca; i++) {
@@ -997,16 +985,16 @@ public final class SMap {
       RotMatrix_80040780(params.rotate, matrix);
 
       params.trans.set(
-        (params.trans.getX() + transforms.get(i).translate_06.getX()) / 2,
-        (params.trans.getY() + transforms.get(i).translate_06.getY()) / 2,
-        (params.trans.getZ() + transforms.get(i).translate_06.getZ()) / 2
+        (params.trans.getX() + transforms[i].translate_06.getX()) / 2,
+        (params.trans.getY() + transforms[i].translate_06.getY()) / 2,
+        (params.trans.getZ() + transforms[i].translate_06.getZ()) / 2
       );
 
       TransMatrix(matrix, params.trans);
     }
 
     //LAB_800daa0c
-    a0.partTransforms_94 = transforms.slice(a0.tmdNobj_ca);
+    a0.partTransforms_94 = Arrays.copyOfRange(transforms, a0.tmdNobj_ca, transforms.length);
   }
 
   @Method(0x800daa3cL)
@@ -1047,77 +1035,76 @@ public final class SMap {
   public static void FUN_800dde70(final Model124 struct, final int index) {
     final SmallerStruct smallerStruct = struct.smallerStructPtr_a4;
 
-    if(smallerStruct.tmdSubExtensionArr_20.get(index).isNull()) {
-      smallerStruct.uba_04.get(index).set(0);
+    if(smallerStruct.tmdSubExtensionArr_20[index] == null) {
+      smallerStruct.uba_04[index] = false;
     } else {
       //LAB_800ddeac
       final int v1 = (struct.colourMap_9d & 0x7f) * 2;
       final int y = (int)_80050424.offset(v1).getSigned() + 112;
       final int x = (int)_800503f8.offset(v1).getSigned();
 
-      final TmdSubExtension v = smallerStruct.tmdSubExtensionArr_20.get(index).deref();
+      final TmdSubExtension v = smallerStruct.tmdSubExtensionArr_20[index];
       int a1 = 0;
 
       //LAB_800ddef8
-      for(int i = 0; i < smallerStruct.sa_08.get(index).get(); i++) {
+      for(int i = 0; i < smallerStruct.sa_08[index]; i++) {
         a1 += 2;
       }
 
       //LAB_800ddf08
-      final int sourceYOffset = v.sa_04.get(a1).get();
+      final int sourceYOffset = v.sa_04[a1];
       a1++;
 
-      smallerStruct.sa_10.get(index).incr();
+      smallerStruct.sa_10[index]++;
 
-      if(smallerStruct.sa_10.get(index).get() == v.sa_04.get(a1).get()) {
-        smallerStruct.sa_10.get(index).set((short)0);
+      if(smallerStruct.sa_10[index] == v.sa_04[a1]) {
+        smallerStruct.sa_10[index] = 0;
 
-        if(v.sa_04.get(a1 + 1).get() == -1) {
-          smallerStruct.sa_08.get(index).set((short)0);
+        if(v.sa_04[a1 + 1] == -1) {
+          smallerStruct.sa_08[index] = 0;
         } else {
           //LAB_800ddf70
-          smallerStruct.sa_08.get(index).incr();
+          smallerStruct.sa_08[index]++;
         }
       }
 
       //LAB_800ddf8c
-      GPU.queueCommand(1, new GpuCommandCopyVramToVram(x, y + sourceYOffset, x, y + smallerStruct.sa_18.get(index).get(), 16, 1));
+      GPU.queueCommand(1, new GpuCommandCopyVramToVram(x, y + sourceYOffset, x, y + smallerStruct.sa_18[index], 16, 1));
     }
 
     //LAB_800ddff4
   }
 
   @Method(0x800de004L)
-  public static void FUN_800de004(final Model124 model, final CContainer CContainer) {
-    if(CContainer.ext_04.isNull()) {
+  public static void FUN_800de004(final Model124 model, final CContainer cContainer) {
+    if(cContainer.ext_04 == null) {
       //LAB_800de120
       model.smallerStructPtr_a4 = null;
       return;
     }
 
-    final SmallerStruct smallerStruct = MEMORY.ref(4, mallocTail(0x30L), SmallerStruct::new);
+    final SmallerStruct smallerStruct = new SmallerStruct();
     model.smallerStructPtr_a4 = smallerStruct;
 
-    final CContainerSubfile1 ext = CContainer.ext_04.deref();
-    smallerStruct.tmdExt_00.set(ext);
+    smallerStruct.tmdExt_00 = cContainer.ext_04;
 
     //LAB_800de05c
     for(int i = 0; i < 4; i++) {
-      smallerStruct.tmdSubExtensionArr_20.get(i).setNullable(smallerStruct.tmdExt_00.deref().tmdSubExtensionArr_00.get(i).derefNullable());
+      smallerStruct.tmdSubExtensionArr_20[i] = smallerStruct.tmdExt_00.tmdSubExtensionArr_00[i];
 
-      if(smallerStruct.tmdSubExtensionArr_20.get(i).isNull()) {
-        smallerStruct.uba_04.get(i).set(0);
+      if(smallerStruct.tmdSubExtensionArr_20[i] == null) {
+        smallerStruct.uba_04[i] = false;
       } else {
-        smallerStruct.sa_08.get(i).set((short)0);
-        smallerStruct.sa_10.get(i).set((short)0);
-        smallerStruct.sa_18.get(i).set(smallerStruct.tmdSubExtensionArr_20.get(i).deref().s_02.get());
+        smallerStruct.sa_08[i] = 0;
+        smallerStruct.sa_10[i] = 0;
+        smallerStruct.sa_18[i] = (short)smallerStruct.tmdSubExtensionArr_20[i].s_02;
 
-        if(smallerStruct.sa_18.get(i).get() == -1) {
+        if(smallerStruct.sa_18[i] == -1) {
           //LAB_800de0f8
-          smallerStruct.uba_04.get(i).set(0);
+          smallerStruct.uba_04[i] = false;
         } else {
           //LAB_800de104
-          smallerStruct.uba_04.get(i).set(1);
+          smallerStruct.uba_04[i] = true;
         }
       }
 
@@ -1131,21 +1118,21 @@ public final class SMap {
   public static void FUN_800de138(final Model124 model, final int index) {
     final SmallerStruct smallerStruct = model.smallerStructPtr_a4;
 
-    if(smallerStruct.tmdSubExtensionArr_20.get(index).isNull()) {
-      smallerStruct.uba_04.get(index).set(0);
+    if(smallerStruct.tmdSubExtensionArr_20[index] == null) {
+      smallerStruct.uba_04[index] = false;
       return;
     }
 
     //LAB_800de164
-    smallerStruct.sa_08.get(index).set((short)0);
-    smallerStruct.sa_10.get(index).set((short)0);
-    smallerStruct.sa_18.get(index).set(smallerStruct.tmdSubExtensionArr_20.get(index).deref().s_02.get());
+    smallerStruct.sa_08[index] = 0;
+    smallerStruct.sa_10[index] = 0;
+    smallerStruct.sa_18[index] = (short)smallerStruct.tmdSubExtensionArr_20[index].s_02;
 
-    if(smallerStruct.sa_18.get(index).get() == -1) {
-      smallerStruct.uba_04.get(index).set(0);
+    if(smallerStruct.sa_18[index] == -1) {
+      smallerStruct.uba_04[index] = false;
     } else {
       //LAB_800de1c4
-      smallerStruct.uba_04.get(index).set(1);
+      smallerStruct.uba_04[index] = true;
     }
   }
 
@@ -1933,8 +1920,7 @@ public final class SMap {
     sobj.sobjIndex_12e = index;
     model.colourMap_9d = (int)submapObjectFlags_800c6a50.offset(index * 0x4L).get();
 
-    deallocateModel(model);
-    FUN_800e0d18(model, submapObjectModels_800c6a00.get(index).deref(), submapAssets.objects.get(index).animations.get(0));
+    FUN_800e0d18(model, submapAssets.objects.get(index).model, submapAssets.objects.get(index).animations.get(0));
 
     sobj.us_12c = 0;
     sobj.rotationFrames_188 = 0;
@@ -2001,7 +1987,7 @@ public final class SMap {
   public static FlowControl FUN_800e00cc(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
-    final int v0 = (int)FUN_800e9018(model.coord2_14.coord.transfer.getX(), model.coord2_14.coord.transfer.getY(), model.coord2_14.coord.transfer.getZ(), 0);
+    final int v0 = FUN_800e9018(model.coord2_14.coord.transfer.getX(), model.coord2_14.coord.transfer.getY(), model.coord2_14.coord.transfer.getZ(), 0);
     script.params_20[1].set(v0);
     sobj.ui_16c = v0;
     return FlowControl.CONTINUE;
@@ -2031,7 +2017,7 @@ public final class SMap {
   @Method(0x800e0204L)
   public static FlowControl FUN_800e0204(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    sobj.model_00.smallerStructPtr_a4.uba_04.get(script.params_20[1].get()).set(0);
+    sobj.model_00.smallerStructPtr_a4.uba_04[script.params_20[1].get()] = false;
     return FlowControl.CONTINUE;
   }
 
@@ -2340,26 +2326,26 @@ public final class SMap {
       model.aub_ec[i] = 0;
     }
 
-    final int count = cContainer.tmdPtr_00.deref().tmd.header.nobj.get();
+    final int count = cContainer.tmdPtr_00.tmd.header.nobj;
     model.count_c8 = count;
     model.dobj2ArrPtr_00 = new GsDOBJ2[count];
     model.coord2ArrPtr_04 = new GsCOORDINATE2[count];
     model.coord2ParamArrPtr_08 = new GsCOORD2PARAM[count];
-    model.tmd_8c = cContainer.tmdPtr_00.deref().tmd;
+    model.tmd_8c = cContainer.tmdPtr_00.tmd;
     model.tmdNobj_ca = count;
 
     Arrays.setAll(model.dobj2ArrPtr_00, i -> new GsDOBJ2());
     Arrays.setAll(model.coord2ArrPtr_04, i -> new GsCOORDINATE2());
     Arrays.setAll(model.coord2ParamArrPtr_08, i -> new GsCOORD2PARAM());
 
-    if(!cContainer.ext_04.isNull()) {
-      final SmallerStruct smallerStruct = MEMORY.ref(4, mallocTail(0x30L), SmallerStruct::new);
+    if(cContainer.ext_04 != null) {
+      final SmallerStruct smallerStruct = new SmallerStruct();
       model.smallerStructPtr_a4 = smallerStruct;
-      smallerStruct.tmdExt_00.set(cContainer.ext_04.deref());
+      smallerStruct.tmdExt_00 = cContainer.ext_04;
 
       //LAB_800e0e28
       for(int i = 0; i < 4; i++) {
-        smallerStruct.tmdSubExtensionArr_20.get(i).set(smallerStruct.tmdExt_00.deref().tmdSubExtensionArr_00.get(i).deref());
+        smallerStruct.tmdSubExtensionArr_20[i] = smallerStruct.tmdExt_00.tmdSubExtensionArr_00[i];
         FUN_800de138(model, i);
       }
     } else {
@@ -2368,10 +2354,10 @@ public final class SMap {
     }
 
     //LAB_800e0e74
-    model.tpage_108 = (int)((cContainer.tmdPtr_00.deref().id.get() & 0xffff_0000L) >> 11);
+    model.tpage_108 = (int)((cContainer.tmdPtr_00.id & 0xffff_0000L) >> 11);
 
-    if(!cContainer.ptr_08.isNull()) {
-      model.ptr_a8 = cContainer.ptr_08.deref();
+    if(cContainer.ptr_08 != null) {
+      model.ptr_a8 = cContainer.ptr_08;
 
       //LAB_800e0eac
       for(int i = 0; i < 7; i++) {
@@ -2389,7 +2375,6 @@ public final class SMap {
     }
 
     //LAB_800e0f10
-    adjustTmdPointers(model.tmd_8c);
     initObjTable2(model.ObjTable_0c, model.dobj2ArrPtr_00, model.coord2ArrPtr_04, model.coord2ParamArrPtr_08, model.count_c8);
 
     model.coord2_14.param = model.coord2Param_64;
@@ -2763,14 +2748,10 @@ public final class SMap {
 
             final SubmapObject obj = new SubmapObject();
             obj.script = new ScriptFile("Submap object %d (DRGN%d/%d/%d)".formatted(objIndex, drgnIndex.get(), fileIndex.get() + 2, objIndex + 1), scriptData);
-            obj.model = MEMORY.ref(4, mallocTail(tmdData.length), CContainer::new);
-
-            MEMORY.setBytes(obj.model.getAddress(), tmdData);
+            obj.model = new CContainer(tmdData, 0);
 
             for(int animIndex = objIndex * 33 + 1; animIndex < (objIndex + 1) * 33; animIndex++) {
-              final TmdAnimationFile anim = MEMORY.ref(4, mallocTail(submapAssetsMrg_800c6878.get(animIndex).length), TmdAnimationFile::new);
-              MEMORY.setBytes(anim.getAddress(), submapAssetsMrg_800c6878.get(animIndex));
-              obj.animations.add(anim);
+              obj.animations.add(new TmdAnimationFile(submapAssetsMrg_800c6878.get(animIndex), 0));
             }
 
             submapAssets.objects.add(obj);
@@ -2838,7 +2819,6 @@ public final class SMap {
 
         //LAB_800e1a38
         for(int i = 0; i < sobjCount_800c6730.get(); i++) {
-          submapObjectModels_800c6a00.get(i).set(submapAssets.objects.get(i).model);
           submapObjectFlags_800c6a50.offset(i * 0x4L).setu(i + 0x81L);
 
           if(i + 1 == s3) {
@@ -2859,7 +2839,7 @@ public final class SMap {
         for(int i = 0; i < sobjCount_800c6730.get(); i++) {
           //LAB_800e1ae0
           for(int n = i + 1; n < sobjCount_800c6730.get(); n++) {
-            if(submapObjectModels_800c6a00.get(n).getPointer() == submapObjectModels_800c6a00.get(i).getPointer()) {
+            if(submapAssets.objects.get(n).model == submapAssets.objects.get(i).model) {
               submapObjectFlags_800c6a50.offset(n * 0x4L).setu(0x80L);
             }
           }
@@ -2880,7 +2860,7 @@ public final class SMap {
           final Model124 model = state.innerStruct_00.model_00;
           model.colourMap_9d = (int)submapObjectFlags_800c6a50.offset(1, i * 0x4L).get();
 
-          final CContainer tmd = submapObjectModels_800c6a00.get(i).deref();
+          final CContainer tmd = submapAssets.objects.get(i).model;
           final TmdAnimationFile anim = obj.animations.get(0);
           initModel(model, tmd, anim);
 
@@ -3142,14 +3122,6 @@ public final class SMap {
     //LAB_800e2350
     _800bd7b0.set(1);
 
-    for(final SubmapObject obj : submapAssets.objects) {
-      free(obj.model.getAddress());
-
-      for(final TmdAnimationFile anim : obj.animations) {
-        free(anim.getAddress());
-      }
-    }
-
     submapAssets = null;
     submapAssetsMrg_800c6878 = null;
     submapScriptsMrg_800c68d8 = null;
@@ -3161,7 +3133,6 @@ public final class SMap {
 
     _800f9eac.set(-1);
     loadSmapMedia();
-    deallocateModel(playerModel_800c6748);
     free(_800c6734.getPointer());
     free(_800c69fc.getPointer());
     loadTimImage(_80010544.getAddress());
@@ -3586,7 +3557,6 @@ public final class SMap {
     }
 
     //LAB_800e3e48
-    deallocateModel(sobj.model_00);
   }
 
   @Method(0x800e3e60L)
@@ -4110,18 +4080,16 @@ public final class SMap {
     //LAB_800e5430
     final EnvironmentFile env = MEMORY.ref(4, mallocHead(files.get(0).length), EnvironmentFile::new);
     final UnboundedArrayRef<SomethingStructSub0c_1> something1 = MEMORY.ref(4, mallocHead(files.get(1).length), UnboundedArrayRef.of(0xc, SomethingStructSub0c_1::new));
-    final TmdWithId tmd = MEMORY.ref(4, mallocHead(files.get(2).length), TmdWithId::new);
+    final TmdWithId tmd = new TmdWithId(files.get(2), 0);
 
     MEMORY.setBytes(env.getAddress(), files.get(0));
     MEMORY.setBytes(something1.getAddress(), files.get(1));
-    MEMORY.setBytes(tmd.getAddress(), files.get(2));
 
     loadEnvironment(env);
-    FUN_800e8cd0(tmd, files.get(2).length, something1);
+    FUN_800e8cd0(tmd, something1);
 
     free(env.getAddress());
     free(something1.getAddress());
-    free(tmd.getAddress());
 
     _80052c44.setu(0x2L);
     _80052c48.setu(0);
@@ -5567,8 +5535,8 @@ public final class SMap {
   public static void FUN_800e866c() {
     //LAB_800e86a4
     for(int i = 0; i < SomethingStructPtr_800d1a88.count_0c; i++) {
-      final int v0 = Math.abs((int)MEMORY.ref(2, SomethingStructPtr_800d1a88.normals_08).offset(i * 0x8L).offset(0x2L).getSigned()); //TODO
-      SomethingStructPtr_800d1a88.ptr_14.get(i).bool_01.set(v0 > 0x400);
+      final int y = Math.abs(SomethingStructPtr_800d1a88.normals_08[i].getY());
+      SomethingStructPtr_800d1a88.ptr_14.get(i).bool_01.set(y > 0x400);
     }
 
     //LAB_800e86f0
@@ -5618,13 +5586,11 @@ public final class SMap {
         final SomethingStructSub0c_1 struct2 = struct.ptr_14.get(i);
         final long t1 = struct.primitives_10 + struct2.ptr_04.get() + 0x6L;
 
-        vec.setX((short)0);
-        vec.setY((short)0);
-        vec.setZ((short)0);
+        vec.set((short)0, (short)0, (short)0);
 
         //LAB_800e8a38
         for(int t0 = 0; t0 < struct2.count_00.get(); t0++) {
-          vec.add(struct.verts_04.get((int)MEMORY.ref(2, t1).offset(t0 * 0x2L).get()));
+          vec.add(struct.verts_04[(int)MEMORY.ref(2, t1).offset(t0 * 0x2L).get()]);
         }
 
         //LAB_800e8a9c
@@ -5660,31 +5626,24 @@ public final class SMap {
 
   @Method(0x800e8bd8L)
   public static void FUN_800e8bd8(final SomethingStruct a0) {
-    final TmdObjTable objTable = a0.objTableArrPtr_00.get(0);
-    a0.verts_04 = objTable.vert_top_00.deref();
-    a0.normals_08 = objTable.normal_top_08.get();
-    a0.count_0c = (int)objTable.n_primitive_14.get();
-    a0.primitives_10 = objTable.primitives_10.getPointer();
-  }
-
-  @Method(0x800e8c20L)
-  public static UnboundedArrayRef<TmdObjTable> adjustTmdPointersAndGetTable(final TmdWithId tmd) {
-    adjustTmdPointers(tmd.tmd);
-    return tmd.tmd.objTable;
+    final TmdObjTable1c objTable = a0.objTableArrPtr_00[0];
+    a0.verts_04 = objTable.vert_top_00;
+    a0.normals_08 = objTable.normal_top_08;
+    a0.count_0c = objTable.n_primitive_14;
+    a0.primitives_10 = objTable.primitives_10;
   }
 
   @Method(0x800e8c50L)
-  public static void FUN_800e8c50(final GsDOBJ2 dobj2, final SomethingStruct a1, final TmdWithId tmd, final int tmdSize) {
-    memcpy(tmd_800cfa78.getAddress(), tmd.getAddress(), tmdSize);
-    a1.tmdPtr_1c = tmd_800cfa78;
-    final UnboundedArrayRef<TmdObjTable> objTables = adjustTmdPointersAndGetTable(tmd_800cfa78);
+  public static void FUN_800e8c50(final GsDOBJ2 dobj2, final SomethingStruct a1, final TmdWithId tmd) {
+    a1.tmdPtr_1c = tmd;
+    final TmdObjTable1c[] objTables = tmd.tmd.objTable;
     updateTmdPacketIlen(objTables, dobj2, 0);
     a1.objTableArrPtr_00 = objTables;
     FUN_800e8bd8(a1);
   }
 
   @Method(0x800e8cd0L)
-  public static void FUN_800e8cd0(final TmdWithId tmd, final int tmdSize, final UnboundedArrayRef<SomethingStructSub0c_1> a2) {
+  public static void FUN_800e8cd0(final TmdWithId tmd, final UnboundedArrayRef<SomethingStructSub0c_1> a2) {
     SomethingStructPtr_800d1a88 = SomethingStruct_800cbe08;
     SomethingStruct_800cbe08.dobj2Ptr_20 = GsDOBJ2_800cbdf8;
     SomethingStruct_800cbe08.coord2Ptr_24 = GsCOORDINATE2_800cbda8;
@@ -5693,7 +5652,7 @@ public final class SMap {
     SomethingStructPtr_800d1a88.dobj2Ptr_20.coord2_04 = SomethingStructPtr_800d1a88.coord2Ptr_24;
     SomethingStructPtr_800d1a88.dobj2Ptr_20.attribute_00 = 0x4000_0000;
 
-    FUN_800e8c50(SomethingStructPtr_800d1a88.dobj2Ptr_20, SomethingStructPtr_800d1a88, tmd, tmdSize);
+    FUN_800e8c50(SomethingStructPtr_800d1a88.dobj2Ptr_20, SomethingStructPtr_800d1a88, tmd);
     FUN_800e8b40(SomethingStructPtr_800d1a88, a2);
 
     _800f7f10.setu(0);
@@ -5728,28 +5687,28 @@ public final class SMap {
   }
 
   @Method(0x800e9018L)
-  public static long FUN_800e9018(final int x, final int y, final int z, final int a3) {
-    long t2 = 0;
+  public static int FUN_800e9018(final int x, final int y, final int z, final int a3) {
+    int t2 = 0;
 
     //LAB_800e9040
     for(int i = 0; i < SomethingStructPtr_800d1a88.count_0c; i++) {
       final SomethingStructSub0c_1 a1 = SomethingStructPtr_800d1a88.ptr_14.get(i);
-      if(a3 != 0x1L || a1.bool_01.get()) {
+      if(a3 != 1 || a1.bool_01.get()) {
         //LAB_800e9078
         //LAB_800e90a0
-        long v0 = 0x1L;
+        boolean v0 = true;
         for(int n = 0; n < a1.count_00.get(); n++) {
           final SomethingStructSub0c_2 a0 = SomethingStructPtr_800d1a88.ptr_18.get(a1._02.get() + n);
 
           if(a0._00.get() * x + a0._02.get() * z + a0._04.get() < 0) {
             //LAB_800e910c
-            v0 = 0;
+            v0 = false;
             break;
           }
         }
 
         //LAB_800e90f0
-        if(v0 != 0) {
+        if(v0) {
           _800cbe48.offset(t2 * 0x4L).setu(i);
           t2++;
         }
@@ -5760,36 +5719,34 @@ public final class SMap {
 
     //LAB_800e9114
     if(t2 == 0) {
-      return -0x1L;
+      return -1;
     }
 
-    if(t2 == 0x1L) {
-      return _800cbe48.get();
+    if(t2 == 1) {
+      return (int)_800cbe48.get();
     }
 
     //LAB_800e9134
-    long t0 = 0x7fff_ffffL;
-    long t3 = -0x1L;
-    final long normals = SomethingStructPtr_800d1a88.normals_08;
+    int t0 = 0x7fff_ffff;
+    int t3 = -1;
+    final SVECTOR[] normals = SomethingStructPtr_800d1a88.normals_08;
 
     //LAB_800e9164
-    long v1;
+    int v1;
     for(int i = 0; i < t2; i++) {
-      final long a3_0 = _800cbe48.offset(i * 0x4L).get();
-      final SomethingStructSub0c_1 t5 = SomethingStructPtr_800d1a88.ptr_14.get((int)a3_0);
+      final int a3_0 = (int)_800cbe48.offset(i * 0x4L).get();
+      final SomethingStructSub0c_1 t5 = SomethingStructPtr_800d1a88.ptr_14.get(a3_0);
 
-      v1 = -MEMORY.ref(2, normals).offset(a3_0 * 0x8L).offset(0x0L).getSigned() * x - MEMORY.ref(2, normals).offset(a3_0 * 0x8L).offset(0x4L).getSigned() * z - t5._08.get();
+      v1 = -normals[a3_0].getX() * x - normals[a3_0].getZ() * z - t5._08.get();
 
-      final short divisor = (short)MEMORY.ref(2, normals).offset(a3_0 * 0x8L).offset(0x2L).getSigned();
-
-      if(divisor != 0) {
-        v1 = (int)v1 / MEMORY.ref(2, normals).offset(a3_0 * 0x8L).offset(0x2L).getSigned();
+      if(normals[a3_0].getY() != 0) {
+        v1 = v1 / normals[a3_0].getY();
       } else {
         v1 = -1;
       }
 
       v1 = v1 - (y - 20);
-      if((int)v1 > 0 && (int)v1 < (int)t0) {
+      if(v1 > 0 && v1 < t0) {
         t3 = a3_0;
         t0 = v1;
       }
@@ -5798,16 +5755,14 @@ public final class SMap {
     }
 
     //LAB_800e91fc
-    if(t0 != 0x7fff_ffffL) {
-      v1 = t3;
-    } else {
+    if(t0 == 0x7fff_ffff) {
       //LAB_800e920c
-      v1 = -0x1L;
+      return -1;
     }
 
     //LAB_800e9210
     //LAB_800e9214
-    return v1;
+    return t3;
   }
 
   @Method(0x800e92dcL)
@@ -5828,7 +5783,7 @@ public final class SMap {
 
     //LAB_800e937c
     for(int i = 0; i < count; i++) {
-      out.add(ss.verts_04.get((int)MEMORY.ref(2, t0).offset(i * 0x2L).get()));
+      out.add(ss.verts_04[(int)MEMORY.ref(2, t0).offset(i * 0x2L).get()]);
     }
 
     //LAB_800e93e0
@@ -5838,38 +5793,36 @@ public final class SMap {
 
   /** TODO collision? */
   @Method(0x800e9430L) //TODO this is almost definitely wrong
-  public static int FUN_800e9430(long a0, final int x, final int y, final int z, final SVECTOR playerMovement) {
-    long v0;
-    long v1;
-    long a1;
-    long a2;
-    long a3;
+  public static int FUN_800e9430(final int unused, final int x, final int y, final int z, final SVECTOR playerMovement) {
+    int v0;
+    int v1;
+    int a0;
+    int a1;
+    int a2;
+    int a3;
     long t0;
-    long t4;
-    long t5;
-    long t6;
-    long t7;
-    long s0;
-    long s1;
-    long s2;
-    long s3;
-    long s4;
+    int t5;
+    int t6;
+    int s0;
+    int s1;
+    int s2;
+    int s4;
     final int s5;
     final int s6;
-    long lo;
     final SVECTOR sp0x28 = new SVECTOR();
-    long sp30 = 0; //TODO was uninitialized
-    long sp34 = 0; //TODO was uninitialized
-    long sp38 = 0; //TODO was uninitialized
+    int sp30 = 0; //TODO was uninitialized
+    int sp34 = 0; //TODO was uninitialized
+    int sp38 = 0; //TODO was uninitialized
 
     if(smapLoadingStage_800cb430.get() != 0xcL) {
       return -1;
     }
-    s3 = 0;
 
     if(playerMovement.getX() == 0 && playerMovement.getZ() == 0) {
       return -1;
     }
+
+    int s3 = 0;
 
     //LAB_800e94a4
     if(playerMovement.getX() * playerMovement.getX() + playerMovement.getZ() * playerMovement.getZ() > 0x40L) {
@@ -5884,16 +5837,16 @@ public final class SMap {
     s5 = z + playerMovement.getZ();
     t6 = y - 20;
     t0 = 0;
-    long t1;
-    long t2 = _800cbe48.getAddress();
+    int t1;
+    int t2;
 
     //LAB_800e9538
     for(a3 = 0; a3 < SomethingStructPtr_800d1a88.count_0c; a3++) {
-      if(SomethingStructPtr_800d1a88.ptr_14.get((int)a3).bool_01.get()) {
+      if(SomethingStructPtr_800d1a88.ptr_14.get(a3).bool_01.get()) {
         //LAB_800e9594
-        v0 = 0x1L;
-        for(a2 = 0; a2 < SomethingStructPtr_800d1a88.ptr_14.get((int)a3).count_00.get(); a2++) {
-          final SomethingStructSub0c_2 struct = SomethingStructPtr_800d1a88.ptr_18.get((int)(SomethingStructPtr_800d1a88.ptr_14.get((int)a3)._02.get() + a2));
+        v0 = 1;
+        for(a2 = 0; a2 < SomethingStructPtr_800d1a88.ptr_14.get(a3).count_00.get(); a2++) {
+          final SomethingStructSub0c_2 struct = SomethingStructPtr_800d1a88.ptr_18.get(SomethingStructPtr_800d1a88.ptr_14.get(a3)._02.get() + a2);
 
           if(struct._00.get() * x + struct._02.get() * z + struct._04.get() < 0) {
             //LAB_800e9604
@@ -5904,7 +5857,7 @@ public final class SMap {
 
         //LAB_800e95e8
         if(v0 != 0) {
-          MEMORY.ref(4, t2).offset(t0 * 0x4L).setu(a3);
+          _800cbe48.offset(t0 * 0x4L).setu(a3);
           t0++;
         }
       }
@@ -5914,23 +5867,23 @@ public final class SMap {
 
     //LAB_800e960c
     if(t0 == 0) {
-      s4 = -0x1L;
-    } else if(t0 == 0x1L) {
-      s4 = _800cbe48.get();
+      s4 = -1;
+    } else if(t0 == 1) {
+      s4 = (int)_800cbe48.get();
     } else {
       //LAB_800e962c
-      t1 = 0x7fff_ffffL;
-      t2 = -0x1L;
+      t1 = 0x7fff_ffff;
+      t2 = -1;
       if((int)t0 > 0) {
         final SomethingStruct struct = SomethingStructPtr_800d1a88;
-        t4 = struct.normals_08;
+        final SVECTOR[] normals = struct.normals_08;
 
         //LAB_800e965c
         for(int i = 0; i < t0; i++) {
-          a2 = _800cbe48.offset(i * 0x4L).get();
-          v1 = (-MEMORY.ref(2, t4).offset(a2 * 0x8L).offset(0x0L).getSigned() * x - MEMORY.ref(2, t4).offset(a2 * 0x8L).offset(0x4L).getSigned() * z - struct.ptr_14.get((int)a2)._08.get()) / MEMORY.ref(2, t4).offset(a2 * 0x8L).offset(0x2L).getSigned() - t6;
+          a2 = (int)_800cbe48.offset(i * 0x4L).get();
+          v1 = (-normals[a2].getX() * x - normals[a2].getZ() * z - struct.ptr_14.get(a2)._08.get()) / normals[a2].getY() - t6;
 
-          if((int)v1 > 0 && (int)v1 < (int)t1) {
+          if(v1 > 0 && v1 < t1) {
             t2 = a2;
             t1 = v1;
           }
@@ -5940,21 +5893,21 @@ public final class SMap {
       }
 
       //LAB_800e96f8
-      if(t1 != 0x7fff_ffffL) {
+      if(t1 != 0x7fff_ffff) {
         s4 = t2;
       } else {
         //LAB_800e9708
-        s4 = -0x1L;
+        s4 = -1;
       }
 
       //LAB_800e970c
     }
 
     //LAB_800e9710
-    if((int)s4 < 0) {
+    if(s4 < 0) {
       s4 = FUN_800e8990(x, z);
 
-      if(_800f7f14.get() != 0 && (int)s4 >= 0 && (int)s4 < SomethingStructPtr_800d1a88.count_0c) {
+      if(_800f7f14.get() != 0 && s4 >= 0 && s4 < SomethingStructPtr_800d1a88.count_0c) {
         v0 = 1;
       } else {
         v0 = 0;
@@ -5962,41 +5915,39 @@ public final class SMap {
 
       //LAB_800e975c
       //LAB_800e9764
-      sp0x28.setX((short)0);
-      sp0x28.setY((short)0);
-      sp0x28.setZ((short)0);
+      sp0x28.set((short)0, (short)0, (short)0);
 
       if(v0 == 0) {
         //LAB_800e9774
-        t0 = SomethingStructPtr_800d1a88.ptr_14.get((int)s4).ptr_04.get() + SomethingStructPtr_800d1a88.primitives_10 + 0x6L;
+        t0 = SomethingStructPtr_800d1a88.ptr_14.get(s4).ptr_04.get() + SomethingStructPtr_800d1a88.primitives_10 + 0x6L;
 
         //LAB_800e97c4
-        for(a2 = 0; a2 < SomethingStructPtr_800d1a88.ptr_14.get((int)s4).count_00.get(); a2++) {
-          sp0x28.add(SomethingStructPtr_800d1a88.verts_04.get((int)MEMORY.ref(2, t0).offset(a2 * 0x2L).get()));
+        for(a2 = 0; a2 < SomethingStructPtr_800d1a88.ptr_14.get(s4).count_00.get(); a2++) {
+          sp0x28.add(SomethingStructPtr_800d1a88.verts_04[(int)MEMORY.ref(2, t0).offset(a2 * 0x2L).get()]);
         }
 
         //LAB_800e9828
-        sp0x28.div(SomethingStructPtr_800d1a88.ptr_14.get((int)s4).count_00.get());
+        sp0x28.div(SomethingStructPtr_800d1a88.ptr_14.get(s4).count_00.get());
       }
 
       //LAB_800e9870
       playerMovement.setX((short)(sp0x28.getX() - x));
       playerMovement.setZ((short)(sp0x28.getZ() - z));
 
-      a1 = SomethingStructPtr_800d1a88.normals_08 + s4 * 0x8L;
-      playerMovement.setY((short)((-MEMORY.ref(2, a1).offset(0x0L).getSigned() * sp0x28.getX() - MEMORY.ref(2, a1).offset(0x4L).getSigned() * sp0x28.getZ() - SomethingStructPtr_800d1a88.ptr_14.get((int)s4)._08.get()) / MEMORY.ref(2, a1).offset(0x2L).getSigned()));
+      final SVECTOR normal = SomethingStructPtr_800d1a88.normals_08[s4];
+      playerMovement.setY((short)((-normal.getX() * sp0x28.getX() - normal.getZ() * sp0x28.getZ() - SomethingStructPtr_800d1a88.ptr_14.get(s4)._08.get()) / normal.getY()));
     } else {
       //LAB_800e990c
-      t6 = y - 0x14L;
+      t6 = y - 20;
       t0 = 0;
 
       //LAB_800e992c
       for(a3 = 0; a3 < SomethingStructPtr_800d1a88.count_0c; a3++) {
-        if(SomethingStructPtr_800d1a88.ptr_14.get((int)a3).bool_01.get()) {
+        if(SomethingStructPtr_800d1a88.ptr_14.get(a3).bool_01.get()) {
           //LAB_800e9988
-          v0 = 0x1L;
-          for(a2 = 0; a2 < SomethingStructPtr_800d1a88.ptr_14.get((int)a3).count_00.get(); a2++) {
-            final SomethingStructSub0c_2 struct = SomethingStructPtr_800d1a88.ptr_18.get((int)(SomethingStructPtr_800d1a88.ptr_14.get((int)a3)._02.get() + a2));
+          v0 = 1;
+          for(a2 = 0; a2 < SomethingStructPtr_800d1a88.ptr_14.get(a3).count_00.get(); a2++) {
+            final SomethingStructSub0c_2 struct = SomethingStructPtr_800d1a88.ptr_18.get(SomethingStructPtr_800d1a88.ptr_14.get(a3)._02.get() + a2);
             if(struct._00.get() * s6 + struct._02.get() * s5 + struct._04.get() < 0) {
               //LAB_800e99f4
               v0 = 0;
@@ -6016,22 +5967,19 @@ public final class SMap {
 
       //LAB_800e99fc
       if(t0 != 0) {
-        if(t0 != 0x1L) {
+        if(t0 != 1) {
           //LAB_800e9a1c
-          t1 = 0x7fff_ffffL;
-          t2 = -0x1L;
+          t1 = 0x7fff_ffff;
+          t2 = -1;
 
           //LAB_800e9a4c
           for(a3 = 0; a3 < t0; a3++) {
-            a2 = _800cbe48.offset(a3 * 0x4L).get();
+            a2 = (int)_800cbe48.offset(a3 * 0x4L).get();
 
-            a1 = SomethingStructPtr_800d1a88.normals_08 + a2 * 0x8L;
+            final SVECTOR normal = SomethingStructPtr_800d1a88.normals_08[a2];
 
-            v1 = -MEMORY.ref(2, a1).offset(0x0L).getSigned() * s6 - MEMORY.ref(2, a1).offset(0x4L).getSigned() * s5 - SomethingStructPtr_800d1a88.ptr_14.get((int)a2)._08.get();
-            v0 = MEMORY.ref(2, a1).offset(0x2L).getSigned();
-
-            v1 = (int)v1 / (int)v0 - t6;
-            if((int)v1 > 0 && (int)v1 < (int)t1) {
+            v1 = (-normal.getX() * s6 - normal.getZ() * s5 - SomethingStructPtr_800d1a88.ptr_14.get(a2)._08.get()) / normal.getY() - t6;
+            if(v1 > 0 && v1 < t1) {
               t2 = a2;
               t1 = v1;
             }
@@ -6040,30 +5988,30 @@ public final class SMap {
           }
 
           //LAB_800e9ae4
-          if(t1 != 0x7fff_ffffL) {
+          if(t1 != 0x7fff_ffff) {
             v1 = t2;
           } else {
             //LAB_800e9af4
-            v1 = -0x1L;
+            v1 = -1;
           }
         } else {
-          v1 = _800cbe48.get();
+          v1 = (int)_800cbe48.get();
         }
 
         //LAB_800e9af8
         s3 = v1;
       } else {
-        s3 = -0x1L;
+        s3 = -1;
       }
 
       //LAB_800e9afc
-      v0 = -0x1L;
-      if((int)s3 >= 0) {
-        final SomethingStructSub0c_1 struct = SomethingStructPtr_800d1a88.ptr_14.get((int)s3);
+      v0 = -1;
+      if(s3 >= 0) {
+        final SomethingStructSub0c_1 struct = SomethingStructPtr_800d1a88.ptr_14.get(s3);
 
         //LAB_800e9b50
         for(s1 = 0; s1 < struct.count_00.get(); s1++) {
-          final SomethingStructSub0c_2 struct2 = SomethingStructPtr_800d1a88.ptr_18.get((int)(struct._02.get() + s1));
+          final SomethingStructSub0c_2 struct2 = SomethingStructPtr_800d1a88.ptr_18.get(struct._02.get() + s1);
           if(struct2._08.get() != 0) {
             if(Math.abs(struct2._00.get() * s6 + struct2._02.get() * s5 + struct2._04.get() >> 10) < 10) {
               v0 = s1;
@@ -6075,49 +6023,42 @@ public final class SMap {
 
       //LAB_800e9bbc
       //LAB_800e9bc0
-      if((int)s3 >= 0 && (int)v0 < 0) {
-        a1 = SomethingStructPtr_800d1a88.normals_08 + s3 * 0x8L;
-        final SomethingStructSub0c_1 struct = SomethingStructPtr_800d1a88.ptr_14.get((int)s3);
+      if(s3 >= 0 && v0 < 0) {
+        final SVECTOR normal = SomethingStructPtr_800d1a88.normals_08[s3];
+        final SomethingStructSub0c_1 struct = SomethingStructPtr_800d1a88.ptr_14.get(s3);
 
-        a0 = -MEMORY.ref(2, a1).offset(0x0L).getSigned() * s6 - MEMORY.ref(2, a1).offset(0x4L).getSigned() * s5 - struct._08.get();
-        a0 = (int)a0 / MEMORY.ref(2, a1).offset(0x2L).getSigned();
-        v0 = Math.abs(y - a0);
-        if((int)v0 < 0x32L) {
-          a0 = SomethingStructPtr_800d1a88.normals_08 + s3 * 0x8L;
-
-          v0 = -MEMORY.ref(2, a0).offset(0x0L).getSigned() * (x + playerMovement.getX()) - MEMORY.ref(2, a0).offset(0x4L).getSigned() * (z + playerMovement.getZ()) - struct._08.get();
-
+        if(Math.abs(y - (-normal.getX() * s6 - normal.getZ() * s5 - struct._08.get()) / normal.getY()) < 50) {
           //LAB_800e9e64
-          playerMovement.setY((short)((int)v0 / MEMORY.ref(2, a0).offset(0x2L).getSigned()));
+          playerMovement.setY((short)((-normal.getX() * (x + playerMovement.getX()) - normal.getZ() * (z + playerMovement.getZ()) - struct._08.get()) / normal.getY()));
 
           //LAB_800ea390
           if(_800d1a8c.deref()._00.get() == 0) {
             _800d1a8c.deref()._00.set(0x1L);
             //LAB_800ea3b4
-            _800d1a84.setu(ratan2(playerMovement.getX(), playerMovement.getZ()) + 0x800L & 0xfffL);
+            _800d1a84.setu(ratan2(playerMovement.getX(), playerMovement.getZ()) + 0x800 & 0xfff);
           }
 
           //LAB_800ea3e0
-          return (int)s3;
+          return s3;
         }
       }
 
       //LAB_800e9c58
-      if((FUN_800e6730((int)s4) & 0x20L) != 0) {
+      if((FUN_800e6730(s4) & 0x20L) != 0) {
         return -1;
       }
 
-      t1 = SomethingStructPtr_800d1a88.ptr_14.get((int)s4).count_00.get();
+      t1 = SomethingStructPtr_800d1a88.ptr_14.get(s4).count_00.get();
 
       //LAB_800e9ca0
-      a1 = -0x1L;
+      a1 = -1;
       for(a2 = 1; a2 < 4; a2++) {
         t0 = x + playerMovement.getX() * a2;
         a3 = z + playerMovement.getZ() * a2;
 
         //LAB_800e9ce8
-        for(long a1_0 = 0; a1_0 < t1; a1_0++) {
-          final SomethingStructSub0c_2 struct = SomethingStructPtr_800d1a88.ptr_18.get((int)(SomethingStructPtr_800d1a88.ptr_14.get((int)s4)._02.get() + a1_0));
+        for(int a1_0 = 0; a1_0 < t1; a1_0++) {
+          final SomethingStructSub0c_2 struct = SomethingStructPtr_800d1a88.ptr_18.get(SomethingStructPtr_800d1a88.ptr_14.get(s4)._02.get() + a1_0);
 
           if(struct._08.get() != 0) {
             if(struct._00.get() * t0 + struct._02.get() * a3 + struct._04.get() >> 10 <= 0) {
@@ -6129,34 +6070,34 @@ public final class SMap {
 
         //LAB_800e9d44
         //LAB_800e9d48
-        if((int)a1 >= 0) {
+        if(a1 >= 0) {
           break;
         }
       }
 
-      if((int)a1 >= 0) {
+      if(a1 >= 0) {
         //LAB_800e9e78
         s2 = s4;
 
         //LAB_800e9e7c
-        final SomethingStructSub0c_2 struct = SomethingStructPtr_800d1a88.ptr_18.get((int)(SomethingStructPtr_800d1a88.ptr_14.get((int)s2)._02.get() + a1));
+        final SomethingStructSub0c_2 struct = SomethingStructPtr_800d1a88.ptr_18.get(SomethingStructPtr_800d1a88.ptr_14.get(s2)._02.get() + a1);
         s3 = ratan2(s5 - z, s6 - x);
         s0 = ratan2(-struct._00.get(), struct._02.get());
         v1 = Math.abs(s3 - s0);
-        if((int)v1 > 0x800) {
+        if(v1 > 0x800) {
           v1 = 0x1000 - v1;
         }
 
         //LAB_800e9f38
         _800cbe68.setu(0);
-        if((v1 - 0x341L & 0xffff_ffffL) > 0x17eL) { //TODO I don't understand this, but it's right
-          if((int)v1 >= 0x401L) {
+        if((v1 - 0x341 & 0xffff_ffffL) > 0x17e) { //TODO I don't understand this, but it's right
+          if(v1 > 0x400) {
             _800cbe68.setu(0x1L);
-            if((int)s0 > 0) {
-              s0 = s0 - 0x800L;
+            if(s0 > 0) {
+              s0 = s0 - 0x800;
             } else {
               //LAB_800e9f6c
-              s0 = s0 + 0x800L;
+              s0 = s0 + 0x800;
             }
           }
 
@@ -6170,48 +6111,37 @@ public final class SMap {
           v1 = s0 - s3;
 
           //LAB_800e9f98
-          if(v1 < 0x400L || (int)v1 < -0x800L) {
+          if(v1 < 0x400 || v1 < -0x800) {
             //LAB_800e9fb4
-            v0 = 0x1L;
+            v0 = 1;
           } else {
             v0 = 0;
           }
         } else {
-          v0 = -0x1L;
+          v0 = -1;
         }
 
         //LAB_800e9fbc
-        if((int)v0 >= 0) {
+        if(v0 >= 0) {
           if(v0 == 0) {
-            s3 = -0x40L;
+            s3 = -0x40;
           } else {
-            s3 = 0x40L;
+            s3 = 0x40;
           }
 
           //LAB_800e9fd0
-          s1 = 0x8L;
 
           sp38 = sp38 - s3;
-          v0 = 0x800d_0000L;
-          s4 = v0 - 0x41b8L;
 
           //LAB_800e9ff4
+          s1 = 8;
           do {
             sp38 = sp38 + s3;
-            v0 = rcos(sp38);
-            v1 = _800cbe30.get();
+            s0 = x + (rcos(sp38) * (int)_800cbe30.get() >> 12);
+            t5 = z + (rsin(sp38) * (int)_800cbe30.get() >> 12);
 
-            t7 = (long)(int)v0 * (int)v1 & 0xffff_ffffL;
-            v0 = (int)t7 >> 12;
-            s0 = x + v0;
-            v0 = rsin(sp38);
-            v1 = _800cbe30.get();
-
-            t7 = (long)(int)v0 * (int)v1 & 0xffff_ffffL;
-            v0 = (int)t7 >> 12;
-            s1 = s1 - 0x1L;
-            t5 = z + v0;
-            if((int)s1 <= 0) {
+            s1--;
+            if(s1 <= 0) {
               break;
             }
 
@@ -6221,14 +6151,14 @@ public final class SMap {
 
             //LAB_800ea064
             for(a2 = 0; a2 < t1_0.count_0c; a2++) {
-              final SomethingStructSub0c_1 a1_0 = t1_0.ptr_14.get((int)a2);
+              final SomethingStructSub0c_1 a1_0 = t1_0.ptr_14.get(a2);
 
               if(a1_0.bool_01.get()) {
                 //LAB_800ea0c4
-                v0 = 0x1L;
+                v0 = 1;
                 for(a3 = 0; a3 < a1_0.count_00.get(); a3++) {
-                  final SomethingStructSub0c_2 a0_0 = t1_0.ptr_18.get(a1_0._02.get() + (int)a3);
-                  if((int)(a0_0._00.get() * s0 + a0_0._02.get() * t5 + a0_0._04.get()) < 0) {
+                  final SomethingStructSub0c_2 a0_0 = t1_0.ptr_18.get(a1_0._02.get() + a3);
+                  if((a0_0._00.get() * s0 + a0_0._02.get() * t5 + a0_0._04.get()) < 0) {
                     //LAB_800ea130
                     v0 = 0;
                     break;
@@ -6237,7 +6167,7 @@ public final class SMap {
 
                 //LAB_800ea114
                 if(v0 != 0) {
-                  MEMORY.ref(4, s4).offset(t0 * 0x4L).setu(a2);
+                  _800cbe48.offset(t0 * 0x4L).setu(a2);
                   t0 = t0 + 0x1L;
                 }
               }
@@ -6247,26 +6177,23 @@ public final class SMap {
 
             //LAB_800ea138
             if(t0 != 0) {
-              if(t0 == 0x1L) {
-                a0 = _800cbe48.get();
+              if(t0 == 1) {
+                a0 = (int)_800cbe48.get();
               } else {
                 //LAB_800ea158
-                t1 = 0x7fff_ffffL;
-                t2 = -0x1L;
+                t1 = 0x7fff_ffff;
+                t2 = -1;
 
                 final SomethingStruct v0_0 = SomethingStructPtr_800d1a88;
 
                 //LAB_800ea17c
                 for(a2 = 0; a2 < (int)t0; a2++) {
-                  a3 = MEMORY.ref(4, s4).offset(a2 * 0x4L).get();
+                  a3 = (int)_800cbe48.offset(a2 * 0x4L).get();
 
-                  a1 = v0_0.normals_08 + a3 * 0x8L;
+                  final SVECTOR normal = v0_0.normals_08[a3];
 
-                  v1 = -MEMORY.ref(2, a1).offset(0x0L).getSigned() * s0 - MEMORY.ref(2, a1).offset(0x4L).getSigned() * t5 - v0_0.ptr_14.get((int)a3)._08.get();
-                  v1 = (int)v1 / MEMORY.ref(2, a1).offset(0x2L).getSigned();
-
-                  v1 = v1 - t6;
-                  if((int)v1 > 0 && (int)v1 < (int)t1) {
+                  v1 = (-normal.getX() * s0 - normal.getZ() * t5 - v0_0.ptr_14.get(a3)._08.get()) / normal.getY() - t6;
+                  if(v1 > 0 && v1 < t1) {
                     t2 = a3;
                     t1 = v1;
                   }
@@ -6275,96 +6202,63 @@ public final class SMap {
                 }
 
                 //LAB_800ea214
-                if(t1 != 0x7fff_ffffL) {
+                if(t1 != 0x7fff_ffff) {
                   a0 = t2;
                 } else {
                   //LAB_800ea224
-                  a0 = -0x1L;
+                  a0 = -1;
                 }
               }
 
               //LAB_800ea228
               s2 = a0;
             } else {
-              s2 = -0x1L;
+              s2 = -1;
             }
 
             //LAB_800ea22c
-          } while((int)s2 < 0);
+          } while(s2 < 0);
 
           //LAB_800ea234
           s3 = s2;
-          if((int)s2 >= 0) {
+          if(s2 >= 0) {
             sp30 = s0;
             sp34 = t5;
           }
         } else {
-          s3 = -0x1L;
+          s3 = -1;
         }
 
         //LAB_800ea254
-        if((int)s3 < 0) {
+        if(s3 < 0) {
           return -1;
         }
 
-        a2 = sp30;
-        a3 = sp34;
-        s1 = s3 * 8;
-        a1 = SomethingStructPtr_800d1a88.normals_08 + s3 * 8;
+        final SVECTOR normal = SomethingStructPtr_800d1a88.normals_08[s3];
 
-        a0 = -MEMORY.ref(2, a1).offset(0x0L).getSigned();
-        lo = (long)(int)a0 * (int)a2 & 0xffff_ffffL;
-        a0 = lo;
-        v0 = MEMORY.ref(2, a1).offset(0x4L).getSigned();
-
-        lo = (long)(int)v0 * (int)a3 & 0xffff_ffffL;
-        t0 = lo;
-        a0 = a0 - t0;
-
-        a0 = a0 - SomethingStructPtr_800d1a88.ptr_14.get((int)s3)._08.get();
-        v0 = MEMORY.ref(2, a1).offset(0x2L).getSigned();
-
-        lo = (int)a0 / (int)v0;
-        a0 = lo;
-        t7 = y;
-        a0 = t7 - a0;
-        v0 = Math.abs(a0);
-        if((int)v0 >= 0x32L) {
+        if(Math.abs(y - (-normal.getX() * sp30 - normal.getZ() * sp34 - SomethingStructPtr_800d1a88.ptr_14.get(s3)._08.get()) / normal.getY()) >= 50) {
           return -1;
         }
 
-        a0 = SomethingStructPtr_800d1a88.normals_08 + s1;
-        v0 = -MEMORY.ref(2, a0).offset(0x0L).getSigned() * sp30 - MEMORY.ref(2, a0).offset(0x4L).getSigned() * sp34 - SomethingStructPtr_800d1a88.ptr_14.get((int)s3)._08.get();
-        v0 = (int)v0 / MEMORY.ref(2, a0).offset(0x2L).getSigned();
-
-        playerMovement.setY((short)v0);
-        v0 = sp30 - x;
-        playerMovement.setX((short)v0);
-        v0 = sp34 - z;
-        playerMovement.setZ((short)v0);
+        playerMovement.setY((short)((-normal.getX() * sp30 - normal.getZ() * sp34 - SomethingStructPtr_800d1a88.ptr_14.get(s3)._08.get()) / normal.getY()));
+        playerMovement.setX((short)(sp30 - x));
+        playerMovement.setZ((short)(sp34 - z));
       } else {
-        if((int)s3 < 0) {
+        if(s3 < 0) {
           return -1;
         }
 
-        s1 = s3 * 0x8L;
-        a1 = SomethingStructPtr_800d1a88.normals_08 + s1;
+        final SVECTOR normal = SomethingStructPtr_800d1a88.normals_08[s3];
 
-        a0 = -MEMORY.ref(2, a1).offset(0x0L).getSigned() * s6 - MEMORY.ref(2, a1).offset(0x4L).getSigned() * s5 - SomethingStructPtr_800d1a88.ptr_14.get((int)s3)._08.get();
-
-        v0 = Math.abs(y - (int)a0 / MEMORY.ref(2, a1).offset(0x2L).getSigned());
-        if((int)v0 >= 0x32L) {
+        if(Math.abs(y - (-normal.getX() * s6 - normal.getZ() * s5 - SomethingStructPtr_800d1a88.ptr_14.get(s3)._08.get()) / normal.getY()) >= 50) {
           return -1;
         }
 
         //LAB_800e9df4
-        a0 = SomethingStructPtr_800d1a88.normals_08 + s1;
-        final SomethingStructSub0c_1 struct = SomethingStructPtr_800d1a88.ptr_14.get((int)s3);
-
-        v0 = -MEMORY.ref(2, a0).offset(0x0L).getSigned() * (x + playerMovement.getX()) - MEMORY.ref(2, a0).offset(0x4L).getSigned() * (z + playerMovement.getZ()) - struct._08.get();
+        final SomethingStructSub0c_1 struct = SomethingStructPtr_800d1a88.ptr_14.get(s3);
 
         //LAB_800e9e64
-        playerMovement.setY((short)((int)v0 / MEMORY.ref(2, a0).offset(0x2L).getSigned()));
+        playerMovement.setY((short)((-normal.getX() * (x + playerMovement.getX()) - normal.getZ() * (z + playerMovement.getZ()) - struct._08.get()) / normal.getY()));
       }
     }
 
@@ -6376,7 +6270,7 @@ public final class SMap {
     }
 
     //LAB_800ea3e0
-    return (int)s3;
+    return s3;
   }
 
   @Method(0x800ea4c8L)
@@ -6439,7 +6333,7 @@ public final class SMap {
     }
 
     //LAB_800ea66c
-    long v1 = _800f7f6c.offset(s1 * 0x2L).getSigned();
+    final long v1 = _800f7f6c.offset(s1 * 0x2L).getSigned();
 
     if(_800cbda4.get() == 0) {
       v0 = v1 - s0;
@@ -6573,11 +6467,6 @@ public final class SMap {
         }
 
         //LAB_800ee1b8
-        deallocateModel(submapModel_800d4bf8);
-
-        free(submapCutModel.getAddress());
-        free(submapCutAnim.getAddress());
-
         submapCutModel = null;
         submapCutAnim = null;
 
@@ -6619,11 +6508,8 @@ public final class SMap {
           loadDrgnDir(0, fileIndex, files -> {
             submapCutModelAndAnimLoaded_800d4bdc.set(true);
 
-            submapCutModel = MEMORY.ref(4, mallocTail(files.get(0).length), CContainer::new);
-            submapCutAnim = MEMORY.ref(4, mallocTail(files.get(1).length), TmdAnimationFile::new);
-
-            MEMORY.setBytes(submapCutModel.getAddress(), files.get(0));
-            MEMORY.setBytes(submapCutAnim.getAddress(), files.get(1));
+            submapCutModel = new CContainer(files.get(0), 0);
+            submapCutAnim = new TmdAnimationFile(files.get(1), 0);
           });
 
           loadDrgnDir(0, fileIndex + 1, files -> {
@@ -7505,7 +7391,7 @@ public final class SMap {
 
   @Method(0x800f0370L)
   public static void FUN_800f0370() {
-    initModel(dustModel_800d4d40, mrg_800d6d1c.getFile(4, CContainer::new), mrg_800d6d1c.getFile(5, TmdAnimationFile::new));
+    initModel(dustModel_800d4d40, new CContainer(MEMORY.getBytes(mrg_800d6d1c.getFile(4), mrg_800d6d1c.entries.get(4).size.get()), 0), new TmdAnimationFile(MEMORY.getBytes(mrg_800d6d1c.getFile(5), mrg_800d6d1c.entries.get(5).size.get()), 0));
     dust_800d4e68.next_50.clear();
     _800d4ec0.next_1c.clear();
     FUN_800f0e60();
@@ -7529,7 +7415,6 @@ public final class SMap {
 
   @Method(0x800f0440L)
   public static void FUN_800f0440() {
-    deallocateModel(dustModel_800d4d40);
     FUN_800f058c();
     deallocateDust();
     FUN_800f0e7c();
@@ -8610,7 +8495,7 @@ public final class SMap {
 
   @Method(0x800f2788L)
   public static void initSavePoint() {
-    initModel(savePointModel_800d5eb0, mrg_800d6d1c.getFile(2, CContainer::new), mrg_800d6d1c.getFile(3, TmdAnimationFile::new));
+    initModel(savePointModel_800d5eb0, new CContainer(MEMORY.getBytes(mrg_800d6d1c.getFile(2), mrg_800d6d1c.entries.get(2).size.get()), 0), new TmdAnimationFile(MEMORY.getBytes(mrg_800d6d1c.getFile(3), mrg_800d6d1c.entries.get(3).size.get()), 0));
     savePoint_800d5598.get(0).rotation_28.set(0);
     savePoint_800d5598.get(0).colour_34.set(0x50);
     savePoint_800d5598.get(1).rotation_28.set(0);
@@ -9103,7 +8988,6 @@ public final class SMap {
 
   @Method(0x800f3b3cL)
   public static void deallocateSavePoint() {
-    deallocateModel(savePointModel_800d5eb0);
     hasSavePoint_800d5620.set(false);
   }
 

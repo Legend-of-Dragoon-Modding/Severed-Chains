@@ -17,7 +17,7 @@ import legend.core.gte.GsDOBJ2;
 import legend.core.gte.MATRIX;
 import legend.core.gte.SVECTOR;
 import legend.core.gte.Tmd;
-import legend.core.gte.TmdObjTable;
+import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.TmdWithId;
 import legend.core.gte.VECTOR;
 import legend.core.memory.Memory;
@@ -1069,7 +1069,7 @@ public final class SEffe {
   }
 
   @Method(0x800fcf20L)
-  public static void FUN_800fcf20(final EffectManagerData6c a0, final TmdObjTable tmd, final long a2, final int tpage) {
+  public static void FUN_800fcf20(final EffectManagerData6c a0, final TmdObjTable1c tmd, final long a2, final int tpage) {
     if(MEMORY.ref(4, a2).offset(0x0L).getSigned() >= 0) {
       final MATRIX sp0x10 = new MATRIX();
       FUN_800fc4bc(sp0x10, a0, a2);
@@ -2453,10 +2453,10 @@ public final class SEffe {
     } else {
       //LAB_80101d98
       final DeffPart.TmdType tmdType = (DeffPart.TmdType)getDeffPart(0x300_0000 | (int)flags & 0xf_ffff);
-      final CContainer extTmd = tmdType.tmd_0c.deref();
-      final TmdWithId tmd = extTmd.tmdPtr_00.deref();
-      a0.tmd_30.set(tmd.tmd.objTable.get(0));
-      a0.tpage_56.set((int)((tmd.id.get() & 0xffff_0000L) >>> 11));
+      final CContainer extTmd = tmdType.tmd_0c;
+      final TmdWithId tmd = extTmd.tmdPtr_00;
+      a0.tmd_30.set(tmd.tmd.objTable[0]);
+      a0.tpage_56.set((int)((tmd.id & 0xffff_0000L) >>> 11));
     }
 
     //LAB_80101dd8
@@ -2504,12 +2504,12 @@ public final class SEffe {
     } else {
       //LAB_80101fec
       final DeffPart.SpriteType spriteType = (DeffPart.SpriteType)getDeffPart((int)flags | 0x400_0000);
-      final DeffPart.SpriteMetrics deffMetrics = spriteType.metrics_08.deref();
-      a0.u_58.set(deffMetrics.u_00.get());
-      a0.v_5a.set(deffMetrics.v_02.get());
-      a0.w_5e.set(deffMetrics.w_04.get() * 4);
-      a0.h_5f.set(deffMetrics.h_06.get());
-      a0.clut_5c.set(GetClut(deffMetrics.clutX_08.get(), deffMetrics.clutY_0a.get()));
+      final DeffPart.SpriteMetrics deffMetrics = spriteType.metrics_08;
+      a0.u_58.set(deffMetrics.u_00);
+      a0.v_5a.set(deffMetrics.v_02);
+      a0.w_5e.set(deffMetrics.w_04 * 4);
+      a0.h_5f.set(deffMetrics.h_06);
+      a0.clut_5c.set(GetClut(deffMetrics.clutX_08, deffMetrics.clutY_0a));
     }
 
     //LAB_80102048
@@ -5103,17 +5103,17 @@ public final class SEffe {
     final FrozenJetEffect28 effect = (FrozenJetEffect28)manager.effect_44;
 
     final GuardHealEffect14 v1 = (GuardHealEffect14)((EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00).effect_44;
-    final TmdObjTable tmd = v1.tmd_08.deref();
+    final TmdObjTable1c tmd = v1.tmd_08;
 
-    final long vertexCount = tmd.n_vert_04.get();
-    final long normalCount = tmd.n_normal_0c.get();
+    final long vertexCount = tmd.n_vert_04;
+    final long normalCount = tmd.n_normal_0c;
 
-    final UnboundedArrayRef<SVECTOR> vertices = tmd.vert_top_00.deref();
-    final long normals = tmd.normal_top_08.get();
+    final SVECTOR[] vertices = tmd.vert_top_00;
+    final SVECTOR[] normals = tmd.normal_top_08;
 
     effect.vertexCount_00.set(vertexCount);
     effect.normalCount_04.set(normalCount);
-    effect.primitiveCount_08.set(tmd.n_primitive_14.get());
+    effect.primitiveCount_08.set(tmd.n_primitive_14);
     effect.vertices_0c.set(vertices);
     effect.normals_10.setPointer(normals);
     effect.primitives_14.set(tmd.primitives_10.getPointer());
@@ -5128,14 +5128,14 @@ public final class SEffe {
     //LAB_8010a538
     for(int t0 = 0; t0 < vertexCount; t0++) {
       //LAB_8010a54c
-      effect.verticesCopy_1c.deref().get(t0).set(vertices.get(t0));
+      effect.verticesCopy_1c.deref().get(t0).set(vertices[t0]);
     }
 
     //LAB_8010a578
     //LAB_8010a588
     for(int t0 = 0; t0 < normalCount; t0++) {
       //LAB_8010a59c
-      effect.normalsCopy_20.deref().get(t0).set((SVECTOR)MEMORY.ref(4, normals).offset(t0 * 0x8L).cast(SVECTOR::new));
+      effect.normalsCopy_20.deref().get(t0).set(normals[t0]);
     }
 
     //LAB_8010a5c8
@@ -5724,12 +5724,12 @@ public final class SEffe {
   public static void FUN_8010c2e0(final long a0, final int a1) {
     if((a1 & 0xf_ff00) != 0xf_ff00) {
       final DeffPart.SpriteType spriteType = (DeffPart.SpriteType)getDeffPart(a1 | 0x400_0000);
-      final DeffPart.SpriteMetrics deffMetrics = spriteType.metrics_08.deref();
-      MEMORY.ref(2, a0).offset(0x0L).setu(deffMetrics.u_00.get());
-      MEMORY.ref(2, a0).offset(0x2L).setu(deffMetrics.v_02.get());
-      MEMORY.ref(1, a0).offset(0x4L).setu(deffMetrics.w_04.get() * 4);
-      MEMORY.ref(1, a0).offset(0x5L).setu(deffMetrics.h_06.get());
-      MEMORY.ref(2, a0).offset(0x6L).setu(deffMetrics.clutY_0a.get() << 6 | (deffMetrics.clutX_08.get() & 0x3f0) >>> 4);
+      final DeffPart.SpriteMetrics deffMetrics = spriteType.metrics_08;
+      MEMORY.ref(2, a0).offset(0x0L).setu(deffMetrics.u_00);
+      MEMORY.ref(2, a0).offset(0x2L).setu(deffMetrics.v_02);
+      MEMORY.ref(1, a0).offset(0x4L).setu(deffMetrics.w_04 * 4);
+      MEMORY.ref(1, a0).offset(0x5L).setu(deffMetrics.h_06);
+      MEMORY.ref(2, a0).offset(0x6L).setu(deffMetrics.clutY_0a << 6 | (deffMetrics.clutX_08 & 0x3f0) >>> 4);
     }
 
     //LAB_8010c368
@@ -5798,12 +5798,12 @@ public final class SEffe {
         } else {
           //LAB_8010c5a8
           final DeffPart.SpriteType spriteType = (DeffPart.SpriteType)getDeffPart(a1 | 0x400_0000);
-          final DeffPart.SpriteMetrics deffMetrics = spriteType.metrics_08.deref();
-          effect.u_04.get(i).set(deffMetrics.u_00.get());
-          effect.v_0e.get(i).set(deffMetrics.v_02.get());
-          effect.w_18.get(i).set(deffMetrics.w_04.get() * 4);
-          effect.h_22.get(i).set(deffMetrics.h_06.get());
-          effect.clut_2c.get(i).set(GetClut(deffMetrics.clutX_08.get(), deffMetrics.clutY_0a.get()));
+          final DeffPart.SpriteMetrics deffMetrics = spriteType.metrics_08;
+          effect.u_04.get(i).set(deffMetrics.u_00);
+          effect.v_0e.get(i).set(deffMetrics.v_02);
+          effect.w_18.get(i).set(deffMetrics.w_04 * 4);
+          effect.h_22.get(i).set(deffMetrics.h_06);
+          effect.clut_2c.get(i).set(GetClut(deffMetrics.clutX_08, deffMetrics.clutY_0a));
         }
       }
 
@@ -6044,12 +6044,12 @@ public final class SEffe {
     } else {
       //LAB_8010d508
       final DeffPart.SpriteType spriteType = (DeffPart.SpriteType)getDeffPart(s5 | 0x400_0000);
-      final DeffPart.SpriteMetrics deffMetrics = spriteType.metrics_08.deref();
-      effect.u_06.set((short)deffMetrics.u_00.get());
-      effect.v_08.set((short)deffMetrics.v_02.get());
-      effect.width_0a.set((short)(deffMetrics.w_04.get() * 4));
-      effect.height_0c.set((short)deffMetrics.h_06.get());
-      effect.clut_0e.set((short)GetClut(deffMetrics.clutX_08.get(), deffMetrics.clutY_0a.get()));
+      final DeffPart.SpriteMetrics deffMetrics = spriteType.metrics_08;
+      effect.u_06.set((short)deffMetrics.u_00);
+      effect.v_08.set((short)deffMetrics.v_02);
+      effect.width_0a.set((short)(deffMetrics.w_04 * 4));
+      effect.height_0c.set((short)deffMetrics.h_06);
+      effect.clut_0e.set((short)GetClut(deffMetrics.clutX_08, deffMetrics.clutY_0a));
     }
 
     //LAB_8010d564
@@ -6173,7 +6173,7 @@ public final class SEffe {
       } else {
         //LAB_8010dc40
         final DeffPart.TmdType tmdType = (DeffPart.TmdType)getDeffPart(s7 | 0x300_0000);
-        instance.tmd_70.set(tmdType.tmd_0c.deref().tmdPtr_00.deref().tmd.objTable.get(0));
+        instance.tmd_70.set(tmdType.tmd_0c.tmdPtr_00.tmd.objTable[0]);
       }
 
       //LAB_8010dc60
@@ -6330,12 +6330,12 @@ public final class SEffe {
     } else {
       //LAB_8010e254
       final DeffPart.SpriteType spriteType = (DeffPart.SpriteType)getDeffPart(s4 | 0x400_0000);
-      final DeffPart.SpriteMetrics deffMetrics = spriteType.metrics_08.deref();
-      effect.metrics_04.u_00.set(deffMetrics.u_00.get());
-      effect.metrics_04.v_02.set(deffMetrics.v_02.get());
-      effect.metrics_04.w_04.set(deffMetrics.w_04.get() * 4);
-      effect.metrics_04.h_05.set(deffMetrics.h_06.get());
-      effect.metrics_04.clut_06.set(GetClut(deffMetrics.clutX_08.get(), deffMetrics.clutY_0a.get()));
+      final DeffPart.SpriteMetrics deffMetrics = spriteType.metrics_08;
+      effect.metrics_04.u_00.set(deffMetrics.u_00);
+      effect.metrics_04.v_02.set(deffMetrics.v_02);
+      effect.metrics_04.w_04.set(deffMetrics.w_04 * 4);
+      effect.metrics_04.h_05.set(deffMetrics.h_06);
+      effect.metrics_04.clut_06.set(GetClut(deffMetrics.clutX_08, deffMetrics.clutY_0a));
     }
 
     //LAB_8010e2b0
@@ -6490,12 +6490,12 @@ public final class SEffe {
     } else {
       //LAB_8010eb50
       final DeffPart.SpriteType spriteType = (DeffPart.SpriteType)getDeffPart(sp1c | 0x400_0000);
-      final DeffPart.SpriteMetrics deffMetrics = spriteType.metrics_08.deref();
-      effect.metrics_04.u_00.set(deffMetrics.u_00.get());
-      effect.metrics_04.v_02.set(deffMetrics.v_02.get());
-      effect.metrics_04.w_04.set(deffMetrics.w_04.get() * 4);
-      effect.metrics_04.h_05.set(deffMetrics.h_06.get());
-      effect.metrics_04.clut_06.set(GetClut(deffMetrics.clutX_08.get(), deffMetrics.clutY_0a.get()));
+      final DeffPart.SpriteMetrics deffMetrics = spriteType.metrics_08;
+      effect.metrics_04.u_00.set(deffMetrics.u_00);
+      effect.metrics_04.v_02.set(deffMetrics.v_02);
+      effect.metrics_04.w_04.set(deffMetrics.w_04 * 4);
+      effect.metrics_04.h_05.set(deffMetrics.h_06);
+      effect.metrics_04.clut_06.set(GetClut(deffMetrics.clutX_08, deffMetrics.clutY_0a));
     }
 
     //LAB_8010ebac
@@ -6612,9 +6612,9 @@ public final class SEffe {
       MEMORY.ref(4, addr).offset(0x1cL).setu(MEMORY.ref(4, addr).offset(0x0cL).get());
       MEMORY.ref(4, addr).offset(0x20L).setu(MEMORY.ref(4, addr).offset(0x10L).get() - 0x100L);
       MEMORY.ref(4, addr).offset(0x24L).setu(MEMORY.ref(4, addr).offset(0x14L).get());
-      MEMORY.ref(4, addr).offset(0x94L).setu(((DeffPart.TmdType)getDeffPart(sp18 | 0x300_0000)).tmd_0c.deref().tmdPtr_00.deref().tmd.objTable.get(0).getAddress());
-      MEMORY.ref(4, addr).offset(0x98L).setu(((DeffPart.TmdType)getDeffPart(sp1c | 0x300_0000)).tmd_0c.deref().tmdPtr_00.deref().tmd.objTable.get(0).getAddress());
-      MEMORY.ref(4, addr).offset(0x9cL).setu(((DeffPart.TmdType)getDeffPart(sp20 | 0x300_0000)).tmd_0c.deref().tmdPtr_00.deref().tmd.objTable.get(0).getAddress());
+      MEMORY.ref(4, addr).offset(0x94L).setu(((DeffPart.TmdType)getDeffPart(sp18 | 0x300_0000)).tmd_0c.tmdPtr_00.tmd.objTable[0].getAddress());
+      MEMORY.ref(4, addr).offset(0x98L).setu(((DeffPart.TmdType)getDeffPart(sp1c | 0x300_0000)).tmd_0c.tmdPtr_00.tmd.objTable[0].getAddress());
+      MEMORY.ref(4, addr).offset(0x9cL).setu(((DeffPart.TmdType)getDeffPart(sp20 | 0x300_0000)).tmd_0c.tmdPtr_00.tmd.objTable[0].getAddress());
       addr += 0xa8L;
     }
 
@@ -6760,7 +6760,7 @@ public final class SEffe {
           tmdGp0Tpage_1f8003ec.set(manager._10.flags_00 >>> 23 & 0x60);
 
           if(MEMORY.ref(1, s3).offset(0x01L).get() != 0) {
-            sp0xf8.tmd_08 = MEMORY.ref(4, MEMORY.ref(4, s3).offset(0x98L).get(), TmdObjTable::new);
+            sp0xf8.tmd_08 = MEMORY.ref(4, MEMORY.ref(4, s3).offset(0x98L).get(), TmdObjTable1c::new);
             Renderer.renderDobj2(sp0xf8, false);
           }
 
@@ -6768,10 +6768,10 @@ public final class SEffe {
           final long v1 = MEMORY.ref(2, s3).offset(0xa2L).getSigned();
 
           if(v1 < 9) {
-            sp0xf8.tmd_08 = MEMORY.ref(4, MEMORY.ref(4, s3).offset(0x94L).get(), TmdObjTable::new);
+            sp0xf8.tmd_08 = MEMORY.ref(4, MEMORY.ref(4, s3).offset(0x94L).get(), TmdObjTable1c::new);
             Renderer.renderDobj2(sp0xf8, false);
           } else if(v1 >= 11) {
-            sp0xf8.tmd_08 = MEMORY.ref(4, MEMORY.ref(4, s3).offset(0x9cL).get(), TmdObjTable::new);
+            sp0xf8.tmd_08 = MEMORY.ref(4, MEMORY.ref(4, s3).offset(0x9cL).get(), TmdObjTable1c::new);
             Renderer.renderDobj2(sp0xf8, false);
           }
 
@@ -7454,9 +7454,6 @@ public final class SEffe {
 
   @Method(0x801116c4L)
   public static MATRIX FUN_801116c4(final MATRIX a0, final int scriptIndex, final int a2) {
-    final long v0;
-    long v1;
-    final long a3;
     final VECTOR trans = new VECTOR();
     final VECTOR scale = new VECTOR();
     final SVECTOR rot = new SVECTOR();
@@ -7468,10 +7465,10 @@ public final class SEffe {
       //LAB_8011172c
       final MATRIX sp0x10 = new MATRIX();
       FUN_800e8594(sp0x10, effects);
-      v1 = effects.flags_04 & 0xff00_0000;
+      final int type = effects.flags_04 & 0xff00_0000;
 
       //LAB_80111768
-      if(v1 == 0x100_0000 || v1 == 0x200_0000) {
+      if(type == 0x100_0000 || type == 0x200_0000) {
         //LAB_80111998
         final BttlScriptData6cSub13c struct13c = (BttlScriptData6cSub13c)effects.effect_44;
         final Model124 model = struct13c.model_134;
@@ -7482,33 +7479,32 @@ public final class SEffe {
         final GsCOORDINATE2 coord2 = model.coord2ArrPtr_04[a2];
         GsGetLw(coord2, a0);
         coord2.flg = 0;
-      } else if(v1 == 0) {
+      } else if(type == 0) {
         //LAB_80111778
         final BttlScriptData6cSub5c a2_0 = (BttlScriptData6cSub5c)effects.effect_44;
 
-        if((a2_0.lmbType_00.get() & 0x7) == 0) {
-          final long v1_0 = a2_0.lmb_0c.derefAs(LmbType0.class).getAddress(); //TODO
+        if((a2_0.lmbType_00 & 0x7) == 0) {
+          final LmbType0 lmb = (LmbType0)a2_0.lmb_0c;
 
           //LAB_801117ac
-          final int a0_0 = Math.max(0, effects._10._24) % (a2_0._08.get() * 2);
+          final int a0_0 = Math.max(0, effects._10._24) % (a2_0._08 * 2);
           final int a1_0 = a0_0 / 2;
-          a3 = v1_0 + MEMORY.ref(4, v1_0).offset(0x10L).offset(a2 * 0xcL).get();
-          v0 = a3 + a1_0 * 0x14L;
-          scale.set((SVECTOR)MEMORY.ref(2, v0).offset(0x0L).cast(SVECTOR::new));
-          trans.set((SVECTOR)MEMORY.ref(2, v0).offset(0x6L).cast(SVECTOR::new));
-          rot.set((SVECTOR)MEMORY.ref(2, v0).offset(0xcL).cast(SVECTOR::new));
+          final LmbTransforms14 lmbTransforms = lmb._08[a2]._08[a1_0];
+          scale.set(lmbTransforms.scale_00);
+          trans.set(lmbTransforms.trans_06);
+          rot.set(lmbTransforms.rot_0c);
 
-          if((a0_0 & 0x1L) != 0) {
-            v1 = a1_0 + 1;
+          if((a0_0 & 0x1) != 0) {
+            int v1 = a1_0 + 1;
 
-            if(v1 == a2_0._08.get()) {
+            if(v1 == a2_0._08) {
               v1 = 0;
             }
 
             //LAB_8011188c
-            final long a0_1 = a3 + v1 * 0x14L;
-            scale.add((SVECTOR)MEMORY.ref(2, a0_1).offset(0x0L).cast(SVECTOR::new)).div(2);
-            trans.add((SVECTOR)MEMORY.ref(2, a0_1).offset(0x6L).cast(SVECTOR::new)).div(2);
+            final LmbTransforms14 a0_1 = lmb._08[a2]._08[v1];
+            scale.add(a0_1.scale_00).div(2);
+            trans.add(a0_1.trans_06).div(2);
           }
 
           //LAB_80111958
@@ -8898,7 +8894,7 @@ public final class SEffe {
     } else if(type == 0x200_0000) {
       //LAB_80116098
       final DeffPart.AnimatedTmdType animatedTmdType = (DeffPart.AnimatedTmdType)getDeffPart(a2);
-      final DeffPart.TextureInfo textureInfo = animatedTmdType.textureInfo_08.deref().get(0);
+      final DeffPart.TextureInfo textureInfo = animatedTmdType.textureInfo_08[0];
       u = textureInfo.vramPos_00.x.get();
       v = textureInfo.vramPos_00.y.get();
       w = 256;
@@ -8907,7 +8903,7 @@ public final class SEffe {
       //LAB_801160c0
       //LAB_801160d4
       final DeffPart.TmdType tmdType = (DeffPart.TmdType)getDeffPart(a2);
-      final DeffPart.TextureInfo textureInfo = tmdType.textureInfo_08.deref().get(s0);
+      final DeffPart.TextureInfo textureInfo = tmdType.textureInfo_08[s0];
       u = textureInfo.vramPos_00.x.get();
       v = textureInfo.vramPos_00.y.get();
       w = textureInfo.vramPos_00.w.get() * 4;
@@ -8958,27 +8954,27 @@ public final class SEffe {
     final int type = deffFlags & 0xff00_0000;
     if(type == 0x300_0000) {
       //LAB_80116708
-      final TmdObjTable tmdObjTable;
-      if(effect.deffTmdFlags_48.get() == deffFlags) {
-        tmdObjTable = effect.deffTmdObjTable_4c.deref();
+      final TmdObjTable1c tmdObjTable;
+      if(effect.deffTmdFlags_48 == deffFlags) {
+        tmdObjTable = effect.deffTmdObjTable_4c;
       } else {
         //LAB_80116724
         if((deffFlags & 0xf_ff00) == 0xf_ff00) {
           tmdObjTable = deffManager_800c693c.tmds_2f8[deffFlags & 0xff];
         } else {
           //LAB_80116750
-          tmdObjTable = ((DeffPart.TmdType)getDeffPart(deffFlags | 0x300_0000)).tmd_0c.deref().tmdPtr_00.deref().tmd.objTable.get(0);
+          tmdObjTable = ((DeffPart.TmdType)getDeffPart(deffFlags | 0x300_0000)).tmd_0c.tmdPtr_00.tmd.objTable[0];
         }
 
         //LAB_8011676c
-        effect.deffTmdFlags_48.set(deffFlags);
-        effect.deffTmdObjTable_4c.set(tmdObjTable);
+        effect.deffTmdFlags_48 = deffFlags;
+        effect.deffTmdObjTable_4c = tmdObjTable;
       }
 
       //LAB_80116778
       FUN_800de3f4(tmdObjTable, manager._10, sp0x10);
     } else if(type == 0x400_0000) {
-      if(effect.deffSpriteFlags_50.get() != deffFlags) {
+      if(effect.deffSpriteFlags_50 != deffFlags) {
         //LAB_801162e8
         final Memory.TemporaryReservation tmp = MEMORY.temp(0xc);
         final AttackHitFlashEffect0c sp0x48 = new AttackHitFlashEffect0c(tmp.get());
@@ -8992,7 +8988,7 @@ public final class SEffe {
 
         tmp.release();
 
-        effect.deffSpriteFlags_50.set(deffFlags);
+        effect.deffSpriteFlags_50 = deffFlags;
       }
 
       final int u = (effect.metrics_54.u_00.get() & 0x3f) * 4;
@@ -9076,30 +9072,26 @@ public final class SEffe {
 
   @Method(0x801168e8L)
   public static void processLmbType0(final EffectManagerData6c manager, final BttlScriptData6cSub5c effect, final int a2, final MATRIX matrix) {
-    final long s3 = effect.lmb_0c.getPointer(); //TODO
+    final LmbType0 lmb = (LmbType0)effect.lmb_0c;
     final int s6 = a2 / 0x2000;
     final int v1 = s6 + 1;
     final int s0 = a2 & 0x1fff;
     final int s1 = 0x2000 - s0;
-    final int fp = v1 % (short)MEMORY.ref(2, s3).offset(0xcL).getSigned();
+    final int fp = v1 % lmb._08[0].count_04;
 
     //LAB_80116960
-    for(int i = 0; i < MEMORY.ref(4, s3).offset(0x4L).get(); i++) {
-      long a0 = s3 + MEMORY.ref(4, s3).offset(0x8L).offset(i * 0xcL).offset(0x8L).get();
-      final long a1 = a0 + s6 * 0x14;
-
-      if(effect._14.get((int)MEMORY.ref(2, s3).offset(0x8L).offset(i * 0xcL).getSigned()).get() != 0) {
-        a0 = a0 + fp * 0x14;
-        manager._10.rot_10.setX((short)MEMORY.ref(2, a1).offset(0x0cL).get());
-        manager._10.rot_10.setY((short)MEMORY.ref(2, a1).offset(0x0eL).get());
-        manager._10.rot_10.setZ((short)MEMORY.ref(2, a1).offset(0x10L).get());
-        manager._10.trans_04.setX((int)((MEMORY.ref(2, a1).offset(0x06L).getSigned() * s1 + MEMORY.ref(2, a0).offset(0x06L).getSigned() * s0) / 0x2000));
-        manager._10.trans_04.setY((int)((MEMORY.ref(2, a1).offset(0x08L).getSigned() * s1 + MEMORY.ref(2, a0).offset(0x08L).getSigned() * s0) / 0x2000));
-        manager._10.trans_04.setZ((int)((MEMORY.ref(2, a1).offset(0x0aL).getSigned() * s1 + MEMORY.ref(2, a0).offset(0x0aL).getSigned() * s0) / 0x2000));
-        manager._10.scale_16.setX((short)((MEMORY.ref(2, a1).offset(0x00L).getSigned() * s1 + MEMORY.ref(2, a0).offset(0x00L).getSigned() * s0) / 0x2000));
-        manager._10.scale_16.setY((short)((MEMORY.ref(2, a1).offset(0x02L).getSigned() * s1 + MEMORY.ref(2, a0).offset(0x02L).getSigned() * s0) / 0x2000));
-        manager._10.scale_16.setZ((short)((MEMORY.ref(2, a1).offset(0x04L).getSigned() * s1 + MEMORY.ref(2, a0).offset(0x04L).getSigned() * s0) / 0x2000));
-        FUN_8011619c(manager, effect, effect._14.get((int)MEMORY.ref(2, s3).offset(0x8L).offset(i * 0xcL).getSigned()).get(), matrix);
+    for(int i = 0; i < lmb.count_04; i++) {
+      if(effect._14[lmb._08[i]._00] != 0) {
+        final LmbTransforms14 a1 = lmb._08[i]._08[s6];
+        final LmbTransforms14 a0 = lmb._08[i]._08[fp];
+        manager._10.rot_10.set(a1.rot_0c);
+        manager._10.trans_04.setX((a1.trans_06.getX() * s1 + a0.trans_06.getX() * s0) / 0x2000);
+        manager._10.trans_04.setY((a1.trans_06.getY() * s1 + a0.trans_06.getY() * s0) / 0x2000);
+        manager._10.trans_04.setZ((a1.trans_06.getZ() * s1 + a0.trans_06.getZ() * s0) / 0x2000);
+        manager._10.scale_16.setX((short)((a1.scale_00.getX() * s1 + a0.scale_00.getX() * s0) / 0x2000));
+        manager._10.scale_16.setY((short)((a1.scale_00.getY() * s1 + a0.scale_00.getY() * s0) / 0x2000));
+        manager._10.scale_16.setZ((short)((a1.scale_00.getZ() * s1 + a0.scale_00.getZ() * s0) / 0x2000));
+        FUN_8011619c(manager, effect, effect._14[lmb._08[i]._00], matrix);
       }
     }
   }
@@ -9109,14 +9101,12 @@ public final class SEffe {
     final long s3 = effect.lmb_0c.getPointer(); //TODO
     final long fp = s3 + MEMORY.ref(4, s3).offset(0xcL).get();
     long a0 = t0 / 0x2000;
-    long a1 = s3 + MEMORY.ref(4, s3).offset(0x10L).get();
+    final long a1 = s3 + MEMORY.ref(4, s3).offset(0x10L).get();
     long s0 = t0 & 0x1fffL;
     long s5 = (a0 + 1) % MEMORY.ref(2, s3).offset(0xaL).getSigned();
-    final long v0 = effect._04.get();
-    final long s7 = effect.ptr_10.getPointer(); //TODO
-    long s2;
+    final LmbTransforms14[] s7 = effect.ptr_10;
     long s1;
-    if(v0 != t0) {
+    if(effect._04 != t0) {
       s1 = 0x2000 - s0;
 
       if(s5 == 0) {
@@ -9137,109 +9127,108 @@ public final class SEffe {
         //LAB_80116c50
         final long t1 = (a0 - 1) * MEMORY.ref(2, s3).offset(0x8L).getSigned();
         a0 = s3 + MEMORY.ref(4, s3).offset(0x14L).get() + t1;
-        a1 = s7;
         long v1 = fp;
 
         //LAB_80116c80
-        for(s2 = 0; s2 < MEMORY.ref(4, s3).offset(0x4L).get(); s2++) {
+        for(int i = 0; i < MEMORY.ref(4, s3).offset(0x4L).get(); i++) {
+          final LmbTransforms14 transforms = s7[i];
           if((MEMORY.ref(2, v1).offset(0x0L).get() & 0x8000) == 0) {
-            MEMORY.ref(2, a1).offset(0x0L).setu(MEMORY.ref(2, a0).offset(0x0L).get());
+            transforms.scale_00.setX((short)MEMORY.ref(2, a0).offset(0x0L).get());
             a0 = a0 + 0x2L;
           }
 
           //LAB_80116ca0
           if((MEMORY.ref(2, v1).offset(0x0L).get() & 0x4000) == 0) {
-            MEMORY.ref(2, a1).offset(0x2L).setu(MEMORY.ref(2, a0).offset(0x0L).get());
+            transforms.scale_00.setY((short)MEMORY.ref(2, a0).offset(0x0L).get());
             a0 = a0 + 0x2L;
           }
 
           //LAB_80116cc0
           if((MEMORY.ref(2, v1).offset(0x0L).get() & 0x2000) == 0) {
-            MEMORY.ref(2, a1).offset(0x4L).setu(MEMORY.ref(2, a0).offset(0x0L).get());
+            transforms.scale_00.setZ((short)MEMORY.ref(2, a0).offset(0x0L).get());
             a0 = a0 + 0x2L;
           }
 
           //LAB_80116ce0
           if((MEMORY.ref(2, v1).offset(0x0L).get() & 0x1000) == 0) {
-            MEMORY.ref(2, a1).offset(0x6L).setu(MEMORY.ref(2, a0).offset(0x0L).get());
+            transforms.trans_06.setX((short)MEMORY.ref(2, a0).offset(0x0L).get());
             a0 = a0 + 0x2L;
           }
 
           //LAB_80116d00
           if((MEMORY.ref(2, v1).offset(0x0L).get() & 0x800) == 0) {
-            MEMORY.ref(2, a1).offset(0x8L).setu(MEMORY.ref(2, a0).offset(0x0L).get());
+            transforms.trans_06.setY((short)MEMORY.ref(2, a0).offset(0x0L).get());
             a0 = a0 + 0x2L;
           }
 
           //LAB_80116d20
           if((MEMORY.ref(2, v1).offset(0x0L).get() & 0x400) == 0) {
-            MEMORY.ref(2, a1).offset(0xaL).setu(MEMORY.ref(2, a0).offset(0x0L).get());
+            transforms.trans_06.setZ((short)MEMORY.ref(2, a0).offset(0x0L).get());
             a0 = a0 + 0x2L;
           }
 
           //LAB_80116d40
           if((MEMORY.ref(2, v1).offset(0x0L).get() & 0x200) == 0) {
-            MEMORY.ref(2, a1).offset(0xcL).setu(MEMORY.ref(2, a0).offset(0x0L).get());
+            transforms.rot_0c.setX((short)MEMORY.ref(2, a0).offset(0x0L).get());
             a0 = a0 + 0x2L;
           }
 
           //LAB_80116d60
           if((MEMORY.ref(2, v1).offset(0x0L).get() & 0x100) == 0) {
-            MEMORY.ref(2, a1).offset(0xeL).setu(MEMORY.ref(2, a0).offset(0x0L).get());
+            transforms.rot_0c.setY((short)MEMORY.ref(2, a0).offset(0x0L).get());
             a0 = a0 + 0x2L;
           }
 
           //LAB_80116d80
           if((MEMORY.ref(2, v1).offset(0x0L).get() & 0x80) == 0) {
-            MEMORY.ref(2, a1).offset(0x10L).setu(MEMORY.ref(2, a0).offset(0x0L).get());
+            transforms.rot_0c.setZ((short)MEMORY.ref(2, a0).offset(0x0L).get());
             a0 = a0 + 0x2L;
           }
 
           //LAB_80116da0
-          a1 = a1 + 0x14L;
           v1 = v1 + 0x4L;
         }
       }
 
       //LAB_80116db8
       a0 = s3 + MEMORY.ref(4, s3).offset(0x14L).get() + (s5 - 1) * MEMORY.ref(2, s3).offset(0x8L).getSigned();
-      a1 = s7;
       long a2 = fp;
 
       //LAB_80116de8
-      for(s2 = 0; s2 < MEMORY.ref(4, s3).offset(0x4L).get(); s2++) {
+      for(int i = 0; i < MEMORY.ref(4, s3).offset(0x4L).get(); i++) {
+        final LmbTransforms14 transforms = s7[i];
         if((MEMORY.ref(2, a2).offset(0x0L).get() & 0x8000) == 0) {
-          MEMORY.ref(2, a1).offset(0x0L).setu((MEMORY.ref(2, a1).offset(0x0L).getSigned() * s1 + MEMORY.ref(2, a0).offset(0x0L).getSigned() * s0) / 0x2000);
+          transforms.scale_00.setX((short)((transforms.scale_00.getX() * s1 + MEMORY.ref(2, a0).offset(0x0L).getSigned() * s0) / 0x2000));
           a0 = a0 + 0x2L;
         }
 
         //LAB_80116e34
         if((MEMORY.ref(2, a2).offset(0x0L).get() & 0x4000) == 0) {
-          MEMORY.ref(2, a1).offset(0x2L).setu((MEMORY.ref(2, a1).offset(0x2L).getSigned() * s1 + MEMORY.ref(2, a0).offset(0x0L).getSigned() * s0) / 0x2000);
+          transforms.scale_00.setY((short)((transforms.scale_00.getY() * s1 + MEMORY.ref(2, a0).offset(0x0L).getSigned() * s0) / 0x2000));
           a0 = a0 + 0x2L;
         }
 
         //LAB_80116e80
         if((MEMORY.ref(2, a2).offset(0x0L).get() & 0x2000) == 0) {
-          MEMORY.ref(2, a1).offset(0x4L).setu((MEMORY.ref(2, a1).offset(0x4L).getSigned() * s1 + MEMORY.ref(2, a0).offset(0x0L).getSigned() * s0) / 0x2000);
+          transforms.scale_00.setZ((short)((transforms.scale_00.getZ() * s1 + MEMORY.ref(2, a0).offset(0x0L).getSigned() * s0) / 0x2000));
           a0 = a0 + 0x2L;
         }
 
         //LAB_80116ecc
         if((MEMORY.ref(2, a2).offset(0x0L).get() & 0x1000) == 0) {
-          MEMORY.ref(2, a1).offset(0x6L).setu((MEMORY.ref(2, a1).offset(0x6L).getSigned() * s1 + MEMORY.ref(2, a0).offset(0x0L).getSigned() * s0) / 0x2000);
+          transforms.trans_06.setX((short)((transforms.trans_06.getX() * s1 + MEMORY.ref(2, a0).offset(0x0L).getSigned() * s0) / 0x2000));
           a0 = a0 + 0x2L;
         }
 
         //LAB_80116f18
         if((MEMORY.ref(2, a2).offset(0x0L).get() & 0x800) == 0) {
-          MEMORY.ref(2, a1).offset(0x8L).setu((MEMORY.ref(2, a1).offset(0x8L).getSigned() * s1 + MEMORY.ref(2, a0).offset(0x0L).getSigned() * s0) / 0x2000);
+          transforms.trans_06.setY((short)((transforms.trans_06.getY() * s1 + MEMORY.ref(2, a0).offset(0x0L).getSigned() * s0) / 0x2000));
           a0 = a0 + 0x2L;
         }
 
         //LAB_80116f64
         if((MEMORY.ref(2, a2).offset(0x0L).get() & 0x400) == 0) {
-          MEMORY.ref(2, a1).offset(0xaL).setu((MEMORY.ref(2, a1).offset(0xaL).getSigned() * s1 + MEMORY.ref(2, a0).offset(0x0L).getSigned() * s0) / 0x2000);
+          transforms.trans_06.setZ((short)((transforms.trans_06.getZ() * s1 + MEMORY.ref(2, a0).offset(0x0L).getSigned() * s0) / 0x2000));
           a0 = a0 + 0x2L;
         }
 
@@ -9260,35 +9249,27 @@ public final class SEffe {
 
         //LAB_80116fe0
         a2 = a2 + 0x4L;
-        a1 = a1 + 0x14L;
       }
 
       //LAB_80116ff8
-      effect._04.set(t0);
+      effect._04 = t0;
     }
 
     //LAB_80116ffc
-    s0 = s7;
     s1 = fp;
 
     //LAB_80117014
-    for(s2 = 0; s2 < MEMORY.ref(4, s3).offset(0x4L).get(); s2++) {
-      if(effect._14.get((int)MEMORY.ref(1, s1).offset(0x3L).get()).get() != 0) {
-        manager._10.rot_10.setX((short)MEMORY.ref(2, s0).offset(0x0cL).get());
-        manager._10.rot_10.setY((short)MEMORY.ref(2, s0).offset(0x0eL).get());
-        manager._10.rot_10.setZ((short)MEMORY.ref(2, s0).offset(0x10L).get());
-        manager._10.trans_04.setX((int)MEMORY.ref(2, s0).offset(0x6L).getSigned());
-        manager._10.trans_04.setY((int)MEMORY.ref(2, s0).offset(0x8L).getSigned());
-        manager._10.trans_04.setZ((int)MEMORY.ref(2, s0).offset(0xaL).getSigned());
-        manager._10.scale_16.setX((short)MEMORY.ref(2, s0).offset(0x0L).get());
-        manager._10.scale_16.setY((short)MEMORY.ref(2, s0).offset(0x2L).get());
-        manager._10.scale_16.setZ((short)MEMORY.ref(2, s0).offset(0x4L).get());
+    for(int i = 0; i < MEMORY.ref(4, s3).offset(0x4L).get(); i++) {
+      final LmbTransforms14 transforms = s7[i];
+      if(effect._14[(int)MEMORY.ref(1, s1).offset(0x3L).get()] != 0) {
+        manager._10.rot_10.set(transforms.rot_0c);
+        manager._10.trans_04.set(transforms.trans_06);
+        manager._10.scale_16.set(transforms.scale_00);
 
-        FUN_8011619c(manager, effect, effect._14.get((int)MEMORY.ref(1, s1).offset(0x3L).get()).get(), matrix);
+        FUN_8011619c(manager, effect, effect._14[(int)MEMORY.ref(1, s1).offset(0x3L).get()], matrix);
       }
 
       //LAB_801170bc
-      s0 = s0 + 0x14L;
       s1 = s1 + 0x4L;
     }
 
@@ -9297,19 +9278,18 @@ public final class SEffe {
 
   @Method(0x80117104L)
   public static void processLmbType2(final EffectManagerData6c manager, final BttlScriptData6cSub5c effect, final int t5, final MATRIX matrix) {
-    final LmbType2 lmb = effect.lmb_0c.derefAs(LmbType2.class);
-    final UnboundedArrayRef<IntRef> t3 = lmb._0c.deref();
-    final UnboundedArrayRef<LmbTransforms14> originalTransforms = lmb._10.deref();
+    final LmbType2 lmb = (LmbType2)effect.lmb_0c;
+    final int[] t3 = lmb._0c;
+    final LmbTransforms14[] originalTransforms = lmb._10;
     final int s6 = t5 / 0x2000;
     final int s0 = t5 & 0x1fff;
     final int s2 = 0x2000 - s0;
-    final int size = lmb.count_04.get() * 0x14;
-    final UnboundedArrayRef<LmbTransforms14> transformsLo = effect.ptr_10.deref();
-    final UnboundedArrayRef<LmbTransforms14> transformsHi = transformsLo.slice(size);
-    final int v1 = effect._04.get();
-    final int fp = (s6 + 1) % lmb._0a.get();
-    if(v1 != t5) {
-      int s1 = v1 / 0x2000;
+    final int size = lmb.count_04 * 0x14;
+    final LmbTransforms14[] transformsLo = effect.ptr_10;
+    final LmbTransforms14[] transformsHi = Arrays.copyOfRange(transformsLo, size, transformsLo.length);
+    final int fp = (s6 + 1) % lmb._0a;
+    if(effect._04 != t5) {
+      int s1 = effect._04 / 0x2000;
 
       if(fp == 0 && s6 == 0) {
         return;
@@ -9318,16 +9298,21 @@ public final class SEffe {
       //LAB_801171c8
       if(s6 < s1) {
         s1 = 0;
-        memcpy(transformsLo.getAddress(), originalTransforms.getAddress(), size);
+
+        for(int i = 0; i < lmb.count_04; i++) {
+          transformsLo[i].scale_00.set(originalTransforms[i].scale_00);
+          transformsLo[i].trans_06.set(originalTransforms[i].trans_06);
+          transformsLo[i].rot_0c.set(originalTransforms[i].rot_0c);
+        }
       }
 
       //LAB_801171f8
       //LAB_8011720c
       for(; s1 < s6; s1++) {
-        long a0 = lmb.getAddress() + MEMORY.ref(4, lmb.getAddress()).offset(0x14L).get() + s1 * lmb._08.get(); //TODO
+        long a0 = lmb.getAddress() + MEMORY.ref(4, lmb.getAddress()).offset(0x14L).get() + s1 * lmb._08; //TODO
 
         //LAB_80117234
-        for(int i = 0; i < lmb._08.get() * 2; i += 2) {
+        for(int i = 0; i < lmb._08 * 2; i += 2) {
           final long v1_0 = _8011a048.offset(i).getAddress();
           MEMORY.ref(1, v1_0).offset(0x0L).setu(MEMORY.ref(1, a0).offset(0x0L).getSigned() >> 4);
           MEMORY.ref(1, v1_0).offset(0x1L).setu((int)MEMORY.ref(1, a0).offset(0x0L).getSigned() << 28 >> 28);
@@ -9338,10 +9323,10 @@ public final class SEffe {
         a0 = _8011a048.getAddress();
 
         //LAB_8011728c
-        for(int i = 0; i < lmb.count_04.get(); i++) {
-          final LmbTransforms14 transform = transformsLo.get(i);
+        for(int i = 0; i < lmb.count_04; i++) {
+          final LmbTransforms14 transform = transformsLo[i];
 
-          final int flags = t3.get(i).get();
+          final int flags = t3[i];
 
           if((flags & 0xe000) != 0xe000) {
             final int shift = (int)MEMORY.ref(1, a0).offset(0x0L).getSigned() & 0xf;
@@ -9419,12 +9404,12 @@ public final class SEffe {
       if(fp == 0) {
         //LAB_801176c0
         //LAB_801176e0
-        for(int i = 0; i < lmb.count_04.get(); i++) {
-          final LmbTransforms14 originalTransform = originalTransforms.get(i);
-          final LmbTransforms14 transformLo = transformsLo.get(i);
-          final LmbTransforms14 transformHi = transformsHi.get(i);
+        for(int i = 0; i < lmb.count_04; i++) {
+          final LmbTransforms14 originalTransform = originalTransforms[i];
+          final LmbTransforms14 transformLo = transformsLo[i];
+          final LmbTransforms14 transformHi = transformsHi[i];
 
-          final int flags = t3.get(i).get();
+          final int flags = t3[i];
 
           if((flags & 0x8000) == 0) {
             transformHi.scale_00.setX((short)((transformLo.scale_00.getX() * s2 + originalTransform.scale_00.getX() * s0) / 0x2000));
@@ -9456,10 +9441,10 @@ public final class SEffe {
           }
         }
       } else {
-        long a0_0 = lmb.getAddress() + MEMORY.ref(4, lmb.getAddress()).offset(0x14L).get() + (fp - 1) * lmb._08.get(); //TODO
+        long a0_0 = lmb.getAddress() + MEMORY.ref(4, lmb.getAddress()).offset(0x14L).get() + (fp - 1) * lmb._08; //TODO
 
         //LAB_80117470
-        for(int i = 0; i < lmb._08.get() * 2; i += 2) {
+        for(int i = 0; i < lmb._08 * 2; i += 2) {
           final long v1_1 = _8011a048.offset(i).getAddress();
           MEMORY.ref(1, v1_1).offset(0x0L).setu(MEMORY.ref(1, a0_0).offset(0x0L).getSigned() >> 4);
           MEMORY.ref(1, v1_1).offset(0x1L).setu((int)MEMORY.ref(1, a0_0).offset(0x0L).getSigned() << 28 >> 28);
@@ -9470,11 +9455,11 @@ public final class SEffe {
         a0_0 = _8011a048.getAddress();
 
         //LAB_801174d0
-        for(int i = 0; i < lmb.count_04.get(); i++) {
-          final LmbTransforms14 transformLo = transformsLo.get(i);
-          final LmbTransforms14 transformHi = transformsHi.get(i);
+        for(int i = 0; i < lmb.count_04; i++) {
+          final LmbTransforms14 transformLo = transformsLo[i];
+          final LmbTransforms14 transformHi = transformsHi[i];
 
-          final int flags = t3.get(i).get();
+          final int flags = t3[i];
 
           if((flags & 0xe000) != 0xe000) {
             final int shift = (int)MEMORY.ref(1, a0_0).offset(0x0L).getSigned() & 0xf;
@@ -9545,17 +9530,17 @@ public final class SEffe {
       }
 
       //LAB_801178a0
-      effect._04.set(t5);
+      effect._04 = t5;
     }
 
     //LAB_801178a4
     //LAB_801178c0
-    for(int i = 0; i < lmb.count_04.get(); i++) {
-      final LmbTransforms14 transformLo = transformsLo.get(i);
-      final LmbTransforms14 transformHi = transformsHi.get(i);
-      final int flags = t3.get(i).get();
+    for(int i = 0; i < lmb.count_04; i++) {
+      final LmbTransforms14 transformLo = transformsLo[i];
+      final LmbTransforms14 transformHi = transformsHi[i];
+      final int flags = t3[i];
 
-      if(effect._14.get(flags >>> 24).get() != 0) {
+      if(effect._14[flags >>> 24] != 0) {
         if(manager._10._2c != 0) {
           manager._10.rot_10.set(transformLo.rot_0c);
         } else {
@@ -9566,7 +9551,7 @@ public final class SEffe {
         //LAB_80117938
         manager._10.trans_04.set(transformHi.trans_06);
         manager._10.scale_16.set(transformHi.scale_00);
-        FUN_8011619c(manager, effect, effect._14.get(flags >>> 24).get(), matrix);
+        FUN_8011619c(manager, effect, effect._14[flags >>> 24], matrix);
       }
     }
 
@@ -9578,7 +9563,7 @@ public final class SEffe {
     final int flags = manager._10.flags_00;
     final BttlScriptData6cSub5c effect = (BttlScriptData6cSub5c)manager.effect_44;
     if(flags >= 0) {
-      int s1 = Math.max(0, manager._10._24) % (effect._08.get() * 2) << 12;
+      int s1 = Math.max(0, manager._10._24) % (effect._08 * 2) << 12;
       tmdGp0Tpage_1f8003ec.set(flags >>> 23 & 0x60);
       zOffset_1f8003e8.set(manager._10.z_22);
       if((manager._10.flags_00 & 0x40) == 0) {
@@ -9593,7 +9578,7 @@ public final class SEffe {
       final MATRIX sp0x80 = new MATRIX();
       FUN_800e8594(sp0x80, manager);
 
-      final int type = effect.lmbType_00.get() & 0x7;
+      final int type = effect.lmbType_00 & 0x7;
       if(type == 0) {
         //LAB_80117b50
         processLmbType0(manager, effect, s1, sp0x80);
@@ -9606,18 +9591,18 @@ public final class SEffe {
       }
 
       //LAB_80117b8c
-      final int s4 = effect._38.get();
+      final int s4 = effect._38;
 
       if(s4 >= 2) {
-        final int spe4 = effect._3c.get();
+        final int spe4 = effect._3c;
         int s5;
         int s6;
         int s7;
         final int spd0;
         final int spd4;
         final int spd8;
-        if((effect._34.get() & 0x4L) != 0) {
-          final int v0 = effect._40.get() - 0x1000;
+        if((effect._34 & 0x4) != 0) {
+          final int v0 = effect._40 - 0x1000;
           spd0 = sp0x10._10.colour_1c.getX() * v0 / s4;
           spd4 = sp0x10._10.colour_1c.getY() * v0 / s4;
           spd8 = sp0x10._10.colour_1c.getZ() * v0 / s4;
@@ -9637,8 +9622,8 @@ public final class SEffe {
         //LAB_80117c48
         int spdc = 0;
         int spe0 = 0;
-        if((effect._34.get() & 0x8L) != 0) {
-          final int t4 = sp0x10._10._28 * (effect._40.get() - 0x1000);
+        if((effect._34 & 0x8) != 0) {
+          final int t4 = sp0x10._10._28 * (effect._40 - 0x1000);
           spdc = sp0x10._10._28 << 12;
           spe0 = t4 / s4;
         }
@@ -9648,7 +9633,7 @@ public final class SEffe {
 
         //LAB_80117ca0
         for(int i = 1; i < s4 && s1 >= 0; i++) {
-          if((effect._34.get() & 0x4L) != 0) {
+          if((effect._34 & 0x4) != 0) {
             s5 = s5 + spd0;
             s6 = s6 + spd4;
             s7 = s7 + spd8;
@@ -9658,7 +9643,7 @@ public final class SEffe {
           }
 
           //LAB_80117d1c
-          if((effect._34.get() & 0x8L) != 0) {
+          if((effect._34 & 0x8) != 0) {
             spdc = spdc + spe0;
             manager._10._28 = spdc >> 12;
           }
@@ -9698,11 +9683,11 @@ public final class SEffe {
     final int param1 = script.params_20[1].get();
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       script.scriptState_04,
-      0x5c,
+      0,
       null,
       SEffe::FUN_801179f0,
       SEffe::FUN_80118148,
-      BttlScriptData6cSub5c::new
+      value -> new BttlScriptData6cSub5c()
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
@@ -9718,40 +9703,44 @@ public final class SEffe {
 
     //LAB_80117f68
     final BttlScriptData6cSub5c effect = (BttlScriptData6cSub5c)manager.effect_44;
-    effect.lmbType_00.set(lmbType.type_04.get());
-    effect._04.set(0);
-    effect.lmb_0c.set(lmbType.lmb_08.deref());
-    effect.ptr_10.clear();
-    effect._38.set(1);
-    effect._3c.set(0x1000);
-    effect.deffTmdFlags_48.set(-1);
-    effect.deffSpriteFlags_50.set(-1);
+    effect.lmbType_00 = lmbType.type_04;
+    effect._04 = 0;
+    effect.lmb_0c = lmbType.lmb_08;
+    effect.ptr_10 = null;
+    effect._38 = 1;
+    effect._3c = 0x1000;
+    effect.deffTmdFlags_48 = -1;
+    effect.deffSpriteFlags_50 = -1;
 
     //LAB_80117fc4
     for(int i = 0; i < 8; i++) {
-      effect._14.get(i).set(0);
+      effect._14[i] = 0;
     }
 
-    final int type = effect.lmbType_00.get() & 0x7;
+    final int type = effect.lmbType_00 & 0x7;
     if(type == 0) {
       //LAB_80118004
-      final LmbType0 lmb = effect.lmb_0c.derefAs(LmbType0.class);
-      effect._08.set(lmb._0c.get());
+      final LmbType0 lmb = (LmbType0)effect.lmb_0c;
+      effect._08 = lmb._08[0].count_04;
     } else if(type == 1) {
       //LAB_80118018
-      final LmbType1 lmb = effect.lmb_0c.derefAs(LmbType1.class);
-      effect._08.set(lmb._0a.get());
-      effect.ptr_10.setPointer(mallocHead(lmb.count_04.get() * 0x14));
-      memcpy(effect.ptr_10.getPointer(), lmb._10.deref().getAddress(), lmb.count_04.get() * 0x14);
+      final LmbType1 lmb = (LmbType1)effect.lmb_0c;
+      effect._08 = lmb._0a;
+      effect.ptr_10 = new LmbTransforms14[lmb.count_04];
+
+      for(int i = 0; i < lmb.count_04; i++) {
+        effect.ptr_10[i] = new LmbTransforms14().set(lmb._10[i]);
+      }
     } else if(type == 2) {
       //LAB_80118068
-      final LmbType2 lmb = effect.lmb_0c.derefAs(LmbType2.class);
-      effect._08.set(lmb._0a.get());
-      effect.ptr_10.setPointer(mallocHead(lmb.count_04.get() * 0x28));
-      final long src = lmb._10.deref().getAddress();
-      final int size = lmb.count_04.get() * 0x14;
-      memcpy(effect.ptr_10.getPointer(), src, size);
-      memcpy(effect.ptr_10.getPointer() + size, src, size);
+      final LmbType2 lmb = (LmbType2)effect.lmb_0c;
+      effect._08 = lmb._0a;
+      effect.ptr_10 = new LmbTransforms14[lmb.count_04 * 2];
+
+      for(int i = 0; i < lmb.count_04; i++) {
+        effect.ptr_10[i] = new LmbTransforms14().set(lmb._10[i]);
+        effect.ptr_10[i + lmb.count_04] = new LmbTransforms14().set(lmb._10[i]);
+      }
     }
 
     //LAB_801180e0
@@ -9768,10 +9757,7 @@ public final class SEffe {
   public static void FUN_80118148(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
     final BttlScriptData6cSub5c s0 = (BttlScriptData6cSub5c)manager.effect_44;
 
-    if(!s0.ptr_10.isNull()) {
-      free(s0.ptr_10.getPointer());
-      s0.ptr_10.clear();
-    }
+    s0.ptr_10 = null;
 
     //LAB_80118198
   }
@@ -9779,7 +9765,7 @@ public final class SEffe {
   @Method(0x801181a8L)
   public static FlowControl FUN_801181a8(final RunningScript<?> script) {
     final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    ((BttlScriptData6cSub5c)manager.effect_44)._14.get(script.params_20[1].get()).set(script.params_20[2].get());
+    ((BttlScriptData6cSub5c)manager.effect_44)._14[script.params_20[1].get()] = script.params_20[2].get();
     return FlowControl.CONTINUE;
   }
 
@@ -9788,10 +9774,10 @@ public final class SEffe {
     final BttlScriptData6cSub5c v0 = (BttlScriptData6cSub5c)((EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00).effect_44;
 
     final int v1 = script.params_20[3].get() + 1;
-    v0._34.set(script.params_20[1].get());
-    v0._38.set(script.params_20[2].get() * v1);
-    v0._3c.set(0x1000 / v1);
-    v0._40.set(script.params_20[4].get());
+    v0._34 = script.params_20[1].get();
+    v0._38 = script.params_20[2].get() * v1;
+    v0._3c = 0x1000 / v1;
+    v0._40 = script.params_20[4].get();
     return FlowControl.CONTINUE;
   }
 
@@ -9807,7 +9793,7 @@ public final class SEffe {
         tmdGp0Tpage_1f8003ec.set(data._10.flags_00 >>> 23 & 0x60);
       } else {
         //LAB_801182bc
-        tmdGp0Tpage_1f8003ec.set(s1._10.get());
+        tmdGp0Tpage_1f8003ec.set(s1._10);
       }
 
       //LAB_801182c8
@@ -9831,11 +9817,11 @@ public final class SEffe {
 
         final GsDOBJ2 dobj2 = new GsDOBJ2();
         dobj2.attribute_00 = data._10.flags_00;
-        dobj2.tmd_08 = s1.tmd_08.deref();
+        dobj2.tmd_08 = s1.tmd_08;
         Renderer.renderDobj2(dobj2, false);
       } else {
         //LAB_80118370
-        FUN_800de3f4(s1.tmd_08.deref(), data._10, sp0x10);
+        FUN_800de3f4(s1.tmd_08, data._10, sp0x10);
       }
 
       //LAB_80118380
@@ -9854,12 +9840,12 @@ public final class SEffe {
   public static FlowControl allocateGuardHealEffect(final RunningScript<? extends BattleScriptDataBase> script) {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       script.scriptState_04,
-      0x14,
+      0,
       null,
       // This renderer is for the circle under the player
       SEffe::renderGuardHealEffect,
       null,
-      GuardHealEffect14::new
+      value -> new GuardHealEffect14()
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
@@ -9868,19 +9854,19 @@ public final class SEffe {
     final GuardHealEffect14 effect = (GuardHealEffect14)manager.effect_44;
 
     final int s1 = script.params_20[1].get();
-    effect._00.set(s1 | 0x300_0000L);
+    effect._00 = s1 | 0x300_0000;
 
     if((s1 & 0xf_ff00) == 0xf_ff00) {
-      effect.tmdType_04.clear();
-      effect.tmd_08.set(deffManager_800c693c.tmds_2f8[s1 & 0xff]);
-      effect._10.set(0x20);
+      effect.tmdType_04 = null;
+      effect.tmd_08 = deffManager_800c693c.tmds_2f8[s1 & 0xff];
+      effect._10 = 0x20;
     } else {
       //LAB_8011847c
       final DeffPart.TmdType tmdType = (DeffPart.TmdType)getDeffPart(s1 | 0x300_0000);
-      final TmdWithId tmdWithId = tmdType.tmd_0c.deref().tmdPtr_00.deref();
-      effect.tmdType_04.set(tmdType);
-      effect.tmd_08.set(tmdWithId.tmd.objTable.get(0));
-      effect._10.set((int)((tmdWithId.id.get() & 0xffff_0000L) >>> 11));
+      final TmdWithId tmdWithId = tmdType.tmd_0c.tmdPtr_00;
+      effect.tmdType_04 = tmdType;
+      effect.tmd_08 = tmdWithId.tmd.objTable[0];
+      effect._10 = (int)((tmdWithId.id & 0xffff_0000L) >>> 11);
     }
 
     //LAB_801184ac
@@ -9900,31 +9886,31 @@ public final class SEffe {
       null,
       SEffe::renderGuardHealEffect,
       null,
-      GuardHealEffect14::new
+      value -> new GuardHealEffect14()
     );
 
     final EffectManagerData6c s4 = state.innerStruct_00;
     s4.flags_04 = 0x300_0000;
 
     final GuardHealEffect14 s0 = (GuardHealEffect14)s4.effect_44;
-    s0._10.set(0x20);
-    s0._00.set(0x300_0000L);
-    s0.tmdType_04.clear();
+    s0._10 = 0x20;
+    s0._00 = 0x300_0000;
+    s0.tmdType_04 = null;
 
     final int type = flags & 0xff00_0000;
     if(type == 0x100_0000) {
       //LAB_801185e4
       final DeffPart.AnimatedTmdType animatedTmdType = (DeffPart.AnimatedTmdType)getDeffPart(flags);
-      final Tmd tmd = animatedTmdType.tmd_0c.deref().tmdPtr_00.deref().tmd;
-      s0.tmd_08.set(tmd.objTable.get(0));
+      final Tmd tmd = animatedTmdType.tmd_0c.tmdPtr_00.tmd;
+      s0.tmd_08 = tmd.objTable[0];
     } else if(type == 0x200_0000) {
       //LAB_801185c0
       final DeffPart.AnimatedTmdType animatedTmdType = (DeffPart.AnimatedTmdType)getDeffPart(flags);
-      s0.tmd_08.set(optimisePacketsIfNecessary(animatedTmdType.tmd_0c.deref().tmdPtr_00.deref(), objIndex));
+      s0.tmd_08 = optimisePacketsIfNecessary(animatedTmdType.tmd_0c.tmdPtr_00, objIndex);
       //LAB_801185b0
     } else if(type == 0x700_0000) {
       //LAB_80118610
-      s0.tmd_08.set(_1f8003f4.stage_963c.dobj2s_00[objIndex].tmd_08);
+      s0.tmd_08 = _1f8003f4.stage_963c.dobj2s_00[objIndex].tmd_08;
     } else {
       //LAB_80118634
       final BattleScriptDataBase a0_0 = (BattleScriptDataBase)scriptStatePtrArr_800bc1c0[flags].innerStruct_00;
@@ -9933,12 +9919,12 @@ public final class SEffe {
         final int v1 = effects.flags_04 & 0xff00_0000;
         if(v1 == 0x100_0000 || v1 == 0x200_0000) {
           //LAB_8011867c
-          s0.tmd_08.set(((BttlScriptData6cSub13c)effects.effect_44).model_134.dobj2ArrPtr_00[objIndex].tmd_08);
+          s0.tmd_08 = ((BttlScriptData6cSub13c)effects.effect_44).model_134.dobj2ArrPtr_00[objIndex].tmd_08;
         }
       } else {
         //LAB_801186a4
         //LAB_801186b4
-        s0.tmd_08.set(((BattleObject27c)a0_0).model_148.dobj2ArrPtr_00[objIndex].tmd_08);
+        s0.tmd_08 = ((BattleObject27c)a0_0).model_148.dobj2ArrPtr_00[objIndex].tmd_08;
       }
     }
 
@@ -9960,10 +9946,10 @@ public final class SEffe {
     } else {
       //LAB_80118750
       final DeffPart.TmdType tmdType = (DeffPart.TmdType)getDeffPart(flags | 0x300_0000);
-      final TmdWithId tmdWithId = tmdType.tmd_0c.deref().tmdPtr_00.deref();
+      final TmdWithId tmdWithId = tmdType.tmd_0c.tmdPtr_00;
       MEMORY.ref(4, a0).offset(0x4L).setu(tmdType.getAddress());
-      MEMORY.ref(4, a0).offset(0x8L).setu(tmdWithId.tmd.objTable.get(0).getAddress());
-      MEMORY.ref(2, a0).offset(0x10L).setu((tmdWithId.id.get() & 0xffff_0000L) >>> 11);
+      MEMORY.ref(4, a0).offset(0x8L).setu(tmdWithId.tmd.objTable[0].getAddress());
+      MEMORY.ref(2, a0).offset(0x10L).setu((tmdWithId.id & 0xffff_0000L) >>> 11);
     }
 
     //LAB_80118780
@@ -10029,9 +10015,9 @@ public final class SEffe {
     final DeffPart part = getDeffPart(script.params_20[1].get() | 0x500_0000);
     final Anim anim;
     if(part instanceof DeffPart.CmbType) {
-      anim = ((DeffPart.CmbType)part).cmb_14.deref();
+      anim = ((DeffPart.CmbType)part).cmb_14;
     } else {
-      anim = ((DeffPart.AnimatedTmdType)part).anim_14.deref();
+      anim = ((DeffPart.AnimatedTmdType)part).anim_14;
     }
 
     effect.anim_0c = anim;

@@ -1,20 +1,22 @@
 package legend.game.combat.deff;
 
-import legend.core.memory.Value;
-import legend.core.memory.types.RelativePointer;
-import legend.core.memory.types.ShortRef;
-import legend.core.memory.types.UnboundedArrayRef;
+import legend.core.IoHelper;
 
 public class LmbType1 extends Lmb {
-  public final ShortRef _0a;
+  public final short _0a;
 
-  public final RelativePointer<UnboundedArrayRef<LmbTransforms14>> _10;
+  public final LmbTransforms14[] _10;
 
-  public LmbType1(final Value ref) {
-    super(ref);
+  public LmbType1(final byte[] data, final int offset) {
+    super(data, offset);
 
-    this._0a = ref.offset(2, 0x0aL).cast(ShortRef::new);
+    this._0a = IoHelper.readShort(data, offset + 0x6);
 
-    this._10 = ref.offset(4, 0x10L).cast(RelativePointer.deferred(4, ref.getAddress(), UnboundedArrayRef.of(0x14, LmbTransforms14::new, this.count_04::get)));
+    this._10 = new LmbTransforms14[this.count_04];
+
+    final int transformsOffset = IoHelper.readInt(data, offset + 0x10);
+    for(int i = 0; i < this.count_04; i++) {
+      this._10[i] = new LmbTransforms14(data, offset + transformsOffset + i * 0x14);
+    }
   }
 }

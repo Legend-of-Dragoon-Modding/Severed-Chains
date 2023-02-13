@@ -1,22 +1,11 @@
 package legend.game.combat.deff;
 
-import legend.core.memory.Value;
-import legend.core.memory.types.IntRef;
-import legend.core.memory.types.MemoryRef;
+import legend.core.IoHelper;
 
-public abstract class Anim implements MemoryRef {
-  protected final Value ref;
+public abstract class Anim {
+  public int magic_00;
 
-  public final IntRef magic_00;
-
-  public Anim(final Value ref) {
-    this.ref = ref;
-
-    this.magic_00 = ref.offset(4, 0x00L).cast(IntRef::new);
-  }
-
-  @Override
-  public long getAddress() {
-    return this.ref.getAddress();
+  public Anim(final byte[] data, final int offset) {
+    this.magic_00 = IoHelper.readInt(data, offset);
   }
 }

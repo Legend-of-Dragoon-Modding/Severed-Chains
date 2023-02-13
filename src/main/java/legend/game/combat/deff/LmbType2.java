@@ -1,23 +1,28 @@
 package legend.game.combat.deff;
 
-import legend.core.memory.Value;
-import legend.core.memory.types.IntRef;
-import legend.core.memory.types.RelativePointer;
-import legend.core.memory.types.ShortRef;
-import legend.core.memory.types.UnboundedArrayRef;
+import legend.core.IoHelper;
 
 public class LmbType2 extends Lmb {
-  public final ShortRef _08;
-  public final ShortRef _0a;
-  public final RelativePointer<UnboundedArrayRef<IntRef>> _0c;
-  public final RelativePointer<UnboundedArrayRef<LmbTransforms14>> _10;
+  public final short _08;
+  public final short _0a;
+  public final int[] _0c;
+  public final LmbTransforms14[] _10;
 
-  public LmbType2(final Value ref) {
-    super(ref);
+  public LmbType2(final byte[] data, final int offset) {
+    super(data, offset);
 
-    this._08 = ref.offset(2, 0x08L).cast(ShortRef::new);
-    this._0a = ref.offset(2, 0x0aL).cast(ShortRef::new);
-    this._0c = ref.offset(4, 0x0cL).cast(RelativePointer.deferred(4, ref.getAddress(), UnboundedArrayRef.of(0x4, IntRef::new)));
-    this._10 = ref.offset(4, 0x10L).cast(RelativePointer.deferred(4, ref.getAddress(), UnboundedArrayRef.of(0x14, LmbTransforms14::new, this.count_04::get)));
+    this._08 = IoHelper.readShort(data, offset + 0x8);
+    this._0a = IoHelper.readShort(data, offset + 0xa);
+
+    final int offset0c = IoHelper.readInt(data, offset + 0x0c);
+    final int offset10 = IoHelper.readInt(data, offset + 0x10);
+
+    this._0c = new int[this.count_04];
+    this._10 = new LmbTransforms14[this.count_04];
+
+    for(int i = 0; i < this.count_04; i++) {
+      this._0c[i] = IoHelper.readInt(data, offset + offset0c + i * 0x4);
+      this._10[i] = new LmbTransforms14(data, offset + offset10 + i * 0x14);
+    }
   }
 }

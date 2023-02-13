@@ -1,21 +1,23 @@
 package legend.game.types;
 
-import legend.core.memory.Value;
-import legend.core.memory.types.ShortRef;
-import legend.core.memory.types.UnboundedArrayRef;
-import legend.core.memory.types.UnsignedShortRef;
+import legend.core.IoHelper;
 import legend.game.combat.deff.Anim;
 
 public class TmdAnimationFile extends Anim {
-  public final UnsignedShortRef count_0c;
-  public final ShortRef _0e;
-  public final UnboundedArrayRef<ModelPartTransforms> partTransforms_10;
+  /** ushort */
+  public final int modelPartCount_0c;
+  public final short _0e;
+  public final ModelPartTransforms0c[] partTransforms_10;
 
-  public TmdAnimationFile(final Value ref) {
-    super(ref);
+  public TmdAnimationFile(final byte[] data, final int offset) {
+    super(data, offset);
 
-    this.count_0c = ref.offset(2, 0x0cL).cast(UnsignedShortRef::new);
-    this._0e = ref.offset(2, 0x0eL).cast(ShortRef::new);
-    this.partTransforms_10 = ref.offset(2, 0x10L).cast(UnboundedArrayRef.of(0xc, ModelPartTransforms::new));
+    this.modelPartCount_0c = IoHelper.readUShort(data, offset + 0xc);
+    this._0e = IoHelper.readShort(data, offset + 0xe);
+    this.partTransforms_10 = new ModelPartTransforms0c[this.modelPartCount_0c];
+
+    for(int i = 0; i < this.modelPartCount_0c; i++) {
+      this.partTransforms_10[i] = new ModelPartTransforms0c(data, offset + 0x10 + i * 0xc);
+    }
   }
 }
