@@ -3,6 +3,7 @@ package legend.game.combat.deff;
 import legend.core.IoHelper;
 
 public class LmbType1 extends Lmb {
+  public final short _08;
   public final short _0a;
 
   public final LmbTransforms14[] _10;
@@ -10,7 +11,8 @@ public class LmbType1 extends Lmb {
   public LmbType1(final byte[] data, final int offset) {
     super(data, offset);
 
-    this._0a = IoHelper.readShort(data, offset + 0x6);
+    this._08 = IoHelper.readShort(data, offset + 0x8);
+    this._0a = IoHelper.readShort(data, offset + 0xa);
 
     this._10 = new LmbTransforms14[this.count_04];
 

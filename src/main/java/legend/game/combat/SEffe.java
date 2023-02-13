@@ -187,7 +187,7 @@ import static legend.game.combat.Bttl_800d.FUN_800dc408;
 import static legend.game.combat.Bttl_800d.FUN_800de3f4;
 import static legend.game.combat.Bttl_800d.FUN_800de544;
 import static legend.game.combat.Bttl_800d.FUN_800de618;
-import static legend.game.combat.Bttl_800d.ScaleVectorL_SVEC;
+import static legend.game.combat.Bttl_800d.ScaleMatrixL_SVEC;
 import static legend.game.combat.Bttl_800d.loadModelAnim;
 import static legend.game.combat.Bttl_800d.optimisePacketsIfNecessary;
 import static legend.game.combat.Bttl_800e.FUN_800e60e0;
@@ -8942,7 +8942,7 @@ public final class SEffe {
     final MATRIX sp0x10 = new MATRIX();
     RotMatrix_80040010(manager._10.rot_10, sp0x10);
     TransMatrix(sp0x10, manager._10.trans_04);
-    ScaleVectorL_SVEC(sp0x10, manager._10.scale_16);
+    ScaleMatrixL_SVEC(sp0x10, manager._10.scale_16);
     MulMatrix0(matrix, sp0x10, sp0x10);
     final int s0 = manager._10._28;
     final VECTOR sp0x30 = new VECTOR().set(s0, s0, s0);
@@ -9098,14 +9098,13 @@ public final class SEffe {
 
   @Method(0x80116b7cL)
   public static void processLmbType1(final EffectManagerData6c manager, final BttlScriptData6cSub5c effect, final int t0, final MATRIX matrix) {
-    final long s3 = effect.lmb_0c.getPointer(); //TODO
-    final long fp = s3 + MEMORY.ref(4, s3).offset(0xcL).get();
-    long a0 = t0 / 0x2000;
-    final long a1 = s3 + MEMORY.ref(4, s3).offset(0x10L).get();
-    long s0 = t0 & 0x1fffL;
-    long s5 = (a0 + 1) % MEMORY.ref(2, s3).offset(0xaL).getSigned();
+    final LmbType1 lmb = (LmbType1)effect.lmb_0c;
+    final long fp = lmb.getAddress() + MEMORY.ref(4, lmb.getAddress()).offset(0xcL).get(); //TODO
+    int a0 = t0 / 0x2000;
+    int s0 = t0 & 0x1fff;
+    int s5 = (a0 + 1) % lmb._0a;
     final LmbTransforms14[] s7 = effect.ptr_10;
-    long s1;
+    int s1;
     if(effect._04 != t0) {
       s1 = 0x2000 - s0;
 
@@ -9122,67 +9121,68 @@ public final class SEffe {
 
       //LAB_80116c20
       if(a0 == 0) {
-        memcpy(s7, a1, (int)(MEMORY.ref(4, s3).offset(0x4L).get() * 0x14));
+        memcpy(s7.getAddress(), lmb._10.getAddress(), lmb.count_04 * 0x14);
       } else {
         //LAB_80116c50
-        final long t1 = (a0 - 1) * MEMORY.ref(2, s3).offset(0x8L).getSigned();
-        a0 = s3 + MEMORY.ref(4, s3).offset(0x14L).get() + t1;
+        final long t1 = (a0 - 1) * lmb._08;
+        long a0_0 = lmb.getAddress() + MEMORY.ref(4, lmb.getAddress()).offset(0x14L).get() + t1; //TODO
         long v1 = fp;
 
         //LAB_80116c80
-        for(int i = 0; i < MEMORY.ref(4, s3).offset(0x4L).get(); i++) {
+        for(int i = 0; i < lmb.count_04; i++) {
           final LmbTransforms14 transforms = s7[i];
+
           if((MEMORY.ref(2, v1).offset(0x0L).get() & 0x8000) == 0) {
-            transforms.scale_00.setX((short)MEMORY.ref(2, a0).offset(0x0L).get());
-            a0 = a0 + 0x2L;
+            transforms.scale_00.setX((short)MEMORY.ref(2, a0_0).offset(0x0L).get());
+            a0_0 = a0_0 + 0x2L;
           }
 
           //LAB_80116ca0
           if((MEMORY.ref(2, v1).offset(0x0L).get() & 0x4000) == 0) {
-            transforms.scale_00.setY((short)MEMORY.ref(2, a0).offset(0x0L).get());
-            a0 = a0 + 0x2L;
+            transforms.scale_00.setY((short)MEMORY.ref(2, a0_0).offset(0x0L).get());
+            a0_0 = a0_0 + 0x2L;
           }
 
           //LAB_80116cc0
           if((MEMORY.ref(2, v1).offset(0x0L).get() & 0x2000) == 0) {
-            transforms.scale_00.setZ((short)MEMORY.ref(2, a0).offset(0x0L).get());
-            a0 = a0 + 0x2L;
+            transforms.scale_00.setZ((short)MEMORY.ref(2, a0_0).offset(0x0L).get());
+            a0_0 = a0_0 + 0x2L;
           }
 
           //LAB_80116ce0
           if((MEMORY.ref(2, v1).offset(0x0L).get() & 0x1000) == 0) {
-            transforms.trans_06.setX((short)MEMORY.ref(2, a0).offset(0x0L).get());
-            a0 = a0 + 0x2L;
+            transforms.trans_06.setX((short)MEMORY.ref(2, a0_0).offset(0x0L).get());
+            a0_0 = a0_0 + 0x2L;
           }
 
           //LAB_80116d00
           if((MEMORY.ref(2, v1).offset(0x0L).get() & 0x800) == 0) {
-            transforms.trans_06.setY((short)MEMORY.ref(2, a0).offset(0x0L).get());
-            a0 = a0 + 0x2L;
+            transforms.trans_06.setY((short)MEMORY.ref(2, a0_0).offset(0x0L).get());
+            a0_0 = a0_0 + 0x2L;
           }
 
           //LAB_80116d20
           if((MEMORY.ref(2, v1).offset(0x0L).get() & 0x400) == 0) {
-            transforms.trans_06.setZ((short)MEMORY.ref(2, a0).offset(0x0L).get());
-            a0 = a0 + 0x2L;
+            transforms.trans_06.setZ((short)MEMORY.ref(2, a0_0).offset(0x0L).get());
+            a0_0 = a0_0 + 0x2L;
           }
 
           //LAB_80116d40
           if((MEMORY.ref(2, v1).offset(0x0L).get() & 0x200) == 0) {
-            transforms.rot_0c.setX((short)MEMORY.ref(2, a0).offset(0x0L).get());
-            a0 = a0 + 0x2L;
+            transforms.rot_0c.setX((short)MEMORY.ref(2, a0_0).offset(0x0L).get());
+            a0_0 = a0_0 + 0x2L;
           }
 
           //LAB_80116d60
           if((MEMORY.ref(2, v1).offset(0x0L).get() & 0x100) == 0) {
-            transforms.rot_0c.setY((short)MEMORY.ref(2, a0).offset(0x0L).get());
-            a0 = a0 + 0x2L;
+            transforms.rot_0c.setY((short)MEMORY.ref(2, a0_0).offset(0x0L).get());
+            a0_0 = a0_0 + 0x2L;
           }
 
           //LAB_80116d80
           if((MEMORY.ref(2, v1).offset(0x0L).get() & 0x80) == 0) {
-            transforms.rot_0c.setZ((short)MEMORY.ref(2, a0).offset(0x0L).get());
-            a0 = a0 + 0x2L;
+            transforms.rot_0c.setZ((short)MEMORY.ref(2, a0_0).offset(0x0L).get());
+            a0_0 = a0_0 + 0x2L;
           }
 
           //LAB_80116da0
@@ -9191,60 +9191,61 @@ public final class SEffe {
       }
 
       //LAB_80116db8
-      a0 = s3 + MEMORY.ref(4, s3).offset(0x14L).get() + (s5 - 1) * MEMORY.ref(2, s3).offset(0x8L).getSigned();
+      long a0_0 = lmb.getAddress() + MEMORY.ref(4, lmb.getAddress()).offset(0x14L).get() + (s5 - 1) * lmb._08; //TODO
       long a2 = fp;
 
       //LAB_80116de8
-      for(int i = 0; i < MEMORY.ref(4, s3).offset(0x4L).get(); i++) {
+      for(int i = 0; i < lmb.count_04; i++) {
         final LmbTransforms14 transforms = s7[i];
+
         if((MEMORY.ref(2, a2).offset(0x0L).get() & 0x8000) == 0) {
-          transforms.scale_00.setX((short)((transforms.scale_00.getX() * s1 + MEMORY.ref(2, a0).offset(0x0L).getSigned() * s0) / 0x2000));
-          a0 = a0 + 0x2L;
+          transforms.scale_00.setX((short)((transforms.scale_00.getX() * s1 + MEMORY.ref(2, a0_0).offset(0x0L).getSigned() * s0) / 0x2000));
+          a0_0 = a0_0 + 0x2L;
         }
 
         //LAB_80116e34
         if((MEMORY.ref(2, a2).offset(0x0L).get() & 0x4000) == 0) {
-          transforms.scale_00.setY((short)((transforms.scale_00.getY() * s1 + MEMORY.ref(2, a0).offset(0x0L).getSigned() * s0) / 0x2000));
-          a0 = a0 + 0x2L;
+          transforms.scale_00.setY((short)((transforms.scale_00.getY() * s1 + MEMORY.ref(2, a0_0).offset(0x0L).getSigned() * s0) / 0x2000));
+          a0_0 = a0_0 + 0x2L;
         }
 
         //LAB_80116e80
         if((MEMORY.ref(2, a2).offset(0x0L).get() & 0x2000) == 0) {
-          transforms.scale_00.setZ((short)((transforms.scale_00.getZ() * s1 + MEMORY.ref(2, a0).offset(0x0L).getSigned() * s0) / 0x2000));
-          a0 = a0 + 0x2L;
+          transforms.scale_00.setZ((short)((transforms.scale_00.getZ() * s1 + MEMORY.ref(2, a0_0).offset(0x0L).getSigned() * s0) / 0x2000));
+          a0_0 = a0_0 + 0x2L;
         }
 
         //LAB_80116ecc
         if((MEMORY.ref(2, a2).offset(0x0L).get() & 0x1000) == 0) {
-          transforms.trans_06.setX((short)((transforms.trans_06.getX() * s1 + MEMORY.ref(2, a0).offset(0x0L).getSigned() * s0) / 0x2000));
-          a0 = a0 + 0x2L;
+          transforms.trans_06.setX((short)((transforms.trans_06.getX() * s1 + MEMORY.ref(2, a0_0).offset(0x0L).getSigned() * s0) / 0x2000));
+          a0_0 = a0_0 + 0x2L;
         }
 
         //LAB_80116f18
         if((MEMORY.ref(2, a2).offset(0x0L).get() & 0x800) == 0) {
-          transforms.trans_06.setY((short)((transforms.trans_06.getY() * s1 + MEMORY.ref(2, a0).offset(0x0L).getSigned() * s0) / 0x2000));
-          a0 = a0 + 0x2L;
+          transforms.trans_06.setY((short)((transforms.trans_06.getY() * s1 + MEMORY.ref(2, a0_0).offset(0x0L).getSigned() * s0) / 0x2000));
+          a0_0 = a0_0 + 0x2L;
         }
 
         //LAB_80116f64
         if((MEMORY.ref(2, a2).offset(0x0L).get() & 0x400) == 0) {
-          transforms.trans_06.setZ((short)((transforms.trans_06.getZ() * s1 + MEMORY.ref(2, a0).offset(0x0L).getSigned() * s0) / 0x2000));
-          a0 = a0 + 0x2L;
+          transforms.trans_06.setZ((short)((transforms.trans_06.getZ() * s1 + MEMORY.ref(2, a0_0).offset(0x0L).getSigned() * s0) / 0x2000));
+          a0_0 = a0_0 + 0x2L;
         }
 
         //LAB_80116fb0
-        if((MEMORY.ref(2, a2).offset(0x0L).get() & 0x200L) == 0) {
-          a0 = a0 + 0x2L;
+        if((MEMORY.ref(2, a2).offset(0x0L).get() & 0x200) == 0) {
+          a0_0 = a0_0 + 0x2L;
         }
 
         //LAB_80116fc8
-        if((MEMORY.ref(2, a2).offset(0x0L).get() & 0x100L) == 0) {
-          a0 = a0 + 0x2L;
+        if((MEMORY.ref(2, a2).offset(0x0L).get() & 0x100) == 0) {
+          a0_0 = a0_0 + 0x2L;
         }
 
         //LAB_80116fd4
-        if((MEMORY.ref(2, a2).offset(0x0L).get() & 0x80L) == 0) {
-          a0 = a0 + 0x2L;
+        if((MEMORY.ref(2, a2).offset(0x0L).get() & 0x80) == 0) {
+          a0_0 = a0_0 + 0x2L;
         }
 
         //LAB_80116fe0
@@ -9256,21 +9257,18 @@ public final class SEffe {
     }
 
     //LAB_80116ffc
-    s1 = fp;
-
     //LAB_80117014
-    for(int i = 0; i < MEMORY.ref(4, s3).offset(0x4L).get(); i++) {
+    for(int i = 0; i < lmb.count_04; i++) {
       final LmbTransforms14 transforms = s7[i];
-      if(effect._14[(int)MEMORY.ref(1, s1).offset(0x3L).get()] != 0) {
+
+      final int deffFlags = effect._14[(int)MEMORY.ref(1, fp).offset(i * 0x4L).offset(0x3L).get()];
+      if(deffFlags != 0) {
         manager._10.rot_10.set(transforms.rot_0c);
         manager._10.trans_04.set(transforms.trans_06);
         manager._10.scale_16.set(transforms.scale_00);
 
-        FUN_8011619c(manager, effect, effect._14[(int)MEMORY.ref(1, s1).offset(0x3L).get()], matrix);
+        FUN_8011619c(manager, effect, deffFlags, matrix);
       }
-
-      //LAB_801170bc
-      s1 = s1 + 0x4L;
     }
 
     //LAB_801170d4
@@ -10232,7 +10230,7 @@ public final class SEffe {
             final MATRIX sp0x30 = new MATRIX().set(sp0x10);
             sp0x30.transfer.set(x >> 12, y >> 12, z >> 12);
 
-            ScaleVectorL_SVEC(sp0x30, sp0x50.scale_16);
+            ScaleMatrixL_SVEC(sp0x30, sp0x50.scale_16);
             if(s5 == 0x300_0000L) {
               //LAB_801193f0
               FUN_800de3f4(effect.tmd_24.deref(), sp0x50, sp0x30);

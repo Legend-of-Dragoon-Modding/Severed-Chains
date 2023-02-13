@@ -26,7 +26,6 @@ public final class Scus94491BpeSegment_8005 {
   public static final ArrayRef<ShortRef> submapMusic_80050068 = MEMORY.ref(2, 0x80050068L, ArrayRef.of(ShortRef.class, 64, 2, ShortRef::new));
   public static final ArrayRef<IntRef> monsterSoundFileIndices_800500e8 = MEMORY.ref(4, 0x800500e8L, ArrayRef.of(IntRef.class, 4, 4, IntRef::new));
   public static final ArrayRef<IntRef> characterSoundFileIndices_800500f8 = MEMORY.ref(4, 0x800500f8L, ArrayRef.of(IntRef.class, 3, 4, IntRef::new));
-  public static final ArrayRef<IntRef> partySoundEffectPermutationFileIndices_80050104 = MEMORY.ref(4, 0x80050104L, ArrayRef.of(IntRef.class, 26, 4, IntRef::new));
 
   public static final Value _80050190 = MEMORY.ref(4, 0x80050190L);
 
@@ -107,6 +106,8 @@ public final class Scus94491BpeSegment_8005 {
   public static final Value array_80054748 = MEMORY.ref(2, 0x80054748L);
 
   public static final Value GsOUT_PACKET_P = MEMORY.ref(4, 0x8005480cL);
+
+  public static final ArrayRef<ShortRef> _80054870 = MEMORY.ref(2, 0x80054870L, ArrayRef.of(ShortRef.class, 192, 2, ShortRef::new));
 
   public static final Value matrixStackIndex_80054a08 = MEMORY.ref(4, 0x80054a08L);
   public static final ArrayRef<MATRIX> matrixStack_80054a0c = MEMORY.ref(4, 0x80054a0cL, ArrayRef.of(MATRIX.class, 20, 32, MATRIX::new));
