@@ -1,12 +1,16 @@
 package legend.game.combat.deff;
 
 import legend.core.IoHelper;
+import legend.core.memory.types.ByteRef;
+import legend.core.memory.types.RelativePointer;
+import legend.core.memory.types.UnboundedArrayRef;
 
 public class LmbType2 extends Lmb {
   public final short _08;
   public final short _0a;
   public final int[] _0c;
   public final LmbTransforms14[] _10;
+  public final RelativePointer<UnboundedArrayRef<ByteRef>> _14;
 
   public LmbType2(final byte[] data, final int offset) {
     super(data, offset);
@@ -24,5 +28,7 @@ public class LmbType2 extends Lmb {
       this._0c[i] = IoHelper.readInt(data, offset + offset0c + i * 0x4);
       this._10[i] = new LmbTransforms14(data, offset + offset10 + i * 0x14);
     }
+
+    this._14 = ref.offset(4, 0x14L).cast(RelativePointer.deferred(1, ref.getAddress(), UnboundedArrayRef.of(0x01, ByteRef::new)));
   }
 }

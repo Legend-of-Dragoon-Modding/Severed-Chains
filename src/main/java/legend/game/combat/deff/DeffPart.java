@@ -53,9 +53,13 @@ public class DeffPart {
       final int textureOffset = IoHelper.readInt(data, offset + 0x8);
       final int tmdOffset = IoHelper.readInt(data, offset + 0xc);
 
-      this.textureInfo_08 = new TextureInfo[(tmdOffset - textureOffset) / 0x8];
-      for(int i = 0; i < this.textureInfo_08.length; i++) {
-        this.textureInfo_08[i] = new TextureInfo(data, offset + textureOffset + i * 0x8);
+      if(textureOffset != tmdOffset) {
+        this.textureInfo_08 = new TextureInfo[(tmdOffset - textureOffset) / 0x8];
+        for(int i = 0; i < this.textureInfo_08.length; i++) {
+          this.textureInfo_08[i] = new TextureInfo(data, offset + textureOffset + i * 0x8);
+        }
+      } else {
+        this.textureInfo_08 = null;
       }
 
       this.tmd_0c = new CContainer(data, offset + tmdOffset);

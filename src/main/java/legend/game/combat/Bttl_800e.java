@@ -2463,12 +2463,10 @@ public final class Bttl_800e {
   @Method(0x800ea620L)
   public static void FUN_800ea620(final List<byte[]> deff, final ScriptState<EffectManagerData6c> deffManagerState) {
     //LAB_800ea674
-    for(int i = 0; i < deff.size(); i++) {
-      final DeffPart deffPart = deff.getFile(i, DeffPart::new);
-
-      final int type = IoHelper.readInt(deff.get(i), 0) & 0xff00_0000; // Flags
+    for(final byte[] data : deff) {
+      final int type = IoHelper.readInt(data, 0) & 0xff00_0000; // Flags
       if(type == 0x100_0000) {
-        final DeffPart.TmdType tmdType = new DeffPart.TmdType(deff.get(i), 0);
+        final DeffPart.TmdType tmdType = new DeffPart.TmdType(data, 0);
         final CContainer extTmd = tmdType.tmd_0c;
         final TmdWithId tmd = extTmd.tmdPtr_00;
 
@@ -2476,20 +2474,18 @@ public final class Bttl_800e {
           optimisePacketsIfNecessary(tmd, objectIndex);
         }
       } else if(type == 0x300_0000) {
-        final DeffPart.TmdType tmdType = new DeffPart.TmdType(deff.get(i), 0);
+        final DeffPart.TmdType tmdType = new DeffPart.TmdType(data, 0);
         final CContainer extTmd = tmdType.tmd_0c;
 
         optimisePacketsIfNecessary(extTmd.tmdPtr_00, 0);
       }
 
       if(type == 0x100_0000 || type == 0x200_0000 || type == 0x300_0000) {
-        final DeffPart.TmdType tmdType = new DeffPart.TmdType(deff.get(i), 0);
+        final DeffPart.TmdType tmdType = new DeffPart.TmdType(data, 0);
         final CContainer extTmd = tmdType.tmd_0c;
 
-        final long a2_0 = MEMORY.ref(4, deffPart.getAddress()).offset(0x8L).get(); //TODO
-
-        if(a2_0 != tmdType.tmd_0c.getPointer() && deffManagerState.index != 0) {
-          FUN_800eb308(deffManagerState.innerStruct_00, extTmd, deffPart.getAddress() + a2_0);
+        if(tmdType.textureInfo_08 != null && deffManagerState.index != 0) {
+          FUN_800eb308(deffManagerState.innerStruct_00, extTmd, tmdType.textureInfo_08);
         }
       }
 
@@ -2785,7 +2781,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800eb308L)
-  public static void FUN_800eb308(final EffectManagerData6c a0, final CContainer cContainer, final long a2) {
+  public static void FUN_800eb308(final EffectManagerData6c a0, final CContainer cContainer, final DeffPart.TextureInfo[] textureInfo) {
     if(cContainer.ptr_08 != null) {
       final CContainerSubfile2 s2 = cContainer.ptr_08;
 
@@ -2797,8 +2793,8 @@ public final class Bttl_800e {
           final BttlScriptData6cSub1c sub = FUN_800e8dd4(a0, 0xaL, 0, MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800eaec8", EffectManagerData6c.class, BttlScriptData6cSub1c.class), BiFunctionRef::new), 0x1cL, BttlScriptData6cSub1c::new);
 
           if((s0.get(1).get() & 0x3c0) == 0) {
-            sub._0c.x.set((short)(MEMORY.ref(2, a2).offset(0x0L).get() & 0x3c0 | s0.get(1).get()));
-            sub._0c.y.set((short)(MEMORY.ref(2, a2).offset(0x2L).get() & 0x100 | s0.get(2).get()));
+            sub._0c.x.set((short)(textureInfo[0].vramPos_00.x.get() & 0x3c0 | s0.get(1).get()));
+            sub._0c.y.set((short)(textureInfo[0].vramPos_00.y.get() & 0x100 | s0.get(2).get()));
           } else {
             //LAB_800eb3cc
             sub._0c.x.set(s0.get(1).get());
