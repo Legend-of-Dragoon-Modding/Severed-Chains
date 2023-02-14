@@ -4419,13 +4419,13 @@ public final class Bttl_800d {
     final int s2;
     if(a0.ub_a2 != 0) {
       s2 = a1 % ((short)a0.s_9a / 2);
-      a0.partTransforms_94 = a0.partTransforms_90.slice(a0.animCount_98 * s2 * 3);
+      a0.partTransforms_94 = a0.partTransforms_90.slice(a0.animCount_98 * s2);
       applyModelPartTransforms(a0);
       v0 = (short)a0.s_9a >> 1;
     } else {
       //LAB_800dd568
       s2 = a1 % a0.s_9a;
-      a0.partTransforms_94 = a0.partTransforms_90.slice(a0.animCount_98 * s2 / 2 * 3);
+      a0.partTransforms_94 = a0.partTransforms_90.slice(a0.animCount_98 * s2 / 2);
       applyModelPartTransforms(a0);
 
       if((s2 & 0x1) != 0 && s2 != a0.s_9a - 1 && a0.ub_a3 == 0) {
