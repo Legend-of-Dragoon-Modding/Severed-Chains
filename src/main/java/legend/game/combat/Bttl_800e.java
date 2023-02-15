@@ -1830,7 +1830,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e8cc8L)
-  public static BttlScriptData6cSub1c FUN_800e8cc8(@Nullable BttlScriptData6cSub1c a0, final byte a1) {
+  public static BttlScriptData6cSubBase2 FUN_800e8cc8(@Nullable BttlScriptData6cSubBase2 a0, final byte a1) {
     //LAB_800e8cd4
     while(a0 != null) {
       if(a0._05.get() == a1) {
@@ -1838,7 +1838,7 @@ public final class Bttl_800e {
         return a0;
       }
 
-      a0 = a0._00.derefNullableAs(BttlScriptData6cSub1c.class);
+      a0 = a0._00.derefNullable();
     }
 
     //LAB_800e8cf4
@@ -2722,7 +2722,7 @@ public final class Bttl_800e {
       }
 
       //LAB_800eaff4
-      a0_0 = FUN_800e8cc8(a0_0._00.derefNullableAs(BttlScriptData6cSub1c.class), (byte)10);
+      a0_0 = (BttlScriptData6cSub1c)FUN_800e8cc8(a0_0._00.derefNullable(), (byte)10);
     }
 
     //LAB_800eb00c
