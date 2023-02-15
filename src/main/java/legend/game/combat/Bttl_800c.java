@@ -1297,7 +1297,7 @@ public final class Bttl_800c {
       stageHasModel_800c66b8.set(true);
 
       final BattleStage stage = _1f8003f4.stage_963c;
-      loadStageTmd(stage, new CContainer(files.get(0), 0), new TmdAnimationFile(files.get(1), 0));
+      loadStageTmd(stage, new CContainer(files.get(0), 0, 10), new TmdAnimationFile(files.get(1), 0));
       stage.coord2_558.coord.transfer.set(0, 0, 0);
       stage.param_5a8.rotate.set((short)0, (short)0x400, (short)0);
     }

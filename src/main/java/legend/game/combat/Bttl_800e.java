@@ -23,8 +23,6 @@ import legend.core.memory.Value;
 import legend.core.memory.types.BiFunctionRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
-import legend.core.memory.types.ShortRef;
-import legend.core.memory.types.UnboundedArrayRef;
 import legend.game.combat.deff.Anim;
 import legend.game.combat.deff.DeffManager7cc;
 import legend.game.combat.deff.DeffPart;
@@ -68,9 +66,9 @@ import legend.game.scripting.ScriptState;
 import legend.game.tim.Tim;
 import legend.game.tmd.Renderer;
 import legend.game.types.ActiveStatsa0;
+import legend.game.types.CContainer;
 import legend.game.types.CContainerSubfile2;
 import legend.game.types.CharacterData2c;
-import legend.game.types.CContainer;
 import legend.game.types.LodString;
 import legend.game.types.Model124;
 import legend.game.types.ModelPartTransforms0c;
@@ -2787,38 +2785,38 @@ public final class Bttl_800e {
 
       //LAB_800eb348
       for(int s1 = 0; s1 < 7; s1++) {
-        final UnboundedArrayRef<ShortRef> s0 = s2._00.get(s1).deref();
+        final short[] s0 = s2._00[s1];
 
-        if((s0.get(0).get() & 0x4000) != 0) {
+        if((s0[0] & 0x4000) != 0) {
           final BttlScriptData6cSub1c sub = FUN_800e8dd4(a0, 0xaL, 0, MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800eaec8", EffectManagerData6c.class, BttlScriptData6cSub1c.class), BiFunctionRef::new), 0x1cL, BttlScriptData6cSub1c::new);
 
-          if((s0.get(1).get() & 0x3c0) == 0) {
-            sub._0c.x.set((short)(textureInfo[0].vramPos_00.x.get() & 0x3c0 | s0.get(1).get()));
-            sub._0c.y.set((short)(textureInfo[0].vramPos_00.y.get() & 0x100 | s0.get(2).get()));
+          if((s0[1] & 0x3c0) == 0) {
+            sub._0c.x.set((short)(textureInfo[0].vramPos_00.x.get() & 0x3c0 | s0[1]));
+            sub._0c.y.set((short)(textureInfo[0].vramPos_00.y.get() & 0x100 | s0[2]));
           } else {
             //LAB_800eb3cc
-            sub._0c.x.set(s0.get(1).get());
-            sub._0c.y.set(s0.get(2).get());
+            sub._0c.x.set(s0[1]);
+            sub._0c.y.set(s0[2]);
           }
 
           //LAB_800eb3dc
           //LAB_800eb3f8
-          sub._0c.w.set((short)(s0.get(3).get() / 4));
-          sub._0c.h.set(s0.get(4).get());
+          sub._0c.w.set((short)(s0[3] / 4));
+          sub._0c.h.set(s0[4]);
           sub._14.set(0);
 
           final int v0;
-          if(s0.get(6).get() >= 0x10) {
-            v0 = s0.get(6).get() * 0x10;
+          if(s0[6] >= 0x10) {
+            v0 = s0[6] * 0x10;
           } else {
             //LAB_800eb42c
-            v0 = 0x100 / s0.get(6).get();
+            v0 = 0x100 / s0[6];
           }
 
           //LAB_800eb434
           sub._18.set(v0);
 
-          if(s0.get(5).get() == 0) {
+          if(s0[5] == 0) {
             sub._18.neg();
           }
         }
@@ -2927,7 +2925,7 @@ public final class Bttl_800e {
 
       //LAB_800eba38
       for(int i = 0; i < 10; i++) {
-        stage._5f0[i] = stage._5ec._00.get(i).deref();
+        stage._5f0[i] = stage._5ec._00[i];
         FUN_800ec86c(stage, i);
       }
     } else {
@@ -3002,7 +3000,7 @@ public final class Bttl_800e {
 
   @Method(0x800ebd34L)
   public static void FUN_800ebd34(final BattleStage struct, final int index) {
-    final UnboundedArrayRef<ShortRef> v0 = struct._5f0[index];
+    final short[] v0 = struct._5f0[index];
 
     if(v0 == null) {
       struct._618[index] = 0;
@@ -3010,19 +3008,19 @@ public final class Bttl_800e {
     }
 
     //LAB_800ebd84
-    final int x = v0.get(0).get();
-    final int y = v0.get(1).get();
-    final int w = (short)(v0.get(2).get() / 4);
-    final int h = v0.get(3).get();
+    final int x = v0[0];
+    final int y = v0[1];
+    final int w = (short)(v0[2] / 4);
+    final int h = v0[3];
 
     //LAB_800ebdcc
     int a2 = 4;
 
     // There was a loop here, but each iteration overwrote the results from the previous iteration... I collapsed it into a single iteration
     a2 += (struct._65e[index] - 1) * 2;
-    final int t1 = (short)(v0.get(a2).get() & 1);
-    final int t0 = (short)(v0.get(a2).get() >>> 1);
-    int s0 = v0.get(a2 + 1).get();
+    final int t1 = (short)(v0[a2] & 1);
+    final int t0 = (short)(v0[a2] >>> 1);
+    int s0 = v0[a2 + 1];
     a2 += 2;
 
     //LAB_800ebdf0
@@ -3044,7 +3042,7 @@ public final class Bttl_800e {
     if(struct._64a[index] >= (short)t0) {
       struct._64a[index] = 0;
 
-      if(v0.get(a2).get() != -1) {
+      if(v0[a2] != -1) {
         struct._65e[index]++;
       } else {
         //LAB_800ebe88
@@ -3236,7 +3234,7 @@ public final class Bttl_800e {
 
   @Method(0x800ec86cL)
   public static void FUN_800ec86c(final BattleStage stage, final int index) {
-    final UnboundedArrayRef<ShortRef> a2 = stage._5f0[index];
+    final short[] a2 = stage._5f0[index];
 
     if(a2 == null) {
       stage._618[index] = 0;
@@ -3244,14 +3242,14 @@ public final class Bttl_800e {
     }
 
     //LAB_800ec890
-    if(a2.get(0).get() == -1) {
+    if(a2[0] == -1) {
       stage._5f0[index] = null;
       return;
     }
 
     //LAB_800ec8a8
     stage._618[index] = 1;
-    stage._622[index] = a2.get(5).get();
+    stage._622[index] = a2[5];
     stage._64a[index] = 0;
     stage._65e[index] = 1;
   }

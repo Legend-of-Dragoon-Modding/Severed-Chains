@@ -12,8 +12,12 @@ public class CContainer {
   public final CContainerSubfile2 ptr_08;
 
   public CContainer(final byte[] data, final int offset) {
+    this(data, offset, 7);
+  }
+
+  public CContainer(final byte[] data, final int offset, final int subfileSize) {
     this.tmdPtr_00 = new TmdWithId(data, offset + IoHelper.readInt(data, offset));
     this.ext_04 = new CContainerSubfile1(data, offset + IoHelper.readInt(data, offset + 0x4));
-    this.ptr_08 = new CContainerSubfile1(data, offset + IoHelper.readInt(data, offset + 0x8));
+    this.ptr_08 = new CContainerSubfile2(data, offset + IoHelper.readInt(data, offset + 0x8), subfileSize);
   }
 }

@@ -239,7 +239,7 @@ public final class Scus94491BpeSegment_800e {
 
       //LAB_800e6c00
       for(int i = 0; i < 7; i++) {
-        model.ptrs_d0[i] = model.ptr_a8._00.get(i).deref();
+        model.ptrs_d0[i] = model.ptr_a8._00[i];
         FUN_8002246c(model, i);
       }
     } else {

@@ -406,7 +406,7 @@ public final class Scus94491BpeSegment_8002 {
 
       //LAB_800207d4
       for(int i = 0; i < 7; i++) {
-        model.ptrs_d0[i] = model.ptr_a8._00.get(i).deref();
+        model.ptrs_d0[i] = model.ptr_a8._00[i];
         FUN_8002246c(model, i);
       }
     } else {
@@ -1192,11 +1192,11 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       int s1 = 0;
-      a0.usArr_ba[index] = a0.ptrs_d0[index].get(s1++).get() & 0x7fff;
-      final int destX = a0.ptrs_d0[index].get(s1++).get() + x;
-      final int destY = a0.ptrs_d0[index].get(s1++).get() + y;
-      rect.w.set((short)(a0.ptrs_d0[index].get(s1++).get() / 4));
-      rect.h.set(a0.ptrs_d0[index].get(s1++).get());
+      a0.usArr_ba[index] = a0.ptrs_d0[index][s1++] & 0x7fff;
+      final int destX = a0.ptrs_d0[index][s1++] + x;
+      final int destY = a0.ptrs_d0[index][s1++] + y;
+      rect.w.set((short)(a0.ptrs_d0[index][s1++] / 4));
+      rect.h.set(a0.ptrs_d0[index][s1++]);
 
       //LAB_80022154
       for(int i = 0; i < a0.usArr_ac[index]; i++) {
@@ -1204,14 +1204,14 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       //LAB_80022164
-      rect.x.set((short)(a0.ptrs_d0[index].get(s1++).get() + x));
-      rect.y.set((short)(a0.ptrs_d0[index].get(s1++).get() + y));
+      rect.x.set((short)(a0.ptrs_d0[index][s1++] + x));
+      rect.y.set((short)(a0.ptrs_d0[index][s1++] + y));
 
       GPU.queueCommand(1, new GpuCommandCopyVramToVram(rect.x.get(), rect.y.get(), destX & 0xffff, destY & 0xffff, rect.w.get(), rect.h.get()));
 
       a0.usArr_ac[index]++;
 
-      final int v1 = a0.ptrs_d0[index].get(s1).get();
+      final int v1 = a0.ptrs_d0[index][s1];
       if(v1 == -2) {
         a0.aub_ec[index] = 0;
         a0.usArr_ac[index] = 0;
@@ -1228,12 +1228,12 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80022208
     int s1 = 1;
     final int a1_0 = a0.usArr_ac[index];
-    final int a0_0 = a0.ptrs_d0[index].get(s1++).get();
-    final int s7 = a0.ptrs_d0[index].get(s1++).get() + y;
-    final int s5 = a0.ptrs_d0[index].get(s1++).get() >>> 2;
-    int s3 = a0.ptrs_d0[index].get(s1++).get();
-    final int v1 = a0.ptrs_d0[index].get(s1++).get();
-    int s0_0 = a0.ptrs_d0[index].get(s1).get();
+    final int a0_0 = a0.ptrs_d0[index][s1++];
+    final int s7 = a0.ptrs_d0[index][s1++] + y;
+    final int s5 = a0.ptrs_d0[index][s1++] >>> 2;
+    int s3 = a0.ptrs_d0[index][s1++];
+    final int v1 = a0.ptrs_d0[index][s1++];
+    int s0_0 = a0.ptrs_d0[index][s1];
     final int s6 = a0_0 + x;
 
     if((a1_0 & 0xf) != 0) {
@@ -1290,9 +1290,9 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_80022490
     a0.usArr_ac[a1] = 0;
-    a0.usArr_ba[a1] = a0.ptrs_d0[a1].get(0).get() & 0x3fff;
+    a0.usArr_ba[a1] = a0.ptrs_d0[a1][0] & 0x3fff;
 
-    if((a0.ptrs_d0[a1].get(0).get() & 0x8000) != 0) {
+    if((a0.ptrs_d0[a1][0] & 0x8000) != 0) {
       a0.aub_ec[a1] = 1;
     } else {
       //LAB_800224d0
@@ -1300,9 +1300,9 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_800224d8
-    if((a0.ptrs_d0[a1].get(0).get() & 0x4000) != 0) {
+    if((a0.ptrs_d0[a1][0] & 0x4000) != 0) {
       a0.usArr_ba[a1] = 0x5678;
-      a0.usArr_ac[a1] = a0.ptrs_d0[a1].get(6).get();
+      a0.usArr_ac[a1] = a0.ptrs_d0[a1][6];
       a0.aub_ec[a1] = 1;
     }
 

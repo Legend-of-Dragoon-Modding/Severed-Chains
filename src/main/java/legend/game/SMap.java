@@ -2361,7 +2361,7 @@ public final class SMap {
 
       //LAB_800e0eac
       for(int i = 0; i < 7; i++) {
-        model.ptrs_d0[i] = model.ptr_a8._00.get(i).deref();
+        model.ptrs_d0[i] = model.ptr_a8._00[i];
         FUN_8002246c(model, i);
       }
     } else {

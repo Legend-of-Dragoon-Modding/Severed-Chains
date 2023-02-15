@@ -6,8 +6,6 @@ import legend.core.gte.GsDOBJ2;
 import legend.core.gte.GsOBJTABLE2;
 import legend.core.gte.Tmd;
 import legend.core.gte.VECTOR;
-import legend.core.memory.types.ShortRef;
-import legend.core.memory.types.UnboundedArrayRef;
 import legend.game.combat.deff.Cmb;
 import legend.game.combat.deff.Lmb;
 
@@ -73,7 +71,7 @@ public class Model124 {
   /** byte */
   public int b_cd;
 
-  public final UnboundedArrayRef<ShortRef>[] ptrs_d0 = new UnboundedArrayRef[7];
+  public final short[][] ptrs_d0 = new short[7][];
   /** ubyte */
   public final int[] aub_ec = new int[7];
 

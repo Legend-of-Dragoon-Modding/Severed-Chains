@@ -1,27 +1,24 @@
 package legend.game.tmd;
 
+import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gte.DVECTOR;
 import legend.core.gte.GsDOBJ2;
 import legend.core.gte.SVECTOR;
 import legend.core.gte.TmdObjTable1c;
-import legend.core.memory.types.UnboundedArrayRef;
 import legend.game.types.Translucency;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GPU;
-import static legend.core.GameEngine.MEMORY;
-import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment.tmdGp0CommandId_1f8003ee;
+import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
 
-public class Renderer {
-  private static final Logger LOGGER = LogManager.getFormatterLogger(Renderer.class);
+public final class Renderer {
+  private Renderer() { }
 
   /**
    * @param useSpecialTranslucency Used in battle, some TMDs have translucency info in the upper 16 bits of their ID. Also enables backside culling.
@@ -30,26 +27,23 @@ public class Renderer {
     final TmdObjTable1c objTable = dobj2.tmd_08;
     final SVECTOR[] vertices = objTable.vert_top_00;
     final SVECTOR[] normals = objTable.normal_top_08;
-    long primitives = objTable.primitives_10.getPointer();
-    int count = objTable.n_primitive_14;
+    final int[] primitives = objTable.primitives_10;
+    final int count = objTable.n_primitive_14;
+    int primitivesOffset = 0;
 
     //LAB_800da2bc
-    while(count > 0) {
-      final int length = (int)MEMORY.ref(2, primitives).get();
-      count -= length;
-
-      if(count < 0) {
-        LOGGER.warn("DOBJ2 count less than 0! %d", count);
-      }
-
-      primitives = renderTmdPrimitive(primitives, vertices, normals, length, useSpecialTranslucency);
+    for(int i = 0; i < count; ) {
+      final int header = primitives[primitivesOffset];
+      final int length = header & 0xffff;
+      primitivesOffset = renderTmdPrimitive(primitives, primitivesOffset, vertices, normals, length, useSpecialTranslucency);
+      i += length;
     }
   }
 
-  public static long renderTmdPrimitive(final long primitives, final SVECTOR[] vertices, final SVECTOR[] normals, final int count, final boolean useSpecialTranslucency) {
+  public static int renderTmdPrimitive(final int[] primitives, int primitivesOffset, final SVECTOR[] vertices, final SVECTOR[] normals, final int count, final boolean useSpecialTranslucency) {
     // Read type info from command ---
-    final long command = MEMORY.ref(4, primitives).get(0xff04_0000L);
-    final int primitiveId = (int)(command >>> 24);
+    final int command = primitives[primitivesOffset] & 0xff04_0000;
+    final int primitiveId = command >>> 24;
 
     if((primitiveId >>> 5 & 0b11) != 1) {
       throw new RuntimeException("Unsupported primitive type");
@@ -76,36 +70,35 @@ public class Renderer {
     // ---
 
     final Polygon poly = new Polygon(vertexCount);
-    long readIndex = primitives;
 
     outer:
     for(int i = 0; i < count; i++) {
       // Read data from TMD ---
-      readIndex += 4;
+      primitivesOffset++;
 
       if(textured) {
         for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
-          poly.vertices[vertexIndex].u = MEMORY.get(readIndex++) & 0xff;
-          poly.vertices[vertexIndex].v = MEMORY.get(readIndex++) & 0xff;
+          poly.vertices[vertexIndex].u = primitives[primitivesOffset] & 0xff;
+          poly.vertices[vertexIndex].v = primitives[primitivesOffset] >>> 8 & 0xff;
 
           if(vertexIndex == 0) {
-            poly.clut = (int)MEMORY.get(readIndex, 2);
+            poly.clut = primitives[primitivesOffset] >>> 16;
           } else if(vertexIndex == 1) {
-            poly.tpage = (int)MEMORY.get(readIndex, 2);
+            poly.tpage = primitives[primitivesOffset] >>> 16;
           }
 
-          readIndex += 2;
+          primitivesOffset++;
         }
       }
 
       if(gradated || !lit) {
         for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
-          poly.vertices[vertexIndex].colour = (int)MEMORY.get(readIndex, 4);
-          readIndex += 4;
+          poly.vertices[vertexIndex].colour = primitives[primitivesOffset];
+          primitivesOffset++;
         }
       } else if(!textured) {
-        final int colour = (int)MEMORY.get(readIndex, 4);
-        readIndex += 4;
+        final int colour = primitives[primitivesOffset];
+        primitivesOffset++;
 
         for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
           poly.vertices[vertexIndex].colour = colour;
@@ -114,15 +107,16 @@ public class Renderer {
 
       for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
         if(lit) {
-          poly.vertices[vertexIndex].normalIndex = (int)MEMORY.get(readIndex, 2);
-          readIndex += 2;
+          poly.vertices[vertexIndex].normalIndex = primitives[primitivesOffset] & 0xffff;
+          poly.vertices[vertexIndex].vertexIndex = primitives[primitivesOffset] >>> 16;
+        } else {
+          poly.vertices[vertexIndex].vertexIndex = primitives[primitivesOffset] & 0xffff;
         }
 
-        poly.vertices[vertexIndex].vertexIndex = (int)MEMORY.get(readIndex, 2);
-        readIndex += 2;
+        primitivesOffset++;
       }
 
-      readIndex = readIndex + 3 & 0xffff_fffcL; // 4-byte-align
+      primitivesOffset = MathHelper.roundUp(primitivesOffset, 4); // 4-byte-align
       // ---
 
       final GpuCommandPoly cmd = new GpuCommandPoly(vertexCount);
@@ -199,6 +193,6 @@ public class Renderer {
       GPU.queueCommand(z, cmd);
     }
 
-    return readIndex;
+    return primitivesOffset;
   }
 }
