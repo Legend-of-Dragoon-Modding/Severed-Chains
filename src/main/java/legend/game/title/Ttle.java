@@ -20,7 +20,6 @@ import legend.core.memory.types.ByteRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.ShortRef;
-import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.core.opengl.Window;
@@ -41,7 +40,6 @@ import java.util.List;
 import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
-import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.SItem.levelStuff_80111cfc;
 import static legend.game.SItem.magicStuff_80111d20;
 import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
@@ -80,7 +78,6 @@ import static legend.game.Scus94491BpeSegment_8003.updateTmdPacketIlen;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndexOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8004.setMono;
-import static legend.game.Scus94491BpeSegment_8005._80052c44;
 import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
 import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
@@ -89,7 +86,6 @@ import static legend.game.Scus94491BpeSegment_800b._800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.afterFmvLoadingStage_800bf0ec;
 import static legend.game.Scus94491BpeSegment_800b.doubleBufferFrame_800bb108;
 import static legend.game.Scus94491BpeSegment_800b.drgn0_6666FilePtr_800bdc3c;
-import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.fmvIndex_800bf0dc;
 import static legend.game.Scus94491BpeSegment_800b.gameOverMcq_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -152,20 +148,6 @@ public final class Ttle {
   private static Window.Events.Cursor onMouseMove;
   private static Window.Events.Click onMouseRelease;
   private static Window.Events.Key onKeyPress;
-
-  public static void test() {
-    mainCallbackIndexOnceLoaded_8004dd24.set(2);
-    pregameLoadingStage_800bb10c.set(0);
-    whichMenu_800bdc38 = WhichMenu.NONE_0;
-    setWidthAndFlags(320);
-    vsyncMode_8007a3b8.set(2);
-    SCRIPTS.resume();
-
-    FUN_8002a9c0();
-    _80052c44.setu(5);
-
-    drgnBinIndex_800bc058.set(1);
-  }
 
   @Method(0x800c7194L)
   public static void setUpNewGameData() {
@@ -1503,44 +1485,43 @@ public final class Ttle {
   @Method(0x800cc388L)
   public static void FUN_800cc388(final GsDOBJ2 dobj2) {
     final SVECTOR[] vertices = dobj2.tmd_08.vert_top_00;
-    long primitives = dobj2.tmd_08.primitives_10.getPointer();
-    long primitiveCount = dobj2.tmd_08.n_primitive_14;
+    final int[] primitives = dobj2.tmd_08.primitives_10;
+    int primitivesOffset = 0;
 
     //LAB_800cc408
-    while(primitiveCount != 0) {
-      final long primitive = MEMORY.ref(4, primitives).get();
-      final long command = primitive & 0xff04_0000L;
-      final int len = (int)(primitive & 0xffff);
+    for(int i = 0; i < dobj2.tmd_08.n_primitive_14; ) {
+      final int primitive = primitives[primitivesOffset];
+      final int command = primitive & 0xff04_0000;
+      final int len = primitive & 0xffff;
 
       //LAB_800cc420
-      primitiveCount -= len;
-
-      if(command == 0x3700_0000L) {
+      if(command == 0x3700_0000) {
         //LAB_800cc4a0
-        primitives = FUN_800cc57c(primitives, vertices, len);
-      } else if(command == 0x3f00_0000L) {
+        primitivesOffset = FUN_800cc57c(primitives, primitivesOffset, vertices, len);
+      } else if(command == 0x3f00_0000) {
         //LAB_800cc4cc
-        primitives = FUN_800ccb78(primitives, vertices, len);
+        primitivesOffset = FUN_800ccb78(primitives, primitivesOffset, vertices, len);
       }
 
       //LAB_800cc558
       //LAB_800cc560
+      i += len;
     }
 
     //LAB_800cc568
   }
 
   @Method(0x800cc57cL)
-  public static long FUN_800cc57c(long primitives, final SVECTOR[] vertices, final int count) {
+  public static int FUN_800cc57c(final int[] primitives, int primitivesOffset, final SVECTOR[] vertices, final int count) {
     //LAB_800cc5b0
     for(int i = 0; i < count; i++) {
       final GpuCommandPoly cmd = new GpuCommandPoly(3)
-        .translucent(Translucency.of(((int)MEMORY.ref(2, primitives).offset(0x0aL).get() & 0b1100000) >>> 5));
+        .translucent(Translucency.of(primitives[primitivesOffset + 2] >>> 21 & 0x3));
 
       //LAB_800cc5c8
-      final SVECTOR vert0 = vertices[(int)MEMORY.ref(2, primitives).offset(0x1cL).get()];
-      final SVECTOR vert1 = vertices[(int)MEMORY.ref(2, primitives).offset(0x1eL).get()];
-      final SVECTOR vert2 = vertices[(int)MEMORY.ref(2, primitives).offset(0x20L).get()];
+      final SVECTOR vert0 = vertices[primitives[primitivesOffset + 7] & 0xffff];
+      final SVECTOR vert1 = vertices[primitives[primitivesOffset + 7] >>> 16 & 0xffff];
+      final SVECTOR vert2 = vertices[primitives[primitivesOffset + 8] & 0xffff];
       CPU.MTC2(vert0.getXY(), 0); // VXY0
       CPU.MTC2(vert0.getZ(),  1); // VZ0
       CPU.MTC2(vert1.getXY(), 2); // VXY1
@@ -1549,12 +1530,12 @@ public final class Ttle {
       CPU.MTC2(vert2.getZ(),  5); // VZ2
       CPU.COP2(0x280030L); // Perspective transformation triple
 
-      cmd.uv(0, (int)MEMORY.ref(1, primitives).offset(0x04L).get(), (int)MEMORY.ref(1, primitives).offset(0x05L).get());
-      cmd.uv(1, (int)MEMORY.ref(1, primitives).offset(0x08L).get(), (int)MEMORY.ref(1, primitives).offset(0x09L).get());
-      cmd.uv(2, (int)MEMORY.ref(1, primitives).offset(0x0cL).get(), (int)MEMORY.ref(1, primitives).offset(0x0dL).get());
+      cmd.uv(0, primitives[primitivesOffset + 1] & 0xff, primitives[primitivesOffset + 1] >>> 8 & 0xff);
+      cmd.uv(1, primitives[primitivesOffset + 2] & 0xff, primitives[primitivesOffset + 2] >>> 8 & 0xff);
+      cmd.uv(2, primitives[primitivesOffset + 3] & 0xff, primitives[primitivesOffset + 3] >>> 8 & 0xff);
 
-      cmd.clut(((int)MEMORY.ref(2, primitives).offset(0x06L).get() & 0b111111) * 16, (int)MEMORY.ref(2, primitives).offset(0x06L).get() >>> 6);
-      cmd.vramPos(((int)MEMORY.ref(2, primitives).offset(0x0aL).get() & 0b1111) * 64, (MEMORY.ref(2, primitives).offset(0x0aL).get() & 0b10000) != 0 ? 256 : 0);
+      cmd.clut((primitives[primitivesOffset + 1] >>> 16 & 0b111111) * 16, primitives[primitivesOffset + 1] >>> 22);
+      cmd.vramPos((primitives[primitivesOffset + 2] >>> 16 & 0b1111) * 64, (primitives[primitivesOffset + 2] >>> 16 & 0b10000) != 0 ? 256 : 0);
 
       if((int)CPU.CFC2(31) >= 0) { // No errors
         //LAB_800cc674
@@ -1582,9 +1563,9 @@ public final class Ttle {
                     //LAB_800cc7f8
                     CPU.COP2(0x158002dL); // Average of three Z values
 
-                    cmd.rgb(0, (int)(MEMORY.ref(1, primitives).offset(0x10L).get() * flameColour / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x11L).get() * flameColour / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x12L).get() * flameColour / 0xff));
-                    cmd.rgb(1, (int)(MEMORY.ref(1, primitives).offset(0x14L).get() * flameColour / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x15L).get() * flameColour / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x16L).get() * flameColour / 0xff));
-                    cmd.rgb(2, (int)(MEMORY.ref(1, primitives).offset(0x18L).get() * flameColour / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x19L).get() * flameColour / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x1aL).get() * flameColour / 0xff));
+                    cmd.rgb(0, (primitives[primitivesOffset + 4] & 0xff) * flameColour / 0xff, (primitives[primitivesOffset + 4] >>> 8 & 0xff) * flameColour / 0xff, (primitives[primitivesOffset + 4] >>> 16 & 0xff) * flameColour / 0xff);
+                    cmd.rgb(1, (primitives[primitivesOffset + 5] & 0xff) * flameColour / 0xff, (primitives[primitivesOffset + 5] >>> 8 & 0xff) * flameColour / 0xff, (primitives[primitivesOffset + 5] >>> 16 & 0xff) * flameColour / 0xff);
+                    cmd.rgb(2, (primitives[primitivesOffset + 6] & 0xff) * flameColour / 0xff, (primitives[primitivesOffset + 6] >>> 8 & 0xff) * flameColour / 0xff, (primitives[primitivesOffset + 6] >>> 16 & 0xff) * flameColour / 0xff);
 
                     // OTZ - Average Z value (for ordering table)
                     final int z = (int)Math.min(CPU.MFC2(7) + flamesZ >> zShift_1f8003c4.get(), zMax_1f8003cc.get());
@@ -1599,25 +1580,25 @@ public final class Ttle {
       }
 
       //LAB_800ccb34
-      primitives += 0x24L;
+      primitivesOffset += 0x24;
     }
 
     //LAB_800ccb4c
     //LAB_800ccb68
-    return primitives;
+    return primitivesOffset;
   }
 
   @Method(0x800ccb78L)
-  public static long FUN_800ccb78(long primitives, final SVECTOR[] vertices, final int count) {
+  public static int FUN_800ccb78(final int[] primitives, int primitivesOffset, final SVECTOR[] vertices, final int count) {
     //LAB_800ccbcc
     for(int i = 0; i < count; i++) {
       final GpuCommandPoly cmd = new GpuCommandPoly(4)
-        .translucent(Translucency.of(((int)MEMORY.ref(2, primitives).offset(0x0aL).get() & 0b1100000) >>> 5));
+        .translucent(Translucency.of(primitives[primitivesOffset + 2] >>> 21 & 0x3));
 
       //LAB_800ccbe4
-      final SVECTOR vert0 = vertices[(int)MEMORY.ref(2, primitives).offset(0x24L).get()];
-      final SVECTOR vert1 = vertices[(int)MEMORY.ref(2, primitives).offset(0x26L).get()];
-      final SVECTOR vert2 = vertices[(int)MEMORY.ref(2, primitives).offset(0x28L).get()];
+      final SVECTOR vert0 = vertices[primitives[9] & 0xffff];
+      final SVECTOR vert1 = vertices[primitives[9] >>> 16 & 0xffff];
+      final SVECTOR vert2 = vertices[primitives[10] & 0xffff];
       CPU.MTC2(vert0.getXY(), 0); // VXY0
       CPU.MTC2(vert0.getZ(),  1); // VZ0
       CPU.MTC2(vert1.getXY(), 2); // VXY1
@@ -1626,13 +1607,13 @@ public final class Ttle {
       CPU.MTC2(vert2.getZ(),  5); // VZ2
       CPU.COP2(0x28_0030L); // Perspective transform triple
 
-      cmd.uv(0, (int)MEMORY.ref(1, primitives).offset(0x04L).get(), (int)MEMORY.ref(1, primitives).offset(0x05L).get());
-      cmd.uv(1, (int)MEMORY.ref(1, primitives).offset(0x08L).get(), (int)MEMORY.ref(1, primitives).offset(0x09L).get());
-      cmd.uv(2, (int)MEMORY.ref(1, primitives).offset(0x0cL).get(), (int)MEMORY.ref(1, primitives).offset(0x0dL).get());
-      cmd.uv(3, (int)MEMORY.ref(1, primitives).offset(0x10L).get(), (int)MEMORY.ref(1, primitives).offset(0x11L).get());
+      cmd.uv(0, primitives[1] & 0xff, primitives[1] >>> 8 & 0xff);
+      cmd.uv(1, primitives[2] & 0xff, primitives[2] >>> 8 & 0xff);
+      cmd.uv(2, primitives[3] & 0xff, primitives[3] >>> 8 & 0xff);
+      cmd.uv(3, primitives[4] & 0xff, primitives[4] >>> 8 & 0xff);
 
-      cmd.clut(((int)MEMORY.ref(2, primitives).offset(0x06L).get() & 0b111111) * 16, (int)MEMORY.ref(2, primitives).offset(0x06L).get() >>> 6);
-      cmd.vramPos(((int)MEMORY.ref(2, primitives).offset(0x0aL).get() & 0b1111) * 64, (MEMORY.ref(2, primitives).offset(0x0aL).get() & 0b10000) != 0 ? 256 : 0);
+      cmd.clut((primitives[1] >>> 16 & 0b111111) * 16, primitives[1] >>> 22);
+      cmd.vramPos((primitives[2] >>> 16 & 0b1111) * 64, (primitives[2] >>> 16 & 0b10000) != 0 ? 256 : 0);
 
       if((int)CPU.CFC2(31) >= 0) { // No errors
         //LAB_800ccc90
@@ -1648,7 +1629,7 @@ public final class Ttle {
           cmd.pos(1, v1.getX(), v1.getY());
           cmd.pos(2, v2.getX(), v2.getY());
 
-          final SVECTOR vert3 = vertices[(int)MEMORY.ref(2, primitives).offset(0x2aL).get()];
+          final SVECTOR vert3 = vertices[primitives[10] >>> 16 & 0xffff];
           CPU.MTC2(vert3.getXY(), 0); // VXY0
           CPU.MTC2(vert3.getZ(),  1); // VZ0
           CPU.COP2(0x18_0001L); // Perspective transform single
@@ -1667,10 +1648,10 @@ public final class Ttle {
                   //LAB_800cce64
                   if(v0.getY() <= 0x78 || v1.getY() <= 0x78 || v2.getY() <= 0x78 || v3.getY() <= 0x78) {
                     //LAB_800ccebc
-                    cmd.rgb(0, (int)(MEMORY.ref(1, primitives).offset(0x14L).get() * flameColour / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x15L).get() * flameColour / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x16L).get() * flameColour / 0xff));
-                    cmd.rgb(1, (int)(MEMORY.ref(1, primitives).offset(0x18L).get() * flameColour / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x19L).get() * flameColour / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x1aL).get() * flameColour / 0xff));
-                    cmd.rgb(2, (int)(MEMORY.ref(1, primitives).offset(0x1cL).get() * flameColour / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x1cL).get() * flameColour / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x1dL).get() * flameColour / 0xff));
-                    cmd.rgb(3, (int)(MEMORY.ref(1, primitives).offset(0x20L).get() * flameColour / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x21L).get() * flameColour / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x22L).get() * flameColour / 0xff));
+                    cmd.rgb(0, (primitives[primitivesOffset + 5] & 0xff) * flameColour / 0xff, (primitives[primitivesOffset + 5] >>> 8 & 0xff) * flameColour / 0xff, (primitives[primitivesOffset + 5] >>> 16 & 0xff) * flameColour / 0xff);
+                    cmd.rgb(1, (primitives[primitivesOffset + 6] & 0xff) * flameColour / 0xff, (primitives[primitivesOffset + 6] >>> 8 & 0xff) * flameColour / 0xff, (primitives[primitivesOffset + 6] >>> 16 & 0xff) * flameColour / 0xff);
+                    cmd.rgb(2, (primitives[primitivesOffset + 7] & 0xff) * flameColour / 0xff, (primitives[primitivesOffset + 7] >>> 8 & 0xff) * flameColour / 0xff, (primitives[primitivesOffset + 7] >>> 16 & 0xff) * flameColour / 0xff);
+                    cmd.rgb(3, (primitives[primitivesOffset + 8] & 0xff) * flameColour / 0xff, (primitives[primitivesOffset + 8] >>> 8 & 0xff) * flameColour / 0xff, (primitives[primitivesOffset + 8] >>> 16 & 0xff) * flameColour / 0xff);
 
                     GPU.queueCommand(flamesZ, cmd);
                   }
@@ -1682,12 +1663,12 @@ public final class Ttle {
       }
 
       //LAB_800cd294
-      primitives += 0x2cL;
+      primitivesOffset += 0x2c;
     }
 
     //LAB-800cd2ac
     //LAB_800cd2c8
-    return primitives;
+    return primitivesOffset;
   }
 
   @Method(0x800cdaa0L)

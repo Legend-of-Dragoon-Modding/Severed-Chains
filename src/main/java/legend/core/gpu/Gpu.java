@@ -183,6 +183,30 @@ public class Gpu implements Runnable {
     });
   }
 
+  public void commandC0CopyRectFromVramToCpu(final RECT rect, final byte[] out) {
+    final int rectX = rect.x.get();
+    final int rectY = rect.y.get();
+    final int rectW = rect.w.get();
+    final int rectH = rect.h.get();
+
+    assert rectX + rectW <= this.vramWidth : "Rect right (" + (rectX + rectW) + ") overflows VRAM width (" + this.vramWidth + ')';
+    assert rectY + rectH <= this.vramHeight : "Rect bottom (" + (rectY + rectH) + ") overflows VRAM height (" + this.vramHeight + ')';
+
+    LOGGER.debug("Copying (%d, %d, %d, %d) from VRAM to byte array", rectX, rectY, rectW, rectH);
+
+    MEMORY.waitForLock(() -> {
+      int i = 0;
+      for(int y = rectY; y < rectY + rectH; y++) {
+        for(int x = rectX; x < rectX + rectW; x++) {
+          final int index = y * this.vramWidth + x;
+          out[i] = (byte)(this.vram15[index] & 0xff);
+          out[i + 1] = (byte)(this.vram15[index] >>> 8);
+          i += 2;
+        }
+      }
+    });
+  }
+
   public void command80CopyRectFromVramToVram(final int sourceX, final int sourceY, final int destX, final int destY, final int width, final int height) {
     LOGGER.debug("COPY VRAM VRAM from %d %d to %d %d size %d %d", sourceX, sourceY, destX, destY, width, height);
 

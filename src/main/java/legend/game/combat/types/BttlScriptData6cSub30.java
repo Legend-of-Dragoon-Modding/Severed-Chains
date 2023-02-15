@@ -1,6 +1,5 @@
 package legend.game.combat.types;
 
-import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.VECTOR;
 import legend.core.memory.Value;
 import legend.core.memory.types.IntRef;
@@ -20,10 +19,9 @@ public class BttlScriptData6cSub30 implements BttlScriptData6cSubBase1, MemoryRe
   public final IntRef _14;
   public final Pointer<UnboundedArrayRef<VECTOR>> _18;
   /** Overlapped */
-  public final AttackHitFlashEffect0c _1c;
-  public final Pointer<TmdObjTable1c> tmd_24;
-
-  public final UnsignedShortRef tpage_2c;
+  public final AttackHitFlashEffect0c _1c_1;
+  /** Overlapped */
+  public final BttlScriptData6cSub30Sub10 _1c_2;
 
   public BttlScriptData6cSub30(final Value ref) {
     this.ref = ref;
@@ -35,10 +33,8 @@ public class BttlScriptData6cSub30 implements BttlScriptData6cSubBase1, MemoryRe
     this._10 = ref.offset(4, 0x10L).cast(IntRef::new);
     this._14 = ref.offset(4, 0x14L).cast(IntRef::new);
     this._18 = ref.offset(4, 0x18L).cast(Pointer.deferred(4, UnboundedArrayRef.of(0x10, VECTOR::new)));
-    this._1c = ref.offset(4, 0x1cL).cast(AttackHitFlashEffect0c::new);
-    this.tmd_24 = ref.offset(4, 0x24L).cast(Pointer.deferred(4, TmdObjTable1c::new));
-
-    this.tpage_2c = ref.offset(2, 0x2cL).cast(UnsignedShortRef::new);
+    this._1c_1 = ref.offset(4, 0x1cL).cast(AttackHitFlashEffect0c::new);
+    this._1c_2 = ref.offset(4, 0x1cL).cast(BttlScriptData6cSub30Sub10::new);
   }
 
   @Override

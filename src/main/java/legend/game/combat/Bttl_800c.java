@@ -1,5 +1,6 @@
 package legend.game.combat;
 
+import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandQuad;
@@ -70,7 +71,6 @@ import legend.game.types.GsF_LIGHT;
 import legend.game.types.LodString;
 import legend.game.types.McqHeader;
 import legend.game.types.Model124;
-import legend.game.types.MrgFile;
 import legend.game.types.SpellStats0c;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
@@ -93,21 +93,17 @@ import static legend.game.Scus94491BpeSegment.btldLoadEncounterSoundEffectsAndMu
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
-import static legend.game.Scus94491BpeSegment.deferReallocOrFree;
 import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.getCharacterName;
-import static legend.game.Scus94491BpeSegment.getMallocSize;
 import static legend.game.Scus94491BpeSegment.loadDir;
-import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
+import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.loadFile;
 import static legend.game.Scus94491BpeSegment.loadMcq;
 import static legend.game.Scus94491BpeSegment.loadMusicPackage;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
-import static legend.game.Scus94491BpeSegment.mallocHead;
 import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
-import static legend.game.Scus94491BpeSegment.realloc2;
 import static legend.game.Scus94491BpeSegment.renderMcq;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment.setDepthResolution;
@@ -1202,12 +1198,10 @@ public final class Bttl_800c {
           //LAB_800c8418
           //LAB_800c8434
           if(combatant.mrg_00 != null) {
-            free(combatant.mrg_00.getAddress());
             combatant.mrg_00 = null;
           }
 
           if(combatant.mrg_04 != null) {
-            free(combatant.mrg_04.getAddress());
             combatant.mrg_04 = null;
           }
         }
@@ -1531,7 +1525,7 @@ public final class Bttl_800c {
   @Method(0x800c90b0L)
   public static long FUN_800c90b0(final int combatantIndex) {
     //LAB_800c9114
-    if((combatants_8005e398[combatantIndex]._1a4 >= 0 || combatants_8005e398[combatantIndex].mrg_00 != null && combatants_8005e398[combatantIndex].mrg_00.entries.get(32).size.get() != 0) && FUN_800ca054(combatantIndex, 0) != 0) {
+    if((combatants_8005e398[combatantIndex]._1a4 >= 0 || combatants_8005e398[combatantIndex].mrg_00 != null && combatants_8005e398[combatantIndex].mrg_00.get(32).length != 0) && FUN_800ca054(combatantIndex, 0) != 0) {
       return 0x1L;
     }
 
@@ -1551,13 +1545,11 @@ public final class Bttl_800c {
 
     //LAB_800c91bc
     if(combatant.mrg_00 != null) {
-      free(combatant.mrg_00.getAddress());
       combatant.mrg_00 = null;
     }
 
     if(combatant.mrg_04 != null) {
       //LAB_800c91e8
-      free(combatant.mrg_04.getAddress());
       combatant.mrg_04 = null;
     }
 
@@ -1631,8 +1623,7 @@ public final class Bttl_800c {
     }
 
     //LAB_800c947c
-    combatant.mrg_00 = MrgFile.alloc(files);
-    final MrgFile mrg = combatant.mrg_00;
+    combatant.mrg_00 = files;
 
     // I don't think this is actually used?
     if(files.get(34).length != 0) {
@@ -1642,10 +1633,10 @@ public final class Bttl_800c {
     //LAB_800c94a0
     //LAB_800c94a4
     for(int animIndex = 0; animIndex < 32; animIndex++) {
-      final int size = mrg.entries.get(animIndex).size.get();
+      final int size = files.get(animIndex).length;
 
       if(size != 0) {
-        FUN_800c9a80(mrg.getFile(animIndex), size, 1, 0, combatantIndex, animIndex);
+        FUN_800c9a80(files.get(animIndex), 1, 0, combatantIndex, animIndex);
       }
 
       //LAB_800c94cc
@@ -1666,11 +1657,11 @@ public final class Bttl_800c {
 
     final CContainer tmd;
     if(s0._1a4 >= 0) {
-      tmd = MEMORY.ref(4, FUN_800cad34(s0._1a4), CContainer::new);
+      tmd = new CContainer(FUN_800cad34(s0._1a4), 0);
     } else {
       //LAB_800c9590
-      if(s0.mrg_00 != null && s0.mrg_00.entries.get(32).size.get() != 0) {
-        tmd = s0.mrg_00.getFile(32, CContainer::new);
+      if(s0.mrg_00 != null && s0.mrg_00.get(32).length != 0) {
+        tmd = new CContainer(s0.mrg_00.get(32), 0);
       } else {
         throw new RuntimeException("anim undefined");
       }
@@ -1745,42 +1736,36 @@ public final class Bttl_800c {
     final CombatantStruct1a8 combatant = getCombatant(combatantIndex);
 
     if(combatant.mrg_04 == null) {
-      final MrgFile mrg = MrgFile.alloc(files);
-
       //LAB_800c9910
       if(!isMonster && files.size() == 64) {
         _8006e398.y_d80[charSlot] = 0;
 
         //LAB_800c9940
         for(int animIndex = 0; animIndex < 32; animIndex++) {
-          final int size = files.get(32 + animIndex).length;
-
-          if(size != 0) {
+          if(files.get(32 + animIndex).length != 0) {
             if(combatant._14[animIndex] != null && combatant._14[animIndex]._09 != 0) {
               FUN_800c9c7c(combatantIndex, animIndex);
             }
 
             //LAB_800c9974
             // Type 6 - TIM file (except it's loading animation data into VRAM???) TODO
-            FUN_800c9a80(mrg.getFile(32 + animIndex), size, 6, charSlot, combatantIndex, animIndex);
+            FUN_800c9a80(files.get(32 + animIndex), 6, charSlot, combatantIndex, animIndex);
           }
         }
       }
 
       //LAB_800c99d8
-      combatant.mrg_04 = mrg;
+      combatant.mrg_04 = files;
 
       //LAB_800c99e8
       for(int animIndex = 0; animIndex < 32; animIndex++) {
-        final int size = mrg.entries.get(animIndex).size.get();
-
-        if(size != 0) {
+        if(files.get(animIndex).length != 0) {
           if(combatant._14[animIndex] != null && combatant._14[animIndex]._09 != 0) {
             FUN_800c9c7c(combatantIndex, animIndex);
           }
 
           //LAB_800c9a18
-          FUN_800c9a80(mrg.getFile(animIndex), size, 2, 1, combatantIndex, animIndex);
+          FUN_800c9a80(files.get(animIndex), 2, 1, combatantIndex, animIndex);
         }
 
         //LAB_800c9a34
@@ -1799,7 +1784,7 @@ public final class Bttl_800c {
    *             </ol>
    */
   @Method(0x800c9a80L)
-  public static void FUN_800c9a80(final long addr, final int size, final int type, final int a3, final int combatantIndex, final int animIndex) {
+  public static void FUN_800c9a80(final byte[] data, final int type, final int a3, final int combatantIndex, final int animIndex) {
     CombatantStruct1a8_c s3 = combatants_8005e398[combatantIndex]._14[animIndex];
 
     if(s3 != null) {
@@ -1809,14 +1794,14 @@ public final class Bttl_800c {
     //LAB_800c9b28
     if(type == 1) {
       //LAB_800c9b68
-      if(MEMORY.ref(4, addr).offset(0x4L).get() == 0x1a45_5042L) { // BPE
-        final CombatantStruct1a8_c.BpeType bpe = new CombatantStruct1a8_c.BpeType(addr);
+      if(IoHelper.readInt(data, 0x4) == 0x1a45_5042) { // BPE
+        final CombatantStruct1a8_c.BpeType bpe = new CombatantStruct1a8_c.BpeType(data);
         bpe._08 = a3;
         bpe.type_0a = 4;
         bpe.isLoaded_0b = 0;
         s3 = bpe;
       } else {
-        final CombatantStruct1a8_c.AnimType anim = new CombatantStruct1a8_c.AnimType(new TmdAnimationFile(MEMORY.getBytes(addr, size), 0));
+        final CombatantStruct1a8_c.AnimType anim = new CombatantStruct1a8_c.AnimType(new TmdAnimationFile(data, 0));
         anim._08 = a3;
         anim.type_0a = 1;
         anim.isLoaded_0b = 0;
@@ -1825,15 +1810,15 @@ public final class Bttl_800c {
     } else if(type == 2) {
       //LAB_800c9b80
       //LAB_800c9b98
-      if(MEMORY.ref(4, addr).offset(0x4L).get() == 0x1a45_5042L) { // BPE
+      if(IoHelper.readInt(data, 0x4) == 0x1a45_5042) { // BPE
         //LAB_800c9b88
-        final CombatantStruct1a8_c.BpeType bpe = new CombatantStruct1a8_c.BpeType(addr);
+        final CombatantStruct1a8_c.BpeType bpe = new CombatantStruct1a8_c.BpeType(data);
         bpe._08 = a3;
         bpe.type_0a = 5;
         bpe.isLoaded_0b = 0;
         s3 = bpe;
       } else {
-        final CombatantStruct1a8_c.AnimType anim = new CombatantStruct1a8_c.AnimType(new TmdAnimationFile(MEMORY.getBytes(addr, size), 0));
+        final CombatantStruct1a8_c.AnimType anim = new CombatantStruct1a8_c.AnimType(new TmdAnimationFile(data, 0));
         anim._08 = a3;
         anim.type_0a = 2;
         anim.isLoaded_0b = 0;
@@ -1849,10 +1834,10 @@ public final class Bttl_800c {
       s3 = index;
     } else if(type == 6) {
       //LAB_800c9bcc
-      final RECT sp0x10 = new RECT((short)(512 + a3 * 64), (short)_8006e398.y_d80[a3], (short)64, (short)(size / 128));
-      LoadImage(sp0x10, addr);
+      final RECT sp0x10 = new RECT((short)(512 + a3 * 64), (short)_8006e398.y_d80[a3], (short)64, (short)(data.length / 128));
+      LoadImage(sp0x10, data);
 
-      _8006e398.y_d80[a3] += size / 128;
+      _8006e398.y_d80[a3] += data.length / 128;
 
       final CombatantStruct1a8_c.TimType tim = new CombatantStruct1a8_c.TimType(sp0x10.x.get(), sp0x10.y.get(), sp0x10.h.get());
       tim._08 = -1;
@@ -1908,7 +1893,7 @@ public final class Bttl_800c {
   @Method(0x800c9db8L)
   public static void FUN_800c9db8(final int combatantIndex, final int animIndex, final int a2) {
     FUN_800c9c7c(combatantIndex, animIndex);
-    FUN_800c9a80(0, 0, 3, a2, combatantIndex, animIndex);
+    FUN_800c9a80(null, 3, a2, combatantIndex, animIndex);
   }
 
   @Method(0x800c9e10L)
@@ -1932,14 +1917,7 @@ public final class Bttl_800c {
         bpeType.isLoaded_0b = 1;
         bpeType.BattleStructEf4Sub08_index_06 = a3;
 
-        final long archiveAddress = bpeType.bpe_00;
-        final int decompressedSize = (int)MEMORY.get(archiveAddress, 4);
-        final byte[] archive = MEMORY.getBytes(archiveAddress, decompressedSize + 0x100); // Too big, but we don't have the real size here
-        final byte[] decompressed = Unpacker.decompress(archive);
-        final long destAddress = mallocHead(decompressedSize);
-        MEMORY.setBytes(destAddress, decompressed);
-
-        FUN_800c9fcc(destAddress, a3);
+        FUN_800c9fcc(Unpacker.decompress(bpeType.bpe_00), a3);
       }
 
       return true;
@@ -1948,10 +1926,6 @@ public final class Bttl_800c {
     if(s0 instanceof final CombatantStruct1a8_c.TimType timType) {
       if(timType.isLoaded_0b == 0) {
         final int s1 = FUN_800cab58(timType.h_03 * 0x80, 3, 0, 0);
-        if(s1 < 0) {
-          return false;
-        }
-
         final RECT sp0x20 = new RECT((short)timType.x_00, (short)timType.y_02, (short)64, (short)timType.h_03);
         StoreImage(sp0x20, FUN_800cad34(s1));
         s0.BttlStruct08_index_04 = s1;
@@ -1966,17 +1940,13 @@ public final class Bttl_800c {
   }
 
   @Method(0x800c9fccL)
-  public static void FUN_800c9fcc(final long address, final int param) {
+  public static void FUN_800c9fcc(final byte[] data, final int param) {
     final CombatantStruct1a8_c s0 = _8006e398._d8c[param]._00;
 
     if(s0.isLoaded_0b != 0 && _8006e398._d8c[param].used_04) {
-      s0.BttlStruct08_index_04 = FUN_800caae4(address, 3, 0, 0);
+      s0.BttlStruct08_index_04 = FUN_800caae4(data, 3, 0, 0);
       s0.BattleStructEf4Sub08_index_06 = -1;
       _8006e398._d8c[param].used_04 = false;
-    } else {
-      //LAB_800ca034
-      //LAB_800ca038
-      free(address);
     }
 
     //LAB_800ca040
@@ -2071,12 +2041,7 @@ public final class Bttl_800c {
     if(a0_0 instanceof final CombatantStruct1a8_c.IndexType indexType) {
       final int s0 = indexType.index_00;
 
-      if(indexType._09 == 0 || encounterId_800bb0f8.get() != 443) { // Melbu
-        //LAB_800ca3c4
-        reallocSomething(s0);
-      }
-
-      return MEMORY.ref(4, FUN_800cad34(s0), TmdAnimationFile::new); //TODO
+      return new TmdAnimationFile(FUN_800cad34(s0), 0);
     }
 
     if(a0_0 instanceof CombatantStruct1a8_c.BpeType || a0_0 instanceof CombatantStruct1a8_c.TimType) {
@@ -2085,7 +2050,7 @@ public final class Bttl_800c {
 
         if(s0 >= 0) {
           //LAB_800ca3f4
-          return MEMORY.ref(4, FUN_800cad34(s0), TmdAnimationFile::new);
+          return new TmdAnimationFile(FUN_800cad34(s0), 0);
         }
       }
     }
@@ -2113,7 +2078,6 @@ public final class Bttl_800c {
     }
 
     if(combatant.mrg_04 != null) {
-      free(combatant.mrg_04.getAddress());
       combatant.mrg_04 = null;
     }
 
@@ -2262,7 +2226,6 @@ public final class Bttl_800c {
     for(int s1 = 0; s1 < 0x100; s1++) {
       final BttlStruct08 s0 = _8006e398._580[s1];
       if(s0._04 >= 2) {
-        free(s0.ptr_00);
         s0._04 = 0;
       }
     }
@@ -2283,7 +2246,7 @@ public final class Bttl_800c {
       if(a1._04 == 0) {
         //LAB_800caacc
         _800c66b4.setu(i);
-        a1.ptr_00 = 0;
+        a1.data_00 = null;
         a1._04 = 1;
         return i;
       }
@@ -2297,26 +2260,22 @@ public final class Bttl_800c {
       if(a1._04 == 0) {
         //LAB_800caacc
         _800c66b4.setu(i);
-        a1.ptr_00 = 0;
+        a1.data_00 = null;
         a1._04 = 1;
         return i;
       }
     }
 
     //LAB_800caac4
-    return -1;
+    throw new RuntimeException("Failed to find free slot");
   }
 
   @Method(0x800caae4L)
-  public static int FUN_800caae4(final long s0, final int a1, final int a2, final int a3) {
+  public static int FUN_800caae4(final byte[] fileData, final int a1, final int a2, final int a3) {
     final int index = FUN_800caa20();
-    if(index < 0) {
-      //LAB_800cab38
-      return -1;
-    }
 
     final BttlStruct08 a0 = _8006e398._580[index];
-    a0.ptr_00 = s0;
+    a0.data_00 = fileData;
     a0._04 = a1;
     a0._05 = a2;
     a0._06 = a3;
@@ -2326,51 +2285,35 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cab58L)
-  public static int FUN_800cab58(final long size, final int a1, final int a2, final int a3) {
-    final long s0 = mallocTail(size);
-    final int v0 = FUN_800caae4(s0, a1, a2, a3);
-    if(v0 < 0) {
-      free(s0);
-      return -1;
-    }
-
-    return v0;
+  public static int FUN_800cab58(final int size, final int a1, final int a2, final int a3) {
+    return FUN_800caae4(new byte[size], a1, a2, a3);
   }
 
   @Method(0x800cac38L)
   public static int FUN_800cac38(final int drgnIndex, final int fileIndex) {
-    final int s0 = FUN_800caa20();
+    final int index = FUN_800caa20();
 
-    if(s0 < 0) {
-      //LAB_800cac94
-      return -1;
-    }
-
-    loadDrgnBinFile(drgnIndex, fileIndex, 0, Bttl_800c::FUN_800cacb0, s0, 0x2L);
+    loadDrgnFile(drgnIndex, fileIndex, data -> FUN_800cacb0(data, index));
 
     //LAB_800cac98
-    return s0;
+    return index;
   }
 
   @Method(0x800cacb0L)
-  public static void FUN_800cacb0(final long address, final int size, final int index) {
+  public static void FUN_800cacb0(final byte[] data, final int index) {
     final BttlStruct08 a1 = _8006e398._580[index];
 
     if(a1._04 == 1) {
-      a1.ptr_00 = address;
+      a1.data_00 = data;
       a1._04 = 2;
-      reallocSomething(index);
-    } else {
-      //LAB_800cacf4
-      free(address);
     }
 
     //LAB_800cad04
   }
 
   @Method(0x800cad34L)
-  public static long FUN_800cad34(final int index) {
-    return _8006e398._580[index].ptr_00;
+  public static byte[] FUN_800cad34(final int index) {
+    return _8006e398._580[index].data_00;
   }
 
   @Method(0x800cad50L)
@@ -2383,30 +2326,11 @@ public final class Bttl_800c {
     final BttlStruct08 s0 = _8006e398._580[index];
 
     if(s0._04 != 1) {
-      deferReallocOrFree(s0.ptr_00, 0, 1);
-      s0.ptr_00 = 0;
+      s0.data_00 = null;
     }
 
     //LAB_800cada8
     s0._04 = 0;
-  }
-
-  @Method(0x800cadbcL)
-  public static long reallocSomething(final int index) {
-    final BttlStruct08 s1 = _8006e398._580[index];
-    final long currentAddress = s1.ptr_00;
-
-    final long newAddress = realloc2(currentAddress, getMallocSize(currentAddress));
-    if(newAddress == 0 || newAddress == currentAddress) {
-      //LAB_800cae1c
-      return -1;
-    }
-
-    //LAB_800cae24
-    s1.ptr_00 = newAddress;
-
-    //LAB_800cae2c
-    return index;
   }
 
   @Method(0x800cae44L)
@@ -3489,7 +3413,7 @@ public final class Bttl_800c {
       return FlowControl.PAUSE_AND_REWIND;
     }
 
-    loadCombatantTim(script.params_20[0].get(), a1.ptr_00);
+    loadCombatantTim(script.params_20[0].get(), a1.data_00);
 
     //LAB_800cd900
     return FlowControl.PAUSE;

@@ -204,6 +204,21 @@ public final class Scus94491BpeSegment_8003 {
     return 0;
   }
 
+  public static long StoreImage(final RECT rect, final byte[] data) {
+    validateRect("StoreImage", rect);
+
+    rect.w.set(MathHelper.clamp(rect.w.get(), (short)0, (short)_800546c0.get()));
+    rect.h.set(MathHelper.clamp(rect.h.get(), (short)0, (short)_800546c2.get()));
+
+    if(rect.w.get() <= 0 || rect.h.get() <= 0) {
+      throw new IllegalArgumentException("RECT width and height must be greater than 0");
+    }
+
+    GPU.commandC0CopyRectFromVramToCpu(rect, data);
+
+    return 0;
+  }
+
   @Method(0x80038878L)
   public static void MoveImage(final RECT rect, final int x, final int y) {
     validateRect("MoveImage", rect);
