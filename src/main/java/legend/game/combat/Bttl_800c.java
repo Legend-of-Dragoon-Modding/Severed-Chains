@@ -1,5 +1,6 @@
 package legend.game.combat;
 
+import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandQuad;
@@ -67,6 +68,7 @@ import legend.game.scripting.ScriptState;
 import legend.game.types.CharacterData2c;
 import legend.game.types.CContainer;
 import legend.game.types.GsF_LIGHT;
+import legend.game.combat.types.CombatItem02;
 import legend.game.types.LodString;
 import legend.game.types.McqHeader;
 import legend.game.types.Model124;
@@ -303,8 +305,10 @@ public final class Bttl_800c {
   public static final Value _800c697e = MEMORY.ref(2, 0x800c697eL);
   public static final Value _800c6980 = MEMORY.ref(2, 0x800c6980L);
 
-  public static final Value _800c6988 = MEMORY.ref(1, 0x800c6988L);
-
+  public static final CombatItem02[] combatItems_800c6988 = new CombatItem02[Config.inventorySize()];
+  static {
+    Arrays.setAll(combatItems_800c6988, i -> new CombatItem02());
+  }
   public static final Value _800c69c8 = MEMORY.ref(4, 0x800c69c8L);
 
   public static final ArrayRef<LodString> currentEnemyNames_800c69d0 = MEMORY.ref(2, 0x800c69d0L, ArrayRef.of(LodString.class, 9, 0x2c, LodString::new));

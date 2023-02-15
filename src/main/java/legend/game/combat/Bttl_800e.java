@@ -231,7 +231,7 @@ import static legend.game.combat.Bttl_800f.FUN_800f3940;
 import static legend.game.combat.Bttl_800f.FUN_800f4964;
 import static legend.game.combat.Bttl_800f.FUN_800f4b80;
 import static legend.game.combat.Bttl_800f.FUN_800f60ac;
-import static legend.game.combat.Bttl_800f.FUN_800f83c8;
+import static legend.game.combat.Bttl_800f.prepareItemList;
 import static legend.game.combat.Bttl_800f.FUN_800f9584;
 import static legend.game.combat.Bttl_800f.drawFloatingNumbers;
 import static legend.game.combat.Bttl_800f.drawItemMenuElements;
@@ -3127,7 +3127,7 @@ public final class Bttl_800e {
         s2.coord2_14.coord.transfer.setY(model.vector_118.getY());
       } else {
         //LAB_800ec2bc
-        s2.coord2_14.coord.transfer.setY(model.vector_118.getY() - (model.coord2_14.coord.transfer.getY() << 12) / model.scaleVector_fc.getY());
+        s2.coord2_14.coord.transfer.setY(model.vector_118.getY() - MathHelper.safeDiv(model.coord2_14.coord.transfer.getY() << 12, model.scaleVector_fc.getY()));
       }
 
       //LAB_800ec2e0
@@ -3135,7 +3135,7 @@ public final class Bttl_800e {
     } else {
       //LAB_800ec2ec
       s2.coord2_14.coord.transfer.setX(model.vector_118.getX() + model.coord2ArrPtr_04[model.b_cd].coord.transfer.getX());
-      s2.coord2_14.coord.transfer.setY(model.vector_118.getY() - (model.coord2_14.coord.transfer.getY() << 12) / model.scaleVector_fc.getY());
+      s2.coord2_14.coord.transfer.setY(model.vector_118.getY() - MathHelper.safeDiv(model.coord2_14.coord.transfer.getY() << 12, model.scaleVector_fc.getY()));
       s2.coord2_14.coord.transfer.setZ(model.vector_118.getZ() + model.coord2ArrPtr_04[model.b_cd].coord.transfer.getZ());
     }
 
@@ -3677,7 +3677,7 @@ public final class Bttl_800e {
     }
 
     FUN_80023a88();
-    FUN_800f83c8();
+    prepareItemList();
   }
 
   @Method(0x800ee8c4L)
@@ -3832,6 +3832,10 @@ public final class Bttl_800e {
       if(name.charAt(charIndex) >= 0xa0ffL) {
         break;
       }
+    }
+
+    if(currentEnemyNames_800c69d0.get((int)_800c6b9c.get()).get().contains("?")) {
+      System.err.println();
     }
 
     //LAB_800eefa8
