@@ -26,6 +26,8 @@ import legend.game.inventory.screens.MainMenuScreen;
 import legend.game.inventory.screens.MenuStack;
 import legend.game.inventory.screens.TooManyItemsScreen;
 import legend.game.modding.events.EventManager;
+import legend.game.modding.events.characters.AdditionHitEvent;
+import legend.game.modding.events.characters.AdditionHitMultiplierEvent;
 import legend.game.modding.events.characters.CharacterStatsEvent;
 import legend.game.scripting.ScriptState;
 import legend.game.types.ActiveStatsa0;
@@ -3021,6 +3023,10 @@ public final class SItem {
         stats._9c.set((int)MEMORY.ref(2, a0).offset(0x0L).get());
         stats.additionSpMultiplier_9e.set((int)MEMORY.ref(1, a0).offset(0x2L).get());
         stats.additionDamageMultiplier_9f.set((int)MEMORY.ref(1, a0).offset(0x3L).get());
+
+        final AdditionHitMultiplierEvent event = EventManager.INSTANCE.postEvent(new AdditionHitMultiplierEvent(additionIndex, stats.additionLevels_36.get(additionIndex - additionOffsets_8004f5ac.get(charId).get()).get()));
+        stats.additionSpMultiplier_9e.set(event.additionSpMulti);
+        stats.additionDamageMultiplier_9f.set(event.additionDmgMulti);
       }
 
       //LAB_8011042c
