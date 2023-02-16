@@ -7214,19 +7214,19 @@ public final class SEffe {
 
       //LAB_80111280
       if((a3[t0]._00 & 0x200) == 0) {
-        sp0x10.setX(lmb._14.deref().get(a0).get());
+        sp0x10.setX(lmb._14[a0]);
         a0++;
       }
 
       //LAB_801112ac
       if((a3[t0]._00 & 0x100) == 0) {
-        sp0x10.setY(lmb._14.deref().get(a0).get());
+        sp0x10.setY(lmb._14[a0]);
         a0++;
       }
 
       //LAB_801112d8
       if((a3[t0]._00 & 0x80) == 0) {
-        sp0x10.setZ(lmb._14.deref().get(a0).get());
+        sp0x10.setZ(lmb._14[a0]);
       }
     }
 
@@ -7254,13 +7254,13 @@ public final class SEffe {
 
     //LAB_801113b4
     if((a3[t0]._00 & 0x100) == 0) {
-      sp0x10.setY((short)((lmb._14.deref().get(a0).get() - sp0x10.getY()) / 2));
+      sp0x10.setY((short)((lmb._14[a0] - sp0x10.getY()) / 2));
       a0++;
     }
 
     //LAB_801113f4
     if((a3[t0]._00 & 0x80) == 0) {
-      sp0x10.setZ((short)((lmb._14.deref().get(a0).get() - sp0x10.getZ()) / 2));
+      sp0x10.setZ((short)((lmb._14[a0] - sp0x10.getZ()) / 2));
     }
 
     //LAB_8011142c
@@ -9006,55 +9006,55 @@ public final class SEffe {
           final LmbType1.Sub04 v1 = lmb._0c[i];
 
           if((v1._00 & 0x8000) == 0) {
-            transforms.scale_00.setX(lmb._14.deref().get(a0_0).get());
+            transforms.scale_00.setX(lmb._14[a0_0]);
             a0_0++;
           }
 
           //LAB_80116ca0
           if((v1._00 & 0x4000) == 0) {
-            transforms.scale_00.setY(lmb._14.deref().get(a0_0).get());
+            transforms.scale_00.setY(lmb._14[a0_0]);
             a0_0++;
           }
 
           //LAB_80116cc0
           if((v1._00 & 0x2000) == 0) {
-            transforms.scale_00.setZ(lmb._14.deref().get(a0_0).get());
+            transforms.scale_00.setZ(lmb._14[a0_0]);
             a0_0++;
           }
 
           //LAB_80116ce0
           if((v1._00 & 0x1000) == 0) {
-            transforms.trans_06.setX(lmb._14.deref().get(a0_0).get());
+            transforms.trans_06.setX(lmb._14[a0_0]);
             a0_0++;
           }
 
           //LAB_80116d00
           if((v1._00 & 0x800) == 0) {
-            transforms.trans_06.setY(lmb._14.deref().get(a0_0).get());
+            transforms.trans_06.setY(lmb._14[a0_0]);
             a0_0++;
           }
 
           //LAB_80116d20
           if((v1._00 & 0x400) == 0) {
-            transforms.trans_06.setZ(lmb._14.deref().get(a0_0).get());
+            transforms.trans_06.setZ(lmb._14[a0_0]);
             a0_0++;
           }
 
           //LAB_80116d40
           if((v1._00 & 0x200) == 0) {
-            transforms.rot_0c.setX(lmb._14.deref().get(a0_0).get());
+            transforms.rot_0c.setX(lmb._14[a0_0]);
             a0_0++;
           }
 
           //LAB_80116d60
           if((v1._00 & 0x100) == 0) {
-            transforms.rot_0c.setY(lmb._14.deref().get(a0_0).get());
+            transforms.rot_0c.setY(lmb._14[a0_0]);
             a0_0++;
           }
 
           //LAB_80116d80
           if((v1._00 & 0x80) == 0) {
-            transforms.rot_0c.setZ(lmb._14.deref().get(a0_0).get());
+            transforms.rot_0c.setZ(lmb._14[a0_0]);
             a0_0++;
           }
         }
@@ -9069,37 +9069,37 @@ public final class SEffe {
         final LmbType1.Sub04 a2 = lmb._0c[i];
 
         if((a2._00 & 0x8000) == 0) {
-          transforms.scale_00.setX((short)((transforms.scale_00.getX() * s1 + lmb._14.deref().get(a0_0).get() * s0) / 0x2000));
+          transforms.scale_00.setX((short)((transforms.scale_00.getX() * s1 + lmb._14[a0_0] * s0) / 0x2000));
           a0_0++;
         }
 
         //LAB_80116e34
         if((a2._00 & 0x4000) == 0) {
-          transforms.scale_00.setY((short)((transforms.scale_00.getY() * s1 + lmb._14.deref().get(a0_0).get() * s0) / 0x2000));
+          transforms.scale_00.setY((short)((transforms.scale_00.getY() * s1 + lmb._14[a0_0] * s0) / 0x2000));
           a0_0++;
         }
 
         //LAB_80116e80
         if((a2._00 & 0x2000) == 0) {
-          transforms.scale_00.setZ((short)((transforms.scale_00.getZ() * s1 + lmb._14.deref().get(a0_0).get() * s0) / 0x2000));
+          transforms.scale_00.setZ((short)((transforms.scale_00.getZ() * s1 + lmb._14[a0_0] * s0) / 0x2000));
           a0_0++;
         }
 
         //LAB_80116ecc
         if((a2._00 & 0x1000) == 0) {
-          transforms.trans_06.setX((short)((transforms.trans_06.getX() * s1 + lmb._14.deref().get(a0_0).get() * s0) / 0x2000));
+          transforms.trans_06.setX((short)((transforms.trans_06.getX() * s1 + lmb._14[a0_0] * s0) / 0x2000));
           a0_0++;
         }
 
         //LAB_80116f18
         if((a2._00 & 0x800) == 0) {
-          transforms.trans_06.setY((short)((transforms.trans_06.getY() * s1 + lmb._14.deref().get(a0_0).get() * s0) / 0x2000));
+          transforms.trans_06.setY((short)((transforms.trans_06.getY() * s1 + lmb._14[a0_0] * s0) / 0x2000));
           a0_0++;
         }
 
         //LAB_80116f64
         if((a2._00 & 0x400) == 0) {
-          transforms.trans_06.setZ((short)((transforms.trans_06.getZ() * s1 + lmb._14.deref().get(a0_0).get() * s0) / 0x2000));
+          transforms.trans_06.setZ((short)((transforms.trans_06.getZ() * s1 + lmb._14[a0_0] * s0) / 0x2000));
           a0_0++;
         }
 
@@ -9178,8 +9178,8 @@ public final class SEffe {
         //LAB_80117234
         for(int i = 0; i < lmb._08 * 2; i += 2) {
           final long v1_0 = _8011a048.offset(i).getAddress();
-          MEMORY.ref(1, v1_0).offset(0x0L).setu(lmb._14.deref().get(a0).get() >> 4);
-          MEMORY.ref(1, v1_0).offset(0x1L).setu(lmb._14.deref().get(a0).get() << 28 >> 28);
+          MEMORY.ref(1, v1_0).offset(0x0L).setu(lmb._14[a0] >> 4);
+          MEMORY.ref(1, v1_0).offset(0x1L).setu(lmb._14[a0] << 28 >> 28);
           a0++;
         }
 
@@ -9310,8 +9310,8 @@ public final class SEffe {
         //LAB_80117470
         for(int i = 0; i < lmb._08 * 2; i += 2) {
           final long v1_1 = _8011a048.offset(i).getAddress();
-          MEMORY.ref(1, v1_1).offset(0x0L).setu(lmb._14.deref().get(a0).get() >> 4);
-          MEMORY.ref(1, v1_1).offset(0x1L).setu(lmb._14.deref().get(a0).get() << 28 >> 28);
+          MEMORY.ref(1, v1_1).offset(0x0L).setu(lmb._14[a0] >> 4);
+          MEMORY.ref(1, v1_1).offset(0x1L).setu(lmb._14[a0] << 28 >> 28);
           a0++;
         }
 

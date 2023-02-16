@@ -8,7 +8,7 @@ import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 
 /** Used for rendering the spell menu, maybe other stuff? */
-public class BttlStructa4 implements MemoryRef {
+public class CombatMenua4 implements MemoryRef {
   private final Value ref;
 
   public final ShortRef _00;
@@ -16,16 +16,22 @@ public class BttlStructa4 implements MemoryRef {
   public final UnsignedShortRef x_04;
   public final UnsignedShortRef y_06;
   public final ShortRef charIndex_08;
-  public final ShortRef _0a;
+  /**
+   * <ol start="0">
+   *   <li>Items</li>
+   *   <li>Spells</li>
+   * </ol>
+   */
+  public final ShortRef menuType_0a;
   public final UnsignedShortRef _0c;
   public final UnsignedShortRef _0e;
   public final UnsignedShortRef _10;
   public final UnsignedShortRef _12;
   public final UnsignedShortRef _14;
   public final UnsignedShortRef _16;
-  public final ShortRef _18;
+  public final ShortRef textX_18;
   public final ShortRef _1a;
-  public final ShortRef spellId_1c;
+  public final ShortRef itemOrSpellId_1c;
   public final ShortRef _1e;
   public final ShortRef _20;
   public final ShortRef count_22;
@@ -46,7 +52,7 @@ public class BttlStructa4 implements MemoryRef {
 
   public final IntRef _a0;
 
-  public BttlStructa4(final Value ref) {
+  public CombatMenua4(final Value ref) {
     this.ref = ref;
 
     this._00 = ref.offset(2, 0x00L).cast(ShortRef::new);
@@ -54,16 +60,16 @@ public class BttlStructa4 implements MemoryRef {
     this.x_04 = ref.offset(2, 0x04L).cast(UnsignedShortRef::new);
     this.y_06 = ref.offset(2, 0x06L).cast(UnsignedShortRef::new);
     this.charIndex_08 = ref.offset(2, 0x08L).cast(ShortRef::new);
-    this._0a = ref.offset(2, 0x0aL).cast(ShortRef::new);
+    this.menuType_0a = ref.offset(2, 0x0aL).cast(ShortRef::new);
     this._0c = ref.offset(2, 0x0cL).cast(UnsignedShortRef::new);
     this._0e = ref.offset(2, 0x0eL).cast(UnsignedShortRef::new);
     this._10 = ref.offset(2, 0x10L).cast(UnsignedShortRef::new);
     this._12 = ref.offset(2, 0x12L).cast(UnsignedShortRef::new);
     this._14 = ref.offset(2, 0x14L).cast(UnsignedShortRef::new);
     this._16 = ref.offset(2, 0x16L).cast(UnsignedShortRef::new);
-    this._18 = ref.offset(2, 0x18L).cast(ShortRef::new);
+    this.textX_18 = ref.offset(2, 0x18L).cast(ShortRef::new);
     this._1a = ref.offset(2, 0x1aL).cast(ShortRef::new);
-    this.spellId_1c = ref.offset(2, 0x1cL).cast(ShortRef::new);
+    this.itemOrSpellId_1c = ref.offset(2, 0x1cL).cast(ShortRef::new);
     this._1e = ref.offset(2, 0x1eL).cast(ShortRef::new);
     this._20 = ref.offset(2, 0x20L).cast(ShortRef::new);
     this.count_22 = ref.offset(2, 0x22L).cast(ShortRef::new);

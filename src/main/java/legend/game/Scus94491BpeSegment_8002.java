@@ -31,15 +31,17 @@ import legend.game.inventory.screens.MenuScreen;
 import legend.game.inventory.screens.SaveGameScreen;
 import legend.game.inventory.screens.ShopScreen;
 import legend.game.inventory.screens.TooManyItemsScreen;
+import legend.game.modding.events.EventManager;
+import legend.game.modding.events.inventory.TakeItemEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
 import legend.game.tim.Tim;
 import legend.game.tmd.Renderer;
 import legend.game.types.ActiveStatsa0;
+import legend.game.types.CContainer;
 import legend.game.types.CharacterData2c;
 import legend.game.types.Drgn0_6666Entry;
 import legend.game.types.Drgn0_6666Struct;
-import legend.game.types.CContainer;
 import legend.game.types.GameState52c;
 import legend.game.types.InventoryMenuState;
 import legend.game.types.ItemStats0c;
@@ -1421,7 +1423,7 @@ public final class Scus94491BpeSegment_8002 {
       return false;
     }
 
-    return (equipmentStats_80111ff0.get(itemId)._00.get() & 0x4) != 0;
+    return (equipmentStats_80111ff0.get(itemId).flags_00.get() & 0x4) != 0;
   }
 
   @Method(0x800228d0L)
@@ -1778,18 +1780,26 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     if(itemIndex < Config.inventorySize()) {
-      if(gameState_800babc8.items_2e9.get(itemIndex).get() == 0xff) {
+      final int itemId = gameState_800babc8.items_2e9.get(itemIndex).get();
+
+      if(itemId == 0xff) {
         return 0xff;
       }
 
       //LAB_80023334
-      for(int i = itemIndex; i < Config.inventorySize() - 1; i++) {
-        gameState_800babc8.items_2e9.get(i).set(gameState_800babc8.items_2e9.get(i + 1).get());
+      final TakeItemEvent takeItemEvent = EventManager.INSTANCE.postEvent(new TakeItemEvent(itemId, true));
+
+      if(takeItemEvent.takeItem) {
+        for(int i = itemIndex; i < Config.inventorySize() - 1; i++) {
+          gameState_800babc8.items_2e9.get(i).set(gameState_800babc8.items_2e9.get(i + 1).get());
+        }
+
+        //LAB_80023358
+        gameState_800babc8.items_2e9.get(Config.inventorySize() - 1).set(0xff);
+        gameState_800babc8.itemCount_1e6.decr();
       }
 
-      //LAB_80023358
-      gameState_800babc8.items_2e9.get(Config.inventorySize() - 1).set(0xff);
-      gameState_800babc8.itemCount_1e6.decr();
+
       return 0;
     }
 
@@ -4994,8 +5004,8 @@ public final class Scus94491BpeSegment_8002 {
     stats.statusResistFlag_7e.set(0);
     stats._7f.set(0);
     stats._80.set(0);
-    stats._81.set(0);
-    stats._82.set(0);
+    stats.special1_81.set(0);
+    stats.special2_82.set(0);
     stats._83.set(0);
     stats._84.set(0);
 

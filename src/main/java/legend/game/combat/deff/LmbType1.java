@@ -1,9 +1,6 @@
 package legend.game.combat.deff;
 
 import legend.core.IoHelper;
-import legend.core.memory.types.RelativePointer;
-import legend.core.memory.types.ShortRef;
-import legend.core.memory.types.UnboundedArrayRef;
 
 public class LmbType1 extends Lmb {
   public final short _08;
@@ -11,7 +8,7 @@ public class LmbType1 extends Lmb {
 
   public final Sub04[] _0c;
   public final LmbTransforms14[] _10;
-  public final RelativePointer<UnboundedArrayRef<ShortRef>> _14;
+  public final short[] _14;
 
   public LmbType1(final byte[] data, final int offset) {
     super(data, offset);
@@ -32,7 +29,11 @@ public class LmbType1 extends Lmb {
       this._10[i] = new LmbTransforms14(data, offset + transformsOffset + i * 0x14);
     }
 
-    this._14 = ref.offset(4, 0x14L).cast(RelativePointer.deferred(2, ref.getAddress(), UnboundedArrayRef.of(0x02, ShortRef::new)));
+    final int offset14 = IoHelper.readInt(data, offset + 0x14);
+    this._14 = new short[this._08 * (this._0a - 1) / 2]; // Number of bytes, /2 to get array length
+    for(int i = 0; i < this._14.length; i++) {
+      this._14[i] = IoHelper.readShort(data, offset + offset14 + i * 0x2);
+    }
   }
 
   public static class Sub04 {

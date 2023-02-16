@@ -13,15 +13,15 @@ public class EquipmentStats1c implements MemoryRef {
    *   <li>0x4 - can't be discarded</li>
    * </ul>
    */
-  public final UnsignedByteRef _00;
+  public final UnsignedByteRef flags_00;
   public final UnsignedByteRef type_01;
   public final UnsignedByteRef _02;
-  public final UnsignedByteRef equips_03;
+  public final UnsignedByteRef equipableFlags_03;
   public final UnsignedByteRef element_04;
   public final UnsignedByteRef _05;
-  public final UnsignedByteRef eHalf_06;
-  public final UnsignedByteRef eImmune_07;
-  public final UnsignedByteRef statRes_08;
+  public final UnsignedByteRef elementalResistance_06;
+  public final UnsignedByteRef elementalImmunity_07;
+  public final UnsignedByteRef statusResist_08;
   public final UnsignedByteRef _09;
   public final UnsignedByteRef atk_0a;
   /**
@@ -57,15 +57,15 @@ public class EquipmentStats1c implements MemoryRef {
   public EquipmentStats1c(final Value ref) {
     this.ref = ref;
 
-    this._00 = ref.offset(1, 0x00L).cast(UnsignedByteRef::new);
+    this.flags_00 = ref.offset(1, 0x00L).cast(UnsignedByteRef::new);
     this.type_01 = ref.offset(1, 0x01L).cast(UnsignedByteRef::new);
     this._02 = ref.offset(1, 0x02L).cast(UnsignedByteRef::new);
-    this.equips_03 = ref.offset(1, 0x03L).cast(UnsignedByteRef::new);
+    this.equipableFlags_03 = ref.offset(1, 0x03L).cast(UnsignedByteRef::new);
     this.element_04 = ref.offset(1, 0x04L).cast(UnsignedByteRef::new);
     this._05 = ref.offset(1, 0x05L).cast(UnsignedByteRef::new);
-    this.eHalf_06 = ref.offset(1, 0x06L).cast(UnsignedByteRef::new);
-    this.eImmune_07 = ref.offset(1, 0x07L).cast(UnsignedByteRef::new);
-    this.statRes_08 = ref.offset(1, 0x08L).cast(UnsignedByteRef::new);
+    this.elementalResistance_06 = ref.offset(1, 0x06L).cast(UnsignedByteRef::new);
+    this.elementalImmunity_07 = ref.offset(1, 0x07L).cast(UnsignedByteRef::new);
+    this.statusResist_08 = ref.offset(1, 0x08L).cast(UnsignedByteRef::new);
     this._09 = ref.offset(1, 0x09L).cast(UnsignedByteRef::new);
     this.atk_0a = ref.offset(1, 0x0aL).cast(UnsignedByteRef::new);
     this.special1_0b = ref.offset(1, 0x0bL).cast(UnsignedByteRef::new);

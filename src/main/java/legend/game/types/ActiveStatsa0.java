@@ -68,8 +68,8 @@ public class ActiveStatsa0 implements MemoryRef {
   public final UnsignedByteRef statusResistFlag_7e;
   public final UnsignedByteRef _7f;
   public final UnsignedByteRef _80;
-  public final UnsignedByteRef _81;
-  public final UnsignedByteRef _82;
+  public final UnsignedByteRef special1_81;
+  public final UnsignedByteRef special2_82;
   public final UnsignedByteRef _83;
   public final ByteRef _84;
 
@@ -147,8 +147,8 @@ public class ActiveStatsa0 implements MemoryRef {
     this.statusResistFlag_7e = ref.offset(1, 0x7eL).cast(UnsignedByteRef::new);
     this._7f = ref.offset(1, 0x7fL).cast(UnsignedByteRef::new);
     this._80 = ref.offset(1, 0x80L).cast(UnsignedByteRef::new);
-    this._81 = ref.offset(1, 0x81L).cast(UnsignedByteRef::new);
-    this._82 = ref.offset(1, 0x82L).cast(UnsignedByteRef::new);
+    this.special1_81 = ref.offset(1, 0x81L).cast(UnsignedByteRef::new);
+    this.special2_82 = ref.offset(1, 0x82L).cast(UnsignedByteRef::new);
     this._83 = ref.offset(1, 0x83L).cast(UnsignedByteRef::new);
     this._84 = ref.offset(1, 0x84L).cast(ByteRef::new);
 
