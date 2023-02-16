@@ -50,7 +50,7 @@ import legend.game.combat.types.BttlLightStruct84;
 import legend.game.combat.types.BttlScriptData6cSub0e;
 import legend.game.combat.types.BttlScriptData6cSub13c;
 import legend.game.combat.types.BttlStruct08;
-import legend.game.combat.types.BttlStructa4;
+import legend.game.combat.types.CombatMenua4;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.combat.types.CombatantStruct1a8_c;
 import legend.game.combat.types.DragoonSpells09;
@@ -316,7 +316,7 @@ public final class Bttl_800c {
   public static final ArrayRef<LodString> currentEnemyNames_800c69d0 = MEMORY.ref(2, 0x800c69d0L, ArrayRef.of(LodString.class, 9, 0x2c, LodString::new));
 
   public static final Pointer<ArrayRef<FloatingNumberC4>> floatingNumbers_800c6b5c = MEMORY.ref(4, 0x800c6b5cL, Pointer.deferred(4, ArrayRef.of(FloatingNumberC4.class, 12, 0xc4, FloatingNumberC4::new)));
-  public static final Pointer<BttlStructa4> _800c6b60 = MEMORY.ref(4, 0x800c6b60L, Pointer.deferred(4, BttlStructa4::new));
+  public static final Pointer<CombatMenua4> _800c6b60 = MEMORY.ref(4, 0x800c6b60L, Pointer.deferred(4, CombatMenua4::new));
   public static final Value _800c6b64 = MEMORY.ref(4, 0x800c6b64L);
   public static final Value _800c6b68 = MEMORY.ref(4, 0x800c6b68L);
   public static final Value _800c6b6c = MEMORY.ref(4, 0x800c6b6cL);

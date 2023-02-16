@@ -15,7 +15,7 @@ import legend.game.combat.types.BattleDisplayStats144Sub10;
 import legend.game.combat.types.BattleMenuStruct58;
 import legend.game.combat.types.BattleObject27c;
 import legend.game.combat.types.BattleStruct3c;
-import legend.game.combat.types.BttlStructa4;
+import legend.game.combat.types.CombatMenua4;
 import legend.game.combat.types.CombatItem02;
 import legend.game.combat.types.FloatingNumberC4;
 import legend.game.combat.types.FloatingNumberC4Sub20;
@@ -1604,7 +1604,7 @@ public final class Bttl_800f {
       sp0x00[i] = (short)_800c7124.offset(i * 0x2L).getSigned();
     }
 
-    final BttlStructa4 structa4 = _800c6b60.deref();
+    final CombatMenua4 structa4 = _800c6b60.deref();
     int a2 = structa4.itemOrSpellId_1c.get();
     if(structa4.charIndex_08.get() == 8 && structa4.menuType_0a.get() == 0x1L) {
       if(a2 == 0xa) {
@@ -1711,7 +1711,7 @@ public final class Bttl_800f {
 
   @Method(0x800f4964L)
   public static void FUN_800f4964() {
-    final BttlStructa4 v0 = _800c6b60.deref();
+    final CombatMenua4 v0 = _800c6b60.deref();
     v0._00.set((short)0);
     v0._02.set(0);
     v0.x_04.set(0);
@@ -1733,7 +1733,7 @@ public final class Bttl_800f {
 
   @Method(0x800f49bcL)
   public static void FUN_800f49bc(final int charIndex, final long a1) {
-    final BttlStructa4 a2 = _800c6b60.deref();
+    final CombatMenua4 a2 = _800c6b60.deref();
     a2._00.set((short)1);
     a2.x_04.set(0xa0);
     a2.y_06.set(0x90);
@@ -1806,7 +1806,7 @@ public final class Bttl_800f {
     long a1;
     int s0;
     BattleObject27c data;
-    final BttlStructa4 structa4 = _800c6b60.deref();
+    final CombatMenua4 structa4 = _800c6b60.deref();
     if(structa4._00.get() == 0) {
       return;
     }
@@ -2221,7 +2221,7 @@ public final class Bttl_800f {
 
   @Method(0x800f56c4L)
   public static int getItemOrSpellId() {
-    final BttlStructa4 a1 = _800c6b60.deref();
+    final CombatMenua4 a1 = _800c6b60.deref();
     final short menuType = a1.menuType_0a.get();
 
     if(menuType == 0) {
@@ -2240,7 +2240,7 @@ public final class Bttl_800f {
       }
 
       //LAB_800f5778
-      final BttlStructa4 a2 = _800c6b60.deref();
+      final CombatMenua4 a2 = _800c6b60.deref();
       int spellIndex = dragoonSpells_800c6960.get(charSlot).spellIndex_01.get(a2._24.get() + a2._1e.get()).get();
       if(a2.charIndex_08.get() == 8) {
         if(spellIndex == 65) {
@@ -2271,7 +2271,7 @@ public final class Bttl_800f {
   public static void renderList(final int type) {
     int a1;
 
-    final BttlStructa4 structa4 = _800c6b60.deref();
+    final CombatMenua4 structa4 = _800c6b60.deref();
 
     int y1 = structa4._20.get();
     final int y2 = structa4._1a.get();
@@ -2425,7 +2425,7 @@ public final class Bttl_800f {
    *   - Dragoon magic MP cost background and normal text (excluding the number value) */
   @Method(0x800f5c94L)
   public static void drawItemMenuElements() {
-    final BttlStructa4 structa4 = _800c6b60.deref();
+    final CombatMenua4 structa4 = _800c6b60.deref();
 
     if(structa4._00.get() != 0 && (structa4._02.get() & 0x1L) != 0) {
       if((structa4._02.get() & 0x2L) != 0) {

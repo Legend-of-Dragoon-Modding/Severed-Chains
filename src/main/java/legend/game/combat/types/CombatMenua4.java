@@ -8,7 +8,7 @@ import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 
 /** Used for rendering the spell menu, maybe other stuff? */
-public class BttlStructa4 implements MemoryRef {
+public class CombatMenua4 implements MemoryRef {
   private final Value ref;
 
   public final ShortRef _00;
@@ -52,7 +52,7 @@ public class BttlStructa4 implements MemoryRef {
 
   public final IntRef _a0;
 
-  public BttlStructa4(final Value ref) {
+  public CombatMenua4(final Value ref) {
     this.ref = ref;
 
     this._00 = ref.offset(2, 0x00L).cast(ShortRef::new);

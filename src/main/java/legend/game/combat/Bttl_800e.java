@@ -49,7 +49,7 @@ import legend.game.combat.types.BttlScriptData6cSub1c;
 import legend.game.combat.types.BttlScriptData6cSub20;
 import legend.game.combat.types.BttlScriptData6cSubBase1;
 import legend.game.combat.types.BttlScriptData6cSubBase2;
-import legend.game.combat.types.BttlStructa4;
+import legend.game.combat.types.CombatMenua4;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.combat.types.EffectManagerData6c;
 import legend.game.combat.types.EffectManagerData6cInner;
@@ -3617,7 +3617,7 @@ public final class Bttl_800e {
     FUN_800ef7c4();
     FUN_800f4964();
 
-    final BttlStructa4 v0 = _800c6b60.deref();
+    final CombatMenua4 v0 = _800c6b60.deref();
     v0._26.set((short)0);
     v0._28.set((short)0);
     v0._2a.set((short)0);
