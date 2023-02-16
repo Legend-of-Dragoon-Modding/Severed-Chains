@@ -61,6 +61,7 @@ import legend.game.combat.types.Ptr;
 import legend.game.combat.types.SpriteMetrics08;
 import legend.game.modding.events.EventManager;
 import legend.game.modding.events.combat.EnemyStatsEvent;
+import legend.game.modding.events.inventory.RepeatItemReturnEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptFile;
@@ -68,9 +69,9 @@ import legend.game.scripting.ScriptState;
 import legend.game.tim.Tim;
 import legend.game.tmd.Renderer;
 import legend.game.types.ActiveStatsa0;
+import legend.game.types.CContainer;
 import legend.game.types.CContainerSubfile2;
 import legend.game.types.CharacterData2c;
-import legend.game.types.CContainer;
 import legend.game.types.LodString;
 import legend.game.types.Model124;
 import legend.game.types.ModelPartTransforms;
@@ -231,7 +232,6 @@ import static legend.game.combat.Bttl_800f.FUN_800f3940;
 import static legend.game.combat.Bttl_800f.FUN_800f4964;
 import static legend.game.combat.Bttl_800f.FUN_800f4b80;
 import static legend.game.combat.Bttl_800f.FUN_800f60ac;
-import static legend.game.combat.Bttl_800f.prepareItemList;
 import static legend.game.combat.Bttl_800f.FUN_800f9584;
 import static legend.game.combat.Bttl_800f.drawFloatingNumbers;
 import static legend.game.combat.Bttl_800f.drawItemMenuElements;
@@ -239,6 +239,7 @@ import static legend.game.combat.Bttl_800f.drawLine;
 import static legend.game.combat.Bttl_800f.drawUiTextureElement;
 import static legend.game.combat.Bttl_800f.getTargetEnemyElement;
 import static legend.game.combat.Bttl_800f.getTargetEnemyName;
+import static legend.game.combat.Bttl_800f.prepareItemList;
 import static legend.game.combat.Bttl_800f.renderNumber;
 import static legend.game.combat.Bttl_800f.renderTextBoxBackground;
 import static legend.game.combat.SBtld.enemyNames_80112068;
@@ -3650,18 +3651,27 @@ public final class Bttl_800e {
 
     checkForPsychBombX();
 
-    usedRepeatItems_800c6c3c.set(0);
+    usedRepeatItems_800c6c3c.clear();
 
     //LAB_800ee80c
-    for(int repeatItemIndex = 0; repeatItemIndex < 9; repeatItemIndex++) {
-      //LAB_800ee824
-      for(int itemSlot = 0; itemSlot < gameState_800babc8.itemCount_1e6.get(); itemSlot++) {
-        if(gameState_800babc8.items_2e9.get(itemSlot).get() == repeatItemIds_800c6e34.get(repeatItemIndex).get()) {
-          usedRepeatItems_800c6c3c.or(1 << repeatItemIndex);
+    //LAB_800ee824
+    for(int itemSlot = 0; itemSlot < gameState_800babc8.itemCount_1e6.get(); itemSlot++) {
+      final int itemId = gameState_800babc8.items_2e9.get(itemSlot).get();
+      boolean returnItem = false;
+
+      for(int repeatItemIndex = 0; repeatItemIndex < 9; repeatItemIndex++) {
+        if(itemId == repeatItemIds_800c6e34.get(repeatItemIndex).get()) {
+          returnItem = true;
           break;
         }
 
         //LAB_800ee848
+      }
+
+      final RepeatItemReturnEvent repeatItemReturnEvent = EventManager.INSTANCE.postEvent(new RepeatItemReturnEvent(itemId, returnItem));
+
+      if(repeatItemReturnEvent.returnItem) {
+        usedRepeatItems_800c6c3c.add(itemId);
       }
 
       //LAB_800ee858
@@ -3768,26 +3778,24 @@ public final class Bttl_800e {
     checkForPsychBombX();
 
     //LAB_800eed78
-    for(int repeatItemIndex = 0; repeatItemIndex < 9; repeatItemIndex++) {
-      if((usedRepeatItems_800c6c3c.get() >> repeatItemIndex & 1) != 0) {
-        boolean hasRepeatItem = false;
+    for(final int itemId : usedRepeatItems_800c6c3c) {
+      boolean hasRepeatItem = false;
 
-        //LAB_800eedb0
-        for(int itemSlot = 0; itemSlot < gameState_800babc8.itemCount_1e6.get(); itemSlot++) {
-          if(gameState_800babc8.items_2e9.get(itemSlot).get() == repeatItemIds_800c6e34.get(repeatItemIndex).get()) {
-            hasRepeatItem = true;
-            break;
-          }
+      //LAB_800eedb0
+      for(int itemSlot = 0; itemSlot < gameState_800babc8.itemCount_1e6.get(); itemSlot++) {
+        if(gameState_800babc8.items_2e9.get(itemSlot).get() == itemId) {
+          hasRepeatItem = true;
+          break;
         }
+      }
 
-        //LAB_800eedd8
-        if(!hasRepeatItem) {
-          giveItem(repeatItemIds_800c6e34.get(repeatItemIndex).get());
-        }
+      //LAB_800eedd8
+      if(!hasRepeatItem) {
+        giveItem(itemId);
       }
     }
 
-    usedRepeatItems_800c6c3c.set(0);
+    usedRepeatItems_800c6c3c.clear();
 
     free(displayStats_800c6c2c.getPointer());
     free(floatingNumbers_800c6b5c.getPointer());

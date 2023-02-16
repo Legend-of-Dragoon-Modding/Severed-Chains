@@ -181,7 +181,7 @@ public class SBtld {
     }
 
     final AdditionHitEvent event = EventManager.INSTANCE.postEvent(new AdditionHitEvent(a1));
-    for (int i = 0; i < 8; i++) {
+    for(int i = 0; i < 8; i++) {
       final BattleStruct18cb0.AdditionHitStruct20 a0 = event.addition.hits_00[i];
       final long v1 = a3 + i * 0x10L;
       MEMORY.ref(1, v1).offset(0x0L).set(a0._00[0]);

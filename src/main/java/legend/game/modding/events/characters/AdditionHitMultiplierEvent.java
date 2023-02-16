@@ -8,8 +8,10 @@ public class AdditionHitMultiplierEvent extends Event {
   public int additionSpMulti;
   public int additionDmgMulti;
 
-  public AdditionHitMultiplierEvent(final int additionId, final int additionLevel) {
+  public AdditionHitMultiplierEvent(final int additionId, final int additionLevel, final int spMulti, final int dmgMulti) {
     this.additionId = additionId;
     this.additionLevel = additionLevel;
+    this.additionSpMulti = spMulti;
+    this.additionDmgMulti = dmgMulti;
   }
 }

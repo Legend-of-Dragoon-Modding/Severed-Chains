@@ -1,5 +1,7 @@
 package legend.game.combat;
 
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.gpu.GpuCommandPoly;
@@ -335,7 +337,7 @@ public final class Bttl_800c {
 
   public static final Pointer<BattleMenuStruct58> battleMenu_800c6c34 = MEMORY.ref(4, 0x800c6c34L, Pointer.deferred(4, BattleMenuStruct58::new));
   public static final Value _800c6c38 = MEMORY.ref(4, 0x800c6c38L);
-  public static final UnsignedShortRef usedRepeatItems_800c6c3c = MEMORY.ref(2, 0x800c6c3cL, UnsignedShortRef::new);
+  public static final IntList usedRepeatItems_800c6c3c = new IntArrayList();
 
   public static final ArrayRef<BattleStruct3c> _800c6c40 = MEMORY.ref(2, 0x800c6c40L, ArrayRef.of(BattleStruct3c.class, 3, 0x3c, BattleStruct3c::new));
 
