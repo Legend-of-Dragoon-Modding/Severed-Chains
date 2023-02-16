@@ -20,7 +20,6 @@ import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
 import legend.core.memory.Ref;
 import legend.core.memory.Value;
-import legend.core.memory.types.BiFunctionRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
 import legend.game.combat.deff.Anim;
@@ -85,13 +84,13 @@ import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SCRIPTS;
-import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.Scus94491BpeSegment.FUN_8001d068;
 import static legend.game.Scus94491BpeSegment._1f8003f4;
@@ -1635,14 +1634,11 @@ public final class Bttl_800e {
     }
 
     //LAB_800e8074
+    //TODO this can probably be removed
     while(struct._58 != null) {
-      final BttlScriptData6cSubBase2 ptr = struct._58;
-
-      struct._58 = struct._58._00.derefNullable();
+      struct._58 = struct._58._00;
 
       //LAB_800e8088
-      free(ptr.getAddress());
-
       //LAB_800e8090
     }
   }
@@ -1808,12 +1804,12 @@ public final class Bttl_800e {
 
     //LAB_800e8c98
     while(v1 != null) {
-      if(v1._05.get() == a1) {
+      if(v1._05 == a1) {
         //LAB_800e8cc0
         return v1;
       }
 
-      v1 = v1._00.derefNullable();
+      v1 = v1._00;
     }
 
     //LAB_800e8cb8
@@ -1824,12 +1820,12 @@ public final class Bttl_800e {
   public static BttlScriptData6cSubBase2 FUN_800e8cc8(@Nullable BttlScriptData6cSubBase2 a0, final byte a1) {
     //LAB_800e8cd4
     while(a0 != null) {
-      if(a0._05.get() == a1) {
+      if(a0._05 == a1) {
         //LAB_800e8cfc
         return a0;
       }
 
-      a0 = a0._00.derefNullable();
+      a0 = a0._00;
     }
 
     //LAB_800e8cf4
@@ -1844,15 +1840,14 @@ public final class Bttl_800e {
     while(s0.get() != null) {
       final BttlScriptData6cSubBase2 v1 = s0.get();
 
-      if(v1._05.get() == (byte)a1) {
-        a0.flags_04 &= ~(0x1 << v1._05.get());
+      if(v1._05 == (byte)a1) {
+        a0.flags_04 &= ~(0x1 << v1._05);
 
         final BttlScriptData6cSubBase2 a0_0 = s0.get();
-        s0.set(a0_0._00.derefNullable());
-        free(a0_0.getAddress());
+        s0.set(a0_0._00);
       } else {
         //LAB_800e8d84
-        s0 = new Ptr<>(v1._00::derefNullable, v1._00::setNullable);
+        s0 = new Ptr<>(() -> v1._00, value -> v1._00 = value);
       }
 
       //LAB_800e8d88
@@ -1862,13 +1857,12 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e8dd4L)
-  public static <T extends BttlScriptData6cSubBase2> T FUN_800e8dd4(final EffectManagerData6c a0, final long a1, final long a2, final BiFunctionRef<EffectManagerData6c, T, Long> callback, final long size, final Function<Value, T> constructor) {
-    final T struct = MEMORY.ref(4, mallocTail(size), constructor);
-    struct.size_04.set((int)size);
-    struct._05.set((int)a1);
-    struct._06.set((short)a2);
-    struct._08.set(callback);
-    struct._00.setNullable(a0._58);
+  public static <T extends BttlScriptData6cSubBase2> T FUN_800e8dd4(final EffectManagerData6c a0, final int a1, final int a2, final BiFunction<EffectManagerData6c, T, Integer> callback, final int size, final T struct) {
+    struct.size_04 = size;
+    struct._05 = (byte)a1;
+    struct._06 = (short)a2;
+    struct._08 = callback;
+    struct._00 = a0._58;
     a0._58 = struct;
     a0.flags_04 |= 1 << a1;
     return struct;
@@ -1877,8 +1871,7 @@ public final class Bttl_800e {
   @Method(0x800e8e68L)
   public static void FUN_800e8e68(final Ptr<BttlScriptData6cSubBase2> a0) {
     final BttlScriptData6cSubBase2 v1 = a0.get();
-    a0.set(v1._00.derefNullable());
-    free(v1.getAddress());
+    a0.set(v1._00);
   }
 
   @Method(0x800e8e9cL)
@@ -1889,15 +1882,14 @@ public final class Bttl_800e {
     while(subPtr.get() != null) {
       final BttlScriptData6cSubBase2 sub = subPtr.get();
 
-      final long v1 = sub._08.derefAs(BiFunctionRef.classFor(EffectManagerData6c.class, BttlScriptData6cSubBase2.class, long.class)).run(data, subPtr.get());
+      final int v1 = (int)((BiFunction)sub._08).apply(data, subPtr.get());
       if(v1 == 0) {
         //LAB_800e8f2c
-        data.flags_04 &= ~(1 << sub._05.get());
-        subPtr.set(sub._00.derefNullable());
-        free(sub.getAddress());
+        data.flags_04 &= ~(1 << sub._05);
+        subPtr.set(sub._00);
       } else if(v1 == 1) {
         //LAB_800e8f6c
-        subPtr = new Ptr<>(sub._00::derefNullable, sub._00::setNullable);
+        subPtr = new Ptr<>(() -> sub._00, value -> sub._00 = value);
         //LAB_800e8f1c
       } else if(v1 == 2) {
         //LAB_800e8f78
@@ -2026,7 +2018,7 @@ public final class Bttl_800e {
 
   @Method(0x800e95f0L)
   public static void FUN_800e95f0(final AttackHitFlashEffect0c a0, final int a1) {
-    a0._00.set(a1 | 0x400_0000);
+    a0.flags_00 = a1 | 0x400_0000;
 
     if((a1 & 0xf_ff00) == 0xf_ff00) {
       final SpriteMetrics08 metrics = deffManager_800c693c.spriteMetrics_39c[a1 & 0xff];
@@ -2053,11 +2045,11 @@ public final class Bttl_800e {
   public static FlowControl allocateAttackHitFlashEffect(final RunningScript<? extends BattleScriptDataBase> script) {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       script.scriptState_04,
-      0xc,
+      0,
       null,
       Bttl_800e::renderAttackHitFlashEffect,
       null,
-      AttackHitFlashEffect0c::new
+      value -> new AttackHitFlashEffect0c()
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
@@ -2640,14 +2632,14 @@ public final class Bttl_800e {
   }
 
   @Method(0x800eaec8L)
-  public static long FUN_800eaec8(final EffectManagerData6c data, final BttlScriptData6cSub1c sub) {
-    int h = sub._14.get() / 0x100;
+  public static int FUN_800eaec8(final EffectManagerData6c data, final BttlScriptData6cSub1c sub) {
+    int h = sub._14 / 0x100;
 
     //LAB_800eaef0
-    sub._14.add(sub._18.get());
+    sub._14 += sub._18;
 
     //LAB_800eaf08
-    h = (sub._14.get() / 0x100 - h) % sub._0c.h.get();
+    h = (sub._14 / 0x100 - h) % sub._0c.h.get();
 
     if(h < 0) {
       h = h + sub._0c.h.get();
@@ -2659,7 +2651,7 @@ public final class Bttl_800e {
     }
 
     //LAB_800eaf44
-    return 0x1L;
+    return 1;
   }
 
   @Method(0x800eaf54L)
@@ -2685,7 +2677,7 @@ public final class Bttl_800e {
       }
 
       //LAB_800eaff4
-      a0_0 = (BttlScriptData6cSub1c)FUN_800e8cc8(a0_0._00.derefNullable(), (byte)10);
+      a0_0 = (BttlScriptData6cSub1c)FUN_800e8cc8(a0_0._00, (byte)10);
     }
 
     //LAB_800eb00c
@@ -2720,7 +2712,7 @@ public final class Bttl_800e {
     while(a0.get() != null) {
       final BttlScriptData6cSub1c a1 = (BttlScriptData6cSub1c)a0.get();
 
-      if(a1._05.get() == 10) {
+      if(a1._05 == 10) {
         if(a1._0c.x.get() == textureInfo.vramPos_00.x.get()) {
           if(a1._0c.y.get() == textureInfo.vramPos_00.y.get()) {
             FUN_800e8e68(a0);
@@ -2730,7 +2722,8 @@ public final class Bttl_800e {
       }
 
       //LAB_800eb15c
-      a0 = new Ptr<>(a0.get()._00::derefNullable, a0.get()._00::setNullable);
+      final Ptr<BttlScriptData6cSubBase2> finalA0 = a0;
+      a0 = new Ptr<>(() -> finalA0.get()._00, value -> finalA0.get()._00 = value);
     }
 
     //LAB_800eb174
@@ -2749,7 +2742,7 @@ public final class Bttl_800e {
     final BttlScriptData6cSub1c a0 = FUN_800eaf54(manager, textureInfo.vramPos_00);
 
     if(a0 != null) {
-      int h = -a0._14.get() / 256 % a0._0c.h.get();
+      int h = -a0._14 / 256 % a0._0c.h.get();
 
       if(h < 0) {
         h = h + a0._0c.h.get();
@@ -2770,13 +2763,13 @@ public final class Bttl_800e {
     BttlScriptData6cSub1c v0 = FUN_800eaf54(manager, vramPos);
 
     if(v0 == null) {
-      v0 = FUN_800e8dd4(manager, 0xa, 0, MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800eaec8", EffectManagerData6c.class, BttlScriptData6cSub1c.class), BiFunctionRef::new), 0x1c, BttlScriptData6cSub1c::new);
+      v0 = FUN_800e8dd4(manager, 10, 0, Bttl_800e::FUN_800eaec8, 0x1c, new BttlScriptData6cSub1c());
       v0._0c.set(vramPos);
-      v0._14.set(0);
+      v0._14 = 0;
     }
 
     //LAB_800eb2ec
-    v0._18.set(a2);
+    v0._18 = a2;
   }
 
   @Method(0x800eb308L)
@@ -2789,7 +2782,7 @@ public final class Bttl_800e {
         final short[] s0 = s2._00[s1];
 
         if((s0[0] & 0x4000) != 0) {
-          final BttlScriptData6cSub1c sub = FUN_800e8dd4(a0, 0xaL, 0, MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800eaec8", EffectManagerData6c.class, BttlScriptData6cSub1c.class), BiFunctionRef::new), 0x1cL, BttlScriptData6cSub1c::new);
+          final BttlScriptData6cSub1c sub = FUN_800e8dd4(a0, 10, 0, Bttl_800e::FUN_800eaec8, 0x1c, new BttlScriptData6cSub1c());
 
           if((s0[1] & 0x3c0) == 0) {
             sub._0c.x.set((short)(textureInfo[0].vramPos_00.x.get() & 0x3c0 | s0[1]));
@@ -2804,7 +2797,7 @@ public final class Bttl_800e {
           //LAB_800eb3f8
           sub._0c.w.set((short)(s0[3] / 4));
           sub._0c.h.set(s0[4]);
-          sub._14.set(0);
+          sub._14 = 0;
 
           final int v0;
           if(s0[6] >= 0x10) {
@@ -2815,10 +2808,10 @@ public final class Bttl_800e {
           }
 
           //LAB_800eb434
-          sub._18.set(v0);
+          sub._18 = v0;
 
           if(s0[5] == 0) {
-            sub._18.neg();
+            sub._18 = -sub._18;
           }
         }
 
@@ -2855,14 +2848,14 @@ public final class Bttl_800e {
   }
 
   @Method(0x800eb7c4L)
-  public static long FUN_800eb7c4(final EffectManagerData6c manager, final BttlScriptData6cSub20 effect) {
-    int a2 = effect._14.get() / 256;
+  public static int FUN_800eb7c4(final EffectManagerData6c manager, final BttlScriptData6cSub20 effect) {
+    int a2 = effect._14 / 256;
 
     //LAB_800eb7e8
-    effect._14.add(effect._18.get());
+    effect._14 += effect._18;
 
     //LAB_800eb800
-    a2 = (effect._14.get() / 256 - a2) % effect._0c.h.get();
+    a2 = (effect._14 / 256 - a2) % effect._0c.h.get();
 
     if(a2 < 0) {
       a2 = a2 + effect._0c.h.get();
@@ -2897,10 +2890,10 @@ public final class Bttl_800e {
     }
 
     //LAB_800eb934
-    final BttlScriptData6cSub20 sub = FUN_800e8dd4(manager, 0xa, 0, MEMORY.ref(4, getMethodAddress(Bttl_800e.class, "FUN_800eb7c4", EffectManagerData6c.class, BttlScriptData6cSub20.class), BiFunctionRef::new), 0x20, BttlScriptData6cSub20::new);
+    final BttlScriptData6cSub20 sub = FUN_800e8dd4(manager, 10, 0, Bttl_800e::FUN_800eb7c4, 0x20, new BttlScriptData6cSub20());
     sub._0c.set(textureInfo1.vramPos_00);
-    sub._14.set(0);
-    sub._18.set(script.params_20[3].get());
+    sub._14 = 0;
+    sub._18 = script.params_20[3].get();
     sub._1c.setX(textureInfo2.vramPos_00.x.get());
     sub._1c.setY(textureInfo2.vramPos_00.y.get());
     return FlowControl.CONTINUE;
