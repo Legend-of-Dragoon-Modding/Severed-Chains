@@ -1072,13 +1072,13 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f3354L)
-  public static void calculateFloatingNumberRender(final int numIndex, final long onHitTextType, final long onHitClutCol, final long rawDamage, final int x, final int y, long a6, final long onHitClutRow) {
+  public static void calculateFloatingNumberRender(final int numIndex, final long onHitTextType, final long onHitClutCol, final int rawDamage, final int x, final int y, long a6, final long onHitClutRow) {
     final short[] damageDigits = new short[5];
 
     final byte floatingTextType;  // 0=floating numbers, 1=MP cost, 2=miss
-    final byte clutCol;  //TODO: confirm this, it may not be this exactly
+    final byte clutCol; //TODO: confirm this, it may not be this exactly
     final byte clutRow; //TODO: confirm this, it may not be this exactly
-    if((int)rawDamage != -1) {
+    if(rawDamage != -1) {
       floatingTextType = (byte)onHitTextType;
       clutCol = (byte)onHitClutCol;
       clutRow = (byte)onHitClutRow;
@@ -1130,7 +1130,7 @@ public final class Bttl_800f {
     //LAB_800f35e4
     //LAB_800f3608
     //Clamp damage to 0-max
-    int damage = Math.max(0, Math.min((int)rawDamage, 99999));
+    int damage = Math.max(0, Math.min(rawDamage, 99999));
 
     //LAB_800f3614
     num.x_1c.set(x);
@@ -1509,7 +1509,7 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f4268L)
-  public static void setFloatingNumCoordsAndRender(final int bobjIndex, final long s3, final long s4) {
+  public static void setFloatingNumCoordsAndRender(final int bobjIndex, final int damage, final long s4) {
     final ScriptState<?> state = scriptStatePtrArr_800bc1c0[bobjIndex];
     final BattleObject27c bobj = (BattleObject27c)state.innerStruct_00;
 
@@ -1531,7 +1531,7 @@ public final class Bttl_800f {
     final DVECTOR screenCoords = perspectiveTransformXyz(bobj.model_148, x, y, z);
 
     //LAB_800f4394
-    FUN_800f89f4(bobjIndex, 0, 0x2L, s3, clampX(screenCoords.getX() + centreScreenX_1f8003dc.get()), clampY(screenCoords.getY() + centreScreenY_1f8003de.get()), 60 / vsyncMode_8007a3b8.get() / 4, s4);
+    FUN_800f89f4(bobjIndex, 0, 0x2L, damage, clampX(screenCoords.getX() + centreScreenX_1f8003dc.get()), clampY(screenCoords.getY() + centreScreenY_1f8003de.get()), 60 / vsyncMode_8007a3b8.get() / 4, s4);
   }
 
   @Method(0x800f43dcL)
@@ -3514,13 +3514,13 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f89f4L)
-  public static long FUN_800f89f4(final int bobjIndex, final long a1, final long a2, final long a3, final int x, final int y, final long a6, final long a7) {
+  public static long FUN_800f89f4(final int bobjIndex, final long a1, final long a2, final int rawDamage, final int x, final int y, final long a6, final long a7) {
     //LAB_800f8a30
     for(int i = 0; i < 12; i++) {
       final FloatingNumberC4 num = floatingNumbers_800c6b5c.deref().get(i);
 
       if(num.state_00.get() == 0) {
-        calculateFloatingNumberRender(i, a1, a2, a3, x, y, a6, a7);
+        calculateFloatingNumberRender(i, a1, a2, rawDamage, x, y, a6, a7);
         num.bobjIndex_04.set(bobjIndex);
         return 0x1L;
       }
@@ -3533,8 +3533,8 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f8aa4L)
-  public static void renderDamage(final int bobjIndex, final long a1) {
-    setFloatingNumCoordsAndRender(bobjIndex, a1, 0x8L);
+  public static void renderDamage(final int bobjIndex, final int damage) {
+    setFloatingNumCoordsAndRender(bobjIndex, damage, 0x8L);
   }
 
   @Method(0x800f8ac4L)

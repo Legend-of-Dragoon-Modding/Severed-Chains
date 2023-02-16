@@ -3977,8 +3977,8 @@ public final class Bttl_800e {
       s0.statusResistFlag_24 = stats.statusResistFlag_7e.get();
       s0._26 = stats._7f.get();
       s0._28 = stats._80.get();
-      s0._2a = stats._81.get();
-      s0._2c = stats._82.get();
+      s0._2a = stats.special1_81.get();
+      s0._2c = stats.special2_82.get();
       s0._2e = stats._83.get();
       s0._30 = stats._84.get();
       s0.speed_32 = stats.gearSpeed_86.get() + stats.bodySpeed_69.get();

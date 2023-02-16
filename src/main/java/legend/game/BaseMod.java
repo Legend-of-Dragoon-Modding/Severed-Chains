@@ -7,6 +7,7 @@ import legend.game.inventory.Item;
 import legend.game.inventory.ItemRegistryEvent;
 import legend.game.modding.Mod;
 import legend.game.modding.events.EventListener;
+import legend.game.modding.events.inventory.EquipmentStatsEvent;
 import legend.game.modding.registries.RegistryId;
 import legend.game.types.EquipmentStats1c;
 import legend.game.types.ItemStats0c;
@@ -50,5 +51,10 @@ public class BaseMod {
         event.register(new Equipment(id(slug.slugify(name)), name, equipmentStats));
       }
     }
+  }
+
+  @EventListener
+  public static void event(final EquipmentStatsEvent event) {
+    event.spRegen = -7;
   }
 }

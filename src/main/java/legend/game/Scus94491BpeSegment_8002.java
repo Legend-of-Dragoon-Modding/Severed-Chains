@@ -1461,7 +1461,7 @@ public final class Scus94491BpeSegment_8002 {
       return false;
     }
 
-    return (equipmentStats_80111ff0.get(itemId)._00.get() & 0x4) != 0;
+    return (equipmentStats_80111ff0.get(itemId).flags_00.get() & 0x4) != 0;
   }
 
   @Method(0x800228d0L)
@@ -5042,8 +5042,8 @@ public final class Scus94491BpeSegment_8002 {
     stats.statusResistFlag_7e.set(0);
     stats._7f.set(0);
     stats._80.set(0);
-    stats._81.set(0);
-    stats._82.set(0);
+    stats.special1_81.set(0);
+    stats.special2_82.set(0);
     stats._83.set(0);
     stats._84.set(0);
 
