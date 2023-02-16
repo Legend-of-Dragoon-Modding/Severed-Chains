@@ -37,6 +37,8 @@ import legend.game.combat.types.BattleObject27c;
 import legend.game.combat.types.BattleStruct18cb0;
 import legend.game.combat.types.StageData10;
 import legend.game.debugger.Debugger;
+import legend.game.input.Input;
+import legend.game.input.TestInput_CheckStyle;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.events.EventManager;
 import legend.game.scripting.FlowControl;
@@ -680,6 +682,8 @@ public final class Scus94491BpeSegment {
       }
     });
 
+    Input.init();
+
     GPU.subRenderer = () -> {
       EventManager.INSTANCE.clearStaleRefs();
 
@@ -688,6 +692,8 @@ public final class Scus94491BpeSegment {
       }
 
       handleControllerInput();
+      Input.update();
+      TestInput_CheckStyle.update();
 
       joypadPress_8007a398.setu(_800bee94.get());
       joypadInput_8007a39c.setu(_800bee90.get());
