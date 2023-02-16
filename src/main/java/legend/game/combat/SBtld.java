@@ -14,6 +14,7 @@ import legend.game.combat.types.EnemyRewards08;
 import legend.game.combat.types.MonsterStats1c;
 import legend.game.combat.types.StageData10;
 import legend.game.modding.events.EventManager;
+import legend.game.modding.events.characters.AdditionHitEvent;
 import legend.game.modding.events.combat.EnemyRewardsEvent;
 import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptState;
@@ -177,6 +178,28 @@ public class SBtld {
       a0._00[13] = (short)MEMORY.ref(1, v1).offset(0xdL).get();
       a0._00[14] = (short)MEMORY.ref(1, v1).offset(0xeL).get();
       a0._00[15] = (short)MEMORY.ref(1, v1).offset(0xfL).get();
+    }
+
+    final AdditionHitEvent event = EventManager.INSTANCE.postEvent(new AdditionHitEvent(a1));
+    for (int i = 0; i < 8; i++) {
+      final BattleStruct18cb0.AdditionHitStruct20 a0 = event.addition.hits_00[i];
+      final long v1 = a3 + i * 0x10L;
+      MEMORY.ref(1, v1).offset(0x0L).set(a0._00[0]);
+      MEMORY.ref(1, v1).offset(0x1L).set(a0._00[1]);
+      MEMORY.ref(1, v1).offset(0x2L).set(a0._00[2]);
+      MEMORY.ref(1, v1).offset(0x3L).set(a0._00[3]);
+      MEMORY.ref(1, v1).offset(0x4L).set(a0._00[4]);
+      MEMORY.ref(1, v1).offset(0x5L).set(a0._00[5]);
+      MEMORY.ref(1, v1).offset(0x6L).set(a0._00[6]);
+      MEMORY.ref(1, v1).offset(0x7L).set(a0._00[7]);
+      MEMORY.ref(1, v1).offset(0x8L).set(a0._00[8]);
+      MEMORY.ref(1, v1).offset(0x9L).set(a0._00[9]);
+      MEMORY.ref(1, v1).offset(0xaL).set(a0._00[10]);
+      MEMORY.ref(1, v1).offset(0xbL).set(a0._00[11]);
+      MEMORY.ref(1, v1).offset(0xcL).set(a0._00[12]);
+      MEMORY.ref(1, v1).offset(0xdL).set(a0._00[13]);
+      MEMORY.ref(1, v1).offset(0xeL).set(a0._00[14]);
+      MEMORY.ref(1, v1).offset(0xfL).set(a0._00[15]);
     }
   }
 
