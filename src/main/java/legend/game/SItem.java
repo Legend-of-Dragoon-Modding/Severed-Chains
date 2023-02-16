@@ -3030,7 +3030,7 @@ public final class SItem {
       }
 
       //LAB_8011042c
-      FUN_8011085c(charId);
+      applyEquipmentStats(charId);
 
       long v0 = _800fbd08.get(charId).get();
       a0 = v0 & 0x1fL;
@@ -3118,7 +3118,7 @@ public final class SItem {
   }
 
   @Method(0x8011085cL)
-  public static void FUN_8011085c(final int charId) {
+  public static void applyEquipmentStats(final int charId) {
     FUN_8002a86c(charId);
     final ActiveStatsa0 characterStats = stats_800be5f8.get(charId);
 

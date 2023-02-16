@@ -132,7 +132,7 @@ public class BattleObject27c extends BattleScriptDataBase {
   public int turnValue_4c;
   public int spellId_4e;
 
-  public int weaponId_52;
+  public int itemOrSpellId_52;
   public int guard_54;
   public int additionHits_56;
   public int selectedAddition_58;
@@ -322,7 +322,7 @@ public class BattleObject27c extends BattleScriptDataBase {
       case 36 -> this.turnValue_4c;
       case 37 -> this.spellId_4e;
 
-      case 39 -> this.weaponId_52;
+      case 39 -> this.itemOrSpellId_52;
       case 40 -> this.guard_54;
       case 41 -> this.additionHits_56;
       case 42 -> this.selectedAddition_58;
@@ -473,7 +473,7 @@ public class BattleObject27c extends BattleScriptDataBase {
       case 36 -> this.turnValue_4c = value;
       case 37 -> this.spellId_4e = value;
 
-      case 39 -> this.weaponId_52 = value;
+      case 39 -> this.itemOrSpellId_52 = value;
       case 40 -> this.guard_54 = value;
       case 41 -> this.additionHits_56 = value;
       case 42 -> this.selectedAddition_58 = value;

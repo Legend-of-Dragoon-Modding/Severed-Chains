@@ -408,7 +408,7 @@ public final class Bttl_800f {
       setTempSpellStats(state1);
     } else {
       //LAB_800f1c38
-      setTempWeaponStats(state1);
+      setTempItemMagicStats(state1);
       attackHit = 100;
     }
 
@@ -753,7 +753,7 @@ public final class Bttl_800f {
     final ScriptState<BattleObject27c> state = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
     final BattleObject27c s0 = state.innerStruct_00;
     clearTempWeaponAndSpellStats(s0);
-    setTempWeaponStats(state);
+    setTempItemMagicStats(state);
     int a1 = Math.max(1, FUN_800f946c(s0, FUN_800f204c(script.params_20[0].get(), script.params_20[1].get(), 0), 1));
 
     //LAB_800f28c8
@@ -2008,8 +2008,8 @@ public final class Bttl_800f {
 
           //LAB_800f50b8
           if(structa4.menuType_0a.get() == 0) {
-            data.weaponId_52 = structa4.itemOrSpellId_1c.get();
-            setTempWeaponStats(s2);
+            data.itemOrSpellId_52 = structa4.itemOrSpellId_1c.get();
+            setTempItemMagicStats(s2);
 
             if((data.itemTarget_d4 & 0x4) != 0) {
               _800c6b68.setu(0x1L);
@@ -3223,11 +3223,11 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f7a74L)
-  public static void setTempWeaponStats(final ScriptState<BattleObject27c> state) {
+  public static void setTempItemMagicStats(final ScriptState<BattleObject27c> state) {
     final BattleObject27c bobj = state.innerStruct_00;
 
     //LAB_800f7a98
-    final ItemStats0c itemStats = itemStats_8004f2ac.get(bobj.weaponId_52);
+    final ItemStats0c itemStats = itemStats_8004f2ac.get(bobj.itemOrSpellId_52);
     bobj.itemTarget_d4 = itemStats.target_00.get();
     bobj.itemElement_d6 = itemStats.element_01.get();
     bobj.itemDamage_d8 = itemStats.damage_02.get();
@@ -3474,7 +3474,7 @@ public final class Bttl_800f {
     final BattleObject27c s2 = state1.innerStruct_00;
 
     if(a2 != 0x1L) {
-      setTempWeaponStats(state1);
+      setTempItemMagicStats(state1);
     }
 
     //LAB_800f88a0
@@ -3863,7 +3863,7 @@ public final class Bttl_800f {
 
   @Method(0x800f9884L)
   public static FlowControl FUN_800f9884(final RunningScript<?> script) {
-    setTempWeaponStats((ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()]);
+    setTempItemMagicStats((ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()]);
     return FlowControl.CONTINUE;
   }
 
