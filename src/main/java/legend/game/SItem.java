@@ -1517,7 +1517,7 @@ public final class SItem {
         renderTwoDigitNumber(x + 154, y + 6, stats.level_0e.get());
         renderTwoDigitNumber(x + 112, y + 17, stats.dlevel_0f.get());
         renderThreeDigitNumber(x + 148, y + 17, stats.sp_08.get());
-        renderFourDigitNumber(x + 100, y + 28, gameState_800babc8.charData_32c.get(charIndex).hp_08.get(), stats.maxHp_66.get());
+        renderFourDigitNumber(x + 100, y + 28, stats.hp_04.get(), stats.maxHp_66.get());
         renderCharacter(x + 124, y + 28, 11);
         renderFourDigitNumber(x + 142, y + 28, stats.maxHp_66.get());
         renderThreeDigitNumber(x + 106, y + 39, stats.mp_06.get());
