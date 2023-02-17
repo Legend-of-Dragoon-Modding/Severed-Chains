@@ -1,9 +1,9 @@
 package legend.game.combat.deff;
 
-import legend.core.IoHelper;
 import legend.core.gpu.RECT;
 import legend.game.types.CContainer;
 import legend.game.types.TmdAnimationFile;
+import legend.game.unpacker.FileData;
 
 public class DeffPart {
   /**
@@ -20,24 +20,24 @@ public class DeffPart {
    */
   public final int flags_00;
 
-  public DeffPart(final byte[] data, final int offset) {
-    this.flags_00 = IoHelper.readInt(data, offset);
+  public DeffPart(final FileData data) {
+    this.flags_00 = data.readInt(0);
   }
 
   public static class LmbType extends DeffPart {
     public final int type_04;
     public final Lmb lmb_08;
 
-    public LmbType(final byte[] data, final int offset) {
-      super(data, offset);
+    public LmbType(final FileData data) {
+      super(data);
 
-      this.type_04 = IoHelper.readInt(data, 4);
+      this.type_04 = data.readInt(0x4);
 
-      final int lmbOffset = offset + IoHelper.readInt(data, 8);
+      final int lmbOffset = data.readInt(0x8);
       this.lmb_08 = switch(this.type_04) {
-        case 0 -> new LmbType0(data, lmbOffset);
-        case 1 -> new LmbType1(data, lmbOffset);
-        case 2 -> new LmbType2(data, lmbOffset);
+        case 0 -> new LmbType0(data.slice(lmbOffset));
+        case 1 -> new LmbType1(data.slice(lmbOffset));
+        case 2 -> new LmbType2(data.slice(lmbOffset));
         default -> throw new RuntimeException("Unsupported LMB type");
       };
     }
@@ -47,40 +47,40 @@ public class DeffPart {
     public final TextureInfo[] textureInfo_08;
     public final CContainer tmd_0c;
 
-    public TmdType(final byte[] data, final int offset) {
-      super(data, offset);
+    public TmdType(final FileData data) {
+      super(data);
 
-      final int textureOffset = IoHelper.readInt(data, offset + 0x8);
-      final int tmdOffset = IoHelper.readInt(data, offset + 0xc);
+      final int textureOffset = data.readInt(0x8);
+      final int tmdOffset = data.readInt(0xc);
 
       if(textureOffset != tmdOffset) {
         this.textureInfo_08 = new TextureInfo[(tmdOffset - textureOffset) / 0x8];
         for(int i = 0; i < this.textureInfo_08.length; i++) {
-          this.textureInfo_08[i] = new TextureInfo(data, offset + textureOffset + i * 0x8);
+          this.textureInfo_08[i] = new TextureInfo(data.slice(textureOffset + i * 0x8, 0x8));
         }
       } else {
         this.textureInfo_08 = null;
       }
 
-      this.tmd_0c = new CContainer(data, offset + tmdOffset);
+      this.tmd_0c = new CContainer(data.slice(tmdOffset));
     }
   }
 
   public static class AnimatedTmdType extends TmdType {
     public final Anim anim_14;
 
-    public AnimatedTmdType(final byte[] data, final int offset) {
-      super(data, offset);
+    public AnimatedTmdType(final FileData data) {
+      super(data);
 
-      final int animOffset = offset + IoHelper.readInt(data, offset + 0x14);
-      final int magic = IoHelper.readInt(data, animOffset);
+      final int animOffset = data.readInt(0x14);
+      final int magic = data.readInt(animOffset);
 
       if(magic == Lmb.MAGIC) {
-        this.anim_14 = new LmbType0(data, animOffset);
+        this.anim_14 = new LmbType0(data.slice(animOffset));
       } else if(magic == Cmb.MAGIC) {
-        this.anim_14 = new Cmb(data, animOffset);
+        this.anim_14 = new Cmb(data.slice(animOffset));
       } else {
-        this.anim_14 = new TmdAnimationFile(data, animOffset);
+        this.anim_14 = new TmdAnimationFile(data.slice(animOffset));
       }
     }
   }
@@ -88,17 +88,17 @@ public class DeffPart {
   public static class TextureInfo {
     public final RECT vramPos_00 = new RECT();
 
-    public TextureInfo(final byte[] data, final int offset) {
-      IoHelper.readRect(data, offset, this.vramPos_00);
+    public TextureInfo(final FileData data) {
+      data.readRect(0, this.vramPos_00);
     }
   }
 
   public static class SpriteType extends DeffPart {
     public final SpriteMetrics metrics_08;
 
-    public SpriteType(final byte[] data, final int offset) {
-      super(data, offset);
-      this.metrics_08 = new SpriteMetrics(data, offset + IoHelper.readInt(data, offset + 0x8));
+    public SpriteType(final FileData data) {
+      super(data);
+      this.metrics_08 = new SpriteMetrics(data.slice(data.readInt(0xc), 0x8));
     }
   }
 
@@ -110,22 +110,22 @@ public class DeffPart {
     public int clutX_08;
     public int clutY_0a;
 
-    public SpriteMetrics(final byte[] data, final int offset) {
-      this.u_00 = IoHelper.readUShort(data, offset);
-      this.v_02 = IoHelper.readUShort(data, offset + 0x2);
-      this.w_04 = IoHelper.readUShort(data, offset + 0x4);
-      this.h_06 = IoHelper.readUShort(data, offset + 0x6);
-      this.clutX_08 = IoHelper.readUShort(data, offset + 0x8);
-      this.clutY_0a = IoHelper.readUShort(data, offset + 0xa);
+    public SpriteMetrics(final FileData data) {
+      this.u_00 = data.readUShort(0x0);
+      this.v_02 = data.readUShort(0x2);
+      this.w_04 = data.readUShort(0x4);
+      this.h_06 = data.readUShort(0x6);
+      this.clutX_08 = data.readUShort(0x8);
+      this.clutY_0a = data.readUShort(0xa);
     }
   }
 
   public static class CmbType extends DeffPart {
     public final Cmb cmb_14;
 
-    public CmbType(final byte[] data, final int offset) {
-      super(data, offset);
-      this.cmb_14 = new Cmb(data, offset + IoHelper.readInt(data, offset + 0x14));
+    public CmbType(final FileData data) {
+      super(data);
+      this.cmb_14 = new Cmb(data.slice(data.readInt(0x14)));
     }
   }
 }

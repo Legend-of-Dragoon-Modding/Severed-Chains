@@ -1,6 +1,6 @@
 package legend.game.combat.deff;
 
-import legend.core.IoHelper;
+import legend.game.unpacker.FileData;
 
 public class LmbType1 extends Lmb {
   public final short _08;
@@ -10,29 +10,29 @@ public class LmbType1 extends Lmb {
   public final LmbTransforms14[] _10;
   public final short[] _14;
 
-  public LmbType1(final byte[] data, final int offset) {
-    super(data, offset);
+  public LmbType1(final FileData data) {
+    super(data);
 
-    this._08 = IoHelper.readShort(data, offset + 0x8);
-    this._0a = IoHelper.readShort(data, offset + 0xa);
+    this._08 = data.readShort(0x8);
+    this._0a = data.readShort(0xa);
 
     this._0c = new Sub04[this.count_04];
     this._10 = new LmbTransforms14[this.count_04];
 
-    final int sub04Offset = IoHelper.readInt(data, offset + 0x0c);
+    final int sub04Offset = data.readInt(0x0c);
     for(int i = 0; i < this.count_04; i++) {
-      this._0c[i] = new Sub04(data, offset + sub04Offset + i * 0x4);
+      this._0c[i] = new Sub04(data.slice(sub04Offset + i * 0x4, 0x4));
     }
 
-    final int transformsOffset = IoHelper.readInt(data, offset + 0x10);
+    final int transformsOffset = data.readInt(0x10);
     for(int i = 0; i < this.count_04; i++) {
-      this._10[i] = new LmbTransforms14(data, offset + transformsOffset + i * 0x14);
+      this._10[i] = new LmbTransforms14(data.slice(transformsOffset + i * 0x14, 0x14));
     }
 
-    final int offset14 = IoHelper.readInt(data, offset + 0x14);
+    final int offset14 = data.readInt(0x14);
     this._14 = new short[this._08 * (this._0a - 1) / 2]; // Number of bytes, /2 to get array length
     for(int i = 0; i < this._14.length; i++) {
-      this._14[i] = IoHelper.readShort(data, offset + offset14 + i * 0x2);
+      this._14[i] = data.readShort(offset14 + i * 0x2);
     }
   }
 
@@ -40,9 +40,9 @@ public class LmbType1 extends Lmb {
     public final int _00;
     public final int _03;
 
-    public Sub04(final byte[] data, final int offset) {
-      this._00 = IoHelper.readUShort(data, offset);
-      this._03 = IoHelper.readUByte(data, offset + 0x3);
+    public Sub04(final FileData data) {
+      this._00 = data.readUShort(0x0);
+      this._03 = data.readUByte(0x3);
     }
   }
 }

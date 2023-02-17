@@ -303,7 +303,7 @@ public class Memory {
         final long addr = this.maskAddress(address.value());
 
         if(methods.containsKey(addr)) {
-          throw new RuntimeException(cls + " contains two methods at address " + addr);
+          throw new RuntimeException(cls + " contains two methods at address " + Long.toHexString(addr));
         }
 
         methods.put(addr, new MethodInfo(method, address.ignoreExtraParams()));

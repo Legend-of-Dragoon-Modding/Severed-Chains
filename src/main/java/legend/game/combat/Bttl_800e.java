@@ -74,6 +74,7 @@ import legend.game.types.Model124;
 import legend.game.types.ModelPartTransforms0c;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
+import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -2457,7 +2458,7 @@ public final class Bttl_800e {
     for(final byte[] data : deff) {
       final int type = IoHelper.readInt(data, 0) & 0xff00_0000; // Flags
       if(type == 0x100_0000) {
-        final DeffPart.TmdType tmdType = new DeffPart.TmdType(data, 0);
+        final DeffPart.TmdType tmdType = new DeffPart.TmdType(new FileData(data));
         final CContainer extTmd = tmdType.tmd_0c;
         final TmdWithId tmd = extTmd.tmdPtr_00;
 
@@ -2465,14 +2466,14 @@ public final class Bttl_800e {
           optimisePacketsIfNecessary(tmd, objectIndex);
         }
       } else if(type == 0x300_0000) {
-        final DeffPart.TmdType tmdType = new DeffPart.TmdType(data, 0);
+        final DeffPart.TmdType tmdType = new DeffPart.TmdType(new FileData(data));
         final CContainer extTmd = tmdType.tmd_0c;
 
         optimisePacketsIfNecessary(extTmd.tmdPtr_00, 0);
       }
 
       if(type == 0x100_0000 || type == 0x200_0000 || type == 0x300_0000) {
-        final DeffPart.TmdType tmdType = new DeffPart.TmdType(data, 0);
+        final DeffPart.TmdType tmdType = new DeffPart.TmdType(new FileData(data));
         final CContainer extTmd = tmdType.tmd_0c;
 
         if(tmdType.textureInfo_08 != null && deffManagerState.index != 0) {
@@ -2501,7 +2502,7 @@ public final class Bttl_800e {
         break;
       }
 
-      struct7cc.lmbs_390[flags & 0xff] = new DeffPart.LmbType(files.get(i), 0);
+      struct7cc.lmbs_390[flags & 0xff] = new DeffPart.LmbType(new FileData(files.get(i)));
     }
 
     //LAB_800ea850
@@ -2524,7 +2525,7 @@ public final class Bttl_800e {
 
       final int index = flags & 0xff;
       if(index >= 5) {
-        final DeffPart.TmdType tmdType = new DeffPart.TmdType(files.get(i), 0);
+        final DeffPart.TmdType tmdType = new DeffPart.TmdType(new FileData(files.get(i)));
         struct7cc.tmds_2f8[index] = tmdType.tmd_0c.tmdPtr_00.tmd.objTable[0];
       }
 
@@ -2540,7 +2541,7 @@ public final class Bttl_800e {
         break;
       }
 
-      final DeffPart.SpriteType spriteType = new DeffPart.SpriteType(files.get(i), 0);
+      final DeffPart.SpriteType spriteType = new DeffPart.SpriteType(new FileData(files.get(i)));
       final DeffPart.SpriteMetrics deffMetrics = spriteType.metrics_08;
       final SpriteMetrics08 metrics = struct7cc.spriteMetrics_39c[flags & 0xff];
       metrics.u_00.set(deffMetrics.u_00);
@@ -2586,14 +2587,14 @@ public final class Bttl_800e {
     final List<byte[]> deff = deffManager_800c693c.deffPackage_5a8;
 
     //LAB_800eac84
-    for(int i = 0; i < deff.size(); i++) {
-      if(IoHelper.readInt(deff.get(i), 0) == flags) {
+    for(final byte[] data : deff) {
+      if(IoHelper.readInt(data, 0) == flags) {
         return switch(flags >>> 24) {
-          case 0 -> new DeffPart.LmbType(deff.get(i), 0);
-          case 1, 2 -> new DeffPart.AnimatedTmdType(deff.get(i), 0);
-          case 3 -> new DeffPart.TmdType(deff.get(i), 0);
-          case 4 -> new DeffPart.SpriteType(deff.get(i), 0);
-          case 5 -> throw new RuntimeException("Not implemented yet")/*value -> {
+          case 0 -> new DeffPart.LmbType(new FileData(data));
+          case 1, 2 -> new DeffPart.AnimatedTmdType(new FileData(data));
+          case 3 -> new DeffPart.TmdType(new FileData(data));
+          case 4 -> new DeffPart.SpriteType(new FileData(data));
+          case 5 -> throw new RuntimeException("Not implemented yet")/*TODO value -> {
             if(value.offset(4, 0x0).get() == Cmb.MAGIC) {
               return new DeffPart.CmbType(value);
             }
@@ -3207,7 +3208,7 @@ public final class Bttl_800e {
     stage.rotTrans_5d4 = anim.partTransforms_10;
     stage.rotTrans_5d8 = anim.partTransforms_10;
     stage.partCount_5dc = anim.modelPartCount_0c;
-    stage._5de = anim._0e;
+    stage._5de = anim.halfKeyframes_0e;
     stage._5e0 = 0;
     applyStagePartAnimations(stage);
     stage._5e0 = 1;

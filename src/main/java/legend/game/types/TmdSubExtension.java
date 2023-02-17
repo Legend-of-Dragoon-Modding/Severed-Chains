@@ -1,12 +1,13 @@
 package legend.game.types;
 
-import legend.core.IoHelper;
+import legend.game.unpacker.FileData;
 
 public class TmdSubExtension {
   public final short s_02;
   public final short[] sa_04;
 
-  public TmdSubExtension(final byte[] data, final int offset) {
-    this.s_02 = IoHelper.readShort(data, offset + 0x2);
+  public TmdSubExtension(final FileData data) {
+    this.s_02 = data.readShort(0x2);
+    this.sa_04 = new short[0];
   }
 }

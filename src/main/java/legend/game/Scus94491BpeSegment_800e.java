@@ -13,10 +13,12 @@ import legend.game.types.Model124;
 import legend.game.types.TexPageY;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
+import legend.game.unpacker.FileData;
 
 import java.util.Arrays;
 
 import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Scus94491BpeSegment.FUN_80019500;
 import static legend.game.Scus94491BpeSegment._1f8003fc;
@@ -199,7 +201,10 @@ public final class Scus94491BpeSegment_800e {
     }
 
     //LAB_800e6af0
-    FUN_800e6b3c(model_800bda10, extendedTmd_800103d0, tmdAnimFile_8001051c);
+    final CContainer container = new CContainer(new FileData(MEMORY.getBytes(extendedTmd_800103d0.getAddress(), 0x14c)));
+    final TmdAnimationFile animation = new TmdAnimationFile(new FileData(MEMORY.getBytes(tmdAnimFile_8001051c.getAddress(), 0x28)));
+
+    FUN_800e6b3c(model_800bda10, container, animation);
 
     model_800bda10.coord2Param_64.rotate.x.set((short)0);
     model_800bda10.coord2Param_64.rotate.y.set((short)0);

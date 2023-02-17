@@ -1,6 +1,7 @@
 package legend.game.combat;
 
 import legend.core.Config;
+import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.Gpu;
@@ -26,7 +27,6 @@ import legend.core.memory.Ref;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BiConsumerRef;
-import legend.core.memory.types.BiFunctionRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
@@ -56,7 +56,6 @@ import legend.game.combat.types.BttlScriptData6cSub14_4;
 import legend.game.combat.types.BttlScriptData6cSub14_4Sub70;
 import legend.game.combat.types.BttlScriptData6cSub18;
 import legend.game.combat.types.BttlScriptData6cSub18Sub3c;
-import legend.game.combat.types.BttlScriptData6cSub1c;
 import legend.game.combat.types.BttlScriptData6cSub1c_2;
 import legend.game.combat.types.BttlScriptData6cSub1c_2Sub1e;
 import legend.game.combat.types.BttlScriptData6cSub1c_3;
@@ -949,10 +948,8 @@ public final class SEffe {
       a2._58.y.neg().shra(1);
       if(a2._14.get() == 0) {
         final int angle = (int)(seed_800fa754.advance().get() % 0x1001);
-        a2._58.setX((short)(rcos(angle) >>> 8));
-        a2._58.setZ((short)(rcos(angle) >>> 8));
-        a2._58.x.mul((short)MEMORY.ref(4, a1.getAddress()).offset(0x20L).get()).shra(8); //TODO
-        a2._58.z.mul((short)MEMORY.ref(4, a1.getAddress()).offset(0x20L).get()).shra(8); //TODO
+        a2._58.setX((short)((rcos(angle) >>> 8) * a1._08._18 >> 8));
+        a2._58.setZ((short)((rcos(angle) >>> 8) * a1._08._18 >> 8));
       }
 
       //LAB_800fc8d8
@@ -1800,7 +1797,7 @@ public final class SEffe {
     FUN_800ff15c(a0, a1, a2, a3);
     a2._20.set((short)0);
     a2._22.set((short)(0x8000 / a2._12.get()));
-    a2._24.set((short)(MEMORY.ref(1, a3.getAddress()).offset(0x1dL).get() << 8)); //TODO
+    a2._24.set((short)((a3._1c >>> 8 & 0xff) << 8));
   }
 
   @Method(0x800ff430L)
@@ -1866,7 +1863,7 @@ public final class SEffe {
     a2._18.set((short)(a0 & 0x1));
     a2._1a.setX((short)(v1 * 8));
 
-    final long a1 = Math.max(0, MEMORY.ref(1, a3.getAddress()).offset(0x1dL).get() - a0 * 16); //TODO
+    final long a1 = Math.max(0, (a3._1c >>> 8 & 0xff) - a0 * 16);
 
     //LAB_800ff754
     a2._12.set((short)-1);
@@ -2104,7 +2101,7 @@ public final class SEffe {
     a2._10.set((short)0);
     a2._70.set((short)0, (short)0, (short)0);
     a2._78.set((short)0, (short)0, (short)0);
-    a2._18.set((short)a3._18);
+    a2._18.set(a3._18);
     a2._14.set((short)0x800);
     a2._16.set((short)(a3._10 << 4));
     a2._1a.setX((short)(a3._18 >>> 2));
@@ -2558,10 +2555,15 @@ public final class SEffe {
     script.params_20[0].set(state.index);
 
     //LAB_8010223c
-    for(int i = 0; i < 9; i++) {
-      //TODO this seems weird
-      MEMORY.ref(4, effect._08.getAddress()).offset(i * 0x4L).setu(script.params_20[i].get());
-    }
+    effect._08._00 = script.params_20[0].get();
+    effect._08.scriptIndex_04 = script.params_20[1].get();
+    effect._08._08 = script.params_20[2].get();
+    effect._08._0c = (short)script.params_20[3].get();
+    effect._08._10 = (short)script.params_20[4].get();
+    effect._08._14 = (short)script.params_20[5].get();
+    effect._08._18 = (short)script.params_20[6].get();
+    effect._08._1c = script.params_20[7].get();
+    effect._08._20 = (short)script.params_20[8].get();
 
     //LAB_80102278
     for(int i = 0; i < effect.count_50; i++) {
@@ -5010,11 +5012,11 @@ public final class SEffe {
     //LAB_8010a130
     if((effect._24 & 0x1) != 0) {
       //LAB_8010a15c
-      for(int i = 0; i < effect.primitives_14.length; i++) {
-        final int sp70 = effect.primitives_14[i * 11 + 9] & 0xffff;
-        final int sp72 = effect.primitives_14[i * 11 + 9] >>> 16 & 0xffff;
-        final int sp74 = effect.primitives_14[i * 11 + 10] & 0xffff;
-        final int sp76 = effect.primitives_14[i * 11 + 10] >>> 16 & 0xffff;
+      for(final TmdObjTable1c.Primitive primitive : effect.primitives_14) {
+        final int sp70 = IoHelper.readUShort(primitive.data()[0], 0x20);
+        final int sp72 = IoHelper.readUShort(primitive.data()[0], 0x22);
+        final int sp74 = IoHelper.readUShort(primitive.data()[0], 0x24);
+        final int sp76 = IoHelper.readUShort(primitive.data()[0], 0x26);
         final SVECTOR sp0x18 = new SVECTOR().set(effect.vertices_0c[sp70]);
         final SVECTOR sp0x20 = new SVECTOR().set(effect.vertices_0c[sp72]);
         final SVECTOR sp0x28 = new SVECTOR().set(effect.vertices_0c[sp74]);
@@ -5052,7 +5054,7 @@ public final class SEffe {
 
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       script.scriptState_04,
-      0x28,
+      0,
       SEffe::FUN_80109fc4,
       null,
       null,

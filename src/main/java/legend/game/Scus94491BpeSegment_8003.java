@@ -10,10 +10,8 @@ import legend.core.gpu.RECT;
 import legend.core.gpu.TimHeader;
 import legend.core.gte.DVECTOR;
 import legend.core.gte.GsCOORDINATE2;
-import legend.core.gte.GsDOBJ2;
 import legend.core.gte.MATRIX;
 import legend.core.gte.SVECTOR;
-import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
 import legend.core.memory.Ref;
@@ -27,6 +25,7 @@ import legend.game.types.GsOffsetType;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.Translucency;
 import legend.game.types.WeirdTimHeader;
+import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -186,6 +185,12 @@ public final class Scus94491BpeSegment_8003 {
     validateRect("LoadImage", rect);
 
     GPU.commandA0CopyRectFromCpuToVram(rect, address);
+  }
+
+  public static void LoadImage(final RECT rect, final byte[] data) {
+    validateRect("LoadImage", rect);
+
+    GPU.uploadData(rect, data, 0);
   }
 
   @Method(0x80038818L)
@@ -1756,24 +1761,21 @@ public final class Scus94491BpeSegment_8003 {
    * I think this method reads through all the packets and sort of "combines" ones that have the same MODE and FLAG for efficiency
    */
   @Method(0x8003e5d0L)
-  public static void updateTmdPacketIlen(final TmdObjTable1c[] objTables, final GsDOBJ2 dobj2, final int objIndex) {
-    int bytesSinceModeOrFlagChange = 0;
+  public static void updateTmdPacketIlen(final FileData primitives, final int count) {
+    int primitivesSinceLastChange = 0;
     int mode = 0;
     int flag = 0;
-
-    final TmdObjTable1c objTable = objTables[objIndex];
-    dobj2.tmd_08 = objTable;
 
     int packetIndex = 0;
     int packetStartIndex = 0;
 
     //LAB_8003e638
-    for(int primitiveIndex = 0; primitiveIndex < objTable.n_primitive_14; primitiveIndex++) {
-      final long previousMode = mode;
-      final long previousFlag = flag;
+    for(int primitiveIndex = 0; primitiveIndex < count; primitiveIndex++) {
+      final int previousMode = mode;
+      final int previousFlag = flag;
 
       // Primitive: mode, flag, ilen, olen
-      final int primitive = objTable.primitives_10[packetIndex / 4];
+      final int primitive = primitives.readInt(packetIndex);
 
       mode = primitive >>> 24 & 0xff;
       flag = primitive >>> 16 & 0xff;
@@ -1781,52 +1783,52 @@ public final class Scus94491BpeSegment_8003 {
       if(previousMode != 0) {
         if(mode != previousMode || flag != previousFlag) {
           //LAB_8003e668
-          objTable.primitives_10[packetStartIndex / 4] = objTable.primitives_10[packetStartIndex / 4] & 0xffff_0000 | bytesSinceModeOrFlagChange;
-          bytesSinceModeOrFlagChange = 0;
+          primitives.writeShort(packetStartIndex, primitivesSinceLastChange);
+          primitivesSinceLastChange = 0;
           packetStartIndex = packetIndex;
         }
       }
 
       //LAB_8003e674
       //LAB_8003e678
-      switch((int)(mode & 0xfdL)) {
+      switch(mode & 0xfd) {
         case 0x20: // setPolyF3
-          if((flag & 0x4L) == 0) {
-            packetIndex += 0x10L;
+          if((flag & 0x4) == 0) {
+            packetIndex += 0x10;
             break;
           }
 
         case 0x31:
         case 0x24: // setPolyFT3
-          packetIndex += 0x18L;
+          packetIndex += 0x18;
           break;
 
         case 0x30: // setPolyG3
-          if((flag & 0x4L) == 0) {
-            packetIndex += 0x14L;
+          if((flag & 0x4) == 0) {
+            packetIndex += 0x14;
             break;
           }
 
         case 0x34: // setPolyGT3
         case 0x39:
         case 0x25:
-          packetIndex += 0x1cL;
+          packetIndex += 0x1c;
           break;
 
         case 0x28: // setPolyF4
           if((flag & 0x4L) == 0) {
-            packetIndex += 0x14L;
+            packetIndex += 0x14;
             break;
           }
 
         case 0x2d:
         case 0x2c: // setPolyFT4
-          packetIndex += 0x20L;
+          packetIndex += 0x20;
           break;
 
         case 0x29:
         case 0x21:
-          packetIndex += 0x10L;
+          packetIndex += 0x10;
           break;
 
         case 0x3d:
@@ -1834,14 +1836,14 @@ public final class Scus94491BpeSegment_8003 {
           break;
 
         case 0x38: // setPolyG4
-          if((flag & 0x4L) == 0) {
-            packetIndex += 0x18L;
+          if((flag & 0x4) == 0) {
+            packetIndex += 0x18;
             break;
           }
 
         case 0x3c: // setPolyGT4
         case 0x35:
-          packetIndex += 0x24L;
+          packetIndex += 0x24;
           break;
 
         case 0x23:
@@ -1863,11 +1865,11 @@ public final class Scus94491BpeSegment_8003 {
       }
 
       //LAB_8003e714
-      bytesSinceModeOrFlagChange++;
+      primitivesSinceLastChange++;
     }
 
     //LAB_8003e724
-    objTable.primitives_10[packetStartIndex / 4] = objTable.primitives_10[packetStartIndex / 4] & 0xffff_0000 | bytesSinceModeOrFlagChange;
+    primitives.writeShort(packetStartIndex, primitivesSinceLastChange);
   }
 
   @Method(0x8003e760L) //TODO using div instead of shifting means some of these values are slightly off, does this matter?

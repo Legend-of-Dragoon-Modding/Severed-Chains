@@ -1,7 +1,7 @@
 package legend.game.combat.deff;
 
-import legend.core.IoHelper;
 import legend.core.gte.SVECTOR;
+import legend.game.unpacker.FileData;
 
 public class LmbTransforms14 {
   public final SVECTOR scale_00 = new SVECTOR();
@@ -10,10 +10,10 @@ public class LmbTransforms14 {
 
   public LmbTransforms14() { }
 
-  public LmbTransforms14(final byte[] data, final int offset) {
-    IoHelper.readSvec3(data, offset, this.scale_00);
-    IoHelper.readSvec3(data, offset + 0x6, this.trans_06);
-    IoHelper.readSvec3(data, offset + 0xc, this.rot_0c);
+  public LmbTransforms14(final FileData data) {
+    data.readSvec3(0x0, this.scale_00);
+    data.readSvec3(0x6, this.trans_06);
+    data.readSvec3(0xc, this.rot_0c);
   }
 
   public LmbTransforms14 set(final LmbTransforms14 other) {

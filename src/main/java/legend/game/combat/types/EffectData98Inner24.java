@@ -1,8 +1,9 @@
 package legend.game.combat.types;
 
 public class EffectData98Inner24 {
+  public int _00;
   public int scriptIndex_04;
-
+  public int _08;
   public short _0c;
 
   public short _10;

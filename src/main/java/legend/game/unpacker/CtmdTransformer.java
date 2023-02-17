@@ -210,8 +210,8 @@ public final class CtmdTransformer {
     final byte[] newData = new byte[newSize];
 
     // Copy data before what we modified
-    data.copyTo(0, newData, 0, containerOffset);
-    containerData.copyTo(0, newData, containerOffset, 0xc);
+    data.copyFrom(0, newData, 0, containerOffset);
+    containerData.copyFrom(0, newData, containerOffset, 0xc);
 
     // Adjust DEFF container pointers
     final int deffContainerPtr10 = (int)MathHelper.get(newData, 0x10, 2);
@@ -241,15 +241,16 @@ public final class CtmdTransformer {
     System.arraycopy(tmdData, 0, newData, containerOffset + 0xc, tmdData.length);
 
     // Copy unmodified data at the end of the 0xc container
-    containerData.copyTo(ctmdEnd, newData, containerOffset + 0xc + tmdData.length, containerData.size() - ctmdEnd);
+    containerData.copyFrom(ctmdEnd, newData, containerOffset + 0xc + tmdData.length, containerData.size() - ctmdEnd);
 
     // Copy unmodified data at the end of the DEFF container
-    data.copyTo(containerOffset + containerData.size(), newData, containerOffset + newContainerSize, data.size() - containerOffset - containerData.size());
+    data.copyFrom(containerOffset + containerData.size(), newData, containerOffset + newContainerSize, data.size() - containerOffset - containerData.size());
 
     return Map.of(name, new FileData(newData));
   }
 
-  private static int primitivePacketSize(final int command) {
+  /** Does not include header */
+  public static int primitivePacketSize(final int command) {
     final int primitiveId = command >>> 24;
     final boolean gradated = (command & 0x4_0000) != 0;
     final boolean normals = (command & 0x1_0000) == 0;

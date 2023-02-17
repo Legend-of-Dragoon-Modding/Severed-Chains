@@ -1,6 +1,7 @@
 package legend.game.combat.types;
 
 import legend.core.gte.SVECTOR;
+import legend.core.gte.TmdObjTable1c;
 
 import java.util.Arrays;
 
@@ -10,7 +11,7 @@ public class FrozenJetEffect28 implements BttlScriptData6cSubBase1 {
 //  public final int primitiveCount_08;
   public final SVECTOR[] vertices_0c;
   public final SVECTOR[] normals_10;
-  public final int[] primitives_14;
+  public final TmdObjTable1c.Primitive[] primitives_14;
   /** ushort */
   public final int _18;
   public short _1a;
@@ -19,7 +20,7 @@ public class FrozenJetEffect28 implements BttlScriptData6cSubBase1 {
   /** ubyte */
   public final int _24;
 
-  public FrozenJetEffect28(final SVECTOR[] vertices, final SVECTOR[] normals, final int[] primitives, final int _18, final int _24) {
+  public FrozenJetEffect28(final SVECTOR[] vertices, final SVECTOR[] normals, final TmdObjTable1c.Primitive[] primitives, final int _18, final int _24) {
     this.vertices_0c = vertices;
     this.normals_10 = normals;
     this.primitives_14 = primitives;

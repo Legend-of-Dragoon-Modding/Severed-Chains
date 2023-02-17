@@ -438,10 +438,7 @@ public final class SItem {
         //LAB_800fc464
         for(int enemySlot = 0; enemySlot < 3; enemySlot++) {
           if((s2.encounterData_00.enemyIndices_00[enemySlot] & 0x1ff) == enemyIndex && files.get(enemySlot).length != 0) {
-            final long tim = mallocTail(files.get(enemySlot).length);
-            MEMORY.setBytes(tim, files.get(enemySlot));
-            loadCombatantTim(i, tim);
-            free(tim);
+            loadCombatantTim(i, files.get(enemySlot));
             break;
           }
         }
@@ -464,13 +461,9 @@ public final class SItem {
 
   @Method(0x800fc548L)
   public static void loadCharacterTim(final byte[] file, final int charSlot) {
-    final long tim = mallocTail(file.length);
-    MEMORY.setBytes(tim, file);
-
     final BattleObject27c bobj = _8006e398.charBobjIndices_e40[charSlot].innerStruct_00;
-    loadCombatantTim(bobj.combatantIndex_26c, tim);
+    loadCombatantTim(bobj.combatantIndex_26c, file);
 
-    free(tim);
     decrementOverlayCount();
   }
 

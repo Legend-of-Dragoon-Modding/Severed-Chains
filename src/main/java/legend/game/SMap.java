@@ -50,12 +50,12 @@ import legend.game.types.AnmFile;
 import legend.game.types.AnmSpriteGroup;
 import legend.game.types.AnmSpriteMetrics14;
 import legend.game.types.BigSubStruct;
+import legend.game.types.CContainer;
 import legend.game.types.CharacterData2c;
 import legend.game.types.DR_TPAGE;
 import legend.game.types.DustRenderData54;
 import legend.game.types.EnvironmentFile;
 import legend.game.types.EnvironmentStruct;
-import legend.game.types.CContainer;
 import legend.game.types.GsF_LIGHT;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.MediumStruct;
@@ -81,7 +81,6 @@ import legend.game.types.SubmapObject210;
 import legend.game.types.TexPageY;
 import legend.game.types.TimFile;
 import legend.game.types.TmdAnimationFile;
-import legend.game.types.CContainerSubfile1;
 import legend.game.types.TmdSubExtension;
 import legend.game.types.Translucency;
 import legend.game.types.TriangleIndicator140;
@@ -89,6 +88,7 @@ import legend.game.types.TriangleIndicator44;
 import legend.game.types.UnknownStruct;
 import legend.game.types.UnknownStruct2;
 import legend.game.types.WeirdTimHeader;
+import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -181,7 +181,6 @@ import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTransp
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
-import static legend.game.Scus94491BpeSegment_8003.updateTmdPacketIlen;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrix_80040780;
 import static legend.game.Scus94491BpeSegment_8004._8004dd30;
 import static legend.game.Scus94491BpeSegment_8004.diskNum_8004ddc0;
@@ -750,44 +749,20 @@ public final class SMap {
   @Method(0x800d9e64L)
   public static void FUN_800d9e64(final GsDOBJ2 dobj2, final int colourMap) {
     final TmdObjTable1c objTable = dobj2.tmd_08;
-    long count = objTable.n_primitive_14;
-    int[] primitives = objTable.primitives_10;
-    int primitiveIndex = 0;
 
     //LAB_800d9e90
-    while(count != 0) {
-      final int header = primitives[primitiveIndex];
+    for(final TmdObjTable1c.Primitive primitive : objTable.primitives_10) {
+      final int header = primitive.header();
       final int id = header & 0xff04_0000;
-      final int primitiveCount = header & 0xffff;
 
-      if(id == 0x3000_0000 || id == 0x3200_0000) {
-        count -= primitiveCount;
-        primitiveIndex += primitiveCount * 0x14;
-      } else if(id == 0x3004_0000 || id == 0x3204_0000) {
-        count -= primitiveCount;
-        primitiveIndex += primitiveCount * 0x1c;
-      } else if(id == 0x3400_0000 || id == 0x3600_0000) {
-        FUN_800da6c8(primitives, primitiveIndex, primitiveCount, colourMap & 0x7f);
-        count -= primitiveCount;
-        primitiveIndex += primitiveCount * 0x1c;
+      if(id == 0x3400_0000 || id == 0x3600_0000) {
+        FUN_800da6c8(primitive, colourMap & 0x7f);
       } else if(id == 0x3500_0000 || id == 0x3700_0000) {
-        FUN_800da7f4(primitives, primitiveIndex, primitiveCount, colourMap & 0x7f);
-        count -= primitiveCount;
-        primitiveIndex += primitiveCount * 0x24;
-      } else if(id == 0x3800_0000 || id == 0x3a00_0000) {
-        count -= primitiveCount;
-        primitiveIndex += primitiveCount * 0x18;
-      } else if(id == 0x3804_0000 || id == 0x3a04_0000) {
-        count -= primitiveCount;
-        primitiveIndex += primitiveCount * 0x24;
+        FUN_800da7f4(primitive, colourMap & 0x7f);
       } else if(id == 0x3c00_0000 || id == 0x3e00_0000) {
-        FUN_800da754(primitives, primitiveIndex, primitiveCount, colourMap & 0x7f);
-        count -= primitiveCount;
-        primitiveIndex += primitiveCount * 0x24;
+        FUN_800da754(primitive, colourMap & 0x7f);
       } else if(id == 0x3d00_0000 || id == 0x3f00_0000) {
-        FUN_800da880(primitives, primitiveIndex, primitiveCount, colourMap & 0x7f);
-        count -= primitiveCount;
-        primitiveIndex += primitiveCount * 0x2c;
+        FUN_800da880(primitive, colourMap & 0x7f);
       }
     }
   }
@@ -909,65 +884,53 @@ public final class SMap {
   }
 
   @Method(0x800da6c8L)
-  public static void FUN_800da6c8(final int[] primitives, int primitiveIndex, final int count, final int colourMap) {
+  public static void FUN_800da6c8(final TmdObjTable1c.Primitive primitive, final int colourMap) {
     final long a3 = _800f5930.offset(colourMap * 0x14L).getAddress();
 
     //LAB_800da6e8
-    for(int i = 0; i < count; i++) {
-      primitives[primitiveIndex + 1] = (primitives[primitiveIndex + 1] & (int)MEMORY.ref(4, a3).offset(0x4L).get() | (int)MEMORY.ref(4, a3).offset(0x0L).get()) + (int)MEMORY.ref(4, a3).offset(0x10L).get();
-      primitives[primitiveIndex + 2] = (primitives[primitiveIndex + 2] & (int)MEMORY.ref(4, a3).offset(0xcL).get() | (int)MEMORY.ref(4, a3).offset(0x8L).get()) + (int)MEMORY.ref(4, a3).offset(0x10L).get();
-      primitives[primitiveIndex + 3] += MEMORY.ref(4, a3).offset(0x10L).get();
-      primitiveIndex += 0x1c;
+    for(final byte[] data : primitive.data()) {
+      MathHelper.set(data, 0x0, 4, (MathHelper.get(data, 0, 4) & (int)MEMORY.ref(4, a3).offset(0x4L).get() | (int)MEMORY.ref(4, a3).offset(0x0L).get()) + (int)MEMORY.ref(4, a3).offset(0x10L).get());
+      MathHelper.set(data, 0x4, 4, (MathHelper.get(data, 4, 4) & (int)MEMORY.ref(4, a3).offset(0xcL).get() | (int)MEMORY.ref(4, a3).offset(0x8L).get()) + (int)MEMORY.ref(4, a3).offset(0x10L).get());
+      MathHelper.set(data, 0x8, 4,  MathHelper.get(data, 8, 4) + (int)MEMORY.ref(4, a3).offset(0x10L).get());
     }
-
-    //LAB_800da74c
   }
 
   @Method(0x800da754L)
-  public static void FUN_800da754(final int[] primitives, int primitiveIndex, final int count, final int colourMap) {
+  public static void FUN_800da754(final TmdObjTable1c.Primitive primitive, final int colourMap) {
     final long a3 = _800f5930.offset(colourMap * 0x14L).getAddress();
 
     //LAB_800da774
-    for(int i = 0; i < count; i++) {
-      primitives[primitiveIndex + 1] = (primitives[primitiveIndex + 1] & (int)MEMORY.ref(4, a3).offset(0x4L).get() | (int)MEMORY.ref(4, a3).offset(0x0L).get()) + (int)MEMORY.ref(4, a3).offset(0x10L).get();
-      primitives[primitiveIndex + 2] = (primitives[primitiveIndex + 2] & (int)MEMORY.ref(4, a3).offset(0xcL).get() | (int)MEMORY.ref(4, a3).offset(0x8L).get()) + (int)MEMORY.ref(4, a3).offset(0x10L).get();
-      primitives[primitiveIndex + 3] += MEMORY.ref(4, a3).offset(0x10L).get();
-      primitives[primitiveIndex + 4] += MEMORY.ref(4, a3).offset(0x10L).get();
-      primitiveIndex += 0x24;
+    for(final byte[] data : primitive.data()) {
+      MathHelper.set(data, 0x0, 4, (MathHelper.get(data, 0, 4) & (int)MEMORY.ref(4, a3).offset(0x4L).get() | (int)MEMORY.ref(4, a3).offset(0x0L).get()) + (int)MEMORY.ref(4, a3).offset(0x10L).get());
+      MathHelper.set(data, 0x4, 4, (MathHelper.get(data, 4, 4) & (int)MEMORY.ref(4, a3).offset(0xcL).get() | (int)MEMORY.ref(4, a3).offset(0x8L).get()) + (int)MEMORY.ref(4, a3).offset(0x10L).get());
+      MathHelper.set(data, 0x8, 4,  MathHelper.get(data, 8, 4) + (int)MEMORY.ref(4, a3).offset(0x10L).get());
+      MathHelper.set(data, 0xc, 4,  MathHelper.get(data, 8, 4) + (int)MEMORY.ref(4, a3).offset(0x10L).get());
     }
-
-    //LAB_800da7ec
   }
 
   @Method(0x800da7f4L)
-  public static void FUN_800da7f4(final int[] primitives, int primitiveIndex, final int count, final int colourMap) {
+  public static void FUN_800da7f4(final TmdObjTable1c.Primitive primitive, final int colourMap) {
     final long a3 = _800f5930.offset(colourMap * 0x14L).getAddress();
 
     //LAB_800da814
-    for(int i = 0; i < count; i++) {
-      primitives[primitiveIndex + 1] = (primitives[primitiveIndex + 1] & (int)MEMORY.ref(4, a3).offset(0x4L).get() | (int)MEMORY.ref(4, a3).offset(0x0L).get()) + (int)MEMORY.ref(4, a3).offset(0x10L).get();
-      primitives[primitiveIndex + 2] = (primitives[primitiveIndex + 2] & (int)MEMORY.ref(4, a3).offset(0xcL).get() | (int)MEMORY.ref(4, a3).offset(0x8L).get()) + (int)MEMORY.ref(4, a3).offset(0x10L).get();
-      primitives[primitiveIndex + 3] += MEMORY.ref(4, a3).offset(0x10L).get();
-      primitiveIndex += 0x24;
+    for(final byte[] data : primitive.data()) {
+      MathHelper.set(data, 0x0, 4, (MathHelper.get(data, 0, 4) & (int)MEMORY.ref(4, a3).offset(0x4L).get() | (int)MEMORY.ref(4, a3).offset(0x0L).get()) + (int)MEMORY.ref(4, a3).offset(0x10L).get());
+      MathHelper.set(data, 0x4, 4, (MathHelper.get(data, 4, 4) & (int)MEMORY.ref(4, a3).offset(0xcL).get() | (int)MEMORY.ref(4, a3).offset(0x8L).get()) + (int)MEMORY.ref(4, a3).offset(0x10L).get());
+      MathHelper.set(data, 0x8, 4,  MathHelper.get(data, 8, 4) + (int)MEMORY.ref(4, a3).offset(0x10L).get());
     }
-
-    //LAB_800da878
   }
 
   @Method(0x800da880L)
-  public static void FUN_800da880(final int[] primitives, int primitiveIndex, final int count, final int colourMap) {
+  public static void FUN_800da880(final TmdObjTable1c.Primitive primitive, final int colourMap) {
     final long a3 = _800f5930.offset(colourMap * 0x14L).getAddress();
 
     //LAB_800da8a0
-    for(int i = 0; i < count; i++) {
-      primitives[primitiveIndex + 1] = (primitives[primitiveIndex + 1] & (int)MEMORY.ref(4, a3).offset(0x04L).get() | (int)MEMORY.ref(4, a3).offset(0x00L).get()) + (int)MEMORY.ref(4, a3).offset(0x10L).get();
-      primitives[primitiveIndex + 2] = (primitives[primitiveIndex + 2] & (int)MEMORY.ref(4, a3).offset(0x0cL).get() | (int)MEMORY.ref(4, a3).offset(0x08L).get()) + (int)MEMORY.ref(4, a3).offset(0x10L).get();
-      primitives[primitiveIndex + 3] += MEMORY.ref(4, a3).offset(0x10L).get();
-      primitives[primitiveIndex + 4] += MEMORY.ref(4, a3).offset(0x10L).get();
-      primitiveIndex += 0x2c;
+    for(final byte[] data : primitive.data()) {
+      MathHelper.set(data, 0x0, 4, (MathHelper.get(data, 0, 4) & (int)MEMORY.ref(4, a3).offset(0x4L).get() | (int)MEMORY.ref(4, a3).offset(0x0L).get()) + (int)MEMORY.ref(4, a3).offset(0x10L).get());
+      MathHelper.set(data, 0x4, 4, (MathHelper.get(data, 4, 4) & (int)MEMORY.ref(4, a3).offset(0xcL).get() | (int)MEMORY.ref(4, a3).offset(0x8L).get()) + (int)MEMORY.ref(4, a3).offset(0x10L).get());
+      MathHelper.set(data, 0x8, 4,  MathHelper.get(data, 8, 4) + (int)MEMORY.ref(4, a3).offset(0x10L).get());
+      MathHelper.set(data, 0xc, 4,  MathHelper.get(data, 8, 4) + (int)MEMORY.ref(4, a3).offset(0x10L).get());
     }
-
-    //LAB_800da918
   }
 
   @Method(0x800da920L)
@@ -2748,10 +2711,10 @@ public final class SMap {
 
             final SubmapObject obj = new SubmapObject();
             obj.script = new ScriptFile("Submap object %d (DRGN%d/%d/%d)".formatted(objIndex, drgnIndex.get(), fileIndex.get() + 2, objIndex + 1), scriptData);
-            obj.model = new CContainer(tmdData, 0);
+            obj.model = new CContainer(new FileData(tmdData));
 
             for(int animIndex = objIndex * 33 + 1; animIndex < (objIndex + 1) * 33; animIndex++) {
-              obj.animations.add(new TmdAnimationFile(submapAssetsMrg_800c6878.get(animIndex), 0));
+              obj.animations.add(new TmdAnimationFile(new FileData(submapAssetsMrg_800c6878.get(animIndex))));
             }
 
             submapAssets.objects.add(obj);
@@ -4080,7 +4043,7 @@ public final class SMap {
     //LAB_800e5430
     final EnvironmentFile env = MEMORY.ref(4, mallocHead(files.get(0).length), EnvironmentFile::new);
     final UnboundedArrayRef<SomethingStructSub0c_1> something1 = MEMORY.ref(4, mallocHead(files.get(1).length), UnboundedArrayRef.of(0xc, SomethingStructSub0c_1::new));
-    final TmdWithId tmd = new TmdWithId(files.get(2), 0);
+    final TmdWithId tmd = new TmdWithId(new FileData(files.get(2)));
 
     MEMORY.setBytes(env.getAddress(), files.get(0));
     MEMORY.setBytes(something1.getAddress(), files.get(1));
@@ -5584,7 +5547,8 @@ public final class SMap {
       } else {
         //LAB_800e89f8
         final SomethingStructSub0c_1 struct2 = struct.ptr_14.get(i);
-        final long t1 = struct.primitives_10 + struct2.ptr_04.get() + 0x6L;
+        final long t1 = 0; //TODO struct.primitives_10 + struct2.ptr_04.get() + 0x6L;
+        assert false;
 
         vec.set((short)0, (short)0, (short)0);
 
@@ -5637,7 +5601,7 @@ public final class SMap {
   public static void FUN_800e8c50(final GsDOBJ2 dobj2, final SomethingStruct a1, final TmdWithId tmd) {
     a1.tmdPtr_1c = tmd;
     final TmdObjTable1c[] objTables = tmd.tmd.objTable;
-    updateTmdPacketIlen(objTables, dobj2, 0);
+    dobj2.tmd_08 = objTables[0];
     a1.objTableArrPtr_00 = objTables;
     FUN_800e8bd8(a1);
   }
@@ -5778,7 +5742,8 @@ public final class SMap {
 
     //LAB_800e932c
     final SomethingStructSub0c_1 ss2 = ss.ptr_14.get(index);
-    final long t0 = ss.primitives_10 + ss2.ptr_04.get() + 0x6L;
+    final long t0 = 0; //ss.primitives_10 + ss2.ptr_04.get() + 0x6L;
+    assert false;
     final int count = ss2.count_00.get();
 
     //LAB_800e937c
@@ -5919,7 +5884,8 @@ public final class SMap {
 
       if(v0 == 0) {
         //LAB_800e9774
-        t0 = SomethingStructPtr_800d1a88.ptr_14.get(s4).ptr_04.get() + SomethingStructPtr_800d1a88.primitives_10 + 0x6L;
+        t0 = 0; //TODO SomethingStructPtr_800d1a88.ptr_14.get(s4).ptr_04.get() + SomethingStructPtr_800d1a88.primitives_10 + 0x6L;
+        assert false;
 
         //LAB_800e97c4
         for(a2 = 0; a2 < SomethingStructPtr_800d1a88.ptr_14.get(s4).count_00.get(); a2++) {
@@ -6508,8 +6474,8 @@ public final class SMap {
           loadDrgnDir(0, fileIndex, files -> {
             submapCutModelAndAnimLoaded_800d4bdc.set(true);
 
-            submapCutModel = new CContainer(files.get(0), 0);
-            submapCutAnim = new TmdAnimationFile(files.get(1), 0);
+            submapCutModel = new CContainer(new FileData(files.get(0)));
+            submapCutAnim = new TmdAnimationFile(new FileData(files.get(1)));
           });
 
           loadDrgnDir(0, fileIndex + 1, files -> {
@@ -7391,7 +7357,7 @@ public final class SMap {
 
   @Method(0x800f0370L)
   public static void FUN_800f0370() {
-    initModel(dustModel_800d4d40, new CContainer(MEMORY.getBytes(mrg_800d6d1c.getFile(4), mrg_800d6d1c.entries.get(4).size.get()), 0), new TmdAnimationFile(MEMORY.getBytes(mrg_800d6d1c.getFile(5), mrg_800d6d1c.entries.get(5).size.get()), 0));
+    initModel(dustModel_800d4d40, new CContainer(new FileData(MEMORY.getBytes(mrg_800d6d1c.getFile(4), mrg_800d6d1c.entries.get(4).size.get()))), new TmdAnimationFile(new FileData(MEMORY.getBytes(mrg_800d6d1c.getFile(5), mrg_800d6d1c.entries.get(5).size.get()))));
     dust_800d4e68.next_50.clear();
     _800d4ec0.next_1c.clear();
     FUN_800f0e60();
@@ -8495,7 +8461,7 @@ public final class SMap {
 
   @Method(0x800f2788L)
   public static void initSavePoint() {
-    initModel(savePointModel_800d5eb0, new CContainer(MEMORY.getBytes(mrg_800d6d1c.getFile(2), mrg_800d6d1c.entries.get(2).size.get()), 0), new TmdAnimationFile(MEMORY.getBytes(mrg_800d6d1c.getFile(3), mrg_800d6d1c.entries.get(3).size.get()), 0));
+    initModel(savePointModel_800d5eb0, new CContainer(new FileData(MEMORY.getBytes(mrg_800d6d1c.getFile(2), mrg_800d6d1c.entries.get(2).size.get()))), new TmdAnimationFile(new FileData(MEMORY.getBytes(mrg_800d6d1c.getFile(3), mrg_800d6d1c.entries.get(3).size.get()))));
     savePoint_800d5598.get(0).rotation_28.set(0);
     savePoint_800d5598.get(0).colour_34.set(0x50);
     savePoint_800d5598.get(1).rotation_28.set(0);

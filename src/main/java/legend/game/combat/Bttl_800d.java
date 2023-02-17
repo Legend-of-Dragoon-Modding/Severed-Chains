@@ -88,7 +88,6 @@ import static legend.game.Scus94491BpeSegment_8003.getProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.getScreenOffset;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
-import static legend.game.Scus94491BpeSegment_8003.updateTmdPacketIlen;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixX;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixY;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixZ;
@@ -4625,7 +4624,7 @@ public final class Bttl_800d {
         model.dobj2ArrPtr_00[i].tmd_08 = tmd.objTable[i];
       } else {
         final GsDOBJ2 dobj2 = new GsDOBJ2();
-        updateTmdPacketIlen(tmd.objTable, dobj2, i);
+        dobj2.tmd_08 = tmd.objTable[i];
         model.dobj2ArrPtr_00[i].tmd_08 = dobj2.tmd_08;
       }
 
@@ -4791,9 +4790,9 @@ public final class Bttl_800d {
     model.animType_90 = 2;
     model.lmbUnknown_94 = 0;
     model.animCount_98 = count;
-    model.s_9a = cmb._0e * 2;
+    model.s_9a = cmb.halfKeyframes_0e * 2;
     model.ub_9c = 1;
-    model.s_9e = cmb._0e * 2;
+    model.s_9e = cmb.halfKeyframes_0e * 2;
 
     //LAB_800de270
     for(int i = 0; i < count; i++) {
@@ -4914,7 +4913,7 @@ public final class Bttl_800d {
   public static TmdObjTable1c optimisePacketsIfNecessary(final TmdWithId tmd, final int objIndex) {
     if((tmd.tmd.header.flags & 0x2) == 0) {
       final GsDOBJ2 dobj2 = new GsDOBJ2();
-      updateTmdPacketIlen(tmd.tmd.objTable, dobj2, objIndex);
+      dobj2.tmd_08 = tmd.tmd.objTable[objIndex];
       return dobj2.tmd_08;
     }
 

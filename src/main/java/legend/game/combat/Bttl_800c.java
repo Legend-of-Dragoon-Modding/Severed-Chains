@@ -69,6 +69,7 @@ import legend.game.scripting.IntParam;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptState;
+import legend.game.tim.Tim;
 import legend.game.types.CContainer;
 import legend.game.types.CharacterData2c;
 import legend.game.types.GsF_LIGHT;
@@ -78,6 +79,7 @@ import legend.game.types.Model124;
 import legend.game.types.SpellStats0c;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
+import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
 
 import javax.annotation.Nullable;
@@ -1303,7 +1305,7 @@ public final class Bttl_800c {
       stageHasModel_800c66b8.set(true);
 
       final BattleStage stage = _1f8003f4.stage_963c;
-      loadStageTmd(stage, new CContainer(files.get(0), 0, 10), new TmdAnimationFile(files.get(1), 0));
+      loadStageTmd(stage, new CContainer(new FileData(files.get(0)), 10), new TmdAnimationFile(new FileData(files.get(1))));
       stage.coord2_558.coord.transfer.set(0, 0, 0);
       stage.param_5a8.rotate.set((short)0, (short)0x400, (short)0);
     }
@@ -1663,11 +1665,11 @@ public final class Bttl_800c {
 
     final CContainer tmd;
     if(s0._1a4 >= 0) {
-      tmd = new CContainer(FUN_800cad34(s0._1a4), 0);
+      tmd = new CContainer(new FileData(FUN_800cad34(s0._1a4)));
     } else {
       //LAB_800c9590
       if(s0.mrg_00 != null && s0.mrg_00.get(32).length != 0) {
-        tmd = new CContainer(s0.mrg_00.get(32), 0);
+        tmd = new CContainer(new FileData(s0.mrg_00.get(32)));
       } else {
         throw new RuntimeException("anim undefined");
       }
@@ -1807,7 +1809,7 @@ public final class Bttl_800c {
         bpe.isLoaded_0b = 0;
         s3 = bpe;
       } else {
-        final CombatantStruct1a8_c.AnimType anim = new CombatantStruct1a8_c.AnimType(new TmdAnimationFile(data, 0));
+        final CombatantStruct1a8_c.AnimType anim = new CombatantStruct1a8_c.AnimType(new TmdAnimationFile(new FileData(data)));
         anim._08 = a3;
         anim.type_0a = 1;
         anim.isLoaded_0b = 0;
@@ -1824,7 +1826,7 @@ public final class Bttl_800c {
         bpe.isLoaded_0b = 0;
         s3 = bpe;
       } else {
-        final CombatantStruct1a8_c.AnimType anim = new CombatantStruct1a8_c.AnimType(new TmdAnimationFile(data, 0));
+        final CombatantStruct1a8_c.AnimType anim = new CombatantStruct1a8_c.AnimType(new TmdAnimationFile(new FileData(data)));
         anim._08 = a3;
         anim.type_0a = 2;
         anim.isLoaded_0b = 0;
@@ -2047,7 +2049,7 @@ public final class Bttl_800c {
     if(a0_0 instanceof final CombatantStruct1a8_c.IndexType indexType) {
       final int s0 = indexType.index_00;
 
-      return new TmdAnimationFile(FUN_800cad34(s0), 0);
+      return new TmdAnimationFile(new FileData(FUN_800cad34(s0)));
     }
 
     if(a0_0 instanceof CombatantStruct1a8_c.BpeType || a0_0 instanceof CombatantStruct1a8_c.TimType) {
@@ -2056,7 +2058,7 @@ public final class Bttl_800c {
 
         if(s0 >= 0) {
           //LAB_800ca3f4
-          return new TmdAnimationFile(FUN_800cad34(s0), 0);
+          return new TmdAnimationFile(new FileData(FUN_800cad34(s0)));
         }
       }
     }
@@ -2124,14 +2126,11 @@ public final class Bttl_800c {
 
   @Method(0x800ca65cL)
   public static void FUN_800ca65c(final byte[] data, final int combatantIndex) {
-    final long tim = mallocTail(data.length);
-    MEMORY.setBytes(tim, data);
-    loadCombatantTim(combatantIndex, tim);
-    free(tim);
+    loadCombatantTim(combatantIndex, data);
   }
 
   @Method(0x800ca75cL)
-  public static void loadCombatantTim(final int combatantIndex, final long timFile) {
+  public static void loadCombatantTim(final int combatantIndex, final byte[] timFile) {
     final int a0;
 
     if(combatantIndex >= 0) {
@@ -2159,27 +2158,23 @@ public final class Bttl_800c {
   }
 
   @Method(0x800ca7ecL)
-  public static void loadCombatantTim2(final int a0, final long timFile) {
-    final TimHeader header = parseTimHeader(MEMORY.ref(4, timFile + 0x4L));
+  public static void loadCombatantTim2(final int a0, final byte[] timFile) {
+    final Tim tim = new Tim(timFile);
 
     if(a0 != 0) {
       //LAB_800ca83c
       final RECT s0 = _800fa6e0.get(a0);
-      LoadImage(s0, header.getImageAddress());
+      LoadImage(s0, tim.getImageData());
 
-      if((header.flags.get() & 0x8L) != 0) {
-        header.clutRect.x.set(s0.x.get());
-        header.clutRect.y.set((short)(s0.y.get() + 240));
+      if(tim.hasClut()) {
+        tim.getClutRect().x.set(s0.x.get());
+        tim.getClutRect().y.set((short)(s0.y.get() + 240));
 
         //LAB_800ca884
-        LoadImage(header.clutRect, header.getClutAddress());
+        LoadImage(tim.getClutRect(), tim.getClutData());
       }
     } else {
-      LoadImage(header.imageRect, header.getImageAddress());
-
-      if((header.flags.get() & 0x8L) != 0) {
-        LoadImage(header.clutRect, header.getClutAddress());
-      }
+      tim.uploadToGpu();
     }
 
     //LAB_800ca88c

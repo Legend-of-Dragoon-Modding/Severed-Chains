@@ -1,6 +1,6 @@
 package legend.game.tmd;
 
-import legend.core.MathHelper;
+import legend.core.IoHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gte.DVECTOR;
@@ -27,22 +27,16 @@ public final class Renderer {
     final TmdObjTable1c objTable = dobj2.tmd_08;
     final SVECTOR[] vertices = objTable.vert_top_00;
     final SVECTOR[] normals = objTable.normal_top_08;
-    final int[] primitives = objTable.primitives_10;
-    final int count = objTable.n_primitive_14;
-    int primitivesOffset = 0;
 
     //LAB_800da2bc
-    for(int i = 0; i < count; ) {
-      final int header = primitives[primitivesOffset];
-      final int length = header & 0xffff;
-      primitivesOffset = renderTmdPrimitive(primitives, primitivesOffset, vertices, normals, length, useSpecialTranslucency);
-      i += length;
+    for(final TmdObjTable1c.Primitive primitive : objTable.primitives_10) {
+      renderTmdPrimitive(primitive, vertices, normals, useSpecialTranslucency);
     }
   }
 
-  public static int renderTmdPrimitive(final int[] primitives, int primitivesOffset, final SVECTOR[] vertices, final SVECTOR[] normals, final int count, final boolean useSpecialTranslucency) {
+  public static void renderTmdPrimitive(final TmdObjTable1c.Primitive primitive, final SVECTOR[] vertices, final SVECTOR[] normals, final boolean useSpecialTranslucency) {
     // Read type info from command ---
-    final int command = primitives[primitivesOffset] & 0xff04_0000;
+    final int command = primitive.header() & 0xff04_0000;
     final int primitiveId = command >>> 24;
 
     if((primitiveId >>> 5 & 0b11) != 1) {
@@ -72,33 +66,33 @@ public final class Renderer {
     final Polygon poly = new Polygon(vertexCount);
 
     outer:
-    for(int i = 0; i < count; i++) {
+    for(final byte[] data : primitive.data()) {
       // Read data from TMD ---
-      primitivesOffset++;
+      int primitivesOffset = 0;
 
       if(textured) {
         for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
-          poly.vertices[vertexIndex].u = primitives[primitivesOffset] & 0xff;
-          poly.vertices[vertexIndex].v = primitives[primitivesOffset] >>> 8 & 0xff;
+          poly.vertices[vertexIndex].u = IoHelper.readUByte(data, primitivesOffset++);
+          poly.vertices[vertexIndex].v = IoHelper.readUByte(data, primitivesOffset++);
 
           if(vertexIndex == 0) {
-            poly.clut = primitives[primitivesOffset] >>> 16;
+            poly.clut = IoHelper.readUShort(data, primitivesOffset);
           } else if(vertexIndex == 1) {
-            poly.tpage = primitives[primitivesOffset] >>> 16;
+            poly.tpage = IoHelper.readUShort(data, primitivesOffset);
           }
 
-          primitivesOffset++;
+          primitivesOffset += 2;
         }
       }
 
       if(gradated || !lit) {
         for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
-          poly.vertices[vertexIndex].colour = primitives[primitivesOffset];
-          primitivesOffset++;
+          poly.vertices[vertexIndex].colour = IoHelper.readInt(data, primitivesOffset);
+          primitivesOffset += 4;
         }
       } else if(!textured) {
-        final int colour = primitives[primitivesOffset];
-        primitivesOffset++;
+        final int colour = IoHelper.readInt(data, primitivesOffset);
+        primitivesOffset += 4;
 
         for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
           poly.vertices[vertexIndex].colour = colour;
@@ -107,16 +101,13 @@ public final class Renderer {
 
       for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
         if(lit) {
-          poly.vertices[vertexIndex].normalIndex = primitives[primitivesOffset] & 0xffff;
-          poly.vertices[vertexIndex].vertexIndex = primitives[primitivesOffset] >>> 16;
-        } else {
-          poly.vertices[vertexIndex].vertexIndex = primitives[primitivesOffset] & 0xffff;
+          poly.vertices[vertexIndex].normalIndex = IoHelper.readUShort(data, primitivesOffset);
+          primitivesOffset += 2;
         }
 
-        primitivesOffset++;
+        poly.vertices[vertexIndex].vertexIndex = IoHelper.readUShort(data, primitivesOffset);
+        primitivesOffset += 2;
       }
-
-      primitivesOffset = MathHelper.roundUp(primitivesOffset, 4); // 4-byte-align
       // ---
 
       final GpuCommandPoly cmd = new GpuCommandPoly(vertexCount);
@@ -192,7 +183,5 @@ public final class Renderer {
 
       GPU.queueCommand(z, cmd);
     }
-
-    return primitivesOffset;
   }
 }

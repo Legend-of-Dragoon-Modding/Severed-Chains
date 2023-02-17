@@ -1,13 +1,13 @@
 package legend.core.gte;
 
-import legend.core.IoHelper;
+import legend.game.unpacker.FileData;
 
 public class TmdWithId {
   public final long id;
   public final Tmd tmd;
 
-  public TmdWithId(final byte[] data, final int offset) {
-    this.id = IoHelper.readInt(data, offset);
-    this.tmd = new Tmd(data, offset + 0x4);
+  public TmdWithId(final FileData data) {
+    this.id = data.readInt(0x0);
+    this.tmd = new Tmd(data.slice(0x4));
   }
 }

@@ -1,6 +1,7 @@
 package legend.game.title;
 
 import legend.core.Config;
+import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandPoly;
@@ -11,6 +12,7 @@ import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.GsDOBJ2;
 import legend.core.gte.MATRIX;
 import legend.core.gte.SVECTOR;
+import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.TmdWithId;
 import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
@@ -31,6 +33,7 @@ import legend.game.tim.Tim;
 import legend.game.types.CharacterData2c;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.Translucency;
+import legend.game.unpacker.FileData;
 import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nullable;
@@ -74,7 +77,6 @@ import static legend.game.Scus94491BpeSegment_8003.StoreImage;
 import static legend.game.Scus94491BpeSegment_8003.bzero;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
-import static legend.game.Scus94491BpeSegment_8003.updateTmdPacketIlen;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndexOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8004.setMono;
@@ -407,7 +409,7 @@ public final class Ttle {
 
   @Method(0x800c7c18L)
   public static void menuFireTmdLoaded(final byte[] file) {
-    final TmdWithId tmd = new TmdWithId(file, 0);
+    final TmdWithId tmd = new TmdWithId(new FileData(file));
     _800c66d0 = parseTmdFile(tmd);
     FUN_800cc0b0(_800c66d0, null);
     _800c66d0.tmd_0c = tmd;
@@ -1436,7 +1438,7 @@ public final class Ttle {
     //LAB_800cc02c
     for(int objIndex = 0; objIndex < tmd.tmd.header.nobj; objIndex++) {
       //LAB_800cc04c
-      updateTmdPacketIlen(tmd.tmd.objTable, tmdRenderer.dobj2s_00[objIndex], objIndex);
+      tmdRenderer.dobj2s_00[objIndex].tmd_08 = tmd.tmd.objTable[objIndex];
     }
 
     //LAB_800cc088
@@ -1485,43 +1487,30 @@ public final class Ttle {
   @Method(0x800cc388L)
   public static void FUN_800cc388(final GsDOBJ2 dobj2) {
     final SVECTOR[] vertices = dobj2.tmd_08.vert_top_00;
-    final int[] primitives = dobj2.tmd_08.primitives_10;
-    int primitivesOffset = 0;
 
     //LAB_800cc408
-    for(int i = 0; i < dobj2.tmd_08.n_primitive_14; ) {
-      final int primitive = primitives[primitivesOffset];
-      final int command = primitive & 0xff04_0000;
-      final int len = primitive & 0xffff;
+    for(final TmdObjTable1c.Primitive primitive : dobj2.tmd_08.primitives_10) {
+      final int command = primitive.header() & 0xff04_0000;
 
-      //LAB_800cc420
       if(command == 0x3700_0000) {
-        //LAB_800cc4a0
-        primitivesOffset = FUN_800cc57c(primitives, primitivesOffset, vertices, len);
+        FUN_800cc57c(primitive, vertices);
       } else if(command == 0x3f00_0000) {
-        //LAB_800cc4cc
-        primitivesOffset = FUN_800ccb78(primitives, primitivesOffset, vertices, len);
+        FUN_800ccb78(primitive, vertices);
       }
-
-      //LAB_800cc558
-      //LAB_800cc560
-      i += len;
     }
-
-    //LAB_800cc568
   }
 
   @Method(0x800cc57cL)
-  public static int FUN_800cc57c(final int[] primitives, int primitivesOffset, final SVECTOR[] vertices, final int count) {
+  public static void FUN_800cc57c(final TmdObjTable1c.Primitive primitive, final SVECTOR[] vertices) {
     //LAB_800cc5b0
-    for(int i = 0; i < count; i++) {
+    for(final byte[] data : primitive.data()) {
       final GpuCommandPoly cmd = new GpuCommandPoly(3)
-        .translucent(Translucency.of(primitives[primitivesOffset + 2] >>> 21 & 0x3));
+        .translucent(Translucency.of(IoHelper.readUShort(data, 0x6) >>> 5 & 0x3));
 
       //LAB_800cc5c8
-      final SVECTOR vert0 = vertices[primitives[primitivesOffset + 7] & 0xffff];
-      final SVECTOR vert1 = vertices[primitives[primitivesOffset + 7] >>> 16 & 0xffff];
-      final SVECTOR vert2 = vertices[primitives[primitivesOffset + 8] & 0xffff];
+      final SVECTOR vert0 = vertices[IoHelper.readUShort(data, 0x18)];
+      final SVECTOR vert1 = vertices[IoHelper.readUShort(data, 0x1a)];
+      final SVECTOR vert2 = vertices[IoHelper.readUShort(data, 0x1c)];
       CPU.MTC2(vert0.getXY(), 0); // VXY0
       CPU.MTC2(vert0.getZ(),  1); // VZ0
       CPU.MTC2(vert1.getXY(), 2); // VXY1
@@ -1530,12 +1519,12 @@ public final class Ttle {
       CPU.MTC2(vert2.getZ(),  5); // VZ2
       CPU.COP2(0x280030L); // Perspective transformation triple
 
-      cmd.uv(0, primitives[primitivesOffset + 1] & 0xff, primitives[primitivesOffset + 1] >>> 8 & 0xff);
-      cmd.uv(1, primitives[primitivesOffset + 2] & 0xff, primitives[primitivesOffset + 2] >>> 8 & 0xff);
-      cmd.uv(2, primitives[primitivesOffset + 3] & 0xff, primitives[primitivesOffset + 3] >>> 8 & 0xff);
+      cmd.uv(0, IoHelper.readUByte(data, 0x0), IoHelper.readUByte(data, 0x1));
+      cmd.uv(1, IoHelper.readUByte(data, 0x4), IoHelper.readUByte(data, 0x5));
+      cmd.uv(2, IoHelper.readUByte(data, 0x8), IoHelper.readUByte(data, 0x9));
 
-      cmd.clut((primitives[primitivesOffset + 1] >>> 16 & 0b111111) * 16, primitives[primitivesOffset + 1] >>> 22);
-      cmd.vramPos((primitives[primitivesOffset + 2] >>> 16 & 0b1111) * 64, (primitives[primitivesOffset + 2] >>> 16 & 0b10000) != 0 ? 256 : 0);
+      cmd.clut((IoHelper.readUShort(data, 0x2) & 0b111111) * 16, IoHelper.readUShort(data, 0x2) >>> 6);
+      cmd.vramPos((IoHelper.readUShort(data, 0x6) & 0b1111) * 64, (IoHelper.readUShort(data, 0x6) & 0b10000) != 0 ? 256 : 0);
 
       if((int)CPU.CFC2(31) >= 0) { // No errors
         //LAB_800cc674
@@ -1563,9 +1552,9 @@ public final class Ttle {
                     //LAB_800cc7f8
                     CPU.COP2(0x158002dL); // Average of three Z values
 
-                    cmd.rgb(0, (primitives[primitivesOffset + 4] & 0xff) * flameColour / 0xff, (primitives[primitivesOffset + 4] >>> 8 & 0xff) * flameColour / 0xff, (primitives[primitivesOffset + 4] >>> 16 & 0xff) * flameColour / 0xff);
-                    cmd.rgb(1, (primitives[primitivesOffset + 5] & 0xff) * flameColour / 0xff, (primitives[primitivesOffset + 5] >>> 8 & 0xff) * flameColour / 0xff, (primitives[primitivesOffset + 5] >>> 16 & 0xff) * flameColour / 0xff);
-                    cmd.rgb(2, (primitives[primitivesOffset + 6] & 0xff) * flameColour / 0xff, (primitives[primitivesOffset + 6] >>> 8 & 0xff) * flameColour / 0xff, (primitives[primitivesOffset + 6] >>> 16 & 0xff) * flameColour / 0xff);
+                    cmd.rgb(0, IoHelper.readUByte(data, 0x0c) * flameColour / 0xff, IoHelper.readUByte(data, 0x0d) * flameColour / 0xff, IoHelper.readUByte(data, 0x0e) * flameColour / 0xff);
+                    cmd.rgb(1, IoHelper.readUByte(data, 0x10) * flameColour / 0xff, IoHelper.readUByte(data, 0x11) * flameColour / 0xff, IoHelper.readUByte(data, 0x12) * flameColour / 0xff);
+                    cmd.rgb(2, IoHelper.readUByte(data, 0x14) * flameColour / 0xff, IoHelper.readUByte(data, 0x15) * flameColour / 0xff, IoHelper.readUByte(data, 0x16) * flameColour / 0xff);
 
                     // OTZ - Average Z value (for ordering table)
                     final int z = (int)Math.min(CPU.MFC2(7) + flamesZ >> zShift_1f8003c4.get(), zMax_1f8003cc.get());
@@ -1578,27 +1567,20 @@ public final class Ttle {
           }
         }
       }
-
-      //LAB_800ccb34
-      primitivesOffset += 0x24;
     }
-
-    //LAB_800ccb4c
-    //LAB_800ccb68
-    return primitivesOffset;
   }
 
   @Method(0x800ccb78L)
-  public static int FUN_800ccb78(final int[] primitives, int primitivesOffset, final SVECTOR[] vertices, final int count) {
+  public static void FUN_800ccb78(final TmdObjTable1c.Primitive primitive, final SVECTOR[] vertices) {
     //LAB_800ccbcc
-    for(int i = 0; i < count; i++) {
+    for(final byte[] data : primitive.data()) {
       final GpuCommandPoly cmd = new GpuCommandPoly(4)
-        .translucent(Translucency.of(primitives[primitivesOffset + 2] >>> 21 & 0x3));
+        .translucent(Translucency.of(IoHelper.readUShort(data, 0x6) >>> 5 & 0x3));
 
       //LAB_800ccbe4
-      final SVECTOR vert0 = vertices[primitives[9] & 0xffff];
-      final SVECTOR vert1 = vertices[primitives[9] >>> 16 & 0xffff];
-      final SVECTOR vert2 = vertices[primitives[10] & 0xffff];
+      final SVECTOR vert0 = vertices[IoHelper.readUShort(data, 0x20)];
+      final SVECTOR vert1 = vertices[IoHelper.readUShort(data, 0x22)];
+      final SVECTOR vert2 = vertices[IoHelper.readUShort(data, 0x24)];
       CPU.MTC2(vert0.getXY(), 0); // VXY0
       CPU.MTC2(vert0.getZ(),  1); // VZ0
       CPU.MTC2(vert1.getXY(), 2); // VXY1
@@ -1607,13 +1589,13 @@ public final class Ttle {
       CPU.MTC2(vert2.getZ(),  5); // VZ2
       CPU.COP2(0x28_0030L); // Perspective transform triple
 
-      cmd.uv(0, primitives[1] & 0xff, primitives[1] >>> 8 & 0xff);
-      cmd.uv(1, primitives[2] & 0xff, primitives[2] >>> 8 & 0xff);
-      cmd.uv(2, primitives[3] & 0xff, primitives[3] >>> 8 & 0xff);
-      cmd.uv(3, primitives[4] & 0xff, primitives[4] >>> 8 & 0xff);
+      cmd.uv(0, IoHelper.readUByte(data, 0x0), IoHelper.readUByte(data, 0x1));
+      cmd.uv(1, IoHelper.readUByte(data, 0x4), IoHelper.readUByte(data, 0x5));
+      cmd.uv(2, IoHelper.readUByte(data, 0x8), IoHelper.readUByte(data, 0x9));
+      cmd.uv(3, IoHelper.readUByte(data, 0xc), IoHelper.readUByte(data, 0xd));
 
-      cmd.clut((primitives[1] >>> 16 & 0b111111) * 16, primitives[1] >>> 22);
-      cmd.vramPos((primitives[2] >>> 16 & 0b1111) * 64, (primitives[2] >>> 16 & 0b10000) != 0 ? 256 : 0);
+      cmd.clut((IoHelper.readUShort(data, 0x2) & 0b111111) * 16, IoHelper.readUShort(data, 0x2) >>> 6);
+      cmd.vramPos((IoHelper.readUShort(data, 0x6) & 0b1111) * 64, (IoHelper.readUShort(data, 0x6) & 0b10000) != 0 ? 256 : 0);
 
       if((int)CPU.CFC2(31) >= 0) { // No errors
         //LAB_800ccc90
@@ -1629,7 +1611,7 @@ public final class Ttle {
           cmd.pos(1, v1.getX(), v1.getY());
           cmd.pos(2, v2.getX(), v2.getY());
 
-          final SVECTOR vert3 = vertices[primitives[10] >>> 16 & 0xffff];
+          final SVECTOR vert3 = vertices[IoHelper.readUShort(data, 0x26)];
           CPU.MTC2(vert3.getXY(), 0); // VXY0
           CPU.MTC2(vert3.getZ(),  1); // VZ0
           CPU.COP2(0x18_0001L); // Perspective transform single
@@ -1648,10 +1630,10 @@ public final class Ttle {
                   //LAB_800cce64
                   if(v0.getY() <= 0x78 || v1.getY() <= 0x78 || v2.getY() <= 0x78 || v3.getY() <= 0x78) {
                     //LAB_800ccebc
-                    cmd.rgb(0, (primitives[primitivesOffset + 5] & 0xff) * flameColour / 0xff, (primitives[primitivesOffset + 5] >>> 8 & 0xff) * flameColour / 0xff, (primitives[primitivesOffset + 5] >>> 16 & 0xff) * flameColour / 0xff);
-                    cmd.rgb(1, (primitives[primitivesOffset + 6] & 0xff) * flameColour / 0xff, (primitives[primitivesOffset + 6] >>> 8 & 0xff) * flameColour / 0xff, (primitives[primitivesOffset + 6] >>> 16 & 0xff) * flameColour / 0xff);
-                    cmd.rgb(2, (primitives[primitivesOffset + 7] & 0xff) * flameColour / 0xff, (primitives[primitivesOffset + 7] >>> 8 & 0xff) * flameColour / 0xff, (primitives[primitivesOffset + 7] >>> 16 & 0xff) * flameColour / 0xff);
-                    cmd.rgb(3, (primitives[primitivesOffset + 8] & 0xff) * flameColour / 0xff, (primitives[primitivesOffset + 8] >>> 8 & 0xff) * flameColour / 0xff, (primitives[primitivesOffset + 8] >>> 16 & 0xff) * flameColour / 0xff);
+                    cmd.rgb(0, IoHelper.readUByte(data, 0x10) * flameColour / 0xff, IoHelper.readUByte(data, 0x11) * flameColour / 0xff, IoHelper.readUByte(data, 0x12) * flameColour / 0xff);
+                    cmd.rgb(1, IoHelper.readUByte(data, 0x14) * flameColour / 0xff, IoHelper.readUByte(data, 0x15) * flameColour / 0xff, IoHelper.readUByte(data, 0x16) * flameColour / 0xff);
+                    cmd.rgb(2, IoHelper.readUByte(data, 0x18) * flameColour / 0xff, IoHelper.readUByte(data, 0x19) * flameColour / 0xff, IoHelper.readUByte(data, 0x1a) * flameColour / 0xff);
+                    cmd.rgb(3, IoHelper.readUByte(data, 0x1c) * flameColour / 0xff, IoHelper.readUByte(data, 0x1d) * flameColour / 0xff, IoHelper.readUByte(data, 0x1e) * flameColour / 0xff);
 
                     GPU.queueCommand(flamesZ, cmd);
                   }
@@ -1661,14 +1643,7 @@ public final class Ttle {
           }
         }
       }
-
-      //LAB_800cd294
-      primitivesOffset += 0x2c;
     }
-
-    //LAB-800cd2ac
-    //LAB_800cd2c8
-    return primitivesOffset;
   }
 
   @Method(0x800cdaa0L)
