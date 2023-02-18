@@ -82,7 +82,7 @@ public record FileData(byte[] data, int offset, int size) {
 
   public BVEC4 readBvec3(final int offset, final BVEC4 bvec) {
     this.checkBounds(offset, 3);
-    return bvec.set(this.readByte(offset), this.readByte(offset + 0x2), this.readByte(offset + 0x4));
+    return bvec.set(this.readByte(offset), this.readByte(offset + 0x1), this.readByte(offset + 0x2));
   }
 
   public SVECTOR readSvec3(final int offset, final SVECTOR svec) {
