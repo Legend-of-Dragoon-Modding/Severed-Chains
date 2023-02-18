@@ -1843,7 +1843,7 @@ public final class Bttl_800c {
     } else if(type == 6) {
       //LAB_800c9bcc
       final RECT sp0x10 = new RECT((short)(512 + a3 * 64), (short)_8006e398.y_d80[a3], (short)64, (short)(data.length / 128));
-      LoadImage(sp0x10, data);
+      LoadImage(sp0x10, data, 0);
 
       _8006e398.y_d80[a3] += data.length / 128;
 
@@ -2164,14 +2164,14 @@ public final class Bttl_800c {
     if(a0 != 0) {
       //LAB_800ca83c
       final RECT s0 = _800fa6e0.get(a0);
-      LoadImage(s0, tim.getImageData());
+      LoadImage(s0, tim.getData(), tim.getImageData());
 
       if(tim.hasClut()) {
         tim.getClutRect().x.set(s0.x.get());
         tim.getClutRect().y.set((short)(s0.y.get() + 240));
 
         //LAB_800ca884
-        LoadImage(tim.getClutRect(), tim.getClutData());
+        LoadImage(tim.getClutRect(), tim.getData(), tim.getClutData());
       }
     } else {
       tim.uploadToGpu();

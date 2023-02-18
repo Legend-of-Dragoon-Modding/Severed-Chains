@@ -206,9 +206,7 @@ public final class Scus94491BpeSegment_800e {
 
     FUN_800e6b3c(model_800bda10, container, animation);
 
-    model_800bda10.coord2Param_64.rotate.x.set((short)0);
-    model_800bda10.coord2Param_64.rotate.y.set((short)0);
-    model_800bda10.coord2Param_64.rotate.z.set((short)0);
+    model_800bda10.coord2Param_64.rotate.set((short)0, (short)0, (short)0);
     model_800bda10.colourMap_9d = 0;
     model_800bda10.b_cc = 0;
   }
@@ -237,7 +235,7 @@ public final class Scus94491BpeSegment_800e {
     final Tmd tmd = cContainer.tmdPtr_00.tmd;
     model.tmd_8c = tmd;
     model.tmdNobj_ca = tmd.header.nobj;
-    model.scaleVector_fc.setPad((int)((cContainer.tmdPtr_00.id & 0xffff0000L) >>> 11));
+    model.tpage_108 = (int)((cContainer.tmdPtr_00.id & 0xffff0000L) >>> 11);
 
     if(cContainer.ptr_08 != null) {
       model.ptr_a8 = cContainer.ptr_08;
@@ -270,19 +268,11 @@ public final class Scus94491BpeSegment_800e {
 
     loadModelStandardAnimation(model, tmdAnimFile);
 
-    model.coord2_14.coord.transfer.setX(x);
-    model.coord2_14.coord.transfer.setY(y);
-    model.coord2_14.coord.transfer.setZ(z);
+    model.coord2_14.coord.transfer.set(x, y, z);
     model.b_cc = 0;
-    model.scaleVector_fc.setX(0x1000);
-    model.scaleVector_fc.setY(0x1000);
-    model.scaleVector_fc.setZ(0x1000);
-    model.vector_10c.setX(0x1000);
-    model.vector_10c.setY(0x1000);
-    model.vector_10c.setZ(0x1000);
-    model.vector_118.setX(0);
-    model.vector_118.setY(0);
-    model.vector_118.setZ(0);
+    model.scaleVector_fc.set(0x1000, 0x1000, 0x1000);
+    model.vector_10c.set(0x1000, 0x1000, 0x1000);
+    model.vector_118.set(0, 0, 0);
   }
 
   @Method(0x800e6d60L)

@@ -398,9 +398,7 @@ public final class Scus94491BpeSegment_8002 {
 
     loadModelStandardAnimation(model, tmdAnimFile);
 
-    model.coord2_14.coord.transfer.setX(transferX);
-    model.coord2_14.coord.transfer.setY(transferY);
-    model.coord2_14.coord.transfer.setZ(transferZ);
+    model.coord2_14.coord.transfer.set(transferX, transferY, transferZ);
 
     int s1 = 0;
     //LAB_80020940

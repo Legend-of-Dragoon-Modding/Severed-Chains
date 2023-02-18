@@ -14,5 +14,9 @@ public class TmdHeader {
     if((this.flags & 0x1) != 0) {
       throw new RuntimeException("fixp not supported");
     }
+
+    if((this.flags & 0x2) != 0) {
+      throw new RuntimeException("Found CTMD");
+    }
   }
 }

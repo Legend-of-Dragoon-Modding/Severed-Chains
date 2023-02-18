@@ -11,6 +11,8 @@ public class Tmd {
   public Tmd(final FileData data) {
     this.header = new TmdHeader(data);
     this.objTable = new TmdObjTable1c[this.header.nobj];
-    Arrays.setAll(this.objTable, i -> new TmdObjTable1c(data.slice(0x8 + i * 0x1c), data.slice(0x8)));
+
+    final FileData objTableOffset = data.slice(0x8);
+    Arrays.setAll(this.objTable, i -> new TmdObjTable1c(objTableOffset.slice(i * 0x1c), objTableOffset));
   }
 }

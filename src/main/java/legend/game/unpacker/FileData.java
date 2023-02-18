@@ -77,17 +77,17 @@ public record FileData(byte[] data, int offset, int size) {
 
   public RECT readRect(final int offset, final RECT rect) {
     this.checkBounds(offset, 8);
-    return rect.set(this.readShort(offset), this.readShort(offset), this.readShort(offset), this.readShort(offset));
+    return rect.set(this.readShort(offset), this.readShort(offset + 0x2), this.readShort(offset + 0x4), this.readShort(offset + 0x6));
   }
 
   public BVEC4 readBvec3(final int offset, final BVEC4 bvec) {
     this.checkBounds(offset, 3);
-    return bvec.set(this.readByte(offset), this.readByte(offset), this.readByte(offset));
+    return bvec.set(this.readByte(offset), this.readByte(offset + 0x2), this.readByte(offset + 0x4));
   }
 
   public SVECTOR readSvec3(final int offset, final SVECTOR svec) {
     this.checkBounds(offset, 6);
-    return svec.set(this.readShort(offset), this.readShort(offset), this.readShort(offset));
+    return svec.set(this.readShort(offset), this.readShort(offset + 0x2), this.readShort(offset + 0x4));
   }
 
   private void checkBounds(final int offset, final int size) {

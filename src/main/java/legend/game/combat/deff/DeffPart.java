@@ -98,7 +98,7 @@ public class DeffPart {
 
     public SpriteType(final FileData data) {
       super(data);
-      this.metrics_08 = new SpriteMetrics(data.slice(data.readInt(0xc), 0x8));
+      this.metrics_08 = new SpriteMetrics(data.slice(data.readInt(0xc), 0xc));
     }
   }
 

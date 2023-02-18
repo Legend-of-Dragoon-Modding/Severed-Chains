@@ -187,10 +187,10 @@ public final class Scus94491BpeSegment_8003 {
     GPU.commandA0CopyRectFromCpuToVram(rect, address);
   }
 
-  public static void LoadImage(final RECT rect, final byte[] data) {
+  public static void LoadImage(final RECT rect, final byte[] data, final int offset) {
     validateRect("LoadImage", rect);
 
-    GPU.uploadData(rect, data, 0);
+    GPU.uploadData(rect, data, offset);
   }
 
   @Method(0x80038818L)
