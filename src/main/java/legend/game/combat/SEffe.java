@@ -10137,10 +10137,12 @@ public final class SEffe {
     final int v1 = s4 & 0xff00_0000;
     if(v1 == 0x400_0000) {
       //LAB_80119640
+      s3._1c = new AttackHitFlashEffect0c();
       FUN_800e95f0((AttackHitFlashEffect0c)s3._1c, s4);
       data._10.flags_00 = data._10.flags_00 & 0xfbff_ffff | 0x5000_0000;
     } else if(v1 == 0x300_0000) {
       //LAB_80119668
+      s3._1c = new BttlScriptData6cSub30Sub10();
       FUN_801186f8((BttlScriptData6cSub30Sub10)s3._1c, s4);
       data._10.flags_00 = 0x1400_0000;
     } else if(v1 == 0) {
