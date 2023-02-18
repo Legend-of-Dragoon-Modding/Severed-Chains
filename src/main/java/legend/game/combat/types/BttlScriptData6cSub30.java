@@ -1,7 +1,6 @@
 package legend.game.combat.types;
 
 import legend.core.gte.VECTOR;
-import legend.core.memory.types.UnboundedArrayRef;
 
 public class BttlScriptData6cSub30 implements BttlScriptData6cSubBase1 {
   public int _00;

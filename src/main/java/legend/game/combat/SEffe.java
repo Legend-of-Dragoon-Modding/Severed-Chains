@@ -10128,6 +10128,7 @@ public final class SEffe {
 
     if(count != 0) {
       s3._18 = new VECTOR[count];
+      Arrays.setAll(s3._18, i -> new VECTOR());
     } else {
       //LAB_80119568
       s3._18 = null;
