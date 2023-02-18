@@ -19,4 +19,15 @@ public class SomethingStruct {
   public TmdWithId tmdPtr_1c;
   public GsDOBJ2 dobj2Ptr_20;
   public GsCOORDINATE2 coord2Ptr_24;
+
+  public TmdObjTable1c.Primitive getPrimitiveForOffset(final int offset) {
+    int primitivesIndex;
+    for(primitivesIndex = 0; primitivesIndex < this.primitives_10.length - 1; primitivesIndex++) {
+      if(this.primitives_10[primitivesIndex + 1].offset() > offset) {
+        break;
+      }
+    }
+
+    return this.primitives_10[primitivesIndex];
+  }
 }

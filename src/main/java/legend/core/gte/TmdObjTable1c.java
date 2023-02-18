@@ -39,6 +39,7 @@ public class TmdObjTable1c {
     Scus94491BpeSegment_8003.updateTmdPacketIlen(primitives, this.n_primitive_14);
 
     for(int primitiveIndex = 0; primitiveIndex < this.n_primitive_14; ) {
+      final int startOffset = primitivesOffset;
       final int header = primitives.readInt(primitivesOffset);
       final int count = header & 0xffff;
 
@@ -54,7 +55,7 @@ public class TmdObjTable1c {
 
       primitivesOffset = MathHelper.roundUp(primitivesOffset, 4);
 
-      primitivesList.add(new Primitive(header, packetData));
+      primitivesList.add(new Primitive(startOffset, packetSize, header, packetData));
       primitiveIndex += count;
     }
 
@@ -63,5 +64,5 @@ public class TmdObjTable1c {
     this.scale_18 = data.readInt(0x18);
   }
 
-  public record Primitive(int header, byte[][] data) { }
+  public record Primitive(int offset, int width, int header, byte[][] data) { }
 }

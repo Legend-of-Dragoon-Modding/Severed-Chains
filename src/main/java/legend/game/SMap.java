@@ -1,5 +1,6 @@
 package legend.game;
 
+import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandCopyVramToVram;
@@ -2714,7 +2715,11 @@ public final class SMap {
             obj.model = new CContainer(new FileData(tmdData));
 
             for(int animIndex = objIndex * 33 + 1; animIndex < (objIndex + 1) * 33; animIndex++) {
-              obj.animations.add(new TmdAnimationFile(new FileData(submapAssetsMrg_800c6878.get(animIndex))));
+              if(submapAssetsMrg_800c6878.get(animIndex).length != 0) {
+                obj.animations.add(new TmdAnimationFile(new FileData(submapAssetsMrg_800c6878.get(animIndex))));
+              } else {
+                obj.animations.add(null);
+              }
             }
 
             submapAssets.objects.add(obj);
@@ -5742,13 +5747,18 @@ public final class SMap {
 
     //LAB_800e932c
     final SomethingStructSub0c_1 ss2 = ss.ptr_14.get(index);
-    final long t0 = 0; //ss.primitives_10 + ss2.ptr_04.get() + 0x6L;
-    assert false;
+
+    final TmdObjTable1c.Primitive primitive = ss.getPrimitiveForOffset(ss2.primitivesOffset_04.get());
+    final int packetOffset = ss2.primitivesOffset_04.get() - primitive.offset();
+    final int packetIndex = packetOffset / (primitive.width() + 4);
+    final int remainder = packetOffset % (primitive.width() + 4);
+    final byte[] packet = primitive.data()[packetIndex];
+
     final int count = ss2.count_00.get();
 
     //LAB_800e937c
     for(int i = 0; i < count; i++) {
-      out.add(ss.verts_04[(int)MEMORY.ref(2, t0).offset(i * 0x2L).get()]);
+      out.add(ss.verts_04[IoHelper.readUShort(packet, remainder + 2 + i * 2)]);
     }
 
     //LAB_800e93e0

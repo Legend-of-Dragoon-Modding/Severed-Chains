@@ -3802,10 +3802,6 @@ public final class Bttl_800e {
       }
     }
 
-    if(currentEnemyNames_800c69d0.get((int)_800c6b9c.get()).get().contains("?")) {
-      System.err.println();
-    }
-
     //LAB_800eefa8
     _800c6b78.offset(_800c6b9c.get() * 0x4L).setu(state.index);
     _800c6b9c.addu(0x1L);
