@@ -2392,7 +2392,7 @@ public final class SEffe {
   @Method(0x80101c74L)
   public static void FUN_80101c74(final EffectData98 a0, final EffectData98Sub94 a1, final EffectData98Inner24 a2, final long a3) {
     a0._60 = (byte)((int)a3 >> 20);
-    a0.count_54 = (int)a3;
+    a0.count_54 = (short)a3;
 
     //LAB_80101cb0
     for(int s3 = 0; s3 < a0.count_50; s3++) {
