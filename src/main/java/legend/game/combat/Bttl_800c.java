@@ -1842,10 +1842,11 @@ public final class Bttl_800c {
       s3 = index;
     } else if(type == 6) {
       //LAB_800c9bcc
-      final RECT sp0x10 = new RECT((short)(512 + a3 * 64), (short)_8006e398.y_d80[a3], (short)64, (short)(data.length / 128));
+      final int size = (data.length + 0x7f) / 0x80;
+      final RECT sp0x10 = new RECT((short)(512 + a3 * 64), (short)_8006e398.y_d80[a3], (short)64, (short)size);
       LoadImage(sp0x10, data, 0);
 
-      _8006e398.y_d80[a3] += data.length / 128;
+      _8006e398.y_d80[a3] += size;
 
       final CombatantStruct1a8_c.TimType tim = new CombatantStruct1a8_c.TimType(sp0x10.x.get(), sp0x10.y.get(), sp0x10.h.get());
       tim._08 = -1;
@@ -2167,11 +2168,12 @@ public final class Bttl_800c {
       LoadImage(s0, tim.getData(), tim.getImageData());
 
       if(tim.hasClut()) {
-        tim.getClutRect().x.set(s0.x.get());
-        tim.getClutRect().y.set((short)(s0.y.get() + 240));
+        final RECT clutRect = tim.getClutRect();
+        clutRect.x.set(s0.x.get());
+        clutRect.y.set((short)(s0.y.get() + 240));
 
         //LAB_800ca884
-        LoadImage(tim.getClutRect(), tim.getData(), tim.getClutData());
+        LoadImage(clutRect, tim.getData(), tim.getClutData());
       }
     } else {
       tim.uploadToGpu();

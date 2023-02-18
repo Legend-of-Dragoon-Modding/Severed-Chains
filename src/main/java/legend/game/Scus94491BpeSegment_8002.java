@@ -318,11 +318,6 @@ public final class Scus94491BpeSegment_8002 {
     return FlowControl.CONTINUE;
   }
 
-  @Method(0x80020460L)
-  public static void FUN_80020460() {
-    // empty
-  }
-
   @Method(0x80020468L)
   public static void FUN_80020468(final GsDOBJ2 dobj2, final int colourMap) {
     final TmdObjTable1c objTable = dobj2.tmd_08;
