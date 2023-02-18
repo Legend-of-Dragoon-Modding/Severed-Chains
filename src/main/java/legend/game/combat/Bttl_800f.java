@@ -19,6 +19,8 @@ import legend.game.combat.types.CombatMenua4;
 import legend.game.combat.types.CombatItem02;
 import legend.game.combat.types.FloatingNumberC4;
 import legend.game.combat.types.FloatingNumberC4Sub20;
+import legend.game.modding.events.EventManager;
+import legend.game.modding.events.combat.SpellStatsEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.ItemStats0c;
@@ -3270,6 +3272,20 @@ public final class Bttl_800f {
       }
 
       final SpellStats0c spellStats = spellStats_800fa0b8.get(bobj.spellId_4e);
+      final SpellStatsEvent event = EventManager.INSTANCE.postEvent(new SpellStatsEvent(bobj.spellId_4e, bobj._94, bobj._96, bobj._98, bobj.spellDamage_9a, bobj.spellMulti_9c, bobj.spellAccuracy_9e, bobj.spellMp_a0, bobj._a2, bobj.spellElement_a4, bobj._a6, bobj._a8, bobj._aa));
+      spellStats._00.set(event.targetType);
+      spellStats._01.set(event._01);
+      spellStats._02.set(event.specialEffect);
+      spellStats.damage_03.set(event.damageFlag);
+      spellStats.multi_04.set(event.healingPercent);
+      spellStats.accuracy_05.set(event.accuracy);
+      spellStats.mp_06.set(event.mpUsage);
+      spellStats._07.set(event.statusChance);
+      spellStats.element_08.set(event.element);
+      spellStats._09.set(event.statusType);
+      spellStats._0a.set(event.buffType);
+      spellStats._0b.set(event._0B);
+
       bobj._94 = spellStats._00.get();
       bobj._96 = spellStats._01.get();
       bobj._98 = spellStats._02.get();
