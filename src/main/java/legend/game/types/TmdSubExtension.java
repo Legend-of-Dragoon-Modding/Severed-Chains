@@ -1,5 +1,7 @@
 package legend.game.types;
 
+import it.unimi.dsi.fastutil.shorts.ShortArrayList;
+import it.unimi.dsi.fastutil.shorts.ShortList;
 import legend.game.unpacker.FileData;
 
 public class TmdSubExtension {
@@ -8,6 +10,17 @@ public class TmdSubExtension {
 
   public TmdSubExtension(final FileData data) {
     this.s_02 = data.readShort(0x2);
-    this.sa_04 = new short[0];
+
+    final ShortList shorts = new ShortArrayList();
+    for(int i = 0; ; i++) {
+      final short val = data.readShort(0x2 + i * 0x2);
+      shorts.add(val);
+
+      if(val == -1) {
+        break;
+      }
+    }
+
+    this.sa_04 = shorts.toShortArray();
   }
 }
