@@ -1,3 +1,9 @@
 # Default ignored files
 /shelf/
 /workspace.xml
+
+/gradle.xml
+/jarRepositories.xml
+/modules/lod-game.iml
+/misc.xml
+/modules.xml
