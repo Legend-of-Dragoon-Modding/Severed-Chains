@@ -2465,16 +2465,21 @@ public final class Bttl_800e {
         for(int objectIndex = 0; objectIndex < tmd.tmd.header.nobj; objectIndex++) {
           optimisePacketsIfNecessary(tmd, objectIndex);
         }
+
+        if(tmdType.textureInfo_08 != null && deffManagerState.index != 0) {
+          FUN_800eb308(deffManagerState.innerStruct_00, extTmd, tmdType.textureInfo_08);
+        }
+      } else if(type == 0x200_0000) {
+        final DeffPart.CmbType cmbType = new DeffPart.CmbType(new FileData(data));
+
+        if(cmbType.textureInfo_08 != null && deffManagerState.index != 0) {
+          FUN_800eb308(deffManagerState.innerStruct_00, cmbType.tmd_0c, cmbType.textureInfo_08);
+        }
       } else if(type == 0x300_0000) {
         final DeffPart.TmdType tmdType = new DeffPart.TmdType(new FileData(data));
         final CContainer extTmd = tmdType.tmd_0c;
 
         optimisePacketsIfNecessary(extTmd.tmdPtr_00, 0);
-      }
-
-      if(type == 0x100_0000 || type == 0x200_0000 || type == 0x300_0000) {
-        final DeffPart.TmdType tmdType = new DeffPart.TmdType(new FileData(data));
-        final CContainer extTmd = tmdType.tmd_0c;
 
         if(tmdType.textureInfo_08 != null && deffManagerState.index != 0) {
           FUN_800eb308(deffManagerState.innerStruct_00, extTmd, tmdType.textureInfo_08);

@@ -331,13 +331,13 @@ public final class Scus94491BpeSegment_8002 {
       final int command = primitive.header() & 0xff04_0000;
 
       if(command == 0x3c00_0000 || command == 0x3e00_0000) {
-        FUN_800210c4(primitive, colourMap);
+        FUN_800210c4(primitive, colourMap & 0x7f);
       } else if(command == 0x3d00_0000 || command == 0x3f00_0000) {
-        FUN_8002117c(primitive, colourMap);
+        FUN_8002117c(primitive, colourMap & 0x7f);
       } else if(command == 0x3500_0000 || command == 0x3700_0000) {
-        FUN_80021120(primitive, colourMap);
+        FUN_80021120(primitive, colourMap & 0x7f);
       } else if(command == 0x3400_0000 || command == 0x3600_0000) {
-        FUN_80021068(primitive, colourMap);
+        FUN_80021068(primitive, colourMap & 0x7f);
       }
     }
   }

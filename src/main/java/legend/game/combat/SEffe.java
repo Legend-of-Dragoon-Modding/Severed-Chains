@@ -118,7 +118,6 @@ import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
 import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.mallocHead;
 import static legend.game.Scus94491BpeSegment.mallocTail;
-import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.playSound;
 import static legend.game.Scus94491BpeSegment.projectionPlaneDistance_1f8003f8;
 import static legend.game.Scus94491BpeSegment.rcos;
@@ -638,8 +637,8 @@ public final class SEffe {
 
   @Method(0x800fb95cL)
   public static void FUN_800fb95c(final EffectData98Sub94 a0) {
-    a0._50.setX((short)(rcos(a0._14.get()) * a0._16.get() >> 12));
-    a0._50.setZ((short)(rsin(a0._14.get()) * a0._16.get() >> 12));
+    a0._50.setX((short)(rcos(a0._14) * a0._16 >> 12));
+    a0._50.setZ((short)(rsin(a0._14) * a0._16 >> 12));
   }
 
   @Method(0x800fb9c0L)
@@ -649,16 +648,16 @@ public final class SEffe {
 
   @Method(0x800fb9c8L)
   public static void FUN_800fb9c8(final EffectManagerData6c a0, final EffectData98 a1, final EffectData98Sub94 a2) {
-    a2._58.x.sub(a2._16.get());
-    a2._58.y.add(a2._14.get());
+    a2._58.x.sub(a2._16);
+    a2._58.y.add(a2._14);
   }
 
   @Method(0x800fb9ecL)
   public static void FUN_800fb9ec(final EffectManagerData6c a0, final EffectData98 a1, final EffectData98Sub94 a2) {
     FUN_800fb95c(a2);
 
-    a2._14.add(a2._18.get());
-    a2._16.add(a2._1a.getX());
+    a2._14 += a2._18;
+    a2._16 += a2._1a.getX();
     a2._58.y.sub((short)2);
 
     if(a2._1a.getX() >= 8) {
@@ -672,10 +671,10 @@ public final class SEffe {
 
     a2._50.x.add((short)(rcos(a2._1a.getX()) * a2._1a.getY() / 0x1000));
     a2._50.z.add((short)(rsin(a2._1a.getX()) * a2._1a.getY() / 0x1000));
-    a2._16.add(a2._18.get());
+    a2._16 += a2._18;
 
-    if(a2._18.get() >= 4) {
-      a2._18.sub((short)4);
+    if(a2._18 >= 4) {
+      a2._18 -= 4;
     }
 
     //LAB_800fbaf0
@@ -689,11 +688,11 @@ public final class SEffe {
     a2._50.x.add((short)(rcos(a2._1a.getX()) * a2._1a.getY() >> 12));
     a2._50.y.add((short)(rsin(a2._1a.getX()) * a2._1a.getY() >> 12));
 
-    if(a2._16.get() >= a2._18.get() * 4) {
-      a2._16.sub(a2._18.get());
+    if(a2._16 >= a2._18 * 4) {
+      a2._16 -= a2._18;
 
-      if(a2._18.get() >= 4) {
-        a2._18.sub((short)4);
+      if(a2._18 >= 4) {
+        a2._18 -= 4;
       }
     }
 
@@ -704,28 +703,28 @@ public final class SEffe {
   @Method(0x800fbbe0L)
   public static void FUN_800fbbe0(final EffectManagerData6c a0, final EffectData98 a1, final EffectData98Sub94 a2) {
     FUN_800fb95c(a2);
-    a2._16.add(a2._1a.getY());
+    a2._16 += a2._1a.getY();
     a2._58.y.add((short)20);
-    a2._10.sub(a2._24.get());
-    if(a2._18.get() == 1) {
-      if(a2._22.get() != 0) {
+    a2._10 -= a2._24;
+    if(a2._18 == 1) {
+      if(a2._22 != 0) {
         //LAB_800fbca4
         a2._50.setY((short)-a2._2c.getY());
-        a2._22.decr();
+        a2._22--;
       } else {
-        a2._50.setY((short)((rsin(a2._1a.getX()) * a2._20.get() >> 12) - (short)a2._2c.getY()));
+        a2._50.setY((short)((rsin(a2._1a.getX()) * a2._20 >> 12) - (short)a2._2c.getY()));
         a2._1a.x.add((short)0x7f);
-        a2._0a.set(a2._1a.getZ());
-        a2._0c.set(a2._1a.getZ());
+        a2._0a = a2._1a.getZ();
+        a2._0c = a2._1a.getZ();
         a2._1a.y.add((short)5);
-        a2._20.add((short)20);
+        a2._20 += 20;
       }
       //LAB_800fbcc0
     } else if(a2._2c.getY() + a2._50.getY() >= -1000) {
       a2._1a.setY((short)0);
-      a2._18.set((short)1);
-      a2._0a.set(a2._1a.getZ());
-      a2._0c.set(a2._1a.getZ());
+      a2._18 = 1;
+      a2._0a = a2._1a.getZ();
+      a2._0c = a2._1a.getZ();
     }
 
     //LAB_800fbcf4
@@ -735,19 +734,19 @@ public final class SEffe {
   public static void FUN_800fbd04(final EffectManagerData6c a0, final EffectData98 a1, final EffectData98Sub94 a2) {
     FUN_800fb95c(a2);
 
-    a2._16.add(a2._18.get());
-    if(a2._18.get() >= 3) {
-      a2._18.sub((short)3);
+    a2._16 += a2._18;
+    if(a2._18 >= 3) {
+      a2._18 -= 3;
     }
 
     //LAB_800fbd44
-    a2._14.add(a2._1a.getX());
+    a2._14 += a2._1a.getX();
   }
 
   @Method(0x800fbd68L)
   public static void FUN_800fbd68(final EffectManagerData6c a0, final EffectData98 a1, final EffectData98Sub94 a2) {
     final SVECTOR sp0x38 = new SVECTOR();
-    if(a2._18.get() == 0) {
+    if(a2._18 == 0) {
       FUN_800fb95c(a2);
       a2._50.setY((short)0);
       a2._50.z.shl(1);
@@ -755,13 +754,13 @@ public final class SEffe {
     } else {
       //LAB_800fbdb8
       a2._50.setX((short)0);
-      a2._50.setY((short)(rsin(a2._14.get()) * a2._16.get() >> 11));
-      a2._50.setZ((short)(rcos(a2._14.get()) * a2._16.get() >> 12));
+      a2._50.setY((short)(rsin(a2._14) * a2._16 >> 11));
+      a2._50.setZ((short)(rcos(a2._14) * a2._16 >> 12));
       sp0x38.set((short)0, (short)0, a2._1a.getX());
     }
 
     //LAB_800fbe10
-    a2._14.sub((short)0x80);
+    a2._14 -= 0x80;
     a2._1a.x.sub((short)0x8);
 
     final VECTOR sp0x18 = new VECTOR().set(a2._50);
@@ -775,8 +774,8 @@ public final class SEffe {
     FUN_800fb95c(a2);
     a2._50.setY((short)0);
     a2._50.z.shl(1);
-    final SVECTOR sp0x38 = new SVECTOR().set(a2._18.get(), (short)0, a2._1a.getX());
-    a2._14.add((short)0x80);
+    final SVECTOR sp0x38 = new SVECTOR().set(a2._18, (short)0, a2._1a.getX());
+    a2._14 += 0x80;
     final VECTOR sp0x18 = new VECTOR().set(a2._50);
     final VECTOR sp0x28 = new VECTOR();
     FUN_800cf37c(a0, sp0x38, sp0x18, sp0x28);
@@ -787,38 +786,38 @@ public final class SEffe {
   public static void FUN_800fbf50(final EffectManagerData6c a0, final EffectData98 a1, final EffectData98Sub94 a2) {
     FUN_800fb95c(a2);
 
-    a2._16.mul(a2._18.get()).shra(8);
+    a2._16 = (short)(a2._16 * a2._18 >> 8);
 
     final int v1 = a2._1a.getY() >> 2;
-    if(a2._16.get() < v1) {
-      a2._16.set((short)v1);
+    if(a2._16 < v1) {
+      a2._16 = (short)v1;
     }
 
     //LAB_800fbfac
-    a2._14.add(a2._1a.getX());
+    a2._14 += a2._1a.getX();
   }
 
   @Method(0x800fbfd0L)
   public static void FUN_800fbfd0(final EffectManagerData6c a0, final EffectData98 a1, final EffectData98Sub94 a2) {
-    a2._50.setY((short)(rsin(a2._14.get()) * a2._16.get() >> 12));
-    a2._50.setZ((short)(rcos(a2._14.get()) * a2._16.get() >> 12));
-    a2._16.add(a2._18.get());
-    if(a2._16.get() < 0) {
-      a2._16.set((short)0);
+    a2._50.setY((short)(rsin(a2._14) * a2._16 >> 12));
+    a2._50.setZ((short)(rcos(a2._14) * a2._16 >> 12));
+    a2._16 += a2._18;
+    if(a2._16 < 0) {
+      a2._16 = 0;
     }
 
     //LAB_800fc044
-    a2._14.add(a2._1a.getX());
+    a2._14 += a2._1a.getX();
   }
 
   @Method(0x800fc068L)
   public static void FUN_800fc068(final EffectManagerData6c a0, final EffectData98 a1, final EffectData98Sub94 a2) {
     FUN_800fb95c(a2);
 
-    a2._16.add(a2._18.get());
+    a2._16 += a2._18;
 
     if(a2._50.getY() + a2._2c.getY() >= a0._10._30) {
-      a2._12.set((short)1);
+      a2._12 = 1;
     }
 
     //LAB_800fc0bc
@@ -826,17 +825,17 @@ public final class SEffe {
 
   @Method(0x800fc0d0L)
   public static void FUN_800fc0d0(final EffectManagerData6c a0, final EffectData98 a1, final EffectData98Sub94 a2) {
-    if(a2._50.getY() + a2._2c.getY() >= -400 && a2._14.get() == 0) {
-      a2._14.set((short)1);
+    if(a2._50.getY() + a2._2c.getY() >= -400 && a2._14 == 0) {
+      a2._14 = 1;
       a2._60.setY((short)-8);
       //LAB_800fc11c
-    } else if(a1.scriptIndex_04 != -1 && a2._14.get() == 0) {
+    } else if(a1.scriptIndex_04 != -1 && a2._14 == 0) {
       final VECTOR sp0x10 = new VECTOR();
       scriptGetScriptedObjectPos(a1.scriptIndex_04, sp0x10);
       a2._58.setX((short)((sp0x10.getX() - (a2._3c.getX() + a2._2c.getX())) / a2._1a.getZ()));
       a2._58.setY((short)((sp0x10.getY() - (a2._3c.getY() + a2._2c.getY())) / a2._1a.getZ()));
       a2._58.setZ((short)((sp0x10.getZ() - (a2._3c.getZ() + a2._2c.getZ())) / a2._1a.getZ()));
-      a2._58.x.add(a2._18.get());
+      a2._58.x.add(a2._18);
       a2._58.y.add(a2._1a.getX());
       a2._58.z.add(a2._1a.getY());
     }
@@ -848,7 +847,7 @@ public final class SEffe {
   public static void FUN_800fc1fc(final EffectManagerData6c a0, final EffectData98 a1, final EffectData98Sub94 a2) {
     FUN_800fb95c(a2);
 
-    a2._16.add(a2._18.get());
+    a2._16 += a2._18;
     if(a2._50.getY() + a2._2c.getY() >= a0._10._30) {
       a2._50.setY((short)(a0._10._30 - a2._2c.getY()));
       a2._58.y.neg().shra(1);
@@ -859,31 +858,31 @@ public final class SEffe {
 
   @Method(0x800fc280L)
   public static void FUN_800fc280(final EffectManagerData6c a0, final EffectData98 a1, final EffectData98Sub94 a2) {
-    a2._50.setZ((short)(rcos(a2._14.get()) * 2 * a2._1a.getY() >> 12));
+    a2._50.setZ((short)(rcos(a2._14) * 2 * a2._1a.getY() >> 12));
     a2._50.setX((short)(rsin(a2._1a.getZ()) * a2._1a.getY() >> 12));
-    a2._14.add(a2._16.get());
-    a2._1a.setZ((short)(a2._1a.getZ() + a2._16.get() * 2));
-    a2._50.y.add((short)(0x40 + (((rcos(a2._18.get()) >> 1) + 0x800) * a2._1a.getY() >> 15)));
-    a2._18.add(a2._1a.getX());
+    a2._14 += a2._16;
+    a2._1a.setZ((short)(a2._1a.getZ() + a2._16 * 2));
+    a2._50.y.add((short)(0x40 + (((rcos(a2._18) >> 1) + 0x800) * a2._1a.getY() >> 15)));
+    a2._18 += a2._1a.getX();
   }
 
   @Method(0x800fc348L)
   public static void FUN_800fc348(final EffectManagerData6c a0, final EffectData98 a1, final EffectData98Sub94 a2) {
-    a2._50.setX((short)((rcos(a2._14.get()) * a2._1a.getX() >> 12) * rsin(a2._18.get()) >> 12));
-    a2._50.setY((short)(a2._18.get() * 2 - 0x800));
-    a2._50.setZ((short)((rsin(a2._14.get()) * a2._1a.getX() >> 12) * rsin(a2._18.get()) >> 12));
-    a2._14.add(a2._16.get());
+    a2._50.setX((short)((rcos(a2._14) * a2._1a.getX() >> 12) * rsin(a2._18) >> 12));
+    a2._50.setY((short)(a2._18 * 2 - 0x800));
+    a2._50.setZ((short)((rsin(a2._14) * a2._1a.getX() >> 12) * rsin(a2._18) >> 12));
+    a2._14 += a2._16;
   }
 
   @Method(0x800fc410L)
   public static void FUN_800fc410(final EffectManagerData6c a0, final EffectData98 a1, final EffectData98Sub94 a2) {
-    a2._58.y.add((short)(a2._14.get() / 0x100));
+    a2._58.y.add((short)(a2._14 / 0x100));
   }
 
   @Method(0x800fc42cL)
   public static void FUN_800fc42c(final EffectManagerData6c a0, final EffectData98 a1, final EffectData98Sub94 a2) {
-    a2._50.setX((short)(a2._14.get() + (rcos(a2._1a.getX()) * a2._1a.getZ() >> 12)));
-    a2._50.setY((short)(a2._18.get() + (rsin(a2._1a.getX()) * a2._1a.getZ() >> 12)));
+    a2._50.setX((short)(a2._14 + (rcos(a2._1a.getX()) * a2._1a.getZ() >> 12)));
+    a2._50.setY((short)(a2._18 + (rsin(a2._1a.getX()) * a2._1a.getZ() >> 12)));
     a2._1a.z.add((short)16);
     a2._1a.x.add(a2._1a.getY());
   }
@@ -897,26 +896,26 @@ public final class SEffe {
 
   @Method(0x800fc528L)
   public static void FUN_800fc528(final EffectManagerData6c a0, final EffectData98 a1, final EffectData98Sub94 a2) {
-    a2._50.setX((short)(rsin(a2._14.get()) * (a2._18.get() >> 1) >> 12));
-    a2._50.setZ((short)(rcos(a2._14.get()) * a2._18.get() >> 12));
-    a2._14.add(a2._16.get());
+    a2._50.setX((short)(rsin(a2._14) * (a2._18 >> 1) >> 12));
+    a2._50.setZ((short)(rcos(a2._14) * a2._18 >> 12));
+    a2._14 += a2._16;
   }
 
   @Method(0x800fc5a8L)
   public static void FUN_800fc5a8(final EffectManagerData6c a0, final EffectData98 a1, final EffectData98Sub94 a2) {
-    a2._50.setX((short)(rsin(a2._14.get()) * a2._18.get() >> 12));
-    a2._50.setZ((short)(rcos(a2._14.get()) * a2._18.get() >> 12));
-    a2._18.mul((short)7).div((short)8);
+    a2._50.setX((short)(rsin(a2._14) * a2._18 >> 12));
+    a2._50.setZ((short)(rcos(a2._14) * a2._18 >> 12));
+    a2._18 = (short)(a2._18 * 7 / 8);
   }
 
   @Method(0x800fc61cL)
   public static void FUN_800fc61c(final EffectManagerData6c a0, final EffectData98 a1, final EffectData98Sub94 a2) {
-    a2._08.set((short)(rcos(a2._14.get()) * a2._16.get() >> 12));
-    a2._14.sub(a2._18.get());
-    a2._08.set((short)(a2._08.get() * a0._10.scale_16.getY() >> 12));
+    a2._08 = (short)(rcos(a2._14) * a2._16 >> 12);
+    a2._14 -= a2._18;
+    a2._08 = (short)(a2._08 * a0._10.scale_16.getY() >> 12);
 
-    if(a2._16.get() > 0) {
-      a2._16.sub(a2._1a.getX());
+    if(a2._16 > 0) {
+      a2._16 -= a2._1a.getX();
     }
 
     //LAB_800fc6a8
@@ -924,18 +923,18 @@ public final class SEffe {
 
   @Method(0x800fc6bcL)
   public static void FUN_800fc6bc(final EffectManagerData6c a0, final EffectData98 a1, final EffectData98Sub94 a2) {
-    a2._50.setX((short)(rsin(a2._14.get()) * a2._16.get() >> 12));
-    a2._50.setZ((short)(rcos(a2._14.get()) * a2._16.get() >> 12));
-    a2._50.x.add((short)(rsin(a2._18.get()) << 8 >> 12));
-    a2._50.z.add((short)(rcos(a2._18.get()) << 8 >> 12));
-    a2._18.add(a2._1a.getX());
+    a2._50.setX((short)(rsin(a2._14) * a2._16 >> 12));
+    a2._50.setZ((short)(rcos(a2._14) * a2._16 >> 12));
+    a2._50.x.add((short)(rsin(a2._18) << 8 >> 12));
+    a2._50.z.add((short)(rcos(a2._18) << 8 >> 12));
+    a2._18 += a2._1a.getX();
   }
 
   @Method(0x800fc768L)
   public static void FUN_800fc768(final EffectManagerData6c a0, final EffectData98 a1, final EffectData98Sub94 a2) {
-    a2._1a.x.add(a2._14.get());
-    a2._1a.y.add(a2._16.get());
-    a2._1a.z.add(a2._18.get());
+    a2._1a.x.add(a2._14);
+    a2._1a.y.add(a2._16);
+    a2._1a.z.add(a2._18);
     a2._58.setX((short)(a2._1a.getX() >> 8));
     a2._58.setY((short)(a2._1a.getY() >> 8));
     a2._58.setZ((short)(a2._1a.getZ() >> 8));
@@ -946,14 +945,14 @@ public final class SEffe {
     if(a2._50.getY() + a2._2c.getY() >= a0._10._30) {
       a2._50.setY((short)(a0._10._30 - a2._2c.getY()));
       a2._58.y.neg().shra(1);
-      if(a2._14.get() == 0) {
+      if(a2._14 == 0) {
         final int angle = (int)(seed_800fa754.advance().get() % 0x1001);
         a2._58.setX((short)((rcos(angle) >>> 8) * a1._08._18 >> 8));
         a2._58.setZ((short)((rcos(angle) >>> 8) * a1._08._18 >> 8));
       }
 
       //LAB_800fc8d8
-      a2._14.set((short)1);
+      a2._14 = 1;
     }
 
     //LAB_800fc8e0
@@ -996,10 +995,10 @@ public final class SEffe {
     final int z = FUN_800cfc20(s1._68, s1._2c, s2, refX, refY);
     if(z >= 40) {
       final int a0 = 0x50_0000 / z;
-      final int s6 = a0 * (s3._10.scale_16.getX() + s1._06.get()) >> 12;
-      final int s7 = a0 * (s3._10.scale_16.getY() + s1._08.get()) >> 12;
+      final int s6 = a0 * (s3._10.scale_16.getX() + s1._06) >> 12;
+      final int s7 = a0 * (s3._10.scale_16.getY() + s1._08) >> 12;
 
-      int angle = s1._0e.get() + s3._10.rot_10.getX() - 0xa00;
+      int angle = s1._0e + s3._10.rot_10.getX() - 0xa00;
 
       if((s3._10._24 & 0x2) != 0) {
         final VECTOR sp0x28 = new VECTOR();
@@ -1109,28 +1108,28 @@ public final class SEffe {
     a2._2c.set(a0._10.trans_04);
     a2._68.set(a0._10.rot_10);
 
-    if(a2._12.get() == 0) {
-      a2._12.set((short)1);
+    if(a2._12 == 0) {
+      a2._12 = 1;
     }
 
     if((a1._08._1c & 0x400_0000) != 0) {
-      a2._84.set((short)(a0._10.colour_1c.getX() << 8));
-      a2._86.set((short)(a0._10.colour_1c.getY() << 8));
-      a2._88.set((short)(a0._10.colour_1c.getZ() << 8));
+      a2._84 = (short)(a0._10.colour_1c.getX() << 8);
+      a2._86 = (short)(a0._10.colour_1c.getY() << 8);
+      a2._88 = (short)(a0._10.colour_1c.getZ() << 8);
 
       if((a0._10._24 & 0x1) == 0) {
-        a2._8a.set((short)0);
-        a2._8c.set((short)0);
-        a2._8e.set((short)0);
+        a2._8a = 0;
+        a2._8c = 0;
+        a2._8e = 0;
         return;
       }
     }
 
     //LAB_800fd18c
     //LAB_800fd0dc
-    a2._8a.set((short)(a2._84.get() / a2._12.get()));
-    a2._8c.set((short)(a2._86.get() / a2._12.get()));
-    a2._8e.set((short)(a2._88.get() / a2._12.get()));
+    a2._8a = (short)(a2._84 / a2._12);
+    a2._8c = (short)(a2._86 / a2._12);
+    a2._8e = (short)(a2._88 / a2._12);
 
     //LAB_800fd1d4
   }
@@ -1139,25 +1138,25 @@ public final class SEffe {
   public static void FUN_800fd1dc(final EffectManagerData6c a0, final EffectData98 a1, final EffectData98Sub94 a2, final VECTOR a3) {
     if((a1._08._1c & 0x800_0000) == 0 || (a0._10._24 & 0x1) != 0) {
       //LAB_800fd23c
-      a2._84.sub(a2._8a.get());
-      a2._86.sub(a2._8c.get());
-      a2._88.sub(a2._8e.get());
+      a2._84 -= a2._8a;
+      a2._86 -= a2._8c;
+      a2._88 -= a2._8e;
     } else {
-      a2._84.set((short)(a0._10.colour_1c.getX() << 8));
-      a2._86.set((short)(a0._10.colour_1c.getY() << 8));
-      a2._88.set((short)(a0._10.colour_1c.getZ() << 8));
+      a2._84 = (short)(a0._10.colour_1c.getX() << 8);
+      a2._86 = (short)(a0._10.colour_1c.getY() << 8);
+      a2._88 = (short)(a0._10.colour_1c.getZ() << 8);
     }
 
     //LAB_800fd26c
-    a3.setX(a2._84.get());
-    a3.setY(a2._86.get());
-    a3.setZ(a2._88.get());
+    a3.setX(a2._84);
+    a3.setY(a2._86);
+    a3.setZ(a2._88);
     a2._50.add(a2._58);
     a2._58.add(a2._60);
 
     if(a2._50.getY() + a2._2c.getY() >= a0._10._30) {
       if((a0._10._24 & 0x20) != 0) {
-        a2._12.set((short)1);
+        a2._12 = 1;
       }
 
       //LAB_800fd324
@@ -1169,17 +1168,17 @@ public final class SEffe {
 
     //LAB_800fd358
     if((a1._08._1c & 0x200_0000) == 0) {
-      a2._06.add(a2._0a.get());
-      a2._08.add(a2._0c.get());
+      a2._06 += a2._0a;
+      a2._08 += a2._0c;
     }
 
     //LAB_800fd38c
     if((a1._08._1c & 0x100_0000) == 0) {
-      a2._0e.add(a2._10.get());
+      a2._0e += a2._10;
       a2._70.add(a2._78);
     } else {
       //LAB_800fd3e4
-      a2._0e.set((short)(a0._10._24 >>> 12 & 0xff0));
+      a2._0e = (short)(a0._10._24 >>> 12 & 0xff0);
     }
 
     //LAB_800fd3f8
@@ -1196,13 +1195,13 @@ public final class SEffe {
 
   @Method(0x800fd460L)
   public static long FUN_800fd460(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c a1, final EffectData98 a2, final EffectData98Sub94 a3) {
-    a3._04.decr();
+    a3._04--;
 
-    final long s0 = a3._04.get();
+    final short s0 = a3._04;
 
     //LAB_800fd53c
-    if(s0 == -0xfffL) {
-      a3._04.set((short)-0xfff);
+    if(s0 == -0xfff) {
+      a3._04 = -0xfff;
     } else if(s0 == 0) {
       FUN_800fd084(a1, a2, a3);
 
@@ -1213,7 +1212,7 @@ public final class SEffe {
           //LAB_800fd4f0
           //LAB_800fd504
           for(int i = 0; i < a2.count_54; i++) {
-            a3._44.deref().get(i).setY((short)0);
+            a3._44[i].setY((short)0);
           }
         }
       }
@@ -1227,17 +1226,17 @@ public final class SEffe {
     //LAB_800fd54c
     a2._88.accept(state, a1, a2, a3);
 
-    if((a3._90.get() & 0x1L) == 0) {
+    if((a3._90 & 0x1) == 0) {
       return 0x1L;
     }
 
-    if(a3._12.get() > 0) {
-      a3._12.decr();
+    if(a3._12 > 0) {
+      a3._12--;
     }
 
     //LAB_800fd58c
-    if(a3._12.get() == 0 && (a1._10._24 & 0x80) == 0) {
-      a3._90.and(0xffff_fffeL);
+    if(a3._12 == 0 && (a1._10._24 & 0x80) == 0) {
+      a3._90 &= 0xffff_fffe;
       a2._90.accept(state, a1, a2, a3);
       return 0x1L;
     }
@@ -1268,9 +1267,9 @@ public final class SEffe {
         sp0x68.offset(0x18L).setu(s3._2c.getX() + sp0x28.getX());
         sp0x68.offset(0x1cL).setu(s3._2c.getY() + sp0x28.getY());
         sp0x68.offset(0x20L).setu(s3._2c.getZ() + sp0x28.getZ());
-        sp0x68.offset(0x28L).setu(data._10.scale_16.getX() + s3._06.get());
-        sp0x68.offset(0x2cL).setu(data._10.scale_16.getY() + s3._08.get());
-        sp0x68.offset(0x30L).setu(data._10.scale_16.getX() + s3._06.get()); // This is correct
+        sp0x68.offset(0x28L).setu(data._10.scale_16.getX() + s3._06);
+        sp0x68.offset(0x2cL).setu(data._10.scale_16.getY() + s3._08);
+        sp0x68.offset(0x30L).setu(data._10.scale_16.getX() + s3._06); // This is correct
         sp0x68.offset(0x38L).setu(s3._70.getX() + s3._68.getX());
         sp0x68.offset(0x3aL).setu(s3._70.getY() + s3._68.getY());
         sp0x68.offset(0x3cL).setu(s3._70.getZ() + s3._68.getZ());
@@ -1318,18 +1317,18 @@ public final class SEffe {
         if(FUN_800fd460(state, data, s2, s5) == 0) {
           //LAB_800fd918
           for(int s0 = s2.count_54 - 1; s0 > 0; s0--) {
-            s5._44.deref().get(s0).set(s5._44.deref().get(s0 - 1));
+            s5._44[s0].set(s5._44[s0 - 1]);
           }
 
           //LAB_800fd950
-          s5._44.deref().get(0).sub(s5._50);
+          s5._44[0].sub(s5._50);
           s2._84.accept(data, s2, s5);
 
           final VECTOR sp0x20 = new VECTOR();
           FUN_800fd1dc(data, s2, s5, sp0x20);
 
           final VECTOR sp0x30 = new VECTOR();
-          if((s2._08._1c & 0x1000_0000) == 0 || (s5._90.get() & 0x8L) == 0) {
+          if((s2._08._1c & 0x1000_0000) == 0 || (s5._90 & 0x8) == 0) {
             //LAB_800fd9f4
             sp0x30.set(0, 0, 0);
           } else {
@@ -1337,14 +1336,7 @@ public final class SEffe {
           }
 
           //LAB_800fda00
-          v0 = s5._90.get();
-          v1 = v0 & 0xffff_fff7L;
-          v0 = v0 >>> 3;
-          v0 = ~v0;
-          v0 = v0 & 0x1L;
-          v0 = v0 << 3;
-          v1 = v1 | v0;
-          s5._90.set(v1);
+          s5._90 = s5._90 & 0xffff_fff7 | (~(s5._90 >>> 3) & 0x1) << 3;
 
           //LAB_800fda58
           //LAB_800fda90
@@ -1353,8 +1345,8 @@ public final class SEffe {
           sp0x20.setZ(MathHelper.clamp(sp0x20.getZ() + sp0x30.getZ(), 0, 0x8000));
 
           //LAB_800fdac8
-          if((s5._90.get() & 0x6L) != 0) {
-            sp0x50.offset(4, 0x0L).setu(data._10.flags_00 & 0x67ff_ffffL | (s5._90.get() >>> 1 & 0x3L) << 28);
+          if((s5._90 & 0x6) != 0) {
+            sp0x50.offset(4, 0x0L).setu(data._10.flags_00 & 0x67ff_ffffL | (s5._90 >>> 1 & 0x3) << 28);
           } else {
             sp0x50.offset(4, 0x0L).setu(data._10.flags_00);
           }
@@ -1364,7 +1356,7 @@ public final class SEffe {
           sp0x98.setX((short)(sp0x20.getX() / s2.count_54));
           sp0x98.setY((short)(sp0x20.getY() / s2.count_54));
           sp0x98.setZ((short)(sp0x20.getZ() / s2.count_54));
-          final VECTOR sp0x40 = new VECTOR().set(s5._44.deref().get(0));
+          final VECTOR sp0x40 = new VECTOR().set(s5._44[0]);
           final ShortRef refX1 = new ShortRef();
           final ShortRef refY1 = new ShortRef();
           s3 = FUN_800cfc20(s5._68, s5._2c, sp0x40, refX1, refY1) / 4;
@@ -1389,7 +1381,7 @@ public final class SEffe {
               sp0x50.offset(1, 0x44L).setu(sp0x20.getX() >> 8);
               sp0x50.offset(1, 0x45L).setu(sp0x20.getY() >> 8);
               sp0x50.offset(1, 0x46L).setu(sp0x20.getZ() >> 8);
-              sp0x40.set(s5._44.deref().get(s0));
+              sp0x40.set(s5._44[s0]);
 
               final ShortRef refX2 = new ShortRef();
               final ShortRef refY2 = new ShortRef();
@@ -1488,7 +1480,7 @@ public final class SEffe {
       final EffectData98Sub94 sp54 = s2._68[i];
 
       if(FUN_800fd460(state, data, s2, sp54) == 0) {
-        long a2 = sp54._80.get() + (s2.count_54 - 1) * 0x10L;
+        long a2 = sp54._80 + (s2.count_54 - 1) * 0x10;
 
         //LAB_800fe1bc
         for(int s4 = 0; s4 < s2.count_54 - 1; s4++) {
@@ -1496,7 +1488,7 @@ public final class SEffe {
           MEMORY.ref(4, a2).offset(0x04L).setu(MEMORY.ref(4, a2).offset(-0x0cL).get());
           MEMORY.ref(4, a2).offset(0x08L).setu(MEMORY.ref(4, a2).offset(-0x08L).get());
           MEMORY.ref(4, a2).offset(0x0cL).setu(MEMORY.ref(4, a2).offset(-0x04L).get());
-          a2 = a2 - 0x10L;
+          a2 = a2 - 0x10;
         }
 
         //LAB_800fe1fc
@@ -1504,7 +1496,7 @@ public final class SEffe {
 
         FUN_800fd1dc(data, s2, sp54, sp0x28);
 
-        if((s2._08._1c & 0x1000_0000) == 0 || (sp54._90.get() & 0x8L) == 0) {
+        if((s2._08._1c & 0x1000_0000) == 0 || (sp54._90 & 0x8) == 0) {
           //LAB_800fe280
           sp0x38.set(0, 0, 0);
         } else {
@@ -1512,7 +1504,7 @@ public final class SEffe {
         }
 
         //LAB_800fe28c
-        sp54._90.set(sp54._90.get() & 0xffff_fff7L | (~(sp54._90.get() >>> 3) & 0x1L) << 3);
+        sp54._90 = sp54._90 & 0xffff_fff7 | (~(sp54._90 >>> 3) & 0x1) << 3;
 
         if((data._10.flags_00 & 0x400_0000) == 0) {
           // This is super bugged in retail and passes garbage as the last 3 params to both methods.
@@ -1556,7 +1548,7 @@ public final class SEffe {
 
         //LAB_800fe564
         if((s2._08._1c & 0x6000_0000) != 0) {
-          long s1 = sp54._80.get();
+          long s1 = sp54._80;
           MEMORY.ref(2, s1).offset(0x0L).setu(cmd1.getX(0));
           MEMORY.ref(2, s1).offset(0x2L).setu(cmd1.getY(0));
           MEMORY.ref(2, s1).offset(0x4L).setu(cmd1.getX(1));
@@ -1569,7 +1561,7 @@ public final class SEffe {
           sp0x48.setY((short)(sp0x28.getY() / s2.count_54));
           sp0x48.setZ((short)(sp0x28.getZ() / s2.count_54));
 
-          final int count = Math.min(-sp54._04.get(), s2.count_54);
+          final int count = Math.min(-sp54._04, s2.count_54);
 
           //LAB_800fe61c
           //LAB_800fe628
@@ -1657,29 +1649,11 @@ public final class SEffe {
 
     //LAB_800fe910
     if(s2.count_54 != 0) {
-      switch(s2._60) {
-        case 2, 4, 5 -> {
-          //LAB_800fe960
+      if(s2._60 == 0) {
+        if((s2._08._1c & 0x6000_0000) != 0) {
+          //LAB_800fe9b4
           for(int i = 0; i < s2.count_50; i++) {
-            free(s2._68[i]._44.getPointer());
-          }
-        }
-
-        case 0 -> {
-          if((s2._08._1c & 0x6000_0000) != 0) {
-            //LAB_800fe9b4
-            for(int i = 0; i < s2.count_50; i++) {
-              free(s2._68[i]._80.get());
-            }
-          }
-        }
-
-        case 1 -> {
-          if((s2._08._1c & 0x6000_0000) != 0) {
-            //LAB_800fea08
-            for(int i = 0; i < s2.count_50; i++) {
-              free(s2._68[i]._44.getPointer());
-            }
+            free(s2._68[i]._80);
           }
         }
       }
@@ -1706,9 +1680,9 @@ public final class SEffe {
 
     seed_800fa754.advance();
     final long a0_0 = seed_800fa754.get() % 101 - 50 << 8;
-    a2._84.add((short)a0_0);
-    a2._86.add((short)a0_0);
-    a2._88.add((short)a0_0);
+    a2._84 += a0_0;
+    a2._86 += a0_0;
+    a2._88 += a0_0;
 
     return theta;
   }
@@ -1731,10 +1705,10 @@ public final class SEffe {
     s2._58.setY((short)-(seed_800fa754.get() % 33 + 13));
     s2._58.setZ((short)(rsin(s0) >> 10));
     seed_800fa754.advance();
-    s2._14.set((short)(seed_800fa754.get() % 3 + 1));
+    s2._14 = (short)(seed_800fa754.get() % 3 + 1);
     seed_800fa754.advance();
-    s2._16.set((short)(seed_800fa754.get() % 3));
-    s2._04.set((short)(s2._04.get() / 4 * 4 + 1));
+    s2._16 = (short)(seed_800fa754.get() % 3);
+    s2._04 = (short)(s2._04 / 4 * 4 + 1);
   }
 
   @Method(0x800fee9cL)
@@ -1744,17 +1718,17 @@ public final class SEffe {
     a2._58.setX((short)(rcos(theta) / 0x80));
     a2._58.setY((short)0);
     a2._58.setZ((short)(rsin(theta) / 0x80));
-    a2._04.set((short)1);
+    a2._04 = 1;
     seed_800fa754.advance();
-    a2._14.set((short)(seed_800fa754.get() % 6));
+    a2._14 = (short)(seed_800fa754.get() % 6);
   }
 
   @Method(0x800fefe4L)
   public static void FUN_800fefe4(final EffectManagerData6c a0, final EffectData98 a1, final EffectData98Sub94 a2, final EffectData98Inner24 a3) {
     FUN_800fee9c(a0, a1, a2, a3);
-    a2._14.set((short)(seed_800fa754.advance().get() % 4097));
-    a2._16.set(a3._10);
-    a2._18.set((short)(seed_800fa754.advance().get() % 91 + 10));
+    a2._14 = (short)(seed_800fa754.advance().get() % 4097);
+    a2._16 = a3._10;
+    a2._18 = (short)(seed_800fa754.advance().get() % 91 + 10);
     a2._1a.setX((short)120);
     a2._58.setX((short)0);
     a2._58.setY((short)-(seed_800fa754.advance().get() % 11 + 5));
@@ -1776,50 +1750,50 @@ public final class SEffe {
       v1 = -(seed_800fa754.get() % 21 + 10);
     }
 
-    a2._0a.set((short)v1);
-    a2._0c.set((short)v1);
+    a2._0a = (short)v1;
+    a2._0c = (short)v1;
 
     //LAB_800ff2b4
     seed_800fa754.advance();
-    a2._14.set((short)(seed_800fa754.get() % 4097));
+    a2._14 = (short)(seed_800fa754.get() % 4097);
     seed_800fa754.advance();
     a2._1a.setX((short)(seed_800fa754.get() % 4097));
     seed_800fa754.advance();
     a2._1a.setZ((short)(seed_800fa754.get() % 1025 - 512));
 
     a2._1a.setY((short)100);
-    a2._16.set(a3._10);
-    a2._18.set((short)(a3._18 * 100 / 256));
+    a2._16 = a3._10;
+    a2._18 = (short)(a3._18 * 100 / 256);
   }
 
   @Method(0x800ff3e0L)
   public static void FUN_800ff3e0(final EffectManagerData6c a0, final EffectData98 a1, final EffectData98Sub94 a2, final EffectData98Inner24 a3) {
     FUN_800ff15c(a0, a1, a2, a3);
-    a2._20.set((short)0);
-    a2._22.set((short)(0x8000 / a2._12.get()));
-    a2._24.set((short)((a3._1c >>> 8 & 0xff) << 8));
+    a2._20 = (short)0;
+    a2._22 = (short)(0x8000 / a2._12);
+    a2._24 = (short)((a3._1c >>> 8 & 0xff) << 8);
   }
 
   @Method(0x800ff430L)
   public static void FUN_800ff430(final EffectManagerData6c a0, final EffectData98 a1, final EffectData98Sub94 a2, final EffectData98Inner24 a3) {
-    a2._16.set(a3._10);
-    a2._18.set((short)0);
+    a2._16 = a3._10;
+    a2._18 = (short)0;
     a2._1a.setX((short)0);
     a2._1a.setY((short)50);
-    a2._20.set((short)100);
-    a2._22.set((short)0);
-    a2._24.set((short)(a2._10.get() / a2._12.get()));
+    a2._20 = (short)100;
+    a2._22 = (short)0;
+    a2._24 = (short)(a2._10 / a2._12);
 
     a2._58.setY((short)(seed_800fa754.advance().get() % 31 + 10));
     a2._1a.setZ((short)(seed_800fa754.advance().get() % 41 + 40));
-    a2._14.set((short)(seed_800fa754.advance().get() % 4097));
+    a2._14 = (short)(seed_800fa754.advance().get() % 4097);
   }
 
   @Method(0x800ff590L)
   public static void FUN_800ff590(final EffectManagerData6c a0, final EffectData98 a1, final EffectData98Sub94 a2, final EffectData98Inner24 a3) {
     FUN_800ff430(a0, a1, a2, a3);
-    a2._22.set((short)20);
-    a2._20.set((short)10);
+    a2._22 = 20;
+    a2._20 = 10;
   }
 
   /**
@@ -1839,45 +1813,45 @@ public final class SEffe {
     seed_800fa754.advance();
     a2._58.setY((short)(-(seed_800fa754.get() % 61 + 60) * a3._18 / 256));
     seed_800fa754.advance();
-    a2._14.set((short)(seed_800fa754.get() % 4097));
-    a2._16.set(a3._10);
-    a2._18.set((short)100);
+    a2._14 = (short)(seed_800fa754.get() % 4097);
+    a2._16 = a3._10;
+    a2._18 = (short)100;
     a2._1a.setX((short)(t2 * 4));
-    a2._60.setY((short)(-a2._58.getY() / a2._12.get()));
+    a2._60.setY((short)(-a2._58.getY() / a2._12));
   }
 
   @Method(0x800ff6d4L)
   public static void FUN_800ff6d4(final EffectManagerData6c a0, final EffectData98 a1, final EffectData98Sub94 a2, final EffectData98Inner24 a3) {
     FUN_800ff5c4(a0, a1, a2, a3);
-    a2._18.set((short)0);
+    a2._18 = 0;
   }
 
   @Method(0x800ff6fcL)
   public static void FUN_800ff6fc(final EffectManagerData6c u0, final EffectData98 u1, final EffectData98Sub94 a2, final EffectData98Inner24 a3) {
     final long a0 = _8011a008.get();
-    a2._10.set((short)-0x80);
+    a2._10 = -0x80;
     final long v1 = a0 >>> 1;
-    a2._0e.set((short)(v1 * 128));
-    a2._14.set((short)(v1 * 128));
-    a2._16.set(a3._10);
-    a2._18.set((short)(a0 & 0x1));
+    a2._0e = (short)(v1 * 128);
+    a2._14 = (short)(v1 * 128);
+    a2._16 = a3._10;
+    a2._18 = (short)(a0 & 0x1);
     a2._1a.setX((short)(v1 * 8));
 
     final long a1 = Math.max(0, (a3._1c >>> 8 & 0xff) - a0 * 16);
 
     //LAB_800ff754
-    a2._12.set((short)-1);
-    a2._84.set((short)(a1 << 8));
-    a2._86.set((short)(a1 << 8));
-    a2._88.set((short)(a1 << 8));
+    a2._12 = -1;
+    a2._84 = (short)(a1 << 8);
+    a2._86 = (short)(a1 << 8);
+    a2._88 = (short)(a1 << 8);
   }
 
   @Method(0x800ff788L)
   public static void FUN_800ff788(final EffectManagerData6c a0, final EffectData98 a1, final EffectData98Sub94 a2, final EffectData98Inner24 a3) {
-    a2._12.set((short)-1);
-    a2._14.set((short)(seed_800fa754.advance().get() % 4097));
-    a2._16.set(a3._10);
-    a2._18.set((short)(seed_800fa754.advance().get() % 4097));
+    a2._12 = -1;
+    a2._14 = (short)(seed_800fa754.advance().get() % 4097);
+    a2._16 = a3._10;
+    a2._18 = (short)(seed_800fa754.advance().get() % 4097);
     a2._1a.setX((short)(seed_800fa754.advance().get() % 4097));
   }
 
@@ -1895,10 +1869,10 @@ public final class SEffe {
     a2._58.setZ((short)(rsin(s1) * rsin(s0) / 0x40000));
 
     seed_800fa754.advance();
-    a2._12.add((short)(seed_800fa754.get() % 21 - 10));
+    a2._12 += (short)(seed_800fa754.get() % 21 - 10);
 
-    if(a2._12.get() <= 0) {
-      a2._12.set((short)1);
+    if(a2._12 <= 0) {
+      a2._12 = 1;
     }
 
     //LAB_800ffa60
@@ -1908,21 +1882,21 @@ public final class SEffe {
   public static void FUN_800ffa80(final EffectManagerData6c a0, final EffectData98 a1, final EffectData98Sub94 a2, final EffectData98Inner24 a3) {
     FUN_800ff5c4(a0, a1, a2, a3);
     final short s2 = a3._10;
-    a2._16.set(s2);
+    a2._16 = s2;
     a2._1a.setY(s2);
-    a2._18.set((short)(a3._18 * 0xe0 >> 8));
+    a2._18 = (short)(a3._18 * 0xe0 >> 8);
   }
 
   @Method(0x800ffadcL)
   public static void FUN_800ffadc(final EffectManagerData6c u0, final EffectData98 a1, final EffectData98Sub94 a2, final EffectData98Inner24 a3) {
-    a2._14.set((short)(seed_800fa754.advance().get() % 4097));
+    a2._14 = (short)(seed_800fa754.advance().get() % 4097);
     final int v0 = -a3._10 >> 5;
     final int a0 = a3._18;
-    a2._84.set((short)0);
-    a2._86.set((short)0);
-    a2._88.set((short)0);
-    a2._16.set(a3._10);
-    a2._18.set((short)(v0 * a0 >> 8));
+    a2._84 = 0;
+    a2._86 = 0;
+    a2._88 = 0;
+    a2._16 = a3._10;
+    a2._18 = (short)(v0 * a0 >> 8);
     a2._1a.setX((short)(a0 >>> 1));
   }
 
@@ -1931,39 +1905,39 @@ public final class SEffe {
     final long v0;
     long a0;
     a2._60.setY((short)8);
-    a0 = _8011a008.get() & 0xffffL;
+    a0 = _8011a008.get();
     v0 = a0 << 9;
-    a2._14.set((short)v0);
+    a2._14 = (short)v0;
     a0 = a0 >>> 2;
     a0 = a0 | 0x1L;
-    a2._16.set(a3._10);
-    a2._04.set((short)a0);
-    a2._18.set((short)(a3._18 >>> 2));
+    a2._16 = a3._10;
+    a2._04 = (short)a0;
+    a2._18 = (short)(a3._18 >>> 2);
     a2._58.setY((short)(a3._14 * -0x40 / 0x100));
   }
 
   @Method(0x800ffbd8L)
   public static void FUN_800ffbd8(final EffectManagerData6c a0, final EffectData98 a1, final EffectData98Sub94 a2, final EffectData98Inner24 a3) {
     final int t6 = a3._18;
-    a2._14.set((short)0);
-    a2._18.set((short)(seed_800fa754.advance().get() % 21 - 10));
+    a2._14 = 0;
+    a2._18 = (short)(seed_800fa754.advance().get() % 21 - 10);
     a2._1a.setX((short)(seed_800fa754.advance().get() % 21 - 10));
     a2._1a.setY((short)(seed_800fa754.advance().get() % 81 - 40));
-    a2._1a.setZ(a2._12.get());
+    a2._1a.setZ(a2._12);
     a2._58.setX((short)((seed_800fa754.advance().get() % 41 + 44) * t6 >> 8));
     a2._58.setY((short)((seed_800fa754.advance().get() % 81 - 40) * t6 >> 8));
     a2._58.setZ((short)((seed_800fa754.advance().get() % 41 + 44) * t6 >> 8));
-    a2._12.add((short)20);
+    a2._12 += 20;
   }
 
   @Method(0x800ffe80L)
   public static void FUN_800ffe80(final EffectManagerData6c u0, final EffectData98 u1, final EffectData98Sub94 a2, final EffectData98Inner24 a3) {
-    a2._16.set(a3._10);
-    a2._18.set((short)(a3._18 >>> 3));
+    a2._16 = a3._10;
+    a2._18 = (short)(a3._18 >>> 3);
     a2._60.setY((short)(a3._18 >>> 7));
 
     seed_800fa754.advance();
-    a2._14.set((short)(seed_800fa754.get() % 4097));
+    a2._14 = (short)(seed_800fa754.get() % 4097);
   }
 
   @Method(0x800ffefcL)
@@ -1973,11 +1947,11 @@ public final class SEffe {
 
   @Method(0x800fff04L)
   public static void FUN_800fff04(final EffectManagerData6c a0, final EffectData98 a1, final EffectData98Sub94 a2, final EffectData98Inner24 a3) {
-    a2._14.set((short)0);
-    a2._18.set((short)0);
+    a2._14 = 0;
+    a2._18 = 0;
     a2._1a.setZ((short)0);
     final short v0 = (short)((a3._18 & 0xffff) >>> 2);
-    a2._16.set(v0);
+    a2._16 = v0;
     a2._1a.setX(v0);
     a2._1a.setY(a3._10);
   }
@@ -1990,9 +1964,9 @@ public final class SEffe {
   @Method(0x800fffa0L)
   public static void FUN_800fffa0(final EffectManagerData6c a0, final EffectData98 a1, final EffectData98Sub94 a2, final EffectData98Inner24 a3) {
     a2._1a.setX(a3._10);
-    a2._14.set((short)(seed_800fa754.advance().get() % 4097));
-    a2._16.set((short)((seed_800fa754.advance().get() % 123 + 64) * a3._18 >> 8));
-    a2._18.set((short)(0x800 / a1.count_50 * (_8011a008.get() & 0xffff)));
+    a2._14 = (short)(seed_800fa754.advance().get() % 4097);
+    a2._16 = (short)((seed_800fa754.advance().get() % 123 + 64) * a3._18 >> 8);
+    a2._18 = (short)(0x800 / a1.count_50 * _8011a008.get());
   }
 
   @Method(0x801000b8L)
@@ -2005,16 +1979,16 @@ public final class SEffe {
   public static void FUN_801000f8(final EffectManagerData6c a0, final EffectData98 a1, final EffectData98Sub94 a2, final EffectData98Inner24 a3) {
     FUN_800ff890(a0, a1, a2, a3);
     a2._58.setY((short)-Math.abs(a2._58.getY()));
-    a2._14.set((short)(a3._18 * 0x300 / 0x100));
+    a2._14 = (short)(a3._18 * 0x300 / 0x100);
   }
 
   @Method(0x80100150L)
   public static void FUN_80100150(final EffectManagerData6c a0, final EffectData98 a1, final EffectData98Sub94 a2, final EffectData98Inner24 a3) {
     seed_800fa754.advance();
     a2._1a.setX((short)(seed_800fa754.get() % 4097));
-    a2._14.set(a2._50.getX());
-    a2._16.set(a2._50.getY());
-    a2._18.set(a2._50.getZ());
+    a2._14 = a2._50.getX();
+    a2._16 = a2._50.getY();
+    a2._18 = a2._50.getZ();
     a2._1a.setZ((short)(a3._10 >>> 2));
     a2._58.setY((short)(a3._18 * -64 >> 8));
     seed_800fa754.advance();
@@ -2043,7 +2017,7 @@ public final class SEffe {
 
     final long s1 = seed_800fa754.advance().get() % 4097;
     final long s0 = seed_800fa754.advance().get() % 2049;
-    a2._12.set((short)(a3._1c >>> 16 & 0xff));
+    a2._12 = (short)(a3._1c >>> 16 & 0xff);
     a2._50.setX((short)((rcos(s1) * rsin(s0) >> 12) * s4 >> 12));
     a2._50.setY((short)(rcos(s0) * s4 >> 12));
     a2._50.setZ((short)((rsin(s1) * rsin(s0) >> 12) * s4 >> 12));
@@ -2055,9 +2029,9 @@ public final class SEffe {
   @Method(0x80100364L)
   public static void FUN_80100364(final EffectManagerData6c a0, final EffectData98 a1, final EffectData98Sub94 a2, final EffectData98Inner24 a3) {
     FUN_800ff890(a0, a1, a2, a3);
-    a2._14.set((short)0);
+    a2._14 = 0;
     a2._58.setY((short)-Math.abs(a2._58.getY()));
-    a2._60.set(a2._58).negate().div(a2._12.get());
+    a2._60.set(a2._58).negate().div(a2._12);
   }
 
   @Method(0x801005b8L)
@@ -2069,7 +2043,7 @@ public final class SEffe {
     a2._50.setY((short)(rsin(s0) * s2 >> 12));
     a2._50.setZ((short)(rcos(s0) * s2 >> 12));
     a2._58.setX((short)((seed_800fa754.advance().get() % 65 + 54) * s4 >> 8));
-    a2._60.setX((short)(-a2._58.getX() / a2._12.get()));
+    a2._60.setX((short)(-a2._58.getX() / a2._12));
     a2._60.setY((short)0x10);
     final int a1_0 = -((rsin(s0) * s2 >> 12) + s2) / 2;
     a2._58.setY((short)((seed_800fa754.advance().get() % (-a1_0 + 1) + a1_0) * s4 >> 8));
@@ -2077,42 +2051,42 @@ public final class SEffe {
 
   @Method(0x801007b4L)
   public static void FUN_801007b4(final EffectManagerData6c a0, final EffectData98 a1, final EffectData98Sub94 a2, final EffectData98Inner24 a3) {
-    a2._58.set(a2._50).negate().div(a2._12.get());
+    a2._58.set(a2._50).negate().div(a2._12);
   }
 
   @Method(0x80100800L)
   public static void FUN_80100800(final EffectManagerData6c a0, final EffectData98 a1, final EffectData98Sub94 a2, final EffectData98Inner24 a3) {
-    a2._16.set((short)(a3._18 >>> 2));
-    a2._18.set(a3._10);
-    a2._14.set((short)(seed_800fa754.advance().get() % 4097));
+    a2._16 = (short)(a3._18 >>> 2);
+    a2._18 = a3._10;
+    a2._14 = (short)(seed_800fa754.advance().get() % 4097);
   }
 
   @Method(0x80100878L)
   public static void FUN_80100878(final EffectManagerData6c a0, final EffectData98 a1, final EffectData98Sub94 a2, final EffectData98Inner24 a3) {
     a2._58.setY((short)-0x40);
-    a2._18.set(a3._10);
-    a2._16.set((short)(a3._18 * 0x20));
-    a2._14.set((short)(seed_800fa754.advance().get() % 4097));
+    a2._18 = a3._10;
+    a2._16 = (short)(a3._18 * 0x20);
+    a2._14 = (short)(seed_800fa754.advance().get() % 4097);
   }
 
   @Method(0x801008f8L)
   public static void FUN_801008f8(final EffectManagerData6c a0, final EffectData98 a1, final EffectData98Sub94 a2, final EffectData98Inner24 a3) {
-    a2._0e.set((short)0);
-    a2._10.set((short)0);
+    a2._0e = 0;
+    a2._10 = 0;
     a2._70.set((short)0, (short)0, (short)0);
     a2._78.set((short)0, (short)0, (short)0);
-    a2._18.set(a3._18);
-    a2._14.set((short)0x800);
-    a2._16.set((short)(a3._10 << 4));
+    a2._18 = a3._18;
+    a2._14 = 0x800;
+    a2._16 = (short)(a3._10 << 4);
     a2._1a.setX((short)(a3._18 >>> 2));
-    a2._04.set((short)((_8011a008.get() & 0xffff) * (a3._14 / a3._0c)));
+    a2._04 = (short)(_8011a008.get() * (a3._14 / a3._0c));
   }
 
   @Method(0x80100978L)
   public static void FUN_80100978(final EffectManagerData6c a0, final EffectData98 a1, final EffectData98Sub94 a2, final EffectData98Inner24 a3) {
-    a2._14.set((short)(seed_800fa754.advance().get() % 4097));
-    a2._16.set((short)(seed_800fa754.advance().get() % ((a3._10 & 0xffff) + 1)));
-    a2._18.set((short)(seed_800fa754.advance().get() % 4097));
+    a2._14 = (short)(seed_800fa754.advance().get() % 4097);
+    a2._16 = (short)(seed_800fa754.advance().get() % ((a3._10 & 0xffff) + 1));
+    a2._18 = (short)(seed_800fa754.advance().get() % 4097);
     a2._1a.setX((short)((seed_800fa754.advance().get() % 41 + 150) * a3._18 >> 8));
     a2._58.setY((short)-0x40);
   }
@@ -2123,7 +2097,7 @@ public final class SEffe {
     a2._58.setX((short)(a2._58.getX() * a3._18 >> 8));
     a2._58.setY((short)(a2._58.getY() * a3._18 >> 8));
     a2._58.setZ((short)(a2._58.getZ() * a3._18 >> 8));
-    a2._60.set(a2._58).negate().div(a2._12.get());
+    a2._60.set(a2._58).negate().div(a2._12);
   }
 
   @Method(0x80100bb4L)
@@ -2135,9 +2109,9 @@ public final class SEffe {
   @Method(0x80100c18L)
   public static void FUN_80100c18(final EffectManagerData6c a0, final EffectData98 a1, final EffectData98Sub94 a2, final EffectData98Inner24 a3) {
     final int v1 = a3._18;
-    a2._14.set((short)((-a2._50.getX() >> 1) * v1 >> 8));
-    a2._16.set((short)((-a2._50.getY() >> 1) * v1 >> 8));
-    a2._18.set((short)((-a2._50.getZ() >> 1) * v1 >> 8));
+    a2._14 = (short)((-a2._50.getX() >> 1) * v1 >> 8);
+    a2._16 = (short)((-a2._50.getY() >> 1) * v1 >> 8);
+    a2._18 = (short)((-a2._50.getZ() >> 1) * v1 >> 8);
     a2._1a.set((short)0, (short)0, (short)0);
   }
 
@@ -2146,12 +2120,12 @@ public final class SEffe {
     FUN_800ff890(a0, a1, a2, a3);
     a2._58.setY((short)-Math.abs(a2._58.getY()));
     a2._58.setX((short)0);
-    a2._14.set((short)0);
+    a2._14 = 0;
   }
 
   @Method(0x80100cecL)
   public static void FUN_80100cec(final EffectManagerData6c a0, final EffectData98 a1, final EffectData98Sub94 a2, final EffectData98Inner24 a3) {
-    a2._14.set((short)0);
+    a2._14 = 0;
     a2._60.setY((short)(a3._18 >>> 7));
   }
 
@@ -2169,7 +2143,7 @@ public final class SEffe {
 
   @Method(0x80100d60L)
   public static void FUN_80100d60(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c a1, final EffectData98 a2, final EffectData98Sub94 a3) {
-    if(a3._04.get() == 0 && a2.scriptIndex_04 != -1) {
+    if(a3._04 == 0 && a2.scriptIndex_04 != -1) {
       final VECTOR sp0x20 = new VECTOR();
       scriptGetScriptedObjectPos(state.index, sp0x20);
 
@@ -2186,10 +2160,10 @@ public final class SEffe {
 
   @Method(0x80100e28L)
   public static void FUN_80100e28(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c a1, final EffectData98 a2, final EffectData98Sub94 a3) {
-    if(a3._04.get() == 0) {
-      a3._8a.set((short)0);
-      a3._8c.set((short)0);
-      a3._8e.set((short)0);
+    if(a3._04 == 0) {
+      a3._8a = 0;
+      a3._8c = 0;
+      a3._8e = 0;
     }
 
     //LAB_80100e44
@@ -2197,10 +2171,10 @@ public final class SEffe {
 
   @Method(0x80100e4cL)
   public static void FUN_80100e4c(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c a1, final EffectData98 a2, final EffectData98Sub94 a3) {
-    if(a3._04.get() == 0) {
-      a3._8a.set((short)(-0x8000 / a3._12.get()));
-      a3._8c.set((short)(-0x8000 / a3._12.get()));
-      a3._8e.set((short)(-0x8000 / a3._12.get()));
+    if(a3._04 == 0) {
+      a3._8a = (short)(-0x8000 / a3._12);
+      a3._8c = (short)(-0x8000 / a3._12);
+      a3._8e = (short)(-0x8000 / a3._12);
     }
 
     //LAB_80100e98
@@ -2231,13 +2205,13 @@ public final class SEffe {
     }
 
     //LAB_80101068
-    a3._12.set((short)(sp0x30.getX() / a3._58.getX()));
+    a3._12 = (short)(sp0x30.getX() / a3._58.getX());
   }
 
   @Method(0x801010a0L)
   public static void FUN_801010a0(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c a1, final EffectData98 a2, final EffectData98Sub94 a3) {
     // Calculate the index of this array element
-    _8011a008.setu((a3.getAddress() - a2._68[0].getAddress()) / 0x94);
+    _8011a008.setu(a3.index);
 
     FUN_80101308(a1, a2, a3, a2._08);
 
@@ -2250,7 +2224,7 @@ public final class SEffe {
 
         //LAB_801011d8
         for(int i = 0; i < a2.count_54; i++) {
-          final long s0 = a3._80.get() + i * 0x10;
+          final long s0 = a3._80 + i * 0x10;
 
           final VECTOR sp0x18 = new VECTOR().set(a3._50);
           FUN_800fca78(a1, a2, a3, sp0x18, cmd);
@@ -2268,7 +2242,7 @@ public final class SEffe {
         //LAB_80101160
         //LAB_80101170
         for(int i = 0; i < a2.count_54; i++) {
-          a3._44.deref().get(i).set(a3._50);
+          a3._44[i].set(a3._50);
         }
       }
     }
@@ -2324,40 +2298,40 @@ public final class SEffe {
 
     //LAB_80101400
     fp._61 = (byte)_801197ec.offset(a4._20 * 0x4L).offset(1, 0x3L).get();
-    s3._00.set(0x73);
-    s3._01.set(0x6d);
-    s3._02.set(0x6b);
+    s3._00 = 0x73;
+    s3._01 = 0x6d;
+    s3._02 = 0x6b;
     s3._50.set((short)0, (short)0, (short)0);
     s3._58.set((short)0, (short)0, (short)0);
-    s3._06.set((short)0);
-    s3._08.set((short)0);
-    s3._0a.set((short)0);
-    s3._0c.set((short)0);
+    s3._06 = 0;
+    s3._08 = 0;
+    s3._0a = 0;
+    s3._0c = 0;
     s3._60.set((short)0, (short)0, (short)0);
-    s3._8a.set((short)0);
-    s3._8c.set((short)0);
-    s3._8e.set((short)0);
+    s3._8a = 0;
+    s3._8c = 0;
+    s3._8e = 0;
     t2 = a4._20 * 10;
     brokenT2For800ff5c4 = t2;
-    s3._04.set((short)(seed_800fa754.advance().get() % (a4._14 + 1) + 1));
-    s3._12.set((short)((a4._1c & 0xff_0000L) >>> 16));
-    final long a0 = (a4._1c & 0xff00L) >>> 8;
-    s3._84.set((short)a0);
-    s3._86.set((short)a0);
-    s3._88.set((short)a0);
-    s3._90.or(0x1L);
-    s3._0e.set((short)(seed_800fa754.advance().get() % 4097));
-    s3._10.set((short)(seed_800fa754.advance().get() % 513 - 256));
+    s3._04 = (short)(seed_800fa754.advance().get() % (a4._14 + 1) + 1);
+    s3._12 = (short)((a4._1c & 0xff_0000) >>> 16);
+    final int a0 = (a4._1c & 0xff00) >>> 8;
+    s3._84 = (short)a0;
+    s3._86 = (short)a0;
+    s3._88 = (short)a0;
+    s3._90 |= 0x1;
+    s3._0e = (short)(seed_800fa754.advance().get() % 4097);
+    s3._10 = (short)(seed_800fa754.advance().get() % 513 - 256);
     s3._70.setX((short)(seed_800fa754.advance().get() % 4097));
     s3._70.setY((short)(seed_800fa754.advance().get() % 4097));
     s3._70.setZ((short)(seed_800fa754.advance().get() % 4097));
     s3._78.setX((short)(seed_800fa754.advance().get() % 129 - 64));
     s3._78.setY((short)(seed_800fa754.advance().get() % 129 - 64));
     s3._78.setZ((short)0);
-    s3._90.and(0xffff_fff1L).or(seed_800fa754.advance().get() % 101 < 50 ? 0 : 0x8L);
-    s3._84.shl(8);
-    s3._88.shl(8);
-    s3._86.shl(8);
+    s3._90 = s3._90 & 0xffff_fff1 | (seed_800fa754.advance().get() % 101 < 50 ? 0 : 0x8);
+    s3._84 <<= 8;
+    s3._88 <<= 8;
+    s3._86 <<= 8;
     s5 = _801198f0.offset(t2).getAddress();
     v1 = MEMORY.ref(1, s5).get();
     s7 = a4._20;
@@ -2402,8 +2376,8 @@ public final class SEffe {
     //LAB_80101ba4
     if(MEMORY.ref(1, a1).offset(0x7L).get() == 1) {
       v1 = (byte)(seed_800fa754.advance().get() % (MEMORY.ref(1, a1).offset(0x9L).getSigned() - MEMORY.ref(1, a1).offset(0x8L).getSigned() + 1) + MEMORY.ref(1, a1).offset(0x8L).getSigned());
-      s3._0a.set((byte)v1);
-      s3._0c.set((byte)v1);
+      s3._0a = (byte)v1;
+      s3._0c = (byte)v1;
     }
 
     //LAB_80101c20
@@ -2423,11 +2397,12 @@ public final class SEffe {
     //LAB_80101cb0
     for(int s3 = 0; s3 < a0.count_50; s3++) {
       final EffectData98Sub94 s2 = a0._68[s3];
-      s2._44.setPointer(mallocHead(a0.count_54 * 0x8));
+      s2._44 = new SVECTOR[a0.count_54];
+      Arrays.setAll(s2._44, i -> new SVECTOR());
 
       //LAB_80101cdc
       for(int s1 = 0; s1 < a0.count_54; s1++) {
-        memcpy(s2._44.deref().get(s1).getAddress(), s2._50.getAddress(), 8);
+        s2._44[s1].set(s2._50);
       }
 
       //LAB_80101d04
@@ -2461,7 +2436,8 @@ public final class SEffe {
 
       //LAB_80101e3c
       for(int i = 0; i < a0.count_50; i++) {
-        a0._68[i]._44.setPointer(mallocHead(a0.count_54 * 8));
+        a0._68[i]._44 = new SVECTOR[a0.count_54];
+        Arrays.setAll(a0._68[i]._44, n -> new SVECTOR());
       }
     }
 
@@ -2485,7 +2461,7 @@ public final class SEffe {
 //        gpuPacketAddr_1f8003d8.addu(0x28L);
 //        MEMORY.ref(1, v1).offset(0x3L).setu(0x9L);
 //        MEMORY.ref(4, v1).offset(0x4L).setu(0x2c80_8080L);
-        s2._80.set(mallocHead(a0.count_54 * 0x10L));
+        s2._80 = mallocHead(a0.count_54 * 0x10L);
       }
     }
 
@@ -2517,7 +2493,7 @@ public final class SEffe {
   public static FlowControl FUN_80102088(final RunningScript<? extends BattleScriptDataBase> script) {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       script.scriptState_04,
-      0x98,
+      0,
       null,
       _80119b7c[script.params_20[2].get() >> 20],
       SEffe::FUN_800fe8b8,
@@ -2529,6 +2505,7 @@ public final class SEffe {
     effect.count_50 = script.params_20[3].get();
     effect.size_64 = effect.count_50 * 0x94;
     effect._68 = new EffectData98Sub94[effect.count_50];
+    Arrays.setAll(effect._68, EffectData98Sub94::new);
 
     if(_8011a00c == null) {
       _8011a00c = effect;
@@ -2573,7 +2550,7 @@ public final class SEffe {
       s2_0._3c.set(s2_0._50);
     }
 
-    final EffectData98Sub94 s2_0 = effect._68[effect.count_50]; // This looks like a retail bug - index out of bounds
+    //final EffectData98Sub94 s2_0 = effect._68[effect.count_50]; // This looks like a retail bug - index out of bounds
 
     //LAB_801022b4
     if(effect._61 != 0) {
@@ -2585,7 +2562,7 @@ public final class SEffe {
 
     //LAB_801022d4
     effect.count_54 = 0;
-    _80119b94.get(script.params_20[2].get() >> 20).deref().run(effect, s2_0, effect._08, script.params_20[2].get());
+    _80119b94.get(script.params_20[2].get() >> 20).deref().run(effect, null/*s2_0 see above*/, effect._08, script.params_20[2].get());
     manager._10.flags_00 |= 0x5000_0000;
     manager.flags_04 |= 0x4_0000;
     return FlowControl.CONTINUE;
@@ -2625,7 +2602,7 @@ public final class SEffe {
     //LAB_8010243c
     for(int i = 0; i < a2.count_50; i++) {
       final EffectData98Sub94 a0 = a2._68[i];
-      script.params_20[1].array(i).set((int)(a0._90.get() & 1));
+      script.params_20[1].array(i).set(a0._90 & 1);
     }
 
     //LAB_80102464
@@ -9742,7 +9719,7 @@ public final class SEffe {
 
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       script.scriptState_04,
-      0x14,
+      0,
       null,
       SEffe::renderGuardHealEffect,
       null,

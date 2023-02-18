@@ -121,11 +121,34 @@ public class DeffPart {
   }
 
   public static class CmbType extends DeffPart {
+    public final TextureInfo[] textureInfo_08;
+    public final CContainer tmd_0c;
+
     public final Cmb cmb_14;
 
     public CmbType(final FileData data) {
       super(data);
-      this.cmb_14 = new Cmb(data.slice(data.readInt(0x14)));
+
+      final int textureOffset = data.readInt(0x8);
+      final int tmdOffset = data.readInt(0xc);
+      final int cmbOffset = data.readInt(0x14);
+
+      if(textureOffset != tmdOffset) {
+        this.textureInfo_08 = new TextureInfo[(tmdOffset - textureOffset) / 0x8];
+        for(int i = 0; i < this.textureInfo_08.length; i++) {
+          this.textureInfo_08[i] = new TextureInfo(data.slice(textureOffset + i * 0x8, 0x8));
+        }
+      } else {
+        this.textureInfo_08 = null;
+      }
+
+      if(tmdOffset != cmbOffset) {
+        this.tmd_0c = new CContainer(data.slice(tmdOffset));
+      } else {
+        this.tmd_0c = null;
+      }
+
+      this.cmb_14 = new Cmb(data.slice(cmbOffset));
     }
   }
 }
