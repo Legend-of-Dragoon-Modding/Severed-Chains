@@ -2,6 +2,10 @@ package legend.core.opengl;
 
 import legend.core.Config;
 import legend.core.DebugHelper;
+import legend.game.input.InputBinding;
+import legend.game.input.InputBindingStateEnum;
+import legend.game.input.InputKeyCode;
+import legend.game.input.InputMapping;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.Version;
@@ -91,7 +95,7 @@ public class Window {
 
       try {
         Config.save();
-      } catch (final IOException e) {
+      } catch(final IOException e) {
         System.err.println("Failed to save config");
       }
     }));
@@ -288,6 +292,8 @@ public class Window {
     private final List<Scroll> mouseScroll = new ArrayList<>();
     private final List<ControllerState> controllerConnected = new ArrayList<>();
     private final List<ControllerState> controllerDisconnected = new ArrayList<>();
+    private final List<OnPressedThisFrame> pressedThisFrame = new ArrayList<>();
+    private final List<OnReleasedThisFrame> releasedThisFrame = new ArrayList<>();
     private final List<Runnable> draw = new ArrayList<>();
     private final List<Runnable> shutdown = new ArrayList<>();
     private final Window window;
@@ -367,6 +373,28 @@ public class Window {
     private void onMouseScroll(final long window, final double deltaX, final double deltaY) {
       synchronized(LOCK) {
         this.mouseScroll.forEach(cb -> cb.action(this.window, deltaX, deltaY));
+      }
+    }
+
+    private void onInputPressedThisFrame(InputKeyCode keyCode) {
+      synchronized(LOCK) {
+        this.pressedThisFrame.forEach(cb -> cb.action(this.window, keyCode));
+      }
+    }
+
+    private void onInputReleasedThisFrame(InputKeyCode keyCode) {
+      synchronized(LOCK) {
+        this.releasedThisFrame.forEach(cb -> cb.action(this.window, keyCode));
+      }
+    }
+
+    public void callNewInputEvents(final InputMapping inputMapping) {
+      for(final InputBinding binding : inputMapping.bindings) {
+        if(binding.getState() == InputBindingStateEnum.PRESSED_THIS_FRAME) {
+          onInputPressedThisFrame(binding.getInputKeyCode());
+        } else if(binding.getState() == InputBindingStateEnum.RELEASED_THIS_FRAME) {
+          onInputReleasedThisFrame(binding.getInputKeyCode());
+        }
       }
     }
 
@@ -486,6 +514,32 @@ public class Window {
       }
     }
 
+    public OnPressedThisFrame onPressedThisFrame(final OnPressedThisFrame callback) {
+      synchronized(LOCK) {
+        this.pressedThisFrame.add(callback);
+        return callback;
+      }
+    }
+
+    public void removePressedThisFrame(final OnPressedThisFrame callback) {
+      synchronized(LOCK) {
+        this.pressedThisFrame.remove(callback);
+      }
+    }
+
+    public OnReleasedThisFrame onReleasedThisFrame(final OnReleasedThisFrame callback) {
+      synchronized(LOCK) {
+        this.releasedThisFrame.add(callback);
+        return callback;
+      }
+    }
+
+    public void removeReleasedThisFrame(final OnReleasedThisFrame callback) {
+      synchronized(LOCK) {
+        this.releasedThisFrame.remove(callback);
+      }
+    }
+
     public ControllerState onControllerConnected(final ControllerState callback) {
       synchronized(LOCK) {
         this.controllerConnected.add(callback);
@@ -554,32 +608,49 @@ public class Window {
       }
     }
 
-    @FunctionalInterface public interface Resize {
+    @FunctionalInterface
+    public interface Resize {
       void resize(final Window window, final int width, final int height);
     }
 
-    @FunctionalInterface public interface Key {
+    @FunctionalInterface
+    public interface Key {
       void action(final Window window, final int key, final int scancode, final int mods);
     }
 
-    @FunctionalInterface public interface Char {
+    @FunctionalInterface
+    public interface Char {
       void action(final Window window, final int codepoint);
     }
 
-    @FunctionalInterface public interface Cursor {
+    @FunctionalInterface
+    public interface Cursor {
       void action(final Window window, final double x, final double y);
     }
 
-    @FunctionalInterface public interface Click {
+    @FunctionalInterface
+    public interface Click {
       void action(final Window window, final double x, final double y, final int button, final int mods);
     }
 
-    @FunctionalInterface public interface Scroll {
+    @FunctionalInterface
+    public interface Scroll {
       void action(final Window window, final double deltaX, final double deltaY);
     }
 
-    @FunctionalInterface public interface ControllerState {
+    @FunctionalInterface
+    public interface ControllerState {
       void action(final Window window, final int id);
+    }
+
+    @FunctionalInterface
+    public interface OnPressedThisFrame {
+      void action(final Window window, final InputKeyCode inputKeyCode);
+    }
+
+    @FunctionalInterface
+    public interface OnReleasedThisFrame {
+      void action(final Window window, final InputKeyCode inputKeyCode);
     }
   }
 }

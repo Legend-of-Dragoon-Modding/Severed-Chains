@@ -24,25 +24,11 @@ public final class Input {
   }
 
 
-  public static void update()
-  {
+  public static void update() {
     //LOGGER.info("Input Update");
     handleControllerInput();
-    callEvents(playerOne);
+    GPU.window().events.callNewInputEvents(playerOne);
   }
-
-  public static void callEvents(final InputMapping inputMapping) {
-    for(final InputBinding binding : inputMapping.bindings) {
-      for(final InputChangedThisFrame listener : listeners) {
-        if(binding.getState() == InputBindingStateEnum.PRESSED_THIS_FRAME) {
-          listener.onPressedThisFrame(binding.getInputKeyCode());
-        } else if(binding.getState() == InputBindingStateEnum.RELEASED_THIS_FRAME) {
-          listener.onReleasedThisFrame(binding.getInputKeyCode());
-        }
-      }
-    }
-  }
-
 
   public static void init() {
     final String controllerGuid = Config.controllerGuid();

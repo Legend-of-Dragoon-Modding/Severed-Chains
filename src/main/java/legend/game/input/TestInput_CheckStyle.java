@@ -3,7 +3,7 @@ package legend.game.input;
 import static legend.game.unpacker.Unpacker.LOGGER;
 
 public final class TestInput_CheckStyle {
-  private static final boolean DISABLE_LOGGING = false;
+  private static final boolean DISABLE_LOGGING = true;
 
   public static void update() {
     if(DISABLE_LOGGING) {
