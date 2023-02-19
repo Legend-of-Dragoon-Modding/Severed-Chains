@@ -4,6 +4,8 @@ import legend.core.DebugHelper;
 import legend.core.MathHelper;
 import legend.core.opengl.Window;
 import legend.core.spu.XaAdpcm;
+import legend.game.input.Input;
+import legend.game.input.InputKeyCode;
 import legend.game.types.FileEntry08;
 import legend.game.unpacker.Unpacker;
 import org.apache.logging.log4j.LogManager;
@@ -253,6 +255,12 @@ public class Fmv {
     click = GPU.window().events.onMouseRelease((window, x, y, button, mods) -> shouldStop = true);
 
     GPU.mainRenderer = () -> {
+
+      Input.update();
+      if(Input.pressedThisFrame(InputKeyCode.BUTTON_CENTER_2)) {
+        shouldStop = true;
+      }
+
       if(shouldStop) {
         stop();
       }
