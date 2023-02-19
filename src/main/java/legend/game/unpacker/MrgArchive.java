@@ -19,7 +19,20 @@ public class MrgArchive implements Iterable<FileData> {
 
   public FileData getFile(final int index) {
     final int offset = (int)MathHelper.get(this.data.data(), this.data.offset() + 8 + index * 8, 4);
-    final int size = (int)MathHelper.get(this.data.data(), this.data.offset() + 8 + index * 8 + 4, 4);
+    int size = (int)MathHelper.get(this.data.data(), this.data.offset() + 8 + index * 8 + 4, 4);
+
+    // Some files are essentially symlinks to others. I don't have a better solution right now other than making copies.
+    if(size == 0) {
+      for(int i = 0; i < this.getCount(); i++) {
+        final int otherOffset = (int)MathHelper.get(this.data.data(), this.data.offset() + 8 + i * 8, 4);
+        final int otherSize = (int)MathHelper.get(this.data.data(), this.data.offset() + 8 + i * 8 + 4, 4);
+
+        if(otherOffset == offset && otherSize != 0) {
+          size = otherSize;
+          break;
+        }
+      }
+    }
 
     if(this.sectorAligned) {
       return new FileData(this.data.data(), this.data.offset() + offset * 0x800, size);
