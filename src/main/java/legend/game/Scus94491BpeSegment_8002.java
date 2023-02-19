@@ -79,7 +79,7 @@ import static legend.game.SItem.magicStuff_80111d20;
 import static legend.game.SItem.menuStack;
 import static legend.game.SItem.renderMenus;
 import static legend.game.SItem.renderPostCombatReport;
-import static legend.game.SMap.FUN_800d9e64;
+import static legend.game.SMap.adjustSmapUvs;
 import static legend.game.SMap.FUN_800da114;
 import static legend.game.SMap.FUN_800da524;
 import static legend.game.SMap.FUN_800de004;
@@ -212,7 +212,7 @@ import static legend.game.Scus94491BpeSegment_800b.textboxes_800be358;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800e.main;
-import static legend.game.WMap.FUN_800c8844;
+import static legend.game.WMap.adjustWmapUvs;
 import static legend.game.WMap.FUN_800c8d90;
 import static legend.game.WMap.renderWmapModel;
 import static legend.game.combat.Bttl_800e.FUN_800ec258;
@@ -319,7 +319,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80020468L)
-  public static void FUN_80020468(final GsDOBJ2 dobj2, final int colourMap) {
+  public static void adjustCombatUvs(final GsDOBJ2 dobj2, final int colourMap) {
     final TmdObjTable1c objTable = dobj2.tmd_08;
 
     for(final TmdObjTable1c.Primitive primitive : objTable.primitives_10) {
@@ -395,28 +395,7 @@ public final class Scus94491BpeSegment_8002 {
 
     model.coord2_14.coord.transfer.set(transferX, transferY, transferZ);
 
-    int s1 = 0;
-    //LAB_80020940
-    if(mainCallbackIndex_8004dd20.get() == 5) { // SMAP
-      //LAB_80020958
-      for(int i = 0; i < model.ObjTable_0c.nobj; i++) {
-        FUN_800d9e64(model.ObjTable_0c.top[s1++], model.colourMap_9d);
-      }
-
-      //LAB_80020978
-    } else if(mainCallbackIndex_8004dd20.get() == 8) { // WMAP
-      //LAB_80020990
-      for(int i = 0; i < model.ObjTable_0c.nobj; i++) {
-        FUN_800c8844(model.ObjTable_0c.top[s1++], model.colourMap_9d);
-      }
-
-      //LAB_800209ac
-    } else {
-      //LAB_8002091c
-      for(int i = 0; i < model.ObjTable_0c.nobj; i++) {
-        FUN_80020468(model.ObjTable_0c.top[s1++], model.colourMap_9d);
-      }
-    }
+    adjustModelUvs(model);
 
     //LAB_800209b0
     model.b_cc = 0;
@@ -764,27 +743,20 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80021628L)
-  public static void FUN_80021628(final Model124 model) {
+  public static void adjustModelUvs(final Model124 model) {
     if(mainCallbackIndex_8004dd20.get() == 5) { // SMAP
-      //LAB_800216b4
       for(int i = 0; i < model.ObjTable_0c.nobj; i++) {
-        FUN_800d9e64(model.ObjTable_0c.top[i], model.colourMap_9d);
+        adjustSmapUvs(model.ObjTable_0c.top[i], model.colourMap_9d);
       }
-      //LAB_800216d4
     } else if(mainCallbackIndex_8004dd20.get() == 8) { // WMAP
-      //LAB_800216ec
       for(int i = 0; i < model.ObjTable_0c.nobj; i++) {
-        FUN_800c8844(model.ObjTable_0c.top[i], model.colourMap_9d);
+        adjustWmapUvs(model.ObjTable_0c.top[i], model.colourMap_9d);
       }
     } else {
-      //LAB_80021678
       for(int i = 0; i < model.ObjTable_0c.nobj; i++) {
-        FUN_80020468(model.ObjTable_0c.top[i], model.colourMap_9d);
+        adjustCombatUvs(model.ObjTable_0c.top[i], model.colourMap_9d);
       }
-      //LAB_8002169c
     }
-
-    //LAB_80021708
   }
 
   @Method(0x80021724L)

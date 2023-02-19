@@ -424,7 +424,7 @@ public class WMap {
   private static final Value _800f65d4 = MEMORY.ref(1, 0x800f65d4L);
 
   @Method(0x800c8844L)
-  public static void FUN_800c8844(final GsDOBJ2 dobj2, final int colourMapIndex) {
+  public static void adjustWmapUvs(final GsDOBJ2 dobj2, final int colourMapIndex) {
     for(final TmdObjTable1c.Primitive primitive : dobj2.tmd_08.primitives_10) {
       final int cmd = primitive.header() & 0xff04_0000;
 

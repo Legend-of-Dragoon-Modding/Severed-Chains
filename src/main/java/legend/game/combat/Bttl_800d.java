@@ -64,7 +64,7 @@ import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800213c4;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80021628;
+import static legend.game.Scus94491BpeSegment_8002.adjustModelUvs;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021724;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022018;
 import static legend.game.Scus94491BpeSegment_8002.SetGeomOffset;
@@ -4645,7 +4645,7 @@ public final class Bttl_800d {
     model.coord2_14.coord.transfer.set(sp0x18);
 
     if((model.tmd_8c.header.flags & 0x2) == 0 && model.colourMap_9d != 0) {
-      FUN_80021628(model);
+      adjustModelUvs(model);
     }
 
     //LAB_800ddce8
