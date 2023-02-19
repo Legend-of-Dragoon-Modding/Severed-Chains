@@ -145,6 +145,11 @@ public class Gpu implements Runnable {
       int i = offset;
       for(int y = rectY; y < rectY + rectH; y++) {
         for(int x = rectX; x < rectX + rectW; x++) {
+          // Sometimes the rect is larger than the data (see: the DEFF stuff where animations are loaded into VRAM for some reason)
+          if(i >= data.length) {
+            break;
+          }
+
           final int packed = (int)MathHelper.get(data, i, 2);
           final int unpacked = MathHelper.colour15To24(packed);
 

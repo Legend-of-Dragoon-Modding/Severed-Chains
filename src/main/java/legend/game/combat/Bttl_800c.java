@@ -1875,10 +1875,10 @@ public final class Bttl_800c {
       s3 = index;
     } else if(type == 6) {
       //LAB_800c9bcc
-      final RECT sp0x10 = new RECT((short)(512 + a3 * 64), (short)_8006e398.y_d80[a3], (short)64, (short)(size / 128));
+      final RECT sp0x10 = new RECT((short)(512 + a3 * 64), (short)_8006e398.y_d80[a3], (short)64, (short)((size + 0x7f) / 0x80));
       LoadImage(sp0x10, addr);
 
-      _8006e398.y_d80[a3] += size / 128;
+      _8006e398.y_d80[a3] += (size + 0x7f) / 0x80;
 
       final CombatantStruct1a8_c.TimType tim = new CombatantStruct1a8_c.TimType(sp0x10.x.get(), sp0x10.y.get(), sp0x10.h.get());
       tim._08 = -1;
