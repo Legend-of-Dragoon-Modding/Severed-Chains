@@ -49,9 +49,17 @@ public final class CtmdTransformer {
 
   public static Map<String, FileData> ctmdTransformer(final String name, final FileData data, final Set<Unpacker.Flags> flags) {
     final int containerOffset = data.readInt(0xc);
-    final int nextOffset = data.readInt(0x10);
+    int nextOffset = data.readInt(0x10);
 
-    final FileData containerData = data.slice(containerOffset, (nextOffset == containerOffset ? data.size() : nextOffset) - containerOffset);
+    if(nextOffset == 0) {
+      final int type = data.readByte(3);
+
+      if(type == 1) {
+        nextOffset = data.readInt(0x14);
+      }
+    }
+
+    final FileData containerData = data.slice(containerOffset, (nextOffset == containerOffset || nextOffset == 0 ? data.size() : nextOffset) - containerOffset);
     int ctmdEnd = containerData.size();
     for(int i = 0; i < 2; i++) {
       final int subfile = containerData.readInt(4 + i * 4);
@@ -110,7 +118,8 @@ public final class CtmdTransformer {
       final FileData vertices = ctmdData.slice(0xc + objTable.vertices_00);
       for(int i = 0; i < vertexCount; i++) {
         final BVEC4 lo = new BVEC4().set(vertices.readByte(i * 4), vertices.readByte(i * 4 + 1), vertices.readByte(i * 4 + 2), vertices.readByte(i * 4 + 3));
-        final BVEC4 hi = new BVEC4().set(vertices.readByte(lo.getW() * 4), vertices.readByte(lo.getW() * 4 + 1), vertices.readByte(lo.getW() * 4 + 2), vertices.readByte(lo.getW() * 4 + 3));
+        final int hiIndex = lo.getW() & 0xff;
+        final BVEC4 hi = new BVEC4().set(vertices.readByte(hiIndex * 4), vertices.readByte(hiIndex * 4 + 1), vertices.readByte(hiIndex * 4 + 2), vertices.readByte(hiIndex * 4 + 3));
         final SVECTOR vert = new SVECTOR();
         vert.setX((short)(lo.getX() + ((hi.getX() & 0xff) << 8)));
         vert.setY((short)(lo.getY() + ((hi.getY() & 0xff) << 8)));
