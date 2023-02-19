@@ -1,6 +1,7 @@
 package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
+import legend.game.input.InputKeyCode;
 import legend.game.types.LodString;
 import legend.game.types.MessageBox20;
 import legend.game.types.MessageBoxResult;
@@ -14,6 +15,7 @@ import static legend.game.SItem.messageBox;
 import static legend.game.SItem.setMessageBoxOptions;
 import static legend.game.SItem.setMessageBoxText;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
+import static legend.game.unpacker.Unpacker.LOGGER;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
@@ -113,54 +115,87 @@ public class MessageBoxScreen extends MenuScreen {
   @Override
   protected void keyPress(final int key, final int scancode, final int mods) {
 
+    if(this.SkipInput()) {
+      return;
+    }
+
+    switch(key) {
+      case GLFW_KEY_UP -> this.menuNavigateUp();
+      case GLFW_KEY_DOWN -> this.menuNavigateDown();
+      case GLFW_KEY_ENTER, GLFW_KEY_S -> this.menuSelect();
+    }
+  }
+
+  private void menuNavigateUp() {
+    playSound(1);
+    this.messageBox.menuIndex_18 = 0;
+
+    final int selectionY = this.messageBox.y_1e + 7 + this.messageBox.text_00.length * 14 + 7;
+    if(this.messageBox.renderable_04 != null) {
+      this.messageBox.renderable_04.y_44 = selectionY - 2;
+    }
+  }
+
+  private void menuNavigateDown() {
+    playSound(1);
+    this.messageBox.menuIndex_18 = 1;
+
+    final int selectionY = this.messageBox.y_1e + 7 + this.messageBox.text_00.length * 14 + 7;
+    if(this.messageBox.renderable_04 != null) {
+      this.messageBox.renderable_04.y_44 = selectionY + 12;
+    }
+  }
+
+  private void menuSelect() {
+    playSound(2);
+
+    if(this.messageBox.menuIndex_18 == 0) {
+      this.result = MessageBoxResult.YES;
+    } else {
+      this.result = MessageBoxResult.NO;
+    }
+
+    this.messageBox.state_0c = 4;
+  }
+
+  private boolean SkipInput() {
     if(this.messageBox.type_15 == 0) {
       playSound(2);
       this.result = MessageBoxResult.YES;
       this.messageBox.state_0c = 4;
-      return;
+      return true;
     }
 
     if(this.messageBox.state_0c != 3 || this.messageBox.type_15 != 2) {
-      return;
+      return true;
     }
 
-    final int selectionY = this.messageBox.y_1e + 7 + this.messageBox.text_00.length * 14 + 7;
-
-    switch(key) {
-      case GLFW_KEY_UP -> {
-        playSound(1);
-
-        this.messageBox.menuIndex_18 = 0;
-        if(this.messageBox.renderable_04 != null) {
-          this.messageBox.renderable_04.y_44 = selectionY - 2;
-        }
-      }
-
-      case GLFW_KEY_DOWN -> {
-        playSound(1);
-
-        this.messageBox.menuIndex_18 = 1;
-        if(this.messageBox.renderable_04 != null) {
-          this.messageBox.renderable_04.y_44 = selectionY + 12;
-        }
-      }
-
-      case GLFW_KEY_ENTER, GLFW_KEY_S -> {
-        playSound(2);
-
-        if(this.messageBox.menuIndex_18 == 0) {
-          this.result = MessageBoxResult.YES;
-        } else {
-          this.result = MessageBoxResult.NO;
-        }
-
-        this.messageBox.state_0c = 4;
-      }
-    }
+    return false;
   }
 
   @Override
   protected boolean propagateRender() {
     return true;
   }
+
+  @Override
+  public void pressedThisFrame(final InputKeyCode inputKeyCode) {
+    if(this.SkipInput()) {
+      return;
+    }
+
+    if(inputKeyCode == InputKeyCode.DPAD_UP) {
+      LOGGER.info("M-Box Nav Up");
+      this.menuNavigateUp();
+    }
+    if(inputKeyCode == InputKeyCode.DPAD_DOWN) {
+      LOGGER.info("M-Box Nav Down");
+      this.menuNavigateDown();
+    }
+    if(inputKeyCode == InputKeyCode.BUTTON_SOUTH) {
+      LOGGER.info("M-Box Select");
+      this.menuSelect();
+    }
+  }
+
 }
