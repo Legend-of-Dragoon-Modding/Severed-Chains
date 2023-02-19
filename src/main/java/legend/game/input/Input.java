@@ -4,8 +4,6 @@ import legend.core.Config;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
-import java.util.ArrayList;
-import java.util.List;
 
 import static legend.core.GameEngine.GPU;
 import static org.lwjgl.glfw.GLFW.GLFW_JOYSTICK_LAST;
@@ -17,12 +15,6 @@ import static org.lwjgl.glfw.GLFW.glfwGetJoystickName;
 
 public final class Input {
   private static final InputMapping playerOne = new InputMapping();
-  private static final List<InputChangedThisFrame> listeners = new ArrayList<>();
-
-  public static void addInputPressedThisFrameListener(final InputChangedThisFrame listener) {
-    listeners.add(listener);
-  }
-
 
   public static void update() {
     //LOGGER.info("Input Update");
@@ -51,9 +43,6 @@ public final class Input {
         controllerId = -1;
       }
     });
-
-
-    addInputPressedThisFrameListener(new TestInput_EventStyle());
   }
 
   private static final float controllerDeadzone = Config.controllerDeadzone();
