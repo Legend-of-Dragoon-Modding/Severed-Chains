@@ -46,6 +46,7 @@ import legend.game.types.MessageBoxResult;
 import legend.game.types.Renderable58;
 import legend.game.types.SavedGameDisplayData;
 import legend.game.types.Translucency;
+import legend.game.unpacker.FileData;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -406,7 +407,7 @@ public final class SItem {
   }
 
   @Method(0x800fc210L)
-  public static void loadCharTmdAndAnims(final List<byte[]> files, final int charSlot) {
+  public static void loadCharTmdAndAnims(final List<FileData> files, final int charSlot) {
     //LAB_800fc260
     final BattleObject27c data = _8006e398.charBobjIndices_e40[charSlot].innerStruct_00;
 
@@ -425,7 +426,7 @@ public final class SItem {
   }
 
   @Method(0x800fc404L)
-  public static void enemyTexturesLoadedCallback(final List<byte[]> files) {
+  public static void enemyTexturesLoadedCallback(final List<FileData> files) {
     final BattleStruct18cb0 s2 = _1f8003f4;
 
     //LAB_800fc434
@@ -437,9 +438,9 @@ public final class SItem {
 
         //LAB_800fc464
         for(int enemySlot = 0; enemySlot < 3; enemySlot++) {
-          if((s2.encounterData_00.enemyIndices_00[enemySlot] & 0x1ff) == enemyIndex && files.get(enemySlot).length != 0) {
-            final long tim = mallocTail(files.get(enemySlot).length);
-            MEMORY.setBytes(tim, files.get(enemySlot));
+          if((s2.encounterData_00.enemyIndices_00[enemySlot] & 0x1ff) == enemyIndex && files.get(enemySlot).real()) {
+            final long tim = mallocTail(files.get(enemySlot).size());
+            MEMORY.setBytes(tim, files.get(enemySlot).getBytes());
             loadCombatantTim(i, tim);
             free(tim);
             break;
@@ -463,9 +464,9 @@ public final class SItem {
   }
 
   @Method(0x800fc548L)
-  public static void loadCharacterTim(final byte[] file, final int charSlot) {
-    final long tim = mallocTail(file.length);
-    MEMORY.setBytes(tim, file);
+  public static void loadCharacterTim(final FileData file, final int charSlot) {
+    final long tim = mallocTail(file.size());
+    MEMORY.setBytes(tim, file.getBytes());
 
     final BattleObject27c bobj = _8006e398.charBobjIndices_e40[charSlot].innerStruct_00;
     loadCombatantTim(bobj.combatantIndex_26c, tim);

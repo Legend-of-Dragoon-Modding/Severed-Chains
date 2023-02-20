@@ -19,6 +19,7 @@ import legend.game.modding.ModManager;
 import legend.game.modding.events.EventManager;
 import legend.game.modding.registries.Registries;
 import legend.game.scripting.ScriptManager;
+import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
 import legend.game.unpacker.UnpackerException;
 import org.apache.logging.log4j.LogManager;
@@ -145,8 +146,8 @@ public final class GameEngine {
         throw new RuntimeException("Failed to unpack files", e);
       }
 
-      final byte[] fileData = Unpacker.loadFile("SCUS_944.91");
-      MEMORY.setBytes(MathHelper.get(fileData, 0x18, 4), fileData, 0x800, (int)MathHelper.get(fileData, 0x1c, 4));
+      final FileData fileData = Unpacker.loadFile("SCUS_944.91");
+      MEMORY.setBytes(fileData.readUInt(0x18), fileData.getBytes(), 0x800, fileData.readInt(0x1c));
 
       final byte[] archive = MEMORY.getBytes(bpe_80188a88.getAddress(), 221736);
       final byte[] decompressed = Unpacker.decompress(archive);

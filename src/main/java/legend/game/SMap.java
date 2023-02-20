@@ -89,6 +89,7 @@ import legend.game.types.TriangleIndicator44;
 import legend.game.types.UnknownStruct;
 import legend.game.types.UnknownStruct2;
 import legend.game.types.WeirdTimHeader;
+import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -262,7 +263,7 @@ public final class SMap {
   public static final Value _800c670a = MEMORY.ref(2, 0x800c670aL);
   public static final Value _800c670c = MEMORY.ref(2, 0x800c670cL);
   public static final Value _800c670e = MEMORY.ref(2, 0x800c670eL);
-  public static List<byte[]> chapterTitleCardMrg_800c6710;
+  public static List<FileData> chapterTitleCardMrg_800c6710;
   public static final Value _800c6714 = MEMORY.ref(4, 0x800c6714L);
   public static final Value _800c6718 = MEMORY.ref(4, 0x800c6718L);
   public static final Value _800c671c = MEMORY.ref(4, 0x800c671cL);
@@ -289,13 +290,13 @@ public final class SMap {
   public static final Value _800c6870 = MEMORY.ref(2, 0x800c6870L);
 
   public static final BoolRef submapAssetsLoaded_800c6874 = MEMORY.ref(4, 0x800c6874L, BoolRef::new);
-  public static List<byte[]> submapAssetsMrg_800c6878;
+  public static List<FileData> submapAssetsMrg_800c6878;
   public static final Value _800c687c = MEMORY.ref(2, 0x800c687cL);
   public static final Value _800c687e = MEMORY.ref(2, 0x800c687eL);
   public static final ScriptState<SubmapObject210>[] sobjs_800c6880 = new ScriptState[20];
   public static final BoolRef submapScriptsLoaded_800c68d0 = MEMORY.ref(4, 0x800c68d0L, BoolRef::new);
 
-  public static List<byte[]> submapScriptsMrg_800c68d8;
+  public static List<FileData> submapScriptsMrg_800c68d8;
   public static SubmapAssets submapAssets;
 
   public static final BoolRef chapterTitleCardLoaded_800c68e0 = MEMORY.ref(2, 0x800c68e0L, BoolRef::new);
@@ -2750,12 +2751,12 @@ public final class SMap {
           final int objCount = submapScriptsMrg_800c68d8.size() - 2;
 
           submapAssets = new SubmapAssets();
-          submapAssets.lastEntry = submapScriptsMrg_800c68d8.get(objCount + 1);
-          submapAssets.script = new ScriptFile("Submap controller", submapScriptsMrg_800c68d8.get(0));
+          submapAssets.lastEntry = submapScriptsMrg_800c68d8.get(objCount + 1).getBytes();
+          submapAssets.script = new ScriptFile("Submap controller", submapScriptsMrg_800c68d8.get(0).getBytes());
 
           for(int objIndex = 0; objIndex < objCount; objIndex++) {
-            final byte[] scriptData = submapScriptsMrg_800c68d8.get(objIndex + 1);
-            final byte[] tmdData = submapAssetsMrg_800c6878.get(objIndex * 33);
+            final byte[] scriptData = submapScriptsMrg_800c68d8.get(objIndex + 1).getBytes();
+            final byte[] tmdData = submapAssetsMrg_800c6878.get(objIndex * 33).getBytes();
 
             final IntRef drgnIndex = new IntRef();
             final IntRef fileIndex = new IntRef();
@@ -2768,8 +2769,8 @@ public final class SMap {
             MEMORY.setBytes(obj.model.getAddress(), tmdData);
 
             for(int animIndex = objIndex * 33 + 1; animIndex < (objIndex + 1) * 33; animIndex++) {
-              final TmdAnimationFile anim = MEMORY.ref(4, mallocTail(submapAssetsMrg_800c6878.get(animIndex).length), TmdAnimationFile::new);
-              MEMORY.setBytes(anim.getAddress(), submapAssetsMrg_800c6878.get(animIndex));
+              final TmdAnimationFile anim = MEMORY.ref(4, mallocTail(submapAssetsMrg_800c6878.get(animIndex).size()), TmdAnimationFile::new);
+              MEMORY.setBytes(anim.getAddress(), submapAssetsMrg_800c6878.get(animIndex).getBytes());
               obj.animations.add(anim);
             }
 
@@ -2777,7 +2778,7 @@ public final class SMap {
           }
 
           for(int i = 0; i < 3; i++) {
-            submapAssets.pxls.add(new Tim(submapAssetsMrg_800c6878.get(objCount * 34 + i)));
+            submapAssets.pxls.add(new Tim(submapAssetsMrg_800c6878.get(objCount * 34 + i).getBytes()));
           }
 
           loadingStage_800c68e4.addu(0x1L);
@@ -3266,8 +3267,8 @@ public final class SMap {
       //LAB_800e284c
       if(v1 == 0) {
         //LAB_800e2860
-        new Tim(chapterTitleCardMrg_800c6710.get(5)).uploadToGpu();
-        new Tim(chapterTitleCardMrg_800c6710.get(13)).uploadToGpu();
+        new Tim(chapterTitleCardMrg_800c6710.get(5).getBytes()).uploadToGpu();
+        new Tim(chapterTitleCardMrg_800c6710.get(13).getBytes()).uploadToGpu();
 
         //LAB_800e2980
         _800c6728.setu(0);
@@ -3302,32 +3303,32 @@ public final class SMap {
           if((int)v1 >= 0xc9L) {
             //LAB_800e311c
             if(v1 == 0xd4L) {
-              new Tim(chapterTitleCardMrg_800c6710.get(1)).uploadToGpu();
-              new Tim(chapterTitleCardMrg_800c6710.get(9)).uploadToGpu();
+              new Tim(chapterTitleCardMrg_800c6710.get(1).getBytes()).uploadToGpu();
+              new Tim(chapterTitleCardMrg_800c6710.get(9).getBytes()).uploadToGpu();
 
               //LAB_800e3248
               //LAB_800e3254
             } else if(v1 == 0xd8L) {
-              new Tim(chapterTitleCardMrg_800c6710.get(2)).uploadToGpu();
-              new Tim(chapterTitleCardMrg_800c6710.get(10)).uploadToGpu();
+              new Tim(chapterTitleCardMrg_800c6710.get(2).getBytes()).uploadToGpu();
+              new Tim(chapterTitleCardMrg_800c6710.get(10).getBytes()).uploadToGpu();
 
               //LAB_800e3384
               //LAB_800e3390
             } else if(v1 == 0xdcL) {
-              new Tim(chapterTitleCardMrg_800c6710.get(3)).uploadToGpu();
-              new Tim(chapterTitleCardMrg_800c6710.get(11)).uploadToGpu();
+              new Tim(chapterTitleCardMrg_800c6710.get(3).getBytes()).uploadToGpu();
+              new Tim(chapterTitleCardMrg_800c6710.get(11).getBytes()).uploadToGpu();
 
               //LAB_800e34c0
               //LAB_800e34cc
             } else if(v1 == 0xe0L) {
-              new Tim(chapterTitleCardMrg_800c6710.get(4)).uploadToGpu();
-              new Tim(chapterTitleCardMrg_800c6710.get(12)).uploadToGpu();
+              new Tim(chapterTitleCardMrg_800c6710.get(4).getBytes()).uploadToGpu();
+              new Tim(chapterTitleCardMrg_800c6710.get(12).getBytes()).uploadToGpu();
 
               //LAB_800e35fc
               //LAB_800e3608
             } else if(v1 == 0xe4L) {
-              new Tim(chapterTitleCardMrg_800c6710.get(5)).uploadToGpu();
-              new Tim(chapterTitleCardMrg_800c6710.get(13)).uploadToGpu();
+              new Tim(chapterTitleCardMrg_800c6710.get(5).getBytes()).uploadToGpu();
+              new Tim(chapterTitleCardMrg_800c6710.get(13).getBytes()).uploadToGpu();
             }
 
             //LAB_800e3744
@@ -3352,32 +3353,32 @@ public final class SMap {
       } else if((int)v1 > 0) {
         //LAB_800e29d4
         if(v1 == 0x4L) {
-          new Tim(chapterTitleCardMrg_800c6710.get(4)).uploadToGpu();
-          new Tim(chapterTitleCardMrg_800c6710.get(12)).uploadToGpu();
+          new Tim(chapterTitleCardMrg_800c6710.get(4).getBytes()).uploadToGpu();
+          new Tim(chapterTitleCardMrg_800c6710.get(12).getBytes()).uploadToGpu();
 
           //LAB_800e2afc
           //LAB_800e2b08
         } else if(v1 == 0x8L) {
-          new Tim(chapterTitleCardMrg_800c6710.get(3)).uploadToGpu();
-          new Tim(chapterTitleCardMrg_800c6710.get(11)).uploadToGpu();
+          new Tim(chapterTitleCardMrg_800c6710.get(3).getBytes()).uploadToGpu();
+          new Tim(chapterTitleCardMrg_800c6710.get(11).getBytes()).uploadToGpu();
 
           //LAB_800e2c38
           //LAB_800e2c44
         } else if(v1 == 0xcL) {
-          new Tim(chapterTitleCardMrg_800c6710.get(2)).uploadToGpu();
-          new Tim(chapterTitleCardMrg_800c6710.get(10)).uploadToGpu();
+          new Tim(chapterTitleCardMrg_800c6710.get(2).getBytes()).uploadToGpu();
+          new Tim(chapterTitleCardMrg_800c6710.get(10).getBytes()).uploadToGpu();
 
           //LAB_800e2d74
           //LAB_800e2d80
         } else if(v1 == 0x10L) {
-          new Tim(chapterTitleCardMrg_800c6710.get(1)).uploadToGpu();
-          new Tim(chapterTitleCardMrg_800c6710.get(9)).uploadToGpu();
+          new Tim(chapterTitleCardMrg_800c6710.get(1).getBytes()).uploadToGpu();
+          new Tim(chapterTitleCardMrg_800c6710.get(9).getBytes()).uploadToGpu();
 
           //LAB_800e2eb0
           //LAB_800e2ebc
         } else if(v1 == 0x14L) {
-          new Tim(chapterTitleCardMrg_800c6710.get(0)).uploadToGpu();
-          new Tim(chapterTitleCardMrg_800c6710.get(8)).uploadToGpu();
+          new Tim(chapterTitleCardMrg_800c6710.get(0).getBytes()).uploadToGpu();
+          new Tim(chapterTitleCardMrg_800c6710.get(8).getBytes()).uploadToGpu();
 
           //LAB_800e2fec
         }
@@ -3552,7 +3553,7 @@ public final class SMap {
   }
 
   @Method(0x800e3d80L)
-  public static void submapAssetsLoadedCallback(final List<byte[]> files, final int assetType) {
+  public static void submapAssetsLoadedCallback(final List<FileData> files, final int assetType) {
     switch(assetType) {
       // Submap assets
       case 0x0 -> {
@@ -4092,12 +4093,12 @@ public final class SMap {
    * </ol>
    */
   @Method(0x800e5330L)
-  public static void loadBackground(final List<byte[]> files) {
+  public static void loadBackground(final List<FileData> files) {
     backgroundLoaded_800cab10.setu(0x1L);
 
     //LAB_800e5374
     for(int i = 3; i < files.size(); i++) {
-      final byte[] data = files.get(i);
+      final byte[] data = files.get(i).getBytes();
 
       final Tim timHeader = new Tim(data);
       GPU.uploadData(timHeader.getImageRect(), data, timHeader.getImageData());
@@ -4108,16 +4109,16 @@ public final class SMap {
     }
 
     //LAB_800e5430
-    final EnvironmentFile env = MEMORY.ref(4, mallocHead(files.get(0).length), EnvironmentFile::new);
-    final UnboundedArrayRef<SomethingStructSub0c_1> something1 = MEMORY.ref(4, mallocHead(files.get(1).length), UnboundedArrayRef.of(0xc, SomethingStructSub0c_1::new));
-    final TmdWithId tmd = MEMORY.ref(4, mallocHead(files.get(2).length), TmdWithId::new);
+    final EnvironmentFile env = MEMORY.ref(4, mallocHead(files.get(0).size()), EnvironmentFile::new);
+    final UnboundedArrayRef<SomethingStructSub0c_1> something1 = MEMORY.ref(4, mallocHead(files.get(1).size()), UnboundedArrayRef.of(0xc, SomethingStructSub0c_1::new));
+    final TmdWithId tmd = MEMORY.ref(4, mallocHead(files.get(2).size()), TmdWithId::new);
 
-    MEMORY.setBytes(env.getAddress(), files.get(0));
-    MEMORY.setBytes(something1.getAddress(), files.get(1));
-    MEMORY.setBytes(tmd.getAddress(), files.get(2));
+    MEMORY.setBytes(env.getAddress(), files.get(0).getBytes());
+    MEMORY.setBytes(something1.getAddress(), files.get(1).getBytes());
+    MEMORY.setBytes(tmd.getAddress(), files.get(2).getBytes());
 
     loadEnvironment(env);
-    FUN_800e8cd0(tmd, files.get(2).length, something1);
+    FUN_800e8cd0(tmd, files.get(2).size(), something1);
 
     free(env.getAddress());
     free(something1.getAddress());
@@ -6619,20 +6620,20 @@ public final class SMap {
           loadDrgnDir(0, fileIndex, files -> {
             submapCutModelAndAnimLoaded_800d4bdc.set(true);
 
-            submapCutModel = MEMORY.ref(4, mallocTail(files.get(0).length), CContainer::new);
-            submapCutAnim = MEMORY.ref(4, mallocTail(files.get(1).length), TmdAnimationFile::new);
+            submapCutModel = MEMORY.ref(4, mallocTail(files.get(0).size()), CContainer::new);
+            submapCutAnim = MEMORY.ref(4, mallocTail(files.get(1).size()), TmdAnimationFile::new);
 
-            MEMORY.setBytes(submapCutModel.getAddress(), files.get(0));
-            MEMORY.setBytes(submapCutAnim.getAddress(), files.get(1));
+            MEMORY.setBytes(submapCutModel.getAddress(), files.get(0).getBytes());
+            MEMORY.setBytes(submapCutAnim.getAddress(), files.get(1).getBytes());
           });
 
           loadDrgnDir(0, fileIndex + 1, files -> {
             submapTextureAndMatrixLoaded_800d4be0.set(true);
 
-            submapCutTexture = new Tim(files.get(0));
+            submapCutTexture = new Tim(files.get(0).getBytes());
             submapCutMatrix = new MATRIX();
 
-            final byte[] matrixData = files.get(1);
+            final byte[] matrixData = files.get(1).getBytes();
 
             for(int i = 0; i < 9; i++) {
               submapCutMatrix.set(i, (short)MathHelper.get(matrixData, i * 2, 2));
