@@ -2,7 +2,6 @@ package legend.game.combat;
 
 import legend.core.Config;
 import legend.core.DebugHelper;
-import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandCopyVramToVram;
@@ -23,6 +22,7 @@ import legend.core.memory.Value;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
 import legend.game.combat.deff.Anim;
+import legend.game.combat.deff.Cmb;
 import legend.game.combat.deff.DeffManager7cc;
 import legend.game.combat.deff.DeffPart;
 import legend.game.combat.types.AttackHitFlashEffect0c;
@@ -2599,13 +2599,13 @@ public final class Bttl_800e {
           case 1, 2 -> new DeffPart.AnimatedTmdType(data);
           case 3 -> new DeffPart.TmdType(data);
           case 4 -> new DeffPart.SpriteType(data);
-          case 5 -> throw new RuntimeException("Not implemented yet")/*TODO value -> {
-            if(value.offset(4, 0x0).get() == Cmb.MAGIC) {
-              return new DeffPart.CmbType(value);
+          case 5 -> { // Example: d-attack (DRGN0.4236.0.0)
+            if(data.readInt(data.readInt(0x14)) == Cmb.MAGIC) {
+              yield new DeffPart.CmbType(data);
             }
 
-            return new DeffPart.AnimatedTmdType(value);
-          }*/;
+            yield  new DeffPart.AnimatedTmdType(data);
+          }
           default -> throw new IllegalArgumentException("Invalid DEFF type %x".formatted(flags & 0xff00_0000));
         };
       }
