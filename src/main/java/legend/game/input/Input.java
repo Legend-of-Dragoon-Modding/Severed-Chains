@@ -127,4 +127,8 @@ public final class Input {
       playerOne.update();
     }
   }
+
+  public static boolean hasActivityThisFrame() {
+    return playerOne.hasActivityThisFrame();
+  }
 }

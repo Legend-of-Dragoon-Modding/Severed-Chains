@@ -84,8 +84,6 @@ import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndexOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8004.setMono;
 import static legend.game.Scus94491BpeSegment_8005._80052c44;
-import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
-import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800bb168;
 import static legend.game.Scus94491BpeSegment_800b._800bdc34;
@@ -99,7 +97,6 @@ import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.identityMatrix_800c3568;
-import static legend.game.unpacker.Unpacker.LOGGER;
 
 public final class Ttle {
   private Ttle() { }
@@ -304,9 +301,9 @@ public final class Ttle {
         pregameLoadingStage_800bb10c.set(4);
       }
 
+      // Game Over Screen
       case 4 -> {
-        if((joypadPress_8007a398.get() & 0x820) != 0) {
-          LOGGER.info("Button Pressed GameOver Screen??? ");
+        if(Input.pressedThisFrame(InputKeyCode.BUTTON_CENTER_2) || Input.pressedThisFrame(InputKeyCode.BUTTON_SOUTH)) {
           Scus94491BpeSegment_8002.playSound(2);
           pregameLoadingStage_800bb10c.set(5);
           scriptStartEffect(1, 10);
@@ -606,15 +603,14 @@ public final class Ttle {
     }
 
     //LAB_800c8448
-    if(Input.pressedThisFrame(InputKeyCode.INPUT_ANY_ACTIVITY)) {
+    if(Input.hasActivityThisFrame()) {
       resetIdleTime();
     }
 
     //LAB_800c8474
   }
 
-  private static void resetIdleTime()
-  {
+  private static void resetIdleTime() {
     menuLoadingStage = 3;
     menuIdleTime = 0;
   }
@@ -772,8 +768,7 @@ public final class Ttle {
     });
   }
 
-  private static void menuEscape()
-  {
+  private static void menuEscape() {
     playSound(0, 3, 0, 0, (short)0, (short)0);
     _800c6738 = 3;
     _800c672c = 0;
@@ -795,7 +790,6 @@ public final class Ttle {
     if(_800c672c < 3) {
       if(Input.pressedThisFrame(InputKeyCode.BUTTON_SOUTH)) { // Menu button X
         playSound(0, 2, 0, 0, (short)0, (short)0);
-        resetIdleTime();
 
         _800c672c = 3;
         if(selectedMenuOption == 2) {
@@ -805,7 +799,6 @@ public final class Ttle {
         }
       } else if(Input.pressedThisFrame(InputKeyCode.DPAD_UP) || Input.pressedThisFrame(InputKeyCode.JOYSTICK_LEFT_BUTTON_UP)) { // Menu button up
         playSound(0, 1, 0, 0, (short)0, (short)0);
-        resetIdleTime();
 
         selectedMenuOption--;
         if(selectedMenuOption < 0) {
@@ -819,7 +812,6 @@ public final class Ttle {
         _800c672c = 2;
       } else if(Input.pressedThisFrame(InputKeyCode.DPAD_DOWN) || Input.pressedThisFrame(InputKeyCode.JOYSTICK_LEFT_BUTTON_DOWN)) { // Menu button down
         playSound(0, 1, 0, 0, (short)0, (short)0);
-        resetIdleTime();
 
         selectedMenuOption++;
         if(selectedMenuOption > 2) {
