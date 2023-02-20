@@ -9121,9 +9121,8 @@ public final class SEffe {
     final int s6 = t5 / 0x2000;
     final int s0 = t5 & 0x1fff;
     final int s2 = 0x2000 - s0;
-    final int size = lmb.count_04 * 0x14;
     final LmbTransforms14[] transformsLo = effect.ptr_10;
-    final LmbTransforms14[] transformsHi = Arrays.copyOfRange(transformsLo, size, transformsLo.length);
+    final LmbTransforms14[] transformsHi = Arrays.copyOfRange(transformsLo, lmb.count_04, transformsLo.length);
     final int fp = (s6 + 1) % lmb._0a;
     if(effect._04 != t5) {
       int s1 = effect._04 / 0x2000;
