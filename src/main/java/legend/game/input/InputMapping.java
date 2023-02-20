@@ -3,6 +3,10 @@ package legend.game.input;
 import java.util.ArrayList;
 import java.util.List;
 
+import static legend.game.Scus94491BpeSegment.keyRepeat;
+import static legend.game.Scus94491BpeSegment_800b._800bee90;
+import static legend.game.Scus94491BpeSegment_800b._800bee94;
+import static legend.game.Scus94491BpeSegment_800b._800bee98;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_TRIGGER;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_X;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y;
@@ -73,6 +77,8 @@ public class InputMapping {
     this.anyActivity = false;
     for(final InputBinding binding : this.bindings) {
       binding.update();
+      this.updateLegacyInput(binding);
+
       if(binding.getState() == InputBindingStateEnum.PRESSED_THIS_FRAME) {
         this.anyActivityThisFrame = true;
         this.anyActivity = true;
@@ -80,6 +86,29 @@ public class InputMapping {
       else if(binding.getState() == InputBindingStateEnum.PRESSED) {
         this.anyActivity = true;
       }
+    }
+  }
+
+  private void updateLegacyInput(final InputBinding binding) {
+    final int hexCode = binding.getHexCode();
+    if(hexCode == -1) {
+      return;
+    }
+
+    if(binding.getState() == InputBindingStateEnum.PRESSED_THIS_FRAME) {
+
+      _800bee90.or(hexCode);
+      _800bee94.or(hexCode);
+      _800bee98.or(hexCode);
+
+      keyRepeat.put(hexCode, 0);
+
+    } else if(binding.getState() == InputBindingStateEnum.RELEASED_THIS_FRAME) {
+      _800bee90.and(~hexCode);
+      _800bee94.and(~hexCode);
+      _800bee98.and(~hexCode);
+
+      keyRepeat.remove(hexCode);
     }
   }
 

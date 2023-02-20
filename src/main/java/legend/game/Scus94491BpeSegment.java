@@ -463,7 +463,7 @@ public final class Scus94491BpeSegment {
   private static final float controllerDeadzone = Config.controllerDeadzone();
   private static int controllerId = -1;
   private static boolean inputPulse;
-  private static final Int2IntMap keyRepeat = new Int2IntOpenHashMap();
+  public static final Int2IntMap keyRepeat = new Int2IntOpenHashMap();
   private static final Int2BooleanMap controllerEdgeTriggers = new Int2BooleanOpenHashMap();
 
   private static void handleControllerInput() {
@@ -691,8 +691,8 @@ public final class Scus94491BpeSegment {
       if(!soundRunning) {
         startSound();
       }
-
-      handleControllerInput();
+      // Disable old controller support
+      // handleControllerInput();
       Input.update();
       TestInput_CheckStyle.update();
 
