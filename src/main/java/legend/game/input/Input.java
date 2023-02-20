@@ -131,4 +131,7 @@ public final class Input {
   public static boolean hasActivityThisFrame() {
     return playerOne.hasActivityThisFrame();
   }
+  public static boolean hasActivity() {
+    return playerOne.hasActivity();
+  }
 }

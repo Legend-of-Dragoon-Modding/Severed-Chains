@@ -24,8 +24,8 @@ import static org.lwjgl.glfw.GLFW.GLFW_HAT_UP;
 
 public class InputMapping {
   public List<InputBinding> bindings = new ArrayList<>();
+  private boolean anyActivityThisFrame;
   private boolean anyActivity;
-
   public InputMapping() {
     this.bindings.add(new InputBinding(InputKeyCode.BUTTON_NORTH, GLFW_GAMEPAD_BUTTON_Y, 0x10, InputTypeEnum.GAMEPAD_BUTTON));
     this.bindings.add(new InputBinding(InputKeyCode.BUTTON_SOUTH, GLFW_GAMEPAD_BUTTON_A, 0x20, InputTypeEnum.GAMEPAD_BUTTON));
@@ -69,16 +69,25 @@ public class InputMapping {
   }
 
   public void update() {
+    this.anyActivityThisFrame = false;
     this.anyActivity = false;
     for(final InputBinding binding : this.bindings) {
       binding.update();
       if(binding.getState() == InputBindingStateEnum.PRESSED_THIS_FRAME) {
+        this.anyActivityThisFrame = true;
+        this.anyActivity = true;
+      }
+      else if(binding.getState() == InputBindingStateEnum.PRESSED) {
         this.anyActivity = true;
       }
     }
   }
 
   public boolean hasActivityThisFrame() {
+    return this.anyActivityThisFrame;
+  }
+
+  public boolean hasActivity() {
     return this.anyActivity;
   }
 }
