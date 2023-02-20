@@ -678,7 +678,6 @@ public class WMap {
   @Method(0x800cc83cL)
   public static void FUN_800cc83c() {
     if(_800c6690.get() == 0) {
-      // Always seems to be true on the world map, can't move yet to test
       if((joypadInput_8007a39c.get() & 0x1afL) == 0) {
         final WMapStruct19c0 v1 = _800c66b0;
 

@@ -33,6 +33,8 @@ import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.fmv.Fmv;
+import legend.game.input.Input;
+import legend.game.input.InputKeyCode;
 import legend.game.inventory.WhichMenu;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.Param;
@@ -208,8 +210,6 @@ import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c3c;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
 import static legend.game.Scus94491BpeSegment_8007._8007a3a8;
-import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
-import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800ba3b8;
 import static legend.game.Scus94491BpeSegment_800b._800babc0;
@@ -3870,7 +3870,7 @@ public final class SMap {
       return 0;
     }
 
-    if(joypadInput_8007a39c.get() == 0) {
+    if(Input.hasActivity() == false) {
       return 0;
     }
 
@@ -4457,7 +4457,7 @@ public final class SMap {
       case 0xc -> {
         _80052c44.setu(0);
         FUN_800e5104(_800caaf8.get(), _800cab24.deref());
-        if(joypadPress_8007a398.get(0x10L) != 0 && gameState_800babc8.indicatorsDisabled_4e3.get() == 0) {
+        if(Input.pressedThisFrame(InputKeyCode.BUTTON_NORTH) && gameState_800babc8.indicatorsDisabled_4e3.get() == 0) {
           FUN_800e5534(-1, 0x3ff);
         }
       }
@@ -8835,7 +8835,7 @@ public final class SMap {
     }
 
     //LAB_800f321c
-    if((joypadPress_8007a398.get() & 0x8) != 0) { // R1
+    if(Input.pressedThisFrame(InputKeyCode.BUTTON_SHOULDER_RIGHT_1)) { // R1
       if(indicatorMode == 0) {
         gameState_800babc8.indicatorMode_4e8.set(1);
         //LAB_800f3244
@@ -8846,7 +8846,7 @@ public final class SMap {
         _800f9e9c.setu(0);
       }
       //LAB_800f3260
-    } else if((joypadPress_8007a398.get() & 0x4) != 0) { // L1
+    } else if(Input.pressedThisFrame(InputKeyCode.BUTTON_SHOULDER_LEFT_1)) { // L1
       if(indicatorMode == 0) {
         //LAB_800f3274
         gameState_800babc8.indicatorMode_4e8.set(2);
