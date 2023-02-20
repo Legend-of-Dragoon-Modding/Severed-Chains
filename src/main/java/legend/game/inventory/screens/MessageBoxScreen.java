@@ -15,7 +15,6 @@ import static legend.game.SItem.messageBox;
 import static legend.game.SItem.setMessageBoxOptions;
 import static legend.game.SItem.setMessageBoxText;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
-import static legend.game.unpacker.Unpacker.LOGGER;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
@@ -184,16 +183,13 @@ public class MessageBoxScreen extends MenuScreen {
       return;
     }
 
-    if(inputKeyCode == InputKeyCode.DPAD_UP) {
-      LOGGER.info("M-Box Nav Up");
+    if(inputKeyCode == InputKeyCode.DPAD_UP || inputKeyCode == InputKeyCode.JOYSTICK_LEFT_BUTTON_UP) {
       this.menuNavigateUp();
     }
-    if(inputKeyCode == InputKeyCode.DPAD_DOWN) {
-      LOGGER.info("M-Box Nav Down");
+    if(inputKeyCode == InputKeyCode.DPAD_DOWN|| inputKeyCode == InputKeyCode.JOYSTICK_LEFT_BUTTON_DOWN) {
       this.menuNavigateDown();
     }
     if(inputKeyCode == InputKeyCode.BUTTON_SOUTH) {
-      LOGGER.info("M-Box Select");
       this.menuSelect();
     }
   }

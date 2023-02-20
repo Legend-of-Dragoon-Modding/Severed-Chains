@@ -271,10 +271,10 @@ public abstract class SaveListScreen extends MenuScreen {
 
   @Override
   public void pressedThisFrame(final InputKeyCode inputKeyCode) {
-    if(inputKeyCode == InputKeyCode.DPAD_UP) {
+    if(inputKeyCode == InputKeyCode.DPAD_UP || inputKeyCode == InputKeyCode.JOYSTICK_LEFT_BUTTON_UP) {
       this.menuNavigateUp();
     }
-    if(inputKeyCode == InputKeyCode.DPAD_DOWN) {
+    if(inputKeyCode == InputKeyCode.DPAD_DOWN || inputKeyCode == InputKeyCode.JOYSTICK_LEFT_BUTTON_DOWN) {
       this.menuNavigateDown();
     }
     if(inputKeyCode == InputKeyCode.BUTTON_EAST) {
