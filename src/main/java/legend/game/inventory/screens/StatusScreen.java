@@ -1,5 +1,7 @@
 package legend.game.inventory.screens;
 
+import legend.game.input.InputKeyCode;
+
 import static legend.game.SItem.FUN_801034cc;
 import static legend.game.SItem._80114290;
 import static legend.game.SItem.allocateUiElement;
@@ -138,22 +140,26 @@ public class StatusScreen extends MenuScreen {
     }
 
     switch(key) {
-      case GLFW_KEY_LEFT -> {
-        if(this.charSlot > 0) {
-          this.scroll(this.charSlot - 1);
-        }
-      }
+      case GLFW_KEY_LEFT -> this.menuNavigateLeft();
+      case GLFW_KEY_RIGHT -> this.menuNavigateRight();
+      case GLFW_KEY_ESCAPE -> this.menuEscape();
+    }
+  }
 
-      case GLFW_KEY_RIGHT -> {
-        if(this.charSlot < characterCount_8011d7c4.get() - 1) {
-          this.scroll(this.charSlot + 1);
-        }
-      }
+  private void menuEscape() {
+    playSound(3);
+    this.loadingStage = 3;
+  }
 
-      case GLFW_KEY_ESCAPE -> {
-        playSound(3);
-        this.loadingStage = 3;
-      }
+  private void menuNavigateLeft() {
+    if(this.charSlot > 0) {
+      this.scroll(this.charSlot - 1);
+    }
+  }
+
+  private void menuNavigateRight() {
+    if(this.charSlot < characterCount_8011d7c4.get() - 1) {
+      this.scroll(this.charSlot + 1);
     }
   }
 
@@ -168,5 +174,21 @@ public class StatusScreen extends MenuScreen {
     }
 
     this.scrollAccumulator += deltaY;
+  }
+
+  @Override
+  public void pressedThisFrame(final InputKeyCode inputKeyCode) {
+    if(this.loadingStage != 2) {
+      return;
+    }
+    if(inputKeyCode == InputKeyCode.DPAD_LEFT || inputKeyCode == InputKeyCode.JOYSTICK_LEFT_BUTTON_LEFT) {
+      this.menuNavigateLeft();
+    }
+    if(inputKeyCode == InputKeyCode.DPAD_RIGHT || inputKeyCode == InputKeyCode.JOYSTICK_LEFT_BUTTON_RIGHT) {
+      this.menuNavigateRight();
+    }
+    if(inputKeyCode == InputKeyCode.BUTTON_EAST) {
+      this.menuEscape();
+    }
   }
 }
