@@ -2,6 +2,7 @@ package legend.game.inventory.screens;
 
 import legend.core.Config;
 import legend.core.MathHelper;
+import legend.game.input.InputKeyCode;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.Renderable58;
 
@@ -218,117 +219,169 @@ public class CharSwapScreen extends MenuScreen {
     if(this.loadingStage == 2) {
       // primary character left side
       switch(key) {
-        case GLFW_KEY_ESCAPE -> {
-          playSound(3);
-          this.loadingStage = 100;
-        }
-
-        case GLFW_KEY_DOWN -> {
-          playSound(1);
-          if(this.primaryCharIndex < 2) {
-            this.primaryCharIndex++;
-          }
-
-          this.primaryCharHighlight.y_44 = getSlotY(this.primaryCharIndex);
-        }
-
-        case GLFW_KEY_UP -> {
-          playSound(1);
-          if(this.primaryCharIndex > 0) {
-            this.primaryCharIndex--;
-          }
-
-          this.primaryCharHighlight.y_44 = getSlotY(this.primaryCharIndex);
-        }
-
-        case GLFW_KEY_S -> {
-          final int charIndex = gameState_800babc8.charIndex_88.get(this.primaryCharIndex).get();
-          if(Config.unlockParty() || charIndex == -1 || (gameState_800babc8.charData_32c.get(charIndex).partyFlags_04.get() & 0x20) == 0) {
-            playSound(2);
-            this.secondaryCharHighlight = allocateUiElement(0x80, 0x80, this.getSecondaryCharX(this.secondaryCharIndex), this.getSecondaryCharY(this.secondaryCharIndex));
-            FUN_80104b60(this.secondaryCharHighlight);
-            this.loadingStage = 3;
-          } else {
-            playSound(40);
-          }
-        }
+        case GLFW_KEY_ESCAPE -> this.menuStage2Escape();
+        case GLFW_KEY_DOWN -> this.menuStage2NavigateDown();
+        case GLFW_KEY_UP -> this.menuStage2NavigateUp();
+        case GLFW_KEY_S -> this.menuStage2Select();
       }
     } else if(this.loadingStage == 3) {
       switch(key) {
-        case GLFW_KEY_DOWN -> {
-          playSound(1);
-
-          if(this.secondaryCharIndex < 3) {
-            this.secondaryCharIndex += 3;
-          }
-
-          this.secondaryCharHighlight.x_40 = this.getSecondaryCharX(this.secondaryCharIndex);
-          this.secondaryCharHighlight.y_44 = this.getSecondaryCharY(this.secondaryCharIndex);
-        }
-
-        case GLFW_KEY_UP -> {
-          playSound(1);
-
-          if(this.secondaryCharIndex > 2) {
-            this.secondaryCharIndex -= 3;
-          }
-
-          this.secondaryCharHighlight.x_40 = this.getSecondaryCharX(this.secondaryCharIndex);
-          this.secondaryCharHighlight.y_44 = this.getSecondaryCharY(this.secondaryCharIndex);
-        }
-
-        case GLFW_KEY_LEFT -> {
-          playSound(1);
-
-          if(this.secondaryCharIndex > 0) {
-            this.secondaryCharIndex--;
-          }
-
-          this.secondaryCharHighlight.x_40 = this.getSecondaryCharX(this.secondaryCharIndex);
-          this.secondaryCharHighlight.y_44 = this.getSecondaryCharY(this.secondaryCharIndex);
-        }
-
-        case GLFW_KEY_RIGHT -> {
-          playSound(1);
-
-          if(this.secondaryCharIndex < 5) {
-            this.secondaryCharIndex++;
-          }
-
-          this.secondaryCharHighlight.x_40 = this.getSecondaryCharX(this.secondaryCharIndex);
-          this.secondaryCharHighlight.y_44 = this.getSecondaryCharY(this.secondaryCharIndex);
-        }
-
-        case GLFW_KEY_ESCAPE -> {
-          playSound(3);
-          unloadRenderable(this.secondaryCharHighlight);
-          this.loadingStage = 2;
-        }
-
-        case GLFW_KEY_ENTER, GLFW_KEY_S -> {
-          this.secondaryCharHighlight.x_40 = this.getSecondaryCharX(this.secondaryCharIndex);
-          this.secondaryCharHighlight.y_44 = this.getSecondaryCharY(this.secondaryCharIndex);
-
-          int charCount = 0;
-          for(int charSlot = 0; charSlot < 3; charSlot++) {
-            if(gameState_800babc8.charIndex_88.get(charSlot).get() != -1) {
-              charCount++;
-            }
-          }
-
-          final int secondaryCharIndex = secondaryCharIndices_800bdbf8.get(this.secondaryCharIndex).get();
-
-          if(((Config.unlockParty() && charCount >= 2) || secondaryCharIndex != -1) && (secondaryCharIndex == -1 || (gameState_800babc8.charData_32c.get(secondaryCharIndex).partyFlags_04.get() & 0x2) != 0)) {
-            playSound(2);
-            final int charIndex = gameState_800babc8.charIndex_88.get(this.primaryCharIndex).get();
-            gameState_800babc8.charIndex_88.get(this.primaryCharIndex).set(secondaryCharIndex);
-            secondaryCharIndices_800bdbf8.get(this.secondaryCharIndex).set(charIndex);
-            this.loadingStage = 1;
-          } else {
-            playSound(40);
-          }
-        }
+        case GLFW_KEY_DOWN -> this.menuStage3NavigateDown();
+        case GLFW_KEY_UP -> this.menuStage3NavigateUp();
+        case GLFW_KEY_LEFT -> this.menuStage3NavigateLeft();
+        case GLFW_KEY_RIGHT -> this.menuStage3NavigateRight();
+        case GLFW_KEY_ESCAPE -> this.menuStage3Escape();
+        case GLFW_KEY_ENTER, GLFW_KEY_S -> this.menuStage3Select();
       }
     }
   }
+
+  private void menuStage2Escape() {
+    playSound(3);
+    this.loadingStage = 100;
+  }
+
+  private void menuStage2NavigateUp() {
+    playSound(1);
+    if(this.primaryCharIndex > 0) {
+      this.primaryCharIndex--;
+    }
+
+    this.primaryCharHighlight.y_44 = getSlotY(this.primaryCharIndex);
+  }
+
+  private void menuStage2NavigateDown() {
+    playSound(1);
+    if(this.primaryCharIndex < 2) {
+      this.primaryCharIndex++;
+    }
+
+    this.primaryCharHighlight.y_44 = getSlotY(this.primaryCharIndex);
+  }
+
+  private void menuStage2Select() {
+    final int charIndex = gameState_800babc8.charIndex_88.get(this.primaryCharIndex).get();
+    if(Config.unlockParty() || charIndex == -1 || (gameState_800babc8.charData_32c.get(charIndex).partyFlags_04.get() & 0x20) == 0) {
+      playSound(2);
+      this.secondaryCharHighlight = allocateUiElement(0x80, 0x80, this.getSecondaryCharX(this.secondaryCharIndex), this.getSecondaryCharY(this.secondaryCharIndex));
+      FUN_80104b60(this.secondaryCharHighlight);
+      this.loadingStage = 3;
+    } else {
+      playSound(40);
+    }
+  }
+
+  private void menuStage3Escape() {
+    playSound(3);
+    unloadRenderable(this.secondaryCharHighlight);
+    this.loadingStage = 2;
+  }
+
+  private void menuStage3NavigateUp() {
+    playSound(1);
+
+    if(this.secondaryCharIndex > 2) {
+      this.secondaryCharIndex -= 3;
+    }
+
+    this.secondaryCharHighlight.x_40 = this.getSecondaryCharX(this.secondaryCharIndex);
+    this.secondaryCharHighlight.y_44 = this.getSecondaryCharY(this.secondaryCharIndex);
+  }
+
+  private void menuStage3NavigateDown() {
+    playSound(1);
+
+    if(this.secondaryCharIndex < 3) {
+      this.secondaryCharIndex += 3;
+    }
+
+    this.secondaryCharHighlight.x_40 = this.getSecondaryCharX(this.secondaryCharIndex);
+    this.secondaryCharHighlight.y_44 = this.getSecondaryCharY(this.secondaryCharIndex);
+  }
+
+  private void menuStage3NavigateLeft() {
+    playSound(1);
+
+    if(this.secondaryCharIndex > 0) {
+      this.secondaryCharIndex--;
+    }
+
+    this.secondaryCharHighlight.x_40 = this.getSecondaryCharX(this.secondaryCharIndex);
+    this.secondaryCharHighlight.y_44 = this.getSecondaryCharY(this.secondaryCharIndex);
+  }
+
+  private void menuStage3NavigateRight() {
+    playSound(1);
+
+    if(this.secondaryCharIndex < 5) {
+      this.secondaryCharIndex++;
+    }
+
+    this.secondaryCharHighlight.x_40 = this.getSecondaryCharX(this.secondaryCharIndex);
+    this.secondaryCharHighlight.y_44 = this.getSecondaryCharY(this.secondaryCharIndex);
+  }
+
+  private void menuStage3Select() {
+    this.secondaryCharHighlight.x_40 = this.getSecondaryCharX(this.secondaryCharIndex);
+    this.secondaryCharHighlight.y_44 = this.getSecondaryCharY(this.secondaryCharIndex);
+
+    int charCount = 0;
+    for(int charSlot = 0; charSlot < 3; charSlot++) {
+      if(gameState_800babc8.charIndex_88.get(charSlot).get() != -1) {
+        charCount++;
+      }
+    }
+
+    final int secondaryCharIndex = secondaryCharIndices_800bdbf8.get(this.secondaryCharIndex).get();
+
+    if(((Config.unlockParty() && charCount >= 2) || secondaryCharIndex != -1) && (secondaryCharIndex == -1 || (gameState_800babc8.charData_32c.get(secondaryCharIndex).partyFlags_04.get() & 0x2) != 0)) {
+      playSound(2);
+      final int charIndex = gameState_800babc8.charIndex_88.get(this.primaryCharIndex).get();
+      gameState_800babc8.charIndex_88.get(this.primaryCharIndex).set(secondaryCharIndex);
+      secondaryCharIndices_800bdbf8.get(this.secondaryCharIndex).set(charIndex);
+      this.loadingStage = 1;
+    } else {
+      playSound(40);
+    }
+  }
+
+  @Override
+  public void pressedThisFrame(final InputKeyCode inputKeyCode) {
+
+    if(this.loadingStage == 2) {
+      // primary character left side
+      if(inputKeyCode == InputKeyCode.DPAD_UP || inputKeyCode == InputKeyCode.JOYSTICK_LEFT_BUTTON_UP) {
+        this.menuStage2NavigateUp();
+      }
+      if(inputKeyCode == InputKeyCode.DPAD_DOWN || inputKeyCode == InputKeyCode.JOYSTICK_LEFT_BUTTON_DOWN) {
+        this.menuStage2NavigateDown();
+      }
+      if(inputKeyCode == InputKeyCode.BUTTON_EAST) {
+        this.menuStage2Escape();
+      }
+      if(inputKeyCode == InputKeyCode.BUTTON_SOUTH) {
+        this.menuStage2Select();
+      }
+    } else if(this.loadingStage == 3) {
+      if(inputKeyCode == InputKeyCode.DPAD_UP || inputKeyCode == InputKeyCode.JOYSTICK_LEFT_BUTTON_UP) {
+        this.menuStage3NavigateUp();
+      }
+      if(inputKeyCode == InputKeyCode.DPAD_DOWN || inputKeyCode == InputKeyCode.JOYSTICK_LEFT_BUTTON_DOWN) {
+        this.menuStage3NavigateDown();
+      }
+      if(inputKeyCode == InputKeyCode.DPAD_LEFT || inputKeyCode == InputKeyCode.JOYSTICK_LEFT_BUTTON_LEFT) {
+        this.menuStage3NavigateLeft();
+      }
+      if(inputKeyCode == InputKeyCode.DPAD_RIGHT || inputKeyCode == InputKeyCode.JOYSTICK_LEFT_BUTTON_RIGHT) {
+        this.menuStage3NavigateRight();
+      }
+      if(inputKeyCode == InputKeyCode.BUTTON_EAST) {
+        this.menuStage3Escape();
+      }
+      if(inputKeyCode == InputKeyCode.BUTTON_SOUTH) {
+        this.menuStage3Select();
+      }
+    }
+  }
+
 }
