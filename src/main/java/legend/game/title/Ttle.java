@@ -34,6 +34,7 @@ import legend.game.tim.Tim;
 import legend.game.types.CharacterData2c;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.Translucency;
+import legend.game.unpacker.FileData;
 import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nullable;
@@ -419,10 +420,10 @@ public final class Ttle {
    * </ol>
    */
   @Method(0x800c7af0L)
-  public static void menuTexturesMrgLoaded(final List<byte[]> files) {
-    for(final byte[] data : files) {
-      if(data.length != 0) {
-        new Tim(data).uploadToGpu();
+  public static void menuTexturesMrgLoaded(final List<FileData> files) {
+    for(final FileData data : files) {
+      if(data.real()) {
+        new Tim(data.getBytes()).uploadToGpu();
       }
     }
   }

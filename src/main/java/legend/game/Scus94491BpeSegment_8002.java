@@ -59,6 +59,7 @@ import legend.game.types.Textbox4c;
 import legend.game.types.TextboxArrow0c;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
+import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -2476,7 +2477,7 @@ public final class Scus94491BpeSegment_8002 {
    * </ol>
    */
   @Method(0x800249b4L)
-  public static void basicUiTexturesLoaded(final List<byte[]> files) {
+  public static void basicUiTexturesLoaded(final List<FileData> files) {
     final RECT[] rects = new RECT[28]; // image size, clut size, image size, clut size...
 
     for(int i = 0; i < 28; i++) {
@@ -2496,7 +2497,7 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_80024e88
     for(int i = 0; i < files.size(); i++) {
-      final byte[] data = files.get(i);
+      final byte[] data = files.get(i).getBytes();
 
       if(data.length != 0) {
         final Tim tim = new Tim(data, 0);
