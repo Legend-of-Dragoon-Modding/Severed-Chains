@@ -1,37 +1,31 @@
 package legend.game.tim;
 
-import legend.core.MathHelper;
 import legend.core.gpu.RECT;
+import legend.game.unpacker.FileData;
 
 import static legend.core.GameEngine.GPU;
 
 public class Tim {
-  private final byte[] data;
-  private final int offset;
+  private final FileData data;
 
-  public Tim(final byte[] data) {
-    this(data, 0);
-  }
-
-  public Tim(final byte[] data, final int offset) {
+  public Tim(final FileData data) {
     this.data = data;
-    this.offset = offset;
   }
 
-  public byte[] getData() {
+  public FileData getData() {
     return this.data;
   }
 
   private int getImageDataOffset() {
     if(this.hasClut()) {
-      return (int)MathHelper.get(this.data, this.offset + 0x8, 2);
+      return this.data.readUShort(0x8);
     }
 
     return 0;
   }
 
   public int getFlags() {
-    return (int)MathHelper.get(this.data, this.offset + 0x4, 4);
+    return this.data.readInt(0x4);
   }
 
   public boolean hasClut() {
@@ -43,42 +37,38 @@ public class Tim {
       throw new IllegalStateException("TIM has no CLUT");
     }
 
-    return new RECT(
-      (short)MathHelper.get(this.data, this.offset + 0x0c, 2),
-      (short)MathHelper.get(this.data, this.offset + 0x0e, 2),
-      (short)MathHelper.get(this.data, this.offset + 0x10, 2),
-      (short)MathHelper.get(this.data, this.offset + 0x12, 2)
-    );
+    return this.data.readRect(0xc, new RECT());
   }
 
-  public int getClutData() {
+  private int getClutOffset() {
     if(!this.hasClut()) {
       throw new IllegalStateException("TIM has no CLUT");
     }
 
-    return this.offset + 0x14;
+    return 0x14;
+  }
+
+  public FileData getClutData() {
+    return this.data.slice(this.getClutOffset());
   }
 
   public RECT getImageRect() {
-    final int offset = this.offset + this.getImageDataOffset();
-
-    return new RECT(
-      (short)MathHelper.get(this.data, offset + 0x0c, 2),
-      (short)MathHelper.get(this.data, offset + 0x0e, 2),
-      (short)MathHelper.get(this.data, offset + 0x10, 2),
-      (short)MathHelper.get(this.data, offset + 0x12, 2)
-    );
+    return this.data.readRect(this.getImageDataOffset() + 0xc, new RECT());
   }
 
-  public int getImageData() {
-    return this.offset + this.getImageDataOffset() + 0x14;
+  private int getImageOffset() {
+    return this.getImageDataOffset() + 0x14;
+  }
+
+  public FileData getImageData() {
+    return this.data.slice(this.getImageOffset());
   }
 
   public void uploadToGpu() {
-    GPU.uploadData(this.getImageRect(), this.data, this.getImageData());
+    GPU.uploadData(this.getImageRect(), this.getImageData());
 
     if(this.hasClut()) {
-      GPU.uploadData(this.getClutRect(), this.data, this.getClutData());
+      GPU.uploadData(this.getClutRect(), this.getClutData());
     }
   }
 }

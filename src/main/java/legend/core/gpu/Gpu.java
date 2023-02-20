@@ -9,6 +9,7 @@ import legend.core.opengl.Shader;
 import legend.core.opengl.Texture;
 import legend.core.opengl.Window;
 import legend.game.types.Translucency;
+import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Matrix4f;
@@ -108,8 +109,13 @@ public class Gpu implements Runnable {
     final int rectW = rect.w.get();
     final int rectH = rect.h.get();
 
-    assert rectX + rectW <= this.vramWidth : "Rect right (" + (rectX + rectW) + ") overflows VRAM width (" + this.vramWidth + ')';
-    assert rectY + rectH <= this.vramHeight : "Rect bottom (" + (rectY + rectH) + ") overflows VRAM height (" + this.vramHeight + ')';
+    if(rectX + rectW > this.vramWidth) {
+      throw new IllegalArgumentException("Rect right (" + (rectX + rectW) + ") overflows VRAM width (" + this.vramWidth + ')');
+    }
+
+    if(rectY + rectH > this.vramHeight) {
+      throw new IllegalArgumentException("Rect bottom (" + (rectY + rectH) + ") overflows VRAM height (" + this.vramHeight + ')');
+    }
 
     LOGGER.debug("Copying (%d, %d, %d, %d) from CPU to VRAM (address: %08x)", rectX, rectY, rectW, rectH, address);
 
@@ -130,7 +136,7 @@ public class Gpu implements Runnable {
     });
   }
 
-  public void uploadData(final RECT rect, final byte[] data, final int offset) {
+  public void uploadData(final RECT rect, final FileData data) {
     final int rectX = rect.x.get();
     final int rectY = rect.y.get();
     final int rectW = rect.w.get();
@@ -142,15 +148,15 @@ public class Gpu implements Runnable {
     LOGGER.debug("Copying (%d, %d, %d, %d) from CPU to VRAM", rectX, rectY, rectW, rectH);
 
     MEMORY.waitForLock(() -> {
-      int i = offset;
+      int i = 0;
       for(int y = rectY; y < rectY + rectH; y++) {
         for(int x = rectX; x < rectX + rectW; x++) {
           // Sometimes the rect is larger than the data (see: the DEFF stuff where animations are loaded into VRAM for some reason)
-          if(i >= data.length) {
+          if(i >= data.size()) {
             break;
           }
 
-          final int packed = (int)MathHelper.get(data, i, 2);
+          final int packed = data.readUShort(i);
           final int unpacked = MathHelper.colour15To24(packed);
 
           final int index = y * this.vramWidth + x;
@@ -188,7 +194,7 @@ public class Gpu implements Runnable {
     });
   }
 
-  public void commandC0CopyRectFromVramToCpu(final RECT rect, final byte[] out) {
+  public void commandC0CopyRectFromVramToCpu(final RECT rect, final FileData out) {
     final int rectX = rect.x.get();
     final int rectY = rect.y.get();
     final int rectW = rect.w.get();
@@ -204,8 +210,8 @@ public class Gpu implements Runnable {
       for(int y = rectY; y < rectY + rectH; y++) {
         for(int x = rectX; x < rectX + rectW; x++) {
           final int index = y * this.vramWidth + x;
-          out[i] = (byte)(this.vram15[index] & 0xff);
-          out[i + 1] = (byte)(this.vram15[index] >>> 8);
+          out.writeByte(i, (byte)(this.vram15[index] & 0xff));
+          out.writeByte(i + 1, (byte)(this.vram15[index] >>> 8));
           i += 2;
         }
       }

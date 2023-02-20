@@ -19,6 +19,7 @@ import legend.game.modding.events.combat.EnemyRewardsEvent;
 import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptState;
 import legend.game.types.LodString;
+import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
 
 import java.nio.ByteBuffer;
@@ -90,15 +91,15 @@ public class SBtld {
     _800c6718.offset(0x28L).setu(stageData._0e.get());
 
     final byte[] archive = MEMORY.getBytes(bpe_800fb77c.getAddress(), 26836);
-    script_800c66fc = new ScriptFile("S_BTLD BPE @ 800fb77c", Unpacker.decompress(archive));
+    script_800c66fc = new ScriptFile("S_BTLD BPE @ 800fb77c", Unpacker.decompress(new FileData(archive)));
 
     loadDrgnFile(1, "401", SBtld::FUN_80109170);
   }
 
   @Method(0x80109170L)
-  public static void FUN_80109170(final byte[] file) {
+  public static void FUN_80109170(final FileData file) {
     scriptState_800c674c = SCRIPTS.allocateScriptState(5, null, 0, null);
-    scriptState_800c674c.loadScriptFile(new ScriptFile("DRGN1.401", file));
+    scriptState_800c674c.loadScriptFile(new ScriptFile("DRGN1.401", file.getBytes()));
 
     final long v1;
     if((simpleRand() & 0x8000L) == 0) {
@@ -151,7 +152,7 @@ public class SBtld {
       //LAB_80109340
     }
 
-    loadFile("encounters", file -> _1f8003f4.encounterData_00 = new EncounterData38(file, encounterId_800bb0f8.get() * 0x38));
+    loadFile("encounters", file -> _1f8003f4.encounterData_00 = new EncounterData38(file.getBytes(), encounterId_800bb0f8.get() * 0x38));
 
     decrementOverlayCount();
   }
@@ -277,7 +278,7 @@ public class SBtld {
     combatant.gold_196 = event.gold;
     combatant._19a = rewards._06.get();
 
-    loadDrgnFile(1, Integer.toString(enemyId + 1), file -> FUN_8010989c(file, combatantIndex));
+    loadDrgnFile(1, Integer.toString(enemyId + 1), file -> FUN_8010989c(file.getBytes(), combatantIndex));
   }
 
   @Method(0x8010989cL)

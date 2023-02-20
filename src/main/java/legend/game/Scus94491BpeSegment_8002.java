@@ -59,6 +59,7 @@ import legend.game.types.Textbox4c;
 import legend.game.types.TextboxArrow0c;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
+import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -2349,7 +2350,7 @@ public final class Scus94491BpeSegment_8002 {
    * </ol>
    */
   @Method(0x800249b4L)
-  public static void basicUiTexturesLoaded(final List<byte[]> files) {
+  public static void basicUiTexturesLoaded(final List<FileData> files) {
     final RECT[] rects = new RECT[28]; // image size, clut size, image size, clut size...
 
     for(int i = 0; i < 28; i++) {
@@ -2369,31 +2370,31 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_80024e88
     for(int i = 0; i < files.size(); i++) {
-      final byte[] data = files.get(i);
+      final FileData data = files.get(i);
 
-      if(data.length != 0) {
-        final Tim tim = new Tim(data, 0);
+      if(data.size() != 0) {
+        final Tim tim = new Tim(data);
         final int rectIndex = indexOffsets[i];
 
         if(i == 0 || i > 2) {
-          GPU.uploadData(rects[rectIndex], data, tim.getImageData());
+          GPU.uploadData(rects[rectIndex], tim.getImageData());
         }
 
         //LAB_80024efc
         if(i == 3) {
           //LAB_80024f2c
-          GPU.uploadData(rects[indexOffsets[i] + 1], data, tim.getClutData());
+          GPU.uploadData(rects[indexOffsets[i] + 1], tim.getClutData());
         } else if(i < 4) {
           //LAB_80024fac
           for(int s0 = 0; s0 < 4; s0++) {
             final RECT rect = new RECT().set(rects[rectIndex + 1]);
             rect.x.set((short)(rect.x.get() + s0 * 16));
-            GPU.uploadData(rect, data,  tim.getClutData() + s0 * 0x80);
+            GPU.uploadData(rect, tim.getClutData().slice(s0 * 0x80));
           }
           //LAB_80024f1c
         } else if(i == 4) {
           //LAB_80024f68
-          GPU.uploadData(rects[rectIndex + 1], data, tim.getClutData());
+          GPU.uploadData(rects[rectIndex + 1], tim.getClutData());
         }
       }
     }

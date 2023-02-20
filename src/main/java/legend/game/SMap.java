@@ -256,7 +256,7 @@ public final class SMap {
   public static final Value _800c670a = MEMORY.ref(2, 0x800c670aL);
   public static final Value _800c670c = MEMORY.ref(2, 0x800c670cL);
   public static final Value _800c670e = MEMORY.ref(2, 0x800c670eL);
-  public static List<byte[]> chapterTitleCardMrg_800c6710;
+  public static List<FileData> chapterTitleCardMrg_800c6710;
   public static final Value _800c6714 = MEMORY.ref(4, 0x800c6714L);
   public static final Value _800c6718 = MEMORY.ref(4, 0x800c6718L);
   public static final Value _800c671c = MEMORY.ref(4, 0x800c671cL);
@@ -283,13 +283,13 @@ public final class SMap {
   public static final Value _800c6870 = MEMORY.ref(2, 0x800c6870L);
 
   public static final BoolRef submapAssetsLoaded_800c6874 = MEMORY.ref(4, 0x800c6874L, BoolRef::new);
-  public static List<byte[]> submapAssetsMrg_800c6878;
+  public static List<FileData> submapAssetsMrg_800c6878;
   public static final Value _800c687c = MEMORY.ref(2, 0x800c687cL);
   public static final Value _800c687e = MEMORY.ref(2, 0x800c687eL);
   public static final ScriptState<SubmapObject210>[] sobjs_800c6880 = new ScriptState[20];
   public static final BoolRef submapScriptsLoaded_800c68d0 = MEMORY.ref(4, 0x800c68d0L, BoolRef::new);
 
-  public static List<byte[]> submapScriptsMrg_800c68d8;
+  public static List<FileData> submapScriptsMrg_800c68d8;
   public static SubmapAssets submapAssets;
 
   public static final BoolRef chapterTitleCardLoaded_800c68e0 = MEMORY.ref(2, 0x800c68e0L, BoolRef::new);
@@ -2699,12 +2699,12 @@ public final class SMap {
           final int objCount = submapScriptsMrg_800c68d8.size() - 2;
 
           submapAssets = new SubmapAssets();
-          submapAssets.lastEntry = submapScriptsMrg_800c68d8.get(objCount + 1);
-          submapAssets.script = new ScriptFile("Submap controller", submapScriptsMrg_800c68d8.get(0));
+          submapAssets.lastEntry = submapScriptsMrg_800c68d8.get(objCount + 1).getBytes();
+          submapAssets.script = new ScriptFile("Submap controller", submapScriptsMrg_800c68d8.get(0).getBytes());
 
           for(int objIndex = 0; objIndex < objCount; objIndex++) {
-            final byte[] scriptData = submapScriptsMrg_800c68d8.get(objIndex + 1);
-            final byte[] tmdData = submapAssetsMrg_800c6878.get(objIndex * 33);
+            final byte[] scriptData = submapScriptsMrg_800c68d8.get(objIndex + 1).getBytes();
+            final byte[] tmdData = submapAssetsMrg_800c6878.get(objIndex * 33).getBytes();
 
             final IntRef drgnIndex = new IntRef();
             final IntRef fileIndex = new IntRef();
@@ -2715,8 +2715,8 @@ public final class SMap {
             obj.model = new CContainer(new FileData(tmdData));
 
             for(int animIndex = objIndex * 33 + 1; animIndex < (objIndex + 1) * 33; animIndex++) {
-              if(submapAssetsMrg_800c6878.get(animIndex).length != 0) {
-                obj.animations.add(new TmdAnimationFile(new FileData(submapAssetsMrg_800c6878.get(animIndex))));
+              if(submapAssetsMrg_800c6878.get(animIndex).real()) {
+                obj.animations.add(new TmdAnimationFile(submapAssetsMrg_800c6878.get(animIndex)));
               } else {
                 obj.animations.add(null);
               }
@@ -2779,7 +2779,7 @@ public final class SMap {
         imageRect.set(tim.getImageRect());
         imageRect.h.set((short)128);
 
-        GPU.uploadData(imageRect, tim.getData(), tim.getImageData());
+        GPU.uploadData(imageRect, tim.getImageData());
 
         final ScriptState<Void> submapController = SCRIPTS.allocateScriptState(0, null, 0, null);
         submapControllerState_800c6740 = submapController;
@@ -3491,7 +3491,7 @@ public final class SMap {
   }
 
   @Method(0x800e3d80L)
-  public static void submapAssetsLoadedCallback(final List<byte[]> files, final int assetType) {
+  public static void submapAssetsLoadedCallback(final List<FileData> files, final int assetType) {
     switch(assetType) {
       // Submap assets
       case 0x0 -> {
@@ -4030,28 +4030,21 @@ public final class SMap {
    * </ol>
    */
   @Method(0x800e5330L)
-  public static void loadBackground(final List<byte[]> files) {
+  public static void loadBackground(final List<FileData> files) {
     backgroundLoaded_800cab10.setu(0x1L);
 
     //LAB_800e5374
     for(int i = 3; i < files.size(); i++) {
-      final byte[] data = files.get(i);
-
-      final Tim timHeader = new Tim(data);
-      GPU.uploadData(timHeader.getImageRect(), data, timHeader.getImageData());
-
-      if(timHeader.hasClut()) {
-        GPU.uploadData(timHeader.getClutRect(), data, timHeader.getClutData());
-      }
+      new Tim(files.get(i)).uploadToGpu();
     }
 
     //LAB_800e5430
-    final EnvironmentFile env = MEMORY.ref(4, mallocHead(files.get(0).length), EnvironmentFile::new);
-    final UnboundedArrayRef<SomethingStructSub0c_1> something1 = MEMORY.ref(4, mallocHead(files.get(1).length), UnboundedArrayRef.of(0xc, SomethingStructSub0c_1::new));
-    final TmdWithId tmd = new TmdWithId(new FileData(files.get(2)));
+    final EnvironmentFile env = MEMORY.ref(4, mallocHead(files.get(0).size()), EnvironmentFile::new);
+    final UnboundedArrayRef<SomethingStructSub0c_1> something1 = MEMORY.ref(4, mallocHead(files.get(1).size()), UnboundedArrayRef.of(0xc, SomethingStructSub0c_1::new));
+    final TmdWithId tmd = new TmdWithId(files.get(2));
 
-    MEMORY.setBytes(env.getAddress(), files.get(0));
-    MEMORY.setBytes(something1.getAddress(), files.get(1));
+    MEMORY.setBytes(env.getAddress(), files.get(0).getBytes());
+    MEMORY.setBytes(something1.getAddress(), files.get(1).getBytes());
 
     loadEnvironment(env);
     FUN_800e8cd0(tmd, something1);
@@ -6484,8 +6477,8 @@ public final class SMap {
           loadDrgnDir(0, fileIndex, files -> {
             submapCutModelAndAnimLoaded_800d4bdc.set(true);
 
-            submapCutModel = new CContainer(new FileData(files.get(0)));
-            submapCutAnim = new TmdAnimationFile(new FileData(files.get(1)));
+            submapCutModel = new CContainer(files.get(0));
+            submapCutAnim = new TmdAnimationFile(files.get(1));
           });
 
           loadDrgnDir(0, fileIndex + 1, files -> {
@@ -6494,14 +6487,14 @@ public final class SMap {
             submapCutTexture = new Tim(files.get(0));
             submapCutMatrix = new MATRIX();
 
-            final byte[] matrixData = files.get(1);
+            final FileData matrixData = files.get(1);
 
             for(int i = 0; i < 9; i++) {
-              submapCutMatrix.set(i, (short)MathHelper.get(matrixData, i * 2, 2));
+              submapCutMatrix.set(i, matrixData.readShort(i * 2));
             }
 
             for(int i = 0; i < 3; i++) {
-              submapCutMatrix.transfer.component(i).set((int)MathHelper.get(matrixData, 18 + i * 2, 2));
+              submapCutMatrix.transfer.component(i).set(matrixData.readUShort(18 + i * 2)); //TODO should this be signed?
             }
           });
 
@@ -6518,7 +6511,7 @@ public final class SMap {
 
       case 0x2 -> {
         if(submapCutModelAndAnimLoaded_800d4bdc.get() && submapTextureAndMatrixLoaded_800d4be0.get()) {
-          GPU.uploadData(new RECT((short)1008, (short)256, submapCutTexture.getImageRect().w.get(), submapCutTexture.getImageRect().h.get()), submapCutTexture.getData(), submapCutTexture.getImageData());
+          GPU.uploadData(new RECT((short)1008, (short)256, submapCutTexture.getImageRect().w.get(), submapCutTexture.getImageRect().h.get()), submapCutTexture.getImageData());
           matrix_800d4bb0.set(submapCutMatrix);
 
           _800f9e5a.addu(0x1L);

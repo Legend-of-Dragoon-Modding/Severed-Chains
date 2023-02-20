@@ -187,10 +187,10 @@ public final class Scus94491BpeSegment_8003 {
     GPU.commandA0CopyRectFromCpuToVram(rect, address);
   }
 
-  public static void LoadImage(final RECT rect, final byte[] data, final int offset) {
+  public static void LoadImage(final RECT rect, final FileData data) {
     validateRect("LoadImage", rect);
 
-    GPU.uploadData(rect, data, offset);
+    GPU.uploadData(rect, data);
   }
 
   @Method(0x80038818L)
@@ -209,7 +209,7 @@ public final class Scus94491BpeSegment_8003 {
     return 0;
   }
 
-  public static long StoreImage(final RECT rect, final byte[] data) {
+  public static long StoreImage(final RECT rect, final FileData data) {
     validateRect("StoreImage", rect);
 
     rect.w.set(MathHelper.clamp(rect.w.get(), (short)0, (short)_800546c0.get()));

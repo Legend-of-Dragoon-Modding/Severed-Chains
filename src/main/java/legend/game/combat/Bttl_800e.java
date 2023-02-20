@@ -1022,7 +1022,7 @@ public final class Bttl_800e {
     //LAB_800e67b0
     loadDrgnDir(0, 4139 + s3 * 2, Bttl_800e::FUN_800e929c);
     loadDrgnDir(0, 4140 + s3 * 2 + "/0", files -> Bttl_800e.loadDeffPackage(files, battle24.managerState_18));
-    loadDrgnFile(0, 4140 + s3 * 2 + "/1", file -> _800c6938.script_14 = new ScriptFile(4140 + s3 * 2 + "/1", file));
+    loadDrgnFile(0, 4140 + s3 * 2 + "/1", file -> _800c6938.script_14 = new ScriptFile(4140 + s3 * 2 + "/1", file.getBytes()));
     _800fafe8.setu(0x1L);
     return 0;
   }
@@ -1041,7 +1041,7 @@ public final class Bttl_800e {
     t0._00 |= 0x200_0000;
     loadDrgnDir(0, 4307 + s0, Bttl_800e::FUN_800e929c);
     loadDrgnDir(0, 4308 + s0 + "/0", files -> Bttl_800e.loadDeffPackage(files, t0.managerState_18));
-    loadDrgnFile(0, 4308 + s0 + "/1", file -> _800c6938.script_14 = new ScriptFile(4308 + s0 + "/1", file));
+    loadDrgnFile(0, 4308 + s0 + "/1", file -> _800c6938.script_14 = new ScriptFile(4308 + s0 + "/1", file.getBytes()));
     _800fafe8.setu(0x1L);
     return 0;
   }
@@ -1072,7 +1072,7 @@ public final class Bttl_800e {
       loadDrgnDir(0, 4433 + sp20 * 2, Bttl_800e::FUN_800e929c);
       loadDrgnDir(0, 4434 + sp20 * 2 + "/0", files -> Bttl_800e.loadDeffPackage(files, v1.managerState_18));
       final int finalSp2 = sp20;
-      loadDrgnFile(0, 4434 + sp20 * 2 + "/1", file -> _800c6938.script_14 = new ScriptFile(4434 + finalSp2 * 2 + "/1", file));
+      loadDrgnFile(0, 4434 + sp20 * 2 + "/1", file -> _800c6938.script_14 = new ScriptFile(4434 + finalSp2 * 2 + "/1", file.getBytes()));
     } else {
       //LAB_800e6a30
       final long a0_0 = sp20 >>> 4;
@@ -1086,7 +1086,7 @@ public final class Bttl_800e {
       loadDrgnDir(0, 4945 + fileIndex, Bttl_800e::FUN_800e929c);
       loadDrgnDir(0, 4946 + fileIndex + "/0", files -> Bttl_800e.loadDeffPackage(files, v1.managerState_18));
       final int finalFileIndex = fileIndex;
-      loadDrgnFile(0, 4946 + fileIndex + "/1", file -> _800c6938.script_14 = new ScriptFile(4946 + finalFileIndex + "/1", file));
+      loadDrgnFile(0, 4946 + fileIndex + "/1", file -> _800c6938.script_14 = new ScriptFile(4946 + finalFileIndex + "/1", file.getBytes()));
     }
 
     //LAB_800e6a9c
@@ -1123,7 +1123,7 @@ public final class Bttl_800e {
     //LAB_800e6bd4
     loadDrgnDir(0, 5511 + s3 * 2, Bttl_800e::FUN_800e929c);
     loadDrgnDir(0, 5512 + s3 * 2 + "/0", files -> Bttl_800e.loadDeffPackage(files, a0_0.managerState_18));
-    loadDrgnFile(0, 5512 + s3 * 2 + "/1", file -> _800c6938.script_14 = new ScriptFile(5512 + s3 * 2 + "/1", file));
+    loadDrgnFile(0, 5512 + s3 * 2 + "/1", file -> _800c6938.script_14 = new ScriptFile(5512 + s3 * 2 + "/1", file.getBytes()));
 
     //LAB_800e6d7c
     _800fafe8.setu(0x1L);
@@ -1267,7 +1267,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e7060L)
-  public static void loadDeffPackage(final List<byte[]> files, final ScriptState<EffectManagerData6c> state) {
+  public static void loadDeffPackage(final List<FileData> files, final ScriptState<EffectManagerData6c> state) {
     deffManager_800c693c.deffPackage_5a8 = files;
     FUN_800ea620(files, state);
   }
@@ -1961,10 +1961,10 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e929cL)
-  public static void FUN_800e929c(final List<byte[]> files) {
+  public static void FUN_800e929c(final List<FileData> files) {
     //LAB_800e92d4
-    for(final byte[] file : files) {
-      if(file.length != 0) {
+    for(final FileData file : files) {
+      if(file.real()) {
         new Tim(file).uploadToGpu();
       }
     }
@@ -2453,12 +2453,12 @@ public final class Bttl_800e {
   }
 
   @Method(0x800ea620L)
-  public static void FUN_800ea620(final List<byte[]> deff, final ScriptState<EffectManagerData6c> deffManagerState) {
+  public static void FUN_800ea620(final List<FileData> deff, final ScriptState<EffectManagerData6c> deffManagerState) {
     //LAB_800ea674
-    for(final byte[] data : deff) {
-      final int type = IoHelper.readInt(data, 0) & 0xff00_0000; // Flags
+    for(final FileData data : deff) {
+      final int type = data.readInt(0) & 0xff00_0000; // Flags
       if(type == 0x100_0000) {
-        final DeffPart.TmdType tmdType = new DeffPart.TmdType(new FileData(data));
+        final DeffPart.TmdType tmdType = new DeffPart.TmdType(data);
         final CContainer extTmd = tmdType.tmd_0c;
         final TmdWithId tmd = extTmd.tmdPtr_00;
 
@@ -2470,13 +2470,13 @@ public final class Bttl_800e {
           FUN_800eb308(deffManagerState.innerStruct_00, extTmd, tmdType.textureInfo_08);
         }
       } else if(type == 0x200_0000) {
-        final DeffPart.CmbType cmbType = new DeffPart.CmbType(new FileData(data));
+        final DeffPart.CmbType cmbType = new DeffPart.CmbType(data);
 
         if(cmbType.textureInfo_08 != null && deffManagerState.index != 0) {
           FUN_800eb308(deffManagerState.innerStruct_00, cmbType.tmd_0c, cmbType.textureInfo_08);
         }
       } else if(type == 0x300_0000) {
-        final DeffPart.TmdType tmdType = new DeffPart.TmdType(new FileData(data));
+        final DeffPart.TmdType tmdType = new DeffPart.TmdType(data);
         final CContainer extTmd = tmdType.tmd_0c;
 
         optimisePacketsIfNecessary(extTmd.tmdPtr_00, 0);
@@ -2494,26 +2494,26 @@ public final class Bttl_800e {
   }
 
   @Method(0x800ea7d0L)
-  public static void hudDeffLoaded(final List<byte[]> files) {
+  public static void hudDeffLoaded(final List<FileData> files) {
     final DeffManager7cc struct7cc = deffManager_800c693c;
     FUN_800ea620(files, struct7cc.scriptState_1c);
 
     //LAB_800ea814
     int i;
     for(i = 0; i < files.size(); i++) {
-      final int flags = IoHelper.readInt(files.get(i), 0); // Flags
+      final int flags = files.get(i).readInt(0); // Flags
 
       if((flags & 0xff00_0000) != 0) {
         break;
       }
 
-      struct7cc.lmbs_390[flags & 0xff] = new DeffPart.LmbType(new FileData(files.get(i)));
+      struct7cc.lmbs_390[flags & 0xff] = new DeffPart.LmbType(files.get(i));
     }
 
     //LAB_800ea850
     //LAB_800ea874
     for(; i < files.size(); i++) {
-      if((IoHelper.readInt(files.get(i), 0) & 0xff00_0000) != 0x100_0000) { // Flags
+      if((files.get(i).readInt(0) & 0xff00_0000) != 0x100_0000) { // Flags
         break;
       }
     }
@@ -2522,7 +2522,7 @@ public final class Bttl_800e {
     //LAB_800ea8a8
     //LAB_800ea8e0
     for(; i < files.size(); i++) {
-      final int flags = IoHelper.readInt(files.get(i), 0);
+      final int flags = files.get(i).readInt(0);
 
       if((flags & 0xff00_0000) != 0x300_0000) {
         break;
@@ -2530,7 +2530,7 @@ public final class Bttl_800e {
 
       final int index = flags & 0xff;
       if(index >= 5) {
-        final DeffPart.TmdType tmdType = new DeffPart.TmdType(new FileData(files.get(i)));
+        final DeffPart.TmdType tmdType = new DeffPart.TmdType(files.get(i));
         struct7cc.tmds_2f8[index] = tmdType.tmd_0c.tmdPtr_00.tmd.objTable[0];
       }
 
@@ -2540,13 +2540,13 @@ public final class Bttl_800e {
     //LAB_800ea93c
     //LAB_800ea964
     for(; i < files.size(); i++) {
-      final int flags = IoHelper.readInt(files.get(i), 0);
+      final int flags = files.get(i).readInt(0);
 
       if((flags & 0xff00_0000) != 0x400_0000) {
         break;
       }
 
-      final DeffPart.SpriteType spriteType = new DeffPart.SpriteType(new FileData(files.get(i)));
+      final DeffPart.SpriteType spriteType = new DeffPart.SpriteType(files.get(i));
       final DeffPart.SpriteMetrics deffMetrics = spriteType.metrics_08;
       final SpriteMetrics08 metrics = struct7cc.spriteMetrics_39c[flags & 0xff];
       metrics.u_00.set(deffMetrics.u_00);
@@ -2589,16 +2589,16 @@ public final class Bttl_800e {
   /** See {@link DeffPart#flags_00} */
   @Method(0x800eac58L)
   public static DeffPart getDeffPart(final int flags) {
-    final List<byte[]> deff = deffManager_800c693c.deffPackage_5a8;
+    final List<FileData> deff = deffManager_800c693c.deffPackage_5a8;
 
     //LAB_800eac84
-    for(final byte[] data : deff) {
-      if(IoHelper.readInt(data, 0) == flags) {
+    for(final FileData data : deff) {
+      if(data.readInt(0) == flags) {
         return switch(flags >>> 24) {
-          case 0 -> new DeffPart.LmbType(new FileData(data));
-          case 1, 2 -> new DeffPart.AnimatedTmdType(new FileData(data));
-          case 3 -> new DeffPart.TmdType(new FileData(data));
-          case 4 -> new DeffPart.SpriteType(new FileData(data));
+          case 0 -> new DeffPart.LmbType(data);
+          case 1, 2 -> new DeffPart.AnimatedTmdType(data);
+          case 3 -> new DeffPart.TmdType(data);
+          case 4 -> new DeffPart.SpriteType(data);
           case 5 -> throw new RuntimeException("Not implemented yet")/*TODO value -> {
             if(value.offset(4, 0x0).get() == Cmb.MAGIC) {
               return new DeffPart.CmbType(value);
@@ -2625,7 +2625,7 @@ public final class Bttl_800e {
       deffManager_800c693c.scripts_2c = new ScriptFile[files.size()];
 
       for(int i = 0; i < files.size(); i++) {
-        deffManager_800c693c.scripts_2c[i] = new ScriptFile("DRGN0.4114.1." + i, files.get(i));
+        deffManager_800c693c.scripts_2c[i] = new ScriptFile("DRGN0.4114.1." + i, files.get(i).getBytes());
       }
     });
   }
@@ -3651,7 +3651,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800ee8c4L)
-  public static void battleHudTexturesLoadedCallback(final List<byte[]> files) {
+  public static void battleHudTexturesLoadedCallback(final List<FileData> files) {
     final short[] clutX = new short[6];
     for(int i = 0; i < 4; i++) {
       clutX[i] = _800c6e60.get(i).get();
@@ -3662,11 +3662,11 @@ public final class Bttl_800e {
 
     //LAB_800ee9c0
     for(int fileIndex = 0; fileIndex < files.size(); fileIndex++) {
-      if(files.get(fileIndex).length != 0) {
+      if(files.get(fileIndex).real()) {
         final Tim tim = new Tim(files.get(fileIndex));
 
         if(fileIndex == 0) {
-          GPU.uploadData(new RECT().set((short)704, (short)256, (short)64, (short)256), tim.getData(), tim.getImageData());
+          GPU.uploadData(new RECT().set((short)704, (short)256, (short)64, (short)256), tim.getImageData());
         }
 
         //LAB_800eea20
@@ -3683,7 +3683,7 @@ public final class Bttl_800e {
         //LAB_800eea50
         sp0x30.w.set(_800c6e48.get(fileIndex).getX());
         sp0x30.h.set(_800c6e48.get(fileIndex).getY());
-        GPU.uploadData(sp0x30, tim.getData(), tim.getClutData());
+        GPU.uploadData(sp0x30, tim.getClutData());
         _800c6cf4.addu(0x1L);
       }
     }

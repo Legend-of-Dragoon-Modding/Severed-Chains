@@ -2,14 +2,15 @@ package legend.game.combat.types;
 
 import legend.game.scripting.ScriptFile;
 import legend.game.types.CContainer;
+import legend.game.unpacker.FileData;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /** Data related to a combatant (player or enemy) */
 public class CombatantStruct1a8 {
-  public List<byte[]> mrg_00;
-  public List<byte[]> mrg_04;
+  public List<FileData> mrg_00;
+  public List<FileData> mrg_04;
   public CContainer tmd_08;
 
   public ScriptFile scriptPtr_10;

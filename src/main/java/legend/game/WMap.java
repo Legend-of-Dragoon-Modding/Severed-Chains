@@ -2736,11 +2736,11 @@ public class WMap {
   }
 
   @Method(0x800d5858L) //TODO loads general world map stuff (location text, doors, buttons, etc.), several blobs that may be smoke?, tons of terrain and terrain sprites
-  public static void timsLoaded(final List<byte[]> files, final int param) {
+  public static void timsLoaded(final List<FileData> files, final int param) {
     //LAB_800d5874
-    for(final byte[] file : files) {
+    for(final FileData file : files) {
       //LAB_800d5898
-      if(file.length != 0) {
+      if(file.size() != 0) {
         //LAB_800d58c8
         new Tim(file).uploadToGpu();
       }
@@ -2753,8 +2753,8 @@ public class WMap {
   }
 
   @Method(0x800d5984L)
-  public static void loadTmdCallback(final byte[] file) {
-    final TmdWithId tmd = new TmdWithId(new FileData(file));
+  public static void loadTmdCallback(final FileData file) {
+    final TmdWithId tmd = new TmdWithId(file);
 
     struct258_800c66a8.tmdRendering_08 = loadTmd(tmd);
     initTmdTransforms(struct258_800c66a8.tmdRendering_08, null);
@@ -2764,25 +2764,25 @@ public class WMap {
   }
 
   @Method(0x800d5a30L)
-  public static void FUN_800d5a30(final List<byte[]> files, final int whichFile) {
+  public static void FUN_800d5a30(final List<FileData> files, final int whichFile) {
     final MrgFile mrg = MrgFile.alloc(files, Math.min(files.size(), 16));
     struct258_800c66a8._1b4[whichFile] = mrg;
 
-    if(files.get(0).length != 0) {
-      struct258_800c66a8._b4[whichFile].extendedTmd_00 = new CContainer(new FileData(files.get(0)));
+    if(files.get(0).size() != 0) {
+      struct258_800c66a8._b4[whichFile].extendedTmd_00 = new CContainer(files.get(0));
     }
 
-    if(files.get(1).length != 0) {
+    if(files.get(1).size() != 0) {
       struct258_800c66a8._b4[whichFile].unknownFile_04 = mrg.getFile(1);
     }
 
     //LAB_800d5a48
     for(int i = 2; i < Math.min(16, files.size()); i++) {
       //LAB_800d5a6c
-      if(files.get(i).length != 0) {
+      if(files.get(i).size() != 0) {
         //LAB_800d5a9c
         //LAB_800d5ab8
-        struct258_800c66a8._b4[whichFile].tmdAnim_08[i - 2] = new TmdAnimationFile(new FileData(files.get(i)));
+        struct258_800c66a8._b4[whichFile].tmdAnim_08[i - 2] = new TmdAnimationFile(files.get(i));
       }
 
       //LAB_800d5b2c

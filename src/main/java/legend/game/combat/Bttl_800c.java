@@ -1297,15 +1297,15 @@ public final class Bttl_800c {
   }
 
   @Method(0x800c8774L)
-  public static void loadStageTmdAndAnim(final List<byte[]> files) {
+  public static void loadStageTmdAndAnim(final List<FileData> files) {
     setStageHasNoModel();
 
-    if(files.get(0).length > 0 && files.get(1).length > 0 && files.get(2).length > 0) {
+    if(files.get(0).size() > 0 && files.get(1).size() > 0 && files.get(2).size() > 0) {
       _800c6754.set(1);
       stageHasModel_800c66b8.set(true);
 
       final BattleStage stage = _1f8003f4.stage_963c;
-      loadStageTmd(stage, new CContainer(new FileData(files.get(0)), 10), new TmdAnimationFile(new FileData(files.get(1))));
+      loadStageTmd(stage, new CContainer(files.get(0), 10), new TmdAnimationFile(files.get(1)));
       stage.coord2_558.coord.transfer.set(0, 0, 0);
       stage.param_5a8.rotate.set((short)0, (short)0x400, (short)0);
     }
@@ -1361,19 +1361,19 @@ public final class Bttl_800c {
   @Method(0x800c8b20L)
   public static void loadStage(final int stage) {
     loadDrgnDir(0, 2497 + stage, files -> {
-      if(files.get(0).length != 0) {
+      if(files.get(0).real()) {
         if(_1f8003f4.stageMcq_9cb0 != null) {
           free(_1f8003f4.stageMcq_9cb0.getAddress());
         }
 
-        final McqHeader mcq = MEMORY.ref(4, mallocTail(files.get(0).length), McqHeader::new);
-        MEMORY.setBytes(mcq.getAddress(), files.get(0));
+        final McqHeader mcq = MEMORY.ref(4, mallocTail(files.get(0).size()), McqHeader::new);
+        MEMORY.setBytes(mcq.getAddress(), files.get(0).getBytes());
         loadStageMcq(mcq);
       }
 
-      if(files.get(1).length != 0) {
-        final long tim = mallocTail(files.get(1).length);
-        MEMORY.setBytes(tim, files.get(1));
+      if(files.get(1).size() != 0) {
+        final long tim = mallocTail(files.get(1).size());
+        MEMORY.setBytes(tim, files.get(1).getBytes());
         loadStageTim(tim);
         free(tim);
       }
@@ -1533,7 +1533,7 @@ public final class Bttl_800c {
   @Method(0x800c90b0L)
   public static long FUN_800c90b0(final int combatantIndex) {
     //LAB_800c9114
-    if((combatants_8005e398[combatantIndex]._1a4 >= 0 || combatants_8005e398[combatantIndex].mrg_00 != null && combatants_8005e398[combatantIndex].mrg_00.get(32).length != 0) && FUN_800ca054(combatantIndex, 0) != 0) {
+    if((combatants_8005e398[combatantIndex]._1a4 >= 0 || combatants_8005e398[combatantIndex].mrg_00 != null && combatants_8005e398[combatantIndex].mrg_00.get(32).real()) && FUN_800ca054(combatantIndex, 0) != 0) {
       return 0x1L;
     }
 
@@ -1622,7 +1622,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800c941cL)
-  public static void combatantTmdAndAnimLoadedCallback(final List<byte[]> files, final int combatantIndex, final boolean isMonster) {
+  public static void combatantTmdAndAnimLoadedCallback(final List<FileData> files, final int combatantIndex, final boolean isMonster) {
     final CombatantStruct1a8 combatant = getCombatant(combatantIndex);
     combatant.flags_19e &= 0xffdf;
 
@@ -1634,16 +1634,14 @@ public final class Bttl_800c {
     combatant.mrg_00 = files;
 
     // I don't think this is actually used?
-    if(files.get(34).length != 0) {
-      combatant.scriptPtr_10 = new ScriptFile("%s %d file 34".formatted(isMonster ? "monster" : "char", combatant.charSlot_19c), files.get(34));
+    if(files.get(34).real()) {
+      combatant.scriptPtr_10 = new ScriptFile("%s %d file 34".formatted(isMonster ? "monster" : "char", combatant.charSlot_19c), files.get(34).getBytes());
     }
 
     //LAB_800c94a0
     //LAB_800c94a4
     for(int animIndex = 0; animIndex < 32; animIndex++) {
-      final int size = files.get(animIndex).length;
-
-      if(size != 0) {
+      if(files.get(animIndex).real()) {
         FUN_800c9a80(files.get(animIndex), 1, 0, combatantIndex, animIndex);
       }
 
@@ -1665,11 +1663,11 @@ public final class Bttl_800c {
 
     final CContainer tmd;
     if(s0._1a4 >= 0) {
-      tmd = new CContainer(new FileData(FUN_800cad34(s0._1a4)));
+      tmd = new CContainer(FUN_800cad34(s0._1a4));
     } else {
       //LAB_800c9590
-      if(s0.mrg_00 != null && s0.mrg_00.get(32).length != 0) {
-        tmd = new CContainer(new FileData(s0.mrg_00.get(32)));
+      if(s0.mrg_00 != null && s0.mrg_00.get(32).real()) {
+        tmd = new CContainer(s0.mrg_00.get(32));
       } else {
         throw new RuntimeException("anim undefined");
       }
@@ -1740,7 +1738,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800c9898L)
-  public static void attackAnimationsLoaded(final List<byte[]> files, final int combatantIndex, final boolean isMonster, final int charSlot) {
+  public static void attackAnimationsLoaded(final List<FileData> files, final int combatantIndex, final boolean isMonster, final int charSlot) {
     final CombatantStruct1a8 combatant = getCombatant(combatantIndex);
 
     if(combatant.mrg_04 == null) {
@@ -1750,7 +1748,7 @@ public final class Bttl_800c {
 
         //LAB_800c9940
         for(int animIndex = 0; animIndex < 32; animIndex++) {
-          if(files.get(32 + animIndex).length != 0) {
+          if(files.get(32 + animIndex).real()) {
             if(combatant._14[animIndex] != null && combatant._14[animIndex]._09 != 0) {
               FUN_800c9c7c(combatantIndex, animIndex);
             }
@@ -1767,7 +1765,7 @@ public final class Bttl_800c {
 
       //LAB_800c99e8
       for(int animIndex = 0; animIndex < 32; animIndex++) {
-        if(files.get(animIndex).length != 0) {
+        if(files.get(animIndex).real()) {
           if(combatant._14[animIndex] != null && combatant._14[animIndex]._09 != 0) {
             FUN_800c9c7c(combatantIndex, animIndex);
           }
@@ -1792,7 +1790,7 @@ public final class Bttl_800c {
    *             </ol>
    */
   @Method(0x800c9a80L)
-  public static void FUN_800c9a80(final byte[] data, final int type, final int a3, final int combatantIndex, final int animIndex) {
+  public static void FUN_800c9a80(final FileData data, final int type, final int a3, final int combatantIndex, final int animIndex) {
     CombatantStruct1a8_c s3 = combatants_8005e398[combatantIndex]._14[animIndex];
 
     if(s3 != null) {
@@ -1802,14 +1800,14 @@ public final class Bttl_800c {
     //LAB_800c9b28
     if(type == 1) {
       //LAB_800c9b68
-      if(IoHelper.readInt(data, 0x4) == 0x1a45_5042) { // BPE
+      if(data.readInt(0x4) == 0x1a45_5042) { // BPE
         final CombatantStruct1a8_c.BpeType bpe = new CombatantStruct1a8_c.BpeType(data);
         bpe._08 = a3;
         bpe.type_0a = 4;
         bpe.isLoaded_0b = 0;
         s3 = bpe;
       } else {
-        final CombatantStruct1a8_c.AnimType anim = new CombatantStruct1a8_c.AnimType(new TmdAnimationFile(new FileData(data)));
+        final CombatantStruct1a8_c.AnimType anim = new CombatantStruct1a8_c.AnimType(new TmdAnimationFile(data));
         anim._08 = a3;
         anim.type_0a = 1;
         anim.isLoaded_0b = 0;
@@ -1818,7 +1816,7 @@ public final class Bttl_800c {
     } else if(type == 2) {
       //LAB_800c9b80
       //LAB_800c9b98
-      if(IoHelper.readInt(data, 0x4) == 0x1a45_5042) { // BPE
+      if(data.readInt(0x4) == 0x1a45_5042) { // BPE
         //LAB_800c9b88
         final CombatantStruct1a8_c.BpeType bpe = new CombatantStruct1a8_c.BpeType(data);
         bpe._08 = a3;
@@ -1826,7 +1824,7 @@ public final class Bttl_800c {
         bpe.isLoaded_0b = 0;
         s3 = bpe;
       } else {
-        final CombatantStruct1a8_c.AnimType anim = new CombatantStruct1a8_c.AnimType(new TmdAnimationFile(new FileData(data)));
+        final CombatantStruct1a8_c.AnimType anim = new CombatantStruct1a8_c.AnimType(new TmdAnimationFile(data));
         anim._08 = a3;
         anim.type_0a = 2;
         anim.isLoaded_0b = 0;
@@ -1842,9 +1840,9 @@ public final class Bttl_800c {
       s3 = index;
     } else if(type == 6) {
       //LAB_800c9bcc
-      final int size = (data.length + 0x7f) / 0x80;
+      final int size = (data.size() + 0x7f) / 0x80;
       final RECT sp0x10 = new RECT((short)(512 + a3 * 64), (short)_8006e398.y_d80[a3], (short)64, (short)size);
-      LoadImage(sp0x10, data, 0);
+      LoadImage(sp0x10, data);
 
       _8006e398.y_d80[a3] += size;
 
@@ -1926,7 +1924,7 @@ public final class Bttl_800c {
         bpeType.isLoaded_0b = 1;
         bpeType.BattleStructEf4Sub08_index_06 = a3;
 
-        FUN_800c9fcc(Unpacker.decompress(bpeType.bpe_00), a3);
+        FUN_800c9fcc(new FileData(Unpacker.decompress(bpeType.bpe_00)), a3);
       }
 
       return true;
@@ -1949,7 +1947,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800c9fccL)
-  public static void FUN_800c9fcc(final byte[] data, final int param) {
+  public static void FUN_800c9fcc(final FileData data, final int param) {
     final CombatantStruct1a8_c s0 = _8006e398._d8c[param]._00;
 
     if(s0.isLoaded_0b != 0 && _8006e398._d8c[param].used_04) {
@@ -2050,7 +2048,7 @@ public final class Bttl_800c {
     if(a0_0 instanceof final CombatantStruct1a8_c.IndexType indexType) {
       final int s0 = indexType.index_00;
 
-      return new TmdAnimationFile(new FileData(FUN_800cad34(s0)));
+      return new TmdAnimationFile(FUN_800cad34(s0));
     }
 
     if(a0_0 instanceof CombatantStruct1a8_c.BpeType || a0_0 instanceof CombatantStruct1a8_c.TimType) {
@@ -2059,7 +2057,7 @@ public final class Bttl_800c {
 
         if(s0 >= 0) {
           //LAB_800ca3f4
-          return new TmdAnimationFile(new FileData(FUN_800cad34(s0)));
+          return new TmdAnimationFile(FUN_800cad34(s0));
         }
       }
     }
@@ -2126,12 +2124,12 @@ public final class Bttl_800c {
   }
 
   @Method(0x800ca65cL)
-  public static void FUN_800ca65c(final byte[] data, final int combatantIndex) {
+  public static void FUN_800ca65c(final FileData data, final int combatantIndex) {
     loadCombatantTim(combatantIndex, data);
   }
 
   @Method(0x800ca75cL)
-  public static void loadCombatantTim(final int combatantIndex, final byte[] timFile) {
+  public static void loadCombatantTim(final int combatantIndex, final FileData timFile) {
     final int a0;
 
     if(combatantIndex >= 0) {
@@ -2159,13 +2157,13 @@ public final class Bttl_800c {
   }
 
   @Method(0x800ca7ecL)
-  public static void loadCombatantTim2(final int a0, final byte[] timFile) {
+  public static void loadCombatantTim2(final int a0, final FileData timFile) {
     final Tim tim = new Tim(timFile);
 
     if(a0 != 0) {
       //LAB_800ca83c
       final RECT s0 = _800fa6e0.get(a0);
-      LoadImage(s0, tim.getData(), tim.getImageData());
+      LoadImage(s0, tim.getImageData());
 
       if(tim.hasClut()) {
         final RECT clutRect = tim.getClutRect();
@@ -2173,7 +2171,7 @@ public final class Bttl_800c {
         clutRect.y.set((short)(s0.y.get() + 240));
 
         //LAB_800ca884
-        LoadImage(clutRect, tim.getData(), tim.getClutData());
+        LoadImage(clutRect, tim.getClutData());
       }
     } else {
       tim.uploadToGpu();
@@ -2274,7 +2272,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800caae4L)
-  public static int FUN_800caae4(final byte[] fileData, final int a1, final int a2, final int a3) {
+  public static int FUN_800caae4(final FileData fileData, final int a1, final int a2, final int a3) {
     final int index = FUN_800caa20();
 
     final BttlStruct08 a0 = _8006e398._580[index];
@@ -2289,7 +2287,7 @@ public final class Bttl_800c {
 
   @Method(0x800cab58L)
   public static int FUN_800cab58(final int size, final int a1, final int a2, final int a3) {
-    return FUN_800caae4(new byte[size], a1, a2, a3);
+    return FUN_800caae4(new FileData(new byte[size]), a1, a2, a3);
   }
 
   @Method(0x800cac38L)
@@ -2303,7 +2301,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cacb0L)
-  public static void FUN_800cacb0(final byte[] data, final int index) {
+  public static void FUN_800cacb0(final FileData data, final int index) {
     final BttlStruct08 a1 = _8006e398._580[index];
 
     if(a1._04 == 1) {
@@ -2315,7 +2313,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cad34L)
-  public static byte[] FUN_800cad34(final int index) {
+  public static FileData FUN_800cad34(final int index) {
     return _8006e398._580[index].data_00;
   }
 

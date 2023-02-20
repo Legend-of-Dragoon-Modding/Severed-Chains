@@ -399,17 +399,17 @@ public final class Ttle {
    * </ol>
    */
   @Method(0x800c7af0L)
-  public static void menuTexturesMrgLoaded(final List<byte[]> files) {
-    for(final byte[] data : files) {
-      if(data.length != 0) {
+  public static void menuTexturesMrgLoaded(final List<FileData> files) {
+    for(final FileData data : files) {
+      if(data.real()) {
         new Tim(data).uploadToGpu();
       }
     }
   }
 
   @Method(0x800c7c18L)
-  public static void menuFireTmdLoaded(final byte[] file) {
-    final TmdWithId tmd = new TmdWithId(new FileData(file));
+  public static void menuFireTmdLoaded(final FileData file) {
+    final TmdWithId tmd = new TmdWithId(file);
     _800c66d0 = parseTmdFile(tmd);
     FUN_800cc0b0(_800c66d0, null);
     _800c66d0.tmd_0c = tmd;

@@ -5,6 +5,7 @@ import legend.core.MathHelper;
 import legend.core.opengl.Window;
 import legend.core.spu.XaAdpcm;
 import legend.game.types.FileEntry08;
+import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -228,7 +229,7 @@ public class Fmv {
     final ByteBuffer demuxed = ByteBuffer.wrap(demuxedRaw);
     final FrameHeader frameHeader = new FrameHeader(demuxedRaw);
 
-    final byte[] fileData = Unpacker.loadFile(file);
+    final FileData fileData = Unpacker.loadFile(file);
     sector = 0;
 
     while(!GPU.isReady()) {
@@ -262,7 +263,7 @@ public class Fmv {
       // Demultiplex the sectors
       Arrays.fill(demuxedRaw, (byte)0);
       for(int sectorIndex = 0, videoSectorIndex = 0; sectorIndex < sectorCount; sectorIndex++, sector++) {
-        System.arraycopy(fileData, sector * data.length, data, 0, data.length);
+        fileData.copyFrom(sector * data.length, data, 0, data.length);
 
         if(header.submode.isEof()) {
           stop();
