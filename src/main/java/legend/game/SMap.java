@@ -2714,11 +2714,7 @@ public final class SMap {
             obj.model = new CContainer(new FileData(tmdData));
 
             for(int animIndex = objIndex * 33 + 1; animIndex < (objIndex + 1) * 33; animIndex++) {
-              if(submapAssetsMrg_800c6878.get(animIndex).real()) {
-                obj.animations.add(new TmdAnimationFile(submapAssetsMrg_800c6878.get(animIndex)));
-              } else {
-                obj.animations.add(null);
-              }
+              obj.animations.add(new TmdAnimationFile(submapAssetsMrg_800c6878.get(animIndex)));
             }
 
             submapAssets.objects.add(obj);
