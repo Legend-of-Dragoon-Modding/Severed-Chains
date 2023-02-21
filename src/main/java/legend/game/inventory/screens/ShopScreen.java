@@ -3,6 +3,7 @@ package legend.game.inventory.screens;
 import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.memory.Memory;
+import legend.game.input.InputKeyCode;
 import legend.game.inventory.WhichMenu;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.LodString;
@@ -708,7 +709,7 @@ public class ShopScreen extends MenuScreen {
                 FUN_80104b60(this.selectedMenuOptionRenderablePtr_800bdbe4);
                 this.FUN_8010a864(gameState_800babc8.equipment_1e8.get(0).get());
               } else {
-                menuStack.pushScreen(new MessageBoxScreen(new LodString("You have no equipment\nto sell"), 0, result1 -> { }));
+                menuStack.pushScreen(new MessageBoxScreen(new LodString("You have no equipment\nto sell"), 0, result1 -> {}));
               }
             }
 
@@ -764,239 +765,328 @@ public class ShopScreen extends MenuScreen {
     switch(this.menuState) {
       case RENDER_3 -> {
         switch(key) {
-          case GLFW_KEY_UP -> {
-            playSound(1);
-
-            if(this.menuIndex_8011e0dc > 0) {
-              this.menuIndex_8011e0dc--;
-            }
-
-            this.menuScroll_8011e0e4 = 0;
-            this.menuIndex_8011e0e0 = 0;
-            this.selectedMenuOptionRenderablePtr_800bdbe0.y_44 = this.getShopMenuYOffset(this.menuIndex_8011e0dc);
-          }
-
-          case GLFW_KEY_DOWN -> {
-            playSound(1);
-
-            if(this.menuIndex_8011e0dc < 3) {
-              this.menuIndex_8011e0dc++;
-            }
-
-            this.menuScroll_8011e0e4 = 0;
-            this.menuIndex_8011e0e0 = 0;
-            this.selectedMenuOptionRenderablePtr_800bdbe0.y_44 = this.getShopMenuYOffset(this.menuIndex_8011e0dc);
-          }
-
-          case GLFW_KEY_ENTER, GLFW_KEY_S -> {
-            playSound(2);
-            this.handleSelectedMenu(this.menuIndex_8011e0dc);
-          }
-
-          case GLFW_KEY_ESCAPE -> {
-            playSound(3);
-            this.FUN_8010a844(MenuState.UNLOAD_19);
-          }
+          case GLFW_KEY_UP -> this.menuMainShopRender3NavigateUp();
+          case GLFW_KEY_DOWN -> this.menuMainShopRender3NavigateDown();
+          case GLFW_KEY_ENTER, GLFW_KEY_S -> this.menuMainShopRender3Select();
+          case GLFW_KEY_ESCAPE -> this.menuMainShopRender3Escape();
         }
       }
 
       case BUY_4 -> {
         switch(key) {
-          case GLFW_KEY_UP -> {
-            playSound(1);
-
-            if(this.menuIndex_8011e0e0 > 0) {
-              this.menuIndex_8011e0e0--;
-            } else if(this.menuScroll_8011e0e4 > 0) {
-              this.menuScroll_8011e0e4--;
-            }
-
-            this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = FUN_8010a808(this.menuIndex_8011e0e0);
-
-            if(this.shopType == 0) {
-              this.equipCharIndex = this.FUN_8010a864(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00);
-            }
-          }
-
-          case GLFW_KEY_DOWN -> {
-            playSound(1);
-
-            if(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00 == 0xff) {
-              playSound(40);
-              break;
-            }
-
-            if(this.menuIndex_8011e0e0 < 5 && this.menuIndex_8011e0e0 < this.itemCount - 1) {
-              this.menuIndex_8011e0e0++;
-            } else if((this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0) < this.itemCount - 1) {
-              this.menuScroll_8011e0e4++;
-            }
-
-            this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = FUN_8010a808(this.menuIndex_8011e0e0);
-
-            if(this.shopType == 0) {
-              this.equipCharIndex = this.FUN_8010a864(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00);
-            }
-          }
-
-          case GLFW_KEY_ENTER, GLFW_KEY_S -> {
-            if(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00 == 0xff) {
-              playSound(40);
-            } else {
-              playSound(2);
-
-              final boolean hasSpace;
-              if(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00 < 0xc0) {
-                hasSpace = gameState_800babc8.equipmentCount_1e4.get() < 255;
-              } else {
-                hasSpace = gameState_800babc8.itemCount_1e6.get() < Config.inventorySize();
-              }
-
-              if(!hasSpace) {
-                menuStack.pushScreen(new MessageBoxScreen(Cannot_carry_anymore_8011c43c, 0, result -> {
-                }));
-              } else if(gameState_800babc8.gold_94.get() < this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].flags_02) {
-                menuStack.pushScreen(new MessageBoxScreen(Not_enough_money_8011c468, 0, result -> {
-                }));
-              } else if(this.shopType != 0) {
-                menuStack.pushScreen(new MessageBoxScreen(new LodString("Buy item?"), 2, result -> {
-                  if(result == MessageBoxResult.YES) {
-                    gameState_800babc8.gold_94.sub(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].flags_02);
-                    giveItem(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00);
-                  }
-                }));
-              } else {
-                this.charHighlight = allocateUiElement(0x83, 0x83, this.FUN_8010a818(this.equipCharIndex), 174);
-                FUN_80104b60(this.charHighlight);
-                this.menuState = MenuState.BUY_SELECT_CHAR_5;
-              }
-            }
-          }
-
-          case GLFW_KEY_ESCAPE -> {
-            playSound(3);
-            this.menuState = MenuState.INIT_2;
-          }
+          case GLFW_KEY_UP -> this.menuBuy4NavigateUp();
+          case GLFW_KEY_DOWN -> this.menuBuy4NavigateDown();
+          case GLFW_KEY_ENTER, GLFW_KEY_S -> this.menuBuy4Select();
+          case GLFW_KEY_ESCAPE -> this.menuBuy4Escape();
         }
       }
 
       case BUY_SELECT_CHAR_5 -> {
         switch(key) {
-          case GLFW_KEY_LEFT -> {
-            playSound(1);
-
-            if(this.equipCharIndex > 0) {
-              this.equipCharIndex--;
-            }
-
-            this.charHighlight.x_40 = this.FUN_8010a818(this.equipCharIndex);
-          }
-
-          case GLFW_KEY_RIGHT -> {
-            playSound(1);
-
-            if(this.equipCharIndex < characterCount_8011d7c4.get() - 1) {
-              this.equipCharIndex++;
-            }
-
-            this.charHighlight.x_40 = this.FUN_8010a818(this.equipCharIndex);
-          }
-
-          case GLFW_KEY_ENTER, GLFW_KEY_S -> menuStack.pushScreen(new MessageBoxScreen(new LodString("Buy item?"), 2, result -> {
-            if(result == MessageBoxResult.YES) {
-              gameState_800babc8.gold_94.sub(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].flags_02);
-
-              menuStack.pushScreen(new MessageBoxScreen(new LodString("Equip item?"), 2, result1 -> {
-                if(result1 == MessageBoxResult.YES && canEquip(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00, characterIndices_800bdbb8.get(this.equipCharIndex).get())) {
-                  giveItem(equipItem(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00, characterIndices_800bdbb8.get(this.equipCharIndex).get()));
-                } else {
-                  giveItem(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00);
-                }
-
-                this.menuState = MenuState.BUY_4;
-                unloadRenderable(this.charHighlight);
-                this.charHighlight = null;
-              }));
-            }
-          }));
-
-          case GLFW_KEY_ESCAPE -> {
-            playSound(3);
-            this.menuState = MenuState.BUY_4;
-            unloadRenderable(this.charHighlight);
-            this.charHighlight = null;
-          }
+          case GLFW_KEY_LEFT -> this.menuSelectChar5NavigateLeft();
+          case GLFW_KEY_RIGHT -> this.menuSelectChar5NavigateRight();
+          case GLFW_KEY_ENTER, GLFW_KEY_S -> this.menuSelectChar5Select();
+          case GLFW_KEY_ESCAPE -> this.menuSelectChar5Escape();
         }
       }
 
       case SELL_10 -> {
         switch(key) {
-          case GLFW_KEY_UP -> {
-            playSound(1);
+          case GLFW_KEY_UP -> this.menuSell10NavigateUp();
+          case GLFW_KEY_DOWN -> this.menuSell10NavigateDown();
+          case GLFW_KEY_ENTER, GLFW_KEY_S -> this.menuSell10Select();
+          case GLFW_KEY_ESCAPE -> this.menuSell10Escape();
+        }
+      }
+    }
+  }
 
-            if(this.menuIndex_8011e0e0 > 0) {
-              this.menuIndex_8011e0e0--;
-            } else if(this.menuScroll_8011e0e4 > 0) {
-              this.menuScroll_8011e0e4--;
-            }
+  private void menuMainShopRender3Escape() {
+    playSound(3);
+    this.FUN_8010a844(MenuState.UNLOAD_19);
+  }
 
-            this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = FUN_8010a808(this.menuIndex_8011e0e0);
+  private void menuMainShopRender3Select() {
+    playSound(2);
+    this.handleSelectedMenu(this.menuIndex_8011e0dc);
+  }
+
+  private void menuMainShopRender3NavigateUp() {
+    playSound(1);
+
+    if(this.menuIndex_8011e0dc > 0) {
+      this.menuIndex_8011e0dc--;
+    }
+
+    this.menuScroll_8011e0e4 = 0;
+    this.menuIndex_8011e0e0 = 0;
+    this.selectedMenuOptionRenderablePtr_800bdbe0.y_44 = this.getShopMenuYOffset(this.menuIndex_8011e0dc);
+  }
+
+  private void menuMainShopRender3NavigateDown() {
+    playSound(1);
+
+    if(this.menuIndex_8011e0dc < 3) {
+      this.menuIndex_8011e0dc++;
+    }
+
+    this.menuScroll_8011e0e4 = 0;
+    this.menuIndex_8011e0e0 = 0;
+    this.selectedMenuOptionRenderablePtr_800bdbe0.y_44 = this.getShopMenuYOffset(this.menuIndex_8011e0dc);
+  }
+
+  private void menuBuy4Escape() {
+    playSound(3);
+    this.menuState = MenuState.INIT_2;
+  }
+
+  private void menuBuy4Select() {
+    if(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00 == 0xff) {
+      playSound(40);
+    } else {
+      playSound(2);
+
+      final boolean hasSpace;
+      if(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00 < 0xc0) {
+        hasSpace = gameState_800babc8.equipmentCount_1e4.get() < 255;
+      } else {
+        hasSpace = gameState_800babc8.itemCount_1e6.get() < Config.inventorySize();
+      }
+
+      if(!hasSpace) {
+        menuStack.pushScreen(new MessageBoxScreen(Cannot_carry_anymore_8011c43c, 0, result -> {
+        }));
+      } else if(gameState_800babc8.gold_94.get() < this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].flags_02) {
+        menuStack.pushScreen(new MessageBoxScreen(Not_enough_money_8011c468, 0, result -> {
+        }));
+      } else if(this.shopType != 0) {
+        menuStack.pushScreen(new MessageBoxScreen(new LodString("Buy item?"), 2, result -> {
+          if(result == MessageBoxResult.YES) {
+            gameState_800babc8.gold_94.sub(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].flags_02);
+            giveItem(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00);
+          }
+        }));
+      } else {
+        this.charHighlight = allocateUiElement(0x83, 0x83, this.FUN_8010a818(this.equipCharIndex), 174);
+        FUN_80104b60(this.charHighlight);
+        this.menuState = MenuState.BUY_SELECT_CHAR_5;
+      }
+    }
+  }
+
+  private void menuBuy4NavigateUp() {
+    playSound(1);
+
+    if(this.menuIndex_8011e0e0 > 0) {
+      this.menuIndex_8011e0e0--;
+    } else if(this.menuScroll_8011e0e4 > 0) {
+      this.menuScroll_8011e0e4--;
+    }
+
+    this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = FUN_8010a808(this.menuIndex_8011e0e0);
+
+    if(this.shopType == 0) {
+      this.equipCharIndex = this.FUN_8010a864(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00);
+    }
+  }
+
+  private void menuBuy4NavigateDown() {
+    playSound(1);
+
+    if(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00 == 0xff) {
+      playSound(40);
+      return;
+    }
+
+    if(this.menuIndex_8011e0e0 < 5 && this.menuIndex_8011e0e0 < this.itemCount - 1) {
+      this.menuIndex_8011e0e0++;
+    } else if((this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0) < this.itemCount - 1) {
+      this.menuScroll_8011e0e4++;
+    }
+
+    this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = FUN_8010a808(this.menuIndex_8011e0e0);
+
+    if(this.shopType == 0) {
+      this.equipCharIndex = this.FUN_8010a864(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00);
+    }
+  }
+
+  private void menuSelectChar5Escape() {
+    playSound(3);
+    this.menuState = MenuState.BUY_4;
+    unloadRenderable(this.charHighlight);
+    this.charHighlight = null;
+  }
+
+  private void menuSelectChar5Select() {
+    menuStack.pushScreen(new MessageBoxScreen(new LodString("Buy item?"), 2, result -> {
+      if(result == MessageBoxResult.YES) {
+        gameState_800babc8.gold_94.sub(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].flags_02);
+
+        menuStack.pushScreen(new MessageBoxScreen(new LodString("Equip item?"), 2, result1 -> {
+          if(result1 == MessageBoxResult.YES && canEquip(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00, characterIndices_800bdbb8.get(this.equipCharIndex).get())) {
+            giveItem(equipItem(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00, characterIndices_800bdbb8.get(this.equipCharIndex).get()));
+          } else {
+            giveItem(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00);
           }
 
-          case GLFW_KEY_DOWN -> {
-            playSound(1);
+          this.menuState = MenuState.BUY_4;
+          unloadRenderable(this.charHighlight);
+          this.charHighlight = null;
+        }));
+      }
+    }));
+  }
 
-            final int itemCount;
-            if(this.shopType2 == 0) { // equipment
-              itemCount = gameState_800babc8.equipmentCount_1e4.get();
-            } else { // items
-              itemCount = gameState_800babc8.itemCount_1e6.get();
-            }
+  private void menuSelectChar5NavigateLeft() {
+    playSound(1);
 
-            if(this.menuIndex_8011e0e0 < 5) {
-              this.menuIndex_8011e0e0++;
-            } else if((this.menuIndex_8011e0e0 + this.menuScroll_8011e0e4) < itemCount - 1) {
-              this.menuScroll_8011e0e4++;
-            } else {
-              playSound(40);
-            }
+    if(this.equipCharIndex > 0) {
+      this.equipCharIndex--;
+    }
 
-            this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = FUN_8010a808(this.menuIndex_8011e0e0);
+    this.charHighlight.x_40 = this.FUN_8010a818(this.equipCharIndex);
+  }
+
+  private void menuSelectChar5NavigateRight() {
+    playSound(1);
+
+    if(this.equipCharIndex < characterCount_8011d7c4.get() - 1) {
+      this.equipCharIndex++;
+    }
+
+    this.charHighlight.x_40 = this.FUN_8010a818(this.equipCharIndex);
+  }
+
+  private void menuSell10Escape() {
+    playSound(3);
+    unloadRenderable(this.selectedMenuOptionRenderablePtr_800bdbe4);
+    this.menuState = MenuState.INIT_2;
+  }
+
+  private void menuSell10Select() {
+
+    final int scroll = this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0;
+    //TODO not sure if this condition is right
+    if(this.shopType2 != 0 && gameState_800babc8.items_2e9.get(scroll).get() == 0xffL || this.shopType2 == 0 && (gameState_800babc8.equipment_1e8.get(scroll).get() == 0xffL || itemCantBeDiscarded(gameState_800babc8.equipment_1e8.get(scroll).get()))) {
+      playSound(40);
+    } else {
+      playSound(2);
+
+      menuStack.pushScreen(new MessageBoxScreen(new LodString("Sell item?"), 2, result -> {
+        if(Objects.requireNonNull(result) == MessageBoxResult.YES) {
+          final int itemId;
+          final int v0;
+          if(this.shopType2 != 0) {
+            itemId = gameState_800babc8.items_2e9.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).get();
+            v0 = takeItem(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0);
+          } else {
+            itemId = gameState_800babc8.equipment_1e8.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).get();
+            v0 = takeEquipment(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0);
           }
 
-          case GLFW_KEY_ENTER, GLFW_KEY_S -> {
-            final int scroll = this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0;
-            //TODO not sure if this condition is right
-            if(this.shopType2 != 0 && gameState_800babc8.items_2e9.get(scroll).get() == 0xffL || this.shopType2 == 0 && (gameState_800babc8.equipment_1e8.get(scroll).get() == 0xffL || itemCantBeDiscarded(gameState_800babc8.equipment_1e8.get(scroll).get()))) {
-              playSound(40);
-            } else {
-              playSound(2);
-
-              menuStack.pushScreen(new MessageBoxScreen(new LodString("Sell item?"), 2, result -> {
-                if(Objects.requireNonNull(result) == MessageBoxResult.YES) {
-                  final int itemId;
-                  final int v0;
-                  if(this.shopType2 != 0) {
-                    itemId = gameState_800babc8.items_2e9.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).get();
-                    v0 = takeItem(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0);
-                  } else {
-                    itemId = gameState_800babc8.equipment_1e8.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).get();
-                    v0 = takeEquipment(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0);
-                  }
-
-                  if(v0 == 0) {
-                    addGold(itemPrices_80114310.get(itemId).get());
-                  }
-                }
-              }));
-            }
+          if(v0 == 0) {
+            addGold(itemPrices_80114310.get(itemId).get());
           }
+        }
+      }));
+    }
+  }
 
-          case GLFW_KEY_ESCAPE -> {
-            playSound(3);
-            unloadRenderable(this.selectedMenuOptionRenderablePtr_800bdbe4);
-            this.menuState = MenuState.INIT_2;
-          }
+  private void menuSell10NavigateUp() {
+    playSound(1);
+
+    if(this.menuIndex_8011e0e0 > 0) {
+      this.menuIndex_8011e0e0--;
+    } else if(this.menuScroll_8011e0e4 > 0) {
+      this.menuScroll_8011e0e4--;
+    }
+
+    this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = FUN_8010a808(this.menuIndex_8011e0e0);
+
+  }
+
+  private void menuSell10NavigateDown() {
+    playSound(1);
+
+    final int itemCount;
+    if(this.shopType2 == 0) { // equipment
+      itemCount = gameState_800babc8.equipmentCount_1e4.get();
+    } else { // items
+      itemCount = gameState_800babc8.itemCount_1e6.get();
+    }
+
+    if(this.menuIndex_8011e0e0 < 5) {
+      this.menuIndex_8011e0e0++;
+    } else if((this.menuIndex_8011e0e0 + this.menuScroll_8011e0e4) < itemCount - 1) {
+      this.menuScroll_8011e0e4++;
+    } else {
+      playSound(40);
+    }
+
+    this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = FUN_8010a808(this.menuIndex_8011e0e0);
+  }
+
+  @Override
+  public void pressedThisFrame(final InputKeyCode inputKeyCode) {
+    switch(this.menuState) {
+      case RENDER_3 -> {
+        if(inputKeyCode == InputKeyCode.DPAD_UP || inputKeyCode == InputKeyCode.JOYSTICK_LEFT_BUTTON_UP) {
+          this.menuMainShopRender3NavigateUp();
+        }
+        if(inputKeyCode == InputKeyCode.DPAD_DOWN || inputKeyCode == InputKeyCode.JOYSTICK_LEFT_BUTTON_DOWN) {
+          this.menuMainShopRender3NavigateDown();
+        }
+        if(inputKeyCode == InputKeyCode.BUTTON_EAST) {
+          this.menuMainShopRender3Escape();
+        }
+        if(inputKeyCode == InputKeyCode.BUTTON_SOUTH) {
+          this.menuMainShopRender3Select();
+        }
+      }
+
+      case BUY_4 -> {
+        if(inputKeyCode == InputKeyCode.DPAD_UP || inputKeyCode == InputKeyCode.JOYSTICK_LEFT_BUTTON_UP) {
+          this.menuBuy4NavigateUp();
+        }
+        if(inputKeyCode == InputKeyCode.DPAD_DOWN || inputKeyCode == InputKeyCode.JOYSTICK_LEFT_BUTTON_DOWN) {
+          this.menuBuy4NavigateDown();
+        }
+        if(inputKeyCode == InputKeyCode.BUTTON_EAST) {
+          this.menuBuy4Escape();
+        }
+        if(inputKeyCode == InputKeyCode.BUTTON_SOUTH) {
+          this.menuBuy4Select();
+        }
+      }
+
+      case BUY_SELECT_CHAR_5 -> {
+        if(inputKeyCode == InputKeyCode.DPAD_LEFT || inputKeyCode == InputKeyCode.JOYSTICK_LEFT_BUTTON_LEFT) {
+          this.menuSelectChar5NavigateLeft();
+        }
+        if(inputKeyCode == InputKeyCode.DPAD_RIGHT || inputKeyCode == InputKeyCode.JOYSTICK_LEFT_BUTTON_RIGHT) {
+          this.menuSelectChar5NavigateRight();
+        }
+        if(inputKeyCode == InputKeyCode.BUTTON_EAST) {
+          this.menuSelectChar5Escape();
+        }
+        if(inputKeyCode == InputKeyCode.BUTTON_SOUTH) {
+          this.menuSelectChar5Select();
+        }
+      }
+
+      case SELL_10 -> {
+        if(inputKeyCode == InputKeyCode.DPAD_UP || inputKeyCode == InputKeyCode.JOYSTICK_LEFT_BUTTON_UP) {
+          this.menuSell10NavigateUp();
+        }
+        if(inputKeyCode == InputKeyCode.DPAD_DOWN || inputKeyCode == InputKeyCode.JOYSTICK_LEFT_BUTTON_DOWN) {
+          this.menuSell10NavigateDown();
+        }
+        if(inputKeyCode == InputKeyCode.BUTTON_EAST) {
+          this.menuSell10Escape();
+        }
+        if(inputKeyCode == InputKeyCode.BUTTON_SOUTH) {
+          this.menuSell10Select();
         }
       }
     }
