@@ -163,44 +163,21 @@ public class SBtld {
     for(int i = 0; i < 8; i++) {
       final BattlePreloadedEntities.AdditionHitProperties hitIndex = activeAdditionHits.hits[i];
       final long additionHitRefCounter = mainAdditionHitsTablePtr + i * 0x10L;
-      hitIndex.hitProperty[ 0] = (short)MEMORY.ref(1, additionHitRefCounter).offset(0x0L).get();
-      hitIndex.hitProperty[ 1] = (short)MEMORY.ref(1, additionHitRefCounter).offset(0x1L).get();
-      hitIndex.hitProperty[ 2] = (short)MEMORY.ref(1, additionHitRefCounter).offset(0x2L).get();
-      hitIndex.hitProperty[ 3] = (short)MEMORY.ref(1, additionHitRefCounter).offset(0x3L).get();
-      hitIndex.hitProperty[ 4] = (short)MEMORY.ref(1, additionHitRefCounter).offset(0x4L).get();
-      hitIndex.hitProperty[ 5] = (short)MEMORY.ref(1, additionHitRefCounter).offset(0x5L).get();
-      hitIndex.hitProperty[ 6] = (short)MEMORY.ref(1, additionHitRefCounter).offset(0x6L).getSigned();
-      hitIndex.hitProperty[ 7] = (short)MEMORY.ref(1, additionHitRefCounter).offset(0x7L).getSigned();
-      hitIndex.hitProperty[ 8] = (short)MEMORY.ref(1, additionHitRefCounter).offset(0x8L).getSigned();
-      hitIndex.hitProperty[ 9] = (short)MEMORY.ref(1, additionHitRefCounter).offset(0x9L).get();
-      hitIndex.hitProperty[10] = (short)MEMORY.ref(1, additionHitRefCounter).offset(0xaL).get();
-      hitIndex.hitProperty[11] = (short)MEMORY.ref(1, additionHitRefCounter).offset(0xbL).get();
-      hitIndex.hitProperty[12] = (short)MEMORY.ref(1, additionHitRefCounter).offset(0xcL).get();
-      hitIndex.hitProperty[13] = (short)MEMORY.ref(1, additionHitRefCounter).offset(0xdL).get();
-      hitIndex.hitProperty[14] = (short)MEMORY.ref(1, additionHitRefCounter).offset(0xeL).get();
-      hitIndex.hitProperty[15] = (short)MEMORY.ref(1, additionHitRefCounter).offset(0xfL).get();
+
+      for(int j=0;j<16;j++) {
+        hitIndex.hitProperty[j] = (short)MEMORY.ref(1, additionHitRefCounter).offset(j).get();
+      }
     }
 
     final AdditionHitEvent event = EventManager.INSTANCE.postEvent(new AdditionHitEvent(activeAdditionHits));
+
     for(int i = 0; i < 8; i++) {
-      final BattlePreloadedEntities.AdditionHitProperties additionHitProperties = event.addition.hits[i];
+      final BattlePreloadedEntities.AdditionHitProperties hitIndex = event.addition.hits[i];
       final long additionHitRefCounter = mainAdditionHitsTablePtr + i * 0x10L;
-      MEMORY.ref(1, additionHitRefCounter).offset(0x0L).set(additionHitProperties.hitProperty[0]);
-      MEMORY.ref(1, additionHitRefCounter).offset(0x1L).set(additionHitProperties.hitProperty[1]);
-      MEMORY.ref(1, additionHitRefCounter).offset(0x2L).set(additionHitProperties.hitProperty[2]);
-      MEMORY.ref(1, additionHitRefCounter).offset(0x3L).set(additionHitProperties.hitProperty[3]);
-      MEMORY.ref(1, additionHitRefCounter).offset(0x4L).set(additionHitProperties.hitProperty[4]);
-      MEMORY.ref(1, additionHitRefCounter).offset(0x5L).set(additionHitProperties.hitProperty[5]);
-      MEMORY.ref(1, additionHitRefCounter).offset(0x6L).set(additionHitProperties.hitProperty[6]);
-      MEMORY.ref(1, additionHitRefCounter).offset(0x7L).set(additionHitProperties.hitProperty[7]);
-      MEMORY.ref(1, additionHitRefCounter).offset(0x8L).set(additionHitProperties.hitProperty[8]);
-      MEMORY.ref(1, additionHitRefCounter).offset(0x9L).set(additionHitProperties.hitProperty[9]);
-      MEMORY.ref(1, additionHitRefCounter).offset(0xaL).set(additionHitProperties.hitProperty[10]);
-      MEMORY.ref(1, additionHitRefCounter).offset(0xbL).set(additionHitProperties.hitProperty[11]);
-      MEMORY.ref(1, additionHitRefCounter).offset(0xcL).set(additionHitProperties.hitProperty[12]);
-      MEMORY.ref(1, additionHitRefCounter).offset(0xdL).set(additionHitProperties.hitProperty[13]);
-      MEMORY.ref(1, additionHitRefCounter).offset(0xeL).set(additionHitProperties.hitProperty[14]);
-      MEMORY.ref(1, additionHitRefCounter).offset(0xfL).set(additionHitProperties.hitProperty[15]);
+
+      for(int j=0;j<16;j++) {
+        MEMORY.ref(1, additionHitRefCounter).offset(j).set(hitIndex.hitProperty[j]);
+      }
     }
   }
 
