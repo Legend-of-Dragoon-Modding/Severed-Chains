@@ -4862,8 +4862,6 @@ public final class SEffe {
 
   @Method(0x80109b44L)
   public static void FUN_80109b44(final ScriptState<EffeScriptData18> state, final EffeScriptData18 data) {
-    long v1;
-
     data.ticksRemaining_00--;
 
     if(data.ticksRemaining_00 < 0) {
@@ -4872,40 +4870,24 @@ public final class SEffe {
     }
 
     //LAB_80109b7c
-    long t1 = data.ptr_0c;
-
     //LAB_80109b90
     for(int i = 0; i < data.count_08; i++) {
-      final long a1 = i * 0x10;
-      final long p10 = data.ptr_10 + a1;
-      final long p14 = data.ptr_14 + a1;
-      MEMORY.ref(4, p14).offset(0x0L).setu(MEMORY.ref(4, p10).offset(0x0L).get());
-      MEMORY.ref(4, p14).offset(0x4L).setu(MEMORY.ref(4, p10).offset(0x4L).get());
-      MEMORY.ref(4, p14).offset(0x8L).setu(MEMORY.ref(4, p10).offset(0x8L).get());
-      v1 = MEMORY.ref(4, p10).offset(0x0L).get();
-      v1 = v1 + (v1 * data._04 >> 8);
-      MEMORY.ref(4, p10).offset(0x0L).setu(v1);
-      v1 = MEMORY.ref(4, p10).offset(0x4L).get();
-      v1 = v1 + (v1 * data._04 >> 8);
-      MEMORY.ref(4, p10).offset(0x4L).setu(v1);
-      v1 = MEMORY.ref(4, p10).offset(0x8L).get();
-      v1 = v1 + (v1 * data._04 >> 8);
-      MEMORY.ref(4, p10).offset(0x8L).setu(v1);
-      MEMORY.ref(2, t1).offset(0x0L).setu(MEMORY.ref(4, p14).offset(0x0L).get() >> 8);
-      MEMORY.ref(2, t1).offset(0x2L).setu(MEMORY.ref(4, p14).offset(0x4L).get() >> 8);
-      MEMORY.ref(2, t1).offset(0x4L).setu(MEMORY.ref(4, p14).offset(0x8L).get() >> 8);
-      t1 = t1 + 0x8L;
+      final SVECTOR t1 = data.ptr_0c[i];
+      final VECTOR p10 = data.ptr_10[i];
+      final VECTOR p14 = data.ptr_14[i];
+      p14.set(p10);
+      p10.setX(p10.getX() + (p10.getX() * data._04 >> 8));
+      p10.setY(p10.getY() + (p10.getY() * data._04 >> 8));
+      p10.setZ(p10.getZ() + (p10.getZ() * data._04 >> 8));
+      t1.setX((short)(p14.getX() >> 8));
+      t1.setY((short)(p14.getY() >> 8));
+      t1.setZ((short)(p14.getZ() >> 8));
     }
 
     //LAB_80109ce0
   }
 
-  @Method(0x80109cf0L)
-  public static void FUN_80109cf0(final ScriptState<EffeScriptData18> state, final EffeScriptData18 data) {
-    free(data.ptr_10);
-    free(data.ptr_14);
-  }
-
+  /** Kubila demon frog */
   @Method(0x80109d30L)
   public static FlowControl FUN_80109d30(final RunningScript<?> script) {
     final int s5 = script.params_20[2].get();
@@ -4913,45 +4895,34 @@ public final class SEffe {
     final ScriptState<EffeScriptData18> state = SCRIPTS.allocateScriptState(new EffeScriptData18());
     state.loadScriptFile(doNothingScript_8004f650);
     state.setTicker(SEffe::FUN_80109b44);
-    state.setDestructor(SEffe::FUN_80109cf0);
-    long v0 = ((MemoryRef)((EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00).effect_44).getAddress(); //TODO
-    long v1 = MEMORY.ref(4, v0).offset(0x8L).get();
-    v0 = ((MemoryRef)((EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00).effect_44).getAddress(); //TODO
-    long s2_0 = MEMORY.ref(4, v1).offset(0x0L).get();
-    final int count = (int)MEMORY.ref(4, v1).offset(0x4L).get();
+    final GuardHealEffect14 effect1 = ((GuardHealEffect14)((EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00).effect_44);
+    final GuardHealEffect14 effect2 = ((GuardHealEffect14)((EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00).effect_44);
+    final TmdObjTable1c tmd1 = effect1.tmd_08;
+    final TmdObjTable1c tmd2 = effect2.tmd_08;
     final EffeScriptData18 s3 = state.innerStruct_00;
     s3.ticksRemaining_00 = s5;
     s3._04 = s4;
-    s3.count_08 = count;
-    s3.ptr_0c = s2_0;
-    s3.ptr_10 = mallocTail(count * 0x10);
-    s3.ptr_14 = mallocTail(count * 0x10);
-    v1 = MEMORY.ref(4, v0).offset(0x8L).get();
-    final long s6 = MEMORY.ref(4, v1).offset(0x0L).get();
+    s3.count_08 = tmd1.n_vert_04;
+    s3.ptr_0c = tmd1.vert_top_00;
+    s3.ptr_10 = new VECTOR[tmd1.n_vert_04];
+    s3.ptr_14 = new VECTOR[tmd1.n_vert_04];
     _8011a030.setu(0x1L);
 
     //LAB_80109e78
-    for(int i = 0; i < count; i++) {
-      final long a0_0 = i * 0x10L;
-      v1 = s3.ptr_14 + a0_0;
-      MEMORY.ref(4, v1).offset(0x0L).setu(MEMORY.ref(2, s2_0).offset(0x0L).getSigned() * 0x100);
-      MEMORY.ref(4, v1).offset(0x4L).setu(MEMORY.ref(2, s2_0).offset(0x2L).getSigned() * 0x100);
-      MEMORY.ref(4, v1).offset(0x8L).setu(MEMORY.ref(2, s2_0).offset(0x4L).getSigned() * 0x100);
-      s2_0 = s2_0 + 0x8L;
+    for(int i = 0; i < tmd1.n_vert_04; i++) {
+      final SVECTOR vertex = tmd1.vert_top_00[i];
+      s3.ptr_14[i].set(vertex).shl(8);
     }
 
     //LAB_80109ecc
-    s2_0 = s6;
-
     //LAB_80109ee4
     for(int i = 0; i < s3.count_08; i++) {
-      final int a0_0 = i * 0x10;
-      final long v0_0 = s3.ptr_14 + a0_0;
-      final long v0_1 = s3.ptr_10 + a0_0;
-      MEMORY.ref(4, v0_1).offset(0x0L).setu((MEMORY.ref(2, s2_0).offset(0x0L).getSigned() * 0x100 - MEMORY.ref(4, v0_0).offset(0x0L).get()) / s5);
-      MEMORY.ref(4, v0_1).offset(0x4L).setu((MEMORY.ref(2, s2_0).offset(0x2L).getSigned() * 0x100 - MEMORY.ref(4, v0_0).offset(0x4L).get()) / s5);
-      MEMORY.ref(4, v0_1).offset(0x8L).setu((MEMORY.ref(2, s2_0).offset(0x4L).getSigned() * 0x100 - MEMORY.ref(4, v0_0).offset(0x8L).get()) / s5);
-      s2_0 = s2_0 + 0x8L;
+      final SVECTOR vertex = tmd2.vert_top_00[i];
+      final VECTOR v0_0 = s3.ptr_14[i];
+      final VECTOR v0_1 = s3.ptr_10[i];
+      v0_1.setX(((vertex.getX() << 8) - v0_0.getX()) / s5);
+      v0_1.setY(((vertex.getY() << 8) - v0_0.getY()) / s5);
+      v0_1.setZ(((vertex.getZ() << 8) - v0_0.getZ()) / s5);
     }
 
     //LAB_80109f90
