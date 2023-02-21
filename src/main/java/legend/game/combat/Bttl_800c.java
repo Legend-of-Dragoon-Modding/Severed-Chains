@@ -2677,14 +2677,14 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cb9f0L)
-  public static FlowControl FUN_800cb9f0(final RunningScript<?> script) {
+  public static FlowControl scriptPauseAnimation(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     bobj.model_148.animationState_9c = 2;
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800cba28L)
-  public static FlowControl FUN_800cba28(final RunningScript<?> script) {
+  public static FlowControl scriptResumeAnimation(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     bobj.model_148.animationState_9c = 1;
     return FlowControl.CONTINUE;
@@ -2704,9 +2704,9 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cbabcL)
-  public static FlowControl FUN_800cbabc(final RunningScript<?> script) {
+  public static FlowControl scriptAnimationHasFinished(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    script.params_20[1].set(bobj.model_148.remainingFrames_9e < 1 ? 1 : 0);
+    script.params_20[1].set(bobj.model_148.remainingFrames_9e > 0 ? 0 : 1);
     return FlowControl.CONTINUE;
   }
 

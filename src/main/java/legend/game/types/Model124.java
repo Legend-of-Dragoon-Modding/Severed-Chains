@@ -30,6 +30,8 @@ public class Model124 {
   /**
    * Union with {@link #partTransforms_90}
    * <ul>
+   *   <li>-1 - SAF</li>
+   *   <li>0 - CMB</li>
    *   <li>1 - LMB</li>
    *   <li>2 - CMB</li>
    * </ul>
@@ -42,7 +44,14 @@ public class Model124 {
   public int animCount_98;
   /** short */
   public int totalFrames_9a;
-  /** ubyte */
+  /**
+   * <ol start="0">
+   *   <li>Init/reset - start animation from beginning and transition to state 1</li>
+   *   <li>Playing</li>
+   *   <li>Paused</li>
+   * </ol>
+   *
+   * ubyte */
   public int animationState_9c;
   /** ubyte */
   public int colourMap_9d;
@@ -93,12 +102,12 @@ public class Model124 {
   }
 
   public static class CmbAnim {
-    public int _00;
+    public int animationTicks_00;
     public Cmb cmb_04;
     public ModelPartTransforms0c[] transforms_08;
 
     public void set(final CmbAnim other) {
-      this._00 = other._00;
+      this.animationTicks_00 = other.animationTicks_00;
       this.cmb_04 = other.cmb_04;
       this.transforms_08 = other.transforms_08;
     }

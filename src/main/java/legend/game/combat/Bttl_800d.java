@@ -4675,11 +4675,12 @@ public final class Bttl_800d {
 
     //LAB_800ddd9c
     final Model124.CmbAnim cmbAnim = model.cmbAnim_08;
-    final Cmb cmb = cmbAnim.cmb_04;
-    final int a2 = cmbAnim._00;
-    if(animationTicks == a2) {
+
+    if(animationTicks == cmbAnim.animationTicks_00) {
       return model.animationState_9c;
     }
+
+    final Cmb cmb = cmbAnim.cmb_04;
 
     // Note: these two variables _should_ be the same
     final int modelPartCount = cmb.modelPartCount_0c;
@@ -4694,12 +4695,12 @@ public final class Bttl_800d {
       final int frame = animationTicks % model.totalFrames_9a;
       isInterpolationFrame = (animationTicks & 0x1) << 11; // Dunno why this is shifted, makes no difference
       a1_0 = frame >>> 1;
-      t0 = a2 % model.totalFrames_9a >> 1;
+      t0 = cmbAnim.animationTicks_00 % model.totalFrames_9a >> 1;
       model.remainingFrames_9e = model.totalFrames_9a - frame - 1;
     } else {
       isInterpolationFrame = 0;
       a1_0 = (animationTicks << 1) % model.totalFrames_9a >>> 1;
-      t0 = (a2 << 1) % model.totalFrames_9a >> 1;
+      t0 = (cmbAnim.animationTicks_00 << 1) % model.totalFrames_9a >> 1;
       model.remainingFrames_9e = (model.totalFrames_9a >> 1) - a1_0 - 1;
     }
 
@@ -4715,7 +4716,7 @@ public final class Bttl_800d {
       }
 
       //LAB_800ddee0
-      cmbAnim._00 = 0;
+      cmbAnim.animationTicks_00 = 0;
       t0 = 0;
     }
 
@@ -4783,7 +4784,7 @@ public final class Bttl_800d {
     }
 
     //LAB_800de1d0
-    cmbAnim._00 = animationTicks;
+    cmbAnim.animationTicks_00 = animationTicks;
 
     //LAB_800de1e0
     return model.remainingFrames_9e;
@@ -4815,7 +4816,7 @@ public final class Bttl_800d {
     }
 
     //LAB_800de2c8
-    anim._00 = 1;
+    anim.animationTicks_00 = 1;
     applyCmbAnimation(model, 0);
   }
 

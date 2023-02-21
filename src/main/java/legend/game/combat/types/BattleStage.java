@@ -23,11 +23,11 @@ public class BattleStage {
   /** short */
   public int partCount_5dc;
   /** short */
-  public int _5de;
+  public int totalFrames_5de;
   /** short */
-  public int _5e0;
+  public int animationState_5e0;
   /** short */
-  public int _5e2;
+  public int remainingFrames_5e2;
   public int _5e4;
   /** short */
   public int z_5e8;

@@ -238,10 +238,10 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[141] = Bttl_800c::FUN_800cb764;
     scriptSubFunctions_8004e29c[142] = Bttl_800c::FUN_800cb76c;
     scriptSubFunctions_8004e29c[143] = Bttl_800c::FUN_800cb9b0;
-    scriptSubFunctions_8004e29c[144] = Bttl_800c::FUN_800cb9f0;
-    scriptSubFunctions_8004e29c[145] = Bttl_800c::FUN_800cba28;
+    scriptSubFunctions_8004e29c[144] = Bttl_800c::scriptPauseAnimation;
+    scriptSubFunctions_8004e29c[145] = Bttl_800c::scriptResumeAnimation;
     scriptSubFunctions_8004e29c[146] = Bttl_800c::FUN_800cba60;
-    scriptSubFunctions_8004e29c[147] = Bttl_800c::FUN_800cbabc;
+    scriptSubFunctions_8004e29c[147] = Bttl_800c::scriptAnimationHasFinished;
     scriptSubFunctions_8004e29c[148] = Bttl_800c::FUN_800cbb00;
     scriptSubFunctions_8004e29c[149] = Bttl_800c::FUN_800cbc14;
     scriptSubFunctions_8004e29c[150] = Bttl_800c::FUN_800cbde0;

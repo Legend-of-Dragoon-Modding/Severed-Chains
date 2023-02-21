@@ -2172,16 +2172,16 @@ public final class Bttl_800e {
     model.animType_90 = -1;
     model.partTransforms_90 = a1.rotTrans_5d4;
     model.partTransforms_94 = a1.rotTrans_5d8;
-    LOGGER.info("Initializing (other) animation of %s (%d remaining)", model, model.partTransforms_94.length);
+    LOGGER.info("Initializing battle stage animation of %s (%d remaining)", model, model.partTransforms_94.length);
     model.animCount_98 = a1.partCount_5dc;
-    model.totalFrames_9a = a1._5de;
-    model.animationState_9c = a1._5e0;
+    model.totalFrames_9a = a1.totalFrames_5de;
+    model.animationState_9c = a1.animationState_5e0;
     model.colourMap_9d = 0;
     model.zOffset_a0 = 0x200;
     model.ub_a2 = 0;
     model.ub_a3 = 0;
     model.smallerStructPtr_a4 = null;
-    model.remainingFrames_9e = a1._5e2;
+    model.remainingFrames_9e = a1.remainingFrames_5e2;
     model.ptr_a8 = a1._5ec;
 
     //LAB_800e9c0c
@@ -3214,11 +3214,11 @@ public final class Bttl_800e {
     stage.rotTrans_5d4 = anim.partTransforms_10;
     stage.rotTrans_5d8 = anim.partTransforms_10;
     stage.partCount_5dc = anim.modelPartCount_0c;
-    stage._5de = anim.totalFrames_0e;
-    stage._5e0 = 0;
+    stage.totalFrames_5de = anim.totalFrames_0e;
+    stage.animationState_5e0 = 0;
     applyStagePartAnimations(stage);
-    stage._5e0 = 1;
-    stage._5e2 = stage._5de;
+    stage.animationState_5e0 = 1;
+    stage.remainingFrames_5e2 = stage.totalFrames_5de;
     stage.rotTrans_5d8 = stage.rotTrans_5d4;
   }
 
