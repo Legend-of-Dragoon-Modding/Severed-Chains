@@ -3,7 +3,6 @@ package legend.game.combat;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import legend.core.Config;
-import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandQuad;
@@ -2390,7 +2389,8 @@ public final class Bttl_800c {
   public static void FUN_800cafb4(final ScriptState<BattleObject27c> state, final BattleObject27c data) {
     if((state.storage_44[7] & 0x211) == 0) {
       applyModelRotationAndScale(data.model_148);
-      if((state.storage_44[7] & 0x80) == 0 || data.model_148.s_9e != 0) {
+
+      if((state.storage_44[7] & 0x80) == 0 || data.model_148.remainingFrames_9e != 0) {
         //LAB_800cb004
         animateModel(data.model_148);
       }
@@ -2613,7 +2613,7 @@ public final class Bttl_800c {
         FUN_800ca194(s0.combatantIndex_26c, s0.animIndex_26e);
         FUN_800ca100(s0.model_148, s0.combatantIndex_26c, animIndex);
         s2.storage_44[7] &= 0xffff_ff6f;
-        s0.model_148.ub_9c = 1;
+        s0.model_148.animationState_9c = 1;
         s0.animIndex_26e = animIndex;
         s0.animIndex_270 = -1;
         return FlowControl.CONTINUE;
@@ -2648,7 +2648,7 @@ public final class Bttl_800c {
         FUN_800ca194(s0.combatantIndex_26c, s0.animIndex_26e);
         FUN_800ca100(s0.model_148, s0.combatantIndex_26c, newAnim);
         s2.storage_44[7] &= 0xffff_ff6f;
-        s0.model_148.ub_9c = 1;
+        s0.model_148.animationState_9c = 1;
         s0.animIndex_26e = newAnim;
         s0.animIndex_270 = -1;
         return FlowControl.CONTINUE;
@@ -2679,14 +2679,14 @@ public final class Bttl_800c {
   @Method(0x800cb9f0L)
   public static FlowControl FUN_800cb9f0(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    bobj.model_148.ub_9c = 2;
+    bobj.model_148.animationState_9c = 2;
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800cba28L)
   public static FlowControl FUN_800cba28(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    bobj.model_148.ub_9c = 1;
+    bobj.model_148.animationState_9c = 1;
     return FlowControl.CONTINUE;
   }
 
@@ -2706,7 +2706,7 @@ public final class Bttl_800c {
   @Method(0x800cbabcL)
   public static FlowControl FUN_800cbabc(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    script.params_20[1].set(bobj.model_148.s_9e < 1 ? 1 : 0);
+    script.params_20[1].set(bobj.model_148.remainingFrames_9e < 1 ? 1 : 0);
     return FlowControl.CONTINUE;
   }
 

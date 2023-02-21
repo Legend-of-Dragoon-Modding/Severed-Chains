@@ -2172,15 +2172,16 @@ public final class Bttl_800e {
     model.animType_90 = -1;
     model.partTransforms_90 = a1.rotTrans_5d4;
     model.partTransforms_94 = a1.rotTrans_5d8;
+    LOGGER.info("Initializing (other) animation of %s (%d remaining)", model, model.partTransforms_94.length);
     model.animCount_98 = a1.partCount_5dc;
-    model.s_9a = a1._5de;
-    model.ub_9c = a1._5e0;
+    model.totalFrames_9a = a1._5de;
+    model.animationState_9c = a1._5e0;
     model.colourMap_9d = 0;
     model.zOffset_a0 = 0x200;
     model.ub_a2 = 0;
     model.ub_a3 = 0;
     model.smallerStructPtr_a4 = null;
-    model.s_9e = a1._5e2;
+    model.remainingFrames_9e = a1._5e2;
     model.ptr_a8 = a1._5ec;
 
     //LAB_800e9c0c
@@ -2389,7 +2390,7 @@ public final class Bttl_800e {
       script.params_20[1].set(0);
     } else {
       //LAB_800ea3cc
-      script.params_20[1].set((manager._10._24 + 2) / effect.model_134.s_9a);
+      script.params_20[1].set((manager._10._24 + 2) / effect.model_134.totalFrames_9a);
     }
 
     //LAB_800ea3e4
@@ -3213,7 +3214,7 @@ public final class Bttl_800e {
     stage.rotTrans_5d4 = anim.partTransforms_10;
     stage.rotTrans_5d8 = anim.partTransforms_10;
     stage.partCount_5dc = anim.modelPartCount_0c;
-    stage._5de = anim.halfKeyframes_0e;
+    stage._5de = anim.totalFrames_0e;
     stage._5e0 = 0;
     applyStagePartAnimations(stage);
     stage._5e0 = 1;

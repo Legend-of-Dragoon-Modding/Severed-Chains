@@ -432,39 +432,40 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80020bf0
     for(int i = 0; i < 7; i++) {
       if(model.aub_ec[i] != 0) {
-        FUN_80022018(model, i);
+        animateModelTextures(model, i);
       }
 
       //LAB_80020c08
     }
 
-    if(model.ub_9c == 2) {
+    if(model.animationState_9c == 2) {
       return;
     }
 
-    if(model.s_9e == 0) {
-      model.ub_9c = 0;
+    if(model.remainingFrames_9e == 0) {
+      model.animationState_9c = 0;
     }
 
     //LAB_80020c3c
-    if(model.ub_9c == 0) {
+    if(model.animationState_9c == 0) {
       if(model.ub_a2 == 0) {
-        model.s_9e = model.s_9a;
+        model.remainingFrames_9e = model.totalFrames_9a;
       } else {
         //LAB_80020c68
-        model.s_9e = model.s_9a / 2;
+        model.remainingFrames_9e = model.totalFrames_9a / 2;
       }
 
       //LAB_80020c7c
-      model.ub_9c++;
+      model.animationState_9c = 1;
+      LOGGER.info("Resetting animations for %s (%d remaining)", model, model.partTransforms_94.length);
       model.partTransforms_94 = model.partTransforms_90;
     }
 
     //LAB_80020c90
     final ModelPartTransforms0c[] transforms = model.partTransforms_94;
 
-    if((model.s_9e & 0x1) == 0 && model.ub_a2 == 0) {
-      if(model.ub_a3 == 0) {
+    if((model.remainingFrames_9e & 0x1) == 0 && model.ub_a2 == 0) { // Interpolation frame (only applies to some animations in combat?)
+      if(model.ub_a3 == 0) { // Only set to 1 sometimes on submaps?
         //LAB_80020ce0
         for(int i = 0; i < model.tmdNobj_ca; i++) {
           final GsCOORDINATE2 coord2 = model.dobj2ArrPtr_00[i].coord2_04;
@@ -512,11 +513,12 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       //LAB_80020e94
+      LOGGER.info("Advancing animation of %s by %d (%d remaining)", model, model.tmdNobj_ca, transforms.length - model.tmdNobj_ca);
       model.partTransforms_94 = Arrays.copyOfRange(transforms, model.tmdNobj_ca, transforms.length);
     }
 
     //LAB_80020e98
-    model.s_9e--;
+    model.remainingFrames_9e--;
 
     //LAB_80020ea8
   }
@@ -679,15 +681,16 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80021390
+    LOGGER.info("Advancing animation of %s by %d (%d remaining)", a0, count, transforms.length - count);
     a0.partTransforms_94 = Arrays.copyOfRange(transforms, count, transforms.length);
   }
 
   @Method(0x800213c4L)
-  public static void FUN_800213c4(final Model124 a0) {
+  public static void applyInterpolationFrame(final Model124 model) {
     //LAB_80021404
-    for(int i = 0; i < a0.tmdNobj_ca; i++) {
-      final ModelPartTransforms0c transforms = a0.partTransforms_94[i];
-      final GsCOORDINATE2 coord2 = a0.dobj2ArrPtr_00[i].coord2_04;
+    for(int i = 0; i < model.tmdNobj_ca; i++) {
+      final ModelPartTransforms0c transforms = model.partTransforms_94[i];
+      final GsCOORDINATE2 coord2 = model.dobj2ArrPtr_00[i].coord2_04;
       final MATRIX coord = coord2.coord;
       final GsCOORD2PARAM params = coord2.param;
       RotMatrix_80040010(params.rotate, coord);
@@ -698,7 +701,8 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80021490
-    a0.partTransforms_94 = Arrays.copyOfRange(a0.partTransforms_94, a0.tmdNobj_ca, a0.partTransforms_94.length);
+    LOGGER.info("Advancing animation of %s by %d (%d remaining)", model, model.tmdNobj_ca, model.partTransforms_94.length - model.tmdNobj_ca);
+    model.partTransforms_94 = Arrays.copyOfRange(model.partTransforms_94, model.tmdNobj_ca, model.partTransforms_94.length);
   }
 
   @Method(0x800214bcL)
@@ -725,21 +729,22 @@ public final class Scus94491BpeSegment_8002 {
     model.animType_90 = -1;
     model.partTransforms_90 = tmdAnimFile.partTransforms_10;
     model.partTransforms_94 = tmdAnimFile.partTransforms_10;
+    LOGGER.info("Initializing animation of %s (%d remaining)", model, model.partTransforms_94.length);
     model.animCount_98 = tmdAnimFile.modelPartCount_0c;
-    model.s_9a = tmdAnimFile.halfKeyframes_0e;
-    model.ub_9c = 0;
+    model.totalFrames_9a = tmdAnimFile.totalFrames_0e;
+    model.animationState_9c = 0;
 
     applyModelPartTransforms(model);
 
     if(model.ub_a2 == 0) {
-      model.s_9e = model.s_9a;
+      model.remainingFrames_9e = model.totalFrames_9a;
     } else {
       //LAB_800215e8
-      model.s_9e = model.s_9a / 2;
+      model.remainingFrames_9e = model.totalFrames_9a / 2;
     }
 
     //LAB_80021608
-    model.ub_9c = 1;
+    model.animationState_9c = 1;
     model.partTransforms_94 = model.partTransforms_90;
   }
 
@@ -1073,7 +1078,7 @@ public final class Scus94491BpeSegment_8002 {
    * This method animates the fog in the first cutscene with Rose/Feyrbrand
    */
   @Method(0x80022018L)
-  public static void FUN_80022018(final Model124 a0, final int index) {
+  public static void animateModelTextures(final Model124 a0, final int index) {
     final RECT rect = new RECT();
 
     if(a0.ptrs_d0[index] == null) {

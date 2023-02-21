@@ -48,6 +48,8 @@ import legend.game.types.Model124;
 import legend.game.types.ModelPartTransforms0c;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Arrays;
 
@@ -63,10 +65,10 @@ import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
-import static legend.game.Scus94491BpeSegment_8002.FUN_800213c4;
+import static legend.game.Scus94491BpeSegment_8002.applyInterpolationFrame;
 import static legend.game.Scus94491BpeSegment_8002.adjustModelUvs;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021724;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80022018;
+import static legend.game.Scus94491BpeSegment_8002.animateModelTextures;
 import static legend.game.Scus94491BpeSegment_8002.SetGeomOffset;
 import static legend.game.Scus94491BpeSegment_8002.SetRotMatrix;
 import static legend.game.Scus94491BpeSegment_8002.SetTransMatrix;
@@ -156,6 +158,8 @@ import static legend.game.combat.Bttl_800e.allocateEffectManager;
 
 public final class Bttl_800d {
   private Bttl_800d() { }
+
+  private static final Logger LOGGER = LogManager.getFormatterLogger(Bttl_800d.class);
 
   @Method(0x800d0094L)
   public static void FUN_800d0094(final int scriptIndex, final int animIndex, final boolean clearBit) {
@@ -4406,85 +4410,88 @@ public final class Bttl_800d {
   }
 
   @Method(0x800dd4ccL)
-  public static int applyStandardAnimation(final Model124 a0, final int a1) {
-    if(a0.ub_9c == 2) {
+  public static int applyStandardAnimation(final Model124 model, final int animationTicks) {
+    if(model.animationState_9c == 2) {
       return 2;
     }
 
     //LAB_800dd4fc
-    final int v0;
-    final int s2;
-    if(a0.ub_a2 != 0) {
-      s2 = a1 % ((short)a0.s_9a / 2);
-      a0.partTransforms_94 = Arrays.copyOfRange(a0.partTransforms_90, a0.animCount_98 * s2, a0.partTransforms_90.length);
-      applyModelPartTransforms(a0);
-      v0 = (short)a0.s_9a >> 1;
-    } else {
+    final int totalFrames;
+    final int frame;
+    if(model.ub_a2 == 0) {
       //LAB_800dd568
-      s2 = a1 % a0.s_9a;
-      a0.partTransforms_94 = Arrays.copyOfRange(a0.partTransforms_90, a0.animCount_98 * s2 / 2, a0.partTransforms_90.length);
-      applyModelPartTransforms(a0);
+      frame = animationTicks % model.totalFrames_9a;
+      LOGGER.info("Advancing animation of %s by %d (%d remaining)", model, model.animCount_98 * frame / 2, model.partTransforms_90.length - model.animCount_98 * frame / 2);
+      model.partTransforms_94 = Arrays.copyOfRange(model.partTransforms_90, model.animCount_98 * frame / 2, model.partTransforms_90.length);
+      applyModelPartTransforms(model);
 
-      if((s2 & 0x1) != 0 && s2 != a0.s_9a - 1 && a0.ub_a3 == 0) {
-        final ModelPartTransforms0c[] original = a0.partTransforms_94;
-        FUN_800213c4(a0);
-        a0.partTransforms_94 = original;
+      if((frame & 0x1) != 0 && frame != model.totalFrames_9a - 1 && model.ub_a3 == 0) { // Interpolation frame
+        final ModelPartTransforms0c[] original = model.partTransforms_94;
+        applyInterpolationFrame(model);
+        LOGGER.info("Rewinding animation for %s", model);
+        model.partTransforms_94 = original;
       }
 
       //LAB_800dd5ec
-      v0 = a0.s_9a;
+      totalFrames = model.totalFrames_9a;
+    } else {
+      frame = animationTicks % (model.totalFrames_9a / 2);
+      LOGGER.info("Advancing animation of %s by %d (%d remaining)", model, model.animCount_98 * frame, model.partTransforms_90.length - model.animCount_98 * frame);
+      model.partTransforms_94 = Arrays.copyOfRange(model.partTransforms_90, model.animCount_98 * frame, model.partTransforms_90.length);
+      applyModelPartTransforms(model);
+      totalFrames = (short)model.totalFrames_9a >> 1;
     }
 
     //LAB_800dd5f0
-    a0.s_9e = v0 - s2 - 1;
+    model.remainingFrames_9e = totalFrames - frame - 1;
 
-    if(a0.s_9e == 0) {
-      a0.ub_9c = 0;
+    if(model.remainingFrames_9e == 0) {
+      model.animationState_9c = 0;
     } else {
       //LAB_800dd618
-      a0.ub_9c = 1;
+      model.animationState_9c = 1;
     }
 
     //LAB_800dd61c
     //LAB_800dd620
-    return a0.s_9e;
+    return model.remainingFrames_9e;
   }
 
   @Method(0x800dd638L)
-  public static int applyLmbAnimation(final Model124 a0, final int a1) {
-    final int s6;
-    if(a0.ub_9c == 2) {
+  public static int applyLmbAnimation(final Model124 model, final int animationTicks) {
+    if(model.animationState_9c == 2) {
       return 2;
     }
 
     //LAB_800dd680
-    final int count = Math.min(a0.count_c8, a0.animCount_98);
+    final int count = Math.min(model.count_c8, model.animCount_98);
 
     //LAB_800dd69c
-    final LmbType0 lmb = (LmbType0)a0.lmbAnim_08.lmb_00;
+    final LmbType0 lmb = (LmbType0)model.lmbAnim_08.lmb_00;
 
     final int a0_0;
-    final int v1;
-    final int v0;
-    if(a0.ub_a2 == 0) {
+    final int frame;
+    final int remainingFrames;
+    final int isInterpolationFrame;
+    if(model.ub_a2 == 0) {
       //LAB_800dd6dc
-      v1 = a1 % a0.s_9a;
-      s6 = (a1 & 0x1) << 11;
-      a0_0 = v1 >>> 1;
-      v0 = a0.s_9a - v1;
+      frame = animationTicks % model.totalFrames_9a;
+      isInterpolationFrame = (animationTicks & 0x1) << 11; // Dunno why this is shifted, makes no difference
+      a0_0 = frame >>> 1;
+      remainingFrames = model.totalFrames_9a - frame;
     } else {
-      s6 = 0;
-      a0_0 = (a1 << 1) % a0.s_9a >>> 1;
-      v0 = (a0.s_9a >> 1) - a0_0;
+      isInterpolationFrame = 0;
+      a0_0 = (animationTicks << 1) % model.totalFrames_9a >>> 1;
+      remainingFrames = (model.totalFrames_9a >> 1) - a0_0;
     }
 
     //LAB_800dd700
-    a0.s_9e = v0 - 1;
+    model.remainingFrames_9e = remainingFrames - 1;
 
     //LAB_800dd720
     for(int i = 0; i < count; i++) {
-      LmbTransforms14 transforms = lmb._08[i]._08[a0_0];
-      final MATRIX matrix = a0.dobj2ArrPtr_00[i].coord2_04.coord;
+      final LmbTransforms14 transforms = lmb._08[i]._08[a0_0];
+      final MATRIX matrix = model.dobj2ArrPtr_00[i].coord2_04.coord;
 
       final VECTOR trans = new VECTOR();
       final SVECTOR rot = new SVECTOR();
@@ -4493,16 +4500,21 @@ public final class Bttl_800d {
       rot.set(transforms.rot_0c);
       scale.set(transforms.scale_00);
 
-      if(s6 != 0) {
-        if(a1 == a0.s_9a - 1) {
-          transforms = lmb._08[i]._08[0];
+      if(isInterpolationFrame != 0) { // Interpolation frame
+        final LmbTransforms14 nextFrame;
+        if(animationTicks == model.totalFrames_9a - 1) {
+          nextFrame = lmb._08[i]._08[0]; // Wrap around to frame 0
         } else {
           //LAB_800dd7cc
-          transforms = lmb._08[i]._08[a0_0 + 1];
+          nextFrame = lmb._08[i]._08[a0_0 + 1];
         }
 
         //LAB_800dd7d0
-        trans.add(transforms.trans_06).div(2);
+        trans.set(
+          (trans.getX() + nextFrame.trans_06.getX()) / 2,
+          (trans.getY() + nextFrame.trans_06.getY()) / 2,
+          (trans.getZ() + nextFrame.trans_06.getZ()) / 2
+        );
       }
 
       //LAB_800dd818
@@ -4512,16 +4524,16 @@ public final class Bttl_800d {
     }
 
     //LAB_800dd84c
-    if(a0.s_9e == 0) {
-      a0.ub_9c = 0;
+    if(model.remainingFrames_9e == 0) {
+      model.animationState_9c = 0;
     } else {
       //LAB_800dd864
-      a0.ub_9c = 1;
+      model.animationState_9c = 1;
     }
 
     //LAB_800dd868
     //LAB_800dd86c
-    return a0.s_9e;
+    return model.remainingFrames_9e;
   }
 
   @Method(0x800dd89cL)
@@ -4575,7 +4587,7 @@ public final class Bttl_800d {
     //LAB_800dda58
     for(int i = 0; i < 7; i++) {
       if(model.aub_ec[i] != 0) {
-        FUN_80022018(model, i);
+        animateModelTextures(model, i);
       }
 
       //LAB_800dda70
@@ -4620,7 +4632,7 @@ public final class Bttl_800d {
 
     //LAB_800ddc0c
     for(int i = 0; i < count; i++) {
-      if((tmd.header.flags & 0x2) != 0) {
+      if((tmd.header.flags & 0x2) != 0) { // CTMD, no longer used
         model.dobj2ArrPtr_00[i].tmd_08 = tmd.objTable[i];
       } else {
         final GsDOBJ2 dobj2 = new GsDOBJ2();
@@ -4656,39 +4668,39 @@ public final class Bttl_800d {
   }
 
   @Method(0x800ddd3cL)
-  public static int applyCmbAnimation(final Model124 a0, final int a1) {
-    if(a0.ub_9c == 2) {
+  public static int applyCmbAnimation(final Model124 model, final int animationTicks) {
+    if(model.animationState_9c == 2) {
       return 2;
     }
 
     //LAB_800ddd9c
-    final Model124.CmbAnim cmbAnim = a0.cmbAnim_08;
+    final Model124.CmbAnim cmbAnim = model.cmbAnim_08;
     final Cmb cmb = cmbAnim.cmb_04;
     final int a2 = cmbAnim._00;
-    if(a1 == a2) {
-      return a0.ub_9c;
+    if(animationTicks == a2) {
+      return model.animationState_9c;
     }
 
     // Note: these two variables _should_ be the same
     final int modelPartCount = cmb.modelPartCount_0c;
-    final int count = Math.min(a0.count_c8, a0.animCount_98);
+    final int count = Math.min(model.count_c8, model.animCount_98);
 
     //LAB_800dddc4
     int t0;
     final int a1_0;
-    final int t3;
-    if(a0.ub_a2 != 0) {
-      t3 = 0;
-      a1_0 = (a1 << 1) % a0.s_9a >>> 1;
-      t0 = (a2 << 1) % a0.s_9a >> 1;
-      a0.s_9e = (a0.s_9a >> 1) - a1_0 - 1;
-    } else {
+    final int isInterpolationFrame;
+    if(model.ub_a2 == 0) {
       //LAB_800dde1c
-      final int v1 = a1 % a0.s_9a;
-      t3 = (a1 & 0x1) << 11;
-      a1_0 = v1 >>> 1;
-      t0 = a2 % a0.s_9a >> 1;
-      a0.s_9e = a0.s_9a - v1 - 1;
+      final int frame = animationTicks % model.totalFrames_9a;
+      isInterpolationFrame = (animationTicks & 0x1) << 11; // Dunno why this is shifted, makes no difference
+      a1_0 = frame >>> 1;
+      t0 = a2 % model.totalFrames_9a >> 1;
+      model.remainingFrames_9e = model.totalFrames_9a - frame - 1;
+    } else {
+      isInterpolationFrame = 0;
+      a1_0 = (animationTicks << 1) % model.totalFrames_9a >>> 1;
+      t0 = (a2 << 1) % model.totalFrames_9a >> 1;
+      model.remainingFrames_9e = (model.totalFrames_9a >> 1) - a1_0 - 1;
     }
 
     //LAB_800dde60
@@ -4729,21 +4741,13 @@ public final class Bttl_800d {
 
     //LAB_800ddfe4
     //LAB_800de158
-    if(t3 == 0 || a0.ub_a3 != 0 || a1_0 == (a0.s_9a >> 1) - 1) {
-      //LAB_800de164
-      for(int i = 0; i < count; i++) {
-        final ModelPartTransforms0c modelTransforms = cmbAnim.transforms_08[i];
-        final MATRIX modelPartMatrix = a0.dobj2ArrPtr_00[i].coord2_04.coord;
-        RotMatrix_80040010(modelTransforms.rotate_00, modelPartMatrix);
-        modelPartMatrix.transfer.set(modelTransforms.translate_06);
-      }
-    } else {
+    if(isInterpolationFrame != 0 && model.ub_a3 == 0 && a1_0 != (model.totalFrames_9a >> 1) - 1) { // Interpolation frame
       //LAB_800de050
       for(int i = 0; i < count; i++) {
         final Cmb.SubTransforms08 subTransforms = cmb.subTransforms[a1_0 * modelPartCount + i];
         final ModelPartTransforms0c modelTransforms = cmbAnim.transforms_08[i];
 
-        final MATRIX modelPartMatrix = a0.dobj2ArrPtr_00[i].coord2_04.coord;
+        final MATRIX modelPartMatrix = model.dobj2ArrPtr_00[i].coord2_04.coord;
         RotMatrix_80040010(modelTransforms.rotate_00, modelPartMatrix);
         modelPartMatrix.transfer.set(modelTransforms.translate_06);
 
@@ -4760,21 +4764,29 @@ public final class Bttl_800d {
 
         FUN_800dd15c(modelPartMatrix, translation, 0x800);
       }
+    } else {
+      //LAB_800de164
+      for(int i = 0; i < count; i++) {
+        final ModelPartTransforms0c modelTransforms = cmbAnim.transforms_08[i];
+        final MATRIX modelPartMatrix = model.dobj2ArrPtr_00[i].coord2_04.coord;
+        RotMatrix_80040010(modelTransforms.rotate_00, modelPartMatrix);
+        modelPartMatrix.transfer.set(modelTransforms.translate_06);
+      }
     }
 
     //LAB_800de1b4
-    if(a0.s_9e == 0) {
-      a0.ub_9c = 0;
+    if(model.remainingFrames_9e == 0) {
+      model.animationState_9c = 0;
     } else {
       //LAB_800de1cc
-      a0.ub_9c = 1;
+      model.animationState_9c = 1;
     }
 
     //LAB_800de1d0
-    cmbAnim._00 = a1;
+    cmbAnim._00 = animationTicks;
 
     //LAB_800de1e0
-    return a0.s_9e;
+    return model.remainingFrames_9e;
   }
 
   @Method(0x800de210L)
@@ -4790,9 +4802,9 @@ public final class Bttl_800d {
     model.animType_90 = 2;
     model.lmbUnknown_94 = 0;
     model.animCount_98 = count;
-    model.s_9a = cmb.halfKeyframes_0e * 2;
-    model.ub_9c = 1;
-    model.s_9e = cmb.halfKeyframes_0e * 2;
+    model.totalFrames_9a = cmb.totalFrames_0e * 2;
+    model.animationState_9c = 1;
+    model.remainingFrames_9e = cmb.totalFrames_0e * 2;
 
     //LAB_800de270
     for(int i = 0; i < count; i++) {
@@ -4808,17 +4820,17 @@ public final class Bttl_800d {
   }
 
   @Method(0x800de2e8L)
-  public static void applyAnimation(final Model124 model, final int a1) {
+  public static void applyAnimation(final Model124 model, final int animationTicks) {
     final int type = model.animType_90;
     if(type == 1) {
       //LAB_800de318
-      applyLmbAnimation(model, a1);
+      applyLmbAnimation(model, animationTicks);
     } else if(type == 0 || type == 2) {
       //LAB_800de328
-      applyCmbAnimation(model, a1);
+      applyCmbAnimation(model, animationTicks);
     } else {
       //LAB_800de338
-      applyStandardAnimation(model, a1);
+      applyStandardAnimation(model, animationTicks);
     }
 
     //LAB_800de340
@@ -4836,9 +4848,9 @@ public final class Bttl_800d {
       model.animType_90 = 1;
       model.lmbUnknown_94 = 0;
       model.animCount_98 = lmb.count_04;
-      model.s_9a = lmb._08[0].count_04 * 2;
-      model.ub_9c = 1;
-      model.s_9e = lmb._08[0].count_04 * 2;
+      model.totalFrames_9a = lmb._08[0].count_04 * 2;
+      model.animationState_9c = 1;
+      model.remainingFrames_9e = lmb._08[0].count_04 * 2;
     } else {
       //LAB_800de3dc
       loadModelStandardAnimation(model, (TmdAnimationFile)anim);

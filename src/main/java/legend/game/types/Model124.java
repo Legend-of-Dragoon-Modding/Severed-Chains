@@ -41,16 +41,16 @@ public class Model124 {
   /** short */
   public int animCount_98;
   /** short */
-  public int s_9a;
+  public int totalFrames_9a;
   /** ubyte */
-  public int ub_9c;
+  public int animationState_9c;
   /** ubyte */
   public int colourMap_9d;
   /** short */
-  public int s_9e;
+  public int remainingFrames_9e;
   /** short */
   public int zOffset_a0;
-  /** ubyte */
+  /** Always 0 except sometimes on submaps (ubyte) */
   public int ub_a2;
   /** ubyte */
   public int ub_a3;
@@ -127,10 +127,10 @@ public class Model124 {
     this.animType_90 = other.animType_90;
     this.lmbUnknown_94 = other.lmbUnknown_94;
     this.animCount_98 = other.animCount_98;
-    this.s_9a = other.s_9a;
-    this.ub_9c = other.ub_9c;
+    this.totalFrames_9a = other.totalFrames_9a;
+    this.animationState_9c = other.animationState_9c;
     this.colourMap_9d = other.colourMap_9d;
-    this.s_9e = other.s_9e;
+    this.remainingFrames_9e = other.remainingFrames_9e;
     this.zOffset_a0 = other.zOffset_a0;
     this.ub_a2 = other.ub_a2;
     this.ub_a3 = other.ub_a3;

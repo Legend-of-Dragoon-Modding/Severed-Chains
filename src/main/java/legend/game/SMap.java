@@ -133,7 +133,7 @@ import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800217a4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800218f0;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80022018;
+import static legend.game.Scus94491BpeSegment_8002.animateModelTextures;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002246c;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80029e04;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a9c0;
@@ -785,36 +785,35 @@ public final class SMap {
     //LAB_800da174
     for(int i = 0; i < 7; i++) {
       if(struct.aub_ec[i] != 0) {
-        FUN_80022018(struct, i);
+        animateModelTextures(struct, i);
       }
 
       //LAB_800da18c
     }
 
-    final int v1 = struct.ub_9c;
-    if(v1 == 2) {
+    if(struct.animationState_9c == 2) {
       return;
     }
 
-    if(v1 == 0) {
+    if(struct.animationState_9c == 0) {
       if(struct.ub_a2 == 0) {
-        struct.s_9e = struct.s_9a;
+        struct.remainingFrames_9e = struct.totalFrames_9a;
       } else {
         //LAB_800da1d0
-        struct.s_9e = struct.s_9a / 2;
+        struct.remainingFrames_9e = struct.totalFrames_9a / 2;
       }
 
       //LAB_800da1e4
-      struct.ub_9c++;
+      struct.animationState_9c = 1;
       struct.partTransforms_94 = struct.partTransforms_90;
     }
 
     //LAB_800da1f8
-    if((struct.s_9e & 0x1) == 0 && struct.ub_a2 == 0) {
+    if((struct.remainingFrames_9e & 0x1) == 0 && struct.ub_a2 == 0) {
       final ModelPartTransforms0c[] old = struct.partTransforms_94;
 
       if(struct.ub_a3 == 0) {
-        FUN_800da920(struct);
+        applyInterpolationFrame(struct);
       } else {
         //LAB_800da23c
         applyModelPartTransforms(struct);
@@ -827,10 +826,10 @@ public final class SMap {
     }
 
     //LAB_800da254
-    struct.s_9e--;
+    struct.remainingFrames_9e--;
 
-    if(struct.s_9e == 0) {
-      struct.ub_9c = 0;
+    if(struct.remainingFrames_9e == 0) {
+      struct.animationState_9c = 0;
     }
 
     //LAB_800da274
@@ -935,7 +934,7 @@ public final class SMap {
   }
 
   @Method(0x800da920L)
-  public static void FUN_800da920(final Model124 a0) {
+  public static void applyInterpolationFrame(final Model124 a0) {
     final ModelPartTransforms0c[] transforms = a0.partTransforms_94;
 
     //LAB_800da96c
@@ -2395,7 +2394,7 @@ public final class SMap {
       }
     }
 
-    if(model.s_9e == 0) {
+    if(model.remainingFrames_9e == 0) {
       sobj.us_12c = 1;
 
       if((sobj.flags_190 & 0x4000_0000) != 0) {
@@ -7092,7 +7091,7 @@ public final class SMap {
         applyModelRotationAndScale(dustModel_800d4d40);
         renderModel(dustModel_800d4d40);
 
-        dustModel_800d4d40.s_9e = 0;
+        dustModel_800d4d40.remainingFrames_9e = 0;
         dustModel_800d4d40.coord2ArrPtr_04[0].flg--;
         s0._00.incr();
 

@@ -213,7 +213,7 @@ import static legend.game.combat.Bttl_800e.perspectiveTransformXyz;
 public final class SEffe {
   private SEffe() { }
 
-  public static final Logger LOGGER = LogManager.getFormatterLogger(SEffe.class);
+  private static final Logger LOGGER = LogManager.getFormatterLogger(SEffe.class);
 
   private static final Value _800fb794 = MEMORY.ref(2, 0x800fb794L);
 
