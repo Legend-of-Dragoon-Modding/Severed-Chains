@@ -808,10 +808,10 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80012094L)
-  public static void allocateHeap(long address, long size) {
+  public static void allocateHeap(long address, int size) {
     LOGGER.info("Allocating memory manager at %08x (0x%x bytes)", address, size);
 
-    size = size - 0x18L & 0xffff_fffcL;
+    size = size - 0x18 & 0xffff_fffc;
     address = address + 0x3L & 0xffff_fffcL;
 
     MEMORY.ref(4, address).offset(0x00L).setu(0);
