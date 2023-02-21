@@ -1,6 +1,7 @@
 package legend.game.input;
 
 import legend.core.Config;
+import legend.core.opengl.Window;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -43,6 +44,9 @@ public final class Input {
         controllerId = -1;
       }
     });
+
+    GPU.window().events.onKeyPress(Input::keyPress);
+    GPU.window().events.onKeyRelease(Input::keyRelease);
   }
 
   private static final float controllerDeadzone = Config.controllerDeadzone();
@@ -131,7 +135,32 @@ public final class Input {
   public static boolean hasActivityThisFrame() {
     return playerOne.hasActivityThisFrame();
   }
+
   public static boolean hasActivity() {
     return playerOne.hasActivity();
+  }
+
+  private static void keyPress(final Window window, final int key, final int scancode, final int mods) {
+    if(mods != 0) {
+      return;
+    }
+
+    for(final InputBinding inputBinding : playerOne.bindings) {
+      if(inputBinding.getInputType() == InputTypeEnum.KEYBOARD && inputBinding.getGlfwKeyCode() == key) {
+        inputBinding.setPressedForKeyboardInput();
+      }
+    }
+  }
+
+  private static void keyRelease(final Window window, final int key, final int scancode, final int mods) {
+    if(mods != 0) {
+      return;
+    }
+
+    for(final InputBinding inputBinding : playerOne.bindings) {
+      if(inputBinding.getInputType() == InputTypeEnum.KEYBOARD && inputBinding.getGlfwKeyCode() == key) {
+        inputBinding.setReleasedForKeyboardInput();
+      }
+    }
   }
 }

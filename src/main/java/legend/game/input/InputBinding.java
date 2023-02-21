@@ -11,6 +11,7 @@ public class InputBinding {
   private float axisValue;
 
   private final float controllerDeadzone;
+  private boolean keyboardInputSetThisFrame;
 
   public InputBinding(final InputKeyCode inputKeyCode, final int glfwKeyCode, final int hexCode, final InputTypeEnum inputType) {
     this.inputKeyCode = inputKeyCode;
@@ -31,6 +32,9 @@ public class InputBinding {
     }
     if(this.inputType == InputTypeEnum.GAMEPAD_HAT) {
       this.updateGamepadHats();
+    }
+    if(this.inputType == InputTypeEnum.KEYBOARD) {
+      this.updateKeyboardInput();
     }
   }
 
@@ -87,6 +91,27 @@ public class InputBinding {
     }
   }
 
+  private void updateKeyboardInput() {
+    if(this.keyboardInputSetThisFrame == false) {
+      if(this.bindingState == InputBindingStateEnum.PRESSED_THIS_FRAME) {
+        this.bindingState = InputBindingStateEnum.PRESSED;
+      } else if(this.bindingState == InputBindingStateEnum.RELEASED_THIS_FRAME) {
+        this.bindingState = InputBindingStateEnum.NO_INPUT;
+      }
+    } else {
+      this.keyboardInputSetThisFrame = false;
+    }
+  }
+
+  public void setPressedForKeyboardInput() {
+    this.bindingState = InputBindingStateEnum.PRESSED_THIS_FRAME;
+    this.keyboardInputSetThisFrame = true;
+  }
+
+  public void setReleasedForKeyboardInput() {
+    this.bindingState = InputBindingStateEnum.RELEASED_THIS_FRAME;
+    this.keyboardInputSetThisFrame = true;
+  }
 
   public InputKeyCode getInputKeyCode() {
     return this.inputKeyCode;
@@ -108,49 +133,7 @@ public class InputBinding {
     return this.axisValue;
   }
 
-
-  /*
-  private void updateDpad(ByteBuffer hats)
-  {
-    int hat = hats.get(0);
-
-    if((hat & GLFW_HAT_UP) != 0)
-    {
-      dpad = DirectionalPadEnum.DPAD_UP;
-    }
-    else if((hat & GLFW_HAT_DOWN) != 0)
-    {
-      dpad = DirectionalPadEnum.DPAD_DOWN;
-    }
-    else if((hat & GLFW_HAT_LEFT) != 0)
-    {
-      dpad = DirectionalPadEnum.DPAD_LEFT;
-    }
-    else if((hat & GLFW_HAT_RIGHT) != 0)
-    {
-      dpad = DirectionalPadEnum.DPAD_RIGHT;
-    }
-    else if((hat & GLFW_HAT_LEFT_UP) != 0)
-    {
-      dpad = DirectionalPadEnum.DPAD_LEFT_UP;
-    }
-    else if((hat & GLFW_HAT_LEFT_DOWN) != 0)
-    {
-      dpad = DirectionalPadEnum.DPAD_LEFT_DOWN;
-    }
-    else if((hat & GLFW_HAT_RIGHT_UP) != 0)
-    {
-      dpad = DirectionalPadEnum.DPAD_RIGHT_UP;
-    }
-    else if((hat & GLFW_HAT_RIGHT_DOWN) != 0)
-    {
-      dpad = DirectionalPadEnum.DPAD_RIGHT_DOWN;
-    }
-    else
-    {
-      dpad = DirectionalPadEnum.DPAD_CENTERED_NO_INPUT;
-    }
-
+  public int getGlfwKeyCode() {
+    return this.glfwKeyCode;
   }
-   */
 }

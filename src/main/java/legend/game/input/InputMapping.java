@@ -70,6 +70,9 @@ public class InputMapping {
     this.bindings.add(new InputBinding(InputKeyCode.DPAD_LEFT, GLFW_HAT_LEFT, 0x8000, InputTypeEnum.GAMEPAD_HAT));
     this.bindings.add(new InputBinding(InputKeyCode.DPAD_RIGHT, GLFW_HAT_RIGHT, 0x2000, InputTypeEnum.GAMEPAD_HAT));
 
+    // Example Keyboard Binding
+    // this.bindings.add(new InputBinding(InputKeyCode.DPAD_DOWN, GLFW_KEY_P, 0x4000, InputTypeEnum.KEYBOARD));
+
   }
 
   public void update() {
