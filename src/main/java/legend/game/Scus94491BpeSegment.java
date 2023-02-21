@@ -34,7 +34,7 @@ import legend.game.combat.Bttl_800f;
 import legend.game.combat.SBtld;
 import legend.game.combat.SEffe;
 import legend.game.combat.types.BattleObject27c;
-import legend.game.combat.types.BattleStruct18cb0;
+import legend.game.combat.types.BattlePreloadedEntities;
 import legend.game.combat.types.StageData10;
 import legend.game.debugger.Debugger;
 import legend.game.inventory.WhichMenu;
@@ -302,7 +302,7 @@ public final class Scus94491BpeSegment {
   public static final UnsignedShortRef tmdGp0Tpage_1f8003ec = MEMORY.ref(2, 0x1f8003ecL, UnsignedShortRef::new);
   public static final UnsignedShortRef tmdGp0CommandId_1f8003ee = MEMORY.ref(2, 0x1f8003eeL, UnsignedShortRef::new);
 
-  public static BattleStruct18cb0 _1f8003f4;
+  public static BattlePreloadedEntities battlePreloadedEntities_1f8003f4;
   public static final IntRef projectionPlaneDistance_1f8003f8 = MEMORY.ref(4, 0x1f8003f8L, IntRef::new);
   public static final Value _1f8003fc = MEMORY.ref(4, 0x1f8003fcL);
 

@@ -9,10 +9,10 @@ import legend.game.types.MrgFile;
 import java.util.Arrays;
 
 /** 0x18cb0 bytes */
-public class BattleStruct18cb0 {
+public class BattlePreloadedEntities {
   public EncounterData38 encounterData_00;
   /** 3 slots for chars, 3 slots for dragoons */
-  public final AdditionStruct100[] _38 = new AdditionStruct100[0x100];
+  public final AdditionHits[] additionHits = new AdditionHits[0x100];
   /** This reference is only valid while it's loading */
   public MrgFile stageMrg_638;
   public MrgFile stageTmdMrg_63c;
@@ -22,21 +22,21 @@ public class BattleStruct18cb0 {
 
   public final Rendering1298[] _9ce8 = new Rendering1298[3];
 
-  public BattleStruct18cb0() {
-    Arrays.setAll(this._38, i -> new AdditionStruct100());
+  public BattlePreloadedEntities() {
+    Arrays.setAll(this.additionHits, i -> new AdditionHits());
     Arrays.setAll(this._9ce8, i -> new Rendering1298());
   }
 
-  public static class AdditionStruct100 {
-    public final AdditionHitStruct20[] hits_00 = new AdditionHitStruct20[8];
+  public static class AdditionHits {
+    public final AdditionHitProperties[] hits = new AdditionHitProperties[8];
 
-    public AdditionStruct100() {
-      Arrays.setAll(this.hits_00, i -> new AdditionHitStruct20());
+    public AdditionHits() {
+      Arrays.setAll(this.hits, i -> new AdditionHitProperties());
     }
   }
 
-  public static class AdditionHitStruct20 {
-    public final short[] _00 = new short[16];
+  public static class AdditionHitProperties {
+    public final short[] hitProperty = new short[16];
   }
 
   public static class Rendering1298 {
