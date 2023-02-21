@@ -6455,7 +6455,7 @@ public final class SEffe {
 
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       script.scriptState_04,
-      0x20,
+      0,
       SEffe::FUN_8010f124,
       SEffe::FUN_8010f340,
       null,

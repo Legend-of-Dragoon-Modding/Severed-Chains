@@ -48,8 +48,6 @@ import legend.game.types.Model124;
 import legend.game.types.ModelPartTransforms0c;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.Arrays;
 
@@ -65,14 +63,14 @@ import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
-import static legend.game.Scus94491BpeSegment_8002.applyInterpolationFrame;
-import static legend.game.Scus94491BpeSegment_8002.adjustModelUvs;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021724;
-import static legend.game.Scus94491BpeSegment_8002.animateModelTextures;
 import static legend.game.Scus94491BpeSegment_8002.SetGeomOffset;
 import static legend.game.Scus94491BpeSegment_8002.SetRotMatrix;
 import static legend.game.Scus94491BpeSegment_8002.SetTransMatrix;
 import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
+import static legend.game.Scus94491BpeSegment_8002.adjustModelUvs;
+import static legend.game.Scus94491BpeSegment_8002.animateModelTextures;
+import static legend.game.Scus94491BpeSegment_8002.applyInterpolationFrame;
 import static legend.game.Scus94491BpeSegment_8002.applyModelPartTransforms;
 import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
@@ -159,8 +157,6 @@ import static legend.game.combat.Bttl_800e.allocateEffectManager;
 public final class Bttl_800d {
   private Bttl_800d() { }
 
-  private static final Logger LOGGER = LogManager.getFormatterLogger(Bttl_800d.class);
-
   @Method(0x800d0094L)
   public static void FUN_800d0094(final int scriptIndex, final int animIndex, final boolean clearBit) {
     final BattleObject27c v1 = (BattleObject27c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
@@ -180,10 +176,10 @@ public final class Bttl_800d {
     final BattleScriptDataBase data = (BattleScriptDataBase)state.innerStruct_00;
 
     if(BattleScriptDataBase.EM__.equals(data.magic_00)) {
-      script.params_20[1].set(((BttlScriptData6cSub13c)((EffectManagerData6c)data).effect_44).model_10.animCount_98);
+      script.params_20[1].set(((BttlScriptData6cSub13c)((EffectManagerData6c)data).effect_44).model_10.partCount_98);
     } else {
       //LAB_800d017c
-      script.params_20[1].set(((BattleObject27c)data).model_148.animCount_98);
+      script.params_20[1].set(((BattleObject27c)data).model_148.partCount_98);
     }
 
     //LAB_800d0194
@@ -1038,7 +1034,7 @@ public final class Bttl_800d {
     );
 
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00;
-    final int animCount = bobj.model_148.animCount_98;
+    final int animCount = bobj.model_148.partCount_98;
     final EffectManagerData6c manager = state.innerStruct_00;
     final MonsterDeathEffect34 effect = (MonsterDeathEffect34)manager.effect_44;
     long s4 = mallocTail(animCount * 0x30L);
@@ -4421,14 +4417,12 @@ public final class Bttl_800d {
     if(model.ub_a2 == 0) {
       //LAB_800dd568
       frame = animationTicks % model.totalFrames_9a;
-      LOGGER.info("Advancing animation of %s by %d (%d remaining)", model, model.animCount_98 * frame / 2, model.partTransforms_90.length - model.animCount_98 * frame / 2);
-      model.partTransforms_94 = Arrays.copyOfRange(model.partTransforms_90, model.animCount_98 * frame / 2, model.partTransforms_90.length);
+      model.partTransforms_94 = Arrays.copyOfRange(model.partTransforms_90, frame / 2, model.partTransforms_90.length);
       applyModelPartTransforms(model);
 
       if((frame & 0x1) != 0 && frame != model.totalFrames_9a - 1 && model.ub_a3 == 0) { // Interpolation frame
-        final ModelPartTransforms0c[] original = model.partTransforms_94;
+        final ModelPartTransforms0c[][] original = model.partTransforms_94;
         applyInterpolationFrame(model);
-        LOGGER.info("Rewinding animation for %s", model);
         model.partTransforms_94 = original;
       }
 
@@ -4436,8 +4430,7 @@ public final class Bttl_800d {
       totalFrames = model.totalFrames_9a;
     } else {
       frame = animationTicks % (model.totalFrames_9a / 2);
-      LOGGER.info("Advancing animation of %s by %d (%d remaining)", model, model.animCount_98 * frame, model.partTransforms_90.length - model.animCount_98 * frame);
-      model.partTransforms_94 = Arrays.copyOfRange(model.partTransforms_90, model.animCount_98 * frame, model.partTransforms_90.length);
+      model.partTransforms_94 = Arrays.copyOfRange(model.partTransforms_90, frame, model.partTransforms_90.length);
       applyModelPartTransforms(model);
       totalFrames = (short)model.totalFrames_9a >> 1;
     }
@@ -4464,7 +4457,7 @@ public final class Bttl_800d {
     }
 
     //LAB_800dd680
-    final int count = Math.min(model.count_c8, model.animCount_98);
+    final int count = Math.min(model.count_c8, model.partCount_98);
 
     //LAB_800dd69c
     final LmbType0 lmb = (LmbType0)model.lmbAnim_08.lmb_00;
@@ -4684,7 +4677,7 @@ public final class Bttl_800d {
 
     // Note: these two variables _should_ be the same
     final int modelPartCount = cmb.modelPartCount_0c;
-    final int count = Math.min(model.count_c8, model.animCount_98);
+    final int count = Math.min(model.count_c8, model.partCount_98);
 
     //LAB_800dddc4
     int t0;
@@ -4708,7 +4701,7 @@ public final class Bttl_800d {
     if(t0 > a1_0) {
       //LAB_800dde88
       for(int partIndex = 0; partIndex < modelPartCount; partIndex++) {
-        final ModelPartTransforms0c fileTransforms = cmb.partTransforms_10[partIndex];
+        final ModelPartTransforms0c fileTransforms = cmb.partTransforms_10[0][partIndex];
         final ModelPartTransforms0c modelTransforms = cmbAnim.transforms_08[partIndex];
 
         modelTransforms.rotate_00.set(fileTransforms.rotate_00);
@@ -4802,14 +4795,14 @@ public final class Bttl_800d {
 
     model.animType_90 = 2;
     model.lmbUnknown_94 = 0;
-    model.animCount_98 = count;
+    model.partCount_98 = count;
     model.totalFrames_9a = cmb.totalFrames_0e * 2;
     model.animationState_9c = 1;
     model.remainingFrames_9e = cmb.totalFrames_0e * 2;
 
     //LAB_800de270
     for(int i = 0; i < count; i++) {
-      final ModelPartTransforms0c v1 = cmb.partTransforms_10[i];
+      final ModelPartTransforms0c v1 = cmb.partTransforms_10[0][i];
       final ModelPartTransforms0c a1_0 = anim.transforms_08[i];
       a1_0.rotate_00.set(v1.rotate_00);
       a1_0.translate_06.set(v1.translate_06);
@@ -4848,7 +4841,7 @@ public final class Bttl_800d {
       model.lmbAnim_08.lmb_00 = lmb;
       model.animType_90 = 1;
       model.lmbUnknown_94 = 0;
-      model.animCount_98 = lmb.count_04;
+      model.partCount_98 = lmb.count_04;
       model.totalFrames_9a = lmb._08[0].count_04 * 2;
       model.animationState_9c = 1;
       model.remainingFrames_9e = lmb._08[0].count_04 * 2;

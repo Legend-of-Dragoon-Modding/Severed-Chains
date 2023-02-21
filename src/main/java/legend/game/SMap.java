@@ -810,7 +810,7 @@ public final class SMap {
 
     //LAB_800da1f8
     if((struct.remainingFrames_9e & 0x1) == 0 && struct.ub_a2 == 0) {
-      final ModelPartTransforms0c[] old = struct.partTransforms_94;
+      final ModelPartTransforms0c[][] old = struct.partTransforms_94;
 
       if(struct.ub_a3 == 0) {
         applyInterpolationFrame(struct);
@@ -935,7 +935,7 @@ public final class SMap {
 
   @Method(0x800da920L)
   public static void applyInterpolationFrame(final Model124 a0) {
-    final ModelPartTransforms0c[] transforms = a0.partTransforms_94;
+    final ModelPartTransforms0c[][] transforms = a0.partTransforms_94;
 
     //LAB_800da96c
     for(int i = 0; i < a0.tmdNobj_ca; i++) {
@@ -948,16 +948,16 @@ public final class SMap {
       RotMatrix_80040780(params.rotate, matrix);
 
       params.trans.set(
-        (params.trans.getX() + transforms[i].translate_06.getX()) / 2,
-        (params.trans.getY() + transforms[i].translate_06.getY()) / 2,
-        (params.trans.getZ() + transforms[i].translate_06.getZ()) / 2
+        (params.trans.getX() + transforms[0][i].translate_06.getX()) / 2,
+        (params.trans.getY() + transforms[0][i].translate_06.getY()) / 2,
+        (params.trans.getZ() + transforms[0][i].translate_06.getZ()) / 2
       );
 
       TransMatrix(matrix, params.trans);
     }
 
     //LAB_800daa0c
-    a0.partTransforms_94 = Arrays.copyOfRange(transforms, a0.tmdNobj_ca, transforms.length);
+    a0.partTransforms_94 = Arrays.copyOfRange(transforms, 1, transforms.length);
   }
 
   @Method(0x800daa3cL)

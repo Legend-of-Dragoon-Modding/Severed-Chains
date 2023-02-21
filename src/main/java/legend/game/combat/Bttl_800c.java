@@ -4226,7 +4226,7 @@ public final class Bttl_800c {
     //LAB_800cfe54
     int largest = 0x8000_0001;
     int smallest = 0x7fff_ffff;
-    for(int animIndex = bobj.model_148.animCount_98 - 1; animIndex >= 0; animIndex--) {
+    for(int animIndex = bobj.model_148.partCount_98 - 1; animIndex >= 0; animIndex--) {
       final int component = coords[animIndex].coord.transfer.get(componentIndex);
 
       if(largest < component) {

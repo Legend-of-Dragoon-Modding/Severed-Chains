@@ -24,9 +24,10 @@ public class Model124 {
   public final GsCOORDINATE2 coord2_14 = new GsCOORDINATE2();
   public final GsCOORD2PARAM coord2Param_64 = new GsCOORD2PARAM();
   public Tmd tmd_8c;
-  public ModelPartTransforms0c[] partTransforms_90;
-  /** One entry for each TMD object (tmdNobj_ca) */
-  public ModelPartTransforms0c[] partTransforms_94;
+  /** [keyframe][part] */
+  public ModelPartTransforms0c[][] partTransforms_90;
+  /** [keyframe][part] One entry for each TMD object (tmdNobj_ca) */
+  public ModelPartTransforms0c[][] partTransforms_94;
   /**
    * Union with {@link #partTransforms_90}
    * <ul>
@@ -41,7 +42,7 @@ public class Model124 {
   public int lmbUnknown_94;
 
   /** short */
-  public int animCount_98;
+  public int partCount_98;
   /** short */
   public int totalFrames_9a;
   /**
@@ -135,7 +136,7 @@ public class Model124 {
     this.partTransforms_94 = other.partTransforms_94;
     this.animType_90 = other.animType_90;
     this.lmbUnknown_94 = other.lmbUnknown_94;
-    this.animCount_98 = other.animCount_98;
+    this.partCount_98 = other.partCount_98;
     this.totalFrames_9a = other.totalFrames_9a;
     this.animationState_9c = other.animationState_9c;
     this.colourMap_9d = other.colourMap_9d;

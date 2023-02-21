@@ -18,8 +18,10 @@ public class BattleStage {
   public final GsCOORDINATE2 coord2_558 = new GsCOORDINATE2();
   public final GsCOORD2PARAM param_5a8 = new GsCOORD2PARAM();
   public Tmd tmd_5d0;
-  public ModelPartTransforms0c[] rotTrans_5d4;
-  public ModelPartTransforms0c[] rotTrans_5d8;
+  /** [keyframe][part] */
+  public ModelPartTransforms0c[][] rotTrans_5d4;
+  /** [keyframe][part] */
+  public ModelPartTransforms0c[][] rotTrans_5d8;
   /** short */
   public int partCount_5dc;
   /** short */

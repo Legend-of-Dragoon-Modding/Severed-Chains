@@ -2172,8 +2172,7 @@ public final class Bttl_800e {
     model.animType_90 = -1;
     model.partTransforms_90 = a1.rotTrans_5d4;
     model.partTransforms_94 = a1.rotTrans_5d8;
-    LOGGER.info("Initializing battle stage animation of %s (%d remaining)", model, model.partTransforms_94.length);
-    model.animCount_98 = a1.partCount_5dc;
+    model.partCount_98 = a1.partCount_5dc;
     model.totalFrames_9a = a1.totalFrames_5de;
     model.animationState_9c = a1.animationState_5e0;
     model.colourMap_9d = 0;
@@ -3188,7 +3187,7 @@ public final class Bttl_800e {
   public static void applyStagePartAnimations(final BattleStage stage) {
     //LAB_800ec688
     for(int i = 0; i < stage.partCount_5dc; i++) {
-      final ModelPartTransforms0c rotTrans = stage.rotTrans_5d8[i];
+      final ModelPartTransforms0c rotTrans = stage.rotTrans_5d8[0][i];
       final GsCOORDINATE2 coord2 = stage.dobj2s_00[i].coord2_04;
       final GsCOORD2PARAM param = coord2.param;
 
@@ -3200,7 +3199,7 @@ public final class Bttl_800e {
     }
 
     //LAB_800ec710
-    stage.rotTrans_5d8 = Arrays.copyOfRange(stage.rotTrans_5d8, stage.partCount_5dc, stage.rotTrans_5d8.length);
+    stage.rotTrans_5d8 = Arrays.copyOfRange(stage.rotTrans_5d8, 1, stage.rotTrans_5d8.length);
   }
 
   @Method(0x800ec744L)
