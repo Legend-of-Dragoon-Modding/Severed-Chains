@@ -1,6 +1,7 @@
 package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
+import legend.game.input.InputKeyCode;
 import legend.game.types.MenuItemStruct04;
 import legend.game.types.Renderable58;
 
@@ -188,63 +189,69 @@ public class GoodsScreen extends MenuScreen {
     }
 
     switch(key) {
-      case GLFW_KEY_LEFT -> {
-        if(this.selectedSlot % 2 == 0) {
-          break;
-        }
-
-        playSound(1);
-        this.selectedSlot--;
-        this.highlight.x_40 = this.getSlotX(this.selectedSlot & 1);
-        this.highlight.y_44 = this.getSlotY(this.selectedSlot / 2) + 32;
-      }
-
-      case GLFW_KEY_RIGHT -> {
-        if(this.selectedSlot % 2 != 0 || this.selectedSlot + this.slotScroll * 2 == this.menuItems.size() - 1) {
-          break;
-        }
-
-        playSound(1);
-        this.selectedSlot++;
-        this.highlight.x_40 = this.getSlotX(this.selectedSlot & 1);
-        this.highlight.y_44 = this.getSlotY(this.selectedSlot / 2) + 32;
-      }
-
-      case GLFW_KEY_DOWN -> {
-        if(this.selectedSlot >= 12) {
-          if((this.selectedSlot + this.slotScroll * 2) < this.menuItems.size()) {
-            this.scroll(this.slotScroll + 2);
-          }
-
-          break;
-        }
-
-        playSound(1);
-        this.selectedSlot += 2;
-        this.highlight.x_40 = this.getSlotX(this.selectedSlot & 1);
-        this.highlight.y_44 = this.getSlotY(this.selectedSlot / 2) + 32;
-      }
-
-      case GLFW_KEY_UP -> {
-        if(this.selectedSlot < 2) {
-          if(this.slotScroll > 0) {
-            this.scroll(this.slotScroll - 2);
-          }
-
-          break;
-        }
-
-        playSound(1);
-        this.selectedSlot -= 2;
-        this.highlight.x_40 = this.getSlotX(this.selectedSlot & 1);
-        this.highlight.y_44 = this.getSlotY(this.selectedSlot / 2) + 32;
-      }
-
-      case GLFW_KEY_ESCAPE -> {
-        playSound(3);
-        this.loadingStage = 100;
-      }
+      case GLFW_KEY_LEFT -> this.menuNavigateLeft();
+      case GLFW_KEY_RIGHT -> this.menuNavigateRight();
+      case GLFW_KEY_DOWN -> this.menuNavigateDown();
+      case GLFW_KEY_UP -> this.menuNavigateUp();
+      case GLFW_KEY_ESCAPE -> this.menuEscape();
     }
+  }
+
+  private void menuEscape() {
+    playSound(3);
+    this.loadingStage = 100;
+  }
+
+  private void menuNavigateUp() {
+    if(this.selectedSlot < 2) {
+      if(this.slotScroll > 0) {
+        this.scroll(this.slotScroll - 2);
+      }
+
+      return;
+    }
+
+    playSound(1);
+    this.selectedSlot -= 2;
+    this.highlight.x_40 = this.getSlotX(this.selectedSlot & 1);
+    this.highlight.y_44 = this.getSlotY(this.selectedSlot / 2) + 32;
+  }
+
+  private void menuNavigateDown() {
+    if(this.selectedSlot >= 12) {
+      if((this.selectedSlot + this.slotScroll * 2) < this.menuItems.size()) {
+        this.scroll(this.slotScroll + 2);
+      }
+
+      return;
+    }
+
+    playSound(1);
+    this.selectedSlot += 2;
+    this.highlight.x_40 = this.getSlotX(this.selectedSlot & 1);
+    this.highlight.y_44 = this.getSlotY(this.selectedSlot / 2) + 32;
+  }
+
+  private void menuNavigateLeft() {
+    if(this.selectedSlot % 2 == 0) {
+      return;
+    }
+
+    playSound(1);
+    this.selectedSlot--;
+    this.highlight.x_40 = this.getSlotX(this.selectedSlot & 1);
+    this.highlight.y_44 = this.getSlotY(this.selectedSlot / 2) + 32;
+  }
+
+  private void menuNavigateRight() {
+    if(this.selectedSlot % 2 != 0 || this.selectedSlot + this.slotScroll * 2 == this.menuItems.size() - 1) {
+      return;
+    }
+
+    playSound(1);
+    this.selectedSlot++;
+    this.highlight.x_40 = this.getSlotX(this.selectedSlot & 1);
+    this.highlight.y_44 = this.getSlotY(this.selectedSlot / 2) + 32;
   }
 
   @Override
@@ -258,5 +265,28 @@ public class GoodsScreen extends MenuScreen {
     }
 
     this.scrollAccumulator += deltaY;
+  }
+
+  @Override
+  public void pressedThisFrame(final InputKeyCode inputKeyCode) {
+    if(this.loadingStage != 1) {
+      return;
+    }
+
+    if(inputKeyCode == InputKeyCode.DPAD_UP || inputKeyCode == InputKeyCode.JOYSTICK_LEFT_BUTTON_UP) {
+      this.menuNavigateUp();
+    }
+    if(inputKeyCode == InputKeyCode.DPAD_DOWN || inputKeyCode == InputKeyCode.JOYSTICK_LEFT_BUTTON_DOWN) {
+      this.menuNavigateDown();
+    }
+    if(inputKeyCode == InputKeyCode.DPAD_LEFT || inputKeyCode == InputKeyCode.JOYSTICK_LEFT_BUTTON_LEFT) {
+      this.menuNavigateLeft();
+    }
+    if(inputKeyCode == InputKeyCode.DPAD_RIGHT || inputKeyCode == InputKeyCode.JOYSTICK_LEFT_BUTTON_RIGHT) {
+      this.menuNavigateRight();
+    }
+    if(inputKeyCode == InputKeyCode.BUTTON_EAST) {
+      this.menuEscape();
+    }
   }
 }
