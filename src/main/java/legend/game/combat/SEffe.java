@@ -4906,6 +4906,8 @@ public final class SEffe {
     s3.ptr_0c = tmd1.vert_top_00;
     s3.ptr_10 = new VECTOR[tmd1.n_vert_04];
     s3.ptr_14 = new VECTOR[tmd1.n_vert_04];
+    Arrays.setAll(s3.ptr_10, i -> new VECTOR());
+    Arrays.setAll(s3.ptr_14, i -> new VECTOR());
     _8011a030.setu(0x1L);
 
     //LAB_80109e78
