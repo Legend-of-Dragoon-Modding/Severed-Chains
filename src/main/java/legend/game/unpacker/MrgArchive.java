@@ -1,47 +1,91 @@
 package legend.game.unpacker;
 
-import legend.core.MathHelper;
-
 import java.util.Iterator;
 
-public class MrgArchive implements Iterable<FileData> {
-  private final FileData data;
-  private final boolean sectorAligned;
+public class MrgArchive implements Iterable<MrgArchive.Entry> {
+  private final Entry[] entries;
 
   public MrgArchive(final FileData data, final boolean sectorAligned) {
-    this.data = data;
-    this.sectorAligned = sectorAligned;
+    this.entries = new Entry[data.readInt(0x4)];
+
+    // Load non-virtual files
+    for(int i = 0; i < this.entries.length; i++) {
+      final int size = data.readInt(0x8 + i * 0x8 + 0x4);
+
+      if(size != 0) {
+        final int offset = data.readInt(0x8 + i * 0x8);
+
+        final Entry fileData;
+        if(sectorAligned) {
+          fileData = new Entry(offset * 0x800, size);
+        } else {
+          fileData = new Entry(offset, size);
+        }
+
+        this.entries[i] = fileData;
+      }
+    }
+
+    // Load virtual files
+    for(int i = 0; i < this.entries.length; i++) {
+      final int size = data.readInt(0x8 + i * 0x8 + 0x4);
+
+      if(size == 0) {
+        final int offset = data.readInt(0x8 + i * 0x8);
+        final int parentIndex = this.getEntryByOffset(offset);
+
+        if(parentIndex != -1) {
+          final Entry parent = this.getEntry(parentIndex);
+          this.entries[i] = new Entry(parent.offset, parent.size, parentIndex);
+        } else {
+          this.entries[i] = new Entry(offset, size);
+        }
+      }
+    }
   }
 
   public int getCount() {
-    return (int)MathHelper.get(this.data.data(), this.data.offset() + 4, 4);
+    return this.entries.length;
   }
 
-  public FileData getFile(final int index) {
-    final int offset = (int)MathHelper.get(this.data.data(), this.data.offset() + 8 + index * 8, 4);
-    final int size = (int)MathHelper.get(this.data.data(), this.data.offset() + 8 + index * 8 + 4, 4);
+  public Entry getEntry(final int index) {
+    return this.entries[index];
+  }
 
-    if(this.sectorAligned) {
-      return new FileData(this.data.data(), this.data.offset() + offset * 0x800, size);
+  public int getEntryByOffset(final int offset) {
+    for(int i = 0; i < this.entries.length; i++) {
+      if(this.entries[i] != null && this.entries[i].offset() == offset) {
+        return i;
+      }
     }
 
-    return new FileData(this.data.data(), this.data.offset() + offset, size);
+    return -1;
   }
 
   @Override
-  public Iterator<FileData> iterator() {
+  public Iterator<Entry> iterator() {
     return new Iterator<>() {
       private int i;
 
       @Override
       public boolean hasNext() {
-        return this.i < MrgArchive.this.getCount();
+        return this.i < MrgArchive.this.entries.length;
       }
 
       @Override
-      public FileData next() {
-        return MrgArchive.this.getFile(this.i++);
+      public Entry next() {
+        return MrgArchive.this.entries[this.i++];
       }
     };
+  }
+
+  public record Entry(int offset, int size, int parent) {
+    public Entry(final int offset, final int size) {
+      this(offset, size, -1);
+    }
+
+    public boolean virtual() {
+      return this.parent != -1;
+    }
   }
 }

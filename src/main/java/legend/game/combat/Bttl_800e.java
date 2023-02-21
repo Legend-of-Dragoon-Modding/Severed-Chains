@@ -78,6 +78,7 @@ import legend.game.types.ModelPartTransforms;
 import legend.game.types.MrgFile;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
+import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -1029,7 +1030,7 @@ public final class Bttl_800e {
     //LAB_800e67b0
     loadDrgnDir(0, 4139 + s3 * 2, Bttl_800e::FUN_800e929c);
     loadDrgnDir(0, 4140 + s3 * 2 + "/0", files -> Bttl_800e.loadDeffPackage(files, battle24.managerState_18));
-    loadDrgnFile(0, 4140 + s3 * 2 + "/1", file -> _800c6938.script_14 = new ScriptFile(4140 + s3 * 2 + "/1", file));
+    loadDrgnFile(0, 4140 + s3 * 2 + "/1", file -> _800c6938.script_14 = new ScriptFile(4140 + s3 * 2 + "/1", file.getBytes()));
     _800fafe8.setu(0x1L);
     return 0;
   }
@@ -1048,7 +1049,7 @@ public final class Bttl_800e {
     t0._00 |= 0x200_0000;
     loadDrgnDir(0, 4307 + s0, Bttl_800e::FUN_800e929c);
     loadDrgnDir(0, 4308 + s0 + "/0", files -> Bttl_800e.loadDeffPackage(files, t0.managerState_18));
-    loadDrgnFile(0, 4308 + s0 + "/1", file -> _800c6938.script_14 = new ScriptFile(4308 + s0 + "/1", file));
+    loadDrgnFile(0, 4308 + s0 + "/1", file -> _800c6938.script_14 = new ScriptFile(4308 + s0 + "/1", file.getBytes()));
     _800fafe8.setu(0x1L);
     return 0;
   }
@@ -1079,7 +1080,7 @@ public final class Bttl_800e {
       loadDrgnDir(0, 4433 + sp20 * 2, Bttl_800e::FUN_800e929c);
       loadDrgnDir(0, 4434 + sp20 * 2 + "/0", files -> Bttl_800e.loadDeffPackage(files, v1.managerState_18));
       final int finalSp2 = sp20;
-      loadDrgnFile(0, 4434 + sp20 * 2 + "/1", file -> _800c6938.script_14 = new ScriptFile(4434 + finalSp2 * 2 + "/1", file));
+      loadDrgnFile(0, 4434 + sp20 * 2 + "/1", file -> _800c6938.script_14 = new ScriptFile(4434 + finalSp2 * 2 + "/1", file.getBytes()));
     } else {
       //LAB_800e6a30
       final long a0_0 = sp20 >>> 4;
@@ -1093,7 +1094,7 @@ public final class Bttl_800e {
       loadDrgnDir(0, 4945 + fileIndex, Bttl_800e::FUN_800e929c);
       loadDrgnDir(0, 4946 + fileIndex + "/0", files -> Bttl_800e.loadDeffPackage(files, v1.managerState_18));
       final int finalFileIndex = fileIndex;
-      loadDrgnFile(0, 4946 + fileIndex + "/1", file -> _800c6938.script_14 = new ScriptFile(4946 + finalFileIndex + "/1", file));
+      loadDrgnFile(0, 4946 + fileIndex + "/1", file -> _800c6938.script_14 = new ScriptFile(4946 + finalFileIndex + "/1", file.getBytes()));
     }
 
     //LAB_800e6a9c
@@ -1130,7 +1131,7 @@ public final class Bttl_800e {
     //LAB_800e6bd4
     loadDrgnDir(0, 5511 + s3 * 2, Bttl_800e::FUN_800e929c);
     loadDrgnDir(0, 5512 + s3 * 2 + "/0", files -> Bttl_800e.loadDeffPackage(files, a0_0.managerState_18));
-    loadDrgnFile(0, 5512 + s3 * 2 + "/1", file -> _800c6938.script_14 = new ScriptFile(5512 + s3 * 2 + "/1", file));
+    loadDrgnFile(0, 5512 + s3 * 2 + "/1", file -> _800c6938.script_14 = new ScriptFile(5512 + s3 * 2 + "/1", file.getBytes()));
 
     //LAB_800e6d7c
     _800fafe8.setu(0x1L);
@@ -1274,7 +1275,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e7060L)
-  public static void loadDeffPackage(final List<byte[]> files, final ScriptState<EffectManagerData6c> state) {
+  public static void loadDeffPackage(final List<FileData> files, final ScriptState<EffectManagerData6c> state) {
     final MrgFile mrg = MrgFile.alloc(files);
 
     deffManager_800c693c.deffPackage_5a8 = mrg;
@@ -1978,11 +1979,11 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e929cL)
-  public static void FUN_800e929c(final List<byte[]> files) {
+  public static void FUN_800e929c(final List<FileData> files) {
     //LAB_800e92d4
-    for(final byte[] file : files) {
-      if(file.length != 0) {
-        new Tim(file).uploadToGpu();
+    for(final FileData file : files) {
+      if(file.real()) {
+        new Tim(file.getBytes()).uploadToGpu();
       }
     }
 
@@ -2518,7 +2519,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800ea7d0L)
-  public static void hudDeffLoaded(final List<byte[]> files) {
+  public static void hudDeffLoaded(final List<FileData> files) {
     // Temporary measure for memory management
     final MrgFile deffMrg = MrgFile.alloc(files);
 
@@ -2665,7 +2666,7 @@ public final class Bttl_800e {
       deffManager_800c693c.scripts_2c = new ScriptFile[files.size()];
 
       for(int i = 0; i < files.size(); i++) {
-        deffManager_800c693c.scripts_2c[i] = new ScriptFile("DRGN0.4114.1." + i, files.get(i));
+        deffManager_800c693c.scripts_2c[i] = new ScriptFile("DRGN0.4114.1." + i, files.get(i).getBytes());
       }
     });
   }
@@ -3691,7 +3692,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800ee8c4L)
-  public static void battleHudTexturesLoadedCallback(final List<byte[]> files) {
+  public static void battleHudTexturesLoadedCallback(final List<FileData> files) {
     final short[] clutX = new short[6];
     for(int i = 0; i < 4; i++) {
       clutX[i] = _800c6e60.get(i).get();
@@ -3702,8 +3703,8 @@ public final class Bttl_800e {
 
     //LAB_800ee9c0
     for(int fileIndex = 0; fileIndex < files.size(); fileIndex++) {
-      if(files.get(fileIndex).length != 0) {
-        final Tim tim = new Tim(files.get(fileIndex));
+      if(files.get(fileIndex).real()) {
+        final Tim tim = new Tim(files.get(fileIndex).getBytes());
 
         if(fileIndex == 0) {
           GPU.uploadData(new RECT().set((short)704, (short)256, (short)64, (short)256), tim.getData(), tim.getImageData());

@@ -108,8 +108,13 @@ public class Gpu implements Runnable {
     final int rectW = rect.w.get();
     final int rectH = rect.h.get();
 
-    assert rectX + rectW <= this.vramWidth : "Rect right (" + (rectX + rectW) + ") overflows VRAM width (" + this.vramWidth + ')';
-    assert rectY + rectH <= this.vramHeight : "Rect bottom (" + (rectY + rectH) + ") overflows VRAM height (" + this.vramHeight + ')';
+    if(rectX + rectW > this.vramWidth) {
+      throw new IllegalArgumentException("Rect right (" + (rectX + rectW) + ") overflows VRAM width (" + this.vramWidth + ')');
+    }
+
+    if(rectY + rectH > this.vramHeight) {
+      throw new IllegalArgumentException("Rect bottom (" + (rectY + rectH) + ") overflows VRAM height (" + this.vramHeight + ')');
+    }
 
     LOGGER.debug("Copying (%d, %d, %d, %d) from CPU to VRAM (address: %08x)", rectX, rectY, rectW, rectH, address);
 

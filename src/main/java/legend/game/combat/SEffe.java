@@ -9273,9 +9273,8 @@ public final class SEffe {
     final int s6 = t5 / 0x2000;
     final int s0 = t5 & 0x1fff;
     final int s2 = 0x2000 - s0;
-    final int size = lmb.count_04.get() * 0x14;
     final UnboundedArrayRef<LmbTransforms14> transformsLo = effect.ptr_10.deref();
-    final UnboundedArrayRef<LmbTransforms14> transformsHi = transformsLo.slice(size);
+    final UnboundedArrayRef<LmbTransforms14> transformsHi = transformsLo.slice(lmb.count_04.get());
     final int v1 = effect._04.get();
     final int fp = (s6 + 1) % lmb._0a.get();
     if(v1 != t5) {
@@ -9288,7 +9287,7 @@ public final class SEffe {
       //LAB_801171c8
       if(s6 < s1) {
         s1 = 0;
-        memcpy(transformsLo.getAddress(), originalTransforms.getAddress(), size);
+        memcpy(transformsLo.getAddress(), originalTransforms.getAddress(), lmb.count_04.get() * 0x14);
       }
 
       //LAB_801171f8

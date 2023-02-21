@@ -78,6 +78,7 @@ import legend.game.types.MrgFile;
 import legend.game.types.SpellStats0c;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
+import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
 
 import javax.annotation.Nullable;
@@ -1306,10 +1307,10 @@ public final class Bttl_800c {
   }
 
   @Method(0x800c8774L)
-  public static void loadStageTmdAndAnim(final List<byte[]> files) {
+  public static void loadStageTmdAndAnim(final List<FileData> files) {
     setStageHasNoModel();
 
-    if(files.get(0).length > 0 && files.get(1).length > 0 && files.get(2).length > 0) {
+    if(files.get(0).size() > 0 && files.get(1).size() > 0 && files.get(2).size() > 0) {
       _800c6754.set(1);
       stageHasModel_800c66b8.set(true);
 
@@ -1376,19 +1377,19 @@ public final class Bttl_800c {
   @Method(0x800c8b20L)
   public static void loadStage(final int stage) {
     loadDrgnDir(0, 2497 + stage, files -> {
-      if(files.get(0).length != 0) {
+      if(files.get(0).real()) {
         if(_1f8003f4.stageMcq_9cb0 != null) {
           free(_1f8003f4.stageMcq_9cb0.getAddress());
         }
 
-        final McqHeader mcq = MEMORY.ref(4, mallocTail(files.get(0).length), McqHeader::new);
-        MEMORY.setBytes(mcq.getAddress(), files.get(0));
+        final McqHeader mcq = MEMORY.ref(4, mallocTail(files.get(0).size()), McqHeader::new);
+        MEMORY.setBytes(mcq.getAddress(), files.get(0).getBytes());
         loadStageMcq(mcq);
       }
 
-      if(files.get(1).length != 0) {
-        final long tim = mallocTail(files.get(1).length);
-        MEMORY.setBytes(tim, files.get(1));
+      if(files.get(1).size() != 0) {
+        final long tim = mallocTail(files.get(1).size());
+        MEMORY.setBytes(tim, files.get(1).getBytes());
         loadStageTim(tim);
         free(tim);
       }
@@ -1639,7 +1640,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800c941cL)
-  public static void combatantTmdAndAnimLoadedCallback(final List<byte[]> files, final int combatantIndex, final boolean isMonster) {
+  public static void combatantTmdAndAnimLoadedCallback(final List<FileData> files, final int combatantIndex, final boolean isMonster) {
     final CombatantStruct1a8 combatant = getCombatant(combatantIndex);
     combatant.flags_19e &= 0xffdf;
 
@@ -1652,17 +1653,15 @@ public final class Bttl_800c {
     final MrgFile mrg = combatant.mrg_00;
 
     // I don't think this is actually used?
-    if(files.get(34).length != 0) {
-      combatant.scriptPtr_10 = new ScriptFile("%s %d file 34".formatted(isMonster ? "monster" : "char", combatant.charSlot_19c), files.get(34));
+    if(files.get(34).real()) {
+      combatant.scriptPtr_10 = new ScriptFile("%s %d file 34".formatted(isMonster ? "monster" : "char", combatant.charSlot_19c), files.get(34).getBytes());
     }
 
     //LAB_800c94a0
     //LAB_800c94a4
     for(int animIndex = 0; animIndex < 32; animIndex++) {
-      final int size = mrg.entries.get(animIndex).size.get();
-
-      if(size != 0) {
-        FUN_800c9a80(mrg.getFile(animIndex), size, 1, 0, combatantIndex, animIndex);
+      if(files.get(animIndex).real()) {
+        FUN_800c9a80(mrg.getFile(animIndex), files.get(animIndex).size(), 1, 0, combatantIndex, animIndex);
       }
 
       //LAB_800c94cc
@@ -1767,7 +1766,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800c9898L)
-  public static void attackAnimationsLoaded(final List<byte[]> files, final int combatantIndex, final boolean isMonster, final int charSlot) {
+  public static void attackAnimationsLoaded(final List<FileData> files, final int combatantIndex, final boolean isMonster, final int charSlot) {
     final CombatantStruct1a8 combatant = getCombatant(combatantIndex);
 
     if(combatant.mrg_04 == null) {
@@ -1779,16 +1778,14 @@ public final class Bttl_800c {
 
         //LAB_800c9940
         for(int animIndex = 0; animIndex < 32; animIndex++) {
-          final int size = files.get(32 + animIndex).length;
-
-          if(size != 0) {
+          if(files.get(32 + animIndex).real()) {
             if(combatant._14[animIndex] != null && combatant._14[animIndex]._09 != 0) {
               FUN_800c9c7c(combatantIndex, animIndex);
             }
 
             //LAB_800c9974
             // Type 6 - TIM file (except it's loading animation data into VRAM???) TODO
-            FUN_800c9a80(mrg.getFile(32 + animIndex), size, 6, charSlot, combatantIndex, animIndex);
+            FUN_800c9a80(mrg.getFile(32 + animIndex), files.get(32 + animIndex).size(), 6, charSlot, combatantIndex, animIndex);
           }
         }
       }
@@ -1798,15 +1795,13 @@ public final class Bttl_800c {
 
       //LAB_800c99e8
       for(int animIndex = 0; animIndex < 32; animIndex++) {
-        final int size = mrg.entries.get(animIndex).size.get();
-
-        if(size != 0) {
+        if(files.get(animIndex).real()) {
           if(combatant._14[animIndex] != null && combatant._14[animIndex]._09 != 0) {
             FUN_800c9c7c(combatantIndex, animIndex);
           }
 
           //LAB_800c9a18
-          FUN_800c9a80(mrg.getFile(animIndex), size, 2, 1, combatantIndex, animIndex);
+          FUN_800c9a80(mrg.getFile(animIndex), files.get(animIndex).size(), 2, 1, combatantIndex, animIndex);
         }
 
         //LAB_800c9a34
@@ -2179,9 +2174,9 @@ public final class Bttl_800c {
   }
 
   @Method(0x800ca65cL)
-  public static void FUN_800ca65c(final byte[] data, final int combatantIndex) {
-    final long tim = mallocTail(data.length);
-    MEMORY.setBytes(tim, data);
+  public static void FUN_800ca65c(final FileData data, final int combatantIndex) {
+    final long tim = mallocTail(data.size());
+    MEMORY.setBytes(tim, data.getBytes());
     loadCombatantTim(combatantIndex, tim);
     free(tim);
   }

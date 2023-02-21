@@ -7,10 +7,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -66,48 +68,94 @@ public final class Unpacker {
     unpack();
   }
 
-  public static byte[] loadFile(final String name) {
+  public static FileData loadFile(final String name) {
     LOGGER.info("Loading file %s", name);
 
     synchronized(IO_LOCK) {
       try {
-        return Files.readAllBytes(ROOT.resolve(fixPath(name)));
+        return new FileData(Files.readAllBytes(ROOT.resolve(fixPath(name))));
       } catch(final IOException e) {
         throw new RuntimeException("Failed to load file " + name, e);
       }
     }
   }
 
-  public static List<byte[]> loadDirectory(final String name) {
+  public static List<FileData> loadDirectory(final String name) {
     LOGGER.info("Loading directory %s", name);
 
     synchronized(IO_LOCK) {
-      try(final DirectoryStream<Path> ds = Files.newDirectoryStream(ROOT.resolve(fixPath(name)))) {
-        final List<byte[]> files = new ArrayList<>();
+      final Path dir = ROOT.resolve(fixPath(name));
+      final Path mrg = dir.resolve("mrg");
 
-        StreamSupport.stream(ds.spliterator(), false)
-          .filter(Files::isRegularFile)
-          .sorted((path1, path2) -> {
-            final String filename1 = path1.getFileName().toString();
-            final String filename2 = path2.getFileName().toString();
+      if(Files.exists(mrg)) {
+        try(final BufferedReader reader = Files.newBufferedReader(mrg)) {
+          final Map<String, String> fileMap = new LinkedHashMap<>();
+
+          reader.lines().forEach(line -> {
+            final String[] parts = line.split("=");
+
+            if(parts.length != 2) {
+              throw new RuntimeException("Invalid MRG entry! " + line);
+            }
+
+            final String virtual = parts[0];
+            final String real = parts[1];
+            fileMap.put(virtual, real);
+          });
+
+          final List<FileData> files = new ArrayList<>();
+          fileMap.forEach((virtual, real) -> {
+            // Resolve to the realest file
+            while(!fileMap.get(real).equals(real)) {
+              real = fileMap.get(real);
+            }
 
             try {
-              return Integer.compare(Integer.parseInt(filename1), Integer.parseInt(filename2));
-            } catch(final NumberFormatException ignored) { }
-
-            return String.CASE_INSENSITIVE_ORDER.compare(filename1, filename2);
-          })
-          .forEach(child -> {
-            try {
-              files.add(Files.readAllBytes(child));
+              final Path file = dir.resolve(real);
+              if(Files.isRegularFile(file)) {
+                if(virtual.equals(real)) {
+                  files.add(new FileData(Files.readAllBytes(file)));
+                } else {
+                  files.add(FileData.virtual(Files.readAllBytes(file)));
+                }
+              }
             } catch(final IOException e) {
               throw new RuntimeException("Failed to load directory " + name, e);
             }
           });
 
-        return files;
-      } catch(final IOException e) {
-        throw new RuntimeException("Failed to load directory " + name, e);
+          return files;
+        } catch(final IOException e) {
+          throw new RuntimeException("Failed to load directory " + name, e);
+        }
+      } else {
+        try(final DirectoryStream<Path> ds = Files.newDirectoryStream(ROOT.resolve(fixPath(name)))) {
+          final List<FileData> files = new ArrayList<>();
+
+          StreamSupport.stream(ds.spliterator(), false)
+            .filter(Files::isRegularFile)
+            .sorted((path1, path2) -> {
+              final String filename1 = path1.getFileName().toString();
+              final String filename2 = path2.getFileName().toString();
+
+              try {
+                return Integer.compare(Integer.parseInt(filename1), Integer.parseInt(filename2));
+              } catch(final NumberFormatException ignored) { }
+
+              return String.CASE_INSENSITIVE_ORDER.compare(filename1, filename2);
+            })
+            .forEach(child -> {
+              try {
+                files.add(new FileData(Files.readAllBytes(child)));
+              } catch(final IOException e) {
+                throw new RuntimeException("Failed to load directory " + name, e);
+              }
+            });
+
+          return files;
+        } catch(final IOException e) {
+          throw new RuntimeException("Failed to load directory " + name, e);
+        }
       }
     }
   }
@@ -246,6 +294,8 @@ public final class Unpacker {
   }
 
   private static Tuple<String, FileData> readFile(final Map.Entry<String, DirectoryEntry> e) {
+    LOGGER.info("Unpacking %s...", e.getKey());
+
     final DirectoryEntry entry = e.getValue();
 
     synchronized(entry.reader()) {
@@ -255,8 +305,6 @@ public final class Unpacker {
   }
 
   private static Map<String, FileData> transform(final String name, final FileData data, final Set<Flags> flags) {
-//    LOGGER.info("Unpacking %s...", name);
-
     final Map<String, FileData> entries = new HashMap<>();
     boolean wasTransformed = false;
 
@@ -309,10 +357,23 @@ public final class Unpacker {
 
     final Map<String, FileData> files = new HashMap<>();
     int i = 0;
-    for(final FileData entry : archive) {
-      files.put(name + '/' + i, entry);
+    for(final MrgArchive.Entry entry : archive) {
+      if(!entry.virtual()) {
+        files.put(name + '/' + i, data.slice(entry.offset(), entry.size()));
+      }
+
       i++;
     }
+
+    final StringBuilder sb = new StringBuilder();
+
+    i = 0;
+    for(final MrgArchive.Entry entry : archive) {
+      sb.append(i).append('=').append(entry.virtual() ? entry.parent() : i).append('\n');
+      i++;
+    }
+
+    files.put(name + "/mrg", new FileData(sb.toString().getBytes(StandardCharsets.US_ASCII)));
 
     return files;
   }
@@ -397,7 +458,7 @@ public final class Unpacker {
 
   private static boolean playerCombatModelsAndTexturesDiscriminator(final String name, final FileData data, final Set<Flags> flags) {
     for(int i = 3993; i <= 4010; i++) {
-      if(name.startsWith("SECT/DRGN0.BIN/" + i + '/')) {
+      if(name.startsWith("SECT/DRGN0.BIN/" + i + '/') && (!name.endsWith("mrg") || i % 2 == 0)) { // Only copy MRG files for models
         return true;
       }
     }
@@ -423,7 +484,7 @@ public final class Unpacker {
 
   private static boolean dragoonCombatModelsAndTexturesDiscriminator(final String name, final FileData data, final Set<Flags> flags) {
     for(int i = 4011; i <= 4030; i++) {
-      if(name.startsWith("SECT/DRGN0.BIN/" + i + '/')) {
+      if(name.startsWith("SECT/DRGN0.BIN/" + i + '/') && (!name.endsWith("mrg") || i % 2 == 0)) { // Only copy MRG files for models
         return true;
       }
     }
@@ -481,6 +542,10 @@ public final class Unpacker {
   }
 
   private static void writeFile(final String name, final FileData data) {
+    if(data.virtual()) {
+      return;
+    }
+
     final Path path = ROOT.resolve(name);
 
     try {

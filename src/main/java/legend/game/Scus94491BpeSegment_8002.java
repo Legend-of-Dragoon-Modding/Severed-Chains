@@ -59,6 +59,7 @@ import legend.game.types.Textbox4c;
 import legend.game.types.TextboxArrow0c;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
+import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -2476,7 +2477,7 @@ public final class Scus94491BpeSegment_8002 {
    * </ol>
    */
   @Method(0x800249b4L)
-  public static void basicUiTexturesLoaded(final List<byte[]> files) {
+  public static void basicUiTexturesLoaded(final List<FileData> files) {
     final RECT[] rects = new RECT[28]; // image size, clut size, image size, clut size...
 
     for(int i = 0; i < 28; i++) {
@@ -2496,7 +2497,7 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_80024e88
     for(int i = 0; i < files.size(); i++) {
-      final byte[] data = files.get(i);
+      final byte[] data = files.get(i).getBytes();
 
       if(data.length != 0) {
         final Tim tim = new Tim(data, 0);
@@ -2588,8 +2589,8 @@ public final class Scus94491BpeSegment_8002 {
     clearTextbox(textboxIndex);
 
     final Textbox4c textbox = textboxes_800be358[textboxIndex];
-    textbox._04 = (int)_80052b88.offset(((script.params_20[2].get() & 0xf0) >>> 4) * 0x2L).get();
-    textbox._06 = (int)_80052b68.offset((script.params_20[2].get() & 0xf) * 0x2L).get();
+    textbox._04 = (short)_80052b88.offset(((script.params_20[2].get() & 0xf0) >>> 4) * 0x2L).get();
+    textbox._06 = (short)_80052b68.offset((script.params_20[2].get() & 0xf) * 0x2L).get();
     textbox.x_14 = 0;
     textbox.y_16 = 0;
     textbox.chars_18 = script.params_20[3].get() + 1;
@@ -3242,7 +3243,7 @@ public final class Scus94491BpeSegment_8002 {
         struct84._40--;
 
         if(struct84._40 <= 0) {
-          struct84._40 =struct84._3e;
+          struct84._40 = struct84._3e;
 
           v1 = struct84._5c;
           if(v1 == 11) {
@@ -4804,7 +4805,7 @@ public final class Scus94491BpeSegment_8002 {
     MEMORY.ref(1, v0).offset(0x4L).setu(a3);
 
     // Hellena Prison has a retail bug (textbox name says Warden?iate)
-    if(lodChar == 0x900) {
+    if(lodChar == 0x900 || lodChar == -1) {
       MEMORY.ref(2, v0).offset(0x6L).setu(0);
     } else {
       MEMORY.ref(2, v0).offset(0x6L).setu(lodChar);
