@@ -160,22 +160,22 @@ public class SBtld {
   @Method(0x80109454L)
   public static void battleMapSelectedAdditionHitProperties(final long mainAdditionHitsTablePtr, final BattlePreloadedEntities.AdditionHits activeAdditionHits) {
     //LAB_80109460
-    for(int i = 0; i < 8; i++) {
+    for(int i = 0; i < activeAdditionHits.hits.length; i++) {
       final BattlePreloadedEntities.AdditionHitProperties hitIndex = activeAdditionHits.hits[i];
       final long additionHitRefCounter = mainAdditionHitsTablePtr + i * 0x10L;
 
-      for(int j=0;j<16;j++) {
+      for(int j = 0; j < hitIndex.hitProperty.length; j++) {
         hitIndex.hitProperty[j] = (short)MEMORY.ref(1, additionHitRefCounter).offset(j).get();
       }
     }
 
     final AdditionHitEvent event = EventManager.INSTANCE.postEvent(new AdditionHitEvent(activeAdditionHits));
 
-    for(int i = 0; i < 8; i++) {
+    for(int i = 0; i < activeAdditionHits.hits.length; i++) {
       final BattlePreloadedEntities.AdditionHitProperties hitIndex = event.addition.hits[i];
       final long additionHitRefCounter = mainAdditionHitsTablePtr + i * 0x10L;
 
-      for(int j=0;j<16;j++) {
+      for(int j = 0; j < hitIndex.hitProperty.length; j++) {
         MEMORY.ref(1, additionHitRefCounter).offset(j).set(hitIndex.hitProperty[j]);
       }
     }
