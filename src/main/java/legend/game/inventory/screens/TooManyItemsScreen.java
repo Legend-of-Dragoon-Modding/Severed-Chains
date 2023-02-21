@@ -1,6 +1,7 @@
 package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
+import legend.game.input.InputKeyCode;
 import legend.game.inventory.WhichMenu;
 import legend.game.types.LodString;
 import legend.game.types.MenuItemStruct04;
@@ -364,23 +365,45 @@ public class TooManyItemsScreen extends MenuScreen {
     }
 
     if(key == GLFW_KEY_ESCAPE) {
-      if(this.menuState == MenuState._8) {
-        playSound(3);
-        unloadRenderable(this.renderable_8011e200);
-        this.menuState = MenuState._10;
-      } else if(this.menuState == MenuState._9) {
-        playSound(3);
-        unloadRenderable(this.renderable_8011e204);
-        this.menuState = MenuState._8;
-      }
-    } else if(key == GLFW_KEY_S && this.menuState == MenuState._9) {
-      playSound(2);
+      this.menuEscape();
+    } else if(key == GLFW_KEY_S) {
+      this.menuSelect();
+    }
+  }
 
-      if(this.droppedItems.get(this.dropIndex).itemId_00 < 0xc0) {
-        sortItems(this.equipment, gameState_800babc8.equipment_1e8, gameState_800babc8.equipmentCount_1e4.get());
-      } else {
-        sortItems(this.items, gameState_800babc8.items_2e9, gameState_800babc8.itemCount_1e6.get());
-      }
+  private void menuEscape() {
+    if(this.menuState == MenuState._8) {
+      playSound(3);
+      unloadRenderable(this.renderable_8011e200);
+      this.menuState = MenuState._10;
+    } else if(this.menuState == MenuState._9) {
+      playSound(3);
+      unloadRenderable(this.renderable_8011e204);
+      this.menuState = MenuState._8;
+    }
+  }
+
+  private void menuSelect() {
+    if(this.menuState != MenuState._9) {
+      return;
+    }
+
+    playSound(2);
+
+    if(this.droppedItems.get(this.dropIndex).itemId_00 < 0xc0) {
+      sortItems(this.equipment, gameState_800babc8.equipment_1e8, gameState_800babc8.equipmentCount_1e4.get());
+    } else {
+      sortItems(this.items, gameState_800babc8.items_2e9, gameState_800babc8.itemCount_1e6.get());
+    }
+  }
+
+  @Override
+  public void pressedThisFrame(final InputKeyCode inputKeyCode) {
+    if(inputKeyCode == InputKeyCode.BUTTON_EAST) {
+      this.menuEscape();
+    }
+    if(inputKeyCode == InputKeyCode.BUTTON_SOUTH) {
+      this.menuSelect();
     }
   }
 
