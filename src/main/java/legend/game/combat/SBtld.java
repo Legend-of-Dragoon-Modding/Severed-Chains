@@ -165,6 +165,10 @@ public class SBtld {
       final long additionHitRefCounter = mainAdditionHitsTablePtr + i * 0x10L;
 
       for(int j = 0; j < hitIndex.hitProperty.length; j++) {
+        if(j > 5 && j < 9) {
+          hitIndex.hitProperty[j] = (short)MEMORY.ref(1, additionHitRefCounter).offset(j).getSigned();
+          continue;
+        }
         hitIndex.hitProperty[j] = (short)MEMORY.ref(1, additionHitRefCounter).offset(j).get();
       }
     }
