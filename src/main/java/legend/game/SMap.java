@@ -34,7 +34,7 @@ import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.fmv.Fmv;
 import legend.game.input.Input;
-import legend.game.input.InputKeyCode;
+import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.Param;
@@ -4457,7 +4457,7 @@ public final class SMap {
       case 0xc -> {
         _80052c44.setu(0);
         FUN_800e5104(_800caaf8.get(), _800cab24.deref());
-        if(Input.pressedThisFrame(InputKeyCode.BUTTON_NORTH) && gameState_800babc8.indicatorsDisabled_4e3.get() == 0) {
+        if(Input.pressedThisFrame(InputAction.BUTTON_NORTH) && gameState_800babc8.indicatorsDisabled_4e3.get() == 0) {
           FUN_800e5534(-1, 0x3ff);
         }
       }
@@ -8835,7 +8835,7 @@ public final class SMap {
     }
 
     //LAB_800f321c
-    if(Input.pressedThisFrame(InputKeyCode.BUTTON_SHOULDER_RIGHT_1)) { // R1
+    if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_RIGHT_1)) { // R1
       if(indicatorMode == 0) {
         gameState_800babc8.indicatorMode_4e8.set(1);
         //LAB_800f3244
@@ -8846,7 +8846,7 @@ public final class SMap {
         _800f9e9c.setu(0);
       }
       //LAB_800f3260
-    } else if(Input.pressedThisFrame(InputKeyCode.BUTTON_SHOULDER_LEFT_1)) { // L1
+    } else if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_LEFT_1)) { // L1
       if(indicatorMode == 0) {
         //LAB_800f3274
         gameState_800babc8.indicatorMode_4e8.set(2);

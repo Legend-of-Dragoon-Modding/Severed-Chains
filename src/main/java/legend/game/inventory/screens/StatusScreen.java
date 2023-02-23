@@ -1,6 +1,6 @@
 package legend.game.inventory.screens;
 
-import legend.game.input.InputKeyCode;
+import legend.game.input.InputAction;
 
 import static legend.game.SItem.FUN_801034cc;
 import static legend.game.SItem._80114290;
@@ -177,17 +177,17 @@ public class StatusScreen extends MenuScreen {
   }
 
   @Override
-  public void pressedThisFrame(final InputKeyCode inputKeyCode) {
+  public void pressedThisFrame(final InputAction inputAction) {
     if(this.loadingStage != 2) {
       return;
     }
-    if(inputKeyCode == InputKeyCode.DPAD_LEFT || inputKeyCode == InputKeyCode.JOYSTICK_LEFT_BUTTON_LEFT) {
+    if(inputAction == InputAction.DPAD_LEFT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_LEFT) {
       this.menuNavigateLeft();
     }
-    if(inputKeyCode == InputKeyCode.DPAD_RIGHT || inputKeyCode == InputKeyCode.JOYSTICK_LEFT_BUTTON_RIGHT) {
+    if(inputAction == InputAction.DPAD_RIGHT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_RIGHT) {
       this.menuNavigateRight();
     }
-    if(inputKeyCode == InputKeyCode.BUTTON_EAST) {
+    if(inputAction == InputAction.BUTTON_EAST) {
       this.menuEscape();
     }
   }

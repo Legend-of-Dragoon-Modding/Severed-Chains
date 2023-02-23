@@ -1,7 +1,6 @@
 package legend.game.input;
 
-public enum InputKeyCode {
-  NOT_SET,
+public enum InputAction {
   BUTTON_NORTH,
   BUTTON_SOUTH,
   BUTTON_EAST,

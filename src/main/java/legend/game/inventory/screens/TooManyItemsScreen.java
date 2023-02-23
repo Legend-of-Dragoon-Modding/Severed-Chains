@@ -1,7 +1,7 @@
 package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
-import legend.game.input.InputKeyCode;
+import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
 import legend.game.types.LodString;
 import legend.game.types.MenuItemStruct04;
@@ -398,11 +398,11 @@ public class TooManyItemsScreen extends MenuScreen {
   }
 
   @Override
-  public void pressedThisFrame(final InputKeyCode inputKeyCode) {
-    if(inputKeyCode == InputKeyCode.BUTTON_EAST) {
+  public void pressedThisFrame(final InputAction inputAction) {
+    if(inputAction == InputAction.BUTTON_EAST) {
       this.menuEscape();
     }
-    if(inputKeyCode == InputKeyCode.BUTTON_SOUTH) {
+    if(inputAction == InputAction.BUTTON_SOUTH) {
       this.menuSelect();
     }
   }

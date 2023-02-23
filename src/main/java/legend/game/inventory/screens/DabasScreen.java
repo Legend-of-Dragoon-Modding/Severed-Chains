@@ -3,7 +3,7 @@ package legend.game.inventory.screens;
 import legend.core.Config;
 import legend.core.MathHelper;
 import legend.game.DabasManager;
-import legend.game.input.InputKeyCode;
+import legend.game.input.InputAction;
 import legend.game.types.DabasData100;
 import legend.game.types.LodString;
 import legend.game.types.MenuItemStruct04;
@@ -396,12 +396,12 @@ public class DabasScreen extends MenuScreen {
   }
 
   @Override
-  public void pressedThisFrame(final InputKeyCode inputKeyCode) {
+  public void pressedThisFrame(final InputAction inputAction) {
     if(this.loadingStage != 2) {
       return;
     }
 
-    if(inputKeyCode == InputKeyCode.BUTTON_EAST) {
+    if(inputAction == InputAction.BUTTON_EAST) {
       this.menuEscape();
     }
   }

@@ -5,7 +5,7 @@ import legend.core.MathHelper;
 import legend.core.opengl.Window;
 import legend.core.spu.XaAdpcm;
 import legend.game.input.Input;
-import legend.game.input.InputKeyCode;
+import legend.game.input.InputAction;
 import legend.game.types.FileEntry08;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
@@ -258,7 +258,7 @@ public class Fmv {
     GPU.mainRenderer = () -> {
 
       Input.update();
-      if(Input.pressedThisFrame(InputKeyCode.BUTTON_CENTER_2)) {
+      if(Input.pressedThisFrame(InputAction.BUTTON_CENTER_2)) {
         shouldStop = true;
       }
 

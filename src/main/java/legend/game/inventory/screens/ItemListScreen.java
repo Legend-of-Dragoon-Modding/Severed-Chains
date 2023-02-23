@@ -4,7 +4,7 @@ import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
-import legend.game.input.InputKeyCode;
+import legend.game.input.InputAction;
 import legend.game.types.LodString;
 import legend.game.types.MenuItemStruct04;
 import legend.game.types.MessageBoxResult;
@@ -370,26 +370,26 @@ public class ItemListScreen extends MenuScreen {
   }
 
   @Override
-  public void pressedThisFrame(final InputKeyCode inputKeyCode) {
-    if(inputKeyCode == InputKeyCode.DPAD_UP) {
+  public void pressedThisFrame(final InputAction inputAction) {
+    if(inputAction == InputAction.DPAD_UP) {
       this.menuNavigateUp();
     }
-    if(inputKeyCode == InputKeyCode.DPAD_DOWN) {
+    if(inputAction == InputAction.DPAD_DOWN) {
       this.menuNavigateDown();
     }
-    if(inputKeyCode == InputKeyCode.DPAD_LEFT) {
+    if(inputAction == InputAction.DPAD_LEFT) {
       this.menuNavigateLeft();
     }
-    if(inputKeyCode == InputKeyCode.DPAD_RIGHT) {
+    if(inputAction == InputAction.DPAD_RIGHT) {
       this.menuNavigateRight();
     }
-    if(inputKeyCode == InputKeyCode.BUTTON_EAST) {
+    if(inputAction == InputAction.BUTTON_EAST) {
       this.menuEscape();
     }
-    if(inputKeyCode == InputKeyCode.BUTTON_SOUTH) {
+    if(inputAction == InputAction.BUTTON_SOUTH) {
       this.menuSelect();
     }
-    if(inputKeyCode == InputKeyCode.BUTTON_NORTH) {
+    if(inputAction == InputAction.BUTTON_NORTH) {
       this.menuItemSort();
     }
   }

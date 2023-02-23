@@ -3,8 +3,8 @@ package legend.core.opengl;
 import legend.core.Config;
 import legend.core.DebugHelper;
 import legend.game.input.InputBinding;
-import legend.game.input.InputBindingStateEnum;
-import legend.game.input.InputKeyCode;
+import legend.game.input.InputBindingState;
+import legend.game.input.InputAction;
 import legend.game.input.InputMapping;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -376,24 +376,24 @@ public class Window {
       }
     }
 
-    private void onInputPressedThisFrame(InputKeyCode keyCode) {
+    private void onInputPressedThisFrame(InputAction keyCode) {
       synchronized(LOCK) {
         this.pressedThisFrame.forEach(cb -> cb.action(this.window, keyCode));
       }
     }
 
-    private void onInputReleasedThisFrame(InputKeyCode keyCode) {
+    private void onInputReleasedThisFrame(InputAction keyCode) {
       synchronized(LOCK) {
         this.releasedThisFrame.forEach(cb -> cb.action(this.window, keyCode));
       }
     }
 
-    public void callNewInputEvents(final InputMapping inputMapping) {
+    public void callInputEvents(final InputMapping inputMapping) {
       for(final InputBinding binding : inputMapping.bindings) {
-        if(binding.getState() == InputBindingStateEnum.PRESSED_THIS_FRAME) {
-          onInputPressedThisFrame(binding.getInputKeyCode());
-        } else if(binding.getState() == InputBindingStateEnum.RELEASED_THIS_FRAME) {
-          onInputReleasedThisFrame(binding.getInputKeyCode());
+        if(binding.getState() == InputBindingState.PRESSED_THIS_FRAME) {
+          onInputPressedThisFrame(binding.getInputAction());
+        } else if(binding.getState() == InputBindingState.RELEASED_THIS_FRAME) {
+          onInputReleasedThisFrame(binding.getInputAction());
         }
       }
     }
@@ -645,12 +645,12 @@ public class Window {
 
     @FunctionalInterface
     public interface OnPressedThisFrame {
-      void action(final Window window, final InputKeyCode inputKeyCode);
+      void action(final Window window, final InputAction inputAction);
     }
 
     @FunctionalInterface
     public interface OnReleasedThisFrame {
-      void action(final Window window, final InputKeyCode inputKeyCode);
+      void action(final Window window, final InputAction inputAction);
     }
   }
 }

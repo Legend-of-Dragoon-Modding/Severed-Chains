@@ -1,6 +1,6 @@
 package legend.game.inventory.screens;
 
-import legend.game.input.InputKeyCode;
+import legend.game.input.InputAction;
 
 public abstract class MenuScreen {
   protected abstract void render();
@@ -17,10 +17,10 @@ public abstract class MenuScreen {
   protected void keyPress(final int key, final int scancode, final int mods) {
   }
 
-  protected void pressedThisFrame(final InputKeyCode keyCode) {
+  protected void pressedThisFrame(final InputAction keyCode) {
   }
 
-  protected void releasedThisFrame(final InputKeyCode keyCode) {
+  protected void releasedThisFrame(final InputAction keyCode) {
   }
 
   protected boolean propagateRender() {

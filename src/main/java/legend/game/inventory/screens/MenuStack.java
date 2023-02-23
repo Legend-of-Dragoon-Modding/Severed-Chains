@@ -3,7 +3,7 @@ package legend.game.inventory.screens;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import legend.core.opengl.Window;
-import legend.game.input.InputKeyCode;
+import legend.game.input.InputAction;
 
 import java.util.Deque;
 import java.util.Iterator;
@@ -159,12 +159,12 @@ public class MenuStack {
   private record Point2D(double x, double y) {
   }
 
-  private void pressedThisFrame(final Window window, final InputKeyCode inputKeyCode) {
-    this.input(screen -> screen.pressedThisFrame(inputKeyCode));
+  private void pressedThisFrame(final Window window, final InputAction inputAction) {
+    this.input(screen -> screen.pressedThisFrame(inputAction));
   }
 
-  private void releasedThisFrame(final Window window, final InputKeyCode inputKeyCode) {
-    this.input(screen -> screen.releasedThisFrame(inputKeyCode));
+  private void releasedThisFrame(final Window window, final InputAction inputAction) {
+    this.input(screen -> screen.releasedThisFrame(inputAction));
   }
 
 }

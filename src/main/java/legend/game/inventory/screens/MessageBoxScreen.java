@@ -1,7 +1,7 @@
 package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
-import legend.game.input.InputKeyCode;
+import legend.game.input.InputAction;
 import legend.game.types.LodString;
 import legend.game.types.MessageBox20;
 import legend.game.types.MessageBoxResult;
@@ -178,18 +178,18 @@ public class MessageBoxScreen extends MenuScreen {
   }
 
   @Override
-  public void pressedThisFrame(final InputKeyCode inputKeyCode) {
+  public void pressedThisFrame(final InputAction inputAction) {
     if(this.SkipInput()) {
       return;
     }
 
-    if(inputKeyCode == InputKeyCode.DPAD_UP || inputKeyCode == InputKeyCode.JOYSTICK_LEFT_BUTTON_UP) {
+    if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
       this.menuNavigateUp();
     }
-    if(inputKeyCode == InputKeyCode.DPAD_DOWN|| inputKeyCode == InputKeyCode.JOYSTICK_LEFT_BUTTON_DOWN) {
+    if(inputAction == InputAction.DPAD_DOWN|| inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
       this.menuNavigateDown();
     }
-    if(inputKeyCode == InputKeyCode.BUTTON_SOUTH) {
+    if(inputAction == InputAction.BUTTON_SOUTH) {
       this.menuSelect();
     }
   }

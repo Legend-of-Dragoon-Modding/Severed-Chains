@@ -2,7 +2,7 @@ package legend.game.inventory.screens;
 
 import legend.core.Config;
 import legend.core.MathHelper;
-import legend.game.input.InputKeyCode;
+import legend.game.input.InputAction;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.Renderable58;
 
@@ -346,39 +346,39 @@ public class CharSwapScreen extends MenuScreen {
   }
 
   @Override
-  public void pressedThisFrame(final InputKeyCode inputKeyCode) {
+  public void pressedThisFrame(final InputAction inputAction) {
 
     if(this.loadingStage == 2) {
       // primary character left side
-      if(inputKeyCode == InputKeyCode.DPAD_UP || inputKeyCode == InputKeyCode.JOYSTICK_LEFT_BUTTON_UP) {
+      if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
         this.menuStage2NavigateUp();
       }
-      if(inputKeyCode == InputKeyCode.DPAD_DOWN || inputKeyCode == InputKeyCode.JOYSTICK_LEFT_BUTTON_DOWN) {
+      if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
         this.menuStage2NavigateDown();
       }
-      if(inputKeyCode == InputKeyCode.BUTTON_EAST) {
+      if(inputAction == InputAction.BUTTON_EAST) {
         this.menuStage2Escape();
       }
-      if(inputKeyCode == InputKeyCode.BUTTON_SOUTH) {
+      if(inputAction == InputAction.BUTTON_SOUTH) {
         this.menuStage2Select();
       }
     } else if(this.loadingStage == 3) {
-      if(inputKeyCode == InputKeyCode.DPAD_UP || inputKeyCode == InputKeyCode.JOYSTICK_LEFT_BUTTON_UP) {
+      if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
         this.menuStage3NavigateUp();
       }
-      if(inputKeyCode == InputKeyCode.DPAD_DOWN || inputKeyCode == InputKeyCode.JOYSTICK_LEFT_BUTTON_DOWN) {
+      if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
         this.menuStage3NavigateDown();
       }
-      if(inputKeyCode == InputKeyCode.DPAD_LEFT || inputKeyCode == InputKeyCode.JOYSTICK_LEFT_BUTTON_LEFT) {
+      if(inputAction == InputAction.DPAD_LEFT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_LEFT) {
         this.menuStage3NavigateLeft();
       }
-      if(inputKeyCode == InputKeyCode.DPAD_RIGHT || inputKeyCode == InputKeyCode.JOYSTICK_LEFT_BUTTON_RIGHT) {
+      if(inputAction == InputAction.DPAD_RIGHT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_RIGHT) {
         this.menuStage3NavigateRight();
       }
-      if(inputKeyCode == InputKeyCode.BUTTON_EAST) {
+      if(inputAction == InputAction.BUTTON_EAST) {
         this.menuStage3Escape();
       }
-      if(inputKeyCode == InputKeyCode.BUTTON_SOUTH) {
+      if(inputAction == InputAction.BUTTON_SOUTH) {
         this.menuStage3Select();
       }
     }

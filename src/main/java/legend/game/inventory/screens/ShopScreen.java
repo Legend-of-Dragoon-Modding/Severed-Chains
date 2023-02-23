@@ -3,7 +3,7 @@ package legend.game.inventory.screens;
 import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.memory.Memory;
-import legend.game.input.InputKeyCode;
+import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.LodString;
@@ -1028,64 +1028,64 @@ public class ShopScreen extends MenuScreen {
   }
 
   @Override
-  public void pressedThisFrame(final InputKeyCode inputKeyCode) {
+  public void pressedThisFrame(final InputAction inputAction) {
     switch(this.menuState) {
       case RENDER_3 -> {
-        if(inputKeyCode == InputKeyCode.DPAD_UP || inputKeyCode == InputKeyCode.JOYSTICK_LEFT_BUTTON_UP) {
+        if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
           this.menuMainShopRender3NavigateUp();
         }
-        if(inputKeyCode == InputKeyCode.DPAD_DOWN || inputKeyCode == InputKeyCode.JOYSTICK_LEFT_BUTTON_DOWN) {
+        if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
           this.menuMainShopRender3NavigateDown();
         }
-        if(inputKeyCode == InputKeyCode.BUTTON_EAST) {
+        if(inputAction == InputAction.BUTTON_EAST) {
           this.menuMainShopRender3Escape();
         }
-        if(inputKeyCode == InputKeyCode.BUTTON_SOUTH) {
+        if(inputAction == InputAction.BUTTON_SOUTH) {
           this.menuMainShopRender3Select();
         }
       }
 
       case BUY_4 -> {
-        if(inputKeyCode == InputKeyCode.DPAD_UP || inputKeyCode == InputKeyCode.JOYSTICK_LEFT_BUTTON_UP) {
+        if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
           this.menuBuy4NavigateUp();
         }
-        if(inputKeyCode == InputKeyCode.DPAD_DOWN || inputKeyCode == InputKeyCode.JOYSTICK_LEFT_BUTTON_DOWN) {
+        if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
           this.menuBuy4NavigateDown();
         }
-        if(inputKeyCode == InputKeyCode.BUTTON_EAST) {
+        if(inputAction == InputAction.BUTTON_EAST) {
           this.menuBuy4Escape();
         }
-        if(inputKeyCode == InputKeyCode.BUTTON_SOUTH) {
+        if(inputAction == InputAction.BUTTON_SOUTH) {
           this.menuBuy4Select();
         }
       }
 
       case BUY_SELECT_CHAR_5 -> {
-        if(inputKeyCode == InputKeyCode.DPAD_LEFT || inputKeyCode == InputKeyCode.JOYSTICK_LEFT_BUTTON_LEFT) {
+        if(inputAction == InputAction.DPAD_LEFT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_LEFT) {
           this.menuSelectChar5NavigateLeft();
         }
-        if(inputKeyCode == InputKeyCode.DPAD_RIGHT || inputKeyCode == InputKeyCode.JOYSTICK_LEFT_BUTTON_RIGHT) {
+        if(inputAction == InputAction.DPAD_RIGHT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_RIGHT) {
           this.menuSelectChar5NavigateRight();
         }
-        if(inputKeyCode == InputKeyCode.BUTTON_EAST) {
+        if(inputAction == InputAction.BUTTON_EAST) {
           this.menuSelectChar5Escape();
         }
-        if(inputKeyCode == InputKeyCode.BUTTON_SOUTH) {
+        if(inputAction == InputAction.BUTTON_SOUTH) {
           this.menuSelectChar5Select();
         }
       }
 
       case SELL_10 -> {
-        if(inputKeyCode == InputKeyCode.DPAD_UP || inputKeyCode == InputKeyCode.JOYSTICK_LEFT_BUTTON_UP) {
+        if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
           this.menuSell10NavigateUp();
         }
-        if(inputKeyCode == InputKeyCode.DPAD_DOWN || inputKeyCode == InputKeyCode.JOYSTICK_LEFT_BUTTON_DOWN) {
+        if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
           this.menuSell10NavigateDown();
         }
-        if(inputKeyCode == InputKeyCode.BUTTON_EAST) {
+        if(inputAction == InputAction.BUTTON_EAST) {
           this.menuSell10Escape();
         }
-        if(inputKeyCode == InputKeyCode.BUTTON_SOUTH) {
+        if(inputAction == InputAction.BUTTON_SOUTH) {
           this.menuSell10Select();
         }
       }

@@ -28,7 +28,7 @@ import legend.game.SaveManager;
 import legend.game.Scus94491BpeSegment_8002;
 import legend.game.fmv.Fmv;
 import legend.game.input.Input;
-import legend.game.input.InputKeyCode;
+import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
 import legend.game.tim.Tim;
 import legend.game.types.CharacterData2c;
@@ -303,7 +303,7 @@ public final class Ttle {
 
       // Game Over Screen
       case 4 -> {
-        if(Input.pressedThisFrame(InputKeyCode.BUTTON_CENTER_2) || Input.pressedThisFrame(InputKeyCode.BUTTON_SOUTH)) {
+        if(Input.pressedThisFrame(InputAction.BUTTON_CENTER_2) || Input.pressedThisFrame(InputAction.BUTTON_SOUTH)) {
           Scus94491BpeSegment_8002.playSound(2);
           pregameLoadingStage_800bb10c.set(5);
           scriptStartEffect(1, 10);
@@ -788,7 +788,7 @@ public final class Ttle {
   @Method(0x800c8484L)
   public static void handleMainInput() {
     if(_800c672c < 3) {
-      if(Input.pressedThisFrame(InputKeyCode.BUTTON_SOUTH)) { // Menu button X
+      if(Input.pressedThisFrame(InputAction.BUTTON_SOUTH)) { // Menu button X
         playSound(0, 2, 0, 0, (short)0, (short)0);
 
         _800c672c = 3;
@@ -797,7 +797,7 @@ public final class Ttle {
           selectedConfigCategory = 0;
           _800c6728 = 1;
         }
-      } else if(Input.pressedThisFrame(InputKeyCode.DPAD_UP) || Input.pressedThisFrame(InputKeyCode.JOYSTICK_LEFT_BUTTON_UP)) { // Menu button up
+      } else if(Input.pressedThisFrame(InputAction.DPAD_UP) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_UP)) { // Menu button up
         playSound(0, 1, 0, 0, (short)0, (short)0);
 
         selectedMenuOption--;
@@ -810,7 +810,7 @@ public final class Ttle {
         }
 
         _800c672c = 2;
-      } else if(Input.pressedThisFrame(InputKeyCode.DPAD_DOWN) || Input.pressedThisFrame(InputKeyCode.JOYSTICK_LEFT_BUTTON_DOWN)) { // Menu button down
+      } else if(Input.pressedThisFrame(InputAction.DPAD_DOWN) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_DOWN)) { // Menu button down
         playSound(0, 1, 0, 0, (short)0, (short)0);
 
         selectedMenuOption++;
@@ -969,21 +969,21 @@ public final class Ttle {
     if(_800c6728 == 1 && _800c6738 < 3) {
 
       // Up, down
-      if(Input.pressedThisFrame(InputKeyCode.DPAD_UP) || Input.pressedThisFrame(InputKeyCode.JOYSTICK_LEFT_BUTTON_UP) ||
-        Input.pressedThisFrame(InputKeyCode.DPAD_DOWN) || Input.pressedThisFrame(InputKeyCode.JOYSTICK_LEFT_BUTTON_DOWN)) {
+      if(Input.pressedThisFrame(InputAction.DPAD_UP) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_UP) ||
+        Input.pressedThisFrame(InputAction.DPAD_DOWN) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_DOWN)) {
         playSound(0, 1, 0, 0, (short)0, (short)0);
         selectedConfigCategory ^= 0b11;
         _800c6738 = 2;
       }
 
       // Back
-      if(Input.pressedThisFrame(InputKeyCode.BUTTON_EAST)) {
+      if(Input.pressedThisFrame(InputAction.BUTTON_EAST)) {
         menuEscape();
       }
 
       // Left, right
-      if(Input.pressedThisFrame(InputKeyCode.DPAD_LEFT) || Input.pressedThisFrame(InputKeyCode.JOYSTICK_LEFT_BUTTON_LEFT) ||
-        Input.pressedThisFrame(InputKeyCode.DPAD_RIGHT) || Input.pressedThisFrame(InputKeyCode.JOYSTICK_LEFT_BUTTON_RIGHT)) {
+      if(Input.pressedThisFrame(InputAction.DPAD_LEFT) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_LEFT) ||
+        Input.pressedThisFrame(InputAction.DPAD_RIGHT) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_RIGHT)) {
         playSound(0, 1, 0, 0, (short)0, (short)0);
 
         if(selectedConfigCategory == 0) {

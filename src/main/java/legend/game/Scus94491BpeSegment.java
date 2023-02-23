@@ -661,7 +661,7 @@ public final class Scus94491BpeSegment {
         keyRepeat.remove(input);
       }
     });
-
+/*
     final String controllerGuid = Config.controllerGuid();
     for(int i = 0; i < GLFW_JOYSTICK_LAST; i++) {
       if(controllerGuid.equals(glfwGetJoystickGUID(i))) {
@@ -682,7 +682,7 @@ public final class Scus94491BpeSegment {
         controllerId = -1;
       }
     });
-
+*/
     Input.init();
 
     GPU.subRenderer = () -> {

@@ -1,7 +1,7 @@
 package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
-import legend.game.input.InputKeyCode;
+import legend.game.input.InputAction;
 import legend.game.types.MenuItemStruct04;
 import legend.game.types.Renderable58;
 
@@ -268,24 +268,24 @@ public class GoodsScreen extends MenuScreen {
   }
 
   @Override
-  public void pressedThisFrame(final InputKeyCode inputKeyCode) {
+  public void pressedThisFrame(final InputAction inputAction) {
     if(this.loadingStage != 1) {
       return;
     }
 
-    if(inputKeyCode == InputKeyCode.DPAD_UP || inputKeyCode == InputKeyCode.JOYSTICK_LEFT_BUTTON_UP) {
+    if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
       this.menuNavigateUp();
     }
-    if(inputKeyCode == InputKeyCode.DPAD_DOWN || inputKeyCode == InputKeyCode.JOYSTICK_LEFT_BUTTON_DOWN) {
+    if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
       this.menuNavigateDown();
     }
-    if(inputKeyCode == InputKeyCode.DPAD_LEFT || inputKeyCode == InputKeyCode.JOYSTICK_LEFT_BUTTON_LEFT) {
+    if(inputAction == InputAction.DPAD_LEFT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_LEFT) {
       this.menuNavigateLeft();
     }
-    if(inputKeyCode == InputKeyCode.DPAD_RIGHT || inputKeyCode == InputKeyCode.JOYSTICK_LEFT_BUTTON_RIGHT) {
+    if(inputAction == InputAction.DPAD_RIGHT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_RIGHT) {
       this.menuNavigateRight();
     }
-    if(inputKeyCode == InputKeyCode.BUTTON_EAST) {
+    if(inputAction == InputAction.BUTTON_EAST) {
       this.menuEscape();
     }
   }
