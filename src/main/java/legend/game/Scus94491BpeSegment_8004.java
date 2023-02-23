@@ -725,7 +725,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[847] = SEffe::FUN_801023fc;
     scriptSubFunctions_8004e29c[848] = SEffe::FUN_8010246c;
     scriptSubFunctions_8004e29c[849] = Bttl_800c::scriptSetMtSeed;
-    scriptSubFunctions_8004e29c[850] = SEffe::FUN_80109d30;
+    scriptSubFunctions_8004e29c[850] = SEffe::allocateVertexDifferenceAnimation;
     scriptSubFunctions_8004e29c[851] = SEffe::FUN_8010a3fc;
     scriptSubFunctions_8004e29c[852] = Bttl_800d::allocateMonsterDeathEffect;
     scriptSubFunctions_8004e29c[853] = Bttl_800d::FUN_800d0124;

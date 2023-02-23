@@ -75,7 +75,7 @@ import legend.game.combat.types.BttlScriptData6cSub5c;
 import legend.game.combat.types.BttlScriptData6cSubBase1;
 import legend.game.combat.types.DeathDimensionEffect1c;
 import legend.game.combat.types.DragoonAdditionScriptData1c;
-import legend.game.combat.types.EffeScriptData18;
+import legend.game.combat.types.VertexDifferenceAnimation18;
 import legend.game.combat.types.EffeScriptData30;
 import legend.game.combat.types.EffeScriptData30Sub06;
 import legend.game.combat.types.EffectData98;
@@ -4861,70 +4861,70 @@ public final class SEffe {
   }
 
   @Method(0x80109b44L)
-  public static void FUN_80109b44(final ScriptState<EffeScriptData18> state, final EffeScriptData18 data) {
-    data.ticksRemaining_00--;
+  public static void applyVertexDifferenceAnimation(final ScriptState<VertexDifferenceAnimation18> state, final VertexDifferenceAnimation18 animation) {
+    animation.ticksRemaining_00--;
 
-    if(data.ticksRemaining_00 < 0) {
+    if(animation.ticksRemaining_00 < 0) {
       state.deallocateWithChildren();
       return;
     }
 
     //LAB_80109b7c
     //LAB_80109b90
-    for(int i = 0; i < data.count_08; i++) {
-      final SVECTOR t1 = data.ptr_0c[i];
-      final VECTOR p10 = data.ptr_10[i];
-      final VECTOR p14 = data.ptr_14[i];
-      p14.set(p10);
-      p10.setX(p10.getX() + (p10.getX() * data._04 >> 8));
-      p10.setY(p10.getY() + (p10.getY() * data._04 >> 8));
-      p10.setZ(p10.getZ() + (p10.getZ() * data._04 >> 8));
-      t1.setX((short)(p14.getX() >> 8));
-      t1.setY((short)(p14.getY() >> 8));
-      t1.setZ((short)(p14.getZ() >> 8));
+    for(int i = 0; i < animation.vertexCount_08; i++) {
+      final SVECTOR source = animation.sourceVertices_0c[i];
+      final VECTOR current = animation.currentState_10[i];
+      final VECTOR previous = animation.previousState_14[i];
+      previous.set(current);
+      current.setX(current.getX() + (current.getX() * animation.embiggener_04 >> 8));
+      current.setY(current.getY() + (current.getY() * animation.embiggener_04 >> 8));
+      current.setZ(current.getZ() + (current.getZ() * animation.embiggener_04 >> 8));
+      source.setX((short)(previous.getX() >> 8));
+      source.setY((short)(previous.getY() >> 8));
+      source.setZ((short)(previous.getZ() >> 8));
     }
 
     //LAB_80109ce0
   }
 
-  /** Kubila demon frog */
+  /** Kubila demon frog, Lloyd's cape, ??? */
   @Method(0x80109d30L)
-  public static FlowControl FUN_80109d30(final RunningScript<?> script) {
-    final int s5 = script.params_20[2].get();
-    final int s4 = script.params_20[3].get();
-    final ScriptState<EffeScriptData18> state = SCRIPTS.allocateScriptState(new EffeScriptData18());
+  public static FlowControl allocateVertexDifferenceAnimation(final RunningScript<?> script) {
+    final int ticksRemaining = script.params_20[2].get();
+    final int embiggener = script.params_20[3].get();
+    final ScriptState<VertexDifferenceAnimation18> state = SCRIPTS.allocateScriptState(new VertexDifferenceAnimation18());
     state.loadScriptFile(doNothingScript_8004f650);
-    state.setTicker(SEffe::FUN_80109b44);
-    final GuardHealEffect14 effect1 = ((GuardHealEffect14)((EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00).effect_44);
-    final GuardHealEffect14 effect2 = ((GuardHealEffect14)((EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00).effect_44);
-    final TmdObjTable1c tmd1 = effect1.tmd_08;
-    final TmdObjTable1c tmd2 = effect2.tmd_08;
-    final EffeScriptData18 s3 = state.innerStruct_00;
-    s3.ticksRemaining_00 = s5;
-    s3._04 = s4;
-    s3.count_08 = tmd1.n_vert_04;
-    s3.ptr_0c = tmd1.vert_top_00;
-    s3.ptr_10 = new VECTOR[tmd1.n_vert_04];
-    s3.ptr_14 = new VECTOR[tmd1.n_vert_04];
-    Arrays.setAll(s3.ptr_10, i -> new VECTOR());
-    Arrays.setAll(s3.ptr_14, i -> new VECTOR());
+    state.setTicker(SEffe::applyVertexDifferenceAnimation);
+    final GuardHealEffect14 source = ((GuardHealEffect14)((EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00).effect_44);
+    final GuardHealEffect14 diff = ((GuardHealEffect14)((EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00).effect_44);
+    final TmdObjTable1c sourceModel = source.tmd_08;
+    final TmdObjTable1c diffModel = diff.tmd_08;
+    final VertexDifferenceAnimation18 animation = state.innerStruct_00;
+    animation.ticksRemaining_00 = ticksRemaining;
+    animation.embiggener_04 = embiggener;
+    animation.vertexCount_08 = sourceModel.n_vert_04;
+    animation.sourceVertices_0c = sourceModel.vert_top_00;
+    animation.currentState_10 = new VECTOR[sourceModel.n_vert_04];
+    animation.previousState_14 = new VECTOR[sourceModel.n_vert_04];
+    Arrays.setAll(animation.currentState_10, i -> new VECTOR());
+    Arrays.setAll(animation.previousState_14, i -> new VECTOR());
     _8011a030.setu(0x1L);
 
     //LAB_80109e78
-    for(int i = 0; i < tmd1.n_vert_04; i++) {
-      final SVECTOR vertex = tmd1.vert_top_00[i];
-      s3.ptr_14[i].set(vertex).shl(8);
+    for(int i = 0; i < sourceModel.n_vert_04; i++) {
+      final SVECTOR sourceVertex = sourceModel.vert_top_00[i];
+      animation.previousState_14[i].set(sourceVertex).shl(8);
     }
 
     //LAB_80109ecc
     //LAB_80109ee4
-    for(int i = 0; i < s3.count_08; i++) {
-      final SVECTOR vertex = tmd2.vert_top_00[i];
-      final VECTOR v0_0 = s3.ptr_14[i];
-      final VECTOR v0_1 = s3.ptr_10[i];
-      v0_1.setX(((vertex.getX() << 8) - v0_0.getX()) / s5);
-      v0_1.setY(((vertex.getY() << 8) - v0_0.getY()) / s5);
-      v0_1.setZ(((vertex.getZ() << 8) - v0_0.getZ()) / s5);
+    for(int i = 0; i < animation.vertexCount_08; i++) {
+      final SVECTOR diffVertex = diffModel.vert_top_00[i];
+      final VECTOR previous = animation.previousState_14[i];
+      final VECTOR current = animation.currentState_10[i];
+      current.setX(((diffVertex.getX() << 8) - previous.getX()) / ticksRemaining);
+      current.setY(((diffVertex.getY() << 8) - previous.getY()) / ticksRemaining);
+      current.setZ(((diffVertex.getZ() << 8) - previous.getZ()) / ticksRemaining);
     }
 
     //LAB_80109f90

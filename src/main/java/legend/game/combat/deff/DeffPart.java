@@ -47,7 +47,7 @@ public class DeffPart {
     public final TextureInfo[] textureInfo_08;
     public final CContainer tmd_0c;
 
-    public TmdType(final FileData data) {
+    public TmdType(final String name, final FileData data) {
       super(data);
 
       final int textureOffset = data.readInt(0x8);
@@ -64,7 +64,7 @@ public class DeffPart {
       }
 
       if(tmdOffset != offset14) {
-        this.tmd_0c = new CContainer(data.slice(tmdOffset));
+        this.tmd_0c = new CContainer(name, data.slice(tmdOffset));
       } else {
         this.tmd_0c = null;
       }
@@ -74,8 +74,8 @@ public class DeffPart {
   public static class AnimatedTmdType extends TmdType {
     public final Anim anim_14;
 
-    public AnimatedTmdType(final FileData data) {
-      super(data);
+    public AnimatedTmdType(final String name, final FileData data) {
+      super(name, data);
 
       final int animOffset = data.readInt(0x14);
       final int magic = data.readInt(animOffset);
@@ -128,8 +128,8 @@ public class DeffPart {
   public static class CmbType extends AnimatedTmdType {
     public final Cmb cmb_14;
 
-    public CmbType(final FileData data) {
-      super(data);
+    public CmbType(final String name, final FileData data) {
+      super(name, data);
 
       final int cmbOffset = data.readInt(0x14);
       this.cmb_14 = new Cmb(data.slice(cmbOffset));

@@ -2455,10 +2455,13 @@ public final class Bttl_800e {
   @Method(0x800ea620L)
   public static void FUN_800ea620(final List<FileData> deff, final ScriptState<EffectManagerData6c> deffManagerState) {
     //LAB_800ea674
-    for(final FileData data : deff) {
-      final int type = data.readInt(0) & 0xff00_0000; // Flags
+    for(int i = 0; i < deff.size(); i++) {
+      final FileData data = deff.get(i);
+
+      final int flags = data.readInt(0);
+      final int type = flags & 0xff00_0000; // Flags
       if(type == 0x100_0000) {
-        final DeffPart.TmdType tmdType = new DeffPart.TmdType(data);
+        final DeffPart.TmdType tmdType = new DeffPart.TmdType("DEFF index %d (flags %08x)".formatted(i, flags), data);
         final CContainer extTmd = tmdType.tmd_0c;
         final TmdWithId tmd = extTmd.tmdPtr_00;
 
@@ -2470,13 +2473,13 @@ public final class Bttl_800e {
           FUN_800eb308(deffManagerState.innerStruct_00, extTmd, tmdType.textureInfo_08);
         }
       } else if(type == 0x200_0000) {
-        final DeffPart.CmbType cmbType = new DeffPart.CmbType(data);
+        final DeffPart.CmbType cmbType = new DeffPart.CmbType("DEFF index %d (flags %08x)".formatted(i, flags), data);
 
         if(cmbType.textureInfo_08 != null && deffManagerState.index != 0) {
           FUN_800eb308(deffManagerState.innerStruct_00, cmbType.tmd_0c, cmbType.textureInfo_08);
         }
       } else if(type == 0x300_0000) {
-        final DeffPart.TmdType tmdType = new DeffPart.TmdType(data);
+        final DeffPart.TmdType tmdType = new DeffPart.TmdType("DEFF index %d (flags %08x)".formatted(i, flags), data);
         final CContainer extTmd = tmdType.tmd_0c;
 
         optimisePacketsIfNecessary(extTmd.tmdPtr_00, 0);
@@ -2530,7 +2533,7 @@ public final class Bttl_800e {
 
       final int index = flags & 0xff;
       if(index >= 5) {
-        final DeffPart.TmdType tmdType = new DeffPart.TmdType(files.get(i));
+        final DeffPart.TmdType tmdType = new DeffPart.TmdType("HUD DEFF file " + i, files.get(i));
         struct7cc.tmds_2f8[index] = tmdType.tmd_0c.tmdPtr_00.tmd.objTable[0];
       }
 
@@ -2592,19 +2595,21 @@ public final class Bttl_800e {
     final List<FileData> deff = deffManager_800c693c.deffPackage_5a8;
 
     //LAB_800eac84
-    for(final FileData data : deff) {
+    for(int i = 0; i < deff.size(); i++) {
+      final FileData data = deff.get(i);
+
       if(data.readInt(0) == flags) {
         return switch(flags >>> 24) {
           case 0 -> new DeffPart.LmbType(data);
-          case 1, 2 -> new DeffPart.AnimatedTmdType(data);
-          case 3 -> new DeffPart.TmdType(data);
+          case 1, 2 -> new DeffPart.AnimatedTmdType("DEFF index %d (flags %08x)".formatted(i, flags), data);
+          case 3 -> new DeffPart.TmdType("DEFF index %d (flags %08x)".formatted(i, flags), data);
           case 4 -> new DeffPart.SpriteType(data);
           case 5 -> { // Example: d-attack (DRGN0.4236.0.0)
             if(data.readInt(data.readInt(0x14)) == Cmb.MAGIC) {
-              yield new DeffPart.CmbType(data);
+              yield new DeffPart.CmbType("DEFF index %d (flags %08x)".formatted(i, flags), data);
             }
 
-            yield  new DeffPart.AnimatedTmdType(data);
+            yield new DeffPart.AnimatedTmdType("DEFF index %d (flags %08x)".formatted(i, flags), data);
           }
           default -> throw new IllegalArgumentException("Invalid DEFF type %x".formatted(flags & 0xff00_0000));
         };

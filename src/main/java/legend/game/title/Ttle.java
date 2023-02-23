@@ -365,7 +365,7 @@ public final class Ttle {
     vsyncMode_8007a3b8.set(2);
 
     loadDrgnDir(0, 5718, Ttle::menuTexturesMrgLoaded);
-    loadDrgnFile(0, 5719, Ttle::menuFireTmdLoaded);
+    loadDrgnFile(0, 5719, file -> menuFireTmdLoaded("DRGN0/5719", file));
 
     // Prepare fire animation struct
     //LAB_800c7d30
@@ -408,8 +408,8 @@ public final class Ttle {
   }
 
   @Method(0x800c7c18L)
-  public static void menuFireTmdLoaded(final FileData file) {
-    final TmdWithId tmd = new TmdWithId(file);
+  public static void menuFireTmdLoaded(final String modelName, final FileData file) {
+    final TmdWithId tmd = new TmdWithId(modelName, file);
     _800c66d0 = parseTmdFile(tmd);
     FUN_800cc0b0(_800c66d0, null);
     _800c66d0.tmd_0c = tmd;

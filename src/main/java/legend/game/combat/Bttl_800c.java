@@ -1296,7 +1296,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800c8774L)
-  public static void loadStageTmdAndAnim(final List<FileData> files) {
+  public static void loadStageTmdAndAnim(final String modelName, final List<FileData> files) {
     setStageHasNoModel();
 
     if(files.get(0).size() > 0 && files.get(1).size() > 0 && files.get(2).size() > 0) {
@@ -1304,7 +1304,7 @@ public final class Bttl_800c {
       stageHasModel_800c66b8.set(true);
 
       final BattleStage stage = _1f8003f4.stage_963c;
-      loadStageTmd(stage, new CContainer(files.get(0), 10), new TmdAnimationFile(files.get(1)));
+      loadStageTmd(stage, new CContainer(modelName, files.get(0), 10), new TmdAnimationFile(files.get(1)));
       stage.coord2_558.coord.transfer.set(0, 0, 0);
       stage.param_5a8.rotate.set((short)0, (short)0x400, (short)0);
     }
@@ -1378,7 +1378,7 @@ public final class Bttl_800c {
       }
     });
 
-    loadDrgnDir(0, (2497 + stage) + "/0", Bttl_800c::loadStageTmdAndAnim);
+    loadDrgnDir(0, (2497 + stage) + "/0", files -> loadStageTmdAndAnim("DRGN0/" + (2497 + stage) + "/0", files));
 
     currentStage_800c66a4.set(stage);
   }
@@ -1662,11 +1662,11 @@ public final class Bttl_800c {
 
     final CContainer tmd;
     if(s0._1a4 >= 0) {
-      tmd = new CContainer(FUN_800cad34(s0._1a4));
+      tmd = new CContainer(model.name, FUN_800cad34(s0._1a4));
     } else {
       //LAB_800c9590
       if(s0.mrg_00 != null && s0.mrg_00.get(32).real()) {
-        tmd = new CContainer(s0.mrg_00.get(32));
+        tmd = new CContainer(model.name, s0.mrg_00.get(32));
       } else {
         throw new RuntimeException("anim undefined");
       }

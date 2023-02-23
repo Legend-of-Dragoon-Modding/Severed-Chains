@@ -201,7 +201,7 @@ public final class Scus94491BpeSegment_800e {
     }
 
     //LAB_800e6af0
-    final CContainer container = new CContainer(new FileData(MEMORY.getBytes(extendedTmd_800103d0.getAddress(), 0x14c)));
+    final CContainer container = new CContainer("Oval blob", new FileData(MEMORY.getBytes(extendedTmd_800103d0.getAddress(), 0x14c)));
     final TmdAnimationFile animation = new TmdAnimationFile(new FileData(MEMORY.getBytes(tmdAnimFile_8001051c.getAddress(), 0x28)));
 
     FUN_800e6b3c(model_800bda10, container, animation);

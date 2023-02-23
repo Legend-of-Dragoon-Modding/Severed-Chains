@@ -2711,7 +2711,7 @@ public final class SMap {
 
             final SubmapObject obj = new SubmapObject();
             obj.script = new ScriptFile("Submap object %d (DRGN%d/%d/%d)".formatted(objIndex, drgnIndex.get(), fileIndex.get() + 2, objIndex + 1), scriptData);
-            obj.model = new CContainer(new FileData(tmdData));
+            obj.model = new CContainer("Submap object %d (DRGN%d/%d/%d)".formatted(objIndex, drgnIndex.get(), fileIndex.get() + 1, objIndex * 33), new FileData(tmdData));
 
             for(int animIndex = objIndex * 33 + 1; animIndex < (objIndex + 1) * 33; animIndex++) {
               obj.animations.add(new TmdAnimationFile(submapAssetsMrg_800c6878.get(animIndex)));
@@ -4025,7 +4025,7 @@ public final class SMap {
    * </ol>
    */
   @Method(0x800e5330L)
-  public static void loadBackground(final List<FileData> files) {
+  public static void loadBackground(final String mapName, final List<FileData> files) {
     backgroundLoaded_800cab10.setu(0x1L);
 
     //LAB_800e5374
@@ -4036,7 +4036,7 @@ public final class SMap {
     //LAB_800e5430
     final EnvironmentFile env = MEMORY.ref(4, mallocHead(files.get(0).size()), EnvironmentFile::new);
     final UnboundedArrayRef<SomethingStructSub0c_1> something1 = MEMORY.ref(4, mallocHead(files.get(1).size()), UnboundedArrayRef.of(0xc, SomethingStructSub0c_1::new));
-    final TmdWithId tmd = new TmdWithId(files.get(2));
+    final TmdWithId tmd = new TmdWithId("Background " + mapName, files.get(2));
 
     MEMORY.setBytes(env.getAddress(), files.get(0).getBytes());
     MEMORY.setBytes(something1.getAddress(), files.get(1).getBytes());
@@ -4308,7 +4308,7 @@ public final class SMap {
 
         //LAB_800e5ccc
         backgroundLoaded_800cab10.setu(0);
-        loadDrgnDir(2, fileIndex.get(), SMap::loadBackground);
+        loadDrgnDir(2, fileIndex.get(), files -> loadBackground("DRGN2%d/%d".formatted(drgnIndex.get(), fileIndex.get()), files));
         smapLoadingStage_800cb430.setu(0x6L);
       }
 
@@ -6472,7 +6472,7 @@ public final class SMap {
           loadDrgnDir(0, fileIndex, files -> {
             submapCutModelAndAnimLoaded_800d4bdc.set(true);
 
-            submapCutModel = new CContainer(files.get(0));
+            submapCutModel = new CContainer("DRGN0/" + fileIndex, files.get(0));
             submapCutAnim = new TmdAnimationFile(files.get(1));
           });
 
@@ -7355,7 +7355,7 @@ public final class SMap {
 
   @Method(0x800f0370L)
   public static void FUN_800f0370() {
-    initModel(dustModel_800d4d40, new CContainer(new FileData(MEMORY.getBytes(mrg_800d6d1c.getFile(4), mrg_800d6d1c.entries.get(4).size.get()))), new TmdAnimationFile(new FileData(MEMORY.getBytes(mrg_800d6d1c.getFile(5), mrg_800d6d1c.entries.get(5).size.get()))));
+    initModel(dustModel_800d4d40, new CContainer("Dust", new FileData(MEMORY.getBytes(mrg_800d6d1c.getFile(4), mrg_800d6d1c.entries.get(4).size.get()))), new TmdAnimationFile(new FileData(MEMORY.getBytes(mrg_800d6d1c.getFile(5), mrg_800d6d1c.entries.get(5).size.get()))));
     dust_800d4e68.next_50.clear();
     _800d4ec0.next_1c.clear();
     FUN_800f0e60();
@@ -8459,7 +8459,7 @@ public final class SMap {
 
   @Method(0x800f2788L)
   public static void initSavePoint() {
-    initModel(savePointModel_800d5eb0, new CContainer(new FileData(MEMORY.getBytes(mrg_800d6d1c.getFile(2), mrg_800d6d1c.entries.get(2).size.get()))), new TmdAnimationFile(new FileData(MEMORY.getBytes(mrg_800d6d1c.getFile(3), mrg_800d6d1c.entries.get(3).size.get()))));
+    initModel(savePointModel_800d5eb0, new CContainer("Save point", new FileData(MEMORY.getBytes(mrg_800d6d1c.getFile(2), mrg_800d6d1c.entries.get(2).size.get()))), new TmdAnimationFile(new FileData(MEMORY.getBytes(mrg_800d6d1c.getFile(3), mrg_800d6d1c.entries.get(3).size.get()))));
     savePoint_800d5598.get(0).rotation_28.set(0);
     savePoint_800d5598.get(0).colour_34.set(0x50);
     savePoint_800d5598.get(1).rotation_28.set(0);

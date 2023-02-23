@@ -11,6 +11,8 @@ import java.util.List;
 
 /** 0x1c bytes long */
 public class TmdObjTable1c {
+  public final String name;
+
   public final SVECTOR[] vert_top_00;
   public final int n_vert_04;
   public final SVECTOR[] normal_top_08;
@@ -19,7 +21,9 @@ public class TmdObjTable1c {
   public final int n_primitive_14;
   public final int scale_18;
 
-  public TmdObjTable1c(final FileData data, final FileData baseOffset) {
+  public TmdObjTable1c(final String name, final FileData data, final FileData baseOffset) {
+    this.name = name;
+
     final FileData verts = baseOffset.slice(data.readInt(0x0));
     final FileData normals = baseOffset.slice(data.readInt(0x8));
     final FileData primitives = baseOffset.slice(data.readInt(0x10));
@@ -62,6 +66,11 @@ public class TmdObjTable1c {
     this.primitives_10 = primitivesList.toArray(Primitive[]::new);
 
     this.scale_18 = data.readInt(0x18);
+  }
+
+  @Override
+  public String toString() {
+    return this.name + ' ' + super.toString();
   }
 
   public record Primitive(int offset, int width, int header, byte[][] data) { }

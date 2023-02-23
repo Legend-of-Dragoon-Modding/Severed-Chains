@@ -11,12 +11,12 @@ public class CContainer {
   public final CContainerSubfile1 ext_04;
   public final CContainerSubfile2 ptr_08;
 
-  public CContainer(final FileData data) {
-    this(data, 7);
+  public CContainer(final String name, final FileData data) {
+    this(name, data, 7);
   }
 
-  public CContainer(final FileData data, final int subfileSize) {
-    this.tmdPtr_00 = new TmdWithId(data.slice(data.readInt(0x0)));
+  public CContainer(final String name, final FileData data, final int subfileSize) {
+    this.tmdPtr_00 = new TmdWithId(name, data.slice(data.readInt(0x0)));
 
     final int offset04 = data.readInt(0x4);
     if(offset04 != 0) {

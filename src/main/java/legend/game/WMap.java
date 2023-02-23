@@ -2753,8 +2753,8 @@ public class WMap {
   }
 
   @Method(0x800d5984L)
-  public static void loadTmdCallback(final FileData file) {
-    final TmdWithId tmd = new TmdWithId(file);
+  public static void loadTmdCallback(final String modelName, final FileData file) {
+    final TmdWithId tmd = new TmdWithId(modelName, file);
 
     struct258_800c66a8.tmdRendering_08 = loadTmd(tmd);
     initTmdTransforms(struct258_800c66a8.tmdRendering_08, null);
@@ -2769,7 +2769,7 @@ public class WMap {
     struct258_800c66a8._1b4[whichFile] = mrg;
 
     if(files.get(0).size() != 0) {
-      struct258_800c66a8._b4[whichFile].extendedTmd_00 = new CContainer(files.get(0));
+      struct258_800c66a8._b4[whichFile].extendedTmd_00 = new CContainer("DRGN0/" + (5714 + whichFile), files.get(0));
     }
 
     if(files.get(1).size() != 0) {
@@ -3441,7 +3441,7 @@ public class WMap {
   public static void FUN_800d8e4c(final int index) {
     filesLoadedFlags_800c66b8.and(0xffff_fffdL);
     loadDrgnDir(0, 5697 + index, files -> WMap.timsLoaded(files, 0x2));
-    loadDrgnFile(0, 5705 + index, WMap::loadTmdCallback);
+    loadDrgnFile(0, 5705 + index, files -> WMap.loadTmdCallback("DRGN0/" +(5705 + index), files));
   }
 
   @Method(0x800d8efcL)
