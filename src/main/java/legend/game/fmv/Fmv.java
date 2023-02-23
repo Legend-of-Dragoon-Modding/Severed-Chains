@@ -2,6 +2,7 @@ package legend.game.fmv;
 
 import legend.core.DebugHelper;
 import legend.core.MathHelper;
+import legend.core.openal.XaFile;
 import legend.core.opengl.Window;
 import legend.core.spu.XaAdpcm;
 import legend.game.types.FileEntry08;
@@ -217,6 +218,8 @@ public class Fmv {
   }
 
   public static void play(final String file, final boolean doubleSpeed) {
+    legend.core.openal.Context.getXA(1, 3).play();
+
     shouldStop = false;
 
     final byte[] data = new byte[2352];

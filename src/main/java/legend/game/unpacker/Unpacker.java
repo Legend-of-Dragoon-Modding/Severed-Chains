@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
@@ -17,6 +18,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -60,6 +62,7 @@ public final class Unpacker {
     transformers.put(Unpacker::skipPartyPermutationsDiscriminator, Unpacker::skipPartyPermutationsTransformer);
     transformers.put(Unpacker::extractBtldDataDiscriminator, Unpacker::extractBtldDataTransformer);
     transformers.put(CtmdTransformer::ctmdDiscriminator, CtmdTransformer::ctmdTransformer);
+    transformers.put(Unpacker::xaDiscriminator, Unpacker::unxa);
   }
 
   public static void main(final String[] args) throws UnpackerException {
@@ -249,7 +252,7 @@ public final class Unpacker {
     final DirectoryEntry entry = e.getValue();
 
     synchronized(entry.reader()) {
-      final byte[] fileData = entry.reader().readSectors(entry.sector(), entry.length(), e.getKey().endsWith(".IKI"));
+      final byte[] fileData = entry.reader().readSectors(entry.sector(), entry.length(), e.getKey().endsWith(".IKI") || e.getKey().endsWith(".XA"));
       return new Tuple<>(e.getKey(), new FileData(fileData));
     }
   }
@@ -279,6 +282,16 @@ public final class Unpacker {
     }
 
     return entries;
+  }
+
+  private static boolean xaDiscriminator(final String name, final FileData data, final Set<Flags> flags) {
+    return name.endsWith(".XA");
+  }
+
+  private static Map<String, FileData> unxa(final String name, final FileData data, final Set<Flags> flags) {
+    legend.game.xa.Transformer.transcode(name, data);
+
+    return Collections.emptyMap();
   }
 
   private static boolean decompressDiscriminator(final String name, final FileData data, final Set<Flags> flags) {

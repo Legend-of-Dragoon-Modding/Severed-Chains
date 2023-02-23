@@ -12,7 +12,7 @@ version '1.0-SNAPSHOT'
 
 sourceCompatibility = targetCompatibility = 1.17
 
-project.ext.lwjglVersion = "3.2.3"
+project.ext.lwjglVersion = "3.3.1"
 project.ext.jomlVersion = "1.10.1"
 
 if(DefaultNativePlatform.getCurrentOperatingSystem().isWindows()) {
@@ -57,12 +57,18 @@ dependencies {
   api "org.lwjgl:lwjgl-glfw"
   api "org.lwjgl:lwjgl-nuklear"
   api "org.lwjgl:lwjgl-opengl"
+  api "org.lwjgl:lwjgl-openal"
   api "org.lwjgl:lwjgl-stb"
+  api "org.lwjgl:lwjgl-opus"
+  api "org.lwjgl:lwjgl-opusenc"
   runtimeOnly "org.lwjgl:lwjgl::$lwjglNatives"
   runtimeOnly "org.lwjgl:lwjgl-glfw::$lwjglNatives"
   runtimeOnly "org.lwjgl:lwjgl-nuklear::$lwjglNatives"
   runtimeOnly "org.lwjgl:lwjgl-opengl::$lwjglNatives"
+  runtimeOnly "org.lwjgl:lwjgl-openal::$lwjglNatives"
   runtimeOnly "org.lwjgl:lwjgl-stb::$lwjglNatives"
+  runtimeOnly "org.lwjgl:lwjgl-opus::$lwjglNatives"
+  runtimeOnly "org.lwjgl:lwjgl-opusenc::$lwjglNatives"
   api "org.joml:joml:${jomlVersion}"
 
   api group: 'com.github.slugify', name: 'slugify', version: '3.0.2'
