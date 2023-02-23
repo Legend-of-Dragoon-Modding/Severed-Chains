@@ -120,8 +120,8 @@ public final class ControllerDatabase {
     {
       case BUTTON_NORTH -> {return 0x10;}
       case BUTTON_SOUTH -> {return 0x20;}
-      case BUTTON_EAST -> {return 0x80;}
-      case BUTTON_WEST -> {return 0x40;}
+      case BUTTON_EAST -> {return 0x40;}
+      case BUTTON_WEST -> {return 0x80;}
 
       case BUTTON_CENTER_1 -> {return 0x100;}
       case BUTTON_CENTER_2 -> {return 0x800;}

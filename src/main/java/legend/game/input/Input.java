@@ -8,7 +8,23 @@ import java.util.List;
 
 import static legend.core.GameEngine.GPU;
 import static legend.game.unpacker.Unpacker.LOGGER;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_1;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_3;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_C;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_E;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F9;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_Q;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_Z;
 import static org.lwjgl.glfw.GLFW.glfwGetJoystickGUID;
 
 public final class Input {
@@ -53,11 +69,14 @@ public final class Input {
     InputControllerAssigner.reassignSequence();
   }
   private static final float controllerDeadzone = Config.controllerDeadzone();
+
   public static boolean pressedThisFrame(final InputAction targetKey) {
 
     for(final InputBinding inputBinding : playerOne.bindings) {
       if(inputBinding.getInputAction() == targetKey) {
-        return inputBinding.getState() == InputBindingState.PRESSED_THIS_FRAME;
+        if(inputBinding.getState() == InputBindingState.PRESSED_THIS_FRAME) {
+          return true;
+        }
       }
     }
     return false;
@@ -67,7 +86,9 @@ public final class Input {
 
     for(final InputBinding inputBinding : playerOne.bindings) {
       if(inputBinding.getInputAction() == targetKey) {
-        return inputBinding.getState() == InputBindingState.RELEASED_THIS_FRAME;
+        if(inputBinding.getState() == InputBindingState.RELEASED_THIS_FRAME) {
+          return true;
+        }
       }
     }
     return false;
@@ -81,15 +102,14 @@ public final class Input {
           return true;
         }
 
+        final InputAxisState axisState = getAxisState(inputBinding.getInputAction());
         if(inputBinding.getInputType() == InputType.GAMEPAD_AXIS_BUTTON_NEGATIVE) {
-          final InputAxisState axisState = getAxisState(inputBinding.getInputAction());
           if(axisState == InputAxisState.AXIS_NEGATIVE) {
             return true;
           }
         }
 
         if(inputBinding.getInputType() == InputType.GAMEPAD_AXIS_BUTTON_POSITIVE) {
-          final InputAxisState axisState = getAxisState(inputBinding.getInputAction());
           if(axisState == InputAxisState.AXIS_POSITIVE) {
             return true;
           }
@@ -115,7 +135,10 @@ public final class Input {
   public static float getAxisStateRaw(final InputAction targetKey) {
     for(final InputBinding inputBinding : playerOne.bindings) {
       if(inputBinding.getInputAction() == targetKey) {
-        return inputBinding.getAxisValue();
+        final float axisValue = inputBinding.getAxisValue();
+        if(axisValue != 0) {
+          return axisValue;
+        }
       }
     }
     return 0;
@@ -163,7 +186,29 @@ public final class Input {
     }
 
     playerOne = controllers.get(0);
+    addKeyboardBindings();
+  }
 
+  private static void addKeyboardBindings()
+  {
+    playerOne.addBinding(new InputBinding(InputAction.BUTTON_CENTER_1, GLFW_KEY_SPACE, 0x100, InputType.KEYBOARD));
+    playerOne.addBinding(new InputBinding(InputAction.BUTTON_THUMB_1, GLFW_KEY_Z, 0x200, InputType.KEYBOARD));
+    playerOne.addBinding(new InputBinding(InputAction.BUTTON_THUMB_2, GLFW_KEY_C, 0x400, InputType.KEYBOARD));
+    playerOne.addBinding(new InputBinding(InputAction.BUTTON_CENTER_2, GLFW_KEY_ENTER, 0x800, InputType.KEYBOARD));
+    playerOne.addBinding(new InputBinding(InputAction.DPAD_UP, GLFW_KEY_UP, 0x1000, InputType.KEYBOARD));
+    playerOne.addBinding(new InputBinding(InputAction.DPAD_RIGHT, GLFW_KEY_RIGHT, 0x2000, InputType.KEYBOARD));
+    playerOne.addBinding(new InputBinding(InputAction.DPAD_DOWN, GLFW_KEY_DOWN, 0x4000, InputType.KEYBOARD));
+    playerOne.addBinding(new InputBinding(InputAction.DPAD_LEFT, GLFW_KEY_LEFT, 0x8000, InputType.KEYBOARD));
+
+    playerOne.addBinding(new InputBinding(InputAction.BUTTON_SHOULDER_LEFT_2, GLFW_KEY_1, 0x01, InputType.KEYBOARD));
+    playerOne.addBinding(new InputBinding(InputAction.BUTTON_SHOULDER_RIGHT_2, GLFW_KEY_3, 0x02, InputType.KEYBOARD));
+    playerOne.addBinding(new InputBinding(InputAction.BUTTON_SHOULDER_LEFT_1, GLFW_KEY_Q, 0x04, InputType.KEYBOARD));
+    playerOne.addBinding(new InputBinding(InputAction.BUTTON_SHOULDER_RIGHT_1, GLFW_KEY_E, 0x08, InputType.KEYBOARD));
+
+    playerOne.addBinding(new InputBinding(InputAction.BUTTON_NORTH, GLFW_KEY_W, 0x10, InputType.KEYBOARD));
+    playerOne.addBinding(new InputBinding(InputAction.BUTTON_EAST, GLFW_KEY_D, 0x40, InputType.KEYBOARD));
+    playerOne.addBinding(new InputBinding(InputAction.BUTTON_SOUTH, GLFW_KEY_S, 0x20, InputType.KEYBOARD));
+    playerOne.addBinding(new InputBinding(InputAction.BUTTON_WEST, GLFW_KEY_A, 0x80, InputType.KEYBOARD));
   }
 
   private static void onControllerConnected(final int id) {

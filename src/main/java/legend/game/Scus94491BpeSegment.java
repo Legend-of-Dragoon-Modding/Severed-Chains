@@ -1,7 +1,5 @@
 package legend.game;
 
-import it.unimi.dsi.fastutil.ints.Int2BooleanMap;
-import it.unimi.dsi.fastutil.ints.Int2BooleanOpenHashMap;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
@@ -72,8 +70,6 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import javax.annotation.Nullable;
-import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -241,48 +237,8 @@ import static legend.game.combat.Bttl_800c.charCount_800c677c;
 import static legend.game.combat.Bttl_800c.monsterCount_800c6768;
 import static legend.game.combat.Bttl_800d.FUN_800d8f10;
 import static legend.game.combat.SBtld.stageData_80109a98;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_TRIGGER;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_X;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_A;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_B;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_BACK;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_LEFT_BUMPER;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_LEFT_THUMB;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_THUMB;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_START;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_X;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_Y;
-import static org.lwjgl.glfw.GLFW.GLFW_HAT_DOWN;
-import static org.lwjgl.glfw.GLFW.GLFW_HAT_LEFT;
-import static org.lwjgl.glfw.GLFW.GLFW_HAT_RIGHT;
-import static org.lwjgl.glfw.GLFW.GLFW_HAT_UP;
-import static org.lwjgl.glfw.GLFW.GLFW_JOYSTICK_LAST;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_1;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_3;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_C;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_DELETE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_E;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F12;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_Q;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_Z;
-import static org.lwjgl.glfw.GLFW.glfwGetJoystickAxes;
-import static org.lwjgl.glfw.GLFW.glfwGetJoystickButtons;
-import static org.lwjgl.glfw.GLFW.glfwGetJoystickGUID;
-import static org.lwjgl.glfw.GLFW.glfwGetJoystickHats;
-import static org.lwjgl.glfw.GLFW.glfwGetJoystickName;
 
 public final class Scus94491BpeSegment {
   private Scus94491BpeSegment() { }
@@ -459,137 +415,8 @@ public final class Scus94491BpeSegment {
       return "func %s (p1[p1[p0]]);".formatted(ptr);
     });
   }
-
-  private static final float controllerDeadzone = Config.controllerDeadzone();
-  private static int controllerId = -1;
   private static boolean inputPulse;
   public static final Int2IntMap keyRepeat = new Int2IntOpenHashMap();
-  private static final Int2BooleanMap controllerEdgeTriggers = new Int2BooleanOpenHashMap();
-
-  private static void handleControllerInput() {
-    if(controllerId != -1) {
-      final FloatBuffer axes = glfwGetJoystickAxes(controllerId);
-      final float axisX = axes.get(GLFW_GAMEPAD_AXIS_LEFT_X);
-      final float axisY = axes.get(GLFW_GAMEPAD_AXIS_LEFT_Y);
-      final float axisL = axes.get(GLFW_GAMEPAD_AXIS_LEFT_TRIGGER);
-      final float axisR = axes.get(GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER);
-
-      final ByteBuffer hats = glfwGetJoystickHats(controllerId);
-      final int dpad = hats.get(0);
-
-      if(axisX > controllerDeadzone || (dpad & GLFW_HAT_RIGHT) != 0) {
-        controllerPress(0x2000);
-      } else if(axisX < -controllerDeadzone || (dpad & GLFW_HAT_LEFT) != 0) {
-        controllerPress(0x8000);
-      } else {
-        controllerRelease(0x2000);
-        controllerRelease(0x8000);
-      }
-
-      if(axisY < -controllerDeadzone || (dpad & GLFW_HAT_UP) != 0) {
-        controllerPress(0x1000);
-      } else if(axisY > controllerDeadzone || (dpad & GLFW_HAT_DOWN) != 0) {
-        controllerPress(0x4000);
-      } else {
-        controllerRelease(0x1000);
-        controllerRelease(0x4000);
-      }
-
-      if(axisL > controllerDeadzone) {
-        controllerPress(0x1);
-      } else {
-        controllerRelease(0x1);
-      }
-
-      if(axisR > controllerDeadzone) {
-        controllerPress(0x2);
-      } else {
-        controllerRelease(0x2);
-      }
-
-      final ByteBuffer buttons = glfwGetJoystickButtons(controllerId);
-
-      if(buttons.get(GLFW_GAMEPAD_BUTTON_A) != 0) {
-        controllerPress(0x20);
-      } else {
-        controllerRelease(0x20);
-      }
-
-      if(buttons.get(GLFW_GAMEPAD_BUTTON_B) != 0) {
-        controllerPress(0x40);
-      } else {
-        controllerRelease(0x40);
-      }
-
-      if(buttons.get(GLFW_GAMEPAD_BUTTON_X) != 0) {
-        controllerPress(0x80);
-      } else {
-        controllerRelease(0x80);
-      }
-
-      if(buttons.get(GLFW_GAMEPAD_BUTTON_Y) != 0) {
-        controllerPress(0x10);
-      } else {
-        controllerRelease(0x10);
-      }
-
-      if(buttons.get(GLFW_GAMEPAD_BUTTON_LEFT_BUMPER) != 0) {
-        controllerPress(0x4);
-      } else {
-        controllerRelease(0x4);
-      }
-
-      if(buttons.get(GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER) != 0) {
-        controllerPress(0x8);
-      } else {
-        controllerRelease(0x8);
-      }
-
-      if(buttons.get(GLFW_GAMEPAD_BUTTON_START) != 0) {
-        controllerPress(0x800);
-      } else {
-        controllerRelease(0x800);
-      }
-
-      if(buttons.get(GLFW_GAMEPAD_BUTTON_BACK) != 0) {
-        controllerPress(0x100);
-      } else {
-        controllerRelease(0x100);
-      }
-
-      if(buttons.get(GLFW_GAMEPAD_BUTTON_LEFT_THUMB) != 0) {
-        controllerPress(0x200);
-      } else {
-        controllerRelease(0x200);
-      }
-
-      if(buttons.get(GLFW_GAMEPAD_BUTTON_RIGHT_THUMB) != 0) {
-        controllerPress(0x400);
-      } else {
-        controllerRelease(0x400);
-      }
-    }
-  }
-
-  private static void controllerPress(final int input) {
-    if(!controllerEdgeTriggers.getOrDefault(input, false)) {
-      _800bee90.or(input);
-      _800bee94.or(input);
-      _800bee98.or(input);
-      keyRepeat.put(input, 0);
-      controllerEdgeTriggers.put(input, true);
-    }
-  }
-
-  private static void controllerRelease(final int input) {
-    if(controllerEdgeTriggers.getOrDefault(input, false)) {
-      _800bee90.and(~input);
-      _800bee94.and(~input);
-      _800bee98.and(~input);
-      keyRepeat.remove(input);
-      controllerEdgeTriggers.remove(input);
-    }
-  }
 
   @Method(0x80011e1cL)
   public static void gameLoop() {
@@ -616,73 +443,6 @@ public final class Scus94491BpeSegment {
       }
     });
 
-    final Int2IntMap gamepadKeyMap = new Int2IntOpenHashMap();
-    gamepadKeyMap.put(GLFW_KEY_SPACE, 0x100); // Select
-    gamepadKeyMap.put(GLFW_KEY_Z, 0x200); // L3
-    gamepadKeyMap.put(GLFW_KEY_C, 0x400); // R3
-    gamepadKeyMap.put(GLFW_KEY_ENTER, 0x800); // Start
-    gamepadKeyMap.put(GLFW_KEY_UP, 0x1000); // Up
-    gamepadKeyMap.put(GLFW_KEY_RIGHT, 0x2000); // Right
-    gamepadKeyMap.put(GLFW_KEY_DOWN, 0x4000); // Down
-    gamepadKeyMap.put(GLFW_KEY_LEFT, 0x8000); // Left
-    gamepadKeyMap.put(GLFW_KEY_1, 0x01); // L2
-    gamepadKeyMap.put(GLFW_KEY_3, 0x02); // R2
-    gamepadKeyMap.put(GLFW_KEY_Q, 0x04); // L1
-    gamepadKeyMap.put(GLFW_KEY_E, 0x08); // R1
-    gamepadKeyMap.put(GLFW_KEY_W, 0x10); // Triangle
-    gamepadKeyMap.put(GLFW_KEY_D, 0x40); // Circle
-    gamepadKeyMap.put(GLFW_KEY_S, 0x20); // Cross
-    gamepadKeyMap.put(GLFW_KEY_A, 0x80); // Square
-
-    GPU.window().events.onKeyPress((window, key, scancode, mods) -> {
-      if(mods != 0) {
-        return;
-      }
-
-      final int input = gamepadKeyMap.get(key);
-
-      if(input != 0) {
-        _800bee90.or(input);
-        _800bee94.or(input);
-        _800bee98.or(input);
-
-        keyRepeat.put(input, 0);
-      }
-    });
-
-    GPU.window().events.onKeyRelease((window, key, scancode, mods) -> {
-      final int input = gamepadKeyMap.get(key);
-
-      if(input != 0) {
-        _800bee90.and(~input);
-        _800bee94.and(~input);
-        _800bee98.and(~input);
-
-        keyRepeat.remove(input);
-      }
-    });
-/*
-    final String controllerGuid = Config.controllerGuid();
-    for(int i = 0; i < GLFW_JOYSTICK_LAST; i++) {
-      if(controllerGuid.equals(glfwGetJoystickGUID(i))) {
-        System.out.println("Using gamepad " + glfwGetJoystickName(i));
-        controllerId = i;
-        break;
-      }
-    }
-
-    GPU.window().events.onControllerConnected((window, id) -> {
-      if(controllerGuid.equals(glfwGetJoystickGUID(id))) {
-        controllerId = id;
-      }
-    });
-
-    GPU.window().events.onControllerDisconnected((window, id) -> {
-      if(controllerId == id) {
-        controllerId = -1;
-      }
-    });
-*/
     Input.init();
 
     GPU.subRenderer = () -> {
@@ -691,8 +451,7 @@ public final class Scus94491BpeSegment {
       if(!soundRunning) {
         startSound();
       }
-      // Disable old controller support
-      // handleControllerInput();
+
       Input.update();
       TestInput_CheckStyle.update();
 
