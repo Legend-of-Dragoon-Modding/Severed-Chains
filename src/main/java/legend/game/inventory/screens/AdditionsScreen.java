@@ -31,13 +31,6 @@ import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
 import static legend.game.Scus94491BpeSegment_8005.additionData_80052884;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 
 public class AdditionsScreen extends MenuScreen {
@@ -212,17 +205,6 @@ public class AdditionsScreen extends MenuScreen {
 
   @Override
   protected void keyPress(final int key, final int scancode, final int mods) {
-    if(this.loadingStage != 2 || mods != 0) {
-      return;
-    }
-    switch(key) {
-      case GLFW_KEY_LEFT -> this.menuNavigateLeft();
-      case GLFW_KEY_RIGHT -> this.menuNavigateRight();
-      case GLFW_KEY_DOWN -> this.menuNavigateDown();
-      case GLFW_KEY_UP -> this.menuNavigateUp();
-      case GLFW_KEY_ENTER, GLFW_KEY_S -> this.menuSelect();
-      case GLFW_KEY_ESCAPE -> this.menuEscape();
-    }
   }
 
   private void menuEscape() {

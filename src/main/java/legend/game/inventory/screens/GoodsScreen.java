@@ -24,11 +24,6 @@ import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
 
 public class GoodsScreen extends MenuScreen {
   private int loadingStage;
@@ -184,17 +179,6 @@ public class GoodsScreen extends MenuScreen {
 
   @Override
   protected void keyPress(final int key, final int scancode, final int mods) {
-    if(this.loadingStage != 1 || mods != 0) {
-      return;
-    }
-
-    switch(key) {
-      case GLFW_KEY_LEFT -> this.menuNavigateLeft();
-      case GLFW_KEY_RIGHT -> this.menuNavigateRight();
-      case GLFW_KEY_DOWN -> this.menuNavigateDown();
-      case GLFW_KEY_UP -> this.menuNavigateUp();
-      case GLFW_KEY_ESCAPE -> this.menuEscape();
-    }
   }
 
   private void menuEscape() {

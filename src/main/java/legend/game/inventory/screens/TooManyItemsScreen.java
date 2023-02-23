@@ -49,9 +49,6 @@ import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
-
 public class TooManyItemsScreen extends MenuScreen {
   private MenuState menuState = MenuState._1;
   private double scrollAccumulator;
@@ -360,15 +357,6 @@ public class TooManyItemsScreen extends MenuScreen {
 
   @Override
   protected void keyPress(final int key, final int scancode, final int mods) {
-    if(mods != 0) {
-      return;
-    }
-
-    if(key == GLFW_KEY_ESCAPE) {
-      this.menuEscape();
-    } else if(key == GLFW_KEY_S) {
-      this.menuSelect();
-    }
   }
 
   private void menuEscape() {

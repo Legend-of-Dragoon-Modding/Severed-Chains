@@ -15,11 +15,6 @@ import static legend.game.SItem.messageBox;
 import static legend.game.SItem.setMessageBoxOptions;
 import static legend.game.SItem.setMessageBoxText;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
-
 public class MessageBoxScreen extends MenuScreen {
   private final MessageBox20 messageBox = new MessageBox20();
   private final Consumer<MessageBoxResult> onResult;
@@ -113,16 +108,6 @@ public class MessageBoxScreen extends MenuScreen {
 
   @Override
   protected void keyPress(final int key, final int scancode, final int mods) {
-
-    if(this.SkipInput()) {
-      return;
-    }
-
-    switch(key) {
-      case GLFW_KEY_UP -> this.menuNavigateUp();
-      case GLFW_KEY_DOWN -> this.menuNavigateDown();
-      case GLFW_KEY_ENTER, GLFW_KEY_S -> this.menuSelect();
-    }
   }
 
   private void menuNavigateUp() {

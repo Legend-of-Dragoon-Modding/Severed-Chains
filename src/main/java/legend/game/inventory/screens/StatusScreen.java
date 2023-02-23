@@ -24,9 +24,6 @@ import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
 import static legend.game.Scus94491BpeSegment_8005.spells_80052734;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
 
 public class StatusScreen extends MenuScreen {
   protected int loadingStage;
@@ -135,15 +132,6 @@ public class StatusScreen extends MenuScreen {
 
   @Override
   protected void keyPress(final int key, final int scancode, final int mods) {
-    if(this.loadingStage != 2 || mods != 0) {
-      return;
-    }
-
-    switch(key) {
-      case GLFW_KEY_LEFT -> this.menuNavigateLeft();
-      case GLFW_KEY_RIGHT -> this.menuNavigateRight();
-      case GLFW_KEY_ESCAPE -> this.menuEscape();
-    }
   }
 
   private void menuEscape() {

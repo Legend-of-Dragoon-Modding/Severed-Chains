@@ -70,13 +70,6 @@ import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
 import static legend.game.Scus94491BpeSegment_800b.submapIndex_800bd808;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
 
 public class MainMenuScreen extends MenuScreen {
   private int loadingStage;
@@ -358,26 +351,6 @@ public class MainMenuScreen extends MenuScreen {
 
   @Override
   protected void keyPress(final int key, final int scancode, final int mods) {
-    if(this.loadingStage == 2) {
-      switch(key) {
-        case GLFW_KEY_ESCAPE -> this.menuEscape();
-
-        case GLFW_KEY_UP -> this.menuNavigateUp();
-
-        case GLFW_KEY_DOWN -> this.menuNavigateDown();
-
-        case GLFW_KEY_LEFT -> this.menuNavigateLeft();
-
-        case GLFW_KEY_RIGHT -> this.menuNavigateRight();
-
-
-        case GLFW_KEY_ENTER, GLFW_KEY_S -> this.menuSelect();
-      }
-    } else if(this.loadingStage == 3) {
-      playSound(2);
-      messageBox_8011dc90.state_0c++;
-      this.loadingStage = 1;
-    }
   }
 
   private void menuEscape() {

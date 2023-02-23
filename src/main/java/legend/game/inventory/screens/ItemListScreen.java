@@ -269,23 +269,6 @@ public class ItemListScreen extends MenuScreen {
 
   @Override
   protected void keyPress(final int key, final int scancode, final int mods) {
-    if(mods != 0) {
-      return;
-    }
-
-    if(this.loadingStage != 1) {
-      return;
-    }
-
-    switch(key) {
-      case GLFW_KEY_ESCAPE -> this.menuEscape();
-      case GLFW_KEY_DOWN -> this.menuNavigateDown();
-      case GLFW_KEY_UP -> this.menuNavigateUp();
-      case GLFW_KEY_LEFT -> this.menuNavigateLeft();
-      case GLFW_KEY_RIGHT -> this.menuNavigateRight();
-      case GLFW_KEY_ENTER -> this.menuSelect();
-      case GLFW_KEY_W -> this.menuItemSort();
-    }
   }
 
   private void menuEscape() {

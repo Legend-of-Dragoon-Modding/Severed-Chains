@@ -6,7 +6,6 @@ import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
 import legend.game.types.MessageBoxResult;
 import legend.game.types.Renderable58;
-import org.lwjgl.glfw.GLFW;
 
 import static legend.game.SItem.FUN_801033cc;
 import static legend.game.SItem.FUN_80103444;
@@ -24,7 +23,6 @@ import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
 import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER;
 
 public abstract class SaveListScreen extends MenuScreen {
   protected int loadingStage;
@@ -142,18 +140,6 @@ public abstract class SaveListScreen extends MenuScreen {
 
   @Override
   protected void keyPress(final int key, final int scancode, final int mods) {
-    if(mods != 0) {
-      return; // preserving the old logic
-    }
-
-    switch(key) {
-
-      case GLFW.GLFW_KEY_ESCAPE -> this.menuEscape();
-      case GLFW.GLFW_KEY_UP -> this.menuNavigateUp();
-      case GLFW.GLFW_KEY_DOWN -> this.menuNavigateDown();
-
-      case GLFW_KEY_ENTER, GLFW.GLFW_KEY_S -> this.menuSelect();
-    }
   }
 
   private void menuEscape() {

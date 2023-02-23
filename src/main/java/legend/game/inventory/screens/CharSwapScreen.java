@@ -25,13 +25,6 @@ import static legend.game.Scus94491BpeSegment_800b.drgn0_6666FilePtr_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.secondaryCharIndices_800bdbf8;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
 
 public class CharSwapScreen extends MenuScreen {
   private int loadingStage;
@@ -215,25 +208,6 @@ public class CharSwapScreen extends MenuScreen {
   @Override
   protected void keyPress(final int key, final int scancode, final int mods) {
     super.keyPress(key, scancode, mods);
-
-    if(this.loadingStage == 2) {
-      // primary character left side
-      switch(key) {
-        case GLFW_KEY_ESCAPE -> this.menuStage2Escape();
-        case GLFW_KEY_DOWN -> this.menuStage2NavigateDown();
-        case GLFW_KEY_UP -> this.menuStage2NavigateUp();
-        case GLFW_KEY_S -> this.menuStage2Select();
-      }
-    } else if(this.loadingStage == 3) {
-      switch(key) {
-        case GLFW_KEY_DOWN -> this.menuStage3NavigateDown();
-        case GLFW_KEY_UP -> this.menuStage3NavigateUp();
-        case GLFW_KEY_LEFT -> this.menuStage3NavigateLeft();
-        case GLFW_KEY_RIGHT -> this.menuStage3NavigateRight();
-        case GLFW_KEY_ESCAPE -> this.menuStage3Escape();
-        case GLFW_KEY_ENTER, GLFW_KEY_S -> this.menuStage3Select();
-      }
-    }
   }
 
   private void menuStage2Escape() {

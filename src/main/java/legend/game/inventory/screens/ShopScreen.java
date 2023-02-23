@@ -80,13 +80,6 @@ import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
 
 public class ShopScreen extends MenuScreen {
   private MenuState menuState = MenuState.INIT_0;
@@ -758,47 +751,6 @@ public class ShopScreen extends MenuScreen {
 
   @Override
   protected void keyPress(final int key, final int scancode, final int mods) {
-    if(mods != 0) {
-      return;
-    }
-
-    switch(this.menuState) {
-      case RENDER_3 -> {
-        switch(key) {
-          case GLFW_KEY_UP -> this.menuMainShopRender3NavigateUp();
-          case GLFW_KEY_DOWN -> this.menuMainShopRender3NavigateDown();
-          case GLFW_KEY_ENTER, GLFW_KEY_S -> this.menuMainShopRender3Select();
-          case GLFW_KEY_ESCAPE -> this.menuMainShopRender3Escape();
-        }
-      }
-
-      case BUY_4 -> {
-        switch(key) {
-          case GLFW_KEY_UP -> this.menuBuy4NavigateUp();
-          case GLFW_KEY_DOWN -> this.menuBuy4NavigateDown();
-          case GLFW_KEY_ENTER, GLFW_KEY_S -> this.menuBuy4Select();
-          case GLFW_KEY_ESCAPE -> this.menuBuy4Escape();
-        }
-      }
-
-      case BUY_SELECT_CHAR_5 -> {
-        switch(key) {
-          case GLFW_KEY_LEFT -> this.menuSelectChar5NavigateLeft();
-          case GLFW_KEY_RIGHT -> this.menuSelectChar5NavigateRight();
-          case GLFW_KEY_ENTER, GLFW_KEY_S -> this.menuSelectChar5Select();
-          case GLFW_KEY_ESCAPE -> this.menuSelectChar5Escape();
-        }
-      }
-
-      case SELL_10 -> {
-        switch(key) {
-          case GLFW_KEY_UP -> this.menuSell10NavigateUp();
-          case GLFW_KEY_DOWN -> this.menuSell10NavigateDown();
-          case GLFW_KEY_ENTER, GLFW_KEY_S -> this.menuSell10Select();
-          case GLFW_KEY_ESCAPE -> this.menuSell10Escape();
-        }
-      }
-    }
   }
 
   private void menuMainShopRender3Escape() {

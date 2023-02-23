@@ -58,13 +58,6 @@ import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
 
 public class UseItemScreen extends MenuScreen {
   private int loadingStage;
@@ -393,25 +386,6 @@ public class UseItemScreen extends MenuScreen {
 
   @Override
   protected void keyPress(final int key, final int scancode, final int mods) {
-    if(mods != 0) {
-      return;
-    }
-
-    if(this.loadingStage == 2) {
-      switch(key) {
-        case GLFW_KEY_ESCAPE -> this.menuStage2Escape();
-        case GLFW_KEY_UP -> this.menuStage2NavigateUp();
-        case GLFW_KEY_DOWN -> this.menuStage2NavigateDown();
-        case GLFW_KEY_ENTER, GLFW_KEY_S -> this.menuStage2Select();
-      }
-    } else if(this.loadingStage == 3) {
-      switch(key) {
-        case GLFW_KEY_LEFT -> this.menuStage3NavigateLeft();
-        case GLFW_KEY_RIGHT -> this.menuStage3NavigateRight();
-        case GLFW_KEY_ESCAPE -> this.menuStage3Escape();
-        case GLFW_KEY_ENTER, GLFW_KEY_S -> this.menuStage3Select();
-      }
-    }
   }
 
   private void menuStage2Escape() {
