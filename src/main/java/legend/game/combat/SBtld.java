@@ -7,7 +7,7 @@ import legend.core.memory.types.Pointer;
 import legend.game.combat.deff.DeffManager7cc;
 import legend.game.combat.types.BattleObject27c;
 import legend.game.combat.types.BattleScriptDataBase;
-import legend.game.combat.types.BattlePreloadedEntities;
+import legend.game.combat.types.BattlePreloadedEntities_18cb0;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.combat.types.EncounterData38;
 import legend.game.combat.types.EnemyRewards08;
@@ -117,11 +117,11 @@ public class SBtld {
   }
 
   @Method(0x80109250L)
-  public static void battlePrepareSelectedAdditionHitProperties() {
+  public static void battlePrepareSelectedAdditionHitProperties_80109250() {
     //LAB_801092a0
     for(int charSlot = 0; charSlot < 3; charSlot++) {
-      final BattlePreloadedEntities.AdditionHits activeAdditionHits = battlePreloadedEntities_1f8003f4.additionHits[charSlot];
-      final BattlePreloadedEntities.AdditionHits activeDragoonAdditionHits = battlePreloadedEntities_1f8003f4.additionHits[charSlot + 3];
+      final BattlePreloadedEntities_18cb0.AdditionHits_100 activeAdditionHits = battlePreloadedEntities_1f8003f4.additionHits_38[charSlot];
+      final BattlePreloadedEntities_18cb0.AdditionHits_100 activeDragoonAdditionHits = battlePreloadedEntities_1f8003f4.additionHits_38[charSlot + 3];
       final int charIndex = gameState_800babc8.charIndex_88.get(charSlot).get();
 
       if(charIndex >= 0) {
@@ -141,11 +141,11 @@ public class SBtld {
 
         //LAB_80109310
         if(activeAdditionIndex < 0) {
-          activeAdditionHits.hits[0].hitProperty[15] = 0;
+          activeAdditionHits.hits_00[0].hitProperty_00[15] = 0;
         } else {
           //LAB_80109320
-          battleMapSelectedAdditionHitProperties(_8010e658.offset(activeAdditionIndex * 0x80L).getAddress(), activeAdditionHits);
-          battleMapSelectedAdditionHitProperties(_8010e658.offset(activeDragoonAdditionIndex * 0x80L).getAddress(), activeDragoonAdditionHits);
+          battleMapSelectedAdditionHitProperties_80109454(_8010e658.offset(activeAdditionIndex * 0x80L).getAddress(), activeAdditionHits);
+          battleMapSelectedAdditionHitProperties_80109454(_8010e658.offset(activeDragoonAdditionIndex * 0x80L).getAddress(), activeDragoonAdditionHits);
         }
       }
 
@@ -158,36 +158,36 @@ public class SBtld {
   }
 
   @Method(0x80109454L)
-  public static void battleMapSelectedAdditionHitProperties(final long mainAdditionHitsTablePtr, final BattlePreloadedEntities.AdditionHits activeAdditionHits) {
+  public static void battleMapSelectedAdditionHitProperties_80109454(final long mainAdditionHitsTablePtr, final BattlePreloadedEntities_18cb0.AdditionHits_100 activeAdditionHits) {
     //LAB_80109460
-    for(int i = 0; i < activeAdditionHits.hits.length; i++) {
-      final BattlePreloadedEntities.AdditionHitProperties hitIndex = activeAdditionHits.hits[i];
+    for(int i = 0; i < activeAdditionHits.hits_00.length; i++) {
+      final BattlePreloadedEntities_18cb0.AdditionHitProperties_20 hitIndex = activeAdditionHits.hits_00[i];
       final long additionHitRefCounter = mainAdditionHitsTablePtr + i * 0x10L;
 
-      for(int j = 0; j < hitIndex.hitProperty.length; j++) {
+      for(int j = 0; j < hitIndex.hitProperty_00.length; j++) {
         if(j > 5 && j < 9) {
-          hitIndex.hitProperty[j] = (short)MEMORY.ref(1, additionHitRefCounter).offset(j).getSigned();
+          hitIndex.hitProperty_00[j] = (short)MEMORY.ref(1, additionHitRefCounter).offset(j).getSigned();
           continue;
         }
-        hitIndex.hitProperty[j] = (short)MEMORY.ref(1, additionHitRefCounter).offset(j).get();
+        hitIndex.hitProperty_00[j] = (short)MEMORY.ref(1, additionHitRefCounter).offset(j).get();
       }
     }
 
     final AdditionHitEvent event = EventManager.INSTANCE.postEvent(new AdditionHitEvent(activeAdditionHits));
 
-    for(int i = 0; i < activeAdditionHits.hits.length; i++) {
-      final BattlePreloadedEntities.AdditionHitProperties hitIndex = event.addition.hits[i];
+    for(int i = 0; i < activeAdditionHits.hits_00.length; i++) {
+      final BattlePreloadedEntities_18cb0.AdditionHitProperties_20 hitIndex = event.addition.hits_00[i];
       final long additionHitRefCounter = mainAdditionHitsTablePtr + i * 0x10L;
 
-      for(int j = 0; j < hitIndex.hitProperty.length; j++) {
-        MEMORY.ref(1, additionHitRefCounter).offset(j).set(hitIndex.hitProperty[j]);
+      for(int j = 0; j < hitIndex.hitProperty_00.length; j++) {
+        MEMORY.ref(1, additionHitRefCounter).offset(j).set(hitIndex.hitProperty_00[j]);
       }
     }
   }
 
   @Method(0x8010955cL)
   public static void allocateEnemyBattleObjects() {
-    final BattlePreloadedEntities fp = battlePreloadedEntities_1f8003f4;
+    final BattlePreloadedEntities_18cb0 fp = battlePreloadedEntities_1f8003f4;
 
     //LAB_801095a0
     for(int i = 0; i < 3; i++) {

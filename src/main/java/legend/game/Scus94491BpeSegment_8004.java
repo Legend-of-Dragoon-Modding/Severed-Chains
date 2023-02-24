@@ -755,7 +755,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link Scus94491BpeSegment#FUN_80018998}</li>
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_80018998}</li>
-   *   <li>{@link Bttl_800c#battleInitiateAndPreload}</li>
+   *   <li>{@link Bttl_800c#battleInitiateAndPreload_800c772c}</li>
    *   <li>{@link Bttl_800c#deferAllocateEnemyBattleObjects()}</li>
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
    *   <li>{@link Bttl_800c#deferAllocatePlayerBattleObjects()}</li>

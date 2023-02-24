@@ -39,10 +39,11 @@ import legend.game.combat.types.BattleDisplayStats144;
 import legend.game.combat.types.BattleLightStruct64;
 import legend.game.combat.types.BattleMenuStruct58;
 import legend.game.combat.types.BattleObject27c;
+import legend.game.combat.types.BattlePreloadedEntities_18cb0;
 import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.BattleStage;
 import legend.game.combat.types.BattleStageDarkening1800;
-import legend.game.combat.types.BattlePreloadedEntities;
+import legend.game.combat.types.BattlePreloadedEntities_18cb0;
 import legend.game.combat.types.BattleStruct24_2;
 import legend.game.combat.types.BattleStruct3c;
 import legend.game.combat.types.BattleStructEf4;
@@ -801,11 +802,11 @@ public final class Bttl_800c {
   @Method(0x800c7488L)
   public static int getHitMultiplier(final int charSlot, final int hitNum, final int a2) {
     if((_8006e398.charBobjIndices_e40[charSlot].storage_44[7] & 0x2) != 0) { // Is dragoon
-      return battlePreloadedEntities_1f8003f4.additionHits[charSlot + 3].hits[hitNum].hitProperty[a2];
+      return battlePreloadedEntities_1f8003f4.additionHits_38[charSlot + 3].hits_00[hitNum].hitProperty_00[a2];
     }
 
     //LAB_800c74fc
-    return battlePreloadedEntities_1f8003f4.additionHits[charSlot].hits[hitNum].hitProperty[a2];
+    return battlePreloadedEntities_1f8003f4.additionHits_38[charSlot].hits_00[hitNum].hitProperty_00[a2];
   }
 
   @Method(0x800c7524L)
@@ -877,7 +878,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800c772cL)
-  public static void battleInitiateAndPreload() {
+  public static void battleInitiateAndPreload_800c772c() {
     FUN_800c8e48();
 
     _800bc94c.setu(0x1L);
@@ -897,7 +898,7 @@ public final class Bttl_800c {
 
     _8006e398.morphMode_ee4 = gameState_800babc8.morphMode_4e2.get();
 
-    loadSupportOverlay(1, SBtld::battlePrepareSelectedAdditionHitProperties);
+    loadSupportOverlay(1, SBtld::battlePrepareSelectedAdditionHitProperties_80109250);
 
     //LAB_800c7830
     for(int i = 0; i < 12; i++) {
@@ -1286,7 +1287,7 @@ public final class Bttl_800c {
 
   @Method(0x800c8624L)
   public static void FUN_800c8624() {
-    battlePreloadedEntities_1f8003f4 = new BattlePreloadedEntities();
+    battlePreloadedEntities_1f8003f4 = new BattlePreloadedEntities_18cb0();
     _8006e398 = new BattleStructEf4();
     targetBobjs_800c71f0 = new ScriptState[][] {_8006e398.charBobjIndices_e40, _8006e398.enemyBobjIndices_ebc, _8006e398.bobjIndices_e78};
   }
@@ -1697,7 +1698,7 @@ public final class Bttl_800c {
 
     final TmdAnimationFile anim = FUN_800ca31c(combatantIndex, 0);
     if((s0.flags_19e & 0x4) != 0) {
-      final BattlePreloadedEntities.Rendering1298 a0_0 = battlePreloadedEntities_1f8003f4._9ce8[s0.charSlot_19c];
+      final BattlePreloadedEntities_18cb0.Rendering1298 a0_0 = battlePreloadedEntities_1f8003f4._9ce8[s0.charSlot_19c];
 
       model.dobj2ArrPtr_00 = a0_0.dobj2s_00;
       model.coord2ArrPtr_04 = a0_0.coord2s_230;

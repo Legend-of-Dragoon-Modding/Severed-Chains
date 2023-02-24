@@ -19,7 +19,7 @@ import legend.core.memory.types.UnsignedShortRef;
 import legend.game.combat.Bttl_800c;
 import legend.game.combat.types.BattleObject27c;
 import legend.game.combat.types.BattleScriptDataBase;
-import legend.game.combat.types.BattlePreloadedEntities;
+import legend.game.combat.types.BattlePreloadedEntities_18cb0;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.MainMenuScreen;
@@ -427,7 +427,7 @@ public final class SItem {
 
   @Method(0x800fc404L)
   public static void enemyTexturesLoadedCallback(final List<FileData> files) {
-    final BattlePreloadedEntities s2 = battlePreloadedEntities_1f8003f4;
+    final BattlePreloadedEntities_18cb0 s2 = battlePreloadedEntities_1f8003f4;
 
     //LAB_800fc434
     for(int i = 0; i < combatantCount_800c66a0.get(); i++) {
