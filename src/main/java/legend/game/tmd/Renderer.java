@@ -169,7 +169,14 @@ public final class Renderer {
       } else {
         for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
           CPU.MTC2(poly.vertices[vertexIndex].colour, 6);
-          final SVECTOR norm = normals[poly.vertices[vertexIndex].normalIndex];
+
+          final SVECTOR norm;
+          if(vertexIndex < normals.length) {
+            norm = normals[poly.vertices[vertexIndex].normalIndex];
+          } else {
+            norm = new SVECTOR();
+          }
+
           CPU.MTC2(norm.getXY(), 0);
           CPU.MTC2(norm.getZ(),  1);
           CPU.COP2(0x108_041bL); // Normal colour colour single vector

@@ -183,8 +183,8 @@ import static legend.game.combat.Bttl_800c._800c6f04;
 import static legend.game.combat.Bttl_800c._800faec4;
 import static legend.game.combat.Bttl_800c._800fafe8;
 import static legend.game.combat.Bttl_800c._800fafec;
-import static legend.game.combat.Bttl_800c._800fb040;
-import static legend.game.combat.Bttl_800c._800fb05c;
+import static legend.game.combat.Bttl_800c.dragoonDeffsWithExtraTims_800fb040;
+import static legend.game.combat.Bttl_800c.cutsceneDeffsWithExtraTims_800fb05c;
 import static legend.game.combat.Bttl_800c._800fb06c;
 import static legend.game.combat.Bttl_800c._800fb148;
 import static legend.game.combat.Bttl_800c._800fb188;
@@ -908,7 +908,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e6314L)
-  public static void FUN_800e6314(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
+  public static void scriptDeffDeallocator(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
     final DeffManager7cc struct7cc = deffManager_800c693c;
 
     struct7cc.deffPackage_5a8 = null;
@@ -963,9 +963,9 @@ public final class Bttl_800e {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       script.scriptState_04,
       0,
-      Bttl_800e::FUN_800e70bc,
+      Bttl_800e::scriptDeffTicker,
       null,
-      Bttl_800e::FUN_800e6314,
+      Bttl_800e::scriptDeffDeallocator,
       null
     );
 
@@ -973,34 +973,34 @@ public final class Bttl_800e {
     manager.flags_04 = 0x600_0400;
 
     final BattleStruct24_2 v0 = _800c6938;
-    v0._00 = t0 & 0xffff;
+    v0.type_00 = t0 & 0xffff;
     v0.bobjState_04 = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[script.params_20[1].get()];
     v0._08 = script.params_20[2].get();
     v0.scriptIndex_0c = script.scriptState_04.index;
     v0.scriptOffsetIndex_10 = script.params_20[3].get() & 0xff;
     v0.managerState_18 = state;
-    v0._1c = 0;
+    v0.init_1c = false;
     v0.frameCount_20 = -1;
     loadSupportOverlay(3, Bttl_800e::FUN_800e704c);
     return state;
   }
 
   @Method(0x800e665cL)
-  public static long FUN_800e665c(final RunningScript<? extends BattleScriptDataBase> script) {
-    final int s3 = script.params_20[0].get() & 0xffff;
+  public static void loadDragoonDeff(final RunningScript<? extends BattleScriptDataBase> script) {
+    final int index = script.params_20[0].get() & 0xffff;
     final int s1 = script.params_20[3].get() & 0xff;
 
     final DeffManager7cc deffManager = deffManager_800c693c;
-    deffManager._20 |= _800fafec.offset(s3).get() << 16;
+    deffManager._20 |= _800fafec.offset(index).get() << 16;
     FUN_800e6470(script);
 
     final BattleStruct24_2 battle24 = _800c6938;
+    battle24.type_00 |= 0x100_0000;
 
-    battle24._00 |= 0x100_0000;
     if((deffManager._20 & 0x4_0000) != 0) {
       //LAB_800e66fc
       //LAB_800e670c
-      FUN_8001d068(battle24.bobjState_04, s3 != 0x2e || s1 != 0 ? 0 : 2);
+      FUN_8001d068(battle24.bobjState_04, index != 0x2e || s1 != 0 ? 0 : 2);
     }
 
     //LAB_800e6714
@@ -1009,10 +1009,10 @@ public final class Bttl_800e {
     }
 
     //LAB_800e6738
-    for(int i = 0; _800fb040.offset(i).get() != 0xff; i++) {
-      if(_800fb040.offset(i).get() == s3) {
+    for(int i = 0; dragoonDeffsWithExtraTims_800fb040.get(i).get() != -1; i++) {
+      if(dragoonDeffsWithExtraTims_800fb040.get(i).get() == index) {
         if(Unpacker.isDirectory("SECT/DRGN0.BIN/%d".formatted(4115 + i))) {
-          loadDrgnDir(0, 4115 + i, Bttl_800e::FUN_800e929c);
+          loadDrgnDir(0, 4115 + i, Bttl_800e::uploadTims);
         }
       }
 
@@ -1020,15 +1020,14 @@ public final class Bttl_800e {
     }
 
     //LAB_800e67b0
-    loadDrgnDir(0, 4139 + s3 * 2, Bttl_800e::FUN_800e929c);
-    loadDrgnDir(0, 4140 + s3 * 2 + "/0", files -> Bttl_800e.loadDeffPackage(files, battle24.managerState_18));
-    loadDrgnFile(0, 4140 + s3 * 2 + "/1", file -> _800c6938.script_14 = new ScriptFile(4140 + s3 * 2 + "/1", file.getBytes()));
+    loadDrgnDir(0, 4139 + index * 2, Bttl_800e::uploadTims);
+    loadDrgnDir(0, 4140 + index * 2 + "/0", files -> Bttl_800e.loadDeffPackage(files, battle24.managerState_18));
+    loadDrgnFile(0, 4140 + index * 2 + "/1", file -> _800c6938.script_14 = new ScriptFile(4140 + index * 2 + "/1", file.getBytes()));
     _800fafe8.setu(0x1L);
-    return 0;
   }
 
   @Method(0x800e6844L)
-  public static long FUN_800e6844(final RunningScript<? extends BattleScriptDataBase> script) {
+  public static void loadSpellItemDeff(final RunningScript<? extends BattleScriptDataBase> script) {
     deffManager_800c693c._20 |= 0x40_0000;
     FUN_800e6470(script);
     final int s0 = ((script.params_20[0].get() & 0xffff) - 192) * 2;
@@ -1038,22 +1037,21 @@ public final class Bttl_800e {
       t0.script_14 = null;
     }
 
-    t0._00 |= 0x200_0000;
-    loadDrgnDir(0, 4307 + s0, Bttl_800e::FUN_800e929c);
+    t0.type_00 |= 0x200_0000;
+    loadDrgnDir(0, 4307 + s0, Bttl_800e::uploadTims);
     loadDrgnDir(0, 4308 + s0 + "/0", files -> Bttl_800e.loadDeffPackage(files, t0.managerState_18));
     loadDrgnFile(0, 4308 + s0 + "/1", file -> _800c6938.script_14 = new ScriptFile(4308 + s0 + "/1", file.getBytes()));
     _800fafe8.setu(0x1L);
-    return 0;
   }
 
   @Method(0x800e6920L)
-  public static long FUN_800e6920(final RunningScript<? extends BattleScriptDataBase> script) {
-    final long s1 = script.params_20[0].get() & 0xff_0000L;
-    int sp20 = (short)script.params_20[0].get();
-    if(sp20 == -1) {
+  public static void loadEnemyOrBossDeff(final RunningScript<? extends BattleScriptDataBase> script) {
+    final int s1 = script.params_20[0].get() & 0xff_0000;
+    int monsterIndex = (short)script.params_20[0].get();
+    if(monsterIndex == -1) {
       final BattleObject27c v0 = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00;
       assert false : "?"; //script.params_20.get(0).set(sp0x20);
-      sp20 = getCombatant(v0.combatantIndex_26c).charIndex_1a2;
+      monsterIndex = getCombatant(v0.combatantIndex_26c).charIndex_1a2;
     }
 
     //LAB_800e69a8
@@ -1066,24 +1064,24 @@ public final class Bttl_800e {
       v1.script_14 = null;
     }
 
-    v1._00 |= 0x300_0000;
+    v1.type_00 |= 0x300_0000;
 
-    if(sp20 < 256) {
-      loadDrgnDir(0, 4433 + sp20 * 2, Bttl_800e::FUN_800e929c);
-      loadDrgnDir(0, 4434 + sp20 * 2 + "/0", files -> Bttl_800e.loadDeffPackage(files, v1.managerState_18));
-      final int finalSp2 = sp20;
-      loadDrgnFile(0, 4434 + sp20 * 2 + "/1", file -> _800c6938.script_14 = new ScriptFile(4434 + finalSp2 * 2 + "/1", file.getBytes()));
+    if(monsterIndex < 256) {
+      loadDrgnDir(0, 4433 + monsterIndex * 2, Bttl_800e::uploadTims);
+      loadDrgnDir(0, 4434 + monsterIndex * 2 + "/0", files -> Bttl_800e.loadDeffPackage(files, v1.managerState_18));
+      final int finalSp2 = monsterIndex;
+      loadDrgnFile(0, 4434 + monsterIndex * 2 + "/1", file -> _800c6938.script_14 = new ScriptFile(4434 + finalSp2 * 2 + "/1", file.getBytes()));
     } else {
       //LAB_800e6a30
-      final long a0_0 = sp20 >>> 4;
-      int fileIndex = (int)(_800faec4.offset(2, (a0_0 - 0x100L) * 0x2L).get() + (sp20 & 0xfL));
-      if((int)a0_0 >= 0x140L) {
+      final int a0_0 = monsterIndex >>> 4;
+      int fileIndex = (int)_800faec4.offset(2, (a0_0 - 0x100) * 0x2L).get() + (monsterIndex & 0xf);
+      if(a0_0 >= 320) {
         fileIndex += 117;
       }
 
       //LAB_800e6a60
       fileIndex = (fileIndex - 1) * 2;
-      loadDrgnDir(0, 4945 + fileIndex, Bttl_800e::FUN_800e929c);
+      loadDrgnDir(0, 4945 + fileIndex, Bttl_800e::uploadTims);
       loadDrgnDir(0, 4946 + fileIndex + "/0", files -> Bttl_800e.loadDeffPackage(files, v1.managerState_18));
       final int finalFileIndex = fileIndex;
       loadDrgnFile(0, 4946 + fileIndex + "/1", file -> _800c6938.script_14 = new ScriptFile(4946 + finalFileIndex + "/1", file.getBytes()));
@@ -1091,13 +1089,12 @@ public final class Bttl_800e {
 
     //LAB_800e6a9c
     _800fafe8.setu(0x1L);
-    return 0;
   }
 
   @Method(0x800e6aecL)
-  public static long FUN_800e6aec(final RunningScript<? extends BattleScriptDataBase> script) {
+  public static void loadCutsceneDeff(final RunningScript<? extends BattleScriptDataBase> script) {
     final int v1 = script.params_20[0].get();
-    final int s3 = v1 & 0xffff;
+    final int cutsceneIndex = v1 & 0xffff;
 
     FUN_800e6470(script);
 
@@ -1107,13 +1104,13 @@ public final class Bttl_800e {
       a0_0.script_14 = null;
     }
 
-    a0_0._00 |= 0x500_0000;
+    a0_0.type_00 |= 0x500_0000;
 
     //LAB_800e6b5c
-    for(int i = 0; _800fb05c.offset(i).get() != 0xff; i++) {
-      if(_800fb05c.offset(i).get() == s3) {
+    for(int i = 0; cutsceneDeffsWithExtraTims_800fb05c.get(i).get() != -1; i++) {
+      if(cutsceneDeffsWithExtraTims_800fb05c.get(i).get() == cutsceneIndex) {
         if(Unpacker.isDirectory("SECT/DRGN0.BIN/%d".formatted(5505 + i))) {
-          loadDrgnDir(0, 5505 + i, Bttl_800e::FUN_800e929c);
+          loadDrgnDir(0, 5505 + i, Bttl_800e::uploadTims);
         }
       }
 
@@ -1121,13 +1118,12 @@ public final class Bttl_800e {
     }
 
     //LAB_800e6bd4
-    loadDrgnDir(0, 5511 + s3 * 2, Bttl_800e::FUN_800e929c);
-    loadDrgnDir(0, 5512 + s3 * 2 + "/0", files -> Bttl_800e.loadDeffPackage(files, a0_0.managerState_18));
-    loadDrgnFile(0, 5512 + s3 * 2 + "/1", file -> _800c6938.script_14 = new ScriptFile(5512 + s3 * 2 + "/1", file.getBytes()));
+    loadDrgnDir(0, 5511 + cutsceneIndex * 2, Bttl_800e::uploadTims);
+    loadDrgnDir(0, 5512 + cutsceneIndex * 2 + "/0", files -> Bttl_800e.loadDeffPackage(files, a0_0.managerState_18));
+    loadDrgnFile(0, 5512 + cutsceneIndex * 2 + "/1", file -> _800c6938.script_14 = new ScriptFile(5512 + cutsceneIndex * 2 + "/1", file.getBytes()));
 
     //LAB_800e6d7c
     _800fafe8.setu(0x1L);
-    return 0;
   }
 
   @Method(0x800e6db4L)
@@ -1171,7 +1167,7 @@ public final class Bttl_800e {
           //LAB_800e6eb0
           final BattleStruct24_2 struct24 = _800c6938;
           struct24.managerState_18.loadScriptFile(struct24.script_14, struct24.scriptOffsetIndex_10);
-          struct24._1c = 0;
+          struct24.init_1c = false;
           struct24.frameCount_20 = 0;
           _800fafe8.setu(0x3L);
           flow = FlowControl.CONTINUE;
@@ -1244,7 +1240,7 @@ public final class Bttl_800e {
 
     //LAB_800e7014
     if(v1 == 0) {
-      FUN_800e665c(script);
+      loadDragoonDeff(script);
     }
 
     if(v1 < 4) {
@@ -1263,7 +1259,7 @@ public final class Bttl_800e {
 
   @Method(0x800e704cL)
   public static void FUN_800e704c() {
-    _800c6938._1c = 1;
+    _800c6938.init_1c = true;
   }
 
   @Method(0x800e7060L)
@@ -1273,7 +1269,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e70bcL)
-  public static void FUN_800e70bc(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c struct) {
+  public static void scriptDeffTicker(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c struct) {
     final BattleStruct24_2 a0 = _800c6938;
 
     if(a0.frameCount_20 != -1) {
@@ -1281,7 +1277,7 @@ public final class Bttl_800e {
     }
 
     //LAB_800e70fc
-    if(a0._1c != 0 && a0.script_14 != null) {
+    if(a0.init_1c && a0.script_14 != null) {
       final DeffManager7cc struct7cc = deffManager_800c693c;
 
       if((struct7cc._20 & 0x4_0000) == 0 || (getLoadedDrgnFiles() & 0x40L) == 0) {
@@ -1297,7 +1293,7 @@ public final class Bttl_800e {
 
         //LAB_800e719c
         state.loadScriptFile(a0.script_14, a0.scriptOffsetIndex_10);
-        a0._1c = 0;
+        a0.init_1c = false;
         a0.frameCount_20 = 0;
       }
     }
@@ -1318,7 +1314,7 @@ public final class Bttl_800e {
     if(v1 < 0x4L) {
       //LAB_800e7244
       if(v1 == 0) {
-        FUN_800e6844(script);
+        loadSpellItemDeff(script);
       }
 
       return FlowControl.PAUSE_AND_REWIND;
@@ -1347,7 +1343,7 @@ public final class Bttl_800e {
 
     //LAB_800e72dc
     if(v1 == 0) {
-      FUN_800e6920(script);
+      loadEnemyOrBossDeff(script);
       return FlowControl.PAUSE_AND_REWIND;
     }
 
@@ -1387,7 +1383,7 @@ public final class Bttl_800e {
 
     //LAB_800e7374
     if(v1 == 0) {
-      FUN_800e6aec(script);
+      loadCutsceneDeff(script);
     }
 
     //LAB_800e739c
@@ -1395,33 +1391,25 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e73acL)
-  public static FlowControl FUN_800e73ac(final RunningScript<? extends BattleScriptDataBase> script) {
+  public static FlowControl scriptLoadDeff(final RunningScript<? extends BattleScriptDataBase> script) {
     if(_800fafe8.get() != 0) {
       return FlowControl.PAUSE_AND_REWIND;
     }
 
-    final int v1 = script.params_20[4].get();
-    if(v1 == 0x100_0000) {
-      //LAB_800e7414
-      FUN_800e665c(script);
-    } else if(v1 == 0x200_0000) {
-      //LAB_800e7424
-      FUN_800e6844(script);
-      //LAB_800e73fc
-    } else if(v1 == 0x300_0000 || v1 == 0x400_0000) {
-      //LAB_800e7434
-      FUN_800e6920(script);
-    } else if(v1 == 0x500_0000) {
-      //LAB_800e7444
-      FUN_800e6aec(script);
+    final int type = script.params_20[4].get();
+    if(type == 0x100_0000) {
+      loadDragoonDeff(script);
+    } else if(type == 0x200_0000) {
+      loadSpellItemDeff(script);
+    } else if(type == 0x300_0000 || type == 0x400_0000) {
+      loadEnemyOrBossDeff(script);
+    } else if(type == 0x500_0000) {
+      loadCutsceneDeff(script);
     }
 
-    //LAB_800e7450
-    //LAB_800e7454
     final EffectManagerData6c manager = _800c6938.managerState_18.innerStruct_00;
     manager.ticker_48 = Bttl_800e::FUN_800e74e0;
 
-    //LAB_800e7480
     return FlowControl.CONTINUE;
   }
 
@@ -1446,7 +1434,7 @@ public final class Bttl_800e {
 
     if(v1 == 0x1L) {
       //LAB_800e7510
-      if(struct24._1c != 0 && struct24.script_14 != null && ((deffManager_800c693c._20 & 0x4_0000) == 0 || (getLoadedDrgnFiles() & 0x40) == 0)) {
+      if(struct24.init_1c && struct24.script_14 != null && ((deffManager_800c693c._20 & 0x4_0000) == 0 || (getLoadedDrgnFiles() & 0x40) == 0)) {
         //LAB_800e756c
         _800fafe8.setu(0x2L);
       }
@@ -1478,7 +1466,7 @@ public final class Bttl_800e {
       CPU.CTC2(sp0x40.transfer.getY(), 6);
       CPU.CTC2(sp0x40.transfer.getZ(), 7);
       final SVECTOR sp0x10 = new SVECTOR().set((short)(a0.x_04.get() * 64), (short)(a0.y_06.get() * 64), (short)0);
-      final SVECTOR sp0x18 = new SVECTOR().set((short)((a0.x_04.get() + a0.w_08.get()) * 64), (short)0, (short)(a0.y_06.get() * 64));
+      final SVECTOR sp0x18 = new SVECTOR().set((short)((a0.x_04.get() + a0.w_08.get()) * 64), (short)(a0.y_06.get() * 64), (short)0);
       final SVECTOR sp0x20 = new SVECTOR().set((short)(a0.x_04.get() * 64), (short)((a0.y_06.get() + a0.h_0a.get()) * 64), (short)0);
       final SVECTOR sp0x28 = new SVECTOR().set((short)((a0.x_04.get() + a0.w_08.get()) * 64), (short)((a0.y_06.get() + a0.h_0a.get()) * 64), (short)0);
       CPU.MTC2(sp0x10.getXY(), 0);
@@ -1509,8 +1497,8 @@ public final class Bttl_800e {
         .uv(2, a0.u_0e.get(), a0.v_0f.get() + a0.h_0a.get())
         .uv(3, a0.u_0e.get() + a0.w_08.get(), a0.v_0f.get() + a0.h_0a.get());
 
-      if((a0._00.get() >>> 30 & 1) != 0) {
-        cmd.translucent(Translucency.of((int)a0._00.get() >>> 28 & 0b11));
+      if((a0.flags_00.get() >>> 30 & 1) != 0) {
+        cmd.translucent(Translucency.of((int)a0.flags_00.get() >>> 28 & 0b11));
       }
 
       GPU.queueCommand(z >> 2, cmd);
@@ -1521,7 +1509,7 @@ public final class Bttl_800e {
 
   @Method(0x800e7944L)
   public static void FUN_800e7944(final BattleStruct24 s1, final VECTOR trans, final int a2) {
-    if((int)s1._00.get() >= 0) {
+    if((int)s1.flags_00.get() >= 0) {
       final VECTOR sp0x18 = ApplyMatrixLV(worldToScreenMatrix_800c3548, trans);
       sp0x18.add(worldToScreenMatrix_800c3548.transfer);
 
@@ -1536,10 +1524,10 @@ public final class Bttl_800e {
 
         //LAB_800e7a38
         final int a1 = MathHelper.safeDiv(projectionPlaneDistance_1f8003f8.get() << 10, sp0x18.getZ() >> 2);
-        final int s5 = s1.x_04.get() * s1._1c.get() / 8 * a1 / 8 >> 12;
-        final int s7 = s5 + (s1.w_08.get() * s1._1c.get() / 8 * a1 / 8 >> 12);
-        final int s2 = s1.y_06.get() * s1._1e.get() / 8 * a1 / 8 >> 12;
-        final int fp = s2 + (s1.h_0a.get() * s1._1e.get() / 8 * a1 / 8 >> 12);
+        final int s5 = s1.x_04.get() * s1.scaleX_1c.get() / 8 * a1 / 8 >> 12;
+        final int s7 = s5 + (s1.w_08.get() * s1.scaleX_1c.get() / 8 * a1 / 8 >> 12);
+        final int s2 = s1.y_06.get() * s1.scaleY_1e.get() / 8 * a1 / 8 >> 12;
+        final int fp = s2 + (s1.h_0a.get() * s1.scaleY_1e.get() / 8 * a1 / 8 >> 12);
         final int sin = rsin(s1.rotation_20.get());
         final int cos = rcos(s1.rotation_20.get());
 
@@ -1555,8 +1543,8 @@ public final class Bttl_800e {
           .uv(2, s1.u_0e.get(), s1.h_0a.get() + s1.v_0f.get() - 1)
           .uv(3, s1.w_08.get() + s1.u_0e.get() - 1, s1.h_0a.get() + s1.v_0f.get() - 1);
 
-        if((s1._00.get() & 1 << 30) != 0) {
-          cmd.translucent(Translucency.of((int)s1._00.get() >>> 28 & 0b11));
+        if((s1.flags_00.get() & 1 << 30) != 0) {
+          cmd.translucent(Translucency.of((int)s1.flags_00.get() >>> 28 & 0b11));
         }
 
         GPU.queueCommand(z >> 2, cmd);
@@ -1961,7 +1949,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e929cL)
-  public static void FUN_800e929c(final List<FileData> files) {
+  public static void uploadTims(final List<FileData> files) {
     //LAB_800e92d4
     for(final FileData file : files) {
       if(file.real()) {
@@ -1982,7 +1970,7 @@ public final class Bttl_800e {
   public static void FUN_800e9428(final SpriteMetrics08 metrics, final EffectManagerData6cInner a1, final MATRIX a2) {
     if(a1.flags_00 >= 0) {
       final BattleStruct24 sp0x10 = new BattleStruct24();
-      sp0x10._00.set(a1.flags_00 & 0xffff_ffffL);
+      sp0x10.flags_00.set(a1.flags_00 & 0xffff_ffffL);
       sp0x10.x_04.set((short)(-metrics.w_04.get() / 2));
       sp0x10.y_06.set((short)(-metrics.h_05.get() / 2));
       sp0x10.w_08.set(metrics.w_04.get());
@@ -1995,8 +1983,8 @@ public final class Bttl_800e {
       sp0x10.r_14.set(a1.colour_1c.getX());
       sp0x10.g_15.set(a1.colour_1c.getY());
       sp0x10.b_16.set(a1.colour_1c.getZ());
-      sp0x10._1c.set(a1.scale_16.getX());
-      sp0x10._1e.set(a1.scale_16.getY());
+      sp0x10.scaleX_1c.set(a1.scale_16.getX());
+      sp0x10.scaleY_1e.set(a1.scale_16.getY());
       sp0x10.rotation_20.set(a1.rot_10.getZ()); // This is correct, different svec for Z
       if((a1.flags_00 & 0x400_0000) != 0) {
         zOffset_1f8003e8.set(a1.z_22);
@@ -2625,7 +2613,7 @@ public final class Bttl_800e {
   @Method(0x800eacf4L)
   public static void loadBattleHudDeff() {
     loadDrgnDir(0, "4114/2", Bttl_800e::hudDeffLoaded);
-    loadDrgnDir(0, "4114/3", Bttl_800e::FUN_800e929c);
+    loadDrgnDir(0, "4114/3", Bttl_800e::uploadTims);
     loadDrgnDir(0, "4114/1", files -> {
       deffManager_800c693c.scripts_2c = new ScriptFile[files.size()];
 

@@ -691,12 +691,64 @@ public final class Bttl_800c {
 
   public static final Value _800fafe8 = MEMORY.ref(4, 0x800fafe8L);
   public static final Value _800fafec = MEMORY.ref(1, 0x800fafecL);
-  public static final Value _800fb040 = MEMORY.ref(1, 0x800fb040L);
-
-  public static final Value _800fb05c = MEMORY.ref(1, 0x800fb05cL);
-
-  public static final Value stageIndices_800fb064 = MEMORY.ref(1, 0x800fb064L);
-
+  /**
+   * <ol start="0">
+   *   <li>0x4</li>
+   *   <li>0x9</li>
+   *   <li>0xa</li>
+   *   <li>0xb</li>
+   *   <li>0xb</li>
+   *   <li>0xd</li>
+   *   <li>0x14</li>
+   *   <li>0x16</li>
+   *   <li>0x1b</li>
+   *   <li>0x1c</li>
+   *   <li>0x1e</li>
+   *   <li>0x24</li>
+   *   <li>0x28</li>
+   *   <li>0x2a</li>
+   *   <li>0x2c</li>
+   *   <li>0x2e</li>
+   *   <li>0x41</li>
+   *   <li>0x42</li>
+   *   <li>0x46</li>
+   *   <li>0x47</li>
+   *   <li>0x49</li>
+   *   <li>0x4b</li>
+   *   <li>0x4e</li>
+   *   <li>0x52</li>
+   *   <li>0xff</li>
+   *   <li>0x0</li>
+   *   <li>0x0</li>
+   *   <li>0x0</li>
+   * </ol>
+   */
+  public static final ArrayRef<ByteRef> dragoonDeffsWithExtraTims_800fb040 = MEMORY.ref(1, 0x800fb040L, ArrayRef.of(ByteRef.class, 28, 1, ByteRef::new));
+  /**
+   * <ol start="0">
+   *   <li>10</li>
+   *   <li>67</li>
+   *   <li>69</li>
+   *   <li>70 Melbu "generation" paintings</li>
+   *   <li>70 Melbu "generation" paintings</li>
+   *   <li>70 Melbu "generation" paintings</li>
+   *   <li>0xff (end)</li>
+   *   <li>0</li>
+   * </ol>
+   */
+  public static final ArrayRef<ByteRef> cutsceneDeffsWithExtraTims_800fb05c = MEMORY.ref(1, 0x800fb05cL, ArrayRef.of(ByteRef.class, 8, 1, ByteRef::new));
+  /**
+   * <ol start="0">
+   *   <li>Melbu 2-1</li>
+   *   <li>Melbu 3-1</li>
+   *   <li>Melbu 3-2</li>
+   *   <li>Melbu 3</li>
+   *   <li>Melbu 4</li>
+   * </ol>
+   *
+   * The rest are -1
+   */
+  public static final ArrayRef<ByteRef> melbuStageIndices_800fb064 = MEMORY.ref(1, 0x800fb064L, ArrayRef.of(ByteRef.class, 8, 1, ByteRef::new));
   public static final Value _800fb06c = MEMORY.ref(1, 0x800fb06cL);
 
   public static final Value _800fb0ec = MEMORY.ref(4, 0x800fb0ecL);

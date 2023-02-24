@@ -50,7 +50,7 @@ import static legend.game.combat.Bttl_800c.getCombatantIndex;
 import static legend.game.combat.Bttl_800c.monsterCount_800c6768;
 import static legend.game.combat.Bttl_800c.scriptState_800c674c;
 import static legend.game.combat.Bttl_800c.script_800c66fc;
-import static legend.game.combat.Bttl_800c.stageIndices_800fb064;
+import static legend.game.combat.Bttl_800c.melbuStageIndices_800fb064;
 import static legend.game.combat.Bttl_800c.uniqueMonsterCount_800c6698;
 import static legend.game.combat.Bttl_800e.FUN_800e5768;
 import static legend.game.combat.Bttl_800f.loadMonster;
@@ -310,9 +310,9 @@ public class SBtld {
     struct7cc._00._04 = (int)_8011517c.offset(combatStage_800bb0f4.get() * 0x8L).offset(2, 0x04L).get();
 
     //LAB_80109a30
-    for(int i = 0; stageIndices_800fb064.offset(i).get() != 0xffL; i++) {
-      struct7cc._08[i]._00 = (int)_8011517c.offset(stageIndices_800fb064.offset(i).get() * 0x8L).offset(2, 0x00L).get();
-      struct7cc._08[i]._02 = (int)_8011517c.offset(stageIndices_800fb064.offset(i).get() * 0x8L).offset(2, 0x02L).get();
+    for(int i = 0; melbuStageIndices_800fb064.get(i).get() != -1; i++) {
+      struct7cc._08[i]._00 = (int)_8011517c.offset(melbuStageIndices_800fb064.get(i).get() * 0x8L).offset(2, 0x00L).get();
+      struct7cc._08[i]._02 = (int)_8011517c.offset(melbuStageIndices_800fb064.get(i).get() * 0x8L).offset(2, 0x02L).get();
     }
 
     //LAB_80109a80

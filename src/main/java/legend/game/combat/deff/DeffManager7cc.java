@@ -37,9 +37,9 @@ public class DeffManager7cc {
   public List<FileData> deffPackage_5a8;
 //  public DeffFile deff_5ac; // No longer needed
 
-  public BattleStruct24_2 _5b8 = new BattleStruct24_2();
-  public BattleLightStruct64 _5dc = new BattleLightStruct64();
-  public BttlLightStruct84[] _640 = {new BttlLightStruct84(), new BttlLightStruct84(), new BttlLightStruct84()};
+  public final BattleStruct24_2 _5b8 = new BattleStruct24_2();
+  public final BattleLightStruct64 _5dc = new BattleLightStruct64();
+  public final BttlLightStruct84[] _640 = {new BttlLightStruct84(), new BttlLightStruct84(), new BttlLightStruct84()};
 
   public DeffManager7cc() {
     Arrays.setAll(this.spriteMetrics_39c, i -> new SpriteMetrics08());

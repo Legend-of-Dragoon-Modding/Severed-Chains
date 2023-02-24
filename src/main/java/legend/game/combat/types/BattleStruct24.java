@@ -15,7 +15,7 @@ public class BattleStruct24 implements MemoryRef {
   @Nullable
   private final Value ref;
 
-  public final UnsignedIntRef _00;
+  public final UnsignedIntRef flags_00;
   public final ShortRef x_04;
   public final ShortRef y_06;
   public final UnsignedShortRef w_08;
@@ -31,14 +31,14 @@ public class BattleStruct24 implements MemoryRef {
 
   public final ShortRef _18;
   public final ShortRef _1a;
-  public final ShortRef _1c;
-  public final ShortRef _1e;
+  public final ShortRef scaleX_1c;
+  public final ShortRef scaleY_1e;
   public final IntRef rotation_20;
 
   public BattleStruct24(final Value ref) {
     this.ref = ref;
 
-    this._00 = ref.offset(4, 0x00L).cast(UnsignedIntRef::new);
+    this.flags_00 = ref.offset(4, 0x00L).cast(UnsignedIntRef::new);
     this.x_04 = ref.offset(2, 0x04L).cast(ShortRef::new);
     this.y_06 = ref.offset(2, 0x06L).cast(ShortRef::new);
     this.w_08 = ref.offset(2, 0x08L).cast(UnsignedShortRef::new);
@@ -54,15 +54,15 @@ public class BattleStruct24 implements MemoryRef {
 
     this._18 = ref.offset(2, 0x18L).cast(ShortRef::new);
     this._1a = ref.offset(2, 0x1aL).cast(ShortRef::new);
-    this._1c = ref.offset(2, 0x1cL).cast(ShortRef::new);
-    this._1e = ref.offset(2, 0x1eL).cast(ShortRef::new);
+    this.scaleX_1c = ref.offset(2, 0x1cL).cast(ShortRef::new);
+    this.scaleY_1e = ref.offset(2, 0x1eL).cast(ShortRef::new);
     this.rotation_20 = ref.offset(4, 0x20L).cast(IntRef::new);
   }
 
   public BattleStruct24() {
     this.ref = null;
 
-    this._00 = new UnsignedIntRef();
+    this.flags_00 = new UnsignedIntRef();
     this.x_04 = new ShortRef();
     this.y_06 = new ShortRef();
     this.w_08 = new UnsignedShortRef();
@@ -78,8 +78,8 @@ public class BattleStruct24 implements MemoryRef {
 
     this._18 = new ShortRef();
     this._1a = new ShortRef();
-    this._1c = new ShortRef();
-    this._1e = new ShortRef();
+    this.scaleX_1c = new ShortRef();
+    this.scaleY_1e = new ShortRef();
     this.rotation_20 = new IntRef();
   }
 

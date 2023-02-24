@@ -183,7 +183,7 @@ import static legend.game.combat.Bttl_800c.getHitMultiplier;
 import static legend.game.combat.Bttl_800c.scriptGetScriptedObjectPos;
 import static legend.game.combat.Bttl_800c.seed_800fa754;
 import static legend.game.combat.Bttl_800c.spriteMetrics_800c6948;
-import static legend.game.combat.Bttl_800c.stageIndices_800fb064;
+import static legend.game.combat.Bttl_800c.melbuStageIndices_800fb064;
 import static legend.game.combat.Bttl_800c.tmds_800c6944;
 import static legend.game.combat.Bttl_800d.FUN_800dc408;
 import static legend.game.combat.Bttl_800d.FUN_800de3f4;
@@ -5943,7 +5943,7 @@ public final class SEffe {
 
     final BattleStruct24 sp0x10 = new BattleStruct24();
 
-    sp0x10._00.set(manager._10.flags_00);
+    sp0x10.flags_00.set(manager._10.flags_00);
     sp0x10.x_04.set((short)(-effect.width_0a.get() / 2));
     sp0x10.y_06.set((short)(-effect.height_0c.get() / 2));
     sp0x10.w_08.set(effect.width_0a.get());
@@ -5975,8 +5975,8 @@ public final class SEffe {
         }
 
         //LAB_8010d73c
-        sp0x10._1c.set(manager._10.scale_16.getX());
-        sp0x10._1e.set(manager._10.scale_16.getY());
+        sp0x10.scaleX_1c.set(manager._10.scale_16.getX());
+        sp0x10.scaleY_1e.set(manager._10.scale_16.getY());
         sp0x10.rotation_20.set(s3._6e.get());
         sp0x38.setX(manager._10.trans_04.getX() + (s3._08.get() >> 8));
         sp0x38.setY(manager._10.trans_04.getY() + (s3._0c.get() >> 8));
@@ -6379,7 +6379,7 @@ public final class SEffe {
     final BttlScriptData6cSub18 effect = (BttlScriptData6cSub18)manager.effect_44;
 
     final BattleStruct24 sp0x10 = new BattleStruct24();
-    sp0x10._00.set(manager._10.flags_00 & 0xffff_ffffL);
+    sp0x10.flags_00.set(manager._10.flags_00 & 0xffff_ffffL);
     sp0x10.x_04.set((short)(-effect.metrics_04.w_04.get() / 2));
     sp0x10.y_06.set((short)(-effect.metrics_04.h_05.get() / 2));
     sp0x10.w_08.set(effect.metrics_04.w_04.get());
@@ -6405,8 +6405,8 @@ public final class SEffe {
       sp0x10.r_14.set(manager._10.colour_1c.getX());
       sp0x10.g_15.set(manager._10.colour_1c.getY());
       sp0x10.b_16.set(manager._10.colour_1c.getZ());
-      sp0x10._1c.set(manager._10.scale_16.getX());
-      sp0x10._1e.set(manager._10.scale_16.getY());
+      sp0x10.scaleX_1c.set(manager._10.scale_16.getX());
+      sp0x10.scaleY_1e.set(manager._10.scale_16.getY());
       sp0x10.rotation_20.set(manager._10.rot_10.getX());
       sp0x38.setX(manager._10.trans_04.getX() + v1._04.get());
       sp0x38.setY(manager._10.trans_04.getY() + v1._06.get());
@@ -8553,18 +8553,18 @@ public final class SEffe {
   }
 
   @Method(0x80115b2cL)
-  public static void FUN_80115b2c(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    final int s0 = state.storage_44[8];
-    final int s1 = state.storage_44[9];
+  public static void screenDarkeningTicker(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
+    final int currentVal = state.storage_44[8];
+    final int targetVal = state.storage_44[9];
 
-    if(s1 == s0) {
+    if(currentVal == targetVal) {
       state.deallocateWithChildren();
     } else {
       //LAB_80115b80
-      applyScreenDarkening(s0);
+      applyScreenDarkening(currentVal);
 
       //LAB_80115bd4
-      if(s1 < s0) {
+      if(currentVal > targetVal) {
         state.storage_44[8]--;
       } else {
         //LAB_80115bb4
@@ -8576,23 +8576,23 @@ public final class SEffe {
   }
 
   @Method(0x80115bf0L)
-  public static void FUN_80115bf0(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
+  public static void screenDarkeningDestructor(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
     applyScreenDarkening(state.storage_44[9]);
   }
 
   @Method(0x80115c2cL)
-  public static void FUN_80115c2c(final int a0, final int a1) {
+  public static void allocateScreenDarkeningEffect(final int startVal, final int targetVal) {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       deffManager_800c693c.scriptState_1c,
       0,
-      SEffe::FUN_80115b2c,
+      SEffe::screenDarkeningTicker,
       null,
-      SEffe::FUN_80115bf0,
+      SEffe::screenDarkeningDestructor,
       null
     );
 
-    state.storage_44[8] = a0;
-    state.storage_44[9] = a1;
+    state.storage_44[8] = startVal;
+    state.storage_44[9] = targetVal;
   }
 
   @Method(0x80115cacL)
@@ -8601,11 +8601,11 @@ public final class SEffe {
     final int _02;
     final int _04;
 
-    if(currentStage_800c66a4.get() < 71 || currentStage_800c66a4.get() > 78) {
+    if(currentStage_800c66a4.get() < 71 || currentStage_800c66a4.get() > 78) { // Not in Dragoon "special transformation" stage
       //LAB_80115d14
       //LAB_80115d2c
       for(int i = 0; ; i++) {
-        if(stageIndices_800fb064.offset(i).get() == 0xffL) {
+        if(melbuStageIndices_800fb064.get(i).get() == -1) { // This is the normal branch, no special-case handling
           //LAB_80115cd8
           final DeffManager7cc.Struct08 v0 = deffManager_800c693c._00;
           _00 = v0._00;
@@ -8614,7 +8614,7 @@ public final class SEffe {
           break;
         }
 
-        if(stageIndices_800fb064.offset(i).get() == currentStage_800c66a4.get()) {
+        if(melbuStageIndices_800fb064.get(i).get() == currentStage_800c66a4.get()) { // Melbu stages
           //LAB_80115d58
           final DeffManager7cc.Struct04 v0 = deffManager_800c693c._08[i];
           _00 = v0._00;
@@ -8628,7 +8628,7 @@ public final class SEffe {
       if(a0 == 0) {
         //LAB_80115dc0
         if((stage_800bda0c._5e4 & 0x8000) != 0) {
-          FUN_80115c2c(6, 16);
+          allocateScreenDarkeningEffect(6, 16);
         }
 
         //LAB_80115de8
@@ -8642,7 +8642,7 @@ public final class SEffe {
         stage_800bda0c._5e4 |= _02;
 
         if((stage_800bda0c._5e4 & 0x8000) != 0) {
-          FUN_80115c2c(16, 6);
+          allocateScreenDarkeningEffect(16, 6);
         }
       } else if(a0 == 3) {
         //LAB_80115e70
