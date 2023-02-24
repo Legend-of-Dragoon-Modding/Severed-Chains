@@ -39,10 +39,11 @@ import legend.game.combat.types.BattleDisplayStats144;
 import legend.game.combat.types.BattleLightStruct64;
 import legend.game.combat.types.BattleMenuStruct58;
 import legend.game.combat.types.BattleObject27c;
+import legend.game.combat.types.BattlePreloadedEntities_18cb0;
 import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.BattleStage;
 import legend.game.combat.types.BattleStageDarkening1800;
-import legend.game.combat.types.BattleStruct18cb0;
+import legend.game.combat.types.BattlePreloadedEntities_18cb0;
 import legend.game.combat.types.BattleStruct24_2;
 import legend.game.combat.types.BattleStruct3c;
 import legend.game.combat.types.BattleStructEf4;
@@ -93,7 +94,7 @@ import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Scus94491BpeSegment.FUN_80013404;
 import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
 import static legend.game.Scus94491BpeSegment.FUN_8001af00;
-import static legend.game.Scus94491BpeSegment._1f8003f4;
+import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
 import static legend.game.Scus94491BpeSegment.btldLoadEncounterSoundEffectsAndMusic;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
@@ -801,11 +802,11 @@ public final class Bttl_800c {
   @Method(0x800c7488L)
   public static int getHitMultiplier(final int charSlot, final int hitNum, final int a2) {
     if((_8006e398.charBobjIndices_e40[charSlot].storage_44[7] & 0x2) != 0) { // Is dragoon
-      return _1f8003f4._38[charSlot + 3].hits_00[hitNum]._00[a2];
+      return battlePreloadedEntities_1f8003f4.additionHits_38[charSlot + 3].hits_00[hitNum].hitProperty_00[a2];
     }
 
     //LAB_800c74fc
-    return _1f8003f4._38[charSlot].hits_00[hitNum]._00[a2];
+    return battlePreloadedEntities_1f8003f4.additionHits_38[charSlot].hits_00[hitNum].hitProperty_00[a2];
   }
 
   @Method(0x800c7524L)
@@ -877,7 +878,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800c772cL)
-  public static void FUN_800c772c() {
+  public static void battleInitiateAndPreload_800c772c() {
     FUN_800c8e48();
 
     _800bc94c.setu(0x1L);
@@ -897,7 +898,7 @@ public final class Bttl_800c {
 
     _8006e398.morphMode_ee4 = gameState_800babc8.morphMode_4e2.get();
 
-    loadSupportOverlay(1, SBtld::FUN_80109250);
+    loadSupportOverlay(1, SBtld::battlePrepareSelectedAdditionHitProperties_80109250);
 
     //LAB_800c7830
     for(int i = 0; i < 12; i++) {
@@ -1286,22 +1287,22 @@ public final class Bttl_800c {
 
   @Method(0x800c8624L)
   public static void FUN_800c8624() {
-    _1f8003f4 = new BattleStruct18cb0();
+    battlePreloadedEntities_1f8003f4 = new BattlePreloadedEntities_18cb0();
     _8006e398 = new BattleStructEf4();
     targetBobjs_800c71f0 = new ScriptState[][] {_8006e398.charBobjIndices_e40, _8006e398.enemyBobjIndices_ebc, _8006e398.bobjIndices_e78};
   }
 
   @Method(0x800c8748L)
   public static void FUN_800c8748() {
-    if(_1f8003f4.stageTmdMrg_63c != null) {
-      free(_1f8003f4.stageTmdMrg_63c.getAddress());
+    if(battlePreloadedEntities_1f8003f4.stageTmdMrg_63c != null) {
+      free(battlePreloadedEntities_1f8003f4.stageTmdMrg_63c.getAddress());
     }
 
-    if(_1f8003f4.stageMcq_9cb0 != null) {
-      free(_1f8003f4.stageMcq_9cb0.getAddress());
+    if(battlePreloadedEntities_1f8003f4.stageMcq_9cb0 != null) {
+      free(battlePreloadedEntities_1f8003f4.stageMcq_9cb0.getAddress());
     }
 
-    _1f8003f4 = null;
+    battlePreloadedEntities_1f8003f4 = null;
     _8006e398 = null;
     targetBobjs_800c71f0 = null;
   }
@@ -1314,14 +1315,14 @@ public final class Bttl_800c {
       _800c6754.set(1);
       stageHasModel_800c66b8.set(true);
 
-      if(_1f8003f4.stageTmdMrg_63c != null) {
-        free(_1f8003f4.stageTmdMrg_63c.getAddress());
+      if(battlePreloadedEntities_1f8003f4.stageTmdMrg_63c != null) {
+        free(battlePreloadedEntities_1f8003f4.stageTmdMrg_63c.getAddress());
       }
 
-      _1f8003f4.stageTmdMrg_63c = MrgFile.alloc(files);
+      battlePreloadedEntities_1f8003f4.stageTmdMrg_63c = MrgFile.alloc(files);
 
-      final BattleStage stage = _1f8003f4.stage_963c;
-      loadStageTmd(stage, _1f8003f4.stageTmdMrg_63c.getFile(0, CContainer::new), _1f8003f4.stageTmdMrg_63c.getFile(1, TmdAnimationFile::new));
+      final BattleStage stage = battlePreloadedEntities_1f8003f4.stage_963c;
+      loadStageTmd(stage, battlePreloadedEntities_1f8003f4.stageTmdMrg_63c.getFile(0, CContainer::new), battlePreloadedEntities_1f8003f4.stageTmdMrg_63c.getFile(1, TmdAnimationFile::new));
       stage.coord2_558.coord.transfer.set(0, 0, 0);
       stage.param_5a8.rotate.set((short)0, (short)0x400, (short)0);
     }
@@ -1340,34 +1341,34 @@ public final class Bttl_800c {
     } else {
       _800c6774.add(_800c676c.get());
       _800c6778.add(_800c6770.get());
-      final int x0 = ((int)_800c66cc.getSigned() * FUN_800dd118() / 0x1000 + _800c6774.get()) % _1f8003f4.stageMcq_9cb0.screenWidth_14.get() - centreScreenX_1f8003dc.get();
-      final int x1 = x0 - _1f8003f4.stageMcq_9cb0.screenWidth_14.get();
-      final int x2 = x0 + _1f8003f4.stageMcq_9cb0.screenWidth_14.get();
+      final int x0 = ((int)_800c66cc.getSigned() * FUN_800dd118() / 0x1000 + _800c6774.get()) % battlePreloadedEntities_1f8003f4.stageMcq_9cb0.screenWidth_14.get() - centreScreenX_1f8003dc.get();
+      final int x1 = x0 - battlePreloadedEntities_1f8003f4.stageMcq_9cb0.screenWidth_14.get();
+      final int x2 = x0 + battlePreloadedEntities_1f8003f4.stageMcq_9cb0.screenWidth_14.get();
       int y = _800c6778.get() - (FUN_800dd0d4() + 0x800 & 0xfff) + 0x760 - centreScreenY_1f8003de.get();
-      renderMcq(_1f8003f4.stageMcq_9cb0, 320, 0, x0, y, orderingTableSize_1f8003c8.get() - 2, mcqColour_800fa6dc.get());
-      renderMcq(_1f8003f4.stageMcq_9cb0, 320, 0, x1, y, orderingTableSize_1f8003c8.get() - 2, mcqColour_800fa6dc.get());
+      renderMcq(battlePreloadedEntities_1f8003f4.stageMcq_9cb0, 320, 0, x0, y, orderingTableSize_1f8003c8.get() - 2, mcqColour_800fa6dc.get());
+      renderMcq(battlePreloadedEntities_1f8003f4.stageMcq_9cb0, 320, 0, x1, y, orderingTableSize_1f8003c8.get() - 2, mcqColour_800fa6dc.get());
 
       if(centreScreenX_1f8003dc.get() >= x2) {
-        renderMcq(_1f8003f4.stageMcq_9cb0, 320, 0, x2, y, orderingTableSize_1f8003c8.get() - 2, mcqColour_800fa6dc.get());
+        renderMcq(battlePreloadedEntities_1f8003f4.stageMcq_9cb0, 320, 0, x2, y, orderingTableSize_1f8003c8.get() - 2, mcqColour_800fa6dc.get());
       }
 
       //LAB_800c89d4
-      if(_1f8003f4.stageMcq_9cb0.magic_00.get() != McqHeader.MAGIC_1) {
+      if(battlePreloadedEntities_1f8003f4.stageMcq_9cb0.magic_00.get() != McqHeader.MAGIC_1) {
         //LAB_800c89f8
-        y += _1f8003f4.stageMcq_9cb0.screenOffsetY_2a.get();
+        y += battlePreloadedEntities_1f8003f4.stageMcq_9cb0.screenOffsetY_2a.get();
       }
 
       //LAB_800c8a04
       final int colour = mcqColour_800fa6dc.get();
       if(y >= -centreScreenY_1f8003de.get()) {
-        _8007a3a8.set(_1f8003f4.stageMcq_9cb0._18.get() * colour / 0x80);
-        _800bb104.set(_1f8003f4.stageMcq_9cb0._19.get() * colour / 0x80);
-        _800babc0.set(_1f8003f4.stageMcq_9cb0._1a.get() * colour / 0x80);
+        _8007a3a8.set(battlePreloadedEntities_1f8003f4.stageMcq_9cb0._18.get() * colour / 0x80);
+        _800bb104.set(battlePreloadedEntities_1f8003f4.stageMcq_9cb0._19.get() * colour / 0x80);
+        _800babc0.set(battlePreloadedEntities_1f8003f4.stageMcq_9cb0._1a.get() * colour / 0x80);
       } else {
         //LAB_800c8a74
-        _8007a3a8.set(_1f8003f4.stageMcq_9cb0._20.get() * colour / 0x80);
-        _800bb104.set(_1f8003f4.stageMcq_9cb0._21.get() * colour / 0x80);
-        _800babc0.set(_1f8003f4.stageMcq_9cb0._22.get() * colour / 0x80);
+        _8007a3a8.set(battlePreloadedEntities_1f8003f4.stageMcq_9cb0._20.get() * colour / 0x80);
+        _800bb104.set(battlePreloadedEntities_1f8003f4.stageMcq_9cb0._21.get() * colour / 0x80);
+        _800babc0.set(battlePreloadedEntities_1f8003f4.stageMcq_9cb0._22.get() * colour / 0x80);
       }
     }
 
@@ -1378,8 +1379,8 @@ public final class Bttl_800c {
   public static void loadStage(final int stage) {
     loadDrgnDir(0, 2497 + stage, files -> {
       if(files.get(0).real()) {
-        if(_1f8003f4.stageMcq_9cb0 != null) {
-          free(_1f8003f4.stageMcq_9cb0.getAddress());
+        if(battlePreloadedEntities_1f8003f4.stageMcq_9cb0 != null) {
+          free(battlePreloadedEntities_1f8003f4.stageMcq_9cb0.getAddress());
         }
 
         final McqHeader mcq = MEMORY.ref(4, mallocTail(files.get(0).size()), McqHeader::new);
@@ -1421,8 +1422,8 @@ public final class Bttl_800c {
   @Method(0x800c8cf0L)
   public static void FUN_800c8cf0() {
     if(stageHasModel_800c66b8.get() && _800c6754.get() != 0 && (_800bc960.get() & 0x20) != 0) {
-      FUN_800ec744(_1f8003f4.stage_963c);
-      FUN_800ec51c(_1f8003f4.stage_963c);
+      FUN_800ec744(battlePreloadedEntities_1f8003f4.stage_963c);
+      FUN_800ec51c(battlePreloadedEntities_1f8003f4.stage_963c);
     }
 
     //LAB_800c8d50
@@ -1443,7 +1444,7 @@ public final class Bttl_800c {
     loadMcq(mcq, x, 0);
 
     //LAB_800c8dc0
-    _1f8003f4.stageMcq_9cb0 = mcq;
+    battlePreloadedEntities_1f8003f4.stageMcq_9cb0 = mcq;
 
     _800c66d4.setu(0x1L);
     _800c66cc.setu((0x400L / mcq.screenWidth_14.get() + 0x1L) * mcq.screenWidth_14.get());
@@ -1452,7 +1453,7 @@ public final class Bttl_800c {
   @Method(0x800c8e48L)
   public static void FUN_800c8e48() {
     if(_800c66d4.get() != 0 && (_800bc960.get() & 0x80) == 0) {
-      final RECT sp0x10 = new RECT((short)512, (short)0, _1f8003f4.stageMcq_9cb0.vramWidth_08.get(), (short)256);
+      final RECT sp0x10 = new RECT((short)512, (short)0, battlePreloadedEntities_1f8003f4.stageMcq_9cb0.vramWidth_08.get(), (short)256);
       MoveImage(sp0x10, 320, 0);
       _800c6764.set(1);
       _800bc960.or(0x80);
@@ -1697,7 +1698,7 @@ public final class Bttl_800c {
 
     final TmdAnimationFile anim = FUN_800ca31c(combatantIndex, 0);
     if((s0.flags_19e & 0x4) != 0) {
-      final BattleStruct18cb0.Rendering1298 a0_0 = _1f8003f4._9ce8[s0.charSlot_19c];
+      final BattlePreloadedEntities_18cb0.Rendering1298 a0_0 = battlePreloadedEntities_1f8003f4._9ce8[s0.charSlot_19c];
 
       model.dobj2ArrPtr_00 = a0_0.dobj2s_00;
       model.coord2ArrPtr_04 = a0_0.coord2s_230;
