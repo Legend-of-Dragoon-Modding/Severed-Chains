@@ -94,7 +94,7 @@ import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.Scus94491BpeSegment.FUN_8001d068;
-import static legend.game.Scus94491BpeSegment._1f8003f4;
+import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
@@ -2268,7 +2268,7 @@ public final class Bttl_800e {
     s0.model_134 = s0.model_10;
 
     if((s2 & 0xff00_0000) == 0x700_0000) {
-      FUN_800e9ae4(s0.model_10, _1f8003f4.stage_963c);
+      FUN_800e9ae4(s0.model_10, battlePreloadedEntities_1f8003f4.stage_963c);
     } else {
       //LAB_800ea030
       FUN_800e9db4(s0.model_10, ((BattleObject27c)scriptStatePtrArr_800bc1c0[s2].innerStruct_00).model_148);

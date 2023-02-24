@@ -112,7 +112,7 @@ import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.Scus94491BpeSegment.FUN_80018a5c;
 import static legend.game.Scus94491BpeSegment.FUN_80018d60;
 import static legend.game.Scus94491BpeSegment.FUN_80018dec;
-import static legend.game.Scus94491BpeSegment._1f8003f4;
+import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
 import static legend.game.Scus94491BpeSegment.displayHeight_1f8003e4;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
 import static legend.game.Scus94491BpeSegment.free;
@@ -4096,10 +4096,6 @@ public final class SEffe {
 
                   //LAB_80107664
                   final long v1 = joypadPress_8007a398.get();
-                  if(Config.autoAddition()) {
-                    _8011a014.offset(s0).setu(1);
-                    MEMORY.ref(1, s2).offset(0x1L).setu(1);
-                  }
 
                   if((v1 & 0x60) != 0) {
                     _8011a014.offset(s0).setu(-1);
@@ -4123,6 +4119,11 @@ public final class SEffe {
                     s3._38.set(2);
                     s3._39.set((int)s0);
                     s3._3c.set(s2);
+                  }
+
+                  if(Config.autoAddition() && s3._34.get() >= MEMORY.ref(2, s2).offset(0x12L).getSigned()) {
+                    _8011a014.offset(s0).setu(1);
+                    MEMORY.ref(1, s2).offset(0x1L).setu(1);
                   }
                 }
               } else {
@@ -9719,7 +9720,7 @@ public final class SEffe {
       //LAB_801185b0
     } else if(type == 0x700_0000) {
       //LAB_80118610
-      s0.tmd_08 = _1f8003f4.stage_963c.dobj2s_00[objIndex].tmd_08;
+      s0.tmd_08 = battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00[objIndex].tmd_08;
     } else {
       //LAB_80118634
       final BattleScriptDataBase a0_0 = (BattleScriptDataBase)scriptStatePtrArr_800bc1c0[flags].innerStruct_00;

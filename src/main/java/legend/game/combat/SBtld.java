@@ -7,7 +7,7 @@ import legend.core.memory.types.Pointer;
 import legend.game.combat.deff.DeffManager7cc;
 import legend.game.combat.types.BattleObject27c;
 import legend.game.combat.types.BattleScriptDataBase;
-import legend.game.combat.types.BattleStruct18cb0;
+import legend.game.combat.types.BattlePreloadedEntities_18cb0;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.combat.types.EncounterData38;
 import legend.game.combat.types.EnemyRewards08;
@@ -27,7 +27,7 @@ import java.nio.ByteOrder;
 
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SCRIPTS;
-import static legend.game.Scus94491BpeSegment._1f8003f4;
+import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
 import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.loadFile;
@@ -117,96 +117,77 @@ public class SBtld {
   }
 
   @Method(0x80109250L)
-  public static void FUN_80109250() {
+  public static void battlePrepareSelectedAdditionHitProperties_80109250() {
     //LAB_801092a0
     for(int charSlot = 0; charSlot < 3; charSlot++) {
-      final BattleStruct18cb0.AdditionStruct100 character = _1f8003f4._38[charSlot];
-      final BattleStruct18cb0.AdditionStruct100 dragoon = _1f8003f4._38[charSlot + 3];
+      final BattlePreloadedEntities_18cb0.AdditionHits_100 activeAdditionHits = battlePreloadedEntities_1f8003f4.additionHits_38[charSlot];
+      final BattlePreloadedEntities_18cb0.AdditionHits_100 activeDragoonAdditionHits = battlePreloadedEntities_1f8003f4.additionHits_38[charSlot + 3];
       final int charIndex = gameState_800babc8.charIndex_88.get(charSlot).get();
 
       if(charIndex >= 0) {
-        int addition = gameState_800babc8.charData_32c.get(charIndex).selectedAddition_19.get();
+        int activeAdditionIndex = gameState_800babc8.charData_32c.get(charIndex).selectedAddition_19.get();
         if(charIndex == 5) {
-          addition = addition + 28;
+          activeAdditionIndex = activeAdditionIndex + 28;
         }
 
         //LAB_801092dc
-        final long s0;
+        final long activeDragoonAdditionIndex;
         if(charIndex != 0 || (gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0xff) >>> 7 == 0) {
           //LAB_80109308
-          s0 = _801134e8.offset(charIndex * 0x2L).getSigned();
+          activeDragoonAdditionIndex = _801134e8.offset(charIndex * 0x2L).getSigned();
         } else {
-          s0 = _801134e8.offset(0x12L).getSigned();
+          activeDragoonAdditionIndex = _801134e8.offset(0x12L).getSigned();
         }
 
         //LAB_80109310
-        if(addition < 0) {
-          character.hits_00[0]._00[15] = 0;
+        if(activeAdditionIndex < 0) {
+          activeAdditionHits.hits_00[0].hitProperty_00[15] = 0;
         } else {
           //LAB_80109320
-          FUN_80109454(_8010e658.offset(addition * 0x80L).getAddress(), character);
-          FUN_80109454(_8010e658.offset(s0 * 0x80L).getAddress(), dragoon);
+          battleMapSelectedAdditionHitProperties_80109454(_8010e658.offset(activeAdditionIndex * 0x80L).getAddress(), activeAdditionHits);
+          battleMapSelectedAdditionHitProperties_80109454(_8010e658.offset(activeDragoonAdditionIndex * 0x80L).getAddress(), activeDragoonAdditionHits);
         }
       }
 
       //LAB_80109340
     }
 
-    loadFile("encounters", file -> _1f8003f4.encounterData_00 = new EncounterData38(file.getBytes(), encounterId_800bb0f8.get() * 0x38));
+    loadFile("encounters", file -> battlePreloadedEntities_1f8003f4.encounterData_00 = new EncounterData38(file.getBytes(), encounterId_800bb0f8.get() * 0x38));
 
     decrementOverlayCount();
   }
 
   @Method(0x80109454L)
-  public static void FUN_80109454(final long a3, final BattleStruct18cb0.AdditionStruct100 a1) {
+  public static void battleMapSelectedAdditionHitProperties_80109454(final long mainAdditionHitsTablePtr, final BattlePreloadedEntities_18cb0.AdditionHits_100 activeAdditionHits) {
     //LAB_80109460
-    for(int i = 0; i < 8; i++) {
-      final BattleStruct18cb0.AdditionHitStruct20 a0 = a1.hits_00[i];
-      final long v1 = a3 + i * 0x10L;
-      a0._00[ 0] = (short)MEMORY.ref(1, v1).offset(0x0L).get();
-      a0._00[ 1] = (short)MEMORY.ref(1, v1).offset(0x1L).get();
-      a0._00[ 2] = (short)MEMORY.ref(1, v1).offset(0x2L).get();
-      a0._00[ 3] = (short)MEMORY.ref(1, v1).offset(0x3L).get();
-      a0._00[ 4] = (short)MEMORY.ref(1, v1).offset(0x4L).get();
-      a0._00[ 5] = (short)MEMORY.ref(1, v1).offset(0x5L).get();
-      a0._00[ 6] = (short)MEMORY.ref(1, v1).offset(0x6L).getSigned();
-      a0._00[ 7] = (short)MEMORY.ref(1, v1).offset(0x7L).getSigned();
-      a0._00[ 8] = (short)MEMORY.ref(1, v1).offset(0x8L).getSigned();
-      a0._00[ 9] = (short)MEMORY.ref(1, v1).offset(0x9L).get();
-      a0._00[10] = (short)MEMORY.ref(1, v1).offset(0xaL).get();
-      a0._00[11] = (short)MEMORY.ref(1, v1).offset(0xbL).get();
-      a0._00[12] = (short)MEMORY.ref(1, v1).offset(0xcL).get();
-      a0._00[13] = (short)MEMORY.ref(1, v1).offset(0xdL).get();
-      a0._00[14] = (short)MEMORY.ref(1, v1).offset(0xeL).get();
-      a0._00[15] = (short)MEMORY.ref(1, v1).offset(0xfL).get();
+    for(int i = 0; i < activeAdditionHits.hits_00.length; i++) {
+      final BattlePreloadedEntities_18cb0.AdditionHitProperties_20 hitIndex = activeAdditionHits.hits_00[i];
+      final long additionHitRefCounter = mainAdditionHitsTablePtr + i * 0x10L;
+
+      for(int j = 0; j < hitIndex.hitProperty_00.length; j++) {
+        if(j > 5 && j < 9) {
+          hitIndex.hitProperty_00[j] = (short)MEMORY.ref(1, additionHitRefCounter).offset(j).getSigned();
+          continue;
+        }
+        hitIndex.hitProperty_00[j] = (short)MEMORY.ref(1, additionHitRefCounter).offset(j).get();
+      }
     }
 
-    final AdditionHitEvent event = EventManager.INSTANCE.postEvent(new AdditionHitEvent(a1));
-    for(int i = 0; i < 8; i++) {
-      final BattleStruct18cb0.AdditionHitStruct20 a0 = event.addition.hits_00[i];
-      final long v1 = a3 + i * 0x10L;
-      MEMORY.ref(1, v1).offset(0x0L).set(a0._00[0]);
-      MEMORY.ref(1, v1).offset(0x1L).set(a0._00[1]);
-      MEMORY.ref(1, v1).offset(0x2L).set(a0._00[2]);
-      MEMORY.ref(1, v1).offset(0x3L).set(a0._00[3]);
-      MEMORY.ref(1, v1).offset(0x4L).set(a0._00[4]);
-      MEMORY.ref(1, v1).offset(0x5L).set(a0._00[5]);
-      MEMORY.ref(1, v1).offset(0x6L).set(a0._00[6]);
-      MEMORY.ref(1, v1).offset(0x7L).set(a0._00[7]);
-      MEMORY.ref(1, v1).offset(0x8L).set(a0._00[8]);
-      MEMORY.ref(1, v1).offset(0x9L).set(a0._00[9]);
-      MEMORY.ref(1, v1).offset(0xaL).set(a0._00[10]);
-      MEMORY.ref(1, v1).offset(0xbL).set(a0._00[11]);
-      MEMORY.ref(1, v1).offset(0xcL).set(a0._00[12]);
-      MEMORY.ref(1, v1).offset(0xdL).set(a0._00[13]);
-      MEMORY.ref(1, v1).offset(0xeL).set(a0._00[14]);
-      MEMORY.ref(1, v1).offset(0xfL).set(a0._00[15]);
+    final AdditionHitEvent event = EventManager.INSTANCE.postEvent(new AdditionHitEvent(activeAdditionHits));
+
+    for(int i = 0; i < activeAdditionHits.hits_00.length; i++) {
+      final BattlePreloadedEntities_18cb0.AdditionHitProperties_20 hitIndex = event.addition.hits_00[i];
+      final long additionHitRefCounter = mainAdditionHitsTablePtr + i * 0x10L;
+
+      for(int j = 0; j < hitIndex.hitProperty_00.length; j++) {
+        MEMORY.ref(1, additionHitRefCounter).offset(j).set(hitIndex.hitProperty_00[j]);
+      }
     }
   }
 
   @Method(0x8010955cL)
   public static void allocateEnemyBattleObjects() {
-    final BattleStruct18cb0 fp = _1f8003f4;
+    final BattlePreloadedEntities_18cb0 fp = battlePreloadedEntities_1f8003f4;
 
     //LAB_801095a0
     for(int i = 0; i < 3; i++) {

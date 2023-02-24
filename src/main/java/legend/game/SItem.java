@@ -19,7 +19,7 @@ import legend.core.memory.types.UnsignedShortRef;
 import legend.game.combat.Bttl_800c;
 import legend.game.combat.types.BattleObject27c;
 import legend.game.combat.types.BattleScriptDataBase;
-import legend.game.combat.types.BattleStruct18cb0;
+import legend.game.combat.types.BattlePreloadedEntities_18cb0;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.MainMenuScreen;
@@ -27,7 +27,9 @@ import legend.game.inventory.screens.MenuStack;
 import legend.game.inventory.screens.TooManyItemsScreen;
 import legend.game.modding.events.EventManager;
 import legend.game.modding.events.characters.AdditionHitMultiplierEvent;
+import legend.game.modding.events.characters.AdditionUnlockEvent;
 import legend.game.modding.events.characters.CharacterStatsEvent;
+import legend.game.modding.events.characters.XpToLevelEvent;
 import legend.game.modding.events.inventory.EquipmentStatsEvent;
 import legend.game.scripting.ScriptState;
 import legend.game.types.ActiveStatsa0;
@@ -59,7 +61,7 @@ import static legend.game.SMap.FUN_800e3fac;
 import static legend.game.Scus94491BpeSegment.FUN_80018e84;
 import static legend.game.Scus94491BpeSegment.FUN_800192d8;
 import static legend.game.Scus94491BpeSegment.FUN_80019470;
-import static legend.game.Scus94491BpeSegment._1f8003f4;
+import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
 import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
 import static legend.game.Scus94491BpeSegment.deferReallocOrFree;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
@@ -427,7 +429,7 @@ public final class SItem {
 
   @Method(0x800fc404L)
   public static void enemyTexturesLoadedCallback(final List<FileData> files) {
-    final BattleStruct18cb0 s2 = _1f8003f4;
+    final BattlePreloadedEntities_18cb0 s2 = battlePreloadedEntities_1f8003f4;
 
     //LAB_800fc434
     for(int i = 0; i < combatantCount_800c66a0.get(); i++) {
@@ -502,6 +504,9 @@ public final class SItem {
       case 7    -> kongolXpTable_801134f0;
       default -> throw new RuntimeException("Impossible");
     };
+
+    final XpToLevelEvent event = EventManager.INSTANCE.postEvent(new XpToLevelEvent(charIndex, level, table.get(level + 1).get()));
+    table.get(level + 1).set(event.xp);
 
     //LAB_800fc70c
     return table.get(level + 1).get();
@@ -995,6 +1000,9 @@ public final class SItem {
     int t5 = 0;
     int t0 = 0;
     for(int additionIndex = 0; additionIndex < additionCounts_8004f5c0.get(charIndex).get(); additionIndex++) {
+      final AdditionUnlockEvent event = EventManager.INSTANCE.postEvent(new AdditionUnlockEvent(additionOffsets_8004f5ac.get(charIndex).get() + additionIndex, additionData_80052884.get(additionOffsets_8004f5ac.get(charIndex).get() + additionIndex).level_00.get()));
+      additionData_80052884.get(additionOffsets_8004f5ac.get(charIndex).get() + additionIndex).level_00.set(event.additionLevel);
+
       final int level = additionData_80052884.get(additionOffsets_8004f5ac.get(charIndex).get() + additionIndex).level_00.get();
 
       if(level == -1 && (gameState_800babc8.charData_32c.get(charIndex).partyFlags_04.get() & 0x40) != 0) {
@@ -1511,7 +1519,7 @@ public final class SItem {
         renderTwoDigitNumber(x + 154, y + 6, stats.level_0e.get());
         renderTwoDigitNumber(x + 112, y + 17, stats.dlevel_0f.get());
         renderThreeDigitNumber(x + 148, y + 17, stats.sp_08.get());
-        renderFourDigitNumber(x + 100, y + 28, gameState_800babc8.charData_32c.get(charIndex).hp_08.get(), stats.maxHp_66.get());
+        renderFourDigitNumber(x + 100, y + 28, stats.hp_04.get(), stats.maxHp_66.get());
         renderCharacter(x + 124, y + 28, 11);
         renderFourDigitNumber(x + 142, y + 28, stats.maxHp_66.get());
         renderThreeDigitNumber(x + 106, y + 39, stats.mp_06.get());

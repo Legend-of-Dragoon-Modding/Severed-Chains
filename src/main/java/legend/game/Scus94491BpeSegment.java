@@ -34,7 +34,7 @@ import legend.game.combat.Bttl_800f;
 import legend.game.combat.SBtld;
 import legend.game.combat.SEffe;
 import legend.game.combat.types.BattleObject27c;
-import legend.game.combat.types.BattleStruct18cb0;
+import legend.game.combat.types.BattlePreloadedEntities_18cb0;
 import legend.game.combat.types.StageData10;
 import legend.game.debugger.Debugger;
 import legend.game.inventory.WhichMenu;
@@ -300,7 +300,7 @@ public final class Scus94491BpeSegment {
   public static final UnsignedShortRef tmdGp0Tpage_1f8003ec = MEMORY.ref(2, 0x1f8003ecL, UnsignedShortRef::new);
   public static final UnsignedShortRef tmdGp0CommandId_1f8003ee = MEMORY.ref(2, 0x1f8003eeL, UnsignedShortRef::new);
 
-  public static BattleStruct18cb0 _1f8003f4;
+  public static BattlePreloadedEntities_18cb0 battlePreloadedEntities_1f8003f4;
   public static final IntRef projectionPlaneDistance_1f8003f8 = MEMORY.ref(4, 0x1f8003f8L, IntRef::new);
   public static final Value _1f8003fc = MEMORY.ref(4, 0x1f8003fcL);
 
@@ -805,10 +805,10 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80012094L)
-  public static void allocateHeap(long address, long size) {
+  public static void allocateHeap(long address, int size) {
     LOGGER.info("Allocating memory manager at %08x (0x%x bytes)", address, size);
 
-    size = size - 0x18L & 0xffff_fffcL;
+    size = size - 0x18 & 0xffff_fffc;
     address = address + 0x3L & 0xffff_fffcL;
 
     MEMORY.ref(4, address).offset(0x00L).setu(0);
