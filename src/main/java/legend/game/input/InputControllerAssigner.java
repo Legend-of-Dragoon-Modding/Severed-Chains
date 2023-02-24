@@ -49,7 +49,7 @@ public final class InputControllerAssigner {
   private static void logConnectedControllers() {
     for(int i = 0; i < GLFW_JOYSTICK_LAST; i++) {
       if(glfwJoystickPresent(i)) {
-        LOGGER.info("Controller Id {} - GUID: {}", i, glfwGetJoystickGUID(i));
+        LOGGER.info("Controller Id:" + i + " - GUID:" + glfwGetJoystickGUID(i));
       }
     }
   }
@@ -66,21 +66,22 @@ public final class InputControllerAssigner {
     for(int i = 0; i < GLFW_JOYSTICK_LAST; i++) {
       if(glfwJoystickPresent(i)) {
         System.out.println((i + 1) + ": " + glfwGetJoystickName(i) + " (" + glfwGetJoystickName(i) + ')');
-        InputControllerData controllerData = new InputControllerData(glfwGetJoystickName(i), glfwGetJoystickGUID(i), i);
+        final InputControllerData controllerData = new InputControllerData(glfwGetJoystickName(i), glfwGetJoystickGUID(i), i);
         connectedControllers.add(controllerData);
       }
     }
-    LOGGER.info("Found a total of {}", connectedControllers.size());
+    LOGGER.info("Found a total of " + connectedControllers.size());
 
     if(connectedControllers.isEmpty()) {
       LOGGER.info("No controllers connected");
     }
     if(connectedControllers.size() == 1) {
 
-      LOGGER.info("Only 1 controller connected so assigning by default. {}", connectedControllers.get(0).getInfoString());
+      LOGGER.info("Only 1 controller connected so assigning by default. " + connectedControllers.get(0).getInfoString());
       connectedControllers.get(0).setPlayerSlot(1);
       assignedControllers.add(connectedControllers.get(0));
       savePlayerOneToConfig();
+      Input.refreshControllers();
     }
     if(connectedControllers.size() >= 2) {
       LOGGER.info("Multiple controllers connected. Please press any of the buttons for the one you want to use");
@@ -93,18 +94,18 @@ public final class InputControllerAssigner {
     for(final InputControllerData controllerData : idleControllers) {
       controllerData.updateState();
       if(controllerData.hasAnyButtonActivity()) {
-        LOGGER.info("Button motion detected with controller {}", controllerData.getInfoString());
+        LOGGER.info("Button motion detected with controller " + controllerData.getInfoString());
         assignedControllers.add(controllerData);
         idleControllers.remove(controllerData);
 
-        LOGGER.info("Assigning as player {}", assignedControllers.size());
+        LOGGER.info("Assigning as player " + assignedControllers.size());
         controllerData.setPlayerSlot(assignedControllers.size());
         if(assignedControllers.size() == 1) {
           savePlayerOneToConfig();
         }
 
         if(assignedControllers.size() < desiredControllerCount) {
-          LOGGER.info("Please press the buttons for player {}", assignedControllers.size() + 1);
+          LOGGER.info("Please press the buttons for player " + (assignedControllers.size() + 1));
         }
 
         break;
@@ -118,7 +119,7 @@ public final class InputControllerAssigner {
     }
 
     if(idleControllers.isEmpty()) {
-      LOGGER.info("No more controllers detected. Continuing with the {} assigned controllers", assignedControllers.size());
+      LOGGER.info("No more controllers detected. Continuing with the " + assignedControllers.size() + " assigned controllers");
       isAssigningControllersBool = false;
       Input.refreshControllers();
     }
