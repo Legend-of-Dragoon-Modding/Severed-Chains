@@ -4147,10 +4147,6 @@ public final class SEffe {
 
                   //LAB_80107664
                   final long v1 = joypadPress_8007a398.get();
-                  if(Config.autoAddition()) {
-                    _8011a014.offset(s0).setu(1);
-                    MEMORY.ref(1, s2).offset(0x1L).setu(1);
-                  }
 
                   if((v1 & 0x60) != 0) {
                     _8011a014.offset(s0).setu(-1);
@@ -4174,6 +4170,11 @@ public final class SEffe {
                     s3._38.set(2);
                     s3._39.set((int)s0);
                     s3._3c.set(s2);
+                  }
+
+                  if(Config.autoAddition() && s3._34.get() >= MEMORY.ref(2, s2).offset(0x12L).getSigned()) {
+                    _8011a014.offset(s0).setu(1);
+                    MEMORY.ref(1, s2).offset(0x1L).setu(1);
                   }
                 }
               } else {

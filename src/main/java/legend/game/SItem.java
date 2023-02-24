@@ -27,7 +27,9 @@ import legend.game.inventory.screens.MenuStack;
 import legend.game.inventory.screens.TooManyItemsScreen;
 import legend.game.modding.events.EventManager;
 import legend.game.modding.events.characters.AdditionHitMultiplierEvent;
+import legend.game.modding.events.characters.AdditionUnlockEvent;
 import legend.game.modding.events.characters.CharacterStatsEvent;
+import legend.game.modding.events.characters.XpToLevelEvent;
 import legend.game.modding.events.inventory.EquipmentStatsEvent;
 import legend.game.scripting.ScriptState;
 import legend.game.types.ActiveStatsa0;
@@ -509,6 +511,9 @@ public final class SItem {
       case 7    -> kongolXpTable_801134f0;
       default -> throw new RuntimeException("Impossible");
     };
+
+    final XpToLevelEvent event = EventManager.INSTANCE.postEvent(new XpToLevelEvent(charIndex, level, table.get(level + 1).get()));
+    table.get(level + 1).set(event.xp);
 
     //LAB_800fc70c
     return table.get(level + 1).get();
@@ -1002,6 +1007,9 @@ public final class SItem {
     int t5 = 0;
     int t0 = 0;
     for(int additionIndex = 0; additionIndex < additionCounts_8004f5c0.get(charIndex).get(); additionIndex++) {
+      final AdditionUnlockEvent event = EventManager.INSTANCE.postEvent(new AdditionUnlockEvent(additionOffsets_8004f5ac.get(charIndex).get() + additionIndex, additionData_80052884.get(additionOffsets_8004f5ac.get(charIndex).get() + additionIndex).level_00.get()));
+      additionData_80052884.get(additionOffsets_8004f5ac.get(charIndex).get() + additionIndex).level_00.set(event.additionLevel);
+
       final int level = additionData_80052884.get(additionOffsets_8004f5ac.get(charIndex).get() + additionIndex).level_00.get();
 
       if(level == -1 && (gameState_800babc8.charData_32c.get(charIndex).partyFlags_04.get() & 0x40) != 0) {
