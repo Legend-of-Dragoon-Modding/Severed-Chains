@@ -267,6 +267,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_E;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F12;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_P;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_Q;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
@@ -586,6 +587,8 @@ public final class Scus94491BpeSegment {
     }
   }
 
+  private static boolean paused;
+
   @Method(0x80011e1cL)
   public static void gameLoop() {
     GPU.events().onKeyPress((window, key, scancode, mods) -> {
@@ -643,6 +646,16 @@ public final class Scus94491BpeSegment {
 
         keyRepeat.put(input, 0);
       }
+
+      if(key == GLFW_KEY_P) {
+        paused = !paused;
+
+        if(paused) {
+          LOGGER.info("Pausing");
+        } else {
+          LOGGER.info("Unpausing");
+        }
+      }
     });
 
     GPU.window().events.onKeyRelease((window, key, scancode, mods) -> {
@@ -680,6 +693,10 @@ public final class Scus94491BpeSegment {
 
     GPU.subRenderer = () -> {
       EventManager.INSTANCE.clearStaleRefs();
+
+      if(paused) {
+        return;
+      }
 
       if(!soundRunning) {
         startSound();

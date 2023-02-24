@@ -170,7 +170,7 @@ import static legend.game.Scus94491BpeSegment_8003.MargePrim;
 import static legend.game.Scus94491BpeSegment_8003.MoveImage;
 import static legend.game.Scus94491BpeSegment_8003.PopMatrix;
 import static legend.game.Scus94491BpeSegment_8003.PushMatrix;
-import static legend.game.Scus94491BpeSegment_8003.RotMatrix_8003faf0;
+import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
 import static legend.game.Scus94491BpeSegment_8003.RotTransPers4;
 import static legend.game.Scus94491BpeSegment_8003.RotTransPersN;
 import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
@@ -846,7 +846,7 @@ public final class SMap {
     model_800bda10.scaleVector_fc.setY(model.vector_10c.y.get() >> 6);
     model_800bda10.scaleVector_fc.setZ(model.vector_10c.z.get() >> 6);
 
-    RotMatrix_8003faf0(model_800bda10.coord2Param_64.rotate, model_800bda10.coord2_14.coord);
+    RotMatrix_Xyz(model_800bda10.coord2Param_64.rotate, model_800bda10.coord2_14.coord);
 
     final VECTOR scale = new VECTOR();
     scale.set(model_800bda10.scaleVector_fc);

@@ -796,70 +796,67 @@ public final class Scus94491BpeSegment_8004 {
 
   /** TODO This is probably one of the RotMatrix* methods */
   @Method(0x80040010L)
-  public static MATRIX RotMatrix_80040010(final SVECTOR r, final MATRIX matrix) {
-    long t8;
-    long t9;
-
+  public static MATRIX RotMatrix_Zyx(final SVECTOR r, final MATRIX matrix) {
     final int x = r.getX();
     final short sinX;
+    final int sinCosX;
     if(x < 0) {
       //LAB_8004002c
-      t9 = sin_cos_80054d0c.offset((-x & 0xfff) * 0x4L).get();
-      sinX = (short)-(short)t9;
+      sinCosX = (int)sin_cos_80054d0c.offset((-x & 0xfff) * 0x4L).get();
+      sinX = (short)-(short)sinCosX;
     } else {
       //LAB_80040054
-      t9 = sin_cos_80054d0c.offset((x & 0xfff) * 0x4L).get();
-      sinX = (short)t9;
+      sinCosX = (int)sin_cos_80054d0c.offset((x & 0xfff) * 0x4L).get();
+      sinX = (short)sinCosX;
     }
 
-    final short cosX = (short)((int)t9 >> 16);
+    final short cosX = (short)(sinCosX >> 16);
 
     //LAB_80040074
     final int y = r.getY();
     final short sinYP;
     final short sinYN;
+    final int sinCosY;
     if(y < 0) {
       //LAB_80040090
-      t9 = sin_cos_80054d0c.offset((-y & 0xfff) * 0x4L).get();
-      sinYP = (short)-(short)t9;
-      sinYN = (short)t9;
+      sinCosY = (int)sin_cos_80054d0c.offset((-y & 0xfff) * 0x4L).get();
+      sinYP = (short)-(short)sinCosY;
+      sinYN = (short)sinCosY;
     } else {
       //LAB_800400b8
-      t9 = sin_cos_80054d0c.offset((y & 0xfff) * 0x4L).get();
-      sinYP = (short)t9;
-      sinYN = (short)-(short)t9;
+      sinCosY = (int)sin_cos_80054d0c.offset((y & 0xfff) * 0x4L).get();
+      sinYP = (short)sinCosY;
+      sinYN = (short)-(short)sinCosY;
     }
 
-    final short cosY = (short)((int)t9 >> 16);
+    final short cosY = (short)(sinCosY >> 16);
 
     //LAB_800400dc
-    matrix.set(2, 0, sinYN);
-    matrix.set(2, 1, (short)(sinX * cosY >> 12));
-    matrix.set(2, 2, (short)(cosX * cosY >> 12));
-
     final int z = r.getZ();
     final short sinZ;
+    final int sinCosZ;
     if(z < 0) {
       //LAB_8004011c
-      t9 = sin_cos_80054d0c.offset((-z & 0xfff) * 0x4L).get();
-      sinZ = (short)-(short)t9;
+      sinCosZ = (int)sin_cos_80054d0c.offset((-z & 0xfff) * 0x4L).get();
+      sinZ = (short)-(short)sinCosZ;
     } else {
       //LAB_80040144
-      t9 = sin_cos_80054d0c.offset((z & 0xfff) * 0x4L).get();
-      sinZ = (short)t9;
+      sinCosZ = (int)sin_cos_80054d0c.offset((z & 0xfff) * 0x4L).get();
+      sinZ = (short)sinCosZ;
     }
 
-    final short cosZ = (short)((int)t9 >> 16);
+    final short cosZ = (short)(sinCosZ >> 16);
 
     //LAB_80040170
     matrix.set(0, 0, (short)(cosY * cosZ >> 12));
     matrix.set(1, 0, (short)(sinZ * cosY >> 12));
-    t8 = sinX * sinYP >> 12;
-    matrix.set(0, 1, (short)((t8 * cosZ >> 12) - (sinZ * cosX >> 12)));
-    matrix.set(1, 1, (short)((t8 * sinZ >> 12) + (cosX * cosZ >> 12)));
-    t8 = sinYP * cosX >> 12;
-    matrix.set(0, 2, (short)((t8 * cosZ >> 12) + (sinX * sinZ >> 12)));
-    matrix.set(1, 2, (short)((t8 * sinZ >> 12) - (sinX * cosZ >> 12)));
+    matrix.set(2, 0, sinYN);
+    matrix.set(0, 1, (short)(((sinX * sinYP >> 12) * cosZ >> 12) - (sinZ * cosX >> 12)));
+    matrix.set(1, 1, (short)(((sinX * sinYP >> 12) * sinZ >> 12) + (cosX * cosZ >> 12)));
+    matrix.set(2, 1, (short)(sinX * cosY >> 12));
+    matrix.set(0, 2, (short)(((sinYP * cosX >> 12) * cosZ >> 12) + (sinX * sinZ >> 12)));
+    matrix.set(1, 2, (short)(((sinYP * cosX >> 12) * sinZ >> 12) - (sinX * cosZ >> 12)));
+    matrix.set(2, 2, (short)(cosX * cosY >> 12));
 
     return matrix;
   }

@@ -132,14 +132,14 @@ import static legend.game.Scus94491BpeSegment_8003.GsSetFlatLight;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.MulMatrix0;
-import static legend.game.Scus94491BpeSegment_8003.RotMatrix_8003faf0;
+import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
 import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
 import static legend.game.Scus94491BpeSegment_8003.TransMatrix;
 import static legend.game.Scus94491BpeSegment_8003.TransposeMatrix;
 import static legend.game.Scus94491BpeSegment_8003.getProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
 import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
-import static legend.game.Scus94491BpeSegment_8004.RotMatrix_80040010;
+import static legend.game.Scus94491BpeSegment_8004.RotMatrix_Zyx;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrix_80040780;
 import static legend.game.Scus94491BpeSegment_8004.doNothingScript_8004f650;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
@@ -260,7 +260,7 @@ public final class Bttl_800e {
   @Method(0x800e4674L)
   public static VECTOR FUN_800e4674(final VECTOR out, final SVECTOR rotation) {
     final MATRIX rotMatrix = new MATRIX();
-    RotMatrix_80040010(rotation, rotMatrix);
+    RotMatrix_Zyx(rotation, rotMatrix);
     SetRotMatrix(rotMatrix);
     ApplyRotMatrix(new SVECTOR().set((short)0, (short)0, (short)(1 << 12)), out);
     return out;
@@ -1711,7 +1711,7 @@ public final class Bttl_800e {
 
   @Method(0x800e8594L)
   public static void FUN_800e8594(final MATRIX a0, final EffectManagerData6c a1) {
-    RotMatrix_8003faf0(a1._10.rot_10, a0);
+    RotMatrix_Xyz(a1._10.rot_10, a0);
     TransMatrix(a0, a1._10.trans_04);
     ScaleMatrixL_SVEC(a0, a1._10.scale_16);
 
@@ -1732,7 +1732,7 @@ public final class Bttl_800e {
       if(BattleScriptDataBase.EM__.equals(base.magic_00)) {
         final EffectManagerData6c manager = (EffectManagerData6c)base;
         final MATRIX sp0x10 = new MATRIX();
-        RotMatrix_8003faf0(manager._10.rot_10, sp0x10);
+        RotMatrix_Xyz(manager._10.rot_10, sp0x10);
         TransMatrix(sp0x10, manager._10.trans_04);
         ScaleMatrixL_SVEC(sp0x10, manager._10.scale_16);
         if(s3.coord2Index_0d != -1) {
@@ -3098,7 +3098,7 @@ public final class Bttl_800e {
     s2.scaleVector_fc.setX(model.vector_10c.getX() / 4);
     s2.scaleVector_fc.setY(model.vector_10c.getY() / 4);
     s2.scaleVector_fc.setZ(model.vector_10c.getZ() / 4);
-    RotMatrix_8003faf0(s2.coord2Param_64.rotate, s2.coord2_14.coord);
+    RotMatrix_Xyz(s2.coord2Param_64.rotate, s2.coord2_14.coord);
     final VECTOR scale = new VECTOR().set(s2.scaleVector_fc);
     ScaleMatrixL(s2.coord2_14.coord, scale);
     s2.coord2_14.flg = 0;
@@ -3185,7 +3185,7 @@ public final class Bttl_800e {
       final GsCOORD2PARAM param = coord2.param;
 
       param.rotate.set(rotTrans.rotate_00);
-      RotMatrix_80040010(param.rotate, coord2.coord);
+      RotMatrix_Zyx(param.rotate, coord2.coord);
 
       param.trans.set(rotTrans.translate_06);
       TransMatrix(coord2.coord, param.trans);
@@ -3197,7 +3197,7 @@ public final class Bttl_800e {
 
   @Method(0x800ec744L)
   public static void FUN_800ec744(final BattleStage stage) {
-    RotMatrix_8003faf0(stage.param_5a8.rotate, stage.coord2_558.coord);
+    RotMatrix_Xyz(stage.param_5a8.rotate, stage.coord2_558.coord);
     stage.coord2_558.flg = 0;
   }
 

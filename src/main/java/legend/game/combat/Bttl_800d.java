@@ -80,7 +80,7 @@ import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8003.GsSetRefView2;
 import static legend.game.Scus94491BpeSegment_8003.MulMatrix0;
-import static legend.game.Scus94491BpeSegment_8003.RotMatrix_8003faf0;
+import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
 import static legend.game.Scus94491BpeSegment_8003.RotTrans;
 import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
 import static legend.game.Scus94491BpeSegment_8003.TransMatrix;
@@ -91,7 +91,7 @@ import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixX;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixY;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixZ;
-import static legend.game.Scus94491BpeSegment_8004.RotMatrix_80040010;
+import static legend.game.Scus94491BpeSegment_8004.RotMatrix_Zyx;
 import static legend.game.Scus94491BpeSegment_8004.doNothingScript_8004f650;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -104,7 +104,6 @@ import static legend.game.combat.Bttl_800c.FUN_800cf4f4;
 import static legend.game.combat.Bttl_800c.FUN_800cfb14;
 import static legend.game.combat.Bttl_800c.FUN_800cffd8;
 import static legend.game.combat.Bttl_800c._800c6798;
-import static legend.game.combat.Bttl_800c._800c67b8;
 import static legend.game.combat.Bttl_800c._800c67c4;
 import static legend.game.combat.Bttl_800c._800c67d4;
 import static legend.game.combat.Bttl_800c._800c67d8;
@@ -2630,7 +2629,7 @@ public final class Bttl_800d {
     _800fab98.setX((short)(cam._d4 >> 8));
     _800fab98.setY((short)(cam._d8 >> 8));
     _800fab98.setZ((short)0);
-    RotMatrix_8003faf0(_800fab98, _800c6798);
+    RotMatrix_Xyz(_800fab98, _800c6798);
     SetRotMatrix(_800c6798);
     SetTransMatrix(_800c6798);
     cam._a4 += cam._b4;
@@ -2638,7 +2637,7 @@ public final class Bttl_800d {
     _800faba0.setX((short)0);
     _800faba0.setY((short)0);
     _800faba0.setZ((short)(cam._dc >> 8));
-    RotTrans(_800faba0, _800faba8, _800c67b8);
+    RotTrans(_800faba0, _800faba8);
     cam.vec_94.setX(cam._e8 - (_800faba8.getZ() << 8));
     cam.vec_94.setY(cam._ec - (_800faba8.getX() << 8));
     cam.vec_94.setZ(cam._f0 + (_800faba8.getY() << 8));
@@ -2685,7 +2684,7 @@ public final class Bttl_800d {
     _800fab98.setX((short)(cam._d4 >> 8));
     _800fab98.setY((short)(cam._d8 >> 8));
     _800fab98.setZ((short)0);
-    RotMatrix_8003faf0(_800fab98, _800c6798);
+    RotMatrix_Xyz(_800fab98, _800c6798);
     SetRotMatrix(_800c6798);
     SetTransMatrix(_800c6798);
     _800faba0.setX((short)0);
@@ -2693,7 +2692,7 @@ public final class Bttl_800d {
     cam._a4 += cam._b4;
     cam._dc -= cam._a4;
     _800faba0.setZ((short)(cam._dc >> 8));
-    RotTrans(_800faba0, _800faba8, _800c67b8);
+    RotTrans(_800faba0, _800faba8);
 
     cam.vec_94.setX(cam._e8 - (_800faba8.getZ() << 8));
     cam.vec_94.setY(cam._ec - (_800faba8.getX() << 8));
@@ -2749,7 +2748,7 @@ public final class Bttl_800d {
     _800fab98.setX((short)(cam._d4 >> 8));
     _800fab98.setY((short)(cam._d8 >> 8));
     _800fab98.setZ((short)0);
-    RotMatrix_8003faf0(_800fab98, _800c6798);
+    RotMatrix_Xyz(_800fab98, _800c6798);
     SetRotMatrix(_800c6798);
     SetTransMatrix(_800c6798);
     _800faba0.setX((short)0);
@@ -2757,7 +2756,7 @@ public final class Bttl_800d {
     cam._a4 += cam._b4;
     cam._dc -= cam._a4;
     _800faba0.setZ((short)(cam._dc >> 8));
-    RotTrans(_800faba0, _800faba8, _800c67b8);
+    RotTrans(_800faba0, _800faba8);
     cam.vec_94.setX(cam._e8 - (_800faba8.getZ() << 8));
     cam.vec_94.setY(cam._ec - (_800faba8.getX() << 8));
     cam.vec_94.setZ(cam._f0 + (_800faba8.getY() << 8));
@@ -2940,7 +2939,7 @@ public final class Bttl_800d {
     _800fab98.setX((short)(cam.vec_60.getX() >> 8));
     _800fab98.setY((short)(cam.vec_60.getY() >> 8));
     _800fab98.setZ((short)0);
-    RotMatrix_8003faf0(_800fab98, _800c6798);
+    RotMatrix_Xyz(_800fab98, _800c6798);
     SetRotMatrix(_800c6798);
     SetTransMatrix(_800c6798);
     cam._30 += cam._40;
@@ -2948,7 +2947,7 @@ public final class Bttl_800d {
     _800faba0.setX((short)0);
     _800faba0.setY((short)0);
     _800faba0.setZ((short)(cam.vec_60.getZ() >> 8));
-    RotTrans(_800faba0, _800faba8, _800c67b8);
+    RotTrans(_800faba0, _800faba8);
     cam.vec_20.setX(cam.vec_74.getX() - (_800faba8.getZ() << 8));
     cam.vec_20.setY(cam.vec_74.getY() - (_800faba8.getX() << 8));
     cam.vec_20.setZ(cam.vec_74.getZ() + (_800faba8.getY() << 8));
@@ -2998,7 +2997,7 @@ public final class Bttl_800d {
     _800fab98.setY((short)(cam.vec_60.getY() >> 8));
     _800fab98.setZ((short)0);
 
-    RotMatrix_8003faf0(_800fab98, _800c6798);
+    RotMatrix_Xyz(_800fab98, _800c6798);
     SetRotMatrix(_800c6798);
     SetTransMatrix(_800c6798);
 
@@ -3007,7 +3006,7 @@ public final class Bttl_800d {
     _800faba0.setX((short)0);
     _800faba0.setY((short)0);
     _800faba0.setZ((short)(cam.vec_60.getZ() >> 8));
-    RotTrans(_800faba0, _800faba8, _800c67b8);
+    RotTrans(_800faba0, _800faba8);
 
     cam.vec_20.setX(cam.vec_74.getX() - (_800faba8.getZ() << 8));
     cam.vec_20.setY(cam.vec_74.getY() - (_800faba8.getX() << 8));
@@ -3071,7 +3070,7 @@ public final class Bttl_800d {
     _800fab98.setY((short)(cam.vec_60.getY() >> 8));
     _800fab98.setZ((short)0);
 
-    RotMatrix_8003faf0(_800fab98, _800c6798);
+    RotMatrix_Xyz(_800fab98, _800c6798);
     SetRotMatrix(_800c6798);
     SetTransMatrix(_800c6798);
 
@@ -3079,7 +3078,7 @@ public final class Bttl_800d {
     _800faba0.setY((short)0);
     _800faba0.setZ((short)(cam.vec_60.getZ() >> 8));
 
-    RotTrans(_800faba0, _800faba8, _800c67b8);
+    RotTrans(_800faba0, _800faba8);
 
     cam.vec_20.setX(cam.vec_74.getX() - (_800faba8.getZ() << 8));
     cam.vec_20.setY(cam.vec_74.getY() - (_800faba8.getX() << 8));
@@ -4223,11 +4222,11 @@ public final class Bttl_800d {
   @Method(0x800dcc94L)
   public static void FUN_800dcc94(final int a0, final int a1, final int a2, final IntRef x, final IntRef y, final IntRef z) {
     _800fab98.set((short)x.get(), (short)y.get(), (short)0);
-    RotMatrix_8003faf0(_800fab98, _800c6798);
+    RotMatrix_Xyz(_800fab98, _800c6798);
     SetRotMatrix(_800c6798);
     SetTransMatrix(_800c6798);
     _800faba0.set((short)0, (short)0, (short)z.get());
-    RotTrans(_800faba0, _800faba8, _800c67b8);
+    RotTrans(_800faba0, _800faba8);
     x.set(a0 - _800faba8.getZ());
     y.set(a1 - _800faba8.getX());
     z.set(a2 + _800faba8.getY());
@@ -4511,7 +4510,7 @@ public final class Bttl_800d {
       }
 
       //LAB_800dd818
-      RotMatrix_80040010(rot, matrix);
+      RotMatrix_Zyx(rot, matrix);
       TransMatrix(matrix, trans);
       ScaleMatrixL(matrix, scale);
     }
@@ -4742,7 +4741,7 @@ public final class Bttl_800d {
         final ModelPartTransforms0c modelTransforms = cmbAnim.transforms_08[i];
 
         final MATRIX modelPartMatrix = model.dobj2ArrPtr_00[i].coord2_04.coord;
-        RotMatrix_80040010(modelTransforms.rotate_00, modelPartMatrix);
+        RotMatrix_Zyx(modelTransforms.rotate_00, modelPartMatrix);
         modelPartMatrix.transfer.set(modelTransforms.translate_06);
 
         final SVECTOR rotation = new SVECTOR();
@@ -4751,7 +4750,7 @@ public final class Bttl_800d {
         rotation.setZ((short)(modelTransforms.rotate_00.getZ() + (subTransforms.rot_01.getZ() << subTransforms.rotScale_00)));
 
         final MATRIX translation = new MATRIX();
-        RotMatrix_80040010(rotation, translation);
+        RotMatrix_Zyx(rotation, translation);
         translation.transfer.setX(modelTransforms.translate_06.getX() + (subTransforms.trans_05.getX() << subTransforms.transScale_04));
         translation.transfer.setY(modelTransforms.translate_06.getY() + (subTransforms.trans_05.getY() << subTransforms.transScale_04));
         translation.transfer.setZ(modelTransforms.translate_06.getZ() + (subTransforms.trans_05.getZ() << subTransforms.transScale_04));
@@ -4763,7 +4762,7 @@ public final class Bttl_800d {
       for(int i = 0; i < count; i++) {
         final ModelPartTransforms0c modelTransforms = cmbAnim.transforms_08[i];
         final MATRIX modelPartMatrix = model.dobj2ArrPtr_00[i].coord2_04.coord;
-        RotMatrix_80040010(modelTransforms.rotate_00, modelPartMatrix);
+        RotMatrix_Zyx(modelTransforms.rotate_00, modelPartMatrix);
         modelPartMatrix.transfer.set(modelTransforms.translate_06);
       }
     }
@@ -4869,7 +4868,7 @@ public final class Bttl_800d {
     //LAB_800de45c
     MulMatrix0(worldToScreenMatrix_800c3548, a2, sp0x10);
     if((a1.flags_00 & 0x400_0000) == 0) {
-      RotMatrix_8003faf0(a1.rot_10, sp0x10);
+      RotMatrix_Xyz(a1.rot_10, sp0x10);
       ScaleMatrixL_SVEC(sp0x10, a1.scale_16);
     }
 
