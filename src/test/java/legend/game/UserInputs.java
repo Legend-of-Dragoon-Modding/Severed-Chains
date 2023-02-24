@@ -1,13 +1,12 @@
 package legend.game;
 
-import java.awt.AWTException;
+
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
-import java.io.IOException;
 
 public class UserInputs {
 
-    public static void arrowUp(int pressDur) throws AWTException, InterruptedException, IOException {
+    public static void arrowUp(int pressDur)  {
         try {
             Robot robot = new Robot();
             robot.keyPress(KeyEvent.VK_UP);
@@ -20,7 +19,7 @@ public class UserInputs {
         }
     }
 
-    public static void arrowDown(int pressDur) throws AWTException, InterruptedException, IOException {
+    public static void arrowDown(int pressDur)  {
         try {
             Robot robot = new Robot();
             robot.keyPress(KeyEvent.VK_DOWN);
@@ -33,7 +32,7 @@ public class UserInputs {
         }
     }
 
-    public static void arrowLeft(int pressDur) throws AWTException, InterruptedException, IOException {
+    public static void arrowLeft(int pressDur)  {
         try {
             Robot robot = new Robot();
             robot.keyPress(KeyEvent.VK_LEFT);
@@ -45,7 +44,7 @@ public class UserInputs {
             System.out.println("arrowLeft() failed, see stack trace");
         }
     }
-    public static void arrowRight(int pressDur) throws AWTException, InterruptedException, IOException {
+    public static void arrowRight(int pressDur)  {
         try {
             Robot robot = new Robot();
             robot.keyPress(KeyEvent.VK_RIGHT);
@@ -58,7 +57,7 @@ public class UserInputs {
         }
     }
 
-    public static void enter() throws AWTException, InterruptedException, IOException {
+    public static void enter()  {
         try {
             Robot robot = new Robot();
             robot.keyPress(KeyEvent.VK_ENTER);
@@ -71,7 +70,7 @@ public class UserInputs {
         }
     }
 
-    public static void spaceBar() throws AWTException, InterruptedException, IOException {
+    public static void spaceBar()  {
         try {
             Robot robot = new Robot();
             robot.keyPress(KeyEvent.VK_SPACE);
@@ -84,7 +83,7 @@ public class UserInputs {
         }
     }
 
-    public static void wKey() throws AWTException, InterruptedException, IOException {
+    public static void wKey()  {
         try {
             Robot robot = new Robot();
             robot.keyPress(KeyEvent.VK_W);
@@ -97,7 +96,7 @@ public class UserInputs {
         }
     }
 
-    public static void aKey() throws AWTException, InterruptedException, IOException {
+    public static void aKey()  {
         try {
             Robot robot = new Robot();
             robot.keyPress(KeyEvent.VK_A);
@@ -110,7 +109,7 @@ public class UserInputs {
         }
     }
 
-    public static void sKey() throws AWTException, InterruptedException, IOException {
+    public static void sKey()  {
         try {
             Robot robot = new Robot();
             robot.keyPress(KeyEvent.VK_S);
@@ -123,7 +122,7 @@ public class UserInputs {
         }
     }
 
-    public static void dKey() throws AWTException, InterruptedException, IOException {
+    public static void dKey()  {
         try {
             Robot robot = new Robot();
             robot.keyPress(KeyEvent.VK_D);
@@ -136,7 +135,7 @@ public class UserInputs {
         }
     }
 
-    public static void l1Button() throws AWTException, InterruptedException, IOException {
+    public static void l1Button()  {
         try {
             Robot robot = new Robot();
             robot.keyPress(KeyEvent.VK_Q);
@@ -149,7 +148,7 @@ public class UserInputs {
         }
     }
 
-    public static void l2Button() throws AWTException, InterruptedException, IOException {
+    public static void l2Button()  {
         try {
             Robot robot = new Robot();
             robot.keyPress(KeyEvent.VK_1);
@@ -162,7 +161,7 @@ public class UserInputs {
         }
     }
 
-    public static void l3Button() throws AWTException, InterruptedException, IOException {
+    public static void l3Button()  {
         try {
             Robot robot = new Robot();
             robot.keyPress(KeyEvent.VK_Z);
@@ -175,7 +174,7 @@ public class UserInputs {
         }
     }
 
-    public static void r1Button() throws AWTException, InterruptedException, IOException {
+    public static void r1Button()  {
         try {
             Robot robot = new Robot();
             robot.keyPress(KeyEvent.VK_E);
@@ -188,7 +187,7 @@ public class UserInputs {
         }
     }
 
-    public static void r2Button() throws AWTException, InterruptedException, IOException {
+    public static void r2Button()  {
         try {
             Robot robot = new Robot();
             robot.keyPress(KeyEvent.VK_3);
@@ -201,7 +200,7 @@ public class UserInputs {
         }
     }
 
-    public static void r3Button() throws AWTException, InterruptedException, IOException {
+    public static void r3Button()  {
         try {
             Robot robot = new Robot();
             robot.keyPress(KeyEvent.VK_C);
