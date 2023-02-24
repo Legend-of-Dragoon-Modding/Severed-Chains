@@ -3,7 +3,7 @@ package legend.game.modding.events.combat;
 import legend.game.modding.events.Event;
 
 public class SpellStatsEvent extends Event {
-  public int spellId;
+  public final int spellId;
   public int targetType;
   public int _01;
   public int specialEffect;
@@ -15,9 +15,9 @@ public class SpellStatsEvent extends Event {
   public int element;
   public int statusType;
   public int buffType;
-  public int _0B;
+  public int _0b;
 
-  public SpellStatsEvent(int spellId, int targetType, int _01, int specialEffect, int damageFlag, int healingPercent, int accuracy, int mpUsage, int statusChance, int element, int statusType, int buffType, int _0B) {
+  public SpellStatsEvent(final int spellId, final int targetType, final int _01, final int specialEffect, final int damageFlag, final int healingPercent, final int accuracy, final int mpUsage, final int statusChance, final int element, final int statusType, final int buffType, final int _0b) {
     this.spellId = spellId;
     this.targetType = targetType;
     this._01 = _01;
@@ -30,6 +30,6 @@ public class SpellStatsEvent extends Event {
     this.element = element;
     this.statusType = statusType;
     this.buffType = buffType;
-    this._0B = _0B;
+    this._0b = _0b;
   }
 }

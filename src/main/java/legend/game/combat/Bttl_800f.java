@@ -3284,7 +3284,7 @@ public final class Bttl_800f {
       spellStats.element_08.set(event.element);
       spellStats._09.set(event.statusType);
       spellStats._0a.set(event.buffType);
-      spellStats._0b.set(event._0B);
+      spellStats._0b.set(event._0b);
 
       bobj._94 = spellStats._00.get();
       bobj._96 = spellStats._01.get();
