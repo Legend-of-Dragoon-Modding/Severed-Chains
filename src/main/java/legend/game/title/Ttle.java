@@ -70,7 +70,7 @@ import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8003.GsSetRefView2;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
-import static legend.game.Scus94491BpeSegment_8003.RotMatrix_8003faf0;
+import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
 import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
 import static legend.game.Scus94491BpeSegment_8003.StoreImage;
 import static legend.game.Scus94491BpeSegment_8003.adjustTmdPointers;
@@ -1504,7 +1504,7 @@ public final class Ttle {
     final MATRIX m = new MATRIX();
     m.set(identityMatrix_800c3568);
     m.transfer.set(a1.coord.transfer);
-    RotMatrix_8003faf0(a0, m);
+    RotMatrix_Xyz(a0, m);
     a1.coord.set(m);
     a1.flg = 0;
   }

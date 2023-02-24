@@ -115,7 +115,7 @@ import static legend.game.Scus94491BpeSegment_8003.GsSetFlatLight;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8003.GsSetRefView2L;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
-import static legend.game.Scus94491BpeSegment_8003.RotMatrix_8003faf0;
+import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
 import static legend.game.Scus94491BpeSegment_8003.RotTransPers4;
 import static legend.game.Scus94491BpeSegment_8003.StoreImage;
 import static legend.game.Scus94491BpeSegment_8003.adjustTmdPointers;
@@ -4484,7 +4484,7 @@ public class WMap {
 
     mat.transfer.set(coord2.coord.transfer);
 
-    RotMatrix_8003faf0(rotation, mat);
+    RotMatrix_Xyz(rotation, mat);
 
     coord2.flg = 0;
     coord2.coord.set(mat);

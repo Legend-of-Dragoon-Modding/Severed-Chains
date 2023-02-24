@@ -125,8 +125,8 @@ import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment_8003.CdMix;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
-import static legend.game.Scus94491BpeSegment_8003.RotMatrix_8003faf0;
-import static legend.game.Scus94491BpeSegment_8003.RotMatrix_8003fd80;
+import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
+import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Yxz;
 import static legend.game.Scus94491BpeSegment_8003.ScaleMatrix;
 import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
 import static legend.game.Scus94491BpeSegment_8003.TransMatrix;
@@ -140,7 +140,7 @@ import static legend.game.Scus94491BpeSegment_8004.FUN_8004d034;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixX;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixY;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixZ;
-import static legend.game.Scus94491BpeSegment_8004.RotMatrix_80040010;
+import static legend.game.Scus94491BpeSegment_8004.RotMatrix_Zyx;
 import static legend.game.Scus94491BpeSegment_8004.itemStats_8004f2ac;
 import static legend.game.Scus94491BpeSegment_8004.loadingGameStateOverlay_8004dd08;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
@@ -536,7 +536,7 @@ public final class Scus94491BpeSegment_8002 {
         for(int i = 0; i < model.tmdNobj_ca; i++) {
           final GsCOORDINATE2 coord2 = model.dobj2ArrPtr_00[i].coord2_04;
           final GsCOORD2PARAM params = coord2.param;
-          RotMatrix_80040010(params.rotate, coord2.coord);
+          RotMatrix_Zyx(params.rotate, coord2.coord);
           params.trans.set(
             (params.trans.getX() + transforms.get(i).translate_06.getX()) / 2,
             (params.trans.getY() + transforms.get(i).translate_06.getY()) / 2,
@@ -554,7 +554,7 @@ public final class Scus94491BpeSegment_8002 {
           final GsCOORD2PARAM params = coord2.param;
 
           params.rotate.set(transforms.get(i).rotate_00);
-          RotMatrix_80040010(params.rotate, coord2.coord);
+          RotMatrix_Zyx(params.rotate, coord2.coord);
 
           params.trans.set(transforms.get(i).translate_06);
           TransMatrix(coord2.coord, params.trans);
@@ -574,7 +574,7 @@ public final class Scus94491BpeSegment_8002 {
         final GsCOORD2PARAM params = coord2.param;
 
         params.rotate.set(transforms.get(i).rotate_00);
-        RotMatrix_80040010(params.rotate, coord2.coord);
+        RotMatrix_Zyx(params.rotate, coord2.coord);
 
         params.trans.set(transforms.get(i).translate_06);
         TransMatrix(coord2.coord, params.trans);
@@ -787,7 +787,7 @@ public final class Scus94491BpeSegment_8002 {
       final MATRIX matrix = coord2.coord;
 
       params.rotate.set(transforms.get(i).rotate_00);
-      RotMatrix_80040010(params.rotate, matrix);
+      RotMatrix_Zyx(params.rotate, matrix);
 
       params.trans.set(transforms.get(i).translate_06);
       TransMatrix(matrix, params.trans);
@@ -805,7 +805,7 @@ public final class Scus94491BpeSegment_8002 {
       final GsCOORDINATE2 coord2 = a0.dobj2ArrPtr_00[i].coord2_04;
       final MATRIX coord = coord2.coord;
       final GsCOORD2PARAM params = coord2.param;
-      RotMatrix_80040010(params.rotate, coord);
+      RotMatrix_Zyx(params.rotate, coord);
       params.trans.setX((params.trans.getX() + transforms.translate_06.getX()) / 2);
       params.trans.setY((params.trans.getY() + transforms.translate_06.getY()) / 2);
       params.trans.setZ((params.trans.getZ() + transforms.translate_06.getZ()) / 2);
@@ -818,7 +818,7 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x800214bcL)
   public static void applyModelRotationAndScale(final Model124 model) {
-    RotMatrix_8003faf0(model.coord2Param_64.rotate, model.coord2_14.coord);
+    RotMatrix_Xyz(model.coord2Param_64.rotate, model.coord2_14.coord);
     ScaleMatrix(model.coord2_14.coord, model.scaleVector_fc);
     model.coord2_14.flg = 0;
   }
@@ -904,7 +904,7 @@ public final class Scus94491BpeSegment_8002 {
   public static void FUN_800217a4(final Model124 model) {
     if(model.coord2Param_64.rotate.pad.get() == -1) {
       final MATRIX mat = new MATRIX();
-      RotMatrix_8003fd80(model.coord2Param_64.rotate, mat);
+      RotMatrix_Yxz(model.coord2Param_64.rotate, mat);
       TransposeMatrix(mat, model.coord2_14.coord);
       model.coord2Param_64.rotate.x.set((short)0);
       model.coord2Param_64.rotate.y.set((short)0);
@@ -912,7 +912,7 @@ public final class Scus94491BpeSegment_8002 {
       model.coord2Param_64.rotate.pad.set((short)0);
     } else {
       model.coord2Param_64.rotate.y.set(FUN_800ea4c8(model.coord2Param_64.rotate.y.get()));
-      RotMatrix_8003faf0(model.coord2Param_64.rotate, model.coord2_14.coord);
+      RotMatrix_Xyz(model.coord2Param_64.rotate, model.coord2_14.coord);
     }
 
     ScaleMatrix(model.coord2_14.coord, model.scaleVector_fc);
@@ -991,7 +991,7 @@ public final class Scus94491BpeSegment_8002 {
 
       scale.set(0x1000, 0x1000, 0x1000);
 
-      RotMatrix_8003faf0(rotation, coord);
+      RotMatrix_Xyz(rotation, coord);
       ScaleMatrixL(coord, scale);
 
       translation.set(1, 1, 1);

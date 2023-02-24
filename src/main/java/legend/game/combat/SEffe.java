@@ -137,8 +137,8 @@ import static legend.game.Scus94491BpeSegment_8003.GetClut;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8003.MulMatrix0;
-import static legend.game.Scus94491BpeSegment_8003.RotMatrix_8003faf0;
-import static legend.game.Scus94491BpeSegment_8003.RotMatrix_8003fd80;
+import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
+import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Yxz;
 import static legend.game.Scus94491BpeSegment_8003.RotTrans;
 import static legend.game.Scus94491BpeSegment_8003.RotTransPers4;
 import static legend.game.Scus94491BpeSegment_8003.ScaleMatrix;
@@ -153,7 +153,7 @@ import static legend.game.Scus94491BpeSegment_8004.FUN_80040e10;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixX;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixY;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixZ;
-import static legend.game.Scus94491BpeSegment_8004.RotMatrix_80040010;
+import static legend.game.Scus94491BpeSegment_8004.RotMatrix_Zyx;
 import static legend.game.Scus94491BpeSegment_8004.doNothingScript_8004f650;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
 import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
@@ -893,7 +893,7 @@ public final class SEffe {
 
   @Method(0x800fc4bcL)
   public static void FUN_800fc4bc(final MATRIX a0, final EffectManagerData6c a1, final long a2) {
-    RotMatrix_8003faf0(MEMORY.ref(4, a2 + 0x38L, SVECTOR::new), a0);
+    RotMatrix_Xyz(MEMORY.ref(4, a2 + 0x38L, SVECTOR::new), a0);
     TransMatrix(a0, MEMORY.ref(4, a2 + 0x18L, VECTOR::new));
     ScaleMatrixL(a0, MEMORY.ref(4, a2 + 0x28L, VECTOR::new));
   }
@@ -1082,7 +1082,7 @@ public final class SEffe {
       final MATRIX sp0x30 = new MATRIX();
       MulMatrix0(worldToScreenMatrix_800c3548, sp0x10, sp0x30);
       if((MEMORY.ref(4, a2).offset(0x0L).get() & 0x400_0000L) == 0) {
-        RotMatrix_8003faf0(a0._10.rot_10, sp0x30);
+        RotMatrix_Xyz(a0._10.rot_10, sp0x30);
         ScaleMatrixL(sp0x30, new VECTOR().set(a0._10.scale_16));
       }
 
@@ -5239,14 +5239,14 @@ public final class SEffe {
     //LAB_8010aa54
     final VECTOR sp0x28 = new VECTOR().set(0, (int)(MEMORY.ref(2, a1).offset(0x2L).getSigned() * effect._08.get()), 0);
     final SVECTOR sp0x78 = new SVECTOR().set((short)MEMORY.ref(2, a1).offset(0x0L).get(), (short)0, (short)0);
-    RotMatrix_8003faf0(sp0x78, sp0xa0);
+    RotMatrix_Xyz(sp0x78, sp0xa0);
     TransMatrix(sp0x80, sp0x28);
     MulMatrix0(sp0xa0, sp0x80, sp0xc0);
     FUN_800e8594(sp0x80, manager);
 
     if((manager._10.flags_00 & 0x400_0000) == 0) {
       MulMatrix0(worldToScreenMatrix_800c3548, sp0x80, sp0xa0);
-      RotMatrix_8003faf0(manager._10.rot_10, sp0xa0);
+      RotMatrix_Xyz(manager._10.rot_10, sp0xa0);
       MulMatrix0(sp0xa0, sp0xc0, sp0xc0);
       setRotTransMatrix(sp0xc0);
     } else {
@@ -6266,7 +6266,7 @@ public final class SEffe {
         rot.set(instance.rot_38);
         scale.set(manager._10.scale_16);
 
-        RotMatrix_8003faf0(rot, transforms);
+        RotMatrix_Xyz(rot, transforms);
         TransMatrix(transforms, trans);
         ScaleMatrix(transforms, scale);
 
@@ -6746,7 +6746,7 @@ public final class SEffe {
           GsSetLightMatrix(sp0xb8);
           MulMatrix0(worldToScreenMatrix_800c3548, sp0xb8, sp0xd8);
           setRotTransMatrix(sp0xd8);
-          RotMatrix_8003faf0(sp0x20, sp0x3c);
+          RotMatrix_Xyz(sp0x20, sp0x3c);
           TransMatrix(sp0x3c, sp0x14);
           sp0xa8.setX(sp26);
           sp0xa8.setY(sp28);
@@ -6991,7 +6991,7 @@ public final class SEffe {
     sp0x30.setX((short)ratan2(-sp0x10.getY(), s1 / 0x1000));
 
     final MATRIX sp0x38 = new MATRIX();
-    RotMatrix_80040010(sp0x30, sp0x38);
+    RotMatrix_Zyx(sp0x30, sp0x38);
     FUN_800de544(s2, sp0x38);
 
     return s2;
@@ -7011,7 +7011,7 @@ public final class SEffe {
 
       final VECTOR translationDelta = new VECTOR().set(translation1).sub(translation2.get());
       final MATRIX sp0x38 = new MATRIX();
-      RotMatrix_8003faf0(rotation2.get(), sp0x38);
+      RotMatrix_Xyz(rotation2.get(), sp0x38);
 
       final VECTOR sp0x28 = new VECTOR();
       ApplyTransposeMatrixLV(sp0x38, translationDelta, sp0x28);
@@ -7049,7 +7049,7 @@ public final class SEffe {
     getScriptedObjectRotationAndTranslation(scriptIndex, rotation, translation);
 
     final MATRIX sp0x10 = new MATRIX();
-    RotMatrix_8003faf0(rotation.get(), sp0x10);
+    RotMatrix_Xyz(rotation.get(), sp0x10);
 
     out
       .set(ApplyMatrixLV(sp0x10, a2))
@@ -7091,7 +7091,7 @@ public final class SEffe {
       getScriptedObjectRotationAndTranslation(s1.scriptIndex_30.get(), sp0x40, sp0x44);
 
       final MATRIX sp0x10 = new MATRIX();
-      RotMatrix_8003faf0(sp0x40.get(), sp0x10);
+      RotMatrix_Xyz(sp0x40.get(), sp0x10);
 
       final VECTOR sp0x30 = new VECTOR().set(s1._0c).div(0x100);
       s2._10.trans_04.set(ApplyMatrixLV(sp0x10, sp0x30)).add(sp0x44.get());
@@ -7134,7 +7134,7 @@ public final class SEffe {
     final int transformedZ2;
     if(scriptIndex != -1) {
       final MATRIX rotation = new MATRIX();
-      RotMatrix_8003faf0(getScriptedObjectRotation(scriptIndex), rotation);
+      RotMatrix_Xyz(getScriptedObjectRotation(scriptIndex), rotation);
       final VECTOR sp0x38 = new VECTOR().set(x1, y1, z1);
       final VECTOR sp0x48 = new VECTOR();
       sp0x48.set(ApplyMatrixLV(rotation, sp0x38));
@@ -7393,7 +7393,7 @@ public final class SEffe {
 
     //LAB_8011142c
     final MATRIX sp0x28 = new MATRIX();
-    RotMatrix_8003faf0(effect._1c, sp0x28);
+    RotMatrix_Xyz(effect._1c, sp0x28);
     SetRotMatrix(sp0x28);
 
     final VECTOR sp0x18 = new VECTOR();
@@ -7509,7 +7509,7 @@ public final class SEffe {
           }
 
           //LAB_80111958
-          RotMatrix_80040010(rot, transforms);
+          RotMatrix_Zyx(rot, transforms);
           TransMatrix(transforms, trans);
           ScaleMatrixL(transforms, scale);
           FUN_8003ec90(sp0x10, transforms, a0);
@@ -7595,7 +7595,7 @@ public final class SEffe {
       if(s2._06.get() == 0) {
         if(s0 != -1) {
           final MATRIX sp0x20 = new MATRIX();
-          RotMatrix_8003faf0(getScriptedObjectRotation(s0), sp0x20);
+          RotMatrix_Xyz(getScriptedObjectRotation(s0), sp0x20);
 
           VECTOR sp0x50 = ApplyMatrixLV(sp0x20, new VECTOR().set(s4, s6, s3));
           s4 = sp0x50.getX();
@@ -7644,7 +7644,7 @@ public final class SEffe {
         FUN_80110120(sp0x20, v0, sp0x10);
 
         final MATRIX sp0x28 = new MATRIX();
-        RotMatrix_80040010(sp0x20, sp0x28);
+        RotMatrix_Zyx(sp0x20, sp0x28);
 
         final VECTOR sp0x48 = new VECTOR().set(
           script.params_20[2].get(),
@@ -7848,7 +7848,7 @@ public final class SEffe {
       getScriptedObjectRotationAndTranslation(s0, sp0x58, sp0x5c);
 
       final MATRIX sp0x20 = new MATRIX();
-      RotMatrix_8003faf0(sp0x58.get(), sp0x20);
+      RotMatrix_Xyz(sp0x58.get(), sp0x20);
       sp0x10.set(ApplyMatrixLV(sp0x20, sp0x10)).add(sp0x5c.get());
     }
 
@@ -7942,7 +7942,7 @@ public final class SEffe {
   public static FlowControl FUN_8011357c(final RunningScript<?> script) {
     final SVECTOR sp0x10 = new SVECTOR().set((short)script.params_20[1].get(), (short)script.params_20[2].get(), (short)script.params_20[3].get());
     final MATRIX sp0x18 = new MATRIX();
-    RotMatrix_8003fd80(sp0x10, sp0x18);
+    RotMatrix_Yxz(sp0x10, sp0x18);
     FUN_800de544(sp0x10, sp0x18);
     script.params_20[4].set(sp0x10.getX());
     script.params_20[5].set(sp0x10.getY());
@@ -8666,7 +8666,7 @@ public final class SEffe {
       final SVECTOR sp0xe8 = new SVECTOR();
       FUN_800de618(sp0xe0, sp0xe8, sp0xc0);
       sp0xe0.negate();
-      RotMatrix_80040010(sp0xe0, sp0xc0);
+      RotMatrix_Zyx(sp0xe0, sp0xc0);
 
       final VECTOR sp0xf0 = new VECTOR().set(0x100_0000, 0x100_0000, 0x100_0000).div(sp0xe8);
       ScaleMatrixL(sp0xc0, sp0xf0);
@@ -8941,7 +8941,7 @@ public final class SEffe {
   @Method(0x8011619cL)
   public static void FUN_8011619c(final EffectManagerData6c manager, final BttlScriptData6cSub5c effect, final int deffFlags, final MATRIX matrix) {
     final MATRIX sp0x10 = new MATRIX();
-    RotMatrix_80040010(manager._10.rot_10, sp0x10);
+    RotMatrix_Zyx(manager._10.rot_10, sp0x10);
     TransMatrix(sp0x10, manager._10.trans_04);
     ScaleMatrixL_SVEC(sp0x10, manager._10.scale_16);
     MulMatrix0(matrix, sp0x10, sp0x10);
