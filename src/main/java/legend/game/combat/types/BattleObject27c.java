@@ -177,17 +177,17 @@ public class BattleObject27c extends BattleScriptDataBase {
   public int _88;
   public int _8a;
 
-  public int _94;
+  public int targetType_94;
   public int _96;
-  public int _98;
+  public int specialEffect_98;
   public int spellDamage_9a;
   public int spellMulti_9c;
   public int spellAccuracy_9e;
   public int spellMp_a0;
-  public int _a2;
+  public int statusChance_a2;
   public int spellElement_a4;
-  public int _a6;
-  public int _a8;
+  public int statusType_a6;
+  public int buffType_a8;
   public int _aa;
   public int dragoonAttack_ac;
   public int dragoonMagic_ae;
@@ -353,17 +353,17 @@ public class BattleObject27c extends BattleScriptDataBase {
       case 66 -> this._88;
       case 67 -> this._8a;
 
-      case 72 -> this._94;
+      case 72 -> this.targetType_94;
       case 73 -> this._96;
-      case 74 -> this._98;
+      case 74 -> this.specialEffect_98;
       case 75 -> this.spellDamage_9a;
       case 76 -> this.spellMulti_9c;
       case 77 -> this.spellAccuracy_9e;
       case 78 -> this.spellMp_a0;
-      case 79 -> this._a2;
+      case 79 -> this.statusChance_a2;
       case 80 -> this.spellElement_a4;
-      case 81 -> this._a6;
-      case 82 -> this._a8;
+      case 81 -> this.statusType_a6;
+      case 82 -> this.buffType_a8;
       case 83 -> this._aa;
       case 84 -> this.dragoonAttack_ac;
       case 85 -> this.dragoonMagic_ae;
@@ -504,17 +504,17 @@ public class BattleObject27c extends BattleScriptDataBase {
       case 66 -> this._88 = value;
       case 67 -> this._8a = value;
 
-      case 72 -> this._94 = value;
+      case 72 -> this.targetType_94 = value;
       case 73 -> this._96 = value;
-      case 74 -> this._98 = value;
+      case 74 -> this.specialEffect_98 = value;
       case 75 -> this.spellDamage_9a = value;
       case 76 -> this.spellMulti_9c = value;
       case 77 -> this.spellAccuracy_9e = value;
       case 78 -> this.spellMp_a0 = value;
-      case 79 -> this._a2 = value;
+      case 79 -> this.statusChance_a2 = value;
       case 80 -> this.spellElement_a4 = value;
-      case 81 -> this._a6 = value;
-      case 82 -> this._a8 = value;
+      case 81 -> this.statusType_a6 = value;
+      case 82 -> this.buffType_a8 = value;
       case 83 -> this._aa = value;
       case 84 -> this.dragoonAttack_ac = value;
       case 85 -> this.dragoonMagic_ae = value;
