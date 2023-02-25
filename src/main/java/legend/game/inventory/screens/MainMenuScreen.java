@@ -556,11 +556,13 @@ public class MainMenuScreen extends MenuScreen {
 
   @Override
   public void pressedWithRepeatPulse(final InputAction inputAction) {
-    if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
-      this.menuNavigateUp();
-    }
-    if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
-      this.menuNavigateDown();
+    if(this.loadingStage == 2) {
+      if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
+        this.menuNavigateUp();
+      }
+      if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
+        this.menuNavigateDown();
+      }
     }
   }
 }

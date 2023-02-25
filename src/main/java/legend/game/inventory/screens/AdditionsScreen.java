@@ -286,6 +286,10 @@ public class AdditionsScreen extends MenuScreen {
 
   @Override
   public void pressedWithRepeatPulse(final InputAction inputAction) {
+    if(this.loadingStage != 2) {
+      return;
+    }
+
     if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
       this.menuNavigateUp();
     }

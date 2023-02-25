@@ -270,6 +270,10 @@ public class GoodsScreen extends MenuScreen {
 
   @Override
   public void pressedWithRepeatPulse(final InputAction inputAction) {
+    if(this.loadingStage != 1) {
+      return;
+    }
+
     if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
       this.menuNavigateUp();
     }
