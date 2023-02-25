@@ -16,6 +16,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_E;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F9;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_Q;
@@ -222,6 +223,9 @@ public final class Input {
     playerOne.addBinding(new InputBinding(InputAction.BUTTON_EAST, GLFW_KEY_D, 0x40, InputType.KEYBOARD));
     playerOne.addBinding(new InputBinding(InputAction.BUTTON_SOUTH, GLFW_KEY_S, 0x20, InputType.KEYBOARD));
     playerOne.addBinding(new InputBinding(InputAction.BUTTON_WEST, GLFW_KEY_A, 0x80, InputType.KEYBOARD));
+
+    playerOne.addBinding(new InputBinding(InputAction.BUTTON_EAST, GLFW_KEY_ESCAPE, 0x40, InputType.KEYBOARD));
+    playerOne.addBinding(new InputBinding(InputAction.BUTTON_SOUTH, GLFW_KEY_ENTER, 0x20, InputType.KEYBOARD));
   }
 
   private static void onControllerConnected(final int id) {
