@@ -1223,80 +1223,69 @@ public final class SMap {
     return FlowControl.CONTINUE;
   }
 
+  /**
+   * Something to do with forced animation. Used when Dart is halfway through his jump animation.
+   */
   @Method(0x800de668L)
   public static FlowControl FUN_800de668(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
-    sobj.vec_138.x.set(script.params_20[1].get());
-    sobj.vec_138.y.set(script.params_20[2].get());
-    sobj.vec_138.z.set(script.params_20[3].get());
+    sobj.vec_138.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
     sobj.i_144 = script.params_20[4].get();
 
     sobj.us_170 = 1;
 
     sobj.vec_148.set(sobj.vec_138).sub(model.coord2_14.coord.transfer).div(sobj.i_144);
 
-    if(sobj.vec_148.x.get() == 0) {
-      if(sobj.vec_138.x.get() < model.coord2_14.coord.transfer.getX()) {
-        sobj.vec_148.x.set(0x8000_0000);
+    if(sobj.vec_148.getX() == 0) {
+      if(sobj.vec_138.getX() < model.coord2_14.coord.transfer.getX()) {
+        sobj.vec_148.setX(0x8000_0000);
       }
     }
 
     //LAB_800de750
-    if(sobj.vec_148.y.get() == 0) {
-      if(sobj.vec_138.y.get() < model.coord2_14.coord.transfer.getY()) {
-        sobj.vec_148.y.set(0x8000_0000);
+    if(sobj.vec_148.getY() == 0) {
+      if(sobj.vec_138.getY() < model.coord2_14.coord.transfer.getY()) {
+        sobj.vec_148.setY(0x8000_0000);
       }
     }
 
     //LAB_800de77c
-    if(sobj.vec_148.z.get() == 0) {
-      if(sobj.vec_138.z.get() < model.coord2_14.coord.transfer.getZ()) {
-        sobj.vec_148.z.set(0x8000_0000);
+    if(sobj.vec_148.getZ() == 0) {
+      if(sobj.vec_138.getZ() < model.coord2_14.coord.transfer.getZ()) {
+        sobj.vec_148.setZ(0x8000_0000);
       }
     }
 
     //LAB_800de7a8
-    int v0;
-    v0 = sobj.vec_138.x.get() - model.coord2_14.coord.transfer.getX();
-    v0 = v0 << 16;
-    v0 = v0 / sobj.i_144;
-
-    if(sobj.vec_148.x.get() < 0) {
+    int x = (sobj.vec_138.getX() - model.coord2_14.coord.transfer.getX() << 16) / sobj.i_144;
+    if(sobj.vec_148.getX() < 0) {
       //LAB_800de7e0
-      v0 = ~v0 + 1;
+      x = ~x + 1;
     }
 
     //LAB_800de810
-    sobj.vec_154.x.set(v0 & 0xffff);
+    sobj.vec_154.setX(x & 0xffff);
 
-    v0 = sobj.vec_138.y.get() - model.coord2_14.coord.transfer.getY();
-    v0 = v0 << 16;
-    v0 = v0 / sobj.i_144;
-
-    if(sobj.vec_148.y.get() < 0) {
+    int y = (sobj.vec_138.getY() - model.coord2_14.coord.transfer.getY() << 16) / sobj.i_144;
+    if(sobj.vec_148.getY() < 0) {
       //LAB_800de84c
-      v0 = ~v0 + 1;
+      y = ~y + 1;
     }
 
     //LAB_800de87c
-    sobj.vec_154.y.set(v0 & 0xffff);
+    sobj.vec_154.setY(y & 0xffff);
 
-    v0 = sobj.vec_138.z.get() - model.coord2_14.coord.transfer.getZ();
-    v0 = v0 << 16;
-    v0 = v0 / sobj.i_144;
-
-    if(sobj.vec_148.z.get() < 0) {
+    int z = (sobj.vec_138.getZ() - model.coord2_14.coord.transfer.getZ() << 16) / sobj.i_144;
+    if(sobj.vec_148.getZ() < 0) {
       //LAB_800de8b8
-      v0 = ~v0 + 1;
+      z = ~z + 1;
     }
 
     //LAB_800de8e8
-    sobj.vec_154.z.set(v0 & 0xffff);
+    sobj.vec_154.setZ(z & 0xffff);
 
-    sobj.vec_160.x.set(0);
-    sobj.vec_160.y.set(0);
-    sobj.vec_160.z.set(0);
+    sobj.vec_160.set(0, 0, 0);
 
     sobjs_800c6880[sobj.sobjIndex_130].setTempTicker(SMap::FUN_800e1f90);
 
@@ -1312,6 +1301,7 @@ public final class SMap {
     sobj.vec_138.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
     final int a3 = script.params_20[4].get();
     sobj.i_144 = a3;
+
     sobj.vec_148.setX((sobj.vec_138.getX() - model.coord2_14.coord.transfer.getX()) / a3);
     sobj.vec_148.setZ((sobj.vec_138.getZ() - model.coord2_14.coord.transfer.getZ()) / a3);
 
@@ -3522,8 +3512,16 @@ public final class SMap {
 
     model.coord2_14.coord.transfer.y.add(sobj.s_134);
 
-    int x = sobj.vec_148.getX();
-    int z = sobj.vec_148.getZ();
+    int x = 0;
+    if((sobj.vec_148.getX() & 0x7fff_ffff) != 0) {
+      x = sobj.vec_148.getX();
+    }
+
+    //LAB_800e3ea8
+    int z = 0;
+    if((sobj.vec_148.getZ() & 0x7fff_ffff) != 0) {
+      z = sobj.vec_148.getZ();
+    }
 
     //LAB_800e3ec0
     sobj.vec_160.x.add(sobj.vec_154.getX());
