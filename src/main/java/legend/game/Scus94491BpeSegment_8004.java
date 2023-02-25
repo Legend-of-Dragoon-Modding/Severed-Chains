@@ -805,17 +805,17 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x800402a0L)
   public static void RotMatrixX(final int rotation, final MATRIX matrixOut) {
-    matrixOut.set(matrixOut.toMat4f().rotateX(MathHelper.psxDegToRad(rotation)));
+    matrixOut.set(matrixOut.toMat4f().rotateX(-MathHelper.psxDegToRad(rotation)));
   }
 
   @Method(0x80040440L)
   public static void RotMatrixY(final int rotation, final MATRIX matrixOut) {
-    matrixOut.set(matrixOut.toMat4f().rotateY(MathHelper.psxDegToRad(rotation)));
+    matrixOut.set(matrixOut.toMat4f().rotateY(-MathHelper.psxDegToRad(rotation)));
   }
 
   @Method(0x800405e0L)
   public static void RotMatrixZ(final int rotation, final MATRIX matrixOut) {
-    matrixOut.set(matrixOut.toMat4f().rotateZ(MathHelper.psxDegToRad(rotation)));
+    matrixOut.set(matrixOut.toMat4f().rotateZ(-MathHelper.psxDegToRad(rotation)));
   }
 
   /**
