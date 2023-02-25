@@ -21,7 +21,7 @@
          <Label text="Battle Objects" />
          <ListView fx:id="bobjList" prefHeight="398.0" prefWidth="182.0" />
       </VBox>
-      <VBox prefHeight="400.0" prefWidth="249.0">
+      <VBox prefHeight="400.0" prefWidth="400.0">
          <padding>
             <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
          </padding>
@@ -73,13 +73,13 @@
                   <Insets right="4.0" />
                </HBox.margin>
             </Label>
-            <Spinner fx:id="hp" editable="true" prefHeight="26.0" prefWidth="65.0" />
+            <Spinner fx:id="hp" editable="true" prefHeight="26.0" prefWidth="80.0" />
             <Label text="/">
                <HBox.margin>
                   <Insets left="4.0" right="4.0" />
                </HBox.margin>
             </Label>
-            <Spinner fx:id="maxHp" editable="true" prefHeight="26.0" prefWidth="65.0" />
+            <Spinner fx:id="maxHp" editable="true" prefHeight="26.0" prefWidth="80.0" />
          </HBox>
          <HBox alignment="CENTER_LEFT" prefHeight="32.0" prefWidth="170.0">
             <VBox.margin>
@@ -193,11 +193,6 @@
                <Spinner fx:id="mavd" editable="true" prefHeight="26.0" prefWidth="65.0" />
             </children>
          </HBox>
-      </VBox>
-      <VBox prefHeight="400.0" prefWidth="163.0">
-         <padding>
-            <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
-         </padding>
       </VBox>
    </HBox>
 </VBox>

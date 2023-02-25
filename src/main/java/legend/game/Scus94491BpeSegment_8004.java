@@ -55,6 +55,7 @@ import static legend.game.Scus94491BpeSegment_8005._80059b3c;
 import static legend.game.Scus94491BpeSegment_8005._80059f3c;
 import static legend.game.Scus94491BpeSegment_8005._80059f7c;
 import static legend.game.Scus94491BpeSegment_8005.atanTable_80058d0c;
+import static legend.game.Scus94491BpeSegment_8005.sin_cos_80054d0c;
 import static legend.game.Scus94491BpeSegment_8005.sssqFadeCurrent_8005a1ce;
 import static legend.game.Scus94491BpeSegment_8005.sssqStatus_8005a1d0;
 import static legend.game.Scus94491BpeSegment_800c._800c3a40;
@@ -805,17 +806,100 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x800402a0L)
   public static void RotMatrixX(final int rotation, final MATRIX matrixOut) {
-    matrixOut.set(matrixOut.toMat4f().rotateX(-MathHelper.psxDegToRad(rotation)));
+    final int sinCos;
+    final short sin;
+
+    if(rotation < 0) {
+      //LAB_800402bc
+      sinCos = (int)sin_cos_80054d0c.offset((-rotation & 0xfff) * 4).get();
+      sin = (short)-(short)sinCos;
+    } else {
+      //LAB_800402e4
+      sinCos = (int)sin_cos_80054d0c.offset((rotation & 0xfff) * 4).get();
+      sin = (short)sinCos;
+    }
+
+    final short cos = (short)(sinCos >> 16);
+
+    //LAB_80040304
+    final long m10 = matrixOut.get(1, 0);
+    final long m11 = matrixOut.get(1, 1);
+    final long m12 = matrixOut.get(1, 2);
+    final long m20 = matrixOut.get(2, 0);
+    final long m21 = matrixOut.get(2, 1);
+    final long m22 = matrixOut.get(2, 2);
+
+    matrixOut.set(1, 0, (short)(cos * m10 - sin * m20 >> 12));
+    matrixOut.set(1, 1, (short)(cos * m11 - sin * m21 >> 12));
+    matrixOut.set(1, 2, (short)(cos * m12 - sin * m22 >> 12));
+    matrixOut.set(2, 0, (short)(sin * m10 + cos * m20 >> 12));
+    matrixOut.set(2, 1, (short)(sin * m11 + cos * m21 >> 12));
+    matrixOut.set(2, 2, (short)(sin * m12 + cos * m22 >> 12));
   }
 
   @Method(0x80040440L)
   public static void RotMatrixY(final int rotation, final MATRIX matrixOut) {
-    matrixOut.set(matrixOut.toMat4f().rotateY(-MathHelper.psxDegToRad(rotation)));
+    final int sinCos;
+    final short sin;
+
+    if(rotation < 0) {
+      //LAB_8004045c
+      sinCos = (int)sin_cos_80054d0c.offset((-rotation & 0xfff) * 4).get();
+      sin = (short)sinCos;
+    } else {
+      //LAB_80040480
+      sinCos = (int)sin_cos_80054d0c.offset((rotation & 0xfff) * 4).get();
+      sin = (short)-(short)sinCos;
+    }
+
+    final short cos = (short)(sinCos >> 16);
+
+    //LAB_800404a4
+    final short m0 = matrixOut.get(0);
+    final short m1 = matrixOut.get(1);
+    final short m2 = matrixOut.get(2);
+    final short m6 = matrixOut.get(6);
+    final short m7 = matrixOut.get(7);
+    final short m8 = matrixOut.get(8);
+    matrixOut.set(0, (short)(cos * m0 - sin * m6 >> 12));
+    matrixOut.set(1, (short)(cos * m1 - sin * m7 >> 12));
+    matrixOut.set(2, (short)(cos * m2 - sin * m8 >> 12));
+    matrixOut.set(6, (short)(sin * m0 + cos * m6 >> 12));
+    matrixOut.set(7, (short)(sin * m1 + cos * m7 >> 12));
+    matrixOut.set(8, (short)(sin * m2 + cos * m8 >> 12));
   }
 
   @Method(0x800405e0L)
   public static void RotMatrixZ(final int rotation, final MATRIX matrixOut) {
-    matrixOut.set(matrixOut.toMat4f().rotateZ(-MathHelper.psxDegToRad(rotation)));
+    final int sinCos;
+    final short sin;
+
+    if(rotation < 0) {
+      //LAB_800405fc
+      sinCos = (int)sin_cos_80054d0c.offset((-rotation & 0xfff) * 4).get();
+      sin = (short)-(short)sinCos;
+    } else {
+      //LAB_80040624
+      sinCos = (int)sin_cos_80054d0c.offset((rotation & 0xfff) * 4).get();
+      sin = (short)sinCos;
+    }
+
+    final short cos = (short)(sinCos >> 16);
+
+    //LAB_80040644
+    final long m00 = matrixOut.get(0, 0);
+    final long m01 = matrixOut.get(0, 1);
+    final long m02 = matrixOut.get(0, 2);
+    final long m10 = matrixOut.get(1, 0);
+    final long m11 = matrixOut.get(1, 1);
+    final long m12 = matrixOut.get(1, 2);
+
+    matrixOut.set(0, 0, (short)(cos * m00 - sin * m10 >> 12));
+    matrixOut.set(0, 1, (short)(cos * m01 - sin * m11 >> 12));
+    matrixOut.set(0, 2, (short)(cos * m02 - sin * m12 >> 12));
+    matrixOut.set(1, 0, (short)(sin * m00 + cos * m10 >> 12));
+    matrixOut.set(1, 1, (short)(sin * m01 + cos * m11 >> 12));
+    matrixOut.set(1, 2, (short)(sin * m02 + cos * m12 >> 12));
   }
 
   /**
