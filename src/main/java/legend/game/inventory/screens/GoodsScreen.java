@@ -210,6 +210,10 @@ public class GoodsScreen extends MenuScreen {
       return;
     }
 
+    if((this.selectedSlot + 2) >= this.menuItems.size()) {
+      return;
+    }
+
     playSound(1);
     this.selectedSlot += 2;
     this.highlight.x_40 = this.getSlotX(this.selectedSlot & 1);
