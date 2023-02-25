@@ -1060,15 +1060,8 @@ public final class SMap {
       } else {
         smallerStruct.sa_08[i] = 0;
         smallerStruct.sa_10[i] = 0;
-        smallerStruct.sa_18[i] = (short)smallerStruct.tmdSubExtensionArr_20[i].s_02;
-
-        if(smallerStruct.sa_18[i] == -1) {
-          //LAB_800de0f8
-          smallerStruct.uba_04[i] = false;
-        } else {
-          //LAB_800de104
-          smallerStruct.uba_04[i] = true;
-        }
+        smallerStruct.sa_18[i] = smallerStruct.tmdSubExtensionArr_20[i].s_02;
+        smallerStruct.uba_04[i] = smallerStruct.sa_18[i] != -1;
       }
 
       //LAB_800de108
@@ -1089,14 +1082,8 @@ public final class SMap {
     //LAB_800de164
     smallerStruct.sa_08[index] = 0;
     smallerStruct.sa_10[index] = 0;
-    smallerStruct.sa_18[index] = (short)smallerStruct.tmdSubExtensionArr_20[index].s_02;
-
-    if(smallerStruct.sa_18[index] == -1) {
-      smallerStruct.uba_04[index] = false;
-    } else {
-      //LAB_800de1c4
-      smallerStruct.uba_04[index] = true;
-    }
+    smallerStruct.sa_18[index] = smallerStruct.tmdSubExtensionArr_20[index].s_02;
+    smallerStruct.uba_04[index] = smallerStruct.sa_18[index] != -1;
   }
 
   /** TODO this method moves the player */
