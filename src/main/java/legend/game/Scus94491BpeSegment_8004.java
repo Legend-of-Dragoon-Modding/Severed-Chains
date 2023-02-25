@@ -1,5 +1,6 @@
 package legend.game;
 
+import legend.core.MathHelper;
 import legend.core.gte.COLOUR;
 import legend.core.gte.MATRIX;
 import legend.core.gte.SVECTOR;
@@ -22,14 +23,14 @@ import legend.game.combat.Bttl_800e;
 import legend.game.combat.Bttl_800f;
 import legend.game.combat.SEffe;
 import legend.game.scripting.FlowControl;
+import legend.game.scripting.RunningScript;
+import legend.game.scripting.ScriptFile;
 import legend.game.title.Ttle;
 import legend.game.types.CallbackStruct;
 import legend.game.types.FileEntry08;
 import legend.game.types.ItemStats0c;
 import legend.game.types.MoonMusic08;
 import legend.game.types.PlayableSoundStruct;
-import legend.game.scripting.RunningScript;
-import legend.game.scripting.ScriptFile;
 import legend.game.types.SpuStruct124;
 import legend.game.types.SpuStruct44;
 import legend.game.types.SpuStruct66;
@@ -38,6 +39,7 @@ import legend.game.types.SssqFile;
 import legend.game.types.SubmapMusic08;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.joml.Matrix4f;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -53,7 +55,6 @@ import static legend.game.Scus94491BpeSegment_8005._80059b3c;
 import static legend.game.Scus94491BpeSegment_8005._80059f3c;
 import static legend.game.Scus94491BpeSegment_8005._80059f7c;
 import static legend.game.Scus94491BpeSegment_8005.atanTable_80058d0c;
-import static legend.game.Scus94491BpeSegment_8005.sin_cos_80054d0c;
 import static legend.game.Scus94491BpeSegment_8005.sssqFadeCurrent_8005a1ce;
 import static legend.game.Scus94491BpeSegment_8005.sssqStatus_8005a1d0;
 import static legend.game.Scus94491BpeSegment_800c._800c3a40;
@@ -795,368 +796,26 @@ public final class Scus94491BpeSegment_8004 {
   public static final ArrayRef<MoonMusic08> moonMusic_8004ff10 = MEMORY.ref(4, 0x8004ff10L, ArrayRef.of(MoonMusic08.class, 43, 8, MoonMusic08::new));
 
   @Method(0x80040010L)
-  public static MATRIX RotMatrix_Zyx(final SVECTOR rotation, final MATRIX matrixOut) {
-    final int x = rotation.getX();
-    final short sinX;
-    final int sinCosX;
-    if(x < 0) {
-      //LAB_8004002c
-      sinCosX = (int)sin_cos_80054d0c.offset((-x & 0xfff) * 0x4L).get();
-      sinX = (short)-(short)sinCosX;
-    } else {
-      //LAB_80040054
-      sinCosX = (int)sin_cos_80054d0c.offset((x & 0xfff) * 0x4L).get();
-      sinX = (short)sinCosX;
-    }
-
-    final short cosX = (short)(sinCosX >> 16);
-
-    //LAB_80040074
-    final int y = rotation.getY();
-    final short sinYP;
-    final short sinYN;
-    final int sinCosY;
-    if(y < 0) {
-      //LAB_80040090
-      sinCosY = (int)sin_cos_80054d0c.offset((-y & 0xfff) * 0x4L).get();
-      sinYP = (short)-(short)sinCosY;
-      sinYN = (short)sinCosY;
-    } else {
-      //LAB_800400b8
-      sinCosY = (int)sin_cos_80054d0c.offset((y & 0xfff) * 0x4L).get();
-      sinYP = (short)sinCosY;
-      sinYN = (short)-(short)sinCosY;
-    }
-
-    final short cosY = (short)(sinCosY >> 16);
-
-    //LAB_800400dc
-    final int z = rotation.getZ();
-    final short sinZ;
-    final int sinCosZ;
-    if(z < 0) {
-      //LAB_8004011c
-      sinCosZ = (int)sin_cos_80054d0c.offset((-z & 0xfff) * 0x4L).get();
-      sinZ = (short)-(short)sinCosZ;
-    } else {
-      //LAB_80040144
-      sinCosZ = (int)sin_cos_80054d0c.offset((z & 0xfff) * 0x4L).get();
-      sinZ = (short)sinCosZ;
-    }
-
-    final short cosZ = (short)(sinCosZ >> 16);
-
-    //LAB_80040170
-    matrixOut.set(0, 0, (short)(cosY * cosZ >> 12));
-    matrixOut.set(1, 0, (short)(sinZ * cosY >> 12));
-    matrixOut.set(2, 0, sinYN);
-    matrixOut.set(0, 1, (short)(((sinX * sinYP >> 12) * cosZ >> 12) - (sinZ * cosX >> 12)));
-    matrixOut.set(1, 1, (short)(((sinX * sinYP >> 12) * sinZ >> 12) + (cosX * cosZ >> 12)));
-    matrixOut.set(2, 1, (short)(sinX * cosY >> 12));
-    matrixOut.set(0, 2, (short)(((sinYP * cosX >> 12) * cosZ >> 12) + (sinX * sinZ >> 12)));
-    matrixOut.set(1, 2, (short)(((sinYP * cosX >> 12) * sinZ >> 12) - (sinX * cosZ >> 12)));
-    matrixOut.set(2, 2, (short)(cosX * cosY >> 12));
-
-    return matrixOut;
+  public static void RotMatrix_Zyx(final SVECTOR rotation, final MATRIX matrixOut) {
+    matrixOut.set(new Matrix4f()
+      .rotateZ(MathHelper.psxDegToRad(rotation.getZ()))
+      .rotateY(MathHelper.psxDegToRad(rotation.getY()))
+      .rotateX(MathHelper.psxDegToRad(rotation.getX())));
   }
 
   @Method(0x800402a0L)
   public static void RotMatrixX(final int rotation, final MATRIX matrixOut) {
-    final int sinCos;
-    final short sin;
-
-    if(rotation < 0) {
-      //LAB_800402bc
-      sinCos = (int)sin_cos_80054d0c.offset((-rotation & 0xfffL) * 4).get();
-      sin = (short)-(short)sinCos;
-    } else {
-      //LAB_800402e4
-      sinCos = (int)sin_cos_80054d0c.offset((rotation & 0xfffL) * 4).get();
-      sin = (short)sinCos;
-    }
-
-    final short cos = (short)(sinCos >> 16);
-
-    //LAB_80040304
-    final long m10 = matrixOut.get(1, 0);
-    final long m11 = matrixOut.get(1, 1);
-    final long m12 = matrixOut.get(1, 2);
-    final long m20 = matrixOut.get(2, 0);
-    final long m21 = matrixOut.get(2, 1);
-    final long m22 = matrixOut.get(2, 2);
-
-    matrixOut.set(1, 0, (short)(cos * m10 - sin * m20 >> 12));
-    matrixOut.set(1, 1, (short)(cos * m11 - sin * m21 >> 12));
-    matrixOut.set(1, 2, (short)(cos * m12 - sin * m22 >> 12));
-    matrixOut.set(2, 0, (short)(sin * m10 + cos * m20 >> 12));
-    matrixOut.set(2, 1, (short)(sin * m11 + cos * m21 >> 12));
-    matrixOut.set(2, 2, (short)(sin * m12 + cos * m22 >> 12));
+    matrixOut.set(new Matrix4f().rotationX(MathHelper.psxDegToRad(rotation)));
   }
 
   @Method(0x80040440L)
   public static void RotMatrixY(final int rotation, final MATRIX matrixOut) {
-    final int sinCos;
-    final short sin;
-
-    if(rotation < 0) {
-      //LAB_8004045c
-      sinCos = (int)sin_cos_80054d0c.offset((-rotation & 0xfff) * 4).get();
-      sin = (short)sinCos;
-    } else {
-      //LAB_80040480
-      sinCos = (int)sin_cos_80054d0c.offset((rotation & 0xfffL) * 4).get();
-      sin = (short)-(short)sinCos;
-    }
-
-    final short cos = (short)(sinCos >> 16);
-
-    //LAB_800404a4
-    final short m0 = matrixOut.get(0);
-    final short m1 = matrixOut.get(1);
-    final short m2 = matrixOut.get(2);
-    final short m6 = matrixOut.get(6);
-    final short m7 = matrixOut.get(7);
-    final short m8 = matrixOut.get(8);
-    matrixOut.set(0, (short)(cos * m0 - sin * m6 >> 12));
-    matrixOut.set(1, (short)(cos * m1 - sin * m7 >> 12));
-    matrixOut.set(2, (short)(cos * m2 - sin * m8 >> 12));
-    matrixOut.set(6, (short)(sin * m0 + cos * m6 >> 12));
-    matrixOut.set(7, (short)(sin * m1 + cos * m7 >> 12));
-    matrixOut.set(8, (short)(sin * m2 + cos * m8 >> 12));
+    matrixOut.set(new Matrix4f().rotationY(MathHelper.psxDegToRad(rotation)));
   }
 
   @Method(0x800405e0L)
   public static void RotMatrixZ(final int rotation, final MATRIX matrixOut) {
-    final int sinCos;
-    final short sin;
-
-    if(rotation < 0) {
-      //LAB_800405fc
-      sinCos = (int)sin_cos_80054d0c.offset((-rotation & 0xfff) * 4).get();
-      sin = (short)-(short)sinCos;
-    } else {
-      //LAB_80040624
-      sinCos = (int)sin_cos_80054d0c.offset((rotation & 0xfff) * 4).get();
-      sin = (short)sinCos;
-    }
-
-    final short cos = (short)(sinCos >> 16);
-
-    //LAB_80040644
-    final long m00 = matrixOut.get(0, 0);
-    final long m01 = matrixOut.get(0, 1);
-    final long m02 = matrixOut.get(0, 2);
-    final long m10 = matrixOut.get(1, 0);
-    final long m11 = matrixOut.get(1, 1);
-    final long m12 = matrixOut.get(1, 2);
-
-    matrixOut.set(0, 0, (short)(cos * m00 - sin * m10 >> 12));
-    matrixOut.set(0, 1, (short)(cos * m01 - sin * m11 >> 12));
-    matrixOut.set(0, 2, (short)(cos * m02 - sin * m12 >> 12));
-    matrixOut.set(1, 0, (short)(sin * m00 + cos * m10 >> 12));
-    matrixOut.set(1, 1, (short)(sin * m01 + cos * m11 >> 12));
-    matrixOut.set(1, 2, (short)(sin * m02 + cos * m12 >> 12));
-  }
-
-  @Method(0x80040780L)
-  public static void RotMatrix_Gte_Zyx(final SVECTOR rotation, final MATRIX matrixOut) {
-    final int x = rotation.getX();
-    final int y = rotation.getY();
-    final int z = rotation.getZ();
-
-    final int signX = x >> 31;
-    final int signY = y >> 31;
-    final int signZ = z >> 31;
-
-    final int sinCosX = (int)sin_cos_80054d0c.offset((x + signX ^ signX) * 0x4L & 0x3ffcL).get();
-    final int sinCosY = (int)sin_cos_80054d0c.offset((y + signY ^ signY) * 0x4L & 0x3ffcL).get();
-    final int sinCosZ = (int)sin_cos_80054d0c.offset((z + signZ ^ signZ) * 0x4L & 0x3ffcL).get();
-
-    final short sinX = (short)(((sinCosX << 16) + signX ^ signX) >>> 16);
-    final short sinY = (short)(((sinCosY << 16) + signY ^ signY) >>> 16);
-    final short sinZ = (short)(((sinCosZ << 16) + signZ ^ signZ) >>> 16);
-
-    final short cosX = (short)(sinCosX >> 16);
-    final short cosY = (short)(sinCosY >> 16);
-    final short cosZ = (short)(sinCosZ >> 16);
-
-    CPU.MTC2(cosX,  8);
-    CPU.MTC2(sinY,  9);
-    CPU.MTC2(sinZ, 10);
-    CPU.MTC2(cosZ, 11);
-    CPU.COP2(0x198003dL);
-    final long t0 = CPU.MFC2( 9);
-    final long t1 = CPU.MFC2(10);
-    final long t2 = CPU.MFC2(11);
-    CPU.MTC2(sinX,  8);
-    CPU.MTC2(sinY,  9);
-    CPU.MTC2(sinZ, 10);
-    CPU.MTC2(cosZ, 11);
-    CPU.COP2(0x198003dL);
-    final long t3 = CPU.MFC2( 9);
-    final long t4 = CPU.MFC2(10);
-    final long t5 = CPU.MFC2(11);
-    CPU.MTC2(cosZ, 8);
-    CPU.MTC2(cosY, 9);
-    CPU.MTC2(t3, 10);
-    CPU.MTC2(t0, 11);
-    CPU.COP2(0x198003dL);
-    final long a0 = CPU.MFC2( 9);
-    final long a1 = CPU.MFC2(10);
-    final long a2 = CPU.MFC2(11);
-    CPU.MTC2(cosY, 9);
-    CPU.MTC2(sinZ, 8);
-    CPU.MTC2(t3, 10);
-    CPU.MTC2(t0, 11);
-    CPU.COP2(0x198003dL);
-    matrixOut.set(0, (short)a0);
-    matrixOut.set(1, (short)(a1 - t1));
-    matrixOut.set(2, (short)(a2 + t4));
-    matrixOut.set(3, (short)CPU.MFC2( 9));
-    matrixOut.set(4, (short)(CPU.MFC2(10) + t2));
-    matrixOut.set(5, (short)(CPU.MFC2(11) - t5));
-    matrixOut.set(6, (short)-sinY);
-    matrixOut.set(7, (short)(cosY * sinX >> 12));
-    matrixOut.set(8, (short)(cosY * cosX >> 12));
-  }
-
-  @Method(0x80040980L)
-  public static void RotMatrix_Gte_Xyz(final SVECTOR rotation, final MATRIX matrixOut) {
-    long at;
-    long v1;
-    long a1;
-    long a2;
-    long a3;
-    long t0;
-    long t1;
-    long t2;
-    long t3;
-    long t4;
-    long t5;
-    long t6;
-    final long t7;
-    long lo;
-    t0 = rotation.getZ();
-    v1 = sin_cos_80054d0c.getAddress();
-    t4 = rotation.getXY();
-    t3 = (int)t0 >> 31;
-    t0 = t0 + t3;
-    t0 = t0 ^ t3;
-    t0 = t0 << 2;
-    t0 = t0 & 0x3ffcL;
-    t0 = t0 + v1;
-    a2 = MEMORY.ref(4, t0).offset(0x0L).get();
-    t0 = (int)t4 >> 16;
-    t2 = (int)t0 >> 31;
-    t0 = t0 + t2;
-    t0 = t0 ^ t2;
-    t0 = t0 << 2;
-    t0 = t0 & 0x3ffcL;
-    t0 = t0 + v1;
-    a1 = MEMORY.ref(4, t0).offset(0x0L).get();
-    t0 = t4 << 16;
-    t0 = (int)t0 >> 16;
-    t1 = (int)t0 >> 31;
-    t0 = t0 + t1;
-    t0 = t0 ^ t1;
-    t0 = t0 << 2;
-    t0 = t0 & 0x3ffcL;
-    t0 = t0 + v1;
-    long a0_0 = MEMORY.ref(4, t0).offset(0x0L).get();
-    at = a2 << 16;
-    a2 = (int)a2 >> 16;
-    a2 = a2 << 16;
-    at = at + t3;
-    at = at ^ t3;
-    at = at >>> 16;
-    a2 = a2 | at;
-    at = a1 << 16;
-    a1 = (int)a1 >> 16;
-    a1 = a1 << 16;
-    at = at + t2;
-    at = at ^ t2;
-    at = at >>> 16;
-    a1 = a1 | at;
-    at = a0_0 << 16;
-    a0_0 = (int)a0_0 >> 16;
-    a0_0 = a0_0 << 16;
-    at = at + t1;
-    at = at ^ t1;
-    at = at >>> 16;
-    a0_0 = a0_0 | at;
-    t0 = (int)a0_0 >> 16;
-    CPU.MTC2(t0, 8);
-    a3 = a1 << 16;
-    a3 = (int)a3 >> 16;
-    CPU.MTC2(a3, 9);
-    v1 = a2 << 16;
-    v1 = (int)v1 >> 16;
-    CPU.MTC2(v1, 10);
-    at = (int)a2 >> 16;
-    CPU.MTC2(at, 11);
-    CPU.COP2(0x198003dL);
-    at = (int)a1 >> 16;
-    lo = (long)(int)at * (int)t0 & 0xffff_ffffL;
-    t0 = CPU.MFC2(9);
-    t1 = CPU.MFC2(10);
-    t6 = a0_0 << 16;
-    t2 = CPU.MFC2(11);
-    t6 = (int)t6 >> 16;
-    CPU.MTC2(t6, 8);
-    CPU.MTC2(a3, 9);
-    CPU.MTC2(v1, 10);
-    at = (int)a2 >> 16;
-    CPU.MTC2(at, 11);
-    CPU.COP2(0x198003dL);
-    at = lo;
-    at = (int)at >> 12;
-    matrixOut.set(8, (short)at);
-    t3 = CPU.MFC2(9);
-    t4 = CPU.MFC2(10);
-    t5 = CPU.MFC2(11);
-    at = (int)a2 >> 16;
-    CPU.MTC2(at, 8);
-    at = (int)a1 >> 16;
-    CPU.MTC2(at, 9);
-    lo = (long)(int)at * (int)t6 & 0xffff_ffffL;
-    CPU.MTC2(t3, 10);
-    CPU.MTC2(t0, 11);
-    CPU.COP2(0x198003dL);
-    a0_0 = CPU.MFC2(9);
-    a1 = CPU.MFC2(10);
-    a2 = CPU.MFC2(11);
-    CPU.MTC2(v1, 8);
-    CPU.MTC2(at, 9);
-    CPU.MTC2(t3, 10);
-    CPU.MTC2(t0, 11);
-    CPU.COP2(0x198003dL);
-    t1 = a1 + t1;
-    t1 = t1 << 16;
-    a3 = a3 & 0xffffL;
-    t1 = t1 | a3;
-    matrixOut.setPacked(2, t1);
-    at = CPU.MFC2(9);
-    a0_0 = a0_0 & 0xffffL;
-    at = -at;
-    at = at << 16;
-    at = at | a0_0;
-    matrixOut.setPacked(0, at);
-    t6 = CPU.MFC2(10);
-    at = lo;
-    t7 = CPU.MFC2(11);
-    t2 = t2 - t6;
-    at = (int)at >> 12;
-    at = -at;
-    t2 = t2 & 0xffffL;
-    at = at << 16;
-    at = at | t2;
-    matrixOut.setPacked(4, at);
-    t4 = t4 - a2;
-    t4 = t4 & 0xffffL;
-    t5 = t5 + t7;
-    t5 = t5 << 16;
-    t4 = t4 | t5;
-    matrixOut.setPacked(6, t4);
+    matrixOut.set(new Matrix4f().rotationZ(MathHelper.psxDegToRad(rotation)));
   }
 
   /**

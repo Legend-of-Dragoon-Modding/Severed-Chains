@@ -1,8 +1,6 @@
 package legend.core;
 
 import legend.core.gpu.Gpu;
-import legend.core.gte.MATRIX;
-import legend.core.gte.SVECTOR;
 import legend.core.memory.Memory;
 import legend.core.memory.Value;
 import legend.core.memory.segments.RamSegment;
@@ -37,7 +35,6 @@ import java.nio.file.Paths;
 import static legend.game.Scus94491BpeSegment._80010004;
 import static legend.game.Scus94491BpeSegment.gameLoop;
 import static legend.game.Scus94491BpeSegment.loadFile;
-import static legend.game.Scus94491BpeSegment_8004.RotMatrix_Gte_Xyz;
 import static legend.game.Scus94491BpeSegment_8004.overlays_8004db88;
 import static org.lwjgl.opengl.GL11C.GL_BLEND;
 import static org.lwjgl.opengl.GL11C.GL_ONE_MINUS_SRC_ALPHA;

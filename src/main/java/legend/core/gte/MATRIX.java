@@ -4,6 +4,7 @@ import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.ShortRef;
+import org.joml.Matrix4fc;
 
 public class MATRIX implements MemoryRef {
   private final Value ref;
@@ -75,6 +76,20 @@ public class MATRIX implements MemoryRef {
       this.transfer.set(other.transfer);
     }
 
+    return this;
+  }
+
+  /** NOTE: does not set translation */
+  public MATRIX set(final Matrix4fc other) {
+    this.set(0, (short)(other.m00() * 4096));
+    this.set(1, (short)(other.m10() * 4096));
+    this.set(2, (short)(other.m20() * 4096));
+    this.set(3, (short)(other.m01() * 4096));
+    this.set(4, (short)(other.m11() * 4096));
+    this.set(5, (short)(other.m21() * 4096));
+    this.set(6, (short)(other.m02() * 4096));
+    this.set(7, (short)(other.m12() * 4096));
+    this.set(8, (short)(other.m22() * 4096));
     return this;
   }
 

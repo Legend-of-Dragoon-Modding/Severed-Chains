@@ -28,6 +28,7 @@ import legend.game.types.WeirdTimHeader;
 import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.joml.Matrix4f;
 
 import javax.annotation.Nullable;
 
@@ -65,7 +66,6 @@ import static legend.game.Scus94491BpeSegment_8005.array_80054748;
 import static legend.game.Scus94491BpeSegment_8005.gpu_debug;
 import static legend.game.Scus94491BpeSegment_8005.matrixStackIndex_80054a08;
 import static legend.game.Scus94491BpeSegment_8005.matrixStack_80054a0c;
-import static legend.game.Scus94491BpeSegment_8005.sin_cos_80054d0c;
 import static legend.game.Scus94491BpeSegment_800c.DISPENV_800c34b0;
 import static legend.game.Scus94491BpeSegment_800c.DRAWENV_800c3450;
 import static legend.game.Scus94491BpeSegment_800c.PSDCNT_800c34d0;
@@ -2678,123 +2678,11 @@ public final class Scus94491BpeSegment_8003 {
 
   @Method(0x8003faf0L)
   public static void RotMatrix_Xyz(final SVECTOR rotation, final MATRIX matrixOut) {
-    int sinCos;
-
-    final int x = rotation.getX();
-    final short sinX;
-    if(x < 0) {
-      //LAB_8003fb0c
-      sinCos = (int)sin_cos_80054d0c.offset((-x & 0xfff) * 4).get();
-      sinX = (short)-(short)sinCos;
-    } else {
-      //LAB_8003fb34
-      sinCos = (int)sin_cos_80054d0c.offset((x & 0xfff) * 4).get();
-      sinX = (short)sinCos;
-    }
-
-    final short cosX = (short)(sinCos >> 16);
-
-    //LAB_8003fb54
-    final int y = rotation.getY();
-    final short sinYN;
-    final short sinYP;
-    if(y < 0) {
-      //LAB_8003fb70
-      sinCos = (int)sin_cos_80054d0c.offset((-y & 0xfff) * 4).get();
-      sinYN = (short)sinCos;
-      sinYP = (short)-(short)sinCos;
-    } else {
-      //LAB_8003fb98
-      sinCos = (int)sin_cos_80054d0c.offset((y & 0xfffL) * 4).get();
-      sinYN = (short)-(short)sinCos;
-      sinYP = (short)sinCos;
-    }
-
-    final short cosY = (short)(sinCos >> 16);
-
-    //LAB_8003fbbc
-    final int z = rotation.getZ();
-    final short sinZ;
-    if(z < 0) {
-      //LAB_8003fbfc
-      sinCos = (int)sin_cos_80054d0c.offset((-z & 0xfff) * 4).get();
-      sinZ = (short)-(short)sinCos;
-    } else {
-      //LAB_8003fc24
-      sinCos = (int)sin_cos_80054d0c.offset((z & 0xfff) * 4).get();
-      sinZ = (short)sinCos;
-    }
-
-    final short cosZ = (short)(sinCos >> 16);
-
-    //LAB_8003fc50
-    matrixOut.set(0, (short)(cosZ * cosY >> 12));
-    matrixOut.set(1, (short)(-(sinZ * cosY) >> 12));
-    matrixOut.set(2, sinYP);
-    matrixOut.set(3, (short)((sinZ * cosX >> 12) - ((cosZ * sinYN >> 12) * sinX >> 12)));
-    matrixOut.set(4, (short)((cosZ * cosX >> 12) + ((sinZ * sinYN >> 12) * sinX >> 12)));
-    matrixOut.set(5, (short)(-(cosY * sinX) >> 12));
-    matrixOut.set(6, (short)((sinZ * sinX >> 12) + ((cosZ * sinYN >> 12) * cosX >> 12)));
-    matrixOut.set(7, (short)((cosZ * sinX >> 12) - ((sinZ * sinYN >> 12) * cosX >> 12)));
-    matrixOut.set(8, (short)(cosY * cosX >> 12));
+    matrixOut.set(new Matrix4f().rotateXYZ(MathHelper.psxDegToRad(rotation.getX()), MathHelper.psxDegToRad(rotation.getY()), MathHelper.psxDegToRad(rotation.getZ())));
   }
 
   @Method(0x8003fd80L)
   public static void RotMatrix_Yxz(final SVECTOR rotation, final MATRIX matrixOut) {
-    final int x = rotation.getX();
-    final int sinCosX;
-    final int sinX;
-    final int negSinX;
-    if(x >= 0) {
-      //LAB_8003fdc4
-      sinCosX = (int)sin_cos_80054d0c.offset((x & 0xfff) * 0x4L).get();
-      sinX = (short)sinCosX;
-      negSinX = -sinX;
-    } else {
-      sinCosX = (int)sin_cos_80054d0c.offset((-x & 0xfff) * 0x4L).get();
-      negSinX = (short)sinCosX;
-      sinX = -negSinX;
-    }
-    final int cosX = sinCosX >> 16;
-
-    //LAB_8003fde8
-    final int y = rotation.getY();
-    final int sinCosY;
-    final int sinY;
-    if(y >= 0) {
-      //LAB_8003fe2c
-      sinCosY = (int)sin_cos_80054d0c.offset((y & 0xfff) * 0x4L).get();
-      sinY = (short)sinCosY;
-    } else {
-      sinCosY = (int)sin_cos_80054d0c.offset((-y & 0xfff) * 0x4L).get();
-      sinY = -(short)sinCosY;
-    }
-    final int cosY = sinCosY >> 16;
-
-    //LAB_8003fe4c
-
-    final int z = rotation.getZ();
-    final int sinCosZ;
-    final int sinZ;
-    if(z >= 0) {
-      //LAB_8003feb4
-      sinCosZ = (int)sin_cos_80054d0c.offset((z & 0xfff) * 0x4L).get();
-      sinZ = (short)sinCosZ;
-    } else {
-      sinCosZ = (int)sin_cos_80054d0c.offset((-z & 0xfff) * 0x4L).get();
-      sinZ = -(short)sinCosZ;
-    }
-    final int cosZ = sinCosZ >> 16;
-
-    //LAB_8003fee0
-    matrixOut.set(0, (short)((cosY * cosZ >> 12) + ((sinY * sinX >> 12) * sinZ >> 12)));
-    matrixOut.set(1, (short)(-(cosY * sinZ >> 12) + ((sinY * sinX >> 12) * cosZ >> 12)));
-    matrixOut.set(2, (short)(sinY * cosX >> 12));
-    matrixOut.set(3, (short)(sinZ * cosX >> 12));
-    matrixOut.set(4, (short)(cosZ * cosX >> 12));
-    matrixOut.set(5, (short)negSinX);
-    matrixOut.set(6, (short)(-(sinY * cosZ >> 12) + ((cosY * sinX >> 12) * sinZ >> 12)));
-    matrixOut.set(7, (short)((sinY * sinZ >> 12) + ((cosY * sinX >> 12) * cosZ >> 12)));
-    matrixOut.set(8, (short)(cosY * cosX >> 12));
+    matrixOut.set(new Matrix4f().rotateYXZ(MathHelper.psxDegToRad(rotation.getY()), MathHelper.psxDegToRad(rotation.getX()), MathHelper.psxDegToRad(rotation.getZ())));
   }
 }
