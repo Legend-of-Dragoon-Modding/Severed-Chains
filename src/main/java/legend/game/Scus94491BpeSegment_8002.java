@@ -3115,7 +3115,6 @@ public final class Scus94491BpeSegment_8002 {
       //LAB_80026928
       if((struct84._08 & 0x20) == 0) {
         if((joypadInput_8007a39c.get() & 0x20) != 0 || Config.fastTextSpeed()) {
-        if(Input.getButtonState(InputAction.BUTTON_SOUTH)) {
           s3 = 0;
 
           //LAB_80026954
