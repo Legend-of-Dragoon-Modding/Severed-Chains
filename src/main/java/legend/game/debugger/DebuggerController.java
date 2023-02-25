@@ -67,11 +67,21 @@ public class DebuggerController {
   @FXML
   public Spinner<Integer> battleUIColourB;
   @FXML
+  public Spinner<Integer> combatStageId;
+  @FXML
   public CheckBox saveAnywhere;
   @FXML
   public CheckBox autoAddition;
   @FXML
   public CheckBox autoMeter;
+  @FXML
+  public CheckBox combatStage;
+  @FXML
+  public CheckBox fastTextSpeed;
+  @FXML
+  public CheckBox autoAdvanceText;
+  @FXML
+  public CheckBox autoCharmPotion;
 
   public void initialize() {
     this.encounterId.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0));
@@ -84,6 +94,11 @@ public class DebuggerController {
     this.battleUIColourB.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getBattleRGB() >> 16)  & 0xff)));
     this.autoAddition.setSelected(Config.autoAddition());
     this.autoMeter.setSelected(Config.autoDragoonMeter());
+    this.combatStage.setSelected(Config.combatStage());
+    this.combatStageId.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 127, Config.getCombatStage()));
+    this.fastTextSpeed.setSelected(Config.fastTextSpeed());
+    this.autoAdvanceText.setSelected(Config.autoAdvanceText());
+    this.autoCharmPotion.setSelected(Config.autoCharmPotion());
   }
 
   @FXML
@@ -111,15 +126,23 @@ public class DebuggerController {
     encounterId_800bb0f8.set(this.encounterId.getValue());
 
     if(mainCallbackIndex_8004dd20.get() == 5) {
-      combatStage_800bb0f4.set(encounterData_800f64c4.get(submapCut_80052c30.get()).stage_03.get());
+      if(Config.combatStage()) {
+        combatStage_800bb0f4.set(Config.getCombatStage());
+      } else {
+        combatStage_800bb0f4.set(encounterData_800f64c4.get(submapCut_80052c30.get()).stage_03.get());
+      }
       FUN_800e5534(-1, 0);
     } else if(mainCallbackIndex_8004dd20.get() == 8) {
       final WMapAreaData08 area = areaData_800f2248.get(areaIndex_800c67aa.get());
 
-      if(area.stage_04.get() == -1) {
-        combatStage_800bb0f4.set(1);
+      if(Config.combatStage()) {
+        combatStage_800bb0f4.set(Config.getCombatStage());
       } else {
-        combatStage_800bb0f4.set(area.stage_04.get());
+        if(area.stage_04.get() == -1) {
+          combatStage_800bb0f4.set(1);
+        } else {
+          combatStage_800bb0f4.set(area.stage_04.get());
+        }
       }
 
       gameState_800babc8.areaIndex_4de.set(areaIndex_800c67aa.get());
@@ -153,10 +176,14 @@ public class DebuggerController {
   }
 
   @FXML
-  private void toggleSaveAnywhere(final ActionEvent event) { Config.toggleSaveAnywhere(); }
+  private void toggleSaveAnywhere(final ActionEvent event) {
+    Config.toggleSaveAnywhere();
+  }
 
   @FXML
-  private void toggleBattleUiColour(final ActionEvent event) { Config.toggleBattleUIColour(); }
+  private void toggleBattleUiColour(final ActionEvent event) {
+    Config.toggleBattleUIColour();
+  }
 
   @FXML
   private void getBattleUIRGB(final ActionEvent event) {
@@ -201,5 +228,35 @@ public class DebuggerController {
   @FXML
   private void toggleAutoDragoonMeter(final ActionEvent event) {
     Config.toggleAutoDragoonMeter();
+  }
+
+  @FXML
+  private void toggleCombatStage(final ActionEvent event) {
+    Config.toggleCombatStage();
+  }
+
+  @FXML
+  private void getCombatStageId(final ActionEvent event) {
+    this.combatStageId.getValueFactory().setValue(combatStage_800bb0f4.get());
+  }
+
+  @FXML
+  private void setCombatStageId(final ActionEvent event) {
+    Config.setCombatStage(this.combatStageId.getValue());
+  }
+
+  @FXML
+  private void toggleFastText(final ActionEvent event) {
+    Config.toggleFastText();
+  }
+
+  @FXML
+  private void toggleAutoAdvanceText(final ActionEvent event) {
+    Config.toggleAutoAdvanceText();
+  }
+
+  @FXML
+  private void toggleAutoCharmPotion(final ActionEvent event) {
+    Config.toggleAutoCharmPotion();
   }
 }
