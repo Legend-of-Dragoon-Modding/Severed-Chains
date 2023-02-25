@@ -5,6 +5,9 @@ import legend.core.MathHelper;
 import legend.core.memory.Memory;
 import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
+import legend.game.modding.events.EventManager;
+import legend.game.modding.events.characters.AdditionHitEvent;
+import legend.game.modding.events.inventory.ShopItemEvent;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.LodString;
 import legend.game.types.MenuItemStruct04;
@@ -147,6 +150,9 @@ public class ShopScreen extends MenuScreen {
 
         for(int i = 0; i < 16; i++) {
           final int menuItemIndex = this.itemCount;
+          final ShopItemEvent event = EventManager.INSTANCE.postEvent(new ShopItemEvent(shopId_8007a3b4.get(), this.itemCount, shops_800f4930.get(shopId_8007a3b4.get()).item_00.get(this.itemCount).id_01.get()));
+          shops_800f4930.get(shopId_8007a3b4.get()).item_00.get(menuItemIndex).id_01.set(event.itemId);
+
           final int itemId = shops_800f4930.get(shopId_8007a3b4.get()).item_00.get(menuItemIndex).id_01.get();
 
           if(itemId != 0xff) {

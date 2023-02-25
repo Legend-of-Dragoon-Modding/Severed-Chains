@@ -51,6 +51,9 @@ public class EquipmentStatsEvent extends Event {
   public int mpRegen;
   public int spRegen;
   public int _56;
+  public int special1;
+  public int special2;
+  public int specialAmount;
 
   public EquipmentStatsEvent(final int charId, final int equipmentId) {
     this.charId = charId;
@@ -82,6 +85,9 @@ public class EquipmentStatsEvent extends Event {
     this._19 = equipmentStats._19.get();
     this._1a = equipmentStats._1a.get();
     this.onHitStatus = equipmentStats.onHitStatus_1b.get();
+    this.special1 = equipmentStats.special1_0b.get();
+    this.special2 = equipmentStats.special2_0c.get();
+    this.specialAmount = equipmentStats.specialAmount_0d.get();
 
     if((equipmentStats.special1_0b.get() & 0x1) != 0) {
       this.mpPerMagicalHit = equipmentStats.specialAmount_0d.get();

@@ -1,5 +1,7 @@
 package legend.game;
 
+import it.unimi.dsi.fastutil.ints.Int2BooleanMap;
+import it.unimi.dsi.fastutil.ints.Int2BooleanOpenHashMap;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
@@ -32,7 +34,7 @@ import legend.game.combat.Bttl_800f;
 import legend.game.combat.SBtld;
 import legend.game.combat.SEffe;
 import legend.game.combat.types.BattleObject27c;
-import legend.game.combat.types.BattleStruct18cb0;
+import legend.game.combat.types.BattlePreloadedEntities_18cb0;
 import legend.game.combat.types.StageData10;
 import legend.game.debugger.Debugger;
 import legend.game.input.Input;
@@ -70,6 +72,8 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import javax.annotation.Nullable;
+import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -237,8 +241,49 @@ import static legend.game.combat.Bttl_800c.charCount_800c677c;
 import static legend.game.combat.Bttl_800c.monsterCount_800c6768;
 import static legend.game.combat.Bttl_800d.FUN_800d8f10;
 import static legend.game.combat.SBtld.stageData_80109a98;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_TRIGGER;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_X;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_A;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_B;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_BACK;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_LEFT_BUMPER;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_LEFT_THUMB;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_THUMB;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_START;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_X;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_Y;
+import static org.lwjgl.glfw.GLFW.GLFW_HAT_DOWN;
+import static org.lwjgl.glfw.GLFW.GLFW_HAT_LEFT;
+import static org.lwjgl.glfw.GLFW.GLFW_HAT_RIGHT;
+import static org.lwjgl.glfw.GLFW.GLFW_HAT_UP;
+import static org.lwjgl.glfw.GLFW.GLFW_JOYSTICK_LAST;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_1;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_3;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_C;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_DELETE;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_E;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F12;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_P;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_Q;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_Z;
+import static org.lwjgl.glfw.GLFW.glfwGetJoystickAxes;
+import static org.lwjgl.glfw.GLFW.glfwGetJoystickButtons;
+import static org.lwjgl.glfw.GLFW.glfwGetJoystickGUID;
+import static org.lwjgl.glfw.GLFW.glfwGetJoystickHats;
+import static org.lwjgl.glfw.GLFW.glfwGetJoystickName;
 
 public final class Scus94491BpeSegment {
   private Scus94491BpeSegment() { }
@@ -260,7 +305,7 @@ public final class Scus94491BpeSegment {
   public static final UnsignedShortRef tmdGp0Tpage_1f8003ec = MEMORY.ref(2, 0x1f8003ecL, UnsignedShortRef::new);
   public static final UnsignedShortRef tmdGp0CommandId_1f8003ee = MEMORY.ref(2, 0x1f8003eeL, UnsignedShortRef::new);
 
-  public static BattleStruct18cb0 _1f8003f4;
+  public static BattlePreloadedEntities_18cb0 battlePreloadedEntities_1f8003f4;
   public static final IntRef projectionPlaneDistance_1f8003f8 = MEMORY.ref(4, 0x1f8003f8L, IntRef::new);
   public static final Value _1f8003fc = MEMORY.ref(4, 0x1f8003fcL);
 
@@ -418,6 +463,8 @@ public final class Scus94491BpeSegment {
   private static boolean inputPulse;
   public static final Int2IntMap keyRepeat = new Int2IntOpenHashMap();
 
+  private static boolean paused;
+
   @Method(0x80011e1cL)
   public static void gameLoop() {
     GPU.events().onKeyPress((window, key, scancode, mods) -> {
@@ -426,6 +473,16 @@ public final class Scus94491BpeSegment {
         for(int i = 0; i < 24; i++) {
           SPU.voices[i].LEFT.set(0);
           SPU.voices[i].RIGHT.set(0);
+        }
+      }
+
+      if(key == GLFW_KEY_P) {
+        paused = !paused;
+
+        if(paused) {
+          LOGGER.info("Pausing");
+        } else {
+          LOGGER.info("Unpausing");
         }
       }
 
@@ -447,6 +504,10 @@ public final class Scus94491BpeSegment {
 
     GPU.subRenderer = () -> {
       EventManager.INSTANCE.clearStaleRefs();
+
+      if(paused) {
+        return;
+      }
 
       if(!soundRunning) {
         startSound();
@@ -573,10 +634,10 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80012094L)
-  public static void allocateHeap(long address, long size) {
+  public static void allocateHeap(long address, int size) {
     LOGGER.info("Allocating memory manager at %08x (0x%x bytes)", address, size);
 
-    size = size - 0x18L & 0xffff_fffcL;
+    size = size - 0x18 & 0xffff_fffc;
     address = address + 0x3L & 0xffff_fffcL;
 
     MEMORY.ref(4, address).offset(0x00L).setu(0);

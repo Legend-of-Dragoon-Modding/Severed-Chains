@@ -19,6 +19,8 @@ import legend.game.combat.types.CombatMenua4;
 import legend.game.combat.types.CombatItem02;
 import legend.game.combat.types.FloatingNumberC4;
 import legend.game.combat.types.FloatingNumberC4Sub20;
+import legend.game.modding.events.EventManager;
+import legend.game.modding.events.combat.SpellStatsEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.ItemStats0c;
@@ -520,7 +522,7 @@ public final class Bttl_800f {
       if((attacker._96 & 0x4) != 0) {
         damage = defender.maxHp_10 * attacker.spellMulti_9c / 100;
 
-        if((attacker._94 & 0x8) != 0) {
+        if((attacker.targetType_94 & 0x8) != 0) {
           // Attack all
 
           final int count;
@@ -538,14 +540,14 @@ public final class Bttl_800f {
           //LAB_800f21d4
           for(int i = 0; i < count; i++) {
             final BattleObject27c a1_0 = bobjs[i].innerStruct_00;
-            a1_0._a8 = attacker._a8;
+            a1_0.buffType_a8 = attacker.buffType_a8;
             FUN_800f9380(attacker, a1_0);
           }
         } else {
           // Attack single
 
           //LAB_800f2210
-          defender._a8 = attacker._a8;
+          defender.buffType_a8 = attacker.buffType_a8;
           FUN_800f9380(attacker, defender);
         }
 
@@ -2133,7 +2135,7 @@ public final class Bttl_800f {
           a1 = _800c69c8.get();
         } else {
           //LAB_800f53f8
-          a1 = data._94;
+          a1 = data.targetType_94;
           a0 = (a1 & 0x40) > 0 ? 1 : 0;
           a1 = (a1 & 0x08) > 0 ? 1 : 0;
         }
@@ -3254,46 +3256,60 @@ public final class Bttl_800f {
     if(bobj.spellId_4e != -1) {
       if(bobj.spellId_4e > 127) {
         LOGGER.error("Retail bug: spell index out of bounds (%d). This is known to happen during Shana/Miranda's dragoon attack.", bobj.spellId_4e);
-        bobj._94 = 0;
+        bobj.targetType_94 = 0;
         bobj._96 = 0;
-        bobj._98 = 0;
+        bobj.specialEffect_98 = 0;
         bobj.spellDamage_9a = 0;
         bobj.spellMulti_9c = 0;
         bobj.spellAccuracy_9e = 0;
         bobj.spellMp_a0 = 0;
-        bobj._a2 = 0;
+        bobj.statusChance_a2 = 0;
         bobj.spellElement_a4 = 0;
-        bobj._a6 = 0;
-        bobj._a8 = 0;
+        bobj.statusType_a6 = 0;
+        bobj.buffType_a8 = 0;
         bobj._aa = 0;
         return;
       }
 
       final SpellStats0c spellStats = spellStats_800fa0b8.get(bobj.spellId_4e);
-      bobj._94 = spellStats._00.get();
+      bobj.targetType_94 = spellStats.targetType_00.get();
       bobj._96 = spellStats._01.get();
-      bobj._98 = spellStats._02.get();
+      bobj.specialEffect_98 = spellStats.specialEffect_02.get();
       bobj.spellDamage_9a = spellStats.damage_03.get();
       bobj.spellMulti_9c = spellStats.multi_04.get();
       bobj.spellAccuracy_9e = spellStats.accuracy_05.get();
       bobj.spellMp_a0 = spellStats.mp_06.get();
-      bobj._a2 = spellStats._07.get();
+      bobj.statusChance_a2 = spellStats.statusChance_07.get();
       bobj.spellElement_a4 = spellStats.element_08.get();
-      bobj._a6 = spellStats._09.get();
-      bobj._a8 = spellStats._0a.get();
+      bobj.statusType_a6 = spellStats.statusType_09.get();
+      bobj.buffType_a8 = spellStats.buffType_0a.get();
       bobj._aa = spellStats._0b.get();
+
+      final SpellStatsEvent event = EventManager.INSTANCE.postEvent(new SpellStatsEvent(bobj.spellId_4e, bobj.targetType_94, bobj._96, bobj.specialEffect_98, bobj.spellDamage_9a, bobj.spellMulti_9c, bobj.spellAccuracy_9e, bobj.spellMp_a0, bobj.statusChance_a2, bobj.spellElement_a4, bobj.statusType_a6, bobj.buffType_a8, bobj._aa));
+      bobj.targetType_94 = event.targetType;
+      bobj._96 = event._01;
+      bobj.specialEffect_98 = event.specialEffect;
+      bobj.spellDamage_9a = event.damageFlag;
+      bobj.spellMulti_9c = event.healingPercent;
+      bobj.spellAccuracy_9e = event.accuracy;
+      bobj.spellMp_a0 = event.mpUsage;
+      bobj.statusChance_a2 = event.statusChance;
+      bobj.spellElement_a4 = event.element;
+      bobj.statusType_a6 = event.statusType;
+      bobj.buffType_a8 = event.buffType;
+      bobj._aa = event._0b;
     } else {
-      bobj._94 = 0;
+      bobj.targetType_94 = 0;
       bobj._96 = 0;
-      bobj._98 = 0;
+      bobj.specialEffect_98 = 0;
       bobj.spellDamage_9a = 0;
       bobj.spellMulti_9c = 0;
       bobj.spellAccuracy_9e = 0;
       bobj.spellMp_a0 = 0;
-      bobj._a2 = 0;
+      bobj.statusChance_a2 = 0;
       bobj.spellElement_a4 = 0;
-      bobj._a6 = 0;
-      bobj._a8 = 0;
+      bobj.statusType_a6 = 0;
+      bobj.buffType_a8 = 0;
       bobj._aa = 0;
     }
 
@@ -3694,10 +3710,10 @@ public final class Bttl_800f {
 
   @Method(0x800f9380L)
   public static void FUN_800f9380(final BattleObject27c attacker, final BattleObject27c defender) {
-    if((defender._a8 & 0xff) != 0) {
+    if((defender.buffType_a8 & 0xff) != 0) {
       //LAB_800f93c8
       for(int i = 0; i < 8; i++) {
-        if((defender._a8 & (0x80 >> i)) != 0) {
+        if((defender.buffType_a8 & (0x80 >> i)) != 0) {
           //LAB_800f93e8
           final int turnCount = attacker.charIndex_272 != defender.charIndex_272 ? 3 : 4;
 

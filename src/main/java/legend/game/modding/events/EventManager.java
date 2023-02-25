@@ -26,7 +26,7 @@ public class EventManager {
   private final Map<Consumer<Event>, Class<?>> listeners = new HashMap<>();
   private final Set<Consumer<Event>> staleListeners = Collections.synchronizedSet(new HashSet<>());
 
-  public EventManager() {
+  private EventManager() {
     LOGGER.info("Scanning for event consumers...");
 
     final ConfigurationBuilder config = new ConfigurationBuilder()
