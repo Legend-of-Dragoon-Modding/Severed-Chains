@@ -4110,7 +4110,7 @@ public final class Bttl_800e {
   @Method(0x800ef9e4L)
   public static void FUN_800ef9e4() {
     if(_800c6cf4.get() == 0x6L) {
-      if (Config.changeBattleRGB()) {
+      if(Config.changeBattleRGB()) {
         Bttl_800c._800c7004.set(Config.getBattleRGB());
       }
 
