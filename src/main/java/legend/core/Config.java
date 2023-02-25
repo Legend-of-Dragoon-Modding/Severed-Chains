@@ -16,7 +16,6 @@ public final class Config {
   static {
     properties.setProperty("window_width", "320");
     properties.setProperty("window_height", "240");
-    properties.setProperty("controller_config", "false");
     properties.setProperty("controller_guid", "");
     properties.setProperty("controller_deadzone", "0.3");
     properties.setProperty("inventory_size", "32");
@@ -36,10 +35,6 @@ public final class Config {
 
   public static int windowHeight() {
     return readInt("window_height", 240, 1, Integer.MAX_VALUE);
-  }
-
-  public static boolean controllerConfig() {
-    return readBool("controller_config", false);
   }
 
   public static void controllerConfig(final boolean config) {
