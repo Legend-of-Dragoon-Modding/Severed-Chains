@@ -230,13 +230,13 @@ public final class Config {
   static class SortedStoreProperties extends Properties {
 
     @Override
-    public void store(OutputStream out, String comments) throws IOException {
+    public void store(final OutputStream out, final String comments) throws IOException {
       Properties sortedProps = new Properties() {
         @Override
         public Set<Map.Entry<Object, Object>> entrySet() {
           Set<Map.Entry<Object, Object>> sortedSet = new TreeSet<Map.Entry<Object, Object>>(new Comparator<Map.Entry<Object, Object>>() {
             @Override
-            public int compare(Map.Entry<Object, Object> o1, Map.Entry<Object, Object> o2) {
+            public int compare(final Map.Entry<Object, Object> o1, final Map.Entry<Object, Object> o2) {
               return o1.getKey().toString().compareTo(o2.getKey().toString());
             }
           }

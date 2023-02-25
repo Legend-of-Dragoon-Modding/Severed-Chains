@@ -3887,7 +3887,7 @@ public final class SMap {
       // Start combat
       encounterId_800bb0f8.set(sceneEncounterIds_800f74c4.get(encounterData_800f64c4.get(submapCut_80052c30.get()).scene_00.get()).get(randomEncounterIndex()).get());
       combatStage_800bb0f4.set(encounterData_800f64c4.get(submapCut_80052c30.get()).stage_03.get());
-      if (Config.combatStage()) {
+      if(Config.combatStage()) {
         combatStage_800bb0f4.set(Config.getCombatStage());
       }
       return 0x1L;
