@@ -1,17 +1,24 @@
 package legend.core;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Enumeration;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
+import java.util.TreeSet;
 
 public final class Config {
   private Config() { }
 
   private static final Path path = Paths.get(".", "config.conf");
-  private static final Properties properties = new Properties();
+  private static final SortedStoreProperties properties = new SortedStoreProperties();
 
   static {
     properties.setProperty("window_width", "320");
@@ -28,6 +35,11 @@ public final class Config {
     properties.setProperty("save_anywhere", "false");
     properties.setProperty("auto_addition", "false");
     properties.setProperty("auto_dragoon_meter", "false");
+    properties.setProperty("combat_stage", "false");
+    properties.setProperty("combat_stage_id", "0");
+    properties.setProperty("fast_text_speed", "false");
+    properties.setProperty("auto_advance_text", "false");
+    properties.setProperty("auto_charm_potion", "false");
   }
 
   public static int windowWidth() {
@@ -96,6 +108,46 @@ public final class Config {
 
   public static void toggleAutoDragoonMeter() {
     properties.setProperty("auto_dragoon_meter", String.valueOf(!autoDragoonMeter()));
+  }
+
+  public static boolean combatStage() {
+    return readBool("combat_stage", false);
+  }
+
+  public static void toggleCombatStage() {
+    properties.setProperty("combat_stage", String.valueOf(!combatStage()));
+  }
+
+  public static int getCombatStage() {
+    return readInt("combat_stage_id", 0, 1, 127);
+  }
+
+  public static void setCombatStage(int id) {
+    properties.setProperty("combat_stage_id", String.valueOf(id));
+  }
+
+  public static  boolean fastTextSpeed() {
+    return readBool("fast_text_speed", false);
+  }
+
+  public static void toggleFastText() {
+    properties.setProperty("fast_text_speed", String.valueOf(!fastTextSpeed()));
+  }
+
+  public static  boolean autoAdvanceText() {
+    return readBool("auto_advance_text", false);
+  }
+
+  public static void toggleAutoAdvanceText() {
+    properties.setProperty("auto_advance_text", String.valueOf(!autoAdvanceText()));
+  }
+
+  public static  boolean autoCharmPotion() {
+    return readBool("auto_charm_potion", false);
+  }
+
+  public static void toggleAutoCharmPotion() {
+    properties.setProperty("auto_charm_potion", String.valueOf(!autoCharmPotion()));
   }
 
   public static int getBattleRGB() {
@@ -172,5 +224,40 @@ public final class Config {
 
   public static void save() throws IOException {
     properties.store(Files.newOutputStream(path, StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING), "");
+  }
+
+
+  static class SortedStoreProperties extends Properties {
+
+    @Override
+    public void store(OutputStream out, String comments) throws IOException {
+      Properties sortedProps = new Properties() {
+        @Override
+        public Set<Map.Entry<Object, Object>> entrySet() {
+          Set<Map.Entry<Object, Object>> sortedSet = new TreeSet<Map.Entry<Object, Object>>(new Comparator<Map.Entry<Object, Object>>() {
+            @Override
+            public int compare(Map.Entry<Object, Object> o1, Map.Entry<Object, Object> o2) {
+              return o1.getKey().toString().compareTo(o2.getKey().toString());
+            }
+          }
+          );
+          sortedSet.addAll(super.entrySet());
+          return sortedSet;
+        }
+
+        @Override
+        public Set<Object> keySet() {
+          return new TreeSet<Object>(super.keySet());
+        }
+
+        @Override
+        public synchronized Enumeration<Object> keys() {
+          return Collections.enumeration(new TreeSet<Object>(super.keySet()));
+        }
+
+      };
+      sortedProps.putAll(this);
+      sortedProps.store(out, comments);
+    }
   }
 }
