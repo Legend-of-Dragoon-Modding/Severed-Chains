@@ -82,7 +82,7 @@ public final class GameEngine {
 
     // --- User memory ------------------------
 
-    MEMORY.addSegment(new RamSegment(0x0001_0000L, 0x6f_0000));
+    MEMORY.addSegment(new RamSegment(0x0001_0000L, 0x8f_0000));
     MEMORY.addSegment(new RamSegment(0x1f80_0000L, 0x400));
 
     CPU = new Cpu();
