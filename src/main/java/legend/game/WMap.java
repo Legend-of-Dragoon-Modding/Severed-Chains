@@ -4321,8 +4321,8 @@ public class WMap {
     struct.models_0c[2].coord2Param_64.rotate.y.add((short)((struct.rotation_a4.getY() - struct.models_0c[2].coord2Param_64.rotate.getY()) / 8));
 
     if(a0 != 0) {
-      if(Input.pressedThisFrame(InputAction.DPAD_RIGHT) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_RIGHT)
-        || Input.pressedThisFrame(InputAction.DPAD_DOWN) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_DOWN)) {
+      if((Input.pressedWithRepeatPulse(InputAction.DPAD_RIGHT) && Input.pressedWithRepeatPulse(InputAction.DPAD_DOWN))
+        || (Input.pressedWithRepeatPulse(InputAction.JOYSTICK_LEFT_BUTTON_RIGHT) && Input.pressedWithRepeatPulse(InputAction.JOYSTICK_LEFT_BUTTON_DOWN))) {
         playSound(0, 1, 0, 0, (short)0, (short)0);
 
         if(struct.coolonWarpIndex_222 > 0) {
@@ -4333,8 +4333,8 @@ public class WMap {
       }
 
       //LAB_800dc384
-      if(Input.pressedThisFrame(InputAction.DPAD_LEFT) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_LEFT)
-        || Input.pressedThisFrame(InputAction.DPAD_UP) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_UP)) {
+      if((Input.pressedWithRepeatPulse(InputAction.DPAD_LEFT) && Input.pressedWithRepeatPulse(InputAction.DPAD_UP))
+        || (Input.pressedWithRepeatPulse(InputAction.JOYSTICK_LEFT_BUTTON_LEFT) && Input.pressedWithRepeatPulse(InputAction.JOYSTICK_LEFT_BUTTON_UP))) {
         playSound(0, 1, 0, 0, (short)0, (short)0);
 
         struct.coolonWarpIndex_222++;

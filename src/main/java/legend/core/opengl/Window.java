@@ -294,6 +294,7 @@ public class Window {
     private final List<ControllerState> controllerDisconnected = new ArrayList<>();
     private final List<OnPressedThisFrame> pressedThisFrame = new ArrayList<>();
     private final List<OnReleasedThisFrame> releasedThisFrame = new ArrayList<>();
+    private final List<OnPressedWithRepeatPulse> pressedWithRepeatPulse = new ArrayList<>();
     private final List<Runnable> draw = new ArrayList<>();
     private final List<Runnable> shutdown = new ArrayList<>();
     private final Window window;
@@ -376,15 +377,21 @@ public class Window {
       }
     }
 
-    private void onInputPressedThisFrame(InputAction keyCode) {
+    private void onInputPressedThisFrame(InputAction inputAction) {
       synchronized(LOCK) {
-        this.pressedThisFrame.forEach(cb -> cb.action(this.window, keyCode));
+        this.pressedThisFrame.forEach(cb -> cb.action(this.window, inputAction));
       }
     }
 
-    private void onInputReleasedThisFrame(InputAction keyCode) {
+    private void onInputReleasedThisFrame(InputAction inputAction) {
       synchronized(LOCK) {
-        this.releasedThisFrame.forEach(cb -> cb.action(this.window, keyCode));
+        this.releasedThisFrame.forEach(cb -> cb.action(this.window, inputAction));
+      }
+    }
+
+    private void onInputPressedWithRepeat(InputAction inputAction) {
+      synchronized(LOCK) {
+        this.pressedWithRepeatPulse.forEach(cb -> cb.action(this.window, inputAction));
       }
     }
 
@@ -392,8 +399,11 @@ public class Window {
       for(final InputBinding binding : inputMapping.bindings) {
         if(binding.getState() == InputBindingState.PRESSED_THIS_FRAME) {
           onInputPressedThisFrame(binding.getInputAction());
+          onInputPressedWithRepeat(binding.getInputAction());
         } else if(binding.getState() == InputBindingState.RELEASED_THIS_FRAME) {
           onInputReleasedThisFrame(binding.getInputAction());
+        } else if(binding.getState() == InputBindingState.PRESSED_REPEAT) {
+          onInputPressedWithRepeat(binding.getInputAction());
         }
       }
     }
@@ -540,6 +550,19 @@ public class Window {
       }
     }
 
+    public OnPressedWithRepeatPulse onPressedWithRepeatPulse(final OnPressedWithRepeatPulse callback) {
+      synchronized(LOCK) {
+        this.pressedWithRepeatPulse.add(callback);
+        return callback;
+      }
+    }
+
+    public void removePressedWithRepeatPulse(final OnPressedWithRepeatPulse callback) {
+      synchronized(LOCK) {
+        this.pressedWithRepeatPulse.remove(callback);
+      }
+    }
+
     public ControllerState onControllerConnected(final ControllerState callback) {
       synchronized(LOCK) {
         this.controllerConnected.add(callback);
@@ -650,6 +673,11 @@ public class Window {
 
     @FunctionalInterface
     public interface OnReleasedThisFrame {
+      void action(final Window window, final InputAction inputAction);
+    }
+
+    @FunctionalInterface
+    public interface OnPressedWithRepeatPulse {
       void action(final Window window, final InputAction inputAction);
     }
   }

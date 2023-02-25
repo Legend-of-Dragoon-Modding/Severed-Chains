@@ -313,12 +313,6 @@ public class EquipmentScreen extends MenuScreen {
     if(this.loadingStage != 3) {
       return;
     }
-    if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
-      this.menuNavigateUp();
-    }
-    if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
-      this.menuNavigateDown();
-    }
     if(inputAction == InputAction.DPAD_LEFT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_LEFT) {
       this.menuNavigateLeft();
     }
@@ -334,6 +328,15 @@ public class EquipmentScreen extends MenuScreen {
     if(inputAction == InputAction.BUTTON_NORTH) {
       this.menuItemSort();
     }
+  }
 
+  @Override
+  public void pressedWithRepeatPulse(final InputAction inputAction) {
+    if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
+      this.menuNavigateUp();
+    }
+    if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
+      this.menuNavigateDown();
+    }
   }
 }

@@ -27,6 +27,8 @@ public class MenuStack {
   private Window.Events.OnPressedThisFrame onPressedThisFrame;
   private Window.Events.OnReleasedThisFrame onReleasedThisFrame;
 
+  private Window.Events.OnPressedWithRepeatPulse onPressedWithRepeatPulse;
+
   private final Int2ObjectMap<Point2D> mousePressCoords = new Int2ObjectOpenHashMap<>();
 
   public void pushScreen(final MenuScreen screen) {
@@ -87,6 +89,7 @@ public class MenuStack {
     this.onKeyRepeat = GPU.window().events.onKeyRepeat(this::keyPress);
     this.onPressedThisFrame = GPU.window().events.onPressedThisFrame(this::pressedThisFrame);
     this.onReleasedThisFrame = GPU.window().events.onReleasedThisFrame(this::releasedThisFrame);
+    this.onPressedWithRepeatPulse = GPU.window().events.onPressedWithRepeatPulse(this::pressedWithRepeatPulse);
   }
 
   public void removeInputHandlers() {
@@ -98,6 +101,7 @@ public class MenuStack {
     GPU.window().events.removeKeyRepeat(this.onKeyRepeat);
     GPU.window().events.removePressedThisFrame(this.onPressedThisFrame);
     GPU.window().events.removeReleasedThisFrame(this.onReleasedThisFrame);
+    GPU.window().events.removePressedWithRepeatPulse(this.onPressedWithRepeatPulse);
   }
 
   private void mouseMove(final Window window, final double x, final double y) {
@@ -161,6 +165,11 @@ public class MenuStack {
 
   private void pressedThisFrame(final Window window, final InputAction inputAction) {
     this.input(screen -> screen.pressedThisFrame(inputAction));
+  }
+
+  private void pressedWithRepeatPulse(final Window window, final InputAction inputAction)
+  {
+    this.input(screen -> screen.pressedWithRepeatPulse(inputAction));
   }
 
   private void releasedThisFrame(final Window window, final InputAction inputAction) {

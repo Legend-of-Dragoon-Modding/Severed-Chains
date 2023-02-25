@@ -17,10 +17,13 @@ public abstract class MenuScreen {
   protected void keyPress(final int key, final int scancode, final int mods) {
   }
 
-  protected void pressedThisFrame(final InputAction keyCode) {
+  protected void pressedThisFrame(final InputAction inputAction) {
   }
 
-  protected void releasedThisFrame(final InputAction keyCode) {
+  protected void pressedWithRepeatPulse(final InputAction inputAction){
+  }
+
+  protected void releasedThisFrame(final InputAction inputAction) {
   }
 
   protected boolean propagateRender() {

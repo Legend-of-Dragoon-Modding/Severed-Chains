@@ -354,12 +354,6 @@ public class ItemListScreen extends MenuScreen {
 
   @Override
   public void pressedThisFrame(final InputAction inputAction) {
-    if(inputAction == InputAction.DPAD_UP) {
-      this.menuNavigateUp();
-    }
-    if(inputAction == InputAction.DPAD_DOWN) {
-      this.menuNavigateDown();
-    }
     if(inputAction == InputAction.DPAD_LEFT) {
       this.menuNavigateLeft();
     }
@@ -388,6 +382,16 @@ public class ItemListScreen extends MenuScreen {
     }
 
     this.scrollAccumulator += deltaY;
+  }
+
+  @Override
+  public void pressedWithRepeatPulse(final InputAction inputAction) {
+    if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
+      this.menuNavigateUp();
+    }
+    if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
+      this.menuNavigateDown();
+    }
   }
 
 

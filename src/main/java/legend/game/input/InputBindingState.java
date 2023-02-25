@@ -5,4 +5,5 @@ public enum InputBindingState {
   PRESSED_THIS_FRAME,
   RELEASED_THIS_FRAME,
   PRESSED,
+  PRESSED_REPEAT
 }

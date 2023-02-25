@@ -512,13 +512,6 @@ public class UseItemScreen extends MenuScreen {
   public void pressedThisFrame(final InputAction inputAction) {
 
     if(this.loadingStage == 2) {
-      // primary character left side
-      if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
-        this.menuStage2NavigateUp();
-      }
-      if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
-        this.menuStage2NavigateDown();
-      }
       if(inputAction == InputAction.BUTTON_EAST) {
         this.menuStage2Escape();
       }
@@ -537,6 +530,19 @@ public class UseItemScreen extends MenuScreen {
       }
       if(inputAction == InputAction.BUTTON_SOUTH) {
         this.menuStage3Select();
+      }
+    }
+  }
+
+  @Override
+  public void pressedWithRepeatPulse(final InputAction inputAction) {
+
+    if(this.loadingStage == 2) {
+      if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
+        this.menuStage2NavigateUp();
+      }
+      if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
+        this.menuStage2NavigateDown();
       }
     }
   }

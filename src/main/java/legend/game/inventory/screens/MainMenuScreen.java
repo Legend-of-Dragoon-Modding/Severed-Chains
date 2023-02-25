@@ -535,12 +535,6 @@ public class MainMenuScreen extends MenuScreen {
   @Override
   public void pressedThisFrame(final InputAction inputAction) {
     if(this.loadingStage == 2) {
-      if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
-        this.menuNavigateUp();
-      }
-      if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
-        this.menuNavigateDown();
-      }
       if(inputAction == InputAction.DPAD_LEFT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_LEFT) {
         this.menuNavigateLeft();
       }
@@ -557,6 +551,16 @@ public class MainMenuScreen extends MenuScreen {
       playSound(2);
       messageBox_8011dc90.state_0c++;
       this.loadingStage = 1;
+    }
+  }
+
+  @Override
+  public void pressedWithRepeatPulse(final InputAction inputAction) {
+    if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
+      this.menuNavigateUp();
+    }
+    if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
+      this.menuNavigateDown();
     }
   }
 }

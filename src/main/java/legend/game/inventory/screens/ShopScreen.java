@@ -983,12 +983,6 @@ public class ShopScreen extends MenuScreen {
   public void pressedThisFrame(final InputAction inputAction) {
     switch(this.menuState) {
       case RENDER_3 -> {
-        if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
-          this.menuMainShopRender3NavigateUp();
-        }
-        if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
-          this.menuMainShopRender3NavigateDown();
-        }
         if(inputAction == InputAction.BUTTON_EAST) {
           this.menuMainShopRender3Escape();
         }
@@ -998,12 +992,6 @@ public class ShopScreen extends MenuScreen {
       }
 
       case BUY_4 -> {
-        if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
-          this.menuBuy4NavigateUp();
-        }
-        if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
-          this.menuBuy4NavigateDown();
-        }
         if(inputAction == InputAction.BUTTON_EAST) {
           this.menuBuy4Escape();
         }
@@ -1028,17 +1016,42 @@ public class ShopScreen extends MenuScreen {
       }
 
       case SELL_10 -> {
-        if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
-          this.menuSell10NavigateUp();
-        }
-        if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
-          this.menuSell10NavigateDown();
-        }
         if(inputAction == InputAction.BUTTON_EAST) {
           this.menuSell10Escape();
         }
         if(inputAction == InputAction.BUTTON_SOUTH) {
           this.menuSell10Select();
+        }
+      }
+    }
+  }
+
+  @Override
+  public void pressedWithRepeatPulse(final InputAction inputAction) {
+    switch(this.menuState) {
+      case RENDER_3 -> {
+        if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
+          this.menuMainShopRender3NavigateUp();
+        }
+        if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
+          this.menuMainShopRender3NavigateDown();
+        }
+      }
+
+      case BUY_4 -> {
+        if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
+          this.menuBuy4NavigateUp();
+        }
+        if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
+          this.menuBuy4NavigateDown();
+        }
+      }
+      case SELL_10 -> {
+        if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
+          this.menuSell10NavigateUp();
+        }
+        if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
+          this.menuSell10NavigateDown();
         }
       }
     }

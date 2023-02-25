@@ -82,6 +82,18 @@ public final class Input {
     return false;
   }
 
+  public static boolean pressedWithRepeatPulse(final InputAction targetKey) {
+
+    for(final InputBinding inputBinding : playerOne.bindings) {
+      if(inputBinding.getInputAction() == targetKey) {
+        if(inputBinding.getState() == InputBindingState.PRESSED_THIS_FRAME || inputBinding.getState() == InputBindingState.PRESSED_REPEAT) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
   public static boolean releasedThisFrame(final InputAction targetKey) {
 
     for(final InputBinding inputBinding : playerOne.bindings) {
@@ -98,7 +110,8 @@ public final class Input {
 
     for(final InputBinding inputBinding : playerOne.bindings) {
       if(inputBinding.getInputAction() == targetKey) {
-        if(inputBinding.getState() == InputBindingState.PRESSED || inputBinding.getState() == InputBindingState.PRESSED_THIS_FRAME) {
+        if(inputBinding.getState() == InputBindingState.PRESSED || inputBinding.getState() == InputBindingState.PRESSED_THIS_FRAME
+        || inputBinding.getState() == InputBindingState.PRESSED_REPEAT) {
           return true;
         }
 
