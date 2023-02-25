@@ -117,7 +117,7 @@ public final class Scus94491BpeSegment_800e {
     precalculateTpages();
     loadSystemFont();
     SCRIPTS.clear();
-    allocateHeap(heap_8011e210.getAddress(), 0x5d_edf0);
+    allocateHeap(heap_8011e210.getAddress(), 0x7d_edf0);
     loadOvalBlobTexture();
     FUN_800e6d60();
     initFmvs();
