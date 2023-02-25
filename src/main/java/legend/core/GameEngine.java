@@ -1,6 +1,8 @@
 package legend.core;
 
 import legend.core.gpu.Gpu;
+import legend.core.gte.MATRIX;
+import legend.core.gte.SVECTOR;
 import legend.core.memory.Memory;
 import legend.core.memory.Value;
 import legend.core.memory.segments.RamSegment;
@@ -35,6 +37,7 @@ import java.nio.file.Paths;
 import static legend.game.Scus94491BpeSegment._80010004;
 import static legend.game.Scus94491BpeSegment.gameLoop;
 import static legend.game.Scus94491BpeSegment.loadFile;
+import static legend.game.Scus94491BpeSegment_8004.RotMatrix_Gte_Xyz;
 import static legend.game.Scus94491BpeSegment_8004.overlays_8004db88;
 import static org.lwjgl.opengl.GL11C.GL_BLEND;
 import static org.lwjgl.opengl.GL11C.GL_ONE_MINUS_SRC_ALPHA;
@@ -242,6 +245,24 @@ public final class GameEngine {
     GPU.setStandardRenderer();
 
     synchronized(LOCK) {
+      final Matrix4f rot = new Matrix4f().rotationX((float)Math.toRadians(45)).rotateY((float)Math.toRadians(90)).rotateZ((float)Math.toRadians(200));
+
+      final SVECTOR rotVec = new SVECTOR().set((short)(45 * 4096 / 360), (short)(90 * 4096 / 360), (short)(200 * 4096 / 360));
+      final MATRIX mat = new MATRIX();
+      mat.set(0, (short)0x1000);
+      mat.set(4, (short)0x1000);
+      mat.set(8, (short)0x1000);
+      RotMatrix_Gte_Xyz(rotVec, mat);
+
+      System.out.printf("%.4f %.4f %.4f%n", mat.get(0) / 4096.0f, mat.get(1) / 4096.0f, mat.get(2) / 4096.0f);
+      System.out.printf("%.4f %.4f %.4f%n", mat.get(3) / 4096.0f, mat.get(4) / 4096.0f, mat.get(5) / 4096.0f);
+      System.out.printf("%.4f %.4f %.4f%n", mat.get(6) / 4096.0f, mat.get(7) / 4096.0f, mat.get(8) / 4096.0f);
+      System.out.println();
+
+      System.out.printf("%.4f %.4f %.4f%n", rot.m00(), rot.m10(), rot.m20());
+      System.out.printf("%.4f %.4f %.4f%n", rot.m01(), rot.m11(), rot.m21());
+      System.out.printf("%.4f %.4f %.4f%n", rot.m02(), rot.m12(), rot.m22());
+
       Fmv.playCurrentFmv();
       gameLoop();
     }

@@ -140,7 +140,7 @@ import static legend.game.Scus94491BpeSegment_8003.getProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
 import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrix_Zyx;
-import static legend.game.Scus94491BpeSegment_8004.RotMatrix_80040780;
+import static legend.game.Scus94491BpeSegment_8004.RotMatrix_Gte_Zyx;
 import static legend.game.Scus94491BpeSegment_8004.doNothingScript_8004f650;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
 import static legend.game.Scus94491BpeSegment_8006._8006e398;
@@ -3105,7 +3105,7 @@ public final class Bttl_800e {
     final GsCOORDINATE2 v0 = s2.dobj2ArrPtr_00[0].coord2_04;
     final GsCOORD2PARAM s0 = v0.param;
     s0.rotate.set((short)0, (short)0, (short)0);
-    RotMatrix_80040780(s0.rotate, v0.coord);
+    RotMatrix_Gte_Zyx(s0.rotate, v0.coord);
     s0.trans.set(0, 0, 0);
     TransMatrix(v0.coord, s0.trans);
 

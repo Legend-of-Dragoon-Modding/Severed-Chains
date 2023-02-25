@@ -2676,12 +2676,11 @@ public final class Scus94491BpeSegment_8003 {
     return m1;
   }
 
-  /** TODO one of the RotMatrix* methods */
   @Method(0x8003faf0L)
-  public static void RotMatrix_Xyz(final SVECTOR a0, final MATRIX a1) {
+  public static void RotMatrix_Xyz(final SVECTOR rotation, final MATRIX matrixOut) {
     int sinCos;
 
-    final int x = a0.getX();
+    final int x = rotation.getX();
     final short sinX;
     if(x < 0) {
       //LAB_8003fb0c
@@ -2696,7 +2695,7 @@ public final class Scus94491BpeSegment_8003 {
     final short cosX = (short)(sinCos >> 16);
 
     //LAB_8003fb54
-    final int y = a0.getY();
+    final int y = rotation.getY();
     final short sinYN;
     final short sinYP;
     if(y < 0) {
@@ -2714,7 +2713,7 @@ public final class Scus94491BpeSegment_8003 {
     final short cosY = (short)(sinCos >> 16);
 
     //LAB_8003fbbc
-    final int z = a0.getZ();
+    final int z = rotation.getZ();
     final short sinZ;
     if(z < 0) {
       //LAB_8003fbfc
@@ -2729,21 +2728,20 @@ public final class Scus94491BpeSegment_8003 {
     final short cosZ = (short)(sinCos >> 16);
 
     //LAB_8003fc50
-    a1.set(0, (short)(cosZ * cosY >> 12));
-    a1.set(1, (short)(-(sinZ * cosY) >> 12));
-    a1.set(2, sinYP);
-    a1.set(3, (short)((sinZ * cosX >> 12) - ((cosZ * sinYN >> 12) * sinX >> 12)));
-    a1.set(4, (short)((cosZ * cosX >> 12) + ((sinZ * sinYN >> 12) * sinX >> 12)));
-    a1.set(5, (short)(-(cosY * sinX) >> 12));
-    a1.set(6, (short)((sinZ * sinX >> 12) + ((cosZ * sinYN >> 12) * cosX >> 12)));
-    a1.set(7, (short)((cosZ * sinX >> 12) - ((sinZ * sinYN >> 12) * cosX >> 12)));
-    a1.set(8, (short)(cosY * cosX >> 12));
+    matrixOut.set(0, (short)(cosZ * cosY >> 12));
+    matrixOut.set(1, (short)(-(sinZ * cosY) >> 12));
+    matrixOut.set(2, sinYP);
+    matrixOut.set(3, (short)((sinZ * cosX >> 12) - ((cosZ * sinYN >> 12) * sinX >> 12)));
+    matrixOut.set(4, (short)((cosZ * cosX >> 12) + ((sinZ * sinYN >> 12) * sinX >> 12)));
+    matrixOut.set(5, (short)(-(cosY * sinX) >> 12));
+    matrixOut.set(6, (short)((sinZ * sinX >> 12) + ((cosZ * sinYN >> 12) * cosX >> 12)));
+    matrixOut.set(7, (short)((cosZ * sinX >> 12) - ((sinZ * sinYN >> 12) * cosX >> 12)));
+    matrixOut.set(8, (short)(cosY * cosX >> 12));
   }
 
-  /** TODO one of the RotMatrix* methods */
   @Method(0x8003fd80L)
-  public static void RotMatrix_Yxz(final SVECTOR svec, final MATRIX mat) {
-    final int x = svec.getX();
+  public static void RotMatrix_Yxz(final SVECTOR rotation, final MATRIX matrixOut) {
+    final int x = rotation.getX();
     final int sinCosX;
     final int sinX;
     final int negSinX;
@@ -2760,7 +2758,7 @@ public final class Scus94491BpeSegment_8003 {
     final int cosX = sinCosX >> 16;
 
     //LAB_8003fde8
-    final int y = svec.getY();
+    final int y = rotation.getY();
     final int sinCosY;
     final int sinY;
     if(y >= 0) {
@@ -2775,7 +2773,7 @@ public final class Scus94491BpeSegment_8003 {
 
     //LAB_8003fe4c
 
-    final int z = svec.getZ();
+    final int z = rotation.getZ();
     final int sinCosZ;
     final int sinZ;
     if(z >= 0) {
@@ -2789,14 +2787,14 @@ public final class Scus94491BpeSegment_8003 {
     final int cosZ = sinCosZ >> 16;
 
     //LAB_8003fee0
-    mat.set(0, (short)((cosY * cosZ >> 12) + ((sinY * sinX >> 12) * sinZ >> 12)));
-    mat.set(1, (short)(-(cosY * sinZ >> 12) + ((sinY * sinX >> 12) * cosZ >> 12)));
-    mat.set(2, (short)(sinY * cosX >> 12));
-    mat.set(3, (short)(sinZ * cosX >> 12));
-    mat.set(4, (short)(cosZ * cosX >> 12));
-    mat.set(5, (short)negSinX);
-    mat.set(6, (short)(-(sinY * cosZ >> 12) + ((cosY * sinX >> 12) * sinZ >> 12)));
-    mat.set(7, (short)((sinY * sinZ >> 12) + ((cosY * sinX >> 12) * cosZ >> 12)));
-    mat.set(8, (short)(cosY * cosX >> 12));
+    matrixOut.set(0, (short)((cosY * cosZ >> 12) + ((sinY * sinX >> 12) * sinZ >> 12)));
+    matrixOut.set(1, (short)(-(cosY * sinZ >> 12) + ((sinY * sinX >> 12) * cosZ >> 12)));
+    matrixOut.set(2, (short)(sinY * cosX >> 12));
+    matrixOut.set(3, (short)(sinZ * cosX >> 12));
+    matrixOut.set(4, (short)(cosZ * cosX >> 12));
+    matrixOut.set(5, (short)negSinX);
+    matrixOut.set(6, (short)(-(sinY * cosZ >> 12) + ((cosY * sinX >> 12) * sinZ >> 12)));
+    matrixOut.set(7, (short)((sinY * sinZ >> 12) + ((cosY * sinX >> 12) * cosZ >> 12)));
+    matrixOut.set(8, (short)(cosY * cosX >> 12));
   }
 }
