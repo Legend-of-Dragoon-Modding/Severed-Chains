@@ -127,12 +127,12 @@ import static legend.game.Scus94491BpeSegment_8003.ApplyMatrixLV;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.MoveImage;
+import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
 import static legend.game.Scus94491BpeSegment_8003.StoreImage;
 import static legend.game.Scus94491BpeSegment_8003.TransMatrix;
 import static legend.game.Scus94491BpeSegment_8003.getProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
-import static legend.game.Scus94491BpeSegment_8004.RotMatrix_Gte_Xyz;
 import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 import static legend.game.Scus94491BpeSegment_8004.previousMainCallbackIndex_8004dd28;
@@ -4059,7 +4059,7 @@ public final class Bttl_800c {
     }
 
     //LAB_800cf400
-    RotMatrix_Gte_Xyz(sp0x20, sp0x28);
+    RotMatrix_Xyz(sp0x20, sp0x28);
     TransMatrix(sp0x28, sp0x10);
     CPU.CTC2(sp0x28.getPacked(0), 0);
     CPU.CTC2(sp0x28.getPacked(2), 1);
@@ -4095,7 +4095,7 @@ public final class Bttl_800c {
 
     //LAB_800cf578
     sp0x10.set(a0._10.trans_04);
-    RotMatrix_Gte_Xyz(sp0x20, sp0x28);
+    RotMatrix_Xyz(sp0x20, sp0x28);
     TransMatrix(sp0x28, sp0x10);
     CPU.CTC2(sp0x28.getPacked(0), 0);
     CPU.CTC2(sp0x28.getPacked(2), 1);
@@ -4120,7 +4120,7 @@ public final class Bttl_800c {
     final SVECTOR sp0x20 = new SVECTOR().set(a0);
     final VECTOR sp0x10 = new VECTOR().set(a1);
     final MATRIX sp0x28 = new MATRIX();
-    RotMatrix_Gte_Xyz(sp0x20, sp0x28);
+    RotMatrix_Xyz(sp0x20, sp0x28);
     TransMatrix(sp0x28, sp0x10);
     CPU.CTC2(sp0x28.getPacked(0), 0);
     CPU.CTC2(sp0x28.getPacked(2), 1);
@@ -4175,7 +4175,7 @@ public final class Bttl_800c {
     sp0x38.transfer.setZ((int)CPU.CFC2(7));
 
     final MATRIX sp0x58 = new MATRIX();
-    RotMatrix_Gte_Xyz(sp0x28, sp0x58);
+    RotMatrix_Xyz(sp0x28, sp0x58);
     CPU.CTC2(sp0x38.getPacked(0), 0); //
     CPU.CTC2(sp0x38.getPacked(2), 1); //
     CPU.CTC2(sp0x38.getPacked(4), 2); // Rotation matrix

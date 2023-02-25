@@ -133,7 +133,6 @@ import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800217a4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800218f0;
-import static legend.game.Scus94491BpeSegment_8002.animateModelTextures;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002246c;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80029e04;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a9c0;
@@ -142,6 +141,7 @@ import static legend.game.Scus94491BpeSegment_8002.SetGeomOffset;
 import static legend.game.Scus94491BpeSegment_8002.SetRotMatrix;
 import static legend.game.Scus94491BpeSegment_8002.SetTransMatrix;
 import static legend.game.Scus94491BpeSegment_8002.animateModel;
+import static legend.game.Scus94491BpeSegment_8002.animateModelTextures;
 import static legend.game.Scus94491BpeSegment_8002.applyModelPartTransforms;
 import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.initModel;
@@ -182,7 +182,7 @@ import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTransp
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
-import static legend.game.Scus94491BpeSegment_8004.RotMatrix_Gte_Zyx;
+import static legend.game.Scus94491BpeSegment_8004.RotMatrix_Zyx;
 import static legend.game.Scus94491BpeSegment_8004._8004dd30;
 import static legend.game.Scus94491BpeSegment_8004.diskNum_8004ddc0;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndexOnceLoaded_8004dd24;
@@ -858,7 +858,7 @@ public final class SMap {
     final GsCOORD2PARAM params = model_800bda10.coord2ArrPtr_04[0].param;
 
     params.rotate.set((short)0, (short)0, (short)0);
-    RotMatrix_Gte_Zyx(params.rotate, matrix);
+    RotMatrix_Zyx(params.rotate, matrix);
 
     params.trans.setX(0);
     params.trans.setY(0);
@@ -945,7 +945,7 @@ public final class SMap {
       final GsCOORD2PARAM params = coord2.param;
       final MATRIX matrix = coord2.coord;
 
-      RotMatrix_Gte_Zyx(params.rotate, matrix);
+      RotMatrix_Zyx(params.rotate, matrix);
 
       params.trans.set(
         (params.trans.getX() + transforms[0][i].translate_06.getX()) / 2,
