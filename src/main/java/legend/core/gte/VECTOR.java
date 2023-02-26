@@ -48,6 +48,14 @@ public class VECTOR implements MemoryRef {
   }
 
   /** NOTE: does NOT set pad */
+  public VECTOR set(final USCOLOUR other) {
+    this.setX(other.getX());
+    this.setY(other.getY());
+    this.setZ(other.getZ());
+    return this;
+  }
+
+  /** NOTE: does NOT set pad */
   public VECTOR set(final int x, final int y, final int z) {
     this.setX(x);
     this.setY(y);
@@ -141,6 +149,13 @@ public class VECTOR implements MemoryRef {
   }
 
   public VECTOR sub(final SVECTOR other) {
+    this.x.sub(other.x.get());
+    this.y.sub(other.y.get());
+    this.z.sub(other.z.get());
+    return this;
+  }
+
+  public VECTOR sub(final USCOLOUR other) {
     this.x.sub(other.x.get());
     this.y.sub(other.y.get());
     this.z.sub(other.z.get());

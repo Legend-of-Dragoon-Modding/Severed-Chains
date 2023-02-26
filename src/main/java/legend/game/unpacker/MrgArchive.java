@@ -32,7 +32,7 @@ public class MrgArchive implements Iterable<MrgArchive.Entry> {
 
       if(size == 0) {
         final int offset = data.readInt(0x8 + i * 0x8);
-        final int parentIndex = this.getEntryByOffset(offset);
+        final int parentIndex = this.getRealEntryByOffset(offset);
 
         if(parentIndex != -1) {
           final Entry parent = this.getEntry(parentIndex);
@@ -52,9 +52,9 @@ public class MrgArchive implements Iterable<MrgArchive.Entry> {
     return this.entries[index];
   }
 
-  public int getEntryByOffset(final int offset) {
+  private int getRealEntryByOffset(final int offset) {
     for(int i = 0; i < this.entries.length; i++) {
-      if(this.entries[i] != null && this.entries[i].offset() == offset) {
+      if(this.entries[i] != null && !this.entries[i].virtual() && this.entries[i].offset() == offset) {
         return i;
       }
     }

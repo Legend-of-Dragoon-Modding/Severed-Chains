@@ -1,6 +1,7 @@
 package legend.game.combat.types;
 
 import legend.game.types.TmdAnimationFile;
+import legend.game.unpacker.FileData;
 
 /** A union type, see type property to tell which type it is */
 public abstract class CombatantStruct1a8_c {
@@ -42,9 +43,9 @@ public abstract class CombatantStruct1a8_c {
 
   /** Type 4/5 */
   public static class BpeType extends CombatantStruct1a8_c {
-    public final long bpe_00;
+    public final FileData bpe_00;
 
-    public BpeType(final long bpe) {
+    public BpeType(final FileData bpe) {
       this.bpe_00 = bpe;
     }
   }
