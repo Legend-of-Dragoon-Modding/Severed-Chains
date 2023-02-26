@@ -229,6 +229,7 @@ public class UserInputs {
         try {
             Robot robot = new Robot();
             robot.mousePress(InputEvent.BUTTON1_MASK);
+            Thread.sleep(100);
             robot.mouseRelease(InputEvent.BUTTON1_MASK);
             System.out.println("Mouse left click has been pressed");
         } catch (Exception e) {
@@ -241,6 +242,7 @@ public class UserInputs {
         try {
             Robot robot = new Robot();
             robot.mousePress(InputEvent.BUTTON3_MASK);
+            Thread.sleep(100);
             robot.mouseRelease(InputEvent.BUTTON3_MASK);
             System.out.println("Mouse right click has been pressed");
         } catch (Exception e) {
@@ -253,11 +255,25 @@ public class UserInputs {
         try {
             Robot robot = new Robot();
             robot.mousePress(InputEvent.BUTTON2_MASK);
+            Thread.sleep(100);
             robot.mouseRelease(InputEvent.BUTTON2_MASK);
             System.out.println("Mouse middle click has been pressed");
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("mouseMiddleClick() failed, see stack trace");
+        }
+    }
+
+    public static void escapeButton() {
+        try {
+            Robot robot = new Robot();
+            robot.keyPress(KeyEvent.VK_ESCAPE);
+            Thread.sleep(100);
+            robot.keyRelease(KeyEvent.VK_ESCAPE);
+            System.out.println("Escape button has been pressed");
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("escapeButton() failed, see stack trace");
         }
     }
 }

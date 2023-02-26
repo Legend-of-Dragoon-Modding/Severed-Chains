@@ -107,7 +107,7 @@ public class StateCheck {
 
       if(screen instanceof ItemListScreen itemList) {
         return itemList.getState() != state .2;
-        
+
       } else {
           return false;
 
@@ -123,7 +123,7 @@ public class StateCheck {
 
         if(screen instanceof ItemListScreen itemList) {
           return itemList.getState() == state .3;
-          
+
         } else {
             return false;
         }
@@ -140,7 +140,7 @@ public class StateCheck {
 
       if(screen instanceof ItemListScreen itemList) {
         return itemList.getState() == state .4;
-        
+
       } else {
           return false;
       }
@@ -156,7 +156,7 @@ public class StateCheck {
 
       if(screen instanceof ItemListScreen itemList) {
         return itemList.getState() != state .4;
-        
+
       } else {
           return false;
       }
@@ -172,7 +172,7 @@ public class StateCheck {
 
       if(screen instanceof ItemListScreen itemList) {
         return itemList.getState() == state .100;
-        
+
       } else {
           return false;
       }
@@ -188,7 +188,7 @@ public class StateCheck {
 
       if(screen instanceof ItemListScreen itemList) {
         return itemList.getState() != state .100;
-        
+
       } else {
           return false;
       }
@@ -197,4 +197,4 @@ public class StateCheck {
       System.out.println("itemListScreenNotState100() failed, see stack trace");
     }
   }
-}
+}w
