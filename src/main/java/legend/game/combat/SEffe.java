@@ -8111,9 +8111,9 @@ public final class SEffe {
 
     //LAB_80114614
     if(script.params_20[1].get() == -1) {
-      a3.setX(script.params_20[2].get());
-      a3.setY(script.params_20[3].get());
-      a3.setZ(script.params_20[4].get());
+      a3.setX(script.params_20[2].get() & 0xffff);
+      a3.setY(script.params_20[3].get() & 0xffff);
+      a3.setZ(script.params_20[4].get() & 0xffff);
     } else {
       //LAB_80114668
       a1 = (BattleScriptDataBase)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00;
@@ -8126,9 +8126,9 @@ public final class SEffe {
       }
 
       //LAB_8011469c
-      a3.setX(script.params_20[2].get() + a2.getX());
-      a3.setY(script.params_20[3].get() + a2.getY());
-      a3.setZ(script.params_20[4].get() + a2.getZ());
+      a3.setX((script.params_20[2].get() & 0xffff) + a2.getX());
+      a3.setY((script.params_20[3].get() & 0xffff) + a2.getY());
+      a3.setZ((script.params_20[4].get() & 0xffff) + a2.getZ());
     }
 
     //LAB_801146f0
