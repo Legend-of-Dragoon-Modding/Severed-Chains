@@ -1943,6 +1943,10 @@ public final class SItem {
     };
 
     MEMORY.setBytes(gameState_800babc8.getAddress(), data, offset, 0x52c);
+
+    if(gameState_800babc8.itemCount_1e6.get() > Config.inventorySize()) {
+      gameState_800babc8.itemCount_1e6.set((short)Config.inventorySize());
+    }
   }
 
   @Method(0x8010a344L)
