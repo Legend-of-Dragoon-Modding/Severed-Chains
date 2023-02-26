@@ -101,13 +101,11 @@ public class EventManager {
     return event;
   }
 
-  public <T extends Event> void postEventAndApply(final T event) {
+  public <T extends Event & EventProvider> void postEventAndApply(final T event) {
     for(final var entry : this.listeners.entrySet()) {
       if(entry.getValue().isInstance(event)) {
         entry.getKey().accept(event);
-        if(event instanceof EventProvider) {
-          ((EventProvider)event).applyEvent();
-        }
+        ((EventProvider)event).applyEvent();
       }
     }
   }
