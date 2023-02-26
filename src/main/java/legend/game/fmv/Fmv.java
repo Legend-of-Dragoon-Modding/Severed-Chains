@@ -218,8 +218,6 @@ public class Fmv {
   }
 
   public static void play(final String file, final boolean doubleSpeed) {
-    legend.core.openal.Context.getXA(1, 3).play();
-
     shouldStop = false;
 
     final byte[] data = new byte[2352];

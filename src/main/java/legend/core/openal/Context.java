@@ -26,6 +26,7 @@ public final class Context {
 
   public static XaFile getXA(final int archive, final int file) {
     if (xaAsset != null) {
+      xaAsset.stop();
       xaAsset.delete();
     }
 

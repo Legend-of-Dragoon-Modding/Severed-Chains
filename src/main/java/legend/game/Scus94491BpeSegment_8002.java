@@ -5187,8 +5187,8 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     if(xaLoadingStage == 3) {
-      legend.core.openal.Context.getXA(xaArchiveIndex, xaFileIndex).play();
       LOGGER.info("Playing XA archive %d file %d", xaArchiveIndex, xaFileIndex);
+      legend.core.openal.Context.getXA(xaArchiveIndex, xaFileIndex).play(); //Plays the ogg file.
 
       setCdVolume(0x7f, 0x7f);
       setCdMix(0x3f);
