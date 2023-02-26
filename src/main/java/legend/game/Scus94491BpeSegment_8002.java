@@ -23,6 +23,7 @@ import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
+import legend.game.fmv.Fmv;
 import legend.game.inventory.UseItemResponse;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.CharSwapScreen;
@@ -5096,6 +5097,8 @@ public final class Scus94491BpeSegment_8002 {
 
       //LAB_8002c448
       LOGGER.info("PLAY XA %d", MEMORY.ref(2, v1).offset(xaArchiveIndex * 0x8L).getSigned());
+      //TODO don't do this.
+      new Thread(() -> Fmv.playXa(xaArchiveIndex, xaFileIndex)).start();
 //      final CdlLOC pos = CdlFILE_800bb4c8.get((int)MEMORY.ref(2, v1).offset(xaArchiveIndex * 0x8L).getSigned()).pos;
 
 //      CDROM.playXaAudio(pos, 1, xaFileIndex, () -> _800bf0cf.setu(0));
