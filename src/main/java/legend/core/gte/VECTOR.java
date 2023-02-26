@@ -155,6 +155,13 @@ public class VECTOR implements MemoryRef {
     return this;
   }
 
+  public VECTOR sub(final USCOLOUR other) {
+    this.x.sub(other.x.get());
+    this.y.sub(other.y.get());
+    this.z.sub(other.z.get());
+    return this;
+  }
+
   public VECTOR sub(final int value) {
     this.x.sub(value);
     this.y.sub(value);

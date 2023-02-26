@@ -13,6 +13,7 @@ import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MATRIX;
 import legend.core.gte.SVECTOR;
 import legend.core.gte.TmdObjTable1c;
+import legend.core.gte.USCOLOUR;
 import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
@@ -3666,8 +3667,8 @@ public final class Bttl_800c {
     final WeaponTrailEffect3c s2 = (WeaponTrailEffect3c)data.effect_44;
 
     if(s2._38 != null) {
-      final SVECTOR sp0x18 = new SVECTOR().set(data._10.colour_1c).shl(8);
-      final SVECTOR sp0x20 = new SVECTOR().set(sp0x18).div(s2._0e);
+      final USCOLOUR sp0x18 = new USCOLOUR().set(data._10.colour_1c).shl(8);
+      final USCOLOUR sp0x20 = new USCOLOUR().set(sp0x18).div(s2._0e);
       WeaponTrailEffectSegment2c s0 = s2._38;
 
       final IntRef sp0x38 = new IntRef();
@@ -3862,7 +3863,7 @@ public final class Bttl_800c {
     effect._04 = script.params_20[1].get();
     effect.dobjIndex_08 = script.params_20[2].get();
     effect._0e = 20;
-    manager._10.colour_1c.set((short)0xff, (short)0x80, (short)0x60);
+    manager._10.colour_1c.set(0xff, 0x80, 0x60);
 
     final BattleScriptDataBase parent = (BattleScriptDataBase)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00;
     if(BattleScriptDataBase.EM__.equals(parent.magic_00)) {

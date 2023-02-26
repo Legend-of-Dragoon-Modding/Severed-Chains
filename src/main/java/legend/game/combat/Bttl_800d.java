@@ -876,9 +876,7 @@ public final class Bttl_800d {
     effect._00.set(1);
     effect._02.set(0);
     effect._04.set((short)0);
-    manager._10.colour_1c.setX((short)255);
-    manager._10.colour_1c.setY((short)0);
-    manager._10.colour_1c.setZ((short)0);
+    manager._10.colour_1c.set(255, 0, 0);
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }

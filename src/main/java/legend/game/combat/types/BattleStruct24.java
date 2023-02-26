@@ -1,7 +1,6 @@
 package legend.game.combat.types;
 
 import legend.core.memory.Value;
-import legend.core.memory.types.ByteRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.ShortRef;
@@ -25,9 +24,9 @@ public class BattleStruct24 implements MemoryRef {
   public final UnsignedByteRef v_0f;
   public final UnsignedShortRef clutX_10;
   public final UnsignedShortRef clutY_12;
-  public final ByteRef r_14;
-  public final ByteRef g_15;
-  public final ByteRef b_16;
+  public final UnsignedByteRef r_14;
+  public final UnsignedByteRef g_15;
+  public final UnsignedByteRef b_16;
 
   public final ShortRef _18;
   public final ShortRef _1a;
@@ -48,9 +47,9 @@ public class BattleStruct24 implements MemoryRef {
     this.v_0f = ref.offset(1, 0x0fL).cast(UnsignedByteRef::new);
     this.clutX_10 = ref.offset(2, 0x10L).cast(UnsignedShortRef::new);
     this.clutY_12 = ref.offset(2, 0x12L).cast(UnsignedShortRef::new);
-    this.r_14 = ref.offset(1, 0x14L).cast(ByteRef::new);
-    this.g_15 = ref.offset(1, 0x15L).cast(ByteRef::new);
-    this.b_16 = ref.offset(1, 0x16L).cast(ByteRef::new);
+    this.r_14 = ref.offset(1, 0x14L).cast(UnsignedByteRef::new);
+    this.g_15 = ref.offset(1, 0x15L).cast(UnsignedByteRef::new);
+    this.b_16 = ref.offset(1, 0x16L).cast(UnsignedByteRef::new);
 
     this._18 = ref.offset(2, 0x18L).cast(ShortRef::new);
     this._1a = ref.offset(2, 0x1aL).cast(ShortRef::new);
@@ -72,9 +71,9 @@ public class BattleStruct24 implements MemoryRef {
     this.v_0f = new UnsignedByteRef();
     this.clutX_10 = new UnsignedShortRef();
     this.clutY_12 = new UnsignedShortRef();
-    this.r_14 = new ByteRef();
-    this.g_15 = new ByteRef();
-    this.b_16 = new ByteRef();
+    this.r_14 = new UnsignedByteRef();
+    this.g_15 = new UnsignedByteRef();
+    this.b_16 = new UnsignedByteRef();
 
     this._18 = new ShortRef();
     this._1a = new ShortRef();

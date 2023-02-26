@@ -247,7 +247,7 @@ public final class SEffe {
 
   private static final Value _800fb940 = MEMORY.ref(4, 0x800fb940L);
 
-  private static final SVECTOR _800fb94c = MEMORY.ref(2, 0x800fb94cL, SVECTOR::new);
+  private static final USCOLOUR _800fb94c = MEMORY.ref(2, 0x800fb94cL, USCOLOUR::new);
 
   /**
    * <ol start="0">
@@ -3391,7 +3391,7 @@ public final class SEffe {
 
     //LAB_80105590
     manager._10.flags_00 |= 0x5000_0000;
-    manager._10.colour_1c.set((short)0, (short)0, (short)0xff);
+    manager._10.colour_1c.set(0, 0, 0xff);
     manager._10._28 = 0x100;
     manager._10._30 = 3;
 
@@ -6471,8 +6471,8 @@ public final class SEffe {
       addr._4c = rand() % 4096;
       addr._6c[0].set(0, 0, 0);
       addr._6c[1].set(0xc00, 0x400, 0xc00);
-      addr._8c[0].set(-1, -1, -1);
-      addr._8c[1].set(-1, -1, -1);
+      addr._8c[0].set(0xff, 0xff, 0xff);
+      addr._8c[1].set(0xff, 0xff, 0xff);
       addr.objTable_94 = ((DeffPart.TmdType)getDeffPart(sp18 | 0x300_0000)).tmd_0c.tmdPtr_00.tmd.objTable[0];
       addr.objTable_98 = ((DeffPart.TmdType)getDeffPart(sp1c | 0x300_0000)).tmd_0c.tmdPtr_00.tmd.objTable[0];
       addr.objTable_9c = ((DeffPart.TmdType)getDeffPart(sp20 | 0x300_0000)).tmd_0c.tmdPtr_00.tmd.objTable[0];
@@ -6537,9 +6537,9 @@ public final class SEffe {
             s1._6c[0].setY(Math.max(sin, 0));
 
             //LAB_8010f2a8
-            s1._8c[0].x.sub(23);
-            s1._8c[0].y.sub(23);
-            s1._8c[0].z.sub(23);
+            s1._8c[0].r.sub(23);
+            s1._8c[0].g.sub(23);
+            s1._8c[0].b.sub(23);
             s1._a2++;
           }
         }
@@ -6587,9 +6587,9 @@ public final class SEffe {
           final short sp26 = (short)(s3._6c[a1].getX() * manager._10.scale_16.getX() >> 12);
           final short sp28 = (short)(s3._6c[a1].getY() * manager._10.scale_16.getY() >> 12);
           final short sp2a = (short)(s3._6c[a1].getZ() * manager._10.scale_16.getZ() >> 12);
-          final int sp2c = s3._8c[a1].getX() * manager._10.colour_1c.getX() >> 8;
-          final int sp2e = s3._8c[a1].getY() * manager._10.colour_1c.getY() >> 8;
-          final int sp30 = s3._8c[a1].getZ() * manager._10.colour_1c.getZ() >> 8;
+          final int sp2c = s3._8c[a1].getR() * manager._10.colour_1c.getX() >> 8;
+          final int sp2e = s3._8c[a1].getG() * manager._10.colour_1c.getY() >> 8;
+          final int sp30 = s3._8c[a1].getB() * manager._10.colour_1c.getZ() >> 8;
 
           if((manager._10.flags_00 & 0x40) == 0) {
             FUN_800e61e4(sp2c << 5, sp2e << 5, sp30 << 5);
@@ -8058,30 +8058,30 @@ public final class SEffe {
   }
 
   @Method(0x8011441cL)
-  public static long FUN_8011441c(final int scriptIndex1, final int scriptIndex2, final SVECTOR a2) {
+  public static long FUN_8011441c(final int scriptIndex1, final int scriptIndex2, final USCOLOUR a2) {
     final BattleScriptDataBase data1 = (BattleScriptDataBase)scriptStatePtrArr_800bc1c0[scriptIndex1].innerStruct_00;
-    final SVECTOR svec1;
+    final USCOLOUR c;
     if(BattleScriptDataBase.EM__.equals(data1.magic_00)) {
-      svec1 = ((EffectManagerData6c)data1)._10.colour_1c;
+      c = ((EffectManagerData6c)data1)._10.colour_1c;
     } else {
-      svec1 = _800fb94c;
+      c = _800fb94c;
     }
 
     //LAB_80114480
     if(scriptIndex2 == -1) {
-      a2.set(svec1);
+      a2.set(c);
     } else {
       //LAB_801144b0
       final BattleScriptDataBase data2 = (BattleScriptDataBase)scriptStatePtrArr_800bc1c0[scriptIndex2].innerStruct_00;
-      final SVECTOR svec2;
+      final USCOLOUR c2;
       if(BattleScriptDataBase.EM__.equals(data2.magic_00)) {
-        svec2 = ((EffectManagerData6c)data2)._10.colour_1c;
+        c2 = ((EffectManagerData6c)data2)._10.colour_1c;
       } else {
-        svec2 = _800fb94c;
+        c2 = _800fb94c;
       }
 
       //LAB_801144e4
-      a2.set(svec1).sub(svec2);
+      a2.set(c).sub(c2);
     }
 
     //LAB_80114520
@@ -8090,7 +8090,7 @@ public final class SEffe {
 
   @Method(0x8011452cL)
   public static FlowControl FUN_8011452c(final RunningScript<?> script) {
-    final SVECTOR sp0x10 = new SVECTOR();
+    final USCOLOUR sp0x10 = new USCOLOUR();
     FUN_8011441c(script.params_20[0].get(), script.params_20[1].get(), sp0x10);
     script.params_20[2].set(sp0x10.getX());
     script.params_20[3].set(sp0x10.getY());
@@ -8102,23 +8102,23 @@ public final class SEffe {
   public static FlowControl FUN_80114598(final RunningScript<?> script) {
     BattleScriptDataBase a1 = (BattleScriptDataBase)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
 
-    final SVECTOR a3;
+    final USCOLOUR a3;
     if(BattleScriptDataBase.EM__.equals(a1.magic_00)) {
       a3 = ((EffectManagerData6c)a1)._10.colour_1c;
     } else {
-      a3 = new SVECTOR().set(_800fb94c);
+      a3 = new USCOLOUR().set(_800fb94c);
     }
 
     //LAB_80114614
     if(script.params_20[1].get() == -1) {
-      a3.setX((short)script.params_20[2].get());
-      a3.setY((short)script.params_20[3].get());
-      a3.setZ((short)script.params_20[4].get());
+      a3.setX(script.params_20[2].get());
+      a3.setY(script.params_20[3].get());
+      a3.setZ(script.params_20[4].get());
     } else {
       //LAB_80114668
       a1 = (BattleScriptDataBase)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00;
 
-      final SVECTOR a2;
+      final USCOLOUR a2;
       if(BattleScriptDataBase.EM__.equals(a1.magic_00)) {
         a2 = ((EffectManagerData6c)a1)._10.colour_1c;
       } else {
@@ -8126,9 +8126,9 @@ public final class SEffe {
       }
 
       //LAB_8011469c
-      a3.setX((short)(script.params_20[2].get() + a2.getX()));
-      a3.setY((short)(script.params_20[3].get() + a2.getY()));
-      a3.setZ((short)(script.params_20[4].get() + a2.getZ()));
+      a3.setX(script.params_20[2].get() + a2.getX());
+      a3.setY(script.params_20[3].get() + a2.getY());
+      a3.setZ(script.params_20[4].get() + a2.getZ());
     }
 
     //LAB_801146f0
@@ -8139,9 +8139,9 @@ public final class SEffe {
   public static int FUN_801146fc(final EffectManagerData6c a0, final BttlScriptData6cSub34 a1) {
     a1._18.add(a1._24);
     a1._0c.add(a1._18);
-    a0._10.colour_1c.setX((short)(a1._0c.getX() >> 8 & 0xff));
-    a0._10.colour_1c.setY((short)(a1._0c.getY() >> 8 & 0xff));
-    a0._10.colour_1c.setZ((short)(a1._0c.getZ() >> 8 & 0xff));
+    a0._10.colour_1c.setX(a1._0c.getX() >> 8 & 0xff);
+    a0._10.colour_1c.setY(a1._0c.getY() >> 8 & 0xff);
+    a0._10.colour_1c.setZ(a1._0c.getZ() >> 8 & 0xff);
 
     if(a1._32 != -1) {
       a1._32--;
@@ -8180,7 +8180,7 @@ public final class SEffe {
 
       //LAB_801149d0
       final BttlScriptData6cSub34 s0 = FUN_800e8dd4(s2, 4, 0, SEffe::FUN_801146fc, 0x34, new BttlScriptData6cSub34());
-      final SVECTOR sp0x28 = new SVECTOR();
+      final USCOLOUR sp0x28 = new USCOLOUR();
       FUN_8011441c(scriptIndex1, scriptIndex2, sp0x28);
       s0.scriptIndex_30 = -1;
       s0._32 = (short)scale;
@@ -8892,12 +8892,13 @@ public final class SEffe {
       final int oldCoord2Index = manager2.coord2Index_0d;
       manager2.scriptIndex_0c = manager.myScriptState_0e.index;
       manager2.coord2Index_0d = -1;
-      final short r = manager2._10.colour_1c.getX();
-      final short g = manager2._10.colour_1c.getY();
-      final short b = manager2._10.colour_1c.getZ();
-      manager2._10.colour_1c.setX((short)(manager._10.colour_1c.getX() * manager2._10.colour_1c.getX() / 128));
-      manager2._10.colour_1c.setY((short)(manager._10.colour_1c.getX() * manager2._10.colour_1c.getY() / 128));
-      manager2._10.colour_1c.setZ((short)(manager._10.colour_1c.getX() * manager2._10.colour_1c.getZ() / 128));
+      final int r = manager2._10.colour_1c.getX();
+      final int g = manager2._10.colour_1c.getY();
+      final int b = manager2._10.colour_1c.getZ();
+      // As far as I can tell, using R for each of these is right...
+      manager2._10.colour_1c.setX(manager._10.colour_1c.getX() * manager2._10.colour_1c.getX() / 128);
+      manager2._10.colour_1c.setY(manager._10.colour_1c.getX() * manager2._10.colour_1c.getY() / 128);
+      manager2._10.colour_1c.setZ(manager._10.colour_1c.getX() * manager2._10.colour_1c.getZ() / 128);
       state.renderer_08.accept(state, manager2);
       manager2._10.colour_1c.setX(r);
       manager2._10.colour_1c.setY(g);
@@ -9396,7 +9397,7 @@ public final class SEffe {
       tmdGp0Tpage_1f8003ec.set(flags >>> 23 & 0x60);
       zOffset_1f8003e8.set(manager._10.z_22);
       if((manager._10.flags_00 & 0x40) == 0) {
-        FUN_800e61e4(manager._10.colour_1c.getX() * 0x20, manager._10.colour_1c.getY() * 0x20, manager._10.colour_1c.getZ() * 0x20);
+        FUN_800e61e4(manager._10.colour_1c.getX() << 5, manager._10.colour_1c.getY() << 5, manager._10.colour_1c.getZ() << 5);
       }
 
       //LAB_80117ac0
@@ -9466,9 +9467,9 @@ public final class SEffe {
             s5 = s5 + spd0;
             s6 = s6 + spd4;
             s7 = s7 + spd8;
-            manager._10.colour_1c.setX((short)(s5 >> 12));
-            manager._10.colour_1c.setY((short)(s6 >> 12));
-            manager._10.colour_1c.setZ((short)(s7 >> 12));
+            manager._10.colour_1c.setX(s5 >> 12);
+            manager._10.colour_1c.setY(s6 >> 12);
+            manager._10.colour_1c.setZ(s7 >> 12);
           }
 
           //LAB_80117d1c
@@ -10042,9 +10043,9 @@ public final class SEffe {
               //LAB_80119254
               //LAB_80119270
               //LAB_8011928c
-              sp0x50.colour_1c.setX((short)(sp0x50._28 >> 12));
-              sp0x50.colour_1c.setY((short)(sp0x50._2c >> 12));
-              sp0x50.colour_1c.setZ((short)(sp0x50._30 >> 12));
+              sp0x50.colour_1c.setX(sp0x50._28 >> 12);
+              sp0x50.colour_1c.setY(sp0x50._2c >> 12);
+              sp0x50.colour_1c.setZ(sp0x50._30 >> 12);
             }
 
             //LAB_80119294

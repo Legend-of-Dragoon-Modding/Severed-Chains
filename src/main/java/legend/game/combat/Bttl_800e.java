@@ -1696,7 +1696,7 @@ public final class Bttl_800e {
     manager._10.trans_04.set(0, 0, 0);
     manager._10.rot_10.set((short)0, (short)0, (short)0);
     manager._10.scale_16.set((short)0x1000, (short)0x1000, (short)0x1000);
-    manager._10.colour_1c.set((short)0x80, (short)0x80, (short)0x80);
+    manager._10.colour_1c.set(0x80, 0x80, 0x80);
     manager._10.z_22 = 0;
     manager._10._24 = 0;
     manager._10._28 = 0;

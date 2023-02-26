@@ -1,6 +1,7 @@
 package legend.game.combat.types;
 
 import legend.core.gte.BVEC4;
+import legend.core.gte.COLOUR;
 import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.VECTOR;
 
@@ -15,7 +16,7 @@ public class BttlScriptData6cSub20_2Suba8 {
   public int _4c;
 
   public final VECTOR[] _6c = {new VECTOR(), new VECTOR()};
-  public final BVEC4[] _8c = {new BVEC4(), new BVEC4()};
+  public final COLOUR[] _8c = {new COLOUR(), new COLOUR()};
   public TmdObjTable1c objTable_94;
   public TmdObjTable1c objTable_98;
   public TmdObjTable1c objTable_9c;
