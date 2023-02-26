@@ -43,7 +43,7 @@ public class InputControllerData {
   }
 
   public boolean checkButton(final int glfwCode) {
-    if(this.buttons == null || this.buttons.remaining() == 0) {
+    if(this.buttons == null || this.buttons.remaining() == 0 || glfwCode == -1) {
       return false;
     }
 
@@ -58,7 +58,7 @@ public class InputControllerData {
   }
 
   public float checkAxis(final int glfwCode) {
-    if(this.axis == null || this.axis.remaining() == 0) {
+    if(this.axis == null || this.axis.remaining() == 0 || glfwCode == -1) {
       return 0;
     }
     try {
@@ -70,7 +70,7 @@ public class InputControllerData {
   }
 
   public boolean checkHat(final int glfwCode, final int hatIndex) {
-    if(this.hats == null || this.hats.remaining() == 0) {
+    if(this.hats == null || this.hats.remaining() == 0 || glfwCode == -1) {
       return false;
     }
     try {
