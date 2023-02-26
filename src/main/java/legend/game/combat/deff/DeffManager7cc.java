@@ -3,7 +3,7 @@ package legend.game.combat.deff;
 import legend.core.gte.TmdObjTable1c;
 import legend.game.combat.types.BattleLightStruct64;
 import legend.game.combat.types.BattleStruct24_2;
-import legend.game.combat.types.BattleStruct4c;
+import legend.game.combat.types.StageAmbiance4c;
 import legend.game.combat.types.BttlLightStruct84;
 import legend.game.combat.types.EffectManagerData6c;
 import legend.game.combat.types.SpriteMetrics08;
@@ -28,8 +28,9 @@ public class DeffManager7cc {
   public long ptr_30;
   public long ptr_34;
 
-  public final BattleStruct4c _4c = new BattleStruct4c();
-  public final BattleStruct4c[] _98 = {new BattleStruct4c(), new BattleStruct4c(), new BattleStruct4c(), new BattleStruct4c(), new BattleStruct4c(), new BattleStruct4c(), new BattleStruct4c(), new BattleStruct4c()};
+  public final StageAmbiance4c stageAmbiance_4c = new StageAmbiance4c();
+  /** One instance for each dragoon */
+  public final StageAmbiance4c[] dragoonSpaceAmbiance_98 = {new StageAmbiance4c(), new StageAmbiance4c(), new StageAmbiance4c(), new StageAmbiance4c(), new StageAmbiance4c(), new StageAmbiance4c(), new StageAmbiance4c(), new StageAmbiance4c()};
   /** Only type 3 TMDs (see {@link DeffPart#flags_00}) */
   public final TmdObjTable1c[] tmds_2f8 = new TmdObjTable1c[38];
   public final DeffPart.LmbType[] lmbs_390 = new DeffPart.LmbType[3];

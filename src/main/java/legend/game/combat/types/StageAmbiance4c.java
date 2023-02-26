@@ -6,14 +6,14 @@ import legend.game.scripting.Param;
 
 import java.nio.ByteBuffer;
 
-public class BattleStruct4c {
+public class StageAmbiance4c {
   public final USCOLOUR ambientColour_00 = new USCOLOUR();
   public final USCOLOUR _06 = new USCOLOUR();
   public int _0c;
   public int _0e;
   public final BattleStruct14[] _10 = {new BattleStruct14(), new BattleStruct14(), new BattleStruct14()};
 
-  public BattleStruct4c set(final ByteBuffer buffer) {
+  public StageAmbiance4c set(final ByteBuffer buffer) {
     IoHelper.readColour(buffer, this.ambientColour_00);
     IoHelper.readColour(buffer, this._06);
     this._0c = IoHelper.readShort(buffer);
@@ -36,7 +36,7 @@ public class BattleStruct4c {
     return this;
   }
 
-  public BattleStruct4c set(final Param param) {
+  public StageAmbiance4c set(final Param param) {
     final int[] vals = new int[0x4c / 4];
     for(int i = 0; i < vals.length; i++) {
       vals[i] = param.array(i).get();

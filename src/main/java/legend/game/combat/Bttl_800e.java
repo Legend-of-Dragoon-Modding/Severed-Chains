@@ -38,7 +38,7 @@ import legend.game.combat.types.BattleStruct14;
 import legend.game.combat.types.BattleStruct24;
 import legend.game.combat.types.BattleStruct24_2;
 import legend.game.combat.types.BattleStruct3c;
-import legend.game.combat.types.BattleStruct4c;
+import legend.game.combat.types.StageAmbiance4c;
 import legend.game.combat.types.BttlLightStruct84;
 import legend.game.combat.types.BttlLightStruct84Sub38;
 import legend.game.combat.types.BttlScriptData6cSub13c;
@@ -654,13 +654,13 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e5768L)
-  public static void FUN_800e5768(final BattleStruct4c struct4c) {
+  public static void FUN_800e5768(final StageAmbiance4c struct4c) {
     FUN_800e4cf8(struct4c.ambientColour_00.getX(), struct4c.ambientColour_00.getY(), struct4c.ambientColour_00.getZ());
 
     final BattleLightStruct64 v1 = _800c6930;
     if(struct4c._0e > 0) {
-      v1.colour_0c.set(struct4c.ambientColour_00);
-      v1._18.set(struct4c._06);
+      v1.colour1_0c.set(struct4c.ambientColour_00);
+      v1.colour2_18.set(struct4c._06);
       v1._24 = 3;
       v1._2c = (short)struct4c._0c;
       v1._2e = (short)struct4c._0e;
@@ -711,10 +711,10 @@ public final class Bttl_800e {
     final int v0 = currentStage_800c66a4.get() - 0x47;
 
     if(v0 >= 0 && v0 < 0x8) {
-      FUN_800e5768(deffManager_800c693c._98[v0]);
+      FUN_800e5768(deffManager_800c693c.dragoonSpaceAmbiance_98[v0]);
     } else {
       //LAB_800e59b0
-      FUN_800e5768(deffManager_800c693c._4c);
+      FUN_800e5768(deffManager_800c693c.stageAmbiance_4c);
     }
 
     return FlowControl.CONTINUE;
@@ -725,15 +725,15 @@ public final class Bttl_800e {
     final int a0 = script.params_20[0].get();
 
     if(a0 == -1) {
-      deffManager_800c693c._4c.set(script.params_20[1]);
+      deffManager_800c693c.stageAmbiance_4c.set(script.params_20[1]);
     } else if(a0 == -2) {
       //LAB_800e5a38
       //LAB_800e5a60
-      FUN_800e5768(new BattleStruct4c().set(script.params_20[1]));
+      FUN_800e5768(new StageAmbiance4c().set(script.params_20[1]));
       //LAB_800e5a14
     } else if(a0 == -3) {
       //LAB_800e5a40
-      FUN_800e5768(deffManager_800c693c._98[script.params_20[1].get()]);
+      FUN_800e5768(deffManager_800c693c.dragoonSpaceAmbiance_98[script.params_20[1].get()]);
     }
 
     //LAB_800e5a68
@@ -746,13 +746,13 @@ public final class Bttl_800e {
 
     _800c6928.addu(0x1L);
 
-    if(light1._24 == 3) {
+    if(light1._24 == 3) { // Dragoon space lighting is handled here, I think this is for flickering light
       final int angle = rcos(((_800c6928.get() + light1._2c) % light1._2e << 12) / light1._2e);
-      final int a2 = 0x1000 - angle;
-      final int a3 = 0x1000 + angle;
-      light1.colour_00.setX((light1.colour_0c.getX() * a3 + light1._18.getX() * a2) / 0x2000);
-      light1.colour_00.setY((light1.colour_0c.getY() * a3 + light1._18.getY() * a2) / 0x2000);
-      light1.colour_00.setZ((light1.colour_0c.getZ() * a3 + light1._18.getZ() * a2) / 0x2000);
+      final int minAngle = 0x1000 - angle;
+      final int maxAngle = 0x1000 + angle;
+      light1.colour_00.setX((light1.colour1_0c.getX() * maxAngle + light1.colour2_18.getX() * minAngle) / 0x2000);
+      light1.colour_00.setY((light1.colour1_0c.getY() * maxAngle + light1.colour2_18.getY() * minAngle) / 0x2000);
+      light1.colour_00.setZ((light1.colour1_0c.getZ() * maxAngle + light1.colour2_18.getZ() * minAngle) / 0x2000);
     }
 
     //LAB_800e5b98

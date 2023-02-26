@@ -69,9 +69,9 @@ public class SBtld {
   public static final Value _801134e8 = MEMORY.ref(2, 0x801134e8L);
 
   /** BattleStruct4c[71] */
-  public static final Value _801134fc = MEMORY.ref(4, 0x801134fcL);
+  public static final Value stageAmbiance_801134fc = MEMORY.ref(4, 0x801134fcL);
   /** BattleStruct4c[8] */
-  public static final Value _80114a10 = MEMORY.ref(4, 0x80114a10L);
+  public static final Value dragoonSpaceAmbiance_80114a10 = MEMORY.ref(4, 0x80114a10L);
 
   public static final Value _8011517c = MEMORY.ref(2, 0x8011517cL);
 
@@ -276,14 +276,14 @@ public class SBtld {
 
     //LAB_8010993c
     //LAB_80109954
-    struct7cc._4c.set(ByteBuffer.wrap(MEMORY.getBytes(_801134fc.offset(stage * 0x4c).getAddress(), 0x4c)).order(ByteOrder.LITTLE_ENDIAN));
+    struct7cc.stageAmbiance_4c.set(ByteBuffer.wrap(MEMORY.getBytes(stageAmbiance_801134fc.offset(stage * 0x4c).getAddress(), 0x4c)).order(ByteOrder.LITTLE_ENDIAN));
 
-    FUN_800e5768(struct7cc._4c);
+    FUN_800e5768(struct7cc.stageAmbiance_4c);
 
     //LAB_8010999c
-    final ByteBuffer buffer = ByteBuffer.wrap(MEMORY.getBytes(_80114a10.getAddress(), 0x4c * 8)).order(ByteOrder.LITTLE_ENDIAN);
-    for(int i = 0; i < struct7cc._98.length; i++) {
-      struct7cc._98[i].set(buffer);
+    final ByteBuffer buffer = ByteBuffer.wrap(MEMORY.getBytes(dragoonSpaceAmbiance_80114a10.getAddress(), 0x4c * 8)).order(ByteOrder.LITTLE_ENDIAN);
+    for(int i = 0; i < struct7cc.dragoonSpaceAmbiance_98.length; i++) {
+      struct7cc.dragoonSpaceAmbiance_98[i].set(buffer);
     }
 
     struct7cc._00._00 = (int)_8011517c.offset(combatStage_800bb0f4.get() * 0x8L).offset(2, 0x00L).get();
