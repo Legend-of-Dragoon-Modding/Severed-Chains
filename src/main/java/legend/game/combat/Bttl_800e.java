@@ -2127,11 +2127,18 @@ public final class Bttl_800e {
     effect.tmdType_04 = animatedTmdType;
     effect.extTmd_08 = animatedTmdType.tmd_0c;
     effect.anim_0c = animatedTmdType.anim_14;
-    final DeffPart.TextureInfo textureInfo = animatedTmdType.textureInfo_08[0];
     effect.model_134 = effect.model_10;
-    final long tpage = GetTPage(Bpp.BITS_4, Translucency.HALF_B_PLUS_HALF_F, textureInfo.vramPos_00.x.get(), textureInfo.vramPos_00.y.get());
     final Model124 model = effect.model_134;
-    model.colourMap_9d = (int)_800fb06c.offset(tpage * 0x4L).get();
+
+    // Retail bug? Trying to read textureInfo from a DEFF container that doesn't have it
+    if(animatedTmdType.textureInfo_08 != null) {
+      final DeffPart.TextureInfo textureInfo = animatedTmdType.textureInfo_08[0];
+      final int tpage = GetTPage(Bpp.BITS_4, Translucency.HALF_B_PLUS_HALF_F, textureInfo.vramPos_00.x.get(), textureInfo.vramPos_00.y.get());
+      model.colourMap_9d = (int)_800fb06c.offset(tpage * 0x4L).get();
+    } else {
+      model.colourMap_9d = 0;
+    }
+
     loadModelTmd(model, effect.extTmd_08);
     loadModelAnim(model, effect.anim_0c);
     FUN_80114f3c(state, 0, 0x100, 0);
