@@ -281,6 +281,13 @@ public class VECTOR implements MemoryRef {
     return this;
   }
 
+  public VECTOR and(final int val) {
+    this.x.and(val);
+    this.y.and(val);
+    this.z.and(val);
+    return this;
+  }
+
   @Override
   public long getAddress() {
     if(this.ref == null) {

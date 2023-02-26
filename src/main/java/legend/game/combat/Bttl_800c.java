@@ -13,7 +13,6 @@ import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MATRIX;
 import legend.core.gte.SVECTOR;
 import legend.core.gte.TmdObjTable1c;
-import legend.core.gte.USCOLOUR;
 import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
@@ -48,7 +47,6 @@ import legend.game.combat.types.BattleStruct24_2;
 import legend.game.combat.types.BattleStruct3c;
 import legend.game.combat.types.BattleStructEf4;
 import legend.game.combat.types.BttlLightStruct84;
-import legend.game.combat.types.FullScreenOverlayEffect0e;
 import legend.game.combat.types.BttlScriptData6cSub13c;
 import legend.game.combat.types.BttlStruct08;
 import legend.game.combat.types.CombatItem02;
@@ -58,6 +56,7 @@ import legend.game.combat.types.CombatantStruct1a8_c;
 import legend.game.combat.types.DragoonSpells09;
 import legend.game.combat.types.EffectManagerData6c;
 import legend.game.combat.types.FloatingNumberC4;
+import legend.game.combat.types.FullScreenOverlayEffect0e;
 import legend.game.combat.types.MersenneTwisterSeed;
 import legend.game.combat.types.PotionEffect14;
 import legend.game.combat.types.SpriteMetrics08;
@@ -3667,34 +3666,34 @@ public final class Bttl_800c {
     final WeaponTrailEffect3c s2 = (WeaponTrailEffect3c)data.effect_44;
 
     if(s2._38 != null) {
-      final USCOLOUR sp0x18 = new USCOLOUR().set(data._10.colour_1c).shl(8);
-      final USCOLOUR sp0x20 = new USCOLOUR().set(sp0x18).div(s2._0e);
+      final VECTOR sp0x18 = new VECTOR().set(data._10.colour_1c).shl(8).and(0xffff);
+      final VECTOR sp0x20 = new VECTOR().set(sp0x18).div(s2._0e);
       WeaponTrailEffectSegment2c s0 = s2._38;
 
-      final IntRef sp0x38 = new IntRef();
-      final IntRef sp0x3c = new IntRef();
-      transformWorldspaceToScreenspace(s0._04.get(0), sp0x38, sp0x3c);
+      final IntRef x0 = new IntRef();
+      final IntRef y0 = new IntRef();
+      transformWorldspaceToScreenspace(s0._04.get(0), x0, y0);
 
-      final IntRef sp0x40 = new IntRef();
-      final IntRef sp0x44 = new IntRef();
-      final int z = transformWorldspaceToScreenspace(s0._04.get(1), sp0x40, sp0x44) >> 2;
+      final IntRef x2 = new IntRef();
+      final IntRef y2 = new IntRef();
+      final int z = transformWorldspaceToScreenspace(s0._04.get(1), x2, y2) >> 2;
 
       //LAB_800cdf94
       s0 = s0._24.derefNullable();
       for(int i = 0; i < s2._0e && s0 != null; i++) {
-        final IntRef sp0x28 = new IntRef();
-        final IntRef sp0x2c = new IntRef();
-        transformWorldspaceToScreenspace(s0._04.get(0), sp0x28, sp0x2c);
-        final IntRef sp0x30 = new IntRef();
-        final IntRef sp0x34 = new IntRef();
-        transformWorldspaceToScreenspace(s0._04.get(1), sp0x30, sp0x34);
+        final IntRef x1 = new IntRef();
+        final IntRef y1 = new IntRef();
+        transformWorldspaceToScreenspace(s0._04.get(0), x1, y1);
+        final IntRef x3 = new IntRef();
+        final IntRef y3 = new IntRef();
+        transformWorldspaceToScreenspace(s0._04.get(1), x3, y3);
 
         final GpuCommandPoly cmd = new GpuCommandPoly(4)
           .translucent(Translucency.B_PLUS_F)
-          .pos(0, sp0x38.get(), sp0x3c.get())
-          .pos(1, sp0x28.get(), sp0x2c.get())
-          .pos(2, sp0x40.get(), sp0x44.get())
-          .pos(3, sp0x30.get(), sp0x34.get())
+          .pos(0, x0.get(), y0.get())
+          .pos(1, x1.get(), y1.get())
+          .pos(2, x2.get(), y2.get())
+          .pos(3, x3.get(), y3.get())
           .monochrome(0, 0)
           .monochrome(1, 0)
           .rgb(2, sp0x18.getX() >>> 8, sp0x18.getY() >>> 8, sp0x18.getZ() >>> 8);
@@ -3714,10 +3713,10 @@ public final class Bttl_800c {
         }
 
         //LAB_800ce14c
-        sp0x38.set(sp0x28.get());
-        sp0x3c.set(sp0x2c.get());
-        sp0x40.set(sp0x30.get());
-        sp0x44.set(sp0x34.get());
+        x0.set(x1.get());
+        y0.set(y1.get());
+        x2.set(x3.get());
+        y2.set(y3.get());
         s0 = s0._24.derefNullable();
       }
 
