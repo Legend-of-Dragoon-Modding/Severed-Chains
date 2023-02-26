@@ -1,30 +1,35 @@
 package legend.game.types;
 
 import legend.core.gte.TmdWithId;
-import legend.core.memory.Value;
-import legend.core.memory.types.MemoryRef;
-import legend.core.memory.types.RelativePointer;
+import legend.game.unpacker.FileData;
 
 /**
  * @see <a href="https://github.com/Legend-of-Dragoon-Modding/Legend-of-Dragoon-Java/issues/2">more information</a>
  */
-public class CContainer implements MemoryRef {
-  private final Value ref;
+public class CContainer {
+  public final TmdWithId tmdPtr_00;
+  public final CContainerSubfile1 ext_04;
+  public final CContainerSubfile2 ptr_08;
 
-  public final RelativePointer<TmdWithId> tmdPtr_00;
-  public final RelativePointer<CContainerSubfile1> ext_04;
-  public final RelativePointer<CContainerSubfile2> ptr_08;
-
-  public CContainer(final Value ref) {
-    this.ref = ref;
-
-    this.tmdPtr_00 = ref.offset(4, 0x0L).cast(RelativePointer.deferred(4, TmdWithId::new));
-    this.ext_04 = ref.offset(4, 0x4L).cast(RelativePointer.deferred(4, ref.getAddress(), CContainerSubfile1::new));
-    this.ptr_08 = ref.offset(4, 0x8L).cast(RelativePointer.deferred(4, ref.getAddress(), CContainerSubfile2::new));
+  public CContainer(final String name, final FileData data) {
+    this(name, data, 7);
   }
 
-  @Override
-  public long getAddress() {
-    return this.ref.getAddress();
+  public CContainer(final String name, final FileData data, final int subfileSize) {
+    this.tmdPtr_00 = new TmdWithId(name, data.slice(data.readInt(0x0)));
+
+    final int offset04 = data.readInt(0x4);
+    if(offset04 != 0) {
+      this.ext_04 = new CContainerSubfile1(data.slice(offset04));
+    } else {
+      this.ext_04 = null;
+    }
+
+    final int offset08 = data.readInt(0x8);
+    if(offset08 != 0) {
+      this.ptr_08 = new CContainerSubfile2(data.slice(offset08), subfileSize);
+    } else {
+      this.ptr_08 = null;
+    }
   }
 }

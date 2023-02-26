@@ -1,25 +1,26 @@
 package legend.game.types;
 
-import legend.core.memory.Value;
-import legend.core.memory.types.MemoryRef;
-import legend.core.memory.types.ShortRef;
-import legend.core.memory.types.UnboundedArrayRef;
+import it.unimi.dsi.fastutil.shorts.ShortArrayList;
+import it.unimi.dsi.fastutil.shorts.ShortList;
+import legend.game.unpacker.FileData;
 
-public class TmdSubExtension implements MemoryRef {
-  private final Value ref;
+public class TmdSubExtension {
+  public final short s_02;
+  public final short[] sa_04;
 
-  public final ShortRef s_02;
-  public final UnboundedArrayRef<ShortRef> sa_04;
+  public TmdSubExtension(final FileData data) {
+    this.s_02 = data.readShort(0x2);
 
-  public TmdSubExtension(final Value ref) {
-    this.ref = ref;
+    final ShortList shorts = new ShortArrayList();
+    for(int i = 0; ; i++) {
+      final short val = data.readShort(0x2 + i * 0x2);
+      shorts.add(val);
 
-    this.s_02 = ref.offset(2, 0x02L).cast(ShortRef::new);
-    this.sa_04 = ref.offset(2, 0x04L).cast(UnboundedArrayRef.of(0x2, ShortRef::new));
-  }
+      if(val == -1) {
+        break;
+      }
+    }
 
-  @Override
-  public long getAddress() {
-    return this.ref.getAddress();
+    this.sa_04 = shorts.toShortArray();
   }
 }

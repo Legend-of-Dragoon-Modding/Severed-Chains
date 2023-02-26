@@ -1,26 +1,22 @@
 package legend.core.gte;
 
-import legend.core.memory.Value;
-import legend.core.memory.types.IntRef;
-import legend.core.memory.types.MemoryRef;
-import legend.core.memory.types.UnsignedIntRef;
+import legend.game.unpacker.FileData;
 
 /** 0x8 bytes long */
-public class TmdHeader implements MemoryRef {
-  private final Value ref;
+public class TmdHeader {
+  public final long flags;
+  public final int nobj;
 
-  public final UnsignedIntRef flags;
-  public final IntRef nobj;
+  public TmdHeader(final FileData data) {
+    this.flags = data.readUInt(0x0);
+    this.nobj = data.readInt(0x4);
 
-  public TmdHeader(final Value ref) {
-    this.ref = ref;
+    if((this.flags & 0x1) != 0) {
+      throw new RuntimeException("fixp not supported");
+    }
 
-    this.flags = ref.offset(4, 0x0L).cast(UnsignedIntRef::new);
-    this.nobj = ref.offset(4, 0x4L).cast(IntRef::new);
-  }
-
-  @Override
-  public long getAddress() {
-    return this.ref.getAddress();
+    if((this.flags & 0x2) != 0) {
+      throw new RuntimeException("Found CTMD");
+    }
   }
 }

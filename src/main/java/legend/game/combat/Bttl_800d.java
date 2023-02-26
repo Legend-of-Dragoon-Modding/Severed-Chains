@@ -10,14 +10,13 @@ import legend.core.gte.GsDOBJ2;
 import legend.core.gte.MATRIX;
 import legend.core.gte.SVECTOR;
 import legend.core.gte.Tmd;
-import legend.core.gte.TmdObjTable;
+import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.TmdWithId;
 import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
 import legend.core.memory.types.CString;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.ShortRef;
-import legend.core.memory.types.UnboundedArrayRef;
 import legend.game.combat.deff.Anim;
 import legend.game.combat.deff.Cmb;
 import legend.game.combat.deff.Lmb;
@@ -26,6 +25,7 @@ import legend.game.combat.deff.LmbType0;
 import legend.game.combat.types.AdditionCharEffectData0c;
 import legend.game.combat.types.AdditionScriptData1c;
 import legend.game.combat.types.AdditionSparksEffect08;
+import legend.game.combat.types.AdditionSparksEffectInstance4c;
 import legend.game.combat.types.AdditionStarburstEffect10;
 import legend.game.combat.types.BattleCamera;
 import legend.game.combat.types.BattleObject27c;
@@ -46,7 +46,7 @@ import legend.game.scripting.ScriptState;
 import legend.game.tmd.Renderer;
 import legend.game.types.CContainer;
 import legend.game.types.Model124;
-import legend.game.types.ModelPartTransforms;
+import legend.game.types.ModelPartTransforms0c;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
 
@@ -66,14 +66,14 @@ import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
-import static legend.game.Scus94491BpeSegment_8002.FUN_800213c4;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80021628;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021724;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80022018;
 import static legend.game.Scus94491BpeSegment_8002.SetGeomOffset;
 import static legend.game.Scus94491BpeSegment_8002.SetRotMatrix;
 import static legend.game.Scus94491BpeSegment_8002.SetTransMatrix;
 import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
+import static legend.game.Scus94491BpeSegment_8002.adjustModelUvs;
+import static legend.game.Scus94491BpeSegment_8002.animateModelTextures;
+import static legend.game.Scus94491BpeSegment_8002.applyInterpolationFrame;
 import static legend.game.Scus94491BpeSegment_8002.applyModelPartTransforms;
 import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
@@ -87,12 +87,10 @@ import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
 import static legend.game.Scus94491BpeSegment_8003.RotTrans;
 import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
 import static legend.game.Scus94491BpeSegment_8003.TransMatrix;
-import static legend.game.Scus94491BpeSegment_8003.adjustTmdPointers;
 import static legend.game.Scus94491BpeSegment_8003.getProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.getScreenOffset;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
-import static legend.game.Scus94491BpeSegment_8003.updateTmdPacketIlen;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixX;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixY;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixZ;
@@ -103,7 +101,7 @@ import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
-import static legend.game.combat.Bttl_800c.FUN_800cf244;
+import static legend.game.combat.Bttl_800c.transformWorldspaceToScreenspace;
 import static legend.game.combat.Bttl_800c.FUN_800cf37c;
 import static legend.game.combat.Bttl_800c.FUN_800cf4f4;
 import static legend.game.combat.Bttl_800c.FUN_800cfb14;
@@ -180,10 +178,10 @@ public final class Bttl_800d {
     final BattleScriptDataBase data = (BattleScriptDataBase)state.innerStruct_00;
 
     if(BattleScriptDataBase.EM__.equals(data.magic_00)) {
-      script.params_20[1].set(((BttlScriptData6cSub13c)((EffectManagerData6c)data).effect_44).model_10.animCount_98);
+      script.params_20[1].set(((BttlScriptData6cSub13c)((EffectManagerData6c)data).effect_44).model_10.partCount_98);
     } else {
       //LAB_800d017c
-      script.params_20[1].set(((BattleObject27c)data).model_148.animCount_98);
+      script.params_20[1].set(((BattleObject27c)data).model_148.partCount_98);
     }
 
     //LAB_800d0194
@@ -330,55 +328,49 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d09c0L)
-  public static void FUN_800d09c0(final EffectManagerData6c a0, final long a1) {
-    FUN_800cf4f4(a0, null, MEMORY.ref(4, a1 + 0x08L, VECTOR::new), MEMORY.ref(4, a1 + 0x08L, VECTOR::new));
-    FUN_800cf37c(a0, null, MEMORY.ref(4, a1 + 0x28L, VECTOR::new), MEMORY.ref(4, a1 + 0x28L, VECTOR::new));
-    MEMORY.ref(4, a1).offset(0x18L).setu(MEMORY.ref(4, a1).offset(0x08L).get());
-    MEMORY.ref(4, a1).offset(0x1cL).setu(MEMORY.ref(4, a1).offset(0x0cL).get());
-    MEMORY.ref(4, a1).offset(0x20L).setu(MEMORY.ref(4, a1).offset(0x10L).get());
+  public static void FUN_800d09c0(final EffectManagerData6c a0, final AdditionSparksEffectInstance4c inst) {
+    FUN_800cf4f4(a0, null, inst.startPos_08, inst.startPos_08);
+    FUN_800cf37c(a0, null, inst.speed_28, inst.speed_28);
+    inst.endPos_18.set(inst.startPos_08);
   }
 
   @Method(0x800d0a30L)
   public static void renderAdditionSparks(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    int s7 = 0;
-    long s3 = 0;
     final AdditionSparksEffect08 s6 = (AdditionSparksEffect08)data.effect_44;
-    long s2 = s6._04.get(); //TODO
 
     //LAB_800d0a7c
-    for(int s5 = 0; s5 < s6.count_00.get(); s5++) {
-      if(MEMORY.ref(1, s2).offset(0x4L).get() != 0) {
-        MEMORY.ref(1, s2).offset(0x4L).subu(0x1L);
+    int s7 = 0;
+    for(int i = 0; i < s6.count_00; i++) {
+      final AdditionSparksEffectInstance4c inst = s6.instances_04[i];
+
+      if(inst.delay_04 != 0) {
+        inst.delay_04--;
         //LAB_800d0a94
-      } else if(MEMORY.ref(1, s2).offset(0x5L).get() != 0) {
-        if(MEMORY.ref(4, s2).offset(0x0L).get() == 0) {
-          FUN_800d09c0(data, s2);
+      } else if(inst.ticksRemaining_05 != 0) {
+        if(inst.ticksExisted_00 == 0) {
+          FUN_800d09c0(data, inst);
         }
 
         //LAB_800d0ac8
-        MEMORY.ref(4, s2).offset(0x00L).addu(0x1L);
-        MEMORY.ref(1, s2).offset(0x05L).subu(0x1L);
-        MEMORY.ref(4, s2).offset(0x08L).addu(MEMORY.ref(4, s2).offset(0x28L).get());
-        MEMORY.ref(4, s2).offset(0x0cL).addu(MEMORY.ref(4, s2).offset(0x2cL).get());
-        MEMORY.ref(4, s2).offset(0x10L).addu(MEMORY.ref(4, s2).offset(0x30L).get());
-        final IntRef sp0x18 = new IntRef();
-        final IntRef sp0x1c = new IntRef();
-        final IntRef sp0x20 = new IntRef();
-        final IntRef sp0x24 = new IntRef();
-        final int s1 = FUN_800cf244(MEMORY.ref(4, s2 + 0x8L, VECTOR::new), sp0x18, sp0x1c);
-        FUN_800cf244(MEMORY.ref(4, s2 + 0x18L, VECTOR::new), sp0x20, sp0x24);
+        inst.ticksExisted_00++;
+        inst.ticksRemaining_05--;
+        inst.startPos_08.add(inst.speed_28);
+        final IntRef startX = new IntRef();
+        final IntRef startY = new IntRef();
+        final IntRef endX = new IntRef();
+        final IntRef endY = new IntRef();
+        final int s1 = transformWorldspaceToScreenspace(inst.startPos_08, startX, startY);
+        transformWorldspaceToScreenspace(inst.endPos_18, endX, endY);
 
-        if(s3 == 0) {
+        if(i == 0) {
           s7 = (short)s1 >> 2;
         }
 
         //LAB_800d0b3c
-        MEMORY.ref(4, s2).offset(0x2cL).addu(MEMORY.ref(2, s2).offset(0x3aL).getSigned());
-        MEMORY.ref(4, s2).offset(0x28L).addu(MEMORY.ref(2, s2).offset(0x38L).getSigned());
-        MEMORY.ref(4, s2).offset(0x30L).addu(MEMORY.ref(2, s2).offset(0x3cL).getSigned());
+        inst.speed_28.add(inst.acceleration_38);
 
-        if((int)MEMORY.ref(4, s2).offset(0x0cL).get() > 0) {
-          MEMORY.ref(4, s2).offset(0x2cL).setu(-MEMORY.ref(4, s2).offset(0x2cL).get() >> 1);
+        if(inst.startPos_08.getY() > 0) {
+          inst.speed_28.setY(-inst.speed_28.getY() / 2);
         }
 
         //LAB_800d0b88
@@ -391,37 +383,28 @@ public final class Bttl_800d {
 
           final GpuCommandLine cmd = new GpuCommandLine()
             .translucent(Translucency.B_PLUS_F)
-            .rgb(0, (int)MEMORY.ref(2, s2).offset(0x40L).get() >>> 8, (int)MEMORY.ref(2, s2).offset(0x42L).get() >>> 8, (int)MEMORY.ref(2, s2).offset(0x44L).get() >>> 8)
-            .rgb(1, (int)MEMORY.ref(2, s2).offset(0x40L).get() >>> 9, (int)MEMORY.ref(2, s2).offset(0x42L).get() >>> 9, (int)MEMORY.ref(2, s2).offset(0x44L).get() >>> 9)
-            .pos(0, sp0x18.get(), sp0x1c.get())
-            .pos(1, sp0x20.get(), sp0x24.get());
+            .rgb(0, inst.r_40 >>> 8, inst.g_42 >>> 8, inst.b_44 >>> 8)
+            .rgb(1, inst.r_40 >>> 9, inst.g_42 >>> 9, inst.b_44 >>> 9)
+            .pos(0, startX.get(), startY.get())
+            .pos(1, endX.get(), endY.get());
 
           //LAB_800d0c84
           GPU.queueCommand(s7 + a3 >> 2, cmd);
         }
 
         //LAB_800d0ca0
-        MEMORY.ref(2, s2).offset(0x40L).subu(MEMORY.ref(2, s2).offset(0x46L).get());
-        MEMORY.ref(2, s2).offset(0x42L).subu(MEMORY.ref(2, s2).offset(0x48L).get());
-        MEMORY.ref(4, s2).offset(0x20L).setu(MEMORY.ref(4, s2).offset(0x10L).get());
-        MEMORY.ref(2, s2).offset(0x44L).subu(MEMORY.ref(2, s2).offset(0x4aL).get());
-        MEMORY.ref(4, s2).offset(0x18L).setu(MEMORY.ref(4, s2).offset(0x08L).get());
-        MEMORY.ref(4, s2).offset(0x1cL).setu(MEMORY.ref(4, s2).offset(0x0cL).get());
-        s3 = s3 + 0x1L;
+        inst.r_40 -= inst.stepR_46;
+        inst.g_42 -= inst.stepG_48;
+        inst.b_44 -= inst.stepB_4a;
+        inst.endPos_18.set(inst.startPos_08);
       }
 
       //LAB_800d0cec
       //LAB_800d0cf0
-      s2 = s2 + 0x4cL;
     }
 
     //LAB_800d0d10
     //LAB_800d0d94
-  }
-
-  @Method(0x800d0dc0L)
-  public static void deallocateAdditionSparksEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    free(((AdditionSparksEffect08)data.effect_44)._04.get());
   }
 
   @Method(0x800d0decL)
@@ -431,47 +414,39 @@ public final class Bttl_800d {
 
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       script.scriptState_04,
-      0x8,
+      0,
       null,
       Bttl_800d::renderAdditionSparks,
-      Bttl_800d::deallocateAdditionSparksEffect,
-      AdditionSparksEffect08::new
+      null,
+      value -> new AdditionSparksEffect08(count)
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
     final AdditionSparksEffect08 effect = (AdditionSparksEffect08)manager.effect_44;
 
-    long t6 = mallocTail(count * 0x4cL);
-    effect._04.set(t6);
-    effect.count_00.set(count);
-
-    final long s1 = script.params_20[5].get() / s4;
+    final int s1 = script.params_20[5].get() / s4;
 
     //LAB_800d0ee0
     for(int i = 0; i < count; i++) {
-      MEMORY.ref(4, t6).offset(0x0L).setu(0);
+      final AdditionSparksEffectInstance4c inst = effect.instances_04[i];
 
-      MEMORY.ref(1, t6).offset(0x4L).setu(seed_800fa754.advance().get() % (s4 + 0x1L));
-      MEMORY.ref(1, t6).offset(0x5L).setu(seed_800fa754.advance().get() % 9 + 7);
+      inst.ticksExisted_00 = 0;
 
-      MEMORY.ref(2, t6).offset(0x40L).setu(script.params_20[2].get() << 8);
-      MEMORY.ref(2, t6).offset(0x46L).setu(MEMORY.ref(2, t6).offset(0x40L).get() / MEMORY.ref(1, t6).offset(0x5L).get());
-      MEMORY.ref(2, t6).offset(0x42L).setu(script.params_20[3].get() << 8);
-      MEMORY.ref(2, t6).offset(0x48L).setu(MEMORY.ref(2, t6).offset(0x44L).get() / MEMORY.ref(1, t6).offset(0x5L).get());
-      MEMORY.ref(2, t6).offset(0x44L).setu(script.params_20[4].get() << 8);
-      MEMORY.ref(2, t6).offset(0x4aL).setu(MEMORY.ref(2, t6).offset(0x48L).get() / MEMORY.ref(1, t6).offset(0x5L).get());
-      MEMORY.ref(4, t6).offset(0x8L).setu(MEMORY.ref(1, t6).offset(0x4L).get() * s1);
-      MEMORY.ref(4, t6).offset(0x1cL).setu(0);
-      MEMORY.ref(4, t6).offset(0x18L).setu(0);
-      MEMORY.ref(4, t6).offset(0x10L).setu(0);
-      MEMORY.ref(4, t6).offset(0xcL).setu(0);
-      MEMORY.ref(2, t6).offset(0x38L).setu(0);
-      MEMORY.ref(4, t6).offset(0x28L).setu(seed_800fa754.advance().get() % 201);
-      MEMORY.ref(4, t6).offset(0x2cL).setu(seed_800fa754.advance().get() % 201 - 100);
-      MEMORY.ref(4, t6).offset(0x30L).setu(seed_800fa754.advance().get() % 201 - 100);
-      MEMORY.ref(2, t6).offset(0x3aL).setu(0xfL);
-      MEMORY.ref(2, t6).offset(0x3cL).setu(0);
-      t6 = t6 + 0x4cL;
+      inst.delay_04 = (byte)(seed_800fa754.advance().get() % (s4 + 1));
+      inst.ticksRemaining_05 = (byte)(seed_800fa754.advance().get() % 9 + 7);
+
+      inst.startPos_08.set(inst.delay_04 * s1, 0, 0);
+      inst.endPos_18.set(0, 0, 0);
+      inst.speed_28.set((int)seed_800fa754.advance().get() % 201, (int)seed_800fa754.advance().get() % 201 - 100, (int)seed_800fa754.advance().get() % 201 - 100);
+      inst.acceleration_38.set((short)0, (short)15, (short)0);
+
+      inst.r_40 = script.params_20[2].get() << 8;
+      inst.g_42 = script.params_20[3].get() << 8;
+      inst.b_44 = script.params_20[4].get() << 8;
+
+      inst.stepR_46 = inst.r_40 / inst.ticksRemaining_05;
+      inst.stepG_48 = inst.g_42 / inst.ticksRemaining_05;
+      inst.stepB_4a = inst.b_44 / inst.ticksRemaining_05;
     }
 
     //LAB_800d1154
@@ -489,7 +464,7 @@ public final class Bttl_800d {
       final VECTOR sp0x10 = new VECTOR();
       scriptGetScriptedObjectPos(a1.scriptIndex_00.get(), sp0x10);
       sp0x10.add(a0._10.trans_04);
-      FUN_800cf244(sp0x10, a2[0], a2[1]);
+      transformWorldspaceToScreenspace(sp0x10, a2[0], a2[1]);
     }
 
     //LAB_800d120c
@@ -801,7 +776,7 @@ public final class Bttl_800d {
       sp0x58.setX(data._10.trans_04.getX() + (i != 0 ? data._10.scale_16.getX() / 4 : 0));
       sp0x58.setY((int)(data._10.trans_04.getY() + (MEMORY.ref(2, s1).offset(0x2L).getSigned() * data._10.scale_16.getY() >> 12)));
       sp0x58.setZ((int)(data._10.trans_04.getZ() + (MEMORY.ref(2, s1).offset(0x0L).getSigned() * data._10.scale_16.getZ() >> 12)));
-      s3 = FUN_800cf244(sp0x58, sp0x18[i], sp0x38[i]);
+      s3 = transformWorldspaceToScreenspace(sp0x58, sp0x18[i], sp0x38[i]);
     }
 
     s3 = s3 >> 2;
@@ -858,7 +833,7 @@ public final class Bttl_800d {
         sp0x58.setX(s7_0 + data._10.trans_04.getX());
         sp0x58.setY((((int)MEMORY.ref(2, s1).offset(0x2L).getSigned() * data._10.scale_16.getY() >> 12) * s6 >> 12) + data._10.trans_04.getY());
         sp0x58.setZ((((int)MEMORY.ref(2, s1).offset(0x0L).getSigned() * data._10.scale_16.getZ() >> 12) * s6 >> 12) + data._10.trans_04.getZ());
-        s3 = FUN_800cf244(sp0x58, sp0x18[n], sp0x38[n]) >> 2;
+        s3 = transformWorldspaceToScreenspace(sp0x58, sp0x18[n], sp0x38[n]) >> 2;
       }
 
       //LAB_800d2e20
@@ -901,9 +876,7 @@ public final class Bttl_800d {
     effect._00.set(1);
     effect._02.set(0);
     effect._04.set((short)0);
-    manager._10.colour_1c.setX((short)255);
-    manager._10.colour_1c.setY((short)0);
-    manager._10.colour_1c.setZ((short)0);
+    manager._10.colour_1c.set(255, 0, 0);
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }
@@ -950,8 +923,8 @@ public final class Bttl_800d {
         s1._0c.g_15.set((int)(MEMORY.ref(2, s2).offset(0x26L).get() >>> 8));
         s1._0c.b_16.set((int)(MEMORY.ref(2, s2).offset(0x28L).get() >>> 8));
         s1._0c.rotation_20.set((int)MEMORY.ref(4, s2).offset(0x0cL).get());
-        s1._0c._1c.set((short)(data._10.scale_16.getX() + MEMORY.ref(2, s2).offset(0x04L).get()));
-        s1._0c._1e.set((short)(data._10.scale_16.getY() + MEMORY.ref(2, s2).offset(0x04L).get()));
+        s1._0c.scaleX_1c.set((short)(data._10.scale_16.getX() + MEMORY.ref(2, s2).offset(0x04L).get()));
+        s1._0c.scaleY_1e.set((short)(data._10.scale_16.getY() + MEMORY.ref(2, s2).offset(0x04L).get()));
         FUN_800e7ea4(s1._0c, MEMORY.ref(4, s2 + 0x14L, VECTOR::new));
       }
 
@@ -1038,7 +1011,7 @@ public final class Bttl_800d {
     );
 
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00;
-    final int animCount = bobj.model_148.animCount_98;
+    final int animCount = bobj.model_148.partCount_98;
     final EffectManagerData6c manager = state.innerStruct_00;
     final MonsterDeathEffect34 effect = (MonsterDeathEffect34)manager.effect_44;
     long s4 = mallocTail(animCount * 0x30L);
@@ -1058,7 +1031,7 @@ public final class Bttl_800d {
 
     //LAB_800d35cc
     final SpriteMetrics08 metrics = spriteMetrics_800c6948[script.params_20[2].get() & 0xff];
-    effect._0c._00.set(manager._10.flags_00 & 0xffff_ffffL);
+    effect._0c.flags_00.set(manager._10.flags_00 & 0xffff_ffffL);
     effect._0c.w_08.set(metrics.w_04.get());
     effect._0c.h_0a.set(metrics.h_05.get());
     effect._0c.x_04.set((short)(-effect._0c.w_08.get() >> 1));
@@ -4410,85 +4383,85 @@ public final class Bttl_800d {
   }
 
   @Method(0x800dd4ccL)
-  public static int applyStandardAnimation(final Model124 a0, final int a1) {
-    if(a0.ub_9c == 2) {
+  public static int applyStandardAnimation(final Model124 model, final int animationTicks) {
+    if(model.animationState_9c == 2) {
       return 2;
     }
 
     //LAB_800dd4fc
-    final int v0;
-    final int s2;
-    if(a0.ub_a2 != 0) {
-      s2 = a1 % ((short)a0.s_9a / 2);
-      a0.partTransforms_94 = a0.partTransforms_90.slice(a0.animCount_98 * s2);
-      applyModelPartTransforms(a0);
-      v0 = (short)a0.s_9a >> 1;
-    } else {
+    final int totalFrames;
+    final int frame;
+    if(model.ub_a2 == 0) {
       //LAB_800dd568
-      s2 = a1 % a0.s_9a;
-      a0.partTransforms_94 = a0.partTransforms_90.slice(a0.animCount_98 * s2 / 2);
-      applyModelPartTransforms(a0);
+      frame = animationTicks % model.totalFrames_9a;
+      model.partTransforms_94 = Arrays.copyOfRange(model.partTransforms_90, frame / 2, model.partTransforms_90.length);
+      applyModelPartTransforms(model);
 
-      if((s2 & 0x1) != 0 && s2 != a0.s_9a - 1 && a0.ub_a3 == 0) {
-        final UnboundedArrayRef<ModelPartTransforms> original = a0.partTransforms_94;
-        FUN_800213c4(a0);
-        a0.partTransforms_94 = original;
+      if((frame & 0x1) != 0 && frame != model.totalFrames_9a - 1 && model.ub_a3 == 0) { // Interpolation frame
+        final ModelPartTransforms0c[][] original = model.partTransforms_94;
+        applyInterpolationFrame(model);
+        model.partTransforms_94 = original;
       }
 
       //LAB_800dd5ec
-      v0 = a0.s_9a;
+      totalFrames = model.totalFrames_9a;
+    } else {
+      frame = animationTicks % (model.totalFrames_9a / 2);
+      model.partTransforms_94 = Arrays.copyOfRange(model.partTransforms_90, frame, model.partTransforms_90.length);
+      applyModelPartTransforms(model);
+      totalFrames = (short)model.totalFrames_9a >> 1;
     }
 
     //LAB_800dd5f0
-    a0.s_9e = v0 - s2 - 1;
+    model.remainingFrames_9e = totalFrames - frame - 1;
 
-    if(a0.s_9e == 0) {
-      a0.ub_9c = 0;
+    if(model.remainingFrames_9e == 0) {
+      model.animationState_9c = 0;
     } else {
       //LAB_800dd618
-      a0.ub_9c = 1;
+      model.animationState_9c = 1;
     }
 
     //LAB_800dd61c
     //LAB_800dd620
-    return a0.s_9e;
+    return model.remainingFrames_9e;
   }
 
   @Method(0x800dd638L)
-  public static int applyLmbAnimation(final Model124 a0, final int a1) {
-    final int s6;
-    if(a0.ub_9c == 2) {
+  public static int applyLmbAnimation(final Model124 model, final int animationTicks) {
+    if(model.animationState_9c == 2) {
       return 2;
     }
 
     //LAB_800dd680
-    final int count = Math.min(a0.count_c8, a0.animCount_98);
+    final int count = Math.min(model.count_c8, model.partCount_98);
 
     //LAB_800dd69c
-    final LmbType0 lmb = (LmbType0)a0.lmbAnim_08.lmb_00;
+    final LmbType0 lmb = (LmbType0)model.lmbAnim_08.lmb_00;
 
     final int a0_0;
-    final int v1;
-    final int v0;
-    if(a0.ub_a2 == 0) {
+    final int frame;
+    final int remainingFrames;
+    final int isInterpolationFrame;
+    if(model.ub_a2 == 0) {
       //LAB_800dd6dc
-      v1 = a1 % a0.s_9a;
-      s6 = (a1 & 0x1) << 11;
-      a0_0 = v1 >>> 1;
-      v0 = a0.s_9a - v1;
+      frame = animationTicks % model.totalFrames_9a;
+      isInterpolationFrame = (animationTicks & 0x1) << 11; // Dunno why this is shifted, makes no difference
+      a0_0 = frame >>> 1;
+      remainingFrames = model.totalFrames_9a - frame;
     } else {
-      s6 = 0;
-      a0_0 = (a1 << 1) % a0.s_9a >>> 1;
-      v0 = (a0.s_9a >> 1) - a0_0;
+      isInterpolationFrame = 0;
+      a0_0 = (animationTicks << 1) % model.totalFrames_9a >>> 1;
+      remainingFrames = (model.totalFrames_9a >> 1) - a0_0;
     }
 
     //LAB_800dd700
-    a0.s_9e = v0 - 1;
+    model.remainingFrames_9e = remainingFrames - 1;
 
     //LAB_800dd720
     for(int i = 0; i < count; i++) {
-      LmbTransforms14 transforms = lmb._08.get(i)._08.deref().get(a0_0);
-      final MATRIX matrix = a0.dobj2ArrPtr_00[i].coord2_04.coord;
+      final LmbTransforms14 transforms = lmb._08[i]._08[a0_0];
+      final MATRIX matrix = model.dobj2ArrPtr_00[i].coord2_04.coord;
 
       final VECTOR trans = new VECTOR();
       final SVECTOR rot = new SVECTOR();
@@ -4497,16 +4470,21 @@ public final class Bttl_800d {
       rot.set(transforms.rot_0c);
       scale.set(transforms.scale_00);
 
-      if(s6 != 0) {
-        if(a1 == a0.s_9a - 1) {
-          transforms = lmb._08.get(i)._08.deref().get(0);
+      if(isInterpolationFrame != 0) { // Interpolation frame
+        final LmbTransforms14 nextFrame;
+        if(animationTicks == model.totalFrames_9a - 1) {
+          nextFrame = lmb._08[i]._08[0]; // Wrap around to frame 0
         } else {
           //LAB_800dd7cc
-          transforms = lmb._08.get(i)._08.deref().get(a0_0 + 1);
+          nextFrame = lmb._08[i]._08[a0_0 + 1];
         }
 
         //LAB_800dd7d0
-        trans.add(transforms.trans_06).div(2);
+        trans.set(
+          (trans.getX() + nextFrame.trans_06.getX()) / 2,
+          (trans.getY() + nextFrame.trans_06.getY()) / 2,
+          (trans.getZ() + nextFrame.trans_06.getZ()) / 2
+        );
       }
 
       //LAB_800dd818
@@ -4516,16 +4494,16 @@ public final class Bttl_800d {
     }
 
     //LAB_800dd84c
-    if(a0.s_9e == 0) {
-      a0.ub_9c = 0;
+    if(model.remainingFrames_9e == 0) {
+      model.animationState_9c = 0;
     } else {
       //LAB_800dd864
-      a0.ub_9c = 1;
+      model.animationState_9c = 1;
     }
 
     //LAB_800dd868
     //LAB_800dd86c
-    return a0.s_9e;
+    return model.remainingFrames_9e;
   }
 
   @Method(0x800dd89cL)
@@ -4587,7 +4565,7 @@ public final class Bttl_800d {
     //LAB_800dda58
     for(int i = 0; i < 7; i++) {
       if(model.aub_ec[i] != 0) {
-        FUN_80022018(model, i);
+        animateModelTextures(model, i);
       }
 
       //LAB_800dda70
@@ -4609,11 +4587,11 @@ public final class Bttl_800d {
       model.aub_ec[i] = 0;
     }
 
-    final TmdWithId tmdWithId = extTmd.tmdPtr_00.deref();
+    final TmdWithId tmdWithId = extTmd.tmdPtr_00;
     final Tmd tmd = tmdWithId.tmd;
 
     model.tmd_8c = tmd;
-    final int count = tmd.header.nobj.get();
+    final int count = tmd.header.nobj;
     model.tmdNobj_ca = count;
     model.count_c8 = count;
     model.dobj2ArrPtr_00 = new GsDOBJ2[count];
@@ -4624,8 +4602,7 @@ public final class Bttl_800d {
     Arrays.setAll(model.coord2ArrPtr_04, i -> new GsCOORDINATE2());
     Arrays.setAll(model.coord2ParamArrPtr_08, i -> new GsCOORD2PARAM());
 
-    model.tpage_108 = (int)((tmdWithId.id.get() & 0xffff_0000L) >>> 11);
-    adjustTmdPointers(model.tmd_8c);
+    model.tpage_108 = (int)((tmdWithId.id & 0xffff_0000L) >>> 11);
     initObjTable2(model.ObjTable_0c, model.dobj2ArrPtr_00, model.coord2ArrPtr_04, model.coord2ParamArrPtr_08, model.count_c8);
     model.coord2_14.param = model.coord2Param_64;
     GsInitCoordinate2(null, model.coord2_14);
@@ -4633,11 +4610,11 @@ public final class Bttl_800d {
 
     //LAB_800ddc0c
     for(int i = 0; i < count; i++) {
-      if((tmd.header.flags.get() & 0x2) != 0) {
-        model.dobj2ArrPtr_00[i].tmd_08 = tmd.objTable.get(i);
+      if((tmd.header.flags & 0x2) != 0) { // CTMD, no longer used
+        model.dobj2ArrPtr_00[i].tmd_08 = tmd.objTable[i];
       } else {
         final GsDOBJ2 dobj2 = new GsDOBJ2();
-        updateTmdPacketIlen(tmd.objTable, dobj2, i);
+        dobj2.tmd_08 = tmd.objTable[i];
         model.dobj2ArrPtr_00[i].tmd_08 = dobj2.tmd_08;
       }
 
@@ -4657,8 +4634,8 @@ public final class Bttl_800d {
     model.zOffset_a0 = 0;
     model.coord2_14.coord.transfer.set(sp0x18);
 
-    if((model.tmd_8c.header.flags.get() & 0x2) == 0 && model.colourMap_9d != 0) {
-      FUN_80021628(model);
+    if((model.tmd_8c.header.flags & 0x2) == 0 && model.colourMap_9d != 0) {
+      adjustModelUvs(model);
     }
 
     //LAB_800ddce8
@@ -4669,54 +4646,55 @@ public final class Bttl_800d {
   }
 
   @Method(0x800ddd3cL)
-  public static int applyCmbAnimation(final Model124 a0, final int a1) {
-    if(a0.ub_9c == 2) {
+  public static int applyCmbAnimation(final Model124 model, final int animationTicks) {
+    if(model.animationState_9c == 2) {
       return 2;
     }
 
     //LAB_800ddd9c
-    final Model124.CmbAnim cmbAnim = a0.cmbAnim_08;
-    final Cmb cmb = cmbAnim.cmb_04;
-    final int a2 = cmbAnim._00;
-    if(a1 == a2) {
-      return a0.ub_9c;
+    final Model124.CmbAnim cmbAnim = model.cmbAnim_08;
+
+    if(animationTicks == cmbAnim.animationTicks_00) {
+      return model.animationState_9c;
     }
 
+    final Cmb cmb = cmbAnim.cmb_04;
+
     // Note: these two variables _should_ be the same
-    final int modelPartCount = cmb.modelPartCount_0c.get();
-    final int count = Math.min(a0.count_c8, a0.animCount_98);
+    final int modelPartCount = cmb.modelPartCount_0c;
+    final int count = Math.min(model.count_c8, model.partCount_98);
 
     //LAB_800dddc4
     int t0;
     final int a1_0;
-    final int t3;
-    if(a0.ub_a2 != 0) {
-      t3 = 0;
-      a1_0 = (a1 << 1) % a0.s_9a >>> 1;
-      t0 = (a2 << 1) % a0.s_9a >> 1;
-      a0.s_9e = (a0.s_9a >> 1) - a1_0 - 1;
-    } else {
+    final int isInterpolationFrame;
+    if(model.ub_a2 == 0) {
       //LAB_800dde1c
-      final int v1 = a1 % a0.s_9a;
-      t3 = (a1 & 0x1) << 11;
-      a1_0 = v1 >>> 1;
-      t0 = a2 % a0.s_9a >> 1;
-      a0.s_9e = a0.s_9a - v1 - 1;
+      final int frame = animationTicks % model.totalFrames_9a;
+      isInterpolationFrame = (animationTicks & 0x1) << 11; // Dunno why this is shifted, makes no difference
+      a1_0 = frame >>> 1;
+      t0 = cmbAnim.animationTicks_00 % model.totalFrames_9a >> 1;
+      model.remainingFrames_9e = model.totalFrames_9a - frame - 1;
+    } else {
+      isInterpolationFrame = 0;
+      a1_0 = (animationTicks << 1) % model.totalFrames_9a >>> 1;
+      t0 = (cmbAnim.animationTicks_00 << 1) % model.totalFrames_9a >> 1;
+      model.remainingFrames_9e = (model.totalFrames_9a >> 1) - a1_0 - 1;
     }
 
     //LAB_800dde60
     if(t0 > a1_0) {
       //LAB_800dde88
       for(int partIndex = 0; partIndex < modelPartCount; partIndex++) {
-        final Cmb.Transforms0c fileTransforms = cmb.transforms_10.get(partIndex);
-        final Cmb.Transforms0c modelTransforms = cmbAnim.transforms_08[partIndex];
+        final ModelPartTransforms0c fileTransforms = cmb.partTransforms_10[0][partIndex];
+        final ModelPartTransforms0c modelTransforms = cmbAnim.transforms_08[partIndex];
 
-        modelTransforms.rot_00.set(fileTransforms.rot_00);
-        modelTransforms.trans_06.set(fileTransforms.trans_06);
+        modelTransforms.rotate_00.set(fileTransforms.rotate_00);
+        modelTransforms.translate_06.set(fileTransforms.translate_06);
       }
 
       //LAB_800ddee0
-      cmbAnim._00 = 0;
+      cmbAnim.animationTicks_00 = 0;
       t0 = 0;
     }
 
@@ -4725,16 +4703,16 @@ public final class Bttl_800d {
     for(; t0 < a1_0; t0++) {
       //LAB_800ddf2c
       for(int partIndex = 0; partIndex < modelPartCount; partIndex++) {
-        final Cmb.SubTransforms08 subTransforms = cmb.subTransforms().get(t0 * modelPartCount + partIndex);
-        final Cmb.Transforms0c modelTransforms = cmbAnim.transforms_08[partIndex];
+        final Cmb.SubTransforms08 subTransforms = cmb.subTransforms[t0 * modelPartCount + partIndex];
+        final ModelPartTransforms0c modelTransforms = cmbAnim.transforms_08[partIndex];
 
-        modelTransforms.rot_00.x.add((short)(subTransforms.rot_01.getX() << subTransforms.rotScale_00.get()));
-        modelTransforms.rot_00.y.add((short)(subTransforms.rot_01.getY() << subTransforms.rotScale_00.get()));
-        modelTransforms.rot_00.z.add((short)(subTransforms.rot_01.getZ() << subTransforms.rotScale_00.get()));
+        modelTransforms.rotate_00.x.add((short)(subTransforms.rot_01.getX() << subTransforms.rotScale_00));
+        modelTransforms.rotate_00.y.add((short)(subTransforms.rot_01.getY() << subTransforms.rotScale_00));
+        modelTransforms.rotate_00.z.add((short)(subTransforms.rot_01.getZ() << subTransforms.rotScale_00));
 
-        modelTransforms.trans_06.x.add((short)(subTransforms.trans_05.getX() << subTransforms.transScale_04.get()));
-        modelTransforms.trans_06.y.add((short)(subTransforms.trans_05.getY() << subTransforms.transScale_04.get()));
-        modelTransforms.trans_06.z.add((short)(subTransforms.trans_05.getZ() << subTransforms.transScale_04.get()));
+        modelTransforms.translate_06.x.add((short)(subTransforms.trans_05.getX() << subTransforms.transScale_04));
+        modelTransforms.translate_06.y.add((short)(subTransforms.trans_05.getY() << subTransforms.transScale_04));
+        modelTransforms.translate_06.z.add((short)(subTransforms.trans_05.getZ() << subTransforms.transScale_04));
       }
 
       //LAB_800ddfd4
@@ -4742,96 +4720,96 @@ public final class Bttl_800d {
 
     //LAB_800ddfe4
     //LAB_800de158
-    if(t3 == 0 || a0.ub_a3 != 0 || a1_0 == (a0.s_9a >> 1) - 1) {
-      //LAB_800de164
-      for(int i = 0; i < count; i++) {
-        final Cmb.Transforms0c modelTransforms = cmbAnim.transforms_08[i];
-        final MATRIX modelPartMatrix = a0.dobj2ArrPtr_00[i].coord2_04.coord;
-        RotMatrix_Zyx(modelTransforms.rot_00, modelPartMatrix);
-        modelPartMatrix.transfer.set(modelTransforms.trans_06);
-      }
-    } else {
+    if(isInterpolationFrame != 0 && model.ub_a3 == 0 && a1_0 != (model.totalFrames_9a >> 1) - 1) { // Interpolation frame
       //LAB_800de050
       for(int i = 0; i < count; i++) {
-        final Cmb.SubTransforms08 subTransforms = cmb.subTransforms().get(a1_0 * modelPartCount + i);
-        final Cmb.Transforms0c modelTransforms = cmbAnim.transforms_08[i];
+        final Cmb.SubTransforms08 subTransforms = cmb.subTransforms[a1_0 * modelPartCount + i];
+        final ModelPartTransforms0c modelTransforms = cmbAnim.transforms_08[i];
 
-        final MATRIX modelPartMatrix = a0.dobj2ArrPtr_00[i].coord2_04.coord;
-        RotMatrix_Zyx(modelTransforms.rot_00, modelPartMatrix);
-        modelPartMatrix.transfer.set(modelTransforms.trans_06);
+        final MATRIX modelPartMatrix = model.dobj2ArrPtr_00[i].coord2_04.coord;
+        RotMatrix_Zyx(modelTransforms.rotate_00, modelPartMatrix);
+        modelPartMatrix.transfer.set(modelTransforms.translate_06);
 
         final SVECTOR rotation = new SVECTOR();
-        rotation.setX((short)(modelTransforms.rot_00.getX() + (subTransforms.rot_01.getX() << subTransforms.rotScale_00.get())));
-        rotation.setY((short)(modelTransforms.rot_00.getY() + (subTransforms.rot_01.getY() << subTransforms.rotScale_00.get())));
-        rotation.setZ((short)(modelTransforms.rot_00.getZ() + (subTransforms.rot_01.getZ() << subTransforms.rotScale_00.get())));
+        rotation.setX((short)(modelTransforms.rotate_00.getX() + (subTransforms.rot_01.getX() << subTransforms.rotScale_00)));
+        rotation.setY((short)(modelTransforms.rotate_00.getY() + (subTransforms.rot_01.getY() << subTransforms.rotScale_00)));
+        rotation.setZ((short)(modelTransforms.rotate_00.getZ() + (subTransforms.rot_01.getZ() << subTransforms.rotScale_00)));
 
         final MATRIX translation = new MATRIX();
         RotMatrix_Zyx(rotation, translation);
-        translation.transfer.setX(modelTransforms.trans_06.getX() + (subTransforms.trans_05.getX() << subTransforms.transScale_04.get()));
-        translation.transfer.setY(modelTransforms.trans_06.getY() + (subTransforms.trans_05.getY() << subTransforms.transScale_04.get()));
-        translation.transfer.setZ(modelTransforms.trans_06.getZ() + (subTransforms.trans_05.getZ() << subTransforms.transScale_04.get()));
+        translation.transfer.setX(modelTransforms.translate_06.getX() + (subTransforms.trans_05.getX() << subTransforms.transScale_04));
+        translation.transfer.setY(modelTransforms.translate_06.getY() + (subTransforms.trans_05.getY() << subTransforms.transScale_04));
+        translation.transfer.setZ(modelTransforms.translate_06.getZ() + (subTransforms.trans_05.getZ() << subTransforms.transScale_04));
 
         FUN_800dd15c(modelPartMatrix, translation, 0x800);
+      }
+    } else {
+      //LAB_800de164
+      for(int i = 0; i < count; i++) {
+        final ModelPartTransforms0c modelTransforms = cmbAnim.transforms_08[i];
+        final MATRIX modelPartMatrix = model.dobj2ArrPtr_00[i].coord2_04.coord;
+        RotMatrix_Zyx(modelTransforms.rotate_00, modelPartMatrix);
+        modelPartMatrix.transfer.set(modelTransforms.translate_06);
       }
     }
 
     //LAB_800de1b4
-    if(a0.s_9e == 0) {
-      a0.ub_9c = 0;
+    if(model.remainingFrames_9e == 0) {
+      model.animationState_9c = 0;
     } else {
       //LAB_800de1cc
-      a0.ub_9c = 1;
+      model.animationState_9c = 1;
     }
 
     //LAB_800de1d0
-    cmbAnim._00 = a1;
+    cmbAnim.animationTicks_00 = animationTicks;
 
     //LAB_800de1e0
-    return a0.s_9e;
+    return model.remainingFrames_9e;
   }
 
   @Method(0x800de210L)
   public static void loadModelCmb(final Model124 model, final Cmb cmb) {
     final Model124.CmbAnim anim = model.cmbAnim_08;
-    final int count = cmb.modelPartCount_0c.get();
+    final int count = cmb.modelPartCount_0c;
 
     anim.cmb_04 = cmb;
-    anim.transforms_08 = new Cmb.Transforms0c[count];
+    anim.transforms_08 = new ModelPartTransforms0c[count];
 
-    Arrays.setAll(anim.transforms_08, i -> new Cmb.Transforms0c());
+    Arrays.setAll(anim.transforms_08, i -> new ModelPartTransforms0c());
 
     model.animType_90 = 2;
     model.lmbUnknown_94 = 0;
-    model.animCount_98 = count;
-    model.s_9a = cmb._0e.get() * 2;
-    model.ub_9c = 1;
-    model.s_9e = cmb._0e.get() * 2;
+    model.partCount_98 = count;
+    model.totalFrames_9a = cmb.totalFrames_0e * 2;
+    model.animationState_9c = 1;
+    model.remainingFrames_9e = cmb.totalFrames_0e * 2;
 
     //LAB_800de270
     for(int i = 0; i < count; i++) {
-      final Cmb.Transforms0c v1 = cmb.transforms_10.get(i);
-      final Cmb.Transforms0c a1_0 = anim.transforms_08[i];
-      a1_0.rot_00.set(v1.rot_00);
-      a1_0.trans_06.set(v1.trans_06);
+      final ModelPartTransforms0c v1 = cmb.partTransforms_10[0][i];
+      final ModelPartTransforms0c a1_0 = anim.transforms_08[i];
+      a1_0.rotate_00.set(v1.rotate_00);
+      a1_0.translate_06.set(v1.translate_06);
     }
 
     //LAB_800de2c8
-    anim._00 = 1;
+    anim.animationTicks_00 = 1;
     applyCmbAnimation(model, 0);
   }
 
   @Method(0x800de2e8L)
-  public static void applyAnimation(final Model124 model, final int a1) {
+  public static void applyAnimation(final Model124 model, final int animationTicks) {
     final int type = model.animType_90;
     if(type == 1) {
       //LAB_800de318
-      applyLmbAnimation(model, a1);
+      applyLmbAnimation(model, animationTicks);
     } else if(type == 0 || type == 2) {
       //LAB_800de328
-      applyCmbAnimation(model, a1);
+      applyCmbAnimation(model, animationTicks);
     } else {
       //LAB_800de338
-      applyStandardAnimation(model, a1);
+      applyStandardAnimation(model, animationTicks);
     }
 
     //LAB_800de340
@@ -4839,20 +4817,19 @@ public final class Bttl_800d {
 
   @Method(0x800de36cL)
   public static void loadModelAnim(final Model124 model, final Anim anim) {
-    final int magic = anim.magic_00.get();
-    if(magic == Cmb.MAGIC) { // "CMB "
+    if(anim.magic_00 == Cmb.MAGIC) { // "CMB "
       loadModelCmb(model, (Cmb)anim);
       //LAB_800de398
-    } else if(magic == Lmb.MAGIC) { // "LMB"
+    } else if(anim.magic_00 == Lmb.MAGIC) { // "LMB"
       final LmbType0 lmb = (LmbType0)anim;
 
       model.lmbAnim_08.lmb_00 = lmb;
       model.animType_90 = 1;
       model.lmbUnknown_94 = 0;
-      model.animCount_98 = lmb.count_04.get();
-      model.s_9a = lmb._0c.get() * 2;
-      model.ub_9c = 1;
-      model.s_9e = lmb._0c.get() * 2;
+      model.partCount_98 = lmb.count_04;
+      model.totalFrames_9a = lmb._08[0].count_04 * 2;
+      model.animationState_9c = 1;
+      model.remainingFrames_9e = lmb._08[0].count_04 * 2;
     } else {
       //LAB_800de3dc
       loadModelStandardAnimation(model, (TmdAnimationFile)anim);
@@ -4862,7 +4839,7 @@ public final class Bttl_800d {
   }
 
   @Method(0x800de3f4L)
-  public static void FUN_800de3f4(final TmdObjTable a0, final EffectManagerData6cInner a1, final MATRIX a2) {
+  public static void FUN_800de3f4(final TmdObjTable1c a0, final EffectManagerData6cInner a1, final MATRIX a2) {
     final int s0 = deffManager_800c693c._20 & 0x4;
 
     final MATRIX sp0x10 = new MATRIX();
@@ -4931,15 +4908,15 @@ public final class Bttl_800d {
   }
 
   @Method(0x800de76cL)
-  public static TmdObjTable optimisePacketsIfNecessary(final TmdWithId tmd, final int objIndex) {
-    if((tmd.tmd.header.flags.get() & 0x2L) == 0) {
+  public static TmdObjTable1c optimisePacketsIfNecessary(final TmdWithId tmd, final int objIndex) {
+    if((tmd.tmd.header.flags & 0x2) == 0) {
       final GsDOBJ2 dobj2 = new GsDOBJ2();
-      updateTmdPacketIlen(tmd.tmd.objTable, dobj2, objIndex);
+      dobj2.tmd_08 = tmd.tmd.objTable[objIndex];
       return dobj2.tmd_08;
     }
 
     //LAB_800de7a0
     //LAB_800de7b4
-    return tmd.tmd.objTable.get(objIndex);
+    return tmd.tmd.objTable[objIndex];
   }
 }

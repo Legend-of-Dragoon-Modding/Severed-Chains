@@ -1,27 +1,15 @@
 package legend.game.combat.types;
 
-import legend.core.memory.Value;
-import legend.core.memory.types.MemoryRef;
-import legend.core.memory.types.UnsignedByteRef;
-import legend.core.memory.types.UnsignedIntRef;
+import java.util.Arrays;
 
-public class AdditionSparksEffect08 implements BttlScriptData6cSubBase1, MemoryRef {
-  private final Value ref;
+public class AdditionSparksEffect08 implements BttlScriptData6cSubBase1 {
+  /** ubyte */
+  public final int count_00;
+  public final AdditionSparksEffectInstance4c[] instances_04;
 
-  public final UnsignedByteRef count_00;
-
-  public final UnsignedIntRef _04;
-
-  public AdditionSparksEffect08(final Value ref) {
-    this.ref = ref;
-
-    this.count_00 = ref.offset(1, 0x00L).cast(UnsignedByteRef::new);
-
-    this._04 = ref.offset(4, 0x04L).cast(UnsignedIntRef::new);
-  }
-
-  @Override
-  public long getAddress() {
-    return this.ref.getAddress();
+  public AdditionSparksEffect08(final int count) {
+    this.count_00 = count;
+    this.instances_04 = new AdditionSparksEffectInstance4c[count];
+    Arrays.setAll(this.instances_04, i -> new AdditionSparksEffectInstance4c());
   }
 }

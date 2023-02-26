@@ -1,17 +1,18 @@
 package legend.game.combat.deff;
 
-import legend.core.gte.TmdObjTable;
+import legend.core.gte.TmdObjTable1c;
 import legend.game.combat.types.BattleLightStruct64;
 import legend.game.combat.types.BattleStruct24_2;
-import legend.game.combat.types.BattleStruct4c;
+import legend.game.combat.types.StageAmbiance4c;
 import legend.game.combat.types.BttlLightStruct84;
 import legend.game.combat.types.EffectManagerData6c;
 import legend.game.combat.types.SpriteMetrics08;
-import legend.game.scripting.ScriptState;
-import legend.game.types.MrgFile;
 import legend.game.scripting.ScriptFile;
+import legend.game.scripting.ScriptState;
+import legend.game.unpacker.FileData;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class DeffManager7cc {
   public Struct08 _00 = new Struct08();
@@ -26,20 +27,20 @@ public class DeffManager7cc {
   public ScriptFile[] scripts_2c;
   public long ptr_30;
   public long ptr_34;
-  public MrgFile deff_38;
 
-  public final BattleStruct4c _4c = new BattleStruct4c();
-  public final BattleStruct4c[] _98 = {new BattleStruct4c(), new BattleStruct4c(), new BattleStruct4c(), new BattleStruct4c(), new BattleStruct4c(), new BattleStruct4c(), new BattleStruct4c(), new BattleStruct4c()};
+  public final StageAmbiance4c stageAmbiance_4c = new StageAmbiance4c();
+  /** One instance for each dragoon */
+  public final StageAmbiance4c[] dragoonSpaceAmbiance_98 = {new StageAmbiance4c(), new StageAmbiance4c(), new StageAmbiance4c(), new StageAmbiance4c(), new StageAmbiance4c(), new StageAmbiance4c(), new StageAmbiance4c(), new StageAmbiance4c()};
   /** Only type 3 TMDs (see {@link DeffPart#flags_00}) */
-  public final TmdObjTable[] tmds_2f8 = new TmdObjTable[38];
+  public final TmdObjTable1c[] tmds_2f8 = new TmdObjTable1c[38];
   public final DeffPart.LmbType[] lmbs_390 = new DeffPart.LmbType[3];
   public final SpriteMetrics08[] spriteMetrics_39c = new SpriteMetrics08[65];
-  public MrgFile deffPackage_5a8;
+  public List<FileData> deffPackage_5a8;
 //  public DeffFile deff_5ac; // No longer needed
 
-  public BattleStruct24_2 _5b8 = new BattleStruct24_2();
-  public BattleLightStruct64 _5dc = new BattleLightStruct64();
-  public BttlLightStruct84[] _640 = {new BttlLightStruct84(), new BttlLightStruct84(), new BttlLightStruct84()};
+  public final BattleStruct24_2 _5b8 = new BattleStruct24_2();
+  public final BattleLightStruct64 _5dc = new BattleLightStruct64();
+  public final BttlLightStruct84[] _640 = {new BttlLightStruct84(), new BttlLightStruct84(), new BttlLightStruct84()};
 
   public DeffManager7cc() {
     Arrays.setAll(this.spriteMetrics_39c, i -> new SpriteMetrics08());

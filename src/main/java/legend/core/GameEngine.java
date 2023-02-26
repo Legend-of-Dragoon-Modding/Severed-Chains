@@ -150,7 +150,7 @@ public final class GameEngine {
       MEMORY.setBytes(fileData.readUInt(0x18), fileData.getBytes(), 0x800, fileData.readInt(0x1c));
 
       final byte[] archive = MEMORY.getBytes(bpe_80188a88.getAddress(), 221736);
-      final byte[] decompressed = Unpacker.decompress(archive);
+      final byte[] decompressed = Unpacker.decompress(new FileData(archive));
       MEMORY.setBytes(_80010000.getAddress(), decompressed);
 
       MEMORY.addFunctions(Scus94491BpeSegment.class);

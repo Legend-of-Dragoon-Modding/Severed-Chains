@@ -1,6 +1,7 @@
 package legend.game.combat.types;
 
 import legend.core.gte.SVECTOR;
+import legend.core.gte.USCOLOUR;
 import legend.core.gte.VECTOR;
 
 public class EffectManagerData6cInner {
@@ -8,7 +9,7 @@ public class EffectManagerData6cInner {
   public final VECTOR trans_04 = new VECTOR();
   public final SVECTOR rot_10 = new SVECTOR();
   public final SVECTOR scale_16 = new SVECTOR();
-  public final SVECTOR colour_1c = new SVECTOR();
+  public final USCOLOUR colour_1c = new USCOLOUR();
   public int z_22;
   /** TODO I dunno what's going on here, seems sometimes the end of this struct is different */
   public int _24;
