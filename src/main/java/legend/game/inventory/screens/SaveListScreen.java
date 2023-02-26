@@ -20,6 +20,8 @@ import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
 import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
+import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
+import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
@@ -52,6 +54,12 @@ public abstract class SaveListScreen extends MenuScreen {
         saveListUpArrow_800bdb94 = null;
         this.scroll = 0;
         this.selectedSlot = 0;
+
+        if(mainCallbackIndex_8004dd20.get() == 8) {
+          gameState_800babc8.isOnWorldMap_4e4.set(1);
+        } else {
+          gameState_800babc8.isOnWorldMap_4e4.set(0);
+        }
 
         saves.clear();
         saves.addAll(SaveManager.loadAllDisplayData());
