@@ -2931,7 +2931,7 @@ public final class Bttl_800f {
       FUN_800f7210(menu._28.get(), menu._2a.get(), _800c71bc, 31, 0xc, Translucency.B_PLUS_F, menu.colour_2c.get());
 
       if((menu._02.get() & 0x1L) != 0) {
-        FUN_800f7210(menu._3c.get(), menu._2a.get(), _800c71bc, 31, 0xc, Translucency.B_PLUS_F, 0x80 - menu.colour_2c.get());
+        FUN_800f7210(menu._3c.get(), menu._2a.get(), _800c71bc, 31, 0xc, Translucency.B_PLUS_F, Math.max(0, 0x80 - menu.colour_2c.get()));
       }
 
       //LAB_800f704c

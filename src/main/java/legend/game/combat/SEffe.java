@@ -20,6 +20,7 @@ import legend.core.gte.SVECTOR;
 import legend.core.gte.Tmd;
 import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.TmdWithId;
+import legend.core.gte.USCOLOUR;
 import legend.core.gte.VECTOR;
 import legend.core.memory.Memory;
 import legend.core.memory.Method;
@@ -1070,7 +1071,7 @@ public final class SEffe {
       final MATRIX sp0x10 = new MATRIX();
       FUN_800fc4bc(sp0x10, a0, a2);
       if((MEMORY.ref(4, a2).offset(0x0L).get() & 0x40L) == 0) {
-        FUN_800e61e4((int)(MEMORY.ref(1, a2).offset(0x40L).getSigned() << 5), (int)(MEMORY.ref(1, a2).offset(0x41L).getSigned() << 5), (int)(MEMORY.ref(1, a2).offset(0x42L).getSigned() << 5));
+        FUN_800e61e4((int)(MEMORY.ref(1, a2).offset(0x40L).get() << 5), (int)(MEMORY.ref(1, a2).offset(0x41L).get() << 5), (int)(MEMORY.ref(1, a2).offset(0x42L).get() << 5));
       }
 
       //LAB_800fcf94
@@ -1123,44 +1124,44 @@ public final class SEffe {
     }
 
     if((a1._08._1c & 0x400_0000) != 0) {
-      a2._84 = (short)(a0._10.colour_1c.getX() << 8);
-      a2._86 = (short)(a0._10.colour_1c.getY() << 8);
-      a2._88 = (short)(a0._10.colour_1c.getZ() << 8);
+      a2.r_84 = a0._10.colour_1c.getX() << 8;
+      a2.g_86 = a0._10.colour_1c.getY() << 8;
+      a2.b_88 = a0._10.colour_1c.getZ() << 8;
 
       if((a0._10._24 & 0x1) == 0) {
-        a2._8a = 0;
-        a2._8c = 0;
-        a2._8e = 0;
+        a2.stepR_8a = 0;
+        a2.stepG_8c = 0;
+        a2.stepB_8e = 0;
         return;
       }
     }
 
     //LAB_800fd18c
     //LAB_800fd0dc
-    a2._8a = (short)(a2._84 / a2._12);
-    a2._8c = (short)(a2._86 / a2._12);
-    a2._8e = (short)(a2._88 / a2._12);
+    a2.stepR_8a = a2.r_84 / a2._12;
+    a2.stepG_8c = a2.g_86 / a2._12;
+    a2.stepB_8e = a2.b_88 / a2._12;
 
     //LAB_800fd1d4
   }
 
   @Method(0x800fd1dcL)
-  public static void FUN_800fd1dc(final EffectManagerData6c a0, final EffectData98 a1, final EffectData98Sub94 a2, final VECTOR a3) {
+  public static void FUN_800fd1dc(final EffectManagerData6c a0, final EffectData98 a1, final EffectData98Sub94 a2, final VECTOR colour) {
     if((a1._08._1c & 0x800_0000) == 0 || (a0._10._24 & 0x1) != 0) {
       //LAB_800fd23c
-      a2._84 -= a2._8a;
-      a2._86 -= a2._8c;
-      a2._88 -= a2._8e;
+      a2.r_84 -= a2.stepR_8a;
+      a2.g_86 -= a2.stepG_8c;
+      a2.b_88 -= a2.stepB_8e;
     } else {
-      a2._84 = (short)(a0._10.colour_1c.getX() << 8);
-      a2._86 = (short)(a0._10.colour_1c.getY() << 8);
-      a2._88 = (short)(a0._10.colour_1c.getZ() << 8);
+      a2.r_84 = a0._10.colour_1c.getX() << 8;
+      a2.g_86 = a0._10.colour_1c.getY() << 8;
+      a2.b_88 = a0._10.colour_1c.getZ() << 8;
     }
 
     //LAB_800fd26c
-    a3.setX(a2._84);
-    a3.setY(a2._86);
-    a3.setZ(a2._88);
+    colour.setX(a2.r_84);
+    colour.setY(a2.g_86);
+    colour.setZ(a2.b_88);
     a2._50.add(a2._58);
     a2._58.add(a2._60);
 
@@ -1689,10 +1690,10 @@ public final class SEffe {
     a2._58.setY((short)-(seed_800fa754.get() % 91 + 10));
 
     seed_800fa754.advance();
-    final long a0_0 = seed_800fa754.get() % 101 - 50 << 8;
-    a2._84 += a0_0;
-    a2._86 += a0_0;
-    a2._88 += a0_0;
+    final long colourStep = seed_800fa754.get() % 101 - 50 << 8;
+    a2.r_84 += colourStep;
+    a2.g_86 += colourStep;
+    a2.b_88 += colourStep;
 
     return theta;
   }
@@ -1838,22 +1839,22 @@ public final class SEffe {
 
   @Method(0x800ff6fcL)
   public static void FUN_800ff6fc(final EffectManagerData6c u0, final EffectData98 u1, final EffectData98Sub94 a2, final EffectData98Inner24 a3) {
-    final long a0 = _8011a008.get();
+    final int a0 = (int)_8011a008.get();
     a2._10 = -0x80;
-    final long v1 = a0 >>> 1;
+    final int v1 = a0 >>> 1;
     a2._0e = (short)(v1 * 128);
     a2._14 = (short)(v1 * 128);
     a2._16 = a3._10;
     a2._18 = (short)(a0 & 0x1);
     a2._1a.setX((short)(v1 * 8));
 
-    final long a1 = Math.max(0, (a3._1c >>> 8 & 0xff) - a0 * 16);
+    final int a1 = Math.max(0, (a3._1c >>> 8 & 0xff) - a0 * 16);
 
     //LAB_800ff754
     a2._12 = -1;
-    a2._84 = (short)(a1 << 8);
-    a2._86 = (short)(a1 << 8);
-    a2._88 = (short)(a1 << 8);
+    a2.r_84 = a1 << 8;
+    a2.g_86 = a1 << 8;
+    a2.b_88 = a1 << 8;
   }
 
   @Method(0x800ff788L)
@@ -1902,9 +1903,9 @@ public final class SEffe {
     a2._14 = (short)(seed_800fa754.advance().get() % 4097);
     final int v0 = -a3._10 >> 5;
     final int a0 = a3._18;
-    a2._84 = 0;
-    a2._86 = 0;
-    a2._88 = 0;
+    a2.r_84 = 0;
+    a2.g_86 = 0;
+    a2.b_88 = 0;
     a2._16 = a3._10;
     a2._18 = (short)(v0 * a0 >> 8);
     a2._1a.setX((short)(a0 >>> 1));
@@ -2171,9 +2172,9 @@ public final class SEffe {
   @Method(0x80100e28L)
   public static void FUN_80100e28(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c a1, final EffectData98 a2, final EffectData98Sub94 a3) {
     if(a3._04 == 0) {
-      a3._8a = 0;
-      a3._8c = 0;
-      a3._8e = 0;
+      a3.stepR_8a = 0;
+      a3.stepG_8c = 0;
+      a3.stepB_8e = 0;
     }
 
     //LAB_80100e44
@@ -2182,9 +2183,9 @@ public final class SEffe {
   @Method(0x80100e4cL)
   public static void FUN_80100e4c(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c a1, final EffectData98 a2, final EffectData98Sub94 a3) {
     if(a3._04 == 0) {
-      a3._8a = (short)(-0x8000 / a3._12);
-      a3._8c = (short)(-0x8000 / a3._12);
-      a3._8e = (short)(-0x8000 / a3._12);
+      a3.stepR_8a = -0x8000 / a3._12;
+      a3.stepG_8c = -0x8000 / a3._12;
+      a3.stepB_8e = -0x8000 / a3._12;
     }
 
     //LAB_80100e98
@@ -2318,17 +2319,17 @@ public final class SEffe {
     s3._0a = 0;
     s3._0c = 0;
     s3._60.set((short)0, (short)0, (short)0);
-    s3._8a = 0;
-    s3._8c = 0;
-    s3._8e = 0;
+    s3.stepR_8a = 0;
+    s3.stepG_8c = 0;
+    s3.stepB_8e = 0;
     t2 = a4._20 * 10;
     brokenT2For800ff5c4 = t2;
     s3._04 = (short)(seed_800fa754.advance().get() % (a4._14 + 1) + 1);
     s3._12 = (short)((a4._1c & 0xff_0000) >>> 16);
-    final int a0 = (a4._1c & 0xff00) >>> 8;
-    s3._84 = (short)a0;
-    s3._86 = (short)a0;
-    s3._88 = (short)a0;
+    final int colour = (a4._1c & 0xff00) >>> 8;
+    s3.r_84 = colour;
+    s3.g_86 = colour;
+    s3.b_88 = colour;
     s3._90 |= 0x1;
     s3._0e = (short)(seed_800fa754.advance().get() % 4097);
     s3._10 = (short)(seed_800fa754.advance().get() % 513 - 256);
@@ -2339,9 +2340,9 @@ public final class SEffe {
     s3._78.setY((short)(seed_800fa754.advance().get() % 129 - 64));
     s3._78.setZ((short)0);
     s3._90 = s3._90 & 0xffff_fff1 | (seed_800fa754.advance().get() % 101 < 50 ? 0 : 0x8);
-    s3._84 <<= 8;
-    s3._88 <<= 8;
-    s3._86 <<= 8;
+    s3.r_84 <<= 8;
+    s3.b_88 <<= 8;
+    s3.g_86 <<= 8;
     s5 = _801198f0.offset(t2).getAddress();
     v1 = MEMORY.ref(1, s5).get();
     s7 = a4._20;
@@ -2718,16 +2719,16 @@ public final class SEffe {
       //LAB_80102a04
       for(a1 = 0; a1 < s0._28.get(); a1++) {
         final BttlScriptData6cSub38Sub14Sub30 struct = s1.ptr_10.deref().get(a1);
-        struct.colour_10.set((short)sp10, (short)sp12, (short)sp14);
-        struct.colour_16.set((short)sp16, (short)sp18, (short)sp1a);
+        struct.colour_10.set(sp10, sp12, sp14);
+        struct.colour_16.set(sp16, sp18, sp1a);
 
         if(s0._22.get() == 0 && s0._0c.get() != -1) {
           struct._1c.set(struct.colour_10).div(s0._0c.get());
           struct._22.set(struct.colour_16).div(s0._0c.get());
         } else {
           //LAB_80102b10
-          struct._1c.set((short)0, (short)0, (short)0);
-          struct._22.set((short)0, (short)0, (short)0);
+          struct._1c.set(0, 0, 0);
+          struct._22.set(0, 0, 0);
         }
 
         //LAB_80102b28
@@ -2786,7 +2787,7 @@ public final class SEffe {
    * @param xy 4 vertices (note: data was originally passed in as ints so you need to change the calling code)
    */
   @Method(0x80102f7cL)
-  public static void renderGradient(final SVECTOR colour1, final SVECTOR colour2, final DVECTOR[] xy, final int a3, final int a4, final Translucency translucency) {
+  public static void renderGradient(final USCOLOUR colour1, final USCOLOUR colour2, final DVECTOR[] xy, final int a3, final int a4, final Translucency translucency) {
     final GpuCommandPoly cmd = new GpuCommandPoly(4)
       .translucent(translucency)
       .pos(0, xy[0].getX(), xy[0].getY())
@@ -3435,18 +3436,18 @@ public final class SEffe {
         sp0x18[2].setY(s4_1.y_02.get());
         sp0x18[3].setX((short)(s4_1.x_00.get() + 1));
         sp0x18[3].setY(s4_1.y_02.get());
-        renderGradient(s4_1.svec_0a, s4_2.svec_0a, sp0x18, data.z_14, data._08, translucency);
+        renderGradient(s4_1.colour_0a, s4_2.colour_0a, sp0x18, data.z_14, data._08, translucency);
         sp0x18[0].setX((short)(s4_2.x_00.get() - s4_2._1c.get() / 3));
         sp0x18[2].setX((short)(s4_1.x_00.get() - s4_1._1c.get() / 3));
-        renderGradient(s4_1.svec_04, s4_2.svec_04, sp0x18, data.z_14, data._08, translucency);
+        renderGradient(s4_1.colour_04, s4_2.colour_04, sp0x18, data.z_14, data._08, translucency);
         sp0x18[0].setX((short)(s4_2.x_00.get() + s4_2._1c.get()));
         sp0x18[1].setX(s4_2.x_00.get());
         sp0x18[2].setX((short)(s4_1.x_00.get() + s4_1._1c.get()));
         sp0x18[3].setX(s4_1.x_00.get());
-        renderGradient(s4_1.svec_0a, s4_2.svec_0a, sp0x18, data.z_14, data._08, translucency);
+        renderGradient(s4_1.colour_0a, s4_2.colour_0a, sp0x18, data.z_14, data._08, translucency);
         sp0x18[0].setX((short)(s4_2.x_00.get() + s4_2._1c.get() / 3));
         sp0x18[2].setX((short)(s4_1.x_00.get() + s4_1._1c.get() / 3));
-        renderGradient(s4_1.svec_04, s4_2.svec_04, sp0x18, data.z_14, data._08, translucency);
+        renderGradient(s4_1.colour_04, s4_2.colour_04, sp0x18, data.z_14, data._08, translucency);
       }
     }
 
@@ -3466,8 +3467,8 @@ public final class SEffe {
         //LAB_80105b00
         for(int a2 = 0; a2 < data.count_0c; a2++) {
           final BttlScriptData6cSub1c_2Sub1e a0 = data._18.get(a3).deref().get(a2);
-          a0.svec_04.sub(a0.svec_10);
-          a0.svec_0a.sub(a0.svec_16);
+          a0.colour_04.sub(a0.svec_10);
+          a0.colour_0a.sub(a0.svec_16);
         }
       }
     }
@@ -3532,10 +3533,10 @@ public final class SEffe {
           effect._08 = manager._10.z_22;
           struct1e.x_00.set(refX.get());
           struct1e.y_02.set(refY.get());
-          struct1e.svec_04.set(s0.colour_10);
-          struct1e.svec_0a.set(s0.colour_16);
-          struct1e.svec_10.set(struct1e.svec_04).div(s3);
-          struct1e.svec_16.set(struct1e.svec_0a).div(s3);
+          struct1e.colour_04.set(s0.colour_10);
+          struct1e.colour_0a.set(s0.colour_16);
+          struct1e.svec_10.set(struct1e.colour_04).div(s3);
+          struct1e.svec_16.set(struct1e.colour_0a).div(s3);
         }
       }
     }

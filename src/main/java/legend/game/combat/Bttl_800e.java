@@ -867,6 +867,18 @@ public final class Bttl_800e {
 
   @Method(0x800e60e0L)
   public static void FUN_800e60e0(final int r, final int g, final int b) {
+    if(r < 0) {
+      LOGGER.warn("Negative R! %x", r);
+    }
+
+    if(g < 0) {
+      LOGGER.warn("Negative R! %x", g);
+    }
+
+    if(b < 0) {
+      LOGGER.warn("Negative R! %x", b);
+    }
+
     final BattleLightStruct64 v1 = _800c6930;
     final VECTOR s0 = v1._30[v1._60];
 
@@ -885,6 +897,18 @@ public final class Bttl_800e {
 
   @Method(0x800e61e4L)
   public static void FUN_800e61e4(final int r, final int g, final int b) {
+    if(r < 0) {
+      LOGGER.warn("Negative R! %x", r);
+    }
+
+    if(g < 0) {
+      LOGGER.warn("Negative R! %x", g);
+    }
+
+    if(b < 0) {
+      LOGGER.warn("Negative R! %x", b);
+    }
+
     GsSetFlatLight(0, light_800c6ddc);
     GsSetFlatLight(1, light_800c6ddc);
     GsSetFlatLight(2, light_800c6ddc);

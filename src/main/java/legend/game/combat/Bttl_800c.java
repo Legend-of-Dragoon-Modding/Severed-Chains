@@ -3944,7 +3944,9 @@ public final class Bttl_800c {
     final BttlScriptData6cSub0e effect = (BttlScriptData6cSub0e)manager.effect_44;
 
     if(effect.scale_0c.get() != 0) {
-      effect.svec_00.add(effect.svec_06);
+      effect.r_00.add(effect.stepR_06.get());
+      effect.g_02.add(effect.stepG_08.get());
+      effect.b_04.add(effect.stepB_0a.get());
       effect.scale_0c.decr();
     }
 
@@ -3957,7 +3959,7 @@ public final class Bttl_800c {
 
     GPU.queueCommand(30, new GpuCommandQuad()
       .translucent(Translucency.of(manager._10.flags_00 >>> 28 & 0b11))
-      .rgb(a0.svec_00.getX(), a0.svec_00.getY(), a0.svec_00.getZ())
+      .rgb(a0.r_00.get(), a0.g_02.get(), a0.b_04.get())
       .pos(-160, -120, 320, 280)
     );
   }
@@ -3965,12 +3967,12 @@ public final class Bttl_800c {
   /** Used at the end of Rose transform */
   @Method(0x800cec8cL)
   public static FlowControl FUN_800cec8c(final RunningScript<? extends BattleScriptDataBase> script) {
-    final short sp18 = (short)(script.params_20[1].get() << 8);
-    final short sp1a = (short)(script.params_20[2].get() << 8);
-    final short sp1c = (short)(script.params_20[3].get() << 8);
-    final short sp20 = (short)(script.params_20[4].get() << 8);
-    final short sp22 = (short)(script.params_20[5].get() << 8);
-    final short sp24 = (short)(script.params_20[6].get() << 8);
+    final int r = script.params_20[1].get() << 8;
+    final int g = script.params_20[2].get() << 8;
+    final int b = script.params_20[3].get() << 8;
+    final int sp20 = script.params_20[4].get() << 8;
+    final int sp22 = script.params_20[5].get() << 8;
+    final int sp24 = script.params_20[6].get() << 8;
     final short s1 = (short)script.params_20[7].get();
 
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
@@ -3986,8 +3988,12 @@ public final class Bttl_800c {
     manager._10.flags_00 = 0x5000_0000;
 
     final BttlScriptData6cSub0e a2 = (BttlScriptData6cSub0e)manager.effect_44;
-    a2.svec_00.set(sp18, sp1a, sp1c);
-    a2.svec_06.set((short)((sp20 - sp18) / s1), (short)((sp22 - sp1a) / s1), (short)((sp24 - sp1c) / s1));
+    a2.r_00.set(r);
+    a2.g_02.set(g);
+    a2.b_04.set(b);
+    a2.stepR_06.set((short)((sp20 - r) / s1));
+    a2.stepG_08.set((short)((sp22 - g) / s1));
+    a2.stepB_0a.set((short)((sp24 - b) / s1));
     a2.scale_0c.set(s1);
 
     script.params_20[0].set(state.index);

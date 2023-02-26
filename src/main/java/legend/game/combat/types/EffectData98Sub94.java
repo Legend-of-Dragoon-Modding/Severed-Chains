@@ -41,12 +41,12 @@ public class EffectData98Sub94 {
   public final SVECTOR _78 = new SVECTOR();
   /** TODO ptr */
   public long _80;
-  public short _84;
-  public short _86;
-  public short _88;
-  public short _8a;
-  public short _8c;
-  public short _8e;
+  public int r_84;
+  public int g_86;
+  public int b_88;
+  public int stepR_8a;
+  public int stepG_8c;
+  public int stepB_8e;
   public int _90;
 
   public EffectData98Sub94(final int index) {
