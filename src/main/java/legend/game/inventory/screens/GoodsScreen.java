@@ -212,7 +212,7 @@ public class GoodsScreen extends MenuScreen {
 
       case GLFW_KEY_DOWN -> {
         if(this.selectedSlot >= 12) {
-          if((this.selectedSlot + this.slotScroll * 2) < this.menuItems.size()) {
+          if(this.selectedSlot + this.slotScroll < this.menuItems.size()) {
             this.scroll(this.slotScroll + 2);
           }
 
@@ -221,6 +221,11 @@ public class GoodsScreen extends MenuScreen {
 
         playSound(1);
         this.selectedSlot += 2;
+
+        if(this.selectedSlot + this.slotScroll >= this.menuItems.size()) {
+          this.selectedSlot = this.menuItems.size() - this.slotScroll - 1;
+        }
+
         this.highlight.x_40 = this.getSlotX(this.selectedSlot & 1);
         this.highlight.y_44 = this.getSlotY(this.selectedSlot / 2) + 32;
       }
