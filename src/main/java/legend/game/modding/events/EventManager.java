@@ -95,6 +95,9 @@ public class EventManager {
     for(final var entry : this.listeners.entrySet()) {
       if(entry.getValue().isInstance(event)) {
         entry.getKey().accept(event);
+        if(event instanceof EventProvider) {
+          ((EventProvider)event).applyEvent();
+        }
       }
     }
 
