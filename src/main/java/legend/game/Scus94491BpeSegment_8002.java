@@ -5214,7 +5214,8 @@ public final class Scus94491BpeSegment_8002 {
 
       //LAB_8002c448
       LOGGER.info("PLAY XA %d", MEMORY.ref(2, v1).offset(xaArchiveIndex * 0x8L).getSigned());
-      Fmv.playXa(xaArchiveIndex, xaFileIndex);
+      //TODO don't do this.
+      new Thread(() -> Fmv.playXa(xaArchiveIndex, xaFileIndex)).start();
 //      final CdlLOC pos = CdlFILE_800bb4c8.get((int)MEMORY.ref(2, v1).offset(xaArchiveIndex * 0x8L).getSigned()).pos;
 
 //      CDROM.playXaAudio(pos, 1, xaFileIndex, () -> _800bf0cf.setu(0));
