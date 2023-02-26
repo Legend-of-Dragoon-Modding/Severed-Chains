@@ -124,7 +124,9 @@ import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
+import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
+import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021de4;
 import static legend.game.Scus94491BpeSegment_8002.SetRotMatrix;
 import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
@@ -1094,7 +1096,15 @@ public final class SEffe {
       final GsDOBJ2 sp0x60 = new GsDOBJ2();
       sp0x60.attribute_00 = (int)MEMORY.ref(4, a2).offset(0x0L).get();
       sp0x60.tmd_08 = tmd;
+
+      final int oldZShift = zShift_1f8003c4.get();
+      final int oldZMax = zMax_1f8003cc.get();
+      zShift_1f8003c4.set(2);
+      zMax_1f8003cc.set(0xffe);
       Renderer.renderDobj2(sp0x60, false);
+      zShift_1f8003c4.set(oldZShift);
+      zMax_1f8003cc.set(oldZMax);
+
       if((MEMORY.ref(4, a2).offset(0x0L).get() & 0x40L) == 0) {
         FUN_800e62a8();
       }
@@ -6602,6 +6612,11 @@ public final class SEffe {
           zOffset_1f8003e8.set(0);
           tmdGp0Tpage_1f8003ec.set(manager._10.flags_00 >>> 23 & 0x60);
 
+          final int oldZShift = zShift_1f8003c4.get();
+          final int oldZMax = zMax_1f8003cc.get();
+          zShift_1f8003c4.set(2);
+          zMax_1f8003cc.set(0xffe);
+
           if(s3._01) {
             sp0xf8.tmd_08 = s3.objTable_98;
             Renderer.renderDobj2(sp0xf8, false);
@@ -6615,6 +6630,9 @@ public final class SEffe {
             sp0xf8.tmd_08 = s3.objTable_9c;
             Renderer.renderDobj2(sp0xf8, false);
           }
+
+          zShift_1f8003c4.set(oldZShift);
+          zMax_1f8003cc.set(oldZMax);
 
           //LAB_8010f608
           if((manager._10.flags_00 & 0x40) == 0) {
@@ -9628,7 +9646,14 @@ public final class SEffe {
         final GsDOBJ2 dobj2 = new GsDOBJ2();
         dobj2.attribute_00 = data._10.flags_00;
         dobj2.tmd_08 = s1.tmd_08;
+
+        final int oldZShift = zShift_1f8003c4.get();
+        final int oldZMax = zMax_1f8003cc.get();
+        zShift_1f8003c4.set(2);
+        zMax_1f8003cc.set(0xffe);
         Renderer.renderDobj2(dobj2, false);
+        zShift_1f8003c4.set(oldZShift);
+        zMax_1f8003cc.set(oldZMax);
       } else {
         //LAB_80118370
         FUN_800de3f4(s1.tmd_08, data._10, sp0x10);

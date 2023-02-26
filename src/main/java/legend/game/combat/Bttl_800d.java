@@ -62,7 +62,9 @@ import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
+import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
+import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021724;
 import static legend.game.Scus94491BpeSegment_8002.SetGeomOffset;
 import static legend.game.Scus94491BpeSegment_8002.SetRotMatrix;
@@ -4569,7 +4571,15 @@ public final class Bttl_800d {
           CPU.CTC2(ls.transfer.getZ(), 7);
           final int s0 = s2.attribute_00;
           s2.attribute_00 = a1;
+
+          final int oldZShift = zShift_1f8003c4.get();
+          final int oldZMax = zMax_1f8003cc.get();
+          zShift_1f8003c4.set(2);
+          zMax_1f8003cc.set(0xffe);
           Renderer.renderDobj2(s2, false);
+          zShift_1f8003c4.set(oldZShift);
+          zMax_1f8003cc.set(oldZMax);
+
           s2.attribute_00 = s0;
         }
       }
@@ -4880,7 +4890,14 @@ public final class Bttl_800d {
       final GsDOBJ2 dobj2 = new GsDOBJ2();
       dobj2.attribute_00 = a1.flags_00;
       dobj2.tmd_08 = a0;
+
+      final int oldZShift = zShift_1f8003c4.get();
+      final int oldZMax = zMax_1f8003cc.get();
+      zShift_1f8003c4.set(2);
+      zMax_1f8003cc.set(0xffe);
       Renderer.renderDobj2(dobj2, false);
+      zShift_1f8003c4.set(oldZShift);
+      zMax_1f8003cc.set(oldZMax);
     }
 
     //LAB_800de528
