@@ -20,6 +20,10 @@ import legend.game.SMap;
 import legend.game.scripting.ScriptState;
 import legend.game.types.SubmapObject210;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 import static legend.game.SMap.sobjCount_800c6730;
 import static legend.game.SMap.sobjs_800c6880;
 
@@ -133,6 +137,17 @@ public class SmapDebuggerController {
     return "Script %d".formatted(index);
   }
 
+  public void delayedTurnOffAlertIcon() {
+    turnOffAlertIcon();
+  }
+
+  private void turnOffAlertIcon() {
+    if(this.sobj != null) {
+      this.alertIcon.setSelected(false);
+      this.sobj.showAlertIndicator_194 = this.alertIcon.isSelected();
+    }
+  }
+
   private void displayStats(final int index) {
     final ScriptState<SubmapObject210> state = sobjs_800c6880[index];
 
@@ -142,6 +157,7 @@ public class SmapDebuggerController {
 
     this.scriptIndex.setText("View script %d".formatted(index));
 
+    this.turnOffAlertIcon();
     this.sobj = state.innerStruct_00;
 
     this.posX.getValueFactory().setValue(this.sobj.model_00.coord2_14.coord.transfer.getX());
@@ -164,7 +180,12 @@ public class SmapDebuggerController {
     this.collide800.setSelected((this.sobj.flags_190 & 0x800_0000) != 0);
     this.collide1000.setSelected((this.sobj.flags_190 & 0x1000_0000) != 0);
 
-    this.alertIcon.setSelected(this.sobj.showAlertIndicator_194);
+    ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+    executorService.schedule(this::delayedTurnOffAlertIcon, 1000, TimeUnit.MILLISECONDS);
+    if(this.sobj != null) {
+      this.alertIcon.setSelected(true);
+      this.sobj.showAlertIndicator_194 = this.alertIcon.isSelected();
+    }
   }
 
   public void openScriptDebugger(final ActionEvent event) throws Exception {
