@@ -3672,21 +3672,21 @@ public final class Bttl_800c {
 
       final IntRef sp0x38 = new IntRef();
       final IntRef sp0x3c = new IntRef();
-      FUN_800cf244(s0._04.get(0), sp0x38, sp0x3c);
+      transformWorldspaceToScreenspace(s0._04.get(0), sp0x38, sp0x3c);
 
       final IntRef sp0x40 = new IntRef();
       final IntRef sp0x44 = new IntRef();
-      final int z = FUN_800cf244(s0._04.get(1), sp0x40, sp0x44) >> 2;
+      final int z = transformWorldspaceToScreenspace(s0._04.get(1), sp0x40, sp0x44) >> 2;
 
       //LAB_800cdf94
       s0 = s0._24.derefNullable();
       for(int i = 0; i < s2._0e && s0 != null; i++) {
         final IntRef sp0x28 = new IntRef();
         final IntRef sp0x2c = new IntRef();
-        FUN_800cf244(s0._04.get(0), sp0x28, sp0x2c);
+        transformWorldspaceToScreenspace(s0._04.get(0), sp0x28, sp0x2c);
         final IntRef sp0x30 = new IntRef();
         final IntRef sp0x34 = new IntRef();
-        FUN_800cf244(s0._04.get(1), sp0x30, sp0x34);
+        transformWorldspaceToScreenspace(s0._04.get(1), sp0x30, sp0x34);
 
         final GpuCommandPoly cmd = new GpuCommandPoly(4)
           .translucent(Translucency.B_PLUS_F)
@@ -4026,27 +4026,27 @@ public final class Bttl_800c {
 
   /** @return Z */
   @Method(0x800cf244L)
-  public static int FUN_800cf244(final VECTOR a0, final IntRef a1, final IntRef a2) {
+  public static int transformWorldspaceToScreenspace(final VECTOR pos, final IntRef outX, final IntRef outY) {
     CPU.CTC2(worldToScreenMatrix_800c3548.getPacked(0), 0);
     CPU.CTC2(worldToScreenMatrix_800c3548.getPacked(2), 1);
     CPU.CTC2(worldToScreenMatrix_800c3548.getPacked(4), 2);
     CPU.CTC2(worldToScreenMatrix_800c3548.getPacked(6), 3);
     CPU.CTC2(worldToScreenMatrix_800c3548.getPacked(8), 4);
 
-    final SVECTOR a0s = new SVECTOR().set(a0);
+    final SVECTOR a0s = new SVECTOR().set(pos);
     CPU.MTC2(a0s.getXY(), 0); // VXY0
     CPU.MTC2(a0s.getZ(),  1); // VZ0
     CPU.COP2(0x48_6012L); // MVMVA - multiply V0 by rotation matrix and add nothing
 
     final VECTOR sp0x10 = new VECTOR().set((int)CPU.MFC2(25), (int)CPU.MFC2(26), (int)CPU.MFC2(27));
     sp0x10.add(worldToScreenMatrix_800c3548.transfer);
-    a1.set(MathHelper.safeDiv(getProjectionPlaneDistance() * sp0x10.getX(), sp0x10.getZ()));
-    a2.set(MathHelper.safeDiv(getProjectionPlaneDistance() * sp0x10.getY(), sp0x10.getZ()));
+    outX.set(MathHelper.safeDiv(getProjectionPlaneDistance() * sp0x10.getX(), sp0x10.getZ()));
+    outY.set(MathHelper.safeDiv(getProjectionPlaneDistance() * sp0x10.getY(), sp0x10.getZ()));
     return sp0x10.getZ();
   }
 
   @Method(0x800cf37cL)
-  public static void FUN_800cf37c(final EffectManagerData6c a0, @Nullable final SVECTOR a1, final VECTOR a2, final VECTOR a3) {
+  public static void FUN_800cf37c(final EffectManagerData6c a0, @Nullable final SVECTOR a1, final VECTOR a2, final VECTOR out) {
     final VECTOR sp0x10 = new VECTOR();
     final SVECTOR sp0x20 = new SVECTOR();
     final MATRIX sp0x28 = new MATRIX();
@@ -4077,11 +4077,11 @@ public final class Bttl_800c {
     sp0x10.setX((int)CPU.MFC2(25));
     sp0x10.setY((int)CPU.MFC2(26));
     sp0x10.setZ((int)CPU.MFC2(27));
-    a3.set(sp0x10);
+    out.set(sp0x10);
   }
 
   @Method(0x800cf4f4L)
-  public static void FUN_800cf4f4(final EffectManagerData6c a0, @Nullable final SVECTOR a1, final VECTOR a2, final VECTOR a3) {
+  public static void FUN_800cf4f4(final EffectManagerData6c a0, @Nullable final SVECTOR a1, final VECTOR a2, final VECTOR out) {
     final VECTOR sp0x10 = new VECTOR();
     final SVECTOR sp0x20 = new SVECTOR();
     final MATRIX sp0x28 = new MATRIX();
@@ -4112,7 +4112,7 @@ public final class Bttl_800c {
     sp0x10.setX((int)CPU.MFC2(25));
     sp0x10.setY((int)CPU.MFC2(26));
     sp0x10.setZ((int)CPU.MFC2(27));
-    a3.set(sp0x10);
+    out.set(sp0x10);
   }
 
   @Method(0x800cf684L)

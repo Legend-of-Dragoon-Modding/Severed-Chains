@@ -25,6 +25,7 @@ import legend.game.combat.deff.LmbType0;
 import legend.game.combat.types.AdditionCharEffectData0c;
 import legend.game.combat.types.AdditionScriptData1c;
 import legend.game.combat.types.AdditionSparksEffect08;
+import legend.game.combat.types.AdditionSparksEffectInstance4c;
 import legend.game.combat.types.AdditionStarburstEffect10;
 import legend.game.combat.types.BattleCamera;
 import legend.game.combat.types.BattleObject27c;
@@ -100,7 +101,7 @@ import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
-import static legend.game.combat.Bttl_800c.FUN_800cf244;
+import static legend.game.combat.Bttl_800c.transformWorldspaceToScreenspace;
 import static legend.game.combat.Bttl_800c.FUN_800cf37c;
 import static legend.game.combat.Bttl_800c.FUN_800cf4f4;
 import static legend.game.combat.Bttl_800c.FUN_800cfb14;
@@ -327,55 +328,49 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d09c0L)
-  public static void FUN_800d09c0(final EffectManagerData6c a0, final long a1) {
-    FUN_800cf4f4(a0, null, MEMORY.ref(4, a1 + 0x08L, VECTOR::new), MEMORY.ref(4, a1 + 0x08L, VECTOR::new));
-    FUN_800cf37c(a0, null, MEMORY.ref(4, a1 + 0x28L, VECTOR::new), MEMORY.ref(4, a1 + 0x28L, VECTOR::new));
-    MEMORY.ref(4, a1).offset(0x18L).setu(MEMORY.ref(4, a1).offset(0x08L).get());
-    MEMORY.ref(4, a1).offset(0x1cL).setu(MEMORY.ref(4, a1).offset(0x0cL).get());
-    MEMORY.ref(4, a1).offset(0x20L).setu(MEMORY.ref(4, a1).offset(0x10L).get());
+  public static void FUN_800d09c0(final EffectManagerData6c a0, final AdditionSparksEffectInstance4c inst) {
+    FUN_800cf4f4(a0, null, inst.startPos_08, inst.startPos_08);
+    FUN_800cf37c(a0, null, inst.speed_28, inst.speed_28);
+    inst.endPos_18.set(inst.startPos_08);
   }
 
   @Method(0x800d0a30L)
   public static void renderAdditionSparks(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    int s7 = 0;
-    long s3 = 0;
     final AdditionSparksEffect08 s6 = (AdditionSparksEffect08)data.effect_44;
-    long s2 = s6._04.get(); //TODO
 
     //LAB_800d0a7c
-    for(int s5 = 0; s5 < s6.count_00.get(); s5++) {
-      if(MEMORY.ref(1, s2).offset(0x4L).get() != 0) {
-        MEMORY.ref(1, s2).offset(0x4L).subu(0x1L);
+    int s7 = 0;
+    for(int i = 0; i < s6.count_00; i++) {
+      final AdditionSparksEffectInstance4c inst = s6.instances_04[i];
+
+      if(inst.delay_04 != 0) {
+        inst.delay_04--;
         //LAB_800d0a94
-      } else if(MEMORY.ref(1, s2).offset(0x5L).get() != 0) {
-        if(MEMORY.ref(4, s2).offset(0x0L).get() == 0) {
-          FUN_800d09c0(data, s2);
+      } else if(inst.ticksRemaining_05 != 0) {
+        if(inst.ticksExisted_00 == 0) {
+          FUN_800d09c0(data, inst);
         }
 
         //LAB_800d0ac8
-        MEMORY.ref(4, s2).offset(0x00L).addu(0x1L);
-        MEMORY.ref(1, s2).offset(0x05L).subu(0x1L);
-        MEMORY.ref(4, s2).offset(0x08L).addu(MEMORY.ref(4, s2).offset(0x28L).get());
-        MEMORY.ref(4, s2).offset(0x0cL).addu(MEMORY.ref(4, s2).offset(0x2cL).get());
-        MEMORY.ref(4, s2).offset(0x10L).addu(MEMORY.ref(4, s2).offset(0x30L).get());
-        final IntRef sp0x18 = new IntRef();
-        final IntRef sp0x1c = new IntRef();
-        final IntRef sp0x20 = new IntRef();
-        final IntRef sp0x24 = new IntRef();
-        final int s1 = FUN_800cf244(MEMORY.ref(4, s2 + 0x8L, VECTOR::new), sp0x18, sp0x1c);
-        FUN_800cf244(MEMORY.ref(4, s2 + 0x18L, VECTOR::new), sp0x20, sp0x24);
+        inst.ticksExisted_00++;
+        inst.ticksRemaining_05--;
+        inst.startPos_08.add(inst.speed_28);
+        final IntRef startX = new IntRef();
+        final IntRef startY = new IntRef();
+        final IntRef endX = new IntRef();
+        final IntRef endY = new IntRef();
+        final int s1 = transformWorldspaceToScreenspace(inst.startPos_08, startX, startY);
+        transformWorldspaceToScreenspace(inst.endPos_18, endX, endY);
 
-        if(s3 == 0) {
+        if(i == 0) {
           s7 = (short)s1 >> 2;
         }
 
         //LAB_800d0b3c
-        MEMORY.ref(4, s2).offset(0x2cL).addu(MEMORY.ref(2, s2).offset(0x3aL).getSigned());
-        MEMORY.ref(4, s2).offset(0x28L).addu(MEMORY.ref(2, s2).offset(0x38L).getSigned());
-        MEMORY.ref(4, s2).offset(0x30L).addu(MEMORY.ref(2, s2).offset(0x3cL).getSigned());
+        inst.speed_28.add(inst.acceleration_38);
 
-        if((int)MEMORY.ref(4, s2).offset(0x0cL).get() > 0) {
-          MEMORY.ref(4, s2).offset(0x2cL).setu(-MEMORY.ref(4, s2).offset(0x2cL).get() >> 1);
+        if(inst.startPos_08.getY() > 0) {
+          inst.speed_28.setY(-inst.speed_28.getY() / 2);
         }
 
         //LAB_800d0b88
@@ -388,37 +383,28 @@ public final class Bttl_800d {
 
           final GpuCommandLine cmd = new GpuCommandLine()
             .translucent(Translucency.B_PLUS_F)
-            .rgb(0, (int)MEMORY.ref(2, s2).offset(0x40L).get() >>> 8, (int)MEMORY.ref(2, s2).offset(0x42L).get() >>> 8, (int)MEMORY.ref(2, s2).offset(0x44L).get() >>> 8)
-            .rgb(1, (int)MEMORY.ref(2, s2).offset(0x40L).get() >>> 9, (int)MEMORY.ref(2, s2).offset(0x42L).get() >>> 9, (int)MEMORY.ref(2, s2).offset(0x44L).get() >>> 9)
-            .pos(0, sp0x18.get(), sp0x1c.get())
-            .pos(1, sp0x20.get(), sp0x24.get());
+            .rgb(0, inst.r_40 >>> 8, inst.g_42 >>> 8, inst.b_44 >>> 8)
+            .rgb(1, inst.r_40 >>> 9, inst.g_42 >>> 9, inst.b_44 >>> 9)
+            .pos(0, startX.get(), startY.get())
+            .pos(1, endX.get(), endY.get());
 
           //LAB_800d0c84
           GPU.queueCommand(s7 + a3 >> 2, cmd);
         }
 
         //LAB_800d0ca0
-        MEMORY.ref(2, s2).offset(0x40L).subu(MEMORY.ref(2, s2).offset(0x46L).get());
-        MEMORY.ref(2, s2).offset(0x42L).subu(MEMORY.ref(2, s2).offset(0x48L).get());
-        MEMORY.ref(4, s2).offset(0x20L).setu(MEMORY.ref(4, s2).offset(0x10L).get());
-        MEMORY.ref(2, s2).offset(0x44L).subu(MEMORY.ref(2, s2).offset(0x4aL).get());
-        MEMORY.ref(4, s2).offset(0x18L).setu(MEMORY.ref(4, s2).offset(0x08L).get());
-        MEMORY.ref(4, s2).offset(0x1cL).setu(MEMORY.ref(4, s2).offset(0x0cL).get());
-        s3 = s3 + 0x1L;
+        inst.r_40 -= inst.stepR_46;
+        inst.g_42 -= inst.stepG_48;
+        inst.b_44 -= inst.stepB_4a;
+        inst.endPos_18.set(inst.startPos_08);
       }
 
       //LAB_800d0cec
       //LAB_800d0cf0
-      s2 = s2 + 0x4cL;
     }
 
     //LAB_800d0d10
     //LAB_800d0d94
-  }
-
-  @Method(0x800d0dc0L)
-  public static void deallocateAdditionSparksEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    free(((AdditionSparksEffect08)data.effect_44)._04.get());
   }
 
   @Method(0x800d0decL)
@@ -428,47 +414,39 @@ public final class Bttl_800d {
 
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       script.scriptState_04,
-      0x8,
+      0,
       null,
       Bttl_800d::renderAdditionSparks,
-      Bttl_800d::deallocateAdditionSparksEffect,
-      AdditionSparksEffect08::new
+      null,
+      value -> new AdditionSparksEffect08(count)
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
     final AdditionSparksEffect08 effect = (AdditionSparksEffect08)manager.effect_44;
 
-    long t6 = mallocTail(count * 0x4cL);
-    effect._04.set(t6);
-    effect.count_00.set(count);
-
-    final long s1 = script.params_20[5].get() / s4;
+    final int s1 = script.params_20[5].get() / s4;
 
     //LAB_800d0ee0
     for(int i = 0; i < count; i++) {
-      MEMORY.ref(4, t6).offset(0x0L).setu(0);
+      final AdditionSparksEffectInstance4c inst = effect.instances_04[i];
 
-      MEMORY.ref(1, t6).offset(0x4L).setu(seed_800fa754.advance().get() % (s4 + 0x1L));
-      MEMORY.ref(1, t6).offset(0x5L).setu(seed_800fa754.advance().get() % 9 + 7);
+      inst.ticksExisted_00 = 0;
 
-      MEMORY.ref(2, t6).offset(0x40L).setu(script.params_20[2].get() << 8);
-      MEMORY.ref(2, t6).offset(0x46L).setu(MEMORY.ref(2, t6).offset(0x40L).get() / MEMORY.ref(1, t6).offset(0x5L).get());
-      MEMORY.ref(2, t6).offset(0x42L).setu(script.params_20[3].get() << 8);
-      MEMORY.ref(2, t6).offset(0x48L).setu(MEMORY.ref(2, t6).offset(0x44L).get() / MEMORY.ref(1, t6).offset(0x5L).get());
-      MEMORY.ref(2, t6).offset(0x44L).setu(script.params_20[4].get() << 8);
-      MEMORY.ref(2, t6).offset(0x4aL).setu(MEMORY.ref(2, t6).offset(0x48L).get() / MEMORY.ref(1, t6).offset(0x5L).get());
-      MEMORY.ref(4, t6).offset(0x8L).setu(MEMORY.ref(1, t6).offset(0x4L).get() * s1);
-      MEMORY.ref(4, t6).offset(0x1cL).setu(0);
-      MEMORY.ref(4, t6).offset(0x18L).setu(0);
-      MEMORY.ref(4, t6).offset(0x10L).setu(0);
-      MEMORY.ref(4, t6).offset(0xcL).setu(0);
-      MEMORY.ref(2, t6).offset(0x38L).setu(0);
-      MEMORY.ref(4, t6).offset(0x28L).setu(seed_800fa754.advance().get() % 201);
-      MEMORY.ref(4, t6).offset(0x2cL).setu(seed_800fa754.advance().get() % 201 - 100);
-      MEMORY.ref(4, t6).offset(0x30L).setu(seed_800fa754.advance().get() % 201 - 100);
-      MEMORY.ref(2, t6).offset(0x3aL).setu(0xfL);
-      MEMORY.ref(2, t6).offset(0x3cL).setu(0);
-      t6 = t6 + 0x4cL;
+      inst.delay_04 = (byte)(seed_800fa754.advance().get() % (s4 + 1));
+      inst.ticksRemaining_05 = (byte)(seed_800fa754.advance().get() % 9 + 7);
+
+      inst.startPos_08.set(inst.delay_04 * s1, 0, 0);
+      inst.endPos_18.set(0, 0, 0);
+      inst.speed_28.set((int)seed_800fa754.advance().get() % 201, (int)seed_800fa754.advance().get() % 201 - 100, (int)seed_800fa754.advance().get() % 201 - 100);
+      inst.acceleration_38.set((short)0, (short)15, (short)0);
+
+      inst.r_40 = script.params_20[2].get() << 8;
+      inst.g_42 = script.params_20[3].get() << 8;
+      inst.b_44 = script.params_20[4].get() << 8;
+
+      inst.stepR_46 = inst.r_40 / inst.ticksRemaining_05;
+      inst.stepG_48 = inst.g_42 / inst.ticksRemaining_05;
+      inst.stepB_4a = inst.b_44 / inst.ticksRemaining_05;
     }
 
     //LAB_800d1154
@@ -486,7 +464,7 @@ public final class Bttl_800d {
       final VECTOR sp0x10 = new VECTOR();
       scriptGetScriptedObjectPos(a1.scriptIndex_00.get(), sp0x10);
       sp0x10.add(a0._10.trans_04);
-      FUN_800cf244(sp0x10, a2[0], a2[1]);
+      transformWorldspaceToScreenspace(sp0x10, a2[0], a2[1]);
     }
 
     //LAB_800d120c
@@ -798,7 +776,7 @@ public final class Bttl_800d {
       sp0x58.setX(data._10.trans_04.getX() + (i != 0 ? data._10.scale_16.getX() / 4 : 0));
       sp0x58.setY((int)(data._10.trans_04.getY() + (MEMORY.ref(2, s1).offset(0x2L).getSigned() * data._10.scale_16.getY() >> 12)));
       sp0x58.setZ((int)(data._10.trans_04.getZ() + (MEMORY.ref(2, s1).offset(0x0L).getSigned() * data._10.scale_16.getZ() >> 12)));
-      s3 = FUN_800cf244(sp0x58, sp0x18[i], sp0x38[i]);
+      s3 = transformWorldspaceToScreenspace(sp0x58, sp0x18[i], sp0x38[i]);
     }
 
     s3 = s3 >> 2;
@@ -855,7 +833,7 @@ public final class Bttl_800d {
         sp0x58.setX(s7_0 + data._10.trans_04.getX());
         sp0x58.setY((((int)MEMORY.ref(2, s1).offset(0x2L).getSigned() * data._10.scale_16.getY() >> 12) * s6 >> 12) + data._10.trans_04.getY());
         sp0x58.setZ((((int)MEMORY.ref(2, s1).offset(0x0L).getSigned() * data._10.scale_16.getZ() >> 12) * s6 >> 12) + data._10.trans_04.getZ());
-        s3 = FUN_800cf244(sp0x58, sp0x18[n], sp0x38[n]) >> 2;
+        s3 = transformWorldspaceToScreenspace(sp0x58, sp0x18[n], sp0x38[n]) >> 2;
       }
 
       //LAB_800d2e20
