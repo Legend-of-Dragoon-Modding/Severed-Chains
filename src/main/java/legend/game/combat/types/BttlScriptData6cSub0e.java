@@ -14,7 +14,7 @@ public class BttlScriptData6cSub0e implements BttlScriptData6cSubBase1, MemoryRe
   public final ShortRef stepR_06;
   public final ShortRef stepG_08;
   public final ShortRef stepB_0a;
-  public final ShortRef scale_0c;
+  public final UnsignedShortRef ticksRemaining_0c;
 
   public BttlScriptData6cSub0e(final Value ref) {
     this.ref = ref;
@@ -25,7 +25,7 @@ public class BttlScriptData6cSub0e implements BttlScriptData6cSubBase1, MemoryRe
     this.stepR_06 = ref.offset(2, 0x06L).cast(ShortRef::new);
     this.stepG_08 = ref.offset(2, 0x08L).cast(ShortRef::new);
     this.stepB_0a = ref.offset(2, 0x0aL).cast(ShortRef::new);
-    this.scale_0c = ref.offset(2, 0x0cL).cast(ShortRef::new);
+    this.ticksRemaining_0c = ref.offset(2, 0x0cL).cast(UnsignedShortRef::new);
   }
 
   @Override

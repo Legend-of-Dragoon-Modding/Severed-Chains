@@ -3943,11 +3943,11 @@ public final class Bttl_800c {
   public static void FUN_800cea9c(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
     final BttlScriptData6cSub0e effect = (BttlScriptData6cSub0e)manager.effect_44;
 
-    if(effect.scale_0c.get() != 0) {
+    if(effect.ticksRemaining_0c.get() != 0) {
       effect.r_00.add(effect.stepR_06.get());
       effect.g_02.add(effect.stepG_08.get());
       effect.b_04.add(effect.stepB_0a.get());
-      effect.scale_0c.decr();
+      effect.ticksRemaining_0c.decr();
     }
 
     //LAB_800ceb20
@@ -3970,10 +3970,10 @@ public final class Bttl_800c {
     final int r = script.params_20[1].get() << 8;
     final int g = script.params_20[2].get() << 8;
     final int b = script.params_20[3].get() << 8;
-    final int sp20 = script.params_20[4].get() << 8;
-    final int sp22 = script.params_20[5].get() << 8;
-    final int sp24 = script.params_20[6].get() << 8;
-    final short s1 = (short)script.params_20[7].get();
+    final int sp20 = (script.params_20[4].get() << 8) & 0xffff; // Retail bug in violet dragon - overflow
+    final int sp22 = (script.params_20[5].get() << 8) & 0xffff; //
+    final int sp24 = (script.params_20[6].get() << 8) & 0xffff; //
+    final int s1 = script.params_20[7].get() & 0xffff;
 
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       script.scriptState_04,
@@ -3994,7 +3994,7 @@ public final class Bttl_800c {
     a2.stepR_06.set((short)((sp20 - r) / s1));
     a2.stepG_08.set((short)((sp22 - g) / s1));
     a2.stepB_0a.set((short)((sp24 - b) / s1));
-    a2.scale_0c.set(s1);
+    a2.ticksRemaining_0c.set(s1);
 
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
