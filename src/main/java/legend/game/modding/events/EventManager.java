@@ -101,6 +101,17 @@ public class EventManager {
     return event;
   }
 
+  public <T extends Event> void postEventAndApply(final T event) {
+    for(final var entry : this.listeners.entrySet()) {
+      if(entry.getValue().isInstance(event)) {
+        entry.getKey().accept(event);
+        if(event instanceof EventProvider) {
+          ((EventProvider)event).applyEvent();
+        }
+      }
+    }
+  }
+
   public void clearStaleRefs() {
     this.listeners.keySet().removeAll(this.staleListeners);
     this.staleListeners.clear();
