@@ -3960,7 +3960,7 @@ public final class Bttl_800c {
 
     GPU.queueCommand(30, new GpuCommandQuad()
       .translucent(Translucency.of(manager._10.flags_00 >>> 28 & 0b11))
-      .rgb(a0.r_00.get(), a0.g_02.get(), a0.b_04.get())
+      .rgb(a0.r_00.get() >> 8, a0.g_02.get() >> 8, a0.b_04.get() >> 8)
       .pos(-160, -120, 320, 280)
     );
   }
