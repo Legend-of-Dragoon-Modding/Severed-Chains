@@ -14,7 +14,7 @@ import legend.game.combat.types.EnemyRewards08;
 import legend.game.combat.types.MonsterStats1c;
 import legend.game.combat.types.StageData10;
 import legend.game.modding.events.EventManager;
-import legend.game.modding.events.characters.AdditionHitEvent;
+import legend.game.modding.events.characters.BattleMapActiveAdditionHitPropertiesEvent;
 import legend.game.modding.events.combat.EnemyRewardsEvent;
 import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptState;
@@ -145,7 +145,10 @@ public class SBtld {
         } else {
           //LAB_80109320
           battleMapSelectedAdditionHitProperties_80109454(_8010e658.offset(activeAdditionIndex * 0x80L).getAddress(), activeAdditionHits);
+          EventManager.INSTANCE.postEventAndApply(new BattleMapActiveAdditionHitPropertiesEvent(activeAdditionHits, activeAdditionIndex, charIndex, charSlot, false));
+
           battleMapSelectedAdditionHitProperties_80109454(_8010e658.offset(activeDragoonAdditionIndex * 0x80L).getAddress(), activeDragoonAdditionHits);
+          EventManager.INSTANCE.postEventAndApply(new BattleMapActiveAdditionHitPropertiesEvent(activeAdditionHits, activeAdditionIndex, charIndex, charSlot, true));
         }
       }
 
@@ -170,17 +173,6 @@ public class SBtld {
           continue;
         }
         hitIndex.hitProperty_00[j] = (short)MEMORY.ref(1, additionHitRefCounter).offset(j).get();
-      }
-    }
-
-    final AdditionHitEvent event = EventManager.INSTANCE.postEvent(new AdditionHitEvent(activeAdditionHits));
-
-    for(int i = 0; i < activeAdditionHits.hits_00.length; i++) {
-      final BattlePreloadedEntities_18cb0.AdditionHitProperties_20 hitIndex = event.addition.hits_00[i];
-      final long additionHitRefCounter = mainAdditionHitsTablePtr + i * 0x10L;
-
-      for(int j = 0; j < hitIndex.hitProperty_00.length; j++) {
-        MEMORY.ref(1, additionHitRefCounter).offset(j).set(hitIndex.hitProperty_00[j]);
       }
     }
   }

@@ -5,7 +5,6 @@ import legend.core.MathHelper;
 import legend.core.memory.Memory;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.events.EventManager;
-import legend.game.modding.events.characters.AdditionHitEvent;
 import legend.game.modding.events.inventory.ShopItemEvent;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.LodString;
