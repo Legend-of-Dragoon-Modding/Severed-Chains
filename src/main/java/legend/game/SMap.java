@@ -6480,7 +6480,7 @@ public final class SMap {
             }
 
             for(int i = 0; i < 3; i++) {
-              submapCutMatrix.transfer.component(i).set(matrixData.readUShort(18 + i * 2)); //TODO should this be signed?
+              submapCutMatrix.transfer.component(i).set(matrixData.readShort(18 + i * 2));
             }
           });
 
