@@ -2546,14 +2546,14 @@ public final class SMap {
         GsF_LIGHT_1_800c66e8.r_0c.set(0);
         GsF_LIGHT_1_800c66e8.g_0d.set(0);
         GsF_LIGHT_1_800c66e8.b_0e.set(0);
-        GsSetFlatLight(0x1L, GsF_LIGHT_1_800c66e8);
+        GsSetFlatLight(1, GsF_LIGHT_1_800c66e8);
         GsF_LIGHT_2_800c66f8.direction_00.setX(0);
         GsF_LIGHT_2_800c66f8.direction_00.setY(0x1000);
         GsF_LIGHT_2_800c66f8.direction_00.setZ(0);
         GsF_LIGHT_2_800c66f8.r_0c.set(0);
         GsF_LIGHT_2_800c66f8.g_0d.set(0);
         GsF_LIGHT_2_800c66f8.b_0e.set(0);
-        GsSetFlatLight(0x2L, GsF_LIGHT_2_800c66f8);
+        GsSetFlatLight(2, GsF_LIGHT_2_800c66f8);
 
         GsSetAmbient(0x800, 0x800, 0x800);
         loadingStage_800c68e4.addu(0x1L);

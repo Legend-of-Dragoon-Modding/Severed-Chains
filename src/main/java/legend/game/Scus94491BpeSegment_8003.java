@@ -990,13 +990,13 @@ public final class Scus94491BpeSegment_8003 {
    * @return 0 on success, -1 on failure
    */
   @Method(0x8003c6f0L)
-  public static long GsSetFlatLight(final long id, final GsF_LIGHT light) {
-    final long x = light.direction_00.getX();
-    final long y = light.direction_00.getY();
-    final long z = light.direction_00.getZ();
-    final long r = light.r_0c.get();
-    final long g = light.g_0d.get();
-    final long b = light.b_0e.get();
+  public static long GsSetFlatLight(final int id, final GsF_LIGHT light) {
+    final int x = light.direction_00.getX();
+    final int y = light.direction_00.getY();
+    final int z = light.direction_00.getZ();
+    final int r = light.r_0c.get();
+    final int g = light.g_0d.get();
+    final int b = light.b_0e.get();
 
     final MATRIX directionMatrix = new MATRIX().set(lightDirectionMatrix_800c34e8);
     final MATRIX colourMatrix = new MATRIX();

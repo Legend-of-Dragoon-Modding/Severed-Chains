@@ -281,7 +281,7 @@ public class SBtld {
     FUN_800e5768(struct7cc._4c);
 
     //LAB_8010999c
-    final ByteBuffer buffer = ByteBuffer.wrap(MEMORY.getBytes(_80114a10.getAddress(), 0x4c * 8));
+    final ByteBuffer buffer = ByteBuffer.wrap(MEMORY.getBytes(_80114a10.getAddress(), 0x4c * 8)).order(ByteOrder.LITTLE_ENDIAN);
     for(int i = 0; i < struct7cc._98.length; i++) {
       struct7cc._98[i].set(buffer);
     }

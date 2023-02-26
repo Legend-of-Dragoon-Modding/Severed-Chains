@@ -660,7 +660,7 @@ public final class Bttl_800e {
     final BattleLightStruct64 v1 = _800c6930;
     if(struct4c._0e > 0) {
       v1.colour_0c.set(struct4c.ambientColour_00);
-      v1._18.set(struct4c._06, struct4c._08, struct4c._0a);
+      v1._18.set(struct4c._06);
       v1._24 = 3;
       v1._2c = (short)struct4c._0c;
       v1._2e = (short)struct4c._0e;

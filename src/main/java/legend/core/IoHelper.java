@@ -3,6 +3,7 @@ package legend.core;
 import legend.core.gpu.RECT;
 import legend.core.gte.BVEC4;
 import legend.core.gte.SVECTOR;
+import legend.core.gte.USCOLOUR;
 import legend.core.memory.Value;
 
 import java.io.IOException;
@@ -175,5 +176,13 @@ public final class IoHelper {
 
   public static SVECTOR readSvec3(final byte[] data, final int offset, final SVECTOR svec) {
     return svec.set(readShort(data, offset), readShort(data, offset), readShort(data, offset));
+  }
+
+  public static USCOLOUR readColour(final ByteBuffer stream, final USCOLOUR colour) {
+    return colour.set(readUShort(stream), readUShort(stream), readUShort(stream));
+  }
+
+  public static USCOLOUR readColour(final byte[] data, final int offset, final USCOLOUR colour) {
+    return colour.set(readUShort(data, offset), readUShort(data, offset), readUShort(data, offset));
   }
 }
