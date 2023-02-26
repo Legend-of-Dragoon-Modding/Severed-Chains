@@ -299,7 +299,7 @@ public final class Unpacker {
     final DirectoryEntry entry = e.getValue();
 
     synchronized(entry.reader()) {
-      final byte[] fileData = entry.reader().readSectors(entry.sector(), entry.length(), e.getKey().endsWith(".IKI"));
+      final byte[] fileData = entry.reader().readSectors(entry.sector(), entry.length(), e.getKey().endsWith(".IKI") || e.getKey().endsWith(".XA"));
       return new Tuple<>(e.getKey(), new FileData(fileData));
     }
   }
