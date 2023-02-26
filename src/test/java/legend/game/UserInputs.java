@@ -2,6 +2,7 @@ package legend.game;
 
 
 import java.awt.Robot;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
 public class UserInputs {
@@ -210,6 +211,53 @@ public class UserInputs {
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("r3Button() failed, see stack trace");
+        }
+    }
+
+    public static void moveMouseTo(int x, int y) {
+        try {
+            Robot robot = new Robot();
+            robot.mouseMove(x, y);
+            System.out.println("Mouse has been moved to 100, 100");
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("moveMouseTo() failed, see stack trace");
+        }
+    }
+
+    public static void mouseLeftClick() {
+        try {
+            Robot robot = new Robot();
+            robot.mousePress(InputEvent.BUTTON1_MASK);
+            robot.mouseRelease(InputEvent.BUTTON1_MASK);
+            System.out.println("Mouse left click has been pressed");
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("mouseLeftClick() failed, see stack trace");
+        }
+    }
+
+    public static void mouseRightClick() {
+        try {
+            Robot robot = new Robot();
+            robot.mousePress(InputEvent.BUTTON3_MASK);
+            robot.mouseRelease(InputEvent.BUTTON3_MASK);
+            System.out.println("Mouse right click has been pressed");
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("mouseRightClick() failed, see stack trace");
+        }
+    }
+
+    public static void mouseMiddleClick() {
+        try {
+            Robot robot = new Robot();
+            robot.mousePress(InputEvent.BUTTON2_MASK);
+            robot.mouseRelease(InputEvent.BUTTON2_MASK);
+            System.out.println("Mouse middle click has been pressed");
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("mouseMiddleClick() failed, see stack trace");
         }
     }
 }
