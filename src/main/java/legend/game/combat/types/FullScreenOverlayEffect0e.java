@@ -5,7 +5,7 @@ import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedShortRef;
 
-public class BttlScriptData6cSub0e implements BttlScriptData6cSubBase1, MemoryRef {
+public class FullScreenOverlayEffect0e implements BttlScriptData6cSubBase1, MemoryRef {
   private final Value ref;
 
   public final UnsignedShortRef r_00;
@@ -16,7 +16,7 @@ public class BttlScriptData6cSub0e implements BttlScriptData6cSubBase1, MemoryRe
   public final ShortRef stepB_0a;
   public final UnsignedShortRef ticksRemaining_0c;
 
-  public BttlScriptData6cSub0e(final Value ref) {
+  public FullScreenOverlayEffect0e(final Value ref) {
     this.ref = ref;
 
     this.r_00 = ref.offset(2, 0x00L).cast(UnsignedShortRef::new);

@@ -644,7 +644,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[718] = Scus94491BpeSegment::FUN_8001f560;
 
     scriptSubFunctions_8004e29c[736] = Bttl_800d::FUN_800d3090;
-    scriptSubFunctions_8004e29c[737] = Bttl_800c::FUN_800cec8c;
+    scriptSubFunctions_8004e29c[737] = Bttl_800c::scriptAllocateFullScreenOverlay;
     scriptSubFunctions_8004e29c[738] = Bttl_800c::FUN_800cee50;
     scriptSubFunctions_8004e29c[739] = Bttl_800c::FUN_800ceecc;
     scriptSubFunctions_8004e29c[740] = Bttl_800d::FUN_800d3098;

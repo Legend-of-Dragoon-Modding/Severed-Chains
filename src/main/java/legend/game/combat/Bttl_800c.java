@@ -48,7 +48,7 @@ import legend.game.combat.types.BattleStruct24_2;
 import legend.game.combat.types.BattleStruct3c;
 import legend.game.combat.types.BattleStructEf4;
 import legend.game.combat.types.BttlLightStruct84;
-import legend.game.combat.types.BttlScriptData6cSub0e;
+import legend.game.combat.types.FullScreenOverlayEffect0e;
 import legend.game.combat.types.BttlScriptData6cSub13c;
 import legend.game.combat.types.BttlStruct08;
 import legend.game.combat.types.CombatItem02;
@@ -3941,8 +3941,8 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cea9cL)
-  public static void FUN_800cea9c(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
-    final BttlScriptData6cSub0e effect = (BttlScriptData6cSub0e)manager.effect_44;
+  public static void tickFullScreenOverlay(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+    final FullScreenOverlayEffect0e effect = (FullScreenOverlayEffect0e)manager.effect_44;
 
     if(effect.ticksRemaining_0c.get() != 0) {
       effect.r_00.add(effect.stepR_06.get());
@@ -3955,8 +3955,8 @@ public final class Bttl_800c {
   }
 
   @Method(0x800ceb28L)
-  public static void FUN_800ceb28(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
-    final BttlScriptData6cSub0e a0 = (BttlScriptData6cSub0e)manager.effect_44;
+  public static void renderFullScreenOverlay(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+    final FullScreenOverlayEffect0e a0 = (FullScreenOverlayEffect0e)manager.effect_44;
 
     GPU.queueCommand(30, new GpuCommandQuad()
       .translucent(Translucency.of(manager._10.flags_00 >>> 28 & 0b11))
@@ -3965,9 +3965,9 @@ public final class Bttl_800c {
     );
   }
 
-  /** Used at the end of Rose transform */
+  /** Used at the end of Rose transform, lots during Albert transform */
   @Method(0x800cec8cL)
-  public static FlowControl FUN_800cec8c(final RunningScript<? extends BattleScriptDataBase> script) {
+  public static FlowControl scriptAllocateFullScreenOverlay(final RunningScript<? extends BattleScriptDataBase> script) {
     final int r = script.params_20[1].get() << 8;
     final int g = script.params_20[2].get() << 8;
     final int b = script.params_20[3].get() << 8;
@@ -3979,23 +3979,23 @@ public final class Bttl_800c {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       script.scriptState_04,
       0xe,
-      Bttl_800c::FUN_800cea9c,
-      Bttl_800c::FUN_800ceb28,
+      Bttl_800c::tickFullScreenOverlay,
+      Bttl_800c::renderFullScreenOverlay,
       null,
-      BttlScriptData6cSub0e::new
+      FullScreenOverlayEffect0e::new
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
     manager._10.flags_00 = 0x5000_0000;
 
-    final BttlScriptData6cSub0e a2 = (BttlScriptData6cSub0e)manager.effect_44;
-    a2.r_00.set(r);
-    a2.g_02.set(g);
-    a2.b_04.set(b);
-    a2.stepR_06.set((short)((sp20 - r) / s1));
-    a2.stepG_08.set((short)((sp22 - g) / s1));
-    a2.stepB_0a.set((short)((sp24 - b) / s1));
-    a2.ticksRemaining_0c.set(s1);
+    final FullScreenOverlayEffect0e effect = (FullScreenOverlayEffect0e)manager.effect_44;
+    effect.r_00.set(r);
+    effect.g_02.set(g);
+    effect.b_04.set(b);
+    effect.stepR_06.set((short)((sp20 - r) / s1));
+    effect.stepG_08.set((short)((sp22 - g) / s1));
+    effect.stepB_0a.set((short)((sp24 - b) / s1));
+    effect.ticksRemaining_0c.set(s1);
 
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
