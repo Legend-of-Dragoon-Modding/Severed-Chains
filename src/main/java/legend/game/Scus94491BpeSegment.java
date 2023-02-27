@@ -1932,7 +1932,7 @@ public final class Scus94491BpeSegment {
     final int shift = script.params_20[1].get() & 0x1f;
     final int index = script.params_20[1].get() >>> 5;
 
-    script.params_20[2].set((script.params_20[0].array(index).get() & 1 << shift) > 0 ? 1 : 0);
+    script.params_20[2].set((script.params_20[0].array(index).get() & 1 << shift) != 0 ? 1 : 0);
     return FlowControl.CONTINUE;
   }
 
