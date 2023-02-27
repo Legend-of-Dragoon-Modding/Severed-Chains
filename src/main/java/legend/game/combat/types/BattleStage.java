@@ -5,10 +5,8 @@ import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.GsDOBJ2;
 import legend.core.gte.GsOBJTABLE2;
 import legend.core.gte.Tmd;
-import legend.core.memory.types.ShortRef;
-import legend.core.memory.types.UnboundedArrayRef;
 import legend.game.types.CContainerSubfile2;
-import legend.game.types.ModelPartTransforms;
+import legend.game.types.ModelPartTransforms0c;
 
 import java.util.Arrays;
 
@@ -20,22 +18,24 @@ public class BattleStage {
   public final GsCOORDINATE2 coord2_558 = new GsCOORDINATE2();
   public final GsCOORD2PARAM param_5a8 = new GsCOORD2PARAM();
   public Tmd tmd_5d0;
-  public UnboundedArrayRef<ModelPartTransforms> rotTrans_5d4;
-  public UnboundedArrayRef<ModelPartTransforms> rotTrans_5d8;
+  /** [keyframe][part] */
+  public ModelPartTransforms0c[][] rotTrans_5d4;
+  /** [keyframe][part] */
+  public ModelPartTransforms0c[][] rotTrans_5d8;
   /** short */
   public int partCount_5dc;
   /** short */
-  public int _5de;
+  public int totalFrames_5de;
   /** short */
-  public int _5e0;
+  public int animationState_5e0;
   /** short */
-  public int _5e2;
+  public int remainingFrames_5e2;
   public int _5e4;
   /** short */
   public int z_5e8;
 
   public CContainerSubfile2 _5ec;
-  public final UnboundedArrayRef<ShortRef>[] _5f0 = new UnboundedArrayRef[10];
+  public final short[][] _5f0 = new short[10][];
   /** ubyte */
   public final int[] _618 = new int[10];
   /** ushort */

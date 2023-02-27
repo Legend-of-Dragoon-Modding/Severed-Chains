@@ -92,6 +92,14 @@ public final class MathHelper {
     return x / 10L << 4L | x % 10L;
   }
 
+  private static final float PSX_DEG_TO_DEG = 360.0f / 4096.0f;
+  private static final float DEG_TO_RAD = (float)(Math.PI / 180.0f);
+  private static final float PSX_DEG_TO_RAD = PSX_DEG_TO_DEG * DEG_TO_RAD;
+
+  public static float psxDegToRad(final int psxDeg) {
+    return psxDeg * PSX_DEG_TO_RAD;
+  }
+
   public static int roundUp(final int val, final int step) {
     return val + step - 1 & -step;
   }

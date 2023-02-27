@@ -50,7 +50,7 @@ import static legend.game.combat.Bttl_800c.getCombatantIndex;
 import static legend.game.combat.Bttl_800c.monsterCount_800c6768;
 import static legend.game.combat.Bttl_800c.scriptState_800c674c;
 import static legend.game.combat.Bttl_800c.script_800c66fc;
-import static legend.game.combat.Bttl_800c.stageIndices_800fb064;
+import static legend.game.combat.Bttl_800c.melbuStageIndices_800fb064;
 import static legend.game.combat.Bttl_800c.uniqueMonsterCount_800c6698;
 import static legend.game.combat.Bttl_800e.FUN_800e5768;
 import static legend.game.combat.Bttl_800f.loadMonster;
@@ -69,9 +69,9 @@ public class SBtld {
   public static final Value _801134e8 = MEMORY.ref(2, 0x801134e8L);
 
   /** BattleStruct4c[71] */
-  public static final Value _801134fc = MEMORY.ref(4, 0x801134fcL);
+  public static final Value stageAmbiance_801134fc = MEMORY.ref(4, 0x801134fcL);
   /** BattleStruct4c[8] */
-  public static final Value _80114a10 = MEMORY.ref(4, 0x80114a10L);
+  public static final Value dragoonSpaceAmbiance_80114a10 = MEMORY.ref(4, 0x80114a10L);
 
   public static final Value _8011517c = MEMORY.ref(2, 0x8011517cL);
 
@@ -91,7 +91,7 @@ public class SBtld {
     _800c6718.offset(0x28L).setu(stageData._0e.get());
 
     final byte[] archive = MEMORY.getBytes(bpe_800fb77c.getAddress(), 26836);
-    script_800c66fc = new ScriptFile("S_BTLD BPE @ 800fb77c", Unpacker.decompress(archive));
+    script_800c66fc = new ScriptFile("S_BTLD BPE @ 800fb77c", Unpacker.decompress(new FileData(archive)));
 
     loadDrgnFile(1, "401", SBtld::FUN_80109170);
   }
@@ -276,14 +276,14 @@ public class SBtld {
 
     //LAB_8010993c
     //LAB_80109954
-    struct7cc._4c.set(ByteBuffer.wrap(MEMORY.getBytes(_801134fc.offset(stage * 0x4c).getAddress(), 0x4c)).order(ByteOrder.LITTLE_ENDIAN));
+    struct7cc.stageAmbiance_4c.set(ByteBuffer.wrap(MEMORY.getBytes(stageAmbiance_801134fc.offset(stage * 0x4c).getAddress(), 0x4c)).order(ByteOrder.LITTLE_ENDIAN));
 
-    FUN_800e5768(struct7cc._4c);
+    FUN_800e5768(struct7cc.stageAmbiance_4c);
 
     //LAB_8010999c
-    final ByteBuffer buffer = ByteBuffer.wrap(MEMORY.getBytes(_80114a10.getAddress(), 0x4c * 8));
-    for(int i = 0; i < struct7cc._98.length; i++) {
-      struct7cc._98[i].set(buffer);
+    final ByteBuffer buffer = ByteBuffer.wrap(MEMORY.getBytes(dragoonSpaceAmbiance_80114a10.getAddress(), 0x4c * 8)).order(ByteOrder.LITTLE_ENDIAN);
+    for(int i = 0; i < struct7cc.dragoonSpaceAmbiance_98.length; i++) {
+      struct7cc.dragoonSpaceAmbiance_98[i].set(buffer);
     }
 
     struct7cc._00._00 = (int)_8011517c.offset(combatStage_800bb0f4.get() * 0x8L).offset(2, 0x00L).get();
@@ -291,9 +291,9 @@ public class SBtld {
     struct7cc._00._04 = (int)_8011517c.offset(combatStage_800bb0f4.get() * 0x8L).offset(2, 0x04L).get();
 
     //LAB_80109a30
-    for(int i = 0; stageIndices_800fb064.offset(i).get() != 0xffL; i++) {
-      struct7cc._08[i]._00 = (int)_8011517c.offset(stageIndices_800fb064.offset(i).get() * 0x8L).offset(2, 0x00L).get();
-      struct7cc._08[i]._02 = (int)_8011517c.offset(stageIndices_800fb064.offset(i).get() * 0x8L).offset(2, 0x02L).get();
+    for(int i = 0; melbuStageIndices_800fb064.get(i).get() != -1; i++) {
+      struct7cc._08[i]._00 = (int)_8011517c.offset(melbuStageIndices_800fb064.get(i).get() * 0x8L).offset(2, 0x00L).get();
+      struct7cc._08[i]._02 = (int)_8011517c.offset(melbuStageIndices_800fb064.get(i).get() * 0x8L).offset(2, 0x02L).get();
     }
 
     //LAB_80109a80

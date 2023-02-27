@@ -52,6 +52,7 @@ public class IsoReader {
   }
 
   public byte[] readSectors(int sector, final int length, final boolean raw) {
+    int sectorsRead = 0;
     int dataRead = 0;
     boolean endOfRecord = false;
     final int sectorCount = (length + 0x7ff) / 0x800;
@@ -71,7 +72,7 @@ public class IsoReader {
           data = new byte[raw ? sectorSize * sectorCount : length];
         }
 
-        endOfRecord = (sectorData[16 + 2] >>> 7 & 1) == 1;
+        endOfRecord = sectorsRead >= sectorCount - 1;
 
         if(raw) {
           System.arraycopy(sectorData, 0, data, dataRead, sectorSize);
@@ -81,6 +82,7 @@ public class IsoReader {
 
         dataRead += sectorSize;
         sector++;
+        sectorsRead++;
       }
 
       return data;

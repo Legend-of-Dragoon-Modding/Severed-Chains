@@ -46,7 +46,6 @@ import legend.game.scripting.ScriptState;
 import legend.game.title.Ttle;
 import legend.game.types.CharacterData2c;
 import legend.game.types.DeferredReallocOrFree0c;
-import legend.game.types.CContainer;
 import legend.game.types.FileEntry08;
 import legend.game.types.FileLoadedCallback;
 import legend.game.types.LoadingOverlay;
@@ -60,7 +59,6 @@ import legend.game.types.SpuStruct28;
 import legend.game.types.SshdFile;
 import legend.game.types.SssqFile;
 import legend.game.types.SubmapMusic08;
-import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
@@ -316,9 +314,8 @@ public final class Scus94491BpeSegment {
   public static final Value _8001032c = MEMORY.ref(1, 0x8001032cL);
   public static final Value _80010334 = MEMORY.ref(1, 0x80010334L);
 
-  public static final CContainer extendedTmd_800103d0 = MEMORY.ref(4, 0x800103d0L, CContainer::new);
-  public static final TmdAnimationFile tmdAnimFile_8001051c = MEMORY.ref(4, 0x8001051cL, TmdAnimationFile::new);
-
+  public static final Value extendedTmd_800103d0 = MEMORY.ref(4, 0x800103d0L);
+  public static final Value tmdAnimFile_8001051c = MEMORY.ref(4, 0x8001051cL);
   /** TIM */
   public static final Value _80010544 = MEMORY.ref(4, 0x80010544L);
 
@@ -1676,6 +1673,10 @@ public final class Scus94491BpeSegment {
     }
 
     onCompletion.accept(fileData);
+  }
+
+  public static void loadDrgnFile(final int drgnBinIndex, final int file, final Consumer<FileData> onCompletion) {
+    loadDrgnFile(drgnBinIndex, String.valueOf(file), onCompletion);
   }
 
   public static void loadDrgnFile(int drgnBinIndex, final String file, final Consumer<FileData> onCompletion) {

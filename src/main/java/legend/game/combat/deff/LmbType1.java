@@ -1,48 +1,48 @@
 package legend.game.combat.deff;
 
-import legend.core.memory.Value;
-import legend.core.memory.types.MemoryRef;
-import legend.core.memory.types.RelativePointer;
-import legend.core.memory.types.ShortRef;
-import legend.core.memory.types.UnboundedArrayRef;
-import legend.core.memory.types.UnsignedByteRef;
-import legend.core.memory.types.UnsignedShortRef;
+import legend.game.unpacker.FileData;
 
 public class LmbType1 extends Lmb {
-  public final ShortRef _08;
-  public final ShortRef _0a;
+  public final short _08;
+  public final short _0a;
 
-  public final RelativePointer<UnboundedArrayRef<Sub04>> _0c;
-  public final RelativePointer<UnboundedArrayRef<LmbTransforms14>> _10;
-  public final RelativePointer<UnboundedArrayRef<ShortRef>> _14;
+  public final Sub04[] _0c;
+  public final LmbTransforms14[] _10;
+  public final short[] _14;
 
-  public LmbType1(final Value ref) {
-    super(ref);
+  public LmbType1(final FileData data) {
+    super(data);
 
-    this._08 = ref.offset(2, 0x08L).cast(ShortRef::new);
-    this._0a = ref.offset(2, 0x0aL).cast(ShortRef::new);
+    this._08 = data.readShort(0x8);
+    this._0a = data.readShort(0xa);
 
-    this._0c = ref.offset(4, 0x0cL).cast(RelativePointer.deferred(4, ref.getAddress(), UnboundedArrayRef.of(0x04, Sub04::new, this.count_04::get)));
-    this._10 = ref.offset(4, 0x10L).cast(RelativePointer.deferred(4, ref.getAddress(), UnboundedArrayRef.of(0x14, LmbTransforms14::new, this.count_04::get)));
-    this._14 = ref.offset(4, 0x14L).cast(RelativePointer.deferred(2, ref.getAddress(), UnboundedArrayRef.of(0x02, ShortRef::new)));
-  }
+    this._0c = new Sub04[this.count_04];
+    this._10 = new LmbTransforms14[this.count_04];
 
-  public static class Sub04 implements MemoryRef {
-    private final Value ref;
-
-    public final UnsignedShortRef _00;
-    public final UnsignedByteRef _03;
-
-    public Sub04(final Value ref) {
-      this.ref = ref;
-
-      this._00 = ref.offset(2, 0x00L).cast(UnsignedShortRef::new);
-      this._03 = ref.offset(1, 0x03L).cast(UnsignedByteRef::new);
+    final int sub04Offset = data.readInt(0x0c);
+    for(int i = 0; i < this.count_04; i++) {
+      this._0c[i] = new Sub04(data.slice(sub04Offset + i * 0x4, 0x4));
     }
 
-    @Override
-    public long getAddress() {
-      return this.ref.getAddress();
+    final int transformsOffset = data.readInt(0x10);
+    for(int i = 0; i < this.count_04; i++) {
+      this._10[i] = new LmbTransforms14(data.slice(transformsOffset + i * 0x14, 0x14));
+    }
+
+    final int offset14 = data.readInt(0x14);
+    this._14 = new short[this._08 * (this._0a - 1) / 2]; // Number of bytes, /2 to get array length
+    for(int i = 0; i < this._14.length; i++) {
+      this._14[i] = data.readShort(offset14 + i * 0x2);
+    }
+  }
+
+  public static class Sub04 {
+    public final int _00;
+    public final int _03;
+
+    public Sub04(final FileData data) {
+      this._00 = data.readUShort(0x0);
+      this._03 = data.readUByte(0x3);
     }
   }
 }

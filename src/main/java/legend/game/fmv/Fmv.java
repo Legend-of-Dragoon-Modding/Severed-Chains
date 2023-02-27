@@ -263,7 +263,7 @@ public class Fmv {
       // Demultiplex the sectors
       Arrays.fill(demuxedRaw, (byte)0);
       for(int sectorIndex = 0, videoSectorIndex = 0; sectorIndex < sectorCount; sectorIndex++, sector++) {
-        fileData.copyTo(sector * data.length, data, 0, data.length);
+        fileData.copyFrom(sector * data.length, data, 0, data.length);
 
         if(header.submode.isEof()) {
           stop();
@@ -604,5 +604,45 @@ public class Fmv {
         dest[iDestOfs1] = rgb1.toRgba();
       }
     }
+  }
+
+  public static void playXa(final int archiveIndex, final int fileIndex) {
+    final byte[] data = new byte[2352];
+    final SectorHeader header = new SectorHeader(data);
+
+    final int offset = archiveIndex == 3 ? 4 : 16;
+
+    final byte[] fileData = Unpacker.loadFile(System.getProperty("user.dir") + "\\files\\XA\\LODXA0" + archiveIndex + ".XA").data();
+    sector = 0;
+
+    try {
+      sound = AudioSystem.getSourceDataLine(new AudioFormat(44100, 16, 2, true, false));
+      sound.open();
+      sound.start();
+    } catch(final LineUnavailableException|IllegalArgumentException e) {
+      LOGGER.error("Failed to start audio for FMV");
+    }
+
+    for(int sector = fileIndex; sector < fileData.length / 0x930; sector += offset) {
+      System.arraycopy(fileData, sector * data.length, data, 0, data.length);
+
+      final byte[] decodedXaAdpcm = XaAdpcm.decode(data, data[19]);
+
+      // Halve the volume
+      for(int i = 0; i < decodedXaAdpcm.length; i++) {
+        decodedXaAdpcm[i] >>= 1;
+      }
+
+      if(sound != null) {
+        sound.write(decodedXaAdpcm, 0, decodedXaAdpcm.length);
+      }
+
+      if(header.submode.isEof()) {
+        break;
+      }
+    }
+
+    sound.close();
+    sound = null;
   }
 }

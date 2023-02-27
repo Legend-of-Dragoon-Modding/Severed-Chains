@@ -6,8 +6,6 @@ import legend.core.gte.GsDOBJ2;
 import legend.core.gte.GsOBJTABLE2;
 import legend.core.gte.Tmd;
 import legend.core.gte.VECTOR;
-import legend.core.memory.types.ShortRef;
-import legend.core.memory.types.UnboundedArrayRef;
 import legend.game.combat.deff.Cmb;
 import legend.game.combat.deff.Lmb;
 
@@ -26,12 +24,15 @@ public class Model124 {
   public final GsCOORDINATE2 coord2_14 = new GsCOORDINATE2();
   public final GsCOORD2PARAM coord2Param_64 = new GsCOORD2PARAM();
   public Tmd tmd_8c;
-  public UnboundedArrayRef<ModelPartTransforms> partTransforms_90;
-  /** One entry for each TMD object (tmdNobj_ca) */
-  public UnboundedArrayRef<ModelPartTransforms> partTransforms_94;
+  /** [keyframe][part] */
+  public ModelPartTransforms0c[][] partTransforms_90;
+  /** [keyframe][part] One entry for each TMD object (tmdNobj_ca) */
+  public ModelPartTransforms0c[][] partTransforms_94;
   /**
    * Union with {@link #partTransforms_90}
    * <ul>
+   *   <li>-1 - SAF</li>
+   *   <li>0 - CMB</li>
    *   <li>1 - LMB</li>
    *   <li>2 - CMB</li>
    * </ul>
@@ -41,18 +42,25 @@ public class Model124 {
   public int lmbUnknown_94;
 
   /** short */
-  public int animCount_98;
+  public int partCount_98;
   /** short */
-  public int s_9a;
-  /** ubyte */
-  public int ub_9c;
+  public int totalFrames_9a;
+  /**
+   * <ol start="0">
+   *   <li>Init/reset - start animation from beginning and transition to state 1</li>
+   *   <li>Playing</li>
+   *   <li>Paused</li>
+   * </ol>
+   *
+   * ubyte */
+  public int animationState_9c;
   /** ubyte */
   public int colourMap_9d;
   /** short */
-  public int s_9e;
+  public int remainingFrames_9e;
   /** short */
   public int zOffset_a0;
-  /** ubyte */
+  /** Always 0 except sometimes on submaps (ubyte) */
   public int ub_a2;
   /** ubyte */
   public int ub_a3;
@@ -73,7 +81,7 @@ public class Model124 {
   /** byte */
   public int b_cd;
 
-  public final UnboundedArrayRef<ShortRef>[] ptrs_d0 = new UnboundedArrayRef[7];
+  public final short[][] ptrs_d0 = new short[7][];
   /** ubyte */
   public final int[] aub_ec = new int[7];
 
@@ -95,12 +103,12 @@ public class Model124 {
   }
 
   public static class CmbAnim {
-    public int _00;
+    public int animationTicks_00;
     public Cmb cmb_04;
-    public Cmb.Transforms0c[] transforms_08;
+    public ModelPartTransforms0c[] transforms_08;
 
     public void set(final CmbAnim other) {
-      this._00 = other._00;
+      this.animationTicks_00 = other.animationTicks_00;
       this.cmb_04 = other.cmb_04;
       this.transforms_08 = other.transforms_08;
     }
@@ -128,11 +136,11 @@ public class Model124 {
     this.partTransforms_94 = other.partTransforms_94;
     this.animType_90 = other.animType_90;
     this.lmbUnknown_94 = other.lmbUnknown_94;
-    this.animCount_98 = other.animCount_98;
-    this.s_9a = other.s_9a;
-    this.ub_9c = other.ub_9c;
+    this.partCount_98 = other.partCount_98;
+    this.totalFrames_9a = other.totalFrames_9a;
+    this.animationState_9c = other.animationState_9c;
     this.colourMap_9d = other.colourMap_9d;
-    this.s_9e = other.s_9e;
+    this.remainingFrames_9e = other.remainingFrames_9e;
     this.zOffset_a0 = other.zOffset_a0;
     this.ub_a2 = other.ub_a2;
     this.ub_a3 = other.ub_a3;

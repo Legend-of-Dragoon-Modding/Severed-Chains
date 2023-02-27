@@ -56,6 +56,7 @@ public final class Unpacker {
     transformers.put(Unpacker::mrgDiscriminator, Unpacker::unmrg);
     transformers.put(Unpacker::deffDiscriminator, Unpacker::undeff);
     transformers.put(Unpacker::drgn21_402_3_patcherDiscriminator, Unpacker::drgn21_402_3_patcher);
+    transformers.put(Unpacker::drgn0_142_patcherDiscriminator, Unpacker::drgn0_142_patcher);
     transformers.put(Unpacker::playerCombatSoundEffectsDiscriminator, Unpacker::playerCombatSoundEffectsTransformer);
     transformers.put(Unpacker::playerCombatModelsAndTexturesDiscriminator, Unpacker::playerCombatModelsAndTexturesTransformer);
     transformers.put(Unpacker::dragoonCombatModelsAndTexturesDiscriminator, Unpacker::dragoonCombatModelsAndTexturesTransformer);
@@ -299,7 +300,7 @@ public final class Unpacker {
     final DirectoryEntry entry = e.getValue();
 
     synchronized(entry.reader()) {
-      final byte[] fileData = entry.reader().readSectors(entry.sector(), entry.length(), e.getKey().endsWith(".IKI"));
+      final byte[] fileData = entry.reader().readSectors(entry.sector(), entry.length(), e.getKey().endsWith(".IKI") || e.getKey().endsWith(".XA"));
       return new Tuple<>(e.getKey(), new FileData(fileData));
     }
   }
@@ -341,7 +342,7 @@ public final class Unpacker {
   }
 
   private static Map<String, FileData> decompress(final String name, final FileData data, final Set<Flags> flags) {
-    return Map.of(name, new FileData(Unpacker.decompress(data.data(), data.offset())));
+    return Map.of(name, new FileData(Unpacker.decompress(data)));
   }
 
   private static boolean mrgDiscriminator(final String name, final FileData data, final Set<Flags> flags) {
@@ -417,6 +418,30 @@ public final class Unpacker {
     final byte[] newData = new byte[0x107c];
     System.arraycopy(data.data(), data.offset(), newData, 0, data.size());
     newData[0x1078] = 0x49;
+    return Map.of(name, new FileData(newData));
+  }
+
+  /**
+   * The Meru model in the post-Divine-Dragon fight cutscene has a corrupt
+   * animation file, missing animations for 2 out of her 22 objects. If you
+   * look closely at the top of her leg, you can see it. This injects extra
+   * animation data for those missing objects made by DooMMetaL.
+   */
+  private static boolean drgn0_142_patcherDiscriminator(final String name, final FileData data, final Set<Flags> flags) {
+    return "SECT/DRGN0.BIN/142".equals(name) && data.size() == 0x1f0;
+  }
+
+  private static Map<String, FileData> drgn0_142_patcher(final String name, final FileData data, final Set<Flags> flags) {
+    final byte[] newData = new byte[data.size() + 0xc * 2 * 2]; // 2 objects, 2 frames, 0xc table pitch
+    final byte[] frame = {0x0e, (byte)0xe0, (byte)0xfe, (byte)0xde, (byte)0xff, (byte)0x9d, 0x1d, 0x00, 0x28, 0x03, (byte)0xcb, 0x00};
+    // Note: we only create data for object 21, object 22 can be all 0's since it's not visible
+
+    data.copyFrom(0, newData, 0, 0x100);
+    System.arraycopy(frame, 0, newData, 0x100, frame.length); // obj 21
+    data.copyFrom(0x100, newData, 0x118, 0xf0);
+    System.arraycopy(frame, 0, newData, 0x208, frame.length); // obj 21
+    newData[0xc] = 22;
+
     return Map.of(name, new FileData(newData));
   }
 
@@ -564,32 +589,28 @@ public final class Unpacker {
     }
   }
 
-  public static byte[] decompress(final byte[] archive) {
-    return decompress(archive, 0);
-  }
-
-  public static byte[] decompress(final byte[] archive, final int offset) {
+  public static byte[] decompress(final FileData archive) {
     // Check BPE header - this check is in the BPE block method but not the main EXE method
-    if(MathHelper.get(archive, offset + 4, 4) != 0x1a455042L) {
+    if(archive.readInt(0x4) != 0x1a455042) {
       throw new RuntimeException("Attempted to decompress non-BPE segment");
     }
 
     LOGGER.info("Decompressing BPE segment");
 
-    final byte[] dest = new byte[(int)MathHelper.get(archive, offset, 4)];
+    final byte[] dest = new byte[archive.readInt(0)];
 
     final Deque<Byte> unresolved_byte_list = new LinkedList<>();
     final byte[] dict_leftch = new byte[0x100];
     final byte[] dict_rightch = new byte[0x100];
 
     int totalSize = 0;
-    int archiveOffset = offset + 8;
+    int archiveOffset = 0x8;
     int destinationOffset = 0;
 
     // Each block is preceded by 4-byte int up to 0x800 giving the number
     // of decompressed bytes in the block. 0x00000000 indicates that there
     // are no further blocks and decompression is complete.
-    int bytes_remaining_in_block = (int)MathHelper.get(archive, archiveOffset, 4);
+    int bytes_remaining_in_block = archive.readInt(archiveOffset);
     archiveOffset += 4;
 
     while(bytes_remaining_in_block != 0) {
@@ -616,7 +637,7 @@ public final class Unpacker {
         // be read into the dictionary, placed at the index value calculated
         // using the below formula. Otherwise, the byte indicates how many
         // sequential bytes to read into the dictionary.
-        int byte_pairs_to_read = archive[archiveOffset] & 0xff;
+        int byte_pairs_to_read = archive.readUByte(archiveOffset);
         archiveOffset++;
 
         if(byte_pairs_to_read >= 0x80) {
@@ -632,11 +653,11 @@ public final class Unpacker {
         if(key < 0x100) {
           // Check that dictionary length not exceeded.
           for(int i = 0; i < byte_pairs_to_read + 1; i++) {
-            dict_leftch[key] = archive[archiveOffset];
+            dict_leftch[key] = archive.readByte(archiveOffset);
             archiveOffset++;
 
             if((dict_leftch[key] & 0xff) != key) {
-              dict_rightch[key] = archive[archiveOffset];
+              dict_rightch[key] = archive.readByte(archiveOffset);
               archiveOffset++;
             }
 
@@ -649,7 +670,7 @@ public final class Unpacker {
       // On each pass, read one byte and add it to a list of unresolved bytes.
       while(bytes_remaining_in_block > 0) {
         unresolved_byte_list.clear();
-        unresolved_byte_list.push(archive[archiveOffset]);
+        unresolved_byte_list.push(archive.readByte(archiveOffset));
         archiveOffset++;
 
         // Pop the first item in the list of unresolved bytes. If the
@@ -675,7 +696,7 @@ public final class Unpacker {
         archiveOffset = archiveOffset + 4 - archiveOffset % 4;
       }
 
-      bytes_remaining_in_block = (int)MathHelper.get(archive, archiveOffset, 4);
+      bytes_remaining_in_block = archive.readInt(archiveOffset);
       archiveOffset += 4;
     }
 
