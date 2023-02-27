@@ -6,7 +6,7 @@ public class GsDOBJ2 {
   public int attribute_00;
   /** local dmatrix */
   public GsCOORDINATE2 coord2_04;
-  public TmdObjTable tmd_08;
+  public TmdObjTable1c tmd_08;
   public int id_0c;
 
   public GsDOBJ2 set(final GsDOBJ2 other) {

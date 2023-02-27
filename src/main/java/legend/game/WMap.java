@@ -1,5 +1,7 @@
 package legend.game;
 
+import legend.core.IoHelper;
+import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandQuad;
@@ -11,6 +13,7 @@ import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.GsDOBJ2;
 import legend.core.gte.MATRIX;
 import legend.core.gte.SVECTOR;
+import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.TmdWithId;
 import legend.core.gte.VECTOR;
 import legend.core.memory.Memory;
@@ -29,9 +32,9 @@ import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
 import legend.game.tim.Tim;
 import legend.game.tmd.Renderer;
+import legend.game.types.CContainer;
 import legend.game.types.CoolonWarpDestination20;
 import legend.game.types.Coord2AndThenSomeStruct_60;
-import legend.game.types.CContainer;
 import legend.game.types.GameState52c;
 import legend.game.types.GsF_LIGHT;
 import legend.game.types.LodString;
@@ -72,6 +75,7 @@ import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
+import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
@@ -85,10 +89,6 @@ import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80021048;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80021050;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80021058;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80021060;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a32c;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a3ec;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a488;
@@ -96,7 +96,6 @@ import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
 import static legend.game.Scus94491BpeSegment_8002.animateModel;
 import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.clearTextbox;
-import static legend.game.Scus94491BpeSegment_8002.deallocateModel;
 import static legend.game.Scus94491BpeSegment_8002.initModel;
 import static legend.game.Scus94491BpeSegment_8002.loadAndRenderMenus;
 import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
@@ -120,7 +119,6 @@ import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
 import static legend.game.Scus94491BpeSegment_8003.RotTransPers4;
 import static legend.game.Scus94491BpeSegment_8003.StoreImage;
-import static legend.game.Scus94491BpeSegment_8003.adjustTmdPointers;
 import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTextureUnshaded;
 import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTransparency;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
@@ -129,7 +127,6 @@ import static legend.game.Scus94491BpeSegment_8003.perspectiveTransformTriple;
 import static legend.game.Scus94491BpeSegment_8003.setLightMode;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
-import static legend.game.Scus94491BpeSegment_8003.updateTmdPacketIlen;
 import static legend.game.Scus94491BpeSegment_8004.FUN_80040e40;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndexOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8004.previousMainCallbackIndex_8004dd28;
@@ -429,108 +426,26 @@ public class WMap {
   private static final Value _800f65d4 = MEMORY.ref(1, 0x800f65d4L);
 
   @Method(0x800c8844L)
-  public static void FUN_800c8844(final GsDOBJ2 dobj2, final long a1) {
-    long primitiveCount = dobj2.tmd_08.n_primitive_14.get();
-    long primitives = dobj2.tmd_08.primitives_10.getPointer();
-    final long s2 = a1 & 0x7fL;
+  public static void adjustWmapUvs(final GsDOBJ2 dobj2, final int colourMapIndex) {
+    for(final TmdObjTable1c.Primitive primitive : dobj2.tmd_08.primitives_10) {
+      final int cmd = primitive.header() & 0xff04_0000;
 
-    //LAB_800c8870
-    while(primitiveCount != 0) {
-      final long cmd = MEMORY.ref(4, primitives).offset(0x0L).get() & 0xff04_0000L;
-      final long count = MEMORY.ref(2, primitives).get();
-
-      if(cmd == 0x3700_0000L) {
-        //LAB_800c8a0c
-        FUN_800c9130(primitives, count, s2);
-        primitiveCount -= count;
-        primitives += count * 0x24L;
-        //LAB_800c8918
-      } else if(cmd == 0x3a04_0000L) {
-        //LAB_800c8a30
-        FUN_80021060(primitives, count);
-        primitiveCount -= count;
-        primitives += count * 0x24L;
-        //LAB_800c898c
-      } else if(cmd == 0x3e00_0000L) {
-        //LAB_800c8a7c
-        FUN_800c9090(primitives, count, s2);
-        primitiveCount -= count;
-        primitives += count * 0x24L;
-      } else if(cmd == 0x3d00_0000L || cmd == 0x3f00_0000L) {
-        //LAB_800c8968
-        //LAB_800c8aa4
-        FUN_800c91bc(primitives, count, s2);
-        primitiveCount -= count;
-
-        //LAB_800c8ac8
-        //LAB_800c8acc
-        //LAB_800c8ad0
-        primitives += count * 0x2cL;
-      } else if(cmd == 0x3c00_0000L) {
-        //LAB_800c8a7c
-        FUN_800c9090(primitives, count, s2);
-        primitiveCount -= count;
-        primitives += count * 0x24L;
-      } else if(cmd == 0x3804_0000L) {
-        //LAB_800c8a30
-        FUN_80021060(primitives, count);
-        primitiveCount -= count;
-        primitives += count * 0x24L;
-        //LAB_800c8958
-      } else if(cmd == 0x3a00_0000L) {
-        //LAB_800c8a54
-        FUN_80021050(primitives, count);
-        primitiveCount -= count;
-        primitives += count * 0x18L;
-      } else if(cmd == 0x3800_0000L) {
-        //LAB_800c8a54
-        FUN_80021050(primitives, count);
-        primitiveCount -= count;
-        primitives += count * 0x18L;
-      } else if(cmd == 0x3204_0000L) {
-        //LAB_800c89a8
-        FUN_80021058(primitives, count);
-        primitiveCount -= count;
-        primitives += count * 0x1cL;
-        //LAB_800c88e0
-      } else if(cmd == 0x3500_0000L) {
-        //LAB_800c8a0c
-        FUN_800c9130(primitives, count, s2);
-        primitiveCount -= count;
-        primitives += count * 0x24L;
-        //LAB_800c8908
-      } else if(cmd == 0x3600_0000L) {
-        //LAB_800c89ec
-        FUN_800c9004(primitives, count, s2);
-        primitiveCount -= count;
-        primitives += count * 0x1cL;
-      } else if(cmd == 0x3400_0000L) {
-        //LAB_800c89ec
-        FUN_800c9004(primitives, count, s2);
-        primitiveCount -= count;
-        primitives += count * 0x1cL;
-      } else if(cmd == 0x3004_0000L) {
-        //LAB_800c89a8
-        FUN_80021058(primitives, count);
-        primitiveCount -= count;
-        primitives += count * 0x1cL;
-        //LAB_800c88d0
-      } else if(cmd == 0x3200_0000L) {
-        //LAB_800c89c8
-        FUN_80021048(primitives, count);
-        primitiveCount -= count;
-        primitives += count * 0x14L;
-      } else if(cmd == 0x3000_0000L) {
-        //LAB_800c89c8
-        FUN_80021048(primitives, count);
-        primitiveCount -= count;
-        primitives += count * 0x14L;
+      if(cmd == 0x3700_0000) {
+        FUN_800c9130(primitive, colourMapIndex & 0x7f);
+      } else if(cmd == 0x3e00_0000) {
+        FUN_800c9090(primitive, colourMapIndex & 0x7f);
+      } else if(cmd == 0x3d00_0000 || cmd == 0x3f00_0000) {
+        FUN_800c91bc(primitive, colourMapIndex & 0x7f);
+      } else if(cmd == 0x3c00_0000) {
+        FUN_800c9090(primitive, colourMapIndex & 0x7f);
+      } else if(cmd == 0x3500_0000) {
+        FUN_800c9130(primitive, colourMapIndex & 0x7f);
+      } else if(cmd == 0x3600_0000) {
+        FUN_800c9004(primitive, colourMapIndex & 0x7f);
+      } else if(cmd == 0x3400_0000) {
+        FUN_800c9004(primitive, colourMapIndex & 0x7f);
       }
-
-      //LAB_800c8ad4
     }
-
-    //LAB_800c8adc
   }
 
   @Method(0x800c8d90L)
@@ -539,73 +454,53 @@ public class WMap {
   }
 
   @Method(0x800c9004L)
-  public static void FUN_800c9004(final long primitives, long count, long a2) {
-    final long a3 = _800eee48.offset(a2 * 0x14L).getAddress();
+  public static void FUN_800c9004(final TmdObjTable1c.Primitive primitive, final int colourMap) {
+    final long a3 = _800eee48.offset(colourMap * 0x14L).getAddress();
 
     //LAB_800c9024
-    a2 = 0;
-    while(count != 0) {
-      MEMORY.ref(4, primitives).offset(a2).offset(0x4L).and(MEMORY.ref(4, a3).offset(0x4L)).oru(MEMORY.ref(4, a3).offset(0x0L)).addu(MEMORY.ref(4, a3).offset(0x10L));
-      MEMORY.ref(4, primitives).offset(a2).offset(0x8L).and(MEMORY.ref(4, a3).offset(0xcL)).oru(MEMORY.ref(4, a3).offset(0x8L)).addu(MEMORY.ref(4, a3).offset(0x10L));
-      MEMORY.ref(4, primitives).offset(a2).offset(0xcL).addu(MEMORY.ref(4, a3).offset(0x10L).get());
-      a2 += 0x1cL;
-      count--;
+    for(final byte[] data : primitive.data()) {
+      MathHelper.set(data, 0x0, 4, (MathHelper.get(data, 0x0, 4) & (int)MEMORY.ref(4, a3).offset(0x4L).get() | (int)MEMORY.ref(4, a3).offset(0x0L).get()) + (int)MEMORY.ref(4, a3).offset(0x10L).get());
+      MathHelper.set(data, 0x4, 4, (MathHelper.get(data, 0x4, 4) & (int)MEMORY.ref(4, a3).offset(0xcL).get() | (int)MEMORY.ref(4, a3).offset(0x8L).get()) + (int)MEMORY.ref(4, a3).offset(0x10L).get());
+      MathHelper.set(data, 0x8, 4,  MathHelper.get(data, 0x8, 4) + (int)MEMORY.ref(4, a3).offset(0x10L).get());
     }
-
-    //LAB_800c9088
   }
 
   @Method(0x800c9090L)
-  public static void FUN_800c9090(final long primitives, long count, long a2) {
-    final long a3 = _800eee48.offset(a2 * 0x14L).getAddress();
+  public static void FUN_800c9090(final TmdObjTable1c.Primitive primitive, final int colourMap) {
+    final long a3 = _800eee48.offset(colourMap * 0x14L).getAddress();
 
     //LAB_800c90b0
-    a2 = 0;
-    while(count != 0) {
-      MEMORY.ref(4, primitives).offset(a2).offset(0x04L).and(MEMORY.ref(4, a3).offset(0x4L)).oru(MEMORY.ref(4, a3).offset(0x0L)).addu(MEMORY.ref(4, a3).offset(0x10L));
-      MEMORY.ref(4, primitives).offset(a2).offset(0x08L).and(MEMORY.ref(4, a3).offset(0xcL)).oru(MEMORY.ref(4, a3).offset(0x8L)).addu(MEMORY.ref(4, a3).offset(0x10L));
-      MEMORY.ref(4, primitives).offset(a2).offset(0x0cL).addu(MEMORY.ref(4, a3).offset(0x10L));
-      MEMORY.ref(4, primitives).offset(a2).offset(0x10L).addu(MEMORY.ref(4, a3).offset(0x10L));
-      a2 += 0x24L;
-      count--;
+    for(final byte[] data : primitive.data()) {
+      MathHelper.set(data, 0x0, 4, (MathHelper.get(data, 0x0, 4) & (int)MEMORY.ref(4, a3).offset(0x4L).get() | (int)MEMORY.ref(4, a3).offset(0x0L).get()) + (int)MEMORY.ref(4, a3).offset(0x10L).get());
+      MathHelper.set(data, 0x4, 4, (MathHelper.get(data, 0x4, 4) & (int)MEMORY.ref(4, a3).offset(0xcL).get() | (int)MEMORY.ref(4, a3).offset(0x8L).get()) + (int)MEMORY.ref(4, a3).offset(0x10L).get());
+      MathHelper.set(data, 0x8, 4,  MathHelper.get(data, 0x8, 4) + (int)MEMORY.ref(4, a3).offset(0x10L).get());
+      MathHelper.set(data, 0xc, 4,  MathHelper.get(data, 0xc, 4) + (int)MEMORY.ref(4, a3).offset(0x10L).get());
     }
-
-    //LAB_800c9128
   }
 
   @Method(0x800c9130L)
-  public static void FUN_800c9130(final long primitives, long count, long a2) {
-    final long a3 = _800eee48.offset(a2 * 0x14L).getAddress();
+  public static void FUN_800c9130(final TmdObjTable1c.Primitive primitive, final int colourMap) {
+    final long a3 = _800eee48.offset(colourMap * 0x14L).getAddress();
 
     //LAB_800c9150
-    a2 = 0;
-    while(count != 0) {
-      MEMORY.ref(4, primitives).offset(a2).offset(0x4L).and(MEMORY.ref(4, a3).offset(0x4L)).oru(MEMORY.ref(4, a3).offset(0x0L)).addu(MEMORY.ref(4, a3).offset(0x10L));
-      MEMORY.ref(4, primitives).offset(a2).offset(0x8L).and(MEMORY.ref(4, a3).offset(0xcL)).oru(MEMORY.ref(4, a3).offset(0x8L)).addu(MEMORY.ref(4, a3).offset(0x10L));
-      MEMORY.ref(4, primitives).offset(a2).offset(0xcL).addu(MEMORY.ref(4, a3).offset(0x10L));
-      a2 += 0x24L;
-      count--;
+    for(final byte[] data : primitive.data()) {
+      MathHelper.set(data, 0x0, 4, (MathHelper.get(data, 0x0, 4) & (int)MEMORY.ref(4, a3).offset(0x4L).get() | (int)MEMORY.ref(4, a3).offset(0x0L).get()) + (int)MEMORY.ref(4, a3).offset(0x10L).get());
+      MathHelper.set(data, 0x4, 4, (MathHelper.get(data, 0x4, 4) & (int)MEMORY.ref(4, a3).offset(0xcL).get() | (int)MEMORY.ref(4, a3).offset(0x8L).get()) + (int)MEMORY.ref(4, a3).offset(0x10L).get());
+      MathHelper.set(data, 0x8, 4,  MathHelper.get(data, 0x8, 4) + (int)MEMORY.ref(4, a3).offset(0x10L).get());
     }
-
-    //LAB_800c91b4
   }
 
   @Method(0x800c91bcL)
-  public static void FUN_800c91bc(final long primitives, long count, long a2) {
-    final long a3 = _800eee48.offset(a2 * 0x14L).getAddress();
+  public static void FUN_800c91bc(final TmdObjTable1c.Primitive primitive, final int colourMap) {
+    final long a3 = _800eee48.offset(colourMap * 0x14L).getAddress();
 
     //LAB_800c91dc
-    a2 = 0;
-    while(count != 0) {
-      MEMORY.ref(4, primitives).offset(a2).offset(0x04L).and(MEMORY.ref(4, a3).offset(0x4L)).oru(MEMORY.ref(4, a3).offset(0x0L)).addu(MEMORY.ref(4, a3).offset(0x10L));
-      MEMORY.ref(4, primitives).offset(a2).offset(0x08L).and(MEMORY.ref(4, a3).offset(0xcL)).oru(MEMORY.ref(4, a3).offset(0x8L)).addu(MEMORY.ref(4, a3).offset(0x10L));
-      MEMORY.ref(4, primitives).offset(a2).offset(0x0cL).addu(MEMORY.ref(4, a3).offset(0x10L));
-      MEMORY.ref(4, primitives).offset(a2).offset(0x10L).addu(MEMORY.ref(4, a3).offset(0x10L));
-      a2 += 0x2cL;
-      count--;
+    for(final byte[] data : primitive.data()) {
+      MathHelper.set(data, 0x0, 4, (MathHelper.get(data, 0x0, 4) & (int)MEMORY.ref(4, a3).offset(0x4L).get() | (int)MEMORY.ref(4, a3).offset(0x0L).get()) + (int)MEMORY.ref(4, a3).offset(0x10L).get());
+      MathHelper.set(data, 0x4, 4, (MathHelper.get(data, 0x4, 4) & (int)MEMORY.ref(4, a3).offset(0xcL).get() | (int)MEMORY.ref(4, a3).offset(0x8L).get()) + (int)MEMORY.ref(4, a3).offset(0x10L).get());
+      MathHelper.set(data, 0x8, 4,  MathHelper.get(data, 0x8, 4) + (int)MEMORY.ref(4, a3).offset(0x10L).get());
+      MathHelper.set(data, 0xc, 4,  MathHelper.get(data, 0xc, 4) + (int)MEMORY.ref(4, a3).offset(0x10L).get());
     }
-
-    //LAB_800c9254
   }
 
   @Method(0x800c925cL) // Renders the player
@@ -2849,7 +2744,7 @@ public class WMap {
       //LAB_800d5898
       if(file.size() != 0) {
         //LAB_800d58c8
-        new Tim(file.getBytes()).uploadToGpu();
+        new Tim(file).uploadToGpu();
       }
     }
 
@@ -2860,8 +2755,8 @@ public class WMap {
   }
 
   @Method(0x800d5984L)
-  public static void loadTmdCallback(final long address, final int size, final int param) {
-    final TmdWithId tmd = MEMORY.ref(4, address, TmdWithId::new);
+  public static void loadTmdCallback(final String modelName, final FileData file) {
+    final TmdWithId tmd = new TmdWithId(modelName, file);
 
     struct258_800c66a8.tmdRendering_08 = loadTmd(tmd);
     initTmdTransforms(struct258_800c66a8.tmdRendering_08, null);
@@ -2876,7 +2771,7 @@ public class WMap {
     struct258_800c66a8._1b4[whichFile] = mrg;
 
     if(files.get(0).size() != 0) {
-      struct258_800c66a8._b4[whichFile].extendedTmd_00 = mrg.getFile(0, CContainer::new);
+      struct258_800c66a8._b4[whichFile].extendedTmd_00 = new CContainer("DRGN0/" + (5714 + whichFile), files.get(0));
     }
 
     if(files.get(1).size() != 0) {
@@ -2886,10 +2781,10 @@ public class WMap {
     //LAB_800d5a48
     for(int i = 2; i < Math.min(16, files.size()); i++) {
       //LAB_800d5a6c
-      if(mrg.entries.get(i).size.get() != 0) {
+      if(files.get(i).size() != 0) {
         //LAB_800d5a9c
         //LAB_800d5ab8
-        struct258_800c66a8._b4[whichFile].tmdAnim_08[i - 2] = mrg.getFile(i, TmdAnimationFile::new);
+        struct258_800c66a8._b4[whichFile].tmdAnim_08[i - 2] = new TmdAnimationFile(files.get(i));
       }
 
       //LAB_800d5b2c
@@ -3548,7 +3443,7 @@ public class WMap {
   public static void FUN_800d8e4c(final int index) {
     filesLoadedFlags_800c66b8.and(0xffff_fffdL);
     loadDrgnDir(0, 5697 + index, files -> WMap.timsLoaded(files, 0x2));
-    loadDrgnBinFile(0, 5705 + index, 0, WMap::loadTmdCallback, 0, 0x2L);
+    loadDrgnFile(0, 5705 + index, files -> WMap.loadTmdCallback("DRGN0/" +(5705 + index), files));
   }
 
   @Method(0x800d8efcL)
@@ -4474,10 +4369,6 @@ public class WMap {
 
   @Method(0x800dcde8L)
   public static void deallocateWorldMap() {
-    if(struct258_800c66a8.tmdRendering_08 != null) {
-      deallocateTmdRenderer(struct258_800c66a8.tmdRendering_08);
-    }
-
     //LAB_800dce24
     FUN_800d6818(struct258_800c66a8.ptr_1c);
     FUN_800d15d8(struct258_800c66a8._1fc);
@@ -4512,50 +4403,38 @@ public class WMap {
   /** Don't really know what makes it special. Seems to use a fixed Z value and doesn't check if the triangles are on screen. Used for water. */
   @Method(0x800dd05cL)
   public static void renderSpecialDobj2(final GsDOBJ2 dobj2) {
-    final UnboundedArrayRef<SVECTOR> vertices = dobj2.tmd_08.vert_top_00.deref();
-    long primitives = dobj2.tmd_08.primitives_10.getPointer();
-    long count = dobj2.tmd_08.n_primitive_14.get();
+    final SVECTOR[] vertices = dobj2.tmd_08.vert_top_00;
 
-    //LAB_800dd0dc
-    while(count != 0) {
-      final long primitiveCount = MEMORY.ref(2, primitives).get();
+    for(final TmdObjTable1c.Primitive primitive : dobj2.tmd_08.primitives_10) {
+      final int command = primitive.header() & 0xff04_0000;
 
-      //LAB_800dd0f4
-      count -= primitiveCount;
-
-      final long v0 = MEMORY.ref(4, primitives).get() & 0xff04_0000L;
-      if(v0 == 0x3d00_0000L) {
-        primitives = FUN_800deeac(primitives, vertices, primitiveCount);
+      if(command == 0x3d00_0000) {
+        FUN_800deeac(primitive, vertices);
       } else {
         assert false;
       }
-
-      //LAB_800dd384
-      //LAB_800dd38c
     }
-
-    //LAB_800dd394
   }
 
   @Method(0x800deeacL)
-  public static long FUN_800deeac(long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long count) {
+  public static void FUN_800deeac(final TmdObjTable1c.Primitive primitive, final SVECTOR[] vertices) {
     //LAB_800deee8
-    for(int i = 0; i < count; i++) {
-      final int tpage = (int)MEMORY.ref(2, primitives).offset(0x0aL).get();
+    for(final byte[] data : primitive.data()) {
+      final int tpage = IoHelper.readUShort(data, 0x6);
 
       final GpuCommandPoly cmd = new GpuCommandPoly(4)
         .bpp(Bpp.of(tpage >>> 7 & 0b11))
         .clut(1008, (int)_800ef348.offset(struct258_800c66a8._28 * 0x2L).get())
         .vramPos((tpage & 0b1111) * 64, (tpage & 0b10000) != 0 ? 256 : 0)
-        .uv(0, MEMORY.get(primitives + 0x04L) & 0xff, MEMORY.get(primitives + 0x05L) & 0xff)
-        .uv(1, MEMORY.get(primitives + 0x08L) & 0xff, MEMORY.get(primitives + 0x09L) & 0xff)
-        .uv(2, MEMORY.get(primitives + 0x0cL) & 0xff, MEMORY.get(primitives + 0x0dL) & 0xff)
-        .uv(3, MEMORY.get(primitives + 0x10L) & 0xff, MEMORY.get(primitives + 0x11L) & 0xff);
+        .uv(0, IoHelper.readUByte(data, 0x0), IoHelper.readUByte(data, 0x1))
+        .uv(1, IoHelper.readUByte(data, 0x4), IoHelper.readUByte(data, 0x5))
+        .uv(2, IoHelper.readUByte(data, 0x8), IoHelper.readUByte(data, 0x9))
+        .uv(3, IoHelper.readUByte(data, 0xc), IoHelper.readUByte(data, 0xd));
 
       //LAB_800def00
-      final SVECTOR vert0 = vertices.get((int)MEMORY.ref(2, primitives).offset(0x24L).get());
-      final SVECTOR vert1 = vertices.get((int)MEMORY.ref(2, primitives).offset(0x26L).get());
-      final SVECTOR vert2 = vertices.get((int)MEMORY.ref(2, primitives).offset(0x28L).get());
+      final SVECTOR vert0 = vertices[IoHelper.readUShort(data, 0x20)];
+      final SVECTOR vert1 = vertices[IoHelper.readUShort(data, 0x22)];
+      final SVECTOR vert2 = vertices[IoHelper.readUShort(data, 0x24)];
       CPU.MTC2(vert0.getXY(), 0);
       CPU.MTC2(vert0.getZ(),  1);
       CPU.MTC2(vert1.getXY(), 2);
@@ -4579,7 +4458,7 @@ public class WMap {
             .pos(1, v1.getX(), v1.getY())
             .pos(2, v2.getX(), v2.getY());
 
-          final SVECTOR vert3 = vertices.get((int)MEMORY.ref(2, primitives).offset(0x2aL).get());
+          final SVECTOR vert3 = vertices[IoHelper.readUShort(data, 0x26)];
           CPU.MTC2(vert3.getXY(), 0);
           CPU.MTC2(vert3.getZ(),  1);
           CPU.COP2(0x18_0001L); // Perspective transform single
@@ -4590,23 +4469,16 @@ public class WMap {
 
             cmd
               .pos(3, v3.getX(), v3.getY())
-              .rgb(0, MEMORY.get(primitives + 0x14L) & 0xff, MEMORY.get(primitives + 0x15L) & 0xff, MEMORY.get(primitives + 0x16L) & 0xff)
-              .rgb(1, MEMORY.get(primitives + 0x18L) & 0xff, MEMORY.get(primitives + 0x19L) & 0xff, MEMORY.get(primitives + 0x1aL) & 0xff)
-              .rgb(2, MEMORY.get(primitives + 0x1cL) & 0xff, MEMORY.get(primitives + 0x1dL) & 0xff, MEMORY.get(primitives + 0x1eL) & 0xff)
-              .rgb(3, MEMORY.get(primitives + 0x20L) & 0xff, MEMORY.get(primitives + 0x21L) & 0xff, MEMORY.get(primitives + 0x22L) & 0xff);
+              .rgb(0, IoHelper.readInt(data, 0x10))
+              .rgb(1, IoHelper.readInt(data, 0x14))
+              .rgb(2, IoHelper.readInt(data, 0x18))
+              .rgb(3, IoHelper.readInt(data, 0x1c));
 
             GPU.queueCommand(tempZ_800c66d8.get(), cmd);
           }
         }
       }
-
-      //LAB_800df1ec
-      primitives += 0x2cL;
     }
-
-    //LAB_800df204
-    //LAB_800df220
-    return primitives;
   }
 
   @Method(0x800dfa70L)
@@ -4747,7 +4619,6 @@ public class WMap {
     //LAB_800e05d8
     for(int i = 0; i < 4; i++) {
       //LAB_800e05f4
-      deallocateModel(struct258_800c66a8.models_0c[i]);
       free(struct258_800c66a8._1b4[i].getAddress());
       struct258_800c66a8.models_0c[i] = null;
     }
@@ -5351,16 +5222,9 @@ public class WMap {
     return sp10;
   }
 
-  @Method(0x800e3b14L)
-  public static void deallocateTmdRenderer(final WMapTmdRenderingStruct18 a0) {
-    free(a0.tmd_14.getAddress());
-  }
-
   @Method(0x800e3bd4L)
   public static int allocateTmdRenderer(final WMapTmdRenderingStruct18 a0, final TmdWithId tmd) {
-    adjustTmdPointers(tmd.tmd);
-
-    final int nobj = tmd.tmd.header.nobj.get();
+    final int nobj = tmd.tmd.header.nobj;
     a0.dobj2s_00 = new GsDOBJ2[nobj];
     a0.coord2s_04 = new GsCOORDINATE2[nobj];
     a0.rotations_08 = new SVECTOR[nobj];
@@ -5373,7 +5237,7 @@ public class WMap {
     //LAB_800e3d24
     for(int i = 0; i < nobj; i++) {
       //LAB_800e3d44
-      updateTmdPacketIlen(tmd.tmd.objTable, a0.dobj2s_00[i], i);
+      a0.dobj2s_00[i].tmd_08 = tmd.tmd.objTable[i];
     }
 
     //LAB_800e3d80

@@ -39,6 +39,10 @@ public class BVEC4 implements MemoryRef {
     return this;
   }
 
+  public BVEC4 set(final int x, final int y, final int z) {
+    return this.setX(x).setY(y).setZ(z);
+  }
+
   public BVEC4 set(final int x, final int y, final int z, final int w) {
     return this.setX(x).setY(y).setZ(z).setW(w);
   }

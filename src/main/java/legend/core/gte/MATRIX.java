@@ -4,6 +4,8 @@ import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.ShortRef;
+import org.joml.Matrix4f;
+import org.joml.Matrix4fc;
 
 public class MATRIX implements MemoryRef {
   private final Value ref;
@@ -76,6 +78,25 @@ public class MATRIX implements MemoryRef {
     }
 
     return this;
+  }
+
+  /** NOTE: does not set translation */
+  public MATRIX set(final Matrix4fc other) {
+    return this
+      .set(0, (short)(other.m00() * 4096)).set(1, (short)(other.m10() * 4096)).set(2, (short)(other.m20() * 4096))
+      .set(3, (short)(other.m01() * 4096)).set(4, (short)(other.m11() * 4096)).set(5, (short)(other.m21() * 4096))
+      .set(6, (short)(other.m02() * 4096)).set(7, (short)(other.m12() * 4096)).set(8, (short)(other.m22() * 4096));
+  }
+
+  public Matrix4f toMat4f(final Matrix4f mat) {
+    return mat
+      .m00(this.get(0) / 4096.0f).m10(this.get(1) / 4096.0f).m20(this.get(2) / 4096.0f)
+      .m01(this.get(3) / 4096.0f).m11(this.get(4) / 4096.0f).m21(this.get(5) / 4096.0f)
+      .m02(this.get(6) / 4096.0f).m12(this.get(7) / 4096.0f).m22(this.get(8) / 4096.0f);
+  }
+
+  public Matrix4f toMat4f() {
+    return this.toMat4f(new Matrix4f());
   }
 
   /** Sets elements index and index+1 to the packed unsigned int value */

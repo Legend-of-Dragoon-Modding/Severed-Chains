@@ -1,21 +1,32 @@
 package legend.game.types;
 
-import legend.core.memory.Value;
-import legend.core.memory.types.ShortRef;
-import legend.core.memory.types.UnboundedArrayRef;
-import legend.core.memory.types.UnsignedShortRef;
 import legend.game.combat.deff.Anim;
+import legend.game.unpacker.FileData;
 
 public class TmdAnimationFile extends Anim {
-  public final UnsignedShortRef count_0c;
-  public final ShortRef _0e;
-  public final UnboundedArrayRef<ModelPartTransforms> partTransforms_10;
+  /** ushort */
+  public final int modelPartCount_0c;
+  /** The total number of frames (seems there is one keyframe every two frames */
+  public final short totalFrames_0e;
+  /** Arrays are [keyframe][part] */
+  public final ModelPartTransforms0c[][] partTransforms_10;
 
-  public TmdAnimationFile(final Value ref) {
-    super(ref);
+  public TmdAnimationFile(final FileData data) {
+    super(data);
 
-    this.count_0c = ref.offset(2, 0x0cL).cast(UnsignedShortRef::new);
-    this._0e = ref.offset(2, 0x0eL).cast(ShortRef::new);
-    this.partTransforms_10 = ref.offset(2, 0x10L).cast(UnboundedArrayRef.of(0xc, ModelPartTransforms::new));
+    this.modelPartCount_0c = data.readUShort(0xc);
+    this.totalFrames_0e = data.readShort(0xe);
+
+    final int keyframeCount = this.totalFrames_0e / 2;
+
+    this.partTransforms_10 = new ModelPartTransforms0c[keyframeCount][];
+
+    for(int frameIndex = 0; frameIndex < keyframeCount; frameIndex++) {
+      this.partTransforms_10[frameIndex] = new ModelPartTransforms0c[this.modelPartCount_0c];
+
+      for(int partIndex = 0; partIndex < this.modelPartCount_0c; partIndex++) {
+        this.partTransforms_10[frameIndex][partIndex] = new ModelPartTransforms0c(data.slice(0x10 + (frameIndex * this.modelPartCount_0c + partIndex) * 0xc, 0xc));
+      }
+    }
   }
 }

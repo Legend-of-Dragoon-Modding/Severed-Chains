@@ -4,13 +4,22 @@ import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptState;
 
 public class BattleStruct24_2 {
-  public int _00;
+  /**
+   * Flags:
+   * <ul>
+   *   <li>0x100_0000 - dragoon attack/spell/transformation DEFF</li>
+   *   <li>0x200_0000 - item magic DEFF</li>
+   *   <li>0x300_0000 - enemy/boss DEFF</li>
+   *   <li>0x500_0000 - cutscene DEFF</li>
+   * </ul>
+   */
+  public int type_00;
   public ScriptState<BattleObject27c> bobjState_04;
   public int _08;
   public int scriptIndex_0c;
   public int scriptOffsetIndex_10;
   public ScriptFile script_14;
   public ScriptState<EffectManagerData6c> managerState_18;
-  public int _1c;
+  public boolean init_1c;
   public int frameCount_20;
 }
