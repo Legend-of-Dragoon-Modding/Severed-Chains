@@ -1,12 +1,8 @@
 package legend.game.input;
 
+import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,20 +13,13 @@ public final class ControllerDatabase {
   private static final boolean logVerbose = false;
 
   public static void loadControllerDB() {
-    final URL pathURL = ControllerDatabase.class.getResource("/input/gamecontrollerdb.txt");
-    final Path path;
+    final String fullPath = System.getProperty("user.dir") + "\\gamecontrollerdb.txt";
+    final File dbFile = new File(fullPath);
     try {
-      final URI uri = pathURL.toURI();
-      path = Paths.get(uri);
-
-      try {
-        databaseEntries = Files.readAllLines(path);
-      } catch(final IOException ex) {
-        LOGGER.error("Invalid path while trying to load controller database\n{}", path);
-      }
-
-    } catch(final URISyntaxException e) {
-      LOGGER.error("Could not convert URL(Java) to URI");
+      databaseEntries = Files.readAllLines(dbFile.toPath());
+      LOGGER.info("Found and Loaded Controller Database File.");
+    } catch(final IOException exception) {
+      LOGGER.error("Controller database file not found! gamecontrollerdb.txt");
     }
   }
 
