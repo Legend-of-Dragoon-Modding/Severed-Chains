@@ -86,7 +86,7 @@ public class GoodsScreen extends MenuScreen {
         if(this.scrollAccumulator <= -1.0d) {
           this.scrollAccumulator += 1.0d;
 
-          if(this.slotScroll < MathHelper.roundUp(this.menuItems.size() / 2 - 7, 2)) {
+          if(this.slotScroll < MathHelper.roundUp(this.menuItems.size() - 14, 2)) {
             this.scroll(this.slotScroll + 2);
           }
         }
@@ -117,7 +117,11 @@ public class GoodsScreen extends MenuScreen {
     renderText(Goods_8011cf48, 32, 22, 4);
     renderText(Goods_8011cf48, 210, 22, 4);
     this.FUN_8010965c(slotScroll, this._800bdb9c, this._800bdba0);
-    renderString(1, 194, 178, this.menuItems.get(slotScroll + selectedSlot).itemId_00, allocate);
+
+    if(slotScroll + selectedSlot < this.menuItems.size()) {
+      renderString(1, 194, 178, this.menuItems.get(slotScroll + selectedSlot).itemId_00, allocate);
+    }
+
     uploadRenderables();
   }
 
@@ -200,7 +204,7 @@ public class GoodsScreen extends MenuScreen {
       }
 
       case GLFW_KEY_RIGHT -> {
-        if(this.selectedSlot % 2 != 0 || this.selectedSlot + this.slotScroll * 2 == this.menuItems.size() - 1) {
+        if(this.selectedSlot % 2 != 0 || this.selectedSlot + this.slotScroll == this.menuItems.size() - 1) {
           break;
         }
 
@@ -212,7 +216,7 @@ public class GoodsScreen extends MenuScreen {
 
       case GLFW_KEY_DOWN -> {
         if(this.selectedSlot >= 12) {
-          if(this.selectedSlot + this.slotScroll < this.menuItems.size()) {
+          if(this.selectedSlot + this.slotScroll < this.menuItems.size() - 1) {
             this.scroll(this.slotScroll + 2);
           }
 
