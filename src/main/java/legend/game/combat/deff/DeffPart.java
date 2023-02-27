@@ -124,15 +124,4 @@ public class DeffPart {
       this.clutY_0a = data.readUShort(0xa);
     }
   }
-
-  public static class CmbType extends AnimatedTmdType {
-    public final Cmb cmb_14;
-
-    public CmbType(final String name, final FileData data) {
-      super(name, data);
-
-      final int cmbOffset = data.readInt(0x14);
-      this.cmb_14 = new Cmb(data.slice(cmbOffset));
-    }
-  }
 }

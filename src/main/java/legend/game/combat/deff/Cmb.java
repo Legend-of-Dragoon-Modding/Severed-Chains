@@ -9,13 +9,21 @@ import java.util.Arrays;
 public class Cmb extends TmdAnimationFile {
   public static final int MAGIC = 0x2042_4d43;
 
+  public final int size_08;
+
   public final SubTransforms08[] subTransforms;
 
   public Cmb(final FileData data) {
     super(data);
 
+    if(data.readInt(0) != MAGIC) {
+      throw new RuntimeException("Not a CMB! Magic: %x".formatted(data.readInt(0)));
+    }
+
+    this.size_08 = data.readUShort(0x8);
+
     final int baseAddress = 0x10 + this.modelPartCount_0c * 0xc;
-    final int count = (data.size() - baseAddress) / 0x8;
+    final int count = this.modelPartCount_0c * (this.totalFrames_0e - 1);
     this.subTransforms = new SubTransforms08[count];
     Arrays.setAll(this.subTransforms, i -> new SubTransforms08(data.slice(baseAddress + i * 0x8, 0x8)));
   }

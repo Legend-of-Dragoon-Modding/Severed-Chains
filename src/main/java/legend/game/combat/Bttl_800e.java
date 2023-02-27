@@ -2491,10 +2491,10 @@ public final class Bttl_800e {
           FUN_800eb308(deffManagerState.innerStruct_00, extTmd, tmdType.textureInfo_08);
         }
       } else if(type == 0x200_0000) {
-        final DeffPart.CmbType cmbType = new DeffPart.CmbType("DEFF index %d (flags %08x)".formatted(i, flags), data);
+        final DeffPart.AnimatedTmdType animType = new DeffPart.AnimatedTmdType("DEFF index %d (flags %08x)".formatted(i, flags), data);
 
-        if(cmbType.textureInfo_08 != null && deffManagerState.index != 0) {
-          FUN_800eb308(deffManagerState.innerStruct_00, cmbType.tmd_0c, cmbType.textureInfo_08);
+        if(animType.textureInfo_08 != null && deffManagerState.index != 0) {
+          FUN_800eb308(deffManagerState.innerStruct_00, animType.tmd_0c, animType.textureInfo_08);
         }
       } else if(type == 0x300_0000) {
         final DeffPart.TmdType tmdType = new DeffPart.TmdType("DEFF index %d (flags %08x)".formatted(i, flags), data);
@@ -2622,13 +2622,8 @@ public final class Bttl_800e {
           case 1, 2 -> new DeffPart.AnimatedTmdType("DEFF index %d (flags %08x)".formatted(i, flags), data);
           case 3 -> new DeffPart.TmdType("DEFF index %d (flags %08x)".formatted(i, flags), data);
           case 4 -> new DeffPart.SpriteType(data);
-          case 5 -> { // Example: d-attack (DRGN0.4236.0.0)
-            if(data.readInt(data.readInt(0x14)) == Cmb.MAGIC) {
-              yield new DeffPart.CmbType("DEFF index %d (flags %08x)".formatted(i, flags), data);
-            }
-
-            yield new DeffPart.AnimatedTmdType("DEFF index %d (flags %08x)".formatted(i, flags), data);
-          }
+          // Example: d-attack (DRGN0.4236.0.0)
+          case 5 -> new DeffPart.AnimatedTmdType("DEFF index %d (flags %08x)".formatted(i, flags), data);
           default -> throw new IllegalArgumentException("Invalid DEFF type %x".formatted(flags & 0xff00_0000));
         };
       }

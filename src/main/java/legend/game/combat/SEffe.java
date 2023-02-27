@@ -9849,12 +9849,7 @@ public final class SEffe {
     final BttlScriptData6cSub13c effect = (BttlScriptData6cSub13c)manager.effect_44;
 
     final DeffPart part = getDeffPart(script.params_20[1].get() | 0x500_0000);
-    final Anim anim;
-    if(part instanceof DeffPart.CmbType) {
-      anim = ((DeffPart.CmbType)part).cmb_14;
-    } else {
-      anim = ((DeffPart.AnimatedTmdType)part).anim_14;
-    }
+    final Anim anim = ((DeffPart.AnimatedTmdType)part).anim_14;
 
     effect.anim_0c = anim;
     loadModelAnim(effect.model_134, anim);
