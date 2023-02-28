@@ -2002,9 +2002,9 @@ public final class Bttl_800e {
       sp0x10.v_0f.set(metrics.v_02.get());
       sp0x10.clutX_10.set(metrics.clut_06.get() << 4 & 0x3ff);
       sp0x10.clutY_12.set(metrics.clut_06.get() >>> 6 & 0x1ff);
-      sp0x10.r_14.set(a1.colour_1c.getX());
-      sp0x10.g_15.set(a1.colour_1c.getY());
-      sp0x10.b_16.set(a1.colour_1c.getZ());
+      sp0x10.r_14.set(a1.colour_1c.getX() & 0xff);
+      sp0x10.g_15.set(a1.colour_1c.getY() & 0xff);
+      sp0x10.b_16.set(a1.colour_1c.getZ() & 0xff);
       sp0x10.scaleX_1c.set(a1.scale_16.getX());
       sp0x10.scaleY_1e.set(a1.scale_16.getY());
       sp0x10.rotation_20.set(a1.rot_10.getZ()); // This is correct, different svec for Z
