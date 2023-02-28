@@ -4665,25 +4665,32 @@ public final class Bttl_800d {
     final int count = Math.min(model.count_c8, model.partCount_98);
 
     //LAB_800dddc4
-    int t0;
+    int frameIndex;
     final int a1_0;
     final int isInterpolationFrame;
     if(model.ub_a2 == 0) {
       //LAB_800dde1c
-      final int frame = animationTicks % model.totalFrames_9a;
+      // This modulo has to be unsigned due to a bug causing the number of ticks
+      // to go negative. This matches the retail behaviour (it uses divu).
+      final int frame = (int)((animationTicks & 0xffff_ffffL) % model.totalFrames_9a);
       isInterpolationFrame = (animationTicks & 0x1) << 11; // Dunno why this is shifted, makes no difference
       a1_0 = frame >>> 1;
-      t0 = cmbAnim.animationTicks_00 % model.totalFrames_9a >> 1;
+      frameIndex = cmbAnim.animationTicks_00 % model.totalFrames_9a >> 1;
       model.remainingFrames_9e = model.totalFrames_9a - frame - 1;
+
+      // This is another retail bug - it's possible for the frame index to go negative
+      if(frameIndex < 0) {
+        frameIndex = 0;
+      }
     } else {
       isInterpolationFrame = 0;
       a1_0 = (animationTicks << 1) % model.totalFrames_9a >>> 1;
-      t0 = (cmbAnim.animationTicks_00 << 1) % model.totalFrames_9a >> 1;
+      frameIndex = (cmbAnim.animationTicks_00 << 1) % model.totalFrames_9a >> 1;
       model.remainingFrames_9e = (model.totalFrames_9a >> 1) - a1_0 - 1;
     }
 
     //LAB_800dde60
-    if(t0 > a1_0) {
+    if(frameIndex > a1_0) {
       //LAB_800dde88
       for(int partIndex = 0; partIndex < modelPartCount; partIndex++) {
         final ModelPartTransforms0c fileTransforms = cmb.partTransforms_10[0][partIndex];
@@ -4695,15 +4702,15 @@ public final class Bttl_800d {
 
       //LAB_800ddee0
       cmbAnim.animationTicks_00 = 0;
-      t0 = 0;
+      frameIndex = 0;
     }
 
     //LAB_800ddeec
     //LAB_800ddf1c
-    for(; t0 < a1_0; t0++) {
+    for(; frameIndex < a1_0; frameIndex++) {
       //LAB_800ddf2c
       for(int partIndex = 0; partIndex < modelPartCount; partIndex++) {
-        final Cmb.SubTransforms08 subTransforms = cmb.subTransforms[t0 * modelPartCount + partIndex];
+        final Cmb.SubTransforms08 subTransforms = cmb.subTransforms[frameIndex][partIndex];
         final ModelPartTransforms0c modelTransforms = cmbAnim.transforms_08[partIndex];
 
         modelTransforms.rotate_00.x.add((short)(subTransforms.rot_01.getX() << subTransforms.rotScale_00));
@@ -4723,7 +4730,7 @@ public final class Bttl_800d {
     if(isInterpolationFrame != 0 && model.ub_a3 == 0 && a1_0 != (model.totalFrames_9a >> 1) - 1) { // Interpolation frame
       //LAB_800de050
       for(int i = 0; i < count; i++) {
-        final Cmb.SubTransforms08 subTransforms = cmb.subTransforms[a1_0 * modelPartCount + i];
+        final Cmb.SubTransforms08 subTransforms = cmb.subTransforms[a1_0][i];
         final ModelPartTransforms0c modelTransforms = cmbAnim.transforms_08[i];
 
         final MATRIX modelPartMatrix = model.dobj2ArrPtr_00[i].coord2_04.coord;

@@ -8261,33 +8261,37 @@ public final class SEffe {
       default -> throw new RuntimeException("Invalid value (I think) " + a1);
     };
 
-    v0._0c = val << 8;
-    v0._10 = a2;
-    v0._14 = a3;
+    v0.accumulator_0c = val << 8;
+    v0.speed_10 = a2;
+    v0.acceleration_14 = a3;
     v0._18 = -1;
-    v0._1a = -1;
+    v0.ticksRemaining_1a = -1;
+
+    if(v0.accumulator_0c < 0 || v0.speed_10 < 0 || v0.acceleration_14 < 0) {
+      System.out.println();
+    }
   }
 
   /** TODO this method advances animation frames */
   @Method(0x80114d98L)
   public static int FUN_80114d98(final EffectManagerData6c a0, final BttlScriptData6cSub1c_3 a1) {
-    a1._10 += a1._14;
-    a1._0c += a1._10;
+    a1.speed_10 += a1.acceleration_14;
+    a1.accumulator_0c += a1.speed_10;
 
     switch(a1._05 - 5) {
-      case 0 -> a0._10._24 = a1._0c >> 8;
-      case 1 -> a0._10._28 = a1._0c >> 8;
-      case 2 -> a0._10._2c = a1._0c >> 8;
-      case 3 -> a0._10._30 = a1._0c >> 8;
+      case 0 -> a0._10._24 = a1.accumulator_0c >> 8;
+      case 1 -> a0._10._28 = a1.accumulator_0c >> 8;
+      case 2 -> a0._10._2c = a1.accumulator_0c >> 8;
+      case 3 -> a0._10._30 = a1.accumulator_0c >> 8;
       default -> throw new RuntimeException("Invalid value (I think) " + (a1._05 - 5));
     }
 
-    if(a1._1a == -1) {
+    if(a1.ticksRemaining_1a == -1) {
       return 1;
     }
 
-    a1._1a--;
-    if(a1._1a > 0) {
+    a1.ticksRemaining_1a--;
+    if(a1.ticksRemaining_1a > 0) {
       //LAB_80114e00
       return 1;
     }
@@ -8330,11 +8334,16 @@ public final class SEffe {
       default -> throw new RuntimeException("Invalid value (I think) " + s1);
     };
 
-    v0._0c = val << 8;
-    v0._10 = (s3 * 0x100 - v0._0c) / s2;
-    v0._14 = 0;
+    v0.accumulator_0c = val << 8;
+    v0.speed_10 = (s3 * 0x100 - v0.accumulator_0c) / s2;
+    v0.acceleration_14 = 0;
     v0._18 = -1;
-    v0._1a = (short)s2;
+    v0.ticksRemaining_1a = (short)s2;
+
+    if(v0.accumulator_0c < 0 || v0.speed_10 < 0) {
+      System.out.println();
+    }
+
     return FlowControl.CONTINUE;
   }
 
@@ -8345,16 +8354,16 @@ public final class SEffe {
 
   @Method(0x80115288L)
   public static int FUN_80115288(final EffectManagerData6c a0, final BttlScriptData6cSub1c_3 a1) {
-    a1._1a--;
+    a1.ticksRemaining_1a--;
 
     //LAB_801152a8
-    return a1._1a > 0 ? 1 : 2;
+    return a1.ticksRemaining_1a > 0 ? 1 : 2;
   }
 
   @Method(0x801152b0L)
   public static FlowControl FUN_801152b0(final RunningScript<?> script) {
     final BttlScriptData6cSub1c_3 v0 = FUN_800e8dd4((EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00, 0, 0, SEffe::FUN_80115288, 0x1c, new BttlScriptData6cSub1c_3());
-    v0._1a = (short)script.params_20[1].get();
+    v0.ticksRemaining_1a = (short)script.params_20[1].get();
     return FlowControl.CONTINUE;
   }
 
