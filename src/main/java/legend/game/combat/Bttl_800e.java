@@ -22,7 +22,6 @@ import legend.core.memory.Value;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
 import legend.game.combat.deff.Anim;
-import legend.game.combat.deff.Cmb;
 import legend.game.combat.deff.DeffManager7cc;
 import legend.game.combat.deff.DeffPart;
 import legend.game.combat.types.AttackHitFlashEffect0c;
@@ -38,7 +37,6 @@ import legend.game.combat.types.BattleStruct14;
 import legend.game.combat.types.BattleStruct24;
 import legend.game.combat.types.BattleStruct24_2;
 import legend.game.combat.types.BattleStruct3c;
-import legend.game.combat.types.StageAmbiance4c;
 import legend.game.combat.types.BttlLightStruct84;
 import legend.game.combat.types.BttlLightStruct84Sub38;
 import legend.game.combat.types.BttlScriptData6cSub13c;
@@ -56,6 +54,7 @@ import legend.game.combat.types.GuardHealEffect14;
 import legend.game.combat.types.MonsterStats1c;
 import legend.game.combat.types.Ptr;
 import legend.game.combat.types.SpriteMetrics08;
+import legend.game.combat.types.StageAmbiance4c;
 import legend.game.modding.events.EventManager;
 import legend.game.modding.events.combat.EnemyStatsEvent;
 import legend.game.modding.events.inventory.RepeatItemReturnEvent;
@@ -182,8 +181,6 @@ import static legend.game.combat.Bttl_800c._800c6f04;
 import static legend.game.combat.Bttl_800c._800faec4;
 import static legend.game.combat.Bttl_800c._800fafe8;
 import static legend.game.combat.Bttl_800c._800fafec;
-import static legend.game.combat.Bttl_800c.dragoonDeffsWithExtraTims_800fb040;
-import static legend.game.combat.Bttl_800c.cutsceneDeffsWithExtraTims_800fb05c;
 import static legend.game.combat.Bttl_800c._800fb06c;
 import static legend.game.combat.Bttl_800c._800fb148;
 import static legend.game.combat.Bttl_800c._800fb188;
@@ -199,8 +196,10 @@ import static legend.game.combat.Bttl_800c.combatantCount_800c66a0;
 import static legend.game.combat.Bttl_800c.currentEnemyNames_800c69d0;
 import static legend.game.combat.Bttl_800c.currentStage_800c66a4;
 import static legend.game.combat.Bttl_800c.currentTurnBobj_800c66c8;
+import static legend.game.combat.Bttl_800c.cutsceneDeffsWithExtraTims_800fb05c;
 import static legend.game.combat.Bttl_800c.deffManager_800c693c;
 import static legend.game.combat.Bttl_800c.displayStats_800c6c2c;
+import static legend.game.combat.Bttl_800c.dragoonDeffsWithExtraTims_800fb040;
 import static legend.game.combat.Bttl_800c.dragoonSpells_800c6960;
 import static legend.game.combat.Bttl_800c.enemyCount_800c6758;
 import static legend.game.combat.Bttl_800c.floatingNumbers_800c6b5c;
@@ -344,7 +343,7 @@ public final class Bttl_800e {
     final int a2 = script.params_20[1].get();
     if(a2 != -1) {
       //LAB_800e49c0
-      if(a2 - 1 < 3) {
+      if(a2 > 0 && a2 - 1 < 3) {
         FUN_800e45c0(sp0x10, lights_800c692c[a2 - 1].light_00.direction_00);
       } else {
         //LAB_800e49f4

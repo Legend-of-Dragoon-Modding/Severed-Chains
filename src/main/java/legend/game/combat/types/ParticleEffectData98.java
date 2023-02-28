@@ -6,8 +6,9 @@ import legend.core.memory.types.QuadConsumer;
 import legend.core.memory.types.TriConsumer;
 import legend.game.scripting.ScriptState;
 
-public class EffectData98 implements BttlScriptData6cSubBase1 {
-  public int scriptIndex_00;
+public class ParticleEffectData98 implements BttlScriptData6cSubBase1 {
+  public ScriptState<EffectManagerData6c> myState_00;
+  /** Parent? Can be -1 */
   public int scriptIndex_04;
   public final EffectData98Inner24 _08 = new EffectData98Inner24();
 
@@ -37,15 +38,15 @@ public class EffectData98 implements BttlScriptData6cSubBase1 {
   public byte _61;
 
   /** Size in bytes of following array of structs */
-  public int size_64;
-  public EffectData98Sub94[] _68;
+//  public int size_64;
+  public ParticleEffectInstance94[] _68;
   public byte _6c;
 
   public final VECTOR vec_70 = new VECTOR();
   public int _80;
-  public TriConsumer<EffectManagerData6c, EffectData98, EffectData98Sub94> _84;
-  public QuadConsumer<ScriptState<EffectManagerData6c>, EffectManagerData6c, EffectData98, EffectData98Sub94> _88;
-  public QuadConsumer<EffectManagerData6c, EffectData98, EffectData98Sub94, EffectData98Inner24> _8c;
-  public QuadConsumer<ScriptState<EffectManagerData6c>, EffectManagerData6c, EffectData98, EffectData98Sub94> _90;
-  public EffectData98 _94;
+  public TriConsumer<EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94> _84;
+  public QuadConsumer<ScriptState<EffectManagerData6c>, EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94> _88;
+  public QuadConsumer<EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94, EffectData98Inner24> _8c;
+  public QuadConsumer<ScriptState<EffectManagerData6c>, EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94> _90;
+  public ParticleEffectData98 _94;
 }
