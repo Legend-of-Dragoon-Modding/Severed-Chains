@@ -8266,10 +8266,6 @@ public final class SEffe {
     v0.acceleration_14 = a3;
     v0._18 = -1;
     v0.ticksRemaining_1a = -1;
-
-    if(v0.accumulator_0c < 0 || v0.speed_10 < 0 || v0.acceleration_14 < 0) {
-      System.out.println();
-    }
   }
 
   /** TODO this method advances animation frames */
@@ -8339,10 +8335,6 @@ public final class SEffe {
     v0.acceleration_14 = 0;
     v0._18 = -1;
     v0.ticksRemaining_1a = (short)s2;
-
-    if(v0.accumulator_0c < 0 || v0.speed_10 < 0) {
-      System.out.println();
-    }
 
     return FlowControl.CONTINUE;
   }
