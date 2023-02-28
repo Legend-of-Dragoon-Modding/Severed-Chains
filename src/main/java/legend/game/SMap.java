@@ -1235,7 +1235,11 @@ public final class SMap {
 
     sobj.us_170 = 1;
 
-    sobj.vec_148.set(sobj.vec_138).sub(model.coord2_14.coord.transfer).div(sobj.i_144);
+    if(sobj.i_144 != 0) {
+      sobj.vec_148.set(sobj.vec_138).sub(model.coord2_14.coord.transfer).div(sobj.i_144);
+    } else {
+      sobj.vec_148.set(0, 0, 0);
+    }
 
     if(sobj.vec_148.getX() == 0) {
       if(sobj.vec_138.getX() < model.coord2_14.coord.transfer.getX()) {
@@ -1258,33 +1262,31 @@ public final class SMap {
     }
 
     //LAB_800de7a8
-    int x = (sobj.vec_138.getX() - model.coord2_14.coord.transfer.getX() << 16) / sobj.i_144;
-    if(sobj.vec_148.getX() < 0) {
-      //LAB_800de7e0
-      x = ~x + 1;
-    }
+    int x = 0;
+    int y = 0;
+    int z = 0;
+    if(sobj.i_144 != 0) {
+      x = (sobj.vec_138.getX() - model.coord2_14.coord.transfer.getX() << 16) / sobj.i_144;
+      if(sobj.vec_148.getX() < 0) {
+        //LAB_800de7e0
+        x = ~x + 1;
+      }
 
-    //LAB_800de810
-    sobj.vec_154.setX(x & 0xffff);
+      y = (sobj.vec_138.getY() - model.coord2_14.coord.transfer.getY() << 16) / sobj.i_144;
+      if(sobj.vec_148.getY() < 0) {
+        //LAB_800de84c
+        y = ~y + 1;
+      }
 
-    int y = (sobj.vec_138.getY() - model.coord2_14.coord.transfer.getY() << 16) / sobj.i_144;
-    if(sobj.vec_148.getY() < 0) {
-      //LAB_800de84c
-      y = ~y + 1;
-    }
-
-    //LAB_800de87c
-    sobj.vec_154.setY(y & 0xffff);
-
-    int z = (sobj.vec_138.getZ() - model.coord2_14.coord.transfer.getZ() << 16) / sobj.i_144;
-    if(sobj.vec_148.getZ() < 0) {
-      //LAB_800de8b8
-      z = ~z + 1;
+      z = (sobj.vec_138.getZ() - model.coord2_14.coord.transfer.getZ() << 16) / sobj.i_144;
+      if(sobj.vec_148.getZ() < 0) {
+        //LAB_800de8b8
+        z = ~z + 1;
+      }
     }
 
     //LAB_800de8e8
-    sobj.vec_154.setZ(z & 0xffff);
-
+    sobj.vec_154.set(x & 0xffff, y & 0xffff, z & 0xffff);
     sobj.vec_160.set(0, 0, 0);
 
     sobjs_800c6880[sobj.sobjIndex_130].setTempTicker(SMap::FUN_800e1f90);
