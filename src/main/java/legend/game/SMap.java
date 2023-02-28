@@ -2694,7 +2694,17 @@ public final class SMap {
             obj.model = new CContainer("Submap object %d (DRGN%d/%d/%d)".formatted(objIndex, drgnIndex.get(), fileIndex.get() + 1, objIndex * 33), new FileData(tmdData));
 
             for(int animIndex = objIndex * 33 + 1; animIndex < (objIndex + 1) * 33; animIndex++) {
-              obj.animations.add(new TmdAnimationFile(submapAssetsMrg_800c6878.get(animIndex)));
+              final FileData data = submapAssetsMrg_800c6878.get(animIndex);
+
+              // This is a stupid fix for a stupid retail bug where almost all
+              // sobj animations in DRGN24.938 are symlinked to a PXL file
+              // GH#292
+              if(data.readInt(0) == 0x11) {
+                obj.animations.add(null);
+                continue;
+              }
+
+              obj.animations.add(new TmdAnimationFile(data));
             }
 
             submapAssets.objects.add(obj);
