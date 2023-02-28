@@ -51,7 +51,7 @@ public class InputControllerData {
       final byte button = this.buttons.get(glfwCode);
       return button != 0;
     } catch(final IndexOutOfBoundsException ex) {
-      LOGGER.error("Attempting to reach out of bounds with button glfwcode: " + glfwCode);
+      //LOGGER.error("Attempting to reach out of bounds with button glfwcode: " + glfwCode);
       return false;
     }
 
@@ -64,7 +64,7 @@ public class InputControllerData {
     try {
       return this.axis.get(glfwCode);
     } catch(final IndexOutOfBoundsException ex) {
-      LOGGER.error("Attempting to reach out of bounds with axis using " + glfwCode);
+      //LOGGER.error("Attempting to reach out of bounds with axis using " + glfwCode);
       return 0;
     }
   }
@@ -77,7 +77,7 @@ public class InputControllerData {
       final int hat = this.hats.get(hatIndex);
       return (hat & glfwCode) != 0;
     } catch(final IndexOutOfBoundsException ex) {
-      LOGGER.error("Attempting to reach out of bounds with hat:" + hatIndex + " glfwcode:" + glfwCode);
+      //LOGGER.error("Attempting to reach out of bounds with hat:" + hatIndex + " glfwcode:" + glfwCode);
       return false;
     }
   }
