@@ -216,8 +216,8 @@ import static legend.game.Scus94491BpeSegment_800b._800bd7b8;
 import static legend.game.Scus94491BpeSegment_800b._800bda08;
 import static legend.game.Scus94491BpeSegment_800b._800bdc34;
 import static legend.game.Scus94491BpeSegment_800b._800bdd24;
-import static legend.game.Scus94491BpeSegment_800b._800bee90;
-import static legend.game.Scus94491BpeSegment_800b._800bee94;
+import static legend.game.Scus94491BpeSegment_800b.inputDpadButtonsActionState_800bee90;
+import static legend.game.Scus94491BpeSegment_800b.inputFaceButtonsActionState_800bee94;
 import static legend.game.Scus94491BpeSegment_800b._800bee98;
 import static legend.game.Scus94491BpeSegment_800b.afterFmvLoadingStage_800bf0ec;
 import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
@@ -3471,8 +3471,8 @@ public final class SMap {
 
   @Method(0x800e3d68L)
   public static void clearJoypadInput() {
-    _800bee90.set(0);
-    _800bee94.set(0);
+    inputDpadButtonsActionState_800bee90.set(0);
+    inputFaceButtonsActionState_800bee94.set(0);
     _800bee98.set(0);
   }
 

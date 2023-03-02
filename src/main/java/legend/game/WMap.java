@@ -141,7 +141,7 @@ import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800babc0;
 import static legend.game.Scus94491BpeSegment_800b._800bb104;
 import static legend.game.Scus94491BpeSegment_800b._800bdc34;
-import static legend.game.Scus94491BpeSegment_800b._800bee90;
+import static legend.game.Scus94491BpeSegment_800b.inputDpadButtonsActionState_800bee90;
 import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.continentIndex_800bf0b0;
 import static legend.game.Scus94491BpeSegment_800b.doubleBufferFrame_800bb108;
@@ -6778,7 +6778,7 @@ public class WMap {
 
     //LAB_800e91cc
     final int sp0 = _800c66b0.mapRotation_70.getY() - previousPlayerRotation_800c685a.get() - 0x700 & 0xfff;
-    final long sp10 = (_800bee90.get() & 0xffff) >>> 12;
+    final long sp10 = (inputDpadButtonsActionState_800bee90.get() & 0xffff) >>> 12;
     int sp4 = 0;
 
     if(sp10 != 0) {
@@ -6971,7 +6971,7 @@ public class WMap {
     final int spa0 = struct258_800c66a8.vec_94.getX() >> 12;
     final int spa4 = struct258_800c66a8.vec_94.getY() >> 12;
     final int spa8 = struct258_800c66a8.vec_94.getZ() >> 12;
-    final long spe0 = (_800bee90.get() & 0xffff) >>> 12;
+    final long spe0 = (inputDpadButtonsActionState_800bee90.get() & 0xffff) >>> 12;
 
     //LAB_800e9e90
     for(int i = 0; i < 7; i++) {

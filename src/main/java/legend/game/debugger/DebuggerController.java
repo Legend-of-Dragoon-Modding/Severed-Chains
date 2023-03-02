@@ -18,7 +18,7 @@ import static legend.game.SMap.smapLoadingStage_800cb430;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
-import static legend.game.Scus94491BpeSegment_800b._800bee90;
+import static legend.game.Scus94491BpeSegment_800b.inputDpadButtonsActionState_800bee90;
 import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -269,10 +269,10 @@ public class DebuggerController {
     Config.toggleAutoRun();
 
     if(!Config.autoRun()) {
-      _800bee90.and(~0x40);
+      inputDpadButtonsActionState_800bee90.and(~0x40);
       return;
     }
 
-    _800bee90.or(0x40);
+    inputDpadButtonsActionState_800bee90.or(0x40);
   }
 }

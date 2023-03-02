@@ -25,8 +25,8 @@ public class GameVarParam extends Param {
       case 0 -> Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20.get();
       case 1 -> Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c.get();
       case 2 -> Scus94491BpeSegment_800b.tickCount_800bb0fc.get();
-      case 3 -> Scus94491BpeSegment_800b._800bee90.get();
-      case 4 -> Scus94491BpeSegment_800b._800bee94.get();
+      case 3 -> Scus94491BpeSegment_800b.inputDpadButtonsActionState_800bee90.get();
+      case 4 -> Scus94491BpeSegment_800b.inputFaceButtonsActionState_800bee94.get();
       case 5 -> Scus94491BpeSegment_800b.gameState_800babc8.gold_94.get();
       case 6 -> Scus94491BpeSegment_800b.gameState_800babc8.scriptData_08.get(0).get();
       case 7 -> Scus94491BpeSegment_8007._8007a3a8.get();
@@ -156,8 +156,8 @@ public class GameVarParam extends Param {
       case 0 -> Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20.set(val);
       case 1 -> Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c.set(val);
       case 2 -> Scus94491BpeSegment_800b.tickCount_800bb0fc.set(val);
-      case 3 -> Scus94491BpeSegment_800b._800bee90.set(val);
-      case 4 -> Scus94491BpeSegment_800b._800bee94.set(val);
+      case 3 -> Scus94491BpeSegment_800b.inputDpadButtonsActionState_800bee90.set(val);
+      case 4 -> Scus94491BpeSegment_800b.inputFaceButtonsActionState_800bee94.set(val);
       case 5 -> Scus94491BpeSegment_800b.gameState_800babc8.gold_94.set(val);
       case 6 -> Scus94491BpeSegment_800b.gameState_800babc8.scriptData_08.get(0).set(val);
       case 7 -> Scus94491BpeSegment_8007._8007a3a8.set(val);

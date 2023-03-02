@@ -201,8 +201,8 @@ import static legend.game.Scus94491BpeSegment_800b._800bd714;
 import static legend.game.Scus94491BpeSegment_800b._800bd740;
 import static legend.game.Scus94491BpeSegment_800b._800bd774;
 import static legend.game.Scus94491BpeSegment_800b._800bdc34;
-import static legend.game.Scus94491BpeSegment_800b._800bee90;
-import static legend.game.Scus94491BpeSegment_800b._800bee94;
+import static legend.game.Scus94491BpeSegment_800b.inputDpadButtonsActionState_800bee90;
+import static legend.game.Scus94491BpeSegment_800b.inputFaceButtonsActionState_800bee94;
 import static legend.game.Scus94491BpeSegment_800b._800bee98;
 import static legend.game.Scus94491BpeSegment_800b.doubleBufferFrame_800bb108;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
@@ -570,8 +570,8 @@ public final class Scus94491BpeSegment {
 
   private static void controllerPress(final int input) {
     if(!controllerEdgeTriggers.getOrDefault(input, false)) {
-      _800bee90.or(input);
-      _800bee94.or(input);
+      inputDpadButtonsActionState_800bee90.or(input);
+      inputFaceButtonsActionState_800bee94.or(input);
       _800bee98.or(input);
       keyRepeat.put(input, 0);
       controllerEdgeTriggers.put(input, true);
@@ -582,8 +582,8 @@ public final class Scus94491BpeSegment {
 
   private static void controllerRelease(final int input) {
     if(controllerEdgeTriggers.getOrDefault(input, false)) {
-      _800bee90.and(~input);
-      _800bee94.and(~input);
+      inputDpadButtonsActionState_800bee90.and(~input);
+      inputFaceButtonsActionState_800bee94.and(~input);
       _800bee98.and(~input);
       keyRepeat.remove(input);
       controllerEdgeTriggers.remove(input);
@@ -644,8 +644,8 @@ public final class Scus94491BpeSegment {
       final int input = gamepadKeyMap.get(key);
 
       if(input != 0) {
-        _800bee90.or(input);
-        _800bee94.or(input);
+        inputDpadButtonsActionState_800bee90.or(input);
+        inputFaceButtonsActionState_800bee94.or(input);
         _800bee98.or(input);
 
         keyRepeat.put(input, 0);
@@ -668,8 +668,8 @@ public final class Scus94491BpeSegment {
       final int input = gamepadKeyMap.get(key);
 
       if(input != 0) {
-        _800bee90.and(~input);
-        _800bee94.and(~input);
+        inputDpadButtonsActionState_800bee90.and(~input);
+        inputFaceButtonsActionState_800bee94.and(~input);
         _800bee98.and(~input);
 
         keyRepeat.remove(input);
@@ -712,8 +712,8 @@ public final class Scus94491BpeSegment {
 
       handleControllerInput();
 
-      joypadPress_8007a398.setu(_800bee94.get());
-      joypadInput_8007a39c.setu(_800bee90.get());
+      joypadPress_8007a398.setu(inputFaceButtonsActionState_800bee94.get());
+      joypadInput_8007a39c.setu(inputDpadButtonsActionState_800bee90.get());
       joypadRepeat_8007a3a0.setu(_800bee98.get());
 
       if(mainCallbackIndex_8004dd20.get() == 3) {
@@ -742,7 +742,7 @@ public final class Scus94491BpeSegment {
       tickCount_800bb0fc.incr();
       endFrame();
 
-      _800bee94.set(0);
+      inputFaceButtonsActionState_800bee94.set(0);
       _800bee98.set(0);
 
       if(inputPulse) {

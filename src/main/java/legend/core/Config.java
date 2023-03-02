@@ -14,7 +14,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
-import static legend.game.Scus94491BpeSegment_800b._800bee90;
+import static legend.game.Scus94491BpeSegment_800b.inputDpadButtonsActionState_800bee90;
 
 public final class Config {
   private Config() { }
@@ -163,7 +163,7 @@ public final class Config {
 
   public static void autoRunHandleInput() {
     if(autoRun()) {
-      _800bee90.or(0x40);
+      inputDpadButtonsActionState_800bee90.or(0x40);
     }
   }
 
