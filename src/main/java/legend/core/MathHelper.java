@@ -137,4 +137,8 @@ public final class MathHelper {
     final long i = (val >> (shr - 1)) & 1;
     return (val >> shr) + i;
   }
+
+  public static boolean flEq(final float a, final float b, final float epsilon) {
+    return Math.abs(a - b) < epsilon;
+  }
 }

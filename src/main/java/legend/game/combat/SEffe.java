@@ -190,8 +190,8 @@ import static legend.game.combat.Bttl_800c.spriteMetrics_800c6948;
 import static legend.game.combat.Bttl_800c.tmds_800c6944;
 import static legend.game.combat.Bttl_800d.FUN_800dc408;
 import static legend.game.combat.Bttl_800d.FUN_800de3f4;
-import static legend.game.combat.Bttl_800d.FUN_800de544;
-import static legend.game.combat.Bttl_800d.FUN_800de618;
+import static legend.game.combat.Bttl_800d.getRotationFromTransforms;
+import static legend.game.combat.Bttl_800d.getRotationAndScaleFromTransforms;
 import static legend.game.combat.Bttl_800d.ScaleMatrixL_SVEC;
 import static legend.game.combat.Bttl_800d.loadModelAnim;
 import static legend.game.combat.Bttl_800d.optimisePacketsIfNecessary;
@@ -6847,7 +6847,7 @@ public final class SEffe {
   }
 
   @Method(0x80110228L)
-  public static SVECTOR FUN_80110228(final SVECTOR s2, @Nullable VECTOR a3, final VECTOR a2) {
+  public static SVECTOR FUN_80110228(final SVECTOR rot, @Nullable VECTOR a3, final VECTOR a2) {
     if(a3 == null) {
       a3 = new VECTOR();
     }
@@ -6860,11 +6860,11 @@ public final class SEffe {
     final int s1 = rcos(-sp0x30.getY()) * sp0x10.getZ() - rsin(-sp0x30.getY()) * sp0x10.getX();
     sp0x30.setX((short)ratan2(-sp0x10.getY(), s1 / 0x1000));
 
-    final MATRIX sp0x38 = new MATRIX();
-    RotMatrix_Zyx(sp0x30, sp0x38);
-    FUN_800de544(s2, sp0x38);
+    final MATRIX transforms = new MATRIX();
+    RotMatrix_Zyx(sp0x30, transforms);
+    getRotationFromTransforms(rot, transforms);
 
-    return s2;
+    return rot;
   }
 
   @Method(0x8011035cL)
@@ -7262,7 +7262,7 @@ public final class SEffe {
 
     //LAB_8011142c
     final MATRIX sp0x28 = new MATRIX();
-    RotMatrix_Xyz(effect._1c, sp0x28);
+    RotMatrix_Xyz(effect.rot_1c, sp0x28);
     SetRotMatrix(sp0x28);
 
     final VECTOR sp0x18 = new VECTOR();
@@ -7287,7 +7287,7 @@ public final class SEffe {
 
     final MATRIX sp0x18 = new MATRIX();
     FUN_800e8594(sp0x18, manager);
-    FUN_800de544(s1._1c, sp0x18);
+    getRotationFromTransforms(s1.rot_1c, sp0x18);
     s1._0c = s3;
     s1._18 = s4;
     if((s2 & 0xf_ff00) == 0xf_ff00) {
@@ -7665,38 +7665,38 @@ public final class SEffe {
 
   @Method(0x801127e0L)
   public static FlowControl FUN_801127e0(final RunningScript<?> script) {
-    final MATRIX sp0x20 = new MATRIX();
-    FUN_800e8594(sp0x20, (EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00);
+    final MATRIX transforms = new MATRIX();
+    FUN_800e8594(transforms, (EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00);
 
-    final SVECTOR sp0x10 = new SVECTOR();
-    FUN_800de544(sp0x10, sp0x20);
-    script.params_20[2].set(sp0x10.getX());
-    script.params_20[3].set(sp0x10.getY());
-    script.params_20[4].set(sp0x10.getZ());
+    final SVECTOR rot = new SVECTOR();
+    getRotationFromTransforms(rot, transforms);
+    script.params_20[2].set(rot.getX());
+    script.params_20[3].set(rot.getY());
+    script.params_20[4].set(rot.getZ());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x8011287cL)
   public static FlowControl FUN_8011287c(final RunningScript<?> script) {
-    final SVECTOR sp0x10 = new SVECTOR();
-    final MATRIX sp0x20 = new MATRIX();
-    FUN_801116c4(sp0x20, script.params_20[0].get(), script.params_20[1].get());
-    FUN_800de544(sp0x10, sp0x20);
-    script.params_20[2].set(sp0x10.getX());
-    script.params_20[3].set(sp0x10.getY());
-    script.params_20[4].set(sp0x10.getZ());
+    final SVECTOR rot = new SVECTOR();
+    final MATRIX transforms = new MATRIX();
+    FUN_801116c4(transforms, script.params_20[0].get(), script.params_20[1].get());
+    getRotationFromTransforms(rot, transforms);
+    script.params_20[2].set(rot.getX());
+    script.params_20[3].set(rot.getY());
+    script.params_20[4].set(rot.getZ());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x80112900L)
   public static FlowControl FUN_80112900(final RunningScript<?> script) {
-    final SVECTOR sp0x10 = new SVECTOR();
-    FUN_80110228(sp0x10, getScriptedObjectTranslation(script.params_20[0].get()), getScriptedObjectTranslation(script.params_20[1].get()));
+    final SVECTOR rot = new SVECTOR();
+    FUN_80110228(rot, getScriptedObjectTranslation(script.params_20[0].get()), getScriptedObjectTranslation(script.params_20[1].get()));
 
     // XZY is the correct order
-    script.params_20[2].set(sp0x10.getX());
-    script.params_20[3].set(sp0x10.getZ());
-    script.params_20[4].set(sp0x10.getY());
+    script.params_20[2].set(rot.getX());
+    script.params_20[3].set(rot.getZ());
+    script.params_20[4].set(rot.getY());
     return FlowControl.CONTINUE;
   }
 
@@ -7809,13 +7809,13 @@ public final class SEffe {
 
   @Method(0x8011357cL)
   public static FlowControl FUN_8011357c(final RunningScript<?> script) {
-    final SVECTOR sp0x10 = new SVECTOR().set((short)script.params_20[1].get(), (short)script.params_20[2].get(), (short)script.params_20[3].get());
-    final MATRIX sp0x18 = new MATRIX();
-    RotMatrix_Yxz(sp0x10, sp0x18);
-    FUN_800de544(sp0x10, sp0x18);
-    script.params_20[4].set(sp0x10.getX());
-    script.params_20[5].set(sp0x10.getY());
-    script.params_20[6].set(sp0x10.getZ());
+    final SVECTOR rot = new SVECTOR().set((short)script.params_20[1].get(), (short)script.params_20[2].get(), (short)script.params_20[3].get());
+    final MATRIX transforms = new MATRIX();
+    RotMatrix_Yxz(rot, transforms);
+    getRotationFromTransforms(rot, transforms);
+    script.params_20[4].set(rot.getX());
+    script.params_20[5].set(rot.getY());
+    script.params_20[6].set(rot.getZ());
     return FlowControl.CONTINUE;
   }
 
@@ -8528,27 +8528,27 @@ public final class SEffe {
       sp0x50.scriptIndex_0c = scriptIndex;
       sp0x50.coord2Index_0d = coord2Index;
 
-      final MATRIX sp0xc0 = new MATRIX();
-      FUN_800e8594(sp0xc0, sp0x50);
+      final MATRIX transforms = new MATRIX();
+      FUN_800e8594(transforms, sp0x50);
 
-      final SVECTOR sp0xe0 = new SVECTOR();
-      final SVECTOR sp0xe8 = new SVECTOR();
-      FUN_800de618(sp0xe0, sp0xe8, sp0xc0);
-      sp0xe0.negate();
-      RotMatrix_Zyx(sp0xe0, sp0xc0);
+      final SVECTOR rot = new SVECTOR();
+      final SVECTOR scale = new SVECTOR();
+      getRotationAndScaleFromTransforms(rot, scale, transforms);
+      rot.negate();
+      RotMatrix_Zyx(rot, transforms);
 
-      final VECTOR sp0xf0 = new VECTOR().set(0x100_0000, 0x100_0000, 0x100_0000).div(sp0xe8);
-      ScaleMatrixL(sp0xc0, sp0xf0);
-      FUN_80021de4(sp0xc0, sp0x10, sp0x30);
+      final VECTOR sp0xf0 = new VECTOR().set(0x100_0000, 0x100_0000, 0x100_0000).div(scale);
+      ScaleMatrixL(transforms, sp0xf0);
+      FUN_80021de4(transforms, sp0x10, sp0x30);
 
-      final VECTOR sp0x100 = new VECTOR().set(sp0x10.transfer).sub(sp0xc0.transfer);
-      sp0x30.transfer.set(ApplyMatrixLV(sp0xc0, sp0x100));
+      final VECTOR sp0x100 = new VECTOR().set(sp0x10.transfer).sub(transforms.transfer);
+      sp0x30.transfer.set(ApplyMatrixLV(transforms, sp0x100));
 
       sp0x50tmp.release();
     }
 
     //LAB_801159cc
-    FUN_800de618(manager._10.rot_10, manager._10.scale_16, sp0x30);
+    getRotationAndScaleFromTransforms(manager._10.rot_10, manager._10.scale_16, sp0x30);
     manager._10.trans_04.set(sp0x30.transfer);
     manager.scriptIndex_0c = scriptIndex;
     manager.coord2Index_0d = coord2Index;
@@ -8912,7 +8912,7 @@ public final class SEffe {
       final ScriptState<EffectManagerData6c> state = (ScriptState<EffectManagerData6c>)scriptStatePtrArr_800bc1c0[deffFlags];
       final EffectManagerData6c manager2 = state.innerStruct_00;
       manager._10.trans_04.set(sp0x10.transfer);
-      FUN_800de618(manager._10.rot_10, manager._10.scale_16, sp0x10);
+      getRotationAndScaleFromTransforms(manager._10.rot_10, manager._10.scale_16, sp0x10);
 
       final int oldScriptIndex = manager2.scriptIndex_0c;
       final int oldCoord2Index = manager2.coord2Index_0d;

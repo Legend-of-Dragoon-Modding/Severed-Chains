@@ -4900,26 +4900,26 @@ public final class Bttl_800d {
   }
 
   @Method(0x800de544L)
-  public static SVECTOR FUN_800de544(final SVECTOR a0, final MATRIX a1) {
-    final MATRIX sp0x10 = new MATRIX().set(a1);
-    a0.setX((short)ratan2(-sp0x10.get(5), sp0x10.get(8)));
-    RotMatrixX(a0.getX(), sp0x10);
-    a0.setY((short)ratan2(sp0x10.get(2), sp0x10.get(8)));
-    RotMatrixY(-a0.getY(), sp0x10);
-    a0.setZ((short)ratan2(sp0x10.get(3), sp0x10.get(0)));
-    return a0;
+  public static SVECTOR getRotationFromTransforms(final SVECTOR rotOut, final MATRIX transforms) {
+    final MATRIX mat = new MATRIX().set(transforms);
+    rotOut.setX((short)ratan2(-mat.get(5), mat.get(8)));
+    RotMatrixX(rotOut.getX(), mat);
+    rotOut.setY((short)ratan2(mat.get(2), mat.get(8)));
+    RotMatrixY(-rotOut.getY(), mat);
+    rotOut.setZ((short)ratan2(mat.get(3), mat.get(0)));
+    return rotOut;
   }
 
   @Method(0x800de618L)
-  public static void FUN_800de618(final SVECTOR a0, final SVECTOR a1, final MATRIX a2) {
-    final MATRIX sp0x10 = new MATRIX().set(a2);
-    a0.setX((short)ratan2(-sp0x10.get(5), sp0x10.get(8)));
-    RotMatrixX(-(short)a0.getX(), sp0x10);
-    a0.setY((short)ratan2(sp0x10.get(2), sp0x10.get(8)));
-    RotMatrixY(-(short)a0.getY(), sp0x10);
-    a0.setZ((short)ratan2(sp0x10.get(3), sp0x10.get(0))); //TODO is this a retail bug? Should it be 4?
-    RotMatrixZ(-(short)a0.getZ(), sp0x10);
-    a1.set(sp0x10.get(0), sp0x10.get(4), sp0x10.get(8));
+  public static void getRotationAndScaleFromTransforms(final SVECTOR rotOut, final SVECTOR scaleOut, final MATRIX transforms) {
+    final MATRIX mat = new MATRIX().set(transforms);
+    rotOut.setX((short)ratan2(-mat.get(5), mat.get(8)));
+    RotMatrixX(-(short)rotOut.getX(), mat);
+    rotOut.setY((short)ratan2(mat.get(2), mat.get(8)));
+    RotMatrixY(-(short)rotOut.getY(), mat);
+    rotOut.setZ((short)ratan2(mat.get(3), mat.get(0)));
+    RotMatrixZ(-(short)rotOut.getZ(), mat);
+    scaleOut.set(mat.get(0), mat.get(4), mat.get(8));
   }
 
   @Method(0x800de72cL)
