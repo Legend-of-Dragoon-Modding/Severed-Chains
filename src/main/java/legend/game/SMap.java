@@ -2766,7 +2766,7 @@ public final class SMap {
 
         GPU.uploadData(imageRect, tim.getImageData());
 
-        final ScriptState<Void> submapController = SCRIPTS.allocateScriptState(0, null, 0, null);
+        final ScriptState<Void> submapController = SCRIPTS.allocateScriptState(0, "Submap controller", 0, null);
         submapControllerState_800c6740 = submapController;
         submapController.loadScriptFile(submapAssets.script);
 
@@ -2803,7 +2803,8 @@ public final class SMap {
         for(int i = 0; i < sobjCount_800c6730.get(); i++) {
           final SubmapObject obj = submapAssets.objects.get(i);
 
-          final ScriptState<SubmapObject210> state = SCRIPTS.allocateScriptState(new SubmapObject210("Submap object " + i + " (file " + i * 33 + ')'));
+          final String name = "Submap object " + i + " (file " + i * 33 + ')';
+          final ScriptState<SubmapObject210> state = SCRIPTS.allocateScriptState(name, new SubmapObject210(name));
           sobjs_800c6880[i] = state;
           state.setTicker(SMap::submapObjectTicker);
           state.setRenderer(SMap::submapObjectRenderer);

@@ -1,7 +1,6 @@
 package legend.game;
 
 import legend.core.GameEngine;
-import legend.game.modding.events.EventManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

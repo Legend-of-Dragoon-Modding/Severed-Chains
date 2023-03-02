@@ -2285,33 +2285,42 @@ public final class Scus94491BpeSegment_8003 {
     out.set(5, (short)CPU.MFC2(10));
     out.set(8, (short)CPU.MFC2(11));
 
+    final int transferX;
     if(a1.transfer.getX() < 0) {
+      transferX = -(-a1.transfer.getX() >> 15);
       t0 = -(-a1.transfer.getX() & 0x7fffL);
     } else {
       //LAB_8003f33c
+      transferX = a1.transfer.getX() >> 15;
       t0 = a1.transfer.getX() & 0x7fffL;
     }
 
     //LAB_8003f344
+    final int transferY;
     if(a1.transfer.getY() < 0) {
+      transferY = -(-a1.transfer.getY() >> 15);
       t1 = -(-a1.transfer.getY() & 0x7fffL);
     } else {
       //LAB_8003f364
+      transferY = a1.transfer.getY() >> 15;
       t1 = a1.transfer.getY() & 0x7fffL;
     }
 
     //LAB_8003f36c
+    final int transferZ;
     if(a1.transfer.getZ() < 0) {
+      transferZ = -(-a1.transfer.getZ() >> 15);
       t2 = -(-a1.transfer.getZ() & 0x7fffL);
     } else {
       //LAB_8003f38c
+      transferZ = a1.transfer.getZ() >> 15;
       t2 = a1.transfer.getZ() & 0x7fffL;
     }
 
     //LAB_8003f394
-    CPU.MTC2(a1.transfer.getX() >> 15,  9);
-    CPU.MTC2(a1.transfer.getY() >> 15, 10);
-    CPU.MTC2(a1.transfer.getZ() >> 15, 11);
+    CPU.MTC2(transferX,  9);
+    CPU.MTC2(transferY, 10);
+    CPU.MTC2(transferZ, 11);
     CPU.COP2(0x41e012L);
     final long t3 = CPU.MFC2(25);
     final long t4 = CPU.MFC2(26);
@@ -2328,9 +2337,9 @@ public final class Scus94491BpeSegment_8003 {
     //LAB_8003f400
     //LAB_8003f418
     //LAB_8003f41c
-    out.transfer.setX((int)(CPU.MFC2(25) + t3 * 8 + a0.transfer.getX()));
-    out.transfer.setY((int)(CPU.MFC2(26) + t4 * 8 + a0.transfer.getY()));
-    out.transfer.setZ((int)(CPU.MFC2(27) + t5 * 8 + a0.transfer.getZ()));
+    out.transfer.setX((int)((int)CPU.MFC2(25) + t3 * 8 + a0.transfer.getX()));
+    out.transfer.setY((int)((int)CPU.MFC2(26) + t4 * 8 + a0.transfer.getY()));
+    out.transfer.setZ((int)((int)CPU.MFC2(27) + t5 * 8 + a0.transfer.getZ()));
     return out;
   }
 

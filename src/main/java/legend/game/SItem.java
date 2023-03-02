@@ -18,8 +18,8 @@ import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.combat.Bttl_800c;
 import legend.game.combat.types.BattleObject27c;
-import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.BattlePreloadedEntities_18cb0;
+import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.MainMenuScreen;
@@ -72,7 +72,6 @@ import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadFile;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
-import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
@@ -355,7 +354,8 @@ public final class SItem {
     //LAB_800fbe70
     for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
       final int charIndex = gameState_800babc8.charIndex_88.get(charSlot).get();
-      final ScriptState<BattleObject27c> state = SCRIPTS.allocateScriptState(charSlot + 6, null, 0, new BattleObject27c("Char ID " + charIndex + " (bobj + " + (charSlot + 6) + ')'));
+      final String name = "Char ID " + charIndex + " (bobj + " + (charSlot + 6) + ')';
+      final ScriptState<BattleObject27c> state = SCRIPTS.allocateScriptState(charSlot + 6, name, 0, new BattleObject27c(name));
       state.setTicker(Bttl_800c::bobjTicker);
       state.setDestructor(Bttl_800c::bobjDestructor);
       _8006e398.bobjIndices_e0c[_800c66d0.get()] = state;

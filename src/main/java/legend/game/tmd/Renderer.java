@@ -14,6 +14,7 @@ import static legend.core.GameEngine.GPU;
 import static legend.game.Scus94491BpeSegment.tmdGp0CommandId_1f8003ee;
 import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
+import static legend.game.Scus94491BpeSegment.zMin;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
 
@@ -161,6 +162,10 @@ public final class Renderer {
       }
 
       final int z = (int)Math.min(CPU.MFC2(7) + zOffset_1f8003e8.get() >> zShift_1f8003c4.get(), zMax_1f8003cc.get());
+
+      if(z < zMin) {
+        continue;
+      }
 
       if(textured && !lit) {
         for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {

@@ -75,21 +75,21 @@ import legend.game.combat.types.BttlScriptData6cSub50Sub3c;
 import legend.game.combat.types.BttlScriptData6cSub5c;
 import legend.game.combat.types.BttlScriptData6cSubBase1;
 import legend.game.combat.types.DeathDimensionEffect1c;
+import legend.game.combat.types.DeffTmdRenderer14;
 import legend.game.combat.types.DragoonAdditionScriptData1c;
-import legend.game.combat.types.VertexDifferenceAnimation18;
 import legend.game.combat.types.EffeScriptData30;
 import legend.game.combat.types.EffeScriptData30Sub06;
-import legend.game.combat.types.ParticleEffectData98;
 import legend.game.combat.types.EffectData98Inner24;
-import legend.game.combat.types.ParticleEffectInstance94;
 import legend.game.combat.types.EffectManagerData6c;
 import legend.game.combat.types.EffectManagerData6cInner;
 import legend.game.combat.types.FrozenJetEffect28;
 import legend.game.combat.types.GoldDragoonTransformEffect20;
 import legend.game.combat.types.GoldDragoonTransformEffectInstance84;
-import legend.game.combat.types.GuardHealEffect14;
+import legend.game.combat.types.ParticleEffectData98;
+import legend.game.combat.types.ParticleEffectInstance94;
 import legend.game.combat.types.ScreenDistortionEffectData08;
 import legend.game.combat.types.SpriteMetrics08;
+import legend.game.combat.types.VertexDifferenceAnimation18;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptFile;
@@ -126,6 +126,7 @@ import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
+import static legend.game.Scus94491BpeSegment.zMin;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021de4;
@@ -178,15 +179,14 @@ import static legend.game.combat.Bttl_800c.FUN_800cfb94;
 import static legend.game.combat.Bttl_800c.FUN_800cfc20;
 import static legend.game.combat.Bttl_800c.FUN_800cffd8;
 import static legend.game.combat.Bttl_800c._800fb0ec;
-import static legend.game.combat.Bttl_800c._800fb954;
 import static legend.game.combat.Bttl_800c.callScriptFunction;
 import static legend.game.combat.Bttl_800c.currentStage_800c66a4;
 import static legend.game.combat.Bttl_800c.deffManager_800c693c;
 import static legend.game.combat.Bttl_800c.getHitMultiplier;
+import static legend.game.combat.Bttl_800c.melbuStageIndices_800fb064;
 import static legend.game.combat.Bttl_800c.scriptGetScriptedObjectPos;
 import static legend.game.combat.Bttl_800c.seed_800fa754;
 import static legend.game.combat.Bttl_800c.spriteMetrics_800c6948;
-import static legend.game.combat.Bttl_800c.melbuStageIndices_800fb064;
 import static legend.game.combat.Bttl_800c.tmds_800c6944;
 import static legend.game.combat.Bttl_800d.FUN_800dc408;
 import static legend.game.combat.Bttl_800d.FUN_800de3f4;
@@ -1100,11 +1100,14 @@ public final class SEffe {
 
       final int oldZShift = zShift_1f8003c4.get();
       final int oldZMax = zMax_1f8003cc.get();
+      final int oldZMin = zMin;
       zShift_1f8003c4.set(2);
       zMax_1f8003cc.set(0xffe);
+      zMin = 0xb;
       Renderer.renderDobj2(sp0x60, false);
       zShift_1f8003c4.set(oldZShift);
       zMax_1f8003cc.set(oldZMax);
+      zMin = oldZMin;
 
       if((MEMORY.ref(4, a2).offset(0x0L).get() & 0x40L) == 0) {
         FUN_800e62a8();
@@ -2503,6 +2506,7 @@ public final class SEffe {
   @Method(0x80102088L)
   public static FlowControl allocateParticleEffect(final RunningScript<? extends BattleScriptDataBase> script) {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+      "Particle effect %x".formatted(script.params_20[2].get()),
       script.scriptState_04,
       0,
       null,
@@ -3342,6 +3346,7 @@ public final class SEffe {
 
     //TODO counter-attack electricity
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+      "BttlScriptData6cSub38 (counter-attack electricity?)",
       script.scriptState_04,
       0x38,
       null,
@@ -3494,7 +3499,7 @@ public final class SEffe {
     final int s3 = script.params_20[1].get();
     final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
     final BttlScriptData6cSub38 s1 = (BttlScriptData6cSub38)manager.effect_44;
-    final ScriptState<BttlScriptData6cSub1c_2> state = SCRIPTS.allocateScriptState(new BttlScriptData6cSub1c_2());
+    final ScriptState<BttlScriptData6cSub1c_2> state = SCRIPTS.allocateScriptState("BttlScriptData6cSub1c_2", new BttlScriptData6cSub1c_2());
     state.loadScriptFile(doNothingScript_8004f650);
     state.setTicker(SEffe::FUN_80105aa0);
     state.setRenderer(SEffe::FUN_80105704);
@@ -4176,6 +4181,7 @@ public final class SEffe {
   @Method(0x801077e8L)
   public static FlowControl allocateAdditionOverlaysEffect(final RunningScript<? extends BattleScriptDataBase> script) {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+      "Addition overlays",
       script.scriptState_04,
       0x44,
       SEffe::tickAdditionOverlaysEffect,
@@ -4503,7 +4509,7 @@ public final class SEffe {
     final int s4 = script.params_20[1].get();
     final int s2 = script.params_20[0].get();
 
-    final ScriptState<DragoonAdditionScriptData1c> state = SCRIPTS.allocateScriptState(new DragoonAdditionScriptData1c());
+    final ScriptState<DragoonAdditionScriptData1c> state = SCRIPTS.allocateScriptState("Dragoon addition", new DragoonAdditionScriptData1c());
     state.loadScriptFile(doNothingScript_8004f650);
     state.setTicker(SEffe::FUN_80108574);
     state.setRenderer(SEffe::FUN_80108514);
@@ -4634,7 +4640,7 @@ public final class SEffe {
   public static void FUN_80108cf4() {
     playSound(0, 50, 0, 0, (short)0, (short)0);
 
-    final ScriptState<EffeScriptData30> state = SCRIPTS.allocateScriptState(new EffeScriptData30());
+    final ScriptState<EffeScriptData30> state = SCRIPTS.allocateScriptState("EffeScriptData30", new EffeScriptData30());
     state.loadScriptFile(doNothingScript_8004f650);
     state.setTicker(SEffe::FUN_801089e8);
     final EffeScriptData30 data = state.innerStruct_00;
@@ -4666,7 +4672,7 @@ public final class SEffe {
 
   @Method(0x80108df8L)
   public static FlowControl FUN_80108df8(final RunningScript<? extends BattleScriptDataBase> script) {
-    script.params_20[0].set(allocateEffectManager(script.scriptState_04, 0, null, null, null, null).index);
+    script.params_20[0].set(allocateEffectManager("Unknown (FUN_80108df8)", script.scriptState_04, 0, null, null, null, null).index);
     return FlowControl.CONTINUE;
   }
 
@@ -4724,6 +4730,7 @@ public final class SEffe {
   public static FlowControl FUN_80109158(final RunningScript<? extends BattleScriptDataBase> script) {
     final int count = script.params_20[1].get();
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+      "BttlScriptData6cSub08_3",
       script.scriptState_04,
       0x8,
       SEffe::FUN_80109000,
@@ -4853,6 +4860,7 @@ public final class SEffe {
   @Method(0x80109a7cL)
   public static FlowControl allocateScreenDistortionEffect(final RunningScript<? extends BattleScriptDataBase> script) {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+      "Screen distortion",
       script.scriptState_04,
       0x8,
       // Ticker and renderer are swapped for some reason
@@ -4903,11 +4911,16 @@ public final class SEffe {
   public static FlowControl allocateVertexDifferenceAnimation(final RunningScript<?> script) {
     final int ticksRemaining = script.params_20[2].get();
     final int embiggener = script.params_20[3].get();
-    final ScriptState<VertexDifferenceAnimation18> state = SCRIPTS.allocateScriptState(new VertexDifferenceAnimation18());
+
+    final ScriptState<EffectManagerData6c> sourceState = (ScriptState<EffectManagerData6c>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
+    final ScriptState<EffectManagerData6c> diffState = (ScriptState<EffectManagerData6c>)scriptStatePtrArr_800bc1c0[script.params_20[1].get()];
+
+    final ScriptState<VertexDifferenceAnimation18> state = SCRIPTS.allocateScriptState("Vertex difference animation source %d (%s), diff %d (%s)".formatted(sourceState.index, sourceState.name, diffState.index, diffState.name), new VertexDifferenceAnimation18());
+
     state.loadScriptFile(doNothingScript_8004f650);
     state.setTicker(SEffe::applyVertexDifferenceAnimation);
-    final GuardHealEffect14 source = ((GuardHealEffect14)((EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00).effect_44);
-    final GuardHealEffect14 diff = ((GuardHealEffect14)((EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00).effect_44);
+    final DeffTmdRenderer14 source = ((DeffTmdRenderer14)sourceState.innerStruct_00.effect_44);
+    final DeffTmdRenderer14 diff = ((DeffTmdRenderer14)diffState.innerStruct_00.effect_44);
     final TmdObjTable1c sourceModel = source.tmd_08;
     final TmdObjTable1c diffModel = diff.tmd_08;
     final VertexDifferenceAnimation18 animation = state.innerStruct_00;
@@ -5010,10 +5023,11 @@ public final class SEffe {
     final int s4 = script.params_20[2].get();
     final int sp18 = script.params_20[3].get();
 
-    final GuardHealEffect14 v1 = (GuardHealEffect14)((EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00).effect_44;
+    final DeffTmdRenderer14 v1 = (DeffTmdRenderer14)((EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00).effect_44;
     final TmdObjTable1c tmd = v1.tmd_08;
 
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+      "FrozenJetEffect28",
       script.scriptState_04,
       0,
       SEffe::FUN_80109fc4,
@@ -5035,6 +5049,7 @@ public final class SEffe {
   @Method(0x8010a610L)
   public static FlowControl FUN_8010a610(final RunningScript<? extends BattleScriptDataBase> script) {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+      "BttlScriptData6cSub24",
       script.scriptState_04,
       0x24,
       SEffe::FUN_8010ae40,
@@ -5276,6 +5291,7 @@ public final class SEffe {
   @Method(0x8010b1d8L)
   public static FlowControl allocateDeathDimensionEffect(final RunningScript<? extends BattleScriptDataBase> script) {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+      "Death dimension",
       script.scriptState_04,
       0x1c,
       null,
@@ -5637,6 +5653,7 @@ public final class SEffe {
     _8011a034.get(4).set(script.params_20[9].get());
 
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+      "BttlScriptData6cSub50",
       script.scriptState_04,
       0x50,
       SEffe::FUN_8010c69c,
@@ -5863,6 +5880,7 @@ public final class SEffe {
     final int s5 = script.params_20[2].get();
 
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+      "BttlScriptData6cSub14_4",
       script.scriptState_04,
       0x14,
       SEffe::FUN_8010f978,
@@ -6009,6 +6027,7 @@ public final class SEffe {
     final int sp30 = script.params_20[8].get();
 
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+      "GoldDragoonTransformEffect20",
       script.scriptState_04,
       0,
       SEffe::goldDragoonTransformEffectTicker,
@@ -6171,6 +6190,7 @@ public final class SEffe {
     final int s4 = script.params_20[1].get();
 
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+      "BttlScriptData6cSub10_2",
       script.scriptState_04,
       0x10,
       SEffe::FUN_8010e6b0,
@@ -6332,6 +6352,7 @@ public final class SEffe {
     final int sp24 = script.params_20[3].get();
 
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+      "BttlScriptData6cSub18",
       script.scriptState_04,
       0x18,
       SEffe::FUN_8010ff10,
@@ -6438,6 +6459,7 @@ public final class SEffe {
     final int sp38 = script.params_20[3].get();
 
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+      "BttlScriptData6cSub20_2",
       script.scriptState_04,
       0,
       SEffe::FUN_8010f124,
@@ -6614,8 +6636,10 @@ public final class SEffe {
 
           final int oldZShift = zShift_1f8003c4.get();
           final int oldZMax = zMax_1f8003cc.get();
+          final int oldZMin = zMin;
           zShift_1f8003c4.set(2);
           zMax_1f8003cc.set(0xffe);
+          zMin = 0xb;
 
           if(s3._01) {
             sp0xf8.tmd_08 = s3.objTable_98;
@@ -6633,6 +6657,7 @@ public final class SEffe {
 
           zShift_1f8003c4.set(oldZShift);
           zMax_1f8003cc.set(oldZMax);
+          zMin = oldZMin;
 
           //LAB_8010f608
           if((manager._10.flags_00 & 0x40) == 0) {
@@ -8470,10 +8495,10 @@ public final class SEffe {
     final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     manager._10.z_22 = script.params_20[1].get();
 
-    if(manager._10.z_22 < 0) {
-      LOGGER.warn("Negative Z value! %d", manager._10.z_22);
-      manager._10.z_22 = Math.abs(manager._10.z_22);
-    }
+//    if(manager._10.z_22 < 0) {
+//      LOGGER.warn("Negative Z value! %d", manager._10.z_22);
+//      manager._10.z_22 = Math.abs(manager._10.z_22);
+//    }
 
     return FlowControl.CONTINUE;
   }
@@ -8494,7 +8519,7 @@ public final class SEffe {
     } else {
       //LAB_8011588c
       final Memory.TemporaryReservation sp0x50tmp = MEMORY.temp(0x6c);
-      final EffectManagerData6c sp0x50 = new EffectManagerData6c();
+      final EffectManagerData6c sp0x50 = new EffectManagerData6c("Temp");
 
       sp0x50._10.trans_04.set(0, 0, 0);
       sp0x50._10.rot_10.set((short)0, (short)0, (short)0);
@@ -8562,13 +8587,13 @@ public final class SEffe {
     final int v0;
     if(script.params_20[0].get() >= 0) {
       //LAB_80115b08
-      v0 = script.params_20[0].get() | v1._20;
+      v0 = script.params_20[0].get() | v1.flags_20;
     } else {
-      v0 = script.params_20[0].get() & v1._20;
+      v0 = script.params_20[0].get() & v1.flags_20;
     }
 
     //LAB_80115b20
-    v1._20 = v0;
+    v1.flags_20 = v0;
     return FlowControl.CONTINUE;
   }
 
@@ -8603,6 +8628,7 @@ public final class SEffe {
   @Method(0x80115c2cL)
   public static void allocateScreenDarkeningEffect(final int startVal, final int targetVal) {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+      "Screen darkening",
       deffManager_800c693c.scriptState_1c,
       0,
       SEffe::screenDarkeningTicker,
@@ -8616,7 +8642,7 @@ public final class SEffe {
   }
 
   @Method(0x80115cacL)
-  public static long FUN_80115cac(final int a0) {
+  public static long loadDeffStageEffects(final int a0) {
     final int _00;
     final int _02;
     final int _04;
@@ -8678,7 +8704,7 @@ public final class SEffe {
 
   @Method(0x80115ea4L)
   public static FlowControl FUN_80115ea4(final RunningScript<?> script) {
-    FUN_80115cac(script.params_20[0].get());
+    loadDeffStageEffects(script.params_20[0].get());
     return FlowControl.CONTINUE;
   }
 
@@ -9402,7 +9428,7 @@ public final class SEffe {
 
       //LAB_80117ac0
       //LAB_80117acc
-      final EffectManagerData6c sp0x10 = new EffectManagerData6c();
+      final EffectManagerData6c sp0x10 = new EffectManagerData6c("Temp 2");
       sp0x10.set(manager);
 
       final MATRIX sp0x80 = new MATRIX();
@@ -9512,6 +9538,7 @@ public final class SEffe {
   public static FlowControl FUN_80117eb0(final RunningScript<? extends BattleScriptDataBase> script) {
     final int param1 = script.params_20[1].get();
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+      "BttlScriptData6cSub5c",
       script.scriptState_04,
       0,
       null,
@@ -9613,8 +9640,8 @@ public final class SEffe {
 
   /** TODO renders other effects too? Burnout, more? */
   @Method(0x8011826cL)
-  public static void renderGuardHealEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    final GuardHealEffect14 s1 = (GuardHealEffect14)data.effect_44;
+  public static void renderDeffTmd(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
+    final DeffTmdRenderer14 s1 = (DeffTmdRenderer14)data.effect_44;
 
     if(data._10.flags_00 >= 0) {
       final MATRIX sp0x10 = new MATRIX();
@@ -9651,11 +9678,14 @@ public final class SEffe {
 
         final int oldZShift = zShift_1f8003c4.get();
         final int oldZMax = zMax_1f8003cc.get();
+        final int oldZMin = zMin;
         zShift_1f8003c4.set(2);
         zMax_1f8003cc.set(0xffe);
+        zMin = 0xb;
         Renderer.renderDobj2(dobj2, false);
         zShift_1f8003c4.set(oldZShift);
         zMax_1f8003cc.set(oldZMax);
+        zMin = oldZMin;
       } else {
         //LAB_80118370
         FUN_800de3f4(s1.tmd_08, data._10, sp0x10);
@@ -9674,23 +9704,31 @@ public final class SEffe {
   }
 
   @Method(0x801183c0L)
-  public static FlowControl allocateGuardHealEffect(final RunningScript<? extends BattleScriptDataBase> script) {
+  public static FlowControl allocateDeffTmd(final RunningScript<? extends BattleScriptDataBase> script) {
+    final int s1 = script.params_20[1].get();
+    final String name;
+    if((s1 & 0xf_ff00) == 0xf_ff00) {
+      name = deffManager_800c693c.tmds_2f8[s1 & 0xff].name;
+    } else {
+      final DeffPart.TmdType tmdType = (DeffPart.TmdType)getDeffPart(s1 | 0x300_0000);
+      name = tmdType.name;
+    }
+
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+      "DEFF TMD " + name,
       script.scriptState_04,
       0,
       null,
-      // This renderer is for the circle under the player
-      SEffe::renderGuardHealEffect,
+      SEffe::renderDeffTmd,
       null,
-      value -> new GuardHealEffect14()
+      value -> new DeffTmdRenderer14()
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
     manager.flags_04 |= 0x300_0000;
 
-    final GuardHealEffect14 effect = (GuardHealEffect14)manager.effect_44;
+    final DeffTmdRenderer14 effect = (DeffTmdRenderer14)manager.effect_44;
 
-    final int s1 = script.params_20[1].get();
     effect._00 = s1 | 0x300_0000;
 
     if((s1 & 0xf_ff00) == 0xf_ff00) {
@@ -9717,37 +9755,22 @@ public final class SEffe {
     final int flags = script.params_20[1].get();
     final int objIndex = script.params_20[2].get();
 
-    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
-      script.scriptState_04,
-      0,
-      null,
-      SEffe::renderGuardHealEffect,
-      null,
-      value -> new GuardHealEffect14()
-    );
-
-    final EffectManagerData6c s4 = state.innerStruct_00;
-    s4.flags_04 = 0x300_0000;
-
-    final GuardHealEffect14 s0 = (GuardHealEffect14)s4.effect_44;
-    s0._10 = 0x20;
-    s0._00 = 0x300_0000;
-    s0.tmdType_04 = null;
+    final TmdObjTable1c objTable;
 
     final int type = flags & 0xff00_0000;
     if(type == 0x100_0000) {
       //LAB_801185e4
       final DeffPart.AnimatedTmdType animatedTmdType = (DeffPart.AnimatedTmdType)getDeffPart(flags);
       final Tmd tmd = animatedTmdType.tmd_0c.tmdPtr_00.tmd;
-      s0.tmd_08 = tmd.objTable[0];
+      objTable = tmd.objTable[0];
     } else if(type == 0x200_0000) {
       //LAB_801185c0
       final DeffPart.AnimatedTmdType animatedTmdType = (DeffPart.AnimatedTmdType)getDeffPart(flags);
-      s0.tmd_08 = optimisePacketsIfNecessary(animatedTmdType.tmd_0c.tmdPtr_00, objIndex);
+      objTable = optimisePacketsIfNecessary(animatedTmdType.tmd_0c.tmdPtr_00, objIndex);
       //LAB_801185b0
     } else if(type == 0x700_0000) {
       //LAB_80118610
-      s0.tmd_08 = battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00[objIndex].tmd_08;
+      objTable = battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00[objIndex].tmd_08;
     } else {
       //LAB_80118634
       final BattleScriptDataBase a0_0 = (BattleScriptDataBase)scriptStatePtrArr_800bc1c0[flags].innerStruct_00;
@@ -9756,14 +9779,35 @@ public final class SEffe {
         final int v1 = effects.flags_04 & 0xff00_0000;
         if(v1 == 0x100_0000 || v1 == 0x200_0000) {
           //LAB_8011867c
-          s0.tmd_08 = ((BttlScriptData6cSub13c)effects.effect_44).model_134.dobj2ArrPtr_00[objIndex].tmd_08;
+          objTable = ((BttlScriptData6cSub13c)effects.effect_44).model_134.dobj2ArrPtr_00[objIndex].tmd_08;
+        } else {
+          objTable = null;
         }
       } else {
         //LAB_801186a4
         //LAB_801186b4
-        s0.tmd_08 = ((BattleObject27c)a0_0).model_148.dobj2ArrPtr_00[objIndex].tmd_08;
+        objTable = ((BattleObject27c)a0_0).model_148.dobj2ArrPtr_00[objIndex].tmd_08;
       }
     }
+
+    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+      objTable != null ? "Obj table renderer FUN_801184e4 " + objTable.name : "TMD renderer with no TMD? FUN_801184e4",
+      script.scriptState_04,
+      0,
+      null,
+      SEffe::renderDeffTmd,
+      null,
+      value -> new DeffTmdRenderer14()
+    );
+
+    final EffectManagerData6c s4 = state.innerStruct_00;
+    s4.flags_04 = 0x300_0000;
+
+    final DeffTmdRenderer14 s0 = (DeffTmdRenderer14)s4.effect_44;
+    s0._10 = 0x20;
+    s0._00 = 0x300_0000;
+    s0.tmdType_04 = null;
+    s0.tmd_08 = objTable;
 
     //LAB_801186bc
     //LAB_801186c0
@@ -9824,6 +9868,7 @@ public final class SEffe {
   @Method(0x801188ecL)
   public static FlowControl FUN_801188ec(final RunningScript<? extends BattleScriptDataBase> script) {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+      "Unknown (FUN_801188ec, %s)".formatted(model_800bda10.dobj2ArrPtr_00[0].tmd_08.name),
       script.scriptState_04,
       0,
       null,
@@ -9924,6 +9969,7 @@ public final class SEffe {
   @Method(0x80118df4L)
   public static FlowControl FUN_80118df4(final RunningScript<? extends BattleScriptDataBase> script) {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+      "Unknown (FUN_80118df4), BttlScriptData6cSub08_4, copies VRAM",
       script.scriptState_04,
       0x8,
       null,
@@ -10093,6 +10139,7 @@ public final class SEffe {
     //LAB_80119454
   }
 
+  /** Not sure what this is, but the effect is given the name "eco " */
   @Method(0x80119484L)
   public static FlowControl FUN_80119484(final RunningScript<? extends BattleScriptDataBase> script) {
     final int s4 = script.params_20[1].get();
@@ -10102,6 +10149,7 @@ public final class SEffe {
     final int s1 = script.params_20[5].get();
 
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+      "\"eco \"?",
       script.scriptState_04,
       0,
       SEffe::FUN_801196bc,
@@ -10111,7 +10159,6 @@ public final class SEffe {
     );
 
     final EffectManagerData6c data = state.innerStruct_00;
-    data.type_5c = _800fb954.get();
 
     final BttlScriptData6cSub30 s3 = (BttlScriptData6cSub30)data.effect_44;
     s3._00 = s2;
