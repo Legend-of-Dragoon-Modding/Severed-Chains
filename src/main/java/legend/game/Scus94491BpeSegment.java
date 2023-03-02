@@ -575,7 +575,9 @@ public final class Scus94491BpeSegment {
       _800bee98.or(input);
       keyRepeat.put(input, 0);
       controllerEdgeTriggers.put(input, true);
+
     }
+    Config.autoRunHandleInput();
   }
 
   private static void controllerRelease(final int input) {
@@ -586,6 +588,7 @@ public final class Scus94491BpeSegment {
       keyRepeat.remove(input);
       controllerEdgeTriggers.remove(input);
     }
+    Config.autoRunHandleInput();
   }
 
   private static boolean paused;
@@ -646,6 +649,8 @@ public final class Scus94491BpeSegment {
         _800bee98.or(input);
 
         keyRepeat.put(input, 0);
+
+        Config.autoRunHandleInput();
       }
 
       if(key == GLFW_KEY_P) {
@@ -668,6 +673,8 @@ public final class Scus94491BpeSegment {
         _800bee98.and(~input);
 
         keyRepeat.remove(input);
+
+        Config.autoRunHandleInput();
       }
     });
 

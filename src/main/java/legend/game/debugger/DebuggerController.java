@@ -18,6 +18,7 @@ import static legend.game.SMap.smapLoadingStage_800cb430;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
+import static legend.game.Scus94491BpeSegment_800b._800bee90;
 import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -82,6 +83,8 @@ public class DebuggerController {
   public CheckBox autoAdvanceText;
   @FXML
   public CheckBox autoCharmPotion;
+  @FXML
+  public CheckBox autoRun;
 
   public void initialize() {
     this.encounterId.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0));
@@ -99,6 +102,7 @@ public class DebuggerController {
     this.fastTextSpeed.setSelected(Config.fastTextSpeed());
     this.autoAdvanceText.setSelected(Config.autoAdvanceText());
     this.autoCharmPotion.setSelected(Config.autoCharmPotion());
+    this.autoRun.setSelected(Config.autoRun());
   }
 
   @FXML
@@ -258,5 +262,17 @@ public class DebuggerController {
   @FXML
   private void toggleAutoCharmPotion(final ActionEvent event) {
     Config.toggleAutoCharmPotion();
+  }
+
+  @FXML
+  private void toggleAutoRun(final ActionEvent event) {
+    Config.toggleAutoRun();
+
+    if(!Config.autoRun()) {
+      _800bee90.and(~0x40);
+      return;
+    }
+
+    _800bee90.or(0x40);
   }
 }

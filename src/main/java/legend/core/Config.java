@@ -14,6 +14,8 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
+import static legend.game.Scus94491BpeSegment_800b._800bee90;
+
 public final class Config {
   private Config() { }
 
@@ -40,6 +42,7 @@ public final class Config {
     properties.setProperty("fast_text_speed", "false");
     properties.setProperty("auto_advance_text", "false");
     properties.setProperty("auto_charm_potion", "false");
+    properties.setProperty("auto_run", "false");
   }
 
   public static int windowWidth() {
@@ -134,7 +137,7 @@ public final class Config {
     properties.setProperty("fast_text_speed", String.valueOf(!fastTextSpeed()));
   }
 
-  public static  boolean autoAdvanceText() {
+  public static boolean autoAdvanceText() {
     return readBool("auto_advance_text", false);
   }
 
@@ -142,12 +145,26 @@ public final class Config {
     properties.setProperty("auto_advance_text", String.valueOf(!autoAdvanceText()));
   }
 
-  public static  boolean autoCharmPotion() {
+  public static boolean autoCharmPotion() {
     return readBool("auto_charm_potion", false);
   }
 
   public static void toggleAutoCharmPotion() {
     properties.setProperty("auto_charm_potion", String.valueOf(!autoCharmPotion()));
+  }
+
+  public static boolean autoRun() {
+    return readBool("auto_run", false);
+  }
+
+  public static void toggleAutoRun() {
+    properties.setProperty("auto_run", String.valueOf(!autoRun()));
+  }
+
+  public static void autoRunHandleInput() {
+    if(autoRun()) {
+      _800bee90.or(0x40);
+    }
   }
 
   public static int getBattleRGB() {
