@@ -59,8 +59,8 @@ public class SaveGameScreen extends SaveListScreen {
   @Override
   protected void onMessageboxResult(final MessageBoxResult result) {
     if(result == MessageBoxResult.YES) {
-      gameState_800babc8.submapScene_a4.set(index_80052c38.get());
-      gameState_800babc8.submapCut_a8.set((int)_800cb450.get());
+      gameState_800babc8.submapScene_a4 = index_80052c38.get();
+      gameState_800babc8.submapCut_a8 = (int)_800cb450.get();
 
       saveGame(this.slot - 1);
 

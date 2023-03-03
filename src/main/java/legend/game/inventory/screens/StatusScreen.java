@@ -108,7 +108,7 @@ public class StatusScreen extends MenuScreen {
       allocateUiElement(0x58, 0x58, 194, 101);
     }
 
-    if(hasDragoon(gameState_800babc8.dragoonSpirits_19c.get(0).get(), charIndex)) {
+    if(hasDragoon(gameState_800babc8.goods_19c[0], charIndex)) {
       final byte[] spellIndices = new byte[8];
       getUnlockedDragoonSpells(spellIndices, charIndex);
       final int unlockedSpellCount = getUnlockedSpellCount(charIndex);

@@ -710,9 +710,9 @@ public final class Scus94491BpeSegment {
       joypadRepeat_8007a3a0.setu(_800bee98.get());
 
       if(mainCallbackIndex_8004dd20.get() == 3) {
-        gameState_800babc8.timestamp_a0.set(0);
+        gameState_800babc8.timestamp_a0 = 0;
       } else {
-        gameState_800babc8.timestamp_a0.add(vsyncMode_8007a3b8.get());
+        gameState_800babc8.timestamp_a0 += vsyncMode_8007a3b8.get();
       }
 
       final int frames = Math.max(1, vsyncMode_8007a3b8.get());
@@ -1788,13 +1788,13 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80017354L)
   public static FlowControl FUN_80017354(final RunningScript<?> script) {
-    gameState_800babc8.indicatorsDisabled_4e3.set(script.params_20[0].get() != 0 ? 1 : 0);
+    gameState_800babc8.indicatorsDisabled_4e3 = script.params_20[0].get() != 0;
     return FlowControl.CONTINUE;
   }
 
   @Method(0x80017374L)
   public static FlowControl FUN_80017374(final RunningScript<?> script) {
-    script.params_20[0].set(gameState_800babc8.indicatorsDisabled_4e3.get() != 0 ? 1 : 0);
+    script.params_20[0].set(gameState_800babc8.indicatorsDisabled_4e3 ? 1 : 0);
     return FlowControl.CONTINUE;
   }
 
@@ -1808,7 +1808,7 @@ public final class Scus94491BpeSegment {
     final int shift = script.params_20[0].get() & 0x1f;
     final int index = script.params_20[0].get() >>> 5;
 
-    final ArrayRef<IntRef> flags;
+    final int[] flags;
     if(index < 8) {
       flags = gameState_800babc8.scriptFlags1_13c;
     } else if(index < 16) {
@@ -1818,10 +1818,10 @@ public final class Scus94491BpeSegment {
     }
 
     if(script.params_20[1].get() != 0) {
-      flags.get(index % 8).or(0x1 << shift);
+      flags[index % 8] |= 0x1 << shift;
     } else {
       //LAB_800173dc
-      flags.get(index % 8).and(~(0x1 << shift));
+      flags[index % 8] &= ~(0x1 << shift);
     }
 
     //LAB_800173f4
@@ -1846,7 +1846,7 @@ public final class Scus94491BpeSegment {
     final int shift = value & 0x1f;
     final int index = value >>> 5;
 
-    script.params_20[1].set((gameState_800babc8.scriptFlags1_13c.get(index).get() & 0x1 << shift) != 0 ? 1 : 0);
+    script.params_20[1].set((gameState_800babc8.scriptFlags1_13c[index] & 0x1 << shift) != 0 ? 1 : 0);
 
     return FlowControl.CONTINUE;
   }
@@ -1857,17 +1857,17 @@ public final class Scus94491BpeSegment {
     final int index = script.params_20[0].get() >>> 5;
 
     if(script.params_20[1].get() != 0) {
-      gameState_800babc8.scriptFlags2_bc.get(index).or(0x1 << shift);
+      gameState_800babc8.scriptFlags2_bc[index] |= 0x1 << shift;
     } else {
       //LAB_8001748c
-      gameState_800babc8.scriptFlags2_bc.get(index).and(~(0x1 << shift));
+      gameState_800babc8.scriptFlags2_bc[index] &= ~(0x1 << shift);
     }
 
     //LAB_800174a4
-    if((gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0xff) >>> 7 != 0) {
-      final CharacterData2c charData = gameState_800babc8.charData_32c.get(0);
-      charData.dlevelXp_0e.set(0x7fff);
-      charData.dlevel_13.set(0x5);
+    if((gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0) {
+      final CharacterData2c charData = gameState_800babc8.charData_32c[0];
+      charData.dlevelXp_0e = 0x7fff;
+      charData.dlevel_13 = 0x5;
     }
 
     //LAB_800174d0
@@ -1884,7 +1884,7 @@ public final class Scus94491BpeSegment {
     final int shift = script.params_20[0].get() & 0x1f;
     final int index = script.params_20[0].get() >>> 5;
 
-    script.params_20[1].set((gameState_800babc8.scriptFlags2_bc.get(index).get() & 0x1L << shift) != 0 ? 1 : 0);
+    script.params_20[1].set((gameState_800babc8.scriptFlags2_bc[index] & 0x1L << shift) != 0 ? 1 : 0);
 
     return FlowControl.CONTINUE;
   }
@@ -1919,9 +1919,9 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_80017614
-    if(gameState_800babc8.dragoonSpirits_19c.get(0).get() < 0) {
-      gameState_800babc8.charData_32c.get(0).dlevel_13.set(5);
-      gameState_800babc8.charData_32c.get(0).dlevelXp_0e.set(0x7fff);
+    if(gameState_800babc8.goods_19c[0] < 0) {
+      gameState_800babc8.charData_32c[0].dlevel_13 = 5;
+      gameState_800babc8.charData_32c[0].dlevelXp_0e = 0x7fff;
     }
 
     //LAB_80017640
@@ -2529,7 +2529,7 @@ public final class Scus94491BpeSegment {
     FUN_8004c3f0(8);
     sssqSetReverbType(3);
     SsSetRVol(0x30, 0x30);
-    setMono(gameState_800babc8.mono_4e0.get());
+    setMono(gameState_800babc8.mono_4e0);
 
     //LAB_80019654
     for(int i = 0; i < 13; i++) {
@@ -2578,7 +2578,7 @@ public final class Scus94491BpeSegment {
 
       //LAB_800197c0
       for(int i = 0; i < 3; i++) {
-        if(gameState_800babc8.charIndex_88.get(i).get() != -1) {
+        if(gameState_800babc8.charIndex_88[i] != -1) {
           free(_800bc980.offset(i * 0xcL).offset(0x4L).get());
         }
       }
@@ -2623,7 +2623,7 @@ public final class Scus94491BpeSegment {
 
         //LAB_800198e8
         for(int charSlot = 0; charSlot < 3; charSlot++) {
-          final int charId = gameState_800babc8.charIndex_88.get(charSlot).get();
+          final int charId = gameState_800babc8.charIndex_88[charSlot];
 
           if(charId != -1) {
             _800bc980.offset(charSlot * 0xcL).offset(1, 0x1L).setu(charId);
@@ -3661,7 +3661,7 @@ public final class Scus94491BpeSegment {
                 continue;
               }
 
-              if((gameState_800babc8._1a4.get(0).get() & 0x1) == 0) {
+              if((gameState_800babc8._1a4[0] & 0x1) == 0) {
                 //LAB_8001c7cc
                 musicIndex = a2.musicIndex_02.get();
                 break jmp_8001c7a0;
@@ -3669,7 +3669,7 @@ public final class Scus94491BpeSegment {
             }
 
             //LAB_8001c6ac
-            if(a2.submapCuts_04.deref().get(v1).get() == submapCut_80052c30.get() && (gameState_800babc8._1a4.get(a3 >>> 5).get() & 0x1 << (a3 & 0x1f)) != 0) {
+            if(a2.submapCuts_04.deref().get(v1).get() == submapCut_80052c30.get() && (gameState_800babc8._1a4[a3 >>> 5] & 0x1 << (a3 & 0x1f)) != 0) {
               //LAB_8001c7c0
               musicIndex = a2.musicIndex_02.get();
               break jmp_8001c7a0;
@@ -3749,7 +3749,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001cae0L)
   public static void charSoundEffectsLoaded(final List<FileData> files, final int charSlot) {
-    final int charId = gameState_800babc8.charIndex_88.get(charSlot).get();
+    final int charId = gameState_800babc8.charIndex_88[charSlot];
 
     //LAB_8001cb34
     final int index = characterSoundFileIndices_800500f8.get(charSlot).get();
@@ -3822,7 +3822,7 @@ public final class Scus94491BpeSegment {
     if(type != 0) {
       //LAB_8001ce44
       fileIndex = 1298 + bobj.charIndex_272;
-    } else if(bobj.charIndex_272 != 0 || (gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0xff) >>> 7 == 0) {
+    } else if(bobj.charIndex_272 != 0 || (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 == 0) {
       //LAB_8001ce18
       fileIndex = 1307 + bobj.charIndex_272;
     } else {
@@ -3896,7 +3896,7 @@ public final class Scus94491BpeSegment {
     if(type == 0) {
       //LAB_8001d0e0
       loadedDrgnFiles_800bcf78.oru(0x40L);
-      if(bobj.charIndex_272 != 0 || (gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0xff) >>> 7 == 0) {
+      if(bobj.charIndex_272 != 0 || (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 == 0) {
         //LAB_8001d134
         // Regular dragoons
         loadDrgnDir(0, 1317 + bobj.charIndex_272, Scus94491BpeSegment::FUN_8001e98c);
@@ -4199,7 +4199,7 @@ public final class Scus94491BpeSegment {
 
     // Player combat sounds for current party composition (example file: 764)
     for(int charSlot = 0; charSlot < 3; charSlot++) {
-      final int charIndex = gameState_800babc8.charIndex_88.get(charSlot).get();
+      final int charIndex = gameState_800babc8.charIndex_88[charSlot];
 
       if(charIndex != -1) {
         final String name = getCharacterName(charIndex).toLowerCase();
@@ -4256,7 +4256,7 @@ public final class Scus94491BpeSegment {
     } else if(a0 == -1) {
       //LAB_8001e0f8
       if(_800bdc34.get() != 0) {
-        if(mainCallbackIndex_8004dd20.get() == 8 && gameState_800babc8.isOnWorldMap_4e4.get() != 0) {
+        if(mainCallbackIndex_8004dd20.get() == 8 && gameState_800babc8.isOnWorldMap_4e4) {
           sssqResetStuff();
           unloadSoundFile(8);
           //TODO GH#3

@@ -660,17 +660,17 @@ public final class SMap {
 
     if(a0 >= 0) {
       final ActiveStatsa0 stats = stats_800be5f8.get(a0);
-      final CharacterData2c charData = gameState_800babc8.charData_32c.get(a0);
-      charData.hp_08.set(stats.maxHp_66.get());
-      charData.mp_0a.set(stats.maxMp_6e.get());
+      final CharacterData2c charData = gameState_800babc8.charData_32c[a0];
+      charData.hp_08 = stats.maxHp_66.get();
+      charData.mp_0a = stats.maxMp_6e.get();
     } else {
       //LAB_800d9b70
       //LAB_800d9b84
       for(int charSlot = 0; charSlot < 9; charSlot++) {
         final ActiveStatsa0 stats = stats_800be5f8.get(charSlot);
-        final CharacterData2c charData = gameState_800babc8.charData_32c.get(charSlot);
-        charData.hp_08.set(stats.maxHp_66.get());
-        charData.mp_0a.set(stats.maxMp_6e.get());
+        final CharacterData2c charData = gameState_800babc8.charData_32c[charSlot];
+        charData.hp_08 = stats.maxHp_66.get();
+        charData.mp_0a = stats.maxMp_6e.get();
       }
     }
 
@@ -688,7 +688,7 @@ public final class SMap {
   public static FlowControl FUN_800d9bf4(final RunningScript<?> script) {
     //LAB_800d9c04
     for(int i = 0; i < 9; i++) {
-      gameState_800babc8.charData_32c.get(i).status_10.set(0);
+      gameState_800babc8.charData_32c[i].status_10 = 0;
     }
 
     return FlowControl.CONTINUE;
@@ -697,31 +697,31 @@ public final class SMap {
   @Method(0x800d9c1cL)
   public static FlowControl FUN_800d9c1c(final RunningScript<?> script) {
     //LAB_800d9c78
-    memcpy(gameState_800babc8.charData_32c.get(script.params_20[1].get()).getAddress(), gameState_800babc8.charData_32c.get(script.params_20[0].get()).getAddress(), 0x2c);
+    gameState_800babc8.charData_32c[script.params_20[1].get()].set(gameState_800babc8.charData_32c[script.params_20[0].get()]);
     loadSupportOverlay(2, () -> SMap.FUN_800d9b08(script.params_20[1].get()));
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800d9ce4L)
   public static FlowControl scriptSetCharAddition(final RunningScript<?> script) {
-    gameState_800babc8.charData_32c.get(script.params_20[0].get()).selectedAddition_19.set(script.params_20[1].get());
+    gameState_800babc8.charData_32c[script.params_20[0].get()].selectedAddition_19 = script.params_20[1].get();
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800d9d20L)
   public static FlowControl scriptGetCharAddition(final RunningScript<?> script) {
-    script.params_20[1].set(gameState_800babc8.charData_32c.get(script.params_20[0].get()).selectedAddition_19.get());
+    script.params_20[1].set(gameState_800babc8.charData_32c[script.params_20[0].get()].selectedAddition_19);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800d9d60L)
   public static FlowControl FUN_800d9d60(final RunningScript<?> script) {
-    if(gameState_800babc8.charData_32c.get(0).dlevelXp_0e.get() < 63901) {
-      gameState_800babc8.charData_32c.get(0).dlevelXp_0e.set(63901);
+    if(gameState_800babc8.charData_32c[0].dlevelXp_0e < 63901) {
+      gameState_800babc8.charData_32c[0].dlevelXp_0e = 63901;
     }
 
     //LAB_800d9d90
-    gameState_800babc8.charData_32c.get(0).dlevel_13.set(5);
+    gameState_800babc8.charData_32c[0].dlevel_13 = 5;
 
     loadSupportOverlay(2, () -> SMap.FUN_800d9dc0(0));
     return FlowControl.CONTINUE;
@@ -729,7 +729,7 @@ public final class SMap {
 
   @Method(0x800d9dc0L)
   public static void FUN_800d9dc0(final int charIndex) {
-    gameState_800babc8.charData_32c.get(charIndex).sp_0c.set(500);
+    gameState_800babc8.charData_32c[charIndex].sp_0c = 500;
     FUN_800d9b08(-1);
   }
 
@@ -3592,7 +3592,7 @@ public final class SMap {
 
   @Method(0x800e4018L)
   public static void FUN_800e4018() {
-    if(gameState_800babc8.indicatorsDisabled_4e3.get() != 0) {
+    if(gameState_800babc8.indicatorsDisabled_4e3) {
       if(_800f64ac.get() == 0) {
         _800f64ac.setu(0x1L);
       }
@@ -3782,7 +3782,7 @@ public final class SMap {
       return 0;
     }
 
-    if(gameState_800babc8.indicatorsDisabled_4e3.get() != 0) {
+    if(gameState_800babc8.indicatorsDisabled_4e3) {
       return 0;
     }
 
@@ -3949,7 +3949,7 @@ public final class SMap {
 
     _800c6ae0.addu(0x1L);
 
-    if(gameState_800babc8.indicatorsDisabled_4e3.get() != 0) {
+    if(gameState_800babc8.indicatorsDisabled_4e3) {
       _800c6ae4.setu(-0x1eL);
     }
 
@@ -4162,8 +4162,8 @@ public final class SMap {
       whichMenu_800bdc38 = WhichMenu.INIT_SAVE_GAME_MENU_16;
       smapLoadingStage_800cb430.setu(0xdL);
       _800f7e30.setu(index_80052c38.get());
-      index_80052c38.set((int)_800f7e30.offset(gameState_800babc8.chapterIndex_98.get() * 0x8L).get());
-      _800cb450.setu(_800f7e2c.offset(gameState_800babc8.chapterIndex_98.get() * 0x8L).get());
+      index_80052c38.set((int)_800f7e30.offset(gameState_800babc8.chapterIndex_98 * 0x8L).get());
+      _800cb450.setu(_800f7e2c.offset(gameState_800babc8.chapterIndex_98 * 0x8L).get());
       _800cab24.set(FUN_800ea974(-0x1L));
       SCRIPTS.pause();
       return 1;
@@ -4384,7 +4384,7 @@ public final class SMap {
       case 0xc -> {
         _80052c44.setu(0);
         FUN_800e5104(_800caaf8.get(), _800cab24.deref());
-        if(joypadPress_8007a398.get(0x10L) != 0 && gameState_800babc8.indicatorsDisabled_4e3.get() == 0) {
+        if(joypadPress_8007a398.get(0x10L) != 0 && !gameState_800babc8.indicatorsDisabled_4e3) {
           FUN_800e5534(-1, 0x3ff);
         }
       }
@@ -4426,7 +4426,7 @@ public final class SMap {
         _800c6aac.setu(0xaL);
         switch(_800caaf0) {
           case UNLOAD_INVENTORY_MENU_5:
-            if(gameState_800babc8.isOnWorldMap_4e4.get() != 0) {
+            if(gameState_800babc8.isOnWorldMap_4e4) {
               smapLoadingStage_800cb430.setu(0x12L);
               _800f7e4c.setu(0);
               break;
@@ -4443,7 +4443,7 @@ public final class SMap {
           case UNLOAD_SAVE_GAME_MENU_20:
             smapLoadingStage_800cb430.setu(0xcL);
             _800f7e4c.setu(0);
-            FUN_800e5534((int)_800f7e2c.offset(gameState_800babc8.chapterIndex_98.get() * 8).get(), (int)_800f7e30.offset(gameState_800babc8.chapterIndex_98.get() * 8).get());
+            FUN_800e5534((int)_800f7e2c.offset(gameState_800babc8.chapterIndex_98 * 8).get(), (int)_800f7e30.offset(gameState_800babc8.chapterIndex_98 * 8).get());
             index_80052c38.set((int)_800f7e30.get());
         }
       }
@@ -4622,14 +4622,14 @@ public final class SMap {
     if(drgnIndexA == drgnBinIndex_800bc058.get() - 1) {
       drgnIndexOut.set(drgnIndexA);
       second = false;
-    } else if(chapterIndex == drgnBinIndex_800bc058.get() - 1 && chapterIndex <= gameState_800babc8.chapterIndex_98.get()) {
+    } else if(chapterIndex == drgnBinIndex_800bc058.get() - 1 && chapterIndex <= gameState_800babc8.chapterIndex_98) {
       drgnIndexOut.set(chapterIndex);
       second = true;
       //LAB_800e6570
     } else if(chapterIndex >= 4) {
       drgnIndexOut.set(drgnIndexA);
       second = false;
-    } else if(chapterIndex <= gameState_800babc8.chapterIndex_98.get()) {
+    } else if(chapterIndex <= gameState_800babc8.chapterIndex_98) {
       //LAB_800e6580
       drgnIndexOut.set(chapterIndex);
       second = true;
@@ -8673,7 +8673,7 @@ public final class SMap {
   public static void handleTriangleIndicators() {
     getScreenOffset(_800c69fc.deref().screenOffsetX_10, _800c69fc.deref().screenOffsetY_14);
 
-    if(gameState_800babc8.indicatorsDisabled_4e3.get() != 0) {
+    if(gameState_800babc8.indicatorsDisabled_4e3) {
       return;
     }
 
@@ -8681,7 +8681,7 @@ public final class SMap {
       return;
     }
 
-    final int indicatorMode = gameState_800babc8.indicatorMode_4e8.get();
+    final int indicatorMode = gameState_800babc8.indicatorMode_4e8;
     if(indicatorMode != 1) {
       _800f9e9c.setu(0);
     }
@@ -8689,26 +8689,26 @@ public final class SMap {
     //LAB_800f321c
     if((joypadPress_8007a398.get() & 0x8) != 0) { // R1
       if(indicatorMode == 0) {
-        gameState_800babc8.indicatorMode_4e8.set(1);
+        gameState_800babc8.indicatorMode_4e8 = 1;
         //LAB_800f3244
       } else if(indicatorMode == 1) {
-        gameState_800babc8.indicatorMode_4e8.set(2);
+        gameState_800babc8.indicatorMode_4e8 = 2;
       } else if(indicatorMode == 2) {
-        gameState_800babc8.indicatorMode_4e8.set(0);
+        gameState_800babc8.indicatorMode_4e8 = 0;
         _800f9e9c.setu(0);
       }
       //LAB_800f3260
     } else if((joypadPress_8007a398.get() & 0x4) != 0) { // L1
       if(indicatorMode == 0) {
         //LAB_800f3274
-        gameState_800babc8.indicatorMode_4e8.set(2);
+        gameState_800babc8.indicatorMode_4e8 = 2;
         //LAB_800f3280
       } else if(indicatorMode == 1) {
-        gameState_800babc8.indicatorMode_4e8.set(0);
+        gameState_800babc8.indicatorMode_4e8 = 0;
         _800f9e9c.setu(0);
         //LAB_800f3294
       } else if(indicatorMode == 2) {
-        gameState_800babc8.indicatorMode_4e8.set(1);
+        gameState_800babc8.indicatorMode_4e8 = 1;
 
         //LAB_800f32a4
         _800f9e9c.setu(0);
@@ -8717,7 +8717,7 @@ public final class SMap {
 
     //LAB_800f32a8
     //LAB_800f32ac
-    if(gameState_800babc8.indicatorMode_4e8.get() == 0) {
+    if(gameState_800babc8.indicatorMode_4e8 == 0) {
       return;
     }
 
@@ -8754,13 +8754,13 @@ public final class SMap {
     _800c69fc.deref().playerX_08.set(sp118.getX());
     _800c69fc.deref().playerY_0c.set(sp118.getY());
 
-    if(gameState_800babc8.indicatorMode_4e8.get() == 1) {
+    if(gameState_800babc8.indicatorMode_4e8 == 1) {
       if(_800f9e9c.get() < 33) {
         renderTriangleIndicators();
         _800f9e9c.addu(0x1L);
       }
       //LAB_800f3508
-    } else if(gameState_800babc8.indicatorMode_4e8.get() == 2) {
+    } else if(gameState_800babc8.indicatorMode_4e8 == 2) {
       renderTriangleIndicators();
     }
 
@@ -8899,7 +8899,7 @@ public final class SMap {
 
   @Method(0x800f3af8L)
   public static void resetTriangleIndicators() {
-    if(gameState_800babc8.indicatorMode_4e8.get() > 0) {
+    if(gameState_800babc8.indicatorMode_4e8 > 0) {
       _800f9e9c.setu(0);
     }
 

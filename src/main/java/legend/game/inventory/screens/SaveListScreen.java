@@ -1,12 +1,12 @@
 package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
-import legend.game.SaveManager;
 import legend.game.inventory.WhichMenu;
 import legend.game.types.MessageBoxResult;
 import legend.game.types.Renderable58;
 import org.lwjgl.glfw.GLFW;
 
+import static legend.core.GameEngine.SAVES;
 import static legend.game.SItem.FUN_801033cc;
 import static legend.game.SItem.FUN_80103444;
 import static legend.game.SItem.FUN_80104b60;
@@ -56,14 +56,12 @@ public abstract class SaveListScreen extends MenuScreen {
         this.scroll = 0;
         this.selectedSlot = 0;
 
-        if(mainCallbackIndex_8004dd20.get() == 8) {
-          gameState_800babc8.isOnWorldMap_4e4.set(1);
-        } else {
-          gameState_800babc8.isOnWorldMap_4e4.set(0);
+        if(gameState_800babc8 != null) {
+          gameState_800babc8.isOnWorldMap_4e4 = mainCallbackIndex_8004dd20.get() == 8;
         }
 
         saves.clear();
-        saves.addAll(SaveManager.loadAllDisplayData());
+        saves.addAll(SAVES.loadAllSaves());
 
         this.highlightLeftHalf = allocateUiElement(129, 129, 16, getSlotY(this.selectedSlot));
         this.highlightRightHalf = allocateUiElement(130, 130, 192, getSlotY(this.selectedSlot));

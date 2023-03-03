@@ -1238,7 +1238,7 @@ public final class Bttl_800d {
       _800faa9d.setu(0);
     } else {
       //LAB_800d3dc0
-      final int addition = gameState_800babc8.charData_32c.get(script.params_20[0].get()).selectedAddition_19.get();
+      final int addition = gameState_800babc8.charData_32c[script.params_20[0].get()].selectedAddition_19;
       final ScriptState<AdditionScriptData1c> state = SCRIPTS.allocateScriptState("AdditionScriptData1c", new AdditionScriptData1c());
       state.loadScriptFile(doNothingScript_8004f650);
       state.setTicker(Bttl_800d::FUN_800d3bb8);

@@ -18,6 +18,8 @@ import legend.game.fmv.Fmv;
 import legend.game.modding.ModManager;
 import legend.game.modding.events.EventManager;
 import legend.game.modding.registries.Registries;
+import legend.game.saves.SaveManager;
+import legend.game.saves.SaveSerialization;
 import legend.game.scripting.ScriptManager;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
@@ -57,6 +59,8 @@ public final class GameEngine {
   private static final Registries.Access REGISTRY_ACCESS = REGISTRIES.new Access();
 
   public static final ScriptManager SCRIPTS = new ScriptManager();
+
+  public static final SaveManager SAVES = new SaveManager(SaveSerialization.MAGIC_V2, SaveSerialization::toV2);
 
   public static final Cpu CPU;
   public static final Gpu GPU;
@@ -138,6 +142,10 @@ public final class GameEngine {
     MODS.instantiateMods();
 
     EventManager.INSTANCE.getClass(); // Trigger load
+
+    SAVES.registerDeserializer(SaveSerialization::fromRetailMatcher, SaveSerialization::fromRetail);
+    SAVES.registerDeserializer(SaveSerialization::fromV1Matcher, SaveSerialization::fromV1);
+    SAVES.registerDeserializer(SaveSerialization::fromV2Matcher, SaveSerialization::fromV2);
 
     synchronized(LOCK) {
       try {

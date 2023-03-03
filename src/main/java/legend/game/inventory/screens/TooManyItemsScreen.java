@@ -32,7 +32,6 @@ import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.itemCantBeDiscarded;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
-import static legend.game.Scus94491BpeSegment_8002.recalcInventory;
 import static legend.game.Scus94491BpeSegment_8002.setInventoryFromDisplay;
 import static legend.game.Scus94491BpeSegment_8002.sortItems;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
@@ -73,7 +72,6 @@ public class TooManyItemsScreen extends MenuScreen {
     switch(this.menuState) {
       case _1 -> {
         if(!drgn0_6666FilePtr_800bdc3c.isNull()) {
-          recalcInventory();
           FUN_80104738(this.equipment, this.items, 0x1L);
           messageBox_8011dc90.state_0c = 0;
 
@@ -124,9 +122,9 @@ public class TooManyItemsScreen extends MenuScreen {
       case _9 -> {
         final int slotCount;
         if(this.droppedItems.get(this.dropIndex).itemId_00 < 0xc0) {
-          slotCount = gameState_800babc8.equipmentCount_1e4.get();
+          slotCount = gameState_800babc8.equipment_1e8.size();
         } else {
-          slotCount = gameState_800babc8.itemCount_1e6.get();
+          slotCount = gameState_800babc8.items_2e9.size();
         }
 
         if(this.scrollAccumulator >= 1.0d) {
@@ -334,9 +332,9 @@ public class TooManyItemsScreen extends MenuScreen {
             this.menuState = MenuState._8;
 
             if(isItem != 0) {
-              setInventoryFromDisplay(this.items, gameState_800babc8.items_2e9, gameState_800babc8.itemCount_1e6.get());
+              setInventoryFromDisplay(this.items, gameState_800babc8.items_2e9, gameState_800babc8.items_2e9.size());
             } else {
-              setInventoryFromDisplay(this.equipment, gameState_800babc8.equipment_1e8, gameState_800babc8.equipmentCount_1e4.get());
+              setInventoryFromDisplay(this.equipment, gameState_800babc8.equipment_1e8, gameState_800babc8.equipment_1e8.size());
             }
           }
         }
@@ -377,9 +375,9 @@ public class TooManyItemsScreen extends MenuScreen {
       playSound(2);
 
       if(this.droppedItems.get(this.dropIndex).itemId_00 < 0xc0) {
-        sortItems(this.equipment, gameState_800babc8.equipment_1e8, gameState_800babc8.equipmentCount_1e4.get());
+        sortItems(this.equipment, gameState_800babc8.equipment_1e8, gameState_800babc8.equipment_1e8.size());
       } else {
-        sortItems(this.items, gameState_800babc8.items_2e9, gameState_800babc8.itemCount_1e6.get());
+        sortItems(this.items, gameState_800babc8.items_2e9, gameState_800babc8.items_2e9.size());
       }
     }
   }

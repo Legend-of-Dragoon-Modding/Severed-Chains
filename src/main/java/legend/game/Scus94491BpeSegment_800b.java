@@ -49,7 +49,7 @@ public final class Scus94491BpeSegment_800b {
 
   public static final IntRef _800babc0 = MEMORY.ref(4, 0x800babc0L, IntRef::new);
 
-  public static final GameState52c gameState_800babc8 = MEMORY.ref(4, 0x800babc8L, GameState52c::new);
+  public static GameState52c gameState_800babc8;
 
   // End of game state 800bb0f4
 

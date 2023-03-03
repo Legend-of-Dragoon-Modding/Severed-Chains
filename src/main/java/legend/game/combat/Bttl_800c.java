@@ -316,7 +316,7 @@ public final class Bttl_800c {
   public static final Value _800c6b64 = MEMORY.ref(4, 0x800c6b64L);
   public static final Value _800c6b68 = MEMORY.ref(4, 0x800c6b68L);
   public static final Value _800c6b6c = MEMORY.ref(4, 0x800c6b6cL);
-  public static final Value _800c6b70 = MEMORY.ref(2, 0x800c6b70L);
+  public static final UnsignedShortRef combatItemsCount_800c6b70 = MEMORY.ref(2, 0x800c6b70L, UnsignedShortRef::new);
 
   public static final Value _800c6b78 = MEMORY.ref(4, 0x800c6b78L);
 
@@ -439,7 +439,7 @@ public final class Bttl_800c {
 
   public static final Value _800c72b4 = MEMORY.ref(4, 0x800c72b4L);
 
-  public static final ArrayRef<UnsignedShortRef> _800c72cc = MEMORY.ref(2, 0x800c72ccL, ArrayRef.of(UnsignedShortRef.class, 10, 2, UnsignedShortRef::new));
+  public static final ArrayRef<UnsignedShortRef> protectedItems_800c72cc = MEMORY.ref(2, 0x800c72ccL, ArrayRef.of(UnsignedShortRef.class, 10, 2, UnsignedShortRef::new));
 
   public static final Value _800d66b0 = MEMORY.ref(1, 0x800d66b0L);
 
@@ -859,7 +859,7 @@ public final class Bttl_800c {
   public static void FUN_800c7524() {
     FUN_800c8624();
 
-    gameState_800babc8._b4.incr();
+    gameState_800babc8._b4++;
     _800bc910.setu(0);
     _800bc914.setu(0);
     _800bc918.setu(0);
@@ -874,24 +874,24 @@ public final class Bttl_800c {
     _800bc974.set(0);
     itemsDroppedByEnemiesCount_800bc978.set(0);
 
-    int charIndex = gameState_800babc8.charIndex_88.get(1).get();
+    int charIndex = gameState_800babc8.charIndex_88[1];
     if(charIndex < 0) {
-      gameState_800babc8.charIndex_88.get(1).set(gameState_800babc8.charIndex_88.get(2).get());
-      gameState_800babc8.charIndex_88.get(2).set(charIndex);
+      gameState_800babc8.charIndex_88[1] = gameState_800babc8.charIndex_88[2];
+      gameState_800babc8.charIndex_88[2] = charIndex;
     }
 
     //LAB_800c75c0
-    charIndex = gameState_800babc8.charIndex_88.get(0).get();
+    charIndex = gameState_800babc8.charIndex_88[0];
     if(charIndex < 0) {
-      gameState_800babc8.charIndex_88.get(0).set(gameState_800babc8.charIndex_88.get(1).get());
-      gameState_800babc8.charIndex_88.get(1).set(charIndex);
+      gameState_800babc8.charIndex_88[0] = gameState_800babc8.charIndex_88[1];
+      gameState_800babc8.charIndex_88[1] = charIndex;
     }
 
     //LAB_800c75e8
-    charIndex = gameState_800babc8.charIndex_88.get(1).get();
+    charIndex = gameState_800babc8.charIndex_88[1];
     if(charIndex < 0) {
-      gameState_800babc8.charIndex_88.get(1).set(gameState_800babc8.charIndex_88.get(2).get());
-      gameState_800babc8.charIndex_88.get(2).set(charIndex);
+      gameState_800babc8.charIndex_88[1] = gameState_800babc8.charIndex_88[2];
+      gameState_800babc8.charIndex_88[2] = charIndex;
     }
 
     //LAB_800c760c
@@ -942,7 +942,7 @@ public final class Bttl_800c {
     monsterCount_800c6768.set(0);
     charCount_800c677c.set(0);
 
-    _8006e398.morphMode_ee4 = gameState_800babc8.morphMode_4e2.get();
+    _8006e398.morphMode_ee4 = gameState_800babc8.morphMode_4e2;
 
     loadSupportOverlay(1, SBtld::battlePrepareSelectedAdditionHitProperties_80109250);
 
@@ -1147,7 +1147,7 @@ public final class Bttl_800c {
         state.innerStruct_00.turnValue_4c = highestTurnValue - 0xd9;
 
         if((state.storage_44[7] & 0x4) == 0) {
-          gameState_800babc8._b8.incr();
+          gameState_800babc8._b8++;
         }
 
         //LAB_800c7f9c
@@ -1285,7 +1285,7 @@ public final class Bttl_800c {
           final int encounter = encounterId_800bb0f8.get();
           if(encounter == 391 || encounter >= 404 && encounter < 408) { // Arena fights in Lohan
             //LAB_800c8514
-            gameState_800babc8.scriptFlags2_bc.get(0x1d).or(0x800_0000);
+            gameState_800babc8.scriptFlags2_bc[0x1d] |= 0x800_0000;
           } else {
             //LAB_800c8534
             a1 = 7; // Game over screen
@@ -1650,11 +1650,11 @@ public final class Bttl_800c {
           } else {
             // Player TMDs
             //LAB_800c9334
-            int charIndex = gameState_800babc8.charIndex_88.get(combatant.charSlot_19c).get();
+            int charIndex = gameState_800babc8.charIndex_88[combatant.charSlot_19c];
             combatant.flags_19e |= 0x2;
 
             if((combatant.charIndex_1a2 & 0x1) != 0) {
-              if(charIndex == 0 && (gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0xff) >>> 7 != 0) {
+              if(charIndex == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0) {
                 charIndex = 10; // Divine dragoon
               }
 
@@ -1769,11 +1769,11 @@ public final class Bttl_800c {
       } else {
         //LAB_800c97a4
         final int isDragoon = combatant.charIndex_1a2 & 0x1;
-        final int charIndex = gameState_800babc8.charIndex_88.get(combatant.charSlot_19c).get();
+        final int charIndex = gameState_800babc8.charIndex_88[combatant.charSlot_19c];
         if(isDragoon == 0) {
           // Additions
-          fileIndex = 4031 + gameState_800babc8.charData_32c.get(charIndex).selectedAddition_19.get() + charIndex * 8 - additionOffsets_8004f5ac.get(charIndex).get();
-        } else if(charIndex != 0 || (gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0xff) >>> 7 == 0) {
+          fileIndex = 4031 + gameState_800babc8.charData_32c[charIndex].selectedAddition_19 + charIndex * 8 - additionOffsets_8004f5ac.get(charIndex).get();
+        } else if(charIndex != 0 || (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 == 0) {
           // Dragoon addition
           fileIndex = 4103 + charIndex;
         } else { // Divine dragoon
@@ -2156,10 +2156,10 @@ public final class Bttl_800c {
     final CombatantStruct1a8 combatant = combatants_8005e398[combatantIndex];
 
     if(combatant.charIndex_1a2 >= 0) {
-      int fileIndex = gameState_800babc8.charIndex_88.get(combatant.charSlot_19c).get();
+      int fileIndex = gameState_800babc8.charIndex_88[combatant.charSlot_19c];
 
       if((combatant.charIndex_1a2 & 0x1) != 0) {
-        if(fileIndex == 0 && (gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0xff) >>> 7 != 0) {
+        if(fileIndex == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0) {
           fileIndex = 10;
         }
 
@@ -3281,21 +3281,21 @@ public final class Bttl_800c {
 
     if(a0.params_20[1].get() != 0) {
       final int charIndex = bobj.charIndex_272;
-      final CharacterData2c charData = gameState_800babc8.charData_32c.get(charIndex);
+      final CharacterData2c charData = gameState_800babc8.charData_32c[charIndex];
 
-      final int additionIndex = charData.selectedAddition_19.get() - additionOffsets_8004f5ac.get(charIndex).get();
+      final int additionIndex = charData.selectedAddition_19 - additionOffsets_8004f5ac.get(charIndex).get();
       if(charIndex == 2 || charIndex == 8 || additionIndex < 0) {
         //LAB_800cd200
         return FlowControl.CONTINUE;
       }
 
       //LAB_800cd208
-      final int additionXp = Math.min(99, charData.additionXp_22.get(additionIndex).get() + 1);
+      final int additionXp = Math.min(99, charData.additionXp_22[additionIndex] + 1);
 
       //LAB_800cd240
       //LAB_800cd288
-      while(charData.additionLevels_1a.get(additionIndex).get() < 5 && additionXp >= additionNextLevelXp_800fa744.get(charData.additionLevels_1a.get(additionIndex).get()).get()) {
-        charData.additionLevels_1a.get(additionIndex).incr();
+      while(charData.additionLevels_1a[additionIndex] < 5 && additionXp >= additionNextLevelXp_800fa744.get(charData.additionLevels_1a[additionIndex]).get()) {
+        charData.additionLevels_1a[additionIndex]++;
       }
 
       //LAB_800cd2ac
@@ -3305,7 +3305,7 @@ public final class Bttl_800c {
       // Find the first addition that isn't already maxed out
       //LAB_800cd2ec
       for(int additionIndex2 = 0; additionIndex2 < additionCounts_8004f5c0.get(charIndex).get(); additionIndex2++) {
-        if(charData.additionLevels_1a.get(additionIndex2).get() == 5) {
+        if(charData.additionLevels_1a[additionIndex2] == 5) {
           nonMaxedAdditions--;
         } else {
           //LAB_800cd308
@@ -3316,11 +3316,11 @@ public final class Bttl_800c {
       }
 
       //LAB_800cd31c
-      if(nonMaxedAdditions < 2 && (charData.partyFlags_04.get() & 0x40) == 0) {
-        charData.partyFlags_04.or(0x40);
+      if(nonMaxedAdditions < 2 && (charData.partyFlags_04 & 0x40) == 0) {
+        charData.partyFlags_04 |= 0x40;
 
         if(firstNonMaxAdditionIndex >= 0) {
-          charData.additionLevels_1a.get(firstNonMaxAdditionIndex).set(1);
+          charData.additionLevels_1a[firstNonMaxAdditionIndex] = 1;
         }
 
         //LAB_800cd36c
@@ -3328,7 +3328,7 @@ public final class Bttl_800c {
       }
 
       //LAB_800cd390
-      charData.additionXp_22.get(additionIndex).set(additionXp);
+      charData.additionXp_22[additionIndex] = additionXp;
     }
 
     //LAB_800cd3ac

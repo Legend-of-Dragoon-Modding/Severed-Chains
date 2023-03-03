@@ -77,13 +77,13 @@ public class AdditionsScreen extends MenuScreen {
 
         allocateUiElement(69, 69, 0, 0);
         allocateUiElement(70, 70, 192, 0);
-        this.renderAdditions(this.charSlot, this.additions, gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.get(this.charSlot).get()).selectedAddition_19.get(), 0xffL);
+        this.renderAdditions(this.charSlot, this.additions, gameState_800babc8.charData_32c[characterIndices_800bdbb8.get(this.charSlot).get()].selectedAddition_19, 0xffL);
         this.loadingStage++;
       }
 
       case 2 -> {
         FUN_801034cc(this.charSlot, characterCount_8011d7c4.get());
-        this.renderAdditions(this.charSlot, this.additions, gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.get(this.charSlot).get()).selectedAddition_19.get(), 0);
+        this.renderAdditions(this.charSlot, this.additions, gameState_800babc8.charData_32c[characterIndices_800bdbb8.get(this.charSlot).get()].selectedAddition_19, 0);
 
         if(this.scrollAccumulator >= 1.0d) {
           this.scrollAccumulator -= 1.0d;
@@ -104,7 +104,7 @@ public class AdditionsScreen extends MenuScreen {
 
       // Fade out
       case 100 -> {
-        this.renderAdditions(this.charSlot, this.additions, gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.get(this.charSlot).get()).selectedAddition_19.get(), 0);
+        this.renderAdditions(this.charSlot, this.additions, gameState_800babc8.charData_32c[characterIndices_800bdbb8.get(this.charSlot).get()].selectedAddition_19, 0);
         this.unload.run();
       }
     }
@@ -135,12 +135,12 @@ public class AdditionsScreen extends MenuScreen {
           renderText(additions_8011a064.get(offset).deref(), 33, y - 2, offset != selectedAdditionOffset ? 4 : 5);
 
           if(allocate) {
-            final int level = gameState_800babc8.charData_32c.get(charIndex).additionLevels_1a.get(index).get();
+            final int level = gameState_800babc8.charData_32c[charIndex].additionLevels_1a[index];
             renderThreeDigitNumber(197, y, level); // Addition level
             renderThreeDigitNumber(230, y, additionData_80052884.get(offset).attacks_01.get()); // Number of attacks
             renderThreeDigitNumber(263, y, additionData_80052884.get(offset).sp_02.get(level - 1).get()); // SP
             renderThreeDigitNumber(297, y, (int)(additionData_80052884.get(offset).damage_0c.get() * (ptrTable_80114070.offset(offset * 0x4L).deref(1).offset(level * 0x4L).offset(0x3L).get() + 100) / 100)); // Damage
-            renderThreeDigitNumber(322, y, gameState_800babc8.charData_32c.get(charIndex).additionXp_22.get(index).get()); // Current XP
+            renderThreeDigitNumber(322, y, gameState_800babc8.charData_32c[charIndex].additionXp_22[index]); // Current XP
 
             if(level < 5) {
               renderThreeDigitNumber(342, y, additionXpPerLevel_800fba2c.get(level).get()); // Max XP
@@ -197,7 +197,7 @@ public class AdditionsScreen extends MenuScreen {
           final int additionOffset = this.additions[i].offset_00;
 
           if(additionOffset != -1) {
-            gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.get(this.charSlot).get()).selectedAddition_19.set(additionOffset);
+            gameState_800babc8.charData_32c[characterIndices_800bdbb8.get(this.charSlot).get()].selectedAddition_19 = additionOffset;
             playSound(2);
             unloadRenderable(this.additionHighlight);
             this.loadingStage = 1;
@@ -240,7 +240,7 @@ public class AdditionsScreen extends MenuScreen {
         final int additionOffset = this.additions[this.selectedSlot].offset_00;
 
         if(additionOffset != -1) {
-          gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.get(this.charSlot).get()).selectedAddition_19.set(additionOffset);
+          gameState_800babc8.charData_32c[characterIndices_800bdbb8.get(this.charSlot).get()].selectedAddition_19 = additionOffset;
           playSound(2);
           unloadRenderable(this.additionHighlight);
           this.loadingStage = 1;

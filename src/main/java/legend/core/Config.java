@@ -71,7 +71,7 @@ public final class Config {
   }
 
   public static int inventorySize() {
-    return readInt("inventory_size", 32, 1, 64);
+    return readInt("inventory_size", 32, 1, 9999);
   }
 
   public static boolean unlockParty() {

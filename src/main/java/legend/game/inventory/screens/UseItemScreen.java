@@ -46,7 +46,7 @@ import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.getItemIcon;
 import static legend.game.Scus94491BpeSegment_8002.itemCanBeUsedInMenu;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
-import static legend.game.Scus94491BpeSegment_8002.takeItem;
+import static legend.game.Scus94491BpeSegment_8002.takeItemId;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
 import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
 import static legend.game.Scus94491BpeSegment_8002.useItemInMenu;
@@ -57,13 +57,13 @@ import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
 
 public class UseItemScreen extends MenuScreen {
   private int loadingStage;
@@ -205,13 +205,13 @@ public class UseItemScreen extends MenuScreen {
   private int getUsableItemsInMenu() {
     int allStatus = 0;
     for(int i = 0; i < characterCount_8011d7c4.get(); i++) {
-      allStatus |= gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.get(i).get()).status_10.get();
+      allStatus |= gameState_800babc8.charData_32c[characterIndices_800bdbb8.get(i).get()].status_10;
     }
 
     this.menuItems.clear();
 
-    for(int i = 0; i < gameState_800babc8.itemCount_1e6.get(); i++) {
-      final int itemId = gameState_800babc8.items_2e9.get(i).get();
+    for(int i = 0; i < gameState_800babc8.items_2e9.size(); i++) {
+      final int itemId = gameState_800babc8.items_2e9.getInt(i);
 
       if(itemCanBeUsedInMenu(itemId) != 0) {
         final ItemStats0c itemStats = itemStats_8004f2ac.get(itemId - 0xc0);
@@ -304,7 +304,7 @@ public class UseItemScreen extends MenuScreen {
           }
 
           playSound(2);
-          takeItem(this.menuItems.get(this.selectedSlot + this.slotScroll).itemId_00);
+          takeItemId(this.menuItems.get(this.selectedSlot + this.slotScroll).itemId_00);
           this.itemCount = this.getUsableItemsInMenu();
           loadCharacterStats(0);
           this.getItemResponseText(this.useItemResponse);
@@ -512,7 +512,7 @@ public class UseItemScreen extends MenuScreen {
           }
 
           playSound(2);
-          takeItem(this.menuItems.get(this.selectedSlot + this.slotScroll).itemId_00);
+          takeItemId(this.menuItems.get(this.selectedSlot + this.slotScroll).itemId_00);
           this.itemCount = this.getUsableItemsInMenu();
           loadCharacterStats(0);
           this.getItemResponseText(this.useItemResponse);

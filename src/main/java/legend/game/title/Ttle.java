@@ -25,12 +25,12 @@ import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.core.opengl.Window;
-import legend.game.SaveManager;
 import legend.game.Scus94491BpeSegment_8002;
 import legend.game.fmv.Fmv;
 import legend.game.inventory.WhichMenu;
 import legend.game.tim.Tim;
 import legend.game.types.CharacterData2c;
+import legend.game.types.GameState52c;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
@@ -43,6 +43,7 @@ import java.util.List;
 import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
+import static legend.core.GameEngine.SAVES;
 import static legend.game.SItem.levelStuff_80111cfc;
 import static legend.game.SItem.magicStuff_80111d20;
 import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
@@ -74,7 +75,6 @@ import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
 import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
 import static legend.game.Scus94491BpeSegment_8003.StoreImage;
-import static legend.game.Scus94491BpeSegment_8003.bzero;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
@@ -153,38 +153,38 @@ public final class Ttle {
 
   @Method(0x800c7194L)
   public static void setUpNewGameData() {
-    final int oldVibration = gameState_800babc8.vibrationEnabled_4e1.get();
-    final int oldMono = gameState_800babc8.mono_4e0.get();
+    final boolean oldVibration = gameState_800babc8.vibrationEnabled_4e1;
+    final boolean oldMono = gameState_800babc8.mono_4e0;
 
-    bzero(gameState_800babc8.getAddress(), 0x52c);
+    gameState_800babc8 = new GameState52c();
 
-    gameState_800babc8.vibrationEnabled_4e1.set(oldVibration);
-    gameState_800babc8.mono_4e0.set(oldMono);
-    gameState_800babc8.indicatorMode_4e8.set(2);
-    gameState_800babc8.charIndex_88.get(0).set(0);
-    gameState_800babc8.charIndex_88.get(1).set(-1);
-    gameState_800babc8.charIndex_88.get(2).set(-1);
+    gameState_800babc8.vibrationEnabled_4e1 = oldVibration;
+    gameState_800babc8.mono_4e0 = oldMono;
+    gameState_800babc8.indicatorMode_4e8 = 2;
+    gameState_800babc8.charIndex_88[0] = 0;
+    gameState_800babc8.charIndex_88[1] = -1;
+    gameState_800babc8.charIndex_88[2] = -1;
 
     //LAB_800c723c
     for(int charIndex = 0; charIndex < 9; charIndex++) {
-      final CharacterData2c charData = gameState_800babc8.charData_32c.get(charIndex);
+      final CharacterData2c charData = gameState_800babc8.charData_32c[charIndex];
       final int level = characterStartingLevels[charIndex];
-      charData.xp_00.set(characterXpPtrs_800ce6d8.get(charIndex).deref().get(level).get());
-      charData.hp_08.set(levelStuff_80111cfc.get(charIndex).deref().get(level).hp_00.get());
-      charData.mp_0a.set(magicStuff_80111d20.get(charIndex).deref().get(1).mp_00.get());
-      charData.sp_0c.set(0);
-      charData.dlevelXp_0e.set(0);
-      charData.status_10.set(0);
-      charData.level_12.set(level);
-      charData.dlevel_13.set(1);
+      charData.xp_00 = characterXpPtrs_800ce6d8.get(charIndex).deref().get(level).get();
+      charData.hp_08 = levelStuff_80111cfc.get(charIndex).deref().get(level).hp_00.get();
+      charData.mp_0a = magicStuff_80111d20.get(charIndex).deref().get(1).mp_00.get();
+      charData.sp_0c = 0;
+      charData.dlevelXp_0e = 0;
+      charData.status_10 = 0;
+      charData.level_12 = level;
+      charData.dlevel_13 = 1;
 
       //LAB_800c7294
       for(int additionIndex = 0; additionIndex < 8; additionIndex++) {
-        charData.additionLevels_1a.get(additionIndex).set(0);
-        charData.additionXp_22.get(additionIndex).set(0);
+        charData.additionLevels_1a[additionIndex] = 0;
+        charData.additionXp_22[additionIndex] = 0;
       }
 
-      charData.additionLevels_1a.get(0).set(1);
+      charData.additionLevels_1a[0] = 1;
 
       //LAB_800c72d4
       for(int i = 1; i < level; i++) {
@@ -192,49 +192,37 @@ public final class Ttle {
 
         if(index != -1) {
           final int offset = additionOffsets_8004f5ac.get(charIndex).get();
-          charData.additionLevels_1a.get(index - offset).set(1);
+          charData.additionLevels_1a[index - offset] = 1;
         }
 
         //LAB_800c72fc
       }
 
       //LAB_800c730c
-      charData.selectedAddition_19.set(startingAddition_800ce758.get(charIndex).get());
+      charData.selectedAddition_19 = startingAddition_800ce758.get(charIndex).get();
 
       //LAB_800c7334
       for(int i = 0; i < 5; i++) {
-        charData.equipment_14.get(i).set(startingEquipment_800ce6fc.get(charIndex).get(i).get());
+        charData.equipment_14[i] = startingEquipment_800ce6fc.get(charIndex).get(i).get();
       }
     }
 
-    gameState_800babc8.charData_32c.get(0).partyFlags_04.set(0x3);
+    gameState_800babc8.charData_32c[0].partyFlags_04 = 0x3;
 
     //LAB_800c7398
-    for(int i = 0x100; i >= 0; i--) {
-      gameState_800babc8.equipment_1e8.get(i).set(0xff);
-    }
-
-    gameState_800babc8.equipmentCount_1e4.set((short)0);
-
-    //LAB_800c73b8
-    for(int i = Config.inventorySize(); i >= 0; i--) {
-      gameState_800babc8.items_2e9.get(i).set(0xff);
-    }
-
     //LAB_800c73d8
     for(int i = 0; i < Config.inventorySize() + 1; i++) {
       final int itemId = startingItems_800ce76c.get(i).get();
       if(itemId == 0xff) {
-        gameState_800babc8.itemCount_1e6.set((short)i);
         break;
       }
 
       //LAB_800c73f0
-      gameState_800babc8.items_2e9.get(i).set(itemId);
+      gameState_800babc8.items_2e9.add(itemId);
     }
 
     //LAB_800c7404
-    gameState_800babc8.gold_94.set(20);
+    gameState_800babc8.gold_94 = 20;
     decrementOverlayCount();
   }
 
@@ -470,7 +458,7 @@ public final class Ttle {
 
     if(whichMenu_800bdc38 == WhichMenu.NONE_0) {
       if(_800bdc34.get() != 0) {
-        if(gameState_800babc8.isOnWorldMap_4e4.get() != 0) {
+        if(gameState_800babc8.isOnWorldMap_4e4) {
           mainCallbackIndexOnceLoaded_8004dd24.set(8); // WMAP
         } else {
           //LAB_800c80a4
@@ -710,23 +698,15 @@ public final class Ttle {
                 playSound(0, 2, 0, 0, (short)0, (short)0);
 
                 switch(i) {
-                  case 1 -> gameState_800babc8.mono_4e0.set(0);
-                  case 2 -> gameState_800babc8.mono_4e0.set(1);
+                  case 1 -> gameState_800babc8.mono_4e0 = false;
+                  case 2 -> gameState_800babc8.mono_4e0 = true;
                   case 4 -> {
-                    gameState_800babc8.vibrationEnabled_4e1.set(1);
-
-                    if(gameState_800babc8.vibrationEnabled_4e1.get() != 0) {
-                      FUN_8002bcc8(0, 0x100);
-                      FUN_8002bda4(0, 0, 0x3c);
-                    }
+                    gameState_800babc8.vibrationEnabled_4e1 = true;
+                    FUN_8002bcc8(0, 0x100);
+                    FUN_8002bda4(0, 0, 0x3c);
                   }
                   case 5 -> {
-                    gameState_800babc8.vibrationEnabled_4e1.set(0);
-
-                    if(gameState_800babc8.vibrationEnabled_4e1.get() != 0) {
-                      FUN_8002bcc8(0, 0x100);
-                      FUN_8002bda4(0, 0, 0x3c);
-                    }
+                    gameState_800babc8.vibrationEnabled_4e1 = false;
                   }
                 }
               }
@@ -801,7 +781,7 @@ public final class Ttle {
   @Method(0x800c8634L)
   public static void renderMenuOptions() {
     if(hasSavedGames == 0) {
-      hasSavedGames = SaveManager.hasSavedGames() ? 1 : 2;
+      hasSavedGames = SAVES.hasSavedGames() ? 1 : 2;
       selectedMenuOption = hasSavedGames == 1 ? 1 : 0;
       return;
     }
@@ -954,12 +934,12 @@ public final class Ttle {
         playSound(0, 1, 0, 0, (short)0, (short)0);
 
         if(selectedConfigCategory == 0) {
-          gameState_800babc8.mono_4e0.xor(0b1);
-          setMono(gameState_800babc8.mono_4e0.get());
+          gameState_800babc8.mono_4e0 = !gameState_800babc8.mono_4e0;
+          setMono(gameState_800babc8.mono_4e0);
         } else {
-          gameState_800babc8.vibrationEnabled_4e1.xor(0b1);
+          gameState_800babc8.vibrationEnabled_4e1 = !gameState_800babc8.vibrationEnabled_4e1;
 
-          if(gameState_800babc8.vibrationEnabled_4e1.get() != 0) {
+          if(gameState_800babc8.vibrationEnabled_4e1) {
             FUN_8002bcc8(0, 0x100);
             FUN_8002bda4(0, 0, 0x3c);
           }
@@ -977,10 +957,10 @@ public final class Ttle {
     }
 
     //LAB_800c95c4
-    int sp18 = gameState_800babc8.mono_4e0.get() + 1;
+    int sp18 = gameState_800babc8.mono_4e0 ? 2 : 1;
 
     int sp1c;
-    if(gameState_800babc8.vibrationEnabled_4e1.get() == 0) {
+    if(!gameState_800babc8.vibrationEnabled_4e1) {
       //LAB_800c95f8
       sp1c = 5;
     } else {
@@ -1131,11 +1111,11 @@ public final class Ttle {
       //LAB_800ca59c
       final int sp14;
       if(i == 0) {
-        sp14 = gameState_800babc8.mono_4e0.get() + 4;
-        sp1c = gameState_800babc8.mono_4e0.get() + 1;
+        sp14 = gameState_800babc8.mono_4e0 ? 5 : 4;
+        sp1c = gameState_800babc8.mono_4e0 ? 2 : 1;
       } else {
         //LAB_800ca5dc
-        if(gameState_800babc8.vibrationEnabled_4e1.get() == 0) {
+        if(!gameState_800babc8.vibrationEnabled_4e1) {
           //LAB_800ca5fc
           sp14 = 8;
         } else {
@@ -1143,7 +1123,7 @@ public final class Ttle {
         }
 
         //LAB_800ca600
-        if(gameState_800babc8.vibrationEnabled_4e1.get() == 0) {
+        if(!gameState_800babc8.vibrationEnabled_4e1) {
           //LAB_800ca624
           sp1c = 5;
         } else {
