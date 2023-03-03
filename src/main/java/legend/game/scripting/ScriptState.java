@@ -31,16 +31,12 @@ public class ScriptState<T> {
   private static final Logger LOGGER = LogManager.getFormatterLogger(ScriptState.class);
   private static final Marker SCRIPT_MARKER = MarkerManager.getMarker("SCRIPT");
 
-  public static <T> Class<ScriptState<T>> classFor(final Class<T> cls) {
-    //noinspection unchecked
-    return (Class<ScriptState<T>>)(Class<?>)ScriptState.class;
-  }
-
   private final ScriptManager manager;
   final RunningScript<T> context = new RunningScript<>(this);
 
   /** This script's index */
   public final int index;
+  public final String name;
   public final T innerStruct_00;
   public BiConsumer<ScriptState<T>, T> ticker_04;
   public BiConsumer<ScriptState<T>, T> renderer_08;
@@ -116,12 +112,12 @@ public class ScriptState<T> {
   public int _ec;
   public int _f0;
   public int _f4;
-  public String type_f8;
   public int ui_fc;
 
-  public ScriptState(final ScriptManager manager, final int index, @Nullable final T innerStruct) {
+  public ScriptState(final ScriptManager manager, final int index, final String name, @Nullable final T innerStruct) {
     this.manager = manager;
     this.index = index;
+    this.name = name;
     this.innerStruct_00 = innerStruct;
   }
 
@@ -247,7 +243,7 @@ public class ScriptState<T> {
   }
 
   public ScriptState<?> fork() {
-    final ScriptState<?> childScript = this.manager.allocateScriptState(null);
+    final ScriptState<?> childScript = this.manager.allocateScriptState("Forked " + this.name, null);
 
     if(LOGGER.isInfoEnabled(SCRIPT_MARKER)) {
       final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();

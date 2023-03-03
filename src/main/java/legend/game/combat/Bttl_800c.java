@@ -174,7 +174,7 @@ import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.combat.Bttl_800d.FUN_800dabec;
 import static legend.game.combat.Bttl_800d.FUN_800dd0d4;
 import static legend.game.combat.Bttl_800d.FUN_800dd118;
-import static legend.game.combat.Bttl_800e.FUN_800e8ffc;
+import static legend.game.combat.Bttl_800e.allocateDeffManager;
 import static legend.game.combat.Bttl_800e.FUN_800e9120;
 import static legend.game.combat.Bttl_800e.FUN_800ec51c;
 import static legend.game.combat.Bttl_800e.FUN_800ec744;
@@ -358,7 +358,7 @@ public final class Bttl_800c {
 
   public static final GsF_LIGHT light_800c6ddc = MEMORY.ref(4, 0x800c6ddcL, GsF_LIGHT::new);
 
-  public static final CString _800c6e18 = MEMORY.ref(7, 0x800c6e18L, CString::new);
+  public static final CString effect_800c6e18 = MEMORY.ref(7, 0x800c6e18L, CString::new);
 
   public static final ArrayRef<UnsignedShortRef> repeatItemIds_800c6e34 = MEMORY.ref(2, 0x800c6e34L, ArrayRef.of(UnsignedShortRef.class, 9, 2, UnsignedShortRef::new));
 
@@ -796,7 +796,7 @@ public final class Bttl_800c {
 
   public static final Value _800fb72c = MEMORY.ref(4, 0x800fb72cL);
 
-  public static final CString _800fb954 = MEMORY.ref(5, 0x800fb954L, CString::new);
+  public static final CString eco_800fb954 = MEMORY.ref(5, 0x800fb954L, CString::new);
 
   @Method(0x800c7304L)
   public static void FUN_800c7304() {
@@ -954,7 +954,7 @@ public final class Bttl_800c {
     FUN_800ee610();
     FUN_800f84c0();
     FUN_800f60ac();
-    FUN_800e8ffc();
+    allocateDeffManager();
 
     pregameLoadingStage_800bb10c.incr();
   }
@@ -3382,7 +3382,8 @@ public final class Bttl_800c {
 
   @Method(0x800cd5b4L)
   public static FlowControl FUN_800cd5b4(final RunningScript<?> script) {
-    final ScriptState<BattleObject27c> state = SCRIPTS.allocateScriptState(new BattleObject27c("Bobj allocated by script " + script.scriptState_04.index));
+    final String name = "Bobj allocated by script " + script.scriptState_04.index;
+    final ScriptState<BattleObject27c> state = SCRIPTS.allocateScriptState(name, new BattleObject27c(name));
     script.params_20[2].set(state.index);
     state.setTicker(Bttl_800c::bobjTicker);
     state.setDestructor(Bttl_800c::bobjDestructor);
@@ -3834,6 +3835,7 @@ public final class Bttl_800c {
   @Method(0x800ce6a8L)
   public static FlowControl allocateWeaponTrailEffect(final RunningScript<? extends BattleScriptDataBase> script) {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+      "Weapon trail",
       script.scriptState_04,
       0,
       Bttl_800c::tickWeaponTrailEffect,
@@ -3976,6 +3978,7 @@ public final class Bttl_800c {
     final int s1 = script.params_20[7].get() & 0xffff;
 
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+      "Full screen overlay rgb(%x, %x, %x) -> rgb(%x, %x, %x)".formatted(r, g, b, sp20, sp22, sp24),
       script.scriptState_04,
       0xe,
       Bttl_800c::tickFullScreenOverlay,

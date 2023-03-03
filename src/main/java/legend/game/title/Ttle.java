@@ -160,7 +160,7 @@ public final class Ttle {
 
     gameState_800babc8.vibrationEnabled_4e1.set(oldVibration);
     gameState_800babc8.mono_4e0.set(oldMono);
-    gameState_800babc8.indicatorMode_4e8.set(0x2L);
+    gameState_800babc8.indicatorMode_4e8.set(2);
     gameState_800babc8.charIndex_88.get(0).set(0);
     gameState_800babc8.charIndex_88.get(1).set(-1);
     gameState_800babc8.charIndex_88.get(2).set(-1);

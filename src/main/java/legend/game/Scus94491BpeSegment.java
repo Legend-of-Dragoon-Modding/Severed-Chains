@@ -292,6 +292,7 @@ public final class Scus94491BpeSegment {
   public static final IntRef zShift_1f8003c4 = MEMORY.ref(4, 0x1f8003c4L, IntRef::new);
   public static final IntRef orderingTableSize_1f8003c8 = MEMORY.ref(4, 0x1f8003c8L, IntRef::new);
   public static final IntRef zMax_1f8003cc = MEMORY.ref(4, 0x1f8003ccL, IntRef::new);
+  public static int zMin;
 
   public static final ShortRef centreScreenX_1f8003dc = MEMORY.ref(2, 0x1f8003dcL, ShortRef::new);
   public static final ShortRef centreScreenY_1f8003de = MEMORY.ref(2, 0x1f8003deL, ShortRef::new);
@@ -1932,7 +1933,7 @@ public final class Scus94491BpeSegment {
     final int shift = script.params_20[1].get() & 0x1f;
     final int index = script.params_20[1].get() >>> 5;
 
-    script.params_20[2].set((script.params_20[0].array(index).get() & 1 << shift) > 0 ? 1 : 0);
+    script.params_20[2].set((script.params_20[0].array(index).get() & 1 << shift) != 0 ? 1 : 0);
     return FlowControl.CONTINUE;
   }
 
@@ -3886,7 +3887,7 @@ public final class Scus94491BpeSegment {
    * </ol>
    */
   @Method(0x8001d068L)
-  public static void FUN_8001d068(final ScriptState<BattleObject27c> bobjState, final int type) {
+  public static void loadDeffSounds(final ScriptState<BattleObject27c> bobjState, final int type) {
     final BattleObject27c bobj = bobjState.innerStruct_00;
 
     unloadSoundFile(3);

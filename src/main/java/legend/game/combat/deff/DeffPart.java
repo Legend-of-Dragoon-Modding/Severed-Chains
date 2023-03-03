@@ -44,11 +44,15 @@ public class DeffPart {
   }
 
   public static class TmdType extends DeffPart {
+    public final String name;
+
     public final TextureInfo[] textureInfo_08;
     public final CContainer tmd_0c;
 
     public TmdType(final String name, final FileData data) {
       super(data);
+
+      this.name = name;
 
       final int textureOffset = data.readInt(0x8);
       final int tmdOffset = data.readInt(0xc);
@@ -122,17 +126,6 @@ public class DeffPart {
       this.h_06 = data.readUShort(0x6);
       this.clutX_08 = data.readUShort(0x8);
       this.clutY_0a = data.readUShort(0xa);
-    }
-  }
-
-  public static class CmbType extends AnimatedTmdType {
-    public final Cmb cmb_14;
-
-    public CmbType(final String name, final FileData data) {
-      super(name, data);
-
-      final int cmbOffset = data.readInt(0x14);
-      this.cmb_14 = new Cmb(data.slice(cmbOffset));
     }
   }
 }

@@ -10,6 +10,10 @@ public abstract class Lmb extends Anim {
   public Lmb(final FileData data) {
     super(data);
 
+    if(data.readInt(0) != MAGIC) {
+      throw new RuntimeException("Not an LMB! Magic: %x".formatted(data.readInt(0)));
+    }
+
     this.count_04 = data.readInt(0x4);
   }
 }

@@ -52,7 +52,7 @@ import static legend.game.combat.Bttl_800c.scriptState_800c674c;
 import static legend.game.combat.Bttl_800c.script_800c66fc;
 import static legend.game.combat.Bttl_800c.melbuStageIndices_800fb064;
 import static legend.game.combat.Bttl_800c.uniqueMonsterCount_800c6698;
-import static legend.game.combat.Bttl_800e.FUN_800e5768;
+import static legend.game.combat.Bttl_800e.applyStageAmbiance;
 import static legend.game.combat.Bttl_800f.loadMonster;
 
 public class SBtld {
@@ -98,7 +98,7 @@ public class SBtld {
 
   @Method(0x80109170L)
   public static void FUN_80109170(final FileData file) {
-    scriptState_800c674c = SCRIPTS.allocateScriptState(5, null, 0, null);
+    scriptState_800c674c = SCRIPTS.allocateScriptState(5, "DRGN1.401", 0, null);
     scriptState_800c674c.loadScriptFile(new ScriptFile("DRGN1.401", file.getBytes()));
 
     final long v1;
@@ -209,7 +209,8 @@ public class SBtld {
       }
 
       final int combatantIndex = getCombatantIndex(charIndex);
-      final ScriptState<BattleObject27c> state = SCRIPTS.allocateScriptState(new BattleObject27c("Enemy combatant index " + combatantIndex));
+      final String name = "Enemy combatant index " + combatantIndex;
+      final ScriptState<BattleObject27c> state = SCRIPTS.allocateScriptState(name, new BattleObject27c(name));
       state.setTicker(Bttl_800c::bobjTicker);
       state.setDestructor(Bttl_800c::bobjDestructor);
       _8006e398.bobjIndices_e0c[_800c66d0.get()] = state;
@@ -270,30 +271,30 @@ public class SBtld {
   }
 
   @Method(0x801098f4L)
-  public static void FUN_801098f4() {
-    final DeffManager7cc struct7cc = deffManager_800c693c;
+  public static void loadStageAmbiance() {
+    final DeffManager7cc deffManager = deffManager_800c693c;
     final int stage = Math.max(0, combatStage_800bb0f4.get());
 
     //LAB_8010993c
     //LAB_80109954
-    struct7cc.stageAmbiance_4c.set(ByteBuffer.wrap(MEMORY.getBytes(stageAmbiance_801134fc.offset(stage * 0x4c).getAddress(), 0x4c)).order(ByteOrder.LITTLE_ENDIAN));
+    deffManager.stageAmbiance_4c.set(ByteBuffer.wrap(MEMORY.getBytes(stageAmbiance_801134fc.offset(stage * 0x4c).getAddress(), 0x4c)).order(ByteOrder.LITTLE_ENDIAN));
 
-    FUN_800e5768(struct7cc.stageAmbiance_4c);
+    applyStageAmbiance(deffManager.stageAmbiance_4c);
 
     //LAB_8010999c
     final ByteBuffer buffer = ByteBuffer.wrap(MEMORY.getBytes(dragoonSpaceAmbiance_80114a10.getAddress(), 0x4c * 8)).order(ByteOrder.LITTLE_ENDIAN);
-    for(int i = 0; i < struct7cc.dragoonSpaceAmbiance_98.length; i++) {
-      struct7cc.dragoonSpaceAmbiance_98[i].set(buffer);
+    for(int i = 0; i < deffManager.dragoonSpaceAmbiance_98.length; i++) {
+      deffManager.dragoonSpaceAmbiance_98[i].set(buffer);
     }
 
-    struct7cc._00._00 = (int)_8011517c.offset(combatStage_800bb0f4.get() * 0x8L).offset(2, 0x00L).get();
-    struct7cc._00._02 = (int)_8011517c.offset(combatStage_800bb0f4.get() * 0x8L).offset(2, 0x02L).get();
-    struct7cc._00._04 = (int)_8011517c.offset(combatStage_800bb0f4.get() * 0x8L).offset(2, 0x04L).get();
+    deffManager._00._00 = (int)_8011517c.offset(combatStage_800bb0f4.get() * 0x8L).offset(2, 0x00L).get();
+    deffManager._00._02 = (int)_8011517c.offset(combatStage_800bb0f4.get() * 0x8L).offset(2, 0x02L).get();
+    deffManager._00._04 = (int)_8011517c.offset(combatStage_800bb0f4.get() * 0x8L).offset(2, 0x04L).get();
 
     //LAB_80109a30
     for(int i = 0; melbuStageIndices_800fb064.get(i).get() != -1; i++) {
-      struct7cc._08[i]._00 = (int)_8011517c.offset(melbuStageIndices_800fb064.get(i).get() * 0x8L).offset(2, 0x00L).get();
-      struct7cc._08[i]._02 = (int)_8011517c.offset(melbuStageIndices_800fb064.get(i).get() * 0x8L).offset(2, 0x02L).get();
+      deffManager._08[i]._00 = (int)_8011517c.offset(melbuStageIndices_800fb064.get(i).get() * 0x8L).offset(2, 0x00L).get();
+      deffManager._08[i]._02 = (int)_8011517c.offset(melbuStageIndices_800fb064.get(i).get() * 0x8L).offset(2, 0x02L).get();
     }
 
     //LAB_80109a80

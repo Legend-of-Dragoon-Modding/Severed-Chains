@@ -545,7 +545,7 @@ public final class Scus94491BpeSegment_8004 {
 //    scriptSubFunctions_8004e29c[603] = Temp::FUN_800ca648;
 
     scriptSubFunctions_8004e29c[605] = SEffe::FUN_80117eb0;
-    scriptSubFunctions_8004e29c[606] = SEffe::allocateGuardHealEffect;
+    scriptSubFunctions_8004e29c[606] = SEffe::allocateDeffTmd;
     scriptSubFunctions_8004e29c[607] = Bttl_800e::FUN_800e99bc;
 
     scriptSubFunctions_8004e29c[608] = SEffe::FUN_801181a8;
@@ -653,7 +653,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[743] = Bttl_800d::FUN_800d30b0;
     scriptSubFunctions_8004e29c[744] = Bttl_800c::FUN_800cef00;
     scriptSubFunctions_8004e29c[745] = Bttl_800c::FUN_800cf0b4;
-    scriptSubFunctions_8004e29c[746] = SEffe::FUN_80102088;
+    scriptSubFunctions_8004e29c[746] = SEffe::allocateParticleEffect;
     scriptSubFunctions_8004e29c[747] = SEffe::FUN_80102364;
     scriptSubFunctions_8004e29c[748] = Bttl_800d::FUN_800d30b8;
     scriptSubFunctions_8004e29c[749] = Bttl_800d::allocateProjectileHitEffect;

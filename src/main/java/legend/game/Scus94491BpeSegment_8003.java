@@ -2285,33 +2285,42 @@ public final class Scus94491BpeSegment_8003 {
     out.set(5, (short)CPU.MFC2(10));
     out.set(8, (short)CPU.MFC2(11));
 
+    final int transferX;
     if(a1.transfer.getX() < 0) {
+      transferX = -(-a1.transfer.getX() >> 15);
       t0 = -(-a1.transfer.getX() & 0x7fffL);
     } else {
       //LAB_8003f33c
+      transferX = a1.transfer.getX() >> 15;
       t0 = a1.transfer.getX() & 0x7fffL;
     }
 
     //LAB_8003f344
+    final int transferY;
     if(a1.transfer.getY() < 0) {
+      transferY = -(-a1.transfer.getY() >> 15);
       t1 = -(-a1.transfer.getY() & 0x7fffL);
     } else {
       //LAB_8003f364
+      transferY = a1.transfer.getY() >> 15;
       t1 = a1.transfer.getY() & 0x7fffL;
     }
 
     //LAB_8003f36c
+    final int transferZ;
     if(a1.transfer.getZ() < 0) {
+      transferZ = -(-a1.transfer.getZ() >> 15);
       t2 = -(-a1.transfer.getZ() & 0x7fffL);
     } else {
       //LAB_8003f38c
+      transferZ = a1.transfer.getZ() >> 15;
       t2 = a1.transfer.getZ() & 0x7fffL;
     }
 
     //LAB_8003f394
-    CPU.MTC2(a1.transfer.getX() >> 15,  9);
-    CPU.MTC2(a1.transfer.getY() >> 15, 10);
-    CPU.MTC2(a1.transfer.getZ() >> 15, 11);
+    CPU.MTC2(transferX,  9);
+    CPU.MTC2(transferY, 10);
+    CPU.MTC2(transferZ, 11);
     CPU.COP2(0x41e012L);
     final long t3 = CPU.MFC2(25);
     final long t4 = CPU.MFC2(26);
@@ -2328,9 +2337,9 @@ public final class Scus94491BpeSegment_8003 {
     //LAB_8003f400
     //LAB_8003f418
     //LAB_8003f41c
-    out.transfer.setX((int)(CPU.MFC2(25) + t3 * 8 + a0.transfer.getX()));
-    out.transfer.setY((int)(CPU.MFC2(26) + t4 * 8 + a0.transfer.getY()));
-    out.transfer.setZ((int)(CPU.MFC2(27) + t5 * 8 + a0.transfer.getZ()));
+    out.transfer.setX((int)((int)CPU.MFC2(25) + t3 * 8 + a0.transfer.getX()));
+    out.transfer.setY((int)((int)CPU.MFC2(26) + t4 * 8 + a0.transfer.getY()));
+    out.transfer.setZ((int)((int)CPU.MFC2(27) + t5 * 8 + a0.transfer.getZ()));
     return out;
   }
 
@@ -2454,34 +2463,34 @@ public final class Scus94491BpeSegment_8003 {
   /**
    * Gives an amount of parallel transfer expressed by v to the matrix m.
    *
-   * @param matrix Pointer to matrix (output)
+   * @param out Pointer to matrix (output)
    * @param vector Pointer to transfer vector (input)
    *
    * @return matrix
    */
   @Method(0x8003f730L)
-  public static MATRIX TransMatrix(final MATRIX matrix, final VECTOR vector) {
-    matrix.transfer.set(vector);
-    return matrix;
+  public static MATRIX TransMatrix(final MATRIX out, final VECTOR vector) {
+    out.transfer.set(vector);
+    return out;
   }
 
   @Method(0x8003f760L)
-  public static MATRIX ScaleMatrixL(final MATRIX matrix, final VECTOR vector) {
-    final long vx = vector.getX();
-    final long vy = vector.getY();
-    final long vz = vector.getZ();
+  public static MATRIX ScaleMatrixL(final MATRIX out, final VECTOR vector) {
+    final int vx = vector.getX();
+    final int vy = vector.getY();
+    final int vz = vector.getZ();
 
-    matrix.set(0, (short)(matrix.get(0) * vx >> 12));
-    matrix.set(1, (short)(matrix.get(1) * vy >> 12));
-    matrix.set(2, (short)(matrix.get(2) * vz >> 12));
-    matrix.set(3, (short)(matrix.get(3) * vx >> 12));
-    matrix.set(4, (short)(matrix.get(4) * vy >> 12));
-    matrix.set(5, (short)(matrix.get(5) * vz >> 12));
-    matrix.set(6, (short)(matrix.get(6) * vx >> 12));
-    matrix.set(7, (short)(matrix.get(7) * vy >> 12));
-    matrix.set(8, (short)(matrix.get(8) * vz >> 12));
+    out.set(0, (short)(out.get(0) * vx >> 12));
+    out.set(1, (short)(out.get(1) * vy >> 12));
+    out.set(2, (short)(out.get(2) * vz >> 12));
+    out.set(3, (short)(out.get(3) * vx >> 12));
+    out.set(4, (short)(out.get(4) * vy >> 12));
+    out.set(5, (short)(out.get(5) * vz >> 12));
+    out.set(6, (short)(out.get(6) * vx >> 12));
+    out.set(7, (short)(out.get(7) * vy >> 12));
+    out.set(8, (short)(out.get(8) * vz >> 12));
 
-    return matrix;
+    return out;
   }
 
   @Method(0x8003f8a0L)

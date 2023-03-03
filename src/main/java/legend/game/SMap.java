@@ -510,8 +510,8 @@ public final class SMap {
   public static final IntRef dartArrowV_800d6cac = MEMORY.ref(4, 0x800d6cacL, IntRef::new);
   public static final IntRef doorArrowU_800d6cb0 = MEMORY.ref(4, 0x800d6cb0L, IntRef::new);
   public static final IntRef doorArrowV_800d6cb4 = MEMORY.ref(4, 0x800d6cb4L, IntRef::new);
-  public static final SVECTOR _800d6cb8 = MEMORY.ref(4, 0x800d6cb8L, SVECTOR::new);
-  public static final SVECTOR _800d6cc0 = MEMORY.ref(4, 0x800d6cc0L, SVECTOR::new);
+  public static final SVECTOR bottom_800d6cb8 = MEMORY.ref(4, 0x800d6cb8L, SVECTOR::new);
+  public static final SVECTOR top_800d6cc0 = MEMORY.ref(4, 0x800d6cc0L, SVECTOR::new);
   public static final ArrayRef<UnsignedIntRef> _800d6cc8 = MEMORY.ref(4, 0x800d6cc8L, ArrayRef.of(UnsignedIntRef.class, 4, 4, UnsignedIntRef::new));
   public static final ArrayRef<IntRef> _800d6cd8 = MEMORY.ref(4, 0x800d6cd8L, ArrayRef.of(IntRef.class, 3, 4, IntRef::new));
   public static final ArrayRef<IntRef> _800d6ce4 = MEMORY.ref(4, 0x800d6ce4L, ArrayRef.of(IntRef.class, 3, 4, IntRef::new));
@@ -1235,7 +1235,11 @@ public final class SMap {
 
     sobj.us_170 = 1;
 
-    sobj.vec_148.set(sobj.vec_138).sub(model.coord2_14.coord.transfer).div(sobj.i_144);
+    if(sobj.i_144 != 0) {
+      sobj.vec_148.set(sobj.vec_138).sub(model.coord2_14.coord.transfer).div(sobj.i_144);
+    } else {
+      sobj.vec_148.set(0, 0, 0);
+    }
 
     if(sobj.vec_148.getX() == 0) {
       if(sobj.vec_138.getX() < model.coord2_14.coord.transfer.getX()) {
@@ -1258,33 +1262,31 @@ public final class SMap {
     }
 
     //LAB_800de7a8
-    int x = (sobj.vec_138.getX() - model.coord2_14.coord.transfer.getX() << 16) / sobj.i_144;
-    if(sobj.vec_148.getX() < 0) {
-      //LAB_800de7e0
-      x = ~x + 1;
-    }
+    int x = 0;
+    int y = 0;
+    int z = 0;
+    if(sobj.i_144 != 0) {
+      x = (sobj.vec_138.getX() - model.coord2_14.coord.transfer.getX() << 16) / sobj.i_144;
+      if(sobj.vec_148.getX() < 0) {
+        //LAB_800de7e0
+        x = ~x + 1;
+      }
 
-    //LAB_800de810
-    sobj.vec_154.setX(x & 0xffff);
+      y = (sobj.vec_138.getY() - model.coord2_14.coord.transfer.getY() << 16) / sobj.i_144;
+      if(sobj.vec_148.getY() < 0) {
+        //LAB_800de84c
+        y = ~y + 1;
+      }
 
-    int y = (sobj.vec_138.getY() - model.coord2_14.coord.transfer.getY() << 16) / sobj.i_144;
-    if(sobj.vec_148.getY() < 0) {
-      //LAB_800de84c
-      y = ~y + 1;
-    }
-
-    //LAB_800de87c
-    sobj.vec_154.setY(y & 0xffff);
-
-    int z = (sobj.vec_138.getZ() - model.coord2_14.coord.transfer.getZ() << 16) / sobj.i_144;
-    if(sobj.vec_148.getZ() < 0) {
-      //LAB_800de8b8
-      z = ~z + 1;
+      z = (sobj.vec_138.getZ() - model.coord2_14.coord.transfer.getZ() << 16) / sobj.i_144;
+      if(sobj.vec_148.getZ() < 0) {
+        //LAB_800de8b8
+        z = ~z + 1;
+      }
     }
 
     //LAB_800de8e8
-    sobj.vec_154.setZ(z & 0xffff);
-
+    sobj.vec_154.set(x & 0xffff, y & 0xffff, z & 0xffff);
     sobj.vec_160.set(0, 0, 0);
 
     sobjs_800c6880[sobj.sobjIndex_130].setTempTicker(SMap::FUN_800e1f90);
@@ -2692,7 +2694,17 @@ public final class SMap {
             obj.model = new CContainer("Submap object %d (DRGN%d/%d/%d)".formatted(objIndex, drgnIndex.get(), fileIndex.get() + 1, objIndex * 33), new FileData(tmdData));
 
             for(int animIndex = objIndex * 33 + 1; animIndex < (objIndex + 1) * 33; animIndex++) {
-              obj.animations.add(new TmdAnimationFile(submapAssetsMrg_800c6878.get(animIndex)));
+              final FileData data = submapAssetsMrg_800c6878.get(animIndex);
+
+              // This is a stupid fix for a stupid retail bug where almost all
+              // sobj animations in DRGN24.938 are symlinked to a PXL file
+              // GH#292
+              if(data.readInt(0) == 0x11) {
+                obj.animations.add(null);
+                continue;
+              }
+
+              obj.animations.add(new TmdAnimationFile(data));
             }
 
             submapAssets.objects.add(obj);
@@ -2754,7 +2766,7 @@ public final class SMap {
 
         GPU.uploadData(imageRect, tim.getImageData());
 
-        final ScriptState<Void> submapController = SCRIPTS.allocateScriptState(0, null, 0, null);
+        final ScriptState<Void> submapController = SCRIPTS.allocateScriptState(0, "Submap controller", 0, null);
         submapControllerState_800c6740 = submapController;
         submapController.loadScriptFile(submapAssets.script);
 
@@ -2791,7 +2803,8 @@ public final class SMap {
         for(int i = 0; i < sobjCount_800c6730.get(); i++) {
           final SubmapObject obj = submapAssets.objects.get(i);
 
-          final ScriptState<SubmapObject210> state = SCRIPTS.allocateScriptState(new SubmapObject210("Submap object " + i + " (file " + i * 33 + ')'));
+          final String name = "Submap object " + i + " (file " + i * 33 + ')';
+          final ScriptState<SubmapObject210> state = SCRIPTS.allocateScriptState(name, new SubmapObject210(name));
           sobjs_800c6880[i] = state;
           state.setTicker(SMap::submapObjectTicker);
           state.setRenderer(SMap::submapObjectRenderer);
@@ -8657,7 +8670,7 @@ public final class SMap {
   }
 
   @Method(0x800f31bcL)
-  public static void FUN_800f31bc() {
+  public static void handleTriangleIndicators() {
     getScreenOffset(_800c69fc.deref().screenOffsetX_10, _800c69fc.deref().screenOffsetY_14);
 
     if(gameState_800babc8.indicatorsDisabled_4e3.get() != 0) {
@@ -8668,7 +8681,7 @@ public final class SMap {
       return;
     }
 
-    final long indicatorMode = gameState_800babc8.indicatorMode_4e8.get();
+    final int indicatorMode = gameState_800babc8.indicatorMode_4e8.get();
     if(indicatorMode != 1) {
       _800f9e9c.setu(0);
     }
@@ -8720,17 +8733,18 @@ public final class SMap {
     CPU.CTC2(ls.transfer.getX(), 5); //
     CPU.CTC2(ls.transfer.getY(), 6); // Translation vector
     CPU.CTC2(ls.transfer.getZ(), 7); //
-    CPU.MTC2(_800d6cb8.getXY(), 0); // Vector XY 0
-    CPU.MTC2(_800d6cb8.getZ(),  1); // Vector Z 0
-    CPU.COP2(0x180001L); // Perspective transform
-    final DVECTOR sp0x150 = new DVECTOR().setXY(CPU.MFC2(14)); // Screen XY 2
 
-    CPU.MTC2(_800d6cc0.getXY(), 0); // Vector XY 0
-    CPU.MTC2(_800d6cc0.getZ(),  1); // Vector Z 0
+    CPU.MTC2(bottom_800d6cb8.getXY(), 0); // Vector XY 0
+    CPU.MTC2(bottom_800d6cb8.getZ(),  1); // Vector Z 0
     CPU.COP2(0x180001L); // Perspective transform
-    final DVECTOR sp0x158 = new DVECTOR().setXY(CPU.MFC2(14)); // Screen XY 2
+    final DVECTOR bottom = new DVECTOR().setXY(CPU.MFC2(14)); // Screen XY 2
 
-    final SVECTOR sp0x110 = new SVECTOR().setY((short)(sp0x158.getY() - sp0x150.getY() - 48));
+    CPU.MTC2(top_800d6cc0.getXY(), 0); // Vector XY 0
+    CPU.MTC2(top_800d6cc0.getZ(),  1); // Vector Z 0
+    CPU.COP2(0x180001L); // Perspective transform
+    final DVECTOR top = new DVECTOR().setXY(CPU.MFC2(14)); // Screen XY 2
+
+    final SVECTOR sp0x110 = new SVECTOR().setY((short)(-(top.getY() - bottom.getY()) - 48));
     CPU.MTC2(sp0x110.getXY(), 0); // Vector XY 0
     CPU.MTC2(sp0x110.getZ(),  1); // Vector Z 0
     CPU.COP2(0x180001L); // Perspective transform
@@ -8741,7 +8755,7 @@ public final class SMap {
     _800c69fc.deref().playerY_0c.set(sp118.getY());
 
     if(gameState_800babc8.indicatorMode_4e8.get() == 1) {
-      if(_800f9e9c.get() < 0x21L) {
+      if(_800f9e9c.get() < 33) {
         renderTriangleIndicators();
         _800f9e9c.addu(0x1L);
       }
@@ -8876,7 +8890,7 @@ public final class SMap {
 
   @Method(0x800f3abcL)
   public static void FUN_800f3abc() {
-    FUN_800f31bc();
+    handleTriangleIndicators();
 
     if(hasSavePoint_800d5620.get()) {
       renderSavePoint();

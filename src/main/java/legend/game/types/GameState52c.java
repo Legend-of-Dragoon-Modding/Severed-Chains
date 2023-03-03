@@ -8,7 +8,6 @@ import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedByteRef;
-import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 
 public class GameState52c implements MemoryRef {
@@ -76,7 +75,7 @@ public class GameState52c implements MemoryRef {
 
   public final UnsignedShortRef _4e6;
   /** Controls how the indicators (triangles) are drawn (called "Note" in options menu) */
-  public final UnsignedIntRef indicatorMode_4e8;
+  public final IntRef indicatorMode_4e8;
 
   public GameState52c(final Value ref) {
     this.ref = ref;
@@ -120,7 +119,7 @@ public class GameState52c implements MemoryRef {
     this.isOnWorldMap_4e4 = ref.offset(1, 0x4e4L).cast(UnsignedByteRef::new);
 
     this._4e6 = ref.offset(2, 0x4e6L).cast(UnsignedShortRef::new);
-    this.indicatorMode_4e8 = ref.offset(4, 0x4e8L).cast(UnsignedIntRef::new);
+    this.indicatorMode_4e8 = ref.offset(4, 0x4e8L).cast(IntRef::new);
   }
 
   @Override

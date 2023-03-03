@@ -3,7 +3,7 @@ package legend.game.combat.types;
 import legend.core.gte.SVECTOR;
 import legend.core.gte.VECTOR;
 
-public class EffectData98Sub94 {
+public class ParticleEffectInstance94 {
   public final int index;
 
   /** ubyte */
@@ -49,7 +49,7 @@ public class EffectData98Sub94 {
   public int stepB_8e;
   public int _90;
 
-  public EffectData98Sub94(final int index) {
+  public ParticleEffectInstance94(final int index) {
     this.index = index;
   }
 }
