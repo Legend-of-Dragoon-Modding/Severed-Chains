@@ -148,6 +148,10 @@ public class ItemListScreen extends MenuScreen {
     }
   }
 
+  private void handleMenuFocusState(final boolean leftSide) {
+    this.leftSide = leftSide;
+  }
+
   private void handleVerticalInput(final boolean isScrollingUp) {
     if(this.leftSide) {
       if(isScrollingUp ? this.selectedSlot > 0 : this.selectedSlot < 6) {
@@ -219,6 +223,7 @@ public class ItemListScreen extends MenuScreen {
       for(int i = 0; i < Math.min(7, gameState_800babc8.equipmentCount_1e4.get() - this.slotScrollEquipment); i++) {
         if(MathHelper.inBox(x, y, 8, 31 + FUN_800fc814(i), 174, 17)) {
           playSound(1);
+          this.handleMenuFocusState(true);
           this.selectedSlot = i;
           this.highlight.y_44 = FUN_800fc814(i) + 32;
           this.highlight.x_40 = FUN_800fc824(0);
@@ -229,6 +234,7 @@ public class ItemListScreen extends MenuScreen {
       for(int i = 0; i < Math.min(7, gameState_800babc8.itemCount_1e6.get() - this.slotScrollItem); i++) {
         if(MathHelper.inBox(x, y, 186, 31 + FUN_800fc814(i), 174, 17)) {
           playSound(1);
+          this.handleMenuFocusState(false);
           this.selectedSlot = i;
           this.highlight.y_44 = FUN_800fc814(i) + 32;
           this.highlight.x_40 = FUN_800fc824(1);
@@ -248,6 +254,7 @@ public class ItemListScreen extends MenuScreen {
       for(int i = 0; i < Math.min(7, gameState_800babc8.equipmentCount_1e4.get() - this.slotScrollEquipment); i++) {
         if(MathHelper.inBox(x, y, 8, 31 + FUN_800fc814(i), 174, 17)) {
           playSound(1);
+          this.handleMenuFocusState(true);
           this.selectedSlot = i;
           this.highlight.y_44 = FUN_800fc814(i) + 32;
           this.highlight.x_40 = FUN_800fc824(0);
@@ -265,6 +272,7 @@ public class ItemListScreen extends MenuScreen {
       for(int i = 0; i < Math.min(7, gameState_800babc8.itemCount_1e6.get() - this.slotScrollItem); i++) {
         if(MathHelper.inBox(x, y, 186, 31 + FUN_800fc814(i), 174, 17)) {
           playSound(1);
+          this.handleMenuFocusState(false);
           this.selectedSlot = i;
           this.highlight.y_44 = FUN_800fc814(i) + 32;
           this.highlight.x_40 = FUN_800fc824(1);
@@ -311,14 +319,14 @@ public class ItemListScreen extends MenuScreen {
 
       case GLFW_KEY_LEFT -> {
         playSound(1);
-        this.leftSide = true;
+        this.handleMenuFocusState(true);
         this.setCurrent(gameState_800babc8.equipment_1e8, this.equipment, this.slotScrollEquipment + this.selectedSlot);
         this.highlight.x_40 = FUN_800fc824(0);
       }
 
       case GLFW_KEY_RIGHT -> {
         playSound(1);
-        this.leftSide = false;
+        this.handleMenuFocusState(false);
         this.setCurrent(gameState_800babc8.items_2e9, this.items, this.slotScrollItem + this.selectedSlot);
         this.highlight.x_40 = FUN_800fc824(1);
       }
