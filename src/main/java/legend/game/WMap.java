@@ -5162,7 +5162,7 @@ public class WMap {
     //LAB_800e3780
     //LAB_800e3794
     final WMapAreaData08 area = areaData_800f2248.get(areaIndex_800c67aa.get());
-    if (!Config.autoCharmPotion()) {
+    if(!Config.autoCharmPotion()) {
       encounterAccumulator_800c6ae8.add(area.encounterRate_03.get() * encounterRateMultiplier * 70);
     }
 
