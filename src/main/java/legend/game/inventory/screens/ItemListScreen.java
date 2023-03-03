@@ -331,7 +331,7 @@ public class ItemListScreen extends MenuScreen {
         this.highlight.x_40 = FUN_800fc824(1);
       }
 
-      case GLFW_KEY_ENTER -> {
+      case GLFW_KEY_ENTER, GLFW_KEY_S -> {
         if((this.currentDisplayList.get(this.currentIndex).flags_02 & 0x2000) != 0) {
           playSound(40);
         } else {
