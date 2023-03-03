@@ -84,6 +84,7 @@ public class ScriptDebuggerController {
       }
     });
     this.scriptSelector.setValue(this.scripts.get(0));
+    this.scriptSelector.onActionProperty().set(event -> this.updateScriptVars());
 
     for(int i = 0; i < 33; i++) {
       this.storage.add(new ListItem(paramIndex -> this.getScriptStorage(this.scriptSelector.getValue().index, paramIndex), i));
@@ -140,7 +141,8 @@ public class ScriptDebuggerController {
   }
 
   private String getScriptName(final int scriptIndex) {
-    return scriptStatePtrArr_800bc1c0[scriptIndex] != null ? scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00 != null ? scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00.getClass().getSimpleName() : "empty state" : "not allocated";
+    final ScriptState<?> state = scriptStatePtrArr_800bc1c0[scriptIndex];
+    return state != null ? state.name + " (" + (state.innerStruct_00 != null ? state.innerStruct_00.getClass().getSimpleName() : "empty state") + ')' : "not allocated";
   }
 
   private void updateScriptVars() {
@@ -188,7 +190,11 @@ public class ScriptDebuggerController {
       this.destructor.setText("null");
     }
 
-    this.filePtr.setText(state.scriptPtr_14.name);
+    if(state.scriptPtr_14 != null) {
+      this.filePtr.setText(state.scriptPtr_14.name);
+    } else {
+      this.filePtr.setText("<none>");
+    }
     this.parentIndex.setText("0x%1$x (%1$d)".formatted(state.storage_44[5]));
     this.childIndex.setText("0x%1$x (%1$d)".formatted(state.storage_44[6]));
   }

@@ -4,20 +4,35 @@ import legend.core.gte.BVEC4;
 import legend.game.types.TmdAnimationFile;
 import legend.game.unpacker.FileData;
 
-import java.util.Arrays;
-
 public class Cmb extends TmdAnimationFile {
   public static final int MAGIC = 0x2042_4d43;
 
-  public final SubTransforms08[] subTransforms;
+  public final int size_08;
+
+  /** [frame][part] */
+  public final SubTransforms08[][] subTransforms;
 
   public Cmb(final FileData data) {
     super(data);
 
+    if(data.readInt(0) != MAGIC) {
+      throw new RuntimeException("Not a CMB! Magic: %x".formatted(data.readInt(0)));
+    }
+
+    this.size_08 = data.readUShort(0x8);
+
     final int baseAddress = 0x10 + this.modelPartCount_0c * 0xc;
-    final int count = (data.size() - baseAddress) / 0x8;
-    this.subTransforms = new SubTransforms08[count];
-    Arrays.setAll(this.subTransforms, i -> new SubTransforms08(data.slice(baseAddress + i * 0x8, 0x8)));
+
+    final int keyframeCount = this.totalFrames_0e - 1;
+    this.subTransforms = new SubTransforms08[keyframeCount][];
+
+    for(int frameIndex = 0; frameIndex < keyframeCount; frameIndex++) {
+      this.subTransforms[frameIndex] = new SubTransforms08[this.modelPartCount_0c];
+
+      for(int partIndex = 0; partIndex < this.modelPartCount_0c; partIndex++) {
+        this.subTransforms[frameIndex][partIndex] = new SubTransforms08(data.slice(baseAddress + (frameIndex * this.modelPartCount_0c + partIndex) * 0x8, 0x8));
+      }
+    }
   }
 
   public static class SubTransforms08 {

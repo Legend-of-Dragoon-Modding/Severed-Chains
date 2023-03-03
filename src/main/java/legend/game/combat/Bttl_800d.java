@@ -64,6 +64,7 @@ import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
+import static legend.game.Scus94491BpeSegment.zMin;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021724;
@@ -273,6 +274,7 @@ public final class Bttl_800d {
   @Method(0x800d0564L)
   public static FlowControl allocateProjectileHitEffect(final RunningScript<? extends BattleScriptDataBase> script) {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+      "ProjectileHitEffect14",
       script.scriptState_04,
       0x14,
       null,
@@ -413,6 +415,7 @@ public final class Bttl_800d {
     final int s4 = script.params_20[6].get();
 
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+      "AdditionSparksEffect08",
       script.scriptState_04,
       0,
       null,
@@ -578,6 +581,7 @@ public final class Bttl_800d {
     final int count = script.params_20[2].get();
 
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+      "AdditionStarburstEffect10",
       script.scriptState_04,
       0x10,
       null,
@@ -613,13 +617,13 @@ public final class Bttl_800d {
 
   @Method(0x800d1cacL)
   public static FlowControl FUN_800d1cac(final RunningScript<? extends BattleScriptDataBase> script) {
-    script.params_20[0].set(allocateEffectManager(script.scriptState_04, 0, null, null, null, null).index);
+    script.params_20[0].set(allocateEffectManager("Unknown (FUN_800d1cac)", script.scriptState_04, 0, null, null, null, null).index);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800d1cf4L)
   public static FlowControl FUN_800d1cf4(final RunningScript<? extends BattleScriptDataBase> script) {
-    script.params_20[0].set(allocateEffectManager(script.scriptState_04, 0, null, null, null, null).index);
+    script.params_20[0].set(allocateEffectManager("Unknown (FUN_800d1cf4)", script.scriptState_04, 0, null, null, null, null).index);
     return FlowControl.CONTINUE;
   }
 
@@ -734,6 +738,7 @@ public final class Bttl_800d {
     final int s1 = script.params_20[2].get();
 
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+      "PotionEffect14",
       script.scriptState_04,
       0x14,
       null,
@@ -863,6 +868,7 @@ public final class Bttl_800d {
   @Method(0x800d2ff4L)
   public static FlowControl allocateGuardEffect(final RunningScript<? extends BattleScriptDataBase> script) {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+      "GuardEffect06",
       script.scriptState_04,
       0x6,
       null,
@@ -1002,6 +1008,7 @@ public final class Bttl_800d {
   @Method(0x800d34bcL)
   public static FlowControl allocateMonsterDeathEffect(final RunningScript<? extends BattleScriptDataBase> script) {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+      "MonsterDeathEffect34",
       script.scriptState_04,
       0x34,
       Bttl_800d::monsterDeathEffectTicker,
@@ -1232,7 +1239,7 @@ public final class Bttl_800d {
     } else {
       //LAB_800d3dc0
       final int addition = gameState_800babc8.charData_32c.get(script.params_20[0].get()).selectedAddition_19.get();
-      final ScriptState<AdditionScriptData1c> state = SCRIPTS.allocateScriptState(new AdditionScriptData1c());
+      final ScriptState<AdditionScriptData1c> state = SCRIPTS.allocateScriptState("AdditionScriptData1c", new AdditionScriptData1c());
       state.loadScriptFile(doNothingScript_8004f650);
       state.setTicker(Bttl_800d::FUN_800d3bb8);
       final CString additionName = getAdditionName(0, addition);
@@ -1407,7 +1414,7 @@ public final class Bttl_800d {
       script.params_20[1].set(0);
     } else {
       //LAB_800d4388
-      final ScriptState<BttlScriptData40> state = SCRIPTS.allocateScriptState(new BttlScriptData40());
+      final ScriptState<BttlScriptData40> state = SCRIPTS.allocateScriptState("BttlScriptData40", new BttlScriptData40());
       state.loadScriptFile(doNothingScript_8004f650);
       state.setTicker(Bttl_800d::FUN_800d4018);
       state.setDestructor(Bttl_800d::FUN_800d430c);
@@ -1471,7 +1478,7 @@ public final class Bttl_800d {
   public static FlowControl FUN_800d4580(final RunningScript<?> script) {
     final int s2 = script.params_20[0].get();
     if(s2 != -1) {
-      final ScriptState<AdditionScriptData1c> state = SCRIPTS.allocateScriptState(new AdditionScriptData1c());
+      final ScriptState<AdditionScriptData1c> state = SCRIPTS.allocateScriptState("AdditionScriptData1c", new AdditionScriptData1c());
       state.loadScriptFile(doNothingScript_8004f650);
       state.setTicker(Bttl_800d::FUN_800d3bb8);
       final AdditionScriptData1c s0 = state.innerStruct_00;
@@ -4514,7 +4521,7 @@ public final class Bttl_800d {
     final int nobj = model.ObjTable_0c.nobj;
     zOffset_1f8003e8.set(model.zOffset_a0);
     tmdGp0Tpage_1f8003ec.set(model.tpage_108);
-    s6 = deffManager_800c693c._20 & 0x4;
+    s6 = deffManager_800c693c.flags_20 & 0x4;
     v1 = (int)s6 >> 1;
     v0 = (int)s6 >> 2;
     s6 = v1 | v0;
@@ -4550,11 +4557,14 @@ public final class Bttl_800d {
 
           final int oldZShift = zShift_1f8003c4.get();
           final int oldZMax = zMax_1f8003cc.get();
+          final int oldZMin = zMin;
           zShift_1f8003c4.set(2);
           zMax_1f8003cc.set(0xffe);
+          zMin = 0xb;
           Renderer.renderDobj2(s2, false);
           zShift_1f8003c4.set(oldZShift);
           zMax_1f8003cc.set(oldZMax);
+          zMin = oldZMin;
 
           s2.attribute_00 = s0;
         }
@@ -4665,25 +4675,32 @@ public final class Bttl_800d {
     final int count = Math.min(model.count_c8, model.partCount_98);
 
     //LAB_800dddc4
-    int t0;
+    int frameIndex;
     final int a1_0;
     final int isInterpolationFrame;
     if(model.ub_a2 == 0) {
       //LAB_800dde1c
-      final int frame = animationTicks % model.totalFrames_9a;
+      // This modulo has to be unsigned due to a bug causing the number of ticks
+      // to go negative. This matches the retail behaviour (it uses divu).
+      final int frame = (int)((animationTicks & 0xffff_ffffL) % model.totalFrames_9a);
       isInterpolationFrame = (animationTicks & 0x1) << 11; // Dunno why this is shifted, makes no difference
       a1_0 = frame >>> 1;
-      t0 = cmbAnim.animationTicks_00 % model.totalFrames_9a >> 1;
+      frameIndex = cmbAnim.animationTicks_00 % model.totalFrames_9a >> 1;
       model.remainingFrames_9e = model.totalFrames_9a - frame - 1;
+
+      // This is another retail bug - it's possible for the frame index to go negative
+      if(frameIndex < 0) {
+        frameIndex = 0;
+      }
     } else {
       isInterpolationFrame = 0;
       a1_0 = (animationTicks << 1) % model.totalFrames_9a >>> 1;
-      t0 = (cmbAnim.animationTicks_00 << 1) % model.totalFrames_9a >> 1;
+      frameIndex = (cmbAnim.animationTicks_00 << 1) % model.totalFrames_9a >> 1;
       model.remainingFrames_9e = (model.totalFrames_9a >> 1) - a1_0 - 1;
     }
 
     //LAB_800dde60
-    if(t0 > a1_0) {
+    if(frameIndex > a1_0) {
       //LAB_800dde88
       for(int partIndex = 0; partIndex < modelPartCount; partIndex++) {
         final ModelPartTransforms0c fileTransforms = cmb.partTransforms_10[0][partIndex];
@@ -4695,15 +4712,15 @@ public final class Bttl_800d {
 
       //LAB_800ddee0
       cmbAnim.animationTicks_00 = 0;
-      t0 = 0;
+      frameIndex = 0;
     }
 
     //LAB_800ddeec
     //LAB_800ddf1c
-    for(; t0 < a1_0; t0++) {
+    for(; frameIndex < a1_0; frameIndex++) {
       //LAB_800ddf2c
       for(int partIndex = 0; partIndex < modelPartCount; partIndex++) {
-        final Cmb.SubTransforms08 subTransforms = cmb.subTransforms[t0 * modelPartCount + partIndex];
+        final Cmb.SubTransforms08 subTransforms = cmb.subTransforms[frameIndex][partIndex];
         final ModelPartTransforms0c modelTransforms = cmbAnim.transforms_08[partIndex];
 
         modelTransforms.rotate_00.x.add((short)(subTransforms.rot_01.getX() << subTransforms.rotScale_00));
@@ -4723,7 +4740,7 @@ public final class Bttl_800d {
     if(isInterpolationFrame != 0 && model.ub_a3 == 0 && a1_0 != (model.totalFrames_9a >> 1) - 1) { // Interpolation frame
       //LAB_800de050
       for(int i = 0; i < count; i++) {
-        final Cmb.SubTransforms08 subTransforms = cmb.subTransforms[a1_0 * modelPartCount + i];
+        final Cmb.SubTransforms08 subTransforms = cmb.subTransforms[a1_0][i];
         final ModelPartTransforms0c modelTransforms = cmbAnim.transforms_08[i];
 
         final MATRIX modelPartMatrix = model.dobj2ArrPtr_00[i].coord2_04.coord;
@@ -4840,7 +4857,7 @@ public final class Bttl_800d {
 
   @Method(0x800de3f4L)
   public static void FUN_800de3f4(final TmdObjTable1c a0, final EffectManagerData6cInner a1, final MATRIX a2) {
-    final int s0 = deffManager_800c693c._20 & 0x4;
+    final int s0 = deffManager_800c693c.flags_20 & 0x4;
 
     final MATRIX sp0x10 = new MATRIX();
     if((a1.flags_00 & 0x8) != 0) {
@@ -4869,37 +4886,40 @@ public final class Bttl_800d {
 
       final int oldZShift = zShift_1f8003c4.get();
       final int oldZMax = zMax_1f8003cc.get();
+      final int oldZMin = zMin;
       zShift_1f8003c4.set(2);
       zMax_1f8003cc.set(0xffe);
+      zMin = 0xb;
       Renderer.renderDobj2(dobj2, false);
       zShift_1f8003c4.set(oldZShift);
       zMax_1f8003cc.set(oldZMax);
+      zMin = oldZMin;
     }
 
     //LAB_800de528
   }
 
   @Method(0x800de544L)
-  public static SVECTOR FUN_800de544(final SVECTOR a0, final MATRIX a1) {
-    final MATRIX sp0x10 = new MATRIX().set(a1);
-    a0.setX((short)ratan2(-sp0x10.get(5), sp0x10.get(8)));
-    RotMatrixX(a0.getX(), sp0x10);
-    a0.setY((short)ratan2(sp0x10.get(2), sp0x10.get(8)));
-    RotMatrixY(-a0.getY(), sp0x10);
-    a0.setZ((short)ratan2(sp0x10.get(3), sp0x10.get(0)));
-    return a0;
+  public static SVECTOR getRotationFromTransforms(final SVECTOR rotOut, final MATRIX transforms) {
+    final MATRIX mat = new MATRIX().set(transforms);
+    rotOut.setX((short)ratan2(-mat.get(5), mat.get(8)));
+    RotMatrixX(rotOut.getX(), mat);
+    rotOut.setY((short)ratan2(mat.get(2), mat.get(8)));
+    RotMatrixY(-rotOut.getY(), mat);
+    rotOut.setZ((short)ratan2(mat.get(3), mat.get(0)));
+    return rotOut;
   }
 
   @Method(0x800de618L)
-  public static void FUN_800de618(final SVECTOR a0, final SVECTOR a1, final MATRIX a2) {
-    final MATRIX sp0x10 = new MATRIX().set(a2);
-    a0.setX((short)ratan2(-sp0x10.get(5), sp0x10.get(8)));
-    RotMatrixX(-(short)a0.getX(), sp0x10);
-    a0.setY((short)ratan2(sp0x10.get(2), sp0x10.get(8)));
-    RotMatrixY(-(short)a0.getY(), sp0x10);
-    a0.setZ((short)ratan2(sp0x10.get(3), sp0x10.get(0))); //TODO is this a retail bug? Should it be 4?
-    RotMatrixZ(-(short)a0.getZ(), sp0x10);
-    a1.set(sp0x10.get(0), sp0x10.get(4), sp0x10.get(8));
+  public static void getRotationAndScaleFromTransforms(final SVECTOR rotOut, final SVECTOR scaleOut, final MATRIX transforms) {
+    final MATRIX mat = new MATRIX().set(transforms);
+    rotOut.setX((short)ratan2(-mat.get(5), mat.get(8)));
+    RotMatrixX(-(short)rotOut.getX(), mat);
+    rotOut.setY((short)ratan2(mat.get(2), mat.get(8)));
+    RotMatrixY(-(short)rotOut.getY(), mat);
+    rotOut.setZ((short)ratan2(mat.get(3), mat.get(0)));
+    RotMatrixZ(-(short)rotOut.getZ(), mat);
+    scaleOut.set(mat.get(0), mat.get(4), mat.get(8));
   }
 
   @Method(0x800de72cL)
