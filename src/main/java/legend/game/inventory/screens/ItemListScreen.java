@@ -220,7 +220,8 @@ public class ItemListScreen extends MenuScreen {
         if(this.selectedSlot != i && MathHelper.inBox(x, y, 8, 31 + FUN_800fc814(i), 174, 17)) {
           playSound(1);
           this.selectedSlot = i;
-//          this.equipmentHighlight.y_44 = FUN_800fc814(i) + 32;
+          this.highlight.y_44 = FUN_800fc814(i) + 32;
+          this.highlight.x_40 = FUN_800fc824(0);
           this.setCurrent(gameState_800babc8.equipment_1e8, this.equipment, this.slotScrollEquipment + this.selectedSlot);
         }
       }
@@ -229,7 +230,8 @@ public class ItemListScreen extends MenuScreen {
         if(this.selectedSlot != i && MathHelper.inBox(x, y, 186, 31 + FUN_800fc814(i), 174, 17)) {
           playSound(1);
           this.selectedSlot = i;
-//          this.itemHighlight.y_44 = FUN_800fc814(i) + 32;
+          this.highlight.y_44 = FUN_800fc814(i) + 32;
+          this.highlight.x_40 = FUN_800fc824(1);
           this.setCurrent(gameState_800babc8.items_2e9, this.items, this.slotScrollItem + this.selectedSlot);
         }
       }
@@ -247,7 +249,8 @@ public class ItemListScreen extends MenuScreen {
         if(MathHelper.inBox(x, y, 8, 31 + FUN_800fc814(i), 174, 17)) {
           playSound(1);
           this.selectedSlot = i;
-//          this.equipmentHighlight.y_44 = FUN_800fc814(i) + 32;
+          this.highlight.y_44 = FUN_800fc814(i) + 32;
+          this.highlight.x_40 = FUN_800fc824(0);
           this.setCurrent(gameState_800babc8.equipment_1e8, this.equipment, this.slotScrollEquipment + this.selectedSlot);
 
           if((this.currentDisplayList.get(this.currentIndex).flags_02 & 0x2000) != 0) {
@@ -263,7 +266,8 @@ public class ItemListScreen extends MenuScreen {
         if(MathHelper.inBox(x, y, 186, 31 + FUN_800fc814(i), 174, 17)) {
           playSound(1);
           this.selectedSlot = i;
-//          this.itemHighlight.y_44 = FUN_800fc814(i) + 32;
+          this.highlight.y_44 = FUN_800fc814(i) + 32;
+          this.highlight.x_40 = FUN_800fc824(1);
           this.setCurrent(gameState_800babc8.items_2e9, this.items, this.slotScrollItem + this.selectedSlot);
 
           if((this.currentDisplayList.get(this.currentIndex).flags_02 & 0x2000) != 0) {
