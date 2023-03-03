@@ -132,8 +132,6 @@ public class ItemListScreen extends MenuScreen {
             }
           }
         }
-
-
       }
 
       // Fade out
@@ -150,8 +148,7 @@ public class ItemListScreen extends MenuScreen {
     }
   }
 
-  private void handleVerticalInput(final boolean isScrollingUp)
-  {
+  private void handleVerticalInput(final boolean isScrollingUp) {
     if(this.leftSide) {
       if(isScrollingUp ? this.selectedSlot > 0 : this.selectedSlot < 6) {
         playSound(1);
