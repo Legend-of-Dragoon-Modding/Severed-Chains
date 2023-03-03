@@ -217,7 +217,7 @@ public class ItemListScreen extends MenuScreen {
 
     if(this.loadingStage == 1) {
       for(int i = 0; i < Math.min(7, gameState_800babc8.equipmentCount_1e4.get() - this.slotScrollEquipment); i++) {
-        if(this.selectedSlot != i && MathHelper.inBox(x, y, 8, 31 + FUN_800fc814(i), 174, 17)) {
+        if(MathHelper.inBox(x, y, 8, 31 + FUN_800fc814(i), 174, 17)) {
           playSound(1);
           this.selectedSlot = i;
           this.highlight.y_44 = FUN_800fc814(i) + 32;
@@ -227,7 +227,7 @@ public class ItemListScreen extends MenuScreen {
       }
 
       for(int i = 0; i < Math.min(7, gameState_800babc8.itemCount_1e6.get() - this.slotScrollItem); i++) {
-        if(this.selectedSlot != i && MathHelper.inBox(x, y, 186, 31 + FUN_800fc814(i), 174, 17)) {
+        if(MathHelper.inBox(x, y, 186, 31 + FUN_800fc814(i), 174, 17)) {
           playSound(1);
           this.selectedSlot = i;
           this.highlight.y_44 = FUN_800fc814(i) + 32;
