@@ -1,5 +1,6 @@
 package legend.game;
 
+import legend.core.Config;
 import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
@@ -5161,7 +5162,9 @@ public class WMap {
     //LAB_800e3780
     //LAB_800e3794
     final WMapAreaData08 area = areaData_800f2248.get(areaIndex_800c67aa.get());
-    encounterAccumulator_800c6ae8.add(area.encounterRate_03.get() * encounterRateMultiplier * 70);
+    if(!Config.autoCharmPotion()) {
+      encounterAccumulator_800c6ae8.add(area.encounterRate_03.get() * encounterRateMultiplier * 70);
+    }
 
     if(encounterAccumulator_800c6ae8.get() >= 5120) {
       encounterAccumulator_800c6ae8.set(0);
