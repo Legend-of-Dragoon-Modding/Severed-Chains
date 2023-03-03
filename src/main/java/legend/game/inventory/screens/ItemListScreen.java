@@ -332,7 +332,11 @@ public class ItemListScreen extends MenuScreen {
       }
 
       case GLFW_KEY_ENTER, GLFW_KEY_S -> {
-        if((this.currentDisplayList.get(this.currentIndex).flags_02 & 0x2000) != 0) {
+        if(this.currentIndex >= this.currentDisplayList.size()) {
+          break;
+        }
+
+        if(((this.currentDisplayList.get(this.currentIndex).flags_02 & 0x2000) != 0)) {
           playSound(40);
         } else {
           playSound(2);
