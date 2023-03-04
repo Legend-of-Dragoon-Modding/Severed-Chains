@@ -1,14 +1,11 @@
 package legend.game;
 
-import it.unimi.dsi.fastutil.ints.Int2BooleanMap;
-import it.unimi.dsi.fastutil.ints.Int2BooleanOpenHashMap;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import javafx.application.Application;
 import javafx.application.Platform;
-import legend.core.Config;
 import legend.core.DebugHelper;
 import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
@@ -38,7 +35,6 @@ import legend.game.combat.types.BattlePreloadedEntities_18cb0;
 import legend.game.combat.types.StageData10;
 import legend.game.debugger.Debugger;
 import legend.game.input.Input;
-import legend.game.input.TestInput_CheckStyle;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.events.EventManager;
 import legend.game.scripting.FlowControl;
@@ -70,8 +66,6 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import javax.annotation.Nullable;
-import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -239,49 +233,9 @@ import static legend.game.combat.Bttl_800c.charCount_800c677c;
 import static legend.game.combat.Bttl_800c.monsterCount_800c6768;
 import static legend.game.combat.Bttl_800d.FUN_800d8f10;
 import static legend.game.combat.SBtld.stageData_80109a98;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_TRIGGER;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_X;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_A;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_B;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_BACK;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_LEFT_BUMPER;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_LEFT_THUMB;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_THUMB;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_START;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_X;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_Y;
-import static org.lwjgl.glfw.GLFW.GLFW_HAT_DOWN;
-import static org.lwjgl.glfw.GLFW.GLFW_HAT_LEFT;
-import static org.lwjgl.glfw.GLFW.GLFW_HAT_RIGHT;
-import static org.lwjgl.glfw.GLFW.GLFW_HAT_UP;
-import static org.lwjgl.glfw.GLFW.GLFW_JOYSTICK_LAST;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_1;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_3;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_C;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_DELETE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_E;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F12;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_P;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_Q;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_Z;
-import static org.lwjgl.glfw.GLFW.glfwGetJoystickAxes;
-import static org.lwjgl.glfw.GLFW.glfwGetJoystickButtons;
-import static org.lwjgl.glfw.GLFW.glfwGetJoystickGUID;
-import static org.lwjgl.glfw.GLFW.glfwGetJoystickHats;
-import static org.lwjgl.glfw.GLFW.glfwGetJoystickName;
 
 public final class Scus94491BpeSegment {
   private Scus94491BpeSegment() { }
@@ -512,7 +466,6 @@ public final class Scus94491BpeSegment {
       }
 
       Input.update();
-      TestInput_CheckStyle.update();
 
       joypadPress_8007a398.setu(_800bee94.get());
       joypadInput_8007a39c.setu(_800bee90.get());

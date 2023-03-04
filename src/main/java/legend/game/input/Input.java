@@ -2,12 +2,13 @@ package legend.game.input;
 
 import legend.core.Config;
 import legend.core.opengl.Window;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static legend.core.GameEngine.GPU;
-import static legend.game.unpacker.Unpacker.LOGGER;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_1;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_3;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
@@ -29,8 +30,12 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_Z;
 import static org.lwjgl.glfw.GLFW.glfwGetJoystickGUID;
 
 public final class Input {
+  private static final Logger LOGGER = LogManager.getFormatterLogger();
   private static InputMapping playerOne = new InputMapping();
   private static final List<InputMapping> controllers = new ArrayList<>();
+
+  private Input() {
+  }
 
   public static void update() {
 
@@ -49,7 +54,6 @@ public final class Input {
   }
 
   public static void init() {
-    LOGGER.info("Input Init Called");
     GPU.window().events.onControllerConnected((window, id) -> onControllerConnected(id));
     GPU.window().events.onControllerDisconnected((window, id) -> onControllerDisconnected(id));
 

@@ -3,7 +3,6 @@ package legend.game.input;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
-import static legend.game.unpacker.Unpacker.LOGGER;
 import static org.lwjgl.glfw.GLFW.glfwGetJoystickAxes;
 import static org.lwjgl.glfw.GLFW.glfwGetJoystickButtons;
 import static org.lwjgl.glfw.GLFW.glfwGetJoystickHats;

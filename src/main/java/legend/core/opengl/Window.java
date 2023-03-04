@@ -377,19 +377,19 @@ public class Window {
       }
     }
 
-    private void onInputPressedThisFrame(InputAction inputAction) {
+    private void onInputPressedThisFrame(final InputAction inputAction) {
       synchronized(LOCK) {
         this.pressedThisFrame.forEach(cb -> cb.action(this.window, inputAction));
       }
     }
 
-    private void onInputReleasedThisFrame(InputAction inputAction) {
+    private void onInputReleasedThisFrame(final InputAction inputAction) {
       synchronized(LOCK) {
         this.releasedThisFrame.forEach(cb -> cb.action(this.window, inputAction));
       }
     }
 
-    private void onInputPressedWithRepeat(InputAction inputAction) {
+    private void onInputPressedWithRepeat(final InputAction inputAction) {
       synchronized(LOCK) {
         this.pressedWithRepeatPulse.forEach(cb -> cb.action(this.window, inputAction));
       }
@@ -398,12 +398,12 @@ public class Window {
     public void callInputEvents(final InputMapping inputMapping) {
       for(final InputBinding binding : inputMapping.bindings) {
         if(binding.getState() == InputBindingState.PRESSED_THIS_FRAME) {
-          onInputPressedThisFrame(binding.getInputAction());
-          onInputPressedWithRepeat(binding.getInputAction());
+          this.onInputPressedThisFrame(binding.getInputAction());
+          this.onInputPressedWithRepeat(binding.getInputAction());
         } else if(binding.getState() == InputBindingState.RELEASED_THIS_FRAME) {
-          onInputReleasedThisFrame(binding.getInputAction());
+          this.onInputReleasedThisFrame(binding.getInputAction());
         } else if(binding.getState() == InputBindingState.PRESSED_REPEAT) {
-          onInputPressedWithRepeat(binding.getInputAction());
+          this.onInputPressedWithRepeat(binding.getInputAction());
         }
       }
     }

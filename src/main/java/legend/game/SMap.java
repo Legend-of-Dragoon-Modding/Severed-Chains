@@ -3801,7 +3801,7 @@ public final class SMap {
       return 0;
     }
 
-    if(Input.hasActivity() == false) {
+    if(!Input.hasActivity()) {
       return 0;
     }
 

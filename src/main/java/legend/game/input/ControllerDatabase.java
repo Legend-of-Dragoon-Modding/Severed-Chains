@@ -1,18 +1,23 @@
 package legend.game.input;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
-import static legend.game.unpacker.Unpacker.LOGGER;
-
 public final class ControllerDatabase {
+  private static final Logger LOGGER = LogManager.getFormatterLogger();
   private static List<String> databaseEntries = new ArrayList<>();
   private static final boolean logVerbose = false;
 
-  public static void loadControllerDB() {
+  private ControllerDatabase() {
+  }
+
+  public static void loadControllerDb() {
     final String fullPath = System.getProperty("user.dir") + "\\gamecontrollerdb.txt";
     final File dbFile = new File(fullPath);
     try {
@@ -89,7 +94,7 @@ public final class ControllerDatabase {
       }
     }
 
-    if(matchesInDb.size() > 0) {
+    if(!matchesInDb.isEmpty()) {
       LOGGER.info("Controller found in database with mapping of...");
       for(final String match : matchesInDb) {
         LOGGER.info(match);

@@ -1,18 +1,20 @@
 package legend.game.input;
 
 import legend.core.Config;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static legend.game.unpacker.Unpacker.LOGGER;
 import static org.lwjgl.glfw.GLFW.GLFW_JOYSTICK_LAST;
 import static org.lwjgl.glfw.GLFW.glfwGetJoystickGUID;
 import static org.lwjgl.glfw.GLFW.glfwGetJoystickName;
 import static org.lwjgl.glfw.GLFW.glfwJoystickPresent;
 
 public final class InputControllerAssigner {
+  private static final Logger LOGGER = LogManager.getFormatterLogger();
   private final static int desiredControllerCount = 1;
 
   private static final List<InputControllerData> assignedControllers = new ArrayList<>();
@@ -21,10 +23,13 @@ public final class InputControllerAssigner {
 
   private static boolean isAssigningControllersBool;
 
+  private InputControllerAssigner() {
+  }
+
   public static void init() {
     logConnectedControllers();
 
-    ControllerDatabase.loadControllerDB();
+    ControllerDatabase.loadControllerDb();
     boolean noControllerFound = true;
     final String controllerGuidFromConfig = Config.controllerGuid();
 
@@ -65,7 +70,7 @@ public final class InputControllerAssigner {
 
     for(int i = 0; i < GLFW_JOYSTICK_LAST; i++) {
       if(glfwJoystickPresent(i)) {
-        System.out.println((i + 1) + ": " + glfwGetJoystickName(i) + " (" + glfwGetJoystickName(i) + ')');
+        LOGGER.info((i + 1) + ": " + glfwGetJoystickName(i) + " (" + glfwGetJoystickName(i) + ')');
         final InputControllerData controllerData = new InputControllerData(glfwGetJoystickName(i), glfwGetJoystickGUID(i), i);
         connectedControllers.add(controllerData);
       }
@@ -148,7 +153,7 @@ public final class InputControllerAssigner {
     try {
       Config.save();
     } catch(final IOException e) {
-      System.err.println("Failed to save config");
+      LOGGER.warn("Failed to save config");
     }
 
   }
