@@ -14,7 +14,7 @@ import java.util.List;
 public final class ControllerDatabase {
   private static final Logger LOGGER = LogManager.getFormatterLogger();
   private static final Marker CONTROLLER_DB_MARKER = MarkerManager.getMarker("CONTROLLER_DB");
-  private static final Marker CONTROLLER_DB_VERBOSE_MARKER = MarkerManager.getMarker("CONTROLLER_DB_VERBOSE");
+  private static final Marker CONTROLLER_VERBOSE_MARKER = MarkerManager.getMarker("CONTROLLER_VERBOSE");
   private static List<String> databaseEntries = new ArrayList<>();
 
   private ControllerDatabase() {
@@ -53,7 +53,7 @@ public final class ControllerDatabase {
     for(final String mapEntry : mapInfo) {
       final String[] mapLabelAndData = mapEntry.split(":");
       if(textLabel.equals(mapLabelAndData[0])) {
-        LOGGER.info(CONTROLLER_DB_VERBOSE_MARKER,"Found a match for text label " +  textLabel + " with data " + mapLabelAndData[1]);
+        LOGGER.info(CONTROLLER_VERBOSE_MARKER,"Found a match for text label %s with data %s", textLabel, mapLabelAndData[1]);
 
         if(mapLabelAndData[1].charAt(0) == 'b') {
           inputBinding.setInputType(InputType.GAMEPAD_BUTTON);
