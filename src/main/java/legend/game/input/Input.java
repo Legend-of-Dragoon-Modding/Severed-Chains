@@ -4,6 +4,8 @@ import legend.core.Config;
 import legend.core.opengl.Window;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +33,7 @@ import static org.lwjgl.glfw.GLFW.glfwGetJoystickGUID;
 
 public final class Input {
   private static final Logger LOGGER = LogManager.getFormatterLogger();
+  private static final Marker INPUT_MARKER = MarkerManager.getMarker("INPUT");
   private static InputMapping playerOne = new InputMapping();
   private static final List<InputMapping> controllers = new ArrayList<>();
 
@@ -70,7 +73,7 @@ public final class Input {
   }
 
   private static void reassignControllers() {
-    LOGGER.info("--- Reassigning Controllers ----");
+    LOGGER.info(INPUT_MARKER,"--- Reassigning Controllers ----");
     InputControllerAssigner.reassignSequence();
   }
   private static final float controllerDeadzone = Config.controllerDeadzone();
@@ -195,7 +198,7 @@ public final class Input {
   }
 
   public static void refreshControllers() {
-    LOGGER.info("Refreshing Controllers...");
+    LOGGER.info(INPUT_MARKER,"Refreshing Controllers...");
     controllers.clear();
     for(final InputControllerData inputControllerData : InputControllerAssigner.getAssignedControllers()) {
       final InputMapping playerInputMapping = new InputMapping();
@@ -234,7 +237,7 @@ public final class Input {
 
   private static void onControllerConnected(final int id) {
     if(playerOne.getControllerData().getGlfwJoystickGUID().equals(glfwGetJoystickGUID(id))) {
-      LOGGER.info("Player 1 has been reconnected");
+      LOGGER.info(INPUT_MARKER,"Player 1 has been reconnected");
     }
 
   }
@@ -243,7 +246,7 @@ public final class Input {
 
     if(playerOne.getControllerData().getGlfwControllerId() == id) {
       // Player one has been disconnected
-      LOGGER.info("Player 1 has been disconnected please reconnect or switch to a different controller using F9");
+      LOGGER.info(INPUT_MARKER,"Player 1 has been disconnected please reconnect or switch to a different controller using F9");
     }
 
 

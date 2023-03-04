@@ -2,6 +2,8 @@ package legend.game.input;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,8 +13,9 @@ import java.util.List;
 
 public final class ControllerDatabase {
   private static final Logger LOGGER = LogManager.getFormatterLogger();
+  private static final Marker CONTROLLER_DB_MARKER = MarkerManager.getMarker("CONTROLLER_DB");
+  private static final Marker CONTROLLER_DB_VERBOSE_MARKER = MarkerManager.getMarker("CONTROLLER_DB_VERBOSE");
   private static List<String> databaseEntries = new ArrayList<>();
-  private static final boolean logVerbose = false;
 
   private ControllerDatabase() {
   }
@@ -22,9 +25,9 @@ public final class ControllerDatabase {
     final File dbFile = new File(fullPath);
     try {
       databaseEntries = Files.readAllLines(dbFile.toPath());
-      LOGGER.info("Found and Loaded Controller Database File.");
+      LOGGER.info(CONTROLLER_DB_MARKER,"Found and Loaded Controller Database File.");
     } catch(final IOException exception) {
-      LOGGER.error("Controller database file not found! gamecontrollerdb.txt");
+      LOGGER.error(CONTROLLER_DB_MARKER,"Controller database file not found! gamecontrollerdb.txt");
     }
   }
 
@@ -50,9 +53,8 @@ public final class ControllerDatabase {
     for(final String mapEntry : mapInfo) {
       final String[] mapLabelAndData = mapEntry.split(":");
       if(textLabel.equals(mapLabelAndData[0])) {
-        if(logVerbose) {
-          LOGGER.info("Found a match for text label " +  textLabel + " with data " + mapLabelAndData[1]);
-        }
+        LOGGER.info(CONTROLLER_DB_VERBOSE_MARKER,"Found a match for text label " +  textLabel + " with data " + mapLabelAndData[1]);
+
         if(mapLabelAndData[1].charAt(0) == 'b') {
           inputBinding.setInputType(InputType.GAMEPAD_BUTTON);
           inputBinding.setGlfwKeyCode(Integer.parseInt(mapLabelAndData[1].substring(1)));
@@ -95,16 +97,16 @@ public final class ControllerDatabase {
     }
 
     if(!matchesInDb.isEmpty()) {
-      LOGGER.info("Controller found in database with mapping of...");
+      LOGGER.info(CONTROLLER_DB_MARKER,"Controller found in database with mapping of...");
       for(final String match : matchesInDb) {
         LOGGER.info(match);
       }
       return matchesInDb.get(0);
     }
 
-    LOGGER.warn("Controller not found in supported database for {}", controllerGUID);
+    LOGGER.warn(CONTROLLER_DB_MARKER,"Controller not found in supported database for {}", controllerGUID);
     final String defaultMap = "00000000000000000000000000000000,GLFW Default Controller,a:b0,b:b1,back:b6,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,leftshoulder:b4,leftstick:b9,lefttrigger:a2,leftx:a0,lefty:a1,rightshoulder:b5,rightstick:b10,righttrigger:a5,rightx:a3,righty:a4,start:b7,x:b2,y:b3,platform:Windows,";
-    LOGGER.warn("Loading default map of... \n" + defaultMap );
+    LOGGER.warn(CONTROLLER_DB_MARKER,"Loading default map of... \n" + defaultMap );
     return defaultMap;
   }
 
