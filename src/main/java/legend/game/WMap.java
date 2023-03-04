@@ -156,7 +156,6 @@ import static legend.game.Scus94491BpeSegment_800b.textboxes_800be358;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.identityMatrix_800c3568;
-import static legend.game.unpacker.Unpacker.LOGGER;
 
 public class WMap {
   private static final Value _800c6690 = MEMORY.ref(4, 0x800c6690L);
@@ -3935,9 +3934,9 @@ public class WMap {
         break;
 
       case 4:
-        if((joypadPress_8007a398.get() & 0xc0L) != 0) {
+        if(Input.getButtonState(InputAction.BUTTON_EAST) || Input.getButtonState(InputAction.BUTTON_WEST)) {
           playSound(0, 3, 0, 0, (short)0, (short)0);
-          LOGGER.info("LATCH ID:1 MYSTERY INPUT PRESSED - Let Latch know when this triggers");
+
           //LAB_800daef8
           for(int i = 0; i < 8; i++) {
             //LAB_800daf14
@@ -4217,8 +4216,8 @@ public class WMap {
     struct.models_0c[2].coord2Param_64.rotate.y.add((short)((struct.rotation_a4.getY() - struct.models_0c[2].coord2Param_64.rotate.getY()) / 8));
 
     if(a0 != 0) {
-      if((Input.pressedWithRepeatPulse(InputAction.DPAD_RIGHT) && Input.pressedWithRepeatPulse(InputAction.DPAD_DOWN))
-        || (Input.pressedWithRepeatPulse(InputAction.JOYSTICK_LEFT_BUTTON_RIGHT) && Input.pressedWithRepeatPulse(InputAction.JOYSTICK_LEFT_BUTTON_DOWN))) {
+      if(Input.pressedWithRepeatPulse(InputAction.DPAD_RIGHT) || Input.pressedWithRepeatPulse(InputAction.DPAD_DOWN)
+        || Input.pressedWithRepeatPulse(InputAction.JOYSTICK_LEFT_BUTTON_RIGHT) || Input.pressedWithRepeatPulse(InputAction.JOYSTICK_LEFT_BUTTON_DOWN)) {
         playSound(0, 1, 0, 0, (short)0, (short)0);
 
         if(struct.coolonWarpIndex_222 > 0) {
@@ -4229,8 +4228,8 @@ public class WMap {
       }
 
       //LAB_800dc384
-      if((Input.pressedWithRepeatPulse(InputAction.DPAD_LEFT) && Input.pressedWithRepeatPulse(InputAction.DPAD_UP))
-        || (Input.pressedWithRepeatPulse(InputAction.JOYSTICK_LEFT_BUTTON_LEFT) && Input.pressedWithRepeatPulse(InputAction.JOYSTICK_LEFT_BUTTON_UP))) {
+      if(Input.pressedWithRepeatPulse(InputAction.DPAD_LEFT) || Input.pressedWithRepeatPulse(InputAction.DPAD_UP)
+        || Input.pressedWithRepeatPulse(InputAction.JOYSTICK_LEFT_BUTTON_LEFT) || Input.pressedWithRepeatPulse(InputAction.JOYSTICK_LEFT_BUTTON_UP)) {
         playSound(0, 1, 0, 0, (short)0, (short)0);
 
         struct.coolonWarpIndex_222++;
