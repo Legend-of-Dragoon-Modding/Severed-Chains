@@ -3,6 +3,8 @@ package legend.game.input;
 import legend.core.Config;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,6 +17,7 @@ import static org.lwjgl.glfw.GLFW.glfwJoystickPresent;
 
 public final class InputControllerAssigner {
   private static final Logger LOGGER = LogManager.getFormatterLogger();
+  private static final Marker INPUT_MARKER = MarkerManager.getMarker("INPUT");
   private final static int desiredControllerCount = 1;
 
   private static final List<InputControllerData> assignedControllers = new ArrayList<>();
@@ -30,33 +33,50 @@ public final class InputControllerAssigner {
     logConnectedControllers();
 
     ControllerDatabase.loadControllerDb();
-    boolean noControllerFound = true;
     final String controllerGuidFromConfig = Config.controllerGuid();
 
-    for(int i = 0; i < GLFW_JOYSTICK_LAST; i++) {
-      if(controllerGuidFromConfig.equals(glfwGetJoystickGUID(i))) {
-        final InputControllerData controllerData = new InputControllerData(glfwGetJoystickName(i), glfwGetJoystickGUID(i), i);
-        controllerData.setPlayerSlot(1);
-        connectedControllers.add(controllerData);
-        assignedControllers.add(controllerData);
-        Input.refreshControllers();
-        noControllerFound = false;
-        LOGGER.info("Last used controller found and connected");
-        break;
+    if(isAnyControllerPresent()) {
+      // Check for matching GUID
+      for(int i = 0; i < GLFW_JOYSTICK_LAST; i++) {
+        if(controllerGuidFromConfig.equals(glfwGetJoystickGUID(i))) {
+          final InputControllerData controllerData = new InputControllerData(glfwGetJoystickName(i), glfwGetJoystickGUID(i), i);
+          controllerData.setPlayerSlot(1);
+          connectedControllers.add(controllerData);
+          assignedControllers.add(controllerData);
+          Input.refreshControllers();
+          LOGGER.info(INPUT_MARKER,"Last used controller found and connected");
+          break;
+        }
       }
     }
+    else {
+      LOGGER.info(INPUT_MARKER,"No controllers connected");
 
-    if(noControllerFound) {
-      reassignSequence();
+      final InputControllerData controllerData = new InputControllerData("Keyboard-Mouse Only", "Keyboard-Mouse Only", -1);
+      controllerData.setPlayerSlot(1);
+      connectedControllers.add(controllerData);
+      assignedControllers.add(controllerData);
+      Input.refreshControllers();
+
     }
+
   }
 
   private static void logConnectedControllers() {
     for(int i = 0; i < GLFW_JOYSTICK_LAST; i++) {
       if(glfwJoystickPresent(i)) {
-        LOGGER.info("Controller Id:" + i + " - GUID:" + glfwGetJoystickGUID(i));
+        LOGGER.info(INPUT_MARKER,"Controller Id:" + i + " - GUID:" + glfwGetJoystickGUID(i));
       }
     }
+  }
+
+  private static boolean isAnyControllerPresent() {
+    for(int i = 0; i < GLFW_JOYSTICK_LAST; i++) {
+      if(glfwJoystickPresent(i)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   public static void reassignSequence() {

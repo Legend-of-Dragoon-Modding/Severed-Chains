@@ -37,10 +37,13 @@ public class InputControllerData {
   }
 
   public void updateState() {
+    if(this.glfwControllerId == -1) {
+      return;
+    }
+
     this.axis = glfwGetJoystickAxes(this.glfwControllerId);
     this.hats = glfwGetJoystickHats(this.glfwControllerId);
     this.buttons = glfwGetJoystickButtons(this.glfwControllerId);
-
   }
 
 
