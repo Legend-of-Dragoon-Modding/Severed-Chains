@@ -1087,8 +1087,6 @@ public final class Scus94491BpeSegment_8002 {
    */
   @Method(0x80022018L)
   public static void animateModelTextures(final Model124 a0, final int index) {
-    final RECT rect = new RECT();
-
     if(a0.ptrs_d0[index] == null) {
       a0.aub_ec[index] = 0;
       return;
@@ -1096,25 +1094,24 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_80022068
     final int x;
-    final long v0;
+    final int y;
     if((a0.colourMap_9d & 0x80) == 0) {
-      x = (int)_800503b0.offset(a0.colourMap_9d * 0x2L).getSigned();
-      v0 = _800503d4.getAddress();
+      x = (int)_800503b0.offset(a0.colourMap_9d * 0x2).get();
+      y = (int)_800503d4.offset(a0.colourMap_9d * 0x2).get();
     } else {
       //LAB_80022098
       if(a0.colourMap_9d == 0x80) {
         return;
       }
 
-      x = (int)_800503f8.offset((a0.colourMap_9d & 0x7f) * 0x2L).getSigned();
-      v0 = _80050424.getAddress();
+      x = (int)_800503f8.offset((a0.colourMap_9d & 0x7f) * 0x2).get();
+      y = (int)_80050424.offset((a0.colourMap_9d & 0x7f) * 0x2).get();
     }
 
     //LAB_800220c0
-    final int y = (int)MEMORY.ref(2, v0).offset((a0.colourMap_9d & 0x7f) * 0x2L).getSigned();
     if(a0.usArr_ba[index] != 0x5678) {
       a0.usArr_ba[index]--;
-      if(a0.usArr_ba[index] != 0) {
+      if((short)a0.usArr_ba[index] != 0) {
         return;
       }
 
@@ -1122,8 +1119,8 @@ public final class Scus94491BpeSegment_8002 {
       a0.usArr_ba[index] = a0.ptrs_d0[index][s1++] & 0x7fff;
       final int destX = a0.ptrs_d0[index][s1++] + x;
       final int destY = a0.ptrs_d0[index][s1++] + y;
-      rect.w.set((short)(a0.ptrs_d0[index][s1++] / 4));
-      rect.h.set(a0.ptrs_d0[index][s1++]);
+      final short w = (short)(a0.ptrs_d0[index][s1++] / 4);
+      final short h = a0.ptrs_d0[index][s1++];
 
       //LAB_80022154
       for(int i = 0; i < a0.usArr_ac[index]; i++) {
@@ -1131,10 +1128,10 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       //LAB_80022164
-      rect.x.set((short)(a0.ptrs_d0[index][s1++] + x));
-      rect.y.set((short)(a0.ptrs_d0[index][s1++] + y));
+      final short x2 = (short)(a0.ptrs_d0[index][s1++] + x);
+      final short y2 = (short)(a0.ptrs_d0[index][s1++] + y);
 
-      GPU.queueCommand(1, new GpuCommandCopyVramToVram(rect.x.get(), rect.y.get(), destX & 0xffff, destY & 0xffff, rect.w.get(), rect.h.get()));
+      GPU.queueCommand(1, new GpuCommandCopyVramToVram(x2, y2, destX & 0xffff, destY & 0xffff, w, h));
 
       a0.usArr_ac[index]++;
 
@@ -1154,17 +1151,15 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_80022208
     int s1 = 1;
-    final int a1_0 = a0.usArr_ac[index];
-    final int a0_0 = a0.ptrs_d0[index][s1++];
+    final int s6 = a0.ptrs_d0[index][s1++] + x;
     final int s7 = a0.ptrs_d0[index][s1++] + y;
-    final int s5 = a0.ptrs_d0[index][s1++] >>> 2;
+    final int s5 = a0.ptrs_d0[index][s1++] / 4;
     int s3 = a0.ptrs_d0[index][s1++];
     final int v1 = a0.ptrs_d0[index][s1++];
     int s0_0 = a0.ptrs_d0[index][s1];
-    final int s6 = a0_0 + x;
 
-    if((a1_0 & 0xf) != 0) {
-      a0.usArr_ac[index] = a1_0 - 1;
+    if((a0.usArr_ac[index] & 0xf) != 0) {
+      a0.usArr_ac[index]--;
 
       if(a0.usArr_ac[index] == 0) {
         a0.usArr_ac[index] = s0_0;
@@ -1176,34 +1171,23 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_8002227c
-    if(s0_0 == 0) {
+    if((short)s0_0 == 0) {
       return;
     }
 
-    rect.set((short)960, (short)256, (short)s5, (short)s3);
-    GPU.queueCommand(1, new GpuCommandCopyVramToVram(rect.x.get(), rect.y.get(), s6 & 0xffff, s7 & 0xffff, rect.w.get(), rect.h.get()));
+    GPU.queueCommand(1, new GpuCommandCopyVramToVram(960, 256, s6 & 0xffff, s7 & 0xffff, s5, s3));
 
-    s0_0 = s0_0 >> 4;
+    s0_0 /= 16;
     s3 -= s0_0;
 
-    final int a3;
-    if(v1 == 0) {
-      rect.set((short)s6, (short)(s7 + s3), (short)s5, (short)s0_0);
-      GPU.queueCommand(1, new GpuCommandCopyVramToVram(rect.x.get(), rect.y.get(), 960, 256, rect.w.get(), rect.h.get()));
-
-      a3 = s0_0 + 256 & 0xffff;
-      rect.set((short)s6, (short)s7, (short)s5, (short)s3);
+    if((short)v1 == 0) {
+      GPU.queueCommand(1, new GpuCommandCopyVramToVram(s6, s7 + s3, 960, 256, s5, s0_0));
+      GPU.queueCommand(1, new GpuCommandCopyVramToVram(s6, s7, 960, s0_0 + 256, s5, s3));
     } else {
       //LAB_80022358
-      rect.set((short)s6, (short)s7, (short)s5, (short)s0_0);
-      GPU.queueCommand(1, new GpuCommandCopyVramToVram(rect.x.get(), rect.y.get(), 960, s3 + 256 & 0xffff, rect.w.get(), rect.h.get()));
-
-      a3 = 256;
-      rect.set((short)s6, (short)(s0_0 + s7), (short)s5, (short)s3);
+      GPU.queueCommand(1, new GpuCommandCopyVramToVram(s6, s7, 960, s3 + 256, s5, s0_0));
+      GPU.queueCommand(1, new GpuCommandCopyVramToVram(s6, s7 + s0_0, 960, 256, s5, s3));
     }
-
-    //LAB_8002241c
-    GPU.queueCommand(1, new GpuCommandCopyVramToVram(rect.x.get(), rect.y.get(), 960, a3, rect.w.get(), rect.h.get()));
 
     //LAB_80022440
   }
