@@ -46,7 +46,7 @@ public class InputControllerData {
 
 
   public boolean hasAnyButtonActivity() {
-    for(int i = 0; i < 10; i++) {
+    for(int i = 0; i < this.maxButtons; i++) {
       if(this.checkButton(i)) {
         return true;
       }
