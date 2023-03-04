@@ -46,7 +46,7 @@ public final class ControllerDatabase {
       final String[] mapLabelAndData = mapEntry.split(":");
       if(textLabel.equals(mapLabelAndData[0])) {
         if(logVerbose) {
-          LOGGER.info("Found a match for text label {} with data {}", textLabel, mapLabelAndData[1]);
+          LOGGER.info("Found a match for text label " +  textLabel + " with data " + mapLabelAndData[1]);
         }
         if(mapLabelAndData[1].charAt(0) == 'b') {
           inputBinding.setInputType(InputType.GAMEPAD_BUTTON);
