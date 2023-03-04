@@ -231,10 +231,6 @@ public class EquipmentScreen extends MenuScreen {
     this.scrollAccumulator += deltaY;
   }
 
-  @Override
-  protected void keyPress(final int key, final int scancode, final int mods) {
-  }
-
   private void menuEscape() {
     playSound(3);
     this.loadingStage = 100;

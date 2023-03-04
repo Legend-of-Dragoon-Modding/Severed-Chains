@@ -755,10 +755,6 @@ public class ShopScreen extends MenuScreen {
     this.scrollAccumulator += deltaY;
   }
 
-  @Override
-  protected void keyPress(final int key, final int scancode, final int mods) {
-  }
-
   private void menuMainShopRender3Escape() {
     playSound(3);
     this.FUN_8010a844(MenuState.UNLOAD_19);

@@ -384,10 +384,6 @@ public class UseItemScreen extends MenuScreen {
     this.scrollAccumulator += deltaY;
   }
 
-  @Override
-  protected void keyPress(final int key, final int scancode, final int mods) {
-  }
-
   private void menuStage2Escape() {
     playSound(3);
     this.loadingStage = 100;

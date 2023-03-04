@@ -355,10 +355,6 @@ public class TooManyItemsScreen extends MenuScreen {
     this.scrollAccumulator += deltaY;
   }
 
-  @Override
-  protected void keyPress(final int key, final int scancode, final int mods) {
-  }
-
   private void menuEscape() {
     if(this.menuState == MenuState._8) {
       playSound(3);

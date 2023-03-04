@@ -106,10 +106,6 @@ public class MessageBoxScreen extends MenuScreen {
     }
   }
 
-  @Override
-  protected void keyPress(final int key, final int scancode, final int mods) {
-  }
-
   private void menuNavigateUp() {
     playSound(1);
     this.messageBox.menuIndex_18 = 0;

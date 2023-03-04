@@ -205,11 +205,6 @@ public class CharSwapScreen extends MenuScreen {
     }
   }
 
-  @Override
-  protected void keyPress(final int key, final int scancode, final int mods) {
-    super.keyPress(key, scancode, mods);
-  }
-
   private void menuStage2Escape() {
     playSound(3);
     this.loadingStage = 100;
