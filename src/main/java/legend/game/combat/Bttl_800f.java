@@ -3335,7 +3335,7 @@ public final class Bttl_800f {
     }
 
     //LAB_800f7e98
-    if(simpleRand() * 0x65 / 0x100 < stat) {
+    if(simpleRand() * 0x65 >> 0x10 < stat) {
       final long a1_0 = bobj1.getStat((int)s3);
 
       if((a1_0 & 0xffL) != 0) {
