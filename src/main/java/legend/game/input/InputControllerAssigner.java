@@ -65,7 +65,7 @@ public final class InputControllerAssigner {
   private static void logConnectedControllers() {
     for(int i = 0; i < GLFW_JOYSTICK_LAST; i++) {
       if(glfwJoystickPresent(i)) {
-        LOGGER.info(INPUT_MARKER,"Controller Id:" + i + " - GUID:" + glfwGetJoystickGUID(i));
+        LOGGER.info(INPUT_MARKER,"Controller Id: %d - GUID: %d",i ,glfwGetJoystickGUID(i));
       }
     }
   }
@@ -80,36 +80,33 @@ public final class InputControllerAssigner {
   }
 
   public static void reassignSequence() {
-    grabAllPossibleControllers();
-  }
-
-  public static void grabAllPossibleControllers() {
     connectedControllers.clear();
     idleControllers.clear();
     assignedControllers.clear();
 
     for(int i = 0; i < GLFW_JOYSTICK_LAST; i++) {
       if(glfwJoystickPresent(i)) {
-        LOGGER.info((i + 1) + ": " + glfwGetJoystickName(i) + " (" + glfwGetJoystickName(i) + ')');
+        LOGGER.info(INPUT_MARKER,"%d: %s (%d)",(i+1),glfwGetJoystickName(i),glfwGetJoystickGUID(i));
         final InputControllerData controllerData = new InputControllerData(glfwGetJoystickName(i), glfwGetJoystickGUID(i), i);
         connectedControllers.add(controllerData);
       }
     }
-    LOGGER.info("Found a total of " + connectedControllers.size());
+
+    LOGGER.info(INPUT_MARKER,"Found a total of %d",connectedControllers.size());
 
     if(connectedControllers.isEmpty()) {
-      LOGGER.info("No controllers connected");
+      LOGGER.info(INPUT_MARKER,"No controllers connected");
     }
     if(connectedControllers.size() == 1) {
 
-      LOGGER.info("Only 1 controller connected so assigning by default. " + connectedControllers.get(0).getInfoString());
+      LOGGER.info(INPUT_MARKER,"Only 1 controller connected so assigning by default. %s",connectedControllers.get(0).getInfoString());
       connectedControllers.get(0).setPlayerSlot(1);
       assignedControllers.add(connectedControllers.get(0));
       savePlayerOneToConfig();
       Input.refreshControllers();
     }
     if(connectedControllers.size() >= 2) {
-      LOGGER.info("Multiple controllers connected. Please press any of the buttons for the one you want to use");
+      LOGGER.info(INPUT_MARKER,"Multiple controllers connected. Please press any of the buttons for the one you want to use");
       isAssigningControllersBool = true;
       idleControllers.addAll(connectedControllers);
     }
@@ -119,18 +116,18 @@ public final class InputControllerAssigner {
     for(final InputControllerData controllerData : idleControllers) {
       controllerData.updateState();
       if(controllerData.hasAnyButtonActivity()) {
-        LOGGER.info("Button motion detected with controller " + controllerData.getInfoString());
+        LOGGER.info(INPUT_MARKER,"Button motion detected with controller %s",controllerData.getInfoString());
         assignedControllers.add(controllerData);
         idleControllers.remove(controllerData);
 
-        LOGGER.info("Assigning as player " + assignedControllers.size());
+        LOGGER.info(INPUT_MARKER,"Assigning as player %d",assignedControllers.size());
         controllerData.setPlayerSlot(assignedControllers.size());
         if(assignedControllers.size() == 1) {
           savePlayerOneToConfig();
         }
 
         if(assignedControllers.size() < desiredControllerCount) {
-          LOGGER.info("Please press the buttons for player " + (assignedControllers.size() + 1));
+          LOGGER.info(INPUT_MARKER,"Please press the buttons for player %d",assignedControllers.size() + 1);
         }
 
         break;
@@ -138,13 +135,13 @@ public final class InputControllerAssigner {
     }
 
     if(assignedControllers.size() >= desiredControllerCount) {
-      LOGGER.info("Target controller count of " + desiredControllerCount + " reached");
+      LOGGER.info(INPUT_MARKER,"Target controller count of %d reached",desiredControllerCount);
       isAssigningControllersBool = false;
       Input.refreshControllers();
     }
 
     if(idleControllers.isEmpty()) {
-      LOGGER.info("No more controllers detected. Continuing with the " + assignedControllers.size() + " assigned controllers");
+      LOGGER.info(INPUT_MARKER,"No more controllers detected. Continuing with the %d assigned controllers ",assignedControllers.size());
       isAssigningControllersBool = false;
       Input.refreshControllers();
     }
@@ -173,7 +170,7 @@ public final class InputControllerAssigner {
     try {
       Config.save();
     } catch(final IOException e) {
-      LOGGER.warn("Failed to save config");
+      LOGGER.warn(INPUT_MARKER,"Failed to save config");
     }
 
   }

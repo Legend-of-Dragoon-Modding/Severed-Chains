@@ -104,7 +104,7 @@ public final class ControllerDatabase {
       return matchesInDb.get(0);
     }
 
-    LOGGER.warn(CONTROLLER_DB_MARKER,"Controller not found in supported database for {}", controllerGUID);
+    LOGGER.warn(CONTROLLER_DB_MARKER,"Controller not found in supported database for %s", controllerGUID);
     final String defaultMap = "00000000000000000000000000000000,GLFW Default Controller,a:b0,b:b1,back:b6,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,leftshoulder:b4,leftstick:b9,lefttrigger:a2,leftx:a0,lefty:a1,rightshoulder:b5,rightstick:b10,righttrigger:a5,rightx:a3,righty:a4,start:b7,x:b2,y:b3,platform:Windows,";
     LOGGER.warn(CONTROLLER_DB_MARKER,"Loading default map of... \n" + defaultMap );
     return defaultMap;
@@ -112,69 +112,65 @@ public final class ControllerDatabase {
 
   private static int getHexCode(final InputAction targetInputAction)
   {
-    switch(targetInputAction)
+    return switch(targetInputAction)
     {
-      case BUTTON_NORTH -> {return 0x10;}
-      case BUTTON_SOUTH -> {return 0x20;}
-      case BUTTON_EAST -> {return 0x40;}
-      case BUTTON_WEST -> {return 0x80;}
+      case BUTTON_NORTH -> 0x10;
+      case BUTTON_SOUTH ->0x20;
+      case BUTTON_EAST -> 0x40;
+      case BUTTON_WEST -> 0x80;
 
-      case BUTTON_CENTER_1 -> {return 0x100;}
-      case BUTTON_CENTER_2 -> {return 0x800;}
+      case BUTTON_CENTER_1 -> 0x100;
+      case BUTTON_CENTER_2 -> 0x800;
 
-      case BUTTON_THUMB_1 -> {return 0x200;}
-      case BUTTON_THUMB_2 -> {return 0x400;}
+      case BUTTON_THUMB_1 -> 0x200;
+      case BUTTON_THUMB_2 -> 0x400;
 
-      case BUTTON_SHOULDER_LEFT_1 -> {return 0x4;}
-      case BUTTON_SHOULDER_LEFT_2 -> {return 0x1;}
+      case BUTTON_SHOULDER_LEFT_1 -> 0x4;
+      case BUTTON_SHOULDER_LEFT_2 -> 0x1;
 
-      case BUTTON_SHOULDER_RIGHT_1 -> {return 0x8;}
-      case BUTTON_SHOULDER_RIGHT_2 -> {return 0x2;}
+      case BUTTON_SHOULDER_RIGHT_1 -> 0x8;
+      case BUTTON_SHOULDER_RIGHT_2 -> 0x2;
 
-      case JOYSTICK_LEFT_BUTTON_UP,DPAD_UP -> { return 0x1000;}
-      case JOYSTICK_LEFT_BUTTON_DOWN,DPAD_DOWN -> { return 0x4000;}
-      case JOYSTICK_LEFT_BUTTON_LEFT,DPAD_LEFT -> { return 0x8000;}
-      case JOYSTICK_LEFT_BUTTON_RIGHT,DPAD_RIGHT -> { return 0x2000;}
+      case JOYSTICK_LEFT_BUTTON_UP,DPAD_UP -> 0x1000;
+      case JOYSTICK_LEFT_BUTTON_DOWN,DPAD_DOWN -> 0x4000;
+      case JOYSTICK_LEFT_BUTTON_LEFT,DPAD_LEFT -> 0x8000;
+      case JOYSTICK_LEFT_BUTTON_RIGHT,DPAD_RIGHT -> 0x2000;
 
-      case JOYSTICK_LEFT_X, JOYSTICK_LEFT_Y, JOYSTICK_RIGHT_X, JOYSTICK_RIGHT_Y,
-        JOYSTICK_RIGHT_BUTTON_UP, JOYSTICK_RIGHT_BUTTON_DOWN, JOYSTICK_RIGHT_BUTTON_LEFT, JOYSTICK_RIGHT_BUTTON_RIGHT -> {
-        return -1;
-      }
-    }
-
-    return -1;
+      default -> -1;
+    };
   }
 
   private static String getTextCodeLabel(final InputAction targetInputAction) {
-    switch(targetInputAction) {
-      case BUTTON_NORTH -> {return "y";}
-      case BUTTON_SOUTH -> {return "a";}
-      case BUTTON_EAST -> {return "b";}
-      case BUTTON_WEST -> {return "x";}
+    return switch(targetInputAction) {
+      case BUTTON_NORTH -> "y";
+      case BUTTON_SOUTH -> "a";
+      case BUTTON_EAST -> "b";
+      case BUTTON_WEST -> "x";
 
-      case BUTTON_CENTER_1 -> {return "back";}
-      case BUTTON_CENTER_2 -> {return "start";}
+      case BUTTON_CENTER_1 -> "back";
+      case BUTTON_CENTER_2 -> "start";
 
-      case BUTTON_THUMB_1 -> {return "leftstick";}
-      case BUTTON_THUMB_2 -> {return "rightstick";}
+      case BUTTON_THUMB_1 -> "leftstick";
+      case BUTTON_THUMB_2 -> "rightstick";
 
-      case BUTTON_SHOULDER_LEFT_1 -> {return "leftshoulder";}
-      case BUTTON_SHOULDER_LEFT_2 -> {return "lefttrigger";}
+      case BUTTON_SHOULDER_LEFT_1 -> "leftshoulder";
+      case BUTTON_SHOULDER_LEFT_2 -> "lefttrigger";
 
-      case BUTTON_SHOULDER_RIGHT_1 -> {return "rightshoulder";}
-      case BUTTON_SHOULDER_RIGHT_2 -> {return "righttrigger";}
+      case BUTTON_SHOULDER_RIGHT_1 -> "rightshoulder";
+      case BUTTON_SHOULDER_RIGHT_2 -> "righttrigger";
 
-      case DPAD_UP -> { return "dpup";}
-      case DPAD_DOWN -> { return "dpdown";}
-      case DPAD_LEFT -> { return "dpleft";}
-      case DPAD_RIGHT -> { return "dpright";}
+      case DPAD_UP -> "dpup";
+      case DPAD_DOWN -> "dpdown";
+      case DPAD_LEFT -> "dpleft";
+      case DPAD_RIGHT -> "dpright";
 
-      case JOYSTICK_LEFT_X, JOYSTICK_LEFT_BUTTON_LEFT, JOYSTICK_LEFT_BUTTON_RIGHT -> {return "leftx";}
-      case JOYSTICK_LEFT_Y,JOYSTICK_LEFT_BUTTON_UP,JOYSTICK_LEFT_BUTTON_DOWN -> {return "lefty";}
+      case JOYSTICK_LEFT_X, JOYSTICK_LEFT_BUTTON_LEFT, JOYSTICK_LEFT_BUTTON_RIGHT -> "leftx";
+      case JOYSTICK_LEFT_Y,JOYSTICK_LEFT_BUTTON_UP,JOYSTICK_LEFT_BUTTON_DOWN -> "lefty";
 
-      case JOYSTICK_RIGHT_X,  JOYSTICK_RIGHT_BUTTON_LEFT, JOYSTICK_RIGHT_BUTTON_RIGHT -> {return "rightx";}
-      case JOYSTICK_RIGHT_Y,JOYSTICK_RIGHT_BUTTON_UP, JOYSTICK_RIGHT_BUTTON_DOWN-> {return "righty";}
-    }
-    return null;
+      case JOYSTICK_RIGHT_X,  JOYSTICK_RIGHT_BUTTON_LEFT, JOYSTICK_RIGHT_BUTTON_RIGHT -> "rightx";
+      case JOYSTICK_RIGHT_Y,JOYSTICK_RIGHT_BUTTON_UP, JOYSTICK_RIGHT_BUTTON_DOWN-> "righty";
+
+      default -> "nobinding";
+    };
   }
 }
