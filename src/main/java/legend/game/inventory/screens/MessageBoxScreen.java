@@ -127,16 +127,6 @@ public class MessageBoxScreen extends MenuScreen {
     }
   }
 
-  private void menuEscape() {
-    playSound(2);
-
-    if(this.messageBox.menuIndex_18 == 0) {
-      this.result = MessageBoxResult.NO;
-    }
-
-    this.messageBox.state_0c = 4;
-  }
-
   private void menuSelect() {
     playSound(2);
 
@@ -183,9 +173,6 @@ public class MessageBoxScreen extends MenuScreen {
     }
     if(inputAction == InputAction.BUTTON_SOUTH) {
       this.menuSelect();
-    }
-    if(inputAction == InputAction.BUTTON_EAST) {
-      this.menuEscape();
     }
   }
 
