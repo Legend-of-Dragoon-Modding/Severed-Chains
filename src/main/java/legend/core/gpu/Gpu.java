@@ -223,7 +223,8 @@ public class Gpu implements Runnable {
 
     for(int y = 0; y < height; y++) {
       for(int x = 0; x < width; x++) {
-        int colour = this.getPixel(sourceX + x, sourceY + y);
+        int colour15 = this.getPixel15(sourceX + x, sourceY + y);
+        int colour24 = this.getPixel(sourceX + x, sourceY + y);
 
         if(this.status.drawPixels == DRAW_PIXELS.NOT_TO_MASKED_AREAS) {
           if((this.getPixel(destX + x, destY + y) & 0xff00_0000L) != 0) {
@@ -231,9 +232,12 @@ public class Gpu implements Runnable {
           }
         }
 
-        colour |= (this.status.setMaskBit ? 1 : 0) << 24;
+        colour15 |= (this.status.setMaskBit ? 1 : 0) << 15;
+        colour24 |= (this.status.setMaskBit ? 1 : 0) << 24;
 
-        this.setPixel(destX + x, destY + y, colour);
+        final int index = (destY + y) * this.vramWidth + destX + x;
+        this.vram15[index] = colour15;
+        this.vram24[index] = colour24;
       }
     }
   }
