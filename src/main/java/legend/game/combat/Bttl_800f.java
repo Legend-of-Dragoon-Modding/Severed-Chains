@@ -3322,7 +3322,7 @@ public final class Bttl_800f {
     final BattleObject27c bobj1 = (BattleObject27c)state1.innerStruct_00;
     final long fp = state1.storage_44[7] & 0x4;
     final long v1 = (fp != 0 ? 0xcL : 0) + a2 * 0x4L;
-    int stat = bobj1.getStat((int)_800c7284.offset(v1).get());
+    int stat = bobj1.getStat((int)_800c7284.offset(v1).get());  // Getting spell status chance and accuracy
     final ScriptState<?> state2 = scriptStatePtrArr_800bc1c0[bobjIndex2];
     final long spa8 = state2.storage_44[7] & 0x4;
     final BattleObject27c bobj2 = (BattleObject27c)state2.innerStruct_00;
@@ -3335,7 +3335,7 @@ public final class Bttl_800f {
     }
 
     //LAB_800f7e98
-    if(simpleRand() * 0x65 / 0x100 < stat) {
+    if(simpleRand() * 0x65 >> 0x10 < stat) {
       final long a1_0 = bobj1.getStat((int)s3);
 
       if((a1_0 & 0xffL) != 0) {
