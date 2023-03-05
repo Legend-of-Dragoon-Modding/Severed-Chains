@@ -3082,7 +3082,7 @@ public final class SItem {
       }
 
       //LAB_801105b0
-      int maxHp = (int) (stats.maxHp_66.get() * ((stats.hpMulti_62.get() / 100.0) + 1));
+      int maxHp = (int)(stats.maxHp_66.get() * ((stats.hpMulti_62.get() / 100.0) + 1));
 
       //TODO remove HP cap
       if(maxHp >= 9999) {
@@ -3097,7 +3097,7 @@ public final class SItem {
       }
 
       //LAB_80110608
-      final int maxMp = (int) (stats.maxMp_6e.get() * ((stats.mpMulti_64.get() / 100.0) + 1));
+      final int maxMp = (int)(stats.maxMp_6e.get() * ((stats.mpMulti_64.get() / 100.0) + 1));
 
       stats.maxMp_6e.set(maxMp);
 
