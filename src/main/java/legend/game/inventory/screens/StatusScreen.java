@@ -165,14 +165,23 @@ public class StatusScreen extends MenuScreen {
     if(this.loadingStage != 2) {
       return;
     }
+
+    if(inputAction == InputAction.BUTTON_EAST) {
+      this.menuEscape();
+    }
+  }
+
+  @Override
+  public void pressedWithRepeatPulse(final InputAction inputAction) {
+    if(this.loadingStage != 2) {
+      return;
+    }
+
     if(inputAction == InputAction.DPAD_LEFT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_LEFT) {
       this.menuNavigateLeft();
     }
     if(inputAction == InputAction.DPAD_RIGHT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_RIGHT) {
       this.menuNavigateRight();
-    }
-    if(inputAction == InputAction.BUTTON_EAST) {
-      this.menuEscape();
     }
   }
 }
