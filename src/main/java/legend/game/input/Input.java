@@ -202,7 +202,7 @@ public final class Input {
   }
 
   public static void refreshControllers() {
-    LOGGER.info(INPUT_MARKER,"Refreshing Controllers...");
+    LOGGER.info(INPUT_MARKER, "Refreshing Controllers...");
     controllers.clear();
     for(final InputControllerData inputControllerData : InputControllerAssigner.getAssignedControllers()) {
       final InputMapping playerInputMapping = new InputMapping();

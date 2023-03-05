@@ -29,7 +29,7 @@ public final class ControllerDatabase {
     }
   }
 
-  public static List<InputBinding> GetBindings(final String targetControllerGUID) {
+  public static List<InputBinding> getBindings(final String targetControllerGUID) {
     final List<InputBinding> returnedBindings = new ArrayList<>();
 
     final String dbMap = getDbMap(targetControllerGUID);

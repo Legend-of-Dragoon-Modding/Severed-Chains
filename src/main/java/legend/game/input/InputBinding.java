@@ -13,7 +13,9 @@ public class InputBinding {
   private float axisValue;
   private final float controllerDeadzone;
   private InputControllerData targetController;
-  private final float[] pulseTimings = {0.5f,0.1f};
+  private final float[] pulseTimings = {
+    0.5f, 0.1f
+  };
   private int pulseTimingsIndex;
   private double lastPressedTriggerTime;
   public InputBinding(final InputAction inputAction)
