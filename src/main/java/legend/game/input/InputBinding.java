@@ -13,13 +13,11 @@ public class InputBinding {
   private float axisValue;
   private final float controllerDeadzone;
   private InputControllerData targetController;
-  private final float[] pulseTimings = {
-    0.5f, 0.1f
-  };
+  private final float[] pulseTimings = {0.5f, 0.1f};
   private int pulseTimingsIndex;
   private double lastPressedTriggerTime;
-  public InputBinding(final InputAction inputAction)
-  {
+
+  public InputBinding(final InputAction inputAction) {
     this.inputAction = inputAction;
     this.hexCode = -1;
     this.glfwKeyCode = -1;
@@ -90,7 +88,6 @@ public class InputBinding {
   }
 
   private void handlePositiveState() {
-
     if(this.bindingState == InputBindingState.NO_INPUT || this.bindingState == InputBindingState.RELEASED_THIS_FRAME) {
       this.bindingState = InputBindingState.PRESSED_THIS_FRAME;
       this.axisValue = 1;
@@ -103,13 +100,11 @@ public class InputBinding {
       if(glfwGetTime() >= targetTimeToBeat) {
         this.lastPressedTriggerTime = glfwGetTime();
         this.bindingState = InputBindingState.PRESSED_REPEAT;
-        if(this.pulseTimingsIndex + 1 < this.pulseTimings.length)
-        {
+        if(this.pulseTimingsIndex + 1 < this.pulseTimings.length) {
           this.pulseTimingsIndex++;
         }
       }
     }
-
   }
 
   private void handleNoInputState() {

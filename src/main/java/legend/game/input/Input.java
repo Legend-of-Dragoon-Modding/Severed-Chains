@@ -214,8 +214,7 @@ public final class Input {
     addKeyboardBindings();
   }
 
-  private static void addKeyboardBindings()
-  {
+  private static void addKeyboardBindings() {
     playerOne.addBinding(new InputBinding(InputAction.BUTTON_CENTER_1, GLFW_KEY_SPACE, 0x100, InputType.KEYBOARD));
     playerOne.addBinding(new InputBinding(InputAction.BUTTON_THUMB_1, GLFW_KEY_Z, 0x200, InputType.KEYBOARD));
     playerOne.addBinding(new InputBinding(InputAction.BUTTON_THUMB_2, GLFW_KEY_C, 0x400, InputType.KEYBOARD));

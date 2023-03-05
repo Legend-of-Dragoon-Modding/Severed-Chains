@@ -133,12 +133,10 @@ public final class ControllerDatabase {
     return defaultMap;
   }
 
-  private static int getHexCode(final InputAction targetInputAction)
-  {
-    return switch(targetInputAction)
-    {
+  private static int getHexCode(final InputAction targetInputAction) {
+    return switch(targetInputAction) {
       case BUTTON_NORTH -> 0x10;
-      case BUTTON_SOUTH ->0x20;
+      case BUTTON_SOUTH -> 0x20;
       case BUTTON_EAST -> 0x40;
       case BUTTON_WEST -> 0x80;
 
@@ -154,10 +152,10 @@ public final class ControllerDatabase {
       case BUTTON_SHOULDER_RIGHT_1 -> 0x8;
       case BUTTON_SHOULDER_RIGHT_2 -> 0x2;
 
-      case JOYSTICK_LEFT_BUTTON_UP,DPAD_UP -> 0x1000;
-      case JOYSTICK_LEFT_BUTTON_DOWN,DPAD_DOWN -> 0x4000;
-      case JOYSTICK_LEFT_BUTTON_LEFT,DPAD_LEFT -> 0x8000;
-      case JOYSTICK_LEFT_BUTTON_RIGHT,DPAD_RIGHT -> 0x2000;
+      case JOYSTICK_LEFT_BUTTON_UP, DPAD_UP -> 0x1000;
+      case JOYSTICK_LEFT_BUTTON_DOWN, DPAD_DOWN -> 0x4000;
+      case JOYSTICK_LEFT_BUTTON_LEFT, DPAD_LEFT -> 0x8000;
+      case JOYSTICK_LEFT_BUTTON_RIGHT, DPAD_RIGHT -> 0x2000;
 
       default -> -1;
     };
