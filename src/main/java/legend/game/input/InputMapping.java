@@ -14,11 +14,15 @@ public class InputMapping {
   private boolean anyActivityThisFrame;
   private boolean anyActivity;
 
+  private boolean anyActivityThisFrameExcludeAxis;
+
   public void update() {
     this.controllerData.updateState();
 
     this.anyActivityThisFrame = false;
     this.anyActivity = false;
+    this.anyActivityThisFrameExcludeAxis = false;
+
     for(final InputBinding binding : this.bindings) {
       binding.update();
       if(this.controllerData.getPlayerSlot() == 1) {
@@ -28,9 +32,14 @@ public class InputMapping {
       if(binding.getState() == InputBindingState.PRESSED_THIS_FRAME) {
         this.anyActivityThisFrame = true;
         this.anyActivity = true;
+        if(binding.getInputType() == InputType.GAMEPAD_BUTTON || binding.getInputType() == InputType.GAMEPAD_HAT || binding.getInputType() == InputType.KEYBOARD) {
+          this.anyActivityThisFrameExcludeAxis = true;
+        }
       } else if(binding.getState() == InputBindingState.PRESSED) {
         this.anyActivity = true;
       }
+
+
     }
   }
 
@@ -57,6 +66,9 @@ public class InputMapping {
     }
   }
 
+  public boolean hasActivityThisFrameExcludeAxis() {
+    return this.anyActivityThisFrameExcludeAxis;
+  }
   public boolean hasActivityThisFrame() {
     return this.anyActivityThisFrame;
   }

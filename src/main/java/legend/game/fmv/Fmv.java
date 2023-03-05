@@ -258,7 +258,10 @@ public class Fmv {
     GPU.mainRenderer = () -> {
 
       Input.update();
-      if(Input.pressedThisFrame(InputAction.BUTTON_CENTER_2)) {
+      if(Input.hasActivityThisFrameExcludeAxis() && file.equals("\\STR\\DEMOH.IKI")) {
+        shouldStop = true;
+      }
+      if(Input.pressedThisFrame(InputAction.BUTTON_CENTER_1)) {
         shouldStop = true;
       }
 

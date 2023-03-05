@@ -165,6 +165,10 @@ public final class Input {
     return 0;
   }
 
+  public static boolean hasActivityThisFrameExcludeAxis() {
+    return playerOne.hasActivityThisFrameExcludeAxis();
+  }
+
   public static boolean hasActivityThisFrame() {
     return playerOne.hasActivityThisFrame();
   }
