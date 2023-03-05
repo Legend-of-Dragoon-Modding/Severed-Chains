@@ -52,24 +52,49 @@ public final class ControllerDatabase {
     final String[] mapInfo = dbMap.split(",");
     for(final String mapEntry : mapInfo) {
       final String[] mapLabelAndData = mapEntry.split(":");
-      if(textLabel.equals(mapLabelAndData[0])) {
+      if(mapLabelAndData.length > 1 && textLabel.equals(mapLabelAndData[0])) {
         LOGGER.info(CONTROLLER_VERBOSE_MARKER,"Found a match for text label %s with data %s", textLabel, mapLabelAndData[1]);
-
-        if(mapLabelAndData[1].charAt(0) == 'b') {
-          inputBinding.setInputType(InputType.GAMEPAD_BUTTON);
-          inputBinding.setGlfwKeyCode(Integer.parseInt(mapLabelAndData[1].substring(1)));
-        } else if(mapLabelAndData[1].charAt(0) == 'a') {
-          inputBinding.setInputType(InputType.GAMEPAD_AXIS);
-          inputBinding.setGlfwKeyCode(Integer.parseInt(mapLabelAndData[1].substring(1)));
-        } else if(mapLabelAndData[1].charAt(0) == 'h') {
-          inputBinding.setInputType(InputType.GAMEPAD_HAT);
-          final String dataOnly = mapLabelAndData[1].substring(1);
-          final String[] hatIndexAndCode = dataOnly.split("\\.");
-          inputBinding.setHatIndex(Integer.parseInt(hatIndexAndCode[0]));
-          inputBinding.setGlfwKeyCode(Integer.parseInt(hatIndexAndCode[1]));
-        }
+        setBindingFromText(inputBinding,mapLabelAndData[1]);
+        return;
       }
     }
+  }
+
+  private static void setBindingFromText(final InputBinding inputBinding, final String bind) {
+    if(bind.length() <= 1) {
+      inputBinding.setGlfwKeyCode(-1);
+      return;
+    }
+
+    if(bind.charAt(0) == 'b') {
+      inputBinding.setInputType(InputType.GAMEPAD_BUTTON);
+      inputBinding.setGlfwKeyCode(parseIntFromBindText(bind.substring(1)));
+      return;
+    } else if(bind.charAt(0) == 'a') {
+      inputBinding.setInputType(InputType.GAMEPAD_AXIS);
+      inputBinding.setGlfwKeyCode(parseIntFromBindText(bind.substring(1)));
+      return;
+    } else if(bind.charAt(0) == 'h') {
+      inputBinding.setInputType(InputType.GAMEPAD_HAT);
+      final String dataOnly = bind.substring(1);
+      final String[] hatIndexAndCode = dataOnly.split("\\.");
+      if(hatIndexAndCode.length > 1) {
+        inputBinding.setHatIndex(parseIntFromBindText(hatIndexAndCode[0]));
+        inputBinding.setGlfwKeyCode(parseIntFromBindText(hatIndexAndCode[1]));
+        return;
+      }
+    }
+    LOGGER.error(CONTROLLER_DB_MARKER, "Bad data failed to bind with text %s", bind);
+    inputBinding.setGlfwKeyCode(-1);
+  }
+
+  private static int parseIntFromBindText(final String bindText) {
+    try {
+      return Integer.parseInt(bindText);
+    } catch(final NumberFormatException exception) {
+      LOGGER.error(CONTROLLER_DB_MARKER, "Bad data failed to convert text to number: %s", bindText);
+    }
+    return -1;
   }
 
   private static void modifyForSpecialCases(final InputBinding inputBinding) {

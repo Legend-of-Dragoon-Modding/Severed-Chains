@@ -65,7 +65,7 @@ public final class InputControllerAssigner {
   private static void logConnectedControllers() {
     for(int i = 0; i < GLFW_JOYSTICK_LAST; i++) {
       if(glfwJoystickPresent(i)) {
-        LOGGER.info(INPUT_MARKER,"Controller Id: %d - GUID: %d",i ,glfwGetJoystickGUID(i));
+        LOGGER.info(INPUT_MARKER,"Controller Id: %d - GUID: %s",i ,glfwGetJoystickGUID(i));
       }
     }
   }
