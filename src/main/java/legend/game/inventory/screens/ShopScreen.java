@@ -692,10 +692,11 @@ public class ShopScreen extends MenuScreen {
       }
 
       case 1 -> { // Sell
-        this.renderable_8011e0f0 = allocateUiElement(0x3d, 0x44, 358, FUN_8010a808(0));
-        this.renderable_8011e0f4 = allocateUiElement(0x35, 0x3c, 358, FUN_8010a808(5));
 
         menuStack.pushScreen(new MessageBoxScreen(new LodString("What do you want to sell?"), new LodString("Armed"), new LodString("Items"), 2, result -> {
+          this.renderable_8011e0f0 = allocateUiElement(0x3d, 0x44, 358, FUN_8010a808(0));
+          this.renderable_8011e0f4 = allocateUiElement(0x35, 0x3c, 358, FUN_8010a808(5));
+
           switch(result) {
             case YES -> {
               this.menuIndex_8011e0e0 = 0;
