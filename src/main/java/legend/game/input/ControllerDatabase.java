@@ -5,9 +5,9 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,10 +21,8 @@ public final class ControllerDatabase {
   }
 
   public static void loadControllerDb() {
-    final String fullPath = System.getProperty("user.dir") + "\\gamecontrollerdb.txt";
-    final File dbFile = new File(fullPath);
     try {
-      databaseEntries = Files.readAllLines(dbFile.toPath());
+      databaseEntries = Files.readAllLines(Path.of("gamecontrollerdb.txt"));
       LOGGER.info(CONTROLLER_DB_MARKER,"Found and Loaded Controller Database File.");
     } catch(final IOException exception) {
       LOGGER.error(CONTROLLER_DB_MARKER,"Controller database file not found! gamecontrollerdb.txt");
