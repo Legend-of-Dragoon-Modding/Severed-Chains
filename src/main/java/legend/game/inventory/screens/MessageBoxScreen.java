@@ -139,6 +139,14 @@ public class MessageBoxScreen extends MenuScreen {
     this.messageBox.state_0c = 4;
   }
 
+  private void menuCancel() {
+    playSound(3);
+
+    this.result = MessageBoxResult.CANCEL;
+
+    this.messageBox.state_0c = 4;
+  }
+
   private boolean SkipInput() {
     if(this.messageBox.type_15 == 0) {
       playSound(2);
@@ -173,6 +181,9 @@ public class MessageBoxScreen extends MenuScreen {
     }
     if(inputAction == InputAction.BUTTON_SOUTH) {
       this.menuSelect();
+    }
+    if(inputAction == InputAction.BUTTON_EAST) {
+      this.menuCancel();
     }
   }
 
