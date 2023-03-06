@@ -20,7 +20,7 @@ public abstract class MenuScreen {
   protected void pressedThisFrame(final InputAction inputAction) {
   }
 
-  protected void pressedWithRepeatPulse(final InputAction inputAction){
+  protected void pressedWithRepeatPulse(final InputAction inputAction) {
   }
 
   protected void releasedThisFrame(final InputAction inputAction) {
