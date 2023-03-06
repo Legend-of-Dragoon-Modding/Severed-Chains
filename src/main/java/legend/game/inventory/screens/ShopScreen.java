@@ -694,9 +694,6 @@ public class ShopScreen extends MenuScreen {
       case 1 -> { // Sell
 
         menuStack.pushScreen(new MessageBoxScreen(new LodString("What do you want to sell?"), new LodString("Armed"), new LodString("Items"), 2, result -> {
-          this.renderable_8011e0f0 = allocateUiElement(0x3d, 0x44, 358, FUN_8010a808(0));
-          this.renderable_8011e0f4 = allocateUiElement(0x35, 0x3c, 358, FUN_8010a808(5));
-
           switch(result) {
             case YES -> {
               this.menuIndex_8011e0e0 = 0;
@@ -706,6 +703,8 @@ public class ShopScreen extends MenuScreen {
               if(gameState_800babc8.equipmentCount_1e4.get() != 0) {
                 this.menuState = MenuState.SELL_10;
                 this.selectedMenuOptionRenderablePtr_800bdbe4 = allocateUiElement(0x7b, 0x7b, 170, FUN_8010a808(0));
+                this.renderable_8011e0f0 = allocateUiElement(0x3d, 0x44, 358, FUN_8010a808(0));
+                this.renderable_8011e0f4 = allocateUiElement(0x35, 0x3c, 358, FUN_8010a808(5));
                 FUN_80104b60(this.selectedMenuOptionRenderablePtr_800bdbe4);
                 this.FUN_8010a864(gameState_800babc8.equipment_1e8.get(0).get());
               } else {
@@ -720,6 +719,8 @@ public class ShopScreen extends MenuScreen {
 
               if(gameState_800babc8.itemCount_1e6.get() != 0) {
                 this.menuState = MenuState.SELL_10;
+                this.renderable_8011e0f0 = allocateUiElement(0x3d, 0x44, 358, FUN_8010a808(0));
+                this.renderable_8011e0f4 = allocateUiElement(0x35, 0x3c, 358, FUN_8010a808(5));
                 this.selectedMenuOptionRenderablePtr_800bdbe4 = allocateUiElement(0x7b, 0x7b, 170, FUN_8010a808(0));
                 FUN_80104b60(this.selectedMenuOptionRenderablePtr_800bdbe4);
               } else {
