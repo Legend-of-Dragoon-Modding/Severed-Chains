@@ -101,6 +101,10 @@ public class Window {
     }));
   }
 
+  public long getWindow() {
+    return this.window;
+  }
+
   private final long window;
   private Runnable eventPoller = GLFW::glfwPollEvents;
 

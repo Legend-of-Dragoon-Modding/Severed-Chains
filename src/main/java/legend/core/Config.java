@@ -39,7 +39,7 @@ public final class Config {
     properties.setProperty("fast_text_speed", "false");
     properties.setProperty("auto_advance_text", "false");
     properties.setProperty("auto_charm_potion", "false");
-    properties.setProperty("receive_input_inactive_window", "false");
+    properties.setProperty("receive_input_on_inactive_window", "false");
   }
 
   public static int windowWidth() {
@@ -146,12 +146,12 @@ public final class Config {
     properties.setProperty("auto_charm_potion", String.valueOf(!autoCharmPotion()));
   }
 
-  public static boolean receiveInputInactiveWindow() {
-    return readBool("receive_input_inactive_window", false);
+  public static boolean receiveInputOnInactiveWindow() {
+    return readBool("receive_input_on_inactive_window", false);
   }
 
-  public static void toggleReceiveInputInactiveWindow() {
-    properties.setProperty("receive_input_inactive_window", String.valueOf(!receiveInputInactiveWindow()));
+  public static void toggleReceiveInputOnInactiveWindow() {
+    properties.setProperty("receive_input_on_inactive_window", String.valueOf(!receiveInputOnInactiveWindow()));
   }
 
   public static int getBattleRGB() {
