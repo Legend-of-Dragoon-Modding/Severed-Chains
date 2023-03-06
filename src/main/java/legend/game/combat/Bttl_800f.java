@@ -380,11 +380,11 @@ public final class Bttl_800f {
   }
 
   /**
-   * @param attackType 0 is physical attack, 1/2 are both magical, don't know the difference
+   * @param attackType 0 is physical attack, 1 is dragoon magic (and status items for some reason?), 2 is item magic
    */
   @Method(0x800f1aa8L)
   public static int FUN_800f1aa8(final int bobjIndex1, final int bobjIndex2, final int attackType) {
-    long s4 = 0;
+    long effectHit = 0;
     final ScriptState<BattleObject27c> state1 = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[bobjIndex1];
     final BattleObject27c bobj1 = state1.innerStruct_00;
     final boolean isEnemy = (state1.storage_44[7] & 0x4) != 0;
@@ -393,54 +393,54 @@ public final class Bttl_800f {
     final BattleObject27c bobj2 = state2.innerStruct_00;
 
     final int hitStat = (byte)bobj1.getStat((int)_800c703c.offset(attackType * 0x4L).get());
-    int attackHit;
+    int effectAccuracy;
     if(attackType == 0) {
       if(isEnemy) {
-        attackHit = spellStats_800fa0b8.get(bobj1.spellId_4e).accuracy_05.get();
+        effectAccuracy = spellStats_800fa0b8.get(bobj1.spellId_4e).accuracy_05.get();
       } else {
         //LAB_800f1bf4
-        attackHit = bobj1.attackHit_3c;
+        effectAccuracy = bobj1.attackHit_3c;
       }
 
       //LAB_800f1bf8
       setTempSpellStats(state1);
     } else if(attackType == 1) {
       //LAB_800f1c08
-      attackHit = spellStats_800fa0b8.get(bobj1.spellId_4e).accuracy_05.get();
+      effectAccuracy = spellStats_800fa0b8.get(bobj1.spellId_4e).accuracy_05.get();
       setTempSpellStats(state1);
     } else {
       //LAB_800f1c38
       setTempItemMagicStats(state1);
-      attackHit = 100;
+      effectAccuracy = 100;
     }
 
     //LAB_800f1c44
-    attackHit = attackHit * (hitStat + 100) / 100;
+    effectAccuracy = effectAccuracy * (hitStat + 100) / 100;
 
-    final int avoid;
+    final int avoidChance;
     if(attackType == 0) {
-      avoid = bobj2.attackAvoid_40;
+      avoidChance = bobj2.attackAvoid_40;
     } else {
       //LAB_800f1c9c
-      avoid = bobj2.magicAvoid_42;
+      avoidChance = bobj2.magicAvoid_42;
     }
 
     //LAB_800f1ca8
-    final int a0_0 = (avoid * ((byte)bobj1.getStat((int)_800c703c.offset(0x10L).offset(attackType * 0x4L).get()) + 100)) / 100;
-    if(a0_0 < attackHit && attackHit - a0_0 >= (simpleRand() * 101 >> 16)) {
-      s4 = 0x1L;
+    final int modifiedAvoidChance = (avoidChance * ((byte)bobj1.getStat((int)_800c703c.offset(0xcL + attackType * 0x4L).get()) + 100)) / 100;
+    if(modifiedAvoidChance < effectAccuracy && effectAccuracy - modifiedAvoidChance >= (simpleRand() * 0x65 >> 0x10)) {
+      effectHit = 0x1L;
       if(isEnemy) {
         setTempSpellStats(state1);
       }
     }
 
     //LAB_800f1d28
-    if((bobj1.getStat((int)_800c703c.offset(0x20L).offset(attackType * 0x4L).get()) & _800c703c.offset(0x30L).offset(attackType * 0x4L).get()) != 0) {
-      s4 = 0x1L;
+    if((bobj1.getStat((int)_800c703c.offset(0x18L + attackType * 0x4L).get()) & _800c703c.offset(0x24L + attackType * 0x4L).get()) != 0) {
+      effectHit = 0x1L;
     }
 
     //LAB_800f1d5c
-    return (int)s4;
+    return (int)effectHit;
   }
 
   @Method(0x800f1d88L)
