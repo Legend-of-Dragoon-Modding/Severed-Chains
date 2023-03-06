@@ -579,10 +579,12 @@ public class MainMenuScreen extends MenuScreen {
     else if(this.loadingStage == 3) {
       if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
         this.selectedConfigOption--;
+        playSound(1);
         if(this.selectedConfigOption < 0){this.selectedConfigOption = 0;}
       }
       if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
         this.selectedConfigOption++;
+        playSound(1);
         if(this.selectedConfigOption > 3){this.selectedConfigOption = 3;}
       }
     }
