@@ -105,6 +105,12 @@ public class MainMenuScreen extends MenuScreen {
         this.selectedMenuOptionRenderable = allocateUiElement(115, 115, 29, getMenuOptionY(this.selectedMenuOption));
         this.selectedConfigMenuOptionRenderable = this.getRendererForHighlight();
         this.selectedItemMenuOptionRenderable = this.FUN_800fc900(this.selectedItemSubmenuOption);
+        if(this.onLeftMenu) {
+          this.selectedItemSubmenuOption = -1;
+        }
+        else{
+          this.selectedItemMenuOptionRenderable.x_40 = 122;
+        }
         FUN_80104b60(this.selectedMenuOptionRenderable);
         this.FUN_80102484(0);
         this.renderItemSubmenu(this.selectedItemSubmenuOption, 4);
@@ -114,8 +120,8 @@ public class MainMenuScreen extends MenuScreen {
 
       case 2 -> {
         this.FUN_80102484(0);
-        this.renderItemSubmenu(this.selectedItemSubmenuOption, 4);
-        this.renderInventoryMenu(this.selectedMenuOption, 4, 0);
+        this.renderItemSubmenu(this.selectedItemSubmenuOption, this.onLeftMenu ? 6 : 4);
+        this.renderInventoryMenu(this.selectedMenuOption, this.onLeftMenu ? 4 : 6, 0);
       }
 
       case 3 -> {
@@ -278,7 +284,7 @@ public class MainMenuScreen extends MenuScreen {
   }
 
   private Renderable58 FUN_800fc900(final int option) {
-    final Renderable58 renderable = allocateUiElement(116, 116, 122, this.getItemSubmenuOptionY(option) - 2);
+    final Renderable58 renderable = allocateUiElement(116, 116, -200, this.getItemSubmenuOptionY(option) - 2);
     FUN_80104b60(renderable);
     return renderable;
   }
@@ -400,6 +406,8 @@ public class MainMenuScreen extends MenuScreen {
   private void menuNavigateLeft() {
     if(!this.onLeftMenu) {
       this.onLeftMenu = true;
+      this.selectedItemSubmenuOption = -1;
+      this.selectedItemMenuOptionRenderable.x_40 = -200;
       playSound(1);
     }
   }
@@ -409,6 +417,7 @@ public class MainMenuScreen extends MenuScreen {
       playSound(1);
       this.onLeftMenu = false;
       this.selectedItemSubmenuOption = 0;
+      this.selectedItemMenuOptionRenderable.x_40 = 122;
       this.selectedItemMenuOptionRenderable.y_44 = this.getItemSubmenuOptionY(0) - 2;
     }
   }
