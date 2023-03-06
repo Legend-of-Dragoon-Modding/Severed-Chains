@@ -77,8 +77,11 @@ public class MainMenuScreen extends MenuScreen {
 
   private int selectedMenuOption;
   private int selectedItemSubmenuOption;
+  private int selectedConfigOption;
   private Renderable58 selectedMenuOptionRenderable;
   private Renderable58 selectedItemMenuOptionRenderable;
+
+  private Renderable58 selectedConfigMenuOptionRenderable;
 
   private boolean onLeftMenu = true;
 
@@ -100,6 +103,7 @@ public class MainMenuScreen extends MenuScreen {
         deallocateRenderables(0xff);
         renderGlyphs(glyphs_80114130, 0, 0);
         this.selectedMenuOptionRenderable = allocateUiElement(115, 115, 29, getMenuOptionY(this.selectedMenuOption));
+        this.selectedConfigMenuOptionRenderable = this.getRendererForHighlight();
         this.selectedItemMenuOptionRenderable = this.FUN_800fc900(this.selectedItemSubmenuOption);
         FUN_80104b60(this.selectedMenuOptionRenderable);
         this.FUN_80102484(0);
@@ -115,20 +119,19 @@ public class MainMenuScreen extends MenuScreen {
       }
 
       case 3 -> {
-        messageBox(messageBox_8011dc90);
-
+         messageBox(messageBox_8011dc90);
         if(messageBox_8011dc90.ticks_10 >= 2) {
+          //LOGGER.error("This will spam");
           if((joypadPress_8007a398.get() & 0x8000) != 0) {
             playSound(2);
-
-            if(this.selectedItemSubmenuOption == 0) {
+            if(this.selectedConfigOption == 0) {
               gameState_800babc8.vibrationEnabled_4e1.set(0);
-            } else if(this.selectedItemSubmenuOption == 1) {
+            } else if(this.selectedConfigOption == 1) {
               gameState_800babc8.mono_4e0.set(0);
               setMono(0);
-            } else if(this.selectedItemSubmenuOption == 2) {
+            } else if(this.selectedConfigOption == 2) {
               gameState_800babc8.morphMode_4e2.set(0);
-            } else if(this.selectedItemSubmenuOption == 3) {
+            } else if(this.selectedConfigOption == 3) {
               if(gameState_800babc8.indicatorMode_4e8.get() != 0) {
                 gameState_800babc8.indicatorMode_4e8.decr();
               }
@@ -137,17 +140,16 @@ public class MainMenuScreen extends MenuScreen {
 
           if((joypadPress_8007a398.get() & 0x2000) != 0) {
             playSound(2);
-
-            if(this.selectedItemSubmenuOption == 0) {
+            if(this.selectedConfigOption == 0) {
               gameState_800babc8.vibrationEnabled_4e1.set(1);
               FUN_8002bcc8(0, 256);
               FUN_8002bda4(0, 0, 60);
-            } else if(this.selectedItemSubmenuOption == 1) {
+            } else if(this.selectedConfigOption == 1) {
               gameState_800babc8.mono_4e0.set(1);
               setMono(1);
-            } else if(this.selectedItemSubmenuOption == 2) {
+            } else if(this.selectedConfigOption == 2) {
               gameState_800babc8.morphMode_4e2.set(1);
-            } else if(this.selectedItemSubmenuOption == 3) {
+            } else if(this.selectedConfigOption == 3) {
               if(gameState_800babc8.indicatorMode_4e8.get() < 2) {
                 gameState_800babc8.indicatorMode_4e8.incr();
               }
@@ -230,19 +232,23 @@ public class MainMenuScreen extends MenuScreen {
   private void renderOptionsMenu(final long vibrateMode, final long soundMode, final long morphMode, final long noteMode) {
     textZ_800bdf00.set(32);
 
-    renderCentredText(Vibrate_8011cf58, this.FUN_800fc7bc(0) - 15, this.menuOptionY(0), 4);
+    renderCentredText(Vibrate_8011cf58, this.FUN_800fc7bc(0) - 15, this.menuOptionY(0), this.selectedConfigOption == 0 ? 5 : 4);
     renderCentredText(Off_8011cf6c, this.FUN_800fc7bc(1), this.menuOptionY(0), vibrateMode == 0 ? 5 : 4);
     renderCentredText(On_8011cf74, this.FUN_800fc7bc(2), this.menuOptionY(0), vibrateMode == 1 ? 5 : 4);
-    renderCentredText(Sound_8011cf7c, this.FUN_800fc7bc(0) - 15, this.menuOptionY(1), 4);
+    renderCentredText(Sound_8011cf7c, this.FUN_800fc7bc(0) - 15, this.menuOptionY(1), this.selectedConfigOption == 1 ? 5 : 4);
     renderCentredText(Stereo_8011cf88, this.FUN_800fc7bc(1), this.menuOptionY(1), soundMode == 0 ? 5 : 4);
     renderCentredText(Mono_8011cf98, this.FUN_800fc7bc(2), this.menuOptionY(1), soundMode == 1 ? 5 : 4);
-    renderCentredText(Morph_8011cfa4, this.FUN_800fc7bc(0) - 15, this.menuOptionY(2), 4);
+    renderCentredText(Morph_8011cfa4, this.FUN_800fc7bc(0) - 15, this.menuOptionY(2), this.selectedConfigOption == 2 ? 5 : 4);
     renderCentredText(Normal_8011cfb0, this.FUN_800fc7bc(1), this.menuOptionY(2), morphMode == 0 ? 5 : 4);
     renderCentredText(Short_8011cfc0, this.FUN_800fc7bc(2), this.menuOptionY(2), morphMode == 1 ? 5 : 4);
-    renderCentredText(Note_8011c814, this.FUN_800fc7bc(0) - 15, this.menuOptionY(3), 4);
+    renderCentredText(Note_8011c814, this.FUN_800fc7bc(0) - 15, this.menuOptionY(3), this.selectedConfigOption == 3 ? 5 : 4);
     renderCentredText(Off_8011c838, this.FUN_800fc7d0(1), this.menuOptionY(3), noteMode == 0 ? 5 : 4);
     renderCentredText(Half_8011c82c, this.FUN_800fc7d0(2), this.menuOptionY(3), noteMode == 1 ? 5 : 4);
     renderCentredText(Stay_8011c820, this.FUN_800fc7d0(3), this.menuOptionY(3), noteMode == 2 ? 5 : 4);
+
+    this.selectedConfigMenuOptionRenderable.x_40 = 100;
+    this.selectedConfigMenuOptionRenderable.y_44 = this.menuConfigOptionY(this.selectedConfigOption);
+    this.selectedConfigMenuOptionRenderable.z_3c = 31;
 
     textZ_800bdf00.set(33);
   }
@@ -263,6 +269,10 @@ public class MainMenuScreen extends MenuScreen {
     return 107 + slot * 13;
   }
 
+  private int menuConfigOptionY(final int slot) {
+    return 105 + slot * 13;
+  }
+
   private void FUN_80102484(final int a0) {
     FUN_801038d4(a0 != 0 ? 23 : 24, 112, getMenuOptionY(1) + 3);
   }
@@ -273,6 +283,11 @@ public class MainMenuScreen extends MenuScreen {
     return renderable;
   }
 
+  private Renderable58 getRendererForHighlight() {
+    final Renderable58 renderable = allocateUiElement(116, 116, -200, -2);
+    FUN_80104b60(renderable);
+    return renderable;
+  }
   @Override
   protected void mouseMove(final int x, final int y) {
     if(this.loadingStage == 2) {
@@ -472,7 +487,6 @@ public class MainMenuScreen extends MenuScreen {
 
         case 4 -> {
           playSound(4);
-          this.selectedItemSubmenuOption = 0;
           setMessageBoxText(messageBox_8011dc90, null, 0x1);
           this.loadingStage = 3;
         }
@@ -544,9 +558,11 @@ public class MainMenuScreen extends MenuScreen {
         this.menuSelect();
       }
     } else if(this.loadingStage == 3) {
-      playSound(2);
-      messageBox_8011dc90.state_0c++;
-      this.loadingStage = 1;
+      if(inputAction == InputAction.BUTTON_EAST) {
+        playSound(3);
+        messageBox_8011dc90.state_0c++;
+        this.loadingStage = 1;
+      }
     }
   }
 
@@ -560,5 +576,18 @@ public class MainMenuScreen extends MenuScreen {
         this.menuNavigateDown();
       }
     }
+    else if(this.loadingStage == 3) {
+      if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
+        this.selectedConfigOption--;
+        if(this.selectedConfigOption < 0){this.selectedConfigOption = 0;}
+      }
+      if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
+        this.selectedConfigOption++;
+        if(this.selectedConfigOption > 3){this.selectedConfigOption = 3;}
+      }
+    }
+
+
+    //
   }
 }
