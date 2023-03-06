@@ -741,7 +741,7 @@ public class Gpu implements Runnable {
     }
   }
 
-  void rasterizeTriangle(final int vx0, final int vy0, int vx1, int vy1, int vx2, int vy2, final int tu0, final int tv0, int tu1, int tv1, int tu2, int tv2, final int c0, int c1, int c2, final int clutX, final int clutY, final int textureBaseX, final int textureBaseY, final Bpp bpp, final boolean isTextured, final boolean isShaded, final boolean isTranslucent, final boolean isRaw, final Translucency translucencyMode) {
+  void rasterizeTriangle(@Nullable final VramTexture texture, final int vx0, final int vy0, int vx1, int vy1, int vx2, int vy2, final int tu0, final int tv0, int tu1, int tv1, int tu2, int tv2, final int c0, int c1, int c2, final int clutX, final int clutY, final int textureBaseX, final int textureBaseY, final Bpp bpp, final boolean isTextured, final boolean isShaded, final boolean isTranslucent, final boolean isRaw, final Translucency translucencyMode) {
     int area = orient2d(vx0, vy0, vx1, vy1, vx2, vy2);
     if(area == 0) {
       return;
@@ -834,7 +834,14 @@ public class Gpu implements Runnable {
           if(isTextured) {
             final int texelX = interpolateCoords(w0, w1, w2, tu0, tu1, tu2, area);
             final int texelY = interpolateCoords(w0, w1, w2, tv0, tv1, tv2, area);
-            int texel = this.getTexel(texelX, texelY, clutX, clutY, textureBaseX, textureBaseY, bpp);
+
+            int texel;
+            if(texture != null) {
+              texel = texture.getTexel(clutY, texelX, texelY);
+            } else {
+              texel = this.getTexel(texelX, texelY, clutX, clutY, textureBaseX, textureBaseY, bpp);
+            }
+
             if(texel == 0) {
               w0 += A12;
               w1 += A20;

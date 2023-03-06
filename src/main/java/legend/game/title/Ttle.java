@@ -7,6 +7,8 @@ import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.RECT;
+import legend.core.gpu.Rect4i;
+import legend.core.gpu.VramTexture;
 import legend.core.gte.DVECTOR;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.GsDOBJ2;
@@ -18,11 +20,10 @@ import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
-import legend.core.memory.types.ByteRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.ShortRef;
-import legend.core.memory.types.UnsignedIntRef;
+import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.core.opengl.Window;
 import legend.game.SaveManager;
@@ -43,6 +44,9 @@ import java.util.List;
 import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
+import static legend.core.gpu.VramTextureLoader.fromTim;
+import static legend.core.gpu.VramTextureLoader.stitchHorizontal;
+import static legend.core.gpu.VramTextureLoader.stitchVertical;
 import static legend.game.SItem.levelStuff_80111cfc;
 import static legend.game.SItem.magicStuff_80111d20;
 import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
@@ -51,7 +55,6 @@ import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
-import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static legend.game.Scus94491BpeSegment.playSound;
 import static legend.game.Scus94491BpeSegment.renderMcq;
@@ -73,7 +76,6 @@ import static legend.game.Scus94491BpeSegment_8003.GsSetRefView2;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
 import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
-import static legend.game.Scus94491BpeSegment_8003.StoreImage;
 import static legend.game.Scus94491BpeSegment_8003.bzero;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
@@ -99,7 +101,7 @@ public final class Ttle {
   private Ttle() { }
 
   public static TmdRenderingStruct _800c66d0;
-  public static final ArrayRef<UnsignedIntRef> _800c66d4 = MEMORY.ref(4, 0x800c66d4L, ArrayRef.of(UnsignedIntRef.class, 4, 4, UnsignedIntRef::new));
+  public static final FireAnimationData20[] fireAnimation_800c66d4 = new FireAnimationData20[4];
   public static int hasSavedGames;
   public static int menuLoadingStage;
   public static int logoFadeInAmount;
@@ -121,8 +123,6 @@ public final class Ttle {
   public static int _800c6738;
   public static final int[] configColours = {0, 0, 0, 0, 0, 0};
 
-  public static final long[] vramData = {0, 0, 0};
-
   public static int _800c6754;
   public static int flamesZ;
 
@@ -133,19 +133,23 @@ public final class Ttle {
   public static int selectedMenuOption;
   public static int selectedConfigCategory;
 
+  private static VramTexture backgroundTexture;
+  private static VramTexture logoTexture;
+  private static VramTexture menuTextTexture;
+  private static VramTexture tmTexture;
+  private static VramTexture copyrightTexture;
+  private static VramTexture fireTexture;
+
   // This is all data stored in the overlay rom
   public static final ArrayRef<Pointer<ArrayRef<IntRef>>> characterXpPtrs_800ce6d8 = MEMORY.ref(4, 0x800ce6d8L, ArrayRef.of(Pointer.classFor(ArrayRef.classFor(IntRef.class)), 9, 4, Pointer.deferred(4, ArrayRef.of(IntRef.class, 61, 4, IntRef::new))));
   public static final ArrayRef<ArrayRef<UnsignedShortRef>> startingEquipment_800ce6fc = MEMORY.ref(2, 0x800ce6fcL, ArrayRef.of(ArrayRef.classFor(UnsignedShortRef.class), 9, 0xa, ArrayRef.of(UnsignedShortRef.class, 5, 2, UnsignedShortRef::new)));
   public static final ArrayRef<ShortRef> startingAddition_800ce758 = MEMORY.ref(2, 0x800ce758L, ArrayRef.of(ShortRef.class, 9, 2, ShortRef::new));
   public static final ArrayRef<UnsignedShortRef> startingItems_800ce76c = MEMORY.ref(2, 0x800ce76cL, ArrayRef.of(UnsignedShortRef.class, 9, 2, UnsignedShortRef::new));
-  public static final ArrayRef<RECT> rectArray_800ce798 = MEMORY.ref(2, 0x800ce798L, ArrayRef.of(RECT.class, 3, 8, RECT::new));
-  public static final ArrayRef<ByteRef> _800ce7b0 = MEMORY.ref(1, 0x800ce7b0L, ArrayRef.of(ByteRef.class, 4, 1, ByteRef::new));
+
+  public static final ArrayRef<UnsignedByteRef> _800ce7b0 = MEMORY.ref(1, 0x800ce7b0L, ArrayRef.of(UnsignedByteRef.class, 4, 1, UnsignedByteRef::new));
   public static final Value _800ce7f8 = MEMORY.ref(1, 0x800ce7f8L);
   public static final Value _800ce840 = MEMORY.ref(1, 0x800ce840L);
   public static final Value _800ce8ac = MEMORY.ref(2, 0x800ce8acL);
-  public static final ArrayRef<UnsignedIntRef> _800ce8f4 = MEMORY.ref(4, 0x800ce8f4L, ArrayRef.of(UnsignedIntRef.class, 8, 4, UnsignedIntRef::new));
-  public static final Value _800ce914 = MEMORY.ref(2, 0x800ce914L);
-  public static final Value _800ce91c = MEMORY.ref(2, 0x800ce91cL);
 
   private static Window.Events.Cursor onMouseMove;
   private static Window.Events.Click onMouseRelease;
@@ -346,14 +350,6 @@ public final class Ttle {
     selectedMenuOption = 0;
     selectedConfigCategory = 0;
 
-    //LAB_800c7888
-    for(int i = 0; i < 3; i++) {
-      //LAB_800c78a4
-      vramData[i] = mallocTail(rectArray_800ce798.get(i).w.get() * rectArray_800ce798.get(i).h.get() * 2L);
-      StoreImage(rectArray_800ce798.get(i), vramData[i]);
-    }
-
-    //LAB_800c7978
     setWidthAndFlags(384);
     setProjectionPlaneDistance(320);
     GsRVIEW2_800c6760.viewpoint_00.set(0, 0, 2000);
@@ -371,8 +367,8 @@ public final class Ttle {
     //LAB_800c7d30
     for(int i = 0; i < 4; i++) {
       //LAB_800c7d4c
-      final RECT rect = new RECT((short)(944 + i * 16), (short)256, (short)64, (short)64);
-      _800c66d4.get(i).set(FUN_800cdaa0(rect, 0, 0x1L, _800ce7b0.get(i).getUnsigned()));
+      final Rect4i rect = new Rect4i(944 + i * 16, 0, 64, 64);
+      fireAnimation_800c66d4[i] = FUN_800cdaa0(rect, 0, 1, _800ce7b0.get(i).get());
     }
 
     scriptStartEffect(2, 15);
@@ -386,7 +382,7 @@ public final class Ttle {
    * Loads the MRG file @ sector 61510. All files are TIMs.
    * <ol start="0">
    *   <li>Menu background (upper portion)</li>
-   *   <li>Logo fire 1</li>
+   *   <li>Menu background (lower portion)</li>
    *   <li>Logo</li>
    *   <li>Menu text</li>
    *   <li>TM</li>
@@ -395,16 +391,31 @@ public final class Ttle {
    *   <li>Logo fire 2</li>
    *   <li>Logo fire 3 (same as 4)</li>
    *   <li>Logo fire 4 (same as 3)</li>
-   *   <li>Menu background (lower portion)</li>
+   *   <li>Logo fire 1</li>
    * </ol>
    */
   @Method(0x800c7af0L)
   public static void menuTexturesMrgLoaded(final List<FileData> files) {
-    for(final FileData data : files) {
-      if(data.real()) {
-        new Tim(data).uploadToGpu();
-      }
-    }
+    backgroundTexture = stitchVertical(
+      fromTim(new Tim(files.get(0))),
+      fromTim(new Tim(files.get(1)))
+    );
+
+    logoTexture = fromTim(new Tim(files.get(2)));
+    menuTextTexture = fromTim(new Tim(files.get(3)));
+    tmTexture = fromTim(new Tim(files.get(4)));
+
+    copyrightTexture = stitchHorizontal(
+      fromTim(new Tim(files.get(5))),
+      fromTim(new Tim(files.get(6)))
+    );
+
+    fireTexture = stitchHorizontal(
+      fromTim(new Tim(files.get(10))),
+      fromTim(new Tim(files.get(7))),
+      fromTim(new Tim(files.get(8))),
+      fromTim(new Tim(files.get(9)))
+    );
   }
 
   @Method(0x800c7c18L)
@@ -433,7 +444,6 @@ public final class Ttle {
     _800c6754++;
     if(_800c6754 >= 16) {
       removeInputHandlers();
-      restoreVram();
       deallocateFire();
 
       fmvIndex_800bf0dc.setu(0x2L);
@@ -459,7 +469,6 @@ public final class Ttle {
       if(_800c6728 == 2) {
         whichMenu_800bdc38 = WhichMenu.INIT_LOAD_GAME_MENU_11;
         removeInputHandlers();
-        restoreVram();
         deallocateFire();
         _800c6728 = 3;
       }
@@ -520,7 +529,6 @@ public final class Ttle {
     _800c6754++;
     if(_800c6754 > 15) {
       removeInputHandlers();
-      restoreVram();
       deallocateFire();
 
       fmvIndex_800bf0dc.setu(0);
@@ -899,6 +907,7 @@ public final class Ttle {
 
       //LAB_800c8a8c
       GPU.queueCommand(100, new GpuCommandPoly(4)
+        .texture(menuTextTexture)
         .bpp(Bpp.BITS_4)
         .translucent(Translucency.B_PLUS_F)
         .monochrome(colour)
@@ -910,20 +919,19 @@ public final class Ttle {
         .uv(2, 0, (int)_800ce7f8.offset(i * 2 * 4).get() + 16)
         .pos(3, x + (int)_800ce7f8.offset(2, (i * 2 + 1) * 4).get(), y + 16)
         .uv(3, (int)_800ce7f8.offset((i * 2 + 1) * 4).get(), (int)_800ce7f8.offset(i * 2 * 4).get() + 16)
-        .clut(640, selectedMenuOption == i ? 5 : 2)
-        .vramPos(576, 0)
+        .clut(0, selectedMenuOption == i ? 5 : 2)
       );
 
       GPU.queueCommand(100, new GpuCommandPoly(4)
+        .texture(menuTextTexture)
         .bpp(Bpp.BITS_4)
         .translucent(Translucency.B_PLUS_F)
         .monochrome(colour)
         .pos(0, x - 8, y - 8)
         .uv(0, (int)_800ce840.offset(i * 3 * 4).get(), (int)_800ce840.offset((i * 3 + 1) * 4).get())
-        .clut(640, 4)
+        .clut(0, 4)
         .pos(1, x - 8 + (int)_800ce840.offset((i * 3 + 2) * 4).get(), y - 8)
         .uv(1, (int)(_800ce840.offset(i * 3 * 4).get() + _800ce840.offset((i * 3 + 2) * 4).get()), (int)_800ce840.offset((i * 3 + 1) * 4).get())
-        .vramPos(576, 0)
         .pos(2, x - 8, y + 23)
         .uv(2, (int)_800ce840.offset(i * 3 * 4).get(), (int)_800ce840.offset((i * 3 + 1) * 4).get() + 32)
         .pos(3, x - 8 + (int)_800ce840.offset((i * 3 + 2) * 4).get(), y + 23)
@@ -1088,11 +1096,11 @@ public final class Ttle {
     //LAB_800c9b70
     for(int i = 0; i < 6; i++) {
       GPU.queueCommand(100, new GpuCommandPoly(4)
+        .texture(menuTextTexture)
         .bpp(Bpp.BITS_4)
         .translucent(Translucency.B_PLUS_F)
         .monochrome(configColours[i])
-        .clut(640, selectedConfigCategory == i ? 5 : 2)
-        .vramPos(576, 0)
+        .clut(0, selectedConfigCategory == i ? 5 : 2)
         .pos(0, (int)_800ce8ac.offset((i + 3) * 8).getSigned(), (int)_800ce8ac.offset(((i + 3) * 2 + 1) * 4).getSigned())
         .uv(0, 0, (int)_800ce7f8.offset((i + 3) * 8).get())
         .pos(1, (int)(_800ce8ac.offset((i + 3) * 8).getSigned() + _800ce7f8.offset(((i + 3) * 2 + 1) * 4).get()), (int)_800ce8ac.offset(((i + 3) * 2 + 1) * 4).getSigned())
@@ -1110,11 +1118,11 @@ public final class Ttle {
       sp18 = i * 3;
 
       GPU.queueCommand(100, new GpuCommandPoly(4)
+        .texture(menuTextTexture)
         .bpp(Bpp.BITS_4)
         .translucent(Translucency.B_PLUS_F)
         .monochrome(configColours[sp18])
-        .clut(640, 4)
-        .vramPos(576, 0)
+        .clut(0, 4)
         .pos(0, (int)_800ce8ac.offset((sp18 + 3) * 8).getSigned() - 8, (int)_800ce8ac.offset(((sp18 + 3) * 2 + 1) * 4).getSigned() - 9)
         .uv(0, (int)_800ce840.offset((sp18 + 3) * 3 * 4).get(), (int)_800ce840.offset(((sp18 + 3) * 3 + 1) * 4).get())
         .pos(1, (int)(_800ce8ac.offset((sp18 + 3) * 8).getSigned() + _800ce840.offset(((sp18 + 3) * 3 + 2) * 4).get() - 8), (int)_800ce8ac.offset(((sp18 + 3) * 2 + 1) * 4).getSigned() - 9)
@@ -1155,11 +1163,11 @@ public final class Ttle {
 
       //LAB_800ca62c
       GPU.queueCommand(100, new GpuCommandPoly(4)
+        .texture(menuTextTexture)
         .bpp(Bpp.BITS_4)
         .translucent(Translucency.B_PLUS_F)
         .monochrome(configColours[sp1c])
-        .clut(640, 4)
-        .vramPos(576, 0)
+        .clut(0, 4)
         .pos(0, (int)_800ce8ac.offset(sp14 * 8).getSigned() - 8, (int)_800ce8ac.offset((sp14 * 2 + 1) * 4).getSigned() - 9)
         .uv(0, (int)_800ce840.offset(sp14 * 3 * 4).get(), (int)_800ce840.offset((sp14 * 3 + 1) * 4).get())
         .pos(1, (int)(_800ce8ac.offset(sp14 * 8).getSigned() + _800ce840.offset((sp14 * 3 + 2) * 4).get() - 8), (int)_800ce8ac.offset((sp14 * 2 + 1) * 4).getSigned() - 9)
@@ -1190,21 +1198,19 @@ public final class Ttle {
 
     //LAB_800cabb8
     //LAB_800cabcc
-    for(int sp44 = 0; sp44 < 2; sp44++) {
-      //LAB_800cabe8
-      renderQuad(
-        Bpp.BITS_4,
-        896, 0,
-        0x1028,
-        copyrightFadeInAmount, copyrightFadeInAmount, copyrightFadeInAmount,
-        (int)_800ce8f4.get(sp44 * 4).get(), (int)_800ce8f4.get(sp44 * 4 + 1).get(),
-        (int)_800ce8f4.get(sp44 * 4 + 2).get(), (int)_800ce8f4.get(sp44 * 4 + 3).get(),
-        (int)_800ce914.offset(4, sp44 * 4).get(), 80,
-        (int)_800ce8f4.get(sp44 * 4 + 2).get(), (int)_800ce8f4.get(sp44 * 4 + 3).get(),
-        100,
-        Translucency.B_PLUS_F
-      );
-    }
+    //LAB_800cabe8
+    renderQuad(
+      copyrightTexture,
+      Bpp.BITS_4,
+      64,
+      copyrightFadeInAmount, copyrightFadeInAmount, copyrightFadeInAmount,
+      0, 0,
+      368, 32,
+      -188, 80,
+      368, 32,
+      100,
+      Translucency.B_PLUS_F
+    );
   }
 
   @Method(0x800cadd0L)
@@ -1216,28 +1222,26 @@ public final class Ttle {
 
     //LAB_800cae18
     //LAB_800cae2c
-    for(int i = 0; i < 2; i++) {
-      //LAB_800cae48
-      renderQuad(
-        Bpp.BITS_4,
-        576 + i * 64, 256,
-        0x68,
-        logoFadeInAmount, logoFadeInAmount, logoFadeInAmount,
-        0, 0,
-        (int)_800ce91c.offset(i * 2).get(), 88,
-        i * 255 - 184, -80,
-        (int)_800ce91c.offset(i * 2).get(), 88,
-        orderingTableSize_1f8003c8.get() - 4,
-        Translucency.B_PLUS_F
-      );
-    }
+    //LAB_800cae48
+    renderQuad(
+      logoTexture,
+      Bpp.BITS_4,
+      1,
+      logoFadeInAmount, logoFadeInAmount, logoFadeInAmount,
+      0, 0,
+      352, 88,
+      -184, -80,
+      352, 88,
+      orderingTableSize_1f8003c8.get() - 4,
+      Translucency.B_PLUS_F
+    );
 
     renderQuad(
+      tmTexture,
       Bpp.BITS_4,
-      896, 0,
-      0x1428,
+      80,
       logoFadeInAmount, logoFadeInAmount, logoFadeInAmount,
-      0, 240,
+      0, 0,
       16, 8,
       134, -14,
       16, 8,
@@ -1263,9 +1267,9 @@ public final class Ttle {
     //LAB_800cb0ec
     //LAB_800cb100
     renderQuad(
+      backgroundTexture,
       Bpp.BITS_8,
-      384, 0,
-      0x28,
+      0,
       backgroundFadeInAmount, backgroundFadeInAmount, backgroundFadeInAmount,
       0, 0,
       384, 424,
@@ -1284,11 +1288,12 @@ public final class Ttle {
     //LAB_800cb3b0
   }
 
-  /** TODO clut split */
   @Method(0x800cb4c4L)
-  public static void renderQuad(final Bpp bpp, final int vramX, final int vramY, final int clut, final int r, final int g, final int b, final int u, final int v, final int tw, final int th, final int x, final int y, final int w, final int h, final int z, @Nullable final Translucency translucency) {
+  public static void renderQuad(@Nullable VramTexture texture, final Bpp bpp, final int clutY, final int r, final int g, final int b, final int u, final int v, final int tw, final int th, final int x, final int y, final int w, final int h, final int z, @Nullable final Translucency translucency) {
     final GpuCommandPoly cmd = new GpuCommandPoly(4)
+      .texture(texture)
       .bpp(bpp)
+      .clut(0, clutY)
       .rgb(r, g, b)
       .pos(0, x, y)
       .pos(1, x + w, y)
@@ -1297,9 +1302,7 @@ public final class Ttle {
       .uv(0, u, v)
       .uv(1, u + tw, v)
       .uv(2, u, v + th)
-      .uv(3, u + tw, v + th)
-      .clut((clut & 0b111111) * 16, clut >>> 6)
-      .vramPos(vramX, vramY);
+      .uv(3, u + tw, v + th);
 
     if(translucency != null) {
       cmd.translucent(translucency);
@@ -1308,29 +1311,13 @@ public final class Ttle {
     GPU.queueCommand(z, cmd);
   }
 
-  @Method(0x800cb5c4L)
-  public static void restoreVram() {
-    //LAB_800cb5d8
-    for(int i = 0; i < 3; i++) {
-      //LAB_800cb5f4
-      LoadImage(rectArray_800ce798.get(i), vramData[i]);
-      free(vramData[i]);
-    }
-
-    //LAB_800cb688
-  }
-
   @Method(0x800cb69cL)
   public static void deallocateFire() {
     _800c66d0 = null;
 
-    //LAB_800cb6bc
     for(int i = 0; i < 4; i++) {
-      //LAB_800cb6d8
-      FUN_800ce448(_800c66d4.get(i).get());
+      fireAnimation_800c66d4[i] = null;
     }
-
-    //LAB_800cb714
   }
 
   @Method(0x800cb728L)
@@ -1366,14 +1353,14 @@ public final class Ttle {
       GsSetLightMatrix(sp10);
       ScaleMatrixL(sp30, scale);
       setRotTransMatrix(sp30);
-      FUN_800cc388(dobj2s[i]);
+      renderTmd(dobj2s[i], fireTexture);
     }
 
     //LAB_800cb904
     //LAB_800cb908
     for(int i = 0; i < 4; i++) {
       //LAB_800cb924
-      animateFire(_800c66d4.get(i).get());
+      animateFire(fireAnimation_800c66d4[i]);
     }
 
     //LAB_800cb960
@@ -1485,7 +1472,7 @@ public final class Ttle {
   }
 
   @Method(0x800cc388L)
-  public static void FUN_800cc388(final GsDOBJ2 dobj2) {
+  public static void renderTmd(final GsDOBJ2 dobj2, final VramTexture texture) {
     final SVECTOR[] vertices = dobj2.tmd_08.vert_top_00;
 
     //LAB_800cc408
@@ -1493,18 +1480,19 @@ public final class Ttle {
       final int command = primitive.header() & 0xff04_0000;
 
       if(command == 0x3700_0000) {
-        FUN_800cc57c(primitive, vertices);
+        renderPrimitive37(primitive, vertices, texture);
       } else if(command == 0x3f00_0000) {
-        FUN_800ccb78(primitive, vertices);
+        renderPrimitive3f(primitive, vertices, texture);
       }
     }
   }
 
   @Method(0x800cc57cL)
-  public static void FUN_800cc57c(final TmdObjTable1c.Primitive primitive, final SVECTOR[] vertices) {
+  public static void renderPrimitive37(final TmdObjTable1c.Primitive primitive, final SVECTOR[] vertices, final VramTexture texture) {
     //LAB_800cc5b0
     for(final byte[] data : primitive.data()) {
       final GpuCommandPoly cmd = new GpuCommandPoly(3)
+        .texture(texture)
         .translucent(Translucency.of(IoHelper.readUShort(data, 0x6) >>> 5 & 0x3));
 
       //LAB_800cc5c8
@@ -1571,10 +1559,11 @@ public final class Ttle {
   }
 
   @Method(0x800ccb78L)
-  public static void FUN_800ccb78(final TmdObjTable1c.Primitive primitive, final SVECTOR[] vertices) {
+  public static void renderPrimitive3f(final TmdObjTable1c.Primitive primitive, final SVECTOR[] vertices, final VramTexture texture) {
     //LAB_800ccbcc
     for(final byte[] data : primitive.data()) {
       final GpuCommandPoly cmd = new GpuCommandPoly(4)
+        .texture(texture)
         .translucent(Translucency.of(IoHelper.readUShort(data, 0x6) >>> 5 & 0x3));
 
       //LAB_800ccbe4
@@ -1647,144 +1636,79 @@ public final class Ttle {
   }
 
   @Method(0x800cdaa0L)
-  public static long FUN_800cdaa0(final RECT rect, final long widthSomething, final long a2, final long a3) {
-    final long addr0 = mallocTail(0x20L);
-    final long addr1 = mallocTail(rect.w.get() / (2 - widthSomething) * rect.h.get());
-    final long addr2 = mallocTail(rect.w.get() / (2 - widthSomething) * rect.h.get());
+  public static FireAnimationData20 FUN_800cdaa0(final Rect4i rect, final int widthSomething, final int a2, final int a3) {
+    final int[] addr1 = new int[rect.w() / (2 - widthSomething) * rect.h()];
+    final int[] addr2 = new int[rect.w() / (2 - widthSomething) * rect.h()];
 
-    MEMORY.ref(2, addr0).offset(0x00L).setu(rect.x.get());
-    MEMORY.ref(2, addr0).offset(0x02L).setu(rect.y.get());
-    MEMORY.ref(2, addr0).offset(0x04L).setu(rect.w.get() / (4 - widthSomething * 2));
-    MEMORY.ref(2, addr0).offset(0x06L).setu(rect.h.get());
-    MEMORY.ref(4, addr0).offset(0x08L).setu(addr1);
-    MEMORY.ref(4, addr0).offset(0x0cL).setu(addr2);
-    MEMORY.ref(4, addr0).offset(0x10L).setu(a2);
-    MEMORY.ref(4, addr0).offset(0x14L).setu(widthSomething);
-    MEMORY.ref(2, addr0).offset(0x18L).setu(a3);
-    MEMORY.ref(2, addr0).offset(0x1aL).setu(a2 / 2 * 2);
-    MEMORY.ref(2, addr0).offset(0x1cL).setu(a2 / 2 * 2);
-    return addr0;
+    return new FireAnimationData20(
+      new Rect4i(rect.x(), rect.y(), rect.w() / (4 - widthSomething * 2), rect.h()),
+      addr1, addr2,
+      a2, widthSomething,
+      a3, a2 / 2 * 2, a2 / 2 * 2
+    );
   }
 
   @Method(0x800cdcb0L)
-  public static void animateFire(final long a0) {
-    final long a1;
-    final long v1;
-    final RECT sp10 = new RECT();
-    final RECT sp18 = new RECT();
-    final RECT sp20 = new RECT();
-    final RECT sp28 = new RECT();
-
-    if(MEMORY.ref(2, a0).offset(0x18L).get() == 0) {
+  public static void animateFire(final FireAnimationData20 fireAnimation) {
+    if(fireAnimation._18 == 0) {
       return;
     }
 
     //LAB_800cdce0
-    MEMORY.ref(2, a0).offset(0x1cL).addu(0x1L);
-    if(MEMORY.ref(2, a0).offset(0x1cL).get() < MEMORY.ref(2, a0).offset(0x1aL).get()) {
+    fireAnimation._1c++;
+    if(fireAnimation._1c < fireAnimation._1a) {
       return;
     }
 
     //LAB_800cdd28
-    MEMORY.ref(2, a0).offset(0x1cL).setu(0);
-    if(MEMORY.ref(4, a0).offset(0x10L).get(0x1L) == 0) {
-      v1 = MEMORY.ref(2, a0).offset(0x18L).get();
-      a1 = MEMORY.ref(2, a0).offset(0x4L).get();
-      MEMORY.ref(2, a0).offset(0x18L).setu(v1 % a1);
-      if(MEMORY.ref(2, a0).offset(0x18L).getSigned() > 0) {
-        sp10.x.set((short)(MEMORY.ref(2, a0).get() + MEMORY.ref(2, a0).offset(0x4L).get() - MEMORY.ref(2, a0).offset(0x18L).get()));
-        sp10.y.set((short)MEMORY.ref(2, a0).offset(0x2L).get());
-        sp10.w.set((short)MEMORY.ref(2, a0).offset(0x18L).get());
-        sp10.h.set((short)MEMORY.ref(2, a0).offset(0x6L).get());
-        sp18.x.set((short)MEMORY.ref(2, a0).get());
-        sp18.y.set((short)MEMORY.ref(2, a0).offset(0x2L).get());
-        sp18.w.set((short)(MEMORY.ref(2, a0).offset(0x4L).get() - MEMORY.ref(2, a0).offset(0x18L).get()));
-        sp18.h.set((short)MEMORY.ref(2, a0).offset(0x6L).get());
-        sp20.x.set((short)MEMORY.ref(2, a0).get());
-        sp20.y.set((short)MEMORY.ref(2, a0).offset(0x2L).get());
-        sp20.w.set((short)MEMORY.ref(2, a0).offset(0x18L).get());
-        sp20.h.set((short)MEMORY.ref(2, a0).offset(0x6L).get());
-        sp28.x.set((short)(MEMORY.ref(2, a0).get() + MEMORY.ref(2, a0).offset(0x18L).get()));
-        sp28.y.set((short)MEMORY.ref(2, a0).offset(0x2L).get());
-        sp28.w.set((short)(MEMORY.ref(2, a0).offset(0x4L).get() - MEMORY.ref(2, a0).offset(0x18L).get()));
-        sp28.h.set((short)MEMORY.ref(2, a0).offset(0x6L).get());
+    final Rect4i sp10;
+    final Rect4i sp18;
+    final Rect4i sp20;
+    final Rect4i sp28;
+
+    fireAnimation._1c = 0;
+    if((fireAnimation._10 & 0x1) == 0) {
+      final int v1 = fireAnimation._18;
+      final int w = fireAnimation.rect_00.w();
+      fireAnimation._18 = v1 % w;
+
+      if(fireAnimation._18 > 0) {
+        sp10 = new Rect4i(fireAnimation.rect_00.x() + w - fireAnimation._18, fireAnimation.rect_00.y(), fireAnimation._18, fireAnimation.rect_00.h());
+        sp18 = new Rect4i(fireAnimation.rect_00.x(), fireAnimation.rect_00.y(), w - fireAnimation._18, fireAnimation.rect_00.h());
+        sp20 = new Rect4i(fireAnimation.rect_00.x(), fireAnimation.rect_00.y(), fireAnimation._18, fireAnimation.rect_00.h());
+        sp28 = new Rect4i(fireAnimation.rect_00.x() + fireAnimation._18, fireAnimation.rect_00.y(), w - fireAnimation._18, fireAnimation.rect_00.h());
       } else {
         //LAB_800cdf14
-        sp10.x.set((short)MEMORY.ref(2, a0).get());
-        sp10.y.set((short)MEMORY.ref(2, a0).offset(0x2L).get());
-        sp10.w.set((short)-MEMORY.ref(2, a0).offset(0x18L).get());
-        sp10.h.set((short)MEMORY.ref(2, a0).offset(0x6L).get());
-        sp18.x.set((short)(MEMORY.ref(2, a0).get() - MEMORY.ref(2, a0).offset(0x18L).get()));
-        sp18.y.set((short)MEMORY.ref(2, a0).offset(0x2L).get());
-        sp18.w.set((short)(MEMORY.ref(2, a0).offset(0x4L).get() + MEMORY.ref(2, a0).offset(0x18L).get()));
-        sp18.h.set((short)MEMORY.ref(2, a0).offset(0x6L).get());
-        sp20.x.set((short)(MEMORY.ref(2, a0).get() + MEMORY.ref(2, a0).offset(0x4L).get() + MEMORY.ref(2, a0).offset(0x18L).get()));
-        sp20.y.set((short)MEMORY.ref(2, a0).offset(0x2L).get());
-        sp20.w.set((short)-MEMORY.ref(2, a0).offset(0x18L).get());
-        sp20.h.set((short)MEMORY.ref(2, a0).offset(0x6L).get());
-        sp28.x.set((short)MEMORY.ref(2, a0).get());
-        sp28.y.set((short)MEMORY.ref(2, a0).offset(0x2L).get());
-        sp28.w.set((short)(MEMORY.ref(2, a0).offset(0x4L).get() + MEMORY.ref(2, a0).offset(0x18L).get()));
-        sp28.h.set((short)MEMORY.ref(2, a0).offset(0x6L).get());
+        sp10 = new Rect4i(fireAnimation.rect_00.x(), fireAnimation.rect_00.y(), -fireAnimation._18, fireAnimation.rect_00.h());
+        sp18 = new Rect4i(fireAnimation.rect_00.x() - fireAnimation._18, fireAnimation.rect_00.y(), w + fireAnimation._18, fireAnimation.rect_00.h());
+        sp20 = new Rect4i(fireAnimation.rect_00.x() + w + fireAnimation._18, fireAnimation.rect_00.y(), -fireAnimation._18, fireAnimation.rect_00.h());
+        sp28 = new Rect4i(fireAnimation.rect_00.x(), fireAnimation.rect_00.y(), w + fireAnimation._18, fireAnimation.rect_00.h());
       }
 
       //LAB_800ce090
     } else {
       //LAB_800ce098
-      v1 = MEMORY.ref(2, a0).offset(0x18L).get();
-      a1 = MEMORY.ref(2, a0).offset(0x6L).get();
-      MEMORY.ref(2, a0).offset(0x18L).setu(v1 % a1);
-      if((int)MEMORY.ref(2, a0).offset(0x18L).get() > 0) {
-        sp10.x.set((short)MEMORY.ref(2, a0).get());
-        sp10.y.set((short)(MEMORY.ref(2, a0).offset(0x2L).get() + MEMORY.ref(2, a0).offset(0x6L).get() - MEMORY.ref(2, a0).offset(0x18L).get()));
-        sp10.w.set((short)MEMORY.ref(2, a0).offset(0x4L).get());
-        sp10.h.set((short)MEMORY.ref(2, a0).offset(0x18L).get());
-        sp18.x.set((short)MEMORY.ref(2, a0).get());
-        sp18.y.set((short)MEMORY.ref(2, a0).offset(0x2L).get());
-        sp18.w.set((short)MEMORY.ref(2, a0).offset(0x4L).get());
-        sp18.h.set((short)(MEMORY.ref(2, a0).offset(0x6L).get() - MEMORY.ref(2, a0).offset(0x18L).get()));
-        sp20.x.set((short)MEMORY.ref(2, a0).get());
-        sp20.y.set((short)MEMORY.ref(2, a0).offset(0x2L).get());
-        sp20.w.set((short)MEMORY.ref(2, a0).offset(0x4L).get());
-        sp20.h.set((short)MEMORY.ref(2, a0).offset(0x18L).get());
-        sp28.x.set((short)MEMORY.ref(2, a0).get());
-        sp28.y.set((short)(MEMORY.ref(2, a0).offset(0x2L).get() + MEMORY.ref(2, a0).offset(0x18L).get()));
-        sp28.w.set((short)MEMORY.ref(2, a0).offset(0x4L).get());
-        sp28.h.set((short)(MEMORY.ref(2, a0).offset(0x6L).get() - MEMORY.ref(2, a0).offset(0x18L).get()));
+      final int v1 = fireAnimation._18;
+      final int h = fireAnimation.rect_00.h();
+      fireAnimation._18 = v1 % h;
+      if(fireAnimation._18 > 0) {
+        sp10 = new Rect4i(fireAnimation.rect_00.x(), fireAnimation.rect_00.y() + h - fireAnimation._18, fireAnimation.rect_00.w(), fireAnimation._18);
+        sp18 = new Rect4i(fireAnimation.rect_00.x(), fireAnimation.rect_00.y(), fireAnimation.rect_00.w(), h - fireAnimation._18);
+        sp20 = new Rect4i(fireAnimation.rect_00.x(), fireAnimation.rect_00.y(), fireAnimation.rect_00.w(), fireAnimation._18);
+        sp28 = new Rect4i(fireAnimation.rect_00.x(), fireAnimation.rect_00.y() + fireAnimation._18, fireAnimation.rect_00.w(), h - fireAnimation._18);
       } else {
         //LAB_800ce25c
-        sp10.x.set((short)MEMORY.ref(2, a0).get());
-        sp10.y.set((short)MEMORY.ref(2, a0).offset(0x2L).get());
-        sp10.w.set((short)MEMORY.ref(2, a0).offset(0x4L).get());
-        sp10.h.set((short)-MEMORY.ref(2, a0).offset(0x18L).get());
-        sp18.x.set((short)MEMORY.ref(2, a0).get());
-        sp18.y.set((short)(MEMORY.ref(2, a0).offset(0x2L).get() - MEMORY.ref(2, a0).offset(0x18L).get()));
-        sp18.w.set((short)MEMORY.ref(2, a0).offset(0x4L).get());
-        sp18.h.set((short)(MEMORY.ref(2, a0).offset(0x6L).get() + MEMORY.ref(2, a0).offset(0x18L).get()));
-        sp20.x.set((short)MEMORY.ref(2, a0).get());
-        sp20.y.set((short)(MEMORY.ref(2, a0).offset(0x2L).get() + MEMORY.ref(2, a0).offset(0x6L).get() + MEMORY.ref(2, a0).offset(0x18L).get()));
-        sp20.w.set((short)MEMORY.ref(2, a0).offset(0x4L).get());
-        sp20.h.set((short)-MEMORY.ref(2, a0).offset(0x18L).get());
-        sp28.x.set((short)MEMORY.ref(2, a0).get());
-        sp28.y.set((short)MEMORY.ref(2, a0).offset(0x2L).get());
-        sp28.w.set((short)MEMORY.ref(2, a0).offset(0x4L).get());
-        sp28.h.set((short)(MEMORY.ref(2, a0).offset(0x6L).get() + MEMORY.ref(2, a0).offset(0x18L).get()));
+        sp10 = new Rect4i(fireAnimation.rect_00.x(), fireAnimation.rect_00.y(), fireAnimation.rect_00.w(), -fireAnimation._18);
+        sp18 = new Rect4i(fireAnimation.rect_00.x(), fireAnimation.rect_00.y() - fireAnimation._18, fireAnimation.rect_00.w(), fireAnimation.rect_00.h() + fireAnimation._18);
+        sp20 = new Rect4i(fireAnimation.rect_00.x(), fireAnimation.rect_00.y() + fireAnimation.rect_00.h() + fireAnimation._18, fireAnimation.rect_00.w(), -fireAnimation._18);
+        sp28 = new Rect4i(fireAnimation.rect_00.x(), fireAnimation.rect_00.y(), fireAnimation.rect_00.w(), fireAnimation.rect_00.h() + fireAnimation._18);
       }
     }
 
     //LAB_800ce3d8
-    StoreImage(sp10, MEMORY.ref(4, a0).offset(0xcL).get());
-    StoreImage(sp18, MEMORY.ref(4, a0).offset(0x8L).get());
-    LoadImage(sp20, MEMORY.ref(4, a0).offset(0xcL).get());
-    LoadImage(sp28, MEMORY.ref(4, a0).offset(0x8L).get());
-
-    //LAB_800ce434
-  }
-
-  @Method(0x800ce448L)
-  public static void FUN_800ce448(final long a0) {
-    free(MEMORY.ref(4, a0).offset(0xcL).get());
-    free(MEMORY.ref(4, a0).offset(0x8L).get());
-    free(a0);
+    fireTexture.getRegion(0, sp10, fireAnimation.pixels_0c);
+    fireTexture.getRegion(0, sp18, fireAnimation.pixels_08);
+    fireTexture.setRegion(0, sp20, fireAnimation.pixels_0c);
+    fireTexture.setRegion(0, sp28, fireAnimation.pixels_08);
   }
 }
