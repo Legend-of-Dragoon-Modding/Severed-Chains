@@ -170,7 +170,7 @@ public final class InputControllerAssigner {
     try {
       Config.save();
     } catch(final IOException e) {
-      LOGGER.warn(INPUT_MARKER,"Failed to save config");
+      LOGGER.warn(INPUT_MARKER, "Failed to save config");
     }
 
   }
