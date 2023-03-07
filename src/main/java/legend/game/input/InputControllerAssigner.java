@@ -141,7 +141,7 @@ public final class InputControllerAssigner {
     }
 
     if(idleControllers.isEmpty()) {
-      LOGGER.info(INPUT_MARKER,"No more controllers detected. Continuing with the %d assigned controllers ",assignedControllers.size());
+      LOGGER.info(INPUT_MARKER, "No more controllers detected. Continuing with the %d assigned controllers ", assignedControllers.size());
       isAssigningControllersBool = false;
       Input.refreshControllers();
     }
