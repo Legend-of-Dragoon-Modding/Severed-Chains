@@ -79,7 +79,7 @@ public class InputControllerData {
     try {
       return this.axis.get(glfwCode);
     } catch(final IndexOutOfBoundsException ex) {
-      LOGGER.error(INPUT_MARKER,"Attempting to reach out of bounds with axis using glfwcode %d", glfwCode);
+      LOGGER.error(INPUT_MARKER, "Attempting to reach out of bounds with axis using glfwcode %d", glfwCode);
       return 0;
     }
   }
