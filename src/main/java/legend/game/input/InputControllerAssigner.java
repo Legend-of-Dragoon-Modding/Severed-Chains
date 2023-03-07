@@ -116,7 +116,7 @@ public final class InputControllerAssigner {
     for(final InputControllerData controllerData : idleControllers) {
       controllerData.updateState();
       if(controllerData.hasAnyButtonActivity()) {
-        LOGGER.info(INPUT_MARKER,"Button motion detected with controller %s",controllerData.getInfoString());
+        LOGGER.info(INPUT_MARKER, "Button motion detected with controller %s", controllerData.getInfoString());
         assignedControllers.add(controllerData);
         idleControllers.remove(controllerData);
 
