@@ -66,7 +66,7 @@ public class InputControllerData {
       final byte button = this.buttons.get(glfwCode);
       return button != 0;
     } catch(final IndexOutOfBoundsException ex) {
-      LOGGER.error(INPUT_MARKER,"Attempting to reach out of bounds with button using glfwcode %d",glfwCode);
+      LOGGER.error(INPUT_MARKER, "Attempting to reach out of bounds with button using glfwcode %d", glfwCode);
       return false;
     }
 
