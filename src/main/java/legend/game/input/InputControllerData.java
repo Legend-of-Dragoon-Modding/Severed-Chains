@@ -92,7 +92,7 @@ public class InputControllerData {
       final int hat = this.hats.get(hatIndex);
       return (hat & glfwCode) != 0;
     } catch(final IndexOutOfBoundsException ex) {
-      LOGGER.error(INPUT_MARKER,"Attempting to reach out of bounds with hat index %d glfwcode %d",hatIndex,glfwCode);
+      LOGGER.error(INPUT_MARKER, "Attempting to reach out of bounds with hat index %d glfwcode %d", hatIndex, glfwCode);
       return false;
     }
   }
