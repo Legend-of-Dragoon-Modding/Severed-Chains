@@ -135,7 +135,7 @@ public final class InputControllerAssigner {
     }
 
     if(assignedControllers.size() >= desiredControllerCount) {
-      LOGGER.info(INPUT_MARKER,"Target controller count of %d reached",desiredControllerCount);
+      LOGGER.info(INPUT_MARKER, "Target controller count of %d reached", desiredControllerCount);
       isAssigningControllersBool = false;
       Input.refreshControllers();
     }
