@@ -51,7 +51,7 @@ public final class ControllerDatabase {
     for(final String mapEntry : mapInfo) {
       final String[] mapLabelAndData = mapEntry.split(":");
       if(mapLabelAndData.length > 1 && textLabel.equals(mapLabelAndData[0])) {
-        LOGGER.info(CONTROLLER_VERBOSE_MARKER,"Found a match for text label %s with data %s", textLabel, mapLabelAndData[1]);
+        LOGGER.info(CONTROLLER_VERBOSE_MARKER, "Found a match for text label %s with data %s", textLabel, mapLabelAndData[1]);
         setBindingFromText(inputBinding,mapLabelAndData[1]);
         return;
       }
