@@ -46,6 +46,7 @@ import static org.lwjgl.glfw.GLFW.glfwGetClipboardString;
 import static org.lwjgl.glfw.GLFW.glfwGetKey;
 import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
 import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
+import static org.lwjgl.glfw.GLFW.glfwGetWindowAttrib;
 import static org.lwjgl.glfw.GLFW.glfwGetWindowContentScale;
 import static org.lwjgl.glfw.GLFW.glfwGetWindowSize;
 import static org.lwjgl.glfw.GLFW.glfwInit;
@@ -99,10 +100,6 @@ public class Window {
         System.err.println("Failed to save config");
       }
     }));
-  }
-
-  public long getWindow() {
-    return this.window;
   }
 
   private final long window;
@@ -244,6 +241,10 @@ public class Window {
 
   public void resize(final int width, final int height) {
     glfwSetWindowSize(this.window, (int)(width * this.scale), (int)(height * this.scale));
+  }
+
+  public boolean isWindowActive() {
+    return glfwGetWindowAttrib(this.window, GLFW.GLFW_FOCUSED) == GLFW.GLFW_TRUE;
   }
 
   public int getWidth() {

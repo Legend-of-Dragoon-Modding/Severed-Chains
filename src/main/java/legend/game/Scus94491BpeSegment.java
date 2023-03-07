@@ -65,7 +65,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
-import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -238,7 +237,6 @@ import static legend.game.combat.SBtld.stageData_80109a98;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_DELETE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F12;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_P;
-import static org.lwjgl.glfw.GLFW.glfwGetWindowAttrib;
 
 public final class Scus94491BpeSegment {
   private Scus94491BpeSegment() { }
@@ -468,7 +466,7 @@ public final class Scus94491BpeSegment {
         startSound();
       }
 
-      final boolean isWindowActive = glfwGetWindowAttrib(GPU.window().getWindow(), GLFW.GLFW_FOCUSED) == GLFW.GLFW_TRUE;
+      final boolean isWindowActive = GPU.window().isWindowActive();
 
       if(Config.receiveInputOnInactiveWindow() || isWindowActive) {
         Input.update();
