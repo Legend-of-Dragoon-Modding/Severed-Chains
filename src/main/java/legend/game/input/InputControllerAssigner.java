@@ -120,7 +120,7 @@ public final class InputControllerAssigner {
         assignedControllers.add(controllerData);
         idleControllers.remove(controllerData);
 
-        LOGGER.info(INPUT_MARKER,"Assigning as player %d",assignedControllers.size());
+        LOGGER.info(INPUT_MARKER, "Assigning as player %d", assignedControllers.size());
         controllerData.setPlayerSlot(assignedControllers.size());
         if(assignedControllers.size() == 1) {
           savePlayerOneToConfig();
