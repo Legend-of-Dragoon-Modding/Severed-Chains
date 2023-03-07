@@ -127,7 +127,7 @@ public final class InputControllerAssigner {
         }
 
         if(assignedControllers.size() < desiredControllerCount) {
-          LOGGER.info(INPUT_MARKER,"Please press the buttons for player %d",assignedControllers.size() + 1);
+          LOGGER.info(INPUT_MARKER, "Please press the buttons for player %d", assignedControllers.size() + 1);
         }
 
         break;
