@@ -707,7 +707,7 @@ public final class Bttl_800f {
 
     //LAB_800f2640
     script.params_20[2].set(damage);
-    script.params_20[3].set(FUN_800f7c5c(script.params_20[0].get(), script.params_20[1].get(), 0));
+    script.params_20[3].set(determineAttackSpecialEffects(script.params_20[0].get(), script.params_20[1].get(), 0));
     return FlowControl.CONTINUE;
   }
 
@@ -746,7 +746,7 @@ public final class Bttl_800f {
 
     //LAB_800f27ec
     script.params_20[3].set(damage);
-    script.params_20[4].set(FUN_800f7c5c(script.params_20[0].get(), script.params_20[1].get(), 1));
+    script.params_20[4].set(determineAttackSpecialEffects(script.params_20[0].get(), script.params_20[1].get(), 1));
     return FlowControl.CONTINUE;
   }
 
@@ -781,7 +781,7 @@ public final class Bttl_800f {
 
     //LAB_800f2970
     script.params_20[3].set(a1);
-    script.params_20[4].set(FUN_800f7c5c(script.params_20[0].get(), script.params_20[1].get(), 0x2L));
+    script.params_20[4].set(determineAttackSpecialEffects(script.params_20[0].get(), script.params_20[1].get(), 0x2L));
     FUN_800f8854(script.params_20[0].get(), script.params_20[1].get(), 0x1L);
     return FlowControl.CONTINUE;
   }
@@ -3317,51 +3317,53 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f7c5cL)
-  public static int FUN_800f7c5c(final int bobjIndex1, final int bobjIndex2, final long a2) {
+  public static int determineAttackSpecialEffects(final int bobjIndex1, final int bobjIndex2, final long attackType) {
     final ScriptState<?> state1 = scriptStatePtrArr_800bc1c0[bobjIndex1];
     final BattleObject27c bobj1 = (BattleObject27c)state1.innerStruct_00;
-    final long fp = state1.storage_44[7] & 0x4;
-    final long v1 = (fp != 0 ? 0xcL : 0) + a2 * 0x4L;
-    int stat = bobj1.getStat((int)_800c7284.offset(v1).get());
+    final long isEnemyBobj1 = state1.storage_44[7] & 0x4;
+    final long memOffset = (isEnemyBobj1 != 0 ? 0xcL : 0) + attackType * 0x4L;
+    int effectChance = bobj1.getStat((int)_800c7284.offset(memOffset).get());
     final ScriptState<?> state2 = scriptStatePtrArr_800bc1c0[bobjIndex2];
-    final long spa8 = state2.storage_44[7] & 0x4;
+    final long isEnemyBobj2 = state2.storage_44[7] & 0x4;
     final BattleObject27c bobj2 = (BattleObject27c)state2.innerStruct_00;
-    final long s3 = _800c726c.offset(v1).get();
-    final long s6 = _800c729c.offset(v1).get();
-    final long s7 = _800c72b4.offset(v1).get();
-    int s0 = -1;
-    if(a2 == 2) {
-      stat = 101;
+    final long s3 = _800c726c.offset(memOffset).get();
+    final long s6 = _800c729c.offset(memOffset).get();
+    final long s7 = _800c72b4.offset(memOffset).get();
+    int effect = -1;
+    if(attackType == 2) {
+      effectChance = 101;
     }
 
     //LAB_800f7e98
-    if(simpleRand() * 0x65 >> 0x10 < stat) {
-      final long a1_0 = bobj1.getStat((int)s3);
+    if((!Config.disableStatusEffects() || isEnemyBobj1 == 0) && simpleRand() * 0x65 >> 0x10 < effectChance) {
+      final long statusType = bobj1.getStat((int)s3);
 
-      if((a1_0 & 0xffL) != 0) {
+      if((statusType & 0xffL) != 0) {
         //LAB_800f7eec
         long v1_0;
         for(v1_0 = 0; v1_0 < 8; v1_0++) {
-          if((a1_0 & (0x80L >> v1_0)) != 0) {
+          if((statusType & (0x80L >> v1_0)) != 0) {
             break;
           }
         }
 
         //LAB_800f7f0c
-        s0 = (int)_800c724c.offset(v1_0 * 0x4L).get();
+        effect = (int)_800c724c.offset(v1_0 * 0x4L).get();
       }
 
       //LAB_800f7f14
+      // TODO: Sometimes references bobj.specialEffectFlag_14 (like for instant death weapons), sometimes references bobj._96.
+      //  Unclear what flag 0x10 is or what it has to do with elements.
       final long v1_0 = bobj1.getStat((int)s6) & s7;
       if(v1_0 != 0) {
-        if(fp != 0 || a2 != 0) {
+        if(isEnemyBobj1 != 0 || attackType != 0) {
           //LAB_800f7f40
-          if(a2 != 0x2L) {
+          if(attackType != 0x2L) {
             //LAB_800f7f68
             if(v1_0 == 0x10L) {
               //LAB_800f7f7c
               final long v0;
-              if(spa8 == 0) {
+              if(isEnemyBobj2 == 0) {
                 v0 = bobj1.spellElement_a4 & characterElements_800c706c.get(bobj2.charIndex_272).get();
               } else {
                 //LAB_800f7fac
@@ -3371,28 +3373,28 @@ public final class Bttl_800f {
               //LAB_800f7fbc
               if(v0 != 0) {
                 //LAB_800f7fc4
-                s0 = 0;
+                effect = 0;
               }
             } else if(v1_0 == 0x80L) {
-              s0 = 0;
+              effect = 0;
             }
           } else {
-            s0 = 0;
+            effect = 0;
           }
         } else {
-          s0 = 0;
+          effect = 0;
         }
 
         //LAB_800f7fc8
         if((bobj2.specialEffectFlag_14 & 0x80) != 0) { // Resistance
-          s0 = -1;
+          effect = -1;
         }
       }
     }
 
     //LAB_800f7fe0
     //LAB_800f7fe4
-    return s0;
+    return effect;
   }
 
   @Method(0x800f83c8L)

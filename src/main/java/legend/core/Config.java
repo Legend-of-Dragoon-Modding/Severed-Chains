@@ -110,6 +110,14 @@ public final class Config {
     properties.setProperty("auto_dragoon_meter", String.valueOf(!autoDragoonMeter()));
   }
 
+  public static boolean disableStatusEffects() {
+    return readBool("disable_status_effects", false);
+  }
+
+  public static void toggleDisableStatusEffects() {
+    properties.setProperty("disable_status_effects", String.valueOf(!disableStatusEffects()));
+  }
+
   public static boolean combatStage() {
     return readBool("combat_stage", false);
   }
