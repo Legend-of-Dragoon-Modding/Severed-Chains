@@ -2319,7 +2319,7 @@ public final class SItem {
             final int secondaryCharIndex = secondaryCharIndices_800bdbf8.get(secondaryCharSlot).get();
 
             if(secondaryCharIndex != -1) {
-              pendingXp_8011e180.get(secondaryCharIndex).set(totalXpFromCombat_800bc95c.get() / xpDivisor_8011e174.get() / 2);
+              pendingXp_8011e180.get(secondaryCharIndex).set(MathHelper.safeDiv(totalXpFromCombat_800bc95c.get(), xpDivisor_8011e174.get()) / 2);
             }
 
             //LAB_8010da24
