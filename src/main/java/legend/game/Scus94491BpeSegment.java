@@ -1881,8 +1881,16 @@ public final class Scus94491BpeSegment {
    */
   @Method(0x800174d8L)
   public static FlowControl scriptReadGlobalFlag2(final RunningScript<?> script) {
-    final int shift = script.params_20[0].get() & 0x1f;
-    final int index = script.params_20[0].get() >>> 5;
+    final int val = script.params_20[0].get();
+
+    // This is a sentinel value used by the Hoax submap controller retail patch. See Unpacker#drgn21_693_0_patcherDiscriminator for details.
+    if(val == -1) {
+      script.params_20[1].set(0);
+      return FlowControl.CONTINUE;
+    }
+
+    final int shift = val & 0x1f;
+    final int index = val >>> 5;
 
     script.params_20[1].set((gameState_800babc8.scriptFlags2_bc.get(index).get() & 0x1L << shift) != 0 ? 1 : 0);
 

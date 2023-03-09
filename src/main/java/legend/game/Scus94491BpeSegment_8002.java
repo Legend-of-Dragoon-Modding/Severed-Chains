@@ -1745,7 +1745,7 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80023454
-    gameState_800babc8.equipment_1e8.get(0x99).set(0xff);
+    gameState_800babc8.equipment_1e8.get(0xff).set(0xff);
     gameState_800babc8.equipmentCount_1e4.decr();
 
     //LAB_80023474
