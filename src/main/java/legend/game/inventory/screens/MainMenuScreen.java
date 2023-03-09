@@ -236,7 +236,7 @@ public class MainMenuScreen extends MenuScreen {
   }
 
   private void renderOptionsMenu(final long vibrateMode, final long soundMode, final long morphMode, final long noteMode) {
-    textZ_800bdf00.set(32);
+    textZ_800bdf00.set(31);
 
     renderCentredText(Vibrate_8011cf58, this.FUN_800fc7bc(0) - 15, this.menuOptionY(0), this.selectedConfigOption == 0 ? 5 : 4);
     renderCentredText(Off_8011cf6c, this.FUN_800fc7bc(1), this.menuOptionY(0), vibrateMode == 0 ? 5 : 4);
