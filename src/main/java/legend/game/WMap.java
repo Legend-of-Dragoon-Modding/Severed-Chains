@@ -6012,6 +6012,7 @@ public class WMap {
         _800c6868.setu(0);
         _800c686c.setu(0);
         _800c6894.setu(0);
+        _800c68a8.setu(0x1L);
 
         //LAB_800e67a8
         for(int i = 0; i < 7; i++) {
@@ -6092,7 +6093,7 @@ public class WMap {
       //LAB_800e6afc
     } else {
       //LAB_800e6b04
-      if(Input.releasedThisFrame(InputAction.BUTTON_CENTER_2)) {
+      if(!Input.getButtonState(InputAction.BUTTON_CENTER_2)) {
         //LAB_800e6b20
         for(int i = 0; i < 7; i++) {
           //LAB_800e6b3c
