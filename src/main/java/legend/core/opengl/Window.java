@@ -2,6 +2,10 @@ package legend.core.opengl;
 
 import legend.core.Config;
 import legend.core.DebugHelper;
+import legend.game.input.InputBinding;
+import legend.game.input.InputBindingState;
+import legend.game.input.InputAction;
+import legend.game.input.InputMapping;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.Version;
@@ -42,6 +46,7 @@ import static org.lwjgl.glfw.GLFW.glfwGetClipboardString;
 import static org.lwjgl.glfw.GLFW.glfwGetKey;
 import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
 import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
+import static org.lwjgl.glfw.GLFW.glfwGetWindowAttrib;
 import static org.lwjgl.glfw.GLFW.glfwGetWindowContentScale;
 import static org.lwjgl.glfw.GLFW.glfwGetWindowSize;
 import static org.lwjgl.glfw.GLFW.glfwInit;
@@ -91,7 +96,7 @@ public class Window {
 
       try {
         Config.save();
-      } catch (final IOException e) {
+      } catch(final IOException e) {
         System.err.println("Failed to save config");
       }
     }));
@@ -238,6 +243,10 @@ public class Window {
     glfwSetWindowSize(this.window, (int)(width * this.scale), (int)(height * this.scale));
   }
 
+  public boolean isWindowActive() {
+    return glfwGetWindowAttrib(this.window, GLFW.GLFW_FOCUSED) == GLFW.GLFW_TRUE;
+  }
+
   public int getWidth() {
     return (int)(this.width / this.scale);
   }
@@ -288,6 +297,9 @@ public class Window {
     private final List<Scroll> mouseScroll = new ArrayList<>();
     private final List<ControllerState> controllerConnected = new ArrayList<>();
     private final List<ControllerState> controllerDisconnected = new ArrayList<>();
+    private final List<OnPressedThisFrame> pressedThisFrame = new ArrayList<>();
+    private final List<OnReleasedThisFrame> releasedThisFrame = new ArrayList<>();
+    private final List<OnPressedWithRepeatPulse> pressedWithRepeatPulse = new ArrayList<>();
     private final List<Runnable> draw = new ArrayList<>();
     private final List<Runnable> shutdown = new ArrayList<>();
     private final Window window;
@@ -367,6 +379,37 @@ public class Window {
     private void onMouseScroll(final long window, final double deltaX, final double deltaY) {
       synchronized(LOCK) {
         this.mouseScroll.forEach(cb -> cb.action(this.window, deltaX, deltaY));
+      }
+    }
+
+    private void onInputPressedThisFrame(final InputAction inputAction) {
+      synchronized(LOCK) {
+        this.pressedThisFrame.forEach(cb -> cb.action(this.window, inputAction));
+      }
+    }
+
+    private void onInputReleasedThisFrame(final InputAction inputAction) {
+      synchronized(LOCK) {
+        this.releasedThisFrame.forEach(cb -> cb.action(this.window, inputAction));
+      }
+    }
+
+    private void onInputPressedWithRepeat(final InputAction inputAction) {
+      synchronized(LOCK) {
+        this.pressedWithRepeatPulse.forEach(cb -> cb.action(this.window, inputAction));
+      }
+    }
+
+    public void callInputEvents(final InputMapping inputMapping) {
+      for(final InputBinding binding : inputMapping.bindings) {
+        if(binding.getState() == InputBindingState.PRESSED_THIS_FRAME) {
+          this.onInputPressedThisFrame(binding.getInputAction());
+          this.onInputPressedWithRepeat(binding.getInputAction());
+        } else if(binding.getState() == InputBindingState.RELEASED_THIS_FRAME) {
+          this.onInputReleasedThisFrame(binding.getInputAction());
+        } else if(binding.getState() == InputBindingState.PRESSED_REPEAT) {
+          this.onInputPressedWithRepeat(binding.getInputAction());
+        }
       }
     }
 
@@ -486,6 +529,45 @@ public class Window {
       }
     }
 
+    public OnPressedThisFrame onPressedThisFrame(final OnPressedThisFrame callback) {
+      synchronized(LOCK) {
+        this.pressedThisFrame.add(callback);
+        return callback;
+      }
+    }
+
+    public void removePressedThisFrame(final OnPressedThisFrame callback) {
+      synchronized(LOCK) {
+        this.pressedThisFrame.remove(callback);
+      }
+    }
+
+    public OnReleasedThisFrame onReleasedThisFrame(final OnReleasedThisFrame callback) {
+      synchronized(LOCK) {
+        this.releasedThisFrame.add(callback);
+        return callback;
+      }
+    }
+
+    public void removeReleasedThisFrame(final OnReleasedThisFrame callback) {
+      synchronized(LOCK) {
+        this.releasedThisFrame.remove(callback);
+      }
+    }
+
+    public OnPressedWithRepeatPulse onPressedWithRepeatPulse(final OnPressedWithRepeatPulse callback) {
+      synchronized(LOCK) {
+        this.pressedWithRepeatPulse.add(callback);
+        return callback;
+      }
+    }
+
+    public void removePressedWithRepeatPulse(final OnPressedWithRepeatPulse callback) {
+      synchronized(LOCK) {
+        this.pressedWithRepeatPulse.remove(callback);
+      }
+    }
+
     public ControllerState onControllerConnected(final ControllerState callback) {
       synchronized(LOCK) {
         this.controllerConnected.add(callback);
@@ -554,32 +636,54 @@ public class Window {
       }
     }
 
-    @FunctionalInterface public interface Resize {
+    @FunctionalInterface
+    public interface Resize {
       void resize(final Window window, final int width, final int height);
     }
 
-    @FunctionalInterface public interface Key {
+    @FunctionalInterface
+    public interface Key {
       void action(final Window window, final int key, final int scancode, final int mods);
     }
 
-    @FunctionalInterface public interface Char {
+    @FunctionalInterface
+    public interface Char {
       void action(final Window window, final int codepoint);
     }
 
-    @FunctionalInterface public interface Cursor {
+    @FunctionalInterface
+    public interface Cursor {
       void action(final Window window, final double x, final double y);
     }
 
-    @FunctionalInterface public interface Click {
+    @FunctionalInterface
+    public interface Click {
       void action(final Window window, final double x, final double y, final int button, final int mods);
     }
 
-    @FunctionalInterface public interface Scroll {
+    @FunctionalInterface
+    public interface Scroll {
       void action(final Window window, final double deltaX, final double deltaY);
     }
 
-    @FunctionalInterface public interface ControllerState {
+    @FunctionalInterface
+    public interface ControllerState {
       void action(final Window window, final int id);
+    }
+
+    @FunctionalInterface
+    public interface OnPressedThisFrame {
+      void action(final Window window, final InputAction inputAction);
+    }
+
+    @FunctionalInterface
+    public interface OnReleasedThisFrame {
+      void action(final Window window, final InputAction inputAction);
+    }
+
+    @FunctionalInterface
+    public interface OnPressedWithRepeatPulse {
+      void action(final Window window, final InputAction inputAction);
     }
   }
 }
