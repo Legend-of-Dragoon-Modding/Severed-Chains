@@ -6,9 +6,13 @@ import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandQuad;
+import legend.core.gpu.ModelLoader;
 import legend.core.gpu.RECT;
 import legend.core.gpu.Rect4i;
+import legend.core.gpu.Renderable;
 import legend.core.gpu.VramTexture;
+import legend.core.gpu.VramTexture2;
+import legend.core.gpu.VramTextureLoader2;
 import legend.core.gte.DVECTOR;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.GsDOBJ2;
@@ -44,9 +48,7 @@ import java.util.List;
 import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
-import static legend.core.gpu.VramTextureLoader.fromTim;
-import static legend.core.gpu.VramTextureLoader.stitchHorizontal;
-import static legend.core.gpu.VramTextureLoader.stitchVertical;
+import static legend.core.gpu.VramTextureLoader2.*;
 import static legend.game.SItem.levelStuff_80111cfc;
 import static legend.game.SItem.magicStuff_80111d20;
 import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
@@ -133,12 +135,25 @@ public final class Ttle {
   public static int selectedMenuOption;
   public static int selectedConfigCategory;
 
-  private static VramTexture backgroundTexture;
-  private static VramTexture logoTexture;
-  private static VramTexture menuTextTexture;
-  private static VramTexture tmTexture;
-  private static VramTexture copyrightTexture;
-  private static VramTexture fireTexture;
+  private static VramTexture2 backgroundTexture;
+  private static VramTexture2[] backgroundPalettes;
+  private static Renderable backgroundRenderable;
+  private static VramTexture2 logoTexture;
+  private static VramTexture2[] logoPalettes;
+  private static Renderable logoRenderable;
+  private static VramTexture2 menuTextTexture;
+  private static VramTexture2[] menuTextPalettes;
+  private static final Renderable[] menuTextRenderables = new Renderable[3];
+  private static final Renderable[] menuTextBlurRenderables = new Renderable[3];
+  private static VramTexture2 tmTexture;
+  private static VramTexture2[] tmPalettes;
+  private static Renderable tmRenderable;
+  private static VramTexture2 copyrightTexture;
+  private static VramTexture2[] copyrightPalettes;
+  private static Renderable copyrightRenderable;
+  private static VramTexture2 fireTexture;
+  private static VramTexture2[] firePalettes;
+  private static Renderable fireRenderable;
 
   // This is all data stored in the overlay rom
   public static final ArrayRef<Pointer<ArrayRef<IntRef>>> characterXpPtrs_800ce6d8 = MEMORY.ref(4, 0x800ce6d8L, ArrayRef.of(Pointer.classFor(ArrayRef.classFor(IntRef.class)), 9, 4, Pointer.deferred(4, ArrayRef.of(IntRef.class, 61, 4, IntRef::new))));
@@ -363,6 +378,8 @@ public final class Ttle {
     loadDrgnDir(0, 5718, Ttle::menuTexturesMrgLoaded);
     loadDrgnFile(0, 5719, file -> menuFireTmdLoaded("DRGN0/5719", file));
 
+    prepareRenderables();
+
     // Prepare fire animation struct
     //LAB_800c7d30
     for(int i = 0; i < 4; i++) {
@@ -397,25 +414,36 @@ public final class Ttle {
   @Method(0x800c7af0L)
   public static void menuTexturesMrgLoaded(final List<FileData> files) {
     backgroundTexture = stitchVertical(
-      fromTim(new Tim(files.get(0))),
-      fromTim(new Tim(files.get(1)))
+      textureFromTim(new Tim(files.get(0))),
+      textureFromTim(new Tim(files.get(1)))
     );
 
-    logoTexture = fromTim(new Tim(files.get(2)));
-    menuTextTexture = fromTim(new Tim(files.get(3)));
-    tmTexture = fromTim(new Tim(files.get(4)));
+    backgroundPalettes = palettesFromTim(new Tim(files.get(0)));
+
+    logoTexture = textureFromTim(new Tim(files.get(2)));
+    logoPalettes = palettesFromTim(new Tim(files.get(2)));
+
+    menuTextTexture = textureFromTim(new Tim(files.get(3)));
+    menuTextPalettes = palettesFromTim(new Tim(files.get(3)));
+
+    tmTexture = textureFromTim(new Tim(files.get(4)));
+    tmPalettes = palettesFromTim(new Tim(files.get(4)));
 
     copyrightTexture = stitchHorizontal(
-      fromTim(new Tim(files.get(5))),
-      fromTim(new Tim(files.get(6)))
+      textureFromTim(new Tim(files.get(5))),
+      textureFromTim(new Tim(files.get(6)))
     );
 
+    copyrightPalettes = palettesFromTim(new Tim(files.get(5)));
+
     fireTexture = stitchHorizontal(
-      fromTim(new Tim(files.get(10))),
-      fromTim(new Tim(files.get(7))),
-      fromTim(new Tim(files.get(8))),
-      fromTim(new Tim(files.get(9)))
+      textureFromTim(new Tim(files.get(10))),
+      textureFromTim(new Tim(files.get(7))),
+      textureFromTim(new Tim(files.get(8))),
+      textureFromTim(new Tim(files.get(9)))
     );
+
+    firePalettes = palettesFromTims(new Tim(files.get(10)), new Tim(files.get(7)), new Tim(files.get(8)), new Tim(files.get(9)));
   }
 
   @Method(0x800c7c18L)
@@ -423,8 +451,87 @@ public final class Ttle {
     final TmdWithId tmd = new TmdWithId(modelName, file);
     _800c66d0 = parseTmdFile(tmd);
     FUN_800cc0b0(_800c66d0, null);
-    _800c66d0.tmd_0c = tmd;
     setDobjAttributes(_800c66d0, 0);
+  }
+
+  private static void prepareRenderables() {
+    backgroundRenderable = ModelLoader.quad(
+      -192, -120, orderingTableSize_1f8003c8.get() - 3,
+      384, 424,
+      0, 0,
+      384, 424,
+      0, 0, 0,
+      null
+    )
+      .texture(backgroundTexture)
+      .palettes(backgroundPalettes)
+      .build();
+
+    logoRenderable = ModelLoader.quad(
+      -184, -80, orderingTableSize_1f8003c8.get() - 4,
+      352, 88,
+      0, 0,
+      352, 88,
+      0, 0, 0,
+      Translucency.B_PLUS_F
+    )
+      .texture(logoTexture)
+      .palettes(logoPalettes)
+      .build();
+
+    tmRenderable = ModelLoader.quad(
+      134, -14, orderingTableSize_1f8003c8.get() - 4,
+      16, 8,
+      0, 0,
+      16, 8,
+      0, 0, 0,
+      Translucency.B_PLUS_F
+    )
+      .texture(tmTexture)
+      .palettes(tmPalettes)
+      .build();
+
+    Arrays.setAll(
+      menuTextRenderables,
+      i -> ModelLoader.quad(
+        (int)_800ce8ac.offset(i * 2 * 4).getSigned(), (int)_800ce8ac.offset((i * 2 + 1) * 4).getSigned(), 100,
+        (int)_800ce7f8.offset((i * 2 + 1) * 4).get(), 16,
+        0, (int)_800ce7f8.offset(i * 2 * 4).get(),
+        (int)_800ce7f8.offset((i * 2 + 1) * 4).get(), 16,
+        0x80, 0x80, 0x80,
+        Translucency.B_PLUS_F
+      )
+        .texture(menuTextTexture)
+        .palettes(menuTextPalettes)
+        .build()
+    );
+
+    Arrays.setAll(
+      menuTextBlurRenderables,
+      i -> ModelLoader.quad(
+        (int)_800ce8ac.offset(i * 2 * 4).getSigned() - 8, (int)_800ce8ac.offset((i * 2 + 1) * 4).getSigned() - 8, 100,
+        (int)_800ce840.offset((i * 3 + 2) * 4).get(), 31,
+        (int)_800ce840.offset(i * 3 * 4).get(), (int)_800ce840.offset((i * 3 + 1) * 4).get(),
+        (int)_800ce840.offset((i * 3 + 2) * 4).get(), 32,
+        0x80, 0x80, 0x80,
+        Translucency.B_PLUS_F
+      )
+      .texture(menuTextTexture)
+      .palettes(menuTextPalettes)
+      .build()
+    );
+
+    copyrightRenderable = ModelLoader.quad(
+      -188, 80, 100,
+      368, 32,
+      0, 0,
+      368, 32,
+      0, 0, 0,
+      Translucency.B_PLUS_F
+    )
+      .texture(copyrightTexture)
+      .palettes(copyrightPalettes)
+      .build();
   }
 
   @Method(0x800c7e50L)
@@ -897,6 +1004,8 @@ public final class Ttle {
     for(int i = 0; i < 3; i++) {
       final int x = (int)_800ce8ac.offset(i * 2 * 4).getSigned();
       final int y = (int)_800ce8ac.offset((i * 2 + 1) * 4).getSigned();
+      final int w = (int)_800ce7f8.offset((i * 2 + 1) * 4).getSigned();
+      final int v = (int)_800ce7f8.offset(i * 2 * 4).getSigned();
 
       final int colour;
       if(i != 1 || hasSavedGames == 1) {
@@ -906,37 +1015,47 @@ public final class Ttle {
       }
 
       //LAB_800c8a8c
+      menuTextRenderables[i].render();
+/*
       GPU.queueCommand(100, new GpuCommandPoly(4)
         .texture(menuTextTexture)
         .bpp(Bpp.BITS_4)
+        .clut(0, selectedMenuOption == i ? 5 : 2)
         .translucent(Translucency.B_PLUS_F)
         .monochrome(colour)
         .pos(0, x, y)
-        .uv(0, 0, (int)_800ce7f8.offset(i * 2 * 4).get())
-        .pos(1, x + (int)_800ce7f8.offset(2, (i * 2 + 1) * 4).get(), y)
-        .uv(1, (int)_800ce7f8.offset((i * 2 + 1) * 4).get(), (int)_800ce7f8.offset(i * 2 * 4).get())
+        .pos(1, x + w, y)
         .pos(2, x, y + 16)
-        .uv(2, 0, (int)_800ce7f8.offset(i * 2 * 4).get() + 16)
-        .pos(3, x + (int)_800ce7f8.offset(2, (i * 2 + 1) * 4).get(), y + 16)
-        .uv(3, (int)_800ce7f8.offset((i * 2 + 1) * 4).get(), (int)_800ce7f8.offset(i * 2 * 4).get() + 16)
-        .clut(0, selectedMenuOption == i ? 5 : 2)
+        .pos(3, x + w, y + 16)
+        .uv(0, 0, v)
+        .uv(1, w, v)
+        .uv(2, 0, v + 16)
+        .uv(3, w, v + 16)
       );
+*/
 
+      final int w2 = (int)_800ce840.offset((i * 3 + 2) * 4).get();
+      final int u2 = (int)_800ce840.offset(i * 3 * 4).get();
+      final int v2 = (int)_800ce840.offset((i * 3 + 1) * 4).get();
+
+      menuTextBlurRenderables[i].render();
+/*
       GPU.queueCommand(100, new GpuCommandPoly(4)
         .texture(menuTextTexture)
         .bpp(Bpp.BITS_4)
+        .clut(0, 4)
         .translucent(Translucency.B_PLUS_F)
         .monochrome(colour)
         .pos(0, x - 8, y - 8)
-        .uv(0, (int)_800ce840.offset(i * 3 * 4).get(), (int)_800ce840.offset((i * 3 + 1) * 4).get())
-        .clut(0, 4)
-        .pos(1, x - 8 + (int)_800ce840.offset((i * 3 + 2) * 4).get(), y - 8)
-        .uv(1, (int)(_800ce840.offset(i * 3 * 4).get() + _800ce840.offset((i * 3 + 2) * 4).get()), (int)_800ce840.offset((i * 3 + 1) * 4).get())
+        .pos(1, x - 8 + w2, y - 8)
         .pos(2, x - 8, y + 23)
-        .uv(2, (int)_800ce840.offset(i * 3 * 4).get(), (int)_800ce840.offset((i * 3 + 1) * 4).get() + 32)
-        .pos(3, x - 8 + (int)_800ce840.offset((i * 3 + 2) * 4).get(), y + 23)
-        .uv(3, (int)(_800ce840.offset(i * 3 * 4).get() + _800ce840.offset((i * 3 + 2) * 4).get()), (int)_800ce840.offset((i * 3 + 1) * 4).get() + 32)
+        .pos(3, x - 8 + w2, y + 23)
+        .uv(0, u2, v2)
+        .uv(1, u2 + w2, v2)
+        .uv(2, u2, v2 + 32)
+        .uv(3, u2 + w2, v2 + 32)
       );
+*/
     }
 
     //LAB_800c9390
@@ -1095,21 +1214,23 @@ public final class Ttle {
 
     //LAB_800c9b70
     for(int i = 0; i < 6; i++) {
+/*
       GPU.queueCommand(100, new GpuCommandPoly(4)
         .texture(menuTextTexture)
         .bpp(Bpp.BITS_4)
         .translucent(Translucency.B_PLUS_F)
         .monochrome(configColours[i])
         .clut(0, selectedConfigCategory == i ? 5 : 2)
-        .pos(0, (int)_800ce8ac.offset((i + 3) * 8).getSigned(), (int)_800ce8ac.offset(((i + 3) * 2 + 1) * 4).getSigned())
         .uv(0, 0, (int)_800ce7f8.offset((i + 3) * 8).get())
-        .pos(1, (int)(_800ce8ac.offset((i + 3) * 8).getSigned() + _800ce7f8.offset(((i + 3) * 2 + 1) * 4).get()), (int)_800ce8ac.offset(((i + 3) * 2 + 1) * 4).getSigned())
         .uv(1, (int)_800ce7f8.offset(((i + 3) * 2 + 1) * 4).get(), (int)_800ce7f8.offset((i + 3) * 8).get())
-        .pos(2, (int)_800ce8ac.offset((i + 3) * 8).getSigned(), (int)_800ce8ac.offset(((i + 3) * 2 + 1) * 4).getSigned() + 16)
         .uv(2, 0, (int)_800ce7f8.offset((i + 3) * 8).get() + 16)
-        .pos(3, (int)(_800ce8ac.offset((i + 3) * 8).getSigned() + _800ce7f8.offset(((i + 3) * 2 + 1) * 4).get()), (int)_800ce8ac.offset(((i + 3) * 2 + 1) * 4).getSigned() + 16)
         .uv(3, (int)_800ce7f8.offset(((i + 3) * 2 + 1) * 4).get(), (int)_800ce7f8.offset((i + 3) * 8).get() + 16)
+        .pos(0, (int)_800ce8ac.offset((i + 3) * 8).getSigned(), (int)_800ce8ac.offset(((i + 3) * 2 + 1) * 4).getSigned())
+        .pos(1, (int)(_800ce8ac.offset((i + 3) * 8).getSigned() + _800ce7f8.offset(((i + 3) * 2 + 1) * 4).get()), (int)_800ce8ac.offset(((i + 3) * 2 + 1) * 4).getSigned())
+        .pos(2, (int)_800ce8ac.offset((i + 3) * 8).getSigned(), (int)_800ce8ac.offset(((i + 3) * 2 + 1) * 4).getSigned() + 16)
+        .pos(3, (int)(_800ce8ac.offset((i + 3) * 8).getSigned() + _800ce7f8.offset(((i + 3) * 2 + 1) * 4).get()), (int)_800ce8ac.offset(((i + 3) * 2 + 1) * 4).getSigned() + 16)
       );
+*/
     }
 
     // Render glowing overlay for Sound/Vibrate options
@@ -1117,6 +1238,7 @@ public final class Ttle {
       //LAB_800ca018
       sp18 = i * 3;
 
+/*
       GPU.queueCommand(100, new GpuCommandPoly(4)
         .texture(menuTextTexture)
         .bpp(Bpp.BITS_4)
@@ -1124,14 +1246,15 @@ public final class Ttle {
         .monochrome(configColours[sp18])
         .clut(0, 4)
         .pos(0, (int)_800ce8ac.offset((sp18 + 3) * 8).getSigned() - 8, (int)_800ce8ac.offset(((sp18 + 3) * 2 + 1) * 4).getSigned() - 9)
-        .uv(0, (int)_800ce840.offset((sp18 + 3) * 3 * 4).get(), (int)_800ce840.offset(((sp18 + 3) * 3 + 1) * 4).get())
         .pos(1, (int)(_800ce8ac.offset((sp18 + 3) * 8).getSigned() + _800ce840.offset(((sp18 + 3) * 3 + 2) * 4).get() - 8), (int)_800ce8ac.offset(((sp18 + 3) * 2 + 1) * 4).getSigned() - 9)
-        .uv(1, (int)(_800ce840.offset((sp18 + 3) * 3 * 4).get() + _800ce840.offset(((sp18 + 3) * 3 + 2) * 4).get()), (int)_800ce840.offset(((sp18 + 3) * 3 + 1) * 4).get())
         .pos(2, (int)_800ce8ac.offset((sp18 + 3) * 8).getSigned() - 8, (int)_800ce8ac.offset(((sp18 + 3) * 2 + 1) * 4).getSigned() + 23)
-        .uv(2, (int)_800ce840.offset((sp18 + 3) * 3 * 4).get(), (int)_800ce840.offset(((sp18 + 3) * 3 + 1) * 4).get() + 31)
         .pos(3, (int)(_800ce8ac.offset((sp18 + 3) * 8).getSigned() + _800ce840.offset(((sp18 + 3) * 3 + 2) * 4).get() - 8), (int)_800ce8ac.offset(((sp18 + 3) * 2 + 1) * 4).getSigned() + 23)
+        .uv(0, (int)_800ce840.offset((sp18 + 3) * 3 * 4).get(), (int)_800ce840.offset(((sp18 + 3) * 3 + 1) * 4).get())
+        .uv(1, (int)(_800ce840.offset((sp18 + 3) * 3 * 4).get() + _800ce840.offset(((sp18 + 3) * 3 + 2) * 4).get()), (int)_800ce840.offset(((sp18 + 3) * 3 + 1) * 4).get())
+        .uv(2, (int)_800ce840.offset((sp18 + 3) * 3 * 4).get(), (int)_800ce840.offset(((sp18 + 3) * 3 + 1) * 4).get() + 31)
         .uv(3, (int)(_800ce840.offset((sp18 + 3) * 3 * 4).get() + _800ce840.offset(((sp18 + 3) * 3 + 2) * 4).get()), (int)_800ce840.offset(((sp18 + 3) * 3 + 1) * 4).get() + 31)
       );
+*/
     }
 
     // Render glowing overlay for selected Sound/Vibration option
@@ -1162,6 +1285,7 @@ public final class Ttle {
       }
 
       //LAB_800ca62c
+/*
       GPU.queueCommand(100, new GpuCommandPoly(4)
         .texture(menuTextTexture)
         .bpp(Bpp.BITS_4)
@@ -1177,6 +1301,7 @@ public final class Ttle {
         .pos(3, (int)(_800ce8ac.offset(sp14 * 8).getSigned() + _800ce840.offset((sp14 * 3 + 2) * 4).get() - 8), (int)_800ce8ac.offset((sp14 * 2 + 1) * 4).getSigned() + 23)
         .uv(3, (int)(_800ce840.offset(sp14 * 3 * 4).get() + _800ce840.offset((sp14 * 3 + 2) * 4).get()), (int)_800ce840.offset((sp14 * 3 + 1) * 4).get() + 31)
       );
+*/
     }
 
     //LAB_800cab28
@@ -1199,18 +1324,7 @@ public final class Ttle {
     //LAB_800cabb8
     //LAB_800cabcc
     //LAB_800cabe8
-    renderQuad(
-      copyrightTexture,
-      Bpp.BITS_4,
-      64,
-      copyrightFadeInAmount, copyrightFadeInAmount, copyrightFadeInAmount,
-      0, 0,
-      368, 32,
-      -188, 80,
-      368, 32,
-      100,
-      Translucency.B_PLUS_F
-    );
+    copyrightRenderable.recolour(copyrightFadeInAmount, copyrightFadeInAmount, copyrightFadeInAmount).render();
   }
 
   @Method(0x800cadd0L)
@@ -1223,31 +1337,8 @@ public final class Ttle {
     //LAB_800cae18
     //LAB_800cae2c
     //LAB_800cae48
-    renderQuad(
-      logoTexture,
-      Bpp.BITS_4,
-      1,
-      logoFadeInAmount, logoFadeInAmount, logoFadeInAmount,
-      0, 0,
-      352, 88,
-      -184, -80,
-      352, 88,
-      orderingTableSize_1f8003c8.get() - 4,
-      Translucency.B_PLUS_F
-    );
-
-    renderQuad(
-      tmTexture,
-      Bpp.BITS_4,
-      80,
-      logoFadeInAmount, logoFadeInAmount, logoFadeInAmount,
-      0, 0,
-      16, 8,
-      134, -14,
-      16, 8,
-      orderingTableSize_1f8003c8.get() - 4,
-      Translucency.B_PLUS_F
-    );
+    logoRenderable.recolour(logoFadeInAmount, logoFadeInAmount, logoFadeInAmount).render();
+    tmRenderable.recolour(logoFadeInAmount, logoFadeInAmount, logoFadeInAmount).render();
   }
 
   @Method(0x800cb070L)
@@ -1266,18 +1357,10 @@ public final class Ttle {
 
     //LAB_800cb0ec
     //LAB_800cb100
-    renderQuad(
-      backgroundTexture,
-      Bpp.BITS_8,
-      0,
-      backgroundFadeInAmount, backgroundFadeInAmount, backgroundFadeInAmount,
-      0, 0,
-      384, 424,
-      -192, -120 + backgroundScrollAmount,
-      384, 424,
-      orderingTableSize_1f8003c8.get() - 3,
-      null
-    );
+    backgroundRenderable
+      .translate(0, backgroundScrollAmount)
+      .recolour(backgroundFadeInAmount, backgroundFadeInAmount, backgroundFadeInAmount)
+      .render();
 
     //LAB_800cb370
     backgroundScrollAmount++;
@@ -1289,7 +1372,7 @@ public final class Ttle {
   }
 
   @Method(0x800cb4c4L)
-  public static void renderQuad(@Nullable VramTexture texture, final Bpp bpp, final int clutY, final int r, final int g, final int b, final int u, final int v, final int tw, final int th, final int x, final int y, final int w, final int h, final int z, @Nullable final Translucency translucency) {
+  public static void renderQuad(@Nullable final VramTexture texture, final Bpp bpp, final int clutY, final int r, final int g, final int b, final int u, final int v, final int tw, final int th, final int x, final int y, final int w, final int h, final int z, @Nullable final Translucency translucency) {
     final GpuCommandPoly cmd = new GpuCommandPoly(4)
       .texture(texture)
       .bpp(bpp)
@@ -1353,7 +1436,7 @@ public final class Ttle {
       GsSetLightMatrix(sp10);
       ScaleMatrixL(sp30, scale);
       setRotTransMatrix(sp30);
-      renderTmd(dobj2s[i], fireTexture);
+      //TODO renderTmd(dobj2s[i], fireTexture);
     }
 
     //LAB_800cb904

@@ -44,8 +44,8 @@ public class Gpu implements Runnable {
   private static final int STANDARD_VRAM_WIDTH = 1024;
   private static final int STANDARD_VRAM_HEIGHT = 512;
 
-  private final int vramWidth = STANDARD_VRAM_WIDTH;
-  private final int vramHeight = STANDARD_VRAM_HEIGHT;
+  public final int vramWidth = STANDARD_VRAM_WIDTH;
+  public final int vramHeight = STANDARD_VRAM_HEIGHT;
 
   private Camera camera;
   private Window window;
@@ -906,7 +906,7 @@ public class Gpu implements Runnable {
     this.vram15[index] = colour24To15(pixel);
   }
 
-  private static int interpolateCoords(final int w0, final int w1, final int w2, final int t0, final int t1, final int t2, final int area) {
+  public static int interpolateCoords(final int w0, final int w1, final int w2, final int t0, final int t1, final int t2, final int area) {
     //https://codeplea.com/triangular-interpolation
     return (t0 * w0 + t1 * w1 + t2 * w2) / area;
   }
@@ -926,7 +926,7 @@ public class Gpu implements Runnable {
     return (r & 0xff) << 16 | (g & 0xff) << 8 | (b & 0xff);
   }
 
-  private static boolean isTopLeft(final int ax, final int ay, final int bx, final int by) {
+  public static boolean isTopLeft(final int ax, final int ay, final int bx, final int by) {
     return ay == by && bx > ax || by < ay;
   }
 
@@ -961,7 +961,7 @@ public class Gpu implements Runnable {
   /**
    * Returns positive value for clockwise winding, negative value for counter-clockwise. 0 if vertices are collinear. Value is roughly twice the area of the triangle.
    */
-  private static int orient2d(final int ax, final int ay, final int bx, final int by, final int cx, final int cy) {
+  public static int orient2d(final int ax, final int ay, final int bx, final int by, final int cx, final int cy) {
     return (bx - ax) * (cy - ay) - (by - ay) * (cx - ax);
   }
 
@@ -1009,7 +1009,7 @@ public class Gpu implements Runnable {
     return b << 16 | g << 8 | r;
   }
 
-  private int getShadedColor(final int w0, final int w1, final int w2, final int c0, final int c1, final int c2, final int area) {
+  public int getShadedColor(final int w0, final int w1, final int w2, final int c0, final int c1, final int c2, final int area) {
     final int r = ((c0        & 0xff) * w0 + (c1        & 0xff) * w1 + (c2        & 0xff) * w2) / area;
     final int g = ((c0 >>>  8 & 0xff) * w0 + (c1 >>>  8 & 0xff) * w1 + (c2 >>>  8 & 0xff) * w2) / area;
     final int b = ((c0 >>> 16 & 0xff) * w0 + (c1 >>> 16 & 0xff) * w1 + (c2 >>> 16 & 0xff) * w2) / area;
