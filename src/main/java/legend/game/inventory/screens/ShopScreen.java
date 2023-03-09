@@ -20,7 +20,6 @@ import java.util.Objects;
 import static legend.core.GameEngine.MEMORY;
 import static legend.game.SItem.Buy_8011c6a4;
 import static legend.game.SItem.Cannot_be_armed_with_8011c6d4;
-import static legend.game.SItem.Cannot_carry_anymore_8011c43c;
 import static legend.game.SItem.Carried_8011c6b8;
 import static legend.game.SItem.FUN_801038d4;
 import static legend.game.SItem.FUN_80103b10;
@@ -591,7 +590,7 @@ public class ShopScreen extends MenuScreen {
             }
 
             if(!hasSpace) {
-              menuStack.pushScreen(new MessageBoxScreen(Cannot_carry_anymore_8011c43c, 0, result -> {
+              menuStack.pushScreen(new MessageBoxScreen(new LodString("Cannot carry anymore"), 0, result -> {
               }));
             } else if(gameState_800babc8.gold_94.get() < this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].flags_02) {
               menuStack.pushScreen(new MessageBoxScreen(Not_enough_money_8011c468, 0, result -> {
@@ -810,7 +809,7 @@ public class ShopScreen extends MenuScreen {
       }
 
       if(!hasSpace) {
-        menuStack.pushScreen(new MessageBoxScreen(Cannot_carry_anymore_8011c43c, 0, result -> {
+        menuStack.pushScreen(new MessageBoxScreen(new LodString("Cannot carry anymore"), 0, result -> {
         }));
       } else if(gameState_800babc8.gold_94.get() < this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].flags_02) {
         menuStack.pushScreen(new MessageBoxScreen(Not_enough_money_8011c468, 0, result -> {

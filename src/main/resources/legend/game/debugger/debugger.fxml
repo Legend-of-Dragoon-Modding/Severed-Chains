@@ -86,6 +86,7 @@
                </HBox>
                <CheckBox fx:id="autoAddition" mnemonicParsing="false" onAction="#toggleAutoAddition" text="Auto Additions" />
                <CheckBox fx:id="autoMeter" mnemonicParsing="false" onAction="#toggleAutoDragoonMeter" text="Auto Dragoon Meter" />
+               <CheckBox fx:id="disableStatusEffects" mnemonicParsing="false" onAction="#toggleDisableStatusEffects" text="Disable Status Effects"/>
             </children>
          </VBox>
       </HBox>

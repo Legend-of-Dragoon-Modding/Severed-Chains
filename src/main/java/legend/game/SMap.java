@@ -3792,7 +3792,10 @@ public final class SMap {
       return 0;
     }
 
-    if(index_80052c38.get() < 0x40L && arr_800cb460.get(index_80052c38.get()).get() != 0) {
+    // The first condition is to fix what we believe is caused by menus loading too fast in SC. Submaps still take several frames to initialize,
+    // and if you spam triangle and escape immediately after the post-combat screen it's possible to get into this method when index_80052c38 is
+    // still set to -1. See #304 for more details.
+    if(index_80052c38.get() >= 0 && index_80052c38.get() < 0x40L && arr_800cb460.get(index_80052c38.get()).get() != 0) {
       return 0;
     }
 
