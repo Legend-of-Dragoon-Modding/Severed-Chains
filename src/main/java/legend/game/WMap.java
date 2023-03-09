@@ -6012,7 +6012,6 @@ public class WMap {
         _800c6868.setu(0);
         _800c686c.setu(0);
         _800c6894.setu(0);
-        _800c68a8.setu(0x1L);
 
         //LAB_800e67a8
         for(int i = 0; i < 7; i++) {
