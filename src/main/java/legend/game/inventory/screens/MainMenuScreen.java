@@ -113,7 +113,7 @@ public class MainMenuScreen extends MenuScreen {
         }
         FUN_80104b60(this.selectedMenuOptionRenderable);
         this.FUN_80102484(0);
-        this.renderItemSubmenu(this.selectedItemSubmenuOption, 4);
+        this.renderItemSubmenu(this.selectedItemSubmenuOption, 6);
         this.renderInventoryMenu(this.selectedMenuOption, 4, 0xff);
         this.loadingStage++;
       }
@@ -166,7 +166,7 @@ public class MainMenuScreen extends MenuScreen {
         }
 
         this.FUN_80102484(0);
-        this.renderItemSubmenu(this.selectedItemSubmenuOption, 4);
+        this.renderItemSubmenu(this.selectedItemSubmenuOption, 6);
         this.renderInventoryMenu(this.selectedMenuOption, 4, 0);
       }
 
