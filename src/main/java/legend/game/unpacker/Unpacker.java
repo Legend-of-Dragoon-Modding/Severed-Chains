@@ -3,6 +3,7 @@ package legend.game.unpacker;
 import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.core.Tuple;
+import legend.game.Scus94491BpeSegment;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -56,6 +57,7 @@ public final class Unpacker {
     transformers.put(Unpacker::mrgDiscriminator, Unpacker::unmrg);
     transformers.put(Unpacker::deffDiscriminator, Unpacker::undeff);
     transformers.put(Unpacker::drgn21_402_3_patcherDiscriminator, Unpacker::drgn21_402_3_patcher);
+    transformers.put(Unpacker::drgn21_693_0_patcherDiscriminator, Unpacker::drgn21_693_0_patcher);
     transformers.put(Unpacker::drgn0_142_patcherDiscriminator, Unpacker::drgn0_142_patcher);
     transformers.put(Unpacker::playerCombatSoundEffectsDiscriminator, Unpacker::playerCombatSoundEffectsTransformer);
     transformers.put(Unpacker::playerCombatModelsAndTexturesDiscriminator, Unpacker::playerCombatModelsAndTexturesTransformer);
@@ -418,6 +420,25 @@ public final class Unpacker {
     final byte[] newData = new byte[0x107c];
     System.arraycopy(data.data(), data.offset(), newData, 0, data.size());
     newData[0x1078] = 0x49;
+    return Map.of(name, new FileData(newData));
+  }
+
+  /**
+   * DRGN21.693.0 is the submap controller for Hoax post-Kongol. If you select
+   * "I still don't know..." as your response during the dialog, the script tries
+   * to push an inline parameter that is past the end of the script. This patcher
+   * extends the script and fills with ffffffff, which we read as a sentinel value
+   * in {@link Scus94491BpeSegment#scriptReadGlobalFlag2}, and return 0 there.
+   */
+  private static boolean drgn21_693_0_patcherDiscriminator(final String name, final FileData data, final Set<Flags> flags) {
+    return "SECT/DRGN21.BIN/693/0".equals(name) && data.size() == 0x188;
+  }
+
+  private static Map<String, FileData> drgn21_693_0_patcher(final String name, final FileData data, final Set<Flags> flags) {
+    final byte[] newData = new byte[0x190];
+    System.arraycopy(data.data(), data.offset(), newData, 0, data.size());
+    MathHelper.set(newData, 0x188, 4, 0xffffffffL);
+    MathHelper.set(newData, 0x18c, 4, 0xffffffffL);
     return Map.of(name, new FileData(newData));
   }
 
