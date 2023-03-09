@@ -101,19 +101,7 @@ public final class Input {
     }
     return false;
   }
-
-  public static boolean releasedThisFrame(final InputAction targetKey) {
-
-    for(final InputBinding inputBinding : playerOne.bindings) {
-      if(inputBinding.getInputAction() == targetKey) {
-        if(inputBinding.getState() == InputBindingState.RELEASED_THIS_FRAME) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
+  
   public static boolean getButtonState(final InputAction targetKey) {
 
     for(final InputBinding inputBinding : playerOne.bindings) {
