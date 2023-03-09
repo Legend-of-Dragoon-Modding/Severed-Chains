@@ -300,7 +300,10 @@ public class MainMenuScreen extends MenuScreen {
       for(int i = 0; i < 6; i++) {
         if(this.selectedMenuOption != i && MathHelper.inBox(x, y, 22, getMenuOptionY(i) + 2, 84, 13)) {
           playSound(1);
+          this.onLeftMenu = true;
           this.selectedMenuOption = i;
+          this.selectedItemSubmenuOption = -1;
+          this.selectedItemMenuOptionRenderable.x_40 = -200;
           this.selectedMenuOptionRenderable.y_44 = getMenuOptionY(i);
         }
       }
@@ -308,7 +311,9 @@ public class MainMenuScreen extends MenuScreen {
       for(int i = 0; i < 4; i++) {
         if(this.selectedItemSubmenuOption != i && MathHelper.inBox(x, y, 114, this.getItemSubmenuOptionY(i), 55, 13)) {
           playSound(1);
+          this.onLeftMenu = false;
           this.selectedItemSubmenuOption = i;
+          this.selectedItemMenuOptionRenderable.x_40 = 122;
           this.selectedItemMenuOptionRenderable.y_44 = this.getItemSubmenuOptionY(i) - 2;
         }
       }
