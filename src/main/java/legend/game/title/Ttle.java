@@ -28,6 +28,8 @@ import legend.core.opengl.Window;
 import legend.game.SaveManager;
 import legend.game.Scus94491BpeSegment_8002;
 import legend.game.fmv.Fmv;
+import legend.game.input.Input;
+import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
 import legend.game.tim.Tim;
 import legend.game.types.CharacterData2c;
@@ -284,8 +286,9 @@ public final class Ttle {
         pregameLoadingStage_800bb10c.set(4);
       }
 
+      // Game Over Screen
       case 4 -> {
-        if((joypadPress_8007a398.get() & 0x820) != 0) {
+        if(Input.pressedThisFrame(InputAction.BUTTON_CENTER_2) || Input.pressedThisFrame(InputAction.BUTTON_SOUTH)) {
           Scus94491BpeSegment_8002.playSound(2);
           pregameLoadingStage_800bb10c.set(5);
           scriptStartEffect(1, 10);
@@ -585,13 +588,18 @@ public final class Ttle {
     }
 
     //LAB_800c8448
-    if(joypadInput_8007a39c.get(0xf9ffL) != 0) {
-      menuLoadingStage = 3;
-      menuIdleTime = 0;
+    if(Input.hasActivityThisFrame()) {
+      resetIdleTime();
     }
 
     //LAB_800c8474
   }
+
+  private static void resetIdleTime() {
+    menuLoadingStage = 3;
+    menuIdleTime = 0;
+  }
+
 
   private static void addInputHandlers() {
     onMouseMove = GPU.window().events.onMouseMove((window, x, y) -> {
@@ -739,12 +747,18 @@ public final class Ttle {
     onKeyPress = GPU.window().events.onKeyPress((window, key, scancode, mods) -> {
       if(_800c6728 == 1 && _800c6738 < 3) {
         if(key == GLFW.GLFW_KEY_ESCAPE) {
-          playSound(0, 3, 0, 0, (short)0, (short)0);
-          _800c6738 = 3;
-          _800c672c = 0;
+          menuEscape();
         }
       }
     });
+  }
+
+  private static void menuEscape() {
+    playSound(0, 3, 0, 0, (short)0, (short)0);
+    _800c6738 = 3;
+    _800c672c = 0;
+
+    resetIdleTime();
   }
 
   private static void removeInputHandlers() {
@@ -759,7 +773,7 @@ public final class Ttle {
   @Method(0x800c8484L)
   public static void handleMainInput() {
     if(_800c672c < 3) {
-      if(joypadPress_8007a398.get(0x20L) != 0) { // Menu button X
+      if(Input.pressedThisFrame(InputAction.BUTTON_SOUTH)) { // Menu button X
         playSound(0, 2, 0, 0, (short)0, (short)0);
 
         _800c672c = 3;
@@ -768,7 +782,7 @@ public final class Ttle {
           selectedConfigCategory = 0;
           _800c6728 = 1;
         }
-      } else if(joypadPress_8007a398.get(0x1000L) != 0) { // Menu button up
+      } else if(Input.pressedThisFrame(InputAction.DPAD_UP) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_UP)) { // Menu button up
         playSound(0, 1, 0, 0, (short)0, (short)0);
 
         selectedMenuOption--;
@@ -781,7 +795,7 @@ public final class Ttle {
         }
 
         _800c672c = 2;
-      } else if(joypadPress_8007a398.get(0x4000L) != 0) { // Menu button down
+      } else if(Input.pressedThisFrame(InputAction.DPAD_DOWN) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_DOWN)) { // Menu button down
         playSound(0, 1, 0, 0, (short)0, (short)0);
 
         selectedMenuOption++;
@@ -938,19 +952,23 @@ public final class Ttle {
   @Method(0x800c93b0L)
   public static void handleOptionsInput() {
     if(_800c6728 == 1 && _800c6738 < 3) {
-      if(joypadPress_8007a398.get(0x5000) != 0) { // Up, down
+
+      // Up, down
+      if(Input.pressedThisFrame(InputAction.DPAD_UP) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_UP) ||
+        Input.pressedThisFrame(InputAction.DPAD_DOWN) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_DOWN)) {
         playSound(0, 1, 0, 0, (short)0, (short)0);
         selectedConfigCategory ^= 0b11;
         _800c6738 = 2;
       }
 
-      if(joypadPress_8007a398.get(0x40) != 0) { // Back
-        playSound(0, 3, 0, 0, (short)0, (short)0);
-        _800c6738 = 3;
-        _800c672c = 0;
+      // Back
+      if(Input.pressedThisFrame(InputAction.BUTTON_EAST)) {
+        menuEscape();
       }
 
-      if(joypadPress_8007a398.get(0xa000) != 0) { // Left, right
+      // Left, right
+      if(Input.pressedThisFrame(InputAction.DPAD_LEFT) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_LEFT) ||
+        Input.pressedThisFrame(InputAction.DPAD_RIGHT) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_RIGHT)) {
         playSound(0, 1, 0, 0, (short)0, (short)0);
 
         if(selectedConfigCategory == 0) {

@@ -114,6 +114,7 @@ task copySupportFiles(type: Copy) {
   into(".") {
     from 'launch.bat'
     from 'log4j2.xml'
+    from 'gamecontrollerdb.txt'
   }
 }
 

@@ -4,6 +4,7 @@ import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
+import legend.game.input.InputAction;
 import legend.game.types.LodString;
 import legend.game.types.MenuItemStruct04;
 import legend.game.types.MessageBoxResult;
@@ -298,61 +299,6 @@ public class ItemListScreen extends MenuScreen {
   }
 
   @Override
-  protected void keyPress(final int key, final int scancode, final int mods) {
-    if(mods != 0) {
-      return;
-    }
-
-    if(this.loadingStage != 1) {
-      return;
-    }
-
-    switch(key) {
-      case GLFW_KEY_ESCAPE -> this.loadingStage = 100;
-
-      case GLFW_KEY_DOWN -> {
-        this.handleVerticalInput(false);
-      }
-      case GLFW_KEY_UP -> {
-        this.handleVerticalInput(true);
-      }
-
-      case GLFW_KEY_LEFT -> {
-        playSound(1);
-        this.handleMenuFocusState(true);
-        this.setCurrent(gameState_800babc8.equipment_1e8, this.equipment, this.slotScrollEquipment + this.selectedSlot);
-        this.highlight.x_40 = FUN_800fc824(0);
-      }
-
-      case GLFW_KEY_RIGHT -> {
-        playSound(1);
-        this.handleMenuFocusState(false);
-        this.setCurrent(gameState_800babc8.items_2e9, this.items, this.slotScrollItem + this.selectedSlot);
-        this.highlight.x_40 = FUN_800fc824(1);
-      }
-
-      case GLFW_KEY_ENTER, GLFW_KEY_S -> {
-        if(this.currentIndex >= this.currentDisplayList.size()) {
-          break;
-        }
-
-        if(((this.currentDisplayList.get(this.currentIndex).flags_02 & 0x2000) != 0)) {
-          playSound(40);
-        } else {
-          playSound(2);
-          menuStack.pushScreen(new MessageBoxScreen(new LodString("Discard?"), 2, this::discard));
-        }
-      }
-
-      case GLFW_KEY_W -> {
-        playSound(2);
-        sortItems(this.equipment, gameState_800babc8.equipment_1e8, gameState_800babc8.equipmentCount_1e4.get() + this.equippedItemsCount);
-        sortItems(this.items, gameState_800babc8.items_2e9, gameState_800babc8.itemCount_1e6.get());
-      }
-    }
-  }
-
-  @Override
   protected void mouseScroll(final double deltaX, final double deltaY) {
     if(this.loadingStage != 1) {
       return;
@@ -363,5 +309,78 @@ public class ItemListScreen extends MenuScreen {
     }
 
     this.scrollAccumulator += deltaY;
+  }
+
+  private void menuEscape() {
+    this.loadingStage = 100;
+  }
+  private void menuSelect() {
+    if(this.currentIndex >= this.currentDisplayList.size()) {
+      return;
+    }
+
+    if(((this.currentDisplayList.get(this.currentIndex).flags_02 & 0x2000) != 0)) {
+      playSound(40);
+    } else {
+      playSound(2);
+      menuStack.pushScreen(new MessageBoxScreen(new LodString("Discard?"), 2, this::discard));
+    }
+  }
+  private void menuSort() {
+    playSound(2);
+    sortItems(this.equipment, gameState_800babc8.equipment_1e8, gameState_800babc8.equipmentCount_1e4.get() + this.equippedItemsCount);
+    sortItems(this.items, gameState_800babc8.items_2e9, gameState_800babc8.itemCount_1e6.get());
+  }
+  private void menuNavigateUp() {
+    this.handleVerticalInput(true);
+  }
+  private void menuNavigateDown() {
+    this.handleVerticalInput(false);
+  }
+  private void menuNavigateLeft() {
+    playSound(1);
+    this.handleMenuFocusState(true);
+    this.setCurrent(gameState_800babc8.equipment_1e8, this.equipment, this.slotScrollEquipment + this.selectedSlot);
+    this.highlight.x_40 = FUN_800fc824(0);
+  }
+  private void menuNavigateRight() {
+    playSound(1);
+    this.handleMenuFocusState(false);
+    this.setCurrent(gameState_800babc8.items_2e9, this.items, this.slotScrollItem + this.selectedSlot);
+    this.highlight.x_40 = FUN_800fc824(1);
+  }
+
+
+  @Override
+  public void pressedThisFrame(final InputAction inputAction) {
+    if(this.loadingStage != 1) {
+      return;
+    }
+
+    if(inputAction == InputAction.DPAD_LEFT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_LEFT) {
+      this.menuNavigateLeft();
+    }
+    if(inputAction == InputAction.DPAD_RIGHT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_RIGHT) {
+      this.menuNavigateRight();
+    }
+    if(inputAction == InputAction.BUTTON_EAST) {
+      this.menuEscape();
+    }
+    if(inputAction == InputAction.BUTTON_SOUTH) {
+      this.menuSelect();
+    }
+    if(inputAction == InputAction.BUTTON_NORTH) {
+      this.menuSort();
+    }
+  }
+
+  @Override
+  public void pressedWithRepeatPulse(final InputAction inputAction) {
+    if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
+      this.menuNavigateUp();
+    }
+    if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
+      this.menuNavigateDown();
+    }
   }
 }

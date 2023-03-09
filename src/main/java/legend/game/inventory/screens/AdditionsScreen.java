@@ -1,6 +1,7 @@
 package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
+import legend.game.input.InputAction;
 import legend.game.types.MenuAdditionInfo;
 import legend.game.types.Renderable58;
 
@@ -30,13 +31,6 @@ import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
 import static legend.game.Scus94491BpeSegment_8005.additionData_80052884;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 
 public class AdditionsScreen extends MenuScreen {
@@ -209,50 +203,47 @@ public class AdditionsScreen extends MenuScreen {
     }
   }
 
-  @Override
-  protected void keyPress(final int key, final int scancode, final int mods) {
-    if(this.loadingStage != 2 || mods != 0) {
-      return;
+  private void menuEscape() {
+    playSound(3);
+    this.loadingStage = 100;
+  }
+
+  private void menuNavigateUp() {
+    if(this.selectedSlot > 0) {
+      this.selectedSlot--;
     }
-    switch(key) {
-      case GLFW_KEY_LEFT -> this.scrollAccumulator++;
-      case GLFW_KEY_RIGHT -> this.scrollAccumulator--;
 
-      case GLFW_KEY_DOWN -> {
-        if(this.selectedSlot < 6) {
-          this.selectedSlot++;
-        }
+    playSound(1);
+    this.additionHighlight.y_44 = this.getAdditionSlotY(this.selectedSlot) - 4;
+  }
 
-        playSound(1);
-        this.additionHighlight.y_44 = this.getAdditionSlotY(this.selectedSlot) - 4;
-      }
+  private void menuNavigateDown() {
+    if(this.selectedSlot < 6) {
+      this.selectedSlot++;
+    }
 
-      case GLFW_KEY_UP -> {
-        if(this.selectedSlot > 0) {
-          this.selectedSlot--;
-        }
+    playSound(1);
+    this.additionHighlight.y_44 = this.getAdditionSlotY(this.selectedSlot) - 4;
+  }
 
-        playSound(1);
-        this.additionHighlight.y_44 = this.getAdditionSlotY(this.selectedSlot) - 4;
-      }
+  private void menuNavigateLeft() {
+    this.scrollAccumulator++;
+  }
 
-      case GLFW_KEY_ENTER, GLFW_KEY_S -> {
-        final int additionOffset = this.additions[this.selectedSlot].offset_00;
+  private void menuNavigateRight() {
+    this.scrollAccumulator--;
+  }
 
-        if(additionOffset != -1) {
-          gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.get(this.charSlot).get()).selectedAddition_19.set(additionOffset);
-          playSound(2);
-          unloadRenderable(this.additionHighlight);
-          this.loadingStage = 1;
-        } else {
-          playSound(40);
-        }
-      }
+  private void menuSelect() {
+    final int additionOffset = this.additions[this.selectedSlot].offset_00;
 
-      case GLFW_KEY_ESCAPE -> {
-        playSound(3);
-        this.loadingStage = 100;
-      }
+    if(additionOffset != -1) {
+      gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.get(this.charSlot).get()).selectedAddition_19.set(additionOffset);
+      playSound(2);
+      unloadRenderable(this.additionHighlight);
+      this.loadingStage = 1;
+    } else {
+      playSound(40);
     }
   }
 
@@ -267,5 +258,39 @@ public class AdditionsScreen extends MenuScreen {
     }
 
     this.scrollAccumulator += deltaY;
+  }
+
+  @Override
+  public void pressedThisFrame(final InputAction inputAction) {
+    if(this.loadingStage != 2) {
+      return;
+    }
+
+    if(inputAction == InputAction.DPAD_LEFT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_LEFT) {
+      this.menuNavigateLeft();
+    }
+    if(inputAction == InputAction.DPAD_RIGHT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_RIGHT) {
+      this.menuNavigateRight();
+    }
+    if(inputAction == InputAction.BUTTON_EAST) {
+      this.menuEscape();
+    }
+    if(inputAction == InputAction.BUTTON_SOUTH) {
+      this.menuSelect();
+    }
+  }
+
+  @Override
+  public void pressedWithRepeatPulse(final InputAction inputAction) {
+    if(this.loadingStage != 2) {
+      return;
+    }
+
+    if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
+      this.menuNavigateUp();
+    }
+    if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
+      this.menuNavigateDown();
+    }
   }
 }
