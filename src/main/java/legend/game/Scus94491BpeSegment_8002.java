@@ -23,6 +23,8 @@ import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
+import legend.game.input.Input;
+import legend.game.input.InputAction;
 import legend.game.fmv.Fmv;
 import legend.game.inventory.UseItemResponse;
 import legend.game.inventory.WhichMenu;
@@ -1745,7 +1747,7 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80023454
-    gameState_800babc8.equipment_1e8.get(0x99).set(0xff);
+    gameState_800babc8.equipment_1e8.get(0xff).set(0xff);
     gameState_800babc8.equipmentCount_1e4.decr();
 
     //LAB_80023474
@@ -3189,7 +3191,7 @@ public final class Scus94491BpeSegment_8002 {
         //LAB_80026df0
         if((joypadInput_8007a39c.get() & 0x4000L) == 0) {
           //LAB_80026ee8
-          if((joypadInput_8007a39c.get() & 0x1000L) != 0) {
+          if(Input.getButtonState(InputAction.DPAD_UP) || Input.getButtonState(InputAction.JOYSTICK_LEFT_BUTTON_UP)) {
             if((struct84._08 & 0x100) == 0 || struct84._68 != 0) {
               //LAB_80026f38
               Scus94491BpeSegment.playSound(0, 1, 0, 0, (short)0, (short)0);
@@ -3281,7 +3283,7 @@ public final class Scus94491BpeSegment_8002 {
             Scus94491BpeSegment.playSound(0, 1, 0, 0, (short)0, (short)0);
 
             //LAB_80026ee8
-            if((joypadInput_8007a39c.get() & 0x1000L) != 0) {
+            if(Input.getButtonState(InputAction.DPAD_UP) || Input.getButtonState(InputAction.JOYSTICK_LEFT_BUTTON_UP)) {
               if((struct84._08 & 0x100) == 0 || struct84._68 != 0) {
                 //LAB_80026f38
                 Scus94491BpeSegment.playSound(0, 1, 0, 0, (short)0, (short)0);
@@ -3478,7 +3480,7 @@ public final class Scus94491BpeSegment_8002 {
         struct84._6c = struct84._68 - struct84._72;
       } else {
         //LAB_800273bc
-        if((joypadInput_8007a39c.get() & 0x1000L) != 0) {
+        if(Input.getButtonState(InputAction.DPAD_UP) || Input.getButtonState(InputAction.JOYSTICK_LEFT_BUTTON_UP)) {
           struct84._00 = 19;
           struct84._64 = 4;
           struct84._68--;
@@ -3493,7 +3495,7 @@ public final class Scus94491BpeSegment_8002 {
         }
 
         //LAB_80027420
-        if((joypadInput_8007a39c.get() & 0x4000L) != 0) {
+        if(Input.getButtonState(InputAction.DPAD_DOWN) || Input.getButtonState(InputAction.JOYSTICK_LEFT_BUTTON_DOWN)) {
           struct84._00 = 19;
           struct84._64 = 4;
           struct84._68++;

@@ -15,6 +15,7 @@ import legend.game.Scus94491BpeSegment_8003;
 import legend.game.Scus94491BpeSegment_8004;
 import legend.game.Scus94491BpeSegment_800e;
 import legend.game.fmv.Fmv;
+import legend.game.input.Input;
 import legend.game.modding.ModManager;
 import legend.game.modding.events.EventManager;
 import legend.game.modding.registries.Registries;

@@ -1,6 +1,7 @@
 package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
+import legend.game.input.InputAction;
 import legend.game.types.MenuItemStruct04;
 import legend.game.types.Renderable58;
 
@@ -36,13 +37,6 @@ import static legend.game.Scus94491BpeSegment_8002.takeEquipment;
 import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
 
 public class EquipmentScreen extends MenuScreen {
   private int loadingStage;
@@ -237,85 +231,111 @@ public class EquipmentScreen extends MenuScreen {
     this.scrollAccumulator += deltaY;
   }
 
+  private void menuEscape() {
+    playSound(3);
+    this.loadingStage = 100;
+  }
+
+  private void menuNavigateUp() {
+    playSound(1);
+
+    if(this.selectedSlot > 0) {
+      this.selectedSlot--;
+    } else {
+      this.scrollAccumulator = 1;
+    }
+
+    this.itemHighlight.y_44 = this.FUN_800fc804(this.selectedSlot);
+  }
+
+  private void menuNavigateDown() {
+    playSound(1);
+
+    if(this.selectedSlot < 3) {
+      this.selectedSlot++;
+    } else {
+      this.scrollAccumulator = -1;
+    }
+
+    this.itemHighlight.y_44 = this.FUN_800fc804(this.selectedSlot);
+  }
+
+  private void menuNavigateLeft() {
+    if(this.charSlot > 0) {
+      this.charSlot--;
+      this.loadingStage = 1;
+    }
+  }
+
+  private void menuNavigateRight() {
+    if(this.charSlot < characterCount_8011d7c4.get() - 1) {
+      this.charSlot++;
+      this.loadingStage = 1;
+    }
+  }
+
+  private void menuSelect() {
+    playSound(2);
+
+    final int itemIndex = this.selectedSlot + this.slotScroll;
+
+    if(itemIndex < gameState_800babc8.equipmentCount_1e4.get()) {
+      final int equipmentId = this.menuItems.get(itemIndex).itemId_00;
+
+      if(equipmentId != 0xff) {
+        final int previousEquipmentId = equipItem(equipmentId, characterIndices_800bdbb8.get(this.charSlot).get());
+        takeEquipment(this.menuItems.get(itemIndex).itemSlot_01);
+        giveItem(previousEquipmentId);
+        playSound(2);
+        loadCharacterStats(0);
+        addHp(characterIndices_800bdbb8.get(this.charSlot).get(), 0);
+        addMp(characterIndices_800bdbb8.get(this.charSlot).get(), 0);
+        this.loadingStage = 2;
+      } else {
+        playSound(40);
+      }
+    }
+  }
+
+  private void menuItemSort() {
+    playSound(2);
+    FUN_80104738(this.equipment, this.items, 1);
+    sortItems(this.equipment, gameState_800babc8.equipment_1e8, gameState_800babc8.equipmentCount_1e4.get());
+    this.loadingStage = 2;
+  }
+
   @Override
-  protected void keyPress(final int key, final int scancode, final int mods) {
+  public void pressedThisFrame(final InputAction inputAction) {
     if(this.loadingStage != 3) {
       return;
     }
+    if(inputAction == InputAction.DPAD_LEFT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_LEFT) {
+      this.menuNavigateLeft();
+    }
+    if(inputAction == InputAction.DPAD_RIGHT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_RIGHT) {
+      this.menuNavigateRight();
+    }
+    if(inputAction == InputAction.BUTTON_EAST) {
+      this.menuEscape();
+    }
+    if(inputAction == InputAction.BUTTON_SOUTH) {
+      this.menuSelect();
+    }
+    if(inputAction == InputAction.BUTTON_NORTH) {
+      this.menuItemSort();
+    }
+  }
 
-    switch(key) {
-      case GLFW_KEY_ESCAPE -> {
-        playSound(3);
-        this.loadingStage = 100;
-      }
-
-      case GLFW_KEY_DOWN -> {
-        playSound(1);
-
-        if(this.selectedSlot < 3) {
-          this.selectedSlot++;
-        } else {
-          this.scrollAccumulator = -1;
-        }
-
-        this.itemHighlight.y_44 = this.FUN_800fc804(this.selectedSlot);
-      }
-
-      case GLFW_KEY_UP -> {
-        playSound(1);
-
-        if(this.selectedSlot > 0) {
-          this.selectedSlot--;
-        } else {
-          this.scrollAccumulator = 1;
-        }
-
-        this.itemHighlight.y_44 = this.FUN_800fc804(this.selectedSlot);
-      }
-
-      case GLFW_KEY_LEFT -> {
-        if(this.charSlot > 0) {
-          this.charSlot--;
-          this.loadingStage = 1;
-        }
-      }
-
-      case GLFW_KEY_RIGHT -> {
-        if(this.charSlot < characterCount_8011d7c4.get() - 1) {
-          this.charSlot++;
-          this.loadingStage = 1;
-        }
-      }
-
-      case GLFW_KEY_ENTER -> {
-        playSound(2);
-
-        final int itemIndex = this.selectedSlot + this.slotScroll;
-
-        if(itemIndex < gameState_800babc8.equipmentCount_1e4.get()) {
-          final int equipmentId = this.menuItems.get(itemIndex).itemId_00;
-
-          if(equipmentId != 0xff) {
-            final int previousEquipmentId = equipItem(equipmentId, characterIndices_800bdbb8.get(this.charSlot).get());
-            takeEquipment(this.menuItems.get(itemIndex).itemSlot_01);
-            giveItem(previousEquipmentId);
-            playSound(2);
-            loadCharacterStats(0);
-            addHp(characterIndices_800bdbb8.get(this.charSlot).get(), 0);
-            addMp(characterIndices_800bdbb8.get(this.charSlot).get(), 0);
-            this.loadingStage = 2;
-          } else {
-            playSound(40);
-          }
-        }
-      }
-
-      case GLFW_KEY_W -> { // sort
-        playSound(2);
-        FUN_80104738(this.equipment, this.items, 1);
-        sortItems(this.equipment, gameState_800babc8.equipment_1e8, gameState_800babc8.equipmentCount_1e4.get());
-        this.loadingStage = 2;
-      }
+  @Override
+  public void pressedWithRepeatPulse(final InputAction inputAction) {
+    if(this.loadingStage != 3) {
+      return;
+    }
+    if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
+      this.menuNavigateUp();
+    }
+    if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
+      this.menuNavigateDown();
     }
   }
 }

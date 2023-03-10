@@ -3,6 +3,7 @@ package legend.game.inventory.screens;
 import legend.core.Config;
 import legend.core.MathHelper;
 import legend.game.DabasManager;
+import legend.game.input.InputAction;
 import legend.game.types.DabasData100;
 import legend.game.types.LodString;
 import legend.game.types.MenuItemStruct04;
@@ -52,7 +53,6 @@ import static legend.game.Scus94491BpeSegment_800b.drgn0_6666FilePtr_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.inventoryJoypadInput_800bdc44;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 
 public class DabasScreen extends MenuScreen {
@@ -378,15 +378,19 @@ public class DabasScreen extends MenuScreen {
     }
   }
 
+  private void menuEscape() {
+    playSound(3);
+    this.loadingStage = 100;
+  }
+
   @Override
-  protected void keyPress(final int key, final int scancode, final int mods) {
-    if(this.loadingStage != 2 || mods != 0) {
+  public void pressedThisFrame(final InputAction inputAction) {
+    if(this.loadingStage != 2) {
       return;
     }
 
-    if(key == GLFW_KEY_ESCAPE) {
-      playSound(3);
-      this.loadingStage = 100;
+    if(inputAction == InputAction.BUTTON_EAST) {
+      this.menuEscape();
     }
   }
 

@@ -431,30 +431,6 @@ public class Gpu implements Runnable {
       this.vsyncCount += 60.0d / this.window.getFpsLimit();
     });
 
-    if(Config.controllerConfig()) {
-      final Scanner scanner = new Scanner(System.in);
-
-      System.out.println("Beginning controller configuration.");
-      System.out.println("Choose a joystick:");
-      for(int i = 0; i < GLFW_JOYSTICK_LAST; i++) {
-        if(glfwJoystickPresent(i)) {
-          System.out.println((i + 1) + ": " + glfwGetJoystickName(i) + " (" + glfwGetJoystickGUID(i) + ')');
-        }
-      }
-
-      final int index = this.readInt(scanner, "# ", "Invalid index") - 1;
-      final String guid = glfwGetJoystickGUID(index);
-
-      Config.controllerConfig(false);
-      Config.controllerGuid(guid);
-
-      try {
-        Config.save();
-      } catch(final IOException e) {
-        System.err.println("Failed to save config");
-      }
-    }
-
     this.window.show();
 
     this.ready = true;

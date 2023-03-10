@@ -2,6 +2,7 @@ package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
 import legend.core.memory.Method;
+import legend.game.input.InputAction;
 import legend.game.inventory.UseItemResponse;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.ItemStats0c;
@@ -57,13 +58,6 @@ import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
 
 public class UseItemScreen extends MenuScreen {
   private int loadingStage;
@@ -308,7 +302,7 @@ public class UseItemScreen extends MenuScreen {
           this.itemCount = this.getUsableItemsInMenu();
           loadCharacterStats(0);
           this.getItemResponseText(this.useItemResponse);
-          menuStack.pushScreen(new MessageBoxScreen(this.useItemResponse.string_08, 0, result -> { }));
+          menuStack.pushScreen(new MessageBoxScreen(this.useItemResponse.string_08, 0, result -> {}));
           this.loadingStage = 1;
         }
       }
@@ -390,135 +384,161 @@ public class UseItemScreen extends MenuScreen {
     this.scrollAccumulator += deltaY;
   }
 
-  @Override
-  protected void keyPress(final int key, final int scancode, final int mods) {
-    if(mods != 0) {
+  private void menuStage2Escape() {
+    playSound(3);
+    this.loadingStage = 100;
+  }
+
+  private void menuStage2NavigateUp() {
+    if(this.selectedSlot > 0) {
+      playSound(1);
+      this.selectedSlot--;
+      this.itemHighlight.y_44 = getItemSlotY(this.selectedSlot);
+    } else if(this.slotScroll > 0) {
+      this.slotScroll--;
+      this.itemHighlight.y_44 = getItemSlotY(this.selectedSlot);
+    }
+  }
+
+  private void menuStage2NavigateDown() {
+    if((this.selectedSlot + this.slotScroll) < this.itemCount - 1) {
+      playSound(1);
+
+      if(this.selectedSlot == 4) {
+        this.slotScroll++;
+      } else {
+        this.selectedSlot++;
+      }
+
+      this.itemHighlight.y_44 = getItemSlotY(this.selectedSlot);
+    }
+  }
+
+  private void menuStage2Select() {
+    if(this.slotScroll + this.selectedSlot >= this.itemCount) {
+      playSound(40);
       return;
     }
 
-    if(this.loadingStage == 2) {
-      switch(key) {
-        case GLFW_KEY_ESCAPE -> {
-          playSound(3);
-          this.loadingStage = 100;
-        }
+    this.itemUseFlags = itemCanBeUsedInMenu(this.menuItems.get(this.selectedSlot + this.slotScroll).itemId_00);
 
-        case GLFW_KEY_UP -> {
-          if(this.selectedSlot > 0) {
-            playSound(1);
-            this.selectedSlot--;
-            this.itemHighlight.y_44 = getItemSlotY(this.selectedSlot);
-          } else if(this.slotScroll > 0) {
-            this.slotScroll--;
-            this.itemHighlight.y_44 = getItemSlotY(this.selectedSlot);
-          }
-        }
+    if(this.itemUseFlags == 0 || (this.menuItems.get(this.selectedSlot + this.slotScroll).flags_02 & 0x4000) != 0) {
+      playSound(40);
+      return;
+    }
 
-        case GLFW_KEY_DOWN -> {
-          if((this.selectedSlot + this.slotScroll) < this.itemCount - 1) {
-            playSound(1);
+    if((this.itemUseFlags & 0x2) != 0) {
+      for(int i = 0; i < 7; i++) {
+        this._8011d718[i] = allocateUiElement(0x7e, 0x7e, getCharacterPortraitX(i), 110);
+        FUN_80104b60(this._8011d718[i]);
+      }
+    } else {
+      this.charHighlight = allocateUiElement(0x7e, 0x7e, getCharacterPortraitX(this.charSlot), 110);
+      FUN_80104b60(this.charHighlight);
+    }
 
-            if(this.selectedSlot == 4) {
-              this.slotScroll++;
-            } else {
-              this.selectedSlot++;
-            }
+    playSound(2);
+    this.loadingStage = 3;
+  }
 
-            this.itemHighlight.y_44 = getItemSlotY(this.selectedSlot);
-          }
-        }
+  private void menuStage3Escape() {
+    if((this.itemUseFlags & 0x2) == 0) {
+      unloadRenderable(this.charHighlight);
+    } else {
+      for(int i = 0; i < 7; i++) {
+        unloadRenderable(this._8011d718[i]);
+      }
+    }
 
-        case GLFW_KEY_ENTER, GLFW_KEY_S -> {
-          if(this.slotScroll + this.selectedSlot >= this.itemCount) {
-            playSound(40);
-            break;
-          }
+    playSound(3);
+    this.loadingStage = 2;
+  }
 
-          this.itemUseFlags = itemCanBeUsedInMenu(this.menuItems.get(this.selectedSlot + this.slotScroll).itemId_00);
+  private void menuStage3NavigateLeft() {
+    if((this.itemUseFlags & 0x2) == 0) {
+      playSound(1);
 
-          if(this.itemUseFlags == 0 || (this.menuItems.get(this.selectedSlot + this.slotScroll).flags_02 & 0x4000) != 0) {
-            playSound(40);
-            break;
-          }
+      if(this.charSlot > 0) {
+        this.charSlot--;
+      }
 
-          if((this.itemUseFlags & 0x2) != 0) {
-            for(int i = 0; i < 7; i++) {
-              this._8011d718[i] = allocateUiElement(0x7e, 0x7e, getCharacterPortraitX(i), 110);
-              FUN_80104b60(this._8011d718[i]);
-            }
-          } else {
-            this.charHighlight = allocateUiElement(0x7e, 0x7e, getCharacterPortraitX(this.charSlot), 110);
-            FUN_80104b60(this.charHighlight);
-          }
+      this.charHighlight.x_40 = getCharacterPortraitX(this.charSlot) - 3;
+    }
+  }
 
-          playSound(2);
-          this.loadingStage = 3;
+  private void menuStage3NavigateRight() {
+    if((this.itemUseFlags & 0x2) == 0) {
+      playSound(1);
+
+      if(this.charSlot < characterCount_8011d7c4.get() - 1) {
+        this.charSlot++;
+      }
+
+      this.charHighlight.x_40 = getCharacterPortraitX(this.charSlot) - 3;
+    }
+  }
+
+  private void menuStage3Select() {
+    if((this.itemUseFlags & 0x2) == 0) {
+      useItemInMenu(this.useItemResponse, this.menuItems.get(this.selectedSlot + this.slotScroll).itemId_00, characterIndices_800bdbb8.get(this.charSlot).get());
+    } else {
+      int responseValue = -2;
+
+      for(int i = 0; i < characterCount_8011d7c4.get(); i++) {
+        useItemInMenu(this.useItemResponse, this.menuItems.get(this.selectedSlot + this.slotScroll).itemId_00, characterIndices_800bdbb8.get(i).get());
+
+        if(this.useItemResponse.value_04 != -2) {
+          responseValue = 0;
         }
       }
+
+      this.useItemResponse.value_04 = responseValue;
+    }
+
+    playSound(2);
+    takeItem(this.menuItems.get(this.selectedSlot + this.slotScroll).itemId_00);
+    this.itemCount = this.getUsableItemsInMenu();
+    loadCharacterStats(0);
+    this.getItemResponseText(this.useItemResponse);
+    menuStack.pushScreen(new MessageBoxScreen(this.useItemResponse.string_08, 0, result -> {}));
+    this.loadingStage = 1;
+  }
+
+  @Override
+  public void pressedThisFrame(final InputAction inputAction) {
+
+    if(this.loadingStage == 2) {
+      if(inputAction == InputAction.BUTTON_EAST) {
+        this.menuStage2Escape();
+      }
+      if(inputAction == InputAction.BUTTON_SOUTH) {
+        this.menuStage2Select();
+      }
     } else if(this.loadingStage == 3) {
-      switch(key) {
-        case GLFW_KEY_LEFT -> {
-          if((this.itemUseFlags & 0x2) == 0) {
-            playSound(1);
+      if(inputAction == InputAction.DPAD_LEFT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_LEFT) {
+        this.menuStage3NavigateLeft();
+      }
+      if(inputAction == InputAction.DPAD_RIGHT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_RIGHT) {
+        this.menuStage3NavigateRight();
+      }
+      if(inputAction == InputAction.BUTTON_EAST) {
+        this.menuStage3Escape();
+      }
+      if(inputAction == InputAction.BUTTON_SOUTH) {
+        this.menuStage3Select();
+      }
+    }
+  }
 
-            if(this.charSlot > 0) {
-              this.charSlot--;
-            }
+  @Override
+  public void pressedWithRepeatPulse(final InputAction inputAction) {
 
-            this.charHighlight.x_40 = getCharacterPortraitX(this.charSlot) - 3;
-          }
-        }
-
-        case GLFW_KEY_RIGHT -> {
-          if((this.itemUseFlags & 0x2) == 0) {
-            playSound(1);
-
-            if(this.charSlot < characterCount_8011d7c4.get() - 1) {
-              this.charSlot++;
-            }
-
-            this.charHighlight.x_40 = getCharacterPortraitX(this.charSlot) - 3;
-          }
-        }
-
-        case GLFW_KEY_ESCAPE -> {
-          if((this.itemUseFlags & 0x2) == 0) {
-            unloadRenderable(this.charHighlight);
-          } else {
-            for(int i = 0; i < 7; i++) {
-              unloadRenderable(this._8011d718[i]);
-            }
-          }
-
-          playSound(3);
-          this.loadingStage = 2;
-        }
-
-        case GLFW_KEY_ENTER, GLFW_KEY_S -> {
-          if((this.itemUseFlags & 0x2) == 0) {
-            useItemInMenu(this.useItemResponse, this.menuItems.get(this.selectedSlot + this.slotScroll).itemId_00, characterIndices_800bdbb8.get(this.charSlot).get());
-          } else {
-            int responseValue = -2;
-
-            for(int i = 0; i < characterCount_8011d7c4.get(); i++) {
-              useItemInMenu(this.useItemResponse, this.menuItems.get(this.selectedSlot + this.slotScroll).itemId_00, characterIndices_800bdbb8.get(i).get());
-
-              if(this.useItemResponse.value_04 != -2) {
-                responseValue = 0;
-              }
-            }
-
-            this.useItemResponse.value_04 = responseValue;
-          }
-
-          playSound(2);
-          takeItem(this.menuItems.get(this.selectedSlot + this.slotScroll).itemId_00);
-          this.itemCount = this.getUsableItemsInMenu();
-          loadCharacterStats(0);
-          this.getItemResponseText(this.useItemResponse);
-          menuStack.pushScreen(new MessageBoxScreen(this.useItemResponse.string_08, 0, result -> { }));
-          this.loadingStage = 1;
-        }
+    if(this.loadingStage == 2) {
+      if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
+        this.menuStage2NavigateUp();
+      }
+      if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
+        this.menuStage2NavigateDown();
       }
     }
   }

@@ -23,7 +23,6 @@ public final class Config {
   static {
     properties.setProperty("window_width", "320");
     properties.setProperty("window_height", "240");
-    properties.setProperty("controller_config", "false");
     properties.setProperty("controller_guid", "");
     properties.setProperty("controller_deadzone", "0.3");
     properties.setProperty("inventory_size", "32");
@@ -40,6 +39,7 @@ public final class Config {
     properties.setProperty("fast_text_speed", "false");
     properties.setProperty("auto_advance_text", "false");
     properties.setProperty("auto_charm_potion", "false");
+    properties.setProperty("receive_input_on_inactive_window", "false");
   }
 
   public static int windowWidth() {
@@ -48,10 +48,6 @@ public final class Config {
 
   public static int windowHeight() {
     return readInt("window_height", 240, 1, Integer.MAX_VALUE);
-  }
-
-  public static boolean controllerConfig() {
-    return readBool("controller_config", false);
   }
 
   public static void controllerConfig(final boolean config) {
@@ -110,6 +106,14 @@ public final class Config {
     properties.setProperty("auto_dragoon_meter", String.valueOf(!autoDragoonMeter()));
   }
 
+  public static boolean disableStatusEffects() {
+    return readBool("disable_status_effects", false);
+  }
+
+  public static void toggleDisableStatusEffects() {
+    properties.setProperty("disable_status_effects", String.valueOf(!disableStatusEffects()));
+  }
+
   public static boolean combatStage() {
     return readBool("combat_stage", false);
   }
@@ -148,6 +152,14 @@ public final class Config {
 
   public static void toggleAutoCharmPotion() {
     properties.setProperty("auto_charm_potion", String.valueOf(!autoCharmPotion()));
+  }
+
+  public static boolean receiveInputOnInactiveWindow() {
+    return readBool("receive_input_on_inactive_window", false);
+  }
+
+  public static void toggleReceiveInputOnInactiveWindow() {
+    properties.setProperty("receive_input_on_inactive_window", String.valueOf(!receiveInputOnInactiveWindow()));
   }
 
   public static int getBattleRGB() {
