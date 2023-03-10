@@ -10,9 +10,7 @@ import legend.core.gpu.ModelLoader;
 import legend.core.gpu.RECT;
 import legend.core.gpu.Rect4i;
 import legend.core.gpu.Renderable;
-import legend.core.gpu.VramTexture;
 import legend.core.gpu.VramTexture2;
-import legend.core.gpu.VramTextureLoader2;
 import legend.core.gte.DVECTOR;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.GsDOBJ2;
@@ -50,7 +48,11 @@ import java.util.List;
 import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
-import static legend.core.gpu.VramTextureLoader2.*;
+import static legend.core.gpu.VramTextureLoader2.palettesFromTim;
+import static legend.core.gpu.VramTextureLoader2.palettesFromTims;
+import static legend.core.gpu.VramTextureLoader2.stitchHorizontal;
+import static legend.core.gpu.VramTextureLoader2.stitchVertical;
+import static legend.core.gpu.VramTextureLoader2.textureFromTim;
 import static legend.game.SItem.levelStuff_80111cfc;
 import static legend.game.SItem.magicStuff_80111d20;
 import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
@@ -86,8 +88,6 @@ import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndexOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8004.setMono;
-import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
-import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800bb168;
 import static legend.game.Scus94491BpeSegment_800b._800bdc34;
@@ -155,7 +155,7 @@ public final class Ttle {
   private static Renderable copyrightRenderable;
   private static VramTexture2 fireTexture;
   private static VramTexture2[] firePalettes;
-  private static Renderable fireRenderable;
+  private static Renderable[] fireRenderable;
 
   // This is all data stored in the overlay rom
   public static final ArrayRef<Pointer<ArrayRef<IntRef>>> characterXpPtrs_800ce6d8 = MEMORY.ref(4, 0x800ce6d8L, ArrayRef.of(Pointer.classFor(ArrayRef.classFor(IntRef.class)), 9, 4, Pointer.deferred(4, ArrayRef.of(IntRef.class, 61, 4, IntRef::new))));
@@ -387,7 +387,7 @@ public final class Ttle {
     //LAB_800c7d30
     for(int i = 0; i < 4; i++) {
       //LAB_800c7d4c
-      final Rect4i rect = new Rect4i(944 + i * 16, 0, 64, 64);
+      final Rect4i rect = new Rect4i(944 + i * 64, 256, 256, 64);
       fireAnimation_800c66d4[i] = FUN_800cdaa0(rect, 0, 1, _800ce7b0.get(i).get());
     }
 
@@ -455,6 +455,15 @@ public final class Ttle {
     _800c66d0 = parseTmdFile(tmd);
     FUN_800cc0b0(_800c66d0, null);
     setDobjAttributes(_800c66d0, 0);
+
+    fireRenderable = new Renderable[_800c66d0.dobj2s_00.length];
+    for(int i = 0; i < _800c66d0.dobj2s_00.length; i++) {
+      fireRenderable[i] = ModelLoader
+        .fromTmd(_800c66d0.dobj2s_00[i].tmd_08)
+        .texture(fireTexture)
+        .palettes(firePalettes)
+        .build();
+    }
   }
 
   private static void prepareRenderables() {
@@ -463,6 +472,7 @@ public final class Ttle {
       384, 424,
       0, 0,
       384, 424,
+      0,
       0, 0, 0,
       null
     )
@@ -475,6 +485,7 @@ public final class Ttle {
       352, 88,
       0, 0,
       352, 88,
+      1,
       0, 0, 0,
       Translucency.B_PLUS_F
     )
@@ -487,6 +498,7 @@ public final class Ttle {
       16, 8,
       0, 0,
       16, 8,
+      80,
       0, 0, 0,
       Translucency.B_PLUS_F
     )
@@ -501,6 +513,7 @@ public final class Ttle {
         (int)_800ce7f8.offset((i * 2 + 1) * 4).get(), 16,
         0, (int)_800ce7f8.offset(i * 2 * 4).get(),
         (int)_800ce7f8.offset((i * 2 + 1) * 4).get(), 16,
+        0,
         0x80, 0x80, 0x80,
         Translucency.B_PLUS_F
       )
@@ -516,6 +529,7 @@ public final class Ttle {
         (int)_800ce840.offset((i * 3 + 2) * 4).get(), 31,
         (int)_800ce840.offset(i * 3 * 4).get(), (int)_800ce840.offset((i * 3 + 1) * 4).get(),
         (int)_800ce840.offset((i * 3 + 2) * 4).get(), 32,
+        0,
         0x80, 0x80, 0x80,
         Translucency.B_PLUS_F
       )
@@ -529,6 +543,7 @@ public final class Ttle {
       368, 32,
       0, 0,
       368, 32,
+      64,
       0, 0, 0,
       Translucency.B_PLUS_F
     )
@@ -1016,11 +1031,6 @@ public final class Ttle {
 
     //LAB_800c8a70
     for(int i = 0; i < 3; i++) {
-      final int x = (int)_800ce8ac.offset(i * 2 * 4).getSigned();
-      final int y = (int)_800ce8ac.offset((i * 2 + 1) * 4).getSigned();
-      final int w = (int)_800ce7f8.offset((i * 2 + 1) * 4).getSigned();
-      final int v = (int)_800ce7f8.offset(i * 2 * 4).getSigned();
-
       final int colour;
       if(i != 1 || hasSavedGames == 1) {
         colour = menuOptionTransparency[i];
@@ -1029,47 +1039,15 @@ public final class Ttle {
       }
 
       //LAB_800c8a8c
-      menuTextRenderables[i].render();
-/*
-      GPU.queueCommand(100, new GpuCommandPoly(4)
-        .texture(menuTextTexture)
-        .bpp(Bpp.BITS_4)
-        .clut(0, selectedMenuOption == i ? 5 : 2)
-        .translucent(Translucency.B_PLUS_F)
-        .monochrome(colour)
-        .pos(0, x, y)
-        .pos(1, x + w, y)
-        .pos(2, x, y + 16)
-        .pos(3, x + w, y + 16)
-        .uv(0, 0, v)
-        .uv(1, w, v)
-        .uv(2, 0, v + 16)
-        .uv(3, w, v + 16)
-      );
-*/
+      menuTextRenderables[i]
+        .recolourMono(colour)
+        .palette(selectedMenuOption == i ? 5 : 2)
+        .render();
 
-      final int w2 = (int)_800ce840.offset((i * 3 + 2) * 4).get();
-      final int u2 = (int)_800ce840.offset(i * 3 * 4).get();
-      final int v2 = (int)_800ce840.offset((i * 3 + 1) * 4).get();
-
-      menuTextBlurRenderables[i].render();
-/*
-      GPU.queueCommand(100, new GpuCommandPoly(4)
-        .texture(menuTextTexture)
-        .bpp(Bpp.BITS_4)
-        .clut(0, 4)
-        .translucent(Translucency.B_PLUS_F)
-        .monochrome(colour)
-        .pos(0, x - 8, y - 8)
-        .pos(1, x - 8 + w2, y - 8)
-        .pos(2, x - 8, y + 23)
-        .pos(3, x - 8 + w2, y + 23)
-        .uv(0, u2, v2)
-        .uv(1, u2 + w2, v2)
-        .uv(2, u2, v2 + 32)
-        .uv(3, u2 + w2, v2 + 32)
-      );
-*/
+      menuTextBlurRenderables[i]
+        .recolourMono(colour)
+        .palette(4)
+        .render();
     }
 
     //LAB_800c9390
@@ -1342,7 +1320,7 @@ public final class Ttle {
     //LAB_800cabb8
     //LAB_800cabcc
     //LAB_800cabe8
-    copyrightRenderable.recolour(copyrightFadeInAmount, copyrightFadeInAmount, copyrightFadeInAmount).render();
+    copyrightRenderable.recolourMono(copyrightFadeInAmount).render();
   }
 
   @Method(0x800cadd0L)
@@ -1355,8 +1333,8 @@ public final class Ttle {
     //LAB_800cae18
     //LAB_800cae2c
     //LAB_800cae48
-    logoRenderable.recolour(logoFadeInAmount, logoFadeInAmount, logoFadeInAmount).render();
-    tmRenderable.recolour(logoFadeInAmount, logoFadeInAmount, logoFadeInAmount).render();
+    logoRenderable.recolourMono(logoFadeInAmount).render();
+    tmRenderable.recolourMono(logoFadeInAmount).render();
   }
 
   @Method(0x800cb070L)
@@ -1377,7 +1355,7 @@ public final class Ttle {
     //LAB_800cb100
     backgroundRenderable
       .translate(0, backgroundScrollAmount)
-      .recolour(backgroundFadeInAmount, backgroundFadeInAmount, backgroundFadeInAmount)
+      .recolourMono(backgroundFadeInAmount)
       .render();
 
     //LAB_800cb370
@@ -1390,9 +1368,8 @@ public final class Ttle {
   }
 
   @Method(0x800cb4c4L)
-  public static void renderQuad(@Nullable final VramTexture texture, final Bpp bpp, final int clutY, final int r, final int g, final int b, final int u, final int v, final int tw, final int th, final int x, final int y, final int w, final int h, final int z, @Nullable final Translucency translucency) {
+  public static void renderQuad(final Bpp bpp, final int clutY, final int r, final int g, final int b, final int u, final int v, final int tw, final int th, final int x, final int y, final int w, final int h, final int z, @Nullable final Translucency translucency) {
     final GpuCommandPoly cmd = new GpuCommandPoly(4)
-      .texture(texture)
       .bpp(bpp)
       .clut(0, clutY)
       .rgb(r, g, b)
@@ -1455,6 +1432,7 @@ public final class Ttle {
       ScaleMatrixL(sp30, scale);
       setRotTransMatrix(sp30);
       //TODO renderTmd(dobj2s[i], fireTexture);
+      fireRenderable[i].render();
     }
 
     //LAB_800cb904
@@ -1573,7 +1551,7 @@ public final class Ttle {
   }
 
   @Method(0x800cc388L)
-  public static void renderTmd(final GsDOBJ2 dobj2, final VramTexture texture) {
+  public static void renderTmd(final GsDOBJ2 dobj2) {
     final SVECTOR[] vertices = dobj2.tmd_08.vert_top_00;
 
     //LAB_800cc408
@@ -1581,19 +1559,18 @@ public final class Ttle {
       final int command = primitive.header() & 0xff04_0000;
 
       if(command == 0x3700_0000) {
-        renderPrimitive37(primitive, vertices, texture);
+        renderPrimitive37(primitive, vertices);
       } else if(command == 0x3f00_0000) {
-        renderPrimitive3f(primitive, vertices, texture);
+        renderPrimitive3f(primitive, vertices);
       }
     }
   }
 
   @Method(0x800cc57cL)
-  public static void renderPrimitive37(final TmdObjTable1c.Primitive primitive, final SVECTOR[] vertices, final VramTexture texture) {
+  public static void renderPrimitive37(final TmdObjTable1c.Primitive primitive, final SVECTOR[] vertices) {
     //LAB_800cc5b0
     for(final byte[] data : primitive.data()) {
       final GpuCommandPoly cmd = new GpuCommandPoly(3)
-        .texture(texture)
         .translucent(Translucency.of(IoHelper.readUShort(data, 0x6) >>> 5 & 0x3));
 
       //LAB_800cc5c8
@@ -1660,11 +1637,10 @@ public final class Ttle {
   }
 
   @Method(0x800ccb78L)
-  public static void renderPrimitive3f(final TmdObjTable1c.Primitive primitive, final SVECTOR[] vertices, final VramTexture texture) {
+  public static void renderPrimitive3f(final TmdObjTable1c.Primitive primitive, final SVECTOR[] vertices) {
     //LAB_800ccbcc
     for(final byte[] data : primitive.data()) {
       final GpuCommandPoly cmd = new GpuCommandPoly(4)
-        .texture(texture)
         .translucent(Translucency.of(IoHelper.readUShort(data, 0x6) >>> 5 & 0x3));
 
       //LAB_800ccbe4
@@ -1807,9 +1783,9 @@ public final class Ttle {
     }
 
     //LAB_800ce3d8
-    fireTexture.getRegion(0, sp10, fireAnimation.pixels_0c);
-    fireTexture.getRegion(0, sp18, fireAnimation.pixels_08);
-    fireTexture.setRegion(0, sp20, fireAnimation.pixels_0c);
-    fireTexture.setRegion(0, sp28, fireAnimation.pixels_08);
+    fireTexture.getRegion(sp10, fireAnimation.pixels_0c);
+    fireTexture.getRegion(sp18, fireAnimation.pixels_08);
+    fireTexture.setRegion(sp20, fireAnimation.pixels_0c);
+    fireTexture.setRegion(sp28, fireAnimation.pixels_08);
   }
 }

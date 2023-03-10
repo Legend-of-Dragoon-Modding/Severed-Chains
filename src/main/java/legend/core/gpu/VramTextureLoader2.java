@@ -9,7 +9,7 @@ import java.util.Arrays;
 public final class VramTextureLoader2 {
   private VramTextureLoader2() { }
 
-  public static final VramTexture2 EMPTY = new VramTexture2(0, 0, new int[0]);
+  public static final VramTexture2 EMPTY = new VramTexture2(0, 0, 0, 0, new int[0]);
 
   public static VramTexture2 textureFromTim(final Tim tim) {
     if(!tim.hasClut()) {
@@ -31,7 +31,7 @@ public final class VramTextureLoader2 {
       }
     }
 
-    return new VramTexture2(width, height, data);
+    return new VramTexture2(width, height, imageSize.x.get(), imageSize.y.get(), data);
   }
 
   public static VramTexture2 stitchHorizontal(final VramTexture2... textures) {
@@ -40,12 +40,22 @@ public final class VramTextureLoader2 {
     }
 
     int newWidth = textures[0].width;
+    int minVramX = textures[0].vramX;
+    int minVramY = textures[0].vramY;
     for(int i = 1; i < textures.length; i++) {
       if(textures[0].height != textures[i].height) {
         throw new IllegalArgumentException("All textures must have the same height");
       }
 
       newWidth += textures[i].width;
+
+      if(textures[i].vramX < minVramX) {
+        minVramX = textures[i].vramX;
+      }
+
+      if(textures[i].vramY < minVramY) {
+        minVramY = textures[i].vramY;
+      }
     }
 
     final int newHeight = textures[0].height;
@@ -59,7 +69,7 @@ public final class VramTextureLoader2 {
       }
     }
 
-    return new VramTexture2(newWidth, newHeight, newData);
+    return new VramTexture2(newWidth, newHeight, minVramX, minVramY, newData);
   }
 
   public static VramTexture2 stitchVertical(final VramTexture2... textures) {
@@ -68,12 +78,22 @@ public final class VramTextureLoader2 {
     }
 
     int newHeight = textures[0].height;
+    int minVramX = textures[0].vramX;
+    int minVramY = textures[0].vramY;
     for(int i = 1; i < textures.length; i++) {
       if(textures[0].width != textures[i].width) {
         throw new IllegalArgumentException("All textures must have the same width");
       }
 
       newHeight += textures[i].height;
+
+      if(textures[i].vramX < minVramX) {
+        minVramX = textures[i].vramX;
+      }
+
+      if(textures[i].vramY < minVramY) {
+        minVramY = textures[i].vramY;
+      }
     }
 
     final int newWidth = textures[0].width;
@@ -86,7 +106,7 @@ public final class VramTextureLoader2 {
       }
     }
 
-    return new VramTexture2(newWidth, newHeight, newData);
+    return new VramTexture2(newWidth, newHeight, minVramX, minVramY, newData);
   }
 
   public static VramTexture2[] palettesFromTim(final Tim tim) {
@@ -105,10 +125,10 @@ public final class VramTextureLoader2 {
       final int[] data = new int[width];
 
       for(int x = 0; x < width; x++) {
-        data[x] = MathHelper.colour15To24(getPixel(clutData, width, x, 0));
+        data[x] = MathHelper.colour15To24(getPixel(clutData, width, x, paletteIndex));
       }
 
-      palettes[paletteIndex] = new VramTexture2(width, 1, data);
+      palettes[paletteIndex] = new VramTexture2(width, 1, 0, clutSize.y.get() + paletteIndex, data);
     }
 
     return palettes;
@@ -133,7 +153,7 @@ public final class VramTextureLoader2 {
       return get8bppPixel(imageData, width, x, y);
     }
 
-    return MathHelper.colour15To24(get16bppPixel(imageData, width, x, y));
+    return get16bppPixel(imageData, width, x, y);
   }
 
   private static int get4bppPixel(final FileData imageData, final int width, final int x, final int y) {

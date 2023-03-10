@@ -11,7 +11,7 @@ import java.util.Arrays;
 import static legend.game.Scus94491BpeSegment.tmdGp0CommandId_1f8003ee;
 
 public class ModelLoader {
-  public static ModelLoader quad(final int x, final int y, final int z, final int w, final int h, final int u, final int v, final int tw, final int th, final int r, final int g, final int b, @Nullable final Translucency translucency) {
+  public static ModelLoader quad(final int x, final int y, final int z, final int w, final int h, final int u, final int v, final int tw, final int th, final int paletteBase, final int r, final int g, final int b, @Nullable final Translucency translucency) {
     final int colour = b << 16 | g << 8 | r;
 
     final Mesh.Vertex2d[] vertices = new Mesh.Vertex2d[4];
@@ -20,13 +20,13 @@ public class ModelLoader {
     vertices[2] = new Mesh.Vertex2d(new Vec2i(x, y + h), new Vec2i(u, v + th), colour);
     vertices[3] = new Mesh.Vertex2d(new Vec2i(x + w, y + h), new Vec2i(u + tw, v + th), colour);
 
-    final Mesh.Poly2d[] polys = {new Mesh.Poly2d(vertices, 0, translucency)};
+    final Mesh.Poly2d[] polys = {new Mesh.Poly2d(vertices, paletteBase, translucency)};
     final Mesh.Segment2d[] segments = {new Mesh.Segment2d(polys, 4, z, true, translucency != null)};
     return new ModelLoader(segments);
   }
 
   public static ModelLoader fromTmd(final TmdObjTable1c objTable) {
-    final Mesh.Segment3d[] segments = new Mesh.Segment3d[objTable.n_primitive_14];
+    final Mesh.Segment3d[] segments = new Mesh.Segment3d[objTable.primitives_10.length];
 
     for(int primitiveIndex = 0; primitiveIndex < objTable.primitives_10.length; primitiveIndex++) {
       final TmdObjTable1c.Primitive primitive = objTable.primitives_10[primitiveIndex];
@@ -82,7 +82,7 @@ public class ModelLoader {
             if(vertexIndex == 0) {
               paletteBase = IoHelper.readUShort(data, primitivesOffset) >>> 6;
             } else if(vertexIndex == 1) {
-              translucency = Translucency.of(IoHelper.readUShort(data, primitivesOffset) >>> 7 & 0b11);
+              translucency = Translucency.of(IoHelper.readUShort(data, primitivesOffset) >>> 5 & 0b11);
             }
 
             primitivesOffset += 2;

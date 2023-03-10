@@ -9,8 +9,9 @@ public class Renderable {
   private final VramTexture2 texture;
   private final VramTexture2[] palettes;
 
-  private int translateX = 0;
-  private int translateY = 0;
+  private int translateX;
+  private int translateY;
+  private int palette;
   private int recolour = -1;
 
   public Renderable(final Mesh mesh, final VramTexture2 texture, final VramTexture2[] palettes) {
@@ -25,9 +26,18 @@ public class Renderable {
     return this;
   }
 
+  public Renderable palette(final int palette) {
+    this.palette = palette;
+    return this;
+  }
+
   public Renderable recolour(final int colour) {
     this.recolour = colour;
     return this;
+  }
+
+  public Renderable recolourMono(final int colour) {
+    return this.recolour(colour, colour, colour);
   }
 
   public Renderable recolour(final int r, final int g, final int b) {
@@ -179,7 +189,7 @@ public class Renderable {
 
             // Check background mask
             if(gpu.status.drawPixels == Gpu.DRAW_PIXELS.NOT_TO_MASKED_AREAS) {
-              if((gpu.getPixel(x, y) & 0xff00_0000L) != 0) {
+              if((gpu.getPixel(x, y) & 0xff00_0000) != 0) {
                 w0 += A12;
                 w1 += A20;
                 w2 += A01;
@@ -197,7 +207,19 @@ public class Renderable {
               final int texelX = Gpu.interpolateCoords(w0, w1, w2, tu0, tu1, tu2, area);
               final int texelY = Gpu.interpolateCoords(w0, w1, w2, tv0, tv1, tv2, area);
 
-              int texel = Renderable.this.texture.getTexel(Renderable.this.palettes[this.paletteBase], texelX, texelY);
+              int texel = 0;
+              boolean found = false;
+              for(final VramTexture2 palette : Renderable.this.palettes) {
+                if(palette.vramY - this.paletteBase - Renderable.this.palette == 0) {
+                  texel = Renderable.this.texture.getTexel(palette, texelX, texelY);
+                  found = true;
+                  break;
+                }
+              }
+
+              if(!found) {
+                System.err.println("Failed to find palette");
+              }
 
               if(texel == 0) {
                 w0 += A12;

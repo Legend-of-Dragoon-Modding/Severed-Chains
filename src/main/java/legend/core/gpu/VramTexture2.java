@@ -8,11 +8,15 @@ import java.io.IOException;
 public class VramTexture2 {
   public final int width;
   public final int height;
+  public final int vramX;
+  public final int vramY;
   private final int[] data;
 
-  public VramTexture2(final int width, final int height, final int[] data) {
+  public VramTexture2(final int width, final int height, final int vramX, final int vramY, final int[] data) {
     this.width = width;
     this.height = height;
+    this.vramX = vramX;
+    this.vramY = vramY;
     this.data = data;
   }
 
@@ -46,6 +50,18 @@ public class VramTexture2 {
     }
 
     System.arraycopy(this.data, y * this.width, dest, destOffset, this.width);
+  }
+
+  public void getRegion(final Rect4i region, final int[] dest) {
+    for(int y = 0; y < region.h(); y++) {
+      System.arraycopy(this.data, (region.y() + y - this.vramY) * this.width + region.x() - this.vramX, dest, y * region.w(), region.w());
+    }
+  }
+
+  public void setRegion(final Rect4i region, final int[] src) {
+    for(int y = 0; y < region.h(); y++) {
+      System.arraycopy(src, y * region.w(), this.data, (region.y() + y - this.vramY) * this.width + region.x() - this.vramX, region.w());
+    }
   }
 
   public void dumpToFile() {
