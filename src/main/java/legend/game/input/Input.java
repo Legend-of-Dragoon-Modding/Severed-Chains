@@ -241,7 +241,7 @@ public final class Input {
       }
     } catch(final NullPointerException exception) {
       LOGGER.info(INPUT_MARKER, "Player 1 has been disconnected");
-      refreshControllers();
+      InputControllerAssigner.reassignSequence();
     }
   }
 }
