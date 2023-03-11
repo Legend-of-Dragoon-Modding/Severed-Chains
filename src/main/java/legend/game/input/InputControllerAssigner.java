@@ -89,7 +89,15 @@ public final class InputControllerAssigner {
     LOGGER.info(INPUT_MARKER,"Found a total of %d",connectedControllers.size());
 
     if(connectedControllers.isEmpty()) {
-      LOGGER.info(INPUT_MARKER,"No controllers connected");
+      LOGGER.info(INPUT_MARKER, "No controllers connected, Keyboard-Mouse Only");
+
+      final InputControllerData controllerData = new InputControllerData("Keyboard-Mouse Only", "Keyboard-Mouse Only", -1);
+      controllerData.setPlayerSlot(1);
+      connectedControllers.add(controllerData);
+      assignedControllers.add(controllerData);
+
+      Input.refreshControllers();
+      return;
     }
     if(connectedControllers.size() == 1) {
 
