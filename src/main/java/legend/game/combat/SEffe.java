@@ -4135,11 +4135,6 @@ public final class SEffe {
                     s3._39.set((int)s0);
                     s3._3c.set(s2);
                   }
-
-                  if(Config.autoAddition() && s3._34.get() >= MEMORY.ref(2, s2).offset(0x12L).getSigned()) {
-                    _8011a014.offset(s0).setu(1);
-                    MEMORY.ref(1, s2).offset(0x1L).setu(1);
-                  }
                 }
               } else {
                 if(s3._34.get() >= MEMORY.ref(2, s2).offset(0x10L).getSigned() && s3._34.get() <= MEMORY.ref(2, s2).offset(0x12L).getSigned()) {
