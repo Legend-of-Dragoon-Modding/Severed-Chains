@@ -1,7 +1,6 @@
 package legend.game.title;
 
 import legend.core.Config;
-import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandPoly;
@@ -10,13 +9,11 @@ import legend.core.gpu.ModelLoader;
 import legend.core.gpu.RECT;
 import legend.core.gpu.Rect4i;
 import legend.core.gpu.Renderable;
-import legend.core.gpu.VramTexture2;
-import legend.core.gte.DVECTOR;
+import legend.core.gpu.VramTexture;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.GsDOBJ2;
 import legend.core.gte.MATRIX;
 import legend.core.gte.SVECTOR;
-import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.TmdWithId;
 import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
@@ -45,14 +42,14 @@ import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
-import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
-import static legend.core.gpu.VramTextureLoader2.palettesFromTim;
-import static legend.core.gpu.VramTextureLoader2.palettesFromTims;
-import static legend.core.gpu.VramTextureLoader2.stitchHorizontal;
-import static legend.core.gpu.VramTextureLoader2.stitchVertical;
-import static legend.core.gpu.VramTextureLoader2.textureFromTim;
+import static legend.core.gpu.VramTextureLoader.palettesFromTim;
+import static legend.core.gpu.VramTextureLoader.palettesFromTims;
+import static legend.core.gpu.VramTextureLoader.stitch;
+import static legend.core.gpu.VramTextureLoader.stitchHorizontal;
+import static legend.core.gpu.VramTextureLoader.stitchVertical;
+import static legend.core.gpu.VramTextureLoader.textureFromTim;
 import static legend.game.SItem.levelStuff_80111cfc;
 import static legend.game.SItem.magicStuff_80111d20;
 import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
@@ -67,8 +64,7 @@ import static legend.game.Scus94491BpeSegment.renderMcq;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
-import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
-import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
+import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a9c0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002bcc8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002bda4;
@@ -137,24 +133,26 @@ public final class Ttle {
   public static int selectedMenuOption;
   public static int selectedConfigCategory;
 
-  private static VramTexture2 backgroundTexture;
-  private static VramTexture2[] backgroundPalettes;
+  private static VramTexture backgroundTexture;
+  private static VramTexture[] backgroundPalettes;
   private static Renderable backgroundRenderable;
-  private static VramTexture2 logoTexture;
-  private static VramTexture2[] logoPalettes;
+  private static VramTexture logoTexture;
+  private static VramTexture[] logoPalettes;
   private static Renderable logoRenderable;
-  private static VramTexture2 menuTextTexture;
-  private static VramTexture2[] menuTextPalettes;
+  private static VramTexture menuTextTexture;
+  private static VramTexture[] menuTextPalettes;
   private static final Renderable[] menuTextRenderables = new Renderable[3];
   private static final Renderable[] menuTextBlurRenderables = new Renderable[3];
-  private static VramTexture2 tmTexture;
-  private static VramTexture2[] tmPalettes;
+  private static final Renderable[] menuOptionsRenderables = new Renderable[6];
+  private static final Renderable[] menuOptionsCaptionRenderables = new Renderable[2];
+  private static VramTexture tmTexture;
+  private static VramTexture[] tmPalettes;
   private static Renderable tmRenderable;
-  private static VramTexture2 copyrightTexture;
-  private static VramTexture2[] copyrightPalettes;
+  private static VramTexture copyrightTexture;
+  private static VramTexture[] copyrightPalettes;
   private static Renderable copyrightRenderable;
-  private static VramTexture2 fireTexture;
-  private static VramTexture2[] firePalettes;
+  private static VramTexture fireTexture;
+  private static VramTexture[] firePalettes;
   private static Renderable[] fireRenderable;
 
   // This is all data stored in the overlay rom
@@ -387,8 +385,8 @@ public final class Ttle {
     //LAB_800c7d30
     for(int i = 0; i < 4; i++) {
       //LAB_800c7d4c
-      final Rect4i rect = new Rect4i(944 + i * 64, 256, 256, 64);
-      fireAnimation_800c66d4[i] = FUN_800cdaa0(rect, 0, 1, _800ce7b0.get(i).get());
+      final Rect4i rect = new Rect4i(944 + i * 16, 256, 256, 64);
+      fireAnimation_800c66d4[i] = FUN_800cdaa0(rect, _800ce7b0.get(i).get());
     }
 
     scriptStartEffect(2, 15);
@@ -439,7 +437,7 @@ public final class Ttle {
 
     copyrightPalettes = palettesFromTim(new Tim(files.get(5)));
 
-    fireTexture = stitchHorizontal(
+    fireTexture = stitch(
       textureFromTim(new Tim(files.get(10))),
       textureFromTim(new Tim(files.get(7))),
       textureFromTim(new Tim(files.get(8))),
@@ -459,7 +457,7 @@ public final class Ttle {
     fireRenderable = new Renderable[_800c66d0.dobj2s_00.length];
     for(int i = 0; i < _800c66d0.dobj2s_00.length; i++) {
       fireRenderable[i] = ModelLoader
-        .fromTmd(_800c66d0.dobj2s_00[i].tmd_08)
+        .fromTmd("Fire " + i, _800c66d0.dobj2s_00[i].tmd_08)
         .texture(fireTexture)
         .palettes(firePalettes)
         .build();
@@ -468,11 +466,13 @@ public final class Ttle {
 
   private static void prepareRenderables() {
     backgroundRenderable = ModelLoader.quad(
+      "Background",
       -192, -120, orderingTableSize_1f8003c8.get() - 3,
       384, 424,
       0, 0,
       384, 424,
       0,
+      384, 0,
       0, 0, 0,
       null
     )
@@ -481,11 +481,13 @@ public final class Ttle {
       .build();
 
     logoRenderable = ModelLoader.quad(
+      "Logo",
       -184, -80, orderingTableSize_1f8003c8.get() - 4,
       352, 88,
       0, 0,
       352, 88,
       1,
+      576, 256,
       0, 0, 0,
       Translucency.B_PLUS_F
     )
@@ -494,11 +496,13 @@ public final class Ttle {
       .build();
 
     tmRenderable = ModelLoader.quad(
+      "TM",
       134, -14, orderingTableSize_1f8003c8.get() - 4,
       16, 8,
       0, 0,
       16, 8,
       80,
+      896, 240,
       0, 0, 0,
       Translucency.B_PLUS_F
     )
@@ -509,11 +513,13 @@ public final class Ttle {
     Arrays.setAll(
       menuTextRenderables,
       i -> ModelLoader.quad(
+        "Text " + i,
         (int)_800ce8ac.offset(i * 2 * 4).getSigned(), (int)_800ce8ac.offset((i * 2 + 1) * 4).getSigned(), 100,
         (int)_800ce7f8.offset((i * 2 + 1) * 4).get(), 16,
         0, (int)_800ce7f8.offset(i * 2 * 4).get(),
         (int)_800ce7f8.offset((i * 2 + 1) * 4).get(), 16,
         0,
+        576, 0,
         0x80, 0x80, 0x80,
         Translucency.B_PLUS_F
       )
@@ -525,11 +531,49 @@ public final class Ttle {
     Arrays.setAll(
       menuTextBlurRenderables,
       i -> ModelLoader.quad(
+        "Text blur " + i,
         (int)_800ce8ac.offset(i * 2 * 4).getSigned() - 8, (int)_800ce8ac.offset((i * 2 + 1) * 4).getSigned() - 8, 100,
         (int)_800ce840.offset((i * 3 + 2) * 4).get(), 31,
         (int)_800ce840.offset(i * 3 * 4).get(), (int)_800ce840.offset((i * 3 + 1) * 4).get(),
         (int)_800ce840.offset((i * 3 + 2) * 4).get(), 32,
         0,
+        576, 0,
+        0x80, 0x80, 0x80,
+        Translucency.B_PLUS_F
+      )
+      .texture(menuTextTexture)
+      .palettes(menuTextPalettes)
+      .build()
+    );
+
+    Arrays.setAll(
+      menuOptionsRenderables,
+      i -> ModelLoader.quad(
+        "Option " + i,
+        (int)_800ce8ac.offset((i + 3) * 8).getSigned(), (int)_800ce8ac.offset(((i + 3) * 2 + 1) * 4).getSigned(), 100,
+        (int)_800ce7f8.offset(((i + 3) * 2 + 1) * 4).get(), 16,
+        0, (int)_800ce7f8.offset((i + 3) * 8).get(),
+        (int)_800ce7f8.offset(((i + 3) * 2 + 1) * 4).get(), 16,
+        0,
+        576, 0,
+        0x80, 0x80, 0x80,
+        Translucency.B_PLUS_F
+      )
+      .texture(menuTextTexture)
+      .palettes(menuTextPalettes)
+      .build()
+    );
+
+    Arrays.setAll(
+      menuOptionsCaptionRenderables,
+      i -> ModelLoader.quad(
+        "Option caption " + i,
+        (int)_800ce8ac.offset((i * 3 + 3) * 8).getSigned() - 8, (int)_800ce8ac.offset(((i * 3 + 3) * 2 + 1) * 4).getSigned() - 9, 100,
+        (int)_800ce840.offset(((i * 3 + 3) * 3 + 2) * 4).get(), 32,
+        (int)_800ce840.offset((i * 3 + 3) * 3 * 4).get(), (int)_800ce840.offset(((i * 3 + 3) * 3 + 1) * 4).get(),
+        (int)_800ce840.offset(((i * 3 + 3) * 3 + 2) * 4).get(), 31,
+        0,
+        576, 0,
         0x80, 0x80, 0x80,
         Translucency.B_PLUS_F
       )
@@ -539,11 +583,13 @@ public final class Ttle {
     );
 
     copyrightRenderable = ModelLoader.quad(
+      "Copyright",
       -188, 80, 100,
       368, 32,
       0, 0,
       368, 32,
       64,
+      896, 0,
       0, 0, 0,
       Translucency.B_PLUS_F
     )
@@ -710,7 +756,7 @@ public final class Ttle {
     renderMenuBackground();
 
     if(_800c6728 != 1) {
-      menuIdleTime += 2;
+//      menuIdleTime += 2;
 
       if(menuIdleTime > 1680) {
         pregameLoadingStage_800bb10c.set(6);
@@ -1210,98 +1256,20 @@ public final class Ttle {
 
     //LAB_800c9b70
     for(int i = 0; i < 6; i++) {
-/*
-      GPU.queueCommand(100, new GpuCommandPoly(4)
-        .texture(menuTextTexture)
-        .bpp(Bpp.BITS_4)
-        .translucent(Translucency.B_PLUS_F)
-        .monochrome(configColours[i])
-        .clut(0, selectedConfigCategory == i ? 5 : 2)
-        .uv(0, 0, (int)_800ce7f8.offset((i + 3) * 8).get())
-        .uv(1, (int)_800ce7f8.offset(((i + 3) * 2 + 1) * 4).get(), (int)_800ce7f8.offset((i + 3) * 8).get())
-        .uv(2, 0, (int)_800ce7f8.offset((i + 3) * 8).get() + 16)
-        .uv(3, (int)_800ce7f8.offset(((i + 3) * 2 + 1) * 4).get(), (int)_800ce7f8.offset((i + 3) * 8).get() + 16)
-        .pos(0, (int)_800ce8ac.offset((i + 3) * 8).getSigned(), (int)_800ce8ac.offset(((i + 3) * 2 + 1) * 4).getSigned())
-        .pos(1, (int)(_800ce8ac.offset((i + 3) * 8).getSigned() + _800ce7f8.offset(((i + 3) * 2 + 1) * 4).get()), (int)_800ce8ac.offset(((i + 3) * 2 + 1) * 4).getSigned())
-        .pos(2, (int)_800ce8ac.offset((i + 3) * 8).getSigned(), (int)_800ce8ac.offset(((i + 3) * 2 + 1) * 4).getSigned() + 16)
-        .pos(3, (int)(_800ce8ac.offset((i + 3) * 8).getSigned() + _800ce7f8.offset(((i + 3) * 2 + 1) * 4).get()), (int)_800ce8ac.offset(((i + 3) * 2 + 1) * 4).getSigned() + 16)
-      );
-*/
+      menuOptionsRenderables[i]
+        .recolourMono(configColours[i])
+        .palette(selectedConfigCategory == i ? 5 : 2)
+        .render();
     }
 
-    // Render glowing overlay for Sound/Vibrate options
+    // Render glowing overlay for Sound/Vibrate captions
     for(int i = 0; i < 2; i++) {
       //LAB_800ca018
-      sp18 = i * 3;
-
-/*
-      GPU.queueCommand(100, new GpuCommandPoly(4)
-        .texture(menuTextTexture)
-        .bpp(Bpp.BITS_4)
-        .translucent(Translucency.B_PLUS_F)
-        .monochrome(configColours[sp18])
-        .clut(0, 4)
-        .pos(0, (int)_800ce8ac.offset((sp18 + 3) * 8).getSigned() - 8, (int)_800ce8ac.offset(((sp18 + 3) * 2 + 1) * 4).getSigned() - 9)
-        .pos(1, (int)(_800ce8ac.offset((sp18 + 3) * 8).getSigned() + _800ce840.offset(((sp18 + 3) * 3 + 2) * 4).get() - 8), (int)_800ce8ac.offset(((sp18 + 3) * 2 + 1) * 4).getSigned() - 9)
-        .pos(2, (int)_800ce8ac.offset((sp18 + 3) * 8).getSigned() - 8, (int)_800ce8ac.offset(((sp18 + 3) * 2 + 1) * 4).getSigned() + 23)
-        .pos(3, (int)(_800ce8ac.offset((sp18 + 3) * 8).getSigned() + _800ce840.offset(((sp18 + 3) * 3 + 2) * 4).get() - 8), (int)_800ce8ac.offset(((sp18 + 3) * 2 + 1) * 4).getSigned() + 23)
-        .uv(0, (int)_800ce840.offset((sp18 + 3) * 3 * 4).get(), (int)_800ce840.offset(((sp18 + 3) * 3 + 1) * 4).get())
-        .uv(1, (int)(_800ce840.offset((sp18 + 3) * 3 * 4).get() + _800ce840.offset(((sp18 + 3) * 3 + 2) * 4).get()), (int)_800ce840.offset(((sp18 + 3) * 3 + 1) * 4).get())
-        .uv(2, (int)_800ce840.offset((sp18 + 3) * 3 * 4).get(), (int)_800ce840.offset(((sp18 + 3) * 3 + 1) * 4).get() + 31)
-        .uv(3, (int)(_800ce840.offset((sp18 + 3) * 3 * 4).get() + _800ce840.offset(((sp18 + 3) * 3 + 2) * 4).get()), (int)_800ce840.offset(((sp18 + 3) * 3 + 1) * 4).get() + 31)
-      );
-*/
+      menuOptionsCaptionRenderables[i]
+        .recolourMono(configColours[i * 3])
+        .palette(4)
+        .render();
     }
-
-    // Render glowing overlay for selected Sound/Vibration option
-    for(int i = 0; i < 2; i++) {
-      //LAB_800ca59c
-      final int sp14;
-      if(i == 0) {
-        sp14 = gameState_800babc8.mono_4e0.get() + 4;
-        sp1c = gameState_800babc8.mono_4e0.get() + 1;
-      } else {
-        //LAB_800ca5dc
-        if(gameState_800babc8.vibrationEnabled_4e1.get() == 0) {
-          //LAB_800ca5fc
-          sp14 = 8;
-        } else {
-          sp14 = 7;
-        }
-
-        //LAB_800ca600
-        if(gameState_800babc8.vibrationEnabled_4e1.get() == 0) {
-          //LAB_800ca624
-          sp1c = 5;
-        } else {
-          sp1c = 4;
-        }
-
-        //LAB_800ca628
-      }
-
-      //LAB_800ca62c
-/*
-      GPU.queueCommand(100, new GpuCommandPoly(4)
-        .texture(menuTextTexture)
-        .bpp(Bpp.BITS_4)
-        .translucent(Translucency.B_PLUS_F)
-        .monochrome(configColours[sp1c])
-        .clut(0, 4)
-        .pos(0, (int)_800ce8ac.offset(sp14 * 8).getSigned() - 8, (int)_800ce8ac.offset((sp14 * 2 + 1) * 4).getSigned() - 9)
-        .uv(0, (int)_800ce840.offset(sp14 * 3 * 4).get(), (int)_800ce840.offset((sp14 * 3 + 1) * 4).get())
-        .pos(1, (int)(_800ce8ac.offset(sp14 * 8).getSigned() + _800ce840.offset((sp14 * 3 + 2) * 4).get() - 8), (int)_800ce8ac.offset((sp14 * 2 + 1) * 4).getSigned() - 9)
-        .uv(1, (int)(_800ce840.offset(sp14 * 3 * 4).get() + _800ce840.offset((sp14 * 3 + 2) * 4).get()), (int)_800ce840.offset((sp14 * 3 + 1) * 4).get())
-        .pos(2, (int)_800ce8ac.offset(sp14 * 8).getSigned() - 8, (int)_800ce8ac.offset((sp14 * 2 + 1) * 4).getSigned() + 23)
-        .uv(2, (int)_800ce840.offset(sp14 * 3 * 4).get(), (int)_800ce840.offset((sp14 * 3 + 1) * 4).get() + 31)
-        .pos(3, (int)(_800ce8ac.offset(sp14 * 8).getSigned() + _800ce840.offset((sp14 * 3 + 2) * 4).get() - 8), (int)_800ce8ac.offset((sp14 * 2 + 1) * 4).getSigned() + 23)
-        .uv(3, (int)(_800ce840.offset(sp14 * 3 * 4).get() + _800ce840.offset((sp14 * 3 + 2) * 4).get()), (int)_800ce840.offset((sp14 * 3 + 1) * 4).get() + 31)
-      );
-*/
-    }
-
-    //LAB_800cab28
-    //LAB_800cab34
   }
 
   @Method(0x800cab48L)
@@ -1431,8 +1399,11 @@ public final class Ttle {
       GsSetLightMatrix(sp10);
       ScaleMatrixL(sp30, scale);
       setRotTransMatrix(sp30);
-      //TODO renderTmd(dobj2s[i], fireTexture);
-      fireRenderable[i].render();
+      zOffset_1f8003e8.set(100);
+      fireRenderable[i]
+        .colourMultiplier(flameColour)
+        .render();
+      zOffset_1f8003e8.set(0);
     }
 
     //LAB_800cb904
@@ -1550,178 +1521,15 @@ public final class Ttle {
     a1.flg = 0;
   }
 
-  @Method(0x800cc388L)
-  public static void renderTmd(final GsDOBJ2 dobj2) {
-    final SVECTOR[] vertices = dobj2.tmd_08.vert_top_00;
-
-    //LAB_800cc408
-    for(final TmdObjTable1c.Primitive primitive : dobj2.tmd_08.primitives_10) {
-      final int command = primitive.header() & 0xff04_0000;
-
-      if(command == 0x3700_0000) {
-        renderPrimitive37(primitive, vertices);
-      } else if(command == 0x3f00_0000) {
-        renderPrimitive3f(primitive, vertices);
-      }
-    }
-  }
-
-  @Method(0x800cc57cL)
-  public static void renderPrimitive37(final TmdObjTable1c.Primitive primitive, final SVECTOR[] vertices) {
-    //LAB_800cc5b0
-    for(final byte[] data : primitive.data()) {
-      final GpuCommandPoly cmd = new GpuCommandPoly(3)
-        .translucent(Translucency.of(IoHelper.readUShort(data, 0x6) >>> 5 & 0x3));
-
-      //LAB_800cc5c8
-      final SVECTOR vert0 = vertices[IoHelper.readUShort(data, 0x18)];
-      final SVECTOR vert1 = vertices[IoHelper.readUShort(data, 0x1a)];
-      final SVECTOR vert2 = vertices[IoHelper.readUShort(data, 0x1c)];
-      CPU.MTC2(vert0.getXY(), 0); // VXY0
-      CPU.MTC2(vert0.getZ(),  1); // VZ0
-      CPU.MTC2(vert1.getXY(), 2); // VXY1
-      CPU.MTC2(vert1.getZ(),  3); // VZ1
-      CPU.MTC2(vert2.getXY(), 4); // VXY2
-      CPU.MTC2(vert2.getZ(),  5); // VZ2
-      CPU.COP2(0x280030L); // Perspective transformation triple
-
-      cmd.uv(0, IoHelper.readUByte(data, 0x0), IoHelper.readUByte(data, 0x1));
-      cmd.uv(1, IoHelper.readUByte(data, 0x4), IoHelper.readUByte(data, 0x5));
-      cmd.uv(2, IoHelper.readUByte(data, 0x8), IoHelper.readUByte(data, 0x9));
-
-      cmd.clut((IoHelper.readUShort(data, 0x2) & 0b111111) * 16, IoHelper.readUShort(data, 0x2) >>> 6);
-      cmd.vramPos((IoHelper.readUShort(data, 0x6) & 0b1111) * 64, (IoHelper.readUShort(data, 0x6) & 0b10000) != 0 ? 256 : 0);
-
-      if((int)CPU.CFC2(31) >= 0) { // No errors
-        //LAB_800cc674
-        CPU.COP2(0x1400006L); // Normal clipping
-
-        if(CPU.MFC2(24L) != 0) { // Is visible
-          //LAB_800cc6b0
-          final DVECTOR v0 = new DVECTOR().setXY(CPU.MFC2(12));
-          final DVECTOR v1 = new DVECTOR().setXY(CPU.MFC2(13));
-          final DVECTOR v2 = new DVECTOR().setXY(CPU.MFC2(14));
-
-          cmd.pos(0, v0.getX(), v0.getY());
-          cmd.pos(1, v1.getX(), v1.getY());
-          cmd.pos(2, v2.getX(), v2.getY());
-
-          if((int)CPU.CFC2(31) >= 0) { // No errors
-            //LAB_800cc6e8
-            if(v0.getX() >= -0xc0 || v1.getX() >= -0xc0 || v2.getX() >= -0xc0) {
-              //LAB_800cc72c
-              if(v0.getY() >= -0x78 || v1.getY() >= -0x78 || v2.getY() >= -0x78) {
-                //LAB_800cc770
-                if(v0.getX() <= 0xc0 || v1.getX() <= 0xc0 || v2.getX() <= 0xc0) {
-                  //LAB_800cc7b4
-                  if(v0.getY() <= 0x78 || v1.getY() <= 0x78 || v2.getY() <= 0x78) {
-                    //LAB_800cc7f8
-                    CPU.COP2(0x158002dL); // Average of three Z values
-
-                    cmd.rgb(0, IoHelper.readUByte(data, 0x0c) * flameColour / 0xff, IoHelper.readUByte(data, 0x0d) * flameColour / 0xff, IoHelper.readUByte(data, 0x0e) * flameColour / 0xff);
-                    cmd.rgb(1, IoHelper.readUByte(data, 0x10) * flameColour / 0xff, IoHelper.readUByte(data, 0x11) * flameColour / 0xff, IoHelper.readUByte(data, 0x12) * flameColour / 0xff);
-                    cmd.rgb(2, IoHelper.readUByte(data, 0x14) * flameColour / 0xff, IoHelper.readUByte(data, 0x15) * flameColour / 0xff, IoHelper.readUByte(data, 0x16) * flameColour / 0xff);
-
-                    // OTZ - Average Z value (for ordering table)
-                    final int z = (int)Math.min(CPU.MFC2(7) + flamesZ >> zShift_1f8003c4.get(), zMax_1f8003cc.get());
-
-                    GPU.queueCommand(z, cmd);
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-
-  @Method(0x800ccb78L)
-  public static void renderPrimitive3f(final TmdObjTable1c.Primitive primitive, final SVECTOR[] vertices) {
-    //LAB_800ccbcc
-    for(final byte[] data : primitive.data()) {
-      final GpuCommandPoly cmd = new GpuCommandPoly(4)
-        .translucent(Translucency.of(IoHelper.readUShort(data, 0x6) >>> 5 & 0x3));
-
-      //LAB_800ccbe4
-      final SVECTOR vert0 = vertices[IoHelper.readUShort(data, 0x20)];
-      final SVECTOR vert1 = vertices[IoHelper.readUShort(data, 0x22)];
-      final SVECTOR vert2 = vertices[IoHelper.readUShort(data, 0x24)];
-      CPU.MTC2(vert0.getXY(), 0); // VXY0
-      CPU.MTC2(vert0.getZ(),  1); // VZ0
-      CPU.MTC2(vert1.getXY(), 2); // VXY1
-      CPU.MTC2(vert1.getZ(),  3); // VY1
-      CPU.MTC2(vert2.getXY(), 4); // VXY2
-      CPU.MTC2(vert2.getZ(),  5); // VZ2
-      CPU.COP2(0x28_0030L); // Perspective transform triple
-
-      cmd.uv(0, IoHelper.readUByte(data, 0x0), IoHelper.readUByte(data, 0x1));
-      cmd.uv(1, IoHelper.readUByte(data, 0x4), IoHelper.readUByte(data, 0x5));
-      cmd.uv(2, IoHelper.readUByte(data, 0x8), IoHelper.readUByte(data, 0x9));
-      cmd.uv(3, IoHelper.readUByte(data, 0xc), IoHelper.readUByte(data, 0xd));
-
-      cmd.clut((IoHelper.readUShort(data, 0x2) & 0b111111) * 16, IoHelper.readUShort(data, 0x2) >>> 6);
-      cmd.vramPos((IoHelper.readUShort(data, 0x6) & 0b1111) * 64, (IoHelper.readUShort(data, 0x6) & 0b10000) != 0 ? 256 : 0);
-
-      if((int)CPU.CFC2(31) >= 0) { // No errors
-        //LAB_800ccc90
-        CPU.COP2(0x140_0006L); // Normal clipping
-
-        if(CPU.MFC2(24) != 0) { // Is visible
-          //LAB_800ccccc
-          final DVECTOR v0 = new DVECTOR().setXY(CPU.MFC2(12));
-          final DVECTOR v1 = new DVECTOR().setXY(CPU.MFC2(13));
-          final DVECTOR v2 = new DVECTOR().setXY(CPU.MFC2(14));
-
-          cmd.pos(0, v0.getX(), v0.getY());
-          cmd.pos(1, v1.getX(), v1.getY());
-          cmd.pos(2, v2.getX(), v2.getY());
-
-          final SVECTOR vert3 = vertices[IoHelper.readUShort(data, 0x26)];
-          CPU.MTC2(vert3.getXY(), 0); // VXY0
-          CPU.MTC2(vert3.getZ(),  1); // VZ0
-          CPU.COP2(0x18_0001L); // Perspective transform single
-
-          if((int)CPU.CFC2(31) >= 0) { // No errors
-            //LAB_800ccd54
-            final DVECTOR v3 = new DVECTOR().setXY(CPU.MFC2(14));
-
-            cmd.pos(3, v3.getX(), v3.getY());
-
-            if(v0.getX() >= -0xc0 || v1.getX() >= -0xc0 || v2.getX() >= -0xc0 || v3.getX() >= -0xc0) {
-              //LAB_800ccdb4
-              if(v0.getY() >= -0x78 || v1.getY() >= -0x78 || v2.getY() >= -0x78 || v3.getY() >= -0x78) {
-                //LAB_800cce0c
-                if(v0.getX() <= 0xc0 || v1.getX() <= 0xc0 || v2.getX() <= 0xc0 || v3.getX() <= 0xc0) {
-                  //LAB_800cce64
-                  if(v0.getY() <= 0x78 || v1.getY() <= 0x78 || v2.getY() <= 0x78 || v3.getY() <= 0x78) {
-                    //LAB_800ccebc
-                    cmd.rgb(0, IoHelper.readUByte(data, 0x10) * flameColour / 0xff, IoHelper.readUByte(data, 0x11) * flameColour / 0xff, IoHelper.readUByte(data, 0x12) * flameColour / 0xff);
-                    cmd.rgb(1, IoHelper.readUByte(data, 0x14) * flameColour / 0xff, IoHelper.readUByte(data, 0x15) * flameColour / 0xff, IoHelper.readUByte(data, 0x16) * flameColour / 0xff);
-                    cmd.rgb(2, IoHelper.readUByte(data, 0x18) * flameColour / 0xff, IoHelper.readUByte(data, 0x19) * flameColour / 0xff, IoHelper.readUByte(data, 0x1a) * flameColour / 0xff);
-                    cmd.rgb(3, IoHelper.readUByte(data, 0x1c) * flameColour / 0xff, IoHelper.readUByte(data, 0x1d) * flameColour / 0xff, IoHelper.readUByte(data, 0x1e) * flameColour / 0xff);
-
-                    GPU.queueCommand(flamesZ, cmd);
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-
   @Method(0x800cdaa0L)
-  public static FireAnimationData20 FUN_800cdaa0(final Rect4i rect, final int widthSomething, final int a2, final int a3) {
-    final int[] addr1 = new int[rect.w() / (2 - widthSomething) * rect.h()];
-    final int[] addr2 = new int[rect.w() / (2 - widthSomething) * rect.h()];
+  public static FireAnimationData20 FUN_800cdaa0(final Rect4i rect, final int a3) {
+    final int[] addr1 = new int[rect.w() / 2 * rect.h()];
+    final int[] addr2 = new int[rect.w() / 2 * rect.h()];
 
     return new FireAnimationData20(
-      new Rect4i(rect.x(), rect.y(), rect.w() / (4 - widthSomething * 2), rect.h()),
+      new Rect4i(rect.x(), rect.y(), rect.w() / 4, rect.h()),
       addr1, addr2,
-      a2, widthSomething,
-      a3, a2 / 2 * 2, a2 / 2 * 2
+      a3
     );
   }
 
@@ -1732,54 +1540,26 @@ public final class Ttle {
     }
 
     //LAB_800cdce0
-    fireAnimation._1c++;
-    if(fireAnimation._1c < fireAnimation._1a) {
-      return;
-    }
-
     //LAB_800cdd28
     final Rect4i sp10;
     final Rect4i sp18;
     final Rect4i sp20;
     final Rect4i sp28;
 
-    fireAnimation._1c = 0;
-    if((fireAnimation._10 & 0x1) == 0) {
-      final int v1 = fireAnimation._18;
-      final int w = fireAnimation.rect_00.w();
-      fireAnimation._18 = v1 % w;
-
-      if(fireAnimation._18 > 0) {
-        sp10 = new Rect4i(fireAnimation.rect_00.x() + w - fireAnimation._18, fireAnimation.rect_00.y(), fireAnimation._18, fireAnimation.rect_00.h());
-        sp18 = new Rect4i(fireAnimation.rect_00.x(), fireAnimation.rect_00.y(), w - fireAnimation._18, fireAnimation.rect_00.h());
-        sp20 = new Rect4i(fireAnimation.rect_00.x(), fireAnimation.rect_00.y(), fireAnimation._18, fireAnimation.rect_00.h());
-        sp28 = new Rect4i(fireAnimation.rect_00.x() + fireAnimation._18, fireAnimation.rect_00.y(), w - fireAnimation._18, fireAnimation.rect_00.h());
-      } else {
-        //LAB_800cdf14
-        sp10 = new Rect4i(fireAnimation.rect_00.x(), fireAnimation.rect_00.y(), -fireAnimation._18, fireAnimation.rect_00.h());
-        sp18 = new Rect4i(fireAnimation.rect_00.x() - fireAnimation._18, fireAnimation.rect_00.y(), w + fireAnimation._18, fireAnimation.rect_00.h());
-        sp20 = new Rect4i(fireAnimation.rect_00.x() + w + fireAnimation._18, fireAnimation.rect_00.y(), -fireAnimation._18, fireAnimation.rect_00.h());
-        sp28 = new Rect4i(fireAnimation.rect_00.x(), fireAnimation.rect_00.y(), w + fireAnimation._18, fireAnimation.rect_00.h());
-      }
-
-      //LAB_800ce090
+    //LAB_800ce098
+    final int h = fireAnimation.rect_00.h();
+    fireAnimation._18 %= h;
+    if(fireAnimation._18 > 0) {
+      sp10 = new Rect4i(fireAnimation.rect_00.x(), fireAnimation.rect_00.y() + h - fireAnimation._18, fireAnimation.rect_00.w(), fireAnimation._18);
+      sp18 = new Rect4i(fireAnimation.rect_00.x(), fireAnimation.rect_00.y(), fireAnimation.rect_00.w(), h - fireAnimation._18);
+      sp20 = new Rect4i(fireAnimation.rect_00.x(), fireAnimation.rect_00.y(), fireAnimation.rect_00.w(), fireAnimation._18);
+      sp28 = new Rect4i(fireAnimation.rect_00.x(), fireAnimation.rect_00.y() + fireAnimation._18, fireAnimation.rect_00.w(), h - fireAnimation._18);
     } else {
-      //LAB_800ce098
-      final int v1 = fireAnimation._18;
-      final int h = fireAnimation.rect_00.h();
-      fireAnimation._18 = v1 % h;
-      if(fireAnimation._18 > 0) {
-        sp10 = new Rect4i(fireAnimation.rect_00.x(), fireAnimation.rect_00.y() + h - fireAnimation._18, fireAnimation.rect_00.w(), fireAnimation._18);
-        sp18 = new Rect4i(fireAnimation.rect_00.x(), fireAnimation.rect_00.y(), fireAnimation.rect_00.w(), h - fireAnimation._18);
-        sp20 = new Rect4i(fireAnimation.rect_00.x(), fireAnimation.rect_00.y(), fireAnimation.rect_00.w(), fireAnimation._18);
-        sp28 = new Rect4i(fireAnimation.rect_00.x(), fireAnimation.rect_00.y() + fireAnimation._18, fireAnimation.rect_00.w(), h - fireAnimation._18);
-      } else {
-        //LAB_800ce25c
-        sp10 = new Rect4i(fireAnimation.rect_00.x(), fireAnimation.rect_00.y(), fireAnimation.rect_00.w(), -fireAnimation._18);
-        sp18 = new Rect4i(fireAnimation.rect_00.x(), fireAnimation.rect_00.y() - fireAnimation._18, fireAnimation.rect_00.w(), fireAnimation.rect_00.h() + fireAnimation._18);
-        sp20 = new Rect4i(fireAnimation.rect_00.x(), fireAnimation.rect_00.y() + fireAnimation.rect_00.h() + fireAnimation._18, fireAnimation.rect_00.w(), -fireAnimation._18);
-        sp28 = new Rect4i(fireAnimation.rect_00.x(), fireAnimation.rect_00.y(), fireAnimation.rect_00.w(), fireAnimation.rect_00.h() + fireAnimation._18);
-      }
+      //LAB_800ce25c
+      sp10 = new Rect4i(fireAnimation.rect_00.x(), fireAnimation.rect_00.y(), fireAnimation.rect_00.w(), -fireAnimation._18);
+      sp18 = new Rect4i(fireAnimation.rect_00.x(), fireAnimation.rect_00.y() - fireAnimation._18, fireAnimation.rect_00.w(), fireAnimation.rect_00.h() + fireAnimation._18);
+      sp20 = new Rect4i(fireAnimation.rect_00.x(), fireAnimation.rect_00.y() + fireAnimation.rect_00.h() + fireAnimation._18, fireAnimation.rect_00.w(), -fireAnimation._18);
+      sp28 = new Rect4i(fireAnimation.rect_00.x(), fireAnimation.rect_00.y(), fireAnimation.rect_00.w(), fireAnimation.rect_00.h() + fireAnimation._18);
     }
 
     //LAB_800ce3d8

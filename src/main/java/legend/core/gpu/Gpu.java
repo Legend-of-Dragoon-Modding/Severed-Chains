@@ -817,7 +817,7 @@ public class Gpu implements Runnable {
             }
 
             if(!isRaw) {
-              texel = this.applyBlending(colour, texel);
+              texel = applyBlending(colour, texel);
             }
 
             colour = texel;
@@ -845,7 +845,7 @@ public class Gpu implements Runnable {
     }
   }
 
-  public int applyBlending(final int colour, final int texel) {
+  public static int applyBlending(final int colour, final int texel) {
     return
       texel & 0xff00_0000 |
       Math.min((colour >>> 16 & 0xff) * (texel >>> 16 & 0xff) >>> 7, 0xff) << 16 |

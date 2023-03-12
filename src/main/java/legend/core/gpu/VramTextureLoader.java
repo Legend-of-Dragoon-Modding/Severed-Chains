@@ -6,12 +6,12 @@ import legend.game.unpacker.FileData;
 
 import java.util.Arrays;
 
-public final class VramTextureLoader2 {
-  private VramTextureLoader2() { }
+public final class VramTextureLoader {
+  private VramTextureLoader() { }
 
-  public static final VramTexture2 EMPTY = new VramTexture2(0, 0, 0, 0, new int[0]);
+  public static final VramTexture EMPTY = new VramTextureSingle(Bpp.BITS_15, new Rect4i(0, 0, 0, 0), new int[0]);
 
-  public static VramTexture2 textureFromTim(final Tim tim) {
+  public static VramTexture textureFromTim(final Tim tim) {
     if(!tim.hasClut()) {
       throw new RuntimeException("Not yet supported");
     }
@@ -31,85 +31,100 @@ public final class VramTextureLoader2 {
       }
     }
 
-    return new VramTexture2(width, height, imageSize.x.get(), imageSize.y.get(), data);
+    return new VramTextureSingle(bpp, new Rect4i(imageSize.x.get(), imageSize.y.get(), width, height), data);
   }
 
-  public static VramTexture2 stitchHorizontal(final VramTexture2... textures) {
+  /** Stitch textures using their absolute VRAM positions */
+  public static VramTexture stitch(final VramTexture... textures) {
+    return new VramTextureStitched(textures);
+  }
+
+  /** Builds a new texture containing the data of each texture in a row. Uses the minimum VRAM coordinates as the coordinates for the new texture. */
+  public static VramTexture stitchHorizontal(final VramTexture... textures) {
     if(textures.length == 0) {
       return EMPTY;
     }
 
-    int newWidth = textures[0].width;
-    int minVramX = textures[0].vramX;
-    int minVramY = textures[0].vramY;
+    int newWidth = textures[0].rect.w();
+    int minVramX = textures[0].rect.x();
+    int minVramY = textures[0].rect.y();
     for(int i = 1; i < textures.length; i++) {
-      if(textures[0].height != textures[i].height) {
+      if(textures[0].rect.h() != textures[i].rect.h()) {
         throw new IllegalArgumentException("All textures must have the same height");
       }
 
-      newWidth += textures[i].width;
-
-      if(textures[i].vramX < minVramX) {
-        minVramX = textures[i].vramX;
+      if(textures[0].bpp != textures[i].bpp) {
+        throw new IllegalArgumentException("All textures must have the same BPP");
       }
 
-      if(textures[i].vramY < minVramY) {
-        minVramY = textures[i].vramY;
+      newWidth += textures[i].rect.w();
+
+      if(textures[i].rect.x() < minVramX) {
+        minVramX = textures[i].rect.x();
+      }
+
+      if(textures[i].rect.y() < minVramY) {
+        minVramY = textures[i].rect.y();
       }
     }
 
-    final int newHeight = textures[0].height;
+    final int newHeight = textures[0].rect.h();
     final int[] newData = new int[newWidth * newHeight];
 
     for(int y = 0; y < newHeight; y++) {
       int x = 0;
-      for(final VramTexture2 texture : textures) {
+      for(final VramTexture texture : textures) {
         texture.copyRow(y, newData, y * newWidth + x);
-        x += texture.width;
+        x += texture.rect.w();
       }
     }
 
-    return new VramTexture2(newWidth, newHeight, minVramX, minVramY, newData);
+    return new VramTextureSingle(textures[0].bpp, new Rect4i(minVramX, minVramY, newWidth, newHeight), newData);
   }
 
-  public static VramTexture2 stitchVertical(final VramTexture2... textures) {
+  /** Builds a new texture containing the data of each texture in a column. Uses the minimum VRAM coordinates as the coordinates for the new texture. */
+  public static VramTexture stitchVertical(final VramTexture... textures) {
     if(textures.length == 0) {
       return EMPTY;
     }
 
-    int newHeight = textures[0].height;
-    int minVramX = textures[0].vramX;
-    int minVramY = textures[0].vramY;
+    int newHeight = textures[0].rect.h();
+    int minVramX = textures[0].rect.x();
+    int minVramY = textures[0].rect.y();
     for(int i = 1; i < textures.length; i++) {
-      if(textures[0].width != textures[i].width) {
+      if(textures[0].rect.w() != textures[i].rect.w()) {
         throw new IllegalArgumentException("All textures must have the same width");
       }
 
-      newHeight += textures[i].height;
-
-      if(textures[i].vramX < minVramX) {
-        minVramX = textures[i].vramX;
+      if(textures[0].bpp != textures[i].bpp) {
+        throw new IllegalArgumentException("All textures must have the same BPP");
       }
 
-      if(textures[i].vramY < minVramY) {
-        minVramY = textures[i].vramY;
+      newHeight += textures[i].rect.h();
+
+      if(textures[i].rect.x() < minVramX) {
+        minVramX = textures[i].rect.x();
+      }
+
+      if(textures[i].rect.y() < minVramY) {
+        minVramY = textures[i].rect.y();
       }
     }
 
-    final int newWidth = textures[0].width;
+    final int newWidth = textures[0].rect.w();
     final int[] newData = new int[newWidth * newHeight];
 
     int y2 = 0;
-    for(final VramTexture2 texture : textures) {
-      for(int y = 0; y < texture.height; y++, y2++) {
+    for(final VramTexture texture : textures) {
+      for(int y = 0; y < texture.rect.h(); y++, y2++) {
         texture.copyRow(y, newData, y2 * newWidth);
       }
     }
 
-    return new VramTexture2(newWidth, newHeight, minVramX, minVramY, newData);
+    return new VramTextureSingle(textures[0].bpp, new Rect4i(minVramX, minVramY, newWidth, newHeight), newData);
   }
 
-  public static VramTexture2[] palettesFromTim(final Tim tim) {
+  public static VramTexture[] palettesFromTim(final Tim tim) {
     if(!tim.hasClut()) {
       throw new RuntimeException("Not yet supported");
     }
@@ -119,7 +134,7 @@ public final class VramTextureLoader2 {
     final int paletteCount = clutSize.h.get();
     final int width = clutSize.w.get();
 
-    final VramTexture2[] palettes = new VramTexture2[paletteCount];
+    final VramTexture[] palettes = new VramTexture[paletteCount];
 
     for(int paletteIndex = 0; paletteIndex < paletteCount; paletteIndex++) {
       final int[] data = new int[width];
@@ -128,16 +143,16 @@ public final class VramTextureLoader2 {
         data[x] = MathHelper.colour15To24(getPixel(clutData, width, x, paletteIndex));
       }
 
-      palettes[paletteIndex] = new VramTexture2(width, 1, 0, clutSize.y.get() + paletteIndex, data);
+      palettes[paletteIndex] = new VramTextureSingle(tim.getBpp(), new Rect4i(0, clutSize.y.get() + paletteIndex, width, 1), data);
     }
 
     return palettes;
   }
 
-  public static VramTexture2[] palettesFromTims(final Tim... tims) {
-    final VramTexture2[][] palettes = new VramTexture2[tims.length][];
+  public static VramTexture[] palettesFromTims(final Tim... tims) {
+    final VramTexture[][] palettes = new VramTexture[tims.length][];
     Arrays.setAll(palettes, i -> palettesFromTim(tims[i]));
-    return Arrays.stream(palettes).flatMap(Arrays::stream).toArray(VramTexture2[]::new);
+    return Arrays.stream(palettes).flatMap(Arrays::stream).toArray(VramTexture[]::new);
   }
 
   private static int getPixel(final FileData data, final int width, final int x, final int y) {

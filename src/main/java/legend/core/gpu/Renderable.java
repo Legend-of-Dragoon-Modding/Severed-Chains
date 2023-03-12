@@ -6,15 +6,16 @@ import javax.annotation.Nullable;
 
 public class Renderable {
   private final Mesh mesh;
-  private final VramTexture2 texture;
-  private final VramTexture2[] palettes;
+  private final VramTexture texture;
+  private final VramTexture[] palettes;
 
   private int translateX;
   private int translateY;
   private int palette;
   private int recolour = -1;
+  private int colourMultiplier = 0xff;
 
-  public Renderable(final Mesh mesh, final VramTexture2 texture, final VramTexture2[] palettes) {
+  public Renderable(final Mesh mesh, final VramTexture texture, final VramTexture[] palettes) {
     this.mesh = mesh;
     this.texture = texture;
     this.palettes = palettes;
@@ -50,6 +51,11 @@ public class Renderable {
     return this;
   }
 
+  public Renderable colourMultiplier(final int multiplier) {
+    this.colourMultiplier = multiplier;
+    return this;
+  }
+
   public void render() {
     for(final Mesh.Segment segment : this.mesh.segments()) {
       segment.render(this);
@@ -57,20 +63,26 @@ public class Renderable {
   }
 
   public class Command extends GpuCommand {
+    public final String name;
     private final Mesh.Segment segment;
     private final Vec2i[] vertices;
     private final Vec2i[] uvs;
     private final int[] colours;
     private final Translucency translucency;
     private final int paletteBase;
+    private final int pageX;
+    private final int pageY;
 
-    public Command(final Mesh.Segment segment, final Vec2i[] vertices, final Vec2i[] uvs, final int[] colours, @Nullable final Translucency translucency, final int paletteBase) {
+    public Command(final String name, final Mesh.Segment segment, final Vec2i[] vertices, final Vec2i[] uvs, final int[] colours, @Nullable final Translucency translucency, final int paletteBase, final int pageX, final int pageY) {
+      this.name = name;
       this.segment = segment;
       this.vertices = vertices;
       this.uvs = uvs;
       this.colours = colours;
       this.translucency = translucency;
       this.paletteBase = paletteBase;
+      this.pageX = pageX;
+      this.pageY = pageY;
     }
 
     @Override
@@ -98,6 +110,11 @@ public class Renderable {
           this.colours[1], this.colours[2], this.colours[3]
         );
       }
+    }
+
+    @Override
+    public String toString() {
+      return this.name + " (" + super.toString() + ')';
     }
 
     private void rasterizeTriangle(final Gpu gpu, int vx0, int vy0, int vx1, int vy1, int vx2, int vy2, final int tu0, final int tv0, int tu1, int tv1, int tu2, int tv2, int c0, int c1, int c2) {
@@ -173,6 +190,12 @@ public class Renderable {
         c2 = Renderable.this.recolour | c2 & 0xff00_0000;
       }
 
+      if(Renderable.this.colourMultiplier != 0xff) {
+        c0 = Gpu.applyBlending(Renderable.this.colourMultiplier, c0) >> 1;
+        c1 = Gpu.applyBlending(Renderable.this.colourMultiplier, c1) >> 1;
+        c2 = Gpu.applyBlending(Renderable.this.colourMultiplier, c2) >> 1;
+      }
+
       // Rasterize
       for(int y = minY; y < maxY; y++) {
         // Barycentric coordinates at start of row
@@ -196,6 +219,7 @@ public class Renderable {
                 continue;
               }
             }
+
             // Reset default colour of the triangle calculated outside the for as it gets overwritten as follows...
             int colour = c0;
 
@@ -209,16 +233,16 @@ public class Renderable {
 
               int texel = 0;
               boolean found = false;
-              for(final VramTexture2 palette : Renderable.this.palettes) {
-                if(palette.vramY - this.paletteBase - Renderable.this.palette == 0) {
-                  texel = Renderable.this.texture.getTexel(palette, texelX, texelY);
+              for(final VramTexture palette : Renderable.this.palettes) {
+                if(palette.rect.y() - this.paletteBase - Renderable.this.palette == 0) {
+                  texel = Renderable.this.texture.getTexel(palette, this.pageX, texelX, texelY);
                   found = true;
                   break;
                 }
               }
 
               if(!found) {
-                System.err.println("Failed to find palette");
+                throw new RuntimeException("Failed to find palette");
               }
 
               if(texel == 0) {
@@ -229,7 +253,7 @@ public class Renderable {
               }
 
               if(!this.segment.raw()) {
-                texel = gpu.applyBlending(colour, texel);
+                texel = Gpu.applyBlending(colour, texel);
               }
 
               colour = texel;

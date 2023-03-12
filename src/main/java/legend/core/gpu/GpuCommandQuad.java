@@ -137,7 +137,7 @@ public class GpuCommandQuad extends GpuCommand {
           }
 
           if(!this.raw) {
-            texel = gpu.applyBlending(this.colour, texel);
+            texel = Gpu.applyBlending(this.colour, texel);
           }
 
           if(this.translucence != null && (texel & 0xff00_0000) != 0) {

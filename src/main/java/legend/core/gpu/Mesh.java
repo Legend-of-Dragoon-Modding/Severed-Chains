@@ -25,6 +25,7 @@ public record Mesh(Segment[] segments) {
   }
 
   public static final class Segment3d implements Segment {
+    public final String name;
     private final Poly3d[] polys;
     public final int vertexCount;
     public final boolean textured;
@@ -33,7 +34,8 @@ public record Mesh(Segment[] segments) {
     public final boolean lit;
     public final boolean raw;
 
-    public Segment3d(final Poly3d[] polys, final int vertexCount, final boolean textured, final boolean shaded, final boolean translucent, final boolean lit, final boolean raw) {
+    public Segment3d(final String name, final Poly3d[] polys, final int vertexCount, final boolean textured, final boolean shaded, final boolean translucent, final boolean lit, final boolean raw) {
+      this.name = name;
       this.polys = polys;
       this.vertexCount = vertexCount;
       this.textured = textured;
@@ -41,6 +43,11 @@ public record Mesh(Segment[] segments) {
       this.translucent = translucent;
       this.lit = lit;
       this.raw = raw;
+    }
+
+    @Override
+    public String toString() {
+      return this.name + " (" + super.toString() + ')';
     }
 
     @Override
@@ -141,15 +148,16 @@ public record Mesh(Segment[] segments) {
           translucency = Translucency.of(tmdGp0Tpage_1f8003ec.get() >>> 5 & 0b11);
         }
 
-        GPU.queueCommand(z, renderable.new Command(this, vertices, uvs, colours, translucency, poly.paletteBase));
+        GPU.queueCommand(z, renderable.new Command(this.name, this, vertices, uvs, colours, translucency, poly.paletteBase, poly.pageX, poly.pageY));
       }
     }
   }
 
-  public record Poly3d(Vertex3d[] vertices, int paletteBase, @Nullable Translucency translucency) { }
+  public record Poly3d(Vertex3d[] vertices, int paletteBase, int pageX, int pageY, @Nullable Translucency translucency) { }
   public record Vertex3d(SVECTOR pos, SVECTOR normals, int u, int v, int colour) { }
 
   public static final class Segment2d implements Segment {
+    public final String name;
     private final Poly2d[] polys;
     public final int vertexCount;
     public final int z;
@@ -160,7 +168,8 @@ public record Mesh(Segment[] segments) {
     private final Vec2i[][] uvs;
     private final int[][] colours;
 
-    public Segment2d(final Poly2d[] polys, final int vertexCount, final int z, final boolean textured, final boolean translucent) {
+    public Segment2d(final String name, final Poly2d[] polys, final int vertexCount, final int z, final boolean textured, final boolean translucent) {
+      this.name = name;
       this.polys = polys;
       this.vertexCount = vertexCount;
       this.z = z;
@@ -182,6 +191,11 @@ public record Mesh(Segment[] segments) {
           this.colours[polyIndex][vertexIndex] = vertex.colour;
         }
       }
+    }
+
+    @Override
+    public String toString() {
+      return this.name + " (" + super.toString() + ')';
     }
 
     @Override
@@ -213,11 +227,11 @@ public record Mesh(Segment[] segments) {
     public void render(final Renderable renderable) {
       for(int polyIndex = 0; polyIndex < this.polys.length; polyIndex++) {
         final Poly2d poly = this.polys[polyIndex];
-        GPU.queueCommand(this.z, renderable.new Command(this, this.positions[polyIndex], this.uvs[polyIndex], this.colours[polyIndex], poly.translucency, poly.paletteBase));
+        GPU.queueCommand(this.z, renderable.new Command(this.name, this, this.positions[polyIndex], this.uvs[polyIndex], this.colours[polyIndex], poly.translucency, poly.paletteBase, poly.pageX, poly.pageY));
       }
     }
   }
 
-  public record Poly2d(Vertex2d[] vertices, int paletteBase, @Nullable Translucency translucency) { }
+  public record Poly2d(Vertex2d[] vertices, int paletteBase, int pageX, int pageY, @Nullable Translucency translucency) { }
   public record Vertex2d(Vec2i pos, Vec2i uv, int colour) { }
 }

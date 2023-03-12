@@ -11,7 +11,7 @@ import java.util.Arrays;
 import static legend.game.Scus94491BpeSegment.tmdGp0CommandId_1f8003ee;
 
 public class ModelLoader {
-  public static ModelLoader quad(final int x, final int y, final int z, final int w, final int h, final int u, final int v, final int tw, final int th, final int paletteBase, final int r, final int g, final int b, @Nullable final Translucency translucency) {
+  public static ModelLoader quad(final String name, final int x, final int y, final int z, final int w, final int h, final int u, final int v, final int tw, final int th, final int paletteBase, final int pageX, final int pageY, final int r, final int g, final int b, @Nullable final Translucency translucency) {
     final int colour = b << 16 | g << 8 | r;
 
     final Mesh.Vertex2d[] vertices = new Mesh.Vertex2d[4];
@@ -20,12 +20,12 @@ public class ModelLoader {
     vertices[2] = new Mesh.Vertex2d(new Vec2i(x, y + h), new Vec2i(u, v + th), colour);
     vertices[3] = new Mesh.Vertex2d(new Vec2i(x + w, y + h), new Vec2i(u + tw, v + th), colour);
 
-    final Mesh.Poly2d[] polys = {new Mesh.Poly2d(vertices, paletteBase, translucency)};
-    final Mesh.Segment2d[] segments = {new Mesh.Segment2d(polys, 4, z, true, translucency != null)};
+    final Mesh.Poly2d[] polys = {new Mesh.Poly2d(vertices, paletteBase, pageX, pageY, translucency)};
+    final Mesh.Segment2d[] segments = {new Mesh.Segment2d("Quad " + name, polys, 4, z, true, translucency != null)};
     return new ModelLoader(segments);
   }
 
-  public static ModelLoader fromTmd(final TmdObjTable1c objTable) {
+  public static ModelLoader fromTmd(final String name, final TmdObjTable1c objTable) {
     final Mesh.Segment3d[] segments = new Mesh.Segment3d[objTable.primitives_10.length];
 
     for(int primitiveIndex = 0; primitiveIndex < objTable.primitives_10.length; primitiveIndex++) {
@@ -39,7 +39,7 @@ public class ModelLoader {
         throw new RuntimeException("Unsupported primitive type");
       }
 
-      final boolean shaded = (command & 0x4_0000) != 0;
+      boolean shaded = (command & 0x4_0000) != 0;
       final boolean quad = (primitiveId & 0b1000) != 0;
       final boolean textured = (primitiveId & 0b100) != 0;
       final boolean translucent = (primitiveId & 0b10) != 0;
@@ -70,6 +70,8 @@ public class ModelLoader {
         final byte[] data = primitive.data()[i];
         Translucency translucency = null;
         int paletteBase = 0;
+        int pageX = 0;
+        int pageY = 0;
 
         // Read data from TMD ---
         int primitivesOffset = 0;
@@ -82,7 +84,10 @@ public class ModelLoader {
             if(vertexIndex == 0) {
               paletteBase = IoHelper.readUShort(data, primitivesOffset) >>> 6;
             } else if(vertexIndex == 1) {
-              translucency = Translucency.of(IoHelper.readUShort(data, primitivesOffset) >>> 5 & 0b11);
+              final int tpage = IoHelper.readUShort(data, primitivesOffset);
+              translucency = Translucency.of(tpage >>> 5 & 0b11);
+              pageX = (tpage & 0b1111) * 64;
+              pageY = (tpage & 0b10000) != 0 ? 256 : 0;
             }
 
             primitivesOffset += 2;
@@ -90,11 +95,13 @@ public class ModelLoader {
         }
 
         if(shaded || !lit) {
+          shaded = true;
           for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
             colours[vertexIndex] = IoHelper.readInt(data, primitivesOffset);
             primitivesOffset += 4;
           }
         } else if(!textured) {
+          shaded = true;
           final int colour = IoHelper.readInt(data, primitivesOffset);
           primitivesOffset += 4;
 
@@ -116,29 +123,29 @@ public class ModelLoader {
           vertices[vertex] = new Mesh.Vertex3d(positions[vertex], normals[vertex], us[vertex], vs[vertex], colours[vertex]);
         }
 
-        polys[i] = new Mesh.Poly3d(vertices, paletteBase, translucency);
+        polys[i] = new Mesh.Poly3d(vertices, paletteBase, pageX, pageY, translucency);
       }
 
-      segments[primitiveIndex] = new Mesh.Segment3d(polys, vertexCount, textured, shaded, translucent, lit, false);
+      segments[primitiveIndex] = new Mesh.Segment3d("TMD " + name, polys, vertexCount, textured, shaded, translucent, lit, false);
     }
 
     return new ModelLoader(segments);
   }
 
   private final Mesh.Segment[] segments;
-  private VramTexture2 texture;
-  private VramTexture2[] palettes;
+  private VramTexture texture;
+  private VramTexture[] palettes;
 
   private ModelLoader(final Mesh.Segment[] segments) {
     this.segments = segments;
   }
 
-  public ModelLoader texture(final VramTexture2 texture) {
+  public ModelLoader texture(final VramTexture texture) {
     this.texture = texture;
     return this;
   }
 
-  public ModelLoader palettes(final VramTexture2[] palettes) {
+  public ModelLoader palettes(final VramTexture[] palettes) {
     this.palettes = palettes;
     return this;
   }
