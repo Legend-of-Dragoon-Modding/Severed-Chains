@@ -4581,7 +4581,7 @@ public final class SEffe {
       final int v1 = struct._00;
       if(v1 == 0) {
         //LAB_80108a78
-        struct._02--;
+        struct._02 -= 0x10;
 
         if(struct._02 < struct._04) {
           struct._02 = struct._04;
