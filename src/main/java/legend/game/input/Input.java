@@ -37,6 +37,8 @@ public final class Input {
   private static InputMapping playerOne = new InputMapping();
   private static final List<InputMapping> controllers = new ArrayList<>();
 
+  public static final String keyboardMouseOnly = "Keyboard-Mouse Only";
+
   private Input() {
   }
 
@@ -239,7 +241,7 @@ public final class Input {
         LOGGER.info(INPUT_MARKER, "Player 1 has been disconnected please reconnect or switch to a different controller using F9");
       }
     } catch(final NullPointerException exception) {
-      LOGGER.error(INPUT_MARKER, "NULL POINTER EXCEPTION: ",exception.getMessage());
+      LOGGER.error(INPUT_MARKER, "NULL POINTER EXCEPTION: %s ",exception.getMessage());
       InputControllerAssigner.reassignSequence();
     }
   }

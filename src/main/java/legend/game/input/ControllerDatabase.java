@@ -32,7 +32,7 @@ public final class ControllerDatabase {
   public static List<InputBinding> getBindings(final String targetControllerGUID) {
     final List<InputBinding> returnedBindings = new ArrayList<>();
 
-    if("Keyboard-Mouse Only".equals(targetControllerGUID)) {
+    if(Input.keyboardMouseOnly.equals(targetControllerGUID)) {
       return returnedBindings;
     }
 
