@@ -37,8 +37,6 @@ public final class Input {
   private static InputMapping playerOne = new InputMapping();
   private static final List<InputMapping> controllers = new ArrayList<>();
 
-  public static final String keyboardMouseOnly = "Keyboard-Mouse Only";
-
   private Input() {
   }
 

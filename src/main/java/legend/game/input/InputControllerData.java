@@ -37,8 +37,8 @@ public class InputControllerData {
   }
 
   public InputControllerData() {
-    this.glfwJoystickName = Input.keyboardMouseOnly;
-    this.glfwJoystickGUID = Input.keyboardMouseOnly;
+    this.glfwJoystickName = "";
+    this.glfwJoystickGUID = "";
     this.glfwControllerId = -1;
   }
 

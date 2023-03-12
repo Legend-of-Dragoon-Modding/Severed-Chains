@@ -32,10 +32,6 @@ public final class ControllerDatabase {
   public static List<InputBinding> getBindings(final String targetControllerGUID) {
     final List<InputBinding> returnedBindings = new ArrayList<>();
 
-    if(Input.keyboardMouseOnly.equals(targetControllerGUID)) {
-      return returnedBindings;
-    }
-
     final String dbMap = getDbMap(targetControllerGUID);
 
     for(final InputAction inputAction : InputAction.values()) {
