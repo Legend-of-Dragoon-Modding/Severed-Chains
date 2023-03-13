@@ -48,16 +48,12 @@ Ingame/combat:
 - R3 - C
 - F12 - open debug tools (developer feature - can easily cause crashes)
 
-Menus:
-- Mouse only (for now)
-- Escape key to return to previous menu
-- Left/right arrow keys to switch characters on equipment menu
+To use a controller
+1) Have it connected
+2) Press F9
+3) Press any buttons on the controller you want to use
 
-To use a controller, open the config.conf file and set controller_config=true. The next time the code is run, it will list all controllers it detects and will prompt you to select the one you wish to use. Only one controller can be registered for use at any given time. If the game crashes after setting up a controller, delete its GUID from the config file and restart the game.
-
-**NOTE**: For now, only Xbox controllers are officially supported. Other controllers may work but are not guaranteed. More work will be done here in the future.
-
-
+**NOTE**: You do NOT need to simulate an Xbox controller. You don't have to do anything extra to get a controller working unless it's not found in the controller database. There is a known issue with having your controller hidden and using DS4windows at the same time. So just unhide your controller and close DS4windows.
 
 ### Copyright Information
 
