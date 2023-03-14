@@ -1214,9 +1214,14 @@ public final class SEffe {
     final short s0 = a3._04;
 
     //LAB_800fd53c
-    if(s0 == -0xfff) {
-      a3._04 = -0xfff;
-    } else if(s0 == 0) {
+    if(s0 < 0) {
+      if(s0 == -0xfff) {
+        a3._04 = -0xfff;
+      }
+    } else {
+      if(s0 != 0) {
+        return 1;
+      }
       FUN_800fd084(a1, a2, a3);
 
       if((a1._10._24 & 0x10) != 0) {
@@ -3344,7 +3349,8 @@ public final class SEffe {
     final int s0 = script.params_20[6].get();
     final int s1 = script.params_20[7].get();
 
-    //TODO counter-attack electricity
+    //TODO counter-attack electricity (tfz note: much more than counter-attack electricity,
+    // used in Haschel Dragoon transformation and Thunder Kid at least, probably more)
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "BttlScriptData6cSub38 (counter-attack electricity?)",
       script.scriptState_04,
