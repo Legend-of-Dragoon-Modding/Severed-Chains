@@ -381,31 +381,29 @@ public class MainMenuScreen extends MenuScreen {
   }
 
   private void menuNavigateUp() {
+    playSound(1);
+
     if(this.onLeftMenu) {
-      if(this.selectedMenuOption > 0) {
-        playSound(1);
-        this.selectedMenuOption--;
-        this.selectedMenuOptionRenderable.y_44 = getMenuOptionY(this.selectedMenuOption);
-      }
-    } else if(this.selectedItemSubmenuOption > 0) {
-      playSound(1);
-      this.selectedItemSubmenuOption--;
-      this.selectedItemMenuOptionRenderable.y_44 = this.getItemSubmenuOptionY(this.selectedItemSubmenuOption) - 2;
+      this.selectedMenuOption = this.selectedMenuOption > 0 ? --this.selectedMenuOption : 5;
+      this.selectedMenuOptionRenderable.y_44 = getMenuOptionY(this.selectedMenuOption);
+      return;
     }
+
+    this.selectedItemSubmenuOption = this.selectedItemSubmenuOption > 0 ? --this.selectedItemSubmenuOption : 3;
+    this.selectedItemMenuOptionRenderable.y_44 = this.getItemSubmenuOptionY(this.selectedItemSubmenuOption) - 2;
   }
 
   private void menuNavigateDown() {
+    playSound(1);
+
     if(this.onLeftMenu) {
-      if(this.selectedMenuOption < 5) {
-        playSound(1);
-        this.selectedMenuOption++;
-        this.selectedMenuOptionRenderable.y_44 = getMenuOptionY(this.selectedMenuOption);
-      }
-    } else if(this.selectedItemSubmenuOption < 3) {
-      playSound(1);
-      this.selectedItemSubmenuOption++;
-      this.selectedItemMenuOptionRenderable.y_44 = this.getItemSubmenuOptionY(this.selectedItemSubmenuOption) - 2;
+      this.selectedMenuOption = this.selectedMenuOption < 5 ? ++this.selectedMenuOption : 0;
+      this.selectedMenuOptionRenderable.y_44 = getMenuOptionY(this.selectedMenuOption);
+      return;
     }
+
+    this.selectedItemSubmenuOption = this.selectedItemSubmenuOption < 3 ? ++this.selectedItemSubmenuOption : 0;
+    this.selectedItemMenuOptionRenderable.y_44 = this.getItemSubmenuOptionY(this.selectedItemSubmenuOption) - 2;
   }
 
   private void menuNavigateLeft() {
