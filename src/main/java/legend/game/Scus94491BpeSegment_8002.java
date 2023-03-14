@@ -1955,8 +1955,8 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x80023a2cL)
   public static void sortItems(final List<MenuItemStruct04> display, final ArrayRef<UnsignedByteRef> items, final int count) {
     display.sort(Comparator
-      .comparingInt((MenuItemStruct04 item) -> item.itemId_00)
-      .thenComparing(item -> equipment_8011972c.get(item.itemId_00).deref().get())
+      .comparingInt((MenuItemStruct04 item) -> getItemIcon(item.itemId_00))
+      .thenComparingInt(item -> item.itemId_00)
     );
 
     setInventoryFromDisplay(display, items, count);
