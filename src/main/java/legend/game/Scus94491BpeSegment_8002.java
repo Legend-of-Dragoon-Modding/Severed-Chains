@@ -1962,7 +1962,6 @@ public final class Scus94491BpeSegment_8002 {
     setInventoryFromDisplay(display, items, count);
   }
 
-
   @Method(0x80023a88L)
   public static void FUN_80023a88() {
     final List<MenuItemStruct04> items = new ArrayList<>();
