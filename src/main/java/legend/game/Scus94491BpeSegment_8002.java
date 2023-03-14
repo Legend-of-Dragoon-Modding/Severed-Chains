@@ -78,6 +78,7 @@ import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.SItem.FUN_80103b10;
 import static legend.game.SItem.equipmentStats_80111ff0;
+import static legend.game.SItem.equipment_8011972c;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.magicStuff_80111d20;
 import static legend.game.SItem.menuStack;
@@ -1953,9 +1954,14 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80023a2cL)
   public static void sortItems(final List<MenuItemStruct04> display, final ArrayRef<UnsignedByteRef> items, final int count) {
-    display.sort(Comparator.comparingInt(item -> getItemIcon(item.itemId_00)));
+    display.sort(Comparator
+      .comparingInt((MenuItemStruct04 item) -> item.itemId_00)
+      .thenComparing(item -> equipment_8011972c.get(item.itemId_00).deref().get())
+    );
+
     setInventoryFromDisplay(display, items, count);
   }
+
 
   @Method(0x80023a88L)
   public static void FUN_80023a88() {
