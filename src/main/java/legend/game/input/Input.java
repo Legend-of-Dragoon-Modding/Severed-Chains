@@ -239,7 +239,7 @@ public final class Input {
         LOGGER.info(INPUT_MARKER, "Player 1's controller has been disconnected. Please reconnect the controller, or switch to a different controller using F9.");
       }
     } catch(final NullPointerException exception) {
-      LOGGER.error(INPUT_MARKER, "NULL POINTER EXCEPTION: %s ",exception.getMessage());
+      LOGGER.error(INPUT_MARKER, "NPE on controller disconnection", exception);
       InputControllerAssigner.reassignSequence();
     }
   }
