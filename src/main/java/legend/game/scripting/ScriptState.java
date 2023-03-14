@@ -522,7 +522,7 @@ public class ScriptState<T> {
       case 42 -> this.FUN_80016b8c();
 
       case 48 -> this.scriptSquareRoot();
-      case 49 -> this.FUN_80016c00();
+      case 49 -> this.scriptRandom();
       case 50 -> this.scriptSin();
       case 51 -> this.scriptCos();
       case 52 -> this.scriptRatan2();
@@ -860,7 +860,7 @@ public class ScriptState<T> {
   }
 
   @Method(0x80016c00L)
-  public FlowControl FUN_80016c00() {
+  public FlowControl scriptRandom() {
     this.context.params_20[1].set(this.context.params_20[0].get() * simpleRand() >>> 16);
     return FlowControl.CONTINUE;
   }
