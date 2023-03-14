@@ -83,6 +83,10 @@ public class InputMapping {
 
   public void setControllerData(final InputControllerData controllerData) {
     this.controllerData = controllerData;
+    if(controllerData.getGlfwControllerId() == -1) {
+      this.bindings = new ArrayList<>();
+      return;
+    }
     this.bindings = ControllerDatabase.getBindings(controllerData.getGlfwJoystickGUID());
     for(final InputBinding binding : this.bindings) {
       binding.setTargetController(controllerData);

@@ -30,53 +30,47 @@ public final class InputControllerAssigner {
   }
 
   public static void init() {
-    logConnectedControllers();
-
     ControllerDatabase.loadControllerDb();
+    setupInitialControllerInput();
+  }
+
+  private static void setupInitialControllerInput() {
     final String controllerGuidFromConfig = Config.controllerGuid();
 
-    if(isAnyControllerPresent()) {
-      // Check for matching GUID
-      for(int i = 0; i < GLFW_JOYSTICK_LAST; i++) {
-        if(controllerGuidFromConfig.equals(glfwGetJoystickGUID(i))) {
-          final InputControllerData controllerData = new InputControllerData(glfwGetJoystickName(i), glfwGetJoystickGUID(i), i);
+    for(int i = 0; i < GLFW_JOYSTICK_LAST; i++) {
+      if(glfwJoystickPresent(i)) {
+        final String controllerGUID = glfwGetJoystickGUID(i);
+        final InputControllerData controllerData = new InputControllerData(glfwGetJoystickName(i), glfwGetJoystickGUID(i), i);
+
+        connectedControllers.add(controllerData);
+        if(controllerGUID.equals(controllerGuidFromConfig)) {
           controllerData.setPlayerSlot(1);
-          connectedControllers.add(controllerData);
           assignedControllers.add(controllerData);
-          Input.refreshControllers();
-          LOGGER.info(INPUT_MARKER,"Last used controller found and connected");
-          break;
+        } else {
+          idleControllers.add(controllerData);
         }
       }
     }
-    else {
-      LOGGER.info(INPUT_MARKER,"No controllers connected");
 
-      final InputControllerData controllerData = new InputControllerData("Keyboard-Mouse Only", "Keyboard-Mouse Only", -1);
+    if(!assignedControllers.isEmpty()) {
+      LOGGER.info(INPUT_MARKER, "Last controller used found and connected");
+      Input.refreshControllers();
+      return;
+    }
+
+    if(connectedControllers.isEmpty()) {
+      LOGGER.info(INPUT_MARKER, "No controllers connected, Keyboard-Mouse Only");
+
+      final InputControllerData controllerData = new InputControllerData();
       controllerData.setPlayerSlot(1);
       connectedControllers.add(controllerData);
       assignedControllers.add(controllerData);
+
       Input.refreshControllers();
-
+      return;
     }
 
-  }
-
-  private static void logConnectedControllers() {
-    for(int i = 0; i < GLFW_JOYSTICK_LAST; i++) {
-      if(glfwJoystickPresent(i)) {
-        LOGGER.info(INPUT_MARKER,"Controller Id: %d - GUID: %s",i ,glfwGetJoystickGUID(i));
-      }
-    }
-  }
-
-  private static boolean isAnyControllerPresent() {
-    for(int i = 0; i < GLFW_JOYSTICK_LAST; i++) {
-      if(glfwJoystickPresent(i)) {
-        return true;
-      }
-    }
-    return false;
+    reassignSequence();
   }
 
   public static void reassignSequence() {
@@ -86,7 +80,7 @@ public final class InputControllerAssigner {
 
     for(int i = 0; i < GLFW_JOYSTICK_LAST; i++) {
       if(glfwJoystickPresent(i)) {
-        LOGGER.info(INPUT_MARKER,"%d: %s (%d)",(i+1),glfwGetJoystickName(i),glfwGetJoystickGUID(i));
+        LOGGER.info(INPUT_MARKER, "Controller Id: %d - GUID: %s ", i, glfwGetJoystickGUID(i));
         final InputControllerData controllerData = new InputControllerData(glfwGetJoystickName(i), glfwGetJoystickGUID(i), i);
         connectedControllers.add(controllerData);
       }
@@ -95,7 +89,15 @@ public final class InputControllerAssigner {
     LOGGER.info(INPUT_MARKER,"Found a total of %d",connectedControllers.size());
 
     if(connectedControllers.isEmpty()) {
-      LOGGER.info(INPUT_MARKER,"No controllers connected");
+      LOGGER.info(INPUT_MARKER, "No controllers connected, Keyboard-Mouse Only");
+
+      final InputControllerData controllerData = new InputControllerData();
+      controllerData.setPlayerSlot(1);
+      connectedControllers.add(controllerData);
+      assignedControllers.add(controllerData);
+
+      Input.refreshControllers();
+      return;
     }
     if(connectedControllers.size() == 1) {
 

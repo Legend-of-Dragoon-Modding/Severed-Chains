@@ -33,7 +33,7 @@ Note: Java 17 is required. It is **strongly** recommended to run with assertions
 
 ### Controls ###
 
-Controls are currently hardcoded to the keyboard.
+Controls are currently hardcoded.
 
 Ingame/combat:
 - D-pad - arrow keys
@@ -46,18 +46,14 @@ Ingame/combat:
 - R1 - E
 - R2 - 3
 - R3 - C
-- F12 - open debug tools (developer feature - can easily cause crashes)
+- F12 - open debug tools (developer features - can easily cause crashes)
 
-Menus:
-- Mouse only (for now)
-- Escape key to return to previous menu
-- Left/right arrow keys to switch characters on equipment menu
+To set up a controller:
+1) Connect your controller (before or after starting the game)
+2) Press F9
+3) Press any button on the controller you want to use
 
-To use a controller, open the config.conf file and set controller_config=true. The next time the code is run, it will list all controllers it detects and will prompt you to select the one you wish to use. Only one controller can be registered for use at any given time. If the game crashes after setting up a controller, delete its GUID from the config file and restart the game.
-
-**NOTE**: For now, only Xbox controllers are officially supported. Other controllers may work but are not guaranteed. More work will be done here in the future.
-
-
+**NOTE**: There are known issues with using DS4windows, and possibly other controller emulators. Severed Chains supports 1800+ controllers out of the box so it's very likely you can just plug in your controller, set it up, and play. If you find a controller that isn't in our controller database, please contact us and we'll work with you to get it added. If you do use DS4windows, make sure your controller isn't hidden and close DS4windows.
 
 ### Copyright Information
 
