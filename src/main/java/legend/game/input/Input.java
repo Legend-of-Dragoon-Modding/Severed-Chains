@@ -234,13 +234,13 @@ public final class Input {
   }
 
   private static void onControllerDisconnected(final int id) {
-
-    if(playerOne.getControllerData().getGlfwControllerId() == id) {
-      // Player one has been disconnected
-      LOGGER.info(INPUT_MARKER,"Player 1 has been disconnected please reconnect or switch to a different controller using F9");
+    try {
+      if(playerOne.getControllerData().getGlfwControllerId() == id) {
+        LOGGER.info(INPUT_MARKER, "Player 1's controller has been disconnected. Please reconnect the controller, or switch to a different controller using F9.");
+      }
+    } catch(final NullPointerException exception) {
+      LOGGER.error(INPUT_MARKER, "NPE on controller disconnection", exception);
+      InputControllerAssigner.reassignSequence();
     }
-
-
   }
-
 }

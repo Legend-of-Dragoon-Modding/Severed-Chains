@@ -36,6 +36,12 @@ public class InputControllerData {
     this.pollControllerForAvailableInputs();
   }
 
+  public InputControllerData() {
+    this.glfwJoystickName = "";
+    this.glfwJoystickGUID = "";
+    this.glfwControllerId = -1;
+  }
+
   public void updateState() {
     if(this.glfwControllerId == -1) {
       return;
