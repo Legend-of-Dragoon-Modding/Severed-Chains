@@ -3614,7 +3614,7 @@ public final class Bttl_800e {
 
       //LAB_800ee770
       for(int v1 = 0; v1 < 22; v1++) {
-        currentEnemyNames_800c69d0.get(combatantIndex).charAt(v1, 0xa0ff);
+        currentEnemyNames_800c69d0[combatantIndex].charAt(v1, 0xa0ff);
       }
     }
 
@@ -3812,7 +3812,7 @@ public final class Bttl_800e {
 
     //LAB_800eef7c
     for(int charIndex = 0; ; charIndex++) {
-      currentEnemyNames_800c69d0.get((int)_800c6b9c.get()).charAt(charIndex, name.charAt(charIndex));
+      currentEnemyNames_800c69d0[(int)_800c6b9c.get()].charAt(charIndex, name.charAt(charIndex));
 
       if(name.charAt(charIndex) >= 0xa0ffL) {
         break;
@@ -4432,7 +4432,7 @@ public final class Bttl_800e {
             }
 
             //LAB_800f0d10
-            str = getTargetEnemyName(targetBobj, currentEnemyNames_800c69d0.get(enemySlot));
+            str = getTargetEnemyName(targetBobj, currentEnemyNames_800c69d0[enemySlot]);
             element = getTargetEnemyElement(targetBobj.elementFlag_1c);
           } else if(menu.targetType_50.get() == 0) {
             targetBobj = _8006e398.charBobjIndices_e40[targetCombatant].innerStruct_00;
@@ -4456,7 +4456,7 @@ public final class Bttl_800e {
               }
             } else {
               //LAB_800f0e24
-              str = getTargetEnemyName(targetBobj, currentEnemyNames_800c69d0.get(targetCombatant));
+              str = getTargetEnemyName(targetBobj, currentEnemyNames_800c69d0[targetCombatant]);
               element = getTargetEnemyElement(targetBobj.elementFlag_1c);
             }
           }

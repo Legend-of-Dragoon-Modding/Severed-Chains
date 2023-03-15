@@ -20,7 +20,7 @@ public class SpecialEffects20 {
    *   <li>0x20 D-Attack</li>
    *   <li>0x40 Magic</li>
    *   <li>0x80 Special</li>
-   * <ul>
+   * </ul>
    */
   public int menuBlockFlag_18;
   /**
@@ -30,7 +30,7 @@ public class SpecialEffects20 {
    *   <li>2 - 3 Magical Shield</li>
    *   <li>4 - 5 Magic Sig Stone</li>
    *   <li>6 - 7 Charm Potion</li>
-   * <ul>
+   * </ul>
    */
   public int shieldsSigStoneCharmTurns_1c;
   public int pandemoniumTurns_1d;

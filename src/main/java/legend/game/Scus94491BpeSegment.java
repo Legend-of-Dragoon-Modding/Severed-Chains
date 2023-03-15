@@ -3810,6 +3810,11 @@ public final class Scus94491BpeSegment {
       }
     }
 
+    // Fix for sound permutation files (duplicate characters)
+    if(charSlot >= 3) {
+      return;
+    }
+
     //LAB_8001cd78
     final SoundFile soundFile = soundFileArr_800bcf80.get(characterSoundFileIndices_800500f8.get(charSlot).get());
     sssqUnloadPlayableSound(soundFile.playableSoundIndex_10.get());

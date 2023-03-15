@@ -1,13 +1,14 @@
 package legend.game.combat;
 
+import legend.core.gte.SVECTOR;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.Pointer;
 import legend.game.combat.deff.DeffManager7cc;
 import legend.game.combat.types.BattleObject27c;
-import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.BattlePreloadedEntities_18cb0;
+import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.combat.types.EncounterData38;
 import legend.game.combat.types.EnemyRewards08;
@@ -30,7 +31,6 @@ import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
 import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
-import static legend.game.Scus94491BpeSegment.loadFile;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment_8006._8006e398;
@@ -47,10 +47,10 @@ import static legend.game.combat.Bttl_800c.addCombatant;
 import static legend.game.combat.Bttl_800c.deffManager_800c693c;
 import static legend.game.combat.Bttl_800c.getCombatant;
 import static legend.game.combat.Bttl_800c.getCombatantIndex;
+import static legend.game.combat.Bttl_800c.melbuStageIndices_800fb064;
 import static legend.game.combat.Bttl_800c.monsterCount_800c6768;
 import static legend.game.combat.Bttl_800c.scriptState_800c674c;
 import static legend.game.combat.Bttl_800c.script_800c66fc;
-import static legend.game.combat.Bttl_800c.melbuStageIndices_800fb064;
 import static legend.game.combat.Bttl_800c.uniqueMonsterCount_800c6698;
 import static legend.game.combat.Bttl_800e.FUN_800e5768;
 import static legend.game.combat.Bttl_800f.loadMonster;
@@ -152,7 +152,17 @@ public class SBtld {
       //LAB_80109340
     }
 
-    loadFile("encounters", file -> battlePreloadedEntities_1f8003f4.encounterData_00 = new EncounterData38(file.getBytes(), encounterId_800bb0f8.get() * 0x38));
+//    loadFile("encounters", file -> battlePreloadedEntities_1f8003f4.encounterData_00 = EncounterData38.fromOverlay(file.getBytes(), encounterId_800bb0f8.get() * 0x38));
+
+    final short[] enemyIndices = new short[7];
+    final EncounterData38.EnemyInfo08[] enemyInfo = new EncounterData38.EnemyInfo08[7];
+
+    for(int i = 0; i < 7; i++) {
+      enemyIndices[i] = (short)344;
+      enemyInfo[i] = new EncounterData38.EnemyInfo08((short)344, new SVECTOR().set((short)0xf180, (short)0, (short)(0x480 + (i - enemyIndices.length / 2) * 0x400)));
+    }
+
+    battlePreloadedEntities_1f8003f4.encounterData_00 = new EncounterData38(enemyIndices, enemyInfo);
 
     decrementOverlayCount();
   }
@@ -190,7 +200,7 @@ public class SBtld {
     final BattlePreloadedEntities_18cb0 fp = battlePreloadedEntities_1f8003f4;
 
     //LAB_801095a0
-    for(int i = 0; i < 3; i++) {
+    for(int i = 0; i < fp.encounterData_00.enemyIndices_00.length; i++) {
       final int enemyIndex = fp.encounterData_00.enemyIndices_00[i] & 0x1ff;
       if(enemyIndex == 0x1ff) {
         break;
@@ -201,7 +211,7 @@ public class SBtld {
 
     //LAB_801095ec
     //LAB_801095fc
-    for(int i = 0; i < 6; i++) {
+    for(int i = 0; i < fp.encounterData_00.enemyInfo_08.length; i++) {
       final EncounterData38.EnemyInfo08 s5 = fp.encounterData_00.enemyInfo_08[i];
       final int charIndex = s5.index_00 & 0x1ff;
       if(charIndex == 0x1ff) {

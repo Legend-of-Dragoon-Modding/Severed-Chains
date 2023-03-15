@@ -309,7 +309,10 @@ public final class Bttl_800c {
   }
   public static final Value _800c69c8 = MEMORY.ref(4, 0x800c69c8L);
 
-  public static final ArrayRef<LodString> currentEnemyNames_800c69d0 = MEMORY.ref(2, 0x800c69d0L, ArrayRef.of(LodString.class, 9, 0x2c, LodString::new));
+  public static final LodString[] currentEnemyNames_800c69d0 = new LodString[20];
+  static {
+    Arrays.setAll(currentEnemyNames_800c69d0, i -> new LodString(0x2c));
+  }
 
   public static final Pointer<ArrayRef<FloatingNumberC4>> floatingNumbers_800c6b5c = MEMORY.ref(4, 0x800c6b5cL, Pointer.deferred(4, ArrayRef.of(FloatingNumberC4.class, 12, 0xc4, FloatingNumberC4::new)));
   public static final Pointer<CombatMenua4> _800c6b60 = MEMORY.ref(4, 0x800c6b60L, Pointer.deferred(4, CombatMenua4::new));
@@ -1523,7 +1526,7 @@ public final class Bttl_800c {
   @Method(0x800c8f50L)
   public static int addCombatant(final int a0, final int charSlot) {
     //LAB_800c8f6c
-    for(int combatantIndex = 0; combatantIndex < 10; combatantIndex++) {
+    for(int combatantIndex = 0; combatantIndex < combatants_8005e398.length; combatantIndex++) {
       if(combatants_8005e398[combatantIndex] == null) {
         final CombatantStruct1a8 combatant = new CombatantStruct1a8();
         combatants_8005e398[combatantIndex] = combatant;
