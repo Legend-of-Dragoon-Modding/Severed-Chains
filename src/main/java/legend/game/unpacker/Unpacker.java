@@ -64,6 +64,7 @@ public final class Unpacker {
     transformers.put(Unpacker::dragoonCombatModelsAndTexturesDiscriminator, Unpacker::dragoonCombatModelsAndTexturesTransformer);
     transformers.put(Unpacker::skipPartyPermutationsDiscriminator, Unpacker::skipPartyPermutationsTransformer);
     transformers.put(Unpacker::extractBtldDataDiscriminator, Unpacker::extractBtldDataTransformer);
+    transformers.put(Unpacker::extractItemDataDiscriminator, Unpacker::extractItemDataTransformer);
     transformers.put(CtmdTransformer::ctmdDiscriminator, CtmdTransformer::ctmdTransformer);
   }
 
@@ -570,6 +571,7 @@ public final class Unpacker {
 
   /** TODO this is pretty bad */
   private static boolean btldDataDiscriminatorLatch = true;
+  private static boolean itemDataDiscriminatorLatch = true;
   /** Extracts table at 80102050 */
   private static boolean extractBtldDataDiscriminator(final String name, final FileData data, final Set<Flags> flags) {
     return btldDataDiscriminatorLatch && "OVL/S_BTLD.OV_".equals(name);
@@ -580,6 +582,26 @@ public final class Unpacker {
     final Map<String, FileData> files = new HashMap<>();
     files.put(name, data);
     files.put("encounters", new FileData(data.data(), 0x68d8, 0x7000));
+    return files;
+  }
+
+  private static boolean extractItemDataDiscriminator(final String name, final FileData data, final Set<Flags> flags) {
+    return itemDataDiscriminatorLatch && "OVL/S_ITEM.OV_".equals(name);
+  }
+
+  private static Map<String, FileData> extractItemDataTransformer(final String name, final FileData data, final Set<Flags> flags) {
+    itemDataDiscriminatorLatch = false;
+    final Map<String, FileData> files = new HashMap<>();
+    files.put(name, data);
+    files.put("characters/kongol/xp", new FileData(data.data(), 0x17d78, 61 * 4));
+    files.put("characters/dart/xp", new FileData(data.data(), 0x17e6c, 61 * 4));
+    files.put("characters/haschel/xp", new FileData(data.data(), 0x17f60, 61 * 4));
+    files.put("characters/meru/xp", new FileData(data.data(), 0x18054, 61 * 4));
+    files.put("characters/lavitz/xp", new FileData(data.data(), 0x18148, 61 * 4));
+    files.put("characters/albert/xp", new FileData(data.data(), 0x18148, 61 * 4));
+    files.put("characters/rose/xp", new FileData(data.data(), 0x1823c, 61 * 4));
+    files.put("characters/shana/xp", new FileData(data.data(), 0x18330, 61 * 4));
+    files.put("characters/miranda/xp", new FileData(data.data(), 0x18330, 61 * 4));
     return files;
   }
 

@@ -93,7 +93,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>0x800eaa88 (TODO)</li>
    *   <li>{@link SMap#executeSmapLoadingStage()} Sets up rendering and loads scene</li>
    *   <li>{@link Scus94491BpeSegment#FUN_80018658()}</li>
-   *   <li>{@link Ttle#FUN_800c75fc()}</li>
+   *   <li>{@link Ttle#gameOver()}</li>
    *   <li>{@link WMap#FUN_800cc738()}</li>
    *   <li>{@link SMap#startFmvLoadingStage()}</li>
    *   <li>{@link SMap#swapDiskLoadingStage()}</li>

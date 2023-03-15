@@ -175,13 +175,16 @@ public final class SItem {
   public static final Value _80111d38 = MEMORY.ref(4, 0x80111d38L);
 
   public static final ArrayRef<EquipmentStats1c> equipmentStats_80111ff0 = MEMORY.ref(1, 0x80111ff0L, ArrayRef.of(EquipmentStats1c.class, 0xc0, 0x1c, EquipmentStats1c::new));
-  public static final ArrayRef<IntRef> kongolXpTable_801134f0 = MEMORY.ref(4, 0x801134f0L, ArrayRef.of(IntRef.class, 61, 4, IntRef::new));
-  public static final ArrayRef<IntRef> dartXpTable_801135e4 = MEMORY.ref(4, 0x801135e4L, ArrayRef.of(IntRef.class, 61, 4, IntRef::new));
-  public static final ArrayRef<IntRef> haschelXpTable_801136d8 = MEMORY.ref(4, 0x801136d8L, ArrayRef.of(IntRef.class, 61, 4, IntRef::new));
-  public static final ArrayRef<IntRef> meruXpTable_801137cc = MEMORY.ref(4, 0x801137ccL, ArrayRef.of(IntRef.class, 61, 4, IntRef::new));
-  public static final ArrayRef<IntRef> lavitzXpTable_801138c0 = MEMORY.ref(4, 0x801138c0L, ArrayRef.of(IntRef.class, 61, 4, IntRef::new));
-  public static final ArrayRef<IntRef> roseXpTable_801139b4 = MEMORY.ref(4, 0x801139b4L, ArrayRef.of(IntRef.class, 61, 4, IntRef::new));
-  public static final ArrayRef<IntRef> shanaXpTable_80113aa8 = MEMORY.ref(4, 0x80113aa8L, ArrayRef.of(IntRef.class, 61, 4, IntRef::new));
+  public static final int[] kongolXpTable_801134f0 = new int[61];
+  public static final int[] dartXpTable_801135e4 = new int[61];
+  public static final int[] haschelXpTable_801136d8 = new int[61];
+  public static final int[] meruXpTable_801137cc = new int[61];
+  public static final int[] lavitzXpTable_801138c0 = new int[61];
+  public static final int[] albertXpTable_801138c0 = new int[61];
+  public static final int[] roseXpTable_801139b4 = new int[61];
+  public static final int[] shanaXpTable_80113aa8 = new int[61];
+  public static final int[] mirandaXpTable_80113aa8 = new int[61];
+  public static final int[][] xpTables = {dartXpTable_801135e4, lavitzXpTable_801138c0, shanaXpTable_80113aa8, roseXpTable_801139b4, haschelXpTable_801136d8, albertXpTable_801138c0, meruXpTable_801137cc, kongolXpTable_801134f0, mirandaXpTable_80113aa8};
 
   public static final Value ptrTable_80114070 = MEMORY.ref(4, 0x80114070L);
 
@@ -494,22 +497,10 @@ public final class SItem {
       return 0; // Max level
     }
 
-    final ArrayRef<IntRef> table = switch(charIndex) {
-      case 0    -> dartXpTable_801135e4;
-      case 1, 5 -> lavitzXpTable_801138c0;
-      case 2, 8 -> shanaXpTable_80113aa8;
-      case 3    -> roseXpTable_801139b4;
-      case 4    -> haschelXpTable_801136d8;
-      case 6    -> meruXpTable_801137cc;
-      case 7    -> kongolXpTable_801134f0;
-      default -> throw new RuntimeException("Impossible");
-    };
-
-    final XpToLevelEvent event = EventManager.INSTANCE.postEvent(new XpToLevelEvent(charIndex, level, table.get(level + 1).get()));
-    table.get(level + 1).set(event.xp);
+    final XpToLevelEvent event = EventManager.INSTANCE.postEvent(new XpToLevelEvent(charIndex, level, xpTables[charIndex][level + 1]));
 
     //LAB_800fc70c
-    return table.get(level + 1).get();
+    return event.xp;
   }
 
   @Method(0x800fc78cL)
