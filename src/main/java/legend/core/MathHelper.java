@@ -32,6 +32,15 @@ public final class MathHelper {
     return (a & 0xff) << 24 | (b & 0xff) << 16 | (g & 0xff) << 8 | r & 0xff;
   }
 
+  public static int colour15To24Bgr(final int colour) {
+    final byte r = (byte)((colour        & 0b1_1111) * 8);
+    final byte g = (byte)((colour >>>  5 & 0b1_1111) * 8);
+    final byte b = (byte)((colour >>> 10 & 0b1_1111) * 8);
+    final byte a = (byte)((colour >>> 15) * 255);
+
+    return (a & 0xff) << 24 | (r & 0xff) << 16 | (g & 0xff) << 8 | b & 0xff;
+  }
+
   public static int colour24To15(final int colour) {
     final byte m = (byte)((colour & 0xff000000) >>> 24);
     final byte r = (byte)((colour & 0x00ff0000) >>> 16 + 3);
