@@ -94,7 +94,7 @@ public class ScriptManager {
     scriptStatePtrArr_800bc1c0[index] = scriptState;
 
     //LAB_800159c0
-    for(int i = 1; i < 25; i++) {
+    for(int i = 1; i < 33; i++) {
       scriptState.storage_44[i] = -1;
     }
 
