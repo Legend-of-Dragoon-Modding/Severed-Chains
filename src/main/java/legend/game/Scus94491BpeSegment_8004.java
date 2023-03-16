@@ -606,9 +606,9 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[681] = SMap::FUN_800e00cc;
     scriptSubFunctions_8004e29c[682] = SMap::FUN_800e0148;
     scriptSubFunctions_8004e29c[683] = SMap::FUN_800e01bc;
-    scriptSubFunctions_8004e29c[684] = SMap::FUN_800e0244;
+    scriptSubFunctions_8004e29c[684] = SMap::scriptEnableTextureAnimation;
     scriptSubFunctions_8004e29c[685] = SMap::FUN_800e0204;
-    scriptSubFunctions_8004e29c[686] = SMap::FUN_800e0284;
+    scriptSubFunctions_8004e29c[686] = SMap::scriptDisableTextureAnimation;
     scriptSubFunctions_8004e29c[687] = SMap::FUN_800e02c0;
     scriptSubFunctions_8004e29c[688] = SMap::FUN_800e02fc;
     scriptSubFunctions_8004e29c[689] = SMap::FUN_800deba0;

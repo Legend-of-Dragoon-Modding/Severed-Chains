@@ -785,7 +785,7 @@ public final class SMap {
     //LAB_800da16c
     //LAB_800da174
     for(int i = 0; i < 7; i++) {
-      if(struct.aub_ec[i] != 0) {
+      if(struct.animateTextures_ec[i]) {
         animateModelTextures(struct, i);
       }
 
@@ -968,7 +968,7 @@ public final class SMap {
 
     //LAB_800daaa8
     for(int i = 0; i < a0.ObjTable_0c.nobj; i++) {
-      if((a0.ui_f4 & 1L << i) == 0) {
+      if((a0.partInvisible_f4 & 1L << i) == 0) {
         final GsDOBJ2 dobj2 = a0.ObjTable_0c.top[i];
 
         final MATRIX lw = new MATRIX();
@@ -988,7 +988,7 @@ public final class SMap {
     }
 
     //LAB_800dab34
-    if(a0.b_cc != 0) {
+    if(a0.movementType_cc != 0) {
       FUN_800da524(a0);
     }
 
@@ -1614,14 +1614,14 @@ public final class SMap {
   public static FlowControl FUN_800df5c0(final RunningScript<?> script) {
     script.params_20[1] = script.params_20[0];
     script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
-    return FUN_800e0244(script);
+    return scriptEnableTextureAnimation(script);
   }
 
   @Method(0x800df5f0L)
   public static FlowControl FUN_800df5f0(final RunningScript<?> script) {
     script.params_20[1] = script.params_20[0];
     script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
-    return FUN_800e0284(script);
+    return scriptDisableTextureAnimation(script);
   }
 
   @Method(0x800df620L)
@@ -1965,16 +1965,16 @@ public final class SMap {
   }
 
   @Method(0x800e0244L)
-  public static FlowControl FUN_800e0244(final RunningScript<?> script) {
+  public static FlowControl scriptEnableTextureAnimation(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    sobj.model_00.aub_ec[script.params_20[1].get()] = 1;
+    sobj.model_00.animateTextures_ec[script.params_20[1].get()] = true;
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e0284L)
-  public static FlowControl FUN_800e0284(final RunningScript<?> script) {
+  public static FlowControl scriptDisableTextureAnimation(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    sobj.model_00.aub_ec[script.params_20[1].get()] = 0;
+    sobj.model_00.animateTextures_ec[script.params_20[1].get()] = false;
     return FlowControl.CONTINUE;
   }
 
@@ -2023,7 +2023,7 @@ public final class SMap {
     final int shift = script.params_20[1].get();
 
     //LAB_800e0430
-    model.ui_f4 |= 0x1L << shift;
+    model.partInvisible_f4 |= 0x1L << shift;
 
     //LAB_800e0440
     return FlowControl.CONTINUE;
@@ -2037,7 +2037,7 @@ public final class SMap {
     final int shift = script.params_20[1].get();
 
     //LAB_800e0498
-    model.ui_f4 &= ~(0x1L << shift);
+    model.partInvisible_f4 &= ~(0x1L << shift);
 
     //LAB_800e04ac
     return FlowControl.CONTINUE;
@@ -2155,14 +2155,14 @@ public final class SMap {
   @Method(0x800e09e0L)
   public static FlowControl FUN_800e09e0(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    sobj.model_00.b_cc = 1;
+    sobj.model_00.movementType_cc = 1;
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e0a14L)
   public static FlowControl FUN_800e0a14(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    sobj.model_00.b_cc = 0;
+    sobj.model_00.movementType_cc = 0;
     return FlowControl.CONTINUE;
   }
 
@@ -2266,7 +2266,7 @@ public final class SMap {
 
     //LAB_800e0d5c
     for(int i = 0; i < 7; i++) {
-      model.aub_ec[i] = 0;
+      model.animateTextures_ec[i] = false;
     }
 
     final int count = cContainer.tmdPtr_00.tmd.header.nobj;
@@ -2328,7 +2328,7 @@ public final class SMap {
     model.zOffset_a0 = 0;
     model.ub_a2 = 0;
     model.ub_a3 = 0;
-    model.ui_f4 = 0;
+    model.partInvisible_f4 = 0;
 
     loadModelStandardAnimation(model, tmdAnimFile);
 

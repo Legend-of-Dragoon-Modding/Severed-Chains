@@ -138,7 +138,6 @@ import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
 import static legend.game.Scus94491BpeSegment_8007._8007a3a8;
 import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
-import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800babc0;
 import static legend.game.Scus94491BpeSegment_800b._800bb104;
@@ -514,7 +513,7 @@ public class WMap {
     for(int i = 0; i < nobj; i++) {
       final GsDOBJ2 dobj2 = model.ObjTable_0c.top[i];
 
-      if((model.ui_f4 & 1L << i) == 0) {
+      if((model.partInvisible_f4 & 1L << i) == 0) {
         final MATRIX ls = new MATRIX();
         final MATRIX lw = new MATRIX();
         GsGetLws(dobj2.coord2_04, lw, ls);
@@ -532,7 +531,7 @@ public class WMap {
     }
 
     //LAB_800c9354
-    if(model.b_cc != 0) {
+    if(model.movementType_cc != 0) {
       FUN_800c8d90(model);
     }
 

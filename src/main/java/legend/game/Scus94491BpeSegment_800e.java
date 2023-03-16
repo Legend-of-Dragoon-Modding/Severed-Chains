@@ -208,7 +208,7 @@ public final class Scus94491BpeSegment_800e {
 
     model_800bda10.coord2Param_64.rotate.set((short)0, (short)0, (short)0);
     model_800bda10.colourMap_9d = 0;
-    model_800bda10.b_cc = 0;
+    model_800bda10.movementType_cc = 0;
   }
 
   /** Very similar to {@link Scus94491BpeSegment_8002#FUN_80020718(Model124, CContainer, TmdAnimationFile)} */
@@ -220,7 +220,7 @@ public final class Scus94491BpeSegment_800e {
 
     //LAB_800e6b7c
     for(int i = 0; i < 7; i++) {
-      model.aub_ec[i] = 0;
+      model.animateTextures_ec[i] = false;
     }
 
     model.dobj2ArrPtr_00 = new GsDOBJ2[tmdAnimFile.modelPartCount_0c];
@@ -264,12 +264,12 @@ public final class Scus94491BpeSegment_800e {
     model.zOffset_a0 = 0;
     model.ub_a2 = 0;
     model.ub_a3 = 0;
-    model.ui_f4 = 0;
+    model.partInvisible_f4 = 0;
 
     loadModelStandardAnimation(model, tmdAnimFile);
 
     model.coord2_14.coord.transfer.set(x, y, z);
-    model.b_cc = 0;
+    model.movementType_cc = 0;
     model.scaleVector_fc.set(0x1000, 0x1000, 0x1000);
     model.vector_10c.set(0x1000, 0x1000, 0x1000);
     model.vector_118.set(0, 0, 0);

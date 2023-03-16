@@ -352,7 +352,7 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_80020760
     for(int i = 0; i < 7; i++) {
-      model.aub_ec[i] = 0;
+      model.animateTextures_ec[i] = false;
     }
 
     final Tmd tmd = cContainer.tmdPtr_00.tmd;
@@ -393,7 +393,7 @@ public final class Scus94491BpeSegment_8002 {
     model.zOffset_a0 = 0;
     model.ub_a2 = 0;
     model.ub_a3 = 0;
-    model.ui_f4 = 0;
+    model.partInvisible_f4 = 0;
 
     loadModelStandardAnimation(model, tmdAnimFile);
 
@@ -402,7 +402,7 @@ public final class Scus94491BpeSegment_8002 {
     adjustModelUvs(model);
 
     //LAB_800209b0
-    model.b_cc = 0;
+    model.movementType_cc = 0;
     model.b_cd = -2;
     model.scaleVector_fc.set(0x1000, 0x1000, 0x1000);
     model.vector_10c.set(0x1000, 0x1000, 0x1000);
@@ -434,7 +434,7 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80020be8
     //LAB_80020bf0
     for(int i = 0; i < 7; i++) {
-      if(model.aub_ec[i] != 0) {
+      if(model.animateTextures_ec[i]) {
         animateModelTextures(model, i);
       }
 
@@ -1088,7 +1088,7 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x80022018L)
   public static void animateModelTextures(final Model124 a0, final int index) {
     if(a0.ptrs_d0[index] == null) {
-      a0.aub_ec[index] = 0;
+      a0.animateTextures_ec[index] = false;
       return;
     }
 
@@ -1137,7 +1137,7 @@ public final class Scus94491BpeSegment_8002 {
 
       final int v1 = a0.ptrs_d0[index][s1];
       if(v1 == -2) {
-        a0.aub_ec[index] = 0;
+        a0.animateTextures_ec[index] = false;
         a0.usArr_ac[index] = 0;
       }
 
@@ -1195,7 +1195,7 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x8002246cL)
   public static void FUN_8002246c(final Model124 a0, final int a1) {
     if(a0.ptrs_d0[a1] == null) {
-      a0.aub_ec[a1] = 0;
+      a0.animateTextures_ec[a1] = false;
       return;
     }
 
@@ -1203,18 +1203,14 @@ public final class Scus94491BpeSegment_8002 {
     a0.usArr_ac[a1] = 0;
     a0.usArr_ba[a1] = a0.ptrs_d0[a1][0] & 0x3fff;
 
-    if((a0.ptrs_d0[a1][0] & 0x8000) != 0) {
-      a0.aub_ec[a1] = 1;
-    } else {
-      //LAB_800224d0
-      a0.aub_ec[a1] = 0;
-    }
+    //LAB_800224d0
+    a0.animateTextures_ec[a1] = (a0.ptrs_d0[a1][0] & 0x8000) != 0;
 
     //LAB_800224d8
     if((a0.ptrs_d0[a1][0] & 0x4000) != 0) {
       a0.usArr_ba[a1] = 0x5678;
       a0.usArr_ac[a1] = a0.ptrs_d0[a1][6];
-      a0.aub_ec[a1] = 1;
+      a0.animateTextures_ec[a1] = true;
     }
 
     //LAB_80022510
