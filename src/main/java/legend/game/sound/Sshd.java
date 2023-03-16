@@ -1,13 +1,13 @@
 package legend.game.sound;
 
-import legend.core.MathHelper;
+import legend.game.unpacker.FileData;
 
 import java.util.function.BiFunction;
 
 public class Sshd {
   public static final long MAGIC = 0x6468_5353L; //SShd
 
-  private final byte[] data;
+  private final FileData data;
 
   public int sshdSize_00;
   public int soundBankSize_04;
@@ -23,16 +23,16 @@ public class Sshd {
    */
   private final Subfile[] subfiles = new Subfile[28];
 
-  public Sshd(final byte[] data) {
-    if(MathHelper.getInt(data,  0xc) != MAGIC) {
+  public Sshd(final FileData data) {
+    if(data.readInt(0xc) != MAGIC) {
       throw new IllegalArgumentException("Invalid file magic");
     }
 
-    this.sshdSize_00 = MathHelper.getInt(data, 0);
-    this.soundBankSize_04 = MathHelper.getInt(data, 4);
+    this.sshdSize_00 = data.readInt(0x0);
+    this.soundBankSize_04 = data.readInt(0x4);
 
     for(int i = 0; i < this.subfileOffsets.length; i++) {
-      this.subfileOffsets[i] = MathHelper.getInt(data, 0x10 + i * 0x4);
+      this.subfileOffsets[i] = data.readInt(0x10 + i * 0x4);
     }
 
     this.data = data;
@@ -42,7 +42,7 @@ public class Sshd {
     return this.subfileOffsets[index] != -1;
   }
 
-  public <T extends Subfile> T getSubfile(final int index, final BiFunction<byte[], Integer, T> constructor) {
+  public <T extends Subfile> T getSubfile(final int index, final BiFunction<FileData, Integer, T> constructor) {
     if(this.subfiles[index] == null && this.hasSubfile(index)) {
       this.subfiles[index] = constructor.apply(this.data, this.subfileOffsets[index]);
     }
@@ -62,7 +62,7 @@ public class Sshd {
       return 0;
     }
 
-    int nextOffset = this.data.length;
+    int nextOffset = this.data.size();
     for(final int subfileOffset : this.subfileOffsets) {
       if(subfileOffset > offset && subfileOffset < nextOffset) {
         nextOffset = subfileOffset;

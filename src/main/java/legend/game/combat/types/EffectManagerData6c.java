@@ -5,6 +5,8 @@ import legend.game.scripting.ScriptState;
 import java.util.function.BiConsumer;
 
 public class EffectManagerData6c extends BattleScriptDataBase {
+  public final String name;
+
   public int flags_04;
   public int size_08;
   public int scriptIndex_0c;
@@ -22,7 +24,11 @@ public class EffectManagerData6c extends BattleScriptDataBase {
   /** If replaced as a child, this is the new child's ID */
   public ScriptState<EffectManagerData6c> newChildScript_56;
   public BttlScriptData6cSubBase2 _58;
-  public String type_5c;
+  //  public String type_5c; Equivalent to "name" above
+
+  public EffectManagerData6c(final String name) {
+    this.name = name;
+  }
 
   public void set(final EffectManagerData6c other) {
     this.flags_04 = other.flags_04;
@@ -39,6 +45,5 @@ public class EffectManagerData6c extends BattleScriptDataBase {
     this.oldChildScript_54 = other.oldChildScript_54;
     this.newChildScript_56 = other.newChildScript_56;
     this._58 = other._58;
-    this.type_5c = other.type_5c;
   }
 }

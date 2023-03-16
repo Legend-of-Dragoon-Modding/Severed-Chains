@@ -1,6 +1,6 @@
 package legend.game.sound;
 
-import legend.core.MathHelper;
+import legend.game.unpacker.FileData;
 
 import java.util.Arrays;
 
@@ -14,17 +14,17 @@ public class Sssq implements Sshd.Subfile {
   /** One per MIDI channel */
   public final ChannelInfo[] channelInfo_10;
 
-  private final byte[] data;
+  private final FileData data;
   private final int offset;
 
-  public Sssq(final byte[] data, final int offset) {
-    if(MathHelper.getInt(data, offset + 0xc) != MAGIC) {
+  public Sssq(final FileData data, final int offset) {
+    if(data.readInt(offset + 0xc) != MAGIC) {
       throw new IllegalArgumentException("Invalid file magic");
     }
 
-    this.volume_00 = MathHelper.getUbyte(data, offset);
-    this.ticksPerQuarterNote_02 = MathHelper.getUshort(data, offset + 0x2);
-    this.tempo_04 = MathHelper.getUshort(data, offset + 0x4);
+    this.volume_00 = data.readUByte(offset);
+    this.ticksPerQuarterNote_02 = data.readUShort(offset + 0x2);
+    this.tempo_04 = data.readUShort(offset + 0x4);
 
     this.channelInfo_10 = new ChannelInfo[16];
     Arrays.setAll(this.channelInfo_10, i -> new ChannelInfo(data, offset + 0x10 + i * 0x10));
@@ -33,7 +33,7 @@ public class Sssq implements Sshd.Subfile {
     this.offset = offset;
   }
 
-  public Sssq(final byte[] data) {
+  public Sssq(final FileData data) {
     this(data, 0);
   }
 
@@ -55,17 +55,17 @@ public class Sssq implements Sshd.Subfile {
 
     public int volume_0e;
 
-    public ChannelInfo(final byte[] data, final int offset) {
-      this.instrumentIndex_02 = MathHelper.getByte(data, offset + 0x2);
-      this.volume_03 = MathHelper.getUbyte(data, offset + 0x3);
-      this.pan_04 = MathHelper.getUbyte(data, offset + 0x4);
+    public ChannelInfo(final FileData data, final int offset) {
+      this.instrumentIndex_02 = data.readByte(offset + 0x2);
+      this.volume_03 = data.readUByte(offset + 0x3);
+      this.pan_04 = data.readUByte(offset + 0x4);
 
-      this.modulation_09 = MathHelper.getUbyte(data, offset + 0x9);
-      this.pitchBend_0a = MathHelper.getUbyte(data, offset + 0xa);
-      this._0b = MathHelper.getUbyte(data, offset + 0xb);
-      this.breath_0c = MathHelper.getUbyte(data, offset + 0xc);
+      this.modulation_09 = data.readUByte(offset + 0x9);
+      this.pitchBend_0a = data.readUByte(offset + 0xa);
+      this._0b = data.readUByte(offset + 0xb);
+      this.breath_0c = data.readUByte(offset + 0xc);
 
-      this.volume_0e = MathHelper.getUbyte(data, offset + 0xe);
+      this.volume_0e = data.readUByte(offset + 0xe);
     }
   }
 
@@ -74,7 +74,7 @@ public class Sssq implements Sshd.Subfile {
 
     @Override
     public int readByteAbsolute(final int absoluteOffset) {
-      return Sssq.this.data[Sssq.this.offset + absoluteOffset] & 0xff;
+      return Sssq.this.data.readUByte(Sssq.this.offset + absoluteOffset);
     }
 
     @Override

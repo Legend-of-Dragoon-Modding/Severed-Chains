@@ -1,7 +1,5 @@
 package legend.game;
 
-import it.unimi.dsi.fastutil.ints.Int2BooleanMap;
-import it.unimi.dsi.fastutil.ints.Int2BooleanOpenHashMap;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
@@ -10,7 +8,6 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import legend.core.Config;
 import legend.core.DebugHelper;
-import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.Gpu;
 import legend.core.gpu.GpuCommandPoly;
@@ -34,9 +31,10 @@ import legend.game.combat.Bttl_800f;
 import legend.game.combat.SBtld;
 import legend.game.combat.SEffe;
 import legend.game.combat.types.BattleObject27c;
-import legend.game.combat.types.BattleStruct18cb0;
+import legend.game.combat.types.BattlePreloadedEntities_18cb0;
 import legend.game.combat.types.StageData10;
 import legend.game.debugger.Debugger;
+import legend.game.input.Input;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.events.EventManager;
 import legend.game.scripting.FlowControl;
@@ -55,15 +53,14 @@ import legend.game.sound.Sssq;
 import legend.game.title.Ttle;
 import legend.game.types.CharacterData2c;
 import legend.game.types.DeferredReallocOrFree0c;
-import legend.game.types.ExtendedTmd;
 import legend.game.types.FileEntry08;
 import legend.game.types.FileLoadedCallback;
 import legend.game.types.LoadingOverlay;
 import legend.game.types.McqHeader;
 import legend.game.types.MoonMusic08;
 import legend.game.types.SubmapMusic08;
-import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
+import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -72,8 +69,6 @@ import org.apache.logging.log4j.MarkerManager;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -237,49 +232,10 @@ import static legend.game.combat.Bttl_800c.charCount_800c677c;
 import static legend.game.combat.Bttl_800c.monsterCount_800c6768;
 import static legend.game.combat.Bttl_800d.FUN_800d8f10;
 import static legend.game.combat.SBtld.stageData_80109a98;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_TRIGGER;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_X;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_A;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_B;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_BACK;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_LEFT_BUMPER;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_LEFT_THUMB;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_RIGHT_THUMB;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_START;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_X;
-import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_BUTTON_Y;
-import static org.lwjgl.glfw.GLFW.GLFW_HAT_DOWN;
-import static org.lwjgl.glfw.GLFW.GLFW_HAT_LEFT;
-import static org.lwjgl.glfw.GLFW.GLFW_HAT_RIGHT;
-import static org.lwjgl.glfw.GLFW.GLFW_HAT_UP;
-import static org.lwjgl.glfw.GLFW.GLFW_JOYSTICK_LAST;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_1;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_3;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_C;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_DELETE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_E;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F11;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F12;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_Q;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_Z;
-import static org.lwjgl.glfw.GLFW.glfwGetJoystickAxes;
-import static org.lwjgl.glfw.GLFW.glfwGetJoystickButtons;
-import static org.lwjgl.glfw.GLFW.glfwGetJoystickGUID;
-import static org.lwjgl.glfw.GLFW.glfwGetJoystickHats;
-import static org.lwjgl.glfw.GLFW.glfwGetJoystickName;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_P;
 
 public final class Scus94491BpeSegment {
   private Scus94491BpeSegment() { }
@@ -292,6 +248,7 @@ public final class Scus94491BpeSegment {
   public static final IntRef zShift_1f8003c4 = MEMORY.ref(4, 0x1f8003c4L, IntRef::new);
   public static final IntRef orderingTableSize_1f8003c8 = MEMORY.ref(4, 0x1f8003c8L, IntRef::new);
   public static final IntRef zMax_1f8003cc = MEMORY.ref(4, 0x1f8003ccL, IntRef::new);
+  public static int zMin;
 
   public static final ShortRef centreScreenX_1f8003dc = MEMORY.ref(2, 0x1f8003dcL, ShortRef::new);
   public static final ShortRef centreScreenY_1f8003de = MEMORY.ref(2, 0x1f8003deL, ShortRef::new);
@@ -301,7 +258,7 @@ public final class Scus94491BpeSegment {
   public static final UnsignedShortRef tmdGp0Tpage_1f8003ec = MEMORY.ref(2, 0x1f8003ecL, UnsignedShortRef::new);
   public static final UnsignedShortRef tmdGp0CommandId_1f8003ee = MEMORY.ref(2, 0x1f8003eeL, UnsignedShortRef::new);
 
-  public static BattleStruct18cb0 _1f8003f4;
+  public static BattlePreloadedEntities_18cb0 battlePreloadedEntities_1f8003f4;
   public static final IntRef projectionPlaneDistance_1f8003f8 = MEMORY.ref(4, 0x1f8003f8L, IntRef::new);
   public static final Value _1f8003fc = MEMORY.ref(4, 0x1f8003fcL);
 
@@ -314,9 +271,8 @@ public final class Scus94491BpeSegment {
   public static final Value _8001032c = MEMORY.ref(1, 0x8001032cL);
   public static final Value _80010334 = MEMORY.ref(1, 0x80010334L);
 
-  public static final ExtendedTmd extendedTmd_800103d0 = MEMORY.ref(4, 0x800103d0L, ExtendedTmd::new);
-  public static final TmdAnimationFile tmdAnimFile_8001051c = MEMORY.ref(4, 0x8001051cL, TmdAnimationFile::new);
-
+  public static final Value extendedTmd_800103d0 = MEMORY.ref(4, 0x800103d0L);
+  public static final Value tmdAnimFile_8001051c = MEMORY.ref(4, 0x8001051cL);
   /** TIM */
   public static final Value _80010544 = MEMORY.ref(4, 0x80010544L);
 
@@ -356,7 +312,7 @@ public final class Scus94491BpeSegment {
 
       return (switch(op) {
         case 0 -> "if 0x%x (p0) <= 0x%x (p1)? %s;";
-        case 1 -> "if 0x%x (p0) = 0x%x (p1)? %s;";
+        case 1 -> "if 0x%x (p0) < 0x%x (p1)? %s;";
         case 2 -> "if 0x%x (p0) == 0x%x (p1)? %s;";
         case 3 -> "if 0x%x (p0) != 0x%x (p1)? %s;";
         case 4 -> "if 0x%x (p0) > 0x%x (p1)? %s;";
@@ -372,7 +328,7 @@ public final class Scus94491BpeSegment {
 
       return (switch(op) {
         case 0 -> "if 0 <= 0x%x (p1)? %s;";
-        case 1 -> "if 0 = 0x%x (p1)? %s;";
+        case 1 -> "if 0 < 0x%x (p1)? %s;";
         case 2 -> "if 0 == 0x%x (p1)? %s;";
         case 3 -> "if 0 != 0x%x (p1)? %s;";
         case 4 -> "if 0 > 0x%x (p1)? %s;";
@@ -456,137 +412,10 @@ public final class Scus94491BpeSegment {
       return "func %s (p1[p1[p0]]);".formatted(ptr);
     });
   }
-
-  private static final float controllerDeadzone = Config.controllerDeadzone();
-  private static int controllerId = -1;
   private static boolean inputPulse;
-  private static final Int2IntMap keyRepeat = new Int2IntOpenHashMap();
-  private static final Int2BooleanMap controllerEdgeTriggers = new Int2BooleanOpenHashMap();
+  public static final Int2IntMap keyRepeat = new Int2IntOpenHashMap();
 
-  private static void handleControllerInput() {
-    if(controllerId != -1) {
-      final FloatBuffer axes = glfwGetJoystickAxes(controllerId);
-      final float axisX = axes.get(GLFW_GAMEPAD_AXIS_LEFT_X);
-      final float axisY = axes.get(GLFW_GAMEPAD_AXIS_LEFT_Y);
-      final float axisL = axes.get(GLFW_GAMEPAD_AXIS_LEFT_TRIGGER);
-      final float axisR = axes.get(GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER);
-
-      final ByteBuffer hats = glfwGetJoystickHats(controllerId);
-      final int dpad = hats.get(0);
-
-      if(axisX > controllerDeadzone || (dpad & GLFW_HAT_RIGHT) != 0) {
-        controllerPress(0x2000);
-      } else if(axisX < -controllerDeadzone || (dpad & GLFW_HAT_LEFT) != 0) {
-        controllerPress(0x8000);
-      } else {
-        controllerRelease(0x2000);
-        controllerRelease(0x8000);
-      }
-
-      if(axisY < -controllerDeadzone || (dpad & GLFW_HAT_UP) != 0) {
-        controllerPress(0x1000);
-      } else if(axisY > controllerDeadzone || (dpad & GLFW_HAT_DOWN) != 0) {
-        controllerPress(0x4000);
-      } else {
-        controllerRelease(0x1000);
-        controllerRelease(0x4000);
-      }
-
-      if(axisL > controllerDeadzone) {
-        controllerPress(0x1);
-      } else {
-        controllerRelease(0x1);
-      }
-
-      if(axisR > controllerDeadzone) {
-        controllerPress(0x2);
-      } else {
-        controllerRelease(0x2);
-      }
-
-      final ByteBuffer buttons = glfwGetJoystickButtons(controllerId);
-
-      if(buttons.get(GLFW_GAMEPAD_BUTTON_A) != 0) {
-        controllerPress(0x20);
-      } else {
-        controllerRelease(0x20);
-      }
-
-      if(buttons.get(GLFW_GAMEPAD_BUTTON_B) != 0) {
-        controllerPress(0x40);
-      } else {
-        controllerRelease(0x40);
-      }
-
-      if(buttons.get(GLFW_GAMEPAD_BUTTON_X) != 0) {
-        controllerPress(0x80);
-      } else {
-        controllerRelease(0x80);
-      }
-
-      if(buttons.get(GLFW_GAMEPAD_BUTTON_Y) != 0) {
-        controllerPress(0x10);
-      } else {
-        controllerRelease(0x10);
-      }
-
-      if(buttons.get(GLFW_GAMEPAD_BUTTON_LEFT_BUMPER) != 0) {
-        controllerPress(0x4);
-      } else {
-        controllerRelease(0x4);
-      }
-
-      if(buttons.get(GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER) != 0) {
-        controllerPress(0x8);
-      } else {
-        controllerRelease(0x8);
-      }
-
-      if(buttons.get(GLFW_GAMEPAD_BUTTON_START) != 0) {
-        controllerPress(0x800);
-      } else {
-        controllerRelease(0x800);
-      }
-
-      if(buttons.get(GLFW_GAMEPAD_BUTTON_BACK) != 0) {
-        controllerPress(0x100);
-      } else {
-        controllerRelease(0x100);
-      }
-
-      if(buttons.get(GLFW_GAMEPAD_BUTTON_LEFT_THUMB) != 0) {
-        controllerPress(0x200);
-      } else {
-        controllerRelease(0x200);
-      }
-
-      if(buttons.get(GLFW_GAMEPAD_BUTTON_RIGHT_THUMB) != 0) {
-        controllerPress(0x400);
-      } else {
-        controllerRelease(0x400);
-      }
-    }
-  }
-
-  private static void controllerPress(final int input) {
-    if(!controllerEdgeTriggers.getOrDefault(input, false)) {
-      _800bee90.or(input);
-      _800bee94.or(input);
-      _800bee98.or(input);
-      keyRepeat.put(input, 0);
-      controllerEdgeTriggers.put(input, true);
-    }
-  }
-
-  private static void controllerRelease(final int input) {
-    if(controllerEdgeTriggers.getOrDefault(input, false)) {
-      _800bee90.and(~input);
-      _800bee94.and(~input);
-      _800bee98.and(~input);
-      keyRepeat.remove(input);
-      controllerEdgeTriggers.remove(input);
-    }
-  }
+  private static boolean paused;
 
   @Method(0x80011e1cL)
   public static void gameLoop() {
@@ -596,6 +425,16 @@ public final class Scus94491BpeSegment {
         for(int i = 0; i < 24; i++) {
           SPU.voices[i].LEFT.set(0);
           SPU.voices[i].RIGHT.set(0);
+        }
+      }
+
+      if(key == GLFW_KEY_P) {
+        paused = !paused;
+
+        if(paused) {
+          LOGGER.info("Pausing");
+        } else {
+          LOGGER.info("Unpausing");
         }
       }
 
@@ -626,81 +465,24 @@ public final class Scus94491BpeSegment {
       }
     });
 
-    final Int2IntMap gamepadKeyMap = new Int2IntOpenHashMap();
-    gamepadKeyMap.put(GLFW_KEY_SPACE, 0x100); // Select
-    gamepadKeyMap.put(GLFW_KEY_Z, 0x200); // L3
-    gamepadKeyMap.put(GLFW_KEY_C, 0x400); // R3
-    gamepadKeyMap.put(GLFW_KEY_ENTER, 0x800); // Start
-    gamepadKeyMap.put(GLFW_KEY_UP, 0x1000); // Up
-    gamepadKeyMap.put(GLFW_KEY_RIGHT, 0x2000); // Right
-    gamepadKeyMap.put(GLFW_KEY_DOWN, 0x4000); // Down
-    gamepadKeyMap.put(GLFW_KEY_LEFT, 0x8000); // Left
-    gamepadKeyMap.put(GLFW_KEY_1, 0x01); // L2
-    gamepadKeyMap.put(GLFW_KEY_3, 0x02); // R2
-    gamepadKeyMap.put(GLFW_KEY_Q, 0x04); // L1
-    gamepadKeyMap.put(GLFW_KEY_E, 0x08); // R1
-    gamepadKeyMap.put(GLFW_KEY_W, 0x10); // Triangle
-    gamepadKeyMap.put(GLFW_KEY_D, 0x40); // Circle
-    gamepadKeyMap.put(GLFW_KEY_S, 0x20); // Cross
-    gamepadKeyMap.put(GLFW_KEY_A, 0x80); // Square
-
-    GPU.window().events.onKeyPress((window, key, scancode, mods) -> {
-      if(mods != 0) {
-        return;
-      }
-
-      final int input = gamepadKeyMap.get(key);
-
-      if(input != 0) {
-        _800bee90.or(input);
-        _800bee94.or(input);
-        _800bee98.or(input);
-
-        keyRepeat.put(input, 0);
-      }
-    });
-
-    GPU.window().events.onKeyRelease((window, key, scancode, mods) -> {
-      final int input = gamepadKeyMap.get(key);
-
-      if(input != 0) {
-        _800bee90.and(~input);
-        _800bee94.and(~input);
-        _800bee98.and(~input);
-
-        keyRepeat.remove(input);
-      }
-    });
-
-    final String controllerGuid = Config.controllerGuid();
-    for(int i = 0; i < GLFW_JOYSTICK_LAST; i++) {
-      if(controllerGuid.equals(glfwGetJoystickGUID(i))) {
-        System.out.println("Using gamepad " + glfwGetJoystickName(i));
-        controllerId = i;
-        break;
-      }
-    }
-
-    GPU.window().events.onControllerConnected((window, id) -> {
-      if(controllerGuid.equals(glfwGetJoystickGUID(id))) {
-        controllerId = id;
-      }
-    });
-
-    GPU.window().events.onControllerDisconnected((window, id) -> {
-      if(controllerId == id) {
-        controllerId = -1;
-      }
-    });
+    Input.init();
 
     GPU.subRenderer = () -> {
       EventManager.INSTANCE.clearStaleRefs();
+
+      if(paused) {
+        return;
+      }
 
       if(!soundRunning) {
         startSound();
       }
 
-      handleControllerInput();
+      final boolean isWindowActive = GPU.window().isWindowActive();
+
+      if(Config.receiveInputOnInactiveWindow() || isWindowActive) {
+        Input.update();
+      }
 
       joypadPress_8007a398.setu(_800bee94.get());
       joypadInput_8007a39c.setu(_800bee90.get());
@@ -820,10 +602,10 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80012094L)
-  public static void allocateHeap(long address, long size) {
+  public static void allocateHeap(long address, int size) {
     LOGGER.info("Allocating memory manager at %08x (0x%x bytes)", address, size);
 
-    size = size - 0x18L & 0xffff_fffcL;
+    size = size - 0x18 & 0xffff_fffc;
     address = address + 0x3L & 0xffff_fffcL;
 
     MEMORY.ref(4, address).offset(0x00L).setu(0);
@@ -1592,21 +1374,21 @@ public final class Scus94491BpeSegment {
     final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
 
     // Insta-load
-    final byte[] data = Unpacker.loadFile(name);
+    final FileData data = Unpacker.loadFile(name);
 
-    LOGGER.info("Loading file %s, size %d from %s.%s(%s:%d)", name, data.length, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
+    LOGGER.info("Loading file %s, size %d from %s.%s(%s:%d)", name, data.size(), frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
     final long transferDest;
     if((type & 0x2) != 0) {
-      transferDest = mallocTail(data.length);
+      transferDest = mallocTail(data.size());
     } else if((type & 0x4) != 0) {
-      transferDest = mallocHead(data.length);
+      transferDest = mallocHead(data.size());
     } else {
       transferDest = fileTransferDest;
     }
 
     LOGGER.info("Loading file %s to %08x", name, transferDest);
-    MEMORY.setBytes(transferDest, data);
+    MEMORY.setBytes(transferDest, data.getBytes());
 
     switch(name) {
       case "\\OVL\\SMAP.OV_" -> MEMORY.addFunctions(SMap.class);
@@ -1627,13 +1409,13 @@ public final class Scus94491BpeSegment {
 
     if(callback != null) {
       LOGGER.info("Executing file callback (param %08x)", callbackParam);
-      callback.onLoad(transferDest, data.length, callbackParam);
+      callback.onLoad(transferDest, data.size(), callbackParam);
     }
 
     return 0;
   }
 
-  public static void loadFile(final String file, final Consumer<byte[]> onCompletion) {
+  public static void loadFile(final String file, final Consumer<FileData> onCompletion) {
     final StackWalker.StackFrame frame = StackWalker.getInstance().walk(frames -> frames
       .skip(1)
       .findFirst())
@@ -1644,7 +1426,7 @@ public final class Scus94491BpeSegment {
     onCompletion.accept(Unpacker.loadFile(file));
   }
 
-  public static void loadDir(final String dir, final Consumer<List<byte[]>> onCompletion) {
+  public static void loadDir(final String dir, final Consumer<List<FileData>> onCompletion) {
     final StackWalker.StackFrame frame = StackWalker.getInstance().walk(frames -> frames
       .skip(1)
       .findFirst())
@@ -1655,7 +1437,7 @@ public final class Scus94491BpeSegment {
     onCompletion.accept(Unpacker.loadDirectory(dir));
   }
 
-  public static void loadDrgnFiles(int drgnBinIndex, final Consumer<List<byte[]>> onCompletion, final String... files) {
+  public static void loadDrgnFiles(int drgnBinIndex, final Consumer<List<FileData>> onCompletion, final String... files) {
     if(drgnBinIndex >= 2) {
       drgnBinIndex = 20 + drgnBinIndex_800bc058.get();
     }
@@ -1663,17 +1445,21 @@ public final class Scus94491BpeSegment {
     final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
     LOGGER.info("Loading DRGN%d %s from %s.%s(%s:%d)", drgnBinIndex, String.join(", ", files), frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
-    final List<byte[]> fileData = new ArrayList<>();
+    final List<FileData> fileData = new ArrayList<>();
     for(final String file : files) {
       final String path = "SECT/DRGN%d.BIN/%s".formatted(drgnBinIndex, file);
-      final byte[] data = Unpacker.loadFile(path);
+      final FileData data = Unpacker.loadFile(path);
       fileData.add(data);
     }
 
     onCompletion.accept(fileData);
   }
 
-  public static void loadDrgnFile(int drgnBinIndex, final String file, final Consumer<byte[]> onCompletion) {
+  public static void loadDrgnFile(final int drgnBinIndex, final int file, final Consumer<FileData> onCompletion) {
+    loadDrgnFile(drgnBinIndex, String.valueOf(file), onCompletion);
+  }
+
+  public static void loadDrgnFile(int drgnBinIndex, final String file, final Consumer<FileData> onCompletion) {
     if(drgnBinIndex >= 2) {
       drgnBinIndex = 20 + drgnBinIndex_800bc058.get();
     }
@@ -1682,11 +1468,11 @@ public final class Scus94491BpeSegment {
     LOGGER.info("Loading DRGN%d %s from %s.%s(%s:%d)", drgnBinIndex, file, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
     final String path = "SECT/DRGN%d.BIN/%s".formatted(drgnBinIndex, file);
-    final byte[] data = Unpacker.loadFile(path);
+    final FileData data = Unpacker.loadFile(path);
     onCompletion.accept(data);
   }
 
-  public static void loadDrgnDir(int drgnBinIndex, final int directory, final Consumer<List<byte[]>> onCompletion) {
+  public static void loadDrgnDir(int drgnBinIndex, final int directory, final Consumer<List<FileData>> onCompletion) {
     if(drgnBinIndex >= 2) {
       drgnBinIndex = 20 + drgnBinIndex_800bc058.get();
     }
@@ -1697,7 +1483,7 @@ public final class Scus94491BpeSegment {
     onCompletion.accept(Unpacker.loadDirectory("SECT/DRGN%d.BIN/%d".formatted(drgnBinIndex, directory)));
   }
 
-  public static void loadDrgnDir(int drgnBinIndex, final String directory, final Consumer<List<byte[]>> onCompletion) {
+  public static void loadDrgnDir(int drgnBinIndex, final String directory, final Consumer<List<FileData>> onCompletion) {
     if(drgnBinIndex >= 2) {
       drgnBinIndex = 20 + drgnBinIndex_800bc058.get();
     }
@@ -1728,22 +1514,22 @@ public final class Scus94491BpeSegment {
     LOGGER.info("Loading %s from %s.%s(%s:%d)", path, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
     // Insta-load
-    final byte[] data = Unpacker.loadFile(path);
+    final FileData data = Unpacker.loadFile(path);
 
     final long transferDest;
     if((type & 0x3) != 0) {
-      transferDest = mallocTail(data.length);
+      transferDest = mallocTail(data.size());
     } else if((type & 0x4) != 0) {
-      transferDest = mallocHead(data.length);
+      transferDest = mallocHead(data.size());
     } else {
       transferDest = fileTransferDest;
     }
 
-    MEMORY.setBytes(transferDest, data);
+    MEMORY.setBytes(transferDest, data.getBytes());
 
     if(callback != null) {
       LOGGER.info("Executing file callback (param %08x)", callbackParam);
-      callback.onLoad(transferDest, data.length, callbackParam);
+      callback.onLoad(transferDest, data.size(), callbackParam);
     }
 
     //LAB_80015424
@@ -1874,8 +1660,16 @@ public final class Scus94491BpeSegment {
    */
   @Method(0x800174d8L)
   public static FlowControl scriptReadGlobalFlag2(final RunningScript<?> script) {
-    final int shift = script.params_20[0].get() & 0x1f;
-    final int index = script.params_20[0].get() >>> 5;
+    final int val = script.params_20[0].get();
+
+    // This is a sentinel value used by the Hoax submap controller retail patch. See Unpacker#drgn21_693_0_patcherDiscriminator for details.
+    if(val == -1) {
+      script.params_20[1].set(0);
+      return FlowControl.CONTINUE;
+    }
+
+    final int shift = val & 0x1f;
+    final int index = val >>> 5;
 
     script.params_20[1].set((gameState_800babc8.scriptFlags2_bc.get(index).get() & 0x1L << shift) != 0 ? 1 : 0);
 
@@ -1926,7 +1720,7 @@ public final class Scus94491BpeSegment {
     final int shift = script.params_20[1].get() & 0x1f;
     final int index = script.params_20[1].get() >>> 5;
 
-    script.params_20[2].set((script.params_20[0].array(index).get() & 1 << shift) > 0 ? 1 : 0);
+    script.params_20[2].set((script.params_20[0].array(index).get() & 1 << shift) != 0 ? 1 : 0);
     return FlowControl.CONTINUE;
   }
 
@@ -2696,7 +2490,7 @@ public final class Scus94491BpeSegment {
 
       if(playingSound.type_00 == 0) {
         //LAB_80019b54
-        playSound(3, soundFile, soundIndex, playingSound, soundFile.playableSound_10, soundFile.indices_08[soundIndex], soundFileIndex == 8 ? (soundFile.ptr_0c[soundIndex] & 0xff) : 0, (short)-1, (short)-1, (short)-1, a5, a4, null);
+        playSound(3, soundFile, soundIndex, playingSound, soundFile.playableSound_10, soundFile.indices_08[soundIndex], soundFileIndex == 8 ? soundFile.ptr_0c.readUByte(soundIndex) : 0, (short)-1, (short)-1, (short)-1, a5, a4, null);
         break;
       }
     }
@@ -3701,7 +3495,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001cae0L)
-  public static void charSoundEffectsLoaded(final List<byte[]> files, final int charSlot) {
+  public static void charSoundEffectsLoaded(final List<FileData> files, final int charSlot) {
     final int charId = gameState_800babc8.charIndex_88.get(charSlot).get();
 
     //LAB_8001cb34
@@ -3765,13 +3559,13 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001ce98L)
-  public static void FUN_8001ce98(final List<byte[]> files, final int charSlot) {
+  public static void FUN_8001ce98(final List<FileData> files, final int charSlot) {
     final SoundFile sound = soundFiles_800bcf80[characterSoundFileIndices_800500f8.get(charSlot).get()];
 
     //LAB_8001cee8
     //LAB_8001cf2c
     sound.indices_08 = SoundFileIndices.load(files.get(1));
-    sound.charId_02 = (short)MathHelper.get(files.get(0), 0, 2);
+    sound.charId_02 = files.get(0).readShort(0);
     setSpuDmaCompleteCallback(Scus94491BpeSegment::FUN_8001e950);
     sound.playableSound_10 = loadSshdAndSoundbank(files.get(3), new Sshd(files.get(2)), (int)_80050190.offset(charSlot * 0x4L).get());
     FUN_8004cb0c(sound.playableSound_10, 0x7f);
@@ -3786,7 +3580,7 @@ public final class Scus94491BpeSegment {
    * </ol>
    */
   @Method(0x8001d068L)
-  public static void FUN_8001d068(final ScriptState<BattleObject27c> bobjState, final int type) {
+  public static void loadDeffSounds(final ScriptState<BattleObject27c> bobjState, final int type) {
     final BattleObject27c bobj = bobjState.innerStruct_00;
 
     unloadSoundFile(3);
@@ -3908,9 +3702,9 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001d51cL)
-  public static void FUN_8001d51c(final List<byte[]> files, final int monsterSlot) {
+  public static void FUN_8001d51c(final List<FileData> files, final int monsterSlot) {
     //LAB_8001d698
-    final int file3Size = files.get(3).length;
+    final int file3Size = files.get(3).size();
 
     if(file3Size > 48) {
       //LAB_8001d704
@@ -3927,7 +3721,7 @@ public final class Scus94491BpeSegment {
       final SoundFile soundFile = soundFiles_800bcf80[soundFileIndex];
 
       soundFile.indices_08 = SoundFileIndices.load(files.get(1));
-      soundFile.charId_02 = (short)MathHelper.get(files.get(0), 0, 2);
+      soundFile.charId_02 = files.get(0).readShort(0);
 
       setSpuDmaCompleteCallback(null);
 
@@ -3959,7 +3753,7 @@ public final class Scus94491BpeSegment {
 //      if(true) return;
 
       final int fileIndex;
-      final Consumer<List<byte[]>> callback;
+      final Consumer<List<FileData>> callback;
       if((stageData.musicIndex_01.get() & 0x1f) == 0x13) {
         unloadSoundFile(8);
         fileIndex = 732;
@@ -3978,7 +3772,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001dabcL)
-  public static void musicPackageLoadedCallback(final List<byte[]> files, final int a2) {
+  public static void musicPackageLoadedCallback(final List<FileData> files, final int a2) {
     LOGGER.info("Music package %d loaded", a2 >> 8);
 
     final SoundFile sound = soundFiles_800bcf80[11];
@@ -3987,9 +3781,9 @@ public final class Scus94491BpeSegment {
     if(mainCallbackIndex_8004dd20.get() == 5 || mainCallbackIndex_8004dd20.get() == 6 && encounterId_800bb0f8.get() == 443) { // Melbu
       //LAB_8001db1c
       _800bd0fc.setu(a2);
-      sound.charId_02 = (short)MathHelper.get(files.get(0), 0, 2);
-      sound.numberOfExtraSoundbanks_18 = (int)MathHelper.get(files.get(1), 0, 1) - 1;
-      sound.spuRamOffset_14 = files.get(4).length;
+      sound.charId_02 = files.get(0).readShort(0);
+      sound.numberOfExtraSoundbanks_18 = files.get(1).readUByte(0) - 1;
+      sound.spuRamOffset_14 = files.get(4).size();
       setSpuDmaCompleteCallback(null);
       sound.playableSound_10 = loadSshdAndSoundbank(files.get(4), new Sshd(files.get(3)), 0x2_1f70);
       currentSequenceData_800bd0f8 = loadSssq(sound.playableSound_10, new Sssq(files.get(2)));
@@ -3999,9 +3793,9 @@ public final class Scus94491BpeSegment {
       //LAB_8001dbf0
       if(files.size() == 5) {
         _800bd0fc.setu(a2);
-        sound.charId_02 = (short)MathHelper.get(files.get(0), 0, 2);
-        sound.numberOfExtraSoundbanks_18 = (int)MathHelper.get(files.get(1), 0, 1) - 1;
-        sound.spuRamOffset_14 = files.get(4).length;
+        sound.charId_02 = files.get(0).readShort(0);
+        sound.numberOfExtraSoundbanks_18 = files.get(1).readUByte(0) - 1;
+        sound.spuRamOffset_14 = files.get(4).size();
         setSpuDmaCompleteCallback(null);
         sound.playableSound_10 = loadSshdAndSoundbank(files.get(4), new Sshd(files.get(3)), 0x2_1f70);
         currentSequenceData_800bd0f8 = loadSssq(sound.playableSound_10, new Sssq(files.get(2)));
@@ -4009,7 +3803,7 @@ public final class Scus94491BpeSegment {
       } else {
         //LAB_8001dcdc
         _800bd0fc.setu(a2);
-        sound.charId_02 = (short)MathHelper.get(files.get(0), 0, 2);
+        sound.charId_02 = files.get(0).readShort(0);
 
         //LAB_8001dd44
         setSpuDmaCompleteCallback(null);
@@ -4310,7 +4104,7 @@ public final class Scus94491BpeSegment {
    * 3: Soundbank (has some map and battle sounds)
    */
   @Method(0x8001e694L)
-  public static void menuSoundsLoaded(final List<byte[]> files) {
+  public static void menuSoundsLoaded(final List<FileData> files) {
     setPreloadingAudioAssets(true);
 
     final SoundFile sound = soundFiles_800bcf80[0];
@@ -4360,12 +4154,12 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001e98cL)
-  public static void FUN_8001e98c(final List<byte[]> files) {
+  public static void FUN_8001e98c(final List<FileData> files) {
     final SoundFile sound = soundFiles_800bcf80[4];
     sound.used_00 = true;
 
     sound.indices_08 = SoundFileIndices.load(files.get(1));
-    sound.charId_02 = (short)MathHelper.get(files.get(0), 0, 2);
+    sound.charId_02 = files.get(0).readShort(0);
     setSpuDmaCompleteCallback(Scus94491BpeSegment::FUN_8001ea5c);
 
     sound.playableSound_10 = loadSshdAndSoundbank(files.get(3), new Sshd(files.get(2)), 0x5_a1e0);
@@ -4389,14 +4183,14 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001eb38L)
-  public static void submapSoundsLoaded(final List<byte[]> files) {
+  public static void submapSoundsLoaded(final List<FileData> files) {
     soundFiles_800bcf80[8].indices_08 = SoundFileIndices.load(files.get(2));
     soundFiles_800bcf80[8].ptr_0c = files.get(1);
-    soundFiles_800bcf80[8].charId_02 = MathHelper.getShort(files.get(0), 0);
+    soundFiles_800bcf80[8].charId_02 = files.get(0).readShort(0);
     setSpuDmaCompleteCallback(Scus94491BpeSegment::submapSoundsCleanup);
 
     final Sshd sshd = new Sshd(files.get(3));
-    if(files.get(4).length != sshd.soundBankSize_04) {
+    if(files.get(4).size() != sshd.soundBankSize_04) {
       throw new RuntimeException("Size didn't match, need to resize array or something");
     }
 
@@ -4431,12 +4225,12 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001eefcL)
-  public static void FUN_8001eefc(final List<byte[]> files) {
+  public static void FUN_8001eefc(final List<FileData> files) {
     final SoundFile sound = soundFiles_800bcf80[12];
     sound.used_00 = true;
 
     sound.indices_08 = SoundFileIndices.load(files.get(2));
-    sound.charId_02 = (short)MathHelper.get(files.get(0), 0, 2);
+    sound.charId_02 = files.get(0).readShort(0);
 
     setSpuDmaCompleteCallback(Scus94491BpeSegment::FUN_8001efcc);
     sound.playableSound_10 = loadSshdAndSoundbank(files.get(4), new Sshd(files.get(3)), 0x4_de90);
@@ -4458,12 +4252,12 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001f0dcL)
-  public static void FUN_8001f0dc(final List<byte[]> files) {
+  public static void FUN_8001f0dc(final List<FileData> files) {
     final SoundFile sound = soundFiles_800bcf80[10];
     sound.used_00 = true;
 
     sound.indices_08 = SoundFileIndices.load(files.get(1));
-    sound.charId_02 = (short)MathHelper.get(files.get(0), 0, 2);
+    sound.charId_02 = files.get(0).readShort(0);
 
     setSpuDmaCompleteCallback(null);
     sound.playableSound_10 = loadSshdAndSoundbank(files.get(3), new Sshd(files.get(2)), 0x6_6930);
@@ -4481,12 +4275,12 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001f2c0L)
-  public static void FUN_8001f2c0(final List<byte[]> files) {
+  public static void FUN_8001f2c0(final List<FileData> files) {
     final SoundFile sound = soundFiles_800bcf80[10];
     sound.used_00 = true;
 
     sound.indices_08 = SoundFileIndices.load(files.get(1));
-    sound.charId_02 = (short)MathHelper.get(files.get(0), 0, 2);
+    sound.charId_02 = files.get(0).readShort(0);
 
     setSpuDmaCompleteCallback(Scus94491BpeSegment::FUN_8001f390);
     sound.playableSound_10 = loadSshdAndSoundbank(files.get(3), new Sshd(files.get(2)), 0x6_6930);
@@ -4622,11 +4416,11 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001fb44L)
-  public static void FUN_8001fb44(final List<byte[]> files, final int param) {
+  public static void FUN_8001fb44(final List<FileData> files, final int param) {
     final SoundFile sound = soundFiles_800bcf80[11];
     sound.used_00 = true;
 
-    sound.charId_02 = (short)MathHelper.get(files.get(0), 0, 2);
+    sound.charId_02 = files.get(0).readShort(0);
 
     //LAB_8001fbcc
     setSpuDmaCompleteCallback(null);
@@ -4658,12 +4452,12 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001fd4cL)
-  public static void encounterSoundEffectsLoaded_8001fd4c(final List<byte[]> files, final int index) {
+  public static void encounterSoundEffectsLoaded_8001fd4c(final List<FileData> files, final int index) {
     final SpuStruct10 struct10 = spu10Arr_800bd610[index];
     struct10._00 = 2;
 
-    struct10.unknown = (int)MathHelper.get(files.get(0), 0, 2);
-    struct10.soundFileIndex = (int)MathHelper.get(files.get(1), 0, 2);
+    struct10.unknown = files.get(0).readUShort(0);
+    struct10.soundFileIndex = files.get(1).readUShort(0);
     struct10.sssq_08 = new Sssq(files.get(2));
 
     FUN_8004c8dc(struct10.sequenceData_0c, 40);

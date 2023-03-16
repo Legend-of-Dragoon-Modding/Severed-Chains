@@ -1,8 +1,12 @@
 package legend.core.gpu;
 
 import legend.game.types.Translucency;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class GpuCommandQuad extends GpuCommand {
+  private static final Logger LOGGER = LogManager.getFormatterLogger(GpuCommandQuad.class);
+
   private Bpp bpp = Bpp.BITS_4;
   private Translucency translucence;
   private boolean raw;
@@ -43,6 +47,18 @@ public class GpuCommandQuad extends GpuCommand {
   }
 
   public GpuCommandQuad rgb(final int r, final int g, final int b) {
+    if(r < 0) {
+      LOGGER.warn("Negative R! %x", r);
+    }
+
+    if(g < 0) {
+      LOGGER.warn("Negative R! %x", g);
+    }
+
+    if(b < 0) {
+      LOGGER.warn("Negative R! %x", b);
+    }
+
     return this.rgb(b << 16 | g << 8 | r);
   }
 
@@ -121,7 +137,7 @@ public class GpuCommandQuad extends GpuCommand {
           }
 
           if(!this.raw) {
-            texel = gpu.applyBlending(this.colour, texel);
+            texel = Gpu.applyBlending(this.colour, texel);
           }
 
           if(this.translucence != null && (texel & 0xff00_0000) != 0) {

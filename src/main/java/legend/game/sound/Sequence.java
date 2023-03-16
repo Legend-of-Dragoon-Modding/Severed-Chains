@@ -1,10 +1,12 @@
 package legend.game.sound;
 
+import legend.game.unpacker.FileData;
+
 public class Sequence {
-  private final byte[] data;
+  private final FileData data;
   private final int offset;
 
-  public Sequence(final byte[] data, final int offset) {
+  public Sequence(final FileData data, final int offset) {
     this.data = data;
     this.offset = offset;
   }
@@ -18,7 +20,7 @@ public class Sequence {
 
     @Override
     public int readByteAbsolute(final int absoluteOffset) {
-      return Sequence.this.data[Sequence.this.offset + absoluteOffset] & 0xff;
+      return Sequence.this.data.readUByte(Sequence.this.offset + absoluteOffset);
     }
 
     @Override

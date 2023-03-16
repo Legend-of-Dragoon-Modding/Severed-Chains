@@ -3,14 +3,17 @@ package legend.game.unpacker;
 import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.core.Tuple;
+import legend.game.Scus94491BpeSegment;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,18 +21,23 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Deque;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiFunction;
-import java.util.function.BiPredicate;
+import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.StreamSupport;
 
 import static legend.game.Scus94491BpeSegment.getCharacterName;
 
-public class Unpacker {
+public final class Unpacker {
+  private Unpacker() { }
+
+  private static final Pattern ROOT_MRG = Pattern.compile("^SECT/DRGN0\\.BIN/\\d{4}/\\d+$");
+
   static {
     System.setProperty("log4j.skipJansi", "false");
     System.setProperty("log4j2.configurationFile", "log4j2.xml");
@@ -43,65 +51,115 @@ public class Unpacker {
 
   private static final Object IO_LOCK = new Object();
 
-  private static final Map<BiPredicate<String, FileData>, BiFunction<String, FileData, Map<String, FileData>>> transformers = new LinkedHashMap<>();
+  private static final Map<Discriminator, Transformer> transformers = new LinkedHashMap<>();
   static {
     transformers.put(Unpacker::decompressDiscriminator, Unpacker::decompress);
     transformers.put(Unpacker::mrgDiscriminator, Unpacker::unmrg);
     transformers.put(Unpacker::deffDiscriminator, Unpacker::undeff);
     transformers.put(Unpacker::drgn21_402_3_patcherDiscriminator, Unpacker::drgn21_402_3_patcher);
+    transformers.put(Unpacker::drgn21_693_0_patcherDiscriminator, Unpacker::drgn21_693_0_patcher);
+    transformers.put(Unpacker::drgn0_142_patcherDiscriminator, Unpacker::drgn0_142_patcher);
     transformers.put(Unpacker::playerCombatSoundEffectsDiscriminator, Unpacker::playerCombatSoundEffectsTransformer);
     transformers.put(Unpacker::playerCombatModelsAndTexturesDiscriminator, Unpacker::playerCombatModelsAndTexturesTransformer);
     transformers.put(Unpacker::dragoonCombatModelsAndTexturesDiscriminator, Unpacker::dragoonCombatModelsAndTexturesTransformer);
     transformers.put(Unpacker::skipPartyPermutationsDiscriminator, Unpacker::skipPartyPermutationsTransformer);
     transformers.put(Unpacker::extractBtldDataDiscriminator, Unpacker::extractBtldDataTransformer);
+    transformers.put(Unpacker::extractItemDataDiscriminator, Unpacker::extractItemDataTransformer);
+    transformers.put(CtmdTransformer::ctmdDiscriminator, CtmdTransformer::ctmdTransformer);
   }
 
   public static void main(final String[] args) throws UnpackerException {
     unpack();
   }
 
-  public static byte[] loadFile(final String name) {
+  public static FileData loadFile(final String name) {
     LOGGER.info("Loading file %s", name);
 
     synchronized(IO_LOCK) {
       try {
-        return Files.readAllBytes(ROOT.resolve(fixPath(name)));
+        return new FileData(Files.readAllBytes(ROOT.resolve(fixPath(name))));
       } catch(final IOException e) {
         throw new RuntimeException("Failed to load file " + name, e);
       }
     }
   }
 
-  public static List<byte[]> loadDirectory(final String name) {
+  public static List<FileData> loadDirectory(final String name) {
     LOGGER.info("Loading directory %s", name);
 
     synchronized(IO_LOCK) {
-      try(final DirectoryStream<Path> ds = Files.newDirectoryStream(ROOT.resolve(fixPath(name)))) {
-        final List<byte[]> files = new ArrayList<>();
+      final Path dir = ROOT.resolve(fixPath(name));
+      final Path mrg = dir.resolve("mrg");
 
-        StreamSupport.stream(ds.spliterator(), false)
-          .filter(Files::isRegularFile)
-          .sorted((path1, path2) -> {
-            final String filename1 = path1.getFileName().toString();
-            final String filename2 = path2.getFileName().toString();
+      if(Files.exists(mrg)) {
+        try(final BufferedReader reader = Files.newBufferedReader(mrg)) {
+          final Map<String, String> fileMap = new LinkedHashMap<>();
+
+          reader.lines().forEach(line -> {
+            final String[] parts = line.split("=");
+
+            if(parts.length != 2) {
+              throw new RuntimeException("Invalid MRG entry! " + line);
+            }
+
+            final String virtual = parts[0];
+            final String real = parts[1];
+            fileMap.put(virtual, real);
+          });
+
+          final List<FileData> files = new ArrayList<>();
+          fileMap.forEach((virtual, real) -> {
+            // Resolve to the realest file
+            while(!fileMap.get(real).equals(real)) {
+              real = fileMap.get(real);
+            }
 
             try {
-              return Integer.compare(Integer.parseInt(filename1), Integer.parseInt(filename2));
-            } catch(final NumberFormatException ignored) { }
-
-            return String.CASE_INSENSITIVE_ORDER.compare(filename1, filename2);
-          })
-          .forEach(child -> {
-            try {
-              files.add(Files.readAllBytes(child));
+              final Path file = dir.resolve(real);
+              if(Files.isRegularFile(file)) {
+                if(virtual.equals(real)) {
+                  files.add(new FileData(Files.readAllBytes(file)));
+                } else {
+                  files.add(FileData.virtual(Files.readAllBytes(file)));
+                }
+              }
             } catch(final IOException e) {
               throw new RuntimeException("Failed to load directory " + name, e);
             }
           });
 
-        return files;
-      } catch(final IOException e) {
-        throw new RuntimeException("Failed to load directory " + name, e);
+          return files;
+        } catch(final IOException e) {
+          throw new RuntimeException("Failed to load directory " + name, e);
+        }
+      } else {
+        try(final DirectoryStream<Path> ds = Files.newDirectoryStream(ROOT.resolve(fixPath(name)))) {
+          final List<FileData> files = new ArrayList<>();
+
+          StreamSupport.stream(ds.spliterator(), false)
+            .filter(Files::isRegularFile)
+            .sorted((path1, path2) -> {
+              final String filename1 = path1.getFileName().toString();
+              final String filename2 = path2.getFileName().toString();
+
+              try {
+                return Integer.compare(Integer.parseInt(filename1), Integer.parseInt(filename2));
+              } catch(final NumberFormatException ignored) { }
+
+              return String.CASE_INSENSITIVE_ORDER.compare(filename1, filename2);
+            })
+            .forEach(child -> {
+              try {
+                files.add(new FileData(Files.readAllBytes(child)));
+              } catch(final IOException e) {
+                throw new RuntimeException("Failed to load directory " + name, e);
+              }
+            });
+
+          return files;
+        } catch(final IOException e) {
+          throw new RuntimeException("Failed to load directory " + name, e);
+        }
       }
     }
   }
@@ -120,7 +178,7 @@ public class Unpacker {
 
   private static String fixPath(String name) {
     if(name.contains(";")) {
-      name = name.substring(0, name.lastIndexOf(";"));
+      name = name.substring(0, name.lastIndexOf(';'));
     }
 
     if(name.startsWith("\\")) {
@@ -153,7 +211,7 @@ public class Unpacker {
           .stream()
           .filter(entry -> !Files.exists(ROOT.resolve(entry.getKey())))
           .map(Unpacker::readFile)
-          .map((Tuple<String, FileData> e) -> transform(e.a(), e.b()))
+          .map(e -> transform(e.a(), e.b(), EnumSet.noneOf(Flags.class)))
           .forEach(Unpacker::writeFiles);
 
         LOGGER.info("Files unpacked in %d seconds", (System.nanoTime() - start) / 1_000_000_000L);
@@ -240,17 +298,17 @@ public class Unpacker {
   }
 
   private static Tuple<String, FileData> readFile(final Map.Entry<String, DirectoryEntry> e) {
+    LOGGER.info("Unpacking %s...", e.getKey());
+
     final DirectoryEntry entry = e.getValue();
 
     synchronized(entry.reader()) {
-      final byte[] fileData = entry.reader().readSectors(entry.sector(), entry.length(), e.getKey().endsWith(".IKI"));
+      final byte[] fileData = entry.reader().readSectors(entry.sector(), entry.length(), e.getKey().endsWith(".IKI") || e.getKey().endsWith(".XA"));
       return new Tuple<>(e.getKey(), new FileData(fileData));
     }
   }
 
-  private static Map<String, FileData> transform(final String name, final FileData data) {
-//    LOGGER.info("Unpacking %s...", name);
-
+  private static Map<String, FileData> transform(final String name, final FileData data, final Set<Flags> flags) {
     final Map<String, FileData> entries = new HashMap<>();
     boolean wasTransformed = false;
 
@@ -258,11 +316,11 @@ public class Unpacker {
       final var discriminator = entry.getKey();
       final var transformer = entry.getValue();
 
-      if(discriminator.test(name, data)) {
+      if(discriminator.matches(name, data, flags)) {
         wasTransformed = true;
-        transformer.apply(name, data)
+        transformer.transform(name, data, flags)
           .entrySet().stream()
-          .map(e -> transform(e.getKey(), e.getValue()))
+          .map(e -> transform(e.getKey(), e.getValue(), flags))
           .forEach(entries::putAll);
         break;
       }
@@ -275,19 +333,26 @@ public class Unpacker {
     return entries;
   }
 
-  private static boolean decompressDiscriminator(final String name, final FileData data) {
+  private static boolean decompressDiscriminator(final String name, final FileData data, final Set<Flags> flags) {
+    if(ROOT_MRG.matcher(name).matches()) {
+      final int dirNum = Integer.parseInt(name.substring(15, 19));
+      if(dirNum >= 4031 && dirNum < 4103) {
+        return false;
+      }
+    }
+
     return data.size() >= 8 && MathHelper.get(data.data(), data.offset() + 4, 4) == 0x1a455042;
   }
 
-  private static Map<String, FileData> decompress(final String name, final FileData data) {
-    return Map.of(name, new FileData(Unpacker.decompress(data.data(), data.offset())));
+  private static Map<String, FileData> decompress(final String name, final FileData data, final Set<Flags> flags) {
+    return Map.of(name, new FileData(Unpacker.decompress(data)));
   }
 
-  private static boolean mrgDiscriminator(final String name, final FileData data) {
+  private static boolean mrgDiscriminator(final String name, final FileData data, final Set<Flags> flags) {
     return data.size() >= 8 && MathHelper.get(data.data(), data.offset(), 4) == 0x1a47524d;
   }
 
-  private static Map<String, FileData> unmrg(final String name, final FileData data) {
+  private static Map<String, FileData> unmrg(final String name, final FileData data, final Set<Flags> flags) {
     final MrgArchive archive = new MrgArchive(data, name.matches("^SECT/DRGN(?:0|1|2[1234])?.BIN$"));
 
     if(archive.getCount() == 0) {
@@ -296,19 +361,34 @@ public class Unpacker {
 
     final Map<String, FileData> files = new HashMap<>();
     int i = 0;
-    for(final FileData entry : archive) {
-      files.put(name + '/' + i, entry);
+    for(final MrgArchive.Entry entry : archive) {
+      if(!entry.virtual()) {
+        files.put(name + '/' + i, data.slice(entry.offset(), entry.size()));
+      }
+
       i++;
     }
+
+    final StringBuilder sb = new StringBuilder();
+
+    i = 0;
+    for(final MrgArchive.Entry entry : archive) {
+      sb.append(i).append('=').append(entry.virtual() ? entry.parent() : i).append('\n');
+      i++;
+    }
+
+    files.put(name + "/mrg", new FileData(sb.toString().getBytes(StandardCharsets.US_ASCII)));
 
     return files;
   }
 
-  private static boolean deffDiscriminator(final String name, final FileData data) {
+  private static boolean deffDiscriminator(final String name, final FileData data, final Set<Flags> flags) {
     return data.size() >= 8 && MathHelper.get(data.data(), data.offset(), 4) == 0x46464544;
   }
 
-  private static Map<String, FileData> undeff(final String name, final FileData data) {
+  private static Map<String, FileData> undeff(final String name, final FileData data, final Set<Flags> flags) {
+    flags.add(Flags.DEFF);
+
     final DeffArchive archive = new DeffArchive(data);
 
     if(archive.getCount() == 0) {
@@ -333,20 +413,63 @@ public class Unpacker {
    * adjacent in a MRG file. This patch extends the script to be long enough to
    * contain the jump and just returns.
    */
-  private static boolean drgn21_402_3_patcherDiscriminator(final String name, final FileData data) {
+  private static boolean drgn21_402_3_patcherDiscriminator(final String name, final FileData data, final Set<Flags> flags) {
     return "SECT/DRGN21.BIN/402/3".equals(name) && data.size() == 0xee4;
   }
 
-  private static Map<String, FileData> drgn21_402_3_patcher(final String name, final FileData data) {
+  private static Map<String, FileData> drgn21_402_3_patcher(final String name, final FileData data, final Set<Flags> flags) {
     final byte[] newData = new byte[0x107c];
     System.arraycopy(data.data(), data.offset(), newData, 0, data.size());
     newData[0x1078] = 0x49;
     return Map.of(name, new FileData(newData));
   }
 
-  private static boolean playerCombatSoundEffectsDiscriminator(final String name, final FileData data) {
+  /**
+   * DRGN21.693.0 is the submap controller for Hoax post-Kongol. If you select
+   * "I still don't know..." as your response during the dialog, the script tries
+   * to push an inline parameter that is past the end of the script. This patcher
+   * extends the script and fills with ffffffff, which we read as a sentinel value
+   * in {@link Scus94491BpeSegment#scriptReadGlobalFlag2}, and return 0 there.
+   */
+  private static boolean drgn21_693_0_patcherDiscriminator(final String name, final FileData data, final Set<Flags> flags) {
+    return "SECT/DRGN21.BIN/693/0".equals(name) && data.size() == 0x188;
+  }
+
+  private static Map<String, FileData> drgn21_693_0_patcher(final String name, final FileData data, final Set<Flags> flags) {
+    final byte[] newData = new byte[0x190];
+    System.arraycopy(data.data(), data.offset(), newData, 0, data.size());
+    MathHelper.set(newData, 0x188, 4, 0xffffffffL);
+    MathHelper.set(newData, 0x18c, 4, 0xffffffffL);
+    return Map.of(name, new FileData(newData));
+  }
+
+  /**
+   * The Meru model in the post-Divine-Dragon fight cutscene has a corrupt
+   * animation file, missing animations for 2 out of her 22 objects. If you
+   * look closely at the top of her leg, you can see it. This injects extra
+   * animation data for those missing objects made by DooMMetaL.
+   */
+  private static boolean drgn0_142_patcherDiscriminator(final String name, final FileData data, final Set<Flags> flags) {
+    return "SECT/DRGN0.BIN/142".equals(name) && data.size() == 0x1f0;
+  }
+
+  private static Map<String, FileData> drgn0_142_patcher(final String name, final FileData data, final Set<Flags> flags) {
+    final byte[] newData = new byte[data.size() + 0xc * 2 * 2]; // 2 objects, 2 frames, 0xc table pitch
+    final byte[] frame = {0x0e, (byte)0xe0, (byte)0xfe, (byte)0xde, (byte)0xff, (byte)0x9d, 0x1d, 0x00, 0x28, 0x03, (byte)0xcb, 0x00};
+    // Note: we only create data for object 21, object 22 can be all 0's since it's not visible
+
+    data.copyFrom(0, newData, 0, 0x100);
+    System.arraycopy(frame, 0, newData, 0x100, frame.length); // obj 21
+    data.copyFrom(0x100, newData, 0x118, 0xf0);
+    System.arraycopy(frame, 0, newData, 0x208, frame.length); // obj 21
+    newData[0xc] = 22;
+
+    return Map.of(name, new FileData(newData));
+  }
+
+  private static boolean playerCombatSoundEffectsDiscriminator(final String name, final FileData data, final Set<Flags> flags) {
     for(int i = 752; i <= 772; i++) {
-      if(name.startsWith("SECT/DRGN0.BIN/" + i + "/")) {
+      if(name.startsWith("SECT/DRGN0.BIN/" + i + '/')) {
         return true;
       }
     }
@@ -354,35 +477,35 @@ public class Unpacker {
     return false;
   }
 
-  private static Map<String, FileData> playerCombatSoundEffectsTransformer(final String name, final FileData data) {
+  private static Map<String, FileData> playerCombatSoundEffectsTransformer(final String name, final FileData data, final Set<Flags> flags) {
     final Map<String, FileData> files = new HashMap<>();
 
     if(name.startsWith("SECT/DRGN0.BIN/752/0/")) {
-      files.put("characters/dart/sounds/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
+      files.put("characters/dart/sounds/combat/" + name.substring(name.lastIndexOf('/') + 1), data);
     } else if(name.startsWith("SECT/DRGN0.BIN/752/1/")) {
-      files.put("characters/lavitz/sounds/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
+      files.put("characters/lavitz/sounds/combat/" + name.substring(name.lastIndexOf('/') + 1), data);
     } else if(name.startsWith("SECT/DRGN0.BIN/752/2/")) {
-      files.put("characters/shana/sounds/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
+      files.put("characters/shana/sounds/combat/" + name.substring(name.lastIndexOf('/') + 1), data);
     } else if(name.startsWith("SECT/DRGN0.BIN/753/2/")) {
-      files.put("characters/rose/sounds/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
+      files.put("characters/rose/sounds/combat/" + name.substring(name.lastIndexOf('/') + 1), data);
     } else if(name.startsWith("SECT/DRGN0.BIN/754/2/")) {
-      files.put("characters/haschel/sounds/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
+      files.put("characters/haschel/sounds/combat/" + name.substring(name.lastIndexOf('/') + 1), data);
     } else if(name.startsWith("SECT/DRGN0.BIN/755/2/")) {
-      files.put("characters/meru/sounds/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
+      files.put("characters/meru/sounds/combat/" + name.substring(name.lastIndexOf('/') + 1), data);
     } else if(name.startsWith("SECT/DRGN0.BIN/756/2/")) {
-      files.put("characters/kongol/sounds/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
+      files.put("characters/kongol/sounds/combat/" + name.substring(name.lastIndexOf('/') + 1), data);
     } else if(name.startsWith("SECT/DRGN0.BIN/757/2/")) {
-      files.put("characters/miranda/sounds/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
+      files.put("characters/miranda/sounds/combat/" + name.substring(name.lastIndexOf('/') + 1), data);
     } else if(name.startsWith("SECT/DRGN0.BIN/772/1/")) {
-      files.put("characters/albert/sounds/combat/" + name.substring(name.lastIndexOf("/") + 1), data);
+      files.put("characters/albert/sounds/combat/" + name.substring(name.lastIndexOf('/') + 1), data);
     }
 
     return files;
   }
 
-  private static boolean playerCombatModelsAndTexturesDiscriminator(final String name, final FileData data) {
+  private static boolean playerCombatModelsAndTexturesDiscriminator(final String name, final FileData data, final Set<Flags> flags) {
     for(int i = 3993; i <= 4010; i++) {
-      if(name.startsWith("SECT/DRGN0.BIN/" + i + "/")) {
+      if(name.startsWith("SECT/DRGN0.BIN/" + i + '/') && (!name.endsWith("mrg") || i % 2 == 0)) { // Only copy MRG files for models
         return true;
       }
     }
@@ -390,7 +513,7 @@ public class Unpacker {
     return false;
   }
 
-  private static Map<String, FileData> playerCombatModelsAndTexturesTransformer(final String name, final FileData data) {
+  private static Map<String, FileData> playerCombatModelsAndTexturesTransformer(final String name, final FileData data, final Set<Flags> flags) {
     final Map<String, FileData> files = new HashMap<>();
 
     for(int charId = 0; charId < 9; charId++) {
@@ -399,16 +522,16 @@ public class Unpacker {
       if(name.startsWith("SECT/DRGN0.BIN/%d".formatted(3993 + charId * 2))) {
         files.put("characters/%s/textures/combat".formatted(charName), data);
       } else if(name.startsWith("SECT/DRGN0.BIN/%d".formatted(3994 + charId * 2))) {
-        files.put("characters/%s/models/combat/%s".formatted(charName, name.substring(name.lastIndexOf("/") + 1)), data);
+        files.put("characters/%s/models/combat/%s".formatted(charName, name.substring(name.lastIndexOf('/') + 1)), data);
       }
     }
 
     return files;
   }
 
-  private static boolean dragoonCombatModelsAndTexturesDiscriminator(final String name, final FileData data) {
+  private static boolean dragoonCombatModelsAndTexturesDiscriminator(final String name, final FileData data, final Set<Flags> flags) {
     for(int i = 4011; i <= 4030; i++) {
-      if(name.startsWith("SECT/DRGN0.BIN/" + i + "/")) {
+      if(name.startsWith("SECT/DRGN0.BIN/" + i + '/') && (!name.endsWith("mrg") || i % 2 == 0)) { // Only copy MRG files for models
         return true;
       }
     }
@@ -416,7 +539,7 @@ public class Unpacker {
     return false;
   }
 
-  private static Map<String, FileData> dragoonCombatModelsAndTexturesTransformer(final String name, final FileData data) {
+  private static Map<String, FileData> dragoonCombatModelsAndTexturesTransformer(final String name, final FileData data, final Set<Flags> flags) {
     final Map<String, FileData> files = new HashMap<>();
 
     for(int charId = 0; charId < 10; charId++) {
@@ -425,16 +548,16 @@ public class Unpacker {
       if(name.startsWith("SECT/DRGN0.BIN/%d".formatted(4011 + charId * 2))) {
         files.put("characters/%s/textures/dragoon".formatted(charName), data);
       } else if(name.startsWith("SECT/DRGN0.BIN/%d".formatted(4012 + charId * 2))) {
-        files.put("characters/%s/models/dragoon/%s".formatted(charName, name.substring(name.lastIndexOf("/") + 1)), data);
+        files.put("characters/%s/models/dragoon/%s".formatted(charName, name.substring(name.lastIndexOf('/') + 1)), data);
       }
     }
 
     return files;
   }
 
-  private static boolean skipPartyPermutationsDiscriminator(final String name, final FileData data) {
+  private static boolean skipPartyPermutationsDiscriminator(final String name, final FileData data, final Set<Flags> flags) {
     for(int i = 3537; i <= 3592; i++) {
-      if(name.startsWith("SECT/DRGN0.BIN/" + i + "/")) {
+      if(name.startsWith("SECT/DRGN0.BIN/" + i + '/')) {
         return true;
       }
     }
@@ -442,22 +565,43 @@ public class Unpacker {
     return false;
   }
 
-  private static Map<String, FileData> skipPartyPermutationsTransformer(final String name, final FileData data) {
+  private static Map<String, FileData> skipPartyPermutationsTransformer(final String name, final FileData data, final Set<Flags> flags) {
     return Map.of();
   }
 
   /** TODO this is pretty bad */
   private static boolean btldDataDiscriminatorLatch = true;
+  private static boolean itemDataDiscriminatorLatch = true;
   /** Extracts table at 80102050 */
-  private static boolean extractBtldDataDiscriminator(final String name, final FileData data) {
+  private static boolean extractBtldDataDiscriminator(final String name, final FileData data, final Set<Flags> flags) {
     return btldDataDiscriminatorLatch && "OVL/S_BTLD.OV_".equals(name);
   }
 
-  private static Map<String, FileData> extractBtldDataTransformer(final String name, final FileData data) {
+  private static Map<String, FileData> extractBtldDataTransformer(final String name, final FileData data, final Set<Flags> flags) {
     btldDataDiscriminatorLatch = false;
     final Map<String, FileData> files = new HashMap<>();
     files.put(name, data);
     files.put("encounters", new FileData(data.data(), 0x68d8, 0x7000));
+    return files;
+  }
+
+  private static boolean extractItemDataDiscriminator(final String name, final FileData data, final Set<Flags> flags) {
+    return itemDataDiscriminatorLatch && "OVL/S_ITEM.OV_".equals(name);
+  }
+
+  private static Map<String, FileData> extractItemDataTransformer(final String name, final FileData data, final Set<Flags> flags) {
+    itemDataDiscriminatorLatch = false;
+    final Map<String, FileData> files = new HashMap<>();
+    files.put(name, data);
+    files.put("characters/kongol/xp", new FileData(data.data(), 0x17d78, 61 * 4));
+    files.put("characters/dart/xp", new FileData(data.data(), 0x17e6c, 61 * 4));
+    files.put("characters/haschel/xp", new FileData(data.data(), 0x17f60, 61 * 4));
+    files.put("characters/meru/xp", new FileData(data.data(), 0x18054, 61 * 4));
+    files.put("characters/lavitz/xp", new FileData(data.data(), 0x18148, 61 * 4));
+    files.put("characters/albert/xp", new FileData(data.data(), 0x18148, 61 * 4));
+    files.put("characters/rose/xp", new FileData(data.data(), 0x1823c, 61 * 4));
+    files.put("characters/shana/xp", new FileData(data.data(), 0x18330, 61 * 4));
+    files.put("characters/miranda/xp", new FileData(data.data(), 0x18330, 61 * 4));
     return files;
   }
 
@@ -466,6 +610,10 @@ public class Unpacker {
   }
 
   private static void writeFile(final String name, final FileData data) {
+    if(data.virtual()) {
+      return;
+    }
+
     final Path path = ROOT.resolve(name);
 
     try {
@@ -484,32 +632,28 @@ public class Unpacker {
     }
   }
 
-  public static byte[] decompress(final byte[] archive) {
-    return decompress(archive, 0);
-  }
-
-  public static byte[] decompress(final byte[] archive, final int offset) {
+  public static byte[] decompress(final FileData archive) {
     // Check BPE header - this check is in the BPE block method but not the main EXE method
-    if(MathHelper.get(archive, offset + 4, 4) != 0x1a455042L) {
+    if(archive.readInt(0x4) != 0x1a455042) {
       throw new RuntimeException("Attempted to decompress non-BPE segment");
     }
 
     LOGGER.info("Decompressing BPE segment");
 
-    final byte[] dest = new byte[(int)MathHelper.get(archive, offset, 4)];
+    final byte[] dest = new byte[archive.readInt(0)];
 
     final Deque<Byte> unresolved_byte_list = new LinkedList<>();
     final byte[] dict_leftch = new byte[0x100];
     final byte[] dict_rightch = new byte[0x100];
 
     int totalSize = 0;
-    int archiveOffset = offset + 8;
+    int archiveOffset = 0x8;
     int destinationOffset = 0;
 
     // Each block is preceded by 4-byte int up to 0x800 giving the number
     // of decompressed bytes in the block. 0x00000000 indicates that there
     // are no further blocks and decompression is complete.
-    int bytes_remaining_in_block = (int)MathHelper.get(archive, archiveOffset, 4);
+    int bytes_remaining_in_block = archive.readInt(archiveOffset);
     archiveOffset += 4;
 
     while(bytes_remaining_in_block != 0) {
@@ -536,7 +680,7 @@ public class Unpacker {
         // be read into the dictionary, placed at the index value calculated
         // using the below formula. Otherwise, the byte indicates how many
         // sequential bytes to read into the dictionary.
-        int byte_pairs_to_read = archive[archiveOffset] & 0xff;
+        int byte_pairs_to_read = archive.readUByte(archiveOffset);
         archiveOffset++;
 
         if(byte_pairs_to_read >= 0x80) {
@@ -552,11 +696,11 @@ public class Unpacker {
         if(key < 0x100) {
           // Check that dictionary length not exceeded.
           for(int i = 0; i < byte_pairs_to_read + 1; i++) {
-            dict_leftch[key] = archive[archiveOffset];
+            dict_leftch[key] = archive.readByte(archiveOffset);
             archiveOffset++;
 
             if((dict_leftch[key] & 0xff) != key) {
-              dict_rightch[key] = archive[archiveOffset];
+              dict_rightch[key] = archive.readByte(archiveOffset);
               archiveOffset++;
             }
 
@@ -569,7 +713,7 @@ public class Unpacker {
       // On each pass, read one byte and add it to a list of unresolved bytes.
       while(bytes_remaining_in_block > 0) {
         unresolved_byte_list.clear();
-        unresolved_byte_list.push(archive[archiveOffset]);
+        unresolved_byte_list.push(archive.readByte(archiveOffset));
         archiveOffset++;
 
         // Pop the first item in the list of unresolved bytes. If the
@@ -595,12 +739,26 @@ public class Unpacker {
         archiveOffset = archiveOffset + 4 - archiveOffset % 4;
       }
 
-      bytes_remaining_in_block = (int)MathHelper.get(archive, archiveOffset, 4);
+      bytes_remaining_in_block = archive.readInt(archiveOffset);
       archiveOffset += 4;
     }
 
     LOGGER.info("Archive size: %d, decompressed size: %d", archiveOffset, totalSize);
 
     return dest;
+  }
+
+  public enum Flags {
+    DEFF,
+  }
+
+  @FunctionalInterface
+  public interface Discriminator {
+    boolean matches(final String name, final FileData data, final Set<Flags> flags);
+  }
+
+  @FunctionalInterface
+  public interface Transformer {
+    Map<String, FileData> transform(final String name, final FileData data, final Set<Flags> flags);
   }
 }

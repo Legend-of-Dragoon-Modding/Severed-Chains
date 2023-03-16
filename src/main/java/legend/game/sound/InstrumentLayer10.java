@@ -1,6 +1,6 @@
 package legend.game.sound;
 
-import legend.core.MathHelper;
+import legend.game.unpacker.FileData;
 
 public class InstrumentLayer10 implements Sshd.Subfile {
   public int minKeyRange_00;
@@ -25,19 +25,19 @@ public class InstrumentLayer10 implements Sshd.Subfile {
    */
   public int flags_0f;
 
-  public InstrumentLayer10(final byte[] data, final int offset) {
-    this.minKeyRange_00 = MathHelper.getUbyte(data, offset);
-    this.maxKeyRange_01 = MathHelper.getUbyte(data, offset + 0x1);
-    this.rootKey_02 = MathHelper.getUbyte(data, offset + 0x2);
-    this.cents_03 = MathHelper.getByte(data, offset + 0x3);
-    this.soundOffset_04 = MathHelper.getUshort(data, offset + 0x4);
-    this.adsrLo_06 = MathHelper.getUshort(data, offset + 0x6);
-    this.adsrHi_08 = MathHelper.getUshort(data, offset + 0x8);
-    this._0a = MathHelper.getUbyte(data, offset + 0xa);
-    this.volume_0b = MathHelper.getUbyte(data, offset + 0xb);
-    this.pan_0c = MathHelper.getUbyte(data, offset + 0xc);
-    this.pitchBendMultiplier_0d = MathHelper.getUbyte(data, offset + 0xd);
-    this._0e = MathHelper.getUbyte(data, offset + 0xe);
-    this.flags_0f = MathHelper.getUbyte(data, offset + 0xf);
+  public InstrumentLayer10(final FileData data, final int offset) {
+    this.minKeyRange_00 = data.readUByte(offset);
+    this.maxKeyRange_01 = data.readUByte(offset + 0x1);
+    this.rootKey_02 = data.readUByte(offset + 0x2);
+    this.cents_03 = data.readByte(offset + 0x3);
+    this.soundOffset_04 = data.readUShort(offset + 0x4);
+    this.adsrLo_06 = data.readUShort(offset + 0x6);
+    this.adsrHi_08 = data.readUShort(offset + 0x8);
+    this._0a = data.readUByte(offset + 0xa);
+    this.volume_0b = data.readUByte(offset + 0xb);
+    this.pan_0c = data.readUByte(offset + 0xc);
+    this.pitchBendMultiplier_0d = data.readUByte(offset + 0xd);
+    this._0e = data.readUByte(offset + 0xe);
+    this.flags_0f = data.readUByte(offset + 0xf);
   }
 }

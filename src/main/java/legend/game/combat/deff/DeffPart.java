@@ -1,18 +1,11 @@
 package legend.game.combat.deff;
 
 import legend.core.gpu.RECT;
-import legend.core.memory.Value;
-import legend.core.memory.types.IntRef;
-import legend.core.memory.types.MemoryRef;
-import legend.core.memory.types.RelativePointer;
-import legend.core.memory.types.UnboundedArrayRef;
-import legend.core.memory.types.UnsignedShortRef;
-import legend.game.types.ExtendedTmd;
+import legend.game.types.CContainer;
 import legend.game.types.TmdAnimationFile;
+import legend.game.unpacker.FileData;
 
-public class DeffPart implements MemoryRef {
-  protected final Value ref;
-
+public class DeffPart {
   /**
    * MSB is type, LSB is index, middle bytes are some kind of ID?
    * <ul>
@@ -25,135 +18,114 @@ public class DeffPart implements MemoryRef {
    *   <li>Apparently there is a type 7</li>
    * </ul>
    */
-  public final IntRef flags_00;
+  public final int flags_00;
 
-  public DeffPart(final Value ref) {
-    this.ref = ref;
-
-    this.flags_00 = ref.offset(4, 0x00L).cast(IntRef::new);
-  }
-
-  @Override
-  public long getAddress() {
-    return this.ref.getAddress();
+  public DeffPart(final FileData data) {
+    this.flags_00 = data.readInt(0);
   }
 
   public static class LmbType extends DeffPart {
-    public final IntRef type_04;
-    public final RelativePointer<Lmb> lmb_08;
+    public final int type_04;
+    public final Lmb lmb_08;
 
-    public LmbType(final Value ref) {
-      super(ref);
+    public LmbType(final FileData data) {
+      super(data);
 
-      this.type_04 = ref.offset(4, 0x04L).cast(IntRef::new);
-      this.lmb_08 = ref.offset(4, 0x08L).cast(RelativePointer.deferred(4, ref.getAddress(), value ->
-        switch(this.type_04.get()) {
-          case 0 -> new LmbType0(value);
-          case 1 -> new LmbType1(value);
-          case 2 -> new LmbType2(value);
-          default -> throw new RuntimeException("Unsupported LMB type");
-        }
-      ));
+      this.type_04 = data.readInt(0x4);
+
+      final int lmbOffset = data.readInt(0x8);
+      this.lmb_08 = switch(this.type_04) {
+        case 0 -> new LmbType0(data.slice(lmbOffset));
+        case 1 -> new LmbType1(data.slice(lmbOffset));
+        case 2 -> new LmbType2(data.slice(lmbOffset));
+        default -> throw new RuntimeException("Unsupported LMB type");
+      };
     }
   }
 
   public static class TmdType extends DeffPart {
-    public final RelativePointer<UnboundedArrayRef<TextureInfo>> textureInfo_08;
-    public final RelativePointer<ExtendedTmd> tmd_0c;
+    public final String name;
 
-    public TmdType(final Value ref) {
-      super(ref);
+    public final TextureInfo[] textureInfo_08;
+    public final CContainer tmd_0c;
 
-      this.textureInfo_08 = ref.offset(4, 0x08L).cast(RelativePointer.deferred(4, ref.getAddress(), UnboundedArrayRef.of(0x10, TextureInfo::new)));
-      this.tmd_0c = ref.offset(4, 0x0cL).cast(RelativePointer.deferred(4, ref.getAddress(), ExtendedTmd::new));
+    public TmdType(final String name, final FileData data) {
+      super(data);
+
+      this.name = name;
+
+      final int textureOffset = data.readInt(0x8);
+      final int tmdOffset = data.readInt(0xc);
+      final int offset14 = data.readInt(0x14);
+
+      if(textureOffset != tmdOffset) {
+        this.textureInfo_08 = new TextureInfo[(tmdOffset - textureOffset) / 0x8];
+        for(int i = 0; i < this.textureInfo_08.length; i++) {
+          this.textureInfo_08[i] = new TextureInfo(data.slice(textureOffset + i * 0x8, 0x8));
+        }
+      } else {
+        this.textureInfo_08 = null;
+      }
+
+      if(tmdOffset != offset14) {
+        this.tmd_0c = new CContainer(name, data.slice(tmdOffset));
+      } else {
+        this.tmd_0c = null;
+      }
     }
   }
 
   public static class AnimatedTmdType extends TmdType {
-    public final RelativePointer<Anim> anim_14;
+    public final Anim anim_14;
 
-    public AnimatedTmdType(final Value ref) {
-      super(ref);
+    public AnimatedTmdType(final String name, final FileData data) {
+      super(name, data);
 
-      this.anim_14 = ref.offset(4, 0x14L).cast(RelativePointer.deferred(4, ref.getAddress(), this::makeAnimType));
-    }
-
-    private Anim makeAnimType(final Value value) {
-      final int magic = (int)this.ref.offset(4, this.anim_14.getPointer()).get();
+      final int animOffset = data.readInt(0x14);
+      final int magic = data.readInt(animOffset);
 
       if(magic == Lmb.MAGIC) {
-        return new LmbType0(value);
+        this.anim_14 = new LmbType0(data.slice(animOffset));
+      } else if(magic == Cmb.MAGIC) {
+        this.anim_14 = new Cmb(data.slice(animOffset));
+      } else {
+        this.anim_14 = new TmdAnimationFile(data.slice(animOffset));
       }
-
-      if(magic == Cmb.MAGIC) {
-        return new Cmb(value);
-      }
-
-      return new TmdAnimationFile(value);
     }
   }
 
-  public static class TextureInfo implements MemoryRef {
-    private final Value ref;
+  public static class TextureInfo {
+    public final RECT vramPos_00 = new RECT();
 
-    public final RECT vramPos_00;
-
-    public TextureInfo(final Value ref) {
-      this.ref = ref;
-
-      this.vramPos_00 = ref.offset(2, 0x00L).cast(RECT::new);
-    }
-
-    @Override
-    public long getAddress() {
-      return this.ref.getAddress();
+    public TextureInfo(final FileData data) {
+      data.readRect(0, this.vramPos_00);
     }
   }
 
   public static class SpriteType extends DeffPart {
-    public final RelativePointer<SpriteMetrics> metrics_08;
+    public final SpriteMetrics metrics_08;
 
-    public SpriteType(final Value ref) {
-      super(ref);
-
-      this.metrics_08 = ref.offset(4, 0x08L).cast(RelativePointer.deferred(4, ref.getAddress(), SpriteMetrics::new));
+    public SpriteType(final FileData data) {
+      super(data);
+      this.metrics_08 = new SpriteMetrics(data.slice(data.readInt(0xc), 0xc));
     }
   }
 
-  public static class SpriteMetrics implements MemoryRef {
-    private final Value ref;
+  public static class SpriteMetrics {
+    public int u_00;
+    public int v_02;
+    public int w_04;
+    public int h_06;
+    public int clutX_08;
+    public int clutY_0a;
 
-    public final UnsignedShortRef u_00;
-    public final UnsignedShortRef v_02;
-    public final UnsignedShortRef w_04;
-    public final UnsignedShortRef h_06;
-    public final UnsignedShortRef clutX_08;
-    public final UnsignedShortRef clutY_0a;
-
-    public SpriteMetrics(final Value ref) {
-      this.ref = ref;
-
-      this.u_00 = ref.offset(2, 0x00L).cast(UnsignedShortRef::new);
-      this.v_02 = ref.offset(2, 0x02L).cast(UnsignedShortRef::new);
-      this.w_04 = ref.offset(2, 0x04L).cast(UnsignedShortRef::new);
-      this.h_06 = ref.offset(2, 0x06L).cast(UnsignedShortRef::new);
-      this.clutX_08 = ref.offset(2, 0x08L).cast(UnsignedShortRef::new);
-      this.clutY_0a = ref.offset(2, 0x0aL).cast(UnsignedShortRef::new);
-    }
-
-    @Override
-    public long getAddress() {
-      return this.ref.getAddress();
-    }
-  }
-
-  public static class CmbType extends DeffPart {
-    public final RelativePointer<Cmb> cmb_14;
-
-    public CmbType(final Value ref) {
-      super(ref);
-
-      this.cmb_14 = ref.offset(4, 0x14L).cast(RelativePointer.deferred(4, ref.getAddress(), Cmb::new));
+    public SpriteMetrics(final FileData data) {
+      this.u_00 = data.readUShort(0x0);
+      this.v_02 = data.readUShort(0x2);
+      this.w_04 = data.readUShort(0x4);
+      this.h_06 = data.readUShort(0x6);
+      this.clutX_08 = data.readUShort(0x8);
+      this.clutY_0a = data.readUShort(0xa);
     }
   }
 }

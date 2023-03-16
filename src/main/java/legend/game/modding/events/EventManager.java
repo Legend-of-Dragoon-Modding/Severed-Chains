@@ -1,9 +1,11 @@
 package legend.game.modding.events;
 
+import legend.core.GameEngine;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.reflections.Reflections;
 import org.reflections.util.ClasspathHelper;
+import org.reflections.util.ConfigurationBuilder;
 
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
@@ -24,9 +26,13 @@ public class EventManager {
   private final Map<Consumer<Event>, Class<?>> listeners = new HashMap<>();
   private final Set<Consumer<Event>> staleListeners = Collections.synchronizedSet(new HashSet<>());
 
-  public EventManager() {
+  private EventManager() {
     LOGGER.info("Scanning for event consumers...");
-    final Reflections reflections = new Reflections(ClasspathHelper.forPackage("legend"));
+
+    final ConfigurationBuilder config = new ConfigurationBuilder()
+      .addClassLoaders(this.getClass().getClassLoader())
+      .addUrls(ClasspathHelper.forPackage("legend"));
+    final Reflections reflections = new Reflections(GameEngine.MODS.addModsToReflectionsConfig(config));
     final Set<Class<?>> listeners = reflections.getTypesAnnotatedWith(EventListener.class);
 
     for(final Class<?> listener : listeners) {
@@ -85,12 +91,14 @@ public class EventManager {
     this.register(listener.getClass(), listener);
   }
 
-  public void postEvent(final Event event) {
+  public <T extends Event> T postEvent(final T event) {
     for(final var entry : this.listeners.entrySet()) {
       if(entry.getValue().isInstance(event)) {
         entry.getKey().accept(event);
       }
     }
+
+    return event;
   }
 
   public void clearStaleRefs() {

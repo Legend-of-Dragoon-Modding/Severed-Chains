@@ -5,6 +5,7 @@ import legend.game.inventory.Equipment;
 import legend.game.inventory.EquipmentRegistryEvent;
 import legend.game.inventory.Item;
 import legend.game.inventory.ItemRegistryEvent;
+import legend.game.modding.Mod;
 import legend.game.modding.events.EventListener;
 import legend.game.modding.registries.RegistryId;
 import legend.game.types.EquipmentStats1c;
@@ -14,6 +15,7 @@ import static legend.game.SItem.equipmentStats_80111ff0;
 import static legend.game.SItem.equipment_8011972c;
 import static legend.game.Scus94491BpeSegment_8004.itemStats_8004f2ac;
 
+@Mod(id = BaseMod.MOD_ID)
 @EventListener
 public class BaseMod {
   public static final String MOD_ID = "lod";

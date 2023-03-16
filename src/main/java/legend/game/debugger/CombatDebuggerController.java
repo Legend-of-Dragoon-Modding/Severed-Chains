@@ -103,8 +103,8 @@ public class CombatDebuggerController {
 
     this.level.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 9999));
     this.dlevel.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 5));
-    this.hp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 9999));
-    this.maxHp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 9999));
+    this.hp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 65535));
+    this.maxHp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 65535));
     this.mp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 9999));
     this.maxMp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 9999));
     this.sp.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 9999));

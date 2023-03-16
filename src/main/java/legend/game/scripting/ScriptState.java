@@ -31,16 +31,12 @@ public class ScriptState<T> {
   private static final Logger LOGGER = LogManager.getFormatterLogger(ScriptState.class);
   private static final Marker SCRIPT_MARKER = MarkerManager.getMarker("SCRIPT");
 
-  public static <T> Class<ScriptState<T>> classFor(final Class<T> cls) {
-    //noinspection unchecked
-    return (Class<ScriptState<T>>)(Class<?>)ScriptState.class;
-  }
-
   private final ScriptManager manager;
   final RunningScript<T> context = new RunningScript<>(this);
 
   /** This script's index */
   public final int index;
+  public final String name;
   public final T innerStruct_00;
   public BiConsumer<ScriptState<T>, T> ticker_04;
   public BiConsumer<ScriptState<T>, T> renderer_08;
@@ -116,12 +112,12 @@ public class ScriptState<T> {
   public int _ec;
   public int _f0;
   public int _f4;
-  public String type_f8;
   public int ui_fc;
 
-  public ScriptState(final ScriptManager manager, final int index, @Nullable final T innerStruct) {
+  public ScriptState(final ScriptManager manager, final int index, final String name, @Nullable final T innerStruct) {
     this.manager = manager;
     this.index = index;
+    this.name = name;
     this.innerStruct_00 = innerStruct;
   }
 
@@ -247,7 +243,7 @@ public class ScriptState<T> {
   }
 
   public ScriptState<?> fork() {
-    final ScriptState<?> childScript = this.manager.allocateScriptState(null);
+    final ScriptState<?> childScript = this.manager.allocateScriptState("Forked " + this.name, null);
 
     if(LOGGER.isInfoEnabled(SCRIPT_MARKER)) {
       final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
@@ -526,7 +522,7 @@ public class ScriptState<T> {
       case 42 -> this.FUN_80016b8c();
 
       case 48 -> this.scriptSquareRoot();
-      case 49 -> this.FUN_80016c00();
+      case 49 -> this.scriptRandom();
       case 50 -> this.scriptSin();
       case 51 -> this.scriptCos();
       case 52 -> this.scriptRatan2();
@@ -658,8 +654,18 @@ public class ScriptState<T> {
    */
   @Method(0x800167bcL)
   public FlowControl scriptMemCopy() {
-    for(int i = 0; i < this.context.params_20[0].get(); i++) {
-      this.context.params_20[2].array(i).set(this.context.params_20[1].array(i).get());
+    // There are hundreds of nearly- (and sometimes entirely-) identical scripts that perform memcopies at the
+    // end of the script, running out of bounds. This is a retail bug and seems to be inconsequential. We're
+    // going to take the traditional LoD approach and just pretend it's not happening. I think these are generic
+    // NPC controller scripts, but I'm not sure. It tends to happen when NPCs are disappearing (walking into Dart,
+    // Lloyd walking into a cave in Snow Field, etc.)
+    // See: GH#230, GH#236, GH#237, GH#240
+    try {
+      for(int i = 0; i < this.context.params_20[0].get(); i++) {
+        this.context.params_20[2].array(i).set(this.context.params_20[1].array(i).get());
+      }
+    } catch(final IndexOutOfBoundsException e) {
+      LOGGER.warn(SCRIPT_MARKER, "Script %d attempted to read out of bounds", this.index);
     }
 
     return FlowControl.CONTINUE;
@@ -854,7 +860,7 @@ public class ScriptState<T> {
   }
 
   @Method(0x80016c00L)
-  public FlowControl FUN_80016c00() {
+  public FlowControl scriptRandom() {
     this.context.params_20[1].set(this.context.params_20[0].get() * simpleRand() >>> 16);
     return FlowControl.CONTINUE;
   }

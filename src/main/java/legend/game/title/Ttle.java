@@ -3,10 +3,12 @@ package legend.game.title;
 import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
-import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandQuad;
+import legend.core.gpu.ModelLoader;
 import legend.core.gpu.RECT;
-import legend.core.gte.DVECTOR;
+import legend.core.gpu.Rect4i;
+import legend.core.gpu.Renderable;
+import legend.core.gpu.VramTexture;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.GsDOBJ2;
 import legend.core.gte.MATRIX;
@@ -14,50 +16,48 @@ import legend.core.gte.SVECTOR;
 import legend.core.gte.TmdWithId;
 import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
-import legend.core.memory.Value;
-import legend.core.memory.types.ArrayRef;
-import legend.core.memory.types.ByteRef;
-import legend.core.memory.types.IntRef;
-import legend.core.memory.types.Pointer;
-import legend.core.memory.types.ShortRef;
-import legend.core.memory.types.UnboundedArrayRef;
-import legend.core.memory.types.UnsignedIntRef;
-import legend.core.memory.types.UnsignedShortRef;
 import legend.core.opengl.Window;
 import legend.game.SaveManager;
 import legend.game.Scus94491BpeSegment_8002;
 import legend.game.fmv.Fmv;
+import legend.game.input.Input;
+import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
 import legend.game.tim.Tim;
 import legend.game.types.CharacterData2c;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.Translucency;
+import legend.game.unpacker.FileData;
 import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
-import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
-import static legend.core.GameEngine.SCRIPTS;
+import static legend.core.gpu.VramTextureLoader.palettesFromTim;
+import static legend.core.gpu.VramTextureLoader.palettesFromTims;
+import static legend.core.gpu.VramTextureLoader.stitch;
+import static legend.core.gpu.VramTextureLoader.stitchHorizontal;
+import static legend.core.gpu.VramTextureLoader.stitchVertical;
+import static legend.core.gpu.VramTextureLoader.textureFromTim;
 import static legend.game.SItem.levelStuff_80111cfc;
 import static legend.game.SItem.magicStuff_80111d20;
+import static legend.game.SItem.xpTables;
 import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
 import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
+import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
-import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static legend.game.Scus94491BpeSegment.playSound;
 import static legend.game.Scus94491BpeSegment.renderMcq;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
-import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
-import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
+import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a9c0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002bcc8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002bda4;
@@ -69,27 +69,20 @@ import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8003.GsSetRefView2;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
-import static legend.game.Scus94491BpeSegment_8003.RotMatrix_8003faf0;
+import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
 import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
-import static legend.game.Scus94491BpeSegment_8003.StoreImage;
-import static legend.game.Scus94491BpeSegment_8003.adjustTmdPointers;
 import static legend.game.Scus94491BpeSegment_8003.bzero;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
-import static legend.game.Scus94491BpeSegment_8003.updateTmdPacketIlen;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndexOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8004.setMono;
-import static legend.game.Scus94491BpeSegment_8005._80052c44;
-import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
-import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800bb168;
 import static legend.game.Scus94491BpeSegment_800b._800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.afterFmvLoadingStage_800bf0ec;
 import static legend.game.Scus94491BpeSegment_800b.doubleBufferFrame_800bb108;
 import static legend.game.Scus94491BpeSegment_800b.drgn0_6666FilePtr_800bdc3c;
-import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.fmvIndex_800bf0dc;
 import static legend.game.Scus94491BpeSegment_800b.gameOverMcq_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -101,7 +94,7 @@ public final class Ttle {
   private Ttle() { }
 
   public static TmdRenderingStruct _800c66d0;
-  public static final ArrayRef<UnsignedIntRef> _800c66d4 = MEMORY.ref(4, 0x800c66d4L, ArrayRef.of(UnsignedIntRef.class, 4, 4, UnsignedIntRef::new));
+  public static final FireAnimationData20[] fireAnimation_800c66d4 = new FireAnimationData20[4];
   public static int hasSavedGames;
   public static int menuLoadingStage;
   public static int logoFadeInAmount;
@@ -123,8 +116,6 @@ public final class Ttle {
   public static int _800c6738;
   public static final int[] configColours = {0, 0, 0, 0, 0, 0};
 
-  public static final long[] vramData = {0, 0, 0};
-
   public static int _800c6754;
   public static int flamesZ;
 
@@ -135,37 +126,50 @@ public final class Ttle {
   public static int selectedMenuOption;
   public static int selectedConfigCategory;
 
-  // This is all data stored in the overlay rom
-  public static final ArrayRef<Pointer<ArrayRef<IntRef>>> characterXpPtrs_800ce6d8 = MEMORY.ref(4, 0x800ce6d8L, ArrayRef.of(Pointer.classFor(ArrayRef.classFor(IntRef.class)), 9, 4, Pointer.deferred(4, ArrayRef.of(IntRef.class, 61, 4, IntRef::new))));
-  public static final ArrayRef<ArrayRef<UnsignedShortRef>> startingEquipment_800ce6fc = MEMORY.ref(2, 0x800ce6fcL, ArrayRef.of(ArrayRef.classFor(UnsignedShortRef.class), 9, 0xa, ArrayRef.of(UnsignedShortRef.class, 5, 2, UnsignedShortRef::new)));
-  public static final ArrayRef<ShortRef> startingAddition_800ce758 = MEMORY.ref(2, 0x800ce758L, ArrayRef.of(ShortRef.class, 9, 2, ShortRef::new));
-  public static final ArrayRef<UnsignedShortRef> startingItems_800ce76c = MEMORY.ref(2, 0x800ce76cL, ArrayRef.of(UnsignedShortRef.class, 9, 2, UnsignedShortRef::new));
-  public static final ArrayRef<RECT> rectArray_800ce798 = MEMORY.ref(2, 0x800ce798L, ArrayRef.of(RECT.class, 3, 8, RECT::new));
-  public static final ArrayRef<ByteRef> _800ce7b0 = MEMORY.ref(1, 0x800ce7b0L, ArrayRef.of(ByteRef.class, 4, 1, ByteRef::new));
-  public static final Value _800ce7f8 = MEMORY.ref(1, 0x800ce7f8L);
-  public static final Value _800ce840 = MEMORY.ref(1, 0x800ce840L);
-  public static final Value _800ce8ac = MEMORY.ref(2, 0x800ce8acL);
-  public static final ArrayRef<UnsignedIntRef> _800ce8f4 = MEMORY.ref(4, 0x800ce8f4L, ArrayRef.of(UnsignedIntRef.class, 8, 4, UnsignedIntRef::new));
-  public static final Value _800ce914 = MEMORY.ref(2, 0x800ce914L);
-  public static final Value _800ce91c = MEMORY.ref(2, 0x800ce91cL);
+  private static VramTexture backgroundTexture;
+  private static VramTexture[] backgroundPalettes;
+  private static Renderable backgroundRenderable;
+  private static VramTexture logoTexture;
+  private static VramTexture[] logoPalettes;
+  private static Renderable logoRenderable;
+  private static VramTexture menuTextTexture;
+  private static VramTexture[] menuTextPalettes;
+  private static final Renderable[] menuTextRenderables = new Renderable[3];
+  private static final Renderable[] menuTextBlurRenderables = new Renderable[3];
+  private static final Renderable[] menuOptionsRenderables = new Renderable[6];
+  private static final Renderable[] menuOptionsCaptionRenderables = new Renderable[2];
+  private static VramTexture tmTexture;
+  private static VramTexture[] tmPalettes;
+  private static Renderable tmRenderable;
+  private static VramTexture copyrightTexture;
+  private static VramTexture[] copyrightPalettes;
+  private static Renderable copyrightRenderable;
+  private static VramTexture fireTexture;
+  private static VramTexture[] firePalettes;
+  private static Renderable[] fireRenderable;
+
+  public static final int[][] startingEquipment_800ce6fc = {
+    { 0, 76, 46, 93, 152},
+    {20, 77, 47, 93, 152},
+    {27, 82, 62, 96, 152},
+    {13, 82, 63, 96, 152},
+    {40, 78, 57, 94, 152},
+    {20, 77, 47, 93, 152},
+    {34, 84, 64, 97, 152},
+    { 8, 78, 53, 94, 152},
+    {27, 82, 62, 96, 152},
+  };
+  public static final int[] startingAddition_800ce758 = {0, 8, -1, 14, 29, 8, 23, 19, -1};
+  public static final int[] startingItems_800ce76c = {195, 203, 203};
+
+  public static final int[] _800ce7b0 = {255, 1, 255, 255};
+  public static final int[] _800ce7f8 = {112, 96, 128, 80, 0, 64, 16, 56, 32, 64, 48, 96, 64, 80, 80, 32, 96, 32};
+  public static final int[] _800ce840 = {128, 96, 112, 128, 128, 96, 0, 144, 80, 0, 176, 72, 0, 208, 72, 128, 0, 112, 128, 32, 88, 128, 64, 48, 173, 64, 48};
+  public static final int[] _800ce8ac = {-48, 16, -40, 34, -32, 52, -128, 34, -32, 34, 48, 34, -128, 52, -32, 52, 48, 52};
 
   private static Window.Events.Cursor onMouseMove;
   private static Window.Events.Click onMouseRelease;
   private static Window.Events.Key onKeyPress;
-
-  public static void test() {
-    mainCallbackIndexOnceLoaded_8004dd24.set(2);
-    pregameLoadingStage_800bb10c.set(0);
-    whichMenu_800bdc38 = WhichMenu.NONE_0;
-    setWidthAndFlags(320);
-    vsyncMode_8007a3b8.set(2);
-    SCRIPTS.resume();
-
-    FUN_8002a9c0();
-    _80052c44.setu(5);
-
-    drgnBinIndex_800bc058.set(1);
-  }
 
   @Method(0x800c7194L)
   public static void setUpNewGameData() {
@@ -176,7 +180,7 @@ public final class Ttle {
 
     gameState_800babc8.vibrationEnabled_4e1.set(oldVibration);
     gameState_800babc8.mono_4e0.set(oldMono);
-    gameState_800babc8.indicatorMode_4e8.set(0x2L);
+    gameState_800babc8.indicatorMode_4e8.set(2);
     gameState_800babc8.charIndex_88.get(0).set(0);
     gameState_800babc8.charIndex_88.get(1).set(-1);
     gameState_800babc8.charIndex_88.get(2).set(-1);
@@ -185,7 +189,7 @@ public final class Ttle {
     for(int charIndex = 0; charIndex < 9; charIndex++) {
       final CharacterData2c charData = gameState_800babc8.charData_32c.get(charIndex);
       final int level = characterStartingLevels[charIndex];
-      charData.xp_00.set(characterXpPtrs_800ce6d8.get(charIndex).deref().get(level).get());
+      charData.xp_00.set(xpTables[charIndex][level]);
       charData.hp_08.set(levelStuff_80111cfc.get(charIndex).deref().get(level).hp_00.get());
       charData.mp_0a.set(magicStuff_80111d20.get(charIndex).deref().get(1).mp_00.get());
       charData.sp_0c.set(0);
@@ -215,11 +219,11 @@ public final class Ttle {
       }
 
       //LAB_800c730c
-      charData.selectedAddition_19.set(startingAddition_800ce758.get(charIndex).get());
+      charData.selectedAddition_19.set(startingAddition_800ce758[charIndex]);
 
       //LAB_800c7334
       for(int i = 0; i < 5; i++) {
-        charData.equipment_14.get(i).set(startingEquipment_800ce6fc.get(charIndex).get(i).get());
+        charData.equipment_14.get(i).set(startingEquipment_800ce6fc[charIndex][i]);
       }
     }
 
@@ -238,15 +242,9 @@ public final class Ttle {
     }
 
     //LAB_800c73d8
-    for(int i = 0; i < Config.inventorySize() + 1; i++) {
-      final int itemId = startingItems_800ce76c.get(i).get();
-      if(itemId == 0xff) {
-        gameState_800babc8.itemCount_1e6.set((short)i);
-        break;
-      }
-
-      //LAB_800c73f0
-      gameState_800babc8.items_2e9.get(i).set(itemId);
+    gameState_800babc8.itemCount_1e6.set((short)startingItems_800ce76c.length);
+    for(int i = 0; i < startingItems_800ce76c.length; i++) {
+      gameState_800babc8.items_2e9.get(i).set(startingItems_800ce76c[i]);
     }
 
     //LAB_800c7404
@@ -281,7 +279,7 @@ public final class Ttle {
   }
 
   @Method(0x800c75fcL)
-  public static void FUN_800c75fc() {
+  public static void gameOver() {
     switch(pregameLoadingStage_800bb10c.get()) {
       case 0 -> {
         FUN_8002a9c0();
@@ -300,8 +298,9 @@ public final class Ttle {
         pregameLoadingStage_800bb10c.set(4);
       }
 
+      // Game Over Screen
       case 4 -> {
-        if((joypadPress_8007a398.get() & 0x820) != 0) {
+        if(Input.pressedThisFrame(InputAction.BUTTON_CENTER_2) || Input.pressedThisFrame(InputAction.BUTTON_SOUTH)) {
           Scus94491BpeSegment_8002.playSound(2);
           pregameLoadingStage_800bb10c.set(5);
           scriptStartEffect(1, 10);
@@ -362,14 +361,6 @@ public final class Ttle {
     selectedMenuOption = 0;
     selectedConfigCategory = 0;
 
-    //LAB_800c7888
-    for(int i = 0; i < 3; i++) {
-      //LAB_800c78a4
-      vramData[i] = mallocTail(rectArray_800ce798.get(i).w.get() * rectArray_800ce798.get(i).h.get() * 2L);
-      StoreImage(rectArray_800ce798.get(i), vramData[i]);
-    }
-
-    //LAB_800c7978
     setWidthAndFlags(384);
     setProjectionPlaneDistance(320);
     GsRVIEW2_800c6760.viewpoint_00.set(0, 0, 2000);
@@ -381,14 +372,16 @@ public final class Ttle {
     vsyncMode_8007a3b8.set(2);
 
     loadDrgnDir(0, 5718, Ttle::menuTexturesMrgLoaded);
-    loadDrgnBinFile(0, 5719, 0, Ttle::menuFireTmdLoaded, 0, 0x2L);
+    loadDrgnFile(0, 5719, file -> menuFireTmdLoaded("DRGN0/5719", file));
+
+    prepareRenderables();
 
     // Prepare fire animation struct
     //LAB_800c7d30
     for(int i = 0; i < 4; i++) {
       //LAB_800c7d4c
-      final RECT rect = new RECT((short)(944 + i * 16), (short)256, (short)64, (short)64);
-      _800c66d4.get(i).set(FUN_800cdaa0(rect, 0, 0x1L, _800ce7b0.get(i).getUnsigned()));
+      final Rect4i rect = new Rect4i(944 + i * 16, 256, 256, 64);
+      fireAnimation_800c66d4[i] = FUN_800cdaa0(rect, _800ce7b0[i]);
     }
 
     scriptStartEffect(2, 15);
@@ -402,7 +395,7 @@ public final class Ttle {
    * Loads the MRG file @ sector 61510. All files are TIMs.
    * <ol start="0">
    *   <li>Menu background (upper portion)</li>
-   *   <li>Logo fire 1</li>
+   *   <li>Menu background (lower portion)</li>
    *   <li>Logo</li>
    *   <li>Menu text</li>
    *   <li>TM</li>
@@ -411,25 +404,193 @@ public final class Ttle {
    *   <li>Logo fire 2</li>
    *   <li>Logo fire 3 (same as 4)</li>
    *   <li>Logo fire 4 (same as 3)</li>
-   *   <li>Menu background (lower portion)</li>
+   *   <li>Logo fire 1</li>
    * </ol>
    */
   @Method(0x800c7af0L)
-  public static void menuTexturesMrgLoaded(final List<byte[]> files) {
-    for(final byte[] data : files) {
-      if(data.length != 0) {
-        new Tim(data).uploadToGpu();
-      }
-    }
+  public static void menuTexturesMrgLoaded(final List<FileData> files) {
+    backgroundTexture = stitchVertical(
+      textureFromTim(new Tim(files.get(0))),
+      textureFromTim(new Tim(files.get(1)))
+    );
+
+    backgroundPalettes = palettesFromTim(new Tim(files.get(0)));
+
+    logoTexture = textureFromTim(new Tim(files.get(2)));
+    logoPalettes = palettesFromTim(new Tim(files.get(2)));
+
+    menuTextTexture = textureFromTim(new Tim(files.get(3)));
+    menuTextPalettes = palettesFromTim(new Tim(files.get(3)));
+
+    tmTexture = textureFromTim(new Tim(files.get(4)));
+    tmPalettes = palettesFromTim(new Tim(files.get(4)));
+
+    copyrightTexture = stitchHorizontal(
+      textureFromTim(new Tim(files.get(5))),
+      textureFromTim(new Tim(files.get(6)))
+    );
+
+    copyrightPalettes = palettesFromTim(new Tim(files.get(5)));
+
+    fireTexture = stitch(
+      textureFromTim(new Tim(files.get(10))),
+      textureFromTim(new Tim(files.get(7))),
+      textureFromTim(new Tim(files.get(8))),
+      textureFromTim(new Tim(files.get(9)))
+    );
+
+    firePalettes = palettesFromTims(new Tim(files.get(10)), new Tim(files.get(7)), new Tim(files.get(8)), new Tim(files.get(9)));
   }
 
   @Method(0x800c7c18L)
-  public static void menuFireTmdLoaded(final long tmdAddressPtr, final int fileSize, final int unused) {
-    final TmdWithId tmd = MEMORY.ref(4, tmdAddressPtr).cast(TmdWithId::new);
+  public static void menuFireTmdLoaded(final String modelName, final FileData file) {
+    final TmdWithId tmd = new TmdWithId(modelName, file);
     _800c66d0 = parseTmdFile(tmd);
     FUN_800cc0b0(_800c66d0, null);
-    _800c66d0.tmd_0c = tmd;
     setDobjAttributes(_800c66d0, 0);
+
+    fireRenderable = new Renderable[_800c66d0.dobj2s_00.length];
+    for(int i = 0; i < _800c66d0.dobj2s_00.length; i++) {
+      fireRenderable[i] = ModelLoader
+        .fromTmd("Fire " + i, _800c66d0.dobj2s_00[i].tmd_08)
+        .texture(fireTexture)
+        .palettes(firePalettes)
+        .build();
+    }
+  }
+
+  private static void prepareRenderables() {
+    backgroundRenderable = ModelLoader.quad(
+      "Background",
+      -192, -120, orderingTableSize_1f8003c8.get() - 3,
+      384, 424,
+      0, 0,
+      384, 424,
+      0,
+      384, 0,
+      0, 0, 0,
+      null
+    )
+      .texture(backgroundTexture)
+      .palettes(backgroundPalettes)
+      .build();
+
+    logoRenderable = ModelLoader.quad(
+      "Logo",
+      -184, -80, orderingTableSize_1f8003c8.get() - 4,
+      352, 88,
+      0, 0,
+      352, 88,
+      1,
+      576, 256,
+      0, 0, 0,
+      Translucency.B_PLUS_F
+    )
+      .texture(logoTexture)
+      .palettes(logoPalettes)
+      .build();
+
+    tmRenderable = ModelLoader.quad(
+      "TM",
+      134, -14, orderingTableSize_1f8003c8.get() - 4,
+      16, 8,
+      0, 0,
+      16, 8,
+      80,
+      896, 240,
+      0, 0, 0,
+      Translucency.B_PLUS_F
+    )
+      .texture(tmTexture)
+      .palettes(tmPalettes)
+      .build();
+
+    Arrays.setAll(
+      menuTextRenderables,
+      i -> ModelLoader.quad(
+        "Text " + i,
+        _800ce8ac[i * 2], _800ce8ac[i * 2 + 1], 100,
+        _800ce7f8[i * 2 + 1], 16,
+        0, _800ce7f8[i * 2],
+         _800ce7f8[i * 2 + 1], 16,
+        0,
+        576, 0,
+        0x80, 0x80, 0x80,
+        Translucency.B_PLUS_F
+      )
+        .texture(menuTextTexture)
+        .palettes(menuTextPalettes)
+        .build()
+    );
+
+    Arrays.setAll(
+      menuTextBlurRenderables,
+      i -> ModelLoader.quad(
+        "Text blur " + i,
+        _800ce8ac[i * 2] - 8, _800ce8ac[i * 2 + 1] - 8, 100,
+        _800ce840[i * 3 + 2], 31,
+        _800ce840[i * 3], _800ce840[i * 3 + 1],
+        _800ce840[i * 3 + 2], 32,
+        0,
+        576, 0,
+        0x80, 0x80, 0x80,
+        Translucency.B_PLUS_F
+      )
+      .texture(menuTextTexture)
+      .palettes(menuTextPalettes)
+      .build()
+    );
+
+    Arrays.setAll(
+      menuOptionsRenderables,
+      i -> ModelLoader.quad(
+        "Option " + i,
+        _800ce8ac[(i + 3) * 2], _800ce8ac[(i + 3) * 2 + 1], 100,
+        _800ce7f8[(i + 3) * 2 + 1], 16,
+        0, _800ce7f8[(i + 3) * 2],
+        _800ce7f8[(i + 3) * 2 + 1], 16,
+        0,
+        576, 0,
+        0x80, 0x80, 0x80,
+        Translucency.B_PLUS_F
+      )
+      .texture(menuTextTexture)
+      .palettes(menuTextPalettes)
+      .build()
+    );
+
+    Arrays.setAll(
+      menuOptionsCaptionRenderables,
+      i -> ModelLoader.quad(
+        "Option caption " + i,
+        _800ce8ac[(i * 3 + 3) * 2] - 8, _800ce8ac[(i * 3 + 3) * 2 + 1] - 9, 100,
+        _800ce840[(i * 3 + 3) * 3 + 2], 32,
+        _800ce840[(i * 3 + 3) * 3], _800ce840[(i * 3 + 3) * 3 + 1],
+        _800ce840[(i * 3 + 3) * 3 + 2], 31,
+        0,
+        576, 0,
+        0x80, 0x80, 0x80,
+        Translucency.B_PLUS_F
+      )
+      .texture(menuTextTexture)
+      .palettes(menuTextPalettes)
+      .build()
+    );
+
+    copyrightRenderable = ModelLoader.quad(
+      "Copyright",
+      -188, 80, 100,
+      368, 32,
+      0, 0,
+      368, 32,
+      64,
+      896, 0,
+      0, 0, 0,
+      Translucency.B_PLUS_F
+    )
+      .texture(copyrightTexture)
+      .palettes(copyrightPalettes)
+      .build();
   }
 
   @Method(0x800c7e50L)
@@ -449,7 +610,6 @@ public final class Ttle {
     _800c6754++;
     if(_800c6754 >= 16) {
       removeInputHandlers();
-      restoreVram();
       deallocateFire();
 
       fmvIndex_800bf0dc.setu(0x2L);
@@ -475,7 +635,6 @@ public final class Ttle {
       if(_800c6728 == 2) {
         whichMenu_800bdc38 = WhichMenu.INIT_LOAD_GAME_MENU_11;
         removeInputHandlers();
-        restoreVram();
         deallocateFire();
         _800c6728 = 3;
       }
@@ -536,7 +695,6 @@ public final class Ttle {
     _800c6754++;
     if(_800c6754 > 15) {
       removeInputHandlers();
-      restoreVram();
       deallocateFire();
 
       fmvIndex_800bf0dc.setu(0);
@@ -601,13 +759,18 @@ public final class Ttle {
     }
 
     //LAB_800c8448
-    if(joypadInput_8007a39c.get(0xf9ffL) != 0) {
-      menuLoadingStage = 3;
-      menuIdleTime = 0;
+    if(Input.hasActivityThisFrame()) {
+      resetIdleTime();
     }
 
     //LAB_800c8474
   }
+
+  private static void resetIdleTime() {
+    menuLoadingStage = 3;
+    menuIdleTime = 0;
+  }
+
 
   private static void addInputHandlers() {
     onMouseMove = GPU.window().events.onMouseMove((window, x, y) -> {
@@ -634,7 +797,7 @@ public final class Ttle {
             final int menuWidth = (int)(130 * scaleX);
             final int menuHeight = (int)(16 * scaleY);
             final int menuX = (window.getWidth() - menuWidth) / 2;
-            final int menuY = (int)(_800ce8ac.offset((i * 2 + 1) * 4).getSigned() * scaleY) + window.getHeight() / 2;
+            final int menuY = (int)(_800ce8ac[i * 2 + 1] * scaleY) + window.getHeight() / 2;
 
             if(MathHelper.inBox((int)x, (int)y, menuX, menuY, menuWidth, menuHeight)) {
               if(selectedMenuOption != i) {
@@ -650,7 +813,7 @@ public final class Ttle {
             final int menuWidth = (int)(300 * scaleX);
             final int menuHeight = (int)(16 * scaleY);
             final int menuX = (window.getWidth() - menuWidth) / 2;
-            final int menuY = (int)(_800ce8ac.offset(((row * 3 + 3) * 2 + 1) * 4).getSigned() * scaleY) + window.getHeight() / 2;
+            final int menuY = (int)(_800ce8ac[(row * 3 + 3) * 2 + 1] * scaleY) + window.getHeight() / 2;
 
             if(MathHelper.inBox((int)x, (int)y, menuX, menuY, menuWidth, menuHeight)) {
               if(selectedConfigCategory != row * 3) {
@@ -698,7 +861,7 @@ public final class Ttle {
             final int menuWidth = (int)(130 * scaleX);
             final int menuHeight = (int)(16 * scaleY);
             final int menuX = (window.getWidth() - menuWidth) / 2;
-            final int menuY = (int)(_800ce8ac.offset((i * 2 + 1) * 4).getSigned() * scaleY) + window.getHeight() / 2;
+            final int menuY = (int)(_800ce8ac[i * 2 + 1] * scaleY) + window.getHeight() / 2;
 
             if(MathHelper.inBox((int)x, (int)y, menuX, menuY, menuWidth, menuHeight)) {
               playSound(0, 2, 0, 0, (short)0, (short)0);
@@ -717,10 +880,10 @@ public final class Ttle {
         } else if(_800c6728 == 1 && _800c6738 < 3) {
           for(int i = 0; i < 6; i++) {
             if(i % 3 != 0) {
-              final int menuWidth = (int)(_800ce7f8.offset(((i + 3) * 2 + 1) * 4).get() * scaleX);
+              final int menuWidth = (int)(_800ce7f8[(i + 3) * 2 + 1] * scaleX);
               final int menuHeight = (int)(16 * scaleY);
-              final int menuX = (int)(_800ce8ac.offset((i + 3) * 8).getSigned() * scaleX) + window.getWidth() / 2;
-              final int menuY = (int)(_800ce8ac.offset(((i + 3) * 2 + 1) * 4).getSigned() * scaleY) + window.getHeight() / 2;
+              final int menuX = (int)(_800ce8ac[(i + 3) * 2] * scaleX) + window.getWidth() / 2;
+              final int menuY = (int)(_800ce8ac[(i + 3) * 2 + 1] * scaleY) + window.getHeight() / 2;
 
               if(MathHelper.inBox((int)x, (int)y, menuX, menuY, menuWidth, menuHeight)) {
                 playSound(0, 2, 0, 0, (short)0, (short)0);
@@ -755,12 +918,18 @@ public final class Ttle {
     onKeyPress = GPU.window().events.onKeyPress((window, key, scancode, mods) -> {
       if(_800c6728 == 1 && _800c6738 < 3) {
         if(key == GLFW.GLFW_KEY_ESCAPE) {
-          playSound(0, 3, 0, 0, (short)0, (short)0);
-          _800c6738 = 3;
-          _800c672c = 0;
+          menuEscape();
         }
       }
     });
+  }
+
+  private static void menuEscape() {
+    playSound(0, 3, 0, 0, (short)0, (short)0);
+    _800c6738 = 3;
+    _800c672c = 0;
+
+    resetIdleTime();
   }
 
   private static void removeInputHandlers() {
@@ -775,7 +944,7 @@ public final class Ttle {
   @Method(0x800c8484L)
   public static void handleMainInput() {
     if(_800c672c < 3) {
-      if(joypadPress_8007a398.get(0x20L) != 0) { // Menu button X
+      if(Input.pressedThisFrame(InputAction.BUTTON_SOUTH)) { // Menu button X
         playSound(0, 2, 0, 0, (short)0, (short)0);
 
         _800c672c = 3;
@@ -784,7 +953,7 @@ public final class Ttle {
           selectedConfigCategory = 0;
           _800c6728 = 1;
         }
-      } else if(joypadPress_8007a398.get(0x1000L) != 0) { // Menu button up
+      } else if(Input.pressedThisFrame(InputAction.DPAD_UP) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_UP)) { // Menu button up
         playSound(0, 1, 0, 0, (short)0, (short)0);
 
         selectedMenuOption--;
@@ -797,7 +966,7 @@ public final class Ttle {
         }
 
         _800c672c = 2;
-      } else if(joypadPress_8007a398.get(0x4000L) != 0) { // Menu button down
+      } else if(Input.pressedThisFrame(InputAction.DPAD_DOWN) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_DOWN)) { // Menu button down
         playSound(0, 1, 0, 0, (short)0, (short)0);
 
         selectedMenuOption++;
@@ -903,9 +1072,6 @@ public final class Ttle {
 
     //LAB_800c8a70
     for(int i = 0; i < 3; i++) {
-      final int x = (int)_800ce8ac.offset(i * 2 * 4).getSigned();
-      final int y = (int)_800ce8ac.offset((i * 2 + 1) * 4).getSigned();
-
       final int colour;
       if(i != 1 || hasSavedGames == 1) {
         colour = menuOptionTransparency[i];
@@ -914,37 +1080,15 @@ public final class Ttle {
       }
 
       //LAB_800c8a8c
-      GPU.queueCommand(100, new GpuCommandPoly(4)
-        .bpp(Bpp.BITS_4)
-        .translucent(Translucency.B_PLUS_F)
-        .monochrome(colour)
-        .pos(0, x, y)
-        .uv(0, 0, (int)_800ce7f8.offset(i * 2 * 4).get())
-        .pos(1, x + (int)_800ce7f8.offset(2, (i * 2 + 1) * 4).get(), y)
-        .uv(1, (int)_800ce7f8.offset((i * 2 + 1) * 4).get(), (int)_800ce7f8.offset(i * 2 * 4).get())
-        .pos(2, x, y + 16)
-        .uv(2, 0, (int)_800ce7f8.offset(i * 2 * 4).get() + 16)
-        .pos(3, x + (int)_800ce7f8.offset(2, (i * 2 + 1) * 4).get(), y + 16)
-        .uv(3, (int)_800ce7f8.offset((i * 2 + 1) * 4).get(), (int)_800ce7f8.offset(i * 2 * 4).get() + 16)
-        .clut(640, selectedMenuOption == i ? 5 : 2)
-        .vramPos(576, 0)
-      );
+      menuTextRenderables[i]
+        .recolourMono(colour)
+        .palette(selectedMenuOption == i ? 5 : 2)
+        .render();
 
-      GPU.queueCommand(100, new GpuCommandPoly(4)
-        .bpp(Bpp.BITS_4)
-        .translucent(Translucency.B_PLUS_F)
-        .monochrome(colour)
-        .pos(0, x - 8, y - 8)
-        .uv(0, (int)_800ce840.offset(i * 3 * 4).get(), (int)_800ce840.offset((i * 3 + 1) * 4).get())
-        .clut(640, 4)
-        .pos(1, x - 8 + (int)_800ce840.offset((i * 3 + 2) * 4).get(), y - 8)
-        .uv(1, (int)(_800ce840.offset(i * 3 * 4).get() + _800ce840.offset((i * 3 + 2) * 4).get()), (int)_800ce840.offset((i * 3 + 1) * 4).get())
-        .vramPos(576, 0)
-        .pos(2, x - 8, y + 23)
-        .uv(2, (int)_800ce840.offset(i * 3 * 4).get(), (int)_800ce840.offset((i * 3 + 1) * 4).get() + 32)
-        .pos(3, x - 8 + (int)_800ce840.offset((i * 3 + 2) * 4).get(), y + 23)
-        .uv(3, (int)(_800ce840.offset(i * 3 * 4).get() + _800ce840.offset((i * 3 + 2) * 4).get()), (int)_800ce840.offset((i * 3 + 1) * 4).get() + 32)
-      );
+      menuTextBlurRenderables[i]
+        .recolourMono(colour)
+        .palette(4)
+        .render();
     }
 
     //LAB_800c9390
@@ -954,19 +1098,23 @@ public final class Ttle {
   @Method(0x800c93b0L)
   public static void handleOptionsInput() {
     if(_800c6728 == 1 && _800c6738 < 3) {
-      if(joypadPress_8007a398.get(0x5000) != 0) { // Up, down
+
+      // Up, down
+      if(Input.pressedThisFrame(InputAction.DPAD_UP) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_UP) ||
+        Input.pressedThisFrame(InputAction.DPAD_DOWN) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_DOWN)) {
         playSound(0, 1, 0, 0, (short)0, (short)0);
         selectedConfigCategory ^= 0b11;
         _800c6738 = 2;
       }
 
-      if(joypadPress_8007a398.get(0x40) != 0) { // Back
-        playSound(0, 3, 0, 0, (short)0, (short)0);
-        _800c6738 = 3;
-        _800c672c = 0;
+      // Back
+      if(Input.pressedThisFrame(InputAction.BUTTON_EAST)) {
+        menuEscape();
       }
 
-      if(joypadPress_8007a398.get(0xa000) != 0) { // Left, right
+      // Left, right
+      if(Input.pressedThisFrame(InputAction.DPAD_LEFT) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_LEFT) ||
+        Input.pressedThisFrame(InputAction.DPAD_RIGHT) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_RIGHT)) {
         playSound(0, 1, 0, 0, (short)0, (short)0);
 
         if(selectedConfigCategory == 0) {
@@ -993,9 +1141,9 @@ public final class Ttle {
     }
 
     //LAB_800c95c4
-    int sp18 = gameState_800babc8.mono_4e0.get() + 1;
+    final int sp18 = gameState_800babc8.mono_4e0.get() + 1;
 
-    int sp1c;
+    final int sp1c;
     if(gameState_800babc8.vibrationEnabled_4e1.get() == 0) {
       //LAB_800c95f8
       sp1c = 5;
@@ -1103,92 +1251,20 @@ public final class Ttle {
 
     //LAB_800c9b70
     for(int i = 0; i < 6; i++) {
-      GPU.queueCommand(100, new GpuCommandPoly(4)
-        .bpp(Bpp.BITS_4)
-        .translucent(Translucency.B_PLUS_F)
-        .monochrome(configColours[i])
-        .clut(640, selectedConfigCategory == i ? 5 : 2)
-        .vramPos(576, 0)
-        .pos(0, (int)_800ce8ac.offset((i + 3) * 8).getSigned(), (int)_800ce8ac.offset(((i + 3) * 2 + 1) * 4).getSigned())
-        .uv(0, 0, (int)_800ce7f8.offset((i + 3) * 8).get())
-        .pos(1, (int)(_800ce8ac.offset((i + 3) * 8).getSigned() + _800ce7f8.offset(((i + 3) * 2 + 1) * 4).get()), (int)_800ce8ac.offset(((i + 3) * 2 + 1) * 4).getSigned())
-        .uv(1, (int)_800ce7f8.offset(((i + 3) * 2 + 1) * 4).get(), (int)_800ce7f8.offset((i + 3) * 8).get())
-        .pos(2, (int)_800ce8ac.offset((i + 3) * 8).getSigned(), (int)_800ce8ac.offset(((i + 3) * 2 + 1) * 4).getSigned() + 16)
-        .uv(2, 0, (int)_800ce7f8.offset((i + 3) * 8).get() + 16)
-        .pos(3, (int)(_800ce8ac.offset((i + 3) * 8).getSigned() + _800ce7f8.offset(((i + 3) * 2 + 1) * 4).get()), (int)_800ce8ac.offset(((i + 3) * 2 + 1) * 4).getSigned() + 16)
-        .uv(3, (int)_800ce7f8.offset(((i + 3) * 2 + 1) * 4).get(), (int)_800ce7f8.offset((i + 3) * 8).get() + 16)
-      );
+      menuOptionsRenderables[i]
+        .recolourMono(configColours[i])
+        .palette(selectedConfigCategory == i ? 5 : 2)
+        .render();
     }
 
-    // Render glowing overlay for Sound/Vibrate options
+    // Render glowing overlay for Sound/Vibrate captions
     for(int i = 0; i < 2; i++) {
       //LAB_800ca018
-      sp18 = i * 3;
-
-      GPU.queueCommand(100, new GpuCommandPoly(4)
-        .bpp(Bpp.BITS_4)
-        .translucent(Translucency.B_PLUS_F)
-        .monochrome(configColours[sp18])
-        .clut(640, 4)
-        .vramPos(576, 0)
-        .pos(0, (int)_800ce8ac.offset((sp18 + 3) * 8).getSigned() - 8, (int)_800ce8ac.offset(((sp18 + 3) * 2 + 1) * 4).getSigned() - 9)
-        .uv(0, (int)_800ce840.offset((sp18 + 3) * 3 * 4).get(), (int)_800ce840.offset(((sp18 + 3) * 3 + 1) * 4).get())
-        .pos(1, (int)(_800ce8ac.offset((sp18 + 3) * 8).getSigned() + _800ce840.offset(((sp18 + 3) * 3 + 2) * 4).get() - 8), (int)_800ce8ac.offset(((sp18 + 3) * 2 + 1) * 4).getSigned() - 9)
-        .uv(1, (int)(_800ce840.offset((sp18 + 3) * 3 * 4).get() + _800ce840.offset(((sp18 + 3) * 3 + 2) * 4).get()), (int)_800ce840.offset(((sp18 + 3) * 3 + 1) * 4).get())
-        .pos(2, (int)_800ce8ac.offset((sp18 + 3) * 8).getSigned() - 8, (int)_800ce8ac.offset(((sp18 + 3) * 2 + 1) * 4).getSigned() + 23)
-        .uv(2, (int)_800ce840.offset((sp18 + 3) * 3 * 4).get(), (int)_800ce840.offset(((sp18 + 3) * 3 + 1) * 4).get() + 31)
-        .pos(3, (int)(_800ce8ac.offset((sp18 + 3) * 8).getSigned() + _800ce840.offset(((sp18 + 3) * 3 + 2) * 4).get() - 8), (int)_800ce8ac.offset(((sp18 + 3) * 2 + 1) * 4).getSigned() + 23)
-        .uv(3, (int)(_800ce840.offset((sp18 + 3) * 3 * 4).get() + _800ce840.offset(((sp18 + 3) * 3 + 2) * 4).get()), (int)_800ce840.offset(((sp18 + 3) * 3 + 1) * 4).get() + 31)
-      );
+      menuOptionsCaptionRenderables[i]
+        .recolourMono(configColours[i * 3])
+        .palette(4)
+        .render();
     }
-
-    // Render glowing overlay for selected Sound/Vibration option
-    for(int i = 0; i < 2; i++) {
-      //LAB_800ca59c
-      final int sp14;
-      if(i == 0) {
-        sp14 = gameState_800babc8.mono_4e0.get() + 4;
-        sp1c = gameState_800babc8.mono_4e0.get() + 1;
-      } else {
-        //LAB_800ca5dc
-        if(gameState_800babc8.vibrationEnabled_4e1.get() == 0) {
-          //LAB_800ca5fc
-          sp14 = 8;
-        } else {
-          sp14 = 7;
-        }
-
-        //LAB_800ca600
-        if(gameState_800babc8.vibrationEnabled_4e1.get() == 0) {
-          //LAB_800ca624
-          sp1c = 5;
-        } else {
-          sp1c = 4;
-        }
-
-        //LAB_800ca628
-      }
-
-      //LAB_800ca62c
-      GPU.queueCommand(100, new GpuCommandPoly(4)
-        .bpp(Bpp.BITS_4)
-        .translucent(Translucency.B_PLUS_F)
-        .monochrome(configColours[sp1c])
-        .clut(640, 4)
-        .vramPos(576, 0)
-        .pos(0, (int)_800ce8ac.offset(sp14 * 8).getSigned() - 8, (int)_800ce8ac.offset((sp14 * 2 + 1) * 4).getSigned() - 9)
-        .uv(0, (int)_800ce840.offset(sp14 * 3 * 4).get(), (int)_800ce840.offset((sp14 * 3 + 1) * 4).get())
-        .pos(1, (int)(_800ce8ac.offset(sp14 * 8).getSigned() + _800ce840.offset((sp14 * 3 + 2) * 4).get() - 8), (int)_800ce8ac.offset((sp14 * 2 + 1) * 4).getSigned() - 9)
-        .uv(1, (int)(_800ce840.offset(sp14 * 3 * 4).get() + _800ce840.offset((sp14 * 3 + 2) * 4).get()), (int)_800ce840.offset((sp14 * 3 + 1) * 4).get())
-        .pos(2, (int)_800ce8ac.offset(sp14 * 8).getSigned() - 8, (int)_800ce8ac.offset((sp14 * 2 + 1) * 4).getSigned() + 23)
-        .uv(2, (int)_800ce840.offset(sp14 * 3 * 4).get(), (int)_800ce840.offset((sp14 * 3 + 1) * 4).get() + 31)
-        .pos(3, (int)(_800ce8ac.offset(sp14 * 8).getSigned() + _800ce840.offset((sp14 * 3 + 2) * 4).get() - 8), (int)_800ce8ac.offset((sp14 * 2 + 1) * 4).getSigned() + 23)
-        .uv(3, (int)(_800ce840.offset(sp14 * 3 * 4).get() + _800ce840.offset((sp14 * 3 + 2) * 4).get()), (int)_800ce840.offset((sp14 * 3 + 1) * 4).get() + 31)
-      );
-    }
-
-    //LAB_800cab28
-    //LAB_800cab34
   }
 
   @Method(0x800cab48L)
@@ -1206,21 +1282,8 @@ public final class Ttle {
 
     //LAB_800cabb8
     //LAB_800cabcc
-    for(int sp44 = 0; sp44 < 2; sp44++) {
-      //LAB_800cabe8
-      renderQuad(
-        Bpp.BITS_4,
-        896, 0,
-        0x1028,
-        copyrightFadeInAmount, copyrightFadeInAmount, copyrightFadeInAmount,
-        (int)_800ce8f4.get(sp44 * 4).get(), (int)_800ce8f4.get(sp44 * 4 + 1).get(),
-        (int)_800ce8f4.get(sp44 * 4 + 2).get(), (int)_800ce8f4.get(sp44 * 4 + 3).get(),
-        (int)_800ce914.offset(4, sp44 * 4).get(), 80,
-        (int)_800ce8f4.get(sp44 * 4 + 2).get(), (int)_800ce8f4.get(sp44 * 4 + 3).get(),
-        100,
-        Translucency.B_PLUS_F
-      );
-    }
+    //LAB_800cabe8
+    copyrightRenderable.recolourMono(copyrightFadeInAmount).render();
   }
 
   @Method(0x800cadd0L)
@@ -1232,34 +1295,9 @@ public final class Ttle {
 
     //LAB_800cae18
     //LAB_800cae2c
-    for(int i = 0; i < 2; i++) {
-      //LAB_800cae48
-      renderQuad(
-        Bpp.BITS_4,
-        576 + i * 64, 256,
-        0x68,
-        logoFadeInAmount, logoFadeInAmount, logoFadeInAmount,
-        0, 0,
-        (int)_800ce91c.offset(i * 2).get(), 88,
-        i * 255 - 184, -80,
-        (int)_800ce91c.offset(i * 2).get(), 88,
-        orderingTableSize_1f8003c8.get() - 4,
-        Translucency.B_PLUS_F
-      );
-    }
-
-    renderQuad(
-      Bpp.BITS_4,
-      896, 0,
-      0x1428,
-      logoFadeInAmount, logoFadeInAmount, logoFadeInAmount,
-      0, 240,
-      16, 8,
-      134, -14,
-      16, 8,
-      orderingTableSize_1f8003c8.get() - 4,
-      Translucency.B_PLUS_F
-    );
+    //LAB_800cae48
+    logoRenderable.recolourMono(logoFadeInAmount).render();
+    tmRenderable.recolourMono(logoFadeInAmount).render();
   }
 
   @Method(0x800cb070L)
@@ -1278,18 +1316,10 @@ public final class Ttle {
 
     //LAB_800cb0ec
     //LAB_800cb100
-    renderQuad(
-      Bpp.BITS_8,
-      384, 0,
-      0x28,
-      backgroundFadeInAmount, backgroundFadeInAmount, backgroundFadeInAmount,
-      0, 0,
-      384, 424,
-      -192, -120 + backgroundScrollAmount,
-      384, 424,
-      orderingTableSize_1f8003c8.get() - 3,
-      null
-    );
+    backgroundRenderable
+      .translate(0, backgroundScrollAmount)
+      .recolourMono(backgroundFadeInAmount)
+      .render();
 
     //LAB_800cb370
     backgroundScrollAmount++;
@@ -1300,54 +1330,13 @@ public final class Ttle {
     //LAB_800cb3b0
   }
 
-  /** TODO clut split */
-  @Method(0x800cb4c4L)
-  public static void renderQuad(final Bpp bpp, final int vramX, final int vramY, final int clut, final int r, final int g, final int b, final int u, final int v, final int tw, final int th, final int x, final int y, final int w, final int h, final int z, @Nullable final Translucency translucency) {
-    final GpuCommandPoly cmd = new GpuCommandPoly(4)
-      .bpp(bpp)
-      .rgb(r, g, b)
-      .pos(0, x, y)
-      .pos(1, x + w, y)
-      .pos(2, x, y + h)
-      .pos(3, x + w, y + h)
-      .uv(0, u, v)
-      .uv(1, u + tw, v)
-      .uv(2, u, v + th)
-      .uv(3, u + tw, v + th)
-      .clut((clut & 0b111111) * 16, clut >>> 6)
-      .vramPos(vramX, vramY);
-
-    if(translucency != null) {
-      cmd.translucent(translucency);
-    }
-
-    GPU.queueCommand(z, cmd);
-  }
-
-  @Method(0x800cb5c4L)
-  public static void restoreVram() {
-    //LAB_800cb5d8
-    for(int i = 0; i < 3; i++) {
-      //LAB_800cb5f4
-      LoadImage(rectArray_800ce798.get(i), vramData[i]);
-      free(vramData[i]);
-    }
-
-    //LAB_800cb688
-  }
-
   @Method(0x800cb69cL)
   public static void deallocateFire() {
-    deallocateTmdRenderer(_800c66d0);
     _800c66d0 = null;
 
-    //LAB_800cb6bc
     for(int i = 0; i < 4; i++) {
-      //LAB_800cb6d8
-      FUN_800ce448(_800c66d4.get(i).get());
+      fireAnimation_800c66d4[i] = null;
     }
-
-    //LAB_800cb714
   }
 
   @Method(0x800cb728L)
@@ -1383,14 +1372,18 @@ public final class Ttle {
       GsSetLightMatrix(sp10);
       ScaleMatrixL(sp30, scale);
       setRotTransMatrix(sp30);
-      FUN_800cc388(dobj2s[i]);
+      zOffset_1f8003e8.set(100);
+      fireRenderable[i]
+        .colourMultiplier(flameColour)
+        .render();
+      zOffset_1f8003e8.set(0);
     }
 
     //LAB_800cb904
     //LAB_800cb908
     for(int i = 0; i < 4; i++) {
       //LAB_800cb924
-      animateFire(_800c66d4.get(i).get());
+      animateFire(fireAnimation_800c66d4[i]);
     }
 
     //LAB_800cb960
@@ -1444,30 +1437,23 @@ public final class Ttle {
     return tmdRenderer;
   }
 
-  @Method(0x800cbeb4L)
-  public static void deallocateTmdRenderer(final TmdRenderingStruct renderer) {
-    free(renderer.tmd_0c.getAddress());
-  }
-
   @Method(0x800cbf3cL)
   public static int prepareTmdRenderer(final TmdRenderingStruct tmdRenderer, final TmdWithId tmd) {
-    adjustTmdPointers(tmd.tmd);
-
-    tmdRenderer.dobj2s_00 = new GsDOBJ2[tmd.tmd.header.nobj.get()];
-    tmdRenderer.coord2s_04 = new GsCOORDINATE2[tmd.tmd.header.nobj.get()];
+    tmdRenderer.dobj2s_00 = new GsDOBJ2[tmd.tmd.header.nobj];
+    tmdRenderer.coord2s_04 = new GsCOORDINATE2[tmd.tmd.header.nobj];
 
     Arrays.setAll(tmdRenderer.dobj2s_00, i -> new GsDOBJ2());
     Arrays.setAll(tmdRenderer.coord2s_04, i -> new GsCOORDINATE2());
 
     //LAB_800cc02c
-    for(int objIndex = 0; objIndex < tmd.tmd.header.nobj.get(); objIndex++) {
+    for(int objIndex = 0; objIndex < tmd.tmd.header.nobj; objIndex++) {
       //LAB_800cc04c
-      updateTmdPacketIlen(tmd.tmd.objTable, tmdRenderer.dobj2s_00[objIndex], objIndex);
+      tmdRenderer.dobj2s_00[objIndex].tmd_08 = tmd.tmd.objTable[objIndex];
     }
 
     //LAB_800cc088
     //LAB_800cc09c
-    return tmd.tmd.header.nobj.get();
+    return tmd.tmd.header.nobj;
   }
 
   @Method(0x800cc0b0L)
@@ -1503,340 +1489,56 @@ public final class Ttle {
     final MATRIX m = new MATRIX();
     m.set(identityMatrix_800c3568);
     m.transfer.set(a1.coord.transfer);
-    RotMatrix_8003faf0(a0, m);
+    RotMatrix_Xyz(a0, m);
     a1.coord.set(m);
     a1.flg = 0;
   }
 
-  @Method(0x800cc388L)
-  public static void FUN_800cc388(final GsDOBJ2 dobj2) {
-    final UnboundedArrayRef<SVECTOR> vertices = dobj2.tmd_08.vert_top_00.deref();
-    long primitives = dobj2.tmd_08.primitives_10.getPointer();
-    long primitiveCount = dobj2.tmd_08.n_primitive_14.get();
-
-    //LAB_800cc408
-    while(primitiveCount != 0) {
-      final long primitive = MEMORY.ref(4, primitives).get();
-      final long command = primitive & 0xff04_0000L;
-      final long len = primitive & 0xffffL;
-
-      //LAB_800cc420
-      primitiveCount -= len;
-
-      if(command == 0x3700_0000L) {
-        //LAB_800cc4a0
-        primitives = FUN_800cc57c(primitives, vertices, len);
-      } else if(command == 0x3f00_0000L) {
-        //LAB_800cc4cc
-        primitives = FUN_800ccb78(primitives, vertices, len);
-      }
-
-      //LAB_800cc558
-      //LAB_800cc560
-    }
-
-    //LAB_800cc568
-  }
-
-  @Method(0x800cc57cL)
-  public static long FUN_800cc57c(long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long count) {
-    //LAB_800cc5b0
-    for(int i = 0; i < count; i++) {
-      final GpuCommandPoly cmd = new GpuCommandPoly(3)
-        .translucent(Translucency.of(((int)MEMORY.ref(2, primitives).offset(0x0aL).get() & 0b1100000) >>> 5));
-
-      //LAB_800cc5c8
-      final SVECTOR vert0 = vertices.get((int)MEMORY.ref(2, primitives).offset(0x1cL).get());
-      final SVECTOR vert1 = vertices.get((int)MEMORY.ref(2, primitives).offset(0x1eL).get());
-      final SVECTOR vert2 = vertices.get((int)MEMORY.ref(2, primitives).offset(0x20L).get());
-      CPU.MTC2(vert0.getXY(), 0); // VXY0
-      CPU.MTC2(vert0.getZ(),  1); // VZ0
-      CPU.MTC2(vert1.getXY(), 2); // VXY1
-      CPU.MTC2(vert1.getZ(),  3); // VZ1
-      CPU.MTC2(vert2.getXY(), 4); // VXY2
-      CPU.MTC2(vert2.getZ(),  5); // VZ2
-      CPU.COP2(0x280030L); // Perspective transformation triple
-
-      cmd.uv(0, (int)MEMORY.ref(1, primitives).offset(0x04L).get(), (int)MEMORY.ref(1, primitives).offset(0x05L).get());
-      cmd.uv(1, (int)MEMORY.ref(1, primitives).offset(0x08L).get(), (int)MEMORY.ref(1, primitives).offset(0x09L).get());
-      cmd.uv(2, (int)MEMORY.ref(1, primitives).offset(0x0cL).get(), (int)MEMORY.ref(1, primitives).offset(0x0dL).get());
-
-      cmd.clut(((int)MEMORY.ref(2, primitives).offset(0x06L).get() & 0b111111) * 16, (int)MEMORY.ref(2, primitives).offset(0x06L).get() >>> 6);
-      cmd.vramPos(((int)MEMORY.ref(2, primitives).offset(0x0aL).get() & 0b1111) * 64, (MEMORY.ref(2, primitives).offset(0x0aL).get() & 0b10000) != 0 ? 256 : 0);
-
-      if((int)CPU.CFC2(31) >= 0) { // No errors
-        //LAB_800cc674
-        CPU.COP2(0x1400006L); // Normal clipping
-
-        if(CPU.MFC2(24L) != 0) { // Is visible
-          //LAB_800cc6b0
-          final DVECTOR v0 = new DVECTOR().setXY(CPU.MFC2(12));
-          final DVECTOR v1 = new DVECTOR().setXY(CPU.MFC2(13));
-          final DVECTOR v2 = new DVECTOR().setXY(CPU.MFC2(14));
-
-          cmd.pos(0, v0.getX(), v0.getY());
-          cmd.pos(1, v1.getX(), v1.getY());
-          cmd.pos(2, v2.getX(), v2.getY());
-
-          if((int)CPU.CFC2(31) >= 0) { // No errors
-            //LAB_800cc6e8
-            if(v0.getX() >= -0xc0 || v1.getX() >= -0xc0 || v2.getX() >= -0xc0) {
-              //LAB_800cc72c
-              if(v0.getY() >= -0x78 || v1.getY() >= -0x78 || v2.getY() >= -0x78) {
-                //LAB_800cc770
-                if(v0.getX() <= 0xc0 || v1.getX() <= 0xc0 || v2.getX() <= 0xc0) {
-                  //LAB_800cc7b4
-                  if(v0.getY() <= 0x78 || v1.getY() <= 0x78 || v2.getY() <= 0x78) {
-                    //LAB_800cc7f8
-                    CPU.COP2(0x158002dL); // Average of three Z values
-
-                    cmd.rgb(0, (int)(MEMORY.ref(1, primitives).offset(0x10L).get() * flameColour / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x11L).get() * flameColour / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x12L).get() * flameColour / 0xff));
-                    cmd.rgb(1, (int)(MEMORY.ref(1, primitives).offset(0x14L).get() * flameColour / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x15L).get() * flameColour / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x16L).get() * flameColour / 0xff));
-                    cmd.rgb(2, (int)(MEMORY.ref(1, primitives).offset(0x18L).get() * flameColour / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x19L).get() * flameColour / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x1aL).get() * flameColour / 0xff));
-
-                    // OTZ - Average Z value (for ordering table)
-                    final int z = (int)Math.min(CPU.MFC2(7) + flamesZ >> zShift_1f8003c4.get(), zMax_1f8003cc.get());
-
-                    GPU.queueCommand(z, cmd);
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-
-      //LAB_800ccb34
-      primitives += 0x24L;
-    }
-
-    //LAB_800ccb4c
-    //LAB_800ccb68
-    return primitives;
-  }
-
-  @Method(0x800ccb78L)
-  public static long FUN_800ccb78(long primitives, final UnboundedArrayRef<SVECTOR> vertices, final long count) {
-    //LAB_800ccbcc
-    for(int i = 0; i < count; i++) {
-      final GpuCommandPoly cmd = new GpuCommandPoly(4)
-        .translucent(Translucency.of(((int)MEMORY.ref(2, primitives).offset(0x0aL).get() & 0b1100000) >>> 5));
-
-      //LAB_800ccbe4
-      final SVECTOR vert0 = vertices.get((int)MEMORY.ref(2, primitives).offset(0x24L).get());
-      final SVECTOR vert1 = vertices.get((int)MEMORY.ref(2, primitives).offset(0x26L).get());
-      final SVECTOR vert2 = vertices.get((int)MEMORY.ref(2, primitives).offset(0x28L).get());
-      CPU.MTC2(vert0.getXY(), 0); // VXY0
-      CPU.MTC2(vert0.getZ(),  1); // VZ0
-      CPU.MTC2(vert1.getXY(), 2); // VXY1
-      CPU.MTC2(vert1.getZ(),  3); // VY1
-      CPU.MTC2(vert2.getXY(), 4); // VXY2
-      CPU.MTC2(vert2.getZ(),  5); // VZ2
-      CPU.COP2(0x28_0030L); // Perspective transform triple
-
-      cmd.uv(0, (int)MEMORY.ref(1, primitives).offset(0x04L).get(), (int)MEMORY.ref(1, primitives).offset(0x05L).get());
-      cmd.uv(1, (int)MEMORY.ref(1, primitives).offset(0x08L).get(), (int)MEMORY.ref(1, primitives).offset(0x09L).get());
-      cmd.uv(2, (int)MEMORY.ref(1, primitives).offset(0x0cL).get(), (int)MEMORY.ref(1, primitives).offset(0x0dL).get());
-      cmd.uv(3, (int)MEMORY.ref(1, primitives).offset(0x10L).get(), (int)MEMORY.ref(1, primitives).offset(0x11L).get());
-
-      cmd.clut(((int)MEMORY.ref(2, primitives).offset(0x06L).get() & 0b111111) * 16, (int)MEMORY.ref(2, primitives).offset(0x06L).get() >>> 6);
-      cmd.vramPos(((int)MEMORY.ref(2, primitives).offset(0x0aL).get() & 0b1111) * 64, (MEMORY.ref(2, primitives).offset(0x0aL).get() & 0b10000) != 0 ? 256 : 0);
-
-      if((int)CPU.CFC2(31) >= 0) { // No errors
-        //LAB_800ccc90
-        CPU.COP2(0x140_0006L); // Normal clipping
-
-        if(CPU.MFC2(24) != 0) { // Is visible
-          //LAB_800ccccc
-          final DVECTOR v0 = new DVECTOR().setXY(CPU.MFC2(12));
-          final DVECTOR v1 = new DVECTOR().setXY(CPU.MFC2(13));
-          final DVECTOR v2 = new DVECTOR().setXY(CPU.MFC2(14));
-
-          cmd.pos(0, v0.getX(), v0.getY());
-          cmd.pos(1, v1.getX(), v1.getY());
-          cmd.pos(2, v2.getX(), v2.getY());
-
-          final SVECTOR vert3 = vertices.get((int)MEMORY.ref(2, primitives).offset(0x2aL).get());
-          CPU.MTC2(vert3.getXY(), 0); // VXY0
-          CPU.MTC2(vert3.getZ(),  1); // VZ0
-          CPU.COP2(0x18_0001L); // Perspective transform single
-
-          if((int)CPU.CFC2(31) >= 0) { // No errors
-            //LAB_800ccd54
-            final DVECTOR v3 = new DVECTOR().setXY(CPU.MFC2(14));
-
-            cmd.pos(3, v3.getX(), v3.getY());
-
-            if(v0.getX() >= -0xc0 || v1.getX() >= -0xc0 || v2.getX() >= -0xc0 || v3.getX() >= -0xc0) {
-              //LAB_800ccdb4
-              if(v0.getY() >= -0x78 || v1.getY() >= -0x78 || v2.getY() >= -0x78 || v3.getY() >= -0x78) {
-                //LAB_800cce0c
-                if(v0.getX() <= 0xc0 || v1.getX() <= 0xc0 || v2.getX() <= 0xc0 || v3.getX() <= 0xc0) {
-                  //LAB_800cce64
-                  if(v0.getY() <= 0x78 || v1.getY() <= 0x78 || v2.getY() <= 0x78 || v3.getY() <= 0x78) {
-                    //LAB_800ccebc
-                    cmd.rgb(0, (int)(MEMORY.ref(1, primitives).offset(0x14L).get() * flameColour / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x15L).get() * flameColour / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x16L).get() * flameColour / 0xff));
-                    cmd.rgb(1, (int)(MEMORY.ref(1, primitives).offset(0x18L).get() * flameColour / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x19L).get() * flameColour / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x1aL).get() * flameColour / 0xff));
-                    cmd.rgb(2, (int)(MEMORY.ref(1, primitives).offset(0x1cL).get() * flameColour / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x1cL).get() * flameColour / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x1dL).get() * flameColour / 0xff));
-                    cmd.rgb(3, (int)(MEMORY.ref(1, primitives).offset(0x20L).get() * flameColour / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x21L).get() * flameColour / 0xff), (int)(MEMORY.ref(1, primitives).offset(0x22L).get() * flameColour / 0xff));
-
-                    GPU.queueCommand(flamesZ, cmd);
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-
-      //LAB_800cd294
-      primitives += 0x2cL;
-    }
-
-    //LAB-800cd2ac
-    //LAB_800cd2c8
-    return primitives;
-  }
-
   @Method(0x800cdaa0L)
-  public static long FUN_800cdaa0(final RECT rect, final long widthSomething, final long a2, final long a3) {
-    final long addr0 = mallocTail(0x20L);
-    final long addr1 = mallocTail(rect.w.get() / (2 - widthSomething) * rect.h.get());
-    final long addr2 = mallocTail(rect.w.get() / (2 - widthSomething) * rect.h.get());
+  public static FireAnimationData20 FUN_800cdaa0(final Rect4i rect, final int a3) {
+    final int[] addr1 = new int[rect.w() / 2 * rect.h()];
+    final int[] addr2 = new int[rect.w() / 2 * rect.h()];
 
-    MEMORY.ref(2, addr0).offset(0x00L).setu(rect.x.get());
-    MEMORY.ref(2, addr0).offset(0x02L).setu(rect.y.get());
-    MEMORY.ref(2, addr0).offset(0x04L).setu(rect.w.get() / (4 - widthSomething * 2));
-    MEMORY.ref(2, addr0).offset(0x06L).setu(rect.h.get());
-    MEMORY.ref(4, addr0).offset(0x08L).setu(addr1);
-    MEMORY.ref(4, addr0).offset(0x0cL).setu(addr2);
-    MEMORY.ref(4, addr0).offset(0x10L).setu(a2);
-    MEMORY.ref(4, addr0).offset(0x14L).setu(widthSomething);
-    MEMORY.ref(2, addr0).offset(0x18L).setu(a3);
-    MEMORY.ref(2, addr0).offset(0x1aL).setu(a2 / 2 * 2);
-    MEMORY.ref(2, addr0).offset(0x1cL).setu(a2 / 2 * 2);
-    return addr0;
+    return new FireAnimationData20(
+      new Rect4i(rect.x(), rect.y(), rect.w() / 4, rect.h()),
+      addr1, addr2,
+      a3
+    );
   }
 
   @Method(0x800cdcb0L)
-  public static void animateFire(final long a0) {
-    final long a1;
-    final long v1;
-    final RECT sp10 = new RECT();
-    final RECT sp18 = new RECT();
-    final RECT sp20 = new RECT();
-    final RECT sp28 = new RECT();
-
-    if(MEMORY.ref(2, a0).offset(0x18L).get() == 0) {
+  public static void animateFire(final FireAnimationData20 fireAnimation) {
+    if(fireAnimation._18 == 0) {
       return;
     }
 
     //LAB_800cdce0
-    MEMORY.ref(2, a0).offset(0x1cL).addu(0x1L);
-    if(MEMORY.ref(2, a0).offset(0x1cL).get() < MEMORY.ref(2, a0).offset(0x1aL).get()) {
-      return;
-    }
-
     //LAB_800cdd28
-    MEMORY.ref(2, a0).offset(0x1cL).setu(0);
-    if(MEMORY.ref(4, a0).offset(0x10L).get(0x1L) == 0) {
-      v1 = MEMORY.ref(2, a0).offset(0x18L).get();
-      a1 = MEMORY.ref(2, a0).offset(0x4L).get();
-      MEMORY.ref(2, a0).offset(0x18L).setu(v1 % a1);
-      if(MEMORY.ref(2, a0).offset(0x18L).getSigned() > 0) {
-        sp10.x.set((short)(MEMORY.ref(2, a0).get() + MEMORY.ref(2, a0).offset(0x4L).get() - MEMORY.ref(2, a0).offset(0x18L).get()));
-        sp10.y.set((short)MEMORY.ref(2, a0).offset(0x2L).get());
-        sp10.w.set((short)MEMORY.ref(2, a0).offset(0x18L).get());
-        sp10.h.set((short)MEMORY.ref(2, a0).offset(0x6L).get());
-        sp18.x.set((short)MEMORY.ref(2, a0).get());
-        sp18.y.set((short)MEMORY.ref(2, a0).offset(0x2L).get());
-        sp18.w.set((short)(MEMORY.ref(2, a0).offset(0x4L).get() - MEMORY.ref(2, a0).offset(0x18L).get()));
-        sp18.h.set((short)MEMORY.ref(2, a0).offset(0x6L).get());
-        sp20.x.set((short)MEMORY.ref(2, a0).get());
-        sp20.y.set((short)MEMORY.ref(2, a0).offset(0x2L).get());
-        sp20.w.set((short)MEMORY.ref(2, a0).offset(0x18L).get());
-        sp20.h.set((short)MEMORY.ref(2, a0).offset(0x6L).get());
-        sp28.x.set((short)(MEMORY.ref(2, a0).get() + MEMORY.ref(2, a0).offset(0x18L).get()));
-        sp28.y.set((short)MEMORY.ref(2, a0).offset(0x2L).get());
-        sp28.w.set((short)(MEMORY.ref(2, a0).offset(0x4L).get() - MEMORY.ref(2, a0).offset(0x18L).get()));
-        sp28.h.set((short)MEMORY.ref(2, a0).offset(0x6L).get());
-      } else {
-        //LAB_800cdf14
-        sp10.x.set((short)MEMORY.ref(2, a0).get());
-        sp10.y.set((short)MEMORY.ref(2, a0).offset(0x2L).get());
-        sp10.w.set((short)-MEMORY.ref(2, a0).offset(0x18L).get());
-        sp10.h.set((short)MEMORY.ref(2, a0).offset(0x6L).get());
-        sp18.x.set((short)(MEMORY.ref(2, a0).get() - MEMORY.ref(2, a0).offset(0x18L).get()));
-        sp18.y.set((short)MEMORY.ref(2, a0).offset(0x2L).get());
-        sp18.w.set((short)(MEMORY.ref(2, a0).offset(0x4L).get() + MEMORY.ref(2, a0).offset(0x18L).get()));
-        sp18.h.set((short)MEMORY.ref(2, a0).offset(0x6L).get());
-        sp20.x.set((short)(MEMORY.ref(2, a0).get() + MEMORY.ref(2, a0).offset(0x4L).get() + MEMORY.ref(2, a0).offset(0x18L).get()));
-        sp20.y.set((short)MEMORY.ref(2, a0).offset(0x2L).get());
-        sp20.w.set((short)-MEMORY.ref(2, a0).offset(0x18L).get());
-        sp20.h.set((short)MEMORY.ref(2, a0).offset(0x6L).get());
-        sp28.x.set((short)MEMORY.ref(2, a0).get());
-        sp28.y.set((short)MEMORY.ref(2, a0).offset(0x2L).get());
-        sp28.w.set((short)(MEMORY.ref(2, a0).offset(0x4L).get() + MEMORY.ref(2, a0).offset(0x18L).get()));
-        sp28.h.set((short)MEMORY.ref(2, a0).offset(0x6L).get());
-      }
+    final Rect4i sp10;
+    final Rect4i sp18;
+    final Rect4i sp20;
+    final Rect4i sp28;
 
-      //LAB_800ce090
+    //LAB_800ce098
+    final int h = fireAnimation.rect_00.h();
+    fireAnimation._18 %= h;
+    if(fireAnimation._18 > 0) {
+      sp10 = new Rect4i(fireAnimation.rect_00.x(), fireAnimation.rect_00.y() + h - fireAnimation._18, fireAnimation.rect_00.w(), fireAnimation._18);
+      sp18 = new Rect4i(fireAnimation.rect_00.x(), fireAnimation.rect_00.y(), fireAnimation.rect_00.w(), h - fireAnimation._18);
+      sp20 = new Rect4i(fireAnimation.rect_00.x(), fireAnimation.rect_00.y(), fireAnimation.rect_00.w(), fireAnimation._18);
+      sp28 = new Rect4i(fireAnimation.rect_00.x(), fireAnimation.rect_00.y() + fireAnimation._18, fireAnimation.rect_00.w(), h - fireAnimation._18);
     } else {
-      //LAB_800ce098
-      v1 = MEMORY.ref(2, a0).offset(0x18L).get();
-      a1 = MEMORY.ref(2, a0).offset(0x6L).get();
-      MEMORY.ref(2, a0).offset(0x18L).setu(v1 % a1);
-      if((int)MEMORY.ref(2, a0).offset(0x18L).get() > 0) {
-        sp10.x.set((short)MEMORY.ref(2, a0).get());
-        sp10.y.set((short)(MEMORY.ref(2, a0).offset(0x2L).get() + MEMORY.ref(2, a0).offset(0x6L).get() - MEMORY.ref(2, a0).offset(0x18L).get()));
-        sp10.w.set((short)MEMORY.ref(2, a0).offset(0x4L).get());
-        sp10.h.set((short)MEMORY.ref(2, a0).offset(0x18L).get());
-        sp18.x.set((short)MEMORY.ref(2, a0).get());
-        sp18.y.set((short)MEMORY.ref(2, a0).offset(0x2L).get());
-        sp18.w.set((short)MEMORY.ref(2, a0).offset(0x4L).get());
-        sp18.h.set((short)(MEMORY.ref(2, a0).offset(0x6L).get() - MEMORY.ref(2, a0).offset(0x18L).get()));
-        sp20.x.set((short)MEMORY.ref(2, a0).get());
-        sp20.y.set((short)MEMORY.ref(2, a0).offset(0x2L).get());
-        sp20.w.set((short)MEMORY.ref(2, a0).offset(0x4L).get());
-        sp20.h.set((short)MEMORY.ref(2, a0).offset(0x18L).get());
-        sp28.x.set((short)MEMORY.ref(2, a0).get());
-        sp28.y.set((short)(MEMORY.ref(2, a0).offset(0x2L).get() + MEMORY.ref(2, a0).offset(0x18L).get()));
-        sp28.w.set((short)MEMORY.ref(2, a0).offset(0x4L).get());
-        sp28.h.set((short)(MEMORY.ref(2, a0).offset(0x6L).get() - MEMORY.ref(2, a0).offset(0x18L).get()));
-      } else {
-        //LAB_800ce25c
-        sp10.x.set((short)MEMORY.ref(2, a0).get());
-        sp10.y.set((short)MEMORY.ref(2, a0).offset(0x2L).get());
-        sp10.w.set((short)MEMORY.ref(2, a0).offset(0x4L).get());
-        sp10.h.set((short)-MEMORY.ref(2, a0).offset(0x18L).get());
-        sp18.x.set((short)MEMORY.ref(2, a0).get());
-        sp18.y.set((short)(MEMORY.ref(2, a0).offset(0x2L).get() - MEMORY.ref(2, a0).offset(0x18L).get()));
-        sp18.w.set((short)MEMORY.ref(2, a0).offset(0x4L).get());
-        sp18.h.set((short)(MEMORY.ref(2, a0).offset(0x6L).get() + MEMORY.ref(2, a0).offset(0x18L).get()));
-        sp20.x.set((short)MEMORY.ref(2, a0).get());
-        sp20.y.set((short)(MEMORY.ref(2, a0).offset(0x2L).get() + MEMORY.ref(2, a0).offset(0x6L).get() + MEMORY.ref(2, a0).offset(0x18L).get()));
-        sp20.w.set((short)MEMORY.ref(2, a0).offset(0x4L).get());
-        sp20.h.set((short)-MEMORY.ref(2, a0).offset(0x18L).get());
-        sp28.x.set((short)MEMORY.ref(2, a0).get());
-        sp28.y.set((short)MEMORY.ref(2, a0).offset(0x2L).get());
-        sp28.w.set((short)MEMORY.ref(2, a0).offset(0x4L).get());
-        sp28.h.set((short)(MEMORY.ref(2, a0).offset(0x6L).get() + MEMORY.ref(2, a0).offset(0x18L).get()));
-      }
+      //LAB_800ce25c
+      sp10 = new Rect4i(fireAnimation.rect_00.x(), fireAnimation.rect_00.y(), fireAnimation.rect_00.w(), -fireAnimation._18);
+      sp18 = new Rect4i(fireAnimation.rect_00.x(), fireAnimation.rect_00.y() - fireAnimation._18, fireAnimation.rect_00.w(), fireAnimation.rect_00.h() + fireAnimation._18);
+      sp20 = new Rect4i(fireAnimation.rect_00.x(), fireAnimation.rect_00.y() + fireAnimation.rect_00.h() + fireAnimation._18, fireAnimation.rect_00.w(), -fireAnimation._18);
+      sp28 = new Rect4i(fireAnimation.rect_00.x(), fireAnimation.rect_00.y(), fireAnimation.rect_00.w(), fireAnimation.rect_00.h() + fireAnimation._18);
     }
 
     //LAB_800ce3d8
-    StoreImage(sp10, MEMORY.ref(4, a0).offset(0xcL).get());
-    StoreImage(sp18, MEMORY.ref(4, a0).offset(0x8L).get());
-    LoadImage(sp20, MEMORY.ref(4, a0).offset(0xcL).get());
-    LoadImage(sp28, MEMORY.ref(4, a0).offset(0x8L).get());
-
-    //LAB_800ce434
-  }
-
-  @Method(0x800ce448L)
-  public static void FUN_800ce448(final long a0) {
-    free(MEMORY.ref(4, a0).offset(0xcL).get());
-    free(MEMORY.ref(4, a0).offset(0x8L).get());
-    free(a0);
+    fireTexture.getRegion(sp10, fireAnimation.pixels_0c);
+    fireTexture.getRegion(sp18, fireAnimation.pixels_08);
+    fireTexture.setRegion(sp20, fireAnimation.pixels_0c);
+    fireTexture.setRegion(sp28, fireAnimation.pixels_08);
   }
 }

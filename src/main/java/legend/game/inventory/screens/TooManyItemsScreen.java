@@ -1,6 +1,7 @@
 package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
+import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
 import legend.game.types.LodString;
 import legend.game.types.MenuItemStruct04;
@@ -48,9 +49,6 @@ import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
-
 public class TooManyItemsScreen extends MenuScreen {
   private MenuState menuState = MenuState._1;
   private double scrollAccumulator;
@@ -107,8 +105,7 @@ public class TooManyItemsScreen extends MenuScreen {
         this.menuState = MenuState._5;
       }
 
-      case _5 ->
-        this.FUN_8010fd80(false, this.droppedItems.get(this.dropIndex).itemId_00, this.invIndex, this.invScroll, 0);
+      case _5 -> this.FUN_8010fd80(false, this.droppedItems.get(this.dropIndex).itemId_00, this.invIndex, this.invScroll, 0);
 
       case _6 -> {
         this.dropIndex = 0;
@@ -120,8 +117,7 @@ public class TooManyItemsScreen extends MenuScreen {
         this.menuState = MenuState._8;
       }
 
-      case _8 ->
-        this.FUN_8010fd80(false, this.droppedItems.get(this.dropIndex).itemId_00, this.invIndex, this.invScroll, 0x1L);
+      case _8 -> this.FUN_8010fd80(false, this.droppedItems.get(this.dropIndex).itemId_00, this.invIndex, this.invScroll, 0x1L);
 
       case _9 -> {
         final int slotCount;
@@ -359,30 +355,39 @@ public class TooManyItemsScreen extends MenuScreen {
     this.scrollAccumulator += deltaY;
   }
 
-  @Override
-  protected void keyPress(final int key, final int scancode, final int mods) {
-    if(mods != 0) {
+  private void menuEscape() {
+    if(this.menuState == MenuState._8) {
+      playSound(3);
+      unloadRenderable(this.renderable_8011e200);
+      this.menuState = MenuState._10;
+    } else if(this.menuState == MenuState._9) {
+      playSound(3);
+      unloadRenderable(this.renderable_8011e204);
+      this.menuState = MenuState._8;
+    }
+  }
+
+  private void menuSelect() {
+    if(this.menuState != MenuState._9) {
       return;
     }
 
-    if(key == GLFW_KEY_ESCAPE) {
-      if(this.menuState == MenuState._8) {
-        playSound(3);
-        unloadRenderable(this.renderable_8011e200);
-        this.menuState = MenuState._10;
-      } else if(this.menuState == MenuState._9) {
-        playSound(3);
-        unloadRenderable(this.renderable_8011e204);
-        this.menuState = MenuState._8;
-      }
-    } else if(key == GLFW_KEY_S && this.menuState == MenuState._9) {
-      playSound(2);
+    playSound(2);
 
-      if(this.droppedItems.get(this.dropIndex).itemId_00 < 0xc0) {
-        sortItems(this.equipment, gameState_800babc8.equipment_1e8, gameState_800babc8.equipmentCount_1e4.get());
-      } else {
-        sortItems(this.items, gameState_800babc8.items_2e9, gameState_800babc8.itemCount_1e6.get());
-      }
+    if(this.droppedItems.get(this.dropIndex).itemId_00 < 0xc0) {
+      sortItems(this.equipment, gameState_800babc8.equipment_1e8, gameState_800babc8.equipmentCount_1e4.get());
+    } else {
+      sortItems(this.items, gameState_800babc8.items_2e9, gameState_800babc8.itemCount_1e6.get());
+    }
+  }
+
+  @Override
+  public void pressedThisFrame(final InputAction inputAction) {
+    if(inputAction == InputAction.BUTTON_EAST) {
+      this.menuEscape();
+    }
+    if(inputAction == InputAction.BUTTON_SOUTH) {
+      this.menuSelect();
     }
   }
 

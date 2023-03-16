@@ -1,6 +1,6 @@
 package legend.game.sound;
 
-import legend.core.MathHelper;
+import legend.game.unpacker.FileData;
 
 import java.util.Arrays;
 
@@ -11,8 +11,8 @@ public class Sssqish implements Sshd.Subfile {
   public final Sssq.ChannelInfo[] entries_10;
   public final Entry2List entries2_190;
 
-  public Sssqish(final byte[] data, final int offset, final int size) {
-    this.volume_00 = MathHelper.getUbyte(data, offset);
+  public Sssqish(final FileData data, final int offset, final int size) {
+    this.volume_00 = data.readUByte(offset);
 
     this.entries_10 = new Sssq.ChannelInfo[24];
     Arrays.setAll(this.entries_10, i -> new Sssq.ChannelInfo(data, offset + 0x10 + i * 0x10));
@@ -24,20 +24,20 @@ public class Sssqish implements Sshd.Subfile {
     public final int count_00;
     public final Instrument[] entries_02;
 
-    public Entry2List(final byte[] data, final int offset, final int size) {
-      this.count_00 = MathHelper.getUshort(data, offset);
+    public Entry2List(final FileData data, final int offset, final int size) {
+      this.count_00 = data.readUShort(offset);
       this.entries_02 = new Instrument[this.count_00 + 1];
 
       final int[] entryOffsets = new int[this.count_00 + 2];
       for(int i = 0; i < entryOffsets.length - 1; i++) {
-        entryOffsets[i] = MathHelper.getShort(data, offset + 2 + i * 2);
+        entryOffsets[i] = data.readShort(offset + 2 + i * 2);
       }
 
       entryOffsets[entryOffsets.length - 1] = size - 0x190;
       Arrays.sort(entryOffsets);
 
       for(int i = 0; i < this.entries_02.length; i++) {
-        final int entryOffset = MathHelper.getShort(data, offset + 2 + i * 2);
+        final int entryOffset = data.readShort(offset + 2 + i * 2);
 
         if(entryOffset != -1) {
           int entrySize = 0;

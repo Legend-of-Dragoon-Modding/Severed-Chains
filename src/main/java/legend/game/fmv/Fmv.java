@@ -4,7 +4,10 @@ import legend.core.DebugHelper;
 import legend.core.MathHelper;
 import legend.core.opengl.Window;
 import legend.core.spu.XaAdpcm;
+import legend.game.input.Input;
+import legend.game.input.InputAction;
 import legend.game.types.FileEntry08;
+import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -228,7 +231,7 @@ public class Fmv {
     final ByteBuffer demuxed = ByteBuffer.wrap(demuxedRaw);
     final FrameHeader frameHeader = new FrameHeader(demuxedRaw);
 
-    final byte[] fileData = Unpacker.loadFile(file);
+    final FileData fileData = Unpacker.loadFile(file);
     sector = 0;
 
     while(!GPU.isReady()) {
@@ -253,6 +256,15 @@ public class Fmv {
     click = GPU.window().events.onMouseRelease((window, x, y, button, mods) -> shouldStop = true);
 
     GPU.mainRenderer = () -> {
+
+      Input.update();
+
+      if(Input.pressedThisFrame(InputAction.BUTTON_CENTER_2)
+        || Input.pressedThisFrame(InputAction.BUTTON_NORTH) || Input.pressedThisFrame(InputAction.BUTTON_SOUTH)
+        || Input.pressedThisFrame(InputAction.BUTTON_EAST) || Input.pressedThisFrame(InputAction.BUTTON_WEST)) {
+        shouldStop = true;
+      }
+
       if(shouldStop) {
         stop();
       }
@@ -262,7 +274,7 @@ public class Fmv {
       // Demultiplex the sectors
       Arrays.fill(demuxedRaw, (byte)0);
       for(int sectorIndex = 0, videoSectorIndex = 0; sectorIndex < sectorCount; sectorIndex++, sector++) {
-        System.arraycopy(fileData, sector * data.length, data, 0, data.length);
+        fileData.copyFrom(sector * data.length, data, 0, data.length);
 
         if(header.submode.isEof()) {
           stop();
@@ -603,5 +615,45 @@ public class Fmv {
         dest[iDestOfs1] = rgb1.toRgba();
       }
     }
+  }
+
+  public static void playXa(final int archiveIndex, final int fileIndex) {
+    final byte[] data = new byte[2352];
+    final SectorHeader header = new SectorHeader(data);
+
+    final int offset = archiveIndex == 3 ? 4 : 16;
+
+    final byte[] fileData = Unpacker.loadFile(System.getProperty("user.dir") + "\\files\\XA\\LODXA0" + archiveIndex + ".XA").data();
+    sector = 0;
+
+    try {
+      sound = AudioSystem.getSourceDataLine(new AudioFormat(44100, 16, 2, true, false));
+      sound.open();
+      sound.start();
+    } catch(final LineUnavailableException|IllegalArgumentException e) {
+      LOGGER.error("Failed to start audio for FMV");
+    }
+
+    for(int sector = fileIndex; sector < fileData.length / 0x930; sector += offset) {
+      System.arraycopy(fileData, sector * data.length, data, 0, data.length);
+
+      final byte[] decodedXaAdpcm = XaAdpcm.decode(data, data[19]);
+
+      // Halve the volume
+      for(int i = 0; i < decodedXaAdpcm.length; i++) {
+        decodedXaAdpcm[i] >>= 1;
+      }
+
+      if(sound != null) {
+        sound.write(decodedXaAdpcm, 0, decodedXaAdpcm.length);
+      }
+
+      if(header.submode.isEof()) {
+        break;
+      }
+    }
+
+    sound.close();
+    sound = null;
   }
 }

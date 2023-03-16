@@ -1,6 +1,7 @@
 package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
+import legend.game.input.InputAction;
 import legend.game.types.MenuItemStruct04;
 import legend.game.types.Renderable58;
 
@@ -23,7 +24,6 @@ import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 
 public class GoodsScreen extends MenuScreen {
   private int loadingStage;
@@ -82,7 +82,7 @@ public class GoodsScreen extends MenuScreen {
         if(this.scrollAccumulator <= -1.0d) {
           this.scrollAccumulator += 1.0d;
 
-          if(this.slotScroll < MathHelper.roundUp(this.menuItems.size() / 2 - 7, 2)) {
+          if(this.slotScroll < MathHelper.roundUp(this.menuItems.size() - 14, 2)) {
             this.scroll(this.slotScroll + 2);
           }
         }
@@ -104,16 +104,20 @@ public class GoodsScreen extends MenuScreen {
     final boolean allocate = a3 == 0xff;
 
     if(allocate) {
-      allocateUiElement(0x55, 0x55,  16, 16);
+      allocateUiElement(0x55, 0x55, 16, 16);
       allocateUiElement(0x55, 0x55, 194, 16);
       this._800bdb9c = allocateUiElement(0x3d, 0x44, 358, this.getSlotY(2));
       this._800bdba0 = allocateUiElement(0x35, 0x3c, 358, this.getSlotY(8));
     }
 
-    renderText(Goods_8011cf48,  32, 22, 4);
+    renderText(Goods_8011cf48, 32, 22, 4);
     renderText(Goods_8011cf48, 210, 22, 4);
     this.FUN_8010965c(slotScroll, this._800bdb9c, this._800bdba0);
-    renderString(1, 194, 178, this.menuItems.get(slotScroll + selectedSlot).itemId_00, allocate);
+
+    if(slotScroll + selectedSlot < this.menuItems.size()) {
+      renderString(1, 194, 178, this.menuItems.get(slotScroll + selectedSlot).itemId_00, allocate);
+    }
+
     uploadRenderables();
   }
 
@@ -178,18 +182,6 @@ public class GoodsScreen extends MenuScreen {
   }
 
   @Override
-  protected void keyPress(final int key, final int scancode, final int mods) {
-    if(this.loadingStage != 1 || mods != 0) {
-      return;
-    }
-
-    if(key == GLFW_KEY_ESCAPE) {
-      playSound(3);
-      this.loadingStage = 100;
-    }
-  }
-
-  @Override
   protected void mouseScroll(final double deltaX, final double deltaY) {
     if(this.loadingStage != 1) {
       return;
@@ -200,5 +192,94 @@ public class GoodsScreen extends MenuScreen {
     }
 
     this.scrollAccumulator += deltaY;
+  }
+
+  private void menuEscape() {
+    playSound(3);
+    this.loadingStage = 100;
+  }
+
+  private void menuNavigateUp() {
+    if(this.selectedSlot < 2) {
+      if(this.slotScroll > 0) {
+        this.scroll(this.slotScroll - 2);
+      }
+
+      return;
+    }
+
+    playSound(1);
+    this.selectedSlot -= 2;
+    this.highlight.x_40 = this.getSlotX(this.selectedSlot & 1);
+    this.highlight.y_44 = this.getSlotY(this.selectedSlot / 2) + 32;
+  }
+
+  private void menuNavigateDown() {
+    if(this.selectedSlot >= 12) {
+      if(this.selectedSlot + this.slotScroll < this.menuItems.size() - 1) {
+        this.scroll(this.slotScroll + 2);
+      }
+
+      return;
+    }
+
+    playSound(1);
+    this.selectedSlot += 2;
+
+    if(this.selectedSlot + this.slotScroll >= this.menuItems.size()) {
+      this.selectedSlot = this.menuItems.size() - this.slotScroll - 1;
+    }
+
+    this.highlight.x_40 = this.getSlotX(this.selectedSlot & 1);
+    this.highlight.y_44 = this.getSlotY(this.selectedSlot / 2) + 32;
+  }
+
+  private void menuNavigateLeft() {
+    if(this.selectedSlot % 2 == 0) {
+      return;
+    }
+
+    playSound(1);
+    this.selectedSlot--;
+    this.highlight.x_40 = this.getSlotX(this.selectedSlot & 1);
+    this.highlight.y_44 = this.getSlotY(this.selectedSlot / 2) + 32;
+  }
+
+  private void menuNavigateRight() {
+    if(this.selectedSlot % 2 != 0 || this.selectedSlot + this.slotScroll == this.menuItems.size() - 1) {
+      return;
+    }
+
+    playSound(1);
+    this.selectedSlot++;
+    this.highlight.x_40 = this.getSlotX(this.selectedSlot & 1);
+    this.highlight.y_44 = this.getSlotY(this.selectedSlot / 2) + 32;
+  }
+
+  @Override
+  public void pressedThisFrame(final InputAction inputAction) {
+    if(this.loadingStage != 1) {
+      return;
+    }
+
+    if(inputAction == InputAction.DPAD_LEFT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_LEFT) {
+      this.menuNavigateLeft();
+    }
+    if(inputAction == InputAction.DPAD_RIGHT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_RIGHT) {
+      this.menuNavigateRight();
+    }
+    if(inputAction == InputAction.BUTTON_EAST) {
+      this.menuEscape();
+    }
+  }
+
+  @Override
+  public void pressedWithRepeatPulse(final InputAction inputAction) {
+    if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
+      this.menuNavigateUp();
+    }
+    if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
+      this.menuNavigateDown();
+    }
   }
 }

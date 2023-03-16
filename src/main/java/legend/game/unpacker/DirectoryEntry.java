@@ -21,7 +21,7 @@ public record DirectoryEntry(String name, int entryLength, int sector, int lengt
     } else if("\1".equals(originalName)) {
       name = "..";
     } else if(originalName.contains(";")) {
-      name = originalName.substring(0, originalName.lastIndexOf(";"));
+      name = originalName.substring(0, originalName.lastIndexOf(';'));
     } else {
       name = originalName;
     }

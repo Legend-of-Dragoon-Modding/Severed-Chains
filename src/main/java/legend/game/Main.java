@@ -1,7 +1,6 @@
 package legend.game;
 
 import legend.core.GameEngine;
-import legend.game.modding.events.EventManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -21,8 +20,6 @@ public final class Main {
 
   public static void main(final String[] args) {
     try {
-      EventManager.INSTANCE.getClass(); // Trigger load
-
       GameEngine.start();
     } catch(final Throwable e) {
       final List<String> messages = new ArrayList<>();

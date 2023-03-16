@@ -2,10 +2,10 @@ package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
 import legend.game.SaveManager;
+import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
 import legend.game.types.MessageBoxResult;
 import legend.game.types.Renderable58;
-import org.lwjgl.glfw.GLFW;
 
 import static legend.game.SItem.FUN_801033cc;
 import static legend.game.SItem.FUN_80103444;
@@ -20,6 +20,8 @@ import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
 import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
+import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
+import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
@@ -52,6 +54,12 @@ public abstract class SaveListScreen extends MenuScreen {
         saveListUpArrow_800bdb94 = null;
         this.scroll = 0;
         this.selectedSlot = 0;
+
+        if(mainCallbackIndex_8004dd20.get() == 8) {
+          gameState_800babc8.isOnWorldMap_4e4.set(1);
+        } else {
+          gameState_800babc8.isOnWorldMap_4e4.set(0);
+        }
 
         saves.clear();
         saves.addAll(SaveManager.loadAllDisplayData());
@@ -138,12 +146,39 @@ public abstract class SaveListScreen extends MenuScreen {
     }
   }
 
-  @Override
-  protected void keyPress(final int key, final int scancode, final int mods) {
-    if(key == GLFW.GLFW_KEY_ESCAPE && mods == 0) {
-      playSound(3);
-      this.loadingStage = 2;
+  private void menuEscape() {
+    playSound(3);
+    this.loadingStage = 2;
+  }
+
+  private void menuNavigateUp() {
+    playSound(1);
+
+    if(this.selectedSlot > 0) {
+      this.selectedSlot--;
+    } else {
+      this.scrollAccumulator++;
     }
+
+    this.highlightLeftHalf.y_44 = getSlotY(this.selectedSlot);
+    this.highlightRightHalf.y_44 = getSlotY(this.selectedSlot);
+  }
+
+  private void menuNavigateDown() {
+    playSound(1);
+
+    if(this.selectedSlot < 2) {
+      this.selectedSlot++;
+    } else {
+      this.scrollAccumulator--;
+    }
+
+    this.highlightLeftHalf.y_44 = getSlotY(this.selectedSlot);
+    this.highlightRightHalf.y_44 = getSlotY(this.selectedSlot);
+  }
+
+  private void menuSelect() {
+    this.onSelect(this.scroll + this.selectedSlot);
   }
 
   @Override
@@ -217,7 +252,31 @@ public abstract class SaveListScreen extends MenuScreen {
   }
 
   protected abstract int menuCount();
+
   protected abstract void renderSaveSlot(final int slot, final int fileIndex, final boolean allocate);
+
   protected abstract void onSelect(final int slot);
+
   protected abstract void onMessageboxResult(final MessageBoxResult result);
+
+  @Override
+  public void pressedThisFrame(final InputAction inputAction) {
+    if(inputAction == InputAction.BUTTON_EAST) {
+      this.menuEscape();
+    }
+    if(inputAction == InputAction.BUTTON_SOUTH) {
+      this.menuSelect();
+    }
+  }
+
+  @Override
+  public void pressedWithRepeatPulse(final InputAction inputAction) {
+    if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
+      this.menuNavigateUp();
+    }
+    if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
+      this.menuNavigateDown();
+    }
+  }
+
 }

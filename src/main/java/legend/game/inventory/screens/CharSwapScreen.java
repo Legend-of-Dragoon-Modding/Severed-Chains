@@ -2,6 +2,7 @@ package legend.game.inventory.screens;
 
 import legend.core.Config;
 import legend.core.MathHelper;
+import legend.game.input.InputAction;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.Renderable58;
 
@@ -24,7 +25,6 @@ import static legend.game.Scus94491BpeSegment_800b.drgn0_6666FilePtr_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.secondaryCharIndices_800bdbf8;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 
 public class CharSwapScreen extends MenuScreen {
   private int loadingStage;
@@ -71,9 +71,9 @@ public class CharSwapScreen extends MenuScreen {
   private void renderCharacterSwapScreen(final int a0) {
     final boolean allocate = a0 == 0xff;
 
-    this.renderSecondaryChar(198,  16, secondaryCharIndices_800bdbf8.get(0).get(), allocate);
-    this.renderSecondaryChar(255,  16, secondaryCharIndices_800bdbf8.get(1).get(), allocate);
-    this.renderSecondaryChar(312,  16, secondaryCharIndices_800bdbf8.get(2).get(), allocate);
+    this.renderSecondaryChar(198, 16, secondaryCharIndices_800bdbf8.get(0).get(), allocate);
+    this.renderSecondaryChar(255, 16, secondaryCharIndices_800bdbf8.get(1).get(), allocate);
+    this.renderSecondaryChar(312, 16, secondaryCharIndices_800bdbf8.get(2).get(), allocate);
     this.renderSecondaryChar(198, 122, secondaryCharIndices_800bdbf8.get(3).get(), allocate);
     this.renderSecondaryChar(255, 122, secondaryCharIndices_800bdbf8.get(4).get(), allocate);
     this.renderSecondaryChar(312, 122, secondaryCharIndices_800bdbf8.get(5).get(), allocate);
@@ -205,21 +205,152 @@ public class CharSwapScreen extends MenuScreen {
     }
   }
 
+  private void menuStage2Escape() {
+    playSound(3);
+    this.loadingStage = 100;
+  }
+
+  private void menuStage2NavigateUp() {
+    playSound(1);
+    if(this.primaryCharIndex > 0) {
+      this.primaryCharIndex--;
+    }
+
+    this.primaryCharHighlight.y_44 = getSlotY(this.primaryCharIndex);
+  }
+
+  private void menuStage2NavigateDown() {
+    playSound(1);
+    if(this.primaryCharIndex < 2) {
+      this.primaryCharIndex++;
+    }
+
+    this.primaryCharHighlight.y_44 = getSlotY(this.primaryCharIndex);
+  }
+
+  private void menuStage2Select() {
+    final int charIndex = gameState_800babc8.charIndex_88.get(this.primaryCharIndex).get();
+    if(Config.unlockParty() || charIndex == -1 || (gameState_800babc8.charData_32c.get(charIndex).partyFlags_04.get() & 0x20) == 0) {
+      playSound(2);
+      this.secondaryCharHighlight = allocateUiElement(0x80, 0x80, this.getSecondaryCharX(this.secondaryCharIndex), this.getSecondaryCharY(this.secondaryCharIndex));
+      FUN_80104b60(this.secondaryCharHighlight);
+      this.loadingStage = 3;
+    } else {
+      playSound(40);
+    }
+  }
+
+  private void menuStage3Escape() {
+    playSound(3);
+    unloadRenderable(this.secondaryCharHighlight);
+    this.loadingStage = 2;
+  }
+
+  private void menuStage3NavigateUp() {
+    playSound(1);
+
+    if(this.secondaryCharIndex > 2) {
+      this.secondaryCharIndex -= 3;
+    }
+
+    this.secondaryCharHighlight.x_40 = this.getSecondaryCharX(this.secondaryCharIndex);
+    this.secondaryCharHighlight.y_44 = this.getSecondaryCharY(this.secondaryCharIndex);
+  }
+
+  private void menuStage3NavigateDown() {
+    playSound(1);
+
+    if(this.secondaryCharIndex < 3) {
+      this.secondaryCharIndex += 3;
+    }
+
+    this.secondaryCharHighlight.x_40 = this.getSecondaryCharX(this.secondaryCharIndex);
+    this.secondaryCharHighlight.y_44 = this.getSecondaryCharY(this.secondaryCharIndex);
+  }
+
+  private void menuStage3NavigateLeft() {
+    playSound(1);
+
+    if(this.secondaryCharIndex > 0) {
+      this.secondaryCharIndex--;
+    }
+
+    this.secondaryCharHighlight.x_40 = this.getSecondaryCharX(this.secondaryCharIndex);
+    this.secondaryCharHighlight.y_44 = this.getSecondaryCharY(this.secondaryCharIndex);
+  }
+
+  private void menuStage3NavigateRight() {
+    playSound(1);
+
+    if(this.secondaryCharIndex < 5) {
+      this.secondaryCharIndex++;
+    }
+
+    this.secondaryCharHighlight.x_40 = this.getSecondaryCharX(this.secondaryCharIndex);
+    this.secondaryCharHighlight.y_44 = this.getSecondaryCharY(this.secondaryCharIndex);
+  }
+
+  private void menuStage3Select() {
+    this.secondaryCharHighlight.x_40 = this.getSecondaryCharX(this.secondaryCharIndex);
+    this.secondaryCharHighlight.y_44 = this.getSecondaryCharY(this.secondaryCharIndex);
+
+    int charCount = 0;
+    for(int charSlot = 0; charSlot < 3; charSlot++) {
+      if(gameState_800babc8.charIndex_88.get(charSlot).get() != -1) {
+        charCount++;
+      }
+    }
+
+    final int secondaryCharIndex = secondaryCharIndices_800bdbf8.get(this.secondaryCharIndex).get();
+
+    if(((Config.unlockParty() && charCount >= 2) || secondaryCharIndex != -1) && (secondaryCharIndex == -1 || (gameState_800babc8.charData_32c.get(secondaryCharIndex).partyFlags_04.get() & 0x2) != 0)) {
+      playSound(2);
+      final int charIndex = gameState_800babc8.charIndex_88.get(this.primaryCharIndex).get();
+      gameState_800babc8.charIndex_88.get(this.primaryCharIndex).set(secondaryCharIndex);
+      secondaryCharIndices_800bdbf8.get(this.secondaryCharIndex).set(charIndex);
+      this.loadingStage = 1;
+    } else {
+      playSound(40);
+    }
+  }
+
   @Override
-  protected void keyPress(final int key, final int scancode, final int mods) {
-    super.keyPress(key, scancode, mods);
+  public void pressedThisFrame(final InputAction inputAction) {
 
     if(this.loadingStage == 2) {
-      if(key == GLFW_KEY_ESCAPE) {
-        playSound(3);
-        this.loadingStage = 100;
+      // primary character left side
+      if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
+        this.menuStage2NavigateUp();
+      }
+      if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
+        this.menuStage2NavigateDown();
+      }
+      if(inputAction == InputAction.BUTTON_EAST) {
+        this.menuStage2Escape();
+      }
+      if(inputAction == InputAction.BUTTON_SOUTH) {
+        this.menuStage2Select();
       }
     } else if(this.loadingStage == 3) {
-      if(key == GLFW_KEY_ESCAPE) {
-        playSound(3);
-        unloadRenderable(this.secondaryCharHighlight);
-        this.loadingStage = 2;
+      if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
+        this.menuStage3NavigateUp();
+      }
+      if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
+        this.menuStage3NavigateDown();
+      }
+      if(inputAction == InputAction.DPAD_LEFT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_LEFT) {
+        this.menuStage3NavigateLeft();
+      }
+      if(inputAction == InputAction.DPAD_RIGHT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_RIGHT) {
+        this.menuStage3NavigateRight();
+      }
+      if(inputAction == InputAction.BUTTON_EAST) {
+        this.menuStage3Escape();
+      }
+      if(inputAction == InputAction.BUTTON_SOUTH) {
+        this.menuStage3Select();
       }
     }
   }
+
 }

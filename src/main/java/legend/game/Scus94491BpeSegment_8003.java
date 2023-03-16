@@ -10,17 +10,13 @@ import legend.core.gpu.RECT;
 import legend.core.gpu.TimHeader;
 import legend.core.gte.DVECTOR;
 import legend.core.gte.GsCOORDINATE2;
-import legend.core.gte.GsDOBJ2;
 import legend.core.gte.MATRIX;
 import legend.core.gte.SVECTOR;
-import legend.core.gte.Tmd;
-import legend.core.gte.TmdObjTable;
 import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
 import legend.core.memory.Ref;
 import legend.core.memory.Value;
 import legend.core.memory.types.IntRef;
-import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.types.DR_TPAGE;
@@ -29,8 +25,10 @@ import legend.game.types.GsOffsetType;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.Translucency;
 import legend.game.types.WeirdTimHeader;
+import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.joml.Matrix4f;
 
 import javax.annotation.Nullable;
 
@@ -62,12 +60,12 @@ import static legend.game.Scus94491BpeSegment_8005._800546bc;
 import static legend.game.Scus94491BpeSegment_8005._800546bd;
 import static legend.game.Scus94491BpeSegment_8005._800546c0;
 import static legend.game.Scus94491BpeSegment_8005._800546c2;
+import static legend.game.Scus94491BpeSegment_8005._80054870;
 import static legend.game.Scus94491BpeSegment_8005.array_8005473c;
 import static legend.game.Scus94491BpeSegment_8005.array_80054748;
 import static legend.game.Scus94491BpeSegment_8005.gpu_debug;
 import static legend.game.Scus94491BpeSegment_8005.matrixStackIndex_80054a08;
 import static legend.game.Scus94491BpeSegment_8005.matrixStack_80054a0c;
-import static legend.game.Scus94491BpeSegment_8005.sin_cos_80054d0c;
 import static legend.game.Scus94491BpeSegment_800c.DISPENV_800c34b0;
 import static legend.game.Scus94491BpeSegment_800c.DRAWENV_800c3450;
 import static legend.game.Scus94491BpeSegment_800c.PSDCNT_800c34d0;
@@ -189,6 +187,12 @@ public final class Scus94491BpeSegment_8003 {
     GPU.commandA0CopyRectFromCpuToVram(rect, address);
   }
 
+  public static void LoadImage(final RECT rect, final FileData data) {
+    validateRect("LoadImage", rect);
+
+    GPU.uploadData(rect, data);
+  }
+
   @Method(0x80038818L)
   public static long StoreImage(final RECT rect, final long address) {
     validateRect("StoreImage", rect);
@@ -201,6 +205,21 @@ public final class Scus94491BpeSegment_8003 {
     }
 
     GPU.commandC0CopyRectFromVramToCpu(rect, address);
+
+    return 0;
+  }
+
+  public static long StoreImage(final RECT rect, final FileData data) {
+    validateRect("StoreImage", rect);
+
+    rect.w.set(MathHelper.clamp(rect.w.get(), (short)0, (short)_800546c0.get()));
+    rect.h.set(MathHelper.clamp(rect.h.get(), (short)0, (short)_800546c2.get()));
+
+    if(rect.w.get() <= 0 || rect.h.get() <= 0) {
+      throw new IllegalArgumentException("RECT width and height must be greater than 0");
+    }
+
+    GPU.commandC0CopyRectFromVramToCpu(rect, data);
 
     return 0;
   }
@@ -961,28 +980,6 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   /**
-   * TMDs can have either fixed pointers (fixp) or offset pointers. If it uses offsets, we need to add the base address to them.
-   */
-  @Method(0x8003c660L)
-  public static void adjustTmdPointers(final Tmd tmd) {
-    if((tmd.header.flags.get() & 0x1L) != 0) {
-      return;
-    }
-
-    tmd.header.flags.or(0x1L);
-
-    //LAB_8003c694
-    for(int i = 0; i < tmd.header.nobj.get(); i++) {
-      final TmdObjTable objTable = tmd.objTable.get(i);
-      objTable.vert_top_00.add(tmd.objTable.getAddress());
-      objTable.normal_top_08.add(tmd.objTable.getAddress());
-      objTable.primitives_10.add(tmd.objTable.getAddress());
-    }
-
-    //LAB_8003c6c8
-  }
-
-  /**
    * Set a parallel light source.
    * <p>
    * Sets the values for one of up to three parallel light sources. Light source data is specified in the GsF_LIGHT structure.
@@ -993,13 +990,13 @@ public final class Scus94491BpeSegment_8003 {
    * @return 0 on success, -1 on failure
    */
   @Method(0x8003c6f0L)
-  public static long GsSetFlatLight(final long id, final GsF_LIGHT light) {
-    final long x = light.direction_00.getX();
-    final long y = light.direction_00.getY();
-    final long z = light.direction_00.getZ();
-    final long r = light.r_0c.get();
-    final long g = light.g_0d.get();
-    final long b = light.b_0e.get();
+  public static long GsSetFlatLight(final int id, final GsF_LIGHT light) {
+    final int x = light.direction_00.getX();
+    final int y = light.direction_00.getY();
+    final int z = light.direction_00.getZ();
+    final int r = light.r_0c.get();
+    final int g = light.g_0d.get();
+    final int b = light.b_0e.get();
 
     final MATRIX directionMatrix = new MATRIX().set(lightDirectionMatrix_800c34e8);
     final MATRIX colourMatrix = new MATRIX();
@@ -1764,77 +1761,74 @@ public final class Scus94491BpeSegment_8003 {
    * I think this method reads through all the packets and sort of "combines" ones that have the same MODE and FLAG for efficiency
    */
   @Method(0x8003e5d0L)
-  public static void updateTmdPacketIlen(final UnboundedArrayRef<TmdObjTable> objTables, final GsDOBJ2 dobj2, final int objIndex) {
-    long bytesSinceModeOrFlagChange = 0;
-    long mode = 0;
-    long flag = 0;
-
-    final TmdObjTable objTable = objTables.get(objIndex);
-    dobj2.tmd_08 = objTable;
+  public static void updateTmdPacketIlen(final FileData primitives, final int count) {
+    int primitivesSinceLastChange = 0;
+    int mode = 0;
+    int flag = 0;
 
     int packetIndex = 0;
     int packetStartIndex = 0;
 
     //LAB_8003e638
-    for(int primitiveIndex = 0; primitiveIndex < objTable.n_primitive_14.get(); primitiveIndex++) {
-      final long previousMode = mode;
-      final long previousFlag = flag;
+    for(int primitiveIndex = 0; primitiveIndex < count; primitiveIndex++) {
+      final int previousMode = mode;
+      final int previousFlag = flag;
 
       // Primitive: mode, flag, ilen, olen
-      final long primitive = objTable.primitives_10.deref().get(packetIndex / 4).get();
+      final int primitive = primitives.readInt(packetIndex);
 
-      mode = primitive >>> 24 & 0xffL;
-      flag = primitive >>> 16 & 0xffL;
+      mode = primitive >>> 24 & 0xff;
+      flag = primitive >>> 16 & 0xff;
 
       if(previousMode != 0) {
         if(mode != previousMode || flag != previousFlag) {
           //LAB_8003e668
-          objTable.primitives_10.deref().get(packetStartIndex / 4).and(0xffff_0000L).or(bytesSinceModeOrFlagChange);
-          bytesSinceModeOrFlagChange = 0;
+          primitives.writeShort(packetStartIndex, primitivesSinceLastChange);
+          primitivesSinceLastChange = 0;
           packetStartIndex = packetIndex;
         }
       }
 
       //LAB_8003e674
       //LAB_8003e678
-      switch((int)(mode & 0xfdL)) {
+      switch(mode & 0xfd) {
         case 0x20: // setPolyF3
-          if((flag & 0x4L) == 0) {
-            packetIndex += 0x10L;
+          if((flag & 0x4) == 0) {
+            packetIndex += 0x10;
             break;
           }
 
         case 0x31:
         case 0x24: // setPolyFT3
-          packetIndex += 0x18L;
+          packetIndex += 0x18;
           break;
 
         case 0x30: // setPolyG3
-          if((flag & 0x4L) == 0) {
-            packetIndex += 0x14L;
+          if((flag & 0x4) == 0) {
+            packetIndex += 0x14;
             break;
           }
 
         case 0x34: // setPolyGT3
         case 0x39:
         case 0x25:
-          packetIndex += 0x1cL;
+          packetIndex += 0x1c;
           break;
 
         case 0x28: // setPolyF4
           if((flag & 0x4L) == 0) {
-            packetIndex += 0x14L;
+            packetIndex += 0x14;
             break;
           }
 
         case 0x2d:
         case 0x2c: // setPolyFT4
-          packetIndex += 0x20L;
+          packetIndex += 0x20;
           break;
 
         case 0x29:
         case 0x21:
-          packetIndex += 0x10L;
+          packetIndex += 0x10;
           break;
 
         case 0x3d:
@@ -1842,14 +1836,14 @@ public final class Scus94491BpeSegment_8003 {
           break;
 
         case 0x38: // setPolyG4
-          if((flag & 0x4L) == 0) {
-            packetIndex += 0x18L;
+          if((flag & 0x4) == 0) {
+            packetIndex += 0x18;
             break;
           }
 
         case 0x3c: // setPolyGT4
         case 0x35:
-          packetIndex += 0x24L;
+          packetIndex += 0x24;
           break;
 
         case 0x23:
@@ -1871,11 +1865,11 @@ public final class Scus94491BpeSegment_8003 {
       }
 
       //LAB_8003e714
-      bytesSinceModeOrFlagChange++;
+      primitivesSinceLastChange++;
     }
 
     //LAB_8003e724
-    objTable.primitives_10.deref().get(packetStartIndex / 4).and(0xffff_0000L).or(bytesSinceModeOrFlagChange);
+    primitives.writeShort(packetStartIndex, primitivesSinceLastChange);
   }
 
   @Method(0x8003e760L) //TODO using div instead of shifting means some of these values are slightly off, does this matter?
@@ -1987,45 +1981,41 @@ public final class Scus94491BpeSegment_8003 {
 
   @Method(0x8003eae0L)
   public static void FUN_8003eae0(final IntRef t0, final IntRef t1, final IntRef t2) {
-    final long v0;
-    final long v1;
-    long t3;
+    // Fix retail bug where inputs can all be 0. Would result in negative array index.
+    if(t0.get() == 0 && t1.get() == 0 && t2.get() == 0) {
+      return;
+    }
+
+    CPU.MTC2(t0.get(),  9); // IR1
+    CPU.MTC2(t1.get(), 10); // IR2
+    CPU.MTC2(t2.get(), 11); // IR3
+    CPU.COP2(0xa00428L); // Square of vector IR
+    final long vectorLength = CPU.MFC2(25) + CPU.MFC2(26) + CPU.MFC2(27); // MAC1/2/3
+    CPU.MTC2(vectorLength, 30); // Count leading zeroes
+    final long lzc = CPU.MFC2(31) & 0xffff_fffeL; // Leading zero count
+    final long t6 = (31 - lzc) / 2;
+    long t3 = lzc - 24;
     long t4;
-    long t5;
-    long t6;
-    CPU.MTC2(t0.get(),  9);
-    CPU.MTC2(t1.get(), 10);
-    CPU.MTC2(t2.get(), 11);
-    CPU.COP2(0xa00428L);
-    v0 = CPU.MFC2(25) + CPU.MFC2(26) + CPU.MFC2(27);
-    CPU.MTC2(v0, 30);
-    v1 = CPU.MFC2(31) & 0xffff_fffeL;
-    t6 = 31 - v1;
-    t6 = (int)t6 >> 1;
-    t3 = v1 - 24;
     if(t3 >= 0) {
-      t4 = v0 << t3;
+      t4 = vectorLength << t3;
     } else {
       //LAB_8003eb40
-      t3 = 24 - v1;
-      t4 = (int)v0 >> t3;
+      t3 = 24 - lzc;
+      t4 = (int)vectorLength >> t3;
     }
 
     //LAB_8003eb4c
-    t4 = t4 - 0x80L;
-    t4 = t4 << 1;
-    t5 = 0x8005_0000L; //TODO
-    t5 = t5 + t4;
-    t5 = MEMORY.ref(2, t5).offset(0x4870L).getSigned();
+    t4 = t4 - 0x40;
+    final int t5 = _80054870.get((int)t4).get();
 
-    CPU.MTC2(t5, 8);
-    CPU.MTC2(t0.get(), 9);
-    CPU.MTC2(t1.get(), 10);
-    CPU.MTC2(t2.get(), 11);
-    CPU.COP2(0x190003dL);
-    t0.set((int)(CPU.MFC2(25) >> t6));
-    t1.set((int)(CPU.MFC2(26) >> t6));
-    t2.set((int)(CPU.MFC2(27) >> t6));
+    CPU.MTC2(t5, 8); // IR0 (interpolate value)
+    CPU.MTC2(t0.get(),  9); // IR1
+    CPU.MTC2(t1.get(), 10); // IR2
+    CPU.MTC2(t2.get(), 11); // IR3
+    CPU.COP2(0x190003dL); // General purpose interpolation
+    t0.set((int)(CPU.MFC2(25) >> t6)); // MAC0
+    t1.set((int)(CPU.MFC2(26) >> t6)); // MAC1
+    t2.set((int)(CPU.MFC2(27) >> t6)); // MAC2
   }
 
   @Method(0x8003eba0L)
@@ -2295,33 +2285,42 @@ public final class Scus94491BpeSegment_8003 {
     out.set(5, (short)CPU.MFC2(10));
     out.set(8, (short)CPU.MFC2(11));
 
+    final int transferX;
     if(a1.transfer.getX() < 0) {
+      transferX = -(-a1.transfer.getX() >> 15);
       t0 = -(-a1.transfer.getX() & 0x7fffL);
     } else {
       //LAB_8003f33c
+      transferX = a1.transfer.getX() >> 15;
       t0 = a1.transfer.getX() & 0x7fffL;
     }
 
     //LAB_8003f344
+    final int transferY;
     if(a1.transfer.getY() < 0) {
+      transferY = -(-a1.transfer.getY() >> 15);
       t1 = -(-a1.transfer.getY() & 0x7fffL);
     } else {
       //LAB_8003f364
+      transferY = a1.transfer.getY() >> 15;
       t1 = a1.transfer.getY() & 0x7fffL;
     }
 
     //LAB_8003f36c
+    final int transferZ;
     if(a1.transfer.getZ() < 0) {
+      transferZ = -(-a1.transfer.getZ() >> 15);
       t2 = -(-a1.transfer.getZ() & 0x7fffL);
     } else {
       //LAB_8003f38c
+      transferZ = a1.transfer.getZ() >> 15;
       t2 = a1.transfer.getZ() & 0x7fffL;
     }
 
     //LAB_8003f394
-    CPU.MTC2(a1.transfer.getX() >> 15,  9);
-    CPU.MTC2(a1.transfer.getY() >> 15, 10);
-    CPU.MTC2(a1.transfer.getZ() >> 15, 11);
+    CPU.MTC2(transferX,  9);
+    CPU.MTC2(transferY, 10);
+    CPU.MTC2(transferZ, 11);
     CPU.COP2(0x41e012L);
     final long t3 = CPU.MFC2(25);
     final long t4 = CPU.MFC2(26);
@@ -2338,9 +2337,9 @@ public final class Scus94491BpeSegment_8003 {
     //LAB_8003f400
     //LAB_8003f418
     //LAB_8003f41c
-    out.transfer.setX((int)(CPU.MFC2(25) + t3 * 8 + a0.transfer.getX()));
-    out.transfer.setY((int)(CPU.MFC2(26) + t4 * 8 + a0.transfer.getY()));
-    out.transfer.setZ((int)(CPU.MFC2(27) + t5 * 8 + a0.transfer.getZ()));
+    out.transfer.setX((int)((int)CPU.MFC2(25) + t3 * 8 + a0.transfer.getX()));
+    out.transfer.setY((int)((int)CPU.MFC2(26) + t4 * 8 + a0.transfer.getY()));
+    out.transfer.setZ((int)((int)CPU.MFC2(27) + t5 * 8 + a0.transfer.getZ()));
     return out;
   }
 
@@ -2464,34 +2463,34 @@ public final class Scus94491BpeSegment_8003 {
   /**
    * Gives an amount of parallel transfer expressed by v to the matrix m.
    *
-   * @param matrix Pointer to matrix (output)
+   * @param out Pointer to matrix (output)
    * @param vector Pointer to transfer vector (input)
    *
    * @return matrix
    */
   @Method(0x8003f730L)
-  public static MATRIX TransMatrix(final MATRIX matrix, final VECTOR vector) {
-    matrix.transfer.set(vector);
-    return matrix;
+  public static MATRIX TransMatrix(final MATRIX out, final VECTOR vector) {
+    out.transfer.set(vector);
+    return out;
   }
 
   @Method(0x8003f760L)
-  public static MATRIX ScaleMatrixL(final MATRIX matrix, final VECTOR vector) {
-    final long vx = vector.getX();
-    final long vy = vector.getY();
-    final long vz = vector.getZ();
+  public static MATRIX ScaleMatrixL(final MATRIX out, final VECTOR vector) {
+    final int vx = vector.getX();
+    final int vy = vector.getY();
+    final int vz = vector.getZ();
 
-    matrix.set(0, (short)(matrix.get(0) * vx >> 12));
-    matrix.set(1, (short)(matrix.get(1) * vy >> 12));
-    matrix.set(2, (short)(matrix.get(2) * vz >> 12));
-    matrix.set(3, (short)(matrix.get(3) * vx >> 12));
-    matrix.set(4, (short)(matrix.get(4) * vy >> 12));
-    matrix.set(5, (short)(matrix.get(5) * vz >> 12));
-    matrix.set(6, (short)(matrix.get(6) * vx >> 12));
-    matrix.set(7, (short)(matrix.get(7) * vy >> 12));
-    matrix.set(8, (short)(matrix.get(8) * vz >> 12));
+    out.set(0, (short)(out.get(0) * vx >> 12));
+    out.set(1, (short)(out.get(1) * vy >> 12));
+    out.set(2, (short)(out.get(2) * vz >> 12));
+    out.set(3, (short)(out.get(3) * vx >> 12));
+    out.set(4, (short)(out.get(4) * vy >> 12));
+    out.set(5, (short)(out.get(5) * vz >> 12));
+    out.set(6, (short)(out.get(6) * vx >> 12));
+    out.set(7, (short)(out.get(7) * vy >> 12));
+    out.set(8, (short)(out.get(8) * vz >> 12));
 
-    return matrix;
+    return out;
   }
 
   @Method(0x8003f8a0L)
@@ -2560,6 +2559,10 @@ public final class Scus94491BpeSegment_8003 {
     }
 
     return (int)CPU.MFC2(19) >> 2;
+  }
+
+  public static void RotTrans(final SVECTOR v0, final VECTOR out) {
+    RotTrans(v0, out, null);
   }
 
   @Method(0x8003f990L)
@@ -2682,127 +2685,13 @@ public final class Scus94491BpeSegment_8003 {
     return m1;
   }
 
-  /** TODO one of the RotMatrix* methods */
   @Method(0x8003faf0L)
-  public static void RotMatrix_8003faf0(final SVECTOR a0, final MATRIX a1) {
-    int sinCos;
-
-    final int x = a0.getX();
-    final short sinX;
-    if(x < 0) {
-      //LAB_8003fb0c
-      sinCos = (int)sin_cos_80054d0c.offset((-x & 0xfff) * 4).get();
-      sinX = (short)-(short)sinCos;
-    } else {
-      //LAB_8003fb34
-      sinCos = (int)sin_cos_80054d0c.offset((x & 0xfff) * 4).get();
-      sinX = (short)sinCos;
-    }
-
-    final short cosX = (short)(sinCos >> 16);
-
-    //LAB_8003fb54
-    final int y = a0.getY();
-    final short sinYN;
-    final short sinYP;
-    if(y < 0) {
-      //LAB_8003fb70
-      sinCos = (int)sin_cos_80054d0c.offset((-y & 0xfff) * 4).get();
-      sinYN = (short)sinCos;
-      sinYP = (short)-(short)sinCos;
-    } else {
-      //LAB_8003fb98
-      sinCos = (int)sin_cos_80054d0c.offset((y & 0xfffL) * 4).get();
-      sinYN = (short)-(short)sinCos;
-      sinYP = (short)sinCos;
-    }
-
-    final short cosY = (short)(sinCos >> 16);
-
-    //LAB_8003fbbc
-    final int z = a0.getZ();
-    final short sinZ;
-    if(z < 0) {
-      //LAB_8003fbfc
-      sinCos = (int)sin_cos_80054d0c.offset((-z & 0xfff) * 4).get();
-      sinZ = (short)-(short)sinCos;
-    } else {
-      //LAB_8003fc24
-      sinCos = (int)sin_cos_80054d0c.offset((z & 0xfff) * 4).get();
-      sinZ = (short)sinCos;
-    }
-
-    final short cosZ = (short)(sinCos >> 16);
-
-    //LAB_8003fc50
-    a1.set(0, (short)(cosZ * cosY >> 12));
-    a1.set(1, (short)(-(sinZ * cosY) >> 12));
-    a1.set(2, sinYP);
-    a1.set(3, (short)((sinZ * cosX >> 12) - ((cosZ * sinYN >> 12) * sinX >> 12)));
-    a1.set(4, (short)((cosZ * cosX >> 12) + ((sinZ * sinYN >> 12) * sinX >> 12)));
-    a1.set(5, (short)(-(cosY * sinX) >> 12));
-    a1.set(6, (short)((sinZ * sinX >> 12) + ((cosZ * sinYN >> 12) * cosX >> 12)));
-    a1.set(7, (short)((cosZ * sinX >> 12) - ((sinZ * sinYN >> 12) * cosX >> 12)));
-    a1.set(8, (short)(cosY * cosX >> 12));
+  public static void RotMatrix_Xyz(final SVECTOR rotation, final MATRIX matrixOut) {
+    matrixOut.set(new Matrix4f().rotateXYZ(MathHelper.psxDegToRad(rotation.getX()), MathHelper.psxDegToRad(rotation.getY()), MathHelper.psxDegToRad(rotation.getZ())));
   }
 
-  /** TODO one of the RotMatrix* methods */
   @Method(0x8003fd80L)
-  public static void RotMatrix_8003fd80(final SVECTOR svec, final MATRIX mat) {
-    final int x = svec.getX();
-    final int sinCosX;
-    final int sinX;
-    final int negSinX;
-    if(x >= 0) {
-      //LAB_8003fdc4
-      sinCosX = (int)sin_cos_80054d0c.offset((x & 0xfff) * 0x4L).get();
-      sinX = (short)sinCosX;
-      negSinX = -sinX;
-    } else {
-      sinCosX = (int)sin_cos_80054d0c.offset((-x & 0xfff) * 0x4L).get();
-      negSinX = (short)sinCosX;
-      sinX = -negSinX;
-    }
-    final int cosX = sinCosX >> 16;
-
-    //LAB_8003fde8
-    final int y = svec.getY();
-    final int sinCosY;
-    final int sinY;
-    if(y >= 0) {
-      //LAB_8003fe2c
-      sinCosY = (int)sin_cos_80054d0c.offset((y & 0xfff) * 0x4L).get();
-      sinY = (short)sinCosY;
-    } else {
-      sinCosY = (int)sin_cos_80054d0c.offset((-y & 0xfff) * 0x4L).get();
-      sinY = -(short)sinCosY;
-    }
-    final int cosY = sinCosY >> 16;
-
-    //LAB_8003fe4c
-    mat.set(5, (short)negSinX);
-    mat.set(2, (short)(sinY * cosX >> 12));
-    mat.set(8, (short)(cosY * cosX >> 12));
-
-    final int z = svec.getZ();
-    final int sinCosZ;
-    final int sinZ;
-    if(z >= 0) {
-      //LAB_8003feb4
-      sinCosZ = (int)sin_cos_80054d0c.offset((z & 0xfff) * 0x4L).get();
-      sinZ = (short)sinCosZ;
-    } else {
-      sinCosZ = (int)sin_cos_80054d0c.offset((-z & 0xfff) * 0x4L).get();
-      sinZ = -(short)sinCosZ;
-    }
-    final int cosZ = sinCosZ >> 16;
-
-    //LAB_8003fee0
-    mat.set(3, (short)(sinZ * cosX >> 12));
-    mat.set(4, (short)(cosZ * cosX >> 12));
-    mat.set(0, (short)((cosY * cosZ >> 12) + ((sinY * sinX >> 12) * sinZ >> 12)));
-    mat.set(1, (short)(-(cosY * sinZ >> 12) + ((sinY * sinX >> 12) * cosZ >> 12)));
-    mat.set(7, (short)((sinY * sinZ >> 12) + ((cosY * sinX >> 12) * cosZ >> 12)));
-    mat.set(6, (short)(-(sinY * cosZ >> 12) + ((cosY * sinX >> 12) * sinZ >> 12)));
+  public static void RotMatrix_Yxz(final SVECTOR rotation, final MATRIX matrixOut) {
+    matrixOut.set(new Matrix4f().rotateYXZ(MathHelper.psxDegToRad(rotation.getY()), MathHelper.psxDegToRad(rotation.getX()), MathHelper.psxDegToRad(rotation.getZ())));
   }
 }

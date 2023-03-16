@@ -1,5 +1,6 @@
 package legend.game;
 
+import legend.core.MathHelper;
 import legend.core.gte.COLOUR;
 import legend.core.gte.MATRIX;
 import legend.core.gte.SVECTOR;
@@ -26,9 +27,9 @@ import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptFile;
 import legend.game.sound.PatchList;
 import legend.game.sound.PlayableSound0c;
+import legend.game.sound.PlayingNote66;
 import legend.game.sound.SequenceData124;
 import legend.game.sound.SoundEnv44;
-import legend.game.sound.PlayingNote66;
 import legend.game.sound.Sshd;
 import legend.game.sound.Sssq;
 import legend.game.sound.SssqReader;
@@ -40,8 +41,10 @@ import legend.game.types.FileEntry08;
 import legend.game.types.ItemStats0c;
 import legend.game.types.MoonMusic08;
 import legend.game.types.SubmapMusic08;
+import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.joml.Matrix4f;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -55,11 +58,11 @@ import static legend.game.Scus94491BpeSegment._80011db0;
 import static legend.game.Scus94491BpeSegment_8005._80059f7c;
 import static legend.game.Scus94491BpeSegment_8005.atanTable_80058d0c;
 import static legend.game.Scus94491BpeSegment_8005.sin_cos_80054d0c;
+import static legend.game.Scus94491BpeSegment_800c.patchList_800c4abc;
+import static legend.game.Scus94491BpeSegment_800c.playableSounds_800c43d0;
 import static legend.game.Scus94491BpeSegment_800c.playingNotes_800c3a40;
 import static legend.game.Scus94491BpeSegment_800c.sequenceData_800c4ac8;
 import static legend.game.Scus94491BpeSegment_800c.soundEnv_800c6630;
-import static legend.game.Scus94491BpeSegment_800c.patchList_800c4abc;
-import static legend.game.Scus94491BpeSegment_800c.playableSounds_800c43d0;
 import static legend.game.Scus94491BpeSegment_800c.spuDmaCompleteCallback_800c6628;
 import static legend.game.Scus94491BpeSegment_800c.sshdPtr_800c4ac0;
 import static legend.game.Scus94491BpeSegment_800c.sssqChannelInfo_800C6680;
@@ -84,7 +87,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>0x800eaa88 (TODO)</li>
    *   <li>{@link SMap#executeSmapLoadingStage()} Sets up rendering and loads scene</li>
    *   <li>{@link Scus94491BpeSegment#FUN_80018658()}</li>
-   *   <li>{@link Ttle#FUN_800c75fc()}</li>
+   *   <li>{@link Ttle#gameOver()}</li>
    *   <li>{@link WMap#FUN_800cc738()}</li>
    *   <li>{@link SMap#startFmvLoadingStage()}</li>
    *   <li>{@link SMap#swapDiskLoadingStage()}</li>
@@ -231,10 +234,10 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[141] = Bttl_800c::FUN_800cb764;
     scriptSubFunctions_8004e29c[142] = Bttl_800c::FUN_800cb76c;
     scriptSubFunctions_8004e29c[143] = Bttl_800c::FUN_800cb9b0;
-    scriptSubFunctions_8004e29c[144] = Bttl_800c::FUN_800cb9f0;
-    scriptSubFunctions_8004e29c[145] = Bttl_800c::FUN_800cba28;
+    scriptSubFunctions_8004e29c[144] = Bttl_800c::scriptPauseAnimation;
+    scriptSubFunctions_8004e29c[145] = Bttl_800c::scriptResumeAnimation;
     scriptSubFunctions_8004e29c[146] = Bttl_800c::FUN_800cba60;
-    scriptSubFunctions_8004e29c[147] = Bttl_800c::FUN_800cbabc;
+    scriptSubFunctions_8004e29c[147] = Bttl_800c::scriptAnimationHasFinished;
     scriptSubFunctions_8004e29c[148] = Bttl_800c::FUN_800cbb00;
     scriptSubFunctions_8004e29c[149] = Bttl_800c::FUN_800cbc14;
     scriptSubFunctions_8004e29c[150] = Bttl_800c::FUN_800cbde0;
@@ -536,7 +539,7 @@ public final class Scus94491BpeSegment_8004 {
 //    scriptSubFunctions_8004e29c[603] = Temp::FUN_800ca648;
 
     scriptSubFunctions_8004e29c[605] = SEffe::FUN_80117eb0;
-    scriptSubFunctions_8004e29c[606] = SEffe::allocateGuardHealEffect;
+    scriptSubFunctions_8004e29c[606] = SEffe::allocateDeffTmd;
     scriptSubFunctions_8004e29c[607] = Bttl_800e::FUN_800e99bc;
 
     scriptSubFunctions_8004e29c[608] = SEffe::FUN_801181a8;
@@ -554,7 +557,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[620] = SEffe::FUN_80111a58;
     scriptSubFunctions_8004e29c[621] = Bttl_800e::FUN_800ea384;
     scriptSubFunctions_8004e29c[622] = SEffe::FUN_80119484;
-    scriptSubFunctions_8004e29c[623] = Bttl_800e::FUN_800e73ac;
+    scriptSubFunctions_8004e29c[623] = Bttl_800e::scriptLoadDeff;
     scriptSubFunctions_8004e29c[624] = Bttl_800e::FUN_800e6db4;
     scriptSubFunctions_8004e29c[625] = Bttl_800e::FUN_800e7490;
     scriptSubFunctions_8004e29c[626] = SEffe::scriptGetEffectZ;
@@ -597,9 +600,9 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[681] = SMap::FUN_800e00cc;
     scriptSubFunctions_8004e29c[682] = SMap::FUN_800e0148;
     scriptSubFunctions_8004e29c[683] = SMap::FUN_800e01bc;
-    scriptSubFunctions_8004e29c[684] = SMap::FUN_800e0244;
+    scriptSubFunctions_8004e29c[684] = SMap::scriptEnableTextureAnimation;
     scriptSubFunctions_8004e29c[685] = SMap::FUN_800e0204;
-    scriptSubFunctions_8004e29c[686] = SMap::FUN_800e0284;
+    scriptSubFunctions_8004e29c[686] = SMap::scriptDisableTextureAnimation;
     scriptSubFunctions_8004e29c[687] = SMap::FUN_800e02c0;
     scriptSubFunctions_8004e29c[688] = SMap::FUN_800e02fc;
     scriptSubFunctions_8004e29c[689] = SMap::FUN_800deba0;
@@ -635,7 +638,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[718] = Scus94491BpeSegment::FUN_8001f560;
 
     scriptSubFunctions_8004e29c[736] = Bttl_800d::FUN_800d3090;
-    scriptSubFunctions_8004e29c[737] = Bttl_800c::FUN_800cec8c;
+    scriptSubFunctions_8004e29c[737] = Bttl_800c::scriptAllocateFullScreenOverlay;
     scriptSubFunctions_8004e29c[738] = Bttl_800c::FUN_800cee50;
     scriptSubFunctions_8004e29c[739] = Bttl_800c::FUN_800ceecc;
     scriptSubFunctions_8004e29c[740] = Bttl_800d::FUN_800d3098;
@@ -644,7 +647,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[743] = Bttl_800d::FUN_800d30b0;
     scriptSubFunctions_8004e29c[744] = Bttl_800c::FUN_800cef00;
     scriptSubFunctions_8004e29c[745] = Bttl_800c::FUN_800cf0b4;
-    scriptSubFunctions_8004e29c[746] = SEffe::FUN_80102088;
+    scriptSubFunctions_8004e29c[746] = SEffe::allocateParticleEffect;
     scriptSubFunctions_8004e29c[747] = SEffe::FUN_80102364;
     scriptSubFunctions_8004e29c[748] = Bttl_800d::FUN_800d30b8;
     scriptSubFunctions_8004e29c[749] = Bttl_800d::allocateProjectileHitEffect;
@@ -718,7 +721,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[847] = SEffe::FUN_801023fc;
     scriptSubFunctions_8004e29c[848] = SEffe::FUN_8010246c;
     scriptSubFunctions_8004e29c[849] = Bttl_800c::scriptSetMtSeed;
-    scriptSubFunctions_8004e29c[850] = SEffe::FUN_80109d30;
+    scriptSubFunctions_8004e29c[850] = SEffe::allocateVertexDifferenceAnimation;
     scriptSubFunctions_8004e29c[851] = SEffe::FUN_8010a3fc;
     scriptSubFunctions_8004e29c[852] = Bttl_800d::allocateMonsterDeathEffect;
     scriptSubFunctions_8004e29c[853] = Bttl_800d::FUN_800d0124;
@@ -748,7 +751,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link Scus94491BpeSegment#FUN_80018998}</li>
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_80018998}</li>
-   *   <li>{@link Bttl_800c#FUN_800c772c}</li>
+   *   <li>{@link Bttl_800c#battleInitiateAndPreload_800c772c}</li>
    *   <li>{@link Bttl_800c#deferAllocateEnemyBattleObjects()}</li>
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
    *   <li>{@link Bttl_800c#deferAllocatePlayerBattleObjects()}</li>
@@ -785,374 +788,110 @@ public final class Scus94491BpeSegment_8004 {
   public static final ArrayRef<SubmapMusic08> _8004fb00 = MEMORY.ref(1, 0x8004fb00L, ArrayRef.of(SubmapMusic08.class, 130, 8, SubmapMusic08::new));
   public static final ArrayRef<MoonMusic08> moonMusic_8004ff10 = MEMORY.ref(4, 0x8004ff10L, ArrayRef.of(MoonMusic08.class, 43, 8, MoonMusic08::new));
 
-  /** TODO This is probably one of the RotMatrix* methods */
   @Method(0x80040010L)
-  public static MATRIX RotMatrix_80040010(final SVECTOR r, final MATRIX matrix) {
-    long t8;
-    long t9;
-
-    final int x = r.getX();
-    final short sinX;
-    if(x < 0) {
-      //LAB_8004002c
-      t9 = sin_cos_80054d0c.offset((-x & 0xfff) * 0x4L).get();
-      sinX = (short)-(short)t9;
-    } else {
-      //LAB_80040054
-      t9 = sin_cos_80054d0c.offset((x & 0xfff) * 0x4L).get();
-      sinX = (short)t9;
-    }
-
-    final short cosX = (short)((int)t9 >> 16);
-
-    //LAB_80040074
-    final int y = r.getY();
-    final short sinYP;
-    final short sinYN;
-    if(y < 0) {
-      //LAB_80040090
-      t9 = sin_cos_80054d0c.offset((-y & 0xfff) * 0x4L).get();
-      sinYP = (short)-(short)t9;
-      sinYN = (short)t9;
-    } else {
-      //LAB_800400b8
-      t9 = sin_cos_80054d0c.offset((y & 0xfff) * 0x4L).get();
-      sinYP = (short)t9;
-      sinYN = (short)-(short)t9;
-    }
-
-    final short cosY = (short)((int)t9 >> 16);
-
-    //LAB_800400dc
-    matrix.set(2, 0, sinYN);
-    matrix.set(2, 1, (short)(sinX * cosY >> 12));
-    matrix.set(2, 2, (short)(cosX * cosY >> 12));
-
-    final int z = r.getZ();
-    final short sinZ;
-    if(z < 0) {
-      //LAB_8004011c
-      t9 = sin_cos_80054d0c.offset((-z & 0xfff) * 0x4L).get();
-      sinZ = (short)-(short)t9;
-    } else {
-      //LAB_80040144
-      t9 = sin_cos_80054d0c.offset((z & 0xfff) * 0x4L).get();
-      sinZ = (short)t9;
-    }
-
-    final short cosZ = (short)((int)t9 >> 16);
-
-    //LAB_80040170
-    matrix.set(0, 0, (short)(cosY * cosZ >> 12));
-    matrix.set(1, 0, (short)(sinZ * cosY >> 12));
-    t8 = sinX * sinYP >> 12;
-    matrix.set(0, 1, (short)((t8 * cosZ >> 12) - (sinZ * cosX >> 12)));
-    matrix.set(1, 1, (short)((t8 * sinZ >> 12) + (cosX * cosZ >> 12)));
-    t8 = sinYP * cosX >> 12;
-    matrix.set(0, 2, (short)((t8 * cosZ >> 12) + (sinX * sinZ >> 12)));
-    matrix.set(1, 2, (short)((t8 * sinZ >> 12) - (sinX * cosZ >> 12)));
-
-    return matrix;
+  public static void RotMatrix_Zyx(final SVECTOR rotation, final MATRIX matrixOut) {
+    matrixOut.set(new Matrix4f()
+      .rotateZ(MathHelper.psxDegToRad(rotation.getZ()))
+      .rotateY(MathHelper.psxDegToRad(rotation.getY()))
+      .rotateX(MathHelper.psxDegToRad(rotation.getX())));
   }
 
   @Method(0x800402a0L)
-  public static void RotMatrixX(final long r, final MATRIX matrix) {
+  public static void RotMatrixX(final int rotation, final MATRIX matrixOut) {
     final int sinCos;
     final short sin;
 
-    if(r < 0) {
+    if(rotation < 0) {
       //LAB_800402bc
-      sinCos = (int)sin_cos_80054d0c.offset((-r & 0xfffL) * 4).get();
+      sinCos = (int)sin_cos_80054d0c.offset((-rotation & 0xfff) * 4).get();
       sin = (short)-(short)sinCos;
     } else {
       //LAB_800402e4
-      sinCos = (int)sin_cos_80054d0c.offset((r & 0xfffL) * 4).get();
+      sinCos = (int)sin_cos_80054d0c.offset((rotation & 0xfff) * 4).get();
       sin = (short)sinCos;
     }
 
     final short cos = (short)(sinCos >> 16);
 
     //LAB_80040304
-    final long m10 = matrix.get(1, 0);
-    final long m11 = matrix.get(1, 1);
-    final long m12 = matrix.get(1, 2);
-    final long m20 = matrix.get(2, 0);
-    final long m21 = matrix.get(2, 1);
-    final long m22 = matrix.get(2, 2);
+    final long m10 = matrixOut.get(1, 0);
+    final long m11 = matrixOut.get(1, 1);
+    final long m12 = matrixOut.get(1, 2);
+    final long m20 = matrixOut.get(2, 0);
+    final long m21 = matrixOut.get(2, 1);
+    final long m22 = matrixOut.get(2, 2);
 
-    matrix.set(1, 0, (short)(cos * m10 - sin * m20 >> 12));
-    matrix.set(1, 1, (short)(cos * m11 - sin * m21 >> 12));
-    matrix.set(1, 2, (short)(cos * m12 - sin * m22 >> 12));
-    matrix.set(2, 0, (short)(sin * m10 + cos * m20 >> 12));
-    matrix.set(2, 1, (short)(sin * m11 + cos * m21 >> 12));
-    matrix.set(2, 2, (short)(sin * m12 + cos * m22 >> 12));
+    matrixOut.set(1, 0, (short)(cos * m10 - sin * m20 >> 12));
+    matrixOut.set(1, 1, (short)(cos * m11 - sin * m21 >> 12));
+    matrixOut.set(1, 2, (short)(cos * m12 - sin * m22 >> 12));
+    matrixOut.set(2, 0, (short)(sin * m10 + cos * m20 >> 12));
+    matrixOut.set(2, 1, (short)(sin * m11 + cos * m21 >> 12));
+    matrixOut.set(2, 2, (short)(sin * m12 + cos * m22 >> 12));
   }
 
   @Method(0x80040440L)
-  public static void RotMatrixY(final long r, final MATRIX matrix) {
+  public static void RotMatrixY(final int rotation, final MATRIX matrixOut) {
     final int sinCos;
     final short sin;
 
-    if(r < 0) {
+    if(rotation < 0) {
       //LAB_8004045c
-      sinCos = (int)sin_cos_80054d0c.offset((-r & 0xfff) * 4).get();
+      sinCos = (int)sin_cos_80054d0c.offset((-rotation & 0xfff) * 4).get();
       sin = (short)sinCos;
     } else {
       //LAB_80040480
-      sinCos = (int)sin_cos_80054d0c.offset((r & 0xfffL) * 4).get();
+      sinCos = (int)sin_cos_80054d0c.offset((rotation & 0xfff) * 4).get();
       sin = (short)-(short)sinCos;
     }
 
     final short cos = (short)(sinCos >> 16);
 
     //LAB_800404a4
-    final short m0 = matrix.get(0);
-    final short m1 = matrix.get(1);
-    final short m2 = matrix.get(2);
-    final short m6 = matrix.get(6);
-    final short m7 = matrix.get(7);
-    final short m8 = matrix.get(8);
-    matrix.set(0, (short)(cos * m0 - sin * m6 >> 12));
-    matrix.set(1, (short)(cos * m1 - sin * m7 >> 12));
-    matrix.set(2, (short)(cos * m2 - sin * m8 >> 12));
-    matrix.set(6, (short)(sin * m0 + cos * m6 >> 12));
-    matrix.set(7, (short)(sin * m1 + cos * m7 >> 12));
-    matrix.set(8, (short)(sin * m2 + cos * m8 >> 12));
+    final short m0 = matrixOut.get(0);
+    final short m1 = matrixOut.get(1);
+    final short m2 = matrixOut.get(2);
+    final short m6 = matrixOut.get(6);
+    final short m7 = matrixOut.get(7);
+    final short m8 = matrixOut.get(8);
+    matrixOut.set(0, (short)(cos * m0 - sin * m6 >> 12));
+    matrixOut.set(1, (short)(cos * m1 - sin * m7 >> 12));
+    matrixOut.set(2, (short)(cos * m2 - sin * m8 >> 12));
+    matrixOut.set(6, (short)(sin * m0 + cos * m6 >> 12));
+    matrixOut.set(7, (short)(sin * m1 + cos * m7 >> 12));
+    matrixOut.set(8, (short)(sin * m2 + cos * m8 >> 12));
   }
 
   @Method(0x800405e0L)
-  public static void RotMatrixZ(final long r, final MATRIX matrix) {
+  public static void RotMatrixZ(final int rotation, final MATRIX matrixOut) {
     final int sinCos;
     final short sin;
 
-    if(r < 0) {
+    if(rotation < 0) {
       //LAB_800405fc
-      sinCos = (int)sin_cos_80054d0c.offset((-r & 0xfff) * 4).get();
+      sinCos = (int)sin_cos_80054d0c.offset((-rotation & 0xfff) * 4).get();
       sin = (short)-(short)sinCos;
     } else {
       //LAB_80040624
-      sinCos = (int)sin_cos_80054d0c.offset((r & 0xfff) * 4).get();
+      sinCos = (int)sin_cos_80054d0c.offset((rotation & 0xfff) * 4).get();
       sin = (short)sinCos;
     }
 
     final short cos = (short)(sinCos >> 16);
 
     //LAB_80040644
-    final long m00 = matrix.get(0, 0);
-    final long m01 = matrix.get(0, 1);
-    final long m02 = matrix.get(0, 2);
-    final long m10 = matrix.get(1, 0);
-    final long m11 = matrix.get(1, 1);
-    final long m12 = matrix.get(1, 2);
+    final long m00 = matrixOut.get(0, 0);
+    final long m01 = matrixOut.get(0, 1);
+    final long m02 = matrixOut.get(0, 2);
+    final long m10 = matrixOut.get(1, 0);
+    final long m11 = matrixOut.get(1, 1);
+    final long m12 = matrixOut.get(1, 2);
 
-    matrix.set(0, 0, (short)(cos * m00 - sin * m10 >> 12));
-    matrix.set(0, 1, (short)(cos * m01 - sin * m11 >> 12));
-    matrix.set(0, 2, (short)(cos * m02 - sin * m12 >> 12));
-    matrix.set(1, 0, (short)(sin * m00 + cos * m10 >> 12));
-    matrix.set(1, 1, (short)(sin * m01 + cos * m11 >> 12));
-    matrix.set(1, 2, (short)(sin * m02 + cos * m12 >> 12));
-  }
-
-  /** TODO RotMatrix_gte? */
-  @Method(0x80040780L)
-  public static void RotMatrix_80040780(final SVECTOR vector, final MATRIX matrix) {
-    final int x = vector.getX();
-    final int y = vector.getY();
-    final int z = vector.getZ();
-
-    final int signX = x >> 31;
-    final int signY = y >> 31;
-    final int signZ = z >> 31;
-
-    final int sinCosX = (int)sin_cos_80054d0c.offset((x + signX ^ signX) * 0x4L & 0x3ffcL).get();
-    final int sinCosY = (int)sin_cos_80054d0c.offset((y + signY ^ signY) * 0x4L & 0x3ffcL).get();
-    final int sinCosZ = (int)sin_cos_80054d0c.offset((z + signZ ^ signZ) * 0x4L & 0x3ffcL).get();
-
-    final short sinX = (short)(((sinCosX << 16) + signX ^ signX) >>> 16);
-    final short sinY = (short)(((sinCosY << 16) + signY ^ signY) >>> 16);
-    final short sinZ = (short)(((sinCosZ << 16) + signZ ^ signZ) >>> 16);
-
-    final short cosX = (short)(sinCosX >> 16);
-    final short cosY = (short)(sinCosY >> 16);
-    final short cosZ = (short)(sinCosZ >> 16);
-
-    CPU.MTC2(cosX,  8);
-    CPU.MTC2(sinY,  9);
-    CPU.MTC2(sinZ, 10);
-    CPU.MTC2(cosZ, 11);
-    CPU.COP2(0x198003dL);
-    final long t0 = CPU.MFC2( 9);
-    final long t1 = CPU.MFC2(10);
-    final long t2 = CPU.MFC2(11);
-    CPU.MTC2(sinX,  8);
-    CPU.MTC2(sinY,  9);
-    CPU.MTC2(sinZ, 10);
-    CPU.MTC2(cosZ, 11);
-    CPU.COP2(0x198003dL);
-    final long t3 = CPU.MFC2( 9);
-    final long t4 = CPU.MFC2(10);
-    final long t5 = CPU.MFC2(11);
-    CPU.MTC2(cosZ, 8);
-    CPU.MTC2(cosY, 9);
-    CPU.MTC2(t3, 10);
-    CPU.MTC2(t0, 11);
-    CPU.COP2(0x198003dL);
-    final long a0 = CPU.MFC2( 9);
-    final long a1 = CPU.MFC2(10);
-    final long a2 = CPU.MFC2(11);
-    CPU.MTC2(cosY, 9);
-    CPU.MTC2(sinZ, 8);
-    CPU.MTC2(t3, 10);
-    CPU.MTC2(t0, 11);
-    CPU.COP2(0x198003dL);
-    matrix.set(0, (short)a0);
-    matrix.set(1, (short)(a1 - t1));
-    matrix.set(2, (short)(a2 + t4));
-    matrix.set(3, (short)CPU.MFC2( 9));
-    matrix.set(4, (short)(CPU.MFC2(10) + t2));
-    matrix.set(5, (short)(CPU.MFC2(11) - t5));
-    matrix.set(6, (short)-sinY);
-    matrix.set(7, (short)(cosY * sinX >> 12));
-    matrix.set(8, (short)(cosY * cosX >> 12));
-  }
-
-  @Method(0x80040980L)
-  public static void FUN_80040980(final SVECTOR a0, final MATRIX v0) {
-    long at;
-    long v1;
-    long a1;
-    long a2;
-    long a3;
-    long t0;
-    long t1;
-    long t2;
-    long t3;
-    long t4;
-    long t5;
-    long t6;
-    final long t7;
-    long lo;
-    t0 = a0.getZ();
-    v1 = sin_cos_80054d0c.getAddress();
-    t4 = a0.getXY();
-    t3 = (int)t0 >> 31;
-    t0 = t0 + t3;
-    t0 = t0 ^ t3;
-    t0 = t0 << 2;
-    t0 = t0 & 0x3ffcL;
-    t0 = t0 + v1;
-    a2 = MEMORY.ref(4, t0).offset(0x0L).get();
-    t0 = (int)t4 >> 16;
-    t2 = (int)t0 >> 31;
-    t0 = t0 + t2;
-    t0 = t0 ^ t2;
-    t0 = t0 << 2;
-    t0 = t0 & 0x3ffcL;
-    t0 = t0 + v1;
-    a1 = MEMORY.ref(4, t0).offset(0x0L).get();
-    t0 = t4 << 16;
-    t0 = (int)t0 >> 16;
-    t1 = (int)t0 >> 31;
-    t0 = t0 + t1;
-    t0 = t0 ^ t1;
-    t0 = t0 << 2;
-    t0 = t0 & 0x3ffcL;
-    t0 = t0 + v1;
-    long a0_0 = MEMORY.ref(4, t0).offset(0x0L).get();
-    at = a2 << 16;
-    a2 = (int)a2 >> 16;
-    a2 = a2 << 16;
-    at = at + t3;
-    at = at ^ t3;
-    at = at >>> 16;
-    a2 = a2 | at;
-    at = a1 << 16;
-    a1 = (int)a1 >> 16;
-    a1 = a1 << 16;
-    at = at + t2;
-    at = at ^ t2;
-    at = at >>> 16;
-    a1 = a1 | at;
-    at = a0_0 << 16;
-    a0_0 = (int)a0_0 >> 16;
-    a0_0 = a0_0 << 16;
-    at = at + t1;
-    at = at ^ t1;
-    at = at >>> 16;
-    a0_0 = a0_0 | at;
-    t0 = (int)a0_0 >> 16;
-    CPU.MTC2(t0, 8);
-    a3 = a1 << 16;
-    a3 = (int)a3 >> 16;
-    CPU.MTC2(a3, 9);
-    v1 = a2 << 16;
-    v1 = (int)v1 >> 16;
-    CPU.MTC2(v1, 10);
-    at = (int)a2 >> 16;
-    CPU.MTC2(at, 11);
-    CPU.COP2(0x198003dL);
-    at = (int)a1 >> 16;
-    lo = (long)(int)at * (int)t0 & 0xffff_ffffL;
-    t0 = CPU.MFC2(9);
-    t1 = CPU.MFC2(10);
-    t6 = a0_0 << 16;
-    t2 = CPU.MFC2(11);
-    t6 = (int)t6 >> 16;
-    CPU.MTC2(t6, 8);
-    CPU.MTC2(a3, 9);
-    CPU.MTC2(v1, 10);
-    at = (int)a2 >> 16;
-    CPU.MTC2(at, 11);
-    CPU.COP2(0x198003dL);
-    at = lo;
-    at = (int)at >> 12;
-    v0.set(8, (short)at);
-    t3 = CPU.MFC2(9);
-    t4 = CPU.MFC2(10);
-    t5 = CPU.MFC2(11);
-    at = (int)a2 >> 16;
-    CPU.MTC2(at, 8);
-    at = (int)a1 >> 16;
-    CPU.MTC2(at, 9);
-    lo = (long)(int)at * (int)t6 & 0xffff_ffffL;
-    CPU.MTC2(t3, 10);
-    CPU.MTC2(t0, 11);
-    CPU.COP2(0x198003dL);
-    a0_0 = CPU.MFC2(9);
-    a1 = CPU.MFC2(10);
-    a2 = CPU.MFC2(11);
-    CPU.MTC2(v1, 8);
-    CPU.MTC2(at, 9);
-    CPU.MTC2(t3, 10);
-    CPU.MTC2(t0, 11);
-    CPU.COP2(0x198003dL);
-    t1 = a1 + t1;
-    t1 = t1 << 16;
-    a3 = a3 & 0xffffL;
-    t1 = t1 | a3;
-    v0.setPacked(2, t1);
-    at = CPU.MFC2(9);
-    a0_0 = a0_0 & 0xffffL;
-    at = -at;
-    at = at << 16;
-    at = at | a0_0;
-    v0.setPacked(0, at);
-    t6 = CPU.MFC2(10);
-    at = lo;
-    t7 = CPU.MFC2(11);
-    t2 = t2 - t6;
-    at = (int)at >> 12;
-    at = -at;
-    t2 = t2 & 0xffffL;
-    at = at << 16;
-    at = at | t2;
-    v0.setPacked(4, at);
-    t4 = t4 - a2;
-    t4 = t4 & 0xffffL;
-    t5 = t5 + t7;
-    t5 = t5 << 16;
-    t4 = t4 | t5;
-    v0.setPacked(6, t4);
+    matrixOut.set(0, 0, (short)(cos * m00 - sin * m10 >> 12));
+    matrixOut.set(0, 1, (short)(cos * m01 - sin * m11 >> 12));
+    matrixOut.set(0, 2, (short)(cos * m02 - sin * m12 >> 12));
+    matrixOut.set(1, 0, (short)(sin * m00 + cos * m10 >> 12));
+    matrixOut.set(1, 1, (short)(sin * m01 + cos * m11 >> 12));
+    matrixOut.set(1, 2, (short)(sin * m02 + cos * m12 >> 12));
   }
 
   /**
@@ -1616,7 +1355,7 @@ public final class Scus94491BpeSegment_8004 {
    * @return Index into {@link Scus94491BpeSegment_800c#playableSounds_800c43d0}, or -1 on error
    */
   @Method(0x8004bea4L)
-  public static PlayableSound0c loadSshdAndSoundbank(final byte[] soundbank, final Sshd sshd, final int addressInSoundBuffer) {
+  public static PlayableSound0c loadSshdAndSoundbank(final FileData soundbank, final Sshd sshd, final int addressInSoundBuffer) {
     if(addressInSoundBuffer > 0x8_0000 || (addressInSoundBuffer & 0xf) != 0) {
       throw new IllegalArgumentException("Invalid sound buffer offset");
     }
@@ -1631,7 +1370,7 @@ public final class Scus94491BpeSegment_8004 {
         sound.soundBufferPtr_08 = addressInSoundBuffer / 8;
 
         if(sshd.soundBankSize_04 != 0) {
-          spuDmaTransfer(0, soundbank, addressInSoundBuffer);
+          spuDmaTransfer(0, soundbank.getBytes(), addressInSoundBuffer);
         }
 
         return sound;

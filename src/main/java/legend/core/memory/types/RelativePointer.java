@@ -6,48 +6,48 @@ import legend.core.memory.Value;
 import javax.annotation.Nullable;
 import java.util.function.Function;
 
-public class RelativePointer<T extends legend.core.memory.types.MemoryRef> implements legend.core.memory.types.MemoryRef {
-  public static <T extends legend.core.memory.types.MemoryRef> Function<Value, RelativePointer<T>> of(final int size, final Function<Value, T> constructor) {
+public class RelativePointer<T extends MemoryRef> implements MemoryRef {
+  public static <T extends MemoryRef> Function<Value, RelativePointer<T>> of(final int size, final Function<Value, T> constructor) {
     return ref -> new RelativePointer<>(ref, constructor, ref.getAddress(), size, 0, true);
   }
 
-  public static <T extends legend.core.memory.types.MemoryRef> Function<Value, RelativePointer<T>> of(final int size, final Function<Value, T> constructor, final long nullValue) {
+  public static <T extends MemoryRef> Function<Value, RelativePointer<T>> of(final int size, final Function<Value, T> constructor, final long nullValue) {
     return ref -> new RelativePointer<>(ref, constructor, ref.getAddress(), size, nullValue, true);
   }
 
-  public static <T extends legend.core.memory.types.MemoryRef> Function<Value, RelativePointer<T>> of(final int size, final long baseAddress, final Function<Value, T> constructor) {
+  public static <T extends MemoryRef> Function<Value, RelativePointer<T>> of(final int size, final long baseAddress, final Function<Value, T> constructor) {
     return ref -> new RelativePointer<>(ref, constructor, baseAddress, size, 0, true);
   }
 
-  public static <T extends legend.core.memory.types.MemoryRef> Function<Value, RelativePointer<T>> of(final int size, final long baseAddress, final Function<Value, T> constructor, final long nullValue) {
+  public static <T extends MemoryRef> Function<Value, RelativePointer<T>> of(final int size, final long baseAddress, final Function<Value, T> constructor, final long nullValue) {
     return ref -> new RelativePointer<>(ref, constructor, baseAddress, size, nullValue, true);
   }
 
   /**
    * Lazy mode - don't resolve pointer until used
    */
-  public static <T extends legend.core.memory.types.MemoryRef> Function<Value, RelativePointer<T>> deferred(final int size, final Function<Value, T> constructor) {
+  public static <T extends MemoryRef> Function<Value, RelativePointer<T>> deferred(final int size, final Function<Value, T> constructor) {
     return ref -> new RelativePointer<>(ref, constructor, ref.getAddress(), size, 0, false);
   }
 
   /**
    * Lazy mode - don't resolve pointer until used
    */
-  public static <T extends legend.core.memory.types.MemoryRef> Function<Value, RelativePointer<T>> deferred(final int size, final Function<Value, T> constructor, final long nullValue) {
+  public static <T extends MemoryRef> Function<Value, RelativePointer<T>> deferred(final int size, final Function<Value, T> constructor, final long nullValue) {
     return ref -> new RelativePointer<>(ref, constructor, ref.getAddress(), size, nullValue, false);
   }
 
   /**
    * Lazy mode - don't resolve pointer until used
    */
-  public static <T extends legend.core.memory.types.MemoryRef> Function<Value, RelativePointer<T>> deferred(final int size, final long baseAddress, final Function<Value, T> constructor) {
+  public static <T extends MemoryRef> Function<Value, RelativePointer<T>> deferred(final int size, final long baseAddress, final Function<Value, T> constructor) {
     return ref -> new RelativePointer<>(ref, constructor, baseAddress, size, 0, false);
   }
 
   /**
    * Lazy mode - don't resolve pointer until used
    */
-  public static <T extends legend.core.memory.types.MemoryRef> Function<Value, RelativePointer<T>> deferred(final int size, final long baseAddress, final Function<Value, T> constructor, final long nullValue) {
+  public static <T extends MemoryRef> Function<Value, RelativePointer<T>> deferred(final int size, final long baseAddress, final Function<Value, T> constructor, final long nullValue) {
     return ref -> new RelativePointer<>(ref, constructor, baseAddress, size, nullValue, false);
   }
 

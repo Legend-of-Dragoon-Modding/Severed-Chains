@@ -123,9 +123,9 @@ public class Memory {
       final Segment segment = this.getSegment(address);
       final byte val = segment.get((int)(this.maskAddress(address) - segment.getAddress()));
 
-//      if(watches.contains((int)address & 0xffffff)) {
-//        LOGGER.error(Long.toHexString(address) + " read " + Long.toHexString(val), new Throwable());
-//      }
+      if(watches.contains((int)address & 0xffffff)) {
+        LOGGER.error(Long.toHexString(address) + " read " + Long.toHexString(val), new Throwable());
+      }
 
       return val;
     }
@@ -138,9 +138,9 @@ public class Memory {
       final Segment segment = this.getSegment(address);
       final long val = segment.get((int)(this.maskAddress(address) - segment.getAddress()), size);
 
-//      if(watches.contains((int)address & 0xffffff)) {
-//        LOGGER.error(Long.toHexString(address) + " read " + Long.toHexString(val), new Throwable());
-//      }
+      if(watches.contains((int)address & 0xffffff)) {
+        LOGGER.error(Long.toHexString(address) + " read " + Long.toHexString(val), new Throwable());
+      }
 
       return val;
     }
@@ -180,9 +180,9 @@ public class Memory {
   }
 
   public void getBytes(final long address, final byte[] dest, final int offset, final int size) {
-//    if(watches.contains((int)address & 0xffffff)) {
-//      LOGGER.error(Long.toHexString(address) + " read", new Throwable());
-//    }
+    if(watches.contains((int)address & 0xffffff)) {
+      LOGGER.error(Long.toHexString(address) + " read", new Throwable());
+    }
 
     synchronized(this.lock) {
       final Segment segment = this.getSegment(address);
@@ -303,7 +303,7 @@ public class Memory {
         final long addr = this.maskAddress(address.value());
 
         if(methods.containsKey(addr)) {
-          throw new RuntimeException(cls + " contains two methods at address " + addr);
+          throw new RuntimeException(cls + " contains two methods at address " + Long.toHexString(addr));
         }
 
         methods.put(addr, new MethodInfo(method, address.ignoreExtraParams()));
@@ -418,9 +418,9 @@ public class Memory {
       synchronized(Memory.this.lock) {
         final long val = this.getSegment().get(this.segmentOffset, this.getSize());
 
-//        if(watches.contains((int)this.address & 0xffffff)) {
-//          LOGGER.error(Long.toHexString(this.address) + " read " + Long.toHexString(val), new Throwable());
-//        }
+        if(watches.contains((int)this.address & 0xffffff)) {
+          LOGGER.error(Long.toHexString(this.address) + " read " + Long.toHexString(val), new Throwable());
+        }
 
         return val;
       }

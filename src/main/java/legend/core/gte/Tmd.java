@@ -1,28 +1,26 @@
 package legend.core.gte;
 
-import legend.core.memory.Value;
-import legend.core.memory.types.MemoryRef;
-import legend.core.memory.types.UnboundedArrayRef;
+import legend.game.unpacker.FileData;
 
-public class Tmd implements MemoryRef {
-  private final Value ref;
+import java.util.Arrays;
+
+public class Tmd {
+  public final String name;
 
   public final TmdHeader header;
-  public final UnboundedArrayRef<TmdObjTable> objTable;
+  public final TmdObjTable1c[] objTable;
 
-  public Tmd(final Value ref) {
-    this.ref = ref;
+  public Tmd(final String name, final FileData data) {
+    this.name = name;
+    this.header = new TmdHeader(data);
+    this.objTable = new TmdObjTable1c[this.header.nobj];
 
-    this.header = ref.offset(4, 0x0L).cast(TmdHeader::new);
-    this.objTable = ref.offset(4, 0x8L).cast(UnboundedArrayRef.of(0x1c, TmdObjTable::new, this::getLength));
-  }
-
-  private int getLength() {
-    return (int)this.header.nobj.get();
+    final FileData objTableOffset = data.slice(0x8);
+    Arrays.setAll(this.objTable, i -> new TmdObjTable1c(name + " obj " + i, objTableOffset.slice(i * 0x1c), objTableOffset));
   }
 
   @Override
-  public long getAddress() {
-    return this.ref.getAddress();
+  public String toString() {
+    return this.name + ' ' + super.toString();
   }
 }

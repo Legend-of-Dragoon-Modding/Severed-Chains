@@ -15,9 +15,12 @@ import legend.game.combat.types.BattleDisplayStats144Sub10;
 import legend.game.combat.types.BattleMenuStruct58;
 import legend.game.combat.types.BattleObject27c;
 import legend.game.combat.types.BattleStruct3c;
-import legend.game.combat.types.BttlStructa4;
+import legend.game.combat.types.CombatMenua4;
+import legend.game.combat.types.CombatItem02;
 import legend.game.combat.types.FloatingNumberC4;
 import legend.game.combat.types.FloatingNumberC4Sub20;
+import legend.game.modding.events.EventManager;
+import legend.game.modding.events.combat.SpellStatsEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.ItemStats0c;
@@ -64,7 +67,7 @@ import static legend.game.combat.Bttl_800c._800c6748;
 import static legend.game.combat.Bttl_800c._800c697c;
 import static legend.game.combat.Bttl_800c._800c697e;
 import static legend.game.combat.Bttl_800c._800c6980;
-import static legend.game.combat.Bttl_800c._800c6988;
+import static legend.game.combat.Bttl_800c.combatItems_800c6988;
 import static legend.game.combat.Bttl_800c._800c69c8;
 import static legend.game.combat.Bttl_800c._800c6b60;
 import static legend.game.combat.Bttl_800c._800c6b64;
@@ -377,11 +380,11 @@ public final class Bttl_800f {
   }
 
   /**
-   * @param attackType 0 is physical attack, 1/2 are both magical, don't know the difference
+   * @param attackType 0 is physical attack, 1 is dragoon magic (and status items for some reason?), 2 is item magic
    */
   @Method(0x800f1aa8L)
   public static int FUN_800f1aa8(final int bobjIndex1, final int bobjIndex2, final int attackType) {
-    long s4 = 0;
+    long effectHit = 0;
     final ScriptState<BattleObject27c> state1 = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[bobjIndex1];
     final BattleObject27c bobj1 = state1.innerStruct_00;
     final boolean isEnemy = (state1.storage_44[7] & 0x4) != 0;
@@ -390,54 +393,54 @@ public final class Bttl_800f {
     final BattleObject27c bobj2 = state2.innerStruct_00;
 
     final int hitStat = (byte)bobj1.getStat((int)_800c703c.offset(attackType * 0x4L).get());
-    int attackHit;
+    int effectAccuracy;
     if(attackType == 0) {
       if(isEnemy) {
-        attackHit = spellStats_800fa0b8.get(bobj1.spellId_4e).accuracy_05.get();
+        effectAccuracy = spellStats_800fa0b8.get(bobj1.spellId_4e).accuracy_05.get();
       } else {
         //LAB_800f1bf4
-        attackHit = bobj1.attackHit_3c;
+        effectAccuracy = bobj1.attackHit_3c;
       }
 
       //LAB_800f1bf8
       setTempSpellStats(state1);
     } else if(attackType == 1) {
       //LAB_800f1c08
-      attackHit = spellStats_800fa0b8.get(bobj1.spellId_4e).accuracy_05.get();
+      effectAccuracy = spellStats_800fa0b8.get(bobj1.spellId_4e).accuracy_05.get();
       setTempSpellStats(state1);
     } else {
       //LAB_800f1c38
-      setTempWeaponStats(state1);
-      attackHit = 100;
+      setTempItemMagicStats(state1);
+      effectAccuracy = 100;
     }
 
     //LAB_800f1c44
-    attackHit = attackHit * (hitStat + 100) / 100;
+    effectAccuracy = effectAccuracy * (hitStat + 100) / 100;
 
-    final int avoid;
+    final int avoidChance;
     if(attackType == 0) {
-      avoid = bobj2.attackAvoid_40;
+      avoidChance = bobj2.attackAvoid_40;
     } else {
       //LAB_800f1c9c
-      avoid = bobj2.magicAvoid_42;
+      avoidChance = bobj2.magicAvoid_42;
     }
 
     //LAB_800f1ca8
-    final int a0_0 = (avoid * ((byte)bobj1.getStat((int)_800c703c.offset(0x10L).offset(attackType * 0x4L).get()) + 100)) / 100;
-    if(a0_0 < attackHit && attackHit - a0_0 >= (simpleRand() * 101 >> 16)) {
-      s4 = 0x1L;
+    final int modifiedAvoidChance = (avoidChance * ((byte)bobj1.getStat((int)_800c703c.offset(0xcL + attackType * 0x4L).get()) + 100)) / 100;
+    if(modifiedAvoidChance < effectAccuracy && effectAccuracy - modifiedAvoidChance >= (simpleRand() * 0x65 >> 0x10)) {
+      effectHit = 0x1L;
       if(isEnemy) {
         setTempSpellStats(state1);
       }
     }
 
     //LAB_800f1d28
-    if((bobj1.getStat((int)_800c703c.offset(0x20L).offset(attackType * 0x4L).get()) & _800c703c.offset(0x30L).offset(attackType * 0x4L).get()) != 0) {
-      s4 = 0x1L;
+    if((bobj1.getStat((int)_800c703c.offset(0x18L + attackType * 0x4L).get()) & _800c703c.offset(0x24L + attackType * 0x4L).get()) != 0) {
+      effectHit = 0x1L;
     }
 
     //LAB_800f1d5c
-    return (int)s4;
+    return (int)effectHit;
   }
 
   @Method(0x800f1d88L)
@@ -519,7 +522,7 @@ public final class Bttl_800f {
       if((attacker._96 & 0x4) != 0) {
         damage = defender.maxHp_10 * attacker.spellMulti_9c / 100;
 
-        if((attacker._94 & 0x8) != 0) {
+        if((attacker.targetType_94 & 0x8) != 0) {
           // Attack all
 
           final int count;
@@ -537,14 +540,14 @@ public final class Bttl_800f {
           //LAB_800f21d4
           for(int i = 0; i < count; i++) {
             final BattleObject27c a1_0 = bobjs[i].innerStruct_00;
-            a1_0._a8 = attacker._a8;
+            a1_0.buffType_a8 = attacker.buffType_a8;
             FUN_800f9380(attacker, a1_0);
           }
         } else {
           // Attack single
 
           //LAB_800f2210
-          defender._a8 = attacker._a8;
+          defender.buffType_a8 = attacker.buffType_a8;
           FUN_800f9380(attacker, defender);
         }
 
@@ -704,7 +707,7 @@ public final class Bttl_800f {
 
     //LAB_800f2640
     script.params_20[2].set(damage);
-    script.params_20[3].set(FUN_800f7c5c(script.params_20[0].get(), script.params_20[1].get(), 0));
+    script.params_20[3].set(determineAttackSpecialEffects(script.params_20[0].get(), script.params_20[1].get(), 0));
     return FlowControl.CONTINUE;
   }
 
@@ -743,7 +746,7 @@ public final class Bttl_800f {
 
     //LAB_800f27ec
     script.params_20[3].set(damage);
-    script.params_20[4].set(FUN_800f7c5c(script.params_20[0].get(), script.params_20[1].get(), 1));
+    script.params_20[4].set(determineAttackSpecialEffects(script.params_20[0].get(), script.params_20[1].get(), 1));
     return FlowControl.CONTINUE;
   }
 
@@ -752,7 +755,7 @@ public final class Bttl_800f {
     final ScriptState<BattleObject27c> state = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
     final BattleObject27c s0 = state.innerStruct_00;
     clearTempWeaponAndSpellStats(s0);
-    setTempWeaponStats(state);
+    setTempItemMagicStats(state);
     int a1 = Math.max(1, FUN_800f946c(s0, FUN_800f204c(script.params_20[0].get(), script.params_20[1].get(), 0), 1));
 
     //LAB_800f28c8
@@ -778,7 +781,7 @@ public final class Bttl_800f {
 
     //LAB_800f2970
     script.params_20[3].set(a1);
-    script.params_20[4].set(FUN_800f7c5c(script.params_20[0].get(), script.params_20[1].get(), 0x2L));
+    script.params_20[4].set(determineAttackSpecialEffects(script.params_20[0].get(), script.params_20[1].get(), 0x2L));
     FUN_800f8854(script.params_20[0].get(), script.params_20[1].get(), 0x1L);
     return FlowControl.CONTINUE;
   }
@@ -1071,13 +1074,13 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f3354L)
-  public static void calculateFloatingNumberRender(final int numIndex, final long onHitTextType, final long onHitClutCol, final long rawDamage, final int x, final int y, long a6, final long onHitClutRow) {
+  public static void calculateFloatingNumberRender(final int numIndex, final long onHitTextType, final long onHitClutCol, final int rawDamage, final int x, final int y, long a6, final long onHitClutRow) {
     final short[] damageDigits = new short[5];
 
     final byte floatingTextType;  // 0=floating numbers, 1=MP cost, 2=miss
-    final byte clutCol;  //TODO: confirm this, it may not be this exactly
+    final byte clutCol; //TODO: confirm this, it may not be this exactly
     final byte clutRow; //TODO: confirm this, it may not be this exactly
-    if((int)rawDamage != -1) {
+    if(rawDamage != -1) {
       floatingTextType = (byte)onHitTextType;
       clutCol = (byte)onHitClutCol;
       clutRow = (byte)onHitClutRow;
@@ -1129,7 +1132,7 @@ public final class Bttl_800f {
     //LAB_800f35e4
     //LAB_800f3608
     //Clamp damage to 0-max
-    int damage = Math.max(0, Math.min((int)rawDamage, 99999));
+    int damage = Math.max(0, Math.min(rawDamage, 99999));
 
     //LAB_800f3614
     num.x_1c.set(x);
@@ -1249,9 +1252,9 @@ public final class Bttl_800f {
             final short y;
             final short z;
             if((state.storage_44[7] & 0x4) != 0) {
-              x = (short)(-bobj._78.getZ() * 100);
-              y = (short)(-bobj._78.getY() * 100);
-              z = (short)(-bobj._78.getX() * 100);
+              x = (short)(-bobj.targetArrowPos_78.getZ() * 100);
+              y = (short)(-bobj.targetArrowPos_78.getY() * 100);
+              z = (short)(-bobj.targetArrowPos_78.getX() * 100);
             } else {
               //LAB_800f3a3c
               x = 0;
@@ -1508,7 +1511,7 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f4268L)
-  public static void setFloatingNumCoordsAndRender(final int bobjIndex, final long s3, final long s4) {
+  public static void setFloatingNumCoordsAndRender(final int bobjIndex, final int damage, final long s4) {
     final ScriptState<?> state = scriptStatePtrArr_800bc1c0[bobjIndex];
     final BattleObject27c bobj = (BattleObject27c)state.innerStruct_00;
 
@@ -1516,9 +1519,9 @@ public final class Bttl_800f {
     final short y;
     final short z;
     if((state.storage_44[7] & 0x4) != 0) {
-      x = (short)(-bobj._78.getZ() * 100);
-      y = (short)(-bobj._78.getY() * 100);
-      z = (short)(-bobj._78.getX() * 100);
+      x = (short)(-bobj.targetArrowPos_78.getZ() * 100);
+      y = (short)(-bobj.targetArrowPos_78.getY() * 100);
+      z = (short)(-bobj.targetArrowPos_78.getX() * 100);
     } else {
       //LAB_800f4314
       x = 0;
@@ -1530,7 +1533,7 @@ public final class Bttl_800f {
     final DVECTOR screenCoords = perspectiveTransformXyz(bobj.model_148, x, y, z);
 
     //LAB_800f4394
-    FUN_800f89f4(bobjIndex, 0, 0x2L, s3, clampX(screenCoords.getX() + centreScreenX_1f8003dc.get()), clampY(screenCoords.getY() + centreScreenY_1f8003de.get()), 60 / vsyncMode_8007a3b8.get() / 4, s4);
+    FUN_800f89f4(bobjIndex, 0, 0x2L, damage, clampX(screenCoords.getX() + centreScreenX_1f8003dc.get()), clampY(screenCoords.getY() + centreScreenY_1f8003de.get()), 60 / vsyncMode_8007a3b8.get() / 4, s4);
   }
 
   @Method(0x800f43dcL)
@@ -1603,9 +1606,9 @@ public final class Bttl_800f {
       sp0x00[i] = (short)_800c7124.offset(i * 0x2L).getSigned();
     }
 
-    final BttlStructa4 structa4 = _800c6b60.deref();
-    int a2 = structa4.spellId_1c.get();
-    if(structa4.charIndex_08.get() == 8 && structa4._0a.get() == 0x1L) {
+    final CombatMenua4 structa4 = _800c6b60.deref();
+    int a2 = structa4.itemOrSpellId_1c.get();
+    if(structa4.charIndex_08.get() == 8 && structa4.menuType_0a.get() == 0x1L) {
       if(a2 == 0xa) {
         a2 = 0x41;
       }
@@ -1640,7 +1643,7 @@ public final class Bttl_800f {
     //LAB_800f47ac
     t0.spellId_4e = a2;
 
-    if(structa4._a0.get() == 1 && structa4._0a.get() == 0) {
+    if(structa4._a0.get() == 1 && structa4.menuType_0a.get() == 0) {
       //LAB_800f47e4
       for(int i = 0; i < 17; i++) {
         if(sp0x00[i] == a2 + 0xc0) {
@@ -1710,47 +1713,47 @@ public final class Bttl_800f {
 
   @Method(0x800f4964L)
   public static void FUN_800f4964() {
-    final BttlStructa4 v0 = _800c6b60.deref();
+    final CombatMenua4 v0 = _800c6b60.deref();
     v0._00.set((short)0);
     v0._02.set(0);
     v0.x_04.set(0);
     v0.y_06.set(0);
     v0.charIndex_08.set((short)0);
-    v0._0a.set((short)0);
+    v0.menuType_0a.set((short)0);
     v0._0c.set(0);
     v0._0e.set(0);
     v0._10.set(0);
     v0._12.set(0);
     v0._14.set(0);
     v0._16.set(0x1000);
-    v0._18.set((short)0);
+    v0.textX_18.set((short)0);
     v0._1a.set((short)0);
-    v0.spellId_1c.set((short)-1);
+    v0.itemOrSpellId_1c.set((short)-1);
     v0.count_22.set((short)0);
     v0._24.set((short)0);
   }
 
   @Method(0x800f49bcL)
   public static void FUN_800f49bc(final int charIndex, final long a1) {
-    final BttlStructa4 a2 = _800c6b60.deref();
+    final CombatMenua4 a2 = _800c6b60.deref();
     a2._00.set((short)1);
     a2.x_04.set(0xa0);
     a2.y_06.set(0x90);
     a2.charIndex_08.set((short)charIndex);
-    a2._0a.set((short)(a1 & 1));
+    a2.menuType_0a.set((short)(a1 & 1));
     a2._0c.set(0x20);
     a2._0e.set(0x2b);
     a2._10.set(0);
     a2._12.set(0);
     a2._14.set(0x1);
     a2._16.set(0x1000);
-    a2._18.set((short)0);
+    a2.textX_18.set((short)0);
     a2._1a.set((short)0);
-    a2.spellId_1c.set((short)-1);
+    a2.itemOrSpellId_1c.set((short)-1);
     a2._1e.set((short)0);
     a2._20.set((short)0);
 
-    final short v1 = a2._0a.get();
+    final short v1 = a2.menuType_0a.get();
 
     //LAB_800f4a58
     if(v1 == 0) {
@@ -1763,7 +1766,7 @@ public final class Bttl_800f {
       }
 
       //LAB_800f4a9c
-      FUN_800f83c8();
+      prepareItemList();
       a2.count_22.set((short)_800c6b70.getSigned());
     } else if(v1 == 0x1L) {
       //LAB_800f4abc
@@ -1805,12 +1808,12 @@ public final class Bttl_800f {
     long a1;
     int s0;
     BattleObject27c data;
-    final BttlStructa4 structa4 = _800c6b60.deref();
+    final CombatMenua4 structa4 = _800c6b60.deref();
     if(structa4._00.get() == 0) {
       return;
     }
 
-    if(structa4._0a.get() != 0) {
+    if(structa4.menuType_0a.get() != 0) {
       s0 = 0x80;
     } else {
       s0 = 0xba;
@@ -1824,7 +1827,7 @@ public final class Bttl_800f {
         structa4._12.set(0);
         structa4._10.set(0);
 
-        if(structa4._0a.get() == 0) {
+        if(structa4.menuType_0a.get() == 0) {
           structa4._24.set(structa4._26.get());
           structa4._02.or(0x20);
           structa4._1e.set(structa4._28.get());
@@ -1850,14 +1853,14 @@ public final class Bttl_800f {
         }
 
         //LAB_800f4cb4
-        structa4.spellId_1c.set((short)FUN_800f56c4());
+        structa4.itemOrSpellId_1c.set((short)getItemOrSpellId());
         structa4._00.set((short)7);
         structa4._02.or(0x40);
       }
 
       case 1 -> {
         structa4._02.and(0xfcff);
-        structa4.spellId_1c.set((short)FUN_800f56c4());
+        structa4.itemOrSpellId_1c.set((short)getItemOrSpellId());
         if((joypadPress_8007a398.get() & 0x4L) != 0) {
           if(structa4._24.get() != 0) {
             structa4._88.set(2);
@@ -2006,9 +2009,9 @@ public final class Bttl_800f {
           } while(charSlot < charCount_800c677c.get());
 
           //LAB_800f50b8
-          if(structa4._0a.get() == 0) {
-            data.weaponId_52 = structa4.spellId_1c.get();
-            setTempWeaponStats(s2);
+          if(structa4.menuType_0a.get() == 0) {
+            data.itemOrSpellId_52 = structa4.itemOrSpellId_1c.get();
+            setTempItemMagicStats(s2);
 
             if((data.itemTarget_d4 & 0x4) != 0) {
               _800c6b68.setu(0x1L);
@@ -2026,7 +2029,7 @@ public final class Bttl_800f {
             }
           } else {
             //LAB_800f5134
-            final BattleObject27c s1 = FUN_800f9e50(structa4.spellId_1c.get());
+            final BattleObject27c s1 = setActiveCharacterSpell(structa4.itemOrSpellId_1c.get());
 
             if(s1.mp_0c < s1.spellMp_a0) {
               //LAB_800f5160
@@ -2045,7 +2048,7 @@ public final class Bttl_800f {
           playSound(0, 2, 0, 0, (short)0, (short)0);
           structa4._8c.set(0);
           structa4._02.or(0x4);
-          if(structa4._0a.get() == 0) {
+          if(structa4.menuType_0a.get() == 0) {
             structa4._94.set(structa4._1a.get() - structa4._20.get());
           }
 
@@ -2111,7 +2114,7 @@ public final class Bttl_800f {
 
       case 5 -> {
         structa4._a0.set(0);
-        structa4.spellId_1c.set((short)FUN_800f56c4());
+        structa4.itemOrSpellId_1c.set((short)getItemOrSpellId());
 
         //LAB_800f538c
         int charSlot = 0;
@@ -2127,12 +2130,12 @@ public final class Bttl_800f {
 
         //LAB_800f53c8
         final int a0;
-        if(structa4._0a.get() == 0) {
+        if(structa4.menuType_0a.get() == 0) {
           a0 = (int)_800c6b68.get();
           a1 = _800c69c8.get();
         } else {
           //LAB_800f53f8
-          a1 = data._94;
+          a1 = data.targetType_94;
           a0 = (a1 & 0x40) > 0 ? 1 : 0;
           a1 = (a1 & 0x08) > 0 ? 1 : 0;
         }
@@ -2140,12 +2143,12 @@ public final class Bttl_800f {
         //LAB_800f5410
         s0 = FUN_800f7768(a0, a1);
         if(s0 == 0x1L) {
-          if(structa4._0a.get() == 0) {
-            takeItem(((structa4.spellId_1c.get() & 0xff) - 0x40) & 0xff);
+          if(structa4.menuType_0a.get() == 0) {
+            takeItem(((structa4.itemOrSpellId_1c.get() & 0xff) - 0x40) & 0xff);
           }
 
           //LAB_800f545c
-          if(structa4._0a.get() == 0x1L) {
+          if(structa4.menuType_0a.get() == 0x1L) {
             data.mp_0c -= data.spellMp_a0;
           }
 
@@ -2166,7 +2169,7 @@ public final class Bttl_800f {
         playSound(0, 4, 0, 0, (short)0, (short)0);
         structa4._12.set(0x52);
         structa4._10.set(s0);
-        structa4._18.set((short)(structa4.x_04.get() - s0 / 2 + 9));
+        structa4.textX_18.set((short)(structa4.x_04.get() - s0 / 2 + 9));
         v0 = (structa4.y_06.get() - structa4._12.get()) - 16;
         structa4._1a.set((short)v0);
         structa4._20.set((short)v0);
@@ -2177,9 +2180,9 @@ public final class Bttl_800f {
         }
 
         //LAB_800f5588
-        if(structa4._0a.get() != 0) {
-          structa4.spellId_1c.set((short)FUN_800f56c4());
-          calculateFloatingNumberRender(0, 0x1L, 0, FUN_800f9e50(structa4.spellId_1c.get()).spellMp_a0, 280, 135, 0, 0x1L);
+        if(structa4.menuType_0a.get() != 0) {
+          structa4.itemOrSpellId_1c.set((short)getItemOrSpellId());
+          calculateFloatingNumberRender(0, 0x1L, 0, setActiveCharacterSpell(structa4.itemOrSpellId_1c.get()).spellMp_a0, 280, 135, 0, 0x1L);
         }
       }
 
@@ -2197,7 +2200,7 @@ public final class Bttl_800f {
       }
 
       case 8 -> {
-        if(structa4._0a.get() == 0) {
+        if(structa4.menuType_0a.get() == 0) {
           v0 = structa4._1a.get() - structa4._20.get();
           structa4._26.set(structa4._24.get());
           structa4._28.set(structa4._1e.get());
@@ -2219,16 +2222,16 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f56c4L)
-  public static int FUN_800f56c4() {
-    final BttlStructa4 a1 = _800c6b60.deref();
-    final short v1 = a1._0a.get();
+  public static int getItemOrSpellId() {
+    final CombatMenua4 a1 = _800c6b60.deref();
+    final short menuType = a1.menuType_0a.get();
 
-    if(v1 == 0) {
+    if(menuType == 0) {
       //LAB_800f56f0
-      return (int)(_800c6988.offset((a1._24.get() + a1._1e.get()) * 0x2L).get() - 0xc0);
+      return combatItems_800c6988[a1._24.get() + a1._1e.get()].itemId - 0xc0;
     }
 
-    if(v1 == 1) {
+    if(menuType == 1) {
       //LAB_800f5718
       //LAB_800f5740
       int charSlot;
@@ -2239,7 +2242,7 @@ public final class Bttl_800f {
       }
 
       //LAB_800f5778
-      final BttlStructa4 a2 = _800c6b60.deref();
+      final CombatMenua4 a2 = _800c6b60.deref();
       int spellIndex = dragoonSpells_800c6960.get(charSlot).spellIndex_01.get(a2._24.get() + a2._1e.get()).get();
       if(a2.charIndex_08.get() == 8) {
         if(spellIndex == 65) {
@@ -2263,16 +2266,18 @@ public final class Bttl_800f {
     throw new RuntimeException("Undefined a0");
   }
 
+  /**
+   * @param type <ol start="0"><li>items</li><li>spells</li></ul>
+   */
   @Method(0x800f57f8L)
-  public static void FUN_800f57f8(final int a0) {
-    long v0;
-    long a1;
+  public static void renderList(final int type) {
+    int a1;
 
-    final BttlStructa4 structa4 = _800c6b60.deref();
+    final CombatMenua4 structa4 = _800c6b60.deref();
 
     int y1 = structa4._20.get();
     final int y2 = structa4._1a.get();
-    final long sp68 = structa4.y_06.get();
+    final int sp68 = structa4.y_06.get();
 
     //LAB_800f5860
     int charSlot;
@@ -2283,12 +2288,11 @@ public final class Bttl_800f {
     }
 
     //LAB_800f58a4
-    long s7 = 0x1L;
-    long sp7c = 0;
+    int sp7c = 0;
 
     final LodString sp0x18 = new LodString(18);
     final LodString sp0x40 = new LodString(5);
-    final LodString sp0x48 = new LodString(12);
+    final LodString itemCount = new LodString(12);
 
     //LAB_800f58e0
     for(int spellSlot = 0; spellSlot < structa4.count_22.get(); spellSlot++) {
@@ -2296,18 +2300,18 @@ public final class Bttl_800f {
         break;
       }
 
-      long s2 = 0;
-      final LodString s3;
-      if(a0 == 0) {
+      int textFlags = 0;
+      final LodString name;
+      if(type == 0) {
         //LAB_800f5918
-        s3 = _80050ae8.get((int)(_800c6988.offset(sp7c).get() - 0xc0)).deref();
-        intToStr((int)_800c6988.offset(s7).get(), sp0x48);
+        name = _80050ae8.get(combatItems_800c6988[sp7c].itemId - 0xc0).deref();
+        intToStr(combatItems_800c6988[sp7c].count, itemCount);
 
         //LAB_800f5968
         int i;
         for(i = 0; ; i++) {
-          sp0x18.charAt(i, s3.charAt(i));
-          if(s3.charAt(i) == 0xa0ff) {
+          sp0x18.charAt(i, name.charAt(i));
+          if(name.charAt(i) == 0xa0ff) {
             break;
           }
         }
@@ -2319,7 +2323,7 @@ public final class Bttl_800f {
         }
 
         //LAB_800f59bc
-        if(_800c6988.offset(s7).get() < 10) {
+        if(combatItems_800c6988[sp7c].count < 10) {
           sp0x18.charAt(i, 0);
           i++;
         }
@@ -2329,21 +2333,22 @@ public final class Bttl_800f {
         sp0x40.charAt(0, 0xe);
 
         //LAB_800f5a10
-        for(a1 = 0; a1 < 2; a1++) {
-          v0 = sp0x48.charAt((int)a1);
-          if(v0 == 0xa0ffL) {
+        int n;
+        for(n = 0; n < 2; n++) {
+          final int chr = itemCount.charAt(n);
+          if(chr == 0xa0ff) {
             break;
           }
 
-          sp0x40.charAt((int)(a1 + 1), (int)v0);
+          sp0x40.charAt(n + 1, chr);
         }
 
         //LAB_800f5a38
-        sp0x40.charAt((int)(a1 + 1), 0xa0ff);
-      } else if(a0 == 1) {
+        sp0x40.charAt(n + 1, 0xa0ff);
+      } else if(type == 1) {
         //LAB_800f5a4c
         int spellId = dragoonSpells_800c6960.get(charSlot).spellIndex_01.get(spellSlot).get();
-        s3 = spells_80052734.get(spellId).deref();
+        name = spells_80052734.get(spellId).deref();
 
         if(structa4.charIndex_08.get() == 8) {
           if(spellId == 65) {
@@ -2362,10 +2367,11 @@ public final class Bttl_800f {
         }
 
         //LAB_800f5acc
-        final BattleObject27c bobj = FUN_800f9e50(spellId);
+        final BattleObject27c bobj = setActiveCharacterSpell(spellId);
 
+        // Not enough MP for spell
         if(bobj.mp_0c < bobj.spellMp_a0) {
-          s2 = 0xaL;
+          textFlags = 0xa;
         }
       } else {
         throw new RuntimeException("Undefined s3");
@@ -2374,42 +2380,41 @@ public final class Bttl_800f {
       //LAB_800f5af0
       if(y1 >= y2) {
         //LAB_800f5b90
-        if(sp68 >= y1 + 0xcL) {
+        if(sp68 >= y1 + 12) {
           a1 = 0;
         } else {
-          a1 = y1 - (sp68 - 0xcL);
+          a1 = y1 - (sp68 - 12);
         }
 
         //LAB_800f5bb4
-        if((structa4._02.get() & 0x4L) != 0) {
+        if((structa4._02.get() & 0x4) != 0) {
           a1 = (short)structa4._8c.get();
         }
 
         //LAB_800f5bd8
-        Scus94491BpeSegment_8002.renderText(s3, structa4._18.get(), y1, (int)s2, (int)a1);
+        Scus94491BpeSegment_8002.renderText(name, structa4.textX_18.get(), y1, textFlags, a1);
 
-        if(a0 == 0) {
-          Scus94491BpeSegment_8002.renderText(sp0x40, structa4._18.get() + 0x80, y1, (int)s2, (int)a1);
+        if(type == 0) {
+          Scus94491BpeSegment_8002.renderText(sp0x40, structa4.textX_18.get() + 128, y1, textFlags, a1);
         }
       } else if(y2 < y1 + 12) {
-        if((structa4._02.get() & 0x4L) != 0) {
+        if((structa4._02.get() & 0x4) != 0) {
           a1 = structa4._8c.get();
         } else {
           a1 = y1 - y2;
         }
 
         //LAB_800f5b40
-        Scus94491BpeSegment_8002.renderText(s3, structa4._18.get(), y2, (int)s2, (int)a1);
+        Scus94491BpeSegment_8002.renderText(name, structa4.textX_18.get(), y2, textFlags, a1);
 
-        if(a0 == 0) {
-          Scus94491BpeSegment_8002.renderText(sp0x40, structa4._18.get() + 0x80, y2, (int)s2, (int)a1);
+        if(type == 0) {
+          Scus94491BpeSegment_8002.renderText(sp0x40, structa4.textX_18.get() + 128, y2, textFlags, a1);
         }
       }
 
       //LAB_800f5c38
       y1 += 14;
-      sp7c = sp7c + 0x2L;
-      s7 = s7 + 0x2L;
+      sp7c++;
     }
 
     //LAB_800f5c64
@@ -2422,19 +2427,19 @@ public final class Bttl_800f {
    *   - Dragoon magic MP cost background and normal text (excluding the number value) */
   @Method(0x800f5c94L)
   public static void drawItemMenuElements() {
-    final BttlStructa4 structa4 = _800c6b60.deref();
+    final CombatMenua4 structa4 = _800c6b60.deref();
 
     if(structa4._00.get() != 0 && (structa4._02.get() & 0x1L) != 0) {
       if((structa4._02.get() & 0x2L) != 0) {
-        FUN_800f57f8(structa4._0a.get());
+        renderList(structa4.menuType_0a.get());
 
         if((structa4._02.get() & 0x8L) != 0) {
           //LAB_800f5d78
           //LAB_800f5d90
-          FUN_800f8cd8(structa4._18.get() - centreScreenX_1f8003dc.get() - 16, structa4._1a.get() - centreScreenY_1f8003de.get() + structa4._24.get() * 14 + 2, structa4._84.get() % 4 * 16 + 192 & 0xf0, structa4._84.get() / 4 * 8 + 32 & 0xf8, 15, 8, 0xd, Translucency.B_PLUS_F);
+          FUN_800f8cd8(structa4.textX_18.get() - centreScreenX_1f8003dc.get() - 16, structa4._1a.get() - centreScreenY_1f8003de.get() + structa4._24.get() * 14 + 2, structa4._84.get() % 4 * 16 + 192 & 0xf0, structa4._84.get() / 4 * 8 + 32 & 0xf8, 15, 8, 0xd, Translucency.B_PLUS_F);
 
           final int s0;
-          if(structa4._0a.get() != 0) {
+          if(structa4.menuType_0a.get() != 0) {
             s0 = 0;
           } else {
             s0 = 26;
@@ -2477,15 +2482,15 @@ public final class Bttl_800f {
       //LAB_800f5f50
       if((structa4._02.get() & 0x40L) != 0) {
         final long s1;
-        if(structa4._0a.get() == 0) {
+        if(structa4.menuType_0a.get() == 0) {
           //LAB_800f5f8c
           s1 = 0x4L;
-        } else if(structa4._0a.get() == 0x1L) {
+        } else if(structa4.menuType_0a.get() == 0x1L) {
           //LAB_800f5f94
           s1 = 0x5L;
           if((structa4._02.get() & 0x2L) != 0) {
-            final BattleObject27c bobj = FUN_800f9e50(structa4.spellId_1c.get());
-            calculateFloatingNumberRender(0, 0x1L, 0, bobj.spellMp_a0, 280, 135, 0, structa4._0a.get());
+            final BattleObject27c bobj = setActiveCharacterSpell(structa4.itemOrSpellId_1c.get());
+            calculateFloatingNumberRender(0, 0x1L, 0, bobj.spellMp_a0, 280, 135, 0, structa4.menuType_0a.get());
             FUN_800f8cd8(236 - centreScreenX_1f8003dc.get(), 130 - centreScreenY_1f8003de.get(), 16, 128, 24, 16, 0x2c, null);
             renderTextBoxBackground(236, 130, 64, 14, 0x8);
           }
@@ -2497,7 +2502,7 @@ public final class Bttl_800f {
         //LAB_800f6050
         //Selected item description
         renderTextBoxBackground(44, 156, 232, 14, 0x8);
-        renderText((short)s1, structa4.spellId_1c.get(), 160, 163);
+        renderText((short)s1, structa4.itemOrSpellId_1c.get(), 160, 163);
       }
     }
 
@@ -2738,7 +2743,7 @@ public final class Bttl_800f {
           } else {
             v1 = v1 & 0xfL;
             if(v1 == 0x5L) {
-              FUN_800f83c8();
+              prepareItemList();
 
               if(_800c6b70.getSigned() == 0) {
                 playSound(0, 3, 0, 0, (short)0, (short)0);
@@ -2926,7 +2931,7 @@ public final class Bttl_800f {
       FUN_800f7210(menu._28.get(), menu._2a.get(), _800c71bc, 31, 0xc, Translucency.B_PLUS_F, menu.colour_2c.get());
 
       if((menu._02.get() & 0x1L) != 0) {
-        FUN_800f7210(menu._3c.get(), menu._2a.get(), _800c71bc, 31, 0xc, Translucency.B_PLUS_F, 0x80 - menu.colour_2c.get());
+        FUN_800f7210(menu._3c.get(), menu._2a.get(), _800c71bc, 31, 0xc, Translucency.B_PLUS_F, Math.max(0, 0x80 - menu.colour_2c.get()));
       }
 
       //LAB_800f704c
@@ -3220,11 +3225,11 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f7a74L)
-  public static void setTempWeaponStats(final ScriptState<BattleObject27c> state) {
+  public static void setTempItemMagicStats(final ScriptState<BattleObject27c> state) {
     final BattleObject27c bobj = state.innerStruct_00;
 
     //LAB_800f7a98
-    final ItemStats0c itemStats = itemStats_8004f2ac.get(bobj.weaponId_52);
+    final ItemStats0c itemStats = itemStats_8004f2ac.get(bobj.itemOrSpellId_52);
     bobj.itemTarget_d4 = itemStats.target_00.get();
     bobj.itemElement_d6 = itemStats.element_01.get();
     bobj.itemDamage_d8 = itemStats.damage_02.get();
@@ -3251,46 +3256,60 @@ public final class Bttl_800f {
     if(bobj.spellId_4e != -1) {
       if(bobj.spellId_4e > 127) {
         LOGGER.error("Retail bug: spell index out of bounds (%d). This is known to happen during Shana/Miranda's dragoon attack.", bobj.spellId_4e);
-        bobj._94 = 0;
+        bobj.targetType_94 = 0;
         bobj._96 = 0;
-        bobj._98 = 0;
+        bobj.specialEffect_98 = 0;
         bobj.spellDamage_9a = 0;
         bobj.spellMulti_9c = 0;
         bobj.spellAccuracy_9e = 0;
         bobj.spellMp_a0 = 0;
-        bobj._a2 = 0;
+        bobj.statusChance_a2 = 0;
         bobj.spellElement_a4 = 0;
-        bobj._a6 = 0;
-        bobj._a8 = 0;
+        bobj.statusType_a6 = 0;
+        bobj.buffType_a8 = 0;
         bobj._aa = 0;
         return;
       }
 
       final SpellStats0c spellStats = spellStats_800fa0b8.get(bobj.spellId_4e);
-      bobj._94 = spellStats._00.get();
+      bobj.targetType_94 = spellStats.targetType_00.get();
       bobj._96 = spellStats._01.get();
-      bobj._98 = spellStats._02.get();
+      bobj.specialEffect_98 = spellStats.specialEffect_02.get();
       bobj.spellDamage_9a = spellStats.damage_03.get();
       bobj.spellMulti_9c = spellStats.multi_04.get();
       bobj.spellAccuracy_9e = spellStats.accuracy_05.get();
       bobj.spellMp_a0 = spellStats.mp_06.get();
-      bobj._a2 = spellStats._07.get();
+      bobj.statusChance_a2 = spellStats.statusChance_07.get();
       bobj.spellElement_a4 = spellStats.element_08.get();
-      bobj._a6 = spellStats._09.get();
-      bobj._a8 = spellStats._0a.get();
+      bobj.statusType_a6 = spellStats.statusType_09.get();
+      bobj.buffType_a8 = spellStats.buffType_0a.get();
       bobj._aa = spellStats._0b.get();
+
+      final SpellStatsEvent event = EventManager.INSTANCE.postEvent(new SpellStatsEvent(bobj.spellId_4e, bobj.targetType_94, bobj._96, bobj.specialEffect_98, bobj.spellDamage_9a, bobj.spellMulti_9c, bobj.spellAccuracy_9e, bobj.spellMp_a0, bobj.statusChance_a2, bobj.spellElement_a4, bobj.statusType_a6, bobj.buffType_a8, bobj._aa));
+      bobj.targetType_94 = event.targetType;
+      bobj._96 = event._01;
+      bobj.specialEffect_98 = event.specialEffect;
+      bobj.spellDamage_9a = event.damageFlag;
+      bobj.spellMulti_9c = event.healingPercent;
+      bobj.spellAccuracy_9e = event.accuracy;
+      bobj.spellMp_a0 = event.mpUsage;
+      bobj.statusChance_a2 = event.statusChance;
+      bobj.spellElement_a4 = event.element;
+      bobj.statusType_a6 = event.statusType;
+      bobj.buffType_a8 = event.buffType;
+      bobj._aa = event._0b;
     } else {
-      bobj._94 = 0;
+      bobj.targetType_94 = 0;
       bobj._96 = 0;
-      bobj._98 = 0;
+      bobj.specialEffect_98 = 0;
       bobj.spellDamage_9a = 0;
       bobj.spellMulti_9c = 0;
       bobj.spellAccuracy_9e = 0;
       bobj.spellMp_a0 = 0;
-      bobj._a2 = 0;
+      bobj.statusChance_a2 = 0;
       bobj.spellElement_a4 = 0;
-      bobj._a6 = 0;
-      bobj._a8 = 0;
+      bobj.statusType_a6 = 0;
+      bobj.buffType_a8 = 0;
       bobj._aa = 0;
     }
 
@@ -3298,51 +3317,53 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f7c5cL)
-  public static int FUN_800f7c5c(final int bobjIndex1, final int bobjIndex2, final long a2) {
+  public static int determineAttackSpecialEffects(final int bobjIndex1, final int bobjIndex2, final long attackType) {
     final ScriptState<?> state1 = scriptStatePtrArr_800bc1c0[bobjIndex1];
     final BattleObject27c bobj1 = (BattleObject27c)state1.innerStruct_00;
-    final long fp = state1.storage_44[7] & 0x4;
-    final long v1 = (fp != 0 ? 0xcL : 0) + a2 * 0x4L;
-    int stat = bobj1.getStat((int)_800c7284.offset(v1).get());
+    final long isEnemyBobj1 = state1.storage_44[7] & 0x4;
+    final long memOffset = (isEnemyBobj1 != 0 ? 0xcL : 0) + attackType * 0x4L;
+    int effectChance = bobj1.getStat((int)_800c7284.offset(memOffset).get());
     final ScriptState<?> state2 = scriptStatePtrArr_800bc1c0[bobjIndex2];
-    final long spa8 = state2.storage_44[7] & 0x4;
+    final long isEnemyBobj2 = state2.storage_44[7] & 0x4;
     final BattleObject27c bobj2 = (BattleObject27c)state2.innerStruct_00;
-    final long s3 = _800c726c.offset(v1).get();
-    final long s6 = _800c729c.offset(v1).get();
-    final long s7 = _800c72b4.offset(v1).get();
-    int s0 = -1;
-    if(a2 == 2) {
-      stat = 101;
+    final long s3 = _800c726c.offset(memOffset).get();
+    final long s6 = _800c729c.offset(memOffset).get();
+    final long s7 = _800c72b4.offset(memOffset).get();
+    int effect = -1;
+    if(attackType == 2) {
+      effectChance = 101;
     }
 
     //LAB_800f7e98
-    if(simpleRand() * 0x65 / 0x100 < stat) {
-      final long a1_0 = bobj1.getStat((int)s3);
+    if((!Config.disableStatusEffects() || isEnemyBobj1 == 0) && simpleRand() * 0x65 >> 0x10 < effectChance) {
+      final long statusType = bobj1.getStat((int)s3);
 
-      if((a1_0 & 0xffL) != 0) {
+      if((statusType & 0xffL) != 0) {
         //LAB_800f7eec
         long v1_0;
         for(v1_0 = 0; v1_0 < 8; v1_0++) {
-          if((a1_0 & (0x80L >> v1_0)) != 0) {
+          if((statusType & (0x80L >> v1_0)) != 0) {
             break;
           }
         }
 
         //LAB_800f7f0c
-        s0 = (int)_800c724c.offset(v1_0 * 0x4L).get();
+        effect = (int)_800c724c.offset(v1_0 * 0x4L).get();
       }
 
       //LAB_800f7f14
+      // TODO: Sometimes references bobj.specialEffectFlag_14 (like for instant death weapons), sometimes references bobj._96.
+      //  Unclear what flag 0x10 is or what it has to do with elements.
       final long v1_0 = bobj1.getStat((int)s6) & s7;
       if(v1_0 != 0) {
-        if(fp != 0 || a2 != 0) {
+        if(isEnemyBobj1 != 0 || attackType != 0) {
           //LAB_800f7f40
-          if(a2 != 0x2L) {
+          if(attackType != 0x2L) {
             //LAB_800f7f68
             if(v1_0 == 0x10L) {
               //LAB_800f7f7c
               final long v0;
-              if(spa8 == 0) {
+              if(isEnemyBobj2 == 0) {
                 v0 = bobj1.spellElement_a4 & characterElements_800c706c.get(bobj2.charIndex_272).get();
               } else {
                 //LAB_800f7fac
@@ -3352,35 +3373,35 @@ public final class Bttl_800f {
               //LAB_800f7fbc
               if(v0 != 0) {
                 //LAB_800f7fc4
-                s0 = 0;
+                effect = 0;
               }
             } else if(v1_0 == 0x80L) {
-              s0 = 0;
+              effect = 0;
             }
           } else {
-            s0 = 0;
+            effect = 0;
           }
         } else {
-          s0 = 0;
+          effect = 0;
         }
 
         //LAB_800f7fc8
         if((bobj2.specialEffectFlag_14 & 0x80) != 0) { // Resistance
-          s0 = -1;
+          effect = -1;
         }
       }
     }
 
     //LAB_800f7fe0
     //LAB_800f7fe4
-    return s0;
+    return effect;
   }
 
   @Method(0x800f83c8L)
-  public static void FUN_800f83c8() {
+  public static void prepareItemList() {
     //LAB_800f83dc
-    for(int i = 0; i < 0x40; i++) {
-      _800c6988.offset(i).setu(0xffL);
+    for(int i = 0; i < Config.inventorySize(); i++) {
+      combatItems_800c6988[i].itemId = 0xff;
     }
 
     _800c6b70.setu(0);
@@ -3389,18 +3410,19 @@ public final class Bttl_800f {
     for(int itemSlot1 = 0; itemSlot1 < gameState_800babc8.itemCount_1e6.get(); itemSlot1++) {
       //LAB_800f843c
       for(int itemSlot2 = 0; itemSlot2 < gameState_800babc8.itemCount_1e6.get(); itemSlot2++) {
-        final int itemId1 = gameState_800babc8.items_2e9.get(itemSlot1).get();
-        final int itemId2 = (int)_800c6988.offset(itemSlot2 * 0x2L).get();
+        final CombatItem02 combatItem = combatItems_800c6988[itemSlot2];
 
-        if(itemId2 == itemId1) {
-          _800c6988.offset(itemSlot2 * 0x2L).offset(0x1L).addu(0x1L);
+        final int itemId1 = gameState_800babc8.items_2e9.get(itemSlot1).get();
+
+        if(combatItem.itemId == itemId1) {
+          combatItem.count++;
           break;
         }
 
         //LAB_800f8468
-        if(itemId2 == 0xff) {
-          _800c6988.offset(itemSlot2 * 0x2L).setu(itemId1);
-          _800c6988.offset(itemSlot2 * 0x2L).offset(0x1L).setu(0x1L);
+        if(combatItem.itemId == 0xff) {
+          combatItem.itemId = itemId1;
+          combatItem.count = 1;
           _800c6b70.addu(0x1L);
           break;
         }
@@ -3470,7 +3492,7 @@ public final class Bttl_800f {
     final BattleObject27c s2 = state1.innerStruct_00;
 
     if(a2 != 0x1L) {
-      setTempWeaponStats(state1);
+      setTempItemMagicStats(state1);
     }
 
     //LAB_800f88a0
@@ -3510,13 +3532,13 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f89f4L)
-  public static long FUN_800f89f4(final int bobjIndex, final long a1, final long a2, final long a3, final int x, final int y, final long a6, final long a7) {
+  public static long FUN_800f89f4(final int bobjIndex, final long a1, final long a2, final int rawDamage, final int x, final int y, final long a6, final long a7) {
     //LAB_800f8a30
     for(int i = 0; i < 12; i++) {
       final FloatingNumberC4 num = floatingNumbers_800c6b5c.deref().get(i);
 
       if(num.state_00.get() == 0) {
-        calculateFloatingNumberRender(i, a1, a2, a3, x, y, a6, a7);
+        calculateFloatingNumberRender(i, a1, a2, rawDamage, x, y, a6, a7);
         num.bobjIndex_04.set(bobjIndex);
         return 0x1L;
       }
@@ -3529,8 +3551,8 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f8aa4L)
-  public static void renderDamage(final int bobjIndex, final long a1) {
-    setFloatingNumCoordsAndRender(bobjIndex, a1, 0x8L);
+  public static void renderDamage(final int bobjIndex, final int damage) {
+    setFloatingNumCoordsAndRender(bobjIndex, damage, 0x8L);
   }
 
   @Method(0x800f8ac4L)
@@ -3690,10 +3712,10 @@ public final class Bttl_800f {
 
   @Method(0x800f9380L)
   public static void FUN_800f9380(final BattleObject27c attacker, final BattleObject27c defender) {
-    if((defender._a8 & 0xff) != 0) {
+    if((defender.buffType_a8 & 0xff) != 0) {
       //LAB_800f93c8
       for(int i = 0; i < 8; i++) {
-        if((defender._a8 & (0x80 >> i)) != 0) {
+        if((defender.buffType_a8 & (0x80 >> i)) != 0) {
           //LAB_800f93e8
           final int turnCount = attacker.charIndex_272 != defender.charIndex_272 ? 3 : 4;
 
@@ -3859,7 +3881,7 @@ public final class Bttl_800f {
 
   @Method(0x800f9884L)
   public static FlowControl FUN_800f9884(final RunningScript<?> script) {
-    setTempWeaponStats((ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()]);
+    setTempItemMagicStats((ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()]);
     return FlowControl.CONTINUE;
   }
 
@@ -4071,7 +4093,7 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f9e50L)
-  public static BattleObject27c FUN_800f9e50(final int spellId) {
+  public static BattleObject27c setActiveCharacterSpell(final int spellId) {
     final int charIndex = _800c6b60.deref().charIndex_08.get();
 
     //LAB_800f9e8c

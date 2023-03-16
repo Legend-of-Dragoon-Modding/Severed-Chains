@@ -1,6 +1,7 @@
 package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
+import legend.game.input.InputAction;
 import legend.game.types.LodString;
 import legend.game.types.MessageBox20;
 import legend.game.types.MessageBoxResult;
@@ -106,8 +107,84 @@ public class MessageBoxScreen extends MenuScreen {
     }
   }
 
+  private void menuNavigateUp() {
+    playSound(1);
+    this.messageBox.menuIndex_18 = 0;
+
+    final int selectionY = this.messageBox.y_1e + 7 + this.messageBox.text_00.length * 14 + 7;
+    if(this.messageBox.renderable_04 != null) {
+      this.messageBox.renderable_04.y_44 = selectionY - 2;
+    }
+  }
+
+  private void menuNavigateDown() {
+    playSound(1);
+    this.messageBox.menuIndex_18 = 1;
+
+    final int selectionY = this.messageBox.y_1e + 7 + this.messageBox.text_00.length * 14 + 7;
+    if(this.messageBox.renderable_04 != null) {
+      this.messageBox.renderable_04.y_44 = selectionY + 12;
+    }
+  }
+
+  private void menuSelect() {
+    playSound(2);
+
+    if(this.messageBox.menuIndex_18 == 0) {
+      this.result = MessageBoxResult.YES;
+    } else {
+      this.result = MessageBoxResult.NO;
+    }
+
+    this.messageBox.state_0c = 4;
+  }
+
+  private void menuCancel() {
+    playSound(3);
+
+    this.result = MessageBoxResult.CANCEL;
+
+    this.messageBox.state_0c = 4;
+  }
+
+  private boolean SkipInput() {
+    if(this.messageBox.type_15 == 0) {
+      playSound(2);
+      this.result = MessageBoxResult.YES;
+      this.messageBox.state_0c = 4;
+      return true;
+    }
+
+    if(this.messageBox.state_0c != 3 || this.messageBox.type_15 != 2) {
+      return true;
+    }
+
+    return false;
+  }
+
   @Override
   protected boolean propagateRender() {
     return true;
   }
+
+  @Override
+  public void pressedThisFrame(final InputAction inputAction) {
+    if(this.SkipInput()) {
+      return;
+    }
+
+    if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
+      this.menuNavigateUp();
+    }
+    if(inputAction == InputAction.DPAD_DOWN|| inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
+      this.menuNavigateDown();
+    }
+    if(inputAction == InputAction.BUTTON_SOUTH) {
+      this.menuSelect();
+    }
+    if(inputAction == InputAction.BUTTON_EAST) {
+      this.menuCancel();
+    }
+  }
+
 }

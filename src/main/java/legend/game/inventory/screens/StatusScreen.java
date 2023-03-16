@@ -1,5 +1,7 @@
 package legend.game.inventory.screens;
 
+import legend.game.input.InputAction;
+
 import static legend.game.SItem.FUN_801034cc;
 import static legend.game.SItem._80114290;
 import static legend.game.SItem.allocateUiElement;
@@ -22,9 +24,6 @@ import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
 import static legend.game.Scus94491BpeSegment_8005.spells_80052734;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
 
 public class StatusScreen extends MenuScreen {
   protected int loadingStage;
@@ -131,29 +130,20 @@ public class StatusScreen extends MenuScreen {
     }
   }
 
-  @Override
-  protected void keyPress(final int key, final int scancode, final int mods) {
-    if(this.loadingStage != 2 || mods != 0) {
-      return;
+  private void menuEscape() {
+    playSound(3);
+    this.loadingStage = 3;
+  }
+
+  private void menuNavigateLeft() {
+    if(this.charSlot > 0) {
+      this.scroll(this.charSlot - 1);
     }
+  }
 
-    switch(key) {
-      case GLFW_KEY_LEFT -> {
-        if(this.charSlot > 0) {
-          this.scroll(this.charSlot - 1);
-        }
-      }
-
-      case GLFW_KEY_RIGHT -> {
-        if(this.charSlot < characterCount_8011d7c4.get() - 1) {
-          this.scroll(this.charSlot + 1);
-        }
-      }
-
-      case GLFW_KEY_ESCAPE -> {
-        playSound(3);
-        this.loadingStage = 3;
-      }
+  private void menuNavigateRight() {
+    if(this.charSlot < characterCount_8011d7c4.get() - 1) {
+      this.scroll(this.charSlot + 1);
     }
   }
 
@@ -168,5 +158,30 @@ public class StatusScreen extends MenuScreen {
     }
 
     this.scrollAccumulator += deltaY;
+  }
+
+  @Override
+  public void pressedThisFrame(final InputAction inputAction) {
+    if(this.loadingStage != 2) {
+      return;
+    }
+
+    if(inputAction == InputAction.BUTTON_EAST) {
+      this.menuEscape();
+    }
+  }
+
+  @Override
+  public void pressedWithRepeatPulse(final InputAction inputAction) {
+    if(this.loadingStage != 2) {
+      return;
+    }
+
+    if(inputAction == InputAction.DPAD_LEFT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_LEFT) {
+      this.menuNavigateLeft();
+    }
+    if(inputAction == InputAction.DPAD_RIGHT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_RIGHT) {
+      this.menuNavigateRight();
+    }
   }
 }

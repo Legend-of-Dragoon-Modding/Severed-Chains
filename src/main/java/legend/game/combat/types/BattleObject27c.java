@@ -18,7 +18,7 @@ public class BattleObject27c extends BattleScriptDataBase {
    *   <li>0x10 - Stunned</li>
    *   <li>0x20 - Weapon blocked</li>
    *   <li>0x40 - Dispirited</li>
-   *   <li>0x80 - Also dispirited?</li>
+   *   <li>0x80 - Poison</li>
    *   <li>0x2000 - Can become dragoon</li>
    * </ul>
    */
@@ -132,7 +132,7 @@ public class BattleObject27c extends BattleScriptDataBase {
   public int turnValue_4c;
   public int spellId_4e;
 
-  public int weaponId_52;
+  public int itemOrSpellId_52;
   public int guard_54;
   public int additionHits_56;
   public int selectedAddition_58;
@@ -168,7 +168,7 @@ public class BattleObject27c extends BattleScriptDataBase {
   public int monsterElementFlag_72;
   public int monsterElementalImmunityFlag_74;
   public int monsterStatusResistFlag_76;
-  public final SVECTOR _78 = new SVECTOR();
+  public final SVECTOR targetArrowPos_78 = new SVECTOR();
   public int _7e;
   public int _80;
   public int _82;
@@ -177,17 +177,17 @@ public class BattleObject27c extends BattleScriptDataBase {
   public int _88;
   public int _8a;
 
-  public int _94;
+  public int targetType_94;
   public int _96;
-  public int _98;
+  public int specialEffect_98;
   public int spellDamage_9a;
   public int spellMulti_9c;
   public int spellAccuracy_9e;
   public int spellMp_a0;
-  public int _a2;
+  public int statusChance_a2;
   public int spellElement_a4;
-  public int _a6;
-  public int _a8;
+  public int statusType_a6;
+  public int buffType_a8;
   public int _aa;
   public int dragoonAttack_ac;
   public int dragoonMagic_ae;
@@ -267,7 +267,7 @@ public class BattleObject27c extends BattleScriptDataBase {
 
   public int _142;
   public CombatantStruct1a8 combatant_144;
-  public final Model124 model_148 = new Model124();
+  public final Model124 model_148;
   public int combatantIndex_26c;
   public int animIndex_26e;
   public int animIndex_270;
@@ -275,7 +275,12 @@ public class BattleObject27c extends BattleScriptDataBase {
   public int charIndex_272;
   public int _274;
   public int charSlot_276;
+  /** Has model? Used to be used to free model, no longer used since it's managed by java */
   public int _278;
+
+  public BattleObject27c(final String name) {
+    this.model_148 = new Model124(name);
+  }
 
   public int getStat(final int statIndex) {
     return switch(statIndex) {
@@ -318,7 +323,7 @@ public class BattleObject27c extends BattleScriptDataBase {
       case 36 -> this.turnValue_4c;
       case 37 -> this.spellId_4e;
 
-      case 39 -> this.weaponId_52;
+      case 39 -> this.itemOrSpellId_52;
       case 40 -> this.guard_54;
       case 41 -> this.additionHits_56;
       case 42 -> this.selectedAddition_58;
@@ -337,9 +342,9 @@ public class BattleObject27c extends BattleScriptDataBase {
       case 55 -> this.monsterElementFlag_72;
       case 56 -> this.monsterElementalImmunityFlag_74;
       case 57 -> this.monsterStatusResistFlag_76;
-      case 58 -> this._78.getX();
-      case 59 -> this._78.getY();
-      case 60 -> this._78.getZ();
+      case 58 -> this.targetArrowPos_78.getX();
+      case 59 -> this.targetArrowPos_78.getY();
+      case 60 -> this.targetArrowPos_78.getZ();
       case 61 -> this._7e;
       case 62 -> this._80;
       case 63 -> this._82;
@@ -348,17 +353,17 @@ public class BattleObject27c extends BattleScriptDataBase {
       case 66 -> this._88;
       case 67 -> this._8a;
 
-      case 72 -> this._94;
+      case 72 -> this.targetType_94;
       case 73 -> this._96;
-      case 74 -> this._98;
+      case 74 -> this.specialEffect_98;
       case 75 -> this.spellDamage_9a;
       case 76 -> this.spellMulti_9c;
       case 77 -> this.spellAccuracy_9e;
       case 78 -> this.spellMp_a0;
-      case 79 -> this._a2;
+      case 79 -> this.statusChance_a2;
       case 80 -> this.spellElement_a4;
-      case 81 -> this._a6;
-      case 82 -> this._a8;
+      case 81 -> this.statusType_a6;
+      case 82 -> this.buffType_a8;
       case 83 -> this._aa;
       case 84 -> this.dragoonAttack_ac;
       case 85 -> this.dragoonMagic_ae;
@@ -469,7 +474,7 @@ public class BattleObject27c extends BattleScriptDataBase {
       case 36 -> this.turnValue_4c = value;
       case 37 -> this.spellId_4e = value;
 
-      case 39 -> this.weaponId_52 = value;
+      case 39 -> this.itemOrSpellId_52 = value;
       case 40 -> this.guard_54 = value;
       case 41 -> this.additionHits_56 = value;
       case 42 -> this.selectedAddition_58 = value;
@@ -488,9 +493,9 @@ public class BattleObject27c extends BattleScriptDataBase {
       case 55 -> this.monsterElementFlag_72 = value;
       case 56 -> this.monsterElementalImmunityFlag_74 = value;
       case 57 -> this.monsterStatusResistFlag_76 = value;
-      case 58 -> this._78.setX((short)value);
-      case 59 -> this._78.setY((short)value);
-      case 60 -> this._78.setZ((short)value);
+      case 58 -> this.targetArrowPos_78.setX((short)value);
+      case 59 -> this.targetArrowPos_78.setY((short)value);
+      case 60 -> this.targetArrowPos_78.setZ((short)value);
       case 61 -> this._7e = value;
       case 62 -> this._80 = value;
       case 63 -> this._82 = value;
@@ -499,17 +504,17 @@ public class BattleObject27c extends BattleScriptDataBase {
       case 66 -> this._88 = value;
       case 67 -> this._8a = value;
 
-      case 72 -> this._94 = value;
+      case 72 -> this.targetType_94 = value;
       case 73 -> this._96 = value;
-      case 74 -> this._98 = value;
+      case 74 -> this.specialEffect_98 = value;
       case 75 -> this.spellDamage_9a = value;
       case 76 -> this.spellMulti_9c = value;
       case 77 -> this.spellAccuracy_9e = value;
       case 78 -> this.spellMp_a0 = value;
-      case 79 -> this._a2 = value;
+      case 79 -> this.statusChance_a2 = value;
       case 80 -> this.spellElement_a4 = value;
-      case 81 -> this._a6 = value;
-      case 82 -> this._a8 = value;
+      case 81 -> this.statusType_a6 = value;
+      case 82 -> this.buffType_a8 = value;
       case 83 -> this._aa = value;
       case 84 -> this.dragoonAttack_ac = value;
       case 85 -> this.dragoonMagic_ae = value;
