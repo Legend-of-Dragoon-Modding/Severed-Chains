@@ -232,17 +232,22 @@ public class Renderable {
               final int texelY = Gpu.interpolateCoords(w0, w1, w2, tv0, tv1, tv2, area);
 
               int texel = 0;
-              boolean found = false;
-              for(final VramTexture palette : Renderable.this.palettes) {
-                if(palette.rect.y() - this.paletteBase - Renderable.this.palette == 0) {
-                  texel = Renderable.this.texture.getTexel(palette, this.pageX, texelX, texelY);
-                  found = true;
-                  break;
-                }
-              }
 
-              if(!found) {
-                throw new RuntimeException("Failed to find palette");
+              if(Renderable.this.texture.bpp == Bpp.BITS_4 || Renderable.this.texture.bpp == Bpp.BITS_8) {
+                boolean found = false;
+                for(final VramTexture palette : Renderable.this.palettes) {
+                  if(palette.rect.y() - this.paletteBase - Renderable.this.palette == 0) {
+                    texel = Renderable.this.texture.getTexel(palette, this.pageX, texelX, texelY);
+                    found = true;
+                    break;
+                  }
+                }
+
+                if(!found) {
+                  throw new RuntimeException("Failed to find palette");
+                }
+              } else {
+                texel = Renderable.this.texture.getTexel(this.pageX, texelX, texelY);
               }
 
               if(texel == 0) {

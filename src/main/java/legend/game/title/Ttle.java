@@ -31,6 +31,7 @@ import legend.game.unpacker.FileData;
 import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nullable;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
@@ -41,6 +42,7 @@ import static legend.core.gpu.VramTextureLoader.palettesFromTims;
 import static legend.core.gpu.VramTextureLoader.stitch;
 import static legend.core.gpu.VramTextureLoader.stitchHorizontal;
 import static legend.core.gpu.VramTextureLoader.stitchVertical;
+import static legend.core.gpu.VramTextureLoader.textureFromPng;
 import static legend.core.gpu.VramTextureLoader.textureFromTim;
 import static legend.game.SItem.levelStuff_80111cfc;
 import static legend.game.SItem.magicStuff_80111d20;
@@ -126,6 +128,9 @@ public final class Ttle {
   public static int selectedMenuOption;
   public static int selectedConfigCategory;
 
+  private static VramTexture testTexture;
+  private static VramTexture[] testPalettes;
+  private static Renderable testRenderable;
   private static VramTexture backgroundTexture;
   private static VramTexture[] backgroundPalettes;
   private static Renderable backgroundRenderable;
@@ -409,6 +414,21 @@ public final class Ttle {
    */
   @Method(0x800c7af0L)
   public static void menuTexturesMrgLoaded(final List<FileData> files) {
+    testTexture = textureFromPng(Path.of("./gfx/textures/loading.png"));
+    testPalettes = new VramTexture[0];
+    testRenderable = ModelLoader.quad("Test",
+      0, 0, 200,
+      16, 16,
+      0, 0,
+      16, 16,
+      0, 0, 0,
+      0x80, 0x80, 0x80,
+      null
+    )
+      .texture(testTexture)
+      .palettes(testPalettes)
+      .build();
+
     backgroundTexture = stitchVertical(
       textureFromTim(new Tim(files.get(0))),
       textureFromTim(new Tim(files.get(1)))
@@ -1326,6 +1346,8 @@ public final class Ttle {
     if(backgroundScrollAmount > 0) {
       backgroundScrollAmount = 0;
     }
+
+    testRenderable.render();
 
     //LAB_800cb3b0
   }

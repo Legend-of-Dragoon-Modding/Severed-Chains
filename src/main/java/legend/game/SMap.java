@@ -7,8 +7,10 @@ import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandCopyVramToVram;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandQuad;
+import legend.core.gpu.ModelLoader;
 import legend.core.gpu.RECT;
 import legend.core.gpu.TimHeader;
+import legend.core.gpu.VramTexture;
 import legend.core.gte.DVECTOR;
 import legend.core.gte.GsCOORD2PARAM;
 import legend.core.gte.GsCOORDINATE2;
@@ -4002,6 +4004,9 @@ public final class SMap {
     return 0x1L;
   }
 
+  private static VramTexture[] backgroundTextures;
+  private static VramTexture[] backgroundOverlays;
+
   /**
    * Loads DRGN21 MRG @ 136653 - contains graphics for intro cutscene with Rose and Feyrbrand
    *
@@ -4035,10 +4040,24 @@ public final class SMap {
   public static void loadBackground(final String mapName, final List<FileData> files) {
     backgroundLoaded_800cab10.setu(0x1L);
 
-    //LAB_800e5374
-    for(int i = 3; i < files.size(); i++) {
-      new Tim(files.get(i)).uploadToGpu();
-    }
+//    if("DRGN23/388".equals(mapName)) {
+//      backgroundTextures = new VramTexture[3];
+//
+//      for(int i = 0; i < 3; i++) {
+//        backgroundTextures[i] = VramTextureLoader.textureFromPng(Path.of("./gfx/textures/%d.png".formatted(i)));
+//      }
+//
+//      backgroundOverlays = new VramTexture[1];
+//      backgroundOverlays[0] = VramTextureLoader.textureFromPng(Path.of("./gfx/textures/3.png"));
+//    } else {
+      backgroundTextures = null;
+      backgroundOverlays = null;
+
+      //LAB_800e5374
+      for(int i = 3; i < files.size(); i++) {
+        new Tim(files.get(i)).uploadToGpu();
+      }
+//    }
 
     //LAB_800e5430
     final EnvironmentFile env = MEMORY.ref(4, mallocHead(files.get(0).size()), EnvironmentFile::new);
@@ -5222,6 +5241,7 @@ public final class SMap {
 
     s1 = _800cb710.getAddress();
 
+    // Regular backgrounds
     //LAB_800e79b8
     for(int i = 0; i < _800cb57c.get(); i++) {
       MEMORY.ref(2, s1).offset(0x10L).setu(_800cb560.getSigned() + screenOffsetX_800cb568.get() + MEMORY.ref(2, s1).offset(0x1cL).get()); // X
@@ -5230,13 +5250,30 @@ public final class SMap {
       final int clut = (int)MEMORY.get(s1 + 0x16L, 2);
       final int tpage = (int)MEMORY.get(s1 + 0x4L, 3);
 
-      GPU.queueCommand((int)MEMORY.ref(2, s1).offset(0x20L).get(), new GpuCommandQuad()
-        .rgb((int)MEMORY.get(s1 + 0xcL, 3))
-        .pos((short)MEMORY.get(s1 + 0x10L, 2), (short)MEMORY.get(s1 + 0x12L, 2), (short)MEMORY.get(s1 + 0x18L, 2), (short)MEMORY.get(s1 + 0x1aL, 2))
-        .uv((int)MEMORY.get(s1 + 0x14L, 1), (int)MEMORY.get(s1 + 0x15L, 1))
-        .clut((clut & 0b111111) * 16, clut >>> 6)
-        .vramPos((tpage & 0b1111) * 64, (tpage & 0b10000) != 0 ? 256 : 0)
-        .bpp(Bpp.of(tpage >>> 7 & 0b11)));
+      if(backgroundTextures != null) {
+        GPU.queueCommand((int)MEMORY.ref(2, s1).offset(0x20L).get(), new GpuCommandQuad()
+          .rgb((int)MEMORY.get(s1 + 0xcL, 3))
+          .pos((short)MEMORY.get(s1 + 0x10L, 2), (short)MEMORY.get(s1 + 0x12L, 2), (short)MEMORY.get(s1 + 0x18L, 2), (short)MEMORY.get(s1 + 0x1aL, 2))
+          .uv((int)MEMORY.get(s1 + 0x14L, 1), (int)MEMORY.get(s1 + 0x15L, 1))
+          .clut((clut & 0b111111) * 16, clut >>> 6)
+          .vramPos((tpage & 0b1111) * 64, (tpage & 0b10000) != 0 ? 256 : 0)
+          .bpp(Bpp.of(tpage >>> 7 & 0b11)));
+      } else {
+        ModelLoader.quad(
+          "BG " + i,
+          (short)MEMORY.get(s1 + 0x10L, 2), (short)MEMORY.get(s1 + 0x12L, 2), (int)MEMORY.ref(2, s1).offset(0x20L).get(),
+          (short)MEMORY.get(s1 + 0x18L, 2), (short)MEMORY.get(s1 + 0x1aL, 2),
+          (int)MEMORY.get(s1 + 0x14L, 1), (int)MEMORY.get(s1 + 0x15L, 1),
+          (short)MEMORY.get(s1 + 0x18L, 2) * 8, (short)MEMORY.get(s1 + 0x1aL, 2) * 8,
+          0,
+          0, 0,
+          (int)MEMORY.get(s1 + 0xcL, 1), (int)MEMORY.get(s1 + 0xdL, 1), (int)MEMORY.get(s1 + 0xeL, 1),
+          null
+        )
+          .texture(backgroundTextures[i])
+          .build()
+          .render();
+      }
 
       s1 += 0x24L;
     }
@@ -5338,6 +5375,7 @@ public final class SMap {
     //LAB_800e7d9c
     s1 = _800cb710.offset(_800cb57c.get() * 0x24L).getAddress();
 
+    // Cutouts
     //LAB_800e7de0
     for(int i = 0; i < _800cb580.get(); i++) {
       if(_800cb590.offset(i * 0xcL).offset(0x8L).get() == 0) {
@@ -5347,13 +5385,13 @@ public final class SMap {
         final int clut = (int)MEMORY.get(s1 + 0x16L, 2);
         final int tpage = (int)MEMORY.get(s1 + 0x4L, 3);
 
-        GPU.queueCommand(sp38[i], new GpuCommandQuad()
-          .rgb((int)MEMORY.get(s1 + 0xcL, 3))
-          .pos((short)MEMORY.get(s1 + 0x10L, 2), (short)MEMORY.get(s1 + 0x12L, 2), (short)MEMORY.get(s1 + 0x18L, 2), (short)MEMORY.get(s1 + 0x1aL, 2))
-          .uv((int)MEMORY.get(s1 + 0x14L, 1), (int)MEMORY.get(s1 + 0x15L, 1))
-          .clut((clut & 0b111111) * 16, clut >>> 6)
-          .vramPos((tpage & 0b1111) * 64, (tpage & 0b10000) != 0 ? 256 : 0)
-          .bpp(Bpp.of(tpage >>> 7 & 0b11)));
+//        GPU.queueCommand(sp38[i], new GpuCommandQuad()
+//          .rgb((int)MEMORY.get(s1 + 0xcL, 3))
+//          .pos((short)MEMORY.get(s1 + 0x10L, 2), (short)MEMORY.get(s1 + 0x12L, 2), (short)MEMORY.get(s1 + 0x18L, 2), (short)MEMORY.get(s1 + 0x1aL, 2))
+//          .uv((int)MEMORY.get(s1 + 0x14L, 1), (int)MEMORY.get(s1 + 0x15L, 1))
+//          .clut((clut & 0b111111) * 16, clut >>> 6)
+//          .vramPos((tpage & 0b1111) * 64, (tpage & 0b10000) != 0 ? 256 : 0)
+//          .bpp(Bpp.of(tpage >>> 7 & 0b11)));
       }
 
       //LAB_800e7eb4
