@@ -5347,7 +5347,13 @@ public final class SMap {
         final int clut = (int)MEMORY.get(s1 + 0x16L, 2);
         final int tpage = (int)MEMORY.get(s1 + 0x4L, 3);
 
-        GPU.queueCommand(sp38[i], new GpuCommandQuad()
+        // This was causing a problem when moving left from the room before Zackwell. Not sure if this is a retail issue or SC-specific. GH#332
+        int z = sp38[i];
+        if(z < 0) {
+          z = (1 << orderingTableBits_1f8003c0.get()) - 1;
+        }
+
+        GPU.queueCommand(z, new GpuCommandQuad()
           .rgb((int)MEMORY.get(s1 + 0xcL, 3))
           .pos((short)MEMORY.get(s1 + 0x10L, 2), (short)MEMORY.get(s1 + 0x12L, 2), (short)MEMORY.get(s1 + 0x18L, 2), (short)MEMORY.get(s1 + 0x1aL, 2))
           .uv((int)MEMORY.get(s1 + 0x14L, 1), (int)MEMORY.get(s1 + 0x15L, 1))
