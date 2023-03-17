@@ -287,7 +287,7 @@ public class BattleStructEf4 {
   public BattleStructEf4() {
     Arrays.setAll(this.specialEffect_00, i -> new SpecialEffects20());
     Arrays.setAll(this.status_384, i -> new Status04());
-    Arrays.setAll(this.additionExtra_474, i -> new AdditionExtra04());
+    Arrays.setAll(this.additionExtra_474, AdditionExtra04::new);
     Arrays.setAll(this._d8c, i -> new BattleStructEf4Sub08());
     Arrays.setAll(this._580, i -> new BttlStruct08());
   }
