@@ -399,29 +399,49 @@ public class TooManyItemsScreen extends MenuScreen {
 
   @Override
   public void pressedThisFrame(final InputAction inputAction) {
-    if(inputAction == InputAction.BUTTON_EAST) {
-      this.menuEscape();
-    }
-    if(inputAction == InputAction.BUTTON_SOUTH) {
-      this.menuSelect();
-    }
 
     if(this.menuState == MenuState._8) {
+      if(inputAction == InputAction.BUTTON_EAST) {
+        // return to state 10 or 12 to prompt discard items
+        // handle allocation renderables
+      }
+      if(inputAction == InputAction.BUTTON_SOUTH) {
+        // confirm dropped item as selected and move to state 9
+        // handle renderables
+      }
       if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
         this.droppedNavigateUp();
       }
       if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
         this.droppedNavigateDown();
       }
+      return;
     }
 
     if(this.menuState == MenuState._9) {
+      if(inputAction == InputAction.BUTTON_EAST) {
+        // move back to state 8, also handle swapping renderables
+      }
+      if(inputAction == InputAction.BUTTON_SOUTH) {
+        // confirm item to swap with dropped item
+        // return to state 8
+        // handle renderables
+        // check for droppable?
+      }
       if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
         this.itemNavigateUp();
       }
       if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
         this.itemNavigateDown();
       }
+      return;
+    }
+
+    if(inputAction == InputAction.BUTTON_EAST) {
+      this.menuEscape();
+    }
+    if(inputAction == InputAction.BUTTON_SOUTH) {
+      this.menuSelect(); //this is incorrect behaviour for the button press
     }
   }
 
