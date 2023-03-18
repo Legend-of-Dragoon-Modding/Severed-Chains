@@ -413,6 +413,11 @@ public final class Scus94491BpeSegment {
       final Param ptr = a.array(a.array(b.get()).get());
       return "gosub %s (p1[p1[p0]]);".formatted(ptr);
     });
+
+    scriptFunctionDescriptions.put(80, r -> "deallocate; pause; rewind;");
+
+    scriptFunctionDescriptions.put(82, r -> "deallocate children; pause; rewind;");
+    scriptFunctionDescriptions.put(83, r -> "deallocate %s (p0);%s".formatted(r.params_20[0], r.scriptState_04.index == r.params_20[0].get() ? "; pause; rewind;" : ""));
   }
   private static boolean inputPulse;
   public static final Int2IntMap keyRepeat = new Int2IntOpenHashMap();
