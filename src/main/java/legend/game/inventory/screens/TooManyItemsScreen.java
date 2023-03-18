@@ -135,6 +135,10 @@ public class TooManyItemsScreen extends MenuScreen {
               playSound(1);
               this.invScroll--;
               this.renderable_8011e204.y_44 = this.FUN_8010f178(this.invIndex);
+            } else if(this.invScroll == 0) {
+              this.invScroll = slotCount -7;
+              this.invIndex = 6;
+              this.renderable_8011e204.y_44 = this.FUN_8010f178(this.invIndex);
             }
           }
         }
@@ -146,6 +150,10 @@ public class TooManyItemsScreen extends MenuScreen {
             if(this.invScroll < slotCount - 7) {
               playSound(1);
               this.invScroll++;
+              this.renderable_8011e204.y_44 = this.FUN_8010f178(this.invIndex);
+            } else if(this.invScroll == slotCount - 7) {
+              this.invScroll = 0;
+              this.invIndex = 0;
               this.renderable_8011e204.y_44 = this.FUN_8010f178(this.invIndex);
             }
           }
@@ -320,30 +328,27 @@ public class TooManyItemsScreen extends MenuScreen {
   }
 
   private void droppedNavigateDown() {
-    if(this.dropIndex < itemsDroppedByEnemiesCount_800bc978.get() - 1 && this.dropIndex < 5) {
-      playSound(1);
-      this.dropIndex++;
-      this.renderable_8011e200.y_44 = this.FUN_8010f178(this.dropIndex);
-      return;
-    }
-
-    playSound(2);
+    playSound(1);
+    this.dropIndex = this.dropIndex < itemsDroppedByEnemiesCount_800bc978.get() - 1 ? ++this.dropIndex : 0;
+    this.renderable_8011e200.y_44 = this.FUN_8010f178(this.dropIndex);
   }
 
   private void droppedNavigateUp() {
-    if(this.dropIndex > 0) {
-      playSound(1);
-      this.dropIndex--;
-      this.renderable_8011e200.y_44 = this.FUN_8010f178(this.dropIndex);
-      return;
-    }
-
-    playSound(2);
+    playSound(1);
+    this.dropIndex = this.dropIndex > 0 ? --this.dropIndex : itemsDroppedByEnemiesCount_800bc978.get() - 1;
+    this.renderable_8011e200.y_44 = this.FUN_8010f178(this.dropIndex);
   }
 
   private void handleInventoryScrollUp() {
+    final int slotCount = gameState_800babc8.itemCount_1e6.get();
+
     if(this.invIndex == 0 && this.invScroll > 0) {
       this.invScroll--;
+    }
+
+    if(this.invIndex == 0 && this.invScroll == 0) {
+      this.invScroll = slotCount - 7;
+      this.invIndex = 7;
     }
   }
 
@@ -353,26 +358,25 @@ public class TooManyItemsScreen extends MenuScreen {
     if(this.invIndex == 6 && this.invScroll < slotCount - 7) {
       this.invScroll++;
     }
+
+    if(this.invIndex == 6 && this.invScroll == slotCount - 7) {
+      this.invScroll = 0;
+      this.invIndex = -1;
+    }
   }
 
   private void inventoryNavigateDown() {
+    playSound(1);
     this.handleInventoryScrollDown();
-
-    if(this.invIndex < 6) {
-      playSound(1);
-      this.invIndex++;
-      this.renderable_8011e204.y_44 = this.FUN_8010f178(this.invIndex);
-    }
+    this.invIndex = this.invIndex < 6 ? ++this.invIndex : 6;
+    this.renderable_8011e204.y_44 = this.FUN_8010f178(this.invIndex);
   }
 
   private void inventoryNavigateUp() {
+    playSound(1);
     this.handleInventoryScrollUp();
-
-    if(this.invIndex > 0) {
-      playSound(1);
-      this.invIndex--;
-      this.renderable_8011e204.y_44 = this.FUN_8010f178(this.invIndex);
-    }
+    this.invIndex = this.invIndex > 0 ? --this.invIndex : 0;
+    this.renderable_8011e204.y_44 = this.FUN_8010f178(this.invIndex);
   }
 
   private void escapeMenuState8() {
