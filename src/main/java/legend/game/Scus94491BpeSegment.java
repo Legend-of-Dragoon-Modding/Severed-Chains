@@ -404,13 +404,14 @@ public final class Scus94491BpeSegment {
         default -> "illegal cmp 66";
       }).formatted(operandB, r.scriptState_04.scriptCompare(0, operandB, op) ? "yes - jmp %s (p1)".formatted(dest) : "no - continue");
     });
-    scriptFunctionDescriptions.put(72, r -> "func %s (p0);".formatted(r.params_20[0]));
+    scriptFunctionDescriptions.put(67, r -> "if(--%s (p0) != 0) jmp %s (p1)".formatted(r.params_20[0], r.params_20[1]));
+    scriptFunctionDescriptions.put(72, r -> "gosub %s (p0);".formatted(r.params_20[0]));
     scriptFunctionDescriptions.put(73, r -> "return;");
     scriptFunctionDescriptions.put(74, r -> {
       final Param a = r.params_20[1];
       final Param b = r.params_20[0];
       final Param ptr = a.array(a.array(b.get()).get());
-      return "func %s (p1[p1[p0]]);".formatted(ptr);
+      return "gosub %s (p1[p1[p0]]);".formatted(ptr);
     });
   }
   private static boolean inputPulse;
