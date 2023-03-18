@@ -381,6 +381,22 @@ public class TooManyItemsScreen extends MenuScreen {
     }
   }
 
+  private void droppedNavigateDown() {
+
+  }
+
+  private void droppedNavigateUp() {
+
+  }
+
+  private void itemNavigateUp() {
+
+  }
+
+  private void itemNavigateDown() {
+
+  }
+
   @Override
   public void pressedThisFrame(final InputAction inputAction) {
     if(inputAction == InputAction.BUTTON_EAST) {
@@ -388,6 +404,24 @@ public class TooManyItemsScreen extends MenuScreen {
     }
     if(inputAction == InputAction.BUTTON_SOUTH) {
       this.menuSelect();
+    }
+
+    if(this.menuState == MenuState._8) {
+      if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
+        this.droppedNavigateUp();
+      }
+      if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
+        this.droppedNavigateDown();
+      }
+    }
+
+    if(this.menuState == MenuState._9) {
+      if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
+        this.itemNavigateUp();
+      }
+      if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
+        this.itemNavigateDown();
+      }
     }
   }
 
