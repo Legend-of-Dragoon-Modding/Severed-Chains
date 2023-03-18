@@ -1,6 +1,10 @@
 package legend.game.combat.types.BattleStructEF4;
 
 import legend.core.Config;
+import legend.game.combat.types.CombatantStruct1a8;
+
+import static legend.game.Scus94491BpeSegment_8006._8006e398;
+import static legend.game.combat.Bttl_800c.getCombatant;
 
 /**
  * One for each ally and enemy
@@ -23,7 +27,16 @@ public class AdditionExtra04 {
   }
 
   public int pack() {
-    return (this.unknown_01 & 0xff_ffff) << 8 | this.flag_00 & 0xff | (Config.autoAddition() && this.index < 3 ? 0x6 : 0x0);
+    final int ultimateWargod;
+    // This is a cheap way to tell if we're in a combat engine cutscene and turn it off
+    if(Config.autoAddition() && _8006e398.enemyBobjIndices_ebc[0] != null && _8006e398.enemyBobjIndices_ebc[0].innerStruct_00 != null && _8006e398.enemyBobjIndices_ebc[0].innerStruct_00.hp_08 != 0) {
+      final CombatantStruct1a8 combatant = getCombatant(this.index);
+      ultimateWargod = combatant != null && combatant.charSlot_19c != -1 ? 0x6 : 0;
+    } else {
+      ultimateWargod = 0;
+    }
+
+    return (this.unknown_01 & 0xff_ffff) << 8 | this.flag_00 & 0xff | ultimateWargod;
   }
 
   public void unpack(final int val) {
