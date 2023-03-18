@@ -136,7 +136,7 @@ public class TooManyItemsScreen extends MenuScreen {
               this.invScroll--;
               this.renderable_8011e204.y_44 = this.FUN_8010f178(this.invIndex);
             } else if(this.invScroll == 0) {
-              this.invScroll = slotCount -7;
+              this.invScroll = slotCount - 7;
               this.invIndex = 6;
               this.renderable_8011e204.y_44 = this.FUN_8010f178(this.invIndex);
             }
