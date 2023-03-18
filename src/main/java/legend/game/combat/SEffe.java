@@ -6959,7 +6959,7 @@ public final class SEffe {
     s1._0c.add(s1._18);
 
     if(s1.scriptIndex_30 == -1) {
-      s2._10.trans_04.set(s1._0c).div(0x100);
+      s2._10.trans_04.set(s1._0c).shra(8);
     } else {
       //LAB_80110814
       final Ref<SVECTOR> sp0x40 = new Ref<>();
@@ -6969,7 +6969,7 @@ public final class SEffe {
       final MATRIX sp0x10 = new MATRIX();
       RotMatrix_Xyz(sp0x40.get(), sp0x10);
 
-      final VECTOR sp0x30 = new VECTOR().set(s1._0c).div(0x100);
+      final VECTOR sp0x30 = new VECTOR().set(s1._0c).shra(8);
       s2._10.trans_04.set(ApplyMatrixLV(sp0x10, sp0x30)).add(sp0x44.get());
     }
 
@@ -7073,15 +7073,15 @@ public final class SEffe {
     s0.scriptIndex_30 = -1;
     s0._32 = (short)a3;
 
+    s0._0c.setX(s2._10.trans_04.getX() << 8);
+    s0._0c.setY(s2._10.trans_04.getY() << 8);
+    s0._0c.setZ(s2._10.trans_04.getZ() << 8);
+
     if(a3 != 0) {
-      s0._0c.setX((s2._10.trans_04.getX() << 8) / a3);
-      s0._0c.setY((s2._10.trans_04.getY() << 8) / a3);
-      s0._0c.setZ((s2._10.trans_04.getZ() << 8) / a3);
       s0._18.setX((sp0x18.getX() << 8) / a3);
       s0._18.setY((sp0x18.getY() << 8) / a3);
       s0._18.setZ((sp0x18.getZ() << 8) / a3);
     } else {
-      s0._0c.set(-1, -1, -1);
       s0._18.set(-1, -1, -1);
     }
 
