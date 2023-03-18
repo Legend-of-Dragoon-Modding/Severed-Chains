@@ -1,10 +1,10 @@
 package legend.game.combat.types.BattleStructEF4;
 
 import legend.core.Config;
-import legend.game.combat.types.CombatantStruct1a8;
+import legend.game.combat.types.BattleObject27c;
+import legend.game.scripting.ScriptState;
 
 import static legend.game.Scus94491BpeSegment_8006._8006e398;
-import static legend.game.combat.Bttl_800c.getCombatant;
 
 /**
  * One for each ally and enemy
@@ -27,13 +27,24 @@ public class AdditionExtra04 {
   }
 
   public int pack() {
-    final int ultimateWargod;
+    int ultimateWargod = 0;
     // This is a cheap way to tell if we're in a combat engine cutscene and turn it off
-    if(Config.autoAddition() && _8006e398.enemyBobjIndices_ebc[0] != null && _8006e398.enemyBobjIndices_ebc[0].innerStruct_00 != null && _8006e398.enemyBobjIndices_ebc[0].innerStruct_00.hp_08 != 0) {
-      final CombatantStruct1a8 combatant = getCombatant(this.index);
-      ultimateWargod = combatant != null && combatant.charSlot_19c != -1 ? 0x6 : 0;
-    } else {
-      ultimateWargod = 0;
+    if(Config.autoAddition()) {
+      final ScriptState<BattleObject27c> combatant = _8006e398.bobjIndices_e0c[this.index];
+
+      if(combatant != null && (combatant.storage_44[7] & 0x4) == 0) {
+        boolean enemyAlive = false;
+        for(int i = 0; i < _8006e398.enemyBobjIndices_ebc.length; i++) {
+          if(_8006e398.enemyBobjIndices_ebc[i] != null && _8006e398.enemyBobjIndices_ebc[i].innerStruct_00 != null && _8006e398.enemyBobjIndices_ebc[i].innerStruct_00.hp_08 != 0) {
+            enemyAlive = true;
+            break;
+          }
+        }
+
+        if(enemyAlive) {
+          ultimateWargod = 0x6;
+        }
+      }
     }
 
     return (this.unknown_01 & 0xff_ffff) << 8 | this.flag_00 & 0xff | ultimateWargod;
