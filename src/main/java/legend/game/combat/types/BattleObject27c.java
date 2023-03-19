@@ -1,5 +1,6 @@
 package legend.game.combat.types;
 
+import legend.core.Config;
 import legend.core.gte.SVECTOR;
 import legend.game.types.Model124;
 
@@ -283,6 +284,13 @@ public class BattleObject27c extends BattleScriptDataBase {
   }
 
   public int getStat(final int statIndex) {
+    int disableStatusFlag = 0x0;
+    if(statIndex == 5 || statIndex == 16) {
+      disableStatusFlag = Config.disableStatusEffects() && this.combatant_144.charSlot_19c > -1 ? 0xff : 0x0;
+      if(disableStatusFlag == 0xff) {
+        this.status_0e &= 0xff00;
+      }
+    }
     return switch(statIndex) {
       case 0 -> this.level_04;
       case 1 -> this.dlevel_06;
@@ -300,7 +308,7 @@ public class BattleObject27c extends BattleScriptDataBase {
       case 13 -> this._1e;
       case 14 -> this.elementalResistanceFlag_20;
       case 15 -> this.elementalImmunityFlag_22;
-      case 16 -> this.statusResistFlag_24;
+      case 16 -> this.statusResistFlag_24 | disableStatusFlag;
       case 17 -> this._26;
       case 18 -> this._28;
       case 19 -> this._2a;

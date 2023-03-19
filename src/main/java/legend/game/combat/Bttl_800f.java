@@ -3335,7 +3335,7 @@ public final class Bttl_800f {
     }
 
     //LAB_800f7e98
-    if((!Config.disableStatusEffects() || isEnemyBobj1 == 0) && simpleRand() * 0x65 >> 0x10 < effectChance) {
+    if(simpleRand() * 0x65 >> 0x10 < effectChance) {
       final long statusType = bobj1.getStat((int)s3);
 
       if((statusType & 0xffL) != 0) {
