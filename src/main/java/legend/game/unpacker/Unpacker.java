@@ -475,10 +475,6 @@ public final class Unpacker {
    * function (800ee3c0) when the battle starts.
    */
   private static boolean drgn1_343_patcherDiscriminator(final String name, final FileData data, final Set<Flags> flags) {
-    if("SECT/DRGN1.BIN/343".equals(name)) {
-      LOGGER.info(data.size());
-      LOGGER.info(data.readByte(0x3a70));
-    }
     return "SECT/DRGN1.BIN/343".equals(name) && data.size() == 0x3ab4 && data.readByte(0x3a70) == 0x8;
   }
 
