@@ -3998,7 +3998,7 @@ public final class Scus94491BpeSegment {
       case 6 -> "Meru";
       case 7 -> "Kongol";
       case 8 -> "Miranda";
-      case 9 -> "Divine";
+      case 9, 10 -> "Divine";
       default -> throw new IllegalArgumentException("Invalid character ID " + id);
     };
   }
