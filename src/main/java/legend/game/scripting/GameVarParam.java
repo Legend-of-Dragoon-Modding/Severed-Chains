@@ -78,7 +78,7 @@ public class GameVarParam extends Param {
       case 54 -> Scus94491BpeSegment_8006._8006e398._ef0;
       case 55 -> Scus94491BpeSegment_800b.gameState_800babc8._b4.get();
       case 56 -> Scus94491BpeSegment_800b.gameState_800babc8._b8.get();
-      case 57 -> Scus94491BpeSegment_800b._800bc974.get();
+      case 57 -> Scus94491BpeSegment_800b.postCombatAction_800bc974.get();
       case 58 -> Scus94491BpeSegment_800b._800bc960.get();
       case 59 -> Bttl_800c.currentTurnBobj_800c66c8 != null ? Bttl_800c.currentTurnBobj_800c66c8.index : -1;
       case 60 -> Scus94491BpeSegment_800b.goldGainedFromCombat_800bc920.get();
@@ -209,7 +209,7 @@ public class GameVarParam extends Param {
       case 54 -> Scus94491BpeSegment_8006._8006e398._ef0 = val;
       case 55 -> Scus94491BpeSegment_800b.gameState_800babc8._b4.set(val);
       case 56 -> Scus94491BpeSegment_800b.gameState_800babc8._b8.set(val);
-      case 57 -> Scus94491BpeSegment_800b._800bc974.set(val);
+      case 57 -> Scus94491BpeSegment_800b.postCombatAction_800bc974.set(val);
       case 58 -> Scus94491BpeSegment_800b._800bc960.set(val);
       case 59 -> Bttl_800c.currentTurnBobj_800c66c8 = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[val];
       case 60 -> Scus94491BpeSegment_800b.goldGainedFromCombat_800bc920.set(val);

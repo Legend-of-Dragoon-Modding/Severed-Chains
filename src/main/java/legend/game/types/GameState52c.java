@@ -39,7 +39,8 @@ public class GameState52c implements MemoryRef {
   public final IntRef _b8;
   /**
    * <ul>
-   *   <li>0x40000 - has psych bomb X</li>
+   *   <li>13 flag 0x4_0000 - has psych bomb X</li>
+   *   <li>29 flag 0x800_0000 - died in arena fight</li>
    * </ul>
    */
   public final ArrayRef<IntRef> scriptFlags2_bc;

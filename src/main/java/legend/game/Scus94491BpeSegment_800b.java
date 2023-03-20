@@ -45,8 +45,6 @@ import static legend.core.GameEngine.MEMORY;
 public final class Scus94491BpeSegment_800b {
   private Scus94491BpeSegment_800b() { }
 
-  public static final Value _800ba3b8 = MEMORY.ref(4, 0x800ba3b8L);
-
   public static final IntRef _800babc0 = MEMORY.ref(4, 0x800babc0L, IntRef::new);
 
   public static final GameState52c gameState_800babc8 = MEMORY.ref(4, 0x800babc8L, GameState52c::new);
@@ -79,7 +77,7 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bc910 = MEMORY.ref(4, 0x800bc910L);
   public static final Value _800bc914 = MEMORY.ref(4, 0x800bc914L);
   public static final Value _800bc918 = MEMORY.ref(4, 0x800bc918L);
-  public static final IntRef _800bc91c = MEMORY.ref(4, 0x800bc91cL, IntRef::new);
+  public static final IntRef postCombatMainCallbackIndex_800bc91c = MEMORY.ref(4, 0x800bc91cL, IntRef::new);
   public static final IntRef goldGainedFromCombat_800bc920 = MEMORY.ref(4, 0x800bc920L, IntRef::new);
 
   public static final ArrayRef<IntRef> itemsDroppedByEnemies_800bc928 = MEMORY.ref(4, 0x800bc928L, ArrayRef.of(IntRef.class, 9, 4, IntRef::new));
@@ -90,7 +88,13 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bc968 = MEMORY.ref(4, 0x800bc968L);
 
-  public static final IntRef _800bc974 = MEMORY.ref(4, 0x800bc974L, IntRef::new);
+  /**
+   * <ol>
+   *   <li value="2">Game over</li>
+   *   <li value="4">FMV</li>
+   * </ol>
+   */
+  public static final IntRef postCombatAction_800bc974 = MEMORY.ref(4, 0x800bc974L, IntRef::new);
   public static final IntRef itemsDroppedByEnemiesCount_800bc978 = MEMORY.ref(4, 0x800bc978L, IntRef::new);
   public static final Value _800bc97c = MEMORY.ref(4, 0x800bc97cL);
   //TODO structure @ 800bc980... 3 * 12?
@@ -215,8 +219,6 @@ public final class Scus94491BpeSegment_800b {
   public static Renderable58 renderablePtr_800bdc5c;
 
   public static final LodString currentText_800bdca0 = MEMORY.ref(2, 0x800bdca0L, LodString::new);
-
-  public static final Value _800bdd24 = MEMORY.ref(4, 0x800bdd24L);
 
   public static final TextboxArrow0c[] textboxArrows_800bdea0 = new TextboxArrow0c[8];
 
