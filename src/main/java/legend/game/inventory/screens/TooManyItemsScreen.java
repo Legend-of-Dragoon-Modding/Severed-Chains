@@ -135,6 +135,10 @@ public class TooManyItemsScreen extends MenuScreen {
               playSound(1);
               this.invScroll--;
               this.renderable_8011e204.y_44 = this.FUN_8010f178(this.invIndex);
+            } else if(this.invScroll == 0) {
+              this.invScroll = slotCount - 7;
+              this.invIndex = 6;
+              this.renderable_8011e204.y_44 = this.FUN_8010f178(this.invIndex);
             }
           }
         }
@@ -146,6 +150,10 @@ public class TooManyItemsScreen extends MenuScreen {
             if(this.invScroll < slotCount - 7) {
               playSound(1);
               this.invScroll++;
+              this.renderable_8011e204.y_44 = this.FUN_8010f178(this.invIndex);
+            } else if(this.invScroll == slotCount - 7) {
+              this.invScroll = 0;
+              this.invIndex = 0;
               this.renderable_8011e204.y_44 = this.FUN_8010f178(this.invIndex);
             }
           }
@@ -290,13 +298,7 @@ public class TooManyItemsScreen extends MenuScreen {
           this.dropIndex = i;
           this.renderable_8011e200.y_44 = this.FUN_8010f178(i);
 
-          this.invScroll = 0;
-          this.invIndex = 0;
-          final Renderable58 renderable3 = allocateUiElement(118, 118, 220, this.FUN_8010f178(0));
-          this.renderable_8011e204 = renderable3;
-          FUN_80104b60(renderable3);
-          playSound(2);
-          this.menuState = MenuState._9;
+          this.selectMenuState8();
         }
       }
     } else if(this.menuState == MenuState._9) {
@@ -306,37 +308,7 @@ public class TooManyItemsScreen extends MenuScreen {
           this.invIndex = i;
           this.renderable_8011e204.y_44 = this.FUN_8010f178(i);
 
-          final MenuItemStruct04 newItem = this.droppedItems.get(this.dropIndex);
-          final int isItem = this.droppedItems.get(this.dropIndex).itemId_00 >= 0xc0 ? 1 : 0;
-          final MenuItemStruct04 existingItem;
-          if(isItem == 0) {
-            existingItem = this.equipment.get(this.invIndex + this.invScroll);
-          } else {
-            existingItem = this.items.get(this.invIndex + this.invScroll);
-          }
-
-          if((existingItem.flags_02 & 0x6000) != 0) {
-            playSound(40);
-          } else {
-            final int itemId = existingItem.itemId_00;
-            final int flags = existingItem.flags_02;
-
-            existingItem.itemId_00 = newItem.itemId_00;
-            existingItem.flags_02 = newItem.flags_02;
-
-            newItem.itemId_00 = itemId;
-            newItem.flags_02 = flags;
-
-            playSound(2);
-            unloadRenderable(this.renderable_8011e204);
-            this.menuState = MenuState._8;
-
-            if(isItem != 0) {
-              setInventoryFromDisplay(this.items, gameState_800babc8.items_2e9, gameState_800babc8.itemCount_1e6.get());
-            } else {
-              setInventoryFromDisplay(this.equipment, gameState_800babc8.equipment_1e8, gameState_800babc8.equipmentCount_1e4.get());
-            }
-          }
+          this.selectMenuState9();
         }
       }
     }
@@ -355,23 +327,119 @@ public class TooManyItemsScreen extends MenuScreen {
     this.scrollAccumulator += deltaY;
   }
 
-  private void menuEscape() {
-    if(this.menuState == MenuState._8) {
-      playSound(3);
-      unloadRenderable(this.renderable_8011e200);
-      this.menuState = MenuState._10;
-    } else if(this.menuState == MenuState._9) {
-      playSound(3);
+  private void droppedNavigateDown() {
+    playSound(1);
+    this.dropIndex = this.dropIndex < itemsDroppedByEnemiesCount_800bc978.get() - 1 ? ++this.dropIndex : 0;
+    this.renderable_8011e200.y_44 = this.FUN_8010f178(this.dropIndex);
+  }
+
+  private void droppedNavigateUp() {
+    playSound(1);
+    this.dropIndex = this.dropIndex > 0 ? --this.dropIndex : itemsDroppedByEnemiesCount_800bc978.get() - 1;
+    this.renderable_8011e200.y_44 = this.FUN_8010f178(this.dropIndex);
+  }
+
+  private void handleInventoryScrollUp() {
+    final int slotCount = gameState_800babc8.itemCount_1e6.get();
+
+    if(this.invIndex == 0 && this.invScroll > 0) {
+      this.invScroll--;
+    }
+
+    if(this.invIndex == 0 && this.invScroll == 0) {
+      this.invScroll = slotCount - 7;
+      this.invIndex = 7;
+    }
+  }
+
+  private void handleInventoryScrollDown() {
+    final int slotCount = gameState_800babc8.itemCount_1e6.get();
+
+    if(this.invIndex == 6 && this.invScroll < slotCount - 7) {
+      this.invScroll++;
+    }
+
+    if(this.invIndex == 6 && this.invScroll == slotCount - 7) {
+      this.invScroll = 0;
+      this.invIndex = -1;
+    }
+  }
+
+  private void inventoryNavigateDown() {
+    playSound(1);
+    this.handleInventoryScrollDown();
+    this.invIndex = this.invIndex < 6 ? ++this.invIndex : 6;
+    this.renderable_8011e204.y_44 = this.FUN_8010f178(this.invIndex);
+  }
+
+  private void inventoryNavigateUp() {
+    playSound(1);
+    this.handleInventoryScrollUp();
+    this.invIndex = this.invIndex > 0 ? --this.invIndex : 0;
+    this.renderable_8011e204.y_44 = this.FUN_8010f178(this.invIndex);
+  }
+
+  private void escapeMenuState8() {
+    playSound(3);
+    unloadRenderable(this.renderable_8011e200);
+    this.menuState = MenuState._10;
+  }
+
+  private void selectMenuState8() {
+    final Renderable58 renderable3 = allocateUiElement(118, 118, 220, this.FUN_8010f178(0));
+    this.renderable_8011e204 = renderable3;
+    FUN_80104b60(renderable3);
+    playSound(2);
+    this.menuState = MenuState._9;
+  }
+
+  private void escapeMenuState9() {
+    this.invScroll = 0;
+    this.invIndex = 0;
+
+    playSound(3);
+    unloadRenderable(this.renderable_8011e204);
+    this.menuState = MenuState._8;
+  }
+
+  private void selectMenuState9() {
+    final MenuItemStruct04 newItem = this.droppedItems.get(this.dropIndex);
+    final int isItem = this.droppedItems.get(this.dropIndex).itemId_00 >= 0xc0 ? 1 : 0;
+    final MenuItemStruct04 existingItem;
+    if(isItem == 0) {
+      existingItem = this.equipment.get(this.invIndex + this.invScroll);
+    } else {
+      existingItem = this.items.get(this.invIndex + this.invScroll);
+    }
+
+    if((existingItem.flags_02 & 0x6000) != 0) {
+      playSound(40);
+    } else {
+      final int itemId = existingItem.itemId_00;
+      final int flags = existingItem.flags_02;
+
+      existingItem.itemId_00 = newItem.itemId_00;
+      existingItem.flags_02 = newItem.flags_02;
+
+      newItem.itemId_00 = itemId;
+      newItem.flags_02 = flags;
+
+      if(isItem != 0) {
+        setInventoryFromDisplay(this.items, gameState_800babc8.items_2e9, gameState_800babc8.itemCount_1e6.get());
+      } else {
+        setInventoryFromDisplay(this.equipment, gameState_800babc8.equipment_1e8, gameState_800babc8.equipmentCount_1e4.get());
+      }
+
+      this.invScroll = 0;
+      this.invIndex = 0;
+
+      playSound(2);
       unloadRenderable(this.renderable_8011e204);
       this.menuState = MenuState._8;
     }
   }
 
-  private void menuSelect() {
-    if(this.menuState != MenuState._9) {
-      return;
-    }
-
+  private void sortMenuState9() {
     playSound(2);
 
     if(this.droppedItems.get(this.dropIndex).itemId_00 < 0xc0) {
@@ -383,11 +451,49 @@ public class TooManyItemsScreen extends MenuScreen {
 
   @Override
   public void pressedThisFrame(final InputAction inputAction) {
-    if(inputAction == InputAction.BUTTON_EAST) {
-      this.menuEscape();
+
+    if(this.menuState == MenuState._8) {
+      if(inputAction == InputAction.BUTTON_EAST) {
+        this.escapeMenuState8();
+      }
+      if(inputAction == InputAction.BUTTON_SOUTH) {
+        this.selectMenuState8();
+      }
+      return;
     }
-    if(inputAction == InputAction.BUTTON_SOUTH) {
-      this.menuSelect();
+
+    if(this.menuState == MenuState._9) {
+      if(inputAction == InputAction.BUTTON_EAST) {
+        this.escapeMenuState9();
+      }
+      if(inputAction == InputAction.BUTTON_SOUTH) {
+        this.selectMenuState9();
+      }
+      if(inputAction == InputAction.BUTTON_NORTH) {
+        this.sortMenuState9();
+      }
+    }
+  }
+
+  @Override
+  public void pressedWithRepeatPulse(final InputAction inputAction) {
+    if(this.menuState == MenuState._8) {
+      if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
+        this.droppedNavigateUp();
+      }
+      if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
+        this.droppedNavigateDown();
+      }
+      return;
+    }
+
+    if(this.menuState == MenuState._9) {
+      if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
+        this.inventoryNavigateUp();
+      }
+      if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
+        this.inventoryNavigateDown();
+      }
     }
   }
 
