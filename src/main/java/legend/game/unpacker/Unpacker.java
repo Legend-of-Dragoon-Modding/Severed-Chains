@@ -59,6 +59,7 @@ public final class Unpacker {
     transformers.put(Unpacker::drgn21_402_3_patcherDiscriminator, Unpacker::drgn21_402_3_patcher);
     transformers.put(Unpacker::drgn21_693_0_patcherDiscriminator, Unpacker::drgn21_693_0_patcher);
     transformers.put(Unpacker::drgn0_142_patcherDiscriminator, Unpacker::drgn0_142_patcher);
+    transformers.put(Unpacker::drgn1_343_patcherDiscriminator, Unpacker::drgn1_343_patcher);
     transformers.put(Unpacker::playerCombatSoundEffectsDiscriminator, Unpacker::playerCombatSoundEffectsTransformer);
     transformers.put(Unpacker::playerCombatModelsAndTexturesDiscriminator, Unpacker::playerCombatModelsAndTexturesTransformer);
     transformers.put(Unpacker::dragoonCombatModelsAndTexturesDiscriminator, Unpacker::dragoonCombatModelsAndTexturesTransformer);
@@ -465,6 +466,23 @@ public final class Unpacker {
     newData[0xc] = 22;
 
     return Map.of(name, new FileData(newData));
+  }
+
+  /**
+   * In the first Faust battle script file (used for the battle itself), the script
+   * tries to access a coord2ArrPtr at index 8 at some moments, but there are only
+   * 6 objects in the model. The index is a param hardcoded into the script. This
+   * alters the value of that param from 8 to 3, which is the index set by the same
+   * function (800ee3c0) when the battle starts.
+   */
+  private static boolean drgn1_343_patcherDiscriminator(final String name, final FileData data, final Set<Flags> flags) {
+    return "SECT/DRGN1.BIN/343".equals(name) && data.size() == 0x3ab4 && data.readByte(0x3a70) == 0x8;
+  }
+
+  private static Map<String, FileData> drgn1_343_patcher(final String name, final FileData data, final Set<Flags> flags) {
+    data.writeByte(0x3a70, 0x3);
+
+    return Map.of(name, data);
   }
 
   private static boolean playerCombatSoundEffectsDiscriminator(final String name, final FileData data, final Set<Flags> flags) {
