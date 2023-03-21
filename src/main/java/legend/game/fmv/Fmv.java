@@ -199,10 +199,6 @@ public class Fmv {
   private static boolean shouldStop;
 
   public static void playCurrentFmv() {
-//TODO this might be necessary for the post-game cutscene or something?
-//      creditsLoaded_800d1cb8.setu(0);
-//      loadDrgnBinFile(0, 5721, 0, SMap::loadCreditsMrg, (int)fmvIndex_800bf0dc.get(), 0x4L);
-
     final int width = switch((int)fmvIndex_800bf0dc.get()) {
       case 0, 2, 3, 4, 6, 7, 8, 9, 14, 15, 16, 17 -> 320;
       case 1, 5, 10, 11, 12, 13 -> 640;

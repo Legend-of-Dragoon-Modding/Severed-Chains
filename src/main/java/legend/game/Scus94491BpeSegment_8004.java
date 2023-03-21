@@ -90,7 +90,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link Scus94491BpeSegment_800e#finalizePregameLoading()}</li>
    *   <li>{@link Ttle#executeTtleLoadingStage()}</li>
    *   <li>{@link Ttle#executeTtleUnloadingStage()}</li>
-   *   <li>0x800eaa88 (TODO)</li>
+   *   <li>{@link SMap#theEnd}</li>
    *   <li>{@link SMap#executeSmapLoadingStage()} Sets up rendering and loads scene</li>
    *   <li>{@link Scus94491BpeSegment#FUN_80018658()}</li>
    *   <li>{@link Ttle#FUN_800c75fc()}</li>
@@ -122,7 +122,10 @@ public final class Scus94491BpeSegment_8004 {
    * <ol>
    *   <li value="5">SMAP</li>
    *   <li value="6">Combat</li>
+   *   <li value="7">Game over</li>
    *   <li value="8">WMAP</li>
+   *   <li value="9">FMV?</li>
+   *   <li value="11">Credits?</li>
    * </ol>
    */
   public static final IntRef mainCallbackIndex_8004dd20 = MEMORY.ref(4, 0x8004dd20L, IntRef::new);
