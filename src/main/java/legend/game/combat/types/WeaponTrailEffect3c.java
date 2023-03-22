@@ -8,9 +8,11 @@ public class WeaponTrailEffect3c implements BttlScriptData6cSubBase1 {
   public int _00;
   public int _04;
   public int dobjIndex_08;
-  public int smallestVertexIndex_0a;
-  public int largestVertexIndex_0c;
-  /** ubyte */
+  public int largestVertexIndex_0a;
+  public int smallestVertexIndex_0c;
+  /**
+   * ubyte
+   */
   public int _0e;
   public final VECTOR smallestVertex_10 = new VECTOR();
   public final VECTOR largestVertex_20 = new VECTOR();
