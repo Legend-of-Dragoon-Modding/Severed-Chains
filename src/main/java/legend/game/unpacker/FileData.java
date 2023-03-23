@@ -94,6 +94,11 @@ public record FileData(byte[] data, int offset, int size, boolean virtual) {
     MathHelper.set(this.data, this.offset + offset, 4, val);
   }
 
+  public int readInt24(final int offset) {
+    this.checkBounds(offset, 3);
+    return (int)MathHelper.get(this.data, this.offset + offset, 3) << 8 >> 8;
+  }
+
   public long readUInt(final int offset) {
     this.checkBounds(offset, 4);
     return MathHelper.get(this.data, this.offset + offset, 4);

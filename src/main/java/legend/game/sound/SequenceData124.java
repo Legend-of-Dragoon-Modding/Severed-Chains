@@ -89,7 +89,7 @@ public class SequenceData124 {
   public int _10c;
 
   public int _110;
-  public int _114;
+  public int deltaTimeFixedPoint10_114;
   /** How many ticks have passed since the last message (command) */
   public int deltaTime_118;
   /** ubyte */

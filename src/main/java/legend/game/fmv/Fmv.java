@@ -2,12 +2,10 @@ package legend.game.fmv;
 
 import legend.core.DebugHelper;
 import legend.core.MathHelper;
-import legend.core.openal.Context;
 import legend.core.opengl.Window;
 import legend.core.spu.XaAdpcm;
 import legend.game.input.Input;
 import legend.game.input.InputAction;
-import legend.game.sound2.Bgm;
 import legend.game.types.FileEntry08;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
@@ -201,15 +199,6 @@ public class Fmv {
   private static boolean shouldStop;
 
   public static void playCurrentFmv() {
-    //TODO Remove this and blame Illeprih
-
-    legend.core.openal.Context context = new Context();
-    final Bgm bgm = new Bgm(Unpacker.loadFile("SECT/DRGN0.BIN/5820/1"), Unpacker.loadFile("SECT/DRGN0.BIN/5820/2"), Unpacker.loadFile("SECT/DRGN0.BIN/5820/3"));
-    bgm.tick();
-
-    DebugHelper.sleep(5000);
-
-
 //TODO this might be necessary for the post-game cutscene or something?
 //      creditsLoaded_800d1cb8.setu(0);
 //      loadDrgnBinFile(0, 5721, 0, SMap::loadCreditsMrg, (int)fmvIndex_800bf0dc.get(), 0x4L);

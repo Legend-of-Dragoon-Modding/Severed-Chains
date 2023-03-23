@@ -1783,7 +1783,7 @@ public class Sequencer {
 
     //LAB_8004a680
     if(sequenceData.tempo_108 != 0) {
-      sequenceData._114 = sequenceData.deltaTime_118 * 10;
+      sequenceData.deltaTimeFixedPoint10_114 = sequenceData.deltaTime_118 * 10;
 
       //LAB_8004a6e8
       //LAB_8004a700
@@ -1798,7 +1798,7 @@ public class Sequencer {
         v1 = -(msPerTick - sequenceData._110);
       }
 
-      v1 += sequenceData._114;
+      v1 += sequenceData.deltaTimeFixedPoint10_114;
 
       //LAB_8004a738
       //LAB_8004a748
@@ -1806,11 +1806,11 @@ public class Sequencer {
       final int a0 = v1 % msPerTick;
 
       if(msPerTick < a0 * 2) {
-        sequenceData._114 = v1 + msPerTick - a0;
+        sequenceData.deltaTimeFixedPoint10_114 = v1 + msPerTick - a0;
         sequenceData._10c = 1;
       } else {
         //LAB_8004a78c
-        sequenceData._114 = v1 - a0;
+        sequenceData.deltaTimeFixedPoint10_114 = v1 - a0;
       }
 
       //LAB_8004a794
@@ -1818,7 +1818,7 @@ public class Sequencer {
       //LAB_8004a7bc
       //LAB_8004a7d8
       sequenceData._110 = a0;
-      sequenceData.deltaTime_118 = sequenceData._114 / msPerTick;
+      sequenceData.deltaTime_118 = sequenceData.deltaTimeFixedPoint10_114 / msPerTick;
     }
 
     //LAB_8004a7e4

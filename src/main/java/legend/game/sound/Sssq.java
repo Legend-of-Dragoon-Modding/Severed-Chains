@@ -37,6 +37,10 @@ public class Sssq implements Sshd.Subfile {
     this(data, 0);
   }
 
+  public FileData data() {
+    return this.data.slice(0x110);
+  }
+
   public Reader reader() {
     return new Reader();
   }

@@ -31,7 +31,7 @@ public final class Context {
     assert alCapabilities.OpenAL10 : "Audio library not supported";
   }
 
-  public void Destroy() {
+  public void destroy() {
     alcDestroyContext(this.audioContext);
     alcCloseDevice(this.audioDevice);
   }

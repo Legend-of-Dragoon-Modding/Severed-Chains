@@ -1,33 +1,30 @@
 package legend.game.sound2;
 
-import legend.core.DebugHelper;
 import legend.core.openal.BufferedSound;
-import legend.core.openal.Sound;
+import legend.game.sound.Sssq;
 
 final class Channel {
+  private final int index;
   private final BufferedSound sound;
   private final int presetIndex;
   private final Sshd sshd;
-  private State state = State.KeyOff;
+  private State state = State.KEY_OFF;
 
-  Channel(final byte[] data, final Sshd sshd) {
+  Channel(final int index, final Sssq.ChannelInfo channelInfo, final Sshd sshd) {
+    this.index = index;
     this.sshd = sshd;
-    this.presetIndex = data[2];
+    this.presetIndex = channelInfo.instrumentIndex_02;
     this.sound = new BufferedSound(false);
   }
 
-  /**
-  Buffers n ticks of audio. Each tick is 1/60 of a second.
-   */
-  void tick(final int ticks) {
+  void tick(final float ms) {
     final int sampleRate = 44100 / 4; //TODO actual sample rate Don't do this
     this.sound.process();
 
-    final short[] pcm = this.sshd.getPreset(this.presetIndex).getLayer(0).getSample().get(ticks * (sampleRate / 60));
+    final short[] pcm = this.sshd.getPreset(this.presetIndex).getLayer(0).getSample().get((int)(ms * (sampleRate / 1000.0f)));
 
     this.sound.bufferSamples(pcm, sampleRate);
     this.sound.play();
-    DebugHelper.sleep(1000); // For testing purposes, so everything doesn't play at once
   }
 
   void play() {
@@ -38,12 +35,43 @@ final class Channel {
     this.sound.stop();
   }
 
-  void KeyOn() {
-    this.state = State.KeyOn;
+  void handleKeyOff(final MidiState state) {
+    this.state = State.KEY_OFF;
+
+    System.out.println("Channel " + this + " key off");
+    state.offset += 2;
   }
 
-  void KeyOff() {
-    this.state = State.KeyOff;
+  void handleKeyOn(final MidiState state) {
+    this.state = State.KEY_ON;
+
+    System.out.println("Channel " + this + " key on");
+    state.offset += 2;
+  }
+
+  void handlePolyphonicKeyPressure(final MidiState state) {
+    System.out.println("Channel " + this + " polyphonic key pressure");
+    state.offset += 2;
+  }
+
+  void handleControlChange(final MidiState state) {
+    System.out.println("Channel " + this + " control change");
+    state.offset += 2;
+  }
+
+  void handleProgramChange(final MidiState state) {
+    System.out.println("Channel " + this + " program change");
+    state.offset++;
+  }
+
+  void handlePitchBend(final MidiState state) {
+    System.out.println("Channel " + this + " pitch bend");
+    state.offset++;
+  }
+
+  @Override
+  public String toString() {
+    return "Channel[%d]".formatted(this.index);
   }
 
   void destroy() {
@@ -52,7 +80,7 @@ final class Channel {
   }
 
   enum State {
-    KeyOn,
-    KeyOff
+    KEY_ON,
+    KEY_OFF,
   }
 }
