@@ -3598,7 +3598,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cdcecL)
-  public static void FUN_800cdcec(final Model124 model, final int dobjIndex, final VECTOR largestVertRef, final VECTOR smallestVertRef, final EffectManagerData6c manager, final IntRef largestIndexRef, final IntRef smallestIndexRef) {
+  public static void FUN_800cdcec(final Model124 model, final int dobjIndex, final VECTOR smallestVertRef, final VECTOR largestVertRef, final EffectManagerData6c manager, final IntRef smallestIndexRef, final IntRef largestIndexRef) {
     short largest = -1;
     short smallest = 0x7fff;
     int largestIndex = 0;
@@ -3745,9 +3745,9 @@ public final class Bttl_800c {
     if(effect._00 == 0) {
       final IntRef largestVertexIndex = new IntRef();
       final IntRef smallestVertexIndex = new IntRef();
-      FUN_800cdcec(effect.parentModel_30, effect.dobjIndex_08, effect.largestVertex_20, effect.smallestVertex_10, data, largestVertexIndex, smallestVertexIndex);
-      effect.largestVertexIndex_0a = largestVertexIndex.get();
-      effect.smallestVertexIndex_0c = smallestVertexIndex.get();
+      FUN_800cdcec(effect.parentModel_30, effect.dobjIndex_08, effect.smallestVertex_20, effect.largestVertex_10, data, smallestVertexIndex, largestVertexIndex);
+      effect.smallestVertexIndex_0a = smallestVertexIndex.get();
+      effect.largestVertexIndex_0c = largestVertexIndex.get();
       return;
     }
 
@@ -3771,7 +3771,7 @@ public final class Bttl_800c {
     for(int i = 0; i < 2; i++) {
       final MATRIX sp0x20 = new MATRIX();
       GsGetLw(effect.parentModel_30.coord2ArrPtr_04[effect.dobjIndex_08], sp0x20);
-      final VECTOR sp0x40 = ApplyMatrixLV(sp0x20, i == 0 ? effect.largestVertex_20 : effect.smallestVertex_10);
+      final VECTOR sp0x40 = ApplyMatrixLV(sp0x20, i == 0 ? effect.largestVertex_10 : effect.smallestVertex_20);
       sp0x40.add(sp0x20.transfer);
       s0._04.get(i).set(sp0x40);
     }
@@ -3926,7 +3926,7 @@ public final class Bttl_800c {
   public static FlowControl FUN_800ce9b0(final RunningScript<?> script) {
     final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final WeaponTrailEffect3c trail = (WeaponTrailEffect3c)manager.effect_44;
-    FUN_800ce880(trail.smallestVertex_10, trail.largestVertex_20, script.params_20[2].get(), script.params_20[1].get());
+    FUN_800ce880(trail.smallestVertex_20, trail.largestVertex_10, script.params_20[2].get(), script.params_20[1].get());
     return FlowControl.CONTINUE;
   }
 
