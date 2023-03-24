@@ -176,10 +176,10 @@ import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800babc0;
 import static legend.game.Scus94491BpeSegment_800b._800bb104;
 import static legend.game.Scus94491BpeSegment_800b._800bb168;
-import static legend.game.Scus94491BpeSegment_800b._800bc91c;
+import static legend.game.Scus94491BpeSegment_800b.postCombatMainCallbackIndex_800bc91c;
 import static legend.game.Scus94491BpeSegment_800b._800bc94c;
 import static legend.game.Scus94491BpeSegment_800b._800bc960;
-import static legend.game.Scus94491BpeSegment_800b._800bc974;
+import static legend.game.Scus94491BpeSegment_800b.postCombatAction_800bc974;
 import static legend.game.Scus94491BpeSegment_800b._800bc980;
 import static legend.game.Scus94491BpeSegment_800b._800bc9a8;
 import static legend.game.Scus94491BpeSegment_800b._800bca68;
@@ -1825,7 +1825,7 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_8001852c
-    if(_800bc91c.get() != 5 || _800bc974.get() == 3) {
+    if(postCombatMainCallbackIndex_800bc91c.get() != 5 || postCombatAction_800bc974.get() == 3) {
       //LAB_80018550
       if(whichMenu_800bdc38 == WhichMenu.NONE_0) {
         pregameLoadingStage_800bb10c.incr();
@@ -1953,7 +1953,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x800189b0L)
   public static void FUN_800189b0() {
-    if(_800bc91c.get() == 5 && _800bc974.get() != 3) {
+    if(postCombatMainCallbackIndex_800bc91c.get() == 5 && postCombatAction_800bc974.get() != 3) {
       FUN_800e5934();
     }
 
@@ -1963,7 +1963,7 @@ public final class Scus94491BpeSegment {
       FUN_800201c8(6);
       pregameLoadingStage_800bb10c.set(0);
       vsyncMode_8007a3b8.set(2);
-      mainCallbackIndexOnceLoaded_8004dd24.set(_800bc91c.get());
+      mainCallbackIndexOnceLoaded_8004dd24.set(postCombatMainCallbackIndex_800bc91c.get());
     }
 
     //LAB_80018a4c

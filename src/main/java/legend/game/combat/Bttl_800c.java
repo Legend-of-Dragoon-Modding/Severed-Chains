@@ -62,6 +62,7 @@ import legend.game.combat.types.PotionEffect14;
 import legend.game.combat.types.SpriteMetrics08;
 import legend.game.combat.types.WeaponTrailEffect3c;
 import legend.game.combat.types.WeaponTrailEffectSegment2c;
+import legend.game.fmv.Fmv;
 import legend.game.inventory.WhichMenu;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.IntParam;
@@ -151,11 +152,11 @@ import static legend.game.Scus94491BpeSegment_800b._800bb168;
 import static legend.game.Scus94491BpeSegment_800b._800bc910;
 import static legend.game.Scus94491BpeSegment_800b._800bc914;
 import static legend.game.Scus94491BpeSegment_800b._800bc918;
-import static legend.game.Scus94491BpeSegment_800b._800bc91c;
+import static legend.game.Scus94491BpeSegment_800b.postCombatMainCallbackIndex_800bc91c;
 import static legend.game.Scus94491BpeSegment_800b._800bc94c;
 import static legend.game.Scus94491BpeSegment_800b._800bc960;
 import static legend.game.Scus94491BpeSegment_800b._800bc968;
-import static legend.game.Scus94491BpeSegment_800b._800bc974;
+import static legend.game.Scus94491BpeSegment_800b.postCombatAction_800bc974;
 import static legend.game.Scus94491BpeSegment_800b._800bc97c;
 import static legend.game.Scus94491BpeSegment_800b.afterFmvLoadingStage_800bf0ec;
 import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
@@ -237,12 +238,8 @@ public final class Bttl_800c {
 
   /** TODO this is a struct, added the int ref temporarily since it's referenced by the script engine */
   public static final ArrayRef<IntRef> intRef_800c6718 = MEMORY.ref(4, 0x800c6718L, ArrayRef.of(IntRef.class, 0x28 / 4, 4, IntRef::new));
+  /** Struct for combat stage stuff */
   public static final Value _800c6718 = MEMORY.ref(4, 0x800c6718L);
-
-  public static final Value _800c6724 = MEMORY.ref(4, 0x800c6724L);
-
-  public static final Value _800c6740 = MEMORY.ref(4, 0x800c6740L);
-
   public static final IntRef _800c6748 = MEMORY.ref(4, 0x800c6748L, IntRef::new);
   public static ScriptState<Void> scriptState_800c674c;
 
@@ -871,7 +868,7 @@ public final class Bttl_800c {
 
     totalXpFromCombat_800bc95c.set(0);
     _800bc960.set(0);
-    _800bc974.set(0);
+    postCombatAction_800bc974.set(0);
     itemsDroppedByEnemiesCount_800bc978.set(0);
 
     int charIndex = gameState_800babc8.charIndex_88.get(1).get();
@@ -1038,7 +1035,7 @@ public final class Bttl_800c {
     FUN_800ef9e4();
     drawUiElements();
 
-    if(_800bc974.get() != 0) {
+    if(postCombatAction_800bc974.get() != 0) {
       pregameLoadingStage_800bb10c.incr();
       return;
     }
@@ -1050,7 +1047,7 @@ public final class Bttl_800c {
 
       if(_800c6760.get() <= 0) {
         loadMusicPackage(19, 0);
-        _800bc974.set(2);
+        postCombatAction_800bc974.set(2);
       } else {
         //LAB_800c7c98
         final ScriptState<BattleObject27c> state = FUN_800c7e24();
@@ -1072,11 +1069,11 @@ public final class Bttl_800c {
             FUN_80020308();
 
             if(encounterId_800bb0f8.get() != 443) { // Melbu
-              _800bc974.set(1);
+              postCombatAction_800bc974.set(1);
               FUN_8001af00(6);
             } else {
               //LAB_800c7d30
-              _800bc974.set(4);
+              postCombatAction_800bc974.set(4);
             }
           }
         }
@@ -1084,7 +1081,7 @@ public final class Bttl_800c {
     }
 
     //LAB_800c7d78
-    if(_800bc974.get() != 0) {
+    if(postCombatAction_800bc974.get() != 0) {
       //LAB_800c7d88
       pregameLoadingStage_800bb10c.incr();
     }
@@ -1172,7 +1169,7 @@ public final class Bttl_800c {
 
   @Method(0x800c8068L)
   public static void FUN_800c8068() {
-    final int s0 = _800bc974.get();
+    final int s0 = postCombatAction_800bc974.get();
 
     if(_800c6690.get() == 0) {
       final int a1 = (int)_800fa6c4.offset(s0 * 0x2L).getSigned();
@@ -1274,50 +1271,50 @@ public final class Bttl_800c {
       deallocateStageDarkeningStorage();
       FUN_800c8748();
 
-      int a1 = previousMainCallbackIndex_8004dd28.get();
-      if(a1 == 9) {
-        a1 = 5;
+      int postCombatMainCallbackIndex = previousMainCallbackIndex_8004dd28.get();
+      if(postCombatMainCallbackIndex == 9) { // FMV
+        postCombatMainCallbackIndex = 5; // SMAP
       }
 
       //LAB_800c84b4
-      switch(_800bc974.get()) {
+      switch(postCombatAction_800bc974.get()) {
         case 2 -> {
           final int encounter = encounterId_800bb0f8.get();
           if(encounter == 391 || encounter >= 404 && encounter < 408) { // Arena fights in Lohan
             //LAB_800c8514
-            gameState_800babc8.scriptFlags2_bc.get(0x1d).or(0x800_0000);
+            gameState_800babc8.scriptFlags2_bc.get(29).or(0x800_0000); // Died in arena fight
           } else {
             //LAB_800c8534
-            a1 = 7; // Game over screen
+            postCombatMainCallbackIndex = 7; // Game over screen
           }
         }
 
         case 4 -> {
           fmvIndex_800bf0dc.setu(0x10L);
           afterFmvLoadingStage_800bf0ec.set(11);
-          a1 = 9;
+          Fmv.playCurrentFmv();
         }
       }
 
       //LAB_800c8558
-      _800bc91c.set(a1);
+      postCombatMainCallbackIndex_800bc91c.set(postCombatMainCallbackIndex);
 
-      long v1 = _800c6724.get();
-      if(v1 != 0xff) {
-        submapScene_80052c34.set((int)v1);
+      final int postCombatSubmapStage = (int)_800c6718.offset(0xcL).get();
+      if(postCombatSubmapStage != 0xff) {
+        submapScene_80052c34.set(postCombatSubmapStage);
       }
 
       //LAB_800c8578
-      v1 = _800c6740.get();
-      if(v1 != 0xffff) {
-        submapCut_80052c30.set((int)v1);
+      final int postCombatSubmapCut = (int)_800c6718.offset(0x28L).get();
+      if(postCombatSubmapCut != 0xffff) {
+        submapCut_80052c30.set(postCombatSubmapCut);
       }
 
       //LAB_800c8590
       setDepthResolution(14);
       _800bc94c.setu(0);
 
-      switch(_800bc974.get()) {
+      switch(postCombatAction_800bc974.get()) {
         case 1, 3 -> whichMenu_800bdc38 = WhichMenu.INIT_POST_COMBAT_REPORT_26;
         case 2, 4, 5 -> whichMenu_800bdc38 = WhichMenu.NONE_0;
       }
@@ -3207,13 +3204,13 @@ public final class Bttl_800c {
 
   @Method(0x800ccef8L)
   public static FlowControl FUN_800ccef8(final RunningScript<?> script) {
-    _800bc974.set(3);
+    postCombatAction_800bc974.set(3);
     return FlowControl.PAUSE_AND_REWIND;
   }
 
   @Method(0x800ccf0cL)
   public static FlowControl FUN_800ccf0c(final RunningScript<?> script) {
-    _800bc974.set(script.params_20[0].get());
+    postCombatAction_800bc974.set(script.params_20[0].get());
     return FlowControl.PAUSE_AND_REWIND;
   }
 
