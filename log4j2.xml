@@ -9,6 +9,9 @@
         <MarkerFilter marker="SCRIPT" onMatch="ACCEPT" onMismatch="NEUTRAL" />
         <MarkerFilter marker="EFFECTS" onMatch="ACCEPT" onMismatch="NEUTRAL" />
         <MarkerFilter marker="DEFF" onMatch="ACCEPT" onMismatch="NEUTRAL" />
+        <MarkerFilter marker="INPUT" onMatch="ACCEPT" onMismatch="NEUTRAL" />
+        <MarkerFilter marker="CONTROLLER_DB" onMatch="ACCEPT" onMismatch="NEUTRAL" />
+        <MarkerFilter marker="CONTROLLER_VERBOSE" onMatch="DENY" onMismatch="NEUTRAL" />
       </Filters>
     </Console>
   </Appenders>

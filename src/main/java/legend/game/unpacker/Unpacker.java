@@ -3,6 +3,7 @@ package legend.game.unpacker;
 import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.core.Tuple;
+import legend.game.Scus94491BpeSegment;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -56,12 +57,15 @@ public final class Unpacker {
     transformers.put(Unpacker::mrgDiscriminator, Unpacker::unmrg);
     transformers.put(Unpacker::deffDiscriminator, Unpacker::undeff);
     transformers.put(Unpacker::drgn21_402_3_patcherDiscriminator, Unpacker::drgn21_402_3_patcher);
+    transformers.put(Unpacker::drgn21_693_0_patcherDiscriminator, Unpacker::drgn21_693_0_patcher);
     transformers.put(Unpacker::drgn0_142_patcherDiscriminator, Unpacker::drgn0_142_patcher);
+    transformers.put(Unpacker::drgn1_343_patcherDiscriminator, Unpacker::drgn1_343_patcher);
     transformers.put(Unpacker::playerCombatSoundEffectsDiscriminator, Unpacker::playerCombatSoundEffectsTransformer);
     transformers.put(Unpacker::playerCombatModelsAndTexturesDiscriminator, Unpacker::playerCombatModelsAndTexturesTransformer);
     transformers.put(Unpacker::dragoonCombatModelsAndTexturesDiscriminator, Unpacker::dragoonCombatModelsAndTexturesTransformer);
     transformers.put(Unpacker::skipPartyPermutationsDiscriminator, Unpacker::skipPartyPermutationsTransformer);
     transformers.put(Unpacker::extractBtldDataDiscriminator, Unpacker::extractBtldDataTransformer);
+    transformers.put(Unpacker::extractItemDataDiscriminator, Unpacker::extractItemDataTransformer);
     transformers.put(CtmdTransformer::ctmdDiscriminator, CtmdTransformer::ctmdTransformer);
   }
 
@@ -422,6 +426,25 @@ public final class Unpacker {
   }
 
   /**
+   * DRGN21.693.0 is the submap controller for Hoax post-Kongol. If you select
+   * "I still don't know..." as your response during the dialog, the script tries
+   * to push an inline parameter that is past the end of the script. This patcher
+   * extends the script and fills with ffffffff, which we read as a sentinel value
+   * in {@link Scus94491BpeSegment#scriptReadGlobalFlag2}, and return 0 there.
+   */
+  private static boolean drgn21_693_0_patcherDiscriminator(final String name, final FileData data, final Set<Flags> flags) {
+    return "SECT/DRGN21.BIN/693/0".equals(name) && data.size() == 0x188;
+  }
+
+  private static Map<String, FileData> drgn21_693_0_patcher(final String name, final FileData data, final Set<Flags> flags) {
+    final byte[] newData = new byte[0x190];
+    System.arraycopy(data.data(), data.offset(), newData, 0, data.size());
+    MathHelper.set(newData, 0x188, 4, 0xffffffffL);
+    MathHelper.set(newData, 0x18c, 4, 0xffffffffL);
+    return Map.of(name, new FileData(newData));
+  }
+
+  /**
    * The Meru model in the post-Divine-Dragon fight cutscene has a corrupt
    * animation file, missing animations for 2 out of her 22 objects. If you
    * look closely at the top of her leg, you can see it. This injects extra
@@ -443,6 +466,23 @@ public final class Unpacker {
     newData[0xc] = 22;
 
     return Map.of(name, new FileData(newData));
+  }
+
+  /**
+   * In the first Faust battle script file (used for the battle itself), the script
+   * tries to access a coord2ArrPtr at index 8 at some moments, but there are only
+   * 6 objects in the model. The index is a param hardcoded into the script. This
+   * alters the value of that param from 8 to 3, which is the index set by the same
+   * function (800ee3c0) when the battle starts.
+   */
+  private static boolean drgn1_343_patcherDiscriminator(final String name, final FileData data, final Set<Flags> flags) {
+    return "SECT/DRGN1.BIN/343".equals(name) && data.size() == 0x3ab4 && data.readByte(0x3a70) == 0x8;
+  }
+
+  private static Map<String, FileData> drgn1_343_patcher(final String name, final FileData data, final Set<Flags> flags) {
+    data.writeByte(0x3a70, 0x3);
+
+    return Map.of(name, data);
   }
 
   private static boolean playerCombatSoundEffectsDiscriminator(final String name, final FileData data, final Set<Flags> flags) {
@@ -549,6 +589,7 @@ public final class Unpacker {
 
   /** TODO this is pretty bad */
   private static boolean btldDataDiscriminatorLatch = true;
+  private static boolean itemDataDiscriminatorLatch = true;
   /** Extracts table at 80102050 */
   private static boolean extractBtldDataDiscriminator(final String name, final FileData data, final Set<Flags> flags) {
     return btldDataDiscriminatorLatch && "OVL/S_BTLD.OV_".equals(name);
@@ -559,6 +600,26 @@ public final class Unpacker {
     final Map<String, FileData> files = new HashMap<>();
     files.put(name, data);
     files.put("encounters", new FileData(data.data(), 0x68d8, 0x7000));
+    return files;
+  }
+
+  private static boolean extractItemDataDiscriminator(final String name, final FileData data, final Set<Flags> flags) {
+    return itemDataDiscriminatorLatch && "OVL/S_ITEM.OV_".equals(name);
+  }
+
+  private static Map<String, FileData> extractItemDataTransformer(final String name, final FileData data, final Set<Flags> flags) {
+    itemDataDiscriminatorLatch = false;
+    final Map<String, FileData> files = new HashMap<>();
+    files.put(name, data);
+    files.put("characters/kongol/xp", new FileData(data.data(), 0x17d78, 61 * 4));
+    files.put("characters/dart/xp", new FileData(data.data(), 0x17e6c, 61 * 4));
+    files.put("characters/haschel/xp", new FileData(data.data(), 0x17f60, 61 * 4));
+    files.put("characters/meru/xp", new FileData(data.data(), 0x18054, 61 * 4));
+    files.put("characters/lavitz/xp", new FileData(data.data(), 0x18148, 61 * 4));
+    files.put("characters/albert/xp", new FileData(data.data(), 0x18148, 61 * 4));
+    files.put("characters/rose/xp", new FileData(data.data(), 0x1823c, 61 * 4));
+    files.put("characters/shana/xp", new FileData(data.data(), 0x18330, 61 * 4));
+    files.put("characters/miranda/xp", new FileData(data.data(), 0x18330, 61 * 4));
     return files;
   }
 

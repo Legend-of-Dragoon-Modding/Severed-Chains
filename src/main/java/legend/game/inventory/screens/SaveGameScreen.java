@@ -71,7 +71,7 @@ public class SaveGameScreen extends SaveListScreen {
   @Override
   protected void renderSaveSlot(final int slot, final int fileIndex, final boolean allocate) {
     if(fileIndex == 0) {
-      renderCentredText(new LodString("New save"), 188, getSlotY(slot) + 25, 4);
+      renderCentredText(new LodString("New save"), 188, getSlotY(slot) + 25, TextColour.BROWN);
     } else if(fileIndex < this.menuCount()) {
       renderSaveGameSlot(fileIndex - 1, getSlotY(slot), allocate);
     }

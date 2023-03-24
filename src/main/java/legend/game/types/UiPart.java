@@ -5,13 +5,13 @@ import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedShortRef;
 
-public class Drgn0_6666Entry implements MemoryRef {
+public class UiPart implements MemoryRef {
   private final Value ref;
 
   public final UnsignedShortRef metricsIndicesIndex_00;
   public final UnsignedByteRef _02;
 
-  public Drgn0_6666Entry(final Value ref) {
+  public UiPart(final Value ref) {
     this.ref = ref;
 
     this.metricsIndicesIndex_00 = ref.offset(2, 0x00L).cast(UnsignedShortRef::new);

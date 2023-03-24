@@ -35,6 +35,8 @@ import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.fmv.Fmv;
+import legend.game.input.Input;
+import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.Param;
@@ -202,8 +204,6 @@ import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c3c;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
 import static legend.game.Scus94491BpeSegment_8007._8007a3a8;
-import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
-import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800ba3b8;
 import static legend.game.Scus94491BpeSegment_800b._800babc0;
@@ -785,7 +785,7 @@ public final class SMap {
     //LAB_800da16c
     //LAB_800da174
     for(int i = 0; i < 7; i++) {
-      if(struct.aub_ec[i] != 0) {
+      if(struct.animateTextures_ec[i]) {
         animateModelTextures(struct, i);
       }
 
@@ -968,7 +968,7 @@ public final class SMap {
 
     //LAB_800daaa8
     for(int i = 0; i < a0.ObjTable_0c.nobj; i++) {
-      if((a0.ui_f4 & 1L << i) == 0) {
+      if((a0.partInvisible_f4 & 1L << i) == 0) {
         final GsDOBJ2 dobj2 = a0.ObjTable_0c.top[i];
 
         final MATRIX lw = new MATRIX();
@@ -988,7 +988,7 @@ public final class SMap {
     }
 
     //LAB_800dab34
-    if(a0.b_cc != 0) {
+    if(a0.movementType_cc != 0) {
       FUN_800da524(a0);
     }
 
@@ -1614,14 +1614,14 @@ public final class SMap {
   public static FlowControl FUN_800df5c0(final RunningScript<?> script) {
     script.params_20[1] = script.params_20[0];
     script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
-    return FUN_800e0244(script);
+    return scriptEnableTextureAnimation(script);
   }
 
   @Method(0x800df5f0L)
   public static FlowControl FUN_800df5f0(final RunningScript<?> script) {
     script.params_20[1] = script.params_20[0];
     script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
-    return FUN_800e0284(script);
+    return scriptDisableTextureAnimation(script);
   }
 
   @Method(0x800df620L)
@@ -1965,16 +1965,16 @@ public final class SMap {
   }
 
   @Method(0x800e0244L)
-  public static FlowControl FUN_800e0244(final RunningScript<?> script) {
+  public static FlowControl scriptEnableTextureAnimation(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    sobj.model_00.aub_ec[script.params_20[1].get()] = 1;
+    sobj.model_00.animateTextures_ec[script.params_20[1].get()] = true;
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e0284L)
-  public static FlowControl FUN_800e0284(final RunningScript<?> script) {
+  public static FlowControl scriptDisableTextureAnimation(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    sobj.model_00.aub_ec[script.params_20[1].get()] = 0;
+    sobj.model_00.animateTextures_ec[script.params_20[1].get()] = false;
     return FlowControl.CONTINUE;
   }
 
@@ -2023,7 +2023,7 @@ public final class SMap {
     final int shift = script.params_20[1].get();
 
     //LAB_800e0430
-    model.ui_f4 |= 0x1L << shift;
+    model.partInvisible_f4 |= 0x1L << shift;
 
     //LAB_800e0440
     return FlowControl.CONTINUE;
@@ -2037,7 +2037,7 @@ public final class SMap {
     final int shift = script.params_20[1].get();
 
     //LAB_800e0498
-    model.ui_f4 &= ~(0x1L << shift);
+    model.partInvisible_f4 &= ~(0x1L << shift);
 
     //LAB_800e04ac
     return FlowControl.CONTINUE;
@@ -2155,14 +2155,14 @@ public final class SMap {
   @Method(0x800e09e0L)
   public static FlowControl FUN_800e09e0(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    sobj.model_00.b_cc = 1;
+    sobj.model_00.movementType_cc = 1;
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e0a14L)
   public static FlowControl FUN_800e0a14(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    sobj.model_00.b_cc = 0;
+    sobj.model_00.movementType_cc = 0;
     return FlowControl.CONTINUE;
   }
 
@@ -2266,7 +2266,7 @@ public final class SMap {
 
     //LAB_800e0d5c
     for(int i = 0; i < 7; i++) {
-      model.aub_ec[i] = 0;
+      model.animateTextures_ec[i] = false;
     }
 
     final int count = cContainer.tmdPtr_00.tmd.header.nobj;
@@ -2328,7 +2328,7 @@ public final class SMap {
     model.zOffset_a0 = 0;
     model.ub_a2 = 0;
     model.ub_a3 = 0;
-    model.ui_f4 = 0;
+    model.partInvisible_f4 = 0;
 
     loadModelStandardAnimation(model, tmdAnimFile);
 
@@ -3792,7 +3792,10 @@ public final class SMap {
       return 0;
     }
 
-    if(index_80052c38.get() < 0x40L && arr_800cb460.get(index_80052c38.get()).get() != 0) {
+    // The first condition is to fix what we believe is caused by menus loading too fast in SC. Submaps still take several frames to initialize,
+    // and if you spam triangle and escape immediately after the post-combat screen it's possible to get into this method when index_80052c38 is
+    // still set to -1. See #304 for more details.
+    if(index_80052c38.get() >= 0 && index_80052c38.get() < 0x40L && arr_800cb460.get(index_80052c38.get()).get() != 0) {
       return 0;
     }
 
@@ -3801,7 +3804,7 @@ public final class SMap {
       return 0;
     }
 
-    if(joypadInput_8007a39c.get() == 0) {
+    if(!Input.hasActivity()) {
       return 0;
     }
 
@@ -4384,7 +4387,7 @@ public final class SMap {
       case 0xc -> {
         _80052c44.setu(0);
         FUN_800e5104(_800caaf8.get(), _800cab24.deref());
-        if(joypadPress_8007a398.get(0x10L) != 0 && !gameState_800babc8.indicatorsDisabled_4e3) {
+        if(Input.pressedThisFrame(InputAction.BUTTON_NORTH) && !gameState_800babc8.indicatorsDisabled_4e3) {
           FUN_800e5534(-1, 0x3ff);
         }
       }
@@ -5344,7 +5347,13 @@ public final class SMap {
         final int clut = (int)MEMORY.get(s1 + 0x16L, 2);
         final int tpage = (int)MEMORY.get(s1 + 0x4L, 3);
 
-        GPU.queueCommand(sp38[i], new GpuCommandQuad()
+        // This was causing a problem when moving left from the room before Zackwell. Not sure if this is a retail issue or SC-specific. GH#332
+        int z = sp38[i];
+        if(z < 0) {
+          z = (1 << orderingTableBits_1f8003c0.get()) - 1;
+        }
+
+        GPU.queueCommand(z, new GpuCommandQuad()
           .rgb((int)MEMORY.get(s1 + 0xcL, 3))
           .pos((short)MEMORY.get(s1 + 0x10L, 2), (short)MEMORY.get(s1 + 0x12L, 2), (short)MEMORY.get(s1 + 0x18L, 2), (short)MEMORY.get(s1 + 0x1aL, 2))
           .uv((int)MEMORY.get(s1 + 0x14L, 1), (int)MEMORY.get(s1 + 0x15L, 1))
@@ -8687,7 +8696,7 @@ public final class SMap {
     }
 
     //LAB_800f321c
-    if((joypadPress_8007a398.get() & 0x8) != 0) { // R1
+    if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_RIGHT_1)) { // R1
       if(indicatorMode == 0) {
         gameState_800babc8.indicatorMode_4e8 = 1;
         //LAB_800f3244
@@ -8698,7 +8707,7 @@ public final class SMap {
         _800f9e9c.setu(0);
       }
       //LAB_800f3260
-    } else if((joypadPress_8007a398.get() & 0x4) != 0) { // L1
+    } else if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_LEFT_1)) { // L1
       if(indicatorMode == 0) {
         //LAB_800f3274
         gameState_800babc8.indicatorMode_4e8 = 2;

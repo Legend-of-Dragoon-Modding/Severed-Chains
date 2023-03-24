@@ -1214,9 +1214,14 @@ public final class SEffe {
     final short s0 = a3._04;
 
     //LAB_800fd53c
-    if(s0 == -0xfff) {
-      a3._04 = -0xfff;
-    } else if(s0 == 0) {
+    if(s0 < 0) {
+      if(s0 == -0xfff) {
+        a3._04 = -0xfff;
+      }
+    } else {
+      if(s0 != 0) {
+        return 1;
+      }
       FUN_800fd084(a1, a2, a3);
 
       if((a1._10._24 & 0x10) != 0) {
@@ -3344,7 +3349,8 @@ public final class SEffe {
     final int s0 = script.params_20[6].get();
     final int s1 = script.params_20[7].get();
 
-    //TODO counter-attack electricity
+    //TODO counter-attack electricity (tfz note: much more than counter-attack electricity,
+    // used in Haschel Dragoon transformation and Thunder Kid at least, probably more)
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "BttlScriptData6cSub38 (counter-attack electricity?)",
       script.scriptState_04,
@@ -4135,11 +4141,6 @@ public final class SEffe {
                     s3._39.set((int)s0);
                     s3._3c.set(s2);
                   }
-
-                  if(Config.autoAddition() && s3._34.get() >= MEMORY.ref(2, s2).offset(0x12L).getSigned()) {
-                    _8011a014.offset(s0).setu(1);
-                    MEMORY.ref(1, s2).offset(0x1L).setu(1);
-                  }
                 }
               } else {
                 if(s3._34.get() >= MEMORY.ref(2, s2).offset(0x10L).getSigned() && s3._34.get() <= MEMORY.ref(2, s2).offset(0x12L).getSigned()) {
@@ -4581,7 +4582,7 @@ public final class SEffe {
       final int v1 = struct._00;
       if(v1 == 0) {
         //LAB_80108a78
-        struct._02--;
+        struct._02 -= 0x10;
 
         if(struct._02 < struct._04) {
           struct._02 = struct._04;
@@ -6953,7 +6954,7 @@ public final class SEffe {
     s1._0c.add(s1._18);
 
     if(s1.scriptIndex_30 == -1) {
-      s2._10.trans_04.set(s1._0c).div(0x100);
+      s2._10.trans_04.set(s1._0c).shra(8);
     } else {
       //LAB_80110814
       final Ref<SVECTOR> sp0x40 = new Ref<>();
@@ -6963,7 +6964,7 @@ public final class SEffe {
       final MATRIX sp0x10 = new MATRIX();
       RotMatrix_Xyz(sp0x40.get(), sp0x10);
 
-      final VECTOR sp0x30 = new VECTOR().set(s1._0c).div(0x100);
+      final VECTOR sp0x30 = new VECTOR().set(s1._0c).shra(8);
       s2._10.trans_04.set(ApplyMatrixLV(sp0x10, sp0x30)).add(sp0x44.get());
     }
 
@@ -7067,15 +7068,15 @@ public final class SEffe {
     s0.scriptIndex_30 = -1;
     s0._32 = (short)a3;
 
+    s0._0c.setX(s2._10.trans_04.getX() << 8);
+    s0._0c.setY(s2._10.trans_04.getY() << 8);
+    s0._0c.setZ(s2._10.trans_04.getZ() << 8);
+
     if(a3 != 0) {
-      s0._0c.setX((s2._10.trans_04.getX() << 8) / a3);
-      s0._0c.setY((s2._10.trans_04.getY() << 8) / a3);
-      s0._0c.setZ((s2._10.trans_04.getZ() << 8) / a3);
       s0._18.setX((sp0x18.getX() << 8) / a3);
       s0._18.setY((sp0x18.getY() << 8) / a3);
       s0._18.setZ((sp0x18.getZ() << 8) / a3);
     } else {
-      s0._0c.set(-1, -1, -1);
       s0._18.set(-1, -1, -1);
     }
 

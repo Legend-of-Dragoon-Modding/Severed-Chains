@@ -3,6 +3,7 @@ package legend.game.inventory.screens;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import legend.core.opengl.Window;
+import legend.game.input.InputAction;
 
 import java.util.Deque;
 import java.util.Iterator;
@@ -11,6 +12,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import static legend.core.GameEngine.GPU;
+import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
 
 public class MenuStack {
   private final Deque<MenuScreen> screens = new LinkedList<>();
@@ -22,6 +24,11 @@ public class MenuStack {
   private Window.Events.Key onKeyPress;
 
   private Window.Events.Key onKeyRepeat;
+
+  private Window.Events.OnPressedThisFrame onPressedThisFrame;
+  private Window.Events.OnReleasedThisFrame onReleasedThisFrame;
+
+  private Window.Events.OnPressedWithRepeatPulse onPressedWithRepeatPulse;
 
   private final Int2ObjectMap<Point2D> mousePressCoords = new Int2ObjectOpenHashMap<>();
 
@@ -45,8 +52,11 @@ public class MenuStack {
     final Iterator<MenuScreen> it = this.screens.iterator();
 
     if(it.hasNext()) {
-      this.propagate(it, MenuScreen::render, MenuScreen::propagateRender, true);
+      this.propagate(it, MenuScreen::renderScreen, MenuScreen::propagateRender, true);
     }
+
+    //TODO temporary until everything is moved over to controls and no longer uses the LOD system
+    uploadRenderables();
   }
 
   private void input(final Consumer<MenuScreen> method) {
@@ -81,6 +91,9 @@ public class MenuStack {
     this.onMouseScroll = GPU.window().events.onMouseScroll(this::mouseScroll);
     this.onKeyPress = GPU.window().events.onKeyPress(this::keyPress);
     this.onKeyRepeat = GPU.window().events.onKeyRepeat(this::keyPress);
+    this.onPressedThisFrame = GPU.window().events.onPressedThisFrame(this::pressedThisFrame);
+    this.onReleasedThisFrame = GPU.window().events.onReleasedThisFrame(this::releasedThisFrame);
+    this.onPressedWithRepeatPulse = GPU.window().events.onPressedWithRepeatPulse(this::pressedWithRepeatPulse);
   }
 
   public void removeInputHandlers() {
@@ -90,6 +103,9 @@ public class MenuStack {
     GPU.window().events.removeMouseScroll(this.onMouseScroll);
     GPU.window().events.removeKeyPress(this.onKeyPress);
     GPU.window().events.removeKeyRepeat(this.onKeyRepeat);
+    GPU.window().events.removePressedThisFrame(this.onPressedThisFrame);
+    GPU.window().events.removeReleasedThisFrame(this.onReleasedThisFrame);
+    GPU.window().events.removePressedWithRepeatPulse(this.onPressedWithRepeatPulse);
   }
 
   private void mouseMove(final Window window, final double x, final double y) {
@@ -148,6 +164,17 @@ public class MenuStack {
     this.input(screen -> screen.keyPress(key, scancode, mods));
   }
 
-  private record Point2D(double x, double y) {
+  private void pressedThisFrame(final Window window, final InputAction inputAction) {
+    this.input(screen -> screen.pressedThisFrame(inputAction));
   }
+
+  private void pressedWithRepeatPulse(final Window window, final InputAction inputAction) {
+    this.input(screen -> screen.pressedWithRepeatPulse(inputAction));
+  }
+
+  private void releasedThisFrame(final Window window, final InputAction inputAction) {
+    this.input(screen -> screen.releasedThisFrame(inputAction));
+  }
+
+  private record Point2D(double x, double y) { }
 }

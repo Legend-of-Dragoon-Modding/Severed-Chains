@@ -30,12 +30,8 @@ import java.util.Scanner;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.MathHelper.colour24To15;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
-import static org.lwjgl.glfw.GLFW.GLFW_JOYSTICK_LAST;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_TAB;
 import static org.lwjgl.glfw.GLFW.glfwGetCurrentContext;
-import static org.lwjgl.glfw.GLFW.glfwGetJoystickGUID;
-import static org.lwjgl.glfw.GLFW.glfwGetJoystickName;
-import static org.lwjgl.glfw.GLFW.glfwJoystickPresent;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
 public class Gpu implements Runnable {
@@ -44,8 +40,8 @@ public class Gpu implements Runnable {
   private static final int STANDARD_VRAM_WIDTH = 1024;
   private static final int STANDARD_VRAM_HEIGHT = 512;
 
-  private final int vramWidth = STANDARD_VRAM_WIDTH;
-  private final int vramHeight = STANDARD_VRAM_HEIGHT;
+  public final int vramWidth = STANDARD_VRAM_WIDTH;
+  public final int vramHeight = STANDARD_VRAM_HEIGHT;
 
   private Camera camera;
   private Window window;
@@ -223,7 +219,8 @@ public class Gpu implements Runnable {
 
     for(int y = 0; y < height; y++) {
       for(int x = 0; x < width; x++) {
-        int colour = this.getPixel(sourceX + x, sourceY + y);
+        int colour15 = this.getPixel15(sourceX + x, sourceY + y);
+        int colour24 = this.getPixel(sourceX + x, sourceY + y);
 
         if(this.status.drawPixels == DRAW_PIXELS.NOT_TO_MASKED_AREAS) {
           if((this.getPixel(destX + x, destY + y) & 0xff00_0000L) != 0) {
@@ -231,9 +228,12 @@ public class Gpu implements Runnable {
           }
         }
 
-        colour |= (this.status.setMaskBit ? 1 : 0) << 24;
+        colour15 |= (this.status.setMaskBit ? 1 : 0) << 15;
+        colour24 |= (this.status.setMaskBit ? 1 : 0) << 24;
 
-        this.setPixel(destX + x, destY + y, colour);
+        final int index = (destY + y) * this.vramWidth + destX + x;
+        this.vram15[index] = colour15;
+        this.vram24[index] = colour24;
       }
     }
   }
@@ -426,30 +426,6 @@ public class Gpu implements Runnable {
       this.lastFrame = System.nanoTime();
       this.vsyncCount += 60.0d / this.window.getFpsLimit();
     });
-
-    if(Config.controllerConfig()) {
-      final Scanner scanner = new Scanner(System.in);
-
-      System.out.println("Beginning controller configuration.");
-      System.out.println("Choose a joystick:");
-      for(int i = 0; i < GLFW_JOYSTICK_LAST; i++) {
-        if(glfwJoystickPresent(i)) {
-          System.out.println((i + 1) + ": " + glfwGetJoystickName(i) + " (" + glfwGetJoystickGUID(i) + ')');
-        }
-      }
-
-      final int index = this.readInt(scanner, "# ", "Invalid index") - 1;
-      final String guid = glfwGetJoystickGUID(index);
-
-      Config.controllerConfig(false);
-      Config.controllerGuid(guid);
-
-      try {
-        Config.save();
-      } catch(final IOException e) {
-        System.err.println("Failed to save config");
-      }
-    }
 
     this.window.show();
 
@@ -830,7 +806,9 @@ public class Gpu implements Runnable {
           if(isTextured) {
             final int texelX = interpolateCoords(w0, w1, w2, tu0, tu1, tu2, area);
             final int texelY = interpolateCoords(w0, w1, w2, tv0, tv1, tv2, area);
+
             int texel = this.getTexel(texelX, texelY, clutX, clutY, textureBaseX, textureBaseY, bpp);
+
             if(texel == 0) {
               w0 += A12;
               w1 += A20;
@@ -839,7 +817,7 @@ public class Gpu implements Runnable {
             }
 
             if(!isRaw) {
-              texel = this.applyBlending(colour, texel);
+              texel = applyBlending(colour, texel);
             }
 
             colour = texel;
@@ -867,7 +845,7 @@ public class Gpu implements Runnable {
     }
   }
 
-  public int applyBlending(final int colour, final int texel) {
+  public static int applyBlending(final int colour, final int texel) {
     return
       texel & 0xff00_0000 |
       Math.min((colour >>> 16 & 0xff) * (texel >>> 16 & 0xff) >>> 7, 0xff) << 16 |
@@ -895,7 +873,7 @@ public class Gpu implements Runnable {
     this.vram15[index] = colour24To15(pixel);
   }
 
-  private static int interpolateCoords(final int w0, final int w1, final int w2, final int t0, final int t1, final int t2, final int area) {
+  public static int interpolateCoords(final int w0, final int w1, final int w2, final int t0, final int t1, final int t2, final int area) {
     //https://codeplea.com/triangular-interpolation
     return (t0 * w0 + t1 * w1 + t2 * w2) / area;
   }
@@ -915,7 +893,7 @@ public class Gpu implements Runnable {
     return (r & 0xff) << 16 | (g & 0xff) << 8 | (b & 0xff);
   }
 
-  private static boolean isTopLeft(final int ax, final int ay, final int bx, final int by) {
+  public static boolean isTopLeft(final int ax, final int ay, final int bx, final int by) {
     return ay == by && bx > ax || by < ay;
   }
 
@@ -950,7 +928,7 @@ public class Gpu implements Runnable {
   /**
    * Returns positive value for clockwise winding, negative value for counter-clockwise. 0 if vertices are collinear. Value is roughly twice the area of the triangle.
    */
-  private static int orient2d(final int ax, final int ay, final int bx, final int by, final int cx, final int cy) {
+  public static int orient2d(final int ax, final int ay, final int bx, final int by, final int cx, final int cy) {
     return (bx - ax) * (cy - ay) - (by - ay) * (cx - ax);
   }
 
@@ -998,7 +976,7 @@ public class Gpu implements Runnable {
     return b << 16 | g << 8 | r;
   }
 
-  private int getShadedColor(final int w0, final int w1, final int w2, final int c0, final int c1, final int c2, final int area) {
+  public int getShadedColor(final int w0, final int w1, final int w2, final int c0, final int c1, final int c2, final int area) {
     final int r = ((c0        & 0xff) * w0 + (c1        & 0xff) * w1 + (c2        & 0xff) * w2) / area;
     final int g = ((c0 >>>  8 & 0xff) * w0 + (c1 >>>  8 & 0xff) * w1 + (c2 >>>  8 & 0xff) * w2) / area;
     final int b = ((c0 >>> 16 & 0xff) * w0 + (c1 >>> 16 & 0xff) * w1 + (c2 >>> 16 & 0xff) * w2) / area;

@@ -18,7 +18,7 @@ public class BattleObject27c extends BattleScriptDataBase {
    *   <li>0x10 - Stunned</li>
    *   <li>0x20 - Weapon blocked</li>
    *   <li>0x40 - Dispirited</li>
-   *   <li>0x80 - Also dispirited?</li>
+   *   <li>0x80 - Poison</li>
    *   <li>0x2000 - Can become dragoon</li>
    * </ul>
    */

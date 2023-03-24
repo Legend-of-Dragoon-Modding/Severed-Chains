@@ -13,7 +13,7 @@ public class Renderable58 {
   public int endGlyph_14;
   public int _18;
   public int _1c;
-  public Drgn0_6666Struct drgn0_6666_20;
+  public UiType uiType_20;
   public int[] metricsIndices_24;
   public int _28;
   public int tpage_2c;

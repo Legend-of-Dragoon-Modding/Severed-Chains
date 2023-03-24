@@ -33,7 +33,7 @@ public class GameVarArrayParam extends Param {
       case 48 -> Scus94491BpeSegment_8006._8006e398.bobjIndices_e78[this.arrIndex] != null ? Scus94491BpeSegment_8006._8006e398.bobjIndices_e78[this.arrIndex].index : -1;
       case 50 -> Scus94491BpeSegment_8006._8006e398.bobjIndices_eac[this.arrIndex] != null ? Scus94491BpeSegment_8006._8006e398.bobjIndices_eac[this.arrIndex].index : -1;
       case 52 -> Scus94491BpeSegment_8006._8006e398.enemyBobjIndices_ebc[this.arrIndex] != null ? Scus94491BpeSegment_8006._8006e398.enemyBobjIndices_ebc[this.arrIndex].index : -1;
-      case 64 -> SMap.sobjs_800c6880[this.arrIndex] != null ? SMap.sobjs_800c6880[this.arrIndex].index : -1;
+      case 64 -> SMap.sobjs_800c6880[this.arrIndex] != null ? SMap.sobjs_800c6880[this.arrIndex].index : 0;
       case 73 -> SMap._800c6970.get(this.arrIndex).get();
       case 112 -> Scus94491BpeSegment_800b.gameState_800babc8._15c[this.arrIndex];
       case 113 -> Scus94491BpeSegment_800b.gameState_800babc8._17c[this.arrIndex];

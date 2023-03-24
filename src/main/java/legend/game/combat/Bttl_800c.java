@@ -2225,6 +2225,13 @@ public final class Bttl_800c {
         LoadImage(clutRect, tim.getClutData());
       }
     } else {
+      final RECT imageRect = tim.getImageRect();
+
+      // This is a fix for a retail bug where they try to load a TMD as a TIM (it has a 0 w/h anyway so no data gets loaded) see GH#330
+      if(imageRect.x.get() == 0x41 && imageRect.y.get() == 0 && imageRect.w.get() == 0 && imageRect.h.get() == 0) {
+        return;
+      }
+
       tim.uploadToGpu();
     }
 
@@ -3050,7 +3057,7 @@ public final class Bttl_800c {
   @Method(0x800cc9d8L)
   public static FlowControl FUN_800cc9d8(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    bobj.model_148.aub_ec[script.params_20[1].get()] = script.params_20[2].get() > 0 ? 1 : 0;
+    bobj.model_148.animateTextures_ec[script.params_20[1].get()] = script.params_20[2].get() > 0;
     return FlowControl.CONTINUE;
   }
 
@@ -3339,10 +3346,10 @@ public final class Bttl_800c {
   public static FlowControl FUN_800cd3b4(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     if(script.params_20[2].get() != 0) {
-      bobj.model_148.ui_f4 &= ~(0x1L << script.params_20[1].get());
+      bobj.model_148.partInvisible_f4 &= ~(0x1L << script.params_20[1].get());
     } else {
       //LAB_800cd420
-      bobj.model_148.ui_f4 |= 0x1L << script.params_20[1].get();
+      bobj.model_148.partInvisible_f4 |= 0x1L << script.params_20[1].get();
     }
 
     //LAB_800cd460

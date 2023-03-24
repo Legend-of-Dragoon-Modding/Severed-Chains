@@ -75,6 +75,8 @@ public class DebuggerController {
   @FXML
   public CheckBox autoMeter;
   @FXML
+  public CheckBox disableStatusEffects;
+  @FXML
   public CheckBox combatStage;
   @FXML
   public CheckBox fastTextSpeed;
@@ -94,6 +96,7 @@ public class DebuggerController {
     this.battleUIColourB.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getBattleRGB() >> 16)  & 0xff)));
     this.autoAddition.setSelected(Config.autoAddition());
     this.autoMeter.setSelected(Config.autoDragoonMeter());
+    this.disableStatusEffects.setSelected(Config.disableStatusEffects());
     this.combatStage.setSelected(Config.combatStage());
     this.combatStageId.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 127, Config.getCombatStage()));
     this.fastTextSpeed.setSelected(Config.fastTextSpeed());
@@ -228,6 +231,11 @@ public class DebuggerController {
   @FXML
   private void toggleAutoDragoonMeter(final ActionEvent event) {
     Config.toggleAutoDragoonMeter();
+  }
+
+  @FXML
+  private void toggleDisableStatusEffects(final ActionEvent event) {
+    Config.toggleDisableStatusEffects();
   }
 
   @FXML

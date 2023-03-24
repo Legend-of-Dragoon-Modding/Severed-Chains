@@ -24,6 +24,8 @@ import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.game.fmv.Fmv;
+import legend.game.input.Input;
+import legend.game.input.InputAction;
 import legend.game.inventory.UseItemResponse;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.CharSwapScreen;
@@ -31,6 +33,7 @@ import legend.game.inventory.screens.LoadGameScreen;
 import legend.game.inventory.screens.MenuScreen;
 import legend.game.inventory.screens.SaveGameScreen;
 import legend.game.inventory.screens.ShopScreen;
+import legend.game.inventory.screens.TextColour;
 import legend.game.inventory.screens.TooManyItemsScreen;
 import legend.game.modding.events.EventManager;
 import legend.game.modding.events.inventory.TakeItemEvent;
@@ -41,8 +44,8 @@ import legend.game.tmd.Renderer;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CContainer;
 import legend.game.types.CharacterData2c;
-import legend.game.types.Drgn0_6666Entry;
-import legend.game.types.Drgn0_6666Struct;
+import legend.game.types.UiPart;
+import legend.game.types.UiType;
 import legend.game.types.InventoryMenuState;
 import legend.game.types.ItemStats0c;
 import legend.game.types.LodString;
@@ -192,7 +195,7 @@ import static legend.game.Scus94491BpeSegment_800b._800beb98;
 import static legend.game.Scus94491BpeSegment_800b._800bed28;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
 import static legend.game.Scus94491BpeSegment_800b.currentText_800bdca0;
-import static legend.game.Scus94491BpeSegment_800b.drgn0_6666FilePtr_800bdc3c;
+import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.equipmentStats_800be5d8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -348,7 +351,7 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_80020760
     for(int i = 0; i < 7; i++) {
-      model.aub_ec[i] = 0;
+      model.animateTextures_ec[i] = false;
     }
 
     final Tmd tmd = cContainer.tmdPtr_00.tmd;
@@ -389,7 +392,7 @@ public final class Scus94491BpeSegment_8002 {
     model.zOffset_a0 = 0;
     model.ub_a2 = 0;
     model.ub_a3 = 0;
-    model.ui_f4 = 0;
+    model.partInvisible_f4 = 0;
 
     loadModelStandardAnimation(model, tmdAnimFile);
 
@@ -398,7 +401,7 @@ public final class Scus94491BpeSegment_8002 {
     adjustModelUvs(model);
 
     //LAB_800209b0
-    model.b_cc = 0;
+    model.movementType_cc = 0;
     model.b_cd = -2;
     model.scaleVector_fc.set(0x1000, 0x1000, 0x1000);
     model.vector_10c.set(0x1000, 0x1000, 0x1000);
@@ -430,7 +433,7 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80020be8
     //LAB_80020bf0
     for(int i = 0; i < 7; i++) {
-      if(model.aub_ec[i] != 0) {
+      if(model.animateTextures_ec[i]) {
         animateModelTextures(model, i);
       }
 
@@ -1083,34 +1086,31 @@ public final class Scus94491BpeSegment_8002 {
    */
   @Method(0x80022018L)
   public static void animateModelTextures(final Model124 a0, final int index) {
-    final RECT rect = new RECT();
-
     if(a0.ptrs_d0[index] == null) {
-      a0.aub_ec[index] = 0;
+      a0.animateTextures_ec[index] = false;
       return;
     }
 
     //LAB_80022068
     final int x;
-    final long v0;
+    final int y;
     if((a0.colourMap_9d & 0x80) == 0) {
-      x = (int)_800503b0.offset(a0.colourMap_9d * 0x2L).getSigned();
-      v0 = _800503d4.getAddress();
+      x = (int)_800503b0.offset(a0.colourMap_9d * 0x2).get();
+      y = (int)_800503d4.offset(a0.colourMap_9d * 0x2).get();
     } else {
       //LAB_80022098
       if(a0.colourMap_9d == 0x80) {
         return;
       }
 
-      x = (int)_800503f8.offset((a0.colourMap_9d & 0x7f) * 0x2L).getSigned();
-      v0 = _80050424.getAddress();
+      x = (int)_800503f8.offset((a0.colourMap_9d & 0x7f) * 0x2).get();
+      y = (int)_80050424.offset((a0.colourMap_9d & 0x7f) * 0x2).get();
     }
 
     //LAB_800220c0
-    final int y = (int)MEMORY.ref(2, v0).offset((a0.colourMap_9d & 0x7f) * 0x2L).getSigned();
     if(a0.usArr_ba[index] != 0x5678) {
       a0.usArr_ba[index]--;
-      if(a0.usArr_ba[index] != 0) {
+      if((short)a0.usArr_ba[index] != 0) {
         return;
       }
 
@@ -1118,8 +1118,8 @@ public final class Scus94491BpeSegment_8002 {
       a0.usArr_ba[index] = a0.ptrs_d0[index][s1++] & 0x7fff;
       final int destX = a0.ptrs_d0[index][s1++] + x;
       final int destY = a0.ptrs_d0[index][s1++] + y;
-      rect.w.set((short)(a0.ptrs_d0[index][s1++] / 4));
-      rect.h.set(a0.ptrs_d0[index][s1++]);
+      final short w = (short)(a0.ptrs_d0[index][s1++] / 4);
+      final short h = a0.ptrs_d0[index][s1++];
 
       //LAB_80022154
       for(int i = 0; i < a0.usArr_ac[index]; i++) {
@@ -1127,16 +1127,16 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       //LAB_80022164
-      rect.x.set((short)(a0.ptrs_d0[index][s1++] + x));
-      rect.y.set((short)(a0.ptrs_d0[index][s1++] + y));
+      final short x2 = (short)(a0.ptrs_d0[index][s1++] + x);
+      final short y2 = (short)(a0.ptrs_d0[index][s1++] + y);
 
-      GPU.queueCommand(1, new GpuCommandCopyVramToVram(rect.x.get(), rect.y.get(), destX & 0xffff, destY & 0xffff, rect.w.get(), rect.h.get()));
+      GPU.queueCommand(1, new GpuCommandCopyVramToVram(x2, y2, destX & 0xffff, destY & 0xffff, w, h));
 
       a0.usArr_ac[index]++;
 
       final int v1 = a0.ptrs_d0[index][s1];
       if(v1 == -2) {
-        a0.aub_ec[index] = 0;
+        a0.animateTextures_ec[index] = false;
         a0.usArr_ac[index] = 0;
       }
 
@@ -1150,17 +1150,15 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_80022208
     int s1 = 1;
-    final int a1_0 = a0.usArr_ac[index];
-    final int a0_0 = a0.ptrs_d0[index][s1++];
+    final int s6 = a0.ptrs_d0[index][s1++] + x;
     final int s7 = a0.ptrs_d0[index][s1++] + y;
-    final int s5 = a0.ptrs_d0[index][s1++] >>> 2;
+    final int s5 = a0.ptrs_d0[index][s1++] / 4;
     int s3 = a0.ptrs_d0[index][s1++];
     final int v1 = a0.ptrs_d0[index][s1++];
     int s0_0 = a0.ptrs_d0[index][s1];
-    final int s6 = a0_0 + x;
 
-    if((a1_0 & 0xf) != 0) {
-      a0.usArr_ac[index] = a1_0 - 1;
+    if((a0.usArr_ac[index] & 0xf) != 0) {
+      a0.usArr_ac[index]--;
 
       if(a0.usArr_ac[index] == 0) {
         a0.usArr_ac[index] = s0_0;
@@ -1172,34 +1170,23 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_8002227c
-    if(s0_0 == 0) {
+    if((short)s0_0 == 0) {
       return;
     }
 
-    rect.set((short)960, (short)256, (short)s5, (short)s3);
-    GPU.queueCommand(1, new GpuCommandCopyVramToVram(rect.x.get(), rect.y.get(), s6 & 0xffff, s7 & 0xffff, rect.w.get(), rect.h.get()));
+    GPU.queueCommand(1, new GpuCommandCopyVramToVram(960, 256, s6 & 0xffff, s7 & 0xffff, s5, s3));
 
-    s0_0 = s0_0 >> 4;
+    s0_0 /= 16;
     s3 -= s0_0;
 
-    final int a3;
-    if(v1 == 0) {
-      rect.set((short)s6, (short)(s7 + s3), (short)s5, (short)s0_0);
-      GPU.queueCommand(1, new GpuCommandCopyVramToVram(rect.x.get(), rect.y.get(), 960, 256, rect.w.get(), rect.h.get()));
-
-      a3 = s0_0 + 256 & 0xffff;
-      rect.set((short)s6, (short)s7, (short)s5, (short)s3);
+    if((short)v1 == 0) {
+      GPU.queueCommand(1, new GpuCommandCopyVramToVram(s6, s7 + s3, 960, 256, s5, s0_0));
+      GPU.queueCommand(1, new GpuCommandCopyVramToVram(s6, s7, 960, s0_0 + 256, s5, s3));
     } else {
       //LAB_80022358
-      rect.set((short)s6, (short)s7, (short)s5, (short)s0_0);
-      GPU.queueCommand(1, new GpuCommandCopyVramToVram(rect.x.get(), rect.y.get(), 960, s3 + 256 & 0xffff, rect.w.get(), rect.h.get()));
-
-      a3 = 256;
-      rect.set((short)s6, (short)(s0_0 + s7), (short)s5, (short)s3);
+      GPU.queueCommand(1, new GpuCommandCopyVramToVram(s6, s7, 960, s3 + 256, s5, s0_0));
+      GPU.queueCommand(1, new GpuCommandCopyVramToVram(s6, s7 + s0_0, 960, 256, s5, s3));
     }
-
-    //LAB_8002241c
-    GPU.queueCommand(1, new GpuCommandCopyVramToVram(rect.x.get(), rect.y.get(), 960, a3, rect.w.get(), rect.h.get()));
 
     //LAB_80022440
   }
@@ -1207,7 +1194,7 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x8002246cL)
   public static void FUN_8002246c(final Model124 a0, final int a1) {
     if(a0.ptrs_d0[a1] == null) {
-      a0.aub_ec[a1] = 0;
+      a0.animateTextures_ec[a1] = false;
       return;
     }
 
@@ -1215,18 +1202,14 @@ public final class Scus94491BpeSegment_8002 {
     a0.usArr_ac[a1] = 0;
     a0.usArr_ba[a1] = a0.ptrs_d0[a1][0] & 0x3fff;
 
-    if((a0.ptrs_d0[a1][0] & 0x8000) != 0) {
-      a0.aub_ec[a1] = 1;
-    } else {
-      //LAB_800224d0
-      a0.aub_ec[a1] = 0;
-    }
+    //LAB_800224d0
+    a0.animateTextures_ec[a1] = (a0.ptrs_d0[a1][0] & 0x8000) != 0;
 
     //LAB_800224d8
     if((a0.ptrs_d0[a1][0] & 0x4000) != 0) {
       a0.usArr_ba[a1] = 0x5678;
       a0.usArr_ac[a1] = a0.ptrs_d0[a1][6];
-      a0.aub_ec[a1] = 1;
+      a0.animateTextures_ec[a1] = true;
     }
 
     //LAB_80022510
@@ -1265,7 +1248,7 @@ public final class Scus94491BpeSegment_8002 {
           whichMenu_800bdc38 = WhichMenu.WAIT_FOR_S_ITEM_TO_LOAD_3;
 
           renderablePtr_800bdc5c = null;
-          drgn0_6666FilePtr_800bdc3c.clear();
+          uiFile_800bdc3c.clear();
           setWidthAndFlags(384);
           loadDrgnBinFile(0, 6665, 0, SItem::menuAssetsLoaded, 0, 0x5L);
           loadDrgnBinFile(0, 6666, 0, SItem::menuAssetsLoaded, 1, 0x3L);
@@ -1312,7 +1295,7 @@ public final class Scus94491BpeSegment_8002 {
         whichMenu_800bdc38 = WhichMenu.NONE_0;
 
         deallocateRenderables(0xff);
-        free(drgn0_6666FilePtr_800bdc3c.getPointer());
+        free(uiFile_800bdc3c.getPointer());
 
         scriptStartEffect(2, 10);
 
@@ -1654,18 +1637,18 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x800232dcL)
-  public static int takeItem(final int itemIndex) {
-    if(itemIndex >= gameState_800babc8.items_2e9.size()) {
-      LOGGER.warn("Tried to take item index %d (out of bounds)".formatted(itemIndex));
+  public static int takeItem(final int itemSlot) {
+    if(itemSlot >= gameState_800babc8.items_2e9.size()) {
+      LOGGER.warn("Tried to take item index %d (out of bounds)".formatted(itemSlot));
       return 0xff;
     }
 
-    final int itemId = gameState_800babc8.items_2e9.getInt(itemIndex);
+    final int itemId = gameState_800babc8.items_2e9.getInt(itemSlot);
 
     final TakeItemEvent takeItemEvent = EventManager.INSTANCE.postEvent(new TakeItemEvent(itemId, true));
 
     if(takeItemEvent.takeItem) {
-      gameState_800babc8.items_2e9.removeInt(itemIndex);
+      gameState_800babc8.items_2e9.removeInt(itemSlot);
     }
 
     return 0;
@@ -1883,8 +1866,14 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80023a2cL)
   public static void sortItems(final List<MenuItemStruct04> display, final IntList items, final int count) {
-    display.sort(Comparator.comparingInt(item -> getItemIcon(item.itemId_00)));
+    display.sort(menuItemComparator());
     setInventoryFromDisplay(display, items, count);
+  }
+
+  public static Comparator<MenuItemStruct04> menuItemComparator() {
+    return Comparator
+      .comparingInt((MenuItemStruct04 item) -> getItemIcon(item.itemId_00))
+      .thenComparingInt(item -> item.itemId_00);
   }
 
   @Method(0x80023a88L)
@@ -1901,35 +1890,8 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80023b54L)
-  public static Renderable58 allocateRenderable(final Drgn0_6666Struct a0, @Nullable Renderable58 a1) {
-    if(a1 == null) {
-      a1 = new Renderable58();
-    }
-
-    //LAB_80023b7c
-    a1.flags_00 = 0;
-    a1.glyph_04 = 0;
-    a1._08 = a0._0a.get();
-    a1._0c = 0;
-    a1.startGlyph_10 = 0;
-    a1.endGlyph_14 = a0.entryCount_06.get() - 1;
-    a1._18 = 0;
-    a1._1c = 0;
-    a1.drgn0_6666_20 = a0;
-    a1.metricsIndices_24 = new int[a0.entryCount_06.get()];
-    for(int i = 0; i < a0.entryCount_06.get(); i++) {
-      a1.metricsIndices_24[i] = (int)MEMORY.get(a0.entries_08.get(a0.entryCount_06.get()).getAddress() + i * 4, 4);
-    }
-
-    a1._28 = 0;
-    a1.tpage_2c = 0;
-    a1._34 = 0x1000;
-    a1._38 = 0x1000;
-    a1.z_3c = 36;
-    a1.x_40 = 0;
-    a1.y_44 = 0;
-    a1._48 = 0;
-    a1.child_50 = null;
+  public static Renderable58 allocateRenderable(final UiType a0, @Nullable Renderable58 a1) {
+    a1 = allocateManualRenderable(a0, a1);
 
     if(renderablePtr_800bdc5c != null) {
       a1.parent_54 = renderablePtr_800bdc5c;
@@ -1944,16 +1906,55 @@ public final class Scus94491BpeSegment_8002 {
     return a1;
   }
 
+  public static Renderable58 allocateManualRenderable() {
+    return allocateManualRenderable(uiFile_800bdc3c.deref().uiElements_0000, null);
+  }
+
+  public static Renderable58 allocateManualRenderable(final UiType uiType, @Nullable Renderable58 renderable) {
+    if(renderable == null) {
+      renderable = new Renderable58();
+    }
+
+    //LAB_80023b7c
+    renderable.flags_00 = 0;
+    renderable.glyph_04 = 0;
+    renderable._08 = uiType._0a.get();
+    renderable._0c = 0;
+    renderable.startGlyph_10 = 0;
+    renderable.endGlyph_14 = uiType.entryCount_06.get() - 1;
+    renderable._18 = 0;
+    renderable._1c = 0;
+    renderable.uiType_20 = uiType;
+    renderable.metricsIndices_24 = new int[uiType.entryCount_06.get()];
+    for(int i = 0; i < uiType.entryCount_06.get(); i++) {
+      renderable.metricsIndices_24[i] = (int)MEMORY.get(uiType.entries_08.get(uiType.entryCount_06.get()).getAddress() + i * 4, 4);
+    }
+
+    renderable._28 = 0;
+    renderable.tpage_2c = 0;
+    renderable._34 = 0x1000;
+    renderable._38 = 0x1000;
+    renderable.z_3c = 36;
+    renderable.x_40 = 0;
+    renderable.y_44 = 0;
+    renderable._48 = 0;
+    renderable.child_50 = null;
+
+    return renderable;
+  }
+
   @Method(0x80023c28L)
   public static void uploadRenderables() {
-    Renderable58 renderable = renderablePtr_800bdc5c;
-
     _800bdc58.addu(0x1L);
 
+    uploadRenderable(renderablePtr_800bdc5c, 0, 0);
+  }
+
+  public static void uploadRenderable(Renderable58 renderable, final int x, final int y) {
     //LAB_80023c8c
     while(renderable != null) {
       boolean forceUnload = false;
-      final UnboundedArrayRef<Drgn0_6666Entry> entries = renderable.drgn0_6666_20.entries_08;
+      final UnboundedArrayRef<UiPart> entries = renderable.uiType_20.entries_08;
 
       if((renderable.flags_00 & 0x4) == 0) {
         renderable._08--;
@@ -2033,7 +2034,7 @@ public final class Scus94491BpeSegment_8002 {
       if((renderable.flags_00 & 0x40) == 0) {
         final int centreX = displayWidth_1f8003e0.get() / 2 + 8;
 
-        final ArrayRef<RenderableMetrics14> metricses = renderable.drgn0_6666_20.getMetrics(renderable.metricsIndices_24[entries.get(renderable.glyph_04).metricsIndicesIndex_00.get()]);
+        final ArrayRef<RenderableMetrics14> metricses = renderable.uiType_20.getMetrics(renderable.metricsIndices_24[entries.get(renderable.glyph_04).metricsIndicesIndex_00.get()]);
 
         //LAB_80023e94
         for(int i = metricses.length() - 1; i >= 0; i--) {
@@ -2100,10 +2101,10 @@ public final class Scus94491BpeSegment_8002 {
           }
 
           //LAB_800240e8
-          cmd.pos(0, x1, y1);
-          cmd.pos(1, x2, y1);
-          cmd.pos(2, x1, y2);
-          cmd.pos(3, x2, y2);
+          cmd.pos(0, x1 + x, y1 + y);
+          cmd.pos(1, x2 + x, y1 + y);
+          cmd.pos(2, x1 + x, y2 + y);
+          cmd.pos(3, x2 + x, y2 + y);
 
           //LAB_80024144
           //LAB_800241b4
@@ -3107,7 +3108,7 @@ public final class Scus94491BpeSegment_8002 {
         //LAB_80026df0
         if((joypadInput_8007a39c.get() & 0x4000L) == 0) {
           //LAB_80026ee8
-          if((joypadInput_8007a39c.get() & 0x1000L) != 0) {
+          if(Input.getButtonState(InputAction.DPAD_UP) || Input.getButtonState(InputAction.JOYSTICK_LEFT_BUTTON_UP)) {
             if((struct84._08 & 0x100) == 0 || struct84._68 != 0) {
               //LAB_80026f38
               Scus94491BpeSegment.playSound(0, 1, 0, 0, (short)0, (short)0);
@@ -3199,7 +3200,7 @@ public final class Scus94491BpeSegment_8002 {
             Scus94491BpeSegment.playSound(0, 1, 0, 0, (short)0, (short)0);
 
             //LAB_80026ee8
-            if((joypadInput_8007a39c.get() & 0x1000L) != 0) {
+            if(Input.getButtonState(InputAction.DPAD_UP) || Input.getButtonState(InputAction.JOYSTICK_LEFT_BUTTON_UP)) {
               if((struct84._08 & 0x100) == 0 || struct84._68 != 0) {
                 //LAB_80026f38
                 Scus94491BpeSegment.playSound(0, 1, 0, 0, (short)0, (short)0);
@@ -3396,7 +3397,7 @@ public final class Scus94491BpeSegment_8002 {
         struct84._6c = struct84._68 - struct84._72;
       } else {
         //LAB_800273bc
-        if((joypadInput_8007a39c.get() & 0x1000L) != 0) {
+        if(Input.getButtonState(InputAction.DPAD_UP) || Input.getButtonState(InputAction.JOYSTICK_LEFT_BUTTON_UP)) {
           struct84._00 = 19;
           struct84._64 = 4;
           struct84._68--;
@@ -3411,7 +3412,7 @@ public final class Scus94491BpeSegment_8002 {
         }
 
         //LAB_80027420
-        if((joypadInput_8007a39c.get() & 0x4000L) != 0) {
+        if(Input.getButtonState(InputAction.DPAD_DOWN) || Input.getButtonState(InputAction.JOYSTICK_LEFT_BUTTON_DOWN)) {
           struct84._00 = 19;
           struct84._64 = 4;
           struct84._68++;
@@ -4225,7 +4226,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80029300L)
-  public static void renderText(final LodString text, final int x, int y, final int a3, final int a4) {
+  public static void renderText(final LodString text, final int x, int y, final TextColour colour, final int a4) {
     //LAB_80029358
     int length;
     for(length = 0; ; length++) {
@@ -4308,7 +4309,7 @@ public final class Scus94491BpeSegment_8002 {
           .monochrome(0x80)
           .pos(x + lineIndex * 8 - centreScreenX_1f8003dc.get() - glyphNudge, y - centreScreenY_1f8003de.get(), 8, h)
           .uv((int)_800be5c0.get() * 16, v)
-          .clut((a3 & 0xf) * 16 + 832 & 0x3f0, (int)_800be5b8.get() + 480)
+          .clut((colour.ordinal() & 0xf) * 16 + 832 & 0x3f0, (int)_800be5b8.get() + 480)
           .vramPos(textboxVramX_80052bc8.get(fp).get(), textboxVramY_80052bf4.get(fp).get() < 256 ? 0 : 256)
         );
 

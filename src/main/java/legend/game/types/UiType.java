@@ -6,21 +6,21 @@ import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedShortRef;
 
-public class Drgn0_6666Struct implements MemoryRef {
+public class UiType implements MemoryRef {
   private final Value ref;
 
   public UnsignedShortRef entryCount_06;
 
-  public UnboundedArrayRef<Drgn0_6666Entry> entries_08;
+  public UnboundedArrayRef<UiPart> entries_08;
 
   public UnsignedShortRef _0a;
 
-  public Drgn0_6666Struct(final Value ref) {
+  public UiType(final Value ref) {
     this.ref = ref;
 
     this.entryCount_06 = ref.offset(2, 0x06L).cast(UnsignedShortRef::new);
 
-    this.entries_08 = ref.offset(4, 0x08L).cast(UnboundedArrayRef.of(0x8, Drgn0_6666Entry::new));
+    this.entries_08 = ref.offset(4, 0x08L).cast(UnboundedArrayRef.of(0x8, UiPart::new));
 
     this._0a = ref.offset(2, 0x0aL).cast(UnsignedShortRef::new);
   }

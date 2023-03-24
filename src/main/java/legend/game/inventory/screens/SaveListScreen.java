@@ -1,10 +1,10 @@
 package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
+import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
 import legend.game.types.MessageBoxResult;
 import legend.game.types.Renderable58;
-import org.lwjgl.glfw.GLFW;
 
 import static legend.core.GameEngine.SAVES;
 import static legend.game.SItem.FUN_801033cc;
@@ -13,19 +13,17 @@ import static legend.game.SItem.FUN_80104b60;
 import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.fadeOutArrow;
 import static legend.game.SItem.getSlotY;
-import static legend.game.SItem.glyphs_80114258;
 import static legend.game.SItem.renderGlyphs;
+import static legend.game.SItem.savedGamesGlyphs_80114258;
 import static legend.game.SItem.saves;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
-import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER;
 
 public abstract class SaveListScreen extends MenuScreen {
   protected int loadingStage;
@@ -105,6 +103,8 @@ public abstract class SaveListScreen extends MenuScreen {
 
   @Override
   protected void mouseMove(final int x, final int y) {
+    super.mouseMove(x, y);
+
     if(this.loadingStage != 1) {
       return;
     }
@@ -128,6 +128,8 @@ public abstract class SaveListScreen extends MenuScreen {
 
   @Override
   protected void mouseClick(final int x, final int y, final int button, final int mods) {
+    super.mouseClick(x, y, button, mods);
+
     if(this.loadingStage != 1) {
       return;
     }
@@ -145,50 +147,45 @@ public abstract class SaveListScreen extends MenuScreen {
     }
   }
 
-  @Override
-  protected void keyPress(final int key, final int scancode, final int mods) {
-    if(mods != 0) {
-      return; // preserving the old logic
+  private void menuEscape() {
+    playSound(3);
+    this.loadingStage = 2;
+  }
+
+  private void menuNavigateUp() {
+    playSound(1);
+
+    if(this.selectedSlot > 0) {
+      this.selectedSlot--;
+    } else {
+      this.scrollAccumulator++;
     }
 
-    switch(key) {
-      case GLFW.GLFW_KEY_ESCAPE -> {
-        playSound(3);
-        this.loadingStage = 2;
-      }
+    this.highlightLeftHalf.y_44 = getSlotY(this.selectedSlot);
+    this.highlightRightHalf.y_44 = getSlotY(this.selectedSlot);
+  }
 
-      case GLFW.GLFW_KEY_UP -> {
-        playSound(1);
+  private void menuNavigateDown() {
+    playSound(1);
 
-        if(this.selectedSlot > 0) {
-          this.selectedSlot--;
-        } else {
-          this.scrollAccumulator++;
-        }
-
-        this.highlightLeftHalf.y_44 = getSlotY(this.selectedSlot);
-        this.highlightRightHalf.y_44 = getSlotY(this.selectedSlot);
-      }
-
-      case GLFW.GLFW_KEY_DOWN -> {
-        playSound(1);
-
-        if(this.selectedSlot < 2) {
-          this.selectedSlot++;
-        } else {
-          this.scrollAccumulator--;
-        }
-
-        this.highlightLeftHalf.y_44 = getSlotY(this.selectedSlot);
-        this.highlightRightHalf.y_44 = getSlotY(this.selectedSlot);
-      }
-
-      case GLFW_KEY_ENTER, GLFW.GLFW_KEY_S -> this.onSelect(this.scroll + this.selectedSlot);
+    if(this.selectedSlot < 2) {
+      this.selectedSlot++;
+    } else {
+      this.scrollAccumulator--;
     }
+
+    this.highlightLeftHalf.y_44 = getSlotY(this.selectedSlot);
+    this.highlightRightHalf.y_44 = getSlotY(this.selectedSlot);
+  }
+
+  private void menuSelect() {
+    this.onSelect(this.scroll + this.selectedSlot);
   }
 
   @Override
   protected void mouseScroll(final double deltaX, final double deltaY) {
+    super.mouseScroll(deltaX, deltaY);
+
     if(this.loadingStage != 1) {
       return;
     }
@@ -211,15 +208,13 @@ public abstract class SaveListScreen extends MenuScreen {
 
   private void renderSavedGames(final int fileScroll, final boolean allocate) {
     if(allocate) {
-      renderGlyphs(glyphs_80114258, 0, 0);
+      renderGlyphs(savedGamesGlyphs_80114258, 0, 0);
     }
 
     final int maxSaves = Math.min(3, this.menuCount() - fileScroll);
     for(int i = 0; i < maxSaves; i++) {
       this.renderSaveSlot(i, fileScroll + i, allocate);
     }
-
-    uploadRenderables();
   }
 
   private void renderSaveListArrows(final int scroll) {
@@ -264,4 +259,29 @@ public abstract class SaveListScreen extends MenuScreen {
   protected abstract void onSelect(final int slot);
 
   protected abstract void onMessageboxResult(final MessageBoxResult result);
+
+  @Override
+  public void pressedThisFrame(final InputAction inputAction) {
+    super.pressedThisFrame(inputAction);
+
+    if(inputAction == InputAction.BUTTON_EAST) {
+      this.menuEscape();
+    }
+    if(inputAction == InputAction.BUTTON_SOUTH) {
+      this.menuSelect();
+    }
+  }
+
+  @Override
+  public void pressedWithRepeatPulse(final InputAction inputAction) {
+    super.pressedWithRepeatPulse(inputAction);
+
+    if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
+      this.menuNavigateUp();
+    }
+    if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
+      this.menuNavigateDown();
+    }
+  }
+
 }
