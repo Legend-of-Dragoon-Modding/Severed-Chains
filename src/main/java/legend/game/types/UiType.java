@@ -1,37 +1,18 @@
 package legend.game.types;
 
-import legend.core.memory.Value;
-import legend.core.memory.types.ArrayRef;
-import legend.core.memory.types.MemoryRef;
-import legend.core.memory.types.UnboundedArrayRef;
-import legend.core.memory.types.UnsignedShortRef;
+import legend.game.unpacker.FileData;
 
-public class UiType implements MemoryRef {
-  private final Value ref;
+import java.util.Arrays;
 
-  public UnsignedShortRef entryCount_06;
+public record UiType(UiPart[] entries_08) {
+  public static UiType fromFile(final FileData data) {
+    final int entryCount = data.readUShort(0x6);
 
-  public UnboundedArrayRef<UiPart> entries_08;
+    final FileData entryIndicesData = data.slice(0x8 + entryCount * 0x8);
 
-  public UnsignedShortRef _0a;
+    final UiPart[] entries_08 = new UiPart[entryCount];
+    Arrays.setAll(entries_08, i -> UiPart.fromFile(data, data.slice(0x8 + i * 0x8, 0x8), entryIndicesData));
 
-  public UiType(final Value ref) {
-    this.ref = ref;
-
-    this.entryCount_06 = ref.offset(2, 0x06L).cast(UnsignedShortRef::new);
-
-    this.entries_08 = ref.offset(4, 0x08L).cast(UnboundedArrayRef.of(0x8, UiPart::new));
-
-    this._0a = ref.offset(2, 0x0aL).cast(UnsignedShortRef::new);
-  }
-
-  public ArrayRef<RenderableMetrics14> getMetrics(final int offset) {
-    final int count = (int)this.ref.offset(4, offset).get();
-    return this.ref.offset(4, offset).offset(0x4L).cast(ArrayRef.of(RenderableMetrics14.class, count, 0x14, RenderableMetrics14::new));
-  }
-
-  @Override
-  public long getAddress() {
-    return this.ref.getAddress();
+    return new UiType(entries_08);
   }
 }

@@ -1,25 +1,22 @@
 package legend.game.types;
 
-import legend.core.memory.Value;
-import legend.core.memory.types.MemoryRef;
-import legend.core.memory.types.UnsignedByteRef;
-import legend.core.memory.types.UnsignedShortRef;
+import legend.game.unpacker.FileData;
 
-public class UiPart implements MemoryRef {
-  private final Value ref;
+import java.util.Arrays;
 
-  public final UnsignedShortRef metricsIndicesIndex_00;
-  public final UnsignedByteRef _02;
+/**
+ * @param _02 ubyte
+ */
+public record UiPart(RenderableMetrics14[] metrics_00, int _02) {
+  public static UiPart fromFile(final FileData data, final FileData partData, final FileData entryIndicesData) {
+    final int _02 = partData.readUByte(0x2);
 
-  public UiPart(final Value ref) {
-    this.ref = ref;
+    final int metricsIndicesIndex = partData.readUShort(0x0);
+    final int metricsOffset = entryIndicesData.readInt(metricsIndicesIndex * 0x4);
+    final int metricsCount = data.readInt(metricsOffset);
+    final RenderableMetrics14[] metrics_00 = new RenderableMetrics14[metricsCount];
+    Arrays.setAll(metrics_00, i -> RenderableMetrics14.fromFile(data.slice(metricsOffset + 0x4 + i * 0x14, 0x14)));
 
-    this.metricsIndicesIndex_00 = ref.offset(2, 0x00L).cast(UnsignedShortRef::new);
-    this._02 = ref.offset(1, 0x02L).cast(UnsignedByteRef::new);
-  }
-
-  @Override
-  public long getAddress() {
-    return this.ref.getAddress();
+    return new UiPart(metrics_00, _02);
   }
 }

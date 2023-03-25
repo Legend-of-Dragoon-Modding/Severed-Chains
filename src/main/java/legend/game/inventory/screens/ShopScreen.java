@@ -130,7 +130,7 @@ public class ShopScreen extends MenuScreen {
       }
 
       case AWAIT_INIT_1 -> {
-        if(!uiFile_800bdc3c.isNull()) {
+        if(uiFile_800bdc3c != null) {
           scriptStartEffect(2, 10);
           this.menuState = MenuState.INIT_2;
         }
@@ -470,7 +470,7 @@ public class ShopScreen extends MenuScreen {
       return null;
     }
 
-    final Renderable58 s0 = allocateRenderable(uiFile_800bdc3c.deref().portraits_cfac, null);
+    final Renderable58 s0 = allocateRenderable(uiFile_800bdc3c.portraits_cfac(), null);
     initGlyph(s0, glyph_801142d4);
     s0.tpage_2c++;
     s0.glyph_04 = glyph;

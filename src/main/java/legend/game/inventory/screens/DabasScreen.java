@@ -405,7 +405,7 @@ public class DabasScreen extends MenuScreen {
     //LAB_80106d5c
     int s0 = value / 10000000 % 10;
     if(s0 != 0) {
-      final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.deref().uiElements_0000, null);
+      final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
       renderable.flags_00 |= 0xc;
       renderable.glyph_04 = s0;
       renderable.tpage_2c = 0x19;
@@ -420,7 +420,7 @@ public class DabasScreen extends MenuScreen {
     s0 = value / 1000000 % 10;
     if(s0 != 0 || (sp10 & 0x1) != 0) {
       //LAB_80106e78
-      final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.deref().uiElements_0000, null);
+      final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
       renderable.flags_00 |= 0xc;
       renderable.glyph_04 = s0;
       renderable.tpage_2c = 0x19;
@@ -435,7 +435,7 @@ public class DabasScreen extends MenuScreen {
     s0 = value / 100000 % 10;
     if(s0 != 0 || (sp10 & 0x1) != 0) {
       //LAB_80106f50
-      final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.deref().uiElements_0000, null);
+      final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
       renderable.flags_00 |= 0xc;
       renderable.glyph_04 = s0;
       renderable.tpage_2c = 0x19;
@@ -450,7 +450,7 @@ public class DabasScreen extends MenuScreen {
     s0 = value / 10000 % 10;
     if(s0 != 0 || (sp10 & 0x1) != 0) {
       //LAB_80107024
-      final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.deref().uiElements_0000, null);
+      final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
       renderable.flags_00 |= 0xc;
       renderable.glyph_04 = s0;
       renderable.tpage_2c = 0x19;
@@ -465,7 +465,7 @@ public class DabasScreen extends MenuScreen {
     s0 = value / 1000 % 10;
     if(s0 != 0 || (sp10 & 0x1) != 0) {
       //LAB_801070f8
-      final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.deref().uiElements_0000, null);
+      final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
       renderable.flags_00 |= 0xc;
       renderable.glyph_04 = s0;
       renderable.tpage_2c = 0x19;
@@ -480,7 +480,7 @@ public class DabasScreen extends MenuScreen {
     s0 = value / 100 % 10;
     if(s0 != 0 || (sp10 & 0x1) != 0) {
       //LAB_801071cc
-      final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.deref().uiElements_0000, null);
+      final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
       renderable.flags_00 |= 0xc;
       renderable.glyph_04 = s0;
       renderable.tpage_2c = 0x19;
@@ -495,7 +495,7 @@ public class DabasScreen extends MenuScreen {
     s0 = value / 10 % 10;
     if(s0 != 0 || (sp10 & 0x1) != 0) {
       //LAB_8010729c
-      final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.deref().uiElements_0000, null);
+      final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
       renderable.flags_00 |= 0xc;
       renderable.glyph_04 = s0;
       renderable.tpage_2c = 0x19;
@@ -507,7 +507,7 @@ public class DabasScreen extends MenuScreen {
 
     //LAB_80107308
     //LAB_80107360
-    final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.deref().uiElements_0000, null);
+    final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
     renderable.flags_00 |= 0xc;
     renderable.glyph_04 = value % 10;
     renderable.tpage_2c = 0x19;
@@ -523,7 +523,7 @@ public class DabasScreen extends MenuScreen {
     //LAB_80107438
     int s0 = value / 1000 % 10;
     if(s0 != 0) {
-      final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.deref().uiElements_0000, null);
+      final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
       renderable.flags_00 |= 0xc;
       renderable.glyph_04 = s0;
       renderable.tpage_2c = 0x19;
@@ -538,7 +538,7 @@ public class DabasScreen extends MenuScreen {
     s0 = value / 100 % 10;
     if(s0 != 0 || (sp10 & 0x1) != 0) {
       //LAB_80107554
-      final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.deref().uiElements_0000, null);
+      final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
       renderable.flags_00 |= 0xc;
       renderable.glyph_04 = s0;
       renderable.tpage_2c = 0x19;
@@ -553,7 +553,7 @@ public class DabasScreen extends MenuScreen {
     s0 = value / 10 % 10;
     if(s0 != 0 || (sp10 & 0x1) != 0) {
       //LAB_80107624
-      final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.deref().uiElements_0000, null);
+      final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
       renderable.flags_00 |= 0xc;
       renderable.glyph_04 = s0;
       renderable.tpage_2c = 0x19;
@@ -564,7 +564,7 @@ public class DabasScreen extends MenuScreen {
     }
 
     //LAB_80107690
-    final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.deref().uiElements_0000, null);
+    final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
     renderable.flags_00 |= 0xc;
     renderable.glyph_04 = value % 10;
     renderable.tpage_2c = 0x19;

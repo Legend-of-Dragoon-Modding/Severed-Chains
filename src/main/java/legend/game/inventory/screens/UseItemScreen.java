@@ -174,7 +174,7 @@ public class UseItemScreen extends MenuScreen {
         allocateUiElement(112, 112, x, y).z_3c = 33;
 
         if(charIndex < 9) {
-          final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.deref().portraits_cfac, null);
+          final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.portraits_cfac(), null);
           initGlyph(renderable, glyph_801142d4);
           renderable.glyph_04 = charIndex;
           renderable.tpage_2c++;

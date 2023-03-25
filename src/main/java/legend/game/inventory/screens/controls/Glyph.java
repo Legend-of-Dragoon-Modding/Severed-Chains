@@ -22,7 +22,7 @@ public class Glyph extends Control {
   }
 
   public static Glyph glyph(final int glyph) {
-    return glyph(uiFile_800bdc3c.deref().uiElements_0000, glyph);
+    return glyph(uiFile_800bdc3c.uiElements_0000(), glyph);
   }
 
   public static Glyph uiElement(final UiType uiType, final int startGlyph, final int endGlyph) {
@@ -31,7 +31,7 @@ public class Glyph extends Control {
   }
 
   public static Glyph uiElement(final int startGlyph, final int endGlyph) {
-    return uiElement(uiFile_800bdc3c.deref().uiElements_0000, startGlyph, endGlyph);
+    return uiElement(uiFile_800bdc3c.uiElements_0000(), startGlyph, endGlyph);
   }
 
   protected Glyph(final Renderable58 renderable) {

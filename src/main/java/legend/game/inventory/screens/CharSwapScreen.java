@@ -93,7 +93,7 @@ public class CharSwapScreen extends MenuScreen {
   private void renderSecondaryChar(final int x, final int y, final int charIndex, final boolean allocate) {
     if(allocate && charIndex != -1) {
       if(charIndex < 9) {
-        final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.deref().portraits_cfac, null);
+        final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.portraits_cfac(), null);
         initGlyph(renderable, glyph_801142d4);
         renderable.glyph_04 = charIndex;
         renderable.tpage_2c++;

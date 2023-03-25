@@ -15,7 +15,7 @@ public class CharacterPortrait extends Control {
   public CharacterPortrait(final int charId) {
     this.setSize(48, 48);
 
-    this.renderable = allocateManualRenderable(uiFile_800bdc3c.deref().portraits_cfac, null);
+    this.renderable = allocateManualRenderable(uiFile_800bdc3c.portraits_cfac(), null);
     initGlyph(this.renderable, glyph_801142d4);
     this.renderable.glyph_04 = charId;
     this.renderable.tpage_2c++;

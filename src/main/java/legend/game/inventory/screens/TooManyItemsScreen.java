@@ -28,7 +28,6 @@ import static legend.game.SItem.renderMenuItems;
 import static legend.game.SItem.renderString;
 import static legend.game.SItem.renderText;
 import static legend.game.SMap.FUN_800e3fac;
-import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.itemCantBeDiscarded;
@@ -68,7 +67,7 @@ public class TooManyItemsScreen extends MenuScreen {
   protected void render() {
     switch(this.menuState) {
       case _1 -> {
-        if(!uiFile_800bdc3c.isNull()) {
+        if(uiFile_800bdc3c != null) {
           loadItemsAndEquipmentForDisplay(this.equipment, this.items, 0x1L);
           messageBox_8011dc90.state_0c = 0;
 
@@ -187,7 +186,7 @@ public class TooManyItemsScreen extends MenuScreen {
         if(_800bb168.get() >= 0xff) {
           scriptStartEffect(2, 10);
           deallocateRenderables(0xff);
-          free(uiFile_800bdc3c.getPointer());
+          uiFile_800bdc3c = null;
           whichMenu_800bdc38 = WhichMenu.UNLOAD_TOO_MANY_ITEMS_MENU_35;
 
           if(mainCallbackIndex_8004dd20.get() == 5 && loadingGameStateOverlay_8004dd08.get() == 0) {

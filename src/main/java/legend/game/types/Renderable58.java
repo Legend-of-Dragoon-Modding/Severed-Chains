@@ -14,7 +14,7 @@ public class Renderable58 {
   public int _18;
   public int _1c;
   public UiType uiType_20;
-  public int[] metricsIndices_24;
+//  public int[] metricsIndices_24;
   public int _28;
   public int tpage_2c;
   public int clut_30;

@@ -8,7 +8,6 @@ import legend.core.gpu.GpuCommandCopyVramToVram;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.RECT;
-import legend.core.gpu.TimHeader;
 import legend.core.gte.GsCOORD2PARAM;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.GsDOBJ2;
@@ -19,10 +18,8 @@ import legend.core.gte.Tmd;
 import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
-import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.IntRef;
-import legend.core.memory.types.UnboundedArrayRef;
 import legend.game.fmv.Fmv;
 import legend.game.input.Input;
 import legend.game.input.InputAction;
@@ -44,8 +41,6 @@ import legend.game.tmd.Renderer;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CContainer;
 import legend.game.types.CharacterData2c;
-import legend.game.types.UiPart;
-import legend.game.types.UiType;
 import legend.game.types.InventoryMenuState;
 import legend.game.types.ItemStats0c;
 import legend.game.types.LodString;
@@ -62,6 +57,8 @@ import legend.game.types.Textbox4c;
 import legend.game.types.TextboxArrow0c;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
+import legend.game.types.UiPart;
+import legend.game.types.UiType;
 import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -80,6 +77,7 @@ import static legend.game.SItem.cacheCharacterSlots;
 import static legend.game.SItem.equipmentStats_80111ff0;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.magicStuff_80111d20;
+import static legend.game.SItem.menuAssetsLoaded;
 import static legend.game.SItem.menuStack;
 import static legend.game.SItem.renderMenus;
 import static legend.game.SItem.renderPostCombatReport;
@@ -116,8 +114,8 @@ import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
 import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
-import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
+import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.mallocHead;
 import static legend.game.Scus94491BpeSegment.memcpy;
@@ -134,7 +132,6 @@ import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
 import static legend.game.Scus94491BpeSegment_8003.TransMatrix;
 import static legend.game.Scus94491BpeSegment_8003.TransposeMatrix;
 import static legend.game.Scus94491BpeSegment_8003.bzero;
-import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004c390;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004d034;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixX;
@@ -195,7 +192,6 @@ import static legend.game.Scus94491BpeSegment_800b._800beb98;
 import static legend.game.Scus94491BpeSegment_800b._800bed28;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
 import static legend.game.Scus94491BpeSegment_800b.currentText_800bdca0;
-import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.equipmentStats_800be5d8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -213,6 +209,7 @@ import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static legend.game.Scus94491BpeSegment_800b.textboxArrows_800bdea0;
 import static legend.game.Scus94491BpeSegment_800b.textboxes_800be358;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
+import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800e.main;
 import static legend.game.WMap.FUN_800c8d90;
@@ -1248,10 +1245,10 @@ public final class Scus94491BpeSegment_8002 {
           whichMenu_800bdc38 = WhichMenu.WAIT_FOR_S_ITEM_TO_LOAD_3;
 
           renderablePtr_800bdc5c = null;
-          uiFile_800bdc3c.clear();
+          uiFile_800bdc3c = null;
           setWidthAndFlags(384);
-          loadDrgnBinFile(0, 6665, 0, SItem::menuAssetsLoaded, 0, 0x5L);
-          loadDrgnBinFile(0, 6666, 0, SItem::menuAssetsLoaded, 1, 0x3L);
+          loadDrgnFile(0, 6665, data -> menuAssetsLoaded(data, 0));
+          loadDrgnFile(0, 6666, data -> menuAssetsLoaded(data, 1));
           textZ_800bdf00.set(33);
 
           loadSupportOverlay(2, () -> {
@@ -1295,7 +1292,7 @@ public final class Scus94491BpeSegment_8002 {
         whichMenu_800bdc38 = WhichMenu.NONE_0;
 
         deallocateRenderables(0xff);
-        free(uiFile_800bdc3c.getPointer());
+        uiFile_800bdc3c = null;
 
         scriptStartEffect(2, 10);
 
@@ -1407,16 +1404,17 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80022a94L)
-  public static void FUN_80022a94(final Value address) {
-    final TimHeader header = parseTimHeader(address.offset(0x4L));
+  public static void FUN_80022a94(final FileData data) {
+    final Tim tim = new Tim(data);
+    final RECT imageRect = tim.getImageRect();
 
-    if(header.imageRect.w.get() != 0 || header.imageRect.h.get() != 0) {
-      LoadImage(header.imageRect, header.imageAddress.get());
+    if(imageRect.w.get() != 0 || imageRect.h.get() != 0) {
+      LoadImage(imageRect, tim.getImageData());
     }
 
     //LAB_80022acc
-    if((header.flags.get() & 0x8L) != 0) {
-      LoadImage(header.clutRect, header.clutAddress.get());
+    if(tim.hasClut()) {
+      LoadImage(tim.getClutRect(), tim.getClutData());
     }
 
     //LAB_80022aec
@@ -1907,7 +1905,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   public static Renderable58 allocateManualRenderable() {
-    return allocateManualRenderable(uiFile_800bdc3c.deref().uiElements_0000, null);
+    return allocateManualRenderable(uiFile_800bdc3c.uiElements_0000(), null);
   }
 
   public static Renderable58 allocateManualRenderable(final UiType uiType, @Nullable Renderable58 renderable) {
@@ -1918,17 +1916,13 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80023b7c
     renderable.flags_00 = 0;
     renderable.glyph_04 = 0;
-    renderable._08 = uiType._0a.get();
+    renderable._08 = uiType.entries_08()[0]._02();
     renderable._0c = 0;
     renderable.startGlyph_10 = 0;
-    renderable.endGlyph_14 = uiType.entryCount_06.get() - 1;
+    renderable.endGlyph_14 = uiType.entries_08().length - 1;
     renderable._18 = 0;
     renderable._1c = 0;
     renderable.uiType_20 = uiType;
-    renderable.metricsIndices_24 = new int[uiType.entryCount_06.get()];
-    for(int i = 0; i < uiType.entryCount_06.get(); i++) {
-      renderable.metricsIndices_24[i] = (int)MEMORY.get(uiType.entries_08.get(uiType.entryCount_06.get()).getAddress() + i * 4, 4);
-    }
 
     renderable._28 = 0;
     renderable.tpage_2c = 0;
@@ -1954,7 +1948,7 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80023c8c
     while(renderable != null) {
       boolean forceUnload = false;
-      final UnboundedArrayRef<UiPart> entries = renderable.uiType_20.entries_08;
+      final UiPart[] entries = renderable.uiType_20.entries_08();
 
       if((renderable.flags_00 & 0x4) == 0) {
         renderable._08--;
@@ -2026,7 +2020,7 @@ public final class Scus94491BpeSegment_8002 {
           }
 
           //LAB_80023e08
-          renderable._08 = entries.get(renderable.glyph_04)._02.get() - 1;
+          renderable._08 = entries[renderable.glyph_04]._02() - 1;
         }
       }
 
@@ -2034,11 +2028,11 @@ public final class Scus94491BpeSegment_8002 {
       if((renderable.flags_00 & 0x40) == 0) {
         final int centreX = displayWidth_1f8003e0.get() / 2 + 8;
 
-        final ArrayRef<RenderableMetrics14> metricses = renderable.uiType_20.getMetrics(renderable.metricsIndices_24[entries.get(renderable.glyph_04).metricsIndicesIndex_00.get()]);
+        final RenderableMetrics14[] metricses = entries[renderable.glyph_04].metrics_00();
 
         //LAB_80023e94
-        for(int i = metricses.length() - 1; i >= 0; i--) {
-          final RenderableMetrics14 metrics = metricses.get(i);
+        for(int i = metricses.length - 1; i >= 0; i--) {
+          final RenderableMetrics14 metrics = metricses[i];
 
           final GpuCommandPoly cmd = new GpuCommandPoly(4)
             .monochrome(0x80);
@@ -2046,27 +2040,27 @@ public final class Scus94491BpeSegment_8002 {
           final int x1;
           final int x2;
           if(renderable._34 == 0x1000) {
-            if(metrics._10.get() < 0) {
-              x2 = renderable.x_40 + metrics.x_02.get() - centreX;
-              x1 = x2 + metrics.width_08.get();
+            if(metrics._10() < 0) {
+              x2 = renderable.x_40 + metrics.x_02() - centreX;
+              x1 = x2 + metrics.width_08();
             } else {
               //LAB_80023f20
-              x1 = renderable.x_40 + metrics.x_02.get() - centreX;
-              x2 = x1 + metrics.width_08.get();
+              x1 = renderable.x_40 + metrics.x_02() - centreX;
+              x2 = x1 + metrics.width_08();
             }
           } else {
             //LAB_80023f40
-            final int a0_0 = renderable._34 != 0 ? renderable._34 : metrics._10.get();
+            final int a0_0 = renderable._34 != 0 ? renderable._34 : metrics._10();
 
             //LAB_80023f4c
             //LAB_80023f68
-            final int a1 = Math.abs(metrics.width_08.get() * a0_0 / 0x1000);
-            if(metrics._10.get() < 0) {
-              x2 = renderable.x_40 + metrics.width_08.get() / 2 + metrics.x_02.get() - centreX - a1 / 2;
+            final int a1 = Math.abs(metrics.width_08() * a0_0 / 0x1000);
+            if(metrics._10() < 0) {
+              x2 = renderable.x_40 + metrics.width_08() / 2 + metrics.x_02() - centreX - a1 / 2;
               x1 = x2 + a1;
             } else {
               //LAB_80023fb4
-              x1 = renderable.x_40 + metrics.width_08.get() / 2 + metrics.x_02.get() - centreX - a1 / 2;
+              x1 = renderable.x_40 + metrics.width_08() / 2 + metrics.x_02() - centreX - a1 / 2;
               x2 = x1 + a1;
             }
           }
@@ -2075,27 +2069,27 @@ public final class Scus94491BpeSegment_8002 {
           final int y1;
           final int y2;
           if(renderable._38 == 0x1000) {
-            if(metrics._12.get() < 0) {
-              y2 = renderable.y_44 + metrics.y_03.get() - 120;
-              y1 = y2 + metrics.height_0a.get();
+            if(metrics._12() < 0) {
+              y2 = renderable.y_44 + metrics.y_03() - 120;
+              y1 = y2 + metrics.height_0a();
             } else {
               //LAB_80024024
-              y1 = renderable.y_44 + metrics.y_03.get() - 120;
-              y2 = y1 + metrics.height_0a.get();
+              y1 = renderable.y_44 + metrics.y_03() - 120;
+              y2 = y1 + metrics.height_0a();
             }
           } else {
             //LAB_80024044
-            final int a0_0 = renderable._38 != 0 ? renderable._38 : metrics._12.get();
+            final int a0_0 = renderable._38 != 0 ? renderable._38 : metrics._12();
 
             //LAB_80024050
             //LAB_8002406c
-            final int a1 = Math.abs(metrics.height_0a.get() * a0_0 / 0x1000);
-            if(metrics._12.get() < 0) {
-              y2 = renderable.y_44 + metrics.height_0a.get() / 2 + metrics.y_03.get() - a1 / 2 - 120;
+            final int a1 = Math.abs(metrics.height_0a() * a0_0 / 0x1000);
+            if(metrics._12() < 0) {
+              y2 = renderable.y_44 + metrics.height_0a() / 2 + metrics.y_03() - a1 / 2 - 120;
               y1 = y2 + a1;
             } else {
               //LAB_800240b8
-              y1 = renderable.y_44 + metrics.height_0a.get() / 2 + metrics.y_03.get() - a1 / 2 - 120;
+              y1 = renderable.y_44 + metrics.height_0a() / 2 + metrics.y_03() - a1 / 2 - 120;
               y2 = y1 + a1;
             }
           }
@@ -2108,26 +2102,26 @@ public final class Scus94491BpeSegment_8002 {
 
           //LAB_80024144
           //LAB_800241b4
-          int v1 = metrics.u_00.get() + metrics.width_08.get();
+          int v1 = metrics.u_00() + metrics.width_08();
           final int u = v1 < 255 ? v1 : v1 - 1;
 
-          v1 = metrics.v_01.get() + metrics.height_0a.get();
+          v1 = metrics.v_01() + metrics.height_0a();
           final int v = v1 < 255 ? v1 : v1 - 1;
 
-          cmd.uv(0, metrics.u_00.get(), metrics.v_01.get());
-          cmd.uv(1, u, metrics.v_01.get());
-          cmd.uv(2, metrics.u_00.get(), v);
+          cmd.uv(0, metrics.u_00(), metrics.v_01());
+          cmd.uv(1, u, metrics.v_01());
+          cmd.uv(2, metrics.u_00(), v);
           cmd.uv(3, u, v);
 
-          final int clut = renderable.clut_30 != 0 ? renderable.clut_30 : metrics.clut_04.get() & 0x7fff;
+          final int clut = renderable.clut_30 != 0 ? renderable.clut_30 : metrics.clut_04() & 0x7fff;
           cmd.clut((clut & 0b111111) * 16, clut >>> 6);
 
           //LAB_80024214
-          final int tpage = renderable.tpage_2c != 0 ? metrics.tpage_06.get() & 0x60 | renderable.tpage_2c : metrics.tpage_06.get() & 0x7f;
+          final int tpage = renderable.tpage_2c != 0 ? metrics.tpage_06() & 0x60 | renderable.tpage_2c : metrics.tpage_06() & 0x7f;
           cmd.vramPos((tpage & 0b1111) * 64, (tpage & 0b10000) != 0 ? 256 : 0);
           cmd.bpp(Bpp.of(tpage >>> 7 & 0b11));
 
-          if((metrics.clut_04.get() & 0x8000) != 0) {
+          if((metrics.clut_04() & 0x8000) != 0) {
             cmd.translucent(Translucency.of(tpage >>> 5 & 0b11));
           }
 

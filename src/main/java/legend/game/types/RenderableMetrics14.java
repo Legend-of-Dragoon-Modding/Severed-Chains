@@ -1,45 +1,31 @@
 package legend.game.types;
 
-import legend.core.memory.Value;
-import legend.core.memory.types.MemoryRef;
-import legend.core.memory.types.ShortRef;
-import legend.core.memory.types.UnsignedByteRef;
-import legend.core.memory.types.UnsignedShortRef;
+import legend.game.unpacker.FileData;
 
-public class RenderableMetrics14 implements MemoryRef {
-  private final Value ref;
+/**
+ * @param u_00      ubyte
+ * @param v_01      ubyte
+ * @param x_02      ubyte
+ * @param y_03      ubyte
+ * @param clut_04   MSB enables raw textures (ushort)
+ * @param tpage_06  ushort
+ * @param width_08  ushort
+ * @param height_0a ushort
+ */
+public record RenderableMetrics14(int u_00, int v_01, int x_02, int y_03, int clut_04, int tpage_06, int width_08, int height_0a, short _10, short _12) {
+  public static RenderableMetrics14 fromFile(final FileData data) {
+    final int u = data.readUByte(0x0);
+    final int v = data.readUByte(0x1);
+    final int x = data.readUByte(0x2);
+    final int y = data.readUByte(0x3);
+    final int clut = data.readUShort(0x4);
+    final int tpage = data.readUShort(0x6);
+    final int width = data.readUShort(0x8);
+    final int height = data.readUShort(0xa);
 
-  public final UnsignedByteRef u_00;
-  public final UnsignedByteRef v_01;
-  public final UnsignedByteRef x_02;
-  public final UnsignedByteRef y_03;
-  /** MSB enables raw textures */
-  public final UnsignedShortRef clut_04;
-  public final UnsignedShortRef tpage_06;
-  public final UnsignedShortRef width_08;
-  public final UnsignedShortRef height_0a;
+    final short _10 = data.readShort(0x10);
+    final short _12 = data.readShort(0x12);
 
-  public final ShortRef _10;
-  public final ShortRef _12;
-
-  public RenderableMetrics14(final Value ref) {
-    this.ref = ref;
-
-    this.u_00 = ref.offset(1, 0x00L).cast(UnsignedByteRef::new);
-    this.v_01 = ref.offset(1, 0x01L).cast(UnsignedByteRef::new);
-    this.x_02 = ref.offset(1, 0x02L).cast(UnsignedByteRef::new);
-    this.y_03 = ref.offset(1, 0x03L).cast(UnsignedByteRef::new);
-    this.clut_04 = ref.offset(2, 0x04L).cast(UnsignedShortRef::new);
-    this.tpage_06 = ref.offset(2, 0x06L).cast(UnsignedShortRef::new);
-    this.width_08 = ref.offset(2, 0x08L).cast(UnsignedShortRef::new);
-    this.height_0a = ref.offset(2, 0x0aL).cast(UnsignedShortRef::new);
-
-    this._10 = ref.offset(2, 0x10L).cast(ShortRef::new);
-    this._12 = ref.offset(2, 0x12L).cast(ShortRef::new);
-  }
-
-  @Override
-  public long getAddress() {
-    return this.ref.getAddress();
+    return new RenderableMetrics14(u, v, x, y, clut, tpage, width, height, _10, _12);
   }
 }

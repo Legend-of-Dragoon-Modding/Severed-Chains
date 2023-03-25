@@ -22,9 +22,9 @@ import legend.game.combat.types.BattlePreloadedEntities_18cb0;
 import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.inventory.WhichMenu;
-import legend.game.inventory.screens.TextColour;
 import legend.game.inventory.screens.MainMenuScreen;
 import legend.game.inventory.screens.MenuStack;
+import legend.game.inventory.screens.TextColour;
 import legend.game.inventory.screens.TooManyItemsScreen;
 import legend.game.modding.events.EventManager;
 import legend.game.modding.events.characters.AdditionHitMultiplierEvent;
@@ -50,6 +50,7 @@ import legend.game.types.MessageBox20;
 import legend.game.types.MessageBoxResult;
 import legend.game.types.Renderable58;
 import legend.game.types.Translucency;
+import legend.game.types.UiFile;
 import legend.game.unpacker.FileData;
 
 import javax.annotation.Nullable;
@@ -67,13 +68,11 @@ import static legend.game.Scus94491BpeSegment.FUN_800192d8;
 import static legend.game.Scus94491BpeSegment.FUN_80019470;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
 import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
-import static legend.game.Scus94491BpeSegment.deferReallocOrFree;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
-import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.getCharacterName;
 import static legend.game.Scus94491BpeSegment.loadDir;
-import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
+import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.loadFile;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.memcpy;
@@ -116,7 +115,6 @@ import static legend.game.Scus94491BpeSegment_800b._800bdc34;
 import static legend.game.Scus94491BpeSegment_800b._800be5d0;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.confirmDest_800bdc30;
-import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.equipmentStats_800be5d8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -134,6 +132,7 @@ import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.totalXpFromCombat_800bc95c;
+import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.combat.Bttl_800c._800c66d0;
 import static legend.game.combat.Bttl_800c.addCombatant;
@@ -512,18 +511,17 @@ public final class SItem {
   }
 
   @Method(0x800fc944L)
-  public static void menuAssetsLoaded(final long address, final int size, final int whichFile) {
+  public static void menuAssetsLoaded(final FileData data, final int whichFile) {
     if(whichFile == 0) {
       //LAB_800fc98c
-      FUN_80022a94(MEMORY.ref(4, address).offset(0x83e0L)); // Character textures
-      FUN_80022a94(MEMORY.ref(4, address)); // Menu textures
-      FUN_80022a94(MEMORY.ref(4, address).offset(0x6200L)); // Item textures
-      FUN_80022a94(MEMORY.ref(4, address).offset(0x1_0460L));
-      FUN_80022a94(MEMORY.ref(4, address).offset(0x1_0580L));
-      deferReallocOrFree(address, 0, 1);
+      FUN_80022a94(data.slice(0x83e0)); // Character textures
+      FUN_80022a94(data); // Menu textures
+      FUN_80022a94(data.slice(0x6200)); // Item textures
+      FUN_80022a94(data.slice(0x1_0460));
+      FUN_80022a94(data.slice(0x1_0580));
     } else if(whichFile == 1) {
       //LAB_800fc9e4
-      uiFile_800bdc3c.setPointer(address);
+      uiFile_800bdc3c = UiFile.fromFile(data);
     }
 
     //LAB_800fc9fc
@@ -551,7 +549,7 @@ public final class SItem {
       }
 
       case AWAIT_INIT_1 -> {
-        if(!uiFile_800bdc3c.isNull()) {
+        if(uiFile_800bdc3c != null) {
           inventoryMenuState_800bdc28.set(InventoryMenuState._2);
           _8011dcfc.set((gameState_800babc8.goods_19c[1] & 0x4) > 0);
         }
@@ -575,7 +573,7 @@ public final class SItem {
 
       case UNLOAD_125 -> {
         deallocateRenderables(0xff);
-        free(uiFile_800bdc3c.getPointer());
+        uiFile_800bdc3c = null;
 
         switch(whichMenu_800bdc38) {
           case RENDER_LOAD_GAME_MENU_14 -> {
@@ -684,7 +682,7 @@ public final class SItem {
   public static void renderGlyphs(final UnboundedArrayRef<MenuGlyph06> glyphs, final int x, final int y) {
     //LAB_801037ac
     for(int i = 0; glyphs.get(i).glyph_00.get() != 0xff; i++) {
-      final Renderable58 s0 = allocateRenderable(uiFile_800bdc3c.deref().uiElements_0000, null);
+      final Renderable58 s0 = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
 
       initGlyph(s0, glyphs.get(i));
 
@@ -724,13 +722,13 @@ public final class SItem {
 
   @Method(0x80103818L)
   public static Renderable58 allocateUiElement(final int startGlyph, final int endGlyph, final int x, final int y) {
-    final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.deref().uiElements_0000, null);
+    final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
     return allocateUiElement(renderable, startGlyph, endGlyph, x, y);
   }
 
   @Method(0x80103910L)
   public static Renderable58 renderItemIcon(final int glyph, final int x, final int y, final long flags) {
-    final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.deref().itemIcons_c6a4, null);
+    final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.itemIcons_c6a4(), null);
     renderable.flags_00 |= flags | 0x4;
     renderable.glyph_04 = glyph;
     renderable.startGlyph_10 = glyph;
@@ -1041,7 +1039,7 @@ public final class SItem {
     int s0 = newVal / 100 % 10;
     if(s0 != 0) {
       //LAB_80105108
-      final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.deref().uiElements_0000, null);
+      final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
       //LAB_80105138
       //LAB_8010513c
       renderable.flags_00 |= 0xc;
@@ -1058,7 +1056,7 @@ public final class SItem {
     s0 = newVal / 10 % 10;
     if(s0 != 0 || (flags & 0x1L) != 0) {
       //LAB_801051ec
-      final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.deref().uiElements_0000, null);
+      final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
       //LAB_8010521c
       //LAB_80105220
       renderable.flags_00 |= 0xc;
@@ -1072,7 +1070,7 @@ public final class SItem {
 
     //LAB_80105274
     s0 = newVal % 10;
-    final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.deref().uiElements_0000, null);
+    final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
     //LAB_801052d8
     //LAB_801052dc
     renderable.flags_00 |= 0xc;
@@ -1124,7 +1122,7 @@ public final class SItem {
     //LAB_80105714
     int s0 = value / 1_000 % 10;
     if(s0 != 0) {
-      final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.deref().uiElements_0000, null);
+      final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
       renderable.glyph_04 = s0;
       //LAB_80105784
       //LAB_80105788
@@ -1142,7 +1140,7 @@ public final class SItem {
     s0 = value / 100 % 10;
     if(s0 != 0 || (flags & 0x1L) != 0) {
       //LAB_80105830
-      final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.deref().uiElements_0000, null);
+      final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
       renderable.glyph_04 = s0;
       //LAB_80105860
       //LAB_80105864
@@ -1160,7 +1158,7 @@ public final class SItem {
     s0 = value / 10 % 10;
     if(s0 != 0 || (flags & 0x1L) != 0) {
       //LAB_80105908
-      final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.deref().uiElements_0000, null);
+      final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
       renderable.glyph_04 = s0;
       //LAB_80105938
       //LAB_8010593c
@@ -1175,7 +1173,7 @@ public final class SItem {
     //LAB_80105978
     //LAB_80105984
     s0 = value % 10;
-    final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.deref().uiElements_0000, null);
+    final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
     renderable.glyph_04 = s0;
     //LAB_801059e8
     //LAB_801059ec
@@ -1198,7 +1196,7 @@ public final class SItem {
     //LAB_80105a98
     int s0 = value / 100_000 % 10;
     if(s0 != 0) {
-      final Renderable58 struct = allocateRenderable(uiFile_800bdc3c.deref().uiElements_0000, null);
+      final Renderable58 struct = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
       struct.glyph_04 = s0;
       //LAB_80105b10
       //LAB_80105b14
@@ -1215,7 +1213,7 @@ public final class SItem {
     s0 = value / 10_000 % 10;
     if(s0 != 0 || (flags & 0x1L) != 0) {
       //LAB_80105ba8
-      final Renderable58 struct = allocateRenderable(uiFile_800bdc3c.deref().uiElements_0000, null);
+      final Renderable58 struct = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
       struct.glyph_04 = s0;
       //LAB_80105bd8
       //LAB_80105bdc
@@ -1232,7 +1230,7 @@ public final class SItem {
     s0 = value / 1_000 % 10;
     if(s0 != 0 || (flags & 0x1L) != 0) {
       //LAB_80105c70
-      final Renderable58 struct = allocateRenderable(uiFile_800bdc3c.deref().uiElements_0000, null);
+      final Renderable58 struct = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
       struct.glyph_04 = s0;
       //LAB_80105ca0
       //LAB_80105ca4
@@ -1249,7 +1247,7 @@ public final class SItem {
     s0 = value / 100 % 10;
     if(s0 != 0 || (flags & 0x1L) != 0) {
       //LAB_80105d38
-      final Renderable58 struct = allocateRenderable(uiFile_800bdc3c.deref().uiElements_0000, null);
+      final Renderable58 struct = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
       struct.glyph_04 = s0;
       //LAB_80105d68
       //LAB_80105d6c
@@ -1266,7 +1264,7 @@ public final class SItem {
     s0 = value / 10 % 10;
     if(s0 != 0 || (flags & 0x1L) != 0) {
       //LAB_80105dfc
-      final Renderable58 struct = allocateRenderable(uiFile_800bdc3c.deref().uiElements_0000, null);
+      final Renderable58 struct = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
       struct.glyph_04 = s0;
       //LAB_80105e2c
       //LAB_80105e30
@@ -1280,7 +1278,7 @@ public final class SItem {
 
     //LAB_80105e68
     s0 = value % 10;
-    final Renderable58 struct = allocateRenderable(uiFile_800bdc3c.deref().uiElements_0000, null);
+    final Renderable58 struct = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
     struct.glyph_04 = s0;
     //LAB_80105ecc
     //LAB_80105ed0
@@ -1309,7 +1307,7 @@ public final class SItem {
     for(int i = 0; i < digitCount; i++) {
       final int digit = value / (int)Math.pow(10, i) % 10;
 
-      final Renderable58 struct = allocateRenderable(uiFile_800bdc3c.deref().uiElements_0000, null);
+      final Renderable58 struct = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
       struct.flags_00 |= 0xc;
       struct.glyph_04 = digit;
       struct.tpage_2c = 0x19;
@@ -1336,7 +1334,7 @@ public final class SItem {
       final int digit = value / (int)Math.pow(10, digitCount - (i + 1)) % 10;
 
       if(digit != 0 || i == digitCount - 1 || (flags & 0x1) != 0) {
-        final Renderable58 struct = allocateRenderable(uiFile_800bdc3c.deref().uiElements_0000, null);
+        final Renderable58 struct = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
         struct.flags_00 |= (flags & 0x2) != 0 ? 0xc : 0x4;
         struct.glyph_04 = digit;
         struct.tpage_2c = 0x19;
@@ -1361,7 +1359,7 @@ public final class SItem {
 
   @Method(0x80107cb4L)
   public static void renderCharacter(final int x, final int y, final int character) {
-    final Renderable58 v0 = allocateRenderable(uiFile_800bdc3c.deref().uiElements_0000, null);
+    final Renderable58 v0 = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
     v0.flags_00 |= 0x4;
     v0.glyph_04 = character;
     v0.tpage_2c = 0x19;
@@ -1374,7 +1372,7 @@ public final class SItem {
   @Method(0x80107d34L)
   public static void renderThreeDigitNumberComparisonWithPercent(final int x, final int y, final int currentVal, final int newVal) {
     final int clut = renderThreeDigitNumberComparison(x, y, currentVal, newVal);
-    final Renderable58 v0 = allocateRenderable(uiFile_800bdc3c.deref().uiElements_0000, null);
+    final Renderable58 v0 = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
     v0.flags_00 |= 0xc;
     v0.glyph_04 = 0xc;
     v0.tpage_2c = 0x19;
@@ -1390,7 +1388,7 @@ public final class SItem {
       renderSixDigitNumber(x, y, xp);
     } else {
       //LAB_80107e08
-      final Renderable58 v0 = allocateRenderable(uiFile_800bdc3c.deref().uiElements_0000, null);
+      final Renderable58 v0 = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
       v0.flags_00 |= 0x4;
       v0.glyph_04 = 218;
       v0.tpage_2c = 0x19;
@@ -1469,7 +1467,7 @@ public final class SItem {
         allocateUiElement(153, 153, x, y);
 
         if(charId < 9) {
-          final Renderable58 struct = allocateRenderable(uiFile_800bdc3c.deref().portraits_cfac, null);
+          final Renderable58 struct = allocateRenderable(uiFile_800bdc3c.portraits_cfac(), null);
           initGlyph(struct, glyph_801142d4);
           struct.glyph_04 = charId;
           struct.tpage_2c++;
@@ -1628,7 +1626,7 @@ public final class SItem {
 
       // Load char 0
       if(state.charIds_88[0] >= 0 && state.charIds_88[0] < 9) {
-        final Renderable58 struct = allocateRenderable(uiFile_800bdc3c.deref().portraits_cfac, null);
+        final Renderable58 struct = allocateRenderable(uiFile_800bdc3c.portraits_cfac(), null);
         initGlyph(struct, glyph_801142d4);
         struct.glyph_04 = state.charIds_88[0];
         struct.tpage_2c++;
@@ -1640,7 +1638,7 @@ public final class SItem {
       // Load char 1
       //LAB_80108c78
       if(state.charIds_88[1] >= 0 && state.charIds_88[1] < 9) {
-        final Renderable58 struct = allocateRenderable(uiFile_800bdc3c.deref().portraits_cfac, null);
+        final Renderable58 struct = allocateRenderable(uiFile_800bdc3c.portraits_cfac(), null);
         initGlyph(struct, glyph_801142d4);
         struct.glyph_04 = state.charIds_88[1];
         struct.tpage_2c++;
@@ -1652,7 +1650,7 @@ public final class SItem {
       // Load char 2
       //LAB_80108cd4
       if(state.charIds_88[2] >= 0 && state.charIds_88[2] < 9) {
-        final Renderable58 struct = allocateRenderable(uiFile_800bdc3c.deref().portraits_cfac, null);
+        final Renderable58 struct = allocateRenderable(uiFile_800bdc3c.portraits_cfac(), null);
         initGlyph(struct, glyph_801142d4);
         struct.glyph_04 = state.charIds_88[2];
         struct.tpage_2c++;
@@ -1856,7 +1854,7 @@ public final class SItem {
     for(int spiritIndex = 0; spiritIndex < 8; spiritIndex++) {
       final int bit = dragoonSpiritGoodsBits_800fbabc.get(spiritIndex).get();
       if((spirits & 0x1 << (bit & 0x1f)) != 0) {
-        final Renderable58 struct = allocateRenderable(uiFile_800bdc3c.deref().uiElements_0000, null);
+        final Renderable58 struct = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
         final MenuGlyph06 glyph = new MenuGlyph06(13 + spiritIndex, x + spiritIndex * 12, y);
         initGlyph(struct, glyph);
         struct.z_3c = 33;
@@ -1970,7 +1968,7 @@ public final class SItem {
 
   @Method(0x8010cfa0L)
   public static Renderable58 FUN_8010cfa0(final int startGlyph, final int endGlyph, final int x, final int y, final int u, final int v) {
-    final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.deref()._d2d8, null);
+    final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c._d2d8(), null);
     renderable.glyph_04 = startGlyph;
     renderable.startGlyph_10 = startGlyph;
 
@@ -2164,16 +2162,16 @@ public final class SItem {
     switch(inventoryMenuState_800bdc28.get()) {
       case INIT_0:
         renderablePtr_800bdc5c = null;
-        uiFile_800bdc3c.clear();
+        uiFile_800bdc3c = null;
         setWidthAndFlags(320);
-        loadDrgnBinFile(0, 6665, 0, SItem::menuAssetsLoaded, 0, 0x5L);
-        loadDrgnBinFile(0, 6666, 0, SItem::menuAssetsLoaded, 1, 0x3L);
+        loadDrgnFile(0, 6665, data -> menuAssetsLoaded(data, 0));
+        loadDrgnFile(0, 6666, data -> menuAssetsLoaded(data, 1));
         textZ_800bdf00.set(33);
         inventoryMenuState_800bdc28.set(InventoryMenuState.AWAIT_INIT_1);
         break;
 
       case AWAIT_INIT_1:
-        if(!uiFile_800bdc3c.isNull()) {
+        if(uiFile_800bdc3c != null) {
           scriptStartEffect(2, 10);
           inventoryMenuState_800bdc28.set(InventoryMenuState._2);
         }
@@ -2501,7 +2499,7 @@ public final class SItem {
       case _18:
         scriptStartEffect(2, 10);
         deallocateRenderables(0xffL);
-        free(uiFile_800bdc3c.getPointer());
+        uiFile_800bdc3c = null;
         whichMenu_800bdc38 = WhichMenu.UNLOAD_POST_COMBAT_REPORT_30;
         textZ_800bdf00.set(13);
         break;

@@ -189,7 +189,7 @@ public final class Scus94491BpeSegment_800b {
    * Seems any other value shows the inventory
    */
   public static WhichMenu whichMenu_800bdc38 = WhichMenu.NONE_0;
-  public static final Pointer<UiFile> uiFile_800bdc3c = MEMORY.ref(4, 0x800bdc3cL, Pointer.deferred(4, UiFile::new));
+  public static UiFile uiFile_800bdc3c;
   /** NOTE: same address as previous var */
   public static final Pointer<McqHeader> gameOverMcq_800bdc3c = MEMORY.ref(4, 0x800bdc3cL, Pointer.deferred(4, McqHeader::new));
 
