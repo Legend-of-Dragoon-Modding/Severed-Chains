@@ -6,13 +6,14 @@ import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
 import legend.game.inventory.screens.TextColour;
 
-public class MenuStruct08 implements MemoryRef {
+public class MenuStatus08 implements MemoryRef {
   private final Value ref;
 
+  /** Poison, etc */
   public final Pointer<LodString> text_00;
   public final EnumRef<TextColour> colour_04;
 
-  public MenuStruct08(final Value ref) {
+  public MenuStatus08(final Value ref) {
     this.ref = ref;
 
     this.text_00 = ref.offset(4, 0x0L).cast(Pointer.deferred(4, LodString::new));

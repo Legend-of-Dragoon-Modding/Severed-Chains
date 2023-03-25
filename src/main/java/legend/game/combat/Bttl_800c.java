@@ -874,24 +874,24 @@ public final class Bttl_800c {
     _800bc974.set(0);
     itemsDroppedByEnemiesCount_800bc978.set(0);
 
-    int charIndex = gameState_800babc8.charIndex_88[1];
+    int charIndex = gameState_800babc8.charIds_88[1];
     if(charIndex < 0) {
-      gameState_800babc8.charIndex_88[1] = gameState_800babc8.charIndex_88[2];
-      gameState_800babc8.charIndex_88[2] = charIndex;
+      gameState_800babc8.charIds_88[1] = gameState_800babc8.charIds_88[2];
+      gameState_800babc8.charIds_88[2] = charIndex;
     }
 
     //LAB_800c75c0
-    charIndex = gameState_800babc8.charIndex_88[0];
+    charIndex = gameState_800babc8.charIds_88[0];
     if(charIndex < 0) {
-      gameState_800babc8.charIndex_88[0] = gameState_800babc8.charIndex_88[1];
-      gameState_800babc8.charIndex_88[1] = charIndex;
+      gameState_800babc8.charIds_88[0] = gameState_800babc8.charIds_88[1];
+      gameState_800babc8.charIds_88[1] = charIndex;
     }
 
     //LAB_800c75e8
-    charIndex = gameState_800babc8.charIndex_88[1];
+    charIndex = gameState_800babc8.charIds_88[1];
     if(charIndex < 0) {
-      gameState_800babc8.charIndex_88[1] = gameState_800babc8.charIndex_88[2];
-      gameState_800babc8.charIndex_88[2] = charIndex;
+      gameState_800babc8.charIds_88[1] = gameState_800babc8.charIds_88[2];
+      gameState_800babc8.charIds_88[2] = charIndex;
     }
 
     //LAB_800c760c
@@ -1650,7 +1650,7 @@ public final class Bttl_800c {
           } else {
             // Player TMDs
             //LAB_800c9334
-            int charIndex = gameState_800babc8.charIndex_88[combatant.charSlot_19c];
+            int charIndex = gameState_800babc8.charIds_88[combatant.charSlot_19c];
             combatant.flags_19e |= 0x2;
 
             if((combatant.charIndex_1a2 & 0x1) != 0) {
@@ -1769,7 +1769,7 @@ public final class Bttl_800c {
       } else {
         //LAB_800c97a4
         final int isDragoon = combatant.charIndex_1a2 & 0x1;
-        final int charIndex = gameState_800babc8.charIndex_88[combatant.charSlot_19c];
+        final int charIndex = gameState_800babc8.charIds_88[combatant.charSlot_19c];
         if(isDragoon == 0) {
           // Additions
           fileIndex = 4031 + gameState_800babc8.charData_32c[charIndex].selectedAddition_19 + charIndex * 8 - additionOffsets_8004f5ac.get(charIndex).get();
@@ -2156,7 +2156,7 @@ public final class Bttl_800c {
     final CombatantStruct1a8 combatant = combatants_8005e398[combatantIndex];
 
     if(combatant.charIndex_1a2 >= 0) {
-      int fileIndex = gameState_800babc8.charIndex_88[combatant.charSlot_19c];
+      int fileIndex = gameState_800babc8.charIds_88[combatant.charSlot_19c];
 
       if((combatant.charIndex_1a2 & 0x1) != 0) {
         if(fileIndex == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0) {

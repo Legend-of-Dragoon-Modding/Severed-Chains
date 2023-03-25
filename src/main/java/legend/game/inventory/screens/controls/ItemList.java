@@ -7,8 +7,10 @@ import legend.game.types.LodString;
 import legend.game.types.MenuItemStruct04;
 import legend.game.types.Renderable58;
 
+import javax.annotation.Nullable;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Function;
 
 import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.equipment_8011972c;
@@ -25,9 +27,13 @@ public class ItemList extends Control {
   private int max;
 
   public ItemList() {
+    this(menuItem -> equipment_8011972c.get(menuItem.itemId_00).deref(), menuItem -> getItemIcon(menuItem.itemId_00));
+  }
+
+  public ItemList(final Function<MenuItemStruct04, LodString> getItemName, @Nullable final Function<MenuItemStruct04, Integer> getItemIcon) {
     this.setSize(173, 147);
 
-    this.items = new ListBox<>(menuItem -> equipment_8011972c.get(menuItem.itemId_00).deref(), menuItem -> getItemIcon(menuItem.itemId_00));
+    this.items = new ListBox<>(getItemName, getItemIcon);
     this.items.setPos(0, 26);
     this.items.setSize(173, 119);
     this.addControl(this.items);
@@ -116,7 +122,9 @@ public class ItemList extends Control {
 
     renderText(this.title, x + 24, y + 8, TextColour.BROWN);
 
-    final LodString count = new LodString(this.items.getCount() + "/" + this.max);
-    renderText(count, x + 162 - textWidth(count), y + 8, TextColour.BROWN);
+    if(this.max != 0) {
+      final LodString count = new LodString(this.items.getCount() + "/" + this.max);
+      renderText(count, x + 162 - textWidth(count), y + 8, TextColour.BROWN);
+    }
   }
 }

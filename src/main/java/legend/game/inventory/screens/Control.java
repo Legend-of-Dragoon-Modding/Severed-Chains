@@ -1,6 +1,7 @@
 package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
+import legend.game.SItem;
 import legend.game.input.InputAction;
 
 public abstract class Control extends ControlHost {
@@ -12,6 +13,7 @@ public abstract class Control extends ControlHost {
 
   private boolean visible = true;
   private boolean acceptsInput = true;
+  private boolean disabled;
 
   public void setPos(final int x, final int y) {
     this.x = x;
@@ -95,7 +97,27 @@ public abstract class Control extends ControlHost {
     this.acceptsInput = false;
   }
 
+  public boolean isDisabled() {
+    return this.disabled;
+  }
+
+  public void disable() {
+    this.disabled = true;
+  }
+
+  public void enable() {
+    this.disabled = true;
+  }
+
+  public void setDisabled(final boolean disabled) {
+    this.disabled = disabled;
+  }
+
   protected abstract void render(final int x, final int y);
+
+  protected void renderNumber(final int x, final int y, final int value, final int digitCount) {
+    SItem.renderNumber(x, y, value, 0x2, digitCount);
+  }
 
   void renderControl(final int parentX, final int parentY) {
     if(this.visible) {
@@ -134,6 +156,10 @@ public abstract class Control extends ControlHost {
 
   @Override
   protected void mouseMove(final int x, final int y) {
+    if(this.isDisabled()) {
+      return;
+    }
+
     super.mouseMove(x, y);
 
     if(this.mouseMoveHandler != null) {
@@ -143,6 +169,10 @@ public abstract class Control extends ControlHost {
 
   @Override
   protected void mouseClick(final int x, final int y, final int button, final int mods) {
+    if(this.isDisabled()) {
+      return;
+    }
+
     super.mouseClick(x, y, button, mods);
 
     if(this.mouseClickHandler != null) {
@@ -152,6 +182,10 @@ public abstract class Control extends ControlHost {
 
   @Override
   protected void mouseScroll(final double deltaX, final double deltaY) {
+    if(this.isDisabled()) {
+      return;
+    }
+
     super.mouseScroll(deltaX, deltaY);
 
     if(this.mouseScrollHandler != null) {
@@ -161,6 +195,10 @@ public abstract class Control extends ControlHost {
 
   @Override
   protected void keyPress(final int key, final int scancode, final int mods) {
+    if(this.isDisabled()) {
+      return;
+    }
+
     super.keyPress(key, scancode, mods);
 
     if(this.keyPressHandler != null) {
@@ -170,6 +208,10 @@ public abstract class Control extends ControlHost {
 
   @Override
   protected void pressedThisFrame(final InputAction inputAction) {
+    if(this.isDisabled()) {
+      return;
+    }
+
     super.pressedThisFrame(inputAction);
 
     if(this.pressedThisFrameHandler != null) {
@@ -179,6 +221,10 @@ public abstract class Control extends ControlHost {
 
   @Override
   protected void pressedWithRepeatPulse(final InputAction inputAction) {
+    if(this.isDisabled()) {
+      return;
+    }
+
     super.pressedWithRepeatPulse(inputAction);
 
     if(this.pressedWithRepeatPulseHandler != null) {
@@ -188,6 +234,10 @@ public abstract class Control extends ControlHost {
 
   @Override
   protected void releasedThisFrame(final InputAction inputAction) {
+    if(this.isDisabled()) {
+      return;
+    }
+
     super.releasedThisFrame(inputAction);
 
     if(this.releasedThisFrameHandler != null) {
@@ -256,7 +306,7 @@ public abstract class Control extends ControlHost {
   @FunctionalInterface public interface GotFocus { void gotFocus(); }
   @FunctionalInterface public interface LostFocus { void lostFocus(); }
   @FunctionalInterface public interface MouseMove { void mouseMove(final int x, final int y); }
-  @FunctionalInterface public interface MouseClick { void mouseClick(final int x, final int y, final int button, final int mds); }
+  @FunctionalInterface public interface MouseClick { void mouseClick(final int x, final int y, final int button, final int mods); }
   @FunctionalInterface public interface MouseScroll { void mouseScroll(final double deltaX, final double deltaY); }
   @FunctionalInterface public interface KeyPress { void keyPress(final int key, final int scancode, final int mods); }
   @FunctionalInterface public interface PressedThisFrame { void pressedThisFrame(final InputAction inputAction); }

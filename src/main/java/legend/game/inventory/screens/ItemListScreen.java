@@ -14,7 +14,6 @@ import legend.game.types.MessageBoxResult;
 import java.util.ArrayList;
 import java.util.List;
 
-import static legend.game.SItem.Press_to_sort_8011d024;
 import static legend.game.SItem.itemDescriptions_80117a10;
 import static legend.game.SItem.loadItemsAndEquipmentForDisplay;
 import static legend.game.SItem.menuStack;
@@ -23,15 +22,10 @@ import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.menuItemComparator;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
 import static legend.game.Scus94491BpeSegment_8002.setInventoryFromDisplay;
-import static legend.game.Scus94491BpeSegment_8002.sortItems;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 
 public class ItemListScreen extends MenuScreen {
   private final Runnable unload;
-
-  private final List<MenuItemStruct04> items = new ArrayList<>();
-  private final List<MenuItemStruct04> equipment = new ArrayList<>();
-  private final int equippedItemsCount;
 
   private final ItemList itemList = new ItemList();
   private final ItemList equipmentList = new ItemList();
@@ -76,17 +70,17 @@ public class ItemListScreen extends MenuScreen {
     });
 
     this.addControl(new Background());
-    this.addControl(Glyph.glyph(91)).setPos(194, 173);
-    this.addControl(Glyph.glyph(83)).setPos( 16, 164);
+    this.addControl(Glyph.glyph(83)).setPos( 16, 164); // Button prompt pane
+    this.addControl(Glyph.glyph(91)).setPos(194, 173); // Description pane
 
-    this.addControl(new Label(Press_to_sort_8011d024)).setPos(37, 178);
-    this.addControl(new Label("Press  to discard")).setPos(37, 193);
+    this.addControl(new Label("Press   to sort")).setPos(30, 179);
+    this.addControl(new Label("Press   to discard")).setPos(30, 194);
 
     final Glyph sortButton = this.addControl(Glyph.glyph(0x89));
     final Glyph discardButton = this.addControl(Glyph.glyph(0x88));
-    sortButton.setPos(84, 178);
+    sortButton.setPos(81, 179);
     sortButton.getRenderable().clut_30 = 0x7ceb;
-    discardButton.setPos(84, 193);
+    discardButton.setPos(81, 194);
     discardButton.getRenderable().clut_30 = 0x7ceb;
 
     this.description.setPos(194, 178);
@@ -98,13 +92,15 @@ public class ItemListScreen extends MenuScreen {
 
     this.setFocus(this.itemList);
 
-    this.equippedItemsCount = loadItemsAndEquipmentForDisplay(this.equipment, this.items, 0x1L);
+    final List<MenuItemStruct04> items = new ArrayList<>();
+    final List<MenuItemStruct04> equipment = new ArrayList<>();
+    loadItemsAndEquipmentForDisplay(equipment, items, 0x1L);
 
-    for(final MenuItemStruct04 item : this.items) {
+    for(final MenuItemStruct04 item : items) {
       this.itemList.add(item);
     }
 
-    for(final MenuItemStruct04 item : this.equipment) {
+    for(final MenuItemStruct04 item : equipment) {
       this.equipmentList.add(item);
     }
   }
@@ -149,8 +145,6 @@ public class ItemListScreen extends MenuScreen {
     playSound(2);
     this.itemList.sort(menuItemComparator());
     this.equipmentList.sort(menuItemComparator());
-    sortItems(this.equipment, gameState_800babc8.equipment_1e8, gameState_800babc8.equipment_1e8.size() + this.equippedItemsCount);
-    sortItems(this.items, gameState_800babc8.items_2e9, gameState_800babc8.items_2e9.size());
   }
 
   @Override

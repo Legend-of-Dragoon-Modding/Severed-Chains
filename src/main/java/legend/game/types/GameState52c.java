@@ -17,7 +17,7 @@ public class GameState52c {
    * </ul>
    */
   public final int[] scriptData_08 = new int[0x20];
-  public final int[] charIndex_88 = new int[3];
+  public final int[] charIds_88 = new int[3];
   public int gold_94;
   public int chapterIndex_98;
   public int stardust_9c;

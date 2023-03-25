@@ -23,7 +23,7 @@ public class GameVarArrayParam extends Param {
   public int get() {
     return switch(this.varIndex) {
       case 6 -> Scus94491BpeSegment_800b.gameState_800babc8.scriptData_08[this.arrIndex];
-      case 17 -> Scus94491BpeSegment_800b.gameState_800babc8.charIndex_88[this.arrIndex];
+      case 17 -> Scus94491BpeSegment_800b.gameState_800babc8.charIds_88[this.arrIndex];
       case 32 -> Scus94491BpeSegment_8006._8006e398.bobjIndices_e0c[this.arrIndex] != null ? Scus94491BpeSegment_8006._8006e398.bobjIndices_e0c[this.arrIndex].index : -1;
       case 34 -> Scus94491BpeSegment_8006._8006e398.charBobjIndices_e40[this.arrIndex] != null ? Scus94491BpeSegment_8006._8006e398.charBobjIndices_e40[this.arrIndex].index : -1;
       case 36 -> Scus94491BpeSegment_8006._8006e398.bobjIndices_e50[this.arrIndex] != null ? Scus94491BpeSegment_8006._8006e398.bobjIndices_e50[this.arrIndex].index : -1;
@@ -59,7 +59,7 @@ public class GameVarArrayParam extends Param {
   public Param set(final int val) {
     switch(this.varIndex) {
       case 6 -> Scus94491BpeSegment_800b.gameState_800babc8.scriptData_08[this.arrIndex] = val;
-      case 17 -> Scus94491BpeSegment_800b.gameState_800babc8.charIndex_88[this.arrIndex] = val;
+      case 17 -> Scus94491BpeSegment_800b.gameState_800babc8.charIds_88[this.arrIndex] = val;
       case 32 -> Scus94491BpeSegment_8006._8006e398.bobjIndices_e0c[this.arrIndex] = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[val];
       case 34 -> Scus94491BpeSegment_8006._8006e398.charBobjIndices_e40[this.arrIndex] = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[val];
       case 36 -> Scus94491BpeSegment_8006._8006e398.bobjIndices_e50[this.arrIndex] = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[val];

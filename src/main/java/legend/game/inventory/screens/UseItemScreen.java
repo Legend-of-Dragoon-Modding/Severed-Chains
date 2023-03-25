@@ -18,7 +18,7 @@ import static legend.game.SItem.Completely_recovered_8011d534;
 import static legend.game.SItem.Detoxified_8011d5c8;
 import static legend.game.SItem.Encounter_risk_reduced_8011d594;
 import static legend.game.SItem.FUN_80104b60;
-import static legend.game.SItem.FUN_80107e70;
+import static legend.game.SItem.renderCharacterStatusEffect;
 import static legend.game.SItem.Fear_gone_8011d604;
 import static legend.game.SItem.HP_8011d57c;
 import static legend.game.SItem.HP_recovered_for_all_8011cfcc;
@@ -168,7 +168,7 @@ public class UseItemScreen extends MenuScreen {
   @Method(0x80108464L)
   private void renderUseItemCharacterPortrait(final int x, final int y, final int charIndex, final boolean allocate) {
     if(charIndex != -1) {
-      FUN_80107e70(x - 4, y - 6, charIndex);
+      renderCharacterStatusEffect(x - 4, y - 6, charIndex);
 
       if(allocate) {
         allocateUiElement(112, 112, x, y).z_3c = 33;

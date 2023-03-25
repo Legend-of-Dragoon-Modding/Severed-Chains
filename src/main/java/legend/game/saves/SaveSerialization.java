@@ -69,8 +69,8 @@ public final class SaveSerialization {
     final int charSlotCount = data.readByte(offset); // Not yet used
     offset++;
 
-    for(int i = 0; i < state.charIndex_88.length; i++) {
-      state.charIndex_88[i] = data.readShort(offset);
+    for(int i = 0; i < state.charIds_88.length; i++) {
+      state.charIds_88[i] = data.readShort(offset);
       offset += 2;
     }
 
@@ -248,10 +248,10 @@ public final class SaveSerialization {
       offset += 4;
     }
 
-    data.writeByte(offset, state.charIndex_88.length);
+    data.writeByte(offset, state.charIds_88.length);
     offset++;
 
-    for(final int charIndex : state.charIndex_88) {
+    for(final int charIndex : state.charIds_88) {
       data.writeShort(offset, charIndex);
       offset += 2;
     }
@@ -412,7 +412,7 @@ public final class SaveSerialization {
     }
 
     for(int i = 0; i < 3; i++) {
-      state.charIndex_88[i] = data.readInt(0x88 + i * 0x4);
+      state.charIds_88[i] = data.readInt(0x88 + i * 0x4);
     }
 
     state.gold_94 = data.readInt(0x94);

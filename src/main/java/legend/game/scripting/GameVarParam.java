@@ -39,7 +39,7 @@ public class GameVarParam extends Param {
       case 14 -> Scus94491BpeSegment_800b.scriptEffect_800bb140.red1_18.get();
       case 15 -> Scus94491BpeSegment_800b.scriptEffect_800bb140.green1_10.get();
       case 16 -> Scus94491BpeSegment_800b.scriptEffect_800bb140.blue1_0c.get();
-      case 17 -> Scus94491BpeSegment_800b.gameState_800babc8.charIndex_88[0];
+      case 17 -> Scus94491BpeSegment_800b.gameState_800babc8.charIds_88[0];
       case 18 -> Scus94491BpeSegment_800b.gameState_800babc8.chapterIndex_98;
       case 19 -> Scus94491BpeSegment_800b.gameState_800babc8.stardust_9c;
       case 20 -> Scus94491BpeSegment_800b.gameState_800babc8.timestamp_a0;
@@ -131,7 +131,7 @@ public class GameVarParam extends Param {
       case 121 -> Scus94491BpeSegment_800b.gameState_800babc8.charData_32c[6].partyFlags_04;
       case 122 -> Scus94491BpeSegment_800b.gameState_800babc8.charData_32c[7].partyFlags_04;
       case 123 -> Scus94491BpeSegment_800b.gameState_800babc8.charData_32c[8].partyFlags_04;
-      case 124 -> Scus94491BpeSegment_8005.standingInSavePoint_8005a368.get();
+      case 124 -> Scus94491BpeSegment_8005.standingInSavePoint_8005a368.get() ? 1 : 0;
       case 125 -> Scus94491BpeSegment_8007.shopId_8007a3b4.get();
       case 126 -> Scus94491BpeSegment_800b.gameState_800babc8._1a4[0];
       case 127 -> Scus94491BpeSegment_800b.gameState_800babc8.chestFlags_1c4[0];
@@ -170,7 +170,7 @@ public class GameVarParam extends Param {
       case 14 -> Scus94491BpeSegment_800b.scriptEffect_800bb140.red1_18.set(val);
       case 15 -> Scus94491BpeSegment_800b.scriptEffect_800bb140.green1_10.set(val);
       case 16 -> Scus94491BpeSegment_800b.scriptEffect_800bb140.blue1_0c.set(val);
-      case 17 -> Scus94491BpeSegment_800b.gameState_800babc8.charIndex_88[0] = val;
+      case 17 -> Scus94491BpeSegment_800b.gameState_800babc8.charIds_88[0] = val;
       case 18 -> Scus94491BpeSegment_800b.gameState_800babc8.chapterIndex_98 = val;
       case 19 -> Scus94491BpeSegment_800b.gameState_800babc8.stardust_9c = val;
       case 20 -> Scus94491BpeSegment_800b.gameState_800babc8.timestamp_a0 = val;
@@ -262,7 +262,7 @@ public class GameVarParam extends Param {
       case 121 -> Scus94491BpeSegment_800b.gameState_800babc8.charData_32c[6].partyFlags_04 = val;
       case 122 -> Scus94491BpeSegment_800b.gameState_800babc8.charData_32c[7].partyFlags_04 = val;
       case 123 -> Scus94491BpeSegment_800b.gameState_800babc8.charData_32c[8].partyFlags_04 = val;
-      case 124 -> Scus94491BpeSegment_8005.standingInSavePoint_8005a368.set(val);
+      case 124 -> Scus94491BpeSegment_8005.standingInSavePoint_8005a368.set(val != 0);
       case 125 -> Scus94491BpeSegment_8007.shopId_8007a3b4.set(val);
       case 126 -> Scus94491BpeSegment_800b.gameState_800babc8._1a4[0] = val;
       case 127 -> Scus94491BpeSegment_800b.gameState_800babc8.chestFlags_1c4[0] = val;

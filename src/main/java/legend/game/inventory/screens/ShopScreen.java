@@ -20,7 +20,7 @@ import static legend.core.GameEngine.MEMORY;
 import static legend.game.SItem.Buy_8011c6a4;
 import static legend.game.SItem.Cannot_be_armed_with_8011c6d4;
 import static legend.game.SItem.Carried_8011c6b8;
-import static legend.game.SItem.FUN_80103b10;
+import static legend.game.SItem.cacheCharacterSlots;
 import static legend.game.SItem.FUN_80104b60;
 import static legend.game.SItem.FUN_8010a808;
 import static legend.game.SItem.Leave_8011c6c8;
@@ -46,7 +46,6 @@ import static legend.game.SItem.renderEightDigitNumber;
 import static legend.game.SItem.renderFiveDigitNumber;
 import static legend.game.SItem.renderGlyphs;
 import static legend.game.SItem.renderItemIcon;
-import static legend.game.SItem.renderNumber;
 import static legend.game.SItem.renderString;
 import static legend.game.SItem.renderText;
 import static legend.game.SItem.renderThreeDigitNumber;
@@ -166,7 +165,7 @@ public class ShopScreen extends MenuScreen {
         final MenuItemStruct04 menuItem = this.menuItems[16];
         menuItem.itemId_00 = 0xff;
         menuItem.flags_02 = 0;
-        FUN_80103b10();
+        cacheCharacterSlots();
 
         for(int charSlot = 0; charSlot < characterCount_8011d7c4.get(); charSlot++) {
           this.charRenderables[charSlot] = this.allocateCharRenderable(this.FUN_8010a818(charSlot), 174, characterIndices_800bdbb8.get(charSlot).get());
@@ -329,16 +328,16 @@ public class ShopScreen extends MenuScreen {
     renderCentredText(Leave_8011c6c8, 72, this.getShopMenuYOffset(3) + 2, selectedMenuItem != 3 ? TextColour.BROWN : TextColour.RED);
 
     if(isItemMenu != 0) {
-      renderTwoDigitNumber(105, 36, gameState_800babc8.items_2e9.size(), 0x2L);
+      renderTwoDigitNumber(105, 36, gameState_800babc8.items_2e9.size(), 0x2);
       allocateOneFrameGlyph(94, 16, 16);
-      renderTwoDigitNumber(123, 36, Config.inventorySize(), 0x2L);
+      renderTwoDigitNumber(123, 36, Config.inventorySize(), 0x2);
     } else {
-      renderThreeDigitNumber(93, 36, gameState_800babc8.equipment_1e8.size(), 0x2L);
+      renderThreeDigitNumber(93, 36, gameState_800babc8.equipment_1e8.size(), 0x2);
       allocateOneFrameGlyph(95, 16, 16);
-      renderThreeDigitNumber(117, 36, 255, 0x2L);
+      renderThreeDigitNumber(117, 36, 255, 0x2);
     }
 
-    renderEightDigitNumber(87, 24, gameState_800babc8.gold_94, 0x2L);
+    renderEightDigitNumber(87, 24, gameState_800babc8.gold_94, 0x2);
   }
 
   private void renderEquipmentStatChange(final int equipmentId, final int charIndex) {
@@ -356,10 +355,10 @@ public class ShopScreen extends MenuScreen {
         allocateOneFrameGlyph(0x69, 210, 147);
         allocateOneFrameGlyph(0x6a, 210, 157);
         final ActiveStatsa0 newStats = stats_800be5f8.get(charIndex);
-        renderThreeDigitNumber(246, 127, newStats.gearAttack_88.get(), 0x2L);
-        renderThreeDigitNumber(246, 137, newStats.gearDefence_8c.get(), 0x2L);
-        renderThreeDigitNumber(246, 147, newStats.gearMagicAttack_8a.get(), 0x2L);
-        renderThreeDigitNumber(246, 157, newStats.gearMagicDefence_8e.get(), 0x2L);
+        renderThreeDigitNumber(246, 127, newStats.gearAttack_88.get(), 0x2);
+        renderThreeDigitNumber(246, 137, newStats.gearDefence_8c.get(), 0x2);
+        renderThreeDigitNumber(246, 147, newStats.gearMagicAttack_8a.get(), 0x2);
+        renderThreeDigitNumber(246, 157, newStats.gearMagicDefence_8e.get(), 0x2);
         allocateOneFrameGlyph(0x6b, 274, 127);
         allocateOneFrameGlyph(0x6b, 274, 137);
         allocateOneFrameGlyph(0x6b, 274, 147);
@@ -484,7 +483,7 @@ public class ShopScreen extends MenuScreen {
 
   private void FUN_801069d0(final int x, final int y, final int value) {
     // I didn't look at this method too closely, this may or may not be right
-    renderNumber(x, y, value, 0x2L, 4);
+    this.renderNumber(x, y, value, 4);
   }
 
   private int FUN_8010a818(final int slot) {

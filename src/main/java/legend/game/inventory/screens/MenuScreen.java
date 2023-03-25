@@ -1,5 +1,6 @@
 package legend.game.inventory.screens;
 
+import legend.game.SItem;
 import legend.game.input.InputAction;
 
 import javax.annotation.Nullable;
@@ -9,6 +10,14 @@ public abstract class MenuScreen extends ControlHost {
   private Control focus;
 
   protected abstract void render();
+
+  protected void renderNumber(final int x, final int y, final int value, final int digitCount) {
+    SItem.renderNumber(x, y, value, 0x2, digitCount);
+  }
+
+  protected void renderNumber(final int x, final int y, final int value, final int digitCount, final int flags) {
+    SItem.renderNumber(x, y, value, flags | 0x2, digitCount);
+  }
 
   final void renderScreen() {
     this.render();

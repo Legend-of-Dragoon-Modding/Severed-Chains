@@ -122,7 +122,7 @@ public class SBtld {
     for(int charSlot = 0; charSlot < 3; charSlot++) {
       final BattlePreloadedEntities_18cb0.AdditionHits_100 activeAdditionHits = battlePreloadedEntities_1f8003f4.additionHits_38[charSlot];
       final BattlePreloadedEntities_18cb0.AdditionHits_100 activeDragoonAdditionHits = battlePreloadedEntities_1f8003f4.additionHits_38[charSlot + 3];
-      final int charIndex = gameState_800babc8.charIndex_88[charSlot];
+      final int charIndex = gameState_800babc8.charIds_88[charSlot];
 
       if(charIndex >= 0) {
         int activeAdditionIndex = gameState_800babc8.charData_32c[charIndex].selectedAddition_19;

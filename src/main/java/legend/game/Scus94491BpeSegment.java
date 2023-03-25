@@ -2359,7 +2359,7 @@ public final class Scus94491BpeSegment {
 
       //LAB_800197c0
       for(int i = 0; i < 3; i++) {
-        if(gameState_800babc8.charIndex_88[i] != -1) {
+        if(gameState_800babc8.charIds_88[i] != -1) {
           free(_800bc980.offset(i * 0xcL).offset(0x4L).get());
         }
       }
@@ -2404,7 +2404,7 @@ public final class Scus94491BpeSegment {
 
         //LAB_800198e8
         for(int charSlot = 0; charSlot < 3; charSlot++) {
-          final int charId = gameState_800babc8.charIndex_88[charSlot];
+          final int charId = gameState_800babc8.charIds_88[charSlot];
 
           if(charId != -1) {
             _800bc980.offset(charSlot * 0xcL).offset(1, 0x1L).setu(charId);
@@ -3530,7 +3530,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001cae0L)
   public static void charSoundEffectsLoaded(final List<FileData> files, final int charSlot) {
-    final int charId = gameState_800babc8.charIndex_88[charSlot];
+    final int charId = gameState_800babc8.charIds_88[charSlot];
 
     //LAB_8001cb34
     final int index = characterSoundFileIndices_800500f8.get(charSlot).get();
@@ -3980,7 +3980,7 @@ public final class Scus94491BpeSegment {
 
     // Player combat sounds for current party composition (example file: 764)
     for(int charSlot = 0; charSlot < 3; charSlot++) {
-      final int charIndex = gameState_800babc8.charIndex_88[charSlot];
+      final int charIndex = gameState_800babc8.charIds_88[charSlot];
 
       if(charIndex != -1) {
         final String name = getCharacterName(charIndex).toLowerCase();

@@ -6,6 +6,7 @@ import legend.game.inventory.screens.Control;
 import legend.game.inventory.screens.TextColour;
 import legend.game.types.LodString;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -18,6 +19,7 @@ import static legend.game.Scus94491BpeSegment_8002.playSound;
 
 public class ListBox<T> extends Control {
   private final Function<T, LodString> entryToString;
+  @Nullable
   private final Function<T, Integer> entryToIcon;
   private final List<Entry> entries = new ArrayList<>();
   private final int entryHeight = 17;
@@ -32,7 +34,7 @@ public class ListBox<T> extends Control {
   private final Glyph upArrow;
   private final Glyph downArrow;
 
-  public ListBox(final Function<T, LodString> entryToString, final Function<T, Integer> entryToIcon) {
+  public ListBox(final Function<T, LodString> entryToString, @Nullable final Function<T, Integer> entryToIcon) {
     this.entryToString = entryToString;
     this.entryToIcon = entryToIcon;
 
@@ -45,9 +47,9 @@ public class ListBox<T> extends Control {
 
     this.highlight.setPos(34, 1);
     this.highlight.ignoreInput();
-    this.upArrow.setPos(this.getWidth() - 1, 0);
+    this.upArrow.setPos(this.getWidth(), 0);
     this.upArrow.ignoreInput();
-    this.downArrow.setPos(this.getWidth() - 1, this.getHeight() - 15);
+    this.downArrow.setPos(this.getWidth(), this.getHeight() - 15);
     this.downArrow.ignoreInput();
     this.select(0);
   }
@@ -307,7 +309,10 @@ public class ListBox<T> extends Control {
     @Override
     protected void render(final int x, final int y) {
       renderText(ListBox.this.entryToString.apply(this.data), x + 28, y + 3, TextColour.BROWN);
-      renderItemIcon(ListBox.this.entryToIcon.apply(this.data), x + 13, y + 1, 0x8L);
+
+      if(ListBox.this.entryToIcon != null) {
+        renderItemIcon(ListBox.this.entryToIcon.apply(this.data), x + 13, y + 1, 0x8L);
+      }
     }
 
     /** Override here to allow access above */

@@ -180,9 +180,9 @@ public final class Ttle {
     gameState_800babc8.vibrationEnabled_4e1 = oldVibration;
     gameState_800babc8.mono_4e0 = oldMono;
     gameState_800babc8.indicatorMode_4e8 = 2;
-    gameState_800babc8.charIndex_88[0] = 0;
-    gameState_800babc8.charIndex_88[1] = -1;
-    gameState_800babc8.charIndex_88[2] = -1;
+    gameState_800babc8.charIds_88[0] = 0;
+    gameState_800babc8.charIds_88[1] = -1;
+    gameState_800babc8.charIds_88[2] = -1;
 
     //LAB_800c723c
     for(int charIndex = 0; charIndex < 9; charIndex++) {
