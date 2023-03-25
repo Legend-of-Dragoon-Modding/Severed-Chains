@@ -24,8 +24,8 @@ import static org.lwjgl.openal.AL10.alSourcef;
 import static org.lwjgl.openal.AL10.alSourcei;
 
 public class BufferedSound {
-  private static final int BUFFER_SIZE = 1024;
-  private static final int BUFFER_COUNT = 4;
+  private static final int BUFFER_SIZE = 512 * 8;
+  private static final int BUFFER_COUNT = 8;
 
   private final int[] buffers = new int[BUFFER_COUNT];
 

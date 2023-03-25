@@ -1,6 +1,7 @@
 package legend.game.sound2;
 
 import java.nio.ByteBuffer;
+import java.security.InvalidParameterException;
 
 final class Preset {
   private final Layer[] layers;
@@ -20,7 +21,30 @@ final class Preset {
     }
   }
 
-  public Layer getLayer(final int index) {
-    return this.layers[index];
+  public void resetBuffs() {
+    for(final Layer layer : this.layers) {
+      layer.resetBuffer();
+    }
+  }
+
+  public void setOff() {
+    for(final Layer layer : this.layers) {
+      layer.getAdsr().release();
+    }
+  }
+
+  public void resetAdsr() {
+    for(final Layer layer : this.layers) {
+      layer.resetAdsr();
+    }
+  }
+
+  public Layer getLayer(final int note) {
+    for(final Layer layer : this.layers) {
+      if(layer.noteInRange(note)) {
+        return layer;
+      }
+    }
+    throw new InvalidParameterException("Note out of range " + note);
   }
 }

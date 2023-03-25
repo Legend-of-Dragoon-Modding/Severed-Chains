@@ -14,6 +14,15 @@ public class SoundTest {
     final Bgm bgm = new Bgm(new Sssq(Unpacker.loadFile("SECT/DRGN0.BIN/5820/1")), Unpacker.loadFile("SECT/DRGN0.BIN/5820/2"), Unpacker.loadFile("SECT/DRGN0.BIN/5820/3"));
     bgm.tick();
 
+    bgm.play();
+
+    int time = 0;
+
+    while(time >= 0) {
+      DebugHelper.sleep(time);
+      time = bgm.tick();
+    }
+
     DebugHelper.sleep(5000);
     context.destroy();
   }

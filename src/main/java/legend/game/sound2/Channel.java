@@ -8,7 +8,9 @@ final class Channel {
   private final BufferedSound sound;
   private final int presetIndex;
   private final Sshd sshd;
-  private State state = State.KEY_OFF;
+  private State state = State.END;
+  private int note;
+  private int pitchBend = 64;
 
   Channel(final int index, final Sssq.ChannelInfo channelInfo, final Sshd sshd) {
     this.index = index;
@@ -18,13 +20,27 @@ final class Channel {
   }
 
   void tick(final float ms) {
-    final int sampleRate = 44100 / 4; //TODO actual sample rate Don't do this
     this.sound.process();
 
-    final short[] pcm = this.sshd.getPreset(this.presetIndex).getLayer(0).getSample().get((int)(ms * (sampleRate / 1000.0f)));
+    if(this.state == State.END) {
+      final short[] pcm = new short[(int) (ms * (44100 / 1000.0f))];
+      this.sound.bufferSamples(pcm, 44100);
+      this.sound.play();
+    } else {
+      final Layer layer = this.sshd.getPreset(this.presetIndex).getLayer(this.note);
+      final int sampleRate = layer.calculateSampleRate(this.note, this.pitchBend);
 
-    this.sound.bufferSamples(pcm, sampleRate);
-    this.sound.play();
+
+      final short[] pcm = layer.getSample().get((int)(ms * (sampleRate / 1000.0f)));
+      final boolean isEnd = layer.getAdsr().applyAdsr(pcm);
+
+      if(isEnd) {
+        this.state = State.END;
+      }
+
+      this.sound.bufferSamples(Resampler.resample(pcm, pcm.length, false, sampleRate, 44100), 44100);
+      this.sound.play();
+    }
   }
 
   void play() {
@@ -37,15 +53,19 @@ final class Channel {
 
   void handleKeyOff(final MidiState state) {
     this.state = State.KEY_OFF;
+    this.sshd.getPreset(this.presetIndex).setOff();
 
     System.out.println("Channel " + this + " key off");
     state.offset += 2;
   }
 
-  void handleKeyOn(final MidiState state) {
+  void handleKeyOn(final MidiState state, final int note) {
     this.state = State.KEY_ON;
+    this.note = note;
+    this.sshd.getPreset(this.presetIndex).resetBuffs();
+    this.sshd.getPreset(this.presetIndex).resetAdsr();
 
-    System.out.println("Channel " + this + " key on");
+    System.out.println("Channel " + this + " key on. Note: " + note);
     state.offset += 2;
   }
 
@@ -64,8 +84,9 @@ final class Channel {
     state.offset++;
   }
 
-  void handlePitchBend(final MidiState state) {
+  void handlePitchBend(final MidiState state, final int value) {
     System.out.println("Channel " + this + " pitch bend");
+    this.pitchBend = value;
     state.offset++;
   }
 
@@ -82,5 +103,6 @@ final class Channel {
   enum State {
     KEY_ON,
     KEY_OFF,
+    END
   }
 }

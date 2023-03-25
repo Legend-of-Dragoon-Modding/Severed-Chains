@@ -26,7 +26,7 @@ public final class Bgm {
   }
 
   //TODO use RealTimeSequencer
-  public void tick() {
+  public int tick() {
     while(this.state.deltaMs == 0.0f) {
       this.readEvent();
 
@@ -35,14 +35,17 @@ public final class Bgm {
 
         switch(this.state.command) {
           case KEY_OFF -> channel.handleKeyOff(this.state);
-          case KEY_ON -> channel.handleKeyOn(this.state);
+          case KEY_ON -> channel.handleKeyOn(this.state, this.readUByte());
           case POLYPHONIC_KEY_PRESSURE -> channel.handlePolyphonicKeyPressure(this.state);
           case CONTROL_CHANGE -> channel.handleControlChange(this.state);
           case PROGRAM_CHANGE -> channel.handleProgramChange(this.state);
-          case PITCH_BEND -> channel.handlePitchBend(this.state);
+          case PITCH_BEND -> channel.handlePitchBend(this.state, this.readUByte());
         }
       } else {
         this.handleMeta();
+        if(this.state.endOfTrack) {
+          return -1;
+        }
       }
 
       this.state.deltaMs = this.readVarInt() * this.state.msPerTick;
@@ -52,6 +55,17 @@ public final class Bgm {
 
     for(final Channel channel : this.midiChannels.values()) {
       channel.tick(this.state.deltaMs);
+    }
+
+    int ret = (int) (this.state.deltaMs);
+    this.state.deltaMs = 0;
+
+    return ret;
+  }
+
+  public void play() {
+    for(final Channel channel : this.midiChannels.values()) {
+      channel.play();
     }
   }
 
@@ -67,6 +81,10 @@ public final class Bgm {
     } else {
       this.state.event = this.state.previousEvent;
     }
+  }
+
+  private int readUByte() {
+    return this.state.sequence.readUByte(this.state.offset);
   }
 
   void handleMeta() {
