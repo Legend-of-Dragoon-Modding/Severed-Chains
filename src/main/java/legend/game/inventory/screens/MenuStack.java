@@ -135,7 +135,7 @@ public class MenuStack {
   private void mouseRelease(final Window window, final double x, final double y, final int button, final int mods) {
     final Point2D point = this.mousePressCoords.remove(button);
 
-    if(point != null && point.x == x && point.y == y) {
+    if(point != null && Math.abs(point.x - x) < 4 && Math.abs(point.y - y) < 4) {
       final float aspect = (float)GPU.getDisplayTextureWidth() / GPU.getDisplayTextureHeight();
 
       float w = window.getWidth();

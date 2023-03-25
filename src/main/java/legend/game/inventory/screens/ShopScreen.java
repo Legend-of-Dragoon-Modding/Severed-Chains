@@ -500,8 +500,10 @@ public class ShopScreen extends MenuScreen {
   }
 
   @Override
-  protected void mouseMove(final int x, final int y) {
-    super.mouseMove(x, y);
+  protected InputPropagation mouseMove(final int x, final int y) {
+    if(super.mouseMove(x, y) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
 
     this.mouseX = x;
     this.mouseY = y;
@@ -515,6 +517,7 @@ public class ShopScreen extends MenuScreen {
           this.menuScroll_8011e0e4 = 0;
           this.menuIndex_8011e0e0 = 0;
           this.selectedMenuOptionRenderablePtr_800bdbe0.y_44 = this.getShopMenuYOffset(i);
+          return InputPropagation.HANDLED;
         }
       }
     } else if(this.menuState == MenuState.BUY_4) {
@@ -527,6 +530,8 @@ public class ShopScreen extends MenuScreen {
           if(this.shopType == 0) {
             this.equipCharIndex = this.FUN_8010a864(this.menuItems[this.menuScroll_8011e0e4 + i].itemId_00);
           }
+
+          return InputPropagation.HANDLED;
         }
       }
     } else if(this.menuState == MenuState.BUY_SELECT_CHAR_5) {
@@ -535,6 +540,7 @@ public class ShopScreen extends MenuScreen {
           playSound(1);
           this.equipCharIndex = i;
           this.charHighlight.x_40 = this.FUN_8010a818(this.equipCharIndex);
+          return InputPropagation.HANDLED;
         }
       }
     } else if(this.menuState == MenuState.SELL_10) {
@@ -545,14 +551,19 @@ public class ShopScreen extends MenuScreen {
           playSound(1);
           this.menuIndex_8011e0e0 = i;
           this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = FUN_8010a808(i);
+          return InputPropagation.HANDLED;
         }
       }
     }
+
+    return InputPropagation.PROPAGATE;
   }
 
   @Override
-  protected void mouseClick(final int x, final int y, final int button, final int mods) {
-    super.mouseClick(x, y, button, mods);
+  protected InputPropagation mouseClick(final int x, final int y, final int button, final int mods) {
+    if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
 
     if(this.menuState == MenuState.RENDER_3) {
       for(int i = 0; i < 4; i++) {
@@ -565,6 +576,7 @@ public class ShopScreen extends MenuScreen {
           this.selectedMenuOptionRenderablePtr_800bdbe0.y_44 = this.getShopMenuYOffset(i);
 
           this.handleSelectedMenu(i);
+          return InputPropagation.HANDLED;
         }
       }
     } else if(this.menuState == MenuState.BUY_4) {
@@ -609,6 +621,8 @@ public class ShopScreen extends MenuScreen {
               }
             }
           }
+
+          return InputPropagation.HANDLED;
         }
       }
     } else if(this.menuState == MenuState.BUY_SELECT_CHAR_5) {
@@ -635,6 +649,8 @@ public class ShopScreen extends MenuScreen {
               }));
             }
           }));
+
+          return InputPropagation.HANDLED;
         }
       }
     } else if(this.menuState == MenuState.SELL_10) {
@@ -679,9 +695,13 @@ public class ShopScreen extends MenuScreen {
               }
             }));
           }
+
+          return InputPropagation.HANDLED;
         }
       }
     }
+
+    return InputPropagation.PROPAGATE;
   }
 
   protected void handleSelectedMenu(final int i) {
@@ -753,13 +773,13 @@ public class ShopScreen extends MenuScreen {
   }
 
   @Override
-  protected void mouseScroll(final double deltaX, final double deltaY) {
-    super.mouseScroll(deltaX, deltaY);
-
-    super.mouseScroll(deltaX, deltaY);
+  protected InputPropagation mouseScroll(final double deltaX, final double deltaY) {
+    if(super.mouseScroll(deltaX, deltaY) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
 
     if(this.menuState != MenuState.BUY_4 && this.menuState != MenuState.SELL_10) {
-      return;
+      return InputPropagation.PROPAGATE;
     }
 
     if(this.scrollAccumulator < 0 && deltaY > 0 || this.scrollAccumulator > 0 && deltaY < 0) {
@@ -767,6 +787,7 @@ public class ShopScreen extends MenuScreen {
     }
 
     this.scrollAccumulator += deltaY;
+    return InputPropagation.HANDLED;
   }
 
   private void menuMainShopRender3Escape() {
@@ -1004,85 +1025,119 @@ public class ShopScreen extends MenuScreen {
   }
 
   @Override
-  public void pressedThisFrame(final InputAction inputAction) {
-    super.pressedThisFrame(inputAction);
+  public InputPropagation pressedThisFrame(final InputAction inputAction) {
+    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
 
     switch(this.menuState) {
       case RENDER_3 -> {
         if(inputAction == InputAction.BUTTON_EAST) {
           this.menuMainShopRender3Escape();
+          return InputPropagation.HANDLED;
         }
+
         if(inputAction == InputAction.BUTTON_SOUTH) {
           this.menuMainShopRender3Select();
+          return InputPropagation.HANDLED;
         }
       }
 
       case BUY_4 -> {
         if(inputAction == InputAction.BUTTON_EAST) {
           this.menuBuy4Escape();
+          return InputPropagation.HANDLED;
         }
+
         if(inputAction == InputAction.BUTTON_SOUTH) {
           this.menuBuy4Select();
+          return InputPropagation.HANDLED;
         }
       }
 
       case BUY_SELECT_CHAR_5 -> {
         if(inputAction == InputAction.DPAD_LEFT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_LEFT) {
           this.menuSelectChar5NavigateLeft();
+          return InputPropagation.HANDLED;
         }
+
         if(inputAction == InputAction.DPAD_RIGHT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_RIGHT) {
           this.menuSelectChar5NavigateRight();
+          return InputPropagation.HANDLED;
         }
+
         if(inputAction == InputAction.BUTTON_EAST) {
           this.menuSelectChar5Escape();
+          return InputPropagation.HANDLED;
         }
+
         if(inputAction == InputAction.BUTTON_SOUTH) {
           this.menuSelectChar5Select();
+          return InputPropagation.HANDLED;
         }
       }
 
       case SELL_10 -> {
         if(inputAction == InputAction.BUTTON_EAST) {
           this.menuSell10Escape();
+          return InputPropagation.HANDLED;
         }
+
         if(inputAction == InputAction.BUTTON_SOUTH) {
           this.menuSell10Select();
+          return InputPropagation.HANDLED;
         }
       }
     }
+
+    return InputPropagation.PROPAGATE;
   }
 
   @Override
-  public void pressedWithRepeatPulse(final InputAction inputAction) {
-    super.pressedWithRepeatPulse(inputAction);
+  public InputPropagation pressedWithRepeatPulse(final InputAction inputAction) {
+    if(super.pressedWithRepeatPulse(inputAction) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
 
     switch(this.menuState) {
       case RENDER_3 -> {
         if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
           this.menuMainShopRender3NavigateUp();
+          return InputPropagation.HANDLED;
         }
+
         if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
           this.menuMainShopRender3NavigateDown();
+          return InputPropagation.HANDLED;
         }
       }
 
       case BUY_4 -> {
         if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
           this.menuBuy4NavigateUp();
+          return InputPropagation.HANDLED;
         }
+
         if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
           this.menuBuy4NavigateDown();
+          return InputPropagation.HANDLED;
         }
       }
+
       case SELL_10 -> {
         if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
           this.menuSell10NavigateUp();
+          return InputPropagation.HANDLED;
         }
+
         if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
           this.menuSell10NavigateDown();
+          return InputPropagation.HANDLED;
         }
       }
     }
+
+    return InputPropagation.PROPAGATE;
   }
 
   public enum MenuState {

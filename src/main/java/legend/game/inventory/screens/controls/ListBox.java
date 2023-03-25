@@ -3,6 +3,7 @@ package legend.game.inventory.screens.controls;
 import legend.core.MathHelper;
 import legend.game.input.InputAction;
 import legend.game.inventory.screens.Control;
+import legend.game.inventory.screens.InputPropagation;
 import legend.game.inventory.screens.TextColour;
 import legend.game.types.LodString;
 
@@ -181,20 +182,27 @@ public class ListBox<T> extends Control {
   }
 
   @Override
-  protected void mouseMove(final int x, final int y) {
-    super.mouseMove(x, y);
+  protected InputPropagation mouseMove(final int x, final int y) {
+    if(super.mouseMove(x, y) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
 
     for(int i = 0; i < this.visibleEntries(); i++) {
       if(this.slot != i && MathHelper.inBox(x, y, 0, i * this.entryHeight + 1, this.getWidth(), this.entryHeight)) {
         playSound(1);
         this.select(i);
+        return InputPropagation.HANDLED;
       }
     }
+
+    return InputPropagation.PROPAGATE;
   }
 
   @Override
-  protected void mouseClick(final int x, final int y, final int button, final int mods) {
-    super.mouseClick(x, y, button, mods);
+  protected InputPropagation mouseClick(final int x, final int y, final int button, final int mods) {
+    if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
 
     for(int i = 0; i < this.visibleEntries(); i++) {
       if(MathHelper.inBox(x, y, 0, i * this.entryHeight + 1, this.getWidth(), this.entryHeight)) {
@@ -203,46 +211,63 @@ public class ListBox<T> extends Control {
         if(this.selectionHandler != null) {
           this.selectionHandler.selection(this.getSelectedEntry());
         }
+
+        return InputPropagation.HANDLED;
       }
     }
+
+    return InputPropagation.PROPAGATE;
   }
 
   @Override
-  protected void mouseScroll(final double deltaX, final double deltaY) {
-    super.mouseScroll(deltaX, deltaY);
+  protected InputPropagation mouseScroll(final double deltaX, final double deltaY) {
+    if(super.mouseScroll(deltaX, deltaY) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
 
     if(this.scrollAccumulator < 0 && deltaY > 0 || this.scrollAccumulator > 0 && deltaY < 0) {
       this.scrollAccumulator = 0;
     }
 
     this.scrollAccumulator += deltaY;
+    return InputPropagation.HANDLED;
   }
 
   @Override
-  protected void pressedThisFrame(final InputAction inputAction) {
-    super.pressedThisFrame(inputAction);
+  protected InputPropagation pressedThisFrame(final InputAction inputAction) {
+    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
 
     if(inputAction == InputAction.BUTTON_SOUTH) {
       if(this.selectionHandler != null) {
         this.selectionHandler.selection(this.getSelectedEntry());
       }
+
+      return InputPropagation.HANDLED;
     }
+
+    return InputPropagation.PROPAGATE;
   }
 
   @Override
-  protected void pressedWithRepeatPulse(final InputAction inputAction) {
-    super.pressedWithRepeatPulse(inputAction);
+  protected InputPropagation pressedWithRepeatPulse(final InputAction inputAction) {
+    if(super.pressedWithRepeatPulse(inputAction) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
 
     switch(inputAction) {
       case DPAD_UP, JOYSTICK_LEFT_BUTTON_UP -> {
         if(this.slot > 0) {
           playSound(1);
           this.select(this.slot - 1);
+          return InputPropagation.HANDLED;
         } else if(this.scroll > 0) {
           playSound(1);
           this.scroll--;
           this.updateEntries();
           this.select(this.slot);
+          return InputPropagation.HANDLED;
         }
       }
 
@@ -250,14 +275,18 @@ public class ListBox<T> extends Control {
         if(this.slot < this.visibleEntries() - 1) {
           playSound(1);
           this.select(this.slot + 1);
+          return InputPropagation.HANDLED;
         } else if(this.scroll < this.entries.size() - this.maxVisibleEntries) {
           playSound(1);
           this.scroll++;
           this.updateEntries();
           this.select(this.slot);
+          return InputPropagation.HANDLED;
         }
       }
     }
+
+    return InputPropagation.PROPAGATE;
   }
 
   @Override

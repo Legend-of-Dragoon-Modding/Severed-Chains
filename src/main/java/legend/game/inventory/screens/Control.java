@@ -47,6 +47,7 @@ public abstract class Control extends ControlHost {
   public void setSize(final int width, final int height) {
     this.width = width;
     this.height = height;
+    this.onResize();
   }
 
   public int getWidth() {
@@ -55,6 +56,7 @@ public abstract class Control extends ControlHost {
 
   public void setWidth(final int width) {
     this.width = width;
+    this.onResize();
   }
 
   public int getHeight() {
@@ -63,6 +65,7 @@ public abstract class Control extends ControlHost {
 
   public void setHeight(final int height) {
     this.height = height;
+    this.onResize();
   }
 
   public boolean isVisible() {
@@ -113,6 +116,10 @@ public abstract class Control extends ControlHost {
     this.disabled = disabled;
   }
 
+  protected void onResize() {
+
+  }
+
   protected abstract void render(final int x, final int y);
 
   protected void renderNumber(final int x, final int y, final int value, final int digitCount) {
@@ -155,94 +162,122 @@ public abstract class Control extends ControlHost {
   }
 
   @Override
-  protected void mouseMove(final int x, final int y) {
+  protected InputPropagation mouseMove(final int x, final int y) {
     if(this.isDisabled()) {
-      return;
+      return InputPropagation.PROPAGATE;
     }
 
-    super.mouseMove(x, y);
+    if(super.mouseMove(x, y) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
 
     if(this.mouseMoveHandler != null) {
-      this.mouseMoveHandler.mouseMove(x, y);
+      return this.mouseMoveHandler.mouseMove(x, y);
     }
+
+    return InputPropagation.PROPAGATE;
   }
 
   @Override
-  protected void mouseClick(final int x, final int y, final int button, final int mods) {
+  protected InputPropagation mouseClick(final int x, final int y, final int button, final int mods) {
     if(this.isDisabled()) {
-      return;
+      return InputPropagation.PROPAGATE;
     }
 
-    super.mouseClick(x, y, button, mods);
+    if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
 
     if(this.mouseClickHandler != null) {
-      this.mouseClickHandler.mouseClick(x, y, button, mods);
+      return this.mouseClickHandler.mouseClick(x, y, button, mods);
     }
+
+    return InputPropagation.PROPAGATE;
   }
 
   @Override
-  protected void mouseScroll(final double deltaX, final double deltaY) {
+  protected InputPropagation mouseScroll(final double deltaX, final double deltaY) {
     if(this.isDisabled()) {
-      return;
+      return InputPropagation.PROPAGATE;
     }
 
-    super.mouseScroll(deltaX, deltaY);
+    if(super.mouseScroll(deltaX, deltaY) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
 
     if(this.mouseScrollHandler != null) {
-      this.mouseScrollHandler.mouseScroll(deltaX, deltaY);
+      return this.mouseScrollHandler.mouseScroll(deltaX, deltaY);
     }
+
+    return InputPropagation.PROPAGATE;
   }
 
   @Override
-  protected void keyPress(final int key, final int scancode, final int mods) {
+  protected InputPropagation keyPress(final int key, final int scancode, final int mods) {
     if(this.isDisabled()) {
-      return;
+      return InputPropagation.PROPAGATE;
     }
 
-    super.keyPress(key, scancode, mods);
+    if(super.keyPress(key, scancode, mods) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
 
     if(this.keyPressHandler != null) {
-      this.keyPressHandler.keyPress(key, scancode, mods);
+      return this.keyPressHandler.keyPress(key, scancode, mods);
     }
+
+    return InputPropagation.PROPAGATE;
   }
 
   @Override
-  protected void pressedThisFrame(final InputAction inputAction) {
+  protected InputPropagation pressedThisFrame(final InputAction inputAction) {
     if(this.isDisabled()) {
-      return;
+      return InputPropagation.PROPAGATE;
     }
 
-    super.pressedThisFrame(inputAction);
+    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
 
     if(this.pressedThisFrameHandler != null) {
-      this.pressedThisFrameHandler.pressedThisFrame(inputAction);
+      return this.pressedThisFrameHandler.pressedThisFrame(inputAction);
     }
+
+    return InputPropagation.PROPAGATE;
   }
 
   @Override
-  protected void pressedWithRepeatPulse(final InputAction inputAction) {
+  protected InputPropagation pressedWithRepeatPulse(final InputAction inputAction) {
     if(this.isDisabled()) {
-      return;
+      return InputPropagation.PROPAGATE;
     }
 
-    super.pressedWithRepeatPulse(inputAction);
+    if(super.pressedWithRepeatPulse(inputAction) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
 
     if(this.pressedWithRepeatPulseHandler != null) {
-      this.pressedWithRepeatPulseHandler.pressedWithRepeatPulse(inputAction);
+      return this.pressedWithRepeatPulseHandler.pressedWithRepeatPulse(inputAction);
     }
+
+    return InputPropagation.PROPAGATE;
   }
 
   @Override
-  protected void releasedThisFrame(final InputAction inputAction) {
+  protected InputPropagation releasedThisFrame(final InputAction inputAction) {
     if(this.isDisabled()) {
-      return;
+      return InputPropagation.PROPAGATE;
     }
 
-    super.releasedThisFrame(inputAction);
+    if(super.releasedThisFrame(inputAction) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
 
     if(this.releasedThisFrameHandler != null) {
-      this.releasedThisFrameHandler.releasedThisFrame(inputAction);
+      return this.releasedThisFrameHandler.releasedThisFrame(inputAction);
     }
+
+    return InputPropagation.PROPAGATE;
   }
 
   public void onHoverIn(final HoverIn handler) {
@@ -305,11 +340,11 @@ public abstract class Control extends ControlHost {
   @FunctionalInterface public interface HoverOut { void hoverOut(); }
   @FunctionalInterface public interface GotFocus { void gotFocus(); }
   @FunctionalInterface public interface LostFocus { void lostFocus(); }
-  @FunctionalInterface public interface MouseMove { void mouseMove(final int x, final int y); }
-  @FunctionalInterface public interface MouseClick { void mouseClick(final int x, final int y, final int button, final int mods); }
-  @FunctionalInterface public interface MouseScroll { void mouseScroll(final double deltaX, final double deltaY); }
-  @FunctionalInterface public interface KeyPress { void keyPress(final int key, final int scancode, final int mods); }
-  @FunctionalInterface public interface PressedThisFrame { void pressedThisFrame(final InputAction inputAction); }
-  @FunctionalInterface public interface PressedWithRepeatPulse { void pressedWithRepeatPulse(final InputAction inputAction); }
-  @FunctionalInterface public interface ReleasedThisFrame { void releasedThisFrame(final InputAction inputAction); }
+  @FunctionalInterface public interface MouseMove { InputPropagation mouseMove(final int x, final int y); }
+  @FunctionalInterface public interface MouseClick { InputPropagation mouseClick(final int x, final int y, final int button, final int mods); }
+  @FunctionalInterface public interface MouseScroll { InputPropagation mouseScroll(final double deltaX, final double deltaY); }
+  @FunctionalInterface public interface KeyPress { InputPropagation keyPress(final int key, final int scancode, final int mods); }
+  @FunctionalInterface public interface PressedThisFrame { InputPropagation pressedThisFrame(final InputAction inputAction); }
+  @FunctionalInterface public interface PressedWithRepeatPulse { InputPropagation pressedWithRepeatPulse(final InputAction inputAction); }
+  @FunctionalInterface public interface ReleasedThisFrame { InputPropagation releasedThisFrame(final InputAction inputAction); }
 }

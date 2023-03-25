@@ -2,6 +2,7 @@ package legend.game.inventory.screens.controls;
 
 import legend.game.input.InputAction;
 import legend.game.inventory.screens.Control;
+import legend.game.inventory.screens.InputPropagation;
 import legend.game.inventory.screens.TextColour;
 import legend.game.types.LodString;
 import legend.game.types.MenuItemStruct04;
@@ -111,9 +112,12 @@ public class ItemList extends Control {
   }
 
   @Override
-  protected void pressedWithRepeatPulse(final InputAction inputAction) {
-    super.pressedWithRepeatPulse(inputAction);
-    this.items.pressedWithRepeatPulse(inputAction);
+  protected InputPropagation pressedWithRepeatPulse(final InputAction inputAction) {
+    if(super.pressedWithRepeatPulse(inputAction) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
+    return this.items.pressedWithRepeatPulse(inputAction);
   }
 
   @Override

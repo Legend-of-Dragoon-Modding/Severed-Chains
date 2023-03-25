@@ -54,7 +54,10 @@ public class ItemListScreen extends MenuScreen {
     this.itemList.onPressedThisFrame(inputAction -> {
       if(inputAction == InputAction.DPAD_RIGHT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_RIGHT) {
         this.setFocus(this.equipmentList);
+        return InputPropagation.HANDLED;
       }
+
+      return InputPropagation.PROPAGATE;
     });
     this.itemList.onHighlight(item -> this.description.setText(itemDescriptions_80117a10.get(item.itemId_00).deref()));
 
@@ -66,7 +69,10 @@ public class ItemListScreen extends MenuScreen {
     this.equipmentList.onPressedThisFrame(inputAction -> {
       if(inputAction == InputAction.DPAD_LEFT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_LEFT) {
         this.setFocus(this.itemList);
+        return InputPropagation.HANDLED;
       }
+
+      return InputPropagation.PROPAGATE;
     });
 
     this.addControl(new Background());
@@ -148,19 +154,26 @@ public class ItemListScreen extends MenuScreen {
   }
 
   @Override
-  public void pressedThisFrame(final InputAction inputAction) {
-    super.pressedThisFrame(inputAction);
+  public InputPropagation pressedThisFrame(final InputAction inputAction) {
+    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
 
     if(inputAction == InputAction.BUTTON_EAST) {
       this.menuEscape();
+      return InputPropagation.HANDLED;
     }
 
     if(inputAction == InputAction.BUTTON_WEST) {
       this.menuDiscard();
+      return InputPropagation.HANDLED;
     }
 
     if(inputAction == InputAction.BUTTON_NORTH) {
       this.menuSort();
+      return InputPropagation.HANDLED;
     }
+
+    return InputPropagation.PROPAGATE;
   }
 }

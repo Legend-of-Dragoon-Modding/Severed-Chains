@@ -2102,10 +2102,10 @@ public final class Scus94491BpeSegment_8002 {
 
           //LAB_80024144
           //LAB_800241b4
-          int v1 = metrics.u_00() + metrics.width_08();
+          int v1 = metrics.u_00() + metrics.textureWidth();
           final int u = v1 < 255 ? v1 : v1 - 1;
 
-          v1 = metrics.v_01() + metrics.height_0a();
+          v1 = metrics.v_01() + metrics.textureHeight();
           final int v = v1 < 255 ? v1 : v1 - 1;
 
           cmd.uv(0, metrics.u_00(), metrics.v_01());

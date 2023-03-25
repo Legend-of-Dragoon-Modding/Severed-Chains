@@ -316,11 +316,13 @@ public class DabasScreen extends MenuScreen {
   }
 
   @Override
-  protected void mouseMove(final int x, final int y) {
-    super.mouseMove(x, y);
+  protected InputPropagation mouseMove(final int x, final int y) {
+    if(super.mouseMove(x, y) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
 
     if(this.loadingStage != 2) {
-      return;
+      return InputPropagation.PROPAGATE;
     }
 
     for(int i = 0; i < 3; i++) {
@@ -328,16 +330,21 @@ public class DabasScreen extends MenuScreen {
         playSound(1);
         this.menuIndex = i;
         this.renderable1.y_44 = this.getDabasMenuY(this.menuIndex);
+        return InputPropagation.HANDLED;
       }
     }
+
+    return InputPropagation.PROPAGATE;
   }
 
   @Override
-  protected void mouseClick(final int x, final int y, final int button, final int mods) {
-    super.mouseClick(x, y, button, mods);
+  protected InputPropagation mouseClick(final int x, final int y, final int button, final int mods) {
+    if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
 
     if(this.loadingStage != 2 || mods != 0) {
-      return;
+      return InputPropagation.PROPAGATE;
     }
 
     if(button == GLFW_MOUSE_BUTTON_LEFT) {
@@ -353,6 +360,8 @@ public class DabasScreen extends MenuScreen {
         } else {
           playSound(40);
         }
+
+        return InputPropagation.HANDLED;
       } else if(MathHelper.inBox(x, y, 52, this.getDabasMenuY(1), 85, 14)) {
         if(this.hasItems) {
           playSound(2);
@@ -365,6 +374,8 @@ public class DabasScreen extends MenuScreen {
         } else {
           playSound(40);
         }
+
+        return InputPropagation.HANDLED;
       } else if(MathHelper.inBox(x, y, 52, this.getDabasMenuY(2), 85, 14)) {
         if(this._8011e094 != 0) {
           playSound(2);
@@ -377,8 +388,12 @@ public class DabasScreen extends MenuScreen {
         } else {
           playSound(40);
         }
+
+        return InputPropagation.HANDLED;
       }
     }
+
+    return InputPropagation.PROPAGATE;
   }
 
   private void menuEscape() {
@@ -387,16 +402,21 @@ public class DabasScreen extends MenuScreen {
   }
 
   @Override
-  public void pressedThisFrame(final InputAction inputAction) {
-    super.pressedThisFrame(inputAction);
+  public InputPropagation pressedThisFrame(final InputAction inputAction) {
+    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
 
     if(this.loadingStage != 2) {
-      return;
+      return InputPropagation.PROPAGATE;
     }
 
     if(inputAction == InputAction.BUTTON_EAST) {
       this.menuEscape();
+      return InputPropagation.HANDLED;
     }
+
+    return InputPropagation.PROPAGATE;
   }
 
   private void FUN_80106d10(final int x, final int y, final int value) {

@@ -102,11 +102,13 @@ public abstract class SaveListScreen extends MenuScreen {
   }
 
   @Override
-  protected void mouseMove(final int x, final int y) {
-    super.mouseMove(x, y);
+  protected InputPropagation mouseMove(final int x, final int y) {
+    if(super.mouseMove(x, y) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
 
     if(this.loadingStage != 1) {
-      return;
+      return InputPropagation.PROPAGATE;
     }
 
     for(int i = 0; i < Math.min(3, this.menuCount() - this.scroll); i++) {
@@ -122,16 +124,22 @@ public abstract class SaveListScreen extends MenuScreen {
           this.highlightLeftHalf.y_44 = getSlotY(this.selectedSlot);
           this.highlightRightHalf.y_44 = getSlotY(this.selectedSlot);
         }
+
+        return InputPropagation.HANDLED;
       }
     }
+
+    return InputPropagation.PROPAGATE;
   }
 
   @Override
-  protected void mouseClick(final int x, final int y, final int button, final int mods) {
-    super.mouseClick(x, y, button, mods);
+  protected InputPropagation mouseClick(final int x, final int y, final int button, final int mods) {
+    if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
 
     if(this.loadingStage != 1) {
-      return;
+      return InputPropagation.PROPAGATE;
     }
 
     for(int i = 0; i < Math.min(3, this.menuCount() - this.scroll); i++) {
@@ -143,8 +151,11 @@ public abstract class SaveListScreen extends MenuScreen {
       if(MathHelper.inBox(x, y, slotX, slotY, slotWidth, slotHeight)) {
         this.selectedSlot = i;
         this.onSelect(this.scroll + i);
+        return InputPropagation.HANDLED;
       }
     }
+
+    return InputPropagation.PROPAGATE;
   }
 
   private void menuEscape() {
@@ -183,11 +194,13 @@ public abstract class SaveListScreen extends MenuScreen {
   }
 
   @Override
-  protected void mouseScroll(final double deltaX, final double deltaY) {
-    super.mouseScroll(deltaX, deltaY);
+  protected InputPropagation mouseScroll(final double deltaX, final double deltaY) {
+    if(super.mouseScroll(deltaX, deltaY) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
 
     if(this.loadingStage != 1) {
-      return;
+      return InputPropagation.PROPAGATE;
     }
 
     if(this.scrollAccumulator < 0 && deltaY > 0 || this.scrollAccumulator > 0 && deltaY < 0) {
@@ -195,6 +208,7 @@ public abstract class SaveListScreen extends MenuScreen {
     }
 
     this.scrollAccumulator += deltaY;
+    return InputPropagation.HANDLED;
   }
 
   private void scroll(final int scroll) {
@@ -261,27 +275,40 @@ public abstract class SaveListScreen extends MenuScreen {
   protected abstract void onMessageboxResult(final MessageBoxResult result);
 
   @Override
-  public void pressedThisFrame(final InputAction inputAction) {
-    super.pressedThisFrame(inputAction);
+  public InputPropagation pressedThisFrame(final InputAction inputAction) {
+    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
 
     if(inputAction == InputAction.BUTTON_EAST) {
       this.menuEscape();
+      return InputPropagation.HANDLED;
     }
+
     if(inputAction == InputAction.BUTTON_SOUTH) {
       this.menuSelect();
+      return InputPropagation.HANDLED;
     }
+
+    return InputPropagation.PROPAGATE;
   }
 
   @Override
-  public void pressedWithRepeatPulse(final InputAction inputAction) {
-    super.pressedWithRepeatPulse(inputAction);
+  public InputPropagation pressedWithRepeatPulse(final InputAction inputAction) {
+    if(super.pressedWithRepeatPulse(inputAction) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
 
     if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
       this.menuNavigateUp();
+      return InputPropagation.HANDLED;
     }
+
     if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
       this.menuNavigateDown();
+      return InputPropagation.HANDLED;
     }
-  }
 
+    return InputPropagation.PROPAGATE;
+  }
 }

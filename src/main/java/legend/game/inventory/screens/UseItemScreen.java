@@ -223,8 +223,10 @@ public class UseItemScreen extends MenuScreen {
   }
 
   @Override
-  protected void mouseMove(final int x, final int y) {
-    super.mouseMove(x, y);
+  protected InputPropagation mouseMove(final int x, final int y) {
+    if(super.mouseMove(x, y) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
 
     if(this.loadingStage == 2) {
       for(int slot = 0; slot < Math.min(5, this.itemCount - this.slotScroll); slot++) {
@@ -232,6 +234,7 @@ public class UseItemScreen extends MenuScreen {
           playSound(1);
           this.selectedSlot = slot;
           this.itemHighlight.y_44 = getItemSlotY(this.selectedSlot);
+          return InputPropagation.HANDLED;
         }
       }
     } else if(this.loadingStage == 3 && (this.itemUseFlags & 0x2) == 0) {
@@ -240,17 +243,22 @@ public class UseItemScreen extends MenuScreen {
           playSound(1);
           this.charSlot = slot;
           this.charHighlight.x_40 = getCharacterPortraitX(this.charSlot) - 3;
+          return InputPropagation.HANDLED;
         }
       }
     }
+
+    return InputPropagation.PROPAGATE;
   }
 
   @Override
-  protected void mouseClick(final int x, final int y, final int button, final int mods) {
-    super.mouseClick(x, y, button, mods);
+  protected InputPropagation mouseClick(final int x, final int y, final int button, final int mods) {
+    if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
 
     if(mods != 0) {
-      return;
+      return InputPropagation.PROPAGATE;
     }
 
     if(this.loadingStage == 2) {
@@ -278,6 +286,8 @@ public class UseItemScreen extends MenuScreen {
             playSound(40);
           }
         }
+
+        return InputPropagation.HANDLED;
       }
     } else if(this.loadingStage == 3) {
       for(int slot = 0; slot < characterCount_8011d7c4.get(); slot++) {
@@ -305,9 +315,12 @@ public class UseItemScreen extends MenuScreen {
           this.getItemResponseText(this.useItemResponse);
           menuStack.pushScreen(new MessageBoxScreen(this.useItemResponse.string_08, 0, result -> {}));
           this.loadingStage = 1;
+          return InputPropagation.HANDLED;
         }
       }
     }
+
+    return InputPropagation.PROPAGATE;
   }
 
   private void getItemResponseText(final UseItemResponse response) {
@@ -373,11 +386,13 @@ public class UseItemScreen extends MenuScreen {
   }
 
   @Override
-  protected void mouseScroll(final double deltaX, final double deltaY) {
-    super.mouseScroll(deltaX, deltaY);
+  protected InputPropagation mouseScroll(final double deltaX, final double deltaY) {
+    if(super.mouseScroll(deltaX, deltaY) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
 
     if(this.loadingStage != 2) {
-      return;
+      return InputPropagation.PROPAGATE;
     }
 
     if(this.scrollAccumulator < 0 && deltaY > 0 || this.scrollAccumulator > 0 && deltaY < 0) {
@@ -385,6 +400,7 @@ public class UseItemScreen extends MenuScreen {
     }
 
     this.scrollAccumulator += deltaY;
+    return InputPropagation.HANDLED;
   }
 
   private void menuStage2Escape() {
@@ -508,44 +524,64 @@ public class UseItemScreen extends MenuScreen {
   }
 
   @Override
-  public void pressedThisFrame(final InputAction inputAction) {
-    super.pressedThisFrame(inputAction);
+  public InputPropagation pressedThisFrame(final InputAction inputAction) {
+    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
 
     if(this.loadingStage == 2) {
       if(inputAction == InputAction.BUTTON_EAST) {
         this.menuStage2Escape();
+        return InputPropagation.HANDLED;
       }
+
       if(inputAction == InputAction.BUTTON_SOUTH) {
         this.menuStage2Select();
+        return InputPropagation.HANDLED;
       }
     } else if(this.loadingStage == 3) {
       if(inputAction == InputAction.DPAD_LEFT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_LEFT) {
         this.menuStage3NavigateLeft();
+        return InputPropagation.HANDLED;
       }
+
       if(inputAction == InputAction.DPAD_RIGHT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_RIGHT) {
         this.menuStage3NavigateRight();
+        return InputPropagation.HANDLED;
       }
+
       if(inputAction == InputAction.BUTTON_EAST) {
         this.menuStage3Escape();
+        return InputPropagation.HANDLED;
       }
+
       if(inputAction == InputAction.BUTTON_SOUTH) {
         this.menuStage3Select();
+        return InputPropagation.HANDLED;
       }
     }
+
+    return InputPropagation.PROPAGATE;
   }
 
   @Override
-  public void pressedWithRepeatPulse(final InputAction inputAction) {
-    super.pressedWithRepeatPulse(inputAction);
+  public InputPropagation pressedWithRepeatPulse(final InputAction inputAction) {
+    if(super.pressedWithRepeatPulse(inputAction) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
 
     if(this.loadingStage == 2) {
       if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
         this.menuStage2NavigateUp();
+        return InputPropagation.HANDLED;
       }
 
       if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
         this.menuStage2NavigateDown();
+        return InputPropagation.HANDLED;
       }
     }
+
+    return InputPropagation.PROPAGATE;
   }
 }

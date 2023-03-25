@@ -145,11 +145,13 @@ public class StatusScreen extends MenuScreen {
   }
 
   @Override
-  protected void mouseScroll(final double deltaX, final double deltaY) {
-    super.mouseScroll(deltaX, deltaY);
+  protected InputPropagation mouseScroll(final double deltaX, final double deltaY) {
+    if(super.mouseScroll(deltaX, deltaY) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
 
     if(this.loadingStage != 2) {
-      return;
+      return InputPropagation.PROPAGATE;
     }
 
     if(this.scrollAccumulator < 0 && deltaY > 0 || this.scrollAccumulator > 0 && deltaY < 0) {
@@ -157,34 +159,47 @@ public class StatusScreen extends MenuScreen {
     }
 
     this.scrollAccumulator += deltaY;
+    return InputPropagation.HANDLED;
   }
 
   @Override
-  public void pressedThisFrame(final InputAction inputAction) {
-    super.pressedThisFrame(inputAction);
+  public InputPropagation pressedThisFrame(final InputAction inputAction) {
+    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
 
     if(this.loadingStage != 2) {
-      return;
+      return InputPropagation.PROPAGATE;
     }
 
     if(inputAction == InputAction.BUTTON_EAST) {
       this.menuEscape();
+      return InputPropagation.HANDLED;
     }
+
+    return InputPropagation.PROPAGATE;
   }
 
   @Override
-  public void pressedWithRepeatPulse(final InputAction inputAction) {
-    super.pressedWithRepeatPulse(inputAction);
+  public InputPropagation pressedWithRepeatPulse(final InputAction inputAction) {
+    if(super.pressedWithRepeatPulse(inputAction) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
 
     if(this.loadingStage != 2) {
-      return;
+      return InputPropagation.PROPAGATE;
     }
 
     if(inputAction == InputAction.DPAD_LEFT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_LEFT) {
       this.menuNavigateLeft();
+      return InputPropagation.HANDLED;
     }
+
     if(inputAction == InputAction.DPAD_RIGHT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_RIGHT) {
       this.menuNavigateRight();
+      return InputPropagation.HANDLED;
     }
+
+    return InputPropagation.PROPAGATE;
   }
 }

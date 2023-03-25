@@ -46,7 +46,7 @@ public class ControlHost implements Iterable<Control> {
     final List<Control> controls = new ArrayList<>();
 
     for(final Control control : this.controls) {
-      if(control.acceptsInput() && control.containsPoint(x, y)) {
+      if(control.acceptsInput() && control.isVisible() && control.containsPoint(x, y)) {
         controls.add(control);
       }
     }
@@ -59,42 +59,52 @@ public class ControlHost implements Iterable<Control> {
     return controls.get(0);
   }
 
-  protected void mouseMove(final int x, final int y) {
+  protected InputPropagation mouseMove(final int x, final int y) {
     this.mouseX = x;
     this.mouseY = y;
 
     final Control control = this.findControlAt(x, y);
 
     if(control != null) {
-      control.mouseMove(x - control.getX(), y - control.getY());
+      return control.mouseMove(x - control.getX(), y - control.getY());
     }
+
+    return InputPropagation.PROPAGATE;
   }
 
-  protected void mouseClick(final int x, final int y, final int button, final int mods) {
+  protected InputPropagation mouseClick(final int x, final int y, final int button, final int mods) {
     final Control control = this.findControlAt(x, y);
 
     if(control != null) {
-      control.mouseClick(x - control.getX(), y - control.getY(), button, mods);
+      return control.mouseClick(x - control.getX(), y - control.getY(), button, mods);
     }
+
+    return InputPropagation.PROPAGATE;
   }
 
-  protected void mouseScroll(final double deltaX, final double deltaY) {
+  protected InputPropagation mouseScroll(final double deltaX, final double deltaY) {
     final Control control = this.findControlAt(this.mouseX, this.mouseY);
 
     if(control != null) {
-      control.mouseScroll(deltaX, deltaY);
+      return control.mouseScroll(deltaX, deltaY);
     }
+
+    return InputPropagation.PROPAGATE;
   }
 
-  protected void keyPress(final int key, final int scancode, final int mods) {
+  protected InputPropagation keyPress(final int key, final int scancode, final int mods) {
+    return InputPropagation.PROPAGATE;
   }
 
-  protected void pressedThisFrame(final InputAction inputAction) {
+  protected InputPropagation pressedThisFrame(final InputAction inputAction) {
+    return InputPropagation.PROPAGATE;
   }
 
-  protected void pressedWithRepeatPulse(final InputAction inputAction) {
+  protected InputPropagation pressedWithRepeatPulse(final InputAction inputAction) {
+    return InputPropagation.PROPAGATE;
   }
 
-  protected void releasedThisFrame(final InputAction inputAction) {
+  protected InputPropagation releasedThisFrame(final InputAction inputAction) {
+    return InputPropagation.PROPAGATE;
   }
 }

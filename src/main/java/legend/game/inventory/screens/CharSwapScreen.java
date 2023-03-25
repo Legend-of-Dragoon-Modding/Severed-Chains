@@ -130,8 +130,10 @@ public class CharSwapScreen extends MenuScreen {
   }
 
   @Override
-  protected void mouseMove(final int x, final int y) {
-    super.mouseMove(x, y);
+  protected InputPropagation mouseMove(final int x, final int y) {
+    if(super.mouseMove(x, y) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
 
     if(this.loadingStage == 2) {
       for(int i = 0; i < 3; i++) {
@@ -139,6 +141,7 @@ public class CharSwapScreen extends MenuScreen {
           playSound(1);
           this.primaryCharIndex = i;
           this.primaryCharHighlight.y_44 = getSlotY(i);
+          return InputPropagation.HANDLED;
         }
       }
     } else if(this.loadingStage == 3) {
@@ -148,14 +151,19 @@ public class CharSwapScreen extends MenuScreen {
           this.secondaryCharIndex = i;
           this.secondaryCharHighlight.x_40 = this.getSecondaryCharX(this.secondaryCharIndex);
           this.secondaryCharHighlight.y_44 = this.getSecondaryCharY(this.secondaryCharIndex);
+          return InputPropagation.HANDLED;
         }
       }
     }
+
+    return InputPropagation.PROPAGATE;
   }
 
   @Override
-  protected void mouseClick(final int x, final int y, final int button, final int mods) {
-    super.mouseClick(x, y, button, mods);
+  protected InputPropagation mouseClick(final int x, final int y, final int button, final int mods) {
+    if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
 
     if(this.loadingStage == 2) {
       for(int i = 0; i < 3; i++) {
@@ -173,6 +181,8 @@ public class CharSwapScreen extends MenuScreen {
           } else {
             playSound(40);
           }
+
+          return InputPropagation.HANDLED;
         }
       }
     } else if(this.loadingStage == 3) {
@@ -201,9 +211,13 @@ public class CharSwapScreen extends MenuScreen {
           } else {
             playSound(40);
           }
+
+          return InputPropagation.HANDLED;
         }
       }
     }
+
+    return InputPropagation.PROPAGATE;
   }
 
   private void menuStage2Escape() {
@@ -316,42 +330,48 @@ public class CharSwapScreen extends MenuScreen {
   }
 
   @Override
-  public void pressedThisFrame(final InputAction inputAction) {
-    super.pressedThisFrame(inputAction);
+  public InputPropagation pressedThisFrame(final InputAction inputAction) {
+    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
 
     if(this.loadingStage == 2) {
       // primary character left side
       if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
         this.menuStage2NavigateUp();
-      }
-      if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
+        return InputPropagation.HANDLED;
+      } else if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
         this.menuStage2NavigateDown();
-      }
-      if(inputAction == InputAction.BUTTON_EAST) {
+        return InputPropagation.HANDLED;
+      } else if(inputAction == InputAction.BUTTON_EAST) {
         this.menuStage2Escape();
-      }
-      if(inputAction == InputAction.BUTTON_SOUTH) {
+        return InputPropagation.HANDLED;
+      } else if(inputAction == InputAction.BUTTON_SOUTH) {
         this.menuStage2Select();
+        return InputPropagation.HANDLED;
       }
     } else if(this.loadingStage == 3) {
       if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
         this.menuStage3NavigateUp();
-      }
-      if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
+        return InputPropagation.HANDLED;
+      } else if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
         this.menuStage3NavigateDown();
-      }
-      if(inputAction == InputAction.DPAD_LEFT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_LEFT) {
+        return InputPropagation.HANDLED;
+      } else if(inputAction == InputAction.DPAD_LEFT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_LEFT) {
         this.menuStage3NavigateLeft();
-      }
-      if(inputAction == InputAction.DPAD_RIGHT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_RIGHT) {
+        return InputPropagation.HANDLED;
+      } else if(inputAction == InputAction.DPAD_RIGHT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_RIGHT) {
         this.menuStage3NavigateRight();
-      }
-      if(inputAction == InputAction.BUTTON_EAST) {
+        return InputPropagation.HANDLED;
+      } else if(inputAction == InputAction.BUTTON_EAST) {
         this.menuStage3Escape();
-      }
-      if(inputAction == InputAction.BUTTON_SOUTH) {
+        return InputPropagation.HANDLED;
+      } else if(inputAction == InputAction.BUTTON_SOUTH) {
         this.menuStage3Select();
+        return InputPropagation.HANDLED;
       }
     }
+
+    return InputPropagation.PROPAGATE;
   }
 }

@@ -53,7 +53,10 @@ public class GoodsScreen extends MenuScreen {
     this.leftList.onPressedThisFrame(inputAction -> {
       if(inputAction == InputAction.DPAD_RIGHT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_RIGHT) {
         this.setFocus(this.rightList);
+        return InputPropagation.HANDLED;
       }
+
+      return InputPropagation.PROPAGATE;
     });
     this.leftList.onHighlight(description);
 
@@ -65,7 +68,10 @@ public class GoodsScreen extends MenuScreen {
     this.rightList.onPressedThisFrame(inputAction -> {
       if(inputAction == InputAction.DPAD_LEFT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_LEFT) {
         this.setFocus(this.leftList);
+        return InputPropagation.HANDLED;
       }
+
+      return InputPropagation.PROPAGATE;
     });
     this.rightList.onHighlight(description);
 
@@ -107,11 +113,16 @@ public class GoodsScreen extends MenuScreen {
   }
 
   @Override
-  public void pressedThisFrame(final InputAction inputAction) {
-    super.pressedThisFrame(inputAction);
+  public InputPropagation pressedThisFrame(final InputAction inputAction) {
+    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
 
     if(inputAction == InputAction.BUTTON_EAST) {
       this.menuEscape();
+      return InputPropagation.HANDLED;
     }
+
+    return InputPropagation.PROPAGATE;
   }
 }

@@ -260,8 +260,10 @@ public class TooManyItemsScreen extends MenuScreen {
   }
 
   @Override
-  protected void mouseMove(final int x, final int y) {
-    super.mouseMove(x, y);
+  protected InputPropagation mouseMove(final int x, final int y) {
+    if(super.mouseMove(x, y) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
 
     this.mouseX = x;
     this.mouseY = y;
@@ -272,6 +274,7 @@ public class TooManyItemsScreen extends MenuScreen {
           playSound(1);
           this.dropIndex = i;
           this.renderable_8011e200.y_44 = this.FUN_8010f178(i);
+          return InputPropagation.HANDLED;
         }
       }
     } else if(this.menuState == MenuState._9) {
@@ -280,14 +283,19 @@ public class TooManyItemsScreen extends MenuScreen {
           playSound(1);
           this.invIndex = i;
           this.renderable_8011e204.y_44 = this.FUN_8010f178(i);
+          return InputPropagation.HANDLED;
         }
       }
     }
+
+    return InputPropagation.PROPAGATE;
   }
 
   @Override
-  protected void mouseClick(final int x, final int y, final int button, final int mods) {
-    super.mouseClick(x, y, button, mods);
+  protected InputPropagation mouseClick(final int x, final int y, final int button, final int mods) {
+    if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
 
     if(this.menuState == MenuState._8) {
       for(int i = 0; i < itemsDroppedByEnemiesCount_800bc978.get(); i++) {
@@ -297,6 +305,7 @@ public class TooManyItemsScreen extends MenuScreen {
           this.renderable_8011e200.y_44 = this.FUN_8010f178(i);
 
           this.selectMenuState8();
+          return InputPropagation.HANDLED;
         }
       }
     } else if(this.menuState == MenuState._9) {
@@ -307,17 +316,22 @@ public class TooManyItemsScreen extends MenuScreen {
           this.renderable_8011e204.y_44 = this.FUN_8010f178(i);
 
           this.selectMenuState9();
+          return InputPropagation.HANDLED;
         }
       }
     }
+
+    return InputPropagation.PROPAGATE;
   }
 
   @Override
-  protected void mouseScroll(final double deltaX, final double deltaY) {
-    super.mouseScroll(deltaX, deltaY);
+  protected InputPropagation mouseScroll(final double deltaX, final double deltaY) {
+    if(super.mouseScroll(deltaX, deltaY) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
 
     if(this.menuState != MenuState._9) {
-      return;
+      return InputPropagation.PROPAGATE;
     }
 
     if(this.scrollAccumulator < 0 && deltaY > 0 || this.scrollAccumulator > 0 && deltaY < 0) {
@@ -325,6 +339,7 @@ public class TooManyItemsScreen extends MenuScreen {
     }
 
     this.scrollAccumulator += deltaY;
+    return InputPropagation.HANDLED;
   }
 
   private void droppedNavigateDown() {
@@ -450,54 +465,78 @@ public class TooManyItemsScreen extends MenuScreen {
   }
 
   @Override
-  public void pressedThisFrame(final InputAction inputAction) {
-    super.pressedThisFrame(inputAction);
+  public InputPropagation pressedThisFrame(final InputAction inputAction) {
+    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
 
     if(this.menuState == MenuState._8) {
       if(inputAction == InputAction.BUTTON_EAST) {
         this.escapeMenuState8();
+        return InputPropagation.HANDLED;
       }
+
       if(inputAction == InputAction.BUTTON_SOUTH) {
         this.selectMenuState8();
+        return InputPropagation.HANDLED;
       }
-      return;
+
+      return InputPropagation.PROPAGATE;
     }
 
     if(this.menuState == MenuState._9) {
       if(inputAction == InputAction.BUTTON_EAST) {
         this.escapeMenuState9();
+        return InputPropagation.HANDLED;
       }
+
       if(inputAction == InputAction.BUTTON_SOUTH) {
         this.selectMenuState9();
+        return InputPropagation.HANDLED;
       }
+
       if(inputAction == InputAction.BUTTON_NORTH) {
         this.sortMenuState9();
+        return InputPropagation.HANDLED;
       }
     }
+
+    return InputPropagation.PROPAGATE;
   }
 
   @Override
-  public void pressedWithRepeatPulse(final InputAction inputAction) {
-    super.pressedWithRepeatPulse(inputAction);
+  public InputPropagation pressedWithRepeatPulse(final InputAction inputAction) {
+    if(super.pressedWithRepeatPulse(inputAction) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
 
     if(this.menuState == MenuState._8) {
       if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
         this.droppedNavigateUp();
+        return InputPropagation.HANDLED;
       }
+
       if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
         this.droppedNavigateDown();
+        return InputPropagation.HANDLED;
       }
-      return;
+
+      return InputPropagation.PROPAGATE;
     }
 
     if(this.menuState == MenuState._9) {
       if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
         this.inventoryNavigateUp();
+        return InputPropagation.HANDLED;
       }
+
       if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
         this.inventoryNavigateDown();
+        return InputPropagation.HANDLED;
       }
     }
+
+    return InputPropagation.PROPAGATE;
   }
 
   public enum MenuState {

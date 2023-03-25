@@ -1231,6 +1231,9 @@ public final class Scus94491BpeSegment {
     return dest;
   }
 
+  /**
+   * @param effectType 1 - fade out, 2 - fade in
+   */
   @Method(0x800136dcL)
   public static void scriptStartEffect(final int effectType, final int frames) {
     //LAB_800136f4

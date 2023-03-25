@@ -25,52 +25,76 @@ public abstract class MenuScreen extends ControlHost {
   }
 
   @Override
-  protected void mouseMove(final int x, final int y) {
-    super.mouseMove(x, y);
+  protected InputPropagation mouseMove(final int x, final int y) {
+    if(super.mouseMove(x, y) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
     this.updateHover(x, y);
+    return InputPropagation.PROPAGATE;
   }
 
   @Override
-  protected void mouseClick(final int x, final int y, final int button, final int mods) {
-    super.mouseClick(x, y, button, mods);
+  protected InputPropagation mouseClick(final int x, final int y, final int button, final int mods) {
+    if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
     this.updateHover(x, y);
     this.updateFocusFromHover();
+    return InputPropagation.PROPAGATE;
   }
 
   @Override
-  protected void keyPress(final int key, final int scancode, final int mods) {
-    super.keyPress(key, scancode, mods);
+  protected InputPropagation keyPress(final int key, final int scancode, final int mods) {
+    if(super.keyPress(key, scancode, mods) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
 
     if(this.focus != null) {
-      this.focus.keyPress(key, scancode, mods);
+      return this.focus.keyPress(key, scancode, mods);
     }
+
+    return InputPropagation.PROPAGATE;
   }
 
   @Override
-  protected void pressedThisFrame(final InputAction inputAction) {
-    super.pressedThisFrame(inputAction);
+  protected InputPropagation pressedThisFrame(final InputAction inputAction) {
+    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
 
     if(this.focus != null) {
-      this.focus.pressedThisFrame(inputAction);
+      return this.focus.pressedThisFrame(inputAction);
     }
+
+    return InputPropagation.PROPAGATE;
   }
 
   @Override
-  protected void pressedWithRepeatPulse(final InputAction inputAction) {
-    super.pressedWithRepeatPulse(inputAction);
+  protected InputPropagation pressedWithRepeatPulse(final InputAction inputAction) {
+    if(super.pressedWithRepeatPulse(inputAction) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
 
     if(this.focus != null) {
-      this.focus.pressedWithRepeatPulse(inputAction);
+      return this.focus.pressedWithRepeatPulse(inputAction);
     }
+
+    return InputPropagation.PROPAGATE;
   }
 
   @Override
-  protected void releasedThisFrame(final InputAction inputAction) {
-    super.releasedThisFrame(inputAction);
+  protected InputPropagation releasedThisFrame(final InputAction inputAction) {
+    if(super.releasedThisFrame(inputAction) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
 
     if(this.focus != null) {
-      this.focus.releasedThisFrame(inputAction);
+      return this.focus.releasedThisFrame(inputAction);
     }
+
+    return InputPropagation.PROPAGATE;
   }
 
   private void updateHover(final int x, final int y) {

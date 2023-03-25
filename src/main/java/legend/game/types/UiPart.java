@@ -5,7 +5,7 @@ import legend.game.unpacker.FileData;
 import java.util.Arrays;
 
 /**
- * @param _02 ubyte
+ * @param _02 Unknown, ranges from 0-10 (ubyte)
  */
 public record UiPart(RenderableMetrics14[] metrics_00, int _02) {
   public static UiPart fromFile(final FileData data, final FileData partData, final FileData entryIndicesData) {
