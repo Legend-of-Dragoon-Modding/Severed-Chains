@@ -51,17 +51,17 @@ import static org.lwjgl.system.MemoryUtil.memAddress;
 import static org.lwjgl.system.MemoryUtil.memAlloc;
 import static org.lwjgl.system.MemoryUtil.memFree;
 
-public class Font {
+public class NuklearFont {
   final NkUserFont font = NkUserFont.create();
 
   @SuppressWarnings("FieldCanBeLocal")
   private final ByteBuffer ttf; // This buffer MUST be kept in memory!
 
-  public Font(final String font) throws IOException {
+  public NuklearFont(final String font) throws IOException {
     this(font, 18);
   }
 
-  public Font(final String font, final int size) throws IOException {
+  public NuklearFont(final String font, final int size) throws IOException {
     this.ttf = ioResourceToByteBuffer(font, 512 * 1024);
 
     final int BITMAP_W = 1024;
@@ -182,7 +182,7 @@ public class Font {
       }
     } else {
       try(
-        final InputStream source = Font.class.getClassLoader().getResourceAsStream(resource);
+        final InputStream source = NuklearFont.class.getClassLoader().getResourceAsStream(resource);
         final ReadableByteChannel rbc = Channels.newChannel(source)
       ) {
         buffer = createByteBuffer(bufferSize);
