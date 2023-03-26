@@ -8,6 +8,7 @@ import legend.game.inventory.screens.controls.DragoonSpirits;
 import legend.game.inventory.screens.controls.Glyph;
 import legend.game.types.LodString;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -80,10 +81,8 @@ public class MainMenuScreen extends MenuScreen {
 
     button.onHoverIn(() -> this.setFocus(button));
 
-    button.onGotFocus(() -> {
-      this.menuButtons.forEach(b -> b.setTextColour(TextColour.BROWN));
-      button.setTextColour(TextColour.RED);
-    });
+    button.onLostFocus(() -> button.setTextColour(TextColour.BROWN));
+    button.onGotFocus(() -> button.setTextColour(TextColour.RED));
 
     button.onMouseClick((x, y, button1, mods) -> {
       if(button1 == GLFW_MOUSE_BUTTON_LEFT && mods == 0) {
@@ -115,6 +114,14 @@ public class MainMenuScreen extends MenuScreen {
 
     if(id != -1) {
       this.addControl(new CharacterCard(id)).setPos(186, 16 + slot * 72);
+    }
+  }
+
+  @Override
+  public void setFocus(@Nullable final Control control) {
+    // Don't allow complete unfocusing
+    if(control != null) {
+      super.setFocus(control);
     }
   }
 
