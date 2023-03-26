@@ -3701,7 +3701,7 @@ public final class Bttl_800f {
     final int turnCount = t0.charIndex_272 != a1.charIndex_272 ? 3 : 4;
 
     //LAB_800f935c
-    a1.setStat((int)MEMORY.ref(4, a3_0).offset(a2 * 0x4L).get(), turnCount << 8 | t0.itemSpecialAmount_e0);
+    a1.setStat((int)MEMORY.ref(4, a3_0).offset(a2 * 0x4L).get(), turnCount << 8 | (t0.itemSpecialAmount_e0 & 0xff));
   }
 
   @Method(0x800f9380L)

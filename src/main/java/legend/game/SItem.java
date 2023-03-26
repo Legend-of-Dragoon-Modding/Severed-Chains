@@ -2965,6 +2965,8 @@ public final class SItem {
         if((gameState_800babc8.goods_19c[0] & 0x1 << v0) != 0) {
           stats.flags_0c.or(0x6000);
 
+          stats.dlevel_0f.set(gameState_800babc8.charData_32c[0].dlevel_13);
+
           final long a1 = _800fbd08.get(0).get();
 
           if((gameState_800babc8.characterInitialized_4e6 >> a1 & 1) == 0) {

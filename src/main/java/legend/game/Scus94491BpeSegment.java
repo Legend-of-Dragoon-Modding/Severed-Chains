@@ -1643,7 +1643,7 @@ public final class Scus94491BpeSegment {
     if((gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0) {
       final CharacterData2c charData = gameState_800babc8.charData_32c[0];
       charData.dlevelXp_0e = 0x7fff;
-      charData.dlevel_13 = 0x5;
+      charData.dlevel_13 = 5;
     }
 
     //LAB_800174d0
@@ -1703,7 +1703,7 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_80017614
-    if(gameState_800babc8.goods_19c[0] < 0) {
+    if((gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0) {
       gameState_800babc8.charData_32c[0].dlevel_13 = 5;
       gameState_800babc8.charData_32c[0].dlevelXp_0e = 0x7fff;
     }

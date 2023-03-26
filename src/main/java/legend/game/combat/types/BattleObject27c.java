@@ -521,19 +521,19 @@ public class BattleObject27c extends BattleScriptDataBase {
       case 86 -> this.dragoonDefence_b0 = value;
       case 87 -> this.dragoonMagicDefence_b2 = value;
       case 88 -> {
-        this.powerAttack_b4 = value & 0xff;
+        this.powerAttack_b4 = (byte)value;
         this.powerAttackTurns_b5 = value >>> 8 & 0xff;
       }
       case 89 -> {
-        this.powerMagicAttack_b6 = value & 0xff;
+        this.powerMagicAttack_b6 = (byte)value;
         this.powerMagicAttackTurns_b7 = value >>> 8 & 0xff;
       }
       case 90 -> {
-        this.powerDefence_b8 = value & 0xff;
+        this.powerDefence_b8 = (byte)value;
         this.powerDefenceTurns_b9 = value >>> 8 & 0xff;
       }
       case 91 -> {
-        this.powerMagicDefence_ba = value & 0xff;
+        this.powerMagicDefence_ba = (byte)value;
         this.powerMagicDefenceTurns_bb = value >>> 8 & 0xff;
       }
       case 92 -> {

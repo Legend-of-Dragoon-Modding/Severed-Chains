@@ -736,6 +736,7 @@ public final class SMap {
     return FlowControl.CONTINUE;
   }
 
+  /** Called when Dart is given Divine Dragon spirit */
   @Method(0x800d9d60L)
   public static FlowControl FUN_800d9d60(final RunningScript<?> script) {
     if(gameState_800babc8.charData_32c[0].dlevelXp_0e < 63901) {
