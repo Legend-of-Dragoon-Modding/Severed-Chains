@@ -51,6 +51,11 @@ public final class Unpacker {
 
   private static final Object IO_LOCK = new Object();
 
+  /**
+   * Note: the transformation pipeline is recursive and after a transformation, the file will be placed back into the transformation queue
+   * until no more transformers apply to it. Discriminators must be able to recognize their own changes and return false, or the file will
+   * be transformed infinitely.
+   */
   private static final Map<Discriminator, Transformer> transformers = new LinkedHashMap<>();
   static {
     transformers.put(Unpacker::decompressDiscriminator, Unpacker::decompress);
@@ -625,7 +630,7 @@ public final class Unpacker {
   }
 
   private static boolean uiPatcherDiscriminator(final String name, final FileData data, final Set<Flags> flags) {
-    return "SECT/DRGN0.BIN/6666".equals(name);
+    return "SECT/DRGN0.BIN/6666".equals(name) && data.readByte(0x24a8) != 0;
   }
 
   private static Map<String, FileData> uiPatcherTransformer(final String name, final FileData data, final Set<Flags> flags) {
