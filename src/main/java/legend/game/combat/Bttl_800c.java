@@ -3593,9 +3593,9 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cdcecL)
-  public static void FUN_800cdcec(final Model124 model, final int dobjIndex, final VECTOR largestVertRef, final VECTOR smallestVertRef, final EffectManagerData6c manager, final IntRef largestIndexRef, final IntRef smallestIndexRef) {
-    short largest = 0x7fff;
-    short smallest = -1;
+  public static void FUN_800cdcec(final Model124 model, final int dobjIndex, final VECTOR smallestVertRef, final VECTOR largestVertRef, final EffectManagerData6c manager, final IntRef smallestIndexRef, final IntRef largestIndexRef) {
+    short largest = -1;
+    short smallest = 0x7fff;
     int largestIndex = 0;
     int smallestIndex = 0;
     final TmdObjTable1c v0 = model.dobj2ArrPtr_00[dobjIndex].tmd_08;
@@ -3606,12 +3606,12 @@ public final class Bttl_800c {
       final ShortRef component = vert.component(manager._10._24);
       final short val = component.get();
 
-      if(val <= largest) {
+      if(val >= largest) {
         largest = component.get();
         largestIndex = i;
         largestVertRef.set(vert);
         //LAB_800cdd7c
-      } else if(val >= smallest) {
+      } else if(val <= smallest) {
         smallest = component.get();
         smallestIndex = i;
         smallestVertRef.set(vert);
@@ -3666,30 +3666,30 @@ public final class Bttl_800c {
 
   @Method(0x800cde94L)
   public static void renderWeaponTrailEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    final WeaponTrailEffect3c s2 = (WeaponTrailEffect3c)data.effect_44;
+    final WeaponTrailEffect3c effect = (WeaponTrailEffect3c)data.effect_44;
 
-    if(s2._38 != null) {
+    if(effect._38 != null) {
       final VECTOR sp0x18 = new VECTOR().set(data._10.colour_1c).shl(8).and(0xffff);
-      final VECTOR sp0x20 = new VECTOR().set(sp0x18).div(s2._0e);
-      WeaponTrailEffectSegment2c s0 = s2._38;
+      final VECTOR sp0x20 = new VECTOR().set(sp0x18).div(effect._0e);
+      WeaponTrailEffectSegment2c effectSegment = effect._38;
 
       final IntRef x0 = new IntRef();
       final IntRef y0 = new IntRef();
-      transformWorldspaceToScreenspace(s0._04.get(0), x0, y0);
+      transformWorldspaceToScreenspace(effectSegment._04.get(0), x0, y0);
 
       final IntRef x2 = new IntRef();
       final IntRef y2 = new IntRef();
-      final int z = transformWorldspaceToScreenspace(s0._04.get(1), x2, y2) >> 2;
+      final int z = transformWorldspaceToScreenspace(effectSegment._04.get(1), x2, y2) >> 2;
 
       //LAB_800cdf94
-      s0 = s0._24.derefNullable();
-      for(int i = 0; i < s2._0e && s0 != null; i++) {
+      effectSegment = effectSegment._24.derefNullable();
+      for(int i = 0; i < effect._0e && effectSegment != null; i++) {
         final IntRef x1 = new IntRef();
         final IntRef y1 = new IntRef();
-        transformWorldspaceToScreenspace(s0._04.get(0), x1, y1);
+        transformWorldspaceToScreenspace(effectSegment._04.get(0), x1, y1);
         final IntRef x3 = new IntRef();
         final IntRef y3 = new IntRef();
-        transformWorldspaceToScreenspace(s0._04.get(1), x3, y3);
+        transformWorldspaceToScreenspace(effectSegment._04.get(1), x3, y3);
 
         final GpuCommandPoly cmd = new GpuCommandPoly(4)
           .translucent(Translucency.B_PLUS_F)
@@ -3708,7 +3708,7 @@ public final class Bttl_800c {
         int a0 = z + data._10.z_22;
         if(a0 >= 0xa0) {
           if(a0 >= 0xffe) {
-            a0 = z + 0xffe - z;
+            a0 = 0xffe;
           }
 
           //LAB_800ce138
@@ -3720,7 +3720,7 @@ public final class Bttl_800c {
         y0.set(y1.get());
         x2.set(x3.get());
         y2.set(y3.get());
-        s0 = s0._24.derefNullable();
+        effectSegment = effectSegment._24.derefNullable();
       }
 
       //LAB_800ce1a0
@@ -3740,9 +3740,9 @@ public final class Bttl_800c {
     if(effect._00 == 0) {
       final IntRef largestVertexIndex = new IntRef();
       final IntRef smallestVertexIndex = new IntRef();
-      FUN_800cdcec(effect.parentModel_30, effect.dobjIndex_08, effect.largestVertex_20, effect.smallestVertex_10, data, largestVertexIndex, smallestVertexIndex);
-      effect.largestVertexIndex_0c = largestVertexIndex.get();
+      FUN_800cdcec(effect.parentModel_30, effect.dobjIndex_08, effect.smallestVertex_20, effect.largestVertex_10, data, smallestVertexIndex, largestVertexIndex);
       effect.smallestVertexIndex_0a = smallestVertexIndex.get();
+      effect.largestVertexIndex_0c = largestVertexIndex.get();
       return;
     }
 
@@ -3766,7 +3766,7 @@ public final class Bttl_800c {
     for(int i = 0; i < 2; i++) {
       final MATRIX sp0x20 = new MATRIX();
       GsGetLw(effect.parentModel_30.coord2ArrPtr_04[effect.dobjIndex_08], sp0x20);
-      final VECTOR sp0x40 = ApplyMatrixLV(sp0x20, i == 0 ? effect.largestVertex_20 : effect.smallestVertex_10);
+      final VECTOR sp0x40 = ApplyMatrixLV(sp0x20, i == 0 ? effect.largestVertex_10 : effect.smallestVertex_20);
       sp0x40.add(sp0x20.transfer);
       s0._04.get(i).set(sp0x40);
     }
@@ -3921,7 +3921,7 @@ public final class Bttl_800c {
   public static FlowControl FUN_800ce9b0(final RunningScript<?> script) {
     final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final WeaponTrailEffect3c trail = (WeaponTrailEffect3c)manager.effect_44;
-    FUN_800ce880(trail.smallestVertex_10, trail.largestVertex_20, script.params_20[2].get(), script.params_20[1].get());
+    FUN_800ce880(trail.smallestVertex_20, trail.largestVertex_10, script.params_20[2].get(), script.params_20[1].get());
     return FlowControl.CONTINUE;
   }
 
