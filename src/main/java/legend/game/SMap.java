@@ -5576,14 +5576,17 @@ public final class SMap {
       } else {
         //LAB_800e89f8
         final SomethingStructSub0c_1 struct2 = struct.ptr_14.get(i);
-        final long t1 = 0; //TODO struct.primitives_10 + struct2.ptr_04.get() + 0x6L;
-        assert false;
+        final TmdObjTable1c.Primitive primitive = struct.getPrimitiveForOffset(struct2.primitivesOffset_04.get());
+        final int packetOffset = struct2.primitivesOffset_04.get() - primitive.offset();
+        final int packetIndex = packetOffset / (primitive.width() + 4);
+        final int remainder = packetOffset % (primitive.width() + 4);
+        final byte[] packet = primitive.data()[packetIndex];
 
         vec.set((short)0, (short)0, (short)0);
 
         //LAB_800e8a38
         for(int t0 = 0; t0 < struct2.count_00.get(); t0++) {
-          vec.add(struct.verts_04[(int)MEMORY.ref(2, t1).offset(t0 * 0x2L).get()]);
+          vec.add(struct.verts_04[IoHelper.readUShort(packet, remainder + 2 + i * 2)]);
         }
 
         //LAB_800e8a9c
@@ -5918,12 +5921,16 @@ public final class SMap {
 
       if(v0 == 0) {
         //LAB_800e9774
-        t0 = 0; //TODO SomethingStructPtr_800d1a88.ptr_14.get(s4).ptr_04.get() + SomethingStructPtr_800d1a88.primitives_10 + 0x6L;
-        assert false;
+        final SomethingStructSub0c_1 ss2 = SomethingStructPtr_800d1a88.ptr_14.get(s4);
+        final TmdObjTable1c.Primitive primitive = SomethingStructPtr_800d1a88.getPrimitiveForOffset(ss2.primitivesOffset_04.get());
+        final int packetOffset = ss2.primitivesOffset_04.get() - primitive.offset();
+        final int packetIndex = packetOffset / (primitive.width() + 4);
+        final int remainder = packetOffset % (primitive.width() + 4);
+        final byte[] packet = primitive.data()[packetIndex];
 
         //LAB_800e97c4
         for(a2 = 0; a2 < SomethingStructPtr_800d1a88.ptr_14.get(s4).count_00.get(); a2++) {
-          sp0x28.add(SomethingStructPtr_800d1a88.verts_04[(int)MEMORY.ref(2, t0).offset(a2 * 0x2L).get()]);
+          sp0x28.add(SomethingStructPtr_800d1a88.verts_04[IoHelper.readUShort(packet, remainder + 2 + a2 * 2)]);
         }
 
         //LAB_800e9828
@@ -6090,7 +6097,7 @@ public final class SMap {
 
         //LAB_800e9f38
         _800cbe68.setu(0);
-        if((v1 - 0x341 & 0xffff_ffffL) > 0x17e) { //TODO I don't understand this, but it's right
+        if((v1 - 0x341 & 0xffff_ffffL) > 0x17e) { // Unsigned comparison
           if(v1 > 0x400) {
             _800cbe68.setu(0x1L);
             if(s0 > 0) {
