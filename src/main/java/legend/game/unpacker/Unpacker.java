@@ -28,6 +28,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import java.util.stream.StreamSupport;
 
@@ -68,8 +69,19 @@ public final class Unpacker {
     transformers.put(CtmdTransformer::ctmdDiscriminator, CtmdTransformer::ctmdTransformer);
   }
 
+  private static Consumer<String> statusListener = status -> { };
+  private static boolean shouldStop;
+
   public static void main(final String[] args) throws UnpackerException {
     unpack();
+  }
+
+  public static void stop() {
+    shouldStop = true;
+  }
+
+  public static void setStatusListener(final Consumer<String> listener) {
+    statusListener = listener;
   }
 
   public static FileData loadFile(final String name) {
@@ -215,7 +227,7 @@ public final class Unpacker {
           .forEach(Unpacker::writeFiles);
 
         LOGGER.info("Files unpacked in %d seconds", (System.nanoTime() - start) / 1_000_000_000L);
-      } catch(final IOException e) {
+      } catch(final Throwable e) {
         throw new UnpackerException(e);
       }
     }
@@ -298,7 +310,7 @@ public final class Unpacker {
   }
 
   private static Tuple<String, FileData> readFile(final Map.Entry<String, DirectoryEntry> e) {
-    LOGGER.info("Unpacking %s...", e.getKey());
+    statusListener.accept("Unpacking %s...".formatted(e.getKey()));
 
     final DirectoryEntry entry = e.getValue();
 
@@ -309,6 +321,10 @@ public final class Unpacker {
   }
 
   private static Map<String, FileData> transform(final String name, final FileData data, final Set<Flags> flags) {
+    if(shouldStop) {
+      throw new UnpackerStoppedRuntimeException("Unpacking cancelled");
+    }
+
     final Map<String, FileData> entries = new HashMap<>();
     boolean wasTransformed = false;
 

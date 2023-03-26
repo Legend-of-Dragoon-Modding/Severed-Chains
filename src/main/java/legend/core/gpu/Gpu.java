@@ -6,8 +6,11 @@ import legend.core.opengl.Camera;
 import legend.core.opengl.Context;
 import legend.core.opengl.Mesh;
 import legend.core.opengl.Shader;
+import legend.core.opengl.ShaderManager;
 import legend.core.opengl.Texture;
 import legend.core.opengl.Window;
+import legend.core.opengl.fonts.Font;
+import legend.core.opengl.fonts.FontManager;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
@@ -30,12 +33,8 @@ import java.util.Scanner;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.MathHelper.colour24To15;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
-import static org.lwjgl.glfw.GLFW.GLFW_JOYSTICK_LAST;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_TAB;
 import static org.lwjgl.glfw.GLFW.glfwGetCurrentContext;
-import static org.lwjgl.glfw.GLFW.glfwGetJoystickGUID;
-import static org.lwjgl.glfw.GLFW.glfwGetJoystickName;
-import static org.lwjgl.glfw.GLFW.glfwJoystickPresent;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
 public class Gpu implements Runnable {
@@ -392,8 +391,21 @@ public class Gpu implements Runnable {
 
     this.window.events.onResize((window1, width, height) -> this.updateDisplayTexture(window1, (int)(width / window1.getScale()), (int)(height / window1.getScale())));
 
+    try {
+      final Shader fontShader = new Shader(Paths.get("gfx/shaders/font.vsh"), Paths.get("gfx/shaders/font.fsh"));
+      fontShader.bindUniformBlock("transforms", Shader.UniformBuffer.TRANSFORM);
+      fontShader.bindUniformBlock("transforms2", Shader.UniformBuffer.TRANSFORM2);
+      fontShader.use();
+      fontShader.bindUniform("colour");
+      ShaderManager.addShader("font", fontShader);
+
+      FontManager.add("default", new Font(Paths.get("gfx/fonts/consolas.ttf")));
+    } catch(final IOException e) {
+      throw new RuntimeException("Failed to load font", e);
+    }
+
     final FloatBuffer transform2Buffer = BufferUtils.createFloatBuffer(4 * 4);
-    this.transforms2 = new Shader.UniformBuffer((long)transform2Buffer.capacity() * Float.BYTES, Shader.UniformBuffer.TRANSFORM2);
+    this.transforms2 = ShaderManager.addUniformBuffer("transforms2", new Shader.UniformBuffer((long)transform2Buffer.capacity() * Float.BYTES, Shader.UniformBuffer.TRANSFORM2));
 
     final int hr = this.vramWidth;
     final int vr = this.vramHeight;
