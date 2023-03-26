@@ -59,8 +59,8 @@ public class SaveGameScreen extends SaveListScreen {
   @Override
   protected void onMessageboxResult(final MessageBoxResult result) {
     if(result == MessageBoxResult.YES) {
-      gameState_800babc8.submapScene_a4.set(index_80052c38.get());
-      gameState_800babc8.submapCut_a8.set((int)_800cb450.get());
+      gameState_800babc8.submapScene_a4 = index_80052c38.get();
+      gameState_800babc8.submapCut_a8 = (int)_800cb450.get();
 
       saveGame(this.slot - 1);
 
@@ -71,7 +71,7 @@ public class SaveGameScreen extends SaveListScreen {
   @Override
   protected void renderSaveSlot(final int slot, final int fileIndex, final boolean allocate) {
     if(fileIndex == 0) {
-      renderCentredText(new LodString("New save"), 188, getSlotY(slot) + 25, 4);
+      renderCentredText(new LodString("New save"), 188, getSlotY(slot) + 25, TextColour.BROWN);
     } else if(fileIndex < this.menuCount()) {
       renderSaveGameSlot(fileIndex - 1, getSlotY(slot), allocate);
     }

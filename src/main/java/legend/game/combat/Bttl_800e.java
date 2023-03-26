@@ -55,6 +55,7 @@ import legend.game.combat.types.MonsterStats1c;
 import legend.game.combat.types.Ptr;
 import legend.game.combat.types.SpriteMetrics08;
 import legend.game.combat.types.StageAmbiance4c;
+import legend.game.inventory.screens.TextColour;
 import legend.game.modding.events.EventManager;
 import legend.game.modding.events.combat.EnemyStatsEvent;
 import legend.game.modding.events.inventory.RepeatItemReturnEvent;
@@ -3661,8 +3662,8 @@ public final class Bttl_800e {
 
     //LAB_800ee80c
     //LAB_800ee824
-    for(int itemSlot = 0; itemSlot < gameState_800babc8.itemCount_1e6.get(); itemSlot++) {
-      final int itemId = gameState_800babc8.items_2e9.get(itemSlot).get();
+    for(int itemSlot = 0; itemSlot < gameState_800babc8.items_2e9.size(); itemSlot++) {
+      final int itemId = gameState_800babc8.items_2e9.getInt(itemSlot);
       boolean returnItem = false;
 
       for(int repeatItemIndex = 0; repeatItemIndex < 9; repeatItemIndex++) {
@@ -3744,31 +3745,31 @@ public final class Bttl_800e {
     //LAB_800eebd8
     for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
       final BattleObject27c bobj = _8006e398.charBobjIndices_e40[charSlot].innerStruct_00;
-      final CharacterData2c charData = gameState_800babc8.charData_32c.get(bobj.charIndex_272);
+      final CharacterData2c charData = gameState_800babc8.charData_32c[bobj.charIndex_272];
 
       //LAB_800eec10
-      charData.hp_08.set(Math.max(1, bobj.hp_08));
+      charData.hp_08 = Math.max(1, bobj.hp_08);
 
-      if((gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0x1 << characterDragoonIndices_800c6e68.get(bobj.charIndex_272).get()) != 0) {
-        charData.mp_0a.set(bobj.mp_0c);
+      if((gameState_800babc8.goods_19c[0] & 0x1 << characterDragoonIndices_800c6e68.get(bobj.charIndex_272).get()) != 0) {
+        charData.mp_0a = bobj.mp_0c;
       }
 
       //LAB_800eec78
-      if(bobj.charIndex_272 == 0 && (gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0x1 << characterDragoonIndices_800c6e68.get(9).get()) != 0) {
-        charData.mp_0a.set(bobj.mp_0c);
+      if(bobj.charIndex_272 == 0 && (gameState_800babc8.goods_19c[0] & 0x1 << characterDragoonIndices_800c6e68.get(9).get()) != 0) {
+        charData.mp_0a = bobj.mp_0c;
       }
 
       //LAB_800eecb8
-      charData.status_10.set(bobj.status_0e & 0xc8);
-      charData.sp_0c.set(bobj.sp_0a);
+      charData.status_10 = bobj.status_0e & 0xc8;
+      charData.sp_0c = bobj.sp_0a;
     }
 
     //LAB_800eecf4
-    if((gameState_800babc8.scriptFlags2_bc.get(13).get() & 0x4_0000) != 0) { // Used Psych Bomb X this battle
+    if((gameState_800babc8.scriptFlags2_bc[13] & 0x4_0000) != 0) { // Used Psych Bomb X this battle
       //LAB_800eed30
       boolean hasPsychBombX = false;
-      for(int i = 0; i < gameState_800babc8.itemCount_1e6.get(); i++) {
-        if(gameState_800babc8.items_2e9.get(i).get() == 0xfa) { // Psych Bomb X
+      for(int i = 0; i < gameState_800babc8.items_2e9.size(); i++) {
+        if(gameState_800babc8.items_2e9.getInt(i) == 0xfa) { // Psych Bomb X
           hasPsychBombX = true;
           break;
         }
@@ -3788,8 +3789,8 @@ public final class Bttl_800e {
       boolean hasRepeatItem = false;
 
       //LAB_800eedb0
-      for(int itemSlot = 0; itemSlot < gameState_800babc8.itemCount_1e6.get(); itemSlot++) {
-        if(gameState_800babc8.items_2e9.get(itemSlot).get() == itemId) {
+      for(int itemSlot = 0; itemSlot < gameState_800babc8.items_2e9.size(); itemSlot++) {
+        if(gameState_800babc8.items_2e9.getInt(itemSlot) == itemId) {
           hasRepeatItem = true;
           break;
         }
@@ -4468,7 +4469,7 @@ public final class Bttl_800e {
             str = playerNames_800fb378.get(targetBobj.charIndex_272).deref();
             element = (int)_800c6ef0.offset(2, targetBobj.charIndex_272 * 0x2L).get();
 
-            if(targetBobj.charIndex_272 == 0 && (gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0xffL) >>> 7 != 0 && (_8006e398.charBobjIndices_e40[menu.combatantIndex.get()].storage_44[7] & 0x2) != 0) {
+            if(targetBobj.charIndex_272 == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0 && (_8006e398.charBobjIndices_e40[menu.combatantIndex.get()].storage_44[7] & 0x2) != 0) {
               element = (int)_800c6ef0.offset(0x12L).get();
             }
           } else {
@@ -4480,7 +4481,7 @@ public final class Bttl_800e {
               str = playerNames_800fb378.get(targetBobj.charIndex_272).deref();
               element = (int)_800c6ef0.offset(2, targetBobj.charIndex_272 * 0x2L).get();
 
-              if(targetBobj.charIndex_272 == 0 && (gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0xffL) >>> 7 != 0 && (_8006e398.charBobjIndices_e40[menu.combatantIndex.get()].storage_44[7] & 0x2) != 0) {
+              if(targetBobj.charIndex_272 == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0 && (_8006e398.charBobjIndices_e40[menu.combatantIndex.get()].storage_44[7] & 0x2) != 0) {
                 element = (int)_800c6ef0.offset(0x12L).get();
               }
             } else {
@@ -4521,7 +4522,7 @@ public final class Bttl_800e {
         //LAB_800f0ed8
         //Character name
         renderTextBoxBackground(44, 23, 232, 14, (short)element);
-        renderText(str, 160 - textWidth(str) / 2, 24, 0, 0);
+        renderText(str, 160 - textWidth(str) / 2, 24, TextColour.WHITE, 0);
       }
     }
 

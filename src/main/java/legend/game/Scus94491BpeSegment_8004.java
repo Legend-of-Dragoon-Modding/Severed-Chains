@@ -3854,8 +3854,8 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004c6f8L)
-  public static void setMono(final int mono) {
-    _800c6630.mono_36.set(mono);
+  public static void setMono(final boolean mono) {
+    _800c6630.mono_36.set(mono ? 1 : 0);
   }
 
   @Method(0x8004c894L)

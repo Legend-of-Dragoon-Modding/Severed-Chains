@@ -18,6 +18,10 @@ import static org.lwjgl.system.MemoryUtil.memSlice;
 public final class IoHelper {
   private IoHelper() { }
 
+  public static boolean getPackedFlag(final int[] array, final int packed) {
+    return (array[packed >>> 5] & 0x1 << (packed & 0x1f)) != 0;
+  }
+
   /**
    * Reads the specified resource and returns the raw data as a ByteBuffer.
    *

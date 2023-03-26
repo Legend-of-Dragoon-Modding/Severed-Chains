@@ -17,7 +17,7 @@ import legend.game.combat.types.BattleStage;
 import legend.game.inventory.WhichMenu;
 import legend.game.scripting.ScriptState;
 import legend.game.types.ActiveStatsa0;
-import legend.game.types.Drgn0_6666File;
+import legend.game.types.UiFile;
 import legend.game.types.EquipmentStats1c;
 import legend.game.types.GameState52c;
 import legend.game.types.GsRVIEW2;
@@ -47,7 +47,7 @@ public final class Scus94491BpeSegment_800b {
 
   public static final IntRef _800babc0 = MEMORY.ref(4, 0x800babc0L, IntRef::new);
 
-  public static final GameState52c gameState_800babc8 = MEMORY.ref(4, 0x800babc8L, GameState52c::new);
+  public static GameState52c gameState_800babc8;
 
   // End of game state 800bb0f4
 
@@ -193,7 +193,7 @@ public final class Scus94491BpeSegment_800b {
    * Seems any other value shows the inventory
    */
   public static WhichMenu whichMenu_800bdc38 = WhichMenu.NONE_0;
-  public static final Pointer<Drgn0_6666File> drgn0_6666FilePtr_800bdc3c = MEMORY.ref(4, 0x800bdc3cL, Pointer.deferred(4, Drgn0_6666File::new));
+  public static UiFile uiFile_800bdc3c;
   /** NOTE: same address as previous var */
   public static final Pointer<McqHeader> gameOverMcq_800bdc3c = MEMORY.ref(4, 0x800bdc3cL, Pointer.deferred(4, McqHeader::new));
 

@@ -25,7 +25,6 @@ public final class Config {
     properties.setProperty("window_height", "240");
     properties.setProperty("controller_guid", "");
     properties.setProperty("controller_deadzone", "0.3");
-    properties.setProperty("inventory_size", "32");
     properties.setProperty("unlock_party", "false");
     properties.setProperty("battle_ui_colour_change", "false");
     properties.setProperty("battle_ui_r", "0");
@@ -50,10 +49,6 @@ public final class Config {
     return readInt("window_height", 240, 1, Integer.MAX_VALUE);
   }
 
-  public static void controllerConfig(final boolean config) {
-    properties.setProperty("controller_config", String.valueOf(config));
-  }
-
   public static String controllerGuid() {
     return properties.getProperty("controller_guid", "");
   }
@@ -64,10 +59,6 @@ public final class Config {
 
   public static float controllerDeadzone() {
     return readFloat("controller_deadzone", 0.3f, 0.0f, 1.0f);
-  }
-
-  public static int inventorySize() {
-    return readInt("inventory_size", 32, 1, 64);
   }
 
   public static boolean unlockParty() {

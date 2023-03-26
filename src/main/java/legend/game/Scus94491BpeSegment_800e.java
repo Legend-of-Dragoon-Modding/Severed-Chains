@@ -9,6 +9,7 @@ import legend.core.gte.GsDOBJ2;
 import legend.core.gte.Tmd;
 import legend.core.memory.Method;
 import legend.game.types.CContainer;
+import legend.game.types.GameState52c;
 import legend.game.types.Model124;
 import legend.game.types.TexPageY;
 import legend.game.types.TmdAnimationFile;
@@ -38,7 +39,6 @@ import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.loadBasicUiTexturesAndSomethingElse;
 import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
 import static legend.game.Scus94491BpeSegment_8002.prepareObjTable2;
-import static legend.game.Scus94491BpeSegment_8002.setCdMix;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003c5e0;
 import static legend.game.Scus94491BpeSegment_8003.GetTPage;
 import static legend.game.Scus94491BpeSegment_8003.GsDefDispBuff;
@@ -69,6 +69,7 @@ import static legend.game.Scus94491BpeSegment_800b.array_800bb198;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.fmvIndex_800bf0dc;
 import static legend.game.Scus94491BpeSegment_800b.fmvStage_800bf0d8;
+import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.model_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
@@ -88,6 +89,8 @@ public final class Scus94491BpeSegment_800e {
 
   @Method(0x800e5d64L) //TODO can rename most of these functions
   public static void gameInit() {
+    gameState_800babc8 = new GameState52c();
+
     ResetGraph(0);
     SetGraphDebug(2);
 
@@ -286,7 +289,6 @@ public final class Scus94491BpeSegment_800e {
   public static void initFmvs() {
     enableAudioSource(0x1L, 0x1L);
     setCdVolume(0x7f, 0x7f);
-    setCdMix(0x3f);
 
     _800bf0cf.setu(0);
     _800bf0d0.setu(0);

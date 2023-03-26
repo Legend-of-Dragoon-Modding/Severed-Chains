@@ -1,25 +1,24 @@
 package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
-import legend.game.SaveManager;
 import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
 import legend.game.types.MessageBoxResult;
 import legend.game.types.Renderable58;
 
+import static legend.core.GameEngine.SAVES;
 import static legend.game.SItem.FUN_801033cc;
 import static legend.game.SItem.FUN_80103444;
 import static legend.game.SItem.FUN_80104b60;
 import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.fadeOutArrow;
 import static legend.game.SItem.getSlotY;
-import static legend.game.SItem.glyphs_80114258;
 import static legend.game.SItem.renderGlyphs;
+import static legend.game.SItem.savedGamesGlyphs_80114258;
 import static legend.game.SItem.saves;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
-import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
@@ -55,14 +54,12 @@ public abstract class SaveListScreen extends MenuScreen {
         this.scroll = 0;
         this.selectedSlot = 0;
 
-        if(mainCallbackIndex_8004dd20.get() == 8) {
-          gameState_800babc8.isOnWorldMap_4e4.set(1);
-        } else {
-          gameState_800babc8.isOnWorldMap_4e4.set(0);
+        if(gameState_800babc8 != null) {
+          gameState_800babc8.isOnWorldMap_4e4 = mainCallbackIndex_8004dd20.get() == 8;
         }
 
         saves.clear();
-        saves.addAll(SaveManager.loadAllDisplayData());
+        saves.addAll(SAVES.loadAllSaves());
 
         this.highlightLeftHalf = allocateUiElement(129, 129, 16, getSlotY(this.selectedSlot));
         this.highlightRightHalf = allocateUiElement(130, 130, 192, getSlotY(this.selectedSlot));
@@ -105,9 +102,13 @@ public abstract class SaveListScreen extends MenuScreen {
   }
 
   @Override
-  protected void mouseMove(final int x, final int y) {
+  protected InputPropagation mouseMove(final int x, final int y) {
+    if(super.mouseMove(x, y) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
     if(this.loadingStage != 1) {
-      return;
+      return InputPropagation.PROPAGATE;
     }
 
     for(int i = 0; i < Math.min(3, this.menuCount() - this.scroll); i++) {
@@ -123,14 +124,22 @@ public abstract class SaveListScreen extends MenuScreen {
           this.highlightLeftHalf.y_44 = getSlotY(this.selectedSlot);
           this.highlightRightHalf.y_44 = getSlotY(this.selectedSlot);
         }
+
+        return InputPropagation.HANDLED;
       }
     }
+
+    return InputPropagation.PROPAGATE;
   }
 
   @Override
-  protected void mouseClick(final int x, final int y, final int button, final int mods) {
+  protected InputPropagation mouseClick(final int x, final int y, final int button, final int mods) {
+    if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
     if(this.loadingStage != 1) {
-      return;
+      return InputPropagation.PROPAGATE;
     }
 
     for(int i = 0; i < Math.min(3, this.menuCount() - this.scroll); i++) {
@@ -142,8 +151,11 @@ public abstract class SaveListScreen extends MenuScreen {
       if(MathHelper.inBox(x, y, slotX, slotY, slotWidth, slotHeight)) {
         this.selectedSlot = i;
         this.onSelect(this.scroll + i);
+        return InputPropagation.HANDLED;
       }
     }
+
+    return InputPropagation.PROPAGATE;
   }
 
   private void menuEscape() {
@@ -182,9 +194,13 @@ public abstract class SaveListScreen extends MenuScreen {
   }
 
   @Override
-  protected void mouseScroll(final double deltaX, final double deltaY) {
+  protected InputPropagation mouseScroll(final double deltaX, final double deltaY) {
+    if(super.mouseScroll(deltaX, deltaY) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
     if(this.loadingStage != 1) {
-      return;
+      return InputPropagation.PROPAGATE;
     }
 
     if(this.scrollAccumulator < 0 && deltaY > 0 || this.scrollAccumulator > 0 && deltaY < 0) {
@@ -192,6 +208,7 @@ public abstract class SaveListScreen extends MenuScreen {
     }
 
     this.scrollAccumulator += deltaY;
+    return InputPropagation.HANDLED;
   }
 
   private void scroll(final int scroll) {
@@ -205,15 +222,13 @@ public abstract class SaveListScreen extends MenuScreen {
 
   private void renderSavedGames(final int fileScroll, final boolean allocate) {
     if(allocate) {
-      renderGlyphs(glyphs_80114258, 0, 0);
+      renderGlyphs(savedGamesGlyphs_80114258, 0, 0);
     }
 
     final int maxSaves = Math.min(3, this.menuCount() - fileScroll);
     for(int i = 0; i < maxSaves; i++) {
       this.renderSaveSlot(i, fileScroll + i, allocate);
     }
-
-    uploadRenderables();
   }
 
   private void renderSaveListArrows(final int scroll) {
@@ -260,23 +275,40 @@ public abstract class SaveListScreen extends MenuScreen {
   protected abstract void onMessageboxResult(final MessageBoxResult result);
 
   @Override
-  public void pressedThisFrame(final InputAction inputAction) {
+  public InputPropagation pressedThisFrame(final InputAction inputAction) {
+    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
     if(inputAction == InputAction.BUTTON_EAST) {
       this.menuEscape();
+      return InputPropagation.HANDLED;
     }
+
     if(inputAction == InputAction.BUTTON_SOUTH) {
       this.menuSelect();
+      return InputPropagation.HANDLED;
     }
+
+    return InputPropagation.PROPAGATE;
   }
 
   @Override
-  public void pressedWithRepeatPulse(final InputAction inputAction) {
+  public InputPropagation pressedWithRepeatPulse(final InputAction inputAction) {
+    if(super.pressedWithRepeatPulse(inputAction) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
     if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
       this.menuNavigateUp();
+      return InputPropagation.HANDLED;
     }
+
     if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
       this.menuNavigateDown();
+      return InputPropagation.HANDLED;
     }
-  }
 
+    return InputPropagation.PROPAGATE;
+  }
 }

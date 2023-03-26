@@ -31,6 +31,7 @@ import legend.core.memory.types.UnsignedShortRef;
 import legend.game.input.Input;
 import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
+import legend.game.inventory.screens.TextColour;
 import legend.game.tim.Tim;
 import legend.game.tmd.Renderer;
 import legend.game.types.CContainer;
@@ -555,11 +556,11 @@ public class WMap {
         free(struct258.imageData_2c);
         free(struct258.imageData_30);
 
-        pregameLoadingStage_800bb10c.set(gameState_800babc8.isOnWorldMap_4e4.get() != 0 ? 9 : 7);
+        pregameLoadingStage_800bb10c.set(gameState_800babc8.isOnWorldMap_4e4 ? 9 : 7);
       } else {
         //LAB_800cc804
         setWidthAndFlags(320);
-        FUN_8001f708(gameState_800babc8.chapterIndex_98.get(), 0);
+        FUN_8001f708(gameState_800babc8.chapterIndex_98, 0);
         pregameLoadingStage_800bb10c.set(12);
       }
 
@@ -670,7 +671,7 @@ public class WMap {
     setWidthAndFlags(320);
     vsyncMode_8007a3b8.set(3);
     unloadSoundFile((int)0x9L);
-    FUN_8001f708(gameState_800babc8.chapterIndex_98.get(), 0);
+    FUN_8001f708(gameState_800babc8.chapterIndex_98, 0);
     pregameLoadingStage_800bb10c.set(1);
   }
 
@@ -689,7 +690,7 @@ public class WMap {
 
     //LAB_800ccc84
     for(int i = 0; i < 8; i++) {
-      gameState_800babc8.scriptFlags1_13c.get(i).set(0);
+      gameState_800babc8.scriptFlags1_13c[i] = 0;
     }
 
     FUN_800ccf04();
@@ -707,11 +708,11 @@ public class WMap {
   public static void FUN_800ccce4() {
     final long v0 = _800c6798.getAddress();
     final GameState52c state = gameState_800babc8;
-    state.areaIndex_4de.set((int)MEMORY.ref(2, v0).offset(0x12L).get());
-    state.pathIndex_4d8.set((int)MEMORY.ref(2, v0).offset(0x14L).get());
-    state.dotIndex_4da.set((int)MEMORY.ref(2, v0).offset(0x16L).get());
-    state.dotOffset_4dc.set((int)MEMORY.ref(1, v0).offset(0x18L).get());
-    state.facing_4dd.set((int)MEMORY.ref(1, v0).offset(0x1cL).get());
+    state.areaIndex_4de = (int)MEMORY.ref(2, v0).offset(0x12L).get();
+    state.pathIndex_4d8 = (int)MEMORY.ref(2, v0).offset(0x14L).get();
+    state.dotIndex_4da = (int)MEMORY.ref(2, v0).offset(0x16L).get();
+    state.dotOffset_4dc = (int)MEMORY.ref(1, v0).offset(0x18L).get();
+    state.facing_4dd = (byte)MEMORY.ref(1, v0).offset(0x1cL).get();
 
     //LAB_800ccd30
     for(int i = 0; i < 8; i++) {
@@ -733,11 +734,11 @@ public class WMap {
 
   @Method(0x800ccda4L)
   public static void FUN_800ccda4() {
-    gameState_800babc8.areaIndex_4de.set(areaIndex_800c67aa.get());
-    gameState_800babc8.pathIndex_4d8.set(pathIndex_800c67ac.get());
-    gameState_800babc8.dotIndex_4da.set(dotIndex_800c67ae.get());
-    gameState_800babc8.dotOffset_4dc.set(dotOffset_800c67b0.get());
-    gameState_800babc8.facing_4dd.set(facing_800c67b4.get());
+    gameState_800babc8.areaIndex_4de = areaIndex_800c67aa.get();
+    gameState_800babc8.pathIndex_4d8 = pathIndex_800c67ac.get();
+    gameState_800babc8.dotIndex_4da = dotIndex_800c67ae.get();
+    gameState_800babc8.dotOffset_4dc = dotOffset_800c67b0.get();
+    gameState_800babc8.facing_4dd = facing_800c67b4.get();
 
     FUN_800cd278();
 
@@ -749,11 +750,11 @@ public class WMap {
 
   @Method(0x800cce1cL)
   public static void transitionToCombat() {
-    gameState_800babc8.areaIndex_4de.set(areaIndex_800c67aa.get());
-    gameState_800babc8.pathIndex_4d8.set(pathIndex_800c67ac.get());
-    gameState_800babc8.dotIndex_4da.set(dotIndex_800c67ae.get());
-    gameState_800babc8.dotOffset_4dc.set(dotOffset_800c67b0.get());
-    gameState_800babc8.facing_4dd.set(facing_800c67b4.get());
+    gameState_800babc8.areaIndex_4de = areaIndex_800c67aa.get();
+    gameState_800babc8.pathIndex_4d8 = pathIndex_800c67ac.get();
+    gameState_800babc8.dotIndex_4da = dotIndex_800c67ae.get();
+    gameState_800babc8.dotOffset_4dc = dotOffset_800c67b0.get();
+    gameState_800babc8.facing_4dd = facing_800c67b4.get();
 
     FUN_800cd030();
     FUN_800cd278();
@@ -2428,7 +2429,7 @@ public class WMap {
         final int sp7c = (int)_800f5a6c.offset(sp20 * 0x2cL).getSigned();
         final int mask = 0x1 << (sp7c & 0x1f);
 
-        if((gameState_800babc8.scriptFlags2_bc.get(sp7c >>> 5).get() & mask) > 0) {
+        if((gameState_800babc8.scriptFlags2_bc[sp7c >>> 5] & mask) > 0) {
           //LAB_800d45cc
           sp24 = sp20;
         }
@@ -2512,7 +2513,7 @@ public class WMap {
           textZ_800bdf00.set(26);
           textboxes_800be358[7].z_0c = 26;
 
-          FUN_800e774c(places_800f0234.get((int)_800f5a94.offset(sp24 * 0x2cL).get()).name_00.deref(), x - width.get() * 3, y - lines.get() * 7, 0, 0);
+          FUN_800e774c(places_800f0234.get((int)_800f5a94.offset(sp24 * 0x2cL).get()).name_00.deref(), x - width.get() * 3, y - lines.get() * 7, TextColour.WHITE, 0);
         }
       }
     }
@@ -3769,7 +3770,7 @@ public class WMap {
       sp5c = 1 << (sp58 & 0x1f);
       sp58 = sp58 >>> 5;
 
-      if((gameState_800babc8.scriptFlags2_bc.get((int)sp58).get() & sp5c) != 0 && _800c6870.get() == 0) {
+      if((gameState_800babc8.scriptFlags2_bc[(int)sp58] & sp5c) != 0 && _800c6870.get() == 0) {
         renderQueenFuryUi(1);
       }
 
@@ -3787,7 +3788,7 @@ public class WMap {
     sp5c = 1 << (sp60 & 0x1fL);
     sp60 = sp60 >>> 5;
 
-    if((gameState_800babc8.scriptFlags2_bc.get((int)sp60).get() & sp5c) == 0) {
+    if((gameState_800babc8.scriptFlags2_bc[(int)sp60] & sp5c) == 0) {
       return;
     }
 
@@ -4000,11 +4001,11 @@ public class WMap {
         final IntRef width = new IntRef();
         final IntRef lines = new IntRef();
         measureText(Move_800f00e8, width, lines);
-        FUN_800e774c(Move_800f00e8, (short)(240 - width.get() * 3), 41, 0, 0);
+        FUN_800e774c(Move_800f00e8, (short)(240 - width.get() * 3), 41, TextColour.WHITE, 0);
         measureText(No_800effa4, width, lines);
-        FUN_800e774c(No_800effa4, (short)(240 - width.get() * 3), 57, 0, 0);
+        FUN_800e774c(No_800effa4, (short)(240 - width.get() * 3), 57, TextColour.WHITE, 0);
         measureText(Yes_800effb0, width, lines);
-        FUN_800e774c(Yes_800effb0, (short)(240 - width.get() * 3), 73, 0, 0);
+        FUN_800e774c(Yes_800effb0, (short)(240 - width.get() * 3), 73, TextColour.WHITE, 0);
         renderCoolonMap(0, 0);
 
         if(Input.pressedThisFrame(InputAction.BUTTON_EAST)) {
@@ -4077,7 +4078,7 @@ public class WMap {
 
         if(struct258.coolonWarpIndex_222 == 8) {
           sp60 = coolonWarpDest_800ef228.get(struct258.coolonWarpIndex_222)._10.get();
-          gameState_800babc8._17c.get((int)(sp60 >>> 5)).or(0x1 << (sp60 & 0x1f));
+          gameState_800babc8._17c[(int)(sp60 >>> 5)] |= 0x1 << (sp60 & 0x1f);
 
           //LAB_800db8f4
           _800c6860.setu(_800f0e34.get((int)coolonWarpDest_800ef228.get(struct258.coolonWarpIndex_222)._10.get())._08.get());
@@ -4344,7 +4345,7 @@ public class WMap {
       //LAB_800dcb48
       textZ_800bdf00.set(18);
       textboxes_800be358[7].z_0c = 18;
-      FUN_800e774c(coolonWarpDest_800ef228.get(struct.coolonWarpIndex_222).placeName_1c.deref(), (short)(x - width * 3), (short)(y - lines * 7), 0, 0);
+      FUN_800e774c(coolonWarpDest_800ef228.get(struct.coolonWarpIndex_222).placeName_1c.deref(), (short)(x - width * 3), (short)(y - lines * 7), TextColour.WHITE, 0);
     }
 
     //LAB_800dcc0c
@@ -4680,7 +4681,7 @@ public class WMap {
         struct258_800c66a8.rotation_a4.setY(_800c66b0.mapRotation_70.getY());
       } else if(struct258_800c66a8._248 == 2) {
         //LAB_800e0a6c
-        gameState_800babc8._17c.get(sp3c >>> 5).or(0x1 << (sp3c & 0x1f));
+        gameState_800babc8._17c[sp3c >>> 5] |= 0x1 << (sp3c & 0x1f);
 
         //LAB_800e0b64
         at = 0x800f_0000L; //TODO
@@ -5203,11 +5204,11 @@ public class WMap {
       }
 
       //LAB_800e3a38
-      gameState_800babc8.areaIndex_4de.set(areaIndex_800c67aa.get());
-      gameState_800babc8.pathIndex_4d8.set(pathIndex_800c67ac.get());
-      gameState_800babc8.dotIndex_4da.set(dotIndex_800c67ae.get());
-      gameState_800babc8.dotOffset_4dc.set(dotOffset_800c67b0.get());
-      gameState_800babc8.facing_4dd.set(facing_800c67b4.get());
+      gameState_800babc8.areaIndex_4de = areaIndex_800c67aa.get();
+      gameState_800babc8.pathIndex_4d8 = pathIndex_800c67ac.get();
+      gameState_800babc8.dotIndex_4da = dotIndex_800c67ae.get();
+      gameState_800babc8.dotOffset_4dc = dotOffset_800c67b0.get();
+      gameState_800babc8.facing_4dd = facing_800c67b4.get();
       pregameLoadingStage_800bb10c.set(8);
     }
 
@@ -5757,11 +5758,11 @@ public class WMap {
           final IntRef width = new IntRef();
           final IntRef height = new IntRef();
           measureText(No_Entry_800f01e4.deref(), width, height);
-          FUN_800e774c(No_Entry_800f01e4.deref(), 240 - width.get() * 3, 164, 0, 0);
+          FUN_800e774c(No_Entry_800f01e4.deref(), 240 - width.get() * 3, 164, TextColour.WHITE, 0);
           measureText(regions_800f01ec.get((int)sp38).deref(), width, height);
-          FUN_800e774c(regions_800f01ec.get((int)sp38).deref(), 240 - width.get() * 3, 182, 0, 0);
+          FUN_800e774c(regions_800f01ec.get((int)sp38).deref(), 240 - width.get() * 3, 182, TextColour.WHITE, 0);
           measureText(regions_800f01ec.get((int)sp3c).deref(), width, height);
-          FUN_800e774c(regions_800f01ec.get((int)sp3c).deref(), 240 - width.get() * 3, 200, 0, 0);
+          FUN_800e774c(regions_800f01ec.get((int)sp3c).deref(), 240 - width.get() * 3, 200, TextColour.WHITE, 0);
 
           if(Input.pressedThisFrame(InputAction.DPAD_UP) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_UP)) {
             _800c86d2.subu(0x1L);
@@ -5793,9 +5794,9 @@ public class WMap {
           final IntRef width = new IntRef();
           final IntRef lines = new IntRef();
           measureText(No_Entry_800f01e4.deref(), width, lines);
-          FUN_800e774c(No_Entry_800f01e4.deref(), 240 - width.get() * 3, 170, 0, 0);
+          FUN_800e774c(No_Entry_800f01e4.deref(), 240 - width.get() * 3, 170, TextColour.WHITE, 0);
           measureText(Enter_800f01e8.deref(), width, lines);
-          FUN_800e774c(Enter_800f01e8.deref(), 240 - width.get() * 3, 190, 0, 0);
+          FUN_800e774c(Enter_800f01e8.deref(), 240 - width.get() * 3, 190, TextColour.WHITE, 0);
 
           // World Map Location Menu (No Entry,Enter)
           if(Input.pressedThisFrame(InputAction.DPAD_UP) || Input.pressedThisFrame(InputAction.DPAD_DOWN) ||
@@ -5816,7 +5817,7 @@ public class WMap {
         final IntRef width = new IntRef();
         final IntRef lines = new IntRef();
         measureText(places_800f0234.get(placeIndex).name_00.deref(), width, lines);
-        FUN_800e774c(places_800f0234.get(placeIndex).name_00.deref(), 240 - width.get() * 3, 140 - lines.get() * 7, 0, 0);
+        FUN_800e774c(places_800f0234.get(placeIndex).name_00.deref(), 240 - width.get() * 3, 140 - lines.get() * 7, TextColour.WHITE, 0);
 
         if((filesLoadedFlags_800c66b8.get() & 0x800L) != 0) {
           final GpuCommandPoly cmd = new GpuCommandPoly(4)
@@ -5828,7 +5829,7 @@ public class WMap {
           final int sp54 = 0x1 << (sp50 & 0x1f);
           sp50 = sp50 >>> 5;
 
-          if((gameState_800babc8._17c.get(sp50).get() & sp54) > 0) {
+          if((gameState_800babc8._17c[sp50] & sp54) > 0) {
             //LAB_800e5e98
             cmd.monochrome((int)_800c86d0.getSigned() / 2);
           } else {
@@ -5874,7 +5875,7 @@ public class WMap {
             for(int i = 0; i < 5; i++) {
               //LAB_800e61b8
               if((services & 1L << i) != 0) {
-                FUN_800e774c(services_800f01cc.get(i).deref(), 205, servicesCount * 16 + 30, 0, 0);
+                FUN_800e774c(services_800f01cc.get(i).deref(), 205, servicesCount * 16 + 30, TextColour.WHITE, 0);
                 servicesCount++;
               }
 
@@ -5883,7 +5884,7 @@ public class WMap {
 
             //LAB_800e6260
             if(servicesCount == 0) {
-              FUN_800e774c(_800f01e0.deref(), 201, 62, 0, 0);
+              FUN_800e774c(_800f01e0.deref(), 201, 62, TextColour.WHITE, 0);
             }
 
             //LAB_800e6290
@@ -6026,7 +6027,7 @@ public class WMap {
         sp58 = _800c67a8.get();
         final int sp54 = 0x1 << (sp58 & 0x1f);
         sp58 = sp58 >>> 5;
-        gameState_800babc8._17c.get((int)sp58).or(sp54);
+        gameState_800babc8._17c[(int)sp58] |= sp54;
 
         //LAB_800e6900
         if(_800c6860.get() != 999L) {
@@ -6234,7 +6235,7 @@ public class WMap {
         textZ_800bdf00.set(i + 119);
         textboxes_800be358[i].z_0c = i + 119;
 
-        FUN_800e774c(places_800f0234.get(place).name_00.deref(), (short)(x - width.get() * 3), (short)(y - lines.get() * 7), 0, 0);
+        FUN_800e774c(places_800f0234.get(place).name_00.deref(), (short)(x - width.get() * 3), (short)(y - lines.get() * 7), TextColour.WHITE, 0);
       }
 
       //LAB_800e7590
@@ -6285,12 +6286,12 @@ public class WMap {
   }
 
   @Method(0x800e774cL)
-  public static void FUN_800e774c(final LodString text, final int x, final int y, final long a3, final long a4) {
+  public static void FUN_800e774c(final LodString text, final int x, final int y, final TextColour colour, final long a4) {
     final IntRef width = new IntRef();
     final IntRef lines = new IntRef();
     measureText(text, width, lines);
-    renderText(text, x - width.get() + 3, y, (short)a3, (short)a4);
-    renderText(text, x - (width.get() - 1) + 3, y + 1, 9, (short)a4);
+    renderText(text, x - width.get() + 3, y, colour, (short)a4);
+    renderText(text, x - (width.get() - 1) + 3, y + 1, TextColour.BLACK, (short)a4);
   }
 
   @Method(0x800e7854L)
@@ -6307,10 +6308,8 @@ public class WMap {
   @Method(0x800e78c0L)
   public static void FUN_800e78c0() {
     //LAB_800e78d4
-    for(int i = 0; i < 8; i++) {
-      //LAB_800e78f0
-      gameState_800babc8._4b8.get(i).set(gameState_800babc8._15c.get(i).get());
-    }
+    //LAB_800e78f0
+    System.arraycopy(gameState_800babc8._15c, 0, gameState_800babc8._4b8, 0, 8);
 
     //LAB_800e7940
     //LAB_800e7944
@@ -6320,12 +6319,12 @@ public class WMap {
       final long sp4c = 0x1L << (sp48 & 0x1fL);
       sp48 = sp48 >>> 5;
 
-      if((gameState_800babc8.scriptFlags2_bc.get((int)sp48).get() & sp4c) != 0) {
+      if((gameState_800babc8.scriptFlags2_bc[(int)sp48] & sp4c) != 0) {
         //LAB_800e7a38
         //LAB_800e7a3c
         for(int sp24 = 0; sp24 < 8; sp24++) {
           //LAB_800e7a58
-          gameState_800babc8._15c.get(sp24).set((int)_800f5a70.offset(i * 0x2cL).offset(sp24 * 0x4L).get());
+          gameState_800babc8._15c[sp24] = (int)_800f5a70.offset(i * 0x2cL).offset(sp24 * 0x4L).get();
         }
       }
 
@@ -6366,7 +6365,7 @@ public class WMap {
     long sp4c = 0x1L << (sp1c & 0x1fL);
     long sp50 = sp1c >>> 5;
 
-    if((gameState_800babc8._15c.get((int)sp50).get() & sp4c) == 0) {
+    if((gameState_800babc8._15c[(int)sp50] & sp4c) == 0) {
       _800c685c.setu(0xdL);
       _800c685e.setu(0x11L);
       sp1c = 5;
@@ -6420,11 +6419,11 @@ public class WMap {
       _800c6868.setu(0x1L);
     } else {
       // Transition from combat to world map (maybe also from smap?)
-      areaIndex_800c67aa.set(gameState_800babc8.areaIndex_4de.get());
-      pathIndex_800c67ac.set(gameState_800babc8.pathIndex_4d8.get());
-      dotIndex_800c67ae.set((short)gameState_800babc8.dotIndex_4da.get());
-      dotOffset_800c67b0.set((short)gameState_800babc8.dotOffset_4dc.get());
-      facing_800c67b4.set(gameState_800babc8.facing_4dd.get());
+      areaIndex_800c67aa.set(gameState_800babc8.areaIndex_4de);
+      pathIndex_800c67ac.set(gameState_800babc8.pathIndex_4d8);
+      dotIndex_800c67ae.set((short)gameState_800babc8.dotIndex_4da);
+      dotOffset_800c67b0.set((short)gameState_800babc8.dotOffset_4dc);
+      facing_800c67b4.set(gameState_800babc8.facing_4dd);
       _800c686c.setu(0);
       _800c6868.setu(0);
 
@@ -6519,7 +6518,7 @@ public class WMap {
         sp4c = 0x1L << (sp50 & 0x1fL);
         sp50 = sp50 >>> 5;
 
-        if((gameState_800babc8.scriptFlags2_bc.get((int)sp50).get() & sp4c) != 0) {
+        if((gameState_800babc8.scriptFlags2_bc[(int)sp50] & sp4c) != 0) {
           _800c686c.setu(0);
           _800c6870.setu(0x1L);
           _800c6868.setu(0x1L);
@@ -6530,7 +6529,7 @@ public class WMap {
         sp4c = 0x1L << (sp50 & 0x1fL);
         sp50 = sp50 >>> 5;
 
-        if((gameState_800babc8.scriptFlags2_bc.get((int)sp50).get() & sp4c) != 0) {
+        if((gameState_800babc8.scriptFlags2_bc[(int)sp50] & sp4c) != 0) {
           _800c6868.setu(0x1L);
           _800c686c.setu(0x1L);
           _800c6870.setu(0);
@@ -6557,7 +6556,7 @@ public class WMap {
       sp50 = _800c67a8.get();
       sp4c = 0x1L << (sp50 & 0x1fL);
       sp50 = sp50 >>> 5;
-      gameState_800babc8._17c.get((int)sp50).or((int)sp4c);
+      gameState_800babc8._17c[(int)sp50] |= (int)sp4c;
     }
 
     //LAB_800e8990
@@ -6712,7 +6711,7 @@ public class WMap {
     final long sp14 = 0x1L << (sp10 & 0x1fL);
     sp10 = sp10 >>> 5;
 
-    if((gameState_800babc8.scriptFlags2_bc.get((int)sp10).get() & sp14) != 0) {
+    if((gameState_800babc8.scriptFlags2_bc[(int)sp10] & sp14) != 0) {
       //LAB_800e8f24
       if(struct258_800c66a8.modelIndex_1e4 == 1) {
         //LAB_800e8f48
@@ -7252,7 +7251,7 @@ public class WMap {
     }
 
     //LAB_800eb144
-    if((gameState_800babc8._15c.get(a0 >>> 5).get() & 0x1 << (a0 & 0x1f)) == 0) {
+    if((gameState_800babc8._15c[a0 >>> 5] & 0x1 << (a0 & 0x1f)) == 0) {
       return 1;
     }
 

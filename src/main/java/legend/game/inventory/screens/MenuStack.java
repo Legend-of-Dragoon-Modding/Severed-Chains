@@ -12,6 +12,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import static legend.core.GameEngine.GPU;
+import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
 
 public class MenuStack {
   private final Deque<MenuScreen> screens = new LinkedList<>();
@@ -51,8 +52,11 @@ public class MenuStack {
     final Iterator<MenuScreen> it = this.screens.iterator();
 
     if(it.hasNext()) {
-      this.propagate(it, MenuScreen::render, MenuScreen::propagateRender, true);
+      this.propagate(it, MenuScreen::renderScreen, MenuScreen::propagateRender, true);
     }
+
+    //TODO temporary until everything is moved over to controls and no longer uses the LOD system
+    uploadRenderables();
   }
 
   private void input(final Consumer<MenuScreen> method) {
@@ -131,7 +135,7 @@ public class MenuStack {
   private void mouseRelease(final Window window, final double x, final double y, final int button, final int mods) {
     final Point2D point = this.mousePressCoords.remove(button);
 
-    if(point != null && point.x == x && point.y == y) {
+    if(point != null && Math.abs(point.x - x) < 4 && Math.abs(point.y - y) < 4) {
       final float aspect = (float)GPU.getDisplayTextureWidth() / GPU.getDisplayTextureHeight();
 
       float w = window.getWidth();
@@ -160,15 +164,11 @@ public class MenuStack {
     this.input(screen -> screen.keyPress(key, scancode, mods));
   }
 
-  private record Point2D(double x, double y) {
-  }
-
   private void pressedThisFrame(final Window window, final InputAction inputAction) {
     this.input(screen -> screen.pressedThisFrame(inputAction));
   }
 
-  private void pressedWithRepeatPulse(final Window window, final InputAction inputAction)
-  {
+  private void pressedWithRepeatPulse(final Window window, final InputAction inputAction) {
     this.input(screen -> screen.pressedWithRepeatPulse(inputAction));
   }
 
@@ -176,4 +176,5 @@ public class MenuStack {
     this.input(screen -> screen.releasedThisFrame(inputAction));
   }
 
+  private record Point2D(double x, double y) { }
 }

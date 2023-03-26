@@ -98,11 +98,6 @@ public final class Scus94491BpeSegment_8003 {
     MEMORY.memfill(address, size, 0);
   }
 
-  @Method(0x80035630L)
-  public static void CdMix(final int cdLeftToSpuLeft, final int cdLeftToSpuRight, final int cdRightToSpuRight, final int cdRightToSpuLeft) {
-    LOGGER.warn("SET CD MIX %d %d %d %d", cdLeftToSpuLeft, cdLeftToSpuRight, cdRightToSpuRight, cdRightToSpuLeft);
-  }
-
   /**
    * Initialize drawing engine.
    *

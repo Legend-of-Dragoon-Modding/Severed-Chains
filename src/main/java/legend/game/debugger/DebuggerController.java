@@ -148,11 +148,11 @@ public class DebuggerController {
         }
       }
 
-      gameState_800babc8.areaIndex_4de.set(areaIndex_800c67aa.get());
-      gameState_800babc8.pathIndex_4d8.set(pathIndex_800c67ac.get());
-      gameState_800babc8.dotIndex_4da.set(dotIndex_800c67ae.get());
-      gameState_800babc8.dotOffset_4dc.set(dotOffset_800c67b0.get());
-      gameState_800babc8.facing_4dd.set(facing_800c67b4.get());
+      gameState_800babc8.areaIndex_4de = areaIndex_800c67aa.get();
+      gameState_800babc8.pathIndex_4d8 = pathIndex_800c67ac.get();
+      gameState_800babc8.dotIndex_4da = dotIndex_800c67ae.get();
+      gameState_800babc8.dotOffset_4dc = dotOffset_800c67b0.get();
+      gameState_800babc8.facing_4dd = facing_800c67b4.get();
       pregameLoadingStage_800bb10c.set(8);
     }
   }

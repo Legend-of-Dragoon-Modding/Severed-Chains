@@ -20,7 +20,6 @@ import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.getUnlockedDragoonSpells;
 import static legend.game.Scus94491BpeSegment_8002.getUnlockedSpellCount;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
-import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
 import static legend.game.Scus94491BpeSegment_8005.spells_80052734;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -94,8 +93,6 @@ public class StatusScreen extends MenuScreen {
     renderCharacterSlot(16, 21, characterIndices_800bdbb8.get(charSlot).get(), a1 == 0xff, false);
     renderCharacterEquipment(characterIndices_800bdbb8.get(charSlot).get(), a1 == 0xff);
     this.renderCharacterSpells(characterIndices_800bdbb8.get(charSlot).get(), a1 == 0xff);
-
-    uploadRenderables();
   }
 
   private void renderCharacterSpells(final int charIndex, final boolean allocate) {
@@ -107,7 +104,7 @@ public class StatusScreen extends MenuScreen {
       allocateUiElement(0x58, 0x58, 194, 101);
     }
 
-    if(hasDragoon(gameState_800babc8.dragoonSpirits_19c.get(0).get(), charIndex)) {
+    if(hasDragoon(gameState_800babc8.goods_19c[0], charIndex)) {
       final byte[] spellIndices = new byte[8];
       getUnlockedDragoonSpells(spellIndices, charIndex);
       final int unlockedSpellCount = getUnlockedSpellCount(charIndex);
@@ -120,7 +117,7 @@ public class StatusScreen extends MenuScreen {
         //LAB_80109370
         final byte spellIndex = spellIndices[i];
         if(spellIndex != -1) {
-          renderText(spells_80052734.get(spellIndex).deref(), 210, 125 + i * 14, 4);
+          renderText(spells_80052734.get(spellIndex).deref(), 210, 125 + i * 14, TextColour.BROWN);
 
           if(allocate) {
             renderThreeDigitNumber(342, 128 + i * 14, (int)_80114290.offset(spellIndex).get());
@@ -148,9 +145,13 @@ public class StatusScreen extends MenuScreen {
   }
 
   @Override
-  protected void mouseScroll(final double deltaX, final double deltaY) {
+  protected InputPropagation mouseScroll(final double deltaX, final double deltaY) {
+    if(super.mouseScroll(deltaX, deltaY) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
     if(this.loadingStage != 2) {
-      return;
+      return InputPropagation.PROPAGATE;
     }
 
     if(this.scrollAccumulator < 0 && deltaY > 0 || this.scrollAccumulator > 0 && deltaY < 0) {
@@ -158,30 +159,47 @@ public class StatusScreen extends MenuScreen {
     }
 
     this.scrollAccumulator += deltaY;
+    return InputPropagation.HANDLED;
   }
 
   @Override
-  public void pressedThisFrame(final InputAction inputAction) {
+  public InputPropagation pressedThisFrame(final InputAction inputAction) {
+    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
     if(this.loadingStage != 2) {
-      return;
+      return InputPropagation.PROPAGATE;
     }
 
     if(inputAction == InputAction.BUTTON_EAST) {
       this.menuEscape();
+      return InputPropagation.HANDLED;
     }
+
+    return InputPropagation.PROPAGATE;
   }
 
   @Override
-  public void pressedWithRepeatPulse(final InputAction inputAction) {
+  public InputPropagation pressedWithRepeatPulse(final InputAction inputAction) {
+    if(super.pressedWithRepeatPulse(inputAction) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
     if(this.loadingStage != 2) {
-      return;
+      return InputPropagation.PROPAGATE;
     }
 
     if(inputAction == InputAction.DPAD_LEFT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_LEFT) {
       this.menuNavigateLeft();
+      return InputPropagation.HANDLED;
     }
+
     if(inputAction == InputAction.DPAD_RIGHT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_RIGHT) {
       this.menuNavigateRight();
+      return InputPropagation.HANDLED;
     }
+
+    return InputPropagation.PROPAGATE;
   }
 }

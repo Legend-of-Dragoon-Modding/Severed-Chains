@@ -42,9 +42,13 @@ public class MessageBoxScreen extends MenuScreen {
   }
 
   @Override
-  protected void mouseMove(final int x, final int y) {
+  protected InputPropagation mouseMove(final int x, final int y) {
+    if(super.mouseMove(x, y) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
     if(this.messageBox.state_0c != 3) {
-      return;
+      return InputPropagation.PROPAGATE;
     }
 
     // Yes/no
@@ -67,12 +71,18 @@ public class MessageBoxScreen extends MenuScreen {
         }
       }
     }
+
+    return InputPropagation.PROPAGATE;
   }
 
   @Override
-  protected void mouseClick(final int x, final int y, final int button, final int mods) {
+  protected InputPropagation mouseClick(final int x, final int y, final int button, final int mods) {
+    if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
     if(this.messageBox.state_0c != 3) {
-      return;
+      return InputPropagation.PROPAGATE;
     }
 
     if(this.messageBox.type_15 == 0) {
@@ -105,6 +115,8 @@ public class MessageBoxScreen extends MenuScreen {
         this.messageBox.state_0c = 4;
       }
     }
+
+    return InputPropagation.PROPAGATE;
   }
 
   private void menuNavigateUp() {
@@ -147,7 +159,7 @@ public class MessageBoxScreen extends MenuScreen {
     this.messageBox.state_0c = 4;
   }
 
-  private boolean SkipInput() {
+  private boolean skipInput() {
     if(this.messageBox.type_15 == 0) {
       playSound(2);
       this.result = MessageBoxResult.YES;
@@ -155,11 +167,7 @@ public class MessageBoxScreen extends MenuScreen {
       return true;
     }
 
-    if(this.messageBox.state_0c != 3 || this.messageBox.type_15 != 2) {
-      return true;
-    }
-
-    return false;
+    return this.messageBox.state_0c != 3 || this.messageBox.type_15 != 2;
   }
 
   @Override
@@ -168,23 +176,35 @@ public class MessageBoxScreen extends MenuScreen {
   }
 
   @Override
-  public void pressedThisFrame(final InputAction inputAction) {
-    if(this.SkipInput()) {
-      return;
+  public InputPropagation pressedThisFrame(final InputAction inputAction) {
+    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
+    if(this.skipInput()) {
+      return InputPropagation.PROPAGATE;
     }
 
     if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
       this.menuNavigateUp();
+      return InputPropagation.HANDLED;
     }
-    if(inputAction == InputAction.DPAD_DOWN|| inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
+
+    if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
       this.menuNavigateDown();
+      return InputPropagation.HANDLED;
     }
+
     if(inputAction == InputAction.BUTTON_SOUTH) {
       this.menuSelect();
+      return InputPropagation.HANDLED;
     }
+
     if(inputAction == InputAction.BUTTON_EAST) {
       this.menuCancel();
+      return InputPropagation.HANDLED;
     }
-  }
 
+    return InputPropagation.PROPAGATE;
+  }
 }
