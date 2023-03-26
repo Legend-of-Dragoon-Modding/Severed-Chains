@@ -521,7 +521,7 @@ public class BattleObject27c extends BattleScriptDataBase {
       case 86 -> this.dragoonDefence_b0 = value;
       case 87 -> this.dragoonMagicDefence_b2 = value;
       case 88 -> {
-        this.powerAttack_b4 = value << 24 >> 24;
+        this.powerAttack_b4 = (byte)value;
         this.powerAttackTurns_b5 = value >>> 8 & 0xff;
       }
       case 89 -> {
