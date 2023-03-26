@@ -148,7 +148,7 @@ public class Gpu implements Runnable {
       for(int y = rectY; y < rectY + rectH; y++) {
         for(int x = rectX; x < rectX + rectW; x++) {
           // Sometimes the rect is larger than the data (see: the DEFF stuff where animations are loaded into VRAM for some reason)
-          if(i >= data.size()) {
+          if(i + 1 >= data.size()) {
             break;
           }
 
