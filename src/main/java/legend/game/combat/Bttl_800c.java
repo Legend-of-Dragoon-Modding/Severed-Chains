@@ -84,6 +84,7 @@ import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -301,10 +302,7 @@ public final class Bttl_800c {
   public static final Value _800c697e = MEMORY.ref(2, 0x800c697eL);
   public static final Value _800c6980 = MEMORY.ref(2, 0x800c6980L);
 
-  public static final CombatItem02[] combatItems_800c6988 = new CombatItem02[gameState_800babc8.getConfig(BaseMod.INVENTORY_SIZE_CONFIG)];
-  static {
-    Arrays.setAll(combatItems_800c6988, i -> new CombatItem02());
-  }
+  public static final List<CombatItem02> combatItems_800c6988 = new ArrayList<>();
   public static final Value _800c69c8 = MEMORY.ref(4, 0x800c69c8L);
 
   public static final ArrayRef<LodString> currentEnemyNames_800c69d0 = MEMORY.ref(2, 0x800c69d0L, ArrayRef.of(LodString.class, 9, 0x2c, LodString::new));
@@ -314,7 +312,6 @@ public final class Bttl_800c {
   public static final Value _800c6b64 = MEMORY.ref(4, 0x800c6b64L);
   public static final Value _800c6b68 = MEMORY.ref(4, 0x800c6b68L);
   public static final Value _800c6b6c = MEMORY.ref(4, 0x800c6b6cL);
-  public static final UnsignedShortRef combatItemsCount_800c6b70 = MEMORY.ref(2, 0x800c6b70L, UnsignedShortRef::new);
 
   public static final Value _800c6b78 = MEMORY.ref(4, 0x800c6b78L);
 

@@ -9,7 +9,6 @@ import legend.core.gte.DVECTOR;
 import legend.core.memory.Method;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.ShortRef;
-import legend.game.BaseMod;
 import legend.game.Scus94491BpeSegment_8002;
 import legend.game.combat.types.BattleDisplayStats144;
 import legend.game.combat.types.BattleDisplayStats144Sub10;
@@ -123,7 +122,6 @@ import static legend.game.combat.Bttl_800c.allText_800fb3c0;
 import static legend.game.combat.Bttl_800c.battleMenu_800c6c34;
 import static legend.game.combat.Bttl_800c.charCount_800c677c;
 import static legend.game.combat.Bttl_800c.characterElements_800c706c;
-import static legend.game.combat.Bttl_800c.combatItemsCount_800c6b70;
 import static legend.game.combat.Bttl_800c.combatItems_800c6988;
 import static legend.game.combat.Bttl_800c.displayStats_800c6c2c;
 import static legend.game.combat.Bttl_800c.dragoonSpells_800c6960;
@@ -1761,7 +1759,7 @@ public final class Bttl_800f {
     if(v1 == 0) {
       //LAB_800f4a9c
       prepareItemList();
-      a2.count_22.set((short)combatItemsCount_800c6b70.get());
+      a2.count_22.set((short)combatItems_800c6988.size());
     } else if(v1 == 0x1L) {
       //LAB_800f4abc
       //LAB_800f4ae0
@@ -2222,7 +2220,7 @@ public final class Bttl_800f {
 
     if(menuType == 0) {
       //LAB_800f56f0
-      return combatItems_800c6988[a1._24.get() + a1._1e.get()].itemId - 0xc0;
+      return combatItems_800c6988.get(a1._24.get() + a1._1e.get()).itemId - 0xc0;
     }
 
     if(menuType == 1) {
@@ -2298,8 +2296,8 @@ public final class Bttl_800f {
       final LodString name;
       if(type == 0) {
         //LAB_800f5918
-        name = _80050ae8.get(combatItems_800c6988[sp7c].itemId - 0xc0).deref();
-        intToStr(combatItems_800c6988[sp7c].count, itemCount);
+        name = _80050ae8.get(combatItems_800c6988.get(sp7c).itemId - 0xc0).deref();
+        intToStr(combatItems_800c6988.get(sp7c).count, itemCount);
 
         //LAB_800f5968
         int i;
@@ -2317,7 +2315,7 @@ public final class Bttl_800f {
         }
 
         //LAB_800f59bc
-        if(combatItems_800c6988[sp7c].count < 10) {
+        if(combatItems_800c6988.get(sp7c).count < 10) {
           sp0x18.charAt(i, 0);
           i++;
         }
@@ -2739,7 +2737,7 @@ public final class Bttl_800f {
             if(v1 == 0x5L) {
               prepareItemList();
 
-              if(combatItemsCount_800c6b70.get() == 0) {
+              if(combatItems_800c6988.isEmpty()) {
                 playSound(0, 3, 0, 0, (short)0, (short)0);
               } else {
                 playSound(0, 2, 0, 0, (short)0, (short)0);
@@ -3394,32 +3392,25 @@ public final class Bttl_800f {
   @Method(0x800f83c8L)
   public static void prepareItemList() {
     //LAB_800f83dc
-    for(int i = 0; i < gameState_800babc8.getConfig(BaseMod.INVENTORY_SIZE_CONFIG); i++) {
-      combatItems_800c6988[i].itemId = 0xff;
-    }
-
-    combatItemsCount_800c6b70.set(0);
+    combatItems_800c6988.clear();
 
     //LAB_800f8420
     for(int itemSlot1 = 0; itemSlot1 < gameState_800babc8.items_2e9.size(); itemSlot1++) {
+      final int itemId1 = gameState_800babc8.items_2e9.getInt(itemSlot1);
+
+      boolean found = false;
+
       //LAB_800f843c
-      for(int itemSlot2 = 0; itemSlot2 < gameState_800babc8.items_2e9.size(); itemSlot2++) {
-        final CombatItem02 combatItem = combatItems_800c6988[itemSlot2];
-
-        final int itemId1 = gameState_800babc8.items_2e9.getInt(itemSlot1);
-
+      for(final CombatItem02 combatItem : combatItems_800c6988) {
         if(combatItem.itemId == itemId1) {
+          found = true;
           combatItem.count++;
           break;
         }
+      }
 
-        //LAB_800f8468
-        if(combatItem.itemId == 0xff) {
-          combatItem.itemId = itemId1;
-          combatItem.count = 1;
-          combatItemsCount_800c6b70.incr();
-          break;
-        }
+      if(!found) {
+        combatItems_800c6988.add(new CombatItem02(itemId1));
       }
     }
   }
