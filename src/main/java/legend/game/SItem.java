@@ -3067,6 +3067,8 @@ public final class SItem {
         if((gameState_800babc8.dragoonSpirits_19c.get((int)v0).get() & 0x1 << a0) != 0) {
           stats.flags_0c.or(0x6000);
 
+          stats.dlevel_0f.set(gameState_800babc8.charData_32c.get(0).dlevel_13.get());
+
           final long a1 = _800fbd08.get(0).get();
 
           if((gameState_800babc8._4e6.get() >> a1 & 1) == 0) {

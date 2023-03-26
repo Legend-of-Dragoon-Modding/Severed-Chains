@@ -1634,7 +1634,7 @@ public final class Scus94491BpeSegment {
     if((gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0xff) >>> 7 != 0) {
       final CharacterData2c charData = gameState_800babc8.charData_32c.get(0);
       charData.dlevelXp_0e.set(0x7fff);
-      charData.dlevel_13.set(0x5);
+      charData.dlevel_13.set(5);
     }
 
     //LAB_800174d0
@@ -1694,9 +1694,9 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_80017614
-    if(gameState_800babc8.dragoonSpirits_19c.get(0).get() < 0) {
-      gameState_800babc8.charData_32c.get(0).dlevel_13.set(5);
+    if((gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0xff) >>> 7 != 0) {
       gameState_800babc8.charData_32c.get(0).dlevelXp_0e.set(0x7fff);
+      gameState_800babc8.charData_32c.get(0).dlevel_13.set(5);
     }
 
     //LAB_80017640
