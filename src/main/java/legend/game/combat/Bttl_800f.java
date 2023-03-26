@@ -658,12 +658,12 @@ public final class Bttl_800f {
 
   @Method(0x800f2500L)
   public static FlowControl FUN_800f2500(final RunningScript<?> script) {
-    final ScriptState<?> v0 = scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
-    final BattleObject27c s2 = (BattleObject27c)v0.innerStruct_00;
+    final ScriptState<?> attackerState = scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
+    final BattleObject27c attacker = (BattleObject27c)attackerState.innerStruct_00;
     int damage = FUN_800f1d88(script.params_20[0].get(), script.params_20[1].get());
-    if((v0.storage_44[7] & 0x4) != 0) {
-      damage = FUN_800f946c(s2, damage, 0);
-      FUN_800f9380(s2, s2);
+    if((attackerState.storage_44[7] & 0x4) != 0) {
+      damage = FUN_800f946c(attacker, damage, 0);
+      FUN_800f9380(attacker, attacker);
     }
 
     //LAB_800f257c
@@ -673,24 +673,22 @@ public final class Bttl_800f {
 
     //LAB_800f2588
     damage = applyResistancesAndImmunities(script.params_20[1].get(), damage, 0);
-    ScriptState<?> a0 = scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
-    final BattleObject27c a1 = (BattleObject27c)a0.innerStruct_00;
 
     final int element;
-    if((a0.storage_44[7] & 0x4) == 0) {
-      element = a1.elementFlag_1c;
+    if((attackerState.storage_44[7] & 0x4) == 0) {
+      element = attacker.elementFlag_1c;
     } else {
       //LAB_800f25f4
-      element = spellStats_800fa0b8.get(a1.spellId_4e).element_08.get();
+      element = spellStats_800fa0b8.get(attacker.spellId_4e).element_08.get();
     }
 
-    a0 = scriptStatePtrArr_800bc1c0[script.params_20[1].get()];
-    final BattleObject27c a3 = (BattleObject27c)a0.innerStruct_00;
+    final ScriptState<?> defenderState = scriptStatePtrArr_800bc1c0[script.params_20[1].get()];
+    final BattleObject27c defender = (BattleObject27c)defenderState.innerStruct_00;
 
     //LAB_800f2614
     final int elementalResistanceFlag;
-    if((a0.storage_44[7] & 0x4) == 0) {
-      elementalResistanceFlag = a3.elementalResistanceFlag_20;
+    if((defenderState.storage_44[7] & 0x4) == 0) {
+      elementalResistanceFlag = defender.elementalResistanceFlag_20;
     } else {
       elementalResistanceFlag = 0;
     }
@@ -701,7 +699,7 @@ public final class Bttl_800f {
     }
 
     //LAB_800f2634
-    if((element & a3.elementalImmunityFlag_22) != 0) {
+    if((element & defender.elementalImmunityFlag_22) != 0) {
       damage = 0;
     }
 
@@ -713,31 +711,31 @@ public final class Bttl_800f {
 
   @Method(0x800f2694L)
   public static FlowControl FUN_800f2694(final RunningScript<?> script) {
-    final ScriptState<BattleObject27c> state = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
-    final BattleObject27c bobj = state.innerStruct_00;
-    bobj.spellId_4e = script.params_20[2].get();
-    clearTempWeaponAndSpellStats(bobj);
-    setTempSpellStats(state);
+    final ScriptState<BattleObject27c> attackerState = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
+    final BattleObject27c attacker = attackerState.innerStruct_00;
+    attacker.spellId_4e = script.params_20[2].get();
+    clearTempWeaponAndSpellStats(attacker);
+    setTempSpellStats(attackerState);
 
-    int damage = Math.max(1, FUN_800f946c(bobj, FUN_800f204c(script.params_20[0].get(), script.params_20[1].get(), 1), 0));
+    int damage = Math.max(1, FUN_800f946c(attacker, FUN_800f204c(script.params_20[0].get(), script.params_20[1].get(), 1), 0));
 
     //LAB_800f272c
-    if((bobj.status_0e & 0x800) != 0) {
-      bobj.status_0e &= 0xf7ff;
+    if((attacker.status_0e & 0x800) != 0) {
+      attacker.status_0e &= 0xf7ff;
     } else {
       //LAB_800f2748
       damage = applyResistancesAndImmunities(script.params_20[1].get(), damage, 1);
-      final ScriptState<?> a3 = scriptStatePtrArr_800bc1c0[script.params_20[1].get()];
-      final BattleObject27c v1 = (BattleObject27c)a3.innerStruct_00;
-      final int element = spellStats_800fa0b8.get(((BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00).spellId_4e).element_08.get();
+      final ScriptState<?> defenderState = scriptStatePtrArr_800bc1c0[script.params_20[1].get()];
+      final BattleObject27c defender = (BattleObject27c)defenderState.innerStruct_00;
+      final int element = spellStats_800fa0b8.get(attacker.spellId_4e).element_08.get();
 
       //LAB_800f27c8
-      if((a3.storage_44[7] & 0x4) == 0 && (v1.elementalResistanceFlag_20 & element) != 0) {
+      if((defenderState.storage_44[7] & 0x4) == 0 && (defender.elementalResistanceFlag_20 & element) != 0) {
         damage = damage >> 1;
       }
 
       //LAB_800f27dc
-      if((v1.elementalImmunityFlag_22 & element) != 0) {
+      if((defender.elementalImmunityFlag_22 & element) != 0) {
         damage = 0;
       }
 
@@ -752,35 +750,35 @@ public final class Bttl_800f {
 
   @Method(0x800f2838L)
   public static FlowControl FUN_800f2838(final RunningScript<?> script) {
-    final ScriptState<BattleObject27c> state = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
-    final BattleObject27c s0 = state.innerStruct_00;
-    clearTempWeaponAndSpellStats(s0);
-    setTempItemMagicStats(state);
-    int a1 = Math.max(1, FUN_800f946c(s0, FUN_800f204c(script.params_20[0].get(), script.params_20[1].get(), 0), 1));
+    final ScriptState<BattleObject27c> attackerState = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
+    final BattleObject27c attacker = attackerState.innerStruct_00;
+    clearTempWeaponAndSpellStats(attacker);
+    setTempItemMagicStats(attackerState);
+    int damage = Math.max(1, FUN_800f946c(attacker, FUN_800f204c(script.params_20[0].get(), script.params_20[1].get(), 0), 1));
 
     //LAB_800f28c8
-    if((s0.status_0e & 0x800) != 0) {
-      s0.status_0e &= 0xf7ff;
+    if((attacker.status_0e & 0x800) != 0) {
+      attacker.status_0e &= 0xf7ff;
     } else {
       //LAB_800f28e4
-      a1 = applyResistancesAndImmunities(script.params_20[1].get(), a1, 1);
-      final long a3 = scriptStatePtrArr_800bc1c0[script.params_20[0].get()]._d4 >>> 16;
+      damage = applyResistancesAndImmunities(script.params_20[1].get(), damage, 1);
+      final long itemElement = attacker.itemElement_d6;
       final ScriptState<?> defenderState = scriptStatePtrArr_800bc1c0[script.params_20[1].get()];
       final BattleObject27c defender = (BattleObject27c)defenderState.innerStruct_00;
 
       //LAB_800f294c
-      if((defenderState.storage_44[7] & 0x4) == 0 && (a3 & defender.elementalResistanceFlag_20) != 0) {
-        a1 = a1 >> 1;
+      if((defenderState.storage_44[7] & 0x4) == 0 && (itemElement & defender.elementalResistanceFlag_20) != 0) {
+        damage = damage >> 1;
       }
 
       //LAB_800f2960
-      if((a3 & defender.elementalImmunityFlag_22) != 0) {
-        a1 = 0;
+      if((itemElement & defender.elementalImmunityFlag_22) != 0) {
+        damage = 0;
       }
     }
 
     //LAB_800f2970
-    script.params_20[3].set(a1);
+    script.params_20[3].set(damage);
     script.params_20[4].set(determineAttackSpecialEffects(script.params_20[0].get(), script.params_20[1].get(), 0x2L));
     FUN_800f8854(script.params_20[0].get(), script.params_20[1].get(), 0x1L);
     return FlowControl.CONTINUE;
