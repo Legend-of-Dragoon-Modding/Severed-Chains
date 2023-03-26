@@ -1,8 +1,8 @@
 package legend.game.inventory.screens;
 
-import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.memory.Memory;
+import legend.game.BaseMod;
 import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.events.EventManager;
@@ -20,7 +20,6 @@ import static legend.core.GameEngine.MEMORY;
 import static legend.game.SItem.Buy_8011c6a4;
 import static legend.game.SItem.Cannot_be_armed_with_8011c6d4;
 import static legend.game.SItem.Carried_8011c6b8;
-import static legend.game.SItem.cacheCharacterSlots;
 import static legend.game.SItem.FUN_80104b60;
 import static legend.game.SItem.FUN_8010a808;
 import static legend.game.SItem.Leave_8011c6c8;
@@ -31,6 +30,7 @@ import static legend.game.SItem.Which_item_do_you_want_to_sell_8011c4e4;
 import static legend.game.SItem.Which_weapon_do_you_want_to_sell_8011c524;
 import static legend.game.SItem.allocateOneFrameGlyph;
 import static legend.game.SItem.allocateUiElement;
+import static legend.game.SItem.cacheCharacterSlots;
 import static legend.game.SItem.canEquip;
 import static legend.game.SItem.characterCount_8011d7c4;
 import static legend.game.SItem.equipItem;
@@ -330,7 +330,7 @@ public class ShopScreen extends MenuScreen {
     if(isItemMenu != 0) {
       renderTwoDigitNumber(105, 36, gameState_800babc8.items_2e9.size(), 0x2);
       allocateOneFrameGlyph(94, 16, 16);
-      renderTwoDigitNumber(123, 36, Config.inventorySize(), 0x2);
+      renderTwoDigitNumber(123, 36, gameState_800babc8.getConfig(BaseMod.INVENTORY_SIZE_CONFIG), 0x2);
     } else {
       renderThreeDigitNumber(93, 36, gameState_800babc8.equipment_1e8.size(), 0x2);
       allocateOneFrameGlyph(95, 16, 16);
@@ -599,7 +599,7 @@ public class ShopScreen extends MenuScreen {
             if(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00 < 0xc0) {
               hasSpace = gameState_800babc8.equipment_1e8.size() < 255;
             } else {
-              hasSpace = gameState_800babc8.items_2e9.size() < Config.inventorySize();
+              hasSpace = gameState_800babc8.items_2e9.size() < gameState_800babc8.getConfig(BaseMod.INVENTORY_SIZE_CONFIG);
             }
 
             if(!hasSpace) {
@@ -839,7 +839,7 @@ public class ShopScreen extends MenuScreen {
       if(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00 < 0xc0) {
         hasSpace = gameState_800babc8.equipment_1e8.size() < 255;
       } else {
-        hasSpace = gameState_800babc8.items_2e9.size() < Config.inventorySize();
+        hasSpace = gameState_800babc8.items_2e9.size() < gameState_800babc8.getConfig(BaseMod.INVENTORY_SIZE_CONFIG);
       }
 
       if(!hasSpace) {

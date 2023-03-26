@@ -1342,7 +1342,7 @@ public final class SItem {
         struct.z_3c = 33;
         struct.x_40 = x + 6 * i;
         struct.y_44 = y;
-        flags |= 0x1L;
+        flags |= 0x1;
       }
     }
   }

@@ -1698,7 +1698,7 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_800234f4
     final int count = gameState_800babc8.items_2e9.size();
 
-    if(count >= Config.inventorySize()) {
+    if(count >= gameState_800babc8.getConfig(BaseMod.INVENTORY_SIZE_CONFIG)) {
       //LAB_8002350c
       return 0xff;
     }

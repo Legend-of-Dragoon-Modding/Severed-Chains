@@ -1,9 +1,14 @@
 package legend.game.saves;
 
+import legend.core.GameEngine;
 import legend.game.inventory.WhichMenu;
+import legend.game.modding.registries.RegistryId;
 import legend.game.types.CharacterData2c;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
 import static legend.game.Scus94491BpeSegment_800b.continentIndex_800bf0b0;
@@ -215,6 +220,28 @@ public final class SaveSerialization {
     state.morphMode_4e2 = data.readUByte(offset);
     offset++;
     state.indicatorsDisabled_4e3 = data.readUByte(offset) != 0;
+    offset++;
+
+    state.clearConfig();
+
+    final int configCount = data.readInt(offset);
+    offset += 4;
+
+    for(int configIndex = 0; configIndex < configCount; configIndex++) {
+      final RegistryId configId = data.readRegistryId(offset);
+      offset += configId.toString().length() + 3;
+
+      //noinspection rawtypes
+      final ConfigEntry configEntry = GameEngine.REGISTRIES.config.getEntry(configId);
+
+      final int configValueLength = data.readInt(offset);
+      offset += 4;
+
+      final byte[] configValueRaw = data.slice(offset, configValueLength).getBytes();
+
+      //noinspection unchecked
+      state.setConfig(configEntry, configEntry.deserializer.apply(configValueRaw));
+    }
 
     return new SavedGame(name, locationType, locationIndex, state);
   }
@@ -398,6 +425,33 @@ public final class SaveSerialization {
     offset++;
     data.writeByte(offset, state.indicatorsDisabled_4e3 ? 1 : 0);
     offset++;
+
+    final Map<RegistryId, byte[]> config = new HashMap<>();
+
+    //noinspection rawtypes
+    for(final ConfigEntry configEntry : GameEngine.REGISTRIES.config) {
+      //noinspection unchecked
+      final Object value = state.getConfig(configEntry);
+
+      if(value != null) {
+        //noinspection unchecked
+        config.put(configEntry.id, (byte[])configEntry.serializer.apply(value));
+      }
+    }
+
+    data.writeInt(offset, config.size());
+    offset += 4;
+
+    for(final var entry : config.entrySet()) {
+      data.writeRegistryId(offset, entry.getKey());
+      offset += entry.getKey().toString().length() + 3;
+
+      data.writeInt(offset, entry.getValue().length);
+      offset += 4;
+
+      data.copyTo(0, entry.getValue(), offset, entry.getValue().length);
+      offset += entry.getValue().length;
+    }
 
     return offset;
   }

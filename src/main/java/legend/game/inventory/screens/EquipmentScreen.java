@@ -151,9 +151,9 @@ public class EquipmentScreen extends MenuScreen {
     renderCharacterEquipment(characterIndices_800bdbb8.get(charSlot).get(), allocate);
 
     if(allocate) {
-      allocateUiElement(0x5a, 0x5a, 194, 96);
-      this._800bdb9c = allocateUiElement(0x3d, 0x44, 358, this.FUN_800fc804(0));
-      this._800bdba0 = allocateUiElement(0x35, 0x3c, 358, this.FUN_800fc804(3));
+      allocateUiElement(90, 0x5a, 194, 96);
+      this._800bdb9c = allocateUiElement(61, 0x44, 358, this.FUN_800fc804(0));
+      this._800bdba0 = allocateUiElement(53, 0x3c, 358, this.FUN_800fc804(3));
     }
 
     renderMenuItems(194, 92, this.menuItems, slotScroll, 4, this._800bdb9c, this._800bdba0);

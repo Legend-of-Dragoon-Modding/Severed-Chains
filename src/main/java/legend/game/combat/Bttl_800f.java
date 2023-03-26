@@ -9,6 +9,7 @@ import legend.core.gte.DVECTOR;
 import legend.core.memory.Method;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.ShortRef;
+import legend.game.BaseMod;
 import legend.game.Scus94491BpeSegment_8002;
 import legend.game.combat.types.BattleDisplayStats144;
 import legend.game.combat.types.BattleDisplayStats144Sub10;
@@ -3393,7 +3394,7 @@ public final class Bttl_800f {
   @Method(0x800f83c8L)
   public static void prepareItemList() {
     //LAB_800f83dc
-    for(int i = 0; i < Config.inventorySize(); i++) {
+    for(int i = 0; i < gameState_800babc8.getConfig(BaseMod.INVENTORY_SIZE_CONFIG); i++) {
       combatItems_800c6988[i].itemId = 0xff;
     }
 

@@ -1,11 +1,13 @@
 package legend.game.inventory.screens;
 
+import legend.core.GameEngine;
 import legend.core.MathHelper;
 import legend.game.input.InputAction;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.Dropdown;
 import legend.game.inventory.screens.controls.Highlight;
 import legend.game.inventory.screens.controls.Label;
+import legend.game.saves.ConfigEntry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,21 +49,34 @@ public class OptionsScreen extends MenuScreen {
     indicators.setSelectedIndex(gameState_800babc8.indicatorMode_4e8);
     indicators.onSelection(index -> gameState_800babc8.indicatorMode_4e8 = index);
 
+    //noinspection rawtypes
+    for(final ConfigEntry configEntry : GameEngine.REGISTRIES.config) {
+      if(configEntry.hasEditControl()) {
+        //noinspection unchecked
+        this.addConfig(configEntry.id.toString(), configEntry.makeEditControl(gameState_800babc8.getConfig(configEntry), gameState_800babc8));
+      }
+    }
+
     this.setFocus(this.options.get(0));
   }
 
   private Dropdown addDropdown(final String name, final String... options) {
-    this.addControl(new Label(name)).setPos(32, 32 + this.options.size() * 20);
-
-    final Dropdown dropdown = this.addControl(new Dropdown());
-    dropdown.setPos(240, 32 + this.options.size() * 20);
+    final Dropdown dropdown = new Dropdown();
 
     for(final String option : options) {
       dropdown.addOption(option);
     }
 
-    this.options.add(dropdown);
-    return dropdown;
+    return this.addConfig(name, dropdown);
+  }
+
+  private <T extends Control> T addConfig(final String name, final T control) {
+    this.addControl(new Label(name)).setPos(32, 32 + this.options.size() * 20);
+
+    control.setPos(240, 32 + this.options.size() * 20);
+    control.setSize(100, 16);
+    this.options.add(control);
+    return this.addControl(control);
   }
 
   private void highlightOption(final int option) {

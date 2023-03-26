@@ -30,6 +30,7 @@ import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
+import legend.game.BaseMod;
 import legend.game.SItem;
 import legend.game.Scus94491BpeSegment;
 import legend.game.Scus94491BpeSegment_8005;
@@ -303,7 +304,7 @@ public final class Bttl_800c {
   public static final Value _800c697e = MEMORY.ref(2, 0x800c697eL);
   public static final Value _800c6980 = MEMORY.ref(2, 0x800c6980L);
 
-  public static final CombatItem02[] combatItems_800c6988 = new CombatItem02[Config.inventorySize()];
+  public static final CombatItem02[] combatItems_800c6988 = new CombatItem02[gameState_800babc8.getConfig(BaseMod.INVENTORY_SIZE_CONFIG)];
   static {
     Arrays.setAll(combatItems_800c6988, i -> new CombatItem02());
   }

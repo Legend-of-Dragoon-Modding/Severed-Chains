@@ -1,7 +1,7 @@
 package legend.game.inventory.screens;
 
-import legend.core.Config;
 import legend.core.MathHelper;
+import legend.game.BaseMod;
 import legend.game.DabasManager;
 import legend.game.input.InputAction;
 import legend.game.types.DabasData100;
@@ -253,7 +253,7 @@ public class DabasScreen extends MenuScreen {
       equipmentCount++;
     }
 
-    if(equipmentCount != 0 && gameState_800babc8.equipment_1e8.size() + equipmentCount >= 0x100 || itemCount != 0 && gameState_800babc8.items_2e9.size() + itemCount > Config.inventorySize()) {
+    if(equipmentCount != 0 && gameState_800babc8.equipment_1e8.size() + equipmentCount >= 0x100 || itemCount != 0 && gameState_800babc8.items_2e9.size() + itemCount > gameState_800babc8.getConfig(BaseMod.INVENTORY_SIZE_CONFIG)) {
       menuStack.pushScreen(new MessageBoxScreen(new LodString("Dabas has more items\nthan you can hold"), 0, result -> {}));
       return;
     }
