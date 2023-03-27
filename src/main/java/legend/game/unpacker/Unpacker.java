@@ -1,5 +1,7 @@
 package legend.game.unpacker;
 
+import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
+import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.core.Tuple;
@@ -112,7 +114,7 @@ public final class Unpacker {
 
       if(Files.exists(mrg)) {
         try(final BufferedReader reader = Files.newBufferedReader(mrg)) {
-          final Map<String, String> fileMap = new LinkedHashMap<>();
+          final Int2IntMap fileMap = new Int2IntArrayMap();
 
           reader.lines().forEach(line -> {
             final String[] parts = line.split("=");
@@ -121,31 +123,51 @@ public final class Unpacker {
               throw new RuntimeException("Invalid MRG entry! " + line);
             }
 
-            final String virtual = parts[0];
-            final String real = parts[1];
+            final int virtual = Integer.parseInt(parts[0]);
+            final int real = Integer.parseInt(parts[1]);
             fileMap.put(virtual, real);
           });
 
           final List<FileData> files = new ArrayList<>();
-          fileMap.forEach((virtual, real) -> {
-            // Resolve to the realest file
-            while(!fileMap.get(real).equals(real)) {
-              real = fileMap.get(real);
-            }
+
+          // Add real files
+          for(final var entry : fileMap.int2IntEntrySet()) {
+            final int virtual = entry.getIntKey();
+            final int real = entry.getIntValue();
 
             try {
-              final Path file = dir.resolve(real);
+              final Path file = dir.resolve(String.valueOf(real));
               if(Files.isRegularFile(file)) {
-                if(virtual.equals(real)) {
+                if(virtual == real) {
                   files.add(new FileData(Files.readAllBytes(file)));
                 } else {
-                  files.add(FileData.virtual(Files.readAllBytes(file)));
+                  files.add(null);
                 }
               }
             } catch(final IOException e) {
               throw new RuntimeException("Failed to load directory " + name, e);
             }
-          });
+          }
+
+          // Add virtual files
+          for(final var entry : fileMap.int2IntEntrySet()) {
+            final int virtual = entry.getIntKey();
+            int real = entry.getIntValue();
+
+            if(virtual == real) {
+              continue;
+            }
+
+            // Resolve to the realest file
+            while(fileMap.get(real) != real) {
+              real = fileMap.get(real);
+            }
+
+            final Path file = dir.resolve(String.valueOf(real));
+            if(Files.isRegularFile(file)) {
+              files.set(virtual, FileData.virtual(files.get(real), real));
+            }
+          }
 
           return files;
         } catch(final IOException e) {
@@ -664,7 +686,7 @@ public final class Unpacker {
   }
 
   private static void writeFile(final String name, final FileData data) {
-    if(data.virtual()) {
+    if(!data.real()) {
       return;
     }
 

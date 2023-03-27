@@ -9,27 +9,27 @@ import legend.game.modding.registries.RegistryId;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-public record FileData(byte[] data, int offset, int size, boolean virtual) {
-  public static FileData virtual(final byte[] data) {
-    return new FileData(data, 0, data.length, true);
+public record FileData(byte[] data, int offset, int size, int realFileIndex) {
+  public static FileData virtual(final FileData real, final int realFileIndex) {
+    return new FileData(real.data, real.offset, real.data.length, realFileIndex);
   }
 
   public FileData(final byte[] data) {
-    this(data, 0, data.length, false);
+    this(data, 0, data.length, -1);
   }
 
   public FileData(final byte[] data, final int offset, final int size) {
-    this(data, offset, size, false);
+    this(data, offset, size, -1);
   }
 
   /** Not a virtual file and larger than zero bytes */
   public boolean real() {
-    return !this.virtual && this.size != 0;
+    return this.realFileIndex == -1 && this.size != 0;
   }
 
   public FileData slice(final int offset, final int size) {
     this.checkBounds(offset, size);
-    return new FileData(this.data, this.offset + offset, size, false);
+    return new FileData(this.data, this.offset + offset, size, -1);
   }
 
   public FileData slice(final int offset) {

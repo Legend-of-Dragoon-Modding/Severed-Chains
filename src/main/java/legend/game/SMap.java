@@ -2706,7 +2706,8 @@ public final class SMap {
 
           for(int objIndex = 0; objIndex < objCount; objIndex++) {
             final byte[] scriptData = submapScriptsMrg_800c68d8.get(objIndex + 1).getBytes();
-            final byte[] tmdData = submapAssetsMrg_800c6878.get(objIndex * 33).getBytes();
+
+            final FileData submapModel = submapAssetsMrg_800c6878.get(objIndex * 33);
 
             final IntRef drgnIndex = new IntRef();
             final IntRef fileIndex = new IntRef();
@@ -2714,7 +2715,12 @@ public final class SMap {
 
             final SubmapObject obj = new SubmapObject();
             obj.script = new ScriptFile("Submap object %d (DRGN%d/%d/%d)".formatted(objIndex, drgnIndex.get(), fileIndex.get() + 2, objIndex + 1), scriptData);
-            obj.model = new CContainer("Submap object %d (DRGN%d/%d/%d)".formatted(objIndex, drgnIndex.get(), fileIndex.get() + 1, objIndex * 33), new FileData(tmdData));
+
+            if(submapModel.real()) {
+              obj.model = new CContainer("Submap object %d (DRGN%d/%d/%d)".formatted(objIndex, drgnIndex.get(), fileIndex.get() + 1, objIndex * 33), new FileData(submapModel.getBytes()));
+            } else {
+              obj.model = null;
+            }
 
             for(int animIndex = objIndex * 33 + 1; animIndex < (objIndex + 1) * 33; animIndex++) {
               final FileData data = submapAssetsMrg_800c6878.get(animIndex);
@@ -2731,6 +2737,17 @@ public final class SMap {
             }
 
             submapAssets.objects.add(obj);
+          }
+
+          // Get models that are symlinked
+          for(int objIndex = 0; objIndex < objCount; objIndex++) {
+            final SubmapObject obj = submapAssets.objects.get(objIndex);
+
+            if(obj.model == null) {
+              final FileData submapModel = submapAssetsMrg_800c6878.get(objIndex * 33);
+
+              obj.model = submapAssets.objects.get(submapModel.realFileIndex() / 33).model;
+            }
           }
 
           for(int i = 0; i < 3; i++) {
