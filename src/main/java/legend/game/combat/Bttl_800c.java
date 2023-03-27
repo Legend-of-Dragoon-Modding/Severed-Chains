@@ -2,7 +2,6 @@ package legend.game.combat;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
-import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandQuad;
@@ -30,7 +29,6 @@ import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
-import legend.game.BaseMod;
 import legend.game.SItem;
 import legend.game.Scus94491BpeSegment;
 import legend.game.Scus94491BpeSegment_8005;
@@ -154,11 +152,9 @@ import static legend.game.Scus94491BpeSegment_800b._800bb168;
 import static legend.game.Scus94491BpeSegment_800b._800bc910;
 import static legend.game.Scus94491BpeSegment_800b._800bc914;
 import static legend.game.Scus94491BpeSegment_800b._800bc918;
-import static legend.game.Scus94491BpeSegment_800b.postCombatMainCallbackIndex_800bc91c;
 import static legend.game.Scus94491BpeSegment_800b._800bc94c;
 import static legend.game.Scus94491BpeSegment_800b._800bc960;
 import static legend.game.Scus94491BpeSegment_800b._800bc968;
-import static legend.game.Scus94491BpeSegment_800b.postCombatAction_800bc974;
 import static legend.game.Scus94491BpeSegment_800b._800bc97c;
 import static legend.game.Scus94491BpeSegment_800b.afterFmvLoadingStage_800bf0ec;
 import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
@@ -168,6 +164,8 @@ import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.goldGainedFromCombat_800bc920;
 import static legend.game.Scus94491BpeSegment_800b.itemsDroppedByEnemiesCount_800bc978;
 import static legend.game.Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928;
+import static legend.game.Scus94491BpeSegment_800b.postCombatAction_800bc974;
+import static legend.game.Scus94491BpeSegment_800b.postCombatMainCallbackIndex_800bc91c;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.spGained_800bc950;
@@ -177,12 +175,12 @@ import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.combat.Bttl_800d.FUN_800dabec;
 import static legend.game.combat.Bttl_800d.FUN_800dd0d4;
 import static legend.game.combat.Bttl_800d.FUN_800dd118;
-import static legend.game.combat.Bttl_800e.allocateDeffManager;
 import static legend.game.combat.Bttl_800e.FUN_800e9120;
 import static legend.game.combat.Bttl_800e.FUN_800ec51c;
 import static legend.game.combat.Bttl_800e.FUN_800ec744;
 import static legend.game.combat.Bttl_800e.FUN_800ee610;
 import static legend.game.combat.Bttl_800e.FUN_800ef9e4;
+import static legend.game.combat.Bttl_800e.allocateDeffManager;
 import static legend.game.combat.Bttl_800e.allocateEffectManager;
 import static legend.game.combat.Bttl_800e.allocateStageDarkeningStorage;
 import static legend.game.combat.Bttl_800e.backupStageClut;
@@ -1764,13 +1762,18 @@ public final class Bttl_800c {
       } else {
         //LAB_800c97a4
         final int isDragoon = combatant.charIndex_1a2 & 0x1;
-        final int charIndex = gameState_800babc8.charIds_88[combatant.charSlot_19c];
+        final int charId = gameState_800babc8.charIds_88[combatant.charSlot_19c];
         if(isDragoon == 0) {
           // Additions
-          fileIndex = 4031 + gameState_800babc8.charData_32c[charIndex].selectedAddition_19 + charIndex * 8 - additionOffsets_8004f5ac.get(charIndex).get();
-        } else if(charIndex != 0 || (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 == 0) {
+          if(charId != 2 && charId != 8) {
+            fileIndex = 4031 + gameState_800babc8.charData_32c[charId].selectedAddition_19 + charId * 8 - additionOffsets_8004f5ac.get(charId).get();
+          } else {
+            // Retail fix: Shana/??? have selectedAddition 255 which loads a random file... just load Dart's first addition here, it isn't used (see GH#357)
+            fileIndex = 4031 + charId * 8;
+          }
+        } else if(charId != 0 || (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 == 0) {
           // Dragoon addition
-          fileIndex = 4103 + charIndex;
+          fileIndex = 4103 + charId;
         } else { // Divine dragoon
           // Divine dragoon addition
           fileIndex = 4112;
