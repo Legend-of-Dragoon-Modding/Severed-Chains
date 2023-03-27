@@ -177,7 +177,7 @@ public final class SaveSerialization {
         offset++;
       }
 
-      charData.selectedAddition_19 = data.readUShort(offset);
+      charData.selectedAddition_19 = data.readShort(offset);
       offset += 2;
 
       final int additionCount = data.readShort(offset); // Not yet used
@@ -546,7 +546,7 @@ public final class SaveSerialization {
         charData.equipment_14[i] = charSlice.readUByte(0x14 + i);
       }
 
-      charData.selectedAddition_19 = charSlice.readUByte(0x19);
+      charData.selectedAddition_19 = charSlice.readByte(0x19);
 
       for(int i = 0; i < 8; i++) {
         charData.additionLevels_1a[i] = charSlice.readUByte(0x1a + i);
