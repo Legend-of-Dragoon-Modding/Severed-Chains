@@ -9,11 +9,19 @@ public class MrgArchive implements Iterable<MrgArchive.Entry> {
     this.entries = new Entry[data.readInt(0x4)];
 
     // Load non-virtual files
+    outer:
     for(int i = 0; i < this.entries.length; i++) {
       final int size = data.readInt(0x8 + i * 0x8 + 0x4);
 
       if(size != 0) {
         final int offset = data.readInt(0x8 + i * 0x8);
+
+        for(int duplicateIndex = 0; duplicateIndex < i; duplicateIndex++) {
+          if(this.entries[duplicateIndex] != null && this.entries[duplicateIndex].offset == offset) {
+            this.entries[i] = new Entry(offset, size, duplicateIndex);
+            continue outer;
+          }
+        }
 
         final Entry fileData;
         if(sectorAligned) {
