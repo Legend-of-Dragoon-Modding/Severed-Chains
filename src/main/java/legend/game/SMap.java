@@ -5603,7 +5603,7 @@ public final class SMap {
 
         //LAB_800e8a38
         for(int t0 = 0; t0 < struct2.count_00.get(); t0++) {
-          vec.add(struct.verts_04[IoHelper.readUShort(packet, remainder + 2 + i * 2)]);
+          vec.add(struct.verts_04[IoHelper.readUShort(packet, remainder + 2 + t0 * 2)]);
         }
 
         //LAB_800e8a9c
