@@ -9,6 +9,7 @@ import legend.core.gte.GsDOBJ2;
 import legend.core.gte.Tmd;
 import legend.core.memory.Method;
 import legend.game.types.CContainer;
+import legend.game.types.GameState52c;
 import legend.game.types.Model124;
 import legend.game.types.TexPageY;
 import legend.game.types.TmdAnimationFile;
@@ -38,7 +39,6 @@ import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.loadBasicUiTexturesAndSomethingElse;
 import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
 import static legend.game.Scus94491BpeSegment_8002.prepareObjTable2;
-import static legend.game.Scus94491BpeSegment_8002.setCdMix;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003c5e0;
 import static legend.game.Scus94491BpeSegment_8003.GetTPage;
 import static legend.game.Scus94491BpeSegment_8003.GsDefDispBuff;
@@ -69,6 +69,7 @@ import static legend.game.Scus94491BpeSegment_800b.array_800bb198;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.fmvIndex_800bf0dc;
 import static legend.game.Scus94491BpeSegment_800b.fmvStage_800bf0d8;
+import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.model_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
@@ -88,6 +89,8 @@ public final class Scus94491BpeSegment_800e {
 
   @Method(0x800e5d64L) //TODO can rename most of these functions
   public static void gameInit() {
+    gameState_800babc8 = new GameState52c();
+
     ResetGraph(0);
     SetGraphDebug(2);
 
@@ -208,7 +211,7 @@ public final class Scus94491BpeSegment_800e {
 
     model_800bda10.coord2Param_64.rotate.set((short)0, (short)0, (short)0);
     model_800bda10.colourMap_9d = 0;
-    model_800bda10.b_cc = 0;
+    model_800bda10.movementType_cc = 0;
   }
 
   /** Very similar to {@link Scus94491BpeSegment_8002#FUN_80020718(Model124, CContainer, TmdAnimationFile)} */
@@ -220,7 +223,7 @@ public final class Scus94491BpeSegment_800e {
 
     //LAB_800e6b7c
     for(int i = 0; i < 7; i++) {
-      model.aub_ec[i] = 0;
+      model.animateTextures_ec[i] = false;
     }
 
     model.dobj2ArrPtr_00 = new GsDOBJ2[tmdAnimFile.modelPartCount_0c];
@@ -264,12 +267,12 @@ public final class Scus94491BpeSegment_800e {
     model.zOffset_a0 = 0;
     model.ub_a2 = 0;
     model.ub_a3 = 0;
-    model.ui_f4 = 0;
+    model.partInvisible_f4 = 0;
 
     loadModelStandardAnimation(model, tmdAnimFile);
 
     model.coord2_14.coord.transfer.set(x, y, z);
-    model.b_cc = 0;
+    model.movementType_cc = 0;
     model.scaleVector_fc.set(0x1000, 0x1000, 0x1000);
     model.vector_10c.set(0x1000, 0x1000, 0x1000);
     model.vector_118.set(0, 0, 0);
@@ -286,7 +289,6 @@ public final class Scus94491BpeSegment_800e {
   public static void initFmvs() {
     enableAudioSource(0x1L, 0x1L);
     setCdVolume(0x7f, 0x7f);
-    setCdMix(0x3f);
 
     _800bf0cf.setu(0);
     _800bf0d0.setu(0);

@@ -55,6 +55,7 @@ import legend.game.combat.types.MonsterStats1c;
 import legend.game.combat.types.Ptr;
 import legend.game.combat.types.SpriteMetrics08;
 import legend.game.combat.types.StageAmbiance4c;
+import legend.game.inventory.screens.TextColour;
 import legend.game.modding.events.EventManager;
 import legend.game.modding.events.combat.EnemyStatsEvent;
 import legend.game.modding.events.inventory.RepeatItemReturnEvent;
@@ -2110,19 +2111,19 @@ public final class Bttl_800e {
     //LAB_800e97ec
     final int a0 = script.params_20[1].get();
     if(a0 == -1) {
-      model.b_cc = 2;
+      model.movementType_cc = 2;
       model.b_cd = -1;
     } else if(a0 == -2) {
       //LAB_800e982c
-      model.b_cc = 3;
+      model.movementType_cc = 3;
       //LAB_800e980c
     } else if(a0 == -3) {
       //LAB_800e983c
-      model.b_cc = 0;
+      model.movementType_cc = 0;
     } else {
       //LAB_800e9844
       //LAB_800e9848
-      model.b_cc = 3;
+      model.movementType_cc = 3;
       model.b_cd = a0;
     }
 
@@ -2230,15 +2231,15 @@ public final class Bttl_800e {
 
     //LAB_800e9c0c
     for(int i = 0; i < 7; i++) {
-      model.aub_ec[i] = 0;
+      model.animateTextures_ec[i] = false;
     }
 
-    model.ui_f4 = a1._5e4;
+    model.partInvisible_f4 = a1._5e4;
     model.scaleVector_fc.set(0x1000, 0x1000, 0x1000);
     model.tpage_108 = 0;
     model.vector_10c.set(0x1000, 0x1000, 0x1000);
     model.vector_118.set(0, 0, 0);
-    model.b_cc = 0;
+    model.movementType_cc = 0;
     model.b_cd = 0;
 
     final int count = model.count_c8;
@@ -2358,7 +2359,7 @@ public final class Bttl_800e {
     final int index = a1 >>> 5;
     final int shift = a1 & 0x1f;
 
-    model.ui_f4 |= 0x1L << shift + index * 32;
+    model.partInvisible_f4 |= 0x1L << shift + index * 32;
     return FlowControl.CONTINUE;
   }
 
@@ -2371,7 +2372,7 @@ public final class Bttl_800e {
     final int index = v1 >>> 5;
     final int shift = v1 & 0x1f;
 
-    model.ui_f4 &= ~(0x1L << shift + index * 32);
+    model.partInvisible_f4 &= ~(0x1L << shift + index * 32);
     return FlowControl.CONTINUE;
   }
 
@@ -3127,10 +3128,15 @@ public final class Bttl_800e {
 
     GsInitCoordinate2(model.coord2_14, s2.coord2_14);
 
-    if(model.b_cc != 3) {
+    if(model.movementType_cc == 3) {
+      //LAB_800ec2ec
+      s2.coord2_14.coord.transfer.setX(model.vector_118.getX() + model.coord2ArrPtr_04[model.b_cd].coord.transfer.getX());
+      s2.coord2_14.coord.transfer.setY(model.vector_118.getY() - MathHelper.safeDiv(model.coord2_14.coord.transfer.getY() << 12, model.scaleVector_fc.getY()));
+      s2.coord2_14.coord.transfer.setZ(model.vector_118.getZ() + model.coord2ArrPtr_04[model.b_cd].coord.transfer.getZ());
+    } else {
       s2.coord2_14.coord.transfer.setX(model.vector_118.getX());
 
-      if(model.b_cc == 1) {
+      if(model.movementType_cc == 1) {
         s2.coord2_14.coord.transfer.setY(model.vector_118.getY());
       } else {
         //LAB_800ec2bc
@@ -3139,11 +3145,6 @@ public final class Bttl_800e {
 
       //LAB_800ec2e0
       s2.coord2_14.coord.transfer.setZ(model.vector_118.getZ());
-    } else {
-      //LAB_800ec2ec
-      s2.coord2_14.coord.transfer.setX(model.vector_118.getX() + model.coord2ArrPtr_04[model.b_cd].coord.transfer.getX());
-      s2.coord2_14.coord.transfer.setY(model.vector_118.getY() - MathHelper.safeDiv(model.coord2_14.coord.transfer.getY() << 12, model.scaleVector_fc.getY()));
-      s2.coord2_14.coord.transfer.setZ(model.vector_118.getZ() + model.coord2ArrPtr_04[model.b_cd].coord.transfer.getZ());
     }
 
     //LAB_800ec370
@@ -3331,7 +3332,7 @@ public final class Bttl_800e {
 
     //LAB_800ec9d0
     for(int i = 0; i < model.ObjTable_0c.nobj; i++) {
-      if((model.ui_f4 & 1L << i) == 0) {
+      if((model.partInvisible_f4 & 1L << i) == 0) {
         final GsDOBJ2 s2 = model.ObjTable_0c.top[i];
         final MATRIX sp0x30 = new MATRIX();
         final MATRIX sp0x10 = new MATRIX();
@@ -3350,7 +3351,7 @@ public final class Bttl_800e {
     }
 
     //LAB_800eca58
-    if(model.b_cc != 0) {
+    if(model.movementType_cc != 0) {
       FUN_800ec258(model);
     }
 
@@ -3527,7 +3528,7 @@ public final class Bttl_800e {
   @Method(0x800ee384L)
   public static FlowControl FUN_800ee384(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    bobj.model_148.b_cc = 2;
+    bobj.model_148.movementType_cc = 2;
     bobj.model_148.b_cd = -1;
     return FlowControl.CONTINUE;
   }
@@ -3535,7 +3536,7 @@ public final class Bttl_800e {
   @Method(0x800ee3c0L)
   public static FlowControl FUN_800ee3c0(final RunningScript<?> script) {
     final BattleObject27c v1 = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    v1.model_148.b_cc = 3;
+    v1.model_148.movementType_cc = 3;
     v1.model_148.b_cd = script.params_20[1].get();
     return FlowControl.CONTINUE;
   }
@@ -3546,12 +3547,12 @@ public final class Bttl_800e {
     final int a0_0 = bobj.model_148.b_cd;
     if(a0_0 == -2) {
       //LAB_800ee450
-      bobj.model_148.b_cc = 0;
+      bobj.model_148.movementType_cc = 0;
     } else if(a0_0 == -1) {
-      bobj.model_148.b_cc = 2;
+      bobj.model_148.movementType_cc = 2;
     } else {
       //LAB_800ee458
-      bobj.model_148.b_cc = 3;
+      bobj.model_148.movementType_cc = 3;
     }
 
     //LAB_800ee460
@@ -3561,7 +3562,7 @@ public final class Bttl_800e {
   @Method(0x800ee468L)
   public static FlowControl FUN_800ee468(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    bobj.model_148.b_cc = 0;
+    bobj.model_148.movementType_cc = 0;
     return FlowControl.CONTINUE;
   }
 
@@ -3661,8 +3662,8 @@ public final class Bttl_800e {
 
     //LAB_800ee80c
     //LAB_800ee824
-    for(int itemSlot = 0; itemSlot < gameState_800babc8.itemCount_1e6.get(); itemSlot++) {
-      final int itemId = gameState_800babc8.items_2e9.get(itemSlot).get();
+    for(int itemSlot = 0; itemSlot < gameState_800babc8.items_2e9.size(); itemSlot++) {
+      final int itemId = gameState_800babc8.items_2e9.getInt(itemSlot);
       boolean returnItem = false;
 
       for(int repeatItemIndex = 0; repeatItemIndex < 9; repeatItemIndex++) {
@@ -3744,31 +3745,31 @@ public final class Bttl_800e {
     //LAB_800eebd8
     for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
       final BattleObject27c bobj = _8006e398.charBobjIndices_e40[charSlot].innerStruct_00;
-      final CharacterData2c charData = gameState_800babc8.charData_32c.get(bobj.charIndex_272);
+      final CharacterData2c charData = gameState_800babc8.charData_32c[bobj.charIndex_272];
 
       //LAB_800eec10
-      charData.hp_08.set(Math.max(1, bobj.hp_08));
+      charData.hp_08 = Math.max(1, bobj.hp_08);
 
-      if((gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0x1 << characterDragoonIndices_800c6e68.get(bobj.charIndex_272).get()) != 0) {
-        charData.mp_0a.set(bobj.mp_0c);
+      if((gameState_800babc8.goods_19c[0] & 0x1 << characterDragoonIndices_800c6e68.get(bobj.charIndex_272).get()) != 0) {
+        charData.mp_0a = bobj.mp_0c;
       }
 
       //LAB_800eec78
-      if(bobj.charIndex_272 == 0 && (gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0x1 << characterDragoonIndices_800c6e68.get(9).get()) != 0) {
-        charData.mp_0a.set(bobj.mp_0c);
+      if(bobj.charIndex_272 == 0 && (gameState_800babc8.goods_19c[0] & 0x1 << characterDragoonIndices_800c6e68.get(9).get()) != 0) {
+        charData.mp_0a = bobj.mp_0c;
       }
 
       //LAB_800eecb8
-      charData.status_10.set(bobj.status_0e & 0xc8);
-      charData.sp_0c.set(bobj.sp_0a);
+      charData.status_10 = bobj.status_0e & 0xc8;
+      charData.sp_0c = bobj.sp_0a;
     }
 
     //LAB_800eecf4
-    if((gameState_800babc8.scriptFlags2_bc.get(0xd).get() & 0x4_0000) != 0) { // Used Psych Bomb X this battle
+    if((gameState_800babc8.scriptFlags2_bc[13] & 0x4_0000) != 0) { // Used Psych Bomb X this battle
       //LAB_800eed30
       boolean hasPsychBombX = false;
-      for(int i = 0; i < gameState_800babc8.itemCount_1e6.get(); i++) {
-        if(gameState_800babc8.items_2e9.get(i).get() == 0xfa) { // Psych Bomb X
+      for(int i = 0; i < gameState_800babc8.items_2e9.size(); i++) {
+        if(gameState_800babc8.items_2e9.getInt(i) == 0xfa) { // Psych Bomb X
           hasPsychBombX = true;
           break;
         }
@@ -3788,8 +3789,8 @@ public final class Bttl_800e {
       boolean hasRepeatItem = false;
 
       //LAB_800eedb0
-      for(int itemSlot = 0; itemSlot < gameState_800babc8.itemCount_1e6.get(); itemSlot++) {
-        if(gameState_800babc8.items_2e9.get(itemSlot).get() == itemId) {
+      for(int itemSlot = 0; itemSlot < gameState_800babc8.items_2e9.size(); itemSlot++) {
+        if(gameState_800babc8.items_2e9.getInt(itemSlot) == itemId) {
           hasRepeatItem = true;
           break;
         }
@@ -4468,7 +4469,7 @@ public final class Bttl_800e {
             str = playerNames_800fb378.get(targetBobj.charIndex_272).deref();
             element = (int)_800c6ef0.offset(2, targetBobj.charIndex_272 * 0x2L).get();
 
-            if(targetBobj.charIndex_272 == 0 && (gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0xffL) >>> 7 != 0 && (_8006e398.charBobjIndices_e40[menu.combatantIndex.get()].storage_44[7] & 0x2) != 0) {
+            if(targetBobj.charIndex_272 == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0 && (_8006e398.charBobjIndices_e40[menu.combatantIndex.get()].storage_44[7] & 0x2) != 0) {
               element = (int)_800c6ef0.offset(0x12L).get();
             }
           } else {
@@ -4480,7 +4481,7 @@ public final class Bttl_800e {
               str = playerNames_800fb378.get(targetBobj.charIndex_272).deref();
               element = (int)_800c6ef0.offset(2, targetBobj.charIndex_272 * 0x2L).get();
 
-              if(targetBobj.charIndex_272 == 0 && (gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0xffL) >>> 7 != 0 && (_8006e398.charBobjIndices_e40[menu.combatantIndex.get()].storage_44[7] & 0x2) != 0) {
+              if(targetBobj.charIndex_272 == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0 && (_8006e398.charBobjIndices_e40[menu.combatantIndex.get()].storage_44[7] & 0x2) != 0) {
                 element = (int)_800c6ef0.offset(0x12L).get();
               }
             } else {
@@ -4521,7 +4522,7 @@ public final class Bttl_800e {
         //LAB_800f0ed8
         //Character name
         renderTextBoxBackground(44, 23, 232, 14, (short)element);
-        renderText(str, 160 - textWidth(str) / 2, 24, 0, 0);
+        renderText(str, 160 - textWidth(str) / 2, 24, TextColour.WHITE, 0);
       }
     }
 

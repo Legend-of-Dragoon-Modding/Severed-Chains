@@ -6,8 +6,12 @@ import legend.core.memory.Value;
 import legend.core.memory.segments.RamSegment;
 import legend.core.opengl.Mesh;
 import legend.core.opengl.Shader;
+import legend.core.opengl.ShaderManager;
 import legend.core.opengl.Texture;
 import legend.core.opengl.Window;
+import legend.core.opengl.fonts.Font;
+import legend.core.opengl.fonts.FontManager;
+import legend.core.opengl.fonts.TextStream;
 import legend.core.spu.Spu;
 import legend.game.Scus94491BpeSegment;
 import legend.game.Scus94491BpeSegment_8002;
@@ -18,10 +22,13 @@ import legend.game.fmv.Fmv;
 import legend.game.modding.ModManager;
 import legend.game.modding.events.EventManager;
 import legend.game.modding.registries.Registries;
+import legend.game.saves.SaveManager;
+import legend.game.saves.SaveSerialization;
 import legend.game.scripting.ScriptManager;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
 import legend.game.unpacker.UnpackerException;
+import legend.game.unpacker.UnpackerStoppedRuntimeException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Matrix4f;
@@ -29,9 +36,19 @@ import org.lwjgl.BufferUtils;
 
 import java.io.IOException;
 import java.nio.FloatBuffer;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import static legend.game.SItem.albertXpTable_801138c0;
+import static legend.game.SItem.dartXpTable_801135e4;
+import static legend.game.SItem.haschelXpTable_801136d8;
+import static legend.game.SItem.kongolXpTable_801134f0;
+import static legend.game.SItem.lavitzXpTable_801138c0;
+import static legend.game.SItem.meruXpTable_801137cc;
+import static legend.game.SItem.mirandaXpTable_80113aa8;
+import static legend.game.SItem.roseXpTable_801139b4;
+import static legend.game.SItem.shanaXpTable_80113aa8;
 import static legend.game.Scus94491BpeSegment._80010004;
 import static legend.game.Scus94491BpeSegment.gameLoop;
 import static legend.game.Scus94491BpeSegment.loadFile;
@@ -57,6 +74,8 @@ public final class GameEngine {
   private static final Registries.Access REGISTRY_ACCESS = REGISTRIES.new Access();
 
   public static final ScriptManager SCRIPTS = new ScriptManager();
+
+  public static final SaveManager SAVES = new SaveManager(SaveSerialization.MAGIC_V2, SaveSerialization::toV2);
 
   public static final Cpu CPU;
   public static final Gpu GPU;
@@ -102,6 +121,7 @@ public final class GameEngine {
   private static Window.Events.Resize onResize;
   private static Window.Events.Key onKeyPress;
   private static Window.Events.Click onMouseRelease;
+  private static Runnable onShutdown;
 
   private static Shader shader;
   private static Shader.UniformFloat shaderAlpha;
@@ -117,6 +137,13 @@ public final class GameEngine {
 
   private static Texture loadingTexture;
   private static Mesh loadingMesh;
+
+  private static Font font;
+
+  private static final Object statusTextLock = new Object();
+  private static String newStatusText;
+  private static TextStream statusText;
+  private static float screenWidth;
 
   private static final FloatBuffer transform2Buffer = BufferUtils.createFloatBuffer(4 * 4);
   private static Shader.UniformBuffer transforms2;
@@ -139,11 +166,26 @@ public final class GameEngine {
 
     EventManager.INSTANCE.getClass(); // Trigger load
 
+    SAVES.registerDeserializer(SaveSerialization::fromRetailMatcher, SaveSerialization::fromRetail);
+    SAVES.registerDeserializer(SaveSerialization::fromV1Matcher, SaveSerialization::fromV1);
+    SAVES.registerDeserializer(SaveSerialization::fromV2Matcher, SaveSerialization::fromV2);
+
     synchronized(LOCK) {
+      Unpacker.setStatusListener(status -> {
+        synchronized(statusTextLock) {
+          newStatusText = status;
+        }
+      });
+
       try {
         Unpacker.unpack();
       } catch(final UnpackerException e) {
-        throw new RuntimeException("Failed to unpack files", e);
+        newStatusText = "Failed to unpack files: " + e.getMessage();
+        LOGGER.error("Failed to unpack files", e);
+        skip();
+      } catch(final UnpackerStoppedRuntimeException e) {
+        LOGGER.info("Unpacking stopped");
+        return;
       }
 
       final FileData fileData = Unpacker.loadFile("SCUS_944.91");
@@ -162,10 +204,60 @@ public final class GameEngine {
       // Load S_ITEM temporarily to get item names
       loadFile(overlays_8004db88.get(2), _80010004.get(), (address, size, integer) -> { }, 0, 0x10L);
 
+      loadXpTables();
+
       REGISTRY_ACCESS.initialize();
 
       Scus94491BpeSegment_8002.start();
       loading = false;
+    }
+  }
+
+  private static void loadXpTables() throws IOException {
+    final FileData dart = new FileData(Files.readAllBytes(Paths.get("./files/characters/dart/xp")));
+    final FileData lavitz = new FileData(Files.readAllBytes(Paths.get("./files/characters/lavitz/xp")));
+    final FileData albert = new FileData(Files.readAllBytes(Paths.get("./files/characters/albert/xp")));
+    final FileData shana = new FileData(Files.readAllBytes(Paths.get("./files/characters/shana/xp")));
+    final FileData miranda = new FileData(Files.readAllBytes(Paths.get("./files/characters/miranda/xp")));
+    final FileData rose = new FileData(Files.readAllBytes(Paths.get("./files/characters/rose/xp")));
+    final FileData haschel = new FileData(Files.readAllBytes(Paths.get("./files/characters/haschel/xp")));
+    final FileData kongol = new FileData(Files.readAllBytes(Paths.get("./files/characters/kongol/xp")));
+    final FileData meru = new FileData(Files.readAllBytes(Paths.get("./files/characters/meru/xp")));
+
+    for(int i = 0; i < dartXpTable_801135e4.length; i++) {
+      dartXpTable_801135e4[i] = dart.readInt(i * 4);
+    }
+
+    for(int i = 0; i < lavitzXpTable_801138c0.length; i++) {
+      lavitzXpTable_801138c0[i] = lavitz.readInt(i * 4);
+    }
+
+    for(int i = 0; i < albertXpTable_801138c0.length; i++) {
+      albertXpTable_801138c0[i] = albert.readInt(i * 4);
+    }
+
+    for(int i = 0; i < shanaXpTable_80113aa8.length; i++) {
+      shanaXpTable_80113aa8[i] = shana.readInt(i * 4);
+    }
+
+    for(int i = 0; i < mirandaXpTable_80113aa8.length; i++) {
+      mirandaXpTable_80113aa8[i] = miranda.readInt(i * 4);
+    }
+
+    for(int i = 0; i < roseXpTable_801139b4.length; i++) {
+      roseXpTable_801139b4[i] = rose.readInt(i * 4);
+    }
+
+    for(int i = 0; i < haschelXpTable_801136d8.length; i++) {
+      haschelXpTable_801136d8[i] = haschel.readInt(i * 4);
+    }
+
+    for(int i = 0; i < kongolXpTable_801134f0.length; i++) {
+      kongolXpTable_801134f0[i] = kongol.readInt(i * 4);
+    }
+
+    for(int i = 0; i < meruXpTable_801137cc.length; i++) {
+      meruXpTable_801137cc[i] = meru.readInt(i * 4);
     }
   }
 
@@ -223,6 +315,10 @@ public final class GameEngine {
       loadingMesh = null;
     }
 
+    if(font != null) {
+      font = null;
+    }
+
     if(onResize != null) {
       GPU.window().events.removeOnResize(onResize);
       onResize = null;
@@ -236,6 +332,11 @@ public final class GameEngine {
     if(onMouseRelease != null) {
       GPU.window().events.removeMouseRelease(onMouseRelease);
       onMouseRelease = null;
+    }
+
+    if(onShutdown != null) {
+      GPU.window().events.removeShutdown(onShutdown);
+      onShutdown = null;
     }
 
     spuThread.start();
@@ -284,8 +385,10 @@ public final class GameEngine {
     loadingMesh.attribute(0, 0L, 2, 4);
     loadingMesh.attribute(1, 2L, 2, 4);
 
-    transforms2 = new Shader.UniformBuffer((long)transform2Buffer.capacity() * Float.BYTES, Shader.UniformBuffer.TRANSFORM2);
+    transforms2 = ShaderManager.getUniformBuffer("transforms2");
     identity.identity();
+
+    font = FontManager.get("default");
 
     onResize = GPU.window().events.onResize(GameEngine::windowResize);
     windowResize(GPU.window(), (int)(GPU.window().getWidth() * GPU.window().getScale()), (int)(GPU.window().getHeight() * GPU.window().getScale()));
@@ -293,6 +396,7 @@ public final class GameEngine {
 
     onKeyPress = GPU.window().events.onKeyPress((window, key, scancode, mods) -> skip());
     onMouseRelease = GPU.window().events.onMouseRelease((window, x, y, button, mods) -> skip());
+    onShutdown = GPU.window().events.onShutdown(Unpacker::stop);
 
     time = System.nanoTime();
   }
@@ -373,6 +477,23 @@ public final class GameEngine {
       loadingTexture.use();
       loadingMesh.draw();
     }
+
+    synchronized(statusTextLock) {
+      if(newStatusText != null) {
+        if(statusText != null) {
+          statusText.delete();
+        }
+
+        statusText = font.text(stream -> stream.text(newStatusText));
+      }
+
+      newStatusText = null;
+    }
+
+    if(statusText != null && loadingFade != 0.0f) {
+      statusText.setColour(loadingFade, loadingFade, loadingFade);
+      statusText.draw((screenWidth - statusText.width()) / 2, 100.0f);
+    }
   }
 
   private static void windowResize(final Window window, final int width, final int height) {
@@ -393,6 +514,8 @@ public final class GameEngine {
       h = unscaledHeight;
       w = h * aspect;
     }
+
+    screenWidth = w;
 
     final float l = (unscaledWidth - w) / 2;
     final float t = (unscaledHeight - h) / 2;

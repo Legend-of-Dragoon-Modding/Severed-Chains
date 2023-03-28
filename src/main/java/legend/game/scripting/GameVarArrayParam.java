@@ -22,8 +22,8 @@ public class GameVarArrayParam extends Param {
   @Override
   public int get() {
     return switch(this.varIndex) {
-      case 6 -> Scus94491BpeSegment_800b.gameState_800babc8.scriptData_08.get(this.arrIndex).get();
-      case 17 -> Scus94491BpeSegment_800b.gameState_800babc8.charIndex_88.get(this.arrIndex).get();
+      case 6 -> Scus94491BpeSegment_800b.gameState_800babc8.scriptData_08[this.arrIndex];
+      case 17 -> Scus94491BpeSegment_800b.gameState_800babc8.charIds_88[this.arrIndex];
       case 32 -> Scus94491BpeSegment_8006._8006e398.bobjIndices_e0c[this.arrIndex] != null ? Scus94491BpeSegment_8006._8006e398.bobjIndices_e0c[this.arrIndex].index : -1;
       case 34 -> Scus94491BpeSegment_8006._8006e398.charBobjIndices_e40[this.arrIndex] != null ? Scus94491BpeSegment_8006._8006e398.charBobjIndices_e40[this.arrIndex].index : -1;
       case 36 -> Scus94491BpeSegment_8006._8006e398.bobjIndices_e50[this.arrIndex] != null ? Scus94491BpeSegment_8006._8006e398.bobjIndices_e50[this.arrIndex].index : -1;
@@ -33,13 +33,13 @@ public class GameVarArrayParam extends Param {
       case 48 -> Scus94491BpeSegment_8006._8006e398.bobjIndices_e78[this.arrIndex] != null ? Scus94491BpeSegment_8006._8006e398.bobjIndices_e78[this.arrIndex].index : -1;
       case 50 -> Scus94491BpeSegment_8006._8006e398.bobjIndices_eac[this.arrIndex] != null ? Scus94491BpeSegment_8006._8006e398.bobjIndices_eac[this.arrIndex].index : -1;
       case 52 -> Scus94491BpeSegment_8006._8006e398.enemyBobjIndices_ebc[this.arrIndex] != null ? Scus94491BpeSegment_8006._8006e398.enemyBobjIndices_ebc[this.arrIndex].index : -1;
-      case 64 -> SMap.sobjs_800c6880[this.arrIndex] != null ? SMap.sobjs_800c6880[this.arrIndex].index : -1;
+      case 64 -> SMap.sobjs_800c6880[this.arrIndex] != null ? SMap.sobjs_800c6880[this.arrIndex].index : 0;
       case 73 -> SMap._800c6970.get(this.arrIndex).get();
-      case 112 -> Scus94491BpeSegment_800b.gameState_800babc8._15c.get(this.arrIndex).get();
-      case 113 -> Scus94491BpeSegment_800b.gameState_800babc8._17c.get(this.arrIndex).get();
-      case 114 -> Scus94491BpeSegment_800b.gameState_800babc8.dragoonSpirits_19c.get(this.arrIndex).get();
-      case 126 -> Scus94491BpeSegment_800b.gameState_800babc8._1a4.get(this.arrIndex).get();
-      case 127 -> Scus94491BpeSegment_800b.gameState_800babc8.chestFlags_1c4.get(this.arrIndex).get();
+      case 112 -> Scus94491BpeSegment_800b.gameState_800babc8._15c[this.arrIndex];
+      case 113 -> Scus94491BpeSegment_800b.gameState_800babc8._17c[this.arrIndex];
+      case 114 -> Scus94491BpeSegment_800b.gameState_800babc8.goods_19c[this.arrIndex];
+      case 126 -> Scus94491BpeSegment_800b.gameState_800babc8._1a4[this.arrIndex];
+      case 127 -> Scus94491BpeSegment_800b.gameState_800babc8.chestFlags_1c4[this.arrIndex];
       case 128 -> this.readSpecialEffectVar(0, this.arrIndex);
       case 129 -> this.readSpecialEffectVar(1, this.arrIndex);
       case 130 -> this.readSpecialEffectVar(2, this.arrIndex);
@@ -58,8 +58,8 @@ public class GameVarArrayParam extends Param {
   @Override
   public Param set(final int val) {
     switch(this.varIndex) {
-      case 6 -> Scus94491BpeSegment_800b.gameState_800babc8.scriptData_08.get(this.arrIndex).set(val);
-      case 17 -> Scus94491BpeSegment_800b.gameState_800babc8.charIndex_88.get(this.arrIndex).set(val);
+      case 6 -> Scus94491BpeSegment_800b.gameState_800babc8.scriptData_08[this.arrIndex] = val;
+      case 17 -> Scus94491BpeSegment_800b.gameState_800babc8.charIds_88[this.arrIndex] = val;
       case 32 -> Scus94491BpeSegment_8006._8006e398.bobjIndices_e0c[this.arrIndex] = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[val];
       case 34 -> Scus94491BpeSegment_8006._8006e398.charBobjIndices_e40[this.arrIndex] = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[val];
       case 36 -> Scus94491BpeSegment_8006._8006e398.bobjIndices_e50[this.arrIndex] = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[val];
@@ -71,11 +71,11 @@ public class GameVarArrayParam extends Param {
       case 52 -> Scus94491BpeSegment_8006._8006e398.enemyBobjIndices_ebc[this.arrIndex] = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[val];
       case 64 -> SMap.sobjs_800c6880[this.arrIndex] = (ScriptState<SubmapObject210>)scriptStatePtrArr_800bc1c0[val];
       case 73 -> SMap._800c6970.get(this.arrIndex).set(val);
-      case 112 -> Scus94491BpeSegment_800b.gameState_800babc8._15c.get(this.arrIndex).set(val);
-      case 113 -> Scus94491BpeSegment_800b.gameState_800babc8._17c.get(this.arrIndex).set(val);
-      case 114 -> Scus94491BpeSegment_800b.gameState_800babc8.dragoonSpirits_19c.get(this.arrIndex).set(val);
-      case 126 -> Scus94491BpeSegment_800b.gameState_800babc8._1a4.get(this.arrIndex).set(val);
-      case 127 -> Scus94491BpeSegment_800b.gameState_800babc8.chestFlags_1c4.get(this.arrIndex).set(val);
+      case 112 -> Scus94491BpeSegment_800b.gameState_800babc8._15c[this.arrIndex] = val;
+      case 113 -> Scus94491BpeSegment_800b.gameState_800babc8._17c[this.arrIndex] = val;
+      case 114 -> Scus94491BpeSegment_800b.gameState_800babc8.goods_19c[this.arrIndex] = val;
+      case 126 -> Scus94491BpeSegment_800b.gameState_800babc8._1a4[this.arrIndex] = val;
+      case 127 -> Scus94491BpeSegment_800b.gameState_800babc8.chestFlags_1c4[this.arrIndex] = val;
       case 128 -> this.writeSpecialEffectVar(0, this.arrIndex, val);
       case 129 -> this.writeSpecialEffectVar(1, this.arrIndex, val);
       case 130 -> this.writeSpecialEffectVar(2, this.arrIndex, val);

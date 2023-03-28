@@ -35,6 +35,8 @@ import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.fmv.Fmv;
+import legend.game.input.Input;
+import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.Param;
@@ -54,6 +56,7 @@ import legend.game.types.AnmSpriteMetrics14;
 import legend.game.types.BigSubStruct;
 import legend.game.types.CContainer;
 import legend.game.types.CharacterData2c;
+import legend.game.types.CreditStruct1c;
 import legend.game.types.DR_TPAGE;
 import legend.game.types.DustRenderData54;
 import legend.game.types.EnvironmentFile;
@@ -63,7 +66,6 @@ import legend.game.types.GsRVIEW2;
 import legend.game.types.MediumStruct;
 import legend.game.types.Model124;
 import legend.game.types.ModelPartTransforms0c;
-import legend.game.types.MrgEntry;
 import legend.game.types.MrgFile;
 import legend.game.types.NewRootEntryStruct;
 import legend.game.types.NewRootStruct;
@@ -124,6 +126,7 @@ import static legend.game.Scus94491BpeSegment.mallocHead;
 import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.orderingTableBits_1f8003c0;
+import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
@@ -149,6 +152,7 @@ import static legend.game.Scus94491BpeSegment_8002.initModel;
 import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.loadAndRenderMenus;
 import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
+import static legend.game.Scus94491BpeSegment_8002.playXaAudio;
 import static legend.game.Scus94491BpeSegment_8002.prepareObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.rand;
 import static legend.game.Scus94491BpeSegment_8002.renderDobj2;
@@ -202,10 +206,7 @@ import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c3c;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
 import static legend.game.Scus94491BpeSegment_8007._8007a3a8;
-import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
-import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
-import static legend.game.Scus94491BpeSegment_800b._800ba3b8;
 import static legend.game.Scus94491BpeSegment_800b._800babc0;
 import static legend.game.Scus94491BpeSegment_800b._800bb104;
 import static legend.game.Scus94491BpeSegment_800b._800bb168;
@@ -215,10 +216,10 @@ import static legend.game.Scus94491BpeSegment_800b._800bd7b4;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b8;
 import static legend.game.Scus94491BpeSegment_800b._800bda08;
 import static legend.game.Scus94491BpeSegment_800b._800bdc34;
-import static legend.game.Scus94491BpeSegment_800b._800bdd24;
 import static legend.game.Scus94491BpeSegment_800b._800bee90;
 import static legend.game.Scus94491BpeSegment_800b._800bee94;
 import static legend.game.Scus94491BpeSegment_800b._800bee98;
+import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
 import static legend.game.Scus94491BpeSegment_800b.afterFmvLoadingStage_800bf0ec;
 import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.doubleBufferFrame_800bb108;
@@ -408,9 +409,13 @@ public final class SMap {
   public static final Pointer<UnknownStruct2> _800d1a8c = MEMORY.ref(4, 0x800d1a8cL, Pointer.deferred(4, UnknownStruct2::new));
   public static final MediumStruct _800d1a90 = MEMORY.ref(4, 0x800d1a90L, MediumStruct::new);
 
-  public static final Value creditsLoaded_800d1cb8 = MEMORY.ref(4, 0x800d1cb8L);
+  public static List<FileData> creditTims_800d1ae0;
+  public static final IntRef fadeOutTicks_800d1ae4 = MEMORY.ref(4, 0x800d1ae4L, IntRef::new);
+  public static final BoolRef creditTimsLoaded_800d1ae8 = MEMORY.ref(4, 0x800d1ae8L, BoolRef::new);
+  public static final IntRef creditsPassed_800d1aec = MEMORY.ref(4, 0x800d1aecL, IntRef::new);
+  public static final IntRef creditIndex_800d1af0 = MEMORY.ref(4, 0x800d1af0L, IntRef::new);
 
-  public static final Value _800d1cc0 = MEMORY.ref(4, 0x800d1cc0L);
+  public static final ArrayRef<CreditStruct1c> credits_800d1af8 = MEMORY.ref(4, 0x800d1af8L, ArrayRef.of(CreditStruct1c.class, 16, 0x1c, CreditStruct1c::new));
 
   public static final MATRIX matrix_800d4bb0 = MEMORY.ref(4, 0x800d4bb0L, MATRIX::new);
 
@@ -573,6 +578,23 @@ public final class SMap {
   public static final Value _800f7f74 = MEMORY.ref(4, 0x800f7f74L);
 
   public static final Value _800f9374 = MEMORY.ref(4, 0x800f9374L);
+  /**
+   * <ol start="0">
+   *   <li>{@link SMap#initCredits}</li>
+   *   <li>{@link SMap#loadCredits}</li>
+   *   <li>{@link SMap#waitForCreditsToLoadAndPlaySong}</li>
+   *   <li>{@link SMap#fadeInCredits}</li>
+   *   <li>{@link SMap#renderCredits}</li>
+   *   <li>{@link SMap#fadeOutCredits}</li>
+   *   <li>{@link SMap#waitForCreditsFadeOut}</li>
+   *   <li>{@link SMap#deallocateCreditsAndReturnToMenu}</li>
+   * </ol>
+   */
+  public static final ArrayRef<Pointer<RunnableRef>> theEndStates_800f9378 = MEMORY.ref(4, 0x800f9378L, ArrayRef.of(Pointer.classFor(RunnableRef.class), 8, 4, Pointer.deferred(4, RunnableRef::new)));
+
+  public static final Value _800f93b0 = MEMORY.ref(4, 0x800f93b0L);
+
+  public static final ArrayRef<DVECTOR> creditPos_800f9670 = MEMORY.ref(2, 0x800f9670L, ArrayRef.of(DVECTOR.class, 16, 4, DVECTOR::new));
 
   public static final UnboundedArrayRef<ShortRef> smapFileIndices_800f982c = MEMORY.ref(2, 0x800f982cL, UnboundedArrayRef.of(2, ShortRef::new));
 
@@ -660,17 +682,17 @@ public final class SMap {
 
     if(a0 >= 0) {
       final ActiveStatsa0 stats = stats_800be5f8.get(a0);
-      final CharacterData2c charData = gameState_800babc8.charData_32c.get(a0);
-      charData.hp_08.set(stats.maxHp_66.get());
-      charData.mp_0a.set(stats.maxMp_6e.get());
+      final CharacterData2c charData = gameState_800babc8.charData_32c[a0];
+      charData.hp_08 = stats.maxHp_66.get();
+      charData.mp_0a = stats.maxMp_6e.get();
     } else {
       //LAB_800d9b70
       //LAB_800d9b84
       for(int charSlot = 0; charSlot < 9; charSlot++) {
         final ActiveStatsa0 stats = stats_800be5f8.get(charSlot);
-        final CharacterData2c charData = gameState_800babc8.charData_32c.get(charSlot);
-        charData.hp_08.set(stats.maxHp_66.get());
-        charData.mp_0a.set(stats.maxMp_6e.get());
+        final CharacterData2c charData = gameState_800babc8.charData_32c[charSlot];
+        charData.hp_08 = stats.maxHp_66.get();
+        charData.mp_0a = stats.maxMp_6e.get();
       }
     }
 
@@ -688,7 +710,7 @@ public final class SMap {
   public static FlowControl FUN_800d9bf4(final RunningScript<?> script) {
     //LAB_800d9c04
     for(int i = 0; i < 9; i++) {
-      gameState_800babc8.charData_32c.get(i).status_10.set(0);
+      gameState_800babc8.charData_32c[i].status_10 = 0;
     }
 
     return FlowControl.CONTINUE;
@@ -697,31 +719,32 @@ public final class SMap {
   @Method(0x800d9c1cL)
   public static FlowControl FUN_800d9c1c(final RunningScript<?> script) {
     //LAB_800d9c78
-    memcpy(gameState_800babc8.charData_32c.get(script.params_20[1].get()).getAddress(), gameState_800babc8.charData_32c.get(script.params_20[0].get()).getAddress(), 0x2c);
+    gameState_800babc8.charData_32c[script.params_20[1].get()].set(gameState_800babc8.charData_32c[script.params_20[0].get()]);
     loadSupportOverlay(2, () -> SMap.FUN_800d9b08(script.params_20[1].get()));
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800d9ce4L)
   public static FlowControl scriptSetCharAddition(final RunningScript<?> script) {
-    gameState_800babc8.charData_32c.get(script.params_20[0].get()).selectedAddition_19.set(script.params_20[1].get());
+    gameState_800babc8.charData_32c[script.params_20[0].get()].selectedAddition_19 = script.params_20[1].get();
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800d9d20L)
   public static FlowControl scriptGetCharAddition(final RunningScript<?> script) {
-    script.params_20[1].set(gameState_800babc8.charData_32c.get(script.params_20[0].get()).selectedAddition_19.get());
+    script.params_20[1].set(gameState_800babc8.charData_32c[script.params_20[0].get()].selectedAddition_19);
     return FlowControl.CONTINUE;
   }
 
+  /** Called when Dart is given Divine Dragon spirit */
   @Method(0x800d9d60L)
   public static FlowControl FUN_800d9d60(final RunningScript<?> script) {
-    if(gameState_800babc8.charData_32c.get(0).dlevelXp_0e.get() < 63901) {
-      gameState_800babc8.charData_32c.get(0).dlevelXp_0e.set(63901);
+    if(gameState_800babc8.charData_32c[0].dlevelXp_0e < 63901) {
+      gameState_800babc8.charData_32c[0].dlevelXp_0e = 63901;
     }
 
     //LAB_800d9d90
-    gameState_800babc8.charData_32c.get(0).dlevel_13.set(5);
+    gameState_800babc8.charData_32c[0].dlevel_13 = 5;
 
     loadSupportOverlay(2, () -> SMap.FUN_800d9dc0(0));
     return FlowControl.CONTINUE;
@@ -729,7 +752,7 @@ public final class SMap {
 
   @Method(0x800d9dc0L)
   public static void FUN_800d9dc0(final int charIndex) {
-    gameState_800babc8.charData_32c.get(charIndex).sp_0c.set(500);
+    gameState_800babc8.charData_32c[charIndex].sp_0c = 500;
     FUN_800d9b08(-1);
   }
 
@@ -740,9 +763,9 @@ public final class SMap {
     if(pregameLoadingStage_800bb10c.get() > 94) {
       fmvIndex_800bf0dc.setu(0x11L);
       afterFmvLoadingStage_800bf0ec.set(4);
-      _800ba3b8.setu(0x2L);
-      _800bdd24.setu(0x9L);
       pregameLoadingStage_800bb10c.set(0);
+      vsyncMode_8007a3b8.set(2);
+      Fmv.playCurrentFmv();
     }
 
     //LAB_800d9e5c
@@ -785,7 +808,7 @@ public final class SMap {
     //LAB_800da16c
     //LAB_800da174
     for(int i = 0; i < 7; i++) {
-      if(struct.aub_ec[i] != 0) {
+      if(struct.animateTextures_ec[i]) {
         animateModelTextures(struct, i);
       }
 
@@ -968,7 +991,7 @@ public final class SMap {
 
     //LAB_800daaa8
     for(int i = 0; i < a0.ObjTable_0c.nobj; i++) {
-      if((a0.ui_f4 & 1L << i) == 0) {
+      if((a0.partInvisible_f4 & 1L << i) == 0) {
         final GsDOBJ2 dobj2 = a0.ObjTable_0c.top[i];
 
         final MATRIX lw = new MATRIX();
@@ -988,7 +1011,7 @@ public final class SMap {
     }
 
     //LAB_800dab34
-    if(a0.b_cc != 0) {
+    if(a0.movementType_cc != 0) {
       FUN_800da524(a0);
     }
 
@@ -1614,14 +1637,14 @@ public final class SMap {
   public static FlowControl FUN_800df5c0(final RunningScript<?> script) {
     script.params_20[1] = script.params_20[0];
     script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
-    return FUN_800e0244(script);
+    return scriptEnableTextureAnimation(script);
   }
 
   @Method(0x800df5f0L)
   public static FlowControl FUN_800df5f0(final RunningScript<?> script) {
     script.params_20[1] = script.params_20[0];
     script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
-    return FUN_800e0284(script);
+    return scriptDisableTextureAnimation(script);
   }
 
   @Method(0x800df620L)
@@ -1965,16 +1988,16 @@ public final class SMap {
   }
 
   @Method(0x800e0244L)
-  public static FlowControl FUN_800e0244(final RunningScript<?> script) {
+  public static FlowControl scriptEnableTextureAnimation(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    sobj.model_00.aub_ec[script.params_20[1].get()] = 1;
+    sobj.model_00.animateTextures_ec[script.params_20[1].get()] = true;
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e0284L)
-  public static FlowControl FUN_800e0284(final RunningScript<?> script) {
+  public static FlowControl scriptDisableTextureAnimation(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    sobj.model_00.aub_ec[script.params_20[1].get()] = 0;
+    sobj.model_00.animateTextures_ec[script.params_20[1].get()] = false;
     return FlowControl.CONTINUE;
   }
 
@@ -2023,7 +2046,7 @@ public final class SMap {
     final int shift = script.params_20[1].get();
 
     //LAB_800e0430
-    model.ui_f4 |= 0x1L << shift;
+    model.partInvisible_f4 |= 0x1L << shift;
 
     //LAB_800e0440
     return FlowControl.CONTINUE;
@@ -2037,7 +2060,7 @@ public final class SMap {
     final int shift = script.params_20[1].get();
 
     //LAB_800e0498
-    model.ui_f4 &= ~(0x1L << shift);
+    model.partInvisible_f4 &= ~(0x1L << shift);
 
     //LAB_800e04ac
     return FlowControl.CONTINUE;
@@ -2155,14 +2178,14 @@ public final class SMap {
   @Method(0x800e09e0L)
   public static FlowControl FUN_800e09e0(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    sobj.model_00.b_cc = 1;
+    sobj.model_00.movementType_cc = 1;
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e0a14L)
   public static FlowControl FUN_800e0a14(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    sobj.model_00.b_cc = 0;
+    sobj.model_00.movementType_cc = 0;
     return FlowControl.CONTINUE;
   }
 
@@ -2266,7 +2289,7 @@ public final class SMap {
 
     //LAB_800e0d5c
     for(int i = 0; i < 7; i++) {
-      model.aub_ec[i] = 0;
+      model.animateTextures_ec[i] = false;
     }
 
     final int count = cContainer.tmdPtr_00.tmd.header.nobj;
@@ -2328,7 +2351,7 @@ public final class SMap {
     model.zOffset_a0 = 0;
     model.ub_a2 = 0;
     model.ub_a3 = 0;
-    model.ui_f4 = 0;
+    model.partInvisible_f4 = 0;
 
     loadModelStandardAnimation(model, tmdAnimFile);
 
@@ -2683,7 +2706,8 @@ public final class SMap {
 
           for(int objIndex = 0; objIndex < objCount; objIndex++) {
             final byte[] scriptData = submapScriptsMrg_800c68d8.get(objIndex + 1).getBytes();
-            final byte[] tmdData = submapAssetsMrg_800c6878.get(objIndex * 33).getBytes();
+
+            final FileData submapModel = submapAssetsMrg_800c6878.get(objIndex * 33);
 
             final IntRef drgnIndex = new IntRef();
             final IntRef fileIndex = new IntRef();
@@ -2691,7 +2715,12 @@ public final class SMap {
 
             final SubmapObject obj = new SubmapObject();
             obj.script = new ScriptFile("Submap object %d (DRGN%d/%d/%d)".formatted(objIndex, drgnIndex.get(), fileIndex.get() + 2, objIndex + 1), scriptData);
-            obj.model = new CContainer("Submap object %d (DRGN%d/%d/%d)".formatted(objIndex, drgnIndex.get(), fileIndex.get() + 1, objIndex * 33), new FileData(tmdData));
+
+            if(submapModel.real()) {
+              obj.model = new CContainer("Submap object %d (DRGN%d/%d/%d)".formatted(objIndex, drgnIndex.get(), fileIndex.get() + 1, objIndex * 33), new FileData(submapModel.getBytes()));
+            } else {
+              obj.model = null;
+            }
 
             for(int animIndex = objIndex * 33 + 1; animIndex < (objIndex + 1) * 33; animIndex++) {
               final FileData data = submapAssetsMrg_800c6878.get(animIndex);
@@ -2708,6 +2737,17 @@ public final class SMap {
             }
 
             submapAssets.objects.add(obj);
+          }
+
+          // Get models that are symlinked
+          for(int objIndex = 0; objIndex < objCount; objIndex++) {
+            final SubmapObject obj = submapAssets.objects.get(objIndex);
+
+            if(obj.model == null) {
+              final FileData submapModel = submapAssetsMrg_800c6878.get(objIndex * 33);
+
+              obj.model = submapAssets.objects.get(submapModel.realFileIndex() / 33).model;
+            }
           }
 
           for(int i = 0; i < 3; i++) {
@@ -3592,7 +3632,7 @@ public final class SMap {
 
   @Method(0x800e4018L)
   public static void FUN_800e4018() {
-    if(gameState_800babc8.indicatorsDisabled_4e3.get() != 0) {
+    if(gameState_800babc8.indicatorsDisabled_4e3) {
       if(_800f64ac.get() == 0) {
         _800f64ac.setu(0x1L);
       }
@@ -3782,7 +3822,7 @@ public final class SMap {
       return 0;
     }
 
-    if(gameState_800babc8.indicatorsDisabled_4e3.get() != 0) {
+    if(gameState_800babc8.indicatorsDisabled_4e3) {
       return 0;
     }
 
@@ -3792,7 +3832,10 @@ public final class SMap {
       return 0;
     }
 
-    if(index_80052c38.get() < 0x40L && arr_800cb460.get(index_80052c38.get()).get() != 0) {
+    // The first condition is to fix what we believe is caused by menus loading too fast in SC. Submaps still take several frames to initialize,
+    // and if you spam triangle and escape immediately after the post-combat screen it's possible to get into this method when index_80052c38 is
+    // still set to -1. See #304 for more details.
+    if(index_80052c38.get() >= 0 && index_80052c38.get() < 0x40L && arr_800cb460.get(index_80052c38.get()).get() != 0) {
       return 0;
     }
 
@@ -3801,7 +3844,7 @@ public final class SMap {
       return 0;
     }
 
-    if(joypadInput_8007a39c.get() == 0) {
+    if(!Input.hasActivity()) {
       return 0;
     }
 
@@ -3949,7 +3992,7 @@ public final class SMap {
 
     _800c6ae0.addu(0x1L);
 
-    if(gameState_800babc8.indicatorsDisabled_4e3.get() != 0) {
+    if(gameState_800babc8.indicatorsDisabled_4e3) {
       _800c6ae4.setu(-0x1eL);
     }
 
@@ -4162,8 +4205,8 @@ public final class SMap {
       whichMenu_800bdc38 = WhichMenu.INIT_SAVE_GAME_MENU_16;
       smapLoadingStage_800cb430.setu(0xdL);
       _800f7e30.setu(index_80052c38.get());
-      index_80052c38.set((int)_800f7e30.offset(gameState_800babc8.chapterIndex_98.get() * 0x8L).get());
-      _800cb450.setu(_800f7e2c.offset(gameState_800babc8.chapterIndex_98.get() * 0x8L).get());
+      index_80052c38.set((int)_800f7e30.offset(gameState_800babc8.chapterIndex_98 * 0x8L).get());
+      _800cb450.setu(_800f7e2c.offset(gameState_800babc8.chapterIndex_98 * 0x8L).get());
       _800cab24.set(FUN_800ea974(-0x1L));
       SCRIPTS.pause();
       return 1;
@@ -4384,7 +4427,7 @@ public final class SMap {
       case 0xc -> {
         _80052c44.setu(0);
         FUN_800e5104(_800caaf8.get(), _800cab24.deref());
-        if(joypadPress_8007a398.get(0x10L) != 0 && gameState_800babc8.indicatorsDisabled_4e3.get() == 0) {
+        if(Input.pressedThisFrame(InputAction.BUTTON_NORTH) && !gameState_800babc8.indicatorsDisabled_4e3) {
           FUN_800e5534(-1, 0x3ff);
         }
       }
@@ -4426,7 +4469,7 @@ public final class SMap {
         _800c6aac.setu(0xaL);
         switch(_800caaf0) {
           case UNLOAD_INVENTORY_MENU_5:
-            if(gameState_800babc8.isOnWorldMap_4e4.get() != 0) {
+            if(gameState_800babc8.isOnWorldMap_4e4) {
               smapLoadingStage_800cb430.setu(0x12L);
               _800f7e4c.setu(0);
               break;
@@ -4443,7 +4486,7 @@ public final class SMap {
           case UNLOAD_SAVE_GAME_MENU_20:
             smapLoadingStage_800cb430.setu(0xcL);
             _800f7e4c.setu(0);
-            FUN_800e5534((int)_800f7e2c.offset(gameState_800babc8.chapterIndex_98.get() * 8).get(), (int)_800f7e30.offset(gameState_800babc8.chapterIndex_98.get() * 8).get());
+            FUN_800e5534((int)_800f7e2c.offset(gameState_800babc8.chapterIndex_98 * 8).get(), (int)_800f7e30.offset(gameState_800babc8.chapterIndex_98 * 8).get());
             index_80052c38.set((int)_800f7e30.get());
         }
       }
@@ -4622,14 +4665,14 @@ public final class SMap {
     if(drgnIndexA == drgnBinIndex_800bc058.get() - 1) {
       drgnIndexOut.set(drgnIndexA);
       second = false;
-    } else if(chapterIndex == drgnBinIndex_800bc058.get() - 1 && chapterIndex <= gameState_800babc8.chapterIndex_98.get()) {
+    } else if(chapterIndex == drgnBinIndex_800bc058.get() - 1 && chapterIndex <= gameState_800babc8.chapterIndex_98) {
       drgnIndexOut.set(chapterIndex);
       second = true;
       //LAB_800e6570
     } else if(chapterIndex >= 4) {
       drgnIndexOut.set(drgnIndexA);
       second = false;
-    } else if(chapterIndex <= gameState_800babc8.chapterIndex_98.get()) {
+    } else if(chapterIndex <= gameState_800babc8.chapterIndex_98) {
       //LAB_800e6580
       drgnIndexOut.set(chapterIndex);
       second = true;
@@ -5344,7 +5387,13 @@ public final class SMap {
         final int clut = (int)MEMORY.get(s1 + 0x16L, 2);
         final int tpage = (int)MEMORY.get(s1 + 0x4L, 3);
 
-        GPU.queueCommand(sp38[i], new GpuCommandQuad()
+        // This was causing a problem when moving left from the room before Zackwell. Not sure if this is a retail issue or SC-specific. GH#332
+        int z = sp38[i];
+        if(z < 0) {
+          z = (1 << orderingTableBits_1f8003c0.get()) - 1;
+        }
+
+        GPU.queueCommand(z, new GpuCommandQuad()
           .rgb((int)MEMORY.get(s1 + 0xcL, 3))
           .pos((short)MEMORY.get(s1 + 0x10L, 2), (short)MEMORY.get(s1 + 0x12L, 2), (short)MEMORY.get(s1 + 0x18L, 2), (short)MEMORY.get(s1 + 0x1aL, 2))
           .uv((int)MEMORY.get(s1 + 0x14L, 1), (int)MEMORY.get(s1 + 0x15L, 1))
@@ -5544,14 +5593,17 @@ public final class SMap {
       } else {
         //LAB_800e89f8
         final SomethingStructSub0c_1 struct2 = struct.ptr_14.get(i);
-        final long t1 = 0; //TODO struct.primitives_10 + struct2.ptr_04.get() + 0x6L;
-        assert false;
+        final TmdObjTable1c.Primitive primitive = struct.getPrimitiveForOffset(struct2.primitivesOffset_04.get());
+        final int packetOffset = struct2.primitivesOffset_04.get() - primitive.offset();
+        final int packetIndex = packetOffset / (primitive.width() + 4);
+        final int remainder = packetOffset % (primitive.width() + 4);
+        final byte[] packet = primitive.data()[packetIndex];
 
         vec.set((short)0, (short)0, (short)0);
 
         //LAB_800e8a38
         for(int t0 = 0; t0 < struct2.count_00.get(); t0++) {
-          vec.add(struct.verts_04[(int)MEMORY.ref(2, t1).offset(t0 * 0x2L).get()]);
+          vec.add(struct.verts_04[IoHelper.readUShort(packet, remainder + 2 + i * 2)]);
         }
 
         //LAB_800e8a9c
@@ -5886,12 +5938,16 @@ public final class SMap {
 
       if(v0 == 0) {
         //LAB_800e9774
-        t0 = 0; //TODO SomethingStructPtr_800d1a88.ptr_14.get(s4).ptr_04.get() + SomethingStructPtr_800d1a88.primitives_10 + 0x6L;
-        assert false;
+        final SomethingStructSub0c_1 ss2 = SomethingStructPtr_800d1a88.ptr_14.get(s4);
+        final TmdObjTable1c.Primitive primitive = SomethingStructPtr_800d1a88.getPrimitiveForOffset(ss2.primitivesOffset_04.get());
+        final int packetOffset = ss2.primitivesOffset_04.get() - primitive.offset();
+        final int packetIndex = packetOffset / (primitive.width() + 4);
+        final int remainder = packetOffset % (primitive.width() + 4);
+        final byte[] packet = primitive.data()[packetIndex];
 
         //LAB_800e97c4
         for(a2 = 0; a2 < SomethingStructPtr_800d1a88.ptr_14.get(s4).count_00.get(); a2++) {
-          sp0x28.add(SomethingStructPtr_800d1a88.verts_04[(int)MEMORY.ref(2, t0).offset(a2 * 0x2L).get()]);
+          sp0x28.add(SomethingStructPtr_800d1a88.verts_04[IoHelper.readUShort(packet, remainder + 2 + a2 * 2)]);
         }
 
         //LAB_800e9828
@@ -6058,7 +6114,7 @@ public final class SMap {
 
         //LAB_800e9f38
         _800cbe68.setu(0);
-        if((v1 - 0x341 & 0xffff_ffffL) > 0x17e) { //TODO I don't understand this, but it's right
+        if((v1 - 0x341 & 0xffff_ffffL) > 0x17e) { // Unsigned comparison
           if(v1 > 0x400) {
             _800cbe68.setu(0x1L);
             if(s0 > 0) {
@@ -6391,6 +6447,548 @@ public final class SMap {
     return _800d1a90;
   }
 
+  @Method(0x800eaa88L)
+  public static void theEnd() {
+    theEndStates_800f9378.get(pregameLoadingStage_800bb10c.get()).deref().run();
+  }
+
+  @Method(0x800eaad4L)
+  public static void initCredits() {
+    setWidthAndFlags(384);
+    vsyncMode_8007a3b8.set(2);
+
+    //LAB_800eab00
+    for(int creditSlot = 0; creditSlot < 16; creditSlot++) {
+      final CreditStruct1c credit = credits_800d1af8.get(creditSlot);
+
+      //LAB_800eab1c
+      credit.colour_00.set(0x80, 0x80, 0x80);
+      credit.scroll_12.set(0);
+      credit._14.set(0);
+      credit.state_16.set(0);
+    }
+
+    //LAB_800eac18
+    //LAB_800eac20
+    credits_800d1af8.get(0).prevCreditSlot_04.set(15);
+    for(int i = 1; i < 16; i++) {
+      //LAB_800eac3c
+      final CreditStruct1c credit = credits_800d1af8.get(i);
+      credit.prevCreditSlot_04.set(i - 1);
+    }
+
+    //LAB_800eac84
+    fadeOutTicks_800d1ae4.set(0);
+    creditsPassed_800d1aec.set(0);
+    creditIndex_800d1af0.set(0);
+    pregameLoadingStage_800bb10c.set(1);
+  }
+
+  @Method(0x800eacc8L)
+  public static void creditsLoaded(final List<FileData> files) {
+    creditTims_800d1ae0 = files;
+    creditTimsLoaded_800d1ae8.set(true);
+  }
+
+  @Method(0x800eacfcL)
+  public static void loadCredits() {
+    creditTimsLoaded_800d1ae8.set(false);
+    loadDrgnDir(0, 5720, SMap::creditsLoaded);
+    pregameLoadingStage_800bb10c.set(2);
+  }
+
+  @Method(0x800ead58L)
+  public static void waitForCreditsToLoadAndPlaySong() {
+    if(creditTimsLoaded_800d1ae8.get()) {
+      //LAB_800ead7c
+      playXaAudio(3, 3, 1);
+      pregameLoadingStage_800bb10c.set(3);
+    }
+
+    //LAB_800ead9c
+  }
+
+  @Method(0x800eadacL)
+  public static void fadeInCredits() {
+    if(_800bf0cf.get() == 4) {
+      //LAB_800eadd0
+      scriptStartEffect(2, 15);
+      pregameLoadingStage_800bb10c.set(4);
+    }
+
+    //LAB_800eadec
+  }
+
+  @Method(0x800eadfcL)
+  public static void renderCredits() {
+    renderCreditsGradient();
+
+    if(loadAndRenderCredits() != 0) {
+      pregameLoadingStage_800bb10c.set(5);
+    }
+
+    //LAB_800eae28
+  }
+
+  @Method(0x800eae38L)
+  public static void fadeOutCredits() {
+    scriptStartEffect(1, 15);
+    pregameLoadingStage_800bb10c.set(6);
+  }
+
+  @Method(0x800eae6cL)
+  public static void waitForCreditsFadeOut() {
+    fadeOutTicks_800d1ae4.incr();
+
+    if(fadeOutTicks_800d1ae4.get() >= 16) {
+      //LAB_800eaea0
+      pregameLoadingStage_800bb10c.set(7);
+    }
+
+    //LAB_800eaeac
+  }
+
+  @Method(0x800eaeb8L)
+  public static void deallocateCreditsAndReturnToMenu() {
+    //LAB_800eaedc
+    creditTims_800d1ae0 = null;
+    mainCallbackIndexOnceLoaded_8004dd24.set(5);
+    pregameLoadingStage_800bb10c.set(0);
+    vsyncMode_8007a3b8.set(2);
+
+    //LAB_800eaf14
+  }
+
+  @Method(0x800eaf24L)
+  public static void renderCreditsGradient() {
+    GPU.queueCommand(10, new GpuCommandPoly(4)
+      .translucent(Translucency.B_MINUS_F)
+      .monochrome(0, 0xff)
+      .monochrome(1, 0xff)
+      .monochrome(2, 0)
+      .monochrome(3, 0)
+      .pos(0, -192, -120)
+      .pos(1, 192, -120)
+      .pos(2, -192, -64)
+      .pos(3, 192, -64)
+    );
+
+    GPU.queueCommand(10, new GpuCommandPoly(4)
+      .translucent(Translucency.B_MINUS_F)
+      .monochrome(0, 0)
+      .monochrome(1, 0)
+      .monochrome(2, 0xff)
+      .monochrome(3, 0xff)
+      .pos(0, -192, 64)
+      .pos(1, 192, 64)
+      .pos(2, -192, 120)
+      .pos(3, 192, 120)
+    );
+  }
+
+  @Method(0x800eb304L)
+  public static int loadAndRenderCredits() {
+    //LAB_800eb318
+    //LAB_800ebc0c
+    for(int creditSlot = 0; creditSlot < 16; creditSlot++) {
+      //LAB_800eb334
+      if(creditsPassed_800d1aec.get() >= 357) {
+        return 1;
+      }
+
+      final CreditStruct1c credit = credits_800d1af8.get(creditSlot);
+
+      //LAB_800eb358
+      final int state = credit.state_16.get();
+      if(state == 0) {
+        //LAB_800eb3b8
+        if(shouldLoadNewCredit(creditSlot) != 0) {
+          credit.state_16.set(2);
+          loadCreditTims(creditSlot);
+        }
+      } else if(state == 2) {
+        //LAB_800eb408
+        moveCredits(creditSlot);
+
+        final int w = credit.width_0e.get() * 4;
+        final int h = credit.height_10.get();
+        final int x = -w / 2 - 8;
+        final int y = credit.y_0c.get();
+        final int tpage = texPages_800bb110.get(Bpp.BITS_4).get(Translucency.HALF_B_PLUS_HALF_F).get(TexPageY.Y_0).get() | (creditSlot / 8 * 128 + 512 & 0x3c0) >> 6;
+        final int clut = creditSlot << 6 | 0x38;
+
+        //LAB_800eb8e8
+        renderQuad(
+          tpage, clut,
+          credit.colour_00.getR(), credit.colour_00.getG(), credit.colour_00.getB(),
+          0, creditSlot % 8 * 64,
+          w, h,
+          x, y,
+          w, h,
+          orderingTableSize_1f8003c8.get() - 3,
+          0
+        );
+
+        //LAB_800eba4c
+        credit.scroll_12.incr();
+        //LAB_800eb3a4
+      } else if(state == 3) {
+        //LAB_800ebabc
+        if(credits_800d1af8.get((creditSlot + 1) % 16).state_16.get() != 0) {
+          credit.scroll_12.set(0);
+          credit._14.set(0);
+          credit.state_16.set(0);
+        } else {
+          //LAB_800ebb84
+          credit.scroll_12.incr();
+        }
+      }
+    }
+
+    //LAB_800ebc18
+    return 0;
+  }
+
+  @Method(0x800ebc2cL)
+  public static int shouldLoadNewCredit(final int creditSlot) {
+    if(creditIndex_800d1af0.get() >= 357) {
+      return 0;
+    }
+
+    //LAB_800ebc5c
+    boolean sp4 = false;
+
+    //LAB_800ebc64
+    int i;
+    for(i = 0; i < 357; i++) {
+      if(_800f93b0.offset(i * 0x8L).getSigned() == -1) {
+        //LAB_800ebca8
+        break;
+      }
+
+      //LAB_800ebcb0
+      if(_800f93b0.offset(i * 0x8L).get() == creditIndex_800d1af0.get()) {
+        sp4 = true;
+        break;
+      }
+    }
+
+    final CreditStruct1c credit = credits_800d1af8.get(creditSlot);
+
+    //LAB_800ebd08
+    if(sp4) {
+      credit.type_08.set((int)_800f93b0.offset((i * 2 + 1) * 0x4L).get());
+    } else {
+      //LAB_800ebd6c
+      credit.type_08.set(2);
+    }
+
+    //LAB_800ebd94
+    if(creditIndex_800d1af0.get() == 0) {
+      return 1;
+    }
+
+    //LAB_800ebdb4
+    final int prevCreditSlot = credit.prevCreditSlot_04.get();
+    final CreditStruct1c prevCredit = credits_800d1af8.get(prevCreditSlot);
+
+    if(prevCredit.state_16.get() == 0) {
+      return 0;
+    }
+
+    //LAB_800ebe1c
+    switch(credit.type_08.get()) {
+      case 0 -> {
+        final int type = prevCredit.type_08.get();
+
+        if(type == 0 || type == 1 || type == 2) {
+          //LAB_800ebee4
+          if(prevCredit.scroll_12.get() >= 66) {
+            return 1;
+          }
+
+          //LAB_800ebf24
+        } else if(type == 3) {
+          //LAB_800ebf2c
+          if(prevCredit.scroll_12.get() >= 64) {
+            return 1;
+          }
+
+          //LAB_800ebf6c
+          //LAB_800ebed0
+        } else if(type == 4) {
+          //LAB_800ebf74
+          if(prevCredit.scroll_12.get() >= 144) {
+            return 1;
+          }
+
+          //LAB_800ebfb4
+        }
+
+        //LAB_800ebfbc
+      }
+
+      case 1 -> {
+        final int type = prevCredit.type_08.get();
+
+        if(type == 0 || type == 1 || type == 2) {
+          //LAB_800ec024
+          if(prevCredit.scroll_12.get() >= 36) {
+            return 1;
+          }
+
+          //LAB_800ec064
+        } else if(type == 3) {
+          //LAB_800ec06c
+          if(prevCredit.scroll_12.get() >= 64) {
+            return 1;
+          }
+
+          //LAB_800ec0ac
+          //LAB_800ec010
+        } else if(type == 4) {
+          //LAB_800ec0b4
+          if(prevCredit.scroll_12.get() >= 144) {
+            return 1;
+          }
+
+          //LAB_800ec0f4
+        }
+
+        //LAB_800ec0fc
+      }
+
+      case 2 -> {
+        switch(prevCredit.type_08.get()) {
+          case 0, 1 -> {
+            if(prevCredit.scroll_12.get() >= 27) {
+              return 1;
+            }
+          }
+
+          //LAB_800ec1ac
+          case 2 -> {
+            if(prevCredit.scroll_12.get() >= 23) {
+              return 1;
+            }
+          }
+
+          //LAB_800ec1f4
+          case 3 -> {
+            if(prevCredit.scroll_12.get() >= 80) {
+              return 1;
+            }
+          }
+
+          //LAB_800ec23c
+          case 4 -> {
+            if(prevCredit.scroll_12.get() >= 144) {
+              return 1;
+            }
+          }
+
+          //LAB_800ec284
+        }
+
+        //LAB_800ec28c
+      }
+
+      case 3 -> {
+        if(prevCredit.type_08.get() == 3) {
+          return 1;
+        }
+
+        //LAB_800ec2d0
+        if(prevCredit.scroll_12.get() > 16) {
+          return 1;
+        }
+
+        //LAB_800ec310
+      }
+
+      case 4 -> {
+        if(prevCredit.scroll_12.get() >= 130) {
+          return 1;
+        }
+
+        //LAB_800ec358
+      }
+    }
+
+    //LAB_800ec360
+    //LAB_800ec36c
+    return 0;
+  }
+
+  @Method(0x800ec37cL)
+  public static void moveCredits(final int creditSlot) {
+    final CreditStruct1c credit = credits_800d1af8.get(creditSlot);
+
+    final int scroll = credit.scroll_12.get();
+
+    switch(credit.type_08.get()) {
+      case 0, 1 -> {
+        credit.y_0c.set((short)(136 - scroll));
+        credit.colour_00.set(192, 93, 81);
+
+        if(scroll > 304) {
+          credit.state_16.set(3);
+          creditsPassed_800d1aec.incr();
+        }
+      }
+
+      //LAB_800ec51c
+      case 2 -> {
+        credit.y_0c.set((short)(136 - scroll));
+        credit.colour_00.set(118, 107, 195);
+
+        if(scroll > 304) {
+          credit.state_16.set(3);
+          creditsPassed_800d1aec.incr();
+        }
+      }
+
+      //LAB_800ec620
+      case 3 -> {
+        final int prevCreditSlot = credit.prevCreditSlot_04.get();
+        final CreditStruct1c prevCredit = credits_800d1af8.get(prevCreditSlot);
+
+        if(credit.scroll_12.get() < 64) {
+          if(credit.type_08.get() == 3) {
+            credit.y_0c.set((short)(-credit.height_10.get() / 2 + 13));
+            credit.colour_00.setR(rsin(credit.scroll_12.get() * 16) * 118 >> 12);
+            credit.colour_00.setG(rsin(credit.scroll_12.get() * 16) * 107 >> 12);
+            credit.colour_00.setB(rsin(credit.scroll_12.get() * 16) * 195 >> 12);
+          } else {
+            //LAB_800ec89c
+            credit.y_0c.set((short)(-credit.height_10.get() / 2 - 13));
+            credit.colour_00.setR(rsin(credit.scroll_12.get() * 16) * 192 >> 12);
+            credit.colour_00.setG(rsin(credit.scroll_12.get() * 16) * 93 >> 12);
+            credit.colour_00.setB(rsin(credit.scroll_12.get() * 16) * 81 >> 12);
+          }
+
+          //LAB_800eca68
+        } else {
+          //LAB_800eca70
+          credit._14.incr();
+
+          final int sp14 = credit._14.get();
+          if(prevCredit.type_08.get() == 3) {
+            credit.y_0c.set((short)(-credit.height_10.get() / 2 - sp14 + 13));
+            credit.colour_00.set(118, 107, 195);
+          } else {
+            //LAB_800ecc2c
+            credit.y_0c.set((short)(-credit.height_10.get() / 2 - sp14 - 13));
+            credit.colour_00.set(192, 93, 81);
+          }
+
+          //LAB_800ecd1c
+          if(credit.y_0c.get() < -184) {
+            credit.state_16.set(3);
+            creditsPassed_800d1aec.incr();
+          }
+        }
+      }
+
+      //LAB_800ecd90
+      case 4 -> {
+        if(credit.y_0c.get() < -credit.height_10.get() / 2 && scroll != 0) {
+          credit._14.add(6);
+          final int sp14 = credit._14.get();
+          credit.colour_00.setR(rcos(sp14) * 128 >> 12);
+          credit.colour_00.setG(rcos(sp14) * 128 >> 12);
+          credit.colour_00.setB(rcos(sp14) * 128 >> 12);
+
+          if(sp14 > 0x400) {
+            credit.colour_00.set(0, 0, 0);
+            credit.state_16.set(3);
+            creditsPassed_800d1aec.incr();
+          }
+
+          //LAB_800ecff8
+        } else {
+          //LAB_800ed000
+          credit.y_0c.set((short)(136 - scroll));
+          credit.colour_00.set(0x80, 0x80, 0x80);
+        }
+      }
+
+      //LAB_800ed0a8
+    }
+
+    //LAB_800ed0b0
+  }
+
+  @Method(0x800ed0c4L)
+  public static void loadCreditTims(final int creditSlot) {
+    if(creditIndex_800d1af0.get() < creditTims_800d1ae0.size()) {
+      //LAB_800ed100
+      if(creditTims_800d1ae0.get(creditIndex_800d1af0.get()).size() != 0) {
+        //LAB_800ed138
+        loadCreditTim(creditSlot);
+      }
+    }
+
+    //LAB_800ed150
+  }
+
+  @Method(0x800ed160L)
+  public static void loadCreditTim(final int creditSlot) {
+    final Tim tim = new Tim(creditTims_800d1ae0.get(creditIndex_800d1af0.get()));
+
+    creditIndex_800d1af0.incr();
+
+    if(creditIndex_800d1af0.get() > 357) {
+      creditIndex_800d1af0.set(357);
+    }
+
+    final CreditStruct1c credit = credits_800d1af8.get(creditSlot);
+
+    //LAB_800ed1f8
+    final RECT imageRect = tim.getImageRect();
+
+    final RECT rect = new RECT(
+      creditPos_800f9670.get(creditSlot).getX(),
+      creditPos_800f9670.get(creditSlot).getY(),
+      imageRect.w.get(),
+      imageRect.h.get()
+    );
+
+    credit.width_0e.set(imageRect.w.get());
+    credit.height_10.set(imageRect.h.get());
+
+    LoadImage(rect, tim.getImageData());
+
+    if(tim.hasClut()) {
+      LoadImage(new RECT((short)896, (short)creditSlot, (short)16, (short)1), tim.getClutData());
+    }
+
+    //LAB_800ed32c
+  }
+
+  @Method(0x800ed3b0L)
+  public static void renderQuad(final int tpage, final int clut, final int r, final int g, final int b, final int u, final int v, final int tw, final int th, final int x, final int y, final int w, final int h, final int z, final int translucent) {
+    final GpuCommandPoly cmd = new GpuCommandPoly(4)
+      .bpp(Bpp.of(tpage >>> 7 & 0b11))
+      .clut((clut & 0b111111) * 16, clut >>> 6)
+      .vramPos((tpage & 0b1111) * 64, (tpage & 0x10000) != 0 ? 256 : 0)
+      .rgb(r, g, b)
+      .pos(0, x, y)
+      .pos(1, x + w, y)
+      .pos(2, x, y + h)
+      .pos(3, x + w, y + h)
+      .uv(0, u, v)
+      .uv(1, u + tw, v)
+      .uv(2, u, v + th)
+      .uv(3, u + tw, v + th);
+
+    if(translucent != 0) {
+      cmd.translucent(Translucency.of(tpage >>> 5 & 0b11));
+    }
+
+    GPU.queueCommand(z, cmd);
+  }
+
   @Method(0x800ed5b0L)
   public static void startFmvLoadingStage() {
     throw new RuntimeException("No longer used");
@@ -6399,21 +6997,6 @@ public final class SMap {
   @Method(0x800edb8cL)
   public static void FUN_800edb8c() {
     assert false;
-  }
-
-  @Method(0x800edc7cL)
-  public static void loadCreditsMrg(final long address, final int fileSize, final int fileIndex) {
-    final MrgFile mrg = MEMORY.ref(4, address, MrgFile::new);
-
-    if(fileIndex <= mrg.count.get()) {
-      final MrgEntry entry = mrg.entries.get(fileIndex);
-
-      if(entry.size.get() != 0) {
-        memcpy(_800d1cc0.getAddress(), mrg.getFile(fileIndex), 12000);
-        free(address);
-        creditsLoaded_800d1cb8.setu(0x1L);
-      }
-    }
   }
 
   @Method(0x800eddb4L)
@@ -6784,8 +7367,81 @@ public final class SMap {
   }
 
   @Method(0x800ee9e0L)
-  public static void FUN_800ee9e0(final RECT a0, final long a1, final long a2, final UnsignedShortRef a3, final UnsignedShortRef a4) {
-    assert false;
+  public static void FUN_800ee9e0(final RECT s0, final long a1, final long a2, final UnsignedShortRef tpage, final UnsignedShortRef clut) {
+    if(MEMORY.ref(2, a2).offset(0x8L).getSigned() == 500) {
+      MEMORY.ref(2, a2).offset(0x0L).setu(1);
+      MEMORY.ref(2, a2).offset(0x2L).setu(0);
+      MEMORY.ref(2, a2).offset(0x6L).setu(1);
+    }
+
+    //LAB_800eea24
+    if(MEMORY.ref(2, a2).offset(0x0L).getSigned() != 0) {
+      if(MEMORY.ref(2, a2).offset(0x4L).getSigned() == 0) {
+        if(MEMORY.ref(2, a2).offset(0x2L).getSigned() == 0) {
+          MEMORY.ref(4, a2).offset(0xcL).addu(0x2_a800L);
+
+          if(MEMORY.ref(4, a2).offset(0xcL).get() >>> 16 >= 0x100) {
+            MEMORY.ref(4, a2).offset(0xcL).setu(0xff_0000);
+            MEMORY.ref(2, a2).offset(0x2L).setu(1);
+          }
+        } else {
+          //LAB_800eead8
+          MEMORY.ref(4, a2).offset(0xcL).subu(0x2_a800L);
+
+          if(MEMORY.ref(4, a2).offset(0xcL).get() >>> 16 < 0x80) {
+            MEMORY.ref(4, a2).offset(0xcL).setu(0x80_0000);
+            MEMORY.ref(2, a2).offset(0x4L).setu(1);
+          }
+        }
+      } else {
+        //LAB_800eeb08
+        MEMORY.ref(4, a2).offset(0xcL).setu(0x80_0000);
+      }
+
+      //LAB_800eeb0c
+      GPU.queueCommand(40, new GpuCommandQuad()
+        .vramPos((tpage.get() & 0b1111) * 64, (tpage.get() & 0b10000) != 0 ? 256 : 0)
+        .clut((clut.get() & 0b111111) * 16, clut.get() >>> 6)
+        .monochrome((int)MEMORY.ref(2, a2).offset(0xeL).get())
+        .translucent(Translucency.of(tpage.get() >>> 5 & 0b11))
+        .pos(-188, 18, 192, 72)
+        .uv(0, 128)
+      );
+    }
+
+    //LAB_800eeb78
+    if(MEMORY.ref(2, a2).offset(0x6L).getSigned() != 0) {
+      FUN_800eec10(s0, a1, a2, tpage);
+
+      if(MEMORY.ref(2, a2).offset(0x8L).getSigned() == 561) {
+        MEMORY.ref(2, a2).offset(0x6L).setu(0);
+      }
+    }
+
+    //LAB_800eeba8
+    //LAB_800eebac
+    MEMORY.ref(2, a2).offset(0x8L).addu(1);
+  }
+
+  @Method(0x800eec10L)
+  public static void FUN_800eec10(final RECT a0, long a1, final long a2, final UnsignedShortRef tpage) {
+    //LAB_800eec1c
+    for(int i = 0; i < 16; i++) {
+      MEMORY.ref(4, a2).offset(0x50L).offset(i * 0x4L).addu(MEMORY.ref(4, a2).offset(0x10L).offset(i * 0x4L).get());
+
+      final long v1 = MEMORY.ref(2, a2).offset(0x90L).offset(i * 0x2L).get();
+      if(v1 < MEMORY.ref(4, a2).offset(0x50L).offset(i * 0x4L).get() >>> 16) {
+        MEMORY.ref(4, a2).offset(0x50L).offset(i * 0x4L).setu(v1 << 16);
+      }
+
+      //LAB_800eec5c
+      final long sp0 = MEMORY.ref(2, a2).offset(0x52L).offset(i * 0x4L).get() << 10;
+      final long sp2 = MEMORY.ref(2, a2).offset(0x52L).offset(i * 0x4L).get() << 5;
+      final long sp4 = MEMORY.ref(2, a2).offset(0x52L).offset(i * 0x4L).get();
+      MEMORY.ref(2, a1).offset(0x0L).setu(0x8000 | sp0 | sp2 | sp4);
+
+      a1 += 0x2L;
+    }
   }
 
   @Method(0x800eece0L)
@@ -8673,7 +9329,7 @@ public final class SMap {
   public static void handleTriangleIndicators() {
     getScreenOffset(_800c69fc.deref().screenOffsetX_10, _800c69fc.deref().screenOffsetY_14);
 
-    if(gameState_800babc8.indicatorsDisabled_4e3.get() != 0) {
+    if(gameState_800babc8.indicatorsDisabled_4e3) {
       return;
     }
 
@@ -8681,34 +9337,34 @@ public final class SMap {
       return;
     }
 
-    final int indicatorMode = gameState_800babc8.indicatorMode_4e8.get();
+    final int indicatorMode = gameState_800babc8.indicatorMode_4e8;
     if(indicatorMode != 1) {
       _800f9e9c.setu(0);
     }
 
     //LAB_800f321c
-    if((joypadPress_8007a398.get() & 0x8) != 0) { // R1
+    if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_RIGHT_1)) { // R1
       if(indicatorMode == 0) {
-        gameState_800babc8.indicatorMode_4e8.set(1);
+        gameState_800babc8.indicatorMode_4e8 = 1;
         //LAB_800f3244
       } else if(indicatorMode == 1) {
-        gameState_800babc8.indicatorMode_4e8.set(2);
+        gameState_800babc8.indicatorMode_4e8 = 2;
       } else if(indicatorMode == 2) {
-        gameState_800babc8.indicatorMode_4e8.set(0);
+        gameState_800babc8.indicatorMode_4e8 = 0;
         _800f9e9c.setu(0);
       }
       //LAB_800f3260
-    } else if((joypadPress_8007a398.get() & 0x4) != 0) { // L1
+    } else if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_LEFT_1)) { // L1
       if(indicatorMode == 0) {
         //LAB_800f3274
-        gameState_800babc8.indicatorMode_4e8.set(2);
+        gameState_800babc8.indicatorMode_4e8 = 2;
         //LAB_800f3280
       } else if(indicatorMode == 1) {
-        gameState_800babc8.indicatorMode_4e8.set(0);
+        gameState_800babc8.indicatorMode_4e8 = 0;
         _800f9e9c.setu(0);
         //LAB_800f3294
       } else if(indicatorMode == 2) {
-        gameState_800babc8.indicatorMode_4e8.set(1);
+        gameState_800babc8.indicatorMode_4e8 = 1;
 
         //LAB_800f32a4
         _800f9e9c.setu(0);
@@ -8717,7 +9373,7 @@ public final class SMap {
 
     //LAB_800f32a8
     //LAB_800f32ac
-    if(gameState_800babc8.indicatorMode_4e8.get() == 0) {
+    if(gameState_800babc8.indicatorMode_4e8 == 0) {
       return;
     }
 
@@ -8754,13 +9410,13 @@ public final class SMap {
     _800c69fc.deref().playerX_08.set(sp118.getX());
     _800c69fc.deref().playerY_0c.set(sp118.getY());
 
-    if(gameState_800babc8.indicatorMode_4e8.get() == 1) {
+    if(gameState_800babc8.indicatorMode_4e8 == 1) {
       if(_800f9e9c.get() < 33) {
         renderTriangleIndicators();
         _800f9e9c.addu(0x1L);
       }
       //LAB_800f3508
-    } else if(gameState_800babc8.indicatorMode_4e8.get() == 2) {
+    } else if(gameState_800babc8.indicatorMode_4e8 == 2) {
       renderTriangleIndicators();
     }
 
@@ -8899,7 +9555,7 @@ public final class SMap {
 
   @Method(0x800f3af8L)
   public static void resetTriangleIndicators() {
-    if(gameState_800babc8.indicatorMode_4e8.get() > 0) {
+    if(gameState_800babc8.indicatorMode_4e8 > 0) {
       _800f9e9c.setu(0);
     }
 

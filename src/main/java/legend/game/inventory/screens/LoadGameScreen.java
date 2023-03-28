@@ -59,15 +59,15 @@ public class LoadGameScreen extends SaveListScreen {
 
       //LAB_800ff6ec
       _800bdc34.setu(0x1L);
-      submapScene_80052c34.set(gameState_800babc8.submapScene_a4.get());
-      submapCut_80052c30.set(gameState_800babc8.submapCut_a8.get());
-      index_80052c38.set(gameState_800babc8.submapCut_a8.get());
+      submapScene_80052c34.set(gameState_800babc8.submapScene_a4);
+      submapCut_80052c30.set(gameState_800babc8.submapCut_a8);
+      index_80052c38.set(gameState_800babc8.submapCut_a8);
 
-      if(gameState_800babc8.submapCut_a8.get() == 264) { // Somewhere in Home of Giganto
+      if(gameState_800babc8.submapCut_a8 == 264) { // Somewhere in Home of Giganto
         submapScene_80052c34.set(53);
       }
 
-      setMono(gameState_800babc8.mono_4e0.get());
+      setMono(gameState_800babc8.mono_4e0);
 
       this.loadingStage = 2;
     }

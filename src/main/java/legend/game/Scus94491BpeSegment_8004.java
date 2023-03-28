@@ -90,10 +90,10 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link Scus94491BpeSegment_800e#finalizePregameLoading()}</li>
    *   <li>{@link Ttle#executeTtleLoadingStage()}</li>
    *   <li>{@link Ttle#executeTtleUnloadingStage()}</li>
-   *   <li>0x800eaa88 (TODO)</li>
+   *   <li>{@link SMap#theEnd}</li>
    *   <li>{@link SMap#executeSmapLoadingStage()} Sets up rendering and loads scene</li>
    *   <li>{@link Scus94491BpeSegment#FUN_80018658()}</li>
-   *   <li>{@link Ttle#FUN_800c75fc()}</li>
+   *   <li>{@link Ttle#gameOver()}</li>
    *   <li>{@link WMap#FUN_800cc738()}</li>
    *   <li>{@link SMap#startFmvLoadingStage()}</li>
    *   <li>{@link SMap#swapDiskLoadingStage()}</li>
@@ -122,7 +122,10 @@ public final class Scus94491BpeSegment_8004 {
    * <ol>
    *   <li value="5">SMAP</li>
    *   <li value="6">Combat</li>
+   *   <li value="7">Game over</li>
    *   <li value="8">WMAP</li>
+   *   <li value="9">FMV?</li>
+   *   <li value="11">Credits?</li>
    * </ol>
    */
   public static final IntRef mainCallbackIndex_8004dd20 = MEMORY.ref(4, 0x8004dd20L, IntRef::new);
@@ -606,9 +609,9 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[681] = SMap::FUN_800e00cc;
     scriptSubFunctions_8004e29c[682] = SMap::FUN_800e0148;
     scriptSubFunctions_8004e29c[683] = SMap::FUN_800e01bc;
-    scriptSubFunctions_8004e29c[684] = SMap::FUN_800e0244;
+    scriptSubFunctions_8004e29c[684] = SMap::scriptEnableTextureAnimation;
     scriptSubFunctions_8004e29c[685] = SMap::FUN_800e0204;
-    scriptSubFunctions_8004e29c[686] = SMap::FUN_800e0284;
+    scriptSubFunctions_8004e29c[686] = SMap::scriptDisableTextureAnimation;
     scriptSubFunctions_8004e29c[687] = SMap::FUN_800e02c0;
     scriptSubFunctions_8004e29c[688] = SMap::FUN_800e02fc;
     scriptSubFunctions_8004e29c[689] = SMap::FUN_800deba0;
@@ -3851,8 +3854,8 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004c6f8L)
-  public static void setMono(final int mono) {
-    _800c6630.mono_36.set(mono);
+  public static void setMono(final boolean mono) {
+    _800c6630.mono_36.set(mono ? 1 : 0);
   }
 
   @Method(0x8004c894L)

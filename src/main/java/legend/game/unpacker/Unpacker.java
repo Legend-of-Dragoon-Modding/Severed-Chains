@@ -1,8 +1,11 @@
 package legend.game.unpacker;
 
+import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
+import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.core.Tuple;
+import legend.game.Scus94491BpeSegment;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -27,6 +30,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import java.util.stream.StreamSupport;
 
@@ -50,23 +54,43 @@ public final class Unpacker {
 
   private static final Object IO_LOCK = new Object();
 
+  /**
+   * Note: the transformation pipeline is recursive and after a transformation, the file will be placed back into the transformation queue
+   * until no more transformers apply to it. Discriminators must be able to recognize their own changes and return false, or the file will
+   * be transformed infinitely.
+   */
   private static final Map<Discriminator, Transformer> transformers = new LinkedHashMap<>();
   static {
     transformers.put(Unpacker::decompressDiscriminator, Unpacker::decompress);
     transformers.put(Unpacker::mrgDiscriminator, Unpacker::unmrg);
     transformers.put(Unpacker::deffDiscriminator, Unpacker::undeff);
     transformers.put(Unpacker::drgn21_402_3_patcherDiscriminator, Unpacker::drgn21_402_3_patcher);
+    transformers.put(Unpacker::drgn21_693_0_patcherDiscriminator, Unpacker::drgn21_693_0_patcher);
     transformers.put(Unpacker::drgn0_142_patcherDiscriminator, Unpacker::drgn0_142_patcher);
+    transformers.put(Unpacker::drgn1_343_patcherDiscriminator, Unpacker::drgn1_343_patcher);
     transformers.put(Unpacker::playerCombatSoundEffectsDiscriminator, Unpacker::playerCombatSoundEffectsTransformer);
     transformers.put(Unpacker::playerCombatModelsAndTexturesDiscriminator, Unpacker::playerCombatModelsAndTexturesTransformer);
     transformers.put(Unpacker::dragoonCombatModelsAndTexturesDiscriminator, Unpacker::dragoonCombatModelsAndTexturesTransformer);
     transformers.put(Unpacker::skipPartyPermutationsDiscriminator, Unpacker::skipPartyPermutationsTransformer);
     transformers.put(Unpacker::extractBtldDataDiscriminator, Unpacker::extractBtldDataTransformer);
+    transformers.put(Unpacker::extractItemDataDiscriminator, Unpacker::extractItemDataTransformer);
+    transformers.put(Unpacker::uiPatcherDiscriminator, Unpacker::uiPatcherTransformer);
     transformers.put(CtmdTransformer::ctmdDiscriminator, CtmdTransformer::ctmdTransformer);
   }
 
+  private static Consumer<String> statusListener = status -> { };
+  private static boolean shouldStop;
+
   public static void main(final String[] args) throws UnpackerException {
     unpack();
+  }
+
+  public static void stop() {
+    shouldStop = true;
+  }
+
+  public static void setStatusListener(final Consumer<String> listener) {
+    statusListener = listener;
   }
 
   public static FileData loadFile(final String name) {
@@ -90,7 +114,7 @@ public final class Unpacker {
 
       if(Files.exists(mrg)) {
         try(final BufferedReader reader = Files.newBufferedReader(mrg)) {
-          final Map<String, String> fileMap = new LinkedHashMap<>();
+          final Int2IntMap fileMap = new Int2IntArrayMap();
 
           reader.lines().forEach(line -> {
             final String[] parts = line.split("=");
@@ -99,31 +123,51 @@ public final class Unpacker {
               throw new RuntimeException("Invalid MRG entry! " + line);
             }
 
-            final String virtual = parts[0];
-            final String real = parts[1];
+            final int virtual = Integer.parseInt(parts[0]);
+            final int real = Integer.parseInt(parts[1]);
             fileMap.put(virtual, real);
           });
 
           final List<FileData> files = new ArrayList<>();
-          fileMap.forEach((virtual, real) -> {
-            // Resolve to the realest file
-            while(!fileMap.get(real).equals(real)) {
-              real = fileMap.get(real);
-            }
+
+          // Add real files
+          for(final var entry : fileMap.int2IntEntrySet()) {
+            final int virtual = entry.getIntKey();
+            final int real = entry.getIntValue();
 
             try {
-              final Path file = dir.resolve(real);
+              final Path file = dir.resolve(String.valueOf(real));
               if(Files.isRegularFile(file)) {
-                if(virtual.equals(real)) {
+                if(virtual == real) {
                   files.add(new FileData(Files.readAllBytes(file)));
                 } else {
-                  files.add(FileData.virtual(Files.readAllBytes(file)));
+                  files.add(null);
                 }
               }
             } catch(final IOException e) {
               throw new RuntimeException("Failed to load directory " + name, e);
             }
-          });
+          }
+
+          // Add virtual files
+          for(final var entry : fileMap.int2IntEntrySet()) {
+            final int virtual = entry.getIntKey();
+            int real = entry.getIntValue();
+
+            if(virtual == real) {
+              continue;
+            }
+
+            // Resolve to the realest file
+            while(fileMap.get(real) != real) {
+              real = fileMap.get(real);
+            }
+
+            final Path file = dir.resolve(String.valueOf(real));
+            if(Files.isRegularFile(file)) {
+              files.set(virtual, FileData.virtual(files.get(real), real));
+            }
+          }
 
           return files;
         } catch(final IOException e) {
@@ -212,7 +256,7 @@ public final class Unpacker {
           .forEach(Unpacker::writeFiles);
 
         LOGGER.info("Files unpacked in %d seconds", (System.nanoTime() - start) / 1_000_000_000L);
-      } catch(final IOException e) {
+      } catch(final Throwable e) {
         throw new UnpackerException(e);
       }
     }
@@ -295,7 +339,7 @@ public final class Unpacker {
   }
 
   private static Tuple<String, FileData> readFile(final Map.Entry<String, DirectoryEntry> e) {
-    LOGGER.info("Unpacking %s...", e.getKey());
+    statusListener.accept("Unpacking %s...".formatted(e.getKey()));
 
     final DirectoryEntry entry = e.getValue();
 
@@ -306,6 +350,10 @@ public final class Unpacker {
   }
 
   private static Map<String, FileData> transform(final String name, final FileData data, final Set<Flags> flags) {
+    if(shouldStop) {
+      throw new UnpackerStoppedRuntimeException("Unpacking cancelled");
+    }
+
     final Map<String, FileData> entries = new HashMap<>();
     boolean wasTransformed = false;
 
@@ -422,6 +470,25 @@ public final class Unpacker {
   }
 
   /**
+   * DRGN21.693.0 is the submap controller for Hoax post-Kongol. If you select
+   * "I still don't know..." as your response during the dialog, the script tries
+   * to push an inline parameter that is past the end of the script. This patcher
+   * extends the script and fills with ffffffff, which we read as a sentinel value
+   * in {@link Scus94491BpeSegment#scriptReadGlobalFlag2}, and return 0 there.
+   */
+  private static boolean drgn21_693_0_patcherDiscriminator(final String name, final FileData data, final Set<Flags> flags) {
+    return "SECT/DRGN21.BIN/693/0".equals(name) && data.size() == 0x188;
+  }
+
+  private static Map<String, FileData> drgn21_693_0_patcher(final String name, final FileData data, final Set<Flags> flags) {
+    final byte[] newData = new byte[0x190];
+    System.arraycopy(data.data(), data.offset(), newData, 0, data.size());
+    MathHelper.set(newData, 0x188, 4, 0xffffffffL);
+    MathHelper.set(newData, 0x18c, 4, 0xffffffffL);
+    return Map.of(name, new FileData(newData));
+  }
+
+  /**
    * The Meru model in the post-Divine-Dragon fight cutscene has a corrupt
    * animation file, missing animations for 2 out of her 22 objects. If you
    * look closely at the top of her leg, you can see it. This injects extra
@@ -443,6 +510,23 @@ public final class Unpacker {
     newData[0xc] = 22;
 
     return Map.of(name, new FileData(newData));
+  }
+
+  /**
+   * In the first Faust battle script file (used for the battle itself), the script
+   * tries to access a coord2ArrPtr at index 8 at some moments, but there are only
+   * 6 objects in the model. The index is a param hardcoded into the script. This
+   * alters the value of that param from 8 to 3, which is the index set by the same
+   * function (800ee3c0) when the battle starts.
+   */
+  private static boolean drgn1_343_patcherDiscriminator(final String name, final FileData data, final Set<Flags> flags) {
+    return "SECT/DRGN1.BIN/343".equals(name) && data.size() == 0x3ab4 && data.readByte(0x3a70) == 0x8;
+  }
+
+  private static Map<String, FileData> drgn1_343_patcher(final String name, final FileData data, final Set<Flags> flags) {
+    data.writeByte(0x3a70, 0x3);
+
+    return Map.of(name, data);
   }
 
   private static boolean playerCombatSoundEffectsDiscriminator(final String name, final FileData data, final Set<Flags> flags) {
@@ -549,6 +633,7 @@ public final class Unpacker {
 
   /** TODO this is pretty bad */
   private static boolean btldDataDiscriminatorLatch = true;
+  private static boolean itemDataDiscriminatorLatch = true;
   /** Extracts table at 80102050 */
   private static boolean extractBtldDataDiscriminator(final String name, final FileData data, final Set<Flags> flags) {
     return btldDataDiscriminatorLatch && "OVL/S_BTLD.OV_".equals(name);
@@ -562,12 +647,46 @@ public final class Unpacker {
     return files;
   }
 
+  private static boolean extractItemDataDiscriminator(final String name, final FileData data, final Set<Flags> flags) {
+    return itemDataDiscriminatorLatch && "OVL/S_ITEM.OV_".equals(name);
+  }
+
+  private static Map<String, FileData> extractItemDataTransformer(final String name, final FileData data, final Set<Flags> flags) {
+    itemDataDiscriminatorLatch = false;
+    final Map<String, FileData> files = new HashMap<>();
+    files.put(name, data);
+    files.put("characters/kongol/xp", new FileData(data.data(), 0x17d78, 61 * 4));
+    files.put("characters/dart/xp", new FileData(data.data(), 0x17e6c, 61 * 4));
+    files.put("characters/haschel/xp", new FileData(data.data(), 0x17f60, 61 * 4));
+    files.put("characters/meru/xp", new FileData(data.data(), 0x18054, 61 * 4));
+    files.put("characters/lavitz/xp", new FileData(data.data(), 0x18148, 61 * 4));
+    files.put("characters/albert/xp", new FileData(data.data(), 0x18148, 61 * 4));
+    files.put("characters/rose/xp", new FileData(data.data(), 0x1823c, 61 * 4));
+    files.put("characters/shana/xp", new FileData(data.data(), 0x18330, 61 * 4));
+    files.put("characters/miranda/xp", new FileData(data.data(), 0x18330, 61 * 4));
+    return files;
+  }
+
+  private static boolean uiPatcherDiscriminator(final String name, final FileData data, final Set<Flags> flags) {
+    return "SECT/DRGN0.BIN/6666".equals(name) && data.readByte(0x24a8) != 0;
+  }
+
+  private static Map<String, FileData> uiPatcherTransformer(final String name, final FileData data, final Set<Flags> flags) {
+    // Remove the baked-in slashes in the fractions for character cards
+    for(int i = 0; i < 3; i++) {
+      data.writeByte(0x24a8 + i * 14, 0);
+      data.writeByte(0x24aa + i * 14, 0);
+    }
+
+    return Map.of(name, data);
+  }
+
   private static void writeFiles(final Map<String, FileData> files) {
     files.forEach(Unpacker::writeFile);
   }
 
   private static void writeFile(final String name, final FileData data) {
-    if(data.virtual()) {
+    if(!data.real()) {
       return;
     }
 

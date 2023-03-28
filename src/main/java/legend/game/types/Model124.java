@@ -76,17 +76,17 @@ public class Model124 {
   public int count_c8;
   /** ushort */
   public int tmdNobj_ca;
-  /** byte */
-  public int b_cc;
+  /** 0/1/2/3 - if 0, the model won't render (byte) */
+  public int movementType_cc;
   /** byte */
   public int b_cd;
 
   public final short[][] ptrs_d0 = new short[7][];
   /** ubyte */
-  public final int[] aub_ec = new int[7];
+  public final boolean[] animateTextures_ec = new boolean[7];
 
   /** One bit per object in TMD object table */
-  public long ui_f4;
+  public long partInvisible_f4;
   public final VECTOR scaleVector_fc = new VECTOR();
   /** Pretty sure this doesn't include VRAM X/Y */
   public int tpage_108;
@@ -150,11 +150,11 @@ public class Model124 {
     System.arraycopy(other.usArr_ba, 0, this.usArr_ba, 0, 7);
     this.count_c8 = other.count_c8;
     this.tmdNobj_ca = other.tmdNobj_ca;
-    this.b_cc = other.b_cc;
+    this.movementType_cc = other.movementType_cc;
     this.b_cd = other.b_cd;
     System.arraycopy(other.ptrs_d0, 0, this.ptrs_d0, 0, 7);
-    System.arraycopy(other.aub_ec, 0, this.aub_ec, 0, 7);
-    this.ui_f4 = other.ui_f4;
+    System.arraycopy(other.animateTextures_ec, 0, this.animateTextures_ec, 0, 7);
+    this.partInvisible_f4 = other.partInvisible_f4;
     this.scaleVector_fc.set(other.scaleVector_fc);
     this.tpage_108 = other.tpage_108;
     this.vector_10c.set(other.vector_10c);

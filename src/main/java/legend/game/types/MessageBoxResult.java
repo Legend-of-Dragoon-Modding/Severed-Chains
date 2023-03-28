@@ -4,4 +4,5 @@ public enum MessageBoxResult {
   AWAITING_INPUT,
   YES,
   NO,
+  CANCEL,
 }

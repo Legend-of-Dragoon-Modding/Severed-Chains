@@ -166,10 +166,10 @@ public final class Bttl_800d {
 
     //LAB_800d00d4
     if(clearBit) {
-      v1.model_148.ui_f4 &= ~(0x1L << animIndex);
+      v1.model_148.partInvisible_f4 &= ~(0x1L << animIndex);
     } else {
       //LAB_800d0104
-      v1.model_148.ui_f4 |= 0x1L << animIndex;
+      v1.model_148.partInvisible_f4 |= 0x1L << animIndex;
     }
   }
 
@@ -1238,7 +1238,7 @@ public final class Bttl_800d {
       _800faa9d.setu(0);
     } else {
       //LAB_800d3dc0
-      final int addition = gameState_800babc8.charData_32c.get(script.params_20[0].get()).selectedAddition_19.get();
+      final int addition = gameState_800babc8.charData_32c[script.params_20[0].get()].selectedAddition_19;
       final ScriptState<AdditionScriptData1c> state = SCRIPTS.allocateScriptState("AdditionScriptData1c", new AdditionScriptData1c());
       state.loadScriptFile(doNothingScript_8004f650);
       state.setTicker(Bttl_800d::FUN_800d3bb8);
@@ -4514,7 +4514,7 @@ public final class Bttl_800d {
   }
 
   @Method(0x800dd89cL)
-  public static void FUN_800dd89c(final Model124 model, final int a1) {
+  public static void FUN_800dd89c(final Model124 model, final int newAttribute) {
     final long v0;
     final long v1;
     long s6;
@@ -4531,14 +4531,14 @@ public final class Bttl_800d {
       final GsDOBJ2 s2 = model.ObjTable_0c.top[i];
 
       //LAB_800dd940
-      if((model.ui_f4 & 1L << i) == 0) {
+      if((model.partInvisible_f4 & 1L << i) == 0) {
         final MATRIX lw = new MATRIX();
         final MATRIX ls = new MATRIX();
         GsGetLws(s2.coord2_04, lw, ls);
 
         if((s6 & (ls.transfer.getZ() ^ tickCount_800bb0fc.get())) == 0 || ls.transfer.getZ() - ls.transfer.getX() >= -0x800 && ls.transfer.getZ() + ls.transfer.getX() >= -0x800 && ls.transfer.getZ() - ls.transfer.getY() >= -0x800 && ls.transfer.getZ() + ls.transfer.getY() >= -0x800) {
           //LAB_800dd9bc
-          if((a1 & 0x8L) != 0) {
+          if((newAttribute & 0x8L) != 0) {
             FUN_8003eba0(lw, lw);
           }
 
@@ -4552,8 +4552,9 @@ public final class Bttl_800d {
           CPU.CTC2(ls.transfer.getX(), 5);
           CPU.CTC2(ls.transfer.getY(), 6);
           CPU.CTC2(ls.transfer.getZ(), 7);
-          final int s0 = s2.attribute_00;
-          s2.attribute_00 = a1;
+
+          final int oldAttrib = s2.attribute_00;
+          s2.attribute_00 = newAttribute;
 
           final int oldZShift = zShift_1f8003c4.get();
           final int oldZMax = zMax_1f8003cc.get();
@@ -4566,7 +4567,7 @@ public final class Bttl_800d {
           zMax_1f8003cc.set(oldZMax);
           zMin = oldZMin;
 
-          s2.attribute_00 = s0;
+          s2.attribute_00 = oldAttrib;
         }
       }
     }
@@ -4574,14 +4575,14 @@ public final class Bttl_800d {
     //LAB_800dda54
     //LAB_800dda58
     for(int i = 0; i < 7; i++) {
-      if(model.aub_ec[i] != 0) {
+      if(model.animateTextures_ec[i]) {
         animateModelTextures(model, i);
       }
 
       //LAB_800dda70
     }
 
-    if(model.b_cc != 0) {
+    if(model.movementType_cc != 0) {
       FUN_80021724(model);
     }
 
@@ -4594,7 +4595,7 @@ public final class Bttl_800d {
 
     //LAB_800ddb18
     for(int i = 0; i < 7; i++) {
-      model.aub_ec[i] = 0;
+      model.animateTextures_ec[i] = false;
     }
 
     final TmdWithId tmdWithId = extTmd.tmdPtr_00;
@@ -4640,7 +4641,7 @@ public final class Bttl_800d {
     //LAB_800ddc80
     model.ub_a2 = 0;
     model.ub_a3 = 0;
-    model.ui_f4 = 0;
+    model.partInvisible_f4 = 0;
     model.zOffset_a0 = 0;
     model.coord2_14.coord.transfer.set(sp0x18);
 
@@ -4650,7 +4651,7 @@ public final class Bttl_800d {
 
     //LAB_800ddce8
     model.scaleVector_fc.set(0x1000, 0x1000, 0x1000);
-    model.b_cc = 0;
+    model.movementType_cc = 0;
     model.vector_10c.set(0x1000, 0x1000, 0x1000);
     model.vector_118.set(0, 0, 0);
   }

@@ -4,6 +4,8 @@ import legend.core.DebugHelper;
 import legend.core.MathHelper;
 import legend.core.opengl.Window;
 import legend.core.spu.XaAdpcm;
+import legend.game.input.Input;
+import legend.game.input.InputAction;
 import legend.game.types.FileEntry08;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
@@ -197,10 +199,6 @@ public class Fmv {
   private static boolean shouldStop;
 
   public static void playCurrentFmv() {
-//TODO this might be necessary for the post-game cutscene or something?
-//      creditsLoaded_800d1cb8.setu(0);
-//      loadDrgnBinFile(0, 5721, 0, SMap::loadCreditsMrg, (int)fmvIndex_800bf0dc.get(), 0x4L);
-
     final int width = switch((int)fmvIndex_800bf0dc.get()) {
       case 0, 2, 3, 4, 6, 7, 8, 9, 14, 15, 16, 17 -> 320;
       case 1, 5, 10, 11, 12, 13 -> 640;
@@ -254,6 +252,15 @@ public class Fmv {
     click = GPU.window().events.onMouseRelease((window, x, y, button, mods) -> shouldStop = true);
 
     GPU.mainRenderer = () -> {
+
+      Input.update();
+
+      if(Input.pressedThisFrame(InputAction.BUTTON_CENTER_2)
+        || Input.pressedThisFrame(InputAction.BUTTON_NORTH) || Input.pressedThisFrame(InputAction.BUTTON_SOUTH)
+        || Input.pressedThisFrame(InputAction.BUTTON_EAST) || Input.pressedThisFrame(InputAction.BUTTON_WEST)) {
+        shouldStop = true;
+      }
+
       if(shouldStop) {
         stop();
       }

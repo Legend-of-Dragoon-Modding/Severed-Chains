@@ -1,5 +1,6 @@
 package legend.game.combat.types;
 
+import legend.core.Config;
 import legend.core.gte.SVECTOR;
 import legend.game.types.Model124;
 
@@ -283,6 +284,13 @@ public class BattleObject27c extends BattleScriptDataBase {
   }
 
   public int getStat(final int statIndex) {
+    int disableStatusFlag = 0x0;
+    if(statIndex == 5 || statIndex == 16) {
+      disableStatusFlag = Config.disableStatusEffects() && this.combatant_144.charSlot_19c > -1 ? 0xff : 0x0;
+      if(disableStatusFlag == 0xff) {
+        this.status_0e &= 0xff00;
+      }
+    }
     return switch(statIndex) {
       case 0 -> this.level_04;
       case 1 -> this.dlevel_06;
@@ -300,7 +308,7 @@ public class BattleObject27c extends BattleScriptDataBase {
       case 13 -> this._1e;
       case 14 -> this.elementalResistanceFlag_20;
       case 15 -> this.elementalImmunityFlag_22;
-      case 16 -> this.statusResistFlag_24;
+      case 16 -> this.statusResistFlag_24 | disableStatusFlag;
       case 17 -> this._26;
       case 18 -> this._28;
       case 19 -> this._2a;
@@ -521,19 +529,19 @@ public class BattleObject27c extends BattleScriptDataBase {
       case 86 -> this.dragoonDefence_b0 = value;
       case 87 -> this.dragoonMagicDefence_b2 = value;
       case 88 -> {
-        this.powerAttack_b4 = value & 0xff;
+        this.powerAttack_b4 = (byte)value;
         this.powerAttackTurns_b5 = value >>> 8 & 0xff;
       }
       case 89 -> {
-        this.powerMagicAttack_b6 = value & 0xff;
+        this.powerMagicAttack_b6 = (byte)value;
         this.powerMagicAttackTurns_b7 = value >>> 8 & 0xff;
       }
       case 90 -> {
-        this.powerDefence_b8 = value & 0xff;
+        this.powerDefence_b8 = (byte)value;
         this.powerDefenceTurns_b9 = value >>> 8 & 0xff;
       }
       case 91 -> {
-        this.powerMagicDefence_ba = value & 0xff;
+        this.powerMagicDefence_ba = (byte)value;
         this.powerMagicDefenceTurns_bb = value >>> 8 & 0xff;
       }
       case 92 -> {
