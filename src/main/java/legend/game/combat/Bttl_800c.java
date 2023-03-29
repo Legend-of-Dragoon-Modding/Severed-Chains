@@ -1793,8 +1793,6 @@ public final class Bttl_800c {
     if(combatant.mrg_04 == null) {
       //LAB_800c9910
       if(!isMonster && files.size() == 64) {
-        _8006e398.y_d80[charSlot] = 0;
-
         //LAB_800c9940
         for(int animIndex = 0; animIndex < 32; animIndex++) {
           if(files.get(32 + animIndex).real()) {
@@ -1889,13 +1887,7 @@ public final class Bttl_800c {
       s3 = index;
     } else if(type == 6) {
       //LAB_800c9bcc
-      final int size = (data.size() + 0x7f) / 0x80;
-      final RECT sp0x10 = new RECT((short)(512 + a3 * 64), (short)_8006e398.y_d80[a3], (short)64, (short)size);
-      LoadImage(sp0x10, data);
-
-      _8006e398.y_d80[a3] += size;
-
-      final CombatantStruct1a8_c.TimType tim = new CombatantStruct1a8_c.TimType(sp0x10.x.get(), sp0x10.y.get(), sp0x10.h.get());
+      final CombatantStruct1a8_c.TimType tim = new CombatantStruct1a8_c.TimType(data);
       tim._08 = -1;
       tim.type_0a = 6;
       tim.isLoaded_0b = 0;
@@ -1981,10 +1973,7 @@ public final class Bttl_800c {
 
     if(s0 instanceof final CombatantStruct1a8_c.TimType timType) {
       if(timType.isLoaded_0b == 0) {
-        final int s1 = FUN_800cab58(timType.h_03 * 0x80, 3, 0, 0);
-        final RECT sp0x20 = new RECT((short)timType.x_00, (short)timType.y_02, (short)64, (short)timType.h_03);
-        StoreImage(sp0x20, FUN_800cad34(s1));
-        s0.BttlStruct08_index_04 = s1;
+        s0.BttlStruct08_index_04 = FUN_800caae4(timType.data, 3, 0, 0);
         s0.isLoaded_0b = 1;
       }
 
@@ -2117,10 +2106,6 @@ public final class Bttl_800c {
   @Method(0x800ca418L)
   public static void FUN_800ca418(final int index) {
     final CombatantStruct1a8 combatant = combatants_8005e398[index];
-
-    if((combatant.flags_19e & 0x4) != 0) {
-      _8006e398.y_d80[combatant.charSlot_19c] = 0;
-    }
 
     //LAB_800ca488
     //LAB_800ca494
@@ -2339,11 +2324,6 @@ public final class Bttl_800c {
 
     //LAB_800cab3c
     return index;
-  }
-
-  @Method(0x800cab58L)
-  public static int FUN_800cab58(final int size, final int a1, final int a2, final int a3) {
-    return FUN_800caae4(new FileData(new byte[size]), a1, a2, a3);
   }
 
   @Method(0x800cac38L)

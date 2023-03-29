@@ -269,7 +269,8 @@ public class BattleStructEf4 {
   public int _578;
   public int _57c;
   public final BttlStruct08[] _580 = new BttlStruct08[0x100];
-  public final int[] y_d80 = new int[3];
+  // This was used for storing animation files in VRAM
+//  public final int[] y_d80 = new int[3];
   public final BattleStructEf4Sub08[] _d8c = new BattleStructEf4Sub08[16];
   public final ScriptState<BattleObject27c>[] bobjIndices_e0c = new ScriptState[13];
   public final ScriptState<BattleObject27c>[] charBobjIndices_e40 = new ScriptState[4];
