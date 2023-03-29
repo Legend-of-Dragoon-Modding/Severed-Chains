@@ -745,7 +745,7 @@ public final class Unpacker {
   }
 
   private static void writeFile(final String name, final FileData data) {
-    if(!data.real()) {
+    if(data.realFileIndex() != -1) {
       return;
     }
 
