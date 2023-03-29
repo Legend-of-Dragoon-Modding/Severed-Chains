@@ -8,10 +8,10 @@ A project to reverse engineer Legend of Dragoon into a high-level language with 
 
 ### Current Progress
 
-- Game engine is mostly functional with a few major graphical glitches that don't negatively affect gameplay
-- Currently uses a simple software renderer that is not very efficient but runs at full FPS even on fairly weak hardware
+- Game engine is fully functional with a few major graphical glitches that don't negatively affect gameplay
+- Modding API is actively in development
 - No music support yet (sound effects work with some issues)
-- Playable most of the way through the fourth disk (up to Three Executioners fight)
+- Game is fully playable with no known crashes
 
 ### Interested in playing?
 
