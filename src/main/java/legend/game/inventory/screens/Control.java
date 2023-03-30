@@ -230,6 +230,23 @@ public abstract class Control extends ControlHost {
   }
 
   @Override
+  protected InputPropagation charPress(final int codepoint) {
+    if(this.isDisabled()) {
+      return InputPropagation.PROPAGATE;
+    }
+
+    if(super.charPress(codepoint) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
+    if(this.charPressHandler != null) {
+      return this.charPressHandler.charPress(codepoint);
+    }
+
+    return InputPropagation.PROPAGATE;
+  }
+
+  @Override
   protected InputPropagation pressedThisFrame(final InputAction inputAction) {
     if(this.isDisabled()) {
       return InputPropagation.PROPAGATE;
@@ -312,6 +329,10 @@ public abstract class Control extends ControlHost {
     this.keyPressHandler = handler;
   }
 
+  public void onCharPress(final CharPress handler) {
+    this.charPressHandler = handler;
+  }
+
   public void onPressedThisFrame(final PressedThisFrame handler) {
     this.pressedThisFrameHandler = handler;
   }
@@ -332,6 +353,7 @@ public abstract class Control extends ControlHost {
   private MouseClick mouseClickHandler;
   private MouseScroll mouseScrollHandler;
   private KeyPress keyPressHandler;
+  private CharPress charPressHandler;
   private PressedThisFrame pressedThisFrameHandler;
   private PressedWithRepeatPulse pressedWithRepeatPulseHandler;
   private ReleasedThisFrame releasedThisFrameHandler;
@@ -344,6 +366,7 @@ public abstract class Control extends ControlHost {
   @FunctionalInterface public interface MouseClick { InputPropagation mouseClick(final int x, final int y, final int button, final int mods); }
   @FunctionalInterface public interface MouseScroll { InputPropagation mouseScroll(final double deltaX, final double deltaY); }
   @FunctionalInterface public interface KeyPress { InputPropagation keyPress(final int key, final int scancode, final int mods); }
+  @FunctionalInterface public interface CharPress { InputPropagation charPress(final int codepoint); }
   @FunctionalInterface public interface PressedThisFrame { InputPropagation pressedThisFrame(final InputAction inputAction); }
   @FunctionalInterface public interface PressedWithRepeatPulse { InputPropagation pressedWithRepeatPulse(final InputAction inputAction); }
   @FunctionalInterface public interface ReleasedThisFrame { InputPropagation releasedThisFrame(final InputAction inputAction); }

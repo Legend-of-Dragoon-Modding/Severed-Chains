@@ -197,7 +197,7 @@ import static legend.game.Scus94491BpeSegment_800b._800bd710;
 import static legend.game.Scus94491BpeSegment_800b._800bd714;
 import static legend.game.Scus94491BpeSegment_800b._800bd740;
 import static legend.game.Scus94491BpeSegment_800b._800bd774;
-import static legend.game.Scus94491BpeSegment_800b._800bdc34;
+import static legend.game.Scus94491BpeSegment_800b.savedGameSelected_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b._800bee90;
 import static legend.game.Scus94491BpeSegment_800b._800bee94;
 import static legend.game.Scus94491BpeSegment_800b._800bee98;
@@ -482,9 +482,7 @@ public final class Scus94491BpeSegment {
       joypadInput_8007a39c.setu(_800bee90.get());
       joypadRepeat_8007a3a0.setu(_800bee98.get());
 
-      if(mainCallbackIndex_8004dd20.get() == 3) {
-        gameState_800babc8.timestamp_a0 = 0;
-      } else {
+      if(mainCallbackIndex_8004dd20.get() > 4) {
         gameState_800babc8.timestamp_a0 += vsyncMode_8007a3b8.get();
       }
 
@@ -4039,7 +4037,7 @@ public final class Scus94491BpeSegment {
 //      loadDrgnBinFile(0, 5900, 0, Scus94491BpeSegment::musicPackageLoadedCallback, 5900 << 8, 0x4L);
     } else if(a0 == -1) {
       //LAB_8001e0f8
-      if(_800bdc34.get() != 0) {
+      if(savedGameSelected_800bdc34.get()) {
         if(mainCallbackIndex_8004dd20.get() == 8 && gameState_800babc8.isOnWorldMap_4e4) {
           sssqResetStuff();
           unloadSoundFile(8);

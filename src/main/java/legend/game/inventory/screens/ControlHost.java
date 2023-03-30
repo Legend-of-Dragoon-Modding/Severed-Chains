@@ -96,6 +96,10 @@ public class ControlHost implements Iterable<Control> {
     return InputPropagation.PROPAGATE;
   }
 
+  protected InputPropagation charPress(final int codepoint) {
+    return InputPropagation.PROPAGATE;
+  }
+
   protected InputPropagation pressedThisFrame(final InputAction inputAction) {
     return InputPropagation.PROPAGATE;
   }

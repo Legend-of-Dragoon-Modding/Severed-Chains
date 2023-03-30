@@ -22,8 +22,8 @@ public class MenuStack {
   private Window.Events.Click onMouseRelease;
   private Window.Events.Scroll onMouseScroll;
   private Window.Events.Key onKeyPress;
-
   private Window.Events.Key onKeyRepeat;
+  private Window.Events.Char onCharPress;
 
   private Window.Events.OnPressedThisFrame onPressedThisFrame;
   private Window.Events.OnReleasedThisFrame onReleasedThisFrame;
@@ -91,6 +91,7 @@ public class MenuStack {
     this.onMouseScroll = GPU.window().events.onMouseScroll(this::mouseScroll);
     this.onKeyPress = GPU.window().events.onKeyPress(this::keyPress);
     this.onKeyRepeat = GPU.window().events.onKeyRepeat(this::keyPress);
+    this.onCharPress = GPU.window().events.onCharPress(this::charPress);
     this.onPressedThisFrame = GPU.window().events.onPressedThisFrame(this::pressedThisFrame);
     this.onReleasedThisFrame = GPU.window().events.onReleasedThisFrame(this::releasedThisFrame);
     this.onPressedWithRepeatPulse = GPU.window().events.onPressedWithRepeatPulse(this::pressedWithRepeatPulse);
@@ -103,6 +104,7 @@ public class MenuStack {
     GPU.window().events.removeMouseScroll(this.onMouseScroll);
     GPU.window().events.removeKeyPress(this.onKeyPress);
     GPU.window().events.removeKeyRepeat(this.onKeyRepeat);
+    GPU.window().events.removeCharPress(this.onCharPress);
     GPU.window().events.removePressedThisFrame(this.onPressedThisFrame);
     GPU.window().events.removeReleasedThisFrame(this.onReleasedThisFrame);
     GPU.window().events.removePressedWithRepeatPulse(this.onPressedWithRepeatPulse);
@@ -166,6 +168,10 @@ public class MenuStack {
 
   private void pressedThisFrame(final Window window, final InputAction inputAction) {
     this.input(screen -> screen.pressedThisFrame(inputAction));
+  }
+
+  private void charPress(final Window window, final int codepoint) {
+    this.input(screen -> screen.charPress(codepoint));
   }
 
   private void pressedWithRepeatPulse(final Window window, final InputAction inputAction) {

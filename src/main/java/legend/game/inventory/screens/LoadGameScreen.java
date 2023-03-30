@@ -15,7 +15,7 @@ import static legend.game.Scus94491BpeSegment_8004.setMono;
 import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
-import static legend.game.Scus94491BpeSegment_800b._800bdc34;
+import static legend.game.Scus94491BpeSegment_800b.savedGameSelected_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
@@ -58,7 +58,7 @@ public class LoadGameScreen extends SaveListScreen {
       loadSaveFile(this.slot);
 
       //LAB_800ff6ec
-      _800bdc34.setu(0x1L);
+      savedGameSelected_800bdc34.set(true);
       submapScene_80052c34.set(gameState_800babc8.submapScene_a4);
       submapCut_80052c30.set(gameState_800babc8.submapCut_a8);
       index_80052c38.set(gameState_800babc8.submapCut_a8);

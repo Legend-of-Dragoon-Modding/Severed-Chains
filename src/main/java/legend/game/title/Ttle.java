@@ -23,7 +23,6 @@ import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
 import legend.game.tim.Tim;
 import legend.game.types.CharacterData2c;
-import legend.game.types.GameState52c;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
@@ -77,13 +76,13 @@ import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndexOnceLoaded_8
 import static legend.game.Scus94491BpeSegment_8004.setMono;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800bb168;
-import static legend.game.Scus94491BpeSegment_800b._800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.afterFmvLoadingStage_800bf0ec;
 import static legend.game.Scus94491BpeSegment_800b.doubleBufferFrame_800bb108;
 import static legend.game.Scus94491BpeSegment_800b.fmvIndex_800bf0dc;
 import static legend.game.Scus94491BpeSegment_800b.gameOverMcq_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
+import static legend.game.Scus94491BpeSegment_800b.savedGameSelected_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.identityMatrix_800c3568;
@@ -114,7 +113,7 @@ public final class Ttle {
   public static int _800c6738;
   public static final int[] configColours = {0, 0, 0, 0, 0, 0};
 
-  public static int _800c6754;
+  public static int fadeOutTimer_800c6754;
   public static int flamesZ;
 
   public static final GsRVIEW2 GsRVIEW2_800c6760 = new GsRVIEW2();
@@ -171,14 +170,6 @@ public final class Ttle {
 
   @Method(0x800c7194L)
   public static void setUpNewGameData() {
-    final boolean oldVibration = gameState_800babc8.vibrationEnabled_4e1;
-    final boolean oldMono = gameState_800babc8.mono_4e0;
-
-    gameState_800babc8 = new GameState52c();
-
-    gameState_800babc8.vibrationEnabled_4e1 = oldVibration;
-    gameState_800babc8.mono_4e0 = oldMono;
-    gameState_800babc8.indicatorMode_4e8 = 2;
     gameState_800babc8.charIds_88[0] = 0;
     gameState_800babc8.charIds_88[1] = -1;
     gameState_800babc8.charIds_88[2] = -1;
@@ -338,7 +329,7 @@ public final class Ttle {
     copyrightInitialized = false;
     logoFireInitialized = false;
     logoFlashStage = 0;
-    _800c6754 = 0;
+    fadeOutTimer_800c6754 = 0;
     flamesZ = 100;
 
     hasSavedGames = 0;
@@ -579,7 +570,54 @@ public final class Ttle {
 
   @Method(0x800c7e50L)
   public static void fadeOutForNewGame() {
-    if(_800c6754 == 0) {
+    if(fadeOutTimer_800c6754 == 0) {
+      scriptStartEffect(1, 15);
+    }
+
+    //LAB_800c7fcc
+    fadeOutTimer_800c6754++;
+
+    if(fadeOutTimer_800c6754 >= 16) {
+      if(_800c6728 == 2) {
+        whichMenu_800bdc38 = WhichMenu.INIT_NEW_GAME_MENU;
+        removeInputHandlers();
+        deallocateFire();
+        _800c6728 = 3;
+      }
+    }
+
+    //LAB_800c8038
+    loadAndRenderMenus();
+
+    if(whichMenu_800bdc38 == WhichMenu.NONE_0) {
+      if(savedGameSelected_800bdc34.get()) {
+        removeInputHandlers();
+        deallocateFire();
+
+        fmvIndex_800bf0dc.setu(0x2L);
+        afterFmvLoadingStage_800bf0ec.set(3);
+        Fmv.playCurrentFmv();
+
+        pregameLoadingStage_800bb10c.set(0);
+        return;
+      }
+
+      if(_800c6728 == 3) {
+        mainCallbackIndexOnceLoaded_8004dd24.set(2);
+        pregameLoadingStage_800bb10c.set(0);
+        vsyncMode_8007a3b8.set(2);
+      } else {
+        renderMenuLogo();
+        renderMenuOptions();
+        renderOptionsMenu();
+        renderMenuLogoFire();
+        renderMenuBackground();
+        renderCopyright();
+      }
+    }
+
+/*
+    if(fadeOutTimer_800c6754 == 0) {
       scriptStartEffect(1, 15);
     }
 
@@ -591,8 +629,8 @@ public final class Ttle {
     renderMenuBackground();
     renderCopyright();
 
-    _800c6754++;
-    if(_800c6754 >= 16) {
+    fadeOutTimer_800c6754++;
+    if(fadeOutTimer_800c6754 >= 16) {
       removeInputHandlers();
       deallocateFire();
 
@@ -604,18 +642,19 @@ public final class Ttle {
     }
 
     //LAB_800c7f90
+*/
   }
 
   @Method(0x800c7fa0L)
   public static void waitForSaveSelection() {
-    if(_800c6754 == 0) {
+    if(fadeOutTimer_800c6754 == 0) {
       scriptStartEffect(1, 15);
     }
 
     //LAB_800c7fcc
-    _800c6754++;
+    fadeOutTimer_800c6754++;
 
-    if(_800c6754 >= 16) {
+    if(fadeOutTimer_800c6754 >= 16) {
       if(_800c6728 == 2) {
         whichMenu_800bdc38 = WhichMenu.INIT_LOAD_GAME_MENU_11;
         removeInputHandlers();
@@ -628,7 +667,7 @@ public final class Ttle {
     loadAndRenderMenus();
 
     if(whichMenu_800bdc38 == WhichMenu.NONE_0) {
-      if(_800bdc34.get() != 0) {
+      if(savedGameSelected_800bdc34.get()) {
         if(gameState_800babc8.isOnWorldMap_4e4) {
           mainCallbackIndexOnceLoaded_8004dd24.set(8); // WMAP
         } else {
@@ -664,7 +703,7 @@ public final class Ttle {
 
   @Method(0x800c8148L)
   public static void fadeOutMainMenu() {
-    if(_800c6754 == 0) {
+    if(fadeOutTimer_800c6754 == 0) {
       scriptStartEffect(1, 15);
     }
 
@@ -676,8 +715,8 @@ public final class Ttle {
     renderMenuBackground();
     renderCopyright();
 
-    _800c6754++;
-    if(_800c6754 > 15) {
+    fadeOutTimer_800c6754++;
+    if(fadeOutTimer_800c6754 > 15) {
       removeInputHandlers();
       deallocateFire();
 
@@ -1029,9 +1068,10 @@ public final class Ttle {
         }
       }
 
-      case 3 -> {
+      case 3 -> { // Clicked on new game or continue
         _800c672c = 4;
         if(selectedMenuOption == 0) {
+          _800c6728 = 2;
           pregameLoadingStage_800bb10c.set(4);
           //LAB_800c8a20
         } else if(selectedMenuOption == 1) {

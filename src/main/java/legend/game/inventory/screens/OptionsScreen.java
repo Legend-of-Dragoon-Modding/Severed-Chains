@@ -8,6 +8,7 @@ import legend.game.inventory.screens.controls.Dropdown;
 import legend.game.inventory.screens.controls.Highlight;
 import legend.game.inventory.screens.controls.Label;
 import legend.game.saves.ConfigEntry;
+import legend.game.types.GameState52c;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,19 +16,20 @@ import java.util.List;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
-import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 
 public class OptionsScreen extends MenuScreen {
+  private final GameState52c state;
   private final Runnable unload;
   private final List<Control> options = new ArrayList<>();
 
   private final Highlight highlight;
   private int highlightedOption;
 
-  public OptionsScreen(final Runnable unload) {
+  public OptionsScreen(final GameState52c state, final Runnable unload) {
     deallocateRenderables(0xff);
     scriptStartEffect(2, 10);
 
+    this.state = state;
     this.unload = unload;
 
     this.addControl(new Background());
@@ -38,22 +40,22 @@ public class OptionsScreen extends MenuScreen {
     this.highlight.setClut(0xfc29);
 
     final Dropdown sound = this.addDropdown("Sound", "Stereo", "Mono");
-    sound.setSelectedIndex(gameState_800babc8.mono_4e0 ? 1 : 0);
-    sound.onSelection(index -> gameState_800babc8.mono_4e0 = index == 1);
+    sound.setSelectedIndex(this.state.mono_4e0 ? 1 : 0);
+    sound.onSelection(index -> this.state.mono_4e0 = index == 1);
 
     final Dropdown transforms = this.addDropdown("Dragoon Transformation", "Normal", "Short");
-    transforms.setSelectedIndex(gameState_800babc8.morphMode_4e2);
-    transforms.onSelection(index -> gameState_800babc8.morphMode_4e2 = index);
+    transforms.setSelectedIndex(this.state.morphMode_4e2);
+    transforms.onSelection(index -> this.state.morphMode_4e2 = index);
 
     final Dropdown indicators = this.addDropdown("Indicators", "Off", "Momentary", "On");
-    indicators.setSelectedIndex(gameState_800babc8.indicatorMode_4e8);
-    indicators.onSelection(index -> gameState_800babc8.indicatorMode_4e8 = index);
+    indicators.setSelectedIndex(this.state.indicatorMode_4e8);
+    indicators.onSelection(index -> this.state.indicatorMode_4e8 = index);
 
     //noinspection rawtypes
     for(final ConfigEntry configEntry : GameEngine.REGISTRIES.config) {
       if(configEntry.hasEditControl()) {
         //noinspection unchecked
-        this.addConfig(configEntry.id.toString(), configEntry.makeEditControl(gameState_800babc8.getConfig(configEntry), gameState_800babc8));
+        this.addConfig(configEntry.id.toString(), configEntry.makeEditControl(this.state.getConfig(configEntry), this.state));
       }
     }
 

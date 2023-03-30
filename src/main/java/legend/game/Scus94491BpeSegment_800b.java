@@ -184,7 +184,7 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bdc2c = MEMORY.ref(4, 0x800bdc2cL);
   public static final EnumRef<InventoryMenuState> confirmDest_800bdc30 = MEMORY.ref(4, 0x800bdc30L, EnumRef.of(InventoryMenuState.values()));
 
-  public static final Value _800bdc34 = MEMORY.ref(4, 0x800bdc34L);
+  public static final BoolRef savedGameSelected_800bdc34 = MEMORY.ref(4, 0x800bdc34L, BoolRef::new);
   /**
    * 0xe - load game
    * 0x13 - also load game (maybe save game...?)

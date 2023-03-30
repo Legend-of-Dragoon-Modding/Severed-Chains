@@ -59,6 +59,19 @@ public abstract class MenuScreen extends ControlHost {
   }
 
   @Override
+  protected InputPropagation charPress(final int codepoint) {
+    if(super.charPress(codepoint) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
+    if(this.focus != null) {
+      return this.focus.charPress(codepoint);
+    }
+
+    return InputPropagation.PROPAGATE;
+  }
+
+  @Override
   protected InputPropagation pressedThisFrame(final InputAction inputAction) {
     if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;

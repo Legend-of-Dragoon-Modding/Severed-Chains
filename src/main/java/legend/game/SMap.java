@@ -215,7 +215,7 @@ import static legend.game.Scus94491BpeSegment_800b._800bd7b0;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b4;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b8;
 import static legend.game.Scus94491BpeSegment_800b._800bda08;
-import static legend.game.Scus94491BpeSegment_800b._800bdc34;
+import static legend.game.Scus94491BpeSegment_800b.savedGameSelected_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b._800bee90;
 import static legend.game.Scus94491BpeSegment_800b._800bee94;
 import static legend.game.Scus94491BpeSegment_800b._800bee98;
@@ -4413,7 +4413,7 @@ public final class SMap {
 
           //LAB_800e5e94
           FUN_800e770c();
-          _800bdc34.setu(0);
+          savedGameSelected_800bdc34.set(false);
           _80052c44.setu(0);
           scriptStartEffect(2, 10);
           _800cab24.set(FUN_800ea974(_800caaf4.get()));
@@ -4497,7 +4497,7 @@ public final class SMap {
         SCRIPTS.resume();
         _800f7e4c.setu(0);
         smapLoadingStage_800cb430.setu(0xcL);
-        if(_800bdc34.get() != 0) {
+        if(savedGameSelected_800bdc34.get()) {
           FUN_800e5534(submapCut_80052c30.get(), submapScene_80052c34.get());
         }
       }
