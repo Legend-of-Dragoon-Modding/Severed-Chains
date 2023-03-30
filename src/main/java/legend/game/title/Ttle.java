@@ -46,6 +46,7 @@ import static legend.game.SItem.levelStuff_80111cfc;
 import static legend.game.SItem.magicStuff_80111d20;
 import static legend.game.SItem.xpTables;
 import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
+import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
@@ -305,6 +306,7 @@ public final class Ttle {
       case 6 -> {
         deallocateRenderables(0xffL);
         uiFile_800bdc3c = null;
+        free(gameOverMcq_800bdc3c.getPointer());
         mainCallbackIndexOnceLoaded_8004dd24.set(2);
         pregameLoadingStage_800bb10c.set(0);
         vsyncMode_8007a3b8.set(2);
