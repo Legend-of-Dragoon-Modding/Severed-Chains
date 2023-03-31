@@ -218,7 +218,7 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bdc58 = MEMORY.ref(4, 0x800bdc58L);
   public static Renderable58 renderablePtr_800bdc5c;
 
-  public static final LodString currentText_800bdca0 = MEMORY.ref(2, 0x800bdca0L, LodString::new);
+  public static final LodString currentText_800bdca0 = new LodString(new int[0xffff]);
 
   public static final TextboxArrow0c[] textboxArrows_800bdea0 = new TextboxArrow0c[8];
 
