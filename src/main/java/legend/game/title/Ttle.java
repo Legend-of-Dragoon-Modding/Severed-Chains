@@ -29,6 +29,7 @@ import legend.game.unpacker.FileData;
 import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nullable;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
@@ -40,6 +41,7 @@ import static legend.core.gpu.VramTextureLoader.palettesFromTims;
 import static legend.core.gpu.VramTextureLoader.stitch;
 import static legend.core.gpu.VramTextureLoader.stitchHorizontal;
 import static legend.core.gpu.VramTextureLoader.stitchVertical;
+import static legend.core.gpu.VramTextureLoader.textureFromPngOneChannelBlue;
 import static legend.core.gpu.VramTextureLoader.textureFromTim;
 import static legend.game.SItem.levelStuff_80111cfc;
 import static legend.game.SItem.magicStuff_80111d20;
@@ -160,9 +162,9 @@ public final class Ttle {
   public static final int[] startingItems_800ce76c = {195, 203, 203};
 
   public static final int[] _800ce7b0 = {255, 1, 255, 255};
-  public static final int[] _800ce7f8 = {112, 96, 128, 80, 0, 64, 16, 56, 32, 64, 48, 96, 64, 80, 80, 32, 96, 32};
-  public static final int[] _800ce840 = {128, 96, 112, 128, 128, 96, 0, 144, 80, 0, 176, 72, 0, 208, 72, 128, 0, 112, 128, 32, 88, 128, 64, 48, 173, 64, 48};
-  public static final int[] _800ce8ac = {-48, 16, -40, 34, -32, 52, -128, 34, -32, 34, 48, 34, -128, 52, -32, 52, 48, 52};
+  public static final int[] _800ce7f8 = {195, 131, 128, 80, 0, 64, 16, 56, 32, 64, 48, 96, 64, 80, 80, 32, 96, 32};
+  public static final int[] _800ce840 = {76, 211, 140, 128, 128, 96, 0, 144, 80, 0, 176, 72, 0, 208, 72, 128, 0, 112, 128, 32, 88, 128, 64, 48, 173, 64, 48};
+  public static final int[] _800ce8ac = {-65, 16, -40, 34, -32, 52, -128, 34, -32, 34, 48, 34, -128, 52, -32, 52, 48, 52};
 
   private static Window.Events.Cursor onMouseMove;
   private static Window.Events.Click onMouseRelease;
@@ -394,7 +396,7 @@ public final class Ttle {
     logoTexture = textureFromTim(new Tim(files.get(2)));
     logoPalettes = palettesFromTim(new Tim(files.get(2)));
 
-    menuTextTexture = textureFromTim(new Tim(files.get(3)));
+    menuTextTexture = textureFromPngOneChannelBlue(Paths.get("gfx", "ui", "5718_3.png"));
     menuTextPalettes = palettesFromTim(new Tim(files.get(3)));
 
     tmTexture = textureFromTim(new Tim(files.get(4)));
@@ -486,10 +488,10 @@ public final class Ttle {
         "Text " + i,
         _800ce8ac[i * 2], _800ce8ac[i * 2 + 1], 100,
         _800ce7f8[i * 2 + 1], 16,
-        0, _800ce7f8[i * 2],
+        i == 0 ? 79 : 0, _800ce7f8[i * 2],
          _800ce7f8[i * 2 + 1], 16,
         0,
-        576, 0,
+        0, 0,
         0x80, 0x80, 0x80,
         Translucency.B_PLUS_F
       )
@@ -507,7 +509,7 @@ public final class Ttle {
         _800ce840[i * 3], _800ce840[i * 3 + 1],
         _800ce840[i * 3 + 2], 32,
         0,
-        576, 0,
+        0, 0,
         0x80, 0x80, 0x80,
         Translucency.B_PLUS_F
       )
@@ -789,7 +791,7 @@ public final class Ttle {
               continue;
             }
 
-            final int menuWidth = (int)(130 * scaleX);
+            final int menuWidth = (int)(155 * scaleX);
             final int menuHeight = (int)(16 * scaleY);
             final int menuX = (window.getWidth() - menuWidth) / 2;
             final int menuY = (int)(_800ce8ac[i * 2 + 1] * scaleY) + window.getHeight() / 2;
@@ -853,7 +855,7 @@ public final class Ttle {
               continue;
             }
 
-            final int menuWidth = (int)(130 * scaleX);
+            final int menuWidth = (int)(155 * scaleX);
             final int menuHeight = (int)(16 * scaleY);
             final int menuX = (window.getWidth() - menuWidth) / 2;
             final int menuY = (int)(_800ce8ac[i * 2 + 1] * scaleY) + window.getHeight() / 2;

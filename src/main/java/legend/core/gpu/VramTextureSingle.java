@@ -15,6 +15,11 @@ public class VramTextureSingle extends VramTexture {
 
   @Override
   public int getTexel(final VramTexture palette, final int pageX, final int x, final int y) {
+    return palette.getPixel(this.getTexel(pageX, x, y), 0);
+  }
+
+  @Override
+  public int getTexel(final int pageX, final int x, final int y) {
     final int textureOffset = (this.rect.x() - pageX) * this.bpp.widthScale;
     final int textureX = x - textureOffset;
 
@@ -26,7 +31,7 @@ public class VramTextureSingle extends VramTexture {
       throw new IllegalArgumentException("Y out of bounds (%d >= %d)".formatted(y, this.rect.h()));
     }
 
-    return palette.getPixel(this.getPixel(textureX, y), 0);
+    return this.getPixel(textureX, y);
   }
 
   @Override
