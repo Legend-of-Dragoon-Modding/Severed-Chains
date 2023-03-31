@@ -8,8 +8,10 @@ import legend.game.inventory.screens.controls.Button;
 import legend.game.inventory.screens.controls.Label;
 import legend.game.inventory.screens.controls.Textbox;
 import legend.game.types.GameState52c;
+import legend.game.types.LodString;
 
 import static legend.core.GameEngine.SAVES;
+import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
@@ -38,6 +40,7 @@ public class NewGameScreen extends MenuScreen {
     this.campaignName.setText(SAVES.generateCampaignName());
     this.campaignName.setPos(110, 10);
     this.campaignName.setSize(150, 16);
+    this.campaignName.setZ(35);
 
     final Button options = this.addControl(new Button("Options"));
     options.setPos(10, 30);
@@ -53,7 +56,12 @@ public class NewGameScreen extends MenuScreen {
     final Button startGame = this.addControl(new Button("Start Game"));
     startGame.setPos(340 - startGame.getWidth(), 220 - startGame.getHeight());
     startGame.onMouseClick((x, y, button, mods) -> {
-      this.unload = true;
+      if(SAVES.campaignExists(this.campaignName.getText())) {
+        menuStack.pushScreen(new MessageBoxScreen(new LodString("Campaign name already\nin use"), 0, result1 -> { }));
+      } else {
+        this.unload = true;
+      }
+
       return InputPropagation.HANDLED;
     });
   }
@@ -64,7 +72,8 @@ public class NewGameScreen extends MenuScreen {
       this.state.campaignName = this.campaignName.getText();
       gameState_800babc8 = this.state;
       savedGameSelected_800bdc34.set(true);
-      this.menuEscape();
+      playSound(2);
+      whichMenu_800bdc38 = WhichMenu.UNLOAD_NEW_GAME_MENU;
     }
   }
 

@@ -55,6 +55,10 @@ public final class SaveManager {
     }
   }
 
+  public boolean campaignExists(final String campaign) {
+    return Files.exists(this.dir.resolve(campaign));
+  }
+
   public boolean saveExists(final String campaign, final String name) {
     return Files.exists(this.dir.resolve(campaign).resolve(name + ".dsav"));
   }

@@ -71,7 +71,7 @@ public class SaveGameScreen extends MenuScreen {
   private void onNewSaveResult(final MessageBoxResult result, final String name) {
     if(result == MessageBoxResult.YES) {
       if(SAVES.saveExists(gameState_800babc8.campaignName, name)) {
-        menuStack.pushScreen(new MessageBoxScreen(new LodString("Save already exists"), 0, result1 -> { }));
+        menuStack.pushScreen(new MessageBoxScreen(new LodString("Save name already\nin use"), 0, result1 -> { }));
         return;
       }
 
