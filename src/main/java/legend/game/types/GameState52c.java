@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GameState52c {
-  public String saveName;
+  public String campaignName;
 
   /** Maybe flags? Maybe individual bytes? */
   public int _04;

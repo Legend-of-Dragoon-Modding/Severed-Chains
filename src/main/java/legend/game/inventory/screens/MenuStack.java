@@ -32,6 +32,9 @@ public class MenuStack {
 
   private final Int2ObjectMap<Point2D> mousePressCoords = new Int2ObjectOpenHashMap<>();
 
+  private double scrollAccumulatorX;
+  private double scrollAccumulatorY;
+
   public void pushScreen(final MenuScreen screen) {
     if(this.screens.isEmpty()) {
       this.registerInputHandlers();
@@ -49,6 +52,35 @@ public class MenuStack {
   }
 
   public void render() {
+    int scrollX = 0;
+    int scrollY = 0;
+
+    if(this.scrollAccumulatorX >= 1.0d) {
+      this.scrollAccumulatorX -= 1.0d;
+      scrollX = 1;
+    }
+
+    if(this.scrollAccumulatorX <= -1.0d) {
+      this.scrollAccumulatorX += 1.0d;
+      scrollX = -1;
+    }
+
+    if(this.scrollAccumulatorY >= 1.0d) {
+      this.scrollAccumulatorY -= 1.0d;
+      scrollY = 1;
+    }
+
+    if(this.scrollAccumulatorY <= -1.0d) {
+      this.scrollAccumulatorY += 1.0d;
+      scrollY = -1;
+    }
+
+    if(scrollX != 0 || scrollY != 0) {
+      final int finalScrollX = scrollX;
+      final int finalScrollY = scrollY;
+      this.input(screen -> screen.mouseScroll(finalScrollX, finalScrollY));
+    }
+
     final Iterator<MenuScreen> it = this.screens.iterator();
 
     if(it.hasNext()) {
@@ -159,7 +191,18 @@ public class MenuStack {
   }
 
   private void mouseScroll(final Window window, final double deltaX, final double deltaY) {
-    this.input(screen -> screen.mouseScroll(deltaX, deltaY));
+    if(this.scrollAccumulatorX < 0 && deltaX > 0 || this.scrollAccumulatorX > 0 && deltaX < 0) {
+      this.scrollAccumulatorX = 0;
+    }
+
+    if(this.scrollAccumulatorY < 0 && deltaY > 0 || this.scrollAccumulatorY > 0 && deltaY < 0) {
+      this.scrollAccumulatorY = 0;
+    }
+
+    this.scrollAccumulatorX += deltaX;
+    this.scrollAccumulatorY += deltaY;
+
+    this.input(screen -> screen.mouseScrollHighRes(deltaX, deltaY));
   }
 
   private void keyPress(final Window window, final int key, final int scancode, final int mods) {

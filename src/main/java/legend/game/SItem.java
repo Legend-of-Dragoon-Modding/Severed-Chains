@@ -2,7 +2,6 @@ package legend.game;
 
 import legend.core.Config;
 import legend.core.MathHelper;
-import legend.core.Tuple;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.memory.Memory;
 import legend.core.memory.Method;
@@ -60,7 +59,6 @@ import java.util.List;
 
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
-import static legend.core.GameEngine.SAVES;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.SMap.FUN_800e3fac;
 import static legend.game.Scus94491BpeSegment.FUN_80018e84;
@@ -111,7 +109,6 @@ import static legend.game.Scus94491BpeSegment_800b._800bc960;
 import static legend.game.Scus94491BpeSegment_800b._800bc968;
 import static legend.game.Scus94491BpeSegment_800b._800bc97c;
 import static legend.game.Scus94491BpeSegment_800b._800bdc2c;
-import static legend.game.Scus94491BpeSegment_800b.savedGameSelected_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b._800be5d0;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.confirmDest_800bdc30;
@@ -126,6 +123,7 @@ import static legend.game.Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc92
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba4;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba8;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
+import static legend.game.Scus94491BpeSegment_800b.savedGameSelected_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.secondaryCharIndices_800bdbf8;
 import static legend.game.Scus94491BpeSegment_800b.spGained_800bc950;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
@@ -245,12 +243,8 @@ public final class SItem {
   public static final LodString Cannot_be_armed_with_8011c6d4 = MEMORY.ref(2, 0x8011c6d4L, LodString::new);
 
   public static final LodString Number_kept_8011c7f4 = MEMORY.ref(2, 0x8011c7f4L, LodString::new);
-  /** "Save new game?" */
-  public static final LodString Save_new_game_8011c9c8 = MEMORY.ref(2, 0x8011c9c8L, LodString::new);
   /** "Overwrite save?" */
   public static final LodString Overwrite_save_8011c9e8 = MEMORY.ref(2, 0x8011c9e8L, LodString::new);
-  /** "Load this data?" */
-  public static final LodString Load_this_data_8011ca08 = MEMORY.ref(2, 0x8011ca08L, LodString::new);
   public static final LodString AcquiredGold_8011cdd4 = new LodString("Acquired Gold");
   public static final LodString HP_recovered_for_all_8011cfcc = MEMORY.ref(2, 0x8011cfccL, LodString::new);
   public static final LodString MP_recovered_for_all_8011cff8 = MEMORY.ref(2, 0x8011cff8L, LodString::new);
@@ -298,7 +292,7 @@ public final class SItem {
 
   public static final EnumRef<MessageBoxResult> msgboxResult_8011e1e8 = MEMORY.ref(4, 0x8011e1e8L, EnumRef.of(MessageBoxResult.values()));
 
-  public static final List<Tuple<String, SavedGame>> saves = new ArrayList<>();
+  public static final List<SavedGame> saves = new ArrayList<>();
 
   @Method(0x800fbd78L)
   public static void allocatePlayerBattleObjects() {
@@ -563,11 +557,6 @@ public final class SItem {
         uiFile_800bdc3c = null;
 
         switch(whichMenu_800bdc38) {
-          case RENDER_LOAD_GAME_MENU_14 -> {
-            scriptStartEffect(2, 10);
-            whichMenu_800bdc38 = WhichMenu.UNLOAD_LOAD_GAME_MENU_15;
-          }
-
           case RENDER_SAVE_GAME_MENU_19 ->
             whichMenu_800bdc38 = WhichMenu.UNLOAD_SAVE_GAME_MENU_20;
 
@@ -1583,7 +1572,7 @@ public final class SItem {
 
   @Method(0x80108a6cL)
   public static void renderSaveGameSlot(final int fileIndex, final int y, final boolean allocate) {
-    final SavedGame saveData = saves.get(fileIndex).b();
+    final SavedGame saveData = saves.get(fileIndex);
 
     if(allocate) {
       renderTwoDigitNumber(21, y, fileIndex + 1); // File number
@@ -1652,7 +1641,7 @@ public final class SItem {
       renderTwoDigitNumber(269, y + 6, char0.dlevel_13); // Dragoon level
       renderFourDigitNumber(302, y + 6, char0.hp_08); // Current HP
       renderFourDigitNumber(332, y + 6, levelStuff_800fbd30.get(state.charIds_88[0]).deref().get(char0.level_12).hp_00.get()); // Max HP
-      renderEightDigitNumber(245, y + 17, saveData.state().gold_94, 0); // Gold
+      renderEightDigitNumber(245, y + 17, state.gold_94, 0); // Gold
       renderThreeDigitNumber(306, y + 17, getTimestampPart(state.timestamp_a0, 0), 0x1); // Time played hour
       renderCharacter(324, y + 17, 10); // Hour-minute colon
       renderTwoDigitNumber(330, y + 17, getTimestampPart(state.timestamp_a0, 1), 0x1); // Time played minute
@@ -1846,20 +1835,6 @@ public final class SItem {
         initGlyph(struct, glyph);
         struct.z_3c = 33;
       }
-    }
-  }
-
-  @Method(0x8010a0ecL)
-  public static void loadSaveFile(final int saveSlot) {
-    gameState_800babc8 = saves.get(saveSlot).b().state();
-  }
-
-  @Method(0x8010a344L)
-  public static void saveGame(final int slot) {
-    if(slot == -1) {
-      SAVES.newSave(gameState_800babc8);
-    } else {
-      SAVES.overwriteSave(saves.get(slot).a(), gameState_800babc8);
     }
   }
 
@@ -2773,7 +2748,7 @@ public final class SItem {
 
         if(messageBox.type_15 == 0) {
           //LAB_8010eed8
-          if((inventoryJoypadInput_800bdc44.get() & 0x60) != 0) {
+          if(!messageBox.ignoreInput && (inventoryJoypadInput_800bdc44.get() & 0x60) != 0) {
             playSound(2);
             messageBox.state_0c = 4;
             msgboxResult_8011e1e8.set(MessageBoxResult.YES);

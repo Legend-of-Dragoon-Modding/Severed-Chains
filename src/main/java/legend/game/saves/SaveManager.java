@@ -1,8 +1,9 @@
 package legend.game.saves;
 
-import legend.core.Tuple;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -24,7 +25,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public final class SaveManager {
-  public static final int MAX_SAVES = 1000;
+  private static final Logger LOGGER = LogManager.getFormatterLogger();
 
   private final Path dir = Paths.get("saves");
   private final PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:*.dsav");
@@ -42,15 +43,53 @@ public final class SaveManager {
     this.deserializers.put(matcher, deserializer);
   }
 
-  private String getFilename(final int slot) {
-    return slot + ".dsav";
+  public String generateCampaignName() {
+    if(!Files.exists(this.dir.resolve("New Campaign"))) {
+      return "New Campaign";
+    }
+
+    for(int i = 2; ; i++) {
+      if(!Files.exists(this.dir.resolve("New Campaign " + i))) {
+        return "New Campaign " + i;
+      }
+    }
   }
 
-  private boolean hasSavedGame(final int slot) {
-    return Files.exists(this.dir.resolve(this.getFilename(slot)));
+  public boolean saveExists(final String campaign, final String name) {
+    return Files.exists(this.dir.resolve(campaign).resolve(name + ".dsav"));
   }
 
-  private List<Path> getSaves() {
+  public String generateSaveName(final String campaign) {
+    for(int i = 1; ; i++) {
+      if(!this.saveExists(campaign, "Save " + i)) {
+        return "Save " + i;
+      }
+    }
+  }
+
+  /** Look for saves from before campaigns were a thing */
+  public void updateUncategorizedSaves() {
+    try(final Stream<Path> stream = Files.list(this.dir)) {
+      final List<Path> files = stream
+        .filter(file -> !Files.isDirectory(file) && this.matcher.matches(file.getFileName()))
+        .toList();
+
+      if(!files.isEmpty()) {
+        LOGGER.info("Upgrading legacy saves to campaign");
+
+        final Path campaignDir = this.dir.resolve(this.generateCampaignName());
+        Files.createDirectories(campaignDir);
+
+        for(final Path file : files) {
+          Files.move(file, campaignDir.resolve(file.getFileName()));
+        }
+      }
+    } catch(final IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private List<Path> getCampaigns() {
     try {
       Files.createDirectories(this.dir);
     } catch(final IOException e) {
@@ -59,10 +98,13 @@ public final class SaveManager {
 
     try(final Stream<Path> stream = Files.list(this.dir)) {
       return stream
-        .filter(file -> !Files.isDirectory(file) && this.matcher.matches(file.getFileName()))
+        .filter(Files::isDirectory)
         .sorted(Comparator.comparingLong((final Path path) -> {
-          try {
-            return Files.getLastModifiedTime(path).to(TimeUnit.MILLISECONDS);
+          try(final Stream<Path> children = this.childrenSortedByDate(path)) {
+            return children
+              .findFirst()
+              .map(this::getModifiedTime)
+              .orElse(0L);
           } catch(final IOException e) {
             throw new RuntimeException(e);
           }
@@ -74,18 +116,40 @@ public final class SaveManager {
     }
   }
 
-  public boolean hasSavedGames() {
-    return !this.getSaves().isEmpty();
-  }
+  private List<Path> getSaves(final String campaign) {
+    final Path campaignPath = this.dir.resolve(campaign);
 
-  public int findFirstAvailableSlot() {
-    for(int i = 0; i < MAX_SAVES; i++) {
-      if(!this.hasSavedGame(i)) {
-        return i;
-      }
+    try {
+      Files.createDirectories(campaignPath);
+    } catch(final IOException e) {
+      throw new RuntimeException(e);
     }
 
-    return -1;
+    try(final Stream<Path> children = this.childrenSortedByDate(campaignPath)) {
+      return children
+        .map(Path::getFileName)
+        .collect(Collectors.toList());
+    } catch(final IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private Stream<Path> childrenSortedByDate(final Path path) throws IOException {
+    return Files.list(path)
+      .filter(file -> !Files.isDirectory(file) && this.matcher.matches(file.getFileName()))
+      .sorted(Comparator.comparingLong(this::getModifiedTime).reversed());
+  }
+
+  private long getModifiedTime(final Path path) {
+    try {
+      return Files.getLastModifiedTime(path).to(TimeUnit.MILLISECONDS);
+    } catch(final IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  public boolean hasCampaigns() {
+    return !this.getCampaigns().isEmpty();
   }
 
   public void overwriteSave(final String filename, final GameState52c state) {
@@ -94,20 +158,21 @@ public final class SaveManager {
       data.writeInt(0x0, this.serializerMagic);
       final int length = this.serializer.applyAsInt(data.slice(0x4), state);
 
-      Files.createDirectories(this.dir);
-      Files.write(this.dir.resolve(filename), data.slice(0x0, length + 0x4).getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
+      final Path dir = this.dir.resolve(state.campaignName);
+
+      Files.createDirectories(dir);
+      Files.write(dir.resolve(filename + ".dsav"), data.slice(0x0, length + 0x4).getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
     } catch(final IOException e) {
       throw new RuntimeException("Failed to save game", e);
     }
   }
 
-  public void newSave(final GameState52c state) {
-    final int index = this.findFirstAvailableSlot();
-    this.overwriteSave(this.getFilename(index), state);
+  public void newSave(final String saveName, final GameState52c state) {
+    this.overwriteSave(saveName, state);
   }
 
-  public SavedGame loadGame(final String filename) {
-    final Path file = this.dir.resolve(filename);
+  public SavedGame loadGame(final String campaign, final String filename) {
+    final Path file = this.dir.resolve(campaign).resolve(filename + ".dsav");
 
     if(!Files.exists(file)) {
       throw new RuntimeException("No saved game " + filename);
@@ -125,19 +190,37 @@ public final class SaveManager {
       final FileData slice = entry.getKey().apply(data);
 
       if(slice != null) {
-        return entry.getValue().apply(filename, slice);
+        final SavedGame savedGame = entry.getValue().apply(filename, slice);
+        savedGame.state().campaignName = campaign;
+        return savedGame;
       }
     }
 
     throw new RuntimeException("Invalid save data for file " + filename);
   }
 
-  public List<Tuple<String, SavedGame>> loadAllSaves() {
-    final List<Tuple<String, SavedGame>> saves = new ArrayList<>();
+  public List<Campaign> loadAllCampaigns() {
+    final List<Campaign> campaigns = new ArrayList<>();
 
-    for(final Path child : this.getSaves()) {
+    for(final Path child : this.getCampaigns()) {
       final String filename = child.getFileName().toString();
-      saves.add(new Tuple<>(filename, this.loadGame(filename)));
+
+      final List<SavedGame> saves = this.loadAllSaves(filename);
+
+      if(!saves.isEmpty()) {
+        campaigns.add(new Campaign(filename, saves.get(0)));
+      }
+    }
+
+    return campaigns;
+  }
+
+  public List<SavedGame> loadAllSaves(final String campaign) {
+    final List<SavedGame> saves = new ArrayList<>();
+
+    for(final Path child : this.getSaves(campaign)) {
+      final String filename = child.getFileName().toString();
+      saves.add(this.loadGame(campaign, filename.substring(0, filename.lastIndexOf('.'))));
     }
 
     return saves;

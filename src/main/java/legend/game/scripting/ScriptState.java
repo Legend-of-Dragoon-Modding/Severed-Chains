@@ -402,7 +402,7 @@ public class ScriptState<T> {
             this.context.params_20[paramIndex] = new GameVarArrayParam(cmd0 + this.storage_44[cmd1], cmd2);
           } else if(paramType == 0x11) {
             //LAB_80016468
-            assert false;
+            this.context.params_20[paramIndex] = new GameVarArrayParam(cmd0 + cmd1, this.storage_44[cmd2]); // Haven't verified this, afaik it's never used
           } else if(paramType == 0x12) {
             //LAB_80016138
             //LAB_8001648c

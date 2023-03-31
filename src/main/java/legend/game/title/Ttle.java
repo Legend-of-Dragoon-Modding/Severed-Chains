@@ -615,34 +615,6 @@ public final class Ttle {
         renderCopyright();
       }
     }
-
-/*
-    if(fadeOutTimer_800c6754 == 0) {
-      scriptStartEffect(1, 15);
-    }
-
-    //LAB_800c7e7c
-    renderMenuLogo();
-    renderMenuOptions();
-    renderOptionsMenu();
-    renderMenuLogoFire();
-    renderMenuBackground();
-    renderCopyright();
-
-    fadeOutTimer_800c6754++;
-    if(fadeOutTimer_800c6754 >= 16) {
-      removeInputHandlers();
-      deallocateFire();
-
-      fmvIndex_800bf0dc.setu(0x2L);
-      afterFmvLoadingStage_800bf0ec.set(3);
-      Fmv.playCurrentFmv();
-
-      pregameLoadingStage_800bb10c.set(0);
-    }
-
-    //LAB_800c7f90
-*/
   }
 
   @Method(0x800c7fa0L)
@@ -656,7 +628,7 @@ public final class Ttle {
 
     if(fadeOutTimer_800c6754 >= 16) {
       if(_800c6728 == 2) {
-        whichMenu_800bdc38 = WhichMenu.INIT_LOAD_GAME_MENU_11;
+        whichMenu_800bdc38 = WhichMenu.INIT_CAMPAIGN_SELECTION_MENU;
         removeInputHandlers();
         deallocateFire();
         _800c6728 = 3;
@@ -1001,7 +973,9 @@ public final class Ttle {
   @Method(0x800c8634L)
   public static void renderMenuOptions() {
     if(hasSavedGames == 0) {
-      hasSavedGames = SAVES.hasSavedGames() ? 1 : 2;
+      SAVES.updateUncategorizedSaves();
+
+      hasSavedGames = SAVES.hasCampaigns() ? 1 : 2;
       selectedMenuOption = hasSavedGames == 1 ? 1 : 0;
       return;
     }

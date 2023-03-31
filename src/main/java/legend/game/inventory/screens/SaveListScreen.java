@@ -54,12 +54,10 @@ public abstract class SaveListScreen extends MenuScreen {
         this.scroll = 0;
         this.selectedSlot = 0;
 
-        if(gameState_800babc8 != null) {
-          gameState_800babc8.isOnWorldMap_4e4 = mainCallbackIndex_8004dd20.get() == 8;
-        }
+        gameState_800babc8.isOnWorldMap_4e4 = mainCallbackIndex_8004dd20.get() == 8;
 
         saves.clear();
-        saves.addAll(SAVES.loadAllSaves());
+        saves.addAll(SAVES.loadAllSaves(gameState_800babc8.campaignName));
 
         this.highlightLeftHalf = allocateUiElement(129, 129, 16, getSlotY(this.selectedSlot));
         this.highlightRightHalf = allocateUiElement(130, 130, 192, getSlotY(this.selectedSlot));
@@ -194,8 +192,8 @@ public abstract class SaveListScreen extends MenuScreen {
   }
 
   @Override
-  protected InputPropagation mouseScroll(final double deltaX, final double deltaY) {
-    if(super.mouseScroll(deltaX, deltaY) == InputPropagation.HANDLED) {
+  protected InputPropagation mouseScrollHighRes(final double deltaX, final double deltaY) {
+    if(super.mouseScrollHighRes(deltaX, deltaY) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
@@ -272,7 +270,7 @@ public abstract class SaveListScreen extends MenuScreen {
 
   protected abstract void onSelect(final int slot);
 
-  protected abstract void onMessageboxResult(final MessageBoxResult result);
+  protected abstract void onOverwriteResult(final MessageBoxResult result);
 
   @Override
   public InputPropagation pressedThisFrame(final InputAction inputAction) {

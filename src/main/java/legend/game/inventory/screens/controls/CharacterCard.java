@@ -26,7 +26,7 @@ public class CharacterCard extends Control {
     this.addControl(linesText);
 
     this.addControl(Glyph.uiElement(153, 153)).getRenderable().x_40 += 8; // Background
-    this.addControl(new CharacterPortrait(charId)).setPos(8, 8);
+    this.addControl(new CharacterPortrait()).setPos(8, 8);
   }
 
   @Override

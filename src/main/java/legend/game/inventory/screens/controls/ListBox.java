@@ -49,9 +49,7 @@ public class ListBox<T> extends Control {
     this.highlight.setPos(34, 1);
     this.highlight.ignoreInput();
     this.upArrow.setPos(this.getWidth(), 0);
-    this.upArrow.ignoreInput();
     this.downArrow.setPos(this.getWidth(), this.getHeight() - 15);
-    this.downArrow.ignoreInput();
     this.select(0);
   }
 
@@ -220,8 +218,8 @@ public class ListBox<T> extends Control {
   }
 
   @Override
-  protected InputPropagation mouseScroll(final double deltaX, final double deltaY) {
-    if(super.mouseScroll(deltaX, deltaY) == InputPropagation.HANDLED) {
+  protected InputPropagation mouseScrollHighRes(final double deltaX, final double deltaY) {
+    if(super.mouseScrollHighRes(deltaX, deltaY) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 

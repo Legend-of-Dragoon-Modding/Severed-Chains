@@ -82,11 +82,21 @@ public class ControlHost implements Iterable<Control> {
     return InputPropagation.PROPAGATE;
   }
 
-  protected InputPropagation mouseScroll(final double deltaX, final double deltaY) {
+  protected InputPropagation mouseScroll(final int deltaX, final int deltaY) {
     final Control control = this.findControlAt(this.mouseX, this.mouseY);
 
     if(control != null) {
       return control.mouseScroll(deltaX, deltaY);
+    }
+
+    return InputPropagation.PROPAGATE;
+  }
+
+  protected InputPropagation mouseScrollHighRes(final double deltaX, final double deltaY) {
+    final Control control = this.findControlAt(this.mouseX, this.mouseY);
+
+    if(control != null) {
+      return control.mouseScrollHighRes(deltaX, deltaY);
     }
 
     return InputPropagation.PROPAGATE;

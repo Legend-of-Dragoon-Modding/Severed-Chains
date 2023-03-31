@@ -9,6 +9,7 @@ import legend.game.inventory.screens.controls.Label;
 import legend.game.inventory.screens.controls.Textbox;
 import legend.game.types.GameState52c;
 
+import static legend.core.GameEngine.SAVES;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
@@ -19,7 +20,7 @@ import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 public class NewGameScreen extends MenuScreen {
   private final GameState52c state = new GameState52c();
 
-  private final Textbox saveName;
+  private final Textbox campaignName;
 
   private boolean unload;
 
@@ -33,10 +34,10 @@ public class NewGameScreen extends MenuScreen {
 
     this.addControl(new Label("Save name")).setPos(10, 10);
 
-    this.saveName = this.addControl(new Textbox());
-    this.saveName.setText("Test");
-    this.saveName.setPos(110, 10);
-    this.saveName.setSize(100, 16);
+    this.campaignName = this.addControl(new Textbox());
+    this.campaignName.setText(SAVES.generateCampaignName());
+    this.campaignName.setPos(110, 10);
+    this.campaignName.setSize(150, 16);
 
     final Button options = this.addControl(new Button("Options"));
     options.setPos(10, 30);
@@ -60,6 +61,7 @@ public class NewGameScreen extends MenuScreen {
   @Override
   protected void render() {
     if(this.unload) {
+      this.state.campaignName = this.campaignName.getText();
       gameState_800babc8 = this.state;
       savedGameSelected_800bdc34.set(true);
       this.menuEscape();
@@ -77,7 +79,7 @@ public class NewGameScreen extends MenuScreen {
       return InputPropagation.HANDLED;
     }
 
-    if(this.getFocus() == this.saveName) {
+    if(this.getFocus() == this.campaignName) {
       return InputPropagation.HANDLED;
     }
 

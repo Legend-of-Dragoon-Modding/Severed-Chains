@@ -261,8 +261,8 @@ public class AdditionsScreen extends MenuScreen {
   }
 
   @Override
-  protected InputPropagation mouseScroll(final double deltaX, final double deltaY) {
-    if(super.mouseScroll(deltaX, deltaY) == InputPropagation.HANDLED) {
+  protected InputPropagation mouseScrollHighRes(final double deltaX, final double deltaY) {
+    if(super.mouseScrollHighRes(deltaX, deltaY) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
