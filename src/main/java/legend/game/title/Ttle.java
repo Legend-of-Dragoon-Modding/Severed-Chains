@@ -581,7 +581,7 @@ public final class Ttle {
 
     if(fadeOutTimer_800c6754 >= 16) {
       if(_800c6728 == 2) {
-        whichMenu_800bdc38 = WhichMenu.INIT_NEW_GAME_MENU;
+        whichMenu_800bdc38 = WhichMenu.INIT_NEW_CAMPAIGN_MENU;
         removeInputHandlers();
         deallocateFire();
         _800c6728 = 3;

@@ -13,6 +13,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_BACKSPACE;
 public class Textbox extends Control {
   private final Panel panel;
   private LodString text = new LodString("");
+  private int maxLength = -1;
 
   public Textbox() {
     this.panel = this.addControl(new Panel());
@@ -23,6 +24,14 @@ public class Textbox extends Control {
   public void setZ(final int z) {
     super.setZ(z);
     this.panel.setZ(z + 1);
+  }
+
+  public void setMaxLength(final int maxLength) {
+    this.maxLength = maxLength;
+  }
+
+  public int getMaxLength() {
+    return this.maxLength;
   }
 
   @Override
@@ -67,6 +76,10 @@ public class Textbox extends Control {
   @Override
   protected InputPropagation charPress(final int codepoint) {
     if(super.charPress(codepoint) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
+    if(this.maxLength != -1 && this.text.length() >= this.maxLength) {
       return InputPropagation.HANDLED;
     }
 

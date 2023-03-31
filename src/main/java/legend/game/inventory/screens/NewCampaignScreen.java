@@ -19,14 +19,14 @@ import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.savedGameSelected_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 
-public class NewGameScreen extends MenuScreen {
+public class NewCampaignScreen extends MenuScreen {
   private final GameState52c state = new GameState52c();
 
   private final Textbox campaignName;
 
   private boolean unload;
 
-  public NewGameScreen() {
+  public NewCampaignScreen() {
     deallocateRenderables(0xff);
     scriptStartEffect(2, 10);
 
@@ -38,6 +38,7 @@ public class NewGameScreen extends MenuScreen {
 
     this.campaignName = this.addControl(new Textbox());
     this.campaignName.setText(SAVES.generateCampaignName());
+    this.campaignName.setMaxLength(30);
     this.campaignName.setPos(110, 10);
     this.campaignName.setSize(150, 16);
     this.campaignName.setZ(35);
@@ -73,13 +74,13 @@ public class NewGameScreen extends MenuScreen {
       gameState_800babc8 = this.state;
       savedGameSelected_800bdc34.set(true);
       playSound(2);
-      whichMenu_800bdc38 = WhichMenu.UNLOAD_NEW_GAME_MENU;
+      whichMenu_800bdc38 = WhichMenu.UNLOAD_NEW_CAMPAIGN_MENU;
     }
   }
 
   private void menuEscape() {
     playSound(3);
-    whichMenu_800bdc38 = WhichMenu.UNLOAD_NEW_GAME_MENU;
+    whichMenu_800bdc38 = WhichMenu.UNLOAD_NEW_CAMPAIGN_MENU;
   }
 
   @Override
