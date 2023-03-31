@@ -36,7 +36,6 @@ import legend.game.scripting.ScriptState;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CharacterData2c;
 import legend.game.types.EquipmentStats1c;
-import legend.game.types.GameState52c;
 import legend.game.types.InventoryMenuState;
 import legend.game.types.LevelStuff08;
 import legend.game.types.LodString;
@@ -85,7 +84,6 @@ import static legend.game.Scus94491BpeSegment_8002.clearCharacterStats;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.getItemIcon;
 import static legend.game.Scus94491BpeSegment_8002.getJoypadInputByPriority;
-import static legend.game.Scus94491BpeSegment_8002.getTimestampPart;
 import static legend.game.Scus94491BpeSegment_8002.getUnlockedDragoonSpells;
 import static legend.game.Scus94491BpeSegment_8002.giveItems;
 import static legend.game.Scus94491BpeSegment_8002.itemCantBeDiscarded;
@@ -191,7 +189,6 @@ public final class SItem {
   public static final UnboundedArrayRef<MenuGlyph06> additionGlyphs_801141e4 = MEMORY.ref(1, 0x801141e4L, UnboundedArrayRef.of(0x6, MenuGlyph06::new));
   public static final UnboundedArrayRef<MenuGlyph06> useItemGlyphs_801141fc = MEMORY.ref(1, 0x801141fcL, UnboundedArrayRef.of(0x6, MenuGlyph06::new));
   public static final UnboundedArrayRef<MenuGlyph06> dabasMenuGlyphs_80114228 = MEMORY.ref(1, 0x80114228L, UnboundedArrayRef.of(0x6, MenuGlyph06::new));
-  public static final UnboundedArrayRef<MenuGlyph06> savedGamesGlyphs_80114258 = MEMORY.ref(1, 0x80114258L, UnboundedArrayRef.of(0x6, MenuGlyph06::new));
 
   public static final Value characterValidEquipment_80114284 = MEMORY.ref(1, 0x80114284L);
 
@@ -1570,90 +1567,6 @@ public final class SItem {
     //LAB_80108a50
   }
 
-  @Method(0x80108a6cL)
-  public static void renderSaveGameSlot(final int fileIndex, final int y, final boolean allocate) {
-    final SavedGame saveData = saves.get(fileIndex);
-
-    if(allocate) {
-      renderTwoDigitNumber(21, y, fileIndex + 1); // File number
-    }
-
-    //LAB_80108b3c
-    final ArrayRef<Pointer<LodString>> locationNames;
-    if(saveData.locationType() == 1) {
-      //LAB_80108b5c
-      locationNames = worldMapNames_8011c1ec;
-    } else if(saveData.locationType() == 3) {
-      //LAB_80108b78
-      locationNames = chapterNames_80114248;
-    } else {
-      //LAB_80108b90
-      locationNames = submapNames_8011c108;
-    }
-
-    //LAB_80108ba0
-    renderCentredText(locationNames.get(saveData.locationIndex()).deref(), 278, y + 47, TextColour.BROWN); // Location text
-
-    if(allocate) {
-      allocateUiElement(0x4c, 0x4c,  16, y).z_3c = 33; // Left half of border
-      allocateUiElement(0x4d, 0x4d, 192, y).z_3c = 33; // Right half of border
-
-      final GameState52c state = saveData.state();
-
-      // Load char 0
-      if(state.charIds_88[0] >= 0 && state.charIds_88[0] < 9) {
-        final Renderable58 struct = allocateRenderable(uiFile_800bdc3c.portraits_cfac(), null);
-        initGlyph(struct, glyph_801142d4);
-        struct.glyph_04 = state.charIds_88[0];
-        struct.tpage_2c++;
-        struct.z_3c = 33;
-        struct.x_40 = 38;
-        struct.y_44 = y + 8;
-      }
-
-      // Load char 1
-      //LAB_80108c78
-      if(state.charIds_88[1] >= 0 && state.charIds_88[1] < 9) {
-        final Renderable58 struct = allocateRenderable(uiFile_800bdc3c.portraits_cfac(), null);
-        initGlyph(struct, glyph_801142d4);
-        struct.glyph_04 = state.charIds_88[1];
-        struct.tpage_2c++;
-        struct.z_3c = 33;
-        struct.x_40 = 90;
-        struct.y_44 = y + 8;
-      }
-
-      // Load char 2
-      //LAB_80108cd4
-      if(state.charIds_88[2] >= 0 && state.charIds_88[2] < 9) {
-        final Renderable58 struct = allocateRenderable(uiFile_800bdc3c.portraits_cfac(), null);
-        initGlyph(struct, glyph_801142d4);
-        struct.glyph_04 = state.charIds_88[2];
-        struct.tpage_2c++;
-        struct.z_3c = 33;
-        struct.x_40 = 142;
-        struct.y_44 = y + 8;
-      }
-
-      //LAB_80108d30
-      final CharacterData2c char0 = state.charData_32c[0];
-      renderTwoDigitNumber(224, y + 6, char0.level_12); // Level
-      renderTwoDigitNumber(269, y + 6, char0.dlevel_13); // Dragoon level
-      renderFourDigitNumber(302, y + 6, char0.hp_08); // Current HP
-      renderFourDigitNumber(332, y + 6, levelStuff_800fbd30.get(state.charIds_88[0]).deref().get(char0.level_12).hp_00.get()); // Max HP
-      renderEightDigitNumber(245, y + 17, state.gold_94, 0); // Gold
-      renderThreeDigitNumber(306, y + 17, getTimestampPart(state.timestamp_a0, 0), 0x1); // Time played hour
-      renderCharacter(324, y + 17, 10); // Hour-minute colon
-      renderTwoDigitNumber(330, y + 17, getTimestampPart(state.timestamp_a0, 1), 0x1); // Time played minute
-      renderCharacter(342, y + 17, 10); // Minute-second colon
-      renderTwoDigitNumber(348, y + 17, getTimestampPart(state.timestamp_a0, 2), 0x1); // Time played second
-      renderTwoDigitNumber(344, y + 34, state.stardust_9c); // Stardust
-      renderDragoonSpirits(state.goods_19c[0], 223, y + 27);
-    }
-
-    //LAB_80108e3c
-  }
-
   @Method(0x80108e60L)
   public static void renderCharacterEquipment(final int charIndex, final boolean allocate) {
     if(charIndex == -1) {
@@ -1821,19 +1734,6 @@ public final class SItem {
         a6.flags_00 &= 0xffff_ffbf;
       } else {
         a6.flags_00 |= 0x40;
-      }
-    }
-  }
-
-  @Method(0x801098c0L)
-  public static void renderDragoonSpirits(final int spirits, final int x, final int y) {
-    for(int spiritIndex = 0; spiritIndex < 8; spiritIndex++) {
-      final int bit = dragoonSpiritGoodsBits_800fbabc.get(spiritIndex).get();
-      if((spirits & 0x1 << (bit & 0x1f)) != 0) {
-        final Renderable58 struct = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
-        final MenuGlyph06 glyph = new MenuGlyph06(13 + spiritIndex, x + spiritIndex * 12, y);
-        initGlyph(struct, glyph);
-        struct.z_3c = 33;
       }
     }
   }

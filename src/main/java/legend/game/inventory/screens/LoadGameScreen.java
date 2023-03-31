@@ -64,7 +64,7 @@ public class LoadGameScreen extends MenuScreen {
 
   @Override
   protected void render() {
-    SItem.renderCentredText(new LodString("Saved Games"), 188, 10, TextColour.BROWN);
+    SItem.renderCentredText(new LodString("Load Game"), 188, 10, TextColour.BROWN);
   }
 
   private void menuEscape() {

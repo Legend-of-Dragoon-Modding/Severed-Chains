@@ -9,6 +9,8 @@ import legend.game.types.CharacterData2c;
 import legend.game.types.GameState52c;
 import legend.game.types.LodString;
 
+import javax.annotation.Nullable;
+
 import static legend.game.SItem.chapterNames_80114248;
 import static legend.game.SItem.levelStuff_800fbd30;
 import static legend.game.SItem.renderCentredText;
@@ -35,13 +37,21 @@ public class SaveCard extends Control {
     }
   }
 
-  public void setSaveData(final SavedGame saveData) {
+  public void setSaveData(@Nullable final SavedGame saveData) {
     this.saveData = saveData;
 
-    this.dragoonSpirits.setSpirits(saveData.state().goods_19c[0]);
+    if(saveData != null) {
+      this.dragoonSpirits.setSpirits(saveData.state().goods_19c[0]);
 
-    for(int i = 0; i < 3; i++) {
-      this.portraits[i].setCharId(saveData.state().charIds_88[i]);
+      for(int i = 0; i < 3; i++) {
+        this.portraits[i].setCharId(saveData.state().charIds_88[i]);
+      }
+    } else {
+      this.dragoonSpirits.setSpirits(0);
+
+      for(int i = 0; i < 3; i++) {
+        this.portraits[i].setCharId(-1);
+      }
     }
   }
 
