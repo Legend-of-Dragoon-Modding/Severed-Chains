@@ -53,7 +53,6 @@ import static legend.game.SItem.renderThreeDigitNumberComparison;
 import static legend.game.SItem.renderTwoDigitNumber;
 import static legend.game.SMap.FUN_800e3fac;
 import static legend.game.SMap.shops_800f4930;
-import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment_8002.addGold;
@@ -72,7 +71,6 @@ import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
 import static legend.game.Scus94491BpeSegment_8007.shopId_8007a3b4;
 import static legend.game.Scus94491BpeSegment_800b._800bb168;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
-import static legend.game.Scus94491BpeSegment_800b.gameOverMcq_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
@@ -282,7 +280,7 @@ public class ShopScreen extends MenuScreen {
       case UNLOAD_19 -> {
         scriptStartEffect(2, 10);
         deallocateRenderables(0xff);
-        free(gameOverMcq_800bdc3c.getPointer());
+
         if(mainCallbackIndex_8004dd20.get() == 5 && loadingGameStateOverlay_8004dd08.get() == 0) {
           FUN_800e3fac();
         }

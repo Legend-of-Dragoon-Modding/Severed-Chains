@@ -1188,7 +1188,7 @@ public final class Bttl_800c {
       if(s0 == 1) {
         //LAB_800c8180
         for(int i = 0; i < charCount_800c677c.get(); i++) {
-          _8006e398.charBobjIndices_e40[_800c6690.get()].storage_44[7] |= 0x8;
+          _8006e398.charBobjIndices_e40[i].storage_44[7] |= 0x8;
         }
       }
     }
