@@ -40,11 +40,12 @@ public class MenuStack {
       this.registerInputHandlers();
     }
 
+    screen.setStack(this);
     this.screens.push(screen);
   }
 
   public void popScreen() {
-    this.screens.pop();
+    this.screens.pop().setStack(null);
 
     if(this.screens.isEmpty()) {
       this.removeInputHandlers();

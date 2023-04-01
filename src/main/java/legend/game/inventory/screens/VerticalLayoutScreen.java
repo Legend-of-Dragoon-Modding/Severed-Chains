@@ -5,6 +5,7 @@ import legend.game.input.InputAction;
 import legend.game.inventory.screens.controls.Brackets;
 import legend.game.inventory.screens.controls.Button;
 import legend.game.inventory.screens.controls.Label;
+import legend.game.inventory.screens.controls.Textbox;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +50,15 @@ public class VerticalLayoutScreen extends MenuScreen {
 
       this.highlightedRow = index;
       this.highlight.setY(30 + index * 20);
-      this.rows.get(this.highlightedRow).hoverIn();
+
+      final Control current = this.rows.get(this.highlightedRow);
+      current.hoverIn();
+
+      if(!(current instanceof Textbox)) {
+        current.focus();
+      } else {
+        this.setFocus(null);
+      }
     }
   }
 

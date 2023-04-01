@@ -5,6 +5,8 @@ import legend.game.input.InputAction;
 import legend.game.inventory.screens.Control;
 import legend.game.inventory.screens.InputPropagation;
 
+import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
+
 public class NumberSpinner extends Control {
   private final Glyph upArrow;
   private final Glyph downArrow;
@@ -24,6 +26,7 @@ public class NumberSpinner extends Control {
 
     this.highlight = this.addControl(new Brackets());
     this.highlight.setHeight(16);
+    this.highlight.ignoreInput();
     this.highlight.hide();
 
     this.setNumber(number);
@@ -73,6 +76,29 @@ public class NumberSpinner extends Control {
   protected void lostFocus() {
     super.lostFocus();
     this.highlight.hide();
+  }
+
+  @Override
+  protected InputPropagation mouseScroll(final int deltaX, final int deltaY) {
+    if(super.mouseScroll(deltaX, deltaY) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
+    this.setNumber(this.number + deltaY);
+    return InputPropagation.HANDLED;
+  }
+
+  @Override
+  protected InputPropagation mouseClick(final int x, final int y, final int button, final int mods) {
+    if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
+    if(button == GLFW_MOUSE_BUTTON_LEFT && mods == 0 && !this.highlight.isVisible()) {
+      this.highlight.show();
+    }
+
+    return InputPropagation.HANDLED;
   }
 
   @Override

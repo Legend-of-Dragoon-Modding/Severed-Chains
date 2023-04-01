@@ -10,8 +10,18 @@ import java.util.Queue;
 public abstract class MenuScreen extends ControlHost {
   private final Queue<Runnable> deferredActions = new LinkedList<>();
 
+  private MenuStack stack;
+
   private Control hover;
   private Control focus;
+
+  void setStack(@Nullable final MenuStack stack) {
+    this.stack = stack;
+  }
+
+  public MenuStack getStack() {
+    return this.stack;
+  }
 
   @Override
   protected MenuScreen getScreen() {
@@ -143,6 +153,10 @@ public abstract class MenuScreen extends ControlHost {
   }
 
   public void setFocus(@Nullable final Control control) {
+    if(this.focus == control) {
+      return;
+    }
+
     if(this.focus != null) {
       this.focus.lostFocus();
     }

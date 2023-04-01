@@ -23,7 +23,7 @@ public abstract class Control extends ControlHost {
   private boolean hovered;
 
   @Override
-  protected MenuScreen getScreen() {
+  public MenuScreen getScreen() {
     return this.screen;
   }
 
