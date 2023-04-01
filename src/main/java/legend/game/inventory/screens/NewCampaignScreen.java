@@ -35,7 +35,7 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
 
     this.campaignName = this.addRow("Campaign name", new Textbox());
     this.campaignName.setText(SAVES.generateCampaignName());
-    this.campaignName.setMaxLength(30);
+    this.campaignName.setMaxLength(15);
     this.campaignName.setZ(35);
 
     final Button options = this.addRow("", new Button("Options"));

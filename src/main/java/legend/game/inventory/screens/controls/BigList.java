@@ -31,7 +31,7 @@ public class BigList<T> extends Control {
     this.entryToString = entryToString;
 
     this.highlight = this.addControl(new Brackets());
-    this.highlight.setX(16);
+    this.highlight.setX(8);
 
     this.upArrow = this.addControl(Glyph.uiElement(61, 68));
     this.downArrow = this.addControl(Glyph.uiElement(53, 60));

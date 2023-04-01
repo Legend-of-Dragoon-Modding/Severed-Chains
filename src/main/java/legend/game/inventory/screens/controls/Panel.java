@@ -12,6 +12,24 @@ import static legend.game.Scus94491BpeSegment_8002.allocateManualRenderable;
 import static legend.game.Scus94491BpeSegment_8002.uploadRenderable;
 
 public class Panel extends Control {
+  public static Panel panel() {
+    return new Panel();
+  }
+
+  public static Panel subtle() {
+    final Panel panel = new Panel();
+
+    panel.setMetrics(
+      240, 245, 250, 16, 21, 27, 196, 70,
+      5, 5,
+      1, 1,
+      3
+    );
+
+    panel.setClut(0x7ca9);
+    return panel;
+  }
+
   private final Renderable58 background;
 
   private int u0 = 128;
@@ -37,7 +55,7 @@ public class Panel extends Control {
   private int clut = 0x7c29;
   private int tpage = 0x200c;
 
-  public Panel() {
+  protected Panel() {
     final UiPart part = new UiPart(new RenderableMetrics14[9], 1);
     final UiType type = new UiType(new UiPart[] {part});
 

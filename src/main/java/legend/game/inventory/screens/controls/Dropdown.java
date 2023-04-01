@@ -14,6 +14,7 @@ import static legend.game.SItem.renderText;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 
 public class Dropdown extends Control {
+  private final Panel background;
   private final Panel panel;
   private final Glyph downArrow;
   private final Brackets highlight;
@@ -23,7 +24,9 @@ public class Dropdown extends Control {
   private int selectedIndex;
 
   public Dropdown() {
-    this.panel = this.addControl(new Panel());
+    this.background = this.addControl(Panel.subtle());
+
+    this.panel = this.addControl(Panel.panel());
     this.panel.setPos(-9, 16);
     this.panel.setZ(10);
     this.panel.hide();
@@ -57,6 +60,7 @@ public class Dropdown extends Control {
 
     this.downArrow = this.addControl(Glyph.uiElement(53, 60));
     this.downArrow.ignoreInput();
+    this.downArrow.setZ(this.background.getZ() - 1);
 
     this.setSize(100, 16);
   }
@@ -77,9 +81,10 @@ public class Dropdown extends Control {
   @Override
   protected void onResize() {
     super.onResize();
+    this.background.setSize(this.getWidth(), this.getHeight());
     this.panel.setWidth(this.getWidth() + 18);
     this.highlight.setWidth(this.getWidth() + 7);
-    this.downArrow.setPos(this.getWidth(), -2);
+    this.downArrow.setPos(this.getWidth() - 1, -1);
   }
 
   @Override
@@ -172,7 +177,10 @@ public class Dropdown extends Control {
   @Override
   protected void render(final int x, final int y) {
     if(!this.options.isEmpty()) {
-      renderText(this.options.get(this.selectedIndex), x + 1, y + 1, TextColour.BROWN);
+      final int oldZ = textZ_800bdf00.get();
+      textZ_800bdf00.set(this.background.getZ() - 1);
+      renderText(this.options.get(this.selectedIndex), x + 4, y + (this.getHeight() - 11) / 2 + 1, TextColour.BROWN);
+      textZ_800bdf00.set(oldZ);
     }
 
     if(this.panel.isVisible()) {

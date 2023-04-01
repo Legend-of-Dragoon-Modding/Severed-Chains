@@ -33,7 +33,7 @@ public class InputBoxScreen extends MenuScreen {
     this.text.setPos(100, 124);
     this.text.setZ(1);
     this.text.setText(defaultText);
-    this.text.setMaxLength(30);
+    this.text.setMaxLength(15);
 
     this.text.onGotFocus(() -> this.messageBox.ignoreInput = true);
     this.text.onLostFocus(() -> this.messageBox.ignoreInput = false);

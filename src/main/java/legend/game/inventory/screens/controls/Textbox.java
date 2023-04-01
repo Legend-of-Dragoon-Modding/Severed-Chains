@@ -12,26 +12,18 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_BACKSPACE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 
 public class Textbox extends Control {
-  private final Panel panel;
+  private final Panel background;
   private LodString text = new LodString("");
   private int maxLength = -1;
 
   public Textbox() {
-    this.panel = this.addControl(new Panel());
-    this.panel.setPos(0, 0);
-    this.panel.setMetrics(
-      240, 245, 250, 16, 21, 27, 196, 70,
-      5, 5,
-      1, 1,
-      3
-    );
-    this.panel.setClut(0x7ca9);
+    this.background = this.addControl(Panel.subtle());
   }
 
   @Override
   public void setZ(final int z) {
     super.setZ(z);
-    this.panel.setZ(z + 1);
+    this.background.setZ(z + 1);
   }
 
   public void setMaxLength(final int maxLength) {
@@ -45,7 +37,7 @@ public class Textbox extends Control {
   @Override
   protected void onResize() {
     super.onResize();
-    this.panel.setSize(this.getWidth(), this.getHeight());
+    this.background.setSize(this.getWidth(), this.getHeight());
   }
 
   public void setText(final String text) {

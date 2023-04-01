@@ -13,7 +13,7 @@ public abstract class Control extends ControlHost {
 
   private int x;
   private int y;
-  private int z;
+  private int z = 35;
   private int width;
   private int height;
 
