@@ -106,7 +106,6 @@ import static legend.game.combat.Bttl_800c._800c7284;
 import static legend.game.combat.Bttl_800c._800c729c;
 import static legend.game.combat.Bttl_800c._800c72b4;
 import static legend.game.combat.Bttl_800c._800d66b0;
-import static legend.game.combat.Bttl_800c._800d6c30;
 import static legend.game.combat.Bttl_800c._800fb4b4;
 import static legend.game.combat.Bttl_800c._800fb534;
 import static legend.game.combat.Bttl_800c._800fb548;
