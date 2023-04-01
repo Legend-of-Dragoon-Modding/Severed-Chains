@@ -9,6 +9,8 @@ import static legend.game.Scus94491BpeSegment_8002.allocateRenderable;
 import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 
 public abstract class Control extends ControlHost {
+  private MenuScreen screen;
+
   private int x;
   private int y;
   private int z;
@@ -18,10 +20,24 @@ public abstract class Control extends ControlHost {
   private boolean visible = true;
   private boolean acceptsInput = true;
   private boolean disabled;
+  private boolean hovered;
+
+  @Override
+  protected MenuScreen getScreen() {
+    return this.screen;
+  }
+
+  void setScreen(final MenuScreen screen) {
+    this.screen = screen;
+  }
 
   public void setPos(final int x, final int y) {
     this.x = x;
     this.y = y;
+  }
+
+  protected void deferAction(final Runnable action) {
+    this.screen.deferAction(action);
   }
 
   public int getX() {
@@ -120,6 +136,14 @@ public abstract class Control extends ControlHost {
     this.disabled = disabled;
   }
 
+  public void focus() {
+    this.screen.setFocus(this);
+  }
+
+  public void unfocus() {
+    this.screen.setFocus(null);
+  }
+
   protected void onResize() {
 
   }
@@ -156,13 +180,21 @@ public abstract class Control extends ControlHost {
     return MathHelper.inBox(x, y, this.x, this.y, this.width, this.height);
   }
 
+  public boolean isHovered() {
+    return this.hovered;
+  }
+
   protected void hoverIn() {
+    this.hovered = true;
+
     if(this.hoverInHandler != null) {
       this.hoverInHandler.hoverIn();
     }
   }
 
   protected void hoverOut() {
+    this.hovered = false;
+
     if(this.hoverOutHandler != null) {
       this.hoverOutHandler.hoverOut();
     }

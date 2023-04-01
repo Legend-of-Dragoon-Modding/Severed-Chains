@@ -4,10 +4,19 @@ import legend.game.SItem;
 import legend.game.input.InputAction;
 
 import javax.annotation.Nullable;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public abstract class MenuScreen extends ControlHost {
+  private final Queue<Runnable> deferredActions = new LinkedList<>();
+
   private Control hover;
   private Control focus;
+
+  @Override
+  protected MenuScreen getScreen() {
+    return this;
+  }
 
   protected abstract void render();
 
@@ -20,6 +29,7 @@ public abstract class MenuScreen extends ControlHost {
   }
 
   final void renderScreen() {
+    this.runDeferredActions();
     this.render();
     this.renderControls(0, 0);
   }
@@ -155,5 +165,20 @@ public abstract class MenuScreen extends ControlHost {
 
   protected boolean propagateInput() {
     return false;
+  }
+
+  protected void deferAction(final Runnable action) {
+    synchronized(this.deferredActions) {
+      this.deferredActions.add(action);
+    }
+  }
+
+  protected void runDeferredActions() {
+    synchronized(this.deferredActions) {
+      Runnable action;
+      while((action = this.deferredActions.poll()) != null) {
+        action.run();
+      }
+    }
   }
 }

@@ -44,14 +44,14 @@ public class Brackets extends Control {
 
   private void rebuild() {
     final UiPart uiType = this.background.uiType_20.entries_08()[0];
-    uiType.metrics_00()[0] = new RenderableMetrics14(240, 64, 0, 0, this.clut, 0x200c, 5, 5, 5, 5, (short)0x1000, (short)0x1000);
-    uiType.metrics_00()[1] = new RenderableMetrics14(251, 64, this.getWidth() - 5, 0, this.clut, 0x200c, 5, 5, 5, 5, (short)0x1000, (short)0x1000);
+    uiType.metrics_00()[0] = new RenderableMetrics14(240, 64, 8, 0, this.clut, 0x200c, 5, 5, 5, 5, (short)0x1000, (short)0x1000);
+    uiType.metrics_00()[1] = new RenderableMetrics14(251, 64, 8 + this.getWidth() - 5, 0, this.clut, 0x200c, 5, 5, 5, 5, (short)0x1000, (short)0x1000);
 
-    uiType.metrics_00()[2] = new RenderableMetrics14(240, 69, 0, 5, this.clut, 0x200c, 5, this.getHeight() - 10, 5, 1, (short)0x1000, (short)0x1000);
-    uiType.metrics_00()[3] = new RenderableMetrics14(251, 69, this.getWidth() - 5, 5, this.clut, 0x200c, 5, this.getHeight() - 10, 5, 1, (short)0x1000, (short)0x1000);
+    uiType.metrics_00()[2] = new RenderableMetrics14(240, 69, 8, 5, this.clut, 0x200c, 5, this.getHeight() - 10, 5, 1, (short)0x1000, (short)0x1000);
+    uiType.metrics_00()[3] = new RenderableMetrics14(251, 69, 8 + this.getWidth() - 5, 5, this.clut, 0x200c, 5, this.getHeight() - 10, 5, 1, (short)0x1000, (short)0x1000);
 
-    uiType.metrics_00()[4] = new RenderableMetrics14(240, 71, 0, this.getHeight() - 5, this.clut, 0x200c, 5, 5, 5, 5, (short)0x1000, (short)0x1000);
-    uiType.metrics_00()[5] = new RenderableMetrics14(251, 71, this.getWidth() - 5, this.getHeight() - 5, this.clut, 0x200c, 5, 5, 5, 5, (short)0x1000, (short)0x1000);
+    uiType.metrics_00()[4] = new RenderableMetrics14(240, 71, 8, this.getHeight() - 5, this.clut, 0x200c, 5, 5, 5, 5, (short)0x1000, (short)0x1000);
+    uiType.metrics_00()[5] = new RenderableMetrics14(251, 71, 8 + this.getWidth() - 5, this.getHeight() - 5, this.clut, 0x200c, 5, 5, 5, 5, (short)0x1000, (short)0x1000);
   }
 
   @Override

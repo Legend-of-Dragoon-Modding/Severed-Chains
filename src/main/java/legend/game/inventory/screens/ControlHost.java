@@ -9,13 +9,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-public class ControlHost implements Iterable<Control> {
+public abstract class ControlHost implements Iterable<Control> {
   private final List<Control> controls = new ArrayList<>();
 
   protected int mouseX;
   protected int mouseY;
 
+  protected abstract MenuScreen getScreen();
+
   public <T extends Control> T addControl(final T control) {
+    control.setScreen(this.getScreen());
     this.controls.add(control);
     this.controls.sort(Comparator.comparingInt(Control::getZ));
     return control;

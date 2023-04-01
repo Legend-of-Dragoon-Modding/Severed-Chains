@@ -29,7 +29,7 @@ public class Dropdown extends Control {
     this.panel.hide();
 
     this.highlight = this.panel.addControl(new Brackets());
-    this.highlight.setPos(14, 8);
+    this.highlight.setPos(6, 8);
     this.highlight.setZ(this.panel.getZ() - 2);
     this.highlight.setHeight(16);
 

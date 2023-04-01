@@ -5,7 +5,6 @@ import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.Button;
-import legend.game.inventory.screens.controls.Label;
 import legend.game.inventory.screens.controls.Textbox;
 import legend.game.types.GameState52c;
 import legend.game.types.LodString;
@@ -19,7 +18,7 @@ import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.savedGameSelected_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 
-public class NewCampaignScreen extends MenuScreen {
+public class NewCampaignScreen extends VerticalLayoutScreen {
   private final GameState52c state = new GameState52c();
 
   private final Textbox campaignName;
@@ -34,38 +33,26 @@ public class NewCampaignScreen extends MenuScreen {
 
     this.addControl(new Background());
 
-    final Label campaignNameLabel = this.addControl(new Label("Campaign name:"));
-    campaignNameLabel.setPos(30, 30);
-    campaignNameLabel.setSize(0, 16);
-
-    this.campaignName = this.addControl(new Textbox());
+    this.campaignName = this.addRow("Campaign name", new Textbox());
     this.campaignName.setText(SAVES.generateCampaignName());
     this.campaignName.setMaxLength(30);
-    this.campaignName.setPos(144, 28);
-    this.campaignName.setSize(150, 20);
     this.campaignName.setZ(35);
 
-    final Button options = this.addControl(new Button("Options"));
-    options.setPos(10, 30);
-    options.onMouseClick((x, y, button, mods) -> {
+    final Button options = this.addRow("", new Button("Options"));
+    options.onPressed(() ->
       SItem.menuStack.pushScreen(new OptionsScreen(this.state, () -> {
         scriptStartEffect(2, 10);
         SItem.menuStack.popScreen();
-      }));
+      }))
+    );
 
-      return InputPropagation.HANDLED;
-    });
-
-    final Button startGame = this.addControl(new Button("Start Game"));
-    startGame.setPos(340 - startGame.getWidth(), 220 - startGame.getHeight());
-    startGame.onMouseClick((x, y, button, mods) -> {
+    final Button startGame = this.addRow("", new Button("Start Game"));
+    startGame.onPressed(() -> {
       if(SAVES.campaignExists(this.campaignName.getText())) {
         menuStack.pushScreen(new MessageBoxScreen(new LodString("Campaign name already\nin use"), 0, result1 -> { }));
       } else {
         this.unload = true;
       }
-
-      return InputPropagation.HANDLED;
     });
   }
 

@@ -69,32 +69,33 @@ public class Highlight extends Control {
 
   private void rebuild() {
     final UiPart backgroundPart = this.background.uiType_20.entries_08()[0];
-    backgroundPart.metrics_00()[0] = new RenderableMetrics14(this.mu, this.mv, this.cw - this.mg, this.ch - this.mg, this.clut, this.tpage, this.getWidth() - (this.cw - this.mg) * 2 + this.mw, this.getHeight() - (this.ch - this.mg) * 2 + this.mh, this.mw, this.mh);
+    backgroundPart.metrics_00()[0] = new RenderableMetrics14(this.mu, this.mv, 8 + this.cw - this.mg, this.ch - this.mg, this.clut, this.tpage, this.getWidth() - (this.cw - this.mg) * 2 + this.mw, this.getHeight() - (this.ch - this.mg) * 2 + this.mh, this.mw, this.mh);
 
-    backgroundPart.metrics_00()[1] = new RenderableMetrics14(this.u0, this.v0, 0, 0, this.clut, this.tpage, this.cw, this.ch, this.cw, this.ch);
-    backgroundPart.metrics_00()[2] = new RenderableMetrics14(this.u1, this.v0, this.cw, 0, this.clut, this.tpage, this.getWidth() - this.cw * 2, this.ch, this.mw, this.ch);
-    backgroundPart.metrics_00()[3] = new RenderableMetrics14(this.u2, this.v0, this.getWidth() - this.cw, 0, this.clut, this.tpage, this.cw, this.ch, this.cw, this.ch);
+    backgroundPart.metrics_00()[1] = new RenderableMetrics14(this.u0, this.v0, 8, 0, this.clut, this.tpage, this.cw, this.ch, this.cw, this.ch);
+    backgroundPart.metrics_00()[2] = new RenderableMetrics14(this.u1, this.v0, 8 + this.cw, 0, this.clut, this.tpage, this.getWidth() - this.cw * 2, this.ch, this.mw, this.ch);
+    backgroundPart.metrics_00()[3] = new RenderableMetrics14(this.u2, this.v0, 8 + this.getWidth() - this.cw, 0, this.clut, this.tpage, this.cw, this.ch, this.cw, this.ch);
 
-    backgroundPart.metrics_00()[4] = new RenderableMetrics14(this.u0, this.v1, 0, this.ch, this.clut, this.tpage, this.cw, this.getHeight() - this.ch * 2, this.cw, this.mh);
-    backgroundPart.metrics_00()[5] = new RenderableMetrics14(this.u2, this.v1, this.getWidth() - this.cw, this.ch, this.clut, this.tpage, this.cw, this.getHeight() - this.ch * 2, this.cw, this.mh);
+    backgroundPart.metrics_00()[4] = new RenderableMetrics14(this.u0, this.v1, 8, this.ch, this.clut, this.tpage, this.cw, this.getHeight() - this.ch * 2, this.cw, this.mh);
+    backgroundPart.metrics_00()[5] = new RenderableMetrics14(this.u2, this.v1, 8 + this.getWidth() - this.cw, this.ch, this.clut, this.tpage, this.cw, this.getHeight() - this.ch * 2, this.cw, this.mh);
 
-    backgroundPart.metrics_00()[6] = new RenderableMetrics14(this.u0, this.v2, 0, this.getHeight() - this.ch, this.clut, this.tpage, this.cw, this.ch, this.cw, this.ch);
-    backgroundPart.metrics_00()[7] = new RenderableMetrics14(this.u1, this.v2, this.cw, this.getHeight() - this.ch, this.clut, this.tpage, this.getWidth() - this.cw * 2, this.ch, this.mw, this.ch);
-    backgroundPart.metrics_00()[8] = new RenderableMetrics14(this.u2, this.v2, this.getWidth() - this.cw, this.getHeight() - this.ch, this.clut, this.tpage, this.cw, this.ch, this.cw, this.ch);
+    backgroundPart.metrics_00()[6] = new RenderableMetrics14(this.u0, this.v2, 8, this.getHeight() - this.ch, this.clut, this.tpage, this.cw, this.ch, this.cw, this.ch);
+    backgroundPart.metrics_00()[7] = new RenderableMetrics14(this.u1, this.v2, 8 + this.cw, this.getHeight() - this.ch, this.clut, this.tpage, this.getWidth() - this.cw * 2, this.ch, this.mw, this.ch);
+    backgroundPart.metrics_00()[8] = new RenderableMetrics14(this.u2, this.v2, 8 + this.getWidth() - this.cw, this.getHeight() - this.ch, this.clut, this.tpage, this.cw, this.ch, this.cw, this.ch);
 
     final UiPart bracketsPart = this.brackets.uiType_20.entries_08()[0];
-    bracketsPart.metrics_00()[0] = new RenderableMetrics14(240, 64, 0, 0, 0xfc29, 0x2c, 5, 5, 5, 5, (short)0x1000, (short)0x1000);
-    bracketsPart.metrics_00()[1] = new RenderableMetrics14(251, 64, this.getWidth() - 5, 0, 0xfc29, 0x2c, 5, 5, 5, 5, (short)0x1000, (short)0x1000);
+    bracketsPart.metrics_00()[0] = new RenderableMetrics14(240, 64, 8, 0, 0xfc29, 0x2c, 5, 5, 5, 5, (short)0x1000, (short)0x1000);
+    bracketsPart.metrics_00()[1] = new RenderableMetrics14(251, 64, 8 + this.getWidth() - 5, 0, 0xfc29, 0x2c, 5, 5, 5, 5, (short)0x1000, (short)0x1000);
 
-    bracketsPart.metrics_00()[2] = new RenderableMetrics14(240, 69, 0, 5, 0xfc29, 0x2c, 5, this.getHeight() - 10, 5, 1, (short)0x1000, (short)0x1000);
-    bracketsPart.metrics_00()[3] = new RenderableMetrics14(251, 69, this.getWidth() - 5, 5, 0xfc29, 0x2c, 5, this.getHeight() - 10, 5, 1, (short)0x1000, (short)0x1000);
+    bracketsPart.metrics_00()[2] = new RenderableMetrics14(240, 69, 8, 5, 0xfc29, 0x2c, 5, this.getHeight() - 10, 5, 1, (short)0x1000, (short)0x1000);
+    bracketsPart.metrics_00()[3] = new RenderableMetrics14(251, 69, 8 + this.getWidth() - 5, 5, 0xfc29, 0x2c, 5, this.getHeight() - 10, 5, 1, (short)0x1000, (short)0x1000);
 
-    bracketsPart.metrics_00()[4] = new RenderableMetrics14(240, 71, 0, this.getHeight() - 5, 0xfc29, 0x2c, 5, 5, 5, 5, (short)0x1000, (short)0x1000);
-    bracketsPart.metrics_00()[5] = new RenderableMetrics14(251, 71, this.getWidth() - 5, this.getHeight() - 5, 0xfc29, 0x2c, 5, 5, 5, 5, (short)0x1000, (short)0x1000);
+    bracketsPart.metrics_00()[4] = new RenderableMetrics14(240, 71, 8, this.getHeight() - 5, 0xfc29, 0x2c, 5, 5, 5, 5, (short)0x1000, (short)0x1000);
+    bracketsPart.metrics_00()[5] = new RenderableMetrics14(251, 71, 8 + this.getWidth() - 5, this.getHeight() - 5, 0xfc29, 0x2c, 5, 5, 5, 5, (short)0x1000, (short)0x1000);
   }
 
   @Override
   protected void render(final int x, final int y) {
+    uploadRenderable(this.background, x, y);
     uploadRenderable(this.brackets, x, y);
   }
 }

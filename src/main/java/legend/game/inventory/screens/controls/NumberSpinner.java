@@ -33,7 +33,7 @@ public class NumberSpinner extends Control {
     this.number = MathHelper.clamp(number, this.min, this.max);
     this.digitCount = MathHelper.digitCount(this.number);
     this.highlight.setWidth(this.digitCount * 6 + 10);
-    this.highlight.setX((this.getWidth() - this.highlight.getWidth()) / 2);
+    this.highlight.setX((this.getWidth() - this.highlight.getWidth()) / 2 - 8);
 
     if(this.changeHandler != null) {
       this.changeHandler.change(this.number);
@@ -66,7 +66,7 @@ public class NumberSpinner extends Control {
     this.upArrow.setPos(this.getWidth() - 10, -1);
     this.downArrow.setPos(this.getWidth(), -2);
     this.highlight.setHeight(this.getHeight());
-    this.highlight.setX((this.getWidth() - this.highlight.getWidth()) / 2);
+    this.highlight.setX((this.getWidth() - this.highlight.getWidth()) / 2 - 8);
   }
 
   @Override

@@ -9,6 +9,7 @@ import legend.game.types.LodString;
 
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_BACKSPACE;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 
 public class Textbox extends Control {
   private final Panel panel;
@@ -63,7 +64,7 @@ public class Textbox extends Control {
   protected void render(final int x, final int y) {
     final int oldZ = textZ_800bdf00.get();
     textZ_800bdf00.set(this.getZ() - 1);
-    SItem.renderText(this.text, x, y + (this.getHeight() - 11) / 2, TextColour.BROWN);
+    SItem.renderText(this.text, x + 4, y + (this.getHeight() - 11) / 2 + 1, TextColour.BROWN);
     textZ_800bdf00.set(oldZ);
   }
 
@@ -75,6 +76,10 @@ public class Textbox extends Control {
 
     if(key == GLFW_KEY_BACKSPACE && this.text.length() > 0) {
       this.text = new LodString(this.text.get().substring(0, this.text.length() - 1));
+    }
+
+    if(key == GLFW_KEY_ESCAPE) {
+      this.deferAction(this::unfocus);
     }
 
     return InputPropagation.HANDLED;
