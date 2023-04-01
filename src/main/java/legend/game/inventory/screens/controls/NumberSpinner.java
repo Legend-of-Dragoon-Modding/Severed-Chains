@@ -8,7 +8,7 @@ import legend.game.inventory.screens.InputPropagation;
 public class NumberSpinner extends Control {
   private final Glyph upArrow;
   private final Glyph downArrow;
-  private final Highlight highlight;
+  private final Brackets highlight;
 
   private int min;
   private int max = Integer.MAX_VALUE;
@@ -22,7 +22,7 @@ public class NumberSpinner extends Control {
     this.downArrow = this.addControl(Glyph.uiElement(53, 60));
     this.downArrow.ignoreInput();
 
-    this.highlight = this.addControl(new Highlight());
+    this.highlight = this.addControl(new Brackets());
     this.highlight.setHeight(16);
     this.highlight.hide();
 

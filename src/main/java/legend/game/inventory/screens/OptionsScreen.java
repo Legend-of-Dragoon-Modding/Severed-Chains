@@ -5,7 +5,7 @@ import legend.core.MathHelper;
 import legend.game.input.InputAction;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.Dropdown;
-import legend.game.inventory.screens.controls.Highlight;
+import legend.game.inventory.screens.controls.Brackets;
 import legend.game.inventory.screens.controls.Label;
 import legend.game.saves.ConfigEntry;
 import legend.game.types.GameState52c;
@@ -22,7 +22,7 @@ public class OptionsScreen extends MenuScreen {
   private final Runnable unload;
   private final List<Control> options = new ArrayList<>();
 
-  private final Highlight highlight;
+  private final Brackets highlight;
   private int highlightedOption;
 
   public OptionsScreen(final GameState52c state, final Runnable unload) {
@@ -34,7 +34,7 @@ public class OptionsScreen extends MenuScreen {
 
     this.addControl(new Background());
 
-    this.highlight = this.addControl(new Highlight());
+    this.highlight = this.addControl(new Brackets());
     this.highlight.setPos(34, 30);
     this.highlight.setSize(320, 16);
     this.highlight.setClut(0xfc29);

@@ -16,7 +16,7 @@ import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 public class Dropdown extends Control {
   private final Panel panel;
   private final Glyph downArrow;
-  private final Highlight highlight;
+  private final Brackets highlight;
 
   private final List<LodString> options = new ArrayList<>();
   private int hoverIndex;
@@ -28,7 +28,7 @@ public class Dropdown extends Control {
     this.panel.setZ(10);
     this.panel.hide();
 
-    this.highlight = this.panel.addControl(new Highlight());
+    this.highlight = this.panel.addControl(new Brackets());
     this.highlight.setPos(14, 8);
     this.highlight.setZ(this.panel.getZ() - 2);
     this.highlight.setHeight(16);

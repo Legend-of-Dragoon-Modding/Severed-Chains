@@ -17,7 +17,14 @@ public class Textbox extends Control {
 
   public Textbox() {
     this.panel = this.addControl(new Panel());
-    this.panel.setPos(-7, -7);
+    this.panel.setPos(0, 0);
+    this.panel.setMetrics(
+      240, 245, 250, 16, 21, 27, 196, 70,
+      5, 5,
+      1, 1,
+      3
+    );
+    this.panel.setClut(0x7ca9);
   }
 
   @Override
@@ -37,7 +44,7 @@ public class Textbox extends Control {
   @Override
   protected void onResize() {
     super.onResize();
-    this.panel.setSize(this.getWidth() + 10, this.getHeight() + 10);
+    this.panel.setSize(this.getWidth(), this.getHeight());
   }
 
   public void setText(final String text) {
@@ -56,7 +63,7 @@ public class Textbox extends Control {
   protected void render(final int x, final int y) {
     final int oldZ = textZ_800bdf00.get();
     textZ_800bdf00.set(this.getZ() - 1);
-    SItem.renderText(this.text, x, y, TextColour.BROWN);
+    SItem.renderText(this.text, x, y + (this.getHeight() - 11) / 2, TextColour.BROWN);
     textZ_800bdf00.set(oldZ);
   }
 

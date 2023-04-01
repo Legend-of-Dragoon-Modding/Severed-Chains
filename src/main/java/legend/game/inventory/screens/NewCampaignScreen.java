@@ -34,13 +34,15 @@ public class NewCampaignScreen extends MenuScreen {
 
     this.addControl(new Background());
 
-    this.addControl(new Label("Save name")).setPos(10, 10);
+    final Label campaignNameLabel = this.addControl(new Label("Campaign name:"));
+    campaignNameLabel.setPos(30, 30);
+    campaignNameLabel.setSize(0, 16);
 
     this.campaignName = this.addControl(new Textbox());
     this.campaignName.setText(SAVES.generateCampaignName());
     this.campaignName.setMaxLength(30);
-    this.campaignName.setPos(110, 10);
-    this.campaignName.setSize(150, 16);
+    this.campaignName.setPos(144, 28);
+    this.campaignName.setSize(150, 20);
     this.campaignName.setZ(35);
 
     final Button options = this.addControl(new Button("Options"));

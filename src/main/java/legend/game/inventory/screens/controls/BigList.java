@@ -22,7 +22,7 @@ public class BigList<T> extends Control {
   private int slot;
 
   private final List<Label> labels = new ArrayList<>();
-  private final Highlight highlight;
+  private final Brackets highlight;
 
   private final Glyph upArrow;
   private final Glyph downArrow;
@@ -30,7 +30,7 @@ public class BigList<T> extends Control {
   public BigList(final Function<T, String> entryToString) {
     this.entryToString = entryToString;
 
-    this.highlight = this.addControl(new Highlight());
+    this.highlight = this.addControl(new Brackets());
     this.highlight.setX(16);
 
     this.upArrow = this.addControl(Glyph.uiElement(61, 68));

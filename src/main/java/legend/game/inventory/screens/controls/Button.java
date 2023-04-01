@@ -8,18 +8,18 @@ import static legend.game.SItem.FUN_80104b60;
 import static legend.game.SItem.renderCentredText;
 
 public class Button extends Control {
-  private final Glyph focus;
+  private final Glyph hover;
   private LodString text;
   private TextColour textColour = TextColour.BROWN;
 
   public Button(final String text) {
     this.setSize(59, 12);
 
-    this.focus = this.addControl(Glyph.uiElement(122, 122));
-    FUN_80104b60(this.focus.getRenderable());
-    this.focus.getRenderable().x_40 += 8;
-    this.focus.getRenderable().y_44 -= 2;
-    this.focus.hide();
+    this.hover = this.addControl(Glyph.uiElement(122, 122));
+    FUN_80104b60(this.hover.getRenderable());
+    this.hover.getRenderable().x_40 += 8;
+    this.hover.getRenderable().y_44 -= 2;
+    this.hover.hide();
 
     this.setText(text);
   }
@@ -45,15 +45,15 @@ public class Button extends Control {
   }
 
   @Override
-  protected void gotFocus() {
-    super.gotFocus();
-    this.focus.show();
+  protected void hoverIn() {
+    super.hoverIn();
+    this.hover.show();
   }
 
   @Override
-  protected void lostFocus() {
-    super.lostFocus();
-    this.focus.hide();
+  protected void hoverOut() {
+    super.hoverOut();
+    this.hover.hide();
   }
 
   @Override
