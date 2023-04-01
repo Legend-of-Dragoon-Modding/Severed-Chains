@@ -1,6 +1,5 @@
 package legend.game.combat;
 
-import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandLine;
@@ -2634,7 +2633,7 @@ public final class Bttl_800f {
 
           if(a0 == 0) {
             sp0x18[(int)_800c6ba0.get()] = _800c6718.offset(1, 0x18L).offset(a2 * 0x4L).get();
-            _800d6c30.offset(_800c6ba0.get()).setu(a2);
+            _800c6c30.offset(_800c6ba0.get()).setu(a2);
 
             if(_800d66b0.get() == a2) {
               _800c6ba1.setu(_800c6ba0.get());
