@@ -91,9 +91,10 @@ public class Button extends Control {
 
     if(inputAction == InputAction.BUTTON_SOUTH) {
       this.press();
+      return InputPropagation.HANDLED;
     }
 
-    return InputPropagation.HANDLED;
+    return InputPropagation.PROPAGATE;
   }
 
   @Override
