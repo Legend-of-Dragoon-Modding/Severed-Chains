@@ -1,5 +1,6 @@
 package legend.game;
 
+import legend.game.modding.coremod.CoreMod;
 import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
@@ -4754,7 +4755,7 @@ public class WMap {
     struct.currentAnimIndex_ac = struct.animIndex_b0;
 
     if(struct.vec_84.getX() != struct.vec_94.getX() || struct.vec_84.getY() != struct.vec_94.getY() || struct.vec_84.getZ() != struct.vec_94.getZ()) {
-      final EncounterRateMode mode = gameState_800babc8.getConfig(BaseMod.ENCOUNTER_RATE_CONFIG);
+      final EncounterRateMode mode = gameState_800babc8.getConfig(CoreMod.ENCOUNTER_RATE_CONFIG.get());
 
       //LAB_800e117c
       //LAB_800e11b0

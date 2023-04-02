@@ -1,6 +1,7 @@
 package legend.game;
 
 import it.unimi.dsi.fastutil.ints.IntList;
+import legend.game.modding.coremod.CoreMod;
 import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
@@ -1701,7 +1702,7 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_800234f4
     final int count = gameState_800babc8.items_2e9.size();
 
-    if(count >= gameState_800babc8.getConfig(BaseMod.INVENTORY_SIZE_CONFIG)) {
+    if(count >= gameState_800babc8.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get())) {
       //LAB_8002350c
       return 0xff;
     }
