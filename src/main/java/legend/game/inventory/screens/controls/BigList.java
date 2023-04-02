@@ -185,7 +185,7 @@ public class BigList<T> extends Control {
 
     switch(inputAction) {
       case DPAD_UP, JOYSTICK_LEFT_BUTTON_UP -> {
-        if(this.slot > 0) {
+        if(this.slot > this.scroll) {
           playSound(1);
           this.highlight(this.slot - 1);
           return InputPropagation.HANDLED;
@@ -193,13 +193,13 @@ public class BigList<T> extends Control {
           playSound(1);
           this.scroll--;
           this.updateEntries();
-          this.highlight(this.slot);
+          this.highlight(this.slot - 1);
           return InputPropagation.HANDLED;
         }
       }
 
       case DPAD_DOWN, JOYSTICK_LEFT_BUTTON_DOWN -> {
-        if(this.slot < this.visibleEntries() - 1) {
+        if(this.slot < this.scroll + this.visibleEntries() - 1) {
           playSound(1);
           this.highlight(this.slot + 1);
           return InputPropagation.HANDLED;
@@ -207,7 +207,7 @@ public class BigList<T> extends Control {
           playSound(1);
           this.scroll++;
           this.updateEntries();
-          this.highlight(this.slot);
+          this.highlight(this.slot + 1);
           return InputPropagation.HANDLED;
         }
       }
