@@ -2,7 +2,6 @@ package legend.game.saves;
 
 import legend.core.GameEngine;
 import legend.game.inventory.WhichMenu;
-import legend.game.modding.registries.RegistryDelegate;
 import legend.game.modding.registries.RegistryId;
 import legend.game.types.CharacterData2c;
 import legend.game.types.GameState52c;
@@ -232,8 +231,8 @@ public final class SaveSerialization {
       final RegistryId configId = data.readRegistryId(offset);
       offset += configId.toString().length() + 3;
 
-      //noinspection rawtypes,unchecked
-      final RegistryDelegate<ConfigEntry> configEntry = (RegistryDelegate)GameEngine.REGISTRIES.config.getEntry(configId);
+      //noinspection rawtypes
+      final ConfigEntry configEntry = GameEngine.REGISTRIES.config.getEntry(configId).get();
 
       final int configValueLength = data.readInt(offset);
       offset += 4;
@@ -241,8 +240,10 @@ public final class SaveSerialization {
       final byte[] configValueRaw = data.slice(offset, configValueLength).getBytes();
       offset += configValueLength;
 
-      //noinspection unchecked
-      state.setConfig(configEntry.get(), configEntry.get().deserializer.apply(configValueRaw));
+      if(configEntry != null) {
+        //noinspection unchecked
+        state.setConfig(configEntry, configEntry.deserializer.apply(configValueRaw));
+      }
     }
 
     return new SavedGame(name, locationType, locationIndex, state);
