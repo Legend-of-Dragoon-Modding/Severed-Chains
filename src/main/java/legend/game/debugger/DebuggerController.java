@@ -82,8 +82,6 @@ public class DebuggerController {
   public CheckBox fastTextSpeed;
   @FXML
   public CheckBox autoAdvanceText;
-  @FXML
-  public CheckBox autoCharmPotion;
 
   public void initialize() {
     this.encounterId.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0));
@@ -101,7 +99,6 @@ public class DebuggerController {
     this.combatStageId.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 127, Config.getCombatStage()));
     this.fastTextSpeed.setSelected(Config.fastTextSpeed());
     this.autoAdvanceText.setSelected(Config.autoAdvanceText());
-    this.autoCharmPotion.setSelected(Config.autoCharmPotion());
   }
 
   @FXML
@@ -261,10 +258,5 @@ public class DebuggerController {
   @FXML
   private void toggleAutoAdvanceText(final ActionEvent event) {
     Config.toggleAutoAdvanceText();
-  }
-
-  @FXML
-  private void toggleAutoCharmPotion(final ActionEvent event) {
-    Config.toggleAutoCharmPotion();
   }
 }

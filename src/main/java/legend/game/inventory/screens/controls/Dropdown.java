@@ -78,6 +78,10 @@ public class Dropdown extends Control {
     return this.selectedIndex;
   }
 
+  public int size() {
+    return this.options.size();
+  }
+
   @Override
   protected void onResize() {
     super.onResize();
