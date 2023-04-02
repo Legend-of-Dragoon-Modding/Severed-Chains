@@ -22,6 +22,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Deque;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -32,6 +33,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static legend.game.Scus94491BpeSegment.getCharacterName;
@@ -40,6 +42,9 @@ public final class Unpacker {
   private Unpacker() { }
 
   private static final Pattern ROOT_MRG = Pattern.compile("^SECT/DRGN0\\.BIN/\\d{4}/\\d+$");
+
+  /** Update this any time we make a breaking change */
+  private static final int VERSION = 1;
 
   static {
     System.setProperty("log4j.skipJansi", "false");
@@ -238,6 +243,36 @@ public final class Unpacker {
   public static void unpack() throws UnpackerException {
     synchronized(IO_LOCK) {
       try {
+        if(getUnpackVersion() != VERSION) {
+          final long start = System.nanoTime();
+
+          statusListener.accept("Deleting old unpacked files...");
+          final Path gitIgnore = ROOT.resolve(".gitignore");
+
+          try(final Stream<Path> files = Files.walk(ROOT)) {
+            files
+              .sorted(Comparator.reverseOrder())
+              .filter(path -> {
+                try {
+                  return !Files.isSameFile(path, gitIgnore);
+                } catch(final IOException ignored) {
+                  return true;
+                }
+              })
+              .forEach(path -> {
+                try {
+                  if(!Files.isSameFile(path, ROOT)) {
+                    Files.delete(path);
+                  }
+                } catch(final IOException e) {
+                  throw new UnpackerException("Failed to delete old unpacked files", e);
+                }
+              });
+          }
+
+          LOGGER.info("Files deleted in %d seconds", (System.nanoTime() - start) / 1_000_000_000L);
+        }
+
         final long start = System.nanoTime();
 
         final DirectoryEntry[] roots = new DirectoryEntry[4];
@@ -261,10 +296,28 @@ public final class Unpacker {
           .map(e -> transform(e.a(), e.b(), EnumSet.noneOf(Flags.class)))
           .forEach(Unpacker::writeFiles);
 
+        Files.writeString(ROOT.resolve("version"), Integer.toString(VERSION));
+
         LOGGER.info("Files unpacked in %d seconds", (System.nanoTime() - start) / 1_000_000_000L);
       } catch(final Throwable e) {
         throw new UnpackerException(e);
       }
+    }
+  }
+
+  private static int getUnpackVersion() throws IOException {
+    final Path versionFile = ROOT.resolve("version");
+
+    if(!Files.isRegularFile(versionFile)) {
+      return 0;
+    }
+
+    final String versionString = Files.readString(versionFile).strip();
+
+    try {
+      return Integer.parseInt(versionString);
+    } catch(final NumberFormatException e) {
+      return 0;
     }
   }
 
