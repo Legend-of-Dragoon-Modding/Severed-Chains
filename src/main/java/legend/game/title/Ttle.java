@@ -120,7 +120,6 @@ public final class Ttle {
   public static final int[] characterStartingLevels = {1, 3, 4, 8, 13, 15, 17, 19, 23};
 
   public static int selectedMenuOption;
-  public static int selectedConfigCategory;
 
   private static VramTexture backgroundTexture;
   private static VramTexture[] backgroundPalettes;
@@ -332,7 +331,6 @@ public final class Ttle {
 
     hasSavedGames = 0;
     selectedMenuOption = 0;
-    selectedConfigCategory = 0;
 
     setWidthAndFlags(384);
     setProjectionPlaneDistance(320);
@@ -749,7 +747,7 @@ public final class Ttle {
             final int menuWidth = (int)(155 * scaleX);
             final int menuHeight = (int)(16 * scaleY);
             final int menuX = (window.getWidth() - menuWidth) / 2;
-            final int menuY = (int)(_800ce8ac[i * 2 + 1] * scaleY) + window.getHeight() / 2;
+            final int menuY = (int)((_800ce8ac[i * 2 + 1] + 10) * scaleY) + window.getHeight() / 2;
 
             if(MathHelper.inBox((int)x, (int)y, menuX, menuY, menuWidth, menuHeight)) {
               if(selectedMenuOption != i) {
@@ -796,7 +794,7 @@ public final class Ttle {
             final int menuWidth = (int)(155 * scaleX);
             final int menuHeight = (int)(16 * scaleY);
             final int menuX = (window.getWidth() - menuWidth) / 2;
-            final int menuY = (int)(_800ce8ac[i * 2 + 1] * scaleY) + window.getHeight() / 2;
+            final int menuY = (int)((_800ce8ac[i * 2 + 1] + 10) * scaleY) + window.getHeight() / 2;
 
             if(MathHelper.inBox((int)x, (int)y, menuX, menuY, menuWidth, menuHeight)) {
               playSound(0, 2, 0, 0, (short)0, (short)0);
@@ -843,34 +841,18 @@ public final class Ttle {
         playSound(0, 2, 0, 0, (short)0, (short)0);
 
         _800c672c = 3;
-        if(selectedMenuOption == 2) {
-          _800c6738 = 0;
-          selectedConfigCategory = 0;
-          _800c6728 = 1;
-        }
-      } else if(Input.pressedThisFrame(InputAction.DPAD_UP) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_UP)) { // Menu button up
+      } else if(
+        Input.pressedThisFrame(InputAction.DPAD_UP) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_UP) ||
+        Input.pressedThisFrame(InputAction.DPAD_DOWN) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_DOWN)
+      ) {
         playSound(0, 1, 0, 0, (short)0, (short)0);
 
-        selectedMenuOption--;
-        if(selectedMenuOption < 0) {
-          selectedMenuOption = 2;
-        }
-
-        if(selectedMenuOption == 1 && hasSavedGames != 1) {
-          selectedMenuOption--;
-        }
-
-        _800c672c = 2;
-      } else if(Input.pressedThisFrame(InputAction.DPAD_DOWN) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_DOWN)) { // Menu button down
-        playSound(0, 1, 0, 0, (short)0, (short)0);
-
-        selectedMenuOption++;
-        if(selectedMenuOption > 2) {
+        if(selectedMenuOption == 0) {
+          if(hasSavedGames == 1) {
+            selectedMenuOption = 1;
+          }
+        } else {
           selectedMenuOption = 0;
-        }
-
-        if(selectedMenuOption == 1 && hasSavedGames != 1) {
-          selectedMenuOption++;
         }
 
         _800c672c = 2;
