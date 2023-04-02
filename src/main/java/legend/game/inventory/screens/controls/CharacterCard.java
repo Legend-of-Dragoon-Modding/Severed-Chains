@@ -13,7 +13,9 @@ import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 
 public class CharacterCard extends Control {
-  private final int charId;
+  private int charId;
+
+  private final CharacterPortrait portrait;
 
   public CharacterCard(final int charId) {
     this.charId = charId;
@@ -26,21 +28,31 @@ public class CharacterCard extends Control {
     this.addControl(linesText);
 
     this.addControl(Glyph.uiElement(153, 153)).getRenderable().x_40 += 8; // Background
-    this.addControl(new CharacterPortrait()).setPos(8, 8);
+
+    this.portrait = this.addControl(new CharacterPortrait());
+    this.portrait.setCharId(charId);
+    this.portrait.setPos(8, 8);
+  }
+
+  public void setCharId(final int charId) {
+    this.charId = charId;
+    this.portrait.setCharId(charId);
   }
 
   @Override
   protected void render(final int x, final int y) {
-    final ActiveStatsa0 stats = stats_800be5f8.get(this.charId);
-    this.renderNumber(x + 162, y + 6, stats.level_0e.get(), 2);
-    this.renderNumber(x + 120, y + 17, stats.dlevel_0f.get(), 2);
-    this.renderNumber(x + 156, y + 17, stats.sp_08.get(), 3);
-    renderFraction(x + this.getWidth(), y + 28, stats.hp_04.get(), stats.maxHp_66.get());
-    renderFraction(x + this.getWidth(), y + 39, stats.mp_06.get(), stats.maxMp_6e.get());
-    renderFraction(x + this.getWidth(), y + 50, gameState_800babc8.charData_32c[this.charId].xp_00, getXpToNextLevel(this.charId));
+    if(this.charId != -1) {
+      final ActiveStatsa0 stats = stats_800be5f8.get(this.charId);
+      this.renderNumber(x + 162, y + 6, stats.level_0e.get(), 2);
+      this.renderNumber(x + 120, y + 17, stats.dlevel_0f.get(), 2);
+      this.renderNumber(x + 156, y + 17, stats.sp_08.get(), 3);
+      renderFraction(x + this.getWidth(), y + 28, stats.hp_04.get(), stats.maxHp_66.get());
+      renderFraction(x + this.getWidth(), y + 39, stats.mp_06.get(), stats.maxMp_6e.get());
+      renderFraction(x + this.getWidth(), y + 50, gameState_800babc8.charData_32c[this.charId].xp_00, getXpToNextLevel(this.charId));
 
-    if(!renderCharacterStatusEffect(x + 48, y + 3, this.charId)) {
-      renderText(characterNames_801142dc.get(this.charId).deref(), x + 56, y + 3, TextColour.BROWN);
+      if(!renderCharacterStatusEffect(x + 48, y + 3, this.charId)) {
+        renderText(characterNames_801142dc.get(this.charId).deref(), x + 56, y + 3, TextColour.BROWN);
+      }
     }
   }
 }
