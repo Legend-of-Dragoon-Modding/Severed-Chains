@@ -65,7 +65,6 @@
             <CheckBox fx:id="saveAnywhere" mnemonicParsing="false" onAction="#toggleSaveAnywhere" text="Save Anywhere" />
             <CheckBox fx:id="fastTextSpeed" mnemonicParsing="false" onAction="#toggleFastText" text="Fast Text Speed" />
             <CheckBox fx:id="autoAdvanceText" mnemonicParsing="false" onAction="#toggleAutoAdvanceText" text="Auto Advance Text" />
-            <CheckBox fx:id="autoCharmPotion" mnemonicParsing="false" onAction="#toggleAutoCharmPotion" text="Auto Charm Potion" />
          </VBox>
          <VBox prefHeight="374.0" prefWidth="213.0">
             <children>

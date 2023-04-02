@@ -1,6 +1,5 @@
 package legend.game;
 
-import legend.core.Config;
 import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
@@ -32,6 +31,7 @@ import legend.game.input.Input;
 import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.TextColour;
+import legend.game.submap.EncounterRateMode;
 import legend.game.tim.Tim;
 import legend.game.tmd.Renderer;
 import legend.game.types.CContainer;
@@ -142,7 +142,6 @@ import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800babc0;
 import static legend.game.Scus94491BpeSegment_800b._800bb104;
-import static legend.game.Scus94491BpeSegment_800b.savedGameSelected_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b._800bee90;
 import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.continentIndex_800bf0b0;
@@ -150,6 +149,7 @@ import static legend.game.Scus94491BpeSegment_800b.doubleBufferFrame_800bb108;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
+import static legend.game.Scus94491BpeSegment_800b.savedGameSelected_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.texPages_800bb110;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static legend.game.Scus94491BpeSegment_800b.textboxes_800be358;
@@ -4754,16 +4754,18 @@ public class WMap {
     struct.currentAnimIndex_ac = struct.animIndex_b0;
 
     if(struct.vec_84.getX() != struct.vec_94.getX() || struct.vec_84.getY() != struct.vec_94.getY() || struct.vec_84.getZ() != struct.vec_94.getZ()) {
+      final EncounterRateMode mode = gameState_800babc8.getConfig(BaseMod.ENCOUNTER_RATE_CONFIG);
+
       //LAB_800e117c
       //LAB_800e11b0
       if(Input.getButtonState(InputAction.BUTTON_EAST)) { // World Map Running
         //LAB_800e11d0
         struct.animIndex_b0 = 4;
-        handleEncounters(2);
+        handleEncounters(mode.worldMapRunModifier);
       } else {
         //LAB_800e11f4
         struct.animIndex_b0 = 3;
-        handleEncounters(1);
+        handleEncounters(mode.worldMapWalkModifier);
       }
 
       //LAB_800e1210
@@ -5131,7 +5133,7 @@ public class WMap {
   }
 
   @Method(0x800e367cL)
-  public static void handleEncounters(final int encounterRateMultiplier) {
+  public static void handleEncounters(final float encounterRateMultiplier) {
     //LAB_800e36a8
     if(worldMapState_800c6698.get() != 0x5L) {
       return;
@@ -5166,9 +5168,7 @@ public class WMap {
     //LAB_800e3780
     //LAB_800e3794
     final WMapAreaData08 area = areaData_800f2248.get(areaIndex_800c67aa.get());
-    if(!Config.autoCharmPotion()) {
-      encounterAccumulator_800c6ae8.add(area.encounterRate_03.get() * encounterRateMultiplier * 70);
-    }
+    encounterAccumulator_800c6ae8.add(Math.round(area.encounterRate_03.get() * encounterRateMultiplier * 70));
 
     if(encounterAccumulator_800c6ae8.get() >= 5120) {
       encounterAccumulator_800c6ae8.set(0);

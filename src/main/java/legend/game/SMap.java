@@ -44,6 +44,7 @@ import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptState;
 import legend.game.scripting.ScriptStorageParam;
+import legend.game.submap.EncounterRateMode;
 import legend.game.submap.SubmapAssets;
 import legend.game.submap.SubmapObject;
 import legend.game.tim.Tim;
@@ -312,7 +313,7 @@ public final class SMap {
   public static final VECTOR cameraPos_800c6aa0 = MEMORY.ref(4, 0x800c6aa0L, VECTOR::new);
   public static final Value _800c6aac = MEMORY.ref(2, 0x800c6aacL);
   public static final VECTOR prevPlayerPos_800c6ab0 = MEMORY.ref(4, 0x800c6ab0L, VECTOR::new);
-  public static final IntRef encounterMultiplier_800c6abc = MEMORY.ref(4, 0x800c6abcL, IntRef::new); // Overlaps previous vector padding
+  public static float encounterMultiplier_800c6abc;
   public static final MATRIX matrix_800c6ac0 = MEMORY.ref(4, 0x800c6ac0L, MATRIX::new);
   public static final Value _800c6ae0 = MEMORY.ref(4, 0x800c6ae0L);
   public static final Value _800c6ae4 = MEMORY.ref(4, 0x800c6ae4L);
@@ -3797,13 +3798,15 @@ public final class SMap {
     final boolean moved = prevPlayerPos_800c6ab0.getX() != mat.transfer.getX() || prevPlayerPos_800c6ab0.getY() != mat.transfer.getY() || prevPlayerPos_800c6ab0.getZ() != mat.transfer.getZ();
 
     //LAB_800e4a4c
-    final long dist = (prevPlayerPos_800c6ab0.getX() - mat.transfer.getX() ^ 0x2L) + (prevPlayerPos_800c6ab0.getZ() - mat.transfer.getZ() ^ 0x2L);
+    final EncounterRateMode mode = gameState_800babc8.getConfig(BaseMod.ENCOUNTER_RATE_CONFIG);
 
-    if((int)dist < 0x9L) {
+    final int dist = mode.modifyDistance((prevPlayerPos_800c6ab0.getX() - mat.transfer.getX() ^ 2) + (prevPlayerPos_800c6ab0.getZ() - mat.transfer.getZ() ^ 2));
+
+    if(dist < 9) {
       //LAB_800e4a98
-      encounterMultiplier_800c6abc.set(1);
+      encounterMultiplier_800c6abc = mode.walkModifier;
     } else {
-      encounterMultiplier_800c6abc.set(4);
+      encounterMultiplier_800c6abc = mode.runModifier;
     }
 
     //LAB_800e4aa0
@@ -3852,9 +3855,7 @@ public final class SMap {
       return 0;
     }
 
-    if (!Config.autoCharmPotion()) {
-      encounterAccumulator_800c6ae8.add(encounterData_800f64c4.get(submapCut_80052c30.get()).rate_02.get() * encounterMultiplier_800c6abc.get());
-    }
+    encounterAccumulator_800c6ae8.add(Math.round(encounterData_800f64c4.get(submapCut_80052c30.get()).rate_02.get() * encounterMultiplier_800c6abc));
 
     if(encounterAccumulator_800c6ae8.get() > 0x1400) {
       // Start combat

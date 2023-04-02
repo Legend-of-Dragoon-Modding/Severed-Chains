@@ -37,7 +37,6 @@ public final class Config {
     properties.setProperty("combat_stage_id", "0");
     properties.setProperty("fast_text_speed", "false");
     properties.setProperty("auto_advance_text", "false");
-    properties.setProperty("auto_charm_potion", "false");
     properties.setProperty("receive_input_on_inactive_window", "false");
   }
 
@@ -135,14 +134,6 @@ public final class Config {
 
   public static void toggleAutoAdvanceText() {
     properties.setProperty("auto_advance_text", String.valueOf(!autoAdvanceText()));
-  }
-
-  public static  boolean autoCharmPotion() {
-    return readBool("auto_charm_potion", false);
-  }
-
-  public static void toggleAutoCharmPotion() {
-    properties.setProperty("auto_charm_potion", String.valueOf(!autoCharmPotion()));
   }
 
   public static boolean receiveInputOnInactiveWindow() {
