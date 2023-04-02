@@ -2,7 +2,6 @@ package legend.game.saves;
 
 import legend.game.inventory.screens.Control;
 import legend.game.modding.registries.RegistryEntry;
-import legend.game.modding.registries.RegistryId;
 import legend.game.types.GameState52c;
 
 import java.util.function.BiFunction;
@@ -17,9 +16,7 @@ public class ConfigEntry<T> extends RegistryEntry {
 
   private BiFunction<T, GameState52c, Control> editControl;
 
-  public ConfigEntry(final RegistryId id, final T defaultValue, final Predicate<T> validator, final Function<T, byte[]> serializer, final Function<byte[], T> deserializer) {
-    super(id);
-
+  public ConfigEntry(final T defaultValue, final Predicate<T> validator, final Function<T, byte[]> serializer, final Function<byte[], T> deserializer) {
     this.defaultValue = defaultValue;
     this.validator = validator;
     this.serializer = serializer;

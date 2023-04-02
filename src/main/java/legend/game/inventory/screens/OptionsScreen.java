@@ -4,6 +4,7 @@ import legend.core.GameEngine;
 import legend.game.input.InputAction;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.Dropdown;
+import legend.game.modding.registries.RegistryId;
 import legend.game.saves.ConfigEntry;
 import legend.game.types.GameState52c;
 
@@ -36,11 +37,13 @@ public class OptionsScreen extends VerticalLayoutScreen {
     indicators.setSelectedIndex(this.state.indicatorMode_4e8);
     indicators.onSelection(index -> this.state.indicatorMode_4e8 = index);
 
-    //noinspection rawtypes
-    for(final ConfigEntry configEntry : GameEngine.REGISTRIES.config) {
+    for(final RegistryId configId : GameEngine.REGISTRIES.config) {
+      //noinspection rawtypes
+      final ConfigEntry configEntry = GameEngine.REGISTRIES.config.getEntry(configId).get();
+
       if(configEntry.hasEditControl()) {
         //noinspection unchecked
-        this.addRow(configEntry.id.toString(), configEntry.makeEditControl(this.state.getConfig(configEntry), this.state));
+        this.addRow(configId.toString(), configEntry.makeEditControl(this.state.getConfig(configEntry), this.state));
       }
     }
   }

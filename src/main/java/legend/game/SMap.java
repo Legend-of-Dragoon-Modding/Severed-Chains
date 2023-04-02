@@ -1,5 +1,6 @@
 package legend.game;
 
+import legend.game.modding.coremod.CoreMod;
 import legend.core.Config;
 import legend.core.IoHelper;
 import legend.core.MathHelper;
@@ -3798,7 +3799,7 @@ public final class SMap {
     final boolean moved = prevPlayerPos_800c6ab0.getX() != mat.transfer.getX() || prevPlayerPos_800c6ab0.getY() != mat.transfer.getY() || prevPlayerPos_800c6ab0.getZ() != mat.transfer.getZ();
 
     //LAB_800e4a4c
-    final EncounterRateMode mode = gameState_800babc8.getConfig(BaseMod.ENCOUNTER_RATE_CONFIG);
+    final EncounterRateMode mode = gameState_800babc8.getConfig(CoreMod.ENCOUNTER_RATE_CONFIG.get());
 
     final int dist = mode.modifyDistance((prevPlayerPos_800c6ab0.getX() - mat.transfer.getX() ^ 2) + (prevPlayerPos_800c6ab0.getZ() - mat.transfer.getZ() ^ 2));
 

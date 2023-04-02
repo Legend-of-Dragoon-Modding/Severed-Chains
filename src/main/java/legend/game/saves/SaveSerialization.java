@@ -2,6 +2,7 @@ package legend.game.saves;
 
 import legend.core.GameEngine;
 import legend.game.inventory.WhichMenu;
+import legend.game.modding.registries.RegistryDelegate;
 import legend.game.modding.registries.RegistryId;
 import legend.game.types.CharacterData2c;
 import legend.game.types.GameState52c;
@@ -231,16 +232,17 @@ public final class SaveSerialization {
       final RegistryId configId = data.readRegistryId(offset);
       offset += configId.toString().length() + 3;
 
-      //noinspection rawtypes
-      final ConfigEntry configEntry = GameEngine.REGISTRIES.config.getEntry(configId);
+      //noinspection rawtypes,unchecked
+      final RegistryDelegate<ConfigEntry> configEntry = (RegistryDelegate)GameEngine.REGISTRIES.config.getEntry(configId);
 
       final int configValueLength = data.readInt(offset);
       offset += 4;
 
       final byte[] configValueRaw = data.slice(offset, configValueLength).getBytes();
+      offset += configValueLength;
 
       //noinspection unchecked
-      state.setConfig(configEntry, configEntry.deserializer.apply(configValueRaw));
+      state.setConfig(configEntry.get(), configEntry.get().deserializer.apply(configValueRaw));
     }
 
     return new SavedGame(name, locationType, locationIndex, state);
@@ -428,14 +430,15 @@ public final class SaveSerialization {
 
     final Map<RegistryId, byte[]> config = new HashMap<>();
 
-    //noinspection rawtypes
-    for(final ConfigEntry configEntry : GameEngine.REGISTRIES.config) {
+    for(final RegistryId configId : GameEngine.REGISTRIES.config) {
+      //noinspection rawtypes
+      final ConfigEntry configEntry = GameEngine.REGISTRIES.config.getEntry(configId).get();
       //noinspection unchecked
       final Object value = state.getConfig(configEntry);
 
       if(value != null) {
         //noinspection unchecked
-        config.put(configEntry.id, (byte[])configEntry.serializer.apply(value));
+        config.put(configId, (byte[])configEntry.serializer.apply(value));
       }
     }
 
