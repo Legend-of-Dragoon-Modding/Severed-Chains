@@ -4,10 +4,29 @@ import legend.game.SItem;
 import legend.game.input.InputAction;
 
 import javax.annotation.Nullable;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public abstract class MenuScreen extends ControlHost {
+  private final Queue<Runnable> deferredActions = new LinkedList<>();
+
+  private MenuStack stack;
+
   private Control hover;
   private Control focus;
+
+  void setStack(@Nullable final MenuStack stack) {
+    this.stack = stack;
+  }
+
+  public MenuStack getStack() {
+    return this.stack;
+  }
+
+  @Override
+  protected MenuScreen getScreen() {
+    return this;
+  }
 
   protected abstract void render();
 
@@ -20,6 +39,7 @@ public abstract class MenuScreen extends ControlHost {
   }
 
   final void renderScreen() {
+    this.runDeferredActions();
     this.render();
     this.renderControls(0, 0);
   }
@@ -53,6 +73,19 @@ public abstract class MenuScreen extends ControlHost {
 
     if(this.focus != null) {
       return this.focus.keyPress(key, scancode, mods);
+    }
+
+    return InputPropagation.PROPAGATE;
+  }
+
+  @Override
+  protected InputPropagation charPress(final int codepoint) {
+    if(super.charPress(codepoint) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
+    if(this.focus != null) {
+      return this.focus.charPress(codepoint);
     }
 
     return InputPropagation.PROPAGATE;
@@ -120,6 +153,10 @@ public abstract class MenuScreen extends ControlHost {
   }
 
   public void setFocus(@Nullable final Control control) {
+    if(this.focus == control) {
+      return;
+    }
+
     if(this.focus != null) {
       this.focus.lostFocus();
     }
@@ -142,5 +179,20 @@ public abstract class MenuScreen extends ControlHost {
 
   protected boolean propagateInput() {
     return false;
+  }
+
+  protected void deferAction(final Runnable action) {
+    synchronized(this.deferredActions) {
+      this.deferredActions.add(action);
+    }
+  }
+
+  protected void runDeferredActions() {
+    synchronized(this.deferredActions) {
+      Runnable action;
+      while((action = this.deferredActions.poll()) != null) {
+        action.run();
+      }
+    }
   }
 }

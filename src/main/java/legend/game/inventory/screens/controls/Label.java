@@ -26,6 +26,7 @@ public class Label extends Control {
 
   @Override
   protected void render(final int x, final int y) {
-    SItem.renderText(this.text, x, y, TextColour.BROWN);
+    final int offsetY = this.getHeight() == 0 ? 0 : (this.getHeight() - 12) / 2;
+    SItem.renderText(this.text, x, y + offsetY, TextColour.BROWN);
   }
 }

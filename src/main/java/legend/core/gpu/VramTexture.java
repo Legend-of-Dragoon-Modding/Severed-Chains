@@ -10,6 +10,7 @@ public abstract class VramTexture {
   }
 
   public abstract int getTexel(final VramTexture palette, final int pageX, final int x, final int y);
+  public abstract int getTexel(final int pageX, final int x, final int y);
   public abstract int getPixel(final int x, final int y);
   public abstract void copyRow(final int y, final int[] dest, final int destOffset);
   public abstract void getRegion(final Rect4i region, final int[] dest);

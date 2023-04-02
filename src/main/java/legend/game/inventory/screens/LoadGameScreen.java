@@ -1,80 +1,88 @@
 package legend.game.inventory.screens;
 
-import legend.game.inventory.WhichMenu;
+import legend.game.SItem;
+import legend.game.input.InputAction;
+import legend.game.inventory.screens.controls.Background;
+import legend.game.inventory.screens.controls.BigList;
+import legend.game.inventory.screens.controls.Glyph;
+import legend.game.inventory.screens.controls.SaveCard;
+import legend.game.saves.Campaign;
+import legend.game.saves.SavedGame;
+import legend.game.types.LodString;
 import legend.game.types.MessageBoxResult;
 
-import static legend.game.SItem.Load_this_data_8011ca08;
-import static legend.game.SItem.fadeOutArrow;
-import static legend.game.SItem.getSlotY;
-import static legend.game.SItem.loadSaveFile;
+import java.util.function.Consumer;
+
+import static legend.core.GameEngine.SAVES;
 import static legend.game.SItem.menuStack;
-import static legend.game.SItem.renderSaveGameSlot;
-import static legend.game.SItem.saves;
+import static legend.game.Scus94491BpeSegment.scriptStartEffect;
+import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
-import static legend.game.Scus94491BpeSegment_8004.setMono;
-import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
-import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
-import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
-import static legend.game.Scus94491BpeSegment_800b._800bdc34;
-import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
-import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
-import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 
-public class LoadGameScreen extends SaveListScreen {
-  private int slot;
+public class LoadGameScreen extends MenuScreen {
+  private final Consumer<SavedGame> saveSelected;
+  private final Runnable closed;
 
-  public LoadGameScreen() {
-    super(() -> whichMenu_800bdc38 = WhichMenu.UNLOAD_LOAD_GAME_MENU_15);
+  public LoadGameScreen(final Consumer<SavedGame> saveSelected, final Runnable closed, final Campaign campaign) {
+    this.saveSelected = saveSelected;
+    this.closed = closed;
+
+    deallocateRenderables(0xff);
+    scriptStartEffect(2, 10);
+
+    this.addControl(new Background());
+
+    // Bottom line
+    this.addControl(Glyph.glyph(78)).setPos(26, 155);
+    this.addControl(Glyph.glyph(79)).setPos(192, 155);
+
+    final SaveCard saveCard = this.addControl(new SaveCard());
+    saveCard.setPos(16, 160);
+
+    final BigList<SavedGame> saveList = this.addControl(new BigList<>(SavedGame::filename));
+    saveList.setPos(16, 16);
+    saveList.setSize(360, 144);
+    saveList.onHighlight(saveCard::setSaveData);
+    saveList.onSelection(this::onSelection);
+    this.setFocus(saveList);
+
+    for(final SavedGame save : SAVES.loadAllSaves(campaign.filename())) {
+      saveList.addEntry(save);
+    }
   }
 
-  @Override
-  protected int menuCount() {
-    return saves.size();
-  }
-
-  @Override
-  protected void onSelect(final int slot) {
+  private void onSelection(final SavedGame save) {
     playSound(2);
-    this.slot = slot;
-
-    menuStack.pushScreen(new MessageBoxScreen(Load_this_data_8011ca08, 2, this::onMessageboxResult));
-
-    if(saveListUpArrow_800bdb94 != null) {
-      fadeOutArrow(saveListUpArrow_800bdb94);
-      saveListUpArrow_800bdb94 = null;
-    }
-
-    //LAB_800ff3a4
-    if(saveListDownArrow_800bdb98 != null) {
-      fadeOutArrow(saveListDownArrow_800bdb98);
-      saveListDownArrow_800bdb98 = null;
-    }
+    menuStack.pushScreen(new MessageBoxScreen(new LodString("Load this save?"), 2, result -> this.onMessageboxResult(result, save)));
   }
 
-  @Override
-  protected void onMessageboxResult(final MessageBoxResult result) {
+  private void onMessageboxResult(final MessageBoxResult result, final SavedGame save) {
     if(result == MessageBoxResult.YES) {
-      loadSaveFile(this.slot);
-
-      //LAB_800ff6ec
-      _800bdc34.setu(0x1L);
-      submapScene_80052c34.set(gameState_800babc8.submapScene_a4);
-      submapCut_80052c30.set(gameState_800babc8.submapCut_a8);
-      index_80052c38.set(gameState_800babc8.submapCut_a8);
-
-      if(gameState_800babc8.submapCut_a8 == 264) { // Somewhere in Home of Giganto
-        submapScene_80052c34.set(53);
-      }
-
-      setMono(gameState_800babc8.mono_4e0);
-
-      this.loadingStage = 2;
+      this.saveSelected.accept(save);
     }
   }
 
   @Override
-  protected void renderSaveSlot(final int slot, final int fileIndex, final boolean allocate) {
-    renderSaveGameSlot(fileIndex, getSlotY(slot), allocate);
+  protected void render() {
+    SItem.renderCentredText(new LodString("Load Game"), 188, 10, TextColour.BROWN);
+  }
+
+  private void menuEscape() {
+    playSound(3);
+    this.closed.run();
+  }
+
+  @Override
+  public InputPropagation pressedThisFrame(final InputAction inputAction) {
+    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
+    if(inputAction == InputAction.BUTTON_EAST) {
+      this.menuEscape();
+      return InputPropagation.HANDLED;
+    }
+
+    return InputPropagation.PROPAGATE;
   }
 }

@@ -232,7 +232,7 @@ public class MainMenuScreen extends MenuScreen {
   }
 
   private void showOptionsScreen() {
-    this.showScreen(OptionsScreen::new);
+    this.showScreen(unload -> new OptionsScreen(gameState_800babc8, unload));
   }
 
   private void showSaveScreen() {

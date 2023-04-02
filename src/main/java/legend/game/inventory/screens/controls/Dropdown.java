@@ -4,6 +4,7 @@ import legend.core.MathHelper;
 import legend.game.input.InputAction;
 import legend.game.inventory.screens.Control;
 import legend.game.inventory.screens.InputPropagation;
+import legend.game.inventory.screens.MenuScreen;
 import legend.game.inventory.screens.TextColour;
 import legend.game.types.LodString;
 
@@ -14,28 +15,29 @@ import static legend.game.SItem.renderText;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 
 public class Dropdown extends Control {
+  private final Panel background;
   private final Panel panel;
   private final Glyph downArrow;
-  private final Highlight highlight;
+  private final Brackets highlight;
 
   private final List<LodString> options = new ArrayList<>();
   private int hoverIndex;
   private int selectedIndex;
 
   public Dropdown() {
-    this.panel = this.addControl(new Panel());
-    this.panel.setPos(-9, 16);
-    this.panel.setZ(10);
-    this.panel.hide();
+    this.background = this.addControl(Panel.subtle());
 
-    this.highlight = this.panel.addControl(new Highlight());
-    this.highlight.setPos(14, 8);
+    this.panel = Panel.panel();
+    this.panel.setZ(10);
+
+    this.highlight = this.panel.addControl(new Brackets());
+    this.highlight.setPos(6, 8);
     this.highlight.setZ(this.panel.getZ() - 2);
     this.highlight.setHeight(16);
 
     this.panel.onMouseMove((x, y) -> {
       for(int i = 0; i < this.options.size(); i++) {
-        if(MathHelper.inBox(x, y, 0, 9 + i * 16, this.getWidth(), 16)) {
+        if(MathHelper.inBox(x, y, 0, 10 + i * 16, this.getWidth(), 16)) {
           this.hover(i);
           return InputPropagation.HANDLED;
         }
@@ -46,8 +48,9 @@ public class Dropdown extends Control {
 
     this.panel.onMouseClick((x, y, button, mods) -> {
       for(int i = 0; i < this.options.size(); i++) {
-        if(MathHelper.inBox(x, y, 0, 9 + i * 16, this.getWidth(), 16)) {
+        if(MathHelper.inBox(x, y, 0, 10 + i * 16, this.getWidth(), 16)) {
           this.select(i);
+          this.panel.getScreen().getStack().popScreen();
           return InputPropagation.HANDLED;
         }
       }
@@ -57,6 +60,7 @@ public class Dropdown extends Control {
 
     this.downArrow = this.addControl(Glyph.uiElement(53, 60));
     this.downArrow.ignoreInput();
+    this.downArrow.setZ(this.background.getZ() - 1);
 
     this.setSize(100, 16);
   }
@@ -77,9 +81,9 @@ public class Dropdown extends Control {
   @Override
   protected void onResize() {
     super.onResize();
-    this.panel.setWidth(this.getWidth() + 18);
+    this.background.setSize(this.getWidth(), this.getHeight());
     this.highlight.setWidth(this.getWidth() + 7);
-    this.downArrow.setPos(this.getWidth(), -2);
+    this.downArrow.setPos(this.getWidth() - 1, -1);
   }
 
   @Override
@@ -88,19 +92,13 @@ public class Dropdown extends Control {
       return InputPropagation.HANDLED;
     }
 
-    this.toggleDrop();
+    this.showDropdown();
     return InputPropagation.HANDLED;
   }
 
-  private void toggleDrop() {
-    this.panel.toggleVisibility();
-
-    if(this.panel.isVisible()) {
-      this.setHeight(this.getHeight() + this.panel.getHeight());
-      this.hover(this.selectedIndex);
-    } else {
-      this.setHeight(this.getHeight() - this.panel.getHeight());
-    }
+  private void showDropdown() {
+    this.getScreen().getStack().pushScreen(new DropdownScreen());
+    this.hover(this.selectedIndex);
   }
 
   private void hover(final int index) {
@@ -123,65 +121,20 @@ public class Dropdown extends Control {
     }
 
     if(inputAction == InputAction.BUTTON_SOUTH) {
-      if(this.panel.isVisible()) {
-        this.select(this.hoverIndex);
-      }
-
-      this.toggleDrop();
-      return InputPropagation.HANDLED;
-    } else if(inputAction == InputAction.BUTTON_EAST) {
-      if(this.panel.isVisible()) {
-        this.toggleDrop();
-        return InputPropagation.HANDLED;
-      }
-    }
-
-    return InputPropagation.PROPAGATE;
-  }
-
-  @Override
-  protected InputPropagation pressedWithRepeatPulse(final InputAction inputAction) {
-    if(super.pressedWithRepeatPulse(inputAction) == InputPropagation.HANDLED) {
+      this.showDropdown();
       return InputPropagation.HANDLED;
     }
 
-    if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
-      if(this.panel.isVisible()) {
-        this.hover((this.hoverIndex + 1) % this.options.size());
-        return InputPropagation.HANDLED;
-      }
-    } else if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
-      if(this.panel.isVisible()) {
-        this.hover(Math.floorMod(this.hoverIndex - 1, this.options.size()));
-        return InputPropagation.HANDLED;
-      }
-    }
-
     return InputPropagation.PROPAGATE;
-  }
-
-  @Override
-  protected void lostFocus() {
-    super.lostFocus();
-
-    if(this.panel.isVisible()) {
-      this.toggleDrop();
-    }
   }
 
   @Override
   protected void render(final int x, final int y) {
     if(!this.options.isEmpty()) {
-      renderText(this.options.get(this.selectedIndex), x + 1, y + 1, TextColour.BROWN);
-    }
-
-    if(this.panel.isVisible()) {
-      final int oldTextZ = textZ_800bdf00.get();
-      textZ_800bdf00.set(this.panel.getZ() - 1);
-      for(int i = 0; i < this.options.size(); i++) {
-        renderText(this.options.get(i), x + 1, y + 26 + i * 16, TextColour.BROWN);
-      }
-      textZ_800bdf00.set(oldTextZ);
+      final int oldZ = textZ_800bdf00.get();
+      textZ_800bdf00.set(this.background.getZ() - 1);
+      renderText(this.options.get(this.selectedIndex), x + 4, y + (this.getHeight() - 11) / 2 + 1, TextColour.BROWN);
+      textZ_800bdf00.set(oldZ);
     }
   }
 
@@ -192,4 +145,62 @@ public class Dropdown extends Control {
   private Selection selectionHandler;
 
   @FunctionalInterface public interface Selection { void selection(final int index); }
+
+  private class DropdownScreen extends MenuScreen {
+    private DropdownScreen() {
+      this.addControl(Dropdown.this.panel);
+      Dropdown.this.panel.setPos(Dropdown.this.getX() - 9, Dropdown.this.getY() + Dropdown.this.getHeight());
+      Dropdown.this.panel.setWidth(Dropdown.this.getWidth() + 18);
+    }
+
+    @Override
+    protected void render() {
+      final int oldTextZ = textZ_800bdf00.get();
+      textZ_800bdf00.set(Dropdown.this.panel.getZ() - 1);
+      for(int i = 0; i < Dropdown.this.options.size(); i++) {
+        renderText(Dropdown.this.options.get(i), Dropdown.this.panel.getX() + 10, Dropdown.this.panel.getY() + 10 + i * 16, TextColour.BROWN);
+      }
+      textZ_800bdf00.set(oldTextZ);
+    }
+
+    @Override
+    protected InputPropagation pressedWithRepeatPulse(final InputAction inputAction) {
+      if(super.pressedWithRepeatPulse(inputAction) == InputPropagation.HANDLED) {
+        return InputPropagation.HANDLED;
+      }
+
+      if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
+        Dropdown.this.hover((Dropdown.this.hoverIndex + 1) % Dropdown.this.options.size());
+        return InputPropagation.HANDLED;
+      } else if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
+        Dropdown.this.hover(Math.floorMod(Dropdown.this.hoverIndex - 1, Dropdown.this.options.size()));
+        return InputPropagation.HANDLED;
+      }
+
+      return InputPropagation.PROPAGATE;
+    }
+
+    @Override
+    protected InputPropagation pressedThisFrame(final InputAction inputAction) {
+      if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
+        return InputPropagation.HANDLED;
+      }
+
+      if(inputAction == InputAction.BUTTON_SOUTH) {
+        Dropdown.this.select(Dropdown.this.hoverIndex);
+        this.getStack().popScreen();
+        return InputPropagation.HANDLED;
+      } else if(inputAction == InputAction.BUTTON_EAST) {
+        this.getStack().popScreen();
+        return InputPropagation.HANDLED;
+      }
+
+      return InputPropagation.PROPAGATE;
+    }
+
+    @Override
+    protected boolean propagateRender() {
+      return true;
+    }
+  }
 }

@@ -5,10 +5,12 @@ import legend.game.input.InputAction;
 import legend.game.inventory.screens.Control;
 import legend.game.inventory.screens.InputPropagation;
 
+import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
+
 public class NumberSpinner extends Control {
   private final Glyph upArrow;
   private final Glyph downArrow;
-  private final Highlight highlight;
+  private final Brackets highlight;
 
   private int min;
   private int max = Integer.MAX_VALUE;
@@ -22,8 +24,9 @@ public class NumberSpinner extends Control {
     this.downArrow = this.addControl(Glyph.uiElement(53, 60));
     this.downArrow.ignoreInput();
 
-    this.highlight = this.addControl(new Highlight());
+    this.highlight = this.addControl(new Brackets());
     this.highlight.setHeight(16);
+    this.highlight.ignoreInput();
     this.highlight.hide();
 
     this.setNumber(number);
@@ -33,7 +36,7 @@ public class NumberSpinner extends Control {
     this.number = MathHelper.clamp(number, this.min, this.max);
     this.digitCount = MathHelper.digitCount(this.number);
     this.highlight.setWidth(this.digitCount * 6 + 10);
-    this.highlight.setX((this.getWidth() - this.highlight.getWidth()) / 2);
+    this.highlight.setX((this.getWidth() - this.highlight.getWidth()) / 2 - 8);
 
     if(this.changeHandler != null) {
       this.changeHandler.change(this.number);
@@ -66,13 +69,36 @@ public class NumberSpinner extends Control {
     this.upArrow.setPos(this.getWidth() - 10, -1);
     this.downArrow.setPos(this.getWidth(), -2);
     this.highlight.setHeight(this.getHeight());
-    this.highlight.setX((this.getWidth() - this.highlight.getWidth()) / 2);
+    this.highlight.setX((this.getWidth() - this.highlight.getWidth()) / 2 - 8);
   }
 
   @Override
   protected void lostFocus() {
     super.lostFocus();
     this.highlight.hide();
+  }
+
+  @Override
+  protected InputPropagation mouseScroll(final int deltaX, final int deltaY) {
+    if(super.mouseScroll(deltaX, deltaY) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
+    this.setNumber(this.number + deltaY);
+    return InputPropagation.HANDLED;
+  }
+
+  @Override
+  protected InputPropagation mouseClick(final int x, final int y, final int button, final int mods) {
+    if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
+    if(button == GLFW_MOUSE_BUTTON_LEFT && mods == 0 && !this.highlight.isVisible()) {
+      this.highlight.show();
+    }
+
+    return InputPropagation.HANDLED;
   }
 
   @Override

@@ -44,6 +44,12 @@ public class Glyph extends Control {
   }
 
   @Override
+  public void setZ(final int z) {
+    super.setZ(z);
+    this.renderable.z_3c = z;
+  }
+
+  @Override
   protected void render(final int x, final int y) {
     uploadRenderable(this.renderable, x, y);
   }

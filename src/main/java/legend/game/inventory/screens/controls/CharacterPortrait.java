@@ -12,20 +12,26 @@ import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 public class CharacterPortrait extends Control {
   private final Renderable58 renderable;
 
-  public CharacterPortrait(final int charId) {
+  public CharacterPortrait() {
     this.setSize(48, 48);
 
     this.renderable = allocateManualRenderable(uiFile_800bdc3c.portraits_cfac(), null);
     initGlyph(this.renderable, glyph_801142d4);
-    this.renderable.glyph_04 = charId;
+    this.renderable.glyph_04 = -1;
     this.renderable.tpage_2c++;
     this.renderable.x_40 = 8;
     this.renderable.y_44 = 0;
     this.renderable.z_3c = 33;
   }
 
+  public void setCharId(final int id) {
+    this.renderable.glyph_04 = id;
+  }
+
   @Override
   protected void render(final int x, final int y) {
-    uploadRenderable(this.renderable, x, y);
+    if(this.renderable.glyph_04 != -1) {
+      uploadRenderable(this.renderable, x, y);
+    }
   }
 }

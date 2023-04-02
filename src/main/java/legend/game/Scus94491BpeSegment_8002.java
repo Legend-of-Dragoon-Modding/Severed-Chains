@@ -25,9 +25,10 @@ import legend.game.input.Input;
 import legend.game.input.InputAction;
 import legend.game.inventory.UseItemResponse;
 import legend.game.inventory.WhichMenu;
+import legend.game.inventory.screens.CampaignSelectionScreen;
 import legend.game.inventory.screens.CharSwapScreen;
-import legend.game.inventory.screens.LoadGameScreen;
 import legend.game.inventory.screens.MenuScreen;
+import legend.game.inventory.screens.NewCampaignScreen;
 import legend.game.inventory.screens.SaveGameScreen;
 import legend.game.inventory.screens.ShopScreen;
 import legend.game.inventory.screens.TextColour;
@@ -68,6 +69,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Supplier;
 
 import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GPU;
@@ -1213,9 +1215,9 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   private static WhichMenu destMenu;
-  private static MenuScreen destScreen;
+  private static Supplier<MenuScreen> destScreen;
 
-  private static void initMenu(final WhichMenu destMenu, final MenuScreen destScreen) {
+  private static void initMenu(final WhichMenu destMenu, final Supplier<MenuScreen> destScreen) {
     if((getLoadedDrgnFiles() & 0x80L) == 0) {
       inventoryMenuState_800bdc28.set(InventoryMenuState.INIT_0);
       whichMenu_800bdc38 = WhichMenu.WAIT_FOR_MUSIC_TO_LOAD_AND_LOAD_S_ITEM_2;
@@ -1230,15 +1232,16 @@ public final class Scus94491BpeSegment_8002 {
   public static void loadAndRenderMenus() {
     switch(whichMenu_800bdc38) {
       case INIT_INVENTORY_MENU_1 -> initMenu(WhichMenu.RENDER_INVENTORY_MENU_4, null);
-      case INIT_SHOP_MENU_6 -> initMenu(WhichMenu.RENDER_SHOP_MENU_9, new ShopScreen());
-      case INIT_LOAD_GAME_MENU_11 -> initMenu(WhichMenu.RENDER_LOAD_GAME_MENU_14, new LoadGameScreen());
-      case INIT_SAVE_GAME_MENU_16 -> initMenu(WhichMenu.RENDER_SAVE_GAME_MENU_19, new SaveGameScreen(() -> whichMenu_800bdc38 = WhichMenu.UNLOAD_SAVE_GAME_MENU_20));
+      case INIT_SHOP_MENU_6 -> initMenu(WhichMenu.RENDER_SHOP_MENU_9, ShopScreen::new);
+      case INIT_CAMPAIGN_SELECTION_MENU -> initMenu(WhichMenu.RENDER_CAMPAIGN_SELECTION_MENU, CampaignSelectionScreen::new);
+      case INIT_SAVE_GAME_MENU_16 -> initMenu(WhichMenu.RENDER_SAVE_GAME_MENU_19, () -> new SaveGameScreen(() -> whichMenu_800bdc38 = WhichMenu.UNLOAD_SAVE_GAME_MENU_20));
+      case INIT_NEW_CAMPAIGN_MENU -> initMenu(WhichMenu.RENDER_NEW_CAMPAIGN_MENU, NewCampaignScreen::new);
       case INIT_CHAR_SWAP_MENU_21 -> {
         loadCharacterStats(0);
         cacheCharacterSlots();
-        initMenu(WhichMenu.RENDER_CHAR_SWAP_MENU_24, new CharSwapScreen(() -> whichMenu_800bdc38 = WhichMenu.UNLOAD_CHAR_SWAP_MENU_25));
+        initMenu(WhichMenu.RENDER_CHAR_SWAP_MENU_24, () -> new CharSwapScreen(() -> whichMenu_800bdc38 = WhichMenu.UNLOAD_CHAR_SWAP_MENU_25));
       }
-      case INIT_TOO_MANY_ITEMS_MENU_31 -> initMenu(WhichMenu.RENDER_TOO_MANY_ITEMS_MENU_34, new TooManyItemsScreen());
+      case INIT_TOO_MANY_ITEMS_MENU_31 -> initMenu(WhichMenu.RENDER_TOO_MANY_ITEMS_MENU_34, TooManyItemsScreen::new);
 
       case WAIT_FOR_MUSIC_TO_LOAD_AND_LOAD_S_ITEM_2 -> {
         if((loadedDrgnFiles_800bcf78.get() & 0x80L) == 0) {
@@ -1255,7 +1258,7 @@ public final class Scus94491BpeSegment_8002 {
             whichMenu_800bdc38 = destMenu;
 
             if(destScreen != null) {
-              menuStack.pushScreen(destScreen);
+              menuStack.pushScreen(destScreen.get());
               destScreen = null;
             }
           });
@@ -1276,11 +1279,11 @@ public final class Scus94491BpeSegment_8002 {
         }
       }
 
-      case RENDER_SHOP_MENU_9, RENDER_LOAD_GAME_MENU_14, RENDER_SAVE_GAME_MENU_19, RENDER_CHAR_SWAP_MENU_24, RENDER_TOO_MANY_ITEMS_MENU_34 -> menuStack.render();
+      case RENDER_SHOP_MENU_9, RENDER_CAMPAIGN_SELECTION_MENU, RENDER_SAVE_GAME_MENU_19, RENDER_CHAR_SWAP_MENU_24, RENDER_TOO_MANY_ITEMS_MENU_34, RENDER_NEW_CAMPAIGN_MENU -> menuStack.render();
       case RENDER_INVENTORY_MENU_4, RENDER_SHOP_CARRIED_ITEMS_36 -> renderMenus();
       case RENDER_POST_COMBAT_REPORT_29 -> renderPostCombatReport();
 
-      case UNLOAD_LOAD_GAME_MENU_15, UNLOAD_SAVE_GAME_MENU_20, UNLOAD_CHAR_SWAP_MENU_25 -> {
+      case UNLOAD_CAMPAIGN_SELECTION_MENU, UNLOAD_SAVE_GAME_MENU_20, UNLOAD_CHAR_SWAP_MENU_25, UNLOAD_NEW_CAMPAIGN_MENU -> {
         menuStack.popScreen();
         decrementOverlayCount();
 

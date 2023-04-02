@@ -28,4 +28,8 @@ public record RenderableMetrics14(int u_00, int v_01, int x_02, int y_03, int cl
 
     return new RenderableMetrics14(u, v, x, y, clut, tpage, width, height, width, height, _10, _12);
   }
+
+  public RenderableMetrics14(final int u, final int v, final int x, final int y, final int clut, final int tpage, final int width, final int height, final int textureWidth, final int textureHeight) {
+    this(u, v, x, y, clut, tpage, width, height, textureWidth, textureHeight, (short)0x1000, (short)0x1000);
+  }
 }
