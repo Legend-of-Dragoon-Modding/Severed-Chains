@@ -51,7 +51,7 @@ public class StageAmbiance4c {
     this._0c = (short)vals[3];
     this._0e = (short)(vals[3] >> 16);
 
-    int paramIndex = 0;
+    int paramIndex = 4;
     for(final BattleStruct14 struct : this._10) {
       struct.lightDirection_00.setX((short)vals[paramIndex]);
       struct.lightDirection_00.setY((short)(vals[paramIndex] >> 16));

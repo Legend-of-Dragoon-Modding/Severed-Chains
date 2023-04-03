@@ -155,7 +155,7 @@ import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.combat.Bttl_800c.FUN_800ca418;
 import static legend.game.combat.Bttl_800c._800c669c;
-import static legend.game.combat.Bttl_800c._800c6928;
+import static legend.game.combat.Bttl_800c.lightTicks_800c6928;
 import static legend.game.combat.Bttl_800c._800c6930;
 import static legend.game.combat.Bttl_800c._800c6938;
 import static legend.game.combat.Bttl_800c._800c697e;
@@ -537,7 +537,7 @@ public final class Bttl_800e {
     s0._00 = 0;
     s0.vec_04.set(sp0x10);
 
-    if(s2 - 1 < 2) {
+    if(s2 > 0 && s2 < 4) {
       final SVECTOR sp0x18 = new SVECTOR();
       FUN_800e45c0(sp0x18, lights_800c692c[s2 - 1].light_00.direction_00);
       s0.vec_28.set(sp0x18);
@@ -682,9 +682,7 @@ public final class Bttl_800e {
       if((a0._06 | a0._08) != 0) {
         a1._10._00 = 0x3;
         a1._10.vec_04.set(a1.light_00.direction_00);
-        a1._10.vec_10.setX(a0._06);
-        a1._10.vec_1c.setZ(a0._08);
-        a1._10.vec_28.setX(0);
+        a1._10.vec_10.set(a0._06, a0._08, 0);
       } else {
         //LAB_800e58cc
         a1._10._00 = 0;
@@ -744,10 +742,10 @@ public final class Bttl_800e {
   public static void tickLighting(final ScriptState<Void> state, final Void struct) {
     final BattleLightStruct64 light1 = _800c6930;
 
-    _800c6928.addu(0x1L);
+    lightTicks_800c6928.addu(0x1L);
 
     if(light1._24 == 3) { // Dragoon space lighting is handled here, I think this is for flickering light
-      final int angle = rcos(((_800c6928.get() + light1._2c) % light1._2e << 12) / light1._2e);
+      final int angle = rcos(((lightTicks_800c6928.get() + light1._2c) % light1._2e << 12) / light1._2e);
       final int minAngle = 0x1000 - angle;
       final int maxAngle = 0x1000 + angle;
       light1.colour_00.setX((light1.colour1_0c.getX() * maxAngle + light1.colour2_18.getX() * minAngle) / 0x2000);
@@ -762,7 +760,7 @@ public final class Bttl_800e {
       final BttlLightStruct84Sub38 a2 = light._10;
 
       int v1 = a2._00 & 0xff;
-      if(v1 == 0x1) {
+      if(v1 == 1) {
         //LAB_800e5c50
         a2.vec_10.add(a2.vec_1c);
         a2.vec_04.add(a2.vec_10);
@@ -777,31 +775,29 @@ public final class Bttl_800e {
         }
 
         //LAB_800e5cf4
-        v1 = a2._00;
-
-        if((v1 & 0x2000) != 0) {
+        if((a2._00 & 0x2000) != 0) {
           light.light_00.direction_00.set(a2.vec_04).div(0x1000);
           //LAB_800e5d40
-        } else if((v1 & 0x4000L) != 0) {
+        } else if((a2._00 & 0x4000) != 0) {
           final SVECTOR sp0x18 = new SVECTOR();
           sp0x18.set(a2.vec_04);
           FUN_800e4674(light.light_00.direction_00, sp0x18);
         }
-      } else if(v1 == 0x2L) {
+      } else if(v1 == 2) {
         //LAB_800e5bf0
         final SVECTOR sp0x10 = new SVECTOR();
         final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[light.scriptIndex_48].innerStruct_00;
         sp0x10.set(bobj.model_148.coord2Param_64.rotate).add(a2.vec_04);
         FUN_800e4674(light.light_00.direction_00, sp0x10);
-      } else if(v1 == 0x3L) {
+      } else if(v1 == 3) {
         //LAB_800e5bdc
         //LAB_800e5d6c
         final SVECTOR sp0x18 = new SVECTOR();
 
-        v1 = (int)(_800c6928.get() & 0xfff);
-        sp0x18.setX((short)(a2.vec_04.getX() + a2.vec_10.getX() * v1));
-        sp0x18.setY((short)(a2.vec_04.getY() + a2.vec_10.getY() * v1));
-        sp0x18.setZ((short)(a2.vec_04.getZ() + a2.vec_10.getZ() * v1));
+        final int ticks = (int)lightTicks_800c6928.get() & 0xfff;
+        sp0x18.setX((short)(a2.vec_04.getX() + a2.vec_10.getX() * ticks));
+        sp0x18.setY((short)(a2.vec_04.getY() + a2.vec_10.getY() * ticks));
+        sp0x18.setZ((short)(a2.vec_04.getZ() + a2.vec_10.getZ() * ticks));
 
         //LAB_800e5dcc
         FUN_800e4674(light.light_00.direction_00, sp0x18);
@@ -810,9 +806,9 @@ public final class Bttl_800e {
       //LAB_800e5dd4
       final BttlLightStruct84Sub38 s0 = light._4c;
       v1 = s0._00 & 0xff;
-      if(v1 == 0x1L) {
+      if(v1 == 1) {
         //LAB_800e5df4
-        s0.vec_10.set(s0.vec_1c);
+        s0.vec_10.add(s0.vec_1c);
         s0.vec_04.add(s0.vec_10);
 
         if((s0._00 & 0x8000) != 0) {
@@ -828,10 +824,10 @@ public final class Bttl_800e {
         lights_800c692c[i].light_00.r_0c.set(s0.vec_04.getX() >> 12);
         lights_800c692c[i].light_00.g_0d.set(s0.vec_04.getY() >> 12);
         lights_800c692c[i].light_00.b_0e.set(s0.vec_04.getZ() >> 12);
-      } else if(v1 == 0x3L) {
+      } else if(v1 == 3) {
         //LAB_800e5ed0
-        final short theta = rcos(((_800c6928.get() + s0.vec_28.getX()) % s0.vec_28.getY() << 12) / s0.vec_28.getY());
-        final int a3_0 = theta + 0x1000;
+        final short theta = rcos(((lightTicks_800c6928.get() + s0.vec_28.getX()) % s0.vec_28.getY() << 12) / s0.vec_28.getY());
+        final int a3_0 = 0x1000 + theta;
         final int a2_0 = 0x1000 - theta;
         lights_800c692c[i].light_00.r_0c.set((s0.vec_04.getX() * a3_0 + s0.vec_10.getX() * a2_0) / 0x2000);
         lights_800c692c[i].light_00.g_0d.set((s0.vec_04.getY() * a3_0 + s0.vec_10.getY() * a2_0) / 0x2000);
