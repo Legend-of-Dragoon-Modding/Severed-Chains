@@ -129,7 +129,6 @@ import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.MoveImage;
 import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
-import static legend.game.Scus94491BpeSegment_8003.StoreImage;
 import static legend.game.Scus94491BpeSegment_8003.TransMatrix;
 import static legend.game.Scus94491BpeSegment_8003.getProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
@@ -280,7 +279,7 @@ public final class Bttl_800c {
   public static ScriptState<BattleObject27c> scriptState_800c6914;
   public static final IntRef _800c6918 = MEMORY.ref(4, 0x800c6918L, IntRef::new);
 
-  public static final Value _800c6928 = MEMORY.ref(4, 0x800c6928L);
+  public static final Value lightTicks_800c6928 = MEMORY.ref(4, 0x800c6928L);
   public static BttlLightStruct84[] lights_800c692c;
   public static BattleLightStruct64 _800c6930;
 
