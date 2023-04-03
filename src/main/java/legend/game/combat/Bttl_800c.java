@@ -314,15 +314,17 @@ public final class Bttl_800c {
   public static final Value _800c6b78 = MEMORY.ref(4, 0x800c6b78L);
 
   public static final Value _800c6b9c = MEMORY.ref(4, 0x800c6b9cL);
-  public static final Value _800c6ba0 = MEMORY.ref(1, 0x800c6ba0L);
+  public static final Value cameraPositionIndicesIndex_800c6ba0 = MEMORY.ref(1, 0x800c6ba0L);
   public static final Value _800c6ba1 = MEMORY.ref(1, 0x800c6ba1L);
 
   /** Uhh, contains the monsters that Melbu summons during his fight...? */
   public static final ArrayRef<LodString> _800c6ba8 = MEMORY.ref(2, 0x800c6ba8L, ArrayRef.of(LodString.class, 3, 0x2c, LodString::new));
 
-  /** One per character slot */
+  /**
+   * One per character slot
+   */
   public static final Pointer<ArrayRef<BattleDisplayStats144>> displayStats_800c6c2c = MEMORY.ref(4, 0x800c6c2cL, Pointer.deferred(4, ArrayRef.of(BattleDisplayStats144.class, 3, 0x144, BattleDisplayStats144::new)));
-  public static final Value _800c6c30 = MEMORY.ref(1, 0x800c6c30L);
+  public static final ArrayRef<UnsignedByteRef> cameraPositionIndices_800c6c30 = MEMORY.ref(4, 0x800c6c30L, ArrayRef.of(UnsignedByteRef.class, 4, 1, UnsignedByteRef::new));
 
   public static final Pointer<BattleMenuStruct58> battleMenu_800c6c34 = MEMORY.ref(4, 0x800c6c34L, Pointer.deferred(4, BattleMenuStruct58::new));
   public static final Value _800c6c38 = MEMORY.ref(4, 0x800c6c38L);

@@ -62,7 +62,6 @@ import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.combat.Bttl_800c._800c669c;
 import static legend.game.combat.Bttl_800c._800c66b0;
-import static legend.game.combat.Bttl_800c._800c6718;
 import static legend.game.combat.Bttl_800c._800c6748;
 import static legend.game.combat.Bttl_800c._800c697c;
 import static legend.game.combat.Bttl_800c._800c697e;
@@ -72,10 +71,10 @@ import static legend.game.combat.Bttl_800c._800c6b60;
 import static legend.game.combat.Bttl_800c._800c6b64;
 import static legend.game.combat.Bttl_800c._800c6b68;
 import static legend.game.combat.Bttl_800c._800c6b6c;
-import static legend.game.combat.Bttl_800c._800c6ba0;
+import static legend.game.combat.Bttl_800c.cameraPositionIndicesIndex_800c6ba0;
 import static legend.game.combat.Bttl_800c._800c6ba1;
 import static legend.game.combat.Bttl_800c._800c6ba8;
-import static legend.game.combat.Bttl_800c._800c6c30;
+import static legend.game.combat.Bttl_800c.cameraPositionIndices_800c6c30;
 import static legend.game.combat.Bttl_800c._800c6c40;
 import static legend.game.combat.Bttl_800c._800c6f30;
 import static legend.game.combat.Bttl_800c._800c6f4c;
@@ -126,6 +125,7 @@ import static legend.game.combat.Bttl_800c.dragoonSpells_800c6960;
 import static legend.game.combat.Bttl_800c.enemyCount_800c6758;
 import static legend.game.combat.Bttl_800c.floatingNumbers_800c6b5c;
 import static legend.game.combat.Bttl_800c.getHitMultiplier;
+import static legend.game.combat.Bttl_800c.intRef_800c6718;
 import static legend.game.combat.Bttl_800c.protectedItems_800c72cc;
 import static legend.game.combat.Bttl_800c.spellStats_800fa0b8;
 import static legend.game.combat.Bttl_800c.targetBobjs_800c71f0;
@@ -2583,7 +2583,7 @@ public final class Bttl_800f {
     long v1;
     long a0;
     long a1;
-    long a2;
+    int cameraPositionIndicesIndex;
     long s1;
     final BattleMenuStruct58 struct58 = battleMenu_800c6c34.deref();
 
@@ -2594,7 +2594,7 @@ public final class Bttl_800f {
     s1 = 0;
 
     switch(struct58._00.get() - 1) {
-      case 0 -> {
+      case 0 -> {  // Set up camera position list at battle start or camera reset (like dragoon or after trying to run)
         struct58._00.set((short)2);
         struct58._28.set((short)(struct58.x_06.get() - struct58._0a.get() + struct58.selectedIcon_22.get() * 19 - 4));
         struct58._2a.set((short)(struct58.y_08.get() - 22));
@@ -2606,19 +2606,19 @@ public final class Bttl_800f {
 
         _800c697c.setu(0);
         _800c6ba1.setu(0);
-        _800c6ba0.setu(0);
+        cameraPositionIndicesIndex_800c6ba0.setu(0);
 
         //LAB_800f6424
         final long[] sp0x18 = new long[4];
         for(int i = 0; i < 4; i++) {
           sp0x18[i] = 0xffL;
-          _800c6c30.offset(i).setu(0);
+          cameraPositionIndices_800c6c30.get(i).set(0);
         }
 
         //LAB_800f6458
-        for(a2 = 0; a2 < 4; a2++) {
+        for(cameraPositionIndicesIndex = 0; cameraPositionIndicesIndex < 4; cameraPositionIndicesIndex++) {
           a0 = 0;
-          a1 = _800c6718.offset(1, 0x18L).offset(a2 * 0x4L).get();
+          a1 = intRef_800c6718.get(6 + cameraPositionIndicesIndex).get();
 
           //LAB_800f646c
           for(int i = 0; i < 4; i++) {
@@ -2631,25 +2631,27 @@ public final class Bttl_800f {
           }
 
           if(a0 == 0) {
-            sp0x18[(int)_800c6ba0.get()] = _800c6718.offset(1, 0x18L).offset(a2 * 0x4L).get();
-            _800c6c30.offset(_800c6ba0.get()).setu(a2);
+            sp0x18[(int)cameraPositionIndicesIndex_800c6ba0.get()] = intRef_800c6718.get(6 + cameraPositionIndicesIndex).get();
+            cameraPositionIndices_800c6c30.get((int)cameraPositionIndicesIndex_800c6ba0.get()).set(cameraPositionIndicesIndex);
 
-            if(_800d66b0.get() == a2) {
-              _800c6ba1.setu(_800c6ba0.get());
+            if(_800d66b0.get() == cameraPositionIndicesIndex) {
+              _800c6ba1.setu(cameraPositionIndicesIndex_800c6ba0.get());
             }
 
             //LAB_800f64dc
-            _800c6ba0.addu(0x1L);
+            cameraPositionIndicesIndex_800c6ba0.addu(0x1L);
           }
 
           //LAB_800f64ec
         }
       }
 
-      case 1 -> {
-        a0 = _800c6ba0.get();
+      case 1 -> {  // Checking for input
+        a0 = cameraPositionIndicesIndex_800c6ba0.get();
         struct58._40.set(0);
         struct58._44.set(0);
+
+        // Input for changing camera angles
         if(a0 >= 0x2L && (joypadInput_8007a39c.get() & 0x2L) != 0) {
           _800c6ba1.addu(0x1L);
           if(_800c6ba1.get() >= a0) {
@@ -2659,12 +2661,13 @@ public final class Bttl_800f {
           //LAB_800f6560
           _800c6748.set(0x21);
           struct58._00.set((short)5);
-          _800c66b0.set((int)_800c6c30.offset(_800c6ba1.get()).get());
+          _800c66b0.set(cameraPositionIndices_800c6c30.get((int)_800c6ba1.get()).get());
           struct58._44.set(60 / vsyncMode_8007a3b8.get() + 2);
           FUN_800f8c38(0);
           break;
         }
 
+        // Input for cycling right on menu bar
         //LAB_800f65b8
         if((joypadInput_8007a39c.get() & 0x2000L) != 0) {
           playSound(0, 1, 0, 0, (short)0, (short)0);
@@ -2693,6 +2696,7 @@ public final class Bttl_800f {
           break;
         }
 
+        // Input for cycling left on menu bar
         //LAB_800f6664
         if((joypadInput_8007a39c.get() & 0x8000L) != 0) {
           playSound(0, 1, 0, 0, (short)0, (short)0);
@@ -2723,6 +2727,7 @@ public final class Bttl_800f {
           break;
         }
 
+        // Input for pressing X on menu bar
         //LAB_800f671c
         if((joypadPress_8007a398.get() & 0x20L) != 0) {
           v1 = struct58.iconFlags_10.get(struct58.selectedIcon_22.get()).get();
@@ -2773,6 +2778,7 @@ public final class Bttl_800f {
             }
           }
           //LAB_800f6898
+          // Input for pressing circle on menu bar
         } else if((joypadPress_8007a398.get() & 0x40L) != 0) {
           //LAB_800f68a4
           //LAB_800f68bc
@@ -2784,7 +2790,7 @@ public final class Bttl_800f {
         struct58._40.set(0x1L);
       }
 
-      case 2 -> {
+      case 2 -> {  // Cycle to adjacent menu bar icon
         struct58._38.incr();
         struct58._28.add((short)(struct58._34.get() / struct58._30.get()));
 
@@ -2798,7 +2804,7 @@ public final class Bttl_800f {
         }
       }
 
-      case 3 -> {
+      case 3 -> {  // Wrap menu bar icon
         struct58._38.incr();
         struct58._28.add((short)(struct58._34.get() / struct58._30.get()));
         struct58._3c.add(struct58._34.get() / struct58._30.get());
@@ -2816,7 +2822,7 @@ public final class Bttl_800f {
         }
       }
 
-      case 4 -> {
+      case 4 -> {  // Seems to be related to switching camera views
         struct58._44.decr();
         if(struct58._44.get() == 1) {
           FUN_800f8c38(0x1L);
