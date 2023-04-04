@@ -21,12 +21,6 @@ public class Renderable {
     this.palettes = palettes;
   }
 
-  public Renderable translate(final int x, final int y) {
-    this.translateX = x;
-    this.translateY = y;
-    return this;
-  }
-
   public Renderable palette(final int palette) {
     this.palette = palette;
     return this;
@@ -56,10 +50,21 @@ public class Renderable {
     return this;
   }
 
-  public void render() {
+  public void render(final int x, final int y, final int z) {
+    this.translateX = x;
+    this.translateY = y;
+
     for(final Mesh.Segment segment : this.mesh.segments()) {
-      segment.render(this);
+      segment.render(this, z);
     }
+  }
+
+  public void render(final int x, final int y) {
+    this.render(x, y, 0);
+  }
+
+  public void render() {
+    this.render(0, 0);
   }
 
   public class Command extends GpuCommand {
@@ -232,17 +237,21 @@ public class Renderable {
               final int texelY = Gpu.interpolateCoords(w0, w1, w2, tv0, tv1, tv2, area);
 
               int texel = 0;
-              boolean found = false;
-              for(final VramTexture palette : Renderable.this.palettes) {
-                if(palette.rect.y() - this.paletteBase - Renderable.this.palette == 0) {
-                  texel = Renderable.this.texture.getTexel(palette, this.pageX, texelX, texelY);
-                  found = true;
-                  break;
+              if(Renderable.this.palettes == null) {
+                texel = Renderable.this.texture.getPixel(texelX, texelY) & 0xffffff;
+              } else {
+                boolean found = false;
+                for(final VramTexture palette : Renderable.this.palettes) {
+                  if(palette.rect.y() - this.paletteBase - Renderable.this.palette == 0) {
+                    texel = Renderable.this.texture.getTexel(palette, this.pageX, texelX, texelY);
+                    found = true;
+                    break;
+                  }
                 }
-              }
 
-              if(!found) {
-                throw new RuntimeException("Failed to find palette");
+                if(!found) {
+                  throw new RuntimeException("Failed to find palette");
+                }
               }
 
               if(texel == 0) {

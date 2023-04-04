@@ -21,6 +21,7 @@ public abstract class Control extends ControlHost {
   private boolean acceptsInput = true;
   private boolean disabled;
   private boolean hovered;
+  private boolean focused;
 
   @Override
   public MenuScreen getScreen() {
@@ -136,6 +137,10 @@ public abstract class Control extends ControlHost {
     this.disabled = disabled;
   }
 
+  public boolean hasFocus() {
+    return this.focused;
+  }
+
   public void focus() {
     this.screen.setFocus(this);
   }
@@ -201,12 +206,16 @@ public abstract class Control extends ControlHost {
   }
 
   protected void gotFocus() {
+    this.focused = true;
+
     if(this.gotFocusHandler != null) {
       this.gotFocusHandler.gotFocus();
     }
   }
 
   protected void lostFocus() {
+    this.focused = false;
+
     if(this.lostFocusHandler != null) {
       this.lostFocusHandler.lostFocus();
     }

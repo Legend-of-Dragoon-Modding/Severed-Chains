@@ -6287,12 +6287,12 @@ public class WMap {
   }
 
   @Method(0x800e774cL)
-  public static void FUN_800e774c(final LodString text, final int x, final int y, final TextColour colour, final long a4) {
+  public static void FUN_800e774c(final LodString text, final int x, final int y, final TextColour colour, final int trim) {
     final IntRef width = new IntRef();
     final IntRef lines = new IntRef();
     measureText(text, width, lines);
-    renderText(text, x - width.get() + 3, y, colour, (short)a4);
-    renderText(text, x - (width.get() - 1) + 3, y + 1, TextColour.BLACK, (short)a4);
+    renderText(text, x - width.get() + 3, y, colour, trim);
+    renderText(text, x - (width.get() - 1) + 3, y + 1, TextColour.BLACK, trim);
   }
 
   @Method(0x800e7854L)

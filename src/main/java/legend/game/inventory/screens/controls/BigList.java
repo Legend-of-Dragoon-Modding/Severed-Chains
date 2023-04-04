@@ -51,10 +51,11 @@ public class BigList<T> extends Control {
     final int index = this.labels.size();
 
     final Label label = this.addControl(new Label(this.entryToString.apply(this.entries.get(index))));
-    label.hide();
+    label.setVerticalAlign(Label.VerticalAlign.CENTRE);
     label.setX(16);
     label.setHeight(ENTRY_HEIGHT);
     label.acceptsInput();
+    label.hide();
 
     label.onMouseMove((x, y) -> {
       this.highlight(index);

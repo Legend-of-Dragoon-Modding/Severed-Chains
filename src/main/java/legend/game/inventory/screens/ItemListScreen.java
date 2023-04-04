@@ -59,7 +59,7 @@ public class ItemListScreen extends MenuScreen {
 
       return InputPropagation.PROPAGATE;
     });
-    this.itemList.onHighlight(item -> this.description.setText(itemDescriptions_80117a10.get(item.itemId_00).deref()));
+    this.itemList.onHighlight(item -> this.description.setText(itemDescriptions_80117a10.get(item.itemId_00).deref().get()));
 
     this.equipmentList.onHoverIn(() -> this.setFocus(this.equipmentList));
     this.equipmentList.onGotFocus(() -> {
