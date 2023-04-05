@@ -5,7 +5,8 @@ import legend.game.input.InputAction;
 import legend.game.inventory.screens.Control;
 import legend.game.inventory.screens.InputPropagation;
 import legend.game.inventory.screens.TextColour;
-import legend.game.types.LodString;
+import legend.game.inventory.screens.TextRenderable;
+import legend.game.inventory.screens.TextRenderer;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -15,11 +16,10 @@ import java.util.function.Function;
 
 import static legend.game.SItem.FUN_80104b60;
 import static legend.game.SItem.renderItemIcon;
-import static legend.game.SItem.renderText;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
 
 public class ListBox<T> extends Control {
-  private final Function<T, LodString> entryToString;
+  private final Function<T, String> entryToString;
   @Nullable
   private final Function<T, Integer> entryToIcon;
   private final List<Entry> entries = new ArrayList<>();
@@ -35,7 +35,7 @@ public class ListBox<T> extends Control {
   private final Glyph upArrow;
   private final Glyph downArrow;
 
-  public ListBox(final Function<T, LodString> entryToString, @Nullable final Function<T, Integer> entryToIcon) {
+  public ListBox(final Function<T, String> entryToString, @Nullable final Function<T, Integer> entryToIcon) {
     this.entryToString = entryToString;
     this.entryToIcon = entryToIcon;
 
@@ -71,10 +71,20 @@ public class ListBox<T> extends Control {
     return this.entries.stream().map(e -> e.data).toList();
   }
 
+  @Override
+  public void setZ(final int z) {
+    super.setZ(z);
+
+    for(final Entry entry : this.entries) {
+      entry.setZ(z - 1);
+    }
+  }
+
   public void add(final T data) {
     final Entry entry = this.addControl(new Entry(data));
     this.entries.add(entry);
     entry.setSize(this.getWidth(), this.entryHeight);
+    entry.setZ(this.getZ() - 1);
     entry.hide();
     entry.ignoreInput();
     this.updateEntries();
@@ -328,14 +338,16 @@ public class ListBox<T> extends Control {
 
   public class Entry extends Control {
     public final T data;
+    private final TextRenderable textRenderable;
 
     public Entry(final T data) {
       this.data = data;
+      this.textRenderable = TextRenderer.prepareShadowText(ListBox.this.entryToString.apply(data), 0, 0, TextColour.BROWN);
     }
 
     @Override
     protected void render(final int x, final int y) {
-      renderText(ListBox.this.entryToString.apply(this.data), x + 28, y + 3, TextColour.BROWN);
+      this.textRenderable.render(x + 28, y + 3, this.getZ() - 1);
 
       if(ListBox.this.entryToIcon != null) {
         renderItemIcon(ListBox.this.entryToIcon.apply(this.data), x + 13, y + 1, 0x8L);

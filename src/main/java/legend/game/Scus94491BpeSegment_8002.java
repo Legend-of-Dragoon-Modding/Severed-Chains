@@ -1,7 +1,6 @@
 package legend.game;
 
 import it.unimi.dsi.fastutil.ints.IntList;
-import legend.game.modding.coremod.CoreMod;
 import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
@@ -34,6 +33,7 @@ import legend.game.inventory.screens.SaveGameScreen;
 import legend.game.inventory.screens.ShopScreen;
 import legend.game.inventory.screens.TextColour;
 import legend.game.inventory.screens.TooManyItemsScreen;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.EventManager;
 import legend.game.modding.events.inventory.TakeItemEvent;
 import legend.game.scripting.FlowControl;
@@ -84,6 +84,7 @@ import static legend.game.SItem.menuAssetsLoaded;
 import static legend.game.SItem.menuStack;
 import static legend.game.SItem.renderMenus;
 import static legend.game.SItem.renderPostCombatReport;
+import static legend.game.SItem.textLength;
 import static legend.game.SMap.FUN_800da114;
 import static legend.game.SMap.FUN_800da524;
 import static legend.game.SMap.FUN_800de004;
@@ -185,16 +186,10 @@ import static legend.game.Scus94491BpeSegment_800b._800bdf08;
 import static legend.game.Scus94491BpeSegment_800b._800bdf10;
 import static legend.game.Scus94491BpeSegment_800b._800bdf18;
 import static legend.game.Scus94491BpeSegment_800b._800bdf38;
-import static legend.game.Scus94491BpeSegment_800b._800be5b8;
-import static legend.game.Scus94491BpeSegment_800b._800be5bc;
-import static legend.game.Scus94491BpeSegment_800b._800be5c0;
-import static legend.game.Scus94491BpeSegment_800b._800be5c4;
-import static legend.game.Scus94491BpeSegment_800b._800be5c8;
 import static legend.game.Scus94491BpeSegment_800b._800be5d0;
 import static legend.game.Scus94491BpeSegment_800b._800beb98;
 import static legend.game.Scus94491BpeSegment_800b._800bed28;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
-import static legend.game.Scus94491BpeSegment_800b.currentText_800bdca0;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.equipmentStats_800be5d8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -208,6 +203,8 @@ import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
 import static legend.game.Scus94491BpeSegment_800b.spu10Arr_800bd610;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
+import static legend.game.Scus94491BpeSegment_800b.textU_800be5c0;
+import static legend.game.Scus94491BpeSegment_800b.textV_800be5c8;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static legend.game.Scus94491BpeSegment_800b.textboxArrows_800bdea0;
 import static legend.game.Scus94491BpeSegment_800b.textboxes_800be358;
@@ -2320,7 +2317,6 @@ public final class Scus94491BpeSegment_8002 {
     textZ_800bdf00.set(13);
     _800bdf04.setu(0);
     _800bdf08.setu(0);
-    _800be5c4.setu(0);
     clearCharacterStats();
 
     //LAB_800250c0
@@ -2342,10 +2338,8 @@ public final class Scus94491BpeSegment_8002 {
       _800bdf18.offset(i * 0x4L).setu(0);
     }
 
-    _800be5b8.setu(0);
-    _800be5bc.setu(0);
-    _800be5c0.setu(0);
-    _800be5c8.setu(0);
+    textU_800be5c0.setu(0);
+    textV_800be5c8.setu(0);
   }
 
   @Method(0x80025158L)
@@ -2709,15 +2703,14 @@ public final class Scus94491BpeSegment_8002 {
       if(textbox._00 != 1) {
         final int x = textbox.x_14 - centreScreenX_1f8003dc.get();
         final int y = textbox.y_16 - centreScreenY_1f8003de.get();
-        final int v0 = (int)_800be5c4.getSigned() * 0xc;
 
         GPU.queueCommand(textbox.z_0c, new GpuCommandPoly(4)
           .translucent(Translucency.HALF_B_PLUS_HALF_F)
           .monochrome(0, 0)
           .pos(0, x - textbox.width_1c, y - textbox.height_1e)
-          .rgb(1, (int)_80010868.offset(v0).offset(0x0L).get(), (int)_80010868.offset(v0).offset(0x4L).get(), (int)_80010868.offset(v0).offset(0x8L).get())
+          .rgb(1, (int)_80010868.offset(0x0L).get(), (int)_80010868.offset(0x4L).get(), (int)_80010868.offset(0x8L).get())
           .pos(1, x + textbox.width_1c, y - textbox.height_1e)
-          .rgb(2, (int)_80010868.offset(v0).offset(0x0L).get(), (int)_80010868.offset(v0).offset(0x4L).get(), (int)_80010868.offset(v0).offset(0x8L).get())
+          .rgb(2, (int)_80010868.offset(0x0L).get(), (int)_80010868.offset(0x4L).get(), (int)_80010868.offset(0x8L).get())
           .pos(2, x - textbox.width_1c, y + textbox.height_1e)
           .monochrome(3, 0)
           .pos(3, x + textbox.width_1c, y + textbox.height_1e)
@@ -3906,12 +3899,10 @@ public final class Scus94491BpeSegment_8002 {
         }
 
         //LAB_8002840c
-        FUN_8002a63c((int)MEMORY.ref(2, fp).offset(0x6L).get());
+        setCharMetrics((int)MEMORY.ref(2, fp).offset(0x6L).get());
         if((short)s3 < 13) {
-          final int s4 = (int)_800be5c0.get() & 0xffff;
-          final int sp18 = (int)_800be5b8.get() & 0xffff;
-          final int sp20 = (int)_800be5c8.get() & 0xffff;
-          final int sp22 = (int)_800be5bc.get() & 0xffff;
+          final int s4 = (int)textU_800be5c0.get() & 0xffff;
+          final int sp20 = (int)textV_800be5c8.get() & 0xffff;
 
           final GpuCommandQuad cmd = new GpuCommandQuad()
             .monochrome(0x80);
@@ -3928,23 +3919,22 @@ public final class Scus94491BpeSegment_8002 {
           //LAB_80028544
           //LAB_80028564
           final int u = s4 * 16;
-          final int v = (sp22 < 6 ? 0 : 240) + sp20 * 12 - s2;
-          final int clutY = sp18 + 480;
+          final int v = sp20 * 12 - s2;
 
           cmd.uv(u, v);
-          cmd.clut(832 + (int)MEMORY.ref(1, fp).offset(0x4L).get() * 16, clutY);
+          cmd.clut(832 + (int)MEMORY.ref(1, fp).offset(0x4L).get() * 16, 480);
 
           final int height = 12 - s3;
           cmd.pos(x, y, 8, height);
           cmd.bpp(Bpp.BITS_4);
-          cmd.vramPos(textboxVramX_80052bc8.get(sp22).get(), textboxVramY_80052bf4.get(sp22).get() < 256 ? 0 : 256);
+          cmd.vramPos(textboxVramX_80052bc8.get(0).get(), textboxVramY_80052bf4.get(0).get() < 256 ? 0 : 256);
           GPU.queueCommand(s7.z_0c, cmd);
 
           GPU.queueCommand(s7.z_0c + 1, new GpuCommandQuad()
             .bpp(Bpp.BITS_4)
             .monochrome(0x80)
-            .clut(976, clutY)
-            .vramPos(textboxVramX_80052bc8.get(sp22).get(), textboxVramY_80052bf4.get(sp22).get() < 256 ? 0 : 256)
+            .clut(976, 480)
+            .vramPos(textboxVramX_80052bc8.get(0).get(), textboxVramY_80052bf4.get(0).get() < 256 ? 0 : 256)
             .pos(x + 1, y + 1, 8, height)
             .uv(u, v)
           );
@@ -4223,92 +4213,52 @@ public final class Scus94491BpeSegment_8002 {
     );
   }
 
+  /**
+   * @param trim Positive trims top, negative trims bottom
+   */
   @Method(0x80029300L)
-  public static void renderText(final LodString text, final int x, int y, final TextColour colour, final int a4) {
-    //LAB_80029358
-    int length;
-    for(length = 0; ; length++) {
-      final int c = text.charAt(length);
+  public static void renderText(final LodString text, final int x, int y, final TextColour colour, int trim) {
+    final int length = textLength(text);
 
-      if(c == 0xa0ff) {
-        currentText_800bdca0.charAt(length, 0xffff);
-        break;
-      }
+    trim = MathHelper.clamp(trim, -12, 12);
 
-      //LAB_80029374
-      currentText_800bdca0.charAt(length, c);
-
-      //LAB_80029384
-    }
-
-    final int s7 = MathHelper.clamp(a4, -12, 12);
-
-    //LAB_800293bc
-    //LAB_800293d8
     int lineIndex = 0;
     int glyphNudge = 0;
 
     for(int i = 0; i < length; i++) {
-      final int c = currentText_800bdca0.charAt(i);
+      final int c = text.charAt(i);
 
       if(c == 0xa1ff) {
         lineIndex = 0;
         glyphNudge = 0;
         y += 12;
       } else {
-        //LAB_80029404
-        if(c < 0x340) {
-          //LAB_8002945c
-          _800be5b8.setu(c / 208);
-          _800be5bc.setu(0);
-          _800be5c0.setu(c & 0xfL);
-          _800be5c8.setu(c % 208 / 16);
-        } else {
-          //LAB_8002946c
-          final long a0_0 = (c - 832) / 16;
-
-          //LAB_80029480
-          _800be5b8.setu(a0_0 % 4);
-          _800be5bc.setu(a0_0 / 4 + 1);
-          _800be5c0.setu(c & 0xf);
-          _800be5c8.setu(0);
-        }
-
-        //LAB_800294b4
-        final int fp = (int)_800be5bc.get();
-
         if(lineIndex == 0) {
           glyphNudge = 0;
         }
 
-        //LAB_80029504
-        //LAB_80029534
-        if(c == 0x45) {
+        if(c == 0x45) { // m
           glyphNudge -= 1;
-        } else if(c == 0x2) {
-          //LAB_80029548
+        } else if(c == 0x2) { // .
           glyphNudge -= 2;
-        } else if(c >= 0x5 && c < 0x7) {
-          //LAB_80029550
+        } else if(c >= 0x5 && c < 0x7) { // ?, !
           glyphNudge -= 3;
         }
 
-        //LAB_80029554
-        //LAB_80029558
-        //LAB_800295d8
-        final int v1 = (int)_800be5c8.get() * 12 + (fp < 6 ? 0 : 240);
-
-        //LAB_80029618
-        final int v = s7 >= 0 ? v1 : v1 - s7;
-        final int h = s7 >= 0 ? 12 - s7 : 12 + s7;
+        final int textU = c & 0xf;
+        final int textV = c / 16;
+        final int v1 = textV * 12;
+        final int v = trim >= 0 ? v1 : v1 - trim;
+        final int h = trim >= 0 ? 12 - trim : 12 + trim;
 
         GPU.queueCommand(textZ_800bdf00.get(), new GpuCommandQuad()
           .bpp(Bpp.BITS_4)
           .monochrome(0x80)
-          .pos(x + lineIndex * 8 - centreScreenX_1f8003dc.get() - glyphNudge, y - centreScreenY_1f8003de.get(), 8, h)
-          .uv((int)_800be5c0.get() * 16, v)
-          .clut((colour.ordinal() & 0xf) * 16 + 832 & 0x3f0, (int)_800be5b8.get() + 480)
-          .vramPos(textboxVramX_80052bc8.get(fp).get(), textboxVramY_80052bf4.get(fp).get() < 256 ? 0 : 256)
+          .pos(x - centreScreenX_1f8003dc.get() + lineIndex * 8 - glyphNudge, y - centreScreenY_1f8003de.get(), 8, h)
+          .uv(textU * 16, v)
+          .clut(832, 480)
+          .vramPos(textboxVramX_80052bc8.get(0).get(), textboxVramY_80052bf4.get(0).get() < 256 ? 0 : 256)
+          .rgb(colour.r, colour.g, colour.b)
         );
 
         glyphNudge += switch(c) {
@@ -4322,11 +4272,7 @@ public final class Scus94491BpeSegment_8002 {
 
         lineIndex++;
       }
-
-      //LAB_80029760
     }
-
-    //LAB_80029770
   }
 
   @Method(0x800297a0L)
@@ -4704,43 +4650,36 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002a59cL)
-  public static int textWidth(final LodString a0) {
-    //LAB_8002a5b4
-    int a3 = 0;
-    int v1;
-    for(v1 = 0; a0.charAt(v1) <= 0x9fffL; v1++) {
-      a3 += switch(a0.charAt(v1)) {
-        case 0x5, 0x23, 0x24, 0x2a, 0x37, 0x38, 0x3a, 0x3b, 0x3c, 0x3d, 0x3f, 0x40, 0x43, 0x46, 0x47, 0x48, 0x49, 0x4a, 0x4b, 0x4d, 0x4e, 0x51, 0x52 -> 1;
-        case 0x2, 0x8, 0x3e, 0x4c -> 2;
-        case 0xb, 0xc, 0x42 -> 3;
-        case 0x1, 0x3, 0x4, 0x9, 0x16, 0x41, 0x44 -> 4;
-        case 0x6, 0x27 -> 5;
-        default -> 0;
-      };
+  public static int textWidth(final LodString text) {
+    return textWidth(text.get());
+  }
 
-      //LAB_8002a618
-      //LAB_8002a624
+  public static int textWidth(final String text) {
+    int width = 0;
+    for(int index = 0; index < text.length(); index++) {
+      width += charWidth(text.charAt(index));
     }
 
-    return v1 * 8 - (short)a3;
+    return width;
+  }
+
+  public static int charWidth(final char chr) {
+    final int nudge = switch(chr) {
+      case '?', 'E', 'F', 'L', 'Y', 'Z', 'b', 'c', 'd', 'e', 'g', 'h', 'k', 'n', 'o', 'p', 'q', 'r', 's', 'u', 'v', 'y', 'z' -> 1;
+      case '.', '/', 'f', 't' -> 2;
+      case '(', ')', 'j' -> 3;
+      case ',', '·', ':', '\'', '1', 'i', 'l' -> 4;
+      case '!', 'I' -> 5;
+      default -> 0;
+    };
+
+    return 8 - nudge;
   }
 
   @Method(0x8002a63cL)
-  public static void FUN_8002a63c(final int a0) {
-    if(a0 > 0 && a0 < 832) {
-      _800be5bc.setu(0);
-      _800be5c0.setu(a0 & 0xf);
-      _800be5b8.setu(a0 / 208);
-      _800be5c8.setu(a0 % 208 / 16);
-      return;
-    }
-
-    //LAB_8002a6b0
-    final int a1 = (a0 - 832) / 16;
-    _800be5bc.setu(a1 / 4 + 1);
-    _800be5b8.setu(a1 % 4);
-    _800be5c0.setu(a0 & 0xf);
-    _800be5c8.setu(0);
+  public static void setCharMetrics(final int chr) {
+    textU_800be5c0.setu(chr & 0xf);
+    textV_800be5c8.setu(chr % 208 / 16);
   }
 
   @Method(0x8002a6fcL)

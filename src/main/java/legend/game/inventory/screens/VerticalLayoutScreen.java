@@ -27,6 +27,7 @@ public class VerticalLayoutScreen extends MenuScreen {
 
   public <T extends Control> T addRow(final String name, final T control) {
     final Label label = this.addControl(new Label(name));
+    label.setVerticalAlign(Label.VerticalAlign.CENTRE);
     label.setSize(0, 16);
     label.setPos(32, 32 + this.rows.size() * 20);
 

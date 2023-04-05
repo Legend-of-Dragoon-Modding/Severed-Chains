@@ -56,12 +56,13 @@ public abstract class MenuScreen extends ControlHost {
 
   @Override
   protected InputPropagation mouseClick(final int x, final int y, final int button, final int mods) {
+    this.updateHover(x, y);
+    this.updateFocusFromHover();
+
     if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
-    this.updateHover(x, y);
-    this.updateFocusFromHover();
     return InputPropagation.PROPAGATE;
   }
 

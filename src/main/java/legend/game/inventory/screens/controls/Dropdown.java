@@ -6,13 +6,11 @@ import legend.game.inventory.screens.Control;
 import legend.game.inventory.screens.InputPropagation;
 import legend.game.inventory.screens.MenuScreen;
 import legend.game.inventory.screens.TextColour;
-import legend.game.types.LodString;
+import legend.game.inventory.screens.TextRenderable;
+import legend.game.inventory.screens.TextRenderer;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static legend.game.SItem.renderText;
-import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 
 public class Dropdown extends Control {
   private final Panel background;
@@ -20,9 +18,10 @@ public class Dropdown extends Control {
   private final Glyph downArrow;
   private final Brackets highlight;
 
-  private final List<LodString> options = new ArrayList<>();
+  private final List<String> options = new ArrayList<>();
   private int hoverIndex;
-  private int selectedIndex;
+  private int selectedIndex = -1;
+  private TextRenderable selectedTextRenderable;
 
   public Dropdown() {
     this.background = this.addControl(Panel.subtle());
@@ -66,12 +65,17 @@ public class Dropdown extends Control {
   }
 
   public void addOption(final String option) {
-    this.options.add(new LodString(option));
+    this.options.add(option);
     this.panel.setHeight(18 + this.options.size() * 16);
+
+    if(this.selectedIndex == -1) {
+      this.setSelectedIndex(0);
+    }
   }
 
   public void setSelectedIndex(final int index) {
     this.selectedIndex = index;
+    this.selectedTextRenderable = TextRenderer.prepareShadowText(this.options.get(index), 0, 0, TextColour.BROWN);
   }
 
   public int getSelectedIndex() {
@@ -111,7 +115,7 @@ public class Dropdown extends Control {
   }
 
   private void select(final int index) {
-    this.selectedIndex = index;
+    this.setSelectedIndex(index);
 
     if(this.selectionHandler != null) {
       this.selectionHandler.selection(index);
@@ -135,10 +139,7 @@ public class Dropdown extends Control {
   @Override
   protected void render(final int x, final int y) {
     if(!this.options.isEmpty()) {
-      final int oldZ = textZ_800bdf00.get();
-      textZ_800bdf00.set(this.background.getZ() - 1);
-      renderText(this.options.get(this.selectedIndex), x + 4, y + (this.getHeight() - 11) / 2 + 1, TextColour.BROWN);
-      textZ_800bdf00.set(oldZ);
+      this.selectedTextRenderable.render(x + 4, y + (this.getHeight() - 11) / 2 + 1, this.background.getZ() - 1);
     }
   }
 
@@ -151,20 +152,23 @@ public class Dropdown extends Control {
   @FunctionalInterface public interface Selection { void selection(final int index); }
 
   private class DropdownScreen extends MenuScreen {
+    private final TextRenderable[] textRenderables = new TextRenderable[Dropdown.this.options.size()];
+
     private DropdownScreen() {
       this.addControl(Dropdown.this.panel);
       Dropdown.this.panel.setPos(Dropdown.this.getX() - 9, Dropdown.this.getY() + Dropdown.this.getHeight());
       Dropdown.this.panel.setWidth(Dropdown.this.getWidth() + 18);
+
+      for(int i = 0; i < this.textRenderables.length; i++) {
+        this.textRenderables[i] = TextRenderer.prepareShadowText(Dropdown.this.options.get(i), 0, 0, TextColour.BROWN);
+      }
     }
 
     @Override
     protected void render() {
-      final int oldTextZ = textZ_800bdf00.get();
-      textZ_800bdf00.set(Dropdown.this.panel.getZ() - 1);
       for(int i = 0; i < Dropdown.this.options.size(); i++) {
-        renderText(Dropdown.this.options.get(i), Dropdown.this.panel.getX() + 10, Dropdown.this.panel.getY() + 10 + i * 16, TextColour.BROWN);
+        this.textRenderables[i].render(Dropdown.this.panel.getX() + 10, Dropdown.this.panel.getY() + 10 + i * 16, Dropdown.this.panel.getZ() - 1);
       }
-      textZ_800bdf00.set(oldTextZ);
     }
 
     @Override

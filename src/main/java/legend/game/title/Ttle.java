@@ -1025,9 +1025,8 @@ public final class Ttle {
     //LAB_800cb0ec
     //LAB_800cb100
     backgroundRenderable
-      .translate(0, backgroundScrollAmount)
       .recolourMono(backgroundFadeInAmount)
-      .render();
+      .render(0, backgroundScrollAmount);
 
     //LAB_800cb370
     backgroundScrollAmount++;

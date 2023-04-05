@@ -2259,7 +2259,7 @@ public final class Bttl_800f {
    */
   @Method(0x800f57f8L)
   public static void renderList(final int type) {
-    int a1;
+    int trim;
 
     final CombatMenua4 structa4 = _800c6b60.deref();
 
@@ -2369,34 +2369,34 @@ public final class Bttl_800f {
       if(y1 >= y2) {
         //LAB_800f5b90
         if(sp68 >= y1 + 12) {
-          a1 = 0;
+          trim = 0;
         } else {
-          a1 = y1 - (sp68 - 12);
+          trim = y1 - (sp68 - 12);
         }
 
         //LAB_800f5bb4
         if((structa4._02.get() & 0x4) != 0) {
-          a1 = (short)structa4._8c.get();
+          trim = (short)structa4._8c.get();
         }
 
         //LAB_800f5bd8
-        Scus94491BpeSegment_8002.renderText(name, structa4.textX_18.get(), y1, textColour, a1);
+        Scus94491BpeSegment_8002.renderText(name, structa4.textX_18.get(), y1, textColour, trim);
 
         if(type == 0) {
-          Scus94491BpeSegment_8002.renderText(sp0x40, structa4.textX_18.get() + 128, y1, textColour, a1);
+          Scus94491BpeSegment_8002.renderText(sp0x40, structa4.textX_18.get() + 128, y1, textColour, trim);
         }
       } else if(y2 < y1 + 12) {
         if((structa4._02.get() & 0x4) != 0) {
-          a1 = structa4._8c.get();
+          trim = structa4._8c.get();
         } else {
-          a1 = y1 - y2;
+          trim = y1 - y2;
         }
 
         //LAB_800f5b40
-        Scus94491BpeSegment_8002.renderText(name, structa4.textX_18.get(), y2, textColour, a1);
+        Scus94491BpeSegment_8002.renderText(name, structa4.textX_18.get(), y2, textColour, trim);
 
         if(type == 0) {
-          Scus94491BpeSegment_8002.renderText(sp0x40, structa4.textX_18.get() + 128, y2, textColour, a1);
+          Scus94491BpeSegment_8002.renderText(sp0x40, structa4.textX_18.get() + 128, y2, textColour, trim);
         }
       }
 

@@ -17,12 +17,10 @@ import legend.game.combat.types.BattleStage;
 import legend.game.inventory.WhichMenu;
 import legend.game.scripting.ScriptState;
 import legend.game.types.ActiveStatsa0;
-import legend.game.types.UiFile;
 import legend.game.types.EquipmentStats1c;
 import legend.game.types.GameState52c;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.InventoryMenuState;
-import legend.game.types.LodString;
 import legend.game.types.McqHeader;
 import legend.game.types.Model124;
 import legend.game.types.Renderable58;
@@ -39,6 +37,7 @@ import legend.game.types.TexPageY;
 import legend.game.types.Textbox4c;
 import legend.game.types.TextboxArrow0c;
 import legend.game.types.Translucency;
+import legend.game.types.UiFile;
 
 import static legend.core.GameEngine.MEMORY;
 
@@ -218,8 +217,6 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bdc58 = MEMORY.ref(4, 0x800bdc58L);
   public static Renderable58 renderablePtr_800bdc5c;
 
-  public static final LodString currentText_800bdca0 = new LodString(new int[0xffff]);
-
   public static final TextboxArrow0c[] textboxArrows_800bdea0 = new TextboxArrow0c[8];
 
   public static final IntRef textZ_800bdf00 = MEMORY.ref(4, 0x800bdf00L, IntRef::new);
@@ -232,11 +229,8 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Struct84[] _800bdf38 = new Struct84[8];
   public static final Textbox4c[] textboxes_800be358 = new Textbox4c[8];
-  public static final Value _800be5b8 = MEMORY.ref(4, 0x800be5b8L);
-  public static final Value _800be5bc = MEMORY.ref(4, 0x800be5bcL);
-  public static final Value _800be5c0 = MEMORY.ref(4, 0x800be5c0L);
-  public static final Value _800be5c4 = MEMORY.ref(2, 0x800be5c4L);
-  public static final Value _800be5c8 = MEMORY.ref(4, 0x800be5c8L);
+  public static final Value textU_800be5c0 = MEMORY.ref(4, 0x800be5c0L);
+  public static final Value textV_800be5c8 = MEMORY.ref(4, 0x800be5c8L);
 
   public static final Value _800be5d0 = MEMORY.ref(4, 0x800be5d0L);
 

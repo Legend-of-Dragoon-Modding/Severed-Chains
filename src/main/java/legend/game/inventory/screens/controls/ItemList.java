@@ -3,8 +3,6 @@ package legend.game.inventory.screens.controls;
 import legend.game.input.InputAction;
 import legend.game.inventory.screens.Control;
 import legend.game.inventory.screens.InputPropagation;
-import legend.game.inventory.screens.TextColour;
-import legend.game.types.LodString;
 import legend.game.types.MenuItemStruct04;
 import legend.game.types.Renderable58;
 
@@ -15,7 +13,6 @@ import java.util.function.Function;
 
 import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.equipment_8011972c;
-import static legend.game.SItem.renderText;
 import static legend.game.Scus94491BpeSegment_8002.allocateManualRenderable;
 import static legend.game.Scus94491BpeSegment_8002.getItemIcon;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
@@ -24,14 +21,15 @@ import static legend.game.Scus94491BpeSegment_8002.uploadRenderable;
 public class ItemList extends Control {
   private final ListBox<MenuItemStruct04> items;
   private final Renderable58 background;
-  private LodString title = new LodString("");
+  private final Label titleLabel;
+  private final Label maxLabel;
   private int max;
 
   public ItemList() {
-    this(menuItem -> equipment_8011972c.get(menuItem.itemId_00).deref(), menuItem -> getItemIcon(menuItem.itemId_00));
+    this(menuItem -> equipment_8011972c.get(menuItem.itemId_00).deref().get(), menuItem -> getItemIcon(menuItem.itemId_00));
   }
 
-  public ItemList(final Function<MenuItemStruct04, LodString> getItemName, @Nullable final Function<MenuItemStruct04, Integer> getItemIcon) {
+  public ItemList(final Function<MenuItemStruct04, String> getItemName, @Nullable final Function<MenuItemStruct04, Integer> getItemIcon) {
     this.setSize(173, 147);
 
     this.items = new ListBox<>(getItemName, getItemIcon);
@@ -39,24 +37,29 @@ public class ItemList extends Control {
     this.items.setSize(173, 119);
     this.addControl(this.items);
 
+    this.titleLabel = this.addControl(new Label(""));
+    this.titleLabel.setPos(24, 8);
+
+    this.maxLabel = this.addControl(new Label(""));
+    this.maxLabel.setY(8);
+    this.maxLabel.hide();
+
     this.background = allocateUiElement(allocateManualRenderable(), 0x55, 0x55, 0, 0);
     this.background.z_3c = 80;
   }
 
-  public void setTitle(final LodString title) {
-    this.title = title;
-  }
-
   public void setTitle(final String title) {
-    this.title = new LodString(title);
+    this.titleLabel.setText(title);
   }
 
-  public LodString getTitle() {
-    return this.title;
+  public String getTitle() {
+    return this.titleLabel.getText();
   }
 
   public void setMax(final int max) {
     this.max = max;
+    this.updateMaxLabel();
+    this.maxLabel.setVisibility(max != 0);
   }
 
   public int getMax() {
@@ -89,14 +92,17 @@ public class ItemList extends Control {
 
   public void add(final MenuItemStruct04 item) {
     this.items.add(item);
+    this.updateMaxLabel();
   }
 
   public void remove(final MenuItemStruct04 item) {
     this.items.remove(item);
+    this.updateMaxLabel();
   }
 
   public void clear() {
     this.items.clear();
+    this.updateMaxLabel();
   }
 
   public void sort(final Comparator<MenuItemStruct04> comparator) {
@@ -111,6 +117,11 @@ public class ItemList extends Control {
     this.items.onSelection(handler);
   }
 
+  private void updateMaxLabel() {
+    this.maxLabel.setText(this.items.getCount() + "/" + this.max);
+    this.maxLabel.setX(162 - textWidth(this.maxLabel.getText()));
+  }
+
   @Override
   protected InputPropagation pressedWithRepeatPulse(final InputAction inputAction) {
     if(super.pressedWithRepeatPulse(inputAction) == InputPropagation.HANDLED) {
@@ -123,12 +134,5 @@ public class ItemList extends Control {
   @Override
   protected void render(final int x, final int y) {
     uploadRenderable(this.background, x + 8, y + 1);
-
-    renderText(this.title, x + 24, y + 8, TextColour.BROWN);
-
-    if(this.max != 0) {
-      final LodString count = new LodString(this.items.getCount() + "/" + this.max);
-      renderText(count, x + 162 - textWidth(count), y + 8, TextColour.BROWN);
-    }
   }
 }

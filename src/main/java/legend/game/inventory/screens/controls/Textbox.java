@@ -1,23 +1,39 @@
 package legend.game.inventory.screens.controls;
 
-import legend.game.SItem;
+import legend.core.MathHelper;
+import legend.core.gpu.GpuCommandLine;
 import legend.game.input.InputAction;
 import legend.game.inventory.screens.Control;
 import legend.game.inventory.screens.InputPropagation;
 import legend.game.inventory.screens.TextColour;
-import legend.game.types.LodString;
+import legend.game.inventory.screens.TextRenderable;
+import legend.game.inventory.screens.TextRenderer;
 
+import static legend.core.GameEngine.GPU;
+import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
+import static legend.game.Scus94491BpeSegment_8002.charWidth;
+import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_BACKSPACE;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_DELETE;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
 
 public class Textbox extends Control {
   private final Panel background;
-  private LodString text = new LodString("");
+  private String text;
+  private TextRenderable textRenderable;
   private int maxLength = -1;
+
+  private int caretIndex;
+  private int caretX;
 
   public Textbox() {
     this.background = this.addControl(Panel.subtle());
+    this.setText("");
   }
 
   @Override
@@ -41,23 +57,65 @@ public class Textbox extends Control {
   }
 
   public void setText(final String text) {
-    this.text = new LodString(text);
-  }
-
-  public void setText(final LodString text) {
-    this.text = text;
+    this.updateText(text);
+    this.setCaretIndex(text.length());
   }
 
   public String getText() {
-    return this.text.get();
+    return this.text;
+  }
+
+  public void setCaretIndex(final int index) {
+    this.caretIndex = MathHelper.clamp(index, 0, this.text.length());
+    this.caretX = this.calculateCaretX(this.caretIndex);
+  }
+
+  private int calculateCaretX(final int index) {
+    return textWidth(this.getText().substring(0, index));
+  }
+
+  private void updateText(final String text) {
+    this.text = text;
+    this.textRenderable = TextRenderer.prepareShadowText(text, 0, 0, TextColour.BROWN);
   }
 
   @Override
   protected void render(final int x, final int y) {
     final int oldZ = textZ_800bdf00.get();
-    textZ_800bdf00.set(this.getZ() - 1);
-    SItem.renderText(this.text, x + 4, y + (this.getHeight() - 11) / 2 + 1, TextColour.BROWN);
+    this.textRenderable.render(x + 4, y + (this.getHeight() - 11) / 2 + 1, this.getZ() - 1);
+
+    if(this.hasFocus()) {
+      final int offsetX = -displayWidth_1f8003e0.get() / 2;
+      final int offsetY = -120;
+      final int caretX = x + offsetX + 4 + this.caretX;
+      final int caretY = y + offsetY + 3;
+
+      GPU.queueCommand(textZ_800bdf00.get() - 1, new GpuCommandLine()
+        .pos(0, caretX, caretY)
+        .pos(1, caretX, caretY + this.getHeight() - 7)
+        .rgb(0xa0, 0x80, 0x50)
+      );
+    }
+
     textZ_800bdf00.set(oldZ);
+  }
+
+  @Override
+  protected InputPropagation mouseClick(final int x, final int y, final int button, final int mods) {
+    if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
+    for(int i = this.text.length(); i >= 0; i--) {
+      final int nudge = i < this.text.length() ? charWidth(this.text.charAt(i)) / 2 : 0;
+
+      if(this.calculateCaretX(i) - nudge + 4 < x) {
+        this.setCaretIndex(i);
+        break;
+      }
+    }
+
+    return InputPropagation.HANDLED;
   }
 
   @Override
@@ -66,8 +124,37 @@ public class Textbox extends Control {
       return InputPropagation.HANDLED;
     }
 
-    if(key == GLFW_KEY_BACKSPACE && this.text.length() > 0) {
-      this.text = new LodString(this.text.get().substring(0, this.text.length() - 1));
+    if(key == GLFW_KEY_LEFT) {
+      if(mods == 0) {
+        this.setCaretIndex(this.caretIndex - 1);
+      }
+    }
+
+    if(key == GLFW_KEY_RIGHT) {
+      if(mods == 0) {
+        this.setCaretIndex(this.caretIndex + 1);
+      }
+    }
+
+    if(key == GLFW_KEY_UP) {
+      if(mods == 0) {
+        this.setCaretIndex(0);
+      }
+    }
+
+    if(key == GLFW_KEY_DOWN) {
+      if(mods == 0) {
+        this.setCaretIndex(this.text.length());
+      }
+    }
+
+    if(key == GLFW_KEY_BACKSPACE && this.caretIndex > 0) {
+      this.updateText(this.text.substring(0, this.caretIndex - 1) + this.text.substring(this.caretIndex));
+      this.setCaretIndex(this.caretIndex - 1);
+    }
+
+    if(key == GLFW_KEY_DELETE && this.caretIndex < this.text.length()) {
+      this.updateText(this.text.substring(0, this.caretIndex) + this.text.substring(this.caretIndex + 1));
     }
 
     if(key == GLFW_KEY_ESCAPE) {
@@ -87,7 +174,8 @@ public class Textbox extends Control {
       return InputPropagation.HANDLED;
     }
 
-    this.text = new LodString(this.text.get() + (char)codepoint);
+    this.updateText(this.text.substring(0, this.caretIndex) + (char)codepoint + this.text.substring(this.caretIndex));
+    this.setCaretIndex(this.caretIndex + 1);
     return InputPropagation.HANDLED;
   }
 
