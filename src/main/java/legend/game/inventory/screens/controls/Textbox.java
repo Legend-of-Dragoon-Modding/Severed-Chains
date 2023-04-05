@@ -174,8 +174,11 @@ public class Textbox extends Control {
       return InputPropagation.HANDLED;
     }
 
-    this.updateText(this.text.substring(0, this.caretIndex) + (char)codepoint + this.text.substring(this.caretIndex));
-    this.setCaretIndex(this.caretIndex + 1);
+    if(codepoint >= 32 && codepoint < 127) {
+      this.updateText(this.text.substring(0, this.caretIndex) + (char)codepoint + this.text.substring(this.caretIndex));
+      this.setCaretIndex(this.caretIndex + 1);
+    }
+
     return InputPropagation.HANDLED;
   }
 
