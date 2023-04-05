@@ -25,6 +25,7 @@ public class InputMapping {
 
     for(final InputBinding binding : this.bindings) {
       binding.update();
+
       if(this.controllerData.getPlayerSlot() == 1) {
         this.updateLegacyInput(binding);
       }
@@ -38,8 +39,6 @@ public class InputMapping {
       } else if(binding.getState() == InputBindingState.PRESSED) {
         this.anyActivity = true;
       }
-
-
     }
   }
 
@@ -50,13 +49,11 @@ public class InputMapping {
     }
 
     if(binding.getState() == InputBindingState.PRESSED_THIS_FRAME) {
-
       _800bee90.or(hexCode);
       _800bee94.or(hexCode);
       _800bee98.or(hexCode);
 
       keyRepeat.put(hexCode, 0);
-
     } else if(binding.getState() == InputBindingState.RELEASED_THIS_FRAME) {
       _800bee90.and(~hexCode);
       _800bee94.and(~hexCode);
@@ -69,6 +66,7 @@ public class InputMapping {
   public boolean hasActivityThisFrameExcludeAxis() {
     return this.anyActivityThisFrameExcludeAxis;
   }
+
   public boolean hasActivityThisFrame() {
     return this.anyActivityThisFrame;
   }

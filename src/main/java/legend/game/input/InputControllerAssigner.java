@@ -99,14 +99,15 @@ public final class InputControllerAssigner {
       Input.refreshControllers();
       return;
     }
-    if(connectedControllers.size() == 1) {
 
-      LOGGER.info(INPUT_MARKER,"Only 1 controller connected so assigning by default. %s",connectedControllers.get(0).getInfoString());
+    if(connectedControllers.size() == 1) {
+      LOGGER.info(INPUT_MARKER,"Only 1 controller connected so assigning by default. %s", connectedControllers.get(0).getInfoString());
       connectedControllers.get(0).setPlayerSlot(1);
       assignedControllers.add(connectedControllers.get(0));
       savePlayerOneToConfig();
       Input.refreshControllers();
     }
+
     if(connectedControllers.size() >= 2) {
       LOGGER.info(INPUT_MARKER,"Multiple controllers connected. Please press any of the buttons for the one you want to use");
       isAssigningControllersBool = true;
@@ -174,7 +175,5 @@ public final class InputControllerAssigner {
     } catch(final IOException e) {
       LOGGER.warn(INPUT_MARKER, "Failed to save config");
     }
-
   }
-
 }

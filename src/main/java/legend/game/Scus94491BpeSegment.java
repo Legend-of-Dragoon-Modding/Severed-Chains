@@ -472,11 +472,7 @@ public final class Scus94491BpeSegment {
         startSound();
       }
 
-      final boolean isWindowActive = GPU.window().isWindowActive();
-
-      if(Config.receiveInputOnInactiveWindow() || isWindowActive) {
-        Input.update();
-      }
+      Input.update();
 
       joypadPress_8007a398.setu(_800bee94.get());
       joypadInput_8007a39c.setu(_800bee90.get());
