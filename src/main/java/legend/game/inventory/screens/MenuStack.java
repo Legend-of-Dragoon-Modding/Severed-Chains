@@ -22,8 +22,8 @@ public class MenuStack {
   private Window.Events.Click onMouseRelease;
   private Window.Events.Scroll onMouseScroll;
   private Window.Events.Key onKeyPress;
-
   private Window.Events.Key onKeyRepeat;
+  private Window.Events.Char onCharPress;
 
   private Window.Events.OnPressedThisFrame onPressedThisFrame;
   private Window.Events.OnReleasedThisFrame onReleasedThisFrame;
@@ -32,16 +32,20 @@ public class MenuStack {
 
   private final Int2ObjectMap<Point2D> mousePressCoords = new Int2ObjectOpenHashMap<>();
 
+  private double scrollAccumulatorX;
+  private double scrollAccumulatorY;
+
   public void pushScreen(final MenuScreen screen) {
     if(this.screens.isEmpty()) {
       this.registerInputHandlers();
     }
 
+    screen.setStack(this);
     this.screens.push(screen);
   }
 
   public void popScreen() {
-    this.screens.pop();
+    this.screens.pop().setStack(null);
 
     if(this.screens.isEmpty()) {
       this.removeInputHandlers();
@@ -49,6 +53,35 @@ public class MenuStack {
   }
 
   public void render() {
+    int scrollX = 0;
+    int scrollY = 0;
+
+    if(this.scrollAccumulatorX >= 1.0d) {
+      this.scrollAccumulatorX -= 1.0d;
+      scrollX = 1;
+    }
+
+    if(this.scrollAccumulatorX <= -1.0d) {
+      this.scrollAccumulatorX += 1.0d;
+      scrollX = -1;
+    }
+
+    if(this.scrollAccumulatorY >= 1.0d) {
+      this.scrollAccumulatorY -= 1.0d;
+      scrollY = 1;
+    }
+
+    if(this.scrollAccumulatorY <= -1.0d) {
+      this.scrollAccumulatorY += 1.0d;
+      scrollY = -1;
+    }
+
+    if(scrollX != 0 || scrollY != 0) {
+      final int finalScrollX = scrollX;
+      final int finalScrollY = scrollY;
+      this.input(screen -> screen.mouseScroll(finalScrollX, finalScrollY));
+    }
+
     final Iterator<MenuScreen> it = this.screens.iterator();
 
     if(it.hasNext()) {
@@ -91,6 +124,7 @@ public class MenuStack {
     this.onMouseScroll = GPU.window().events.onMouseScroll(this::mouseScroll);
     this.onKeyPress = GPU.window().events.onKeyPress(this::keyPress);
     this.onKeyRepeat = GPU.window().events.onKeyRepeat(this::keyPress);
+    this.onCharPress = GPU.window().events.onCharPress(this::charPress);
     this.onPressedThisFrame = GPU.window().events.onPressedThisFrame(this::pressedThisFrame);
     this.onReleasedThisFrame = GPU.window().events.onReleasedThisFrame(this::releasedThisFrame);
     this.onPressedWithRepeatPulse = GPU.window().events.onPressedWithRepeatPulse(this::pressedWithRepeatPulse);
@@ -103,6 +137,7 @@ public class MenuStack {
     GPU.window().events.removeMouseScroll(this.onMouseScroll);
     GPU.window().events.removeKeyPress(this.onKeyPress);
     GPU.window().events.removeKeyRepeat(this.onKeyRepeat);
+    GPU.window().events.removeCharPress(this.onCharPress);
     GPU.window().events.removePressedThisFrame(this.onPressedThisFrame);
     GPU.window().events.removeReleasedThisFrame(this.onReleasedThisFrame);
     GPU.window().events.removePressedWithRepeatPulse(this.onPressedWithRepeatPulse);
@@ -157,7 +192,18 @@ public class MenuStack {
   }
 
   private void mouseScroll(final Window window, final double deltaX, final double deltaY) {
-    this.input(screen -> screen.mouseScroll(deltaX, deltaY));
+    if(this.scrollAccumulatorX < 0 && deltaX > 0 || this.scrollAccumulatorX > 0 && deltaX < 0) {
+      this.scrollAccumulatorX = 0;
+    }
+
+    if(this.scrollAccumulatorY < 0 && deltaY > 0 || this.scrollAccumulatorY > 0 && deltaY < 0) {
+      this.scrollAccumulatorY = 0;
+    }
+
+    this.scrollAccumulatorX += deltaX;
+    this.scrollAccumulatorY += deltaY;
+
+    this.input(screen -> screen.mouseScrollHighRes(deltaX, deltaY));
   }
 
   private void keyPress(final Window window, final int key, final int scancode, final int mods) {
@@ -166,6 +212,10 @@ public class MenuStack {
 
   private void pressedThisFrame(final Window window, final InputAction inputAction) {
     this.input(screen -> screen.pressedThisFrame(inputAction));
+  }
+
+  private void charPress(final Window window, final int codepoint) {
+    this.input(screen -> screen.charPress(codepoint));
   }
 
   private void pressedWithRepeatPulse(final Window window, final InputAction inputAction) {

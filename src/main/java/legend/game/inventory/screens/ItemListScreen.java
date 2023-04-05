@@ -1,7 +1,7 @@
 package legend.game.inventory.screens;
 
 import it.unimi.dsi.fastutil.ints.IntList;
-import legend.game.BaseMod;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.input.InputAction;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.Glyph;
@@ -39,7 +39,7 @@ public class ItemListScreen extends MenuScreen {
 
     this.itemList.setPos(8, 15);
     this.itemList.setTitle("Items");
-    this.itemList.setMax(gameState_800babc8.getConfig(BaseMod.INVENTORY_SIZE_CONFIG));
+    this.itemList.setMax(gameState_800babc8.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get()));
 
     this.equipmentList.setPos(188, 15);
     this.equipmentList.setTitle("Equipment");
@@ -59,7 +59,7 @@ public class ItemListScreen extends MenuScreen {
 
       return InputPropagation.PROPAGATE;
     });
-    this.itemList.onHighlight(item -> this.description.setText(itemDescriptions_80117a10.get(item.itemId_00).deref()));
+    this.itemList.onHighlight(item -> this.description.setText(itemDescriptions_80117a10.get(item.itemId_00).deref().get()));
 
     this.equipmentList.onHoverIn(() -> this.setFocus(this.equipmentList));
     this.equipmentList.onGotFocus(() -> {

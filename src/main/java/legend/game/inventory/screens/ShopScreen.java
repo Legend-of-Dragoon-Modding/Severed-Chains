@@ -2,7 +2,7 @@ package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
 import legend.core.memory.Memory;
-import legend.game.BaseMod;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.events.EventManager;
@@ -53,7 +53,6 @@ import static legend.game.SItem.renderThreeDigitNumberComparison;
 import static legend.game.SItem.renderTwoDigitNumber;
 import static legend.game.SMap.FUN_800e3fac;
 import static legend.game.SMap.shops_800f4930;
-import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment_8002.addGold;
@@ -72,7 +71,6 @@ import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
 import static legend.game.Scus94491BpeSegment_8007.shopId_8007a3b4;
 import static legend.game.Scus94491BpeSegment_800b._800bb168;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
-import static legend.game.Scus94491BpeSegment_800b.gameOverMcq_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
@@ -282,7 +280,7 @@ public class ShopScreen extends MenuScreen {
       case UNLOAD_19 -> {
         scriptStartEffect(2, 10);
         deallocateRenderables(0xff);
-        free(gameOverMcq_800bdc3c.getPointer());
+
         if(mainCallbackIndex_8004dd20.get() == 5 && loadingGameStateOverlay_8004dd08.get() == 0) {
           FUN_800e3fac();
         }
@@ -330,7 +328,7 @@ public class ShopScreen extends MenuScreen {
     if(isItemMenu != 0) {
       renderTwoDigitNumber(105, 36, gameState_800babc8.items_2e9.size(), 0x2);
       allocateOneFrameGlyph(94, 16, 16);
-      renderTwoDigitNumber(123, 36, gameState_800babc8.getConfig(BaseMod.INVENTORY_SIZE_CONFIG), 0x2);
+      renderTwoDigitNumber(123, 36, gameState_800babc8.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get()), 0x2);
     } else {
       renderThreeDigitNumber(93, 36, gameState_800babc8.equipment_1e8.size(), 0x2);
       allocateOneFrameGlyph(95, 16, 16);
@@ -599,7 +597,7 @@ public class ShopScreen extends MenuScreen {
             if(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00 < 0xc0) {
               hasSpace = gameState_800babc8.equipment_1e8.size() < 255;
             } else {
-              hasSpace = gameState_800babc8.items_2e9.size() < gameState_800babc8.getConfig(BaseMod.INVENTORY_SIZE_CONFIG);
+              hasSpace = gameState_800babc8.items_2e9.size() < gameState_800babc8.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get());
             }
 
             if(!hasSpace) {
@@ -773,8 +771,8 @@ public class ShopScreen extends MenuScreen {
   }
 
   @Override
-  protected InputPropagation mouseScroll(final double deltaX, final double deltaY) {
-    if(super.mouseScroll(deltaX, deltaY) == InputPropagation.HANDLED) {
+  protected InputPropagation mouseScrollHighRes(final double deltaX, final double deltaY) {
+    if(super.mouseScrollHighRes(deltaX, deltaY) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
     }
 
@@ -839,7 +837,7 @@ public class ShopScreen extends MenuScreen {
       if(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00 < 0xc0) {
         hasSpace = gameState_800babc8.equipment_1e8.size() < 255;
       } else {
-        hasSpace = gameState_800babc8.items_2e9.size() < gameState_800babc8.getConfig(BaseMod.INVENTORY_SIZE_CONFIG);
+        hasSpace = gameState_800babc8.items_2e9.size() < gameState_800babc8.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get());
       }
 
       if(!hasSpace) {

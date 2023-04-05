@@ -52,14 +52,10 @@ public abstract class CombatantStruct1a8_c {
 
   /** Type 6 */
   public static class TimType extends CombatantStruct1a8_c {
-    public final int x_00;
-    public final int y_02;
-    public final int h_03;
+    public final FileData data;
 
-    public TimType(final int x, final int y, final int h) {
-      this.x_00 = x;
-      this.y_02 = y;
-      this.h_03 = h;
+    public TimType(final FileData data) {
+      this.data = data;
     }
   }
 }

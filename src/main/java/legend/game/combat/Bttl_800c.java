@@ -129,7 +129,6 @@ import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.MoveImage;
 import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
-import static legend.game.Scus94491BpeSegment_8003.StoreImage;
 import static legend.game.Scus94491BpeSegment_8003.TransMatrix;
 import static legend.game.Scus94491BpeSegment_8003.getProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
@@ -280,7 +279,7 @@ public final class Bttl_800c {
   public static ScriptState<BattleObject27c> scriptState_800c6914;
   public static final IntRef _800c6918 = MEMORY.ref(4, 0x800c6918L, IntRef::new);
 
-  public static final Value _800c6928 = MEMORY.ref(4, 0x800c6928L);
+  public static final Value lightTicks_800c6928 = MEMORY.ref(4, 0x800c6928L);
   public static BttlLightStruct84[] lights_800c692c;
   public static BattleLightStruct64 _800c6930;
 
@@ -314,15 +313,17 @@ public final class Bttl_800c {
   public static final Value _800c6b78 = MEMORY.ref(4, 0x800c6b78L);
 
   public static final Value _800c6b9c = MEMORY.ref(4, 0x800c6b9cL);
-  public static final Value _800c6ba0 = MEMORY.ref(1, 0x800c6ba0L);
+  public static final Value cameraPositionIndicesIndex_800c6ba0 = MEMORY.ref(1, 0x800c6ba0L);
   public static final Value _800c6ba1 = MEMORY.ref(1, 0x800c6ba1L);
 
   /** Uhh, contains the monsters that Melbu summons during his fight...? */
   public static final ArrayRef<LodString> _800c6ba8 = MEMORY.ref(2, 0x800c6ba8L, ArrayRef.of(LodString.class, 3, 0x2c, LodString::new));
 
-  /** One per character slot */
+  /**
+   * One per character slot
+   */
   public static final Pointer<ArrayRef<BattleDisplayStats144>> displayStats_800c6c2c = MEMORY.ref(4, 0x800c6c2cL, Pointer.deferred(4, ArrayRef.of(BattleDisplayStats144.class, 3, 0x144, BattleDisplayStats144::new)));
-  public static final Value _800c6c30 = MEMORY.ref(1, 0x800c6c30L);
+  public static final ArrayRef<UnsignedByteRef> cameraPositionIndices_800c6c30 = MEMORY.ref(4, 0x800c6c30L, ArrayRef.of(UnsignedByteRef.class, 4, 1, UnsignedByteRef::new));
 
   public static final Pointer<BattleMenuStruct58> battleMenu_800c6c34 = MEMORY.ref(4, 0x800c6c34L, Pointer.deferred(4, BattleMenuStruct58::new));
   public static final Value _800c6c38 = MEMORY.ref(4, 0x800c6c38L);
@@ -435,8 +436,6 @@ public final class Bttl_800c {
   public static final ArrayRef<UnsignedShortRef> protectedItems_800c72cc = MEMORY.ref(2, 0x800c72ccL, ArrayRef.of(UnsignedShortRef.class, 10, 2, UnsignedShortRef::new));
 
   public static final Value _800d66b0 = MEMORY.ref(1, 0x800d66b0L);
-
-  public static final Value _800d6c30 = MEMORY.ref(1, 0x800d6c30L);
 
   public static final ArrayRef<SpellStats0c> spellStats_800fa0b8 = MEMORY.ref(1, 0x800fa0b8L, ArrayRef.of(SpellStats0c.class, 128, 0xc, SpellStats0c::new));
   public static final Value _800fa6b8 = MEMORY.ref(2, 0x800fa6b8L);
@@ -1188,7 +1187,7 @@ public final class Bttl_800c {
       if(s0 == 1) {
         //LAB_800c8180
         for(int i = 0; i < charCount_800c677c.get(); i++) {
-          _8006e398.charBobjIndices_e40[_800c6690.get()].storage_44[7] |= 0x8;
+          _8006e398.charBobjIndices_e40[i].storage_44[7] |= 0x8;
         }
       }
     }
@@ -1793,8 +1792,6 @@ public final class Bttl_800c {
     if(combatant.mrg_04 == null) {
       //LAB_800c9910
       if(!isMonster && files.size() == 64) {
-        _8006e398.y_d80[charSlot] = 0;
-
         //LAB_800c9940
         for(int animIndex = 0; animIndex < 32; animIndex++) {
           if(files.get(32 + animIndex).real()) {
@@ -1889,13 +1886,7 @@ public final class Bttl_800c {
       s3 = index;
     } else if(type == 6) {
       //LAB_800c9bcc
-      final int size = (data.size() + 0x7f) / 0x80;
-      final RECT sp0x10 = new RECT((short)(512 + a3 * 64), (short)_8006e398.y_d80[a3], (short)64, (short)size);
-      LoadImage(sp0x10, data);
-
-      _8006e398.y_d80[a3] += size;
-
-      final CombatantStruct1a8_c.TimType tim = new CombatantStruct1a8_c.TimType(sp0x10.x.get(), sp0x10.y.get(), sp0x10.h.get());
+      final CombatantStruct1a8_c.TimType tim = new CombatantStruct1a8_c.TimType(data);
       tim._08 = -1;
       tim.type_0a = 6;
       tim.isLoaded_0b = 0;
@@ -1981,10 +1972,7 @@ public final class Bttl_800c {
 
     if(s0 instanceof final CombatantStruct1a8_c.TimType timType) {
       if(timType.isLoaded_0b == 0) {
-        final int s1 = FUN_800cab58(timType.h_03 * 0x80, 3, 0, 0);
-        final RECT sp0x20 = new RECT((short)timType.x_00, (short)timType.y_02, (short)64, (short)timType.h_03);
-        StoreImage(sp0x20, FUN_800cad34(s1));
-        s0.BttlStruct08_index_04 = s1;
+        s0.BttlStruct08_index_04 = FUN_800caae4(timType.data, 3, 0, 0);
         s0.isLoaded_0b = 1;
       }
 
@@ -2117,10 +2105,6 @@ public final class Bttl_800c {
   @Method(0x800ca418L)
   public static void FUN_800ca418(final int index) {
     final CombatantStruct1a8 combatant = combatants_8005e398[index];
-
-    if((combatant.flags_19e & 0x4) != 0) {
-      _8006e398.y_d80[combatant.charSlot_19c] = 0;
-    }
 
     //LAB_800ca488
     //LAB_800ca494
@@ -2339,11 +2323,6 @@ public final class Bttl_800c {
 
     //LAB_800cab3c
     return index;
-  }
-
-  @Method(0x800cab58L)
-  public static int FUN_800cab58(final int size, final int a1, final int a2, final int a3) {
-    return FUN_800caae4(new FileData(new byte[size]), a1, a2, a3);
   }
 
   @Method(0x800cac38L)

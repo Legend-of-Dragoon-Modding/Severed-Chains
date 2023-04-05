@@ -9,13 +9,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-public class ControlHost implements Iterable<Control> {
+public abstract class ControlHost implements Iterable<Control> {
   private final List<Control> controls = new ArrayList<>();
 
   protected int mouseX;
   protected int mouseY;
 
+  protected abstract MenuScreen getScreen();
+
   public <T extends Control> T addControl(final T control) {
+    control.setScreen(this.getScreen());
     this.controls.add(control);
     this.controls.sort(Comparator.comparingInt(Control::getZ));
     return control;
@@ -82,7 +85,7 @@ public class ControlHost implements Iterable<Control> {
     return InputPropagation.PROPAGATE;
   }
 
-  protected InputPropagation mouseScroll(final double deltaX, final double deltaY) {
+  protected InputPropagation mouseScroll(final int deltaX, final int deltaY) {
     final Control control = this.findControlAt(this.mouseX, this.mouseY);
 
     if(control != null) {
@@ -92,7 +95,21 @@ public class ControlHost implements Iterable<Control> {
     return InputPropagation.PROPAGATE;
   }
 
+  protected InputPropagation mouseScrollHighRes(final double deltaX, final double deltaY) {
+    final Control control = this.findControlAt(this.mouseX, this.mouseY);
+
+    if(control != null) {
+      return control.mouseScrollHighRes(deltaX, deltaY);
+    }
+
+    return InputPropagation.PROPAGATE;
+  }
+
   protected InputPropagation keyPress(final int key, final int scancode, final int mods) {
+    return InputPropagation.PROPAGATE;
+  }
+
+  protected InputPropagation charPress(final int codepoint) {
     return InputPropagation.PROPAGATE;
   }
 

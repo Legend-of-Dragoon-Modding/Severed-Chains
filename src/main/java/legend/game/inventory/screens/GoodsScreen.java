@@ -6,14 +6,12 @@ import legend.game.inventory.screens.controls.Glyph;
 import legend.game.inventory.screens.controls.ItemList;
 import legend.game.inventory.screens.controls.Label;
 import legend.game.inventory.screens.controls.ListBox;
-import legend.game.types.LodString;
 import legend.game.types.MenuItemStruct04;
 
 import java.util.function.Function;
 
 import static legend.core.IoHelper.getPackedFlag;
 import static legend.game.SItem._8011b75c;
-import static legend.game.SItem._8011c254;
 import static legend.game.SItem.goodsItemNames_8011c008;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
@@ -33,8 +31,8 @@ public class GoodsScreen extends MenuScreen {
 
     this.unload = unload;
 
-    final Function<MenuItemStruct04, LodString> getItemName = item -> goodsItemNames_8011c008.get(item.itemId_00).deref();
-    final ListBox.Highlight<MenuItemStruct04> description = item -> this.description.setText(item.itemId_00 >= 0xff ? _8011c254 : _8011b75c.get(item.itemId_00).deref());
+    final Function<MenuItemStruct04, String> getItemName = item -> goodsItemNames_8011c008.get(item.itemId_00).deref().get();
+    final ListBox.Highlight<MenuItemStruct04> description = item -> this.description.setText(item.itemId_00 >= 0xff ? "" : _8011b75c.get(item.itemId_00).deref().get());
 
     this.leftList = new ItemList(getItemName, null);
     this.leftList.setPos(8, 15);

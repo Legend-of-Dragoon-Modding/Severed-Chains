@@ -17,4 +17,6 @@ public class MessageBox20 {
 
   public LodString yes;
   public LodString no;
+
+  public boolean ignoreInput;
 }

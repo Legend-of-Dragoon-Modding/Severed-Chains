@@ -22,6 +22,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Deque;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -32,6 +33,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static legend.game.Scus94491BpeSegment.getCharacterName;
@@ -40,6 +42,9 @@ public final class Unpacker {
   private Unpacker() { }
 
   private static final Pattern ROOT_MRG = Pattern.compile("^SECT/DRGN0\\.BIN/\\d{4}/\\d+$");
+
+  /** Update this any time we make a breaking change */
+  private static final int VERSION = 1;
 
   static {
     System.setProperty("log4j.skipJansi", "false");
@@ -66,7 +71,13 @@ public final class Unpacker {
     transformers.put(Unpacker::deffDiscriminator, Unpacker::undeff);
     transformers.put(Unpacker::drgn21_402_3_patcherDiscriminator, Unpacker::drgn21_402_3_patcher);
     transformers.put(Unpacker::drgn21_693_0_patcherDiscriminator, Unpacker::drgn21_693_0_patcher);
-    transformers.put(Unpacker::drgn0_142_patcherDiscriminator, Unpacker::drgn0_142_patcher);
+    transformers.put(Unpacker::drgn0_142_animPatcherDiscriminator, Unpacker::drgn0_142_animPatcher);
+
+    // Yes there are 3 different magma fish files to patch
+    transformers.put(Unpacker::drgn0_3667_16_animPatcherDiscriminator, Unpacker::drgn0_3667_16_animPatcher);
+    transformers.put(Unpacker::drgn0_3667_17_animPatcherDiscriminator, Unpacker::drgn0_3667_17_animPatcher);
+    transformers.put(Unpacker::drgn0_3750_16_animPatcherDiscriminator, Unpacker::drgn0_3750_16_animPatcher);
+
     transformers.put(Unpacker::drgn1_343_patcherDiscriminator, Unpacker::drgn1_343_patcher);
     transformers.put(Unpacker::playerCombatSoundEffectsDiscriminator, Unpacker::playerCombatSoundEffectsTransformer);
     transformers.put(Unpacker::playerCombatModelsAndTexturesDiscriminator, Unpacker::playerCombatModelsAndTexturesTransformer);
@@ -232,6 +243,36 @@ public final class Unpacker {
   public static void unpack() throws UnpackerException {
     synchronized(IO_LOCK) {
       try {
+        if(getUnpackVersion() != VERSION) {
+          final long start = System.nanoTime();
+
+          statusListener.accept("Deleting old unpacked files...");
+          final Path gitIgnore = ROOT.resolve(".gitignore");
+
+          try(final Stream<Path> files = Files.walk(ROOT)) {
+            files
+              .sorted(Comparator.reverseOrder())
+              .filter(path -> {
+                try {
+                  return !Files.isSameFile(path, gitIgnore);
+                } catch(final IOException ignored) {
+                  return true;
+                }
+              })
+              .forEach(path -> {
+                try {
+                  if(!Files.isSameFile(path, ROOT)) {
+                    Files.delete(path);
+                  }
+                } catch(final IOException e) {
+                  throw new UnpackerException("Failed to delete old unpacked files", e);
+                }
+              });
+          }
+
+          LOGGER.info("Files deleted in %d seconds", (System.nanoTime() - start) / 1_000_000_000L);
+        }
+
         final long start = System.nanoTime();
 
         final DirectoryEntry[] roots = new DirectoryEntry[4];
@@ -255,10 +296,28 @@ public final class Unpacker {
           .map(e -> transform(e.a(), e.b(), EnumSet.noneOf(Flags.class)))
           .forEach(Unpacker::writeFiles);
 
+        Files.writeString(ROOT.resolve("version"), Integer.toString(VERSION));
+
         LOGGER.info("Files unpacked in %d seconds", (System.nanoTime() - start) / 1_000_000_000L);
       } catch(final Throwable e) {
         throw new UnpackerException(e);
       }
+    }
+  }
+
+  private static int getUnpackVersion() throws IOException {
+    final Path versionFile = ROOT.resolve("version");
+
+    if(!Files.isRegularFile(versionFile)) {
+      return 0;
+    }
+
+    final String versionString = Files.readString(versionFile).strip();
+
+    try {
+      return Integer.parseInt(versionString);
+    } catch(final NumberFormatException e) {
+      return 0;
     }
   }
 
@@ -494,12 +553,12 @@ public final class Unpacker {
    * look closely at the top of her leg, you can see it. This injects extra
    * animation data for those missing objects made by DooMMetaL.
    */
-  private static boolean drgn0_142_patcherDiscriminator(final String name, final FileData data, final Set<Flags> flags) {
+  private static boolean drgn0_142_animPatcherDiscriminator(final String name, final FileData data, final Set<Flags> flags) {
     return "SECT/DRGN0.BIN/142".equals(name) && data.size() == 0x1f0;
   }
 
-  private static Map<String, FileData> drgn0_142_patcher(final String name, final FileData data, final Set<Flags> flags) {
-    final byte[] newData = new byte[data.size() + 0xc * 2 * 2]; // 2 objects, 2 frames, 0xc table pitch
+  private static Map<String, FileData> drgn0_142_animPatcher(final String name, final FileData data, final Set<Flags> flags) {
+    final byte[] newData = new byte[data.size() + 0xc * 2 * 2]; // 2 objects, 2 keyframes, 0xc table pitch
     final byte[] frame = {0x0e, (byte)0xe0, (byte)0xfe, (byte)0xde, (byte)0xff, (byte)0x9d, 0x1d, 0x00, 0x28, 0x03, (byte)0xcb, 0x00};
     // Note: we only create data for object 21, object 22 can be all 0's since it's not visible
 
@@ -510,6 +569,59 @@ public final class Unpacker {
     newData[0xc] = 22;
 
     return Map.of(name, new FileData(newData));
+  }
+
+  /**
+   * The lava fish animation where it swims around the player is missing the last object
+   */
+  private static boolean drgn0_3667_16_animPatcherDiscriminator(final String name, final FileData data, final Set<Flags> flags) {
+    return "SECT/DRGN0.BIN/3667/16".equals(name) && data.size() == 0x538;
+  }
+
+  private static Map<String, FileData> drgn0_3667_16_animPatcher(final String name, final FileData data, final Set<Flags> flags) {
+    return Map.of(name, new FileData(patchAnimation(data, 11)));
+  }
+
+  /**
+   * The lava fish animation where it swims around the player is missing the last object
+   */
+  private static boolean drgn0_3667_17_animPatcherDiscriminator(final String name, final FileData data, final Set<Flags> flags) {
+    return "SECT/DRGN0.BIN/3667/17".equals(name) && data.size() == 0x178;
+  }
+
+  private static Map<String, FileData> drgn0_3667_17_animPatcher(final String name, final FileData data, final Set<Flags> flags) {
+    return Map.of(name, new FileData(patchAnimation(data, 11)));
+  }
+
+  /**
+   * The lava fish animation where it swims around the player is missing the last object
+   */
+  private static boolean drgn0_3750_16_animPatcherDiscriminator(final String name, final FileData data, final Set<Flags> flags) {
+    return "SECT/DRGN0.BIN/3750/16".equals(name) && data.size() == 0x538;
+  }
+
+  private static Map<String, FileData> drgn0_3750_16_animPatcher(final String name, final FileData data, final Set<Flags> flags) {
+    return Map.of(name, new FileData(patchAnimation(data, 11)));
+  }
+
+  /**
+   * @param expectedObjects Expected number of objects
+   */
+  private static byte[] patchAnimation(final FileData data, final int expectedObjects) {
+    final int actualObjects = data.readUShort(0xc);
+    final int keyframes = data.readUShort(0xe) / 2;
+
+    final byte[] newData = new byte[data.size() + 0xc * keyframes * (expectedObjects - actualObjects)];
+
+    data.copyFrom(0, newData, 0, 0x10);
+
+    for(int i = 0; i < keyframes; i++) {
+      // This will fill the new objects with the first objects from the next keyframe to emulate retail behaviour. The last keyframe is an exception - it gets zero-filled.
+      data.copyFrom(0x10 + i * 0xc * actualObjects, newData, 0x10 + i * 0xc * expectedObjects, Math.min(0xc * expectedObjects, data.size() - (0x10 + i * 0xc * actualObjects)));
+    }
+
+    newData[0xc] = (byte)expectedObjects;
+    return newData;
   }
 
   /**
@@ -686,7 +798,7 @@ public final class Unpacker {
   }
 
   private static void writeFile(final String name, final FileData data) {
-    if(!data.real()) {
+    if(data.realFileIndex() != -1) {
       return;
     }
 

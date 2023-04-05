@@ -1,16 +1,27 @@
 package legend.game.inventory.screens;
 
 public enum TextColour {
-  WHITE,
-  GREEN,
-  LIME,
-  CYAN,
-  BROWN,
-  RED,
-  MIDDLE_BROWN,
-  LIGHT_BROWN,
-  YELLOW,
-  BLACK,
-  GREY,
-  PURPLE,
+  WHITE(0x7b, 0x7b, 0x7b),
+  GREEN(0x0c, 0x3c, 0x00),
+  LIME(0x2c, 0x5c, 0x00),
+  CYAN(0x38, 0x7c, 0x7c),
+  BROWN(0x2c, 0x20, 0x18),
+  RED(0x6c, 0x20, 0x10),
+  MIDDLE_BROWN(0x48, 0x34, 0x20),
+  LIGHT_BROWN(0x50, 0x40, 0x28),
+  YELLOW(0x7c, 0x7c, 0x00),
+  BLACK(0x04, 0x04, 0x04),
+  GREY(0x3c, 0x3c, 0x3c),
+  PURPLE(0x30, 0x00, 0x7c),
+  ;
+
+  public final int r;
+  public final int g;
+  public final int b;
+
+  TextColour(final int r, final int g, final int b) {
+    this.r = r;
+    this.g = g;
+    this.b = b;
+  }
 }

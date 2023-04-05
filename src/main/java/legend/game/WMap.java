@@ -1,6 +1,6 @@
 package legend.game;
 
-import legend.core.Config;
+import legend.game.modding.coremod.CoreMod;
 import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
@@ -32,6 +32,7 @@ import legend.game.input.Input;
 import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.TextColour;
+import legend.game.submap.EncounterRateMode;
 import legend.game.tim.Tim;
 import legend.game.tmd.Renderer;
 import legend.game.types.CContainer;
@@ -142,7 +143,6 @@ import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800babc0;
 import static legend.game.Scus94491BpeSegment_800b._800bb104;
-import static legend.game.Scus94491BpeSegment_800b._800bdc34;
 import static legend.game.Scus94491BpeSegment_800b._800bee90;
 import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.continentIndex_800bf0b0;
@@ -150,6 +150,7 @@ import static legend.game.Scus94491BpeSegment_800b.doubleBufferFrame_800bb108;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
+import static legend.game.Scus94491BpeSegment_800b.savedGameSelected_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.texPages_800bb110;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static legend.game.Scus94491BpeSegment_800b.textboxes_800be358;
@@ -549,7 +550,7 @@ public class WMap {
     loadAndRenderMenus();
 
     if(whichMenu_800bdc38 == WhichMenu.NONE_0) {
-      if(_800bdc34.get() != 0) {
+      if(savedGameSelected_800bdc34.get()) {
         final WMapStruct258 struct258 = struct258_800c66a8;
 
         //LAB_800cc7d0
@@ -4754,16 +4755,18 @@ public class WMap {
     struct.currentAnimIndex_ac = struct.animIndex_b0;
 
     if(struct.vec_84.getX() != struct.vec_94.getX() || struct.vec_84.getY() != struct.vec_94.getY() || struct.vec_84.getZ() != struct.vec_94.getZ()) {
+      final EncounterRateMode mode = gameState_800babc8.getConfig(CoreMod.ENCOUNTER_RATE_CONFIG.get());
+
       //LAB_800e117c
       //LAB_800e11b0
       if(Input.getButtonState(InputAction.BUTTON_EAST)) { // World Map Running
         //LAB_800e11d0
         struct.animIndex_b0 = 4;
-        handleEncounters(2);
+        handleEncounters(mode.worldMapRunModifier);
       } else {
         //LAB_800e11f4
         struct.animIndex_b0 = 3;
-        handleEncounters(1);
+        handleEncounters(mode.worldMapWalkModifier);
       }
 
       //LAB_800e1210
@@ -5131,7 +5134,7 @@ public class WMap {
   }
 
   @Method(0x800e367cL)
-  public static void handleEncounters(final int encounterRateMultiplier) {
+  public static void handleEncounters(final float encounterRateMultiplier) {
     //LAB_800e36a8
     if(worldMapState_800c6698.get() != 0x5L) {
       return;
@@ -5166,9 +5169,7 @@ public class WMap {
     //LAB_800e3780
     //LAB_800e3794
     final WMapAreaData08 area = areaData_800f2248.get(areaIndex_800c67aa.get());
-    if(!Config.autoCharmPotion()) {
-      encounterAccumulator_800c6ae8.add(area.encounterRate_03.get() * encounterRateMultiplier * 70);
-    }
+    encounterAccumulator_800c6ae8.add(Math.round(area.encounterRate_03.get() * encounterRateMultiplier * 70));
 
     if(encounterAccumulator_800c6ae8.get() >= 5120) {
       encounterAccumulator_800c6ae8.set(0);
@@ -6286,12 +6287,12 @@ public class WMap {
   }
 
   @Method(0x800e774cL)
-  public static void FUN_800e774c(final LodString text, final int x, final int y, final TextColour colour, final long a4) {
+  public static void FUN_800e774c(final LodString text, final int x, final int y, final TextColour colour, final int trim) {
     final IntRef width = new IntRef();
     final IntRef lines = new IntRef();
     measureText(text, width, lines);
-    renderText(text, x - width.get() + 3, y, colour, (short)a4);
-    renderText(text, x - (width.get() - 1) + 3, y + 1, TextColour.BLACK, (short)a4);
+    renderText(text, x - width.get() + 3, y, colour, trim);
+    renderText(text, x - (width.get() - 1) + 3, y + 1, TextColour.BLACK, trim);
   }
 
   @Method(0x800e7854L)
@@ -6413,7 +6414,7 @@ public class WMap {
 
     //LAB_800e7e5c
     //LAB_800e7e88
-    if(sp2c == 0 && _800bdc34.get() == 0 || _80052c6c.get() != 0) {
+    if(sp2c == 0 && !savedGameSelected_800bdc34.get() || _80052c6c.get() != 0) {
       //LAB_800e844c
       _800c686c.setu(0x1L);
       _800c6868.setu(0x1L);
@@ -6490,7 +6491,7 @@ public class WMap {
 
       _800c6890.setu(0);
       _800c6894.setu(0);
-      _800bdc34.setu(0);
+      savedGameSelected_800bdc34.set(false);
     }
 
     //LAB_800e8464

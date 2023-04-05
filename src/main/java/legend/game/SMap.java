@@ -1,5 +1,6 @@
 package legend.game;
 
+import legend.game.modding.coremod.CoreMod;
 import legend.core.Config;
 import legend.core.IoHelper;
 import legend.core.MathHelper;
@@ -44,6 +45,8 @@ import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptState;
 import legend.game.scripting.ScriptStorageParam;
+import legend.game.submap.EncounterRateMode;
+import legend.game.submap.IndicatorMode;
 import legend.game.submap.SubmapAssets;
 import legend.game.submap.SubmapObject;
 import legend.game.tim.Tim;
@@ -215,7 +218,7 @@ import static legend.game.Scus94491BpeSegment_800b._800bd7b0;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b4;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b8;
 import static legend.game.Scus94491BpeSegment_800b._800bda08;
-import static legend.game.Scus94491BpeSegment_800b._800bdc34;
+import static legend.game.Scus94491BpeSegment_800b.savedGameSelected_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b._800bee90;
 import static legend.game.Scus94491BpeSegment_800b._800bee94;
 import static legend.game.Scus94491BpeSegment_800b._800bee98;
@@ -312,7 +315,7 @@ public final class SMap {
   public static final VECTOR cameraPos_800c6aa0 = MEMORY.ref(4, 0x800c6aa0L, VECTOR::new);
   public static final Value _800c6aac = MEMORY.ref(2, 0x800c6aacL);
   public static final VECTOR prevPlayerPos_800c6ab0 = MEMORY.ref(4, 0x800c6ab0L, VECTOR::new);
-  public static final IntRef encounterMultiplier_800c6abc = MEMORY.ref(4, 0x800c6abcL, IntRef::new); // Overlaps previous vector padding
+  public static float encounterMultiplier_800c6abc;
   public static final MATRIX matrix_800c6ac0 = MEMORY.ref(4, 0x800c6ac0L, MATRIX::new);
   public static final Value _800c6ae0 = MEMORY.ref(4, 0x800c6ae0L);
   public static final Value _800c6ae4 = MEMORY.ref(4, 0x800c6ae4L);
@@ -615,7 +618,7 @@ public final class SMap {
 
   public static final Value _800f9e7c = MEMORY.ref(4, 0x800f9e7cL);
 
-  public static final Value _800f9e9c = MEMORY.ref(4, 0x800f9e9cL);
+  public static final IntRef momentaryIndicatorTicks_800f9e9c = MEMORY.ref(4, 0x800f9e9cL, IntRef::new);
 
   public static final Value _800f9ea0 = MEMORY.ref(2, 0x800f9ea0L);
 
@@ -3797,13 +3800,15 @@ public final class SMap {
     final boolean moved = prevPlayerPos_800c6ab0.getX() != mat.transfer.getX() || prevPlayerPos_800c6ab0.getY() != mat.transfer.getY() || prevPlayerPos_800c6ab0.getZ() != mat.transfer.getZ();
 
     //LAB_800e4a4c
-    final long dist = (prevPlayerPos_800c6ab0.getX() - mat.transfer.getX() ^ 0x2L) + (prevPlayerPos_800c6ab0.getZ() - mat.transfer.getZ() ^ 0x2L);
+    final EncounterRateMode mode = gameState_800babc8.getConfig(CoreMod.ENCOUNTER_RATE_CONFIG.get());
 
-    if((int)dist < 0x9L) {
+    final int dist = mode.modifyDistance((prevPlayerPos_800c6ab0.getX() - mat.transfer.getX() ^ 2) + (prevPlayerPos_800c6ab0.getZ() - mat.transfer.getZ() ^ 2));
+
+    if(dist < 9) {
       //LAB_800e4a98
-      encounterMultiplier_800c6abc.set(1);
+      encounterMultiplier_800c6abc = mode.walkModifier;
     } else {
-      encounterMultiplier_800c6abc.set(4);
+      encounterMultiplier_800c6abc = mode.runModifier;
     }
 
     //LAB_800e4aa0
@@ -3852,9 +3857,7 @@ public final class SMap {
       return 0;
     }
 
-    if (!Config.autoCharmPotion()) {
-      encounterAccumulator_800c6ae8.add(encounterData_800f64c4.get(submapCut_80052c30.get()).rate_02.get() * encounterMultiplier_800c6abc.get());
-    }
+    encounterAccumulator_800c6ae8.add(Math.round(encounterData_800f64c4.get(submapCut_80052c30.get()).rate_02.get() * encounterMultiplier_800c6abc));
 
     if(encounterAccumulator_800c6ae8.get() > 0x1400) {
       // Start combat
@@ -4413,7 +4416,7 @@ public final class SMap {
 
           //LAB_800e5e94
           FUN_800e770c();
-          _800bdc34.setu(0);
+          savedGameSelected_800bdc34.set(false);
           _80052c44.setu(0);
           scriptStartEffect(2, 10);
           _800cab24.set(FUN_800ea974(_800caaf4.get()));
@@ -4497,7 +4500,7 @@ public final class SMap {
         SCRIPTS.resume();
         _800f7e4c.setu(0);
         smapLoadingStage_800cb430.setu(0xcL);
-        if(_800bdc34.get() != 0) {
+        if(savedGameSelected_800bdc34.get()) {
           FUN_800e5534(submapCut_80052c30.get(), submapScene_80052c34.get());
         }
       }
@@ -5603,7 +5606,7 @@ public final class SMap {
 
         //LAB_800e8a38
         for(int t0 = 0; t0 < struct2.count_00.get(); t0++) {
-          vec.add(struct.verts_04[IoHelper.readUShort(packet, remainder + 2 + i * 2)]);
+          vec.add(struct.verts_04[IoHelper.readUShort(packet, remainder + 2 + t0 * 2)]);
         }
 
         //LAB_800e8a9c
@@ -9337,43 +9340,43 @@ public final class SMap {
       return;
     }
 
-    final int indicatorMode = gameState_800babc8.indicatorMode_4e8;
-    if(indicatorMode != 1) {
-      _800f9e9c.setu(0);
+    final IndicatorMode indicatorMode = gameState_800babc8.getConfig(CoreMod.INDICATOR_MODE_CONFIG.get());
+    if(indicatorMode != IndicatorMode.MOMENTARY) {
+      momentaryIndicatorTicks_800f9e9c.set(0);
     }
 
     //LAB_800f321c
     if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_RIGHT_1)) { // R1
-      if(indicatorMode == 0) {
-        gameState_800babc8.indicatorMode_4e8 = 1;
+      if(indicatorMode == IndicatorMode.OFF) {
+        gameState_800babc8.setConfig(CoreMod.INDICATOR_MODE_CONFIG.get(), IndicatorMode.MOMENTARY);
         //LAB_800f3244
-      } else if(indicatorMode == 1) {
-        gameState_800babc8.indicatorMode_4e8 = 2;
-      } else if(indicatorMode == 2) {
-        gameState_800babc8.indicatorMode_4e8 = 0;
-        _800f9e9c.setu(0);
+      } else if(indicatorMode == IndicatorMode.MOMENTARY) {
+        gameState_800babc8.setConfig(CoreMod.INDICATOR_MODE_CONFIG.get(), IndicatorMode.ON);
+      } else if(indicatorMode == IndicatorMode.ON) {
+        gameState_800babc8.setConfig(CoreMod.INDICATOR_MODE_CONFIG.get(), IndicatorMode.OFF);
+        momentaryIndicatorTicks_800f9e9c.set(0);
       }
       //LAB_800f3260
     } else if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_LEFT_1)) { // L1
-      if(indicatorMode == 0) {
+      if(indicatorMode == IndicatorMode.OFF) {
         //LAB_800f3274
-        gameState_800babc8.indicatorMode_4e8 = 2;
+        gameState_800babc8.setConfig(CoreMod.INDICATOR_MODE_CONFIG.get(), IndicatorMode.ON);
         //LAB_800f3280
-      } else if(indicatorMode == 1) {
-        gameState_800babc8.indicatorMode_4e8 = 0;
-        _800f9e9c.setu(0);
+      } else if(indicatorMode == IndicatorMode.MOMENTARY) {
+        gameState_800babc8.setConfig(CoreMod.INDICATOR_MODE_CONFIG.get(), IndicatorMode.OFF);
+        momentaryIndicatorTicks_800f9e9c.set(0);
         //LAB_800f3294
-      } else if(indicatorMode == 2) {
-        gameState_800babc8.indicatorMode_4e8 = 1;
+      } else if(indicatorMode == IndicatorMode.ON) {
+        gameState_800babc8.setConfig(CoreMod.INDICATOR_MODE_CONFIG.get(), IndicatorMode.MOMENTARY);
 
         //LAB_800f32a4
-        _800f9e9c.setu(0);
+        momentaryIndicatorTicks_800f9e9c.set(0);
       }
     }
 
     //LAB_800f32a8
     //LAB_800f32ac
-    if(gameState_800babc8.indicatorMode_4e8 == 0) {
+    if(gameState_800babc8.getConfig(CoreMod.INDICATOR_MODE_CONFIG.get()) == IndicatorMode.OFF) {
       return;
     }
 
@@ -9410,13 +9413,13 @@ public final class SMap {
     _800c69fc.deref().playerX_08.set(sp118.getX());
     _800c69fc.deref().playerY_0c.set(sp118.getY());
 
-    if(gameState_800babc8.indicatorMode_4e8 == 1) {
-      if(_800f9e9c.get() < 33) {
+    if(gameState_800babc8.getConfig(CoreMod.INDICATOR_MODE_CONFIG.get()) == IndicatorMode.MOMENTARY) {
+      if(momentaryIndicatorTicks_800f9e9c.get() < 33) {
         renderTriangleIndicators();
-        _800f9e9c.addu(0x1L);
+        momentaryIndicatorTicks_800f9e9c.incr();
       }
       //LAB_800f3508
-    } else if(gameState_800babc8.indicatorMode_4e8 == 2) {
+    } else if(gameState_800babc8.getConfig(CoreMod.INDICATOR_MODE_CONFIG.get()) == IndicatorMode.ON) {
       renderTriangleIndicators();
     }
 
@@ -9555,8 +9558,8 @@ public final class SMap {
 
   @Method(0x800f3af8L)
   public static void resetTriangleIndicators() {
-    if(gameState_800babc8.indicatorMode_4e8 > 0) {
-      _800f9e9c.setu(0);
+    if(gameState_800babc8.getConfig(CoreMod.INDICATOR_MODE_CONFIG.get()) != IndicatorMode.OFF) {
+      momentaryIndicatorTicks_800f9e9c.set(0);
     }
 
     //LAB_800f3b14

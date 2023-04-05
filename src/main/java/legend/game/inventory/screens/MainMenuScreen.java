@@ -41,6 +41,7 @@ public class MainMenuScreen extends MenuScreen {
   private int loadingStage;
   private final Runnable unload;
 
+  private final CharacterCard[] charCards = new CharacterCard[3];
   private final List<Button> menuButtons = new ArrayList<>();
 
   public MainMenuScreen(final Runnable unload) {
@@ -111,10 +112,8 @@ public class MainMenuScreen extends MenuScreen {
 
   private void addCharCard(final int slot) {
     final int id = gameState_800babc8.charIds_88[slot];
-
-    if(id != -1) {
-      this.addControl(new CharacterCard(id)).setPos(186, 16 + slot * 72);
-    }
+    this.charCards[slot] = this.addControl(new CharacterCard(id));
+    this.charCards[slot].setPos(186, 16 + slot * 72);
   }
 
   @Override
@@ -131,6 +130,11 @@ public class MainMenuScreen extends MenuScreen {
       case 0 -> {
         cacheCharacterSlots();
         scriptStartEffect(2, 10);
+
+        for(int i = 0; i < 3; i++) {
+          this.charCards[i].setCharId(gameState_800babc8.charIds_88[i]);
+        }
+
         this.loadingStage++;
       }
 
@@ -232,7 +236,7 @@ public class MainMenuScreen extends MenuScreen {
   }
 
   private void showOptionsScreen() {
-    this.showScreen(OptionsScreen::new);
+    this.showScreen(unload -> new OptionsScreen(gameState_800babc8, unload));
   }
 
   private void showSaveScreen() {

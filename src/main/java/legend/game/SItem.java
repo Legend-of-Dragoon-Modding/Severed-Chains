@@ -2,7 +2,6 @@ package legend.game;
 
 import legend.core.Config;
 import legend.core.MathHelper;
-import legend.core.Tuple;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.memory.Memory;
 import legend.core.memory.Method;
@@ -32,12 +31,10 @@ import legend.game.modding.events.characters.AdditionUnlockEvent;
 import legend.game.modding.events.characters.CharacterStatsEvent;
 import legend.game.modding.events.characters.XpToLevelEvent;
 import legend.game.modding.events.inventory.EquipmentStatsEvent;
-import legend.game.saves.SavedGame;
 import legend.game.scripting.ScriptState;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CharacterData2c;
 import legend.game.types.EquipmentStats1c;
-import legend.game.types.GameState52c;
 import legend.game.types.InventoryMenuState;
 import legend.game.types.LevelStuff08;
 import legend.game.types.LodString;
@@ -60,7 +57,6 @@ import java.util.List;
 
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
-import static legend.core.GameEngine.SAVES;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.SMap.FUN_800e3fac;
 import static legend.game.Scus94491BpeSegment.FUN_80018e84;
@@ -87,7 +83,6 @@ import static legend.game.Scus94491BpeSegment_8002.clearCharacterStats;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.getItemIcon;
 import static legend.game.Scus94491BpeSegment_8002.getJoypadInputByPriority;
-import static legend.game.Scus94491BpeSegment_8002.getTimestampPart;
 import static legend.game.Scus94491BpeSegment_8002.getUnlockedDragoonSpells;
 import static legend.game.Scus94491BpeSegment_8002.giveItems;
 import static legend.game.Scus94491BpeSegment_8002.itemCantBeDiscarded;
@@ -111,7 +106,6 @@ import static legend.game.Scus94491BpeSegment_800b._800bc960;
 import static legend.game.Scus94491BpeSegment_800b._800bc968;
 import static legend.game.Scus94491BpeSegment_800b._800bc97c;
 import static legend.game.Scus94491BpeSegment_800b._800bdc2c;
-import static legend.game.Scus94491BpeSegment_800b._800bdc34;
 import static legend.game.Scus94491BpeSegment_800b._800be5d0;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.confirmDest_800bdc30;
@@ -126,6 +120,7 @@ import static legend.game.Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc92
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba4;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba8;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
+import static legend.game.Scus94491BpeSegment_800b.savedGameSelected_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.secondaryCharIndices_800bdbf8;
 import static legend.game.Scus94491BpeSegment_800b.spGained_800bc950;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
@@ -193,7 +188,6 @@ public final class SItem {
   public static final UnboundedArrayRef<MenuGlyph06> additionGlyphs_801141e4 = MEMORY.ref(1, 0x801141e4L, UnboundedArrayRef.of(0x6, MenuGlyph06::new));
   public static final UnboundedArrayRef<MenuGlyph06> useItemGlyphs_801141fc = MEMORY.ref(1, 0x801141fcL, UnboundedArrayRef.of(0x6, MenuGlyph06::new));
   public static final UnboundedArrayRef<MenuGlyph06> dabasMenuGlyphs_80114228 = MEMORY.ref(1, 0x80114228L, UnboundedArrayRef.of(0x6, MenuGlyph06::new));
-  public static final UnboundedArrayRef<MenuGlyph06> savedGamesGlyphs_80114258 = MEMORY.ref(1, 0x80114258L, UnboundedArrayRef.of(0x6, MenuGlyph06::new));
 
   public static final Value characterValidEquipment_80114284 = MEMORY.ref(1, 0x80114284L);
 
@@ -245,12 +239,8 @@ public final class SItem {
   public static final LodString Cannot_be_armed_with_8011c6d4 = MEMORY.ref(2, 0x8011c6d4L, LodString::new);
 
   public static final LodString Number_kept_8011c7f4 = MEMORY.ref(2, 0x8011c7f4L, LodString::new);
-  /** "Save new game?" */
-  public static final LodString Save_new_game_8011c9c8 = MEMORY.ref(2, 0x8011c9c8L, LodString::new);
   /** "Overwrite save?" */
   public static final LodString Overwrite_save_8011c9e8 = MEMORY.ref(2, 0x8011c9e8L, LodString::new);
-  /** "Load this data?" */
-  public static final LodString Load_this_data_8011ca08 = MEMORY.ref(2, 0x8011ca08L, LodString::new);
   public static final LodString AcquiredGold_8011cdd4 = new LodString("Acquired Gold");
   public static final LodString HP_recovered_for_all_8011cfcc = MEMORY.ref(2, 0x8011cfccL, LodString::new);
   public static final LodString MP_recovered_for_all_8011cff8 = MEMORY.ref(2, 0x8011cff8L, LodString::new);
@@ -297,8 +287,6 @@ public final class SItem {
   public static final Value _8011e1d8 = MEMORY.ref(1, 0x8011e1d8L);
 
   public static final EnumRef<MessageBoxResult> msgboxResult_8011e1e8 = MEMORY.ref(4, 0x8011e1e8L, EnumRef.of(MessageBoxResult.values()));
-
-  public static final List<Tuple<String, SavedGame>> saves = new ArrayList<>();
 
   @Method(0x800fbd78L)
   public static void allocatePlayerBattleObjects() {
@@ -520,7 +508,7 @@ public final class SItem {
 
     switch(inventoryMenuState_800bdc28.get()) {
       case INIT_0 -> { // Initialize, loads some files (unknown contents)
-        _800bdc34.setu(0);
+        savedGameSelected_800bdc34.set(false);
         messageBox_8011dc90.state_0c = 0;
         loadCharacterStats(0);
 
@@ -563,11 +551,6 @@ public final class SItem {
         uiFile_800bdc3c = null;
 
         switch(whichMenu_800bdc38) {
-          case RENDER_LOAD_GAME_MENU_14 -> {
-            scriptStartEffect(2, 10);
-            whichMenu_800bdc38 = WhichMenu.UNLOAD_LOAD_GAME_MENU_15;
-          }
-
           case RENDER_SAVE_GAME_MENU_19 ->
             whichMenu_800bdc38 = WhichMenu.UNLOAD_SAVE_GAME_MENU_20;
 
@@ -1581,90 +1564,6 @@ public final class SItem {
     //LAB_80108a50
   }
 
-  @Method(0x80108a6cL)
-  public static void renderSaveGameSlot(final int fileIndex, final int y, final boolean allocate) {
-    final SavedGame saveData = saves.get(fileIndex).b();
-
-    if(allocate) {
-      renderTwoDigitNumber(21, y, fileIndex + 1); // File number
-    }
-
-    //LAB_80108b3c
-    final ArrayRef<Pointer<LodString>> locationNames;
-    if(saveData.locationType() == 1) {
-      //LAB_80108b5c
-      locationNames = worldMapNames_8011c1ec;
-    } else if(saveData.locationType() == 3) {
-      //LAB_80108b78
-      locationNames = chapterNames_80114248;
-    } else {
-      //LAB_80108b90
-      locationNames = submapNames_8011c108;
-    }
-
-    //LAB_80108ba0
-    renderCentredText(locationNames.get(saveData.locationIndex()).deref(), 278, y + 47, TextColour.BROWN); // Location text
-
-    if(allocate) {
-      allocateUiElement(0x4c, 0x4c,  16, y).z_3c = 33; // Left half of border
-      allocateUiElement(0x4d, 0x4d, 192, y).z_3c = 33; // Right half of border
-
-      final GameState52c state = saveData.state();
-
-      // Load char 0
-      if(state.charIds_88[0] >= 0 && state.charIds_88[0] < 9) {
-        final Renderable58 struct = allocateRenderable(uiFile_800bdc3c.portraits_cfac(), null);
-        initGlyph(struct, glyph_801142d4);
-        struct.glyph_04 = state.charIds_88[0];
-        struct.tpage_2c++;
-        struct.z_3c = 33;
-        struct.x_40 = 38;
-        struct.y_44 = y + 8;
-      }
-
-      // Load char 1
-      //LAB_80108c78
-      if(state.charIds_88[1] >= 0 && state.charIds_88[1] < 9) {
-        final Renderable58 struct = allocateRenderable(uiFile_800bdc3c.portraits_cfac(), null);
-        initGlyph(struct, glyph_801142d4);
-        struct.glyph_04 = state.charIds_88[1];
-        struct.tpage_2c++;
-        struct.z_3c = 33;
-        struct.x_40 = 90;
-        struct.y_44 = y + 8;
-      }
-
-      // Load char 2
-      //LAB_80108cd4
-      if(state.charIds_88[2] >= 0 && state.charIds_88[2] < 9) {
-        final Renderable58 struct = allocateRenderable(uiFile_800bdc3c.portraits_cfac(), null);
-        initGlyph(struct, glyph_801142d4);
-        struct.glyph_04 = state.charIds_88[2];
-        struct.tpage_2c++;
-        struct.z_3c = 33;
-        struct.x_40 = 142;
-        struct.y_44 = y + 8;
-      }
-
-      //LAB_80108d30
-      final CharacterData2c char0 = state.charData_32c[0];
-      renderTwoDigitNumber(224, y + 6, char0.level_12); // Level
-      renderTwoDigitNumber(269, y + 6, char0.dlevel_13); // Dragoon level
-      renderFourDigitNumber(302, y + 6, char0.hp_08); // Current HP
-      renderFourDigitNumber(332, y + 6, levelStuff_800fbd30.get(state.charIds_88[0]).deref().get(char0.level_12).hp_00.get()); // Max HP
-      renderEightDigitNumber(245, y + 17, saveData.state().gold_94, 0); // Gold
-      renderThreeDigitNumber(306, y + 17, getTimestampPart(state.timestamp_a0, 0), 0x1); // Time played hour
-      renderCharacter(324, y + 17, 10); // Hour-minute colon
-      renderTwoDigitNumber(330, y + 17, getTimestampPart(state.timestamp_a0, 1), 0x1); // Time played minute
-      renderCharacter(342, y + 17, 10); // Minute-second colon
-      renderTwoDigitNumber(348, y + 17, getTimestampPart(state.timestamp_a0, 2), 0x1); // Time played second
-      renderTwoDigitNumber(344, y + 34, state.stardust_9c); // Stardust
-      renderDragoonSpirits(state.goods_19c[0], 223, y + 27);
-    }
-
-    //LAB_80108e3c
-  }
-
   @Method(0x80108e60L)
   public static void renderCharacterEquipment(final int charIndex, final boolean allocate) {
     if(charIndex == -1) {
@@ -1833,33 +1732,6 @@ public final class SItem {
       } else {
         a6.flags_00 |= 0x40;
       }
-    }
-  }
-
-  @Method(0x801098c0L)
-  public static void renderDragoonSpirits(final int spirits, final int x, final int y) {
-    for(int spiritIndex = 0; spiritIndex < 8; spiritIndex++) {
-      final int bit = dragoonSpiritGoodsBits_800fbabc.get(spiritIndex).get();
-      if((spirits & 0x1 << (bit & 0x1f)) != 0) {
-        final Renderable58 struct = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
-        final MenuGlyph06 glyph = new MenuGlyph06(13 + spiritIndex, x + spiritIndex * 12, y);
-        initGlyph(struct, glyph);
-        struct.z_3c = 33;
-      }
-    }
-  }
-
-  @Method(0x8010a0ecL)
-  public static void loadSaveFile(final int saveSlot) {
-    gameState_800babc8 = saves.get(saveSlot).b().state();
-  }
-
-  @Method(0x8010a344L)
-  public static void saveGame(final int slot) {
-    if(slot == -1) {
-      SAVES.newSave(gameState_800babc8);
-    } else {
-      SAVES.overwriteSave(saves.get(slot).a(), gameState_800babc8);
     }
   }
 
@@ -2773,7 +2645,7 @@ public final class SItem {
 
         if(messageBox.type_15 == 0) {
           //LAB_8010eed8
-          if((inventoryJoypadInput_800bdc44.get() & 0x60) != 0) {
+          if(!messageBox.ignoreInput && (inventoryJoypadInput_800bdc44.get() & 0x60) != 0) {
             playSound(2);
             messageBox.state_0c = 4;
             msgboxResult_8011e1e8.set(MessageBoxResult.YES);

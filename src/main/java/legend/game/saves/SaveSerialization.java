@@ -2,7 +2,9 @@ package legend.game.saves;
 
 import legend.core.GameEngine;
 import legend.game.inventory.WhichMenu;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.registries.RegistryId;
+import legend.game.submap.IndicatorMode;
 import legend.game.types.CharacterData2c;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
@@ -232,15 +234,18 @@ public final class SaveSerialization {
       offset += configId.toString().length() + 3;
 
       //noinspection rawtypes
-      final ConfigEntry configEntry = GameEngine.REGISTRIES.config.getEntry(configId);
+      final ConfigEntry configEntry = GameEngine.REGISTRIES.config.getEntry(configId).get();
 
       final int configValueLength = data.readInt(offset);
       offset += 4;
 
       final byte[] configValueRaw = data.slice(offset, configValueLength).getBytes();
+      offset += configValueLength;
 
-      //noinspection unchecked
-      state.setConfig(configEntry, configEntry.deserializer.apply(configValueRaw));
+      if(configEntry != null) {
+        //noinspection unchecked
+        state.setConfig(configEntry, configEntry.deserializer.apply(configValueRaw));
+      }
     }
 
     return new SavedGame(name, locationType, locationIndex, state);
@@ -428,14 +433,15 @@ public final class SaveSerialization {
 
     final Map<RegistryId, byte[]> config = new HashMap<>();
 
-    //noinspection rawtypes
-    for(final ConfigEntry configEntry : GameEngine.REGISTRIES.config) {
+    for(final RegistryId configId : GameEngine.REGISTRIES.config) {
+      //noinspection rawtypes
+      final ConfigEntry configEntry = GameEngine.REGISTRIES.config.getEntry(configId).get();
       //noinspection unchecked
       final Object value = state.getConfig(configEntry);
 
       if(value != null) {
         //noinspection unchecked
-        config.put(configEntry.id, (byte[])configEntry.serializer.apply(value));
+        config.put(configId, (byte[])configEntry.serializer.apply(value));
       }
     }
 
@@ -571,7 +577,7 @@ public final class SaveSerialization {
     state.isOnWorldMap_4e4 = data.readUByte(0x4e4) != 0;
 
     state.characterInitialized_4e6 = data.readUShort(0x4e6);
-    state.indicatorMode_4e8 = data.readInt(0x4e8);
+    state.setConfig(CoreMod.INDICATOR_MODE_CONFIG.get(), IndicatorMode.values()[data.readInt(0x4e8)]);
 
     return state;
   }

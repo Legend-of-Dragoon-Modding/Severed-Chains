@@ -119,14 +119,7 @@ public record FileData(byte[] data, int offset, int size, int realFileIndex) {
   }
 
   public RegistryId readRegistryId(final int offset) {
-    final String id = this.readAscii(offset);
-    final String[] parts = id.split(":");
-
-    if(parts.length != 2) {
-      throw new IllegalArgumentException("Invalid registry ID " + id);
-    }
-
-    return new RegistryId(parts[0], parts[1]);
+    return RegistryId.of(this.readAscii(offset));
   }
 
   public RECT readRect(final int offset, final RECT rect) {

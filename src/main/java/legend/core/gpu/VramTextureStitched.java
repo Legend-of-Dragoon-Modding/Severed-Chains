@@ -37,6 +37,20 @@ public class VramTextureStitched extends VramTexture {
   }
 
   @Override
+  public int getTexel(final int pageX, final int x, final int y) {
+    for(final VramTexture texture : this.textures) {
+      final int textureOffset = (texture.rect.x() - pageX) * this.bpp.widthScale;
+      final int textureX = x - textureOffset;
+
+      if(textureX >= 0 && textureX < texture.rect.w()) {
+        return texture.getTexel(pageX, x, y);
+      }
+    }
+
+    throw new IllegalArgumentException("Texture does not contain pixel (%d, %d) in page %d".formatted(x, y, pageX));
+  }
+
+  @Override
   public int getPixel(final int x, final int y) {
     throw new IllegalStateException("Can't get raw pixel of stitched texture");
   }

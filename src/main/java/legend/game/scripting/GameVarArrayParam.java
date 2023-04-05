@@ -29,6 +29,7 @@ public class GameVarArrayParam extends Param {
       case 36 -> Scus94491BpeSegment_8006._8006e398.bobjIndices_e50[this.arrIndex] != null ? Scus94491BpeSegment_8006._8006e398.bobjIndices_e50[this.arrIndex].index : -1;
       case 41 -> Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928.get(this.arrIndex).get();
       case 45 -> this.readCombatVar(this.arrIndex);
+      // Indices 6-9 are indices for the four camera positions in a battle
       case 46 -> Bttl_800c.intRef_800c6718.get(this.arrIndex).get();
       case 48 -> Scus94491BpeSegment_8006._8006e398.bobjIndices_e78[this.arrIndex] != null ? Scus94491BpeSegment_8006._8006e398.bobjIndices_e78[this.arrIndex].index : -1;
       case 50 -> Scus94491BpeSegment_8006._8006e398.bobjIndices_eac[this.arrIndex] != null ? Scus94491BpeSegment_8006._8006e398.bobjIndices_eac[this.arrIndex].index : -1;
