@@ -13,6 +13,8 @@ import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 public class CharacterCard extends Control {
   private int charId;
 
+  private final Glyph background;
+  private final Glyph overlay;
   private final Label name;
   private final CharacterPortrait portrait;
 
@@ -21,12 +23,12 @@ public class CharacterCard extends Control {
 
     this.setSize(174, 64);
 
-    final Glyph linesText = Glyph.uiElement(74, 74);
-    linesText.getRenderable().x_40 += 8;
-    linesText.getRenderable().z_3c = 33;
-    this.addControl(linesText);
+    this.overlay = this.addControl(Glyph.uiElement(74, 74));
+    this.overlay.getRenderable().x_40 += 8;
+    this.overlay.getRenderable().z_3c = 33;
 
-    this.addControl(Glyph.uiElement(153, 153)).getRenderable().x_40 += 8; // Background
+    this.background = this.addControl(Glyph.uiElement(153, 153));
+    this.background.getRenderable().x_40 += 8;
 
     this.name = this.addControl(new Label(""));
     this.name.setPos(56, 3);
@@ -41,13 +43,16 @@ public class CharacterCard extends Control {
     this.charId = charId;
 
     this.portrait.setCharId(charId);
-    this.portrait.setVisibility(charId != -1);
 
-    if(this.charId != -1) {
+    final boolean visible = charId != -1;
+    this.background.setVisibility(visible);
+    this.overlay.setVisibility(visible);
+    this.name.setVisibility(visible);
+    this.portrait.setVisibility(visible);
+
+    if(visible) {
       this.name.setText(characterNames_801142dc.get(this.charId).deref().get());
     }
-
-    this.name.setVisibility(charId != -1);
   }
 
   @Override
