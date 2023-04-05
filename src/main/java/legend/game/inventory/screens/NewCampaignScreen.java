@@ -29,8 +29,6 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
     deallocateRenderables(0xff);
     scriptStartEffect(2, 10);
 
-    this.state.indicatorMode_4e8 = 2;
-
     this.addControl(new Background());
 
     this.campaignName = this.addRow("Campaign name", new Textbox());

@@ -2,7 +2,9 @@ package legend.game.saves;
 
 import legend.core.GameEngine;
 import legend.game.inventory.WhichMenu;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.registries.RegistryId;
+import legend.game.submap.IndicatorMode;
 import legend.game.types.CharacterData2c;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
@@ -575,7 +577,7 @@ public final class SaveSerialization {
     state.isOnWorldMap_4e4 = data.readUByte(0x4e4) != 0;
 
     state.characterInitialized_4e6 = data.readUShort(0x4e6);
-    state.indicatorMode_4e8 = data.readInt(0x4e8);
+    state.setConfig(CoreMod.INDICATOR_MODE_CONFIG.get(), IndicatorMode.values()[data.readInt(0x4e8)]);
 
     return state;
   }

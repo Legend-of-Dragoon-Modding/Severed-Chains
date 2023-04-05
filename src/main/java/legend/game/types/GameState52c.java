@@ -76,8 +76,6 @@ public class GameState52c {
 
   /** A bitset used to set each char's MP to max the first time each one is loaded */
   public int characterInitialized_4e6;
-  /** Controls how the indicators (triangles) are drawn (called "Note" in options menu) */
-  public int indicatorMode_4e8;
 
   public GameState52c() {
     Arrays.setAll(this.charData_32c, i -> new CharacterData2c());
