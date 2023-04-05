@@ -33,10 +33,6 @@ public class OptionsScreen extends VerticalLayoutScreen {
     transforms.setSelectedIndex(this.state.morphMode_4e2);
     transforms.onSelection(index -> this.state.morphMode_4e2 = index);
 
-    final Dropdown indicators = this.addDropdown("Indicators", "Off", "Momentary", "On");
-    indicators.setSelectedIndex(this.state.indicatorMode_4e8);
-    indicators.onSelection(index -> this.state.indicatorMode_4e8 = index);
-
     for(final RegistryId configId : GameEngine.REGISTRIES.config) {
       //noinspection rawtypes
       final ConfigEntry configEntry = GameEngine.REGISTRIES.config.getEntry(configId).get();

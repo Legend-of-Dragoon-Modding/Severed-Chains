@@ -46,6 +46,7 @@ import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptState;
 import legend.game.scripting.ScriptStorageParam;
 import legend.game.submap.EncounterRateMode;
+import legend.game.submap.IndicatorMode;
 import legend.game.submap.SubmapAssets;
 import legend.game.submap.SubmapObject;
 import legend.game.tim.Tim;
@@ -617,7 +618,7 @@ public final class SMap {
 
   public static final Value _800f9e7c = MEMORY.ref(4, 0x800f9e7cL);
 
-  public static final Value _800f9e9c = MEMORY.ref(4, 0x800f9e9cL);
+  public static final IntRef momentaryIndicatorTicks_800f9e9c = MEMORY.ref(4, 0x800f9e9cL, IntRef::new);
 
   public static final Value _800f9ea0 = MEMORY.ref(2, 0x800f9ea0L);
 
@@ -9339,43 +9340,43 @@ public final class SMap {
       return;
     }
 
-    final int indicatorMode = gameState_800babc8.indicatorMode_4e8;
-    if(indicatorMode != 1) {
-      _800f9e9c.setu(0);
+    final IndicatorMode indicatorMode = gameState_800babc8.getConfig(CoreMod.INDICATOR_MODE_CONFIG.get());
+    if(indicatorMode != IndicatorMode.MOMENTARY) {
+      momentaryIndicatorTicks_800f9e9c.set(0);
     }
 
     //LAB_800f321c
     if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_RIGHT_1)) { // R1
-      if(indicatorMode == 0) {
-        gameState_800babc8.indicatorMode_4e8 = 1;
+      if(indicatorMode == IndicatorMode.OFF) {
+        gameState_800babc8.setConfig(CoreMod.INDICATOR_MODE_CONFIG.get(), IndicatorMode.MOMENTARY);
         //LAB_800f3244
-      } else if(indicatorMode == 1) {
-        gameState_800babc8.indicatorMode_4e8 = 2;
-      } else if(indicatorMode == 2) {
-        gameState_800babc8.indicatorMode_4e8 = 0;
-        _800f9e9c.setu(0);
+      } else if(indicatorMode == IndicatorMode.MOMENTARY) {
+        gameState_800babc8.setConfig(CoreMod.INDICATOR_MODE_CONFIG.get(), IndicatorMode.ON);
+      } else if(indicatorMode == IndicatorMode.ON) {
+        gameState_800babc8.setConfig(CoreMod.INDICATOR_MODE_CONFIG.get(), IndicatorMode.OFF);
+        momentaryIndicatorTicks_800f9e9c.set(0);
       }
       //LAB_800f3260
     } else if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_LEFT_1)) { // L1
-      if(indicatorMode == 0) {
+      if(indicatorMode == IndicatorMode.OFF) {
         //LAB_800f3274
-        gameState_800babc8.indicatorMode_4e8 = 2;
+        gameState_800babc8.setConfig(CoreMod.INDICATOR_MODE_CONFIG.get(), IndicatorMode.ON);
         //LAB_800f3280
-      } else if(indicatorMode == 1) {
-        gameState_800babc8.indicatorMode_4e8 = 0;
-        _800f9e9c.setu(0);
+      } else if(indicatorMode == IndicatorMode.MOMENTARY) {
+        gameState_800babc8.setConfig(CoreMod.INDICATOR_MODE_CONFIG.get(), IndicatorMode.OFF);
+        momentaryIndicatorTicks_800f9e9c.set(0);
         //LAB_800f3294
-      } else if(indicatorMode == 2) {
-        gameState_800babc8.indicatorMode_4e8 = 1;
+      } else if(indicatorMode == IndicatorMode.ON) {
+        gameState_800babc8.setConfig(CoreMod.INDICATOR_MODE_CONFIG.get(), IndicatorMode.MOMENTARY);
 
         //LAB_800f32a4
-        _800f9e9c.setu(0);
+        momentaryIndicatorTicks_800f9e9c.set(0);
       }
     }
 
     //LAB_800f32a8
     //LAB_800f32ac
-    if(gameState_800babc8.indicatorMode_4e8 == 0) {
+    if(gameState_800babc8.getConfig(CoreMod.INDICATOR_MODE_CONFIG.get()) == IndicatorMode.OFF) {
       return;
     }
 
@@ -9412,13 +9413,13 @@ public final class SMap {
     _800c69fc.deref().playerX_08.set(sp118.getX());
     _800c69fc.deref().playerY_0c.set(sp118.getY());
 
-    if(gameState_800babc8.indicatorMode_4e8 == 1) {
-      if(_800f9e9c.get() < 33) {
+    if(gameState_800babc8.getConfig(CoreMod.INDICATOR_MODE_CONFIG.get()) == IndicatorMode.MOMENTARY) {
+      if(momentaryIndicatorTicks_800f9e9c.get() < 33) {
         renderTriangleIndicators();
-        _800f9e9c.addu(0x1L);
+        momentaryIndicatorTicks_800f9e9c.incr();
       }
       //LAB_800f3508
-    } else if(gameState_800babc8.indicatorMode_4e8 == 2) {
+    } else if(gameState_800babc8.getConfig(CoreMod.INDICATOR_MODE_CONFIG.get()) == IndicatorMode.ON) {
       renderTriangleIndicators();
     }
 
@@ -9557,8 +9558,8 @@ public final class SMap {
 
   @Method(0x800f3af8L)
   public static void resetTriangleIndicators() {
-    if(gameState_800babc8.indicatorMode_4e8 > 0) {
-      _800f9e9c.setu(0);
+    if(gameState_800babc8.getConfig(CoreMod.INDICATOR_MODE_CONFIG.get()) != IndicatorMode.OFF) {
+      momentaryIndicatorTicks_800f9e9c.set(0);
     }
 
     //LAB_800f3b14
