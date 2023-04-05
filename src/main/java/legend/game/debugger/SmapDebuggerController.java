@@ -26,7 +26,6 @@ import java.util.concurrent.TimeUnit;
 
 import static legend.game.SMap.sobjCount_800c6730;
 import static legend.game.SMap.sobjs_800c6880;
-import static legend.game.unpacker.Unpacker.LOGGER;
 
 public class SmapDebuggerController {
   @FXML
@@ -144,7 +143,6 @@ public class SmapDebuggerController {
   }
 
   private void setToOriginalState() {
-    LOGGER.error(this.alertIconOriginalState);
     if(this.alertIconOriginalState) {
       this.turnOnAlertIcon();
     } else {
