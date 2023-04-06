@@ -3611,7 +3611,6 @@ public final class Bttl_800e {
   public static void FUN_800ee610() {
     _800c6cf4.setu(0);
     _800c6c38.setu(0x1L);
-    displayStats_800c6c2c.setPointer(mallocTail(0x144 * 3));
     floatingNumbers_800c6b5c.setPointer(mallocTail(0xc4 * 12));
     _800c6b60.setPointer(mallocTail(0xa4L));
     battleMenu_800c6c34.setPointer(mallocTail(0x58L));
@@ -3800,7 +3799,6 @@ public final class Bttl_800e {
 
     usedRepeatItems_800c6c3c.clear();
 
-    free(displayStats_800c6c2c.getPointer());
     free(floatingNumbers_800c6b5c.getPointer());
     free(_800c6b60.getPointer());
     free(battleMenu_800c6c34.getPointer());
@@ -4047,13 +4045,13 @@ public final class Bttl_800e {
 
     //LAB_800ef818
     for(int charSlot = 0; charSlot < 3; charSlot++) {
-      final BattleDisplayStats144 displayStats = displayStats_800c6c2c.deref().get(charSlot);
+      final BattleDisplayStats144 displayStats = displayStats_800c6c2c[charSlot];
 
       //LAB_800ef820
-      for(int a1 = 0; a1 < 5; a1++) {
+      for(int a1 = 0; a1 < displayStats._04.length; a1++) {
         //LAB_800ef828
-        for(int a0 = 0; a0 < 4; a0++) {
-          displayStats._04.get(a1).get(a0)._00.set((short)-1);
+        for(int a0 = 0; a0 < displayStats._04[a1].length; a0++) {
+          displayStats._04[a1][a0].digitValue_00 = -1;
         }
       }
     }
@@ -4100,9 +4098,9 @@ public final class Bttl_800e {
       a0_0._14.get(i).set(0);
     }
 
-    final BattleDisplayStats144 displayStats = displayStats_800c6c2c.deref().get(charSlot);
-    displayStats.x_00.set(a0_0.x_08.get());
-    displayStats.y_02.set(a0_0.y_0a.get());
+    final BattleDisplayStats144 displayStats = displayStats_800c6c2c[charSlot];
+    displayStats.x_00 = a0_0.x_08.get();
+    displayStats.y_02 = a0_0.y_0a.get();
   }
 
   @Method(0x800ef9e4L)
@@ -4178,10 +4176,10 @@ public final class Bttl_800e {
 
       //LAB_800efcdc
       for(int charSlot = 0; charSlot < charCount; charSlot++) {
-        final BattleDisplayStats144 displayStats = displayStats_800c6c2c.deref().get(charSlot);
+        final BattleDisplayStats144 displayStats = displayStats_800c6c2c[charSlot];
         final BattleStruct3c a1 = _800c6c40.get(charSlot);
         a1.y_0a.set((short)MEMORY.ref(2, v1).offset(0x0L).get());
-        displayStats.y_02.set((short)MEMORY.ref(2, v1).offset(0x0L).get());
+        displayStats.y_02 = (short)MEMORY.ref(2, v1).offset(0x0L).get();
       }
 
       //LAB_800efd00
@@ -4205,7 +4203,7 @@ public final class Bttl_800e {
       //LAB_800f0000
       //LAB_800f0074
       for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
-        final BattleDisplayStats144 displayStats = displayStats_800c6c2c.deref().get(charSlot);
+        final BattleDisplayStats144 displayStats = displayStats_800c6c2c[charSlot];
         final BattleStruct3c s7 = _800c6c40.get(charSlot);
 
         if(s7.charIndex_00.get() != -1 && (s7.flags_06.get() & 0x1) != 0 && (s7.flags_06.get() & 0x2) != 0) {
@@ -4223,7 +4221,7 @@ public final class Bttl_800e {
 
           //LAB_800f0108
           int s2;
-          if((data.status_0e & 0x2000) == 0) {
+          if((data.status_0e & 0x2000) == 0) { // Can't become dragoon
             s2 = 4;
           } else {
             s2 = 5;
@@ -4233,21 +4231,21 @@ public final class Bttl_800e {
           //LAB_800f0128
           for(int i = 0; i < s2; i++) {
             //LAB_800f0134
-            for(int n = 0; n < 4; n++) {
-              final BattleDisplayStats144Sub10 struct = displayStats._04.get(i).get(n);
-              if(struct._00.get() == -1) {
+            for(int n = 0; n < displayStats._04[i].length; n++) {
+              final BattleDisplayStats144Sub10 struct = displayStats._04[i][n];
+              if(struct.digitValue_00 == -1) {
                 break;
               }
 
               // Numbers
               drawUiTextureElement(
-                displayStats.x_00.get() + struct.x_02.get() - centreScreenX_1f8003dc.get(),
-                displayStats.y_02.get() + struct.y_04.get() - centreScreenY_1f8003de.get(),
-                struct.u_06.get(),
-                struct.v_08.get(),
-                struct.w_0a.get(),
-                struct.h_0c.get(),
-                struct._0e.get(),
+                displayStats.x_00 + struct.x_02 - centreScreenX_1f8003dc.get(),
+                displayStats.y_02 + struct.y_04 - centreScreenY_1f8003de.get(),
+                struct.u_06,
+                struct.v_08,
+                struct.w_0a,
+                struct.h_0c,
+                struct._0e,
                 spec,
                 s7._14.get(2).get()
               );
@@ -4260,15 +4258,15 @@ public final class Bttl_800e {
           final long s0 = _800fb444.offset(data.charIndex_272 * 0x4L).get();
 
           // Names
-          drawUiTextureElement(displayStats.x_00.get() - centreScreenX_1f8003dc.get() + 1, displayStats.y_02.get() - centreScreenY_1f8003de.get() - 25, (int)MEMORY.ref(1, s0).offset(0x0L).get(), (int)MEMORY.ref(1, s0).offset(0x1L).get(), (int)MEMORY.ref(1, s0).offset(0x2L).get(), (int)MEMORY.ref(1, s0).offset(0x3L).get(), 0x2c, spec, s7._14.get(2).get());
+          drawUiTextureElement(displayStats.x_00 - centreScreenX_1f8003dc.get() + 1, displayStats.y_02 - centreScreenY_1f8003de.get() - 25, (int)MEMORY.ref(1, s0).offset(0x0L).get(), (int)MEMORY.ref(1, s0).offset(0x1L).get(), (int)MEMORY.ref(1, s0).offset(0x2L).get(), (int)MEMORY.ref(1, s0).offset(0x3L).get(), 0x2c, spec, s7._14.get(2).get());
 
           // Portraits
-          drawUiTextureElement(displayStats.x_00.get() - centreScreenX_1f8003dc.get() - 44, displayStats.y_02.get() - centreScreenY_1f8003de.get() - 22, (int)MEMORY.ref(1, s0).offset(0x4L).get(), (int)MEMORY.ref(1, s0).offset(0x5L).get(), (int)MEMORY.ref(1, s0).offset(0x6L).get(), (int)MEMORY.ref(1, s0).offset(0x7L).get(), (int)MEMORY.ref(1, s0).offset(0x8L).get(), s5, s7._14.get(2).get());
+          drawUiTextureElement(displayStats.x_00 - centreScreenX_1f8003dc.get() - 44, displayStats.y_02 - centreScreenY_1f8003de.get() - 22, (int)MEMORY.ref(1, s0).offset(0x4L).get(), (int)MEMORY.ref(1, s0).offset(0x5L).get(), (int)MEMORY.ref(1, s0).offset(0x6L).get(), (int)MEMORY.ref(1, s0).offset(0x7L).get(), (int)MEMORY.ref(1, s0).offset(0x8L).get(), s5, s7._14.get(2).get());
 
           if(spec != 0) {
             final int v1_0 = (6 - s7._14.get(2).get()) * 8 + 100;
-            final int x = displayStats.x_00.get() - centreScreenX_1f8003dc.get() + (int)MEMORY.ref(1, s0).offset(0x6L).get() / 2 - 44;
-            final int y = displayStats.y_02.get() - centreScreenY_1f8003de.get() + (int)MEMORY.ref(1, s0).offset(0x7L).get() / 2 - 22;
+            final int x = displayStats.x_00 - centreScreenX_1f8003dc.get() + (int)MEMORY.ref(1, s0).offset(0x6L).get() / 2 - 44;
+            final int y = displayStats.y_02 - centreScreenY_1f8003de.get() + (int)MEMORY.ref(1, s0).offset(0x7L).get() / 2 - 22;
             int v1 = ((int)MEMORY.ref(1, s0).offset(0x6L).get() + 2) * v1_0 / 100 / 2;
             final int x0 = x - v1;
             final int x1 = x + v1 - 1;
@@ -4336,8 +4334,8 @@ public final class Bttl_800e {
             // HP: /  MP: /  SP:
             //LAB_800f0610
             drawUiTextureElement(
-              (short)MEMORY.ref(2, v1_0).offset(0x0L).get() + displayStats.x_00.get() - centreScreenX_1f8003dc.get(),
-              (short)MEMORY.ref(2, v1_0).offset(0x2L).get() + displayStats.y_02.get() - centreScreenY_1f8003de.get(),
+              (short)MEMORY.ref(2, v1_0).offset(0x0L).get() + displayStats.x_00 - centreScreenX_1f8003dc.get(),
+              (short)MEMORY.ref(2, v1_0).offset(0x2L).get() + displayStats.y_02 - centreScreenY_1f8003de.get(),
               (int)MEMORY.ref(1, v1_0).offset(0x4L).get(),
               (int)MEMORY.ref(1, v1_0).offset(0x6L).get(),
               (short)MEMORY.ref(2, v1_0).offset(0x8L).getSigned(),
@@ -4372,8 +4370,8 @@ public final class Bttl_800e {
               s1 = Math.max(0, (short)s1 * 35 / 100);
 
               //LAB_800f0780
-              final int left = displayStats.x_00.get() - centreScreenX_1f8003dc.get() + 3;
-              final int top = displayStats.y_02.get() - centreScreenY_1f8003de.get() + 8;
+              final int left = displayStats.x_00 - centreScreenX_1f8003dc.get() + 3;
+              final int top = displayStats.y_02 - centreScreenY_1f8003de.get() + 8;
               final int right = left + s1;
               final int bottom = top + 3;
 
@@ -4401,8 +4399,8 @@ public final class Bttl_800e {
             //SP border
             //LAB_800f0910
             for(int i = 0; i < 4; i++) {
-              final int offsetX = displayStats.x_00.get() - centreScreenX_1f8003dc.get();
-              final int offsetY = displayStats.y_02.get() - centreScreenY_1f8003de.get();
+              final int offsetX = displayStats.x_00 - centreScreenX_1f8003dc.get();
+              final int offsetY = displayStats.y_02 - centreScreenY_1f8003de.get();
               drawLine((int)_800fb46c.get(i * 4).get() + offsetX, _800fb46c.get(i * 4 + 1).get() + offsetY, _800fb46c.get(i * 4 + 2).get() + offsetX, _800fb46c.get(i * 4 + 3).get() + offsetY, 0x60, 0x60, 0x60, false);
             }
 
@@ -4410,8 +4408,8 @@ public final class Bttl_800e {
             if((s7.flags_06.get() & 0x8) != 0) {
               //LAB_800f09ec
               for(int i = 0; i < 4; i++) {
-                final int offsetX = displayStats.x_00.get() - centreScreenX_1f8003dc.get();
-                final int offsetY = displayStats.y_02.get() - centreScreenY_1f8003de.get();
+                final int offsetX = displayStats.x_00 - centreScreenX_1f8003dc.get();
+                final int offsetY = displayStats.y_02 - centreScreenY_1f8003de.get();
                 drawLine((int)_800fb47c.get(i * 4).get() + offsetX, _800fb47c.get(i * 4 + 1).get() + offsetY, _800fb47c.get(i * 4 + 2).get() + offsetX, _800fb47c.get(i * 4 + 3).get() + offsetY, 0x80, 0, 0, false);
               }
             }

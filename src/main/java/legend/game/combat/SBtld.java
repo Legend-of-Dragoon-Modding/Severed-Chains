@@ -6,8 +6,8 @@ import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.Pointer;
 import legend.game.combat.deff.DeffManager7cc;
 import legend.game.combat.types.BattleObject27c;
-import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.BattlePreloadedEntities_18cb0;
+import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.combat.types.EncounterData38;
 import legend.game.combat.types.EnemyRewards08;
@@ -47,10 +47,10 @@ import static legend.game.combat.Bttl_800c.addCombatant;
 import static legend.game.combat.Bttl_800c.deffManager_800c693c;
 import static legend.game.combat.Bttl_800c.getCombatant;
 import static legend.game.combat.Bttl_800c.getCombatantIndex;
+import static legend.game.combat.Bttl_800c.melbuStageIndices_800fb064;
 import static legend.game.combat.Bttl_800c.monsterCount_800c6768;
 import static legend.game.combat.Bttl_800c.scriptState_800c674c;
 import static legend.game.combat.Bttl_800c.script_800c66fc;
-import static legend.game.combat.Bttl_800c.melbuStageIndices_800fb064;
 import static legend.game.combat.Bttl_800c.uniqueMonsterCount_800c6698;
 import static legend.game.combat.Bttl_800e.applyStageAmbiance;
 import static legend.game.combat.Bttl_800f.loadMonster;
@@ -90,8 +90,7 @@ public class SBtld {
     _800c6718.offset(0x24L).setu(stageData._0c.get());
     _800c6718.offset(0x28L).setu(stageData._0e.get());
 
-    final byte[] archive = MEMORY.getBytes(bpe_800fb77c.getAddress(), 26836);
-    script_800c66fc = new ScriptFile("S_BTLD BPE @ 800fb77c", Unpacker.decompress(new FileData(archive)));
+    script_800c66fc = new ScriptFile("player_combat_script", Unpacker.loadFile("player_combat_script").getBytes());
 
     loadDrgnFile(1, "401", SBtld::FUN_80109170);
   }

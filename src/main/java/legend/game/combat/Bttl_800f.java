@@ -34,6 +34,8 @@ import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
 
+import java.util.Arrays;
+
 import static java.lang.Math.round;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
@@ -71,15 +73,12 @@ import static legend.game.combat.Bttl_800c._800c6b60;
 import static legend.game.combat.Bttl_800c._800c6b64;
 import static legend.game.combat.Bttl_800c._800c6b68;
 import static legend.game.combat.Bttl_800c._800c6b6c;
-import static legend.game.combat.Bttl_800c.cameraPositionIndicesIndex_800c6ba0;
 import static legend.game.combat.Bttl_800c._800c6ba1;
 import static legend.game.combat.Bttl_800c._800c6ba8;
-import static legend.game.combat.Bttl_800c.cameraPositionIndices_800c6c30;
 import static legend.game.combat.Bttl_800c._800c6c40;
 import static legend.game.combat.Bttl_800c._800c6f30;
 import static legend.game.combat.Bttl_800c._800c6f4c;
 import static legend.game.combat.Bttl_800c._800c6fec;
-import static legend.game.combat.Bttl_800c._800c7008;
 import static legend.game.combat.Bttl_800c._800c7014;
 import static legend.game.combat.Bttl_800c._800c7028;
 import static legend.game.combat.Bttl_800c._800c703c;
@@ -117,6 +116,8 @@ import static legend.game.combat.Bttl_800c._800fb6f4;
 import static legend.game.combat.Bttl_800c._800fb72c;
 import static legend.game.combat.Bttl_800c.allText_800fb3c0;
 import static legend.game.combat.Bttl_800c.battleMenu_800c6c34;
+import static legend.game.combat.Bttl_800c.cameraPositionIndicesIndex_800c6ba0;
+import static legend.game.combat.Bttl_800c.cameraPositionIndices_800c6c30;
 import static legend.game.combat.Bttl_800c.charCount_800c677c;
 import static legend.game.combat.Bttl_800c.characterElements_800c706c;
 import static legend.game.combat.Bttl_800c.combatItems_800c6988;
@@ -244,49 +245,30 @@ public final class Bttl_800f {
 
   @Method(0x800f1550L)
   public static void renderNumber(final int charSlot, final int a1, int value, final int a3) {
-    final int digitCount = _800c7008.get(a1).get();
-    if(digitCount == 1) {
-      if((short)value > 9) {
-        value = 9;
-      }
-    } else if(digitCount == 2) {
-      //LAB_800f16a0
-      if((short)value > 99) {
-        value = 99;
-      }
-    } else {
-      if((short)value > 9999) {
-        value = 9999;
-      }
-    }
-
-    //LAB_800f16d4
-    //LAB_800f16d8
-    if((short)value < 0) {
-      value = 0;
-    }
+    final int digitCount = MathHelper.digitCount(value);
 
     //LAB_800f16e4
-    final BattleDisplayStats144 displayStats = displayStats_800c6c2c.deref().get(charSlot);
+    final BattleDisplayStats144 displayStats = displayStats_800c6c2c[charSlot];
 
-    final short[] sp0x00 = new short[4];
+    final short[] sp0x00 = new short[digitCount];
+
+    for(int i = 0; i < displayStats._04[a1].length; i++) {
+      displayStats._04[a1][i].digitValue_00 = -1;
+    }
 
     //LAB_800f171c
-    for(int i = 0; i < 4; i++) {
-      displayStats._04.get(a1).get(i)._00.set((short)-1);
-      sp0x00[i] = -1;
-    }
+    Arrays.fill(sp0x00, (short)-1);
 
     int divisor = 1;
 
     //LAB_800f1768
-    for(int i = 0; i < _800c7008.get(a1).get() - 1; i++) {
+    for(int i = 0; i < digitCount - 1; i++) {
       divisor *= 10;
     }
 
     //LAB_800f1780
     //LAB_800f17b0
-    for(int i = 0; i < _800c7008.get(a1).get(); i++) {
+    for(int i = 0; i < digitCount; i++) {
       sp0x00[i] = (short)(value / divisor);
       value %= divisor;
       divisor /= 10;
@@ -295,7 +277,7 @@ public final class Bttl_800f {
     //LAB_800f1800
     //LAB_800f1828
     int a2_0;
-    for(a2_0 = 0; a2_0 < _800c7008.get(a1).get() - 1; a2_0++) {
+    for(a2_0 = 0; a2_0 < digitCount - 1; a2_0++) {
       if(sp0x00[a2_0] != 0) {
         break;
       }
@@ -304,22 +286,22 @@ public final class Bttl_800f {
     //LAB_800f1848
     //LAB_800f184c
     //LAB_800f18cc
-    for(int i = 0; i < _800c7008.get(a1).get() && a2_0 < _800c7008.get(a1).get(); i++, a2_0++) {
-      final BattleDisplayStats144Sub10 struct = displayStats._04.get(a1).get(i);
+    for(int i = 0; i < digitCount && a2_0 < digitCount; i++, a2_0++) {
+      final BattleDisplayStats144Sub10 struct = displayStats._04[a1][i];
 
       if(a1 == 1 || a1 == 3 || a1 == 4) {
         //LAB_800f18f0
-        struct.x_02.set((short)(_800c7014.get(a1 * 2).get() + i * 5));
+        struct.x_02 = _800c7014.get(a1 * 2).get() + i * 5;
       } else {
-        struct.x_02.set((short)(_800c7014.get(a1 * 2).get() + a2_0 * 5));
+        struct.x_02 = _800c7014.get(a1 * 2).get() + a2_0 * 5;
       }
 
       //LAB_800f1920
-      struct.y_04.set((short)_800c7014.get(a1 * 2 + 1).get());
-      struct.u_06.set((short)_800c7028.get(sp0x00[a2_0]).get());
-      struct.v_08.set((short)0x20);
-      struct.w_0a.set((short)0x8);
-      struct.h_0c.set((short)0x8);
+      struct.y_04 = _800c7014.get(a1 * 2 + 1).get();
+      struct.u_06 = _800c7028.get(sp0x00[a2_0]).get();
+      struct.v_08 = 0x20;
+      struct.w_0a = 0x8;
+      struct.h_0c = 0x8;
 
       final int v0;
       if(a3 == 1) {
@@ -336,10 +318,10 @@ public final class Bttl_800f {
       }
 
       //LAB_800f1998
-      struct._0e.set((short)v0);
+      struct._0e = v0;
 
       //LAB_800f199c
-      struct._00.set(sp0x00[a2_0]);
+      struct.digitValue_00 = sp0x00[a2_0];
     }
 
     //LAB_800f19e0
@@ -443,7 +425,7 @@ public final class Bttl_800f {
 
   @Method(0x800f1d88L)
   public static int FUN_800f1d88(final int scriptIndex1, final int scriptIndex2) {
-    int s2;
+    int damage;
     final long s6;
     final long s7;
 
@@ -451,12 +433,17 @@ public final class Bttl_800f {
     final BattleObject27c s0 = (BattleObject27c)a1.innerStruct_00;
     final int element;
     if((a1.storage_44[7] & 0x4) == 0) {
-      s2 = calculateAdditionDamage(scriptIndex1, scriptIndex2);
+      damage = calculateAdditionDamage(scriptIndex1, scriptIndex2);
       element = s0.elementFlag_1c;
     } else {
       //LAB_800f1e5c
-      s2 = FUN_800f2d48(scriptIndex1, scriptIndex2);
+      damage = FUN_800f2d48(scriptIndex1, scriptIndex2);
       element = spellStats_800fa0b8.get(s0.spellId_4e).element_08.get();
+    }
+
+    //TODO temporary damage cap
+    if(damage > 0xffff) {
+      damage = 0xffff;
     }
 
     //LAB_800f1e88
@@ -495,15 +482,15 @@ public final class Bttl_800f {
     }
 
     //LAB_800f1f54
-    s2 = s2 * FUN_800f2fe0((short)element, (short)s0_0, 0) / 100;
-    s2 = s2 * FUN_800f2fe0((short)s7, (short)s4_0, 0x3L) / 100;
-    s2 = s2 * FUN_800f2fe0((short)s6, (short)s3_0, 0x5L) / 100;
-    if(s2 <= 0) {
-      s2 = 0;
+    damage = damage * FUN_800f2fe0((short)element, (short)s0_0, 0) / 100;
+    damage = damage * FUN_800f2fe0((short)s7, (short)s4_0, 0x3L) / 100;
+    damage = damage * FUN_800f2fe0((short)s6, (short)s3_0, 0x5L) / 100;
+    if(damage <= 0) {
+      damage = 0;
     }
 
     //LAB_800f2020
-    return s2;
+    return damage;
   }
 
   @Method(0x800f204cL)
@@ -1493,12 +1480,12 @@ public final class Bttl_800f {
 
     //LAB_800f4220
     for(int charSlot = 0; charSlot < 3; charSlot++) {
-      final BattleDisplayStats144 displayStats = displayStats_800c6c2c.deref().get(charSlot);
+      final BattleDisplayStats144 displayStats = displayStats_800c6c2c[charSlot];
       final BattleStruct3c v1 = _800c6c40.get(charSlot);
 
       if(v1.charIndex_00.get() != -1) {
         v1.x_08.set(x);
-        displayStats.x_00.set(x);
+        displayStats.x_00 = x;
       }
 
       //LAB_800f4238
