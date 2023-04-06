@@ -786,8 +786,8 @@ public final class Unpacker {
   private static Map<String, FileData> uiPatcherTransformer(final String name, final FileData data, final Set<Flags> flags) {
     // Remove the baked-in slashes in the fractions for character cards
     for(int i = 0; i < 3; i++) {
-      data.writeByte(0x24a8 + i * 14, 0);
-      data.writeByte(0x24aa + i * 14, 0);
+      data.writeByte(0x24a8 + i * 0x14, 0);
+      data.writeByte(0x24aa + i * 0x14, 0);
     }
 
     return Map.of(name, data);
