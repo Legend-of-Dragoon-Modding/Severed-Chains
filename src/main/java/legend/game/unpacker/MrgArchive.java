@@ -3,6 +3,8 @@ package legend.game.unpacker;
 import java.util.Iterator;
 
 public class MrgArchive implements Iterable<MrgArchive.Entry> {
+  public static final int MAGIC = 0x1a47524d;
+
   private final Entry[] entries;
 
   public MrgArchive(final FileData data, final boolean sectorAligned) {

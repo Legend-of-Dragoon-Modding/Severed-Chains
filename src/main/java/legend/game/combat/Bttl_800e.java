@@ -3611,7 +3611,6 @@ public final class Bttl_800e {
   public static void FUN_800ee610() {
     _800c6cf4.setu(0);
     _800c6c38.setu(0x1L);
-    floatingNumbers_800c6b5c.setPointer(mallocTail(0xc4 * 12));
     _800c6b60.setPointer(mallocTail(0xa4L));
     battleMenu_800c6c34.setPointer(mallocTail(0x58L));
     _800c6b6c.setu(mallocTail(0x3cL));
@@ -3799,7 +3798,6 @@ public final class Bttl_800e {
 
     usedRepeatItems_800c6c3c.clear();
 
-    free(floatingNumbers_800c6b5c.getPointer());
     free(_800c6b60.getPointer());
     free(battleMenu_800c6c34.getPointer());
     free(_800c6b6c.get());
@@ -4057,26 +4055,25 @@ public final class Bttl_800e {
     }
 
     //LAB_800ef878
-    for(int i = 0; i < 12; i++) {
-      final FloatingNumberC4 num = floatingNumbers_800c6b5c.deref().get(i);
-      num.state_00.set(0);
-      num.flags_02.set(0);
-      num.bobjIndex_04.set(-1);
-      num.translucent_08.set(false);
-      num.b_0c.set(0x80);
-      num.g_0d.set(0x80);
-      num.r_0e.set(0x80);
-      num._14.set(-1);
-      num._18.set(-1);
+    for(final FloatingNumberC4 num : floatingNumbers_800c6b5c) {
+      num.state_00 = 0;
+      num.flags_02 = 0;
+      num.bobjIndex_04 = -1;
+      num.translucent_08 = false;
+      num.b_0c = 0x80;
+      num.g_0d = 0x80;
+      num.r_0e = 0x80;
+      num._14 = -1;
+      num._18 = -1;
 
       //LAB_800ef89c
-      for(int a1 = 0; a1 < 5; a1++) {
-        final FloatingNumberC4Sub20 v1 = num.digits_24.get(a1);
-        v1._00.set(0);
-        v1._04.set(0);
-        v1._08.set(0);
-        v1.digit_0c.set((short)-1);
-        v1._1c.set(0);
+      for(int a1 = 0; a1 < num.digits_24.length; a1++) {
+        final FloatingNumberC4Sub20 v1 = num.digits_24[a1];
+        v1._00 = 0;
+        v1._04 = 0;
+        v1._08 = 0;
+        v1.digit_0c = -1;
+        v1._1c = 0;
       }
     }
   }

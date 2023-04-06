@@ -78,7 +78,6 @@ public final class Unpacker {
     transformers.put(Unpacker::drgn0_3667_17_animPatcherDiscriminator, Unpacker::drgn0_3667_17_animPatcher);
     transformers.put(Unpacker::drgn0_3750_16_animPatcherDiscriminator, Unpacker::drgn0_3750_16_animPatcher);
 
-    transformers.put(Unpacker::drgn1DamageCapDiscriminator, Unpacker::drgn1DamageCapPatcher);
     transformers.put(Unpacker::drgn1_343_patcherDiscriminator, Unpacker::drgn1_343_patcher);
     transformers.put(Unpacker::playerCombatSoundEffectsDiscriminator, Unpacker::playerCombatSoundEffectsTransformer);
     transformers.put(Unpacker::playerCombatModelsAndTexturesDiscriminator, Unpacker::playerCombatModelsAndTexturesTransformer);
@@ -88,6 +87,11 @@ public final class Unpacker {
     transformers.put(Unpacker::extractItemDataDiscriminator, Unpacker::extractItemDataTransformer);
     transformers.put(Unpacker::uiPatcherDiscriminator, Unpacker::uiPatcherTransformer);
     transformers.put(CtmdTransformer::ctmdDiscriminator, CtmdTransformer::ctmdTransformer);
+
+    // Remove damage caps from scripts
+    transformers.put(Unpacker::playerScriptDamageCapsDiscriminator, Unpacker::playerScriptDamageCapsTransformer);
+    transformers.put(Unpacker::enemyScriptDamageCapDiscriminator, Unpacker::enemyAndItemScriptDamageCapPatcher);
+    transformers.put(Unpacker::itemScriptDamageCapDiscriminator, Unpacker::enemyAndItemScriptDamageCapPatcher);
   }
 
   private static Consumer<String> statusListener = status -> { };
@@ -454,7 +458,7 @@ public final class Unpacker {
   }
 
   private static boolean mrgDiscriminator(final String name, final FileData data, final Set<String> flags) {
-    return data.size() >= 8 && MathHelper.get(data.data(), data.offset(), 4) == 0x1a47524d;
+    return data.size() >= 8 && MathHelper.get(data.data(), data.offset(), 4) == MrgArchive.MAGIC;
   }
 
   private static Map<String, FileData> unmrg(final String name, final FileData data, final Set<String> flags) {
@@ -628,26 +632,39 @@ public final class Unpacker {
   /**
    * Every single enemy script has damage caps build into it for some reason
    */
-  private static boolean drgn1DamageCapDiscriminator(final String name, final FileData data, final Set<String> flags) {
+  private static boolean enemyScriptDamageCapDiscriminator(final String name, final FileData data, final Set<String> flags) {
     return name.startsWith("SECT/DRGN1.BIN/") && !flags.contains(name);
   }
 
-  private static Map<String, FileData> drgn1DamageCapPatcher(final String name, final FileData data, final Set<String> flags) {
-    for(int i = 0; i < data.size(); i++) {
-      if(data.readByte(i) == 0xf) {
-        if(data.readByte(i + 1) == 0x27) {
-          if(data.readUShort(i + 0x10) == 9999) {
-            data.writeShort(i, 0xffff);
-            data.writeShort(i + 0x10, 0xffff);
-            i += 0x11;
-          }
-        }
+  private static Map<String, FileData> enemyAndItemScriptDamageCapPatcher(final String name, final FileData data, final Set<String> flags) {
+    flags.add(name);
+
+    for(int i = 0; i < data.size(); i += 4) {
+      if(data.readUShort(i) == 9999 && data.readUShort(i + 0x10) == 9999) {
+        data.writeInt(i, 999999999);
+        data.writeInt(i + 0x10, 999999999);
+        i += 0x10;
       }
     }
 
-    flags.add(name);
-
     return Map.of(name, data);
+  }
+
+  /**
+   * Every single item script has damage caps build into it for some reason
+   */
+  private static boolean itemScriptDamageCapDiscriminator(final String name, final FileData data, final Set<String> flags) {
+    if(flags.contains(name)) {
+      return false;
+    }
+
+    for(int i = 4140; i <= 5500; i += 2) {
+      if(name.startsWith("SECT/DRGN0.BIN/" + i + "/1")) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   /**
@@ -769,16 +786,14 @@ public final class Unpacker {
     return Map.of();
   }
 
-  /** TODO this is pretty bad */
-  private static boolean btldDataDiscriminatorLatch = true;
-  private static boolean itemDataDiscriminatorLatch = true;
-  /** Extracts table at 80102050 */
+  /** Extracts some S_BTLD tables/scripts */
   private static boolean extractBtldDataDiscriminator(final String name, final FileData data, final Set<String> flags) {
-    return btldDataDiscriminatorLatch && "OVL/S_BTLD.OV_".equals(name);
+    return "OVL/S_BTLD.OV_".equals(name) && !flags.contains("S_BTLD");
   }
 
   private static Map<String, FileData> extractBtldDataTransformer(final String name, final FileData data, final Set<String> flags) {
-    btldDataDiscriminatorLatch = false;
+    flags.add("S_BTLD");
+
     final Map<String, FileData> files = new HashMap<>();
     files.put(name, data);
     files.put("encounters", data.slice(0x68d8, 0x7000));
@@ -786,12 +801,30 @@ public final class Unpacker {
     return files;
   }
 
+  private static boolean playerScriptDamageCapsDiscriminator(final String name, final FileData data, final Set<String> flags) {
+    return "player_combat_script".equals(name) && data.readInt(4) != MrgArchive.MAGIC && !flags.contains(name);
+  }
+
+  private static Map<String, FileData> playerScriptDamageCapsTransformer(final String name, final FileData data, final Set<String> flags) {
+    flags.add(name);
+
+    data.writeInt(0x9f0, 999999999);
+    data.writeInt(0xa00, 999999999);
+    data.writeInt(0x82b0, 999999999);
+    data.writeInt(0x82c0, 999999999);
+    data.writeInt(0xe190, 999999999);
+    data.writeInt(0xe1a0, 999999999);
+
+    return Map.of(name, data);
+  }
+
   private static boolean extractItemDataDiscriminator(final String name, final FileData data, final Set<String> flags) {
-    return itemDataDiscriminatorLatch && "OVL/S_ITEM.OV_".equals(name);
+    return "OVL/S_ITEM.OV_".equals(name) && !flags.contains("S_ITEM");
   }
 
   private static Map<String, FileData> extractItemDataTransformer(final String name, final FileData data, final Set<String> flags) {
-    itemDataDiscriminatorLatch = false;
+    flags.add("S_ITEM");
+
     final Map<String, FileData> files = new HashMap<>();
     files.put(name, data);
     files.put("characters/kongol/xp", new FileData(data.data(), 0x17d78, 61 * 4));

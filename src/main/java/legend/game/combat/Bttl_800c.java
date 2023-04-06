@@ -304,7 +304,10 @@ public final class Bttl_800c {
 
   public static final ArrayRef<LodString> currentEnemyNames_800c69d0 = MEMORY.ref(2, 0x800c69d0L, ArrayRef.of(LodString.class, 9, 0x2c, LodString::new));
 
-  public static final Pointer<ArrayRef<FloatingNumberC4>> floatingNumbers_800c6b5c = MEMORY.ref(4, 0x800c6b5cL, Pointer.deferred(4, ArrayRef.of(FloatingNumberC4.class, 12, 0xc4, FloatingNumberC4::new)));
+  public static final FloatingNumberC4[] floatingNumbers_800c6b5c = new FloatingNumberC4[12];
+  static {
+    Arrays.setAll(floatingNumbers_800c6b5c, i -> new FloatingNumberC4());
+  }
   public static final Pointer<CombatMenua4> _800c6b60 = MEMORY.ref(4, 0x800c6b60L, Pointer.deferred(4, CombatMenua4::new));
   public static final Value _800c6b64 = MEMORY.ref(4, 0x800c6b64L);
   public static final Value _800c6b68 = MEMORY.ref(4, 0x800c6b68L);

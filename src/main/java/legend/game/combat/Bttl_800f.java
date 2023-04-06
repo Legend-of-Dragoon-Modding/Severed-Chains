@@ -424,43 +424,41 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f1d88L)
-  public static int FUN_800f1d88(final int scriptIndex1, final int scriptIndex2) {
-    int damage;
-    final long s6;
-    final long s7;
+  public static int FUN_800f1d88(final int attackerIndex, final int defenderIndex) {
 
-    ScriptState<?> a1 = scriptStatePtrArr_800bc1c0[scriptIndex1];
-    final BattleObject27c s0 = (BattleObject27c)a1.innerStruct_00;
+    final ScriptState<?> attacker = scriptStatePtrArr_800bc1c0[attackerIndex];
+    final BattleObject27c s0 = (BattleObject27c)attacker.innerStruct_00;
     final int element;
-    if((a1.storage_44[7] & 0x4) == 0) {
-      damage = calculateAdditionDamage(scriptIndex1, scriptIndex2);
+    int damage;
+    if((attacker.storage_44[7] & 0x4) == 0) {
+      damage = calculateAdditionDamage(attackerIndex, defenderIndex);
       element = s0.elementFlag_1c;
     } else {
       //LAB_800f1e5c
-      damage = FUN_800f2d48(scriptIndex1, scriptIndex2);
+      damage = calculateEnemyDamage(attackerIndex, defenderIndex);
       element = spellStats_800fa0b8.get(s0.spellId_4e).element_08.get();
     }
 
-    //TODO temporary damage cap
-    if(damage > 0xffff) {
-      damage = 0xffff;
+    if(damage > 999999999) {
+      damage = 999999999;
     }
 
     //LAB_800f1e88
-    s7 = FUN_800f89cc(s0.powerAttack_b4);
-    if((int)_800c6b64.get() == -0x1L) {
+    final int s7 = FUN_800f89cc(s0.powerAttack_b4);
+    final int s6;
+    if((int)_800c6b64.get() == -1) {
       s6 = 0;
     } else {
       s6 = element;
     }
 
-    a1 = scriptStatePtrArr_800bc1c0[scriptIndex2];
-    final BattleObject27c s3 = (BattleObject27c)a1.innerStruct_00;
+    final ScriptState<?> defender = scriptStatePtrArr_800bc1c0[defenderIndex];
+    final BattleObject27c s3 = (BattleObject27c)defender.innerStruct_00;
 
     //LAB_800f1eb0
-    final long s0_0;
-    if((a1.storage_44[7] & 0x4) == 0) {
-      if(s3.charIndex_272 == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0 && (scriptStatePtrArr_800bc1c0[scriptIndex2].storage_44[7] & 0x2) != 0) {
+    final int s0_0;
+    if((defender.storage_44[7] & 0x4) == 0) {
+      if(s3.charIndex_272 == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0 && (scriptStatePtrArr_800bc1c0[defenderIndex].storage_44[7] & 0x2) != 0) {
         s0_0 = characterElements_800c706c.get(9).get();
       } else {
         s0_0 = characterElements_800c706c.get(s3.charIndex_272).get();
@@ -852,16 +850,16 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f2d48L)
-  public static int FUN_800f2d48(final int scriptIndex1, final int scriptIndex2) {
-    final ScriptState<?> state1 = scriptStatePtrArr_800bc1c0[scriptIndex1];
-    final ScriptState<?> state2 = scriptStatePtrArr_800bc1c0[scriptIndex2];
-    final BattleObject27c combatant1 = (BattleObject27c)state1.innerStruct_00;
-    final BattleObject27c combatant2 = (BattleObject27c)state2.innerStruct_00;
+  public static int calculateEnemyDamage(final int attackerIndex, final int defenderIndex) {
+    final ScriptState<?> attackerState = scriptStatePtrArr_800bc1c0[attackerIndex];
+    final ScriptState<?> defenderState = scriptStatePtrArr_800bc1c0[defenderIndex];
+    final BattleObject27c attacker = (BattleObject27c)attackerState.innerStruct_00;
+    final BattleObject27c defender = (BattleObject27c)defenderState.innerStruct_00;
 
-    final int atk = combatant1.attack_34 + spellStats_800fa0b8.get(combatant1.spellId_4e).multi_04.get();
+    final int atk = attacker.attack_34 + spellStats_800fa0b8.get(attacker.spellId_4e).multi_04.get();
 
     //TODO impossible condition with code that does nothing?
-    if((state2.storage_44[7] & 0x4) == 0x1) {
+    if((defenderState.storage_44[7] & 0x4) == 0x1) {
       //LAB_800f2ddc
       //LAB_800f2dec
       for(int i = 0; i < Math.min(3, charCount_800c677c.get()); i++) {
@@ -872,9 +870,9 @@ public final class Bttl_800f {
     }
 
     //LAB_800f2e28
-    int def = combatant2.defence_38;
-    if((state2.storage_44[7] & 0x2) != 0) { // Is dragoon
-      def = def * combatant2.dragoonDefence_b0 / 100;
+    int def = defender.defence_38;
+    if((defenderState.storage_44[7] & 0x2) != 0) { // Is dragoon
+      def = def * defender.dragoonDefence_b0 / 100;
     }
 
     //LAB_800f2e88
@@ -1057,8 +1055,9 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f3354L)
-  public static void calculateFloatingNumberRender(final int numIndex, final long onHitTextType, final long onHitClutCol, final int rawDamage, final int x, final int y, long a6, final long onHitClutRow) {
-    final short[] damageDigits = new short[5];
+  public static void calculateFloatingNumberRender(final int numIndex, final long onHitTextType, final long onHitClutCol, final int rawDamage, final int x, final int y, int a6, final long onHitClutRow) {
+    final FloatingNumberC4 num = floatingNumbers_800c6b5c[numIndex];
+    final short[] damageDigits = new short[num.digits_24.length];
 
     final byte floatingTextType;  // 0=floating numbers, 1=MP cost, 2=miss
     final byte clutCol; //TODO: confirm this, it may not be this exactly
@@ -1074,38 +1073,33 @@ public final class Bttl_800f {
     }
 
     //LAB_800f34d4
-    final FloatingNumberC4 num = floatingNumbers_800c6b5c.deref().get(numIndex);
-    num.state_00.set(0);
-    num.flags_02.set(0);
-    num.bobjIndex_04.set(-1);
-    num.translucent_08.set(false);
-    num.b_0c.set(0x80);
-    num.g_0d.set(0x80);
-    num.r_0e.set(0x80);
-    num._18.set(-1);
-    num._14.set(-1);
+    num.state_00 = 0;
+    num.flags_02 = 0;
+    num.bobjIndex_04 = -1;
+    num.translucent_08 = false;
+    num.b_0c = 0x80;
+    num.g_0d = 0x80;
+    num.r_0e = 0x80;
+    num._18 = -1;
+    num._14 = -1;
 
     //LAB_800f3528
-    for(int i = 0; i < 5; i++) {
-      num.digits_24.get(i)._00.set(0);
-      num.digits_24.get(i)._04.set(0);
-      num.digits_24.get(i)._08.set(0);
-      num.digits_24.get(i).digit_0c.set((short)-1);
-      num.digits_24.get(i)._1c.set(0);
+    for(int i = 0; i < num.digits_24.length; i++) {
+      num.digits_24[i]._00 = 0;
+      num.digits_24[i]._04 = 0;
+      num.digits_24[i]._08 = 0;
+      num.digits_24[i].digit_0c = -1;
+      num.digits_24[i]._1c = 0;
     }
 
-    num.state_00.set(1);
+    num.state_00 = 1;
     if(a6 == 0) {
-      num.flags_02.or(0x1);
+      num.flags_02 |= 0x1;
     }
 
     //LAB_800f3588
-    num.flags_02.or(0x8000);
-    num.translucent_08.set(false);
-    num.b_0c.set(0x80);
-    num.g_0d.set(0x80);
-    num.r_0e.set(0x80);
-    num._10.set(clutCol);
+    num.flags_02 |= 0x8000;
+    num._10 = clutCol;
 
     if(clutCol == 2 && a6 == 0) {
       a6 = 60 / vsyncMode_8007a3b8.get() * 2;
@@ -1115,23 +1109,23 @@ public final class Bttl_800f {
     //LAB_800f35e4
     //LAB_800f3608
     //Clamp damage to 0-max
-    int damage = Math.max(0, Math.min(rawDamage, 99999));
+    int damage = Math.max(0, Math.min(rawDamage, 999999999));
 
     //LAB_800f3614
-    num.x_1c.set(x);
-    num.y_20.set(y);
+    num.x_1c = x;
+    num.y_20 = y;
 
     //LAB_800f3654
-    for(int i = 0; i < 5; i++) {
-      num.digits_24.get(i).digit_0c.set((short)-1);
+    for(int i = 0; i < num.digits_24.length; i++) {
+      num.digits_24[i].digit_0c = -1;
       damageDigits[i] = -1;
     }
 
     //LAB_800f36a0
     //Sets what places to render
-    int currDigitPlace = 10000;
+    int currDigitPlace = (int)Math.pow(10, num.digits_24.length - 1);
     int currDigit;
-    for(int i = 0; i < 5; i++) {
+    for(int i = 0; i < num.digits_24.length; i++) {
       currDigit = damage / currDigitPlace;
       damage = damage % currDigitPlace;
       damageDigits[i] = (short)currDigit;
@@ -1141,7 +1135,7 @@ public final class Bttl_800f {
     //LAB_800f36dc
     //LAB_800f36ec
     int digitIdx;
-    for(digitIdx = 0; digitIdx < 4; digitIdx++) {
+    for(digitIdx = 0; digitIdx < num.digits_24.length - 1; digitIdx++) {
       if(damageDigits[digitIdx] != 0) {
         break;
       }
@@ -1164,68 +1158,64 @@ public final class Bttl_800f {
     //LAB_800f375c
     //LAB_800f37ac
     int digitStructIdx;
-    for(digitStructIdx = 0; digitStructIdx < 5; digitStructIdx++) {
-      final FloatingNumberC4Sub20 digitStruct = num.digits_24.get(digitStructIdx);
-      digitStruct._00.set(0x8000L);
-      digitStruct.y_10.set((short)0);
+    for(digitStructIdx = 0; digitStructIdx < num.digits_24.length && digitIdx < num.digits_24.length; digitStructIdx++) {
+      final FloatingNumberC4Sub20 digitStruct = num.digits_24[digitStructIdx];
+      digitStruct._00 = 0x8000;
+      digitStruct.y_10 = 0;
 
       if(clutCol == 2) {
-        digitStruct._00.set(0);
-        digitStruct._04.set(digitStructIdx);
-        digitStruct._08.set(0);
+        digitStruct._00 = 0;
+        digitStruct._04 = digitStructIdx;
+        digitStruct._08 = 0;
       }
 
       //LAB_800f37d8
       if(floatingTextType == 1) {
         //LAB_800f382c
-        digitStruct.x_0e.set((short)displayPosX);
-        digitStruct.u_12.set(_800c7028.get(damageDigits[digitIdx]).get());
-        digitStruct.v_14.set(0x20);
-        digitStruct.texW_16.set(0x8);
-        digitStruct.texH_18.set(0x8);
+        digitStruct.x_0e = displayPosX;
+        digitStruct.u_12 = _800c7028.get(damageDigits[digitIdx]).get();
+        digitStruct.v_14 = 32;
+        digitStruct.texW_16 = 8;
+        digitStruct.texH_18 = 8;
         displayPosX += 5;
       } else if(floatingTextType == 2) {
         //LAB_800f386c
-        digitStruct.x_0e.set((short)displayPosX);
-        digitStruct.u_12.set(0x48);
-        digitStruct.v_14.set(0x80);
-        digitStruct.texW_16.set(0x24);
-        digitStruct.texH_18.set(0x10);
+        digitStruct.x_0e = displayPosX;
+        digitStruct.u_12 = 72;
+        digitStruct.v_14 = 128;
+        digitStruct.texW_16 = 36;
+        digitStruct.texH_18 = 16;
         displayPosX += 36;
       } else {
         //LAB_800f37f4
-        digitStruct.x_0e.set((short)displayPosX);
-        digitStruct.u_12.set((int)_800c70e0.offset(damageDigits[digitIdx] * 2).get());
-        digitStruct.v_14.set(0x28);
-        digitStruct.texW_16.set(0x8);
-        digitStruct.texH_18.set(0x10);
+        digitStruct.x_0e = displayPosX;
+        digitStruct.u_12 = (int)_800c70e0.offset(damageDigits[digitIdx] * 2).get();
+        digitStruct.v_14 = 40;
+        digitStruct.texW_16 = 8;
+        digitStruct.texH_18 = 16;
         displayPosX += 8;
       }
 
       //LAB_800f3898
-      digitStruct.digit_0c.set(damageDigits[digitIdx]);
-      digitStruct._1a.set((short)_800c70f4.offset(clutRow * 2).get());
-      digitStruct._1c.set(0x1000);
+      digitStruct.digit_0c = damageDigits[digitIdx];
+      digitStruct._1a = (short)_800c70f4.offset(clutRow * 2).get();
+      digitStruct._1c = 0x1000;
 
       digitIdx++;
-      if(digitIdx >= 5) {
-        break;
-      }
     }
 
     //LAB_800f38e8
-    num._14.set(digitStructIdx + 12); //TODO: ID duration meaning
-    num._18.set((int)(a6 + 4)); //TODO: ID duration meaning
+    num._14 = digitStructIdx + 12; //TODO: ID duration meaning
+    num._18 = a6 + 4; //TODO: ID duration meaning
   }
 
   @Method(0x800f3940L)
   public static void FUN_800f3940() {
     //LAB_800f3978
-    for(int i = 0; i < 12; i++) {
-      final FloatingNumberC4 num = floatingNumbers_800c6b5c.deref().get(i);
-      if((num.flags_02.get() & 0x8000) != 0) {
-        if(num.state_00.get() != 0) {
-          final int bobjIndex = num.bobjIndex_04.get();
+    for(final FloatingNumberC4 num : floatingNumbers_800c6b5c) {
+      if((num.flags_02 & 0x8000) != 0) {
+        if(num.state_00 != 0) {
+          final int bobjIndex = num.bobjIndex_04;
 
           if(bobjIndex != -1) {
             final ScriptState<?> state = scriptStatePtrArr_800bc1c0[bobjIndex];
@@ -1247,122 +1237,122 @@ public final class Bttl_800f {
 
             //LAB_800f3a44
             final DVECTOR screenCoords = perspectiveTransformXyz(bobj.model_148, x, y, z);
-            num.x_1c.set(clampX(screenCoords.getX() + centreScreenX_1f8003dc.get()));
-            num.y_20.set(clampY(screenCoords.getY() + centreScreenY_1f8003de.get()));
+            num.x_1c = clampX(screenCoords.getX() + centreScreenX_1f8003dc.get());
+            num.y_20 = clampY(screenCoords.getY() + centreScreenY_1f8003de.get());
           }
 
           //LAB_800f3ac8
-          final int state = num.state_00.get();
+          final int state = num.state_00;
 
           if(state == 1) {
             //LAB_800f3b24
-            if(num._10.get() == 0x2L) {
-              num.state_00.set(2);
+            if(num._10 == 0x2) {
+              num.state_00 = 2;
             } else {
               //LAB_800f3b44
-              num.state_00.set(98);
+              num.state_00 = 98;
             }
           } else if(state == 2) {
             //LAB_800f3b50
-            for(int n = 0; n < 5; n++) {
-              final FloatingNumberC4Sub20 a1 = num.digits_24.get(n);
+            for(int n = 0; n < num.digits_24.length; n++) {
+              final FloatingNumberC4Sub20 a1 = num.digits_24[n];
 
-              if(a1.digit_0c.get() == -1) {
+              if(a1.digit_0c == -1) {
                 break;
               }
 
-              final long a0 = a1._00.get();
+              final int a0 = a1._00;
 
               if((a0 & 0x1) != 0) {
                 if((a0 & 0x2) != 0) {
-                  if(a1._08.get() < 5) {
-                    a1.y_10.add((short)a1._08.get());
-                    a1._08.incr();
+                  if(a1._08 < 5) {
+                    a1.y_10 += a1._08;
+                    a1._08++;
                   }
                 } else {
                   //LAB_800f3bb0
-                  a1._00.or(0x8002L);
-                  a1._04.set(a1.y_10.get());
-                  a1._08.set(-4);
+                  a1._00 |= 0x8002;
+                  a1._04 = a1.y_10;
+                  a1._08 = -4;
                 }
               } else {
                 //LAB_800f3bc8
-                if(a1._08.get() == a1._04.get()) {
-                  a1._00.or(0x1L);
+                if(a1._08 == a1._04) {
+                  a1._00 |= 0x1;
                 }
 
                 //LAB_800f3be0
-                a1._08.incr();
+                a1._08++;
               }
             }
 
             //LAB_800f3c00
-            num._14.decr();
-            if(num._14.get() <= 0) {
-              num.state_00.set(98);
-              num._14.set(num._18.get());
+            num._14--;
+            if(num._14 <= 0) {
+              num.state_00 = 98;
+              num._14 = num._18;
             }
           } else if(state == 97) {
             //LAB_800f3c34
-            if(num._14.get() <= 0) {
-              num.state_00.set(100);
+            if(num._14 <= 0) {
+              num.state_00 = 100;
             } else {
               //LAB_800f3c50
-              num._14.decr();
+              num._14--;
               // Monochromify
-              final int b = num.b_0c.get();
-              final int colour = (b - (num._18.get() & 0xff)) & 0xff;
-              num.b_0c.set(colour);
-              num.g_0d.set(colour);
-              num.r_0e.set(colour);
+              final int b = num.b_0c;
+              final int colour = (b - (num._18 & 0xff)) & 0xff;
+              num.b_0c = colour;
+              num.g_0d = colour;
+              num.r_0e = colour;
             }
           } else if(state == 100) {
             //LAB_800f3d38
-            num.state_00.set(0);
-            num.flags_02.set(0);
-            num.bobjIndex_04.set(-1);
-            num.translucent_08.set(false);
-            num.b_0c.set(0x80);
-            num.g_0d.set(0x80);
-            num.r_0e.set(0x80);
-            num._14.set(-1);
-            num._18.set(-1);
+            num.state_00 = 0;
+            num.flags_02 = 0;
+            num.bobjIndex_04 = -1;
+            num.translucent_08 = false;
+            num.b_0c = 0x80;
+            num.g_0d = 0x80;
+            num.r_0e = 0x80;
+            num._14 = -1;
+            num._18 = -1;
 
             //LAB_800f3d60
-            for(int n = 0; n < 5; n++) {
-              final FloatingNumberC4Sub20 v1 = num.digits_24.get(n);
-              v1._00.set(0);
-              v1._04.set(0);
-              v1._08.set(0);
-              v1.digit_0c.set((short)-1);
-              v1._1c.set(0);
+            for(int n = 0; n < num.digits_24.length; n++) {
+              final FloatingNumberC4Sub20 v1 = num.digits_24[n];
+              v1._00 = 0;
+              v1._04 = 0;
+              v1._08 = 0;
+              v1.digit_0c = -1;
+              v1._1c = 0;
             }
             //LAB_800f3b04
           } else if(state < 99) {
             //LAB_800f3c88
-            if((num.flags_02.get() & 0x1) != 0) {
-              num.state_00.set(99);
+            if((num.flags_02 & 0x1) != 0) {
+              num.state_00 = 99;
             } else {
               //LAB_800f3ca4
-              num._14.decr();
+              num._14--;
 
-              if(num._14.get() <= 0) {
-                final long v1 = num._10.get();
+              if(num._14 <= 0) {
+                final int v1 = num._10;
 
                 if(v1 > 0 && v1 < 3) {
-                  num.state_00.set(97);
-                  num.translucent_08.set(true);
-                  num.b_0c.set(0x60);
-                  num.g_0d.set(0x60);
-                  num.r_0e.set(0x60);
+                  num.state_00 = 97;
+                  num.translucent_08 = true;
+                  num.b_0c = 0x60;
+                  num.g_0d = 0x60;
+                  num.r_0e = 0x60;
 
                   final int a2 = 60 / vsyncMode_8007a3b8.get() / 2;
-                  num._14.set(a2);
-                  num._18.set(96 / a2);
+                  num._14 = a2;
+                  num._18 = 96 / a2;
                 } else {
                   //LAB_800f3d24
                   //LAB_800f3d2c
-                  num.state_00.set(100);
+                  num.state_00 = 100;
                 }
               }
             }
@@ -1375,38 +1365,38 @@ public final class Bttl_800f {
   @Method(0x800f3dbcL)
   public static void drawFloatingNumbers() {
     //LAB_800f3e20
-    for(int i = 0; i < 12; i++) {
-      final FloatingNumberC4 num = floatingNumbers_800c6b5c.deref().get(i);
+    for(int i = 0; i < floatingNumbers_800c6b5c.length; i++) {
+      final FloatingNumberC4 num = floatingNumbers_800c6b5c[i];
 
-      if((num.flags_02.get() & 0x8000) != 0) {
-        if(num.state_00.get() != 0) {
-          final boolean translucent = num.translucent_08.get();
-          final int r = num.r_0e.get();
-          final int g = num.g_0d.get();
-          final int b = num.b_0c.get();
+      if((num.flags_02 & 0x8000) != 0) {
+        if(num.state_00 != 0) {
+          final boolean translucent = num.translucent_08;
+          final int r = num.r_0e;
+          final int g = num.g_0d;
+          final int b = num.b_0c;
 
           //LAB_800f3e80
-          for(int s7 = 0; s7 < 5; s7++) {
-            final FloatingNumberC4Sub20 digit = num.digits_24.get(s7);
+          for(int s7 = 0; s7 < num.digits_24.length; s7++) {
+            final FloatingNumberC4Sub20 digit = num.digits_24[s7];
 
-            if(digit.digit_0c.get() == -1) {
+            if(digit.digit_0c == -1) {
               break;
             }
 
-            if((digit._00.get() & 0x8000) != 0) {
+            if((digit._00 & 0x8000) != 0) {
               //LAB_800f3ec0
               for(int s3 = 1; s3 < 3; s3++) {
-                final int a1 = num.x_1c.get() - centreScreenX_1f8003dc.get();
-                final int a2 = num.y_20.get() - centreScreenY_1f8003de.get();
-                final int left = digit.x_0e.get() + a1;
-                final int right = digit.x_0e.get() + digit.texW_16.get() + a1;
-                final int top = digit.y_10.get() + a2;
-                final int bottom = digit.y_10.get() + digit.texH_18.get() + a2;
-                final int leftU = digit.u_12.get();
-                final int rightU = digit.u_12.get() + digit.texW_16.get();
-                final int topV = digit.v_14.get();
-                final int bottomV = digit.v_14.get() + digit.texH_18.get();
-                final int v1 = digit._1a.get();
+                final int a1 = num.x_1c - centreScreenX_1f8003dc.get();
+                final int a2 = num.y_20 - centreScreenY_1f8003de.get();
+                final int left = digit.x_0e + a1;
+                final int right = digit.x_0e + digit.texW_16 + a1;
+                final int top = digit.y_10 + a2;
+                final int bottom = digit.y_10 + digit.texH_18 + a2;
+                final int leftU = digit.u_12;
+                final int rightU = digit.u_12 + digit.texW_16;
+                final int topV = digit.v_14;
+                final int bottomV = digit.v_14 + digit.texH_18;
+                final int v1 = digit._1a;
 
                 final int t1;
                 final int t0;
@@ -1446,7 +1436,7 @@ public final class Bttl_800f {
                 //LAB_800f4068
                 GPU.queueCommand(7, cmd);
 
-                if((num.state_00.get() & 97) == 0) {
+                if((num.state_00 & 97) == 0) {
                   //LAB_800f4118
                   break;
                 }
@@ -2014,9 +2004,9 @@ public final class Bttl_800f {
             }
 
             //LAB_800f517c
-            final FloatingNumberC4 num = floatingNumbers_800c6b5c.deref().get(0);
-            num.state_00.set(0);
-            num.flags_02.set(0);
+            final FloatingNumberC4 num = floatingNumbers_800c6b5c[0];
+            num.state_00 = 0;
+            num.flags_02 = 0;
           }
 
           //LAB_800f5190
@@ -2169,9 +2159,9 @@ public final class Bttl_800f {
         structa4._12.set(0);
         structa4._10.set(0);
         structa4._02.and(0xfffc);
-        final FloatingNumberC4 num = floatingNumbers_800c6b5c.deref().get(0);
-        num.state_00.set(0);
-        num.flags_02.set(0);
+        final FloatingNumberC4 num = floatingNumbers_800c6b5c[0];
+        num.state_00 = 0;
+        num.flags_02 = 0;
       }
 
       case 8 -> {
@@ -3506,14 +3496,14 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f89f4L)
-  public static long FUN_800f89f4(final int bobjIndex, final long a1, final long a2, final int rawDamage, final int x, final int y, final long a6, final long a7) {
+  public static long FUN_800f89f4(final int bobjIndex, final long a1, final long a2, final int rawDamage, final int x, final int y, final int a6, final long a7) {
     //LAB_800f8a30
-    for(int i = 0; i < 12; i++) {
-      final FloatingNumberC4 num = floatingNumbers_800c6b5c.deref().get(i);
+    for(int i = 0; i < floatingNumbers_800c6b5c.length; i++) {
+      final FloatingNumberC4 num = floatingNumbers_800c6b5c[i];
 
-      if(num.state_00.get() == 0) {
+      if(num.state_00 == 0) {
         calculateFloatingNumberRender(i, a1, a2, rawDamage, x, y, a6, a7);
-        num.bobjIndex_04.set(bobjIndex);
+        num.bobjIndex_04 = bobjIndex;
         return 0x1L;
       }
 
@@ -3825,10 +3815,10 @@ public final class Bttl_800f {
   @Method(0x800f9730L)
   public static FlowControl FUN_800f9730(final RunningScript<?> script) {
     //LAB_800f9758
-    for(int i = 0; i < 12; i++) {
-      final FloatingNumberC4 num = floatingNumbers_800c6b5c.deref().get(i);
+    for(int i = 0; i < floatingNumbers_800c6b5c.length; i++) {
+      final FloatingNumberC4 num = floatingNumbers_800c6b5c[i];
 
-      if(num.state_00.get() == 0) {
+      if(num.state_00 == 0) {
         calculateFloatingNumberRender(i, 0, 0, script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), 60 / vsyncMode_8007a3b8.get() * 5, 0);
         break;
       }
@@ -3951,10 +3941,8 @@ public final class Bttl_800f {
   public static FlowControl scriptIsFloatingNumberOnScreen(final RunningScript<?> script) {
     //LAB_800f9b3c
     int found = 0;
-    for(int i = 0; i < 12; i++) {
-      final FloatingNumberC4 num = floatingNumbers_800c6b5c.deref().get(i);
-
-      if(num.state_00.get() != 0) {
+    for(final FloatingNumberC4 num : floatingNumbers_800c6b5c) {
+      if(num.state_00 != 0) {
         found = 1;
         break;
       }
