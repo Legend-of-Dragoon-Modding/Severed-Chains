@@ -9,15 +9,15 @@ import legend.core.memory.Method;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.ShortRef;
 import legend.game.Scus94491BpeSegment_8002;
-import legend.game.combat.types.BattleDisplayStats144;
-import legend.game.combat.types.BattleDisplayStats144Sub10;
-import legend.game.combat.types.BattleMenuStruct58;
 import legend.game.combat.types.BattleObject27c;
-import legend.game.combat.types.BattleStruct3c;
-import legend.game.combat.types.CombatItem02;
-import legend.game.combat.types.CombatMenua4;
-import legend.game.combat.types.FloatingNumberC4;
-import legend.game.combat.types.FloatingNumberC4Sub20;
+import legend.game.combat.ui.BattleDisplayStats144;
+import legend.game.combat.ui.BattleDisplayStats144Sub10;
+import legend.game.combat.ui.BattleMenuStruct58;
+import legend.game.combat.ui.BattleStruct3c;
+import legend.game.combat.ui.CombatItem02;
+import legend.game.combat.ui.CombatMenua4;
+import legend.game.combat.ui.FloatingNumberC4;
+import legend.game.combat.ui.FloatingNumberC4Sub20;
 import legend.game.inventory.screens.TextColour;
 import legend.game.modding.events.EventManager;
 import legend.game.modding.events.combat.SpellStatsEvent;
@@ -33,7 +33,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
-
 import java.util.Arrays;
 
 import static java.lang.Math.round;

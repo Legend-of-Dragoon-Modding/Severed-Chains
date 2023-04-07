@@ -13,7 +13,7 @@ import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
-import legend.game.combat.types.BattleStage;
+import legend.game.combat.environment.BattleStage;
 import legend.game.inventory.WhichMenu;
 import legend.game.scripting.ScriptState;
 import legend.game.types.ActiveStatsa0;
