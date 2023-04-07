@@ -2854,12 +2854,7 @@ public final class SItem {
       }
 
       //LAB_801105b0
-      int maxHp = (int)(stats.maxHp_66.get() * ((stats.hpMulti_62.get() / 100.0) + 1));
-
-      //TODO remove HP cap
-      if(maxHp >= 9999) {
-        maxHp = 9999;
-      }
+      final int maxHp = (int)(stats.maxHp_66.get() * ((stats.hpMulti_62.get() / 100.0) + 1));
 
       //LAB_801105f0
       stats.maxHp_66.set(maxHp);
