@@ -755,7 +755,8 @@ public final class Unpacker {
     btldDataDiscriminatorLatch = false;
     final Map<String, FileData> files = new HashMap<>();
     files.put(name, data);
-    files.put("encounters", new FileData(data.data(), 0x68d8, 0x7000));
+    files.put("encounters", data.slice(0x68d8, 0x7000));
+    files.put("player_combat_script", data.slice(0x4, 0x68d4));
     return files;
   }
 
