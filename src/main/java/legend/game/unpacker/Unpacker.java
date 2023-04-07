@@ -248,6 +248,8 @@ public final class Unpacker {
   public static void unpack() throws UnpackerException {
     synchronized(IO_LOCK) {
       try {
+        Files.createDirectories(ROOT);
+
         if(getUnpackVersion() != VERSION) {
           final long start = System.nanoTime();
 
