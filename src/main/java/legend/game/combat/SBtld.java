@@ -4,11 +4,12 @@ import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.Pointer;
+import legend.game.combat.bobj.BattleObject27c;
+import legend.game.combat.bobj.MonsterBattleObject;
 import legend.game.combat.deff.DeffManager7cc;
 import legend.game.combat.environment.BattlePreloadedEntities_18cb0;
 import legend.game.combat.environment.EncounterData38;
 import legend.game.combat.environment.StageData10;
-import legend.game.combat.types.BattleObject27c;
 import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.combat.types.EnemyRewards08;
@@ -207,7 +208,7 @@ public class SBtld {
 
       final int combatantIndex = getCombatantIndex(charIndex);
       final String name = "Enemy combatant index " + combatantIndex;
-      final ScriptState<BattleObject27c> state = SCRIPTS.allocateScriptState(name, new BattleObject27c(name));
+      final ScriptState<MonsterBattleObject> state = SCRIPTS.allocateScriptState(name, new MonsterBattleObject(name));
       state.setTicker(Bttl_800c::bobjTicker);
       state.setDestructor(Bttl_800c::bobjDestructor);
       _8006e398.bobjIndices_e0c[_800c66d0.get()] = state;

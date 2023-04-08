@@ -1,7 +1,7 @@
 package legend.game.combat.deff;
 
 import legend.game.combat.effects.EffectManagerData6c;
-import legend.game.combat.types.BattleObject27c;
+import legend.game.combat.bobj.BattleObject27c;
 import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptState;
 

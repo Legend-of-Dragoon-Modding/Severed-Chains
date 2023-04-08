@@ -30,7 +30,8 @@ import legend.game.combat.Bttl_800e;
 import legend.game.combat.Bttl_800f;
 import legend.game.combat.SBtld;
 import legend.game.combat.SEffe;
-import legend.game.combat.types.BattleObject27c;
+import legend.game.combat.bobj.BattleObject27c;
+import legend.game.combat.bobj.MonsterBattleObject;
 import legend.game.combat.environment.BattlePreloadedEntities_18cb0;
 import legend.game.combat.environment.StageData10;
 import legend.game.debugger.Debugger;
@@ -2611,15 +2612,15 @@ public final class Scus94491BpeSegment {
   @Method(0x80019facL)
   public static void playCombatantSound(final int type, final int charOrMonsterIndex, final int soundIndex, final short a3, final short a4) {
     int soundFileIndex = 0;
-    ScriptState<BattleObject27c> state = null;
+    ScriptState<? extends BattleObject27c> state = null;
 
     //LAB_80019fdc
     for(int i = 0; i < monsterCount_800c6768.get(); i++) {
-      final ScriptState<BattleObject27c> state2 = _8006e398.bobjIndices_e50[i];
+      final ScriptState<MonsterBattleObject> monster = _8006e398.bobjIndices_e50[i];
 
-      if(state2.innerStruct_00.charIndex_272 == charOrMonsterIndex) {
+      if(monster.innerStruct_00.charIndex_272 == charOrMonsterIndex) {
         //LAB_8001a070
-        state = state2;
+        state = monster;
         break;
       }
     }
@@ -2776,7 +2777,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001a714L)
-  public static void playSound(final int type, final int soundFileIndex, final int soundIndex, final int a3, final short playableSoundIndex, final long a5, final long a6, final short pitchShiftVolRight, final short pitchShiftVolLeft, final short pitch, final short a10, final short a11, @Nullable final ScriptState<BattleObject27c> state) {
+  public static void playSound(final int type, final int soundFileIndex, final int soundIndex, final int a3, final short playableSoundIndex, final long a5, final long a6, final short pitchShiftVolRight, final short pitchShiftVolLeft, final short pitch, final short a10, final short a11, @Nullable final ScriptState<? extends BattleObject27c> state) {
     final SpuStruct28 spu28 = spu28Arr_800bd110.get(a3);
     spu28.type_00.set(type);
     spu28.bobjIndex_04.set(state != null ? state.index : -1);

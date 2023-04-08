@@ -10,6 +10,7 @@ public class MonsterStats1c implements MemoryRef {
   private final Value ref;
 
   public final UnsignedShortRef hp_00;
+  /** Unused */
   public final UnsignedShortRef mp_02;
   public final UnsignedShortRef attack_04;
   public final UnsignedShortRef magicAttack_06;

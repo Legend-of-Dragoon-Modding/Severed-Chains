@@ -36,7 +36,7 @@ import legend.game.combat.effects.ProjectileHitEffect14Sub48;
 import legend.game.combat.environment.BattleCamera;
 import legend.game.combat.types.AdditionCharEffectData0c;
 import legend.game.combat.types.AdditionScriptData1c;
-import legend.game.combat.types.BattleObject27c;
+import legend.game.combat.bobj.BattleObject27c;
 import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.BttlScriptData40;
 import legend.game.combat.types.SpriteMetrics08;

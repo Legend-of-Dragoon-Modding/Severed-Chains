@@ -5,13 +5,11 @@ import legend.game.modding.events.Event;
 
 import static legend.game.combat.SBtld.monsterStats_8010ba98;
 
-public class EnemyStatsEvent extends Event {
+public class MonsterStatsEvent extends Event {
   public final int enemyId;
 
   public int hp;
-  public int mp;
   public int maxHp;
-  public int maxMp;
   /**
    * <ul>
    *   <li>0x1 - 1 damage from magic</li>
@@ -30,14 +28,12 @@ public class EnemyStatsEvent extends Event {
   public int attackAvoid;
   public int magicAvoid;
 
-  public EnemyStatsEvent(final int enemyId) {
+  public MonsterStatsEvent(final int enemyId) {
     this.enemyId = enemyId;
 
     final MonsterStats1c monsterStats = monsterStats_8010ba98.get(enemyId);
     this.hp = monsterStats.hp_00.get();
-    this.mp = monsterStats.mp_02.get();
     this.maxHp = monsterStats.hp_00.get();
-    this.maxMp = monsterStats.mp_02.get();
     this.specialEffectFlag = monsterStats.specialEffectFlag_0d.get();
     this.elementFlag = monsterStats.elementFlag_0f.get();
     this.elementalImmunityFlag = monsterStats.elementalImmunityFlag_10.get();
