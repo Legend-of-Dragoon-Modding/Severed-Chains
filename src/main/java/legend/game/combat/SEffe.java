@@ -8775,7 +8775,7 @@ public final class SEffe {
       //LAB_801160c0
       //LAB_801160d4
       final DeffPart.TmdType tmdType = (DeffPart.TmdType)getDeffPart(a2);
-      final DeffPart.TextureInfo textureInfo = tmdType.textureInfo_08[s0];
+      final DeffPart.TextureInfo textureInfo = tmdType.textureInfo_08[s0 * 2];
       u = textureInfo.vramPos_00.x.get();
       v = textureInfo.vramPos_00.y.get();
       w = textureInfo.vramPos_00.w.get() * 4;

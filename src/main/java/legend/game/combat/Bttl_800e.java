@@ -2738,7 +2738,7 @@ public final class Bttl_800e {
     final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[(short)script.params_20[0].get()].innerStruct_00;
     final DeffTmdRenderer14 effect = (DeffTmdRenderer14)manager.effect_44;
     final DeffPart.TmdType tmdType = effect.tmdType_04;
-    final DeffPart.TextureInfo textureInfo = tmdType.textureInfo_08[(short)script.params_20[1].get()];
+    final DeffPart.TextureInfo textureInfo = tmdType.textureInfo_08[(short)script.params_20[1].get() * 2];
 
     EffectManagerData6c v1_0 = manager;
 
@@ -2787,7 +2787,7 @@ public final class Bttl_800e {
     final DeffTmdRenderer14 effect = (DeffTmdRenderer14)manager.effect_44;
 
     final DeffPart.TmdType tmdType = effect.tmdType_04;
-    final DeffPart.TextureInfo textureInfo = tmdType.textureInfo_08[(short)script.params_20[1].get()];
+    final DeffPart.TextureInfo textureInfo = tmdType.textureInfo_08[(short)script.params_20[1].get() * 2];
     final BttlScriptData6cSub1c a0 = FUN_800eaf54(manager, textureInfo.vramPos_00);
 
     if(a0 != null) {
@@ -2877,7 +2877,7 @@ public final class Bttl_800e {
     final EffectManagerData6c manager = (EffectManagerData6c)state.innerStruct_00;
     final DeffTmdRenderer14 effect = (DeffTmdRenderer14)manager.effect_44;
     final DeffPart.TmdType tmdType = effect.tmdType_04;
-    FUN_800eb280(manager, new RECT().set(tmdType.textureInfo_08[a1].vramPos_00), a2);
+    FUN_800eb280(manager, new RECT().set(tmdType.textureInfo_08[a1 * 2].vramPos_00), a2);
   }
 
   @Method(0x800eb518L)
@@ -2892,7 +2892,7 @@ public final class Bttl_800e {
     GPU.queueCommand(1, new GpuCommandCopyVramToVram(960, 256, a1.getX(), a1.getY() + a0.h.get() - height, a0.w.get(), height));
     GPU.queueCommand(1, new GpuCommandCopyVramToVram(a1.getX(), a1.getY() + height, a1.getX(), a1.getY(), a0.w.get(), a0.h.get() - height));
     GPU.queueCommand(1, new GpuCommandCopyVramToVram(a1.getX(), a1.getY(), a0.x.get(), a0.y.get() + a0.h.get() - height, a0.w.get(), height));
-    GPU.queueCommand(1, new GpuCommandCopyVramToVram(a0.x.get(), a0.y.get() + height, a0.x.get(), a0.h.get(), a0.w.get(), a0.h.get() - height));
+    GPU.queueCommand(1, new GpuCommandCopyVramToVram(a0.x.get(), a0.y.get() + height, a0.x.get(), a0.y.get(), a0.w.get(), a0.h.get() - height));
     GPU.queueCommand(1, new GpuCommandCopyVramToVram(a0.x.get(), a0.y.get(), 960, 256, a0.w.get(), height));
   }
 
@@ -2924,8 +2924,8 @@ public final class Bttl_800e {
     EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final DeffTmdRenderer14 effect = (DeffTmdRenderer14)manager.effect_44;
     final DeffPart.TmdType tmdType = effect.tmdType_04;
-    final DeffPart.TextureInfo textureInfo1 = tmdType.textureInfo_08[script.params_20[1].get()];
-    final DeffPart.TextureInfo textureInfo2 = tmdType.textureInfo_08[script.params_20[2].get()];
+    final DeffPart.TextureInfo textureInfo1 = tmdType.textureInfo_08[script.params_20[1].get() * 2];
+    final DeffPart.TextureInfo textureInfo2 = tmdType.textureInfo_08[script.params_20[2].get() * 2];
 
     //LAB_800eb8fc
     while((manager.flags_04 & 0x400) == 0) {
