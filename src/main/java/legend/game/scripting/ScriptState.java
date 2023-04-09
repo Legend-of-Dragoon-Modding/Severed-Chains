@@ -4,7 +4,7 @@ import legend.core.DebugHelper;
 import legend.core.MathHelper;
 import legend.core.memory.Method;
 import legend.game.Scus94491BpeSegment_8004;
-import legend.game.combat.types.BattleObject27c;
+import legend.game.combat.bobj.BattleObject27c;
 import legend.game.modding.events.EventManager;
 import legend.game.modding.events.scripting.ScriptDeallocatedEvent;
 import legend.game.modding.events.scripting.ScriptTickEvent;

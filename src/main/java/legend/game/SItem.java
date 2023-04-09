@@ -16,7 +16,8 @@ import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.combat.Bttl_800c;
-import legend.game.combat.types.BattleObject27c;
+import legend.game.combat.bobj.BattleObject27c;
+import legend.game.combat.bobj.PlayerBattleObject;
 import legend.game.combat.environment.BattlePreloadedEntities_18cb0;
 import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.CombatantStruct1a8;
@@ -311,7 +312,7 @@ public final class SItem {
     for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
       final int charIndex = gameState_800babc8.charIds_88[charSlot];
       final String name = "Char ID " + charIndex + " (bobj + " + (charSlot + 6) + ')';
-      final ScriptState<BattleObject27c> state = SCRIPTS.allocateScriptState(charSlot + 6, name, 0, new BattleObject27c(name));
+      final ScriptState<PlayerBattleObject> state = SCRIPTS.allocateScriptState(charSlot + 6, name, 0, new PlayerBattleObject(name, charSlot + 6));
       state.setTicker(Bttl_800c::bobjTicker);
       state.setDestructor(Bttl_800c::bobjDestructor);
       _8006e398.bobjIndices_e0c[_800c66d0.get()] = state;
@@ -2808,6 +2809,8 @@ public final class SItem {
         final AdditionHitMultiplierEvent event = EventManager.INSTANCE.postEvent(new AdditionHitMultiplierEvent(additionIndex, stats.additionLevels_36.get(additionIndex - additionOffsets_8004f5ac.get(charId).get()).get(), stats.additionSpMultiplier_9e.get(), stats.additionDamageMultiplier_9f.get()));
         stats.additionSpMultiplier_9e.set(event.additionSpMulti);
         stats.additionDamageMultiplier_9f.set(event.additionDmgMulti);
+      } else {
+        stats.additionDamageMultiplier_9f.set(0);
       }
 
       //LAB_8011042c
