@@ -392,11 +392,8 @@ public final class Bttl_800c {
 
   public static final Value _800c7004 = MEMORY.ref(4, 0x800c7004L);
 
-  public static final ArrayRef<ShortRef> _800c7008 = MEMORY.ref(2, 0x800c7008L, ArrayRef.of(ShortRef.class, 5, 2, ShortRef::new));
-
   public static final ArrayRef<ShortRef> _800c7014 = MEMORY.ref(2, 0x800c7014L, ArrayRef.of(ShortRef.class, 10, 2, ShortRef::new));
   public static final ArrayRef<UnsignedShortRef> _800c7028 = MEMORY.ref(2, 0x800c7028L, ArrayRef.of(UnsignedShortRef.class, 10, 2, UnsignedShortRef::new));
-  public static final Value _800c703c = MEMORY.ref(4, 0x800c703cL);
 
   public static final ArrayRef<UnsignedShortRef> characterElements_800c706c = MEMORY.ref(2, 0x800c706cL, ArrayRef.of(UnsignedShortRef.class, 10, 2, UnsignedShortRef::new));
 
@@ -430,17 +427,7 @@ public final class Bttl_800c {
 
   public static final Value _800c721c = MEMORY.ref(4, 0x800c721cL);
 
-  public static final Value _800c726c = MEMORY.ref(4, 0x800c726cL);
-
   public static final Value _800c723c = MEMORY.ref(4, 0x800c723cL);
-
-  public static final Value _800c724c = MEMORY.ref(4, 0x800c724cL);
-
-  public static final Value _800c7284 = MEMORY.ref(4, 0x800c7284L);
-
-  public static final Value _800c729c = MEMORY.ref(4, 0x800c729cL);
-
-  public static final Value _800c72b4 = MEMORY.ref(4, 0x800c72b4L);
 
   public static final ArrayRef<UnsignedShortRef> protectedItems_800c72cc = MEMORY.ref(2, 0x800c72ccL, ArrayRef.of(UnsignedShortRef.class, 10, 2, UnsignedShortRef::new));
 

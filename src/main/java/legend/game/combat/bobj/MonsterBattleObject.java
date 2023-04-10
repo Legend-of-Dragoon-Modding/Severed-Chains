@@ -1,6 +1,8 @@
 package legend.game.combat.bobj;
 
 import legend.core.gte.SVECTOR;
+import legend.game.combat.types.AttackType;
+import legend.game.modding.coremod.CoreMod;
 
 public class MonsterBattleObject extends BattleObject27c {
   public int originalHp_5c;
@@ -36,7 +38,20 @@ public class MonsterBattleObject extends BattleObject27c {
   public int _8a;
 
   public MonsterBattleObject(final String name) {
-    super(name);
+    super(CoreMod.MONSTER_TYPE.get(), name);
+  }
+
+  @Override
+  public int applyDamageResistanceAndImmunity(final int damage, final AttackType attackType) {
+    if(attackType.isPhysical() && (this.damageReductionFlags_6e & 0x2) != 0) {
+      return 1;
+    }
+
+    if(attackType.isMagical() && (this.damageReductionFlags_6e & 0x1) != 0) {
+      return 1;
+    }
+
+    return super.applyDamageResistanceAndImmunity(damage, attackType);
   }
 
   @Override

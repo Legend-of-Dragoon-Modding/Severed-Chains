@@ -1,5 +1,11 @@
 package legend.game.modding.registries;
 
+import legend.game.characters.StatTypeRegistryEvent;
+import legend.game.characters.StatType;
+import legend.game.characters.StatTypeRegistry;
+import legend.game.combat.bobj.BattleObjectType;
+import legend.game.combat.bobj.BattleObjectTypeRegistry;
+import legend.game.combat.bobj.BattleObjectTypeRegistryEvent;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.EquipmentRegistry;
 import legend.game.inventory.EquipmentRegistryEvent;
@@ -20,6 +26,8 @@ public class Registries {
   private final List<MutableRegistry<?>> registries = new ArrayList<>();
   private final List<Function<MutableRegistry<?>, RegistryEvent.Register<?>>> registryEvents = new ArrayList<>();
 
+  public final Registry<StatType> stats = this.addRegistry(new StatTypeRegistry(), StatTypeRegistryEvent::new);
+  public final Registry<BattleObjectType> battleObjectTypes = this.addRegistry(new BattleObjectTypeRegistry(), BattleObjectTypeRegistryEvent::new);
   public final Registry<Item> items = this.addRegistry(new ItemRegistry(), ItemRegistryEvent::new);
   public final Registry<Equipment> equipment = this.addRegistry(new EquipmentRegistry(), EquipmentRegistryEvent::new);
   public final Registry<ConfigEntry<?>> config = this.addRegistry(new ConfigRegistry(), ConfigRegistryEvent::new);

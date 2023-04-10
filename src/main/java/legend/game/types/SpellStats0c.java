@@ -8,7 +8,12 @@ public class SpellStats0c implements MemoryRef {
   private final Value ref;
 
   public final UnsignedByteRef targetType_00;
-  public final UnsignedByteRef _01;
+  /**
+   * <ul>
+   *   <li>0x4 - either buff spell or always hit (or both)</li>
+   * </ul>
+   */
+  public final UnsignedByteRef flags_01;
   public final UnsignedByteRef specialEffect_02;
   public final UnsignedByteRef damage_03;
   public final UnsignedByteRef multi_04;
@@ -24,7 +29,7 @@ public class SpellStats0c implements MemoryRef {
     this.ref = ref;
 
     this.targetType_00 = ref.offset(1, 0x00L).cast(UnsignedByteRef::new);
-    this._01 = ref.offset(1, 0x01L).cast(UnsignedByteRef::new);
+    this.flags_01 = ref.offset(1, 0x01L).cast(UnsignedByteRef::new);
     this.specialEffect_02 = ref.offset(1, 0x02L).cast(UnsignedByteRef::new);
     this.damage_03 = ref.offset(1, 0x03L).cast(UnsignedByteRef::new);
     this.multi_04 = ref.offset(1, 0x04L).cast(UnsignedByteRef::new);

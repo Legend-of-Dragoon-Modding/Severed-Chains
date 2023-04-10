@@ -225,7 +225,7 @@ import static legend.game.combat.Bttl_800d.loadModelAnim;
 import static legend.game.combat.Bttl_800d.loadModelTmd;
 import static legend.game.combat.Bttl_800d.optimisePacketsIfNecessary;
 import static legend.game.combat.Bttl_800f.FUN_800f3940;
-import static legend.game.combat.Bttl_800f.FUN_800f4964;
+import static legend.game.combat.Bttl_800f.resetCombatMenu;
 import static legend.game.combat.Bttl_800f.FUN_800f4b80;
 import static legend.game.combat.Bttl_800f.FUN_800f60ac;
 import static legend.game.combat.Bttl_800f.FUN_800f9584;
@@ -3617,7 +3617,7 @@ public final class Bttl_800e {
     _800c6b6c.setu(mallocTail(0x3cL));
 
     FUN_800ef7c4();
-    FUN_800f4964();
+    resetCombatMenu();
 
     final CombatMenua4 v0 = _800c6b60.deref();
     v0._26.set((short)0);

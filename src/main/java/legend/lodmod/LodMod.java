@@ -1,12 +1,20 @@
 package legend.lodmod;
 
 import com.github.slugify.Slugify;
+import legend.core.GameEngine;
+import legend.game.characters.StatType;
+import legend.game.characters.StatTypeRegistryEvent;
+import legend.game.combat.bobj.BattleObjectType;
+import legend.game.combat.bobj.BattleObjectTypeRegistryEvent;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.EquipmentRegistryEvent;
 import legend.game.inventory.Item;
 import legend.game.inventory.ItemRegistryEvent;
 import legend.game.modding.Mod;
 import legend.game.modding.events.EventListener;
+import legend.game.modding.events.combat.RegisterBattleObjectStatsEvent;
+import legend.game.modding.registries.Registrar;
+import legend.game.modding.registries.RegistryDelegate;
 import legend.game.modding.registries.RegistryId;
 import legend.game.types.EquipmentStats1c;
 import legend.game.types.ItemStats0c;

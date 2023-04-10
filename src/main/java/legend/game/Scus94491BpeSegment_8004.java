@@ -438,13 +438,13 @@ public final class Scus94491BpeSegment_8004 {
 
 //    scriptSubFunctions_8004e29c[445] = Temp::FUN_800ca734;
 
-    scriptSubFunctions_8004e29c[480] = Bttl_800f::FUN_800f95d0;
+    scriptSubFunctions_8004e29c[480] = Bttl_800f::scriptCheckPhysicalHit;
     scriptSubFunctions_8004e29c[481] = Bttl_800f::FUN_800f2500;
-    scriptSubFunctions_8004e29c[482] = Bttl_800f::FUN_800f96d4;
-    scriptSubFunctions_8004e29c[483] = Bttl_800f::FUN_800f9730;
-    scriptSubFunctions_8004e29c[484] = Bttl_800f::FUN_800f95d0;
-    scriptSubFunctions_8004e29c[485] = Bttl_800f::FUN_800f95d0;
-    scriptSubFunctions_8004e29c[486] = Bttl_800f::FUN_800f95d0;
+    scriptSubFunctions_8004e29c[482] = Bttl_800f::scriptGetBobjPos;
+    scriptSubFunctions_8004e29c[483] = Bttl_800f::scriptAddFloatingNumber;
+    scriptSubFunctions_8004e29c[484] = Bttl_800f::scriptCheckPhysicalHit;
+    scriptSubFunctions_8004e29c[485] = Bttl_800f::scriptCheckPhysicalHit;
+    scriptSubFunctions_8004e29c[486] = Bttl_800f::scriptCheckPhysicalHit;
     scriptSubFunctions_8004e29c[487] = Bttl_800f::FUN_800f43dc;
     scriptSubFunctions_8004e29c[488] = Bttl_800f::FUN_800f4518;
     scriptSubFunctions_8004e29c[489] = Bttl_800f::FUN_800f97d8;
@@ -465,8 +465,8 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[504] = Bttl_800f::FUN_800f9c00;
     scriptSubFunctions_8004e29c[505] = Bttl_800f::FUN_800f9c2c;
     scriptSubFunctions_8004e29c[506] = Bttl_800f::FUN_800f9cac;
-    scriptSubFunctions_8004e29c[507] = Bttl_800f::FUN_800f9618;
-    scriptSubFunctions_8004e29c[508] = Bttl_800f::FUN_800f9660;
+    scriptSubFunctions_8004e29c[507] = Bttl_800f::scriptCheckSpellOrStatusHit;
+    scriptSubFunctions_8004e29c[508] = Bttl_800f::scriptCheckItemHit;
     scriptSubFunctions_8004e29c[509] = Bttl_800f::scriptTickTemporaryStatMods;
 
     scriptSubFunctions_8004e29c[512] = Bttl_800e::scriptSetBobjZOffset;

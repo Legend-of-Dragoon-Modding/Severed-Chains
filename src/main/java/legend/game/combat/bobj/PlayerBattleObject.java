@@ -2,6 +2,7 @@ package legend.game.combat.bobj;
 
 import legend.core.Config;
 import legend.core.Latch;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.scripting.ScriptState;
 
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
@@ -56,7 +57,7 @@ public class PlayerBattleObject extends BattleObject27c {
   public int mpMulti_13e;
 
   public PlayerBattleObject(final String name, final int scriptIndex) {
-    super(name);
+    super(CoreMod.PLAYER_TYPE.get(), name);
 
     //noinspection unchecked
     this.scriptState = new Latch<>(() -> (ScriptState<PlayerBattleObject>)scriptStatePtrArr_800bc1c0[scriptIndex]);

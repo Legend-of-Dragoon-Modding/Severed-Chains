@@ -5,7 +5,7 @@ import legend.game.modding.events.Event;
 public class SpellStatsEvent extends Event {
   public final int spellId;
   public int targetType;
-  public int _01;
+  public int flags_01;
   public int specialEffect;
   public int damageFlag;
   public int healingPercent;
@@ -17,10 +17,10 @@ public class SpellStatsEvent extends Event {
   public int buffType;
   public int _0b;
 
-  public SpellStatsEvent(final int spellId, final int targetType, final int _01, final int specialEffect, final int damageFlag, final int healingPercent, final int accuracy, final int mpUsage, final int statusChance, final int element, final int statusType, final int buffType, final int _0b) {
+  public SpellStatsEvent(final int spellId, final int targetType, final int flags, final int specialEffect, final int damageFlag, final int healingPercent, final int accuracy, final int mpUsage, final int statusChance, final int element, final int statusType, final int buffType, final int _0b) {
     this.spellId = spellId;
     this.targetType = targetType;
-    this._01 = _01;
+    this.flags_01 = flags;
     this.specialEffect = specialEffect;
     this.damageFlag = damageFlag;
     this.healingPercent = healingPercent;

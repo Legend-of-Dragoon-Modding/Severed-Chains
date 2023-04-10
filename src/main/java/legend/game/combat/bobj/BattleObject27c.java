@@ -1,10 +1,23 @@
 package legend.game.combat.bobj;
 
+import legend.core.memory.Method;
+import legend.game.characters.StatCollection;
+import legend.game.characters.StatType;
+import legend.game.combat.types.AttackType;
 import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.CombatantStruct1a8;
+import legend.game.modding.events.EventManager;
+import legend.game.modding.events.combat.RegisterBattleObjectStatsEvent;
 import legend.game.types.Model124;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public abstract class BattleObject27c extends BattleScriptDataBase {
+  public final BattleObjectType type;
+
+  public final StatCollection stats;
+
   public int hp_08;
 
   /**
@@ -135,8 +148,18 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
   public int itemOrSpellId_52;
   public int guard_54;
 
+  /**
+   * <ul>
+   *   <li>0x8 - attack all</li>
+   * </ul>
+   */
   public int targetType_94;
-  public int _96;
+  /**
+   * <ul>
+   *   <li>0x4 - either buff spell or always hit (or both)</li>
+   * </ul>
+   */
+  public int spellFlags_96;
   public int specialEffect_98;
   public int spellDamage_9a;
   public int spellMulti_9c;
@@ -160,10 +183,10 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
   public int tempAttackHitTurns_bd;
   public int tempMagicHit_be;
   public int tempMagicHitTurns_bf;
-  public int unknown_c0;
-  public int unknownTurns_c1;
-  public int unknown_c2;
-  public int unknownTurns_c3;
+  public int tempAttackAvoid_c0;
+  public int tempAttackAvoidTurns_c1;
+  public int tempMagicAvoid_c2;
+  public int tempMagicAvoidTurns_c3;
   public int tempPhysicalImmunity_c4;
   public int tempPhysicalImmunityTurns_c5;
   public int tempMagicalImmunity_c6;
@@ -216,8 +239,38 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
   /** Has model? Used to be used to free model, no longer used since it's managed by java */
   public int _278;
 
-  public BattleObject27c(final String name) {
+  public BattleObject27c(final BattleObjectType type, final String name) {
+    this.type = type;
     this.model_148 = new Model124(name);
+
+    final Set<StatType> stats = new HashSet<>();
+    EventManager.INSTANCE.postEvent(new RegisterBattleObjectStatsEvent(type, stats));
+    this.stats = new StatCollection(stats.toArray(StatType[]::new));
+  }
+
+  @Method(0x800f29d4L)
+  public int applyDamageResistanceAndImmunity(final int damage, final AttackType attackType) {
+    if(attackType.isPhysical()) {
+      if(this.physicalImmunity_110 != 0) {
+        return 0;
+      }
+
+      if(this.physicalResistance_114 != 0) {
+        return damage / 2;
+      }
+    }
+
+    if(attackType.isMagical()) {
+      if(this.magicalImmunity_112 != 0) {
+        return 0;
+      }
+
+      if(this.magicalResistance_116 != 0) {
+        return damage / 2;
+      }
+    }
+
+    return damage;
   }
 
   public int getStat(final int statIndex) {
@@ -262,7 +315,7 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
       case 40 -> this.guard_54;
 
       case 72 -> this.targetType_94;
-      case 73 -> this._96;
+      case 73 -> this.spellFlags_96;
       case 74 -> this.specialEffect_98;
       case 75 -> this.spellDamage_9a;
       case 76 -> this.spellMulti_9c;
@@ -280,8 +333,8 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
       case 91 -> (this.powerMagicDefenceTurns_bb & 0xff) << 8 | this.powerMagicDefence_ba & 0xff;
       case 92 -> (this.tempAttackHitTurns_bd & 0xff) << 8 | this.tempAttackHit_bc & 0xff;
       case 93 -> (this.tempMagicHitTurns_bf & 0xff) << 8 | this.tempMagicHit_be & 0xff;
-      case 94 -> (this.unknownTurns_c1 & 0xff) << 8 | this.unknown_c0 & 0xff;
-      case 95 -> (this.unknownTurns_c3 & 0xff) << 8 | this.unknown_c2 & 0xff;
+      case 94 -> (this.tempAttackAvoidTurns_c1 & 0xff) << 8 | this.tempAttackAvoid_c0 & 0xff;
+      case 95 -> (this.tempMagicAvoidTurns_c3 & 0xff) << 8 | this.tempMagicAvoid_c2 & 0xff;
       case 96 -> (this.tempPhysicalImmunityTurns_c5 & 0xff) << 8 | this.tempPhysicalImmunity_c4 & 0xff;
       case 97 -> (this.tempMagicalImmunityTurns_c7 & 0xff) << 8 | this.tempMagicalImmunity_c6 & 0xff;
       case 98 -> this.speedUpTurns_c8;
@@ -357,7 +410,7 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
       case 40 -> this.guard_54 = value;
 
       case 72 -> this.targetType_94 = value;
-      case 73 -> this._96 = value;
+      case 73 -> this.spellFlags_96 = value;
       case 74 -> this.specialEffect_98 = value;
       case 75 -> this.spellDamage_9a = value;
       case 76 -> this.spellMulti_9c = value;
@@ -394,12 +447,12 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
         this.tempMagicHitTurns_bf = value >>> 8 & 0xff;
       }
       case 94 -> {
-        this.unknown_c0 = value & 0xff;
-        this.unknownTurns_c1 = value >>> 8 & 0xff;
+        this.tempAttackAvoid_c0 = value & 0xff;
+        this.tempAttackAvoidTurns_c1 = value >>> 8 & 0xff;
       }
       case 95 -> {
-        this.unknown_c2 = value & 0xff;
-        this.unknownTurns_c3 = value >>> 8 & 0xff;
+        this.tempMagicAvoid_c2 = value & 0xff;
+        this.tempMagicAvoidTurns_c3 = value >>> 8 & 0xff;
       }
       case 96 -> {
         this.tempPhysicalImmunity_c4 = value & 0xff;
