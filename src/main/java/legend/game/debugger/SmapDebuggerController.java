@@ -81,6 +81,16 @@ public class SmapDebuggerController {
 
   private SubmapObject210 sobj;
 
+  // I might be able to eliminate this bool by using the state of the UI as true / false
+  // this.alertIcon.isSelected() and this.alertIcon.setSelected();
+  // But I'm not sure what else has access to that since it's part of the UI
+  // system. I also don't know if by setting it to a value in code it will trigger other
+  // functions. I found it cleaner / more readable to just create a new bool in this class and
+  // update the UI only when I need to.
+
+  // Because of the delay/pulse this bool and the UI do go out of sync for a small amount of time.
+  // If the user moves on to the next object it doesn't matter because this is holding
+  // the intended value for that object
   private boolean alertIconOriginalState;
   public void initialize() {
     for(int i = 0; i < sobjCount_800c6730.get(); i++) {
@@ -138,32 +148,30 @@ public class SmapDebuggerController {
     return "Script %d".formatted(index);
   }
 
-  private void delayedSetToOriginalState() {
-    this.setToOriginalState();
+  // I can't give the schedule a function call while passing a parameter.
+  // So this function exists to set it back to the original state
+  // after a set amount of delay see the "final ScheduledExecutorService executorService"
+  // line in displayStats
+  private void setAlertIconToOriginalState() {
+    this.setAlertIcon(this.alertIconOriginalState);
   }
 
-  private void setToOriginalState() {
-    if(this.alertIconOriginalState) {
-      this.turnOnAlertIcon();
-    } else {
-      this.turnOffAlertIcon();
+  // When the user is quickly going through the list, faster than what the delay time is
+  // I need to be able to immediately set it before I lose the reference to this.sobj
+  // this.sobj is the reference to the current selected object
+  private void setAlertIcon(boolean newValue) {
+    if(this.sobj == null) {
+      return;
     }
+    // UI needs to be updated when switching objects. Otherwise, it will be checked
+    // when the next selected object is not showing an icon. This produces that flash mentioned
+    this.alertIcon.setSelected(newValue);
+
+    // This is the actual flag value the game uses. This will make the image/icon show up in game
+    this.sobj.showAlertIndicator_194 = newValue;
   }
 
-  private void turnOnAlertIcon() {
-    if(this.sobj != null) {
-      this.alertIcon.setSelected(true);
-      this.sobj.showAlertIndicator_194 = true;
-    }
-  }
-
-  private void turnOffAlertIcon() {
-    if(this.sobj != null) {
-      this.alertIcon.setSelected(false);
-      this.sobj.showAlertIndicator_194 = false;
-    }
-  }
-
+  // This function being called means the user just selected a new object in the list
   private void displayStats(final int index) {
     final ScriptState<SubmapObject210> state = sobjs_800c6880[index];
 
@@ -173,7 +181,10 @@ public class SmapDebuggerController {
 
     this.scriptIndex.setText("View script %d".formatted(index));
 
-    this.setToOriginalState();
+    // If we had a previously selected object set it to the correct state
+    // before we lose the reference to the current this.sobj
+    this.setAlertIcon(this.alertIconOriginalState);
+    // Get the reference to the newly selected object
     this.sobj = state.innerStruct_00;
 
     this.posX.getValueFactory().setValue(this.sobj.model_00.coord2_14.coord.transfer.getX());
@@ -196,11 +207,16 @@ public class SmapDebuggerController {
     this.collide800.setSelected((this.sobj.flags_190 & 0x800_0000) != 0);
     this.collide1000.setSelected((this.sobj.flags_190 & 0x1000_0000) != 0);
 
+    // Keep track of the original state of the newly selected object
+    // This is so if we previously set an object ON we don't delay/pulse it off
     this.alertIconOriginalState = this.sobj.showAlertIndicator_194;
-    this.turnOnAlertIcon();
 
+    // Turn the alert on
+    this.setAlertIcon(true);
+
+    // Set the alert to the original state after a delay
     final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-    executorService.schedule(this::delayedSetToOriginalState, 1000, TimeUnit.MILLISECONDS);
+    executorService.schedule(this::setAlertIconToOriginalState, 400, TimeUnit.MILLISECONDS);
   }
 
   public void openScriptDebugger(final ActionEvent event) throws Exception {
@@ -286,6 +302,8 @@ public class SmapDebuggerController {
   public void showAlertIconClick(final ActionEvent actionEvent) {
     if(this.sobj != null) {
       this.sobj.showAlertIndicator_194 = this.alertIcon.isSelected();
+      // When the user clicks the box we override the original state
+      // so that when displayStats is called it remains the state that the user wanted
       this.alertIconOriginalState = this.alertIcon.isSelected();
     }
   }
