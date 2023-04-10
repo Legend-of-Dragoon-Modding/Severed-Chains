@@ -2,11 +2,8 @@ package legend.game.modding.events.characters;
 
 import legend.game.combat.types.BattlePreloadedEntities_18cb0;
 import legend.game.modding.events.Event;
-import legend.game.modding.events.EventProvider;
 
-import static legend.core.GameEngine.MEMORY;
-
-public class BattleMapActiveAdditionHitPropertiesEvent extends Event implements EventProvider {
+public class BattleMapActiveAdditionHitPropertiesEvent extends Event {
   public final BattlePreloadedEntities_18cb0.AdditionHits_100 additionHits;
   public final int additionIndex;
   public final int charIndex;
@@ -19,10 +16,5 @@ public class BattleMapActiveAdditionHitPropertiesEvent extends Event implements 
     this.charIndex = charIndex;
     this.charSlot = charSlot;
     this.dragoon = dragoon;
-  }
-
-  @Override
-  public void applyEvent() {
-
   }
 }
