@@ -472,8 +472,6 @@ public final class Scus94491BpeSegment {
         startSound();
       }
 
-      Input.update();
-
       joypadPress_8007a398.setu(_800bee94.get());
       joypadInput_8007a39c.setu(_800bee90.get());
       joypadRepeat_8007a3a0.setu(_800bee98.get());

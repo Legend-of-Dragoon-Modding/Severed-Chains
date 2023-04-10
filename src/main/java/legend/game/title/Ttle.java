@@ -108,9 +108,7 @@ public final class Ttle {
 
   public static int _800c6728;
   public static int _800c672c;
-  public static final int[] menuOptionTransparency = {0, 0, 0};
-
-  public static int _800c6738;
+  public static final int[] menuOptionTransparency = {0, 0};
 
   public static int fadeOutTimer_800c6754;
   public static int flamesZ;
@@ -162,7 +160,6 @@ public final class Ttle {
 
   private static Window.Events.Cursor onMouseMove;
   private static Window.Events.Click onMouseRelease;
-  private static Window.Events.Key onKeyPress;
 
   @Method(0x800c7194L)
   public static void setUpNewGameData() {
@@ -319,7 +316,6 @@ public final class Ttle {
     menuIdleTime = 0;
     _800c6728 = 0;
     _800c672c = 0;
-    _800c6738 = 0;
     logoFadeInAmount = 0;
     backgroundInitialized = false;
     backgroundScrollAmount = -176;
@@ -807,31 +803,13 @@ public final class Ttle {
         }
       }
     });
-
-    onKeyPress = GPU.window().events.onKeyPress((window, key, scancode, mods) -> {
-      if(_800c6728 == 1 && _800c6738 < 3) {
-        if(key == GLFW.GLFW_KEY_ESCAPE) {
-          menuEscape();
-        }
-      }
-    });
-  }
-
-  private static void menuEscape() {
-    playSound(0, 3, 0, 0, (short)0, (short)0);
-    _800c6738 = 3;
-    _800c672c = 0;
-
-    resetIdleTime();
   }
 
   private static void removeInputHandlers() {
     GPU.window().events.removeMouseMove(onMouseMove);
     GPU.window().events.removeMouseRelease(onMouseRelease);
-    GPU.window().events.removeKeyPress(onKeyPress);
     onMouseMove = null;
     onMouseRelease = null;
-    onKeyPress = null;
   }
 
   @Method(0x800c8484L)
@@ -874,7 +852,7 @@ public final class Ttle {
     switch(_800c672c) {
       case 0 -> {
         //LAB_800c86d8
-        for(int i = 0; i < 3; i++) {
+        for(int i = 0; i < 2; i++) {
           //LAB_800c86f4
           menuOptionTransparency[i] = 0;
         }
@@ -886,7 +864,7 @@ public final class Ttle {
       case 1 -> {
         //LAB_800c8740
         //LAB_800c886c
-        for(int i = 0; i < 3; i++) {
+        for(int i = 0; i < 2; i++) {
           //LAB_800c875c
           menuOptionTransparency[i] += 4;
           if(selectedMenuOption == i) {
@@ -907,7 +885,7 @@ public final class Ttle {
       case 2 -> {
         //LAB_800c8878
         //LAB_800c89e4
-        for(int i = 0; i < 3; i++) {
+        for(int i = 0; i < 2; i++) {
           //LAB_800c8894
           if(selectedMenuOption == i) {
             // Fade in selected item

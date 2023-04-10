@@ -12,7 +12,7 @@ public class InputBinding {
   private InputType inputType;
   private float axisValue;
   private final float controllerDeadzone;
-  private InputControllerData targetController;
+  private HardwareController targetController;
   private final float[] pulseTimings = {0.5f, 0.1f};
   private int pulseTimingsIndex;
   private double lastPressedTriggerTime;
@@ -37,18 +37,21 @@ public class InputBinding {
     this.controllerDeadzone = Config.controllerDeadzone();
   }
 
-  public void update() {
+  public void poll() {
     if(this.inputType == InputType.GAMEPAD_BUTTON) {
-      this.updateGamepadButtons();
+      this.pollGamepadButtons();
     }
+
     if(this.inputType == InputType.GAMEPAD_AXIS || this.inputType == InputType.GAMEPAD_AXIS_BUTTON_POSITIVE || this.inputType == InputType.GAMEPAD_AXIS_BUTTON_NEGATIVE) {
-      this.updateGamepadAxis();
+      this.pollGamepadAxis();
     }
+
     if(this.inputType == InputType.GAMEPAD_HAT) {
-      this.updateGamepadHats();
+      this.pollGamepadHats();
     }
+
     if(this.inputType == InputType.KEYBOARD) {
-      this.updateKeyboardInput();
+      this.pollKeyboardInput();
     }
   }
 
@@ -58,16 +61,16 @@ public class InputBinding {
     }
   }
 
-  private void updateGamepadButtons() {
-    if(this.targetController.checkButton(this.glfwKeyCode)) {
+  private void pollGamepadButtons() {
+    if(this.targetController.readButton(this.glfwKeyCode)) {
       this.handlePositiveState();
     } else {
       this.handleNoInputState();
     }
   }
 
-  private void updateGamepadAxis() {
-    this.axisValue = this.targetController.checkAxis(this.glfwKeyCode);
+  private void pollGamepadAxis() {
+    this.axisValue = this.targetController.readAxis(this.glfwKeyCode);
 
     if(this.inputType == InputType.GAMEPAD_AXIS_BUTTON_POSITIVE) {
       if(this.axisValue > this.controllerDeadzone) {
@@ -84,8 +87,8 @@ public class InputBinding {
     }
   }
 
-  private void updateGamepadHats() {
-    if(this.targetController.checkHat(this.glfwKeyCode, this.hatIndex)) {
+  private void pollGamepadHats() {
+    if(this.targetController.readHat(this.glfwKeyCode, this.hatIndex)) {
       this.handlePositiveState();
     } else {
       this.handleNoInputState();
@@ -121,7 +124,7 @@ public class InputBinding {
     }
   }
 
-  private void updateKeyboardInput() {
+  private void pollKeyboardInput() {
     if(this.axisValue == 1) {
       this.handlePositiveState();
     } else {
@@ -143,8 +146,8 @@ public class InputBinding {
   public InputType getInputType() { return this.inputType; }
   public float getAxisValue() { return this.axisValue; }
   public int getGlfwKeyCode() { return this.glfwKeyCode; }
-  public InputControllerData getTargetController() { return this.targetController; }
-  public void setTargetController(final InputControllerData targetController) { this.targetController = targetController; }
+  public HardwareController getTargetController() { return this.targetController; }
+  public void setTargetController(final HardwareController targetController) { this.targetController = targetController; }
   public void setHexCode(final int hexCode) { this.hexCode = hexCode; }
 
   public void setGlfwKeyCode(final int glfwKeyCode) { this.glfwKeyCode = glfwKeyCode;  }

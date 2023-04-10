@@ -29,10 +29,10 @@ public final class ControllerDatabase {
     }
   }
 
-  public static List<InputBinding> getBindings(final String targetControllerGUID) {
+  public static List<InputBinding> createBindings(final String targetControllerGuid) {
     final List<InputBinding> returnedBindings = new ArrayList<>();
 
-    final String dbMap = getDbMap(targetControllerGUID);
+    final String dbMap = getDbMap(targetControllerGuid);
 
     for(final InputAction inputAction : InputAction.values()) {
       final InputBinding newBinding = new InputBinding(inputAction);
@@ -40,6 +40,7 @@ public final class ControllerDatabase {
       modifyForSpecialCases(newBinding);
       returnedBindings.add(newBinding);
     }
+
     return returnedBindings;
   }
 

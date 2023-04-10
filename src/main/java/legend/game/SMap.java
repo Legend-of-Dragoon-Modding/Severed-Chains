@@ -3849,10 +3849,6 @@ public final class SMap {
       return 0;
     }
 
-    if(!Input.hasActivity()) {
-      return 0;
-    }
-
     if(!hasPlayerMoved(sobjs_800c6880[0].innerStruct_00.model_00.coord2_14.coord)) {
       return 0;
     }
