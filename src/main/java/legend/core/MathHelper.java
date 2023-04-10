@@ -62,7 +62,7 @@ public final class MathHelper {
 
   public static int digitCount(final int number) {
     if(number == 0) {
-      return 0;
+      return 1;
     }
 
     return (int)(Math.log10(number) + 1);

@@ -32,35 +32,37 @@ import legend.core.memory.types.UnsignedShortRef;
 import legend.game.SItem;
 import legend.game.Scus94491BpeSegment;
 import legend.game.Scus94491BpeSegment_8005;
+import legend.game.combat.bobj.BattleObject27c;
+import legend.game.combat.bobj.MonsterBattleObject;
+import legend.game.combat.bobj.PlayerBattleObject;
+import legend.game.combat.deff.BattleStruct24_2;
 import legend.game.combat.deff.DeffManager7cc;
-import legend.game.combat.types.BattleCamera;
-import legend.game.combat.types.BattleDisplayStats144;
-import legend.game.combat.types.BattleLightStruct64;
-import legend.game.combat.types.BattleMenuStruct58;
-import legend.game.combat.types.BattleObject27c;
-import legend.game.combat.types.BattlePreloadedEntities_18cb0;
+import legend.game.combat.effects.BttlScriptData6cSub13c;
+import legend.game.combat.effects.EffectManagerData6c;
+import legend.game.combat.effects.FullScreenOverlayEffect0e;
+import legend.game.combat.effects.PotionEffect14;
+import legend.game.combat.effects.WeaponTrailEffect3c;
+import legend.game.combat.effects.WeaponTrailEffectSegment2c;
+import legend.game.combat.environment.BattleCamera;
+import legend.game.combat.environment.BattleLightStruct64;
+import legend.game.combat.environment.BattlePreloadedEntities_18cb0;
+import legend.game.combat.environment.BattleStage;
+import legend.game.combat.environment.BattleStageDarkening1800;
+import legend.game.combat.environment.BttlLightStruct84;
 import legend.game.combat.types.BattleScriptDataBase;
-import legend.game.combat.types.BattleStage;
-import legend.game.combat.types.BattleStageDarkening1800;
-import legend.game.combat.types.BattleStruct24_2;
-import legend.game.combat.types.BattleStruct3c;
 import legend.game.combat.types.BattleStructEf4;
-import legend.game.combat.types.BttlLightStruct84;
-import legend.game.combat.types.BttlScriptData6cSub13c;
 import legend.game.combat.types.BttlStruct08;
-import legend.game.combat.types.CombatItem02;
-import legend.game.combat.types.CombatMenua4;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.combat.types.CombatantStruct1a8_c;
 import legend.game.combat.types.DragoonSpells09;
-import legend.game.combat.types.EffectManagerData6c;
-import legend.game.combat.types.FloatingNumberC4;
-import legend.game.combat.types.FullScreenOverlayEffect0e;
 import legend.game.combat.types.MersenneTwisterSeed;
-import legend.game.combat.types.PotionEffect14;
 import legend.game.combat.types.SpriteMetrics08;
-import legend.game.combat.types.WeaponTrailEffect3c;
-import legend.game.combat.types.WeaponTrailEffectSegment2c;
+import legend.game.combat.ui.BattleDisplayStats144;
+import legend.game.combat.ui.BattleMenuStruct58;
+import legend.game.combat.ui.BattleStruct3c;
+import legend.game.combat.ui.CombatItem02;
+import legend.game.combat.ui.CombatMenua4;
+import legend.game.combat.ui.FloatingNumberC4;
 import legend.game.fmv.Fmv;
 import legend.game.inventory.WhichMenu;
 import legend.game.scripting.FlowControl;
@@ -218,12 +220,12 @@ public final class Bttl_800c {
   public static final BoolRef stageHasModel_800c66b8 = MEMORY.ref(1, 0x800c66b8L, BoolRef::new);
   public static final Value _800c66b9 = MEMORY.ref(1, 0x800c66b9L);
 
-  public static ScriptState<BattleObject27c> scriptIndex_800c66bc;
+  public static ScriptState<? extends BattleObject27c> scriptIndex_800c66bc;
   public static final Value _800c66c0 = MEMORY.ref(1, 0x800c66c0L);
   public static final Value _800c66c1 = MEMORY.ref(1, 0x800c66c1L);
 
   public static final Value _800c66c4 = MEMORY.ref(4, 0x800c66c4L);
-  public static ScriptState<BattleObject27c> currentTurnBobj_800c66c8;
+  public static ScriptState<? extends BattleObject27c> currentTurnBobj_800c66c8;
   public static final Value _800c66cc = MEMORY.ref(4, 0x800c66ccL);
   public static final IntRef _800c66d0 = MEMORY.ref(4, 0x800c66d0L, IntRef::new);
   public static final Value _800c66d4 = MEMORY.ref(1, 0x800c66d4L);
@@ -276,7 +278,7 @@ public final class Bttl_800c {
 
   public static final Value _800c6912 = MEMORY.ref(1, 0x800c6912L);
   public static final Value _800c6913 = MEMORY.ref(1, 0x800c6913L);
-  public static ScriptState<BattleObject27c> scriptState_800c6914;
+  public static ScriptState<? extends BattleObject27c> scriptState_800c6914;
   public static final IntRef _800c6918 = MEMORY.ref(4, 0x800c6918L, IntRef::new);
 
   public static final Value lightTicks_800c6928 = MEMORY.ref(4, 0x800c6928L);
@@ -304,7 +306,10 @@ public final class Bttl_800c {
 
   public static final ArrayRef<LodString> currentEnemyNames_800c69d0 = MEMORY.ref(2, 0x800c69d0L, ArrayRef.of(LodString.class, 9, 0x2c, LodString::new));
 
-  public static final Pointer<ArrayRef<FloatingNumberC4>> floatingNumbers_800c6b5c = MEMORY.ref(4, 0x800c6b5cL, Pointer.deferred(4, ArrayRef.of(FloatingNumberC4.class, 12, 0xc4, FloatingNumberC4::new)));
+  public static final FloatingNumberC4[] floatingNumbers_800c6b5c = new FloatingNumberC4[12];
+  static {
+    Arrays.setAll(floatingNumbers_800c6b5c, i -> new FloatingNumberC4());
+  }
   public static final Pointer<CombatMenua4> _800c6b60 = MEMORY.ref(4, 0x800c6b60L, Pointer.deferred(4, CombatMenua4::new));
   public static final Value _800c6b64 = MEMORY.ref(4, 0x800c6b64L);
   public static final Value _800c6b68 = MEMORY.ref(4, 0x800c6b68L);
@@ -322,7 +327,11 @@ public final class Bttl_800c {
   /**
    * One per character slot
    */
-  public static final Pointer<ArrayRef<BattleDisplayStats144>> displayStats_800c6c2c = MEMORY.ref(4, 0x800c6c2cL, Pointer.deferred(4, ArrayRef.of(BattleDisplayStats144.class, 3, 0x144, BattleDisplayStats144::new)));
+  public static final BattleDisplayStats144[] displayStats_800c6c2c = new BattleDisplayStats144[3];
+  static {
+    Arrays.setAll(displayStats_800c6c2c, i -> new BattleDisplayStats144());
+  }
+
   public static final ArrayRef<UnsignedByteRef> cameraPositionIndices_800c6c30 = MEMORY.ref(4, 0x800c6c30L, ArrayRef.of(UnsignedByteRef.class, 4, 1, UnsignedByteRef::new));
 
   public static final Pointer<BattleMenuStruct58> battleMenu_800c6c34 = MEMORY.ref(4, 0x800c6c34L, Pointer.deferred(4, BattleMenuStruct58::new));
@@ -385,7 +394,7 @@ public final class Bttl_800c {
 
   public static final ArrayRef<ShortRef> _800c7008 = MEMORY.ref(2, 0x800c7008L, ArrayRef.of(ShortRef.class, 5, 2, ShortRef::new));
 
-  public static final ArrayRef<UnsignedShortRef> _800c7014 = MEMORY.ref(2, 0x800c7014L, ArrayRef.of(UnsignedShortRef.class, 10, 2, UnsignedShortRef::new));
+  public static final ArrayRef<ShortRef> _800c7014 = MEMORY.ref(2, 0x800c7014L, ArrayRef.of(ShortRef.class, 10, 2, ShortRef::new));
   public static final ArrayRef<UnsignedShortRef> _800c7028 = MEMORY.ref(2, 0x800c7028L, ArrayRef.of(UnsignedShortRef.class, 10, 2, UnsignedShortRef::new));
   public static final Value _800c703c = MEMORY.ref(4, 0x800c703cL);
 
@@ -788,15 +797,13 @@ public final class Bttl_800c {
 
   public static final Value _800fb72c = MEMORY.ref(4, 0x800fb72cL);
 
-  public static final CString eco_800fb954 = MEMORY.ref(5, 0x800fb954L, CString::new);
-
   @Method(0x800c7304L)
   public static void FUN_800c7304() {
     int a0;
     int a1;
     //LAB_800c7330
     for(a0 = 0, a1 = 0; a0 < _800c66d0.get(); a0++) {
-      final ScriptState<BattleObject27c> bobjState = _8006e398.bobjIndices_e0c[a0];
+      final ScriptState<? extends BattleObject27c> bobjState = _8006e398.bobjIndices_e0c[a0];
       if((bobjState.storage_44[7] & 0x40) == 0) {
         _8006e398.bobjIndices_e78[a1] = bobjState;
         a1++;
@@ -810,9 +817,9 @@ public final class Bttl_800c {
 
     //LAB_800c73b0
     for(a0 = 0, a1 = 0; a0 < charCount_800c677c.get(); a0++) {
-      final ScriptState<BattleObject27c> bobjState = _8006e398.charBobjIndices_e40[a0];
-      if((bobjState.storage_44[7] & 0x40) == 0) {
-        _8006e398.bobjIndices_eac[a1] = bobjState;
+      final ScriptState<PlayerBattleObject> playerState = _8006e398.charBobjIndices_e40[a0];
+      if((playerState.storage_44[7] & 0x40) == 0) {
+        _8006e398.bobjIndices_eac[a1] = playerState;
         a1++;
       }
 
@@ -824,9 +831,9 @@ public final class Bttl_800c {
 
     //LAB_800c7430
     for(a0 = 0, a1 = 0; a0 < monsterCount_800c6768.get(); a0++) {
-      final ScriptState<BattleObject27c> bobjState = _8006e398.bobjIndices_e50[a0];
-      if((bobjState.storage_44[7] & 0x40) == 0) {
-        _8006e398.enemyBobjIndices_ebc[a1] = bobjState;
+      final ScriptState<MonsterBattleObject> monsterState = _8006e398.bobjIndices_e50[a0];
+      if((monsterState.storage_44[7] & 0x40) == 0) {
+        _8006e398.monsterBobjIndices_ebc[a1] = monsterState;
         a1++;
       }
 
@@ -1005,7 +1012,7 @@ public final class Bttl_800c {
 
       //LAB_800c7ae4
       for(int i = 0; i < _800c66d0.get(); i++) {
-        final ScriptState<BattleObject27c> bobjState = _8006e398.bobjIndices_e0c[i];
+        final ScriptState<? extends BattleObject27c> bobjState = _8006e398.bobjIndices_e0c[i];
         final BattleObject27c bobj = bobjState.innerStruct_00;
 
         if((bobjState.storage_44[7] & 0x4) != 0) {
@@ -1045,7 +1052,7 @@ public final class Bttl_800c {
         postCombatAction_800bc974.set(2);
       } else {
         //LAB_800c7c98
-        final ScriptState<BattleObject27c> state = FUN_800c7e24();
+        final ScriptState<? extends BattleObject27c> state = FUN_800c7e24();
         scriptIndex_800c66bc = state;
 
         if(state != null) {
@@ -1055,9 +1062,9 @@ public final class Bttl_800c {
           //LAB_800c7ce8
           if(enemyCount_800c6758.get() > 0) {
             //LAB_800c7d3c
-            final ScriptState<BattleObject27c> a1_0 = getCurrentTurnBobj();
-            currentTurnBobj_800c66c8 = a1_0;
-            a1_0.storage_44[7] |= 0x1008;
+            final ScriptState<? extends BattleObject27c> currentTurn = getCurrentTurnBobj();
+            currentTurnBobj_800c66c8 = currentTurn;
+            currentTurn.storage_44[7] |= 0x1008;
 
             //LAB_800c7d74
           } else {
@@ -1100,10 +1107,10 @@ public final class Bttl_800c {
   }
 
   @Method(0x800c7e24L)
-  public static ScriptState<BattleObject27c> FUN_800c7e24() {
+  public static ScriptState<? extends BattleObject27c> FUN_800c7e24() {
     //LAB_800c7e54
     for(int i = 0; i < _800c669c.get(); i++) {
-      final ScriptState<BattleObject27c> bobjState = _8006e398.bobjIndices_e78[i];
+      final ScriptState<? extends BattleObject27c> bobjState = _8006e398.bobjIndices_e78[i];
       if(bobjState != null && (bobjState.storage_44[7] & 0x20) != 0) {
         return bobjState;
       }
@@ -1116,7 +1123,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800c7ea0L)
-  public static ScriptState<BattleObject27c> getCurrentTurnBobj() {
+  public static ScriptState<? extends BattleObject27c> getCurrentTurnBobj() {
     //LAB_800c7ee4
     for(int s4 = 0; s4 < 32; s4++) {
       //LAB_800c7ef0
@@ -1135,7 +1142,7 @@ public final class Bttl_800c {
 
       //LAB_800c7f40
       if(highestTurnValue > 0xd9) {
-        final ScriptState<BattleObject27c> state = _8006e398.bobjIndices_e78[highestCombatantindex];
+        final ScriptState<? extends BattleObject27c> state = _8006e398.bobjIndices_e78[highestCombatantindex];
         state.innerStruct_00.turnValue_4c = highestTurnValue - 0xd9;
 
         if((state.storage_44[7] & 0x4) == 0) {
@@ -1325,7 +1332,7 @@ public final class Bttl_800c {
   public static void FUN_800c8624() {
     battlePreloadedEntities_1f8003f4 = new BattlePreloadedEntities_18cb0();
     _8006e398 = new BattleStructEf4();
-    targetBobjs_800c71f0 = new ScriptState[][] {_8006e398.charBobjIndices_e40, _8006e398.enemyBobjIndices_ebc, _8006e398.bobjIndices_e78};
+    targetBobjs_800c71f0 = new ScriptState[][] {_8006e398.charBobjIndices_e40, _8006e398.monsterBobjIndices_ebc, _8006e398.bobjIndices_e78};
   }
 
   @Method(0x800c8748L)
@@ -2375,7 +2382,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cae50L)
-  public static void bobjTicker(final ScriptState<BattleObject27c> state, final BattleObject27c bobj) {
+  public static void bobjTicker(final ScriptState<? extends BattleObject27c> state, final BattleObject27c bobj) {
     bobj._278 = 0;
 
     final int v1;
@@ -2415,14 +2422,14 @@ public final class Bttl_800c {
   }
 
   @Method(0x800caf2cL)
-  public static void FUN_800caf50(final ScriptState<BattleObject27c> state, final BattleObject27c data) {
+  public static void FUN_800caf50(final ScriptState<? extends BattleObject27c> state, final BattleObject27c data) {
     state.setRenderer(Bttl_800c::FUN_800cb024);
     state.setTicker(Bttl_800c::FUN_800cafb4);
     FUN_800cafb4(state, data);
   }
 
   @Method(0x800cafb4L)
-  public static void FUN_800cafb4(final ScriptState<BattleObject27c> state, final BattleObject27c data) {
+  public static void FUN_800cafb4(final ScriptState<? extends BattleObject27c> state, final BattleObject27c data) {
     if((state.storage_44[7] & 0x211) == 0) {
       applyModelRotationAndScale(data.model_148);
 
@@ -2436,7 +2443,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cb024L)
-  public static void FUN_800cb024(final ScriptState<BattleObject27c> state, final BattleObject27c data) {
+  public static void FUN_800cb024(final ScriptState<? extends BattleObject27c> state, final BattleObject27c data) {
     if((state.storage_44[7] & 0x211) == 0) {
       renderModel(data.model_148);
     }
@@ -2445,7 +2452,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cb058L)
-  public static void bobjDestructor(final ScriptState<BattleObject27c> state, final BattleObject27c bobj) {
+  public static void bobjDestructor(final ScriptState<? extends BattleObject27c> state, final BattleObject27c bobj) {
     //LAB_800cb088
     FUN_800ca194(bobj.combatantIndex_26c, bobj.animIndex_26e);
 
@@ -2576,8 +2583,8 @@ public final class Bttl_800c {
 
   @Method(0x800cb5d8L)
   public static FlowControl scriptGetMonsterStatusResistFlags(final RunningScript<?> script) {
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    script.params_20[1].set(bobj.monsterStatusResistFlag_76);
+    final MonsterBattleObject monster = (MonsterBattleObject)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    script.params_20[1].set(monster.monsterStatusResistFlag_76);
     return FlowControl.CONTINUE;
   }
 
@@ -3367,7 +3374,7 @@ public final class Bttl_800c {
   @Method(0x800cd5b4L)
   public static FlowControl FUN_800cd5b4(final RunningScript<?> script) {
     final String name = "Bobj allocated by script " + script.scriptState_04.index;
-    final ScriptState<BattleObject27c> state = SCRIPTS.allocateScriptState(name, new BattleObject27c(name));
+    final ScriptState<MonsterBattleObject> state = SCRIPTS.allocateScriptState(name, new MonsterBattleObject(name));
     script.params_20[2].set(state.index);
     state.setTicker(Bttl_800c::bobjTicker);
     state.setDestructor(Bttl_800c::bobjDestructor);

@@ -1,28 +1,21 @@
 package legend.game.modding.registries;
 
+import legend.core.Latch;
+
 import java.util.function.Supplier;
 
-public class RegistryDelegate<Type extends RegistryEntry> implements Supplier<Type> {
-  private final Supplier<Type> supplier;
-  private Type value;
-  private boolean resolved;
+public class RegistryDelegate<Type extends RegistryEntry> {
+  private final Latch<Type> latch;
 
   RegistryDelegate(final Supplier<Type> supplier) {
-    this.supplier = supplier;
+    this.latch = new Latch<>(supplier);
   }
 
   public void clear() {
-    this.value = null;
-    this.resolved = false;
+    this.latch.clear();
   }
 
-  @Override
   public Type get() {
-    if(!this.resolved) {
-      this.value = this.supplier.get();
-      this.resolved = true;
-    }
-
-    return this.value;
+    return this.latch.get();
   }
 }

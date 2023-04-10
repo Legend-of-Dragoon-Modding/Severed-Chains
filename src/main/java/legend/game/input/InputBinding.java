@@ -52,6 +52,11 @@ public class InputBinding {
     }
   }
 
+  public void release() {
+    if(this.axisValue != 0) {
+      this.handleNoInputState();
+    }
+  }
 
   private void updateGamepadButtons() {
     if(this.targetController.checkButton(this.glfwKeyCode)) {
@@ -80,7 +85,7 @@ public class InputBinding {
   }
 
   private void updateGamepadHats() {
-    if(this.targetController.checkHat(this.glfwKeyCode,this.hatIndex)) {
+    if(this.targetController.checkHat(this.glfwKeyCode, this.hatIndex)) {
       this.handlePositiveState();
     } else {
       this.handleNoInputState();

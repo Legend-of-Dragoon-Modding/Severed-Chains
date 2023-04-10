@@ -467,7 +467,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[506] = Bttl_800f::FUN_800f9cac;
     scriptSubFunctions_8004e29c[507] = Bttl_800f::FUN_800f9618;
     scriptSubFunctions_8004e29c[508] = Bttl_800f::FUN_800f9660;
-    scriptSubFunctions_8004e29c[509] = Bttl_800f::FUN_800f9d7c;
+    scriptSubFunctions_8004e29c[509] = Bttl_800f::scriptTickTemporaryStatMods;
 
     scriptSubFunctions_8004e29c[512] = Bttl_800e::scriptSetBobjZOffset;
     scriptSubFunctions_8004e29c[513] = Bttl_800e::scriptSetBobjScaleUniform;

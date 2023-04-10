@@ -2,9 +2,9 @@ package legend.core.opengl;
 
 import legend.core.Config;
 import legend.core.DebugHelper;
+import legend.game.input.InputAction;
 import legend.game.input.InputBinding;
 import legend.game.input.InputBindingState;
-import legend.game.input.InputAction;
 import legend.game.input.InputMapping;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -46,7 +46,6 @@ import static org.lwjgl.glfw.GLFW.glfwGetClipboardString;
 import static org.lwjgl.glfw.GLFW.glfwGetKey;
 import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
 import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
-import static org.lwjgl.glfw.GLFW.glfwGetWindowAttrib;
 import static org.lwjgl.glfw.GLFW.glfwGetWindowContentScale;
 import static org.lwjgl.glfw.GLFW.glfwGetWindowSize;
 import static org.lwjgl.glfw.GLFW.glfwInit;
@@ -60,6 +59,7 @@ import static org.lwjgl.glfw.GLFW.glfwSetJoystickCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetScrollCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetWindowFocusCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowSize;
@@ -110,6 +110,7 @@ public class Window {
   private int width;
   private int height;
   private float scale = 1.0f;
+  private boolean hasFocus;
 
   private int fpsLimit = Integer.MAX_VALUE;
 
@@ -133,6 +134,7 @@ public class Window {
     }
 
     glfwSetWindowSizeCallback(this.window, this.events::onResize);
+    glfwSetWindowFocusCallback(this.window,this.events::onFocus);
     glfwSetKeyCallback(this.window, this.events::onKey);
     glfwSetCharCallback(this.window, this.events::onChar);
     glfwSetCursorPosCallback(this.window, this.events::onMouseMove);
@@ -222,6 +224,10 @@ public class Window {
     return glfwGetKey(this.window, key) == GLFW_PRESS;
   }
 
+  public boolean hasFocus() {
+    return this.hasFocus;
+  }
+
   public void setTitle(final String title) {
     glfwSetWindowTitle(this.window, title);
   }
@@ -241,10 +247,6 @@ public class Window {
 
   public void resize(final int width, final int height) {
     glfwSetWindowSize(this.window, (int)(width * this.scale), (int)(height * this.scale));
-  }
-
-  public boolean isWindowActive() {
-    return glfwGetWindowAttrib(this.window, GLFW.GLFW_FOCUSED) == GLFW.GLFW_TRUE;
   }
 
   public int getWidth() {
@@ -287,6 +289,8 @@ public class Window {
     private static final Object LOCK = new Object();
 
     private final List<Resize> resize = new ArrayList<>();
+    private final List<Focus> gotFocus = new ArrayList<>();
+    private final List<Focus> lostFocus = new ArrayList<>();
     private final List<Key> keyPress = new ArrayList<>();
     private final List<Key> keyRelease = new ArrayList<>();
     private final List<Key> keyRepeat = new ArrayList<>();
@@ -337,6 +341,44 @@ public class Window {
     public void removeOnResize(final Resize callback) {
       synchronized(LOCK) {
         this.resize.remove(callback);
+      }
+    }
+
+    private void onFocus(final long window, final boolean focus) {
+      synchronized(LOCK) {
+        this.window.hasFocus = focus;
+
+        if(focus) {
+          this.gotFocus.forEach(cb -> cb.focus(this.window));
+        } else {
+          this.lostFocus.forEach(cb -> cb.focus(this.window));
+        }
+      }
+    }
+
+    public Focus onGotFocus(final Focus callback) {
+      synchronized(LOCK) {
+        this.gotFocus.add(callback);
+        return callback;
+      }
+    }
+
+    public Focus onLostFocus(final Focus callback) {
+      synchronized(LOCK) {
+        this.lostFocus.add(callback);
+        return callback;
+      }
+    }
+
+    public void removeOnGotFocus(final Focus callback) {
+      synchronized(LOCK) {
+        this.gotFocus.remove(callback);
+      }
+    }
+
+    public void removeOnLostFocus(final Focus callback) {
+      synchronized(LOCK) {
+        this.lostFocus.remove(callback);
       }
     }
 
@@ -639,6 +681,11 @@ public class Window {
     @FunctionalInterface
     public interface Resize {
       void resize(final Window window, final int width, final int height);
+    }
+
+    @FunctionalInterface
+    public interface Focus {
+      void focus(final Window window);
     }
 
     @FunctionalInterface
