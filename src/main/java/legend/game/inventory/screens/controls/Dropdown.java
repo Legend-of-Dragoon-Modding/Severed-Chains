@@ -64,6 +64,12 @@ public class Dropdown extends Control {
     this.setSize(100, 16);
   }
 
+  public void clearOptions() {
+    this.options.clear();
+    this.panel.setHeight(18);
+    this.selectedIndex = -1;
+  }
+
   public void addOption(final String option) {
     this.options.add(option);
     this.panel.setHeight(18 + this.options.size() * 16);

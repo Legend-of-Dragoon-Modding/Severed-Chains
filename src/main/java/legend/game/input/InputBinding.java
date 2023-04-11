@@ -12,7 +12,7 @@ public class InputBinding {
   private InputType inputType;
   private float axisValue;
   private final float controllerDeadzone;
-  private HardwareController targetController;
+  private Controller targetController;
   private final float[] pulseTimings = {0.5f, 0.1f};
   private int pulseTimingsIndex;
   private double lastPressedTriggerTime;
@@ -146,8 +146,8 @@ public class InputBinding {
   public InputType getInputType() { return this.inputType; }
   public float getAxisValue() { return this.axisValue; }
   public int getGlfwKeyCode() { return this.glfwKeyCode; }
-  public HardwareController getTargetController() { return this.targetController; }
-  public void setTargetController(final HardwareController targetController) { this.targetController = targetController; }
+  public Controller getTargetController() { return this.targetController; }
+  public void setTargetController(final Controller targetController) { this.targetController = targetController; }
   public void setHexCode(final int hexCode) { this.hexCode = hexCode; }
 
   public void setGlfwKeyCode(final int glfwKeyCode) { this.glfwKeyCode = glfwKeyCode;  }

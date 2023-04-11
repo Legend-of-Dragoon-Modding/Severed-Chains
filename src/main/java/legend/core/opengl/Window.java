@@ -2,11 +2,11 @@ package legend.core.opengl;
 
 import legend.core.Config;
 import legend.core.DebugHelper;
+import legend.game.input.Controller;
 import legend.game.input.Input;
 import legend.game.input.InputAction;
 import legend.game.input.InputBinding;
 import legend.game.input.InputBindingState;
-import legend.game.input.Controller;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.Version;

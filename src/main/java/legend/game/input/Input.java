@@ -7,8 +7,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.annotation.Nullable;
 
 import static legend.core.GameEngine.GPU;
 import static legend.game.Scus94491BpeSegment.keyRepeat;
@@ -24,7 +23,6 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_E;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_F9;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_Q;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
@@ -33,40 +31,25 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_Z;
-import static org.lwjgl.glfw.GLFW.glfwGetJoystickGUID;
 
 public final class Input {
   private static final Logger LOGGER = LogManager.getFormatterLogger();
   private static final Marker INPUT_MARKER = MarkerManager.getMarker("INPUT");
 
-  private static Controller playerOne = new Controller();
-  private static final List<Controller> controllers = new ArrayList<>();
   private static final float controllerDeadzone = Config.controllerDeadzone();
 
-  private static final ControllerManager controllerManager = new ControllerManager();
+  public static final ControllerManager controllerManager = new ControllerManager(Input::onControllerConnected, Input::onControllerDisconnected);
+  private static Controller playerOne;
 
   private Input() {
   }
 
-  public static void poll() {
-
-  }
-
   public static void update() {
-    if(!GPU.window().hasFocus() && !Config.receiveInputOnInactiveWindow()) {
+    if(!GPU.window().hasFocus() && !Config.receiveInputOnInactiveWindow() || playerOne == null) {
       return;
     }
 
-    if(controllerManager.isAssigningControllers()) {
-      controllerManager.lookForInputOnIdleControllers();
-      return;
-    }
-
-    controllerManager.pollAssignedControllers();
-
-    for(final Controller controller : controllers) {
-      controller.poll();
-    }
+    playerOne.poll();
 
     for(final InputBinding binding : playerOne.bindings) {
       updateLegacyInput(binding);
@@ -99,25 +82,13 @@ public final class Input {
   }
 
   public static void init() {
-    GPU.window().events.onControllerConnected(Input::onControllerConnected);
-    GPU.window().events.onControllerDisconnected(Input::onControllerDisconnected);
-
-    GPU.window().events.onKeyPress((window, key, scancode, mods) -> {
-      if(key == GLFW_KEY_F9) {
-        reassignControllers();
-      }
-    });
-
     GPU.window().events.onKeyPress(Input::keyPress);
     GPU.window().events.onKeyRelease(Input::keyRelease);
     GPU.window().events.onLostFocus(Input::lostFocus);
 
-    controllerManager.init();
-  }
+    useController(null);
 
-  private static void reassignControllers() {
-    LOGGER.info(INPUT_MARKER,"--- Reassigning Controllers ----");
-    controllerManager.reassignSequence();
+    controllerManager.init();
   }
 
   public static boolean pressedThisFrame(final InputAction targetKey) {
@@ -225,18 +196,27 @@ public final class Input {
     }
   }
 
-  public static void refreshControllers() {
-    LOGGER.info(INPUT_MARKER, "Refreshing Controllers...");
-    controllers.clear();
-
-    for(final HardwareController hardwareController : controllerManager.getAssignedControllers()) {
-      final Controller playerController = new Controller();
-      playerController.setHardwareController(hardwareController);
-      controllers.add(playerController);
+  public static void useController(@Nullable final Controller controller) {
+    if(controller != null) {
+      playerOne = controller;
+    } else {
+      playerOne = new DummyController();
+      addKeyboardBindings(playerOne);
     }
+  }
 
-    playerOne = controllers.get(0);
-    addKeyboardBindings(playerOne);
+  private static void onControllerConnected(final GlfwController controller) {
+    addKeyboardBindings(controller);
+
+    if(playerOne.equals(controller)) {
+      LOGGER.info(INPUT_MARKER,"Player 1 has been reconnected");
+    }
+  }
+
+  private static void onControllerDisconnected(final GlfwController controller) {
+    if(playerOne.equals(controller)) {
+      LOGGER.info(INPUT_MARKER, "Player 1's controller has been disconnected. Please reconnect the controller, or switch to a different controller using F9.");
+    }
   }
 
   private static void addKeyboardBindings(final Controller controller) {
@@ -261,22 +241,4 @@ public final class Input {
 
     controller.addBinding(new InputBinding(InputAction.BUTTON_EAST, GLFW_KEY_ESCAPE, 0x40, InputType.KEYBOARD));
     controller.addBinding(new InputBinding(InputAction.BUTTON_SOUTH, GLFW_KEY_ENTER, 0x20, InputType.KEYBOARD));
-  }
-
-  private static void onControllerConnected(final Window window, final int id) {
-    if(playerOne.getGuid().equals(glfwGetJoystickGUID(id))) {
-      LOGGER.info(INPUT_MARKER,"Player 1 has been reconnected");
-    }
-  }
-
-  private static void onControllerDisconnected(final Window window, final int id) {
-    try {
-      if(playerOne.getId() == id) {
-        LOGGER.info(INPUT_MARKER, "Player 1's controller has been disconnected. Please reconnect the controller, or switch to a different controller using F9.");
-      }
-    } catch(final NullPointerException exception) {
-      LOGGER.error(INPUT_MARKER, "NPE on controller disconnection", exception);
-      controllerManager.reassignSequence();
-    }
-  }
-}
+  }}
