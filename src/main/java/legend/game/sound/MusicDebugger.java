@@ -2,8 +2,8 @@ package legend.game.sound;
 
 import legend.core.opengl.Camera;
 import legend.core.opengl.Context;
-import legend.core.opengl.Font;
 import legend.core.opengl.GuiManager;
+import legend.core.opengl.NuklearFont;
 import legend.core.opengl.Window;
 
 import java.io.IOException;
@@ -22,7 +22,7 @@ public class MusicDebugger {
     this.guiManager = new GuiManager(this.window);
     this.window.setEventPoller(this.guiManager::captureInput);
 
-    final Font font = new Font("gfx/fonts/Consolas.ttf");
+    final NuklearFont font = new NuklearFont("gfx/fonts/Consolas.ttf");
     this.guiManager.setFont(font);
 
     final MusicDebuggerGui gui = new MusicDebuggerGui();

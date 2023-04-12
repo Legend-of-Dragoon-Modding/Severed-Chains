@@ -11,6 +11,7 @@ group 'legend'
 version '1.0-SNAPSHOT'
 
 sourceCompatibility = targetCompatibility = 1.17
+compileJava.options.encoding = 'UTF-8'
 
 project.ext.lwjglVersion = "3.2.3"
 project.ext.jomlVersion = "1.10.1"

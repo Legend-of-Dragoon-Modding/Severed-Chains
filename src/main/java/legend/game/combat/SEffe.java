@@ -44,50 +44,50 @@ import legend.game.combat.deff.LmbTransforms14;
 import legend.game.combat.deff.LmbType0;
 import legend.game.combat.deff.LmbType1;
 import legend.game.combat.deff.LmbType2;
-import legend.game.combat.types.AdditionOverlaysEffect44;
-import legend.game.combat.types.AttackHitFlashEffect0c;
-import legend.game.combat.types.BattleObject27c;
+import legend.game.combat.effects.AdditionOverlaysEffect44;
+import legend.game.combat.effects.AttackHitFlashEffect0c;
+import legend.game.combat.effects.BattleStruct24;
+import legend.game.combat.effects.BttlScriptData6cSub08_3;
+import legend.game.combat.effects.BttlScriptData6cSub08_4;
+import legend.game.combat.effects.BttlScriptData6cSub10_2;
+import legend.game.combat.effects.BttlScriptData6cSub13c;
+import legend.game.combat.effects.BttlScriptData6cSub14_4;
+import legend.game.combat.effects.BttlScriptData6cSub14_4Sub70;
+import legend.game.combat.effects.BttlScriptData6cSub18;
+import legend.game.combat.effects.BttlScriptData6cSub18Sub3c;
+import legend.game.combat.effects.BttlScriptData6cSub1c_2;
+import legend.game.combat.effects.BttlScriptData6cSub1c_2Sub1e;
+import legend.game.combat.effects.BttlScriptData6cSub1c_3;
+import legend.game.combat.effects.BttlScriptData6cSub20_2;
+import legend.game.combat.effects.BttlScriptData6cSub20_2Suba8;
+import legend.game.combat.effects.BttlScriptData6cSub24;
+import legend.game.combat.effects.BttlScriptData6cSub24_2;
+import legend.game.combat.effects.BttlScriptData6cSub30;
+import legend.game.combat.effects.BttlScriptData6cSub30Sub10;
+import legend.game.combat.effects.BttlScriptData6cSub34;
+import legend.game.combat.effects.BttlScriptData6cSub38;
+import legend.game.combat.effects.BttlScriptData6cSub38Sub14;
+import legend.game.combat.effects.BttlScriptData6cSub38Sub14Sub30;
+import legend.game.combat.effects.BttlScriptData6cSub50;
+import legend.game.combat.effects.BttlScriptData6cSub50Sub3c;
+import legend.game.combat.effects.BttlScriptData6cSub5c;
+import legend.game.combat.effects.BttlScriptData6cSubBase1;
+import legend.game.combat.effects.DeathDimensionEffect1c;
+import legend.game.combat.effects.DeffTmdRenderer14;
+import legend.game.combat.effects.EffectData98Inner24;
+import legend.game.combat.effects.EffectManagerData6c;
+import legend.game.combat.effects.EffectManagerData6cInner;
+import legend.game.combat.effects.FrozenJetEffect28;
+import legend.game.combat.effects.GoldDragoonTransformEffect20;
+import legend.game.combat.effects.GoldDragoonTransformEffectInstance84;
+import legend.game.combat.effects.ParticleEffectData98;
+import legend.game.combat.effects.ParticleEffectInstance94;
+import legend.game.combat.effects.ScreenDistortionEffectData08;
+import legend.game.combat.bobj.BattleObject27c;
 import legend.game.combat.types.BattleScriptDataBase;
-import legend.game.combat.types.BattleStruct24;
-import legend.game.combat.types.BttlScriptData6cSub08_3;
-import legend.game.combat.types.BttlScriptData6cSub08_4;
-import legend.game.combat.types.BttlScriptData6cSub10_2;
-import legend.game.combat.types.BttlScriptData6cSub13c;
-import legend.game.combat.types.BttlScriptData6cSub14_4;
-import legend.game.combat.types.BttlScriptData6cSub14_4Sub70;
-import legend.game.combat.types.BttlScriptData6cSub18;
-import legend.game.combat.types.BttlScriptData6cSub18Sub3c;
-import legend.game.combat.types.BttlScriptData6cSub1c_2;
-import legend.game.combat.types.BttlScriptData6cSub1c_2Sub1e;
-import legend.game.combat.types.BttlScriptData6cSub1c_3;
-import legend.game.combat.types.BttlScriptData6cSub20_2;
-import legend.game.combat.types.BttlScriptData6cSub20_2Suba8;
-import legend.game.combat.types.BttlScriptData6cSub24;
-import legend.game.combat.types.BttlScriptData6cSub24_2;
-import legend.game.combat.types.BttlScriptData6cSub30;
-import legend.game.combat.types.BttlScriptData6cSub30Sub10;
-import legend.game.combat.types.BttlScriptData6cSub34;
-import legend.game.combat.types.BttlScriptData6cSub38;
-import legend.game.combat.types.BttlScriptData6cSub38Sub14;
-import legend.game.combat.types.BttlScriptData6cSub38Sub14Sub30;
-import legend.game.combat.types.BttlScriptData6cSub50;
-import legend.game.combat.types.BttlScriptData6cSub50Sub3c;
-import legend.game.combat.types.BttlScriptData6cSub5c;
-import legend.game.combat.types.BttlScriptData6cSubBase1;
-import legend.game.combat.types.DeathDimensionEffect1c;
-import legend.game.combat.types.DeffTmdRenderer14;
 import legend.game.combat.types.DragoonAdditionScriptData1c;
 import legend.game.combat.types.EffeScriptData30;
 import legend.game.combat.types.EffeScriptData30Sub06;
-import legend.game.combat.types.EffectData98Inner24;
-import legend.game.combat.types.EffectManagerData6c;
-import legend.game.combat.types.EffectManagerData6cInner;
-import legend.game.combat.types.FrozenJetEffect28;
-import legend.game.combat.types.GoldDragoonTransformEffect20;
-import legend.game.combat.types.GoldDragoonTransformEffectInstance84;
-import legend.game.combat.types.ParticleEffectData98;
-import legend.game.combat.types.ParticleEffectInstance94;
-import legend.game.combat.types.ScreenDistortionEffectData08;
 import legend.game.combat.types.SpriteMetrics08;
 import legend.game.combat.types.VertexDifferenceAnimation18;
 import legend.game.scripting.FlowControl;
@@ -190,9 +190,9 @@ import static legend.game.combat.Bttl_800c.spriteMetrics_800c6948;
 import static legend.game.combat.Bttl_800c.tmds_800c6944;
 import static legend.game.combat.Bttl_800d.FUN_800dc408;
 import static legend.game.combat.Bttl_800d.FUN_800de3f4;
-import static legend.game.combat.Bttl_800d.getRotationFromTransforms;
-import static legend.game.combat.Bttl_800d.getRotationAndScaleFromTransforms;
 import static legend.game.combat.Bttl_800d.ScaleMatrixL_SVEC;
+import static legend.game.combat.Bttl_800d.getRotationAndScaleFromTransforms;
+import static legend.game.combat.Bttl_800d.getRotationFromTransforms;
 import static legend.game.combat.Bttl_800d.loadModelAnim;
 import static legend.game.combat.Bttl_800d.optimisePacketsIfNecessary;
 import static legend.game.combat.Bttl_800e.FUN_800e60e0;
@@ -6954,7 +6954,7 @@ public final class SEffe {
     s1._0c.add(s1._18);
 
     if(s1.scriptIndex_30 == -1) {
-      s2._10.trans_04.set(s1._0c).div(0x100);
+      s2._10.trans_04.set(s1._0c).shra(8);
     } else {
       //LAB_80110814
       final Ref<SVECTOR> sp0x40 = new Ref<>();
@@ -6964,7 +6964,7 @@ public final class SEffe {
       final MATRIX sp0x10 = new MATRIX();
       RotMatrix_Xyz(sp0x40.get(), sp0x10);
 
-      final VECTOR sp0x30 = new VECTOR().set(s1._0c).div(0x100);
+      final VECTOR sp0x30 = new VECTOR().set(s1._0c).shra(8);
       s2._10.trans_04.set(ApplyMatrixLV(sp0x10, sp0x30)).add(sp0x44.get());
     }
 
@@ -7068,15 +7068,15 @@ public final class SEffe {
     s0.scriptIndex_30 = -1;
     s0._32 = (short)a3;
 
+    s0._0c.setX(s2._10.trans_04.getX() << 8);
+    s0._0c.setY(s2._10.trans_04.getY() << 8);
+    s0._0c.setZ(s2._10.trans_04.getZ() << 8);
+
     if(a3 != 0) {
-      s0._0c.setX((s2._10.trans_04.getX() << 8) / a3);
-      s0._0c.setY((s2._10.trans_04.getY() << 8) / a3);
-      s0._0c.setZ((s2._10.trans_04.getZ() << 8) / a3);
       s0._18.setX((sp0x18.getX() << 8) / a3);
       s0._18.setY((sp0x18.getY() << 8) / a3);
       s0._18.setZ((sp0x18.getZ() << 8) / a3);
     } else {
-      s0._0c.set(-1, -1, -1);
       s0._18.set(-1, -1, -1);
     }
 
@@ -8775,7 +8775,7 @@ public final class SEffe {
       //LAB_801160c0
       //LAB_801160d4
       final DeffPart.TmdType tmdType = (DeffPart.TmdType)getDeffPart(a2);
-      final DeffPart.TextureInfo textureInfo = tmdType.textureInfo_08[s0];
+      final DeffPart.TextureInfo textureInfo = tmdType.textureInfo_08[s0 * 2];
       u = textureInfo.vramPos_00.x.get();
       v = textureInfo.vramPos_00.y.get();
       w = textureInfo.vramPos_00.w.get() * 4;

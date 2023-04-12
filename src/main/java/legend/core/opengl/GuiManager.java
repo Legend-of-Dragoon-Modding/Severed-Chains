@@ -367,8 +367,8 @@ public class GuiManager {
     glBindVertexArray(0);
   }
 
-  public void setFont(final Font font) {
-    nk_style_set_font(this.ctx, font.font);
+  public void setFont(final NuklearFont nuklearFont) {
+    nk_style_set_font(this.ctx, nuklearFont.font);
   }
 
   public void captureInput() {

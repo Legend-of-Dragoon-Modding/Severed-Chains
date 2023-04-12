@@ -5,6 +5,7 @@ import legend.core.gpu.DRAWENV;
 import legend.core.gte.MATRIX;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
+import legend.core.memory.types.BoolRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.ShortRef;
@@ -135,7 +136,7 @@ public final class Scus94491BpeSegment_8005 {
   public static final Value heapHead_8005a2a0 = MEMORY.ref(4, 0x8005a2a0L);
   public static final Value heapTail_8005a2a4 = MEMORY.ref(4, 0x8005a2a4L);
   public static LoadingOverlay loadingOverlay_8005a2a8;
-  public static final IntRef standingInSavePoint_8005a368 = MEMORY.ref(4, 0x8005a368L, IntRef::new);
+  public static final BoolRef standingInSavePoint_8005a368 = MEMORY.ref(4, 0x8005a368L, BoolRef::new);
 
   public static final CombatantStruct1a8[] combatants_8005e398 = new CombatantStruct1a8[10];
 }

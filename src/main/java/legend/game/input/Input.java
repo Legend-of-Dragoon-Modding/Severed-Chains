@@ -36,11 +36,15 @@ public final class Input {
   private static final Marker INPUT_MARKER = MarkerManager.getMarker("INPUT");
   private static InputMapping playerOne = new InputMapping();
   private static final List<InputMapping> controllers = new ArrayList<>();
+  private static final float controllerDeadzone = Config.controllerDeadzone();
 
   private Input() {
   }
 
   public static void update() {
+    if(!GPU.window().hasFocus() && !Config.receiveInputOnInactiveWindow()) {
+      return;
+    }
 
     InputPlayerUtility.update();
 
@@ -70,13 +74,13 @@ public final class Input {
 
     GPU.window().events.onKeyPress(Input::keyPress);
     GPU.window().events.onKeyRelease(Input::keyRelease);
+    GPU.window().events.onLostFocus(Input::lostFocus);
   }
 
   private static void reassignControllers() {
     LOGGER.info(INPUT_MARKER,"--- Reassigning Controllers ----");
     InputControllerAssigner.reassignSequence();
   }
-  private static final float controllerDeadzone = Config.controllerDeadzone();
 
   public static boolean pressedThisFrame(final InputAction targetKey) {
 
@@ -101,13 +105,12 @@ public final class Input {
     }
     return false;
   }
-  
+
   public static boolean getButtonState(final InputAction targetKey) {
 
     for(final InputBinding inputBinding : playerOne.bindings) {
       if(inputBinding.getInputAction() == targetKey) {
-        if(inputBinding.getState() == InputBindingState.PRESSED || inputBinding.getState() == InputBindingState.PRESSED_THIS_FRAME
-        || inputBinding.getState() == InputBindingState.PRESSED_REPEAT) {
+        if(inputBinding.getState().pressed) {
           return true;
         }
 
@@ -186,6 +189,12 @@ public final class Input {
       if(inputBinding.getInputType() == InputType.KEYBOARD && inputBinding.getGlfwKeyCode() == key) {
         inputBinding.setReleasedForKeyboardInput();
       }
+    }
+  }
+
+  private static void lostFocus(final Window window) {
+    for(final InputBinding inputBinding : playerOne.bindings) {
+      inputBinding.release();
     }
   }
 

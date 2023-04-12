@@ -1,6 +1,5 @@
 package legend.game.title;
 
-import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandQuad;
@@ -17,7 +16,6 @@ import legend.core.gte.TmdWithId;
 import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
 import legend.core.opengl.Window;
-import legend.game.SaveManager;
 import legend.game.Scus94491BpeSegment_8002;
 import legend.game.fmv.Fmv;
 import legend.game.input.Input;
@@ -31,16 +29,19 @@ import legend.game.unpacker.FileData;
 import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nullable;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
+import static legend.core.GameEngine.SAVES;
 import static legend.core.gpu.VramTextureLoader.palettesFromTim;
 import static legend.core.gpu.VramTextureLoader.palettesFromTims;
 import static legend.core.gpu.VramTextureLoader.stitch;
 import static legend.core.gpu.VramTextureLoader.stitchHorizontal;
 import static legend.core.gpu.VramTextureLoader.stitchVertical;
+import static legend.core.gpu.VramTextureLoader.textureFromPngOneChannelBlue;
 import static legend.core.gpu.VramTextureLoader.textureFromTim;
 import static legend.game.SItem.levelStuff_80111cfc;
 import static legend.game.SItem.magicStuff_80111d20;
@@ -59,8 +60,6 @@ import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a9c0;
-import static legend.game.Scus94491BpeSegment_8002.FUN_8002bcc8;
-import static legend.game.Scus94491BpeSegment_8002.FUN_8002bda4;
 import static legend.game.Scus94491BpeSegment_8002.SetGeomOffset;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.loadAndRenderMenus;
@@ -71,22 +70,20 @@ import static legend.game.Scus94491BpeSegment_8003.GsSetRefView2;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
 import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
-import static legend.game.Scus94491BpeSegment_8003.bzero;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndexOnceLoaded_8004dd24;
-import static legend.game.Scus94491BpeSegment_8004.setMono;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800bb168;
-import static legend.game.Scus94491BpeSegment_800b._800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.afterFmvLoadingStage_800bf0ec;
 import static legend.game.Scus94491BpeSegment_800b.doubleBufferFrame_800bb108;
-import static legend.game.Scus94491BpeSegment_800b.drgn0_6666FilePtr_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.fmvIndex_800bf0dc;
 import static legend.game.Scus94491BpeSegment_800b.gameOverMcq_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
+import static legend.game.Scus94491BpeSegment_800b.savedGameSelected_800bdc34;
+import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.identityMatrix_800c3568;
 
@@ -114,9 +111,8 @@ public final class Ttle {
   public static final int[] menuOptionTransparency = {0, 0, 0};
 
   public static int _800c6738;
-  public static final int[] configColours = {0, 0, 0, 0, 0, 0};
 
-  public static int _800c6754;
+  public static int fadeOutTimer_800c6754;
   public static int flamesZ;
 
   public static final GsRVIEW2 GsRVIEW2_800c6760 = new GsRVIEW2();
@@ -124,7 +120,6 @@ public final class Ttle {
   public static final int[] characterStartingLevels = {1, 3, 4, 8, 13, 15, 17, 19, 23};
 
   public static int selectedMenuOption;
-  public static int selectedConfigCategory;
 
   private static VramTexture backgroundTexture;
   private static VramTexture[] backgroundPalettes;
@@ -134,10 +129,8 @@ public final class Ttle {
   private static Renderable logoRenderable;
   private static VramTexture menuTextTexture;
   private static VramTexture[] menuTextPalettes;
-  private static final Renderable[] menuTextRenderables = new Renderable[3];
-  private static final Renderable[] menuTextBlurRenderables = new Renderable[3];
-  private static final Renderable[] menuOptionsRenderables = new Renderable[6];
-  private static final Renderable[] menuOptionsCaptionRenderables = new Renderable[2];
+  private static final Renderable[] menuTextRenderables = new Renderable[2];
+  private static final Renderable[] menuTextBlurRenderables = new Renderable[2];
   private static VramTexture tmTexture;
   private static VramTexture[] tmPalettes;
   private static Renderable tmRenderable;
@@ -163,9 +156,9 @@ public final class Ttle {
   public static final int[] startingItems_800ce76c = {195, 203, 203};
 
   public static final int[] _800ce7b0 = {255, 1, 255, 255};
-  public static final int[] _800ce7f8 = {112, 96, 128, 80, 0, 64, 16, 56, 32, 64, 48, 96, 64, 80, 80, 32, 96, 32};
-  public static final int[] _800ce840 = {128, 96, 112, 128, 128, 96, 0, 144, 80, 0, 176, 72, 0, 208, 72, 128, 0, 112, 128, 32, 88, 128, 64, 48, 173, 64, 48};
-  public static final int[] _800ce8ac = {-48, 16, -40, 34, -32, 52, -128, 34, -32, 34, 48, 34, -128, 52, -32, 52, 48, 52};
+  public static final int[] _800ce7f8 = {195, 131, 128, 80, 0, 64, 16, 56, 32, 64, 48, 96, 64, 80, 80, 32, 96, 32};
+  public static final int[] _800ce840 = {76, 211, 140, 128, 128, 96, 0, 144, 80, 0, 176, 72, 0, 208, 72, 128, 0, 112, 128, 32, 88, 128, 64, 48, 173, 64, 48};
+  public static final int[] _800ce8ac = {-65, 16, -40, 34, -32, 52, -128, 34, -32, 34, 48, 34, -128, 52, -32, 52, 48, 52};
 
   private static Window.Events.Cursor onMouseMove;
   private static Window.Events.Click onMouseRelease;
@@ -173,38 +166,30 @@ public final class Ttle {
 
   @Method(0x800c7194L)
   public static void setUpNewGameData() {
-    final int oldVibration = gameState_800babc8.vibrationEnabled_4e1.get();
-    final int oldMono = gameState_800babc8.mono_4e0.get();
-
-    bzero(gameState_800babc8.getAddress(), 0x52c);
-
-    gameState_800babc8.vibrationEnabled_4e1.set(oldVibration);
-    gameState_800babc8.mono_4e0.set(oldMono);
-    gameState_800babc8.indicatorMode_4e8.set(2);
-    gameState_800babc8.charIndex_88.get(0).set(0);
-    gameState_800babc8.charIndex_88.get(1).set(-1);
-    gameState_800babc8.charIndex_88.get(2).set(-1);
+    gameState_800babc8.charIds_88[0] = 0;
+    gameState_800babc8.charIds_88[1] = -1;
+    gameState_800babc8.charIds_88[2] = -1;
 
     //LAB_800c723c
     for(int charIndex = 0; charIndex < 9; charIndex++) {
-      final CharacterData2c charData = gameState_800babc8.charData_32c.get(charIndex);
+      final CharacterData2c charData = gameState_800babc8.charData_32c[charIndex];
       final int level = characterStartingLevels[charIndex];
-      charData.xp_00.set(xpTables[charIndex][level]);
-      charData.hp_08.set(levelStuff_80111cfc.get(charIndex).deref().get(level).hp_00.get());
-      charData.mp_0a.set(magicStuff_80111d20.get(charIndex).deref().get(1).mp_00.get());
-      charData.sp_0c.set(0);
-      charData.dlevelXp_0e.set(0);
-      charData.status_10.set(0);
-      charData.level_12.set(level);
-      charData.dlevel_13.set(1);
+      charData.xp_00 = xpTables[charIndex][level];
+      charData.hp_08 = levelStuff_80111cfc.get(charIndex).deref().get(level).hp_00.get();
+      charData.mp_0a = magicStuff_80111d20.get(charIndex).deref().get(1).mp_00.get();
+      charData.sp_0c = 0;
+      charData.dlevelXp_0e = 0;
+      charData.status_10 = 0;
+      charData.level_12 = level;
+      charData.dlevel_13 = 1;
 
       //LAB_800c7294
       for(int additionIndex = 0; additionIndex < 8; additionIndex++) {
-        charData.additionLevels_1a.get(additionIndex).set(0);
-        charData.additionXp_22.get(additionIndex).set(0);
+        charData.additionLevels_1a[additionIndex] = 0;
+        charData.additionXp_22[additionIndex] = 0;
       }
 
-      charData.additionLevels_1a.get(0).set(1);
+      charData.additionLevels_1a[0] = 1;
 
       //LAB_800c72d4
       for(int i = 1; i < level; i++) {
@@ -212,43 +197,29 @@ public final class Ttle {
 
         if(index != -1) {
           final int offset = additionOffsets_8004f5ac.get(charIndex).get();
-          charData.additionLevels_1a.get(index - offset).set(1);
+          charData.additionLevels_1a[index - offset] = 1;
         }
 
         //LAB_800c72fc
       }
 
       //LAB_800c730c
-      charData.selectedAddition_19.set(startingAddition_800ce758[charIndex]);
+      charData.selectedAddition_19 = startingAddition_800ce758[charIndex];
 
       //LAB_800c7334
-      for(int i = 0; i < 5; i++) {
-        charData.equipment_14.get(i).set(startingEquipment_800ce6fc[charIndex][i]);
-      }
+      System.arraycopy(startingEquipment_800ce6fc[charIndex], 0, charData.equipment_14, 0, 5);
     }
 
-    gameState_800babc8.charData_32c.get(0).partyFlags_04.set(0x3);
+    gameState_800babc8.charData_32c[0].partyFlags_04 = 0x3;
 
     //LAB_800c7398
-    for(int i = 0x100; i >= 0; i--) {
-      gameState_800babc8.equipment_1e8.get(i).set(0xff);
-    }
-
-    gameState_800babc8.equipmentCount_1e4.set((short)0);
-
-    //LAB_800c73b8
-    for(int i = Config.inventorySize(); i >= 0; i--) {
-      gameState_800babc8.items_2e9.get(i).set(0xff);
-    }
-
     //LAB_800c73d8
-    gameState_800babc8.itemCount_1e6.set((short)startingItems_800ce76c.length);
-    for(int i = 0; i < startingItems_800ce76c.length; i++) {
-      gameState_800babc8.items_2e9.get(i).set(startingItems_800ce76c[i]);
+    for(final int itemId : startingItems_800ce76c) {
+      gameState_800babc8.items_2e9.add(itemId);
     }
 
     //LAB_800c7404
-    gameState_800babc8.gold_94.set(20);
+    gameState_800babc8.gold_94 = 20;
     decrementOverlayCount();
   }
 
@@ -320,7 +291,8 @@ public final class Ttle {
 
       case 6 -> {
         deallocateRenderables(0xffL);
-        free(drgn0_6666FilePtr_800bdc3c.getPointer());
+        uiFile_800bdc3c = null;
+        free(gameOverMcq_800bdc3c.getPointer());
         mainCallbackIndexOnceLoaded_8004dd24.set(2);
         pregameLoadingStage_800bb10c.set(0);
         vsyncMode_8007a3b8.set(2);
@@ -354,12 +326,11 @@ public final class Ttle {
     copyrightInitialized = false;
     logoFireInitialized = false;
     logoFlashStage = 0;
-    _800c6754 = 0;
+    fadeOutTimer_800c6754 = 0;
     flamesZ = 100;
 
     hasSavedGames = 0;
     selectedMenuOption = 0;
-    selectedConfigCategory = 0;
 
     setWidthAndFlags(384);
     setProjectionPlaneDistance(320);
@@ -419,7 +390,7 @@ public final class Ttle {
     logoTexture = textureFromTim(new Tim(files.get(2)));
     logoPalettes = palettesFromTim(new Tim(files.get(2)));
 
-    menuTextTexture = textureFromTim(new Tim(files.get(3)));
+    menuTextTexture = textureFromPngOneChannelBlue(Paths.get("gfx", "ui", "5718_3.png"));
     menuTextPalettes = palettesFromTim(new Tim(files.get(3)));
 
     tmTexture = textureFromTim(new Tim(files.get(4)));
@@ -509,12 +480,12 @@ public final class Ttle {
       menuTextRenderables,
       i -> ModelLoader.quad(
         "Text " + i,
-        _800ce8ac[i * 2], _800ce8ac[i * 2 + 1], 100,
+        _800ce8ac[i * 2], _800ce8ac[i * 2 + 1] + 10, 100,
         _800ce7f8[i * 2 + 1], 16,
-        0, _800ce7f8[i * 2],
+        i == 0 ? 79 : 0, _800ce7f8[i * 2],
          _800ce7f8[i * 2 + 1], 16,
         0,
-        576, 0,
+        0, 0,
         0x80, 0x80, 0x80,
         Translucency.B_PLUS_F
       )
@@ -527,48 +498,12 @@ public final class Ttle {
       menuTextBlurRenderables,
       i -> ModelLoader.quad(
         "Text blur " + i,
-        _800ce8ac[i * 2] - 8, _800ce8ac[i * 2 + 1] - 8, 100,
+        _800ce8ac[i * 2] - 8, _800ce8ac[i * 2 + 1] + 10 - 8, 100,
         _800ce840[i * 3 + 2], 31,
         _800ce840[i * 3], _800ce840[i * 3 + 1],
         _800ce840[i * 3 + 2], 32,
         0,
-        576, 0,
-        0x80, 0x80, 0x80,
-        Translucency.B_PLUS_F
-      )
-      .texture(menuTextTexture)
-      .palettes(menuTextPalettes)
-      .build()
-    );
-
-    Arrays.setAll(
-      menuOptionsRenderables,
-      i -> ModelLoader.quad(
-        "Option " + i,
-        _800ce8ac[(i + 3) * 2], _800ce8ac[(i + 3) * 2 + 1], 100,
-        _800ce7f8[(i + 3) * 2 + 1], 16,
-        0, _800ce7f8[(i + 3) * 2],
-        _800ce7f8[(i + 3) * 2 + 1], 16,
-        0,
-        576, 0,
-        0x80, 0x80, 0x80,
-        Translucency.B_PLUS_F
-      )
-      .texture(menuTextTexture)
-      .palettes(menuTextPalettes)
-      .build()
-    );
-
-    Arrays.setAll(
-      menuOptionsCaptionRenderables,
-      i -> ModelLoader.quad(
-        "Option caption " + i,
-        _800ce8ac[(i * 3 + 3) * 2] - 8, _800ce8ac[(i * 3 + 3) * 2 + 1] - 9, 100,
-        _800ce840[(i * 3 + 3) * 3 + 2], 32,
-        _800ce840[(i * 3 + 3) * 3], _800ce840[(i * 3 + 3) * 3 + 1],
-        _800ce840[(i * 3 + 3) * 3 + 2], 31,
-        0,
-        576, 0,
+        0, 0,
         0x80, 0x80, 0x80,
         Translucency.B_PLUS_F
       )
@@ -595,45 +530,16 @@ public final class Ttle {
 
   @Method(0x800c7e50L)
   public static void fadeOutForNewGame() {
-    if(_800c6754 == 0) {
-      scriptStartEffect(1, 15);
-    }
-
-    //LAB_800c7e7c
-    renderMenuLogo();
-    renderMenuOptions();
-    renderOptionsMenu();
-    renderMenuLogoFire();
-    renderMenuBackground();
-    renderCopyright();
-
-    _800c6754++;
-    if(_800c6754 >= 16) {
-      removeInputHandlers();
-      deallocateFire();
-
-      fmvIndex_800bf0dc.setu(0x2L);
-      afterFmvLoadingStage_800bf0ec.set(3);
-      Fmv.playCurrentFmv();
-
-      pregameLoadingStage_800bb10c.set(0);
-    }
-
-    //LAB_800c7f90
-  }
-
-  @Method(0x800c7fa0L)
-  public static void waitForSaveSelection() {
-    if(_800c6754 == 0) {
+    if(fadeOutTimer_800c6754 == 0) {
       scriptStartEffect(1, 15);
     }
 
     //LAB_800c7fcc
-    _800c6754++;
+    fadeOutTimer_800c6754++;
 
-    if(_800c6754 >= 16) {
+    if(fadeOutTimer_800c6754 >= 16) {
       if(_800c6728 == 2) {
-        whichMenu_800bdc38 = WhichMenu.INIT_LOAD_GAME_MENU_11;
+        whichMenu_800bdc38 = WhichMenu.INIT_NEW_CAMPAIGN_MENU;
         removeInputHandlers();
         deallocateFire();
         _800c6728 = 3;
@@ -644,8 +550,56 @@ public final class Ttle {
     loadAndRenderMenus();
 
     if(whichMenu_800bdc38 == WhichMenu.NONE_0) {
-      if(_800bdc34.get() != 0) {
-        if(gameState_800babc8.isOnWorldMap_4e4.get() != 0) {
+      if(savedGameSelected_800bdc34.get()) {
+        removeInputHandlers();
+        deallocateFire();
+
+        fmvIndex_800bf0dc.setu(0x2L);
+        afterFmvLoadingStage_800bf0ec.set(3);
+        Fmv.playCurrentFmv();
+
+        pregameLoadingStage_800bb10c.set(0);
+        return;
+      }
+
+      if(_800c6728 == 3) {
+        mainCallbackIndexOnceLoaded_8004dd24.set(2);
+        pregameLoadingStage_800bb10c.set(0);
+        vsyncMode_8007a3b8.set(2);
+      } else {
+        renderMenuLogo();
+        renderMenuOptions();
+        renderMenuLogoFire();
+        renderMenuBackground();
+        renderCopyright();
+      }
+    }
+  }
+
+  @Method(0x800c7fa0L)
+  public static void waitForSaveSelection() {
+    if(fadeOutTimer_800c6754 == 0) {
+      scriptStartEffect(1, 15);
+    }
+
+    //LAB_800c7fcc
+    fadeOutTimer_800c6754++;
+
+    if(fadeOutTimer_800c6754 >= 16) {
+      if(_800c6728 == 2) {
+        whichMenu_800bdc38 = WhichMenu.INIT_CAMPAIGN_SELECTION_MENU;
+        removeInputHandlers();
+        deallocateFire();
+        _800c6728 = 3;
+      }
+    }
+
+    //LAB_800c8038
+    loadAndRenderMenus();
+
+    if(whichMenu_800bdc38 == WhichMenu.NONE_0) {
+      if(savedGameSelected_800bdc34.get()) {
+        if(gameState_800babc8.isOnWorldMap_4e4) {
           mainCallbackIndexOnceLoaded_8004dd24.set(8); // WMAP
         } else {
           //LAB_800c80a4
@@ -668,7 +622,6 @@ public final class Ttle {
         //LAB_800c8108
         renderMenuLogo();
         renderMenuOptions();
-        renderOptionsMenu();
         renderMenuLogoFire();
         renderMenuBackground();
         renderCopyright();
@@ -680,20 +633,19 @@ public final class Ttle {
 
   @Method(0x800c8148L)
   public static void fadeOutMainMenu() {
-    if(_800c6754 == 0) {
+    if(fadeOutTimer_800c6754 == 0) {
       scriptStartEffect(1, 15);
     }
 
     //LAB_800c8174
     renderMenuLogo();
     renderMenuOptions();
-    renderOptionsMenu();
     renderMenuLogoFire();
     renderMenuBackground();
     renderCopyright();
 
-    _800c6754++;
-    if(_800c6754 > 15) {
+    fadeOutTimer_800c6754++;
+    if(fadeOutTimer_800c6754 > 15) {
       removeInputHandlers();
       deallocateFire();
 
@@ -738,11 +690,9 @@ public final class Ttle {
       //LAB_800c8380
     } else if(menuLoadingStage == 3) {
       //LAB_800c8388
-      handleOptionsInput();
       handleMainInput();
       renderMenuLogo();
       renderMenuOptions();
-      renderOptionsMenu();
       renderMenuLogoFire();
       renderCopyright();
     }
@@ -789,37 +739,20 @@ public final class Ttle {
 
       if(menuLoadingStage == 3) {
         if(_800c672c < 3) {
-          for(int i = 0; i < 3; i++) {
+          for(int i = 0; i < 2; i++) {
             if(i == 1 && hasSavedGames != 1) {
               continue;
             }
 
-            final int menuWidth = (int)(130 * scaleX);
+            final int menuWidth = (int)(155 * scaleX);
             final int menuHeight = (int)(16 * scaleY);
             final int menuX = (window.getWidth() - menuWidth) / 2;
-            final int menuY = (int)(_800ce8ac[i * 2 + 1] * scaleY) + window.getHeight() / 2;
+            final int menuY = (int)((_800ce8ac[i * 2 + 1] + 10) * scaleY) + window.getHeight() / 2;
 
             if(MathHelper.inBox((int)x, (int)y, menuX, menuY, menuWidth, menuHeight)) {
               if(selectedMenuOption != i) {
                 playSound(0, 1, 0, 0, (short)0, (short)0);
                 selectedMenuOption = i;
-              }
-
-              break;
-            }
-          }
-        } else if(_800c6728 == 1 && _800c6738 < 3) {
-          for(int row = 0; row < 2; row++) {
-            final int menuWidth = (int)(300 * scaleX);
-            final int menuHeight = (int)(16 * scaleY);
-            final int menuX = (window.getWidth() - menuWidth) / 2;
-            final int menuY = (int)(_800ce8ac[(row * 3 + 3) * 2 + 1] * scaleY) + window.getHeight() / 2;
-
-            if(MathHelper.inBox((int)x, (int)y, menuX, menuY, menuWidth, menuHeight)) {
-              if(selectedConfigCategory != row * 3) {
-                playSound(0, 1, 0, 0, (short)0, (short)0);
-                selectedConfigCategory = row * 3;
-                _800c6738 = 2;
               }
 
               break;
@@ -853,62 +786,22 @@ public final class Ttle {
         final float scaleY = h / GPU.getDisplayTextureHeight();
 
         if(_800c672c < 3) {
-          for(int i = 0; i < 3; i++) {
+          for(int i = 0; i < 2; i++) {
             if(i == 1 && hasSavedGames != 1) {
               continue;
             }
 
-            final int menuWidth = (int)(130 * scaleX);
+            final int menuWidth = (int)(155 * scaleX);
             final int menuHeight = (int)(16 * scaleY);
             final int menuX = (window.getWidth() - menuWidth) / 2;
-            final int menuY = (int)(_800ce8ac[i * 2 + 1] * scaleY) + window.getHeight() / 2;
+            final int menuY = (int)((_800ce8ac[i * 2 + 1] + 10) * scaleY) + window.getHeight() / 2;
 
             if(MathHelper.inBox((int)x, (int)y, menuX, menuY, menuWidth, menuHeight)) {
               playSound(0, 2, 0, 0, (short)0, (short)0);
               selectedMenuOption = i;
 
               _800c672c = 3;
-              if(selectedMenuOption == 2) {
-                _800c6738 = 0;
-                selectedConfigCategory = 0;
-                _800c6728 = 1;
-              }
-
               break;
-            }
-          }
-        } else if(_800c6728 == 1 && _800c6738 < 3) {
-          for(int i = 0; i < 6; i++) {
-            if(i % 3 != 0) {
-              final int menuWidth = (int)(_800ce7f8[(i + 3) * 2 + 1] * scaleX);
-              final int menuHeight = (int)(16 * scaleY);
-              final int menuX = (int)(_800ce8ac[(i + 3) * 2] * scaleX) + window.getWidth() / 2;
-              final int menuY = (int)(_800ce8ac[(i + 3) * 2 + 1] * scaleY) + window.getHeight() / 2;
-
-              if(MathHelper.inBox((int)x, (int)y, menuX, menuY, menuWidth, menuHeight)) {
-                playSound(0, 2, 0, 0, (short)0, (short)0);
-
-                switch(i) {
-                  case 1 -> gameState_800babc8.mono_4e0.set(0);
-                  case 2 -> gameState_800babc8.mono_4e0.set(1);
-                  case 4 -> {
-                    gameState_800babc8.vibrationEnabled_4e1.set(1);
-
-                    if(gameState_800babc8.vibrationEnabled_4e1.get() != 0) {
-                      FUN_8002bcc8(0, 0x100);
-                      FUN_8002bda4(0, 0, 0x3c);
-                    }
-                  }
-                  case 5 -> {
-                    gameState_800babc8.vibrationEnabled_4e1.set(0);
-
-                    if(gameState_800babc8.vibrationEnabled_4e1.get() != 0) {
-                      FUN_8002bcc8(0, 0x100);
-                      FUN_8002bda4(0, 0, 0x3c);
-                    }
-                  }
-                }
-              }
             }
           }
         }
@@ -948,34 +841,18 @@ public final class Ttle {
         playSound(0, 2, 0, 0, (short)0, (short)0);
 
         _800c672c = 3;
-        if(selectedMenuOption == 2) {
-          _800c6738 = 0;
-          selectedConfigCategory = 0;
-          _800c6728 = 1;
-        }
-      } else if(Input.pressedThisFrame(InputAction.DPAD_UP) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_UP)) { // Menu button up
+      } else if(
+        Input.pressedThisFrame(InputAction.DPAD_UP) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_UP) ||
+        Input.pressedThisFrame(InputAction.DPAD_DOWN) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_DOWN)
+      ) {
         playSound(0, 1, 0, 0, (short)0, (short)0);
 
-        selectedMenuOption--;
-        if(selectedMenuOption < 0) {
-          selectedMenuOption = 2;
-        }
-
-        if(selectedMenuOption == 1 && hasSavedGames != 1) {
-          selectedMenuOption--;
-        }
-
-        _800c672c = 2;
-      } else if(Input.pressedThisFrame(InputAction.DPAD_DOWN) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_DOWN)) { // Menu button down
-        playSound(0, 1, 0, 0, (short)0, (short)0);
-
-        selectedMenuOption++;
-        if(selectedMenuOption > 2) {
+        if(selectedMenuOption == 0) {
+          if(hasSavedGames == 1) {
+            selectedMenuOption = 1;
+          }
+        } else {
           selectedMenuOption = 0;
-        }
-
-        if(selectedMenuOption == 1 && hasSavedGames != 1) {
-          selectedMenuOption++;
         }
 
         _800c672c = 2;
@@ -986,7 +863,9 @@ public final class Ttle {
   @Method(0x800c8634L)
   public static void renderMenuOptions() {
     if(hasSavedGames == 0) {
-      hasSavedGames = SaveManager.hasSavedGames() ? 1 : 2;
+      SAVES.updateUncategorizedSaves();
+
+      hasSavedGames = SAVES.hasCampaigns() ? 1 : 2;
       selectedMenuOption = hasSavedGames == 1 ? 1 : 0;
       return;
     }
@@ -1053,9 +932,10 @@ public final class Ttle {
         }
       }
 
-      case 3 -> {
+      case 3 -> { // Clicked on new game or continue
         _800c672c = 4;
         if(selectedMenuOption == 0) {
+          _800c6728 = 2;
           pregameLoadingStage_800bb10c.set(4);
           //LAB_800c8a20
         } else if(selectedMenuOption == 1) {
@@ -1071,7 +951,7 @@ public final class Ttle {
     }
 
     //LAB_800c8a70
-    for(int i = 0; i < 3; i++) {
+    for(int i = 0; i < 2; i++) {
       final int colour;
       if(i != 1 || hasSavedGames == 1) {
         colour = menuOptionTransparency[i];
@@ -1093,178 +973,6 @@ public final class Ttle {
 
     //LAB_800c9390
     //LAB_800c939c
-  }
-
-  @Method(0x800c93b0L)
-  public static void handleOptionsInput() {
-    if(_800c6728 == 1 && _800c6738 < 3) {
-
-      // Up, down
-      if(Input.pressedThisFrame(InputAction.DPAD_UP) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_UP) ||
-        Input.pressedThisFrame(InputAction.DPAD_DOWN) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_DOWN)) {
-        playSound(0, 1, 0, 0, (short)0, (short)0);
-        selectedConfigCategory ^= 0b11;
-        _800c6738 = 2;
-      }
-
-      // Back
-      if(Input.pressedThisFrame(InputAction.BUTTON_EAST)) {
-        menuEscape();
-      }
-
-      // Left, right
-      if(Input.pressedThisFrame(InputAction.DPAD_LEFT) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_LEFT) ||
-        Input.pressedThisFrame(InputAction.DPAD_RIGHT) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_RIGHT)) {
-        playSound(0, 1, 0, 0, (short)0, (short)0);
-
-        if(selectedConfigCategory == 0) {
-          gameState_800babc8.mono_4e0.xor(0b1);
-          setMono(gameState_800babc8.mono_4e0.get() != 0);
-        } else {
-          gameState_800babc8.vibrationEnabled_4e1.xor(0b1);
-
-          if(gameState_800babc8.vibrationEnabled_4e1.get() != 0) {
-            FUN_8002bcc8(0, 0x100);
-            FUN_8002bda4(0, 0, 0x3c);
-          }
-        }
-
-        _800c6738 = 2;
-      }
-    }
-  }
-
-  @Method(0x800c959cL)
-  public static void renderOptionsMenu() {
-    if(_800c6728 != 1) {
-      return;
-    }
-
-    //LAB_800c95c4
-    final int sp18 = gameState_800babc8.mono_4e0.get() + 1;
-
-    final int sp1c;
-    if(gameState_800babc8.vibrationEnabled_4e1.get() == 0) {
-      //LAB_800c95f8
-      sp1c = 5;
-    } else {
-      sp1c = 4;
-    }
-
-    //LAB_800c95fc
-    switch(_800c6738) {
-      case 0 -> {
-        //LAB_800c964c
-        for(int i = 0; i < 6; i++) {
-          //LAB_800c9668
-          configColours[i] = 0;
-        }
-
-        //LAB_800c969c
-        _800c6738 = 1;
-      }
-
-      case 0x1 -> {
-        //LAB_800c96b4
-        for(int i = 0; i < 6; i++) {
-          //LAB_800c96d0
-          configColours[i] += 16;
-          if(selectedConfigCategory == i || sp18 == i || sp1c == i) {
-            //LAB_800c9758
-            if(configColours[i] > 176) {
-              configColours[i] = 176;
-            }
-
-            //LAB_800c97a4
-          } else {
-            //LAB_800c97ac
-            if(configColours[i] > 64) {
-              configColours[i] = 64;
-            }
-          }
-
-          //LAB_800c97f8
-        }
-
-        //LAB_800c9810
-      }
-
-      case 0x2 -> {
-        //LAB_800c981c
-        for(int i = 0; i < 6; i++) {
-          //LAB_800c9838
-          if(selectedConfigCategory == i || sp18 == i || sp1c == i) {
-            //LAB_800c9880
-            configColours[i] += 8;
-            if(configColours[i] > 160) {
-              configColours[i] = 160;
-            }
-
-            //LAB_800c990c
-          } else {
-            //LAB_800c9914
-            configColours[i] = 16;
-            if(configColours[i] < 64) {
-              configColours[i] = 64;
-            }
-          }
-
-          //LAB_800c99a0
-        }
-
-        //LAB_800c99b8
-      }
-
-      case 0x3 -> {
-        //LAB_800c99c4
-        for(int i = 0; i < 6; i++) {
-          //LAB_800c99e0
-          if(selectedConfigCategory == i || sp18 == i || sp1c == i) {
-            //LAB_800c9a28
-            configColours[i] -= 32;
-          } else {
-            //LAB_800c9a70
-            configColours[i] -= 8;
-          }
-
-          //LAB_800c9ab0
-          if(configColours[i] < 0) {
-            configColours[i] = 0;
-          }
-
-          //LAB_800c9af4
-          if(configColours[selectedConfigCategory] == 0) {
-            _800c6738 = 4;
-            _800c6728 = 0;
-          }
-
-          //LAB_800c9b34
-        }
-
-        //LAB_800c9b4c
-      }
-
-      case 0x4 -> {
-        return;
-      }
-    }
-
-    //LAB_800c9b70
-    for(int i = 0; i < 6; i++) {
-      menuOptionsRenderables[i]
-        .recolourMono(configColours[i])
-        .palette(selectedConfigCategory == i ? 5 : 2)
-        .render();
-    }
-
-    // Render glowing overlay for Sound/Vibrate captions
-    for(int i = 0; i < 2; i++) {
-      //LAB_800ca018
-      menuOptionsCaptionRenderables[i]
-        .recolourMono(configColours[i * 3])
-        .palette(4)
-        .render();
-    }
   }
 
   @Method(0x800cab48L)
@@ -1317,9 +1025,8 @@ public final class Ttle {
     //LAB_800cb0ec
     //LAB_800cb100
     backgroundRenderable
-      .translate(0, backgroundScrollAmount)
       .recolourMono(backgroundFadeInAmount)
-      .render();
+      .render(0, backgroundScrollAmount);
 
     //LAB_800cb370
     backgroundScrollAmount++;

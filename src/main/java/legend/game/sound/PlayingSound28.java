@@ -1,6 +1,6 @@
 package legend.game.sound;
 
-import legend.game.combat.types.BattleObject27c;
+import legend.game.combat.bobj.BattleObject27c;
 
 public class PlayingSound28 {
   /**

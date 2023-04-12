@@ -1,9 +1,9 @@
 package legend.game.modding.registries;
 
 public class RegistryEntry {
-  public final RegistryId id;
+  private RegistryId id;
 
-  public RegistryEntry(final RegistryId id) {
+  void setRegistryId(final RegistryId id) {
     this.id = id;
   }
 }

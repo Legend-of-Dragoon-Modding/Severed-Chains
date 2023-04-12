@@ -60,6 +60,14 @@ public final class MathHelper {
     return 16;
   }
 
+  public static int digitCount(final int number) {
+    if(number == 0) {
+      return 1;
+    }
+
+    return (int)(Math.log10(number) + 1);
+  }
+
   public static int assertPositive(final int val) {
     assert val >= 0 : "Value must be positive";
     return val;

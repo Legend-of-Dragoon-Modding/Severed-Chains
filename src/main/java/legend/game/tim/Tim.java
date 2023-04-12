@@ -58,13 +58,7 @@ public class Tim {
   }
 
   public RECT getImageRect() {
-    final RECT rect = this.data.readRect(this.getImageDataOffset() + 0xc, new RECT());
-
-    if(rect.w.get() <= 0 || rect.h.get() <= 0) {
-      throw new RuntimeException("Image width and height must be > 0");
-    }
-
-    return rect;
+    return this.data.readRect(this.getImageDataOffset() + 0xc, new RECT());
   }
 
   private int getImageOffset() {

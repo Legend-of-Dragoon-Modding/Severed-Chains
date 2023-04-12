@@ -26,7 +26,6 @@ import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
-import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
 import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
 import static legend.game.Scus94491BpeSegment_8005.additionData_80052884;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
@@ -71,13 +70,13 @@ public class AdditionsScreen extends MenuScreen {
 
         allocateUiElement(69, 69, 0, 0);
         allocateUiElement(70, 70, 192, 0);
-        this.renderAdditions(this.charSlot, this.additions, gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.get(this.charSlot).get()).selectedAddition_19.get(), 0xffL);
+        this.renderAdditions(this.charSlot, this.additions, gameState_800babc8.charData_32c[characterIndices_800bdbb8.get(this.charSlot).get()].selectedAddition_19, 0xffL);
         this.loadingStage++;
       }
 
       case 2 -> {
         FUN_801034cc(this.charSlot, characterCount_8011d7c4.get());
-        this.renderAdditions(this.charSlot, this.additions, gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.get(this.charSlot).get()).selectedAddition_19.get(), 0);
+        this.renderAdditions(this.charSlot, this.additions, gameState_800babc8.charData_32c[characterIndices_800bdbb8.get(this.charSlot).get()].selectedAddition_19, 0);
 
         if(this.scrollAccumulator >= 1.0d) {
           this.scrollAccumulator -= 1.0d;
@@ -98,7 +97,7 @@ public class AdditionsScreen extends MenuScreen {
 
       // Fade out
       case 100 -> {
-        this.renderAdditions(this.charSlot, this.additions, gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.get(this.charSlot).get()).selectedAddition_19.get(), 0);
+        this.renderAdditions(this.charSlot, this.additions, gameState_800babc8.charData_32c[characterIndices_800bdbb8.get(this.charSlot).get()].selectedAddition_19, 0);
         this.unload.run();
       }
     }
@@ -109,7 +108,7 @@ public class AdditionsScreen extends MenuScreen {
     final int charIndex = characterIndices_800bdbb8.get(charSlot).get();
 
     if(additions[0].offset_00 == -1) {
-      renderText(Addition_cannot_be_used_8011c340, 106, 150, 4);
+      renderText(Addition_cannot_be_used_8011c340, 106, 150, TextColour.BROWN);
     } else {
       if(allocate) {
         renderGlyphs(additionGlyphs_801141e4, 0, 0);
@@ -126,15 +125,15 @@ public class AdditionsScreen extends MenuScreen {
         final int index = additions[i].index_01;
 
         if(offset != -1) {
-          renderText(additions_8011a064.get(offset).deref(), 33, y - 2, offset != selectedAdditionOffset ? 4 : 5);
+          renderText(additions_8011a064.get(offset).deref(), 33, y - 2, offset != selectedAdditionOffset ? TextColour.BROWN : TextColour.RED);
 
           if(allocate) {
-            final int level = gameState_800babc8.charData_32c.get(charIndex).additionLevels_1a.get(index).get();
+            final int level = gameState_800babc8.charData_32c[charIndex].additionLevels_1a[index];
             renderThreeDigitNumber(197, y, level); // Addition level
             renderThreeDigitNumber(230, y, additionData_80052884.get(offset).attacks_01.get()); // Number of attacks
             renderThreeDigitNumber(263, y, additionData_80052884.get(offset).sp_02.get(level - 1).get()); // SP
             renderThreeDigitNumber(297, y, (int)(additionData_80052884.get(offset).damage_0c.get() * (ptrTable_80114070.offset(offset * 0x4L).deref(1).offset(level * 0x4L).offset(0x3L).get() + 100) / 100)); // Damage
-            renderThreeDigitNumber(322, y, gameState_800babc8.charData_32c.get(charIndex).additionXp_22.get(index).get()); // Current XP
+            renderThreeDigitNumber(322, y, gameState_800babc8.charData_32c[charIndex].additionXp_22[index]); // Current XP
 
             if(level < 5) {
               renderThreeDigitNumber(342, y, additionXpPerLevel_800fba2c.get(level).get()); // Max XP
@@ -147,7 +146,6 @@ public class AdditionsScreen extends MenuScreen {
     }
 
     renderCharacterSlot(16, 21, charIndex, allocate, false);
-    uploadRenderables();
   }
 
   private int getAdditionSlotY(final int slot) {
@@ -162,9 +160,13 @@ public class AdditionsScreen extends MenuScreen {
   }
 
   @Override
-  protected void mouseMove(final int x, final int y) {
+  protected InputPropagation mouseMove(final int x, final int y) {
+    if(super.mouseMove(x, y) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
     if(this.loadingStage != 2) {
-      return;
+      return InputPropagation.PROPAGATE;
     }
 
     for(int i = 0; i < 7; i++) {
@@ -172,14 +174,21 @@ public class AdditionsScreen extends MenuScreen {
         playSound(1);
         this.selectedSlot = i;
         this.additionHighlight.y_44 = this.getAdditionSlotY(i) - 4;
+        return InputPropagation.HANDLED;
       }
     }
+
+    return InputPropagation.PROPAGATE;
   }
 
   @Override
-  protected void mouseClick(final int x, final int y, final int button, final int mods) {
+  protected InputPropagation mouseClick(final int x, final int y, final int button, final int mods) {
+    if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
     if(this.loadingStage != 2 || mods != 0) {
-      return;
+      return InputPropagation.PROPAGATE;
     }
 
     if(button == GLFW_MOUSE_BUTTON_LEFT && this.additions[0].offset_00 != -1) {
@@ -191,16 +200,20 @@ public class AdditionsScreen extends MenuScreen {
           final int additionOffset = this.additions[i].offset_00;
 
           if(additionOffset != -1) {
-            gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.get(this.charSlot).get()).selectedAddition_19.set(additionOffset);
+            gameState_800babc8.charData_32c[characterIndices_800bdbb8.get(this.charSlot).get()].selectedAddition_19 = additionOffset;
             playSound(2);
             unloadRenderable(this.additionHighlight);
             this.loadingStage = 1;
           } else {
             playSound(40);
           }
+
+          return InputPropagation.HANDLED;
         }
       }
     }
+
+    return InputPropagation.PROPAGATE;
   }
 
   private void menuEscape() {
@@ -238,7 +251,7 @@ public class AdditionsScreen extends MenuScreen {
     final int additionOffset = this.additions[this.selectedSlot].offset_00;
 
     if(additionOffset != -1) {
-      gameState_800babc8.charData_32c.get(characterIndices_800bdbb8.get(this.charSlot).get()).selectedAddition_19.set(additionOffset);
+      gameState_800babc8.charData_32c[characterIndices_800bdbb8.get(this.charSlot).get()].selectedAddition_19 = additionOffset;
       playSound(2);
       unloadRenderable(this.additionHighlight);
       this.loadingStage = 1;
@@ -248,9 +261,13 @@ public class AdditionsScreen extends MenuScreen {
   }
 
   @Override
-  protected void mouseScroll(final double deltaX, final double deltaY) {
+  protected InputPropagation mouseScrollHighRes(final double deltaX, final double deltaY) {
+    if(super.mouseScrollHighRes(deltaX, deltaY) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
     if(this.loadingStage != 2) {
-      return;
+      return InputPropagation.PROPAGATE;
     }
 
     if(this.scrollAccumulator < 0 && deltaY > 0 || this.scrollAccumulator > 0 && deltaY < 0) {
@@ -258,39 +275,54 @@ public class AdditionsScreen extends MenuScreen {
     }
 
     this.scrollAccumulator += deltaY;
+    return InputPropagation.HANDLED;
   }
 
   @Override
-  public void pressedThisFrame(final InputAction inputAction) {
+  public InputPropagation pressedThisFrame(final InputAction inputAction) {
+    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
     if(this.loadingStage != 2) {
-      return;
+      return InputPropagation.PROPAGATE;
     }
 
     if(inputAction == InputAction.DPAD_LEFT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_LEFT) {
       this.menuNavigateLeft();
-    }
-    if(inputAction == InputAction.DPAD_RIGHT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_RIGHT) {
+      return InputPropagation.HANDLED;
+    } else if(inputAction == InputAction.DPAD_RIGHT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_RIGHT) {
       this.menuNavigateRight();
-    }
-    if(inputAction == InputAction.BUTTON_EAST) {
+      return InputPropagation.HANDLED;
+    } else if(inputAction == InputAction.BUTTON_EAST) {
       this.menuEscape();
-    }
-    if(inputAction == InputAction.BUTTON_SOUTH) {
+      return InputPropagation.HANDLED;
+    } else if(inputAction == InputAction.BUTTON_SOUTH) {
       this.menuSelect();
+      return InputPropagation.HANDLED;
     }
+
+    return InputPropagation.PROPAGATE;
   }
 
   @Override
-  public void pressedWithRepeatPulse(final InputAction inputAction) {
+  public InputPropagation pressedWithRepeatPulse(final InputAction inputAction) {
+    if(super.pressedWithRepeatPulse(inputAction) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
     if(this.loadingStage != 2) {
-      return;
+      return InputPropagation.PROPAGATE;
     }
 
     if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
       this.menuNavigateUp();
-    }
-    if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
+      return InputPropagation.HANDLED;
+    } else if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
       this.menuNavigateDown();
+      return InputPropagation.HANDLED;
     }
+
+    return InputPropagation.PROPAGATE;
   }
 }
