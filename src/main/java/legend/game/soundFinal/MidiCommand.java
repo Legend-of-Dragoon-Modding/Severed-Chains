@@ -28,3 +28,4 @@ enum MidiCommand {
     this.command = command;
   }
 }
+

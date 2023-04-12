@@ -1,7 +1,5 @@
 package legend.game.soundFinal;
 
-import it.unimi.dsi.fastutil.shorts.ShortArrayList;
-import legend.core.IoHelper;
 import legend.core.MathHelper;
 
 final class AdsrEnvelope {
@@ -10,9 +8,9 @@ final class AdsrEnvelope {
   private short currentLevel;
   private int counter;
 
-  AdsrEnvelope(final int lo, final int hi) {
-    this.phases = AdsrPhase.getPhases(lo, hi);
-    this.phase = Phase.Attack;
+  AdsrEnvelope(final AdsrPhase[] phases) {
+    this.phases = phases;
+    this.phase = AdsrEnvelope.Phase.Attack;
   }
 
   short get() {
@@ -21,33 +19,30 @@ final class AdsrEnvelope {
       return this.currentLevel;
     }
 
-    int envelopeCycles = 1 << Math.max(0, this.phases[this.phase.value].getShift() - 11);
-    int envelopeStep = this.phases[this.phase.value].getStep() << Math.max(0, 11 - this.phases[this.phase.value].getShift());
+    final AdsrPhase phase = this.phases[this.phase.value];
 
-    if(this.phases[this.phase.value].isExponential && !this.phases[this.phase.value].isDecreasing && this.currentLevel > 0x6000) {
+    int envelopeCycles = 1 << Math.max(0, phase.getShift() - 11);
+    int envelopeStep = phase.getStep() << Math.max(0, 11 - phase.getShift());
+
+    if(phase.isExponential && !phase.isDecreasing && this.currentLevel > 0x6000) {
       envelopeCycles += 4;
     }
 
-    if(this.phases[this.phase.value].isExponential && this.phases[this.phase.value].isDecreasing) {
+    if(phase.isExponential && phase.isDecreasing) {
       envelopeStep = envelopeCycles * this.currentLevel >> 15;
     }
 
     this.currentLevel = (short) MathHelper.clamp(this.currentLevel + envelopeStep, 0, 0x7fff);
     this.counter += envelopeCycles;
 
-    final boolean nextPhase = this.phases[this.phase.value].isDecreasing ? this.currentLevel <= this.phases[this.phase.value].getTarget() : this.currentLevel >= this.phases[this.phase.value].getTarget();
+    final boolean nextPhase = phase.isDecreasing ? this.currentLevel <= phase.getTarget() : this.currentLevel >= phase.getTarget();
 
     if(nextPhase) {
-      this.phase = this.phase.next(this.phases[this.phase.value].isDecreasing);
+      this.phase = this.phase.next(phase.isDecreasing);
       this.counter = 0;
     }
 
     return this.currentLevel;
-  }
-
-  void reset() {
-    this.phase = Phase.Attack;
-    this.currentLevel = 0;
   }
 
   void KeyOff() {
@@ -55,7 +50,7 @@ final class AdsrEnvelope {
   }
 
 
-  Phase getState() {
+  AdsrEnvelope.Phase getState() {
     return this.phase;
   }
 
@@ -72,7 +67,7 @@ final class AdsrEnvelope {
       this.value = value;
     }
 
-    private Phase next(final boolean isDecreasing) {
+    private AdsrEnvelope.Phase next(final boolean isDecreasing) {
       return switch(this.value) {
         case 0 -> Decay;
         case 1 -> Sustain;

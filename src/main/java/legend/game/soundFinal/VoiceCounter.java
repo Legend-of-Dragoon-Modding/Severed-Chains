@@ -1,6 +1,6 @@
 package legend.game.soundFinal;
 
-final class ChannelCounter {
+final class VoiceCounter {
   private int counter;
 
   int getCurrentSampleIndex() {

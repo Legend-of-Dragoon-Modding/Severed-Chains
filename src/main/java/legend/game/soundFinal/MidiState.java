@@ -9,6 +9,7 @@ final class MidiState {
   public int tempo;
   public int ticksPerQuarterNote;
   public float msPerTick;
+  public double ticksPerMs;
   public float deltaMs;
   public boolean endOfTrack;
 
@@ -24,3 +25,4 @@ final class MidiState {
     this.sequence = sequence;
   }
 }
+

@@ -1,12 +1,9 @@
 package legend.core.openal;
 
-import static org.lwjgl.openal.AL10.AL_BUFFER;
 import static org.lwjgl.openal.AL10.AL_BUFFERS_PROCESSED;
 import static org.lwjgl.openal.AL10.AL_FORMAT_MONO16;
 import static org.lwjgl.openal.AL10.AL_FORMAT_STEREO16;
 import static org.lwjgl.openal.AL10.AL_GAIN;
-import static org.lwjgl.openal.AL10.AL_LOOPING;
-import static org.lwjgl.openal.AL10.AL_POSITION;
 import static org.lwjgl.openal.AL10.AL_SOURCE_STATE;
 import static org.lwjgl.openal.AL10.AL_STOPPED;
 import static org.lwjgl.openal.AL10.alBufferData;
@@ -21,32 +18,77 @@ import static org.lwjgl.openal.AL10.alSourceQueueBuffers;
 import static org.lwjgl.openal.AL10.alSourceStop;
 import static org.lwjgl.openal.AL10.alSourceUnqueueBuffers;
 import static org.lwjgl.openal.AL10.alSourcef;
-import static org.lwjgl.openal.AL10.alSourcei;
 
 public class BufferedSound {
-  private static final int BUFFER_SIZE = 512 * 8;
-  private static final int BUFFER_COUNT = 8;
+  /**
+   * Use powers of 2 to avoid % operator
+   */
+  private static final int BUFFER_COUNT = 4;
+  /**
+   * 1/20 of a second at 44100 Hz
+   */
+  private static final int BUFFER_SIZE = 2205;
 
   private final int[] buffers = new int[BUFFER_COUNT];
+  private final int bufferSize;
 
   private final int format;
   private final int sourceId;
 
-  private boolean isPlaying = false;
+  private int bufferPosition;
+  private short[] sampleBuffer;
+
+  private boolean isPlaying;
   private int bufferIndex;
 
   public BufferedSound(final boolean stereo) {
     this.format = stereo ? AL_FORMAT_STEREO16 : AL_FORMAT_MONO16;
+    this.bufferSize = BUFFER_SIZE * (stereo ? 2 : 1);
+    this.sampleBuffer = new short[this.bufferSize];
 
     this.sourceId = alGenSources();
 
     for(int i = 0; i < BUFFER_COUNT; i++) {
-      this.bufferSamples(new short[0], 44100);
+      this.buffers[i] = alGenBuffers();
     }
 
     alSourcef(this.sourceId, AL_GAIN, 0.3f); //TODO actual volume control
 
     alSourcePlay(this.sourceId);
+  }
+
+  public void bufferSample(final short sample) {
+    this.sampleBuffer[this.bufferPosition++] = sample;
+
+    if(this.bufferPosition >= this.bufferSize) {
+      this.bufferSamples(this.sampleBuffer);
+
+      this.bufferPosition = 0;
+      this.sampleBuffer = new short[this.bufferSize];
+    }
+  }
+
+  private void bufferSamples(final short[] pcm) {
+    this.processBuffer();
+
+    final int buffer = this.buffers[this.bufferIndex++];
+    alBufferData(buffer, this.format, pcm, 44100);
+    alSourceQueueBuffers(this.sourceId, buffer);
+    this.bufferIndex &= BUFFER_COUNT - 1;
+  }
+
+  /**
+   * Dequeues processed buffers, deletes them, then creates new ones.
+   */
+  private void processBuffer() {
+    final int processedBufferCount = alGetSourcei(this.sourceId, AL_BUFFERS_PROCESSED);
+
+    for(int i = 0; i < processedBufferCount; i++) {
+      final int processedBufferName = alSourceUnqueueBuffers(this.sourceId);
+      alDeleteBuffers(processedBufferName);
+    }
+
+    alGenBuffers(this.buffers);
   }
 
   public void play() {
@@ -78,21 +120,6 @@ public class BufferedSound {
   public void destroy() {
     alDeleteSources(this.sourceId);
     alDeleteBuffers(this.buffers);
-  }
-
-  public void process() {
-    final int processedBuffers = alGetSourcei(this.sourceId, AL_BUFFERS_PROCESSED);
-    for (int i = 0; i < processedBuffers; i++) {
-      alDeleteBuffers(alSourceUnqueueBuffers(this.sourceId));
-      this.buffers[this.bufferIndex] = alGenBuffers();
-    }
-  }
-
-  public void bufferSamples(final short[] pcm, final int sampleRate) {
-    final int buffer = this.buffers[this.bufferIndex++];
-    alBufferData(buffer, this.format, pcm, sampleRate);
-    alSourceQueueBuffers(this.sourceId, buffer);
-    this.bufferIndex %= BUFFER_COUNT;
   }
 
   public boolean isPlaying() {

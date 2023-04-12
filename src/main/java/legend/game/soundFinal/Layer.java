@@ -8,24 +8,25 @@ final class Layer {
   private final int rootKey;
   private final int cents;
   private final double volume;
-  private final double pan;
+  private final int pan;
   private final int pitchBendMultiplier;
   private final boolean noise;
   private final boolean modulation;
   private final boolean reverb;
-
-  private final AdsrEnvelope adsrEnvelope;
-  private final SoundBankEntry soundBankEntry;
+  private final AdsrPhase[] adsrPhases;
+  private final SoundBank soundBank;
+  private final int soundBankOffset;
 
   Layer(final byte[] data, final SoundBank soundBank) {
     this.minimumKeyRange = data[0];
     this.maximumKeyRange = data[1];
     this.rootKey = data[2];
     this.cents = data[3];
-    this.soundBankEntry = soundBank.getEntry(IoHelper.readShort(data, 4) * 8);
-    this.adsrEnvelope = new AdsrEnvelope(IoHelper.readUShort(data, 6), IoHelper.readUShort(data, 8));
+    this.soundBank = soundBank;
+    this.soundBankOffset = IoHelper.readShort(data, 4) * 8;
+    this.adsrPhases = AdsrPhase.getPhases(IoHelper.readUShort(data, 6), IoHelper.readUShort(data, 8));
     this.volume = (data[11] & 0xff) / 127d;
-    this.pan = (data[12] & 0xff) / 64d;
+    this.pan = (data[12] & 0xff);
     this.pitchBendMultiplier = data[13];
 
     this.noise = (data[15] & 0x2) != 0;
@@ -57,19 +58,15 @@ final class Layer {
     return this.volume;
   }
 
-  double getPan() {
+  int getPan() {
     return this.pan;
   }
 
   AdsrEnvelope getAdsrEnvelope() {
-    return this.adsrEnvelope;
+    return new AdsrEnvelope(this.adsrPhases);
   }
 
   SoundBankEntry getSoundBankEntry() {
-    return this.soundBankEntry;
-  }
-
-  void resetSoundBankEntry() {
-    this.soundBankEntry.reset();
+    return this.soundBank.getEntry(this.soundBankOffset);
   }
 }

@@ -6,8 +6,6 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectArrayMap;
 import legend.core.MathHelper;
 import legend.game.unpacker.FileData;
 
-import java.util.Arrays;
-
 final class SoundBank {
   private static final int[] POSITIVE_SPU_ADPCM_TABLE = {0, 60, 115, 98, 122};
   private static final int[] NEGATIVE_SPU_ADPCM_TABLE = {0, 0, -52, -55, -60};
@@ -134,3 +132,4 @@ final class SoundBank {
     return value << 28 >> 28;
   }
 }
+

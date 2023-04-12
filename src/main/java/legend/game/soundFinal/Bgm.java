@@ -5,9 +5,11 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import legend.game.sound.Sssq;
 import legend.game.unpacker.FileData;
 
-public class Bgm {
-  private final Int2ObjectMap<Channel> midiChannels = new Int2ObjectArrayMap<>();
+public final class Bgm {
+  static final boolean STEREO = true;
+  private final Voice[] voicePool = new Voice[24];
   private final MidiState state;
+  private final Int2ObjectMap<Channel> channels = new Int2ObjectArrayMap<>();
 
   private int samplesToProcess;
 
@@ -17,24 +19,29 @@ public class Bgm {
 
     for(int i = 0; i < 0x10; i++) {
       if(sssq.channelInfo_10[i].instrumentIndex_02 != -1) { // preset (SShd entry)
-        this.midiChannels.put(i, new Channel(i, sssq.channelInfo_10[i], sshd));
+        this.channels.put(i, new Channel(i, sssq.channelInfo_10[i], sshd));
       }
+    }
+
+    for(int voice = 0; voice < this.voicePool.length; voice++) {
+      this.voicePool[voice] = new Voice();
     }
 
     this.state = new MidiState(sssq.data());
     this.state.ticksPerQuarterNote = sssq.ticksPerQuarterNote_02;
     this.state.tempo = sssq.tempo_04;
-    this.state.msPerTick = this.state.tempo * this.state.ticksPerQuarterNote / 60_000.0f;
+    this.state.ticksPerMs = (this.state.tempo * this.state.ticksPerQuarterNote) / 60_000d;
   }
 
   public void tick(final int sampleCount) {
     int processed = 0;
 
-    while (processed < sampleCount) {
+    while(processed < sampleCount) {
       while(this.samplesToProcess > 0 && processed < sampleCount) {
-        for(final Channel channel : this.midiChannels.values()) {
-          channel.processSample();
+        for(final Voice voice : this.voicePool) {
+          voice.processSample();
         }
+
         this.samplesToProcess--;
         processed++;
       }
@@ -47,27 +54,26 @@ public class Bgm {
         this.readEvent();
 
         if(this.state.command != MidiCommand.META) {
-          final Channel channel = this.midiChannels.get(this.state.channel);
-
           switch(this.state.command) {
-            case KEY_OFF -> channel.keyOff(this.state);
-            case KEY_ON -> channel.keyOn(this.state, this.readUByte());
-            case POLYPHONIC_KEY_PRESSURE -> channel.polyphonicKeyPressure(this.state);
-            case CONTROL_CHANGE -> channel.controlChange(this.state);
-            case PROGRAM_CHANGE -> channel.programChange(this.state);
-            case PITCH_BEND -> channel.pitchBend(this.state, this.readUByte());
+            case KEY_OFF -> this.keyOff();
+            case KEY_ON -> this.keyOn();
+            case POLYPHONIC_KEY_PRESSURE -> this.polyphonicKeyPressure();
+            case CONTROL_CHANGE -> this.controlChange();
+            case PROGRAM_CHANGE -> this.programChange();
+            case PITCH_BEND -> this.pitchBend();
           }
         } else {
           this.handleMeta();
+
           if(this.state.endOfTrack) {
-            for(final Channel channel : this.midiChannels.values()) {
-              //channel.processEndOfTrack();
+            for(final Voice voice : this.voicePool) {
+              //TODO process end of track (push remaining samples)
             }
             return;
           }
         }
 
-        this.state.deltaMs = this.readVarInt() * this.state.msPerTick;
+        this.state.deltaMs = (float) (this.readVarInt() / this.state.ticksPerMs);
         this.samplesToProcess = (int) (this.state.deltaMs * 44.1f);
       }
 
@@ -85,9 +91,11 @@ public class Bgm {
 
       this.state.command = MidiCommand.fromEvent(this.state.event);
       this.state.channel = this.state.event & 0x0f;
-    } else {
-      this.state.event = this.state.previousEvent;
+
+      return;
     }
+
+    this.state.event = this.state.previousEvent;
   }
 
   private void handleMeta() {
@@ -102,16 +110,12 @@ public class Bgm {
 
       case 0x51 -> {
         this.state.tempo = this.state.sequence.readUShort(this.state.offset);
-        this.state.msPerTick = this.state.tempo * this.state.ticksPerQuarterNote / 60_000.0f;
+        this.state.ticksPerMs = (this.state.tempo * this.state.ticksPerQuarterNote) / 60_000d;
         this.state.offset += 2;
 
         System.out.println("Tempo " + this.state.tempo);
       }
     }
-  }
-
-  private int readUByte() {
-    return this.state.sequence.readUByte(this.state.offset);
   }
 
   private int readVarInt() {
@@ -132,17 +136,83 @@ public class Bgm {
     return varint;
   }
 
-  public void play() {
-    for(final Channel channel : this.midiChannels.values()) {
-      channel.play();
+  private void keyOn() {
+    final int channelIndex = this.state.channel;
+    final int note = this.state.sequence.readUByte(this.state.offset++);
+    final int velocity = this.state.sequence.readUByte(this.state.offset++);
+
+    for(int voice = 0; voice < this.voicePool.length; voice++) {
+      if(this.voicePool[voice].empty) {
+        this.voicePool[voice].keyOn(this.channels.get(channelIndex), note);
+
+        System.out.println("Key on Channel: " + channelIndex + " [Voice: " + voice + "] Note: " + note);
+
+        return;
+      }
+    }
+
+    throw new IndexOutOfBoundsException("Voice Pool overflow!");
+  }
+
+  private void keyOff() {
+    final int channelIndex = this.state.channel;
+    final int note = this.state.sequence.readUByte(this.state.offset++);
+    final int velocity = this.state.sequence.readUByte(this.state.offset++);
+
+    for(int voice = 0; voice < this.voicePool.length; voice++) {
+      if(this.voicePool[voice].getChannel().getChannelIndex() == channelIndex && this.voicePool[voice].getNote() == note) {
+        this.voicePool[voice].keyOff();
+
+        System.out.println("Key off Channel: " + channelIndex + " [Voice: " + voice + ']');
+
+        return;
+      }
     }
   }
 
-  public boolean isPlaying() {
-    for(final Channel channel :this.midiChannels.values()) {
-      return channel.isPlaying();
+  private void polyphonicKeyPressure() {
+    this.state.offset += 2;
+  }
+
+  private void controlChange() {
+    final int channelIndex = this.state.channel;
+    final int command = this.state.sequence.readUByte(this.state.offset++);
+    final int value = this.state.sequence.readUByte(this.state.offset++);
+
+    switch(command) {
+      case 0x07:
+        this.channels.get(channelIndex).setVolume(value);
+        System.out.println("Control Change Channel: " + channelIndex + " Volume: " + value);
+        break;
+      case 0x0A:
+        this.channels.get(channelIndex).setPan(value);
+        System.out.println("Control Change Channel: " + channelIndex + " Pan: " + value);
+        break;
     }
 
-    return false;
+  }
+
+  private void programChange() {
+    final int channelIndex = this.state.channel;
+    final int program = this.state.sequence.readUByte(this.state.offset++);
+
+    this.channels.get(channelIndex).setPresetIndex(program);
+
+    System.out.println("Program Change Channel: " + channelIndex + " Program: " + program);
+  }
+
+  private void pitchBend() {
+    final int channelIndex = this.state.channel;
+    final int value = this.state.sequence.readUByte(this.state.offset++);
+
+    this.channels.get(channelIndex).setPitchBend(value);
+
+    System.out.println("Pitch Bend Channel: " + channelIndex + " Value: " + value);
+  }
+
+  public void play() {
+    for(final Voice voice : this.voicePool) {
+      voice.play();
+    }
   }
 }

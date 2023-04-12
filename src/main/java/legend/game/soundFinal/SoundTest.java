@@ -17,18 +17,17 @@ public final class SoundTest {
     Offsets.genOffsets();
 
     bgm.tick(2205);
-    bgm.tick(2205);
     bgm.play();
 
     Runnable runnable = new Runnable() {
       @Override
       public void run() {
-        bgm.tick(4410);
+        bgm.tick(2205);
       }
     };
 
     ScheduledExecutorService executor  = Executors.newScheduledThreadPool(1);
-    executor.scheduleAtFixedRate(runnable, 0, 100, TimeUnit.MILLISECONDS);
+    executor.scheduleAtFixedRate(runnable, 0, 50, TimeUnit.MILLISECONDS);
 
     DebugHelper.sleep(300000);
 

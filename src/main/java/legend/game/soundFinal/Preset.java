@@ -43,6 +43,8 @@ final class Preset {
       offsetIndex = i;
     }
 
-    return this.layers[offsetIndex];
+    return this.layers[0];
+    //return this.layers[offsetIndex];
   }
 }
+
