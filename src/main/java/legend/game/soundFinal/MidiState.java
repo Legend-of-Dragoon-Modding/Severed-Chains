@@ -1,14 +1,15 @@
-package legend.game.sound2;
+package legend.game.soundFinal;
 
 import legend.game.unpacker.FileData;
 
-public class MidiState {
+final class MidiState {
   public final FileData sequence;
   public int offset;
 
   public int tempo;
   public int ticksPerQuarterNote;
   public float msPerTick;
+  public double ticksPerMs;
   public float deltaMs;
   public boolean endOfTrack;
 
@@ -20,7 +21,8 @@ public class MidiState {
   /** The low nibble of event */
   public int channel;
 
-  public MidiState(final FileData sequence) {
+  MidiState(final FileData sequence) {
     this.sequence = sequence;
   }
 }
+

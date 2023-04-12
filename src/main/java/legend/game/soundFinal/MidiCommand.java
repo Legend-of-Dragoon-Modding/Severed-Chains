@@ -1,6 +1,6 @@
-package legend.game.sound2;
+package legend.game.soundFinal;
 
-public enum MidiCommand {
+enum MidiCommand {
   KEY_OFF(0x80),
   KEY_ON(0x90),
   POLYPHONIC_KEY_PRESSURE(0xa0),
@@ -10,7 +10,7 @@ public enum MidiCommand {
   META(0xf0),
   ;
 
-  public static MidiCommand fromEvent(final int event) {
+  static MidiCommand fromEvent(final int event) {
     final int command = event & 0xf0;
 
     for(final MidiCommand cmd : MidiCommand.values()) {
@@ -22,9 +22,10 @@ public enum MidiCommand {
     throw new IllegalArgumentException("Unknown command %x".formatted(command));
   }
 
-  public final int command;
+  final int command;
 
   MidiCommand(final int command) {
     this.command = command;
   }
 }
+

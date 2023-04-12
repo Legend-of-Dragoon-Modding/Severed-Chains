@@ -1157,11 +1157,22 @@ public class Sequencer {
     // There are 12 notes per octave, %12 is likely getting the note, and /12 the octave
 
     if(note < rootKey) {
-      return (int)(_8005967c.offset(((12 - (rootKey - note) % 12) * 16 + pitchBendMultiplier * (pitchBend - 64) / 4 + 0xd0L + cents) * 0x2L).get() >> ((rootKey - note) / 12 + 1));
+      final int semitoneOffset = 12 - (rootKey - note) % 12;
+      final int octaveShift = ((rootKey - note) / 12 + 1);
+
+      final int actualOctaveShift = (rootKey - note - 1) / 12 + 1;
+      final int actualSemitoneOffset =  (actualOctaveShift * 12 - (rootKey - note)) % 12;
+
+      int i = (int)(_8005967c.offset((semitoneOffset * 16 + pitchBendMultiplier * (pitchBend - 64) / 4 + 0xd0L + cents) * 0x2L).get() >> octaveShift);
+      final double semitoneMulti = Math.pow(1.05946d, actualSemitoneOffset);
+      final double centMulti = 1 + (cents * 0.0005946d);
+      final int correct = (int) ((0x1000 >> actualOctaveShift) * semitoneMulti * centMulti);
+      return i;
     }
 
     //LAB_80048a38
-    return (int)(_8005967c.offset(((note - rootKey) % 12 * 16 + pitchBendMultiplier * (pitchBend - 64) / 4 + 0xd0L + cents) * 0x2L).get() << (note - rootKey) / 12);
+    final int i = (int)(_8005967c.offset(((note - rootKey) % 12 * 16 + pitchBendMultiplier * (pitchBend - 64) / 4 + 0xd0L + cents) * 0x2L).get() << (note - rootKey) / 12);
+    return i;
   }
 
   @Method(0x80048ab8L)
