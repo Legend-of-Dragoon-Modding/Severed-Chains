@@ -2,10 +2,16 @@ package legend.game.combat.bobj;
 
 import legend.core.Config;
 import legend.core.Latch;
+import legend.core.memory.Method;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.scripting.ScriptState;
 
+import static java.lang.Math.round;
+import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
+import static legend.game.combat.Bttl_800c.characterElements_800c706c;
+import static legend.game.combat.Bttl_800c.getHitMultiplier;
+import static legend.game.combat.Bttl_800c.spellStats_800fa0b8;
 
 public class PlayerBattleObject extends BattleObject27c {
   private final Latch<ScriptState<PlayerBattleObject>> scriptState;
@@ -65,6 +71,111 @@ public class PlayerBattleObject extends BattleObject27c {
 
   public boolean isDragoon() {
     return (this.scriptState.get().storage_44[7] & 0x2) != 0;
+  }
+
+  @Override
+  public int getEffectiveDefence() {
+    if(this.isDragoon()) {
+      return super.getEffectiveDefence() * this.dragoonDefence_b0 / 100;
+    }
+
+    return super.getEffectiveDefence();
+  }
+
+  @Override
+  public int getEffectiveMagicDefence() {
+    if(this.isDragoon()) {
+      return super.getEffectiveMagicDefence() * this.dragoonMagicDefence_b2 / 100;
+    }
+
+    return super.getEffectiveMagicDefence();
+  }
+
+  @Override
+  public int getAttackElement() {
+    return this.elementFlag_1c;
+  }
+
+  @Override
+  public int getElement() {
+    if(this.charIndex_272 == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0 && this.isDragoon()) { // Dart Divine Dragoon
+      return characterElements_800c706c.get(9).get();
+    }
+
+    return characterElements_800c706c.get(this.charIndex_272).get(); // Regular Dragoon
+  }
+
+  @Override
+  @Method(0x800f2af4L)
+  public int calculatePhysicalAttack(final BattleObject27c target) {
+    int attack = this.attack_34;
+    int attackMultiplier = 100;
+
+    if(this.selectedAddition_58 == -1) { // No addition (Shana/???)
+      //LAB_800f2c24
+      if(this.isDragoon()) {
+        //LAB_800f2c4c
+        attackMultiplier = this.dragoonAttack_ac;
+      }
+    } else if(this.additionHits_56 > 0) {
+      //LAB_800f2b94
+      int additionMultiplier = 0;
+      for(int i = 0; i < this.additionHits_56; i++) {
+        additionMultiplier += getHitMultiplier(this.charSlot_276, i, 4);
+      }
+
+      //LAB_800f2bb4
+      final int damageMultiplier;
+      if(this.isDragoon()) { // Is dragoon
+        damageMultiplier = this.dragoonAttack_ac;
+      } else {
+        //LAB_800f2bec
+        damageMultiplier = this.additionDamageMultiplier_11c + 100;
+      }
+
+      //LAB_800f2bfc
+      attackMultiplier = additionMultiplier * damageMultiplier / 100;
+    }
+
+    attack = attack * attackMultiplier / 100;
+
+    //LAB_800f2c6c
+    //LAB_800f2c70
+    //LAB_800f2ccc
+    return round((this.level_04 + 5) * attack * 5 / (float)target.getEffectiveDefence());
+  }
+
+  /**
+   * @param magicType item (0), spell (1)
+   */
+  @Override
+  @Method(0x800f2e98L)
+  public int calculateMagicAttack(final BattleObject27c target, final int magicType) {
+    int matk = this.magicAttack_36;
+    if(magicType == 1) {
+      matk += spellStats_800fa0b8.get(this.spellId_4e).multi_04.get();
+    } else {
+      //LAB_800f2ef8
+      matk += this.itemDamage_de;
+    }
+
+    //LAB_800f2f04
+    if(this.isDragoon()) {
+      matk = matk * this.dragoonMagic_ae / 100;
+    }
+
+    //LAB_800f2f5c
+    //LAB_800f2fb4
+    return (this.level_04 + 5) * matk * 5 / target.getEffectiveMagicDefence();
+  }
+
+  @Override
+  public int applyElementalResistanceAndImmunity(final int damage, final int element) {
+    if((this.elementalResistanceFlag_20 & element) != 0) {
+      return damage / 2;
+    }
+
+    return super.applyElementalResistanceAndImmunity(damage, element);
   }
 
   @Override

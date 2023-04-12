@@ -233,7 +233,7 @@ import static legend.game.combat.Bttl_800f.drawFloatingNumbers;
 import static legend.game.combat.Bttl_800f.drawItemMenuElements;
 import static legend.game.combat.Bttl_800f.drawLine;
 import static legend.game.combat.Bttl_800f.drawUiTextureElement;
-import static legend.game.combat.Bttl_800f.getTargetEnemyElement;
+import static legend.game.combat.Bttl_800f.getFirstSetBitIndex;
 import static legend.game.combat.Bttl_800f.getTargetEnemyName;
 import static legend.game.combat.Bttl_800f.prepareItemList;
 import static legend.game.combat.Bttl_800f.renderNumber;
@@ -4451,7 +4451,7 @@ public final class Bttl_800e {
 
             //LAB_800f0d10
             str = getTargetEnemyName(targetBobj, currentEnemyNames_800c69d0.get(enemySlot));
-            element = getTargetEnemyElement(targetBobj.elementFlag_1c);
+            element = getFirstSetBitIndex(targetBobj.elementFlag_1c);
           } else if(menu.targetType_50.get() == 0) {
             targetBobj = _8006e398.charBobjIndices_e40[targetCombatant].innerStruct_00;
             str = playerNames_800fb378.get(targetBobj.charIndex_272).deref();
@@ -4475,7 +4475,7 @@ public final class Bttl_800e {
             } else {
               //LAB_800f0e24
               str = getTargetEnemyName(targetBobj, currentEnemyNames_800c69d0.get(targetCombatant));
-              element = getTargetEnemyElement(targetBobj.elementFlag_1c);
+              element = getFirstSetBitIndex(targetBobj.elementFlag_1c);
             }
           }
 

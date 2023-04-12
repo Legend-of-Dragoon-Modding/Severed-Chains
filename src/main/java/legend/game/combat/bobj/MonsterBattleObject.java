@@ -1,8 +1,11 @@
 package legend.game.combat.bobj;
 
 import legend.core.gte.SVECTOR;
+import legend.core.memory.Method;
 import legend.game.combat.types.AttackType;
 import legend.game.modding.coremod.CoreMod;
+
+import static legend.game.combat.Bttl_800c.spellStats_800fa0b8;
 
 public class MonsterBattleObject extends BattleObject27c {
   public int originalHp_5c;
@@ -42,6 +45,16 @@ public class MonsterBattleObject extends BattleObject27c {
   }
 
   @Override
+  public int getAttackElement() {
+    return spellStats_800fa0b8.get(this.spellId_4e).element_08.get();
+  }
+
+  @Override
+  public int getElement() {
+    return this.monsterElementFlag_72;
+  }
+
+  @Override
   public int applyDamageResistanceAndImmunity(final int damage, final AttackType attackType) {
     if(attackType.isPhysical() && (this.damageReductionFlags_6e & 0x2) != 0) {
       return 1;
@@ -52,6 +65,35 @@ public class MonsterBattleObject extends BattleObject27c {
     }
 
     return super.applyDamageResistanceAndImmunity(damage, attackType);
+  }
+
+  @Override
+  @Method(0x800f2d48L)
+  public int calculatePhysicalAttack(final BattleObject27c target) {
+    final int atk = this.attack_34 + spellStats_800fa0b8.get(this.spellId_4e).multi_04.get();
+
+    //LAB_800f2e28
+    //LAB_800f2e88
+    return atk * atk * 5 / target.getEffectiveDefence();
+  }
+
+  /**
+   * @param magicType item (0), spell (1)
+   */
+  @Override
+  @Method(0x800f8768L)
+  public int calculateMagicAttack(final BattleObject27c target, final int magicType) {
+    int matk = this.magicAttack_36;
+    if(magicType == 1) {
+      matk += spellStats_800fa0b8.get(this.spellId_4e).multi_04.get();
+    } else {
+      //LAB_800f87c4
+      matk += this.itemDamage_de;
+    }
+
+    //LAB_800f87d0
+    //LAB_800f8844
+    return matk * matk * 5 / target.getEffectiveMagicDefence();
   }
 
   @Override

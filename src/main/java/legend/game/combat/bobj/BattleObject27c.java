@@ -248,6 +248,23 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
     this.stats = new StatCollection(stats.toArray(StatType[]::new));
   }
 
+  public int getEffectiveDefence() {
+    return this.defence_38;
+  }
+
+  public int getEffectiveMagicDefence() {
+    return this.magicDefence_3a;
+  }
+
+  public abstract int getAttackElement();
+  public abstract int getElement();
+
+  public abstract int calculatePhysicalAttack(final BattleObject27c target);
+  /**
+   * @param magicType item (0), spell (1)
+   */
+  public abstract int calculateMagicAttack(final BattleObject27c target, final int magicType);
+
   @Method(0x800f29d4L)
   public int applyDamageResistanceAndImmunity(final int damage, final AttackType attackType) {
     if(attackType.isPhysical()) {
@@ -268,6 +285,14 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
       if(this.magicalResistance_116 != 0) {
         return damage / 2;
       }
+    }
+
+    return damage;
+  }
+
+  public int applyElementalResistanceAndImmunity(final int damage, final int element) {
+    if((this.elementalImmunityFlag_22 & element) != 0) {
+      return 0;
     }
 
     return damage;

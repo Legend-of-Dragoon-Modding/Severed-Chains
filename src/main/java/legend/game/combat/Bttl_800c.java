@@ -397,7 +397,7 @@ public final class Bttl_800c {
 
   public static final ArrayRef<UnsignedShortRef> characterElements_800c706c = MEMORY.ref(2, 0x800c706cL, ArrayRef.of(UnsignedShortRef.class, 10, 2, UnsignedShortRef::new));
 
-  public static final Value _800c70a4 = MEMORY.ref(4, 0x800c70a4L);
+  public static final ArrayRef<IntRef> numberOfBits_800c70a4 = MEMORY.ref(4, 0x800c70a4L, ArrayRef.of(IntRef.class, 6, 4, IntRef::new));
 
   /** TODO array of shorts, 0x14 bytes total */
   public static final Value _800c70e0 = MEMORY.ref(2, 0x800c70e0L);
@@ -764,14 +764,10 @@ public final class Bttl_800c {
   public static final ArrayRef<ByteRef> _800fb46c = MEMORY.ref(1, 0x800fb46cL, ArrayRef.of(ByteRef.class, 0x10, 1, ByteRef::new));
   public static final ArrayRef<ByteRef> _800fb47c = MEMORY.ref(1, 0x800fb47cL, ArrayRef.of(ByteRef.class, 0x10, 1, ByteRef::new));
 
-  public static final Value _800fb4b4 = MEMORY.ref(2, 0x800fb4b4L);
-
-  public static final Value _800fb534 = MEMORY.ref(2, 0x800fb534L);
-
-  public static final Value _800fb548 = MEMORY.ref(2, 0x800fb548L);
-
-  public static final Value _800fb55c = MEMORY.ref(2, 0x800fb55cL);
-
+  public static final ArrayRef<ArrayRef<UnsignedShortRef>> _800fb4b4 = MEMORY.ref(2, 0x800fb4b4L, ArrayRef.of(ArrayRef.classFor(UnsignedShortRef.class), 8, 0x10, ArrayRef.of(UnsignedShortRef.class, 8, 2, UnsignedShortRef::new)));
+  public static final ArrayRef<ArrayRef<UnsignedShortRef>> _800fb534 = MEMORY.ref(2, 0x800fb534L, ArrayRef.of(ArrayRef.classFor(UnsignedShortRef.class), 3, 0x6, ArrayRef.of(UnsignedShortRef.class, 3, 2, UnsignedShortRef::new)));
+  public static final ArrayRef<ArrayRef<UnsignedShortRef>> _800fb548 = MEMORY.ref(2, 0x800fb548L, ArrayRef.of(ArrayRef.classFor(UnsignedShortRef.class), 3, 0x6, ArrayRef.of(UnsignedShortRef.class, 3, 2, UnsignedShortRef::new)));
+  public static final ArrayRef<ArrayRef<UnsignedShortRef>> _800fb55c = MEMORY.ref(2, 0x800fb55cL, ArrayRef.of(ArrayRef.classFor(UnsignedShortRef.class), 8, 0x10, ArrayRef.of(UnsignedShortRef.class, 8, 2, UnsignedShortRef::new)));
   public static final Value _800fb5dc = MEMORY.ref(4, 0x800fb5dcL);
 
   public static final Value _800fb614 = MEMORY.ref(4, 0x800fb614L);
