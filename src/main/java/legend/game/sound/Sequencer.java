@@ -391,8 +391,10 @@ public class Sequencer {
 
       //LAB_80046af8
       //LAB_80046b24
+      boolean found = false;
       for(int instrumentIndex = sequenceData.startingInstrument_01e; instrumentIndex < sequenceData.endingInstrument_026 + 1; instrumentIndex++) {
         if(this.instrumentCanPlayNote(instrument_800c6674.patchVolume_01, instrumentIndex, sequenceData.param0_002)) {
+          found = true;
           final int voiceIndex = this.FUN_80047e1c();
           if(voiceIndex == -1) {
             break;
@@ -521,6 +523,10 @@ public class Sequencer {
         }
 
         //LAB_8004709c
+      }
+
+      if(!found) {
+        System.out.println();
       }
     }
 

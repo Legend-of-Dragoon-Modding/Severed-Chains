@@ -36,7 +36,7 @@ final class SoundBank {
 
 
   SoundBankEntry getEntry(final int offset) {
-    Pair<short[][], int[]> entry = this.entries.get(offset);
+    final Pair<short[][], int[]> entry = this.entries.get(offset);
     return new SoundBankEntry(entry.left(), entry.right());
   }
 
@@ -132,4 +132,3 @@ final class SoundBank {
     return value << 28 >> 28;
   }
 }
-

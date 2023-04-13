@@ -5,6 +5,8 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import legend.game.sound.Sssq;
 import legend.game.unpacker.FileData;
 
+import java.util.List;
+
 public final class Bgm {
   static final boolean STEREO = true;
   private final Voice[] voicePool = new Voice[24];
@@ -139,33 +141,37 @@ public final class Bgm {
   private void keyOn() {
     final int channelIndex = this.state.channel;
     final int note = this.state.sequence.readUByte(this.state.offset++);
-    final int velocity = this.state.sequence.readUByte(this.state.offset++);
+    final int velocity = this.state.sequence.readUByte(this.state.offset++); //TODO
 
-    for(int voice = 0; voice < this.voicePool.length; voice++) {
+    final Channel channel = this.channels.get(channelIndex);
+    final List<Layer> layers = channel.getLayers(note);
+
+    int layerIndex = 0;
+    int voice;
+    for(voice = 0; voice < this.voicePool.length && layerIndex < layers.size(); voice++) {
       if(this.voicePool[voice].empty) {
-        this.voicePool[voice].keyOn(this.channels.get(channelIndex), note);
+        this.voicePool[voice].keyOn(this.channels.get(channelIndex), layers.get(layerIndex), note);
+        layerIndex++;
 
         System.out.println("Key on Channel: " + channelIndex + " [Voice: " + voice + "] Note: " + note);
-
-        return;
       }
     }
 
-    throw new IndexOutOfBoundsException("Voice Pool overflow!");
+    if(voice == this.voicePool.length) {
+      throw new IndexOutOfBoundsException("Voice Pool overflow!");
+    }
   }
 
   private void keyOff() {
     final int channelIndex = this.state.channel;
     final int note = this.state.sequence.readUByte(this.state.offset++);
-    final int velocity = this.state.sequence.readUByte(this.state.offset++);
+    final int velocity = this.state.sequence.readUByte(this.state.offset++); //TODO
 
     for(int voice = 0; voice < this.voicePool.length; voice++) {
-      if(this.voicePool[voice].getChannel().getChannelIndex() == channelIndex && this.voicePool[voice].getNote() == note) {
+      if(this.voicePool[voice].getChannel() != null && this.voicePool[voice].getChannel().getChannelIndex() == channelIndex && this.voicePool[voice].getNote() == note) {
         this.voicePool[voice].keyOff();
 
         System.out.println("Key off Channel: " + channelIndex + " [Voice: " + voice + ']');
-
-        return;
       }
     }
   }
@@ -180,14 +186,15 @@ public final class Bgm {
     final int value = this.state.sequence.readUByte(this.state.offset++);
 
     switch(command) {
-      case 0x07:
+      case 0x07 -> {
         this.channels.get(channelIndex).setVolume(value);
         System.out.println("Control Change Channel: " + channelIndex + " Volume: " + value);
-        break;
-      case 0x0A:
+      }
+
+      case 0x0a -> {
         this.channels.get(channelIndex).setPan(value);
         System.out.println("Control Change Channel: " + channelIndex + " Pan: " + value);
-        break;
+      }
     }
 
   }

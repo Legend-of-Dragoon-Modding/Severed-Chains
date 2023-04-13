@@ -2,6 +2,8 @@ package legend.game.soundFinal;
 
 import legend.game.sound.Sssq;
 
+import java.util.List;
+
 final class Channel {
   final private int channelIndex;
   private final Sshd sshd;
@@ -51,7 +53,7 @@ final class Channel {
     this.pan = value;
   }
 
-  Layer getLayer(final int note) {
-    return this.sshd.getPreset(this.presetIndex).getLayer(note);
+  List<Layer> getLayers(final int note) {
+    return this.sshd.getPreset(this.presetIndex).getLayers(note);
   }
 }

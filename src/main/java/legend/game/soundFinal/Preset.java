@@ -1,16 +1,20 @@
 package legend.game.soundFinal;
 
+import java.util.ArrayList;
+import java.util.List;
+
 final class Preset {
   private final Layer[] layers;
+  public final boolean playsMultipleLayers;
 
   Preset(final byte[] data, final SoundBank soundBank) {
-    final int layerCount = (data[0] & 0xf) + 1;
+    final int layerCount = (data[0] & 0x7f) + 1;
     final int volume = data[1];
     //Flag??
     final int startingKey = data[6];
 
     this.layers = new Layer[layerCount];
-
+    this.playsMultipleLayers = (data[0] & 0x80) != 0;
 
     for(int i = 0; i < layerCount; i++) {
       final byte[] layerArr = new byte[16];
@@ -19,32 +23,19 @@ final class Preset {
     }
   }
 
-  Layer getLayer(final int note) {
-    int offset = 1000;
-    int offsetIndex = 0;
+  List<Layer> getLayers(final int note) {
+    final List<Layer> layers = new ArrayList<>();
 
-    for(int i = 0; i < this.layers.length; i++) {
-      if(this.layers[i].getMinimumKeyRange() >= note && this.layers[i].getMaximumKeyRange() <= note) {
-        return this.layers[i];
+    for(final Layer layer : this.layers) {
+      if(layer.getMinimumKeyRange() <= note && layer.getMaximumKeyRange() >= note) {
+        layers.add(layer);
+
+        if(!this.playsMultipleLayers) {
+          break;
+        }
       }
-
-      final int currentOffset;
-      if(note < this.layers[i].getMinimumKeyRange()) {
-        currentOffset = note - this.layers[i].getMinimumKeyRange();
-      } else {
-        currentOffset = this.layers[i].getMaximumKeyRange() - note;
-      }
-
-      if(currentOffset > offset) {
-        return this.layers[offsetIndex];
-      }
-
-      offset = currentOffset;
-      offsetIndex = i;
     }
 
-    return this.layers[0];
-    //return this.layers[offsetIndex];
+    return layers;
   }
 }
-

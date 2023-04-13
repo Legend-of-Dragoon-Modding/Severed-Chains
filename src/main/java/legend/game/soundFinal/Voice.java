@@ -7,14 +7,9 @@ final class Voice {
   private final BufferedSound sound;
   private final VoiceCounter counter = new VoiceCounter();
   private Channel channel;
-  private Layer layer;
-  private SoundBankEntry soundBankEntry;
-  private AdsrEnvelope adsrEnvelope;
-  private int note;
+  private LayerData layerData;
 
-
-  private int sampleRate;
-  private boolean hasSamples = false;
+  private boolean hasSamples;
   private final short[] samples = new short[31];
 
   Voice() {
@@ -25,19 +20,16 @@ final class Voice {
     this.sound.play();
   }
 
-
-  void keyOn(final Channel channel, final int note) {
+  void keyOn(final Channel channel, final Layer layer, final int note) {
     this.empty = false;
     this.channel = channel;
-    this.note = note;
-    this.layer = this.channel.getLayer(note);
-    this.soundBankEntry = this.layer.getSoundBankEntry();
-    this.adsrEnvelope = this.layer.getAdsrEnvelope();
-    this.sampleRate = calculateSampleRate(this.layer.getRootKey(), note, this.layer.getPitchBendMultiplier(), channel.getPitchBend(), this.layer.getCents());
+    this.layerData = new LayerData(layer);
+    this.layerData.note = note;
+    this.layerData.sampleRate = calculateSampleRate(layer.getRootKey(), note, layer.getPitchBendMultiplier(), channel.getPitchBend(), layer.getCents());
   }
 
   void keyOff() {
-    this.adsrEnvelope.KeyOff();
+    this.layerData.adsrEnvelope.KeyOff();
     this.empty = true; //TODO temp fix
   }
 
@@ -50,19 +42,19 @@ final class Voice {
       return;
     }
 
-    final short adsrValue = this.adsrEnvelope.get();
+    final short adsrValue = this.layerData.adsrEnvelope.get();
 
-    if(this.adsrEnvelope.getState() == AdsrEnvelope.Phase.Off) {
+    if(this.layerData.adsrEnvelope.getState() == AdsrEnvelope.Phase.Off) {
       this.empty = true;
     }
 
-    final double volume = this.channel.getVolume() * this.layer.getVolume();
+    final double volume = this.channel.getVolume() * this.layerData.layer.getVolume();
 
     final short sample = (short)(((int)(this.sampleVoice() * adsrValue * volume)) >> 15);
 
     if(Bgm.STEREO) {
-      final double leftPan = Offsets.pan[this.layer.getPan()] * Offsets.pan[this.channel.getPan()];
-      final double rightPan = Offsets.pan[127 - this.layer.getPan()] * Offsets.pan[127 - this.channel.getPan()];
+      final double leftPan = Offsets.pan[this.layerData.layer.getPan()] * Offsets.pan[this.channel.getPan()];
+      final double rightPan = Offsets.pan[127 - this.layerData.layer.getPan()] * Offsets.pan[127 - this.channel.getPan()];
 
       this.sound.bufferSample((short) (sample * leftPan));
       this.sound.bufferSample((short) (sample * rightPan));
@@ -77,7 +69,7 @@ final class Voice {
     if(!this.hasSamples) {
       System.arraycopy(this.samples, 28, this.samples, 0, 3);
 
-      System.arraycopy(this.soundBankEntry.get(), 0, this.samples, 3, 28);
+      System.arraycopy(this.layerData.soundBankEntry.get(), 0, this.samples, 3, 28);
       this.hasSamples = true;
     }
 
@@ -92,9 +84,9 @@ final class Voice {
     interpolated += gaussTable[interpolationIndex] * this.samples[sampleIndex + 3];
     interpolated >>= 15;
 
-    int step = this.sampleRate;
+    int step = this.layerData.sampleRate;
 
-    //Something here
+    //TODO voice modulation (see Spu sampleVoice)
 
     if(step > 0x3fff) {
       step = 0x4000;
@@ -131,7 +123,7 @@ final class Voice {
   }
 
   int getNote() {
-    return this.note;
+    return this.layerData.note;
   }
 
   private static final short[] gaussTable = {
