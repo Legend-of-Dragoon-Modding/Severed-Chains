@@ -63,6 +63,7 @@ public final class Bgm {
             case CONTROL_CHANGE -> this.controlChange();
             case PROGRAM_CHANGE -> this.programChange();
             case PITCH_BEND -> this.pitchBend();
+            default -> throw new RuntimeException("Bad message " + this.state.command);
           }
         } else {
           this.handleMeta();
@@ -186,6 +187,11 @@ public final class Bgm {
     final int value = this.state.sequence.readUByte(this.state.offset++);
 
     switch(command) {
+      case 0x01 -> {
+        this.channels.get(channelIndex).setModulation(value);
+        System.out.println("Control Change Channel: " + channelIndex + " Modulation: " + value);
+      }
+
       case 0x07 -> {
         this.channels.get(channelIndex).setVolume(value);
         System.out.println("Control Change Channel: " + channelIndex + " Volume: " + value);
@@ -195,8 +201,9 @@ public final class Bgm {
         this.channels.get(channelIndex).setPan(value);
         System.out.println("Control Change Channel: " + channelIndex + " Pan: " + value);
       }
-    }
 
+      default -> System.err.printf("Bad control change 0x%x%n", command);
+    }
   }
 
   private void programChange() {
@@ -212,7 +219,14 @@ public final class Bgm {
     final int channelIndex = this.state.channel;
     final int value = this.state.sequence.readUByte(this.state.offset++);
 
-    this.channels.get(channelIndex).setPitchBend(value);
+    final Channel channel = this.channels.get(channelIndex);
+    channel.setPitchBend(value);
+
+    for(final Voice voice : this.voicePool) {
+      if(voice.getChannel() == channel) {
+        voice.updateSampleRate();
+      }
+    }
 
     System.out.println("Pitch Bend Channel: " + channelIndex + " Value: " + value);
   }

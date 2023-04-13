@@ -524,10 +524,6 @@ public class Sequencer {
 
         //LAB_8004709c
       }
-
-      if(!found) {
-        System.out.println();
-      }
     }
 
     //LAB_800470bc
@@ -604,26 +600,9 @@ public class Sequencer {
                 //LAB_800473d8
                 note = playingNote._4e;
                 if(playingNote._1c == 0) {
-                  int v0;
-                  int v1;
-                  if(playingNote.pitchBend_38 >= 64) {
-                    v0 = (playingNote.pitchBend_38 - 0x40) * playingNote.pitchBendMultiplier_3a;
-                    v1 = v0 / 64;
-                    note = note + v1;
-                    v0 = v0 / 4;
-                    v1 = v1 * 16;
-                  } else {
-                    //LAB_80047454
-                    v0 = (0x40 - playingNote.pitchBend_38) * playingNote.pitchBendMultiplier_3a;
-                    final int a0_0 = v0 / 64;
-                    note = note - a0_0;
-                    v1 = v0 / 4;
-                    v0 = a0_0 * 16;
-                  }
-
-                  //LAB_8004748c
-                  v0 = v0 - v1;
-                  cents = cents + v0;
+                  final int _64ths = (playingNote.pitchBend_38 - 64) * playingNote.pitchBendMultiplier_3a; // 64ths of notes
+                  note = note + _64ths / 64; // Add whole number of notes
+                  cents = cents + Math.floorMod(_64ths / 4, 16);
                   pitchBendMultiplier = 1;
                 }
 
@@ -638,7 +617,7 @@ public class Sequencer {
 
                   if(playingNote.newPortamento_60 < 0) {
                     final int portamentoTimeElapsed = playingNote.portamentoTimeTotal_64 - playingNote.portamentoTimeRemaining_62;
-                    note = playingNote._4e - portamentoTimeElapsed * (0x100 - playingNote.newPortamento_60) / 10 / playingNote.portamentoTimeTotal_64;
+                    note = playingNote._4e - portamentoTimeElapsed * (256 - playingNote.newPortamento_60) / 10 / playingNote.portamentoTimeTotal_64;
                     cents = cents - portamentoTimeElapsed * playingNote.newPortamento_60 * 192 / (playingNote.portamentoTimeTotal_64 * 120) % 16;
                   } else {
                     //LAB_8004762c

@@ -41,7 +41,7 @@ public class PlayingNote66 {
   public boolean panChanging_48;
   public int _4a;
   public int pan_4c;
-  /** Maybe tempo? */
+  /** Maybe target note? */
   public int _4e;
   public int newVolume_50;
   public int previousVolume_52;

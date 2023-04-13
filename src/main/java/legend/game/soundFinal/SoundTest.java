@@ -9,7 +9,10 @@ public final class SoundTest {
   public static void main(final String[] args) {
     final Context context = new Context();
 
-    final Bgm bgm = new Bgm(new Sssq(Unpacker.loadFile("SECT/DRGN0.BIN/5825/1")), Unpacker.loadFile("SECT/DRGN0.BIN/5825/2"), Unpacker.loadFile("SECT/DRGN0.BIN/5825/3"));
+    // Title: 5820
+    // World map 1: 5850 (pitch issues)
+    final String file = "SECT/DRGN0.BIN/5850";
+    final Bgm bgm = new Bgm(new Sssq(Unpacker.loadFile(file + "/1")), Unpacker.loadFile(file + "/2"), Unpacker.loadFile(file + "/3"));
     Offsets.genOffsets();
 
     bgm.tick(2205);

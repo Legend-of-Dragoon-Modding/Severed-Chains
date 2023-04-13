@@ -25,12 +25,19 @@ final class Voice {
     this.channel = channel;
     this.layerData = new LayerData(layer);
     this.layerData.note = note;
-    this.layerData.sampleRate = calculateSampleRate(layer.getRootKey(), note, layer.getPitchBendMultiplier(), channel.getPitchBend(), layer.getCents());
+    this.updateSampleRate();
   }
 
   void keyOff() {
     this.layerData.adsrEnvelope.KeyOff();
     this.empty = true; //TODO temp fix
+  }
+
+  void updateSampleRate() {
+    if(this.layerData != null) {
+      final Layer layer = this.layerData.layer;
+      this.layerData.sampleRate = calculateSampleRate(layer.getRootKey(), this.layerData.note, layer.getPitchBendMultiplier(), this.channel.getPitchBend(), layer.getCents());
+    }
   }
 
   void processSample() {
