@@ -3123,7 +3123,9 @@ public final class Bttl_800e {
   @Method(0x800ec258L)
   public static void FUN_800ec258(final Model124 model) {
     final Model124 s2 = model_800bda10;
-
+    if(model.name.contains("file 8")) {
+      int a = 0;
+    }
     GsInitCoordinate2(model.coord2_14, s2.coord2_14);
 
     if(model.movementType_cc == 3) {
@@ -3173,7 +3175,7 @@ public final class Bttl_800e {
     CPU.CTC2(sp0x10.transfer.getX(), 5);
     CPU.CTC2(sp0x10.transfer.getY(), 6);
     CPU.CTC2(sp0x10.transfer.getZ(), 7);
-    Renderer.renderDobj2(s2.ObjTable_0c.top[0], true);
+    Renderer.renderDobj2(s2.ObjTable_0c.top[0], true, 0);
     s2.coord2ArrPtr_04[0].flg--;
   }
 
@@ -3218,7 +3220,7 @@ public final class Bttl_800e {
         CPU.CTC2(ls.transfer.getX(), 5);
         CPU.CTC2(ls.transfer.getY(), 6);
         CPU.CTC2(ls.transfer.getZ(), 7);
-        Renderer.renderDobj2(dobj2, true);
+        Renderer.renderDobj2(dobj2, true, 0);
       }
 
       //LAB_800ec608
@@ -3344,7 +3346,7 @@ public final class Bttl_800e {
         CPU.CTC2(sp0x10.transfer.getX(), 5);
         CPU.CTC2(sp0x10.transfer.getY(), 6);
         CPU.CTC2(sp0x10.transfer.getZ(), 7);
-        Renderer.renderDobj2(s2, true);
+        Renderer.renderDobj2(s2, true, 0);
       }
     }
 
