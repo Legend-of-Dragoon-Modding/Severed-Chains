@@ -568,7 +568,7 @@ public final class Bttl_800f {
           //LAB_800f2324
           defenderElement = monster.monsterElementFlag_72;
         } else if(defender.charIndex_272 == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0 && (defenderState.storage_44[7] & 0x2) != 0) {
-          defenderElement = characterElements_800c706c.get(1).get();
+          defenderElement = characterElements_800c706c.get(9).get();
         } else {
           defenderElement = characterElements_800c706c.get(defender.charIndex_272).get();
         }
