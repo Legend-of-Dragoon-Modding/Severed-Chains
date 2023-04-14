@@ -62,8 +62,8 @@ final class Layer {
     return this.pan;
   }
 
-  AdsrEnvelope getAdsrEnvelope() {
-    return new AdsrEnvelope(this.adsrPhases);
+  AdsrEnvelope getAdsrEnvelope(final int adsrLevel) {
+    return new AdsrEnvelope(this.adsrPhases, adsrLevel);
   }
 
   SoundBankEntry getSoundBankEntry() {

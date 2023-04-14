@@ -9,7 +9,7 @@ import java.util.List;
 
 public final class Bgm {
   static final boolean STEREO = true;
-  private final Voice[] voicePool = new Voice[24];
+  private final Voice[] voicePool = new Voice[128];
   private final MidiState state;
   private final Int2ObjectMap<Channel> channels = new Int2ObjectArrayMap<>();
 
@@ -35,7 +35,7 @@ public final class Bgm {
     this.state.ticksPerMs = (this.state.tempo * this.state.ticksPerQuarterNote) / 60_000d;
   }
 
-  public void tick(final int sampleCount) {
+  public boolean tick(final int sampleCount) {
     int processed = 0;
 
     while(processed < sampleCount) {
@@ -49,7 +49,7 @@ public final class Bgm {
       }
 
       if(processed == sampleCount) {
-        return;
+        return true;
       }
 
       while(this.state.deltaMs == 0.0f) {
@@ -72,7 +72,7 @@ public final class Bgm {
             for(final Voice voice : this.voicePool) {
               //TODO process end of track (push remaining samples)
             }
-            return;
+            return false;
           }
         }
 
@@ -83,6 +83,8 @@ public final class Bgm {
       System.out.printf("Delta ms %.02f%n", this.state.deltaMs);
       this.state.deltaMs = 0;
     }
+
+    return true;
   }
 
   private void readEvent() {
@@ -150,8 +152,17 @@ public final class Bgm {
     int layerIndex = 0;
     int voice;
     for(voice = 0; voice < this.voicePool.length && layerIndex < layers.size(); voice++) {
+      if(this.voicePool[voice].getChannel() != null && this.voicePool[voice].getChannel().getChannelIndex() == channelIndex && this.voicePool[voice].getNote() == note) {
+        this.voicePool[voice].keyOn(this.channels.get(channelIndex), layers.get(layerIndex), note, velocity, true);
+        layerIndex++;
+
+        System.out.println("Key on (Reset) Channel: " + channelIndex + " [Voice: " + voice + "] Note: " + note);
+      }
+    }
+
+    for(voice = 0; voice < this.voicePool.length && layerIndex < layers.size(); voice++) {
       if(this.voicePool[voice].empty) {
-        this.voicePool[voice].keyOn(this.channels.get(channelIndex), layers.get(layerIndex), note);
+        this.voicePool[voice].keyOn(this.channels.get(channelIndex), layers.get(layerIndex), note, velocity, false);
         layerIndex++;
 
         System.out.println("Key on Channel: " + channelIndex + " [Voice: " + voice + "] Note: " + note);
@@ -234,6 +245,19 @@ public final class Bgm {
   public void play() {
     for(final Voice voice : this.voicePool) {
       voice.play();
+    }
+  }
+
+  public void stop() {
+    for(final Voice voice : this.voicePool) {
+      voice.stop();
+    }
+  }
+
+  public void destroy() {
+    for(final Voice voice : this.voicePool) {
+      voice.stop();
+      voice.destroy();
     }
   }
 }

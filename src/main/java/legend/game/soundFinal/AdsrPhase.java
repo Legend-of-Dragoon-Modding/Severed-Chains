@@ -4,8 +4,8 @@ final class AdsrPhase {
   private final int target;
   private final int shift;
   private final int step;
-  final boolean isDecreasing;
-  final boolean isExponential;
+  private final boolean isDecreasing;
+  private final boolean isExponential;
 
   AdsrPhase(final int target, final int shift, final int step, final boolean isDecreasing, final boolean isExponential) {
     this.target = target;

@@ -5,53 +5,70 @@ import legend.core.MathHelper;
 final class AdsrEnvelope {
   private final AdsrPhase[] phases;
   private Phase phase;
-  private short currentLevel;
+  private int currentLevel;
   private int counter;
 
-  AdsrEnvelope(final AdsrPhase[] phases) {
+  AdsrEnvelope(final AdsrPhase[] phases, final int adsrLevel) {
     this.phases = phases;
     this.phase = AdsrEnvelope.Phase.Attack;
+    this.currentLevel = adsrLevel;
   }
 
   short get() {
     if(this.counter > 0) {
       this.counter--;
-      return this.currentLevel;
+      return (short)this.currentLevel;
+    }
+
+    if(this.phase == Phase.Off) {
+      return 0;
     }
 
     final AdsrPhase phase = this.phases[this.phase.value];
+    final int step = phase.getStep();
+    final int shift = phase.getShift();
+    final int taget = phase.getTarget();
+    final boolean isDecreasing = phase.isDecreasing();
+    final boolean isExponential = phase.isExponential();
 
-    int envelopeCycles = 1 << Math.max(0, phase.getShift() - 11);
-    int envelopeStep = phase.getStep() << Math.max(0, 11 - phase.getShift());
+    int adsrCycles = 1 << Math.max(0, shift - 11);
+    int adsrStep = step << Math.max(0, 11 - shift);
 
-    if(phase.isExponential && !phase.isDecreasing && this.currentLevel > 0x6000) {
-      envelopeCycles += 4;
+    if(isExponential && !isDecreasing && this.currentLevel > 0x6000) {
+      adsrCycles *= 4;
     }
 
-    if(phase.isExponential && phase.isDecreasing) {
-      envelopeStep = envelopeCycles * this.currentLevel >> 15;
+    if(isExponential && isDecreasing) {
+      adsrStep = (adsrStep * this.currentLevel) >> 15;
     }
 
-    this.currentLevel = (short) MathHelper.clamp(this.currentLevel + envelopeStep, 0, 0x7fff);
-    this.counter += envelopeCycles;
+    this.currentLevel += adsrStep;
+    this.currentLevel = isDecreasing ? (short)Math.max(this.currentLevel, taget) : (short)Math.min(this.currentLevel, taget);
 
-    final boolean nextPhase = phase.isDecreasing ? this.currentLevel <= phase.getTarget() : this.currentLevel >= phase.getTarget();
+    this.counter += adsrCycles;
+
+    final boolean nextPhase = isDecreasing ? this.currentLevel <= taget : this.currentLevel >= taget;
 
     if(nextPhase) {
-      this.phase = this.phase.next(phase.isDecreasing);
+      this.phase = this.phase.next(isDecreasing);
       this.counter = 0;
     }
 
-    return this.currentLevel;
+    return (short)this.currentLevel;
   }
 
   void KeyOff() {
     this.phase = Phase.Release;
+    this.counter = 0;
   }
 
 
   AdsrEnvelope.Phase getState() {
     return this.phase;
+  }
+
+  int getCurrentLevel() {
+    return this.currentLevel;
   }
 
   enum Phase {
