@@ -28,9 +28,7 @@ public final class Renderer {
     final TmdObjTable1c objTable = dobj2.tmd_08;
     final SVECTOR[] vertices = objTable.vert_top_00;
     final SVECTOR[] normals = objTable.normal_top_08;
-    if((dobj2.attribute_00 & 0x4000_0000) != 0) {
-      int x = 0;
-    }
+
     // CTMD flag and scripted "uniform lighting" + transparency flag for STMDs in DEFFs
     final int specialFlags = ctmdFlag | ((dobj2.attribute_00 & 0x4000_0000) != 0 ? 0x12 : 0x0);
 

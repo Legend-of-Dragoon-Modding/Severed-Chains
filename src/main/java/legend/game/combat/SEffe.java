@@ -8174,13 +8174,11 @@ public final class SEffe {
     a0._10.colour_1c.setX(a1._0c.getX() >> 8 & 0xff);
     a0._10.colour_1c.setY(a1._0c.getY() >> 8 & 0xff);
     a0._10.colour_1c.setZ(a1._0c.getZ() >> 8 & 0xff);
-    if(a0.name.contains("file 8")) {
-      int a = 0;
-    }
+
     if(a1._32 != -1) {
       a1._32--;
 
-      if(a1._32 << 0x10 <= 0) {
+      if(a1._32 <= 0) {
         return 0;
       }
     }
@@ -9657,9 +9655,7 @@ public final class SEffe {
   @Method(0x8011826cL)
   public static void renderDeffTmd(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
     final DeffTmdRenderer14 s1 = (DeffTmdRenderer14)data.effect_44;
-    if(state.name.contains("file 8")) {
-      int x = 0;
-    }
+
     if(data._10.flags_00 >= 0) {
       final MATRIX sp0x10 = new MATRIX();
       FUN_800e8594(sp0x10, data);
@@ -9730,9 +9726,7 @@ public final class SEffe {
       final DeffPart.TmdType tmdType = (DeffPart.TmdType)getDeffPart(s1 | 0x300_0000);
       name = tmdType.name;
     }
-    if(name.contains("DEFF index 5")) {
-      int z = 0;
-    }
+
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "DEFF TMD " + name,
       script.scriptState_04,

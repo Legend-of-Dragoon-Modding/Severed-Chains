@@ -3123,9 +3123,7 @@ public final class Bttl_800e {
   @Method(0x800ec258L)
   public static void FUN_800ec258(final Model124 model) {
     final Model124 s2 = model_800bda10;
-    if(model.name.contains("file 8")) {
-      int a = 0;
-    }
+
     GsInitCoordinate2(model.coord2_14, s2.coord2_14);
 
     if(model.movementType_cc == 3) {
