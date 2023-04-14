@@ -9,7 +9,7 @@ import java.util.List;
 
 public final class Bgm {
   static final boolean STEREO = true;
-  private final Voice[] voicePool = new Voice[128];
+  private final Voice[] voicePool = new Voice[28];
   private final MidiState state;
   private final Int2ObjectMap<Channel> channels = new Int2ObjectArrayMap<>();
 
@@ -153,7 +153,7 @@ public final class Bgm {
     int voice;
     for(voice = 0; voice < this.voicePool.length && layerIndex < layers.size(); voice++) {
       if(this.voicePool[voice].getChannel() != null && this.voicePool[voice].getChannel().getChannelIndex() == channelIndex && this.voicePool[voice].getNote() == note) {
-        this.voicePool[voice].keyOn(this.channels.get(channelIndex), layers.get(layerIndex), note, velocity, true);
+        this.voicePool[voice].keyOn(this.channels.get(channelIndex), layers.get(layerIndex), note, velocity);
         layerIndex++;
 
         System.out.println("Key on (Reset) Channel: " + channelIndex + " [Voice: " + voice + "] Note: " + note);
@@ -162,7 +162,7 @@ public final class Bgm {
 
     for(voice = 0; voice < this.voicePool.length && layerIndex < layers.size(); voice++) {
       if(this.voicePool[voice].empty) {
-        this.voicePool[voice].keyOn(this.channels.get(channelIndex), layers.get(layerIndex), note, velocity, false);
+        this.voicePool[voice].keyOn(this.channels.get(channelIndex), layers.get(layerIndex), note, velocity);
         layerIndex++;
 
         System.out.println("Key on Channel: " + channelIndex + " [Voice: " + voice + "] Note: " + note);
@@ -196,11 +196,19 @@ public final class Bgm {
     final int channelIndex = this.state.channel;
     final int command = this.state.sequence.readUByte(this.state.offset++);
     final int value = this.state.sequence.readUByte(this.state.offset++);
+    final int note1 = this.state.sequence.readUByte(this.state.offset + 1);
+    final int note2 = this.state.sequence.readUByte(this.state.offset + 2);
 
     switch(command) {
       case 0x01 -> {
         this.channels.get(channelIndex).setModulation(value);
-        System.out.println("Control Change Channel: " + channelIndex + " Modulation: " + value);
+
+        System.err.printf("Control Change Channel: %d Modulation: 0x%x Note1: %d Note2: %d%n", channelIndex, value, note1, note2);
+      }
+
+      case 0x02 -> {
+        this.channels.get(channelIndex).setModulation(value);
+        System.err.printf("Control Change Channel: %d Breath Control: %d%n", channelIndex, value);
       }
 
       case 0x07 -> {

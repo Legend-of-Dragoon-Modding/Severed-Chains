@@ -66,27 +66,21 @@ final class SoundBank {
   }
 
   private static Pair<short[][], int[]> generateEntry(final byte[] data) {
-    final boolean loops = (data[0x11] & 2) == 2;
-
-    assert !loops || (data[data.length - 0xf] & 0x3) == 3 : "SoundBank partial loop!";
-
     final int blockCount = data.length / 16;
 
-    final short[][] pcm = new short[blockCount + (loops ? 0 : 1)][];
+    final short[][] pcm = new short[blockCount][];
     for(int i = 0; i < pcm.length; i++) {
       pcm[i] = new short[28];
     }
 
-    final int[] next = new int[blockCount + (loops ? 0 : 1)];
-    for(int i = 0; i < next.length - 1; i++) {
-      next[i] = i + 1;
-    }
-    next[next.length - 1] = loops ? 1 : (next.length - 1);
+    final int[] flag = new int[blockCount];
 
     int old = 0;
     int older = 0;
 
-    for(int block = 1; block < blockCount; block++) {
+    for(int block = 0; block < blockCount; block++) {
+      flag[block] = data[block * 16 + 1];
+
       final int shift = 12 - (data[block * 16] & 0xf);
       int filter = (data[block * 16] & 0x70) >> 4; //filter on SPU adpcm is 0-4 vs XA which is 0-3
       if(filter > 4) {
@@ -123,7 +117,7 @@ final class SoundBank {
 
       @Override
       public int[] right() {
-        return next;
+        return flag;
       }
     };
   }

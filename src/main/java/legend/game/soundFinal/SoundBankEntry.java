@@ -2,21 +2,33 @@ package legend.game.soundFinal;
 
 final class SoundBankEntry {
   private final short[][] pcm;
-  private final int[] next;
+  private final int[] flags;
   private int index;
+  private int repeatIndex;
 
 
-  SoundBankEntry(final short[][] pcm, final int[] next) {
+  SoundBankEntry(final short[][] pcm, final int[] flags) {
     this.pcm = pcm;
-    this.next = next;
+    this.flags = flags;
   }
 
-  short[] get() {
-    this.index = this.next[this.index];
-    return this.pcm[this.index];
-  }
+  boolean get(final short[] samples) {
+    boolean isEnd = false;
+    switch(this.flags[this.index]) {
+      case 0, 2 -> this.index++;
+      case 1 -> {
+        this.index = 0;
+        isEnd = true;
+      }
+      case 3 -> this.index = this.repeatIndex;
+      case 4, 6 -> {
+       this.repeatIndex = this.index;
+       this.index++;
+      }
+    }
 
-  void reset() {
-    this.index = 0;
+    System.arraycopy(this.pcm[this.index], 0, samples, 3, 28);
+
+    return isEnd;
   }
 }

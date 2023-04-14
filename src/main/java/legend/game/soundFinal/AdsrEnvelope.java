@@ -8,10 +8,9 @@ final class AdsrEnvelope {
   private int currentLevel;
   private int counter;
 
-  AdsrEnvelope(final AdsrPhase[] phases, final int adsrLevel) {
+  AdsrEnvelope(final AdsrPhase[] phases) {
     this.phases = phases;
     this.phase = AdsrEnvelope.Phase.Attack;
-    this.currentLevel = adsrLevel;
   }
 
   short get() {
@@ -59,6 +58,12 @@ final class AdsrEnvelope {
 
   void KeyOff() {
     this.phase = Phase.Release;
+    this.counter = 0;
+  }
+
+  void Mute() {
+    this.phase = Phase.Off;
+    this.currentLevel = 0;
     this.counter = 0;
   }
 
