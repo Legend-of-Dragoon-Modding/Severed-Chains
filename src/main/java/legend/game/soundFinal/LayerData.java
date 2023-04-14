@@ -6,10 +6,11 @@ public class LayerData {
   public final AdsrEnvelope adsrEnvelope;
   public int sampleRate;
   public int note;
+  public double velocity;
 
-  public LayerData(final Layer layer) {
+  public LayerData(final Layer layer, final int adsrLevel) {
     this.layer = layer;
     this.soundBankEntry = layer.getSoundBankEntry();
-    this.adsrEnvelope = layer.getAdsrEnvelope();
+    this.adsrEnvelope = layer.getAdsrEnvelope(adsrLevel);
   }
 }

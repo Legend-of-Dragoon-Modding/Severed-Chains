@@ -20,17 +20,26 @@ final class Voice {
     this.sound.play();
   }
 
-  void keyOn(final Channel channel, final Layer layer, final int note) {
+  void stop() {
+    this.sound.stop();
+  }
+
+  void destroy() {
+    this.sound.destroy();
+  }
+
+  void keyOn(final Channel channel, final Layer layer, final int note, final int velocity, final boolean reset) {
     this.empty = false;
+    this.hasSamples = false;
     this.channel = channel;
-    this.layerData = new LayerData(layer);
+    this.layerData = reset ? new LayerData(layer, this.layerData.adsrEnvelope.getCurrentLevel()) : new LayerData(layer, 0);
     this.layerData.note = note;
+    this.layerData.velocity = velocity / 127d;
     this.updateSampleRate();
   }
 
   void keyOff() {
     this.layerData.adsrEnvelope.KeyOff();
-    this.empty = true; //TODO temp fix
   }
 
   void updateSampleRate() {
@@ -46,6 +55,14 @@ final class Voice {
         this.sound.bufferSample((short) 0);
       }
 
+      if(this.hasSamples) {
+        this.samples[28] = 0;
+        this.samples[29] = 0;
+        this.samples[30] = 0;
+
+        this.hasSamples = false;
+      }
+
       return;
     }
 
@@ -55,7 +72,8 @@ final class Voice {
       this.empty = true;
     }
 
-    final double volume = this.channel.getVolume() * this.layerData.layer.getVolume();
+
+    final double volume = this.channel.getVolume() * this.layerData.layer.getVolume() * this.layerData.velocity;
 
     final short sample = (short)(((int)(this.sampleVoice() * adsrValue * volume)) >> 15);
 

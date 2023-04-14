@@ -11,7 +11,7 @@ public final class SoundTest {
 
     // Title: 5820
     // World map 1: 5850 (pitch issues)
-    final String file = "SECT/DRGN0.BIN/5850";
+    final String file = "SECT/DRGN0.BIN/5835";
     final Bgm bgm = new Bgm(new Sssq(Unpacker.loadFile(file + "/1")), Unpacker.loadFile(file + "/2"), Unpacker.loadFile(file + "/3"));
     Offsets.genOffsets();
 
@@ -23,13 +23,16 @@ public final class SoundTest {
 
     boolean running = true;
     while(running) {
-      bgm.tick(4410);
+      running = bgm.tick(4410);
 
       final long interval = System.nanoTime() - time;
       final int toSleep = (int)Math.max(0, 100_000_000 - interval) / 1_000_000;
       DebugHelper.sleep(toSleep);
       time += soundTime;
     }
+
+    bgm.stop();
+    bgm.destroy();
 
     context.destroy();
   }
