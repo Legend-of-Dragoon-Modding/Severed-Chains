@@ -180,10 +180,10 @@ public final class Renderer {
 
         for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
           int rgb = poly.vertices[vertexIndex].colour;
-          final int r = (int)((((rgb >>> 16) & 0xff) * rbk >> 0xc) & 0xff);
-          final int g = (int)((((rgb >>> 8) & 0xff) * gbk >> 0xc) & 0xff);
-          final int b = (int)(((rgb & 0xff) * bbk >> 0xc) & 0xff);
-          rgb = r << 16 | g << 8 | b;
+          final int r = (int)(((rgb & 0xff) * rbk >> 12) & 0xff);
+          final int g = (int)((((rgb >>> 8) & 0xff) * gbk >> 12) & 0xff);
+          final int b = (int)((((rgb >>> 16) & 0xff) * bbk >> 12) & 0xff);
+          rgb = b << 16 | g << 8 | r;
           cmd.rgb(vertexIndex, rgb);
         }
       } else if(!textured || lit) {
