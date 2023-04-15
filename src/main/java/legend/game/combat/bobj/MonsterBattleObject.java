@@ -27,9 +27,6 @@ public class MonsterBattleObject extends BattleObject27c {
   public int monsterElementalImmunityFlag_74;
   public int monsterStatusResistFlag_76;
   public final SVECTOR targetArrowPos_78 = new SVECTOR();
-  public int _7e;
-  public int _80;
-  public int _82;
 
   public MonsterBattleObject(final String name) {
     super(name);
@@ -55,9 +52,6 @@ public class MonsterBattleObject extends BattleObject27c {
       case 58 -> this.targetArrowPos_78.getX();
       case 59 -> this.targetArrowPos_78.getY();
       case 60 -> this.targetArrowPos_78.getZ();
-      case 61 -> this._7e;
-      case 62 -> this._80;
-      case 63 -> this._82;
 
       default -> super.getStat(statIndex);
     };
@@ -83,9 +77,6 @@ public class MonsterBattleObject extends BattleObject27c {
       case 58 -> this.targetArrowPos_78.setX((short)value);
       case 59 -> this.targetArrowPos_78.setY((short)value);
       case 60 -> this.targetArrowPos_78.setZ((short)value);
-      case 61 -> this._7e = value;
-      case 62 -> this._80 = value;
-      case 63 -> this._82 = value;
 
       default -> super.setStat(statIndex, value);
     }
