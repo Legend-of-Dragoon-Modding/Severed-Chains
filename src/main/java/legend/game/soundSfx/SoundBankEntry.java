@@ -1,6 +1,8 @@
-package legend.game.soundFinal;
+package legend.game.soundSfx;
 
-final class SoundBankEntry {
+import legend.core.audio.MidiSoundFontEntry;
+
+final class SoundBankEntry implements MidiSoundFontEntry {
   private final short[][] pcm;
   private final int[] flags;
   private int index;
@@ -12,7 +14,8 @@ final class SoundBankEntry {
     this.flags = flags;
   }
 
-  boolean get(final short[] samples) {
+  @Override
+  public boolean get(final short[] samples) {
     boolean isEnd = false;
     switch(this.flags[this.index]) {
       case 0, 2 -> this.index++;
@@ -22,8 +25,8 @@ final class SoundBankEntry {
       }
       case 3 -> this.index = this.repeatIndex;
       case 4, 6 -> {
-       this.repeatIndex = this.index;
-       this.index++;
+        this.repeatIndex = this.index;
+        this.index++;
       }
     }
 

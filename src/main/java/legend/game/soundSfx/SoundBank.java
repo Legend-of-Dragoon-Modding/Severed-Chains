@@ -1,4 +1,4 @@
-package legend.game.soundFinal;
+package legend.game.soundSfx;
 
 import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
@@ -9,36 +9,31 @@ import legend.game.unpacker.FileData;
 final class SoundBank {
   private static final int[] POSITIVE_SPU_ADPCM_TABLE = {0, 60, 115, 98, 122};
   private static final int[] NEGATIVE_SPU_ADPCM_TABLE = {0, 0, -52, -55, -60};
-  private final Long2ObjectArrayMap<Pair<short[][], int[]>> entries;
 
+  private final Long2ObjectArrayMap<Pair<short[][], int[]>> entries = new Long2ObjectArrayMap<>();
 
-  SoundBank(final FileData soundBank) {
-    this.entries = new Long2ObjectArrayMap<>();
-
-    final byte[] data = soundBank.data();
+  SoundBank(final FileData soundBankData) {
+    //TODO keep as FileData to prevent copying
+    final byte[] data = soundBankData.data();
 
     final IntArrayList offsets = findSounds(data);
 
-    for(int i = 0; i < offsets.size() - 1; i++) {
-      final int offset = offsets.getInt(i);
-      final int size = offsets.getInt(i + 1) - offset;
-      final byte[] entry = new byte[size];
-      System.arraycopy(data, offset, entry, 0, size);
-      this.entries.put(offset, generateEntry(entry));
+    int lastOffset = data.length;
+    for(int entry = offsets.size() - 1; entry >= 0; entry--) {
+      final int offset = offsets.getInt(entry);
+      final int size = lastOffset - offset;
+      final byte[] entryArr = new byte[size];
+      System.arraycopy(data, offset, entryArr, 0, size);
+      this.entries.put(offset, generateEntry(entryArr));
+      lastOffset = offset;
     }
-
-    final int offset = offsets.getInt(offsets.size() - 1);
-    final int size = data.length - offset;
-    final byte[] entry = new byte[size];
-    System.arraycopy(data, offset, entry, 0, size);
-    this.entries.put(offset, generateEntry(entry));
   }
-
 
   SoundBankEntry getEntry(final int offset) {
     final Pair<short[][], int[]> entry = this.entries.get(offset);
     return new SoundBankEntry(entry.left(), entry.right());
   }
+
 
   private static IntArrayList findSounds(final byte[] haystack) {
     final IntArrayList offsets = new IntArrayList();

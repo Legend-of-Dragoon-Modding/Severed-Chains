@@ -8,9 +8,9 @@ public class LayerData {
   public int note;
   public double velocity;
 
-  public LayerData(final Layer layer, final int adsrLevel) {
+  public LayerData(final Layer layer) {
     this.layer = layer;
     this.soundBankEntry = layer.getSoundBankEntry();
-    this.adsrEnvelope = layer.getAdsrEnvelope(adsrLevel);
+    this.adsrEnvelope = layer.getAdsrEnvelope();
   }
 }

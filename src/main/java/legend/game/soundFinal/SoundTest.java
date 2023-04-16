@@ -11,22 +11,27 @@ public final class SoundTest {
 
     // Title: 5820
     // World map 1: 5850 (pitch issues)
-    final String file = "SECT/DRGN0.BIN/5835";
+    final String file = "SECT/DRGN0.BIN/5820";
     final Bgm bgm = new Bgm(new Sssq(Unpacker.loadFile(file + "/1")), Unpacker.loadFile(file + "/2"), Unpacker.loadFile(file + "/3"));
     Offsets.genOffsets();
 
-    bgm.tick(2205);
+
+
+    final int frequency = 50;
+    final long soundTime = 1_000_000_000 / frequency;
+    final int ticks = 44100 / frequency;
+
+    bgm.tick(ticks * 2);
     bgm.play();
 
-    final long soundTime = 1_000_000_000 / 10;
     long time = System.nanoTime();
 
     boolean running = true;
     while(running) {
-      running = bgm.tick(4410);
+      running = bgm.tick(ticks);
 
       final long interval = System.nanoTime() - time;
-      final int toSleep = (int)Math.max(0, 100_000_000 - interval) / 1_000_000;
+      final int toSleep = (int)Math.max(0, soundTime - interval) / 1_000_000;
       DebugHelper.sleep(toSleep);
       time += soundTime;
     }

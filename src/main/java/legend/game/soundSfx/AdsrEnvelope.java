@@ -1,10 +1,8 @@
-package legend.game.soundFinal;
+package legend.game.soundSfx;
 
-import legend.core.MathHelper;
-
-final class AdsrEnvelope {
+final class AdsrEnvelope implements legend.core.audio.AdsrEnvelope {
   private final AdsrPhase[] phases;
-  private Phase phase;
+  private AdsrEnvelope.Phase phase;
   private int currentLevel;
   private int counter;
 
@@ -13,13 +11,14 @@ final class AdsrEnvelope {
     this.phase = AdsrEnvelope.Phase.Attack;
   }
 
-  short get() {
+  @Override
+  public short get() {
     if(this.counter > 0) {
       this.counter--;
       return (short)this.currentLevel;
     }
 
-    if(this.phase == Phase.Off) {
+    if(this.phase == AdsrEnvelope.Phase.Off) {
       return 0;
     }
 
@@ -56,13 +55,15 @@ final class AdsrEnvelope {
     return (short)this.currentLevel;
   }
 
-  void KeyOff() {
-    this.phase = Phase.Release;
+  @Override
+  public void keyOff() {
+    this.phase = AdsrEnvelope.Phase.Release;
     this.counter = 0;
   }
 
-  void Mute() {
-    this.phase = Phase.Off;
+  @Override
+  public void mute() {
+    this.phase = AdsrEnvelope.Phase.Off;
     this.currentLevel = 0;
     this.counter = 0;
   }
