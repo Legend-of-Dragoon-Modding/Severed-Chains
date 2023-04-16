@@ -23,11 +23,11 @@ public class BufferedSound {
   /**
    * Use powers of 2 to avoid % operator
    */
-  private static final int BUFFER_COUNT = 4;
+  private static final int BUFFER_COUNT = 8;
   /**
    * 1/20 of a second at 44100 Hz
    */
-  private static final int BUFFER_SIZE = 2205;
+  private static final int BUFFER_SIZE = 882;
 
   private final int[] buffers = new int[BUFFER_COUNT];
   private final int bufferSize;
