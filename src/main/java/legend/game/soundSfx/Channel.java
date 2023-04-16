@@ -14,7 +14,7 @@ final class Channel implements MidiChannel {
   int pan_04;
   // 05-08 is possibly ADSR lo and hi
   final int modulation_09;
-  int pitchBend_0a;
+  double pitchBend_0a;
   final int _0b;
   final int breath_0c;
   final int volume_0e;
@@ -27,7 +27,7 @@ final class Channel implements MidiChannel {
     this.volume_03 = channelData.readByte(0x03);
     this.pan_04 = channelData.readByte(0x04);
     this.modulation_09 = channelData.readByte(0x09);
-    this.pitchBend_0a = channelData.readByte(0x0a);
+    this.pitchBend_0a = (channelData.readByte(0x0a) - 64) / 64d;
     this._0b = channelData.readByte(0x0b);
     this.breath_0c = channelData.readByte(0x0c);
     this.volume_0e = channelData.readByte(0x0e);
@@ -56,12 +56,12 @@ final class Channel implements MidiChannel {
   }
 
   @Override
-  public int getPitchBend() {
+  public double getPitchBend() {
     return this.pitchBend_0a;
   }
 
   void setPitchBend(final int value) {
-    this.pitchBend_0a = value;
+    this.pitchBend_0a = (value - 64) / 64d;
   }
 
   void setProgram(final int value) {

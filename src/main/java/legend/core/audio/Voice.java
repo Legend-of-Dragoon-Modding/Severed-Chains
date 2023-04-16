@@ -23,10 +23,6 @@ final class Voice implements AudioStream {
     this.sound = new BufferedSound(bufferSize, stereo);
   }
 
-  void processBuffers() {
-    this.sound.processBuffers();
-  }
-
   void tick(final boolean stereo) {
     if(this.empty) {
       for(int channel = 0; channel < (stereo ? 2 : 1); channel++) {
@@ -58,9 +54,11 @@ final class Voice implements AudioStream {
 
     if(this.sound.isStereo()) {
       //TODO panning
+      final double leftPan = Offsets.pan[this.layer.getPan()] * Offsets.pan[this.channel.getPan()];
+      final double rightPan = Offsets.pan[127 - this.layer.getPan()] * Offsets.pan[this.channel.getPan()];
 
-      this.sound.bufferSample(processedSample);
-      this.sound.bufferSample(processedSample);
+      this.sound.bufferSample((short)(processedSample * leftPan));
+      this.sound.bufferSample((short)(processedSample * rightPan));
 
       return;
     }

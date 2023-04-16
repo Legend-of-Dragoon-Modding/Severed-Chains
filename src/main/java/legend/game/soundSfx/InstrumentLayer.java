@@ -63,7 +63,8 @@ final class InstrumentLayer implements MidiInstrumentLayer {
     return this.volume;
   }
 
-  int getPan() {
+  @Override
+  public int getPan() {
     return this.pan;
   }
 

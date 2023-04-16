@@ -68,6 +68,10 @@ public class AudioThread implements Runnable {
     this.running = true;
     this.paused = false;
 
+    for(final Voice voice : this.voicePool) {
+      voice.play();
+    }
+
     this.time = System.nanoTime();
 
     while(this.running) {
@@ -100,11 +104,6 @@ public class AudioThread implements Runnable {
   }
 
   private void tick() {
-    for(final Voice voice : this.voicePool) {
-      voice.processBuffers();
-      voice.play();
-    }
-
     for(int sample = 0; sample < this.samplesPerTick; sample++) {
       //TODO set empty
 
