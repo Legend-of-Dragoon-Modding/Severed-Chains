@@ -1582,13 +1582,13 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004c8dcL)
-  public static long FUN_8004c8dc(final SequenceData124 sequenceData, final int volume) {
+  public static long FUN_8004c8dc(@Nullable final SequenceData124 sequenceData, final int volume) {
     if(volume >= 128) {
       assert false : "Error";
       return -0x1L;
     }
 
-    if(sequenceData._027 == 0) {
+    if(sequenceData == null || sequenceData._027 == 0) {
       // This is normal
 //      assert false : "Error";
       return -0x1L;
