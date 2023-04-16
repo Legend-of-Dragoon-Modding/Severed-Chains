@@ -34,8 +34,13 @@ public class AudioThread implements Runnable {
    * @param voiceCount Amount of voices that can play at ones. Retail uses 24
    */
   public AudioThread(final int frequency, final boolean stereo, final int voiceCount) {
-    assert 1_000_000_000 % frequency == 0 : "1_000_000_00 is not divisible by " + frequency;
-    assert 44_100 % frequency == 0 : "44_100 is not divisible by " + frequency;
+    if(1_000_000_000 % frequency != 0) {
+      throw new IllegalArgumentException("Nanos (1_000_000_000) is not divisible by frequency " + frequency);
+    }
+
+    if(44_100 % frequency != 0) {
+      throw new IllegalArgumentException("Sample Rate (44_100) is not divisable by frequency " + frequency);
+    }
 
     this.nanosPerTick = 1_000_000_000 / frequency;
     this.samplesPerTick = 44_100 / frequency;
@@ -50,7 +55,10 @@ public class AudioThread implements Runnable {
     final ALCCapabilities alcCapabilities = ALC.createCapabilities(this.audioDevice);
     final ALCapabilities alCapabilities = AL.createCapabilities(alcCapabilities);
 
-    assert alCapabilities.OpenAL10 : "Audio library not supported";
+    //TODO disable audio instead of crashing
+    if(!alCapabilities.OpenAL10) {
+      throw new UnsupportedOperationException("Device does not support OpenAL10");
+    }
 
     this.stereo = stereo;
 
@@ -101,6 +109,7 @@ public class AudioThread implements Runnable {
 
   public void stop() {
     this.running = false;
+    this.notify();
   }
 
   private void tick() {

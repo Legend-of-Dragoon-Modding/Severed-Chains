@@ -1,6 +1,7 @@
 package legend.game.soundSfx;
 
 import legend.game.unpacker.FileData;
+import legend.game.unpacker.UnpackerException;
 
 final class Sssq {
   private final double ticksPerMs;
@@ -14,7 +15,9 @@ final class Sssq {
     this.tempo = sssqData.readUShort(4);
     this.ticksPerMs = (this.tempo * ticksPerQuarterNote) / 60_000d;
 
-    assert sssqData.readInt(12) == 0x71735353 : "Not a SSsq file!";
+    if(sssqData.readInt(12) != 0x71735353) {
+      throw new UnpackerException("Not a SSsq file!");
+    }
 
     this.channels = new Channel[0x10];
 

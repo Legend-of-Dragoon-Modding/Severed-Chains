@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
+import legend.game.unpacker.UnpackerException;
 
 import java.util.List;
 
@@ -52,7 +53,9 @@ public final class SoundFactory {
 
 
     SshdParser(final FileData sshdData) {
-      assert sshdData.readInt(12) == 0x64685353 : "Not a SShd file!";
+      if(sshdData.readInt(12) != 0x64685353) {
+        throw new UnpackerException("Not a SShd file!");
+      }
 
       int lastOffset = sshdData.size();
       for(int i = 23;  i >= 0; i--) {
