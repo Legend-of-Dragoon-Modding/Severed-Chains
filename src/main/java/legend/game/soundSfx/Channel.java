@@ -24,10 +24,12 @@ final class Channel implements MidiChannel {
   Channel(final FileData channelData, final SoundFont soundFont) {
     this.channelIndex_01 = channelData.readByte(0x01);
     this.instrumentIndex_02 = channelData.readByte(0x02);
-    this.volume_03 = channelData.readByte(0x03);
+    //this.volume_03 = channelData.readByte(0x03);
+    this.volume_03 = 64;
     this.pan_04 = channelData.readByte(0x04);
     this.modulation_09 = channelData.readByte(0x09);
-    this.pitchBend_0a = (channelData.readByte(0x0a) - 64) / 64d;
+    this.pitchBend_0a = 0;
+    //this.pitchBend_0a = (channelData.readByte(0x0a) - 64) / 64d;
     this._0b = channelData.readByte(0x0b);
     this.breath_0c = channelData.readByte(0x0c);
     this.volume_0e = channelData.readByte(0x0e);

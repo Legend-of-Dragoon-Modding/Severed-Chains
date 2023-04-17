@@ -76,10 +76,6 @@ public class AudioThread implements Runnable {
     this.running = true;
     this.paused = false;
 
-    for(final Voice voice : this.voicePool) {
-      voice.play();
-    }
-
     this.time = System.nanoTime();
 
     while(this.running) {
@@ -98,6 +94,10 @@ public class AudioThread implements Runnable {
       final int toSleep = (int)Math.max(0, this.nanosPerTick - interval) / 1_000_000;
       DebugHelper.sleep(toSleep);
       this.time += this.nanosPerTick;
+
+      for(final Voice voice : this.voicePool) {
+        voice.play();
+      }
     }
 
     for(final Voice voice : this.voicePool) {
