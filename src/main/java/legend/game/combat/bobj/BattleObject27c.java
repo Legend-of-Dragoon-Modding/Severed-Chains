@@ -1,14 +1,19 @@
 package legend.game.combat.bobj;
 
 import legend.core.memory.Method;
+import legend.game.characters.Element;
+import legend.game.characters.ElementSet;
 import legend.game.characters.StatCollection;
 import legend.game.characters.StatType;
 import legend.game.combat.types.AttackType;
 import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.CombatantStruct1a8;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.EventManager;
 import legend.game.modding.events.combat.RegisterBattleObjectStatsEvent;
+import legend.game.types.ItemStats0c;
 import legend.game.types.Model124;
+import legend.game.types.SpellStats0c;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -17,8 +22,6 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
   public final BattleObjectType type;
 
   public final StatCollection stats;
-
-  public int hp_08;
 
   /**
    * <ul>
@@ -35,7 +38,6 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
    * </ul>
    */
   public int status_0e;
-  public int maxHp_10;
 
   /**
    * <ul>
@@ -48,48 +50,10 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
   public int _16;
   public int _18;
   public int _1a;
-  /**
-   * Either weapon element, or <i>display</i> element for monster (display element may be different from actual element)
-   *
-   * <ul>
-   *   <li>0x1 - Water</li>
-   *   <li>0x2 - Earth</li>
-   *   <li>0x4 - Dark</li>
-   *   <li>0x8 - None</li>
-   *   <li>0x10 - Thunder</li>
-   *   <li>0x20 - Wind</li>
-   *   <li>0x40 - Light</li>
-   *   <li>0x80 - Fire</li>
-   * </ul>
-   */
-  public int elementFlag_1c;
+
   public int _1e;
-  /**
-   * <ul>
-   *   <li>0x1 - Water</li>
-   *   <li>0x2 - Earth</li>
-   *   <li>0x4 - Dark</li>
-   *   <li>0x8 - None</li>
-   *   <li>0x10 - Thunder</li>
-   *   <li>0x20 - Wind</li>
-   *   <li>0x40 - Light</li>
-   *   <li>0x80 - Fire</li>
-   * </ul>
-   */
-  public int elementalResistanceFlag_20;
-  /**
-   * <ul>
-   *   <li>0x1 - Water</li>
-   *   <li>0x2 - Earth</li>
-   *   <li>0x4 - Dark</li>
-   *   <li>0x8 - None</li>
-   *   <li>0x10 - Thunder</li>
-   *   <li>0x20 - Wind</li>
-   *   <li>0x40 - Light</li>
-   *   <li>0x80 - Fire</li>
-   * </ul>
-   */
-  public int elementalImmunityFlag_22;
+  public final ElementSet elementalResistanceFlag_20 = new ElementSet();
+  public final ElementSet elementalImmunityFlag_22 = new ElementSet();
   /**
    * <ul>
    *   <li>0x1 - Petrify</li>
@@ -148,28 +112,7 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
   public int itemOrSpellId_52;
   public int guard_54;
 
-  /**
-   * <ul>
-   *   <li>0x8 - attack all</li>
-   * </ul>
-   */
-  public int targetType_94;
-  /**
-   * <ul>
-   *   <li>0x4 - either buff spell or always hit (or both)</li>
-   * </ul>
-   */
-  public int spellFlags_96;
-  public int specialEffect_98;
-  public int spellDamage_9a;
-  public int spellMulti_9c;
-  public int spellAccuracy_9e;
-  public int spellMp_a0;
-  public int statusChance_a2;
-  public int spellElement_a4;
-  public int statusType_a6;
-  public int buffType_a8;
-  public int _aa;
+  public SpellStats0c spell_94;
 
   public int powerAttack_b4;
   public int powerAttackTurns_b5;
@@ -194,28 +137,7 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
   public int speedUpTurns_c8;
   public int speedDownTurns_ca;
 
-  public int itemTarget_d4;
-  public int itemElement_d6;
-  public int itemDamage_d8;
-  public int itemSpecial1_da;
-  public int itemSpecial2_dc;
-  public int itemDamage_de;
-  public int itemSpecialAmount_e0;
-  public int _e2;
-  public int itemStatus_e4;
-  public int itemPercentage_e6;
-  public int itemUu2_e8;
-  /**
-   * <ul>
-   *   <li>0x04 - cause status</li>
-   *   <li>0x08 - cure status</li>
-   *   <li>0x10 - revive</li>
-   *   <li>0x20 - SP</li>
-   *   <li>0x40 - MP</li>
-   *   <li>0x80 - HP</li>
-   * </ul>
-   */
-  public int itemType_ea;
+  public ItemStats0c item_d4;
   public int _ec;
   public int _ee;
   public int _f0;
@@ -256,8 +178,8 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
     return this.magicDefence_3a;
   }
 
-  public abstract int getAttackElement();
-  public abstract int getElement();
+  public abstract Element getAttackElement();
+  public abstract Element getElement();
 
   public abstract int calculatePhysicalAttack(final BattleObject27c target);
   /**
@@ -290,29 +212,34 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
     return damage;
   }
 
-  public int applyElementalResistanceAndImmunity(final int damage, final int element) {
-    if((this.elementalImmunityFlag_22 & element) != 0) {
+  public int applyElementalResistanceAndImmunity(final int damage, final Element element) {
+    if(this.elementalImmunityFlag_22.contains(element)) {
       return 0;
     }
 
     return damage;
   }
 
+  public void turnFinished() {
+
+  }
+
+  @Deprecated
   public int getStat(final int statIndex) {
     return switch(statIndex) {
-      case 2 -> this.hp_08;
+      case 2 -> this.stats.getStat(CoreMod.HP_STAT.get()).getCurrent();
 
       case 5 -> this.status_0e;
-      case 6 -> this.maxHp_10;
+      case 6 -> this.stats.getStat(CoreMod.HP_STAT.get()).getMax();
 
       case 8 -> this.specialEffectFlag_14;
       case 9 -> this._16;
       case 10 -> this._18;
       case 11 -> this._1a;
-      case 12 -> this.elementFlag_1c;
       case 13 -> this._1e;
-      case 14 -> this.elementalResistanceFlag_20;
-      case 15 -> this.elementalImmunityFlag_22;
+
+      case 14 -> this.elementalResistanceFlag_20.pack();
+      case 15 -> this.elementalImmunityFlag_22.pack();
       case 16 -> this.statusResistFlag_24;
       case 17 -> this._26;
       case 18 -> this._28;
@@ -339,18 +266,18 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
       case 39 -> this.itemOrSpellId_52;
       case 40 -> this.guard_54;
 
-      case 72 -> this.targetType_94;
-      case 73 -> this.spellFlags_96;
-      case 74 -> this.specialEffect_98;
-      case 75 -> this.spellDamage_9a;
-      case 76 -> this.spellMulti_9c;
-      case 77 -> this.spellAccuracy_9e;
-      case 78 -> this.spellMp_a0;
-      case 79 -> this.statusChance_a2;
-      case 80 -> this.spellElement_a4;
-      case 81 -> this.statusType_a6;
-      case 82 -> this.buffType_a8;
-      case 83 -> this._aa;
+      case 72 -> this.spell_94.targetType_00.get();
+      case 73 -> this.spell_94.flags_01.get();
+      case 74 -> this.spell_94.specialEffect_02.get();
+      case 75 -> this.spell_94.damage_03.get();
+      case 76 -> this.spell_94.multi_04.get();
+      case 77 -> this.spell_94.accuracy_05.get();
+      case 78 -> this.spell_94.mp_06.get();
+      case 79 -> this.spell_94.statusChance_07.get();
+      case 80 -> this.spell_94.element_08.get();
+      case 81 -> this.spell_94.statusType_09.get();
+      case 82 -> this.spell_94.buffType_0a.get();
+      case 83 -> this.spell_94._0b.get();
 
       case 88 -> (this.powerAttackTurns_b5 & 0xff) << 8 | this.powerAttack_b4 & 0xff;
       case 89 -> (this.powerMagicAttackTurns_b7 & 0xff) << 8 | this.powerMagicAttack_b6 & 0xff;
@@ -365,18 +292,18 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
       case 98 -> this.speedUpTurns_c8;
       case 99 -> this.speedDownTurns_ca;
 
-      case 104 -> this.itemTarget_d4;
-      case 105 -> this.itemElement_d6;
-      case 106 -> this.itemDamage_d8;
-      case 107 -> this.itemSpecial1_da;
-      case 108 -> this.itemSpecial2_dc;
-      case 109 -> this.itemDamage_de;
-      case 110 -> this.itemSpecialAmount_e0;
-      case 111 -> this._e2;
-      case 112 -> this.itemStatus_e4;
-      case 113 -> this.itemPercentage_e6;
-      case 114 -> this.itemUu2_e8;
-      case 115 -> this.itemType_ea;
+      case 104 -> this.item_d4.target_00.get();
+      case 105 -> this.item_d4.element_01.get();
+      case 106 -> this.item_d4.damage_02.get();
+//      case 107 -> this.itemSpecial1_da;
+//      case 108 -> this.itemSpecial2_dc;
+      case 109 -> this.item_d4.damage_05.get();
+      case 110 -> this.item_d4.specialAmount_06.get();
+      case 111 -> this.item_d4.icon_07.get();
+      case 112 -> this.item_d4.status_08.get();
+      case 113 -> this.item_d4.percentage_09.get();
+      case 114 -> this.item_d4.uu2_0a.get();
+      case 115 -> this.item_d4.type_0b.get();
       case 116 -> this._ec;
       case 117 -> this._ee;
       case 118 -> this._f0;
@@ -393,21 +320,21 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
     };
   }
 
+  @Deprecated
   public void setStat(final int statIndex, final int value) {
     switch(statIndex) {
-      case 2 -> this.hp_08 = value;
+      case 2 -> this.stats.getStat(CoreMod.HP_STAT.get()).setCurrent(value);
 
       case 5 -> this.status_0e = value;
-      case 6 -> this.maxHp_10 = value;
 
       case 8 -> this.specialEffectFlag_14 = value;
       case 9 -> this._16 = value;
       case 10 -> this._18 = value;
       case 11 -> this._1a = value;
-      case 12 -> this.elementFlag_1c = value;
+
       case 13 -> this._1e = value;
-      case 14 -> this.elementalResistanceFlag_20 = value;
-      case 15 -> this.elementalImmunityFlag_22 = value;
+      case 14 -> this.elementalResistanceFlag_20.unpack(value);
+      case 15 -> this.elementalImmunityFlag_22.unpack(value);
       case 16 -> this.statusResistFlag_24 = value;
       case 17 -> this._26 = value;
       case 18 -> this._28 = value;
@@ -433,19 +360,6 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
 
       case 39 -> this.itemOrSpellId_52 = value;
       case 40 -> this.guard_54 = value;
-
-      case 72 -> this.targetType_94 = value;
-      case 73 -> this.spellFlags_96 = value;
-      case 74 -> this.specialEffect_98 = value;
-      case 75 -> this.spellDamage_9a = value;
-      case 76 -> this.spellMulti_9c = value;
-      case 77 -> this.spellAccuracy_9e = value;
-      case 78 -> this.spellMp_a0 = value;
-      case 79 -> this.statusChance_a2 = value;
-      case 80 -> this.spellElement_a4 = value;
-      case 81 -> this.statusType_a6 = value;
-      case 82 -> this.buffType_a8 = value;
-      case 83 -> this._aa = value;
 
       case 88 -> {
         this.powerAttack_b4 = (byte)value;
@@ -490,18 +404,6 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
       case 98 -> this.speedUpTurns_c8 = value;
       case 99 -> this.speedDownTurns_ca = value;
 
-      case 104 -> this.itemTarget_d4 = value;
-      case 105 -> this.itemElement_d6 = value;
-      case 106 -> this.itemDamage_d8 = value;
-      case 107 -> this.itemSpecial1_da = value;
-      case 108 -> this.itemSpecial2_dc = value;
-      case 109 -> this.itemDamage_de = value;
-      case 110 -> this.itemSpecialAmount_e0 = value;
-      case 111 -> this._e2 = value;
-      case 112 -> this.itemStatus_e4 = value;
-      case 113 -> this.itemPercentage_e6 = value;
-      case 114 -> this.itemUu2_e8 = value;
-      case 115 -> this.itemType_ea = value;
       case 116 -> this._ec = value;
       case 117 -> this._ee = value;
       case 118 -> this._f0 = value;

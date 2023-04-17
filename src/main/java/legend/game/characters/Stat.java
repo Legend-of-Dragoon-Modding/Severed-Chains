@@ -1,40 +1,28 @@
 package legend.game.characters;
 
+import legend.game.combat.bobj.BattleObject27c;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class Stat {
-  private final StatCollection stats;
-  public final StatType type;
-  private final List<StatMod> mods = new ArrayList<>();
+public abstract class Stat {
+  public final StatType<?> type;
+  protected final StatCollection stats;
+  protected final List<StatMod> mods = new ArrayList<>();
 
-  private int value;
-
-  public Stat(final StatCollection stats, final StatType type) {
-    this.stats = stats;
+  public Stat(final StatType<?> type, final StatCollection stats) {
     this.type = type;
-  }
-
-  public int getRaw() {
-    return this.value;
-  }
-
-  public void setRaw(final int value) {
-    this.value = value;
-  }
-
-  public int getModified() {
-    int value = this.getRaw();
-
-    for(final StatMod mod : this.mods) {
-      value += mod.apply(this.stats, this.type);
-    }
-
-    return value;
+    this.stats = stats;
   }
 
   public <T extends StatMod> T addMod(final T mod) {
     this.mods.add(mod);
     return mod;
+  }
+
+  protected void turnFinished(final BattleObject27c bobj) {
+    for(final StatMod mod : this.mods) {
+      mod.turnFinished(this.stats, this.type, bobj);
+    }
   }
 }

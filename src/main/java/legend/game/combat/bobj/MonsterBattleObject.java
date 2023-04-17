@@ -2,12 +2,16 @@ package legend.game.combat.bobj;
 
 import legend.core.gte.SVECTOR;
 import legend.core.memory.Method;
+import legend.game.characters.Element;
+import legend.game.characters.ElementSet;
 import legend.game.combat.types.AttackType;
 import legend.game.modding.coremod.CoreMod;
 
 import static legend.game.combat.Bttl_800c.spellStats_800fa0b8;
 
 public class MonsterBattleObject extends BattleObject27c {
+  public Element displayElement_1c;
+
   public int originalHp_5c;
   /** Unused */
   public int originalMp_5e;
@@ -28,8 +32,8 @@ public class MonsterBattleObject extends BattleObject27c {
    */
   public int damageReductionFlags_6e;
   public int _70;
-  public int monsterElementFlag_72;
-  public int monsterElementalImmunityFlag_74;
+  public Element monsterElementFlag_72;
+  public final ElementSet monsterElementalImmunityFlag_74 = new ElementSet();
   public int monsterStatusResistFlag_76;
   public final SVECTOR targetArrowPos_78 = new SVECTOR();
   public int _7e;
@@ -45,12 +49,12 @@ public class MonsterBattleObject extends BattleObject27c {
   }
 
   @Override
-  public int getAttackElement() {
-    return spellStats_800fa0b8.get(this.spellId_4e).element_08.get();
+  public Element getAttackElement() {
+    return Element.fromFlag(spellStats_800fa0b8.get(this.spellId_4e).element_08.get());
   }
 
   @Override
-  public int getElement() {
+  public Element getElement() {
     return this.monsterElementFlag_72;
   }
 
@@ -88,7 +92,7 @@ public class MonsterBattleObject extends BattleObject27c {
       matk += spellStats_800fa0b8.get(this.spellId_4e).multi_04.get();
     } else {
       //LAB_800f87c4
-      matk += this.itemDamage_de;
+      matk += this.item_d4.damage_05.get();
     }
 
     //LAB_800f87d0
@@ -99,6 +103,8 @@ public class MonsterBattleObject extends BattleObject27c {
   @Override
   public int getStat(final int statIndex) {
     return switch(statIndex) {
+      case 12 -> this.displayElement_1c.flag;
+
       case 44 -> this.originalHp_5c;
       case 45 -> this.originalMp_5e;
       case 46 -> this.originalAttack_60;
@@ -110,8 +116,8 @@ public class MonsterBattleObject extends BattleObject27c {
       case 52 -> this.originalMagicAvoid_6c;
       case 53 -> this.damageReductionFlags_6e;
       case 54 -> this._70;
-      case 55 -> this.monsterElementFlag_72;
-      case 56 -> this.monsterElementalImmunityFlag_74;
+      case 55 -> this.monsterElementFlag_72.flag;
+      case 56 -> this.monsterElementalImmunityFlag_74.pack();
       case 57 -> this.monsterStatusResistFlag_76;
       case 58 -> this.targetArrowPos_78.getX();
       case 59 -> this.targetArrowPos_78.getY();
@@ -142,8 +148,8 @@ public class MonsterBattleObject extends BattleObject27c {
       case 52 -> this.originalMagicAvoid_6c = value;
       case 53 -> this.damageReductionFlags_6e = value;
       case 54 -> this._70 = value;
-      case 55 -> this.monsterElementFlag_72 = value;
-      case 56 -> this.monsterElementalImmunityFlag_74 = value;
+      case 55 -> this.monsterElementFlag_72 = Element.fromFlag(value);
+      case 56 -> this.monsterElementalImmunityFlag_74.unpack(value);
       case 57 -> this.monsterStatusResistFlag_76 = value;
       case 58 -> this.targetArrowPos_78.setX((short)value);
       case 59 -> this.targetArrowPos_78.setY((short)value);

@@ -76,7 +76,7 @@ public class GameVarParam extends Param {
       case 50 -> Scus94491BpeSegment_8006._8006e398.bobjIndices_eac[0] != null ? Scus94491BpeSegment_8006._8006e398.bobjIndices_eac[0].index : -1;
       case 51 -> Bttl_800c._800c6760.get();
       case 52 -> Scus94491BpeSegment_8006._8006e398.monsterBobjIndices_ebc[0] != null ? Scus94491BpeSegment_8006._8006e398.monsterBobjIndices_ebc[0].index : -1;
-      case 53 -> Bttl_800c.enemyCount_800c6758.get();
+      case 53 -> Bttl_800c.monsterCount_800c6758.get();
       case 54 -> Scus94491BpeSegment_8006._8006e398._ef0;
       case 55 -> Scus94491BpeSegment_800b.gameState_800babc8._b4;
       case 56 -> Scus94491BpeSegment_800b.gameState_800babc8._b8;
@@ -207,7 +207,7 @@ public class GameVarParam extends Param {
       case 50 -> Scus94491BpeSegment_8006._8006e398.bobjIndices_eac[0] = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[val];
       case 51 -> Bttl_800c._800c6760.set(val);
       case 52 -> Scus94491BpeSegment_8006._8006e398.monsterBobjIndices_ebc[0] = (ScriptState<MonsterBattleObject>)scriptStatePtrArr_800bc1c0[val];
-      case 53 -> Bttl_800c.enemyCount_800c6758.set(val);
+      case 53 -> Bttl_800c.monsterCount_800c6758.set(val);
       case 54 -> Scus94491BpeSegment_8006._8006e398._ef0 = val;
       case 55 -> Scus94491BpeSegment_800b.gameState_800babc8._b4 = val;
       case 56 -> Scus94491BpeSegment_800b.gameState_800babc8._b8 = val;

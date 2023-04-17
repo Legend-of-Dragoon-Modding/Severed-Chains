@@ -1,5 +1,7 @@
 package legend.game.modding.events.combat;
 
+import legend.game.characters.Element;
+import legend.game.characters.ElementSet;
 import legend.game.combat.types.MonsterStats1c;
 import legend.game.modding.events.Event;
 
@@ -17,8 +19,8 @@ public class MonsterStatsEvent extends Event {
    * </ul>
    */
   public int specialEffectFlag;
-  public int elementFlag;
-  public int elementalImmunityFlag;
+  public Element elementFlag;
+  public final ElementSet elementalImmunityFlag = new ElementSet();
   public int statusResistFlag;
   public int speed;
   public int attack;
@@ -35,8 +37,8 @@ public class MonsterStatsEvent extends Event {
     this.hp = monsterStats.hp_00.get();
     this.maxHp = monsterStats.hp_00.get();
     this.specialEffectFlag = monsterStats.specialEffectFlag_0d.get();
-    this.elementFlag = monsterStats.elementFlag_0f.get();
-    this.elementalImmunityFlag = monsterStats.elementalImmunityFlag_10.get();
+    this.elementFlag = Element.fromFlag(monsterStats.elementFlag_0f.get());
+    this.elementalImmunityFlag.unpack(monsterStats.elementalImmunityFlag_10.get());
     this.statusResistFlag = monsterStats.statusResistFlag_11.get();
     this.speed = monsterStats.speed_08.get();
     this.attack = monsterStats.attack_04.get();

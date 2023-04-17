@@ -1,8 +1,11 @@
 package legend.game.modding.registries;
 
-import legend.game.characters.StatTypeRegistryEvent;
+import legend.game.characters.Element;
+import legend.game.characters.ElementRegistry;
+import legend.game.characters.ElementRegistryEvent;
 import legend.game.characters.StatType;
 import legend.game.characters.StatTypeRegistry;
+import legend.game.characters.StatTypeRegistryEvent;
 import legend.game.combat.bobj.BattleObjectType;
 import legend.game.combat.bobj.BattleObjectTypeRegistry;
 import legend.game.combat.bobj.BattleObjectTypeRegistryEvent;
@@ -26,7 +29,8 @@ public class Registries {
   private final List<MutableRegistry<?>> registries = new ArrayList<>();
   private final List<Function<MutableRegistry<?>, RegistryEvent.Register<?>>> registryEvents = new ArrayList<>();
 
-  public final Registry<StatType> stats = this.addRegistry(new StatTypeRegistry(), StatTypeRegistryEvent::new);
+  public final Registry<StatType<?>> stats = this.addRegistry(new StatTypeRegistry(), StatTypeRegistryEvent::new);
+  public final Registry<Element> elements = this.addRegistry(new ElementRegistry(), ElementRegistryEvent::new);
   public final Registry<BattleObjectType> battleObjectTypes = this.addRegistry(new BattleObjectTypeRegistry(), BattleObjectTypeRegistryEvent::new);
   public final Registry<Item> items = this.addRegistry(new ItemRegistry(), ItemRegistryEvent::new);
   public final Registry<Equipment> equipment = this.addRegistry(new EquipmentRegistry(), EquipmentRegistryEvent::new);
@@ -34,6 +38,7 @@ public class Registries {
 
   private <Type extends RegistryEntry> Registry<Type> addRegistry(final Registry<Type> registry, final Function<MutableRegistry<Type>, RegistryEvent.Register<Type>> registryEvent) {
     this.registries.add((MutableRegistry<Type>)registry);
+    //noinspection unchecked
     this.registryEvents.add((Function<MutableRegistry<?>, RegistryEvent.Register<?>>)(Object)registryEvent);
     return registry;
   }

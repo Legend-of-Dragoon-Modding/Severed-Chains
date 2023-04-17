@@ -1,5 +1,7 @@
 package legend.game.characters;
 
+import legend.game.combat.bobj.BattleObject27c;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,11 +10,18 @@ public class StatCollection {
 
   public StatCollection(final StatType... stats) {
     for(final StatType stat : stats) {
-      this.stats.put(stat, new Stat(this, stat));
+      this.stats.put(stat, stat.make(this));
     }
   }
 
-  public Stat getStat(final StatType type) {
-    return this.stats.get(type);
+  public <T extends Stat> T getStat(final StatType<T> type) {
+    //noinspection unchecked
+    return (T)this.stats.get(type);
+  }
+
+  public void turnFinished(final BattleObject27c bobj) {
+    for(final Stat stat : this.stats.values()) {
+      stat.turnFinished(bobj);
+    }
   }
 }

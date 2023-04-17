@@ -62,7 +62,7 @@ public class SBtld {
   /** TODO 0x80-byte struct array */
   public static final Value _8010e658 = MEMORY.ref(4, 0x8010e658L);
 
-  public static final ArrayRef<Pointer<LodString>> enemyNames_80112068 = MEMORY.ref(4, 0x80112068L, ArrayRef.of(Pointer.classFor(LodString.class), 0x200, 4, Pointer.deferred(4, LodString::new)));
+  public static final ArrayRef<Pointer<LodString>> monsterNames_80112068 = MEMORY.ref(4, 0x80112068L, ArrayRef.of(Pointer.classFor(LodString.class), 0x200, 4, Pointer.deferred(4, LodString::new)));
 
   public static final ArrayRef<EnemyRewards08> enemyRewards_80112868 = MEMORY.ref(4, 0x80112868L, ArrayRef.of(EnemyRewards08.class, 400, 0x8, EnemyRewards08::new));
   public static final Value _801134e8 = MEMORY.ref(2, 0x801134e8L);

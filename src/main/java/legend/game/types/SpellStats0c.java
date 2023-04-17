@@ -7,6 +7,11 @@ import legend.core.memory.types.UnsignedByteRef;
 public class SpellStats0c implements MemoryRef {
   private final Value ref;
 
+  /**
+   * <ul>
+   *   <li>0x8 - attack all</li>
+   * </ul>
+   */
   public final UnsignedByteRef targetType_00;
   /**
    * <ul>

@@ -15,10 +15,12 @@ import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
+import legend.game.characters.VitalsStat;
 import legend.game.combat.bobj.BattleObject27c;
 import legend.game.combat.bobj.MonsterBattleObject;
 import legend.game.combat.bobj.PlayerBattleObject;
 import legend.game.combat.types.CombatantStruct1a8;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.scripting.ScriptState;
 
 import static legend.game.Scus94491BpeSegment_8005.combatants_8005e398;
@@ -136,11 +138,14 @@ public class CombatDebuggerController {
     this.scriptIndex.setText("View script %d".formatted(state.index));
 
     if(bobj instanceof final PlayerBattleObject player) {
+      final VitalsStat mp = player.stats.getStat(CoreMod.MP_STAT.get());
+      final VitalsStat sp = player.stats.getStat(CoreMod.SP_STAT.get());
+
       this.level.getValueFactory().setValue(player.level_04);
       this.dlevel.getValueFactory().setValue(player.dlevel_06);
-      this.mp.getValueFactory().setValue(player.mp_0c);
-      this.maxMp.getValueFactory().setValue(player.maxMp_12);
-      this.sp.getValueFactory().setValue(player.sp_0a);
+      this.mp.getValueFactory().setValue(mp.getCurrent());
+      this.maxMp.getValueFactory().setValue(mp.getMaxRaw());
+      this.sp.getValueFactory().setValue(sp.getCurrent());
       this.level.setVisible(true);
       this.dlevel.setVisible(true);
       this.mp.setVisible(true);
@@ -154,8 +159,9 @@ public class CombatDebuggerController {
       this.sp.setVisible(false);
     }
 
-    this.hp.getValueFactory().setValue(bobj.hp_08);
-    this.maxHp.getValueFactory().setValue(bobj.maxHp_10);
+    final VitalsStat hp = bobj.stats.getStat(CoreMod.HP_STAT.get());
+    this.hp.getValueFactory().setValue(hp.getCurrent());
+    this.maxHp.getValueFactory().setValue(hp.getMaxRaw());
 
     this.spd.getValueFactory().setValue(bobj.speed_32);
     this.turn.getValueFactory().setValue(bobj.turnValue_4c);
@@ -217,15 +223,19 @@ public class CombatDebuggerController {
     final BattleObject27c bobj = state.innerStruct_00;
 
     if(bobj instanceof final PlayerBattleObject player) {
+      final VitalsStat mp = player.stats.getStat(CoreMod.MP_STAT.get());
+      final VitalsStat sp = player.stats.getStat(CoreMod.SP_STAT.get());
+
       player.level_04 = this.level.getValue();
       player.dlevel_06 = this.dlevel.getValue();
-      player.mp_0c = this.mp.getValue();
-      player.maxMp_12 = this.maxMp.getValue();
-      player.sp_0a = this.sp.getValue().shortValue();
+      mp.setCurrent(this.mp.getValue());
+      mp.setMaxRaw(this.maxMp.getValue());
+      sp.setCurrent(this.sp.getValue());
     }
 
-    bobj.hp_08 = this.hp.getValue();
-    bobj.maxHp_10 = this.maxHp.getValue();
+    final VitalsStat hp = bobj.stats.getStat(CoreMod.HP_STAT.get());
+    hp.setCurrent(this.hp.getValue());
+    hp.setMaxRaw(this.maxHp.getValue());
 
     bobj.speed_32 = this.spd.getValue();
     bobj.turnValue_4c = this.turn.getValue().shortValue();

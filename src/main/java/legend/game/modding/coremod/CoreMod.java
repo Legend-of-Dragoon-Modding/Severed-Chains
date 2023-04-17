@@ -1,14 +1,26 @@
 package legend.game.modding.coremod;
 
 import legend.core.GameEngine;
+import legend.game.characters.Element;
+import legend.game.characters.ElementRegistryEvent;
 import legend.game.characters.StatType;
 import legend.game.characters.StatTypeRegistryEvent;
+import legend.game.characters.VitalsStat;
 import legend.game.combat.bobj.BattleObjectType;
 import legend.game.combat.bobj.BattleObjectTypeRegistryEvent;
 import legend.game.modding.Mod;
 import legend.game.modding.coremod.config.EncounterRateConfigEntry;
 import legend.game.modding.coremod.config.IndicatorModeConfigEntry;
 import legend.game.modding.coremod.config.InventorySizeConfigEntry;
+import legend.game.modding.coremod.elements.DarkElement;
+import legend.game.modding.coremod.elements.DivineElement;
+import legend.game.modding.coremod.elements.EarthElement;
+import legend.game.modding.coremod.elements.FireElement;
+import legend.game.modding.coremod.elements.LightElement;
+import legend.game.modding.coremod.elements.NoElement;
+import legend.game.modding.coremod.elements.ThunderElement;
+import legend.game.modding.coremod.elements.WaterElement;
+import legend.game.modding.coremod.elements.WindElement;
 import legend.game.modding.events.EventListener;
 import legend.game.modding.events.combat.RegisterBattleObjectStatsEvent;
 import legend.game.modding.registries.Registrar;
@@ -23,10 +35,21 @@ import legend.game.saves.ConfigRegistryEvent;
 public class CoreMod {
   public static final String MOD_ID = "lod-core";
 
-  private static final Registrar<StatType, StatTypeRegistryEvent> STAT_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.stats, MOD_ID);
-  public static final RegistryDelegate<StatType> HP_STAT = STAT_REGISTRAR.register("hp", StatType::new);
-  public static final RegistryDelegate<StatType> MP_STAT = STAT_REGISTRAR.register("mp", StatType::new);
-  public static final RegistryDelegate<StatType> SP_STAT = STAT_REGISTRAR.register("sp", StatType::new);
+  private static final Registrar<StatType<?>, StatTypeRegistryEvent> STAT_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.stats, MOD_ID);
+  public static final RegistryDelegate<StatType<VitalsStat>> HP_STAT = STAT_REGISTRAR.register("hp", () -> new StatType<>(VitalsStat::new));
+  public static final RegistryDelegate<StatType<VitalsStat>> MP_STAT = STAT_REGISTRAR.register("mp", () -> new StatType<>(VitalsStat::new));
+  public static final RegistryDelegate<StatType<VitalsStat>> SP_STAT = STAT_REGISTRAR.register("sp", () -> new StatType<>(VitalsStat::new));
+
+  private static final Registrar<Element, ElementRegistryEvent> ELEMENT_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.elements, MOD_ID);
+  public static final RegistryDelegate<Element> NO_ELEMENT = ELEMENT_REGISTRAR.register("none", NoElement::new);
+  public static final RegistryDelegate<Element> WATER_ELEMENT = ELEMENT_REGISTRAR.register("water", WaterElement::new);
+  public static final RegistryDelegate<Element> EARTH_ELEMENT = ELEMENT_REGISTRAR.register("earth", EarthElement::new);
+  public static final RegistryDelegate<Element> DARK_ELEMENT = ELEMENT_REGISTRAR.register("dark", DarkElement::new);
+  public static final RegistryDelegate<Element> DIVINE_ELEMENT = ELEMENT_REGISTRAR.register("divine", DivineElement::new);
+  public static final RegistryDelegate<Element> THUNDER_ELEMENT = ELEMENT_REGISTRAR.register("thunder", ThunderElement::new);
+  public static final RegistryDelegate<Element> LIGHT_ELEMENT = ELEMENT_REGISTRAR.register("light", LightElement::new);
+  public static final RegistryDelegate<Element> WIND_ELEMENT = ELEMENT_REGISTRAR.register("wind", WindElement::new);
+  public static final RegistryDelegate<Element> FIRE_ELEMENT = ELEMENT_REGISTRAR.register("fire", FireElement::new);
 
   private static final Registrar<BattleObjectType, BattleObjectTypeRegistryEvent> BOBJ_TYPE_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.battleObjectTypes, MOD_ID);
   public static final RegistryDelegate<BattleObjectType> PLAYER_TYPE = BOBJ_TYPE_REGISTRAR.register("player", BattleObjectType::new);
@@ -52,6 +75,11 @@ public class CoreMod {
   }
 
   @EventListener
+  public static void registerElements(final ElementRegistryEvent event) {
+    ELEMENT_REGISTRAR.registryEvent(event);
+  }
+
+  @EventListener
   public static void registerBobjTypes(final BattleObjectTypeRegistryEvent event) {
     BOBJ_TYPE_REGISTRAR.registryEvent(event);
   }
@@ -59,5 +87,10 @@ public class CoreMod {
   @EventListener
   public static void registerBobjStats(final RegisterBattleObjectStatsEvent event) {
     event.addStat(HP_STAT.get());
+
+    if(event.type == PLAYER_TYPE.get()) {
+      event.addStat(MP_STAT.get());
+      event.addStat(SP_STAT.get());
+    }
   }
 }

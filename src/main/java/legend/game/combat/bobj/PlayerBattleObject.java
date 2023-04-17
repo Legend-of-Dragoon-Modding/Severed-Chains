@@ -3,6 +3,7 @@ package legend.game.combat.bobj;
 import legend.core.Config;
 import legend.core.Latch;
 import legend.core.memory.Method;
+import legend.game.characters.Element;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.scripting.ScriptState;
 
@@ -19,10 +20,7 @@ public class PlayerBattleObject extends BattleObject27c {
   public int level_04;
   public int dlevel_06;
 
-  public int sp_0a;
-  public int mp_0c;
-
-  public int maxMp_12;
+  public Element weaponElement_1c;
 
   public int additionHits_56;
   public int selectedAddition_58;
@@ -92,17 +90,17 @@ public class PlayerBattleObject extends BattleObject27c {
   }
 
   @Override
-  public int getAttackElement() {
-    return this.elementFlag_1c;
+  public Element getAttackElement() {
+    return this.weaponElement_1c;
   }
 
   @Override
-  public int getElement() {
+  public Element getElement() {
     if(this.charIndex_272 == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0 && this.isDragoon()) { // Dart Divine Dragoon
-      return characterElements_800c706c.get(9).get();
+      return CoreMod.DIVINE_ELEMENT.get();
     }
 
-    return characterElements_800c706c.get(this.charIndex_272).get(); // Regular Dragoon
+    return characterElements_800c706c[this.charIndex_272].get();
   }
 
   @Override
@@ -156,7 +154,7 @@ public class PlayerBattleObject extends BattleObject27c {
       matk += spellStats_800fa0b8.get(this.spellId_4e).multi_04.get();
     } else {
       //LAB_800f2ef8
-      matk += this.itemDamage_de;
+      matk += this.item_d4.damage_05.get();
     }
 
     //LAB_800f2f04
@@ -170,8 +168,8 @@ public class PlayerBattleObject extends BattleObject27c {
   }
 
   @Override
-  public int applyElementalResistanceAndImmunity(final int damage, final int element) {
-    if((this.elementalResistanceFlag_20 & element) != 0) {
+  public int applyElementalResistanceAndImmunity(final int damage, final Element element) {
+    if(this.elementalResistanceFlag_20.contains(element)) {
       return damage / 2;
     }
 
@@ -192,10 +190,12 @@ public class PlayerBattleObject extends BattleObject27c {
       case 0 -> this.level_04;
       case 1 -> this.dlevel_06;
 
-      case 3 -> this.sp_0a;
-      case 4 -> this.mp_0c;
+      case 3 -> this.stats.getStat(CoreMod.SP_STAT.get()).getCurrent();
+      case 4 -> this.stats.getStat(CoreMod.MP_STAT.get()).getCurrent();
 
-      case 7 -> this.maxMp_12;
+      case 7 -> this.stats.getStat(CoreMod.MP_STAT.get()).getMax();
+
+      case 12 -> this.weaponElement_1c.flag;
 
       case 16 -> this.statusResistFlag_24 | disableStatusFlag;
 
@@ -243,10 +243,8 @@ public class PlayerBattleObject extends BattleObject27c {
       case 0 -> this.level_04 = value;
       case 1 -> this.dlevel_06 = value;
 
-      case 3 -> this.sp_0a = value;
-      case 4 -> this.mp_0c = value;
-
-      case 7 -> this.maxMp_12 = value;
+      case 3 -> this.stats.getStat(CoreMod.SP_STAT.get()).setCurrent(value);
+      case 4 -> this.stats.getStat(CoreMod.MP_STAT.get()).setCurrent(value);
 
       case 41 -> this.additionHits_56 = value;
       case 42 -> this.selectedAddition_58 = value;

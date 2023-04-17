@@ -32,6 +32,7 @@ import legend.core.memory.types.UnsignedShortRef;
 import legend.game.SItem;
 import legend.game.Scus94491BpeSegment;
 import legend.game.Scus94491BpeSegment_8005;
+import legend.game.characters.Element;
 import legend.game.combat.bobj.BattleObject27c;
 import legend.game.combat.bobj.MonsterBattleObject;
 import legend.game.combat.bobj.PlayerBattleObject;
@@ -65,6 +66,8 @@ import legend.game.combat.ui.CombatMenua4;
 import legend.game.combat.ui.FloatingNumberC4;
 import legend.game.fmv.Fmv;
 import legend.game.inventory.WhichMenu;
+import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.registries.RegistryDelegate;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.IntParam;
 import legend.game.scripting.RunningScript;
@@ -245,7 +248,7 @@ public final class Bttl_800c {
   public static ScriptState<Void> scriptState_800c674c;
 
   public static final IntRef _800c6754 = MEMORY.ref(4, 0x800c6754L, IntRef::new);
-  public static final IntRef enemyCount_800c6758 = MEMORY.ref(4, 0x800c6758L, IntRef::new);
+  public static final IntRef monsterCount_800c6758 = MEMORY.ref(4, 0x800c6758L, IntRef::new);
   public static final Value _800c675c = MEMORY.ref(4, 0x800c675cL);
   public static final IntRef _800c6760 = MEMORY.ref(4, 0x800c6760L, IntRef::new);
   public static final IntRef _800c6764 = MEMORY.ref(4, 0x800c6764L, IntRef::new);
@@ -302,7 +305,7 @@ public final class Bttl_800c {
   public static final Value _800c6980 = MEMORY.ref(2, 0x800c6980L);
 
   public static final List<CombatItem02> combatItems_800c6988 = new ArrayList<>();
-  public static final Value _800c69c8 = MEMORY.ref(4, 0x800c69c8L);
+  public static final BoolRef itemTargetAll_800c69c8 = MEMORY.ref(4, 0x800c69c8L, BoolRef::new);
 
   public static final ArrayRef<LodString> currentEnemyNames_800c69d0 = MEMORY.ref(2, 0x800c69d0L, ArrayRef.of(LodString.class, 9, 0x2c, LodString::new));
 
@@ -310,19 +313,18 @@ public final class Bttl_800c {
   static {
     Arrays.setAll(floatingNumbers_800c6b5c, i -> new FloatingNumberC4());
   }
-  public static final Pointer<CombatMenua4> _800c6b60 = MEMORY.ref(4, 0x800c6b60L, Pointer.deferred(4, CombatMenua4::new));
-  public static final Value _800c6b64 = MEMORY.ref(4, 0x800c6b64L);
-  public static final Value _800c6b68 = MEMORY.ref(4, 0x800c6b68L);
+  public static final Pointer<CombatMenua4> combatMenu_800c6b60 = MEMORY.ref(4, 0x800c6b60L, Pointer.deferred(4, CombatMenua4::new));
+  public static final IntRef dragoonSpaceElementIndex_800c6b64 = MEMORY.ref(4, 0x800c6b64L, IntRef::new);
+  public static final IntRef itemTargetType_800c6b68 = MEMORY.ref(4, 0x800c6b68L, IntRef::new);
   public static final Value _800c6b6c = MEMORY.ref(4, 0x800c6b6cL);
 
-  public static final Value _800c6b78 = MEMORY.ref(4, 0x800c6b78L);
-
-  public static final Value _800c6b9c = MEMORY.ref(4, 0x800c6b9cL);
+  public static final ArrayRef<IntRef> monsterBobjs_800c6b78 = MEMORY.ref(4, 0x800c6b78L, ArrayRef.of(IntRef.class, 9, 4, IntRef::new));
+  public static final IntRef monsterCount_800c6b9c = MEMORY.ref(4, 0x800c6b9cL, IntRef::new);
   public static final Value cameraPositionIndicesIndex_800c6ba0 = MEMORY.ref(1, 0x800c6ba0L);
   public static final Value _800c6ba1 = MEMORY.ref(1, 0x800c6ba1L);
 
   /** Uhh, contains the monsters that Melbu summons during his fight...? */
-  public static final ArrayRef<LodString> _800c6ba8 = MEMORY.ref(2, 0x800c6ba8L, ArrayRef.of(LodString.class, 3, 0x2c, LodString::new));
+  public static final ArrayRef<LodString> melbuMonsterNames_800c6ba8 = MEMORY.ref(2, 0x800c6ba8L, ArrayRef.of(LodString.class, 3, 0x2c, LodString::new));
 
   /**
    * One per character slot
@@ -361,8 +363,6 @@ public final class Bttl_800c {
 
   public static final GsF_LIGHT light_800c6ddc = MEMORY.ref(4, 0x800c6ddcL, GsF_LIGHT::new);
 
-  public static final CString effect_800c6e18 = MEMORY.ref(7, 0x800c6e18L, CString::new);
-
   public static final ArrayRef<UnsignedShortRef> repeatItemIds_800c6e34 = MEMORY.ref(2, 0x800c6e34L, ArrayRef.of(UnsignedShortRef.class, 9, 2, UnsignedShortRef::new));
 
   public static final ArrayRef<DVECTOR> _800c6e48 = MEMORY.ref(2, 0x800c6e48L, ArrayRef.of(DVECTOR.class, 6, 4, DVECTOR::new));
@@ -370,7 +370,7 @@ public final class Bttl_800c {
 
   public static final ArrayRef<UnsignedIntRef> characterDragoonIndices_800c6e68 = MEMORY.ref(4, 0x800c6e68L, ArrayRef.of(UnsignedIntRef.class, 10, 4, UnsignedIntRef::new));
 
-  public static final Value _800c6e90 = MEMORY.ref(4, 0x800c6e90L);
+  public static final ArrayRef<IntRef> melbuMonsterNameIndices = MEMORY.ref(4, 0x800c6e90L, ArrayRef.of(IntRef.class, 3, 4, IntRef::new));
 
   /** TODO unknown size, maybe struct or array */
   public static final Value _800c6e9c = MEMORY.ref(2, 0x800c6e9cL);
@@ -384,8 +384,7 @@ public final class Bttl_800c {
   /** TODO unknown size, maybe struct or array */
   public static final Value _800c6f04 = MEMORY.ref(1, 0x800c6f04L);
 
-  public static final Value _800c6f30 = MEMORY.ref(4, 0x800c6f30L);
-
+  public static final ArrayRef<IntRef> melbuStageToMonsterNameIndices_800c6f30 = MEMORY.ref(4, 0x800c6f30L, ArrayRef.of(IntRef.class, 7, 4, IntRef::new));
   public static final Value _800c6f4c = MEMORY.ref(2, 0x800c6f4cL);
 
   public static final ArrayRef<ArrayRef<UnsignedByteRef>> _800c6fec = MEMORY.ref(1, 0x800c6fecL, ArrayRef.of(ArrayRef.classFor(UnsignedByteRef.class), 9, 3, ArrayRef.of(UnsignedByteRef.class, 3, 1, UnsignedByteRef::new)));
@@ -395,9 +394,8 @@ public final class Bttl_800c {
   public static final ArrayRef<ShortRef> _800c7014 = MEMORY.ref(2, 0x800c7014L, ArrayRef.of(ShortRef.class, 10, 2, ShortRef::new));
   public static final ArrayRef<UnsignedShortRef> _800c7028 = MEMORY.ref(2, 0x800c7028L, ArrayRef.of(UnsignedShortRef.class, 10, 2, UnsignedShortRef::new));
 
-  public static final ArrayRef<UnsignedShortRef> characterElements_800c706c = MEMORY.ref(2, 0x800c706cL, ArrayRef.of(UnsignedShortRef.class, 10, 2, UnsignedShortRef::new));
-
-  public static final ArrayRef<IntRef> numberOfBits_800c70a4 = MEMORY.ref(4, 0x800c70a4L, ArrayRef.of(IntRef.class, 6, 4, IntRef::new));
+  @SuppressWarnings("unchecked")
+  public static final RegistryDelegate<Element>[] characterElements_800c706c = new RegistryDelegate[] {CoreMod.FIRE_ELEMENT, CoreMod.WIND_ELEMENT, CoreMod.LIGHT_ELEMENT, CoreMod.DARK_ELEMENT, CoreMod.THUNDER_ELEMENT, CoreMod.WIND_ELEMENT, CoreMod.WATER_ELEMENT, CoreMod.EARTH_ELEMENT, CoreMod.LIGHT_ELEMENT};
 
   /** TODO array of shorts, 0x14 bytes total */
   public static final Value _800c70e0 = MEMORY.ref(2, 0x800c70e0L);
@@ -407,7 +405,7 @@ public final class Bttl_800c {
 
   public static final Value _800c7114 = MEMORY.ref(2, 0x800c7114L);
 
-  public static final Value _800c7124 = MEMORY.ref(2, 0x800c7124L);
+  public static final ArrayRef<UnsignedShortRef> targetAllItemIds_800c7124 = MEMORY.ref(2, 0x800c7124L, ArrayRef.of(UnsignedShortRef.class, 17, 2, UnsignedShortRef::new));
 
   public static final Value _800c7190 = MEMORY.ref(1, 0x800c7190L);
 
@@ -420,14 +418,12 @@ public final class Bttl_800c {
   public static final ArrayRef<ShortRef> _800c71e4 = MEMORY.ref(2, 0x800c71e4L, ArrayRef.of(ShortRef.class, 10, 2, ShortRef::new));
   public static final Value _800c71ec = MEMORY.ref(1, 0x800c71ecL);
 
-  /** Different sets of bobjs for different target types */
+  /** Different sets of bobjs for different target types (chars, monsters, all) */
   public static ScriptState<BattleObject27c>[][] targetBobjs_800c71f0;
 
-  public static final Value _800c71fc = MEMORY.ref(4, 0x800c71fcL);
-
-  public static final Value _800c721c = MEMORY.ref(4, 0x800c721cL);
-
-  public static final Value _800c723c = MEMORY.ref(4, 0x800c723cL);
+  public static final ArrayRef<IntRef> statsForSpecial1_800c71fc = MEMORY.ref(4, 0x800c71fcL, ArrayRef.of(IntRef.class, 8, 4, IntRef::new));
+  public static final ArrayRef<IntRef> statsForSpecial2_800c721c = MEMORY.ref(4, 0x800c721cL, ArrayRef.of(IntRef.class, 8, 4, IntRef::new));
+  public static final ArrayRef<IntRef> _800c723c = MEMORY.ref(4, 0x800c723cL, ArrayRef.of(IntRef.class, 4, 4, IntRef::new));
 
   public static final ArrayRef<UnsignedShortRef> protectedItems_800c72cc = MEMORY.ref(2, 0x800c72ccL, ArrayRef.of(UnsignedShortRef.class, 10, 2, UnsignedShortRef::new));
 
@@ -764,10 +760,6 @@ public final class Bttl_800c {
   public static final ArrayRef<ByteRef> _800fb46c = MEMORY.ref(1, 0x800fb46cL, ArrayRef.of(ByteRef.class, 0x10, 1, ByteRef::new));
   public static final ArrayRef<ByteRef> _800fb47c = MEMORY.ref(1, 0x800fb47cL, ArrayRef.of(ByteRef.class, 0x10, 1, ByteRef::new));
 
-  public static final ArrayRef<ArrayRef<UnsignedShortRef>> _800fb4b4 = MEMORY.ref(2, 0x800fb4b4L, ArrayRef.of(ArrayRef.classFor(UnsignedShortRef.class), 8, 0x10, ArrayRef.of(UnsignedShortRef.class, 8, 2, UnsignedShortRef::new)));
-  public static final ArrayRef<ArrayRef<UnsignedShortRef>> _800fb534 = MEMORY.ref(2, 0x800fb534L, ArrayRef.of(ArrayRef.classFor(UnsignedShortRef.class), 3, 0x6, ArrayRef.of(UnsignedShortRef.class, 3, 2, UnsignedShortRef::new)));
-  public static final ArrayRef<ArrayRef<UnsignedShortRef>> _800fb548 = MEMORY.ref(2, 0x800fb548L, ArrayRef.of(ArrayRef.classFor(UnsignedShortRef.class), 3, 0x6, ArrayRef.of(UnsignedShortRef.class, 3, 2, UnsignedShortRef::new)));
-  public static final ArrayRef<ArrayRef<UnsignedShortRef>> _800fb55c = MEMORY.ref(2, 0x800fb55cL, ArrayRef.of(ArrayRef.classFor(UnsignedShortRef.class), 8, 0x10, ArrayRef.of(UnsignedShortRef.class, 8, 2, UnsignedShortRef::new)));
   public static final Value _800fb5dc = MEMORY.ref(4, 0x800fb5dcL);
 
   public static final Value _800fb614 = MEMORY.ref(4, 0x800fb614L);
@@ -824,7 +816,7 @@ public final class Bttl_800c {
     }
 
     //LAB_800c747c
-    enemyCount_800c6758.set(a1);
+    monsterCount_800c6758.set(a1);
   }
 
   @Method(0x800c7488L)
@@ -1043,7 +1035,7 @@ public final class Bttl_800c {
           currentTurnBobj_800c66c8 = state;
         } else {
           //LAB_800c7ce8
-          if(enemyCount_800c6758.get() > 0) {
+          if(monsterCount_800c6758.get() > 0) {
             //LAB_800c7d3c
             final ScriptState<? extends BattleObject27c> currentTurn = getCurrentTurnBobj();
             currentTurnBobj_800c66c8 = currentTurn;
@@ -3125,42 +3117,34 @@ public final class Bttl_800c {
   }
 
   @Method(0x800ccd34L)
-  public static FlowControl FUN_800ccd34(final RunningScript<?> script) {
-    int v1 = script.params_20[1].get();
-    if(script.params_20[2].get() == 2 && v1 < 0) {
-      v1 = 0;
+  public static FlowControl scriptSetBobjStat(final RunningScript<?> script) {
+    int value = script.params_20[1].get();
+    if(script.params_20[2].get() == 2 && value < 0) {
+      value = 0;
     }
 
     //LAB_800ccd8c
-    final BattleObject27c a1 = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    a1.setStat(script.params_20[2].get(), v1);
+    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    bobj.setStat(script.params_20[2].get(), value);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800ccda0L)
-  public static FlowControl scriptSetStat(final RunningScript<?> script) {
-    final BattleObject27c a1 = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    a1.setStat(Math.max(0, script.params_20[2].get()), script.params_20[1].get());
+  public static FlowControl scriptSetBobjRawStat(final RunningScript<?> script) {
+    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    bobj.setStat(Math.max(0, script.params_20[2].get()), script.params_20[1].get());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800cce04L)
-  public static FlowControl scriptGetStat(final RunningScript<?> script) {
-    final BattleObject27c a1 = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-
-    if(script.params_20[1].get() == 2) {
-      script.params_20[2].set(a1.hp_08);
-    } else {
-      //LAB_800cce54
-      script.params_20[2].set(a1.getStat(script.params_20[1].get()));
-    }
-
-    //LAB_800cce68
+  public static FlowControl scriptGetBobjStat(final RunningScript<?> script) {
+    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    script.params_20[2].set(bobj.getStat(script.params_20[1].get()));
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800cce70L)
-  public static FlowControl FUN_800cce70(final RunningScript<?> script) {
+  public static FlowControl scriptGetBobjStat2(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     script.params_20[2].set(bobj.getStat(script.params_20[1].get()));
     return FlowControl.CONTINUE;
