@@ -283,7 +283,7 @@ public class GameStateViewerController {
       @Override
       public void run() {
         Platform.runLater(() -> {
-          if (gameState_800babc8 == null) {
+          if(gameState_800babc8 == null) {
             return;
           }
           dataI.setText(String.valueOf(gameState_800babc8._04));

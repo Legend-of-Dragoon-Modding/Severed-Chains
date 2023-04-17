@@ -103,13 +103,13 @@ public class GameStateEditorController {
   public void initialize() {
     this.textData1.setText(String.valueOf(gameState_800babc8._04));
 
-    for (int i = 0; i < 0x20; i++) {
+    for(int i = 0; i < 0x20; i++) {
       this.getScriptData.getItems().add(i);
     }
     this.getScriptData.getSelectionModel().select(0);
     this.getScriptData();
 
-    for (int i = 0; i < 3; i++) {
+    for(int i = 0; i < 3; i++) {
       this.getParty.getItems().add(i);
     }
     this.getParty.getSelectionModel().select(0);
@@ -125,25 +125,25 @@ public class GameStateEditorController {
     this.textScriptEngine2.setText(String.valueOf(gameState_800babc8._b4));
     this.textScriptEngine3.setText(String.valueOf(gameState_800babc8._b8));
 
-    for (int i = 0; i < 0x20; i++) {
+    for(int i = 0; i < 0x20; i++) {
       this.getScriptFlags1.getItems().add(i);
     }
     this.getScriptFlags1.getSelectionModel().select(0);
     this.getScriptFlags1();
 
-    for (int i = 0; i < 8; i++) {
+    for(int i = 0; i < 8; i++) {
       this.getScriptFlags2.getItems().add(i);
     }
     this.getScriptFlags2.getSelectionModel().select(0);
     this.getScriptFlags2();
 
-    for (int i = 0; i < 8; i++) {
+    for(int i = 0; i < 8; i++) {
       this.getData2.getItems().add(i);
     }
     this.getData2.getSelectionModel().select(0);
     this.getData2();
 
-    for (int i = 0; i < 8; i++) {
+    for(int i = 0; i < 8; i++) {
       this.getData3.getItems().add(i);
     }
     this.getData3.getSelectionModel().select(0);
@@ -154,13 +154,13 @@ public class GameStateEditorController {
     this.getGoods.getSelectionModel().select(0);
     getGoods();
 
-    for (int i = 0; i < 8; i++) {
+    for(int i = 0; i < 8; i++) {
       this.getData4.getItems().add(i);
     }
     this.getData4.getSelectionModel().select(0);
     this.getData4();
 
-    for (int i = 0; i < 8; i++) {
+    for(int i = 0; i < 8; i++) {
       this.getChestFlags.getItems().add(i);
     }
     this.getChestFlags.getSelectionModel().select(0);
@@ -168,7 +168,7 @@ public class GameStateEditorController {
 
     this.getEquipment.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 254, 0));
     this.getEquipment.valueProperty().addListener((observable, oldValue, newValue) -> {
-      if (oldValue != newValue) {
+      if(oldValue != newValue) {
         getEquipment();
       }
     });
@@ -176,24 +176,24 @@ public class GameStateEditorController {
 
     this.getItems.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, gameState_800babc8.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get()), 0));
     this.getItems.valueProperty().addListener((observable, oldValue, newValue) -> {
-      if (oldValue != newValue) {
+      if(oldValue != newValue) {
         getItems();
       }
     });
     getItems();
 
-    for (int i = 0; i < characters.length; i++) {
+    for(int i = 0; i < characters.length; i++) {
       this.getCharacter.getItems().add(characters[i]);
     }
     this.getCharacter.getSelectionModel().select(0);
 
-    for (int i = 0; i < characterData.length; i++) {
+    for(int i = 0; i < characterData.length; i++) {
       this.getCharacterData.getItems().add(characterData[i]);
     }
     this.getCharacterData.getSelectionModel().select(0);
     getCharacter();
 
-    for (int i = 0; i < 8; i++) {
+    for(int i = 0; i < 8; i++) {
       this.getData5.getItems().add(i);
     }
     this.getData5.getSelectionModel().select(0);
