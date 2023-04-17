@@ -18,6 +18,8 @@
          <MenuItem fx:id="menuDebuggersScript" mnemonicParsing="false" onAction="#showScriptDebugger" text="Script" />
          <MenuItem fx:id="menuDebuggersCombat" mnemonicParsing="false" onAction="#showCombatDebugger" text="Combat" />
          <MenuItem fx:id="menuDebuggersSubmap" mnemonicParsing="false" onAction="#showSubmapDebugger" text="Submap" />
+         <MenuItem fx:id="menuDebuggersGameStateEditor" mnemonicParsing="false" onAction="#showGameStateEditor" text="GameState Editor" />
+         <MenuItem fx:id="menuDebuggersGameStateViewer" mnemonicParsing="false" onAction="#showGameStateViewer" text="GameState Viewer" />
       </Menu>
    </MenuBar>
    <AnchorPane VBox.vgrow="ALWAYS">
