@@ -425,6 +425,9 @@ public final class Bttl_800e {
     GsSetAmbient(r, g, b);
   }
 
+  /**
+   * script set back color
+   */
   @Method(0x800e4d2cL)
   public static FlowControl FUN_800e4d2c(final RunningScript<?> script) {
     FUN_800e4cf8(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get());
@@ -1575,6 +1578,7 @@ public final class Bttl_800e {
         final GpuCommandPoly cmd = new GpuCommandPoly(4)
           .clut(s1.clutX_10.get(), s1.clutY_12.get())
           .vramPos((s1.tpage_0c.get() & 0b1111) * 64, (s1.tpage_0c.get() & 0b10000) != 0 ? 256 : 0)
+          .rgb(s1.r_14.get(), s1.g_15.get(), s1.b_16.get())
           .pos(0, x + (s5 * cos >> 12) - (s2 * sin >> 12), y + (s5 * sin >> 12) + (s2 * cos >> 12))
           .pos(1, x + (s7 * cos >> 12) - (s2 * sin >> 12), y + (s7 * sin >> 12) + (s2 * cos >> 12))
           .pos(2, x + (s5 * cos >> 12) - (fp * sin >> 12), y + (s5 * sin >> 12) + (fp * cos >> 12))
@@ -1584,7 +1588,7 @@ public final class Bttl_800e {
           .uv(2, s1.u_0e.get(), s1.h_0a.get() + s1.v_0f.get() - 1)
           .uv(3, s1.w_08.get() + s1.u_0e.get() - 1, s1.h_0a.get() + s1.v_0f.get() - 1);
 
-        if((s1.flags_00.get() & 1 << 30) != 0) {
+        if((s1.flags_00.get() & 0x4000_0000) != 0) {
           cmd.translucent(Translucency.of((int)s1.flags_00.get() >>> 28 & 0b11));
         }
 
