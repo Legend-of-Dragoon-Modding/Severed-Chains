@@ -184,11 +184,11 @@ public class UseItemScreen extends MenuScreen {
         }
 
         //LAB_80108544
-        final ActiveStatsa0 stats = stats_800be5f8.get(charIndex);
-        renderFourDigitNumber(x + 25, y + 57, stats.hp_04.get(), stats.maxHp_66.get());
-        renderFourDigitNumber(x + 25, y + 68, stats.maxHp_66.get());
-        renderFourDigitNumber(x + 25, y + 79, stats.mp_06.get());
-        renderFourDigitNumber(x + 25, y + 90, stats.maxMp_6e.get());
+        final ActiveStatsa0 stats = stats_800be5f8[charIndex];
+        renderFourDigitNumber(x + 25, y + 57, stats.hp_04, stats.maxHp_66);
+        renderFourDigitNumber(x + 25, y + 68, stats.maxHp_66);
+        renderFourDigitNumber(x + 25, y + 79, stats.mp_06);
+        renderFourDigitNumber(x + 25, y + 90, stats.maxMp_6e);
       }
     }
   }
@@ -205,12 +205,12 @@ public class UseItemScreen extends MenuScreen {
       final int itemId = gameState_800babc8.items_2e9.getInt(i);
 
       if(itemCanBeUsedInMenu(itemId) != 0) {
-        final ItemStats0c itemStats = itemStats_8004f2ac.get(itemId - 0xc0);
+        final ItemStats0c itemStats = itemStats_8004f2ac[itemId - 0xc0];
         final MenuItemStruct04 item = new MenuItemStruct04();
         item.itemId_00 = itemId;
         item.flags_02 = 0;
 
-        if(itemStats.type_0b.get() == 0x8 && (itemStats.status_08.get() & allStatus) == 0) {
+        if(itemStats.type_0b == 0x8 && (itemStats.status_08 & allStatus) == 0) {
           item.flags_02 = 0x4000;
         }
 

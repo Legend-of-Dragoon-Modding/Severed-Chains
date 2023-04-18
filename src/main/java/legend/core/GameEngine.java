@@ -188,12 +188,7 @@ public final class GameEngine {
         return;
       }
 
-      final FileData fileData = Unpacker.loadFile("SCUS_944.91");
-      MEMORY.setBytes(fileData.readUInt(0x18), fileData.getBytes(), 0x800, fileData.readInt(0x1c));
-
-      final byte[] archive = MEMORY.getBytes(bpe_80188a88.getAddress(), 221736);
-      final byte[] decompressed = Unpacker.decompress(new FileData(archive));
-      MEMORY.setBytes(_80010000.getAddress(), decompressed);
+      MEMORY.setBytes(_80010000.getAddress(), Unpacker.loadFile("lod_engine").getBytes());
 
       MEMORY.addFunctions(Scus94491BpeSegment.class);
       MEMORY.addFunctions(Scus94491BpeSegment_8002.class);

@@ -1,23 +1,16 @@
 package legend.lodmod;
 
 import com.github.slugify.Slugify;
-import legend.core.GameEngine;
-import legend.game.characters.StatType;
-import legend.game.characters.StatTypeRegistryEvent;
-import legend.game.combat.bobj.BattleObjectType;
-import legend.game.combat.bobj.BattleObjectTypeRegistryEvent;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.EquipmentRegistryEvent;
 import legend.game.inventory.Item;
 import legend.game.inventory.ItemRegistryEvent;
 import legend.game.modding.Mod;
 import legend.game.modding.events.EventListener;
-import legend.game.modding.events.combat.RegisterBattleObjectStatsEvent;
-import legend.game.modding.registries.Registrar;
-import legend.game.modding.registries.RegistryDelegate;
 import legend.game.modding.registries.RegistryId;
 import legend.game.types.EquipmentStats1c;
 import legend.game.types.ItemStats0c;
+import legend.game.unpacker.Unpacker;
 
 import static legend.game.SItem.equipmentStats_80111ff0;
 import static legend.game.SItem.equipment_8011972c;
@@ -37,13 +30,11 @@ public class LodMod {
 
   @EventListener
   public static void registerItems(final ItemRegistryEvent event) {
-    for(int itemId = 0; itemId < itemStats_8004f2ac.length(); itemId++) {
-      if(itemId == 0) {
-        continue;
-      }
+    for(int itemId = 0; itemId < itemStats_8004f2ac.length; itemId++) {
+      itemStats_8004f2ac[itemId] = ItemStats0c.fromFile(Unpacker.loadFile("items/%d.ditm".formatted(itemId)));
 
       final String name = equipment_8011972c.get(itemId + 0xc0).deref().get();
-      final ItemStats0c itemStats = itemStats_8004f2ac.get(itemId);
+      final ItemStats0c itemStats = itemStats_8004f2ac[itemId];
 
       event.register(id(slug.slugify(name)), new Item(name, itemStats));
     }
@@ -51,11 +42,13 @@ public class LodMod {
 
   @EventListener
   public static void registerEquipment(final EquipmentRegistryEvent event) {
-    for(int equipmentId = 0; equipmentId < Math.min(158, equipmentStats_80111ff0.length()); equipmentId++) {
+    for(int equipmentId = 0; equipmentId < equipmentStats_80111ff0.length; equipmentId++) {
+      equipmentStats_80111ff0[equipmentId] = EquipmentStats1c.fromFile(Unpacker.loadFile("equipment/%d.deqp".formatted(equipmentId)));
+
       final String name = equipment_8011972c.get(equipmentId).deref().get();
 
       if(!name.isEmpty()) {
-        final EquipmentStats1c equipmentStats = equipmentStats_80111ff0.get(equipmentId);
+        final EquipmentStats1c equipmentStats = equipmentStats_80111ff0[equipmentId];
         event.register(id(slug.slugify(name)), new Equipment(name, equipmentStats));
       }
     }

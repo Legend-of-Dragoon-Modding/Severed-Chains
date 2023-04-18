@@ -61,11 +61,11 @@ public class DebuggerController {
   @FXML
   public CheckBox battleUiColour;
   @FXML
-  public Spinner<Integer> battleUIColourR;
+  public Spinner<Integer> battleUiColourR;
   @FXML
-  public Spinner<Integer> battleUIColourG;
+  public Spinner<Integer> battleUiColourG;
   @FXML
-  public Spinner<Integer> battleUIColourB;
+  public Spinner<Integer> battleUiColourB;
   @FXML
   public Spinner<Integer> combatStageId;
   @FXML
@@ -87,11 +87,11 @@ public class DebuggerController {
     this.encounterId.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0));
     this.mapId.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0));
     this.vsyncMode.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, Integer.MAX_VALUE, 1));
-    this.battleUiColour.setSelected(Config.changeBattleRGB());
+    this.battleUiColour.setSelected(Config.changeBattleRgb());
     this.saveAnywhere.setSelected(Config.saveAnywhere());
-    this.battleUIColourR.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (Config.getBattleRGB() & 0xff)));
-    this.battleUIColourG.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getBattleRGB() >> 8)  & 0xff)));
-    this.battleUIColourB.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getBattleRGB() >> 16)  & 0xff)));
+    this.battleUiColourR.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (Config.getBattleRgb() & 0xff)));
+    this.battleUiColourG.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getBattleRgb() >> 8)  & 0xff)));
+    this.battleUiColourB.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getBattleRgb() >> 16)  & 0xff)));
     this.autoAddition.setSelected(Config.autoAddition());
     this.autoMeter.setSelected(Config.autoDragoonMeter());
     this.disableStatusEffects.setSelected(Config.disableStatusEffects());
@@ -182,41 +182,28 @@ public class DebuggerController {
 
   @FXML
   private void toggleBattleUiColour(final ActionEvent event) {
-    Config.toggleBattleUIColour();
+    Config.toggleBattleUiColour();
   }
 
   @FXML
-  private void getBattleUIRGB(final ActionEvent event) {
-    final int rgb = (int) Bttl_800c._800c7004.get();
-    final int[] rgbArray = {
-      rgb >> 24 & 0xff,
-      rgb >> 16 & 0xff,
-      rgb >>  8 & 0xff,
-      rgb       & 0xff
-    };
-
-    this.battleUIColourR.getValueFactory().setValue(rgbArray[3]);
-    this.battleUIColourG.getValueFactory().setValue(rgbArray[2]);
-    this.battleUIColourB.getValueFactory().setValue(rgbArray[1]);
+  private void getBattleUiRgb(final ActionEvent event) {
+    this.battleUiColourR.getValueFactory().setValue(Bttl_800c.textboxColours_800c6fec.get(8).get(0).get());
+    this.battleUiColourG.getValueFactory().setValue(Bttl_800c.textboxColours_800c6fec.get(8).get(1).get());
+    this.battleUiColourB.getValueFactory().setValue(Bttl_800c.textboxColours_800c6fec.get(8).get(2).get());
   }
 
   @FXML
   private void setBattleUIRGB(final ActionEvent event) {
-    final byte[] rgbArray = {
-      this.battleUIColourR.getValueFactory().getValue().byteValue(),
-      this.battleUIColourG.getValueFactory().getValue().byteValue(),
-      this.battleUIColourB.getValueFactory().getValue().byteValue(),
-      (byte)0x00,
-    };
+    Bttl_800c.textboxColours_800c6fec.get(8).get(0).set(this.battleUiColourR.getValueFactory().getValue().byteValue());
+    Bttl_800c.textboxColours_800c6fec.get(8).get(1).set(this.battleUiColourG.getValueFactory().getValue().byteValue());
+    Bttl_800c.textboxColours_800c6fec.get(8).get(2).set(this.battleUiColourB.getValueFactory().getValue().byteValue());
 
     final int rgb =
-      (0xff & rgbArray[3]) << 24 |
-        (0xff & rgbArray[2]) << 16 |
-        (0xff & rgbArray[1]) << 8  |
-        0xff & rgbArray[0];
+      Bttl_800c.textboxColours_800c6fec.get(8).get(2).get() << 16 |
+      Bttl_800c.textboxColours_800c6fec.get(8).get(1).get() << 8  |
+      Bttl_800c.textboxColours_800c6fec.get(8).get(0).get();
 
-    Config.setBattleRGB(rgb);
-    Bttl_800c._800c7004.set(rgb);
+    Config.setBattleRgb(rgb);
     this.battleUiColour.setSelected(true);
   }
 

@@ -194,7 +194,7 @@ public class CombatDebuggerController {
       return currentEnemyNames_800c69d0.get(bobj.charSlot_276).get();
     }
 
-    return bobj.charIndex_272 == 8 ? "Who?" : playerNames_800fb378.get(bobj.charIndex_272).deref().get();
+    return bobj.charId_272 == 8 ? "Who?" : playerNames_800fb378.get(bobj.charId_272).deref().get();
   }
 
   public void openScriptDebugger(final ActionEvent event) throws Exception {

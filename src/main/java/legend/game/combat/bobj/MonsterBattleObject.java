@@ -8,6 +8,8 @@ import legend.game.combat.types.AttackType;
 import legend.game.modding.coremod.CoreMod;
 
 import static legend.game.combat.Bttl_800c.spellStats_800fa0b8;
+import static legend.game.combat.Bttl_800f.applyBuffOrDebuff;
+import static legend.game.combat.Bttl_800f.applyMagicDamageMultiplier;
 
 public class MonsterBattleObject extends BattleObject27c {
   public Element displayElement_1c;
@@ -59,6 +61,13 @@ public class MonsterBattleObject extends BattleObject27c {
   }
 
   @Override
+  public int applyPhysicalDamageMultipliers(int damage) {
+    damage = applyMagicDamageMultiplier(this, damage, 0);
+    applyBuffOrDebuff(this, this);
+    return damage;
+  }
+
+  @Override
   public int applyDamageResistanceAndImmunity(final int damage, final AttackType attackType) {
     if(attackType.isPhysical() && (this.damageReductionFlags_6e & 0x2) != 0) {
       return 1;
@@ -92,7 +101,7 @@ public class MonsterBattleObject extends BattleObject27c {
       matk += spellStats_800fa0b8.get(this.spellId_4e).multi_04.get();
     } else {
       //LAB_800f87c4
-      matk += this.item_d4.damage_05.get();
+      matk += this.item_d4.damage_05;
     }
 
     //LAB_800f87d0

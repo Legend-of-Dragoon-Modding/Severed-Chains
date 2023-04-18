@@ -680,22 +680,22 @@ public final class SMap {
   }
 
   @Method(0x800d9b08L)
-  public static void FUN_800d9b08(final int a0) {
+  public static void FUN_800d9b08(final int charId) {
     loadCharacterStats(0);
 
-    if(a0 >= 0) {
-      final ActiveStatsa0 stats = stats_800be5f8.get(a0);
-      final CharacterData2c charData = gameState_800babc8.charData_32c[a0];
-      charData.hp_08 = stats.maxHp_66.get();
-      charData.mp_0a = stats.maxMp_6e.get();
+    if(charId >= 0) {
+      final ActiveStatsa0 stats = stats_800be5f8[charId];
+      final CharacterData2c charData = gameState_800babc8.charData_32c[charId];
+      charData.hp_08 = stats.maxHp_66;
+      charData.mp_0a = stats.maxMp_6e;
     } else {
       //LAB_800d9b70
       //LAB_800d9b84
       for(int charSlot = 0; charSlot < 9; charSlot++) {
-        final ActiveStatsa0 stats = stats_800be5f8.get(charSlot);
+        final ActiveStatsa0 stats = stats_800be5f8[charSlot];
         final CharacterData2c charData = gameState_800babc8.charData_32c[charSlot];
-        charData.hp_08 = stats.maxHp_66.get();
-        charData.mp_0a = stats.maxMp_6e.get();
+        charData.hp_08 = stats.maxHp_66;
+        charData.mp_0a = stats.maxMp_6e;
       }
     }
 

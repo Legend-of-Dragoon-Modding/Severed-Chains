@@ -1,5 +1,7 @@
 package legend.game.modding.events.inventory;
 
+import legend.game.characters.Element;
+import legend.game.characters.ElementSet;
 import legend.game.modding.events.Event;
 import legend.game.types.EquipmentStats1c;
 
@@ -13,10 +15,10 @@ public class EquipmentStatsEvent extends Event {
   public int type;
   public int _02;
   public int equipableFlags;
-  public int element;
+  public Element element;
   public int _05;
-  public int elementalResistance;
-  public int elementalImmunity;
+  public final ElementSet elementalResistance = new ElementSet();
+  public final ElementSet elementalImmunity = new ElementSet();
   public int statusResist;
   public int _09;
   public int icon;
@@ -61,96 +63,96 @@ public class EquipmentStatsEvent extends Event {
 
     final EquipmentStats1c equipmentStats = equipmentStats_800be5d8;
 
-    this.flags = equipmentStats.flags_00.get();
-    this.type = equipmentStats.type_01.get();
-    this._02 = equipmentStats._02.get();
-    this.equipableFlags = equipmentStats.equipableFlags_03.get();
-    this.element = equipmentStats.element_04.get();
-    this._05 = equipmentStats._05.get();
-    this.elementalResistance = equipmentStats.elementalResistance_06.get();
-    this.elementalImmunity = equipmentStats.elementalImmunity_07.get();
-    this.statusResist = equipmentStats.statusResist_08.get();
-    this._09 = equipmentStats._09.get();
-    this.icon = equipmentStats.icon_0e.get();
-    this.speed = equipmentStats.spd_0f.get();
-    this.attack = equipmentStats.atkHi_10.get() + equipmentStats.atk_0a.get();
-    this.magicAttack = equipmentStats.matk_11.get();
-    this.defence = equipmentStats.def_12.get();
-    this.magicDefence = equipmentStats.mdef_13.get();
-    this.attackHit = equipmentStats.aHit_14.get();
-    this.magicHit = equipmentStats.mHit_15.get();
-    this.attackAvoid = equipmentStats.aAv_16.get();
-    this.magicAvoid = equipmentStats.mAv_17.get();
-    this.statusChance = equipmentStats.onStatusChance_18.get();
-    this._19 = equipmentStats._19.get();
-    this._1a = equipmentStats._1a.get();
-    this.onHitStatus = equipmentStats.onHitStatus_1b.get();
-    this.special1 = equipmentStats.special1_0b.get();
-    this.special2 = equipmentStats.special2_0c.get();
-    this.specialAmount = equipmentStats.specialAmount_0d.get();
+    this.flags = equipmentStats.flags_00;
+    this.type = equipmentStats.type_01;
+    this._02 = equipmentStats._02;
+    this.equipableFlags = equipmentStats.equipableFlags_03;
+    this.element = equipmentStats.element_04;
+    this._05 = equipmentStats._05;
+    this.elementalResistance.set(equipmentStats.elementalResistance_06);
+    this.elementalImmunity.set(equipmentStats.elementalImmunity_07);
+    this.statusResist = equipmentStats.statusResist_08;
+    this._09 = equipmentStats._09;
+    this.icon = equipmentStats.icon_0e;
+    this.speed = equipmentStats.spd_0f;
+    this.attack = equipmentStats.atkHi_10 + equipmentStats.atk_0a;
+    this.magicAttack = equipmentStats.matk_11;
+    this.defence = equipmentStats.def_12;
+    this.magicDefence = equipmentStats.mdef_13;
+    this.attackHit = equipmentStats.aHit_14;
+    this.magicHit = equipmentStats.mHit_15;
+    this.attackAvoid = equipmentStats.aAv_16;
+    this.magicAvoid = equipmentStats.mAv_17;
+    this.statusChance = equipmentStats.onStatusChance_18;
+    this._19 = equipmentStats._19;
+    this._1a = equipmentStats._1a;
+    this.onHitStatus = equipmentStats.onHitStatus_1b;
+    this.special1 = equipmentStats.special1_0b;
+    this.special2 = equipmentStats.special2_0c;
+    this.specialAmount = equipmentStats.specialAmount_0d;
 
-    if((equipmentStats.special1_0b.get() & 0x1) != 0) {
-      this.mpPerMagicalHit = equipmentStats.specialAmount_0d.get();
+    if((equipmentStats.special1_0b & 0x1) != 0) {
+      this.mpPerMagicalHit = equipmentStats.specialAmount_0d;
     }
 
-    if((equipmentStats.special1_0b.get() & 0x2) != 0) {
-      this.spPerMagicalHit = equipmentStats.specialAmount_0d.get();
+    if((equipmentStats.special1_0b & 0x2) != 0) {
+      this.spPerMagicalHit = equipmentStats.specialAmount_0d;
     }
 
-    if((equipmentStats.special1_0b.get() & 0x4) != 0) {
-      this.mpPerPhysicalHit = equipmentStats.specialAmount_0d.get();
+    if((equipmentStats.special1_0b & 0x4) != 0) {
+      this.mpPerPhysicalHit = equipmentStats.specialAmount_0d;
     }
 
-    if((equipmentStats.special1_0b.get() & 0x8) != 0) {
-      this.spPerPhysicalHit = equipmentStats.specialAmount_0d.get();
+    if((equipmentStats.special1_0b & 0x8) != 0) {
+      this.spPerPhysicalHit = equipmentStats.specialAmount_0d;
     }
 
-    if((equipmentStats.special1_0b.get() & 0x10) != 0) {
-      this.spMultiplier = equipmentStats.specialAmount_0d.get();
+    if((equipmentStats.special1_0b & 0x10) != 0) {
+      this.spMultiplier = equipmentStats.specialAmount_0d;
     }
 
-    if((equipmentStats.special1_0b.get() & 0x20) != 0) {
+    if((equipmentStats.special1_0b & 0x20) != 0) {
       this.physicalResistance = true;
     }
 
-    if((equipmentStats.special1_0b.get() & 0x40) != 0) {
+    if((equipmentStats.special1_0b & 0x40) != 0) {
       this.magicalImmunity = true;
     }
 
-    if((equipmentStats.special1_0b.get() & 0x80) != 0) {
+    if((equipmentStats.special1_0b & 0x80) != 0) {
       this.physicalImmunity = true;
     }
 
-    if((equipmentStats.special2_0c.get() & 0x1) != 0) {
-      this.mpMultiplier = equipmentStats.specialAmount_0d.get();
+    if((equipmentStats.special2_0c & 0x1) != 0) {
+      this.mpMultiplier = equipmentStats.specialAmount_0d;
     }
 
-    if((equipmentStats.special2_0c.get() & 0x2) != 0) {
-      this.hpMultiplier = equipmentStats.specialAmount_0d.get();
+    if((equipmentStats.special2_0c & 0x2) != 0) {
+      this.hpMultiplier = equipmentStats.specialAmount_0d;
     }
 
-    if((equipmentStats.special2_0c.get() & 0x4) != 0) {
+    if((equipmentStats.special2_0c & 0x4) != 0) {
       this.magicalResistance = true;
     }
 
-    if((equipmentStats.special2_0c.get() & 0x8) != 0) {
-      this.revive = equipmentStats.specialAmount_0d.get();
+    if((equipmentStats.special2_0c & 0x8) != 0) {
+      this.revive = equipmentStats.specialAmount_0d;
     }
 
-    if((equipmentStats.special2_0c.get() & 0x10) != 0) {
-      this.spRegen = equipmentStats.specialAmount_0d.get();
+    if((equipmentStats.special2_0c & 0x10) != 0) {
+      this.spRegen = equipmentStats.specialAmount_0d;
     }
 
-    if((equipmentStats.special2_0c.get() & 0x20) != 0) {
-      this.mpRegen = equipmentStats.specialAmount_0d.get();
+    if((equipmentStats.special2_0c & 0x20) != 0) {
+      this.mpRegen = equipmentStats.specialAmount_0d;
     }
 
-    if((equipmentStats.special2_0c.get() & 0x40) != 0) {
-      this.hpRegen = equipmentStats.specialAmount_0d.get();
+    if((equipmentStats.special2_0c & 0x40) != 0) {
+      this.hpRegen = equipmentStats.specialAmount_0d;
     }
 
-    if((equipmentStats.special2_0c.get() & 0x80) != 0) {
-      this._56 = equipmentStats.specialAmount_0d.get();
+    if((equipmentStats.special2_0c & 0x80) != 0) {
+      this._56 = equipmentStats.specialAmount_0d;
     }
   }
 }

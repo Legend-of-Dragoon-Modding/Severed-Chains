@@ -1,21 +1,21 @@
 package legend.game.types;
 
-import legend.core.memory.Value;
-import legend.core.memory.types.ByteRef;
-import legend.core.memory.types.MemoryRef;
-import legend.core.memory.types.UnsignedByteRef;
+import legend.game.characters.Element;
+import legend.game.unpacker.FileData;
 
-public class ItemStats0c implements MemoryRef {
-  private final Value ref;
-
+public class ItemStats0c {
   /**
    * <ul>
    *   <li>0x2 - target all</li>
    * </ul>
+   *
+   * ubyte
    */
-  public final UnsignedByteRef target_00;
-  public final UnsignedByteRef element_01;
-  public final UnsignedByteRef damage_02;
+  public final int target_00;
+  /** ubyte */
+  public final Element element_01;
+  /** ubyte */
+  public final int damage_02;
   /**
    * Read left to right
    *
@@ -29,8 +29,10 @@ public class ItemStats0c implements MemoryRef {
    *   <li>0x2 - attack avoid</li>
    *   <li>0x1 - magic attack avoid</li>
    * </ul>
+   *
+   * ubyte
    */
-  public final UnsignedByteRef special1_03;
+  public final int special1_03;
   /**
    * Read left to right
    *
@@ -44,14 +46,22 @@ public class ItemStats0c implements MemoryRef {
    *   <li>0x2 - SP per magical hit</li>
    *   <li>0x1 - MP per magical hit</li>
    * </ul>
+   *
+   * ubyte
    */
-  public final UnsignedByteRef special2_04;
-  public final UnsignedByteRef damage_05;
-  public final ByteRef specialAmount_06;
-  public final ByteRef icon_07;
-  public final UnsignedByteRef status_08;
-  public final UnsignedByteRef percentage_09;
-  public final UnsignedByteRef uu2_0a;
+  public final int special2_04;
+  /** ubyte */
+  public final int damage_05;
+  /** byte */
+  public final int specialAmount_06;
+  /** byte */
+  public final int icon_07;
+  /** ubyte */
+  public final int status_08;
+  /** ubyte */
+  public final int percentage_09;
+  /** ubyte */
+  public final int uu2_0a;
   /**
    * <ul>
    *   <li>0x04 - cause status</li>
@@ -61,28 +71,39 @@ public class ItemStats0c implements MemoryRef {
    *   <li>0x40 - MP</li>
    *   <li>0x80 - HP</li>
    * </ul>
+   *
+   * ubyte
    */
-  public final UnsignedByteRef type_0b;
+  public final int type_0b;
 
-  public ItemStats0c(final Value ref) {
-    this.ref = ref;
-
-    this.target_00 = ref.offset(1, 0x00L).cast(UnsignedByteRef::new);
-    this.element_01 = ref.offset(1, 0x01L).cast(UnsignedByteRef::new);
-    this.damage_02 = ref.offset(1, 0x02L).cast(UnsignedByteRef::new);
-    this.special1_03 = ref.offset(1, 0x03L).cast(UnsignedByteRef::new);
-    this.special2_04 = ref.offset(1, 0x04L).cast(UnsignedByteRef::new);
-    this.damage_05 = ref.offset(1, 0x05L).cast(UnsignedByteRef::new);
-    this.specialAmount_06 = ref.offset(1, 0x06L).cast(ByteRef::new);
-    this.icon_07 = ref.offset(1, 0x07L).cast(ByteRef::new);
-    this.status_08 = ref.offset(1, 0x08L).cast(UnsignedByteRef::new);
-    this.percentage_09 = ref.offset(1, 0x09L).cast(UnsignedByteRef::new);
-    this.uu2_0a = ref.offset(1, 0x0aL).cast(UnsignedByteRef::new);
-    this.type_0b = ref.offset(1, 0x0bL).cast(UnsignedByteRef::new);
+  public static ItemStats0c fromFile(final FileData data) {
+    final int target = data.readUByte(0x0);
+    final Element element = Element.fromFlag(data.readUByte(0x1));
+    final int damage = data.readUByte(0x2);
+    final int special1 = data.readUByte(0x3);
+    final int special2 = data.readUByte(0x4);
+    final int damage2 = data.readUByte(0x5);
+    final int specialAmount = data.readByte(0x6);
+    final int icon = data.readByte(0x7);
+    final int status = data.readUByte(0x8);
+    final int percentage = data.readUByte(0x9);
+    final int uu2 = data.readUByte(0xa);
+    final int type = data.readUByte(0xb);
+    return new ItemStats0c(target, element, damage, special1, special2, damage2, specialAmount, icon, status, percentage, uu2, type);
   }
 
-  @Override
-  public long getAddress() {
-    return this.ref.getAddress();
+  public ItemStats0c(final int target, final Element element, final int damage, final int special1, final int special2, final int damage2, final int specialAmount, final int icon, final int status, final int percentage, final int uu2, final int type) {
+    this.target_00 = target;
+    this.element_01 = element;
+    this.damage_02 = damage;
+    this.special1_03 = special1;
+    this.special2_04 = special2;
+    this.damage_05 = damage2;
+    this.specialAmount_06 = specialAmount;
+    this.icon_07 = icon;
+    this.status_08 = status;
+    this.percentage_09 = percentage;
+    this.uu2_0a = uu2;
+    this.type_0b = type;
   }
 }

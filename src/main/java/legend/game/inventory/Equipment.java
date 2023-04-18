@@ -1,5 +1,7 @@
 package legend.game.inventory;
 
+import legend.game.characters.Element;
+import legend.game.characters.ElementSet;
 import legend.game.modding.registries.RegistryEntry;
 import legend.game.types.EquipmentStats1c;
 
@@ -10,10 +12,10 @@ public class Equipment extends RegistryEntry {
   public final int type;
   public final int _02;
   public final int equips;
-  public final int element;
+  public final Element element;
   public final int _05;
-  public final int eHalf;
-  public final int eImmune;
+  public final ElementSet eHalf;
+  public final ElementSet eImmune;
   public final int statRes;
   public final int _09;
   public final int atk;
@@ -50,38 +52,38 @@ public class Equipment extends RegistryEntry {
   public Equipment(final String name, final EquipmentStats1c stats) {
     this(
       name,
-      stats.flags_00.get(),
-      stats.type_01.get(),
-      stats._02.get(),
-      stats.equipableFlags_03.get(),
-      stats.element_04.get(),
-      stats._05.get(),
-      stats.elementalResistance_06.get(),
-      stats.elementalImmunity_07.get(),
-      stats.statusResist_08.get(),
-      stats._09.get(),
-      stats.atk_0a.get(),
-      stats.special1_0b.get(),
-      stats.special2_0c.get(),
-      stats.specialAmount_0d.get(),
-      stats.icon_0e.get(),
-      stats.spd_0f.get(),
-      stats.atkHi_10.get(),
-      stats.matk_11.get(),
-      stats.def_12.get(),
-      stats.mdef_13.get(),
-      stats.aHit_14.get(),
-      stats.mHit_15.get(),
-      stats.aAv_16.get(),
-      stats.mAv_17.get(),
-      stats.onStatusChance_18.get(),
-      stats._19.get(),
-      stats._1a.get(),
-      stats.onHitStatus_1b.get()
+      stats.flags_00,
+      stats.type_01,
+      stats._02,
+      stats.equipableFlags_03,
+      stats.element_04,
+      stats._05,
+      stats.elementalResistance_06,
+      stats.elementalImmunity_07,
+      stats.statusResist_08,
+      stats._09,
+      stats.atk_0a,
+      stats.special1_0b,
+      stats.special2_0c,
+      stats.specialAmount_0d,
+      stats.icon_0e,
+      stats.spd_0f,
+      stats.atkHi_10,
+      stats.matk_11,
+      stats.def_12,
+      stats.mdef_13,
+      stats.aHit_14,
+      stats.mHit_15,
+      stats.aAv_16,
+      stats.mAv_17,
+      stats.onStatusChance_18,
+      stats._19,
+      stats._1a,
+      stats.onHitStatus_1b
     );
   }
 
-  public Equipment(final String name, final int _00, final int type, final int _02, final int equips, final int element, final int _05, final int eHalf, final int eImmune, final int statRes, final int _09, final int atk, final int special1, final int special2, final int specialAmount, final int icon, final int spd, final int atkHi, final int matk, final int def, final int mdef, final int aHit, final int mHit, final int aAv, final int mAv, final int onStatusChance, final int _19, final int _1a, final int onHitStatus) {
+  public Equipment(final String name, final int _00, final int type, final int _02, final int equips, final Element element, final int _05, final ElementSet eHalf, final ElementSet eImmune, final int statRes, final int _09, final int atk, final int special1, final int special2, final int specialAmount, final int icon, final int spd, final int atkHi, final int matk, final int def, final int mdef, final int aHit, final int mHit, final int aAv, final int mAv, final int onStatusChance, final int _19, final int _1a, final int onHitStatus) {
     this.name = name;
     this._00 = _00;
     this.type = type;

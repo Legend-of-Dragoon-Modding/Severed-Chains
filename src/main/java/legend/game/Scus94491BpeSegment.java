@@ -2570,7 +2570,7 @@ public final class Scus94491BpeSegment {
       //LAB_80019e68
       for(int charSlot = 0; charSlot < 3; charSlot++) {
         final int index = characterSoundFileIndices_800500f8.get(charSlot).get();
-        if(soundFileArr_800bcf80.get(index).charId_02.get() == bobj.charIndex_272) {
+        if(soundFileArr_800bcf80.get(index).charId_02.get() == bobj.charId_272) {
           //LAB_80019ea4
           soundFileIndex = index;
           break;
@@ -2581,7 +2581,7 @@ public final class Scus94491BpeSegment {
       //LAB_80019f30
       for(int monsterSlot = 0; monsterSlot < 4; monsterSlot++) {
         final int index = monsterSoundFileIndices_800500e8.get(monsterSlot).get();
-        if(soundFileArr_800bcf80.get(index).charId_02.get() == bobj.charIndex_272) {
+        if(soundFileArr_800bcf80.get(index).charId_02.get() == bobj.charId_272) {
           //LAB_80019ea4
           soundFileIndex = index;
           break;
@@ -2618,7 +2618,7 @@ public final class Scus94491BpeSegment {
     for(int i = 0; i < monsterCount_800c6768.get(); i++) {
       final ScriptState<MonsterBattleObject> monster = _8006e398.bobjIndices_e50[i];
 
-      if(monster.innerStruct_00.charIndex_272 == charOrMonsterIndex) {
+      if(monster.innerStruct_00.charId_272 == charOrMonsterIndex) {
         //LAB_8001a070
         state = monster;
         break;
@@ -3584,7 +3584,7 @@ public final class Scus94491BpeSegment {
     for(charSlot = 0; charSlot < 3; charSlot++) {
       final SoundFile soundFile = soundFileArr_800bcf80.get(characterSoundFileIndices_800500f8.get(charSlot).get());
 
-      if(soundFile.charId_02.get() == bobj.charIndex_272) {
+      if(soundFile.charId_02.get() == bobj.charId_272) {
         break;
       }
     }
@@ -3599,10 +3599,10 @@ public final class Scus94491BpeSegment {
     final int fileIndex;
     if(type != 0) {
       //LAB_8001ce44
-      fileIndex = 1298 + bobj.charIndex_272;
-    } else if(bobj.charIndex_272 != 0 || (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 == 0) {
+      fileIndex = 1298 + bobj.charId_272;
+    } else if(bobj.charId_272 != 0 || (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 == 0) {
       //LAB_8001ce18
-      fileIndex = 1307 + bobj.charIndex_272;
+      fileIndex = 1307 + bobj.charId_272;
     } else {
       fileIndex = 1307;
     }
@@ -3674,10 +3674,10 @@ public final class Scus94491BpeSegment {
     if(type == 0) {
       //LAB_8001d0e0
       loadedDrgnFiles_800bcf78.oru(0x40L);
-      if(bobj.charIndex_272 != 0 || (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 == 0) {
+      if(bobj.charId_272 != 0 || (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 == 0) {
         //LAB_8001d134
         // Regular dragoons
-        loadDrgnDir(0, 1317 + bobj.charIndex_272, Scus94491BpeSegment::FUN_8001e98c);
+        loadDrgnDir(0, 1317 + bobj.charId_272, Scus94491BpeSegment::FUN_8001e98c);
       } else {
         // Divine dragoon
         loadDrgnDir(0, 1328, Scus94491BpeSegment::FUN_8001e98c);

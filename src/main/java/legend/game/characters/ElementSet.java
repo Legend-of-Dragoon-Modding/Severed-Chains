@@ -46,7 +46,7 @@ public class ElementSet implements Iterable<Element> {
    * TODO remove this
    */
   @Deprecated
-  public void unpack(final int packed) {
+  public ElementSet unpack(final int packed) {
     this.clear();
 
     for(final RegistryId elementId : GameEngine.REGISTRIES.elements) {
@@ -56,6 +56,8 @@ public class ElementSet implements Iterable<Element> {
         this.add(element);
       }
     }
+
+    return this;
   }
 
   /**

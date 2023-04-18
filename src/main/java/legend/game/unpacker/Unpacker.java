@@ -69,9 +69,15 @@ public final class Unpacker {
     transformers.put(Unpacker::decompressDiscriminator, Unpacker::decompress);
     transformers.put(Unpacker::mrgDiscriminator, Unpacker::unmrg);
     transformers.put(Unpacker::deffDiscriminator, Unpacker::undeff);
+
+    transformers.put(Unpacker::engineOverlayDiscriminator, Unpacker::engineOverlayExtractor);
+
     transformers.put(Unpacker::drgn21_402_3_patcherDiscriminator, Unpacker::drgn21_402_3_patcher);
     transformers.put(Unpacker::drgn21_693_0_patcherDiscriminator, Unpacker::drgn21_693_0_patcher);
     transformers.put(Unpacker::drgn0_142_animPatcherDiscriminator, Unpacker::drgn0_142_animPatcher);
+
+    // Item and equipment tables
+    transformers.put(Unpacker::itemTableDiscriminator, Unpacker::itemTableExtractor);
 
     // Yes there are 3 different magma fish files to patch
     transformers.put(Unpacker::drgn0_3667_16_animPatcherDiscriminator, Unpacker::drgn0_3667_16_animPatcher);
@@ -516,6 +522,19 @@ public final class Unpacker {
     return files;
   }
 
+  private static boolean engineOverlayDiscriminator(final String name, final FileData data, final Set<String> flags) {
+    return "SCUS_944.91".equals(name) && !flags.contains(name);
+  }
+
+  private static Map<String, FileData> engineOverlayExtractor(final String name, final FileData data, final Set<String> flags) {
+    flags.add(name);
+
+    return Map.of(
+      name, data,
+      "lod_engine", data.slice(0xa00, 0x36228)
+    );
+  }
+
   /**
    * DRGN21.402.3 is a submap object script for the screen of the Dragon's Nest
    * with the weird plant you need to use the spring water on. That script has a
@@ -576,6 +595,23 @@ public final class Unpacker {
     newData[0xc] = 22;
 
     return Map.of(name, new FileData(newData));
+  }
+
+  private static boolean itemTableDiscriminator(final String name, final FileData data, final Set<String> flags) {
+    return "lod_engine".equals(name) && !flags.contains(name);
+  }
+
+  private static Map<String, FileData> itemTableExtractor(final String name, final FileData data, final Set<String> flags) {
+    flags.add(name);
+
+    final Map<String, FileData> files = new HashMap<>();
+    files.put(name, data);
+
+    for(int i = 0; i < 64; i++) {
+      files.put("items/%d.ditm".formatted(i), data.slice(0x3f2ac + i * 0xc, 0xc));
+    }
+
+    return files;
   }
 
   /**
@@ -838,6 +874,11 @@ public final class Unpacker {
     files.put("characters/rose/xp", new FileData(data.data(), 0x1823c, 61 * 4));
     files.put("characters/shana/xp", new FileData(data.data(), 0x18330, 61 * 4));
     files.put("characters/miranda/xp", new FileData(data.data(), 0x18330, 61 * 4));
+
+    for(int i = 0; i < 192; i++) {
+      files.put("equipment/%d.deqp".formatted(i), data.slice(0x16878 + i * 0x1c, 0x1c));
+    }
+
     return files;
   }
 

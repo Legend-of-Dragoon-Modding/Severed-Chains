@@ -96,11 +96,11 @@ public class PlayerBattleObject extends BattleObject27c {
 
   @Override
   public Element getElement() {
-    if(this.charIndex_272 == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0 && this.isDragoon()) { // Dart Divine Dragoon
+    if(this.charId_272 == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0 && this.isDragoon()) { // Dart Divine Dragoon
       return CoreMod.DIVINE_ELEMENT.get();
     }
 
-    return characterElements_800c706c[this.charIndex_272].get();
+    return characterElements_800c706c[this.charId_272].get();
   }
 
   @Override
@@ -154,7 +154,7 @@ public class PlayerBattleObject extends BattleObject27c {
       matk += spellStats_800fa0b8.get(this.spellId_4e).multi_04.get();
     } else {
       //LAB_800f2ef8
-      matk += this.item_d4.damage_05.get();
+      matk += this.item_d4.damage_05;
     }
 
     //LAB_800f2f04

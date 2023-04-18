@@ -314,7 +314,7 @@ public final class Bttl_800c {
     Arrays.setAll(floatingNumbers_800c6b5c, i -> new FloatingNumberC4());
   }
   public static final Pointer<CombatMenua4> combatMenu_800c6b60 = MEMORY.ref(4, 0x800c6b60L, Pointer.deferred(4, CombatMenua4::new));
-  public static final IntRef dragoonSpaceElementIndex_800c6b64 = MEMORY.ref(4, 0x800c6b64L, IntRef::new);
+  public static Element dragoonSpaceElement_800c6b64;
   public static final IntRef itemTargetType_800c6b68 = MEMORY.ref(4, 0x800c6b68L, IntRef::new);
   public static final Value _800c6b6c = MEMORY.ref(4, 0x800c6b6cL);
 
@@ -378,18 +378,14 @@ public final class Bttl_800c {
   /** TODO unknown size, maybe struct or array */
   public static final Value _800c6ecc = MEMORY.ref(1, 0x800c6eccL);
 
-  /** TODO unknown size, maybe struct or array */
-  public static final Value _800c6ef0 = MEMORY.ref(2, 0x800c6ef0L);
-
+  public static final ArrayRef<UnsignedShortRef> elements_800c6ef0 = MEMORY.ref(2, 0x800c6ef0L, ArrayRef.of(UnsignedShortRef.class, 10, 2, UnsignedShortRef::new));
   /** TODO unknown size, maybe struct or array */
   public static final Value _800c6f04 = MEMORY.ref(1, 0x800c6f04L);
 
   public static final ArrayRef<IntRef> melbuStageToMonsterNameIndices_800c6f30 = MEMORY.ref(4, 0x800c6f30L, ArrayRef.of(IntRef.class, 7, 4, IntRef::new));
   public static final Value _800c6f4c = MEMORY.ref(2, 0x800c6f4cL);
 
-  public static final ArrayRef<ArrayRef<UnsignedByteRef>> _800c6fec = MEMORY.ref(1, 0x800c6fecL, ArrayRef.of(ArrayRef.classFor(UnsignedByteRef.class), 9, 3, ArrayRef.of(UnsignedByteRef.class, 3, 1, UnsignedByteRef::new)));
-
-  public static final Value _800c7004 = MEMORY.ref(4, 0x800c7004L);
+  public static final ArrayRef<ArrayRef<UnsignedByteRef>> textboxColours_800c6fec = MEMORY.ref(1, 0x800c6fecL, ArrayRef.of(ArrayRef.classFor(UnsignedByteRef.class), 9, 3, ArrayRef.of(UnsignedByteRef.class, 3, 1, UnsignedByteRef::new)));
 
   public static final ArrayRef<ShortRef> _800c7014 = MEMORY.ref(2, 0x800c7014L, ArrayRef.of(ShortRef.class, 10, 2, ShortRef::new));
   public static final ArrayRef<UnsignedShortRef> _800c7028 = MEMORY.ref(2, 0x800c7028L, ArrayRef.of(UnsignedShortRef.class, 10, 2, UnsignedShortRef::new));
@@ -1162,7 +1158,7 @@ public final class Bttl_800c {
 
       //LAB_800c8104
       for(int i = 0; i < v0; i++) {
-        _800bc968.offset(i * 0x4L).setu(_8006e398.bobjIndices_eac[i].innerStruct_00.charIndex_272);
+        _800bc968.offset(i * 0x4L).setu(_8006e398.bobjIndices_eac[i].innerStruct_00.charId_272);
       }
 
       //LAB_800c8144
@@ -3112,7 +3108,7 @@ public final class Bttl_800c {
   @Method(0x800cccf4L)
   public static FlowControl FUN_800cccf4(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    script.params_20[1].set(bobj.charIndex_272);
+    script.params_20[1].set(bobj.charId_272);
     return FlowControl.CONTINUE;
   }
 
@@ -3238,7 +3234,7 @@ public final class Bttl_800c {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00;
 
     if(a0.params_20[1].get() != 0) {
-      final int charIndex = bobj.charIndex_272;
+      final int charIndex = bobj.charId_272;
       final CharacterData2c charData = gameState_800babc8.charData_32c[charIndex];
 
       final int additionIndex = charData.selectedAddition_19 - additionOffsets_8004f5ac.get(charIndex).get();
@@ -3355,7 +3351,7 @@ public final class Bttl_800c {
     final CombatantStruct1a8 combatant = getCombatant(script.params_20[1].get());
     bobj.combatant_144 = combatant;
     bobj.combatantIndex_26c = script.params_20[1].get();
-    bobj.charIndex_272 = combatant.charIndex_1a2;
+    bobj.charId_272 = combatant.charIndex_1a2;
     bobj._274 = _800c66d0.get();
     _800c66d0.incr();
     bobj.charSlot_276 = monsterCount_800c6768.get();

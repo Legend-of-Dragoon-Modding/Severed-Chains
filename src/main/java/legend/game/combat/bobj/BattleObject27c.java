@@ -155,7 +155,7 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
   public int animIndex_26e;
   public int animIndex_270;
   /** Also monster ID */
-  public int charIndex_272;
+  public int charId_272;
   public int _274;
   public int charSlot_276;
   /** Has model? Used to be used to free model, no longer used since it's managed by java */
@@ -186,6 +186,10 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
    * @param magicType item (0), spell (1)
    */
   public abstract int calculateMagicAttack(final BattleObject27c target, final int magicType);
+
+  public int applyPhysicalDamageMultipliers(final int damage) {
+    return damage;
+  }
 
   @Method(0x800f29d4L)
   public int applyDamageResistanceAndImmunity(final int damage, final AttackType attackType) {
@@ -292,18 +296,18 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
       case 98 -> this.speedUpTurns_c8;
       case 99 -> this.speedDownTurns_ca;
 
-      case 104 -> this.item_d4.target_00.get();
-      case 105 -> this.item_d4.element_01.get();
-      case 106 -> this.item_d4.damage_02.get();
+      case 104 -> this.item_d4.target_00;
+      case 105 -> this.item_d4.element_01.flag;
+      case 106 -> this.item_d4.damage_02;
 //      case 107 -> this.itemSpecial1_da;
 //      case 108 -> this.itemSpecial2_dc;
-      case 109 -> this.item_d4.damage_05.get();
-      case 110 -> this.item_d4.specialAmount_06.get();
-      case 111 -> this.item_d4.icon_07.get();
-      case 112 -> this.item_d4.status_08.get();
-      case 113 -> this.item_d4.percentage_09.get();
-      case 114 -> this.item_d4.uu2_0a.get();
-      case 115 -> this.item_d4.type_0b.get();
+      case 109 -> this.item_d4.damage_05;
+      case 110 -> this.item_d4.specialAmount_06;
+      case 111 -> this.item_d4.icon_07;
+      case 112 -> this.item_d4.status_08;
+      case 113 -> this.item_d4.percentage_09;
+      case 114 -> this.item_d4.uu2_0a;
+      case 115 -> this.item_d4.type_0b;
       case 116 -> this._ec;
       case 117 -> this._ee;
       case 118 -> this._f0;

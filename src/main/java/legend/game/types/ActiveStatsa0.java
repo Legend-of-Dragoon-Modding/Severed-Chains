@@ -1,177 +1,227 @@
 package legend.game.types;
 
-import legend.core.memory.Value;
-import legend.core.memory.types.ArrayRef;
-import legend.core.memory.types.ByteRef;
-import legend.core.memory.types.MemoryRef;
-import legend.core.memory.types.ShortRef;
-import legend.core.memory.types.UnsignedByteRef;
-import legend.core.memory.types.UnsignedIntRef;
-import legend.core.memory.types.UnsignedShortRef;
+import legend.game.characters.Element;
+import legend.game.characters.ElementSet;
 
-public class ActiveStatsa0 implements MemoryRef {
-  private final Value ref;
+public class ActiveStatsa0 {
+  public int xp_00;
+  /** ushort */
+  public int hp_04;
+  /** ushort */
+  public int mp_06;
+  /** ushort */
+  public int sp_08;
+  /** ushort */
+  public int dxp_0a;
+  /** Status, dragoon, etc. (ushort) */
+  public int flags_0c;
+  /** ubyte */
+  public int level_0e;
+  /** ubyte */
+  public int dlevel_0f;
 
-  public final UnsignedIntRef xp_00;
-  public final UnsignedShortRef hp_04;
-  public final UnsignedShortRef mp_06;
-  public final UnsignedShortRef sp_08;
-  public final UnsignedShortRef dxp_0a;
-  /** Status, dragoon, etc. */
-  public final UnsignedShortRef flags_0c;
-  public final UnsignedByteRef level_0e;
-  public final UnsignedByteRef dlevel_0f;
+  /** ubyte */
+  public final int[] equipment_30 = new int[5];
+  /** Absolute addition index into the table of every addition for every character (byte) */
+  public int selectedAddition_35;
+  /** ubyte */
+  public final int[] additionLevels_36 = new int[8];
+  /** ubyte */
+  public final int[] additionXp_3e = new int[8];
+  /** ushort */
+  public int physicalImmunity_46;
+  /** ushort */
+  public int magicalImmunity_48;
+  /** ushort */
+  public int physicalResistance_4a;
+  /** short */
+  public int spMultiplier_4c;
+  /** short */
+  public int spPerPhysicalHit_4e;
+  /** short */
+  public int mpPerPhysicalHit_50;
+  /** short */
+  public int spPerMagicalHit_52;
+  /** short */
+  public int mpPerMagicalHit_54;
+  /** short */
+  public int _56;
+  /** short */
+  public int hpRegen_58;
+  /** short */
+  public int mpRegen_5a;
+  /** short */
+  public int spRegen_5c;
+  /** short */
+  public int revive_5e;
+  /** ushort */
+  public int magicalResistance_60;
+  public short hpMulti_62;
+  public short mpMulti_64;
+  /** ushort */
+  public int maxHp_66;
+  /** byte */
+  public int addition_68;
+  /** ubyte */
+  public int bodySpeed_69;
+  /** ubyte */
+  public int bodyAttack_6a;
+  /** ubyte */
+  public int bodyMagicAttack_6b;
+  /** ubyte */
+  public int bodyDefence_6c;
+  /** ubyte */
+  public int bodyMagicDefence_6d;
+  /** ushort */
+  public int maxMp_6e;
+  /** byte */
+  public int spellId_70;
+  /** ubyte */
+  public int _71;
+  /** ubyte */
+  public int dragoonAttack_72;
+  /** ubyte */
+  public int dragoonMagicAttack_73;
+  /** ubyte */
+  public int dragoonDefence_74;
+  /** ubyte */
+  public int dragoonMagicDefence_75;
+  /** ubyte */
+  public int specialEffectFlag_76;
+  /** ubyte */
+  public int _77;
+  /** ubyte */
+  public int _78;
+  /** ubyte */
+  public int _79;
+  /** ubyte */
+  public Element elementFlag_7a;
+  /** ubyte */
+  public int _7b;
+  /** ubyte */
+  public final ElementSet elementalResistanceFlag_7c = new ElementSet();
+  /** ubyte */
+  public final ElementSet elementalImmunityFlag_7d = new ElementSet();
+  /** ubyte */
+  public int statusResistFlag_7e;
+  /** ubyte */
+  public int _7f;
+  /** ubyte */
+  public int _80;
+  /** ubyte */
+  public int special1_81;
+  /** ubyte */
+  public int special2_82;
+  /** ubyte */
+  public int _83;
+  /** byte */
+  public int _84;
 
-  public final ArrayRef<UnsignedByteRef> equipment_30;
-  /** Absolute addition index into the table of every addition for every character */
-  public final ByteRef selectedAddition_35;
-  public final ArrayRef<UnsignedByteRef> additionLevels_36;
-  public final ArrayRef<UnsignedByteRef> additionXp_3e;
-  public final UnsignedShortRef physicalImmunity_46;
-  public final UnsignedShortRef magicalImmunity_48;
-  public final UnsignedShortRef physicalResistance_4a;
-  public final ShortRef spMultiplier_4c;
-  public final ShortRef spPerPhysicalHit_4e;
-  public final ShortRef mpPerPhysicalHit_50;
-  public final ShortRef spPerMagicalHit_52;
-  public final ShortRef mpPerMagicalHit_54;
-  public final ShortRef _56;
-  public final ShortRef hpRegen_58;
-  public final ShortRef mpRegen_5a;
-  public final ShortRef spRegen_5c;
-  public final ShortRef revive_5e;
-  public final UnsignedShortRef magicalResistance_60;
-  public final ShortRef hpMulti_62;
-  public final ShortRef mpMulti_64;
-  public final UnsignedShortRef maxHp_66;
-  public final ByteRef addition_68;
-  public final UnsignedByteRef bodySpeed_69;
-  public final UnsignedByteRef bodyAttack_6a;
-  public final UnsignedByteRef bodyMagicAttack_6b;
-  public final UnsignedByteRef bodyDefence_6c;
-  public final UnsignedByteRef bodyMagicDefence_6d;
-  public final UnsignedShortRef maxMp_6e;
-  public final ByteRef spellIndex_70;
-  public final UnsignedByteRef _71;
-  public final UnsignedByteRef dragoonAttack_72;
-  public final UnsignedByteRef dragoonMagicAttack_73;
-  public final UnsignedByteRef dragoonDefence_74;
-  public final UnsignedByteRef dragoonMagicDefence_75;
-  public final UnsignedByteRef specialEffectFlag_76;
-  public final UnsignedByteRef _77;
-  public final UnsignedByteRef _78;
-  public final UnsignedByteRef _79;
-  public final UnsignedByteRef elementFlag_7a;
-  public final UnsignedByteRef _7b;
-  public final UnsignedByteRef elementalResistanceFlag_7c;
-  public final UnsignedByteRef elementalImmunityFlag_7d;
-  public final UnsignedByteRef statusResistFlag_7e;
-  public final UnsignedByteRef _7f;
-  public final UnsignedByteRef _80;
-  public final UnsignedByteRef special1_81;
-  public final UnsignedByteRef special2_82;
-  public final UnsignedByteRef _83;
-  public final ByteRef _84;
+  /** short */
+  public int gearSpeed_86;
+  /** short */
+  public int gearAttack_88;
+  /** short */
+  public int gearMagicAttack_8a;
+  /** short */
+  public int gearDefence_8c;
+  /** short */
+  public int gearMagicDefence_8e;
+  /** short */
+  public int attackHit_90;
+  /** short */
+  public int magicHit_92;
+  /** short */
+  public int attackAvoid_94;
+  /** short */
+  public int magicAvoid_96;
+  /** ubyte */
+  public int onHitStatusChance_98;
+  /** ubyte */
+  public int _99;
+  /** ubyte */
+  public int _9a;
+  /** ubyte */
+  public int onHitStatus_9b;
+  /** ushort */
+  public int _9c;
+  /** ubyte */
+  public int additionSpMultiplier_9e;
+  /** ubyte */
+  public int additionDamageMultiplier_9f;
 
-  public final ShortRef gearSpeed_86;
-  public final ShortRef gearAttack_88;
-  public final ShortRef gearMagicAttack_8a;
-  public final ShortRef gearDefence_8c;
-  public final ShortRef gearMagicDefence_8e;
-  public final ShortRef attackHit_90;
-  public final ShortRef magicHit_92;
-  public final ShortRef attackAvoid_94;
-  public final ShortRef magicAvoid_96;
-  public final UnsignedByteRef onHitStatusChance_98;
-  public final UnsignedByteRef _99;
-  public final UnsignedByteRef _9a;
-  public final UnsignedByteRef onHitStatus_9b;
-  public final UnsignedShortRef _9c;
-  public final UnsignedByteRef additionSpMultiplier_9e;
-  public final UnsignedByteRef additionDamageMultiplier_9f;
+  public ActiveStatsa0() {
 
-  public ActiveStatsa0(final Value ref) {
-    this.ref = ref;
-
-    this.xp_00 = ref.offset(4, 0x00L).cast(UnsignedIntRef::new);
-    this.hp_04 = ref.offset(2, 0x04L).cast(UnsignedShortRef::new);
-    this.mp_06 = ref.offset(2, 0x06L).cast(UnsignedShortRef::new);
-    this.sp_08 = ref.offset(2, 0x08L).cast(UnsignedShortRef::new);
-    this.dxp_0a = ref.offset(2, 0x0aL).cast(UnsignedShortRef::new);
-    this.flags_0c = ref.offset(2, 0x0cL).cast(UnsignedShortRef::new);
-    this.level_0e = ref.offset(1, 0x0eL).cast(UnsignedByteRef::new);
-    this.dlevel_0f = ref.offset(1, 0x0fL).cast(UnsignedByteRef::new);
-
-    this.equipment_30 = ref.offset(1, 0x30L).cast(ArrayRef.of(UnsignedByteRef.class, 5, 1, UnsignedByteRef::new));
-    this.selectedAddition_35 = ref.offset(1, 0x35L).cast(ByteRef::new);
-    this.additionLevels_36 = ref.offset(1, 0x36L).cast(ArrayRef.of(UnsignedByteRef.class, 8, 1, UnsignedByteRef::new));
-    this.additionXp_3e = ref.offset(1, 0x3eL).cast(ArrayRef.of(UnsignedByteRef.class, 8, 1, UnsignedByteRef::new));
-    this.physicalImmunity_46 = ref.offset(2, 0x46L).cast(UnsignedShortRef::new);
-    this.magicalImmunity_48 = ref.offset(2, 0x48L).cast(UnsignedShortRef::new);
-    this.physicalResistance_4a = ref.offset(2, 0x4aL).cast(UnsignedShortRef::new);
-    this.spMultiplier_4c = ref.offset(2, 0x4cL).cast(ShortRef::new);
-    this.spPerPhysicalHit_4e = ref.offset(2, 0x4eL).cast(ShortRef::new);
-    this.mpPerPhysicalHit_50 = ref.offset(2, 0x50L).cast(ShortRef::new);
-    this.spPerMagicalHit_52 = ref.offset(2, 0x52L).cast(ShortRef::new);
-    this.mpPerMagicalHit_54 = ref.offset(2, 0x54L).cast(ShortRef::new);
-    this._56 = ref.offset(2, 0x56L).cast(ShortRef::new);
-    this.hpRegen_58 = ref.offset(2, 0x58L).cast(ShortRef::new);
-    this.mpRegen_5a = ref.offset(2, 0x5aL).cast(ShortRef::new);
-    this.spRegen_5c = ref.offset(2, 0x5cL).cast(ShortRef::new);
-    this.revive_5e = ref.offset(2, 0x5eL).cast(ShortRef::new);
-    this.magicalResistance_60 = ref.offset(2, 0x60L).cast(UnsignedShortRef::new);
-    this.hpMulti_62 = ref.offset(2, 0x62L).cast(ShortRef::new);
-    this.mpMulti_64 = ref.offset(2, 0x64L).cast(ShortRef::new);
-    this.maxHp_66 = ref.offset(2, 0x66L).cast(UnsignedShortRef::new);
-    this.addition_68 = ref.offset(1, 0x68L).cast(ByteRef::new);
-    this.bodySpeed_69 = ref.offset(1, 0x69L).cast(UnsignedByteRef::new);
-    this.bodyAttack_6a = ref.offset(1, 0x6aL).cast(UnsignedByteRef::new);
-    this.bodyMagicAttack_6b = ref.offset(1, 0x6bL).cast(UnsignedByteRef::new);
-    this.bodyDefence_6c = ref.offset(1, 0x6cL).cast(UnsignedByteRef::new);
-    this.bodyMagicDefence_6d = ref.offset(1, 0x6dL).cast(UnsignedByteRef::new);
-    this.maxMp_6e = ref.offset(2, 0x6eL).cast(UnsignedShortRef::new);
-    this.spellIndex_70 = ref.offset(1, 0x70L).cast(ByteRef::new);
-    this._71 = ref.offset(1, 0x71L).cast(UnsignedByteRef::new);
-    this.dragoonAttack_72 = ref.offset(1, 0x72L).cast(UnsignedByteRef::new);
-    this.dragoonMagicAttack_73 = ref.offset(1, 0x73L).cast(UnsignedByteRef::new);
-    this.dragoonDefence_74 = ref.offset(1, 0x74L).cast(UnsignedByteRef::new);
-    this.dragoonMagicDefence_75 = ref.offset(1, 0x75L).cast(UnsignedByteRef::new);
-    this.specialEffectFlag_76 = ref.offset(1, 0x76L).cast(UnsignedByteRef::new);
-    this._77 = ref.offset(1, 0x77L).cast(UnsignedByteRef::new);
-    this._78 = ref.offset(1, 0x78L).cast(UnsignedByteRef::new);
-    this._79 = ref.offset(1, 0x79L).cast(UnsignedByteRef::new);
-    this.elementFlag_7a = ref.offset(1, 0x7aL).cast(UnsignedByteRef::new);
-    this._7b = ref.offset(1, 0x7bL).cast(UnsignedByteRef::new);
-    this.elementalResistanceFlag_7c = ref.offset(1, 0x7cL).cast(UnsignedByteRef::new);
-    this.elementalImmunityFlag_7d = ref.offset(1, 0x7dL).cast(UnsignedByteRef::new);
-    this.statusResistFlag_7e = ref.offset(1, 0x7eL).cast(UnsignedByteRef::new);
-    this._7f = ref.offset(1, 0x7fL).cast(UnsignedByteRef::new);
-    this._80 = ref.offset(1, 0x80L).cast(UnsignedByteRef::new);
-    this.special1_81 = ref.offset(1, 0x81L).cast(UnsignedByteRef::new);
-    this.special2_82 = ref.offset(1, 0x82L).cast(UnsignedByteRef::new);
-    this._83 = ref.offset(1, 0x83L).cast(UnsignedByteRef::new);
-    this._84 = ref.offset(1, 0x84L).cast(ByteRef::new);
-
-    this.gearSpeed_86 = ref.offset(2, 0x86L).cast(ShortRef::new);
-    this.gearAttack_88 = ref.offset(2, 0x88L).cast(ShortRef::new);
-    this.gearMagicAttack_8a = ref.offset(2, 0x8aL).cast(ShortRef::new);
-    this.gearDefence_8c = ref.offset(2, 0x8cL).cast(ShortRef::new);
-    this.gearMagicDefence_8e = ref.offset(2, 0x8eL).cast(ShortRef::new);
-    this.attackHit_90 = ref.offset(2, 0x90L).cast(ShortRef::new);
-    this.magicHit_92 = ref.offset(2, 0x92L).cast(ShortRef::new);
-    this.attackAvoid_94 = ref.offset(2, 0x94L).cast(ShortRef::new);
-    this.magicAvoid_96 = ref.offset(2, 0x96L).cast(ShortRef::new);
-    this.onHitStatusChance_98 = ref.offset(1, 0x98L).cast(UnsignedByteRef::new);
-    this._99 = ref.offset(1, 0x99L).cast(UnsignedByteRef::new);
-    this._9a = ref.offset(1, 0x9aL).cast(UnsignedByteRef::new);
-    this.onHitStatus_9b = ref.offset(1, 0x9bL).cast(UnsignedByteRef::new);
-    this._9c = ref.offset(2, 0x9cL).cast(UnsignedShortRef::new);
-    this.additionSpMultiplier_9e = ref.offset(1, 0x9eL).cast(UnsignedByteRef::new);
-    this.additionDamageMultiplier_9f = ref.offset(1, 0x9fL).cast(UnsignedByteRef::new);
   }
 
-  @Override
-  public long getAddress() {
-    return this.ref.getAddress();
+  public ActiveStatsa0(final ActiveStatsa0 other) {
+    this.xp_00 = other.xp_00;
+    this.hp_04 = other.hp_04;
+    this.mp_06 = other.mp_06;
+    this.sp_08 = other.sp_08;
+    this.dxp_0a = other.dxp_0a;
+    this.flags_0c = other.flags_0c;
+    this.level_0e = other.level_0e;
+    this.dlevel_0f = other.dlevel_0f;
+    this.selectedAddition_35 = other.selectedAddition_35;
+    this.physicalImmunity_46 = other.physicalImmunity_46;
+    this.magicalImmunity_48 = other.magicalImmunity_48;
+    this.physicalResistance_4a = other.physicalResistance_4a;
+    this.spMultiplier_4c = other.spMultiplier_4c;
+    this.spPerPhysicalHit_4e = other.spPerPhysicalHit_4e;
+    this.mpPerPhysicalHit_50 = other.mpPerPhysicalHit_50;
+    this.spPerMagicalHit_52 = other.spPerMagicalHit_52;
+    this.mpPerMagicalHit_54 = other.mpPerMagicalHit_54;
+    this._56 = other._56;
+    this.hpRegen_58 = other.hpRegen_58;
+    this.mpRegen_5a = other.mpRegen_5a;
+    this.spRegen_5c = other.spRegen_5c;
+    this.revive_5e = other.revive_5e;
+    this.magicalResistance_60 = other.magicalResistance_60;
+    this.hpMulti_62 = other.hpMulti_62;
+    this.mpMulti_64 = other.mpMulti_64;
+    this.maxHp_66 = other.maxHp_66;
+    this.addition_68 = other.addition_68;
+    this.bodySpeed_69 = other.bodySpeed_69;
+    this.bodyAttack_6a = other.bodyAttack_6a;
+    this.bodyMagicAttack_6b = other.bodyMagicAttack_6b;
+    this.bodyDefence_6c = other.bodyDefence_6c;
+    this.bodyMagicDefence_6d = other.bodyMagicDefence_6d;
+    this.maxMp_6e = other.maxMp_6e;
+    this.spellId_70 = other.spellId_70;
+    this._71 = other._71;
+    this.dragoonAttack_72 = other.dragoonAttack_72;
+    this.dragoonMagicAttack_73 = other.dragoonMagicAttack_73;
+    this.dragoonDefence_74 = other.dragoonDefence_74;
+    this.dragoonMagicDefence_75 = other.dragoonMagicDefence_75;
+    this.specialEffectFlag_76 = other.specialEffectFlag_76;
+    this._77 = other._77;
+    this._78 = other._78;
+    this._79 = other._79;
+    this.elementFlag_7a = other.elementFlag_7a;
+    this._7b = other._7b;
+    this.statusResistFlag_7e = other.statusResistFlag_7e;
+    this._7f = other._7f;
+    this._80 = other._80;
+    this.special1_81 = other.special1_81;
+    this.special2_82 = other.special2_82;
+    this._83 = other._83;
+    this._84 = other._84;
+    this.gearSpeed_86 = other.gearSpeed_86;
+    this.gearAttack_88 = other.gearAttack_88;
+    this.gearMagicAttack_8a = other.gearMagicAttack_8a;
+    this.gearDefence_8c = other.gearDefence_8c;
+    this.gearMagicDefence_8e = other.gearMagicDefence_8e;
+    this.attackHit_90 = other.attackHit_90;
+    this.magicHit_92 = other.magicHit_92;
+    this.attackAvoid_94 = other.attackAvoid_94;
+    this.magicAvoid_96 = other.magicAvoid_96;
+    this.onHitStatusChance_98 = other.onHitStatusChance_98;
+    this._99 = other._99;
+    this._9a = other._9a;
+    this.onHitStatus_9b = other.onHitStatus_9b;
+    this._9c = other._9c;
+    this.additionSpMultiplier_9e = other.additionSpMultiplier_9e;
+    this.additionDamageMultiplier_9f = other.additionDamageMultiplier_9f;
   }
 }

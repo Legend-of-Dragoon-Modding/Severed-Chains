@@ -271,10 +271,6 @@ public class Memory {
     return constructor.apply(this.ref(byteSize, address));
   }
 
-  public TemporaryReservation temp() {
-    return this.temp(4);
-  }
-
   public TemporaryReservation temp(final int length) {
     return new TemporaryReservation(this.temp.allocate(length), length);
   }
