@@ -10,9 +10,9 @@ import java.util.List;
 
 public final class SoundFactory {
 
-  static BackgroundMusic backgroundMusic(final String path) {
+  static BackgroundMusic backgroundMusic(final int fileIndex) {
     //TODO use Scus94491BpeSegment#loadDrgnDir
-    final List<FileData> files = Unpacker.loadDirectory(path);
+    final List<FileData> files = Unpacker.loadDirectory("SECT/DRGN0.BIN/" + fileIndex);
 
     final SshdParser sshdParser;
     final Sssq sssq;
@@ -23,9 +23,28 @@ public final class SoundFactory {
         sssq = new Sssq(files.get(1), sshdParser.createSoundFont(files.get(3)));
       }
       case 5 -> {
+        final int soundbankCount = files.get(1).readUShort(0);
+        final FileData[] soundbanks = new FileData[soundbankCount];
+
+        soundbanks[0] = files.get(4);
+
+        int totalSoundbankSize = soundbanks[0].size();
+        for(int i = 1; i < soundbankCount; i++) {
+          soundbanks[i] = Unpacker.loadFile("SECT/DRGN0.BIN/" + (fileIndex + i));
+          totalSoundbankSize += soundbanks[i].size();
+        }
+
+        final byte[] allSoundbanks = new byte[totalSoundbankSize];
+        int offset = 0;
+
+        for(final FileData soundbank : soundbanks) {
+          soundbank.copyFrom(0, allSoundbanks, offset, soundbank.size());
+          offset += soundbank.size();
+        }
+
         sshdParser = new SshdParser(files.get(3));
 
-        sssq = new Sssq(files.get(2), sshdParser.createSoundFont(files.get(4)));
+        sssq = new Sssq(files.get(2), sshdParser.createSoundFont(new FileData(allSoundbanks)));
       }
       default -> throw new RuntimeException("Unknown BGM type. File count " + files.size());
     }

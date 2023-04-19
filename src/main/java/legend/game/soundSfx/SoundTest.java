@@ -9,7 +9,7 @@ public final class SoundTest {
 
     final AudioThread audioThread = new AudioThread(100, true, 24);
 
-    final BackgroundMusic bgm = SoundFactory.backgroundMusic("SECT\\DRGN0.BIN\\5820");
+    final BackgroundMusic bgm = SoundFactory.backgroundMusic(5815);
 
     final Thread spuThread = new Thread(audioThread);
     spuThread.setName("SPU");
