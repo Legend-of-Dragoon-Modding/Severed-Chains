@@ -5542,20 +5542,23 @@ public final class SEffe {
       final SVECTOR sp0x38 = new SVECTOR();
       final SVECTOR sp0x40 = new SVECTOR();
 
-      int a1 = s0 / 5;
       final int a0 = s0 % 5;
       int v1 = effect._10.get();
       int v0 = a0 * v1 / 5 - v1 / 2;
       sp0x28.setZ((short)v0);
       sp0x38.setZ((short)v0);
+
+      int a1 = s0 / 5;
       v1 = effect._14.get();
       v0 = a1 * v1 / 3 - v1 / 2;
       sp0x28.setY((short)v0);
       sp0x30.setY((short)v0);
+
       v1 = effect._10.get();
       v0 = (a0 + 1) * v1 / 5 - v1 / 2;
       sp0x30.setZ((short)v0);
       sp0x40.setZ((short)v0);
+
       v1 = effect._14.get();
       v0 = (a1 + 1) * v1 / 3 - v1 / 2;
       sp0x38.setY((short)v0);
@@ -5570,9 +5573,9 @@ public final class SEffe {
       if(effect._10.get() == 0) {
         //LAB_8010bd08
         final int sp8c = (int)CPU.CFC2(26);
-        a1 = (z << 12) * 4;
-        effect._10.set(effect._04.get() * a1 / sp8c >>> 12);
-        effect._14.set(sp8c / (effect._08.get() * a1) >>> 12);
+        final long zShift = z << 14;
+        effect._10.set((int)(effect._04.get() * zShift / sp8c >>> 12));
+        effect._14.set((int)(effect._08.get() * zShift / sp8c >>> 12));
         break;
       }
 
@@ -7733,6 +7736,7 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
+  /* related to rotation scaling */
   @Method(0x80112aa4L)
   public static FlowControl FUN_80112aa4(final RunningScript<?> script) {
     final EffectManagerData6c s0 = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
