@@ -42,8 +42,6 @@ final class BufferedSound {
 
     alGenBuffers(this.buffers);
 
-    this.bufferSamples(new short[this.bufferSize]);
-
     alSourcef(this.sourceId, AL_GAIN, 0.3f); //TODO actual volume control
 
   }
@@ -60,8 +58,6 @@ final class BufferedSound {
   }
 
   private void bufferSamples(final short[] pcm) {
-    this.processBuffers();
-
     final int bufferId = this.buffers[this.bufferIndex++];
     alBufferData(bufferId, this.format, pcm, 44_100);
     alSourceQueueBuffers(this.sourceId, bufferId);

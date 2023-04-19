@@ -81,11 +81,14 @@ public class AudioThread implements Runnable {
     while(this.running) {
       while(this.paused) {
         try {
-          //TODO Pause all sources
           this.wait();
         } catch(final InterruptedException e) {
 
         }
+      }
+
+      for(final Voice voice : this.voicePool) {
+        voice.processBuffers();
       }
 
       this.tick();

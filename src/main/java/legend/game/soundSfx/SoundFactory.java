@@ -33,7 +33,7 @@ public final class SoundFactory {
     return new BackgroundMusic(sssq);
   }
 
-  static SoundEffect soundEffect(final String path) {
+  static BackgroundMusic soundEffect(final String path) {
     //TODO use Scus94491BpeSegment#loadDrgnDir
     final List<FileData> files = Unpacker.loadDirectory(path);
 
@@ -43,13 +43,22 @@ public final class SoundFactory {
 
     final Sssq sssq = sshdParser.getSssq(soundFont);
 
-    return new SoundEffect();
+    return new BackgroundMusic(sssq);
   }
 
 
   private static class SshdParser {
+    /**
+     * <ul>
+     *   <li>Index 0 - Instruments</li>
+     *   <li>Index 1 - Volume Ramp??</li>
+     *   <li>Index 2 - Breath Control wave</li>
+     *   <li>Index 3 - Multi-Sequence</li>
+     *   <li>Index 4 - Channels + Instruments (SFX)</li>
+     * </ul>
+     */
     private final Int2ObjectMap<FileData> subfiles = new Int2ObjectArrayMap<>();
-    private int instrumentsSubfileIndex;
+    private int instrumentsSubfileIndex = 0;
 
 
     SshdParser(final FileData sshdData) {
@@ -73,8 +82,12 @@ public final class SoundFactory {
     }
 
     private SoundFont createSoundFont(final FileData soundBankData) {
+      if(this.subfiles.containsKey(0)) {
+        //TODO should include volume ramp?? and breath control wave
+        return new SoundFont(this.subfiles.get(0), new SoundBank(soundBankData));
+      }
 
-      return new SoundFont(this.subfiles.get(this.instrumentsSubfileIndex), new SoundBank(soundBankData));
+      return new SoundFont(this.subfiles.get(4).slice(0x190), new SoundBank(soundBankData));
     }
   }
 }

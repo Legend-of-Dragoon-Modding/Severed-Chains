@@ -22,7 +22,12 @@ final class Sequence {
     }
 
     switch(this.previousCommand.command) {
-      case KEY_OFF, KEY_ON, POLYPHONIC_KEY_PRESSURE, CONTROL_CHANGE -> {
+      case POLYPHONIC_KEY_PRESSURE -> {
+        this.previousCommand.value1 = this.sequenceData.readUByte(this.offset++);
+        this.previousCommand.value2 = this.sequenceData.readUByte(this.offset++);
+        this.offset++;
+      }
+      case KEY_OFF, KEY_ON, CONTROL_CHANGE -> {
         this.previousCommand.value1 = this.sequenceData.readUByte(this.offset++);
         this.previousCommand.value2 = this.sequenceData.readUByte(this.offset++);
       }
@@ -45,22 +50,25 @@ final class Sequence {
     final int sequenceTrackUpperBound = data.readUShort(0);
     final Sequence[][] sequences = new Sequence[sequenceTrackUpperBound + 1][];
 
-    int nextTrackOffset = data.size();
+    int trackEnd = data.size();
+
     for(int sequenceTrack = sequenceTrackUpperBound; sequenceTrack >= 0; sequenceTrack--) {
-      int nextSequenceOffset = nextTrackOffset;
+      final int trackStart = data.readUShort(2 + sequenceTrack * 2);
 
-      nextTrackOffset = data.readUShort(2 + sequenceTrack * 2);
+      int sequenceEnd = trackEnd;
 
-      final int sequenceUpperBound = data.readUShort(nextTrackOffset);
+      final int sequenceUpperBound = data.readUShort(trackStart);
       sequences[sequenceTrack] = new Sequence[sequenceUpperBound + 1];
 
       for(int sequence = sequenceUpperBound; sequence >= 0; sequence--) {
-        final int sequenceOffset = data.readUShort(nextSequenceOffset + 2 + sequence * 2);
+        final int sequenceStart = data.readUShort(trackStart + 2 + sequence * 2);
 
-        sequences[sequenceTrack][sequence] = new Sequence(data.slice(sequenceOffset, nextSequenceOffset - sequenceOffset));
+        sequences[sequenceTrack][sequence] = new Sequence(data.slice(sequenceStart, sequenceEnd - sequenceStart));
 
-        nextSequenceOffset = sequenceOffset;
+        sequenceEnd = sequenceStart;
       }
+
+      trackEnd = sequenceEnd;
     }
 
     return sequences;
