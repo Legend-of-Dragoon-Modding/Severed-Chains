@@ -13,7 +13,14 @@ final class Instrument {
   private final int startingKey;
 
   Instrument(final FileData data, final SoundBank soundBank) {
-    final int layerCount = (data.readUByte(0) & 0x7f) + 1;
+    final int layerCountByte = (data.readUByte(0));
+    final int layerCount;
+    if(layerCountByte != 0xff) {
+      layerCount = (layerCountByte & 0x7f) + 1;
+    } else {
+      layerCount = (data.size() - 8) / 16;
+    }
+
     this.playsMultipleLayers = (data.readUByte(0) & 0x80) != 0;
     this.volume = data.readUByte(1);
 
@@ -22,7 +29,7 @@ final class Instrument {
     this.startingKey = data.readUByte(6);
 
     this.layers = new InstrumentLayer[layerCount];
-    for(int layer = 0; layer < layerCount; layer++) {
+    for(int layer = 0; layer < this.layers.length; layer++) {
       this.layers[layer] = new InstrumentLayer(data.slice(8 + layer * 16, 16), soundBank);
     }
   }
