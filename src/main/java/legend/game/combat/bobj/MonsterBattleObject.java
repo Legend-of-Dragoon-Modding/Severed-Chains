@@ -51,8 +51,8 @@ public class MonsterBattleObject extends BattleObject27c {
   }
 
   @Override
-  public Element getAttackElement() {
-    return Element.fromFlag(spellStats_800fa0b8.get(this.spellId_4e).element_08.get());
+  public ElementSet getAttackElements() {
+    return new ElementSet().unpack(spellStats_800fa0b8.get(this.spellId_4e).element_08.get());
   }
 
   @Override

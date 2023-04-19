@@ -191,7 +191,6 @@ import static legend.game.Scus94491BpeSegment_800b._800beb98;
 import static legend.game.Scus94491BpeSegment_800b._800bed28;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
-import static legend.game.Scus94491BpeSegment_800b.equipmentStats_800be5d8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.hasNoEncounters_800bed58;
 import static legend.game.Scus94491BpeSegment_800b.inventoryMenuState_800bdc28;
@@ -1235,7 +1234,7 @@ public final class Scus94491BpeSegment_8002 {
       case INIT_SAVE_GAME_MENU_16 -> initMenu(WhichMenu.RENDER_SAVE_GAME_MENU_19, () -> new SaveGameScreen(() -> whichMenu_800bdc38 = WhichMenu.UNLOAD_SAVE_GAME_MENU_20));
       case INIT_NEW_CAMPAIGN_MENU -> initMenu(WhichMenu.RENDER_NEW_CAMPAIGN_MENU, NewCampaignScreen::new);
       case INIT_CHAR_SWAP_MENU_21 -> {
-        loadCharacterStats(0);
+        loadCharacterStats();
         cacheCharacterSlots();
         initMenu(WhichMenu.RENDER_CHAR_SWAP_MENU_24, () -> new CharSwapScreen(() -> whichMenu_800bdc38 = WhichMenu.UNLOAD_CHAR_SWAP_MENU_25));
       }
@@ -1469,7 +1468,7 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80022bec
-    loadCharacterStats(0);
+    loadCharacterStats();
 
     //LAB_80022bf8
     return ret;
@@ -1506,7 +1505,7 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80022cb4
-    loadCharacterStats(0);
+    loadCharacterStats();
 
     //LAB_80022cc0
     return ret;
@@ -4710,22 +4709,22 @@ public final class Scus94491BpeSegment_8002 {
         stats.additionXp_3e[i] = 0;
       }
 
-      stats.physicalImmunity_46 = 0;
-      stats.magicalImmunity_48 = 0;
-      stats.physicalResistance_4a = 0;
-      stats.spMultiplier_4c = 0;
-      stats.spPerPhysicalHit_4e = 0;
-      stats.mpPerPhysicalHit_50 = 0;
-      stats.spPerMagicalHit_52 = 0;
-      stats.mpPerMagicalHit_54 = 0;
-      stats._56 = 0;
-      stats.hpRegen_58 = 0;
-      stats.mpRegen_5a = 0;
-      stats.spRegen_5c = 0;
-      stats.revive_5e = 0;
-      stats.magicalResistance_60 = 0;
-      stats.hpMulti_62 = 0;
-      stats.mpMulti_64 = 0;
+      stats.equipmentPhysicalImmunity_46 = false;
+      stats.equipmentMagicalImmunity_48 = false;
+      stats.equipmentPhysicalResistance_4a = false;
+      stats.equipmentSpMultiplier_4c = 0;
+      stats.equipmentSpPerPhysicalHit_4e = 0;
+      stats.equipmentMpPerPhysicalHit_50 = 0;
+      stats.equipmentSpPerMagicalHit_52 = 0;
+      stats.equipmentMpPerMagicalHit_54 = 0;
+      stats.equipmentSpecial2Flag80_56 = 0;
+      stats.equipmentHpRegen_58 = 0;
+      stats.equipmentMpRegen_5a = 0;
+      stats.equipmentSpRegen_5c = 0;
+      stats.equipmentRevive_5e = 0;
+      stats.equipmentMagicalResistance_60 = false;
+      stats.equipmentHpMulti_62 = 0;
+      stats.equipmentMpMulti_64 = 0;
       stats.maxHp_66 = 0;
       stats.addition_68 = 0;
       stats.bodySpeed_69 = 0;
@@ -4741,55 +4740,47 @@ public final class Scus94491BpeSegment_8002 {
       stats.dragoonDefence_74 = 0;
       stats.dragoonMagicDefence_75 = 0;
 
-      FUN_8002a86c(charIndex);
+      clearEquipmentStats(charIndex);
 
-      stats._9c = 0;
+      stats.addition_00_9c = 0;
       stats.additionSpMultiplier_9e = 0;
       stats.additionDamageMultiplier_9f = 0;
     }
 
-    clearCurrentEquip();
     _800be5d0.setu(0);
   }
 
   @Method(0x8002a86cL)
-  public static void FUN_8002a86c(final int charIndex) {
+  public static void clearEquipmentStats(final int charIndex) {
     final ActiveStatsa0 stats = stats_800be5f8[charIndex];
 
     stats.specialEffectFlag_76 = 0;
-    stats._77 = 0;
-    stats._78 = 0;
-    stats._79 = 0;
-    stats.elementFlag_7a = CoreMod.NO_ELEMENT.get();
-    stats._7b = 0;
-    stats.elementalResistanceFlag_7c.clear();
-    stats.elementalImmunityFlag_7d.clear();
-    stats.statusResistFlag_7e = 0;
-    stats._7f = 0;
-    stats._80 = 0;
-    stats.special1_81 = 0;
-    stats.special2_82 = 0;
+    stats.equipmentType_77 = 0;
+    stats.equipment_02_78 = 0;
+    stats.equipmentEquipableFlags_79 = 0;
+    stats.equipmentAttackElements_7a.clear();
+    stats.equipment_05_7b = 0;
+    stats.equipmentElementalResistance_7c.clear();
+    stats.equipmentElementalImmunity_7d.clear();
+    stats.equipmentStatusResist_7e = 0;
+    stats.equipment_09_7f = 0;
+    stats.equipmentAttack1_80 = 0;
     stats._83 = 0;
-    stats._84 = 0;
+    stats.equipmentIcon_84 = 0;
 
-    stats.gearSpeed_86 = 0;
-    stats.gearAttack_88 = 0;
-    stats.gearMagicAttack_8a = 0;
-    stats.gearDefence_8c = 0;
-    stats.gearMagicDefence_8e = 0;
-    stats.attackHit_90 = 0;
-    stats.magicHit_92 = 0;
-    stats.attackAvoid_94 = 0;
-    stats.magicAvoid_96 = 0;
-    stats.onHitStatusChance_98 = 0;
-    stats._99 = 0;
-    stats._9a = 0;
-    stats.onHitStatus_9b = 0;
-  }
-
-  @Method(0x8002a8f8L)
-  public static void clearCurrentEquip() {
-    equipmentStats_800be5d8 = null;
+    stats.equipmentSpeed_86 = 0;
+    stats.equipmentAttack_88 = 0;
+    stats.equipmentMagicAttack_8a = 0;
+    stats.equipmentDefence_8c = 0;
+    stats.equipmentMagicDefence_8e = 0;
+    stats.equipmentAttackHit_90 = 0;
+    stats.equipmentMagicHit_92 = 0;
+    stats.equipmentAttackAvoid_94 = 0;
+    stats.equipmentMagicAvoid_96 = 0;
+    stats.equipmentOnHitStatusChance_98 = 0;
+    stats.equipment_19_99 = 0;
+    stats.equipment_1a_9a = 0;
+    stats.equipmentOnHitStatus_9b = 0;
   }
 
   @Method(0x8002a9c0L)

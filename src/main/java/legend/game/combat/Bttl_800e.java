@@ -3852,19 +3852,17 @@ public final class Bttl_800e {
     monsterHp.setCurrent(statsEvent.hp);
     monsterHp.setMaxRaw(statsEvent.maxHp);
     monster.specialEffectFlag_14 = statsEvent.specialEffectFlag;
-    monster._16 = 0;
-    monster._18 = 0;
-    monster._1a = 0;
+    monster.equipmentType_16 = 0;
+    monster.equipment_02_18 = 0;
+    monster.equipmentEquipableFlags_1a = 0;
     monster.displayElement_1c = statsEvent.elementFlag;
-    monster._1e = monsterStats._0e.get();
-    monster.elementalImmunityFlag_22.set(statsEvent.elementalImmunityFlag);
-    monster.statusResistFlag_24 = statsEvent.statusResistFlag;
-    monster._26 = 0;
-    monster._28 = 0;
-    monster._2a = 0;
-    monster._2c = 0;
+    monster.equipment_05_1e = monsterStats._0e.get();
+    monster.equipmentElementalImmunity_22.set(statsEvent.elementalImmunityFlag);
+    monster.equipmentStatusResist_24 = statsEvent.statusResistFlag;
+    monster.equipment_09_26 = 0;
+    monster.equipmentAttack1_28 = 0;
     monster._2e = 0;
-    monster._30 = 0;
+    monster.equipmentIcon_30 = 0;
     monster.speed_32 = statsEvent.speed;
     monster.attack_34 = statsEvent.attack;
     monster.magicAttack_36 = statsEvent.magicAttack;
@@ -3875,9 +3873,9 @@ public final class Bttl_800e {
     monster.attackAvoid_40 = statsEvent.attackAvoid;
     monster.magicAvoid_42 = statsEvent.magicAvoid;
     monster.onHitStatusChance_44 = 0;
-    monster._46 = 0;
-    monster._48 = 0;
-    monster.onHitStatus_4a = 0;
+    monster.equipment_19_46 = 0;
+    monster.equipment_1a_48 = 0;
+    monster.equipmentOnHitStatus_4a = 0;
     monster.targetArrowPos_78.set(monsterStats.targetArrowX_12.get(), monsterStats.targetArrowY_13.get(), monsterStats.targetArrowZ_14.get());
     monster._7e = monsterStats._15.get();
     monster._80 = monsterStats._16.get();
@@ -3896,18 +3894,18 @@ public final class Bttl_800e {
     monster.originalAttackAvoid_6a = monster.attackAvoid_40;
     monster.originalMagicAvoid_6c = monster.magicAvoid_42;
     monster.damageReductionFlags_6e = monster.specialEffectFlag_14;
-    monster._70 = monster._1e;
+    monster._70 = monster.equipment_05_1e;
     monster.monsterElementFlag_72 = monster.displayElement_1c;
-    monster.monsterElementalImmunityFlag_74.set(monster.elementalImmunityFlag_22);
-    monster.monsterStatusResistFlag_76 = monster.statusResistFlag_24;
+    monster.monsterElementalImmunityFlag_74.set(monster.equipmentElementalImmunity_22);
+    monster.monsterStatusResistFlag_76 = monster.equipmentStatusResist_24;
 
     if((monster.damageReductionFlags_6e & 0x8) != 0) {
-      monster.physicalImmunity_110 = 1;
+      monster.physicalImmunity_110 = true;
     }
 
     //LAB_800ef25c
     if((monster.damageReductionFlags_6e & 0x4) != 0) {
-      monster.magicalImmunity_112 = 1;
+      monster.magicalImmunity_112 = true;
     }
 
     //LAB_800ef274
@@ -3920,7 +3918,9 @@ public final class Bttl_800e {
     //TODO sp0x18 is unused, why?
     //memcpy(sp0x18, _800c6e68.getAddress(), 0x28);
 
-    loadCharacterStats(0x1L);
+    loadCharacterStats();
+    decrementOverlayCount();
+    _800be5d0.setu(1);
 
     //LAB_800ef31c
     for(int charSlot = 0; charSlot < 3; charSlot++) {
@@ -3961,44 +3961,42 @@ public final class Bttl_800e {
       playerMp.setMaxRaw(stats.maxMp_6e);
       player.status_0e = stats.flags_0c;
       player.specialEffectFlag_14 = stats.specialEffectFlag_76;
-      player._16 = stats._77;
-      player._18 = stats._78;
-      player._1a = stats._79;
-      player.weaponElement_1c = stats.elementFlag_7a;
-      player._1e = stats._7b;
-      player.elementalResistanceFlag_20.set(stats.elementalResistanceFlag_7c);
-      player.elementalImmunityFlag_22.set(stats.elementalImmunityFlag_7d);
-      player.statusResistFlag_24 = stats.statusResistFlag_7e;
-      player._26 = stats._7f;
-      player._28 = stats._80;
-      player._2a = stats.special1_81;
-      player._2c = stats.special2_82;
+      player.equipmentType_16 = stats.equipmentType_77;
+      player.equipment_02_18 = stats.equipment_02_78;
+      player.equipmentEquipableFlags_1a = stats.equipmentEquipableFlags_79;
+      player.equipmentAttackElements_1c.set(stats.equipmentAttackElements_7a);
+      player.equipment_05_1e = stats.equipment_05_7b;
+      player.equipmentElementalResistance_20.set(stats.equipmentElementalResistance_7c);
+      player.equipmentElementalImmunity_22.set(stats.equipmentElementalImmunity_7d);
+      player.equipmentStatusResist_24 = stats.equipmentStatusResist_7e;
+      player.equipment_09_26 = stats.equipment_09_7f;
+      player.equipmentAttack1_28 = stats.equipmentAttack1_80;
       player._2e = stats._83;
-      player._30 = stats._84;
-      player.speed_32 = stats.gearSpeed_86 + stats.bodySpeed_69;
-      player.attack_34 = stats.gearAttack_88 + stats.bodyAttack_6a;
-      player.magicAttack_36 = stats.gearMagicAttack_8a + stats.bodyMagicAttack_6b;
-      player.defence_38 = stats.gearDefence_8c + stats.bodyDefence_6c;
-      player.magicDefence_3a = stats.gearMagicDefence_8e + stats.bodyMagicDefence_6d;
-      player.attackHit_3c = stats.attackHit_90;
-      player.magicHit_3e = stats.magicHit_92;
-      player.attackAvoid_40 = stats.attackAvoid_94;
-      player.magicAvoid_42 = stats.magicAvoid_96;
-      player.onHitStatusChance_44 = stats.onHitStatusChance_98;
-      player._46 = stats._99;
-      player._48 = stats._9a;
-      player.onHitStatus_4a = stats.onHitStatus_9b;
-      player.spellId_4e = stats.onHitStatus_9b;
+      player.equipmentIcon_30 = stats.equipmentIcon_84;
+      player.speed_32 = stats.equipmentSpeed_86 + stats.bodySpeed_69;
+      player.attack_34 = stats.equipmentAttack_88 + stats.bodyAttack_6a;
+      player.magicAttack_36 = stats.equipmentMagicAttack_8a + stats.bodyMagicAttack_6b;
+      player.defence_38 = stats.equipmentDefence_8c + stats.bodyDefence_6c;
+      player.magicDefence_3a = stats.equipmentMagicDefence_8e + stats.bodyMagicDefence_6d;
+      player.attackHit_3c = stats.equipmentAttackHit_90;
+      player.magicHit_3e = stats.equipmentMagicHit_92;
+      player.attackAvoid_40 = stats.equipmentAttackAvoid_94;
+      player.magicAvoid_42 = stats.equipmentMagicAvoid_96;
+      player.onHitStatusChance_44 = stats.equipmentOnHitStatusChance_98;
+      player.equipment_19_46 = stats.equipment_19_99;
+      player.equipment_1a_48 = stats.equipment_1a_9a;
+      player.equipmentOnHitStatus_4a = stats.equipmentOnHitStatus_9b;
+      player.spellId_4e = stats.equipmentOnHitStatus_9b; //TODO retail bug?
       player.selectedAddition_58 = stats.selectedAddition_35;
       player.dragoonAttack_ac = stats.dragoonAttack_72;
       player.dragoonMagic_ae = stats.dragoonMagicAttack_73;
       player.dragoonDefence_b0 = stats.dragoonDefence_74;
       player.dragoonMagicDefence_b2 = stats.dragoonMagicDefence_75;
-      player.physicalImmunity_110 = stats.physicalImmunity_46;
-      player.magicalImmunity_112 = stats.magicalImmunity_48;
-      player.physicalResistance_114 = stats.physicalResistance_4a;
-      player.magicalResistance_116 = stats.magicalResistance_60;
-      player._118 = stats._9c;
+      player.physicalImmunity_110 = stats.equipmentPhysicalImmunity_46;
+      player.magicalImmunity_112 = stats.equipmentMagicalImmunity_48;
+      player.physicalResistance_114 = stats.equipmentPhysicalResistance_4a;
+      player.magicalResistance_116 = stats.equipmentMagicalResistance_60;
+      player._118 = stats.addition_00_9c;
       player.additionSpMultiplier_11a = stats.additionSpMultiplier_9e;
       player.additionDamageMultiplier_11c = stats.additionDamageMultiplier_9f;
       player.equipment0_11e = stats.equipment_30[0];
@@ -4006,19 +4004,19 @@ public final class Bttl_800e {
       player.equipment2_122 = stats.equipment_30[2];
       player.equipment3_124 = stats.equipment_30[3];
       player.equipment4_126 = stats.equipment_30[4];
-      player.spMultiplier_128 = stats.spMultiplier_4c;
-      player.spPerPhysicalHit_12a = stats.spPerPhysicalHit_4e;
-      player.mpPerPhysicalHit_12c = stats.mpPerPhysicalHit_50;
-      player.itemSpPerMagicalHit_12e = stats.spPerMagicalHit_52;
-      player.mpPerMagicalHit_130 = stats.mpPerMagicalHit_54;
-      player._132 = stats._56;
-      player.hpRegen_134 = stats.hpRegen_58;
-      player.mpRegen_136 = stats.mpRegen_5a;
-      player.spRegen_138 = stats.spRegen_5c;
-      player.revive_13a = stats.revive_5e;
-      player.hpMulti_13c = stats.hpMulti_62;
-      player.mpMulti_13e = stats.mpMulti_64;
-      player._142 = stats.onHitStatus_9b;
+      player.spMultiplier_128 = stats.equipmentSpMultiplier_4c;
+      player.spPerPhysicalHit_12a = stats.equipmentSpPerPhysicalHit_4e;
+      player.mpPerPhysicalHit_12c = stats.equipmentMpPerPhysicalHit_50;
+      player.itemSpPerMagicalHit_12e = stats.equipmentSpPerMagicalHit_52;
+      player.mpPerMagicalHit_130 = stats.equipmentMpPerMagicalHit_54;
+      player._132 = stats.equipmentSpecial2Flag80_56;
+      player.hpRegen_134 = stats.equipmentHpRegen_58;
+      player.mpRegen_136 = stats.equipmentMpRegen_5a;
+      player.spRegen_138 = stats.equipmentSpRegen_5c;
+      player.revive_13a = stats.equipmentRevive_5e;
+      player.hpMulti_13c = stats.equipmentHpMulti_62;
+      player.mpMulti_13e = stats.equipmentMpMulti_64;
+      player._142 = stats.equipmentOnHitStatus_9b;
     }
 
     //LAB_800ef798

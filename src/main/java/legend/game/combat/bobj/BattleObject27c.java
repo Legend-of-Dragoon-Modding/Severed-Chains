@@ -47,13 +47,13 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
    * </ul>
    */
   public int specialEffectFlag_14;
-  public int _16;
-  public int _18;
-  public int _1a;
+  public int equipmentType_16;
+  public int equipment_02_18;
+  public int equipmentEquipableFlags_1a;
 
-  public int _1e;
-  public final ElementSet elementalResistanceFlag_20 = new ElementSet();
-  public final ElementSet elementalImmunityFlag_22 = new ElementSet();
+  public int equipment_05_1e;
+  public final ElementSet equipmentElementalResistance_20 = new ElementSet();
+  public final ElementSet equipmentElementalImmunity_22 = new ElementSet();
   /**
    * <ul>
    *   <li>0x1 - Petrify</li>
@@ -66,13 +66,12 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
    *   <li>0x80 - Poison</li>
    * </ul>
    */
-  public int statusResistFlag_24;
-  public int _26;
-  public int _28;
-  public int _2a;
-  public int _2c;
+  public int equipmentStatusResist_24;
+  public int equipment_09_26;
+  public int equipmentAttack1_28;
+
   public int _2e;
-  public int _30;
+  public int equipmentIcon_30;
   public int speed_32;
   public int attack_34;
   public int magicAttack_36;
@@ -88,8 +87,8 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
    * Also used if specialEffect has one-hit-KO enabled
    */
   public int onHitStatusChance_44;
-  public int _46;
-  public int _48;
+  public int equipment_19_46;
+  public int equipment_1a_48;
   /**
    * Player only - if you have a weapon that inflicts a status, this will be set of statuses
    *
@@ -104,7 +103,7 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
    *   <li>0x80 - Poison</li>
    * </ul>
    */
-  public int onHitStatus_4a;
+  public int equipmentOnHitStatus_4a;
   /** Determines turn order */
   public int turnValue_4c;
   public int spellId_4e;
@@ -143,10 +142,10 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
   public int _f0;
   public int _f2;
 
-  public int physicalImmunity_110;
-  public int magicalImmunity_112;
-  public int physicalResistance_114;
-  public int magicalResistance_116;
+  public boolean physicalImmunity_110;
+  public boolean magicalImmunity_112;
+  public boolean physicalResistance_114;
+  public boolean magicalResistance_116;
 
   public int _142;
   public CombatantStruct1a8 combatant_144;
@@ -178,7 +177,7 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
     return this.magicDefence_3a;
   }
 
-  public abstract Element getAttackElement();
+  public abstract ElementSet getAttackElements();
   public abstract Element getElement();
 
   public abstract int calculatePhysicalAttack(final BattleObject27c target);
@@ -194,21 +193,21 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
   @Method(0x800f29d4L)
   public int applyDamageResistanceAndImmunity(final int damage, final AttackType attackType) {
     if(attackType.isPhysical()) {
-      if(this.physicalImmunity_110 != 0) {
+      if(this.physicalImmunity_110) {
         return 0;
       }
 
-      if(this.physicalResistance_114 != 0) {
+      if(this.physicalResistance_114) {
         return damage / 2;
       }
     }
 
     if(attackType.isMagical()) {
-      if(this.magicalImmunity_112 != 0) {
+      if(this.magicalImmunity_112) {
         return 0;
       }
 
-      if(this.magicalResistance_116 != 0) {
+      if(this.magicalResistance_116) {
         return damage / 2;
       }
     }
@@ -217,7 +216,7 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
   }
 
   public int applyElementalResistanceAndImmunity(final int damage, final Element element) {
-    if(this.elementalImmunityFlag_22.contains(element)) {
+    if(this.equipmentElementalImmunity_22.contains(element)) {
       return 0;
     }
 
@@ -237,20 +236,19 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
       case 6 -> this.stats.getStat(CoreMod.HP_STAT.get()).getMax();
 
       case 8 -> this.specialEffectFlag_14;
-      case 9 -> this._16;
-      case 10 -> this._18;
-      case 11 -> this._1a;
-      case 13 -> this._1e;
+      case 9 -> this.equipmentType_16;
+      case 10 -> this.equipment_02_18;
+      case 11 -> this.equipmentEquipableFlags_1a;
+      case 13 -> this.equipment_05_1e;
 
-      case 14 -> this.elementalResistanceFlag_20.pack();
-      case 15 -> this.elementalImmunityFlag_22.pack();
-      case 16 -> this.statusResistFlag_24;
-      case 17 -> this._26;
-      case 18 -> this._28;
-      case 19 -> this._2a;
-      case 20 -> this._2c;
+      case 14 -> this.equipmentElementalResistance_20.pack();
+      case 15 -> this.equipmentElementalImmunity_22.pack();
+      case 16 -> this.equipmentStatusResist_24;
+      case 17 -> this.equipment_09_26;
+      case 18 -> this.equipmentAttack1_28;
+
       case 21 -> this._2e;
-      case 22 -> this._30;
+      case 22 -> this.equipmentIcon_30;
       case 23 -> this.speed_32;
       case 24 -> this.attack_34;
       case 25 -> this.magicAttack_36;
@@ -261,9 +259,9 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
       case 30 -> this.attackAvoid_40;
       case 31 -> this.magicAvoid_42;
       case 32 -> this.onHitStatusChance_44;
-      case 33 -> this._46;
-      case 34 -> this._48;
-      case 35 -> this.onHitStatus_4a;
+      case 33 -> this.equipment_19_46;
+      case 34 -> this.equipment_1a_48;
+      case 35 -> this.equipmentOnHitStatus_4a;
       case 36 -> this.turnValue_4c;
       case 37 -> this.spellId_4e;
 
@@ -298,9 +296,7 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
 
       case 104 -> this.item_d4.target_00;
       case 105 -> this.item_d4.element_01.flag;
-      case 106 -> this.item_d4.damage_02;
-//      case 107 -> this.itemSpecial1_da;
-//      case 108 -> this.itemSpecial2_dc;
+      case 106 -> this.item_d4.damageMultiplier_02;
       case 109 -> this.item_d4.damage_05;
       case 110 -> this.item_d4.specialAmount_06;
       case 111 -> this.item_d4.icon_07;
@@ -313,10 +309,10 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
       case 118 -> this._f0;
       case 119 -> this._f2;
 
-      case 134 -> this.physicalImmunity_110;
-      case 135 -> this.magicalImmunity_112;
-      case 136 -> this.physicalResistance_114;
-      case 137 -> this.magicalResistance_116;
+      case 134 -> this.physicalImmunity_110 ? 1 : 0;
+      case 135 -> this.magicalImmunity_112 ? 1 : 0;
+      case 136 -> this.physicalResistance_114 ? 1 : 0;
+      case 137 -> this.magicalResistance_116 ? 1 : 0;
 
       case 159 -> this._142;
 
@@ -332,20 +328,19 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
       case 5 -> this.status_0e = value;
 
       case 8 -> this.specialEffectFlag_14 = value;
-      case 9 -> this._16 = value;
-      case 10 -> this._18 = value;
-      case 11 -> this._1a = value;
+      case 9 -> this.equipmentType_16 = value;
+      case 10 -> this.equipment_02_18 = value;
+      case 11 -> this.equipmentEquipableFlags_1a = value;
 
-      case 13 -> this._1e = value;
-      case 14 -> this.elementalResistanceFlag_20.unpack(value);
-      case 15 -> this.elementalImmunityFlag_22.unpack(value);
-      case 16 -> this.statusResistFlag_24 = value;
-      case 17 -> this._26 = value;
-      case 18 -> this._28 = value;
-      case 19 -> this._2a = value;
-      case 20 -> this._2c = value;
+      case 13 -> this.equipment_05_1e = value;
+      case 14 -> this.equipmentElementalResistance_20.unpack(value);
+      case 15 -> this.equipmentElementalImmunity_22.unpack(value);
+      case 16 -> this.equipmentStatusResist_24 = value;
+      case 17 -> this.equipment_09_26 = value;
+      case 18 -> this.equipmentAttack1_28 = value;
+
       case 21 -> this._2e = value;
-      case 22 -> this._30 = value;
+      case 22 -> this.equipmentIcon_30 = value;
       case 23 -> this.speed_32 = value;
       case 24 -> this.attack_34 = value;
       case 25 -> this.magicAttack_36 = value;
@@ -356,9 +351,9 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
       case 30 -> this.attackAvoid_40 = value;
       case 31 -> this.magicAvoid_42 = value;
       case 32 -> this.onHitStatusChance_44 = value;
-      case 33 -> this._46 = value;
-      case 34 -> this._48 = value;
-      case 35 -> this.onHitStatus_4a = value;
+      case 33 -> this.equipment_19_46 = value;
+      case 34 -> this.equipment_1a_48 = value;
+      case 35 -> this.equipmentOnHitStatus_4a = value;
       case 36 -> this.turnValue_4c = value;
       case 37 -> this.spellId_4e = value;
 
@@ -413,10 +408,10 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
       case 118 -> this._f0 = value;
       case 119 -> this._f2 = value;
 
-      case 134 -> this.physicalImmunity_110 = value;
-      case 135 -> this.magicalImmunity_112 = value;
-      case 136 -> this.physicalResistance_114 = value;
-      case 137 -> this.magicalResistance_116 = value;
+      case 134 -> this.physicalImmunity_110 = value != 0;
+      case 135 -> this.magicalImmunity_112 = value != 0;
+      case 136 -> this.physicalResistance_114 = value != 0;
+      case 137 -> this.magicalResistance_116 = value != 0;
 
       case 159 -> this._142 = value;
 

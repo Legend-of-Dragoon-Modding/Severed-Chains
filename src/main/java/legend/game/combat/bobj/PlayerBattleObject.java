@@ -4,6 +4,7 @@ import legend.core.Config;
 import legend.core.Latch;
 import legend.core.memory.Method;
 import legend.game.characters.Element;
+import legend.game.characters.ElementSet;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.scripting.ScriptState;
 
@@ -20,7 +21,7 @@ public class PlayerBattleObject extends BattleObject27c {
   public int level_04;
   public int dlevel_06;
 
-  public Element weaponElement_1c;
+  public final ElementSet equipmentAttackElements_1c = new ElementSet();
 
   public int additionHits_56;
   public int selectedAddition_58;
@@ -90,8 +91,8 @@ public class PlayerBattleObject extends BattleObject27c {
   }
 
   @Override
-  public Element getAttackElement() {
-    return this.weaponElement_1c;
+  public ElementSet getAttackElements() {
+    return this.equipmentAttackElements_1c;
   }
 
   @Override
@@ -169,7 +170,7 @@ public class PlayerBattleObject extends BattleObject27c {
 
   @Override
   public int applyElementalResistanceAndImmunity(final int damage, final Element element) {
-    if(this.elementalResistanceFlag_20.contains(element)) {
+    if(this.equipmentElementalResistance_20.contains(element)) {
       return damage / 2;
     }
 
@@ -195,9 +196,9 @@ public class PlayerBattleObject extends BattleObject27c {
 
       case 7 -> this.stats.getStat(CoreMod.MP_STAT.get()).getMax();
 
-      case 12 -> this.weaponElement_1c.flag;
+      case 12 -> this.equipmentAttackElements_1c.pack();
 
-      case 16 -> this.statusResistFlag_24 | disableStatusFlag;
+      case 16 -> this.equipmentStatusResist_24 | disableStatusFlag;
 
       case 41 -> this.additionHits_56;
       case 42 -> this.selectedAddition_58;

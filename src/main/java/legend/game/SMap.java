@@ -681,7 +681,7 @@ public final class SMap {
 
   @Method(0x800d9b08L)
   public static void FUN_800d9b08(final int charId) {
-    loadCharacterStats(0);
+    loadCharacterStats();
 
     if(charId >= 0) {
       final ActiveStatsa0 stats = stats_800be5f8[charId];

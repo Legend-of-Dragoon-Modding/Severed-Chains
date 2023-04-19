@@ -1,6 +1,5 @@
 package legend.game.types;
 
-import legend.game.characters.Element;
 import legend.game.characters.ElementSet;
 
 public class ActiveStatsa0 {
@@ -29,35 +28,35 @@ public class ActiveStatsa0 {
   /** ubyte */
   public final int[] additionXp_3e = new int[8];
   /** ushort */
-  public int physicalImmunity_46;
+  public boolean equipmentPhysicalImmunity_46;
   /** ushort */
-  public int magicalImmunity_48;
+  public boolean equipmentMagicalImmunity_48;
   /** ushort */
-  public int physicalResistance_4a;
+  public boolean equipmentPhysicalResistance_4a;
   /** short */
-  public int spMultiplier_4c;
+  public int equipmentSpMultiplier_4c;
   /** short */
-  public int spPerPhysicalHit_4e;
+  public int equipmentSpPerPhysicalHit_4e;
   /** short */
-  public int mpPerPhysicalHit_50;
+  public int equipmentMpPerPhysicalHit_50;
   /** short */
-  public int spPerMagicalHit_52;
+  public int equipmentSpPerMagicalHit_52;
   /** short */
-  public int mpPerMagicalHit_54;
+  public int equipmentMpPerMagicalHit_54;
   /** short */
-  public int _56;
+  public int equipmentSpecial2Flag80_56;
   /** short */
-  public int hpRegen_58;
+  public int equipmentHpRegen_58;
   /** short */
-  public int mpRegen_5a;
+  public int equipmentMpRegen_5a;
   /** short */
-  public int spRegen_5c;
+  public int equipmentSpRegen_5c;
   /** short */
-  public int revive_5e;
+  public int equipmentRevive_5e;
   /** ushort */
-  public int magicalResistance_60;
-  public short hpMulti_62;
-  public short mpMulti_64;
+  public boolean equipmentMagicalResistance_60;
+  public short equipmentHpMulti_62;
+  public short equipmentMpMulti_64;
   /** ushort */
   public int maxHp_66;
   /** byte */
@@ -89,62 +88,58 @@ public class ActiveStatsa0 {
   /** ubyte */
   public int specialEffectFlag_76;
   /** ubyte */
-  public int _77;
+  public int equipmentType_77;
   /** ubyte */
-  public int _78;
+  public int equipment_02_78;
   /** ubyte */
-  public int _79;
+  public int equipmentEquipableFlags_79;
   /** ubyte */
-  public Element elementFlag_7a;
+  public final ElementSet equipmentAttackElements_7a = new ElementSet();
   /** ubyte */
-  public int _7b;
+  public int equipment_05_7b;
   /** ubyte */
-  public final ElementSet elementalResistanceFlag_7c = new ElementSet();
+  public final ElementSet equipmentElementalResistance_7c = new ElementSet();
   /** ubyte */
-  public final ElementSet elementalImmunityFlag_7d = new ElementSet();
+  public final ElementSet equipmentElementalImmunity_7d = new ElementSet();
   /** ubyte */
-  public int statusResistFlag_7e;
+  public int equipmentStatusResist_7e;
   /** ubyte */
-  public int _7f;
+  public int equipment_09_7f;
   /** ubyte */
-  public int _80;
-  /** ubyte */
-  public int special1_81;
-  /** ubyte */
-  public int special2_82;
+  public int equipmentAttack1_80;
   /** ubyte */
   public int _83;
   /** byte */
-  public int _84;
+  public int equipmentIcon_84;
 
   /** short */
-  public int gearSpeed_86;
+  public int equipmentSpeed_86;
   /** short */
-  public int gearAttack_88;
+  public int equipmentAttack_88;
   /** short */
-  public int gearMagicAttack_8a;
+  public int equipmentMagicAttack_8a;
   /** short */
-  public int gearDefence_8c;
+  public int equipmentDefence_8c;
   /** short */
-  public int gearMagicDefence_8e;
+  public int equipmentMagicDefence_8e;
   /** short */
-  public int attackHit_90;
+  public int equipmentAttackHit_90;
   /** short */
-  public int magicHit_92;
+  public int equipmentMagicHit_92;
   /** short */
-  public int attackAvoid_94;
+  public int equipmentAttackAvoid_94;
   /** short */
-  public int magicAvoid_96;
+  public int equipmentMagicAvoid_96;
   /** ubyte */
-  public int onHitStatusChance_98;
+  public int equipmentOnHitStatusChance_98;
   /** ubyte */
-  public int _99;
+  public int equipment_19_99;
   /** ubyte */
-  public int _9a;
+  public int equipment_1a_9a;
   /** ubyte */
-  public int onHitStatus_9b;
+  public int equipmentOnHitStatus_9b;
   /** ushort */
-  public int _9c;
+  public int addition_00_9c;
   /** ubyte */
   public int additionSpMultiplier_9e;
   /** ubyte */
@@ -164,22 +159,22 @@ public class ActiveStatsa0 {
     this.level_0e = other.level_0e;
     this.dlevel_0f = other.dlevel_0f;
     this.selectedAddition_35 = other.selectedAddition_35;
-    this.physicalImmunity_46 = other.physicalImmunity_46;
-    this.magicalImmunity_48 = other.magicalImmunity_48;
-    this.physicalResistance_4a = other.physicalResistance_4a;
-    this.spMultiplier_4c = other.spMultiplier_4c;
-    this.spPerPhysicalHit_4e = other.spPerPhysicalHit_4e;
-    this.mpPerPhysicalHit_50 = other.mpPerPhysicalHit_50;
-    this.spPerMagicalHit_52 = other.spPerMagicalHit_52;
-    this.mpPerMagicalHit_54 = other.mpPerMagicalHit_54;
-    this._56 = other._56;
-    this.hpRegen_58 = other.hpRegen_58;
-    this.mpRegen_5a = other.mpRegen_5a;
-    this.spRegen_5c = other.spRegen_5c;
-    this.revive_5e = other.revive_5e;
-    this.magicalResistance_60 = other.magicalResistance_60;
-    this.hpMulti_62 = other.hpMulti_62;
-    this.mpMulti_64 = other.mpMulti_64;
+    this.equipmentPhysicalImmunity_46 = other.equipmentPhysicalImmunity_46;
+    this.equipmentMagicalImmunity_48 = other.equipmentMagicalImmunity_48;
+    this.equipmentPhysicalResistance_4a = other.equipmentPhysicalResistance_4a;
+    this.equipmentSpMultiplier_4c = other.equipmentSpMultiplier_4c;
+    this.equipmentSpPerPhysicalHit_4e = other.equipmentSpPerPhysicalHit_4e;
+    this.equipmentMpPerPhysicalHit_50 = other.equipmentMpPerPhysicalHit_50;
+    this.equipmentSpPerMagicalHit_52 = other.equipmentSpPerMagicalHit_52;
+    this.equipmentMpPerMagicalHit_54 = other.equipmentMpPerMagicalHit_54;
+    this.equipmentSpecial2Flag80_56 = other.equipmentSpecial2Flag80_56;
+    this.equipmentHpRegen_58 = other.equipmentHpRegen_58;
+    this.equipmentMpRegen_5a = other.equipmentMpRegen_5a;
+    this.equipmentSpRegen_5c = other.equipmentSpRegen_5c;
+    this.equipmentRevive_5e = other.equipmentRevive_5e;
+    this.equipmentMagicalResistance_60 = other.equipmentMagicalResistance_60;
+    this.equipmentHpMulti_62 = other.equipmentHpMulti_62;
+    this.equipmentMpMulti_64 = other.equipmentMpMulti_64;
     this.maxHp_66 = other.maxHp_66;
     this.addition_68 = other.addition_68;
     this.bodySpeed_69 = other.bodySpeed_69;
@@ -195,32 +190,30 @@ public class ActiveStatsa0 {
     this.dragoonDefence_74 = other.dragoonDefence_74;
     this.dragoonMagicDefence_75 = other.dragoonMagicDefence_75;
     this.specialEffectFlag_76 = other.specialEffectFlag_76;
-    this._77 = other._77;
-    this._78 = other._78;
-    this._79 = other._79;
-    this.elementFlag_7a = other.elementFlag_7a;
-    this._7b = other._7b;
-    this.statusResistFlag_7e = other.statusResistFlag_7e;
-    this._7f = other._7f;
-    this._80 = other._80;
-    this.special1_81 = other.special1_81;
-    this.special2_82 = other.special2_82;
+    this.equipmentType_77 = other.equipmentType_77;
+    this.equipment_02_78 = other.equipment_02_78;
+    this.equipmentEquipableFlags_79 = other.equipmentEquipableFlags_79;
+    this.equipmentAttackElements_7a.set(other.equipmentAttackElements_7a);
+    this.equipment_05_7b = other.equipment_05_7b;
+    this.equipmentStatusResist_7e = other.equipmentStatusResist_7e;
+    this.equipment_09_7f = other.equipment_09_7f;
+    this.equipmentAttack1_80 = other.equipmentAttack1_80;
     this._83 = other._83;
-    this._84 = other._84;
-    this.gearSpeed_86 = other.gearSpeed_86;
-    this.gearAttack_88 = other.gearAttack_88;
-    this.gearMagicAttack_8a = other.gearMagicAttack_8a;
-    this.gearDefence_8c = other.gearDefence_8c;
-    this.gearMagicDefence_8e = other.gearMagicDefence_8e;
-    this.attackHit_90 = other.attackHit_90;
-    this.magicHit_92 = other.magicHit_92;
-    this.attackAvoid_94 = other.attackAvoid_94;
-    this.magicAvoid_96 = other.magicAvoid_96;
-    this.onHitStatusChance_98 = other.onHitStatusChance_98;
-    this._99 = other._99;
-    this._9a = other._9a;
-    this.onHitStatus_9b = other.onHitStatus_9b;
-    this._9c = other._9c;
+    this.equipmentIcon_84 = other.equipmentIcon_84;
+    this.equipmentSpeed_86 = other.equipmentSpeed_86;
+    this.equipmentAttack_88 = other.equipmentAttack_88;
+    this.equipmentMagicAttack_8a = other.equipmentMagicAttack_8a;
+    this.equipmentDefence_8c = other.equipmentDefence_8c;
+    this.equipmentMagicDefence_8e = other.equipmentMagicDefence_8e;
+    this.equipmentAttackHit_90 = other.equipmentAttackHit_90;
+    this.equipmentMagicHit_92 = other.equipmentMagicHit_92;
+    this.equipmentAttackAvoid_94 = other.equipmentAttackAvoid_94;
+    this.equipmentMagicAvoid_96 = other.equipmentMagicAvoid_96;
+    this.equipmentOnHitStatusChance_98 = other.equipmentOnHitStatusChance_98;
+    this.equipment_19_99 = other.equipment_19_99;
+    this.equipment_1a_9a = other.equipment_1a_9a;
+    this.equipmentOnHitStatus_9b = other.equipmentOnHitStatus_9b;
+    this.addition_00_9c = other.addition_00_9c;
     this.additionSpMultiplier_9e = other.additionSpMultiplier_9e;
     this.additionDamageMultiplier_9f = other.additionDamageMultiplier_9f;
   }

@@ -212,7 +212,7 @@ public class EquipmentScreen extends MenuScreen {
             takeEquipment(this.menuItems.get(itemIndex).itemSlot_01);
             giveItem(previousEquipmentId);
             playSound(2);
-            loadCharacterStats(0);
+            loadCharacterStats();
             addHp(characterIndices_800bdbb8.get(this.charSlot).get(), 0);
             addMp(characterIndices_800bdbb8.get(this.charSlot).get(), 0);
             this.loadingStage = 2;
@@ -302,7 +302,7 @@ public class EquipmentScreen extends MenuScreen {
         takeEquipment(this.menuItems.get(itemIndex).itemSlot_01);
         giveItem(previousEquipmentId);
         playSound(2);
-        loadCharacterStats(0);
+        loadCharacterStats();
         addHp(characterIndices_800bdbb8.get(this.charSlot).get(), 0);
         addMp(characterIndices_800bdbb8.get(this.charSlot).get(), 0);
         this.loadingStage = 2;

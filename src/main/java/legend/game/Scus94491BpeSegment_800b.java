@@ -17,7 +17,6 @@ import legend.game.combat.environment.BattleStage;
 import legend.game.inventory.WhichMenu;
 import legend.game.scripting.ScriptState;
 import legend.game.types.ActiveStatsa0;
-import legend.game.types.EquipmentStats1c;
 import legend.game.types.GameState52c;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.InventoryMenuState;
@@ -235,8 +234,6 @@ public final class Scus94491BpeSegment_800b {
   public static final Value textV_800be5c8 = MEMORY.ref(4, 0x800be5c8L);
 
   public static final Value _800be5d0 = MEMORY.ref(4, 0x800be5d0L);
-
-  public static EquipmentStats1c equipmentStats_800be5d8;
 
   public static final ActiveStatsa0[] stats_800be5f8 = new ActiveStatsa0[9];
   static {

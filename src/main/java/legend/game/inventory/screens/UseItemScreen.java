@@ -311,7 +311,7 @@ public class UseItemScreen extends MenuScreen {
           playSound(2);
           takeItemId(this.menuItems.get(this.selectedSlot + this.slotScroll).itemId_00);
           this.itemCount = this.getUsableItemsInMenu();
-          loadCharacterStats(0);
+          loadCharacterStats();
           this.getItemResponseText(this.useItemResponse);
           menuStack.pushScreen(new MessageBoxScreen(this.useItemResponse.string_08, 0, result -> {}));
           this.loadingStage = 1;
@@ -517,7 +517,7 @@ public class UseItemScreen extends MenuScreen {
     playSound(2);
     takeItemId(this.menuItems.get(this.selectedSlot + this.slotScroll).itemId_00);
     this.itemCount = this.getUsableItemsInMenu();
-    loadCharacterStats(0);
+    loadCharacterStats();
     this.getItemResponseText(this.useItemResponse);
     menuStack.pushScreen(new MessageBoxScreen(this.useItemResponse.string_08, 0, result -> {}));
     this.loadingStage = 1;

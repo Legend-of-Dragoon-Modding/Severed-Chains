@@ -11,42 +11,54 @@ public class EquipmentStats1c {
    * </ul>
    */
   public final int flags_00;
+  /**
+   * Which equipment slot (bitset read left to right, 0x80 is slot 0)
+   */
   public final int type_01;
   public final int _02;
+  /**
+   * Which characters can wear this (bitset)
+   */
   public final int equipableFlags_03;
-  public final Element element_04;
+  public final ElementSet attackElement_04 = new ElementSet();
   public final int _05;
   public final ElementSet elementalResistance_06 = new ElementSet();
   public final ElementSet elementalImmunity_07 = new ElementSet();
   public final int statusResist_08;
   public final int _09;
-  public final int atk_0a;
-  /**
-   * Half Physical
-   * SP on Magic/Physical Hit
-   * MP on Magic Physical Hit
-   * SP Multiplier
-   */
-  public final int special1_0b;
-  /**
-   * Half Magic
-   * Revive
-   * HP/MP/SP Regen
-   */
-  public final int special2_0c;
-  /** Amount for MP/SP per hit or SP multiplier */
-  public final int specialAmount_0d;
+  public final int attack1_0a;
+
+  public final int mpPerPhysicalHit;
+  public final int spPerPhysicalHit;
+  public final int mpPerMagicalHit;
+  public final int spPerMagicalHit;
+  public final int hpMultiplier;
+  public final int mpMultiplier;
+  public final int spMultiplier;
+  public final boolean magicalResistance;
+  public final boolean physicalResistance;
+  public final boolean magicalImmunity;
+  public final boolean physicalImmunity;
+  public final int revive;
+  /** Percentage */
+  public final int hpRegen;
+  /** Percentage */
+  public final int mpRegen;
+  /** Percentage */
+  public final int spRegen;
+  public final int special2Flag80;
+
   public final int icon_0e;
-  public final int spd_0f;
-  public final int atkHi_10;
-  public final int matk_11;
-  public final int def_12;
-  public final int mdef_13;
-  public final int aHit_14;
-  public final int mHit_15;
-  public final int aAv_16;
-  public final int mAv_17;
-  public final int onStatusChance_18;
+  public final int speed_0f;
+  public final int attack2_10;
+  public final int magicAttack_11;
+  public final int defence_12;
+  public final int magicDefence_13;
+  public final int attackHit_14;
+  public final int magicHit_15;
+  public final int attackAvoid_16;
+  public final int magicAvoid_17;
+  public final int onHitStatusChance_18;
   public final int _19;
   public final int _1a;
   public final int onHitStatus_1b;
@@ -63,9 +75,28 @@ public class EquipmentStats1c {
     final int statusResist = data.readUByte(0x8);
     final int _09 = data.readUByte(0x9);
     final int atk = data.readUByte(0xa);
+
     final int special1 = data.readUByte(0xb);
     final int special2 = data.readUByte(0xc);
     final int specialAmount = data.readUByte(0xd);
+
+    final int mpPerMagicalHit = (special1 & 0x1) != 0 ? specialAmount : 0;
+    final int spPerMagicalHit = (special1 & 0x2) != 0 ? specialAmount : 0;
+    final int mpPerPhysicalHit = (special1 & 0x4) != 0 ? specialAmount : 0;
+    final int spPerPhysicalHit = (special1 & 0x8) != 0 ? specialAmount : 0;
+    final int spMultiplier = (special1 & 0x10) != 0 ? specialAmount : 0;
+    final boolean physicalResistance = (special1 & 0x20) != 0;
+    final boolean magicalImmunity = (special1 & 0x40) != 0;
+    final boolean physicalImmunity = (special1 & 0x80) != 0;
+    final int mpMultiplier = (special2 & 0x1) != 0 ? specialAmount : 0;
+    final int hpMultiplier = (special2 & 0x2) != 0 ? specialAmount : 0;
+    final boolean magicalResistance = (special2 & 0x4) != 0;
+    final int revive = (special2 & 0x8) != 0 ? specialAmount : 0;
+    final int spRegen = (special2 & 0x10) != 0 ? specialAmount : 0;
+    final int mpRegen = (special2 & 0x20) != 0 ? specialAmount : 0;
+    final int hpRegen = (special2 & 0x40) != 0 ? specialAmount : 0;
+    final int special2Flag80 = (special2 & 0x80) != 0 ? specialAmount : 0;
+
     final int icon = data.readUByte(0xe);
     final int spd = data.readByte(0xf);
     final int atkHi = data.readByte(0x10);
@@ -81,35 +112,48 @@ public class EquipmentStats1c {
     final int _1a = data.readUByte(0x1a);
     final int onHitStatus = data.readUByte(0x1b);
 
-    return new EquipmentStats1c(flags, type, _02, equipableFlags, element, _05, elementalResistance, elementalImmunity, statusResist, _09, atk, special1, special2, specialAmount, icon, spd, atkHi, matk, def, mdef, aHit, mHit, aAv, mAv, onStatusChance, _19, _1a, onHitStatus);
+    return new EquipmentStats1c(flags, type, _02, equipableFlags, element, _05, elementalResistance, elementalImmunity, statusResist, _09, atk, mpPerPhysicalHit, spPerPhysicalHit, mpPerMagicalHit, spPerMagicalHit, hpMultiplier, mpMultiplier, spMultiplier, magicalResistance, physicalResistance, magicalImmunity, physicalImmunity, revive, hpRegen, mpRegen, spRegen, special2Flag80, icon, spd, atkHi, matk, def, mdef, aHit, mHit, aAv, mAv, onStatusChance, _19, _1a, onHitStatus);
   }
 
-  public EquipmentStats1c(final int flags, final int type, final int _02, final int equipableFlags, final Element element, final int _05, final ElementSet elementalResistance, final ElementSet elementalImmunity, final int statusResist, final int _09, final int atk, final int special1, final int special2, final int specialAmount, final int icon, final int spd, final int atkHi, final int matk, final int def, final int mdef, final int aHit, final int mHit, final int aAv, final int mAv, final int onStatusChance, final int _19, final int _1a, final int onHitStatus) {
+  public EquipmentStats1c(final int flags, final int type, final int _02, final int equipableFlags, final Element element, final int _05, final ElementSet elementalResistance, final ElementSet elementalImmunity, final int statusResist, final int _09, final int atk, final int mpPerPhysicalHit, final int spPerPhysicalHit, final int mpPerMagicalHit, final int spPerMagicalHit, final int hpMultiplier, final int mpMultiplier, final int spMultiplier, final boolean magicalResistance, final boolean physicalResistance, final boolean magicalImmunity, final boolean physicalImmunity, final int revive, final int hpRegen, final int mpRegen, final int spRegen, final int special2Flag80, final int icon, final int spd, final int atkHi, final int matk, final int def, final int mdef, final int aHit, final int mHit, final int aAv, final int mAv, final int onStatusChance, final int _19, final int _1a, final int onHitStatus) {
     this.flags_00 = flags;
     this.type_01 = type;
     this._02 = _02;
     this.equipableFlags_03 = equipableFlags;
-    this.element_04 = element;
+    this.attackElement_04.add(element);
     this._05 = _05;
+    this.mpPerPhysicalHit = mpPerPhysicalHit;
+    this.spPerPhysicalHit = spPerPhysicalHit;
+    this.mpPerMagicalHit = mpPerMagicalHit;
+    this.spPerMagicalHit = spPerMagicalHit;
+    this.hpMultiplier = hpMultiplier;
+    this.mpMultiplier = mpMultiplier;
+    this.spMultiplier = spMultiplier;
+    this.magicalResistance = magicalResistance;
+    this.physicalResistance = physicalResistance;
+    this.magicalImmunity = magicalImmunity;
+    this.physicalImmunity = physicalImmunity;
+    this.revive = revive;
+    this.hpRegen = hpRegen;
+    this.mpRegen = mpRegen;
+    this.spRegen = spRegen;
+    this.special2Flag80 = special2Flag80;
     this.elementalResistance_06.set(elementalResistance);
     this.elementalImmunity_07.set(elementalImmunity);
     this.statusResist_08 = statusResist;
     this._09 = _09;
-    this.atk_0a = atk;
-    this.special1_0b = special1;
-    this.special2_0c = special2;
-    this.specialAmount_0d = specialAmount;
+    this.attack1_0a = atk;
     this.icon_0e = icon;
-    this.spd_0f = spd;
-    this.atkHi_10 = atkHi;
-    this.matk_11 = matk;
-    this.def_12 = def;
-    this.mdef_13 = mdef;
-    this.aHit_14 = aHit;
-    this.mHit_15 = mHit;
-    this.aAv_16 = aAv;
-    this.mAv_17 = mAv;
-    this.onStatusChance_18 = onStatusChance;
+    this.speed_0f = spd;
+    this.attack2_10 = atkHi;
+    this.magicAttack_11 = matk;
+    this.defence_12 = def;
+    this.magicDefence_13 = mdef;
+    this.attackHit_14 = aHit;
+    this.magicHit_15 = mHit;
+    this.attackAvoid_16 = aAv;
+    this.magicAvoid_17 = mAv;
+    this.onHitStatusChance_18 = onStatusChance;
     this._19 = _19;
     this._1a = _1a;
     this.onHitStatus_1b = onHitStatus;

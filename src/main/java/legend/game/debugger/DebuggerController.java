@@ -193,7 +193,7 @@ public class DebuggerController {
   }
 
   @FXML
-  private void setBattleUIRGB(final ActionEvent event) {
+  private void setBattleUiRgb(final ActionEvent event) {
     Bttl_800c.textboxColours_800c6fec.get(8).get(0).set(this.battleUiColourR.getValueFactory().getValue().byteValue());
     Bttl_800c.textboxColours_800c6fec.get(8).get(1).set(this.battleUiColourG.getValueFactory().getValue().byteValue());
     Bttl_800c.textboxColours_800c6fec.get(8).get(2).set(this.battleUiColourB.getValueFactory().getValue().byteValue());

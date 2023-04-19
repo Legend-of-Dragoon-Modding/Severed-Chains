@@ -435,58 +435,8 @@ public final class Bttl_800f {
    */
   @Method(0x800f204cL)
   public static int calculateMagicDamage(final BattleObject27c attacker, final BattleObject27c defender, final int magicType) {
-    int damage;
-    if(magicType == 1 || attacker.item_d4.type_0b == 0) {
-      //LAB_800f2140
-      if(attacker.spell_94 != null && (attacker.spell_94.flags_01.get() & 0x4) != 0) {
-        damage = defender.stats.getStat(CoreMod.HP_STAT.get()).getMax() * attacker.spell_94.multi_04.get() / 100;
-
-        if((attacker.spell_94.targetType_00.get() & 0x8) != 0) {
-          // Attack all
-
-          final int count;
-          final ScriptState<? extends BattleObject27c>[] bobjs;
-          if(attacker instanceof PlayerBattleObject) {
-            count = charCount_800c677c.get();
-            bobjs = _8006e398.charBobjIndices_e40;
-          } else {
-            //LAB_800f21a8
-            count = monsterCount_800c6758.get();
-            bobjs = _8006e398.monsterBobjIndices_ebc;
-          }
-
-          //LAB_800f21b0
-          //LAB_800f21d4
-          for(int i = 0; i < count; i++) {
-            applyBuffOrDebuff(attacker, bobjs[i].innerStruct_00);
-          }
-        } else {
-          // Attack single
-
-          //LAB_800f2210
-          applyBuffOrDebuff(attacker, defender);
-        }
-
-        //LAB_800f2224
-        attacker.status_0e |= 0x800;
-      } else {
-        final Element attackElement;
-        if(magicType == 1) {
-          attackElement = Element.fromFlag(spellStats_800fa0b8.get(attacker.spellId_4e).element_08.get());
-        } else {
-          attackElement = attacker.item_d4.element_01;
-        }
-
-        //LAB_800f2238
-        damage = attacker.calculateMagicAttack(defender, magicType);
-        damage = attackElement.adjustElementalDamage(damage, defender.getElement());
-        damage = adjustDamageForPower(damage, attacker.powerMagicAttack_b6, defender.powerMagicDefence_ba);
-
-        if(dragoonSpaceElement_800c6b64 != null) {
-          damage = attackElement.adjustDragoonSpaceDamage(damage, dragoonSpaceElement_800c6b64);
-        }
-      }
-    } else {
+    // Stat mod item
+    if(magicType == 0 && attacker.item_d4.type_0b != 0) {
       //LAB_800f2404
       //LAB_800f2410
       int s1;
@@ -498,7 +448,7 @@ public final class Bttl_800f {
       }
 
       //LAB_800f2430
-      damage = switch(s1) {
+      final int value = switch(s1) {
         case 0 -> {
           //LAB_800f2454
           attacker.status_0e |= 0x800;
@@ -523,7 +473,58 @@ public final class Bttl_800f {
 
       //LAB_800f2494
       //LAB_800f24bc
-      damage = damage * attacker.item_d4.percentage_09 / 100;
+      return value * attacker.item_d4.percentage_09 / 100;
+    }
+
+    //LAB_800f2140
+    int damage;
+    if(attacker.spell_94 != null && (attacker.spell_94.flags_01.get() & 0x4) != 0) {
+      damage = defender.stats.getStat(CoreMod.HP_STAT.get()).getMax() * attacker.spell_94.multi_04.get() / 100;
+
+      if((attacker.spell_94.targetType_00.get() & 0x8) != 0) {
+        // Attack all
+
+        final int count;
+        final ScriptState<? extends BattleObject27c>[] bobjs;
+        if(attacker instanceof PlayerBattleObject) {
+          count = charCount_800c677c.get();
+          bobjs = _8006e398.charBobjIndices_e40;
+        } else {
+          //LAB_800f21a8
+          count = monsterCount_800c6758.get();
+          bobjs = _8006e398.monsterBobjIndices_ebc;
+        }
+
+        //LAB_800f21b0
+        //LAB_800f21d4
+        for(int i = 0; i < count; i++) {
+          applyBuffOrDebuff(attacker, bobjs[i].innerStruct_00);
+        }
+      } else {
+        // Attack single
+
+        //LAB_800f2210
+        applyBuffOrDebuff(attacker, defender);
+      }
+
+      //LAB_800f2224
+      attacker.status_0e |= 0x800;
+    } else {
+      final Element attackElement;
+      if(magicType == 1) {
+        attackElement = Element.fromFlag(spellStats_800fa0b8.get(attacker.spellId_4e).element_08.get());
+      } else {
+        attackElement = attacker.item_d4.element_01;
+      }
+
+      //LAB_800f2238
+      damage = attacker.calculateMagicAttack(defender, magicType);
+      damage = attackElement.adjustElementalDamage(damage, defender.getElement());
+      damage = adjustDamageForPower(damage, attacker.powerMagicAttack_b6, defender.powerMagicDefence_ba);
+
+      if(dragoonSpaceElement_800c6b64 != null) {
+        damage = attackElement.adjustDragoonSpaceDamage(damage, dragoonSpaceElement_800c6b64);
+      }
     }
 
     //LAB_800f24c0
@@ -541,18 +542,27 @@ public final class Bttl_800f {
     final BattleObject27c defender = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00;
 
     int damage = attacker.calculatePhysicalAttack(defender);
-    damage = attacker.getAttackElement().adjustElementalDamage(damage, defender.getElement());
+
+    for(final Element attackElement : attacker.getAttackElements()) {
+      damage = attackElement.adjustElementalDamage(damage, defender.getElement());
+    }
+
     damage = adjustDamageForPower(damage, attacker.powerAttack_b4, defender.powerDefence_b8);
 
     if(dragoonSpaceElement_800c6b64 != null) {
-      damage = attacker.getAttackElement().adjustDragoonSpaceDamage(damage, dragoonSpaceElement_800c6b64);
+      for(final Element attackElement : attacker.getAttackElements()) {
+        damage = attackElement.adjustDragoonSpaceDamage(damage, dragoonSpaceElement_800c6b64);
+      }
     }
 
     damage = Math.max(0, damage);
     damage = attacker.applyPhysicalDamageMultipliers(damage);
     damage = Math.max(1, damage);
     damage = defender.applyDamageResistanceAndImmunity(damage, AttackType.PHYSICAL);
-    damage = defender.applyElementalResistanceAndImmunity(damage, attacker.getAttackElement());
+
+    for(final Element attackElement : attacker.getAttackElements()) {
+      damage = defender.applyElementalResistanceAndImmunity(damage, attackElement);
+    }
 
     script.params_20[2].set(damage);
     script.params_20[3].set(determineAttackSpecialEffects(attacker, defender, AttackType.PHYSICAL));
@@ -622,10 +632,10 @@ public final class Bttl_800f {
     } else if(bobj instanceof final PlayerBattleObject player) {
       //LAB_800f3244
       final ActiveStatsa0 stats = stats_800be5f8[bobj.charId_272];
-      final int spPerPhysicalHit = stats.spPerPhysicalHit_4e;
-      final int mpPerPhysicalHit = stats.mpPerPhysicalHit_50;
-      final int spPerMagicalHit = stats.spPerMagicalHit_52;
-      final int mpPerMagicalHit = stats.mpPerMagicalHit_54;
+      final int spPerPhysicalHit = stats.equipmentSpPerPhysicalHit_4e;
+      final int mpPerPhysicalHit = stats.equipmentMpPerPhysicalHit_50;
+      final int spPerMagicalHit = stats.equipmentSpPerMagicalHit_52;
+      final int mpPerMagicalHit = stats.equipmentMpPerMagicalHit_54;
 
       //LAB_800f32ac
       if(player.tempSpPerPhysicalHitTurns_cd != 0) {
@@ -655,7 +665,7 @@ public final class Bttl_800f {
         player.mpPerMagicalHit_130 = mpPerMagicalHit;
       }
 
-      speed = stats.gearSpeed_86 + stats.bodySpeed_69;
+      speed = stats.equipmentSpeed_86 + stats.bodySpeed_69;
     } else {
       throw new IllegalStateException("Unknown bobj type");
     }
@@ -3156,54 +3166,54 @@ public final class Bttl_800f {
    */
   @Method(0x800f946cL)
   public static int applyMagicDamageMultiplier(final BattleObject27c attacker, final int damage, final int magicType) {
-    final int damageType;
+    final int damageMultiplier;
     if(magicType == 0) {
-      damageType = spellStats_800fa0b8.get(attacker.spellId_4e).damage_03.get();
+      damageMultiplier = spellStats_800fa0b8.get(attacker.spellId_4e).damage_03.get();
     } else {
       //LAB_800f949c
-      damageType = attacker.item_d4.damage_02;
+      damageMultiplier = attacker.item_d4.damageMultiplier_02;
     }
 
-    if(damageType == 0x1) {
+    if(damageMultiplier == 0x1) {
       //LAB_800f9570
       return damage * 8;
     }
 
-    if(damageType == 0x2) {
+    if(damageMultiplier == 0x2) {
       //LAB_800f9564
       return damage * 6;
     }
 
     //LAB_800f94d8
-    if(damageType == 0x4) {
+    if(damageMultiplier == 0x4) {
       //LAB_800f955c
       return damage * 5;
     }
 
     //LAB_800f94a0
-    if(damageType == 0x8) {
+    if(damageMultiplier == 0x8) {
       //LAB_800f9554
       return damage * 4;
     }
 
-    if(damageType == 0x10) {
+    if(damageMultiplier == 0x10) {
       //LAB_800f954c
       return damage * 3;
     }
 
     //LAB_800f94ec
-    if(damageType == 0x20) {
+    if(damageMultiplier == 0x20) {
       //LAB_800f9544
       return damage * 2;
     }
 
     //LAB_800f9510
-    if(damageType == 0x40) {
+    if(damageMultiplier == 0x40) {
       //LAB_800f9534
       return damage + damage / 2;
     }
 
-    if(damageType == 0x80) {
+    if(damageMultiplier == 0x80) {
       return damage / 2;
     }
 

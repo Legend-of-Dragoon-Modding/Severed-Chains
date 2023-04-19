@@ -12,7 +12,10 @@ public class ElementSet implements Iterable<Element> {
 
   public void set(final ElementSet other) {
     this.clear();
+    this.addAll(other);
+  }
 
+  public void addAll(final ElementSet other) {
     for(final Element element : other) {
       this.add(element);
     }

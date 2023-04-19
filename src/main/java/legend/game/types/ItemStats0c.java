@@ -15,7 +15,7 @@ public class ItemStats0c {
   /** ubyte */
   public final Element element_01;
   /** ubyte */
-  public final int damage_02;
+  public final int damageMultiplier_02;
   /**
    * Read left to right
    *
@@ -79,26 +79,26 @@ public class ItemStats0c {
   public static ItemStats0c fromFile(final FileData data) {
     final int target = data.readUByte(0x0);
     final Element element = Element.fromFlag(data.readUByte(0x1));
-    final int damage = data.readUByte(0x2);
+    final int damageMultiplier = data.readUByte(0x2);
     final int special1 = data.readUByte(0x3);
     final int special2 = data.readUByte(0x4);
-    final int damage2 = data.readUByte(0x5);
+    final int damage = data.readUByte(0x5);
     final int specialAmount = data.readByte(0x6);
     final int icon = data.readByte(0x7);
     final int status = data.readUByte(0x8);
     final int percentage = data.readUByte(0x9);
     final int uu2 = data.readUByte(0xa);
     final int type = data.readUByte(0xb);
-    return new ItemStats0c(target, element, damage, special1, special2, damage2, specialAmount, icon, status, percentage, uu2, type);
+    return new ItemStats0c(target, element, damageMultiplier, special1, special2, damage, specialAmount, icon, status, percentage, uu2, type);
   }
 
-  public ItemStats0c(final int target, final Element element, final int damage, final int special1, final int special2, final int damage2, final int specialAmount, final int icon, final int status, final int percentage, final int uu2, final int type) {
+  public ItemStats0c(final int target, final Element element, final int damageMultiplier, final int special1, final int special2, final int damage, final int specialAmount, final int icon, final int status, final int percentage, final int uu2, final int type) {
     this.target_00 = target;
     this.element_01 = element;
-    this.damage_02 = damage;
+    this.damageMultiplier_02 = damageMultiplier;
     this.special1_03 = special1;
     this.special2_04 = special2;
-    this.damage_05 = damage2;
+    this.damage_05 = damage;
     this.specialAmount_06 = specialAmount;
     this.icon_07 = icon;
     this.status_08 = status;
