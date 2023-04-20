@@ -1212,7 +1212,7 @@ public final class SEffe {
 
   @Method(0x800fd460L)
   public static long FUN_800fd460(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c particleManager, final ParticleEffectData98 particles, final ParticleEffectInstance94 particleInstance) {
-    particleInstance._04--;  // a3 is particle
+    particleInstance._04--;
 
     final short s0 = particleInstance._04;
 
@@ -2794,6 +2794,8 @@ public final class SEffe {
   }
 
   /**
+   * Used by the following two lightning renderers and FUN_80105704
+   *
    * @param xy 4 vertices (note: data was originally passed in as ints so you need to change the calling code)
    */
   @Method(0x80102f7cL)
@@ -2812,6 +2814,9 @@ public final class SEffe {
     GPU.queueCommand(a3 + a4 >> 2, cmd);
   }
 
+  /* renderer used for many (though not all) lightning effects
+    used by allocator 0x801052dc
+   */
   @Method(0x801030d8L)
   public static void FUN_801030d8(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
     final BttlScriptData6cSub38 s6 = (BttlScriptData6cSub38)data.effect_44;
@@ -2994,6 +2999,8 @@ public final class SEffe {
     }
   }
 
+  /* renders some lightning effects (so far only confirmed the ones at the end of Rose's D transformation)
+   * Used by allocator 0x801052dc*/
   @Method(0x80103db0L)
   public static void FUN_80103db0(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
     int v1;
@@ -3018,13 +3025,12 @@ public final class SEffe {
     int spc0;
     boolean spb4 = true;
     final BttlScriptData6cSub38 spb8 = (BttlScriptData6cSub38)manager.effect_44;
-    final long spbc = mallocTail(spb8._28.get() * 0x8L);
 
     if(spb8._04.get() + 1 == spb8._0c.get()) {
-      free(spbc);
       return;
     }
 
+    final long spbc = mallocTail(spb8._28.get() * 0x8L);
     spb8._04.incr();
 
     //LAB_80103e40
@@ -3348,13 +3354,13 @@ public final class SEffe {
     // no-op
   }
 
+  /* Allocates what appear to be electric bolts and those little rainbow rays in Rose's transformation,
+   or more generally, particle effects using multiple gradients */
   @Method(0x801052dcL)
   public static FlowControl FUN_801052dc(final RunningScript<? extends BattleScriptDataBase> script) {
     final int s0 = script.params_20[6].get();
     final int s1 = script.params_20[7].get();
 
-    //TODO counter-attack electricity (tfz note: much more than counter-attack electricity,
-    // used in Haschel Dragoon transformation and Thunder Kid at least, probably more)
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "BttlScriptData6cSub38 (counter-attack electricity?)",
       script.scriptState_04,
