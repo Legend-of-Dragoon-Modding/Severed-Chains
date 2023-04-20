@@ -25,7 +25,7 @@ final class AdsrEnvelope implements legend.core.audio.AdsrEnvelope {
     final AdsrPhase phase = this.phases[this.phase.value];
     final int step = phase.getStep();
     final int shift = phase.getShift();
-    final int taget = phase.getTarget();
+    final int target = phase.getTarget();
     final boolean isDecreasing = phase.isDecreasing();
     final boolean isExponential = phase.isExponential();
 
@@ -41,11 +41,11 @@ final class AdsrEnvelope implements legend.core.audio.AdsrEnvelope {
     }
 
     this.currentLevel += adsrStep;
-    this.currentLevel = isDecreasing ? (short)Math.max(this.currentLevel, taget) : (short)Math.min(this.currentLevel, taget);
+    this.currentLevel = isDecreasing ? (short)Math.max(this.currentLevel, target) : (short)Math.min(this.currentLevel, target);
 
     this.counter += adsrCycles;
 
-    final boolean nextPhase = isDecreasing ? this.currentLevel <= taget : this.currentLevel >= taget;
+    final boolean nextPhase = isDecreasing ? this.currentLevel <= target : this.currentLevel >= target;
 
     if(nextPhase) {
       this.phase = this.phase.next(isDecreasing);
