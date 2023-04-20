@@ -41,16 +41,16 @@ final class AdsrPhase {
     //Attack
     phases[0] = new AdsrPhase(
       0x7fff,
-      (lo >> 10) & 0x1f,
-      7 - ((lo >> 8)  & 0x3),
+      lo >> 10 & 0x1f,
+      7 - (lo >> 8 & 0x3),
       false,
-      ((lo >> 15) & 0x1) != 0
+      (lo >> 15 & 0x1) != 0
     );
 
     //Decay
     phases[1] = new AdsrPhase(
-      (lo & 0xf) * 0x800,
-      (lo >> 4) & 0xf,
+      ((lo & 0xf) + 1) * 0x800,
+      lo >> 4 & 0xf,
       -8,
       true,
       true
@@ -58,11 +58,11 @@ final class AdsrPhase {
 
     //Sustain
     final boolean sustainDecreasing = (hi >> 14 & 0x1) != 0;
-    final int sustainStep = (hi >> 6) & 0x3;
+    final int sustainStep = hi >> 6 & 0x3;
 
     phases[2] = new AdsrPhase(
       sustainDecreasing ? 0 : 0x7fff,
-      (hi >> 8) & 0x1f,
+      hi >> 8 & 0x1f,
       sustainDecreasing ? -8 + sustainStep : 7 - sustainStep,
       sustainDecreasing,
       (hi >> 15 & 0x1) != 0

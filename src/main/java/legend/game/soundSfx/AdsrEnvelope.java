@@ -1,5 +1,7 @@
 package legend.game.soundSfx;
 
+import legend.core.MathHelper;
+
 final class AdsrEnvelope implements legend.core.audio.AdsrEnvelope {
   private final AdsrPhase[] phases;
   private Phase phase;
@@ -42,7 +44,7 @@ final class AdsrEnvelope implements legend.core.audio.AdsrEnvelope {
     }
 
     this.currentLevel += adsrStep;
-    this.currentLevel = isDecreasing ? (short)Math.max(this.currentLevel, target) : (short)Math.min(this.currentLevel, target);
+    this.currentLevel = MathHelper.clamp(this.currentLevel, 0, 0x7fff);
 
     this.counter += adsrCycles;
 
