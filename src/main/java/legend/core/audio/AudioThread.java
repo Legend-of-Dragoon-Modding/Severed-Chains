@@ -131,7 +131,7 @@ public class AudioThread implements Runnable {
     }
   }
 
-  public void LoadBackgroundMusic(final MidiSequence sequence) {
+  public void loadBackgroundMusic(final MidiSequence sequence) {
     sequence.loadVoices(this.voicePool);
     this.sequence = sequence;
   }

@@ -4,16 +4,17 @@ import legend.game.unpacker.FileData;
 import legend.game.unpacker.UnpackerException;
 
 final class Sssq {
-  private final double ticksPerMs;
-  private final int tempo;
   private final Channel[] channels;
   private final Sequence[][] sequences;
+  private final int ticksPerQuarterNote;
+  private int tempo;
+  private double ticksPerMs;
 
   /** Background Music */
   Sssq(final FileData sssqData, final SoundFont soundFont) {
-    final int ticksPerQuarterNote = sssqData.readUShort(2);
-    this.tempo = sssqData.readUShort(4);
-    this.ticksPerMs = (this.tempo * ticksPerQuarterNote) / 60_000d;
+    this.ticksPerQuarterNote = sssqData.readUShort(2);
+    final int tempo = sssqData.readUShort(4);
+    this.setTempo(tempo);
 
     if(sssqData.readInt(12) != 0x71735353) {
       throw new UnpackerException("Not a SSsq file!");
@@ -31,9 +32,8 @@ final class Sssq {
 
   /** Sound Effects */
   Sssq(final FileData sssqData, final Sequence[][] sequences, final SoundFont soundFont) {
-    final int ticksPerQuarterNote = sssqData.readUShort(2); // This is 0??
-    this.tempo = sssqData.readUShort(4); // Also 0??
-    this.ticksPerMs = (this.tempo * ticksPerQuarterNote) / 60_000d;
+    this.ticksPerQuarterNote = sssqData.readUShort(2); // This is 0??
+    this.setTempo(sssqData.readUShort(4)); // Also 0??
 
     this.channels = new Channel[0x10];
 
@@ -42,6 +42,11 @@ final class Sssq {
     }
 
     this.sequences = sequences;
+  }
+
+  public void setTempo(final int tempo) {
+    this.tempo = tempo;
+    this.ticksPerMs = (this.tempo * this.ticksPerQuarterNote) / 60_000d;
   }
 
   int deltaTimeToSampleCount(final int deltaTime) {

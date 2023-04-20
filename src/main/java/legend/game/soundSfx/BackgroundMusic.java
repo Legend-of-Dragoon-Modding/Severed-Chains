@@ -31,6 +31,8 @@ final class BackgroundMusic implements MidiSequence {
         case CONTROL_CHANGE -> this.controlChange(command.getChannel(), command.getValue1(), command.getValue2());
         case PROGRAM_CHANGE -> this.programChange(command.getChannel(), command.getValue1());
         case PITCH_BEND -> this.pitchBend(command.getChannel(), command.getValue1());
+        case META -> this.meta(command.getValue1(), command.getValue2());
+        default -> System.err.println("Unhandled message " + command.getCommand());
       }
 
       this.samplesToProcess = this.sssq.deltaTimeToSampleCount(command.getDeltaTime());
@@ -49,17 +51,15 @@ final class BackgroundMusic implements MidiSequence {
       final AudioStream stream = this.audioStreams[voice];
 
       if(stream.getChannel() == channel && stream.getNote() == note) {
-        this.audioStreams[voice].keyOn(channel, layers.get(layerIndex++), note, velocity);
-
         System.out.printf("Key On (Reset) Channel: %d [Voice: %d] Note: %d%n", channelIndex, voice, note);
+        this.audioStreams[voice].keyOn(channel, layers.get(layerIndex++), note, velocity);
       }
     }
 
     for(voice = 0; voice < this.audioStreams.length && layerIndex < layers.size(); voice++) {
       if(this.audioStreams[voice].isEmpty()) {
-        this.audioStreams[voice].keyOn(channel, layers.get(layerIndex++), note, velocity);
-
         System.out.printf("Key On Channel: %d [Voice: %d] Note: %d%n", channelIndex, voice, note);
+        this.audioStreams[voice].keyOn(channel, layers.get(layerIndex++), note, velocity);
       }
     }
 
@@ -72,9 +72,8 @@ final class BackgroundMusic implements MidiSequence {
     for(int voice = 0; voice < this.audioStreams.length; voice++) {
       final AudioStream stream = this.audioStreams[voice];
       if(stream.getChannel() == this.sssq.getChannel(channelIndex) && stream.getNote() == note) {
-        stream.keyOff(velocity);
-
         System.out.printf("Key Off Channel: %d [Voice: %d]%n", channelIndex, voice);
+        stream.keyOff(velocity);
       }
     }
   }
@@ -88,12 +87,12 @@ final class BackgroundMusic implements MidiSequence {
       case 0x01 -> System.err.printf("Control Change Channel: %d Modulation: 0x%x%n", channelIndex, value);
       case 0x02 -> System.err.printf("Control Change Channel: %d Breath Control: 0x%x%n", channelIndex, value);
       case 0x07 -> {
-        this.sssq.getChannel(channelIndex).setVolume(value);
         System.out.printf("Control Change Channel: %d Volume: %d%n", channelIndex, value);
+        this.sssq.getChannel(channelIndex).setVolume(value);
       }
       case 0x0a -> {
-        this.sssq.getChannel(channelIndex).setPan(value);
         System.out.printf("Control Change Channel: %d Pan: %d%n", channelIndex, value);
+        this.sssq.getChannel(channelIndex).setPan(value);
       }
       default -> System.err.printf("Bad Control Change Channel: %d Command: 0x%x Value: 0x%x%n", channelIndex, control, value);
     }
@@ -116,6 +115,17 @@ final class BackgroundMusic implements MidiSequence {
     }
 
     System.out.printf("Pitch Bend Channel: %d, Value: %d%n", channelIndex, value);
+  }
+
+  private void meta(final int command, final int value) {
+    switch(command) {
+      case 0x51 -> {
+        System.out.printf("Tempo change: %d%n", value);
+        this.sssq.setTempo(value);
+      }
+
+      default -> System.err.printf("Unhandled meta event %d value %d%n", command, value);
+    }
   }
 
   @Override

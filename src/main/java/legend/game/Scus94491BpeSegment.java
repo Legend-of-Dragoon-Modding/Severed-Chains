@@ -4324,6 +4324,11 @@ public final class Scus94491BpeSegment {
 //    musicLoaded_800bd782.incr();
     loadedDrgnFiles_800bcf78.oru(0x80L);
     final int fileIndex = 5815 + script.params_20[0].get() * 5;
+
+    if(script.params_20[1].get() != 0) {
+      System.out.println(script.params_20[1].get());
+    }
+
     loadDrgnDir(0, fileIndex, files -> Scus94491BpeSegment.musicPackageLoadedCallback(files, fileIndex << 8 | script.params_20[1].get()));
     return FlowControl.CONTINUE;
   }
@@ -4335,6 +4340,11 @@ public final class Scus94491BpeSegment {
 //    musicLoaded_800bd782.incr();
     loadedDrgnFiles_800bcf78.oru(0x80L);
     final int fileIndex = 732 + script.params_20[0].get() * 5;
+
+    if(script.params_20[1].get() != 0) {
+      System.out.println(script.params_20[1].get());
+    }
+
     loadDrgnDir(0, fileIndex, files -> Scus94491BpeSegment.musicPackageLoadedCallback(files, fileIndex << 8 | script.params_20[1].get()));
     return FlowControl.CONTINUE;
   }
@@ -4346,6 +4356,11 @@ public final class Scus94491BpeSegment {
 //    musicLoaded_800bd782.incr();
     loadedDrgnFiles_800bcf78.oru(0x80L);
     final int fileIndex = 2353 + script.params_20[0].get() * 6;
+
+    if(script.params_20[1].get() != 0) {
+      System.out.println(script.params_20[1].get());
+    }
+
     loadDrgnDir(0, fileIndex, files -> Scus94491BpeSegment.musicPackageLoadedCallback(files, fileIndex << 8 | script.params_20[1].get()));
     return FlowControl.CONTINUE;
   }
