@@ -1016,7 +1016,7 @@ public final class Bttl_800e {
   @Method(0x800e665cL)
   public static void loadDragoonDeff(final RunningScript<? extends BattleScriptDataBase> script) {
     final int index = script.params_20[0].get() & 0xffff;
-    final int s1 = script.params_20[3].get() & 0xff;
+    final int soundType = script.params_20[3].get() & 0xff;
 
     LOGGER.info(DEFF, "Loading dragoon DEFF (ID: %d, flags: %x)", index, script.params_20[0].get() & 0xffff_0000);
 
@@ -1030,7 +1030,7 @@ public final class Bttl_800e {
     if((deffManager.flags_20 & 0x4_0000) != 0) {
       //LAB_800e66fc
       //LAB_800e670c
-      loadDeffSounds(battle24.bobjState_04, index != 0x2e || s1 != 0 ? 0 : 2);
+      loadDeffSounds(battle24.bobjState_04, index != 0x2e || soundType != 0 ? 0 : 2);
     }
 
     //LAB_800e6714
