@@ -15,12 +15,12 @@ final class Offsets {
       cent[i] = Math.pow(1.0005946d, i);
     }
 
-    for(int i = 0; i < 65; i++) {
-      pan[i] = i * Math.PI / 256;
+    for(int i = 0; i <= 60; i++) {
+      pan[i] = i * 4 / 256.0;
     }
 
-    for(int i = 65; i < pan.length; i++) {
-      pan[i] = i * Math.PI / 254;
+    for(int i = 61; i < 128; i++) {
+      pan[i] = 1.0;
     }
   }
 }

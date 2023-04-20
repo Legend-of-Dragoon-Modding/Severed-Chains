@@ -53,8 +53,8 @@ final class Voice implements AudioStream {
     final short processedSample = (short)(((int)(sample * adsrValue * volume)) >> 15);
 
     if(this.sound.isStereo()) {
-      final double leftPan = Offsets.pan[this.layer.getPan()] * Offsets.pan[this.channel.getPan()];
-      final double rightPan = Offsets.pan[127 - this.layer.getPan()] * Offsets.pan[127 - this.channel.getPan()];
+      final double leftPan = Offsets.pan[127 - this.layer.getPan()] * Offsets.pan[127 - this.channel.getPan()];
+      final double rightPan = Offsets.pan[this.layer.getPan()] * Offsets.pan[this.channel.getPan()];
 
       this.sound.bufferSample((short)(processedSample * leftPan));
       this.sound.bufferSample((short)(processedSample * rightPan));

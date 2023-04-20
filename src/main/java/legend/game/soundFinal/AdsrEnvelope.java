@@ -1,7 +1,5 @@
 package legend.game.soundFinal;
 
-import legend.core.MathHelper;
-
 final class AdsrEnvelope {
   private final AdsrPhase[] phases;
   private Phase phase;
@@ -10,7 +8,8 @@ final class AdsrEnvelope {
 
   AdsrEnvelope(final AdsrPhase[] phases) {
     this.phases = phases;
-    this.phase = AdsrEnvelope.Phase.Attack;
+    this.phase = Phase.Attack;
+    this.counter = phases[0].getStep() << Math.max(0, 11 - phases[0].getShift());
   }
 
   short get() {
@@ -26,7 +25,7 @@ final class AdsrEnvelope {
     final AdsrPhase phase = this.phases[this.phase.value];
     final int step = phase.getStep();
     final int shift = phase.getShift();
-    final int taget = phase.getTarget();
+    final int target = phase.getTarget();
     final boolean isDecreasing = phase.isDecreasing();
     final boolean isExponential = phase.isExponential();
 
@@ -42,11 +41,11 @@ final class AdsrEnvelope {
     }
 
     this.currentLevel += adsrStep;
-    this.currentLevel = isDecreasing ? (short)Math.max(this.currentLevel, taget) : (short)Math.min(this.currentLevel, taget);
+    this.currentLevel = isDecreasing ? (short)Math.max(this.currentLevel, target) : (short)Math.min(this.currentLevel, target);
 
     this.counter += adsrCycles;
 
-    final boolean nextPhase = isDecreasing ? this.currentLevel <= taget : this.currentLevel >= taget;
+    final boolean nextPhase = isDecreasing ? this.currentLevel <= target : this.currentLevel >= target;
 
     if(nextPhase) {
       this.phase = this.phase.next(isDecreasing);
@@ -68,7 +67,7 @@ final class AdsrEnvelope {
   }
 
 
-  AdsrEnvelope.Phase getState() {
+  Phase getState() {
     return this.phase;
   }
 
@@ -85,11 +84,11 @@ final class AdsrEnvelope {
 
     private final int value;
 
-    private Phase(final int value) {
+    Phase(final int value) {
       this.value = value;
     }
 
-    private AdsrEnvelope.Phase next(final boolean isDecreasing) {
+    private Phase next(final boolean isDecreasing) {
       return switch(this.value) {
         case 0 -> Decay;
         case 1 -> Sustain;
