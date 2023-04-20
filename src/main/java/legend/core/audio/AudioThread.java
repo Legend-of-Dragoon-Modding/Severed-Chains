@@ -67,7 +67,7 @@ public class AudioThread implements Runnable {
 
     this.voicePool = new Voice[voiceCount];
     for(int voice = 0; voice < this.voicePool.length; voice++) {
-      this.voicePool[voice] = new Voice(this.samplesPerTick, stereo);
+      this.voicePool[voice] = new Voice(voice, this.samplesPerTick, stereo);
     }
   }
 

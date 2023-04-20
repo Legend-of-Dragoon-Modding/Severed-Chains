@@ -7,6 +7,7 @@ import legend.core.audio.AudioThread;
 //TODO
 // See sssqTempo_800bd104
 // See code @ LAB_8001dda0
+// Decay ((lo & 0xf) + 1) * 0x800
 
 public final class SoundTest {
   public static void main(final String[] args) {

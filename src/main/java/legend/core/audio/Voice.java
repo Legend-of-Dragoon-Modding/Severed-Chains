@@ -2,6 +2,8 @@ package legend.core.audio;
 
 final class Voice implements AudioStream {
   private static final short[] EMPTY = new short[3];
+
+  public final int index;
   private final BufferedSound sound;
   private final VoiceCounter counter = new VoiceCounter();
 
@@ -19,7 +21,8 @@ final class Voice implements AudioStream {
   private boolean hasSamples;
   private final short[] samples = new short[31];
 
-  Voice(final int bufferSize, final boolean stereo) {
+  Voice(final int index, final int bufferSize, final boolean stereo) {
+    this.index = index;
     this.sound = new BufferedSound(bufferSize, stereo);
   }
 
@@ -42,9 +45,9 @@ final class Voice implements AudioStream {
 
     final short sample = this.sampleVoice();
 
-    final short adsrValue = this.adsrEnvelope.get();
+    final short adsrValue = this.adsrEnvelope.tick();
 
-    if(adsrValue < 16) {
+    if(this.adsrEnvelope.isFinished()) {
       this.empty = true;
     }
 

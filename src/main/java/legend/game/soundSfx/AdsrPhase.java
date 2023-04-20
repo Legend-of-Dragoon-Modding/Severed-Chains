@@ -50,7 +50,7 @@ final class AdsrPhase {
     //Decay
     phases[1] = new AdsrPhase(
       (lo & 0xf) * 0x800,
-      (lo >> 4) & 0x1f,
+      (lo >> 4) & 0xf,
       -8,
       true,
       true

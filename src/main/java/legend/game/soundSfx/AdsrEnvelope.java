@@ -2,23 +2,24 @@ package legend.game.soundSfx;
 
 final class AdsrEnvelope implements legend.core.audio.AdsrEnvelope {
   private final AdsrPhase[] phases;
-  private AdsrEnvelope.Phase phase;
+  private Phase phase;
   private int currentLevel;
   private int counter;
 
   AdsrEnvelope(final AdsrPhase[] phases) {
     this.phases = phases;
-    this.phase = AdsrEnvelope.Phase.Attack;
+    this.phase = Phase.Attack;
+    this.counter = 1 << Math.max(0, phases[0].getShift() - 11);
   }
 
   @Override
-  public short get() {
+  public short tick() {
     if(this.counter > 0) {
       this.counter--;
       return (short)this.currentLevel;
     }
 
-    if(this.phase == AdsrEnvelope.Phase.Off) {
+    if(this.phase == Phase.Off) {
       return 0;
     }
 
@@ -57,20 +58,20 @@ final class AdsrEnvelope implements legend.core.audio.AdsrEnvelope {
 
   @Override
   public void keyOff() {
-    this.phase = AdsrEnvelope.Phase.Release;
+    this.phase = Phase.Release;
     this.counter = 0;
   }
 
   @Override
   public void mute() {
-    this.phase = AdsrEnvelope.Phase.Off;
+    this.phase = Phase.Off;
     this.currentLevel = 0;
     this.counter = 0;
   }
 
-
-  AdsrEnvelope.Phase getState() {
-    return this.phase;
+  @Override
+  public boolean isFinished() {
+    return this.phase == Phase.Off;
   }
 
   int getCurrentLevel() {
@@ -86,11 +87,11 @@ final class AdsrEnvelope implements legend.core.audio.AdsrEnvelope {
 
     private final int value;
 
-    private Phase(final int value) {
+    Phase(final int value) {
       this.value = value;
     }
 
-    private AdsrEnvelope.Phase next(final boolean isDecreasing) {
+    private Phase next(final boolean isDecreasing) {
       return switch(this.value) {
         case 0 -> Decay;
         case 1 -> Sustain;

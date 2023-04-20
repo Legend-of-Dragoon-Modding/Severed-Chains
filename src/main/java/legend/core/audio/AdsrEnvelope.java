@@ -1,7 +1,8 @@
 package legend.core.audio;
 
 public interface AdsrEnvelope {
-  short get();
+  short tick();
   void mute();
   void keyOff();
+  boolean isFinished();
 }
