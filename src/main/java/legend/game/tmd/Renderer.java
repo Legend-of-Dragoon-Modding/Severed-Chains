@@ -24,33 +24,37 @@ public final class Renderer {
   /**
    * @param useSpecialTranslucency Used in battle, some TMDs have translucency info in the upper 16 bits of their ID. Also enables backside culling.
    */
-  public static void renderDobj2(final GsDOBJ2 dobj2, final boolean useSpecialTranslucency) {
+  public static void renderDobj2(final GsDOBJ2 dobj2, final boolean useSpecialTranslucency, final int ctmdFlag) {
     final TmdObjTable1c objTable = dobj2.tmd_08;
     final SVECTOR[] vertices = objTable.vert_top_00;
     final SVECTOR[] normals = objTable.normal_top_08;
 
+    // CTMD flag and scripted "uniform lighting" + transparency flag for STMDs in DEFFs
+    final int specialFlags = ctmdFlag | ((dobj2.attribute_00 & 0x4000_0000) != 0 ? 0x12 : 0x0);
+
     //LAB_800da2bc
     for(final TmdObjTable1c.Primitive primitive : objTable.primitives_10) {
-      renderTmdPrimitive(primitive, vertices, normals, useSpecialTranslucency);
+      renderTmdPrimitive(primitive, vertices, normals, useSpecialTranslucency, specialFlags);
     }
   }
 
-  public static void renderTmdPrimitive(final TmdObjTable1c.Primitive primitive, final SVECTOR[] vertices, final SVECTOR[] normals, final boolean useSpecialTranslucency) {
+  public static void renderTmdPrimitive(final TmdObjTable1c.Primitive primitive, final SVECTOR[] vertices, final SVECTOR[] normals, final boolean useSpecialTranslucency, final int specialFlags) {
     // Read type info from command ---
-    final int command = primitive.header() & 0xff04_0000;
+    final int command = (primitive.header() | specialFlags) & 0xff04_0000;
     final int primitiveId = command >>> 24;
-
     if((primitiveId >>> 5 & 0b11) != 1) {
       throw new RuntimeException("Unsupported primitive type");
     }
 
-    final boolean gradated = (command & 0x4_0000) != 0;
+    final boolean ctmd = (specialFlags & 0x20) != 0;
+    final boolean uniformLit = (specialFlags & 0x10) != 0;
+    final boolean shaded = (command & 0x4_0000) != 0;
     final boolean quad = (primitiveId & 0b1000) != 0;
     final boolean textured = (primitiveId & 0b100) != 0;
-    final boolean translucent = (primitiveId & 0b10) != 0;
+    final boolean translucent = ((primitiveId & 0b10) != 0) || ((specialFlags & 0x2) != 0);
     final boolean lit = (primitiveId & 0b1) == 0;
 
-    if(textured && gradated) {
+    if(textured && shaded) {
       throw new RuntimeException("Invalid primitive type");
     }
 
@@ -86,7 +90,7 @@ public final class Renderer {
         }
       }
 
-      if(gradated || !lit) {
+      if(shaded || !lit) {
         for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
           poly.vertices[vertexIndex].colour = IoHelper.readInt(data, primitivesOffset);
           primitivesOffset += 4;
@@ -167,11 +171,20 @@ public final class Renderer {
         continue;
       }
 
-      if(textured && !lit) {
+      if(translucent && (ctmd || uniformLit)) {
+        final long rbk = CPU.CFC2(13);
+        final long gbk = CPU.CFC2(14);
+        final long bbk = CPU.CFC2(15);
+
         for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
-          cmd.rgb(vertexIndex, poly.vertices[vertexIndex].colour);
+          int rgb = poly.vertices[vertexIndex].colour;
+          final int r = (int)(((rgb & 0xff) * rbk >> 12) & 0xff);
+          final int g = (int)((((rgb >>> 8) & 0xff) * gbk >> 12) & 0xff);
+          final int b = (int)((((rgb >>> 16) & 0xff) * bbk >> 12) & 0xff);
+          rgb = b << 16 | g << 8 | r;
+          cmd.rgb(vertexIndex, rgb);
         }
-      } else {
+      } else if(!textured || lit) {
         for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
           CPU.MTC2(poly.vertices[vertexIndex].colour, 6);
 
@@ -183,9 +196,13 @@ public final class Renderer {
           }
 
           CPU.MTC2(norm.getXY(), 0);
-          CPU.MTC2(norm.getZ(),  1);
+          CPU.MTC2(norm.getZ(), 1);
           CPU.COP2(0x108_041bL); // Normal colour colour single vector
           cmd.rgb(vertexIndex, (int)CPU.MFC2(22));
+        }
+      } else {
+        for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
+          cmd.rgb(vertexIndex, poly.vertices[vertexIndex].colour);
         }
       }
 

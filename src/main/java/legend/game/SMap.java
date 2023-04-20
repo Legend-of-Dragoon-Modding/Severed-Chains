@@ -906,7 +906,7 @@ public final class SMap {
     CPU.CTC2(ls.transfer.getY(), 6);
     CPU.CTC2(ls.transfer.getZ(), 7);
 
-    Renderer.renderDobj2(model_800bda10.ObjTable_0c.top[0], false);
+    Renderer.renderDobj2(model_800bda10.ObjTable_0c.top[0], false, 0);
     model_800bda10.coord2ArrPtr_04[0].flg--;
   }
 
@@ -1009,7 +1009,7 @@ public final class SMap {
         CPU.CTC2(ls.transfer.getX(), 5);
         CPU.CTC2(ls.transfer.getY(), 6);
         CPU.CTC2(ls.transfer.getZ(), 7);
-        Renderer.renderDobj2(dobj2, false);
+        Renderer.renderDobj2(dobj2, false, 0);
       }
     }
 

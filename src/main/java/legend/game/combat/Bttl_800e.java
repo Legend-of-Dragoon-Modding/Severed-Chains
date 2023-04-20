@@ -3176,7 +3176,7 @@ public final class Bttl_800e {
     CPU.CTC2(sp0x10.transfer.getX(), 5);
     CPU.CTC2(sp0x10.transfer.getY(), 6);
     CPU.CTC2(sp0x10.transfer.getZ(), 7);
-    Renderer.renderDobj2(s2.ObjTable_0c.top[0], true);
+    Renderer.renderDobj2(s2.ObjTable_0c.top[0], true, 0);
     s2.coord2ArrPtr_04[0].flg--;
   }
 
@@ -3221,7 +3221,7 @@ public final class Bttl_800e {
         CPU.CTC2(ls.transfer.getX(), 5);
         CPU.CTC2(ls.transfer.getY(), 6);
         CPU.CTC2(ls.transfer.getZ(), 7);
-        Renderer.renderDobj2(dobj2, true);
+        Renderer.renderDobj2(dobj2, true, 0);
       }
 
       //LAB_800ec608
@@ -3347,7 +3347,7 @@ public final class Bttl_800e {
         CPU.CTC2(sp0x10.transfer.getX(), 5);
         CPU.CTC2(sp0x10.transfer.getY(), 6);
         CPU.CTC2(sp0x10.transfer.getZ(), 7);
-        Renderer.renderDobj2(s2, true);
+        Renderer.renderDobj2(s2, true, 0);
       }
     }
 

@@ -38,13 +38,6 @@ public class MonsterBattleObject extends BattleObject27c {
   public final ElementSet monsterElementalImmunityFlag_74 = new ElementSet();
   public int monsterStatusResistFlag_76;
   public final SVECTOR targetArrowPos_78 = new SVECTOR();
-  public int _7e;
-  public int _80;
-  public int _82;
-  public int _84;
-  public int _86;
-  public int _88;
-  public int _8a;
 
   public MonsterBattleObject(final String name) {
     super(CoreMod.MONSTER_TYPE.get(), name);
@@ -131,13 +124,6 @@ public class MonsterBattleObject extends BattleObject27c {
       case 58 -> this.targetArrowPos_78.getX();
       case 59 -> this.targetArrowPos_78.getY();
       case 60 -> this.targetArrowPos_78.getZ();
-      case 61 -> this._7e;
-      case 62 -> this._80;
-      case 63 -> this._82;
-      case 64 -> this._84;
-      case 65 -> this._86;
-      case 66 -> this._88;
-      case 67 -> this._8a;
 
       default -> super.getStat(statIndex);
     };
@@ -163,13 +149,6 @@ public class MonsterBattleObject extends BattleObject27c {
       case 58 -> this.targetArrowPos_78.setX((short)value);
       case 59 -> this.targetArrowPos_78.setY((short)value);
       case 60 -> this.targetArrowPos_78.setZ((short)value);
-      case 61 -> this._7e = value;
-      case 62 -> this._80 = value;
-      case 63 -> this._82 = value;
-      case 64 -> this._84 = value;
-      case 65 -> this._86 = value;
-      case 66 -> this._88 = value;
-      case 67 -> this._8a = value;
 
       default -> super.setStat(statIndex, value);
     }

@@ -4513,6 +4513,9 @@ public final class Bttl_800d {
     return model.remainingFrames_9e;
   }
 
+  /**
+   * used renderCtmd
+   */
   @Method(0x800dd89cL)
   public static void FUN_800dd89c(final Model124 model, final int newAttribute) {
     final long v0;
@@ -4562,7 +4565,7 @@ public final class Bttl_800d {
           zShift_1f8003c4.set(2);
           zMax_1f8003cc.set(0xffe);
           zMin = 0xb;
-          Renderer.renderDobj2(s2, false);
+          Renderer.renderDobj2(s2, false, 0x20);
           zShift_1f8003c4.set(oldZShift);
           zMax_1f8003cc.set(oldZMax);
           zMin = oldZMin;
@@ -4856,6 +4859,9 @@ public final class Bttl_800d {
     //LAB_800de3e4
   }
 
+  /**
+   * used renderCtmd
+   */
   @Method(0x800de3f4L)
   public static void FUN_800de3f4(final TmdObjTable1c a0, final EffectManagerData6cInner a1, final MATRIX a2) {
     final int s0 = deffManager_800c693c.flags_20 & 0x4;
@@ -4891,7 +4897,7 @@ public final class Bttl_800d {
       zShift_1f8003c4.set(2);
       zMax_1f8003cc.set(0xffe);
       zMin = 0xb;
-      Renderer.renderDobj2(dobj2, false);
+      Renderer.renderDobj2(dobj2, false, 0x20);
       zShift_1f8003c4.set(oldZShift);
       zMax_1f8003cc.set(oldZMax);
       zMin = oldZMin;

@@ -1065,6 +1065,9 @@ public final class SEffe {
     // no-op
   }
 
+  /**
+   * used renderCtmd
+   */
   @Method(0x800fcf20L)
   public static void FUN_800fcf20(final EffectManagerData6c a0, final TmdObjTable1c tmd, final long a2, final int tpage) {
     if(MEMORY.ref(4, a2).offset(0x0L).getSigned() >= 0) {
@@ -1104,7 +1107,7 @@ public final class SEffe {
       zShift_1f8003c4.set(2);
       zMax_1f8003cc.set(0xffe);
       zMin = 0xb;
-      Renderer.renderDobj2(sp0x60, false);
+      Renderer.renderDobj2(sp0x60, false, 0x20);
       zShift_1f8003c4.set(oldZShift);
       zMax_1f8003cc.set(oldZMax);
       zMin = oldZMin;
@@ -6578,6 +6581,9 @@ public final class SEffe {
     //LAB_8010f31c
   }
 
+  /**
+   * used renderCtmd
+   */
   @Method(0x8010f340L)
   public static void FUN_8010f340(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
     final BttlScriptData6cSub20_2 effect = (BttlScriptData6cSub20_2)manager.effect_44;
@@ -6644,16 +6650,16 @@ public final class SEffe {
 
           if(s3._01) {
             sp0xf8.tmd_08 = s3.objTable_98;
-            Renderer.renderDobj2(sp0xf8, false);
+            Renderer.renderDobj2(sp0xf8, false, 0x20);
           }
 
           //LAB_8010f5d0
           if(s3._a2 < 9) {
             sp0xf8.tmd_08 = s3.objTable_94;
-            Renderer.renderDobj2(sp0xf8, false);
+            Renderer.renderDobj2(sp0xf8, false, 0x20);
           } else if(s3._a2 >= 11) {
             sp0xf8.tmd_08 = s3.objTable_9c;
-            Renderer.renderDobj2(sp0xf8, false);
+            Renderer.renderDobj2(sp0xf8, false, 0x20);
           }
 
           zShift_1f8003c4.set(oldZShift);
@@ -7966,26 +7972,26 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
+  /* calculate scale growth */
   @Method(0x80113ba0L)
   public static int FUN_80113ba0(final EffectManagerData6c data, final BttlScriptData6cSub34 sub) {
     sub._18.add(sub._24);
     sub._0c.add(sub._18);
     data._10.scale_16.set(sub._0c);
+    if(sub._32 != -1) {
+      sub._32--;
 
-    if(sub._32 == -1) {
-      return 1;
+      if(sub._32 <= 0) {
+        return 0;
+      }
     }
 
-    sub._32--;
-    if(sub._32 > 0) {
-      //LAB_80113c60
-      return 1;
-    }
-
+    //LAB_80113c60
     //LAB_80113c64
-    return 0;
+    return 1;
   }
 
+  /* set some kind of scale thing */
   @Method(0x80113c6cL)
   public static FlowControl FUN_80113c6c(final RunningScript<?> script) {
     final EffectManagerData6c s0 = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
@@ -8160,6 +8166,7 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
+  /* calculate color(?) scale growth */
   @Method(0x801146fcL)
   public static int FUN_801146fc(final EffectManagerData6c a0, final BttlScriptData6cSub34 a1) {
     a1._18.add(a1._24);
@@ -8186,6 +8193,7 @@ public final class SEffe {
     throw new RuntimeException("Not implemented");
   }
 
+  /* set color scale and growth factors */
   @Method(0x80114920L)
   public static FlowControl FUN_80114920(final RunningScript<?> script) {
     final int scriptIndex1 = script.params_20[0].get();
@@ -8807,6 +8815,10 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
+  /**
+   * TODO used for rendering deffs of some kind, possibly sprite deffs?
+   *   Uses CTMD render pipeline if type == 0x300_0000
+   */
   @Method(0x8011619cL)
   public static void FUN_8011619c(final EffectManagerData6c manager, final BttlScriptData6cSub5c effect, final int deffFlags, final MATRIX matrix) {
     final MATRIX sp0x10 = new MATRIX();
@@ -9639,7 +9651,7 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
-  /** TODO renders other effects too? Burnout, more? */
+  /** TODO renders other effects too? Burnout, more? Uses CTMD render pipeline */
   @Method(0x8011826cL)
   public static void renderDeffTmd(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
     final DeffTmdRenderer14 s1 = (DeffTmdRenderer14)data.effect_44;
@@ -9683,7 +9695,7 @@ public final class SEffe {
         zShift_1f8003c4.set(2);
         zMax_1f8003cc.set(0xffe);
         zMin = 0xb;
-        Renderer.renderDobj2(dobj2, false);
+        Renderer.renderDobj2(dobj2, false, 0);
         zShift_1f8003c4.set(oldZShift);
         zMax_1f8003cc.set(oldZMax);
         zMin = oldZMin;
@@ -9726,7 +9738,7 @@ public final class SEffe {
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
-    manager.flags_04 |= 0x300_0000;
+    manager.flags_04 = 0x300_0000;
 
     final DeffTmdRenderer14 effect = (DeffTmdRenderer14)manager.effect_44;
 
@@ -9836,6 +9848,7 @@ public final class SEffe {
     //LAB_80118780
   }
 
+  /** TODO renders some kind of deff tmd maybe, uses ctmd render pipeline */
   @Method(0x80118790L)
   public static void FUN_80118790(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
     if(manager._10.flags_00 >= 0) {
@@ -9994,6 +10007,7 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
+  /** TODO some effects use CTMD render pipeline if type == 0x300_0000 */
   @Method(0x80118e98L)
   public static void FUN_80118e98(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
     final VECTOR sp0x84 = new VECTOR();

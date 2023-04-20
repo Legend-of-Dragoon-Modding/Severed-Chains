@@ -36,6 +36,10 @@ public class DebuggerController {
   private MenuItem menuDebuggersCombat;
   @FXML
   private MenuItem menuDebuggersSubmap;
+  @FXML
+  private MenuItem menuDebuggersGameStateEditor;
+  @FXML
+  private MenuItem menuDebuggersGameStateViewer;
 
   @FXML
   public Spinner<Integer> encounterId;
@@ -114,6 +118,16 @@ public class DebuggerController {
   @FXML
   private void showSubmapDebugger(final ActionEvent event) throws Exception {
     new SmapDebugger().start(new Stage());
+  }
+
+  @FXML
+  private void showGameStateEditor(final ActionEvent event) throws Exception {
+    new GameStateEditor().start(new Stage());
+  }
+
+  @FXML
+  private void showGameStateViewer(final ActionEvent event) throws Exception {
+    new GameStateViewer().start(new Stage());
   }
 
   @FXML

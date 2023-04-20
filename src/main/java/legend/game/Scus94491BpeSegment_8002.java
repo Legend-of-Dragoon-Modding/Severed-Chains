@@ -632,20 +632,20 @@ public final class Scus94491BpeSegment_8002 {
   public static void renderDobj2(final GsDOBJ2 dobj2) {
     if(mainCallbackIndex_8004dd20.get() == 5) {
       //LAB_800212b0
-      Renderer.renderDobj2(dobj2, false);
+      Renderer.renderDobj2(dobj2, false, 0);
       return;
     }
 
     if(mainCallbackIndex_8004dd20.get() == 6) {
       //LAB_800212a0
-      Renderer.renderDobj2(dobj2, true);
+      Renderer.renderDobj2(dobj2, true, 0);
       return;
     }
 
     //LAB_8002128c
     if(mainCallbackIndex_8004dd20.get() == 8) {
       //LAB_800212c0
-      Renderer.renderDobj2(dobj2, false);
+      Renderer.renderDobj2(dobj2, false, 0);
     }
 
     //LAB_800212c8
