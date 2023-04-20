@@ -3,14 +3,14 @@ package legend.game.combat.types;
 import legend.game.combat.bobj.BattleObject27c;
 import legend.game.combat.bobj.MonsterBattleObject;
 import legend.game.combat.bobj.PlayerBattleObject;
-import legend.game.combat.types.BattleStructEF4.AdditionExtra04;
-import legend.game.combat.types.BattleStructEF4.SpecialEffects20;
-import legend.game.combat.types.BattleStructEF4.Status04;
+import legend.game.combat.types.battlestate.AdditionExtra04;
+import legend.game.combat.types.battlestate.SpecialEffects20;
+import legend.game.combat.types.battlestate.Status04;
 import legend.game.scripting.ScriptState;
 
 import java.util.Arrays;
 
-public class BattleStructEf4 {
+public class BattleStateEf4 {
   public final SpecialEffects20[] specialEffect_00 = new SpecialEffects20[10];
 
   public int _180;
@@ -103,7 +103,7 @@ public class BattleStructEf4 {
    *   <li>0x06 Meru</li>
    *   <li>0x07 Kongol</li>
    *   <li>0x08 Miranda</li>
-   * <ul>
+   * </ul>
    */
   public int specialFlag_2b0;
   public int _2b4;
@@ -274,13 +274,13 @@ public class BattleStructEf4 {
   public final BttlStruct08[] _580 = new BttlStruct08[0x100];
   // This was used for storing animation files in VRAM
 //  public final int[] y_d80 = new int[3];
-  public final BattleStructEf4Sub08[] _d8c = new BattleStructEf4Sub08[16];
-  public final ScriptState<? extends BattleObject27c>[] bobjIndices_e0c = new ScriptState[13];
-  public final ScriptState<PlayerBattleObject>[] charBobjIndices_e40 = new ScriptState[4];
-  public final ScriptState<MonsterBattleObject>[] bobjIndices_e50 = new ScriptState[10];
-  public final ScriptState<? extends BattleObject27c>[] bobjIndices_e78 = new ScriptState[13];
-  public final ScriptState<? extends BattleObject27c>[] bobjIndices_eac = new ScriptState[4];
-  public final ScriptState<MonsterBattleObject>[] monsterBobjIndices_ebc = new ScriptState[10];
+  public final BattleStateEf4Sub08[] _d8c = new BattleStateEf4Sub08[16];
+  public final ScriptState<? extends BattleObject27c>[] allBobjs_e0c = new ScriptState[13];
+  public final ScriptState<PlayerBattleObject>[] charBobjs_e40 = new ScriptState[4];
+  public final ScriptState<MonsterBattleObject>[] monsterBobjs_e50 = new ScriptState[10];
+  public final ScriptState<? extends BattleObject27c>[] aliveBobjs_e78 = new ScriptState[13];
+  public final ScriptState<? extends BattleObject27c>[] aliveCharBobjs_eac = new ScriptState[4];
+  public final ScriptState<MonsterBattleObject>[] aliveMonsterBobjs_ebc = new ScriptState[10];
   public int morphMode_ee4;
 
   // nodart code no longer uses this
@@ -288,11 +288,11 @@ public class BattleStructEf4 {
   public int stageProgression_eec;
   public int _ef0;
 
-  public BattleStructEf4() {
+  public BattleStateEf4() {
     Arrays.setAll(this.specialEffect_00, i -> new SpecialEffects20());
     Arrays.setAll(this.status_384, i -> new Status04());
     Arrays.setAll(this.additionExtra_474, AdditionExtra04::new);
-    Arrays.setAll(this._d8c, i -> new BattleStructEf4Sub08());
+    Arrays.setAll(this._d8c, i -> new BattleStateEf4Sub08());
     Arrays.setAll(this._580, i -> new BttlStruct08());
   }
 }

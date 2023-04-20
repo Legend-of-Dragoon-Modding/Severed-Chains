@@ -10,27 +10,31 @@ import java.util.Set;
 public class ElementSet implements Iterable<Element> {
   private final Set<Element> elements = new HashSet<>();
 
-  public void set(final ElementSet other) {
-    this.clear();
-    this.addAll(other);
+  public ElementSet set(final ElementSet other) {
+    return this.clear().addAll(other);
   }
 
-  public void addAll(final ElementSet other) {
+  public ElementSet addAll(final ElementSet other) {
     for(final Element element : other) {
       this.add(element);
     }
+
+    return this;
   }
 
-  public void add(final Element element) {
+  public ElementSet add(final Element element) {
     this.elements.add(element);
+    return this;
   }
 
-  public void remove(final Element element) {
+  public ElementSet remove(final Element element) {
     this.elements.remove(element);
+    return this;
   }
 
-  public void clear() {
+  public ElementSet clear() {
     this.elements.clear();
+    return this;
   }
 
   public boolean contains(final Element element) {

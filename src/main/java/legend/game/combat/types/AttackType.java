@@ -6,14 +6,14 @@ public enum AttackType {
   ITEM_MAGIC(93, 95, 115, 0xe0),
   ;
 
-  public final int hitStat;
-  public final int avoidStat;
+  public final int tempHitStat;
+  public final int tempAvoidStat;
   public final int alwaysHitStat;
   public final int alwaysHitMask;
 
-  AttackType(final int hitStat, final int avoidStat, final int alwaysHitStat, final int alwaysHitMask) {
-    this.hitStat = hitStat;
-    this.avoidStat = avoidStat;
+  AttackType(final int tempHitStat, final int tempAvoidStat, final int alwaysHitStat, final int alwaysHitMask) {
+    this.tempHitStat = tempHitStat;
+    this.tempAvoidStat = tempAvoidStat;
     this.alwaysHitStat = alwaysHitStat;
     this.alwaysHitMask = alwaysHitMask;
   }

@@ -1,11 +1,11 @@
-package legend.game.combat.types.BattleStructEF4;
+package legend.game.combat.types.battlestate;
 
 import legend.core.Config;
 import legend.game.combat.bobj.BattleObject27c;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.scripting.ScriptState;
 
-import static legend.game.Scus94491BpeSegment_8006._8006e398;
+import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 
 /**
  * One for each ally and enemy
@@ -31,12 +31,12 @@ public class AdditionExtra04 {
     int ultimateWargod = 0;
     // This is a cheap way to tell if we're in a combat engine cutscene and turn it off
     if(Config.autoAddition()) {
-      final ScriptState<? extends BattleObject27c> combatant = _8006e398.bobjIndices_e0c[this.index];
+      final ScriptState<? extends BattleObject27c> combatant = battleState_8006e398.allBobjs_e0c[this.index];
 
       if(combatant != null && (combatant.storage_44[7] & 0x4) == 0) {
         boolean enemyAlive = false;
-        for(int i = 0; i < _8006e398.monsterBobjIndices_ebc.length; i++) {
-          if(_8006e398.monsterBobjIndices_ebc[i] != null && _8006e398.monsterBobjIndices_ebc[i].innerStruct_00 != null && _8006e398.monsterBobjIndices_ebc[i].innerStruct_00.stats.getStat(CoreMod.HP_STAT.get()).getCurrent() != 0) {
+        for(int i = 0; i < battleState_8006e398.aliveMonsterBobjs_ebc.length; i++) {
+          if(battleState_8006e398.aliveMonsterBobjs_ebc[i] != null && battleState_8006e398.aliveMonsterBobjs_ebc[i].innerStruct_00 != null && battleState_8006e398.aliveMonsterBobjs_ebc[i].innerStruct_00.stats.getStat(CoreMod.HP_STAT.get()).getCurrent() != 0) {
             enemyAlive = true;
             break;
           }

@@ -15,6 +15,9 @@ import legend.game.inventory.EquipmentRegistryEvent;
 import legend.game.inventory.Item;
 import legend.game.inventory.ItemRegistry;
 import legend.game.inventory.ItemRegistryEvent;
+import legend.game.inventory.Spell;
+import legend.game.inventory.SpellRegistry;
+import legend.game.inventory.SpellRegistryEvent;
 import legend.game.modding.events.EventManager;
 import legend.game.modding.events.registries.RegistryEvent;
 import legend.game.saves.ConfigEntry;
@@ -34,6 +37,7 @@ public class Registries {
   public final Registry<BattleObjectType> battleObjectTypes = this.addRegistry(new BattleObjectTypeRegistry(), BattleObjectTypeRegistryEvent::new);
   public final Registry<Item> items = this.addRegistry(new ItemRegistry(), ItemRegistryEvent::new);
   public final Registry<Equipment> equipment = this.addRegistry(new EquipmentRegistry(), EquipmentRegistryEvent::new);
+  public final Registry<Spell> spell = this.addRegistry(new SpellRegistry(), SpellRegistryEvent::new);
   public final Registry<ConfigEntry<?>> config = this.addRegistry(new ConfigRegistry(), ConfigRegistryEvent::new);
 
   private <Type extends RegistryEntry> Registry<Type> addRegistry(final Registry<Type> registry, final Function<MutableRegistry<Type>, RegistryEvent.Register<Type>> registryEvent) {

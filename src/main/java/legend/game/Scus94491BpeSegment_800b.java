@@ -90,11 +90,12 @@ public final class Scus94491BpeSegment_800b {
 
   /**
    * <ol>
+   *   <li value="1">Combat victory</li>
    *   <li value="2">Game over</li>
    *   <li value="4">FMV</li>
    * </ol>
    */
-  public static final IntRef postCombatAction_800bc974 = MEMORY.ref(4, 0x800bc974L, IntRef::new);
+  public static final IntRef postBattleAction_800bc974 = MEMORY.ref(4, 0x800bc974L, IntRef::new);
   public static final IntRef itemsDroppedByEnemiesCount_800bc978 = MEMORY.ref(4, 0x800bc978L, IntRef::new);
   public static final Value _800bc97c = MEMORY.ref(4, 0x800bc97cL);
   //TODO structure @ 800bc980... 3 * 12?

@@ -76,8 +76,10 @@ public final class Unpacker {
     transformers.put(Unpacker::drgn21_693_0_patcherDiscriminator, Unpacker::drgn21_693_0_patcher);
     transformers.put(Unpacker::drgn0_142_animPatcherDiscriminator, Unpacker::drgn0_142_animPatcher);
 
-    // Item and equipment tables
+    // Item, equipment, spells, XP
     transformers.put(Unpacker::itemTableDiscriminator, Unpacker::itemTableExtractor);
+    transformers.put(Unpacker::equipmentAndXpDiscriminator, Unpacker::equipmentAndXpExtractor);
+    transformers.put(Unpacker::spellsDiscriminator, Unpacker::spellsExtractor);
 
     // Yes there are 3 different magma fish files to patch
     transformers.put(Unpacker::drgn0_3667_16_animPatcherDiscriminator, Unpacker::drgn0_3667_16_animPatcher);
@@ -90,7 +92,6 @@ public final class Unpacker {
     transformers.put(Unpacker::dragoonCombatModelsAndTexturesDiscriminator, Unpacker::dragoonCombatModelsAndTexturesTransformer);
     transformers.put(Unpacker::skipPartyPermutationsDiscriminator, Unpacker::skipPartyPermutationsTransformer);
     transformers.put(Unpacker::extractBtldDataDiscriminator, Unpacker::extractBtldDataTransformer);
-    transformers.put(Unpacker::extractItemDataDiscriminator, Unpacker::extractItemDataTransformer);
     transformers.put(Unpacker::uiPatcherDiscriminator, Unpacker::uiPatcherTransformer);
     transformers.put(CtmdTransformer::ctmdDiscriminator, CtmdTransformer::ctmdTransformer);
 
@@ -614,6 +615,49 @@ public final class Unpacker {
     return files;
   }
 
+  private static boolean equipmentAndXpDiscriminator(final String name, final FileData data, final Set<String> flags) {
+    return "OVL/S_ITEM.OV_".equals(name) && !flags.contains("S_ITEM");
+  }
+
+  private static Map<String, FileData> equipmentAndXpExtractor(final String name, final FileData data, final Set<String> flags) {
+    flags.add("S_ITEM");
+
+    final Map<String, FileData> files = new HashMap<>();
+    files.put(name, data);
+    files.put("characters/kongol/xp", new FileData(data.data(), 0x17d78, 61 * 4));
+    files.put("characters/dart/xp", new FileData(data.data(), 0x17e6c, 61 * 4));
+    files.put("characters/haschel/xp", new FileData(data.data(), 0x17f60, 61 * 4));
+    files.put("characters/meru/xp", new FileData(data.data(), 0x18054, 61 * 4));
+    files.put("characters/lavitz/xp", new FileData(data.data(), 0x18148, 61 * 4));
+    files.put("characters/albert/xp", new FileData(data.data(), 0x18148, 61 * 4));
+    files.put("characters/rose/xp", new FileData(data.data(), 0x1823c, 61 * 4));
+    files.put("characters/shana/xp", new FileData(data.data(), 0x18330, 61 * 4));
+    files.put("characters/miranda/xp", new FileData(data.data(), 0x18330, 61 * 4));
+
+    for(int i = 0; i < 192; i++) {
+      files.put("equipment/%d.deqp".formatted(i), data.slice(0x16878 + i * 0x1c, 0x1c));
+    }
+
+    return files;
+  }
+
+  private static boolean spellsDiscriminator(final String name, final FileData data, final Set<String> flags) {
+    return "OVL/BTTL.OV_".equals(name) && !flags.contains(name);
+  }
+
+  private static Map<String, FileData> spellsExtractor(final String name, final FileData data, final Set<String> flags) {
+    flags.add(name);
+
+    final Map<String, FileData> files = new HashMap<>();
+    files.put(name, data);
+
+    for(int i = 0; i < 128; i++) {
+      files.put("spells/%d.dspl".formatted(i), data.slice(0x33a30 + i * 0xc, 0xc));
+    }
+
+    return files;
+  }
+
   /**
    * The lava fish animation where it swims around the player is missing the last object
    */
@@ -854,32 +898,6 @@ public final class Unpacker {
     data.writeInt(0xe1a0, 999999999);
 
     return Map.of(name, data);
-  }
-
-  private static boolean extractItemDataDiscriminator(final String name, final FileData data, final Set<String> flags) {
-    return "OVL/S_ITEM.OV_".equals(name) && !flags.contains("S_ITEM");
-  }
-
-  private static Map<String, FileData> extractItemDataTransformer(final String name, final FileData data, final Set<String> flags) {
-    flags.add("S_ITEM");
-
-    final Map<String, FileData> files = new HashMap<>();
-    files.put(name, data);
-    files.put("characters/kongol/xp", new FileData(data.data(), 0x17d78, 61 * 4));
-    files.put("characters/dart/xp", new FileData(data.data(), 0x17e6c, 61 * 4));
-    files.put("characters/haschel/xp", new FileData(data.data(), 0x17f60, 61 * 4));
-    files.put("characters/meru/xp", new FileData(data.data(), 0x18054, 61 * 4));
-    files.put("characters/lavitz/xp", new FileData(data.data(), 0x18148, 61 * 4));
-    files.put("characters/albert/xp", new FileData(data.data(), 0x18148, 61 * 4));
-    files.put("characters/rose/xp", new FileData(data.data(), 0x1823c, 61 * 4));
-    files.put("characters/shana/xp", new FileData(data.data(), 0x18330, 61 * 4));
-    files.put("characters/miranda/xp", new FileData(data.data(), 0x18330, 61 * 4));
-
-    for(int i = 0; i < 192; i++) {
-      files.put("equipment/%d.deqp".formatted(i), data.slice(0x16878 + i * 0x1c, 0x1c));
-    }
-
-    return files;
   }
 
   private static boolean uiPatcherDiscriminator(final String name, final FileData data, final Set<String> flags) {

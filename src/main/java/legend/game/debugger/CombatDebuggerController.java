@@ -24,7 +24,7 @@ import legend.game.modding.coremod.CoreMod;
 import legend.game.scripting.ScriptState;
 
 import static legend.game.Scus94491BpeSegment_8005.combatants_8005e398;
-import static legend.game.Scus94491BpeSegment_8006._8006e398;
+import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.combat.Bttl_800c.currentEnemyNames_800c69d0;
 import static legend.game.combat.Bttl_800c.playerNames_800fb378;
 
@@ -127,7 +127,7 @@ public class CombatDebuggerController {
   }
 
   private void displayStats(final int index) {
-    final ScriptState<? extends BattleObject27c> state = _8006e398.bobjIndices_e0c[index];
+    final ScriptState<? extends BattleObject27c> state = battleState_8006e398.allBobjs_e0c[index];
 
     if(state == null) {
       return;
@@ -176,7 +176,7 @@ public class CombatDebuggerController {
   }
 
   private String getCombatantName(final int combatantIndex) {
-    final ScriptState<? extends BattleObject27c> state = _8006e398.bobjIndices_e0c[combatantIndex];
+    final ScriptState<? extends BattleObject27c> state = battleState_8006e398.allBobjs_e0c[combatantIndex];
 
     if(state == null) {
       return "unused";
@@ -202,7 +202,7 @@ public class CombatDebuggerController {
       return;
     }
 
-    final ScriptState<? extends BattleObject27c> state = _8006e398.bobjIndices_e0c[this.bobjList.getSelectionModel().getSelectedIndex()];
+    final ScriptState<? extends BattleObject27c> state = battleState_8006e398.allBobjs_e0c[this.bobjList.getSelectionModel().getSelectedIndex()];
 
     final ScriptDebugger scriptDebugger = new ScriptDebugger();
     scriptDebugger.preselectScript(state.index).start(new Stage());
@@ -214,7 +214,7 @@ public class CombatDebuggerController {
 
   public void updateStats(final ActionEvent event) {
     final int index = this.bobjList.getSelectionModel().getSelectedIndex();
-    final ScriptState<? extends BattleObject27c> state = _8006e398.bobjIndices_e0c[index];
+    final ScriptState<? extends BattleObject27c> state = battleState_8006e398.allBobjs_e0c[index];
 
     if(state == null) {
       return;

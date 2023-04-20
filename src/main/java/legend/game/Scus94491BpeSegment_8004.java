@@ -245,7 +245,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[143] = Bttl_800c::FUN_800cb9b0;
     scriptSubFunctions_8004e29c[144] = Bttl_800c::scriptPauseAnimation;
     scriptSubFunctions_8004e29c[145] = Bttl_800c::scriptResumeAnimation;
-    scriptSubFunctions_8004e29c[146] = Bttl_800c::FUN_800cba60;
+    scriptSubFunctions_8004e29c[146] = Bttl_800c::scriptDisableBobjAnimationLoop;
     scriptSubFunctions_8004e29c[147] = Bttl_800c::scriptAnimationHasFinished;
     scriptSubFunctions_8004e29c[148] = Bttl_800c::FUN_800cbb00;
     scriptSubFunctions_8004e29c[149] = Bttl_800c::FUN_800cbc14;
@@ -255,26 +255,26 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[153] = Bttl_800c::FUN_800cc1cc;
     scriptSubFunctions_8004e29c[154] = Bttl_800c::FUN_800cc364;
     scriptSubFunctions_8004e29c[155] = Bttl_800c::FUN_800cc46c;
-    scriptSubFunctions_8004e29c[156] = Bttl_800c::FUN_800cc608;
+    scriptSubFunctions_8004e29c[156] = Bttl_800c::scriptBobjLookAtBobj;
     scriptSubFunctions_8004e29c[157] = Bttl_800c::FUN_800cc698;
     scriptSubFunctions_8004e29c[158] = Bttl_800c::FUN_800cc784;
-    scriptSubFunctions_8004e29c[159] = Bttl_800c::FUN_800cc8f4;
+    scriptSubFunctions_8004e29c[159] = Bttl_800c::scriptLoadAttackAnimations;
     scriptSubFunctions_8004e29c[160] = Bttl_800c::FUN_800cca34;
     scriptSubFunctions_8004e29c[161] = Scus94491BpeSegment::scriptRewindAndPause2;
     scriptSubFunctions_8004e29c[162] = Scus94491BpeSegment::scriptRewindAndPause2;
     scriptSubFunctions_8004e29c[163] = Scus94491BpeSegment::scriptRewindAndPause2;
     scriptSubFunctions_8004e29c[164] = Bttl_800c::scriptRenderDamage;
-    scriptSubFunctions_8004e29c[165] = Bttl_800c::FUN_800ccb70;
+    scriptSubFunctions_8004e29c[165] = Bttl_800c::scriptAddFloatingNumberForBobj;
     scriptSubFunctions_8004e29c[166] = Bttl_800c::FUN_800ccba4;
-    scriptSubFunctions_8004e29c[167] = Bttl_800c::FUN_800cccf4;
+    scriptSubFunctions_8004e29c[167] = Bttl_800c::scriptGetCharOrMonsterId;
     scriptSubFunctions_8004e29c[168] = Bttl_800c::scriptSetBobjStat;
     scriptSubFunctions_8004e29c[169] = Bttl_800c::scriptGetBobjStat;
-    scriptSubFunctions_8004e29c[170] = Bttl_800c::FUN_800ccf0c;
+    scriptSubFunctions_8004e29c[170] = Bttl_800c::scriptSetPostBattleAction;
     scriptSubFunctions_8004e29c[171] = Bttl_800c::FUN_800ccec8;
     scriptSubFunctions_8004e29c[172] = Bttl_800c::FUN_800ccef8;
-    scriptSubFunctions_8004e29c[173] = Bttl_800c::FUN_800ccf2c;
-    scriptSubFunctions_8004e29c[174] = Bttl_800c::FUN_800cd0ec;
-    scriptSubFunctions_8004e29c[175] = Bttl_800c::FUN_800cd078;
+    scriptSubFunctions_8004e29c[173] = Bttl_800c::scriptSetBobjDeadAndDropLoot;
+    scriptSubFunctions_8004e29c[174] = Bttl_800c::scriptGetHitMultiplier;
+    scriptSubFunctions_8004e29c[175] = Bttl_800c::scriptSetBobjDead;
     scriptSubFunctions_8004e29c[176] = Bttl_800c::levelUpAddition;
     scriptSubFunctions_8004e29c[177] = Bttl_800c::scriptGetBobjStat2;
     scriptSubFunctions_8004e29c[178] = Bttl_800c::scriptSetBobjRawStat;
@@ -774,9 +774,9 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link Bttl_800c#deferDoNothing}</li>
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
    *   <li>{@link Bttl_800c#FUN_800c7a80}</li>
-   *   <li>{@link Bttl_800c#FUN_800c7bb8}</li>
+   *   <li>{@link Bttl_800c#battleTick}</li>
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
-   *   <li>{@link Bttl_800c#FUN_800c8068}</li>
+   *   <li>{@link Bttl_800c#performPostBattleAction}</li>
    *   <li>{@link Bttl_800c#deallocateCombat}</li>
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_80018998}</li>

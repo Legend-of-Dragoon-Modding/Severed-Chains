@@ -108,7 +108,7 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
   public int turnValue_4c;
   public int spellId_4e;
 
-  public int itemOrSpellId_52;
+  public int itemId_52;
   public int guard_54;
 
   public SpellStats0c spell_94;
@@ -265,21 +265,21 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
       case 36 -> this.turnValue_4c;
       case 37 -> this.spellId_4e;
 
-      case 39 -> this.itemOrSpellId_52;
+      case 39 -> this.itemId_52;
       case 40 -> this.guard_54;
 
-      case 72 -> this.spell_94.targetType_00.get();
-      case 73 -> this.spell_94.flags_01.get();
-      case 74 -> this.spell_94.specialEffect_02.get();
-      case 75 -> this.spell_94.damage_03.get();
-      case 76 -> this.spell_94.multi_04.get();
-      case 77 -> this.spell_94.accuracy_05.get();
-      case 78 -> this.spell_94.mp_06.get();
-      case 79 -> this.spell_94.statusChance_07.get();
-      case 80 -> this.spell_94.element_08.get();
-      case 81 -> this.spell_94.statusType_09.get();
-      case 82 -> this.spell_94.buffType_0a.get();
-      case 83 -> this.spell_94._0b.get();
+      case 72 -> this.spell_94.targetType_00;
+      case 73 -> this.spell_94.flags_01;
+      case 74 -> this.spell_94.specialEffect_02;
+      case 75 -> this.spell_94.damageMultiplier_03;
+      case 76 -> this.spell_94.multi_04;
+      case 77 -> this.spell_94.accuracy_05;
+      case 78 -> this.spell_94.mp_06;
+      case 79 -> this.spell_94.statusChance_07;
+      case 80 -> this.spell_94.element_08.flag;
+      case 81 -> this.spell_94.statusType_09;
+      case 82 -> this.spell_94.buffType_0a;
+      case 83 -> this.spell_94._0b;
 
       case 88 -> (this.powerAttackTurns_b5 & 0xff) << 8 | this.powerAttack_b4 & 0xff;
       case 89 -> (this.powerMagicAttackTurns_b7 & 0xff) << 8 | this.powerMagicAttack_b6 & 0xff;
@@ -357,7 +357,7 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
       case 36 -> this.turnValue_4c = value;
       case 37 -> this.spellId_4e = value;
 
-      case 39 -> this.itemOrSpellId_52 = value;
+      case 39 -> this.itemId_52 = value;
       case 40 -> this.guard_54 = value;
 
       case 88 -> {

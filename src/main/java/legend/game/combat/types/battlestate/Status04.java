@@ -1,4 +1,4 @@
-package legend.game.combat.types.BattleStructEF4;
+package legend.game.combat.types.battlestate;
 
 /**
  * One for each ally and enemy

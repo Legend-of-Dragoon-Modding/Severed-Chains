@@ -152,7 +152,7 @@ public class PlayerBattleObject extends BattleObject27c {
   public int calculateMagicAttack(final BattleObject27c target, final int magicType) {
     int matk = this.magicAttack_36;
     if(magicType == 1) {
-      matk += spellStats_800fa0b8.get(this.spellId_4e).multi_04.get();
+      matk += spellStats_800fa0b8[this.spellId_4e].multi_04;
     } else {
       //LAB_800f2ef8
       matk += this.item_d4.damage_05;

@@ -77,10 +77,19 @@ public class ScriptState<T> {
    *     <p>In combat this variable is used for a few different things:</p>
    *     <ul>
    *       <li>0x2 - dragoon</li>
-   *       <li>0x4 - is enemy</li>
+   *       <li>0x4 - monster</li>
    *       <li>0x8 - it is this character's turn</li>
-   *       <li>0x20 - ?</li>
-   *       <li>0x40 - ?</li>
+   *       <li>0x10 - ?</li>
+   *       <li>0x20 - forced turn, probably bosses who have reaction attacks</li>
+   *       <li>0x40 - dead</li>
+   *       <li>0x80 - finish the current animation and then stop animating</li>
+   *       <li>0x100 - ?</li>
+   *       <li>0x200 - ?</li>
+   *       <li>0x400 - ?</li>
+   *       <li>0x800 - don't load script (used by cutscene bobjs controlled by other scripts)</li>
+   *       <li>0x1000 - ?</li>
+   *       <li>0x2000 - don't drop loot (set when monster has died to prevent duplicate drops)</li>
+   *       <li>0x4000 - cannot target</li>
    *     </ul>
    *   </li>
    *   <li>
