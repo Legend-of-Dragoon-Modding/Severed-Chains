@@ -1211,55 +1211,55 @@ public final class SEffe {
   }
 
   @Method(0x800fd460L)
-  public static long FUN_800fd460(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c a1, final ParticleEffectData98 a2, final ParticleEffectInstance94 a3) {
-    a3._04--;
+  public static long FUN_800fd460(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c particleManager, final ParticleEffectData98 particles, final ParticleEffectInstance94 particleInstance) {
+    particleInstance._04--;  // a3 is particle
 
-    final short s0 = a3._04;
+    final short s0 = particleInstance._04;
 
     //LAB_800fd53c
     if(s0 < 0) {
       if(s0 == -0xfff) {
-        a3._04 = -0xfff;
+        particleInstance._04 = -0xfff;
       }
     } else {
       if(s0 != 0) {
         return 1;
       }
-      FUN_800fd084(a1, a2, a3);
+      FUN_800fd084(particleManager, particles, particleInstance);
 
-      if((a1._10._24 & 0x10) != 0) {
-        a3._50.setY((short)0);
+      if((particleManager._10._24 & 0x10) != 0) {
+        particleInstance._50.setY((short)0);
 
-        if(a2._60 == 2 || a2._60 == 5) {
+        if(particles._60 == 2 || particles._60 == 5) {
           //LAB_800fd4f0
           //LAB_800fd504
-          for(int i = 0; i < a2.count_54; i++) {
-            a3._44[i].setY((short)0);
+          for(int i = 0; i < particles.count_54; i++) {
+            particleInstance._44[i].setY((short)0);
           }
         }
       }
 
       //LAB_800fd520
-      if((a1._10._24 & 0x40) != 0) {
-        a3._58.setY((short)0);
+      if((particleManager._10._24 & 0x40) != 0) {
+        particleInstance._58.setY((short)0);
       }
     }
 
     //LAB_800fd54c
-    a2._88.accept(state, a1, a2, a3);
+    particles._88.accept(state, particleManager, particles, particleInstance);
 
-    if((a3._90 & 0x1) == 0) {
+    if((particleInstance._90 & 0x1) == 0) {
       return 0x1L;
     }
 
-    if(a3._12 > 0) {
-      a3._12--;
+    if(particleInstance._12 > 0) {
+      particleInstance._12--;
     }
 
     //LAB_800fd58c
-    if(a3._12 == 0 && (a1._10._24 & 0x80) == 0) {
-      a3._90 &= 0xffff_fffe;
-      a2._90.accept(state, a1, a2, a3);
+    if(particleInstance._12 == 0 && (particleManager._10._24 & 0x80) == 0) {
+      particleInstance._90 &= 0xffff_fffe;
+      particles._90.accept(state, particleManager, particles, particleInstance);
       return 0x1L;
     }
 
@@ -1320,7 +1320,6 @@ public final class SEffe {
 
   @Method(0x800fd87cL)
   public static void FUN_800fd87c(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    long v0;
     long v1;
     long a0;
     long s3;
@@ -2806,9 +2805,9 @@ public final class SEffe {
       .pos(2, xy[2].getX(), xy[2].getY())
       .pos(3, xy[3].getX(), xy[3].getY())
       .monochrome(0, 0)
-      .rgb(1, colour2.getX(), colour2.getY(), colour2.getZ())
+      .rgb(1, colour2.getX() >>> 8, colour2.getY() >>> 8, colour2.getZ() >>> 8)
       .monochrome(2, 0)
-      .rgb(3, colour1.getX(), colour1.getY(), colour1.getZ());
+      .rgb(3, colour1.getX() >>> 8, colour1.getY() >>> 8, colour1.getZ() >>> 8);
 
     GPU.queueCommand(a3 + a4 >> 2, cmd);
   }
@@ -2942,7 +2941,9 @@ public final class SEffe {
                 .pos(0, spa0 >> 8, spa4 >> 8)
                 .pos(1, sp50 >> 8, sp54 >> 8)
                 .pos(2, spa8 >> 8, spac >> 8)
-                .monochrome(spb0 >>> 9);
+                .monochrome(0, spb0 >>> 9)
+                .monochrome(1, spb0 >>> 8)
+                .monochrome(2, spb0 >>> 9);
 
               GPU.queueCommand(data._10.z_22 + sp18 >> 2, cmd);
             }
