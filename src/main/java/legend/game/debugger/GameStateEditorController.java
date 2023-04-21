@@ -399,7 +399,7 @@ public class GameStateEditorController {
   public void getEquipment() {
     if(gameState_800babc8.equipment_1e8.size() > 0) {
       this.textEquipment.setText(String.valueOf(gameState_800babc8.equipment_1e8.getInt((int)this.getEquipment.getValue())));
-    }else{
+    } else {
       this.textEquipment.setText(String.valueOf(255));
     }
   }
@@ -408,7 +408,7 @@ public class GameStateEditorController {
   public void setEquipment() {
     if((int)this.getEquipment.getValue() >= gameState_800babc8.equipment_1e8.size()) {
       gameState_800babc8.equipment_1e8.add(Integer.valueOf(this.textEquipment.getText()));
-    }else{
+    } else {
       gameState_800babc8.equipment_1e8.set((int)this.getEquipment.getValue(), Integer.valueOf(this.textEquipment.getText()));
     }
   }
@@ -416,7 +416,7 @@ public class GameStateEditorController {
   public void getItems() {
     if(gameState_800babc8.items_2e9.size() > 0) {
       this.textItems.setText(String.valueOf(gameState_800babc8.items_2e9.getInt((int)this.getItems.getValue())));
-    }else{
+    } else {
       this.textEquipment.setText(String.valueOf(255));
     }
   }
@@ -425,7 +425,7 @@ public class GameStateEditorController {
   public void setItems() {
     if((int)this.getItems.getValue() >= gameState_800babc8.items_2e9.size()) {
       gameState_800babc8.items_2e9.add(Integer.valueOf(this.textItems.getText()));
-    }else{
+    } else {
       gameState_800babc8.items_2e9.set((int)this.getItems.getValue(), Integer.valueOf(this.textItems.getText()));
     }
   }
