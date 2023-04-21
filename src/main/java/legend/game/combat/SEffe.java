@@ -72,7 +72,7 @@ import legend.game.combat.effects.BttlScriptData6cSub50;
 import legend.game.combat.effects.BttlScriptData6cSub50Sub3c;
 import legend.game.combat.effects.BttlScriptData6cSub5c;
 import legend.game.combat.effects.BttlScriptData6cSubBase1;
-import legend.game.combat.effects.DeathDimensionEffect1c;
+import legend.game.combat.effects.ScreenCaptureEffect1c;
 import legend.game.combat.effects.DeffTmdRenderer14;
 import legend.game.combat.effects.EffectData98Inner24;
 import legend.game.combat.effects.EffectManagerData6c;
@@ -585,13 +585,14 @@ public final class SEffe {
     screenDistortionEffectTickers_80119fe0[1] = SEffe::FUN_80109a4c;
     screenDistortionEffectTickers_80119fe0[2] = SEffe::tickScreenDistortionBlurEffect;
   }
+
   /**
    * <ol start="0">
    *   <li>{@link SEffe#FUN_8010b594}</li>
-   *   <li>{@link SEffe#FUN_8010bc60}</li>
+   *   <li>{@link SEffe#renderScreenCapture}</li>
    * </ol>
    */
-  private static final ArrayRef<Pointer<BiConsumerRef<EffectManagerData6c, DeathDimensionEffect1c>>> deathDimensionRenderers_80119fec = MEMORY.ref(4, 0x80119fecL, ArrayRef.of(Pointer.classFor(BiConsumerRef.classFor(EffectManagerData6c.class, DeathDimensionEffect1c.class)), 2, 4, Pointer.deferred(4, BiConsumerRef::new)));
+  private static final ArrayRef<Pointer<BiConsumerRef<EffectManagerData6c, ScreenCaptureEffect1c>>> screenCaptureRenderers_80119fec = MEMORY.ref(4, 0x80119fecL, ArrayRef.of(Pointer.classFor(BiConsumerRef.classFor(EffectManagerData6c.class, ScreenCaptureEffect1c.class)), 2, 4, Pointer.deferred(4, BiConsumerRef::new)));
 
   private static final Value _80119f40 = MEMORY.ref(1, 0x80119f40L);
   private static final Value _80119f41 = MEMORY.ref(1, 0x80119f41L);
@@ -2999,7 +3000,7 @@ public final class SEffe {
     }
   }
 
-  /* renders some lightning effects (so far only confirmed the ones at the end of Rose's D transformation)
+  /* renders some lightning effects (confirmed at the end of Rose's D transformation, Melbu's D Block, some Haschel stuff)
    * Used by allocator 0x801052dc*/
   @Method(0x80103db0L)
   public static void FUN_80103db0(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
@@ -5299,35 +5300,38 @@ public final class SEffe {
     };
   }
 
+  /**
+   * Used for Death Dimension, Melbu's screenshot attack, and Kubila's demon frog, possibly other unknown effects
+   */
   @Method(0x8010b1d8L)
-  public static FlowControl allocateDeathDimensionEffect(final RunningScript<? extends BattleScriptDataBase> script) {
+  public static FlowControl allocateScreenCaptureEffect(final RunningScript<? extends BattleScriptDataBase> script) {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
-      "Death dimension",
+      "Screen capture",
       script.scriptState_04,
       0x1c,
       null,
-      SEffe::renderDeathDimensionEffect,
-      SEffe::deallocateDeathDimensionEffect,
-      DeathDimensionEffect1c::new
+      SEffe::renderScreenCaptureEffect,
+      SEffe::deallocateScreenCaptureEffect,
+      ScreenCaptureEffect1c::new
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
-    final DeathDimensionEffect1c effect = (DeathDimensionEffect1c)manager.effect_44;
+    final ScreenCaptureEffect1c effect = (ScreenCaptureEffect1c)manager.effect_44;
     effect.ptr_00.set(mallocTail(0x8));
-    effect._04.set(script.params_20[4].get());
-    effect._08.set(script.params_20[5].get());
-    effect._0c.set(script.params_20[6].get());
-    effect._10.set(0);
+    effect.captureW_04.set(script.params_20[4].get());
+    effect.captureH_08.set(script.params_20[5].get());
+    effect.rendererIndex_0c.set(script.params_20[6].get());
+    effect.screenspaceW_10.set(0);
     script.params_20[0].set(state.index);
     FUN_8010c2e0(effect.ptr_00.get(), script.params_20[1].get());
 
-    final int v0 = effect._0c.get();
+    final int v0 = effect.rendererIndex_0c.get();
     if(v0 == 0) {
       //LAB_8010b2e4
       final int x = DISPENV_800c34b0.disp.x.get() + script.params_20[2].get() + 160;
       final int y = DISPENV_800c34b0.disp.y.get() + script.params_20[3].get() + 120;
-      final int w = effect._04.get() / 2;
-      final int h = effect._08.get() / 2;
+      final int w = effect.captureW_04.get() / 2;
+      final int h = effect.captureH_08.get() / 2;
 
       //LAB_8010b308
       for(int i = 0; i < 4; i++) {
@@ -5338,10 +5342,10 @@ public final class SEffe {
       }
     } else if(v0 < 3) {
       //LAB_8010b3f0
-      final int x = DISPENV_800c34b0.disp.x.get() + script.params_20[2].get() + 160 - effect._04.get() / 2;
-      final int y = DISPENV_800c34b0.disp.y.get() + script.params_20[3].get() + 120 - effect._08.get() / 2;
-      final int w = effect._04.get() / 5;
-      final int h = effect._08.get() / 3;
+      final int x = DISPENV_800c34b0.disp.x.get() + script.params_20[2].get() + 160 - effect.captureW_04.get() / 2;
+      final int y = DISPENV_800c34b0.disp.y.get() + script.params_20[3].get() + 120 - effect.captureH_08.get() / 2;
+      final int w = effect.captureW_04.get() / 5;
+      final int h = effect.captureH_08.get() / 3;
 
       //LAB_8010b468
       for(int i = 0; i < 15; i++) {
@@ -5357,8 +5361,11 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
+  /**
+   * TODO This is the  second screen capture function, usage currently unknown
+   */
   @Method(0x8010b594L)
-  public static void FUN_8010b594(final EffectManagerData6c manager, final DeathDimensionEffect1c effect) {
+  public static void FUN_8010b594(final EffectManagerData6c manager, final ScreenCaptureEffect1c effect) {
     int v0;
     int v1;
     int a0;
@@ -5398,56 +5405,56 @@ public final class SEffe {
           if(i == 1 || i == 4) {
             //LAB_8010b828
             a0 = i & 0x3;
-            v0 = (a0 - 2) * effect._10.get() / 4;
+            v0 = (a0 - 2) * effect.screenspaceW_10.get() / 4;
             vert1.setZ((short)v0);
-            v0 = (a0 - 1) * effect._10.get() / 4;
+            v0 = (a0 - 1) * effect.screenspaceW_10.get() / 4;
             vert0.setZ((short)v0);
             vert2.setZ((short)v0);
             a0 = i >> 2;
-            v0 = (a0 - 1) * effect._14.get() / 2;
+            v0 = (a0 - 1) * effect.screenspaceH_14.get() / 2;
             vert0.setY((short)v0);
-            v0 = a0 * effect._14.get() / 2;
+            v0 = a0 * effect.screenspaceH_14.get() / 2;
             vert1.setY((short)v0);
             vert2.setY((short)v0);
             a0 = (i >> 1) * 64;
             v1 = (i & 0x1) * 32;
 
             cmd
-              .uv(0, a0, v1 + effect._04.get() / 4 - 1)
-              .uv(1, v1, a0 + effect._08.get() / 2 - 1)
-              .uv(2, v1 + effect._04.get() / 4 - 1, a0 + effect._08.get() / 2 - 1);
+              .uv(0, a0, v1 + effect.captureW_04.get() / 4 - 1)
+              .uv(1, v1, a0 + effect.captureH_08.get() / 2 - 1)
+              .uv(2, v1 + effect.captureW_04.get() / 4 - 1, a0 + effect.captureH_08.get() / 2 - 1);
           } else {
             //LAB_8010b8c8
             a0 = i & 0x3;
-            v0 = (a0 - 2) * effect._10.get() / 4;
+            v0 = (a0 - 2) * effect.screenspaceW_10.get() / 4;
             vert1.setZ((short)v0);
             vert0.setZ((short)v0);
-            v0 = (a0 - 1) * effect._10.get() / 4;
+            v0 = (a0 - 1) * effect.screenspaceW_10.get() / 4;
             vert2.setZ((short)v0);
             a0 = i >> 2;
-            v0 = (a0 - 1) * effect._14.get() / 2;
+            v0 = (a0 - 1) * effect.screenspaceH_14.get() / 2;
             vert0.setY((short)v0);
             v1 = (i & 1) * 32;
             a0 = (i >> 1) * 64;
-            v0 = a0 * effect._14.get() / 2;
+            v0 = a0 * effect.screenspaceH_14.get() / 2;
             vert2.setY((short)v0);
             vert1.setY((short)v0);
 
             cmd
               .uv(0, v1, a0)
-              .uv(1, v1, a0 + effect._08.get() / 2 - 1)
-              .uv(2, v1 + effect._04.get() / 4 - 1, a0 + effect._08.get() / 2 - 1);
+              .uv(1, v1, a0 + effect.captureH_08.get() / 2 - 1)
+              .uv(2, v1 + effect.captureW_04.get() / 4 - 1, a0 + effect.captureH_08.get() / 2 - 1);
           }
 
           //LAB_8010b9a4
           final int z = perspectiveTransformTriple(vert0, vert1, vert2, sxy0, sxy1, sxy2, null, null);
 
-          if(effect._10.get() == 0) {
+          if(effect.screenspaceW_10.get() == 0) {
             //LAB_8010b638
             final int sp8c = (int)CPU.CFC2(26);
             a1 = (z << 12) * 4;
-            effect._10.set(effect._04.get() * a1 / sp8c >>> 12);
-            effect._14.set(effect._08.get() * a1 / sp8c >>> 12);
+            effect.screenspaceW_10.set(effect.captureW_04.get() * a1 / sp8c >>> 12);
+            effect.screenspaceH_14.set(effect.captureH_08.get() * a1 / sp8c >>> 12);
             break;
           }
 
@@ -5475,28 +5482,28 @@ public final class SEffe {
 
           a0 = i & 0x3;
           a1 = i >> 2;
-          v0 = (a0 - 2) * effect._10.get() / 4;
+          v0 = (a0 - 2) * effect.screenspaceW_10.get() / 4;
           vert2.setZ((short)v0);
           vert0.setZ((short)v0);
-          v0 = (a1 - 1) * effect._14.get() / 2;
+          v0 = (a1 - 1) * effect.screenspaceH_14.get() / 2;
           vert1.setY((short)v0);
           vert0.setY((short)v0);
-          v0 = (a0 - 1) * effect._10.get() / 4;
+          v0 = (a0 - 1) * effect.screenspaceW_10.get() / 4;
           vert3.setZ((short)v0);
           vert1.setZ((short)v0);
-          v0 = a1 * effect._14.get() / 2;
+          v0 = a1 * effect.screenspaceH_14.get() / 2;
           vert3.setY((short)v0);
           vert2.setY((short)v0);
           final int z = RotTransPers4(vert0, vert1, vert2, vert3, sxy0, sxy1, sxy2, sxy3, null, null);
 
-          if(effect._10.get() == 0) {
+          if(effect.screenspaceW_10.get() == 0) {
             //LAB_8010b664
             final int sp90 = (int)CPU.CFC2(26);
             a1 = (z << 12) * 4;
 
             //LAB_8010b688
-            effect._10.set(effect._04.get() * a1 / sp90 >>> 12);
-            effect._14.set(effect._08.get() * a1 / sp90 >>> 12);
+            effect.screenspaceW_10.set(effect.captureW_04.get() * a1 / sp90 >>> 12);
+            effect.screenspaceH_14.set(effect.captureH_08.get() * a1 / sp90 >>> 12);
             break;
           }
 
@@ -5513,9 +5520,9 @@ public final class SEffe {
             .pos(2, sxy2.getX(), sxy2.getY())
             .pos(3, sxy3.getX(), sxy3.getY())
             .uv(0, u, v)
-            .uv(1, u + effect._04.get() / 4 - 1, v)
-            .uv(2, u, v + effect._08.get() / 2 - 1)
-            .uv(3, u + effect._04.get() / 4 - 1, v + effect._08.get() / 2 - 1)
+            .uv(1, u + effect.captureW_04.get() / 4 - 1, v)
+            .uv(2, u, v + effect.captureH_08.get() / 2 - 1)
+            .uv(3, u + effect.captureW_04.get() / 4 - 1, v + effect.captureH_08.get() / 2 - 1)
           );
         }
       }
@@ -5525,7 +5532,7 @@ public final class SEffe {
   }
 
   @Method(0x8010bc60L)
-  public static void FUN_8010bc60(final EffectManagerData6c manager, final DeathDimensionEffect1c effect) {
+  public static void renderScreenCapture(final EffectManagerData6c manager, final ScreenCaptureEffect1c effect) {
     final COLOUR rgb = new COLOUR();
 
     if((manager._10.flags_00 & 0x40) != 0) {
@@ -5550,23 +5557,23 @@ public final class SEffe {
       final SVECTOR sp0x40 = new SVECTOR();
 
       final int a0 = s0 % 5;
-      int v1 = effect._10.get();
+      int v1 = effect.screenspaceW_10.get();
       int v0 = a0 * v1 / 5 - v1 / 2;
       sp0x28.setZ((short)v0);
       sp0x38.setZ((short)v0);
 
       int a1 = s0 / 5;
-      v1 = effect._14.get();
+      v1 = effect.screenspaceH_14.get();
       v0 = a1 * v1 / 3 - v1 / 2;
       sp0x28.setY((short)v0);
       sp0x30.setY((short)v0);
 
-      v1 = effect._10.get();
+      v1 = effect.screenspaceW_10.get();
       v0 = (a0 + 1) * v1 / 5 - v1 / 2;
       sp0x30.setZ((short)v0);
       sp0x40.setZ((short)v0);
 
-      v1 = effect._14.get();
+      v1 = effect.screenspaceH_14.get();
       v0 = (a1 + 1) * v1 / 3 - v1 / 2;
       sp0x38.setY((short)v0);
       sp0x40.setY((short)v0);
@@ -5577,19 +5584,19 @@ public final class SEffe {
       final SVECTOR sxy3 = new SVECTOR();
       final int z = RotTransPers4(sp0x28, sp0x30, sp0x38, sp0x40, sxy0, sxy1, sxy2, sxy3, null, null);
 
-      if(effect._10.get() == 0) {
+      if(effect.screenspaceW_10.get() == 0) {
         //LAB_8010bd08
         final int sp8c = (int)CPU.CFC2(26);
         final long zShift = z << 14;
-        effect._10.set((int)(effect._04.get() * zShift / sp8c >>> 12));
-        effect._14.set((int)(effect._08.get() * zShift / sp8c >>> 12));
+        effect.screenspaceW_10.set((int)(effect.captureW_04.get() * zShift / sp8c >>> 12));
+        effect.screenspaceH_14.set((int)(effect.captureH_08.get() * zShift / sp8c >>> 12));
         break;
       }
 
       final int leftU = s0 % 2 * 32;
       final int topV = s0 / 2 * 32;
-      final int rightU = leftU + effect._04.get() / 5 - 1;
-      final int bottomV = topV + effect._08.get() / 3 - 1;
+      final int rightU = leftU + effect.captureW_04.get() / 5 - 1;
+      final int bottomV = topV + effect.captureH_08.get() / 3 - 1;
 
       final long addr = effect.ptr_00.get();
 
@@ -5612,12 +5619,12 @@ public final class SEffe {
   }
 
   @Method(0x8010c114L)
-  public static void renderDeathDimensionEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void renderScreenCaptureEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
     final MATRIX sp0x10 = new MATRIX().set(identityMatrix_800c3568);
     final MATRIX sp0x30 = new MATRIX().set(identityMatrix_800c3568);
 
     if(manager._10.flags_00 >= 0) {
-      final DeathDimensionEffect1c effect = (DeathDimensionEffect1c)manager.effect_44;
+      final ScreenCaptureEffect1c effect = (ScreenCaptureEffect1c)manager.effect_44;
       FUN_800e8594(sp0x10, manager);
       MulMatrix0(worldToScreenMatrix_800c3548, sp0x10, sp0x30);
       CPU.CTC2(sp0x30.getPacked(0), 0);
@@ -5628,15 +5635,15 @@ public final class SEffe {
       CPU.CTC2(sp0x30.transfer.getX(), 5);
       CPU.CTC2(sp0x30.transfer.getY(), 6);
       CPU.CTC2(sp0x30.transfer.getZ(), 7);
-      deathDimensionRenderers_80119fec.get(effect._0c.get()).deref().run(manager, effect);
+      screenCaptureRenderers_80119fec.get(effect.rendererIndex_0c.get()).deref().run(manager, effect);
     }
 
     //LAB_8010c278
   }
 
   @Method(0x8010c294L)
-  public static void deallocateDeathDimensionEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
-    free(((DeathDimensionEffect1c)manager.effect_44).ptr_00.get());
+  public static void deallocateScreenCaptureEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+    free(((ScreenCaptureEffect1c)manager.effect_44).ptr_00.get());
   }
 
   @Method(0x8010c2e0L)
