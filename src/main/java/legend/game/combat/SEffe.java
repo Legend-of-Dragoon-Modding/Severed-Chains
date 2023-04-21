@@ -64,7 +64,7 @@ import legend.game.combat.effects.BttlScriptData6cSub24;
 import legend.game.combat.effects.BttlScriptData6cSub24_2;
 import legend.game.combat.effects.BttlScriptData6cSub30;
 import legend.game.combat.effects.BttlScriptData6cSub30Sub10;
-import legend.game.combat.effects.TransformScaler6cSub34;
+import legend.game.combat.effects.TransformScalerEffect34;
 import legend.game.combat.effects.BttlScriptData6cSub38;
 import legend.game.combat.effects.BttlScriptData6cSub38Sub14;
 import legend.game.combat.effects.BttlScriptData6cSub38Sub14Sub30;
@@ -2815,8 +2815,9 @@ public final class SEffe {
     GPU.queueCommand(a3 + a4 >> 2, cmd);
   }
 
-  /* renderer used for many (though not all) lightning effects
-    used by allocator 0x801052dc
+  /**
+   * renderer used for many (though not all) lightning effects.
+   * Used by allocator 0x801052dc
    */
   @Method(0x801030d8L)
   public static void FUN_801030d8(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
@@ -3000,8 +3001,11 @@ public final class SEffe {
     }
   }
 
-  /* renders some lightning effects (confirmed at the end of Rose's D transformation, Melbu's D Block, some Haschel stuff)
-   * Used by allocator 0x801052dc*/
+  /**
+   * Renders some lightning effects (confirmed at the end of Rose's D transformation, Melbu's D Block,
+   * some Haschel stuff)
+   * Used by allocator 0x801052dc
+   */
   @Method(0x80103db0L)
   public static void FUN_80103db0(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
     int v1;
@@ -3355,15 +3359,17 @@ public final class SEffe {
     // no-op
   }
 
-  /* Allocates what appear to be electric bolts and those little rainbow rays in Rose's transformation,
-   or more generally, particle effects using multiple gradients */
+  /**
+   * Allocates lightning bolts, or possibly more generally, particle effects using multiple gradients
+   * Not quite certain enough to narrow it to only electricity.
+   */
   @Method(0x801052dcL)
   public static FlowControl FUN_801052dc(final RunningScript<? extends BattleScriptDataBase> script) {
     final int s0 = script.params_20[6].get();
     final int s1 = script.params_20[7].get();
 
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
-      "BttlScriptData6cSub38 (counter-attack electricity?)",
+      "BttlScriptData6cSub38 (electricity)",
       script.scriptState_04,
       0x38,
       null,
@@ -5362,7 +5368,7 @@ public final class SEffe {
   }
 
   /**
-   * TODO This is the  second screen capture function, usage currently unknown
+   * TODO This is the second screen capture function, usage currently unknown
    */
   @Method(0x8010b594L)
   public static void FUN_8010b594(final EffectManagerData6c manager, final ScreenCaptureEffect1c effect) {
@@ -6972,7 +6978,7 @@ public final class SEffe {
   }
 
   @Method(0x80110740L)
-  public static int FUN_80110740(final EffectManagerData6c s2, final TransformScaler6cSub34 s1) {
+  public static int FUN_80110740(final EffectManagerData6c s2, final TransformScalerEffect34 s1) {
     s1.velocity_18.add(s1.acceleration_24);
     s1.value_0c.add(s1.velocity_18);
 
@@ -6992,13 +6998,13 @@ public final class SEffe {
     }
 
     //LAB_801108bc
-    if(s1.ticker_32 == -1) {
+    if(s1.stepTicker_32 == -1) {
       return 1;
     }
 
-    s1.ticker_32--;
+    s1.stepTicker_32--;
 
-    if(s1.ticker_32 > 0) {
+    if(s1.stepTicker_32 > 0) {
       //LAB_801108e0
       return 1;
     }
@@ -7008,17 +7014,17 @@ public final class SEffe {
   }
 
   @Method(0x801108fcL)
-  public static TransformScaler6cSub34 FUN_801108fc(final int a0, final int scriptIndex, final int x1, final int y1, final int z1, final int x2, final int y2, final int z2) {
+  public static TransformScalerEffect34 FUN_801108fc(final int a0, final int scriptIndex, final int x1, final int y1, final int z1, final int x2, final int y2, final int z2) {
     final EffectManagerData6c s0 = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[a0].innerStruct_00;
     if((s0.flags_04 & 0x2) != 0) {
       FUN_800e8d04(s0, 0x1L);
     }
 
     //LAB_80110980
-    final TransformScaler6cSub34 s2 = FUN_800e8dd4(s0, 1, 0, SEffe::FUN_80110740, 0x34, new TransformScaler6cSub34());
+    final TransformScalerEffect34 s2 = FUN_800e8dd4(s0, 1, 0, SEffe::FUN_80110740, 0x34, new TransformScalerEffect34());
     s2.value_0c.set(s0._10.trans_04.getX() << 8, s0._10.trans_04.getY() << 8, s0._10.trans_04.getZ() << 8);
     s2.scriptIndex_30 = -1;
-    s2.ticker_32 = -1;
+    s2.stepTicker_32 = -1;
 
     final int transformedX1;
     final int transformedY1;
@@ -7056,7 +7062,7 @@ public final class SEffe {
   }
 
   @Method(0x80110aa8L)
-  public static TransformScaler6cSub34 FUN_80110aa8(final int a0, final int scriptIndex1, final int scriptIndex2, final int a3, final int x, final int y, final int z) {
+  public static TransformScalerEffect34 FUN_80110aa8(final int a0, final int scriptIndex1, final int scriptIndex2, final int a3, final int x, final int y, final int z) {
     if(a3 < 0) {
       return null;
     }
@@ -7070,7 +7076,7 @@ public final class SEffe {
     final VECTOR sp0x18 = new VECTOR();
 
     //LAB_80110b38
-    final TransformScaler6cSub34 s0 = FUN_800e8dd4(s2, 1, 0, SEffe::FUN_80110740, 0x34, new TransformScaler6cSub34());
+    final TransformScalerEffect34 s0 = FUN_800e8dd4(s2, 1, 0, SEffe::FUN_80110740, 0x34, new TransformScalerEffect34());
     if(scriptIndex2 == -1) {
       sp0x18.set(x, y, z)
         .sub(getScriptedObjectTranslation(scriptIndex1));
@@ -7089,7 +7095,7 @@ public final class SEffe {
 
     //LAB_80110c6c
     s0.scriptIndex_30 = -1;
-    s0.ticker_32 = (short)a3;
+    s0.stepTicker_32 = (short)a3;
 
     s0.value_0c.setX(s2._10.trans_04.getX() << 8);
     s0.value_0c.setY(s2._10.trans_04.getY() << 8);
@@ -7110,21 +7116,21 @@ public final class SEffe {
   }
 
   @Method(0x80110d34L)
-  public static TransformScaler6cSub34 FUN_80110d34(final int a0, final int scriptIndex1, final int scriptIndex2, final int a3, final int x, final int y, final int z) {
+  public static TransformScalerEffect34 FUN_80110d34(final int a0, final int scriptIndex1, final int scriptIndex2, final int a3, final int x, final int y, final int z) {
     final EffectManagerData6c s1 = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[scriptIndex1].innerStruct_00;
     if((s1.flags_04 & 0x2) != 0) {
       FUN_800e8d04(s1, 1);
     }
 
     //LAB_80110db8
-    final TransformScaler6cSub34 s0 = FUN_800e8dd4(s1, 1, 0, SEffe::FUN_80110740, 0x34, new TransformScaler6cSub34());
+    final TransformScalerEffect34 s0 = FUN_800e8dd4(s1, 1, 0, SEffe::FUN_80110740, 0x34, new TransformScalerEffect34());
     s0.value_0c.setX(s1._10.trans_04.getX() << 8);
     s0.value_0c.setY(s1._10.trans_04.getY() << 8);
     s0.value_0c.setZ(s1._10.trans_04.getZ() << 8);
     s0.scriptIndex_30 = -1;
 
     if(a3 <= 0) {
-      s0.ticker_32 = -1;
+      s0.stepTicker_32 = -1;
       s0.velocity_18.set(0, 0, 0);
     } else {
       //LAB_80110e30
@@ -7150,15 +7156,15 @@ public final class SEffe {
       final VECTOR sp0x28 = new VECTOR();
       FUN_80040e10(sp0x18, sp0x28);
 
-      s0.ticker_32 = (short)((SquareRoot0(sp0x28.getX() + sp0x28.getY() + sp0x28.getZ()) << 8) / a3);
-      if(s0.ticker_32 == 0) {
-        s0.ticker_32 = 1;
+      s0.stepTicker_32 = (short)((SquareRoot0(sp0x28.getX() + sp0x28.getY() + sp0x28.getZ()) << 8) / a3);
+      if(s0.stepTicker_32 == 0) {
+        s0.stepTicker_32 = 1;
       }
 
       //LAB_80110f80
-      s0.velocity_18.setX((sp0x18.getX() << 8) / s0.ticker_32);
-      s0.velocity_18.setY((sp0x18.getY() << 8) / s0.ticker_32);
-      s0.velocity_18.setZ((sp0x18.getZ() << 8) / s0.ticker_32);
+      s0.velocity_18.setX((sp0x18.getX() << 8) / s0.stepTicker_32);
+      s0.velocity_18.setY((sp0x18.getY() << 8) / s0.stepTicker_32);
+      s0.velocity_18.setZ((sp0x18.getZ() << 8) / s0.stepTicker_32);
     }
 
     //LAB_80110fec
@@ -7167,7 +7173,7 @@ public final class SEffe {
   }
 
   @Method(0x8011102cL)
-  public static TransformScaler6cSub34 FUN_8011102c(final int scriptIndex1, final int scriptIndex2) {
+  public static TransformScalerEffect34 FUN_8011102c(final int scriptIndex1, final int scriptIndex2) {
     final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[scriptIndex1].innerStruct_00;
 
     if((manager.flags_04 & 0x2) != 0) {
@@ -7175,13 +7181,13 @@ public final class SEffe {
     }
 
     //LAB_80111084
-    final TransformScaler6cSub34 effect = FUN_800e8dd4(manager, 1, 0, SEffe::FUN_80110740, 0x34, new TransformScaler6cSub34());
+    final TransformScalerEffect34 effect = FUN_800e8dd4(manager, 1, 0, SEffe::FUN_80110740, 0x34, new TransformScalerEffect34());
     final VECTOR v1 = getScriptedObjectTranslation(scriptIndex1);
     final VECTOR v2 = getScriptedObjectTranslation(scriptIndex2);
     final VECTOR sp0x18 = new VECTOR().set(v1).sub(v2);
     effect.value_0c.set(sp0x18);
     effect.scriptIndex_30 = scriptIndex2;
-    effect.ticker_32 = -1;
+    effect.stepTicker_32 = -1;
     effect.velocity_18.set(0, 0, 0);
     effect.acceleration_24.set(0, 0, 0);
     return effect;
@@ -7483,7 +7489,7 @@ public final class SEffe {
       FUN_801108fc(a1, s0, s4, s6, s3, s5, s7, fp);
     } else {
       //LAB_80111dac
-      final TransformScaler6cSub34 s2 = (TransformScaler6cSub34)FUN_800e8c84(manager, 1);
+      final TransformScalerEffect34 s2 = (TransformScalerEffect34)FUN_800e8c84(manager, 1);
 
       if(s2._06 == 0) {
         if(s0 != -1) {
@@ -7521,11 +7527,11 @@ public final class SEffe {
     final EffectManagerData6c data = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
 
     if((data.flags_04 & 0x2) != 0) {
-      final TransformScaler6cSub34 s3 = (TransformScaler6cSub34)FUN_800e8c84(data, 0x1L);
+      final TransformScalerEffect34 s3 = (TransformScalerEffect34)FUN_800e8c84(data, 0x1L);
 
-      if(s3.ticker_32 != -1 && s3._06 == 0) {
+      if(s3.stepTicker_32 != -1 && s3._06 == 0) {
         final VECTOR v0 = getScriptedObjectTranslation(scriptIndex);
-        int s0 = s3.ticker_32;
+        int s0 = s3.stepTicker_32;
 
         final VECTOR sp0x10 = new VECTOR().set(
           (s0 * s3.acceleration_24.getX() / 2 + s3.velocity_18.getX()) * s0 + s3.value_0c.getX() >> 8,
@@ -7594,7 +7600,7 @@ public final class SEffe {
     final VECTOR sp0x10 = new VECTOR();
 
     if((a0.flags_04 & 0x2) != 0) {
-      final TransformScaler6cSub34 v1 = (TransformScaler6cSub34)FUN_800e8c84(a0, 1);
+      final TransformScalerEffect34 v1 = (TransformScalerEffect34)FUN_800e8c84(a0, 1);
 
       if(v1._06 == 0) {
         sp0x10.set(v1.velocity_18);
@@ -7642,18 +7648,18 @@ public final class SEffe {
   }
 
   @Method(0x80112638L)
-  public static int FUN_80112638(final EffectManagerData6c a0, final TransformScaler6cSub34 a1) {
+  public static int FUN_80112638(final EffectManagerData6c a0, final TransformScalerEffect34 a1) {
     a1.velocity_18.add(a1.acceleration_24);
     a1.value_0c.add(a1.velocity_18);
     a0._10.rot_10.set(a1.value_0c);
 
-    if(a1.ticker_32 == -1) {
+    if(a1.stepTicker_32 == -1) {
       return 1;
     }
 
-    a1.ticker_32--;
+    a1.stepTicker_32--;
 
-    if(a1.ticker_32 > 0) {
+    if(a1.stepTicker_32 > 0) {
       //LAB_801126f8
       return 1;
     }
@@ -7750,18 +7756,20 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
-  /* related to rotation scaling */
+  /**
+   * Set rotation value and rate of change factors
+   */
   @Method(0x80112aa4L)
-  public static FlowControl FUN_80112aa4(final RunningScript<?> script) {
+  public static FlowControl scriptSetRotScaler(final RunningScript<?> script) {
     final EffectManagerData6c s0 = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     if((s0.flags_04 & 0x4) != 0) {
       FUN_800e8d04(s0, 0x2L);
     }
 
     //LAB_80112b58
-    final TransformScaler6cSub34 v0 = FUN_800e8dd4(s0, 2, 0, SEffe::FUN_80112638, 0x34, new TransformScaler6cSub34());
+    final TransformScalerEffect34 v0 = FUN_800e8dd4(s0, 2, 0, SEffe::FUN_80112638, 0x34, new TransformScalerEffect34());
     v0.scriptIndex_30 = -1;
-    v0.ticker_32 = -1;
+    v0.stepTicker_32 = -1;
     v0.value_0c.set(s0._10.rot_10);
     v0.velocity_18.setX(script.params_20[2].get());
     v0.velocity_18.setY(script.params_20[3].get());
@@ -7783,7 +7791,7 @@ public final class SEffe {
 
     if(s2 >= 0) {
       final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[s0].innerStruct_00;
-      final TransformScaler6cSub34 effect = FUN_800e8dd4(manager, 2, 0, SEffe::FUN_80112638, 0x34, new TransformScaler6cSub34());
+      final TransformScalerEffect34 effect = FUN_800e8dd4(manager, 2, 0, SEffe::FUN_80112638, 0x34, new TransformScalerEffect34());
 
       final SVECTOR v1 = getScriptedObjectRotation(s0);
       final int sp18;
@@ -7803,7 +7811,7 @@ public final class SEffe {
 
       //LAB_80112d48
       effect.scriptIndex_30 = -1;
-      effect.ticker_32 = (short)s2;
+      effect.stepTicker_32 = (short)s2;
       effect.value_0c.set(manager._10.rot_10);
       effect.value_0c.set(manager._10.rot_10);
       effect.value_0c.set(manager._10.rot_10);
@@ -7994,14 +8002,14 @@ public final class SEffe {
    * Scales scale vector for changing effect size
    */
   @Method(0x80113ba0L)
-  public static int tickScaleScaler(final EffectManagerData6c data, final TransformScaler6cSub34 sub) {
+  public static int tickScaleScaler(final EffectManagerData6c data, final TransformScalerEffect34 sub) {
     sub.velocity_18.add(sub.acceleration_24);
     sub.value_0c.add(sub.velocity_18);
     data._10.scale_16.set(sub.value_0c);
-    if(sub.ticker_32 != -1) {
-      sub.ticker_32--;
+    if(sub.stepTicker_32 != -1) {
+      sub.stepTicker_32--;
 
-      if(sub.ticker_32 <= 0) {
+      if(sub.stepTicker_32 <= 0) {
         return 0;
       }
     }
@@ -8023,9 +8031,9 @@ public final class SEffe {
     }
 
     //LAB_80113d20
-    final TransformScaler6cSub34 scaleScaler = FUN_800e8dd4(scalerManager, 3, 0, SEffe::tickScaleScaler, 0x34, new TransformScaler6cSub34());
+    final TransformScalerEffect34 scaleScaler = FUN_800e8dd4(scalerManager, 3, 0, SEffe::tickScaleScaler, 0x34, new TransformScalerEffect34());
     scaleScaler.scriptIndex_30 = -1;
-    scaleScaler.ticker_32 = (short)-1;
+    scaleScaler.stepTicker_32 = (short)-1;
     scaleScaler.value_0c.set(scalerManager._10.scale_16);
     scaleScaler.velocity_18.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
     scaleScaler.acceleration_24.set(script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get());
@@ -8049,7 +8057,7 @@ public final class SEffe {
       }
 
       //LAB_80113e70
-      final TransformScaler6cSub34 s0 = FUN_800e8dd4(s1, 3, 0, SEffe::tickScaleScaler, 0x34, new TransformScaler6cSub34());
+      final TransformScalerEffect34 s0 = FUN_800e8dd4(s1, 3, 0, SEffe::tickScaleScaler, 0x34, new TransformScalerEffect34());
 
       final VECTOR sp0x18 = new VECTOR().set(s4, s5, s6);
       if(a0 == 0) {
@@ -8079,7 +8087,7 @@ public final class SEffe {
 
       //LAB_80113fc0
       s0.scriptIndex_30 = -1;
-      s0.ticker_32 = (short)s2;
+      s0.stepTicker_32 = (short)s2;
       s0.value_0c.set(s1._10.scale_16);
 
       if(s2 != 0) {
@@ -8192,17 +8200,17 @@ public final class SEffe {
    * Scales color vector for fading color in/out
    */
   @Method(0x801146fcL)
-  public static int tickColorScaler(final EffectManagerData6c a0, final TransformScaler6cSub34 a1) {
+  public static int tickColorScaler(final EffectManagerData6c a0, final TransformScalerEffect34 a1) {
     a1.velocity_18.add(a1.acceleration_24);
     a1.value_0c.add(a1.velocity_18);
     a0._10.colour_1c.setX(a1.value_0c.getX() >> 8 & 0xff);
     a0._10.colour_1c.setY(a1.value_0c.getY() >> 8 & 0xff);
     a0._10.colour_1c.setZ(a1.value_0c.getZ() >> 8 & 0xff);
 
-    if(a1.ticker_32 != -1) {
-      a1.ticker_32--;
+    if(a1.stepTicker_32 != -1) {
+      a1.stepTicker_32--;
 
-      if(a1.ticker_32 <= 0) {
+      if(a1.stepTicker_32 <= 0) {
         return 0;
       }
     }
@@ -8238,11 +8246,11 @@ public final class SEffe {
       }
 
       //LAB_801149d0
-      final TransformScaler6cSub34 colorScaler = FUN_800e8dd4(scalerManager, 4, 0, SEffe::tickColorScaler, 0x34, new TransformScaler6cSub34());
+      final TransformScalerEffect34 colorScaler = FUN_800e8dd4(scalerManager, 4, 0, SEffe::tickColorScaler, 0x34, new TransformScalerEffect34());
       final USCOLOUR sp0x28 = new USCOLOUR();
       FUN_8011441c(scriptIndex1, scriptIndex2, sp0x28);
       colorScaler.scriptIndex_30 = -1;
-      colorScaler.ticker_32 = (short)scalerStepCount;
+      colorScaler.stepTicker_32 = (short)scalerStepCount;
       colorScaler.value_0c.set(scalerManager._10.colour_1c).mul(0x100);
       colorScaler.velocity_18.set(velocityVec).sub(sp0x28).mul(0x100).div(scalerStepCount);
       colorScaler.acceleration_24.set(0, 0, 0);
