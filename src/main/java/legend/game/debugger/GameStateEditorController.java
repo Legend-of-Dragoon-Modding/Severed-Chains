@@ -378,40 +378,56 @@ public class GameStateEditorController {
 
   @FXML
   public void getData4() {
-    this.textData4.setText(String.valueOf(gameState_800babc8._17c[this.getData4.getSelectionModel().getSelectedIndex()]));
+    this.textData4.setText(String.valueOf(gameState_800babc8._1a4[this.getData4.getSelectionModel().getSelectedIndex()]));
   }
 
   @FXML
   public void setData4() {
-    gameState_800babc8._17c[this.getData4.getSelectionModel().getSelectedIndex()] = Integer.valueOf(this.textData4.getText());
+    gameState_800babc8._1a4[this.getData4.getSelectionModel().getSelectedIndex()] = Integer.valueOf(this.textData4.getText());
   }
 
   @FXML
   public void getChestFlags() {
-    this.textChestFlags.setText(String.valueOf(gameState_800babc8._1a4[this.getChestFlags.getSelectionModel().getSelectedIndex()]));
+    this.textChestFlags.setText(String.valueOf(gameState_800babc8.chestFlags_1c4[this.getChestFlags.getSelectionModel().getSelectedIndex()]));
   }
 
   @FXML
   public void setChestFlags() {
-    gameState_800babc8._1a4[this.getChestFlags.getSelectionModel().getSelectedIndex()] = Integer.valueOf(this.textChestFlags.getText());
+    gameState_800babc8.chestFlags_1c4[this.getChestFlags.getSelectionModel().getSelectedIndex()] = Integer.valueOf(this.textChestFlags.getText());
   }
 
   public void getEquipment() {
-    this.textEquipment.setText(String.valueOf(gameState_800babc8.equipment_1e8.getInt((int)this.getEquipment.getValue())));
+    if(gameState_800babc8.equipment_1e8.size() > 0) {
+      this.textEquipment.setText(String.valueOf(gameState_800babc8.equipment_1e8.getInt((int)this.getEquipment.getValue())));
+    } else {
+      this.textEquipment.setText(String.valueOf(255));
+    }
   }
 
   @FXML
   public void setEquipment() {
-    gameState_800babc8.equipment_1e8.set((int)this.getEquipment.getValue(), Integer.valueOf(this.textEquipment.getText()));
+    if((int)this.getEquipment.getValue() >= gameState_800babc8.equipment_1e8.size()) {
+      gameState_800babc8.equipment_1e8.add(Integer.valueOf(this.textEquipment.getText()));
+    } else {
+      gameState_800babc8.equipment_1e8.set((int)this.getEquipment.getValue(), Integer.valueOf(this.textEquipment.getText()));
+    }
   }
 
   public void getItems() {
-    this.textItems.setText(String.valueOf(gameState_800babc8.items_2e9.getInt((int)this.getItems.getValue())));
+    if(gameState_800babc8.items_2e9.size() > 0) {
+      this.textItems.setText(String.valueOf(gameState_800babc8.items_2e9.getInt((int)this.getItems.getValue())));
+    } else {
+      this.textEquipment.setText(String.valueOf(255));
+    }
   }
 
   @FXML
   public void setItems() {
-    gameState_800babc8.items_2e9.set((int)this.getItems.getValue(), Integer.valueOf(this.textItems.getText()));
+    if((int)this.getItems.getValue() >= gameState_800babc8.items_2e9.size()) {
+      gameState_800babc8.items_2e9.add(Integer.valueOf(this.textItems.getText()));
+    } else {
+      gameState_800babc8.items_2e9.set((int)this.getItems.getValue(), Integer.valueOf(this.textItems.getText()));
+    }
   }
 
   @FXML
