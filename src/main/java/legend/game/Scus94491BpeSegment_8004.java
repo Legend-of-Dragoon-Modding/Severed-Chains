@@ -153,8 +153,8 @@ public final class Scus94491BpeSegment_8004 {
   static {
     Arrays.setAll(scriptSubFunctions_8004e29c, i -> Scus94491BpeSegment::scriptRewindAndPause2);
 
-    scriptSubFunctions_8004e29c[0] = Scus94491BpeSegment::FUN_80017354;
-    scriptSubFunctions_8004e29c[1] = Scus94491BpeSegment::FUN_80017374;
+    scriptSubFunctions_8004e29c[0] = Scus94491BpeSegment::scriptSetIndicatorsDisabled;
+    scriptSubFunctions_8004e29c[1] = Scus94491BpeSegment::scriptReadIndicatorsDisabled;
     scriptSubFunctions_8004e29c[2] = Scus94491BpeSegment::scriptSetGlobalFlag1;
     scriptSubFunctions_8004e29c[3] = Scus94491BpeSegment::scriptReadGlobalFlag1;
     scriptSubFunctions_8004e29c[4] = Scus94491BpeSegment::scriptSetGlobalFlag2;
@@ -199,10 +199,10 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[98] = SMap::FUN_800df1c8;
     scriptSubFunctions_8004e29c[99] = SMap::FUN_800df1f8;
     scriptSubFunctions_8004e29c[100] = SMap::FUN_800df228;
-    scriptSubFunctions_8004e29c[101] = SMap::FUN_800df258;
-    scriptSubFunctions_8004e29c[102] = SMap::FUN_800df2b8;
-    scriptSubFunctions_8004e29c[103] = SMap::FUN_800df314;
-    scriptSubFunctions_8004e29c[104] = SMap::FUN_800df374;
+    scriptSubFunctions_8004e29c[101] = SMap::scriptSetModelPosition;
+    scriptSubFunctions_8004e29c[102] = SMap::scriptReadModelPosition;
+    scriptSubFunctions_8004e29c[103] = SMap::scriptSetModelRotate;
+    scriptSubFunctions_8004e29c[104] = SMap::scriptReadModelRotate;
     scriptSubFunctions_8004e29c[105] = SMap::FUN_800df3d0;
     scriptSubFunctions_8004e29c[106] = SMap::FUN_800df410;
     scriptSubFunctions_8004e29c[107] = SMap::FUN_800df440;
