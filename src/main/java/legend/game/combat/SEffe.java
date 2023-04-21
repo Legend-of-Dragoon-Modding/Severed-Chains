@@ -10180,7 +10180,10 @@ public final class SEffe {
     //LAB_80119454
   }
 
-  /** Not sure what this is, but the effect is given the name "eco " */
+  /**
+   * Not sure what this is, but the effect is given the name "eco ", allocates "count" instances of effect
+   * tfz note: used for effect sprite overlays on red glow in Death Dimension, for one
+   */
   @Method(0x80119484L)
   public static FlowControl FUN_80119484(final RunningScript<? extends BattleScriptDataBase> script) {
     final int s4 = script.params_20[1].get();

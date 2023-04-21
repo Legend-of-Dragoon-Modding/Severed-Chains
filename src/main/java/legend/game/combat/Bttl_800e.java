@@ -1551,6 +1551,10 @@ public final class Bttl_800e {
     //LAB_800e7930
   }
 
+  /**
+   * Renderer for some kind of effect sprites like those in HUD DEFF.
+   * Used for example for sprite effect overlays on red glow in Death Dimension.
+   */
   @Method(0x800e7944L)
   public static void FUN_800e7944(final BattleStruct24 s1, final VECTOR trans, final int a2) {
     if((int)s1.flags_00.get() >= 0) {
@@ -2013,6 +2017,7 @@ public final class Bttl_800e {
     return FlowControl.CONTINUE;
   }
 
+  /** Has some relation to rendering of certain effect sprites, like ones from HUD DEFF */
   @Method(0x800e9428L)
   public static void FUN_800e9428(final SpriteMetrics08 metrics, final EffectManagerData6cInner a1, final MATRIX a2) {
     if(a1.flags_00 >= 0) {
