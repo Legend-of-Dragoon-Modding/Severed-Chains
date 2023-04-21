@@ -10,8 +10,6 @@ import legend.core.gte.TmdObjTable1c;
 import legend.game.combat.environment.BattleLightStruct64;
 import legend.game.types.Translucency;
 
-import java.util.Arrays;
-
 import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GPU;
 import static legend.game.Scus94491BpeSegment.tmdGp0CommandId_1f8003ee;
