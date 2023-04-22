@@ -72,7 +72,6 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
 
   public int _2e;
   public int equipmentIcon_30;
-  public int speed_32;
   public int attack_34;
   public int magicAttack_36;
   public int defence_38;
@@ -141,8 +140,6 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
   public int tempPhysicalImmunityTurns_c5;
   public int tempMagicalImmunity_c6;
   public int tempMagicalImmunityTurns_c7;
-  public int speedUpTurns_c8;
-  public int speedDownTurns_ca;
 
   public ItemStats0c item_d4;
   public int _ec;
@@ -232,7 +229,7 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
   }
 
   public void turnFinished() {
-
+    this.stats.turnFinished(this);
   }
 
   @Deprecated
@@ -257,7 +254,7 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
 
       case 21 -> this._2e;
       case 22 -> this.equipmentIcon_30;
-      case 23 -> this.speed_32;
+      case 23 -> this.stats.getStat(CoreMod.SPEED_STAT.get()).get();
       case 24 -> this.attack_34;
       case 25 -> this.magicAttack_36;
       case 26 -> this.defence_38;
@@ -307,14 +304,11 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
       case 95 -> (this.tempMagicAvoidTurns_c3 & 0xff) << 8 | this.tempMagicAvoid_c2 & 0xff;
       case 96 -> (this.tempPhysicalImmunityTurns_c5 & 0xff) << 8 | this.tempPhysicalImmunity_c4 & 0xff;
       case 97 -> (this.tempMagicalImmunityTurns_c7 & 0xff) << 8 | this.tempMagicalImmunity_c6 & 0xff;
-      case 98 -> this.speedUpTurns_c8;
-      case 99 -> this.speedDownTurns_ca;
 
       case 104 -> this.item_d4.target_00;
       case 105 -> this.item_d4.element_01.flag;
       case 106 -> this.item_d4.damageMultiplier_02;
       case 109 -> this.item_d4.damage_05;
-      case 110 -> this.item_d4.specialAmount_06;
       case 111 -> this.item_d4.icon_07;
       case 112 -> this.item_d4.status_08;
       case 113 -> this.item_d4.percentage_09;
@@ -357,7 +351,6 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
 
       case 21 -> this._2e = value;
       case 22 -> this.equipmentIcon_30 = value;
-      case 23 -> this.speed_32 = value;
       case 24 -> this.attack_34 = value;
       case 25 -> this.magicAttack_36 = value;
       case 26 -> this.defence_38 = value;
@@ -424,8 +417,6 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
         this.tempMagicalImmunity_c6 = value & 0xff;
         this.tempMagicalImmunityTurns_c7 = value >>> 8 & 0xff;
       }
-      case 98 -> this.speedUpTurns_c8 = value;
-      case 99 -> this.speedDownTurns_ca = value;
 
       case 116 -> this._ec = value;
       case 117 -> this._ee = value;

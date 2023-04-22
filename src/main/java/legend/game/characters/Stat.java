@@ -24,5 +24,7 @@ public abstract class Stat {
     for(final StatMod mod : this.mods) {
       mod.turnFinished(this.stats, this.type, bobj);
     }
+
+    this.mods.removeIf(StatMod::isFinished);
   }
 }

@@ -10,6 +10,7 @@ import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.ShortRef;
 import legend.game.Scus94491BpeSegment_8002;
 import legend.game.characters.Element;
+import legend.game.characters.TurnBasedPercentileBuff;
 import legend.game.characters.VitalsStat;
 import legend.game.combat.bobj.BattleObject27c;
 import legend.game.combat.bobj.MonsterBattleObject;
@@ -66,7 +67,6 @@ import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.spGained_800bc950;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
-import static legend.game.combat.Bttl_800c.aliveBobjCount_800c669c;
 import static legend.game.combat.Bttl_800c._800c66b0;
 import static legend.game.combat.Bttl_800c._800c6748;
 import static legend.game.combat.Bttl_800c._800c697c;
@@ -97,6 +97,8 @@ import static legend.game.combat.Bttl_800c._800fb674;
 import static legend.game.combat.Bttl_800c._800fb6bc;
 import static legend.game.combat.Bttl_800c._800fb6f4;
 import static legend.game.combat.Bttl_800c._800fb72c;
+import static legend.game.combat.Bttl_800c.aliveBobjCount_800c669c;
+import static legend.game.combat.Bttl_800c.aliveMonsterCount_800c6758;
 import static legend.game.combat.Bttl_800c.allText_800fb3c0;
 import static legend.game.combat.Bttl_800c.battleMenu_800c6c34;
 import static legend.game.combat.Bttl_800c.cameraPositionIndicesIndex_800c6ba0;
@@ -114,11 +116,8 @@ import static legend.game.combat.Bttl_800c.itemTargetAll_800c69c8;
 import static legend.game.combat.Bttl_800c.itemTargetType_800c6b68;
 import static legend.game.combat.Bttl_800c.melbuMonsterNames_800c6ba8;
 import static legend.game.combat.Bttl_800c.melbuStageToMonsterNameIndices_800c6f30;
-import static legend.game.combat.Bttl_800c.aliveMonsterCount_800c6758;
 import static legend.game.combat.Bttl_800c.protectedItems_800c72cc;
 import static legend.game.combat.Bttl_800c.spellStats_800fa0b8;
-import static legend.game.combat.Bttl_800c.statsForSpecial1_800c71fc;
-import static legend.game.combat.Bttl_800c.statsForSpecial2_800c721c;
 import static legend.game.combat.Bttl_800c.targetAllItemIds_800c7124;
 import static legend.game.combat.Bttl_800c.targetBobjs_800c71f0;
 import static legend.game.combat.Bttl_800c.textboxColours_800c6fec;
@@ -505,12 +504,7 @@ public final class Bttl_800f {
       //LAB_800f2224
       attacker.status_0e |= 0x800;
     } else {
-      final Element attackElement;
-      if(magicType == 1) {
-        attackElement = attacker.spell_94.element_08;
-      } else {
-        attackElement = attacker.item_d4.element_01;
-      }
+      final Element attackElement = magicType == 1 ? attacker.spell_94.element_08 : attacker.item_d4.element_01;
 
       //LAB_800f2238
       damage = attacker.calculateMagicAttack(defender, magicType);
@@ -621,15 +615,12 @@ public final class Bttl_800f {
 
   @Method(0x800f3204L)
   public static void recalculateSpeedAndPerHitStats(final BattleObject27c bobj) {
-    final int speed;
-    if(bobj instanceof final MonsterBattleObject monster) {
-      speed = monster.originalSpeed_64;
-    } else if(bobj instanceof final PlayerBattleObject player) {
+    if(bobj instanceof final PlayerBattleObject player) {
       final ActiveStatsa0 stats = stats_800be5f8[bobj.charId_272];
 
       player.spPerPhysicalHit_12a = stats.equipmentSpPerPhysicalHit_4e;
       player.mpPerPhysicalHit_12c = stats.equipmentMpPerPhysicalHit_50;
-      player.itemSpPerMagicalHit_12e = stats.equipmentSpPerMagicalHit_52;
+      player.spPerMagicalHit_12e = stats.equipmentSpPerMagicalHit_52;
       player.mpPerMagicalHit_130 = stats.equipmentMpPerMagicalHit_54;
 
       if(player.tempSpPerPhysicalHitTurns_cd != 0) {
@@ -641,26 +632,12 @@ public final class Bttl_800f {
       }
 
       if(player.tempSpPerMagicalHitTurns_d1 != 0) {
-        player.itemSpPerMagicalHit_12e += player.tempSpPerMagicalHit_d0;
+        player.spPerMagicalHit_12e += player.tempSpPerMagicalHit_d0;
       }
 
       if(player.tempMpPerMagicalHitTurns_d3 != 0) {
         player.mpPerMagicalHit_130 += player.tempMpPerMagicalHit_d2;
       }
-
-      speed = stats.equipmentSpeed_86 + stats.bodySpeed_69;
-    } else {
-      throw new IllegalStateException("Unknown bobj type");
-    }
-
-    bobj.speed_32 = speed;
-
-    if(bobj.speedUpTurns_c8 != 0) {
-      bobj.speed_32 *= 2;
-    }
-
-    if(bobj.speedDownTurns_ca != 0) {
-      bobj.speed_32 /= 2;
     }
   }
 
@@ -2930,15 +2907,85 @@ public final class Bttl_800f {
   public static void applyItemSpecialEffects(final BattleObject27c attacker, final BattleObject27c defender) {
     setTempItemMagicStats(attacker);
 
-    for(int i = 0; i < 8; i++) {
-      if((attacker.item_d4.special1_03 & (0x80 >> i)) != 0) {
-        applyBuffItem(attacker, defender, statsForSpecial1_800c71fc.get(i).get());
-      }
+    final int turnCount = attacker != defender ? 3 : 4;
+
+    if(attacker.item_d4.powerDefence != 0) {
+      defender.powerDefence_b8 = attacker.item_d4.powerDefence;
+      defender.powerDefenceTurns_b9 = turnCount;
     }
 
-    for(int i = 0; i < 8; i++) {
-      if((attacker.item_d4.special2_04 & (0x80 >> i)) != 0) {
-        applyBuffItem(attacker, defender, statsForSpecial2_800c721c.get(i).get());
+    if(attacker.item_d4.powerMagicDefence != 0) {
+      defender.powerMagicDefence_ba = attacker.item_d4.powerMagicDefence;
+      defender.powerMagicDefenceTurns_bb = turnCount;
+    }
+
+    if(attacker.item_d4.powerAttack != 0) {
+      defender.powerAttack_b4 = attacker.item_d4.powerAttack;
+      defender.powerAttackTurns_b5 = turnCount;
+    }
+
+    if(attacker.item_d4.powerMagicAttack != 0) {
+      defender.powerMagicAttack_b6 = attacker.item_d4.powerMagicAttack;
+      defender.powerMagicAttackTurns_b7 = turnCount;
+    }
+
+    if(attacker.item_d4.powerAttackHit != 0) {
+      defender.tempAttackHit_bc = attacker.item_d4.powerAttackHit;
+      defender.tempAttackHitTurns_bd = turnCount;
+    }
+
+    if(attacker.item_d4.powerMagicAttackHit != 0) {
+      defender.tempMagicHit_be = attacker.item_d4.powerMagicAttackHit;
+      defender.tempMagicHitTurns_bf = turnCount;
+    }
+
+    if(attacker.item_d4.powerAttackAvoid != 0) {
+      defender.tempAttackAvoid_c0 = attacker.item_d4.powerAttackAvoid;
+      defender.tempAttackAvoidTurns_c1 = turnCount;
+    }
+
+    if(attacker.item_d4.powerMagicAttackAvoid != 0) {
+      defender.tempMagicAvoid_c2 = attacker.item_d4.powerMagicAttackAvoid;
+      defender.tempMagicAvoidTurns_c3 = turnCount;
+    }
+
+    if(attacker.item_d4.physicalImmunity) {
+      defender.tempPhysicalImmunity_c4 = 1;
+      defender.tempPhysicalImmunityTurns_c5 = turnCount;
+    }
+
+    if(attacker.item_d4.magicalImmunity) {
+      defender.tempMagicalImmunity_c6 = 1;
+      defender.tempMagicalImmunityTurns_c7 = turnCount;
+    }
+
+    if(attacker.item_d4.speedDown != 0) {
+      defender.stats.getStat(CoreMod.SPEED_STAT.get()).addMod(new TurnBasedPercentileBuff(attacker.item_d4.speedDown, turnCount));
+    }
+
+    if(attacker.item_d4.speedUp != 0) {
+      defender.stats.getStat(CoreMod.SPEED_STAT.get()).addMod(new TurnBasedPercentileBuff(attacker.item_d4.speedUp, turnCount));
+    }
+
+    if(defender instanceof final PlayerBattleObject playerDefender) {
+      if(attacker.item_d4.spPerPhysicalHit != 0) {
+        playerDefender.tempSpPerPhysicalHit_cc = attacker.item_d4.spPerPhysicalHit;
+        playerDefender.tempSpPerPhysicalHitTurns_cd = turnCount;
+      }
+
+      if(attacker.item_d4.mpPerPhysicalHit != 0) {
+        playerDefender.tempMpPerPhysicalHit_ce = attacker.item_d4.mpPerPhysicalHit;
+        playerDefender.tempMpPerPhysicalHitTurns_cf = turnCount;
+      }
+
+      if(attacker.item_d4.spPerMagicalHit != 0) {
+        playerDefender.tempSpPerMagicalHit_d0 = attacker.item_d4.spPerMagicalHit;
+        playerDefender.tempSpPerMagicalHitTurns_d1 = turnCount;
+      }
+
+      if(attacker.item_d4.mpPerMagicalHit != 0) {
+        playerDefender.tempMpPerMagicalHit_d2 = attacker.item_d4.mpPerMagicalHit;
+        playerDefender.tempMpPerMagicalHitTurns_d3 = turnCount;
       }
     }
 
@@ -3107,14 +3154,6 @@ public final class Bttl_800f {
     }
 
     GPU.queueCommand(31, cmd);
-  }
-
-  @Method(0x800f923cL)
-  public static void applyBuffItem(final BattleObject27c attacker, final BattleObject27c defender, final int statIndex) {
-    final int turnCount = attacker.charId_272 != defender.charId_272 ? 3 : 4;
-    final int amount = attacker.item_d4.specialAmount_06;
-
-    defender.setStat(statIndex, turnCount << 8 | amount & 0xff);
   }
 
   @Method(0x800f9380L)
@@ -3463,8 +3502,8 @@ public final class Bttl_800f {
     final int bobjIndex = script.params_20[0].get();
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[bobjIndex].innerStruct_00;
 
-    // Temporary power/speed stats
-    for(int statIndex = 88; statIndex <= 99; statIndex++) {
+    // Temporary power stats
+    for(int statIndex = 88; statIndex <= 97; statIndex++) {
       scriptTickTemporaryStatMod(bobj, statIndex);
     }
 

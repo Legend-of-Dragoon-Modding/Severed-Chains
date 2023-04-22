@@ -5,6 +5,7 @@ import legend.game.characters.Element;
 import legend.game.characters.ElementRegistryEvent;
 import legend.game.characters.StatType;
 import legend.game.characters.StatTypeRegistryEvent;
+import legend.game.characters.UnaryStat;
 import legend.game.characters.VitalsStat;
 import legend.game.combat.bobj.BattleObjectType;
 import legend.game.combat.bobj.BattleObjectTypeRegistryEvent;
@@ -39,6 +40,8 @@ public class CoreMod {
   public static final RegistryDelegate<StatType<VitalsStat>> HP_STAT = STAT_REGISTRAR.register("hp", () -> new StatType<>(VitalsStat::new));
   public static final RegistryDelegate<StatType<VitalsStat>> MP_STAT = STAT_REGISTRAR.register("mp", () -> new StatType<>(VitalsStat::new));
   public static final RegistryDelegate<StatType<VitalsStat>> SP_STAT = STAT_REGISTRAR.register("sp", () -> new StatType<>(VitalsStat::new));
+
+  public static final RegistryDelegate<StatType<UnaryStat>> SPEED_STAT = STAT_REGISTRAR.register("speed", () -> new StatType<>(UnaryStat::new));
 
   private static final Registrar<Element, ElementRegistryEvent> ELEMENT_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.elements, MOD_ID);
   public static final RegistryDelegate<Element> NO_ELEMENT = ELEMENT_REGISTRAR.register("none", NoElement::new);
@@ -92,5 +95,7 @@ public class CoreMod {
       event.addStat(MP_STAT.get());
       event.addStat(SP_STAT.get());
     }
+
+    event.addStat(SPEED_STAT.get());
   }
 }

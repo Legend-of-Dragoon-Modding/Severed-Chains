@@ -9,12 +9,14 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
+import legend.game.characters.UnaryStat;
 import legend.game.characters.VitalsStat;
 import legend.game.combat.bobj.BattleObject27c;
 import legend.game.combat.bobj.MonsterBattleObject;
@@ -53,6 +55,8 @@ public class CombatDebuggerController {
 
   @FXML
   public Spinner<Integer> spd;
+  @FXML
+  public Label spdMod;
   @FXML
   public Spinner<Integer> turn;
   @FXML
@@ -163,7 +167,11 @@ public class CombatDebuggerController {
     this.hp.getValueFactory().setValue(hp.getCurrent());
     this.maxHp.getValueFactory().setValue(hp.getMaxRaw());
 
-    this.spd.getValueFactory().setValue(bobj.speed_32);
+    final UnaryStat speedStat = bobj.stats.getStat(CoreMod.SPEED_STAT.get());
+    final int speedMod = speedStat.getMods();
+    this.spd.getValueFactory().setValue(speedStat.getRaw());
+    this.spdMod.setText(speedMod < 0 ? Integer.toString(speedMod) : "+" + speedMod);
+
     this.turn.getValueFactory().setValue(bobj.turnValue_4c);
     this.atk.getValueFactory().setValue(bobj.attack_34);
     this.def.getValueFactory().setValue(bobj.defence_38);
@@ -237,7 +245,7 @@ public class CombatDebuggerController {
     hp.setCurrent(this.hp.getValue());
     hp.setMaxRaw(this.maxHp.getValue());
 
-    bobj.speed_32 = this.spd.getValue();
+    bobj.stats.getStat(CoreMod.SPEED_STAT.get()).setRaw(this.spd.getValue());
     bobj.turnValue_4c = this.turn.getValue().shortValue();
     bobj.attack_34 = this.atk.getValue();
     bobj.defence_38 = this.def.getValue();

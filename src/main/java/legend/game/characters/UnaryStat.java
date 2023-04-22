@@ -6,9 +6,13 @@ public class UnaryStat extends Stat {
   private final Int2IntFunction validator;
   private int value;
 
-  public UnaryStat(final StatCollection stats, final StatType<UnaryStat> type, final Int2IntFunction validator) {
+  public UnaryStat(final StatType<UnaryStat> type, final StatCollection stats, final Int2IntFunction validator) {
     super(type, stats);
     this.validator = validator;
+  }
+
+  public UnaryStat(final StatType<UnaryStat> type, final StatCollection stats) {
+    this(type, stats, i -> i);
   }
 
   public int getRaw() {
@@ -20,7 +24,11 @@ public class UnaryStat extends Stat {
   }
 
   public int get() {
-    int value = this.getRaw();
+    return this.getRaw() + this.getMods();
+  }
+
+  public int getMods() {
+    int value = 0;
 
     for(final StatMod mod : this.mods) {
       value += mod.apply(this.stats, this.type);

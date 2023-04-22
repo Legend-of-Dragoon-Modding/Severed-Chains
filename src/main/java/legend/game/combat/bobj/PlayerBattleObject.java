@@ -51,7 +51,7 @@ public class PlayerBattleObject extends BattleObject27c {
   public int spMultiplier_128;
   public int spPerPhysicalHit_12a;
   public int mpPerPhysicalHit_12c;
-  public int itemSpPerMagicalHit_12e;
+  public int spPerMagicalHit_12e;
   public int mpPerMagicalHit_130;
   public int _132;
   public int hpRegen_134;
@@ -224,7 +224,7 @@ public class PlayerBattleObject extends BattleObject27c {
       case 146 -> this.spMultiplier_128;
       case 147 -> this.spPerPhysicalHit_12a;
       case 148 -> this.mpPerPhysicalHit_12c;
-      case 149 -> this.itemSpPerMagicalHit_12e;
+      case 149 -> this.spPerMagicalHit_12e;
       case 150 -> this.mpPerMagicalHit_130;
       case 151 -> this._132;
       case 152 -> this.hpRegen_134;
@@ -283,7 +283,7 @@ public class PlayerBattleObject extends BattleObject27c {
       case 146 -> this.spMultiplier_128 = value;
       case 147 -> this.spPerPhysicalHit_12a = value;
       case 148 -> this.mpPerPhysicalHit_12c = value;
-      case 149 -> this.itemSpPerMagicalHit_12e = value;
+      case 149 -> this.spPerMagicalHit_12e = value;
       case 150 -> this.mpPerMagicalHit_130 = value;
       case 151 -> this._132 = value;
       case 152 -> this.hpRegen_134 = value;

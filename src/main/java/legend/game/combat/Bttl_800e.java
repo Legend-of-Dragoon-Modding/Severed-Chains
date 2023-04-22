@@ -3863,7 +3863,7 @@ public final class Bttl_800e {
     monster.equipmentAttack1_28 = 0;
     monster._2e = 0;
     monster.equipmentIcon_30 = 0;
-    monster.speed_32 = statsEvent.speed;
+    monster.stats.getStat(CoreMod.SPEED_STAT.get()).setRaw(statsEvent.speed);
     monster.attack_34 = statsEvent.attack;
     monster.magicAttack_36 = statsEvent.magicAttack;
     monster.defence_38 = statsEvent.defence;
@@ -3885,14 +3885,6 @@ public final class Bttl_800e {
     monster._88 = monsterStats._1a.get();
     monster._8a = monsterStats._1b.get();
 
-    monster.originalHp_5c = monster.stats.getStat(CoreMod.HP_STAT.get()).getCurrent();
-    monster.originalAttack_60 = monster.attack_34;
-    monster.originalMagicAttack_62 = monster.magicAttack_36;
-    monster.originalSpeed_64 = monster.speed_32;
-    monster.originalDefence_66 = monster.defence_38;
-    monster.originalMagicDefence_68 = monster.magicDefence_3a;
-    monster.originalAttackAvoid_6a = monster.attackAvoid_40;
-    monster.originalMagicAvoid_6c = monster.magicAvoid_42;
     monster.damageReductionFlags_6e = monster.specialEffectFlag_14;
     monster._70 = monster.equipment_05_1e;
     monster.monsterElementFlag_72 = monster.displayElement_1c;
@@ -3973,7 +3965,7 @@ public final class Bttl_800e {
       player.equipmentAttack1_28 = stats.equipmentAttack1_80;
       player._2e = stats._83;
       player.equipmentIcon_30 = stats.equipmentIcon_84;
-      player.speed_32 = stats.equipmentSpeed_86 + stats.bodySpeed_69;
+      player.stats.getStat(CoreMod.SPEED_STAT.get()).setRaw(stats.equipmentSpeed_86 + stats.bodySpeed_69);
       player.attack_34 = stats.equipmentAttack_88 + stats.bodyAttack_6a;
       player.magicAttack_36 = stats.equipmentMagicAttack_8a + stats.bodyMagicAttack_6b;
       player.defence_38 = stats.equipmentDefence_8c + stats.bodyDefence_6c;
@@ -4007,7 +3999,7 @@ public final class Bttl_800e {
       player.spMultiplier_128 = stats.equipmentSpMultiplier_4c;
       player.spPerPhysicalHit_12a = stats.equipmentSpPerPhysicalHit_4e;
       player.mpPerPhysicalHit_12c = stats.equipmentMpPerPhysicalHit_50;
-      player.itemSpPerMagicalHit_12e = stats.equipmentSpPerMagicalHit_52;
+      player.spPerMagicalHit_12e = stats.equipmentSpPerMagicalHit_52;
       player.mpPerMagicalHit_130 = stats.equipmentMpPerMagicalHit_54;
       player._132 = stats.equipmentSpecial2Flag80_56;
       player.hpRegen_134 = stats.equipmentHpRegen_58;

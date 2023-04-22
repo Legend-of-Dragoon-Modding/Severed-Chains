@@ -417,8 +417,6 @@ public final class Bttl_800c {
   /** Different sets of bobjs for different target types (chars, monsters, all) */
   public static ScriptState<BattleObject27c>[][] targetBobjs_800c71f0;
 
-  public static final ArrayRef<IntRef> statsForSpecial1_800c71fc = MEMORY.ref(4, 0x800c71fcL, ArrayRef.of(IntRef.class, 8, 4, IntRef::new));
-  public static final ArrayRef<IntRef> statsForSpecial2_800c721c = MEMORY.ref(4, 0x800c721cL, ArrayRef.of(IntRef.class, 8, 4, IntRef::new));
   public static final ArrayRef<IntRef> _800c723c = MEMORY.ref(4, 0x800c723cL, ArrayRef.of(IntRef.class, 4, 4, IntRef::new));
 
   public static final ArrayRef<UnsignedShortRef> protectedItems_800c72cc = MEMORY.ref(2, 0x800c72ccL, ArrayRef.of(UnsignedShortRef.class, 10, 2, UnsignedShortRef::new));
@@ -1128,7 +1126,7 @@ public final class Bttl_800c {
       //LAB_800c7fb0
       for(int combatantIndex = 0; combatantIndex < aliveBobjCount_800c669c.get(); combatantIndex++) {
         final BattleObject27c bobj = battleState_8006e398.aliveBobjs_e78[combatantIndex].innerStruct_00;
-        highestTurnValue = bobj.speed_32 * (simpleRand() + 0x4_4925);
+        highestTurnValue = bobj.stats.getStat(CoreMod.SPEED_STAT.get()).get() * (simpleRand() + 0x4_4925);
         final int v1 = (int)(highestTurnValue * 0x35c2_9183L >>> 32) >> 16; //TODO _pretty_ sure this is roughly /312,110 (seems oddly specific?)
         bobj.turnValue_4c += v1;
       }

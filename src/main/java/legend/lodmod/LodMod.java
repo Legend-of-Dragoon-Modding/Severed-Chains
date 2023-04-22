@@ -36,7 +36,11 @@ public class LodMod {
     for(int itemId = 0; itemId < itemStats_8004f2ac.length; itemId++) {
       itemStats_8004f2ac[itemId] = ItemStats0c.fromFile(Unpacker.loadFile("items/%d.ditm".formatted(itemId)));
 
-      final String name = equipment_8011972c.get(itemId + 0xc0).deref().get();
+      String name = equipment_8011972c.get(itemId + 0xc0).deref().get();
+      if(name.isEmpty()) {
+        name = "Item " + itemId;
+      }
+
       final ItemStats0c itemStats = itemStats_8004f2ac[itemId];
 
       event.register(id(slug.slugify(name)), new Item(name, itemStats));
