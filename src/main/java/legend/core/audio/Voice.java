@@ -47,11 +47,14 @@ final class Voice implements AudioStream {
 
     final short adsrValue = this.adsrEnvelope.tick();
 
-    if(this.adsrEnvelope.isFinished()) {
+    final double volume = this.channel.getVolume() * this.layer.getVolume() * this.velocity;
+
+    final short actualVolume = (short) (adsrValue * volume);
+
+    if(!this.adsrEnvelope.isAttack() && actualVolume <= 16) {
+      System.out.printf("Clear [Voice: %d]%n", this.index);
       this.empty = true;
     }
-
-    final double volume = this.channel.getVolume() * this.layer.getVolume() * this.velocity;
 
     final short processedSample = (short)(((int)(sample * adsrValue * volume)) >> 15);
 

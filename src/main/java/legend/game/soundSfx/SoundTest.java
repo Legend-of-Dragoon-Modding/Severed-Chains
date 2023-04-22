@@ -4,6 +4,8 @@ package legend.game.soundSfx;
 import legend.core.DebugHelper;
 import legend.core.audio.AudioThread;
 
+import java.io.IOException;
+
 //TODO
 // See sssqTempo_800bd104
 // See code @ LAB_8001dda0
@@ -23,7 +25,11 @@ public final class SoundTest {
 
     spuThread.start();
 
-    DebugHelper.sleep(100000);
+    try {
+      System.in.read();
+    } catch(IOException e) {
+      throw new RuntimeException(e);
+    }
 
     audioThread.stop();
   }
