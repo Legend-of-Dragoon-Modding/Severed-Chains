@@ -9766,9 +9766,7 @@ public final class SEffe {
       final DeffPart.TmdType tmdType = (DeffPart.TmdType)getDeffPart(s1 | 0x300_0000);
       name = tmdType.name;
     }
-    if(name.contains("index 4 ")) {
-      int x = 0;
-    }
+
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "DEFF TMD " + name,
       script.scriptState_04,
