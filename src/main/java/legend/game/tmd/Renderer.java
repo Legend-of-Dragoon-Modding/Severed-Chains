@@ -7,6 +7,7 @@ import legend.core.gte.DVECTOR;
 import legend.core.gte.GsDOBJ2;
 import legend.core.gte.SVECTOR;
 import legend.core.gte.TmdObjTable1c;
+import legend.game.combat.environment.BattleLightStruct64;
 import legend.game.types.Translucency;
 
 import static legend.core.GameEngine.CPU;
@@ -17,6 +18,7 @@ import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
 import static legend.game.Scus94491BpeSegment.zMin;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
+import static legend.game.combat.Bttl_800c._800c6930;
 
 public final class Renderer {
   private Renderer() { }
@@ -171,16 +173,17 @@ public final class Renderer {
         continue;
       }
 
-      if(translucent && (ctmd || uniformLit)) {
-        final long rbk = CPU.CFC2(13);
-        final long gbk = CPU.CFC2(14);
-        final long bbk = CPU.CFC2(15);
+      if(textured && translucent && (ctmd || uniformLit)) {
+        final BattleLightStruct64 bkLight = _800c6930;
+        final int rbk = bkLight.colour_00.getX();
+        final int gbk = bkLight.colour_00.getY();
+        final int bbk = bkLight.colour_00.getZ();
 
         for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
           int rgb = poly.vertices[vertexIndex].colour;
-          final int r = (int)(((rgb & 0xff) * rbk >> 12) & 0xff);
-          final int g = (int)((((rgb >>> 8) & 0xff) * gbk >> 12) & 0xff);
-          final int b = (int)((((rgb >>> 16) & 0xff) * bbk >> 12) & 0xff);
+          final int r = (((rgb & 0xff) * rbk >> 12) & 0xff);
+          final int g = ((((rgb >>> 8) & 0xff) * gbk >> 12) & 0xff);
+          final int b = ((((rgb >>> 16) & 0xff) * bbk >> 12) & 0xff);
           rgb = b << 16 | g << 8 | r;
           cmd.rgb(vertexIndex, rgb);
         }
@@ -206,7 +209,7 @@ public final class Renderer {
         }
       }
 
-      if(translucent && !textured) {
+      if(translucent && (!textured || uniformLit)) {
         cmd.translucent(Translucency.of(tmdGp0Tpage_1f8003ec.get() >>> 5 & 0b11));
       }
 

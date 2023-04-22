@@ -1556,14 +1556,20 @@ public final class Scus94491BpeSegment {
     return FlowControl.PAUSE_AND_REWIND;
   }
 
+  /**
+   * Forces disabling/enabling of indicators during scripted movement (not during normal play)
+   */
   @Method(0x80017354L)
-  public static FlowControl FUN_80017354(final RunningScript<?> script) {
+  public static FlowControl scriptSetIndicatorsDisabled(final RunningScript<?> script) {
     gameState_800babc8.indicatorsDisabled_4e3 = script.params_20[0].get() != 0;
     return FlowControl.CONTINUE;
   }
 
+  /**
+   * Reads indicator status during some scripted movement (only identified instance so far is Bale boat ride)
+   */
   @Method(0x80017374L)
-  public static FlowControl FUN_80017374(final RunningScript<?> script) {
+  public static FlowControl scriptReadIndicatorsDisabled(final RunningScript<?> script) {
     script.params_20[0].set(gameState_800babc8.indicatorsDisabled_4e3 ? 1 : 0);
     return FlowControl.CONTINUE;
   }
