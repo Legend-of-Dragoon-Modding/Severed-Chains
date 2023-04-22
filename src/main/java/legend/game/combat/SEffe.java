@@ -4912,7 +4912,7 @@ public final class SEffe {
       final SVECTOR source = animation.sourceVertices_0c[i];
       final VECTOR current = animation.currentState_10[i];
       final VECTOR previous = animation.previousState_14[i];
-      previous.set(current);
+      previous.add(current);
       current.setX(current.getX() + (current.getX() * animation.embiggener_04 >> 8));
       current.setY(current.getY() + (current.getY() * animation.embiggener_04 >> 8));
       current.setZ(current.getZ() + (current.getZ() * animation.embiggener_04 >> 8));
@@ -6956,6 +6956,9 @@ public final class SEffe {
       .add(translation.get());
   }
 
+  /**
+   * Sets translation on script, from second script if one specified
+   */
   @Method(0x8011066cL)
   public static BattleScriptDataBase FUN_8011066c(final int scriptIndex1, final int scriptIndex2, final VECTOR translation) {
     final BattleScriptDataBase obj = (BattleScriptDataBase)scriptStatePtrArr_800bc1c0[scriptIndex1].innerStruct_00;
@@ -7628,6 +7631,7 @@ public final class SEffe {
     //LAB_80112518
   }
 
+  /** Sets rotation on script, from second script if one is specified */
   @Method(0x80112530L)
   public static long FUN_80112530(final int scriptIndex1, final int scriptIndex2, final SVECTOR a2) {
     final EffectManagerData6c data = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[scriptIndex1].innerStruct_00;
@@ -7953,6 +7957,7 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
+  /** Set model scale, transfer from second script if included */
   @Method(0x801139d0L)
   public static FlowControl FUN_801139d0(final RunningScript<?> script) {
     final int t1 = script.params_20[0].get();
@@ -8118,6 +8123,7 @@ public final class SEffe {
     throw new RuntimeException("Not implemented");
   }
 
+  /** Set color from script, transfer from second script if included */
   @Method(0x8011441cL)
   public static long FUN_8011441c(final int scriptIndex1, final int scriptIndex2, final USCOLOUR a2) {
     final BattleScriptDataBase data1 = (BattleScriptDataBase)scriptStatePtrArr_800bc1c0[scriptIndex1].innerStruct_00;
@@ -9760,7 +9766,9 @@ public final class SEffe {
       final DeffPart.TmdType tmdType = (DeffPart.TmdType)getDeffPart(s1 | 0x300_0000);
       name = tmdType.name;
     }
-
+    if(name.contains("index 4 ")) {
+      int x = 0;
+    }
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "DEFF TMD " + name,
       script.scriptState_04,
