@@ -199,7 +199,7 @@ public class DebuggerController {
 
   @FXML
   private void getGameSpeedMultiplier(final ActionEvent event) {
-    Config.getGameSpeedMultiplier();
+    this.gameSpeedMultiplier.getValueFactory().setValue(Config.getGameSpeedMultiplier());
   }
 
   @FXML

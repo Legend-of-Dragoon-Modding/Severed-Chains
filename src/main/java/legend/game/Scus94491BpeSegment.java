@@ -238,6 +238,9 @@ import static legend.game.combat.SBtld.stageData_80109a98;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_DELETE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F11;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F12;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_MINUS;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_EQUAL;
+
 
 public final class Scus94491BpeSegment {
   private Scus94491BpeSegment() { }
@@ -427,6 +430,15 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80011e1cL)
   public static void gameLoop() {
+    GPU.events().onKeyRepeat((window, key, scancode, mods) -> {
+      if(key == GLFW_KEY_EQUAL) {
+        Config.setGameSpeedMultiplier(Config.getGameSpeedMultiplier() + 1);
+      }
+
+      if(key == GLFW_KEY_MINUS) {
+        Config.setGameSpeedMultiplier(Config.getGameSpeedMultiplier() - 1);
+      }
+    });
     GPU.events().onKeyPress((window, key, scancode, mods) -> {
       // Add killswitch in case sounds get stuck on
       if(key == GLFW_KEY_DELETE) {
@@ -446,6 +458,14 @@ public final class Scus94491BpeSegment {
         }
       }
 
+      if(key == GLFW_KEY_EQUAL) {
+        Config.setGameSpeedMultiplier(Config.getGameSpeedMultiplier() + 1);
+      }
+
+      if(key == GLFW_KEY_MINUS) {
+        Config.setGameSpeedMultiplier(Config.getGameSpeedMultiplier() - 1);
+      }
+      
       if(key == GLFW_KEY_F12) {
         if(!Debugger.isRunning()) {
           try {
