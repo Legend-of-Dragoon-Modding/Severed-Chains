@@ -241,7 +241,6 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_F12;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_MINUS;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_EQUAL;
 
-
 public final class Scus94491BpeSegment {
   private Scus94491BpeSegment() { }
 
@@ -465,7 +464,7 @@ public final class Scus94491BpeSegment {
       if(key == GLFW_KEY_MINUS) {
         Config.setGameSpeedMultiplier(Config.getGameSpeedMultiplier() - 1);
       }
-      
+
       if(key == GLFW_KEY_F12) {
         if(!Debugger.isRunning()) {
           try {
