@@ -6,6 +6,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import javafx.application.Application;
 import javafx.application.Platform;
+import legend.core.Config;
 import legend.core.DebugHelper;
 import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
