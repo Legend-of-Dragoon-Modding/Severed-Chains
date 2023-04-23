@@ -483,7 +483,7 @@ public final class Scus94491BpeSegment {
       }
 
       final int frames = Math.max(1, vsyncMode_8007a3b8.get());
-      GPU.window().setFpsLimit(60 / frames);
+      GPU.window().setFpsLimit((60 / frames) * Config.getGameSpeedMultiplier());
 
       startFrame();
       tickDeferredReallocOrFree();
