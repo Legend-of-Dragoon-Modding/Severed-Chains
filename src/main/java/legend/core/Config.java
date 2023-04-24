@@ -30,6 +30,7 @@ public final class Config {
     properties.setProperty("battle_ui_r", "0");
     properties.setProperty("battle_ui_g", "41");
     properties.setProperty("battle_ui_b", "159");
+    properties.setProperty("game_speed_multiplier", "1");
     properties.setProperty("save_anywhere", "false");
     properties.setProperty("auto_addition", "false");
     properties.setProperty("auto_dragoon_meter", "false");
@@ -118,6 +119,14 @@ public final class Config {
 
   public static void setCombatStage(final int id) {
     properties.setProperty("combat_stage_id", String.valueOf(id));
+  }
+
+  public static int getGameSpeedMultiplier() {
+    return readInt("game_speed_multiplier", 1, 1, 16);
+  }
+
+  public static void setGameSpeedMultiplier(final int id) {
+    properties.setProperty("game_speed_multiplier", String.valueOf(id));
   }
 
   public static  boolean fastTextSpeed() {
