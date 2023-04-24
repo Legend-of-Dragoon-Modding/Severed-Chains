@@ -3327,7 +3327,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cd3b4L)
-  public static FlowControl FUN_800cd3b4(final RunningScript<?> script) {
+  public static FlowControl scriptSetModelPartVisibility(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     if(script.params_20[2].get() != 0) {
       bobj.model_148.partInvisible_f4 &= ~(0x1L << script.params_20[1].get());

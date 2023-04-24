@@ -73,6 +73,9 @@ public final class Unpacker {
     transformers.put(Unpacker::drgn21_693_0_patcherDiscriminator, Unpacker::drgn21_693_0_patcher);
     transformers.put(Unpacker::drgn0_142_animPatcherDiscriminator, Unpacker::drgn0_142_animPatcher);
 
+    // Give Dart his hand back during oof
+    transformers.put(Unpacker::drgn0_5546_1_patcherDiscriminator, Unpacker::drgn0_5546_1_patcher);
+
     // Yes there are 3 different magma fish files to patch
     transformers.put(Unpacker::drgn0_3667_16_animPatcherDiscriminator, Unpacker::drgn0_3667_16_animPatcher);
     transformers.put(Unpacker::drgn0_3667_17_animPatcherDiscriminator, Unpacker::drgn0_3667_17_animPatcher);
@@ -575,6 +578,69 @@ public final class Unpacker {
     System.arraycopy(frame, 0, newData, 0x208, frame.length); // obj 21
     newData[0xc] = 22;
 
+    return Map.of(name, new FileData(newData));
+  }
+
+  /**
+   * During oof, Dart's left hand and forearm are missing for the last parts of the scene.
+   * This is because they were turned off to be replaced by the fancy hand for the hand
+   * clasp close-up, but were never turned back on. This patch replaces a command to turn
+   * off the sword (again, for some reason) with a jump to the end of the script, and
+   * injects extra script ops at the end of file to add the hand and arm back and then
+   * jump back to the original next op.
+   * <p>
+   * They also left Lavitz's damaged chest plate visible behind Albert in the distance.
+   * This patch also replaces a command to turn an object on with a jump to the end and
+   * injects additional script ops to change the z offset of the object to stop it rendering
+   * and then move it back.
+   */
+  private static boolean drgn0_5546_1_patcherDiscriminator(final String name, final FileData data, final Set<String> flags) {
+    return "SECT/DRGN0.BIN/5546/1".equals(name) && data.size() == 0x721c;
+  }
+
+  private static Map<String, FileData> drgn0_5546_1_patcher(final String name, final FileData data, final Set<String> flags) {
+    final byte[] newData = new byte[0x7284];
+    final int jump = 0x0000_0140;
+    final byte[] address1 = {(byte)0x97, 0x0a, 0x00, 0x09, 0x00, 0x00, 0x00, 0x00, 0x00};
+    final byte[] address2 = {(byte)0xcd, 0x08, 0x00, 0x09, 0x00};
+    final int address3 = 0x0900_f566;
+    final int address4 = 0x0900f728;
+
+    final byte[] subfunc160a = {0x38, 0x03, 0x60, 0x01, 0x0c, 0x00, 0x00, 0x02};
+    final byte[] subfunc160b = {0x38, 0x03, 0x60, 0x01, 0x2d, 0x0c, 0x00, 0x0f};
+    final byte[] subfunc160params12a = {0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00};
+    final byte[] subfunc160params12b = {0x0e, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    final byte[] subfunc160params12c = {0x05, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00};
+    final int subfunc273 = 0x0273_0238;
+    final int subfunc273params0 = 0x0f00_1d2d;
+    final int subfunc273params1a = 0xffff_f000;
+    final int subfunc273params1b = 0xffff_fffa;
+
+    data.copyFrom(0, newData, 0, 0x47c0);
+    MathHelper.set(newData, 0x47c0, 4, jump);
+    System.arraycopy(address1, 0, newData, 0x47c4, address1.length);
+    data.copyFrom(0x47cd, newData, 0x47cd, 0x73f);
+    MathHelper.set(newData, 0x4f0c, 4, jump);
+    System.arraycopy(address2, 0, newData, 0x4f10, address2.length);
+    data.copyFrom(0x4f15, newData, 0x4f15, 0x2307);
+    System.arraycopy(subfunc160a, 0, newData, 0x721c, subfunc160a.length);
+    System.arraycopy(subfunc160params12a, 0, newData, 0x7224, subfunc160params12a.length);
+    MathHelper.set(newData, 0x722c, 4, subfunc273);
+    MathHelper.set(newData, 0x7230, 4, subfunc273params0);
+    MathHelper.set(newData, 0x7234, 4, subfunc273params1a);
+    MathHelper.set(newData, 0x7238, 4, jump);
+    MathHelper.set(newData, 0x723c, 4, address3);
+    System.arraycopy(subfunc160b, 0, newData, 0x7240, subfunc160b.length);
+    System.arraycopy(subfunc160params12b, 0, newData, 0x7248, subfunc160params12b.length);
+    System.arraycopy(subfunc160b, 0, newData, 0x7250, subfunc160b.length);
+    System.arraycopy(subfunc160params12c, 0, newData, 0x7258, subfunc160params12c.length);
+    System.arraycopy(subfunc160b, 0, newData, 0x7260, subfunc160b.length);
+    System.arraycopy(subfunc160params12a, 0, newData, 0x7268, subfunc160params12a.length);
+    MathHelper.set(newData, 0x7270, 4, subfunc273);
+    MathHelper.set(newData, 0x7274, 4, subfunc273params0);
+    MathHelper.set(newData, 0x7278, 4, subfunc273params1b);
+    MathHelper.set(newData, 0x727c, 4, jump);
+    MathHelper.set(newData, 0x7280, 4, address4);
     return Map.of(name, new FileData(newData));
   }
 
