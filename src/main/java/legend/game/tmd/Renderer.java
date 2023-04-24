@@ -173,7 +173,7 @@ public final class Renderer {
         continue;
       }
 
-      if(textured && translucent && (ctmd || uniformLit)) {
+      if(textured && translucent && !lit && (ctmd || uniformLit)) {
         final BattleLightStruct64 bkLight = _800c6930;
         final int rbk = bkLight.colour_00.getX();
         final int gbk = bkLight.colour_00.getY();
