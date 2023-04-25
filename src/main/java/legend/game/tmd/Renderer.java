@@ -147,15 +147,17 @@ public final class Renderer {
           cmd.uv(vertexIndex, poly.vertices[vertexIndex].u, poly.vertices[vertexIndex].v);
         }
 
-        // Back-face culling
-        if(useSpecialTranslucency) {
-          if(vertexIndex == 2) {
-            CPU.COP2(0x140_0006L); // Normal clipping
-            final long winding = CPU.MFC2(24);
+        /* if(useSpecialTranslucency) {
+          TODO Figure out how specialTrans is used
+        } */
 
-            if(!translucent && winding <= 0 || translucent && winding == 0) {
-              continue outer;
-            }
+        // Back-face culling
+        if(vertexIndex == 2) {
+          CPU.COP2(0x140_0006L); // Normal clipping
+          final long winding = CPU.MFC2(24);
+
+          if(!translucent && winding <= 0 || translucent && winding == 0) {
+            continue outer;
           }
         }
       }
