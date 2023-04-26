@@ -385,7 +385,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[323] = Bttl_800c::FUN_800cb95c;
     scriptSubFunctions_8004e29c[324] = Scus94491BpeSegment::scriptRewindAndPause2;
 
-    scriptSubFunctions_8004e29c[352] = Bttl_800c::FUN_800cd3b4;
+    scriptSubFunctions_8004e29c[352] = Bttl_800c::scriptSetModelPartVisibility;
     scriptSubFunctions_8004e29c[353] = Bttl_800e::scriptCopyVram;
     scriptSubFunctions_8004e29c[354] = Bttl_800c::FUN_800cd468;
     scriptSubFunctions_8004e29c[355] = Bttl_800c::FUN_800cd4b0;

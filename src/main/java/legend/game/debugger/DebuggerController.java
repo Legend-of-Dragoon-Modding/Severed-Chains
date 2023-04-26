@@ -63,6 +63,13 @@ public class DebuggerController {
   public Button setVsyncMode;
 
   @FXML
+  public Spinner<Integer> gameSpeedMultiplier;
+  @FXML
+  public Button getGameSpeedMultiplier;
+  @FXML
+  public Button setGameSpeedMultiplier;
+
+  @FXML
   public CheckBox battleUiColour;
   @FXML
   public Spinner<Integer> battleUiColourR;
@@ -91,6 +98,7 @@ public class DebuggerController {
     this.encounterId.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0));
     this.mapId.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0));
     this.vsyncMode.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, Integer.MAX_VALUE, 1));
+    this.gameSpeedMultiplier.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 16, Config.getGameSpeedMultiplier()));
     this.battleUiColour.setSelected(Config.changeBattleRgb());
     this.saveAnywhere.setSelected(Config.saveAnywhere());
     this.battleUiColourR.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (Config.getBattleRgb() & 0xff)));
@@ -187,6 +195,16 @@ public class DebuggerController {
   @FXML
   private void setVsyncMode(final ActionEvent event) {
     vsyncMode_8007a3b8.set(this.vsyncMode.getValue());
+  }
+
+  @FXML
+  private void getGameSpeedMultiplier(final ActionEvent event) {
+    this.gameSpeedMultiplier.getValueFactory().setValue(Config.getGameSpeedMultiplier());
+  }
+
+  @FXML
+  private void setGameSpeedMultiplier(final ActionEvent event) {
+    Config.setGameSpeedMultiplier(this.gameSpeedMultiplier.getValue());
   }
 
   @FXML

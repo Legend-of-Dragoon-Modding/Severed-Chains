@@ -6,6 +6,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import javafx.application.Application;
 import javafx.application.Platform;
+import legend.core.Config;
 import legend.core.DebugHelper;
 import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
@@ -237,6 +238,8 @@ import static legend.game.combat.SBtld.stageData_80109a98;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_DELETE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F11;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F12;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_MINUS;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_EQUAL;
 
 public final class Scus94491BpeSegment {
   private Scus94491BpeSegment() { }
@@ -426,6 +429,15 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80011e1cL)
   public static void gameLoop() {
+    GPU.events().onKeyRepeat((window, key, scancode, mods) -> {
+      if(key == GLFW_KEY_EQUAL) {
+        Config.setGameSpeedMultiplier(Config.getGameSpeedMultiplier() + 1);
+      }
+
+      if(key == GLFW_KEY_MINUS) {
+        Config.setGameSpeedMultiplier(Config.getGameSpeedMultiplier() - 1);
+      }
+    });
     GPU.events().onKeyPress((window, key, scancode, mods) -> {
       // Add killswitch in case sounds get stuck on
       if(key == GLFW_KEY_DELETE) {
@@ -443,6 +455,14 @@ public final class Scus94491BpeSegment {
         } else {
           LOGGER.info("Unpausing");
         }
+      }
+
+      if(key == GLFW_KEY_EQUAL) {
+        Config.setGameSpeedMultiplier(Config.getGameSpeedMultiplier() + 1);
+      }
+
+      if(key == GLFW_KEY_MINUS) {
+        Config.setGameSpeedMultiplier(Config.getGameSpeedMultiplier() - 1);
       }
 
       if(key == GLFW_KEY_F12) {
@@ -483,7 +503,7 @@ public final class Scus94491BpeSegment {
       }
 
       final int frames = Math.max(1, vsyncMode_8007a3b8.get());
-      GPU.window().setFpsLimit(60 / frames);
+      GPU.window().setFpsLimit((60 / frames) * Config.getGameSpeedMultiplier());
 
       startFrame();
       tickDeferredReallocOrFree();
