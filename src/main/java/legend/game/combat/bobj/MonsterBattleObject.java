@@ -44,10 +44,13 @@ public class MonsterBattleObject extends BattleObject27c {
   }
 
   @Override
-  public int applyPhysicalDamageMultipliers(int damage) {
-    damage = applyMagicDamageMultiplier(this, damage, 0);
+  public int applyPhysicalDamageMultipliers(final int damage) {
+    return applyMagicDamageMultiplier(this, damage, 0);
+  }
+
+  @Override
+  public void applyAttackEffects() {
     applyBuffOrDebuff(this, this);
-    return damage;
   }
 
   @Override
@@ -65,7 +68,7 @@ public class MonsterBattleObject extends BattleObject27c {
 
   @Override
   @Method(0x800f2d48L)
-  public int calculatePhysicalAttack(final BattleObject27c target) {
+  public int calculatePhysicalDamage(final BattleObject27c target) {
     final int atk = this.attack_34 + spellStats_800fa0b8[this.spellId_4e].multi_04;
 
     //LAB_800f2e28
@@ -78,7 +81,7 @@ public class MonsterBattleObject extends BattleObject27c {
    */
   @Override
   @Method(0x800f8768L)
-  public int calculateMagicAttack(final BattleObject27c target, final int magicType) {
+  public int calculateMagicDamage(final BattleObject27c target, final int magicType) {
     int matk = this.magicAttack_36;
     if(magicType == 1) {
       matk += spellStats_800fa0b8[this.spellId_4e].multi_04;

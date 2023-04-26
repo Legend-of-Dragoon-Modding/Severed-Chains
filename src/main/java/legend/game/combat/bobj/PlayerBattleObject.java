@@ -106,7 +106,7 @@ public class PlayerBattleObject extends BattleObject27c {
 
   @Override
   @Method(0x800f2af4L)
-  public int calculatePhysicalAttack(final BattleObject27c target) {
+  public int calculatePhysicalDamage(final BattleObject27c target) {
     int attack = this.attack_34;
     int attackMultiplier = 100;
 
@@ -149,7 +149,7 @@ public class PlayerBattleObject extends BattleObject27c {
    */
   @Override
   @Method(0x800f2e98L)
-  public int calculateMagicAttack(final BattleObject27c target, final int magicType) {
+  public int calculateMagicDamage(final BattleObject27c target, final int magicType) {
     int matk = this.magicAttack_36;
     if(magicType == 1) {
       matk += spellStats_800fa0b8[this.spellId_4e].multi_04;

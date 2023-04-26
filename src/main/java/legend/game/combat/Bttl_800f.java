@@ -15,6 +15,8 @@ import legend.game.characters.VitalsStat;
 import legend.game.combat.bobj.BattleObject27c;
 import legend.game.combat.bobj.MonsterBattleObject;
 import legend.game.combat.bobj.PlayerBattleObject;
+import legend.game.combat.formula.Formula;
+import legend.game.combat.formula.PhysicalDamageFormula;
 import legend.game.combat.types.AttackType;
 import legend.game.combat.ui.BattleDisplayStats144;
 import legend.game.combat.ui.BattleDisplayStats144Sub10;
@@ -507,7 +509,7 @@ public final class Bttl_800f {
       final Element attackElement = magicType == 1 ? attacker.spell_94.element_08 : attacker.item_d4.element_01;
 
       //LAB_800f2238
-      damage = attacker.calculateMagicAttack(defender, magicType);
+      damage = attacker.calculateMagicDamage(defender, magicType);
       damage = attackElement.adjustElementalDamage(damage, defender.getElement());
       damage = adjustDamageForPower(damage, attacker.powerMagicAttack_b6, defender.powerMagicDefence_ba);
 
@@ -530,28 +532,43 @@ public final class Bttl_800f {
     final BattleObject27c attacker = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final BattleObject27c defender = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00;
 
-    int damage = attacker.calculatePhysicalAttack(defender);
+//    int damage = attacker.calculatePhysicalAttack(defender);
+//
+//    for(final Element attackElement : attacker.getAttackElements()) {
+//      damage = attackElement.adjustElementalDamage(damage, defender.getElement());
+//    }
+//
+//    damage = adjustDamageForPower(damage, attacker.powerAttack_b4, defender.powerDefence_b8);
+//
+//    if(dragoonSpaceElement_800c6b64 != null) {
+//      for(final Element attackElement : attacker.getAttackElements()) {
+//        damage = attackElement.adjustDragoonSpaceDamage(damage, dragoonSpaceElement_800c6b64);
+//      }
+//    }
+//
+//    damage = Math.max(0, damage);
+//    damage = attacker.applyPhysicalDamageMultipliers(damage);
+//    attacker.applyAttackEffects();
+//    damage = Math.max(1, damage);
+//    damage = defender.applyDamageResistanceAndImmunity(damage, AttackType.PHYSICAL);
+//
+//    for(final Element attackElement : attacker.getAttackElements()) {
+//      damage = defender.applyElementalResistanceAndImmunity(damage, attackElement);
+//    }
 
-    for(final Element attackElement : attacker.getAttackElements()) {
-      damage = attackElement.adjustElementalDamage(damage, defender.getElement());
-    }
+    final Formula<Integer, Integer> physicalDamage = Formula.make(PhysicalDamageFormula::calculatePhysicalDamage, builder -> builder
+      .then(PhysicalDamageFormula::applyElementalInteractions)
+      .then(PhysicalDamageFormula::applyPower)
+      .then(PhysicalDamageFormula::applyDragoonSpace)
+      .then(PhysicalDamageFormula.minimum(0))
+      .then(PhysicalDamageFormula::applyDamageMultipliers)
+      .then(PhysicalDamageFormula::applyAttackEffects)
+      .then(PhysicalDamageFormula.minimum(1))
+      .then(PhysicalDamageFormula::applyResistanceAndImmunity)
+      .then(PhysicalDamageFormula::applyElementalResistanceAndImmunity)
+    );
 
-    damage = adjustDamageForPower(damage, attacker.powerAttack_b4, defender.powerDefence_b8);
-
-    if(dragoonSpaceElement_800c6b64 != null) {
-      for(final Element attackElement : attacker.getAttackElements()) {
-        damage = attackElement.adjustDragoonSpaceDamage(damage, dragoonSpaceElement_800c6b64);
-      }
-    }
-
-    damage = Math.max(0, damage);
-    damage = attacker.applyPhysicalDamageMultipliers(damage);
-    damage = Math.max(1, damage);
-    damage = defender.applyDamageResistanceAndImmunity(damage, AttackType.PHYSICAL);
-
-    for(final Element attackElement : attacker.getAttackElements()) {
-      damage = defender.applyElementalResistanceAndImmunity(damage, attackElement);
-    }
+    final int damage = physicalDamage.calculate(attacker, defender);
 
     script.params_20[2].set(damage);
     script.params_20[3].set(determineAttackSpecialEffects(attacker, defender, AttackType.PHYSICAL));

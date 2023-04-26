@@ -185,14 +185,18 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
   public abstract ElementSet getAttackElements();
   public abstract Element getElement();
 
-  public abstract int calculatePhysicalAttack(final BattleObject27c target);
+  public abstract int calculatePhysicalDamage(final BattleObject27c target);
   /**
    * @param magicType item (0), spell (1)
    */
-  public abstract int calculateMagicAttack(final BattleObject27c target, final int magicType);
+  public abstract int calculateMagicDamage(final BattleObject27c target, final int magicType);
 
   public int applyPhysicalDamageMultipliers(final int damage) {
     return damage;
+  }
+
+  public void applyAttackEffects() {
+
   }
 
   @Method(0x800f29d4L)
