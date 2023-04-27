@@ -106,7 +106,6 @@ import static legend.game.combat.Bttl_800c.battleMenu_800c6c34;
 import static legend.game.combat.Bttl_800c.cameraPositionIndicesIndex_800c6ba0;
 import static legend.game.combat.Bttl_800c.cameraPositionIndices_800c6c30;
 import static legend.game.combat.Bttl_800c.charCount_800c677c;
-import static legend.game.combat.Bttl_800c.characterElements_800c706c;
 import static legend.game.combat.Bttl_800c.combatItems_800c6988;
 import static legend.game.combat.Bttl_800c.combatMenu_800c6b60;
 import static legend.game.combat.Bttl_800c.displayStats_800c6c2c;
@@ -201,21 +200,19 @@ public final class Bttl_800f {
 
   @Method(0x800f1268L)
   public static void renderTextBoxBackground(final int x, final int y, final int width, final int height, int colour) {
-    colour = Math.min(colour & 0xf, 8);
-
     //LAB_800f1340
     final int left = x - centreScreenX_1f8003dc.get();
     final int top = y - centreScreenY_1f8003de.get();
-    final int r = textboxColours_800c6fec.get(colour).get(0).get();
-    final int g = textboxColours_800c6fec.get(colour).get(1).get();
-    final int b = textboxColours_800c6fec.get(colour).get(2).get();
+    final int b = colour & 0xff;
+    final int g = colour >> 8 & 0xff;
+    final int r = colour >> 16 & 0xff;
 
     final GpuCommandPoly cmd1 = new GpuCommandPoly(4)
       .translucent(Translucency.HALF_B_PLUS_HALF_F)
-      .rgb(0, 0, 0, 0)
+      .monochrome(0, 0)
       .rgb(1, r, g, b)
       .rgb(2, r, g, b)
-      .rgb(3, 0, 0, 0)
+      .monochrome(3, 0)
       .pos(0, left, top)
       .pos(1, left + width, top)
       .pos(2, left, top + height)
@@ -507,14 +504,16 @@ public final class Bttl_800f {
       attacker.status_0e |= 0x800;
     } else {
       final Element attackElement = magicType == 1 ? attacker.spell_94.element_08 : attacker.item_d4.element_01;
+      final AttackType attackType = magicType == 1 ? AttackType.DRAGOON_MAGIC_STATUS_ITEMS : AttackType.ITEM_MAGIC;
 
       //LAB_800f2238
       damage = attacker.calculateMagicDamage(defender, magicType);
-      damage = attackElement.adjustElementalDamage(damage, defender.getElement());
+      damage = attackElement.adjustAttackingElementalDamage(attackType, damage, defender.getElement());
+      damage = defender.getElement().adjustDefendingElementalDamage(attackType, damage, attackElement);
       damage = adjustDamageForPower(damage, attacker.powerMagicAttack_b6, defender.powerMagicDefence_ba);
 
       if(dragoonSpaceElement_800c6b64 != null) {
-        damage = attackElement.adjustDragoonSpaceDamage(damage, dragoonSpaceElement_800c6b64);
+        damage = attackElement.adjustDragoonSpaceDamage(attackType, damage, dragoonSpaceElement_800c6b64);
       }
     }
 
@@ -2019,7 +2018,7 @@ public final class Bttl_800f {
         //Item menu
         final int a2 = structa4._10.get() + 6;
         final int a3 = structa4._12.get() + 17;
-        renderTextBoxBackground(structa4.x_04.get() - a2 / 2, structa4.y_06.get() - a3, a2, a3, 0x8);
+        renderTextBoxBackground(structa4.x_04.get() - a2 / 2, structa4.y_06.get() - a3, a2, a3, 0x00299f);
       }
 
       //LAB_800f5f50
@@ -2035,7 +2034,7 @@ public final class Bttl_800f {
             final BattleObject27c bobj = setActiveCharacterSpell(structa4.itemOrSpellId_1c.get());
             addFloatingNumber(0, 0x1L, 0, bobj.spell_94.mp_06, 280, 135, 0, structa4.menuType_0a.get());
             FUN_800f8cd8(236 - centreScreenX_1f8003dc.get(), 130 - centreScreenY_1f8003de.get(), 16, 128, 24, 16, 0x2c, null);
-            renderTextBoxBackground(236, 130, 64, 14, 0x8);
+            renderTextBoxBackground(236, 130, 64, 14, 0x00299f);
           }
         } else {
           throw new RuntimeException("Undefined s1");
@@ -2044,7 +2043,7 @@ public final class Bttl_800f {
         //LAB_800f604c
         //LAB_800f6050
         //Selected item description
-        renderTextBoxBackground(44, 156, 232, 14, 0x8);
+        renderTextBoxBackground(44, 156, 232, 14, 0x00299f);
         renderText((short)s1, structa4.itemOrSpellId_1c.get(), 160, 163);
       }
     }
@@ -3445,12 +3444,17 @@ public final class Bttl_800f {
 
   @Method(0x800f9b78L)
   public static FlowControl scriptSetDragoonSpaceElementIndex(final RunningScript<?> script) {
-    final int elementIndex = script.params_20[0].get();
+    final int characterId = script.params_20[0].get();
 
-    if(elementIndex != -1) {
-      dragoonSpaceElement_800c6b64 = characterElements_800c706c[elementIndex].get();
-    } else {
-      dragoonSpaceElement_800c6b64 = null;
+    dragoonSpaceElement_800c6b64 = null;
+
+    if(characterId != -1) {
+      for(int i = 0; i < charCount_800c677c.get(); i++) {
+        if(battleState_8006e398.charBobjs_e40[i].innerStruct_00.charId_272 == characterId) {
+          dragoonSpaceElement_800c6b64 = battleState_8006e398.charBobjs_e40[i].innerStruct_00.element;
+          break;
+        }
+      }
     }
 
     return FlowControl.CONTINUE;
@@ -3481,12 +3485,18 @@ public final class Bttl_800f {
 
   @Method(0x800f9c2cL)
   public static FlowControl FUN_800f9c2c(final RunningScript<?> script) {
+    final int colourIndex = script.params_20[4].get();
+    final int r = textboxColours_800c6fec.get(colourIndex).get(0).get();
+    final int g = textboxColours_800c6fec.get(colourIndex).get(1).get();
+    final int b = textboxColours_800c6fec.get(colourIndex).get(2).get();
+    final int colour = b << 16 | g << 8 | b;
+
     renderTextBoxBackground(
       (short)script.params_20[0].get() - script.params_20[2].get() / 2,
       (short)script.params_20[1].get() - script.params_20[3].get() / 2,
       (short)script.params_20[2].get(),
       (short)script.params_20[3].get(),
-      (short)script.params_20[4].get()
+      colour
     );
 
     return FlowControl.CONTINUE;

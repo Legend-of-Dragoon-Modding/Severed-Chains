@@ -16,8 +16,11 @@ public final class PhysicalDamageFormula {
   public static int applyElementalInteractions(final State<Integer> state) {
     int damage = state.value();
 
+    final Element defendElement = state.bobjs.get(Side.DEFENDER).getElement();
+
     for(final Element attackElement : state.bobjs.get(Side.ATTACKER).getAttackElements()) {
-      damage = attackElement.adjustElementalDamage(damage, state.bobjs.get(Side.DEFENDER).getElement());
+      damage = attackElement.adjustAttackingElementalDamage(AttackType.PHYSICAL, damage, defendElement);
+      damage = defendElement.adjustDefendingElementalDamage(AttackType.PHYSICAL, damage, attackElement);
     }
 
     return damage;
@@ -32,7 +35,7 @@ public final class PhysicalDamageFormula {
 
     if(dragoonSpaceElement_800c6b64 != null) {
       for(final Element attackElement : state.bobjs.get(Side.ATTACKER).getAttackElements()) {
-        damage = attackElement.adjustDragoonSpaceDamage(damage, dragoonSpaceElement_800c6b64);
+        damage = dragoonSpaceElement_800c6b64.adjustDragoonSpaceDamage(AttackType.PHYSICAL, damage, attackElement);
       }
     }
 

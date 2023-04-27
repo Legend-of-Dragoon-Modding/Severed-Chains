@@ -21,6 +21,7 @@ import legend.core.memory.Ref;
 import legend.core.memory.Value;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
+import legend.game.characters.Element;
 import legend.game.characters.VitalsStat;
 import legend.game.combat.bobj.BattleObject27c;
 import legend.game.combat.bobj.MonsterBattleObject;
@@ -158,7 +159,6 @@ import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.combat.Bttl_800c.FUN_800ca418;
-import static legend.game.combat.Bttl_800c.aliveBobjCount_800c669c;
 import static legend.game.combat.Bttl_800c._800c6930;
 import static legend.game.combat.Bttl_800c._800c6938;
 import static legend.game.combat.Bttl_800c._800c697e;
@@ -183,6 +183,8 @@ import static legend.game.combat.Bttl_800c._800fb444;
 import static legend.game.combat.Bttl_800c._800fb46c;
 import static legend.game.combat.Bttl_800c._800fb47c;
 import static legend.game.combat.Bttl_800c.ailments_800fb3a0;
+import static legend.game.combat.Bttl_800c.aliveBobjCount_800c669c;
+import static legend.game.combat.Bttl_800c.aliveMonsterCount_800c6758;
 import static legend.game.combat.Bttl_800c.battleMenu_800c6c34;
 import static legend.game.combat.Bttl_800c.charCount_800c677c;
 import static legend.game.combat.Bttl_800c.characterDragoonIndices_800c6e68;
@@ -197,7 +199,6 @@ import static legend.game.combat.Bttl_800c.displayStats_800c6c2c;
 import static legend.game.combat.Bttl_800c.dragoonDeffsWithExtraTims_800fb040;
 import static legend.game.combat.Bttl_800c.dragoonSpaceElement_800c6b64;
 import static legend.game.combat.Bttl_800c.dragoonSpells_800c6960;
-import static legend.game.combat.Bttl_800c.elements_800c6ef0;
 import static legend.game.combat.Bttl_800c.floatingNumbers_800c6b5c;
 import static legend.game.combat.Bttl_800c.getCombatant;
 import static legend.game.combat.Bttl_800c.itemTargetAll_800c69c8;
@@ -209,7 +210,6 @@ import static legend.game.combat.Bttl_800c.loadAttackAnimations;
 import static legend.game.combat.Bttl_800c.melbuMonsterNameIndices;
 import static legend.game.combat.Bttl_800c.melbuMonsterNames_800c6ba8;
 import static legend.game.combat.Bttl_800c.monsterBobjs_800c6b78;
-import static legend.game.combat.Bttl_800c.aliveMonsterCount_800c6758;
 import static legend.game.combat.Bttl_800c.monsterCount_800c6768;
 import static legend.game.combat.Bttl_800c.monsterCount_800c6b9c;
 import static legend.game.combat.Bttl_800c.playerNames_800fb378;
@@ -235,7 +235,6 @@ import static legend.game.combat.Bttl_800f.drawFloatingNumbers;
 import static legend.game.combat.Bttl_800f.drawItemMenuElements;
 import static legend.game.combat.Bttl_800f.drawLine;
 import static legend.game.combat.Bttl_800f.drawUiTextureElement;
-import static legend.game.combat.Bttl_800f.getFirstSetBitIndex;
 import static legend.game.combat.Bttl_800f.getTargetEnemyName;
 import static legend.game.combat.Bttl_800f.prepareItemList;
 import static legend.game.combat.Bttl_800f.renderNumber;
@@ -3896,8 +3895,8 @@ public final class Bttl_800e {
 
     monster.damageReductionFlags_6e = monster.specialEffectFlag_14;
     monster._70 = monster.equipment_05_1e;
-    monster.monsterElementFlag_72 = monster.displayElement_1c;
-    monster.monsterElementalImmunityFlag_74.set(monster.equipmentElementalImmunity_22);
+    monster.monsterElement_72 = monster.displayElement_1c;
+    monster.monsterElementalImmunity_74.set(monster.equipmentElementalImmunity_22);
     monster.monsterStatusResistFlag_76 = monster.equipmentStatusResist_24;
 
     if((monster.damageReductionFlags_6e & 0x8) != 0) {
@@ -4426,7 +4425,7 @@ public final class Bttl_800e {
       //LAB_800f0ad4
       // Background
       if(_800c6c40.get(0).charIndex_00.get() != -1 && (_800c6c40.get(0).flags_06.get() & 0x1) != 0) {
-        renderTextBoxBackground(16, (int)_800fb198.offset(2, _800c6c38.get() * 0x2L).get() - 26, 288, 40, 8);
+        renderTextBoxBackground(16, (int)_800fb198.offset(2, _800c6c38.get() * 0x2L).get() - 26, 288, 40, 0x00299f);
       }
 
       //LAB_800f0b3c
@@ -4441,10 +4440,10 @@ public final class Bttl_800e {
         drawTargetArrow(menu.targetType_50.get(), menu.combatantIndex.get());
         final int targetCombatant = menu.combatantIndex.get();
         LodString str;
-        int element;
+        Element element;
         if(targetCombatant == -1) {  // Target all
           str = targeting_800fb36c.get(menu.targetType_50.get()).deref();
-          element = 3;
+          element = CoreMod.DIVINE_ELEMENT.get();
         } else {  // Target single
           final BattleObject27c targetBobj;
 
@@ -4463,15 +4462,15 @@ public final class Bttl_800e {
 
             //LAB_800f0d10
             str = getTargetEnemyName(monsterBobj, currentEnemyNames_800c69d0.get(enemySlot));
-            element = getFirstSetBitIndex(monsterBobj.displayElement_1c.flag);
+            element = monsterBobj.displayElement_1c;
             targetBobj = monsterBobj;
           } else if(menu.targetType_50.get() == 0) {
             targetBobj = battleState_8006e398.charBobjs_e40[targetCombatant].innerStruct_00;
             str = playerNames_800fb378.get(targetBobj.charId_272).deref();
-            element = elements_800c6ef0.get(targetBobj.charId_272).get();
+            element = targetBobj.getElement();
 
-            if(targetBobj.charId_272 == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0 && (battleState_8006e398.charBobjs_e40[menu.combatantIndex.get()].storage_44[7] & 0x2) != 0) {
-              element = elements_800c6ef0.get(9).get();
+            if(targetBobj.charId_272 == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0 && battleState_8006e398.charBobjs_e40[menu.combatantIndex.get()].innerStruct_00.isDragoon()) {
+              element = CoreMod.DIVINE_ELEMENT.get();
             }
           } else {
             //LAB_800f0d58
@@ -4481,13 +4480,13 @@ public final class Bttl_800e {
             if(targetBobj instanceof final MonsterBattleObject monsterBobj) {
               //LAB_800f0e24
               str = getTargetEnemyName(monsterBobj, currentEnemyNames_800c69d0.get(targetCombatant));
-              element = getFirstSetBitIndex(monsterBobj.displayElement_1c.flag);
+              element = monsterBobj.displayElement_1c;
             } else {
               str = playerNames_800fb378.get(targetBobj.charId_272).deref();
-              element = elements_800c6ef0.get(targetBobj.charId_272).get();
+              element = targetBobj.getElement();
 
-              if(targetBobj.charId_272 == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0 && (battleState_8006e398.charBobjs_e40[menu.combatantIndex.get()].storage_44[7] & 0x2) != 0) {
-                element = elements_800c6ef0.get(9).get();
+              if(targetBobj.charId_272 == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0 && battleState_8006e398.charBobjs_e40[menu.combatantIndex.get()].innerStruct_00.isDragoon()) {
+                element = CoreMod.DIVINE_ELEMENT.get();
               }
             }
           }
@@ -4522,7 +4521,7 @@ public final class Bttl_800e {
 
         //LAB_800f0ed8
         //Character name
-        renderTextBoxBackground(44, 23, 232, 14, (short)element);
+        renderTextBoxBackground(44, 23, 232, 14, element.colour);
         renderText(str, 160 - textWidth(str) / 2, 24, TextColour.WHITE, 0);
       }
     }

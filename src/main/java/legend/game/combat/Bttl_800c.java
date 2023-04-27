@@ -2428,9 +2428,9 @@ public final class Bttl_800c {
     allBobjCount_800c66d0.decr();
 
     //LAB_800cb0d4
-    for(int i = bobj._274; i < allBobjCount_800c66d0.get(); i++) {
+    for(int i = bobj.bobjIndex_274; i < allBobjCount_800c66d0.get(); i++) {
       battleState_8006e398.allBobjs_e0c[i] = battleState_8006e398.allBobjs_e0c[i + 1];
-      battleState_8006e398.allBobjs_e0c[i].innerStruct_00._274 = i;
+      battleState_8006e398.allBobjs_e0c[i].innerStruct_00.bobjIndex_274 = i;
     }
 
     //LAB_800cb11c
@@ -3351,7 +3351,7 @@ public final class Bttl_800c {
     bobj.combatant_144 = combatant;
     bobj.combatantIndex_26c = script.params_20[1].get();
     bobj.charId_272 = combatant.charIndex_1a2;
-    bobj._274 = allBobjCount_800c66d0.get();
+    bobj.bobjIndex_274 = allBobjCount_800c66d0.get();
     allBobjCount_800c66d0.incr();
     bobj.charSlot_276 = monsterCount_800c6768.get();
     monsterCount_800c6768.incr();
@@ -3447,7 +3447,7 @@ public final class Bttl_800c {
       script.params_20[1].set(v1.charSlot_276);
     } else {
       //LAB_800cd9e8
-      script.params_20[1].set(v1._274);
+      script.params_20[1].set(v1.bobjIndex_274);
     }
 
     //LAB_800cd9f4

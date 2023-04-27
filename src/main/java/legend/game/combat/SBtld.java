@@ -216,7 +216,7 @@ public class SBtld {
       final BattleObject27c data = state.innerStruct_00;
       data.magic_00 = BattleScriptDataBase.BOBJ;
       data.charId_272 = charIndex;
-      data._274 = allBobjCount_800c66d0.get();
+      data.bobjIndex_274 = allBobjCount_800c66d0.get();
       data.charSlot_276 = monsterCount_800c6768.get();
       data.combatant_144 = getCombatant(combatantIndex);
       data.combatantIndex_26c = combatantIndex;

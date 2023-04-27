@@ -1,18 +1,19 @@
 package legend.game.modding.coremod.elements;
 
 import legend.game.characters.Element;
+import legend.game.combat.types.AttackType;
 import legend.game.modding.registries.RegistryDelegate;
 
 public class SimpleElement extends Element {
   private final RegistryDelegate<Element> opposed;
 
-  public SimpleElement(final int flag, final RegistryDelegate<Element> opposed) {
-    super(flag);
+  public SimpleElement(final int flag, final int colour, final RegistryDelegate<Element> opposed) {
+    super(flag, colour);
     this.opposed = opposed;
   }
 
   @Override
-  public int adjustElementalDamage(final int damage, final Element targetElement) {
+  public int adjustAttackingElementalDamage(final AttackType attackType, final int damage, final Element targetElement) {
     if(targetElement == this.opposed.get()) {
       return damage * 150 / 100;
     }
@@ -25,12 +26,12 @@ public class SimpleElement extends Element {
   }
 
   @Override
-  public int adjustDragoonSpaceDamage(final int damage, final Element dragoonSpaceElement) {
-    if(dragoonSpaceElement == this) {
+  public int adjustDragoonSpaceDamage(final AttackType attackType, final int damage, final Element attackingElement) {
+    if(attackingElement == this) {
       return damage * 150 / 100;
     }
 
-    if(dragoonSpaceElement == this.opposed.get()) {
+    if(attackingElement == this.opposed.get()) {
       return damage * 50 / 100;
     }
 

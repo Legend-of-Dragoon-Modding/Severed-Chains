@@ -4,6 +4,6 @@ import legend.game.modding.coremod.CoreMod;
 
 public class EarthElement extends SimpleElement {
   public EarthElement() {
-    super(0x2, CoreMod.WIND_ELEMENT);
+    super(0x2, 0xb67000, CoreMod.WIND_ELEMENT);
   }
 }

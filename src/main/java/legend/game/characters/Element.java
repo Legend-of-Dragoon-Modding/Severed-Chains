@@ -1,6 +1,7 @@
 package legend.game.characters;
 
 import legend.core.GameEngine;
+import legend.game.combat.types.AttackType;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.registries.RegistryEntry;
 import legend.game.modding.registries.RegistryId;
@@ -9,6 +10,8 @@ public abstract class Element extends RegistryEntry {
   /** TODO figure out a way to remove this, mods will add elements with conflicting flags */
   @Deprecated
   public final int flag;
+
+  public final int colour;
 
   @Deprecated
   public static Element fromFlag(final int flag) {
@@ -27,10 +30,12 @@ public abstract class Element extends RegistryEntry {
     throw new IllegalArgumentException("Unknown element %x".formatted(flag));
   }
 
-  public Element(final int flag) {
+  public Element(final int flag, final int colour) {
     this.flag = flag;
+    this.colour = colour;
   }
 
-  public abstract int adjustElementalDamage(final int damage, final Element targetElement);
-  public abstract int adjustDragoonSpaceDamage(final int damage, final Element dragoonSpaceElement);
+  public abstract int adjustAttackingElementalDamage(final AttackType attackType, final int damage, final Element targetElement);
+  public int adjustDefendingElementalDamage(final AttackType attackType, final int damage, final Element attackerElement) { return damage; }
+  public abstract int adjustDragoonSpaceDamage(final AttackType attackType, final int damage, final Element attackingElement);
 }

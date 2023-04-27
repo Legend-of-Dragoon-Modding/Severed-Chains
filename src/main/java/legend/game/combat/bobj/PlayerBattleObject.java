@@ -11,12 +11,13 @@ import legend.game.scripting.ScriptState;
 import static java.lang.Math.round;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
-import static legend.game.combat.Bttl_800c.characterElements_800c706c;
 import static legend.game.combat.Bttl_800c.getHitMultiplier;
 import static legend.game.combat.Bttl_800c.spellStats_800fa0b8;
 
 public class PlayerBattleObject extends BattleObject27c {
   private final Latch<ScriptState<PlayerBattleObject>> scriptState;
+
+  public Element element;
 
   public int level_04;
   public int dlevel_06;
@@ -101,7 +102,7 @@ public class PlayerBattleObject extends BattleObject27c {
       return CoreMod.DIVINE_ELEMENT.get();
     }
 
-    return characterElements_800c706c[this.charId_272].get();
+    return this.element;
   }
 
   @Override

@@ -24,8 +24,8 @@ public class MonsterBattleObject extends BattleObject27c {
    */
   public int damageReductionFlags_6e;
   public int _70;
-  public Element monsterElementFlag_72;
-  public final ElementSet monsterElementalImmunityFlag_74 = new ElementSet();
+  public Element monsterElement_72;
+  public final ElementSet monsterElementalImmunity_74 = new ElementSet();
   public int monsterStatusResistFlag_76;
   public final SVECTOR targetArrowPos_78 = new SVECTOR();
 
@@ -40,7 +40,7 @@ public class MonsterBattleObject extends BattleObject27c {
 
   @Override
   public Element getElement() {
-    return this.monsterElementFlag_72;
+    return this.monsterElement_72;
   }
 
   @Override
@@ -102,8 +102,8 @@ public class MonsterBattleObject extends BattleObject27c {
 
       case 53 -> this.damageReductionFlags_6e;
       case 54 -> this._70;
-      case 55 -> this.monsterElementFlag_72.flag;
-      case 56 -> this.monsterElementalImmunityFlag_74.pack();
+      case 55 -> this.monsterElement_72.flag;
+      case 56 -> this.monsterElementalImmunity_74.pack();
       case 57 -> this.monsterStatusResistFlag_76;
       case 58 -> this.targetArrowPos_78.getX();
       case 59 -> this.targetArrowPos_78.getY();
@@ -118,8 +118,8 @@ public class MonsterBattleObject extends BattleObject27c {
     switch(statIndex) {
       case 53 -> this.damageReductionFlags_6e = value;
       case 54 -> this._70 = value;
-      case 55 -> this.monsterElementFlag_72 = Element.fromFlag(value);
-      case 56 -> this.monsterElementalImmunityFlag_74.unpack(value);
+      case 55 -> this.monsterElement_72 = Element.fromFlag(value);
+      case 56 -> this.monsterElementalImmunity_74.unpack(value);
       case 57 -> this.monsterStatusResistFlag_76 = value;
       case 58 -> this.targetArrowPos_78.setX((short)value);
       case 59 -> this.targetArrowPos_78.setY((short)value);
