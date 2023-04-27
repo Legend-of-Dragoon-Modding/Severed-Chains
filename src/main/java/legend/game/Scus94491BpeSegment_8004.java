@@ -500,7 +500,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[556] = SEffe::FUN_801155a0;
     scriptSubFunctions_8004e29c[557] = SEffe::FUN_80111be8;
     scriptSubFunctions_8004e29c[558] = SEffe::FUN_80111c2c;
-    scriptSubFunctions_8004e29c[559] = SEffe::FUN_80112184;
+    scriptSubFunctions_8004e29c[559] = SEffe::scriptSetTranslationScalerWithRotation0;
     scriptSubFunctions_8004e29c[560] = SEffe::FUN_80112274;
     scriptSubFunctions_8004e29c[561] = SEffe::FUN_80112364;
     scriptSubFunctions_8004e29c[562] = SEffe::FUN_801155f8;
@@ -539,7 +539,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[594] = Bttl_800e::FUN_800eb518;
     scriptSubFunctions_8004e29c[595] = SEffe::FUN_8011549c;
     scriptSubFunctions_8004e29c[596] = SEffe::FUN_801122ec;
-    scriptSubFunctions_8004e29c[597] = SEffe::FUN_801121fc;
+    scriptSubFunctions_8004e29c[597] = SEffe::scriptSetTranslationScalerWithRotation1;
     scriptSubFunctions_8004e29c[598] = SEffe::FUN_80111cc4;
     scriptSubFunctions_8004e29c[599] = SEffe::FUN_80111ed4;
     scriptSubFunctions_8004e29c[600] = Bttl_800e::FUN_800e93e0;

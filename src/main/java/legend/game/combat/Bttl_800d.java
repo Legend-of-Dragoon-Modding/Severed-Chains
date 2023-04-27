@@ -4910,7 +4910,7 @@ public final class Bttl_800d {
   public static SVECTOR getRotationFromTransforms(final SVECTOR rotOut, final MATRIX transforms) {
     final MATRIX mat = new MATRIX().set(transforms);
     rotOut.setX((short)ratan2(-mat.get(5), mat.get(8)));
-    RotMatrixX(rotOut.getX(), mat);
+    RotMatrixX(-rotOut.getX(), mat);
     rotOut.setY((short)ratan2(mat.get(2), mat.get(8)));
     RotMatrixY(-rotOut.getY(), mat);
     rotOut.setZ((short)ratan2(mat.get(3), mat.get(0)));
