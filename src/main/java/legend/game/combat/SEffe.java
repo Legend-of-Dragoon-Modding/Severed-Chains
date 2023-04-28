@@ -6860,30 +6860,36 @@ public final class SEffe {
     rotation.set(bobj.model_148.coord2Param_64.rotate);
   }
 
+  /**
+   * Used in the item throwing parabolic
+   */
   @Method(0x80110120L)
-  public static SVECTOR FUN_80110120(final SVECTOR a0, @Nullable VECTOR a1, final VECTOR a2) {
-    if(a1 == null) {
-      a1 = new VECTOR();
+  public static SVECTOR FUN_80110120(final SVECTOR rotation, @Nullable VECTOR translation, final VECTOR in) {
+    if(translation == null) {
+      translation = new VECTOR();
     }
 
     //LAB_8011014c
-    final VECTOR sp0x10 = new VECTOR().set(a2).sub(a1);
-    a0.setZ((short)0);
-    a0.setY((short)ratan2(sp0x10.getX(), sp0x10.getZ()));
+    final VECTOR sp0x10 = new VECTOR().set(in).sub(translation);
+    rotation.setZ((short)0);
+    rotation.setY((short)ratan2(sp0x10.getX(), sp0x10.getZ()));
 
-    final short s1 = (short)(rcos(-a0.getY()) * sp0x10.getZ() - rsin(-a0.getY()) * sp0x10.getX());
-    a0.setX((short)ratan2(-sp0x10.getY(), s1 / 0x1000));
-    return a0;
+    final int s1 = rcos(-rotation.getY()) * sp0x10.getZ() - rsin(-rotation.getY()) * sp0x10.getX();
+    rotation.setX((short)ratan2(-sp0x10.getY(), s1 / 0x1000));
+    return rotation;
   }
 
+  /**
+   * Transform rotation vector of script using rotation and translation of second
+   */
   @Method(0x80110228L)
-  public static SVECTOR FUN_80110228(final SVECTOR rot, @Nullable VECTOR a3, final VECTOR a2) {
-    if(a3 == null) {
-      a3 = new VECTOR();
+  public static SVECTOR FUN_80110228(final SVECTOR rotation, @Nullable VECTOR translation, final VECTOR in) {
+    if(translation == null) {
+      translation = new VECTOR();
     }
 
     //LAB_80110258
-    final VECTOR sp0x10 = new VECTOR().set(a2).sub(a3).negate();
+    final VECTOR sp0x10 = new VECTOR().set(in).sub(translation).negate();
     final SVECTOR sp0x30 = new SVECTOR();
     sp0x30.setY((short)ratan2(sp0x10.getX(), sp0x10.getZ()));
 
@@ -6892,9 +6898,9 @@ public final class SEffe {
 
     final MATRIX transforms = new MATRIX();
     RotMatrix_Zyx(sp0x30, transforms);
-    getRotationFromTransforms(rot, transforms);
+    getRotationFromTransforms(rotation, transforms);
 
-    return rot;
+    return rotation;
   }
 
   @Method(0x8011035cL)
@@ -6943,16 +6949,16 @@ public final class SEffe {
   }
 
   @Method(0x801105ccL)
-  public static void FUN_801105cc(final VECTOR out, final int scriptIndex, final VECTOR a2) {
+  public static void getTranslationWithRotation(final VECTOR out, final int scriptIndex, final VECTOR in) {
     final Ref<SVECTOR> rotation = new Ref<>();
     final Ref<VECTOR> translation = new Ref<>();
     getScriptedObjectRotationAndTranslation(scriptIndex, rotation, translation);
 
-    final MATRIX sp0x10 = new MATRIX();
-    RotMatrix_Xyz(rotation.get(), sp0x10);
+    final MATRIX rotMatrix = new MATRIX();
+    RotMatrix_Xyz(rotation.get(), rotMatrix);
 
     out
-      .set(ApplyMatrixLV(sp0x10, a2))
+      .set(ApplyMatrixLV(rotMatrix, in))
       .add(translation.get());
   }
 
@@ -6973,47 +6979,48 @@ public final class SEffe {
       objTranslation.set(translation);
     } else {
       //LAB_80110718
-      FUN_801105cc(objTranslation, scriptIndex2, translation);
+      getTranslationWithRotation(objTranslation, scriptIndex2, translation);
     }
 
     //LAB_80110720
     return obj;
   }
 
+  /**
+   * Ticks translation scaler, applying additional translation from translation and rotation of a second effect if one specified in scaler
+   */
   @Method(0x80110740L)
-  public static int FUN_80110740(final EffectManagerData6c s2, final TransformScalerEffect34 s1) {
-    s1.velocity_18.add(s1.acceleration_24);
-    s1.value_0c.add(s1.velocity_18);
+  public static int tickTranslationScalerWithRotation(final EffectManagerData6c manager, final TransformScalerEffect34 scaler) {
+    scaler.velocity_18.add(scaler.acceleration_24);
+    scaler.value_0c.add(scaler.velocity_18);
 
-    if(s1.scriptIndex_30 == -1) {
-      s2._10.trans_04.set(s1.value_0c).shra(8);
+    if(scaler.scriptIndex_30 == -1) {
+      manager._10.trans_04.set(scaler.value_0c).shra(8);
     } else {
       //LAB_80110814
-      final Ref<SVECTOR> sp0x40 = new Ref<>();
-      final Ref<VECTOR> sp0x44 = new Ref<>();
-      getScriptedObjectRotationAndTranslation(s1.scriptIndex_30, sp0x40, sp0x44);
+      final Ref<SVECTOR> scriptRot = new Ref<>();
+      final Ref<VECTOR> scriptTrans = new Ref<>();
+      getScriptedObjectRotationAndTranslation(scaler.scriptIndex_30, scriptRot, scriptTrans);
 
-      final MATRIX sp0x10 = new MATRIX();
-      RotMatrix_Xyz(sp0x40.get(), sp0x10);
+      final MATRIX rotMatrix = new MATRIX();
+      RotMatrix_Xyz(scriptRot.get(), rotMatrix);
 
-      final VECTOR sp0x30 = new VECTOR().set(s1.value_0c).shra(8);
-      s2._10.trans_04.set(ApplyMatrixLV(sp0x10, sp0x30)).add(sp0x44.get());
+      final VECTOR transScalerValue = new VECTOR().set(scaler.value_0c).shra(8);
+      manager._10.trans_04.set(ApplyMatrixLV(rotMatrix, transScalerValue)).add(scriptTrans.get());
     }
 
     //LAB_801108bc
-    if(s1.stepTicker_32 == -1) {
-      return 1;
+    if(scaler.stepTicker_32 != -1) {
+      scaler.stepTicker_32--;
+
+      if(scaler.stepTicker_32 <= 0) {
+        //LAB_801108e4
+        return 0;
+      }
     }
 
-    s1.stepTicker_32--;
-
-    if(s1.stepTicker_32 > 0) {
-      //LAB_801108e0
-      return 1;
-    }
-
-    //LAB_801108e4
-    return 0;
+    //LAB_801108e0
+    return 1;
   }
 
   @Method(0x801108fcL)
@@ -7024,7 +7031,7 @@ public final class SEffe {
     }
 
     //LAB_80110980
-    final TransformScalerEffect34 s2 = FUN_800e8dd4(s0, 1, 0, SEffe::FUN_80110740, 0x34, new TransformScalerEffect34());
+    final TransformScalerEffect34 s2 = FUN_800e8dd4(s0, 1, 0, SEffe::tickTranslationScalerWithRotation, 0x34, new TransformScalerEffect34());
     s2.value_0c.set(s0._10.trans_04.getX() << 8, s0._10.trans_04.getY() << 8, s0._10.trans_04.getZ() << 8);
     s2.scriptIndex_30 = -1;
     s2.stepTicker_32 = -1;
@@ -7064,58 +7071,61 @@ public final class SEffe {
     return s2;
   }
 
+  /**
+   * Sets translation scaler with additional scaling based on translation and rotation of a second script
+   */
   @Method(0x80110aa8L)
-  public static TransformScalerEffect34 FUN_80110aa8(final int a0, final int scriptIndex1, final int scriptIndex2, final int a3, final int x, final int y, final int z) {
-    if(a3 < 0) {
+  public static TransformScalerEffect34 setTranslationScalerWithRotation(final int transformType, final int scriptIndex1, final int scriptIndex2, final int stepCount, final int x, final int y, final int z) {
+    if(stepCount < 0) {
       return null;
     }
 
     //LAB_80110afc
-    final EffectManagerData6c s2 = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[scriptIndex1].innerStruct_00;
-    if((s2.flags_04 & 0x2) != 0) {
-      FUN_800e8d04(s2, 0x1L);
+    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[scriptIndex1].innerStruct_00;
+    if((manager.flags_04 & 0x2) != 0) {
+      FUN_800e8d04(manager, 0x1L);
     }
 
-    final VECTOR sp0x18 = new VECTOR();
+    final VECTOR translationVelocity = new VECTOR();
 
     //LAB_80110b38
-    final TransformScalerEffect34 s0 = FUN_800e8dd4(s2, 1, 0, SEffe::FUN_80110740, 0x34, new TransformScalerEffect34());
+    final TransformScalerEffect34 translationScaler = FUN_800e8dd4(manager, 1, 0, SEffe::tickTranslationScalerWithRotation, 0x34, new TransformScalerEffect34());
     if(scriptIndex2 == -1) {
-      sp0x18.set(x, y, z)
+      translationVelocity.set(x, y, z)
         .sub(getScriptedObjectTranslation(scriptIndex1));
       //LAB_80110b9c
-    } else if(a0 == 0) {
+    } else if(transformType == 0) {  // XYZ minus script 1 translation + script 2 translation
       //LAB_80110bc0
-      sp0x18.set(x, y, z)
+      translationVelocity.set(x, y, z)
         .sub(getScriptedObjectTranslation(scriptIndex1))
         .add(getScriptedObjectTranslation(scriptIndex2));
-    } else if(a0 == 1) {
+    } else if(transformType == 1) {  // XYZ minus script 1 translation + script 2 translation with rotation
       //LAB_80110c0c
-      FUN_801105cc(sp0x18, scriptIndex2, new VECTOR().set(x, y, z));
-      sp0x18
+      getTranslationWithRotation(translationVelocity, scriptIndex2, new VECTOR().set(x, y, z));
+      translationVelocity
         .sub(getScriptedObjectTranslation(scriptIndex1));
     }
 
     //LAB_80110c6c
-    s0.scriptIndex_30 = -1;
-    s0.stepTicker_32 = (short)a3;
+    translationScaler.scriptIndex_30 = -1;
+    translationScaler.stepTicker_32 = (short)stepCount;
 
-    s0.value_0c.setX(s2._10.trans_04.getX() << 8);
-    s0.value_0c.setY(s2._10.trans_04.getY() << 8);
-    s0.value_0c.setZ(s2._10.trans_04.getZ() << 8);
+    translationScaler.value_0c.setX(manager._10.trans_04.getX() << 8);
+    translationScaler.value_0c.setY(manager._10.trans_04.getY() << 8);
+    translationScaler.value_0c.setZ(manager._10.trans_04.getZ() << 8);
 
-    if(a3 != 0) {
-      s0.velocity_18.setX((sp0x18.getX() << 8) / a3);
-      s0.velocity_18.setY((sp0x18.getY() << 8) / a3);
-      s0.velocity_18.setZ((sp0x18.getZ() << 8) / a3);
+    if(stepCount != 0) {
+      translationScaler.velocity_18.setX((translationVelocity.getX() << 8) / stepCount);
+      translationScaler.velocity_18.setY((translationVelocity.getY() << 8) / stepCount);
+      translationScaler.velocity_18.setZ((translationVelocity.getZ() << 8) / stepCount);
     } else {
-      s0.velocity_18.set(-1, -1, -1);
+      translationScaler.velocity_18.set(-1, -1, -1);
     }
 
-    s0.acceleration_24.set(0, 0, 0);
+    translationScaler.acceleration_24.set(0, 0, 0);
 
     //LAB_80110d04
-    return s0;
+    return translationScaler;
   }
 
   @Method(0x80110d34L)
@@ -7126,7 +7136,7 @@ public final class SEffe {
     }
 
     //LAB_80110db8
-    final TransformScalerEffect34 s0 = FUN_800e8dd4(s1, 1, 0, SEffe::FUN_80110740, 0x34, new TransformScalerEffect34());
+    final TransformScalerEffect34 s0 = FUN_800e8dd4(s1, 1, 0, SEffe::tickTranslationScalerWithRotation, 0x34, new TransformScalerEffect34());
     s0.value_0c.setX(s1._10.trans_04.getX() << 8);
     s0.value_0c.setY(s1._10.trans_04.getY() << 8);
     s0.value_0c.setZ(s1._10.trans_04.getZ() << 8);
@@ -7150,7 +7160,7 @@ public final class SEffe {
           .add(getScriptedObjectTranslation(scriptIndex2));
       } else if(a0 == 1) {
         //LAB_80110ee0
-        FUN_801105cc(sp0x18, scriptIndex2, new VECTOR().set(x, y, z));
+        getTranslationWithRotation(sp0x18, scriptIndex2, new VECTOR().set(x, y, z));
         sp0x18
           .sub(getScriptedObjectTranslation(scriptIndex1));
       }
@@ -7184,7 +7194,7 @@ public final class SEffe {
     }
 
     //LAB_80111084
-    final TransformScalerEffect34 effect = FUN_800e8dd4(manager, 1, 0, SEffe::FUN_80110740, 0x34, new TransformScalerEffect34());
+    final TransformScalerEffect34 effect = FUN_800e8dd4(manager, 1, 0, SEffe::tickTranslationScalerWithRotation, 0x34, new TransformScalerEffect34());
     final VECTOR v1 = getScriptedObjectTranslation(scriptIndex1);
     final VECTOR v2 = getScriptedObjectTranslation(scriptIndex2);
     final VECTOR sp0x18 = new VECTOR().set(v1).sub(v2);
@@ -7524,16 +7534,20 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
+  /**
+   * Does some kind of transformation on the velocity and acceleration of a TransformScaler.
+   * Rotation appears to be involved as well. Used in the item throwing parabolic.
+   */
   @Method(0x80111ed4L)
   public static FlowControl FUN_80111ed4(final RunningScript<?> script) {
     final int scriptIndex = script.params_20[0].get();
     final EffectManagerData6c data = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
 
     if((data.flags_04 & 0x2) != 0) {
-      final TransformScalerEffect34 s3 = (TransformScalerEffect34)FUN_800e8c84(data, 0x1L);
+      final TransformScalerEffect34 s3 = (TransformScalerEffect34)FUN_800e8c84(data, 1);
 
-      if(s3.stepTicker_32 != -1 && s3._06 == 0) {
-        final VECTOR v0 = getScriptedObjectTranslation(scriptIndex);
+      if(s3 != null && s3.stepTicker_32 != -1 && s3._06 == 0) {
+        final VECTOR translation = getScriptedObjectTranslation(scriptIndex);
         int s0 = s3.stepTicker_32;
 
         final VECTOR sp0x10 = new VECTOR().set(
@@ -7542,19 +7556,19 @@ public final class SEffe {
           (s0 * s3.acceleration_24.getZ() / 2 + s3.velocity_18.getZ()) * s0 + s3.value_0c.getZ() >> 8
         );
 
-        final SVECTOR sp0x20 = new SVECTOR();
-        FUN_80110120(sp0x20, v0, sp0x10);
+        final SVECTOR rotation = new SVECTOR();
+        FUN_80110120(rotation, translation, sp0x10);
 
-        final MATRIX sp0x28 = new MATRIX();
-        RotMatrix_Zyx(sp0x20, sp0x28);
+        final MATRIX rotMatrix = new MATRIX();
+        RotMatrix_Zyx(rotation, rotMatrix);
 
-        final VECTOR sp0x48 = new VECTOR().set(
+        final VECTOR inVec = new VECTOR().set(
           script.params_20[2].get(),
           script.params_20[3].get(),
           script.params_20[4].get()
         );
 
-        final VECTOR sp0x58 = ApplyMatrixLV(sp0x28, sp0x48);
+        final VECTOR sp0x58 = ApplyMatrixLV(rotMatrix, inVec);
         s0++;
         s3.velocity_18.x.sub(sp0x58.getX() * s0 / 2);
         s3.velocity_18.y.sub(sp0x58.getY() * s0 / 2);
@@ -7568,14 +7582,14 @@ public final class SEffe {
   }
 
   @Method(0x80112184L)
-  public static FlowControl FUN_80112184(final RunningScript<?> script) {
-    FUN_80110aa8(0, script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get(), script.params_20[4].get(), script.params_20[5].get());
+  public static FlowControl scriptSetTranslationScalerWithRotation0(final RunningScript<?> script) {
+    setTranslationScalerWithRotation(0, script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get(), script.params_20[4].get(), script.params_20[5].get());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x801121fcL)
-  public static FlowControl FUN_801121fc(final RunningScript<?> script) {
-    FUN_80110aa8(1, script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get(), script.params_20[4].get(), script.params_20[5].get());
+  public static FlowControl scriptSetTranslationScalerWithRotation1(final RunningScript<?> script) {
+    setTranslationScalerWithRotation(1, script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get(), script.params_20[4].get(), script.params_20[5].get());
     return FlowControl.CONTINUE;
   }
 
@@ -7631,45 +7645,52 @@ public final class SEffe {
     //LAB_80112518
   }
 
-  /** Sets rotation on script, from second script if one is specified */
+  /**
+   * Sets rotation on script from given vector, adding from second script if one is specified
+   */
   @Method(0x80112530L)
-  public static long FUN_80112530(final int scriptIndex1, final int scriptIndex2, final SVECTOR a2) {
+  public static long FUN_80112530(final int scriptIndex1, final int scriptIndex2, final SVECTOR inVec) {
     final EffectManagerData6c data = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[scriptIndex1].innerStruct_00;
 
     if(BattleScriptDataBase.EM__.equals(data.magic_00) && (data.flags_04 & 0x4) != 0) {
       FUN_800e8d04(data, 0x2L);
     }
 
+    // scriptIndex1Rotation cannot be factored out of condition because scriptIndex 1 and 2 can
+    // refer to the same script. In this scenario, setting the rotation of scriptIndex1 outside
+    // the condition will cause the script to always be set to 2 * inVec instead of rotation + inVec.
     //LAB_8011259c
-    final SVECTOR s0 = getScriptedObjectRotation(scriptIndex1).set(a2);
-    if(scriptIndex2 != -1) {
+    final SVECTOR scriptIndex1Rotation = getScriptedObjectRotation(scriptIndex1);
+    if(scriptIndex2 == -1) {
+      scriptIndex1Rotation.set(inVec);
+    } else {
       //LAB_801125d8
-      s0.add(getScriptedObjectRotation(scriptIndex2));
+      scriptIndex1Rotation.set(getScriptedObjectRotation(scriptIndex2)).add(inVec);
     }
 
     //LAB_8011261c
     return 0;
   }
 
+  /**
+   * Scales rotation vector for altering effect orientation
+   */
   @Method(0x80112638L)
-  public static int FUN_80112638(final EffectManagerData6c a0, final TransformScalerEffect34 a1) {
-    a1.velocity_18.add(a1.acceleration_24);
-    a1.value_0c.add(a1.velocity_18);
-    a0._10.rot_10.set(a1.value_0c);
+  public static int tickRotScaler(final EffectManagerData6c manager, final TransformScalerEffect34 scaler) {
+    scaler.velocity_18.add(scaler.acceleration_24);
+    scaler.value_0c.add(scaler.velocity_18);
+    manager._10.rot_10.set(scaler.value_0c);
+    if(scaler.stepTicker_32 != -1) {
+      scaler.stepTicker_32--;
 
-    if(a1.stepTicker_32 == -1) {
-      return 1;
-    }
-
-    a1.stepTicker_32--;
-
-    if(a1.stepTicker_32 > 0) {
-      //LAB_801126f8
-      return 1;
+      if(scaler.stepTicker_32 <= 0) {
+        //LAB_801126f8
+        return 0;
+      }
     }
 
     //LAB_801126fc
-    return 0;
+    return 1;
   }
 
   @Method(0x80112704L)
@@ -7734,29 +7755,32 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
+  /**
+   * Calculates rotation of one script based on position of a second script
+   */
   @Method(0x8011299cL)
   public static FlowControl FUN_8011299c(final RunningScript<?> script) {
-    final int s0 = script.params_20[1].get();
+    final int targetScript = script.params_20[1].get();
 
-    final VECTOR sp0x10 = new VECTOR().set(script.params_20[2].get(), script.params_20[3].get(), script.params_20[4].get());
-    final Ref<SVECTOR> sp0x50 = new Ref<>(new SVECTOR());
-    final Ref<VECTOR> sp0x54 = new Ref<>(new VECTOR());
+    final VECTOR inVec = new VECTOR().set(script.params_20[2].get(), script.params_20[3].get(), script.params_20[4].get());
+    final Ref<SVECTOR> rotation = new Ref<>(new SVECTOR());
+    final Ref<VECTOR> translation = new Ref<>(new VECTOR());
 
-    getScriptedObjectRotationAndTranslation(script.params_20[0].get(), sp0x50, sp0x54);
+    getScriptedObjectRotationAndTranslation(script.params_20[0].get(), rotation, translation);
 
-    if(s0 != -1) {
-      final Ref<SVECTOR> sp0x58 = new Ref<>(new SVECTOR());
-      final Ref<VECTOR> sp0x5c = new Ref<>(new VECTOR());
+    if(targetScript != -1) {
+      final Ref<SVECTOR> targetRotation = new Ref<>(new SVECTOR());
+      final Ref<VECTOR> targetTranslation = new Ref<>(new VECTOR());
 
-      getScriptedObjectRotationAndTranslation(s0, sp0x58, sp0x5c);
+      getScriptedObjectRotationAndTranslation(targetScript, targetRotation, targetTranslation);
 
-      final MATRIX sp0x20 = new MATRIX();
-      RotMatrix_Xyz(sp0x58.get(), sp0x20);
-      sp0x10.set(ApplyMatrixLV(sp0x20, sp0x10)).add(sp0x5c.get());
+      final MATRIX rotMatrix = new MATRIX();
+      RotMatrix_Xyz(targetRotation.get(), rotMatrix);
+      inVec.set(ApplyMatrixLV(rotMatrix, inVec)).add(targetTranslation.get());
     }
 
     //LAB_80112a80
-    FUN_80110228(sp0x50.get(), sp0x54.get(), sp0x10);
+    FUN_80110228(rotation.get(), translation.get(), inVec);
     return FlowControl.CONTINUE;
   }
 
@@ -7771,7 +7795,7 @@ public final class SEffe {
     }
 
     //LAB_80112b58
-    final TransformScalerEffect34 v0 = FUN_800e8dd4(s0, 2, 0, SEffe::FUN_80112638, 0x34, new TransformScalerEffect34());
+    final TransformScalerEffect34 v0 = FUN_800e8dd4(s0, 2, 0, SEffe::tickRotScaler, 0x34, new TransformScalerEffect34());
     v0.scriptIndex_30 = -1;
     v0.stepTicker_32 = -1;
     v0.value_0c.set(s0._10.rot_10);
@@ -7795,7 +7819,7 @@ public final class SEffe {
 
     if(s2 >= 0) {
       final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[s0].innerStruct_00;
-      final TransformScalerEffect34 effect = FUN_800e8dd4(manager, 2, 0, SEffe::FUN_80112638, 0x34, new TransformScalerEffect34());
+      final TransformScalerEffect34 effect = FUN_800e8dd4(manager, 2, 0, SEffe::tickRotScaler, 0x34, new TransformScalerEffect34());
 
       final SVECTOR v1 = getScriptedObjectRotation(s0);
       final int sp18;
@@ -8007,14 +8031,14 @@ public final class SEffe {
    * Scales scale vector for changing effect size
    */
   @Method(0x80113ba0L)
-  public static int tickScaleScaler(final EffectManagerData6c data, final TransformScalerEffect34 sub) {
-    sub.velocity_18.add(sub.acceleration_24);
-    sub.value_0c.add(sub.velocity_18);
-    data._10.scale_16.set(sub.value_0c);
-    if(sub.stepTicker_32 != -1) {
-      sub.stepTicker_32--;
+  public static int tickScaleScaler(final EffectManagerData6c manager, final TransformScalerEffect34 scaler) {
+    scaler.velocity_18.add(scaler.acceleration_24);
+    scaler.value_0c.add(scaler.velocity_18);
+    manager._10.scale_16.set(scaler.value_0c);
+    if(scaler.stepTicker_32 != -1) {
+      scaler.stepTicker_32--;
 
-      if(sub.stepTicker_32 <= 0) {
+      if(scaler.stepTicker_32 <= 0) {
         return 0;
       }
     }
@@ -8206,17 +8230,17 @@ public final class SEffe {
    * Scales color vector for fading color in/out
    */
   @Method(0x801146fcL)
-  public static int tickColorScaler(final EffectManagerData6c a0, final TransformScalerEffect34 a1) {
-    a1.velocity_18.add(a1.acceleration_24);
-    a1.value_0c.add(a1.velocity_18);
-    a0._10.colour_1c.setX(a1.value_0c.getX() >> 8 & 0xff);
-    a0._10.colour_1c.setY(a1.value_0c.getY() >> 8 & 0xff);
-    a0._10.colour_1c.setZ(a1.value_0c.getZ() >> 8 & 0xff);
+  public static int tickColorScaler(final EffectManagerData6c manager, final TransformScalerEffect34 scaler) {
+    scaler.velocity_18.add(scaler.acceleration_24);
+    scaler.value_0c.add(scaler.velocity_18);
+    manager._10.colour_1c.setX(scaler.value_0c.getX() >> 8 & 0xff);
+    manager._10.colour_1c.setY(scaler.value_0c.getY() >> 8 & 0xff);
+    manager._10.colour_1c.setZ(scaler.value_0c.getZ() >> 8 & 0xff);
 
-    if(a1.stepTicker_32 != -1) {
-      a1.stepTicker_32--;
+    if(scaler.stepTicker_32 != -1) {
+      scaler.stepTicker_32--;
 
-      if(a1.stepTicker_32 <= 0) {
+      if(scaler.stepTicker_32 <= 0) {
         return 0;
       }
     }
