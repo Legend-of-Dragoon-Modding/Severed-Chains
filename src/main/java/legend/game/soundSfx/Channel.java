@@ -70,6 +70,10 @@ final class Channel implements MidiChannel {
     this.instrumentIndex_02 = value;
   }
 
+  Instrument getInstrument() {
+    return this.soundFont.getInstrument(this.instrumentIndex_02);
+  }
+
   List<InstrumentLayer> getLayers(final int note) {
     return this.soundFont.getInstrument(this.instrumentIndex_02).getLayers(note);
   }

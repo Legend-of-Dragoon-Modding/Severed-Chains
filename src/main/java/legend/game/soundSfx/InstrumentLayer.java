@@ -1,7 +1,6 @@
 package legend.game.soundSfx;
 
 import legend.core.audio.MidiInstrumentLayer;
-import legend.game.sound.Sssqish;
 import legend.game.unpacker.FileData;
 
 final class InstrumentLayer implements MidiInstrumentLayer {
@@ -9,12 +8,15 @@ final class InstrumentLayer implements MidiInstrumentLayer {
   private final int maximumKeyRange;
   private final int rootKey;
   private final int cents;
+  private final double lockedVolume;
   private final double volume;
   private final int pan;
   private final int pitchBendMultiplier;
 
   private final int flags;
+  private final boolean lockedPanAndVolume;
   private final boolean noise;
+  private final boolean pitchBendMultiplierFromInstrument;
   private final boolean modulation;
   private final boolean reverb;
   private final AdsrPhase[] adsrPhases;
@@ -22,16 +24,17 @@ final class InstrumentLayer implements MidiInstrumentLayer {
   private final int soundBankOffset;
 
   InstrumentLayer(final FileData data, final SoundBank soundBank) {
-    this.minimumKeyRange = data.readUByte(0);
-    this.maximumKeyRange = data.readUByte(1);
-    this.rootKey = data.readUByte(2);
-    this.cents = data.readUByte(3);
+    this.minimumKeyRange = data.readUByte(0x0);
+    this.maximumKeyRange = data.readUByte(0x1);
+    this.rootKey = data.readUByte(0x2);
+    this.cents = data.readUByte(0x3);
     this.soundBank = soundBank;
-    this.soundBankOffset = data.readUShort(4) * 8;
-    this.adsrPhases = AdsrPhase.getPhases(data.readUShort(6), data.readUShort(8));
-    this.volume = data.readUByte(11) / 127d;
-    this.pan = data.readUByte(12);
-    this.pitchBendMultiplier = data.readUByte(13);
+    this.soundBankOffset = data.readUShort(0x4) * 8;
+    this.adsrPhases = AdsrPhase.getPhases(data.readUShort(0x6), data.readUShort(0x8));
+    this.lockedVolume = data.readUByte(0x0a) / 127d;
+    this.volume = data.readUByte(0x0b) / 127d;
+    this.pan = data.readUByte(0x0c);
+    this.pitchBendMultiplier = data.readUByte(0x0d);
 
     /**
      * <li>
@@ -43,11 +46,13 @@ final class InstrumentLayer implements MidiInstrumentLayer {
      *   <ul>0x80 - Reverb on</ul>
      * </li>
      */
-    this.flags = data.readUByte(15);
+    this.flags = data.readUByte(0x0f);
 
-    this.noise = (data.readUByte(15) & 0x2) != 0;
-    this.modulation = (data.readUByte(15) & 0x20) != 0;
-    this.reverb = (data.readUByte(15) & 0x80) != 0;
+    this.lockedPanAndVolume = (this.flags & 0x1) != 0;
+    this.noise = (this.flags & 0x2) != 0;
+    this.pitchBendMultiplierFromInstrument = (this.flags & 0x10) != 0;
+    this.modulation = (this.flags & 0x20) != 0;
+    this.reverb = (this.flags & 0x80) != 0;
   }
 
   int getMinimumKeyRange() {
@@ -74,6 +79,11 @@ final class InstrumentLayer implements MidiInstrumentLayer {
   }
 
   @Override
+  public double getLockedVolume() {
+    return this.lockedVolume;
+  }
+
+  @Override
   public double getVolume() {
     return this.volume;
   }
@@ -81,6 +91,16 @@ final class InstrumentLayer implements MidiInstrumentLayer {
   @Override
   public int getPan() {
     return this.pan;
+  }
+
+  @Override
+  public boolean isPitchBendMultiplierFromInstrument() {
+    return this.pitchBendMultiplierFromInstrument;
+  }
+
+  @Override
+  public boolean isLockedPanAndVolume() {
+    return this.lockedPanAndVolume;
   }
 
 

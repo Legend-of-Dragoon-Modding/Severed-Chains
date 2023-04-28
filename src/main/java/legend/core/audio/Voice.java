@@ -11,12 +11,15 @@ final class Voice implements AudioStream {
   private boolean empty = true;
 
   private MidiChannel channel;
+  private MidiInstrument instrument;
   private MidiInstrumentLayer layer;
   private AdsrEnvelope adsrEnvelope;
   private MidiSoundFontEntry soundFontEntry;
   private int note;
   private double velocity;
   private int sampleRate;
+  private int pitchBendMultiplier;
+  private double volume;
 
   private boolean hasSamples;
   private final short[] samples = new short[31];
@@ -47,20 +50,18 @@ final class Voice implements AudioStream {
 
     final short adsrValue = this.adsrEnvelope.tick();
 
-    final double volume = this.channel.getVolume() * this.layer.getVolume() * this.velocity;
-
-    final short actualVolume = (short) (adsrValue * volume);
+    final short actualVolume = (short) (adsrValue * this.volume);
 
     if(!this.adsrEnvelope.isAttack() && actualVolume <= 16) {
       System.out.printf("Clear [Voice: %d]%n", this.index);
       this.empty = true;
     }
 
-    final short processedSample = (short)(((int)(sample * adsrValue * volume)) >> 15);
+    final short processedSample = (short)(((int)(sample * adsrValue * this.volume)) >> 15);
 
     if(this.sound.isStereo()) {
-      final double leftPan = Offsets.pan[127 - this.layer.getPan()] * Offsets.pan[127 - this.channel.getPan()];
-      final double rightPan = Offsets.pan[this.layer.getPan()] * Offsets.pan[this.channel.getPan()];
+      final double leftPan = Offsets.pan[127 - this.layer.getPan()] * Offsets.pan[127 - this.channel.getPan()] * Offsets.pan[127 - this.instrument.getPan()];
+      final double rightPan = Offsets.pan[this.layer.getPan()] * Offsets.pan[this.channel.getPan()] * Offsets.pan[this.instrument.getPan()];
 
       this.sound.bufferSample((short)(processedSample * leftPan));
       this.sound.bufferSample((short)(processedSample * rightPan));
@@ -113,15 +114,18 @@ final class Voice implements AudioStream {
   }
 
   @Override
-  public void keyOn(final MidiChannel channel, final MidiInstrumentLayer layer, final int note, final int velocity) {
+  public void keyOn(final MidiChannel channel, final MidiInstrument instrument, final MidiInstrumentLayer layer, final int note, final int velocity) {
     this.channel = channel;
+    this.instrument = instrument;
     this.layer = layer;
     this.soundFontEntry = layer.getSoundFontEntry();
     this.adsrEnvelope = layer.getAdsrEnvelope();
     this.note = note;
     this.velocity = velocity / 127d;
+    this.pitchBendMultiplier = layer.isPitchBendMultiplierFromInstrument() ? this.instrument.getPitchBendMultiplier() : layer.getPitchBendMultiplier();
 
     this.updateSampleRate();
+    this.updateVolume();
 
     this.empty = false;
   }
@@ -130,13 +134,26 @@ final class Voice implements AudioStream {
   public void keyOff(final int velocity) {
     this.adsrEnvelope.keyOff();
     this.velocity = velocity / 127d;
+
+    this.updateVolume();
   }
 
   @Override
   public void updateSampleRate() {
     if(this.layer != null) {
-      this.sampleRate = calculateSampleRate(this.layer.getRootKey(), this.note, this.layer.getPitchBendMultiplier(), this.channel.getPitchBend(), this.layer.getCents());
+      this.sampleRate = calculateSampleRate(this.layer.getRootKey(), this.note, this.pitchBendMultiplier, this.channel.getPitchBend(), this.layer.getCents());
     }
+  }
+
+  @Override
+  public void updateVolume() {
+    if(this.layer.getLockedVolume() != 0) {
+      this.volume = this.layer.getLockedVolume();
+      return;
+    }
+
+    //TODO velocity should use the volume ramp
+    this.volume = this.channel.getVolume() * this.instrument.getVolume() * this.layer.getVolume() * this.velocity;
   }
 
   void play() {

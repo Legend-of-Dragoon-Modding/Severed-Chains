@@ -1,15 +1,18 @@
 package legend.game.soundSfx;
 
+import legend.core.audio.MidiInstrument;
 import legend.game.unpacker.FileData;
 
 import java.util.ArrayList;
 import java.util.List;
 
-final class Instrument {
+final class Instrument implements MidiInstrument {
   private final InstrumentLayer[] layers;
   private final boolean playsMultipleLayers;
 
-  private final int volume;
+  private final double volume;
+  private final int pan;
+  private final int pitchBendMultiplier;
   private final int startingKey;
 
   Instrument(final FileData data, final SoundBank soundBank) {
@@ -22,7 +25,9 @@ final class Instrument {
     }
 
     this.playsMultipleLayers = (data.readUByte(0) & 0x80) != 0;
-    this.volume = data.readUByte(1);
+    this.volume = data.readUByte(1) / 127d;
+    this.pan = data.readUByte(2);
+    this.pitchBendMultiplier = data.readUByte(4);
 
     //Flags?? ADSR??
 
@@ -48,5 +53,20 @@ final class Instrument {
     }
 
     return layers;
+  }
+
+  @Override
+  public double getVolume() {
+    return this.volume;
+  }
+
+  @Override
+  public int getPan() {
+    return this.pan;
+  }
+
+  @Override
+  public int getPitchBendMultiplier() {
+    return this.pitchBendMultiplier;
   }
 }

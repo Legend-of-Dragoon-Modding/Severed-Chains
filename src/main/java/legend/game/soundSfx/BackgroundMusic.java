@@ -43,6 +43,7 @@ final class BackgroundMusic implements MidiSequence {
 
   private void keyOn(final int channelIndex, final int note, final int velocity) {
     final Channel channel = this.sssq.getChannel(channelIndex);
+    final Instrument instrument = channel.getInstrument();
     final List<InstrumentLayer> layers = channel.getLayers(note);
 
     int layerIndex = 0;
@@ -52,14 +53,14 @@ final class BackgroundMusic implements MidiSequence {
 
       if(stream.getChannel() == channel && stream.getNote() == note) {
         System.out.printf("Key On (Reset) Channel: %d [Voice: %d] Note: %d%n", channelIndex, voice, note);
-        this.audioStreams[voice].keyOn(channel, layers.get(layerIndex++), note, velocity);
+        this.audioStreams[voice].keyOn(channel, instrument, layers.get(layerIndex++), note, velocity);
       }
     }
 
     for(voice = 0; voice < this.audioStreams.length && layerIndex < layers.size(); voice++) {
       if(this.audioStreams[voice].isEmpty()) {
         System.out.printf("Key On Channel: %d [Voice: %d] Note: %d%n", channelIndex, voice, note);
-        this.audioStreams[voice].keyOn(channel, layers.get(layerIndex++), note, velocity);
+        this.audioStreams[voice].keyOn(channel, instrument, layers.get(layerIndex++), note, velocity);
       }
     }
 
@@ -86,15 +87,25 @@ final class BackgroundMusic implements MidiSequence {
     switch(control) {
       case 0x01 -> System.err.printf("Control Change Channel: %d Modulation: 0x%x%n", channelIndex, value);
       case 0x02 -> System.err.printf("Control Change Channel: %d Breath Control: 0x%x%n", channelIndex, value);
-      case 0x07 -> {
-        System.out.printf("Control Change Channel: %d Volume: %d%n", channelIndex, value);
-        this.sssq.getChannel(channelIndex).setVolume(value);
-      }
+      case 0x07 -> this.changeVolume(channelIndex, value);
       case 0x0a -> {
         System.out.printf("Control Change Channel: %d Pan: %d%n", channelIndex, value);
         this.sssq.getChannel(channelIndex).setPan(value);
       }
       default -> System.err.printf("Bad Control Change Channel: %d Command: 0x%x Value: 0x%x%n", channelIndex, control, value);
+    }
+  }
+
+  public void changeVolume(final int channelIndex, final int value) {
+    System.out.printf("Control Change Channel: %d Volume: %d%n", channelIndex, value);
+
+    final Channel channel = sssq.getChannel(channelIndex);
+    channel.setVolume(value);
+
+    for(final AudioStream audioStream : this.audioStreams) {
+      if(audioStream.getChannel() == channel) {
+        audioStream.updateVolume();
+      }
     }
   }
 
