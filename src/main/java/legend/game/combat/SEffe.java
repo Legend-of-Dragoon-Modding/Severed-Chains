@@ -6864,32 +6864,32 @@ public final class SEffe {
    * Used in the item throwing parabolic
    */
   @Method(0x80110120L)
-  public static SVECTOR FUN_80110120(final SVECTOR rot, @Nullable VECTOR trans, final VECTOR in) {
-    if(trans == null) {
-      trans = new VECTOR();
+  public static SVECTOR FUN_80110120(final SVECTOR rotation, @Nullable VECTOR translation, final VECTOR in) {
+    if(translation == null) {
+      translation = new VECTOR();
     }
 
     //LAB_8011014c
-    final VECTOR sp0x10 = new VECTOR().set(in).sub(trans);
-    rot.setZ((short)0);
-    rot.setY((short)ratan2(sp0x10.getX(), sp0x10.getZ()));
+    final VECTOR sp0x10 = new VECTOR().set(in).sub(translation);
+    rotation.setZ((short)0);
+    rotation.setY((short)ratan2(sp0x10.getX(), sp0x10.getZ()));
 
-    final int s1 = rcos(-rot.getY()) * sp0x10.getZ() - rsin(-rot.getY()) * sp0x10.getX();
-    rot.setX((short)ratan2(-sp0x10.getY(), s1 / 0x1000));
-    return rot;
+    final int s1 = rcos(-rotation.getY()) * sp0x10.getZ() - rsin(-rotation.getY()) * sp0x10.getX();
+    rotation.setX((short)ratan2(-sp0x10.getY(), s1 / 0x1000));
+    return rotation;
   }
 
   /**
    * Transform rotation vector of script using rotation and translation of second
    */
   @Method(0x80110228L)
-  public static SVECTOR FUN_80110228(final SVECTOR rot, @Nullable VECTOR trans, final VECTOR in) {
-    if(trans == null) {
-      trans = new VECTOR();
+  public static SVECTOR FUN_80110228(final SVECTOR rotation, @Nullable VECTOR translation, final VECTOR in) {
+    if(translation == null) {
+      translation = new VECTOR();
     }
 
     //LAB_80110258
-    final VECTOR sp0x10 = new VECTOR().set(in).sub(trans).negate();
+    final VECTOR sp0x10 = new VECTOR().set(in).sub(translation).negate();
     final SVECTOR sp0x30 = new SVECTOR();
     sp0x30.setY((short)ratan2(sp0x10.getX(), sp0x10.getZ()));
 
@@ -6898,9 +6898,9 @@ public final class SEffe {
 
     final MATRIX transforms = new MATRIX();
     RotMatrix_Zyx(sp0x30, transforms);
-    getRotationFromTransforms(rot, transforms);
+    getRotationFromTransforms(rotation, transforms);
 
-    return rot;
+    return rotation;
   }
 
   @Method(0x8011035cL)
@@ -7086,46 +7086,46 @@ public final class SEffe {
       FUN_800e8d04(manager, 0x1L);
     }
 
-    final VECTOR transVelocity = new VECTOR();
+    final VECTOR translationVelocity = new VECTOR();
 
     //LAB_80110b38
-    final TransformScalerEffect34 transScaler = FUN_800e8dd4(manager, 1, 0, SEffe::tickTranslationScalerWithRotation, 0x34, new TransformScalerEffect34());
+    final TransformScalerEffect34 translationScaler = FUN_800e8dd4(manager, 1, 0, SEffe::tickTranslationScalerWithRotation, 0x34, new TransformScalerEffect34());
     if(scriptIndex2 == -1) {
-      transVelocity.set(x, y, z)
+      translationVelocity.set(x, y, z)
         .sub(getScriptedObjectTranslation(scriptIndex1));
       //LAB_80110b9c
     } else if(transformType == 0) {  // XYZ minus script 1 translation + script 2 translation
       //LAB_80110bc0
-      transVelocity.set(x, y, z)
+      translationVelocity.set(x, y, z)
         .sub(getScriptedObjectTranslation(scriptIndex1))
         .add(getScriptedObjectTranslation(scriptIndex2));
     } else if(transformType == 1) {  // XYZ minus script 1 translation + script 2 translation with rotation
       //LAB_80110c0c
-      getTranslationWithRotation(transVelocity, scriptIndex2, new VECTOR().set(x, y, z));
-      transVelocity
+      getTranslationWithRotation(translationVelocity, scriptIndex2, new VECTOR().set(x, y, z));
+      translationVelocity
         .sub(getScriptedObjectTranslation(scriptIndex1));
     }
 
     //LAB_80110c6c
-    transScaler.scriptIndex_30 = -1;
-    transScaler.stepTicker_32 = (short)stepCount;
+    translationScaler.scriptIndex_30 = -1;
+    translationScaler.stepTicker_32 = (short)stepCount;
 
-    transScaler.value_0c.setX(manager._10.trans_04.getX() << 8);
-    transScaler.value_0c.setY(manager._10.trans_04.getY() << 8);
-    transScaler.value_0c.setZ(manager._10.trans_04.getZ() << 8);
+    translationScaler.value_0c.setX(manager._10.trans_04.getX() << 8);
+    translationScaler.value_0c.setY(manager._10.trans_04.getY() << 8);
+    translationScaler.value_0c.setZ(manager._10.trans_04.getZ() << 8);
 
     if(stepCount != 0) {
-      transScaler.velocity_18.setX((transVelocity.getX() << 8) / stepCount);
-      transScaler.velocity_18.setY((transVelocity.getY() << 8) / stepCount);
-      transScaler.velocity_18.setZ((transVelocity.getZ() << 8) / stepCount);
+      translationScaler.velocity_18.setX((translationVelocity.getX() << 8) / stepCount);
+      translationScaler.velocity_18.setY((translationVelocity.getY() << 8) / stepCount);
+      translationScaler.velocity_18.setZ((translationVelocity.getZ() << 8) / stepCount);
     } else {
-      transScaler.velocity_18.set(-1, -1, -1);
+      translationScaler.velocity_18.set(-1, -1, -1);
     }
 
-    transScaler.acceleration_24.set(0, 0, 0);
+    translationScaler.acceleration_24.set(0, 0, 0);
 
     //LAB_80110d04
-    return transScaler;
+    return translationScaler;
   }
 
   @Method(0x80110d34L)
@@ -7656,13 +7656,16 @@ public final class SEffe {
       FUN_800e8d04(data, 0x2L);
     }
 
+    // scriptIndex1Rotation cannot be factored out of condition because scriptIndex 1 and 2 can
+    // refer to the same script. In this scenario, setting the rotation of scriptIndex1 outside
+    // the condition will cause the script to always be set to 2 * inVec instead of rotation + inVec.
     //LAB_8011259c
-    final SVECTOR scriptIndex1Rot = getScriptedObjectRotation(scriptIndex1);
+    final SVECTOR scriptIndex1Rotation = getScriptedObjectRotation(scriptIndex1);
     if(scriptIndex2 == -1) {
-      scriptIndex1Rot.set(inVec);
+      scriptIndex1Rotation.set(inVec);
     } else {
       //LAB_801125d8
-      scriptIndex1Rot.set(getScriptedObjectRotation(scriptIndex2)).add(inVec);
+      scriptIndex1Rotation.set(getScriptedObjectRotation(scriptIndex2)).add(inVec);
     }
 
     //LAB_8011261c
