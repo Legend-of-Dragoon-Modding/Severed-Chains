@@ -9,6 +9,9 @@ public interface MidiInstrumentLayer {
   int getCents();
   boolean isLockedPanAndVolume();
   boolean isPitchBendMultiplierFromInstrument();
+  boolean isModulation();
+  int getFlags();
+  int get_0e();
 
   MidiSoundFontEntry getSoundFontEntry();
   AdsrEnvelope getAdsrEnvelope();

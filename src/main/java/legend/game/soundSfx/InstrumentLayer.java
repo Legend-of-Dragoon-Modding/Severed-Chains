@@ -22,19 +22,21 @@ final class InstrumentLayer implements MidiInstrumentLayer {
   private final AdsrPhase[] adsrPhases;
   private final SoundBank soundBank;
   private final int soundBankOffset;
+  private final int _0e;
 
   InstrumentLayer(final FileData data, final SoundBank soundBank) {
-    this.minimumKeyRange = data.readUByte(0x0);
-    this.maximumKeyRange = data.readUByte(0x1);
-    this.rootKey = data.readUByte(0x2);
-    this.cents = data.readUByte(0x3);
+    this.minimumKeyRange = data.readUByte(0x00);
+    this.maximumKeyRange = data.readUByte(0x01);
+    this.rootKey = data.readUByte(0x02);
+    this.cents = data.readUByte(0x03);
     this.soundBank = soundBank;
-    this.soundBankOffset = data.readUShort(0x4) * 8;
-    this.adsrPhases = AdsrPhase.getPhases(data.readUShort(0x6), data.readUShort(0x8));
+    this.soundBankOffset = data.readUShort(0x04) * 8;
+    this.adsrPhases = AdsrPhase.getPhases(data.readUShort(0x06), data.readUShort(0x08));
     this.lockedVolume = data.readUByte(0x0a) / 127d;
     this.volume = data.readUByte(0x0b) / 127d;
     this.pan = data.readUByte(0x0c);
     this.pitchBendMultiplier = data.readUByte(0x0d);
+    this._0e = data.readUByte(0x0e);
 
     /**
      * <li>
@@ -101,6 +103,21 @@ final class InstrumentLayer implements MidiInstrumentLayer {
   @Override
   public boolean isLockedPanAndVolume() {
     return this.lockedPanAndVolume;
+  }
+
+  @Override
+  public boolean isModulation() {
+    return this.modulation;
+  }
+
+  @Override
+  public int getFlags() {
+    return this.flags;
+  }
+
+  @Override
+  public int get_0e() {
+    return this._0e;
   }
 
 

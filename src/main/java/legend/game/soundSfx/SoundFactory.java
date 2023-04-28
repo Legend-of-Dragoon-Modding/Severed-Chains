@@ -49,7 +49,7 @@ public final class SoundFactory {
       default -> throw new RuntimeException("Unknown BGM type. File count " + files.size());
     }
 
-    return new BackgroundMusic(sssq);
+    return new BackgroundMusic(sssq, sshdParser.getBreathControls());
   }
 
   static BackgroundMusic soundEffect(final String path) {
@@ -62,7 +62,7 @@ public final class SoundFactory {
 
     final Sssq sssq = sshdParser.getSssq(soundFont);
 
-    return new BackgroundMusic(sssq);
+    return new BackgroundMusic(sssq, sshdParser.getBreathControls());
   }
 
 
@@ -107,6 +107,28 @@ public final class SoundFactory {
       }
 
       return new SoundFont(this.subfiles.get(4).slice(0x190), new SoundBank(soundBankData));
+    }
+
+    private byte[][] getBreathControls() {
+      if(!this.subfiles.containsKey(2)) {
+        return new byte[0][];
+      }
+
+      final FileData file = this.subfiles.get(2);
+
+      final int upperBound = file.readUShort(0);
+      final byte[][] breathControls = new byte[upperBound + 1][];
+
+      int nextOffset = file.size();
+
+      for(int i = upperBound; i >= 0; i--) {
+        final int startOffset = file.readUShort(2 + i * 2);
+        breathControls[i] = file.slice(startOffset, nextOffset - startOffset).data();
+
+        nextOffset = startOffset;
+      }
+
+      return breathControls;
     }
   }
 }

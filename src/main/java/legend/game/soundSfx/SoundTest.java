@@ -14,9 +14,9 @@ import java.io.IOException;
 public final class SoundTest {
   public static void main(final String[] args) {
 
-    final AudioThread audioThread = new AudioThread(100, true, 24);
+    final AudioThread audioThread = new AudioThread(100, true, 32);
 
-    final BackgroundMusic bgm = SoundFactory.backgroundMusic(5815);
+    final BackgroundMusic bgm = SoundFactory.backgroundMusic(5850);
 
     final Thread spuThread = new Thread(audioThread);
     spuThread.setName("SPU");

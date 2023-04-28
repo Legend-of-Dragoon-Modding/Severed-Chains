@@ -10,9 +10,11 @@ final class BackgroundMusic implements MidiSequence {
   private int samplesToProcess;
   private AudioStream[] audioStreams;
   private final Sssq sssq;
+  private final byte[][] breathControls;
 
-  BackgroundMusic(final Sssq sssq) {
+  BackgroundMusic(final Sssq sssq, final byte[][] breathControls) {
     this.sssq = sssq;
+    this.breathControls = breathControls;
   }
 
   @Override
@@ -53,14 +55,14 @@ final class BackgroundMusic implements MidiSequence {
 
       if(stream.getChannel() == channel && stream.getNote() == note) {
         System.out.printf("Key On (Reset) Channel: %d [Voice: %d] Note: %d%n", channelIndex, voice, note);
-        this.audioStreams[voice].keyOn(channel, instrument, layers.get(layerIndex++), note, velocity);
+        this.audioStreams[voice].keyOn(channel, instrument, layers.get(layerIndex++), note, velocity, this.breathControls);
       }
     }
 
     for(voice = 0; voice < this.audioStreams.length && layerIndex < layers.size(); voice++) {
       if(this.audioStreams[voice].isEmpty()) {
         System.out.printf("Key On Channel: %d [Voice: %d] Note: %d%n", channelIndex, voice, note);
-        this.audioStreams[voice].keyOn(channel, instrument, layers.get(layerIndex++), note, velocity);
+        this.audioStreams[voice].keyOn(channel, instrument, layers.get(layerIndex++), note, velocity, this.breathControls);
       }
     }
 
@@ -85,14 +87,42 @@ final class BackgroundMusic implements MidiSequence {
 
   private void controlChange(final int channelIndex, final int control, final int value) {
     switch(control) {
-      case 0x01 -> System.err.printf("Control Change Channel: %d Modulation: 0x%x%n", channelIndex, value);
-      case 0x02 -> System.err.printf("Control Change Channel: %d Breath Control: 0x%x%n", channelIndex, value);
+      case 0x01 -> this.setModulation(channelIndex, value);
+      case 0x02 -> this.setBreathControl(channelIndex, value);
       case 0x07 -> this.changeVolume(channelIndex, value);
       case 0x0a -> {
         System.out.printf("Control Change Channel: %d Pan: %d%n", channelIndex, value);
         this.sssq.getChannel(channelIndex).setPan(value);
       }
       default -> System.err.printf("Bad Control Change Channel: %d Command: 0x%x Value: 0x%x%n", channelIndex, control, value);
+    }
+  }
+
+  public void setModulation(final int channelIndex, final int value) {
+    System.out.printf("Control Change Channel: %d Modulation %d%n", channelIndex, value);
+
+    final Channel channel = this.sssq.getChannel(channelIndex);
+    channel.setModulation(value);
+
+    for(final AudioStream audioStream : this.audioStreams) {
+      if(!audioStream.isEmpty() && audioStream.getChannel() == channel) {
+        audioStream.setModulation(value);
+      }
+    }
+  }
+
+  public void setBreathControl(final int channelIndex, final int value) {
+    System.out.printf("Control Change Channel: %d Breath %d%n", channelIndex, value);
+
+    final int breath = 24 / (60 - value * 58 / 127);
+
+    final Channel channel = this.sssq.getChannel(channelIndex);
+    channel.setBreath(breath);
+
+    for(final AudioStream audioStream : this.audioStreams) {
+      if(!audioStream.isEmpty() && audioStream.getChannel() == channel) {
+        audioStream.setBreath(breath);
+      }
     }
   }
 
@@ -103,7 +133,7 @@ final class BackgroundMusic implements MidiSequence {
     channel.setVolume(value);
 
     for(final AudioStream audioStream : this.audioStreams) {
-      if(audioStream.getChannel() == channel) {
+      if(!audioStream.isEmpty() && audioStream.getChannel() == channel) {
         audioStream.updateVolume();
       }
     }
@@ -120,7 +150,7 @@ final class BackgroundMusic implements MidiSequence {
     channel.setPitchBend(value);
 
     for(final AudioStream audioStream : this.audioStreams) {
-      if(audioStream.getChannel() == channel) {
+      if(!audioStream.isEmpty() && audioStream.getChannel() == channel) {
         audioStream.updateSampleRate();
       }
     }
