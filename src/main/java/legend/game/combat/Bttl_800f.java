@@ -277,29 +277,24 @@ public final class Bttl_800f {
 
     //LAB_800f1800
     //LAB_800f1828
-    int a2_0;
-    for(a2_0 = 0; a2_0 < digitCount - 1; a2_0++) {
-      if(sp0x00[a2_0] != 0) {
-        break;
-      }
-    }
+    final int rightAlignOffset = 4 - digitCount;
 
     //LAB_800f1848
     //LAB_800f184c
     //LAB_800f18cc
-    for(int i = 0; i < digitCount && a2_0 < digitCount; i++, a2_0++) {
+    for(int i = 0; i < digitCount; i++) {
       final BattleDisplayStats144Sub10 struct = displayStats._04[a1][i];
 
       if(a1 == 1 || a1 == 3 || a1 == 4) {
         //LAB_800f18f0
         struct.x_02 = _800c7014.get(a1 * 2).get() + i * 5;
       } else {
-        struct.x_02 = _800c7014.get(a1 * 2).get() + a2_0 * 5;
+        struct.x_02 = _800c7014.get(a1 * 2).get() + (i + rightAlignOffset) * 5;
       }
 
       //LAB_800f1920
       struct.y_04 = _800c7014.get(a1 * 2 + 1).get();
-      struct.u_06 = _800c7028.get(sp0x00[a2_0]).get();
+      struct.u_06 = _800c7028.get(sp0x00[i]).get();
       struct.v_08 = 0x20;
       struct.w_0a = 0x8;
       struct.h_0c = 0x8;
@@ -322,7 +317,7 @@ public final class Bttl_800f {
       struct._0e = v0;
 
       //LAB_800f199c
-      struct.digitValue_00 = sp0x00[a2_0];
+      struct.digitValue_00 = sp0x00[i];
     }
 
     //LAB_800f19e0
