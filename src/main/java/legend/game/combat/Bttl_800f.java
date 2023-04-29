@@ -3675,7 +3675,7 @@ public final class Bttl_800f {
           }
 
           //LAB_800f9438
-          defender.setStat((int)_800c723c.offset(i % 4 * 4).get(), turnCount << 8 | amount);
+          defender.setStat((int)_800c723c.offset(i % 4 * 4).get(), turnCount << 8 | (amount & 0xff));
         }
 
         //LAB_800f9454
