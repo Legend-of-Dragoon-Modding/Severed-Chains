@@ -4656,8 +4656,17 @@ public final class Scus94491BpeSegment_8002 {
 
   public static int textWidth(final String text) {
     int width = 0;
+    int currentWidth = 0;
     for(int index = 0; index < text.length(); index++) {
-      width += charWidth(text.charAt(index));
+      if(text.charAt(index) == '\n') {
+        currentWidth = 0;
+      }
+
+      currentWidth += charWidth(text.charAt(index));
+
+      if(currentWidth > width) {
+        width = currentWidth;
+      }
     }
 
     return width;
