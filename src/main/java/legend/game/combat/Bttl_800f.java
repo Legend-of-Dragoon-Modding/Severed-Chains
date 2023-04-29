@@ -80,8 +80,8 @@ import static legend.game.combat.Bttl_800c._800c6c40;
 import static legend.game.combat.Bttl_800c._800c6f30;
 import static legend.game.combat.Bttl_800c._800c6f4c;
 import static legend.game.combat.Bttl_800c._800c6fec;
-import static legend.game.combat.Bttl_800c._800c7014;
-import static legend.game.combat.Bttl_800c._800c7028;
+import static legend.game.combat.Bttl_800c.digitOffsetXy_800c7014;
+import static legend.game.combat.Bttl_800c.digitU_800c7028;
 import static legend.game.combat.Bttl_800c._800c703c;
 import static legend.game.combat.Bttl_800c._800c70a4;
 import static legend.game.combat.Bttl_800c._800c70e0;
@@ -287,14 +287,14 @@ public final class Bttl_800f {
 
       if(a1 == 1 || a1 == 3 || a1 == 4) {
         //LAB_800f18f0
-        struct.x_02 = _800c7014.get(a1 * 2).get() + i * 5;
+        struct.x_02 = digitOffsetXy_800c7014.get(a1 * 2).get() + i * 5;
       } else {
-        struct.x_02 = _800c7014.get(a1 * 2).get() + (i + rightAlignOffset) * 5;
+        struct.x_02 = digitOffsetXy_800c7014.get(a1 * 2).get() + (i + rightAlignOffset) * 5;
       }
 
       //LAB_800f1920
-      struct.y_04 = _800c7014.get(a1 * 2 + 1).get();
-      struct.u_06 = _800c7028.get(sp0x00[i]).get();
+      struct.y_04 = digitOffsetXy_800c7014.get(a1 * 2 + 1).get();
+      struct.u_06 = digitU_800c7028.get(sp0x00[i]).get();
       struct.v_08 = 0x20;
       struct.w_0a = 0x8;
       struct.h_0c = 0x8;
@@ -1153,7 +1153,7 @@ public final class Bttl_800f {
       if(floatingTextType == 1) {
         //LAB_800f382c
         digitStruct.x_0e = displayPosX;
-        digitStruct.u_12 = _800c7028.get(damageDigits[digitIdx]).get();
+        digitStruct.u_12 = digitU_800c7028.get(damageDigits[digitIdx]).get();
         digitStruct.v_14 = 32;
         digitStruct.texW_16 = 8;
         digitStruct.texH_18 = 8;
