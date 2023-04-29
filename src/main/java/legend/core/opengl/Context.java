@@ -27,7 +27,7 @@ public class Context {
 
   public final Camera camera;
   private final Matrix4f proj = new Matrix4f();
-  private final legend.core.opengl.Shader.UniformBuffer transforms;
+  private final Shader.UniformBuffer transforms;
 
   private final FloatBuffer transformsBuffer = BufferUtils.createFloatBuffer(4 * 4 * 2);
 
@@ -58,7 +58,7 @@ public class Context {
 
     this.setClearColour(0.0f, 0.0f, 0.0f);
 
-    this.transforms = new legend.core.opengl.Shader.UniformBuffer((long)this.transformsBuffer.capacity() * Float.BYTES, Shader.UniformBuffer.TRANSFORM);
+    this.transforms = new Shader.UniformBuffer((long)this.transformsBuffer.capacity() * Float.BYTES, Shader.UniformBuffer.TRANSFORM);
   }
 
   public int getWidth() {

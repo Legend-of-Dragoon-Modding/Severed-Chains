@@ -37,7 +37,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_TAB;
 import static org.lwjgl.glfw.GLFW.glfwGetCurrentContext;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
-public class Gpu implements Runnable {
+public class Gpu {
   private static final Logger LOGGER = LogManager.getFormatterLogger(Gpu.class);
 
   private static final int STANDARD_VRAM_WIDTH = 1024;
@@ -366,7 +366,6 @@ public class Gpu implements Runnable {
     return this.ready;
   }
 
-  @Override
   public void run() {
     this.camera = new Camera(0.0f, 0.0f);
     this.window = new Window("Legend of Dragoon", Config.windowWidth(), Config.windowHeight());
@@ -452,6 +451,9 @@ public class Gpu implements Runnable {
     } catch(final Throwable t) {
       LOGGER.error("Shutting down due to GPU exception:", t);
       this.window.close();
+    } finally {
+      FontManager.free();
+      Window.free();
     }
   }
 
