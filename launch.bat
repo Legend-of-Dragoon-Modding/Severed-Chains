@@ -15,7 +15,7 @@ for /f "tokens=1,2 delims=." %%a in (%version%) do (
 
 if %major% equ 1 (if %minor% lss 17 goto OLD_JAVA) else (if %major% lss 17 goto OLD_JAVA)
 
-java -cp "lod-game-1.0-SNAPSHOT.jar;libs/*" legend.game.MainWindows -ea || pause
+java -cp "lod-game-@version@.jar;libs/*" legend.game.MainWindows -ea || pause
 
 goto EOF
 

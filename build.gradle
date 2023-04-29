@@ -1,4 +1,5 @@
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
+import org.apache.tools.ant.filters.ReplaceTokens
 
 plugins {
   id 'java'
@@ -7,8 +8,14 @@ plugins {
   id 'maven-publish'
 }
 
+project.ext.hash = System.getenv("GITHUB_SHA");
+
+if(project.ext.hash == null) {
+  project.ext.hash = 'snapshot'
+}
+
 group 'legend'
-version '1.0-SNAPSHOT'
+version project.ext.hash
 
 sourceCompatibility = targetCompatibility = 1.17
 compileJava.options.encoding = 'UTF-8'
@@ -113,10 +120,16 @@ task copySupportFiles(type: Copy) {
   }
 
   into(".") {
-    from 'launch.bat'
-    from 'launch'
+    from('launch.bat') {
+      filter(ReplaceTokens, tokens: [version: project.ext.hash])
+    }
+    from('launch') {
+      filter(ReplaceTokens, tokens: [version: project.ext.hash])
+    }
     from 'log4j2.xml'
     from 'gamecontrollerdb.txt'
+    from 'README.md'
+    from 'LICENSE'
   }
 }
 
