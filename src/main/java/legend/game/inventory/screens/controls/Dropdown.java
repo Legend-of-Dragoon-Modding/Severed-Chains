@@ -172,6 +172,16 @@ public class Dropdown extends Control {
     }
 
     @Override
+    protected InputPropagation mouseClick(final int x, final int y, final int button, final int mods) {
+      if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
+        return InputPropagation.HANDLED;
+      }
+
+      this.getStack().popScreen();
+      return InputPropagation.HANDLED;
+    }
+
+    @Override
     protected InputPropagation pressedWithRepeatPulse(final InputAction inputAction) {
       if(super.pressedWithRepeatPulse(inputAction) == InputPropagation.HANDLED) {
         return InputPropagation.HANDLED;
