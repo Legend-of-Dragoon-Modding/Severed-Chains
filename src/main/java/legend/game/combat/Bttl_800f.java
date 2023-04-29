@@ -1131,13 +1131,13 @@ public final class Bttl_800f {
     int displayPosX;
     if(floatingTextType == 1) {
       //LAB_800f3738
-      displayPosX = -(5 - digitIdx) * 5 / 2;
+      displayPosX = -(num.digits_24.length - digitIdx) * 5 / 2;
     } else if(floatingTextType == 2) {
       //LAB_800f3758
       displayPosX = -18;
     } else {
       //LAB_800f372c
-      displayPosX = -(5 - digitIdx) * 4;
+      displayPosX = -(num.digits_24.length - digitIdx) * 4;
     }
 
     //LAB_800f375c
