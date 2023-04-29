@@ -27,6 +27,7 @@ final class Voice implements AudioStream {
   private int playingNote_10;
   private int playingNote_12;
   private int playingNote_1c;
+  private int playingNote_42;
   private int playingNote_4e;
   private boolean portamento;
 
@@ -72,6 +73,8 @@ final class Voice implements AudioStream {
       this.playingNote_10 = 0;
       this.playingNote_12 = 0;
       this.playingNote_1c = 0;
+      this.playingNote_42 = 0;
+      this.playingNote_4e = 0;
       this.breath = 0;
     }
 
@@ -150,6 +153,7 @@ final class Voice implements AudioStream {
     this.playingNote_10 = (this.layer.getFlags() & 0x40) != 0 ? this.instrument.get_05() : this.layer.get_0e();
     this.playingNote_12 = 0;
     this.playingNote_1c = 0;
+    this.playingNote_42 = 0;
     this.playingNote_4e = 120;
 
     this.updateSampleRate();
@@ -242,7 +246,7 @@ final class Voice implements AudioStream {
           if((this.breath & 0xfff) != 120) { //TODO  || ticksPerSecond != 60
             this.playingNote_12 += this.breath & 0xfff;
           } else {
-            int var = this.breath & 0xf000;
+            final int var = this.breath & 0xf000;
             if(var != 0) {
               this.breath = this.breath & 0xfff | var - 0x1000;
               this.playingNote_12 += this.breath & 0xfff;
@@ -253,7 +257,7 @@ final class Voice implements AudioStream {
 
           pitchBend = 0x80;
 
-          if(this.breathControls != null && this.breathControls.length > 0) { //TODO has to access the breath control somehow
+          if(this.breathControls != null && this.breathControls.length > 0) {
 
             if(this.playingNote_12 >= 0xf0) {
               this.playingNote_12 = (this.breath & 0xfff) >>> 1;
@@ -266,7 +270,7 @@ final class Voice implements AudioStream {
 
           if(this.playingNote_1c == 0) {
             final int _64ths = (this.channel.getPitchBend() - 64) * this.pitchBendMultiplier;
-            note = note + _64ths;
+            note = note + _64ths / 64;
             cents = cents + Math.floorMod(_64ths / 4, 16);
             pitchBendMultiplier = 1;
           }
@@ -276,6 +280,10 @@ final class Voice implements AudioStream {
 
         if(this.portamento) {
           //TODO
+        }
+
+        if(this.playingNote_42 == 1) { //TODO || sequenceData_104
+          //pitch = sequenceData.pitch_0ec;
         }
 
         final int pitch = 0x1000;
