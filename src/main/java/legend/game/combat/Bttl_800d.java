@@ -2079,9 +2079,15 @@ public final class Bttl_800d {
     if(a5 == 0) {
       //LAB_800d7424
       cam._5c = a3;
-      cam._3c = (a0 - cam.vec_20.getX()) / a3;
-      cam._48 = (a1 - cam.vec_20.getY()) / a3;
-      cam._54 = (a2 - cam.vec_20.getZ()) / a3;
+      if(a3 != 0) {
+        cam._3c = (a0 - cam.vec_20.getX()) / a3;
+        cam._48 = (a1 - cam.vec_20.getY()) / a3;
+        cam._54 = (a2 - cam.vec_20.getZ()) / a3;
+      } else {
+        cam._3c = -1;
+        cam._48 = -1;
+        cam._54 = -1;
+      }
     } else if(a5 == 1) {
       throw new RuntimeException("Undefined s5/s6");
     }
@@ -2883,7 +2889,7 @@ public final class Bttl_800d {
     cam.vec_20.z.add(cam._54);
 
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[cam.bobjIndex_80].innerStruct_00;
-    setRefpoint(bobj.model_148.coord2_14.coord.transfer.getX() + (cam.vec_20.getX() >> 8), bobj.model_148.coord2_14.coord.transfer.getY() + (cam.vec_20.getY() >> 8), bobj.model_148.coord2_14.coord.transfer.getY() + (cam.vec_20.getZ() >> 8));
+    setRefpoint(bobj.model_148.coord2_14.coord.transfer.getX() + (cam.vec_20.getX() >> 8), bobj.model_148.coord2_14.coord.transfer.getY() + (cam.vec_20.getY() >> 8), bobj.model_148.coord2_14.coord.transfer.getZ() + (cam.vec_20.getZ() >> 8));
 
     cam._5c--;
     if(cam._5c <= 0) {
