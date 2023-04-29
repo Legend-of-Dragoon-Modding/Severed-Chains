@@ -49,6 +49,7 @@ import legend.game.types.Model124;
 import legend.game.types.ModelPartTransforms0c;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
+import org.joml.Math;
 
 import java.util.Arrays;
 
@@ -2079,15 +2080,9 @@ public final class Bttl_800d {
     if(a5 == 0) {
       //LAB_800d7424
       cam._5c = a3;
-      if(a3 != 0) {
-        cam._3c = (a0 - cam.vec_20.getX()) / a3;
-        cam._48 = (a1 - cam.vec_20.getY()) / a3;
-        cam._54 = (a2 - cam.vec_20.getZ()) / a3;
-      } else {
-        cam._3c = -1;
-        cam._48 = -1;
-        cam._54 = -1;
-      }
+      cam._3c = MathHelper.safeDiv(a0 - cam.vec_20.getX(), a3);
+      cam._48 = MathHelper.safeDiv(a1 - cam.vec_20.getY(), a3);
+      cam._54 = MathHelper.safeDiv(a2 - cam.vec_20.getZ(), a3);
     } else if(a5 == 1) {
       throw new RuntimeException("Undefined s5/s6");
     }
