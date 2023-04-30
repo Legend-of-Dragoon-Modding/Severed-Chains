@@ -48,7 +48,7 @@ import legend.game.sound.PlayingSound28;
 import legend.game.sound.SoundFile;
 import legend.game.sound.SoundFileIndices;
 import legend.game.sound.SpuStruct08;
-import legend.game.sound.SpuStruct10;
+import legend.game.sound.EncounterSoundEffects10;
 import legend.game.sound.Sshd;
 import legend.game.sound.Sssq;
 import legend.game.title.Ttle;
@@ -83,7 +83,7 @@ import static legend.core.GameEngine.SEQUENCER;
 import static legend.core.GameEngine.SPU;
 import static legend.game.SMap.FUN_800e5934;
 import static legend.game.SMap.chapterTitleCardMrg_800c6710;
-import static legend.game.Scus94491BpeSegment_8002.FUN_800201c8;
+import static legend.game.Scus94491BpeSegment_8002.unloadEncounterSoundEffects;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80020ed8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a058;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002bb38;
@@ -217,7 +217,7 @@ import static legend.game.Scus94491BpeSegment_800b.savedGameSelected_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.scriptEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.soundFiles_800bcf80;
-import static legend.game.Scus94491BpeSegment_800b.spu10Arr_800bd610;
+import static legend.game.Scus94491BpeSegment_800b.encounterSoundEffects_800bd610;
 import static legend.game.Scus94491BpeSegment_800b.sssqTempoScale_800bd100;
 import static legend.game.Scus94491BpeSegment_800b.sssqTempo_800bd104;
 import static legend.game.Scus94491BpeSegment_800b.submapIndex_800bd808;
@@ -1996,7 +1996,7 @@ public final class Scus94491BpeSegment {
     //LAB_800189e4
     //LAB_800189e8
     if(!loadingOverlay_8004dd1e && loadingGameStateOverlay_8004dd08.get() == 0) {
-      FUN_800201c8(6);
+      unloadEncounterSoundEffects();
       pregameLoadingStage_800bb10c.set(0);
       vsyncMode_8007a3b8.set(2);
       mainCallbackIndexOnceLoaded_8004dd24.set(postCombatMainCallbackIndex_800bc91c.get());
@@ -2331,9 +2331,7 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_800195c8
-    for(int i = 0; i < 7; i++) {
-      spu10Arr_800bd610[i]._00 = 0;
-    }
+    encounterSoundEffects_800bd610._00 = 0;
 
     sssqTempoScale_800bd100.set(0x100);
     melbuSoundsLoaded_800bd780.set(false);
@@ -2370,9 +2368,7 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_800196d4
-    for(int i = 0; i < 7; i++) {
-      spu10Arr_800bd610[i]._00 = 0;
-    }
+    encounterSoundEffects_800bd610._00 = 0;
 
     sssqTempoScale_800bd100.set(0x100);
     melbuSoundsLoaded_800bd780.set(false);
@@ -2943,8 +2939,8 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001af00L)
-  public static void FUN_8001af00(final int index) {
-    FUN_8004cf8c(spu10Arr_800bd610[index].sequenceData_0c);
+  public static void FUN_8001af00() {
+    FUN_8004cf8c(encounterSoundEffects_800bd610.sequenceData_0c);
   }
 
   @Method(0x8001af34L)
@@ -3007,9 +3003,9 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001b1a8L)
-  public static void FUN_8001b1a8(final int a0) {
-    FUN_8004c8dc(currentSequenceData_800bd0f8, (short)a0);
-    _800bd108.setu(a0);
+  public static void FUN_8001b1a8(final int volume) {
+    FUN_8004c8dc(currentSequenceData_800bd0f8, volume);
+    _800bd108.setu(volume);
   }
 
   @Method(0x8001b1ecL)
@@ -3859,11 +3855,11 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001ddd8L)
   public static void FUN_8001ddd8() {
-    final SpuStruct10 struct10 = spu10Arr_800bd610[6];
+    final EncounterSoundEffects10 encounterSoundEffects = encounterSoundEffects_800bd610;
 
     FUN_8004cf8c(currentSequenceData_800bd0f8);
-    struct10._00 = 2;
-    struct10.sequenceData_0c = loadSssq(soundFiles_800bcf80[struct10.soundFileIndex].playableSound_10, struct10.sssq_08);
+    encounterSoundEffects._00 = 2;
+    encounterSoundEffects.sequenceData_0c = loadSssq(soundFiles_800bcf80[encounterSoundEffects.soundFileIndex].playableSound_10, encounterSoundEffects.sssq_08);
     musicLoaded_800bd782.incr();
     loadedDrgnFiles_800bcf78.and(0xffff_ff7fL);
   }
@@ -3879,7 +3875,7 @@ public final class Scus94491BpeSegment {
     final StageData10 stageData = stageData_80109a98.get(encounterId_800bb0f8.get());
 
     if(stageData.musicIndex_01.get() != 0xff) {
-      FUN_800201c8(6);
+      unloadEncounterSoundEffects();
 
       // Pulled this up from below since the methods below queue files which are now loaded synchronously. This code would therefore run before the files were loaded.
       //LAB_8001df8c
@@ -3981,7 +3977,7 @@ public final class Scus94491BpeSegment {
         }
       } else {
         //LAB_8001e160
-        FUN_800201c8(6);
+        unloadEncounterSoundEffects();
         unloadSoundFile(8);
 
         final long callbackIndex = mainCallbackIndex_8004dd20.get();
@@ -4507,20 +4503,20 @@ public final class Scus94491BpeSegment {
   public static void loadEncounterSoundEffects(final int fileIndex) {
     loadedDrgnFiles_800bcf78.oru(0x4000L);
     // Example file: 700
-    loadDrgnDir(0, fileIndex, files -> Scus94491BpeSegment.encounterSoundEffectsLoaded_8001fd4c(files, 6));
+    loadDrgnDir(0, fileIndex, Scus94491BpeSegment::encounterSoundEffectsLoaded);
   }
 
   @Method(0x8001fd4cL)
-  public static void encounterSoundEffectsLoaded_8001fd4c(final List<FileData> files, final int index) {
-    final SpuStruct10 struct10 = spu10Arr_800bd610[index];
-    struct10._00 = 2;
+  public static void encounterSoundEffectsLoaded(final List<FileData> files) {
+    final EncounterSoundEffects10 encounterSoundEffects = encounterSoundEffects_800bd610;
+    encounterSoundEffects._00 = 2;
 
-    struct10.unknown = files.get(0).readUShort(0);
-    struct10.soundFileIndex = files.get(1).readUShort(0);
-    struct10.sssq_08 = new Sssq(files.get(2));
+    encounterSoundEffects.unknown = files.get(0).readUShort(0);
+    encounterSoundEffects.soundFileIndex = files.get(1).readUShort(0);
+    encounterSoundEffects.sssq_08 = new Sssq(files.get(2));
 
-    FUN_8004c8dc(struct10.sequenceData_0c, 40);
-    struct10._00 = 2;
+    FUN_8004c8dc(encounterSoundEffects.sequenceData_0c, 40);
+    encounterSoundEffects._00 = 2;
     loadedDrgnFiles_800bcf78.and(0xffff_bfffL);
   }
 

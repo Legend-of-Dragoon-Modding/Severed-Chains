@@ -1,6 +1,6 @@
 package legend.game.sound;
 
-public class SpuStruct10 {
+public class EncounterSoundEffects10 {
   public int _00;
 
   public int unknown;

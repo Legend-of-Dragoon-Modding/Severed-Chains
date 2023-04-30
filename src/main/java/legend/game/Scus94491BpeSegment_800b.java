@@ -19,7 +19,7 @@ import legend.game.sound.PlayingSound28;
 import legend.game.sound.SequenceData124;
 import legend.game.sound.SoundFile;
 import legend.game.sound.SpuStruct08;
-import legend.game.sound.SpuStruct10;
+import legend.game.sound.EncounterSoundEffects10;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.EquipmentStats1c;
 import legend.game.types.GameState52c;
@@ -136,7 +136,8 @@ public final class Scus94491BpeSegment_800b {
   static {
     Arrays.setAll(playingSounds_800bd110, i -> new PlayingSound28());
   }
-  public static final SpuStruct10[] spu10Arr_800bd610 = {new SpuStruct10(), new SpuStruct10(), new SpuStruct10(), new SpuStruct10(), new SpuStruct10(), new SpuStruct10(), new SpuStruct10()};
+  /** NOTE: this used to be an array, but only the 6th element was used */
+  public static final EncounterSoundEffects10 encounterSoundEffects_800bd610 = new EncounterSoundEffects10();
 
   public static final Value _800bd6f8 = MEMORY.ref(4, 0x800bd6f8L);
 

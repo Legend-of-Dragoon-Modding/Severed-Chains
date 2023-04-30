@@ -39,7 +39,7 @@ import legend.game.modding.events.inventory.TakeItemEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
 import legend.game.sound.PlayingSound28;
-import legend.game.sound.SpuStruct10;
+import legend.game.sound.EncounterSoundEffects10;
 import legend.game.tim.Tim;
 import legend.game.tmd.Renderer;
 import legend.game.types.ActiveStatsa0;
@@ -200,7 +200,7 @@ import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba8;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
 import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
-import static legend.game.Scus94491BpeSegment_800b.spu10Arr_800bd610;
+import static legend.game.Scus94491BpeSegment_800b.encounterSoundEffects_800bd610;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.textU_800be5c0;
 import static legend.game.Scus94491BpeSegment_800b.textV_800be5c8;
@@ -231,7 +231,7 @@ public final class Scus94491BpeSegment_8002 {
     unloadSoundFile(5);
     unloadSoundFile(6);
     unloadSoundFile(8);
-    FUN_800201c8(6);
+    unloadEncounterSoundEffects();
   }
 
   @Method(0x80020060L)
@@ -243,7 +243,7 @@ public final class Scus94491BpeSegment_8002 {
     unloadSoundFile(5);
     unloadSoundFile(6);
     unloadSoundFile(8);
-    FUN_800201c8(6);
+    unloadEncounterSoundEffects();
     return FlowControl.CONTINUE;
   }
 
@@ -253,14 +253,14 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x800201c8L)
-  public static void FUN_800201c8(final int index) {
-    final SpuStruct10 struct10 = spu10Arr_800bd610[index];
+  public static void unloadEncounterSoundEffects() {
+    final EncounterSoundEffects10 encounterSoundEffects = encounterSoundEffects_800bd610;
 
-    if(struct10._00 != 0) {
-      FUN_8004d034(struct10.sequenceData_0c, 1);
-      FUN_8004c390(struct10.sequenceData_0c);
-      struct10.sssq_08 = null;
-      struct10._00 = 0;
+    if(encounterSoundEffects._00 != 0) {
+      FUN_8004d034(encounterSoundEffects.sequenceData_0c, 1);
+      FUN_8004c390(encounterSoundEffects.sequenceData_0c);
+      encounterSoundEffects.sssq_08 = null;
+      encounterSoundEffects._00 = 0;
     }
 
     //LAB_80020220
