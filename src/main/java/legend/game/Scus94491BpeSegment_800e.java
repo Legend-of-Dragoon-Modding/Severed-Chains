@@ -40,9 +40,7 @@ import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
 import static legend.game.Scus94491BpeSegment_8002.prepareObjTable2;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003c5e0;
 import static legend.game.Scus94491BpeSegment_8003.GetTPage;
-import static legend.game.Scus94491BpeSegment_8003.GsDefDispBuff;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
-import static legend.game.Scus94491BpeSegment_8003.GsInitGraph;
 import static legend.game.Scus94491BpeSegment_8003.InitGeom;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.ResetGraph;
@@ -89,9 +87,6 @@ public final class Scus94491BpeSegment_800e {
   public static void gameInit() {
     ResetGraph(0);
     SetGraphDebug(2);
-
-    GsInitGraph((short)640, (short)480, 0b110100);
-    GsDefDispBuff((short)0, (short)16, (short)0, (short)16);
 
     orderingTableBits_1f8003c0.set(14);
     zShift_1f8003c4.set(0);

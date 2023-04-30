@@ -275,15 +275,12 @@ public final class Scus94491BpeSegment_8003 {
     //LAB_80038d8c
     GPU.displayStart(env.disp.x.get(), env.disp.y.get());
 
-    long s0 = 0;
-
     if(DISPENV_80054728.disp.x.get() != env.disp.x.get() || DISPENV_80054728.disp.y.get() != env.disp.y.get() || DISPENV_80054728.disp.w.get() != env.disp.w.get() || DISPENV_80054728.disp.h.get() != env.disp.h.get()) {
       //LAB_80038e34
       //LAB_80038e94
       final int width = env.disp.w.get();
 
       final Gpu.HORIZONTAL_RESOLUTION hRes;
-      final Gpu.VERTICAL_RESOLUTION vRes;
 
       if(width <= 280) {
         hRes = Gpu.HORIZONTAL_RESOLUTION._256;
@@ -297,16 +294,8 @@ public final class Scus94491BpeSegment_8003 {
         hRes = Gpu.HORIZONTAL_RESOLUTION._640;
       }
 
-      //LAB_80038edc
-      //LAB_80038ef0
-      if(env.disp.h.get() <= 256) {
-        vRes = Gpu.VERTICAL_RESOLUTION._240;
-      } else {
-        vRes = Gpu.VERTICAL_RESOLUTION._480;
-      }
-
       //LAB_80038efc
-      GPU.displayMode(hRes, vRes, Gpu.DISPLAY_AREA_COLOUR_DEPTH.BITS_15);
+      GPU.displayMode(hRes);
 
       env.pad0.set((byte)8);
     }
@@ -316,42 +305,42 @@ public final class Scus94491BpeSegment_8003 {
       //LAB_80038f98
       env.pad0.set((byte)0);
 
-      s0 = env.screen.y.get() + 16;
+      int y1 = env.screen.y.get() + 16;
 
       //LAB_80038fb8
-      final long s2;
+      final int s2;
 
       if(env.screen.h.get() == 0) {
-        s2 = s0 + 0xf0L;
+        s2 = y1 + 240;
       } else {
-        s2 = s0 + env.screen.h.get();
+        s2 = y1 + env.screen.h.get();
       }
 
-      long a1;
+      int y2;
       //LAB_80039164
-      if(s0 < 16L) {
+      if(y1 < 16) {
         //LAB_80039180
-        a1 = 16L;
-      } else if(s0 <= 257L) {
-        a1 = s0;
+        y2 = 16;
+      } else if(y1 <= 257) {
+        y2 = y1;
       } else {
-        a1 = 257L;
+        y2 = 257;
       }
 
       //LAB_80039184
-      s0 = a1;
+      y1 = y2;
 
       //LAB_8003919c
-      if(s2 < a1) {
-        a1 += 2L;
-      } else if(s2 <= 258L) {
-        a1 = s2;
+      if(s2 < y2) {
+        y2 += 2;
+      } else if(s2 <= 258) {
+        y2 = s2;
       } else {
-        a1 = 258L;
+        y2 = 258;
       }
 
       //LAB_800391a8
-      GPU.verticalDisplayRange((int)s0, (int)a1);
+      GPU.verticalDisplayRange(y1, y2);
     }
 
     memcpy(DISPENV_80054728.getAddress(), env.getAddress(), 0x14);
@@ -717,7 +706,6 @@ public final class Scus94491BpeSegment_8003 {
 
     DRAWENV_800c3450.ofs.get(0).set((short)0);
     DRAWENV_800c3450.ofs.get(1).set((short)0);
-    DRAWENV_800c3450.tw.set((short)0, (short)0, (short)0, (short)0);
     PutDrawEnv(DRAWENV_800c3450);
 
     DISPENV_800c34b0.disp.set((short)0, (short)0, displayWidth, displayHeight);

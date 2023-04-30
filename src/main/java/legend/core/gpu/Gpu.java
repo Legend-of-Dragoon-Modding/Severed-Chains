@@ -28,7 +28,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.LinkedList;
-import java.util.Scanner;
 
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.MathHelper.colour24To15;
@@ -251,7 +250,7 @@ public class Gpu {
     this.resetCommandBuffer();
     this.displayStart(0, 0);
     this.verticalDisplayRange(16, 256);
-    this.displayMode(HORIZONTAL_RESOLUTION._320, VERTICAL_RESOLUTION._240, DISPLAY_AREA_COLOUR_DEPTH.BITS_15);
+    this.displayMode(HORIZONTAL_RESOLUTION._320);
   }
 
   /**
@@ -289,13 +288,9 @@ public class Gpu {
 
   /**
    * GP1(08h) - Display Mode
-   *
-   * Note: The Display Area Color Depth does NOT affect the Drawing Area (the Drawing Area is always 15bit).
    */
-  public void displayMode(final HORIZONTAL_RESOLUTION hRes, final VERTICAL_RESOLUTION vRes, final DISPLAY_AREA_COLOUR_DEPTH dispColourDepth) {
+  public void displayMode(final HORIZONTAL_RESOLUTION hRes) {
     this.status.horizontalResolution = hRes;
-    this.status.verticalResolution = vRes;
-    this.status.displayAreaColourDepth = dispColourDepth;
 
     // Always run on the GPU thread
     if(glfwGetCurrentContext() == 0) {
@@ -303,7 +298,7 @@ public class Gpu {
       return;
     }
 
-    this.displaySize(hRes.res, vRes.res);
+    this.displaySize(hRes.res, 240);
   }
 
   public void displaySize(final int horizontalRes, final int verticalRes) {
@@ -317,7 +312,7 @@ public class Gpu {
 
     this.displayTexture = Texture.empty(horizontalRes, verticalRes);
 
-    this.updateDisplayTexture(this.window, this.windowWidth, this.windowHeight);
+    this.updateDisplayTexture(this.windowWidth, this.windowHeight);
   }
 
   public void displayTexture(final int[] pixels) {
@@ -388,7 +383,7 @@ public class Gpu {
       }
     });
 
-    this.window.events.onResize((window1, width, height) -> this.updateDisplayTexture(window1, (int)(width / window1.getScale()), (int)(height / window1.getScale())));
+    this.window.events.onResize((window1, width, height) -> this.updateDisplayTexture((int)(width / window1.getScale()), (int)(height / window1.getScale())));
 
     try {
       final Shader fontShader = new Shader(Paths.get("gfx/shaders/font.vsh"), Paths.get("gfx/shaders/font.fsh"));
@@ -457,9 +452,8 @@ public class Gpu {
     }
   }
 
-  private void updateDisplayTexture(final Window window, final int width, final int height) {
+  private void updateDisplayTexture(final int width, final int height) {
     if(!this.isVramViewer) {
-
       this.windowWidth = width;
       this.windowHeight = height;
 
@@ -512,21 +506,9 @@ public class Gpu {
     this.zQueues = list;
   }
 
-  private int readInt(final Scanner scanner, final String prompt, final String error) {
-    while(true) {
-      System.out.print(prompt);
-
-      try {
-        return Integer.parseInt(scanner.nextLine());
-      } catch(final NumberFormatException e) {
-        System.out.println(error);
-      }
-    }
-  }
-
   public void tick() {
     if(this.displayChanged) {
-      this.displaySize(this.status.horizontalResolution.res, this.status.verticalResolution.res);
+      this.displaySize(this.status.horizontalResolution.res, 240);
       this.displayChanged = false;
     }
 
@@ -545,54 +527,8 @@ public class Gpu {
       this.vramMesh.draw();
 
       MemoryUtil.memFree(pixels);
-    } else if(this.status.displayAreaColourDepth == DISPLAY_AREA_COLOUR_DEPTH.BITS_24) {
-      int yRangeOffset = 240 - (this.displayRangeY2 - this.displayRangeY1) >> (this.status.verticalResolution == VERTICAL_RESOLUTION._480 ? 0 : 1);
-      if(yRangeOffset < 0) {
-        yRangeOffset = 0;
-      }
-
-      final int size = this.displayTexture.width * this.displayTexture.height;
-      final ByteBuffer pixels = MemoryUtil.memAlloc(size * 4);
-      final IntBuffer pixelsInt = pixels.asIntBuffer();
-
-      for(int y = yRangeOffset; y < this.status.verticalResolution.res - yRangeOffset; y++) {
-        int offset = 0;
-        for(int x = 0; x < this.status.horizontalResolution.res; x += 2) {
-          final int p0rgb = this.vram24[offset++ + this.displayStartX + (y - yRangeOffset + this.displayStartY) * this.vramWidth];
-          final int p1rgb = this.vram24[offset++ + this.displayStartX + (y - yRangeOffset + this.displayStartY) * this.vramWidth];
-          final int p2rgb = this.vram24[offset++ + this.displayStartX + (y - yRangeOffset + this.displayStartY) * this.vramWidth];
-
-          final int p0bgr555 = colour24To15(p0rgb);
-          final int p1bgr555 = colour24To15(p1rgb);
-          final int p2bgr555 = colour24To15(p2rgb);
-
-          //[(G0R0][R1)(B0][B1G1)]
-          //   RG    B - R   GB
-
-          final int p0R = p0bgr555 & 0xff;
-          final int p0G = p0bgr555 >>> 8 & 0xff;
-          final int p0B = p1bgr555 & 0xff;
-          final int p1R = p1bgr555 >>> 8 & 0xff;
-          final int p1G = p2bgr555 & 0xff;
-          final int p1B = p2bgr555 >>> 8 & 0xff;
-
-          final int p0rgb24bpp = p0B << 16 | p0G << 8 | p0R;
-          final int p1rgb24bpp = p1B << 16 | p1G << 8 | p1R;
-
-          pixelsInt.put(p0rgb24bpp);
-          pixelsInt.put(p1rgb24bpp);
-        }
-      }
-
-      pixels.flip();
-
-      this.displayTexture.data(0, 0, this.displayTexture.width, this.displayTexture.height, pixels);
-
-      this.drawMesh();
-
-      MemoryUtil.memFree(pixels);
     } else { // 15bpp
-      int yRangeOffset = 240 - (this.displayRangeY2 - this.displayRangeY1) >> (this.status.verticalResolution == VERTICAL_RESOLUTION._480 ? 0 : 1);
+      int yRangeOffset = 240 - (this.displayRangeY2 - this.displayRangeY1) >> 1;
       if(yRangeOffset < 0) {
         yRangeOffset = 0;
       }
@@ -605,7 +541,7 @@ public class Gpu {
       final ByteBuffer pixels = MemoryUtil.memAlloc(size * 4);
       final byte[] from = new byte[this.displayTexture.width * 4];
 
-      for(int y = yRangeOffset; y < this.status.verticalResolution.res - yRangeOffset; y++) {
+      for(int y = yRangeOffset; y < 240 - yRangeOffset; y++) {
         vram.get((this.displayStartX + (y - yRangeOffset + this.displayStartY) * this.vramTexture.width) * 4, from);
         pixels.put(from, 0, from.length);
       }
@@ -915,7 +851,7 @@ public class Gpu {
     return ay == by && bx > ax || by < ay;
   }
 
-  public int getTexel(final int x, final int y, final int clutX, final int clutY, final int textureBaseX, final int textureBaseY, final legend.core.gpu.Bpp depth) {
+  public int getTexel(final int x, final int y, final int clutX, final int clutY, final int textureBaseX, final int textureBaseY, final Bpp depth) {
     if(depth == Bpp.BITS_4) {
       return this.get4bppTexel(x, y, clutX, clutY, textureBaseX, textureBaseY);
     }
@@ -1016,15 +952,6 @@ public class Gpu {
      * Bits 17-18 - Horizontal resolution 1
      */
     public HORIZONTAL_RESOLUTION horizontalResolution = HORIZONTAL_RESOLUTION._256;
-    /**
-     * Bit 19 - Vertical resolution
-     */
-    public VERTICAL_RESOLUTION verticalResolution = VERTICAL_RESOLUTION._240;
-
-    /**
-     * Bit 21 - Display area colour depth
-     */
-    public DISPLAY_AREA_COLOUR_DEPTH displayAreaColourDepth = DISPLAY_AREA_COLOUR_DEPTH.BITS_15;
   }
 
   public enum DRAW_PIXELS {
@@ -1045,22 +972,5 @@ public class Gpu {
     HORIZONTAL_RESOLUTION(final int res) {
       this.res = res;
     }
-  }
-
-  public enum VERTICAL_RESOLUTION {
-    _240(240),
-    _480(480),
-    ;
-
-    public final int res;
-
-    VERTICAL_RESOLUTION(final int res) {
-      this.res = res;
-    }
-  }
-
-  public enum DISPLAY_AREA_COLOUR_DEPTH {
-    BITS_15,
-    BITS_24,
   }
 }
