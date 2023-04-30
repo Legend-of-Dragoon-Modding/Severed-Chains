@@ -143,14 +143,23 @@ final class Voice implements AudioStream {
     this.adsrEnvelope = layer.getAdsrEnvelope();
     this.note = note;
     this.velocity = velocity / 127d;
-    this.isModulation = this.layer.isModulation();
-    this.modulation = this.isModulation ? this.channel.getModulation() : 0;
+
+    if(this.layer.canUseModulation() && this.channel.getModulation() != 0) {
+      this.playingNote_10 = (this.layer.getFlags() & 0x40) != 0 ? this.instrument.get_05() : this.layer.get_0e();
+
+      //this.isModulation = true;
+      //this.modulation = this.channel.getModulation();
+    } else {
+      this.isModulation = false;
+      this.modulation = 0;
+    }
+
     this.breathControls = breathControls;
     this.breath = this.channel.getBreath();
 
     this.pitchBendMultiplier = layer.isPitchBendMultiplierFromInstrument() ? this.instrument.getPitchBendMultiplier() : layer.getPitchBendMultiplier();
 
-    this.playingNote_10 = (this.layer.getFlags() & 0x40) != 0 ? this.instrument.get_05() : this.layer.get_0e();
+
     this.playingNote_12 = 0;
     this.playingNote_1c = 0;
     this.playingNote_42 = 0;
@@ -190,8 +199,8 @@ final class Voice implements AudioStream {
 
   @Override
   public void setModulation(final int modulation) {
-    this.isModulation = true;
-    this.modulation = modulation;
+    //this.isModulation = true;
+    //this.modulation = modulation;
   }
 
   @Override
@@ -240,6 +249,7 @@ final class Voice implements AudioStream {
       int pitchBendMultiplier = this.pitchBendMultiplier;
 
       if(this.isModulation || this.portamento) {
+        //This essentially swaps the offset from note to root key, since note is set to 120 down the line
         rootKey = 120 + rootKey - note;
 
         if(this.isModulation) {
@@ -266,16 +276,20 @@ final class Voice implements AudioStream {
             pitchBend = this.breathControls[this.playingNote_10][this.playingNote_12 >>> 2];
           }
 
+          //Set the note to 120, unless portamento
           note = this.playingNote_4e;
 
+          //Pitch bend will be overwritten, so it has to be converted into note offset and cents
           if(this.playingNote_1c == 0) {
             final int _64ths = (this.channel.getPitchBend() - 64) * this.pitchBendMultiplier;
             note = note + _64ths / 64;
-            cents = cents + Math.floorMod(_64ths / 4, 16);
+            //cents = cents + Math.floorMod(_64ths / 4, 16);
             pitchBendMultiplier = 1;
           }
 
-          pitchBend = pitchBend * this.modulation / 255 - ((this.modulation + 1) / 2 - 64);
+          // Here, pitch bend is either 128 or the value from the breath control wave
+          // Since modulation is a single byte, the * just sets it to 1 in the edge case of it being 0xFF, otherwise pitch bend is ignored, which has to be wrong.
+          pitchBend = (pitchBend * this.modulation) / 255 - ((this.modulation + 1) / 2 - 64);
         }
 
         if(this.portamento) {
@@ -298,6 +312,7 @@ final class Voice implements AudioStream {
   private static int calculateSampleRate(final int rootKey, final int note, final int pitchBendMultiplier, final int pitchBend, final int cents) {
     final int semitoneOffset;
     final int octaveOffset;
+    final int adjustedCents = (int) (cents * 6.25f);
 
     final double pitchBendD = (pitchBend - 64) / 64d;
 
@@ -307,13 +322,13 @@ final class Voice implements AudioStream {
       octaveOffset = ((rootKey - note - 1)) / 12 + 1;
       semitoneOffset = (12 * octaveOffset) - (rootKey - note);
 
-      return (int)((0x1000 >> octaveOffset) * (Offsets.semitone[semitoneOffset] * Offsets.cent[cents] * pitchBendMulti));
+      return (int)((0x1000 >> octaveOffset) * (Offsets.semitone[semitoneOffset] * Offsets.cent[adjustedCents] * pitchBendMulti));
     }
 
     semitoneOffset = ((note - rootKey) % 12);
     octaveOffset = (note - rootKey) / 12;
 
-    return (int)((0x1000 << octaveOffset) * (Offsets.semitone[semitoneOffset] * Offsets.cent[cents] * pitchBendMulti));
+    return (int)((0x1000 << octaveOffset) * (Offsets.semitone[semitoneOffset] * Offsets.cent[adjustedCents] * pitchBendMulti));
   }
 
   private static final short[] gaussTable = {

@@ -9,7 +9,7 @@ public interface MidiInstrumentLayer {
   int getCents();
   boolean isLockedPanAndVolume();
   boolean isPitchBendMultiplierFromInstrument();
-  boolean isModulation();
+  boolean canUseModulation();
   int getFlags();
   int get_0e();
 

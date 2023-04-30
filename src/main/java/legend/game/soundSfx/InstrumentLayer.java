@@ -106,7 +106,7 @@ final class InstrumentLayer implements MidiInstrumentLayer {
   }
 
   @Override
-  public boolean isModulation() {
+  public boolean canUseModulation() {
     return this.modulation;
   }
 
