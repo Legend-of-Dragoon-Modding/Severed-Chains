@@ -107,6 +107,7 @@ import static legend.game.Scus94491BpeSegment_8002.renderDobj2;
 import static legend.game.Scus94491BpeSegment_8002.renderModel;
 import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8002.strcmp;
+import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b8f0;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b900;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003ea80;
@@ -393,6 +394,7 @@ public class WMap {
 
   private static final Value _800f5a90 = MEMORY.ref(2, 0x800f5a90L);
   private static final Value _800f5a92 = MEMORY.ref(2, 0x800f5a92L);
+  /** TODO struct for world map destination (shows where you need to go when you're fully zoomed out) */
   private static final Value _800f5a94 = MEMORY.ref(4, 0x800f5a94L);
 
   private static final Value _800f6598 = MEMORY.ref(4, 0x800f6598L);
@@ -529,7 +531,7 @@ public class WMap {
         CPU.CTC2(ls.transfer.getX(), 5);
         CPU.CTC2(ls.transfer.getY(), 6);
         CPU.CTC2(ls.transfer.getZ(), 7);
-        Renderer.renderDobj2(dobj2, false);
+        Renderer.renderDobj2(dobj2, false, 0);
       }
     }
 
@@ -2515,7 +2517,7 @@ public class WMap {
           textZ_800bdf00.set(26);
           textboxes_800be358[7].z_0c = 26;
 
-          FUN_800e774c(places_800f0234.get((int)_800f5a94.offset(sp24 * 0x2cL).get()).name_00.deref(), x - width.get() * 3, y - lines.get() * 7, TextColour.WHITE, 0);
+          renderCenteredShadowedText(places_800f0234.get((int)_800f5a94.offset(sp24 * 0x2cL).get()).name_00.deref(), x, y - lines.get() * 7 + 1, TextColour.WHITE, 0);
         }
       }
     }
@@ -4000,14 +4002,9 @@ public class WMap {
       case 6:
         textboxes_800be358[6].z_0c = 18;
 
-        final IntRef width = new IntRef();
-        final IntRef lines = new IntRef();
-        measureText(Move_800f00e8, width, lines);
-        FUN_800e774c(Move_800f00e8, (short)(240 - width.get() * 3), 41, TextColour.WHITE, 0);
-        measureText(No_800effa4, width, lines);
-        FUN_800e774c(No_800effa4, (short)(240 - width.get() * 3), 57, TextColour.WHITE, 0);
-        measureText(Yes_800effb0, width, lines);
-        FUN_800e774c(Yes_800effb0, (short)(240 - width.get() * 3), 73, TextColour.WHITE, 0);
+        renderCenteredShadowedText(Move_800f00e8, 240, 41, TextColour.WHITE, 0);
+        renderCenteredShadowedText(No_800effa4, 240, 57, TextColour.WHITE, 0);
+        renderCenteredShadowedText(Yes_800effb0, 240, 73, TextColour.WHITE, 0);
         renderCoolonMap(0, 0);
 
         if(Input.pressedThisFrame(InputAction.BUTTON_EAST)) {
@@ -4347,7 +4344,7 @@ public class WMap {
       //LAB_800dcb48
       textZ_800bdf00.set(18);
       textboxes_800be358[7].z_0c = 18;
-      FUN_800e774c(coolonWarpDest_800ef228.get(struct.coolonWarpIndex_222).placeName_1c.deref(), (short)(x - width * 3), (short)(y - lines * 7), TextColour.WHITE, 0);
+      renderCenteredShadowedText(coolonWarpDest_800ef228.get(struct.coolonWarpIndex_222).placeName_1c.deref(), x, y - lines * 7 + 1, TextColour.WHITE, 0);
     }
 
     //LAB_800dcc0c
@@ -5757,14 +5754,9 @@ public class WMap {
           sp38 = _800c6862.get() >>> 4 & 0xffffL;
           sp3c = _800c6862.get() & 0xfL;
 
-          final IntRef width = new IntRef();
-          final IntRef height = new IntRef();
-          measureText(No_Entry_800f01e4.deref(), width, height);
-          FUN_800e774c(No_Entry_800f01e4.deref(), 240 - width.get() * 3, 164, TextColour.WHITE, 0);
-          measureText(regions_800f01ec.get((int)sp38).deref(), width, height);
-          FUN_800e774c(regions_800f01ec.get((int)sp38).deref(), 240 - width.get() * 3, 182, TextColour.WHITE, 0);
-          measureText(regions_800f01ec.get((int)sp3c).deref(), width, height);
-          FUN_800e774c(regions_800f01ec.get((int)sp3c).deref(), 240 - width.get() * 3, 200, TextColour.WHITE, 0);
+          renderCenteredShadowedText(No_Entry_800f01e4.deref(), 240, 164, TextColour.WHITE, 0);
+          renderCenteredShadowedText(regions_800f01ec.get((int)sp38).deref(), 240, 182, TextColour.WHITE, 0);
+          renderCenteredShadowedText(regions_800f01ec.get((int)sp3c).deref(), 240, 200, TextColour.WHITE, 0);
 
           if(Input.pressedThisFrame(InputAction.DPAD_UP) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_UP)) {
             _800c86d2.subu(0x1L);
@@ -5793,12 +5785,8 @@ public class WMap {
           _800c689c.deref().y_3a.set((short)_800c86d2.getSigned() * 18 + 8);
         } else { // Entering a town, etc.
           //LAB_800e5a18
-          final IntRef width = new IntRef();
-          final IntRef lines = new IntRef();
-          measureText(No_Entry_800f01e4.deref(), width, lines);
-          FUN_800e774c(No_Entry_800f01e4.deref(), 240 - width.get() * 3, 170, TextColour.WHITE, 0);
-          measureText(Enter_800f01e8.deref(), width, lines);
-          FUN_800e774c(Enter_800f01e8.deref(), 240 - width.get() * 3, 190, TextColour.WHITE, 0);
+          renderCenteredShadowedText(No_Entry_800f01e4.deref(), 240, 170, TextColour.WHITE, 0);
+          renderCenteredShadowedText(Enter_800f01e8.deref(), 240, 190, TextColour.WHITE, 0);
 
           // World Map Location Menu (No Entry,Enter)
           if(Input.pressedThisFrame(InputAction.DPAD_UP) || Input.pressedThisFrame(InputAction.DPAD_DOWN) ||
@@ -5819,7 +5807,7 @@ public class WMap {
         final IntRef width = new IntRef();
         final IntRef lines = new IntRef();
         measureText(places_800f0234.get(placeIndex).name_00.deref(), width, lines);
-        FUN_800e774c(places_800f0234.get(placeIndex).name_00.deref(), 240 - width.get() * 3, 140 - lines.get() * 7, TextColour.WHITE, 0);
+        renderCenteredShadowedText(places_800f0234.get(placeIndex).name_00.deref(), 240, 140 - lines.get() * 7, TextColour.WHITE, 0);
 
         if((filesLoadedFlags_800c66b8.get() & 0x800L) != 0) {
           final GpuCommandPoly cmd = new GpuCommandPoly(4)
@@ -5877,7 +5865,7 @@ public class WMap {
             for(int i = 0; i < 5; i++) {
               //LAB_800e61b8
               if((services & 1L << i) != 0) {
-                FUN_800e774c(services_800f01cc.get(i).deref(), 205, servicesCount * 16 + 30, TextColour.WHITE, 0);
+                renderCenteredShadowedText(services_800f01cc.get(i).deref(), 240, servicesCount * 16 + 30, TextColour.WHITE, 0);
                 servicesCount++;
               }
 
@@ -5886,7 +5874,7 @@ public class WMap {
 
             //LAB_800e6260
             if(servicesCount == 0) {
-              FUN_800e774c(_800f01e0.deref(), 201, 62, TextColour.WHITE, 0);
+              renderCenteredShadowedText(_800f01e0.deref(), 240, 62, TextColour.WHITE, 0);
             }
 
             //LAB_800e6290
@@ -6237,7 +6225,7 @@ public class WMap {
         textZ_800bdf00.set(i + 119);
         textboxes_800be358[i].z_0c = i + 119;
 
-        FUN_800e774c(places_800f0234.get(place).name_00.deref(), (short)(x - width.get() * 3), (short)(y - lines.get() * 7), TextColour.WHITE, 0);
+        renderCenteredShadowedText(places_800f0234.get(place).name_00.deref(), x, y - lines.get() * 7 + 1, TextColour.WHITE, 0);
       }
 
       //LAB_800e7590
@@ -6288,12 +6276,15 @@ public class WMap {
   }
 
   @Method(0x800e774cL)
-  public static void FUN_800e774c(final LodString text, final int x, final int y, final TextColour colour, final int trim) {
-    final IntRef width = new IntRef();
-    final IntRef lines = new IntRef();
-    measureText(text, width, lines);
-    renderText(text, x - width.get() + 3, y, colour, trim);
-    renderText(text, x - (width.get() - 1) + 3, y + 1, TextColour.BLACK, trim);
+  public static void renderCenteredShadowedText(final LodString text, final int x, final int y, final TextColour colour, final int trim) {
+    final String[] split = text.get().split("\\n");
+
+    for(int i = 0; i < split.length; i++) {
+      final LodString part = new LodString(split[i]);
+      final int textWidth = textWidth(part);
+      renderText(part, x - textWidth / 2, y + i * 12, colour, trim);
+      renderText(part, x - textWidth / 2 + 1, y + i * 12 + 1, TextColour.BLACK, trim);
+    }
   }
 
   @Method(0x800e7854L)

@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="game (lwjgl debug)" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="legend.game.Main" />
+    <module name="lod-game.main" />
+    <option name="VM_PARAMETERS" value="-Xms1g -Xmx1g -ea -javaagent:./lwjglx-debug-1.0.0.jar" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

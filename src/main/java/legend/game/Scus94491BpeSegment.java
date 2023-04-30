@@ -6,6 +6,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import javafx.application.Application;
 import javafx.application.Platform;
+import legend.core.Config;
 import legend.core.DebugHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.Gpu;
@@ -236,6 +237,8 @@ import static legend.game.combat.SBtld.stageData_80109a98;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_DELETE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F11;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F12;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_MINUS;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_EQUAL;
 
 public final class Scus94491BpeSegment {
   private Scus94491BpeSegment() { }
@@ -425,6 +428,15 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80011e1cL)
   public static void gameLoop() {
+    GPU.events().onKeyRepeat((window, key, scancode, mods) -> {
+      if(key == GLFW_KEY_EQUAL) {
+        Config.setGameSpeedMultiplier(Config.getGameSpeedMultiplier() + 1);
+      }
+
+      if(key == GLFW_KEY_MINUS) {
+        Config.setGameSpeedMultiplier(Config.getGameSpeedMultiplier() - 1);
+      }
+    });
     GPU.events().onKeyPress((window, key, scancode, mods) -> {
       // Add killswitch in case sounds get stuck on
       if(key == GLFW_KEY_DELETE) {
@@ -442,6 +454,14 @@ public final class Scus94491BpeSegment {
         } else {
           LOGGER.info("Unpausing");
         }
+      }
+
+      if(key == GLFW_KEY_EQUAL) {
+        Config.setGameSpeedMultiplier(Config.getGameSpeedMultiplier() + 1);
+      }
+
+      if(key == GLFW_KEY_MINUS) {
+        Config.setGameSpeedMultiplier(Config.getGameSpeedMultiplier() - 1);
       }
 
       if(key == GLFW_KEY_F12) {
@@ -495,7 +515,7 @@ public final class Scus94491BpeSegment {
       }
 
       final int frames = Math.max(1, vsyncMode_8007a3b8.get());
-      GPU.window().setFpsLimit(60 / frames);
+      GPU.window().setFpsLimit((60 / frames) * Config.getGameSpeedMultiplier());
 
       startFrame();
       tickDeferredReallocOrFree();
@@ -1569,14 +1589,20 @@ public final class Scus94491BpeSegment {
     return FlowControl.PAUSE_AND_REWIND;
   }
 
+  /**
+   * Forces disabling/enabling of indicators during scripted movement (not during normal play)
+   */
   @Method(0x80017354L)
-  public static FlowControl FUN_80017354(final RunningScript<?> script) {
+  public static FlowControl scriptSetIndicatorsDisabled(final RunningScript<?> script) {
     gameState_800babc8.indicatorsDisabled_4e3 = script.params_20[0].get() != 0;
     return FlowControl.CONTINUE;
   }
 
+  /**
+   * Reads indicator status during some scripted movement (only identified instance so far is Bale boat ride)
+   */
   @Method(0x80017374L)
-  public static FlowControl FUN_80017374(final RunningScript<?> script) {
+  public static FlowControl scriptReadIndicatorsDisabled(final RunningScript<?> script) {
     script.params_20[0].set(gameState_800babc8.indicatorsDisabled_4e3 ? 1 : 0);
     return FlowControl.CONTINUE;
   }

@@ -906,7 +906,7 @@ public final class SMap {
     CPU.CTC2(ls.transfer.getY(), 6);
     CPU.CTC2(ls.transfer.getZ(), 7);
 
-    Renderer.renderDobj2(model_800bda10.ObjTable_0c.top[0], false);
+    Renderer.renderDobj2(model_800bda10.ObjTable_0c.top[0], false, 0);
     model_800bda10.coord2ArrPtr_04[0].flg--;
   }
 
@@ -1009,7 +1009,7 @@ public final class SMap {
         CPU.CTC2(ls.transfer.getX(), 5);
         CPU.CTC2(ls.transfer.getY(), 6);
         CPU.CTC2(ls.transfer.getZ(), 7);
-        Renderer.renderDobj2(dobj2, false);
+        Renderer.renderDobj2(dobj2, false, 0);
       }
     }
 
@@ -1530,7 +1530,7 @@ public final class SMap {
   }
 
   @Method(0x800df258L)
-  public static FlowControl FUN_800df258(final RunningScript<?> script) {
+  public static FlowControl scriptSetModelPosition(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
     model.coord2_14.coord.transfer.setX(script.params_20[1].get());
@@ -1541,7 +1541,7 @@ public final class SMap {
   }
 
   @Method(0x800df2b8L)
-  public static FlowControl FUN_800df2b8(final RunningScript<?> script) {
+  public static FlowControl scriptReadModelPosition(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
     script.params_20[1].set(model.coord2_14.coord.transfer.getX());
@@ -1551,7 +1551,7 @@ public final class SMap {
   }
 
   @Method(0x800df314L)
-  public static FlowControl FUN_800df314(final RunningScript<?> script) {
+  public static FlowControl scriptSetModelRotate(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
     model.coord2Param_64.rotate.x.set((short)script.params_20[1].get());
@@ -1562,7 +1562,7 @@ public final class SMap {
   }
 
   @Method(0x800df374L)
-  public static FlowControl FUN_800df374(final RunningScript<?> script) {
+  public static FlowControl scriptReadModelRotate(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
     script.params_20[1].set(model.coord2Param_64.rotate.getX());

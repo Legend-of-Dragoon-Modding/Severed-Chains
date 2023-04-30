@@ -425,6 +425,9 @@ public final class Bttl_800e {
     GsSetAmbient(r, g, b);
   }
 
+  /**
+   * script set back color
+   */
   @Method(0x800e4d2cL)
   public static FlowControl FUN_800e4d2c(final RunningScript<?> script) {
     FUN_800e4cf8(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get());
@@ -1016,7 +1019,7 @@ public final class Bttl_800e {
   @Method(0x800e665cL)
   public static void loadDragoonDeff(final RunningScript<? extends BattleScriptDataBase> script) {
     final int index = script.params_20[0].get() & 0xffff;
-    final int s1 = script.params_20[3].get() & 0xff;
+    final int soundType = script.params_20[3].get() & 0xff;
 
     LOGGER.info(DEFF, "Loading dragoon DEFF (ID: %d, flags: %x)", index, script.params_20[0].get() & 0xffff_0000);
 
@@ -1030,7 +1033,7 @@ public final class Bttl_800e {
     if((deffManager.flags_20 & 0x4_0000) != 0) {
       //LAB_800e66fc
       //LAB_800e670c
-      loadDeffSounds(battle24.bobjState_04, index != 0x2e || s1 != 0 ? 0 : 2);
+      loadDeffSounds(battle24.bobjState_04, index != 0x2e || soundType != 0 ? 0 : 2);
     }
 
     //LAB_800e6714
@@ -1548,6 +1551,10 @@ public final class Bttl_800e {
     //LAB_800e7930
   }
 
+  /**
+   * Renderer for some kind of effect sprites like those in HUD DEFF.
+   * Used for example for sprite effect overlays on red glow in Death Dimension.
+   */
   @Method(0x800e7944L)
   public static void FUN_800e7944(final BattleStruct24 s1, final VECTOR trans, final int a2) {
     if((int)s1.flags_00.get() >= 0) {
@@ -1575,6 +1582,7 @@ public final class Bttl_800e {
         final GpuCommandPoly cmd = new GpuCommandPoly(4)
           .clut(s1.clutX_10.get(), s1.clutY_12.get())
           .vramPos((s1.tpage_0c.get() & 0b1111) * 64, (s1.tpage_0c.get() & 0b10000) != 0 ? 256 : 0)
+          .rgb(s1.r_14.get(), s1.g_15.get(), s1.b_16.get())
           .pos(0, x + (s5 * cos >> 12) - (s2 * sin >> 12), y + (s5 * sin >> 12) + (s2 * cos >> 12))
           .pos(1, x + (s7 * cos >> 12) - (s2 * sin >> 12), y + (s7 * sin >> 12) + (s2 * cos >> 12))
           .pos(2, x + (s5 * cos >> 12) - (fp * sin >> 12), y + (s5 * sin >> 12) + (fp * cos >> 12))
@@ -1584,7 +1592,7 @@ public final class Bttl_800e {
           .uv(2, s1.u_0e.get(), s1.h_0a.get() + s1.v_0f.get() - 1)
           .uv(3, s1.w_08.get() + s1.u_0e.get() - 1, s1.h_0a.get() + s1.v_0f.get() - 1);
 
-        if((s1.flags_00.get() & 1 << 30) != 0) {
+        if((s1.flags_00.get() & 0x4000_0000) != 0) {
           cmd.translucent(Translucency.of((int)s1.flags_00.get() >>> 28 & 0b11));
         }
 
@@ -2009,6 +2017,7 @@ public final class Bttl_800e {
     return FlowControl.CONTINUE;
   }
 
+  /** Has some relation to rendering of certain effect sprites, like ones from HUD DEFF */
   @Method(0x800e9428L)
   public static void FUN_800e9428(final SpriteMetrics08 metrics, final EffectManagerData6cInner a1, final MATRIX a2) {
     if(a1.flags_00 >= 0) {
@@ -3173,7 +3182,7 @@ public final class Bttl_800e {
     CPU.CTC2(sp0x10.transfer.getX(), 5);
     CPU.CTC2(sp0x10.transfer.getY(), 6);
     CPU.CTC2(sp0x10.transfer.getZ(), 7);
-    Renderer.renderDobj2(s2.ObjTable_0c.top[0], true);
+    Renderer.renderDobj2(s2.ObjTable_0c.top[0], true, 0);
     s2.coord2ArrPtr_04[0].flg--;
   }
 
@@ -3218,7 +3227,7 @@ public final class Bttl_800e {
         CPU.CTC2(ls.transfer.getX(), 5);
         CPU.CTC2(ls.transfer.getY(), 6);
         CPU.CTC2(ls.transfer.getZ(), 7);
-        Renderer.renderDobj2(dobj2, true);
+        Renderer.renderDobj2(dobj2, true, 0);
       }
 
       //LAB_800ec608
@@ -3344,7 +3353,7 @@ public final class Bttl_800e {
         CPU.CTC2(sp0x10.transfer.getX(), 5);
         CPU.CTC2(sp0x10.transfer.getY(), 6);
         CPU.CTC2(sp0x10.transfer.getZ(), 7);
-        Renderer.renderDobj2(s2, true);
+        Renderer.renderDobj2(s2, true, 0);
       }
     }
 

@@ -40,13 +40,15 @@ import static org.lwjgl.opengl.GL30C.glGenerateMipmap;
 import static org.lwjgl.stb.STBImage.stbi_failure_reason;
 import static org.lwjgl.stb.STBImage.stbi_load_from_memory;
 import static org.lwjgl.system.MemoryStack.stackPush;
+import static org.lwjgl.system.MemoryUtil.memFree;
 
 public final class Texture {
   public static Texture create(final Consumer<Builder> callback) {
     final Builder builder = new Builder();
-
     callback.accept(builder);
-    return builder.build();
+    final Texture texture = builder.build();
+    builder.free();
+    return texture;
   }
 
   public static Texture empty(final int w, final int h) {
@@ -158,7 +160,15 @@ public final class Texture {
     private boolean generateMipmaps;
     private final List<MipmapBuilder> mipmaps = new ArrayList<>();
 
+    private final List<Runnable> cleanup = new ArrayList<>();
+
     Builder() {}
+
+    public void free() {
+      for(final Runnable runnable : this.cleanup) {
+        runnable.run();
+      }
+    }
 
     public void png(final Path path) {
       final ByteBuffer imageBuffer;
@@ -179,6 +189,8 @@ public final class Texture {
         }
 
         this.data(data, w.get(0), h.get(0));
+
+        this.cleanup.add(() -> memFree(data));
       }
     }
 

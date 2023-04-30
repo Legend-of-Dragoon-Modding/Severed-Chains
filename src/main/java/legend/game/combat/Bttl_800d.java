@@ -49,6 +49,7 @@ import legend.game.types.Model124;
 import legend.game.types.ModelPartTransforms0c;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
+import org.joml.Math;
 
 import java.util.Arrays;
 
@@ -2079,9 +2080,9 @@ public final class Bttl_800d {
     if(a5 == 0) {
       //LAB_800d7424
       cam._5c = a3;
-      cam._3c = (a0 - cam.vec_20.getX()) / a3;
-      cam._48 = (a1 - cam.vec_20.getY()) / a3;
-      cam._54 = (a2 - cam.vec_20.getZ()) / a3;
+      cam._3c = MathHelper.safeDiv(a0 - cam.vec_20.getX(), a3);
+      cam._48 = MathHelper.safeDiv(a1 - cam.vec_20.getY(), a3);
+      cam._54 = MathHelper.safeDiv(a2 - cam.vec_20.getZ(), a3);
     } else if(a5 == 1) {
       throw new RuntimeException("Undefined s5/s6");
     }
@@ -2883,7 +2884,7 @@ public final class Bttl_800d {
     cam.vec_20.z.add(cam._54);
 
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[cam.bobjIndex_80].innerStruct_00;
-    setRefpoint(bobj.model_148.coord2_14.coord.transfer.getX() + (cam.vec_20.getX() >> 8), bobj.model_148.coord2_14.coord.transfer.getY() + (cam.vec_20.getY() >> 8), bobj.model_148.coord2_14.coord.transfer.getY() + (cam.vec_20.getZ() >> 8));
+    setRefpoint(bobj.model_148.coord2_14.coord.transfer.getX() + (cam.vec_20.getX() >> 8), bobj.model_148.coord2_14.coord.transfer.getY() + (cam.vec_20.getY() >> 8), bobj.model_148.coord2_14.coord.transfer.getZ() + (cam.vec_20.getZ() >> 8));
 
     cam._5c--;
     if(cam._5c <= 0) {
@@ -4513,6 +4514,9 @@ public final class Bttl_800d {
     return model.remainingFrames_9e;
   }
 
+  /**
+   * used renderCtmd
+   */
   @Method(0x800dd89cL)
   public static void FUN_800dd89c(final Model124 model, final int newAttribute) {
     final long v0;
@@ -4562,7 +4566,7 @@ public final class Bttl_800d {
           zShift_1f8003c4.set(2);
           zMax_1f8003cc.set(0xffe);
           zMin = 0xb;
-          Renderer.renderDobj2(s2, false);
+          Renderer.renderDobj2(s2, false, 0x20);
           zShift_1f8003c4.set(oldZShift);
           zMax_1f8003cc.set(oldZMax);
           zMin = oldZMin;
@@ -4856,6 +4860,9 @@ public final class Bttl_800d {
     //LAB_800de3e4
   }
 
+  /**
+   * used renderCtmd
+   */
   @Method(0x800de3f4L)
   public static void FUN_800de3f4(final TmdObjTable1c a0, final EffectManagerData6cInner a1, final MATRIX a2) {
     final int s0 = deffManager_800c693c.flags_20 & 0x4;
@@ -4891,7 +4898,7 @@ public final class Bttl_800d {
       zShift_1f8003c4.set(2);
       zMax_1f8003cc.set(0xffe);
       zMin = 0xb;
-      Renderer.renderDobj2(dobj2, false);
+      Renderer.renderDobj2(dobj2, false, 0x20);
       zShift_1f8003c4.set(oldZShift);
       zMax_1f8003cc.set(oldZMax);
       zMin = oldZMin;
@@ -4904,7 +4911,7 @@ public final class Bttl_800d {
   public static SVECTOR getRotationFromTransforms(final SVECTOR rotOut, final MATRIX transforms) {
     final MATRIX mat = new MATRIX().set(transforms);
     rotOut.setX((short)ratan2(-mat.get(5), mat.get(8)));
-    RotMatrixX(rotOut.getX(), mat);
+    RotMatrixX(-rotOut.getX(), mat);
     rotOut.setY((short)ratan2(mat.get(2), mat.get(8)));
     RotMatrixY(-rotOut.getY(), mat);
     rotOut.setZ((short)ratan2(mat.get(3), mat.get(0)));

@@ -135,6 +135,14 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
   public int itemOrSpellId_52;
   public int guard_54;
 
+  public int _7e;
+  public int _80;
+  public int _82;
+  public int _84;
+  public int _86;
+  public int _88;
+  public int _8a;
+
   public int targetType_94;
   public int _96;
   public int specialEffect_98;
@@ -261,6 +269,14 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
       case 39 -> this.itemOrSpellId_52;
       case 40 -> this.guard_54;
 
+      case 61 -> this._7e;
+      case 62 -> this._80;
+      case 63 -> this._82;
+      case 64 -> this._84;
+      case 65 -> this._86;
+      case 66 -> this._88;
+      case 67 -> this._8a;
+
       case 72 -> this.targetType_94;
       case 73 -> this._96;
       case 74 -> this.specialEffect_98;
@@ -355,6 +371,14 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
 
       case 39 -> this.itemOrSpellId_52 = value;
       case 40 -> this.guard_54 = value;
+
+      case 61 -> this._7e = value;
+      case 62 -> this._80 = value;
+      case 63 -> this._82 = value;
+      case 64 -> this._84 = value;
+      case 65 -> this._86 = value;
+      case 66 -> this._88 = value;
+      case 67 -> this._8a = value;
 
       case 72 -> this.targetType_94 = value;
       case 73 -> this._96 = value;
