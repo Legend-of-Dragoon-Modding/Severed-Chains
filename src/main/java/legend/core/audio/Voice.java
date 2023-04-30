@@ -166,6 +166,7 @@ final class Voice implements AudioStream {
   private static int calculateSampleRate(final int rootKey, final int note, final int pitchBendMultiplier, final double pitchBend, final int cents) {
     final int semitoneOffset;
     final int octaveOffset;
+    final int centsAdjusted = (int)(cents * 6.25f); // Map 16 -> 100
 
     final double pitchBendMulti = Math.pow(2, (pitchBendMultiplier * pitchBend) / 12d);
 
@@ -173,13 +174,13 @@ final class Voice implements AudioStream {
       octaveOffset = ((rootKey - note - 1)) / 12 + 1;
       semitoneOffset = (12 * octaveOffset) - (rootKey - note);
 
-      return (int)((0x1000 >> octaveOffset) * (Offsets.semitone[semitoneOffset] * Offsets.cent[cents] * pitchBendMulti));
+      return (int)((0x1000 >> octaveOffset) * (Offsets.semitone[semitoneOffset] * Offsets.cent[centsAdjusted] * pitchBendMulti));
     }
 
     semitoneOffset = ((note - rootKey) % 12);
     octaveOffset = (note - rootKey) / 12;
 
-    return (int)((0x1000 << octaveOffset) * (Offsets.semitone[semitoneOffset] * Offsets.cent[cents] * pitchBendMulti));
+    return (int)((0x1000 << octaveOffset) * (Offsets.semitone[semitoneOffset] * Offsets.cent[centsAdjusted] * pitchBendMulti));
   }
 
   private static final short[] gaussTable = {
