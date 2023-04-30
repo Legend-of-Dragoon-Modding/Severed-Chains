@@ -394,8 +394,8 @@ public final class Bttl_800c {
 
   public static final ArrayRef<ShortRef> _800c7008 = MEMORY.ref(2, 0x800c7008L, ArrayRef.of(ShortRef.class, 5, 2, ShortRef::new));
 
-  public static final ArrayRef<ShortRef> _800c7014 = MEMORY.ref(2, 0x800c7014L, ArrayRef.of(ShortRef.class, 10, 2, ShortRef::new));
-  public static final ArrayRef<UnsignedShortRef> _800c7028 = MEMORY.ref(2, 0x800c7028L, ArrayRef.of(UnsignedShortRef.class, 10, 2, UnsignedShortRef::new));
+  public static final ArrayRef<ShortRef> digitOffsetXy_800c7014 = MEMORY.ref(2, 0x800c7014L, ArrayRef.of(ShortRef.class, 10, 2, ShortRef::new));
+  public static final ArrayRef<UnsignedShortRef> digitU_800c7028 = MEMORY.ref(2, 0x800c7028L, ArrayRef.of(UnsignedShortRef.class, 10, 2, UnsignedShortRef::new));
   public static final Value _800c703c = MEMORY.ref(4, 0x800c703cL);
 
   public static final ArrayRef<UnsignedShortRef> characterElements_800c706c = MEMORY.ref(2, 0x800c706cL, ArrayRef.of(UnsignedShortRef.class, 10, 2, UnsignedShortRef::new));
