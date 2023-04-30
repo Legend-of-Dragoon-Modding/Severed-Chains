@@ -110,7 +110,7 @@ public class AudioThread implements Runnable {
     alcCloseDevice(this.audioDevice);
   }
 
-  public void stop() {
+  public synchronized void stop() {
     this.running = false;
     this.notify();
   }

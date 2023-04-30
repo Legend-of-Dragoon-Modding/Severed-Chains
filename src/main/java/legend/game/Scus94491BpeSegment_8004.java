@@ -1222,7 +1222,7 @@ public final class Scus94491BpeSegment_8004 {
     }
 
     //LAB_8004ae10
-    playingNote.volume_28 = sssqChannelInfo_800C6680.volume_0e;
+    playingNote.channelVolume_28 = sssqChannelInfo_800C6680.volume_0e;
     voicePtr_800c4ac4.deref().voices[voiceIndex].LEFT.set(calculateNoteVolume(voiceIndex, 0));
     voicePtr_800c4ac4.deref().voices[voiceIndex].RIGHT.set(calculateNoteVolume(voiceIndex, 1));
   }
@@ -1231,7 +1231,7 @@ public final class Scus94491BpeSegment_8004 {
   public static int calculateNoteVolume(final int voiceIndex, final int leftOrRight) {
     final PlayingNote66 playingNote = playingNotes_800c3a40[voiceIndex];
 
-    final short a0 = (short)((playingNote.volume_28 * playingNote.volume_2a * playingNote.volume_2c * playingNote.volume_2e >> 14) * playingNote.volumeLeftRight_30[leftOrRight] >> 7);
+    final short a0 = (short)((playingNote.channelVolume_28 * playingNote.instrumentVolume_2a * playingNote.velocityVolume_2c * playingNote.instrumentLayerVolume_2e >> 14) * playingNote.volumeLeftRight_30[leftOrRight] >> 7);
     if(playingNote._4a == 0) {
       return a0;
     }
@@ -1340,7 +1340,7 @@ public final class Scus94491BpeSegment_8004 {
 
     //LAB_8004bb14
     for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
-      playingNotes_800c3a40[voiceIndex]._4e = 120;
+      playingNotes_800c3a40[voiceIndex].portamentoNote_4e = 120;
     }
   }
 

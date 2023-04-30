@@ -76,6 +76,11 @@ final class AdsrEnvelope implements legend.core.audio.AdsrEnvelope {
     return this.phase == Phase.Off;
   }
 
+  @Override
+  public boolean isAttack() {
+    return this.phase == Phase.Attack;
+  }
+
   int getCurrentLevel() {
     return this.currentLevel;
   }

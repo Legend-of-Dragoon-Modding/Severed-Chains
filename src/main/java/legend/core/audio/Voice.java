@@ -11,12 +11,25 @@ final class Voice implements AudioStream {
   private boolean empty = true;
 
   private MidiChannel channel;
+  private MidiInstrument instrument;
   private MidiInstrumentLayer layer;
   private AdsrEnvelope adsrEnvelope;
   private MidiSoundFontEntry soundFontEntry;
   private int note;
   private double velocity;
   private int sampleRate;
+  private int pitchBendMultiplier;
+  private double volume;
+  private byte[][] breathControls;
+  private boolean isModulation;
+  private int modulation;
+  private int breath;
+  private int playingNote_10;
+  private int playingNote_12;
+  private int playingNote_1c;
+  private int playingNote_42;
+  private int playingNote_4e;
+  private boolean portamento;
 
   private boolean hasSamples;
   private final short[] samples = new short[31];
@@ -43,21 +56,33 @@ final class Voice implements AudioStream {
       return;
     }
 
+    this.variableParameters();
+
     final short sample = this.sampleVoice();
 
     final short adsrValue = this.adsrEnvelope.tick();
 
-    if(this.adsrEnvelope.isFinished()) {
+    final short actualVolume = (short) (adsrValue * this.volume);
+
+    if(!this.adsrEnvelope.isAttack() && actualVolume <= 16) {
+      System.out.printf("Clear [Voice: %d]%n", this.index);
+      this.modulation = 0;
+      this.isModulation = false;
       this.empty = true;
+      this.breathControls = null;
+      this.playingNote_10 = 0;
+      this.playingNote_12 = 0;
+      this.playingNote_1c = 0;
+      this.playingNote_42 = 0;
+      this.playingNote_4e = 0;
+      this.breath = 0;
     }
 
-    final double volume = this.channel.getVolume() * this.layer.getVolume() * this.velocity;
-
-    final short processedSample = (short)(((int)(sample * adsrValue * volume)) >> 15);
+    final short processedSample = (short)(((int)(sample * adsrValue * this.volume)) >> 15);
 
     if(this.sound.isStereo()) {
-      final double leftPan = Offsets.pan[127 - this.layer.getPan()] * Offsets.pan[127 - this.channel.getPan()];
-      final double rightPan = Offsets.pan[this.layer.getPan()] * Offsets.pan[this.channel.getPan()];
+      final double leftPan = Offsets.pan[127 - this.layer.getPan()] * Offsets.pan[127 - this.channel.getPan()] * Offsets.pan[127 - this.instrument.getPan()];
+      final double rightPan = Offsets.pan[this.layer.getPan()] * Offsets.pan[this.channel.getPan()] * Offsets.pan[this.instrument.getPan()];
 
       this.sound.bufferSample((short)(processedSample * leftPan));
       this.sound.bufferSample((short)(processedSample * rightPan));
@@ -110,15 +135,38 @@ final class Voice implements AudioStream {
   }
 
   @Override
-  public void keyOn(final MidiChannel channel, final MidiInstrumentLayer layer, final int note, final int velocity) {
+  public void keyOn(final MidiChannel channel, final MidiInstrument instrument, final MidiInstrumentLayer layer, final int note, final int velocity, final byte[][] breathControls) {
     this.channel = channel;
+    this.instrument = instrument;
     this.layer = layer;
     this.soundFontEntry = layer.getSoundFontEntry();
     this.adsrEnvelope = layer.getAdsrEnvelope();
     this.note = note;
     this.velocity = velocity / 127d;
 
+    if(this.layer.canUseModulation() && this.channel.getModulation() != 0) {
+      this.playingNote_10 = (this.layer.getFlags() & 0x40) != 0 ? this.instrument.get_05() : this.layer.get_0e();
+
+      this.isModulation = true;
+      this.modulation = this.channel.getModulation();
+    } else {
+      this.isModulation = false;
+      this.modulation = 0;
+    }
+
+    this.breathControls = breathControls;
+    this.breath = this.channel.getBreath();
+
+    this.pitchBendMultiplier = layer.isPitchBendMultiplierFromInstrument() ? this.instrument.getPitchBendMultiplier() : layer.getPitchBendMultiplier();
+
+
+    this.playingNote_12 = 0;
+    this.playingNote_1c = 0;
+    this.playingNote_42 = 0;
+    this.playingNote_4e = 120;
+
     this.updateSampleRate();
+    this.updateVolume();
 
     this.empty = false;
   }
@@ -127,13 +175,37 @@ final class Voice implements AudioStream {
   public void keyOff(final int velocity) {
     this.adsrEnvelope.keyOff();
     this.velocity = velocity / 127d;
+
+    this.updateVolume();
   }
 
   @Override
   public void updateSampleRate() {
     if(this.layer != null) {
-      this.sampleRate = calculateSampleRate(this.layer.getRootKey(), this.note, this.layer.getPitchBendMultiplier(), this.channel.getPitchBend(), this.layer.getCents());
+      this.sampleRate = calculateSampleRate(this.layer.getRootKey(), this.note, this.pitchBendMultiplier, this.channel.getPitchBend(), this.layer.getCents());
     }
+  }
+
+  @Override
+  public void updateVolume() {
+    if(this.layer.getLockedVolume() != 0) {
+      this.volume = this.layer.getLockedVolume();
+      return;
+    }
+
+    //TODO velocity should use the volume ramp
+    this.volume = this.channel.getVolume() * this.instrument.getVolume() * this.layer.getVolume() * this.velocity;
+  }
+
+  @Override
+  public void setModulation(final int modulation) {
+    this.isModulation = true;
+    this.modulation = modulation;
+  }
+
+  @Override
+  public void setBreath(int value) {
+    this.breath = value;
   }
 
   void play() {
@@ -163,24 +235,98 @@ final class Voice implements AudioStream {
     return this.empty;
   }
 
-  private static int calculateSampleRate(final int rootKey, final int note, final int pitchBendMultiplier, final double pitchBend, final int cents) {
+  //see FUN_800470fc
+  private void variableParameters() {
+    if(this.empty) {
+      return;
+    }
+
+    if(this.isModulation || this.portamento) { //TODO sequenceData_104
+      int cents = this.layer.getCents();
+      int note = this.note;
+      int rootKey = this.layer.getRootKey();
+      int pitchBend = this.channel.getPitchBend();
+      int pitchBendMultiplier = this.pitchBendMultiplier;
+
+      if(this.isModulation || this.portamento) {
+        //This essentially swaps the offset from note to root key, since note is set to 120 down the line
+        rootKey = 120 + rootKey - note;
+
+        if(this.isModulation) {
+          if((this.breath & 0xfff) != 120) { //TODO  || ticksPerSecond != 60
+            this.playingNote_12 += this.breath & 0xfff;
+          } else {
+            final int var = this.breath & 0xf000;
+            if(var != 0) {
+              this.breath = this.breath & 0xfff | var - 0x1000;
+              this.playingNote_12 += this.breath & 0xfff;
+            } else {
+              this.breath |= 0x6000;
+            }
+          }
+
+          pitchBend = 0x80;
+
+          if(this.breathControls != null && this.breathControls.length > 0) {
+
+            if(this.playingNote_12 >= 0xf0) {
+              this.playingNote_12 = (this.breath & 0xfff) >>> 1;
+            }
+
+            pitchBend = this.breathControls[this.playingNote_10][this.playingNote_12 >>> 2] & 0xff;
+          }
+
+          //Set the note to 120, unless portamento
+          note = this.playingNote_4e;
+
+          //Pitch bend will be overwritten, so it has to be converted into note offset and cents
+          if(this.playingNote_1c == 0) {
+            final int _64ths = (this.channel.getPitchBend() - 64) * this.pitchBendMultiplier;
+            note = note + _64ths / 64;
+            cents = cents + Math.floorMod(_64ths / 4, 16);
+            pitchBendMultiplier = 1;
+          }
+
+          // Here, pitch bend is either 128 or the value from the breath control wave
+          // Since modulation is a single byte, the * just sets it to 1 in the edge case of it being 0xFF, otherwise pitch bend is ignored, which has to be wrong.
+          pitchBend = pitchBend * this.modulation / 255 - ((this.modulation + 1) / 2 - 64);
+        }
+
+        if(this.portamento) {
+          //TODO
+        }
+
+        if(this.playingNote_42 == 1) { //TODO || sequenceData_104
+          //pitch = sequenceData.pitch_0ec;
+        }
+
+        final int pitch = 0x1000;
+
+        this.sampleRate = (pitch * calculateSampleRate(rootKey, note, pitchBendMultiplier, pitchBend, cents)) >> 12;
+      }
+    }
+
+    //TODO playingNote_1a
+  }
+
+  private static int calculateSampleRate(final int rootKey, final int note, final int pitchBendMultiplier, final int pitchBend, final int cents) {
     final int semitoneOffset;
     final int octaveOffset;
-    final int centsAdjusted = (int)(cents * 6.25f); // Map 16 -> 100
+    final int adjustedCents = (int) (cents * 6.25f); //Cents are actually 16ths
 
-    final double pitchBendMulti = Math.pow(2, (pitchBendMultiplier * pitchBend) / 12d);
+    final double pitchBendMulti = Math.pow(2, (pitchBendMultiplier * ((pitchBend - 64) / 64d)) / 12d);
 
     if(note < rootKey) {
       octaveOffset = ((rootKey - note - 1)) / 12 + 1;
       semitoneOffset = (12 * octaveOffset) - (rootKey - note);
 
-      return (int)((0x1000 >> octaveOffset) * (Offsets.semitone[semitoneOffset] * Offsets.cent[centsAdjusted] * pitchBendMulti));
+      return (int)((0x1000 >> octaveOffset) * (Offsets.semitone[semitoneOffset] * Offsets.cent[adjustedCents] * pitchBendMulti));
     }
 
     semitoneOffset = ((note - rootKey) % 12);
     octaveOffset = (note - rootKey) / 12;
 
-    return (int)((0x1000 << octaveOffset) * (Offsets.semitone[semitoneOffset] * Offsets.cent[centsAdjusted] * pitchBendMulti));
+    return (int)((0x1000 << octaveOffset) * (Offsets.semitone[semitoneOffset] * Offsets.cent[adjustedCents] * pitchBendMulti));
   }
 
   private static final short[] gaussTable = {

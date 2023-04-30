@@ -5,4 +5,6 @@ public interface AdsrEnvelope {
   void mute();
   void keyOff();
   boolean isFinished();
+
+  boolean isAttack();
 }

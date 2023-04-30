@@ -6,33 +6,32 @@ import legend.game.unpacker.FileData;
 import java.util.List;
 
 final class Channel implements MidiChannel {
-  final int channelIndex_01;
+  private final int channelIndex_01;
   /** -1 means none */
-  int instrumentIndex_02;
-  int volume_03;
+  private int instrumentIndex_02;
+  private int volume_03;
   /** 0x40 is middle, 0 is left, and 0x7f is right. */
-  int pan_04;
+  private int pan_04;
   // 05-08 is possibly ADSR lo and hi
-  final int modulation_09;
-  double pitchBend_0a;
+  private int modulation_09;
+  private int pitchBend_0a;
   final int _0b;
-  final int breath_0c;
-  final int volume_0e;
+  int breath_0c;
+  int volume_0e;
 
   private final SoundFont soundFont;
 
   Channel(final FileData channelData, final SoundFont soundFont) {
     this.channelIndex_01 = channelData.readByte(0x01);
     this.instrumentIndex_02 = channelData.readByte(0x02);
-    //this.volume_03 = channelData.readByte(0x03);
-    this.volume_03 = 64;
-    this.pan_04 = channelData.readByte(0x04);
-    this.modulation_09 = channelData.readByte(0x09);
-    this.pitchBend_0a = 0;
-    //this.pitchBend_0a = (channelData.readByte(0x0a) - 64) / 64d;
-    this._0b = channelData.readByte(0x0b);
-    this.breath_0c = channelData.readByte(0x0c);
-    this.volume_0e = channelData.readByte(0x0e);
+    this.volume_03 = channelData.readUByte(0x03);
+    this.pan_04 = channelData.readUByte(0x04);
+    this.modulation_09 = channelData.readUByte(0x09);
+    //this.pitchBend_0a = channelData.readUByte(0x0a);
+    this.pitchBend_0a = 64;
+    this._0b = channelData.readUByte(0x0b);
+    this.breath_0c = channelData.readUShort(0x0c);
+    this.volume_0e = channelData.readUByte(0x0e);
 
     this.soundFont = soundFont;
   }
@@ -40,12 +39,12 @@ final class Channel implements MidiChannel {
   @Override
   public double getVolume() {
     //TODO verify volumes
-    return this.volume_03 / 127d;
+    return this.volume_0e / 127d;
   }
 
   void setVolume(final int value) {
     //TODO verify volumes
-    this.volume_03 = value;
+    this.volume_0e = value;
   }
 
   @Override
@@ -58,16 +57,38 @@ final class Channel implements MidiChannel {
   }
 
   @Override
-  public double getPitchBend() {
+  public int getPitchBend() {
     return this.pitchBend_0a;
   }
 
   void setPitchBend(final int value) {
-    this.pitchBend_0a = (value - 64) / 64d;
+    this.pitchBend_0a = value;
   }
 
   void setProgram(final int value) {
     this.instrumentIndex_02 = value;
+  }
+
+  @Override
+  public int getModulation() {
+    return this.modulation_09;
+  }
+
+  void setModulation(final int value) {
+    this.modulation_09 = value;
+  }
+
+  @Override
+  public int getBreath() {
+    return this.breath_0c;
+  }
+
+  void setBreath(final int value) {
+    this.breath_0c = value;
+  }
+
+  Instrument getInstrument() {
+    return this.soundFont.getInstrument(this.instrumentIndex_02);
   }
 
   List<InstrumentLayer> getLayers(final int note) {

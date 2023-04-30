@@ -10,7 +10,7 @@ public class PlayingNote66 {
   public int _0a;
   public int _0c;
   public int instrumentIndex_0e;
-  public int _10;
+  public int breathControlListIndex_10;
   public int _12;
   public boolean modulationEnabled_14;
   public int modulation_16;
@@ -22,10 +22,10 @@ public class PlayingNote66 {
   public PlayableSound0c playableSound_22;
   public int patchIndex_24;
   public int sequenceIndex_26;
-  public int volume_28;
-  public int volume_2a;
-  public int volume_2c;
-  public int volume_2e;
+  public int channelVolume_28;
+  public int instrumentVolume_2a;
+  public int velocityVolume_2c;
+  public int instrumentLayerVolume_2e;
   public int[] volumeLeftRight_30 = new int[2];
   public int volume_34;
   public int cents_36;
@@ -41,8 +41,8 @@ public class PlayingNote66 {
   public boolean panChanging_48;
   public int _4a;
   public int pan_4c;
-  /** Maybe target note? */
-  public int _4e;
+  /** Portamento Note, Default value is 120 */
+  public int portamentoNote_4e;
   public int newVolume_50;
   public int previousVolume_52;
   public int remainingVolumeChangeTime_54;
@@ -65,7 +65,7 @@ public class PlayingNote66 {
     this._0a = 0;
     this._0c = 0;
     this.instrumentIndex_0e = 0;
-    this._10 = 0;
+    this.breathControlListIndex_10 = 0;
     this._12 = 0;
     this.modulationEnabled_14 = false;
     this.modulation_16 = 0;
@@ -77,10 +77,10 @@ public class PlayingNote66 {
     this.playableSound_22 = null;
     this.patchIndex_24 = 0;
     this.sequenceIndex_26 = 0;
-    this.volume_28 = 0;
-    this.volume_2a = 0;
-    this.volume_2c = 0;
-    this.volume_2e = 0;
+    this.channelVolume_28 = 0;
+    this.instrumentVolume_2a = 0;
+    this.velocityVolume_2c = 0;
+    this.instrumentLayerVolume_2e = 0;
     this.volumeLeftRight_30[0] = 0;
     this.volumeLeftRight_30[1] = 0;
     this.volume_34 = 0;
@@ -96,7 +96,7 @@ public class PlayingNote66 {
     this.panChanging_48 = false;
     this._4a = 0;
     this.pan_4c = 0;
-    this._4e = 0;
+    this.portamentoNote_4e = 0;
     this.newVolume_50 = 0;
     this.previousVolume_52 = 0;
     this.remainingVolumeChangeTime_54 = 0;

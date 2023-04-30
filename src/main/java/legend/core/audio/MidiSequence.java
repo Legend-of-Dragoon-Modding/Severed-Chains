@@ -2,7 +2,7 @@ package legend.core.audio;
 
 public interface MidiSequence {
 
-  public void tick();
+  void tick();
 
-  public void loadVoices(AudioStream[] audioStreams);
+  void loadVoices(AudioStream[] audioStreams);
 }
