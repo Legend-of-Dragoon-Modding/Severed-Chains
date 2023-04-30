@@ -4028,9 +4028,23 @@ public final class Scus94491BpeSegment {
     //LAB_8001e288
   }
 
+  /**
+   * <ul>
+   *   <li>0 - menu sounds</li>
+   *   <li>1 - players</li>
+   *   <li>2 - dragoon/spells/items</li>
+   *   <li>3 - monsters</li>
+   *   <li>4 - submap sounds</li>
+   *   <li>5 - ?</li>
+   *   <li>6 - monster sounds</li>
+   *   <li>7 - player sounds</li>
+   *   <li>8 - music</li>
+   *   <li>9 - world map sounds</li>
+   * </ul>
+   */
   @Method(0x8001e29cL)
-  public static void unloadSoundFile(final int fileIndex) {
-    switch(fileIndex) {
+  public static void unloadSoundFile(final int soundType) {
+    switch(soundType) {
       case 0 -> {
         if(soundFiles_800bcf80[0].used_00) {
           sssqUnloadPlayableSound(soundFiles_800bcf80[0].playableSound_10);
@@ -4274,15 +4288,15 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001f070L)
-  public static FlowControl FUN_8001f070(final RunningScript<?> script) {
+  public static FlowControl scriptLoadMonsterAttackSounds(final RunningScript<?> script) {
     loadedDrgnFiles_800bcf78.oru(0x20L);
     unloadSoundFile(6);
-    loadDrgnDir(0, 1841 + script.params_20[0].get(), Scus94491BpeSegment::FUN_8001f0dc);
+    loadDrgnDir(0, 1841 + script.params_20[0].get(), Scus94491BpeSegment::monsterAttackSoundsLoaded);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x8001f0dcL)
-  public static void FUN_8001f0dc(final List<FileData> files) {
+  public static void monsterAttackSoundsLoaded(final List<FileData> files) {
     final SoundFile sound = soundFiles_800bcf80[10];
     sound.used_00 = true;
 
@@ -4297,15 +4311,15 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001f250L)
-  public static FlowControl FUN_8001f250(final RunningScript<?> script) {
+  public static FlowControl scriptLoadPlayerAttackSounds(final RunningScript<?> script) {
     loadedDrgnFiles_800bcf78.oru(0x1_0000L);
     unloadSoundFile(7);
-    loadDrgnDir(0, 1897 + script.params_20[0].get(), Scus94491BpeSegment::FUN_8001f2c0);
+    loadDrgnDir(0, 1897 + script.params_20[0].get(), Scus94491BpeSegment::playerAttackSoundsLoaded);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x8001f2c0L)
-  public static void FUN_8001f2c0(final List<FileData> files) {
+  public static void playerAttackSoundsLoaded(final List<FileData> files) {
     final SoundFile sound = soundFiles_800bcf80[10];
     sound.used_00 = true;
 

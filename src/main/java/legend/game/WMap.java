@@ -674,7 +674,7 @@ public class WMap {
   public static void FUN_800ccbe0() {
     setWidthAndFlags(320);
     vsyncMode_8007a3b8.set(3);
-    unloadSoundFile((int)0x9L);
+    unloadSoundFile(9);
     FUN_8001f708(gameState_800babc8.chapterIndex_98, 0);
     pregameLoadingStage_800bb10c.set(1);
   }

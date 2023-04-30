@@ -295,7 +295,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[226] = Scus94491BpeSegment::FUN_8001e920;
     scriptSubFunctions_8004e29c[227] = Scus94491BpeSegment::FUN_8001eb30;
     scriptSubFunctions_8004e29c[228] = Scus94491BpeSegment::FUN_8001eccc;
-    scriptSubFunctions_8004e29c[229] = Scus94491BpeSegment::FUN_8001f070;
+    scriptSubFunctions_8004e29c[229] = Scus94491BpeSegment::scriptLoadMonsterAttackSounds;
     scriptSubFunctions_8004e29c[230] = Scus94491BpeSegment::scriptLoadMusicPackage;
     scriptSubFunctions_8004e29c[231] = Scus94491BpeSegment::FUN_8001fe28;
     scriptSubFunctions_8004e29c[232] = Scus94491BpeSegment::FUN_8001ffdc;
@@ -635,7 +635,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[712] = Scus94491BpeSegment::scriptPlayCombatantSound;
     scriptSubFunctions_8004e29c[713] = Scus94491BpeSegment::FUN_8001acd8;
     scriptSubFunctions_8004e29c[714] = Scus94491BpeSegment_8002::FUN_80020060;
-    scriptSubFunctions_8004e29c[715] = Scus94491BpeSegment::FUN_8001f250;
+    scriptSubFunctions_8004e29c[715] = Scus94491BpeSegment::scriptLoadPlayerAttackSounds;
     scriptSubFunctions_8004e29c[716] = Scus94491BpeSegment_8002::FUN_800203f0;
     scriptSubFunctions_8004e29c[717] = Scus94491BpeSegment::FUN_8001f674;
     scriptSubFunctions_8004e29c[718] = Scus94491BpeSegment::FUN_8001f560;
