@@ -123,7 +123,7 @@ public final class SoundFactory {
 
       for(int i = upperBound; i >= 0; i--) {
         final int startOffset = file.readUShort(2 + i * 2);
-        breathControls[i] = file.slice(startOffset, nextOffset - startOffset).data();
+        breathControls[i] = file.slice(startOffset, nextOffset - startOffset).getBytes();
 
         nextOffset = startOffset;
       }

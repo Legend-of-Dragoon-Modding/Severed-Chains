@@ -10,7 +10,7 @@ final class Channel {
   private int presetIndex;
 
   //TODO load this from channelInfo
-  private double pitchBend;
+  private int pitchBend;
   private double modulationBend;
   private double volume = 1;
   private int pan = 64;
@@ -30,12 +30,12 @@ final class Channel {
     this.presetIndex = presetIndex;
   }
 
-  double getPitchBend() {
+  int getPitchBend() {
     return this.pitchBend;
   }
 
   void setPitchBend(final int value) {
-    this.pitchBend = (value - 64) / 64d;
+    this.pitchBend = value;
   }
 
   double getModulation() {

@@ -114,7 +114,7 @@ final class BackgroundMusic implements MidiSequence {
   public void setBreathControl(final int channelIndex, final int value) {
     System.out.printf("Control Change Channel: %d Breath %d%n", channelIndex, value);
 
-    final int breath = 24 / (60 - value * 58 / 127);
+    final int breath = 240 / (60 - value * 58 / 127);
 
     final Channel channel = this.sssq.getChannel(channelIndex);
     channel.setBreath(breath);
@@ -129,7 +129,7 @@ final class BackgroundMusic implements MidiSequence {
   public void changeVolume(final int channelIndex, final int value) {
     System.out.printf("Control Change Channel: %d Volume: %d%n", channelIndex, value);
 
-    final Channel channel = sssq.getChannel(channelIndex);
+    final Channel channel = this.sssq.getChannel(channelIndex);
     channel.setVolume(value);
 
     for(final AudioStream audioStream : this.audioStreams) {

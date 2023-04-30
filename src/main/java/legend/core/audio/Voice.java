@@ -147,8 +147,8 @@ final class Voice implements AudioStream {
     if(this.layer.canUseModulation() && this.channel.getModulation() != 0) {
       this.playingNote_10 = (this.layer.getFlags() & 0x40) != 0 ? this.instrument.get_05() : this.layer.get_0e();
 
-      //this.isModulation = true;
-      //this.modulation = this.channel.getModulation();
+      this.isModulation = true;
+      this.modulation = this.channel.getModulation();
     } else {
       this.isModulation = false;
       this.modulation = 0;
@@ -199,8 +199,8 @@ final class Voice implements AudioStream {
 
   @Override
   public void setModulation(final int modulation) {
-    //this.isModulation = true;
-    //this.modulation = modulation;
+    this.isModulation = true;
+    this.modulation = modulation;
   }
 
   @Override
@@ -273,7 +273,7 @@ final class Voice implements AudioStream {
               this.playingNote_12 = (this.breath & 0xfff) >>> 1;
             }
 
-            pitchBend = this.breathControls[this.playingNote_10][this.playingNote_12 >>> 2];
+            pitchBend = this.breathControls[this.playingNote_10][this.playingNote_12 >>> 2] & 0xff;
           }
 
           //Set the note to 120, unless portamento
@@ -283,13 +283,13 @@ final class Voice implements AudioStream {
           if(this.playingNote_1c == 0) {
             final int _64ths = (this.channel.getPitchBend() - 64) * this.pitchBendMultiplier;
             note = note + _64ths / 64;
-            //cents = cents + Math.floorMod(_64ths / 4, 16);
+            cents = cents + Math.floorMod(_64ths / 4, 16);
             pitchBendMultiplier = 1;
           }
 
           // Here, pitch bend is either 128 or the value from the breath control wave
           // Since modulation is a single byte, the * just sets it to 1 in the edge case of it being 0xFF, otherwise pitch bend is ignored, which has to be wrong.
-          pitchBend = (pitchBend * this.modulation) / 255 - ((this.modulation + 1) / 2 - 64);
+          pitchBend = pitchBend * this.modulation / 255 - ((this.modulation + 1) / 2 - 64);
         }
 
         if(this.portamento) {
