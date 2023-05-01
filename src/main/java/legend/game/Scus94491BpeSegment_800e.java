@@ -38,27 +38,23 @@ import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.loadBasicUiTexturesAndSomethingElse;
 import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
 import static legend.game.Scus94491BpeSegment_8002.prepareObjTable2;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003c5e0;
 import static legend.game.Scus94491BpeSegment_8003.GetTPage;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.InitGeom;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.ResetGraph;
-import static legend.game.Scus94491BpeSegment_8003.SetGraphDebug;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
+import static legend.game.Scus94491BpeSegment_8003.setDrawOffset;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
-import static legend.game.Scus94491BpeSegment_8004._8004dd30;
 import static legend.game.Scus94491BpeSegment_8004.enableAudioSource;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndexOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8004.setCdVolume;
-import static legend.game.Scus94491BpeSegment_8007._8007a3a8;
+import static legend.game.Scus94491BpeSegment_8007.clearRed_8007a3a8;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
-import static legend.game.Scus94491BpeSegment_800b._800babc0;
-import static legend.game.Scus94491BpeSegment_800b._800bb104;
+import static legend.game.Scus94491BpeSegment_800b.clearBlue_800babc0;
+import static legend.game.Scus94491BpeSegment_800b.clearGreen_800bb104;
 import static legend.game.Scus94491BpeSegment_800b._800bb228;
 import static legend.game.Scus94491BpeSegment_800b._800bb348;
-import static legend.game.Scus94491BpeSegment_800b._800bdb90;
-import static legend.game.Scus94491BpeSegment_800b._800bdc24;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
 import static legend.game.Scus94491BpeSegment_800b._800bf0d0;
 import static legend.game.Scus94491BpeSegment_800b.afterFmvLoadingStage_800bf0ec;
@@ -85,8 +81,7 @@ public final class Scus94491BpeSegment_800e {
 
   @Method(0x800e5d64L) //TODO can rename most of these functions
   public static void gameInit() {
-    ResetGraph(0);
-    SetGraphDebug(2);
+    ResetGraph();
 
     orderingTableBits_1f8003c0.set(14);
     zShift_1f8003c4.set(0);
@@ -94,11 +89,11 @@ public final class Scus94491BpeSegment_800e {
     zMax_1f8003cc.set(0x3ffe);
     GPU.updateOrderingTableSize(orderingTableSize_1f8003c8.get());
 
-    FUN_8003c5e0();
+    setDrawOffset();
 
-    _8007a3a8.set(0);
-    _800bb104.set(0);
-    _800babc0.set(0);
+    clearRed_8007a3a8.set(0);
+    clearGreen_800bb104.set(0);
+    clearBlue_800babc0.set(0);
 
     InitGeom();
     setProjectionPlaneDistance(640);
@@ -145,7 +140,6 @@ public final class Scus94491BpeSegment_800e {
     loadBasicUiTexturesAndSomethingElse();
 
     //LAB_800e6040
-    _8004dd30.setu(0);
     fmvIndex_800bf0dc.setu(0);
     afterFmvLoadingStage_800bf0ec.set(2);
   }
@@ -271,8 +265,6 @@ public final class Scus94491BpeSegment_800e {
 
   @Method(0x800e6d60L)
   public static void FUN_800e6d60() {
-    _800bdb90.setu(0);
-    _800bdc24.setu(0);
     renderablePtr_800bdc5c = null;
   }
 

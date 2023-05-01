@@ -723,9 +723,9 @@ public class Gpu {
     final int bias1 = isTopLeft(vx2, vy2, vx0, vy0) ? 0 : -1;
     final int bias2 = isTopLeft(vx0, vy0, vx1, vy1) ? 0 : -1;
 
-    int w0_row = orient2d(vx1, vy1, vx2, vy2, minX, minY);
-    int w1_row = orient2d(vx2, vy2, vx0, vy0, minX, minY);
-    int w2_row = orient2d(vx0, vy0, vx1, vy1, minX, minY);
+    int w0_row = orient2d(vx1, vy1, vx2, vy2, minX, minY) + bias0;
+    int w1_row = orient2d(vx2, vy2, vx0, vy0, minX, minY) + bias1;
+    int w2_row = orient2d(vx0, vy0, vx1, vy1, minX, minY) + bias2;
 
     // Rasterize
     for(int y = minY; y < maxY; y++) {
@@ -736,7 +736,7 @@ public class Gpu {
 
       for(int x = minX; x < maxX; x++) {
         // If p is on or inside all edges, render pixel
-        if((w0 + bias0 | w1 + bias1 | w2 + bias2) >= 0) {
+        if((w0 | w1 | w2) >= 0) {
           // Adjustments per triangle instead of per pixel can be done at area level
           // but it still has small off-by-1 error appreciable on some textured quads
           // I assume it could be handled recalculating AXX and BXX offsets but the math is beyond my scope
@@ -754,12 +754,12 @@ public class Gpu {
           int colour = c0;
 
           if(isShaded) {
-            colour = this.getShadedColor(w0, w1, w2, c0, c1, c2, area);
+            colour = this.getShadedColor(w0 - bias0, w1 - bias1, w2 - bias2, c0, c1, c2, area);
           }
 
           if(isTextured) {
-            final int texelX = interpolateCoords(w0, w1, w2, tu0, tu1, tu2, area);
-            final int texelY = interpolateCoords(w0, w1, w2, tv0, tv1, tv2, area);
+            final int texelX = interpolateCoords(w0 - bias0, w1 - bias1, w2 - bias2, tu0, tu1, tu2, area);
+            final int texelY = interpolateCoords(w0 - bias0, w1 - bias1, w2 - bias2, tv0, tv1, tv2, area);
 
             int texel = this.getTexel(texelX, texelY, clutX, clutY, textureBaseX, textureBaseY, bpp);
 
@@ -951,7 +951,7 @@ public class Gpu {
     /**
      * Bits 17-18 - Horizontal resolution 1
      */
-    public HORIZONTAL_RESOLUTION horizontalResolution = HORIZONTAL_RESOLUTION._256;
+    public HORIZONTAL_RESOLUTION horizontalResolution = HORIZONTAL_RESOLUTION._320;
   }
 
   public enum DRAW_PIXELS {
@@ -960,11 +960,8 @@ public class Gpu {
   }
 
   public enum HORIZONTAL_RESOLUTION {
-    _256(256),
     _368(368),
     _320(320),
-    _512(512),
-    _640(640),
     ;
 
     public final int res;

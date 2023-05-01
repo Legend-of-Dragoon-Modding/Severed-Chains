@@ -1,6 +1,5 @@
 package legend.game;
 
-import legend.game.modding.coremod.CoreMod;
 import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
@@ -32,6 +31,7 @@ import legend.game.input.Input;
 import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.TextColour;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.submap.EncounterRateMode;
 import legend.game.tim.Tim;
 import legend.game.tmd.Renderer;
@@ -128,7 +128,6 @@ import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTransp
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
 import static legend.game.Scus94491BpeSegment_8003.perspectiveTransformTriple;
-import static legend.game.Scus94491BpeSegment_8003.setLightMode;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
 import static legend.game.Scus94491BpeSegment_8004.FUN_80040e40;
@@ -139,11 +138,11 @@ import static legend.game.Scus94491BpeSegment_8005._80052c6c;
 import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
-import static legend.game.Scus94491BpeSegment_8007._8007a3a8;
+import static legend.game.Scus94491BpeSegment_8007.clearRed_8007a3a8;
 import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
-import static legend.game.Scus94491BpeSegment_800b._800babc0;
-import static legend.game.Scus94491BpeSegment_800b._800bb104;
+import static legend.game.Scus94491BpeSegment_800b.clearBlue_800babc0;
+import static legend.game.Scus94491BpeSegment_800b.clearGreen_800bb104;
 import static legend.game.Scus94491BpeSegment_800b._800bee90;
 import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.continentIndex_800bf0b0;
@@ -1913,9 +1912,9 @@ public class WMap {
   public static void FUN_800d1914() {
     final WMapStruct19c0 v0 = _800c66b0;
 
-    _8007a3a8.set(0);
-    _800bb104.set(0);
-    _800babc0.set(0);
+    clearRed_8007a3a8.set(0);
+    clearGreen_800bb104.set(0);
+    clearBlue_800babc0.set(0);
 
     v0._154[0].index_00 = -1;
     v0._196c = 0;
@@ -1944,7 +1943,6 @@ public class WMap {
     }
 
     //LAB_800d1c88
-    setLightMode(0);
     v0.ambientLight_14c.set((short)0x600, (short)0x600, (short)0x600);
     GsSetAmbient(v0.ambientLight_14c.getX(), v0.ambientLight_14c.getY(), v0.ambientLight_14c.getZ());
     v0._88 = 0;

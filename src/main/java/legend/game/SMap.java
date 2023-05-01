@@ -1,6 +1,5 @@
 package legend.game;
 
-import legend.game.modding.coremod.CoreMod;
 import legend.core.Config;
 import legend.core.IoHelper;
 import legend.core.MathHelper;
@@ -39,6 +38,7 @@ import legend.game.fmv.Fmv;
 import legend.game.input.Input;
 import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.Param;
 import legend.game.scripting.RunningScript;
@@ -191,7 +191,6 @@ import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrix_Zyx;
-import static legend.game.Scus94491BpeSegment_8004._8004dd30;
 import static legend.game.Scus94491BpeSegment_8004.diskNum_8004ddc0;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndexOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
@@ -208,17 +207,16 @@ import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c3c;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
-import static legend.game.Scus94491BpeSegment_8007._8007a3a8;
+import static legend.game.Scus94491BpeSegment_8007.clearRed_8007a3a8;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
-import static legend.game.Scus94491BpeSegment_800b._800babc0;
-import static legend.game.Scus94491BpeSegment_800b._800bb104;
+import static legend.game.Scus94491BpeSegment_800b.clearBlue_800babc0;
+import static legend.game.Scus94491BpeSegment_800b.clearGreen_800bb104;
 import static legend.game.Scus94491BpeSegment_800b._800bb168;
 import static legend.game.Scus94491BpeSegment_800b._800bc05c;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b0;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b4;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b8;
 import static legend.game.Scus94491BpeSegment_800b._800bda08;
-import static legend.game.Scus94491BpeSegment_800b.savedGameSelected_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b._800bee90;
 import static legend.game.Scus94491BpeSegment_800b._800bee94;
 import static legend.game.Scus94491BpeSegment_800b._800bee98;
@@ -238,6 +236,7 @@ import static legend.game.Scus94491BpeSegment_800b.musicLoaded_800bd782;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.projectionPlaneDistance_800bd810;
 import static legend.game.Scus94491BpeSegment_800b.rview2_800bd7e8;
+import static legend.game.Scus94491BpeSegment_800b.savedGameSelected_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.screenOffsetX_800bed50;
 import static legend.game.Scus94491BpeSegment_800b.screenOffsetY_800bed54;
 import static legend.game.Scus94491BpeSegment_800b.scriptEffect_800bb140;
@@ -654,10 +653,9 @@ public final class SMap {
 
   @Method(0x800d93dcL)
   public static int loadDiskSwapScreen() {
-    _800babc0.set(0);
-    _800bb104.set(0);
-    _8007a3a8.set(0);
-    _8004dd30.setu(0x1L);
+    clearBlue_800babc0.set(0);
+    clearGreen_800bb104.set(0);
+    clearRed_8007a3a8.set(0);
     setMainVolume(0, 0);
     vsyncMode_8007a3b8.set(1);
     return 1;
@@ -672,8 +670,6 @@ public final class SMap {
     FUN_80019610();
     loadMenuSounds();
     sssqFadeIn(0x3c, 0x7f);
-
-    _8004dd30.setu(0);
 
     //LAB_800d9a6c
     return 2;
