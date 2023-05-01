@@ -6,6 +6,7 @@ final class Voice implements AudioStream {
   public final int index;
   private final BufferedSound sound;
   private final VoiceCounter counter = new VoiceCounter();
+  private final Voice previousVoice;
 
 
   private boolean empty = true;
@@ -30,13 +31,15 @@ final class Voice implements AudioStream {
   private int playingNote_42;
   private int playingNote_4e;
   private boolean portamento;
+  private short lastSample;
 
   private boolean hasSamples;
   private final short[] samples = new short[31];
 
-  Voice(final int index, final int bufferSize, final boolean stereo) {
+  Voice(final int index, final int bufferSize, final boolean stereo, final Voice previousVoice) {
     this.index = index;
     this.sound = new BufferedSound(bufferSize, stereo);
+    this.previousVoice = previousVoice;
   }
 
   void tick(final boolean stereo) {
@@ -78,7 +81,9 @@ final class Voice implements AudioStream {
       this.breath = 0;
     }
 
-    final short processedSample = (short)(((int)(sample * adsrValue * this.volume)) >> 15);
+    this.lastSample = (short)((sample * adsrValue) >>> 15);
+
+    final short processedSample = (short)(this.lastSample * this.volume);
 
     if(this.sound.isStereo()) {
       final double leftPan = Offsets.pan[127 - this.layer.getPan()] * Offsets.pan[127 - this.channel.getPan()] * Offsets.pan[127 - this.instrument.getPan()];
@@ -113,15 +118,17 @@ final class Voice implements AudioStream {
 
     int interpolated;
 
-    interpolated  = gaussTable[0x0FF - interpolationIndex] * this.samples[sampleIndex];
-    interpolated += gaussTable[0x1FF - interpolationIndex] * this.samples[sampleIndex + 1];
-    interpolated += gaussTable[0x100 + interpolationIndex] * this.samples[sampleIndex + 2];
-    interpolated += gaussTable[interpolationIndex] * this.samples[sampleIndex + 3];
-    interpolated >>= 15;
+    interpolated  = gaussTable[0x0FF - interpolationIndex] * this.samples[sampleIndex] >> 15;
+    interpolated += gaussTable[0x1FF - interpolationIndex] * this.samples[sampleIndex + 1] >> 15;
+    interpolated += gaussTable[0x100 + interpolationIndex] * this.samples[sampleIndex + 2] >> 15;
+    interpolated += gaussTable[interpolationIndex] * this.samples[sampleIndex + 3] >> 15;
 
     int step = this.sampleRate;
-
-    //TODO voice modulation (see Spu sampleVoice)
+    if(this.index > 0 && this.isModulation) {
+      final int factor = this.previousVoice.lastSample + 0x8000;
+      //step = (step * factor) >> 15;
+      //step &= 0xffff;
+    }
 
     if(step > 0x3fff) {
       step = 0x4000;
@@ -204,7 +211,7 @@ final class Voice implements AudioStream {
   }
 
   @Override
-  public void setBreath(int value) {
+  public void setBreath(final int value) {
     this.breath = value;
   }
 

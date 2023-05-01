@@ -66,8 +66,11 @@ public class AudioThread implements Runnable {
     Offsets.genOffsets();
 
     this.voicePool = new Voice[voiceCount];
-    for(int voice = 0; voice < this.voicePool.length; voice++) {
-      this.voicePool[voice] = new Voice(voice, this.samplesPerTick, stereo);
+
+    this.voicePool[0] = new Voice(0, this.samplesPerTick, stereo, null);
+
+    for(int voice = 1; voice < this.voicePool.length; voice++) {
+      this.voicePool[voice] = new Voice(voice, this.samplesPerTick, stereo, this.voicePool[voice - 1]);
     }
   }
 

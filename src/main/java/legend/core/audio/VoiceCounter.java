@@ -13,7 +13,7 @@ final class VoiceCounter {
   }
 
   int getInterpolationIndex() {
-    return this.counter >> 3 & 0xff;
+    return this.counter >> 4 & 0xff;
   }
 
   /**

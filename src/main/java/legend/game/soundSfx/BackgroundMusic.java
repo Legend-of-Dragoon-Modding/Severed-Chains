@@ -75,7 +75,7 @@ final class BackgroundMusic implements MidiSequence {
     for(int voice = 0; voice < this.audioStreams.length; voice++) {
       final AudioStream stream = this.audioStreams[voice];
       if(stream.getChannel() == this.sssq.getChannel(channelIndex) && stream.getNote() == note) {
-        System.out.printf("Key Off Channel: %d [Voice: %d]%n", channelIndex, voice);
+        System.out.printf("Key Off Channel: %d [Voice: %d] Note:%d%n", channelIndex, voice, note);
         stream.keyOff(velocity);
       }
     }
