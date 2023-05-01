@@ -3668,7 +3668,7 @@ public final class SEffe {
       MEMORY.ref(1, s7).offset(0x1cL).setu(0);
       _8011a014.offset(hitNum).offset(1, 0x0L).setu(0);
       v0 = FUN_801061bc(s5.charSlot_276, hitNum, 1, a3) & 0xffL;
-      s6 = s6 + v0;
+      s6 += v0;
       MEMORY.ref(2, s7).offset(0xaL).setu(v0);
       v0 = FUN_801061bc(s5.charSlot_276, hitNum, 2, a3) & 0xffL;
       MEMORY.ref(2, s7).offset(0xcL).setu(v0);
@@ -3697,10 +3697,9 @@ public final class SEffe {
         a3_0 = a3_0 + 0xeL;
       }
 
-      a3_0 = a3_0 - 0xeL;
-
       //LAB_80106634
       for(int i = 0; i < 3; i++) {
+        a3_0 = a3_0 - 0xeL;
         MEMORY.ref(2, a3_0).offset(0x8L).setu(0x14L - i * 0x2L);
         MEMORY.ref(1, a3_0).offset(0x0L).setu(0x1L);
         MEMORY.ref(2, a3_0).offset(0x2L).setu(0x200L);
@@ -3716,9 +3715,7 @@ public final class SEffe {
           //LAB_80106680
           MEMORY.ref(1, a3_0).offset(0xdL).setu(0xffL);
         }
-
         //LAB_80106684
-        a3_0 = a3_0 - 0xeL;
       }
 
       MEMORY.ref(4, s7).offset(0x14L).setu(a3_0);
@@ -3732,9 +3729,9 @@ public final class SEffe {
     FUN_80105f98(a2.scriptIndex_04.get(), sp0x10, 0x1L);
 
     final int a0_0 = (int)MEMORY.ref(4, a2._40.get()).offset(0x10L).getSigned();
-    a2.vec_20.setX(sp0x10.getX() - a2.vec_10.getX() / a0_0);
-    a2.vec_20.setY(sp0x10.getY() - a2.vec_10.getY() / a0_0);
-    a2.vec_20.setZ(sp0x10.getZ() - a2.vec_10.getZ() / a0_0);
+    a2.vec_20.setX((sp0x10.getX() - a2.vec_10.getX()) / a0_0);
+    a2.vec_20.setY((sp0x10.getY() - a2.vec_10.getY()) / a0_0);
+    a2.vec_20.setZ((sp0x10.getZ() - a2.vec_10.getZ()) / a0_0);
   }
 
   @Method(0x80106774L)
@@ -3794,15 +3791,15 @@ public final class SEffe {
 
         final GpuCommandPoly cmd = new GpuCommandPoly(4);
 
-        if(a2 == 1) {
+        if(a2 == 1) {  // Success
           cmd.monochrome(0xff);
           //LAB_80106918
-        } else if(a2 != -2) {
+        } else if(a2 != -2) {  // Too early
           //LAB_80106988
           cmd.monochrome(0x30);
-        } else if(MEMORY.ref(1, a1).offset(0x1cL).getSigned() != 0) {
+        } else if(MEMORY.ref(1, a1).offset(0x1cL).getSigned() != 0) {  // Counter-attack too late
           cmd.rgb((int)MEMORY.ref(1, v0).offset(0x12L).get() * 3, (int)MEMORY.ref(1, v0).offset(0x13L).get(), ((int)MEMORY.ref(1, v0).offset(0x14L).get() - 1) * 8);
-        } else {
+        } else {  // Too late
           //LAB_80106964
           cmd.rgb((int)MEMORY.ref(1, v0).offset(0x12L).get(), (int)MEMORY.ref(1, v0).offset(0x13L).get(), (int)MEMORY.ref(1, v0).offset(0x14L).get());
         }
@@ -3822,7 +3819,7 @@ public final class SEffe {
   }
 
   @Method(0x80106ac4L)
-  public static void renderRotatedSquare(final long a0, final int angle, final int a2) {
+  public static void renderRotatedSquareShadow(final long a0, final int angle, final int a2) {
     final int s2 = angle + 0x400;
     final int s0 = a2 - 1;
     final int s1 = a2 - 11;
@@ -3899,11 +3896,12 @@ public final class SEffe {
             sp24 = sp1c;
           }
 
+          // Renders rotating shadow
           if(MEMORY.ref(1, s3).offset(0xbL).get() == 0) {
-            renderRotatedSquare(a3, (int)MEMORY.ref(2, s3).offset(0x0L).get() + s4        , s2);
-            renderRotatedSquare(a3, (int)MEMORY.ref(2, s3).offset(0x0L).get() + s4 + 0x400, s2);
-            renderRotatedSquare(a3, (int)MEMORY.ref(2, s3).offset(0x0L).get() + s4 + 0x800, s2);
-            renderRotatedSquare(a3, (int)MEMORY.ref(2, s3).offset(0x0L).get() + s4 + 0xc00, s2);
+            renderRotatedSquareShadow(a3, (int)MEMORY.ref(2, s3).offset(0x0L).get() + s4, s2);
+            renderRotatedSquareShadow(a3, (int)MEMORY.ref(2, s3).offset(0x0L).get() + s4 + 0x400, s2);
+            renderRotatedSquareShadow(a3, (int)MEMORY.ref(2, s3).offset(0x0L).get() + s4 + 0x800, s2);
+            renderRotatedSquareShadow(a3, (int)MEMORY.ref(2, s3).offset(0x0L).get() + s4 + 0xc00, s2);
           }
         }
       }
