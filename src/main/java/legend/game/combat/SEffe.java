@@ -3688,14 +3688,14 @@ public final class SEffe {
       //LAB_8010652c
       int val = 16;
       for(int i = 0; i < 17; i++) {
-        squareArray.get(i)._08.set((18 - val) * 10);
+        squareArray.get(i)._08.set((short)((18 - val) * 10));
         squareArray.get(i)._00.set(1);
         //LAB_8010656c
         //LAB_80106574
-        squareArray.get(i)._02.set((16 - val) * 0x80 + 0x200);
+        squareArray.get(i)._02.set((short)((16 - val) * 0x80 + 0x200));
         squareArray.get(i)._0c.set(5);
         squareArray.get(i)._0d.set(0);
-        squareArray.get(i)._0a.set((hitArray.get(hitNum)._10.get() + (hitArray.get(hitNum)._0e.get() - 0x1) / 2 + val - 0x11) & 0xffff);
+        squareArray.get(i)._0a.set((short)((hitArray.get(hitNum)._10.get() + (hitArray.get(hitNum)._0e.get() - 0x1) / 2 + val - 0x11) & 0xffff));
         squareArray.get(i).r_04.set(additionSquareColors_800fb7f0.get(hitArray.get(hitNum)._02.get() * 3).get() & 0xff);
         squareArray.get(i).g_05.set(additionSquareColors_800fb7f0.get(hitArray.get(hitNum)._02.get() * 3 + 1).get() & 0xff);
         squareArray.get(i).b_06.set(additionSquareColors_800fb7f0.get(hitArray.get(hitNum)._02.get() * 3 + 2).get() & 0xff);
@@ -3706,12 +3706,12 @@ public final class SEffe {
       //LAB_80106634
       val = 0;
       for(int i = 16; i >= 14; i--) {
-        squareArray.get(i)._08.set(0x14 - val * 0x2);
+        squareArray.get(i)._08.set((short)(0x14 - val * 0x2));
         squareArray.get(i)._00.set(1);
-        squareArray.get(i)._02.set(0x200);
+        squareArray.get(i)._02.set((short)0x200);
         squareArray.get(i)._0c.set(0x11);
         squareArray.get(i)._0d.set(1);
-        squareArray.get(i)._0a.set(hitArray.get(hitNum)._10.get() - 0x11 & 0xffff);
+        squareArray.get(i)._0a.set((short)(hitArray.get(hitNum)._10.get() - 0x11 & 0xffff));
 
         if(val != 0x1L) {
           squareArray.get(i).r_04.set(0x30);
@@ -3741,12 +3741,15 @@ public final class SEffe {
     a2.vec_20.setZ((sp0x10.getZ() - a2.vec_10.getZ()) / a0_0);
   }
 
+  /**
+   * Something to do with changing colors of overlay squares
+   */
   @Method(0x80106774L)
-  public static long FUN_80106774(final long a0, final long a1) {
+  public static long FUN_80106774(final AdditionOverlaysSquare0e square, final int a1) {
     long numberOfNegativeComponents = 0;
-    long v0 = MEMORY.ref(1, a0).offset(0x4L).get() - a1;
-    final long sp10;
-    if((int)v0 > 0) {
+    int v0 = square.r_04.get() - a1;
+    final int sp10;
+    if(v0 > 0) {
       sp10 = v0;
     } else {
       sp10 = 0;
@@ -3754,9 +3757,9 @@ public final class SEffe {
     }
 
     //LAB_801067b0
-    v0 = MEMORY.ref(1, a0).offset(0x5L).get() - a1;
-    final long sp14;
-    if((int)v0 > 0) {
+    v0 = square.g_05.get() - a1;
+    final int sp14;
+    if(v0 > 0) {
       sp14 = v0;
     } else {
       sp14 = 0;
@@ -3764,9 +3767,9 @@ public final class SEffe {
     }
 
     //LAB_801067c4
-    v0 = MEMORY.ref(1, a0).offset(0x6L).get() - a1;
-    final long sp18;
-    if((int)v0 > 0) {
+    v0 = square.b_06.get() - a1;
+    final int sp18;
+    if(v0 > 0) {
       sp18 = v0;
     } else {
       sp18 = 0;
@@ -3774,9 +3777,9 @@ public final class SEffe {
     }
 
     //LAB_801067d8
-    MEMORY.ref(1, a0).offset(0x4L).setu(sp10);
-    MEMORY.ref(1, a0).offset(0x5L).setu(sp14);
-    MEMORY.ref(1, a0).offset(0x6L).setu(sp18);
+    square.r_04.set(sp10);
+    square.g_05.set(sp14);
+    square.b_06.set(sp18);
     return numberOfNegativeComponents;
   }
 
@@ -3920,54 +3923,54 @@ public final class SEffe {
   }
 
   @Method(0x80107088L)
-  public static long FUN_80107088(final long a0, final long a1, final AdditionOverlaysEffect44 a2, final long a3) {
-    if(a2._34.get() >= MEMORY.ref(2, a3).offset(0x10L).getSigned() - 0x11L) {
-      MEMORY.ref(2, a3).offset(0x8L).addu(0x1L);
+  public static long FUN_80107088(final byte a0, final int hitNum, final AdditionOverlaysEffect44 effect, final UnboundedArrayRef<AdditionOverlaysHit20> hitArray) {
+    if(effect._34.get() >= hitArray.get(hitNum)._10.get() - 0x11) {
+      hitArray.get(hitNum)._08.add((short)1);
 
-      if(MEMORY.ref(2, a3).offset(0x8L).getSigned() >= 0xeL) {
-        MEMORY.ref(2, a3).offset(0x8L).setu(0xdL);
+      if(hitArray.get(hitNum)._08.get() >= 0xe) {
+        hitArray.get(hitNum)._08.set((short)0xd);
       }
     }
 
     //LAB_801070ec
-    final long s5 = _8011a014.get((int)a1).getAddress();
-    long s1 = MEMORY.ref(4, a3).offset(0x18L).get();
+    final byte s5 = _8011a014.get(hitNum).get();
+    final ArrayRef<AdditionOverlaysSquare0e> squareArray = hitArray.get(hitNum).squareOverlayArray_18.deref();
     long s4 = 0;
 
     //LAB_80107104
     for(int i = 0; i < 17; i++) {
-      if(MEMORY.ref(1, s5).offset(0x0L).getSigned() < 0) {
-        MEMORY.ref(2, a3).offset(0x8L).subu(0x3L);
+      if(s5 < 0) {
+        hitArray.get(hitNum)._08.sub((short)3);
 
-        if(MEMORY.ref(2, a3).offset(0x8L).getSigned() < 0) {
-          MEMORY.ref(2, a3).offset(0x8L).setu(0);
+        if(hitArray.get(hitNum)._08.get() < 0) {
+          hitArray.get(hitNum)._08.set((short)0);
         }
 
         //LAB_80107134
-        if(FUN_80106774(s1, 0x20L) == 0x3L) {
-          MEMORY.ref(1, s1).offset(0x0L).setu(0);
+        if(FUN_80106774(squareArray.get(i), 0x20) == 0x3L) {
+          squareArray.get(i)._00.set(0);
         }
       }
 
       //LAB_80107150
-      if(MEMORY.ref(1, s1).offset(0x0L).getSigned() != 0) {
-        if(MEMORY.ref(2, s1).offset(0xaL).getSigned() > 0) {
-          MEMORY.ref(2, s1).offset(0xaL).subu(0x1L);
+      if(squareArray.get(i)._00.get() != 0) {
+        if(squareArray.get(i)._0a.get() > 0) {
+          squareArray.get(i)._0a.sub((short)1);
         } else {
           //LAB_80107178
-          if(MEMORY.ref(1, s1).offset(0xdL).get() != 0xffL) {
-            MEMORY.ref(1, s1).offset(0xdL).addu(0x1L);
+          if(squareArray.get(i)._0d.get() != 0xff) {
+            squareArray.get(i)._0d.add(1);
           }
 
           //LAB_80107190
-          MEMORY.ref(1, s1).offset(0xcL).subu(0x1L);
-          if(MEMORY.ref(1, s1).offset(0xcL).get() == 0) {
-            MEMORY.ref(1, s1).offset(0x0L).setu(0);
+          squareArray.get(i)._0c.sub(1);
+          if(squareArray.get(i)._0c.get() == 0) {
+            squareArray.get(i)._00.set(0);
           }
 
           //LAB_801071b0
           if(i < 14) {
-            FUN_80106774(s1, 0x4eL);
+            FUN_80106774(squareArray.get(i), 0x4e);
           }
 
           s4 = 0x1L;
@@ -3975,28 +3978,27 @@ public final class SEffe {
       }
 
       //LAB_801071c0
-      s1 = s1 + 0xeL;
     }
 
     return s4;
   }
 
+  /**
+   * Sets some values for hits after the current hit
+   */
   @Method(0x801071fcL)
-  public static void FUN_801071fc(final AdditionOverlaysEffect44 a0, long a1, long a2) {
-    final long a3 = _8011a014.get((int)a2).get();
-    a0._32.set(1);
-
-    a1 = a1 + 0x20L + 0xcL;
+  public static void FUN_801071fc(final AdditionOverlaysEffect44 effect, final UnboundedArrayRef<AdditionOverlaysHit20> hitArray, int hitNum) {
+    final byte a3 = _8011a014.get(hitNum).get();
+    effect._32.set(1);
 
     //LAB_80107234
-    a2 = a2 + 0x1L;
-    for(; a2 < a0.count_30.get(); a2++) {
-      MEMORY.ref(2, a1).offset(0x6L).setu(-0x1L);
-      MEMORY.ref(2, a1).offset(0x4L).setu(-0x1L);
-      MEMORY.ref(2, a1).offset(0x2L).setu(0);
-      MEMORY.ref(2, a1).offset(0x0L).setu(0);
-      _8011a014.get((int)a2).set((int)a3);
-      a1 = a1 + 0x20L;
+    hitNum += 1;
+    for(; hitNum < effect.count_30.get(); hitNum++) {
+      hitArray.get(hitNum)._12.set((short)-1);
+      hitArray.get(hitNum)._10.set((short)-1);
+      hitArray.get(hitNum)._0e.set((short)0);
+      hitArray.get(hitNum)._0c.set((short)0);
+      _8011a014.get(hitNum).set(a3);
     }
 
     //LAB_80107264
@@ -4046,92 +4048,81 @@ public final class SEffe {
 
   @Method(0x801073d4L)
   public static void tickAdditionOverlaysEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    final AdditionOverlaysEffect44 s3 = (AdditionOverlaysEffect44)data.effect_44;
+    final AdditionOverlaysEffect44 effect = (AdditionOverlaysEffect44)data.effect_44;
 
-    if(s3._31.get() == 0) {
+    if(effect._31.get() == 0) {
       long s4 = 0x1L;
-      long s2 = s3.hitOverlays_40.getPointer();
-      s3._34.incr();
+      UnboundedArrayRef<AdditionOverlaysHit20> hitArray = effect.hitOverlays_40.deref();
+      effect._34.incr();
 
       //LAB_80107440
-      long s0;
-      for(s0 = 0; s0 < s3.count_30.get(); s0++) {
-        if(s3._34.get() == MEMORY.ref(2, s2).offset(0x12L).getSigned() + 1) {
-          if(_8011a014.get((int)s0).get() == 0) {
-            _8011a014.get((int)s0).set(-2);
-            FUN_801071fc(s3, s2, s0);
+      int hitNum;
+      for(hitNum = 0; hitNum < effect.count_30.get(); hitNum++) {
+        if(effect._34.get() == hitArray.get(hitNum)._12.get() + 1) {
+          if(_8011a014.get(hitNum).get() == 0) {
+            _8011a014.get(hitNum).set(-2);
+            FUN_801071fc(effect, hitArray, hitNum);
 
             //LAB_80107478
-            if(_8011a014.get((int)s0).get() == 0) {
+            if(_8011a014.get(hitNum).get() == 0) {
               s4 = 0;
             }
           }
-        } else {
-          if(_8011a014.get((int)s0).get() == 0) {
-            s4 = 0;
-          }
+        } else if(_8011a014.get(hitNum).get() == 0) {
+          s4 = 0;
         }
-
         //LAB_8010748c
-        s2 = s2 + 0x20L;
       }
 
       //LAB_801074a8
       if(s4 != 0) {
-        FUN_801071fc(s3, s2, s0);
+        FUN_801071fc(effect, hitArray, hitNum);
       }
 
       //LAB_801074bc
       long s1 = 0;
-      s2 = s3.hitOverlays_40.getPointer();
 
       //LAB_801074d0
-      for(s0 = 0; s0 < s3.count_30.get(); s0++) {
-        s1 = s1 + FUN_80107088(MEMORY.ref(1, s2).offset(0x2L).getSigned(), s0, s3, s2);
-        s2 = s2 + 0x20L;
+      for(hitNum = 0; hitNum < effect.count_30.get(); hitNum++) {
+        s1 = s1 + FUN_80107088(hitArray.get(hitNum)._02.get(), hitNum, effect, hitArray);
       }
 
       //LAB_80107500
-      if(s1 == 0 && s3._32.get() != 0) {
+      if(s1 == 0 && effect._32.get() != 0) {
         _80119f41.setu(0);
 
         //LAB_8010752c
-        s2 = s3.hitOverlays_40.getPointer();
-        for(s0 = 0; s0 < s3.count_30.get(); s0++) {
-          free(MEMORY.ref(4, s2).offset(0x18L).get());
-          s2 = s2 + 0x20L;
+        for(hitNum = 0; hitNum < effect.count_30.get(); hitNum++) {
+          free(hitArray.get(hitNum).squareOverlayArray_18.getPointer());
         }
 
         //LAB_80107554
         state.deallocateWithChildren();
       } else {
         //LAB_8010756c
-        if(s3._34.get() >= 9) {
-          s2 = s3.hitOverlays_40.getPointer();
-          if(s3.count_30.get() != 0) {
+        if(effect._34.get() >= 9) {
+          if(effect.count_30.get() != 0) {
             //LAB_80107598
-            for(s0 = 0; s0 < s3.count_30.get(); s0++) {
-              if(_8011a014.get((int)s0).get() == 0) {
+            for(hitNum = 0; hitNum < effect.count_30.get(); hitNum++) {
+              if(_8011a014.get(hitNum).get() == 0) {
                 break;
               }
-
-              s2 = s2 + 0x20L;
             }
 
             //LAB_801075bc
-            if(s0 < s3.count_30.get()) {
+            if(hitNum < effect.count_30.get()) {
               if(state.storage_44[8] != 0) {
-                MEMORY.ref(1, s2).offset(0x1cL).setu(1);
+                hitArray.get(hitNum)._1c.set(1);
                 state.storage_44[8] = 0;
               }
 
               //LAB_801075e8
-              if((s3._3a.get() - 1 & 0xffff_ffffL) >= 2) { // Unsigned comparison
+              if((effect._3a.get() - 1 & 0xffff_ffffL) >= 2) { // Unsigned comparison
 
                 //LAB_8010763c
-                if(s3._3a.get() != 1 && s3._3a.get() != 3) {
+                if(effect._3a.get() != 1 && effect._3a.get() != 3) {
                   final long a0;
-                  if(MEMORY.ref(1, s2).offset(0x1cL).getSigned() == 0) {
+                  if(hitArray.get(hitNum)._1c.get() == 0) {
                     a0 = 0x20;
                   } else {
                     a0 = 0x40;
@@ -4141,47 +4132,47 @@ public final class SEffe {
                   final long v1 = joypadPress_8007a398.get();
 
                   if((v1 & 0x60) != 0) {
-                    _8011a014.get((int)s0).set(-1);
+                    _8011a014.get((int)hitNum).set(-1);
 
                     if((v1 & a0) == 0 || (v1 & ~a0) != 0) {
                       //LAB_801076d8
                       //LAB_801076dc
-                      _8011a014.get((int)s0).set(-3);
-                    } else if(s3._34.get() >= MEMORY.ref(2, s2).offset(0x10L).getSigned() && s3._34.get() <= MEMORY.ref(2, s2).offset(0x12L).getSigned()) {
-                      _8011a014.get((int)s0).set(1);
-                      MEMORY.ref(1, s2).offset(0x1L).setu(1);
+                      _8011a014.get(hitNum).set(-3);
+                    } else if(effect._34.get() >= hitArray.get(hitNum)._10.get() && effect._34.get() <= hitArray.get(hitNum)._12.get()) {
+                      _8011a014.get(hitNum).set(1);
+                      hitArray.get(hitNum)._01.set(1);
                     }
 
                     //LAB_801076f0
-                    if(_8011a014.get((int)s0).get() < 0) {
-                      FUN_801071fc(s3, s2, s0);
+                    if(_8011a014.get((int)hitNum).get() < 0) {
+                      FUN_801071fc(effect, hitArray, hitNum);
                     }
 
                     //LAB_80107718
                     //LAB_8010771c
-                    s3._38.set(2);
-                    s3._39.set((int)s0);
-                    s3._3c.set(s2);
+                    effect._38.set(2);
+                    effect._39.set(hitNum);
+                    effect._3c.set(hitArray.get(hitNum).getAddress());
                   }
                 }
               } else {
-                if(s3._34.get() >= MEMORY.ref(2, s2).offset(0x10L).getSigned() && s3._34.get() <= MEMORY.ref(2, s2).offset(0x12L).getSigned()) {
-                  _8011a014.get((int)s0).set(1);
-                  MEMORY.ref(1, s2).offset(0x1L).setu(1);
+                if(effect._34.get() >= hitArray.get(hitNum)._10.get() && effect._34.get() <= hitArray.get(hitNum)._12.get()) {
+                  _8011a014.get(hitNum).set(1);
+                  hitArray.get(hitNum)._01.set(1);
 
                   //LAB_8010771c
-                  s3._38.set(2);
-                  s3._39.set((int)s0);
-                  s3._3c.set(s2);
+                  effect._38.set(2);
+                  effect._39.set(hitNum);
+                  effect._3c.set(hitArray.get(hitNum).getAddress());
                 }
               }
             }
           }
 
           //LAB_80107728
-          if(s3._38.get() != 0) {
-            s3._38.decr();
-            renderAdditionCentreSolidSquare(s3, s3._3c.get(), _8011a014.get(s3._39.get()).get(), state, data);
+          if(effect._38.get() != 0) {
+            effect._38.decr();
+            renderAdditionCentreSolidSquare(effect, effect._3c.get(), _8011a014.get(effect._39.get()).get(), state, data);
           }
         }
       }
@@ -4195,6 +4186,7 @@ public final class SEffe {
     free(((AdditionOverlaysEffect44)data.effect_44).hitOverlays_40.getPointer());
   }
 
+  /** gets some kind of addition overlay-related value */
   @Method(0x801077bcL)
   public static FlowControl FUN_801077bc(final RunningScript<?> script) {
     script.params_20[2].set(_8011a014.get(script.params_20[1].get()).get());
@@ -4220,6 +4212,7 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
+  /** Script subfunc relating somehow to addition overlays */
   @Method(0x801078c0L)
   public static FlowControl FUN_801078c0(final RunningScript<?> script) {
     final EffectManagerData6c v0 = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
@@ -4249,12 +4242,11 @@ public final class SEffe {
     a2._32.set(v1);
 
     //LAB_80107954
-    long ptr = a2.hitOverlays_40.getPointer() + 0x10L;
+    final UnboundedArrayRef<AdditionOverlaysHit20> hitArray = a2.hitOverlays_40.deref();
     for(int i = 0; i < a2.count_30.get(); i++) {
-      MEMORY.ref(2, ptr).offset(0x0L).setu(0);
-      MEMORY.ref(2, ptr).offset(0x2L).setu(0);
+      hitArray.get(i)._10.set((short)0);
+      hitArray.get(i)._12.set((short)0);
       _8011a014.get(i).set(-0x1);
-      ptr = ptr + 0x20L;
     }
 
     //LAB_80107998
