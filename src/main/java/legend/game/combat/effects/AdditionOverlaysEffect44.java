@@ -9,7 +9,6 @@ import legend.core.memory.types.Pointer;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
-import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 
 public class AdditionOverlaysEffect44 implements BttlScriptData6cSubBase1, MemoryRef {
@@ -31,7 +30,7 @@ public class AdditionOverlaysEffect44 implements BttlScriptData6cSubBase1, Memor
   public final UnsignedByteRef _39;
   public final UnsignedByteRef _3a;
 
-  public final UnsignedIntRef _3c;
+  public final Pointer<AdditionOverlaysHit20> _3c; // points to a specific hit set while ticking
   public final Pointer<UnboundedArrayRef<AdditionOverlaysHit20>> hitOverlays_40;
 
   public AdditionOverlaysEffect44(final Value ref) {
@@ -53,7 +52,7 @@ public class AdditionOverlaysEffect44 implements BttlScriptData6cSubBase1, Memor
     this._39 = ref.offset(1, 0x39L).cast(UnsignedByteRef::new);
     this._3a = ref.offset(1, 0x3aL).cast(UnsignedByteRef::new);
 
-    this._3c = ref.offset(4, 0x3cL).cast(UnsignedIntRef::new);
+    this._3c = ref.offset(4, 0x3cL).cast(Pointer.deferred(4, AdditionOverlaysHit20::new));
     this.hitOverlays_40 = ref.offset(4, 0x40L).cast(Pointer.deferred(4, UnboundedArrayRef.of(0x20, AdditionOverlaysHit20::new, this.count_30::get)));
   }
 

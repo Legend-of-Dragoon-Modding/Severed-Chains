@@ -20,7 +20,7 @@ public class AdditionOverlaysHit20 implements MemoryRef {
   public final ShortRef _0e;
   public final ShortRef _10;
   public final ShortRef _12;
-  public final Pointer<ArrayRef<AdditionOverlaysSquare0e>> squareOverlayArray_14;
+  public final Pointer<ArrayRef<AdditionOverlaysSquare0e>> centerSquareOverlayArray_14;
   public final Pointer<ArrayRef<AdditionOverlaysSquare0e>> squareOverlayArray_18;
   public final ByteRef _1c;
 
@@ -37,7 +37,7 @@ public class AdditionOverlaysHit20 implements MemoryRef {
     this._0e = ref.offset(2, 0x0e).cast(ShortRef::new);
     this._10 = ref.offset(2, 0x10).cast(ShortRef::new);
     this._12 = ref.offset(2, 0x12).cast(ShortRef::new);
-    this.squareOverlayArray_14 = ref.offset(4, 0x14).cast(Pointer.deferred(4, ArrayRef.of(AdditionOverlaysSquare0e.class, 0x2a, 0xe, AdditionOverlaysSquare0e::new)));
+    this.centerSquareOverlayArray_14 = ref.offset(4, 0x14).cast(Pointer.deferred(4, ArrayRef.of(AdditionOverlaysSquare0e.class, 0x2a, 0xe, AdditionOverlaysSquare0e::new)));
     this.squareOverlayArray_18 = ref.offset(4, 0x18).cast(Pointer.deferred(4, ArrayRef.of(AdditionOverlaysSquare0e.class, 0xee, 0xe, AdditionOverlaysSquare0e::new)));
     this._1c = ref.offset(1, 0x1c).cast(ByteRef::new);
   }

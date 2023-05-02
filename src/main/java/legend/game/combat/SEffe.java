@@ -3726,7 +3726,7 @@ public final class SEffe {
       }
 
       final ArrayRef<AdditionOverlaysSquare0e> centerSquaresArray = MEMORY.ref(4, squareArrayAddress + 0xc4, ArrayRef.of(AdditionOverlaysSquare0e.class, 3, 0xe, AdditionOverlaysSquare0e::new));
-      hitArray.get(hitNum).squareOverlayArray_14.set(centerSquaresArray);
+      hitArray.get(hitNum).centerSquareOverlayArray_14.set(centerSquaresArray);
     }
 
     //LAB_801066c8
@@ -3784,19 +3784,19 @@ public final class SEffe {
   }
 
   @Method(0x80106808L)
-  public static void renderAdditionCentreSolidSquare(final BttlScriptData6cSubBase1 a0, final long a1, final long a2, final ScriptState<EffectManagerData6c> a3, final EffectManagerData6c a4) {
+  public static void renderAdditionCentreSolidSquare(final BttlScriptData6cSubBase1 a0, final AdditionOverlaysHit20 hitOverlay, final long a2, final ScriptState<EffectManagerData6c> a3, final EffectManagerData6c a4) {
     if(a4._10.flags_00 >= 0) {
-      final long v0 = MEMORY.ref(4, a1).offset(0x14L).get();
+      final ArrayRef<AdditionOverlaysSquare0e> centerSquareArray = hitOverlay.centerSquareOverlayArray_14.deref();
 
       //LAB_8010685c
       for(int s5 = 0; s5 < 2; s5++) {
-        final int s3 = (short)MEMORY.ref(2, v0).offset(0x24L).getSigned() - s5 * 8;
+        final int s3 = centerSquareArray.get(2)._08.get() - s5 * 8;
 
         //LAB_80106874
         final int[] sp0x18 = new int[8];
         for(int i = 0; i < 4; i++) {
-          sp0x18[i * 2    ] =  rcos((short)MEMORY.ref(2, v0).offset(0x1eL).getSigned() + i * 0x400) * s3 >> 12;
-          sp0x18[i * 2 + 1] = (rsin((short)MEMORY.ref(2, v0).offset(0x1eL).getSigned() + i * 0x400) * s3 >> 12) + 30;
+          sp0x18[i * 2] = rcos(centerSquareArray.get(2)._02.get() + i * 0x400) * s3 >> 12;
+          sp0x18[i * 2 + 1] = (rsin(centerSquareArray.get(2)._02.get() + i * 0x400) * s3 >> 12) + 30;
         }
 
         final GpuCommandPoly cmd = new GpuCommandPoly(4);
@@ -3807,11 +3807,11 @@ public final class SEffe {
         } else if(a2 != -2) {  // Too early
           //LAB_80106988
           cmd.monochrome(0x30);
-        } else if(MEMORY.ref(1, a1).offset(0x1cL).getSigned() != 0) {  // Counter-attack too late
-          cmd.rgb((int)MEMORY.ref(1, v0).offset(0x12L).get() * 3, (int)MEMORY.ref(1, v0).offset(0x13L).get(), ((int)MEMORY.ref(1, v0).offset(0x14L).get() - 1) * 8);
+        } else if(hitOverlay._1c.get() != 0) {  // Counter-attack too late
+          cmd.rgb(centerSquareArray.get(1).r_04.get() * 3, centerSquareArray.get(1).g_05.get(), (centerSquareArray.get(1).b_06.get() - 1) * 8);
         } else {  // Too late
           //LAB_80106964
-          cmd.rgb((int)MEMORY.ref(1, v0).offset(0x12L).get(), (int)MEMORY.ref(1, v0).offset(0x13L).get(), (int)MEMORY.ref(1, v0).offset(0x14L).get());
+          cmd.rgb(centerSquareArray.get(1).r_04.get(), centerSquareArray.get(1).g_05.get(), centerSquareArray.get(1).b_06.get());
         }
 
         //LAB_80106994
@@ -4052,7 +4052,7 @@ public final class SEffe {
 
     if(effect._31.get() == 0) {
       long s4 = 0x1L;
-      UnboundedArrayRef<AdditionOverlaysHit20> hitArray = effect.hitOverlays_40.deref();
+      final UnboundedArrayRef<AdditionOverlaysHit20> hitArray = effect.hitOverlays_40.deref();
       effect._34.incr();
 
       //LAB_80107440
@@ -4152,7 +4152,7 @@ public final class SEffe {
                     //LAB_8010771c
                     effect._38.set(2);
                     effect._39.set(hitNum);
-                    effect._3c.set(hitArray.get(hitNum).getAddress());
+                    effect._3c.set(hitArray.get(hitNum));
                   }
                 }
               } else {
@@ -4163,7 +4163,7 @@ public final class SEffe {
                   //LAB_8010771c
                   effect._38.set(2);
                   effect._39.set(hitNum);
-                  effect._3c.set(hitArray.get(hitNum).getAddress());
+                  effect._3c.set(hitArray.get(hitNum));
                 }
               }
             }
@@ -4172,7 +4172,7 @@ public final class SEffe {
           //LAB_80107728
           if(effect._38.get() != 0) {
             effect._38.decr();
-            renderAdditionCentreSolidSquare(effect, effect._3c.get(), _8011a014.get(effect._39.get()).get(), state, data);
+            renderAdditionCentreSolidSquare(effect, effect._3c.deref(), _8011a014.get(effect._39.get()).get(), state, data);
           }
         }
       }
