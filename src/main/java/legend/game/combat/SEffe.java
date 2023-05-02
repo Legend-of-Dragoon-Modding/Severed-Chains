@@ -28,6 +28,7 @@ import legend.core.memory.Ref;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BiConsumerRef;
+import legend.core.memory.types.ByteRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
@@ -45,6 +46,8 @@ import legend.game.combat.deff.LmbType0;
 import legend.game.combat.deff.LmbType1;
 import legend.game.combat.deff.LmbType2;
 import legend.game.combat.effects.AdditionOverlaysEffect44;
+import legend.game.combat.effects.AdditionOverlaysHit20;
+import legend.game.combat.effects.AdditionOverlaysSquare0e;
 import legend.game.combat.effects.AttackHitFlashEffect0c;
 import legend.game.combat.effects.BattleStruct24;
 import legend.game.combat.effects.BttlScriptData6cSub08_3;
@@ -224,7 +227,7 @@ public final class SEffe {
 
   private static final Value _800fb7c0 = MEMORY.ref(1, 0x800fb7c0L);
 
-  private static final Value _800fb7f0 = MEMORY.ref(1, 0x800fb7f0L);
+  private static final ArrayRef<ByteRef> additionSquareColors_800fb7f0 = MEMORY.ref(1, 0x800fb7f0L, ArrayRef.of(ByteRef.class, 0xc, 0x1, ByteRef::new));
 
   private static final Value _800fb7fc = MEMORY.ref(1, 0x800fb7fcL);
 
@@ -3609,6 +3612,7 @@ public final class SEffe {
     }
   }
 
+  // Set counter attack?
   @Method(0x801061bcL)
   public static long FUN_801061bc(final int charSlot, final int hitNum, final int a2, final long a3) {
     //LAB_80106264
@@ -3674,51 +3678,55 @@ public final class SEffe {
       MEMORY.ref(2, s7).offset(0xcL).setu(v0);
       v0 = FUN_801061bc(s5.charSlot_276, hitNum, 3, a3) & 0xffL;
       MEMORY.ref(2, s7).offset(0xeL).setu(v0);
-      long a3_0 = MEMORY.ref(2, s7).offset(0x10L).get() + MEMORY.ref(2, s7).offset(0xcL).get();
+      final long a3_0 = MEMORY.ref(2, s7).offset(0x10L).get() + MEMORY.ref(2, s7).offset(0xcL).get();
       MEMORY.ref(2, s7).offset(0x10L).setu(a3_0 - (short)v0 / 2 + 1);
       MEMORY.ref(2, s7).offset(0x12L).setu(a3_0 + v0 - (short)MEMORY.ref(2, s7).offset(0xeL).get() / 2);
 
-      a3_0 = mallocTail(0xeeL);
-      MEMORY.ref(4, s7).offset(0x18L).setu(a3_0);
+      final long squareArrayAddress = mallocTail(0xeeL);
+      final ArrayRef<AdditionOverlaysSquare0e> squareArray = MEMORY.ref(4, squareArrayAddress, ArrayRef.of(AdditionOverlaysSquare0e.class, 17, 0xe, AdditionOverlaysSquare0e::new));
+      MEMORY.ref(4, s7).offset(0x18L).setu(squareArrayAddress);
 
       //LAB_8010652c
-      for(int i = 16; i >= 0; i--) {
-        MEMORY.ref(2, a3_0).offset(0x8L).setu((18 - i) * 10);
-        MEMORY.ref(1, a3_0).offset(0x0L).setu(0x1L);
+      int val = 16;
+      for(int i = 0; i < 17; i++) {
+        squareArray.get(i)._08.set((18 - val) * 10);
+        squareArray.get(i)._00.set(1);
         //LAB_8010656c
         //LAB_80106574
-        MEMORY.ref(2, a3_0).offset(0x2L).setu((16 - i) * 0x80 + 0x200L);
-        MEMORY.ref(1, a3_0).offset(0xcL).setu(0x5L);
-        MEMORY.ref(1, a3_0).offset(0xdL).setu(0);
-        MEMORY.ref(2, a3_0).offset(0xaL).setu(MEMORY.ref(2, s7).offset(0x10L).get() + (MEMORY.ref(2, s7).offset(0xeL).getSigned() - 0x1L) / 2 + i - 0x11L);
-        MEMORY.ref(1, a3_0).offset(0x4L).setu(_800fb7f0.offset(1, MEMORY.ref(1, s7).offset(0x2L).getSigned() * 3).offset(0x0L).get());
-        MEMORY.ref(1, a3_0).offset(0x5L).setu(_800fb7f0.offset(1, MEMORY.ref(1, s7).offset(0x2L).getSigned() * 3).offset(0x1L).get());
-        MEMORY.ref(1, a3_0).offset(0x6L).setu(_800fb7f0.offset(1, MEMORY.ref(1, s7).offset(0x2L).getSigned() * 3).offset(0x2L).get());
-        a3_0 = a3_0 + 0xeL;
+        squareArray.get(i)._02.set((16 - val) * 0x80 + 0x200);
+        squareArray.get(i)._0c.set(5);
+        squareArray.get(i)._0d.set(0);
+        squareArray.get(i)._0a.set((int)(MEMORY.ref(2, s7).offset(0x10L).get() + (MEMORY.ref(2, s7).offset(0xeL).getSigned() - 0x1) / 2 + val - 0x11) & 0xffff);
+        squareArray.get(i).r_04.set(additionSquareColors_800fb7f0.get((int)(MEMORY.ref(1, s7).offset(0x2L).getSigned() * 3)).get() & 0xff);
+        squareArray.get(i).g_05.set(additionSquareColors_800fb7f0.get((int)(MEMORY.ref(1, s7).offset(0x2L).getSigned() * 3) + 1).get() & 0xff);
+        squareArray.get(i).b_06.set(additionSquareColors_800fb7f0.get((int)(MEMORY.ref(1, s7).offset(0x2L).getSigned() * 3) + 2).get() & 0xff);
+
+        val--;
       }
 
       //LAB_80106634
-      for(int i = 0; i < 3; i++) {
-        a3_0 = a3_0 - 0xeL;
-        MEMORY.ref(2, a3_0).offset(0x8L).setu(0x14L - i * 0x2L);
-        MEMORY.ref(1, a3_0).offset(0x0L).setu(0x1L);
-        MEMORY.ref(2, a3_0).offset(0x2L).setu(0x200L);
-        MEMORY.ref(1, a3_0).offset(0xcL).setu(0x11L);
-        MEMORY.ref(1, a3_0).offset(0xdL).setu(0x1L);
-        MEMORY.ref(2, a3_0).offset(0xaL).setu(MEMORY.ref(2, s7).offset(0x10L).get() - 0x11L);
+      val = 0;
+      for(int i = 16; i >= 14; i--) {
+        squareArray.get(i)._08.set(0x14 - val * 0x2);
+        squareArray.get(i)._00.set(1);
+        squareArray.get(i)._02.set(0x200);
+        squareArray.get(i)._0c.set(0x11);
+        squareArray.get(i)._0d.set(1);
+        squareArray.get(i)._0a.set((int)(MEMORY.ref(2, s7).offset(0x10L).get() - 0x11L) & 0xffff);
 
-        if(i != 0x1L) {
-          MEMORY.ref(1, a3_0).offset(0x4L).setu(0x30L);
-          MEMORY.ref(1, a3_0).offset(0x5L).setu(0x30L);
-          MEMORY.ref(1, a3_0).offset(0x6L).setu(0x30L);
+        if(val != 0x1L) {
+          squareArray.get(i).r_04.set(0x30);
+          squareArray.get(i).g_05.set(0x30);
+          squareArray.get(i).b_06.set(0x30);
         } else {
           //LAB_80106680
-          MEMORY.ref(1, a3_0).offset(0xdL).setu(0xffL);
+          squareArray.get(i)._0d.set(0xff);
         }
         //LAB_80106684
+        val++;
       }
 
-      MEMORY.ref(4, s7).offset(0x14L).setu(a3_0);
+      MEMORY.ref(4, s7).offset(0x14L).setu(squareArrayAddress + 0xc4);
       s7 = s7 + 0x20L;
     }
 
@@ -3728,7 +3736,7 @@ public final class SEffe {
     final VECTOR sp0x10 = new VECTOR();
     FUN_80105f98(a2.scriptIndex_04.get(), sp0x10, 0x1L);
 
-    final int a0_0 = (int)MEMORY.ref(4, a2._40.get()).offset(0x10L).getSigned();
+    final int a0_0 = (int)MEMORY.ref(4, a2.hitOverlays_40.get()).offset(0x10L).getSigned();
     a2.vec_20.setX((sp0x10.getX() - a2.vec_10.getX()) / a0_0);
     a2.vec_20.setY((sp0x10.getY() - a2.vec_10.getY()) / a0_0);
     a2.vec_20.setZ((sp0x10.getZ() - a2.vec_10.getZ()) / a0_0);
@@ -4001,7 +4009,7 @@ public final class SEffe {
 
     if(s2._31.get() != 0x1L) {
       if(data._10.flags_00 >= 0) {
-        long s1 = s2._40.get();
+        long s1 = s2.hitOverlays_40.get();
 
         //LAB_801072c4
         int s0;
@@ -4011,7 +4019,7 @@ public final class SEffe {
         }
 
         //LAB_801072f4
-        s1 = s2._40.get();
+        s1 = s2.hitOverlays_40.get();
 
         //LAB_8010730c
         for(s0 = 0; s0 < s2.count_30.get(); s0++) {
@@ -4043,7 +4051,7 @@ public final class SEffe {
 
     if(s3._31.get() == 0) {
       long s4 = 0x1L;
-      long s2 = s3._40.get();
+      long s2 = s3.hitOverlays_40.get();
       s3._34.incr();
 
       //LAB_80107440
@@ -4076,7 +4084,7 @@ public final class SEffe {
 
       //LAB_801074bc
       long s1 = 0;
-      s2 = s3._40.get();
+      s2 = s3.hitOverlays_40.get();
 
       //LAB_801074d0
       for(s0 = 0; s0 < s3.count_30.get(); s0++) {
@@ -4089,7 +4097,7 @@ public final class SEffe {
         _80119f41.setu(0);
 
         //LAB_8010752c
-        s2 = s3._40.get();
+        s2 = s3.hitOverlays_40.get();
         for(s0 = 0; s0 < s3.count_30.get(); s0++) {
           free(MEMORY.ref(4, s2).offset(0x18L).get());
           s2 = s2 + 0x20L;
@@ -4100,7 +4108,7 @@ public final class SEffe {
       } else {
         //LAB_8010756c
         if(s3._34.get() >= 9) {
-          s2 = s3._40.get();
+          s2 = s3.hitOverlays_40.get();
           if(s3.count_30.get() != 0) {
             //LAB_80107598
             for(s0 = 0; s0 < s3.count_30.get(); s0++) {
@@ -4185,7 +4193,7 @@ public final class SEffe {
 
   @Method(0x80107790L)
   public static void deallocateAdditionOverlaysEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    free(((AdditionOverlaysEffect44)data.effect_44)._40.get());
+    free(((AdditionOverlaysEffect44)data.effect_44).hitOverlays_40.get());
   }
 
   @Method(0x801077bcL)
@@ -4242,7 +4250,7 @@ public final class SEffe {
     a2._32.set(v1);
 
     //LAB_80107954
-    long ptr = a2._40.get() + 0x10L;
+    long ptr = a2.hitOverlays_40.get() + 0x10L;
     for(int i = 0; i < a2.count_30.get(); i++) {
       MEMORY.ref(2, ptr).offset(0x0L).setu(0);
       MEMORY.ref(2, ptr).offset(0x2L).setu(0);
