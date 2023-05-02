@@ -3630,7 +3630,7 @@ public final class SEffe {
   }
 
   @Method(0x801062a8L)
-  public static void FUN_801062a8(final int scriptIndex, final int a1, final AdditionOverlaysEffect44 a2, final long a3) {
+  public static void initializeAdditionOverlaysEffect(final int scriptIndex, final int a1, final AdditionOverlaysEffect44 a2, final long a3) {
     long v0;
     int hitNum;
     long s6;
@@ -3645,7 +3645,7 @@ public final class SEffe {
 
     //LAB_80106374
     v0 = hitNum - 1;
-    final long hitArrayAddress = mallocTail(v0 & 0xffL);
+    final long hitArrayAddress = mallocTail((v0 & 0xffL) * 0x20);
     a2.count_30.set((int)v0);
     a2.attackerScriptIndex_00.set(scriptIndex);
     a2.targetScriptIndex_04.set(a1);
@@ -3725,7 +3725,8 @@ public final class SEffe {
         val++;
       }
 
-      hitArray.get(hitNum).squareOverlayArray_14.set(squareArrayAddress + 0xc4, ArrayRef.classFor(AdditionOverlaysSquare0e.class));
+      final ArrayRef<AdditionOverlaysSquare0e> centerSquaresArray = MEMORY.ref(4, squareArrayAddress + 0xc4, ArrayRef.of(AdditionOverlaysSquare0e.class, 3, 0xe, AdditionOverlaysSquare0e::new));
+      hitArray.get(hitNum).squareOverlayArray_14.set(centerSquaresArray);
     }
 
     //LAB_801066c8
@@ -4212,7 +4213,7 @@ public final class SEffe {
       AdditionOverlaysEffect44::new
     );
 
-    FUN_801062a8(script.params_20[0].get(), script.params_20[1].get(), (AdditionOverlaysEffect44)state.innerStruct_00.effect_44, script.params_20[2].get());
+    initializeAdditionOverlaysEffect(script.params_20[0].get(), script.params_20[1].get(), (AdditionOverlaysEffect44)state.innerStruct_00.effect_44, script.params_20[2].get());
     state.storage_44[8] = 0;
     script.params_20[4].set(state.index);
     _80119f41.setu(0x1L);
