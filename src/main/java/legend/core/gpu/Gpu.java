@@ -54,6 +54,8 @@ public class Gpu {
   private final VramTextureSingle[] renderBuffers = new VramTextureSingle[2];
   private int drawBufferIndex;
 
+  private int scale = 2;
+
   private final int[] vram24 = new int[this.vramWidth * this.vramHeight];
   private final int[] vram15 = new int[this.vramWidth * this.vramHeight];
 

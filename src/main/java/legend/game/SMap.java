@@ -8,6 +8,7 @@ import legend.core.gpu.GpuCommandCopyVramToVram;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.RECT;
+import legend.core.gpu.Rect4i;
 import legend.core.gpu.TimHeader;
 import legend.core.gte.DVECTOR;
 import legend.core.gte.GsCOORD2PARAM;
@@ -175,7 +176,6 @@ import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8003.GsSetRefView2;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.MargePrim;
-import static legend.game.Scus94491BpeSegment_8003.MoveImage;
 import static legend.game.Scus94491BpeSegment_8003.PopMatrix;
 import static legend.game.Scus94491BpeSegment_8003.PushMatrix;
 import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
@@ -3909,7 +3909,7 @@ public final class SMap {
   @Method(0x800e4e5cL)
   public static void FUN_800e4e5c() {
     //LAB_800e4ecc
-    MoveImage(GPU.getDrawBufferIndex() == 0 ? _800d6a04 : _800d69fc, 640, 0);
+    GPU.uploadData(new Rect4i(640, 0, 384, 240), GPU.getDisplayBuffer().getData());
     _80052c48.setu(0x1L);
   }
 
