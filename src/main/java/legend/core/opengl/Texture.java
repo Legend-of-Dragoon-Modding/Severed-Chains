@@ -32,7 +32,7 @@ import static org.lwjgl.opengl.GL11C.glTexImage2D;
 import static org.lwjgl.opengl.GL11C.glTexParameteri;
 import static org.lwjgl.opengl.GL11C.glTexSubImage2D;
 import static org.lwjgl.opengl.GL12C.GL_TEXTURE_MAX_LEVEL;
-import static org.lwjgl.opengl.GL12C.GL_UNSIGNED_INT_8_8_8_8;
+import static org.lwjgl.opengl.GL12C.GL_UNSIGNED_INT_8_8_8_8_REV;
 import static org.lwjgl.opengl.GL13C.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13C.glActiveTexture;
 import static org.lwjgl.opengl.GL21C.GL_SRGB_ALPHA;
@@ -118,7 +118,7 @@ public final class Texture {
 
   public void data(final int x, final int y, final int w, final int h, final int[] data) {
     this.use();
-    glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, w, h, this.dataFormat, GL_UNSIGNED_INT_8_8_8_8, data);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, w, h, this.dataFormat, GL_UNSIGNED_INT_8_8_8_8_REV, data);
 
     final int error = glGetError();
     if(error != GL_NO_ERROR) {

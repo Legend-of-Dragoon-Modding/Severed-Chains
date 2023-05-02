@@ -209,8 +209,6 @@ import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c3c;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
 import static legend.game.Scus94491BpeSegment_8007.clearRed_8007a3a8;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
-import static legend.game.Scus94491BpeSegment_800b.clearBlue_800babc0;
-import static legend.game.Scus94491BpeSegment_800b.clearGreen_800bb104;
 import static legend.game.Scus94491BpeSegment_800b._800bb168;
 import static legend.game.Scus94491BpeSegment_800b._800bc05c;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b0;
@@ -222,8 +220,9 @@ import static legend.game.Scus94491BpeSegment_800b._800bee94;
 import static legend.game.Scus94491BpeSegment_800b._800bee98;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
 import static legend.game.Scus94491BpeSegment_800b.afterFmvLoadingStage_800bf0ec;
+import static legend.game.Scus94491BpeSegment_800b.clearBlue_800babc0;
+import static legend.game.Scus94491BpeSegment_800b.clearGreen_800bb104;
 import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
-import static legend.game.Scus94491BpeSegment_800b.doubleBufferFrame_800bb108;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.fmvIndex_800bf0dc;
@@ -3910,7 +3909,7 @@ public final class SMap {
   @Method(0x800e4e5cL)
   public static void FUN_800e4e5c() {
     //LAB_800e4ecc
-    MoveImage(doubleBufferFrame_800bb108.get() != 0 ? _800d69fc : _800d6a04, 640, 0);
+    MoveImage(GPU.getDrawBufferIndex() == 0 ? _800d6a04 : _800d69fc, 640, 0);
     _80052c48.setu(0x1L);
   }
 

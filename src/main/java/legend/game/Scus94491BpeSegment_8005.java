@@ -1,6 +1,5 @@
 package legend.game;
 
-import legend.core.gpu.DISPENV;
 import legend.core.gte.MATRIX;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
@@ -92,8 +91,6 @@ public final class Scus94491BpeSegment_8005 {
    * Max RECT height?
    */
   public static final Value _800546c2 = MEMORY.ref(2, 0x800546c2L);
-
-  public static final DISPENV DISPENV_80054728 = MEMORY.ref(4, 0x80054728L, DISPENV::new);
 
   public static final ArrayRef<ShortRef> _80054870 = MEMORY.ref(2, 0x80054870L, ArrayRef.of(ShortRef.class, 192, 2, ShortRef::new));
 

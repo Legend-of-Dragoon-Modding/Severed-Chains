@@ -55,7 +55,7 @@ public final class Scus94491BpeSegment_800b {
   public static final IntRef tickCount_800bb0fc = MEMORY.ref(4, 0x800bb0fcL, IntRef::new);
 
   public static final IntRef clearGreen_800bb104 = MEMORY.ref(4, 0x800bb104L, IntRef::new);
-  public static final IntRef doubleBufferFrame_800bb108 = MEMORY.ref(4, 0x800bb108L, IntRef::new);
+
   public static final IntRef pregameLoadingStage_800bb10c = MEMORY.ref(4, 0x800bb10cL, IntRef::new);
   public static final EnumMapRef<Bpp, EnumMapRef<Translucency, EnumMapRef<TexPageY, UnsignedShortRef>>> texPages_800bb110 = MEMORY.ref(2, 0x800bb110L, EnumMapRef.of(Bpp.class, EnumMapRef.classFor(EnumMapRef.classFor(UnsignedShortRef.class)), Bpp.values().length, 0x10, EnumMapRef.of(Translucency.class, EnumMapRef.classFor(UnsignedShortRef.class), Translucency.values().length, 4, EnumMapRef.of(TexPageY.class, UnsignedShortRef.class, 2, 2, UnsignedShortRef::new))));
   public static final ScriptEffectStruct scriptEffect_800bb140 = MEMORY.ref(4, 0x800bb140L, ScriptEffectStruct::new);

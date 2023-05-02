@@ -553,10 +553,10 @@ public class Fmv {
 
         psxycc.toRgb(rgb1, rgb2, rgb3, rgb4);
 
-        dest[iDestOfs1++] = rgb1.toRgba();
-        dest[iDestOfs1++] = rgb2.toRgba();
-        dest[iDestOfs2++] = rgb3.toRgba();
-        dest[iDestOfs2++] = rgb4.toRgba();
+        dest[iDestOfs1++] = rgb1.toArgb();
+        dest[iDestOfs1++] = rgb2.toArgb();
+        dest[iDestOfs2++] = rgb3.toArgb();
+        dest[iDestOfs2++] = rgb4.toArgb();
       }
 
       if(iX < destW) {
@@ -571,8 +571,8 @@ public class Fmv {
 
         psxycc.toRgb(rgb1, rgb2, rgb3, rgb4); // rgb2,4 ignored
 
-        dest[iDestOfs1] = rgb1.toRgba();
-        dest[iDestOfs2] = rgb3.toRgba();
+        dest[iDestOfs1] = rgb1.toArgb();
+        dest[iDestOfs2] = rgb3.toArgb();
       }
     }
 
@@ -592,8 +592,8 @@ public class Fmv {
 
         psxycc.toRgb(rgb1, rgb2, rgb3, rgb4); // rgb3,4 ignored
 
-        dest[iDestOfs1++] = rgb1.toRgba();
-        dest[iDestOfs1++] = rgb2.toRgba();
+        dest[iDestOfs1++] = rgb1.toArgb();
+        dest[iDestOfs1++] = rgb2.toArgb();
       }
 
       if(iX < destW) {
@@ -608,7 +608,7 @@ public class Fmv {
 
         psxycc.toRgb(rgb1, rgb2, rgb3, rgb4); // rgb2,3,4 ignored
 
-        dest[iDestOfs1] = rgb1.toRgba();
+        dest[iDestOfs1] = rgb1.toArgb();
       }
     }
   }

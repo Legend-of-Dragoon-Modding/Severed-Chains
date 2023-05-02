@@ -141,12 +141,11 @@ import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
 import static legend.game.Scus94491BpeSegment_8007.clearRed_8007a3a8;
 import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
+import static legend.game.Scus94491BpeSegment_800b._800bee90;
 import static legend.game.Scus94491BpeSegment_800b.clearBlue_800babc0;
 import static legend.game.Scus94491BpeSegment_800b.clearGreen_800bb104;
-import static legend.game.Scus94491BpeSegment_800b._800bee90;
 import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.continentIndex_800bf0b0;
-import static legend.game.Scus94491BpeSegment_800b.doubleBufferFrame_800bb108;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
@@ -1176,10 +1175,10 @@ public class WMap {
 
     if(a0._3d.get() == 9) {
       //LAB_800ce538
-      renderPacket = a0.renderPacket_0c.get(doubleBufferFrame_800bb108.get()).get();
+      renderPacket = a0.renderPacket_0c.get(GPU.getDrawBufferIndex()).get();
 
       if(a0.transparency_3c.get()) {
-        tpagePacket = a0.tpagePacket_04.get(doubleBufferFrame_800bb108.get()).get();
+        tpagePacket = a0.tpagePacket_04.get(GPU.getDrawBufferIndex()).get();
       } else {
         tpagePacket = 0; // Only used if transparency is set, just needs to be initialized
       }
@@ -1261,8 +1260,8 @@ public class WMap {
     v0 = a0._3d.get();
     if(v0 == 0x9L) {
       //LAB_800ceacc
-      long sp4 = a0.renderPacket_0c.get(doubleBufferFrame_800bb108.get()).get();
-      long sp8 = a0.renderPacket_0c.get(doubleBufferFrame_800bb108.get() ^ 1).get();
+      long sp4 = a0.renderPacket_0c.get(GPU.getDrawBufferIndex()).get();
+      long sp8 = a0.renderPacket_0c.get(GPU.getDrawBufferIndex() ^ 1).get();
 
       //LAB_800ceb38
       int n = 0;
@@ -1335,8 +1334,8 @@ public class WMap {
       //LAB_800cf050
       int n = 0;
       for(int i = 0; i < a0._30.get(); i++) {
-        final WMapRender28 spc = a0._14.get(doubleBufferFrame_800bb108.get()).deref().get(i);
-        final WMapRender28 sp10 = a0._14.get(doubleBufferFrame_800bb108.get() ^ 1).deref().get(i);
+        final WMapRender28 spc = a0._14.get(GPU.getDrawBufferIndex()).deref().get(i);
+        final WMapRender28 sp10 = a0._14.get(GPU.getDrawBufferIndex() ^ 1).deref().get(i);
         final WMapRender10 sp14 = a0._00.deref().get(n);
 
         //LAB_800cf074
@@ -5115,15 +5114,13 @@ public class WMap {
   /** Some kind of full-screen effect during the Wingly teleportation between Aglis and Zenebatos */
   @Method(0x800e3304L)
   public static void renderWinglyTeleportScreenEffect() {
-    final int v = doubleBufferFrame_800bb108.get() ^ 1;
-
     final GpuCommandQuad cmd = new GpuCommandQuad()
       .bpp(Bpp.BITS_15)
       .translucent(Translucency.HALF_B_PLUS_HALF_F)
-      .vramPos(0, doubleBufferFrame_800bb108.get() * 256)
+      .vramPos(0, 0)
       .monochrome(0x80)
       .pos(-160, -120, 320, 240)
-      .uv(0, v * 16);
+      .texture(GPU.getDisplayBuffer());
 
     GPU.queueCommand(5, cmd);
   }

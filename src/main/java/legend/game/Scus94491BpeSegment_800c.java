@@ -1,14 +1,12 @@
 package legend.game;
 
 import legend.core.gpu.Box;
-import legend.core.gpu.DISPENV;
 import legend.core.gpu.RECT;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MATRIX;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.Pointer;
-import legend.core.memory.types.UnsignedShortRef;
 import legend.core.spu.Spu;
 import legend.game.types.PlayableSoundStruct;
 import legend.game.types.SpuStruct124;
@@ -25,13 +23,10 @@ public final class Scus94491BpeSegment_800c {
   public static final Value _800c3410 = MEMORY.ref(4, 0x800c3410L);
 
   public static final Box clip_800c3440 = MEMORY.ref(8, 0x800c3440L, Box::new);
-  public static final DISPENV DISPENV_800c34b0 = MEMORY.ref(20, 0x800c34b0L, DISPENV::new);
 
   public static final RECT displayRect_800c34c8 = MEMORY.ref(8, 0x800c34c8L, RECT::new);
   /** Incremented with each frame - overflows to 1 */
   public static int PSDCNT_800c34d0;
-  /** Double buffer index */
-  public static final UnsignedShortRef PSDIDX_800c34d4 = MEMORY.ref(2, 0x800c34d4L, UnsignedShortRef::new);
 
   public static final MATRIX lightDirectionMatrix_800c34e8 = MEMORY.ref(4, 0x800c34e8L, MATRIX::new);
   public static final MATRIX lightColourMatrix_800c3508 = MEMORY.ref(4, 0x800c3508L, MATRIX::new);
