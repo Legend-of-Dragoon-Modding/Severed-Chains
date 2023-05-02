@@ -170,7 +170,7 @@ public class Window {
 
   void makeContextCurrent() {
     glfwMakeContextCurrent(this.window);
-    glfwSwapInterval(1);
+    glfwSwapInterval(0);
   }
 
   public void setEventPoller(final Runnable poller) {

@@ -439,7 +439,7 @@ public class Gpu {
       final float fps = 1.0f / ((System.nanoTime() - this.lastFrame) / (1_000_000_000 / 30.0f)) * 30.0f;
       this.window.setTitle("Legend of Dragoon - FPS: %.2f/%d".formatted(fps, this.window.getFpsLimit()));
       this.lastFrame = System.nanoTime();
-      this.vsyncCount += 60.0d / this.window.getFpsLimit();
+      this.vsyncCount += 60.0d * Config.getGameSpeedMultiplier() / this.window.getFpsLimit();
     });
 
     this.window.show();
