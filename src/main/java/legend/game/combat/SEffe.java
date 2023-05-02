@@ -629,7 +629,7 @@ public final class SEffe {
   private static final Value _8011a008 = MEMORY.ref(4, 0x8011a008L);
   private static ParticleEffectData98 _8011a00c;
   private static ParticleEffectData98 _8011a010;
-  private static final Value _8011a014 = MEMORY.ref(1, 0x8011a014L);
+  private static final ArrayRef<ByteRef> _8011a014 = MEMORY.ref(1, 0x8011a014L, ArrayRef.of(ByteRef.class, 8, 1, ByteRef::new));
 
   private static final Value _8011a01c = MEMORY.ref(4, 0x8011a01cL);
   private static final Value _8011a020 = MEMORY.ref(4, 0x8011a020L);
@@ -3634,7 +3634,6 @@ public final class SEffe {
     long v0;
     int hitNum;
     long s6;
-    long s7;
     final BattleObject27c s5 = (BattleObject27c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
 
     //LAB_8010633c
@@ -3646,45 +3645,45 @@ public final class SEffe {
 
     //LAB_80106374
     v0 = hitNum - 1;
+    final long hitArrayAddress = mallocTail(v0 & 0xffL);
     a2.count_30.set((int)v0);
-    a2.scriptIndex_00.set(scriptIndex);
-    a2.scriptIndex_04.set(a1);
+    a2.attackerScriptIndex_00.set(scriptIndex);
+    a2.targetScriptIndex_04.set(a1);
     a2._34.set((short)0);
     a2._31.set(0);
     a2._32.set(0);
     a2._38.set(0);
     a2._39.set(0);
     a2._3a.set((int)a3);
-    a2._40.set(mallocTail((v0 & 0xffL) * 0x20L));
+    final UnboundedArrayRef<AdditionOverlaysHit20> hitArray = MEMORY.ref(4, hitArrayAddress, UnboundedArrayRef.of(0x20, AdditionOverlaysHit20::new, a2.count_30::get));
+    a2.hitOverlays_40.set(hitArray);
     s6 = FUN_801061bc(s5.charSlot_276, 0, 15, a3) & 0xffL;
     a2._36.set((int)s6);
 
-    s7 = a2._40.get();
-
     //LAB_801063f0
     for(hitNum = 0; hitNum < a2.count_30.get(); hitNum++) {
-      MEMORY.ref(1, s7).offset(0x0L).setu(0x1L);
-      MEMORY.ref(1, s7).offset(0x1L).setu(0);
-      MEMORY.ref(2, s7).offset(0x8L).setu(0);
-      MEMORY.ref(2, s7).offset(0x10L).setu(s6 + 0x2L);
+      hitArray.get(hitNum)._00.set(1);
+      hitArray.get(hitNum)._01.set(0);
+      hitArray.get(hitNum)._08.set((short)0);
+      hitArray.get(hitNum)._10.set((short)(s6 + 2));
       seed_800fa754.advance();
-      MEMORY.ref(1, s7).offset(0x2L).setu(0x3L);
-      MEMORY.ref(1, s7).offset(0x1cL).setu(0);
-      _8011a014.offset(hitNum).offset(1, 0x0L).setu(0);
+      hitArray.get(hitNum)._02.set(3);
+      hitArray.get(hitNum)._1c.set(0);
+      _8011a014.get(hitNum).set(0);
       v0 = FUN_801061bc(s5.charSlot_276, hitNum, 1, a3) & 0xffL;
       s6 += v0;
-      MEMORY.ref(2, s7).offset(0xaL).setu(v0);
+      hitArray.get(hitNum)._0a.set((short)v0);
       v0 = FUN_801061bc(s5.charSlot_276, hitNum, 2, a3) & 0xffL;
-      MEMORY.ref(2, s7).offset(0xcL).setu(v0);
+      hitArray.get(hitNum)._0c.set((short)v0);
       v0 = FUN_801061bc(s5.charSlot_276, hitNum, 3, a3) & 0xffL;
-      MEMORY.ref(2, s7).offset(0xeL).setu(v0);
-      final long a3_0 = MEMORY.ref(2, s7).offset(0x10L).get() + MEMORY.ref(2, s7).offset(0xcL).get();
-      MEMORY.ref(2, s7).offset(0x10L).setu(a3_0 - (short)v0 / 2 + 1);
-      MEMORY.ref(2, s7).offset(0x12L).setu(a3_0 + v0 - (short)MEMORY.ref(2, s7).offset(0xeL).get() / 2);
+      hitArray.get(hitNum)._0e.set((short)v0);
+      final int a3_0 = hitArray.get(hitNum)._10.get() + hitArray.get(hitNum)._0c.get();
+      hitArray.get(hitNum)._10.set((short)(a3_0 - v0 / 2 + 1));
+      hitArray.get(hitNum)._12.set((short)(a3_0 + v0 - hitArray.get(hitNum)._0e.get() / 2));
 
       final long squareArrayAddress = mallocTail(0xeeL);
       final ArrayRef<AdditionOverlaysSquare0e> squareArray = MEMORY.ref(4, squareArrayAddress, ArrayRef.of(AdditionOverlaysSquare0e.class, 17, 0xe, AdditionOverlaysSquare0e::new));
-      MEMORY.ref(4, s7).offset(0x18L).setu(squareArrayAddress);
+      hitArray.get(hitNum).squareOverlayArray_18.set(squareArray);
 
       //LAB_8010652c
       int val = 16;
@@ -3696,10 +3695,10 @@ public final class SEffe {
         squareArray.get(i)._02.set((16 - val) * 0x80 + 0x200);
         squareArray.get(i)._0c.set(5);
         squareArray.get(i)._0d.set(0);
-        squareArray.get(i)._0a.set((int)(MEMORY.ref(2, s7).offset(0x10L).get() + (MEMORY.ref(2, s7).offset(0xeL).getSigned() - 0x1) / 2 + val - 0x11) & 0xffff);
-        squareArray.get(i).r_04.set(additionSquareColors_800fb7f0.get((int)(MEMORY.ref(1, s7).offset(0x2L).getSigned() * 3)).get() & 0xff);
-        squareArray.get(i).g_05.set(additionSquareColors_800fb7f0.get((int)(MEMORY.ref(1, s7).offset(0x2L).getSigned() * 3) + 1).get() & 0xff);
-        squareArray.get(i).b_06.set(additionSquareColors_800fb7f0.get((int)(MEMORY.ref(1, s7).offset(0x2L).getSigned() * 3) + 2).get() & 0xff);
+        squareArray.get(i)._0a.set((hitArray.get(hitNum)._10.get() + (hitArray.get(hitNum)._0e.get() - 0x1) / 2 + val - 0x11) & 0xffff);
+        squareArray.get(i).r_04.set(additionSquareColors_800fb7f0.get(hitArray.get(hitNum)._02.get() * 3).get() & 0xff);
+        squareArray.get(i).g_05.set(additionSquareColors_800fb7f0.get(hitArray.get(hitNum)._02.get() * 3 + 1).get() & 0xff);
+        squareArray.get(i).b_06.set(additionSquareColors_800fb7f0.get(hitArray.get(hitNum)._02.get() * 3 + 2).get() & 0xff);
 
         val--;
       }
@@ -3712,7 +3711,7 @@ public final class SEffe {
         squareArray.get(i)._02.set(0x200);
         squareArray.get(i)._0c.set(0x11);
         squareArray.get(i)._0d.set(1);
-        squareArray.get(i)._0a.set((int)(MEMORY.ref(2, s7).offset(0x10L).get() - 0x11L) & 0xffff);
+        squareArray.get(i)._0a.set(hitArray.get(hitNum)._10.get() - 0x11 & 0xffff);
 
         if(val != 0x1L) {
           squareArray.get(i).r_04.set(0x30);
@@ -3726,17 +3725,16 @@ public final class SEffe {
         val++;
       }
 
-      MEMORY.ref(4, s7).offset(0x14L).setu(squareArrayAddress + 0xc4);
-      s7 = s7 + 0x20L;
+      hitArray.get(hitNum).squareOverlayArray_14.set(squareArrayAddress + 0xc4, ArrayRef.classFor(AdditionOverlaysSquare0e.class));
     }
 
     //LAB_801066c8
-    FUN_80105f98(a2.scriptIndex_00.get(), a2.vec_10, 0);
+    FUN_80105f98(a2.attackerScriptIndex_00.get(), a2.vec_10, 0);
 
     final VECTOR sp0x10 = new VECTOR();
-    FUN_80105f98(a2.scriptIndex_04.get(), sp0x10, 0x1L);
+    FUN_80105f98(a2.targetScriptIndex_04.get(), sp0x10, 0x1L);
 
-    final int a0_0 = (int)MEMORY.ref(4, a2.hitOverlays_40.get()).offset(0x10L).getSigned();
+    final int a0_0 = a2.hitOverlays_40.deref().get(0)._10.get();
     a2.vec_20.setX((sp0x10.getX() - a2.vec_10.getX()) / a0_0);
     a2.vec_20.setY((sp0x10.getY() - a2.vec_10.getY()) / a0_0);
     a2.vec_20.setZ((sp0x10.getZ() - a2.vec_10.getZ()) / a0_0);
@@ -3858,7 +3856,7 @@ public final class SEffe {
   @Method(0x80106cccL)
   public static void renderAdditionBorderSquares(final long a0, final long a1, final BttlScriptData6cSubBase1 a2, final long a3, final ScriptState<EffectManagerData6c> a4) {
     long s7 = MEMORY.ref(4, a3).offset(0x18L).get();
-    final long sp28 = _8011a014.offset(a1).getAddress();
+    final long sp28 = _8011a014.get((int)a1).getAddress();
     long s3 = s7 + 0x2L;
 
     //LAB_80106d18
@@ -3931,7 +3929,7 @@ public final class SEffe {
     }
 
     //LAB_801070ec
-    final long s5 = _8011a014.offset(a1).getAddress();
+    final long s5 = _8011a014.get((int)a1).getAddress();
     long s1 = MEMORY.ref(4, a3).offset(0x18L).get();
     long s4 = 0;
 
@@ -3984,7 +3982,7 @@ public final class SEffe {
 
   @Method(0x801071fcL)
   public static void FUN_801071fc(final AdditionOverlaysEffect44 a0, long a1, long a2) {
-    final long a3 = _8011a014.offset(a2).getSigned();
+    final long a3 = _8011a014.get((int)a2).get();
     a0._32.set(1);
 
     a1 = a1 + 0x20L + 0xcL;
@@ -3996,7 +3994,7 @@ public final class SEffe {
       MEMORY.ref(2, a1).offset(0x4L).setu(-0x1L);
       MEMORY.ref(2, a1).offset(0x2L).setu(0);
       MEMORY.ref(2, a1).offset(0x0L).setu(0);
-      _8011a014.offset(a2).setu(a3);
+      _8011a014.get((int)a2).set((int)a3);
       a1 = a1 + 0x20L;
     }
 
@@ -4009,7 +4007,7 @@ public final class SEffe {
 
     if(s2._31.get() != 0x1L) {
       if(data._10.flags_00 >= 0) {
-        long s1 = s2.hitOverlays_40.get();
+        long s1 = s2.hitOverlays_40.getAddress();
 
         //LAB_801072c4
         int s0;
@@ -4019,11 +4017,11 @@ public final class SEffe {
         }
 
         //LAB_801072f4
-        s1 = s2.hitOverlays_40.get();
+        s1 = s2.hitOverlays_40.getAddress();
 
         //LAB_8010730c
         for(s0 = 0; s0 < s2.count_30.get(); s0++) {
-          if(_8011a014.offset(1, s0).getSigned() == 0) {
+          if(_8011a014.get(s0).get() == 0) {
             break;
           }
 
@@ -4051,24 +4049,24 @@ public final class SEffe {
 
     if(s3._31.get() == 0) {
       long s4 = 0x1L;
-      long s2 = s3.hitOverlays_40.get();
+      long s2 = s3.hitOverlays_40.getAddress();
       s3._34.incr();
 
       //LAB_80107440
       long s0;
       for(s0 = 0; s0 < s3.count_30.get(); s0++) {
         if(s3._34.get() == MEMORY.ref(2, s2).offset(0x12L).getSigned() + 1) {
-          if(_8011a014.offset(s0).getSigned() == 0) {
-            _8011a014.offset(s0).setu(-2);
+          if(_8011a014.get((int)s0).get() == 0) {
+            _8011a014.get((int)s0).set(-2);
             FUN_801071fc(s3, s2, s0);
 
             //LAB_80107478
-            if(_8011a014.offset(s0).getSigned() == 0) {
+            if(_8011a014.get((int)s0).get() == 0) {
               s4 = 0;
             }
           }
         } else {
-          if(_8011a014.offset(s0).getSigned() == 0) {
+          if(_8011a014.get((int)s0).get() == 0) {
             s4 = 0;
           }
         }
@@ -4084,7 +4082,7 @@ public final class SEffe {
 
       //LAB_801074bc
       long s1 = 0;
-      s2 = s3.hitOverlays_40.get();
+      s2 = s3.hitOverlays_40.getAddress();
 
       //LAB_801074d0
       for(s0 = 0; s0 < s3.count_30.get(); s0++) {
@@ -4097,7 +4095,7 @@ public final class SEffe {
         _80119f41.setu(0);
 
         //LAB_8010752c
-        s2 = s3.hitOverlays_40.get();
+        s2 = s3.hitOverlays_40.getAddress();
         for(s0 = 0; s0 < s3.count_30.get(); s0++) {
           free(MEMORY.ref(4, s2).offset(0x18L).get());
           s2 = s2 + 0x20L;
@@ -4108,11 +4106,11 @@ public final class SEffe {
       } else {
         //LAB_8010756c
         if(s3._34.get() >= 9) {
-          s2 = s3.hitOverlays_40.get();
+          s2 = s3.hitOverlays_40.getAddress();
           if(s3.count_30.get() != 0) {
             //LAB_80107598
             for(s0 = 0; s0 < s3.count_30.get(); s0++) {
-              if(_8011a014.offset(s0).getSigned() == 0) {
+              if(_8011a014.get((int)s0).get() == 0) {
                 break;
               }
 
@@ -4142,19 +4140,19 @@ public final class SEffe {
                   final long v1 = joypadPress_8007a398.get();
 
                   if((v1 & 0x60) != 0) {
-                    _8011a014.offset(s0).setu(-1);
+                    _8011a014.get((int)s0).set(-1);
 
                     if((v1 & a0) == 0 || (v1 & ~a0) != 0) {
                       //LAB_801076d8
                       //LAB_801076dc
-                      _8011a014.offset(s0).setu(-3);
+                      _8011a014.get((int)s0).set(-3);
                     } else if(s3._34.get() >= MEMORY.ref(2, s2).offset(0x10L).getSigned() && s3._34.get() <= MEMORY.ref(2, s2).offset(0x12L).getSigned()) {
-                      _8011a014.offset(s0).setu(1);
+                      _8011a014.get((int)s0).set(1);
                       MEMORY.ref(1, s2).offset(0x1L).setu(1);
                     }
 
                     //LAB_801076f0
-                    if(_8011a014.offset(s0).getSigned() < 0) {
+                    if(_8011a014.get((int)s0).get() < 0) {
                       FUN_801071fc(s3, s2, s0);
                     }
 
@@ -4167,7 +4165,7 @@ public final class SEffe {
                 }
               } else {
                 if(s3._34.get() >= MEMORY.ref(2, s2).offset(0x10L).getSigned() && s3._34.get() <= MEMORY.ref(2, s2).offset(0x12L).getSigned()) {
-                  _8011a014.offset(s0).setu(1);
+                  _8011a014.get((int)s0).set(1);
                   MEMORY.ref(1, s2).offset(0x1L).setu(1);
 
                   //LAB_8010771c
@@ -4182,7 +4180,7 @@ public final class SEffe {
           //LAB_80107728
           if(s3._38.get() != 0) {
             s3._38.decr();
-            renderAdditionCentreSolidSquare(s3, s3._3c.get(), _8011a014.offset(s3._39.get()).getSigned(), state, data);
+            renderAdditionCentreSolidSquare(s3, s3._3c.get(), _8011a014.get(s3._39.get()).get(), state, data);
           }
         }
       }
@@ -4193,12 +4191,12 @@ public final class SEffe {
 
   @Method(0x80107790L)
   public static void deallocateAdditionOverlaysEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    free(((AdditionOverlaysEffect44)data.effect_44).hitOverlays_40.get());
+    free(((AdditionOverlaysEffect44)data.effect_44).hitOverlays_40.getAddress());
   }
 
   @Method(0x801077bcL)
   public static FlowControl FUN_801077bc(final RunningScript<?> script) {
-    script.params_20[2].set((int)_8011a014.offset(script.params_20[1].get()).getSigned());
+    script.params_20[2].set(_8011a014.get(script.params_20[1].get()).get());
     return FlowControl.CONTINUE;
   }
 
@@ -4250,11 +4248,11 @@ public final class SEffe {
     a2._32.set(v1);
 
     //LAB_80107954
-    long ptr = a2.hitOverlays_40.get() + 0x10L;
+    long ptr = a2.hitOverlays_40.getAddress() + 0x10L;
     for(int i = 0; i < a2.count_30.get(); i++) {
       MEMORY.ref(2, ptr).offset(0x0L).setu(0);
       MEMORY.ref(2, ptr).offset(0x2L).setu(0);
-      _8011a014.offset(i).setu(-0x1L);
+      _8011a014.get(i).set(-0x1);
       ptr = ptr + 0x20L;
     }
 
