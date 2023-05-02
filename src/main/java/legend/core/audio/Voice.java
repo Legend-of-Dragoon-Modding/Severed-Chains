@@ -126,8 +126,8 @@ final class Voice implements AudioStream {
     int step = this.sampleRate;
     if(this.index > 0 && this.isModulation) {
       final int factor = this.previousVoice.lastSample + 0x8000;
-      //step = (step * factor) >> 15;
-      //step &= 0xffff;
+      step = (step * factor) >> 15;
+      step &= 0xffff;
     }
 
     if(step > 0x3fff) {
@@ -317,23 +317,25 @@ final class Voice implements AudioStream {
   }
 
   private static int calculateSampleRate(final int rootKey, final int note, final int pitchBendMultiplier, final int pitchBend, final int cents) {
+    final int pitchBend_64ths = (pitchBend - 64) * pitchBendMultiplier;
+    final int pitchBend_fullNotes = pitchBend_64ths / 64;
+    final int pitchBentCents = pitchBend_64ths - pitchBend_fullNotes * 64 + cents * 4;
+    final int adjustedNote = note + pitchBend_fullNotes;
+
     final int semitoneOffset;
     final int octaveOffset;
-    final int adjustedCents = (int) (cents * 6.25f); //Cents are actually 16ths
 
-    final double pitchBendMulti = Math.pow(2, (pitchBendMultiplier * ((pitchBend - 64) / 64d)) / 12d);
+    if(adjustedNote < rootKey) {
+      octaveOffset = ((rootKey - adjustedNote - 1)) / 12 + 1;
+      semitoneOffset = (12 * octaveOffset) - (rootKey - adjustedNote);
 
-    if(note < rootKey) {
-      octaveOffset = ((rootKey - note - 1)) / 12 + 1;
-      semitoneOffset = (12 * octaveOffset) - (rootKey - note);
-
-      return (int)((0x1000 >> octaveOffset) * (Offsets.semitone[semitoneOffset] * Offsets.cent[adjustedCents] * pitchBendMulti));
+      return Offsets.sampleRates[semitoneOffset * 64 + pitchBentCents + 64] >> octaveOffset;
     }
 
-    semitoneOffset = ((note - rootKey) % 12);
-    octaveOffset = (note - rootKey) / 12;
+    semitoneOffset = ((adjustedNote - rootKey) % 12);
+    octaveOffset = (adjustedNote - rootKey) / 12;
 
-    return (int)((0x1000 << octaveOffset) * (Offsets.semitone[semitoneOffset] * Offsets.cent[adjustedCents] * pitchBendMulti));
+    return Offsets.sampleRates[semitoneOffset * 64 + pitchBentCents + 64] << octaveOffset;
   }
 
   private static final short[] gaussTable = {
