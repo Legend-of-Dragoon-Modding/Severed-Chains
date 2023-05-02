@@ -4008,7 +4008,7 @@ public final class SEffe {
 
     if(s2._31.get() != 0x1L) {
       if(data._10.flags_00 >= 0) {
-        long s1 = s2.hitOverlays_40.getAddress();
+        long s1 = s2.hitOverlays_40.getPointer();
 
         //LAB_801072c4
         int s0;
@@ -4018,7 +4018,7 @@ public final class SEffe {
         }
 
         //LAB_801072f4
-        s1 = s2.hitOverlays_40.getAddress();
+        s1 = s2.hitOverlays_40.getPointer();
 
         //LAB_8010730c
         for(s0 = 0; s0 < s2.count_30.get(); s0++) {
@@ -4050,7 +4050,7 @@ public final class SEffe {
 
     if(s3._31.get() == 0) {
       long s4 = 0x1L;
-      long s2 = s3.hitOverlays_40.getAddress();
+      long s2 = s3.hitOverlays_40.getPointer();
       s3._34.incr();
 
       //LAB_80107440
@@ -4083,7 +4083,7 @@ public final class SEffe {
 
       //LAB_801074bc
       long s1 = 0;
-      s2 = s3.hitOverlays_40.getAddress();
+      s2 = s3.hitOverlays_40.getPointer();
 
       //LAB_801074d0
       for(s0 = 0; s0 < s3.count_30.get(); s0++) {
@@ -4096,7 +4096,7 @@ public final class SEffe {
         _80119f41.setu(0);
 
         //LAB_8010752c
-        s2 = s3.hitOverlays_40.getAddress();
+        s2 = s3.hitOverlays_40.getPointer();
         for(s0 = 0; s0 < s3.count_30.get(); s0++) {
           free(MEMORY.ref(4, s2).offset(0x18L).get());
           s2 = s2 + 0x20L;
@@ -4107,7 +4107,7 @@ public final class SEffe {
       } else {
         //LAB_8010756c
         if(s3._34.get() >= 9) {
-          s2 = s3.hitOverlays_40.getAddress();
+          s2 = s3.hitOverlays_40.getPointer();
           if(s3.count_30.get() != 0) {
             //LAB_80107598
             for(s0 = 0; s0 < s3.count_30.get(); s0++) {
@@ -4192,7 +4192,7 @@ public final class SEffe {
 
   @Method(0x80107790L)
   public static void deallocateAdditionOverlaysEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    free(((AdditionOverlaysEffect44)data.effect_44).hitOverlays_40.getAddress());
+    free(((AdditionOverlaysEffect44)data.effect_44).hitOverlays_40.getPointer());
   }
 
   @Method(0x801077bcL)
@@ -4249,7 +4249,7 @@ public final class SEffe {
     a2._32.set(v1);
 
     //LAB_80107954
-    long ptr = a2.hitOverlays_40.getAddress() + 0x10L;
+    long ptr = a2.hitOverlays_40.getPointer() + 0x10L;
     for(int i = 0; i < a2.count_30.get(); i++) {
       MEMORY.ref(2, ptr).offset(0x0L).setu(0);
       MEMORY.ref(2, ptr).offset(0x2L).setu(0);
