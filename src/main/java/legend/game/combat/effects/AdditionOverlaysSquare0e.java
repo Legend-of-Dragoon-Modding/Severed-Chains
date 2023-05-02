@@ -10,7 +10,7 @@ public class AdditionOverlaysSquare0e implements MemoryRef {
 
   public final ByteRef _00;
 
-  public final ShortRef _02;
+  public final ShortRef _02; // something to do with angle
   public final ByteRef r_04;
   public final ByteRef g_05;
   public final ByteRef b_06;

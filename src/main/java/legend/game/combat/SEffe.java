@@ -3664,7 +3664,7 @@ public final class SEffe {
     for(hitNum = 0; hitNum < a2.count_30.get(); hitNum++) {
       hitArray.get(hitNum)._00.set(1);
       hitArray.get(hitNum)._01.set(0);
-      hitArray.get(hitNum)._08.set((short)0);
+      hitArray.get(hitNum).shadowColor_08.set((short)0);
       hitArray.get(hitNum)._10.set((short)(s6 + 2));
       seed_800fa754.advance();
       hitArray.get(hitNum)._02.set(3);
@@ -3829,7 +3829,7 @@ public final class SEffe {
   }
 
   @Method(0x80106ac4L)
-  public static void renderRotatedSquareShadow(final long a0, final int angle, final int a2) {
+  public static void renderRotatedSquareShadow(final AdditionOverlaysHit20 hitOverlay, final int angle, final int a2) {
     final int s2 = angle + 0x400;
     final int s0 = a2 - 1;
     final int s1 = a2 - 11;
@@ -3841,7 +3841,7 @@ public final class SEffe {
     final int y1 = rsin(s2) * s0 >> 12;
     final int y2 = rsin(angle) * s1 >> 12;
     final int y3 = rsin(s2) * s1 >> 12;
-    final int colour = (int)(MEMORY.ref(2, a0).offset(0x8L).getSigned() * 4);
+    final int colour = hitOverlay.shadowColor_08.get() * 4;
 
     final GpuCommandPoly cmd = new GpuCommandPoly(4)
       .translucent(Translucency.B_MINUS_F)
@@ -3858,44 +3858,43 @@ public final class SEffe {
   }
 
   @Method(0x80106cccL)
-  public static void renderAdditionBorderSquares(final long a0, final long a1, final BttlScriptData6cSubBase1 a2, final long a3, final ScriptState<EffectManagerData6c> a4) {
-    long s7 = MEMORY.ref(4, a3).offset(0x18L).get();
-    final long sp28 = _8011a014.get((int)a1).getAddress();
-    long s3 = s7 + 0x2L;
+  public static void renderAdditionBorderSquares(final byte a0, final int hitNum, final AdditionOverlaysEffect44 effect, final UnboundedArrayRef<AdditionOverlaysHit20> hitArray, final ScriptState<EffectManagerData6c> state) {
+    final ArrayRef<AdditionOverlaysSquare0e> squareArray = hitArray.get(hitNum).squareOverlayArray_18.deref();
+    final byte sp28 = _8011a014.get(hitNum).get();
 
     //LAB_80106d18
-    for(long s6 = 0; s6 < 17; s6++) {
-      if(MEMORY.ref(1, s7).offset(0x0L).getSigned() != 0) {
-        if(MEMORY.ref(2, s3).offset(0x8L).getSigned() <= 0) {
-          final int s2 = (int)MEMORY.ref(2, s3).offset(0x6L).getSigned();
-          int sp20 = rcos(MEMORY.ref(2, s3).offset(0x0L).getSigned()) * s2 >> 12;
-          int sp24 = (rsin(MEMORY.ref(2, s3).offset(0x0L).getSigned()) * s2 >> 12) + 30;
+    for(int i = 0; i < 17; i++) {
+      if(squareArray.get(i)._00.get() != 0) {
+        if(squareArray.get(i)._0a.get() <= 0) {
+          final int s2 = squareArray.get(i)._08.get();
+          int sp20 = rcos(squareArray.get(i)._02.get()) * s2 >> 12;
+          int sp24 = (rsin(squareArray.get(i)._02.get()) * s2 >> 12) + 30;
 
           //LAB_80106d80
           int s4 = 0;
           for(long s5 = 0; s5 < 4; s5++) {
             final GpuCommandLine cmd = new GpuCommandLine();
 
-            final long v1 = MEMORY.ref(1, s3).offset(0xbL).get();
+            final int v1 = squareArray.get(i)._0d.get();
 
             //LAB_80106dc0
-            if(v1 != 0 && v1 != 0xffL || MEMORY.ref(1, sp28).offset(0x0L).getSigned() < 0) {
+            if(v1 != 0 && v1 != 0xffL || sp28 < 0) {
               //LAB_80106de8
               cmd.translucent(Translucency.B_PLUS_F);
             }
 
 
-            if(MEMORY.ref(1, a3).offset(0x1cL).getSigned() != 0 && s6 != 0x10L) {
-              cmd.rgb((int)MEMORY.ref(1, s3).offset(0x2L).get() * 3, (int)MEMORY.ref(1, s3).offset(0x3L).get(), ((int)MEMORY.ref(1, s3).offset(0x4L).get() + 1) / 8);
+            if(hitArray.get(hitNum)._1c.get() != 0 && i != 0x10L) {
+              cmd.rgb(squareArray.get(i).r_04.get() * 3, squareArray.get(i).g_05.get(), (squareArray.get(i).b_06.get() + 1) / 8);
             } else {
               //LAB_80106e58
-              cmd.rgb((int)MEMORY.ref(1, s3).offset(0x2L).get(), (int)MEMORY.ref(1, s3).offset(0x3L).get(), (int)MEMORY.ref(1, s3).offset(0x4L).get());
+              cmd.rgb(squareArray.get(i).r_04.get(), squareArray.get(i).g_05.get(), squareArray.get(i).b_06.get());
             }
 
             //LAB_80106e74
             s4 = s4 + 0x400;
-            final int sp18 = rcos(MEMORY.ref(2, s3).offset(0x0L).getSigned() + s4) * s2 >> 12;
-            final int sp1c = (rsin(MEMORY.ref(2, s3).offset(0x0L).getSigned() + s4) * s2 >> 12) + 30;
+            final int sp18 = rcos(squareArray.get(i)._02.get() + s4) * s2 >> 12;
+            final int sp1c = (rsin(squareArray.get(i)._02.get() + s4) * s2 >> 12) + 30;
             cmd
               .pos(0, sp20, sp24)
               .pos(1, sp18, sp1c);
@@ -3907,28 +3906,25 @@ public final class SEffe {
           }
 
           // Renders rotating shadow
-          if(MEMORY.ref(1, s3).offset(0xbL).get() == 0) {
-            renderRotatedSquareShadow(a3, (int)MEMORY.ref(2, s3).offset(0x0L).get() + s4, s2);
-            renderRotatedSquareShadow(a3, (int)MEMORY.ref(2, s3).offset(0x0L).get() + s4 + 0x400, s2);
-            renderRotatedSquareShadow(a3, (int)MEMORY.ref(2, s3).offset(0x0L).get() + s4 + 0x800, s2);
-            renderRotatedSquareShadow(a3, (int)MEMORY.ref(2, s3).offset(0x0L).get() + s4 + 0xc00, s2);
+          if(squareArray.get(i)._0d.get() == 0) {
+            renderRotatedSquareShadow(hitArray.get(hitNum), squareArray.get(i)._02.get() + s4, s2);
+            renderRotatedSquareShadow(hitArray.get(hitNum), squareArray.get(i)._02.get() + s4 + 0x400, s2);
+            renderRotatedSquareShadow(hitArray.get(hitNum), squareArray.get(i)._02.get() + s4 + 0x800, s2);
+            renderRotatedSquareShadow(hitArray.get(hitNum), squareArray.get(i)._02.get() + s4 + 0xc00, s2);
           }
         }
       }
-
       //LAB_80106fac
-      s3 = s3 + 0xeL;
-      s7 = s7 + 0xeL;
     }
   }
 
   @Method(0x80107088L)
   public static long FUN_80107088(final byte a0, final int hitNum, final AdditionOverlaysEffect44 effect, final UnboundedArrayRef<AdditionOverlaysHit20> hitArray) {
     if(effect._34.get() >= hitArray.get(hitNum)._10.get() - 0x11) {
-      hitArray.get(hitNum)._08.add((short)1);
+      hitArray.get(hitNum).shadowColor_08.add((short)1);
 
-      if(hitArray.get(hitNum)._08.get() >= 0xe) {
-        hitArray.get(hitNum)._08.set((short)0xd);
+      if(hitArray.get(hitNum).shadowColor_08.get() >= 0xe) {
+        hitArray.get(hitNum).shadowColor_08.set((short)0xd);
       }
     }
 
@@ -3940,10 +3936,10 @@ public final class SEffe {
     //LAB_80107104
     for(int i = 0; i < 17; i++) {
       if(s5 < 0) {
-        hitArray.get(hitNum)._08.sub((short)3);
+        hitArray.get(hitNum).shadowColor_08.sub((short)3);
 
-        if(hitArray.get(hitNum)._08.get() < 0) {
-          hitArray.get(hitNum)._08.set((short)0);
+        if(hitArray.get(hitNum).shadowColor_08.get() < 0) {
+          hitArray.get(hitNum).shadowColor_08.set((short)0);
         }
 
         //LAB_80107134
@@ -4006,38 +4002,33 @@ public final class SEffe {
 
   @Method(0x8010726cL)
   public static void renderAdditionOverlaysEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    final AdditionOverlaysEffect44 s2 = (AdditionOverlaysEffect44)data.effect_44;
+    final AdditionOverlaysEffect44 effect = (AdditionOverlaysEffect44)data.effect_44;
 
-    if(s2._31.get() != 0x1L) {
+    if(effect._31.get() != 0x1L) {
       if(data._10.flags_00 >= 0) {
-        long s1 = s2.hitOverlays_40.getPointer();
+        final UnboundedArrayRef<AdditionOverlaysHit20> hitArray = effect.hitOverlays_40.deref();
 
         //LAB_801072c4
-        int s0;
-        for(s0 = 0; s0 < s2.count_30.get(); s0++) {
-          renderAdditionBorderSquares(MEMORY.ref(1, s1).offset(0x2L).getSigned(), s0, s2, s1, state);
-          s1 = s1 + 0x20L;
+        int hitNum;
+        for(hitNum = 0; hitNum < effect.count_30.get(); hitNum++) {
+          renderAdditionBorderSquares(hitArray.get(hitNum)._02.get(), hitNum, effect, hitArray, state);
         }
 
         //LAB_801072f4
-        s1 = s2.hitOverlays_40.getPointer();
-
         //LAB_8010730c
-        for(s0 = 0; s0 < s2.count_30.get(); s0++) {
-          if(_8011a014.get(s0).get() == 0) {
+        for(hitNum = 0; hitNum < effect.count_30.get(); hitNum++) {
+          if(_8011a014.get(hitNum).get() == 0) {
             break;
           }
-
-          s1 = s1 + 0x20L;
         }
 
         //LAB_80107330
-        if(s0 < s2.count_30.get()) {
-          renderAdditionButton((byte)(MEMORY.ref(2, s1).offset(0x10L).getSigned() + (MEMORY.ref(2, s1).offset(0x12L).getSigned() - MEMORY.ref(2, s1).offset(0x10L).getSigned()) / 2 - s2._34.get() - 0x1L), MEMORY.ref(1, s1).offset(0x1cL).getSigned());
+        if(hitNum < effect.count_30.get()) {
+          renderAdditionButton((byte)(hitArray.get(hitNum)._10.get() + (hitArray.get(hitNum)._12.get() - hitArray.get(hitNum)._10.get()) / 2 - effect._34.get() - 0x1L), hitArray.get(hitNum)._1c.get());
 
-          final byte v1 = (byte)s2._34.get();
-          if(v1 >= MEMORY.ref(2, s1).offset(0x10L).getSigned() && v1 <= MEMORY.ref(2, s1).offset(0x12L).getSigned()) {
-            renderAdditionCentreSolidSquare(s2, s1, -2, state, data);
+          final byte v1 = (byte)effect._34.get();
+          if(v1 >= hitArray.get(hitNum)._10.get() && v1 <= hitArray.get(hitNum)._12.get()) {
+            renderAdditionCentreSolidSquare(effect, hitArray.get(hitNum), -2, state, data);
           }
         }
       }
@@ -4186,7 +4177,9 @@ public final class SEffe {
     free(((AdditionOverlaysEffect44)data.effect_44).hitOverlays_40.getPointer());
   }
 
-  /** gets some kind of addition overlay-related value */
+  /**
+   * gets some kind of addition overlay-related value
+   */
   @Method(0x801077bcL)
   public static FlowControl FUN_801077bc(final RunningScript<?> script) {
     script.params_20[2].set(_8011a014.get(script.params_20[1].get()).get());
@@ -4212,7 +4205,9 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
-  /** Script subfunc relating somehow to addition overlays */
+  /**
+   * Script subfunc relating somehow to addition overlays
+   */
   @Method(0x801078c0L)
   public static FlowControl FUN_801078c0(final RunningScript<?> script) {
     final EffectManagerData6c v0 = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;

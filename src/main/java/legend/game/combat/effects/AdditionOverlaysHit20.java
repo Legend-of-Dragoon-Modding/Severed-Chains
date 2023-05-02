@@ -14,7 +14,7 @@ public class AdditionOverlaysHit20 implements MemoryRef {
   public final ByteRef _01;
   public final ByteRef _02;
 
-  public final ShortRef _08;
+  public final ShortRef shadowColor_08;
   public final ShortRef _0a;
   public final ShortRef _0c;
   public final ShortRef _0e;
@@ -31,7 +31,7 @@ public class AdditionOverlaysHit20 implements MemoryRef {
     this._01 = ref.offset(1, 0x01L).cast(ByteRef::new);
     this._02 = ref.offset(1, 0x02L).cast(ByteRef::new);
 
-    this._08 = ref.offset(2, 0x08).cast(ShortRef::new);
+    this.shadowColor_08 = ref.offset(2, 0x08).cast(ShortRef::new);
     this._0a = ref.offset(2, 0x0a).cast(ShortRef::new);
     this._0c = ref.offset(2, 0x0c).cast(ShortRef::new);
     this._0e = ref.offset(2, 0x0e).cast(ShortRef::new);
