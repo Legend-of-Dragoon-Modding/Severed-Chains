@@ -873,11 +873,11 @@ public final class Bttl_800e {
     }
 
     if(g < 0) {
-      LOGGER.warn("Negative R! %x", g);
+      LOGGER.warn("Negative G! %x", g);
     }
 
     if(b < 0) {
-      LOGGER.warn("Negative R! %x", b);
+      LOGGER.warn("Negative B! %x", b);
     }
 
     final BattleLightStruct64 v1 = _800c6930;
@@ -903,11 +903,11 @@ public final class Bttl_800e {
     }
 
     if(g < 0) {
-      LOGGER.warn("Negative R! %x", g);
+      LOGGER.warn("Negative G! %x", g);
     }
 
     if(b < 0) {
-      LOGGER.warn("Negative R! %x", b);
+      LOGGER.warn("Negative B! %x", b);
     }
 
     GsSetFlatLight(0, light_800c6ddc);
