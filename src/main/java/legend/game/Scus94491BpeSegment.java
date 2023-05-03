@@ -450,7 +450,7 @@ public final class Scus94491BpeSegment {
       if(key == GLFW_KEY_EQUAL) {
         if(mods == 0) {
           Config.setGameSpeedMultiplier(Config.getGameSpeedMultiplier() + 1);
-        } else if((mods & GLFW_MOD_CONTROL) != 0) {
+        } else if((mods & GLFW_MOD_CONTROL) != 0 && gameState_800babc8 != null) {
           final RenderScaleConfigEntry config = CoreMod.RENDER_SCALE_CONFIG.get();
           final int scale = gameState_800babc8.getConfig(config) + 1;
 
@@ -464,7 +464,7 @@ public final class Scus94491BpeSegment {
       if(key == GLFW_KEY_MINUS) {
         if(mods == 0) {
           Config.setGameSpeedMultiplier(Config.getGameSpeedMultiplier() - 1);
-        } else if((mods & GLFW_MOD_CONTROL) != 0) {
+        } else if((mods & GLFW_MOD_CONTROL) != 0 && gameState_800babc8 != null) {
           final RenderScaleConfigEntry config = CoreMod.RENDER_SCALE_CONFIG.get();
           final int scale = gameState_800babc8.getConfig(config) - 1;
 
