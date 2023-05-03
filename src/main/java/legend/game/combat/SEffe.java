@@ -3645,7 +3645,6 @@ public final class SEffe {
 
     //LAB_80106374
     v0 = hitNum - 1;
-    final long hitArrayAddress = mallocTail((v0 & 0xffL) * 0x20);
     a2.count_30.set((int)v0);
     a2.attackerScriptIndex_00.set(scriptIndex);
     a2.targetScriptIndex_04.set(a1);
@@ -3655,6 +3654,7 @@ public final class SEffe {
     a2._38.set(0);
     a2._39.set(0);
     a2._3a.set((int)a3);
+    final long hitArrayAddress = mallocTail((v0 & 0xffL) * 0x20);
     final UnboundedArrayRef<AdditionOverlaysHit20> hitArray = MEMORY.ref(4, hitArrayAddress, UnboundedArrayRef.of(0x20, AdditionOverlaysHit20::new, a2.count_30::get));
     a2.hitOverlays_40.set(hitArray);
     s6 = FUN_801061bc(s5.charSlot_276, 0, 15, a3) & 0xffL;
@@ -3695,7 +3695,7 @@ public final class SEffe {
         squareArray.get(i)._02.set((short)((16 - val) * 0x80 + 0x200));
         squareArray.get(i)._0c.set(5);
         squareArray.get(i)._0d.set(0);
-        squareArray.get(i)._0a.set((short)((hitArray.get(hitNum)._10.get() + (hitArray.get(hitNum)._0e.get() - 0x1) / 2 + val - 0x11) & 0xffff));
+        squareArray.get(i)._0a.set((short)((hitArray.get(hitNum)._10.get() + (hitArray.get(hitNum)._0e.get() - 0x1) / 2 + val - 0x11)));
         squareArray.get(i).r_04.set(additionSquareColors_800fb7f0.get(hitArray.get(hitNum)._02.get() * 3).get() & 0xff);
         squareArray.get(i).g_05.set(additionSquareColors_800fb7f0.get(hitArray.get(hitNum)._02.get() * 3 + 1).get() & 0xff);
         squareArray.get(i).b_06.set(additionSquareColors_800fb7f0.get(hitArray.get(hitNum)._02.get() * 3 + 2).get() & 0xff);
@@ -3711,7 +3711,7 @@ public final class SEffe {
         squareArray.get(i)._02.set((short)0x200);
         squareArray.get(i)._0c.set(0x11);
         squareArray.get(i)._0d.set(1);
-        squareArray.get(i)._0a.set((short)(hitArray.get(hitNum)._10.get() - 0x11 & 0xffff));
+        squareArray.get(i)._0a.set((short)(hitArray.get(hitNum)._10.get() - 0x11));
 
         if(val != 0x1L) {
           squareArray.get(i).r_04.set(0x30);
@@ -3719,7 +3719,7 @@ public final class SEffe {
           squareArray.get(i).b_06.set(0x30);
         } else {
           //LAB_80106680
-          squareArray.get(i)._0d.set(0xff);
+          squareArray.get(i)._0d.set(-1);
         }
         //LAB_80106684
         val++;
@@ -3736,6 +3736,7 @@ public final class SEffe {
     FUN_80105f98(a2.targetScriptIndex_04.get(), sp0x10, 0x1L);
 
     final int a0_0 = a2.hitOverlays_40.deref().get(0)._10.get();
+    LOGGER.info(MEMORY.getBytes(a2.hitOverlays_40.getPointer(), 0x100));
     a2.vec_20.setX((sp0x10.getX() - a2.vec_10.getX()) / a0_0);
     a2.vec_20.setY((sp0x10.getY() - a2.vec_10.getY()) / a0_0);
     a2.vec_20.setZ((sp0x10.getZ() - a2.vec_10.getZ()) / a0_0);
@@ -3878,7 +3879,7 @@ public final class SEffe {
             final int v1 = squareArray.get(i)._0d.get();
 
             //LAB_80106dc0
-            if(v1 != 0 && v1 != 0xffL || sp28 < 0) {
+            if(v1 != 0 && v1 != -1 || sp28 < 0) {
               //LAB_80106de8
               cmd.translucent(Translucency.B_PLUS_F);
             }
@@ -3954,7 +3955,7 @@ public final class SEffe {
           squareArray.get(i)._0a.sub((short)1);
         } else {
           //LAB_80107178
-          if(squareArray.get(i)._0d.get() != 0xff) {
+          if(squareArray.get(i)._0d.get() != -1) {
             squareArray.get(i)._0d.add(1);
           }
 
@@ -4123,7 +4124,7 @@ public final class SEffe {
                   final long v1 = joypadPress_8007a398.get();
 
                   if((v1 & 0x60) != 0) {
-                    _8011a014.get((int)hitNum).set(-1);
+                    _8011a014.get(hitNum).set(-1);
 
                     if((v1 & a0) == 0 || (v1 & ~a0) != 0) {
                       //LAB_801076d8
@@ -4135,7 +4136,7 @@ public final class SEffe {
                     }
 
                     //LAB_801076f0
-                    if(_8011a014.get((int)hitNum).get() < 0) {
+                    if(_8011a014.get(hitNum).get() < 0) {
                       FUN_801071fc(effect, hitArray, hitNum);
                     }
 
