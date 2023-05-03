@@ -1,6 +1,5 @@
 package legend.game;
 
-import legend.core.gpu.Box;
 import legend.core.gpu.RECT;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MATRIX;
@@ -21,8 +20,6 @@ public final class Scus94491BpeSegment_800c {
   private Scus94491BpeSegment_800c() { }
 
   public static final Value _800c3410 = MEMORY.ref(4, 0x800c3410L);
-
-  public static final Box clip_800c3440 = MEMORY.ref(8, 0x800c3440L, Box::new);
 
   public static final RECT displayRect_800c34c8 = MEMORY.ref(8, 0x800c34c8L, RECT::new);
   /** Incremented with each frame - overflows to 1 */

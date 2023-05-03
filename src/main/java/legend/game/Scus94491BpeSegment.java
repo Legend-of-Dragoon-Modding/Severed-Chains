@@ -93,8 +93,9 @@ import static legend.game.Scus94491BpeSegment_8002.loadAndRenderMenus;
 import static legend.game.Scus94491BpeSegment_8002.rand;
 import static legend.game.Scus94491BpeSegment_8002.renderTextboxes;
 import static legend.game.Scus94491BpeSegment_8002.sssqResetStuff;
-import static legend.game.Scus94491BpeSegment_8003.GsDefDispBuff;
 import static legend.game.Scus94491BpeSegment_8003.GsInitGraph;
+import static legend.game.Scus94491BpeSegment_8003.GsSetDrawBuffClip;
+import static legend.game.Scus94491BpeSegment_8003.GsSetDrawBuffOffset;
 import static legend.game.Scus94491BpeSegment_8003.GsSortClear;
 import static legend.game.Scus94491BpeSegment_8003.GsSwapDispBuff;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
@@ -1099,7 +1100,8 @@ public final class Scus94491BpeSegment {
     GPU.updateOrderingTableSize(orderingTableSize_1f8003c8.get());
 
     //LAB_80013040
-    GsDefDispBuff((short)0, (short)16, (short)0, (short)256);
+    GsSetDrawBuffClip();
+    GsSetDrawBuffOffset();
 
     //LAB_80013060
     GsInitGraph(width_8004dd34.get(), 240);

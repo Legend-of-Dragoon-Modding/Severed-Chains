@@ -53,7 +53,6 @@ import static legend.game.Scus94491BpeSegment_8005.matrixStackIndex_80054a08;
 import static legend.game.Scus94491BpeSegment_8005.matrixStack_80054a0c;
 import static legend.game.Scus94491BpeSegment_800c.PSDCNT_800c34d0;
 import static legend.game.Scus94491BpeSegment_800c._800c3410;
-import static legend.game.Scus94491BpeSegment_800c.clip_800c3440;
 import static legend.game.Scus94491BpeSegment_800c.coord2s_800c35a8;
 import static legend.game.Scus94491BpeSegment_800c.displayRect_800c34c8;
 import static legend.game.Scus94491BpeSegment_800c.identityAspectMatrix_800c3588;
@@ -585,30 +584,6 @@ public final class Scus94491BpeSegment_8003 {
     PopMatrix();
 
     SetLightMatrix(lightDirection);
-  }
-
-  /**
-   * <p>Defines the display areas used for double-buffering.</p>
-   *
-   * <p>x0 and y0 specify the frame buffer coordinates for buffer #0. x1 and y1 specify the frame buffer coordinates
-   * for buffer #0. Normally, buffer #0 is located at (0,0) and buffer #1 is located at (0, yres), where yres is the
-   * vertical resolution specified using GsInitGraph().</p>
-   *
-   * <p>If x0, y0 and x1, y1 are specified as the same coordinates, the double buffers are released. However,
-   * double-buffer swapping of even-numbered and odd-numbered fields is performed automatically when x0,
-   * y0 and x1, y1 are specified as the same coordinates in interlace mode.</p>
-   *
-   * <p>GsSwapDispBuffer() is used to swap double buffers. The double buffer is implemented by the GPU or GTE
-   * offset. Set the libgpu or libgte offset with GsInitGraph(). When using the libgpu offset, coordinate values
-   * based on the coordinate system using the upper left point in the double buffer as the origin are created in
-   * the packet (add the offset at the time of drawing, not at the time of packet preparation).</p>
-   */
-  @Method(0x8003c540L)
-  public static void GsDefDispBuff(final short x1, final short y1, final short x2, final short y2) {
-    clip_800c3440.set(x1, x2, y1, y2);
-
-    GsSetDrawBuffClip();
-    GsSetDrawBuffOffset();
   }
 
   @Method(0x8003c5e0L)
