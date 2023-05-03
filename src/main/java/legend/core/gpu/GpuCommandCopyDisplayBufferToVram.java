@@ -35,8 +35,16 @@ public class GpuCommandCopyDisplayBufferToVram extends GpuCommand {
 
   @Override
   public void render(final Gpu gpu) {
-    final int[] data = new int[this.width * this.height];
-    gpu.getDisplayBuffer().getRegion(new Rect4i(this.sourceX, this.sourceY, this.width, this.height), data);
-    gpu.uploadData(new Rect4i(this.destX, this.destY, this.width, this.height), data);
+    final int[] data = new int[this.width * gpu.getScale() * this.height * gpu.getScale()];
+    gpu.getDisplayBuffer().getRegion(new Rect4i(this.sourceX, this.sourceY, this.width * gpu.getScale(), this.height * gpu.getScale()), data);
+
+    final int[] unscaledData = new int[this.width * this.height];
+    for(int y = 0; y < this.height; y++) {
+      for(int x = 0; x < this.width; x++) {
+        unscaledData[y * this.width + x] = data[y * gpu.getScale() * this.width + x * gpu.getScale()];
+      }
+    }
+
+    gpu.uploadData(new Rect4i(this.destX, this.destY, this.width, this.height), unscaledData);
   }
 }

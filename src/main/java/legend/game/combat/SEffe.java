@@ -4809,10 +4809,10 @@ public final class SEffe {
           GPU.queueCommand(30, new GpuCommandQuad()
             .bpp(Bpp.BITS_15)
             .translucent(Translucency.of(data._10.flags_00 >>> 28 & 3))
-            .vramPos(0, 0)
             .rgb(data._10.colour_1c.getX(), data._10.colour_1c.getY(), data._10.colour_1c.getZ())
             .pos(-160 - x, y, 320, 1)
             .uv(0, sp40)
+            .texture(GPU.getDisplayBuffer())
           );
 
           angle2 += s3 * 32;
@@ -5541,7 +5541,7 @@ public final class SEffe {
       sp0x28.setZ((short)v0);
       sp0x38.setZ((short)v0);
 
-      int a1 = s0 / 5;
+      final int a1 = s0 / 5;
       v1 = effect.screenspaceH_14.get();
       v0 = a1 * v1 / 3 - v1 / 2;
       sp0x28.setY((short)v0);

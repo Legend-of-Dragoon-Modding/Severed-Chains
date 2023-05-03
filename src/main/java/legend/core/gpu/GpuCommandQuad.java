@@ -108,12 +108,14 @@ public class GpuCommandQuad extends GpuCommand {
 
   public GpuCommandQuad texture(final VramTexture texture) {
     this.texture = texture;
+    this.textured = true;
     return this;
   }
 
   public GpuCommandQuad texture(final VramTexture texture, final VramTexture[] palettes) {
     this.texture = texture;
     this.palettes = palettes;
+    this.textured = true;
     return this;
   }
 

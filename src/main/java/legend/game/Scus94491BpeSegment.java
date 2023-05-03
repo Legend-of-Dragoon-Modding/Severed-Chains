@@ -38,6 +38,8 @@ import legend.game.combat.environment.StageData10;
 import legend.game.debugger.Debugger;
 import legend.game.input.Input;
 import legend.game.inventory.WhichMenu;
+import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.coremod.config.RenderScaleConfigEntry;
 import legend.game.modding.events.EventManager;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.Param;
@@ -236,6 +238,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_EQUAL;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F11;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F12;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_MINUS;
+import static org.lwjgl.glfw.GLFW.GLFW_MOD_CONTROL;
 
 public final class Scus94491BpeSegment {
   private Scus94491BpeSegment() { }
@@ -424,15 +427,6 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80011e1cL)
   public static void gameLoop() {
-    GPU.events().onKeyRepeat((window, key, scancode, mods) -> {
-      if(key == GLFW_KEY_EQUAL) {
-        Config.setGameSpeedMultiplier(Config.getGameSpeedMultiplier() + 1);
-      }
-
-      if(key == GLFW_KEY_MINUS) {
-        Config.setGameSpeedMultiplier(Config.getGameSpeedMultiplier() - 1);
-      }
-    });
     GPU.events().onKeyPress((window, key, scancode, mods) -> {
       // Add killswitch in case sounds get stuck on
       if(key == GLFW_KEY_DELETE) {
@@ -453,11 +447,31 @@ public final class Scus94491BpeSegment {
       }
 
       if(key == GLFW_KEY_EQUAL) {
-        Config.setGameSpeedMultiplier(Config.getGameSpeedMultiplier() + 1);
+        if(mods == 0) {
+          Config.setGameSpeedMultiplier(Config.getGameSpeedMultiplier() + 1);
+        } else if((mods & GLFW_MOD_CONTROL) != 0) {
+          final RenderScaleConfigEntry config = CoreMod.RENDER_SCALE_CONFIG.get();
+          final int scale = gameState_800babc8.getConfig(config) + 1;
+
+          if(scale <= RenderScaleConfigEntry.MAX) {
+            gameState_800babc8.setConfig(config, scale);
+            GPU.rescale(scale);
+          }
+        }
       }
 
       if(key == GLFW_KEY_MINUS) {
-        Config.setGameSpeedMultiplier(Config.getGameSpeedMultiplier() - 1);
+        if(mods == 0) {
+          Config.setGameSpeedMultiplier(Config.getGameSpeedMultiplier() - 1);
+        } else if((mods & GLFW_MOD_CONTROL) != 0) {
+          final RenderScaleConfigEntry config = CoreMod.RENDER_SCALE_CONFIG.get();
+          final int scale = gameState_800babc8.getConfig(config) - 1;
+
+          if(scale >= 1) {
+            gameState_800babc8.setConfig(config, scale);
+            GPU.rescale(scale);
+          }
+        }
       }
 
       if(key == GLFW_KEY_F12) {
