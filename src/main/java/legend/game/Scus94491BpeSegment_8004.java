@@ -664,7 +664,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[751] = Bttl_800d::allocateAdditionSparksEffect;
     scriptSubFunctions_8004e29c[752] = SEffe::FUN_80102608;
     scriptSubFunctions_8004e29c[753] = SEffe::allocateAdditionOverlaysEffect;
-    scriptSubFunctions_8004e29c[754] = SEffe::FUN_801077bc;
+    scriptSubFunctions_8004e29c[754] = SEffe::scriptGetHitCompletionState;
     scriptSubFunctions_8004e29c[755] = SEffe::FUN_80108de8;
     scriptSubFunctions_8004e29c[756] = Bttl_800d::allocateAdditionStarburstEffect;
     scriptSubFunctions_8004e29c[757] = Bttl_800d::FUN_800d1cac;
