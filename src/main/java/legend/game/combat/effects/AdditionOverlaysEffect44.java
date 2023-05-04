@@ -25,10 +25,10 @@ public class AdditionOverlaysEffect44 implements BttlScriptData6cSubBase1, Memor
   public final ByteRef additionComplete_32; // 0 = not complete, 1 = complete, either successful or failed
 
   public final ShortRef currentTick_34;
-  public final UnsignedShortRef _36;
+  public final UnsignedShortRef _36; // Unused
   public final UnsignedByteRef _38;
   public final UnsignedByteRef _39;
-  public final UnsignedByteRef _3a;
+  public final UnsignedByteRef _3a; // Something to do with whether a keypress is needed
 
   public final Pointer<AdditionOverlaysHit20> _3c; // points to a specific hit set while ticking
   public final Pointer<UnboundedArrayRef<AdditionOverlaysHit20>> hitOverlays_40;

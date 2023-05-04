@@ -185,7 +185,7 @@ import static legend.game.combat.Bttl_800c._800fb0ec;
 import static legend.game.combat.Bttl_800c.callScriptFunction;
 import static legend.game.combat.Bttl_800c.currentStage_800c66a4;
 import static legend.game.combat.Bttl_800c.deffManager_800c693c;
-import static legend.game.combat.Bttl_800c.getHitMultiplier;
+import static legend.game.combat.Bttl_800c.getHitProperty;
 import static legend.game.combat.Bttl_800c.melbuStageIndices_800fb064;
 import static legend.game.combat.Bttl_800c.scriptGetScriptedObjectPos;
 import static legend.game.combat.Bttl_800c.seed_800fa754;
@@ -227,7 +227,7 @@ public final class SEffe {
 
   private static final Value _800fb7c0 = MEMORY.ref(1, 0x800fb7c0L);
 
-  private static final ArrayRef<ByteRef> additionSquareColors_800fb7f0 = MEMORY.ref(1, 0x800fb7f0L, ArrayRef.of(ByteRef.class, 0xc, 0x1, ByteRef::new));
+  private static final ArrayRef<ByteRef> additionBorderColors_800fb7f0 = MEMORY.ref(1, 0x800fb7f0L, ArrayRef.of(ByteRef.class, 0xc, 0x1, ByteRef::new));
 
   private static final Value _800fb7fc = MEMORY.ref(1, 0x800fb7fcL);
 
@@ -3586,6 +3586,9 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
+  /**
+   * Related to addition overlay border rotation
+   */
   @Method(0x80105f98L)
   public static void FUN_80105f98(final int scriptIndex, final VECTOR a1, final long a2) {
     final MATRIX sp0x10 = new MATRIX();
@@ -3623,17 +3626,16 @@ public final class SEffe {
     }
   }
 
-  // Set counter attack?
   @Method(0x801061bcL)
-  public static long FUN_801061bc(final int charSlot, final int hitNum, final int a2, final long a3) {
+  public static int FUN_801061bc(final int charSlot, final int hitNum, final int a2, final long a3) {
     //LAB_80106264
-    final long v0;
+    final int v0;
     if(a3 == 0x1L || a3 == 0x3L) {
       //LAB_80106274
-      v0 = _800fb7c0.offset(hitNum * 0x10L).offset(1, a2).get();
+      v0 = (int)_800fb7c0.offset(hitNum * 0x10L).offset(1, a2).get();
     } else {
       //LAB_8010628c
-      v0 = getHitMultiplier(charSlot, hitNum, a2) & 0xffL;
+      v0 = (int)(getHitProperty(charSlot, hitNum, a2) & 0xffL);
     }
 
     //LAB_80106298
@@ -3641,11 +3643,10 @@ public final class SEffe {
   }
 
   @Method(0x801062a8L)
-  public static void initializeAdditionOverlaysEffect(final int scriptIndex, final int a1, final AdditionOverlaysEffect44 a2, final long a3) {
-    long v0;
+  public static void initializeAdditionOverlaysEffect(final int attackerScriptIndex, final int targetScriptIndex, final AdditionOverlaysEffect44 effect, final long a3) {
     int hitNum;
     long s6;
-    final BattleObject27c s5 = (BattleObject27c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
+    final BattleObject27c s5 = (BattleObject27c)scriptStatePtrArr_800bc1c0[attackerScriptIndex].innerStruct_00;
 
     //LAB_8010633c
     for(hitNum = 0; hitNum < 8; hitNum++) {
@@ -3655,100 +3656,103 @@ public final class SEffe {
     }
 
     //LAB_80106374
-    v0 = hitNum - 1;
-    a2.count_30.set((int)v0);
-    a2.attackerScriptIndex_00.set(scriptIndex);
-    a2.targetScriptIndex_04.set(a1);
-    a2.currentTick_34.set((short)0);
-    a2._31.set(0);
-    a2.additionComplete_32.set(0);
-    a2._38.set(0);
-    a2._39.set(0);
-    a2._3a.set((int)a3);
-    final long hitArrayAddress = mallocTail((v0 & 0xffL) * 0x20);
-    final UnboundedArrayRef<AdditionOverlaysHit20> hitArray = MEMORY.ref(4, hitArrayAddress, UnboundedArrayRef.of(0x20, AdditionOverlaysHit20::new, a2.count_30::get));
-    a2.hitOverlays_40.set(hitArray);
+    final int hitCount = hitNum - 1;
+    effect.count_30.set(hitCount);
+    effect.attackerScriptIndex_00.set(attackerScriptIndex);
+    effect.targetScriptIndex_04.set(targetScriptIndex);
+    effect.currentTick_34.set((short)0);
+    effect._31.set(0);
+    effect.additionComplete_32.set(0);
+    effect._38.set(0);
+    effect._39.set(0);
+    effect._3a.set((int)a3);
+    final long hitArrayAddress = mallocTail((hitCount & 0xffL) * 0x20);
+    final UnboundedArrayRef<AdditionOverlaysHit20> hitArray = MEMORY.ref(4, hitArrayAddress, UnboundedArrayRef.of(0x20, AdditionOverlaysHit20::new, effect.count_30::get));
+    effect.hitOverlays_40.set(hitArray);
     s6 = FUN_801061bc(s5.charSlot_276, 0, 15, a3) & 0xffL;
-    a2._36.set((int)s6);
+    effect._36.set((int)s6);
 
     //LAB_801063f0
-    for(hitNum = 0; hitNum < a2.count_30.get(); hitNum++) {
-      hitArray.get(hitNum)._00.set(1);
-      hitArray.get(hitNum).hitSuccessful_01.set(0);
-      hitArray.get(hitNum).shadowColor_08.set((short)0);
-      hitArray.get(hitNum).tickSuccessLowerBound_10.set((short)(s6 + 2));
+    for(hitNum = 0; hitNum < effect.count_30.get(); hitNum++) {
+      final AdditionOverlaysHit20 hitOverlay = hitArray.get(hitNum);
+      hitOverlay.unused_00.set(1);
+      hitOverlay.hitSuccessful_01.set(0);
+      hitOverlay.shadowColor_08.set((short)0);
+      hitOverlay.frameSuccessLowerBound_10.set((short)(s6 + 2));
       seed_800fa754.advance();
-      hitArray.get(hitNum)._02.set(3);
-      hitArray.get(hitNum).isCountered_1c.set(0);
+      hitOverlay.borderColorsArrayIndex_02.set(3);
+      hitOverlay.isCounter_1c.set(0);
       additionHitCompletionState_8011a014.get(hitNum).set(0);
-      v0 = FUN_801061bc(s5.charSlot_276, hitNum, 1, a3) & 0xffL;
-      s6 += v0;
-      hitArray.get(hitNum)._0a.set((short)v0);
-      v0 = FUN_801061bc(s5.charSlot_276, hitNum, 2, a3) & 0xffL;
-      hitArray.get(hitNum)._0c.set((short)v0);
-      v0 = FUN_801061bc(s5.charSlot_276, hitNum, 3, a3) & 0xffL;
-      hitArray.get(hitNum)._0e.set((short)v0);
-      final int a3_0 = hitArray.get(hitNum).tickSuccessLowerBound_10.get() + hitArray.get(hitNum)._0c.get();
-      hitArray.get(hitNum).tickSuccessLowerBound_10.set((short)(a3_0 - v0 / 2 + 1));
-      hitArray.get(hitNum).tickSuccessUpperBound_12.set((short)(a3_0 + v0 - hitArray.get(hitNum)._0e.get() / 2));
+      int hitProperty = FUN_801061bc(s5.charSlot_276, hitNum, 1, a3) & 0xff;
+      s6 += hitProperty;
+      hitOverlay.totalHitFrames_0a.set((short)hitProperty);
+      hitProperty = FUN_801061bc(s5.charSlot_276, hitNum, 2, a3) & 0xff;
+      hitOverlay.frameBeginDisplay_0c.set((short)hitProperty);
+      hitProperty = FUN_801061bc(s5.charSlot_276, hitNum, 3, a3) & 0xff;
+      hitOverlay.numGrayFrames_0e.set((short)hitProperty);
+      final int successTickTarget = hitOverlay.frameSuccessLowerBound_10.get() + hitOverlay.frameBeginDisplay_0c.get();
+      hitOverlay.frameSuccessLowerBound_10.set((short)(successTickTarget - hitOverlay.numGrayFrames_0e.get() / 2 + 1));
+      hitOverlay.frameSuccessUpperBound_12.set((short)(successTickTarget + hitOverlay.numGrayFrames_0e.get() - hitOverlay.numGrayFrames_0e.get() / 2));
 
       final long borderArrayAddress = mallocTail(0xeeL);
       final ArrayRef<AdditionOverlaysBorder0e> borderArray = MEMORY.ref(4, borderArrayAddress, ArrayRef.of(AdditionOverlaysBorder0e.class, 17, 0xe, AdditionOverlaysBorder0e::new));
-      hitArray.get(hitNum).borderArray_18.set(borderArray);
+      hitOverlay.borderArray_18.set(borderArray);
 
       //LAB_8010652c
       int val = 16;
-      for(int i = 0; i < 17; i++) {
-        borderArray.get(i).size_08.set((short)((0x12 - val) * 0xa));
-        borderArray.get(i).isVisible_00.set(1);
+      for(int borderNum = 0; borderNum < 17; borderNum++) {
+        final AdditionOverlaysBorder0e borderOverlay = borderArray.get(borderNum);
+        borderOverlay.size_08.set((short)((0x12 - val) * 0xa));
+        borderOverlay.isVisible_00.set(1);
         //LAB_8010656c
         //LAB_80106574
-        borderArray.get(i).angleModifier_02.set((short)((0x10 - val) * 0x80 + 0x200));
-        borderArray.get(i).countTicksVisible_0c.set(5);
-        borderArray.get(i).sideEffects_0d.set(0);
-        borderArray.get(i).ticksUntilRender_0a.set((short)((hitArray.get(hitNum).tickSuccessLowerBound_10.get() + (hitArray.get(hitNum)._0e.get() - 0x1) / 2 + val - 0x11)));
-        borderArray.get(i).r_04.set(additionSquareColors_800fb7f0.get(hitArray.get(hitNum)._02.get() * 3).get() & 0xff);
-        borderArray.get(i).g_05.set(additionSquareColors_800fb7f0.get(hitArray.get(hitNum)._02.get() * 3 + 1).get() & 0xff);
-        borderArray.get(i).b_06.set(additionSquareColors_800fb7f0.get(hitArray.get(hitNum)._02.get() * 3 + 2).get() & 0xff);
+        borderOverlay.angleModifier_02.set((short)((0x10 - val) * 0x80 + 0x200));
+        borderOverlay.countTicksVisible_0c.set(5);
+        borderOverlay.sideEffects_0d.set(0);
+        borderOverlay.ticksUntilRender_0a.set((short)((hitOverlay.frameSuccessLowerBound_10.get() + (hitOverlay.numGrayFrames_0e.get() - 0x1) / 2 + val - 0x11)));
+        borderOverlay.r_04.set(additionBorderColors_800fb7f0.get(hitOverlay.borderColorsArrayIndex_02.get() * 3).get() & 0xff);
+        borderOverlay.g_05.set(additionBorderColors_800fb7f0.get(hitOverlay.borderColorsArrayIndex_02.get() * 3 + 1).get() & 0xff);
+        borderOverlay.b_06.set(additionBorderColors_800fb7f0.get(hitOverlay.borderColorsArrayIndex_02.get() * 3 + 2).get() & 0xff);
 
         val--;
       }
 
       //LAB_80106634
       val = 0;
-      for(int i = 16; i >= 14; i--) {
-        borderArray.get(i).size_08.set((short)(0x14 - val * 0x2));
-        borderArray.get(i).angleModifier_02.set((short)0x200);
-        borderArray.get(i).countTicksVisible_0c.set(0x11);
-        borderArray.get(i).ticksUntilRender_0a.set((short)(hitArray.get(hitNum).tickSuccessLowerBound_10.get() - 0x11));
+      for(int borderNum = 16; borderNum >= 14; borderNum--) {
+        final AdditionOverlaysBorder0e borderOverlay = borderArray.get(borderNum);
+        borderOverlay.size_08.set((short)(0x14 - val * 0x2));
+        borderOverlay.angleModifier_02.set((short)0x200);
+        borderOverlay.countTicksVisible_0c.set(0x11);
+        borderOverlay.ticksUntilRender_0a.set((short)(hitOverlay.frameSuccessLowerBound_10.get() - 0x11));
 
         if(val != 0x1L) {
-          borderArray.get(i).r_04.set(0x30);
-          borderArray.get(i).g_05.set(0x30);
-          borderArray.get(i).b_06.set(0x30);
-          borderArray.get(i).sideEffects_0d.set(1);
+          borderOverlay.r_04.set(0x30);
+          borderOverlay.g_05.set(0x30);
+          borderOverlay.b_06.set(0x30);
+          borderOverlay.sideEffects_0d.set(1);
         } else {
           //LAB_80106680
-          borderArray.get(i).sideEffects_0d.set(-1);
+          borderOverlay.sideEffects_0d.set(-1);
         }
         //LAB_80106684
         val++;
       }
 
       final ArrayRef<AdditionOverlaysBorder0e> centerSquaresArray = MEMORY.ref(4, borderArrayAddress + 0xc4, ArrayRef.of(AdditionOverlaysBorder0e.class, 3, 0xe, AdditionOverlaysBorder0e::new));
-      hitArray.get(hitNum).targetBorderArray_14.set(centerSquaresArray);
+      hitOverlay.targetBorderArray_14.set(centerSquaresArray);
     }
 
     //LAB_801066c8
-    FUN_80105f98(a2.attackerScriptIndex_00.get(), a2.vec_10, 0);
+    FUN_80105f98(effect.attackerScriptIndex_00.get(), effect.vec_10, 0);
 
     final VECTOR sp0x10 = new VECTOR();
-    FUN_80105f98(a2.targetScriptIndex_04.get(), sp0x10, 0x1L);
+    FUN_80105f98(effect.targetScriptIndex_04.get(), sp0x10, 0x1L);
 
-    final int a0_0 = a2.hitOverlays_40.deref().get(0).tickSuccessLowerBound_10.get();
-    a2.vec_20.setX((sp0x10.getX() - a2.vec_10.getX()) / a0_0);
-    a2.vec_20.setY((sp0x10.getY() - a2.vec_10.getY()) / a0_0);
-    a2.vec_20.setZ((sp0x10.getZ() - a2.vec_10.getZ()) / a0_0);
+    final int a0_0 = effect.hitOverlays_40.deref().get(0).frameSuccessLowerBound_10.get();
+    effect.vec_20.setX((sp0x10.getX() - effect.vec_10.getX()) / a0_0);
+    effect.vec_20.setY((sp0x10.getY() - effect.vec_10.getY()) / a0_0);
+    effect.vec_20.setZ((sp0x10.getZ() - effect.vec_10.getZ()) / a0_0);
   }
 
   @Method(0x80106774L)
@@ -3814,7 +3818,7 @@ public final class SEffe {
         } else if(a2 != -2) {  // Too early
           //LAB_80106988
           cmd.monochrome(0x30);
-        } else if(hitOverlay.isCountered_1c.get() != 0) {  // Counter-attack
+        } else if(hitOverlay.isCounter_1c.get() != 0) {  // Counter-attack
           cmd.rgb(centerBorderArray.get(1).r_04.get() * 3, centerBorderArray.get(1).g_05.get(), (centerBorderArray.get(1).b_06.get() - 1) * 8);
         } else {  // Too late
           //LAB_80106964
@@ -3870,19 +3874,20 @@ public final class SEffe {
     final byte sp28 = additionHitCompletionState_8011a014.get(hitNum).get();
 
     //LAB_80106d18
-    for(int i = 0; i < 17; i++) {
-      if(borderArray.get(i).isVisible_00.get() != 0) {
-        if(borderArray.get(i).ticksUntilRender_0a.get() <= 0) {
-          final int borderSize = borderArray.get(i).size_08.get();
-          int sp20 = rcos(borderArray.get(i).angleModifier_02.get()) * borderSize >> 12;
-          int sp24 = (rsin(borderArray.get(i).angleModifier_02.get()) * borderSize >> 12) + 30;
+    for(int borderNum = 0; borderNum < 17; borderNum++) {
+      final AdditionOverlaysBorder0e borderOverlay = borderArray.get(borderNum);
+      if(borderOverlay.isVisible_00.get() != 0) {
+        if(borderOverlay.ticksUntilRender_0a.get() <= 0) {
+          final int borderSize = borderOverlay.size_08.get();
+          int sp20 = rcos(borderOverlay.angleModifier_02.get()) * borderSize >> 12;
+          int sp24 = (rsin(borderOverlay.angleModifier_02.get()) * borderSize >> 12) + 30;
 
           //LAB_80106d80
           int angleModifier = 0;
           for(long s5 = 0; s5 < 4; s5++) {
             final GpuCommandLine cmd = new GpuCommandLine();
 
-            final int v1 = borderArray.get(i).sideEffects_0d.get();
+            final int v1 = borderOverlay.sideEffects_0d.get();
 
             //LAB_80106dc0
             // Set translucent if button press not failure and border sideEffects_0d not innermost rotating border or target (15)
@@ -3892,17 +3897,17 @@ public final class SEffe {
             }
 
 
-            if(hitArray.get(hitNum).isCountered_1c.get() != 0 && i != 0x10) {
-              cmd.rgb(borderArray.get(i).r_04.get() * 3, borderArray.get(i).g_05.get(), (borderArray.get(i).b_06.get() + 1) / 8);
+            if(hitArray.get(hitNum).isCounter_1c.get() != 0 && borderNum != 0x10) {
+              cmd.rgb(borderOverlay.r_04.get() * 3, borderOverlay.g_05.get(), (borderOverlay.b_06.get() + 1) / 8);
             } else {
               //LAB_80106e58
-              cmd.rgb(borderArray.get(i).r_04.get(), borderArray.get(i).g_05.get(), borderArray.get(i).b_06.get());
+              cmd.rgb(borderOverlay.r_04.get(), borderOverlay.g_05.get(), borderOverlay.b_06.get());
             }
 
             //LAB_80106e74
             angleModifier += 0x400;
-            final int sp18 = rcos(borderArray.get(i).angleModifier_02.get() + angleModifier) * borderSize >> 12;
-            final int sp1c = (rsin(borderArray.get(i).angleModifier_02.get() + angleModifier) * borderSize >> 12) + 30;
+            final int sp18 = rcos(borderOverlay.angleModifier_02.get() + angleModifier) * borderSize >> 12;
+            final int sp1c = (rsin(borderOverlay.angleModifier_02.get() + angleModifier) * borderSize >> 12) + 30;
             cmd
               .pos(0, sp20, sp24)
               .pos(1, sp18, sp1c);
@@ -3914,11 +3919,11 @@ public final class SEffe {
           }
 
           // Renders rotating shadow on innermost rotating border
-          if(borderArray.get(i).sideEffects_0d.get() == 0) {
-            renderAdditionBorderShadow(hitArray.get(hitNum), borderArray.get(i).angleModifier_02.get() + angleModifier, borderSize);
-            renderAdditionBorderShadow(hitArray.get(hitNum), borderArray.get(i).angleModifier_02.get() + angleModifier + 0x400, borderSize);
-            renderAdditionBorderShadow(hitArray.get(hitNum), borderArray.get(i).angleModifier_02.get() + angleModifier + 0x800, borderSize);
-            renderAdditionBorderShadow(hitArray.get(hitNum), borderArray.get(i).angleModifier_02.get() + angleModifier + 0xc00, borderSize);
+          if(borderOverlay.sideEffects_0d.get() == 0) {
+            renderAdditionBorderShadow(hitArray.get(hitNum), borderOverlay.angleModifier_02.get() + angleModifier, borderSize);
+            renderAdditionBorderShadow(hitArray.get(hitNum), borderOverlay.angleModifier_02.get() + angleModifier + 0x400, borderSize);
+            renderAdditionBorderShadow(hitArray.get(hitNum), borderOverlay.angleModifier_02.get() + angleModifier + 0x800, borderSize);
+            renderAdditionBorderShadow(hitArray.get(hitNum), borderOverlay.angleModifier_02.get() + angleModifier + 0xc00, borderSize);
           }
         }
       }
@@ -3930,7 +3935,7 @@ public final class SEffe {
   public static long tickBorderDisplay(final byte a0, final int hitNum, final AdditionOverlaysEffect44 effect, final UnboundedArrayRef<AdditionOverlaysHit20> hitArray) {
     // Darken shadow color of innermost border of current hit
     final AdditionOverlaysHit20 hitOverlay = hitArray.get(hitNum);
-    if(effect.currentTick_34.get() >= hitOverlay.tickSuccessLowerBound_10.get() - 0x11) {
+    if(effect.currentTick_34.get() >= hitOverlay.frameSuccessLowerBound_10.get() - 0x11) {
       hitOverlay.shadowColor_08.add((short)1);
 
       if(hitOverlay.shadowColor_08.get() >= 0xe) {
@@ -3997,17 +4002,18 @@ public final class SEffe {
    */
   @Method(0x801071fcL)
   public static void propagateFailedAdditionHitFlag(final AdditionOverlaysEffect44 effect, final UnboundedArrayRef<AdditionOverlaysHit20> hitArray, int hitNum) {
-    final byte a3 = additionHitCompletionState_8011a014.get(hitNum).get();
+    final byte currentHitCompletionState = additionHitCompletionState_8011a014.get(hitNum).get();
     effect.additionComplete_32.set(1);
 
     //LAB_80107234
     hitNum += 1;
     for(; hitNum < effect.count_30.get(); hitNum++) {
-      hitArray.get(hitNum).tickSuccessUpperBound_12.set((short)-1);
-      hitArray.get(hitNum).tickSuccessLowerBound_10.set((short)-1);
-      hitArray.get(hitNum)._0e.set((short)0);
-      hitArray.get(hitNum)._0c.set((short)0);
-      additionHitCompletionState_8011a014.get(hitNum).set(a3);
+      final AdditionOverlaysHit20 hitOverlay = hitArray.get(hitNum);
+      hitOverlay.frameSuccessUpperBound_12.set((short)-1);
+      hitOverlay.frameSuccessLowerBound_10.set((short)-1);
+      hitOverlay.numGrayFrames_0e.set((short)0);
+      hitOverlay.frameBeginDisplay_0c.set((short)0);
+      additionHitCompletionState_8011a014.get(hitNum).set(currentHitCompletionState);
     }
 
     //LAB_80107264
@@ -4024,7 +4030,7 @@ public final class SEffe {
         //LAB_801072c4
         int hitNum;
         for(hitNum = 0; hitNum < effect.count_30.get(); hitNum++) {
-          renderAdditionBorders(hitArray.get(hitNum)._02.get(), hitNum, effect, hitArray, state);
+          renderAdditionBorders(hitArray.get(hitNum).borderColorsArrayIndex_02.get(), hitNum, effect, hitArray, state);
         }
 
         //LAB_801072f4
@@ -4037,11 +4043,12 @@ public final class SEffe {
 
         //LAB_80107330
         if(hitNum < effect.count_30.get()) {
-          renderAdditionButton((byte)(hitArray.get(hitNum).tickSuccessLowerBound_10.get() + (hitArray.get(hitNum).tickSuccessUpperBound_12.get() - hitArray.get(hitNum).tickSuccessLowerBound_10.get()) / 2 - effect.currentTick_34.get() - 0x1L), hitArray.get(hitNum).isCountered_1c.get());
+          final AdditionOverlaysHit20 hitOverlay = hitArray.get(hitNum);
+          renderAdditionButton((byte)(hitOverlay.frameSuccessLowerBound_10.get() + (hitOverlay.frameSuccessUpperBound_12.get() - hitOverlay.frameSuccessLowerBound_10.get()) / 2 - effect.currentTick_34.get() - 0x1L), hitOverlay.isCounter_1c.get());
 
           final byte v1 = (byte)effect.currentTick_34.get();
-          if(v1 >= hitArray.get(hitNum).tickSuccessLowerBound_10.get() && v1 <= hitArray.get(hitNum).tickSuccessUpperBound_12.get()) {
-            renderAdditionCentreSolidSquare(effect, hitArray.get(hitNum), -2, state, data);
+          if(v1 >= hitOverlay.frameSuccessLowerBound_10.get() && v1 <= hitOverlay.frameSuccessUpperBound_12.get()) {
+            renderAdditionCentreSolidSquare(effect, hitOverlay, -2, state, data);
           }
         }
       }
@@ -4062,7 +4069,7 @@ public final class SEffe {
       //LAB_80107440
       int hitNum;
       for(hitNum = 0; hitNum < effect.count_30.get(); hitNum++) {
-        if(effect.currentTick_34.get() == hitArray.get(hitNum).tickSuccessUpperBound_12.get() + 1) {
+        if(effect.currentTick_34.get() == hitArray.get(hitNum).frameSuccessUpperBound_12.get() + 1) {
           if(additionHitCompletionState_8011a014.get(hitNum).get() == 0) {
             additionHitCompletionState_8011a014.get(hitNum).set(-2);
             propagateFailedAdditionHitFlag(effect, hitArray, hitNum);
@@ -4088,7 +4095,7 @@ public final class SEffe {
 
       //LAB_801074d0
       for(hitNum = 0; hitNum < effect.count_30.get(); hitNum++) {
-        numberBordersRendering += tickBorderDisplay(hitArray.get(hitNum)._02.get(), hitNum, effect, hitArray);
+        numberBordersRendering += tickBorderDisplay(hitArray.get(hitNum).borderColorsArrayIndex_02.get(), hitNum, effect, hitArray);
       }
 
       //LAB_80107500
@@ -4115,8 +4122,10 @@ public final class SEffe {
 
           //LAB_801075bc
           if(hitNum < effect.count_30.get()) {
+            final AdditionOverlaysHit20 hitOverlay = hitArray.get(hitNum);
+
             if(state.storage_44[8] != 0) {
-              hitArray.get(hitNum).isCountered_1c.set(1);
+              hitOverlay.isCounter_1c.set(1);
               state.storage_44[8] = 0;
             }
 
@@ -4124,11 +4133,11 @@ public final class SEffe {
             if((effect._3a.get() - 1 & 0xffff_ffffL) >= 2) { // Unsigned comparison
               //LAB_8010763c
               if(effect._3a.get() != 1 && effect._3a.get() != 3) {
-                final long a0;
-                if(hitArray.get(hitNum).isCountered_1c.get() == 0) {
-                  a0 = 0x20;
+                final int buttonType;
+                if(hitOverlay.isCounter_1c.get() == 0) {
+                  buttonType = 0x20;
                 } else {
-                  a0 = 0x40;
+                  buttonType = 0x40;
                 }
 
                 //LAB_80107664
@@ -4137,13 +4146,13 @@ public final class SEffe {
                 if((v1 & 0x60) != 0) {
                   additionHitCompletionState_8011a014.get(hitNum).set(-1);
 
-                  if((v1 & a0) == 0 || (v1 & ~a0) != 0) {
+                  if((v1 & buttonType) == 0 || (v1 & ~buttonType) != 0) {
                     //LAB_801076d8
                     //LAB_801076dc
                     additionHitCompletionState_8011a014.get(hitNum).set(-3);
-                  } else if(effect.currentTick_34.get() >= hitArray.get(hitNum).tickSuccessLowerBound_10.get() && effect.currentTick_34.get() <= hitArray.get(hitNum).tickSuccessUpperBound_12.get()) {
+                  } else if(effect.currentTick_34.get() >= hitOverlay.frameSuccessLowerBound_10.get() && effect.currentTick_34.get() <= hitOverlay.frameSuccessUpperBound_12.get()) {
                     additionHitCompletionState_8011a014.get(hitNum).set(1);
-                    hitArray.get(hitNum).hitSuccessful_01.set(1);
+                    hitOverlay.hitSuccessful_01.set(1);
                   }
 
                   //LAB_801076f0
@@ -4155,18 +4164,18 @@ public final class SEffe {
                   //LAB_8010771c
                   effect._38.set(2);
                   effect._39.set(hitNum);
-                  effect._3c.set(hitArray.get(hitNum));
+                  effect._3c.set(hitOverlay);
                 }
               }
             } else {  // auto-complete?
-              if(effect.currentTick_34.get() >= hitArray.get(hitNum).tickSuccessLowerBound_10.get() && effect.currentTick_34.get() <= hitArray.get(hitNum).tickSuccessUpperBound_12.get()) {
+              if(effect.currentTick_34.get() >= hitOverlay.frameSuccessLowerBound_10.get() && effect.currentTick_34.get() <= hitOverlay.frameSuccessUpperBound_12.get()) {
                 additionHitCompletionState_8011a014.get(hitNum).set(1);
-                hitArray.get(hitNum).hitSuccessful_01.set(1);
+                hitOverlay.hitSuccessful_01.set(1);
 
                 //LAB_8010771c
                 effect._38.set(2);
                 effect._39.set(hitNum);
-                effect._3c.set(hitArray.get(hitNum));
+                effect._3c.set(hitOverlay);
               }
             }
           }
@@ -4245,8 +4254,8 @@ public final class SEffe {
     //LAB_80107954
     final UnboundedArrayRef<AdditionOverlaysHit20> hitArray = a2.hitOverlays_40.deref();
     for(int hitNum = 0; hitNum < a2.count_30.get(); hitNum++) {
-      hitArray.get(hitNum).tickSuccessLowerBound_10.set((short)0);
-      hitArray.get(hitNum).tickSuccessUpperBound_12.set((short)0);
+      hitArray.get(hitNum).frameSuccessLowerBound_10.set((short)0);
+      hitArray.get(hitNum).frameSuccessUpperBound_12.set((short)0);
       additionHitCompletionState_8011a014.get(hitNum).set(-0x1);
     }
 
