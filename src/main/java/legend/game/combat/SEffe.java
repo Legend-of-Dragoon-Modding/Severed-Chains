@@ -3927,58 +3927,59 @@ public final class SEffe {
   }
 
   @Method(0x80107088L)
-  public static long FUN_80107088(final byte a0, final int hitNum, final AdditionOverlaysEffect44 effect, final UnboundedArrayRef<AdditionOverlaysHit20> hitArray) {
+  public static long tickBorderDisplay(final byte a0, final int hitNum, final AdditionOverlaysEffect44 effect, final UnboundedArrayRef<AdditionOverlaysHit20> hitArray) {
     // Darken shadow color of innermost border of current hit
     final AdditionOverlaysHit20 hitOverlay = hitArray.get(hitNum);
-    if(effect.currentTick_34.get() >= hitArray.get(hitNum).tickSuccessLowerBound_10.get() - 0x11) {
-      hitArray.get(hitNum).shadowColor_08.add((short)1);
+    if(effect.currentTick_34.get() >= hitOverlay.tickSuccessLowerBound_10.get() - 0x11) {
+      hitOverlay.shadowColor_08.add((short)1);
 
-      if(hitArray.get(hitNum).shadowColor_08.get() >= 0xe) {
-        hitArray.get(hitNum).shadowColor_08.set((short)0xd);
+      if(hitOverlay.shadowColor_08.get() >= 0xe) {
+        hitOverlay.shadowColor_08.set((short)0xd);
       }
     }
 
     //LAB_801070ec
     final byte hitCompletionState = additionHitCompletionState_8011a014.get(hitNum).get();
-    final ArrayRef<AdditionOverlaysBorder0e> borderArray = hitArray.get(hitNum).borderArray_18.deref();
+    final ArrayRef<AdditionOverlaysBorder0e> borderArray = hitOverlay.borderArray_18.deref();
     int isRendered = 0;
 
     //LAB_80107104
     for(int borderNum = 0; borderNum < 17; borderNum++) {
+      final AdditionOverlaysBorder0e borderOverlay = borderArray.get(borderNum);
       if(hitCompletionState < 0) {
-        hitArray.get(hitNum).shadowColor_08.sub((short)3);
+        hitOverlay.shadowColor_08.sub((short)3);
 
-        if(hitArray.get(hitNum).shadowColor_08.get() < 0) {
-          hitArray.get(hitNum).shadowColor_08.set((short)0);
+        if(hitOverlay.shadowColor_08.get() < 0) {
+          hitOverlay.shadowColor_08.set((short)0);
         }
 
         //LAB_80107134
         // If border is within 0x20 of fully faded, set invisible
-        if(fadeAdditionBorders(borderArray.get(borderNum), 0x20) == 0x3L) {
-          borderArray.get(borderNum).isVisible_00.set(0);
+        if(fadeAdditionBorders(borderOverlay, 0x20) == 0x3L) {
+          borderOverlay.isVisible_00.set(0);
         }
       }
 
       //LAB_80107150
-      if(borderArray.get(borderNum).isVisible_00.get() != 0) {
-        if(borderArray.get(borderNum).ticksUntilRender_0a.get() > 0) {
-          borderArray.get(borderNum).ticksUntilRender_0a.sub((short)1);
+      if(borderOverlay.isVisible_00.get() != 0) {
+        if(borderOverlay.ticksUntilRender_0a.get() > 0) {
+          borderOverlay.ticksUntilRender_0a.sub((short)1);
         } else {
           //LAB_80107178
-          if(borderArray.get(borderNum).sideEffects_0d.get() != -1) {
-            borderArray.get(borderNum).sideEffects_0d.add(1);
+          if(borderOverlay.sideEffects_0d.get() != -1) {
+            borderOverlay.sideEffects_0d.add(1);
           }
 
           //LAB_80107190
-          borderArray.get(borderNum).countTicksVisible_0c.sub(1);
-          if(borderArray.get(borderNum).countTicksVisible_0c.get() == 0) {
-            borderArray.get(borderNum).isVisible_00.set(0);
+          borderOverlay.countTicksVisible_0c.sub(1);
+          if(borderOverlay.countTicksVisible_0c.get() == 0) {
+            borderOverlay.isVisible_00.set(0);
           }
 
           //LAB_801071b0
           // Fade rotating borders
           if(borderNum < 14) {
-            fadeAdditionBorders(borderArray.get(borderNum), 0x4e);
+            fadeAdditionBorders(borderOverlay, 0x4e);
           }
 
           isRendered = 1;
@@ -4083,16 +4084,16 @@ public final class SEffe {
       }
 
       //LAB_801074bc
-      int s1 = 0;
+      int numberBordersRendering = 0;
 
       //LAB_801074d0
       for(hitNum = 0; hitNum < effect.count_30.get(); hitNum++) {
-        s1 += FUN_80107088(hitArray.get(hitNum)._02.get(), hitNum, effect, hitArray);
+        numberBordersRendering += tickBorderDisplay(hitArray.get(hitNum)._02.get(), hitNum, effect, hitArray);
       }
 
       //LAB_80107500
       // If addition is complete and there are no more visible overlays to render, deallocate effect
-      if(s1 == 0 && effect.additionComplete_32.get() != 0) {
+      if(numberBordersRendering == 0 && effect.additionComplete_32.get() != 0) {
         additionOverlayActive_80119f41.set(0);
 
         //LAB_8010752c
