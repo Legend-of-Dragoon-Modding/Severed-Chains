@@ -845,13 +845,13 @@ public final class Bttl_800c {
   }
 
   @Method(0x800c7488L)
-  public static int getHitMultiplier(final int charSlot, final int hitNum, final int a2) {
+  public static int getHitProperty(final int charSlot, final int hitNum, final int hitPropertyIndex) {
     if((_8006e398.charBobjIndices_e40[charSlot].storage_44[7] & 0x2) != 0) { // Is dragoon
-      return battlePreloadedEntities_1f8003f4.additionHits_38[charSlot + 3].hits_00[hitNum].hitProperty_00[a2];
+      return battlePreloadedEntities_1f8003f4.additionHits_38[charSlot + 3].hits_00[hitNum].get(hitPropertyIndex);
     }
 
     //LAB_800c74fc
-    return battlePreloadedEntities_1f8003f4.additionHits_38[charSlot].hits_00[hitNum].hitProperty_00[a2];
+    return battlePreloadedEntities_1f8003f4.additionHits_38[charSlot].hits_00[hitNum].get(hitPropertyIndex);
   }
 
   @Method(0x800c7524L)
@@ -3257,7 +3257,7 @@ public final class Bttl_800c {
   @Method(0x800cd0ecL)
   public static FlowControl FUN_800cd0ec(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    script.params_20[3].set(getHitMultiplier(
+    script.params_20[3].set(getHitProperty(
       bobj.charSlot_276,
       script.params_20[1].get(),
       script.params_20[2].get()
