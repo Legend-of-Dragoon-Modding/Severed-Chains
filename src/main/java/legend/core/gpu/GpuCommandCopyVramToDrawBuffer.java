@@ -1,6 +1,6 @@
 package legend.core.gpu;
 
-public class GpuCommandCopyDisplayBufferToVram extends GpuCommand {
+public class GpuCommandCopyVramToDrawBuffer extends GpuCommand {
   private final int sourceX;
   private final int sourceY;
   private final int destX;
@@ -8,7 +8,7 @@ public class GpuCommandCopyDisplayBufferToVram extends GpuCommand {
   private final int width;
   private final int height;
 
-  public GpuCommandCopyDisplayBufferToVram(final int sourceX, final int sourceY, final int destX, final int destY, final int width, final int height) {
+  public GpuCommandCopyVramToDrawBuffer(final int sourceX, final int sourceY, final int destX, final int destY, final int width, final int height) {
     if(sourceX < 0) {
       throw new IllegalArgumentException("Negative sourceX " + sourceX);
     }
@@ -35,16 +35,21 @@ public class GpuCommandCopyDisplayBufferToVram extends GpuCommand {
 
   @Override
   public void render(final Gpu gpu) {
-    final int[] data = new int[this.width * gpu.getScale() * this.height * gpu.getScale()];
-    gpu.getDisplayBuffer().getRegion(new Rect4i(this.sourceX * gpu.getScale(), this.sourceY * gpu.getScale(), this.width * gpu.getScale(), this.height * gpu.getScale()), data);
+    final int scale = gpu.getScale();
+    final int[] data = new int[this.width * scale * this.height * scale];
 
-    final int[] unscaledData = new int[this.width * this.height];
     for(int y = 0; y < this.height; y++) {
       for(int x = 0; x < this.width; x++) {
-        unscaledData[y * this.width + x] = data[y * gpu.getScale() * this.width + x * gpu.getScale()];
+        final int pixel = gpu.getPixel(this.sourceX + x, this.sourceY + y);
+
+        for(int yy = 0; yy < scale; yy++) {
+          for(int xx = 0; xx < scale; xx++) {
+            data[(y * scale + yy) * this.width + x * scale + xx] = pixel;
+          }
+        }
       }
     }
 
-    gpu.uploadData(new Rect4i(this.destX, this.destY, this.width, this.height), unscaledData);
+    gpu.getDrawBuffer().setRegion(new Rect4i(this.destX * scale, this.destY * scale, this.width * scale, this.height * scale), data);
   }
 }

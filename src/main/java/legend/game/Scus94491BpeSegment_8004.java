@@ -561,7 +561,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[616] = Bttl_800e::FUN_800eb01c;
 //    scriptSubFunctions_8004e29c[617] = Temp::FUN_800caae4;
     scriptSubFunctions_8004e29c[618] = SEffe::scriptLoadSameScriptAndJump;
-    scriptSubFunctions_8004e29c[619] = SEffe::FUN_80118df4;
+    scriptSubFunctions_8004e29c[619] = SEffe::allocateShirleyTransformWipeEffect;
     scriptSubFunctions_8004e29c[620] = SEffe::FUN_80111a58;
     scriptSubFunctions_8004e29c[621] = Bttl_800e::FUN_800ea384;
     scriptSubFunctions_8004e29c[622] = SEffe::FUN_80119484;

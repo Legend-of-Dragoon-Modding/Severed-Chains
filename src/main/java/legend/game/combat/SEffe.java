@@ -5,12 +5,14 @@ import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.Gpu;
+import legend.core.gpu.GpuCommand;
 import legend.core.gpu.GpuCommandCopyDisplayBufferToVram;
 import legend.core.gpu.GpuCommandLine;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.GpuCommandSetMaskBit;
 import legend.core.gpu.RECT;
+import legend.core.gpu.Rect4i;
 import legend.core.gte.COLOUR;
 import legend.core.gte.DVECTOR;
 import legend.core.gte.GsCOORDINATE2;
@@ -49,7 +51,6 @@ import legend.game.combat.effects.AdditionOverlaysEffect44;
 import legend.game.combat.effects.AttackHitFlashEffect0c;
 import legend.game.combat.effects.BattleStruct24;
 import legend.game.combat.effects.BttlScriptData6cSub08_3;
-import legend.game.combat.effects.BttlScriptData6cSub08_4;
 import legend.game.combat.effects.BttlScriptData6cSub10_2;
 import legend.game.combat.effects.BttlScriptData6cSub13c;
 import legend.game.combat.effects.BttlScriptData6cSub14_4;
@@ -9953,86 +9954,92 @@ public final class SEffe {
   }
 
   @Method(0x80118a24L)
-  public static void FUN_80118a24(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
-    final BttlScriptData6cSub08_4 effect = (BttlScriptData6cSub08_4)manager.effect_44;
-    final int sp10 = manager._10.trans_04.getX() + 160 - manager._10._24 / 2;
-    final int sp12 = manager._10.trans_04.getY() + 120 - manager._10._28 / 2;
-    final int minZ = manager._10.trans_04.getZ() - manager._10._24 / 2 >> 2;
-    final int maxZ = manager._10.trans_04.getZ() + manager._10._24 / 2 >> 2;
-    final int r = 320;
-    final int b = 240;
+  public static void renderShirleyTransformWipeEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+    final int x = manager._10.trans_04.getX() + 160 - manager._10._24 / 2;
+    final int y = manager._10.trans_04.getY() + 120 - manager._10._28 / 2;
+    final int minZ = manager._10.trans_04.getZ() - manager._10._2c / 2 >> 2;
+    final int maxZ = manager._10.trans_04.getZ() + manager._10._2c / 2 >> 2;
+    final int right = 320;
+    final int bottom = 240;
 
-    final RECT sp0x20 = new RECT();
-    final RECT sp0x28 = new RECT();
+    final RECT buffPos = new RECT();
 
     //LAB_80118ba8
     for(int i = 0; i < 4; i++) {
-      sp0x28.x.set((short)(sp10 + manager._10._24 / 2 * (i & 0x1L)));
-      sp0x28.y.set((short)(sp12 + manager._10._28 / 2 * (i >> 1)));
-      sp0x28.w.set((short)(manager._10._24 / 2));
-      sp0x28.h.set((short)(manager._10._28 / 2));
-      if(sp0x28.x.get() < r) {
-        if(sp0x28.x.get() < 0) {
-          sp0x28.w.add(sp0x28.x.get());
-          sp0x28.x.set((short)0);
+      buffPos.x.set((short)(x + manager._10._24 / 2 * (i & 1)));
+      buffPos.y.set((short)(y + manager._10._28 / 2 * (i >> 1)));
+      buffPos.w.set((short)(manager._10._24 / 2));
+      buffPos.h.set((short)(manager._10._28 / 2));
+
+      if(buffPos.x.get() < right) {
+        if(buffPos.x.get() < 0) {
+          buffPos.w.add(buffPos.x.get());
+          buffPos.x.set((short)0);
         }
 
         //LAB_80118c58
-        if(r < sp0x28.x.get() + sp0x28.w.get()) {
-          sp0x28.w.set((short)(r - sp0x28.x.get()));
+        if(buffPos.x.get() + buffPos.w.get() > right) {
+          buffPos.w.set((short)(right - buffPos.x.get()));
         }
 
         //LAB_80118c7c
-        if(sp0x28.w.get() > 0) {
-          if(sp0x28.y.get() < b) {
-            if(sp0x28.y.get() < 0) {
-              sp0x20.h.add(sp0x28.y.get());
-              sp0x28.y.set((short)0);
+        if(buffPos.w.get() > 0) {
+          if(buffPos.y.get() < bottom) {
+            if(buffPos.y.get() < 0) {
+              buffPos.y.set((short)0);
             }
 
             //LAB_80118cc0
-            if(b < sp0x28.y.get() + sp0x28.h.get()) {
-              sp0x28.h.set((short)(b - sp0x28.y.get()));
+            if(buffPos.y.get() + buffPos.h.get() > bottom) {
+              buffPos.h.set((short)(bottom - buffPos.y.get()));
             }
 
             //LAB_80118ce4
-            if(sp0x28.h.get() > 0) {
-              sp0x20.x.set(effect._00.get());
-              sp0x20.y.set((short)(effect._02.get() + i * 64));
-              sp0x20.w.set(sp0x28.w.get());
-              sp0x20.h.set(sp0x28.h.get());
+            if(buffPos.h.get() > 0) {
+              final int scale = GPU.getScale();
+              final int[] data = new int[buffPos.w.get() * scale * buffPos.h.get() * scale];
+              final Rect4i rect = new Rect4i(buffPos.x.get() * scale, buffPos.y.get() * scale, buffPos.w.get() * scale, buffPos.h.get() * scale);
 
-              // This was depth-queued at both minZ and maxZ, not really sure why... minZ sometimes had a negative value and would crash
-              GPU.command80CopyRectFromVramToVram(sp0x28.x.get(), sp0x28.y.get(), sp0x20.x.get(), sp0x20.y.get(), sp0x28.w.get(), sp0x28.h.get());
+              // Back up draw buffer data after background is rendered, but before models are rendered
+              GPU.queueCommand(maxZ, new GpuCommand() {
+                @Override
+                public void render(final Gpu gpu) {
+                  gpu.getDrawBuffer().getRegion(rect, data);
+                }
+              });
+
+              // Overwrite rendered model pixels with the background pixels we backed up to emulate the wipe effect
+              GPU.queueCommand(minZ, new GpuCommand() {
+                @Override
+                public void render(final Gpu gpu) {
+                  gpu.getDrawBuffer().setRegion(rect, data);
+                }
+              });
             }
           }
         }
       }
-
-      //LAB_80118db4
     }
   }
 
+  /**
+   * Used when Shirley transforms into another char. Causes the wipe effect where her model
+   * disappears from top to bottom and then reappears as another char from bottom to top.
+   */
   @Method(0x80118df4L)
-  public static FlowControl FUN_80118df4(final RunningScript<? extends BattleScriptDataBase> script) {
+  public static FlowControl allocateShirleyTransformWipeEffect(final RunningScript<? extends BattleScriptDataBase> script) {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
-      "Unknown (FUN_80118df4), BttlScriptData6cSub08_4, copies VRAM",
+      "Shirley transform wipe effect",
       script.scriptState_04,
-      0x8,
+      0,
       null,
-      SEffe::FUN_80118a24,
+      SEffe::renderShirleyTransformWipeEffect,
       null,
-      BttlScriptData6cSub08_4::new
+      null
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
-    final BttlScriptData6cSub08_4 effect = (BttlScriptData6cSub08_4)manager.effect_44;
-    effect._00.set((short)0x300);
-    effect._02.set((short)0);
-    effect._04.set(-1);
-    effect._05.set(-1);
-    effect._06.set((short)0);
-    manager._10.trans_04.setZ(0x100);
+    manager._10.trans_04.setZ(256);
     manager._10._24 = 0x80;
     manager._10._28 = 0x80;
     manager._10._2c = 0x100;

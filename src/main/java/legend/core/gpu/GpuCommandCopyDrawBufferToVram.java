@@ -1,6 +1,6 @@
 package legend.core.gpu;
 
-public class GpuCommandCopyDisplayBufferToVram extends GpuCommand {
+public class GpuCommandCopyDrawBufferToVram extends GpuCommand {
   private final int sourceX;
   private final int sourceY;
   private final int destX;
@@ -8,7 +8,7 @@ public class GpuCommandCopyDisplayBufferToVram extends GpuCommand {
   private final int width;
   private final int height;
 
-  public GpuCommandCopyDisplayBufferToVram(final int sourceX, final int sourceY, final int destX, final int destY, final int width, final int height) {
+  public GpuCommandCopyDrawBufferToVram(final int sourceX, final int sourceY, final int destX, final int destY, final int width, final int height) {
     if(sourceX < 0) {
       throw new IllegalArgumentException("Negative sourceX " + sourceX);
     }
@@ -36,7 +36,7 @@ public class GpuCommandCopyDisplayBufferToVram extends GpuCommand {
   @Override
   public void render(final Gpu gpu) {
     final int[] data = new int[this.width * gpu.getScale() * this.height * gpu.getScale()];
-    gpu.getDisplayBuffer().getRegion(new Rect4i(this.sourceX * gpu.getScale(), this.sourceY * gpu.getScale(), this.width * gpu.getScale(), this.height * gpu.getScale()), data);
+    gpu.getDrawBuffer().getRegion(new Rect4i(this.sourceX * gpu.getScale(), this.sourceY * gpu.getScale(), this.width * gpu.getScale(), this.height * gpu.getScale()), data);
 
     final int[] unscaledData = new int[this.width * this.height];
     for(int y = 0; y < this.height; y++) {
