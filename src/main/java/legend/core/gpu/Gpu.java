@@ -637,7 +637,7 @@ public class Gpu {
 
       if(this.drawingArea.contains(x, y)) {
         if(translucency != null) {
-          colour = this.handleTranslucence(x, y, colour, translucency);
+          colour = this.handleTranslucence(x * this.scale, y * this.scale, colour, translucency);
         }
 
         colour |= (this.status.setMaskBit ? 1 : 0) << 24;
