@@ -21,10 +21,10 @@ public class AdditionOverlaysEffect44 implements BttlScriptData6cSubBase1, Memor
   public final VECTOR vec_20;
 
   public final UnsignedByteRef count_30;
-  public final UnsignedByteRef _31;
-  public final ByteRef _32;
+  public final UnsignedByteRef _31; // Renders and ticks if 0, ticks if 2, skips both if 1, only set by unidentified script command
+  public final ByteRef additionComplete_32; // 0 = not complete, 1 = complete, either successful or failed
 
-  public final ShortRef _34;
+  public final ShortRef currentTick_34;
   public final UnsignedShortRef _36;
   public final UnsignedByteRef _38;
   public final UnsignedByteRef _39;
@@ -44,9 +44,9 @@ public class AdditionOverlaysEffect44 implements BttlScriptData6cSubBase1, Memor
 
     this.count_30 = ref.offset(1, 0x30L).cast(UnsignedByteRef::new);
     this._31 = ref.offset(1, 0x31L).cast(UnsignedByteRef::new);
-    this._32 = ref.offset(1, 0x32L).cast(ByteRef::new);
+    this.additionComplete_32 = ref.offset(1, 0x32L).cast(ByteRef::new);
 
-    this._34 = ref.offset(2, 0x34L).cast(ShortRef::new);
+    this.currentTick_34 = ref.offset(2, 0x34L).cast(ShortRef::new);
     this._36 = ref.offset(2, 0x36L).cast(UnsignedShortRef::new);
     this._38 = ref.offset(1, 0x38L).cast(UnsignedByteRef::new);
     this._39 = ref.offset(1, 0x39L).cast(UnsignedByteRef::new);
