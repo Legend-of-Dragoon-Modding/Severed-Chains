@@ -2104,7 +2104,7 @@ public final class SItem {
           }
 
           inventoryMenuState_800bdc28.set(InventoryMenuState.INIT_MAIN_MENU_3);
-          FUN_8010e9a8(0x1L, xpDivisor_8011e174.get());
+          FUN_8010e9a8(1);
         }
 
         break;
@@ -2119,7 +2119,7 @@ public final class SItem {
           }
         }
 
-        FUN_8010e9a8(0, xpDivisor_8011e174.get());
+        FUN_8010e9a8(0);
         break;
 
       case MAIN_MENU_4:
@@ -2158,7 +2158,7 @@ public final class SItem {
           playSound(0x1L);
         }
 
-        FUN_8010e9a8(0, xpDivisor_8011e174.get());
+        FUN_8010e9a8(0);
         break;
 
       case _5:
@@ -2193,7 +2193,7 @@ public final class SItem {
           }
         }
 
-        FUN_8010e9a8(0, xpDivisor_8011e174.get());
+        FUN_8010e9a8(0);
         break;
 
       case CONFIG_6:
@@ -2212,7 +2212,7 @@ public final class SItem {
         //LAB_8010dcf4
         //LAB_8010dcf8
         renderAdditionsUnlocked((int)_8011e178.get());
-        FUN_8010e9a8(0, xpDivisor_8011e174.get());
+        FUN_8010e9a8(0);
         break;
 
       case _7:
@@ -2224,7 +2224,7 @@ public final class SItem {
         }
 
         renderAdditionsUnlocked((int)_8011e178.get());
-        FUN_8010e9a8(0, xpDivisor_8011e174.get());
+        FUN_8010e9a8(0);
         break;
 
       case REPLACE_INIT_8:
@@ -2240,7 +2240,7 @@ public final class SItem {
           _8011e170.addu(0x1L);
         }
 
-        FUN_8010e9a8(0, xpDivisor_8011e174.get());
+        FUN_8010e9a8(0);
         break;
 
       case _9:
@@ -2253,7 +2253,7 @@ public final class SItem {
           _8011e170.addu(0x1L);
         }
 
-        FUN_8010e9a8(0, xpDivisor_8011e174.get());
+        FUN_8010e9a8(0);
         break;
 
       case REPLACE_MENU_10:
@@ -2271,7 +2271,7 @@ public final class SItem {
           inventoryMenuState_800bdc28.set(InventoryMenuState._14);
         }
 
-        FUN_8010e9a8(0, xpDivisor_8011e174.get());
+        FUN_8010e9a8(0);
         break;
 
       case _11:
@@ -2283,7 +2283,7 @@ public final class SItem {
           inventoryMenuState_800bdc28.set(InventoryMenuState.EQUIPMENT_INIT_12);
         }
 
-        FUN_8010e9a8(0, xpDivisor_8011e174.get());
+        FUN_8010e9a8(0);
         break;
 
       case EQUIPMENT_INIT_12:
@@ -2302,7 +2302,7 @@ public final class SItem {
         //LAB_8010df20
         //LAB_8010df24
         renderSpellsUnlocked((int)_8011e178.get());
-        FUN_8010e9a8(0, xpDivisor_8011e174.get());
+        FUN_8010e9a8(0);
         break;
 
       case _13:
@@ -2317,7 +2317,7 @@ public final class SItem {
         //LAB_8010df20
         //LAB_8010df24
         renderSpellsUnlocked((int)_8011e178.get());
-        FUN_8010e9a8(0, xpDivisor_8011e174.get());
+        FUN_8010e9a8(0);
         break;
 
       case _14:
@@ -2339,7 +2339,7 @@ public final class SItem {
 
         //LAB_8010dfb8
         //LAB_8010dfbc
-        FUN_8010e9a8(0, xpDivisor_8011e174.get());
+        FUN_8010e9a8(0);
         break;
 
       case LIST_INIT_16:
@@ -2347,7 +2347,7 @@ public final class SItem {
         inventoryMenuState_800bdc28.set(InventoryMenuState._17);
 
       case _17:
-        FUN_8010e9a8(0, xpDivisor_8011e174.get());
+        FUN_8010e9a8(0);
 
         if(_800bb168.get() >= 0xff) {
           inventoryMenuState_800bdc28.set(confirmDest_800bdc30.get());
@@ -2522,7 +2522,7 @@ public final class SItem {
   }
 
   @Method(0x8010e9a8L)
-  public static void FUN_8010e9a8(final long a0, final long a1) {
+  public static void FUN_8010e9a8(final int a0) {
     int y1 = 24;
     int y2 = -82;
     int y3 = -70;

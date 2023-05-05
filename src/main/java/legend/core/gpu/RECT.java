@@ -57,6 +57,10 @@ public class RECT implements MemoryRef {
     return this.set((short)0, (short)0, (short)0, (short)0);
   }
 
+  public boolean contains(final int x, final int y) {
+    return x >= this.x.get() && x < this.x.get() + this.w.get() && y >= this.y.get() && y < this.y.get() + this.h.get();
+  }
+
   @Override
   public String toString() {
     return "RECT {" + this.x.get() + ", " + this.y.get() + ", " + this.w.get() + ", " + this.h.get() + '}' + (this.ref == null ? " (local)" : " @ " + Long.toHexString(this.getAddress()));

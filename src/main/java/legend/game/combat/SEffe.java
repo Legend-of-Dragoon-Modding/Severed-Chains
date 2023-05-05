@@ -5,12 +5,14 @@ import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.Gpu;
-import legend.core.gpu.GpuCommandCopyVramToVram;
+import legend.core.gpu.GpuCommand;
+import legend.core.gpu.GpuCommandCopyDisplayBufferToVram;
 import legend.core.gpu.GpuCommandLine;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.GpuCommandSetMaskBit;
 import legend.core.gpu.RECT;
+import legend.core.gpu.Rect4i;
 import legend.core.gte.COLOUR;
 import legend.core.gte.DVECTOR;
 import legend.core.gte.GsCOORDINATE2;
@@ -37,6 +39,7 @@ import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.TriConsumer;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
+import legend.game.combat.bobj.BattleObject27c;
 import legend.game.combat.deff.Anim;
 import legend.game.combat.deff.DeffManager7cc;
 import legend.game.combat.deff.DeffPart;
@@ -48,7 +51,6 @@ import legend.game.combat.effects.AdditionOverlaysEffect44;
 import legend.game.combat.effects.AttackHitFlashEffect0c;
 import legend.game.combat.effects.BattleStruct24;
 import legend.game.combat.effects.BttlScriptData6cSub08_3;
-import legend.game.combat.effects.BttlScriptData6cSub08_4;
 import legend.game.combat.effects.BttlScriptData6cSub10_2;
 import legend.game.combat.effects.BttlScriptData6cSub13c;
 import legend.game.combat.effects.BttlScriptData6cSub14_4;
@@ -64,7 +66,6 @@ import legend.game.combat.effects.BttlScriptData6cSub24;
 import legend.game.combat.effects.BttlScriptData6cSub24_2;
 import legend.game.combat.effects.BttlScriptData6cSub30;
 import legend.game.combat.effects.BttlScriptData6cSub30Sub10;
-import legend.game.combat.effects.TransformScalerEffect34;
 import legend.game.combat.effects.BttlScriptData6cSub38;
 import legend.game.combat.effects.BttlScriptData6cSub38Sub14;
 import legend.game.combat.effects.BttlScriptData6cSub38Sub14Sub30;
@@ -72,7 +73,6 @@ import legend.game.combat.effects.BttlScriptData6cSub50;
 import legend.game.combat.effects.BttlScriptData6cSub50Sub3c;
 import legend.game.combat.effects.BttlScriptData6cSub5c;
 import legend.game.combat.effects.BttlScriptData6cSubBase1;
-import legend.game.combat.effects.ScreenCaptureEffect1c;
 import legend.game.combat.effects.DeffTmdRenderer14;
 import legend.game.combat.effects.EffectData98Inner24;
 import legend.game.combat.effects.EffectManagerData6c;
@@ -82,8 +82,11 @@ import legend.game.combat.effects.GoldDragoonTransformEffect20;
 import legend.game.combat.effects.GoldDragoonTransformEffectInstance84;
 import legend.game.combat.effects.ParticleEffectData98;
 import legend.game.combat.effects.ParticleEffectInstance94;
+import legend.game.combat.effects.ParticleEffectInstance94Sub10;
+import legend.game.combat.effects.ScreenCaptureEffect1c;
+import legend.game.combat.effects.ScreenCaptureEffectMetrics8;
 import legend.game.combat.effects.ScreenDistortionEffectData08;
-import legend.game.combat.bobj.BattleObject27c;
+import legend.game.combat.effects.TransformScalerEffect34;
 import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.DragoonAdditionScriptData1c;
 import legend.game.combat.types.EffeScriptData30;
@@ -117,7 +120,6 @@ import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
 import static legend.game.Scus94491BpeSegment.displayHeight_1f8003e4;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
 import static legend.game.Scus94491BpeSegment.free;
-import static legend.game.Scus94491BpeSegment.mallocHead;
 import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.playSound;
 import static legend.game.Scus94491BpeSegment.projectionPlaneDistance_1f8003f8;
@@ -165,11 +167,9 @@ import static legend.game.Scus94491BpeSegment_8004.ratan2;
 import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
-import static legend.game.Scus94491BpeSegment_800b.doubleBufferFrame_800bb108;
 import static legend.game.Scus94491BpeSegment_800b.model_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.stage_800bda0c;
-import static legend.game.Scus94491BpeSegment_800c.DISPENV_800c34b0;
 import static legend.game.Scus94491BpeSegment_800c.identityMatrix_800c3568;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.combat.Bttl_800c.FUN_800cf37c;
@@ -1487,38 +1487,32 @@ public final class SEffe {
   }
 
   @Method(0x800fe120L)
-  public static void FUN_800fe120(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
+  public static void FUN_800fe120(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
     final VECTOR sp0x38 = new VECTOR();
     final SVECTOR sp0x48 = new SVECTOR();
-    final ParticleEffectData98 s2 = (ParticleEffectData98)data.effect_44;
+    final ParticleEffectData98 effect = (ParticleEffectData98)manager.effect_44;
 
     final Memory.TemporaryReservation sp0x28tmp = MEMORY.temp(0x8a);
     final VECTOR sp0x28 = sp0x28tmp.get().cast(VECTOR::new);
 
-    s2._52++;
+    effect._52++;
 
     //LAB_800fe180
-    for(int i = 0; i < s2.count_50; i++) {
-      final ParticleEffectInstance94 sp54 = s2._68[i];
+    for(int i = 0; i < effect.count_50; i++) {
+      final ParticleEffectInstance94 inst = effect._68[i];
 
-      if(FUN_800fd460(state, data, s2, sp54) == 0) {
-        long a2 = sp54._80 + (s2.count_54 - 1) * 0x10;
-
+      if(FUN_800fd460(state, manager, effect, inst) == 0) {
         //LAB_800fe1bc
-        for(int s4 = 0; s4 < s2.count_54 - 1; s4++) {
-          MEMORY.ref(4, a2).offset(0x00L).setu(MEMORY.ref(4, a2).offset(-0x10L).get());
-          MEMORY.ref(4, a2).offset(0x04L).setu(MEMORY.ref(4, a2).offset(-0x0cL).get());
-          MEMORY.ref(4, a2).offset(0x08L).setu(MEMORY.ref(4, a2).offset(-0x08L).get());
-          MEMORY.ref(4, a2).offset(0x0cL).setu(MEMORY.ref(4, a2).offset(-0x04L).get());
-          a2 = a2 - 0x10;
+        for(int s4 = effect.count_54 - 1; s4 > 0; s4--) {
+          inst._80[s4].copy(inst._80[s4 - 1]);
         }
 
         //LAB_800fe1fc
-        s2._84.accept(data, s2, sp54);
+        effect._84.accept(manager, effect, inst);
 
-        FUN_800fd1dc(data, s2, sp54, sp0x28);
+        FUN_800fd1dc(manager, effect, inst, sp0x28);
 
-        if((s2._08._1c & 0x1000_0000) == 0 || (sp54._90 & 0x8) == 0) {
+        if((effect._08._1c & 0x1000_0000) == 0 || (inst._90 & 0x8) == 0) {
           //LAB_800fe280
           sp0x38.set(0, 0, 0);
         } else {
@@ -1526,39 +1520,39 @@ public final class SEffe {
         }
 
         //LAB_800fe28c
-        sp54._90 = sp54._90 & 0xffff_fff7 | (~(sp54._90 >>> 3) & 0x1) << 3;
+        inst._90 = inst._90 & 0xffff_fff7 | (~(inst._90 >>> 3) & 0x1) << 3;
 
-        if((data._10.flags_00 & 0x400_0000) == 0) {
+        if((manager._10.flags_00 & 0x400_0000) == 0) {
           // This is super bugged in retail and passes garbage as the last 3 params to both methods.
           // Hopefully this is fine with them all zeroed. This is used for the Glare's bewitching attack.
-          sp54._68.setY((short)(ratan2(
-            FUN_800dc408(0, 0, 0, 0, 0) - sp54._50.getX(),
-            FUN_800dc408(2, 0, 0, 0, 0) - sp54._50.getZ()
+          inst._68.setY((short)(ratan2(
+            FUN_800dc408(0, 0, 0, 0, 0) - inst._50.getX(),
+            FUN_800dc408(2, 0, 0, 0, 0) - inst._50.getZ()
           ) + 0x400));
         }
 
         //LAB_800fe300
-        final VECTOR sp0x18 = new VECTOR().set(sp54._50);
+        final VECTOR sp0x18 = new VECTOR().set(inst._50);
 
         sp0x28.setX(MathHelper.clamp(sp0x28.getX() + sp0x38.getX(), 0, 0x8000));
         sp0x28.setY(MathHelper.clamp(sp0x28.getY() + sp0x38.getY(), 0, 0x8000));
         sp0x28.setZ(MathHelper.clamp(sp0x28.getZ() + sp0x38.getZ(), 0, 0x8000));
 
         final GpuCommandPoly cmd1 = new GpuCommandPoly(4)
-          .clut((s2.clut_5c & 0b111111) * 16, s2.clut_5c >>> 6)
-          .vramPos(s2.u_58 & 0x3c0, s2.v_5a < 256 ? 0 : 256)
+          .clut((effect.clut_5c & 0b111111) * 16, effect.clut_5c >>> 6)
+          .vramPos(effect.u_58 & 0x3c0, effect.v_5a < 256 ? 0 : 256)
           .rgb(sp0x28.getX() >> 8, sp0x28.getY() >> 8, sp0x28.getZ() >> 8)
-          .uv(0, (s2.u_58 & 0x3f) * 4,               s2.v_5a)
-          .uv(1, (s2.u_58 & 0x3f) * 4 + s2.w_5e - 1, s2.v_5a)
-          .uv(2, (s2.u_58 & 0x3f) * 4,               s2.v_5a + s2.h_5f - 1)
-          .uv(3, (s2.u_58 & 0x3f) * 4 + s2.w_5e - 1, s2.v_5a + s2.h_5f - 1);
+          .uv(0, (effect.u_58 & 0x3f) * 4,               effect.v_5a)
+          .uv(1, (effect.u_58 & 0x3f) * 4 + effect.w_5e - 1, effect.v_5a)
+          .uv(2, (effect.u_58 & 0x3f) * 4,               effect.v_5a + effect.h_5f - 1)
+          .uv(3, (effect.u_58 & 0x3f) * 4 + effect.w_5e - 1, effect.v_5a + effect.h_5f - 1);
 
-        if((data._10.flags_00 & 1 << 30) != 0) {
-          cmd1.translucent(Translucency.of(data._10.flags_00 >>> 28 & 0b11));
+        if((manager._10.flags_00 & 1 << 30) != 0) {
+          cmd1.translucent(Translucency.of(manager._10.flags_00 >>> 28 & 0b11));
         }
 
-        final int s5 = FUN_800fca78(data, s2, sp54, sp0x18, cmd1) >> 2;
-        int a0 = data._10.z_22;
+        final int s5 = FUN_800fca78(manager, effect, inst, sp0x18, cmd1) >> 2;
+        int a0 = manager._10.z_22;
         if(a0 + s5 >= 160) {
           if(a0 + s5 >= 4094) {
             a0 = 4094 - s5;
@@ -1569,26 +1563,26 @@ public final class SEffe {
         }
 
         //LAB_800fe564
-        if((s2._08._1c & 0x6000_0000) != 0) {
-          long s1 = sp54._80;
-          MEMORY.ref(2, s1).offset(0x0L).setu(cmd1.getX(0));
-          MEMORY.ref(2, s1).offset(0x2L).setu(cmd1.getY(0));
-          MEMORY.ref(2, s1).offset(0x4L).setu(cmd1.getX(1));
-          MEMORY.ref(2, s1).offset(0x6L).setu(cmd1.getY(1));
-          MEMORY.ref(2, s1).offset(0x8L).setu(cmd1.getX(2));
-          MEMORY.ref(2, s1).offset(0xaL).setu(cmd1.getY(2));
-          MEMORY.ref(2, s1).offset(0xcL).setu(cmd1.getX(3));
-          MEMORY.ref(2, s1).offset(0xeL).setu(cmd1.getY(3));
-          sp0x48.setX((short)(sp0x28.getX() / s2.count_54));
-          sp0x48.setY((short)(sp0x28.getY() / s2.count_54));
-          sp0x48.setZ((short)(sp0x28.getZ() / s2.count_54));
+        if((effect._08._1c & 0x6000_0000) != 0) {
+          ParticleEffectInstance94Sub10 s1 = inst._80[0];
+          s1.x0_00 = cmd1.getX(0);
+          s1.y0_02 = cmd1.getY(0);
+          s1.x1_04 = cmd1.getX(1);
+          s1.y1_06 = cmd1.getY(1);
+          s1.x2_08 = cmd1.getX(2);
+          s1.y2_0a = cmd1.getY(2);
+          s1.x3_0c = cmd1.getX(3);
+          s1.y3_0e = cmd1.getY(3);
+          sp0x48.setX((short)(sp0x28.getX() / effect.count_54));
+          sp0x48.setY((short)(sp0x28.getY() / effect.count_54));
+          sp0x48.setZ((short)(sp0x28.getZ() / effect.count_54));
 
-          final int count = Math.min(-sp54._04, s2.count_54);
+          final int count = Math.min(-inst._04, effect.count_54);
 
           //LAB_800fe61c
           //LAB_800fe628
           for(int s4 = 0; s4 < count; s4++) {
-            a0 = data._10.z_22;
+            a0 = manager._10.z_22;
             if(a0 + s5 >= 160) {
               if(a0 + s5 >= 4094) {
                 a0 = 4094 - s5;
@@ -1596,22 +1590,21 @@ public final class SEffe {
 
               final GpuCommandPoly cmd2 = new GpuCommandPoly(cmd1);
 
+              s1 = inst._80[s4];
+
               //LAB_800fe644
               cmd2
                 .rgb(sp0x28.getX() >> 8, sp0x28.getY() >> 8, sp0x28.getZ() >> 8)
-                .pos(0, (int)MEMORY.ref(2, s1).offset(0x0L).get(), (int)MEMORY.ref(2, s1).offset(0x2L).get())
-                .pos(1, (int)MEMORY.ref(2, s1).offset(0x4L).get(), (int)MEMORY.ref(2, s1).offset(0x6L).get())
-                .pos(2, (int)MEMORY.ref(2, s1).offset(0x8L).get(), (int)MEMORY.ref(2, s1).offset(0xaL).get())
-                .pos(3, (int)MEMORY.ref(2, s1).offset(0xcL).get(), (int)MEMORY.ref(2, s1).offset(0xeL).get());
+                .pos(0, s1.x0_00, s1.y0_02)
+                .pos(1, s1.x1_04, s1.y1_06)
+                .pos(2, s1.x2_08, s1.y2_0a)
+                .pos(3, s1.x3_0c, s1.y3_0e);
 
               //LAB_800fe78c
               GPU.queueCommand(s5 + a0 >> 2, cmd2);
             }
 
             sp0x28.sub(sp0x48);
-
-            //LAB_800fe7a8
-            s1 = s1 + 0x10L;
           }
         }
       }
@@ -1622,10 +1615,10 @@ public final class SEffe {
     sp0x28tmp.release();
 
     //LAB_800fe7ec
-    if(s2._6c != 0) {
-      s2.vec_70.setX(s2.vec_70.getX() * s2._80 >> 8);
-      s2.vec_70.setY(s2.vec_70.getY() * s2._80 >> 8);
-      s2.vec_70.setZ(s2.vec_70.getZ() * s2._80 >> 8);
+    if(effect._6c != 0) {
+      effect.vec_70.setX(effect.vec_70.getX() * effect._80 >> 8);
+      effect.vec_70.setY(effect.vec_70.getY() * effect._80 >> 8);
+      effect.vec_70.setZ(effect.vec_70.getZ() * effect._80 >> 8);
     }
 
     //LAB_800fe848
@@ -1667,18 +1660,6 @@ public final class SEffe {
     //LAB_800fe8fc
     if(s2._94 == null) {
       _8011a010 = a0;
-    }
-
-    //LAB_800fe910
-    if(s2.count_54 != 0) {
-      if(s2._60 == 0) {
-        if((s2._08._1c & 0x6000_0000) != 0) {
-          //LAB_800fe9b4
-          for(int i = 0; i < s2.count_50; i++) {
-            free(s2._68[i]._80);
-          }
-        }
-      }
     }
 
     //LAB_800fea30
@@ -2246,18 +2227,18 @@ public final class SEffe {
 
         //LAB_801011d8
         for(int i = 0; i < a2.count_54; i++) {
-          final long s0 = a3._80 + i * 0x10;
+          final ParticleEffectInstance94Sub10 s0 = a3._80[i];
 
           final VECTOR sp0x18 = new VECTOR().set(a3._50);
           FUN_800fca78(a1, a2, a3, sp0x18, cmd);
-          MEMORY.ref(2, s0).offset(0x0L).setu(cmd.getX(0));
-          MEMORY.ref(2, s0).offset(0x2L).setu(cmd.getY(0));
-          MEMORY.ref(2, s0).offset(0x4L).setu(cmd.getX(1));
-          MEMORY.ref(2, s0).offset(0x6L).setu(cmd.getY(1));
-          MEMORY.ref(2, s0).offset(0x8L).setu(cmd.getX(2));
-          MEMORY.ref(2, s0).offset(0xaL).setu(cmd.getY(2));
-          MEMORY.ref(2, s0).offset(0xcL).setu(cmd.getX(3));
-          MEMORY.ref(2, s0).offset(0xeL).setu(cmd.getY(3));
+          s0.x0_00 = cmd.getX(0);
+          s0.y0_02 = cmd.getY(0);
+          s0.x1_04 = cmd.getX(1);
+          s0.y1_06 = cmd.getY(1);
+          s0.x2_08 = cmd.getX(2);
+          s0.y2_0a = cmd.getY(2);
+          s0.x3_0c = cmd.getX(3);
+          s0.y3_0e = cmd.getY(3);
         }
         //LAB_8010114c
       } else if(v1 == 2 || v1 >= 4 && v1 < 6) {
@@ -2483,7 +2464,8 @@ public final class SEffe {
 //        gpuPacketAddr_1f8003d8.addu(0x28L);
 //        MEMORY.ref(1, v1).offset(0x3L).setu(0x9L);
 //        MEMORY.ref(4, v1).offset(0x4L).setu(0x2c80_8080L);
-        s2._80 = mallocHead(a0.count_54 * 0x10L);
+        s2._80 = new ParticleEffectInstance94Sub10[a0.count_54];
+        Arrays.setAll(s2._80, n -> new ParticleEffectInstance94Sub10());
       }
     }
 
@@ -4778,8 +4760,6 @@ public final class SEffe {
 
   @Method(0x80109358L)
   public static void FUN_80109358(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    final int u = doubleBufferFrame_800bb108.get() == 0 ? 16 : 0;
-
     final ScreenDistortionEffectData08 sp48 = (ScreenDistortionEffectData08)data.effect_44;
     final int sp30 = data._10.scale_16.getX() >> 8;
     final int sp2c = data._10.scale_16.getY() >> 11;
@@ -4807,24 +4787,14 @@ public final class SEffe {
         for(int s6 = 0; s6 < s2; s6++) {
           final int x = rsin(angle2) * sp30 >> 12;
           final int y = s5 + s6 * s3;
-          final int vramY = doubleBufferFrame_800bb108.get() == 0 ? 0 : 256;
 
           GPU.queueCommand(30, new GpuCommandQuad()
             .bpp(Bpp.BITS_15)
             .translucent(Translucency.of(data._10.flags_00 >>> 28 & 3))
-            .vramPos(0, vramY)
             .rgb(data._10.colour_1c.getX(), data._10.colour_1c.getY(), data._10.colour_1c.getZ())
-            .pos(-160 - x, y, 256, 1)
-            .uv(0, u + sp40)
-          );
-
-          GPU.queueCommand(29, new GpuCommandQuad()
-            .bpp(Bpp.BITS_15)
-            .translucent(Translucency.of(data._10.flags_00 >>> 28 & 3))
-            .vramPos(256, vramY)
-            .rgb(data._10.colour_1c.getX(), data._10.colour_1c.getY(), data._10.colour_1c.getZ())
-            .pos(96 - x, y, 64, 1)
-            .uv(0, u + sp40)
+            .pos(-160 - x, y, 320, 1)
+            .uv(0, sp40)
+            .texture(GPU.getDisplayBuffer())
           );
 
           angle2 += s3 * 32;
@@ -4840,25 +4810,12 @@ public final class SEffe {
 
   @Method(0x801097e0L)
   public static void renderScreenDistortionBlurEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    final int y = doubleBufferFrame_800bb108.get() == 0 ? 0 : 256;
-    final int v = doubleBufferFrame_800bb108.get() == 0 ? 16 : 0;
-
     GPU.queueCommand(30, new GpuCommandQuad()
       .bpp(Bpp.BITS_15)
       .translucent(Translucency.of(data._10.flags_00 >>> 28 & 3))
-      .vramPos(0, y)
       .rgb(data._10.colour_1c.getX(), data._10.colour_1c.getY(), data._10.colour_1c.getZ())
-      .pos(-160, -120, 256, 240)
-      .uv(0, v)
-    );
-
-    GPU.queueCommand(30, new GpuCommandQuad()
-      .bpp(Bpp.BITS_15)
-      .translucent(Translucency.of(data._10.flags_00 >>> 28 & 3))
-      .vramPos(256, y)
-      .rgb(data._10.colour_1c.getX(), data._10.colour_1c.getY(), data._10.colour_1c.getZ())
-      .pos(96, -120, 64, 240)
-      .uv(0, v)
+      .pos(-160, -120, 320, 240)
+      .texture(GPU.getDisplayBuffer())
     );
   }
 
@@ -5321,41 +5278,41 @@ public final class SEffe {
 
     final EffectManagerData6c manager = state.innerStruct_00;
     final ScreenCaptureEffect1c effect = (ScreenCaptureEffect1c)manager.effect_44;
-    effect.ptr_00.set(mallocTail(0x8));
+    effect.metrics_00.setPointer(mallocTail(0x8));
     effect.captureW_04.set(script.params_20[4].get());
     effect.captureH_08.set(script.params_20[5].get());
     effect.rendererIndex_0c.set(script.params_20[6].get());
     effect.screenspaceW_10.set(0);
     script.params_20[0].set(state.index);
-    FUN_8010c2e0(effect.ptr_00.get(), script.params_20[1].get());
+    FUN_8010c2e0(effect.metrics_00.deref(), script.params_20[1].get());
 
     final int v0 = effect.rendererIndex_0c.get();
     if(v0 == 0) {
       //LAB_8010b2e4
-      final int x = DISPENV_800c34b0.disp.x.get() + script.params_20[2].get() + 160;
-      final int y = DISPENV_800c34b0.disp.y.get() + script.params_20[3].get() + 120;
+      final int x = script.params_20[2].get() + 160;
+      final int y = script.params_20[3].get() + 120;
       final int w = effect.captureW_04.get() / 2;
       final int h = effect.captureH_08.get() / 2;
 
       //LAB_8010b308
       for(int i = 0; i < 4; i++) {
-        final long v1 = effect.ptr_00.get();
+        final ScreenCaptureEffectMetrics8 metrics = effect.metrics_00.deref();
 
-        GPU.queueCommand(40, new GpuCommandCopyVramToVram(x + ((i & 1) - 1) * w, y + (i / 2 - 1) * h, (int)MEMORY.ref(2, v1).offset(0x0L).get(), (int)MEMORY.ref(2, v1).offset(0x2L).get() + i * 64, w, h));
+        GPU.queueCommand(40, new GpuCommandCopyDisplayBufferToVram(x + ((i & 1) - 1) * w, y + (i / 2 - 1) * h, metrics.u_00.get(), metrics.v_02.get() + i * 64, w, h));
         GPU.queueCommand(40, new GpuCommandSetMaskBit(true, Gpu.DRAW_PIXELS.ALWAYS));
       }
     } else if(v0 < 3) {
       //LAB_8010b3f0
-      final int x = DISPENV_800c34b0.disp.x.get() + script.params_20[2].get() + 160 - effect.captureW_04.get() / 2;
-      final int y = DISPENV_800c34b0.disp.y.get() + script.params_20[3].get() + 120 - effect.captureH_08.get() / 2;
+      final int x = script.params_20[2].get() + 160 - effect.captureW_04.get() / 2;
+      final int y = script.params_20[3].get() + 120 - effect.captureH_08.get() / 2;
       final int w = effect.captureW_04.get() / 5;
       final int h = effect.captureH_08.get() / 3;
 
       //LAB_8010b468
       for(int i = 0; i < 15; i++) {
-        final long v1 = effect.ptr_00.get();
+        final ScreenCaptureEffectMetrics8 metrics = effect.metrics_00.deref();
 
-        GPU.queueCommand(40, new GpuCommandCopyVramToVram(x + i % 5 * w, y + i / 5 * h, (int)MEMORY.ref(2, v1).offset(0x0L).get() + i % 2 * 32, (int)MEMORY.ref(2, v1).offset(0x2L).get() + i / 2 * 32, w, h));
+        GPU.queueCommand(40, new GpuCommandCopyDisplayBufferToVram(x + i % 5 * w, y + i / 5 * h, metrics.u_00.get() + i % 2 * 32, metrics.v_02.get() + i / 2 * 32, w, h));
         GPU.queueCommand(40, new GpuCommandSetMaskBit(true, Gpu.DRAW_PIXELS.ALWAYS));
       }
     }
@@ -5462,14 +5419,14 @@ public final class SEffe {
             break;
           }
 
-          final long addr = effect.ptr_00.get();
+          final ScreenCaptureEffectMetrics8 metrics = effect.metrics_00.deref();
 
           cmd
             .bpp(Bpp.BITS_15)
-            .vramPos((int)MEMORY.ref(2, addr).offset(0x0L).get() & 0x3c0, (MEMORY.ref(1, addr).offset(0x3L).get() & 0x1) == 0 ? 0 : 256)
+            .vramPos(metrics.u_00.get() & 0x3c0, (metrics.v_02.get() & 0x1) == 0 ? 0 : 256)
             .pos(0, sxy0.getX(), sxy0.getY())
-            .pos(0, sxy1.getX(), sxy1.getY())
-            .pos(0, sxy2.getX(), sxy2.getY());
+            .pos(1, sxy1.getX(), sxy1.getY())
+            .pos(2, sxy2.getX(), sxy2.getY());
 
           GPU.queueCommand(z >> 2, cmd);
         }
@@ -5513,11 +5470,11 @@ public final class SEffe {
 
           final int u = (i & 0x1) * 32;
           final int v = (i >> 1) * 64;
-          final long addr = effect.ptr_00.get();
+          final ScreenCaptureEffectMetrics8 metrics = effect.metrics_00.deref();
 
           GPU.queueCommand(z >> 2, new GpuCommandPoly(4)
             .bpp(Bpp.BITS_15)
-            .vramPos((int)MEMORY.ref(2, addr).offset(0x0L).get() & 0x3c0, (MEMORY.ref(1, addr).offset(0x3L).get() & 0x1) != 0 ? 256 : 0)
+            .vramPos(metrics.u_00.get() & 0x3c0, (metrics.v_02.get() & 0x1) != 0 ? 256 : 0)
             .rgb(sp0x48.getR(), sp0x48.getG(), sp0x48.getB())
             .pos(0, sxy0.getX(), sxy0.getY())
             .pos(1, sxy1.getX(), sxy1.getY())
@@ -5566,7 +5523,7 @@ public final class SEffe {
       sp0x28.setZ((short)v0);
       sp0x38.setZ((short)v0);
 
-      int a1 = s0 / 5;
+      final int a1 = s0 / 5;
       v1 = effect.screenspaceH_14.get();
       v0 = a1 * v1 / 3 - v1 / 2;
       sp0x28.setY((short)v0);
@@ -5602,11 +5559,11 @@ public final class SEffe {
       final int rightU = leftU + effect.captureW_04.get() / 5 - 1;
       final int bottomV = topV + effect.captureH_08.get() / 3 - 1;
 
-      final long addr = effect.ptr_00.get();
+      final ScreenCaptureEffectMetrics8 metrics = effect.metrics_00.deref();
 
       GPU.queueCommand(z >> 2, new GpuCommandPoly(4)
         .bpp(Bpp.BITS_15)
-        .vramPos((int)MEMORY.ref(2, addr).offset(0x0L).get() & 0x3c0, (MEMORY.ref(1, addr).offset(0x3L).get() & 0x1) != 0 ? 256 : 0)
+        .vramPos(metrics.u_00.get() & 0x3c0, (metrics.v_02.get() & 0x1) != 0 ? 256 : 0)
         .rgb(rgb.getR(), rgb.getG(), rgb.getB())
         .pos(0, sxy0.getX(), sxy0.getY())
         .pos(1, sxy1.getX(), sxy1.getY())
@@ -5647,19 +5604,17 @@ public final class SEffe {
 
   @Method(0x8010c294L)
   public static void deallocateScreenCaptureEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
-    free(((ScreenCaptureEffect1c)manager.effect_44).ptr_00.get());
+    free(((ScreenCaptureEffect1c)manager.effect_44).metrics_00.getPointer());
   }
 
   @Method(0x8010c2e0L)
-  public static void FUN_8010c2e0(final long a0, final int a1) {
+  public static void FUN_8010c2e0(final ScreenCaptureEffectMetrics8 metrics, final int a1) {
     if((a1 & 0xf_ff00) != 0xf_ff00) {
       final DeffPart.SpriteType spriteType = (DeffPart.SpriteType)getDeffPart(a1 | 0x400_0000);
       final DeffPart.SpriteMetrics deffMetrics = spriteType.metrics_08;
-      MEMORY.ref(2, a0).offset(0x0L).setu(deffMetrics.u_00);
-      MEMORY.ref(2, a0).offset(0x2L).setu(deffMetrics.v_02);
-      MEMORY.ref(1, a0).offset(0x4L).setu(deffMetrics.w_04 * 4);
-      MEMORY.ref(1, a0).offset(0x5L).setu(deffMetrics.h_06);
-      MEMORY.ref(2, a0).offset(0x6L).setu(deffMetrics.clutY_0a << 6 | (deffMetrics.clutX_08 & 0x3f0) >>> 4);
+      metrics.u_00.set(deffMetrics.u_00);
+      metrics.v_02.set(deffMetrics.v_02);
+      metrics.clut_06.set(deffMetrics.clutY_0a << 6 | (deffMetrics.clutX_08 & 0x3f0) >>> 4);
     }
 
     //LAB_8010c368
@@ -9980,88 +9935,92 @@ public final class SEffe {
   }
 
   @Method(0x80118a24L)
-  public static void FUN_80118a24(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
-    final BttlScriptData6cSub08_4 effect = (BttlScriptData6cSub08_4)manager.effect_44;
-    final int sp10 = DISPENV_800c34b0.disp.x.get() + manager._10.trans_04.getX() + 160 - manager._10._24 / 2;
-    final int sp12 = DISPENV_800c34b0.disp.y.get() + manager._10.trans_04.getY() + 120 - manager._10._28 / 2;
-    final int minZ = manager._10.trans_04.getZ() - manager._10._24 / 2 >> 2;
-    final int maxZ = manager._10.trans_04.getZ() + manager._10._24 / 2 >> 2;
-    final int l = DISPENV_800c34b0.disp.x.get();
-    final int r = l + 320;
-    final int t = DISPENV_800c34b0.disp.y.get();
-    final int b = t + 240;
+  public static void renderShirleyTransformWipeEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+    final int x = manager._10.trans_04.getX() + 160 - manager._10._24 / 2;
+    final int y = manager._10.trans_04.getY() + 120 - manager._10._28 / 2;
+    final int minZ = manager._10.trans_04.getZ() - manager._10._2c / 2 >> 2;
+    final int maxZ = manager._10.trans_04.getZ() + manager._10._2c / 2 >> 2;
+    final int right = 320;
+    final int bottom = 240;
 
-    final RECT sp0x20 = new RECT();
-    final RECT sp0x28 = new RECT();
+    final RECT buffPos = new RECT();
 
     //LAB_80118ba8
     for(int i = 0; i < 4; i++) {
-      sp0x28.x.set((short)(sp10 + manager._10._24 / 2 * (i & 0x1L)));
-      sp0x28.y.set((short)(sp12 + manager._10._28 / 2 * (i >> 1)));
-      sp0x28.w.set((short)(manager._10._24 / 2));
-      sp0x28.h.set((short)(manager._10._28 / 2));
-      if(sp0x28.x.get() < r) {
-        if(sp0x28.x.get() < l) {
-          sp0x28.w.add((short)(sp0x28.x.get() - l));
-          sp0x28.x.set((short)l);
+      buffPos.x.set((short)(x + manager._10._24 / 2 * (i & 1)));
+      buffPos.y.set((short)(y + manager._10._28 / 2 * (i >> 1)));
+      buffPos.w.set((short)(manager._10._24 / 2));
+      buffPos.h.set((short)(manager._10._28 / 2));
+
+      if(buffPos.x.get() < right) {
+        if(buffPos.x.get() < 0) {
+          buffPos.w.add(buffPos.x.get());
+          buffPos.x.set((short)0);
         }
 
         //LAB_80118c58
-        if(r < sp0x28.x.get() + sp0x28.w.get()) {
-          sp0x28.w.set((short)(r - sp0x28.x.get()));
+        if(buffPos.x.get() + buffPos.w.get() > right) {
+          buffPos.w.set((short)(right - buffPos.x.get()));
         }
 
         //LAB_80118c7c
-        if(sp0x28.w.get() > 0) {
-          if(sp0x28.y.get() < b) {
-            if(sp0x28.y.get() < t) {
-              sp0x20.h.add((short)(sp0x28.y.get() - t));
-              sp0x28.y.set((short)t);
+        if(buffPos.w.get() > 0) {
+          if(buffPos.y.get() < bottom) {
+            if(buffPos.y.get() < 0) {
+              buffPos.y.set((short)0);
             }
 
             //LAB_80118cc0
-            if(b < sp0x28.y.get() + sp0x28.h.get()) {
-              sp0x28.h.set((short)(b - sp0x28.y.get()));
+            if(buffPos.y.get() + buffPos.h.get() > bottom) {
+              buffPos.h.set((short)(bottom - buffPos.y.get()));
             }
 
             //LAB_80118ce4
-            if(sp0x28.h.get() > 0) {
-              sp0x20.x.set(effect._00.get());
-              sp0x20.y.set((short)(effect._02.get() + i * 64));
-              sp0x20.w.set(sp0x28.w.get());
-              sp0x20.h.set(sp0x28.h.get());
+            if(buffPos.h.get() > 0) {
+              final int scale = GPU.getScale();
+              final int[] data = new int[buffPos.w.get() * scale * buffPos.h.get() * scale];
+              final Rect4i rect = new Rect4i(buffPos.x.get() * scale, buffPos.y.get() * scale, buffPos.w.get() * scale, buffPos.h.get() * scale);
 
-              // This was depth-queued at both minZ and maxZ, not really sure why... minZ sometimes had a negative value and would crash
-              GPU.command80CopyRectFromVramToVram(sp0x28.x.get(), sp0x28.y.get(), sp0x20.x.get(), sp0x20.y.get(), sp0x28.w.get(), sp0x28.h.get());
+              // Back up draw buffer data after background is rendered, but before models are rendered
+              GPU.queueCommand(maxZ, new GpuCommand() {
+                @Override
+                public void render(final Gpu gpu) {
+                  gpu.getDrawBuffer().getRegion(rect, data);
+                }
+              });
+
+              // Overwrite rendered model pixels with the background pixels we backed up to emulate the wipe effect
+              GPU.queueCommand(minZ, new GpuCommand() {
+                @Override
+                public void render(final Gpu gpu) {
+                  gpu.getDrawBuffer().setRegion(rect, data);
+                }
+              });
             }
           }
         }
       }
-
-      //LAB_80118db4
     }
   }
 
+  /**
+   * Used when Shirley transforms into another char. Causes the wipe effect where her model
+   * disappears from top to bottom and then reappears as another char from bottom to top.
+   */
   @Method(0x80118df4L)
-  public static FlowControl FUN_80118df4(final RunningScript<? extends BattleScriptDataBase> script) {
+  public static FlowControl allocateShirleyTransformWipeEffect(final RunningScript<? extends BattleScriptDataBase> script) {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
-      "Unknown (FUN_80118df4), BttlScriptData6cSub08_4, copies VRAM",
+      "Shirley transform wipe effect",
       script.scriptState_04,
-      0x8,
+      0,
       null,
-      SEffe::FUN_80118a24,
+      SEffe::renderShirleyTransformWipeEffect,
       null,
-      BttlScriptData6cSub08_4::new
+      null
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
-    final BttlScriptData6cSub08_4 effect = (BttlScriptData6cSub08_4)manager.effect_44;
-    effect._00.set((short)0x300);
-    effect._02.set((short)0);
-    effect._04.set(-1);
-    effect._05.set(-1);
-    effect._06.set((short)0);
-    manager._10.trans_04.setZ(0x100);
+    manager._10.trans_04.setZ(256);
     manager._10._24 = 0x80;
     manager._10._28 = 0x80;
     manager._10._2c = 0x100;

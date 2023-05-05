@@ -190,6 +190,7 @@ public class Fmv {
   private static int oldFps;
   private static int oldWidth;
   private static int oldHeight;
+  private static int oldScale;
   private static int sector;
 
   private static SourceDataLine sound;
@@ -234,11 +235,13 @@ public class Fmv {
       DebugHelper.sleep(1);
     }
 
+    oldScale = GPU.getScale();
     oldRenderer = GPU.mainRenderer;
     oldFps = GPU.window().getFpsLimit();
     oldWidth = GPU.window().getWidth();
     oldHeight = GPU.window().getHeight();
     GPU.window().setFpsLimit(15);
+    GPU.rescaleNow(1);
 
     try {
       sound = AudioSystem.getSourceDataLine(new AudioFormat(44100, 16, 2, true, false));
@@ -252,7 +255,6 @@ public class Fmv {
     click = GPU.window().events.onMouseRelease((window, x, y, button, mods) -> shouldStop = true);
 
     GPU.mainRenderer = () -> {
-
       Input.update();
 
       if(Input.pressedThisFrame(InputAction.BUTTON_CENTER_2)
@@ -463,6 +465,7 @@ public class Fmv {
 
       GPU.mainRenderer = oldRenderer;
       GPU.window().setFpsLimit(oldFps);
+      GPU.rescaleNow(oldScale);
       GPU.displaySize(oldWidth, oldHeight);
       oldRenderer = null;
 
@@ -553,10 +556,10 @@ public class Fmv {
 
         psxycc.toRgb(rgb1, rgb2, rgb3, rgb4);
 
-        dest[iDestOfs1++] = rgb1.toRgba();
-        dest[iDestOfs1++] = rgb2.toRgba();
-        dest[iDestOfs2++] = rgb3.toRgba();
-        dest[iDestOfs2++] = rgb4.toRgba();
+        dest[iDestOfs1++] = rgb1.toArgb();
+        dest[iDestOfs1++] = rgb2.toArgb();
+        dest[iDestOfs2++] = rgb3.toArgb();
+        dest[iDestOfs2++] = rgb4.toArgb();
       }
 
       if(iX < destW) {
@@ -571,8 +574,8 @@ public class Fmv {
 
         psxycc.toRgb(rgb1, rgb2, rgb3, rgb4); // rgb2,4 ignored
 
-        dest[iDestOfs1] = rgb1.toRgba();
-        dest[iDestOfs2] = rgb3.toRgba();
+        dest[iDestOfs1] = rgb1.toArgb();
+        dest[iDestOfs2] = rgb3.toArgb();
       }
     }
 
@@ -592,8 +595,8 @@ public class Fmv {
 
         psxycc.toRgb(rgb1, rgb2, rgb3, rgb4); // rgb3,4 ignored
 
-        dest[iDestOfs1++] = rgb1.toRgba();
-        dest[iDestOfs1++] = rgb2.toRgba();
+        dest[iDestOfs1++] = rgb1.toArgb();
+        dest[iDestOfs1++] = rgb2.toArgb();
       }
 
       if(iX < destW) {
@@ -608,7 +611,7 @@ public class Fmv {
 
         psxycc.toRgb(rgb1, rgb2, rgb3, rgb4); // rgb2,3,4 ignored
 
-        dest[iDestOfs1] = rgb1.toRgba();
+        dest[iDestOfs1] = rgb1.toArgb();
       }
     }
   }

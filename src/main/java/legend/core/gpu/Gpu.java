@@ -28,7 +28,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.LinkedList;
-import java.util.Scanner;
 
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.MathHelper.colour24To15;
@@ -52,6 +51,12 @@ public class Gpu {
   private Shader.UniformBuffer transforms2;
   private final Matrix4f transforms = new Matrix4f();
 
+  private final VramTextureSingle[] renderBuffers = new VramTextureSingle[2];
+  private int drawBufferIndex;
+
+  private int scale = 2;
+  private int newScale = 0;
+
   private final int[] vram24 = new int[this.vramWidth * this.vramHeight];
   private final int[] vram15 = new int[this.vramWidth * this.vramHeight];
 
@@ -69,11 +74,8 @@ public class Gpu {
 
   public final Status status = new Status();
 
-  private int displayStartX;
-  private int displayStartY;
-  private int displayRangeY1;
-  private int displayRangeY2;
   public final RECT drawingArea = new RECT();
+  public final RECT scaledDrawingArea = new RECT();
   private short offsetX;
   private short offsetY;
 
@@ -81,6 +83,12 @@ public class Gpu {
   private LinkedList<GpuCommand>[] zQueues;
 
   private boolean displayChanged;
+
+  private boolean ready;
+  private double vsyncCount;
+  private long lastFrame;
+  public Runnable mainRenderer;
+  public Runnable subRenderer = () -> { };
 
   public Window.Events events() {
     return this.window.events;
@@ -90,276 +98,36 @@ public class Gpu {
     return this.window;
   }
 
-  public void command02FillRect(final int x, final int y, final int w, final int h, final int colour) {
-    LOGGER.trace("Fill rectangle in VRAM XYWH %d %d %d %d, RGB %06x", x, y, w, h, colour);
-
-    for(int posY = y; posY < y + h; posY++) {
-      for(int posX = x; posX < x + w; posX++) {
-        this.setPixel(posX, posY, colour);
-      }
-    }
-  }
-
-  public void commandA0CopyRectFromCpuToVram(final RECT rect, final long address) {
-    assert address != 0;
-
-    final int rectX = rect.x.get();
-    final int rectY = rect.y.get();
-    final int rectW = rect.w.get();
-    final int rectH = rect.h.get();
-
-    if(rectX + rectW > this.vramWidth) {
-      throw new IllegalArgumentException("Rect right (" + (rectX + rectW) + ") overflows VRAM width (" + this.vramWidth + ')');
-    }
-
-    if(rectY + rectH > this.vramHeight) {
-      throw new IllegalArgumentException("Rect bottom (" + (rectY + rectH) + ") overflows VRAM height (" + this.vramHeight + ')');
-    }
-
-    LOGGER.debug("Copying (%d, %d, %d, %d) from CPU to VRAM (address: %08x)", rectX, rectY, rectW, rectH, address);
-
-    MEMORY.waitForLock(() -> {
-      int i = 0;
-      for(int y = rectY; y < rectY + rectH; y++) {
-        for(int x = rectX; x < rectX + rectW; x++) {
-          final int packed = (int)MEMORY.get(address + i, 2);
-          final int unpacked = MathHelper.colour15To24(packed);
-
-          final int index = y * this.vramWidth + x;
-          this.vram24[index] = unpacked;
-          this.vram15[index] = packed;
-
-          i += 2;
-        }
-      }
-    });
-  }
-
-  public void uploadData(final RECT rect, final FileData data) {
-    final int rectX = rect.x.get();
-    final int rectY = rect.y.get();
-    final int rectW = rect.w.get();
-    final int rectH = rect.h.get();
-
-    assert rectX + rectW <= this.vramWidth : "Rect right (" + (rectX + rectW) + ") overflows VRAM width (" + this.vramWidth + ')';
-    assert rectY + rectH <= this.vramHeight : "Rect bottom (" + (rectY + rectH) + ") overflows VRAM height (" + this.vramHeight + ')';
-
-    LOGGER.debug("Copying (%d, %d, %d, %d) from CPU to VRAM", rectX, rectY, rectW, rectH);
-
-    MEMORY.waitForLock(() -> {
-      int i = 0;
-      for(int y = rectY; y < rectY + rectH; y++) {
-        for(int x = rectX; x < rectX + rectW; x++) {
-          // Sometimes the rect is larger than the data (see: the DEFF stuff where animations are loaded into VRAM for some reason)
-          if(i + 1 >= data.size()) {
-            break;
-          }
-
-          final int packed = data.readUShort(i);
-          final int unpacked = MathHelper.colour15To24(packed);
-
-          final int index = y * this.vramWidth + x;
-          this.vram24[index] = unpacked;
-          this.vram15[index] = packed;
-
-          i += 2;
-        }
-      }
-    });
-  }
-
-  public void commandC0CopyRectFromVramToCpu(final RECT rect, final long address) {
-    assert address != 0;
-
-    final int rectX = rect.x.get();
-    final int rectY = rect.y.get();
-    final int rectW = rect.w.get();
-    final int rectH = rect.h.get();
-
-    assert rectX + rectW <= this.vramWidth : "Rect right (" + (rectX + rectW) + ") overflows VRAM width (" + this.vramWidth + ')';
-    assert rectY + rectH <= this.vramHeight : "Rect bottom (" + (rectY + rectH) + ") overflows VRAM height (" + this.vramHeight + ')';
-
-    LOGGER.debug("Copying (%d, %d, %d, %d) from VRAM to CPU (address: %08x)", rectX, rectY, rectW, rectH, address);
-
-    MEMORY.waitForLock(() -> {
-      int i = 0;
-      for(int y = rectY; y < rectY + rectH; y++) {
-        for(int x = rectX; x < rectX + rectW; x++) {
-          final int index = y * this.vramWidth + x;
-          MEMORY.set(address + i, 2, this.vram15[index]);
-          i += 2;
-        }
-      }
-    });
-  }
-
-  public void commandC0CopyRectFromVramToCpu(final RECT rect, final FileData out) {
-    final int rectX = rect.x.get();
-    final int rectY = rect.y.get();
-    final int rectW = rect.w.get();
-    final int rectH = rect.h.get();
-
-    assert rectX + rectW <= this.vramWidth : "Rect right (" + (rectX + rectW) + ") overflows VRAM width (" + this.vramWidth + ')';
-    assert rectY + rectH <= this.vramHeight : "Rect bottom (" + (rectY + rectH) + ") overflows VRAM height (" + this.vramHeight + ')';
-
-    LOGGER.debug("Copying (%d, %d, %d, %d) from VRAM to byte array", rectX, rectY, rectW, rectH);
-
-    MEMORY.waitForLock(() -> {
-      int i = 0;
-      for(int y = rectY; y < rectY + rectH; y++) {
-        for(int x = rectX; x < rectX + rectW; x++) {
-          final int index = y * this.vramWidth + x;
-          out.writeByte(i, (byte)(this.vram15[index] & 0xff));
-          out.writeByte(i + 1, (byte)(this.vram15[index] >>> 8));
-          i += 2;
-        }
-      }
-    });
-  }
-
-  public void command80CopyRectFromVramToVram(final int sourceX, final int sourceY, final int destX, final int destY, final int width, final int height) {
-    LOGGER.debug("COPY VRAM VRAM from %d %d to %d %d size %d %d", sourceX, sourceY, destX, destY, width, height);
-
-    for(int y = 0; y < height; y++) {
-      for(int x = 0; x < width; x++) {
-        int colour15 = this.getPixel15(sourceX + x, sourceY + y);
-        int colour24 = this.getPixel(sourceX + x, sourceY + y);
-
-        if(this.status.drawPixels == DRAW_PIXELS.NOT_TO_MASKED_AREAS) {
-          if((this.getPixel(destX + x, destY + y) & 0xff00_0000L) != 0) {
-            continue;
-          }
-        }
-
-        colour15 |= (this.status.setMaskBit ? 1 : 0) << 15;
-        colour24 |= (this.status.setMaskBit ? 1 : 0) << 24;
-
-        final int index = (destY + y) * this.vramWidth + destX + x;
-        this.vram15[index] = colour15;
-        this.vram24[index] = colour24;
-      }
-    }
-  }
-
-  public void queueCommand(final int z, final GpuCommand command) {
-    this.zQueues[z].addFirst(command);
-  }
-
-  public void reset() {
-    LOGGER.info("Resetting GPU");
-
-    this.resetCommandBuffer();
-    this.displayStart(0, 0);
-    this.verticalDisplayRange(16, 256);
-    this.displayMode(HORIZONTAL_RESOLUTION._320, VERTICAL_RESOLUTION._240, DISPLAY_AREA_COLOUR_DEPTH.BITS_15);
-  }
-
-  /**
-   * GP1(01h) - Reset Command Buffer
-   */
-  public void resetCommandBuffer() {
-    if(this.zQueues != null) {
-      for(int z = this.zQueues.length - 1; z >= 0; z--) {
-        this.zQueues[z].clear();
-      }
-    }
-  }
-
-  /**
-   * GP1(05h) - Start of Display Area in VRAM
-   *
-   * Upper/left Display source address in VRAM. The size and target position on screen is set via Display Range registers; target=X1,Y2; size=(X2-X1/cycles_per_pix), (Y2-Y1).
-   */
-  public void displayStart(final int x, final int y) {
-    this.displayStartX = x;
-    this.displayStartY = y;
-  }
-
-  /**
-   * GP1(07h) - Vertical Display Range (on Screen)
-   *
-   * Specifies the vertical range within which the display area is displayed. The number of lines is Y2-Y1 (unlike as for the width, there's no rounding applied to the height). If Y2 is set to a much too large value, then the hardware stops to generate vblank interrupts (IRQ0).
-   * The 88h/A3h values are the middle-scanlines on normal TV Sets, these values are used by MOST NTSC games, and SOME PAL games (see below notes on Mis-Centered PAL games).
-   * The 224/264 values are for fullscreen pictures. Many NTSC games display 240 lines (overscan with hidden lines). Many PAL games display only 256 lines (underscan with black borders).
-   */
-  public void verticalDisplayRange(final int y1, final int y2) {
-    this.displayRangeY1 = y1;
-    this.displayRangeY2 = y2;
-  }
-
-  /**
-   * GP1(08h) - Display Mode
-   *
-   * Note: The Display Area Color Depth does NOT affect the Drawing Area (the Drawing Area is always 15bit).
-   */
-  public void displayMode(final HORIZONTAL_RESOLUTION hRes, final VERTICAL_RESOLUTION vRes, final DISPLAY_AREA_COLOUR_DEPTH dispColourDepth) {
-    this.status.horizontalResolution = hRes;
-    this.status.verticalResolution = vRes;
-    this.status.displayAreaColourDepth = dispColourDepth;
-
-    // Always run on the GPU thread
-    if(glfwGetCurrentContext() == 0) {
-      this.displayChanged = true;
-      return;
-    }
-
-    this.displaySize(hRes.res, vRes.res);
-  }
-
-  public void displaySize(final int horizontalRes, final int verticalRes) {
-    if(this.displayTexture != null) {
-      if(this.displayTexture.width == horizontalRes && this.displayTexture.height == verticalRes) {
-        return;
-      }
-
-      this.displayTexture.delete();
-    }
-
-    this.displayTexture = Texture.empty(horizontalRes, verticalRes);
-
-    this.updateDisplayTexture(this.window, this.windowWidth, this.windowHeight);
-  }
-
-  public void displayTexture(final int[] pixels) {
-    this.displayTexture.data(0, 0, this.displayTexture.width, this.displayTexture.height, pixels);
-  }
-
-  public void drawingArea(final int left, final int top, final int right, final int bottom) {
-    this.drawingArea.set((short)left, (short)top, (short)right, (short)bottom);
-  }
-
-  public void drawingOffset(final int x, final int y) {
-    this.offsetX = (short)x;
-    this.offsetY = (short)y;
-  }
-
-  public void maskBit(final boolean setMaskBit, final DRAW_PIXELS drawPixels) {
-    this.status.setMaskBit = setMaskBit;
-    this.status.drawPixels = drawPixels;
-  }
-
-  private Shader loadShader(final Path vsh, final Path fsh) {
-    final Shader shader;
-
-    try {
-      shader = new Shader(vsh, fsh);
-    } catch(final IOException e) {
-      throw new RuntimeException("Failed to load vram shader", e);
-    }
-
-    shader.bindUniformBlock("transforms", Shader.UniformBuffer.TRANSFORM);
-    shader.bindUniformBlock("transforms2", Shader.UniformBuffer.TRANSFORM2);
-    return shader;
-  }
-
-  private boolean ready;
-  private double vsyncCount;
-  private long lastFrame;
-  public Runnable mainRenderer;
-  public Runnable subRenderer = () -> { };
-
   public int getVsyncCount() {
     return (int)this.vsyncCount;
+  }
+
+  public int getDrawBufferIndex() {
+    return this.drawBufferIndex;
+  }
+
+  public VramTextureSingle getDisplayBuffer() {
+    return this.renderBuffers[this.drawBufferIndex ^ 1];
+  }
+
+  public VramTextureSingle getDrawBuffer() {
+    return this.renderBuffers[this.drawBufferIndex];
+  }
+
+  public int getScale() {
+    return this.scale;
+  }
+
+  /** Schedule a rescale when the current frame completes */
+  public void rescale(final int scale) {
+    this.newScale = scale;
+  }
+
+  /** Rescale immediately - may cause issues if commands are in the queue */
+  public void rescaleNow(final int scale) {
+    this.scale = scale;
+    this.displaySize(this.status.horizontalResolution, 240);
+    this.drawingArea(this.drawingArea.x.get(), this.drawingArea.y.get(), this.drawingArea.w.get(), this.drawingArea.h.get());
   }
 
   public boolean isReady() {
@@ -367,6 +135,25 @@ public class Gpu {
   }
 
   public void run() {
+    this.init();
+
+    this.window.show();
+
+    this.ready = true;
+    this.lastFrame = System.nanoTime();
+
+    try {
+      this.window.run();
+    } catch(final Throwable t) {
+      LOGGER.error("Shutting down due to GPU exception:", t);
+      this.window.close();
+    } finally {
+      FontManager.free();
+      Window.free();
+    }
+  }
+
+  private void init() {
     this.camera = new Camera(0.0f, 0.0f);
     this.window = new Window("Legend of Dragoon", Config.windowWidth(), Config.windowHeight());
     this.window.setFpsLimit(60);
@@ -388,7 +175,7 @@ public class Gpu {
       }
     });
 
-    this.window.events.onResize((window1, width, height) -> this.updateDisplayTexture(window1, (int)(width / window1.getScale()), (int)(height / window1.getScale())));
+    this.window.events.onResize((window1, width, height) -> this.updateDisplayTexture((int)(width / window1.getScale()), (int)(height / window1.getScale())));
 
     try {
       final Shader fontShader = new Shader(Paths.get("gfx/shaders/font.vsh"), Paths.get("gfx/shaders/font.fsh"));
@@ -413,8 +200,8 @@ public class Gpu {
     this.vramTexture = Texture.empty(hr, vr);
 
     this.vramMesh = new Mesh(GL_TRIANGLE_STRIP, new float[] {
-       0,  0, 0, 0,
-       0, vr, 0, 1,
+      0,   0, 0, 0,
+      0,  vr, 0, 1,
       hr,  0, 1, 0,
       hr, vr, 1, 1,
     }, 4);
@@ -422,8 +209,6 @@ public class Gpu {
     this.vramMesh.attribute(1, 2L, 2, 4);
 
     this.displaySize(320, 240);
-
-    this.lastFrame = System.nanoTime();
 
     if(this.mainRenderer == null) {
       this.setStandardRenderer();
@@ -437,29 +222,14 @@ public class Gpu {
       this.mainRenderer.run();
 
       final float fps = 1.0f / ((System.nanoTime() - this.lastFrame) / (1_000_000_000 / 30.0f)) * 30.0f;
-      this.window.setTitle("Legend of Dragoon - FPS: %.2f/%d".formatted(fps, this.window.getFpsLimit()));
+      this.window.setTitle("Legend of Dragoon - FPS: %.2f/%d scale: %d".formatted(fps, this.window.getFpsLimit(), this.scale));
       this.lastFrame = System.nanoTime();
       this.vsyncCount += 60.0d * Config.getGameSpeedMultiplier() / this.window.getFpsLimit();
     });
-
-    this.window.show();
-
-    this.ready = true;
-
-    try {
-      this.window.run();
-    } catch(final Throwable t) {
-      LOGGER.error("Shutting down due to GPU exception:", t);
-      this.window.close();
-    } finally {
-      FontManager.free();
-      Window.free();
-    }
   }
 
-  private void updateDisplayTexture(final Window window, final int width, final int height) {
+  private void updateDisplayTexture(final int width, final int height) {
     if(!this.isVramViewer) {
-
       this.windowWidth = width;
       this.windowHeight = height;
 
@@ -504,29 +274,9 @@ public class Gpu {
     };
   }
 
-  public void updateOrderingTableSize(final int size) {
-    final LinkedList<GpuCommand>[] list = new LinkedList[size];
-    Arrays.setAll(list, key -> new LinkedList<>());
-
-    this.zMax = size;
-    this.zQueues = list;
-  }
-
-  private int readInt(final Scanner scanner, final String prompt, final String error) {
-    while(true) {
-      System.out.print(prompt);
-
-      try {
-        return Integer.parseInt(scanner.nextLine());
-      } catch(final NumberFormatException e) {
-        System.out.println(error);
-      }
-    }
-  }
-
   public void tick() {
     if(this.displayChanged) {
-      this.displaySize(this.status.horizontalResolution.res, this.status.verticalResolution.res);
+      this.displaySize(this.status.horizontalResolution, 240);
       this.displayChanged = false;
     }
 
@@ -545,79 +295,9 @@ public class Gpu {
       this.vramMesh.draw();
 
       MemoryUtil.memFree(pixels);
-    } else if(this.status.displayAreaColourDepth == DISPLAY_AREA_COLOUR_DEPTH.BITS_24) {
-      int yRangeOffset = 240 - (this.displayRangeY2 - this.displayRangeY1) >> (this.status.verticalResolution == VERTICAL_RESOLUTION._480 ? 0 : 1);
-      if(yRangeOffset < 0) {
-        yRangeOffset = 0;
-      }
-
-      final int size = this.displayTexture.width * this.displayTexture.height;
-      final ByteBuffer pixels = MemoryUtil.memAlloc(size * 4);
-      final IntBuffer pixelsInt = pixels.asIntBuffer();
-
-      for(int y = yRangeOffset; y < this.status.verticalResolution.res - yRangeOffset; y++) {
-        int offset = 0;
-        for(int x = 0; x < this.status.horizontalResolution.res; x += 2) {
-          final int p0rgb = this.vram24[offset++ + this.displayStartX + (y - yRangeOffset + this.displayStartY) * this.vramWidth];
-          final int p1rgb = this.vram24[offset++ + this.displayStartX + (y - yRangeOffset + this.displayStartY) * this.vramWidth];
-          final int p2rgb = this.vram24[offset++ + this.displayStartX + (y - yRangeOffset + this.displayStartY) * this.vramWidth];
-
-          final int p0bgr555 = colour24To15(p0rgb);
-          final int p1bgr555 = colour24To15(p1rgb);
-          final int p2bgr555 = colour24To15(p2rgb);
-
-          //[(G0R0][R1)(B0][B1G1)]
-          //   RG    B - R   GB
-
-          final int p0R = p0bgr555 & 0xff;
-          final int p0G = p0bgr555 >>> 8 & 0xff;
-          final int p0B = p1bgr555 & 0xff;
-          final int p1R = p1bgr555 >>> 8 & 0xff;
-          final int p1G = p2bgr555 & 0xff;
-          final int p1B = p2bgr555 >>> 8 & 0xff;
-
-          final int p0rgb24bpp = p0B << 16 | p0G << 8 | p0R;
-          final int p1rgb24bpp = p1B << 16 | p1G << 8 | p1R;
-
-          pixelsInt.put(p0rgb24bpp);
-          pixelsInt.put(p1rgb24bpp);
-        }
-      }
-
-      pixels.flip();
-
-      this.displayTexture.data(0, 0, this.displayTexture.width, this.displayTexture.height, pixels);
-
-      this.drawMesh();
-
-      MemoryUtil.memFree(pixels);
     } else { // 15bpp
-      int yRangeOffset = 240 - (this.displayRangeY2 - this.displayRangeY1) >> (this.status.verticalResolution == VERTICAL_RESOLUTION._480 ? 0 : 1);
-      if(yRangeOffset < 0) {
-        yRangeOffset = 0;
-      }
-
-      final ByteBuffer vram = MemoryUtil.memAlloc(this.vram24.length * 4);
-      final IntBuffer intVram = vram.asIntBuffer();
-      intVram.put(this.vram24);
-
-      final int size = this.displayTexture.width * this.displayTexture.height;
-      final ByteBuffer pixels = MemoryUtil.memAlloc(size * 4);
-      final byte[] from = new byte[this.displayTexture.width * 4];
-
-      for(int y = yRangeOffset; y < this.status.verticalResolution.res - yRangeOffset; y++) {
-        vram.get((this.displayStartX + (y - yRangeOffset + this.displayStartY) * this.vramTexture.width) * 4, from);
-        pixels.put(from, 0, from.length);
-      }
-
-      pixels.flip();
-
-      this.displayTexture.data(0, 0, this.displayTexture.width, this.displayTexture.height, pixels);
-
+      this.displayTexture.data(0, 0, this.displayTexture.width, this.displayTexture.height, this.getDisplayBuffer().getData());
       this.drawMesh();
-
-      MemoryUtil.memFree(vram);
-      MemoryUtil.memFree(pixels);
     }
 
     if(this.zQueues != null) {
@@ -629,6 +309,252 @@ public class Gpu {
         this.zQueues[z].clear();
       }
     }
+
+    if(this.newScale != 0) {
+      this.rescaleNow(this.newScale);
+      this.newScale = 0;
+    }
+
+    this.drawBufferIndex ^= 1;
+  }
+
+  public void clear(final int colour) {
+    LOGGER.trace("Clear display RGB %06x", colour);
+
+    this.getDrawBuffer().fill(colour);
+  }
+
+  public void commandA0CopyRectFromCpuToVram(final RECT rect, final long address) {
+    assert address != 0;
+
+    final int rectX = rect.x.get();
+    final int rectY = rect.y.get();
+    final int rectW = rect.w.get();
+    final int rectH = rect.h.get();
+
+    if(rectX + rectW > this.vramWidth) {
+      throw new IllegalArgumentException("Rect right (" + (rectX + rectW) + ") overflows VRAM width (" + this.vramWidth + ')');
+    }
+
+    if(rectY + rectH > this.vramHeight) {
+      throw new IllegalArgumentException("Rect bottom (" + (rectY + rectH) + ") overflows VRAM height (" + this.vramHeight + ')');
+    }
+
+    LOGGER.debug("Copying (%d, %d, %d, %d) from CPU to VRAM (address: %08x)", rectX, rectY, rectW, rectH, address);
+
+    MEMORY.waitForLock(() -> {
+      int i = 0;
+      for(int y = rectY; y < rectY + rectH; y++) {
+        for(int x = rectX; x < rectX + rectW; x++) {
+          final int packed = (int)MEMORY.get(address + i, 2);
+          final int unpacked = MathHelper.colour15To24(packed);
+
+          this.setVramPixel(x, y, unpacked, packed);
+
+          i += 2;
+        }
+      }
+    });
+  }
+
+  public void uploadData(final RECT rect, final FileData data) {
+    final int rectX = rect.x.get();
+    final int rectY = rect.y.get();
+    final int rectW = rect.w.get();
+    final int rectH = rect.h.get();
+
+    assert rectX + rectW <= this.vramWidth : "Rect right (" + (rectX + rectW) + ") overflows VRAM width (" + this.vramWidth + ')';
+    assert rectY + rectH <= this.vramHeight : "Rect bottom (" + (rectY + rectH) + ") overflows VRAM height (" + this.vramHeight + ')';
+
+    LOGGER.debug("Copying (%d, %d, %d, %d) from CPU to VRAM", rectX, rectY, rectW, rectH);
+
+    int i = 0;
+    for(int y = rectY; y < rectY + rectH; y++) {
+      for(int x = rectX; x < rectX + rectW; x++) {
+        // Sometimes the rect is larger than the data (see: the DEFF stuff where animations are loaded into VRAM for some reason)
+        if(i + 1 >= data.size()) {
+          break;
+        }
+
+        final int packed = data.readUShort(i);
+        final int unpacked = MathHelper.colour15To24(packed);
+
+        this.setVramPixel(x, y, unpacked, packed);
+
+        i += 2;
+      }
+    }
+  }
+
+  public void uploadData(final Rect4i rect, final int[] data) {
+    final int rectX = rect.x();
+    final int rectY = rect.y();
+    final int rectW = rect.w();
+    final int rectH = rect.h();
+
+    assert rectX + rectW <= this.vramWidth : "Rect right (" + (rectX + rectW) + ") overflows VRAM width (" + this.vramWidth + ')';
+    assert rectY + rectH <= this.vramHeight : "Rect bottom (" + (rectY + rectH) + ") overflows VRAM height (" + this.vramHeight + ')';
+
+    LOGGER.debug("Copying (%d, %d, %d, %d) from CPU to VRAM", rectX, rectY, rectW, rectH);
+
+    int i = 0;
+    for(int y = rectY; y < rectY + rectH; y++) {
+      for(int x = rectX; x < rectX + rectW; x++) {
+        this.setVramPixel(x, y, data[i], colour24To15(data[i]));
+        i++;
+      }
+    }
+  }
+
+  public void commandC0CopyRectFromVramToCpu(final RECT rect, final long address) {
+    assert address != 0;
+
+    final int rectX = rect.x.get();
+    final int rectY = rect.y.get();
+    final int rectW = rect.w.get();
+    final int rectH = rect.h.get();
+
+    assert rectX + rectW <= this.vramWidth : "Rect right (" + (rectX + rectW) + ") overflows VRAM width (" + this.vramWidth + ')';
+    assert rectY + rectH <= this.vramHeight : "Rect bottom (" + (rectY + rectH) + ") overflows VRAM height (" + this.vramHeight + ')';
+
+    LOGGER.debug("Copying (%d, %d, %d, %d) from VRAM to CPU (address: %08x)", rectX, rectY, rectW, rectH, address);
+
+    MEMORY.waitForLock(() -> {
+      int i = 0;
+      for(int y = rectY; y < rectY + rectH; y++) {
+        for(int x = rectX; x < rectX + rectW; x++) {
+          MEMORY.set(address + i, 2, this.getPixel15(x, y));
+          i += 2;
+        }
+      }
+    });
+  }
+
+  public void commandC0CopyRectFromVramToCpu(final RECT rect, final FileData out) {
+    final int rectX = rect.x.get();
+    final int rectY = rect.y.get();
+    final int rectW = rect.w.get();
+    final int rectH = rect.h.get();
+
+    assert rectX + rectW <= this.vramWidth : "Rect right (" + (rectX + rectW) + ") overflows VRAM width (" + this.vramWidth + ')';
+    assert rectY + rectH <= this.vramHeight : "Rect bottom (" + (rectY + rectH) + ") overflows VRAM height (" + this.vramHeight + ')';
+
+    LOGGER.debug("Copying (%d, %d, %d, %d) from VRAM to byte array", rectX, rectY, rectW, rectH);
+
+    int i = 0;
+    for(int y = rectY; y < rectY + rectH; y++) {
+      for(int x = rectX; x < rectX + rectW; x++) {
+        final int pixel = this.getPixel15(x, y);
+        out.writeByte(i, (byte)(pixel & 0xff));
+        out.writeByte(i + 1, (byte)(pixel >>> 8));
+        i += 2;
+      }
+    }
+  }
+
+  public void command80CopyRectFromVramToVram(final int sourceX, final int sourceY, final int destX, final int destY, final int width, final int height) {
+    LOGGER.debug("COPY VRAM VRAM from %d %d to %d %d size %d %d", sourceX, sourceY, destX, destY, width, height);
+
+    for(int y = 0; y < height; y++) {
+      for(int x = 0; x < width; x++) {
+        int colour15 = this.getPixel15(sourceX + x, sourceY + y);
+        int colour24 = this.getPixel(sourceX + x, sourceY + y);
+
+        if(this.status.drawPixels == DRAW_PIXELS.NOT_TO_MASKED_AREAS) {
+          if((this.getPixel(destX + x, destY + y) & 0xff00_0000L) != 0) {
+            continue;
+          }
+        }
+
+        colour15 |= (this.status.setMaskBit ? 1 : 0) << 15;
+        colour24 |= (this.status.setMaskBit ? 1 : 0) << 24;
+
+        this.setVramPixel(destX + x, destY + y, colour24, colour15);
+      }
+    }
+  }
+
+  public void queueCommand(final int z, final GpuCommand command) {
+    this.zQueues[z].addFirst(command);
+  }
+
+  /**
+   * GP1(01h) - Reset Command Buffer
+   */
+  public void resetCommandBuffer() {
+    if(this.zQueues != null) {
+      for(int z = this.zQueues.length - 1; z >= 0; z--) {
+        this.zQueues[z].clear();
+      }
+    }
+  }
+
+  /**
+   * GP1(08h) - Display Mode
+   */
+  public void displayMode(final int hRes) {
+    this.status.horizontalResolution = hRes;
+
+    // Always run on the GPU thread
+    if(glfwGetCurrentContext() == 0) {
+      this.displayChanged = true;
+      return;
+    }
+
+    this.displaySize(hRes, 240);
+  }
+
+  public void displaySize(final int horizontalRes, final int verticalRes) {
+    if(this.displayTexture != null) {
+      this.displayTexture.delete();
+    }
+
+    final int scaledWidth = horizontalRes * this.scale;
+    final int scaledHeight = verticalRes * this.scale;
+
+    for(int i = 0; i < this.renderBuffers.length; i++) {
+      this.renderBuffers[i] = new VramTextureSingle(Bpp.BITS_24, new Rect4i(0, 0, scaledWidth, scaledHeight), new int[scaledWidth * scaledHeight]);
+    }
+
+    this.displayTexture = Texture.empty(scaledWidth, scaledHeight);
+
+    this.updateDisplayTexture(this.windowWidth, this.windowHeight);
+  }
+
+  public void displayTexture(final int[] pixels) {
+    this.displayTexture.data(0, 0, this.displayTexture.width, this.displayTexture.height, pixels);
+  }
+
+  public void drawingArea(final int left, final int top, final int width, final int height) {
+    this.drawingArea.set((short)left, (short)top, (short)width, (short)height);
+    this.scaledDrawingArea.set((short)(left * this.scale), (short)(top * this.scale), (short)(width * this.scale), (short)(height * this.scale));
+  }
+
+  public void drawingOffset(final int x, final int y) {
+    this.offsetX = (short)x;
+    this.offsetY = (short)y;
+  }
+
+  private Shader loadShader(final Path vsh, final Path fsh) {
+    final Shader shader;
+
+    try {
+      shader = new Shader(vsh, fsh);
+    } catch(final IOException e) {
+      throw new RuntimeException("Failed to load vram shader", e);
+    }
+
+    shader.bindUniformBlock("transforms", Shader.UniformBuffer.TRANSFORM);
+    shader.bindUniformBlock("transforms2", Shader.UniformBuffer.TRANSFORM2);
+    return shader;
+  }
+
+  public void updateOrderingTableSize(final int size) {
+    final LinkedList<GpuCommand>[] list = new LinkedList[size];
+    Arrays.setAll(list, key -> new LinkedList<>());
+
+    this.zMax = size;
+    this.zQueues = list;
   }
 
   public void drawMesh() {
@@ -646,11 +572,11 @@ public class Gpu {
   }
 
   public int getDisplayTextureWidth() {
-    return this.displayTexture.width;
+    return this.displayTexture.width / this.scale;
   }
 
   public int getDisplayTextureHeight() {
-    return this.displayTexture.height;
+    return this.displayTexture.height / this.scale;
   }
 
   public void rasterizeLine(int x, int y, int x2, int y2, final int colour1, final int colour2, @Nullable final Translucency translucency) {
@@ -709,14 +635,18 @@ public class Gpu {
       final float ratio = (float)i / longest;
       int colour = interpolateColours(colour1, colour2, ratio);
 
-      if(x >= this.drawingArea.x.get() && x < this.drawingArea.w.get() && y >= this.drawingArea.y.get() && y < this.drawingArea.h.get()) {
+      if(this.drawingArea.contains(x, y)) {
         if(translucency != null) {
-          colour = this.handleTranslucence(x, y, colour, translucency);
+          colour = this.handleTranslucence(x * this.scale, y * this.scale, colour, translucency);
         }
 
         colour |= (this.status.setMaskBit ? 1 : 0) << 24;
 
-        this.setPixel(x, y, colour);
+        for(int xx = 0; xx < this.scale; xx++) {
+          for(int yy = 0; yy < this.scale; yy++) {
+            this.getDrawBuffer().setPixel(x * this.scale + xx, y * this.scale + yy, colour);
+          }
+        }
       }
 
       numerator += shortest;
@@ -731,7 +661,14 @@ public class Gpu {
     }
   }
 
-  void rasterizeTriangle(final int vx0, final int vy0, int vx1, int vy1, int vx2, int vy2, final int tu0, final int tv0, int tu1, int tv1, int tu2, int tv2, final int c0, int c1, int c2, final int clutX, final int clutY, final int textureBaseX, final int textureBaseY, final Bpp bpp, final boolean isTextured, final boolean isShaded, final boolean isTranslucent, final boolean isRaw, final Translucency translucencyMode) {
+  void rasterizeTriangle(int vx0, int vy0, int vx1, int vy1, int vx2, int vy2, final int tu0, final int tv0, int tu1, int tv1, int tu2, int tv2, final int c0, int c1, int c2, final int clutX, final int clutY, final int textureBaseX, final int textureBaseY, final Bpp bpp, final boolean isTextured, final boolean isShaded, final boolean isTranslucent, final boolean isRaw, final Translucency translucencyMode, @Nullable final VramTexture texture, @Nullable final VramTexture[] palettes) {
+    vx0 *= this.scale;
+    vy0 *= this.scale;
+    vx1 *= this.scale;
+    vy1 *= this.scale;
+    vx2 *= this.scale;
+    vy2 *= this.scale;
+
     int area = orient2d(vx0, vy0, vx1, vy1, vx2, vy2);
     if(area == 0) {
       return;
@@ -766,15 +703,11 @@ public class Gpu {
     int maxX = Math.max(vx0, Math.max(vx1, vx2));
     int maxY = Math.max(vy0, Math.max(vy1, vy2));
 
-    if(maxX - minX > this.vramWidth || maxY - minY > this.vramHeight) {
-      return;
-    }
-
     /*clip*/
-    minX = (short)Math.max(minX, this.drawingArea.x.get());
-    minY = (short)Math.max(minY, this.drawingArea.y.get());
-    maxX = (short)Math.min(maxX, this.drawingArea.w.get());
-    maxY = (short)Math.min(maxY, this.drawingArea.h.get());
+    minX = (short)Math.max(minX, this.scaledDrawingArea.x.get());
+    minY = (short)Math.max(minY, this.scaledDrawingArea.y.get());
+    maxX = (short)Math.min(maxX, this.scaledDrawingArea.x.get() + this.scaledDrawingArea.w.get());
+    maxY = (short)Math.min(maxY, this.scaledDrawingArea.y.get() + this.scaledDrawingArea.h.get());
 
     final int A01 = vy0 - vy1;
     final int B01 = vx1 - vx0;
@@ -801,10 +734,6 @@ public class Gpu {
       for(int x = minX; x < maxX; x++) {
         // If p is on or inside all edges, render pixel
         if((w0 + bias0 | w1 + bias1 | w2 + bias2) >= 0) {
-          // Adjustments per triangle instead of per pixel can be done at area level
-          // but it still has small off-by-1 error appreciable on some textured quads
-          // I assume it could be handled recalculating AXX and BXX offsets but the math is beyond my scope
-
           // Check background mask
           if(this.status.drawPixels == DRAW_PIXELS.NOT_TO_MASKED_AREAS) {
             if((this.getPixel(x, y) & 0xff00_0000L) != 0) {
@@ -814,6 +743,7 @@ public class Gpu {
               continue;
             }
           }
+
           // Reset default colour of the triangle calculated outside the for as it gets overwritten as follows...
           int colour = c0;
 
@@ -825,7 +755,32 @@ public class Gpu {
             final int texelX = interpolateCoords(w0, w1, w2, tu0, tu1, tu2, area);
             final int texelY = interpolateCoords(w0, w1, w2, tv0, tv1, tv2, area);
 
-            int texel = this.getTexel(texelX, texelY, clutX, clutY, textureBaseX, textureBaseY, bpp);
+            int texel;
+            if(texture == null) {
+              texel = this.getTexel(texelX, texelY, clutX, clutY, textureBaseX, textureBaseY, bpp);
+            } else {
+              texel = 0;
+              if(palettes == null) {
+                if(texture == this.getDisplayBuffer() || texture == this.getDrawBuffer()) {
+                  texel = texture.getPixel(texelX * this.scale, texelY * this.scale) & 0xffffff;
+                } else {
+                  texel = texture.getPixel(texelX, texelY) & 0xffffff;
+                }
+              } else {
+                boolean found = false;
+                for(final VramTexture palette : palettes) {
+                  if(palette.rect.y() - clutY == 0) {
+                    texel = texture.getTexel(palette, textureBaseX, texelX, texelY);
+                    found = true;
+                    break;
+                  }
+                }
+
+                if(!found) {
+                  throw new RuntimeException("Failed to find palette");
+                }
+              }
+            }
 
             if(texel == 0) {
               w0 += A12;
@@ -847,7 +802,7 @@ public class Gpu {
 
           colour |= (this.status.setMaskBit ? 1 : 0) << 24;
 
-          this.setPixel(x, y, colour);
+          this.getDrawBuffer().setPixel(x, y, colour);
         }
 
         // One step right
@@ -863,6 +818,106 @@ public class Gpu {
     }
   }
 
+  void rasterizeQuad(int x1, int y1, int x2, int y2, final int colour, final boolean raw, final boolean textured, int u1, int v1, final int clutX, final int clutY, final int vramX, final int vramY, final Bpp bpp, @Nullable final Translucency translucency, @Nullable final VramTexture texture, @Nullable final VramTexture[] palettes) {
+    // If we're dealing with a render buffer texture we need to process the entire thing scaled. If we're doing
+    // a regular render, we only need to render at 1x and then duplicate the pixels `this.scale` times.
+    if(texture == this.getDrawBuffer() || texture == this.getDisplayBuffer()) {
+      x1 *= this.scale;
+      y1 *= this.scale;
+      x2 *= this.scale;
+      y2 *= this.scale;
+      u1 *= this.scale;
+      v1 *= this.scale;
+
+      for(int y = y1, v = v1; y < y2; y++, v++) {
+        for(int x = x1, u = u1; x < x2; x++, u++) {
+          // Check background mask
+          if(this.status.drawPixels == DRAW_PIXELS.NOT_TO_MASKED_AREAS) {
+            if((this.getPixel(x, y) & 0xff00_0000L) != 0) {
+              continue;
+            }
+          }
+
+          int texel = texture.getPixel(u, v);
+
+          if(texel == 0) {
+            continue;
+          }
+
+          if(!raw) {
+            texel = applyBlending(colour, texel);
+          }
+
+          if(translucency != null && (texel & 0xff00_0000) != 0) {
+            texel = this.handleTranslucence(x, y, texel, translucency);
+          }
+
+          this.getDrawBuffer().setPixel(x, y, (this.status.setMaskBit ? 1 : 0) << 24 | texel);
+        }
+      }
+    } else {
+      for(int y = y1, v = v1; y < y2; y++, v++) {
+        for(int x = x1, u = u1; x < x2; x++, u++) {
+          // Check background mask
+          if(this.status.drawPixels == DRAW_PIXELS.NOT_TO_MASKED_AREAS) {
+            if((this.getPixel(x, y) & 0xff00_0000L) != 0) {
+              continue;
+            }
+          }
+
+          int texel;
+          if(textured) {
+            if(texture == null) {
+              texel = this.getTexel(u, v, clutX, clutY, vramX, vramY, bpp);
+            } else {
+              texel = 0;
+              if(palettes == null) {
+                texel = texture.getPixel(u, v);
+              } else {
+                boolean found = false;
+                for(final VramTexture palette : palettes) {
+                  if(palette.rect.y() - clutY == 0) {
+                    texel = texture.getTexel(palette, vramX, u, v);
+                    found = true;
+                    break;
+                  }
+                }
+
+                if(!found) {
+                  throw new RuntimeException("Failed to find palette");
+                }
+              }
+            }
+
+            if(texel == 0) {
+              continue;
+            }
+
+            if(!raw) {
+              texel = applyBlending(colour, texel);
+            }
+
+            if(translucency != null && (texel & 0xff00_0000) != 0) {
+              texel = this.handleTranslucence(x * this.scale, y * this.scale, texel, translucency);
+            }
+          } else {
+            if(translucency != null) {
+              texel = this.handleTranslucence(x * this.scale, y * this.scale, colour, translucency);
+            } else {
+              texel = colour;
+            }
+          }
+
+          for(int xx = 0; xx < this.scale; xx++) {
+            for(int yy = 0; yy < this.scale; yy++) {
+              this.getDrawBuffer().setPixel(x * this.scale + xx, y * this.scale + yy, (this.status.setMaskBit ? 1 : 0) << 24 | texel);
+            }
+          }
+        }
+      }
+    }
+  }
+
   public static int applyBlending(final int colour, final int texel) {
     return
       texel & 0xff00_0000 |
@@ -872,10 +927,18 @@ public class Gpu {
   }
 
   public int getPixel(final int x, final int y) {
+    if(x < this.drawingArea.x.get() + this.drawingArea.w.get()) {
+      throw new IllegalArgumentException("Use render buffer textures instead of double buffer VRAM region (%d, %d)".formatted(x, y));
+    }
+
     return this.vram24[y * this.vramWidth + x];
   }
 
   public int getPixel15(final int x, final int y) {
+    if(x < this.drawingArea.x.get() + this.drawingArea.w.get()) {
+      throw new IllegalArgumentException("Use render buffer textures instead of double buffer VRAM region (%d, %d)".formatted(x, y));
+    }
+
     final int index = y * this.vramWidth + x;
 
     if(index < 0 || index >= this.vram15.length) {
@@ -885,10 +948,14 @@ public class Gpu {
     return this.vram15[index];
   }
 
-  public void setPixel(final int x, final int y, final int pixel) {
+  private void setVramPixel(final int x, final int y, final int pixel24, final int pixel15) {
+    if(x < this.drawingArea.x.get() + this.drawingArea.w.get()) {
+      throw new IllegalArgumentException("Use render buffer textures instead of double buffer VRAM region (%d, %d)".formatted(x, y));
+    }
+
     final int index = y * this.vramWidth + x;
-    this.vram24[index] = pixel;
-    this.vram15[index] = colour24To15(pixel);
+    this.vram24[index] = pixel24;
+    this.vram15[index] = pixel15;
   }
 
   public static int interpolateCoords(final int w0, final int w1, final int w2, final int t0, final int t1, final int t2, final int area) {
@@ -915,7 +982,7 @@ public class Gpu {
     return ay == by && bx > ax || by < ay;
   }
 
-  public int getTexel(final int x, final int y, final int clutX, final int clutY, final int textureBaseX, final int textureBaseY, final legend.core.gpu.Bpp depth) {
+  public int getTexel(final int x, final int y, final int clutX, final int clutY, final int textureBaseX, final int textureBaseY, final Bpp depth) {
     if(depth == Bpp.BITS_4) {
       return this.get4bppTexel(x, y, clutX, clutY, textureBaseX, textureBaseY);
     }
@@ -951,7 +1018,7 @@ public class Gpu {
   }
 
   public int handleTranslucence(final int x, final int y, final int texel, final Translucency mode) {
-    final int pixel = this.getPixel(x, y);
+    final int pixel = this.getDrawBuffer().getPixel(x, y);
 
     final int br = pixel        & 0xff;
     final int bg = pixel >>>  8 & 0xff;
@@ -1015,52 +1082,11 @@ public class Gpu {
     /**
      * Bits 17-18 - Horizontal resolution 1
      */
-    public HORIZONTAL_RESOLUTION horizontalResolution = HORIZONTAL_RESOLUTION._256;
-    /**
-     * Bit 19 - Vertical resolution
-     */
-    public VERTICAL_RESOLUTION verticalResolution = VERTICAL_RESOLUTION._240;
-
-    /**
-     * Bit 21 - Display area colour depth
-     */
-    public DISPLAY_AREA_COLOUR_DEPTH displayAreaColourDepth = DISPLAY_AREA_COLOUR_DEPTH.BITS_15;
+    public int horizontalResolution = 320;
   }
 
   public enum DRAW_PIXELS {
     ALWAYS,
     NOT_TO_MASKED_AREAS,
-  }
-
-  public enum HORIZONTAL_RESOLUTION {
-    _256(256),
-    _368(368),
-    _320(320),
-    _512(512),
-    _640(640),
-    ;
-
-    public final int res;
-
-    HORIZONTAL_RESOLUTION(final int res) {
-      this.res = res;
-    }
-  }
-
-  public enum VERTICAL_RESOLUTION {
-    _240(240),
-    _480(480),
-    ;
-
-    public final int res;
-
-    VERTICAL_RESOLUTION(final int res) {
-      this.res = res;
-    }
-  }
-
-  public enum DISPLAY_AREA_COLOUR_DEPTH {
-    BITS_15,
-    BITS_24,
   }
 }
