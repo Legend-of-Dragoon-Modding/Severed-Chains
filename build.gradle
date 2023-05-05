@@ -36,6 +36,8 @@ if(DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX()) {
 }
 
 if(hasProperty("os")) {
+  println "Building for OS " + os
+
   switch(os) {
     case "windows":
       project.ext.lwjglNatives = "natives-windows"
@@ -92,10 +94,10 @@ dependencies {
 javafx {
   version = "18.0.2"
   modules = ['javafx.controls', 'javafx.fxml']
+}
 
-  if(hasProperty("os")) {
-    platform = os;
-  }
+if(hasProperty("os")) {
+  javafx.platform = os;
 }
 
 jar {
