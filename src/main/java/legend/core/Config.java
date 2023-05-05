@@ -1,5 +1,8 @@
 package legend.core;
 
+import legend.game.combat.AutoAdditionMode;
+import legend.game.modding.coremod.CoreMod;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
@@ -14,8 +17,11 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
+import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
+
 public final class Config {
-  private Config() { }
+  private Config() {
+  }
 
   private static final Path path = Paths.get(".", "config.conf");
   private static final SortedStoreProperties properties = new SortedStoreProperties();
@@ -82,11 +88,18 @@ public final class Config {
   }
 
   public static boolean autoAddition() {
+    if(gameState_800babc8 != null) {
+      return gameState_800babc8.getConfig(CoreMod.AUTO_ADDITION_CONFIG.get()) == AutoAdditionMode.ON;
+    }
+
     return readBool("auto_addition", false);
   }
 
   public static void toggleAutoAddition() {
-    properties.setProperty("auto_addition", String.valueOf(!autoAddition()));
+    if(gameState_800babc8 != null) {
+      properties.setProperty("auto_addition", String.valueOf(gameState_800babc8.getConfig(CoreMod.AUTO_ADDITION_CONFIG.get()) == AutoAdditionMode.ON));
+      gameState_800babc8.setConfig(CoreMod.AUTO_ADDITION_CONFIG.get(), autoAddition() ? AutoAdditionMode.OFF : AutoAdditionMode.ON);
+    }
   }
 
   public static boolean autoDragoonMeter() {

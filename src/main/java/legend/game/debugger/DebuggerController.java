@@ -93,6 +93,8 @@ public class DebuggerController {
   public CheckBox fastTextSpeed;
   @FXML
   public CheckBox autoAdvanceText;
+  @FXML
+  public Button refreshAutoAddition;
 
   public void initialize() {
     this.encounterId.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0));
@@ -102,7 +104,7 @@ public class DebuggerController {
     this.battleUiColour.setSelected(Config.changeBattleRGB());
     this.saveAnywhere.setSelected(Config.saveAnywhere());
     this.battleUIColourR.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (Config.getBattleRGB() & 0xff)));
-    this.battleUIColourG.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getBattleRGB() >> 8)  & 0xff)));
+    this.battleUIColourG.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getBattleRGB() >> 8) & 0xff)));
     this.battleUIColourB.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getBattleRGB() >> 16)  & 0xff)));
     this.autoAddition.setSelected(Config.autoAddition());
     this.autoMeter.setSelected(Config.autoDragoonMeter());
@@ -255,6 +257,11 @@ public class DebuggerController {
   @FXML
   private void toggleAutoAddition(final ActionEvent event) {
     Config.toggleAutoAddition();
+  }
+
+  @FXML
+  private void refreshAutoAddition(final ActionEvent event) {
+    this.autoAddition.setSelected(Config.autoAddition());
   }
 
   @FXML

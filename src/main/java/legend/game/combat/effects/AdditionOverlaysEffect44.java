@@ -30,9 +30,10 @@ public class AdditionOverlaysEffect44 implements BttlScriptData6cSubBase1, Memor
   public final UnsignedShortRef unused_36;
   public final UnsignedByteRef numFramesToRenderCenterSquare_38;
   public final UnsignedByteRef lastCompletedHit_39;
-  public final UnsignedByteRef autoCompleteType_3a; // 0 = no auto complete, 2 = WC and UW auto-complete
+  /** 0 = no auto complete, 2 = WC and UW auto-complete */
+  public final UnsignedByteRef autoCompleteType_3a;
 
-  public final Pointer<AdditionOverlaysHit20> lastCompletedHitOverlay_3c; // points to a specific hit set while ticking
+  public final Pointer<AdditionOverlaysHit20> lastCompletedHitOverlay_3c;
   public final Pointer<UnboundedArrayRef<AdditionOverlaysHit20>> hitOverlays_40;
 
   public AdditionOverlaysEffect44(final Value ref) {
