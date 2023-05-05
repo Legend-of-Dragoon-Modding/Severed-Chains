@@ -572,11 +572,11 @@ public class Gpu {
   }
 
   public int getDisplayTextureWidth() {
-    return this.displayTexture.width;
+    return this.displayTexture.width / this.scale;
   }
 
   public int getDisplayTextureHeight() {
-    return this.displayTexture.height;
+    return this.displayTexture.height / this.scale;
   }
 
   public void rasterizeLine(int x, int y, int x2, int y2, final int colour1, final int colour2, @Nullable final Translucency translucency) {
