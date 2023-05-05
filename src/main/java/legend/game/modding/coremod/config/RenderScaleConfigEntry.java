@@ -7,7 +7,7 @@ import legend.game.saves.ConfigEntry;
 import static legend.core.GameEngine.GPU;
 
 public class RenderScaleConfigEntry extends ConfigEntry<Integer> {
-  public static final int MAX = 10;
+  public static final int MAX = 5;
 
   public RenderScaleConfigEntry() {
     super(2, RenderScaleConfigEntry::validator, RenderScaleConfigEntry::serializer, RenderScaleConfigEntry::deserializer);
