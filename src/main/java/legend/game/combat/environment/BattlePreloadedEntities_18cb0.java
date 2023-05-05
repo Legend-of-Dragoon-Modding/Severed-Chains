@@ -44,22 +44,22 @@ public class BattlePreloadedEntities_18cb0 {
   public static class AdditionHitProperties20 {
     public int length;
 
-    public short isHitStep_00;
+    public short _00; // Some kind of flag; all hits except first hit of final addition (0xe0) seem to be 0xc0
     public short totalFrames_02;
-    public short frameBeginOverlayDisplay_04;
-    public short totalGrayFrames_06;
+    public short overlayHitFrameOffset;
+    public short totalSuccessFrames_06;
     public short damageMultiplier_08;
-    public short spMultiplier_0a;
+    public short spValue_0a;
     public short audioFile_0c;
     public short isFinalHit_0e;
-    public short _10; // related to camera or voice?
-    public short _12; // related to camera or voice?
-    public short _14; // related to camera?
-    public short distanceFromTarget_16;
-    public short moveToTargetSpeed_18;
-    public short _1a; //always 32
+    public short _10; // related to camera or voice? index into array?
+    public short _12; // related to camera or voice? index into array?
+    public short _14; // related to camera? index into array?
+    public short hitDistanceFromTarget_16;
+    public short framesToHitPosition_18;
+    public short _1a; // always 32, could be length of properties array
     public short unused_1c;
-    public short reticleSpeedModifier_1e;
+    public short overlayStartingFrameOffset_1e;
 
     public AdditionHitProperties20() {
       this.length = 16;
@@ -67,44 +67,44 @@ public class BattlePreloadedEntities_18cb0 {
 
     public short get(final int propertyIndex) {
       return switch(propertyIndex) {
-        case 0 -> this.isHitStep_00;
+        case 0 -> this._00;
         case 1 -> this.totalFrames_02;
-        case 2 -> this.frameBeginOverlayDisplay_04;
-        case 3 -> this.totalGrayFrames_06;
+        case 2 -> this.overlayHitFrameOffset;
+        case 3 -> this.totalSuccessFrames_06;
         case 4 -> this.damageMultiplier_08;
-        case 5 -> this.spMultiplier_0a;
+        case 5 -> this.spValue_0a;
         case 6 -> this.audioFile_0c;
         case 7 -> this.isFinalHit_0e;
         case 8 -> this._10;
         case 9 -> this._12;
         case 10 -> this._14;
-        case 11 -> this.distanceFromTarget_16;
-        case 12 -> this.moveToTargetSpeed_18;
+        case 11 -> this.hitDistanceFromTarget_16;
+        case 12 -> this.framesToHitPosition_18;
         case 13 -> this._1a;
         case 14 -> this.unused_1c;
-        case 15 -> this.reticleSpeedModifier_1e;
+        case 15 -> this.overlayStartingFrameOffset_1e;
         default -> throw new IllegalArgumentException(propertyIndex + " is an invalid addition hit property index.");
       };
     }
 
     public void set(final int propertyIndex, final short value) {
       switch(propertyIndex) {
-        case 0 -> this.isHitStep_00 = value;
+        case 0 -> this._00 = value;
         case 1 -> this.totalFrames_02 = value;
-        case 2 -> this.frameBeginOverlayDisplay_04 = value;
-        case 3 -> this.totalGrayFrames_06 = value;
+        case 2 -> this.overlayHitFrameOffset = value;
+        case 3 -> this.totalSuccessFrames_06 = value;
         case 4 -> this.damageMultiplier_08 = value;
-        case 5 -> this.spMultiplier_0a = value;
+        case 5 -> this.spValue_0a = value;
         case 6 -> this.audioFile_0c = value;
         case 7 -> this.isFinalHit_0e = value;
         case 8 -> this._10 = value;
         case 9 -> this._12 = value;
         case 10 -> this._14 = value;
-        case 11 -> this.distanceFromTarget_16 = value;
-        case 12 -> this.moveToTargetSpeed_18 = value;
+        case 11 -> this.hitDistanceFromTarget_16 = value;
+        case 12 -> this.framesToHitPosition_18 = value;
         case 13 -> this._1a = value;
         case 14 -> this.unused_1c = value;
-        case 15 -> this.reticleSpeedModifier_1e = value;
+        case 15 -> this.overlayStartingFrameOffset_1e = value;
         default -> throw new IllegalArgumentException(propertyIndex + " is an invalid addition hit property index.");
       }
     }

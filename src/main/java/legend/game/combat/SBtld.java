@@ -139,7 +139,7 @@ public class SBtld {
 
         //LAB_80109310
         if(activeAdditionIndex < 0) {
-          activeAdditionHits.hits_00[0].reticleSpeedModifier_1e = 0;
+          activeAdditionHits.hits_00[0].overlayStartingFrameOffset_1e = 0;
         } else {
           //LAB_80109320
           battleMapSelectedAdditionHitProperties_80109454(_8010e658.offset(activeAdditionIndex * 0x80L).getAddress(), activeAdditionHits);

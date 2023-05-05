@@ -17,18 +17,20 @@ public class AdditionOverlaysEffect44 implements BttlScriptData6cSubBase1, Memor
   public final IntRef attackerScriptIndex_00;
   public final IntRef targetScriptIndex_04;
 
-  public final VECTOR vec_10;
-  public final VECTOR vec_20;
+  public final VECTOR attackerStartingPosition_10; // Unused
+  public final VECTOR distancePerFrame_20; // Unused
 
   public final UnsignedByteRef count_30;
-  public final UnsignedByteRef _31; // Renders and ticks if 0, ticks if 2, skips both if 1, only set by unidentified script command
-  public final ByteRef additionComplete_32; // 0 = not complete, 1 = complete, either successful or failed
+  /** 0 = renders and ticks, 1 = skip render and tick, 2 = renders only; only set by unidentified script command */
+  public final UnsignedByteRef pauseTickerAndRenderer_31;
+  /** 0 = not complete, 1 = complete, either successful or failed */
+  public final ByteRef additionComplete_32;
 
-  public final ShortRef currentTick_34;
-  public final UnsignedShortRef _36; // Unused
-  public final UnsignedByteRef _38;
-  public final UnsignedByteRef _39;
-  public final UnsignedByteRef _3a; // Something to do with whether a keypress is needed
+  public final ShortRef currentFrame_34;
+  public final UnsignedShortRef unused_36;
+  public final UnsignedByteRef numFramesToRenderCenterSquare_38;
+  public final UnsignedByteRef lastCompletedHit_39;
+  public final UnsignedByteRef autoCompleteType_3a; // 0 = no auto complete, 2 = WC and UW auto-complete
 
   public final Pointer<AdditionOverlaysHit20> _3c; // points to a specific hit set while ticking
   public final Pointer<UnboundedArrayRef<AdditionOverlaysHit20>> hitOverlays_40;
@@ -39,18 +41,18 @@ public class AdditionOverlaysEffect44 implements BttlScriptData6cSubBase1, Memor
     this.attackerScriptIndex_00 = ref.offset(4, 0x00L).cast(IntRef::new);
     this.targetScriptIndex_04 = ref.offset(4, 0x04L).cast(IntRef::new);
 
-    this.vec_10 = ref.offset(4, 0x10L).cast(VECTOR::new);
-    this.vec_20 = ref.offset(4, 0x20L).cast(VECTOR::new);
+    this.attackerStartingPosition_10 = ref.offset(4, 0x10L).cast(VECTOR::new);
+    this.distancePerFrame_20 = ref.offset(4, 0x20L).cast(VECTOR::new);
 
     this.count_30 = ref.offset(1, 0x30L).cast(UnsignedByteRef::new);
-    this._31 = ref.offset(1, 0x31L).cast(UnsignedByteRef::new);
+    this.pauseTickerAndRenderer_31 = ref.offset(1, 0x31L).cast(UnsignedByteRef::new);
     this.additionComplete_32 = ref.offset(1, 0x32L).cast(ByteRef::new);
 
-    this.currentTick_34 = ref.offset(2, 0x34L).cast(ShortRef::new);
-    this._36 = ref.offset(2, 0x36L).cast(UnsignedShortRef::new);
-    this._38 = ref.offset(1, 0x38L).cast(UnsignedByteRef::new);
-    this._39 = ref.offset(1, 0x39L).cast(UnsignedByteRef::new);
-    this._3a = ref.offset(1, 0x3aL).cast(UnsignedByteRef::new);
+    this.currentFrame_34 = ref.offset(2, 0x34L).cast(ShortRef::new);
+    this.unused_36 = ref.offset(2, 0x36L).cast(UnsignedShortRef::new);
+    this.numFramesToRenderCenterSquare_38 = ref.offset(1, 0x38L).cast(UnsignedByteRef::new);
+    this.lastCompletedHit_39 = ref.offset(1, 0x39L).cast(UnsignedByteRef::new);
+    this.autoCompleteType_3a = ref.offset(1, 0x3aL).cast(UnsignedByteRef::new);
 
     this._3c = ref.offset(4, 0x3cL).cast(Pointer.deferred(4, AdditionOverlaysHit20::new));
     this.hitOverlays_40 = ref.offset(4, 0x40L).cast(Pointer.deferred(4, UnboundedArrayRef.of(0x20, AdditionOverlaysHit20::new, this.count_30::get)));
