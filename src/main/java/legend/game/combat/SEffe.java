@@ -83,6 +83,7 @@ import legend.game.combat.effects.GoldDragoonTransformEffectInstance84;
 import legend.game.combat.effects.ParticleEffectData98;
 import legend.game.combat.effects.ParticleEffectInstance94;
 import legend.game.combat.effects.ScreenCaptureEffect1c;
+import legend.game.combat.effects.ScreenCaptureEffectMetrics8;
 import legend.game.combat.effects.ScreenDistortionEffectData08;
 import legend.game.combat.effects.TransformScalerEffect34;
 import legend.game.combat.types.BattleScriptDataBase;
@@ -5295,13 +5296,13 @@ public final class SEffe {
 
     final EffectManagerData6c manager = state.innerStruct_00;
     final ScreenCaptureEffect1c effect = (ScreenCaptureEffect1c)manager.effect_44;
-    effect.ptr_00.set(mallocTail(0x8));
+    effect.metrics_00.setPointer(mallocTail(0x8));
     effect.captureW_04.set(script.params_20[4].get());
     effect.captureH_08.set(script.params_20[5].get());
     effect.rendererIndex_0c.set(script.params_20[6].get());
     effect.screenspaceW_10.set(0);
     script.params_20[0].set(state.index);
-    FUN_8010c2e0(effect.ptr_00.get(), script.params_20[1].get());
+    FUN_8010c2e0(effect.metrics_00.deref(), script.params_20[1].get());
 
     final int v0 = effect.rendererIndex_0c.get();
     if(v0 == 0) {
@@ -5313,9 +5314,9 @@ public final class SEffe {
 
       //LAB_8010b308
       for(int i = 0; i < 4; i++) {
-        final long v1 = effect.ptr_00.get();
+        final ScreenCaptureEffectMetrics8 metrics = effect.metrics_00.deref();
 
-        GPU.queueCommand(40, new GpuCommandCopyDisplayBufferToVram(x + ((i & 1) - 1) * w, y + (i / 2 - 1) * h, (int)MEMORY.ref(2, v1).offset(0x0L).get(), (int)MEMORY.ref(2, v1).offset(0x2L).get() + i * 64, w, h));
+        GPU.queueCommand(40, new GpuCommandCopyDisplayBufferToVram(x + ((i & 1) - 1) * w, y + (i / 2 - 1) * h, metrics.u_00.get(), metrics.v_02.get() + i * 64, w, h));
         GPU.queueCommand(40, new GpuCommandSetMaskBit(true, Gpu.DRAW_PIXELS.ALWAYS));
       }
     } else if(v0 < 3) {
@@ -5327,9 +5328,9 @@ public final class SEffe {
 
       //LAB_8010b468
       for(int i = 0; i < 15; i++) {
-        final long v1 = effect.ptr_00.get();
+        final ScreenCaptureEffectMetrics8 metrics = effect.metrics_00.deref();
 
-        GPU.queueCommand(40, new GpuCommandCopyDisplayBufferToVram(x + i % 5 * w, y + i / 5 * h, (int)MEMORY.ref(2, v1).offset(0x0L).get() + i % 2 * 32, (int)MEMORY.ref(2, v1).offset(0x2L).get() + i / 2 * 32, w, h));
+        GPU.queueCommand(40, new GpuCommandCopyDisplayBufferToVram(x + i % 5 * w, y + i / 5 * h, metrics.u_00.get() + i % 2 * 32, metrics.v_02.get() + i / 2 * 32, w, h));
         GPU.queueCommand(40, new GpuCommandSetMaskBit(true, Gpu.DRAW_PIXELS.ALWAYS));
       }
     }
@@ -5436,14 +5437,14 @@ public final class SEffe {
             break;
           }
 
-          final long addr = effect.ptr_00.get();
+          final ScreenCaptureEffectMetrics8 metrics = effect.metrics_00.deref();
 
           cmd
             .bpp(Bpp.BITS_15)
-            .vramPos((int)MEMORY.ref(2, addr).offset(0x0L).get() & 0x3c0, (MEMORY.ref(1, addr).offset(0x3L).get() & 0x1) == 0 ? 0 : 256)
+            .vramPos(metrics.u_00.get() & 0x3c0, (metrics.v_02.get() & 0x1) == 0 ? 0 : 256)
             .pos(0, sxy0.getX(), sxy0.getY())
-            .pos(0, sxy1.getX(), sxy1.getY())
-            .pos(0, sxy2.getX(), sxy2.getY());
+            .pos(1, sxy1.getX(), sxy1.getY())
+            .pos(2, sxy2.getX(), sxy2.getY());
 
           GPU.queueCommand(z >> 2, cmd);
         }
@@ -5487,11 +5488,11 @@ public final class SEffe {
 
           final int u = (i & 0x1) * 32;
           final int v = (i >> 1) * 64;
-          final long addr = effect.ptr_00.get();
+          final ScreenCaptureEffectMetrics8 metrics = effect.metrics_00.deref();
 
           GPU.queueCommand(z >> 2, new GpuCommandPoly(4)
             .bpp(Bpp.BITS_15)
-            .vramPos((int)MEMORY.ref(2, addr).offset(0x0L).get() & 0x3c0, (MEMORY.ref(1, addr).offset(0x3L).get() & 0x1) != 0 ? 256 : 0)
+            .vramPos(metrics.u_00.get() & 0x3c0, (metrics.v_02.get() & 0x1) != 0 ? 256 : 0)
             .rgb(sp0x48.getR(), sp0x48.getG(), sp0x48.getB())
             .pos(0, sxy0.getX(), sxy0.getY())
             .pos(1, sxy1.getX(), sxy1.getY())
@@ -5576,11 +5577,11 @@ public final class SEffe {
       final int rightU = leftU + effect.captureW_04.get() / 5 - 1;
       final int bottomV = topV + effect.captureH_08.get() / 3 - 1;
 
-      final long addr = effect.ptr_00.get();
+      final ScreenCaptureEffectMetrics8 metrics = effect.metrics_00.deref();
 
       GPU.queueCommand(z >> 2, new GpuCommandPoly(4)
         .bpp(Bpp.BITS_15)
-        .vramPos((int)MEMORY.ref(2, addr).offset(0x0L).get() & 0x3c0, (MEMORY.ref(1, addr).offset(0x3L).get() & 0x1) != 0 ? 256 : 0)
+        .vramPos(metrics.u_00.get() & 0x3c0, (metrics.v_02.get() & 0x1) != 0 ? 256 : 0)
         .rgb(rgb.getR(), rgb.getG(), rgb.getB())
         .pos(0, sxy0.getX(), sxy0.getY())
         .pos(1, sxy1.getX(), sxy1.getY())
@@ -5621,19 +5622,17 @@ public final class SEffe {
 
   @Method(0x8010c294L)
   public static void deallocateScreenCaptureEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
-    free(((ScreenCaptureEffect1c)manager.effect_44).ptr_00.get());
+    free(((ScreenCaptureEffect1c)manager.effect_44).metrics_00.getPointer());
   }
 
   @Method(0x8010c2e0L)
-  public static void FUN_8010c2e0(final long a0, final int a1) {
+  public static void FUN_8010c2e0(final ScreenCaptureEffectMetrics8 metrics, final int a1) {
     if((a1 & 0xf_ff00) != 0xf_ff00) {
       final DeffPart.SpriteType spriteType = (DeffPart.SpriteType)getDeffPart(a1 | 0x400_0000);
       final DeffPart.SpriteMetrics deffMetrics = spriteType.metrics_08;
-      MEMORY.ref(2, a0).offset(0x0L).setu(deffMetrics.u_00);
-      MEMORY.ref(2, a0).offset(0x2L).setu(deffMetrics.v_02);
-      MEMORY.ref(1, a0).offset(0x4L).setu(deffMetrics.w_04 * 4);
-      MEMORY.ref(1, a0).offset(0x5L).setu(deffMetrics.h_06);
-      MEMORY.ref(2, a0).offset(0x6L).setu(deffMetrics.clutY_0a << 6 | (deffMetrics.clutX_08 & 0x3f0) >>> 4);
+      metrics.u_00.set(deffMetrics.u_00);
+      metrics.v_02.set(deffMetrics.v_02);
+      metrics.clut_06.set(deffMetrics.clutY_0a << 6 | (deffMetrics.clutX_08 & 0x3f0) >>> 4);
     }
 
     //LAB_8010c368

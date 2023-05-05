@@ -44,7 +44,7 @@ public class GpuCommandCopyVramToDrawBuffer extends GpuCommand {
 
         for(int yy = 0; yy < scale; yy++) {
           for(int xx = 0; xx < scale; xx++) {
-            data[(y * scale + yy) * this.width + x * scale + xx] = pixel;
+            data[(y * scale + yy) * this.width * scale + x * scale + xx] = pixel;
           }
         }
       }
