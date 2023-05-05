@@ -3,7 +3,7 @@ import org.apache.tools.ant.filters.ReplaceTokens
 
 plugins {
   id 'java'
-  id 'org.openjfx.javafxplugin' version '0.0.13'
+  id 'org.openjfx.javafxplugin' version '0.0.14'
   id 'java-library'
   id 'maven-publish'
 }
@@ -92,6 +92,10 @@ dependencies {
 javafx {
   version = "18.0.2"
   modules = ['javafx.controls', 'javafx.fxml']
+
+  if(hasProperty("os")) {
+    platform = os;
+  }
 }
 
 jar {
