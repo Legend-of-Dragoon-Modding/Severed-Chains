@@ -669,7 +669,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[756] = Bttl_800d::allocateAdditionStarburstEffect;
     scriptSubFunctions_8004e29c[757] = Bttl_800d::FUN_800d1cac;
     scriptSubFunctions_8004e29c[758] = Bttl_800d::FUN_800d1cf4;
-    scriptSubFunctions_8004e29c[759] = SEffe::FUN_801078c0;
+    scriptSubFunctions_8004e29c[759] = SEffe::scriptAlterAdditionContinuationState;
     scriptSubFunctions_8004e29c[760] = SEffe::FUN_80108df0;
     scriptSubFunctions_8004e29c[761] = Bttl_800d::allocateGuardEffect;
     scriptSubFunctions_8004e29c[762] = Bttl_800c::allocateWeaponTrailEffect;

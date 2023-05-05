@@ -21,7 +21,7 @@ public class AdditionOverlaysEffect44 implements BttlScriptData6cSubBase1, Memor
   public final VECTOR distancePerFrame_20; // Unused
 
   public final UnsignedByteRef count_30;
-  /** 0 = renders and ticks, 1 = skip render and tick, 2 = renders only; only set by unidentified script command */
+  /** 0 = renders and ticks, 1 = skips render and tick, 2 = renders only; set by scriptAlterAdditionContinuationState */
   public final UnsignedByteRef pauseTickerAndRenderer_31;
   /** 0 = not complete, 1 = complete, either successful or failed */
   public final ByteRef additionComplete_32;
@@ -32,7 +32,7 @@ public class AdditionOverlaysEffect44 implements BttlScriptData6cSubBase1, Memor
   public final UnsignedByteRef lastCompletedHit_39;
   public final UnsignedByteRef autoCompleteType_3a; // 0 = no auto complete, 2 = WC and UW auto-complete
 
-  public final Pointer<AdditionOverlaysHit20> _3c; // points to a specific hit set while ticking
+  public final Pointer<AdditionOverlaysHit20> lastCompletedHitOverlay_3c; // points to a specific hit set while ticking
   public final Pointer<UnboundedArrayRef<AdditionOverlaysHit20>> hitOverlays_40;
 
   public AdditionOverlaysEffect44(final Value ref) {
@@ -54,7 +54,7 @@ public class AdditionOverlaysEffect44 implements BttlScriptData6cSubBase1, Memor
     this.lastCompletedHit_39 = ref.offset(1, 0x39L).cast(UnsignedByteRef::new);
     this.autoCompleteType_3a = ref.offset(1, 0x3aL).cast(UnsignedByteRef::new);
 
-    this._3c = ref.offset(4, 0x3cL).cast(Pointer.deferred(4, AdditionOverlaysHit20::new));
+    this.lastCompletedHitOverlay_3c = ref.offset(4, 0x3cL).cast(Pointer.deferred(4, AdditionOverlaysHit20::new));
     this.hitOverlays_40 = ref.offset(4, 0x40L).cast(Pointer.deferred(4, UnboundedArrayRef.of(0x20, AdditionOverlaysHit20::new, this.count_30::get)));
   }
 

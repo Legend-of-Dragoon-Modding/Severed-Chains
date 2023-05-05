@@ -17,13 +17,11 @@ public class AdditionOverlaysHit20 implements MemoryRef {
   public final ShortRef shadowColor_08;
   public final ShortRef totalHitFrames_0a;
   public final ShortRef frameBeginDisplay_0c;
-  public final ShortRef numGrayFrames_0e;
+  public final ShortRef numSuccessFrames_0e;
   public final ShortRef frameSuccessLowerBound_10;
   public final ShortRef frameSuccessUpperBound_12;
   public final Pointer<ArrayRef<AdditionOverlaysBorder0e>> targetBorderArray_14;
-  /**
-   * 0-13: rotating borders, 14 and 16: target border frames, 15: target border
-   */
+  /** 0-13: rotating borders, 14 and 16: target border frames, 15: target border */
   public final Pointer<ArrayRef<AdditionOverlaysBorder0e>> borderArray_18;
   public final ByteRef isCounter_1c;
 
@@ -37,7 +35,7 @@ public class AdditionOverlaysHit20 implements MemoryRef {
     this.shadowColor_08 = ref.offset(2, 0x08).cast(ShortRef::new);
     this.totalHitFrames_0a = ref.offset(2, 0x0a).cast(ShortRef::new);
     this.frameBeginDisplay_0c = ref.offset(2, 0x0c).cast(ShortRef::new);
-    this.numGrayFrames_0e = ref.offset(2, 0x0e).cast(ShortRef::new);
+    this.numSuccessFrames_0e = ref.offset(2, 0x0e).cast(ShortRef::new);
     this.frameSuccessLowerBound_10 = ref.offset(2, 0x10).cast(ShortRef::new);
     this.frameSuccessUpperBound_12 = ref.offset(2, 0x12).cast(ShortRef::new);
     this.targetBorderArray_14 = ref.offset(4, 0x14).cast(Pointer.deferred(4, ArrayRef.of(AdditionOverlaysBorder0e.class, 0x2a, 0xe, AdditionOverlaysBorder0e::new)));

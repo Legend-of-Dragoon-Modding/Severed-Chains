@@ -3588,7 +3588,8 @@ public final class SEffe {
   }
 
   /**
-   * Used to calculate unused vectors on AdditionOverlaysEffect. Gets translation of attacker or target at start of addition, and for some reason does a meaningless 0 rotation.
+   * Used to calculate unused vectors on AdditionOverlaysEffect. Gets translation of attacker or target at start of
+   * addition, and for some reason does a meaningless 0 rotation.
    */
   @Method(0x80105f98L)
   public static void getBobjTranslation(final int scriptIndex, final VECTOR out, final long coordType) {
@@ -3610,9 +3611,7 @@ public final class SEffe {
     out.set(ApplyMatrixLV(transformationMatrix, zeroVec)).add(transformationMatrix.transfer);
   }
 
-  /**
-   * Runs callbacks to render correct button icon effects during addition
-   */
+  /** Runs callbacks to render correct button icon effects during addition */
   @Method(0x80106050L)
   public static void renderAdditionButton(final long a0, final long a1) {
     final long callback = getMethodAddress(Bttl_800d.class, "FUN_800d46d4", RunningScript.class);
@@ -3630,6 +3629,10 @@ public final class SEffe {
     }
   }
 
+  /**
+   * Selects where to get hit property from based on auto-complete type. 1 and 3 use a mysterious global 2-hit array,
+   * which may be unused testing code.
+   */
   @Method(0x801061bcL)
   public static int getHitProperty(final int charSlot, final int hitNum, final int hitPropertyIndex, final int autoCompleteType) {
     //LAB_80106264
@@ -3648,11 +3651,10 @@ public final class SEffe {
 
   @Method(0x801062a8L)
   public static void initializeAdditionOverlaysEffect(final int attackerScriptIndex, final int targetScriptIndex, final AdditionOverlaysEffect44 effect, final int autoCompleteType) {
-    int hitNum;
-    long uiDelay;
     final BattleObject27c s5 = (BattleObject27c)scriptStatePtrArr_800bc1c0[attackerScriptIndex].innerStruct_00;
 
     //LAB_8010633c
+    int hitNum;
     for(hitNum = 0; hitNum < 8; hitNum++) {
       // Number of hits calculated by counting to first hit with 0 total frames
       if((getHitProperty(s5.charSlot_276, hitNum, 1, autoCompleteType) & 0xffL) == 0) {
@@ -3674,8 +3676,8 @@ public final class SEffe {
     final long hitArrayAddress = mallocTail((hitCount & 0xffL) * 0x20);
     final UnboundedArrayRef<AdditionOverlaysHit20> hitArray = MEMORY.ref(4, hitArrayAddress, UnboundedArrayRef.of(0x20, AdditionOverlaysHit20::new, effect.count_30::get));
     effect.hitOverlays_40.set(hitArray);
-    uiDelay = getHitProperty(s5.charSlot_276, 0, 15, autoCompleteType) & 0xffL;
-    effect.unused_36.set((int)uiDelay);
+    int overlayDisplayDelay = getHitProperty(s5.charSlot_276, 0, 15, autoCompleteType) & 0xff;
+    effect.unused_36.set(overlayDisplayDelay);
 
     //LAB_801063f0
     for(hitNum = 0; hitNum < effect.count_30.get(); hitNum++) {
@@ -3683,21 +3685,21 @@ public final class SEffe {
       hitOverlay.unused_00.set(1);
       hitOverlay.hitSuccessful_01.set(0);
       hitOverlay.shadowColor_08.set((short)0);
-      hitOverlay.frameSuccessLowerBound_10.set((short)(uiDelay + 2));
+      hitOverlay.frameSuccessLowerBound_10.set((short)(overlayDisplayDelay + 2));
       seed_800fa754.advance();
       hitOverlay.borderColorsArrayIndex_02.set(3);
       hitOverlay.isCounter_1c.set(0);
       additionHitCompletionState_8011a014.get(hitNum).set(0);
       int hitProperty = getHitProperty(s5.charSlot_276, hitNum, 1, autoCompleteType) & 0xff;
-      uiDelay += hitProperty;
+      overlayDisplayDelay += hitProperty; // Display delay for each hit
       hitOverlay.totalHitFrames_0a.set((short)hitProperty);
       hitProperty = getHitProperty(s5.charSlot_276, hitNum, 2, autoCompleteType) & 0xff;
       hitOverlay.frameBeginDisplay_0c.set((short)hitProperty);
       hitProperty = getHitProperty(s5.charSlot_276, hitNum, 3, autoCompleteType) & 0xff;
-      hitOverlay.numGrayFrames_0e.set((short)hitProperty);
+      hitOverlay.numSuccessFrames_0e.set((short)hitProperty);
       final int successFrameTarget = hitOverlay.frameSuccessLowerBound_10.get() + hitOverlay.frameBeginDisplay_0c.get();
-      hitOverlay.frameSuccessLowerBound_10.set((short)(successFrameTarget - hitOverlay.numGrayFrames_0e.get() / 2 + 1));
-      hitOverlay.frameSuccessUpperBound_12.set((short)(successFrameTarget + hitOverlay.numGrayFrames_0e.get() - hitOverlay.numGrayFrames_0e.get() / 2));
+      hitOverlay.frameSuccessLowerBound_10.set((short)(successFrameTarget - hitOverlay.numSuccessFrames_0e.get() / 2 + 1));
+      hitOverlay.frameSuccessUpperBound_12.set((short)(successFrameTarget + hitOverlay.numSuccessFrames_0e.get() - hitOverlay.numSuccessFrames_0e.get() / 2));
 
       final long borderArrayAddress = mallocTail(0xeeL);
       final ArrayRef<AdditionOverlaysBorder0e> borderArray = MEMORY.ref(4, borderArrayAddress, ArrayRef.of(AdditionOverlaysBorder0e.class, 17, 0xe, AdditionOverlaysBorder0e::new));
@@ -3712,9 +3714,9 @@ public final class SEffe {
         //LAB_8010656c
         //LAB_80106574
         borderOverlay.angleModifier_02.set((short)((0x10 - val) * 0x80 + 0x200));
-        borderOverlay.countTicksVisible_0c.set(5);
+        borderOverlay.countFramesVisible_0c.set(5);
         borderOverlay.sideEffects_0d.set(0);
-        borderOverlay.ticksUntilRender_0a.set((short)((hitOverlay.frameSuccessLowerBound_10.get() + (hitOverlay.numGrayFrames_0e.get() - 0x1) / 2 + val - 0x11)));
+        borderOverlay.framesUntilRender_0a.set((short)((hitOverlay.frameSuccessLowerBound_10.get() + (hitOverlay.numSuccessFrames_0e.get() - 0x1) / 2 + val - 0x11)));
         borderOverlay.r_04.set(additionBorderColors_800fb7f0.get(hitOverlay.borderColorsArrayIndex_02.get() * 3).get() & 0xff);
         borderOverlay.g_05.set(additionBorderColors_800fb7f0.get(hitOverlay.borderColorsArrayIndex_02.get() * 3 + 1).get() & 0xff);
         borderOverlay.b_06.set(additionBorderColors_800fb7f0.get(hitOverlay.borderColorsArrayIndex_02.get() * 3 + 2).get() & 0xff);
@@ -3728,8 +3730,8 @@ public final class SEffe {
         final AdditionOverlaysBorder0e borderOverlay = borderArray.get(borderNum);
         borderOverlay.size_08.set((short)(0x14 - val * 0x2));
         borderOverlay.angleModifier_02.set((short)0x200);
-        borderOverlay.countTicksVisible_0c.set(0x11);
-        borderOverlay.ticksUntilRender_0a.set((short)(hitOverlay.frameSuccessLowerBound_10.get() - 0x11));
+        borderOverlay.countFramesVisible_0c.set(0x11);
+        borderOverlay.framesUntilRender_0a.set((short)(hitOverlay.frameSuccessLowerBound_10.get() - 0x11));
 
         if(val != 0x1L) {
           borderOverlay.r_04.set(0x30);
@@ -3762,41 +3764,41 @@ public final class SEffe {
   }
 
   @Method(0x80106774L)
-  public static long fadeAdditionBorders(final AdditionOverlaysBorder0e square, final int a1) {
+  public static long fadeAdditionBorders(final AdditionOverlaysBorder0e square, final int fadeStep) {
     long numberOfNegativeComponents = 0;
-    int v0 = square.r_04.get() - a1;
-    final int sp10;
-    if(v0 > 0) {
-      sp10 = v0;
+    int newColor = square.r_04.get() - fadeStep;
+    final int newR;
+    if(newColor > 0) {
+      newR = newColor;
     } else {
-      sp10 = 0;
+      newR = 0;
       numberOfNegativeComponents++;
     }
 
     //LAB_801067b0
-    v0 = square.g_05.get() - a1;
-    final int sp14;
-    if(v0 > 0) {
-      sp14 = v0;
+    newColor = square.g_05.get() - fadeStep;
+    final int newG;
+    if(newColor > 0) {
+      newG = newColor;
     } else {
-      sp14 = 0;
+      newG = 0;
       numberOfNegativeComponents++;
     }
 
     //LAB_801067c4
-    v0 = square.b_06.get() - a1;
-    final int sp18;
-    if(v0 > 0) {
-      sp18 = v0;
+    newColor = square.b_06.get() - fadeStep;
+    final int newB;
+    if(newColor > 0) {
+      newB = newColor;
     } else {
-      sp18 = 0;
+      newB = 0;
       numberOfNegativeComponents++;
     }
 
     //LAB_801067d8
-    square.r_04.set(sp10);
-    square.g_05.set(sp14);
-    square.b_06.set(sp18);
+    square.r_04.set(newR);
+    square.g_05.set(newG);
+    square.b_06.set(newB);
     return numberOfNegativeComponents;
   }
 
@@ -3824,7 +3826,7 @@ public final class SEffe {
         } else if(completionState != -2) {  // Too early
           //LAB_80106988
           cmd.monochrome(0x30);
-        } else if(hitOverlay.isCounter_1c.get() != 0) {  // Counter-attack
+        } else if(hitOverlay.isCounter_1c.get() != 0) {  // Counter-attack too late
           cmd.rgb(targetBorderArray.get(1).r_04.get() * 3, targetBorderArray.get(1).g_05.get(), (targetBorderArray.get(1).b_06.get() - 1) * 8);
         } else {  // Too late
           //LAB_80106964
@@ -3841,23 +3843,23 @@ public final class SEffe {
         GPU.queueCommand(30, cmd);
       }
     }
-
     //LAB_80106a4c
   }
 
+  /** Renders the shadow on the inside of the innermost rotating border. */
   @Method(0x80106ac4L)
-  public static void renderAdditionBorderShadow(final AdditionOverlaysHit20 hitOverlay, final int angle, final int borderSize) {
-    final int s2 = angle + 0x400;
-    final int s0 = borderSize - 1;
-    final int s1 = borderSize - 11;
-    final int x0 = rcos(angle) * s0 >> 12;
-    final int x1 = rcos(s2) * s0 >> 12;
-    final int x2 = rcos(angle) * s1 >> 12;
-    final int x3 = rcos(s2) * s1 >> 12;
-    final int y0 = rsin(angle) * s0 >> 12;
-    final int y1 = rsin(s2) * s0 >> 12;
-    final int y2 = rsin(angle) * s1 >> 12;
-    final int y3 = rsin(s2) * s1 >> 12;
+  public static void renderAdditionBorderShadow(final AdditionOverlaysHit20 hitOverlay, final int angle0, final int borderSize) {
+    final int angle1 = angle0 + 0x400;
+    final int offset0 = borderSize - 1;
+    final int offset1 = borderSize - 11;
+    final int x0 = rcos(angle0) * offset0 >> 12;
+    final int x1 = rcos(angle1) * offset0 >> 12;
+    final int x2 = rcos(angle0) * offset1 >> 12;
+    final int x3 = rcos(angle1) * offset1 >> 12;
+    final int y0 = rsin(angle0) * offset0 >> 12;
+    final int y1 = rsin(angle1) * offset0 >> 12;
+    final int y2 = rsin(angle0) * offset1 >> 12;
+    final int y3 = rsin(angle1) * offset1 >> 12;
     final int colour = hitOverlay.shadowColor_08.get() * 4;
 
     final GpuCommandPoly cmd = new GpuCommandPoly(4)
@@ -3877,27 +3879,27 @@ public final class SEffe {
   @Method(0x80106cccL)
   public static void renderAdditionBorders(final byte a0, final int hitNum, final AdditionOverlaysEffect44 effect, final UnboundedArrayRef<AdditionOverlaysHit20> hitArray, final ScriptState<EffectManagerData6c> state) {
     final ArrayRef<AdditionOverlaysBorder0e> borderArray = hitArray.get(hitNum).borderArray_18.deref();
-    final byte sp28 = additionHitCompletionState_8011a014.get(hitNum).get();
+    final byte currentHitCompletionState = additionHitCompletionState_8011a014.get(hitNum).get();
 
     //LAB_80106d18
     for(int borderNum = 0; borderNum < 17; borderNum++) {
       final AdditionOverlaysBorder0e borderOverlay = borderArray.get(borderNum);
       if(borderOverlay.isVisible_00.get() != 0) {
-        if(borderOverlay.ticksUntilRender_0a.get() <= 0) {
+        if(borderOverlay.framesUntilRender_0a.get() <= 0) {
           final int borderSize = borderOverlay.size_08.get();
-          int sp20 = rcos(borderOverlay.angleModifier_02.get()) * borderSize >> 12;
-          int sp24 = (rsin(borderOverlay.angleModifier_02.get()) * borderSize >> 12) + 30;
+          int x0 = rcos(borderOverlay.angleModifier_02.get()) * borderSize >> 12;
+          int y0 = (rsin(borderOverlay.angleModifier_02.get()) * borderSize >> 12) + 30;
 
           //LAB_80106d80
           int angleModifier = 0;
-          for(long s5 = 0; s5 < 4; s5++) {
+          for(long lineNum = 0; lineNum < 4; lineNum++) {
             final GpuCommandLine cmd = new GpuCommandLine();
 
-            final int v1 = borderOverlay.sideEffects_0d.get();
+            final int sideEffects = borderOverlay.sideEffects_0d.get();
 
             //LAB_80106dc0
-            // Set translucent if button press not failure and border sideEffects_0d not innermost rotating border or target (15)
-            if(v1 != 0 && v1 != -1 || sp28 < 0) {
+            // Set translucent if button press is failure and border sideEffects_0d not innermost rotating border or target (15)
+            if(sideEffects != 0 && sideEffects != -1 || currentHitCompletionState < 0) {
               //LAB_80106de8
               cmd.translucent(Translucency.B_PLUS_F);
             }
@@ -3912,16 +3914,16 @@ public final class SEffe {
 
             //LAB_80106e74
             angleModifier += 0x400;
-            final int sp18 = rcos(borderOverlay.angleModifier_02.get() + angleModifier) * borderSize >> 12;
-            final int sp1c = (rsin(borderOverlay.angleModifier_02.get() + angleModifier) * borderSize >> 12) + 30;
+            final int x1 = rcos(borderOverlay.angleModifier_02.get() + angleModifier) * borderSize >> 12;
+            final int y1 = (rsin(borderOverlay.angleModifier_02.get() + angleModifier) * borderSize >> 12) + 30;
             cmd
-              .pos(0, sp20, sp24)
-              .pos(1, sp18, sp1c);
+              .pos(0, x0, y0)
+              .pos(1, x1, y1);
 
             GPU.queueCommand(30, cmd);
 
-            sp20 = sp18;
-            sp24 = sp1c;
+            x0 = x1;
+            y0 = y1;
           }
 
           // Renders rotating shadow on innermost rotating border
@@ -3950,14 +3952,16 @@ public final class SEffe {
     }
 
     //LAB_801070ec
-    final byte hitCompletionState = additionHitCompletionState_8011a014.get(hitNum).get();
+    final byte currentHitCompletionState = additionHitCompletionState_8011a014.get(hitNum).get();
     final ArrayRef<AdditionOverlaysBorder0e> borderArray = hitOverlay.borderArray_18.deref();
     int isRendered = 0;
 
     //LAB_80107104
     for(int borderNum = 0; borderNum < 17; borderNum++) {
       final AdditionOverlaysBorder0e borderOverlay = borderArray.get(borderNum);
-      if(hitCompletionState < 0) {
+
+      // Fade shadow if hit failed, set invisible if border is within 0x20 of fully faded
+      if(currentHitCompletionState < 0) {
         hitOverlay.shadowColor_08.sub((short)3);
 
         if(hitOverlay.shadowColor_08.get() < 0) {
@@ -3965,7 +3969,6 @@ public final class SEffe {
         }
 
         //LAB_80107134
-        // If border is within 0x20 of fully faded, set invisible
         if(fadeAdditionBorders(borderOverlay, 0x20) == 0x3L) {
           borderOverlay.isVisible_00.set(0);
         }
@@ -3973,8 +3976,8 @@ public final class SEffe {
 
       //LAB_80107150
       if(borderOverlay.isVisible_00.get() != 0) {
-        if(borderOverlay.ticksUntilRender_0a.get() > 0) {
-          borderOverlay.ticksUntilRender_0a.sub((short)1);
+        if(borderOverlay.framesUntilRender_0a.get() > 0) {
+          borderOverlay.framesUntilRender_0a.sub((short)1);
         } else {
           //LAB_80107178
           if(borderOverlay.sideEffects_0d.get() != -1) {
@@ -3982,13 +3985,13 @@ public final class SEffe {
           }
 
           //LAB_80107190
-          borderOverlay.countTicksVisible_0c.sub(1);
-          if(borderOverlay.countTicksVisible_0c.get() == 0) {
+          borderOverlay.countFramesVisible_0c.sub(1);
+          if(borderOverlay.countFramesVisible_0c.get() == 0) {
             borderOverlay.isVisible_00.set(0);
           }
 
           //LAB_801071b0
-          // Fade rotating borders
+          // Fade rotating borders only
           if(borderNum < 14) {
             fadeAdditionBorders(borderOverlay, 0x4e);
           }
@@ -3996,16 +3999,13 @@ public final class SEffe {
           isRendered = 1;
         }
       }
-
       //LAB_801071c0
     }
 
     return isRendered;
   }
 
-  /**
-   * If a hit is failed, flag all subsequent hits as failed as well
-   */
+  /** If a hit is failed, flag all subsequent hits as failed as well */
   @Method(0x801071fcL)
   public static void propagateFailedAdditionHitFlag(final AdditionOverlaysEffect44 effect, final UnboundedArrayRef<AdditionOverlaysHit20> hitArray, int hitNum) {
     final byte currentHitCompletionState = additionHitCompletionState_8011a014.get(hitNum).get();
@@ -4017,11 +4017,10 @@ public final class SEffe {
       final AdditionOverlaysHit20 hitOverlay = hitArray.get(hitNum);
       hitOverlay.frameSuccessUpperBound_12.set((short)-1);
       hitOverlay.frameSuccessLowerBound_10.set((short)-1);
-      hitOverlay.numGrayFrames_0e.set((short)0);
+      hitOverlay.numSuccessFrames_0e.set((short)0);
       hitOverlay.frameBeginDisplay_0c.set((short)0);
       additionHitCompletionState_8011a014.get(hitNum).set(currentHitCompletionState);
     }
-
     //LAB_80107264
   }
 
@@ -4052,14 +4051,13 @@ public final class SEffe {
           final AdditionOverlaysHit20 hitOverlay = hitArray.get(hitNum);
           renderAdditionButton((byte)(hitOverlay.frameSuccessLowerBound_10.get() + (hitOverlay.frameSuccessUpperBound_12.get() - hitOverlay.frameSuccessLowerBound_10.get()) / 2 - effect.currentFrame_34.get() - 0x1L), hitOverlay.isCounter_1c.get());
 
-          final byte v1 = (byte)effect.currentFrame_34.get();
-          if(v1 >= hitOverlay.frameSuccessLowerBound_10.get() && v1 <= hitOverlay.frameSuccessUpperBound_12.get()) {
+          final byte currentFrame = (byte)effect.currentFrame_34.get();
+          if(currentFrame >= hitOverlay.frameSuccessLowerBound_10.get() && currentFrame <= hitOverlay.frameSuccessUpperBound_12.get()) {
             renderAdditionCentreSolidSquare(effect, hitOverlay, -2, state, data);
           }
         }
       }
     }
-
     //LAB_801073b4
   }
 
@@ -4068,31 +4066,29 @@ public final class SEffe {
     final AdditionOverlaysEffect44 effect = (AdditionOverlaysEffect44)data.effect_44;
 
     if(effect.pauseTickerAndRenderer_31.get() == 0) {
-      int s4 = 1;
       final UnboundedArrayRef<AdditionOverlaysHit20> hitArray = effect.hitOverlays_40.deref();
       effect.currentFrame_34.incr();
 
       //LAB_80107440
       int hitNum;
+      int hitFailed = 1;
       for(hitNum = 0; hitNum < effect.count_30.get(); hitNum++) {
+        // Catch too late failure when no button pressed
         if(effect.currentFrame_34.get() == hitArray.get(hitNum).frameSuccessUpperBound_12.get() + 1) {
           if(additionHitCompletionState_8011a014.get(hitNum).get() == 0) {
             additionHitCompletionState_8011a014.get(hitNum).set(-2);
             propagateFailedAdditionHitFlag(effect, hitArray, hitNum);
 
             //LAB_80107478
-            if(additionHitCompletionState_8011a014.get(hitNum).get() == 0) {
-              s4 = 0;
-            }
           }
         } else if(additionHitCompletionState_8011a014.get(hitNum).get() == 0) {
-          s4 = 0;
+          hitFailed = 0;
         }
         //LAB_8010748c
       }
 
       //LAB_801074a8
-      if(s4 != 0) {
+      if(hitFailed != 0) {
         propagateFailedAdditionHitFlag(effect, hitArray, hitNum);
       }
 
@@ -4138,7 +4134,7 @@ public final class SEffe {
             //LAB_801075e8
             if(effect.autoCompleteType_3a.get() < 1 || effect.autoCompleteType_3a.get() > 2) {
               //LAB_8010763c
-              if(effect.autoCompleteType_3a.get() != 1 && effect.autoCompleteType_3a.get() != 3) {
+              if(effect.autoCompleteType_3a.get() != 3) {
                 final int buttonType;
                 if(hitOverlay.isCounter_1c.get() == 0) {
                   buttonType = 0x20;
@@ -4147,12 +4143,12 @@ public final class SEffe {
                 }
 
                 //LAB_80107664
-                final long v1 = joypadPress_8007a398.get();
+                final long buttonPressed = joypadPress_8007a398.get();
 
-                if((v1 & 0x60) != 0) {
+                if((buttonPressed & 0x60) != 0) {
                   additionHitCompletionState_8011a014.get(hitNum).set(-1);
 
-                  if((v1 & buttonType) == 0 || (v1 & ~buttonType) != 0) {
+                  if((buttonPressed & buttonType) == 0 || (buttonPressed & ~buttonType) != 0) {
                     //LAB_801076d8
                     //LAB_801076dc
                     additionHitCompletionState_8011a014.get(hitNum).set(-3);
@@ -4170,7 +4166,7 @@ public final class SEffe {
                   //LAB_8010771c
                   effect.numFramesToRenderCenterSquare_38.set(2);
                   effect.lastCompletedHit_39.set(hitNum);
-                  effect._3c.set(hitOverlay);
+                  effect.lastCompletedHitOverlay_3c.set(hitOverlay);
                 }
               }
             } else {  // Auto-complete
@@ -4181,7 +4177,7 @@ public final class SEffe {
                 //LAB_8010771c
                 effect.numFramesToRenderCenterSquare_38.set(2);
                 effect.lastCompletedHit_39.set(hitNum);
-                effect._3c.set(hitOverlay);
+                effect.lastCompletedHitOverlay_3c.set(hitOverlay);
               }
             }
           }
@@ -4189,12 +4185,11 @@ public final class SEffe {
           //LAB_80107728
           if(effect.numFramesToRenderCenterSquare_38.get() != 0) {
             effect.numFramesToRenderCenterSquare_38.decr();
-            renderAdditionCentreSolidSquare(effect, effect._3c.deref(), additionHitCompletionState_8011a014.get(effect.lastCompletedHit_39.get()).get(), state, data);
+            renderAdditionCentreSolidSquare(effect, effect.lastCompletedHitOverlay_3c.deref(), additionHitCompletionState_8011a014.get(effect.lastCompletedHit_39.get()).get(), state, data);
           }
         }
       }
     }
-
     //LAB_80107764
   }
 
@@ -4203,9 +4198,6 @@ public final class SEffe {
     free(((AdditionOverlaysEffect44)data.effect_44).hitOverlays_40.getPointer());
   }
 
-  /**
-   * gets some kind of addition overlay-related value
-   */
   @Method(0x801077bcL)
   public static FlowControl scriptGetHitCompletionState(final RunningScript<?> script) {
     script.params_20[2].set(additionHitCompletionState_8011a014.get(script.params_20[1].get()).get());
@@ -4225,29 +4217,28 @@ public final class SEffe {
     );
 
     initializeAdditionOverlaysEffect(script.params_20[0].get(), script.params_20[1].get(), (AdditionOverlaysEffect44)state.innerStruct_00.effect_44, script.params_20[2].get());
-    state.storage_44[8] = 0;
+    state.storage_44[8] = 0; // Storage for counterattack state
     script.params_20[4].set(state.index);
     additionOverlayActive_80119f41.set(1);
     return FlowControl.CONTINUE;
   }
 
   /**
-   * Script subfunc related to pausing ticking/rendering of addition overlay during counterattacks.
-   * v1 == 0 occurs when counterattack counter is successful; have not gotten other conditions
-   * to trigger
+   * Script subfunc related to pausing ticking/rendering of addition overlay during counterattacks. v1 == 0 occurs when
+   * counterattack counter is successful; have not gotten other conditions to trigger
    */
   @Method(0x801078c0L)
-  public static FlowControl FUN_801078c0(final RunningScript<?> script) {
-    final EffectManagerData6c v0 = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    final AdditionOverlaysEffect44 a2 = (AdditionOverlaysEffect44)v0.effect_44;
-    final int v1 = script.params_20[1].get();
+  public static FlowControl scriptAlterAdditionContinuationState(final RunningScript<?> script) {
+    final EffectManagerData6c data = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final AdditionOverlaysEffect44 a2 = (AdditionOverlaysEffect44)data.effect_44;
+    final int additionContinuationState = script.params_20[1].get();
 
-    if(v1 == 0) {
+    if(additionContinuationState == 0) {
       //LAB_80107924
       a2.pauseTickerAndRenderer_31.set(a2.pauseTickerAndRenderer_31.get() < 1 ? 1 : 0);
       return FlowControl.CONTINUE;
       //LAB_80107910
-    } else if(v1 == 2) {
+    } else if(additionContinuationState == 2) {
       //LAB_80107984
       //LAB_80107994
       a2.pauseTickerAndRenderer_31.set(a2.pauseTickerAndRenderer_31.get() < 1 ? 2 : 0);
@@ -4255,7 +4246,7 @@ public final class SEffe {
     }
 
     //LAB_80107930
-    a2.additionComplete_32.set(v1);
+    a2.additionComplete_32.set(additionContinuationState);
 
     //LAB_80107954
     final UnboundedArrayRef<AdditionOverlaysHit20> hitArray = a2.hitOverlays_40.deref();
@@ -4270,9 +4261,7 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
-  /**
-   * Param 0 is 0 for addition, 1 for dragoon addition
-   */
+  /** Param 0 is 0 for addition, 1 for dragoon addition */
   @Method(0x801079a4L)
   public static FlowControl scriptGetAdditionOverlayActiveStatus(final RunningScript<?> script) {
     if(script.params_20[0].get() == 0) {
