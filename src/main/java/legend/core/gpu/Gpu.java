@@ -55,7 +55,7 @@ public class Gpu {
   private int drawBufferIndex;
 
   private int scale = 2;
-  private int newScale = 0;
+  private int newScale;
 
   private final int[] vram24 = new int[this.vramWidth * this.vramHeight];
   private final int[] vram15 = new int[this.vramWidth * this.vramHeight];

@@ -42,11 +42,11 @@ public final class Config {
   }
 
   public static int windowWidth() {
-    return readInt("window_width", 320, 1, Integer.MAX_VALUE);
+    return readInt("window_width", 640, 1, Integer.MAX_VALUE);
   }
 
   public static int windowHeight() {
-    return readInt("window_height", 240, 1, Integer.MAX_VALUE);
+    return readInt("window_height", 480, 1, Integer.MAX_VALUE);
   }
 
   public static String controllerGuid() {

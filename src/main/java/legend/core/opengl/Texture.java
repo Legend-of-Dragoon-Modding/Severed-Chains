@@ -96,6 +96,11 @@ public final class Texture {
       glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, w, h, 0, dataFormat, dataType, data);
     }
 
+    final int error = glGetError();
+    if(error != GL_NO_ERROR) {
+      throw new RuntimeException("Failed to create texture, glError: " + Long.toString(error, 16));
+    }
+
     if(generateMipmaps) {
       glGenerateMipmap(GL_TEXTURE_2D);
     } else {
