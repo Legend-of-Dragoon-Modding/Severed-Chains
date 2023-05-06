@@ -231,7 +231,7 @@ public final class SEffe {
   private static final Value _800fb7c0 = MEMORY.ref(1, 0x800fb7c0L);
 
   /** Fours sets of color values used for addition overlay borders; only last actually used */
-  private static final ArrayRef<ByteRef> additionBorderColors_800fb7f0 = MEMORY.ref(1, 0x800fb7f0L, ArrayRef.of(ByteRef.class, 0xc, 0x1, ByteRef::new));
+  public static final ArrayRef<UnsignedByteRef> additionBorderColors_800fb7f0 = MEMORY.ref(1, 0x800fb7f0L, ArrayRef.of(UnsignedByteRef.class, 0xc, 0x1, UnsignedByteRef::new));
 
   private static final Value _800fb7fc = MEMORY.ref(1, 0x800fb7fcL);
 
@@ -3812,7 +3812,11 @@ public final class SEffe {
           //LAB_80106988
           cmd.monochrome(0x30);
         } else if(hitOverlay.isCounter_1c.get() != 0) {  // Counter-attack too late
-          cmd.rgb(targetBorderArray.get(1).r_04.get() * 3, targetBorderArray.get(1).g_05.get(), (targetBorderArray.get(1).b_06.get() - 1) * 8);
+          if(Config.changeAdditionOverlayRGB()) {
+            cmd.rgb(additionBorderColors_800fb7f0.get(6).get(), additionBorderColors_800fb7f0.get(7).get(), (additionBorderColors_800fb7f0.get(8).get() * 8 - 2) * 8);
+          } else {
+            cmd.rgb(targetBorderArray.get(1).r_04.get() * 3, targetBorderArray.get(1).g_05.get(), (targetBorderArray.get(1).b_06.get() - 1) * 8);
+          }
         } else {  // Too late
           //LAB_80106964
           cmd.rgb(targetBorderArray.get(1).r_04.get(), targetBorderArray.get(1).g_05.get(), targetBorderArray.get(1).b_06.get());
@@ -3891,7 +3895,18 @@ public final class SEffe {
 
 
             if(hitArray.get(hitNum).isCounter_1c.get() != 0 && borderNum != 0x10) {
-              cmd.rgb(borderOverlay.r_04.get() * 3, borderOverlay.g_05.get(), (borderOverlay.b_06.get() + 1) / 8);
+              if(Config.changeAdditionOverlayRGB()) {
+                final int rgb = Config.getCounterOverlayRGB();
+
+                // Hack to get around lack of separate counterattack color field until full dememulation
+                final float rFactor = borderArray.get(borderNum).r_04.get() / (float)additionBorderColors_800fb7f0.get(9).get();
+                final float gFactor = borderArray.get(borderNum).g_05.get() / (float)additionBorderColors_800fb7f0.get(10).get();
+                final float bFactor = borderArray.get(borderNum).b_06.get() / (float)additionBorderColors_800fb7f0.get(11).get();
+
+                cmd.rgb(Math.round((rgb & 0xff) * rFactor), Math.round((rgb >> 8 & 0xff) * gFactor), Math.round((rgb >> 16 & 0xff) * bFactor));
+              } else {
+                cmd.rgb(borderOverlay.r_04.get() * 3, borderOverlay.g_05.get(), (borderOverlay.b_06.get() + 1) / 8);
+              }
             } else {
               //LAB_80106e58
               cmd.rgb(borderOverlay.r_04.get(), borderOverlay.g_05.get(), borderOverlay.b_06.get());

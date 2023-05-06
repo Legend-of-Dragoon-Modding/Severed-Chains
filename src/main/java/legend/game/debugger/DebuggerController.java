@@ -10,6 +10,7 @@ import javafx.scene.control.SpinnerValueFactory;
 import javafx.stage.Stage;
 import legend.core.Config;
 import legend.game.combat.Bttl_800c;
+import legend.game.combat.SEffe;
 import legend.game.types.WMapAreaData08;
 
 import static legend.game.SMap.FUN_800e5534;
@@ -78,6 +79,20 @@ public class DebuggerController {
   @FXML
   public Spinner<Integer> battleUIColourB;
   @FXML
+  public CheckBox additionOverlayColor;
+  @FXML
+  public Spinner<Integer> additionOverlayR;
+  @FXML
+  public Spinner<Integer> additionOverlayG;
+  @FXML
+  public Spinner<Integer> additionOverlayB;
+  @FXML
+  public Spinner<Integer> counterOverlayR;
+  @FXML
+  public Spinner<Integer> counterOverlayG;
+  @FXML
+  public Spinner<Integer> counterOverlayB;
+  @FXML
   public Spinner<Integer> combatStageId;
   @FXML
   public CheckBox saveAnywhere;
@@ -105,7 +120,14 @@ public class DebuggerController {
     this.saveAnywhere.setSelected(Config.saveAnywhere());
     this.battleUIColourR.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (Config.getBattleRGB() & 0xff)));
     this.battleUIColourG.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getBattleRGB() >> 8) & 0xff)));
-    this.battleUIColourB.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getBattleRGB() >> 16)  & 0xff)));
+    this.battleUIColourB.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getBattleRGB() >> 16) & 0xff)));
+    this.additionOverlayColor.setSelected(Config.changeAdditionOverlayRGB());
+    this.additionOverlayR.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (Config.getAdditionOverlayRGB() & 0xff)));
+    this.additionOverlayG.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getAdditionOverlayRGB() >> 8) & 0xff)));
+    this.additionOverlayB.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getAdditionOverlayRGB() >> 16) & 0xff)));
+    this.counterOverlayR.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (Config.getCounterOverlayRGB() & 0xff)));
+    this.counterOverlayG.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getCounterOverlayRGB() >> 8) & 0xff)));
+    this.counterOverlayB.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getCounterOverlayRGB() >> 16) & 0xff)));
     this.autoAddition.setSelected(Config.autoAddition());
     this.autoMeter.setSelected(Config.autoDragoonMeter());
     this.disableStatusEffects.setSelected(Config.disableStatusEffects());
@@ -246,12 +268,75 @@ public class DebuggerController {
     final int rgb =
       (0xff & rgbArray[3]) << 24 |
         (0xff & rgbArray[2]) << 16 |
-        (0xff & rgbArray[1]) << 8  |
+        (0xff & rgbArray[1]) << 8 |
         0xff & rgbArray[0];
 
     Config.setBattleRGB(rgb);
     Bttl_800c._800c7004.set(rgb);
     this.battleUiColour.setSelected(true);
+  }
+
+  @FXML
+  private void toggleAdditionOverlayColor() {
+    Config.toggleAdditionOverlayColor();
+  }
+
+  @FXML
+  private void getAdditionOverlayRGB(final ActionEvent event) {
+    this.additionOverlayR.getValueFactory().setValue((int)SEffe.additionBorderColors_800fb7f0.get(9).get());
+    this.additionOverlayG.getValueFactory().setValue((int)SEffe.additionBorderColors_800fb7f0.get(10).get());
+    this.additionOverlayB.getValueFactory().setValue((int)SEffe.additionBorderColors_800fb7f0.get(11).get());
+  }
+
+  @FXML
+  private void setAdditionOverlayRGB(final ActionEvent event) {
+    final byte[] rgbArray = {
+      this.additionOverlayR.getValueFactory().getValue().byteValue(),
+      this.additionOverlayG.getValueFactory().getValue().byteValue(),
+      this.additionOverlayB.getValueFactory().getValue().byteValue(),
+      (byte)0x00,
+    };
+
+    final int rgb =
+      (0xff & rgbArray[3]) << 24 |
+        (0xff & rgbArray[2]) << 16 |
+        (0xff & rgbArray[1]) << 8 |
+        0xff & rgbArray[0];
+
+    Config.setAdditionOverlayRGB(rgb);
+    SEffe.additionBorderColors_800fb7f0.get(9).set(rgbArray[0] & 0xff);
+    SEffe.additionBorderColors_800fb7f0.get(10).set(rgbArray[1] & 0xff);
+    SEffe.additionBorderColors_800fb7f0.get(11).set(rgbArray[2] & 0xff);
+    this.additionOverlayColor.setSelected(true);
+  }
+
+  @FXML
+  private void getCounterOverlayRGB(final ActionEvent event) {
+    this.counterOverlayR.getValueFactory().setValue((int)SEffe.additionBorderColors_800fb7f0.get(6).get());
+    this.counterOverlayG.getValueFactory().setValue((int)SEffe.additionBorderColors_800fb7f0.get(7).get());
+    this.counterOverlayB.getValueFactory().setValue((int)SEffe.additionBorderColors_800fb7f0.get(8).get());
+  }
+
+  @FXML
+  private void setCounterOverlayRGB(final ActionEvent event) {
+    final byte[] rgbArray = {
+      this.counterOverlayR.getValueFactory().getValue().byteValue(),
+      this.counterOverlayG.getValueFactory().getValue().byteValue(),
+      this.counterOverlayB.getValueFactory().getValue().byteValue(),
+      (byte)0x00,
+    };
+
+    final int rgb =
+      (0xff & rgbArray[3]) << 24 |
+        (0xff & rgbArray[2]) << 16 |
+        (0xff & rgbArray[1]) << 8 |
+        0xff & rgbArray[0];
+
+    Config.setCounterOverlayRGB(rgb);
+    SEffe.additionBorderColors_800fb7f0.get(6).set(rgbArray[0] & 0xff);
+    SEffe.additionBorderColors_800fb7f0.get(7).set(rgbArray[1] & 0xff);
+    SEffe.additionBorderColors_800fb7f0.get(8).set(rgbArray[2] & 0xff);
+    this.additionOverlayColor.setSelected(true);
   }
 
   @FXML

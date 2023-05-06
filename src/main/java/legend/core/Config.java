@@ -36,6 +36,13 @@ public final class Config {
     properties.setProperty("battle_ui_r", "0");
     properties.setProperty("battle_ui_g", "41");
     properties.setProperty("battle_ui_b", "159");
+    properties.setProperty("addition_overlay_color_change", "false");
+    properties.setProperty("addition_overlay_r", "72");
+    properties.setProperty("addition_overlay_g", "96");
+    properties.setProperty("addition_overlay_b", "255");
+    properties.setProperty("counter_overlay_r", "216");
+    properties.setProperty("counter_overlay_g", "96");
+    properties.setProperty("counter_overlay_b", "32");
     properties.setProperty("game_speed_multiplier", "1");
     properties.setProperty("save_anywhere", "false");
     properties.setProperty("auto_addition", "false");
@@ -77,6 +84,14 @@ public final class Config {
 
   public static void toggleBattleUIColour() {
     properties.setProperty("battle_ui_colour_change", String.valueOf(!changeBattleRGB()));
+  }
+
+  public static boolean changeAdditionOverlayRGB() {
+    return readBool("addition_overlay_color_change", false);
+  }
+
+  public static void toggleAdditionOverlayColor() {
+    properties.setProperty("addition_overlay_color_change", String.valueOf(!changeAdditionOverlayRGB()));
   }
 
   public static boolean saveAnywhere() {
@@ -186,14 +201,74 @@ public final class Config {
     final int[] rgbArray = {
       ((rgb >> 24) & 0xff),
       ((rgb >> 16) & 0xff),
-      ((rgb >> 8)  & 0xff),
-      ( rgb        & 0xff)
+      ((rgb >> 8) & 0xff),
+      (rgb & 0xff)
     };
 
     properties.setProperty("battle_ui_r", String.valueOf(rgbArray[3]));
     properties.setProperty("battle_ui_g", String.valueOf(rgbArray[2]));
     properties.setProperty("battle_ui_b", String.valueOf(rgbArray[1]));
     properties.setProperty("battle_ui_colour_change", "true");
+  }
+
+  public static int getAdditionOverlayRGB() {
+    final int[] rgbArray = {
+      readInt("addition_overlay_r", 72, 0, 255),
+      readInt("addition_overlay_g", 96, 0, 255),
+      readInt("addition_overlay_b", 255, 0, 255),
+      0x00,
+    };
+
+    return (
+      (0xff & rgbArray[3]) << 24 |
+        (0xff & rgbArray[2]) << 16 |
+        (0xff & rgbArray[1]) << 8 |
+        0xff & rgbArray[0]
+    );
+  }
+
+  public static void setAdditionOverlayRGB(final int rgb) {
+    final int[] rgbArray = {
+      ((rgb >> 24) & 0xff),
+      ((rgb >> 16) & 0xff),
+      ((rgb >> 8) & 0xff),
+      (rgb & 0xff)
+    };
+
+    properties.setProperty("addition_overlay_r", String.valueOf(rgbArray[3]));
+    properties.setProperty("addition_overlay_g", String.valueOf(rgbArray[2]));
+    properties.setProperty("addition_overlay_b", String.valueOf(rgbArray[1]));
+    properties.setProperty("addition_overlay_color_change", "true");
+  }
+
+  public static int getCounterOverlayRGB() {
+    final int[] rgbArray = {
+      readInt("counter_overlay_r", 216, 0, 255),
+      readInt("counter_overlay_g", 96, 0, 255),
+      readInt("counter_overlay_b", 32, 0, 255),
+      0x00,
+    };
+
+    return (
+      (0xff & rgbArray[3]) << 24 |
+        (0xff & rgbArray[2]) << 16 |
+        (0xff & rgbArray[1]) << 8 |
+        0xff & rgbArray[0]
+    );
+  }
+
+  public static void setCounterOverlayRGB(final int rgb) {
+    final int[] rgbArray = {
+      ((rgb >> 24) & 0xff),
+      ((rgb >> 16) & 0xff),
+      ((rgb >> 8) & 0xff),
+      (rgb & 0xff)
+    };
+
+    properties.setProperty("counter_overlay_r", String.valueOf(rgbArray[3]));
+    properties.setProperty("counter_overlay_g", String.valueOf(rgbArray[2]));
+    properties.setProperty("counter_overlay_b", String.valueOf(rgbArray[1]));
+    properties.setProperty("addition_overlay_color_change", "true");
   }
 
   private static int readInt(final String key, final int defaultVal, final int min, final int max) {
