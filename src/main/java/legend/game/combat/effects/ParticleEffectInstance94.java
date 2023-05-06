@@ -39,8 +39,7 @@ public class ParticleEffectInstance94 {
   public final SVECTOR _68 = new SVECTOR();
   public final SVECTOR _70 = new SVECTOR();
   public final SVECTOR _78 = new SVECTOR();
-  /** TODO ptr */
-  public long _80;
+  public ParticleEffectInstance94Sub10[] _80;
   public int r_84;
   public int g_86;
   public int b_88;

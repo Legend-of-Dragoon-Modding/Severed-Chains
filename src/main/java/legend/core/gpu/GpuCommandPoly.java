@@ -28,6 +28,9 @@ public class GpuCommandPoly extends GpuCommand {
   private int vramX;
   private int vramY;
 
+  private VramTexture texture;
+  private VramTexture[] palettes;
+
   public GpuCommandPoly(final int vertexCount) {
     this.vertexCount = vertexCount;
     this.x = new int[vertexCount];
@@ -168,6 +171,17 @@ public class GpuCommandPoly extends GpuCommand {
     return this;
   }
 
+  public GpuCommandPoly texture(final VramTexture texture) {
+    this.texture = texture;
+    return this;
+  }
+
+  public GpuCommandPoly texture(final VramTexture texture, final VramTexture[] palettes) {
+    this.texture = texture;
+    this.palettes = palettes;
+    return this;
+  }
+
   @Override
   public void render(final Gpu gpu) {
     for(int i = 0; i < this.vertexCount; i++) {
@@ -175,10 +189,10 @@ public class GpuCommandPoly extends GpuCommand {
       this.y[i] += gpu.getOffsetY();
     }
 
-    gpu.rasterizeTriangle(this.x[0], this.y[0], this.x[1], this.y[1], this.x[2], this.y[2], this.u[0], this.v[0], this.u[1], this.v[1], this.u[2], this.v[2], this.colour[0], this.colour[1], this.colour[2], this.clutX, this.clutY, this.vramX, this.vramY, this.bpp, this.textured, this.shaded, this.translucence != null, this.raw, this.translucence);
+    gpu.rasterizeTriangle(this.x[0], this.y[0], this.x[1], this.y[1], this.x[2], this.y[2], this.u[0], this.v[0], this.u[1], this.v[1], this.u[2], this.v[2], this.colour[0], this.colour[1], this.colour[2], this.clutX, this.clutY, this.vramX, this.vramY, this.bpp, this.textured, this.shaded, this.translucence != null, this.raw, this.translucence, this.texture, this.palettes);
 
     if(this.vertexCount == 4) {
-      gpu.rasterizeTriangle(this.x[1], this.y[1], this.x[2], this.y[2], this.x[3], this.y[3], this.u[1], this.v[1], this.u[2], this.v[2], this.u[3], this.v[3], this.colour[1], this.colour[2], this.colour[3], this.clutX, this.clutY, this.vramX, this.vramY, this.bpp, this.textured, this.shaded, this.translucence != null, this.raw, this.translucence);
+      gpu.rasterizeTriangle(this.x[1], this.y[1], this.x[2], this.y[2], this.x[3], this.y[3], this.u[1], this.v[1], this.u[2], this.v[2], this.u[3], this.v[3], this.colour[1], this.colour[2], this.colour[3], this.clutX, this.clutY, this.vramX, this.vramY, this.bpp, this.textured, this.shaded, this.translucence != null, this.raw, this.translucence, this.texture, this.palettes);
     }
   }
 }

@@ -134,8 +134,7 @@ public final class Scus94491BpeSegment_8004 {
   /** The previous index before the file finished loading */
   public static final IntRef previousMainCallbackIndex_8004dd28 = MEMORY.ref(4, 0x8004dd28L, IntRef::new);
 
-  public static final Value _8004dd30 = MEMORY.ref(4, 0x8004dd30L);
-  public static final Value width_8004dd34 = MEMORY.ref(2, 0x8004dd34L);
+  public static final UnsignedShortRef width_8004dd34 = MEMORY.ref(2, 0x8004dd34L, UnsignedShortRef::new);
 
   public static final UnsignedShortRef reinitOrderingTableBits_8004dd38 = MEMORY.ref(2, 0x8004dd38L, UnsignedShortRef::new);
 
@@ -562,7 +561,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[616] = Bttl_800e::FUN_800eb01c;
 //    scriptSubFunctions_8004e29c[617] = Temp::FUN_800caae4;
     scriptSubFunctions_8004e29c[618] = SEffe::scriptLoadSameScriptAndJump;
-    scriptSubFunctions_8004e29c[619] = SEffe::FUN_80118df4;
+    scriptSubFunctions_8004e29c[619] = SEffe::allocateShirleyTransformWipeEffect;
     scriptSubFunctions_8004e29c[620] = SEffe::FUN_80111a58;
     scriptSubFunctions_8004e29c[621] = Bttl_800e::FUN_800ea384;
     scriptSubFunctions_8004e29c[622] = SEffe::FUN_80119484;
