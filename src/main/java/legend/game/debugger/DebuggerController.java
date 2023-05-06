@@ -283,9 +283,9 @@ public class DebuggerController {
 
   @FXML
   private void getAdditionOverlayRGB(final ActionEvent event) {
-    this.additionOverlayR.getValueFactory().setValue((int)SEffe.additionBorderColors_800fb7f0.get(9).get());
-    this.additionOverlayG.getValueFactory().setValue((int)SEffe.additionBorderColors_800fb7f0.get(10).get());
-    this.additionOverlayB.getValueFactory().setValue((int)SEffe.additionBorderColors_800fb7f0.get(11).get());
+    this.additionOverlayR.getValueFactory().setValue(SEffe.additionBorderColors_800fb7f0.get(9).get());
+    this.additionOverlayG.getValueFactory().setValue(SEffe.additionBorderColors_800fb7f0.get(10).get());
+    this.additionOverlayB.getValueFactory().setValue(SEffe.additionBorderColors_800fb7f0.get(11).get());
   }
 
   @FXML
@@ -312,9 +312,9 @@ public class DebuggerController {
 
   @FXML
   private void getCounterOverlayRGB(final ActionEvent event) {
-    this.counterOverlayR.getValueFactory().setValue((int)SEffe.additionBorderColors_800fb7f0.get(6).get());
-    this.counterOverlayG.getValueFactory().setValue((int)SEffe.additionBorderColors_800fb7f0.get(7).get());
-    this.counterOverlayB.getValueFactory().setValue((int)SEffe.additionBorderColors_800fb7f0.get(8).get());
+    this.counterOverlayR.getValueFactory().setValue(SEffe.additionBorderColors_800fb7f0.get(6).get());
+    this.counterOverlayG.getValueFactory().setValue(SEffe.additionBorderColors_800fb7f0.get(7).get());
+    this.counterOverlayB.getValueFactory().setValue(SEffe.additionBorderColors_800fb7f0.get(8).get());
   }
 
   @FXML

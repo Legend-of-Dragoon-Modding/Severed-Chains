@@ -3691,6 +3691,17 @@ public final class SEffe {
       hitOverlay.borderArray_18.set(borderArray);
 
       //LAB_8010652c
+      if(Config.changeAdditionOverlayRGB()) {
+        final int counterRgb = Config.getCounterOverlayRGB();
+        final int additionRgb = Config.getAdditionOverlayRGB();
+        additionBorderColors_800fb7f0.get(6).set(counterRgb & 0xff);
+        additionBorderColors_800fb7f0.get(7).set(counterRgb >> 8 & 0xff);
+        additionBorderColors_800fb7f0.get(8).set(counterRgb >> 16 & 0xff);
+        additionBorderColors_800fb7f0.get(9).set(additionRgb & 0xff);
+        additionBorderColors_800fb7f0.get(10).set(additionRgb >> 8 & 0xff);
+        additionBorderColors_800fb7f0.get(11).set(additionRgb >> 16 & 0xff);
+      }
+
       int val = 16;
       for(int borderNum = 0; borderNum < 17; borderNum++) {
         final AdditionOverlaysBorder0e borderOverlay = borderArray.get(borderNum);
