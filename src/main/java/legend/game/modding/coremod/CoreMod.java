@@ -2,6 +2,7 @@ package legend.game.modding.coremod;
 
 import legend.core.GameEngine;
 import legend.game.modding.Mod;
+import legend.game.modding.coremod.config.AdditionOverlayConfigEntry;
 import legend.game.modding.coremod.config.AutoAdditionConfigEntry;
 import legend.game.modding.coremod.config.EncounterRateConfigEntry;
 import legend.game.modding.coremod.config.IndicatorModeConfigEntry;
@@ -24,6 +25,7 @@ public class CoreMod {
   public static final RegistryDelegate<InventorySizeConfigEntry> INVENTORY_SIZE_CONFIG = CONFIG_REGISTRAR.register("inventory_size", InventorySizeConfigEntry::new);
   public static final RegistryDelegate<EncounterRateConfigEntry> ENCOUNTER_RATE_CONFIG = CONFIG_REGISTRAR.register("encounter_rate", EncounterRateConfigEntry::new);
   public static final RegistryDelegate<AutoAdditionConfigEntry> AUTO_ADDITION_CONFIG = CONFIG_REGISTRAR.register("auto_addition", AutoAdditionConfigEntry::new);
+  public static final RegistryDelegate<AdditionOverlayConfigEntry> ADDITION_OVERLAY_CONFIG = CONFIG_REGISTRAR.register("addition_overlay_mode", AdditionOverlayConfigEntry::new);
 
   public static RegistryId id(final String entryId) {
     return new RegistryId(MOD_ID, entryId);

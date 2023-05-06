@@ -44,7 +44,8 @@ public class BattlePreloadedEntities_18cb0 {
   public static class AdditionHitProperties20 {
     public int length;
 
-    public short _00; // Some kind of flag; all hits except first hit of final addition (0xe0) seem to be 0xc0
+    /** All hits except first hit of final addition (0xe0) seem to be 0xc0 */
+    public short flags_00;
     public short totalFrames_02;
     public short overlayHitFrameOffset;
     public short totalSuccessFrames_06;
@@ -67,7 +68,7 @@ public class BattlePreloadedEntities_18cb0 {
 
     public short get(final int propertyIndex) {
       return switch(propertyIndex) {
-        case 0 -> this._00;
+        case 0 -> this.flags_00;
         case 1 -> this.totalFrames_02;
         case 2 -> this.overlayHitFrameOffset;
         case 3 -> this.totalSuccessFrames_06;
@@ -89,7 +90,7 @@ public class BattlePreloadedEntities_18cb0 {
 
     public void set(final int propertyIndex, final short value) {
       switch(propertyIndex) {
-        case 0 -> this._00 = value;
+        case 0 -> this.flags_00 = value;
         case 1 -> this.totalFrames_02 = value;
         case 2 -> this.overlayHitFrameOffset = value;
         case 3 -> this.totalSuccessFrames_06 = value;

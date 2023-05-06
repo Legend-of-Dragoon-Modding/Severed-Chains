@@ -93,6 +93,7 @@ import legend.game.combat.types.EffeScriptData30;
 import legend.game.combat.types.EffeScriptData30Sub06;
 import legend.game.combat.types.SpriteMetrics08;
 import legend.game.combat.types.VertexDifferenceAnimation18;
+import legend.game.combat.ui.AdditionOverlayMode;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
@@ -3806,7 +3807,7 @@ public final class SEffe {
 
   @Method(0x80106808L)
   public static void renderAdditionCentreSolidSquare(final BttlScriptData6cSubBase1 a0, final AdditionOverlaysHit20 hitOverlay, final int completionState, final ScriptState<EffectManagerData6c> a3, final EffectManagerData6c effect) {
-    if(effect._10.flags_00 >= 0 && gameState_800babc8.getConfig(CoreMod.AUTO_ADDITION_CONFIG.get()) == AutoAdditionMode.OFF) {
+    if(effect._10.flags_00 >= 0) {
       final ArrayRef<AdditionOverlaysBorder0e> targetBorderArray = hitOverlay.targetBorderArray_14.deref();
 
       //LAB_8010685c
@@ -4037,7 +4038,9 @@ public final class SEffe {
         //LAB_801072c4
         int hitNum;
         for(hitNum = 0; hitNum < effect.count_30.get(); hitNum++) {
-          renderAdditionBorders(hitArray.get(hitNum).borderColorsArrayIndex_02.get(), hitNum, effect, hitArray, state);
+          if(gameState_800babc8.getConfig(CoreMod.ADDITION_OVERLAY_CONFIG.get()) == AdditionOverlayMode.FULL) {
+            renderAdditionBorders(hitArray.get(hitNum).borderColorsArrayIndex_02.get(), hitNum, effect, hitArray, state);
+          }
         }
 
         //LAB_801072f4
@@ -4051,11 +4054,15 @@ public final class SEffe {
         //LAB_80107330
         if(hitNum < effect.count_30.get()) {
           final AdditionOverlaysHit20 hitOverlay = hitArray.get(hitNum);
-          renderAdditionButton((byte)(hitOverlay.frameSuccessLowerBound_10.get() + (hitOverlay.frameSuccessUpperBound_12.get() - hitOverlay.frameSuccessLowerBound_10.get()) / 2 - effect.currentFrame_34.get() - 0x1L), hitOverlay.isCounter_1c.get());
+          if(gameState_800babc8.getConfig(CoreMod.ADDITION_OVERLAY_CONFIG.get()) == AdditionOverlayMode.FULL) {
+            renderAdditionButton((byte)(hitOverlay.frameSuccessLowerBound_10.get() + (hitOverlay.frameSuccessUpperBound_12.get() - hitOverlay.frameSuccessLowerBound_10.get()) / 2 - effect.currentFrame_34.get() - 0x1L), hitOverlay.isCounter_1c.get());
+          }
 
           final byte currentFrame = (byte)effect.currentFrame_34.get();
           if(currentFrame >= hitOverlay.frameSuccessLowerBound_10.get() && currentFrame <= hitOverlay.frameSuccessUpperBound_12.get()) {
-            renderAdditionCentreSolidSquare(effect, hitOverlay, -2, state, data);
+            if(gameState_800babc8.getConfig(CoreMod.ADDITION_OVERLAY_CONFIG.get()) != AdditionOverlayMode.OFF) {
+              renderAdditionCentreSolidSquare(effect, hitOverlay, -2, state, data);
+            }
           }
         }
       }
@@ -4187,7 +4194,10 @@ public final class SEffe {
           //LAB_80107728
           if(effect.numFramesToRenderCenterSquare_38.get() != 0) {
             effect.numFramesToRenderCenterSquare_38.decr();
-            renderAdditionCentreSolidSquare(effect, effect.lastCompletedHitOverlay_3c.deref(), additionHitCompletionState_8011a014.get(effect.lastCompletedHit_39.get()).get(), state, data);
+            if(gameState_800babc8.getConfig(CoreMod.ADDITION_OVERLAY_CONFIG.get()) != AdditionOverlayMode.OFF && gameState_800babc8.getConfig(CoreMod.AUTO_ADDITION_CONFIG.get()) == AutoAdditionMode.OFF) {
+              renderAdditionCentreSolidSquare(effect, effect.lastCompletedHitOverlay_3c.deref(),
+                additionHitCompletionState_8011a014.get(effect.lastCompletedHit_39.get()).get(), state, data);
+            }
           }
         }
       }
