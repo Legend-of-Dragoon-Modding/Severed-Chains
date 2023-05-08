@@ -47,7 +47,7 @@ public class BattlePreloadedEntities_18cb0 {
     /** All hits except first hit of final addition (0xe0) seem to be 0xc0 */
     public short flags_00;
     public short totalFrames_02;
-    public short overlayHitFrameOffset;
+    public short overlayHitFrameOffset_04;
     public short totalSuccessFrames_06;
     public short damageMultiplier_08;
     public short spValue_0a;
@@ -70,7 +70,7 @@ public class BattlePreloadedEntities_18cb0 {
       return switch(propertyIndex) {
         case 0 -> this.flags_00;
         case 1 -> this.totalFrames_02;
-        case 2 -> this.overlayHitFrameOffset;
+        case 2 -> this.overlayHitFrameOffset_04;
         case 3 -> this.totalSuccessFrames_06;
         case 4 -> this.damageMultiplier_08;
         case 5 -> this.spValue_0a;
@@ -92,7 +92,7 @@ public class BattlePreloadedEntities_18cb0 {
       switch(propertyIndex) {
         case 0 -> this.flags_00 = value;
         case 1 -> this.totalFrames_02 = value;
-        case 2 -> this.overlayHitFrameOffset = value;
+        case 2 -> this.overlayHitFrameOffset_04 = value;
         case 3 -> this.totalSuccessFrames_06 = value;
         case 4 -> this.damageMultiplier_08 = value;
         case 5 -> this.spValue_0a = value;
