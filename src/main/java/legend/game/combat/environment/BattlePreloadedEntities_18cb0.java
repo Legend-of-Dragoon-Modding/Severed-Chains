@@ -8,18 +8,12 @@ import legend.game.types.MrgFile;
 
 import java.util.Arrays;
 
-/**
- * 0x18cb0 bytes
- */
+/** 0x18cb0 bytes */
 public class BattlePreloadedEntities_18cb0 {
   public EncounterData38 encounterData_00;
-  /**
-   * 3 slots for chars, 3 slots for dragoons
-   */
+  /** 3 slots for chars, 3 slots for dragoons */
   public final AdditionHits100[] additionHits_38 = new AdditionHits100[0x100];
-  /**
-   * This reference is only valid while it's loading
-   */
+  /** This reference is only valid while it's loading */
   public MrgFile stageMrg_638;
   public MrgFile stageTmdMrg_63c;
 
@@ -58,8 +52,8 @@ public class BattlePreloadedEntities_18cb0 {
     public short _14; // related to camera? index into array?
     public short hitDistanceFromTarget_16;
     public short framesToHitPosition_18;
-    public short _1a; // always 32, could be length of properties array
-    public short unused_1c;
+    public short _1a; // always 32 (except for a few for Haschel), could be length of properties array
+    public short framesPostFailure_1c;
     public short overlayStartingFrameOffset_1e;
 
     public AdditionHitProperties20() {
@@ -82,7 +76,7 @@ public class BattlePreloadedEntities_18cb0 {
         case 11 -> this.hitDistanceFromTarget_16;
         case 12 -> this.framesToHitPosition_18;
         case 13 -> this._1a;
-        case 14 -> this.unused_1c;
+        case 14 -> this.framesPostFailure_1c;
         case 15 -> this.overlayStartingFrameOffset_1e;
         default -> throw new IllegalArgumentException(propertyIndex + " is an invalid addition hit property index.");
       };
@@ -104,7 +98,7 @@ public class BattlePreloadedEntities_18cb0 {
         case 11 -> this.hitDistanceFromTarget_16 = value;
         case 12 -> this.framesToHitPosition_18 = value;
         case 13 -> this._1a = value;
-        case 14 -> this.unused_1c = value;
+        case 14 -> this.framesPostFailure_1c = value;
         case 15 -> this.overlayStartingFrameOffset_1e = value;
         default -> throw new IllegalArgumentException(propertyIndex + " is an invalid addition hit property index.");
       }
