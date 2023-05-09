@@ -130,6 +130,7 @@ import static legend.game.Scus94491BpeSegment_8004._8004fa98;
 import static legend.game.Scus94491BpeSegment_8004._8004fb00;
 import static legend.game.Scus94491BpeSegment_8004.currentlyLoadingFileEntry_8004dd04;
 import static legend.game.Scus94491BpeSegment_8004.gameStateCallbacks_8004dbc0;
+import static legend.game.Scus94491BpeSegment_8004.height_8004dd34;
 import static legend.game.Scus94491BpeSegment_8004.initSpu;
 import static legend.game.Scus94491BpeSegment_8004.loadSshdAndSoundbank;
 import static legend.game.Scus94491BpeSegment_8004.loadedOverlayIndex_8004dd10;
@@ -1104,7 +1105,7 @@ public final class Scus94491BpeSegment {
     GsSetDrawBuffOffset();
 
     //LAB_80013060
-    GsInitGraph(width_8004dd34.get(), 240);
+    GsInitGraph(width_8004dd34, height_8004dd34);
 
     //LAB_80013080
     setDrawOffset();
@@ -1121,11 +1122,12 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80013200L)
-  public static void setWidthAndFlags(final int width) {
+  public static void resizeDisplay(final int width, final int height) {
     if(width != displayWidth_1f8003e0.get()) {
       // Change the syncFrame callback to the reinitializer for a frame to reinitialize everything with the new size/flags
       syncFrame_8004dd3c = Scus94491BpeSegment::syncFrame_reinit;
-      width_8004dd34.set(width);
+      width_8004dd34 = width;
+      height_8004dd34 = height;
     }
   }
 

@@ -74,7 +74,7 @@ import static legend.game.Scus94491BpeSegment.loadFile;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
-import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
+import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022a94;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a86c;
@@ -2023,7 +2023,7 @@ public final class SItem {
       case INIT_0:
         renderablePtr_800bdc5c = null;
         uiFile_800bdc3c = null;
-        setWidthAndFlags(320);
+        resizeDisplay(320, 240);
         loadDrgnFile(0, 6665, data -> menuAssetsLoaded(data, 0));
         loadDrgnFile(0, 6666, data -> menuAssetsLoaded(data, 1));
         textZ_800bdf00.set(33);
@@ -2330,7 +2330,7 @@ public final class SItem {
             FUN_8010d050(InventoryMenuState._18, 0x1L);
           } else {
             // Some items remaining
-            setWidthAndFlags(384);
+            resizeDisplay(368, 240);
             deallocateRenderables(0xff);
             menuStack.pushScreen(new TooManyItemsScreen());
             inventoryMenuState_800bdc28.set(InventoryMenuState._19);

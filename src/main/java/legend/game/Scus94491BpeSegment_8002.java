@@ -125,7 +125,7 @@ import static legend.game.Scus94491BpeSegment.mallocHead;
 import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.rectArray28_80010770;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
-import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
+import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
@@ -1247,7 +1247,7 @@ public final class Scus94491BpeSegment_8002 {
 
           renderablePtr_800bdc5c = null;
           uiFile_800bdc3c = null;
-          setWidthAndFlags(384);
+          resizeDisplay(368, 240);
           loadDrgnFile(0, 6665, data -> menuAssetsLoaded(data, 0));
           loadDrgnFile(0, 6666, data -> menuAssetsLoaded(data, 1));
           textZ_800bdf00.set(33);

@@ -134,7 +134,8 @@ public final class Scus94491BpeSegment_8004 {
   /** The previous index before the file finished loading */
   public static final IntRef previousMainCallbackIndex_8004dd28 = MEMORY.ref(4, 0x8004dd28L, IntRef::new);
 
-  public static final UnsignedShortRef width_8004dd34 = MEMORY.ref(2, 0x8004dd34L, UnsignedShortRef::new);
+  public static int width_8004dd34 = 320;
+  public static int height_8004dd34 = 240;
 
   public static final UnsignedShortRef reinitOrderingTableBits_8004dd38 = MEMORY.ref(2, 0x8004dd38L, UnsignedShortRef::new);
 

@@ -132,9 +132,9 @@ import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.orderingTableBits_1f8003c0;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static legend.game.Scus94491BpeSegment.rcos;
+import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
-import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment.unloadSoundFile;
@@ -4277,7 +4277,7 @@ public final class SMap {
       _800cab20.subu(0x1L);
 
       if(_800cab20.getSigned() >= 0) {
-        setWidthAndFlags(384);
+        resizeDisplay(384, 240);
         _800caaf4.set(submapCut_80052c30.get());
         _800caaf8.set(submapScene_80052c34.get());
         return;
@@ -4314,7 +4314,7 @@ public final class SMap {
       case 0x0 -> {
         srand((int)System.nanoTime());
         if(_800cb440.get() == 0) {
-          setWidthAndFlags(384);
+          resizeDisplay(384, 240);
         }
 
         //LAB_800e5b2c
@@ -6452,7 +6452,7 @@ public final class SMap {
 
   @Method(0x800eaad4L)
   public static void initCredits() {
-    setWidthAndFlags(384);
+    resizeDisplay(384, 240);
     vsyncMode_8007a3b8.set(2);
 
     //LAB_800eab00

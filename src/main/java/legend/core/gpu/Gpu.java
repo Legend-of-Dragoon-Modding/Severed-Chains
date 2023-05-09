@@ -126,7 +126,7 @@ public class Gpu {
   /** Rescale immediately - may cause issues if commands are in the queue */
   public void rescaleNow(final int scale) {
     this.scale = scale;
-    this.displaySize(this.status.horizontalResolution, 240);
+    this.displaySize(this.status.horizontalResolution, this.status.verticalResolution);
     this.drawingArea(this.drawingArea.x.get(), this.drawingArea.y.get(), this.drawingArea.w.get(), this.drawingArea.h.get());
   }
 
@@ -276,7 +276,7 @@ public class Gpu {
 
   public void tick() {
     if(this.displayChanged) {
-      this.displaySize(this.status.horizontalResolution, 240);
+      this.displaySize(this.status.horizontalResolution, this.status.verticalResolution);
       this.displayChanged = false;
     }
 
@@ -492,8 +492,9 @@ public class Gpu {
   /**
    * GP1(08h) - Display Mode
    */
-  public void displayMode(final int hRes) {
-    this.status.horizontalResolution = hRes;
+  public void displayMode(final int width, final int height) {
+    this.status.horizontalResolution = width;
+    this.status.verticalResolution = height;
 
     // Always run on the GPU thread
     if(glfwGetCurrentContext() == 0) {
@@ -501,7 +502,7 @@ public class Gpu {
       return;
     }
 
-    this.displaySize(hRes, 240);
+    this.displaySize(width, height);
   }
 
   public void displaySize(final int horizontalRes, final int verticalRes) {
@@ -1079,10 +1080,8 @@ public class Gpu {
      */
     public DRAW_PIXELS drawPixels = DRAW_PIXELS.ALWAYS;
 
-    /**
-     * Bits 17-18 - Horizontal resolution 1
-     */
     public int horizontalResolution = 320;
+    public int verticalResolution = 240;
   }
 
   public enum DRAW_PIXELS {

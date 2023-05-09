@@ -55,9 +55,9 @@ import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static legend.game.Scus94491BpeSegment.playSound;
 import static legend.game.Scus94491BpeSegment.renderMcq;
+import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
-import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a9c0;
 import static legend.game.Scus94491BpeSegment_8002.SetGeomOffset;
@@ -253,7 +253,7 @@ public final class Ttle {
     switch(pregameLoadingStage_800bb10c.get()) {
       case 0 -> {
         FUN_8002a9c0();
-        setWidthAndFlags(640);
+        resizeDisplay(640, 240);
         pregameLoadingStage_800bb10c.set(1);
       }
 
@@ -331,7 +331,7 @@ public final class Ttle {
     hasSavedGames = 0;
     selectedMenuOption = 0;
 
-    setWidthAndFlags(384);
+    resizeDisplay(368, 240);
     setProjectionPlaneDistance(320);
     GsRVIEW2_800c6760.viewpoint_00.set(0, 0, 2000);
     GsRVIEW2_800c6760.refpoint_0c.set(0, 0, -4000);
