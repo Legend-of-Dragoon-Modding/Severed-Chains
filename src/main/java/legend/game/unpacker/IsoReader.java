@@ -5,8 +5,8 @@ import java.io.RandomAccessFile;
 import java.nio.file.Path;
 
 public class IsoReader {
-  private static final int SECTOR_SIZE = 2352;
-  private static final int SYNC_PATTER_SIZE = 12;
+  public static final int SECTOR_SIZE = 2352;
+  public static final int SYNC_PATTER_SIZE = 12;
 
   private final Path path;
   private final RandomAccessFile file;
