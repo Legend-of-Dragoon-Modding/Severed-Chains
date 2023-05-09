@@ -8920,7 +8920,7 @@ public final class SEffe {
 
         final GpuCommandPoly cmd = new GpuCommandPoly(4)
           .clut((clut & 0b111111) * 16, clut >>> 6)
-          .vramPos(((effect.metrics_54.u_00.get() & 0x3ff) & ~0x3f), (effect.metrics_54.v_02.get() & 0x100) != 0 ? 256 : 0)
+          .vramPos(effect.metrics_54.u_00.get() & 0x3c0, (effect.metrics_54.v_02.get() & 0x100) != 0 ? 256 : 0)
           .rgb(manager._10.colour_1c.getX(), manager._10.colour_1c.getY(), manager._10.colour_1c.getZ())
           .pos(0, sp0x80.getX() + cosL - sinT, sp0x80.getY() + sinL + cosT)
           .pos(1, sp0x80.getX() + cosR - sinT, sp0x80.getY() + sinR + cosT)
