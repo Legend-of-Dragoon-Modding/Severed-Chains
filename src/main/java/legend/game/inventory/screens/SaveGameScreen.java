@@ -1,6 +1,7 @@
 package legend.game.inventory.screens;
 
 import legend.game.SItem;
+import legend.game.input.InputAction;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.BigList;
 import legend.game.inventory.screens.controls.Glyph;
@@ -93,5 +94,24 @@ public class SaveGameScreen extends MenuScreen {
 
       this.unload.run();
     }
+  }
+
+  private void menuEscape() {
+    playSound(3);
+    this.unload.run();
+  }
+
+  @Override
+  public InputPropagation pressedThisFrame(final InputAction inputAction) {
+    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
+    if(inputAction == InputAction.BUTTON_EAST) {
+      this.menuEscape();
+      return InputPropagation.HANDLED;
+    }
+
+    return InputPropagation.PROPAGATE;
   }
 }
