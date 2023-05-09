@@ -331,18 +331,19 @@ public final class Scus94491BpeSegment {
       final int op = r.opParam_18;
 
       return (switch(op) {
-        case 0 -> "if 0 <= 0x%x (p1)? %s;";
-        case 1 -> "if 0 < 0x%x (p1)? %s;";
-        case 2 -> "if 0 == 0x%x (p1)? %s;";
-        case 3 -> "if 0 != 0x%x (p1)? %s;";
-        case 4 -> "if 0 > 0x%x (p1)? %s;";
-        case 5 -> "if 0 >= 0x%x (p1)? %s;";
-        case 6 -> "if 0 & 0x%x (p1)? %s;";
-        case 7 -> "if 0 !& 0x%x (p1)? %s;";
+        case 0 -> "if 0 <= 0x%x (p0)? %s;";
+        case 1 -> "if 0 < 0x%x (p0)? %s;";
+        case 2 -> "if 0 == 0x%x (p0)? %s;";
+        case 3 -> "if 0 != 0x%x (p0)? %s;";
+        case 4 -> "if 0 > 0x%x (p0)? %s;";
+        case 5 -> "if 0 >= 0x%x (p0)? %s;";
+        case 6 -> "if 0 & 0x%x (p0)? %s;";
+        case 7 -> "if 0 !& 0x%x (p0)? %s;";
         default -> "illegal cmp 4";
       }).formatted(operandB, r.scriptState_04.scriptCompare(0, operandB, op) ? "yes - continue" : "no - rewind");
     });
     scriptFunctionDescriptions.put(8, r -> "*%s (p1) = 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(9, r -> "tmp = 0x%x (p0); *%s (p1) = tmp; *%s (p0) = tmp; // Broken swap".formatted(r.params_20[0].get(), r.params_20[1], r.params_20[0]));
     scriptFunctionDescriptions.put(10, r -> "memcpy(%s (p1), %s (p2), %d (p0));".formatted(r.params_20[1], r.params_20[2], r.params_20[0].get()));
     scriptFunctionDescriptions.put(12, r -> "*%s (p0) = 0;".formatted(r.params_20[0]));
     scriptFunctionDescriptions.put(16, r -> "*%s (p1) &= 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
