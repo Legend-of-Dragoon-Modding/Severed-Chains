@@ -9493,9 +9493,9 @@ public final class SMap {
           .pos(2, x, y + sprite.h_0a.get())
           .pos(3, x + sprite.w_08.get(), y + sprite.h_0a.get())
           .uv(0, u, v)
-          .uv(1, u + sprite.w_08.get() + 1, v)
-          .uv(2, u, v + sprite.h_0a.get() + 1)
-          .uv(3, u + sprite.w_08.get() + 1, v + sprite.h_0a.get() + 1);
+          .uv(1, u + sprite.w_08.get(), v)
+          .uv(2, u, v + sprite.h_0a.get())
+          .uv(3, u + sprite.w_08.get(), v + sprite.h_0a.get());
 
         if(indicatorIndex == 0) { // Player indicator
           final int triangleIndex = getEncounterTriangleColour();
