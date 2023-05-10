@@ -873,11 +873,11 @@ public final class Bttl_800e {
     }
 
     if(g < 0) {
-      LOGGER.warn("Negative R! %x", g);
+      LOGGER.warn("Negative G! %x", g);
     }
 
     if(b < 0) {
-      LOGGER.warn("Negative R! %x", b);
+      LOGGER.warn("Negative B! %x", b);
     }
 
     final BattleLightStruct64 v1 = _800c6930;
@@ -903,11 +903,11 @@ public final class Bttl_800e {
     }
 
     if(g < 0) {
-      LOGGER.warn("Negative R! %x", g);
+      LOGGER.warn("Negative G! %x", g);
     }
 
     if(b < 0) {
-      LOGGER.warn("Negative R! %x", b);
+      LOGGER.warn("Negative B! %x", b);
     }
 
     GsSetFlatLight(0, light_800c6ddc);
@@ -4110,7 +4110,7 @@ public final class Bttl_800e {
   public static void FUN_800ef9e4() {
     if(_800c6cf4.get() == 0x6L) {
       if(Config.changeBattleRGB()) {
-        Bttl_800c._800c7004.set(Config.getBattleRGB());
+        Bttl_800c._800c7004.set(Config.getBattleRgb());
       }
 
       final long charCount = charCount_800c677c.get();

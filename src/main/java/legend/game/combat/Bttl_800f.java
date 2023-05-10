@@ -126,7 +126,7 @@ import static legend.game.combat.Bttl_800c.displayStats_800c6c2c;
 import static legend.game.combat.Bttl_800c.dragoonSpells_800c6960;
 import static legend.game.combat.Bttl_800c.enemyCount_800c6758;
 import static legend.game.combat.Bttl_800c.floatingNumbers_800c6b5c;
-import static legend.game.combat.Bttl_800c.getHitMultiplier;
+import static legend.game.combat.Bttl_800c.getHitProperty;
 import static legend.game.combat.Bttl_800c.intRef_800c6718;
 import static legend.game.combat.Bttl_800c.protectedItems_800c72cc;
 import static legend.game.combat.Bttl_800c.spellStats_800fa0b8;
@@ -812,7 +812,7 @@ public final class Bttl_800f {
       //LAB_800f2b94
       int additionMultiplier = 0;
       for(int i = 0; i < attacker.additionHits_56; i++) {
-        additionMultiplier += getHitMultiplier(attacker.charSlot_276, i, 4);
+        additionMultiplier += getHitProperty(attacker.charSlot_276, i, 4);
       }
 
       //LAB_800f2bb4

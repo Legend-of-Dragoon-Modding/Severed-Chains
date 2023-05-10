@@ -83,18 +83,52 @@
                <HBox prefHeight="19.0" prefWidth="213.0">
                   <children>
                      <Spinner fx:id="battleUIColourR" editable="true" prefHeight="25.0" prefWidth="75.0" />
-                     <Spinner fx:id="battleUIColourG" editable="true" prefHeight="25.0" prefWidth="75.0" />
-                     <Spinner fx:id="battleUIColourB" editable="true" prefHeight="25.0" prefWidth="75.0" />
+                     <Spinner fx:id="battleUIColourG" editable="true" prefHeight="25.0" prefWidth="75.0"/>
+                     <Spinner fx:id="battleUIColourB" editable="true" prefHeight="25.0" prefWidth="75.0"/>
                   </children>
                </HBox>
                <HBox prefHeight="0.0" prefWidth="213.0">
                   <children>
-                     <Button mnemonicParsing="false" onAction="#getBattleUIRGB" text="Get" />
-                     <Button mnemonicParsing="false" onAction="#setBattleUIRGB" text="Set" />
+                     <Button mnemonicParsing="false" onAction="#getBattleUiRgb" text="Get"/>
+                     <Button mnemonicParsing="false" onAction="#setBattleUiRgb" text="Set"/>
                   </children>
                </HBox>
-               <CheckBox fx:id="autoAddition" mnemonicParsing="false" onAction="#toggleAutoAddition" text="Auto Additions" />
-               <CheckBox fx:id="autoMeter" mnemonicParsing="false" onAction="#toggleAutoDragoonMeter" text="Auto Dragoon Meter" />
+               <CheckBox fx:id="additionOverlayColour" mnemonicParsing="false" onAction="#toggleAdditionOverlayColour" text="Addition Overlay Colour"/>
+               <Label text="Normal"/>
+               <HBox prefHeight="19.0" prefWidth="213.0">
+                  <children>
+                     <Spinner fx:id="additionOverlayR" editable="true" prefHeight="25.0" prefWidth="75.0"/>
+                     <Spinner fx:id="additionOverlayG" editable="true" prefHeight="25.0" prefWidth="75.0"/>
+                     <Spinner fx:id="additionOverlayB" editable="true" prefHeight="25.0" prefWidth="75.0"/>
+                  </children>
+               </HBox>
+               <HBox prefHeight="0.0" prefWidth="213.0">
+                  <children>
+                     <Button mnemonicParsing="false" onAction="#getAdditionOverlayRgb" text="Get"/>
+                     <Button mnemonicParsing="false" onAction="#setAdditionOverlayRgb" text="Set"/>
+                  </children>
+               </HBox>
+               <Label text="Counterattack"/>
+               <HBox prefHeight="19.0" prefWidth="213.0">
+                  <children>
+                     <Spinner fx:id="counterOverlayR" editable="true" prefHeight="25.0" prefWidth="75.0"/>
+                     <Spinner fx:id="counterOverlayG" editable="true" prefHeight="25.0" prefWidth="75.0"/>
+                     <Spinner fx:id="counterOverlayB" editable="true" prefHeight="25.0" prefWidth="75.0"/>
+                  </children>
+               </HBox>
+               <HBox prefHeight="0.0" prefWidth="213.0">
+                  <children>
+                     <Button mnemonicParsing="false" onAction="#getCounterOverlayRgb" text="Get"/>
+                     <Button mnemonicParsing="false" onAction="#setCounterOverlayRgb" text="Set"/>
+                  </children>
+               </HBox>
+               <HBox prefHeight="0.0" prefWidth="213.0">
+                  <children>
+                     <CheckBox fx:id="autoAddition" mnemonicParsing="false" onAction="#toggleAutoAddition" text="Auto Additions  "/>
+                     <Button fx:id="refreshAutoAddition" mnemonicParsing="false" onAction="#refreshAutoAddition" text="Refresh" style="-fx-padding: 0 2 0 2;"/>
+                  </children>
+               </HBox>
+               <CheckBox fx:id="autoMeter" mnemonicParsing="false" onAction="#toggleAutoDragoonMeter" text="Auto Dragoon Meter"/>
                <CheckBox fx:id="disableStatusEffects" mnemonicParsing="false" onAction="#toggleDisableStatusEffects" text="Disable Status Effects"/>
             </children>
          </VBox>

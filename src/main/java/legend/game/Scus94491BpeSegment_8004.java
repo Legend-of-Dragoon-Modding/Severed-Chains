@@ -664,12 +664,12 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[751] = Bttl_800d::allocateAdditionSparksEffect;
     scriptSubFunctions_8004e29c[752] = SEffe::FUN_80102608;
     scriptSubFunctions_8004e29c[753] = SEffe::allocateAdditionOverlaysEffect;
-    scriptSubFunctions_8004e29c[754] = SEffe::FUN_801077bc;
+    scriptSubFunctions_8004e29c[754] = SEffe::scriptGetHitCompletionState;
     scriptSubFunctions_8004e29c[755] = SEffe::FUN_80108de8;
     scriptSubFunctions_8004e29c[756] = Bttl_800d::allocateAdditionStarburstEffect;
     scriptSubFunctions_8004e29c[757] = Bttl_800d::FUN_800d1cac;
     scriptSubFunctions_8004e29c[758] = Bttl_800d::FUN_800d1cf4;
-    scriptSubFunctions_8004e29c[759] = SEffe::FUN_801078c0;
+    scriptSubFunctions_8004e29c[759] = SEffe::scriptAlterAdditionContinuationState;
     scriptSubFunctions_8004e29c[760] = SEffe::FUN_80108df0;
     scriptSubFunctions_8004e29c[761] = Bttl_800d::allocateGuardEffect;
     scriptSubFunctions_8004e29c[762] = Bttl_800c::allocateWeaponTrailEffect;
@@ -734,7 +734,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[851] = SEffe::FUN_8010a3fc;
     scriptSubFunctions_8004e29c[852] = Bttl_800d::allocateMonsterDeathEffect;
     scriptSubFunctions_8004e29c[853] = Bttl_800d::FUN_800d0124;
-    scriptSubFunctions_8004e29c[854] = SEffe::FUN_801079a4;
+    scriptSubFunctions_8004e29c[854] = SEffe::scriptGetAdditionOverlayActiveStatus;
 
     scriptSubFunctions_8004e29c[864] = Scus94491BpeSegment_8002::scriptGiveChestContents;
     scriptSubFunctions_8004e29c[865] = Scus94491BpeSegment_8002::scriptTakeItem;

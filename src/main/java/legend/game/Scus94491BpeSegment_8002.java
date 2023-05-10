@@ -1053,15 +1053,15 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x80021f8cL)
   public static void SetBackColor(final long r, final long g, final long b) {
     if(r < 0) {
-      LOGGER.warn("Negative r! %x", r);
+      LOGGER.warn("Negative R! %x", r);
     }
 
     if(g < 0) {
-      LOGGER.warn("Negative r! %x", g);
+      LOGGER.warn("Negative G! %x", g);
     }
 
     if(b < 0) {
-      LOGGER.warn("Negative r! %x", b);
+      LOGGER.warn("Negative B! %x", b);
     }
 
     CPU.CTC2(r * 0x10L, 13); // Background colour R

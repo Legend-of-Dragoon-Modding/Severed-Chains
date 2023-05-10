@@ -87,11 +87,11 @@ public class GpuCommandPoly extends GpuCommand {
     }
 
     if(g < 0) {
-      LOGGER.warn("Negative R! %x", g);
+      LOGGER.warn("Negative G! %x", g);
     }
 
     if(b < 0) {
-      LOGGER.warn("Negative R! %x", b);
+      LOGGER.warn("Negative B! %x", b);
     }
 
     return this.rgb(b << 16 | g << 8 | r);
@@ -113,11 +113,11 @@ public class GpuCommandPoly extends GpuCommand {
     }
 
     if(g < 0) {
-      LOGGER.warn("Negative R! %x", g);
+      LOGGER.warn("Negative G! %x", g);
     }
 
     if(b < 0) {
-      LOGGER.warn("Negative R! %x", b);
+      LOGGER.warn("Negative B! %x", b);
     }
 
     return this.rgb(vertex, b << 16 | g << 8 | r);
