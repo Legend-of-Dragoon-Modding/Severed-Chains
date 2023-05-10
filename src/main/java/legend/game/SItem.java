@@ -25,7 +25,6 @@ import legend.game.inventory.screens.MainMenuScreen;
 import legend.game.inventory.screens.MenuStack;
 import legend.game.inventory.screens.TextColour;
 import legend.game.inventory.screens.TooManyItemsScreen;
-import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.EventManager;
 import legend.game.modding.events.characters.AdditionHitMultiplierEvent;
 import legend.game.modding.events.characters.AdditionUnlockEvent;
@@ -72,8 +71,8 @@ import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.loadFile;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
+import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
-import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022a94;
 import static legend.game.Scus94491BpeSegment_8002.allocateRenderable;
@@ -126,8 +125,8 @@ import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.totalXpFromCombat_800bc95c;
 import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
-import static legend.game.combat.Bttl_800c.allBobjCount_800c66d0;
 import static legend.game.combat.Bttl_800c.addCombatant;
+import static legend.game.combat.Bttl_800c.allBobjCount_800c66d0;
 import static legend.game.combat.Bttl_800c.charCount_800c677c;
 import static legend.game.combat.Bttl_800c.characterElements_800c706c;
 import static legend.game.combat.Bttl_800c.combatantCount_800c66a0;
@@ -1648,7 +1647,6 @@ public final class SItem {
     for(int i = 0; i < 4; i++) {
       int s4 = 0;
       final int len = Math.min(textLength(s0), 20);
-
       final LodString s3 = new LodString(len + 1);
 
       //LAB_801091bc
@@ -2015,7 +2013,7 @@ public final class SItem {
       case INIT_0:
         renderablePtr_800bdc5c = null;
         uiFile_800bdc3c = null;
-        setWidthAndFlags(320);
+        resizeDisplay(320, 240);
         loadDrgnFile(0, 6665, data -> menuAssetsLoaded(data, 0));
         loadDrgnFile(0, 6666, data -> menuAssetsLoaded(data, 1));
         textZ_800bdf00.set(33);
@@ -2096,7 +2094,7 @@ public final class SItem {
           }
 
           inventoryMenuState_800bdc28.set(InventoryMenuState.INIT_MAIN_MENU_3);
-          FUN_8010e9a8(0x1L, xpDivisor_8011e174.get());
+          FUN_8010e9a8(1);
         }
 
         break;
@@ -2111,7 +2109,7 @@ public final class SItem {
           }
         }
 
-        FUN_8010e9a8(0, xpDivisor_8011e174.get());
+        FUN_8010e9a8(0);
         break;
 
       case MAIN_MENU_4:
@@ -2150,7 +2148,7 @@ public final class SItem {
           playSound(0x1L);
         }
 
-        FUN_8010e9a8(0, xpDivisor_8011e174.get());
+        FUN_8010e9a8(0);
         break;
 
       case _5:
@@ -2185,7 +2183,7 @@ public final class SItem {
           }
         }
 
-        FUN_8010e9a8(0, xpDivisor_8011e174.get());
+        FUN_8010e9a8(0);
         break;
 
       case CONFIG_6:
@@ -2204,7 +2202,7 @@ public final class SItem {
         //LAB_8010dcf4
         //LAB_8010dcf8
         renderAdditionsUnlocked((int)_8011e178.get());
-        FUN_8010e9a8(0, xpDivisor_8011e174.get());
+        FUN_8010e9a8(0);
         break;
 
       case _7:
@@ -2216,7 +2214,7 @@ public final class SItem {
         }
 
         renderAdditionsUnlocked((int)_8011e178.get());
-        FUN_8010e9a8(0, xpDivisor_8011e174.get());
+        FUN_8010e9a8(0);
         break;
 
       case REPLACE_INIT_8:
@@ -2232,7 +2230,7 @@ public final class SItem {
           _8011e170.addu(0x1L);
         }
 
-        FUN_8010e9a8(0, xpDivisor_8011e174.get());
+        FUN_8010e9a8(0);
         break;
 
       case _9:
@@ -2245,7 +2243,7 @@ public final class SItem {
           _8011e170.addu(0x1L);
         }
 
-        FUN_8010e9a8(0, xpDivisor_8011e174.get());
+        FUN_8010e9a8(0);
         break;
 
       case REPLACE_MENU_10:
@@ -2263,7 +2261,7 @@ public final class SItem {
           inventoryMenuState_800bdc28.set(InventoryMenuState._14);
         }
 
-        FUN_8010e9a8(0, xpDivisor_8011e174.get());
+        FUN_8010e9a8(0);
         break;
 
       case _11:
@@ -2275,7 +2273,7 @@ public final class SItem {
           inventoryMenuState_800bdc28.set(InventoryMenuState.EQUIPMENT_INIT_12);
         }
 
-        FUN_8010e9a8(0, xpDivisor_8011e174.get());
+        FUN_8010e9a8(0);
         break;
 
       case EQUIPMENT_INIT_12:
@@ -2294,7 +2292,7 @@ public final class SItem {
         //LAB_8010df20
         //LAB_8010df24
         renderSpellsUnlocked((int)_8011e178.get());
-        FUN_8010e9a8(0, xpDivisor_8011e174.get());
+        FUN_8010e9a8(0);
         break;
 
       case _13:
@@ -2309,7 +2307,7 @@ public final class SItem {
         //LAB_8010df20
         //LAB_8010df24
         renderSpellsUnlocked((int)_8011e178.get());
-        FUN_8010e9a8(0, xpDivisor_8011e174.get());
+        FUN_8010e9a8(0);
         break;
 
       case _14:
@@ -2322,7 +2320,7 @@ public final class SItem {
             FUN_8010d050(InventoryMenuState._18, 0x1L);
           } else {
             // Some items remaining
-            setWidthAndFlags(384);
+            resizeDisplay(368, 240);
             deallocateRenderables(0xff);
             menuStack.pushScreen(new TooManyItemsScreen());
             inventoryMenuState_800bdc28.set(InventoryMenuState._19);
@@ -2331,7 +2329,7 @@ public final class SItem {
 
         //LAB_8010dfb8
         //LAB_8010dfbc
-        FUN_8010e9a8(0, xpDivisor_8011e174.get());
+        FUN_8010e9a8(0);
         break;
 
       case LIST_INIT_16:
@@ -2339,7 +2337,7 @@ public final class SItem {
         inventoryMenuState_800bdc28.set(InventoryMenuState._17);
 
       case _17:
-        FUN_8010e9a8(0, xpDivisor_8011e174.get());
+        FUN_8010e9a8(0);
 
         if(_800bb168.get() >= 0xff) {
           inventoryMenuState_800bdc28.set(confirmDest_800bdc30.get());
@@ -2514,7 +2512,7 @@ public final class SItem {
   }
 
   @Method(0x8010e9a8L)
-  public static void FUN_8010e9a8(final long a0, final long a1) {
+  public static void FUN_8010e9a8(final int a0) {
     int y1 = 24;
     int y2 = -82;
     int y3 = -70;

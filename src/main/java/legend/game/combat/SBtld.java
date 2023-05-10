@@ -15,7 +15,7 @@ import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.combat.types.EnemyRewards08;
 import legend.game.combat.types.MonsterStats1c;
 import legend.game.modding.events.EventManager;
-import legend.game.modding.events.characters.AdditionHitEvent;
+import legend.game.modding.events.characters.BattleMapActiveAdditionHitPropertiesEvent;
 import legend.game.modding.events.combat.EnemyRewardsEvent;
 import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptState;
@@ -118,8 +118,8 @@ public class SBtld {
   public static void battlePrepareSelectedAdditionHitProperties_80109250() {
     //LAB_801092a0
     for(int charSlot = 0; charSlot < 3; charSlot++) {
-      final BattlePreloadedEntities_18cb0.AdditionHits_100 activeAdditionHits = battlePreloadedEntities_1f8003f4.additionHits_38[charSlot];
-      final BattlePreloadedEntities_18cb0.AdditionHits_100 activeDragoonAdditionHits = battlePreloadedEntities_1f8003f4.additionHits_38[charSlot + 3];
+      final BattlePreloadedEntities_18cb0.AdditionHits100 activeAdditionHits = battlePreloadedEntities_1f8003f4.additionHits_38[charSlot];
+      final BattlePreloadedEntities_18cb0.AdditionHits100 activeDragoonAdditionHits = battlePreloadedEntities_1f8003f4.additionHits_38[charSlot + 3];
       final int charIndex = gameState_800babc8.charIds_88[charSlot];
 
       if(charIndex >= 0) {
@@ -139,11 +139,14 @@ public class SBtld {
 
         //LAB_80109310
         if(activeAdditionIndex < 0) {
-          activeAdditionHits.hits_00[0].hitProperty_00[15] = 0;
+          activeAdditionHits.hits_00[0].overlayStartingFrameOffset_1e = 0;
         } else {
           //LAB_80109320
           battleMapSelectedAdditionHitProperties_80109454(_8010e658.offset(activeAdditionIndex * 0x80L).getAddress(), activeAdditionHits);
+          EventManager.INSTANCE.postEvent(new BattleMapActiveAdditionHitPropertiesEvent(activeAdditionHits, activeAdditionIndex, charIndex, charSlot, false));
+
           battleMapSelectedAdditionHitProperties_80109454(_8010e658.offset(activeDragoonAdditionIndex * 0x80L).getAddress(), activeDragoonAdditionHits);
+          EventManager.INSTANCE.postEvent(new BattleMapActiveAdditionHitPropertiesEvent(activeAdditionHits, activeAdditionIndex, charIndex, charSlot, true));
         }
       }
 
@@ -156,29 +159,18 @@ public class SBtld {
   }
 
   @Method(0x80109454L)
-  public static void battleMapSelectedAdditionHitProperties_80109454(final long mainAdditionHitsTablePtr, final BattlePreloadedEntities_18cb0.AdditionHits_100 activeAdditionHits) {
+  public static void battleMapSelectedAdditionHitProperties_80109454(final long mainAdditionHitsTablePtr, final BattlePreloadedEntities_18cb0.AdditionHits100 activeAdditionHits) {
     //LAB_80109460
     for(int i = 0; i < activeAdditionHits.hits_00.length; i++) {
-      final BattlePreloadedEntities_18cb0.AdditionHitProperties_20 hitIndex = activeAdditionHits.hits_00[i];
+      final BattlePreloadedEntities_18cb0.AdditionHitProperties20 hitIndex = activeAdditionHits.hits_00[i];
       final long additionHitRefCounter = mainAdditionHitsTablePtr + i * 0x10L;
 
-      for(int j = 0; j < hitIndex.hitProperty_00.length; j++) {
+      for(int j = 0; j < hitIndex.length; j++) {
         if(j > 5 && j < 9) {
-          hitIndex.hitProperty_00[j] = (short)MEMORY.ref(1, additionHitRefCounter).offset(j).getSigned();
+          hitIndex.set(j, (short)MEMORY.ref(1, additionHitRefCounter).offset(j).getSigned());
           continue;
         }
-        hitIndex.hitProperty_00[j] = (short)MEMORY.ref(1, additionHitRefCounter).offset(j).get();
-      }
-    }
-
-    final AdditionHitEvent event = EventManager.INSTANCE.postEvent(new AdditionHitEvent(activeAdditionHits));
-
-    for(int i = 0; i < activeAdditionHits.hits_00.length; i++) {
-      final BattlePreloadedEntities_18cb0.AdditionHitProperties_20 hitIndex = event.addition.hits_00[i];
-      final long additionHitRefCounter = mainAdditionHitsTablePtr + i * 0x10L;
-
-      for(int j = 0; j < hitIndex.hitProperty_00.length; j++) {
-        MEMORY.ref(1, additionHitRefCounter).offset(j).set(hitIndex.hitProperty_00[j]);
+        hitIndex.set(j, (short)MEMORY.ref(1, additionHitRefCounter).offset(j).get());
       }
     }
   }

@@ -33,6 +33,7 @@ import static org.lwjgl.stb.STBTruetype.stbtt_PackFontRange;
 import static org.lwjgl.stb.STBTruetype.stbtt_PackSetOversampling;
 import static org.lwjgl.system.MemoryUtil.NULL;
 import static org.lwjgl.system.MemoryUtil.memAllocFloat;
+import static org.lwjgl.system.MemoryUtil.memFree;
 
 public class Font {
   private static final float[] scale = {
@@ -94,6 +95,13 @@ public class Font {
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     }
+  }
+
+  public void free() {
+    this.charData.free();
+    this.q.free();
+    memFree(this.xb);
+    memFree(this.yb);
   }
 
   public TextStream text(final Consumer<TextStream.Builder> stream) {

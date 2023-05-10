@@ -78,8 +78,6 @@ import static legend.game.combat.Bttl_800c._800c6b6c;
 import static legend.game.combat.Bttl_800c._800c6ba1;
 import static legend.game.combat.Bttl_800c._800c6c40;
 import static legend.game.combat.Bttl_800c._800c6f4c;
-import static legend.game.combat.Bttl_800c._800c7014;
-import static legend.game.combat.Bttl_800c._800c7028;
 import static legend.game.combat.Bttl_800c._800c70e0;
 import static legend.game.combat.Bttl_800c._800c70f4;
 import static legend.game.combat.Bttl_800c._800c7114;
@@ -108,6 +106,8 @@ import static legend.game.combat.Bttl_800c.cameraPositionIndices_800c6c30;
 import static legend.game.combat.Bttl_800c.charCount_800c677c;
 import static legend.game.combat.Bttl_800c.combatItems_800c6988;
 import static legend.game.combat.Bttl_800c.combatMenu_800c6b60;
+import static legend.game.combat.Bttl_800c.digitOffsetXy_800c7014;
+import static legend.game.combat.Bttl_800c.digitU_800c7028;
 import static legend.game.combat.Bttl_800c.displayStats_800c6c2c;
 import static legend.game.combat.Bttl_800c.dragoonSpaceElement_800c6b64;
 import static legend.game.combat.Bttl_800c.dragoonSpells_800c6960;
@@ -266,29 +266,24 @@ public final class Bttl_800f {
 
     //LAB_800f1800
     //LAB_800f1828
-    int a2_0;
-    for(a2_0 = 0; a2_0 < digitCount - 1; a2_0++) {
-      if(digits[a2_0] != 0) {
-        break;
-      }
-    }
+    final int rightAlignOffset = 4 - digitCount;
 
     //LAB_800f1848
     //LAB_800f184c
     //LAB_800f18cc
-    for(int i = 0; i < digitCount && a2_0 < digitCount; i++, a2_0++) {
+    for(int i = 0; i < digitCount; i++) {
       final BattleDisplayStats144Sub10 struct = displayStats._04[a1][i];
 
       if(a1 == 1 || a1 == 3 || a1 == 4) {
         //LAB_800f18f0
-        struct.x_02 = _800c7014.get(a1 * 2).get() + i * 5;
+        struct.x_02 = digitOffsetXy_800c7014.get(a1 * 2).get() + i * 5;
       } else {
-        struct.x_02 = _800c7014.get(a1 * 2).get() + a2_0 * 5;
+        struct.x_02 = digitOffsetXy_800c7014.get(a1 * 2).get() + (i + rightAlignOffset) * 5;
       }
 
       //LAB_800f1920
-      struct.y_04 = _800c7014.get(a1 * 2 + 1).get();
-      struct.u_06 = _800c7028.get(digits[a2_0]).get();
+      struct.y_04 = digitOffsetXy_800c7014.get(a1 * 2 + 1).get();
+      struct.u_06 = digitU_800c7028.get(digits[i]).get();
       struct.v_08 = 0x20;
       struct.w_0a = 0x8;
       struct.h_0c = 0x8;
@@ -311,7 +306,7 @@ public final class Bttl_800f {
       struct._0e = v0;
 
       //LAB_800f199c
-      struct.digitValue_00 = digits[a2_0];
+      struct.digitValue_00 = digits[i];
     }
 
     //LAB_800f19e0
@@ -747,13 +742,13 @@ public final class Bttl_800f {
     int displayPosX;
     if(floatingTextType == 1) {
       //LAB_800f3738
-      displayPosX = -(5 - digitIdx) * 5 / 2;
+      displayPosX = -(num.digits_24.length - digitIdx) * 5 / 2;
     } else if(floatingTextType == 2) {
       //LAB_800f3758
       displayPosX = -18;
     } else {
       //LAB_800f372c
-      displayPosX = -(5 - digitIdx) * 4;
+      displayPosX = -(num.digits_24.length - digitIdx) * 4;
     }
 
     //LAB_800f375c
@@ -774,7 +769,7 @@ public final class Bttl_800f {
       if(floatingTextType == 1) {
         //LAB_800f382c
         digitStruct.x_0e = displayPosX;
-        digitStruct.u_12 = _800c7028.get(damageDigits[digitIdx]).get();
+        digitStruct.u_12 = digitU_800c7028.get(damageDigits[digitIdx]).get();
         digitStruct.v_14 = 32;
         digitStruct.texW_16 = 8;
         digitStruct.texH_18 = 8;
@@ -3180,7 +3175,7 @@ public final class Bttl_800f {
         final int turnCount = attacker.charId_272 != defender.charId_272 ? 3 : 4;
         final int amount = i < 4 ? 50 : -50;
 
-        defender.setStat(_800c723c.get(i % 4).get(), turnCount << 8 | amount);
+        defender.setStat(_800c723c.get(i % 4).get(), turnCount << 8 | (amount & 0xff));
       }
     }
   }

@@ -1,6 +1,5 @@
 package legend.game;
 
-import legend.game.modding.coremod.CoreMod;
 import legend.core.Config;
 import legend.core.IoHelper;
 import legend.core.MathHelper;
@@ -9,6 +8,7 @@ import legend.core.gpu.GpuCommandCopyVramToVram;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.RECT;
+import legend.core.gpu.Rect4i;
 import legend.core.gpu.TimHeader;
 import legend.core.gte.DVECTOR;
 import legend.core.gte.GsCOORD2PARAM;
@@ -19,7 +19,6 @@ import legend.core.gte.SVECTOR;
 import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.TmdWithId;
 import legend.core.gte.VECTOR;
-import legend.core.memory.Memory;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
@@ -39,6 +38,7 @@ import legend.game.fmv.Fmv;
 import legend.game.input.Input;
 import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.Param;
 import legend.game.scripting.RunningScript;
@@ -131,9 +131,9 @@ import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.orderingTableBits_1f8003c0;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static legend.game.Scus94491BpeSegment.rcos;
+import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
-import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment.unloadSoundFile;
@@ -175,7 +175,6 @@ import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8003.GsSetRefView2;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.MargePrim;
-import static legend.game.Scus94491BpeSegment_8003.MoveImage;
 import static legend.game.Scus94491BpeSegment_8003.PopMatrix;
 import static legend.game.Scus94491BpeSegment_8003.PushMatrix;
 import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
@@ -191,7 +190,6 @@ import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrix_Zyx;
-import static legend.game.Scus94491BpeSegment_8004._8004dd30;
 import static legend.game.Scus94491BpeSegment_8004.diskNum_8004ddc0;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndexOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
@@ -208,24 +206,22 @@ import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c3c;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
-import static legend.game.Scus94491BpeSegment_8007._8007a3a8;
+import static legend.game.Scus94491BpeSegment_8007.clearRed_8007a3a8;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
-import static legend.game.Scus94491BpeSegment_800b._800babc0;
-import static legend.game.Scus94491BpeSegment_800b._800bb104;
 import static legend.game.Scus94491BpeSegment_800b._800bb168;
 import static legend.game.Scus94491BpeSegment_800b._800bc05c;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b0;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b4;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b8;
 import static legend.game.Scus94491BpeSegment_800b._800bda08;
-import static legend.game.Scus94491BpeSegment_800b.savedGameSelected_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b._800bee90;
 import static legend.game.Scus94491BpeSegment_800b._800bee94;
 import static legend.game.Scus94491BpeSegment_800b._800bee98;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
 import static legend.game.Scus94491BpeSegment_800b.afterFmvLoadingStage_800bf0ec;
+import static legend.game.Scus94491BpeSegment_800b.clearBlue_800babc0;
+import static legend.game.Scus94491BpeSegment_800b.clearGreen_800bb104;
 import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
-import static legend.game.Scus94491BpeSegment_800b.doubleBufferFrame_800bb108;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.fmvIndex_800bf0dc;
@@ -238,6 +234,7 @@ import static legend.game.Scus94491BpeSegment_800b.musicLoaded_800bd782;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.projectionPlaneDistance_800bd810;
 import static legend.game.Scus94491BpeSegment_800b.rview2_800bd7e8;
+import static legend.game.Scus94491BpeSegment_800b.savedGameSelected_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.screenOffsetX_800bed50;
 import static legend.game.Scus94491BpeSegment_800b.screenOffsetY_800bed54;
 import static legend.game.Scus94491BpeSegment_800b.scriptEffect_800bb140;
@@ -654,10 +651,9 @@ public final class SMap {
 
   @Method(0x800d93dcL)
   public static int loadDiskSwapScreen() {
-    _800babc0.set(0);
-    _800bb104.set(0);
-    _8007a3a8.set(0);
-    _8004dd30.setu(0x1L);
+    clearBlue_800babc0.set(0);
+    clearGreen_800bb104.set(0);
+    clearRed_8007a3a8.set(0);
     setMainVolume(0, 0);
     vsyncMode_8007a3b8.set(1);
     return 1;
@@ -672,8 +668,6 @@ public final class SMap {
     FUN_80019610();
     loadMenuSounds();
     sssqFadeIn(0x3c, 0x7f);
-
-    _8004dd30.setu(0);
 
     //LAB_800d9a6c
     return 2;
@@ -3914,7 +3908,7 @@ public final class SMap {
   @Method(0x800e4e5cL)
   public static void FUN_800e4e5c() {
     //LAB_800e4ecc
-    MoveImage(doubleBufferFrame_800bb108.get() != 0 ? _800d69fc : _800d6a04, 640, 0);
+    GPU.uploadData(new Rect4i(640, 0, 384, 240), GPU.getDisplayBuffer().getData());
     _80052c48.setu(0x1L);
   }
 
@@ -4282,7 +4276,7 @@ public final class SMap {
       _800cab20.subu(0x1L);
 
       if(_800cab20.getSigned() >= 0) {
-        setWidthAndFlags(384);
+        resizeDisplay(384, 240);
         _800caaf4.set(submapCut_80052c30.get());
         _800caaf8.set(submapScene_80052c34.get());
         return;
@@ -4319,7 +4313,7 @@ public final class SMap {
       case 0x0 -> {
         srand((int)System.nanoTime());
         if(_800cb440.get() == 0) {
-          setWidthAndFlags(384);
+          resizeDisplay(384, 240);
         }
 
         //LAB_800e5b2c
@@ -6457,7 +6451,7 @@ public final class SMap {
 
   @Method(0x800eaad4L)
   public static void initCredits() {
-    setWidthAndFlags(384);
+    resizeDisplay(384, 240);
     vsyncMode_8007a3b8.set(2);
 
     //LAB_800eab00
@@ -9498,9 +9492,9 @@ public final class SMap {
           .pos(2, x, y + sprite.h_0a.get())
           .pos(3, x + sprite.w_08.get(), y + sprite.h_0a.get())
           .uv(0, u, v)
-          .uv(1, u + sprite.w_08.get() + 1, v)
-          .uv(2, u, v + sprite.h_0a.get() + 1)
-          .uv(3, u + sprite.w_08.get() + 1, v + sprite.h_0a.get() + 1);
+          .uv(1, u + sprite.w_08.get(), v)
+          .uv(2, u, v + sprite.h_0a.get())
+          .uv(3, u + sprite.w_08.get(), v + sprite.h_0a.get());
 
         if(indicatorIndex == 0) { // Player indicator
           final int triangleIndex = getEncounterTriangleColour();
@@ -9774,24 +9768,21 @@ public final class SMap {
   public static void FUN_800f4244(final long timFile, final UnsignedShortRef tpageOut, final UnsignedShortRef clutOut, final Translucency transMode) {
     FUN_8003b8f0(timFile);
 
-    final Memory.TemporaryReservation tmp = MEMORY.temp(0x14);
-    final WeirdTimHeader tim = new WeirdTimHeader(tmp.get()); // sp+0x10
+    final WeirdTimHeader tim = new WeirdTimHeader(); // sp+0x10
 
     //LAB_800f427c
     while(FUN_8003b900(tim) != null) {
-      if(tim.clutAddress.get() != 0) {
-        clutOut.set(tim.clutRect.deref().y.get() << 6 | (tim.clutRect.deref().x.get() & 0x3f0) >> 4);
-        LoadImage(tim.clutRect.deref(), tim.clutAddress.get());
+      if(tim.clutAddress != 0) {
+        clutOut.set(tim.clutRect.y.get() << 6 | (tim.clutRect.x.get() & 0x3f0) >> 4);
+        LoadImage(tim.clutRect, tim.clutAddress);
       }
 
       //LAB_800f42d0
-      if(tim.imageAddress.get() != 0) {
-        tpageOut.set(texPages_800bb110.get(Bpp.values()[(int)(tim.flags.get() & 0b11)]).get(transMode).get(TexPageY.fromY(tim.imageRect.deref().y.get())).get() | (tim.imageRect.deref().x.get() & 0x3c0) >> 6);
-        LoadImage(tim.imageRect.deref(), tim.imageAddress.get());
+      if(tim.imageAddress != 0) {
+        tpageOut.set(texPages_800bb110.get(Bpp.values()[tim.flags & 0b11]).get(transMode).get(TexPageY.fromY(tim.imageRect.y.get())).get() | (tim.imageRect.x.get() & 0x3c0) >> 6);
+        LoadImage(tim.imageRect, tim.imageAddress);
       }
     }
-
-    tmp.release();
 
     //LAB_800f4338
   }

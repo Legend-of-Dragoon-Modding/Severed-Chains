@@ -32,10 +32,8 @@ import legend.game.unpacker.UnpackerStoppedRuntimeException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Matrix4f;
-import org.lwjgl.BufferUtils;
 
 import java.io.IOException;
-import java.nio.FloatBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -82,7 +80,6 @@ public final class GameEngine {
   public static final Spu SPU;
 
   public static final Thread hardwareThread;
-  public static final Thread gpuThread;
   public static final Thread spuThread;
 
   static {
@@ -107,8 +104,6 @@ public final class GameEngine {
 
     hardwareThread = Thread.currentThread();
     hardwareThread.setName("Hardware");
-    gpuThread = new Thread(GPU);
-    gpuThread.setName("GPU");
     spuThread = new Thread(SPU);
     spuThread.setName("SPU");
   }
@@ -145,7 +140,6 @@ public final class GameEngine {
   private static TextStream statusText;
   private static float screenWidth;
 
-  private static final FloatBuffer transform2Buffer = BufferUtils.createFloatBuffer(4 * 4);
   private static Shader.UniformBuffer transforms2;
   private static final Matrix4f identity = new Matrix4f();
   private static final Matrix4f eyeTransforms = new Matrix4f();
@@ -154,58 +148,67 @@ public final class GameEngine {
   private static boolean loading;
 
   public static void start() throws IOException {
-    gpuThread.start();
-
-    LOGGER.info("--- Legend start ---");
-
-    loading = true;
-    GPU.mainRenderer = GameEngine::loadGfx;
-
-    MODS.loadMods();
-    MODS.instantiateMods();
-
-    EventManager.INSTANCE.getClass(); // Trigger load
-
-    SAVES.registerDeserializer(SaveSerialization::fromRetailMatcher, SaveSerialization::fromRetail);
-    SAVES.registerDeserializer(SaveSerialization::fromV1Matcher, SaveSerialization::fromV1);
-    SAVES.registerDeserializer(SaveSerialization::fromV2Matcher, SaveSerialization::fromV2);
-
-    synchronized(LOCK) {
-      Unpacker.setStatusListener(status -> {
-        synchronized(statusTextLock) {
-          newStatusText = status;
-        }
-      });
-
+    final Thread thread = new Thread(() -> {
       try {
-        Unpacker.unpack();
-      } catch(final UnpackerException e) {
-        newStatusText = "Failed to unpack files: " + e.getMessage();
-        LOGGER.error("Failed to unpack files", e);
-        skip();
-      } catch(final UnpackerStoppedRuntimeException e) {
-        LOGGER.info("Unpacking stopped");
-        return;
+        LOGGER.info("--- Legend start ---");
+
+        loading = true;
+        GPU.mainRenderer = GameEngine::loadGfx;
+
+        MODS.loadMods();
+        MODS.instantiateMods();
+
+        EventManager.INSTANCE.getClass(); // Trigger load
+
+        SAVES.registerDeserializer(SaveSerialization::fromRetailMatcher, SaveSerialization::fromRetail);
+        SAVES.registerDeserializer(SaveSerialization::fromV1Matcher, SaveSerialization::fromV1);
+        SAVES.registerDeserializer(SaveSerialization::fromV2Matcher, SaveSerialization::fromV2);
+
+        synchronized(LOCK) {
+          Unpacker.setStatusListener(status -> {
+            synchronized(statusTextLock) {
+              newStatusText = status;
+            }
+          });
+
+          try {
+            Unpacker.unpack();
+          } catch(final UnpackerException e) {
+            newStatusText = "Failed to unpack files: " + e.getMessage();
+            LOGGER.error("Failed to unpack files", e);
+            skip();
+            return;
+          } catch(final UnpackerStoppedRuntimeException e) {
+            LOGGER.info("Unpacking stopped");
+            return;
+          }
+
+          MEMORY.setBytes(_80010000.getAddress(), Unpacker.loadFile("lod_engine").getBytes());
+
+          MEMORY.addFunctions(Scus94491BpeSegment.class);
+          MEMORY.addFunctions(Scus94491BpeSegment_8002.class);
+          MEMORY.addFunctions(Scus94491BpeSegment_8003.class);
+          MEMORY.addFunctions(Scus94491BpeSegment_8004.class);
+          MEMORY.addFunctions(Scus94491BpeSegment_800e.class);
+
+          // Load S_ITEM temporarily to get item names
+          loadFile(overlays_8004db88.get(2), _80010004.get(), (address, size, integer) -> {}, 0, 0x10L);
+
+          loadXpTables();
+
+          REGISTRY_ACCESS.initialize();
+
+          Scus94491BpeSegment_8002.start();
+          loading = false;
+        }
+      } catch(final Exception e) {
+        throw new RuntimeException(e);
       }
+    });
 
-      MEMORY.setBytes(_80010000.getAddress(), Unpacker.loadFile("lod_engine").getBytes());
-
-      MEMORY.addFunctions(Scus94491BpeSegment.class);
-      MEMORY.addFunctions(Scus94491BpeSegment_8002.class);
-      MEMORY.addFunctions(Scus94491BpeSegment_8003.class);
-      MEMORY.addFunctions(Scus94491BpeSegment_8004.class);
-      MEMORY.addFunctions(Scus94491BpeSegment_800e.class);
-
-      // Load S_ITEM temporarily to get item names
-      loadFile(overlays_8004db88.get(2), _80010004.get(), (address, size, integer) -> { }, 0, 0x10L);
-
-      loadXpTables();
-
-      REGISTRY_ACCESS.initialize();
-
-      Scus94491BpeSegment_8002.start();
-      loading = false;
-    }
+    time = System.nanoTime();
+    thread.start();
+    GPU.run();
   }
 
   private static void loadXpTables() throws IOException {
@@ -392,8 +395,6 @@ public final class GameEngine {
     onKeyPress = GPU.window().events.onKeyPress((window, key, scancode, mods) -> skip());
     onMouseRelease = GPU.window().events.onMouseRelease((window, x, y, button, mods) -> skip());
     onShutdown = GPU.window().events.onShutdown(Unpacker::stop);
-
-    time = System.nanoTime();
   }
 
   private static void skip() {

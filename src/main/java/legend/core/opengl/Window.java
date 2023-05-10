@@ -54,6 +54,7 @@ import static org.lwjgl.glfw.GLFW.glfwSetCharCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetClipboardString;
 import static org.lwjgl.glfw.GLFW.glfwSetCursorPos;
 import static org.lwjgl.glfw.GLFW.glfwSetCursorPosCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetErrorCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetInputMode;
 import static org.lwjgl.glfw.GLFW.glfwSetJoystickCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
@@ -77,29 +78,28 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 public class Window {
   private static final Logger LOGGER = LogManager.getLogger(Window.class.getName());
 
-  private static final GLFWErrorCallback ERROR_CALLBACK;
-
   static {
     LOGGER.info("Initialising LWJGL version {}", Version.getVersion());
 
-    ERROR_CALLBACK = GLFWErrorCallback.createPrint(System.err).set();
+    GLFWErrorCallback.createPrint(System.err).set();
 
     if(!glfwInit()) {
       throw new IllegalStateException("Unable to initialize GLFW");
     }
+  }
 
-    Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-      LOGGER.info("Shutting down...");
+  public static void free() {
+    LOGGER.info("Shutting down...");
 
-      glfwTerminate();
-      ERROR_CALLBACK.free();
+    glfwSetErrorCallback(null).free();
+    glfwSetJoystickCallback(null).free();
+    glfwTerminate();
 
-      try {
-        Config.save();
-      } catch(final IOException e) {
-        System.err.println("Failed to save config");
-      }
-    }));
+    try {
+      Config.save();
+    } catch(final IOException e) {
+      System.err.println("Failed to save config");
+    }
   }
 
   private final long window;
@@ -170,7 +170,7 @@ public class Window {
 
   void makeContextCurrent() {
     glfwMakeContextCurrent(this.window);
-    glfwSwapInterval(1);
+    glfwSwapInterval(0);
   }
 
   public void setEventPoller(final Runnable poller) {
@@ -188,19 +188,12 @@ public class Window {
   public void show() {
     glfwShowWindow(this.window);
 
-    // Well this is bad code
-    if(!System.getProperty("os.name").startsWith("Windows")) {
-      try(final MemoryStack stack = MemoryStack.stackPush()) {
-        final IntBuffer x = stack.mallocInt(1);
-        final IntBuffer y = stack.mallocInt(1);
-        glfwGetWindowSize(this.window, x, y);
+    try(final MemoryStack stack = MemoryStack.stackPush()) {
+      final IntBuffer x = stack.mallocInt(1);
+      final IntBuffer y = stack.mallocInt(1);
+      glfwGetWindowSize(this.window, x, y);
 
-        final FloatBuffer scaleX = stack.mallocFloat(1);
-        final FloatBuffer scaleY = stack.mallocFloat(1);
-        glfwGetWindowContentScale(this.window, scaleX, scaleY);
-
-        this.events.onResize(this.window, (int)(x.get() / scaleX.get()), (int)(y.get() / scaleY.get()));
-      }
+      this.events.onResize(this.window, x.get(0), y.get(0));
     }
   }
 

@@ -1,18 +1,7 @@
 package legend.game.combat.types.battlestate;
 
-import legend.core.Config;
-import legend.game.combat.bobj.BattleObject27c;
-import legend.game.modding.coremod.CoreMod;
-import legend.game.scripting.ScriptState;
-
-import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
-
-/**
- * One for each ally and enemy
- */
+/** One for each ally and enemy */
 public class AdditionExtra04 {
-  private final int index;
-
   /**
    * <ul>
    *   <li>0x01 Destroyer Mace </li>
@@ -23,32 +12,8 @@ public class AdditionExtra04 {
   public int flag_00;
   public int unknown_01;
 
-  public AdditionExtra04(final int index) {
-    this.index = index;
-  }
-
   public int pack() {
-    int ultimateWargod = 0;
-    // This is a cheap way to tell if we're in a combat engine cutscene and turn it off
-    if(Config.autoAddition()) {
-      final ScriptState<? extends BattleObject27c> combatant = battleState_8006e398.allBobjs_e0c[this.index];
-
-      if(combatant != null && (combatant.storage_44[7] & 0x4) == 0) {
-        boolean enemyAlive = false;
-        for(int i = 0; i < battleState_8006e398.aliveMonsterBobjs_ebc.length; i++) {
-          if(battleState_8006e398.aliveMonsterBobjs_ebc[i] != null && battleState_8006e398.aliveMonsterBobjs_ebc[i].innerStruct_00 != null && battleState_8006e398.aliveMonsterBobjs_ebc[i].innerStruct_00.stats.getStat(CoreMod.HP_STAT.get()).getCurrent() != 0) {
-            enemyAlive = true;
-            break;
-          }
-        }
-
-        if(enemyAlive) {
-          ultimateWargod = 0x6;
-        }
-      }
-    }
-
-    return (this.unknown_01 & 0xff_ffff) << 8 | this.flag_00 & 0xff | ultimateWargod;
+    return (this.unknown_01 & 0xff_ffff) << 8 | this.flag_00 & 0xff;
   }
 
   public void unpack(final int val) {

@@ -158,7 +158,10 @@ public class ActiveStatsa0 {
     this.flags_0c = other.flags_0c;
     this.level_0e = other.level_0e;
     this.dlevel_0f = other.dlevel_0f;
+    System.arraycopy(other.equipment_30, 0, this.equipment_30, 0, this.equipment_30.length);
     this.selectedAddition_35 = other.selectedAddition_35;
+    System.arraycopy(other.additionLevels_36, 0, this.additionLevels_36, 0, this.additionLevels_36.length);
+    System.arraycopy(other.additionXp_3e, 0, this.additionXp_3e, 0, this.additionXp_3e.length);
     this.equipmentPhysicalImmunity_46 = other.equipmentPhysicalImmunity_46;
     this.equipmentMagicalImmunity_48 = other.equipmentMagicalImmunity_48;
     this.equipmentPhysicalResistance_4a = other.equipmentPhysicalResistance_4a;

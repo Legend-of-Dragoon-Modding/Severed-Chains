@@ -11,7 +11,7 @@ import legend.game.scripting.ScriptState;
 import static java.lang.Math.round;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
-import static legend.game.combat.Bttl_800c.getHitMultiplier;
+import static legend.game.combat.Bttl_800c.getHitProperty;
 import static legend.game.combat.Bttl_800c.spellStats_800fa0b8;
 
 public class PlayerBattleObject extends BattleObject27c {
@@ -121,7 +121,7 @@ public class PlayerBattleObject extends BattleObject27c {
       //LAB_800f2b94
       int additionMultiplier = 0;
       for(int i = 0; i < this.additionHits_56; i++) {
-        additionMultiplier += getHitMultiplier(this.charSlot_276, i, 4);
+        additionMultiplier += getHitProperty(this.charSlot_276, i, 4);
       }
 
       //LAB_800f2bb4

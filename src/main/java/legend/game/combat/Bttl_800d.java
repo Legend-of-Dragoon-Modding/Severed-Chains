@@ -1,5 +1,6 @@
 package legend.game.combat;
 
+import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.gpu.GpuCommandLine;
 import legend.core.gpu.GpuCommandPoly;
@@ -49,6 +50,7 @@ import legend.game.types.Model124;
 import legend.game.types.ModelPartTransforms0c;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
+import org.joml.Math;
 
 import java.util.Arrays;
 
@@ -882,7 +884,15 @@ public final class Bttl_800d {
     effect._00.set(1);
     effect._02.set(0);
     effect._04.set((short)0);
-    manager._10.colour_1c.set(255, 0, 0);
+
+    // Hack to make shield color default if counter overlay color is default
+    // Otherwise, just use the overlay color. Maybe we can make shields toggleable later.
+    final int rgb = Config.getCounterOverlayRgb();
+    if(Config.changeAdditionOverlayRgb() && rgb != 0x2060d8) {
+      manager._10.colour_1c.set(rgb & 0xff, rgb >> 8 & 0xff, rgb >> 16 & 0xff);
+    } else {
+      manager._10.colour_1c.set(255, 0, 0);
+    }
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }
@@ -2079,9 +2089,9 @@ public final class Bttl_800d {
     if(a5 == 0) {
       //LAB_800d7424
       cam._5c = a3;
-      cam._3c = (a0 - cam.vec_20.getX()) / a3;
-      cam._48 = (a1 - cam.vec_20.getY()) / a3;
-      cam._54 = (a2 - cam.vec_20.getZ()) / a3;
+      cam._3c = MathHelper.safeDiv(a0 - cam.vec_20.getX(), a3);
+      cam._48 = MathHelper.safeDiv(a1 - cam.vec_20.getY(), a3);
+      cam._54 = MathHelper.safeDiv(a2 - cam.vec_20.getZ(), a3);
     } else if(a5 == 1) {
       throw new RuntimeException("Undefined s5/s6");
     }
@@ -2883,7 +2893,7 @@ public final class Bttl_800d {
     cam.vec_20.z.add(cam._54);
 
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[cam.bobjIndex_80].innerStruct_00;
-    setRefpoint(bobj.model_148.coord2_14.coord.transfer.getX() + (cam.vec_20.getX() >> 8), bobj.model_148.coord2_14.coord.transfer.getY() + (cam.vec_20.getY() >> 8), bobj.model_148.coord2_14.coord.transfer.getY() + (cam.vec_20.getZ() >> 8));
+    setRefpoint(bobj.model_148.coord2_14.coord.transfer.getX() + (cam.vec_20.getX() >> 8), bobj.model_148.coord2_14.coord.transfer.getY() + (cam.vec_20.getY() >> 8), bobj.model_148.coord2_14.coord.transfer.getZ() + (cam.vec_20.getZ() >> 8));
 
     cam._5c--;
     if(cam._5c <= 0) {
@@ -4910,7 +4920,7 @@ public final class Bttl_800d {
   public static SVECTOR getRotationFromTransforms(final SVECTOR rotOut, final MATRIX transforms) {
     final MATRIX mat = new MATRIX().set(transforms);
     rotOut.setX((short)ratan2(-mat.get(5), mat.get(8)));
-    RotMatrixX(rotOut.getX(), mat);
+    RotMatrixX(-rotOut.getX(), mat);
     rotOut.setY((short)ratan2(mat.get(2), mat.get(8)));
     RotMatrixY(-rotOut.getY(), mat);
     rotOut.setZ((short)ratan2(mat.get(3), mat.get(0)));

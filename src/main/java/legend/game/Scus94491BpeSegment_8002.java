@@ -124,8 +124,8 @@ import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.mallocHead;
 import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.rectArray28_80010770;
+import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
-import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
 import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
@@ -142,10 +142,12 @@ import static legend.game.Scus94491BpeSegment_8004.RotMatrixX;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixY;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixZ;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrix_Zyx;
+import static legend.game.Scus94491BpeSegment_8004.height_8004dd34;
 import static legend.game.Scus94491BpeSegment_8004.itemStats_8004f2ac;
 import static legend.game.Scus94491BpeSegment_8004.loadingGameStateOverlay_8004dd08;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
 import static legend.game.Scus94491BpeSegment_8004.setCdVolume;
+import static legend.game.Scus94491BpeSegment_8004.width_8004dd34;
 import static legend.game.Scus94491BpeSegment_8005._8005027c;
 import static legend.game.Scus94491BpeSegment_8005._8005039c;
 import static legend.game.Scus94491BpeSegment_8005._800503b0;
@@ -195,6 +197,8 @@ import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.hasNoEncounters_800bed58;
 import static legend.game.Scus94491BpeSegment_800b.inventoryMenuState_800bdc28;
 import static legend.game.Scus94491BpeSegment_800b.loadedDrgnFiles_800bcf78;
+import static legend.game.Scus94491BpeSegment_800b.oldHeight;
+import static legend.game.Scus94491BpeSegment_800b.oldWidth;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba4;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba8;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
@@ -1048,15 +1052,15 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x80021f8cL)
   public static void SetBackColor(final long r, final long g, final long b) {
     if(r < 0) {
-      LOGGER.warn("Negative r! %x", r);
+      LOGGER.warn("Negative R! %x", r);
     }
 
     if(g < 0) {
-      LOGGER.warn("Negative r! %x", g);
+      LOGGER.warn("Negative G! %x", g);
     }
 
     if(b < 0) {
-      LOGGER.warn("Negative r! %x", b);
+      LOGGER.warn("Negative B! %x", b);
     }
 
     CPU.CTC2(r * 0x10L, 13); // Background colour R
@@ -1246,7 +1250,11 @@ public final class Scus94491BpeSegment_8002 {
 
           renderablePtr_800bdc5c = null;
           uiFile_800bdc3c = null;
-          setWidthAndFlags(384);
+
+          oldWidth = width_8004dd34;
+          oldHeight = height_8004dd34;
+          resizeDisplay(368, 240);
+
           loadDrgnFile(0, 6665, data -> menuAssetsLoaded(data, 0));
           loadDrgnFile(0, 6666, data -> menuAssetsLoaded(data, 1));
           textZ_800bdf00.set(33);
@@ -1281,6 +1289,8 @@ public final class Scus94491BpeSegment_8002 {
       case RENDER_POST_COMBAT_REPORT_29 -> renderPostCombatReport();
 
       case UNLOAD_CAMPAIGN_SELECTION_MENU, UNLOAD_SAVE_GAME_MENU_20, UNLOAD_CHAR_SWAP_MENU_25, UNLOAD_NEW_CAMPAIGN_MENU -> {
+        resizeDisplay(oldWidth, oldHeight);
+
         menuStack.popScreen();
         decrementOverlayCount();
 
@@ -1304,6 +1314,8 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       case UNLOAD_INVENTORY_MENU_5, UNLOAD_SHOP_MENU_10, UNLOAD_TOO_MANY_ITEMS_MENU_35 -> {
+        resizeDisplay(oldWidth, oldHeight);
+
         decrementOverlayCount();
         FUN_8001e010(-1);
         SCRIPTS.start();
@@ -1311,6 +1323,8 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       case UNLOAD_POST_COMBAT_REPORT_30 -> {
+        resizeDisplay(oldWidth, oldHeight);
+
         decrementOverlayCount();
         SCRIPTS.start();
         whichMenu_800bdc38 = WhichMenu.NONE_0;
@@ -4655,8 +4669,17 @@ public final class Scus94491BpeSegment_8002 {
 
   public static int textWidth(final String text) {
     int width = 0;
+    int currentWidth = 0;
     for(int index = 0; index < text.length(); index++) {
-      width += charWidth(text.charAt(index));
+      if(text.charAt(index) == '\n') {
+        currentWidth = 0;
+      }
+
+      currentWidth += charWidth(text.charAt(index));
+
+      if(currentWidth > width) {
+        width = currentWidth;
+      }
     }
 
     return width;
