@@ -371,7 +371,10 @@ public final class Scus94491BpeSegment_8003 {
     return timHeader;
   }
 
-  /** TODO figure out what this is doing - looks important... TIM loader? Why is this one different? */
+  /**
+   * TODO figure out what this is doing - looks important... TIM loader? Why is this one different?
+   * Seems to be used for "The End", which isn't rendering correctly (no overlay on the text)
+   */
   @Method(0x8003b964L)
   public static long FUN_8003b964(final long a0, final WeirdTimHeader timHeader) {
     if(MEMORY.ref(4, a0).get() != 0x10L) {
@@ -379,22 +382,22 @@ public final class Scus94491BpeSegment_8003 {
     }
 
     //LAB_8003b998
-    timHeader.flags.set(MEMORY.ref(4, a0).offset(0x4L).get());
+    timHeader.flags = (int)MEMORY.ref(4, a0).offset(0x4L).get();
 
     LOGGER.info("id  =%08x", 0x10L);
-    LOGGER.info("mode=%08x", timHeader.flags.get());
+    LOGGER.info("mode=%08x", timHeader.flags);
     LOGGER.info("timaddr=%08x", a0 + 0x8L);
 
     //LAB_8003ba04
     final long a0_0;
-    if((timHeader.flags.get() & 0b1000L) != 0) {
+    if((timHeader.flags & 0b1000) != 0) {
       timHeader.clutRect.set(MEMORY.ref(4, a0).offset(0xcL).cast(RECT::new));
-      timHeader.clutAddress.set(a0 + 0x14L);
+      timHeader.clutAddress = a0 + 0x14L;
       a0_0 = MEMORY.ref(4, a0).offset(0x8L).get() / 0x4L;
     } else {
       //LAB_8003ba38
       timHeader.clutRect.clear();
-      timHeader.clutAddress.set(0);
+      timHeader.clutAddress = 0;
       a0_0 = 0;
     }
 
@@ -402,7 +405,7 @@ public final class Scus94491BpeSegment_8003 {
 
     //LAB_8003ba44
     timHeader.imageRect.set(MEMORY.ref(4, s0).offset(0xcL).cast(RECT::new));
-    timHeader.imageAddress.set(s0 + 0x14L);
+    timHeader.imageAddress = s0 + 0x14L;
 
     //LAB_8003ba64
     return MEMORY.ref(4, s0).offset(0x8L).get() / 0x4L + 0x2L + a0_0; // +8 CLUT data pointer / 4 + 2 (plus CLUT data pointer if CLUT present) ???

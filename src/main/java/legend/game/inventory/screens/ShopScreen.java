@@ -1,10 +1,9 @@
 package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
-import legend.core.memory.Memory;
-import legend.game.modding.coremod.CoreMod;
 import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.EventManager;
 import legend.game.modding.events.inventory.ShopItemEvent;
 import legend.game.types.ActiveStatsa0;
@@ -16,7 +15,6 @@ import legend.game.types.Renderable58;
 import java.util.Arrays;
 import java.util.Objects;
 
-import static legend.core.GameEngine.MEMORY;
 import static legend.game.SItem.Buy_8011c6a4;
 import static legend.game.SItem.Cannot_be_armed_with_8011c6d4;
 import static legend.game.SItem.Carried_8011c6b8;
@@ -53,7 +51,6 @@ import static legend.game.SItem.renderThreeDigitNumberComparison;
 import static legend.game.SItem.renderTwoDigitNumber;
 import static legend.game.SMap.FUN_800e3fac;
 import static legend.game.SMap.shops_800f4930;
-import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment_8002.addGold;
 import static legend.game.Scus94491BpeSegment_8002.allocateRenderable;
@@ -340,10 +337,7 @@ public class ShopScreen extends MenuScreen {
 
   private void renderEquipmentStatChange(final int equipmentId, final int charIndex) {
     if(charIndex != -1) {
-      final Memory.TemporaryReservation tmp = MEMORY.temp(0xa0);
-      final ActiveStatsa0 oldStats = new ActiveStatsa0(tmp.get());
-
-      memcpy(oldStats.getAddress(), stats_800be5f8.get(charIndex).getAddress(), 0xa0);
+      final ActiveStatsa0 oldStats = new ActiveStatsa0(stats_800be5f8[charIndex]);
 
       final int[] oldEquipment = Arrays.copyOf(gameState_800babc8.charData_32c[charIndex].equipment_14, 5);
 
@@ -352,20 +346,20 @@ public class ShopScreen extends MenuScreen {
         allocateOneFrameGlyph(0x68, 210, 137);
         allocateOneFrameGlyph(0x69, 210, 147);
         allocateOneFrameGlyph(0x6a, 210, 157);
-        final ActiveStatsa0 newStats = stats_800be5f8.get(charIndex);
-        renderThreeDigitNumber(246, 127, newStats.gearAttack_88.get(), 0x2);
-        renderThreeDigitNumber(246, 137, newStats.gearDefence_8c.get(), 0x2);
-        renderThreeDigitNumber(246, 147, newStats.gearMagicAttack_8a.get(), 0x2);
-        renderThreeDigitNumber(246, 157, newStats.gearMagicDefence_8e.get(), 0x2);
+        final ActiveStatsa0 newStats = stats_800be5f8[charIndex];
+        renderThreeDigitNumber(246, 127, newStats.gearAttack_88, 0x2);
+        renderThreeDigitNumber(246, 137, newStats.gearDefence_8c, 0x2);
+        renderThreeDigitNumber(246, 147, newStats.gearMagicAttack_8a, 0x2);
+        renderThreeDigitNumber(246, 157, newStats.gearMagicDefence_8e, 0x2);
         allocateOneFrameGlyph(0x6b, 274, 127);
         allocateOneFrameGlyph(0x6b, 274, 137);
         allocateOneFrameGlyph(0x6b, 274, 147);
         allocateOneFrameGlyph(0x6b, 274, 157);
         loadCharacterStats(0);
-        renderThreeDigitNumberComparison(284, 127, oldStats.gearAttack_88.get(), newStats.gearAttack_88.get());
-        renderThreeDigitNumberComparison(284, 137, oldStats.gearDefence_8c.get(), newStats.gearDefence_8c.get());
-        renderThreeDigitNumberComparison(284, 147, oldStats.gearMagicAttack_8a.get(), newStats.gearMagicAttack_8a.get());
-        renderThreeDigitNumberComparison(284, 157, oldStats.gearMagicDefence_8e.get(), newStats.gearMagicDefence_8e.get());
+        renderThreeDigitNumberComparison(284, 127, oldStats.gearAttack_88, newStats.gearAttack_88);
+        renderThreeDigitNumberComparison(284, 137, oldStats.gearDefence_8c, newStats.gearDefence_8c);
+        renderThreeDigitNumberComparison(284, 147, oldStats.gearMagicAttack_8a, newStats.gearMagicAttack_8a);
+        renderThreeDigitNumberComparison(284, 157, oldStats.gearMagicDefence_8e, newStats.gearMagicDefence_8e);
       } else {
         renderText(Cannot_be_armed_with_8011c6d4, 228, 137, TextColour.BROWN);
       }
@@ -373,8 +367,6 @@ public class ShopScreen extends MenuScreen {
       System.arraycopy(oldEquipment, 0, gameState_800babc8.charData_32c[charIndex].equipment_14, 0, 5);
 
       loadCharacterStats(0);
-
-      tmp.release();
     }
   }
 

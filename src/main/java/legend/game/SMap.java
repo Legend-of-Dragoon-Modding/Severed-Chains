@@ -19,7 +19,6 @@ import legend.core.gte.SVECTOR;
 import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.TmdWithId;
 import legend.core.gte.VECTOR;
-import legend.core.memory.Memory;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
@@ -679,18 +678,18 @@ public final class SMap {
     loadCharacterStats(0);
 
     if(a0 >= 0) {
-      final ActiveStatsa0 stats = stats_800be5f8.get(a0);
+      final ActiveStatsa0 stats = stats_800be5f8[a0];
       final CharacterData2c charData = gameState_800babc8.charData_32c[a0];
-      charData.hp_08 = stats.maxHp_66.get();
-      charData.mp_0a = stats.maxMp_6e.get();
+      charData.hp_08 = stats.maxHp_66;
+      charData.mp_0a = stats.maxMp_6e;
     } else {
       //LAB_800d9b70
       //LAB_800d9b84
       for(int charSlot = 0; charSlot < 9; charSlot++) {
-        final ActiveStatsa0 stats = stats_800be5f8.get(charSlot);
+        final ActiveStatsa0 stats = stats_800be5f8[charSlot];
         final CharacterData2c charData = gameState_800babc8.charData_32c[charSlot];
-        charData.hp_08 = stats.maxHp_66.get();
-        charData.mp_0a = stats.maxMp_6e.get();
+        charData.hp_08 = stats.maxHp_66;
+        charData.mp_0a = stats.maxMp_6e;
       }
     }
 
@@ -9769,24 +9768,21 @@ public final class SMap {
   public static void FUN_800f4244(final long timFile, final UnsignedShortRef tpageOut, final UnsignedShortRef clutOut, final Translucency transMode) {
     FUN_8003b8f0(timFile);
 
-    final Memory.TemporaryReservation tmp = MEMORY.temp(0x14);
-    final WeirdTimHeader tim = new WeirdTimHeader(tmp.get()); // sp+0x10
+    final WeirdTimHeader tim = new WeirdTimHeader(); // sp+0x10
 
     //LAB_800f427c
     while(FUN_8003b900(tim) != null) {
-      if(tim.clutAddress.get() != 0) {
-        clutOut.set(tim.clutRect.deref().y.get() << 6 | (tim.clutRect.deref().x.get() & 0x3f0) >> 4);
-        LoadImage(tim.clutRect.deref(), tim.clutAddress.get());
+      if(tim.clutAddress != 0) {
+        clutOut.set(tim.clutRect.y.get() << 6 | (tim.clutRect.x.get() & 0x3f0) >> 4);
+        LoadImage(tim.clutRect, tim.clutAddress);
       }
 
       //LAB_800f42d0
-      if(tim.imageAddress.get() != 0) {
-        tpageOut.set(texPages_800bb110.get(Bpp.values()[(int)(tim.flags.get() & 0b11)]).get(transMode).get(TexPageY.fromY(tim.imageRect.deref().y.get())).get() | (tim.imageRect.deref().x.get() & 0x3c0) >> 6);
-        LoadImage(tim.imageRect.deref(), tim.imageAddress.get());
+      if(tim.imageAddress != 0) {
+        tpageOut.set(texPages_800bb110.get(Bpp.values()[tim.flags & 0b11]).get(transMode).get(TexPageY.fromY(tim.imageRect.y.get())).get() | (tim.imageRect.x.get() & 0x3c0) >> 6);
+        LoadImage(tim.imageRect, tim.imageAddress);
       }
     }
-
-    tmp.release();
 
     //LAB_800f4338
   }

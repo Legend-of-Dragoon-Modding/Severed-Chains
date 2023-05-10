@@ -109,11 +109,11 @@ public class CharSwapScreen extends MenuScreen {
         allocateUiElement(0x72, 0x72, x, y + 24).z_3c = 33;
       }
 
-      final ActiveStatsa0 stats = stats_800be5f8.get(charIndex);
-      renderFourDigitNumber(x + 25, y + 57, stats.level_0e.get());
-      renderFourDigitNumber(x + 25, y + 68, stats.dlevel_0f.get());
-      renderFourDigitNumber(x + 25, y + 79, stats.hp_04.get(), stats.maxHp_66.get());
-      renderFourDigitNumber(x + 25, y + 90, stats.mp_06.get());
+      final ActiveStatsa0 stats = stats_800be5f8[charIndex];
+      renderFourDigitNumber(x + 25, y + 57, stats.level_0e);
+      renderFourDigitNumber(x + 25, y + 68, stats.dlevel_0f);
+      renderFourDigitNumber(x + 25, y + 79, stats.hp_04, stats.maxHp_66);
+      renderFourDigitNumber(x + 25, y + 90, stats.mp_06);
     }
   }
 
