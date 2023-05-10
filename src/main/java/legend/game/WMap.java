@@ -87,7 +87,7 @@ import static legend.game.Scus94491BpeSegment.qsort;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
-import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
+import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment.unloadSoundFile;
@@ -560,7 +560,7 @@ public class WMap {
         pregameLoadingStage_800bb10c.set(gameState_800babc8.isOnWorldMap_4e4 ? 9 : 7);
       } else {
         //LAB_800cc804
-        setWidthAndFlags(320);
+        resizeDisplay(320, 240);
         FUN_8001f708(gameState_800babc8.chapterIndex_98, 0);
         pregameLoadingStage_800bb10c.set(12);
       }
@@ -669,7 +669,7 @@ public class WMap {
 
   @Method(0x800ccbe0L)
   public static void FUN_800ccbe0() {
-    setWidthAndFlags(320);
+    resizeDisplay(320, 240);
     vsyncMode_8007a3b8.set(3);
     unloadSoundFile((int)0x9L);
     FUN_8001f708(gameState_800babc8.chapterIndex_98, 0);

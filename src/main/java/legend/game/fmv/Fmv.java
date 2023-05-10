@@ -20,7 +20,7 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 import static legend.core.GameEngine.GPU;
-import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
+import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndexOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8005._80052d6c;
 import static legend.game.Scus94491BpeSegment_8005.diskFmvs_80052d7c;
@@ -206,7 +206,7 @@ public class Fmv {
       default -> throw new RuntimeException("Bad FMV index");
     };
 
-    setWidthAndFlags(width);
+    resizeDisplay(width, 240);
 
     submapIndex_800bd808.set(-1);
 

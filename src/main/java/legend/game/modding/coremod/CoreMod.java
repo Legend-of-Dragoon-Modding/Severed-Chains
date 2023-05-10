@@ -9,6 +9,7 @@ import legend.game.modding.coremod.config.IndicatorModeConfigEntry;
 import legend.game.modding.coremod.config.InventorySizeConfigEntry;
 import legend.game.modding.coremod.config.RenderScaleConfigEntry;
 import legend.game.modding.events.EventListener;
+import legend.game.modding.events.gamestate.GameLoadedEvent;
 import legend.game.modding.registries.Registrar;
 import legend.game.modding.registries.RegistryDelegate;
 import legend.game.modding.registries.RegistryId;
@@ -36,5 +37,10 @@ public class CoreMod {
   @EventListener
   public static void registerConfig(final ConfigRegistryEvent event) {
     CONFIG_REGISTRAR.registryEvent(event);
+  }
+
+  @EventListener
+  public static void handleGameLoaded(final GameLoadedEvent event) {
+    GameEngine.GPU.rescale(event.gameState.getConfig(RENDER_SCALE_CONFIG.get()));
   }
 }

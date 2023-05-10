@@ -130,6 +130,7 @@ import static legend.game.Scus94491BpeSegment_8004._8004fa98;
 import static legend.game.Scus94491BpeSegment_8004._8004fb00;
 import static legend.game.Scus94491BpeSegment_8004.currentlyLoadingFileEntry_8004dd04;
 import static legend.game.Scus94491BpeSegment_8004.gameStateCallbacks_8004dbc0;
+import static legend.game.Scus94491BpeSegment_8004.height_8004dd34;
 import static legend.game.Scus94491BpeSegment_8004.initSpu;
 import static legend.game.Scus94491BpeSegment_8004.loadSshdAndSoundbank;
 import static legend.game.Scus94491BpeSegment_8004.loadedOverlayIndex_8004dd10;
@@ -330,18 +331,19 @@ public final class Scus94491BpeSegment {
       final int op = r.opParam_18;
 
       return (switch(op) {
-        case 0 -> "if 0 <= 0x%x (p1)? %s;";
-        case 1 -> "if 0 < 0x%x (p1)? %s;";
-        case 2 -> "if 0 == 0x%x (p1)? %s;";
-        case 3 -> "if 0 != 0x%x (p1)? %s;";
-        case 4 -> "if 0 > 0x%x (p1)? %s;";
-        case 5 -> "if 0 >= 0x%x (p1)? %s;";
-        case 6 -> "if 0 & 0x%x (p1)? %s;";
-        case 7 -> "if 0 !& 0x%x (p1)? %s;";
+        case 0 -> "if 0 <= 0x%x (p0)? %s;";
+        case 1 -> "if 0 < 0x%x (p0)? %s;";
+        case 2 -> "if 0 == 0x%x (p0)? %s;";
+        case 3 -> "if 0 != 0x%x (p0)? %s;";
+        case 4 -> "if 0 > 0x%x (p0)? %s;";
+        case 5 -> "if 0 >= 0x%x (p0)? %s;";
+        case 6 -> "if 0 & 0x%x (p0)? %s;";
+        case 7 -> "if 0 !& 0x%x (p0)? %s;";
         default -> "illegal cmp 4";
       }).formatted(operandB, r.scriptState_04.scriptCompare(0, operandB, op) ? "yes - continue" : "no - rewind");
     });
     scriptFunctionDescriptions.put(8, r -> "*%s (p1) = 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
+    scriptFunctionDescriptions.put(9, r -> "tmp = 0x%x (p0); *%s (p1) = tmp; *%s (p0) = tmp; // Broken swap".formatted(r.params_20[0].get(), r.params_20[1], r.params_20[0]));
     scriptFunctionDescriptions.put(10, r -> "memcpy(%s (p1), %s (p2), %d (p0));".formatted(r.params_20[1], r.params_20[2], r.params_20[0].get()));
     scriptFunctionDescriptions.put(12, r -> "*%s (p0) = 0;".formatted(r.params_20[0]));
     scriptFunctionDescriptions.put(16, r -> "*%s (p1) &= 0x%x (p0);".formatted(r.params_20[1], r.params_20[0].get()));
@@ -1104,7 +1106,7 @@ public final class Scus94491BpeSegment {
     GsSetDrawBuffOffset();
 
     //LAB_80013060
-    GsInitGraph(width_8004dd34.get(), 240);
+    GsInitGraph(width_8004dd34, height_8004dd34);
 
     //LAB_80013080
     setDrawOffset();
@@ -1121,11 +1123,15 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80013200L)
-  public static void setWidthAndFlags(final int width) {
+  public static void resizeDisplay(final int width, final int height) {
     if(width != displayWidth_1f8003e0.get()) {
+      final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
+      LOGGER.info("Changing resolution to (%d, %d) from %s.%s(%s:%d)", width, height, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
+
       // Change the syncFrame callback to the reinitializer for a frame to reinitialize everything with the new size/flags
       syncFrame_8004dd3c = Scus94491BpeSegment::syncFrame_reinit;
-      width_8004dd34.set(width);
+      width_8004dd34 = width;
+      height_8004dd34 = height;
     }
   }
 

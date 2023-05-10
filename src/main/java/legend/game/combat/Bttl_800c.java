@@ -115,7 +115,7 @@ import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static legend.game.Scus94491BpeSegment.renderMcq;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment.setDepthResolution;
-import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
+import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80020308;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021520;
@@ -910,7 +910,7 @@ public final class Bttl_800c {
   @Method(0x800c76a0L)
   public static void FUN_800c76a0() {
     if((_800bc960.get() & 0x3) == 0x3) {
-      setWidthAndFlags(320);
+      resizeDisplay(320, 240);
       setDepthResolution(12);
       vsyncMode_8007a3b8.set(3);
       _800bc960.or(0x40);

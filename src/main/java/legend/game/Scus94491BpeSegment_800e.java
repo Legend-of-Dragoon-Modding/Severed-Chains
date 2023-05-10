@@ -29,7 +29,7 @@ import static legend.game.Scus94491BpeSegment.loadMenuSounds;
 import static legend.game.Scus94491BpeSegment.orderingTableBits_1f8003c0;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static legend.game.Scus94491BpeSegment.ovalBlobTimHeader_80010548;
-import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
+import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.tmdAnimFile_8001051c;
 import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
 import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
@@ -133,7 +133,7 @@ public final class Scus94491BpeSegment_800e {
     drgnBinIndex_800bc058.set(1);
 
     loadMenuSounds();
-    setWidthAndFlags(320);
+    resizeDisplay(320, 240);
     vsyncMode_8007a3b8.set(2);
 
     //LAB_800e600c

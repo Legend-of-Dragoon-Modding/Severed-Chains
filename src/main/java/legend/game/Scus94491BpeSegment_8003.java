@@ -429,7 +429,7 @@ public final class Scus94491BpeSegment_8003 {
    */
   @Method(0x8003bc30L)
   public static void GsInitGraph(final int displayWidth, final int displayHeight) {
-    GsInitGraph2(displayWidth);
+    GsInitGraph2(displayWidth, displayHeight);
     GsInit3D();
 
     initDisplay(displayWidth, displayHeight);
@@ -444,11 +444,11 @@ public final class Scus94491BpeSegment_8003 {
    * <p>Always use GsInitGraph() for the first initialization.</p>
    */
   @Method(0x8003bca4L)
-  public static void GsInitGraph2(final int displayWidth) {
+  public static void GsInitGraph2(final int displayWidth, final int displayHeight) {
     ResetGraph();
 
     GPU.drawingOffset(0, 0);
-    GPU.displayMode(displayWidth);
+    GPU.displayMode(displayWidth, displayHeight);
   }
 
   @Method(0x8003be28L)
