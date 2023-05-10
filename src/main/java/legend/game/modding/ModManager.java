@@ -44,9 +44,9 @@ public class ModManager {
     this.modClassLoader = new URLClassLoader(this.modUrls, ModManager.class.getClassLoader());
 
     final Reflections reflections = new Reflections(this.addModsToReflectionsConfig(new ConfigurationBuilder()));
-    final Set<Class<?>> listeners = reflections.getTypesAnnotatedWith(Mod.class);
+    final Set<Class<?>> modClasses = reflections.getTypesAnnotatedWith(Mod.class);
 
-    for(final Class<?> modClass : listeners) {
+    for(final Class<?> modClass : modClasses) {
       final Mod modAnnotation = modClass.getDeclaredAnnotation(Mod.class);
 
       if(this.modClasses.containsKey(modAnnotation.id())) {
@@ -71,11 +71,9 @@ public class ModManager {
     });
   }
 
-  public ConfigurationBuilder addModsToReflectionsConfig(ConfigurationBuilder builder) {
-    if(!System.getProperty("scdk", "").isEmpty()) {
-      builder = builder.addUrls(this.getClass().getClassLoader().getResource(""));
-    }
-
-    return builder.addClassLoaders(this.modClassLoader).addUrls(this.modUrls);
+  public ConfigurationBuilder addModsToReflectionsConfig(final ConfigurationBuilder builder) {
+    return builder
+      .addUrls(this.getClass().getClassLoader().getResource(""))
+      .addClassLoaders(this.modClassLoader).addUrls(this.modUrls);
   }
 }

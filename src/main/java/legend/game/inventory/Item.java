@@ -1,7 +1,6 @@
 package legend.game.inventory;
 
 import legend.game.modding.registries.RegistryEntry;
-import legend.game.modding.registries.RegistryId;
 import legend.game.types.ItemStats0c;
 
 public class Item extends RegistryEntry {
@@ -29,9 +28,8 @@ public class Item extends RegistryEntry {
    */
   public final int type;
 
-  public Item(final RegistryId id, final String name, final ItemStats0c stats) {
+  public Item(final String name, final ItemStats0c stats) {
     this(
-      id,
       name,
       stats.target_00.get(),
       stats.element_01.get(),
@@ -48,8 +46,7 @@ public class Item extends RegistryEntry {
     );
   }
 
-  public Item(final RegistryId id, final String name, int target, int element, int damage, int special1, int special2, int damage2, int specialAmount, int icon, int status, int percentage, int uu2, int type) {
-    super(id);
+  public Item(final String name, final int target, final int element, final int damage, final int special1, final int special2, final int damage2, final int specialAmount, final int icon, final int status, final int percentage, final int uu2, final int type) {
     this.name = name;
     this.target = target;
     this.element = element;

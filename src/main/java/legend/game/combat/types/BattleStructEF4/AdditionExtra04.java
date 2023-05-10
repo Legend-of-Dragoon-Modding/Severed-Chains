@@ -1,15 +1,13 @@
 package legend.game.combat.types.BattleStructEF4;
 
-/**
- * One for each ally and enemy
- */
+/** One for each ally and enemy */
 public class AdditionExtra04 {
   /**
-   * <ul
-   *   <li>0x01 Destroyer Mace </li>
-   *   <li>0x02 Wargod Sash (half damage) </li>
-   *   <li>0x06 Ultimate Wargod (full damage) </li>
    * <ul>
+   *   <li>0x01 Destroyer Mace </li>
+   *   <li>0x02 Wargod Calling (half damage) </li>
+   *   <li>0x06 Ultimate Wargod (full damage) </li>
+   * </ul>
    */
   public int flag_00;
   public int unknown_01;

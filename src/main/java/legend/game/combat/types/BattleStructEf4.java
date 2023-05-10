@@ -1,5 +1,8 @@
 package legend.game.combat.types;
 
+import legend.game.combat.bobj.BattleObject27c;
+import legend.game.combat.bobj.MonsterBattleObject;
+import legend.game.combat.bobj.PlayerBattleObject;
 import legend.game.combat.types.BattleStructEF4.AdditionExtra04;
 import legend.game.combat.types.BattleStructEF4.SpecialEffects20;
 import legend.game.combat.types.BattleStructEF4.Status04;
@@ -269,14 +272,15 @@ public class BattleStructEf4 {
   public int _578;
   public int _57c;
   public final BttlStruct08[] _580 = new BttlStruct08[0x100];
-  public final int[] y_d80 = new int[3];
+  // This was used for storing animation files in VRAM
+//  public final int[] y_d80 = new int[3];
   public final BattleStructEf4Sub08[] _d8c = new BattleStructEf4Sub08[16];
-  public final ScriptState<BattleObject27c>[] bobjIndices_e0c = new ScriptState[20];
-  public final ScriptState<BattleObject27c>[] charBobjIndices_e40 = new ScriptState[20];
-  public final ScriptState<BattleObject27c>[] bobjIndices_e50 = new ScriptState[20];
-  public final ScriptState<BattleObject27c>[] bobjIndices_e78 = new ScriptState[20];
-  public final ScriptState<BattleObject27c>[] bobjIndices_eac = new ScriptState[20];
-  public final ScriptState<BattleObject27c>[] enemyBobjIndices_ebc = new ScriptState[20];
+  public final ScriptState<? extends BattleObject27c>[] bobjIndices_e0c = new ScriptState[20];
+  public final ScriptState<PlayerBattleObject>[] charBobjIndices_e40 = new ScriptState[20];
+  public final ScriptState<MonsterBattleObject>[] bobjIndices_e50 = new ScriptState[20];
+  public final ScriptState<? extends BattleObject27c>[] bobjIndices_e78 = new ScriptState[20];
+  public final ScriptState<? extends BattleObject27c>[] bobjIndices_eac = new ScriptState[20];
+  public final ScriptState<MonsterBattleObject>[] monsterBobjIndices_ebc = new ScriptState[20];
   public int morphMode_ee4;
 
   // nodart code no longer uses this

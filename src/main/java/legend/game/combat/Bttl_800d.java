@@ -1,5 +1,6 @@
 package legend.game.combat;
 
+import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.gpu.GpuCommandLine;
 import legend.core.gpu.GpuCommandPoly;
@@ -22,23 +23,23 @@ import legend.game.combat.deff.Cmb;
 import legend.game.combat.deff.Lmb;
 import legend.game.combat.deff.LmbTransforms14;
 import legend.game.combat.deff.LmbType0;
+import legend.game.combat.effects.AdditionSparksEffect08;
+import legend.game.combat.effects.AdditionSparksEffectInstance4c;
+import legend.game.combat.effects.AdditionStarburstEffect10;
+import legend.game.combat.effects.BttlScriptData6cSub13c;
+import legend.game.combat.effects.EffectManagerData6c;
+import legend.game.combat.effects.EffectManagerData6cInner;
+import legend.game.combat.effects.GuardEffect06;
+import legend.game.combat.effects.MonsterDeathEffect34;
+import legend.game.combat.effects.PotionEffect14;
+import legend.game.combat.effects.ProjectileHitEffect14;
+import legend.game.combat.effects.ProjectileHitEffect14Sub48;
+import legend.game.combat.environment.BattleCamera;
 import legend.game.combat.types.AdditionCharEffectData0c;
 import legend.game.combat.types.AdditionScriptData1c;
-import legend.game.combat.types.AdditionSparksEffect08;
-import legend.game.combat.types.AdditionSparksEffectInstance4c;
-import legend.game.combat.types.AdditionStarburstEffect10;
-import legend.game.combat.types.BattleCamera;
-import legend.game.combat.types.BattleObject27c;
+import legend.game.combat.bobj.BattleObject27c;
 import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.BttlScriptData40;
-import legend.game.combat.types.BttlScriptData6cSub13c;
-import legend.game.combat.types.EffectManagerData6c;
-import legend.game.combat.types.EffectManagerData6cInner;
-import legend.game.combat.types.GuardEffect06;
-import legend.game.combat.types.MonsterDeathEffect34;
-import legend.game.combat.types.PotionEffect14;
-import legend.game.combat.types.ProjectileHitEffect14;
-import legend.game.combat.types.ProjectileHitEffect14Sub48;
 import legend.game.combat.types.SpriteMetrics08;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
@@ -49,6 +50,7 @@ import legend.game.types.Model124;
 import legend.game.types.ModelPartTransforms0c;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
+import org.joml.Math;
 
 import java.util.Arrays;
 
@@ -64,6 +66,7 @@ import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
+import static legend.game.Scus94491BpeSegment.zMin;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021724;
@@ -101,7 +104,6 @@ import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
-import static legend.game.combat.Bttl_800c.transformWorldspaceToScreenspace;
 import static legend.game.combat.Bttl_800c.FUN_800cf37c;
 import static legend.game.combat.Bttl_800c.FUN_800cf4f4;
 import static legend.game.combat.Bttl_800c.FUN_800cfb14;
@@ -153,6 +155,7 @@ import static legend.game.combat.Bttl_800c.screenOffsetY_800c67c0;
 import static legend.game.combat.Bttl_800c.scriptGetScriptedObjectPos;
 import static legend.game.combat.Bttl_800c.seed_800fa754;
 import static legend.game.combat.Bttl_800c.spriteMetrics_800c6948;
+import static legend.game.combat.Bttl_800c.transformWorldspaceToScreenspace;
 import static legend.game.combat.Bttl_800e.FUN_800e7ea4;
 import static legend.game.combat.Bttl_800e.allocateEffectManager;
 
@@ -165,10 +168,10 @@ public final class Bttl_800d {
 
     //LAB_800d00d4
     if(clearBit) {
-      v1.model_148.ui_f4 &= ~(0x1L << animIndex);
+      v1.model_148.partInvisible_f4 &= ~(0x1L << animIndex);
     } else {
       //LAB_800d0104
-      v1.model_148.ui_f4 |= 0x1L << animIndex;
+      v1.model_148.partInvisible_f4 |= 0x1L << animIndex;
     }
   }
 
@@ -273,6 +276,7 @@ public final class Bttl_800d {
   @Method(0x800d0564L)
   public static FlowControl allocateProjectileHitEffect(final RunningScript<? extends BattleScriptDataBase> script) {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+      "ProjectileHitEffect14",
       script.scriptState_04,
       0x14,
       null,
@@ -413,6 +417,7 @@ public final class Bttl_800d {
     final int s4 = script.params_20[6].get();
 
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+      "AdditionSparksEffect08",
       script.scriptState_04,
       0,
       null,
@@ -578,6 +583,7 @@ public final class Bttl_800d {
     final int count = script.params_20[2].get();
 
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+      "AdditionStarburstEffect10",
       script.scriptState_04,
       0x10,
       null,
@@ -613,13 +619,13 @@ public final class Bttl_800d {
 
   @Method(0x800d1cacL)
   public static FlowControl FUN_800d1cac(final RunningScript<? extends BattleScriptDataBase> script) {
-    script.params_20[0].set(allocateEffectManager(script.scriptState_04, 0, null, null, null, null).index);
+    script.params_20[0].set(allocateEffectManager("Unknown (FUN_800d1cac)", script.scriptState_04, 0, null, null, null, null).index);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800d1cf4L)
   public static FlowControl FUN_800d1cf4(final RunningScript<? extends BattleScriptDataBase> script) {
-    script.params_20[0].set(allocateEffectManager(script.scriptState_04, 0, null, null, null, null).index);
+    script.params_20[0].set(allocateEffectManager("Unknown (FUN_800d1cf4)", script.scriptState_04, 0, null, null, null, null).index);
     return FlowControl.CONTINUE;
   }
 
@@ -734,6 +740,7 @@ public final class Bttl_800d {
     final int s1 = script.params_20[2].get();
 
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+      "PotionEffect14",
       script.scriptState_04,
       0x14,
       null,
@@ -863,6 +870,7 @@ public final class Bttl_800d {
   @Method(0x800d2ff4L)
   public static FlowControl allocateGuardEffect(final RunningScript<? extends BattleScriptDataBase> script) {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+      "GuardEffect06",
       script.scriptState_04,
       0x6,
       null,
@@ -876,7 +884,15 @@ public final class Bttl_800d {
     effect._00.set(1);
     effect._02.set(0);
     effect._04.set((short)0);
-    manager._10.colour_1c.set(255, 0, 0);
+
+    // Hack to make shield color default if counter overlay color is default
+    // Otherwise, just use the overlay color. Maybe we can make shields toggleable later.
+    final int rgb = Config.getCounterOverlayRgb();
+    if(Config.changeAdditionOverlayRgb() && rgb != 0x2060d8) {
+      manager._10.colour_1c.set(rgb & 0xff, rgb >> 8 & 0xff, rgb >> 16 & 0xff);
+    } else {
+      manager._10.colour_1c.set(255, 0, 0);
+    }
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }
@@ -1002,6 +1018,7 @@ public final class Bttl_800d {
   @Method(0x800d34bcL)
   public static FlowControl allocateMonsterDeathEffect(final RunningScript<? extends BattleScriptDataBase> script) {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+      "MonsterDeathEffect34",
       script.scriptState_04,
       0x34,
       Bttl_800d::monsterDeathEffectTicker,
@@ -1231,8 +1248,8 @@ public final class Bttl_800d {
       _800faa9d.setu(0);
     } else {
       //LAB_800d3dc0
-      final int addition = gameState_800babc8.charData_32c.get(script.params_20[0].get()).selectedAddition_19.get();
-      final ScriptState<AdditionScriptData1c> state = SCRIPTS.allocateScriptState(new AdditionScriptData1c());
+      final int addition = gameState_800babc8.charData_32c[script.params_20[0].get()].selectedAddition_19;
+      final ScriptState<AdditionScriptData1c> state = SCRIPTS.allocateScriptState("AdditionScriptData1c", new AdditionScriptData1c());
       state.loadScriptFile(doNothingScript_8004f650);
       state.setTicker(Bttl_800d::FUN_800d3bb8);
       final CString additionName = getAdditionName(0, addition);
@@ -1407,7 +1424,7 @@ public final class Bttl_800d {
       script.params_20[1].set(0);
     } else {
       //LAB_800d4388
-      final ScriptState<BttlScriptData40> state = SCRIPTS.allocateScriptState(new BttlScriptData40());
+      final ScriptState<BttlScriptData40> state = SCRIPTS.allocateScriptState("BttlScriptData40", new BttlScriptData40());
       state.loadScriptFile(doNothingScript_8004f650);
       state.setTicker(Bttl_800d::FUN_800d4018);
       state.setDestructor(Bttl_800d::FUN_800d430c);
@@ -1471,7 +1488,7 @@ public final class Bttl_800d {
   public static FlowControl FUN_800d4580(final RunningScript<?> script) {
     final int s2 = script.params_20[0].get();
     if(s2 != -1) {
-      final ScriptState<AdditionScriptData1c> state = SCRIPTS.allocateScriptState(new AdditionScriptData1c());
+      final ScriptState<AdditionScriptData1c> state = SCRIPTS.allocateScriptState("AdditionScriptData1c", new AdditionScriptData1c());
       state.loadScriptFile(doNothingScript_8004f650);
       state.setTicker(Bttl_800d::FUN_800d3bb8);
       final AdditionScriptData1c s0 = state.innerStruct_00;
@@ -2072,9 +2089,9 @@ public final class Bttl_800d {
     if(a5 == 0) {
       //LAB_800d7424
       cam._5c = a3;
-      cam._3c = (a0 - cam.vec_20.getX()) / a3;
-      cam._48 = (a1 - cam.vec_20.getY()) / a3;
-      cam._54 = (a2 - cam.vec_20.getZ()) / a3;
+      cam._3c = MathHelper.safeDiv(a0 - cam.vec_20.getX(), a3);
+      cam._48 = MathHelper.safeDiv(a1 - cam.vec_20.getY(), a3);
+      cam._54 = MathHelper.safeDiv(a2 - cam.vec_20.getZ(), a3);
     } else if(a5 == 1) {
       throw new RuntimeException("Undefined s5/s6");
     }
@@ -2876,7 +2893,7 @@ public final class Bttl_800d {
     cam.vec_20.z.add(cam._54);
 
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[cam.bobjIndex_80].innerStruct_00;
-    setRefpoint(bobj.model_148.coord2_14.coord.transfer.getX() + (cam.vec_20.getX() >> 8), bobj.model_148.coord2_14.coord.transfer.getY() + (cam.vec_20.getY() >> 8), bobj.model_148.coord2_14.coord.transfer.getY() + (cam.vec_20.getZ() >> 8));
+    setRefpoint(bobj.model_148.coord2_14.coord.transfer.getX() + (cam.vec_20.getX() >> 8), bobj.model_148.coord2_14.coord.transfer.getY() + (cam.vec_20.getY() >> 8), bobj.model_148.coord2_14.coord.transfer.getZ() + (cam.vec_20.getZ() >> 8));
 
     cam._5c--;
     if(cam._5c <= 0) {
@@ -4506,15 +4523,18 @@ public final class Bttl_800d {
     return model.remainingFrames_9e;
   }
 
+  /**
+   * used renderCtmd
+   */
   @Method(0x800dd89cL)
-  public static void FUN_800dd89c(final Model124 model, final int a1) {
+  public static void FUN_800dd89c(final Model124 model, final int newAttribute) {
     final long v0;
     final long v1;
     long s6;
     final int nobj = model.ObjTable_0c.nobj;
     zOffset_1f8003e8.set(model.zOffset_a0);
     tmdGp0Tpage_1f8003ec.set(model.tpage_108);
-    s6 = deffManager_800c693c._20 & 0x4;
+    s6 = deffManager_800c693c.flags_20 & 0x4;
     v1 = (int)s6 >> 1;
     v0 = (int)s6 >> 2;
     s6 = v1 | v0;
@@ -4524,14 +4544,14 @@ public final class Bttl_800d {
       final GsDOBJ2 s2 = model.ObjTable_0c.top[i];
 
       //LAB_800dd940
-      if((model.ui_f4 & 1L << i) == 0) {
+      if((model.partInvisible_f4 & 1L << i) == 0) {
         final MATRIX lw = new MATRIX();
         final MATRIX ls = new MATRIX();
         GsGetLws(s2.coord2_04, lw, ls);
 
         if((s6 & (ls.transfer.getZ() ^ tickCount_800bb0fc.get())) == 0 || ls.transfer.getZ() - ls.transfer.getX() >= -0x800 && ls.transfer.getZ() + ls.transfer.getX() >= -0x800 && ls.transfer.getZ() - ls.transfer.getY() >= -0x800 && ls.transfer.getZ() + ls.transfer.getY() >= -0x800) {
           //LAB_800dd9bc
-          if((a1 & 0x8L) != 0) {
+          if((newAttribute & 0x8L) != 0) {
             FUN_8003eba0(lw, lw);
           }
 
@@ -4545,18 +4565,22 @@ public final class Bttl_800d {
           CPU.CTC2(ls.transfer.getX(), 5);
           CPU.CTC2(ls.transfer.getY(), 6);
           CPU.CTC2(ls.transfer.getZ(), 7);
-          final int s0 = s2.attribute_00;
-          s2.attribute_00 = a1;
+
+          final int oldAttrib = s2.attribute_00;
+          s2.attribute_00 = newAttribute;
 
           final int oldZShift = zShift_1f8003c4.get();
           final int oldZMax = zMax_1f8003cc.get();
+          final int oldZMin = zMin;
           zShift_1f8003c4.set(2);
           zMax_1f8003cc.set(0xffe);
-          Renderer.renderDobj2(s2, false);
+          zMin = 0xb;
+          Renderer.renderDobj2(s2, false, 0x20);
           zShift_1f8003c4.set(oldZShift);
           zMax_1f8003cc.set(oldZMax);
+          zMin = oldZMin;
 
-          s2.attribute_00 = s0;
+          s2.attribute_00 = oldAttrib;
         }
       }
     }
@@ -4564,14 +4588,14 @@ public final class Bttl_800d {
     //LAB_800dda54
     //LAB_800dda58
     for(int i = 0; i < 7; i++) {
-      if(model.aub_ec[i] != 0) {
+      if(model.animateTextures_ec[i]) {
         animateModelTextures(model, i);
       }
 
       //LAB_800dda70
     }
 
-    if(model.b_cc != 0) {
+    if(model.movementType_cc != 0) {
       FUN_80021724(model);
     }
 
@@ -4584,7 +4608,7 @@ public final class Bttl_800d {
 
     //LAB_800ddb18
     for(int i = 0; i < 7; i++) {
-      model.aub_ec[i] = 0;
+      model.animateTextures_ec[i] = false;
     }
 
     final TmdWithId tmdWithId = extTmd.tmdPtr_00;
@@ -4630,7 +4654,7 @@ public final class Bttl_800d {
     //LAB_800ddc80
     model.ub_a2 = 0;
     model.ub_a3 = 0;
-    model.ui_f4 = 0;
+    model.partInvisible_f4 = 0;
     model.zOffset_a0 = 0;
     model.coord2_14.coord.transfer.set(sp0x18);
 
@@ -4640,7 +4664,7 @@ public final class Bttl_800d {
 
     //LAB_800ddce8
     model.scaleVector_fc.set(0x1000, 0x1000, 0x1000);
-    model.b_cc = 0;
+    model.movementType_cc = 0;
     model.vector_10c.set(0x1000, 0x1000, 0x1000);
     model.vector_118.set(0, 0, 0);
   }
@@ -4845,9 +4869,12 @@ public final class Bttl_800d {
     //LAB_800de3e4
   }
 
+  /**
+   * used renderCtmd
+   */
   @Method(0x800de3f4L)
   public static void FUN_800de3f4(final TmdObjTable1c a0, final EffectManagerData6cInner a1, final MATRIX a2) {
-    final int s0 = deffManager_800c693c._20 & 0x4;
+    final int s0 = deffManager_800c693c.flags_20 & 0x4;
 
     final MATRIX sp0x10 = new MATRIX();
     if((a1.flags_00 & 0x8) != 0) {
@@ -4876,37 +4903,40 @@ public final class Bttl_800d {
 
       final int oldZShift = zShift_1f8003c4.get();
       final int oldZMax = zMax_1f8003cc.get();
+      final int oldZMin = zMin;
       zShift_1f8003c4.set(2);
       zMax_1f8003cc.set(0xffe);
-      Renderer.renderDobj2(dobj2, false);
+      zMin = 0xb;
+      Renderer.renderDobj2(dobj2, false, 0x20);
       zShift_1f8003c4.set(oldZShift);
       zMax_1f8003cc.set(oldZMax);
+      zMin = oldZMin;
     }
 
     //LAB_800de528
   }
 
   @Method(0x800de544L)
-  public static SVECTOR FUN_800de544(final SVECTOR a0, final MATRIX a1) {
-    final MATRIX sp0x10 = new MATRIX().set(a1);
-    a0.setX((short)ratan2(-sp0x10.get(5), sp0x10.get(8)));
-    RotMatrixX(a0.getX(), sp0x10);
-    a0.setY((short)ratan2(sp0x10.get(2), sp0x10.get(8)));
-    RotMatrixY(-a0.getY(), sp0x10);
-    a0.setZ((short)ratan2(sp0x10.get(3), sp0x10.get(0)));
-    return a0;
+  public static SVECTOR getRotationFromTransforms(final SVECTOR rotOut, final MATRIX transforms) {
+    final MATRIX mat = new MATRIX().set(transforms);
+    rotOut.setX((short)ratan2(-mat.get(5), mat.get(8)));
+    RotMatrixX(-rotOut.getX(), mat);
+    rotOut.setY((short)ratan2(mat.get(2), mat.get(8)));
+    RotMatrixY(-rotOut.getY(), mat);
+    rotOut.setZ((short)ratan2(mat.get(3), mat.get(0)));
+    return rotOut;
   }
 
   @Method(0x800de618L)
-  public static void FUN_800de618(final SVECTOR a0, final SVECTOR a1, final MATRIX a2) {
-    final MATRIX sp0x10 = new MATRIX().set(a2);
-    a0.setX((short)ratan2(-sp0x10.get(5), sp0x10.get(8)));
-    RotMatrixX(-(short)a0.getX(), sp0x10);
-    a0.setY((short)ratan2(sp0x10.get(2), sp0x10.get(8)));
-    RotMatrixY(-(short)a0.getY(), sp0x10);
-    a0.setZ((short)ratan2(sp0x10.get(3), sp0x10.get(0))); //TODO is this a retail bug? Should it be 4?
-    RotMatrixZ(-(short)a0.getZ(), sp0x10);
-    a1.set(sp0x10.get(0), sp0x10.get(4), sp0x10.get(8));
+  public static void getRotationAndScaleFromTransforms(final SVECTOR rotOut, final SVECTOR scaleOut, final MATRIX transforms) {
+    final MATRIX mat = new MATRIX().set(transforms);
+    rotOut.setX((short)ratan2(-mat.get(5), mat.get(8)));
+    RotMatrixX(-(short)rotOut.getX(), mat);
+    rotOut.setY((short)ratan2(mat.get(2), mat.get(8)));
+    RotMatrixY(-(short)rotOut.getY(), mat);
+    rotOut.setZ((short)ratan2(mat.get(3), mat.get(0)));
+    RotMatrixZ(-(short)rotOut.getZ(), mat);
+    scaleOut.set(mat.get(0), mat.get(4), mat.get(8));
   }
 
   @Method(0x800de72cL)

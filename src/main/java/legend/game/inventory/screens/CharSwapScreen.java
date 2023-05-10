@@ -2,6 +2,7 @@ package legend.game.inventory.screens;
 
 import legend.core.Config;
 import legend.core.MathHelper;
+import legend.game.input.InputAction;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.Renderable58;
 
@@ -19,18 +20,10 @@ import static legend.game.Scus94491BpeSegment_8002.allocateRenderable;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
-import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
-import static legend.game.Scus94491BpeSegment_800b.drgn0_6666FilePtr_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.secondaryCharIndices_800bdbf8;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
+import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 
 public class CharSwapScreen extends MenuScreen {
   private int loadingStage;
@@ -84,25 +77,23 @@ public class CharSwapScreen extends MenuScreen {
     this.renderSecondaryChar(255, 122, secondaryCharIndices_800bdbf8.get(4).get(), allocate);
     this.renderSecondaryChar(312, 122, secondaryCharIndices_800bdbf8.get(5).get(), allocate);
 
-    if(gameState_800babc8.charIndex_88.get(0).get() != -1) {
-      renderCharacterSlot(16, 16, gameState_800babc8.charIndex_88.get(0).get(), allocate, !Config.unlockParty() && (gameState_800babc8.charData_32c.get(gameState_800babc8.charIndex_88.get(0).get()).partyFlags_04.get() & 0x20) != 0);
+    if(gameState_800babc8.charIds_88[0] != -1) {
+      renderCharacterSlot(16, 16, gameState_800babc8.charIds_88[0], allocate, !Config.unlockParty() && (gameState_800babc8.charData_32c[gameState_800babc8.charIds_88[0]].partyFlags_04 & 0x20) != 0);
     }
 
-    if(gameState_800babc8.charIndex_88.get(1).get() != -1) {
-      renderCharacterSlot(16, 88, gameState_800babc8.charIndex_88.get(1).get(), allocate, !Config.unlockParty() && (gameState_800babc8.charData_32c.get(gameState_800babc8.charIndex_88.get(1).get()).partyFlags_04.get() & 0x20) != 0);
+    if(gameState_800babc8.charIds_88[1] != -1) {
+      renderCharacterSlot(16, 88, gameState_800babc8.charIds_88[1], allocate, !Config.unlockParty() && (gameState_800babc8.charData_32c[gameState_800babc8.charIds_88[1]].partyFlags_04 & 0x20) != 0);
     }
 
-    if(gameState_800babc8.charIndex_88.get(2).get() != -1) {
-      renderCharacterSlot(16, 160, gameState_800babc8.charIndex_88.get(2).get(), allocate, !Config.unlockParty() && (gameState_800babc8.charData_32c.get(gameState_800babc8.charIndex_88.get(2).get()).partyFlags_04.get() & 0x20) != 0);
+    if(gameState_800babc8.charIds_88[2] != -1) {
+      renderCharacterSlot(16, 160, gameState_800babc8.charIds_88[2], allocate, !Config.unlockParty() && (gameState_800babc8.charData_32c[gameState_800babc8.charIds_88[2]].partyFlags_04 & 0x20) != 0);
     }
-
-    uploadRenderables();
   }
 
   private void renderSecondaryChar(final int x, final int y, final int charIndex, final boolean allocate) {
     if(allocate && charIndex != -1) {
       if(charIndex < 9) {
-        final Renderable58 renderable = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._cfac, null);
+        final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.portraits_cfac(), null);
         initGlyph(renderable, glyph_801142d4);
         renderable.glyph_04 = charIndex;
         renderable.tpage_2c++;
@@ -114,7 +105,7 @@ public class CharSwapScreen extends MenuScreen {
       allocateUiElement(0x50, 0x50, x, y).z_3c = 33;
       allocateUiElement(0x9c, 0x9c, x, y);
 
-      if((gameState_800babc8.charData_32c.get(charIndex).partyFlags_04.get() & 0x2) == 0) {
+      if(!Config.unlockParty() && (gameState_800babc8.charData_32c[charIndex].partyFlags_04 & 0x2) == 0) {
         allocateUiElement(0x72, 0x72, x, y + 24).z_3c = 33;
       }
 
@@ -139,13 +130,18 @@ public class CharSwapScreen extends MenuScreen {
   }
 
   @Override
-  protected void mouseMove(final int x, final int y) {
+  protected InputPropagation mouseMove(final int x, final int y) {
+    if(super.mouseMove(x, y) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
     if(this.loadingStage == 2) {
       for(int i = 0; i < 3; i++) {
         if(this.primaryCharIndex != i && MathHelper.inBox(x, y, 8, getSlotY(i), 174, 65)) {
           playSound(1);
           this.primaryCharIndex = i;
           this.primaryCharHighlight.y_44 = getSlotY(i);
+          return InputPropagation.HANDLED;
         }
       }
     } else if(this.loadingStage == 3) {
@@ -155,13 +151,20 @@ public class CharSwapScreen extends MenuScreen {
           this.secondaryCharIndex = i;
           this.secondaryCharHighlight.x_40 = this.getSecondaryCharX(this.secondaryCharIndex);
           this.secondaryCharHighlight.y_44 = this.getSecondaryCharY(this.secondaryCharIndex);
+          return InputPropagation.HANDLED;
         }
       }
     }
+
+    return InputPropagation.PROPAGATE;
   }
 
   @Override
-  protected void mouseClick(final int x, final int y, final int button, final int mods) {
+  protected InputPropagation mouseClick(final int x, final int y, final int button, final int mods) {
+    if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
     if(this.loadingStage == 2) {
       for(int i = 0; i < 3; i++) {
         if(MathHelper.inBox(x, y, 8, getSlotY(i), 174, 65)) {
@@ -169,8 +172,8 @@ public class CharSwapScreen extends MenuScreen {
           this.primaryCharIndex = i;
           this.primaryCharHighlight.y_44 = getSlotY(i);
 
-          final int charIndex = gameState_800babc8.charIndex_88.get(this.primaryCharIndex).get();
-          if(Config.unlockParty() || charIndex == -1 || (gameState_800babc8.charData_32c.get(charIndex).partyFlags_04.get() & 0x20) == 0) {
+          final int charIndex = gameState_800babc8.charIds_88[this.primaryCharIndex];
+          if(Config.unlockParty() || charIndex == -1 || (gameState_800babc8.charData_32c[charIndex].partyFlags_04 & 0x20) == 0) {
             playSound(2);
             this.secondaryCharHighlight = allocateUiElement(0x80, 0x80, this.getSecondaryCharX(this.secondaryCharIndex), this.getSecondaryCharY(this.secondaryCharIndex));
             FUN_80104b60(this.secondaryCharHighlight);
@@ -178,6 +181,8 @@ public class CharSwapScreen extends MenuScreen {
           } else {
             playSound(40);
           }
+
+          return InputPropagation.HANDLED;
         }
       }
     } else if(this.loadingStage == 3) {
@@ -190,145 +195,183 @@ public class CharSwapScreen extends MenuScreen {
 
           int charCount = 0;
           for(int charSlot = 0; charSlot < 3; charSlot++) {
-            if(gameState_800babc8.charIndex_88.get(charSlot).get() != -1) {
+            if(gameState_800babc8.charIds_88[charSlot] != -1) {
               charCount++;
             }
           }
 
           final int secondaryCharIndex = secondaryCharIndices_800bdbf8.get(this.secondaryCharIndex).get();
 
-          if(((Config.unlockParty() && charCount >= 2) || secondaryCharIndex != -1) && (secondaryCharIndex == -1 || (gameState_800babc8.charData_32c.get(secondaryCharIndex).partyFlags_04.get() & 0x2) != 0)) {
+          if(((Config.unlockParty() && charCount >= 2) || secondaryCharIndex != -1) && (secondaryCharIndex == -1 || Config.unlockParty() || (gameState_800babc8.charData_32c[secondaryCharIndex].partyFlags_04 & 0x2) != 0)) {
             playSound(2);
-            final int charIndex = gameState_800babc8.charIndex_88.get(this.primaryCharIndex).get();
-            gameState_800babc8.charIndex_88.get(this.primaryCharIndex).set(secondaryCharIndex);
+            final int charIndex = gameState_800babc8.charIds_88[this.primaryCharIndex];
+            gameState_800babc8.charIds_88[this.primaryCharIndex] = secondaryCharIndex;
             secondaryCharIndices_800bdbf8.get(this.secondaryCharIndex).set(charIndex);
             this.loadingStage = 1;
           } else {
             playSound(40);
           }
+
+          return InputPropagation.HANDLED;
         }
       }
+    }
+
+    return InputPropagation.PROPAGATE;
+  }
+
+  private void menuStage2Escape() {
+    playSound(3);
+    this.loadingStage = 100;
+  }
+
+  private void menuStage2NavigateUp() {
+    playSound(1);
+    if(this.primaryCharIndex > 0) {
+      this.primaryCharIndex--;
+    }
+
+    this.primaryCharHighlight.y_44 = getSlotY(this.primaryCharIndex);
+  }
+
+  private void menuStage2NavigateDown() {
+    playSound(1);
+    if(this.primaryCharIndex < 2) {
+      this.primaryCharIndex++;
+    }
+
+    this.primaryCharHighlight.y_44 = getSlotY(this.primaryCharIndex);
+  }
+
+  private void menuStage2Select() {
+    final int charIndex = gameState_800babc8.charIds_88[this.primaryCharIndex];
+    if(Config.unlockParty() || charIndex == -1 || (gameState_800babc8.charData_32c[charIndex].partyFlags_04 & 0x20) == 0) {
+      playSound(2);
+      this.secondaryCharHighlight = allocateUiElement(0x80, 0x80, this.getSecondaryCharX(this.secondaryCharIndex), this.getSecondaryCharY(this.secondaryCharIndex));
+      FUN_80104b60(this.secondaryCharHighlight);
+      this.loadingStage = 3;
+    } else {
+      playSound(40);
+    }
+  }
+
+  private void menuStage3Escape() {
+    playSound(3);
+    unloadRenderable(this.secondaryCharHighlight);
+    this.loadingStage = 2;
+  }
+
+  private void menuStage3NavigateUp() {
+    playSound(1);
+
+    if(this.secondaryCharIndex > 2) {
+      this.secondaryCharIndex -= 3;
+    }
+
+    this.secondaryCharHighlight.x_40 = this.getSecondaryCharX(this.secondaryCharIndex);
+    this.secondaryCharHighlight.y_44 = this.getSecondaryCharY(this.secondaryCharIndex);
+  }
+
+  private void menuStage3NavigateDown() {
+    playSound(1);
+
+    if(this.secondaryCharIndex < 3) {
+      this.secondaryCharIndex += 3;
+    }
+
+    this.secondaryCharHighlight.x_40 = this.getSecondaryCharX(this.secondaryCharIndex);
+    this.secondaryCharHighlight.y_44 = this.getSecondaryCharY(this.secondaryCharIndex);
+  }
+
+  private void menuStage3NavigateLeft() {
+    playSound(1);
+
+    if(this.secondaryCharIndex > 0) {
+      this.secondaryCharIndex--;
+    }
+
+    this.secondaryCharHighlight.x_40 = this.getSecondaryCharX(this.secondaryCharIndex);
+    this.secondaryCharHighlight.y_44 = this.getSecondaryCharY(this.secondaryCharIndex);
+  }
+
+  private void menuStage3NavigateRight() {
+    playSound(1);
+
+    if(this.secondaryCharIndex < 5) {
+      this.secondaryCharIndex++;
+    }
+
+    this.secondaryCharHighlight.x_40 = this.getSecondaryCharX(this.secondaryCharIndex);
+    this.secondaryCharHighlight.y_44 = this.getSecondaryCharY(this.secondaryCharIndex);
+  }
+
+  private void menuStage3Select() {
+    this.secondaryCharHighlight.x_40 = this.getSecondaryCharX(this.secondaryCharIndex);
+    this.secondaryCharHighlight.y_44 = this.getSecondaryCharY(this.secondaryCharIndex);
+
+    int charCount = 0;
+    for(int charSlot = 0; charSlot < 3; charSlot++) {
+      if(gameState_800babc8.charIds_88[charSlot] != -1) {
+        charCount++;
+      }
+    }
+
+    final int secondaryCharIndex = secondaryCharIndices_800bdbf8.get(this.secondaryCharIndex).get();
+
+    if(((Config.unlockParty() && charCount >= 2) || secondaryCharIndex != -1) && (secondaryCharIndex == -1 || Config.unlockParty() || (gameState_800babc8.charData_32c[secondaryCharIndex].partyFlags_04 & 0x2) != 0)) {
+      playSound(2);
+      final int charIndex = gameState_800babc8.charIds_88[this.primaryCharIndex];
+      gameState_800babc8.charIds_88[this.primaryCharIndex] = secondaryCharIndex;
+      secondaryCharIndices_800bdbf8.get(this.secondaryCharIndex).set(charIndex);
+      this.loadingStage = 1;
+    } else {
+      playSound(40);
     }
   }
 
   @Override
-  protected void keyPress(final int key, final int scancode, final int mods) {
-    super.keyPress(key, scancode, mods);
+  public InputPropagation pressedThisFrame(final InputAction inputAction) {
+    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
 
     if(this.loadingStage == 2) {
       // primary character left side
-      switch(key) {
-        case GLFW_KEY_ESCAPE -> {
-          playSound(3);
-          this.loadingStage = 100;
-        }
-
-        case GLFW_KEY_DOWN -> {
-          playSound(1);
-          if(this.primaryCharIndex < 2) {
-            this.primaryCharIndex++;
-          }
-
-          this.primaryCharHighlight.y_44 = getSlotY(this.primaryCharIndex);
-        }
-
-        case GLFW_KEY_UP -> {
-          playSound(1);
-          if(this.primaryCharIndex > 0) {
-            this.primaryCharIndex--;
-          }
-
-          this.primaryCharHighlight.y_44 = getSlotY(this.primaryCharIndex);
-        }
-
-        case GLFW_KEY_S -> {
-          final int charIndex = gameState_800babc8.charIndex_88.get(this.primaryCharIndex).get();
-          if(Config.unlockParty() || charIndex == -1 || (gameState_800babc8.charData_32c.get(charIndex).partyFlags_04.get() & 0x20) == 0) {
-            playSound(2);
-            this.secondaryCharHighlight = allocateUiElement(0x80, 0x80, this.getSecondaryCharX(this.secondaryCharIndex), this.getSecondaryCharY(this.secondaryCharIndex));
-            FUN_80104b60(this.secondaryCharHighlight);
-            this.loadingStage = 3;
-          } else {
-            playSound(40);
-          }
-        }
+      if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
+        this.menuStage2NavigateUp();
+        return InputPropagation.HANDLED;
+      } else if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
+        this.menuStage2NavigateDown();
+        return InputPropagation.HANDLED;
+      } else if(inputAction == InputAction.BUTTON_EAST) {
+        this.menuStage2Escape();
+        return InputPropagation.HANDLED;
+      } else if(inputAction == InputAction.BUTTON_SOUTH) {
+        this.menuStage2Select();
+        return InputPropagation.HANDLED;
       }
     } else if(this.loadingStage == 3) {
-      switch(key) {
-        case GLFW_KEY_DOWN -> {
-          playSound(1);
-
-          if(this.secondaryCharIndex < 3) {
-            this.secondaryCharIndex += 3;
-          }
-
-          this.secondaryCharHighlight.x_40 = this.getSecondaryCharX(this.secondaryCharIndex);
-          this.secondaryCharHighlight.y_44 = this.getSecondaryCharY(this.secondaryCharIndex);
-        }
-
-        case GLFW_KEY_UP -> {
-          playSound(1);
-
-          if(this.secondaryCharIndex > 2) {
-            this.secondaryCharIndex -= 3;
-          }
-
-          this.secondaryCharHighlight.x_40 = this.getSecondaryCharX(this.secondaryCharIndex);
-          this.secondaryCharHighlight.y_44 = this.getSecondaryCharY(this.secondaryCharIndex);
-        }
-
-        case GLFW_KEY_LEFT -> {
-          playSound(1);
-
-          if(this.secondaryCharIndex > 0) {
-            this.secondaryCharIndex--;
-          }
-
-          this.secondaryCharHighlight.x_40 = this.getSecondaryCharX(this.secondaryCharIndex);
-          this.secondaryCharHighlight.y_44 = this.getSecondaryCharY(this.secondaryCharIndex);
-        }
-
-        case GLFW_KEY_RIGHT -> {
-          playSound(1);
-
-          if(this.secondaryCharIndex < 5) {
-            this.secondaryCharIndex++;
-          }
-
-          this.secondaryCharHighlight.x_40 = this.getSecondaryCharX(this.secondaryCharIndex);
-          this.secondaryCharHighlight.y_44 = this.getSecondaryCharY(this.secondaryCharIndex);
-        }
-
-        case GLFW_KEY_ESCAPE -> {
-          playSound(3);
-          unloadRenderable(this.secondaryCharHighlight);
-          this.loadingStage = 2;
-        }
-
-        case GLFW_KEY_ENTER, GLFW_KEY_S -> {
-          this.secondaryCharHighlight.x_40 = this.getSecondaryCharX(this.secondaryCharIndex);
-          this.secondaryCharHighlight.y_44 = this.getSecondaryCharY(this.secondaryCharIndex);
-
-          int charCount = 0;
-          for(int charSlot = 0; charSlot < 3; charSlot++) {
-            if(gameState_800babc8.charIndex_88.get(charSlot).get() != -1) {
-              charCount++;
-            }
-          }
-
-          final int secondaryCharIndex = secondaryCharIndices_800bdbf8.get(this.secondaryCharIndex).get();
-
-          if(((Config.unlockParty() && charCount >= 2) || secondaryCharIndex != -1) && (secondaryCharIndex == -1 || (gameState_800babc8.charData_32c.get(secondaryCharIndex).partyFlags_04.get() & 0x2) != 0)) {
-            playSound(2);
-            final int charIndex = gameState_800babc8.charIndex_88.get(this.primaryCharIndex).get();
-            gameState_800babc8.charIndex_88.get(this.primaryCharIndex).set(secondaryCharIndex);
-            secondaryCharIndices_800bdbf8.get(this.secondaryCharIndex).set(charIndex);
-            this.loadingStage = 1;
-          } else {
-            playSound(40);
-          }
-        }
+      if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
+        this.menuStage3NavigateUp();
+        return InputPropagation.HANDLED;
+      } else if(inputAction == InputAction.DPAD_DOWN || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_DOWN) {
+        this.menuStage3NavigateDown();
+        return InputPropagation.HANDLED;
+      } else if(inputAction == InputAction.DPAD_LEFT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_LEFT) {
+        this.menuStage3NavigateLeft();
+        return InputPropagation.HANDLED;
+      } else if(inputAction == InputAction.DPAD_RIGHT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_RIGHT) {
+        this.menuStage3NavigateRight();
+        return InputPropagation.HANDLED;
+      } else if(inputAction == InputAction.BUTTON_EAST) {
+        this.menuStage3Escape();
+        return InputPropagation.HANDLED;
+      } else if(inputAction == InputAction.BUTTON_SOUTH) {
+        this.menuStage3Select();
+        return InputPropagation.HANDLED;
       }
     }
+
+    return InputPropagation.PROPAGATE;
   }
 }

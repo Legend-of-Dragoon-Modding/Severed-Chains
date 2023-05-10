@@ -302,6 +302,14 @@ public class LodString implements MemoryRef {
     return this.ref.offset(2, index * 0x2L).cast(LodString::new);
   }
 
+  public int length() {
+    if(this.chars == null) {
+      throw new IllegalStateException("Can only get length of stack LodStrings");
+    }
+
+    return this.chars.length - 1;
+  }
+
   @Override
   public long getAddress() {
     if(this.ref == null) {

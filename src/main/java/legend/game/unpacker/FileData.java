@@ -4,30 +4,32 @@ import legend.core.MathHelper;
 import legend.core.gpu.RECT;
 import legend.core.gte.BVEC4;
 import legend.core.gte.SVECTOR;
+import legend.game.modding.registries.RegistryId;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-public record FileData(byte[] data, int offset, int size, boolean virtual) {
-  public static FileData virtual(final byte[] data) {
-    return new FileData(data, 0, data.length, true);
+public record FileData(byte[] data, int offset, int size, int realFileIndex) {
+  public static FileData virtual(final FileData real, final int realFileIndex) {
+    return new FileData(real.data, real.offset, real.data.length, realFileIndex);
   }
 
   public FileData(final byte[] data) {
-    this(data, 0, data.length, false);
+    this(data, 0, data.length, -1);
   }
 
   public FileData(final byte[] data, final int offset, final int size) {
-    this(data, offset, size, false);
+    this(data, offset, size, -1);
   }
 
   /** Not a virtual file and larger than zero bytes */
   public boolean real() {
-    return !this.virtual && this.size != 0;
+    return this.realFileIndex == -1 && this.size != 0;
   }
 
   public FileData slice(final int offset, final int size) {
     this.checkBounds(offset, size);
-    return new FileData(this.data, this.offset + offset, size, false);
+    return new FileData(this.data, this.offset + offset, size, -1);
   }
 
   public FileData slice(final int offset) {
@@ -41,7 +43,7 @@ public record FileData(byte[] data, int offset, int size, boolean virtual) {
       return this.data;
     }
 
-    return Arrays.copyOfRange(this.data, this.offset, this.size);
+    return Arrays.copyOfRange(this.data, this.offset, this.offset + this.size);
   }
 
   public void copyFrom(final int srcOffset, final byte[] dest, final int destOffset, final int size) {
@@ -50,7 +52,7 @@ public record FileData(byte[] data, int offset, int size, boolean virtual) {
   }
 
   public void copyTo(final int srcOffset, final byte[] src, final int destOffset, final int size) {
-    this.checkBounds(srcOffset, size);
+    this.checkBounds(destOffset, size);
     System.arraycopy(src, srcOffset, this.data, this.offset + destOffset, size);
   }
 
@@ -97,6 +99,27 @@ public record FileData(byte[] data, int offset, int size, boolean virtual) {
   public long readUInt(final int offset) {
     this.checkBounds(offset, 4);
     return MathHelper.get(this.data, this.offset + offset, 4);
+  }
+
+  public void writeAscii(final int offset, final String val) {
+    this.checkBounds(offset, val.length() + 3);
+    MathHelper.set(this.data, this.offset + offset, 3, val.length());
+    System.arraycopy(val.getBytes(StandardCharsets.US_ASCII), 0, this.data, this.offset + offset + 3, val.length());
+  }
+
+  public String readAscii(final int offset) {
+    this.checkBounds(offset, 3);
+    final int length = (int)MathHelper.get(this.data, this.offset + offset, 3);
+    this.checkBounds(offset, length + 3);
+    return new String(this.data, this.offset + offset + 3, length, StandardCharsets.US_ASCII);
+  }
+
+  public void writeRegistryId(final int offset, final RegistryId id) {
+    this.writeAscii(offset, id.toString());
+  }
+
+  public RegistryId readRegistryId(final int offset) {
+    return RegistryId.of(this.readAscii(offset));
   }
 
   public RECT readRect(final int offset, final RECT rect) {

@@ -1,5 +1,6 @@
 package legend.game.tim;
 
+import legend.core.gpu.Bpp;
 import legend.core.gpu.RECT;
 import legend.game.unpacker.FileData;
 
@@ -28,6 +29,10 @@ public class Tim {
     return this.data.readInt(0x4);
   }
 
+  public Bpp getBpp() {
+    return Bpp.of(this.getFlags() & 0b111);
+  }
+
   public boolean hasClut() {
     return (this.getFlags() & 0b1000) != 0;
   }
@@ -49,7 +54,7 @@ public class Tim {
   }
 
   public FileData getClutData() {
-    return this.data.slice(this.getClutOffset());
+    return this.data.slice(this.getClutOffset(), this.data.readInt(0x8) - 0xc);
   }
 
   public RECT getImageRect() {
@@ -61,7 +66,7 @@ public class Tim {
   }
 
   public FileData getImageData() {
-    return this.data.slice(this.getImageOffset());
+    return this.data.slice(this.getImageOffset(), this.data.readInt(this.getImageDataOffset() + 0x8) - 0xc);
   }
 
   public void uploadToGpu() {

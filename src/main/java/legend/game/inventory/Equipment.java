@@ -1,7 +1,6 @@
 package legend.game.inventory;
 
 import legend.game.modding.registries.RegistryEntry;
-import legend.game.modding.registries.RegistryId;
 import legend.game.types.EquipmentStats1c;
 
 public class Equipment extends RegistryEntry {
@@ -48,9 +47,8 @@ public class Equipment extends RegistryEntry {
   public final int _1a;
   public final int onHitStatus;
 
-  public Equipment(final RegistryId id, final String name, final EquipmentStats1c stats) {
+  public Equipment(final String name, final EquipmentStats1c stats) {
     this(
-      id,
       name,
       stats.flags_00.get(),
       stats.type_01.get(),
@@ -83,8 +81,7 @@ public class Equipment extends RegistryEntry {
     );
   }
 
-  public Equipment(final RegistryId id, final String name, int _00, int type, int _02, int equips, int element, int _05, int eHalf, int eImmune, int statRes, int _09, int atk, int special1, int special2, int specialAmount, int icon, int spd, int atkHi, int matk, int def, int mdef, int aHit, int mHit, int aAv, int mAv, int onStatusChance, int _19, int _1a, int onHitStatus) {
-    super(id);
+  public Equipment(final String name, final int _00, final int type, final int _02, final int equips, final int element, final int _05, final int eHalf, final int eImmune, final int statRes, final int _09, final int atk, final int special1, final int special2, final int specialAmount, final int icon, final int spd, final int atkHi, final int matk, final int def, final int mdef, final int aHit, final int mHit, final int aAv, final int mAv, final int onStatusChance, final int _19, final int _1a, final int onHitStatus) {
     this.name = name;
     this._00 = _00;
     this.type = type;

@@ -1,8 +1,9 @@
 package legend.game.inventory.screens;
 
-import legend.core.Config;
 import legend.core.MathHelper;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.DabasManager;
+import legend.game.input.InputAction;
 import legend.game.types.DabasData100;
 import legend.game.types.LodString;
 import legend.game.types.MenuItemStruct04;
@@ -46,13 +47,11 @@ import static legend.game.Scus94491BpeSegment_8002.getItemIcon;
 import static legend.game.Scus94491BpeSegment_8002.giveItem;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
-import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
 import static legend.game.Scus94491BpeSegment_8003.bzero;
-import static legend.game.Scus94491BpeSegment_800b.drgn0_6666FilePtr_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.inventoryJoypadInput_800bdc44;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
+import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 
 public class DabasScreen extends MenuScreen {
@@ -160,7 +159,7 @@ public class DabasScreen extends MenuScreen {
         }
 
         this.FUN_801073f8(112, 144, this.gold);
-        this.FUN_80106d10(226, 144, gameState_800babc8.gold_94.get());
+        this.FUN_80106d10(226, 144, gameState_800babc8.gold_94);
 
         if((inventoryJoypadInput_800bdc44.get() & 0x20) == 0) {
           this.renderDabasMenu(this.menuIndex);
@@ -178,7 +177,7 @@ public class DabasScreen extends MenuScreen {
         messageBox(messageBox_8011dc90);
 
         if(this.gold <= 10 || (inventoryJoypadInput_800bdc44.get() & 0x20) != 0) {
-          gameState_800babc8.gold_94.add(this.gold);
+          gameState_800babc8.gold_94 += this.gold;
           this.gold = 0;
           unloadRenderable(this.renderable2);
           this.renderable2 = allocateUiElement(0xd3, 0xd3, 68, 80);
@@ -186,11 +185,11 @@ public class DabasScreen extends MenuScreen {
           this.loadingStage++;
         } else {
           this.gold -= 10;
-          gameState_800babc8.gold_94.add(10);
+          gameState_800babc8.gold_94 += 10;
         }
 
-        if(gameState_800babc8.gold_94.get() > 99999999) {
-          gameState_800babc8.gold_94.set(99999999);
+        if(gameState_800babc8.gold_94 > 99999999) {
+          gameState_800babc8.gold_94 = 99999999;
         }
 
         if((tickCount_800bb0fc.get() & 0x1) != 0) {
@@ -198,7 +197,7 @@ public class DabasScreen extends MenuScreen {
         }
 
         this.FUN_801073f8(112, 144, this.gold);
-        this.FUN_80106d10(226, 144, gameState_800babc8.gold_94.get());
+        this.FUN_80106d10(226, 144, gameState_800babc8.gold_94);
         this.renderDabasMenu(this.menuIndex);
       }
 
@@ -211,7 +210,7 @@ public class DabasScreen extends MenuScreen {
         }
 
         this.FUN_801073f8(112, 144, this.gold);
-        this.FUN_80106d10(226, 144, gameState_800babc8.gold_94.get());
+        this.FUN_80106d10(226, 144, gameState_800babc8.gold_94);
         this.renderDabasMenu(this.menuIndex);
       }
 
@@ -234,7 +233,7 @@ public class DabasScreen extends MenuScreen {
 
   private void takeItems() {
     final DabasData100 dabasData = this.dabasData_8011d7c0;
-    dabasData.chapterIndex_00.set(gameState_800babc8.chapterIndex_98.get());
+    dabasData.chapterIndex_00.set(gameState_800babc8.chapterIndex_98);
 
     int equipmentCount = 0;
     int itemCount = 0;
@@ -254,7 +253,7 @@ public class DabasScreen extends MenuScreen {
       equipmentCount++;
     }
 
-    if(equipmentCount != 0 && gameState_800babc8.equipmentCount_1e4.get() + equipmentCount >= 0x100 || itemCount != 0 && gameState_800babc8.itemCount_1e6.get() + itemCount > Config.inventorySize()) {
+    if(equipmentCount != 0 && gameState_800babc8.equipment_1e8.size() + equipmentCount >= 0x100 || itemCount != 0 && gameState_800babc8.items_2e9.size() + itemCount > gameState_800babc8.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get())) {
       menuStack.pushScreen(new MessageBoxScreen(new LodString("Dabas has more items\nthan you can hold"), 0, result -> {}));
       return;
     }
@@ -287,7 +286,7 @@ public class DabasScreen extends MenuScreen {
 
   private void discardItems() {
     final DabasData100 dabasData = this.dabasData_8011d7c0;
-    dabasData.chapterIndex_00.set(gameState_800babc8.chapterIndex_98.get());
+    dabasData.chapterIndex_00.set(gameState_800babc8.chapterIndex_98);
 
     for(int i = 0; i < 6; i++) {
       dabasData.items_14.get(i).set(0);
@@ -304,7 +303,7 @@ public class DabasScreen extends MenuScreen {
 
   private void newDig() {
     final DabasData100 dabasData = this.dabasData_8011d7c0;
-    dabasData.chapterIndex_00.set(gameState_800babc8.chapterIndex_98.get());
+    dabasData.chapterIndex_00.set(gameState_800babc8.chapterIndex_98);
 
     this.menuItems.clear();
     this.specialItem = null;
@@ -317,9 +316,13 @@ public class DabasScreen extends MenuScreen {
   }
 
   @Override
-  protected void mouseMove(final int x, final int y) {
+  protected InputPropagation mouseMove(final int x, final int y) {
+    if(super.mouseMove(x, y) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
     if(this.loadingStage != 2) {
-      return;
+      return InputPropagation.PROPAGATE;
     }
 
     for(int i = 0; i < 3; i++) {
@@ -327,14 +330,21 @@ public class DabasScreen extends MenuScreen {
         playSound(1);
         this.menuIndex = i;
         this.renderable1.y_44 = this.getDabasMenuY(this.menuIndex);
+        return InputPropagation.HANDLED;
       }
     }
+
+    return InputPropagation.PROPAGATE;
   }
 
   @Override
-  protected void mouseClick(final int x, final int y, final int button, final int mods) {
+  protected InputPropagation mouseClick(final int x, final int y, final int button, final int mods) {
+    if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
     if(this.loadingStage != 2 || mods != 0) {
-      return;
+      return InputPropagation.PROPAGATE;
     }
 
     if(button == GLFW_MOUSE_BUTTON_LEFT) {
@@ -350,6 +360,8 @@ public class DabasScreen extends MenuScreen {
         } else {
           playSound(40);
         }
+
+        return InputPropagation.HANDLED;
       } else if(MathHelper.inBox(x, y, 52, this.getDabasMenuY(1), 85, 14)) {
         if(this.hasItems) {
           playSound(2);
@@ -362,6 +374,8 @@ public class DabasScreen extends MenuScreen {
         } else {
           playSound(40);
         }
+
+        return InputPropagation.HANDLED;
       } else if(MathHelper.inBox(x, y, 52, this.getDabasMenuY(2), 85, 14)) {
         if(this._8011e094 != 0) {
           playSound(2);
@@ -374,20 +388,35 @@ public class DabasScreen extends MenuScreen {
         } else {
           playSound(40);
         }
+
+        return InputPropagation.HANDLED;
       }
     }
+
+    return InputPropagation.PROPAGATE;
+  }
+
+  private void menuEscape() {
+    playSound(3);
+    this.loadingStage = 100;
   }
 
   @Override
-  protected void keyPress(final int key, final int scancode, final int mods) {
-    if(this.loadingStage != 2 || mods != 0) {
-      return;
+  public InputPropagation pressedThisFrame(final InputAction inputAction) {
+    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
     }
 
-    if(key == GLFW_KEY_ESCAPE) {
-      playSound(3);
-      this.loadingStage = 100;
+    if(this.loadingStage != 2) {
+      return InputPropagation.PROPAGATE;
     }
+
+    if(inputAction == InputAction.BUTTON_EAST) {
+      this.menuEscape();
+      return InputPropagation.HANDLED;
+    }
+
+    return InputPropagation.PROPAGATE;
   }
 
   private void FUN_80106d10(final int x, final int y, final int value) {
@@ -396,7 +425,7 @@ public class DabasScreen extends MenuScreen {
     //LAB_80106d5c
     int s0 = value / 10000000 % 10;
     if(s0 != 0) {
-      final Renderable58 renderable = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._0000, null);
+      final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
       renderable.flags_00 |= 0xc;
       renderable.glyph_04 = s0;
       renderable.tpage_2c = 0x19;
@@ -411,7 +440,7 @@ public class DabasScreen extends MenuScreen {
     s0 = value / 1000000 % 10;
     if(s0 != 0 || (sp10 & 0x1) != 0) {
       //LAB_80106e78
-      final Renderable58 renderable = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._0000, null);
+      final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
       renderable.flags_00 |= 0xc;
       renderable.glyph_04 = s0;
       renderable.tpage_2c = 0x19;
@@ -426,7 +455,7 @@ public class DabasScreen extends MenuScreen {
     s0 = value / 100000 % 10;
     if(s0 != 0 || (sp10 & 0x1) != 0) {
       //LAB_80106f50
-      final Renderable58 renderable = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._0000, null);
+      final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
       renderable.flags_00 |= 0xc;
       renderable.glyph_04 = s0;
       renderable.tpage_2c = 0x19;
@@ -441,7 +470,7 @@ public class DabasScreen extends MenuScreen {
     s0 = value / 10000 % 10;
     if(s0 != 0 || (sp10 & 0x1) != 0) {
       //LAB_80107024
-      final Renderable58 renderable = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._0000, null);
+      final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
       renderable.flags_00 |= 0xc;
       renderable.glyph_04 = s0;
       renderable.tpage_2c = 0x19;
@@ -456,7 +485,7 @@ public class DabasScreen extends MenuScreen {
     s0 = value / 1000 % 10;
     if(s0 != 0 || (sp10 & 0x1) != 0) {
       //LAB_801070f8
-      final Renderable58 renderable = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._0000, null);
+      final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
       renderable.flags_00 |= 0xc;
       renderable.glyph_04 = s0;
       renderable.tpage_2c = 0x19;
@@ -471,7 +500,7 @@ public class DabasScreen extends MenuScreen {
     s0 = value / 100 % 10;
     if(s0 != 0 || (sp10 & 0x1) != 0) {
       //LAB_801071cc
-      final Renderable58 renderable = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._0000, null);
+      final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
       renderable.flags_00 |= 0xc;
       renderable.glyph_04 = s0;
       renderable.tpage_2c = 0x19;
@@ -486,7 +515,7 @@ public class DabasScreen extends MenuScreen {
     s0 = value / 10 % 10;
     if(s0 != 0 || (sp10 & 0x1) != 0) {
       //LAB_8010729c
-      final Renderable58 renderable = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._0000, null);
+      final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
       renderable.flags_00 |= 0xc;
       renderable.glyph_04 = s0;
       renderable.tpage_2c = 0x19;
@@ -498,7 +527,7 @@ public class DabasScreen extends MenuScreen {
 
     //LAB_80107308
     //LAB_80107360
-    final Renderable58 renderable = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._0000, null);
+    final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
     renderable.flags_00 |= 0xc;
     renderable.glyph_04 = value % 10;
     renderable.tpage_2c = 0x19;
@@ -514,7 +543,7 @@ public class DabasScreen extends MenuScreen {
     //LAB_80107438
     int s0 = value / 1000 % 10;
     if(s0 != 0) {
-      final Renderable58 renderable = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._0000, null);
+      final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
       renderable.flags_00 |= 0xc;
       renderable.glyph_04 = s0;
       renderable.tpage_2c = 0x19;
@@ -529,7 +558,7 @@ public class DabasScreen extends MenuScreen {
     s0 = value / 100 % 10;
     if(s0 != 0 || (sp10 & 0x1) != 0) {
       //LAB_80107554
-      final Renderable58 renderable = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._0000, null);
+      final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
       renderable.flags_00 |= 0xc;
       renderable.glyph_04 = s0;
       renderable.tpage_2c = 0x19;
@@ -544,7 +573,7 @@ public class DabasScreen extends MenuScreen {
     s0 = value / 10 % 10;
     if(s0 != 0 || (sp10 & 0x1) != 0) {
       //LAB_80107624
-      final Renderable58 renderable = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._0000, null);
+      final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
       renderable.flags_00 |= 0xc;
       renderable.glyph_04 = s0;
       renderable.tpage_2c = 0x19;
@@ -555,7 +584,7 @@ public class DabasScreen extends MenuScreen {
     }
 
     //LAB_80107690
-    final Renderable58 renderable = allocateRenderable(drgn0_6666FilePtr_800bdc3c.deref()._0000, null);
+    final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
     renderable.flags_00 |= 0xc;
     renderable.glyph_04 = value % 10;
     renderable.tpage_2c = 0x19;
@@ -567,24 +596,23 @@ public class DabasScreen extends MenuScreen {
 
   private void renderDabasMenu(final int selectedSlot) {
     //LAB_801031cc
-    renderText(DigDabas_8011d04c, 48, 28, 4);
-    renderText(AcquiredItems_8011d050, 210, 28, 4);
-    renderText(SpecialItem_8011d054, 210, 170, 4);
-    renderText(AcquiredGold_8011cdd4, 30, 124, 4);
-    renderCentredText(Take_8011d058, 94, this.getDabasMenuY(0) + 2, selectedSlot == 0 ? 5 : !this.hasItems && this.gold == 0 ? 6 : 4);
-    renderCentredText(Discard_8011d05c, 94, this.getDabasMenuY(1) + 2, selectedSlot == 1 ? 5 : !this.hasItems ? 6 : 4);
-    renderCentredText(NextDig_8011d064, 94, this.getDabasMenuY(2) + 2, selectedSlot == 2 ? 5 : this._8011e094 == 0 ? 6 : 4);
+    renderText(DigDabas_8011d04c, 48, 28, TextColour.BROWN);
+    renderText(AcquiredItems_8011d050, 210, 28, TextColour.BROWN);
+    renderText(SpecialItem_8011d054, 210, 170, TextColour.BROWN);
+    renderText(AcquiredGold_8011cdd4, 30, 124, TextColour.BROWN);
+    renderCentredText(Take_8011d058, 94, this.getDabasMenuY(0) + 2, selectedSlot == 0 ? TextColour.RED : !this.hasItems && this.gold == 0 ? TextColour.MIDDLE_BROWN : TextColour.BROWN);
+    renderCentredText(Discard_8011d05c, 94, this.getDabasMenuY(1) + 2, selectedSlot == 1 ? TextColour.RED : !this.hasItems ? TextColour.MIDDLE_BROWN : TextColour.BROWN);
+    renderCentredText(NextDig_8011d064, 94, this.getDabasMenuY(2) + 2, selectedSlot == 2 ? TextColour.RED : this._8011e094 == 0 ? TextColour.MIDDLE_BROWN : TextColour.BROWN);
     renderMenuItems(194, 37, this.menuItems, 0, 6, null, null);
-    renderEightDigitNumber(100, 147, this.gold, 0x2L);
+    renderEightDigitNumber(100, 147, this.gold, 0x2);
 
     if(this.specialItem != null) {
       renderItemIcon(getItemIcon(this.specialItem.itemId_00), 198, 192, 0x8L);
-      renderText(equipment_8011972c.get(this.specialItem.itemId_00).deref(), 214, 194, 4);
+      renderText(equipment_8011972c.get(this.specialItem.itemId_00).deref(), 214, 194, TextColour.BROWN);
     }
 
     //LAB_80103390
     renderString(2, 16, 178, selectedSlot, false);
-    uploadRenderables();
   }
 
   private int getDabasMenuY(final int slot) {

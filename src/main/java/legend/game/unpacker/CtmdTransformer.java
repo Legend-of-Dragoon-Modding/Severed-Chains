@@ -12,9 +12,9 @@ public final class CtmdTransformer {
   private CtmdTransformer() { }
 
   /** Example file: 4146/0/0 */
-  public static boolean ctmdDiscriminator(final String name, final FileData data, final Set<Unpacker.Flags> flags) {
+  public static boolean ctmdDiscriminator(final String name, final FileData data, final Set<String> flags) {
     // Check if in DEFF and if file is large enough
-    if(!flags.contains(Unpacker.Flags.DEFF) || data.size() < 0x14) {
+    if(!flags.contains("DEFF") || data.size() < 0x14) {
       return false;
     }
 
@@ -47,7 +47,7 @@ public final class CtmdTransformer {
     return (data.readInt(containerOffset + 0x10) & 0x2) != 0;
   }
 
-  public static Map<String, FileData> ctmdTransformer(final String name, final FileData data, final Set<Unpacker.Flags> flags) {
+  public static Map<String, FileData> ctmdTransformer(final String name, final FileData data, final Set<String> flags) {
     final int containerOffset = data.readInt(0xc);
     int nextOffset = data.readInt(0x10);
 

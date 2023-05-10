@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.lwjgl.opengl.GL15C.GL_DYNAMIC_DRAW;
 import static org.lwjgl.opengl.GL15C.glBindBuffer;
@@ -47,6 +49,8 @@ import static org.lwjgl.opengl.GL31C.glUniformBlockBinding;
 
 public class Shader {
   private static final Logger LOGGER = LogManager.getLogger(Shader.class.getName());
+
+  private final Map<String, Uniform> uniforms = new HashMap<>();
 
   private final int shader;
 
@@ -91,6 +95,16 @@ public class Shader {
     } else {
       glUniformBlockBinding(this.shader, index, binding);
     }
+  }
+
+  public Uniform bindUniform(final String name) {
+    final Uniform uniform = new Uniform(name);
+    this.uniforms.put(name, uniform);
+    return uniform;
+  }
+
+  public Uniform getUniform(final String name) {
+    return this.uniforms.get(name);
   }
 
   public void use() {

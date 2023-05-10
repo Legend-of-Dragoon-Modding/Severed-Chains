@@ -44,11 +44,15 @@ public class DeffPart {
   }
 
   public static class TmdType extends DeffPart {
+    public final String name;
+
     public final TextureInfo[] textureInfo_08;
     public final CContainer tmd_0c;
 
     public TmdType(final String name, final FileData data) {
       super(data);
+
+      this.name = name;
 
       final int textureOffset = data.readInt(0x8);
       final int tmdOffset = data.readInt(0xc);

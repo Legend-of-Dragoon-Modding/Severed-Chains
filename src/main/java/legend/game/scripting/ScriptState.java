@@ -4,7 +4,7 @@ import legend.core.DebugHelper;
 import legend.core.MathHelper;
 import legend.core.memory.Method;
 import legend.game.Scus94491BpeSegment_8004;
-import legend.game.combat.types.BattleObject27c;
+import legend.game.combat.bobj.BattleObject27c;
 import legend.game.modding.events.EventManager;
 import legend.game.modding.events.scripting.ScriptDeallocatedEvent;
 import legend.game.modding.events.scripting.ScriptTickEvent;
@@ -31,16 +31,12 @@ public class ScriptState<T> {
   private static final Logger LOGGER = LogManager.getFormatterLogger(ScriptState.class);
   private static final Marker SCRIPT_MARKER = MarkerManager.getMarker("SCRIPT");
 
-  public static <T> Class<ScriptState<T>> classFor(final Class<T> cls) {
-    //noinspection unchecked
-    return (Class<ScriptState<T>>)(Class<?>)ScriptState.class;
-  }
-
   private final ScriptManager manager;
   final RunningScript<T> context = new RunningScript<>(this);
 
   /** This script's index */
   public final int index;
+  public final String name;
   public final T innerStruct_00;
   public BiConsumer<ScriptState<T>, T> ticker_04;
   public BiConsumer<ScriptState<T>, T> renderer_08;
@@ -116,12 +112,12 @@ public class ScriptState<T> {
   public int _ec;
   public int _f0;
   public int _f4;
-  public String type_f8;
   public int ui_fc;
 
-  public ScriptState(final ScriptManager manager, final int index, @Nullable final T innerStruct) {
+  public ScriptState(final ScriptManager manager, final int index, final String name, @Nullable final T innerStruct) {
     this.manager = manager;
     this.index = index;
+    this.name = name;
     this.innerStruct_00 = innerStruct;
   }
 
@@ -247,7 +243,7 @@ public class ScriptState<T> {
   }
 
   public ScriptState<?> fork() {
-    final ScriptState<?> childScript = this.manager.allocateScriptState(null);
+    final ScriptState<?> childScript = this.manager.allocateScriptState("Forked " + this.name, null);
 
     if(LOGGER.isInfoEnabled(SCRIPT_MARKER)) {
       final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
@@ -406,7 +402,7 @@ public class ScriptState<T> {
             this.context.params_20[paramIndex] = new GameVarArrayParam(cmd0 + this.storage_44[cmd1], cmd2);
           } else if(paramType == 0x11) {
             //LAB_80016468
-            assert false;
+            this.context.params_20[paramIndex] = new GameVarArrayParam(cmd0 + cmd1, this.storage_44[cmd2]); // Haven't verified this, afaik it's never used
           } else if(paramType == 0x12) {
             //LAB_80016138
             //LAB_8001648c
@@ -526,7 +522,7 @@ public class ScriptState<T> {
       case 42 -> this.FUN_80016b8c();
 
       case 48 -> this.scriptSquareRoot();
-      case 49 -> this.FUN_80016c00();
+      case 49 -> this.scriptRandom();
       case 50 -> this.scriptSin();
       case 51 -> this.scriptCos();
       case 52 -> this.scriptRatan2();
@@ -864,7 +860,7 @@ public class ScriptState<T> {
   }
 
   @Method(0x80016c00L)
-  public FlowControl FUN_80016c00() {
+  public FlowControl scriptRandom() {
     this.context.params_20[1].set(this.context.params_20[0].get() * simpleRand() >>> 16);
     return FlowControl.CONTINUE;
   }
