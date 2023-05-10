@@ -1,8 +1,5 @@
 package legend.core;
 
-import legend.game.combat.AutoAdditionMode;
-import legend.game.modding.coremod.CoreMod;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
@@ -16,8 +13,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
-
-import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 
 public final class Config {
   private Config() {
@@ -36,7 +31,7 @@ public final class Config {
     properties.setProperty("battle_ui_r", "0");
     properties.setProperty("battle_ui_g", "41");
     properties.setProperty("battle_ui_b", "159");
-    properties.setProperty("addition_overlay_color_change", "false");
+    properties.setProperty("addition_overlay_colour_change", "false");
     properties.setProperty("addition_overlay_r", "72");
     properties.setProperty("addition_overlay_g", "96");
     properties.setProperty("addition_overlay_b", "255");
@@ -86,12 +81,12 @@ public final class Config {
     properties.setProperty("battle_ui_colour_change", String.valueOf(!changeBattleRGB()));
   }
 
-  public static boolean changeAdditionOverlayRGB() {
-    return readBool("addition_overlay_color_change", false);
+  public static boolean changeAdditionOverlayRgb() {
+    return readBool("addition_overlay_colour_change", false);
   }
 
-  public static void toggleAdditionOverlayColor() {
-    properties.setProperty("addition_overlay_color_change", String.valueOf(!changeAdditionOverlayRGB()));
+  public static void toggleAdditionOverlayColour() {
+    properties.setProperty("addition_overlay_colour_change", String.valueOf(!changeAdditionOverlayRgb()));
   }
 
   public static boolean saveAnywhere() {
@@ -100,21 +95,6 @@ public final class Config {
 
   public static void toggleSaveAnywhere() {
     properties.setProperty("save_anywhere", String.valueOf(!saveAnywhere()));
-  }
-
-  public static boolean autoAddition() {
-    if(gameState_800babc8 != null) {
-      return gameState_800babc8.getConfig(CoreMod.AUTO_ADDITION_CONFIG.get()) == AutoAdditionMode.ON;
-    }
-
-    return readBool("auto_addition", false);
-  }
-
-  public static void toggleAutoAddition() {
-    if(gameState_800babc8 != null) {
-      properties.setProperty("auto_addition", String.valueOf(gameState_800babc8.getConfig(CoreMod.AUTO_ADDITION_CONFIG.get()) == AutoAdditionMode.ON));
-      gameState_800babc8.setConfig(CoreMod.AUTO_ADDITION_CONFIG.get(), autoAddition() ? AutoAdditionMode.OFF : AutoAdditionMode.ON);
-    }
   }
 
   public static boolean autoDragoonMeter() {
@@ -181,7 +161,7 @@ public final class Config {
     properties.setProperty("receive_input_on_inactive_window", String.valueOf(!receiveInputOnInactiveWindow()));
   }
 
-  public static int getBattleRGB() {
+  public static int getBattleRgb() {
     final int[] rgbArray = {
       readInt("battle_ui_r", 0, 0, 255),
       readInt("battle_ui_g", 0, 0, 255),
@@ -197,7 +177,7 @@ public final class Config {
     );
   }
 
-  public static void setBattleRGB(final int rgb) {
+  public static void setBattleRgb(final int rgb) {
     final int[] rgbArray = {
       ((rgb >> 24) & 0xff),
       ((rgb >> 16) & 0xff),
@@ -211,7 +191,7 @@ public final class Config {
     properties.setProperty("battle_ui_colour_change", "true");
   }
 
-  public static int getAdditionOverlayRGB() {
+  public static int getAdditionOverlayRgb() {
     final int[] rgbArray = {
       readInt("addition_overlay_r", 72, 0, 255),
       readInt("addition_overlay_g", 96, 0, 255),
@@ -227,7 +207,7 @@ public final class Config {
     );
   }
 
-  public static void setAdditionOverlayRGB(final int rgb) {
+  public static void setAdditionOverlayRgb(final int rgb) {
     final int[] rgbArray = {
       ((rgb >> 24) & 0xff),
       ((rgb >> 16) & 0xff),
@@ -238,10 +218,10 @@ public final class Config {
     properties.setProperty("addition_overlay_r", String.valueOf(rgbArray[3]));
     properties.setProperty("addition_overlay_g", String.valueOf(rgbArray[2]));
     properties.setProperty("addition_overlay_b", String.valueOf(rgbArray[1]));
-    properties.setProperty("addition_overlay_color_change", "true");
+    properties.setProperty("addition_overlay_colour_change", "true");
   }
 
-  public static int getCounterOverlayRGB() {
+  public static int getCounterOverlayRgb() {
     final int[] rgbArray = {
       readInt("counter_overlay_r", 216, 0, 255),
       readInt("counter_overlay_g", 96, 0, 255),
@@ -257,7 +237,7 @@ public final class Config {
     );
   }
 
-  public static void setCounterOverlayRGB(final int rgb) {
+  public static void setCounterOverlayRgb(final int rgb) {
     final int[] rgbArray = {
       ((rgb >> 24) & 0xff),
       ((rgb >> 16) & 0xff),
@@ -268,7 +248,7 @@ public final class Config {
     properties.setProperty("counter_overlay_r", String.valueOf(rgbArray[3]));
     properties.setProperty("counter_overlay_g", String.valueOf(rgbArray[2]));
     properties.setProperty("counter_overlay_b", String.valueOf(rgbArray[1]));
-    properties.setProperty("addition_overlay_color_change", "true");
+    properties.setProperty("addition_overlay_colour_change", "true");
   }
 
   private static int readInt(final String key, final int defaultVal, final int min, final int max) {

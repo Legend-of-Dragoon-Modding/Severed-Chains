@@ -12,9 +12,9 @@ public class AdditionOverlaysHit20 implements MemoryRef {
 
   public final ByteRef unused_00; // never used
   public final ByteRef hitSuccessful_01;
-  public final ByteRef borderColorsArrayIndex_02; // Set only to 3
+  public final ByteRef borderColoursArrayIndex_02; // Set only to 3
 
-  public final ShortRef shadowColor_08;
+  public final ShortRef shadowColour_08;
   public final ShortRef totalHitFrames_0a;
   public final ShortRef frameBeginDisplay_0c;
   public final ShortRef numSuccessFrames_0e;
@@ -30,9 +30,9 @@ public class AdditionOverlaysHit20 implements MemoryRef {
 
     this.unused_00 = ref.offset(1, 0x00L).cast(ByteRef::new);
     this.hitSuccessful_01 = ref.offset(1, 0x01L).cast(ByteRef::new);
-    this.borderColorsArrayIndex_02 = ref.offset(1, 0x02L).cast(ByteRef::new);
+    this.borderColoursArrayIndex_02 = ref.offset(1, 0x02L).cast(ByteRef::new);
 
-    this.shadowColor_08 = ref.offset(2, 0x08).cast(ShortRef::new);
+    this.shadowColour_08 = ref.offset(2, 0x08).cast(ShortRef::new);
     this.totalHitFrames_0a = ref.offset(2, 0x0a).cast(ShortRef::new);
     this.frameBeginDisplay_0c = ref.offset(2, 0x0c).cast(ShortRef::new);
     this.numSuccessFrames_0e = ref.offset(2, 0x0e).cast(ShortRef::new);

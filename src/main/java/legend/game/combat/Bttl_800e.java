@@ -4110,7 +4110,7 @@ public final class Bttl_800e {
   public static void FUN_800ef9e4() {
     if(_800c6cf4.get() == 0x6L) {
       if(Config.changeBattleRGB()) {
-        Bttl_800c._800c7004.set(Config.getBattleRGB());
+        Bttl_800c._800c7004.set(Config.getBattleRgb());
       }
 
       final long charCount = charCount_800c677c.get();

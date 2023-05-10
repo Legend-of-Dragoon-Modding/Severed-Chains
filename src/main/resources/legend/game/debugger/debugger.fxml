@@ -89,11 +89,11 @@
                </HBox>
                <HBox prefHeight="0.0" prefWidth="213.0">
                   <children>
-                     <Button mnemonicParsing="false" onAction="#getBattleUIRGB" text="Get"/>
-                     <Button mnemonicParsing="false" onAction="#setBattleUIRGB" text="Set"/>
+                     <Button mnemonicParsing="false" onAction="#getBattleUiRgb" text="Get"/>
+                     <Button mnemonicParsing="false" onAction="#setBattleUiRgb" text="Set"/>
                   </children>
                </HBox>
-               <CheckBox fx:id="additionOverlayColor" mnemonicParsing="false" onAction="#toggleAdditionOverlayColor" text="Addition Overlay Colour"/>
+               <CheckBox fx:id="additionOverlayColour" mnemonicParsing="false" onAction="#toggleAdditionOverlayColour" text="Addition Overlay Colour"/>
                <Label text="Normal"/>
                <HBox prefHeight="19.0" prefWidth="213.0">
                   <children>
@@ -104,8 +104,8 @@
                </HBox>
                <HBox prefHeight="0.0" prefWidth="213.0">
                   <children>
-                     <Button mnemonicParsing="false" onAction="#getAdditionOverlayRGB" text="Get"/>
-                     <Button mnemonicParsing="false" onAction="#setAdditionOverlayRGB" text="Set"/>
+                     <Button mnemonicParsing="false" onAction="#getAdditionOverlayRgb" text="Get"/>
+                     <Button mnemonicParsing="false" onAction="#setAdditionOverlayRgb" text="Set"/>
                   </children>
                </HBox>
                <Label text="Counterattack"/>
@@ -118,8 +118,8 @@
                </HBox>
                <HBox prefHeight="0.0" prefWidth="213.0">
                   <children>
-                     <Button mnemonicParsing="false" onAction="#getCounterOverlayRGB" text="Get"/>
-                     <Button mnemonicParsing="false" onAction="#setCounterOverlayRGB" text="Set"/>
+                     <Button mnemonicParsing="false" onAction="#getCounterOverlayRgb" text="Get"/>
+                     <Button mnemonicParsing="false" onAction="#setCounterOverlayRgb" text="Set"/>
                   </children>
                </HBox>
                <HBox prefHeight="0.0" prefWidth="213.0">

@@ -884,16 +884,12 @@ public final class Bttl_800d {
     effect._00.set(1);
     effect._02.set(0);
     effect._04.set((short)0);
-    if(Config.changeAdditionOverlayRGB()) {
-      final int rgb = Config.getCounterOverlayRGB();
 
-      // Hack to make shield color default if counter overlay color is default
-      // Otherwise, just use the overlay color. Maybe we can make shields toggleable later.
-      if(rgb == 0x2060d8) {
-        manager._10.colour_1c.set(255, 0, 0);
-      } else {
-        manager._10.colour_1c.set(rgb & 0xff, rgb >> 8 & 0xff, rgb >> 16 & 0xff);
-      }
+    // Hack to make shield color default if counter overlay color is default
+    // Otherwise, just use the overlay color. Maybe we can make shields toggleable later.
+    final int rgb = Config.getCounterOverlayRgb();
+    if(Config.changeAdditionOverlayRgb() && rgb != 0x2060d8) {
+      manager._10.colour_1c.set(rgb & 0xff, rgb >> 8 & 0xff, rgb >> 16 & 0xff);
     } else {
       manager._10.colour_1c.set(255, 0, 0);
     }
