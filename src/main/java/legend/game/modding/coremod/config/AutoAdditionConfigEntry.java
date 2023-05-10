@@ -31,7 +31,7 @@ public class AutoAdditionConfigEntry extends ConfigEntry<AutoAdditionMode> {
   }
 
   private static byte[] serializer(final AutoAdditionMode val) {
-    return new byte[]{(byte)val.ordinal()};
+    return new byte[] {(byte)val.ordinal()};
   }
 
   private static AutoAdditionMode deserializer(final byte[] data) {

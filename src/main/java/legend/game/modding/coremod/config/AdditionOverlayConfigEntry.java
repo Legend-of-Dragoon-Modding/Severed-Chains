@@ -32,7 +32,7 @@ public class AdditionOverlayConfigEntry extends ConfigEntry<AdditionOverlayMode>
   }
 
   private static byte[] serializer(final AdditionOverlayMode val) {
-    return new byte[]{(byte)val.ordinal()};
+    return new byte[] {(byte)val.ordinal()};
   }
 
   private static AdditionOverlayMode deserializer(final byte[] data) {
