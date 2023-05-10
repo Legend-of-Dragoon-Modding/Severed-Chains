@@ -1125,6 +1125,9 @@ public final class Scus94491BpeSegment {
   @Method(0x80013200L)
   public static void resizeDisplay(final int width, final int height) {
     if(width != displayWidth_1f8003e0.get()) {
+      final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
+      LOGGER.info("Changing resolution to (%d, %d) from %s.%s(%s:%d)", width, height, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
+
       // Change the syncFrame callback to the reinitializer for a frame to reinitialize everything with the new size/flags
       syncFrame_8004dd3c = Scus94491BpeSegment::syncFrame_reinit;
       width_8004dd34 = width;
