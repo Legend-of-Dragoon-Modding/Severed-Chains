@@ -6,7 +6,10 @@ import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.BigList;
 import legend.game.inventory.screens.controls.SaveCard;
+import legend.game.modding.events.EventManager;
+import legend.game.modding.events.gamestate.GameLoadedEvent;
 import legend.game.saves.Campaign;
+import legend.game.types.GameState52c;
 import legend.game.types.LodString;
 
 import static legend.core.GameEngine.SAVES;
@@ -48,7 +51,10 @@ public class CampaignSelectionScreen extends MenuScreen {
     menuStack.pushScreen(new LoadGameScreen(save -> {
       menuStack.popScreen();
 
-      gameState_800babc8 = save.state();
+      final GameState52c state = save.state();
+      final GameLoadedEvent event = EventManager.INSTANCE.postEvent(new GameLoadedEvent(state));
+
+      gameState_800babc8 = event.gameState;
 
       savedGameSelected_800bdc34.set(true);
       whichMenu_800bdc38 = WhichMenu.UNLOAD_CAMPAIGN_SELECTION_MENU;
