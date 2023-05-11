@@ -1,5 +1,6 @@
 package legend.game.combat;
 
+import legend.core.Latch;
 import legend.core.gte.SVECTOR;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
@@ -155,12 +156,12 @@ public class SBtld {
 
 //    loadFile("encounters", file -> battlePreloadedEntities_1f8003f4.encounterData_00 = EncounterData38.fromOverlay(file.getBytes(), encounterId_800bb0f8.get() * 0x38));
 
-    final short[] enemyIndices = new short[7];
+    final int[] enemyIndices = new int[7];
     final EncounterData38.EnemyInfo08[] enemyInfo = new EncounterData38.EnemyInfo08[7];
 
     for(int i = 0; i < 7; i++) {
-      enemyIndices[i] = (short)344;
-      enemyInfo[i] = new EncounterData38.EnemyInfo08((short)344, new SVECTOR().set((short)0xf180, (short)0, (short)(0x480 + (i - enemyIndices.length / 2) * 0x400)));
+      enemyIndices[i] = i;
+      enemyInfo[i] = new EncounterData38.EnemyInfo08(i, new SVECTOR().set((short)0xf180, (short)0, (short)(0x480 + (i - enemyIndices.length / 2) * 0x400)));
     }
 
     battlePreloadedEntities_1f8003f4.encounterData_00 = new EncounterData38(enemyIndices, enemyInfo);
@@ -190,8 +191,8 @@ public class SBtld {
     final BattlePreloadedEntities_18cb0 fp = battlePreloadedEntities_1f8003f4;
 
     //LAB_801095a0
-    for(int i = 0; i < fp.encounterData_00.enemyIndices_00.length; i++) {
-      final int enemyIndex = fp.encounterData_00.enemyIndices_00[i] & 0x1ff;
+    for(int i = 0; i < fp.encounterData_00.monsterIndices_00.length; i++) {
+      final int enemyIndex = fp.encounterData_00.monsterIndices_00[i] & 0x1ff;
       if(enemyIndex == 0x1ff) {
         break;
       }
@@ -209,6 +210,7 @@ public class SBtld {
       }
 
       final int combatantIndex = getCombatantIndex(charIndex);
+      final CombatantStruct1a8 combatant = getCombatant(combatantIndex);
       final String name = "Enemy combatant index " + combatantIndex;
       final ScriptState<MonsterBattleObject> state = SCRIPTS.allocateScriptState(name, new MonsterBattleObject(name));
       state.setTicker(Bttl_800c::bobjTicker);
@@ -220,10 +222,12 @@ public class SBtld {
       data.charIndex_272 = charIndex;
       data._274 = _800c66d0.get();
       data.charSlot_276 = monsterCount_800c6768.get();
-      data.combatant_144 = getCombatant(combatantIndex);
+      data.combatant_144 = combatant;
       data.combatantIndex_26c = combatantIndex;
       data.model_148.coord2_14.coord.transfer.set(s5.pos_02);
       data.model_148.coord2Param_64.rotate.set((short)0, (short)0xc01, (short)0);
+      data.model_148.texture = new Latch<>(() -> combatant.texture);
+      data.model_148.palettes = new Latch<>(() -> combatant.palettes);
       state.storage_44[7] |= 0x4;
       _800c66d0.incr();
       monsterCount_800c6768.incr();

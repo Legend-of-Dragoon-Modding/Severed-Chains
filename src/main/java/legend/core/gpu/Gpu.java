@@ -778,7 +778,7 @@ public class Gpu {
                 }
 
                 if(!found) {
-                  throw new RuntimeException("Failed to find palette");
+                  throw new RuntimeException("Failed to find palette (clut: %d, %d)".formatted(clutX, clutY));
                 }
               }
             }

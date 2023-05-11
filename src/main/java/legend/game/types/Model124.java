@@ -1,5 +1,7 @@
 package legend.game.types;
 
+import legend.core.Latch;
+import legend.core.gpu.VramTexture;
 import legend.core.gte.GsCOORD2PARAM;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.GsDOBJ2;
@@ -56,6 +58,8 @@ public class Model124 {
   public int animationState_9c;
   /** ubyte */
   public int colourMap_9d;
+  public Latch<VramTexture> texture = new Latch<>(() -> null);
+  public Latch<VramTexture[]> palettes = new Latch<>(() -> null);
   /** short */
   public int remainingFrames_9e;
   /** short */

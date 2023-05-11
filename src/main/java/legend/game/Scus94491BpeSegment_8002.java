@@ -399,7 +399,9 @@ public final class Scus94491BpeSegment_8002 {
 
     model.coord2_14.coord.transfer.set(transferX, transferY, transferZ);
 
-    adjustModelUvs(model);
+    if(model.texture.get() == null) {
+      adjustModelUvs(model);
+    }
 
     //LAB_800209b0
     model.movementType_cc = 0;

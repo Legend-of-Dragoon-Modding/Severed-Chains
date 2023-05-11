@@ -7,6 +7,7 @@ import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.RECT;
 import legend.core.gpu.TimHeader;
+import legend.core.gpu.VramTextureLoader;
 import legend.core.gte.DVECTOR;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MATRIX;
@@ -224,7 +225,7 @@ public final class Bttl_800c {
   public static final Value _800c66c0 = MEMORY.ref(1, 0x800c66c0L);
   public static final Value _800c66c1 = MEMORY.ref(1, 0x800c66c1L);
 
-  public static final Value _800c66c4 = MEMORY.ref(4, 0x800c66c4L);
+  public static final IntRef usedMonsterTextureSlots_800c66c4 = MEMORY.ref(4, 0x800c66c4L, IntRef::new);
   public static ScriptState<? extends BattleObject27c> currentTurnBobj_800c66c8;
   public static final Value _800c66cc = MEMORY.ref(4, 0x800c66ccL);
   public static final IntRef _800c66d0 = MEMORY.ref(4, 0x800c66d0L, IntRef::new);
@@ -459,7 +460,7 @@ public final class Bttl_800c {
   public static final Value _800fa6d4 = MEMORY.ref(2, 0x800fa6d4L);
 
   public static final IntRef mcqColour_800fa6dc = MEMORY.ref(4, 0x800fa6dcL, IntRef::new);
-  public static final UnboundedArrayRef<RECT> _800fa6e0 = MEMORY.ref(2, 0x800fa6e0L, UnboundedArrayRef.of(0x8, RECT::new));
+  public static final UnboundedArrayRef<RECT> textureSlotRects_800fa6e0 = MEMORY.ref(2, 0x800fa6e0L, UnboundedArrayRef.of(0x8, RECT::new));
 
   public static final ArrayRef<ShortRef> colourMaps_800fa730 = MEMORY.ref(2, 0x800fa730L, ArrayRef.of(ShortRef.class, 10, 2, ShortRef::new));
 
@@ -1539,7 +1540,7 @@ public final class Bttl_800c {
 
         //LAB_800c8f94
         combatant.charSlot_19c = charSlot;
-        combatant.colourMap_1a0 = 0;
+        combatant.textureSlot_1a0 = 0;
         combatant.charIndex_1a2 = a0;
         combatant._1a4 = -1;
         combatant._1a6 = -1;
@@ -1555,8 +1556,8 @@ public final class Bttl_800c {
   public static void removeCombatant(final int combatantIndex) {
     final CombatantStruct1a8 combatant = combatants_8005e398[combatantIndex];
 
-    if(combatant.colourMap_1a0 != 0) {
-      FUN_800ca918(combatant.colourMap_1a0);
+    if(combatant.textureSlot_1a0 != 0) {
+      unsetMonsterTextureSlotUsed(combatant.textureSlot_1a0);
     }
 
     //LAB_800c9020
@@ -2173,45 +2174,53 @@ public final class Bttl_800c {
 
   @Method(0x800ca75cL)
   public static void loadCombatantTim(final int combatantIndex, final FileData timFile) {
-    final int a0;
+    final int textureSlot;
 
     if(combatantIndex >= 0) {
       //LAB_800ca77c
-      final CombatantStruct1a8 s0 = getCombatant(combatantIndex);
+      final CombatantStruct1a8 combatant = getCombatant(combatantIndex);
 
-      if(s0.colourMap_1a0 == 0) {
-        final int charSlot = s0.charSlot_19c;
+      if(combatant.textureSlot_1a0 == 0) {
+        final int charSlot = combatant.charSlot_19c;
 
         if(charSlot < 0) {
-          s0.colourMap_1a0 = FUN_800ca89c(s0.charIndex_1a2);
+          combatant.textureSlot_1a0 = findFreeMonsterTextureSlot(combatant.charIndex_1a2);
+          loadCombatantTim2(combatant.textureSlot_1a0, timFile, combatant);
+          return;
         } else {
           //LAB_800ca7c4
-          s0.colourMap_1a0 = charSlot + 1;
+          combatant.textureSlot_1a0 = charSlot + 1;
         }
       }
 
-      a0 = s0.colourMap_1a0;
+      textureSlot = combatant.textureSlot_1a0;
     } else {
-      a0 = 0;
+      textureSlot = 0;
     }
 
     //LAB_800ca7d0
-    loadCombatantTim2(a0, timFile);
+    loadCombatantTim2(textureSlot, timFile, null);
   }
 
   @Method(0x800ca7ecL)
-  public static void loadCombatantTim2(final int a0, final FileData timFile) {
+  public static void loadCombatantTim2(final int textureSlot, final FileData timFile, @Nullable final CombatantStruct1a8 combatant) {
     final Tim tim = new Tim(timFile);
 
-    if(a0 != 0) {
+    if(combatant != null) {
+      combatant.texture = VramTextureLoader.textureFromTim(tim);
+      combatant.palettes = VramTextureLoader.palettesFromTim(tim);
+      return;
+    }
+
+    if(textureSlot != 0) {
       //LAB_800ca83c
-      final RECT s0 = _800fa6e0.get(a0);
-      LoadImage(s0, tim.getImageData());
+      final RECT textureSlotRect = textureSlotRects_800fa6e0.get(textureSlot);
+      LoadImage(textureSlotRect, tim.getImageData());
 
       if(tim.hasClut()) {
         final RECT clutRect = tim.getClutRect();
-        clutRect.x.set(s0.x.get());
-        clutRect.y.set((short)(s0.y.get() + 240));
+        clutRect.x.set(textureSlotRect.x.get());
+        clutRect.y.set((short)(textureSlotRect.y.get() + 240));
 
         //LAB_800ca884
         LoadImage(clutRect, tim.getClutData());
@@ -2231,14 +2240,14 @@ public final class Bttl_800c {
   }
 
   @Method(0x800ca89cL)
-  public static int FUN_800ca89c(final int a0) {
+  public static int findFreeMonsterTextureSlot(final int monsterId) {
     //LAB_800ca8ac
     //LAB_800ca8c4
-    for(int i = a0 < 0x200 ? 4 : 1; i < 9; i++) {
+    for(int i = monsterId < 512 ? 4 : 1; i < 9; i++) {
       final int a0_0 = 0x1 << i;
 
-      if((_800c66c4.get() & a0_0) == 0) {
-        _800c66c4.oru(a0_0);
+      if((usedMonsterTextureSlots_800c66c4.get() & a0_0) == 0) {
+        setMonsterTextureSlotUsed(i);
         return i;
       }
 
@@ -2250,18 +2259,18 @@ public final class Bttl_800c {
   }
 
   @Method(0x800ca8fcL)
-  public static void FUN_800ca8fc(final int shift) {
-    _800c66c4.oru(1L << shift);
+  public static void setMonsterTextureSlotUsed(final int shift) {
+    usedMonsterTextureSlots_800c66c4.or(1 << shift);
   }
 
   @Method(0x800ca918L)
-  public static void FUN_800ca918(final int shift) {
-    _800c66c4.and(~(1L << shift));
+  public static void unsetMonsterTextureSlotUsed(final int shift) {
+    usedMonsterTextureSlots_800c66c4.and(~(1 << shift));
   }
 
   @Method(0x800ca938L)
   public static short getCombatantColourMap(final int combatantIndex) {
-    return colourMaps_800fa730.get(combatants_8005e398[combatantIndex].colourMap_1a0).get();
+    return colourMaps_800fa730.get(combatants_8005e398[combatantIndex].textureSlot_1a0).get();
   }
 
   @Method(0x800ca980L)

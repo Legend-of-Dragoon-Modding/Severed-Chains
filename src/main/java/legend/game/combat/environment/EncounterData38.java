@@ -4,16 +4,16 @@ import legend.core.MathHelper;
 import legend.core.gte.SVECTOR;
 
 public class EncounterData38 {
-  public final short[] enemyIndices_00;
+  public final int[] monsterIndices_00;
   public final EnemyInfo08[] enemyInfo_08;
 
-  public EncounterData38(final short[] enemyIndices, final EnemyInfo08[] enemyInfo) {
-    this.enemyIndices_00 = enemyIndices;
+  public EncounterData38(final int[] enemyIndices, final EnemyInfo08[] enemyInfo) {
+    this.monsterIndices_00 = enemyIndices;
     this.enemyInfo_08 = enemyInfo;
   }
 
   public static EncounterData38 fromOverlay(final byte[] data, int offset) {
-    final short[] enemyIndices = new short[3];
+    final int[] enemyIndices = new int[3];
     final EnemyInfo08[] enemyInfo = new EnemyInfo08[6];
 
     for(int i = 0; i < enemyIndices.length; i++) {
@@ -32,10 +32,10 @@ public class EncounterData38 {
   }
 
   public static class EnemyInfo08 {
-    public final short index_00;
+    public final int index_00;
     public final SVECTOR pos_02;
 
-    public EnemyInfo08(final short index, final SVECTOR pos) {
+    public EnemyInfo08(final int index, final SVECTOR pos) {
       this.index_00 = index;
       this.pos_02 = pos;
     }

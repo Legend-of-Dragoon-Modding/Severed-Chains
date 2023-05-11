@@ -3,12 +3,15 @@ package legend.game.tmd;
 import legend.core.IoHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandPoly;
+import legend.core.gpu.VramTexture;
 import legend.core.gte.DVECTOR;
 import legend.core.gte.GsDOBJ2;
 import legend.core.gte.SVECTOR;
 import legend.core.gte.TmdObjTable1c;
 import legend.game.combat.environment.BattleLightStruct64;
 import legend.game.types.Translucency;
+
+import javax.annotation.Nullable;
 
 import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GPU;
@@ -23,10 +26,14 @@ import static legend.game.combat.Bttl_800c._800c6930;
 public final class Renderer {
   private Renderer() { }
 
+  public static void renderDobj2(final GsDOBJ2 dobj2, final boolean useSpecialTranslucency, final int ctmdFlag) {
+    renderDobj2(dobj2, useSpecialTranslucency, ctmdFlag, null, null);
+  }
+
   /**
    * @param useSpecialTranslucency Used in battle, some TMDs have translucency info in the upper 16 bits of their ID. Also enables backside culling.
    */
-  public static void renderDobj2(final GsDOBJ2 dobj2, final boolean useSpecialTranslucency, final int ctmdFlag) {
+  public static void renderDobj2(final GsDOBJ2 dobj2, final boolean useSpecialTranslucency, final int ctmdFlag, @Nullable final VramTexture texture, @Nullable final VramTexture[] palettes) {
     final TmdObjTable1c objTable = dobj2.tmd_08;
     final SVECTOR[] vertices = objTable.vert_top_00;
     final SVECTOR[] normals = objTable.normal_top_08;
@@ -36,11 +43,11 @@ public final class Renderer {
 
     //LAB_800da2bc
     for(final TmdObjTable1c.Primitive primitive : objTable.primitives_10) {
-      renderTmdPrimitive(primitive, vertices, normals, useSpecialTranslucency, specialFlags);
+      renderTmdPrimitive(primitive, vertices, normals, useSpecialTranslucency, specialFlags, texture, palettes);
     }
   }
 
-  public static void renderTmdPrimitive(final TmdObjTable1c.Primitive primitive, final SVECTOR[] vertices, final SVECTOR[] normals, final boolean useSpecialTranslucency, final int specialFlags) {
+  public static void renderTmdPrimitive(final TmdObjTable1c.Primitive primitive, final SVECTOR[] vertices, final SVECTOR[] normals, final boolean useSpecialTranslucency, final int specialFlags, @Nullable final VramTexture texture, @Nullable final VramTexture[] palettes) {
     // Read type info from command ---
     final int command = (primitive.header() | specialFlags) & 0xff04_0000;
     final int primitiveId = command >>> 24;
@@ -118,6 +125,10 @@ public final class Renderer {
       // ---
 
       final GpuCommandPoly cmd = new GpuCommandPoly(vertexCount);
+
+      if(texture != null) {
+        cmd.texture(texture, palettes);
+      }
 
       if(textured) {
         cmd.clut((poly.clut & 0b111111) * 16, poly.clut >>> 6);

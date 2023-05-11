@@ -3353,7 +3353,8 @@ public final class Bttl_800e {
         CPU.CTC2(sp0x10.transfer.getX(), 5);
         CPU.CTC2(sp0x10.transfer.getY(), 6);
         CPU.CTC2(sp0x10.transfer.getZ(), 7);
-        Renderer.renderDobj2(s2, true, 0);
+
+        Renderer.renderDobj2(s2, true, 0, model.texture.get(), model.palettes.get());
       }
     }
 

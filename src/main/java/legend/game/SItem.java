@@ -19,6 +19,7 @@ import legend.game.combat.Bttl_800c;
 import legend.game.combat.bobj.BattleObject27c;
 import legend.game.combat.bobj.PlayerBattleObject;
 import legend.game.combat.environment.BattlePreloadedEntities_18cb0;
+import legend.game.combat.environment.EncounterData38;
 import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.inventory.WhichMenu;
@@ -110,7 +111,6 @@ import static legend.game.Scus94491BpeSegment_800b._800bdc2c;
 import static legend.game.Scus94491BpeSegment_800b._800be5d0;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.confirmDest_800bdc30;
-import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.equipmentStats_800be5d8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.goldGainedFromCombat_800bc920;
@@ -339,9 +339,40 @@ public final class SItem {
     decrementOverlayCount();
   }
 
+  private static FileData[] getMonsterTextures(final int[] monsterIds) {
+    final FileData[] textures = new FileData[monsterIds.length];
+
+    loadFile("encounters", file -> {
+      final EncounterData38[] encounterData = new EncounterData38[512];
+
+      for(int encounterId = 0; encounterId < encounterData.length; encounterId++) {
+        encounterData[encounterId] = EncounterData38.fromOverlay(file.getBytes(), encounterId * 0x38);
+      }
+
+      outer:
+      for(int i = 0; i < monsterIds.length; i++) {
+        for(int encounterId = 0; encounterId < encounterData.length; encounterId++) {
+          for(int monsterSlot = 0; monsterSlot < 3; monsterSlot++) {
+            if(encounterData[encounterId].monsterIndices_00[monsterSlot] == monsterIds[i]) {
+              final int finalI = i;
+              loadDrgnFile(0, "%d/%d".formatted(2625 + encounterId, monsterSlot), fileData -> textures[finalI] = fileData);
+              continue outer;
+            }
+          }
+        }
+      }
+    });
+
+    return textures;
+  }
+
   @Method(0x800fbfe0L)
   public static void loadEncounterAssets() {
-    loadSupportOverlay(2, () -> SItem.loadEnemyTextures(2625 + encounterId_800bb0f8.get()));
+//    loadSupportOverlay(2, () -> SItem.loadEnemyTextures(2625 + encounterId_800bb0f8.get()));
+
+    final EncounterData38 encounterData38 = battlePreloadedEntities_1f8003f4.encounterData_00;
+    final FileData[] textures = getMonsterTextures(encounterData38.monsterIndices_00);
+    enemyTexturesLoadedCallback(List.of(textures));
 
     //LAB_800fc030
     for(int i = 0; i < combatantCount_800c66a0.get(); i++) {
@@ -390,14 +421,14 @@ public final class SItem {
 
     //LAB_800fc434
     for(int i = 0; i < combatantCount_800c66a0.get(); i++) {
-      final CombatantStruct1a8 a0 = getCombatant(i);
+      final CombatantStruct1a8 combatant = getCombatant(i);
 
-      if(a0.charSlot_19c < 0) {
-        final int enemyIndex = a0.charIndex_1a2 & 0x1ff;
+      if(combatant.charSlot_19c < 0) {
+        final int enemyIndex = combatant.charIndex_1a2 & 0x1ff;
 
         //LAB_800fc464
-        for(int enemySlot = 0; enemySlot < 3; enemySlot++) {
-          if((s2.encounterData_00.enemyIndices_00[enemySlot] & 0x1ff) == enemyIndex && files.get(enemySlot).real()) {
+        for(int enemySlot = 0; enemySlot < files.size(); enemySlot++) {
+          if((s2.encounterData_00.monsterIndices_00[enemySlot] & 0x1ff) == enemyIndex && files.get(enemySlot).real()) {
             loadCombatantTim(i, files.get(enemySlot));
             break;
           }

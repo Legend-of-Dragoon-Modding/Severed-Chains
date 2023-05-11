@@ -1,5 +1,6 @@
 package legend.game.combat.types;
 
+import legend.core.gpu.VramTexture;
 import legend.game.scripting.ScriptFile;
 import legend.game.types.CContainer;
 import legend.game.unpacker.FileData;
@@ -27,7 +28,9 @@ public class CombatantStruct1a8 {
    * 0x4 - player (not NPC)
    */
   public int flags_19e;
-  public int colourMap_1a0;
+  public int textureSlot_1a0;
+  public VramTexture texture;
+  public VramTexture[] palettes;
   /**
    * Not just char index
    * <ul>
