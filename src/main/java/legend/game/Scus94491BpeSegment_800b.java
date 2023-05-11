@@ -70,7 +70,7 @@ public final class Scus94491BpeSegment_800b {
   public static final IntRef drgnBinIndex_800bc058 = MEMORY.ref(4, 0x800bc058L, IntRef::new);
   public static final IntRef _800bc05c = MEMORY.ref(4, 0x800bc05cL, IntRef::new);
 
-  public static final ScriptState<?>[] scriptStatePtrArr_800bc1c0 = new ScriptState[72];
+  public static final ScriptState<?>[] scriptStatePtrArr_800bc1c0 = new ScriptState[500];
 
   /** TODO vec3 or maybe 3 values indexed by char slot? */
   public static final Value _800bc910 = MEMORY.ref(4, 0x800bc910L);
@@ -79,7 +79,7 @@ public final class Scus94491BpeSegment_800b {
   public static final IntRef postCombatMainCallbackIndex_800bc91c = MEMORY.ref(4, 0x800bc91cL, IntRef::new);
   public static final IntRef goldGainedFromCombat_800bc920 = MEMORY.ref(4, 0x800bc920L, IntRef::new);
 
-  public static final ArrayRef<IntRef> itemsDroppedByEnemies_800bc928 = MEMORY.ref(4, 0x800bc928L, ArrayRef.of(IntRef.class, 9, 4, IntRef::new));
+  public static final int[] itemsDroppedByEnemies_800bc928 = new int[100];
   public static final Value _800bc94c = MEMORY.ref(4, 0x800bc94cL);
   public static final ArrayRef<IntRef> spGained_800bc950 = MEMORY.ref(4, 0x800bc950L, ArrayRef.of(IntRef.class, 3, 4, IntRef::new));
   public static final IntRef totalXpFromCombat_800bc95c = MEMORY.ref(4, 0x800bc95cL, IntRef::new);

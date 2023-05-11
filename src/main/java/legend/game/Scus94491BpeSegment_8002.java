@@ -1729,22 +1729,22 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80023544L)
-  public static int giveItems(final ArrayRef<IntRef> items, final IntRef itemCount) {
+  public static int giveItems(final int[] items, final IntRef itemCount) {
     int count = 0;
     //LAB_80023580
     for(int itemSlot = 0; itemSlot < itemCount.get(); itemSlot++) {
-      if(giveItem(items.get(itemSlot).get()) != 0) {
+      if(giveItem(items[itemSlot]) != 0) {
         count++;
       } else {
         //LAB_800235a4
         //LAB_800235c0
         int i;
         for(i = itemSlot; i < itemCount.get() - 1; i++) {
-          items.get(i).set(items.get(i + 1).get());
+          items[i] = items[i + 1];
         }
 
         //LAB_800235e4
-        items.get(i).set(0xff);
+        items[i] = 0xff;
         itemCount.decr();
         itemSlot--;
       }

@@ -64,7 +64,7 @@ public class GameVarParam extends Param {
       case 38 -> Scus94491BpeSegment_8006._8006e398.morphMode_ee4;
       case 39 -> Scus94491BpeSegment_8006._8006e398.stageProgression_eec;
       case 40 -> Scus94491BpeSegment_800b.itemsDroppedByEnemiesCount_800bc978.get();
-      case 41 -> Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928.get(0).get();
+      case 41 -> Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928[0];
       case 42 -> Bttl_800c.scriptIndex_800c66bc != null ? Bttl_800c.scriptIndex_800c66bc.index : -1;
       case 43 -> Scus94491BpeSegment_800b.encounterId_800bb0f8.get();
       case 44 -> Bttl_800c._800c6748.get();
@@ -195,7 +195,7 @@ public class GameVarParam extends Param {
       case 38 -> Scus94491BpeSegment_8006._8006e398.morphMode_ee4 = val;
       case 39 -> Scus94491BpeSegment_8006._8006e398.stageProgression_eec = val;
       case 40 -> Scus94491BpeSegment_800b.itemsDroppedByEnemiesCount_800bc978.set(val);
-      case 41 -> Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928.get(0).set(val);
+      case 41 -> Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928[0] = val;
       case 42 -> Bttl_800c.scriptIndex_800c66bc = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[val];
       case 43 -> Scus94491BpeSegment_800b.encounterId_800bb0f8.set(val);
       case 44 -> Bttl_800c._800c6748.set(val);

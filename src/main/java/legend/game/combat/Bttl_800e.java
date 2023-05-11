@@ -3645,7 +3645,7 @@ public final class Bttl_800e {
 
     //LAB_800ee764
     for(int combatantIndex = 0; combatantIndex < 9; combatantIndex++) {
-      _800c6b78.offset(combatantIndex * 0x4L).setu(-0x1L);
+      _800c6b78[combatantIndex] = -1;
 
       //LAB_800ee770
       for(int v1 = 0; v1 < 22; v1++) {
@@ -3853,7 +3853,7 @@ public final class Bttl_800e {
     }
 
     //LAB_800eefa8
-    _800c6b78.offset(_800c6b9c.get() * 0x4L).setu(state.index);
+    _800c6b78[(int)_800c6b9c.get()] = state.index;
     _800c6b9c.addu(0x1L);
 
     //LAB_800eefcc
@@ -4454,7 +4454,7 @@ public final class Bttl_800e {
             //LAB_800f0cf0
             int enemySlot;
             for(enemySlot = 0; enemySlot < monsterCount_800c6768.get(); enemySlot++) {
-              if(_800c6b78.offset(enemySlot * 0x4L).get() == menu.target_48.get()) {
+              if(_800c6b78[enemySlot] == menu.target_48.get()) {
                 break;
               }
             }

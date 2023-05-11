@@ -23,6 +23,7 @@ import legend.game.scripting.ScriptState;
 
 import static legend.game.Scus94491BpeSegment_8005.combatants_8005e398;
 import static legend.game.Scus94491BpeSegment_8006._8006e398;
+import static legend.game.combat.Bttl_800c._800c66d0;
 import static legend.game.combat.Bttl_800c.currentEnemyNames_800c69d0;
 import static legend.game.combat.Bttl_800c.playerNames_800fb378;
 
@@ -76,7 +77,7 @@ public class CombatDebuggerController {
   public Button updateStats;
 
   public void initialize() {
-    for(int i = 0; i < 10; i++) {
+    for(int i = 0; i < _800c66d0.get(); i++) {
       this.bobjs.add(new ListItem(this::getCombatantName, i));
     }
 

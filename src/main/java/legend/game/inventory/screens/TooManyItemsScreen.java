@@ -73,7 +73,7 @@ public class TooManyItemsScreen extends MenuScreen {
 
           for(int itemIndex = 0; itemIndex < itemsDroppedByEnemiesCount_800bc978.get(); itemIndex++) {
             final MenuItemStruct04 item = new MenuItemStruct04();
-            item.itemId_00 = itemsDroppedByEnemies_800bc928.get(itemIndex).get();
+            item.itemId_00 = itemsDroppedByEnemies_800bc928[itemIndex];
             this.droppedItems.add(item);
           }
 

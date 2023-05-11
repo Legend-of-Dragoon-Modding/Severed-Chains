@@ -23,13 +23,17 @@ public class GameVarArrayParam extends Param {
 
   @Override
   public int get() {
+    if(this.varIndex >= 128) {
+      return this.readSpecialEffectVar(this.varIndex - 128, this.arrIndex);
+    }
+
     return switch(this.varIndex) {
       case 6 -> Scus94491BpeSegment_800b.gameState_800babc8.scriptData_08[this.arrIndex];
       case 17 -> Scus94491BpeSegment_800b.gameState_800babc8.charIds_88[this.arrIndex];
       case 32 -> Scus94491BpeSegment_8006._8006e398.bobjIndices_e0c[this.arrIndex] != null ? Scus94491BpeSegment_8006._8006e398.bobjIndices_e0c[this.arrIndex].index : -1;
       case 34 -> Scus94491BpeSegment_8006._8006e398.charBobjIndices_e40[this.arrIndex] != null ? Scus94491BpeSegment_8006._8006e398.charBobjIndices_e40[this.arrIndex].index : -1;
       case 36 -> Scus94491BpeSegment_8006._8006e398.bobjIndices_e50[this.arrIndex] != null ? Scus94491BpeSegment_8006._8006e398.bobjIndices_e50[this.arrIndex].index : -1;
-      case 41 -> Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928.get(this.arrIndex).get();
+      case 41 -> Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928[this.arrIndex];
       case 45 -> this.readCombatVar(this.arrIndex);
       // Indices 6-9 are indices for the four camera positions in a battle
       case 46 -> Bttl_800c.intRef_800c6718.get(this.arrIndex).get();
@@ -43,16 +47,16 @@ public class GameVarArrayParam extends Param {
       case 114 -> Scus94491BpeSegment_800b.gameState_800babc8.goods_19c[this.arrIndex];
       case 126 -> Scus94491BpeSegment_800b.gameState_800babc8._1a4[this.arrIndex];
       case 127 -> Scus94491BpeSegment_800b.gameState_800babc8.chestFlags_1c4[this.arrIndex];
-      case 128 -> this.readSpecialEffectVar(0, this.arrIndex);
-      case 129 -> this.readSpecialEffectVar(1, this.arrIndex);
-      case 130 -> this.readSpecialEffectVar(2, this.arrIndex);
-      case 131 -> this.readSpecialEffectVar(3, this.arrIndex);
-      case 132 -> this.readSpecialEffectVar(4, this.arrIndex);
-      case 133 -> this.readSpecialEffectVar(5, this.arrIndex);
-      case 134 -> this.readSpecialEffectVar(6, this.arrIndex);
-      case 135 -> this.readSpecialEffectVar(7, this.arrIndex);
-      case 136 -> this.readSpecialEffectVar(8, this.arrIndex);
-      case 137 -> this.readSpecialEffectVar(9, this.arrIndex);
+//      case 128 -> this.readSpecialEffectVar(0, this.arrIndex);
+//      case 129 -> this.readSpecialEffectVar(1, this.arrIndex);
+//      case 130 -> this.readSpecialEffectVar(2, this.arrIndex);
+//      case 131 -> this.readSpecialEffectVar(3, this.arrIndex);
+//      case 132 -> this.readSpecialEffectVar(4, this.arrIndex);
+//      case 133 -> this.readSpecialEffectVar(5, this.arrIndex);
+//      case 134 -> this.readSpecialEffectVar(6, this.arrIndex);
+//      case 135 -> this.readSpecialEffectVar(7, this.arrIndex);
+//      case 136 -> this.readSpecialEffectVar(8, this.arrIndex);
+//      case 137 -> this.readSpecialEffectVar(9, this.arrIndex);
 
       default -> throw new IllegalArgumentException("Unknown game data index " + this.varIndex);
     };
@@ -60,13 +64,18 @@ public class GameVarArrayParam extends Param {
 
   @Override
   public Param set(final int val) {
+    if(this.varIndex >= 128) {
+      this.writeSpecialEffectVar(this.varIndex - 128, this.arrIndex, val);
+      return this;
+    }
+
     switch(this.varIndex) {
       case 6 -> Scus94491BpeSegment_800b.gameState_800babc8.scriptData_08[this.arrIndex] = val;
       case 17 -> Scus94491BpeSegment_800b.gameState_800babc8.charIds_88[this.arrIndex] = val;
       case 32 -> Scus94491BpeSegment_8006._8006e398.bobjIndices_e0c[this.arrIndex] = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[val];
       case 34 -> Scus94491BpeSegment_8006._8006e398.charBobjIndices_e40[this.arrIndex] = (ScriptState<PlayerBattleObject>)scriptStatePtrArr_800bc1c0[val];
       case 36 -> Scus94491BpeSegment_8006._8006e398.bobjIndices_e50[this.arrIndex] = (ScriptState<MonsterBattleObject>)scriptStatePtrArr_800bc1c0[val];
-      case 41 -> Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928.get(this.arrIndex).set(val);
+      case 41 -> Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928[this.arrIndex] = val;
       case 45 -> this.writeCombatVar(this.arrIndex, val);
       case 46 -> Bttl_800c.intRef_800c6718.get(this.arrIndex).set(val);
       case 48 -> Scus94491BpeSegment_8006._8006e398.bobjIndices_e78[this.arrIndex] = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[val];
@@ -79,16 +88,16 @@ public class GameVarArrayParam extends Param {
       case 114 -> Scus94491BpeSegment_800b.gameState_800babc8.goods_19c[this.arrIndex] = val;
       case 126 -> Scus94491BpeSegment_800b.gameState_800babc8._1a4[this.arrIndex] = val;
       case 127 -> Scus94491BpeSegment_800b.gameState_800babc8.chestFlags_1c4[this.arrIndex] = val;
-      case 128 -> this.writeSpecialEffectVar(0, this.arrIndex, val);
-      case 129 -> this.writeSpecialEffectVar(1, this.arrIndex, val);
-      case 130 -> this.writeSpecialEffectVar(2, this.arrIndex, val);
-      case 131 -> this.writeSpecialEffectVar(3, this.arrIndex, val);
-      case 132 -> this.writeSpecialEffectVar(4, this.arrIndex, val);
-      case 133 -> this.writeSpecialEffectVar(5, this.arrIndex, val);
-      case 134 -> this.writeSpecialEffectVar(6, this.arrIndex, val);
-      case 135 -> this.writeSpecialEffectVar(7, this.arrIndex, val);
-      case 136 -> this.writeSpecialEffectVar(8, this.arrIndex, val);
-      case 137 -> this.writeSpecialEffectVar(9, this.arrIndex, val);
+//      case 128 -> this.writeSpecialEffectVar(0, this.arrIndex, val);
+//      case 129 -> this.writeSpecialEffectVar(1, this.arrIndex, val);
+//      case 130 -> this.writeSpecialEffectVar(2, this.arrIndex, val);
+//      case 131 -> this.writeSpecialEffectVar(3, this.arrIndex, val);
+//      case 132 -> this.writeSpecialEffectVar(4, this.arrIndex, val);
+//      case 133 -> this.writeSpecialEffectVar(5, this.arrIndex, val);
+//      case 134 -> this.writeSpecialEffectVar(6, this.arrIndex, val);
+//      case 135 -> this.writeSpecialEffectVar(7, this.arrIndex, val);
+//      case 136 -> this.writeSpecialEffectVar(8, this.arrIndex, val);
+//      case 137 -> this.writeSpecialEffectVar(9, this.arrIndex, val);
 
       default -> throw new IllegalArgumentException("Unknown game data index " + this.varIndex);
     }

@@ -67,7 +67,7 @@ public class ScriptDebuggerController {
   public void initialize() {
     INSTANCES.add(this);
 
-    for(int i = 0; i < 0x48; i++) {
+    for(int i = 0; i < scriptStatePtrArr_800bc1c0.length; i++) {
       this.scripts.add(new ListItem(this::getScriptName, i));
     }
 

@@ -2088,7 +2088,7 @@ public final class SItem {
           //LAB_8010d81c
           for(int i = 0; i < 6; i++) {
             if(i >= itemsDroppedByEnemiesCount_800bc978.get()) {
-              itemsDroppedByEnemies_800bc928.get(i).set(0xff);
+              itemsDroppedByEnemies_800bc928[i] = 0xff;
             }
 
             //LAB_8010d830
@@ -2591,9 +2591,9 @@ public final class SItem {
 
     //LAB_8010eae0
     for(int i = 0; i < itemsDroppedByEnemiesCount_800bc978.get(); i++) {
-      if(itemsDroppedByEnemies_800bc928.get(i).get() != 0xff) {
-        renderItemIcon(getItemIcon(itemsDroppedByEnemies_800bc928.get(i).get()), 18, y1, 0x8L);
-        renderText(equipment_8011972c.get(itemsDroppedByEnemies_800bc928.get(i).get()).deref(), 28, y2, TextColour.WHITE);
+      if(itemsDroppedByEnemies_800bc928[i] != 0xff) {
+        renderItemIcon(getItemIcon(itemsDroppedByEnemies_800bc928[i]), 18, y1, 0x8L);
+        renderText(equipment_8011972c.get(itemsDroppedByEnemies_800bc928[i]).deref(), 28, y2, TextColour.WHITE);
       }
 
       //LAB_8010eb38

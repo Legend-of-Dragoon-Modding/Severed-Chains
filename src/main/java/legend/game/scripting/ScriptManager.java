@@ -9,6 +9,8 @@ import org.apache.logging.log4j.MarkerManager;
 
 import javax.annotation.Nullable;
 
+import java.util.Arrays;
+
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 
 public class ScriptManager {
@@ -47,21 +49,19 @@ public class ScriptManager {
   }
 
   public void clear() {
-    for(int i = 0; i < 72; i++) {
-      scriptStatePtrArr_800bc1c0[i] = null;
-    }
+    Arrays.fill(scriptStatePtrArr_800bc1c0, null);
   }
 
   private int findFreeScriptState() {
     this.upperBound++;
 
-    if(this.upperBound >= 72) {
+    if(this.upperBound >= scriptStatePtrArr_800bc1c0.length) {
       this.upperBound = 9;
     }
 
     //LAB_80015824
     //LAB_8001584c
-    for(int i = this.upperBound; i < 72; i++) {
+    for(int i = this.upperBound; i < scriptStatePtrArr_800bc1c0.length; i++) {
       if(scriptStatePtrArr_800bc1c0[i] == null) {
         //LAB_800158c0
         this.upperBound = i;
@@ -117,7 +117,7 @@ public class ScriptManager {
     }
 
     //LAB_80015fd8
-    for(int index = 0; index < 72; index++) {
+    for(int index = 0; index < scriptStatePtrArr_800bc1c0.length; index++) {
       final ScriptState<?> state = scriptStatePtrArr_800bc1c0[index];
 
       if(state != null) {
@@ -164,7 +164,7 @@ public class ScriptManager {
     }
 
     //LAB_80017750
-    for(int i = 0; i < 72; i++) {
+    for(int i = 0; i < scriptStatePtrArr_800bc1c0.length; i++) {
       final ScriptState<?> scriptState = scriptStatePtrArr_800bc1c0[i];
       if(scriptState != null) {
         scriptState.tick();
@@ -172,7 +172,7 @@ public class ScriptManager {
     }
 
     //LAB_800177ac
-    for(int i = 0; i < 72; i++) {
+    for(int i = 0; i < scriptStatePtrArr_800bc1c0.length; i++) {
       final ScriptState<?> scriptState = scriptStatePtrArr_800bc1c0[i];
       if(scriptState != null) {
         scriptState.tempTick();
@@ -186,7 +186,7 @@ public class ScriptManager {
     }
 
     //LAB_80017854
-    for(int i = 0; i < 72; i++) {
+    for(int i = 0; i < scriptStatePtrArr_800bc1c0.length; i++) {
       final ScriptState<?> scriptState = scriptStatePtrArr_800bc1c0[i];
       if(scriptState != null) {
         scriptState.render();

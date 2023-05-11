@@ -124,5 +124,5 @@ public final class Scus94491BpeSegment_8005 {
   public static LoadingOverlay loadingOverlay_8005a2a8;
   public static final BoolRef standingInSavePoint_8005a368 = MEMORY.ref(4, 0x8005a368L, BoolRef::new);
 
-  public static final CombatantStruct1a8[] combatants_8005e398 = new CombatantStruct1a8[20];
+  public static final CombatantStruct1a8[] combatants_8005e398 = new CombatantStruct1a8[150];
 }

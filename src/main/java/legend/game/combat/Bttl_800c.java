@@ -305,7 +305,7 @@ public final class Bttl_800c {
   public static final List<CombatItem02> combatItems_800c6988 = new ArrayList<>();
   public static final Value _800c69c8 = MEMORY.ref(4, 0x800c69c8L);
 
-  public static final LodString[] currentEnemyNames_800c69d0 = new LodString[20];
+  public static final LodString[] currentEnemyNames_800c69d0 = new LodString[150];
   static {
     Arrays.setAll(currentEnemyNames_800c69d0, i -> new LodString(0x2c));
   }
@@ -319,7 +319,7 @@ public final class Bttl_800c {
   public static final Value _800c6b68 = MEMORY.ref(4, 0x800c6b68L);
   public static final Value _800c6b6c = MEMORY.ref(4, 0x800c6b6cL);
 
-  public static final Value _800c6b78 = MEMORY.ref(4, 0x800c6b78L);
+  public static final int[] _800c6b78 = new int[150];
 
   public static final Value _800c6b9c = MEMORY.ref(4, 0x800c6b9cL);
   public static final Value cameraPositionIndicesIndex_800c6ba0 = MEMORY.ref(1, 0x800c6ba0L);
@@ -1549,7 +1549,7 @@ public final class Bttl_800c {
       }
     }
 
-    return -1;
+    throw new IllegalStateException("Ran out of combatants");
   }
 
   @Method(0x800c8fd4L)
@@ -1570,7 +1570,7 @@ public final class Bttl_800c {
   @Method(0x800c9060L)
   public static int getCombatantIndex(final int charIndex) {
     //LAB_800c906c
-    for(int i = 0; i < 10; i++) {
+    for(int i = 0; i < combatants_8005e398.length; i++) {
       final CombatantStruct1a8 combatant = combatants_8005e398[i];
 
       if(combatant != null && combatant.charIndex_1a2 == charIndex) {
@@ -1581,7 +1581,7 @@ public final class Bttl_800c {
       //LAB_800c9090
     }
 
-    return -1;
+    throw new IllegalStateException("Ran out of combatants");
   }
 
   @Method(0x800c90b0L)
@@ -3231,7 +3231,7 @@ public final class Bttl_800c {
           if((s0 & 0x2000) == 0) {
             for(final CombatantStruct1a8.ItemDrop drop : enemyCombatant.drops) {
               if(simpleRand() * 100 >> 16 < drop.chance()) {
-                itemsDroppedByEnemies_800bc928.get(itemsDroppedByEnemiesCount_800bc978.get()).set(drop.item());
+                itemsDroppedByEnemies_800bc928[itemsDroppedByEnemiesCount_800bc978.get()] = drop.item();
                 itemsDroppedByEnemiesCount_800bc978.incr();
                 s0 = s0 | 0x2000;
               }

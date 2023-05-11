@@ -293,7 +293,7 @@ public final class Scus94491BpeSegment {
 
   public static final Value heap_8011e210 = MEMORY.ref(4, 0x8011e210L);
 
-  public static boolean[] scriptLog = new boolean[0x48];
+  public static boolean[] scriptLog = new boolean[scriptStatePtrArr_800bc1c0.length];
 
   public static final Int2ObjectMap<Function<RunningScript<?>, String>> scriptFunctionDescriptions = new Int2ObjectOpenHashMap<>();
 
