@@ -1564,7 +1564,7 @@ public final class Bttl_800e {
       final int x = MathHelper.safeDiv(sp0x18.getX() * projectionPlaneDistance_1f8003f8.get(), sp0x18.getZ());
       final int y = MathHelper.safeDiv(sp0x18.getY() * projectionPlaneDistance_1f8003f8.get(), sp0x18.getZ());
 
-      // a2 needs to be ignored in z check or
+      // a2 needs to be ignored in z check or poly positions will overflow at low z values
       int z = sp0x18.getZ() >> 2;
       if(z >= 0x28) {
         if(z > 0x3ff8) {
