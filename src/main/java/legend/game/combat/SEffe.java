@@ -80,6 +80,7 @@ import legend.game.combat.effects.DeffTmdRenderer14;
 import legend.game.combat.effects.EffectData98Inner24;
 import legend.game.combat.effects.EffectManagerData6c;
 import legend.game.combat.effects.EffectManagerData6cInner;
+import legend.game.combat.effects.EffectStruct48;
 import legend.game.combat.effects.FrozenJetEffect28;
 import legend.game.combat.effects.GoldDragoonTransformEffect20;
 import legend.game.combat.effects.GoldDragoonTransformEffectInstance84;
@@ -263,7 +264,7 @@ public final class SEffe {
    *   <li>{@link SEffe#FUN_800fcf18}</li>
    * </ol>
    */
-  private static final Value _801197c0 = MEMORY.ref(4, 0x801197c0L);
+  private static final ArrayRef<Pointer<BiConsumerRef<EffectManagerData6c, EffectStruct48>>> _801197c0 = MEMORY.ref(4, 0x801197c0L, ArrayRef.of(Pointer.classFor(BiConsumerRef.classFor(EffectManagerData6c.class, EffectStruct48.class)), 3, 4, Pointer.deferred(4, BiConsumerRef::new)));
 
   private static final Value _801197ec = MEMORY.ref(1, 0x801197ecL);
 
@@ -910,10 +911,10 @@ public final class SEffe {
   }
 
   @Method(0x800fc4bcL)
-  public static void FUN_800fc4bc(final MATRIX a0, final EffectManagerData6c a1, final long a2) {
-    RotMatrix_Xyz(MEMORY.ref(4, a2 + 0x38L, SVECTOR::new), a0);
-    TransMatrix(a0, MEMORY.ref(4, a2 + 0x18L, VECTOR::new));
-    ScaleMatrixL(a0, MEMORY.ref(4, a2 + 0x28L, VECTOR::new));
+  public static void FUN_800fc4bc(final MATRIX a0, final EffectManagerData6c a1, final EffectStruct48 a2) {
+    RotMatrix_Xyz(a2._38, a0);
+    TransMatrix(a0, a2._18);
+    ScaleMatrixL(a0, a2._28);
   }
 
   @Method(0x800fc528L)
@@ -1065,14 +1066,14 @@ public final class SEffe {
   }
 
   @Method(0x800fce10L)
-  public static void FUN_800fce10(final EffectManagerData6c a0, final long a1) {
-    if((int)MEMORY.ref(4, a1).offset(0x0L).get() >= 0) {
-      GPU.queueCommand(((int)MEMORY.ref(4, a1).offset(0x04L).get() + a0._10.z_22) / 4, new GpuCommandLine()
+  public static void FUN_800fce10(final EffectManagerData6c a0, final EffectStruct48 a1) {
+    if(a1.flags_00 >= 0) {
+      GPU.queueCommand(a1.z_04 + a0._10.z_22 >> 2, new GpuCommandLine()
         .translucent(Translucency.B_PLUS_F)
-        .rgb(0, 0x40, 0x41, 0x42)
-        .rgb(1, (int)MEMORY.ref(1, a1).offset(0x44L).get(), (int)MEMORY.ref(1, a1).offset(0x45L).get(), (int)MEMORY.ref(1, a1).offset(0x46L).get())
-        .pos(0, (int)MEMORY.ref(2, a1).offset(0x08L).get(), (int)MEMORY.ref(2, a1).offset(0x10L).get())
-        .pos(1, (int)MEMORY.ref(2, a1).offset(0x0cL).get(), (int)MEMORY.ref(2, a1).offset(0x14L).get())
+        .rgb(0, a1.colour0_40.getR(), a1.colour0_40.getG(), a1.colour0_40.getB())
+        .rgb(1, a1.colour1_44.getR(), a1.colour1_44.getG(), a1.colour1_44.getB())
+        .pos(0, a1.x0_08, a1.y0_10)
+        .pos(1, a1.x1_0c, a1.y1_14)
       );
     }
 
@@ -1080,7 +1081,7 @@ public final class SEffe {
   }
 
   @Method(0x800fcf18L)
-  public static void FUN_800fcf18(final EffectManagerData6c a0, final long a1) {
+  public static void FUN_800fcf18(final EffectManagerData6c a0, final EffectStruct48 a1) {
     // no-op
   }
 
@@ -1088,19 +1089,19 @@ public final class SEffe {
    * used renderCtmd
    */
   @Method(0x800fcf20L)
-  public static void FUN_800fcf20(final EffectManagerData6c a0, final TmdObjTable1c tmd, final long a2, final int tpage) {
-    if(MEMORY.ref(4, a2).offset(0x0L).getSigned() >= 0) {
+  public static void FUN_800fcf20(final EffectManagerData6c a0, final TmdObjTable1c tmd, final EffectStruct48 a2, final int tpage) {
+    if(a2.flags_00 >= 0) {
       final MATRIX sp0x10 = new MATRIX();
       FUN_800fc4bc(sp0x10, a0, a2);
-      if((MEMORY.ref(4, a2).offset(0x0L).get() & 0x40L) == 0) {
-        FUN_800e61e4((int)(MEMORY.ref(1, a2).offset(0x40L).get() << 5), (int)(MEMORY.ref(1, a2).offset(0x41L).get() << 5), (int)(MEMORY.ref(1, a2).offset(0x42L).get() << 5));
+      if((a2.flags_00 & 0x40) == 0) {
+        FUN_800e61e4(a2.colour0_40.getR() << 5, a2.colour0_40.getG(), a2.colour0_40.getB());
       }
 
       //LAB_800fcf94
       GsSetLightMatrix(sp0x10);
       final MATRIX sp0x30 = new MATRIX();
       MulMatrix0(worldToScreenMatrix_800c3548, sp0x10, sp0x30);
-      if((MEMORY.ref(4, a2).offset(0x0L).get() & 0x400_0000L) == 0) {
+      if((a2.flags_00 & 0x400_0000) == 0) {
         RotMatrix_Xyz(a0._10.rot_10, sp0x30);
         ScaleMatrixL(sp0x30, new VECTOR().set(a0._10.scale_16));
       }
@@ -1117,7 +1118,7 @@ public final class SEffe {
 
       //LAB_800fd040
       final GsDOBJ2 sp0x60 = new GsDOBJ2();
-      sp0x60.attribute_00 = (int)MEMORY.ref(4, a2).offset(0x0L).get();
+      sp0x60.attribute_00 = a2.flags_00;
       sp0x60.tmd_08 = tmd;
 
       final int oldZShift = zShift_1f8003c4.get();
@@ -1131,7 +1132,7 @@ public final class SEffe {
       zMax_1f8003cc.set(oldZMax);
       zMin = oldZMin;
 
-      if((MEMORY.ref(4, a2).offset(0x0L).get() & 0x40L) == 0) {
+      if((a2.flags_00 & 0x40) == 0) {
         FUN_800e62a8();
       }
     }
@@ -1302,26 +1303,16 @@ public final class SEffe {
         final VECTOR sp0x28 = new VECTOR();
         FUN_800cf37c(data, new SVECTOR(), new VECTOR().set(s3._50), sp0x28);
 
-        final Memory.TemporaryReservation tmp = MEMORY.temp(0x48);
-        final Value sp0x68 = tmp.get();
-        sp0x68.offset(0x00L).setu(data._10.flags_00 & 0xffff_ffffL);
-        sp0x68.offset(0x18L).setu(s3._2c.getX() + sp0x28.getX());
-        sp0x68.offset(0x1cL).setu(s3._2c.getY() + sp0x28.getY());
-        sp0x68.offset(0x20L).setu(s3._2c.getZ() + sp0x28.getZ());
-        sp0x68.offset(0x28L).setu(data._10.scale_16.getX() + s3._06);
-        sp0x68.offset(0x2cL).setu(data._10.scale_16.getY() + s3._08);
-        sp0x68.offset(0x30L).setu(data._10.scale_16.getX() + s3._06); // This is correct
-        sp0x68.offset(0x38L).setu(s3._70.getX() + s3._68.getX());
-        sp0x68.offset(0x3aL).setu(s3._70.getY() + s3._68.getY());
-        sp0x68.offset(0x3cL).setu(s3._70.getZ() + s3._68.getZ());
-        sp0x68.offset(1, 0x40L).setu(sp0x48.getX() >> 8);
-        sp0x68.offset(1, 0x41L).setu(sp0x48.getY() >> 8);
-        sp0x68.offset(1, 0x42L).setu(sp0x48.getZ() >> 8);
-        sp0x68.offset(1, 0x44L).setu(0);
-        sp0x68.offset(1, 0x45L).setu(0);
-        sp0x68.offset(1, 0x46L).setu(0);
-        FUN_800fcf20(data, s1.tmd_30, sp0x68.getAddress(), s1.tpage_56);
-        tmp.release();
+        final EffectStruct48 sp0x68 = new EffectStruct48();
+        sp0x68.flags_00 = data._10.flags_00;
+        sp0x68._18.set(s3._2c).add(sp0x28);
+        sp0x68._28.setX(data._10.scale_16.getX() + s3._06);
+        sp0x68._28.setY(data._10.scale_16.getY() + s3._08);
+        sp0x68._28.setZ(data._10.scale_16.getX() + s3._06); // This is correct
+        sp0x68._38.set(s3._70).add(s3._68);
+        sp0x68.colour0_40.set(sp0x48.getX() >> 8, sp0x48.getY() >> 8, sp0x48.getZ() >> 8);
+        sp0x68.colour1_44.set(0, 0, 0);
+        FUN_800fcf20(data, s1.tmd_30, sp0x68, s1.tpage_56);
       }
 
       //LAB_800fd7e0
@@ -1339,16 +1330,11 @@ public final class SEffe {
 
   @Method(0x800fd87cL)
   public static void FUN_800fd87c(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    long v1;
-    long a0;
-    long s3;
-
     final ParticleEffectData98 s2 = (ParticleEffectData98)data.effect_44;
     s2._52++;
 
     if(s2.count_50 != 0) {
-      final Memory.TemporaryReservation sp0x50tmp = MEMORY.temp(0x48);
-      final Value sp0x50 = sp0x50tmp.get();
+      final EffectStruct48 sp0x50 = new EffectStruct48();
 
       //LAB_800fd8dc
       for(int s7 = 0; s7 < s2.count_50; s7++) {
@@ -1386,9 +1372,9 @@ public final class SEffe {
 
           //LAB_800fdac8
           if((s5._90 & 0x6) != 0) {
-            sp0x50.offset(4, 0x0L).setu(data._10.flags_00 & 0x67ff_ffffL | (s5._90 >>> 1 & 0x3) << 28);
+            sp0x50.flags_00 = data._10.flags_00 & 0x67ff_ffff | (s5._90 >>> 1 & 0x3) << 28;
           } else {
-            sp0x50.offset(4, 0x0L).setu(data._10.flags_00);
+            sp0x50.flags_00 = data._10.flags_00;
           }
 
           //LAB_800fdb14
@@ -1396,41 +1382,37 @@ public final class SEffe {
           sp0x98.setX((short)(sp0x20.getX() / s2.count_54));
           sp0x98.setY((short)(sp0x20.getY() / s2.count_54));
           sp0x98.setZ((short)(sp0x20.getZ() / s2.count_54));
+
           final VECTOR sp0x40 = new VECTOR().set(s5._44[0]);
           final ShortRef refX1 = new ShortRef();
           final ShortRef refY1 = new ShortRef();
-          s3 = FUN_800cfc20(s5._68, s5._2c, sp0x40, refX1, refY1) / 4;
-          sp0x50.offset(2, 0x08L).setu(refX1.get());
-          sp0x50.offset(2, 0x10L).setu(refY1.get());
-          a0 = data._10.z_22;
-          v1 = s3 + a0;
-          if((int)v1 >= 0xa0L) {
-            if((int)v1 >= 0xffeL) {
-              s3 = 0xffeL - a0;
+          int z = FUN_800cfc20(s5._68, s5._2c, sp0x40, refX1, refY1) / 4;
+          sp0x50.x0_08 = refX1.get();
+          sp0x50.y0_10 = refY1.get();
+
+          if(z + data._10.z_22 >= 0xa0) {
+            if(z + data._10.z_22 >= 0xffe) {
+              z = 0xffe - data._10.z_22;
             }
 
             //LAB_800fdbc0
-            sp0x50.offset(4, 0x4L).setu(s3);
+            sp0x50.z_04 = z;
 
             //LAB_800fdbe4
             for(int s0 = 0; s0 < s2.count_54 - 1; s0++) {
-              sp0x50.offset(1, 0x40L).setu(sp0x20.getX() >> 8);
-              sp0x50.offset(1, 0x41L).setu(sp0x20.getY() >> 8);
-              sp0x50.offset(1, 0x42L).setu(sp0x20.getZ() >> 8);
+              sp0x50.colour0_40.set(sp0x20.getX() >> 8, sp0x20.getY() >> 8, sp0x20.getZ() >> 8);
               sp0x20.sub(sp0x98);
-              sp0x50.offset(1, 0x44L).setu(sp0x20.getX() >> 8);
-              sp0x50.offset(1, 0x45L).setu(sp0x20.getY() >> 8);
-              sp0x50.offset(1, 0x46L).setu(sp0x20.getZ() >> 8);
+              sp0x50.colour1_44.set(sp0x20.getX() >> 8, sp0x20.getY() >> 8, sp0x20.getZ() >> 8);
               sp0x40.set(s5._44[s0]);
 
               final ShortRef refX2 = new ShortRef();
               final ShortRef refY2 = new ShortRef();
               FUN_800cfc20(s5._68, s5._2c, sp0x40, refX2, refY2);
-              sp0x50.offset(2, 0x0cL).setu(refX2.get());
-              sp0x50.offset(2, 0x14L).setu(refY2.get());
-              _801197c0.offset((s2._60 - 2) * 0x4L).deref(4).call(data, sp0x50.getAddress());
-              sp0x50.offset(2, 0x08L).setu(sp0x50.offset(2, 0x0cL).get());
-              sp0x50.offset(2, 0x10L).setu(sp0x50.offset(2, 0x14L).get());
+              sp0x50.x1_0c = refX2.get();
+              sp0x50.y1_14 = refY2.get();
+              _801197c0.get(s2._60 - 2).deref().run(data, sp0x50);
+              sp0x50.x0_08 = sp0x50.x1_0c;
+              sp0x50.y0_10 = sp0x50.y1_14;
             }
 
             //LAB_800fdcc8
@@ -1439,8 +1421,6 @@ public final class SEffe {
 
         //LAB_800fdd28
       }
-
-      sp0x50tmp.release();
     }
 
     //LAB_800fdd44
@@ -1510,8 +1490,7 @@ public final class SEffe {
     final SVECTOR sp0x48 = new SVECTOR();
     final ParticleEffectData98 effect = (ParticleEffectData98)manager.effect_44;
 
-    final Memory.TemporaryReservation sp0x28tmp = MEMORY.temp(0x8a);
-    final VECTOR sp0x28 = sp0x28tmp.get().cast(VECTOR::new);
+    final VECTOR sp0x28 = new VECTOR();
 
     effect._52++;
 
@@ -1629,8 +1608,6 @@ public final class SEffe {
 
       //LAB_800fe7b8
     }
-
-    sp0x28tmp.release();
 
     //LAB_800fe7ec
     if(effect._6c != 0) {
@@ -8589,7 +8566,6 @@ public final class SEffe {
       sp0x30.set(sp0x10);
     } else {
       //LAB_8011588c
-      final Memory.TemporaryReservation sp0x50tmp = MEMORY.temp(0x6c);
       final EffectManagerData6c sp0x50 = new EffectManagerData6c("Temp");
 
       sp0x50._10.trans_04.set(0, 0, 0);
@@ -8614,8 +8590,6 @@ public final class SEffe {
 
       final VECTOR sp0x100 = new VECTOR().set(sp0x10.transfer).sub(transforms.transfer);
       sp0x30.transfer.set(ApplyMatrixLV(transforms, sp0x100));
-
-      sp0x50tmp.release();
     }
 
     //LAB_801159cc
