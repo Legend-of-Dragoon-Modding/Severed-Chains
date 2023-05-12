@@ -3891,7 +3891,7 @@ public final class Bttl_800e {
     monster._48 = 0;
     monster.onHitStatus_4a = 0;
     monster.targetArrowPos_78.set(monsterStats.targetArrowX_12.get(), monsterStats.targetArrowY_13.get(), monsterStats.targetArrowZ_14.get());
-    monster._7e = monsterStats._15.get();
+    monster.hitCounterFrameThreshold_7e = monsterStats.hitCounterFrameThreshold_15.get();
     monster._80 = monsterStats._16.get();
     monster._82 = monsterStats._17.get();
     monster._84 = monsterStats._18.get();
