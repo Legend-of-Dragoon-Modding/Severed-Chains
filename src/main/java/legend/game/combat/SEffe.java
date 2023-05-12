@@ -4039,7 +4039,7 @@ public final class SEffe {
   public static void renderAdditionOverlaysEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
     final AdditionOverlaysEffect44 effect = (AdditionOverlaysEffect44)data.effect_44;
 
-    if(effect.pauseTickerAndRenderer_31.get() != 1 && gameState_800babc8.getConfig(CoreMod.AUTO_ADDITION_CONFIG.get()) == AutoAdditionMode.OFF) {
+    if(effect.pauseTickerAndRenderer_31.get() != 1) {
       if(data._10.flags_00 >= 0) {
         final UnboundedArrayRef<AdditionOverlaysHit20> hitArray = effect.hitOverlays_40.deref();
 
@@ -4149,7 +4149,7 @@ public final class SEffe {
             }
 
             //LAB_801075e8
-            if((effect.autoCompleteType_3a.get() < 1 || effect.autoCompleteType_3a.get() > 2) && gameState_800babc8.getConfig(CoreMod.AUTO_ADDITION_CONFIG.get()) == AutoAdditionMode.OFF) {
+            if(effect.autoCompleteType_3a.get() < 1 || effect.autoCompleteType_3a.get() > 2) {
               //LAB_8010763c
               if(effect.autoCompleteType_3a.get() != 3) {
                 final int buttonType;
@@ -4202,7 +4202,7 @@ public final class SEffe {
           //LAB_80107728
           if(effect.numFramesToRenderCenterSquare_38.get() != 0) {
             effect.numFramesToRenderCenterSquare_38.decr();
-            if(gameState_800babc8.getConfig(CoreMod.ADDITION_OVERLAY_CONFIG.get()) != AdditionOverlayMode.OFF && gameState_800babc8.getConfig(CoreMod.AUTO_ADDITION_CONFIG.get()) == AutoAdditionMode.OFF) {
+            if(gameState_800babc8.getConfig(CoreMod.ADDITION_OVERLAY_CONFIG.get()) != AdditionOverlayMode.OFF) {
               renderAdditionCentreSolidSquare(effect, effect.lastCompletedHitOverlay_3c.deref(),
                 additionHitCompletionState_8011a014.get(effect.lastCompletedHit_39.get()).get(), state, data);
             }
