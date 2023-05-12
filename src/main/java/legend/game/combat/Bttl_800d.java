@@ -18,6 +18,7 @@ import legend.core.memory.Method;
 import legend.core.memory.types.CString;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.ShortRef;
+import legend.game.combat.bobj.BattleObject27c;
 import legend.game.combat.deff.Anim;
 import legend.game.combat.deff.Cmb;
 import legend.game.combat.deff.Lmb;
@@ -37,7 +38,6 @@ import legend.game.combat.effects.ProjectileHitEffect14Sub48;
 import legend.game.combat.environment.BattleCamera;
 import legend.game.combat.types.AdditionCharEffectData0c;
 import legend.game.combat.types.AdditionScriptData1c;
-import legend.game.combat.bobj.BattleObject27c;
 import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.BttlScriptData40;
 import legend.game.combat.types.SpriteMetrics08;
@@ -50,6 +50,10 @@ import legend.game.types.Model124;
 import legend.game.types.ModelPartTransforms0c;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.joml.Math;
 
 import java.util.Arrays;
@@ -160,7 +164,11 @@ import static legend.game.combat.Bttl_800e.FUN_800e7ea4;
 import static legend.game.combat.Bttl_800e.allocateEffectManager;
 
 public final class Bttl_800d {
-  private Bttl_800d() { }
+  private Bttl_800d() {
+  }
+
+  private static final Logger LOGGER = LogManager.getFormatterLogger(String.class);
+  private static final Marker CAMERA = MarkerManager.getMarker("CAMERA");
 
   @Method(0x800d0094L)
   public static void FUN_800d0094(final int scriptIndex, final int animIndex, final boolean clearBit) {
@@ -2443,11 +2451,13 @@ public final class Bttl_800d {
 
     if(cam._11c != 0) {
       if((cam._11c & 0x1) != 0) {
+        LOGGER.info(CAMERA, "[CAMERA] Array=_800facbc, FUN index=%d", cam._120);
         _800facbc.get(cam._120).deref().run();
       }
 
       //LAB_800d8f80
       if((cam._11c & 0x2) != 0) {
+        LOGGER.info(CAMERA, "[CAMERA] Array=_800fad1c, FUN index=%d", cam._121);
         _800fad1c.get(cam._121).deref().run();
       }
     }
@@ -3206,6 +3216,7 @@ public final class Bttl_800d {
 
   @Method(0x800dac70L)
   public static void FUN_800dac70(final int index, final int x, final int y, final int z, final int scriptIndex) {
+    LOGGER.info(CAMERA, "[CAMERA] Array=_800fabbc, FUN index=%d, x=%d, y=%d, z=%d, script index=%d", index, x, y, z, scriptIndex);
     _800fabbc.get(index).deref().run(x, y, z, scriptIndex);
     camera_800c67f0.callbackIndex_fc = index;
   }
@@ -3324,6 +3335,7 @@ public final class Bttl_800d {
 
   @Method(0x800db084L)
   public static void FUN_800db084(final int index, final int x, final int y, final int z, final int scriptIndex) {
+    LOGGER.info(CAMERA, "[CAMERA] Array=_800fabdc, FUN index=%d, x=%d, y=%d, z=%d, script index=%d", index, x, y, z, scriptIndex);
     _800fabdc.get(index).deref().run(x, y, z, scriptIndex);
     camera_800c67f0.callbackIndex_88 = index;
   }
@@ -3432,6 +3444,7 @@ public final class Bttl_800d {
 
   @Method(0x800db4ecL)
   public static void FUN_800db4ec(final int callbackIndex, final int a1, final int a2, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
+    LOGGER.info(CAMERA, "[CAMERA] Array=_800fabfc, FUN index=%d, a1=%d, a2=%d, a3=%d, a4=%d, a5=%d, a6=%d, script index=%d", callbackIndex, a1, a2, a3, a4, a5, a6, scriptIndex);
     _800fabfc.offset(callbackIndex * 0x4L).deref(4).call(a1, a2, a3, a5, a6, a4, scriptIndex);
     final BattleCamera cam = camera_800c67f0;
     cam.callbackIndex_fc = callbackIndex;
@@ -3456,6 +3469,7 @@ public final class Bttl_800d {
 
   @Method(0x800db600L)
   public static void FUN_800db600(final int callbackIndex, final int a1, final int a2, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
+    LOGGER.info(CAMERA, "[CAMERA] Array=_800fac5c, FUN index=%d, a1=%d, a2=%d, a3=%d, a5=%d, a6=%d, a4=%d, script index=%d", callbackIndex, a1, a2, a3, a5, a6, a4, scriptIndex);
     _800fac5c.offset(callbackIndex * 0x4L).deref(4).call(a1, a2, a3, a5, a6, a4, scriptIndex);
     final BattleCamera cam = camera_800c67f0;
     cam.callbackIndex_88 = callbackIndex;
@@ -3480,6 +3494,7 @@ public final class Bttl_800d {
 
   @Method(0x800db714L)
   public static void FUN_800db714(final int callbackIndex, final int a1, final int a2, final int a3, final int a4, final int a5, final int a6, final int a7) {
+    LOGGER.info(CAMERA, "[CAMERA] Array=_800fac1c, FUN index=%d, a1=%d, a2=%d, a3=%d, a4=%d, a5=%d, a6=%d, script index=%d", callbackIndex, a1, a2, a3, a4, a5, a6, a7);
     _800fac1c.offset(callbackIndex * 0x4L).deref(4).call(a1, a2, a3, a4, a5, a6, a7);
 
     final BattleCamera cam = camera_800c67f0;
@@ -3495,6 +3510,7 @@ public final class Bttl_800d {
 
   @Method(0x800db828L)
   public static void FUN_800db828(final int callbackIndex, final int x, final int y, final int z, final int a4, final int a5, final int a6, final int a7) {
+    LOGGER.info(CAMERA, "[CAMERA] Array=_800fac7c, FUN index=%d, x=%d, y=%d, z=%d, a4=%d, a5=%d, a6=%d, a7=%d, script index=%d", callbackIndex, x, y, z, a4, a5, a6, a7);
     _800fac7c.offset(callbackIndex * 0x4L).deref(4).call(x, y, z, a4, a5, a6, a7);
     final BattleCamera cam = camera_800c67f0;
     cam.callbackIndex_88 = callbackIndex;
@@ -3509,6 +3525,7 @@ public final class Bttl_800d {
 
   @Method(0x800db950L)
   public static void FUN_800db950(final int callbackIndex, final int a1, final int a2, final int a3, final int a4, final int a5, final int a6, final int a7, final int scriptIndex) {
+    LOGGER.info(CAMERA, "[CAMERA] Array=_800fac3c, FUN index=%d, a1=%d, a2=%d, a3=%d, a4=%d, a5=%d, a6=%d, a7=%d, script index=%d", callbackIndex, a1, a2, a3, a4, a5, a6, a7, scriptIndex);
     _800fac3c.offset(callbackIndex * 0x4L).deref(4).call(a1, a2, a3, a4, a5, a6, a7, scriptIndex);
     final BattleCamera cam = camera_800c67f0;
     cam.callbackIndex_fc = callbackIndex;
@@ -3533,6 +3550,7 @@ public final class Bttl_800d {
 
   @Method(0x800dba80L)
   public static void FUN_800dba80(final int callbackIndex, final int a1, final int a2, final int a3, final int a4, final int a5, final int a6, final int a7, final int scriptIndex) {
+    LOGGER.info(CAMERA, "[CAMERA] Array=_800fac9c, FUN index=%d, a1=%d, a2=%d, a3=%d, a4=%d, a5=%d, a6=%d, a7=%d, script index=%d", callbackIndex, a1, a2, a3, a4, a5, a6, a7, scriptIndex);
     _800fac9c.offset(callbackIndex * 0x4L).deref(4).call(a1, a2, a3, a4, a5, a6, a7, scriptIndex);
     final BattleCamera cam = camera_800c67f0;
     cam.callbackIndex_88 = callbackIndex;
