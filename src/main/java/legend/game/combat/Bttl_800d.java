@@ -164,8 +164,7 @@ import static legend.game.combat.Bttl_800e.FUN_800e7ea4;
 import static legend.game.combat.Bttl_800e.allocateEffectManager;
 
 public final class Bttl_800d {
-  private Bttl_800d() {
-  }
+  private Bttl_800d() { }
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(String.class);
   private static final Marker CAMERA = MarkerManager.getMarker("CAMERA");
