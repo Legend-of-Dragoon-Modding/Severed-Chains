@@ -2916,7 +2916,7 @@ public final class Bttl_800d {
     final IntRef sp0x1c = new IntRef().set(cam._44 >> 8);
     final IntRef sp0x20 = new IntRef().set(cam._2c >> 8);
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[cam.bobjIndex_80].innerStruct_00;
-    FUN_800dcc94(bobj.model_148.coord2_14.coord.transfer.getX(), bobj.model_148.coord2_14.coord.transfer.getX(), bobj.model_148.coord2_14.coord.transfer.getX(), sp0x18, sp0x1c, sp0x20);
+    FUN_800dcc94(bobj.model_148.coord2_14.coord.transfer.getX(), bobj.model_148.coord2_14.coord.transfer.getY(), bobj.model_148.coord2_14.coord.transfer.getZ(), sp0x18, sp0x1c, sp0x20);
     setRefpoint(sp0x18.get(), sp0x1c.get(), sp0x20.get());
 
     cam._5c--;
