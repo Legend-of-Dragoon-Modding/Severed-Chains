@@ -1566,7 +1566,7 @@ public final class Bttl_800e {
 
       // a2 needs to be ignored in z check or poly positions will overflow at low z values
       int z = a2 + (sp0x18.getZ() >> 2);
-      if(sp0x18.getZ() >> 2 >= 0x28) {
+      if(sp0x18.getZ() >> 2 >= 0x28 && z >= 0x28) {
         if(z > 0x3ff8) {
           z = 0x3ff8;
         }
