@@ -876,7 +876,8 @@ public class Gpu {
             }
           }
 
-          int texel;
+          boolean handleTranslucence = false;
+          int texel = 0;
           if(textured) {
             if(texture == null) {
               texel = this.getTexel(u, v, clutX, clutY, vramX, vramY, bpp);
@@ -909,19 +910,27 @@ public class Gpu {
             }
 
             if(translucency != null && (texel & 0xff00_0000) != 0) {
-              texel = this.handleTranslucence(x * this.scale, y * this.scale, texel, translucency);
+              handleTranslucence = true;
             }
           } else {
             if(translucency != null) {
-              texel = this.handleTranslucence(x * this.scale, y * this.scale, colour, translucency);
+              handleTranslucence = true;
             } else {
               texel = colour;
             }
           }
 
-          for(int xx = 0; xx < this.scale; xx++) {
-            for(int yy = 0; yy < this.scale; yy++) {
-              this.getDrawBuffer().setPixel(x * this.scale + xx, y * this.scale + yy, (this.status.setMaskBit ? 1 : 0) << 24 | texel);
+          if(handleTranslucence) {
+            for(int xx = 0; xx < this.scale; xx++) {
+              for(int yy = 0; yy < this.scale; yy++) {
+                this.getDrawBuffer().setPixel(x * this.scale + xx, y * this.scale + yy, (this.status.setMaskBit ? 1 : 0) << 24 | this.handleTranslucence(x * this.scale + xx, y * this.scale + yy, colour, translucency));
+              }
+            }
+          } else {
+            for(int xx = 0; xx < this.scale; xx++) {
+              for(int yy = 0; yy < this.scale; yy++) {
+                this.getDrawBuffer().setPixel(x * this.scale + xx, y * this.scale + yy, (this.status.setMaskBit ? 1 : 0) << 24 | texel);
+              }
             }
           }
         }
