@@ -19,6 +19,7 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
    *   <li>0x80 - Poison</li>
    *   <li>0x800 - Don't apply elemental effects for this attack (cleared after damage is done)</li>
    *   <li>0x2000 - Can become dragoon</li>
+   *   <li>0x4000 - Divine Dragoon</li>
    * </ul>
    */
   public int status_0e;

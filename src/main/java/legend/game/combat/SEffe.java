@@ -24,7 +24,6 @@ import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.TmdWithId;
 import legend.core.gte.USCOLOUR;
 import legend.core.gte.VECTOR;
-import legend.core.memory.Memory;
 import legend.core.memory.Method;
 import legend.core.memory.Ref;
 import legend.core.memory.Value;
@@ -48,12 +47,12 @@ import legend.game.combat.deff.LmbTransforms14;
 import legend.game.combat.deff.LmbType0;
 import legend.game.combat.deff.LmbType1;
 import legend.game.combat.deff.LmbType2;
+import legend.game.combat.effects.AdditionOverlaysBorder0e;
 import legend.game.combat.effects.AdditionOverlaysEffect44;
 import legend.game.combat.effects.AdditionOverlaysHit20;
-import legend.game.combat.effects.AdditionOverlaysBorder0e;
 import legend.game.combat.effects.AttackHitFlashEffect0c;
 import legend.game.combat.effects.BattleStruct24;
-import legend.game.combat.effects.BttlScriptData6cSub08_3;
+import legend.game.combat.effects.RainEffect08;
 import legend.game.combat.effects.BttlScriptData6cSub10_2;
 import legend.game.combat.effects.BttlScriptData6cSub13c;
 import legend.game.combat.effects.BttlScriptData6cSub14_4;
@@ -87,6 +86,7 @@ import legend.game.combat.effects.GoldDragoonTransformEffectInstance84;
 import legend.game.combat.effects.ParticleEffectData98;
 import legend.game.combat.effects.ParticleEffectInstance94;
 import legend.game.combat.effects.ParticleEffectInstance94Sub10;
+import legend.game.combat.effects.RaindropEffect0c;
 import legend.game.combat.effects.ScreenCaptureEffect1c;
 import legend.game.combat.effects.ScreenCaptureEffectMetrics8;
 import legend.game.combat.effects.ScreenDistortionEffectData08;
@@ -4697,82 +4697,79 @@ public final class SEffe {
   }
 
   @Method(0x80108e40L)
-  public static void FUN_80108e40(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    final BttlScriptData6cSub08_3 s4 = (BttlScriptData6cSub08_3)data.effect_44;
-    long s1 = s4.ptr_04.get();
+  public static void renderRainEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
+    final RainEffect08 effect = (RainEffect08)data.effect_44;
+    final long rainArrayAddress = effect.raindropArray_04.getPointer();
+    final UnboundedArrayRef<RaindropEffect0c> rainArray = MEMORY.ref(4, rainArrayAddress, UnboundedArrayRef.of(0x0c, RaindropEffect0c::new, effect.count_00::get));
 
     //LAB_80108e84
-    for(long s3 = 0; s3 < s4.count_00.get(); s3++) {
-      if(Math.abs(Math.abs(MEMORY.ref(2, s1).offset(0x4L).getSigned() + MEMORY.ref(2, s1).offset(0x2L).getSigned()) - Math.abs(MEMORY.ref(2, s1).offset(0x8L).getSigned() + MEMORY.ref(2, s1).offset(0x6L).getSigned())) > 180) {
+    for(int i = 0; i < effect.count_00.get(); i++) {
+      if(Math.abs(Math.abs(rainArray.get(i).y0_04.get() + rainArray.get(i).x0_02.get()) - Math.abs(rainArray.get(i).y1_08.get() + rainArray.get(i).x1_06.get())) <= 180) {
         GPU.queueCommand(30, new GpuCommandLine()
           .translucent(Translucency.of(data._10.flags_00 >>> 28 & 3))
           .monochrome(0, 0)
           .rgb(1, data._10.colour_1c.getX(), data._10.colour_1c.getY(), data._10.colour_1c.getZ())
-          .pos(0, (int)MEMORY.ref(2, s1).offset(0x06L).get() - 256, (int)MEMORY.ref(2, s1).offset(0x08L).get() - 128)
-          .pos(1, (int)MEMORY.ref(2, s1).offset(0x02L).get() - 256, (int)MEMORY.ref(2, s1).offset(0x04L).get() - 128)
+          .pos(0, (int)rainArray.get(i).x1_06.get() - 256, (int)rainArray.get(i).y1_08.get() - 128)
+          .pos(1, (int)rainArray.get(i).x0_02.get() - 256, (int)rainArray.get(i).y0_04.get() - 128)
         );
       }
-
       //LAB_80108f6c
-      s1 = s1 + 0xcL;
     }
-
     //LAB_80108f84
   }
 
   @Method(0x80109000L)
-  public static void FUN_80109000(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    final BttlScriptData6cSub08_3 s3 = (BttlScriptData6cSub08_3)data.effect_44;
-    long v1 = s3.ptr_04.get();
+  public static void tickRainEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
+    final RainEffect08 effect = (RainEffect08)data.effect_44;
+    final long rainArrayAddress = effect.raindropArray_04.getPointer();
+    final UnboundedArrayRef<RaindropEffect0c> rainArray = MEMORY.ref(4, rainArrayAddress, UnboundedArrayRef.of(0x0c, RaindropEffect0c::new, effect.count_00::get));
 
     //LAB_80109038
-    for(int i = 0; i < s3.count_00.get(); i++) {
-      long sp10 = rsin(data._10.rot_10.getX()) << 5 >> 12;
-      long sp12 = rcos(data._10.rot_10.getX()) << 5 >> 12;
-      sp10 = sp10 * data._10.scale_16.getX() * MEMORY.ref(2, v1).offset(0xaL).getSigned() >> 24;
-      sp12 = sp12 * data._10.scale_16.getX() * MEMORY.ref(2, v1).offset(0xaL).getSigned() >> 24;
-      MEMORY.ref(2, v1).offset(0x6L).setu(MEMORY.ref(2, v1).offset(0x2L).get());
-      MEMORY.ref(2, v1).offset(0x8L).setu(MEMORY.ref(2, v1).offset(0x4L).get());
-      MEMORY.ref(2, v1).offset(0x2L).addu(sp10).and(0x1ff);
-      MEMORY.ref(2, v1).offset(0x4L).addu(sp12).and(0xff);
-      v1 = v1 + 0xcL;
+    for(int i = 0; i < effect.count_00.get(); i++) {
+      long endpointShiftX = rsin(data._10.rot_10.getX()) << 5 >> 12;
+      long endpointShiftY = rcos(data._10.rot_10.getX()) << 5 >> 12;
+      endpointShiftX = endpointShiftX * data._10.scale_16.getX() * rainArray.get(i).angleModifier_0a.get() >> 24;
+      endpointShiftY = endpointShiftY * data._10.scale_16.getX() * rainArray.get(i).angleModifier_0a.get() >> 24;
+      rainArray.get(i).x1_06.set(rainArray.get(i).x0_02.get());
+      rainArray.get(i).y1_08.set(rainArray.get(i).y0_04.get());
+      rainArray.get(i).x0_02.add((short)endpointShiftX).and(0x1ff);
+      rainArray.get(i).y0_04.add((short)endpointShiftY).and(0xff);
     }
-
     //LAB_80109110
   }
 
   @Method(0x8010912cL)
-  public static void FUN_8010912c(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    free(((BttlScriptData6cSub08_3)data.effect_44).ptr_04.get());
+  public static void deallocateRainEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
+    free(((RainEffect08)data.effect_44).raindropArray_04.getPointer());
   }
 
   @Method(0x80109158L)
-  public static FlowControl FUN_80109158(final RunningScript<? extends BattleScriptDataBase> script) {
+  public static FlowControl allocateRainEffect(final RunningScript<? extends BattleScriptDataBase> script) {
     final int count = script.params_20[1].get();
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
-      "BttlScriptData6cSub08_3",
+      "RainEffect08",
       script.scriptState_04,
       0x8,
-      SEffe::FUN_80109000,
-      SEffe::FUN_80108e40,
-      SEffe::FUN_8010912c,
-      BttlScriptData6cSub08_3::new
+      SEffe::tickRainEffect,
+      SEffe::renderRainEffect,
+      SEffe::deallocateRainEffect,
+      RainEffect08::new
     );
 
-    final EffectManagerData6c s1 = state.innerStruct_00;
-    final BttlScriptData6cSub08_3 s0 = (BttlScriptData6cSub08_3)s1.effect_44;
-    long t1 = mallocTail(count * 0xcL);
-    s0.count_00.set(count);
-    s0.ptr_04.set(t1);
-    s1._10.flags_00 = 0x5000_0000;
+    final EffectManagerData6c manager = state.innerStruct_00;
+    final RainEffect08 effect = (RainEffect08)manager.effect_44;
+    final long rainArrayAddress = mallocTail(count * 0xc);
+    effect.count_00.set(count);
+    final UnboundedArrayRef<RaindropEffect0c> rainArray = MEMORY.ref(4, rainArrayAddress, UnboundedArrayRef.of(0x0c, RaindropEffect0c::new, effect.count_00::get));
+    effect.raindropArray_04.set(rainArray);
+    manager._10.flags_00 = 0x5000_0000;
 
     //LAB_80109204
     for(int i = 0; i < count; i++) {
-      MEMORY.ref(1, t1).offset(0x0L).setu(0x1L);
-      MEMORY.ref(2, t1).offset(0x2L).setu(seed_800fa754.advance().get() % 513);
-      MEMORY.ref(2, t1).offset(0x4L).setu(seed_800fa754.advance().get() % 257);
-      MEMORY.ref(2, t1).offset(0xaL).setu(seed_800fa754.advance().get() % 3073 + 1024);
-      t1 = t1 + 0xcL;
+      rainArray.get(i)._00.set(1);
+      rainArray.get(i).x0_02.set((short)(seed_800fa754.advance().get() % 513));
+      rainArray.get(i).y0_04.set((short)(seed_800fa754.advance().get() % 257));
+      rainArray.get(i).angleModifier_0a.set((short)(seed_800fa754.advance().get() % 3073 + 1024));
     }
 
     //LAB_80109328
