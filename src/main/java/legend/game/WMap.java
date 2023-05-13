@@ -1,6 +1,5 @@
 package legend.game;
 
-import legend.core.Config;
 import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
@@ -17,7 +16,6 @@ import legend.core.gte.SVECTOR;
 import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.TmdWithId;
 import legend.core.gte.VECTOR;
-import legend.core.memory.Memory;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
@@ -31,6 +29,9 @@ import legend.core.memory.types.UnsignedShortRef;
 import legend.game.input.Input;
 import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
+import legend.game.inventory.screens.TextColour;
+import legend.game.modding.coremod.CoreMod;
+import legend.game.submap.EncounterRateMode;
 import legend.game.tim.Tim;
 import legend.game.tmd.Renderer;
 import legend.game.types.CContainer;
@@ -53,6 +54,7 @@ import legend.game.types.WMapRender40;
 import legend.game.types.WMapStruct0c_2;
 import legend.game.types.WMapStruct14;
 import legend.game.types.WMapStruct19c0;
+import legend.game.types.WMapStruct20;
 import legend.game.types.WMapStruct258;
 import legend.game.types.WMapStruct258Sub60;
 import legend.game.types.WMapTmdRenderingStruct18;
@@ -83,9 +85,9 @@ import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static legend.game.Scus94491BpeSegment.playSound;
 import static legend.game.Scus94491BpeSegment.qsort;
 import static legend.game.Scus94491BpeSegment.rcos;
+import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
-import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment.unloadSoundFile;
@@ -105,6 +107,7 @@ import static legend.game.Scus94491BpeSegment_8002.renderDobj2;
 import static legend.game.Scus94491BpeSegment_8002.renderModel;
 import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8002.strcmp;
+import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b8f0;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003b900;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003ea80;
@@ -125,7 +128,6 @@ import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTransp
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
 import static legend.game.Scus94491BpeSegment_8003.perspectiveTransformTriple;
-import static legend.game.Scus94491BpeSegment_8003.setLightMode;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
 import static legend.game.Scus94491BpeSegment_8004.FUN_80040e40;
@@ -136,20 +138,18 @@ import static legend.game.Scus94491BpeSegment_8005._80052c6c;
 import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
-import static legend.game.Scus94491BpeSegment_8007._8007a3a8;
+import static legend.game.Scus94491BpeSegment_8007.clearRed_8007a3a8;
 import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
-import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
-import static legend.game.Scus94491BpeSegment_800b._800babc0;
-import static legend.game.Scus94491BpeSegment_800b._800bb104;
-import static legend.game.Scus94491BpeSegment_800b._800bdc34;
 import static legend.game.Scus94491BpeSegment_800b._800bee90;
+import static legend.game.Scus94491BpeSegment_800b.clearBlue_800babc0;
+import static legend.game.Scus94491BpeSegment_800b.clearGreen_800bb104;
 import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.continentIndex_800bf0b0;
-import static legend.game.Scus94491BpeSegment_800b.doubleBufferFrame_800bb108;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
+import static legend.game.Scus94491BpeSegment_800b.savedGameSelected_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.texPages_800bb110;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static legend.game.Scus94491BpeSegment_800b.textboxes_800be358;
@@ -176,7 +176,7 @@ public class WMap {
    */
   private static final Value filesLoadedFlags_800c66b8 = MEMORY.ref(4, 0x800c66b8L);
 
-  private static final WeirdTimHeader _800c66c0 = MEMORY.ref(4, 0x800c66c0L, WeirdTimHeader::new);
+  private static final WeirdTimHeader _800c66c0 = new WeirdTimHeader();
 
   private static final IntRef tempZ_800c66d8 = MEMORY.ref(4, 0x800c66d8L, IntRef::new);
   private static final Value _800c66dc = MEMORY.ref(2, 0x800c66dcL);
@@ -251,15 +251,15 @@ public class WMap {
   private static final Value _800c86fc = MEMORY.ref(4, 0x800c86fcL);
   private static final RECT _800c8700 = MEMORY.ref(4, 0x800c8700L, RECT::new);
 
-  private static final Value _800c8778 = MEMORY.ref(4, 0x800c8778L);
-  private static final Value _800c877c = MEMORY.ref(4, 0x800c877cL);
+  private static final COLOUR _800c8778 = MEMORY.ref(4, 0x800c8778L, COLOUR::new);
+  private static final RECT _800c877c = MEMORY.ref(4, 0x800c877cL, RECT::new);
 
   private static final VECTOR _800c87d8 = MEMORY.ref(4, 0x800c87d8L, VECTOR::new);
-  private static final Value _800c87e8 = MEMORY.ref(4, 0x800c87e8L);
-  private static final Value _800c87ec = MEMORY.ref(4, 0x800c87ecL);
+  private static final COLOUR _800c87e8 = MEMORY.ref(4, 0x800c87e8L, COLOUR::new);
+  private static final RECT _800c87ec = MEMORY.ref(4, 0x800c87ecL, RECT::new);
 
-  private static final Value _800c87f4 = MEMORY.ref(4, 0x800c87f4L);
-  private static final Value _800c87f8 = MEMORY.ref(4, 0x800c87f8L);
+  private static final COLOUR _800c87f4 = MEMORY.ref(4, 0x800c87f4L, COLOUR::new);
+  private static final RECT _800c87f8 = MEMORY.ref(4, 0x800c87f8L, RECT::new);
 
   private static final Value _800eee48 = MEMORY.ref(4, 0x800eee48L);
 
@@ -391,6 +391,7 @@ public class WMap {
 
   private static final Value _800f5a90 = MEMORY.ref(2, 0x800f5a90L);
   private static final Value _800f5a92 = MEMORY.ref(2, 0x800f5a92L);
+  /** TODO struct for world map destination (shows where you need to go when you're fully zoomed out) */
   private static final Value _800f5a94 = MEMORY.ref(4, 0x800f5a94L);
 
   private static final Value _800f6598 = MEMORY.ref(4, 0x800f6598L);
@@ -514,7 +515,7 @@ public class WMap {
     for(int i = 0; i < nobj; i++) {
       final GsDOBJ2 dobj2 = model.ObjTable_0c.top[i];
 
-      if((model.ui_f4 & 1L << i) == 0) {
+      if((model.partInvisible_f4 & 1L << i) == 0) {
         final MATRIX ls = new MATRIX();
         final MATRIX lw = new MATRIX();
         GsGetLws(dobj2.coord2_04, lw, ls);
@@ -527,12 +528,12 @@ public class WMap {
         CPU.CTC2(ls.transfer.getX(), 5);
         CPU.CTC2(ls.transfer.getY(), 6);
         CPU.CTC2(ls.transfer.getZ(), 7);
-        Renderer.renderDobj2(dobj2, false);
+        Renderer.renderDobj2(dobj2, false, 0);
       }
     }
 
     //LAB_800c9354
-    if(model.b_cc != 0) {
+    if(model.movementType_cc != 0) {
       FUN_800c8d90(model);
     }
 
@@ -549,18 +550,18 @@ public class WMap {
     loadAndRenderMenus();
 
     if(whichMenu_800bdc38 == WhichMenu.NONE_0) {
-      if(_800bdc34.get() != 0) {
+      if(savedGameSelected_800bdc34.get()) {
         final WMapStruct258 struct258 = struct258_800c66a8;
 
         //LAB_800cc7d0
         free(struct258.imageData_2c);
         free(struct258.imageData_30);
 
-        pregameLoadingStage_800bb10c.set(gameState_800babc8.isOnWorldMap_4e4.get() != 0 ? 9 : 7);
+        pregameLoadingStage_800bb10c.set(gameState_800babc8.isOnWorldMap_4e4 ? 9 : 7);
       } else {
         //LAB_800cc804
-        setWidthAndFlags(320);
-        FUN_8001f708(gameState_800babc8.chapterIndex_98.get(), 0);
+        resizeDisplay(320, 240);
+        FUN_8001f708(gameState_800babc8.chapterIndex_98, 0);
         pregameLoadingStage_800bb10c.set(12);
       }
 
@@ -668,10 +669,10 @@ public class WMap {
 
   @Method(0x800ccbe0L)
   public static void FUN_800ccbe0() {
-    setWidthAndFlags(320);
+    resizeDisplay(320, 240);
     vsyncMode_8007a3b8.set(3);
     unloadSoundFile((int)0x9L);
-    FUN_8001f708(gameState_800babc8.chapterIndex_98.get(), 0);
+    FUN_8001f708(gameState_800babc8.chapterIndex_98, 0);
     pregameLoadingStage_800bb10c.set(1);
   }
 
@@ -690,7 +691,7 @@ public class WMap {
 
     //LAB_800ccc84
     for(int i = 0; i < 8; i++) {
-      gameState_800babc8.scriptFlags1_13c.get(i).set(0);
+      gameState_800babc8.scriptFlags1_13c[i] = 0;
     }
 
     FUN_800ccf04();
@@ -708,11 +709,11 @@ public class WMap {
   public static void FUN_800ccce4() {
     final long v0 = _800c6798.getAddress();
     final GameState52c state = gameState_800babc8;
-    state.areaIndex_4de.set((int)MEMORY.ref(2, v0).offset(0x12L).get());
-    state.pathIndex_4d8.set((int)MEMORY.ref(2, v0).offset(0x14L).get());
-    state.dotIndex_4da.set((int)MEMORY.ref(2, v0).offset(0x16L).get());
-    state.dotOffset_4dc.set((int)MEMORY.ref(1, v0).offset(0x18L).get());
-    state.facing_4dd.set((int)MEMORY.ref(1, v0).offset(0x1cL).get());
+    state.areaIndex_4de = (int)MEMORY.ref(2, v0).offset(0x12L).get();
+    state.pathIndex_4d8 = (int)MEMORY.ref(2, v0).offset(0x14L).get();
+    state.dotIndex_4da = (int)MEMORY.ref(2, v0).offset(0x16L).get();
+    state.dotOffset_4dc = (int)MEMORY.ref(1, v0).offset(0x18L).get();
+    state.facing_4dd = (byte)MEMORY.ref(1, v0).offset(0x1cL).get();
 
     //LAB_800ccd30
     for(int i = 0; i < 8; i++) {
@@ -734,11 +735,11 @@ public class WMap {
 
   @Method(0x800ccda4L)
   public static void FUN_800ccda4() {
-    gameState_800babc8.areaIndex_4de.set(areaIndex_800c67aa.get());
-    gameState_800babc8.pathIndex_4d8.set(pathIndex_800c67ac.get());
-    gameState_800babc8.dotIndex_4da.set(dotIndex_800c67ae.get());
-    gameState_800babc8.dotOffset_4dc.set(dotOffset_800c67b0.get());
-    gameState_800babc8.facing_4dd.set(facing_800c67b4.get());
+    gameState_800babc8.areaIndex_4de = areaIndex_800c67aa.get();
+    gameState_800babc8.pathIndex_4d8 = pathIndex_800c67ac.get();
+    gameState_800babc8.dotIndex_4da = dotIndex_800c67ae.get();
+    gameState_800babc8.dotOffset_4dc = dotOffset_800c67b0.get();
+    gameState_800babc8.facing_4dd = facing_800c67b4.get();
 
     FUN_800cd278();
 
@@ -750,11 +751,11 @@ public class WMap {
 
   @Method(0x800cce1cL)
   public static void transitionToCombat() {
-    gameState_800babc8.areaIndex_4de.set(areaIndex_800c67aa.get());
-    gameState_800babc8.pathIndex_4d8.set(pathIndex_800c67ac.get());
-    gameState_800babc8.dotIndex_4da.set(dotIndex_800c67ae.get());
-    gameState_800babc8.dotOffset_4dc.set(dotOffset_800c67b0.get());
-    gameState_800babc8.facing_4dd.set(facing_800c67b4.get());
+    gameState_800babc8.areaIndex_4de = areaIndex_800c67aa.get();
+    gameState_800babc8.pathIndex_4d8 = pathIndex_800c67ac.get();
+    gameState_800babc8.dotIndex_4da = dotIndex_800c67ae.get();
+    gameState_800babc8.dotOffset_4dc = dotOffset_800c67b0.get();
+    gameState_800babc8.facing_4dd = facing_800c67b4.get();
 
     FUN_800cd030();
     FUN_800cd278();
@@ -941,7 +942,7 @@ public class WMap {
   }
 
   @Method(0x800cd3c8L)
-  public static WMapRender40 FUN_800cd3c8(final long a0, final COLOUR a1, final COLOUR a2, final COLOUR a3, final COLOUR a4, final long a5, final long a6, final long a7, final long a8, final long a9, final boolean transparency, final Translucency transparencyMode, final long a12, final int z, final long a14, final long a15, final long a16) {
+  public static WMapRender40 FUN_800cd3c8(final long a0, final COLOUR a1, final COLOUR a2, final COLOUR a3, final COLOUR a4, final COLOUR a5, final RECT a6, final int a7, final int a8, final int type, final boolean transparency, final Translucency transparencyMode, final long a12, final int z, final long a14, final long a15, final long a16) {
     long sp2c = 0;
     long sp30 = 0;
     long sp38;
@@ -963,7 +964,7 @@ public class WMap {
     sp34._3d.set((int)a12);
     sp34.z_3e.set(z);
 
-    if(a9 == 0) {
+    if(type == 0) {
       sp34._00.set(MEMORY.ref(4, mallocTail(0x10L), UnboundedArrayRef.of(0x10, WMapRender10::new)));
     } else {
       //LAB_800cd4fc
@@ -971,7 +972,7 @@ public class WMap {
     }
 
     //LAB_800cd534
-    FUN_800ce0bc(sp34, a9, a1, a2, a3, a4, a5);
+    FUN_800ce0bc(sp34, type, a1, a2, a3, a4, a5);
 
     //LAB_800cd578
     for(int i = 0; i < 2; i++) {
@@ -984,8 +985,8 @@ public class WMap {
     //LAB_800cd600
     sp34._1c.set(MEMORY.ref(4, mallocTail(sp34._30.get() * 0x8L), UnboundedArrayRef.of(0x8, RECT::new)));
 
-    final long sp58_s = MEMORY.ref(2, a6).offset(0x4L).getSigned() / (int)a7;
-    final long sp5a_s = MEMORY.ref(2, a6).offset(0x6L).getSigned() / (int)a8;
+    final int sp58_s = a6.w.get() / a7;
+    final int sp5a_s = a6.h.get() / a8;
 
     if(a12 != 0x9L) {
       if(a12 == 0xcL) {
@@ -1012,8 +1013,8 @@ public class WMap {
           MEMORY.ref(2, sp44).offset(0x16L).setu(a15);
           MEMORY.ref(2, sp44).offset(0xeL).setu(a16);
 
-          sp54_s = MEMORY.ref(2, a6).offset(0x0L).get() + sp58_s * sp2c - 0xa0L;
-          sp56_s = MEMORY.ref(2, a6).offset(0x2L).get() + sp5a_s * sp30 - 0x78L;
+          sp54_s = a6.x.get() + sp58_s * sp2c - 160;
+          sp56_s = a6.y.get() + sp5a_s * sp30 - 120;
 
           MEMORY.ref(2, sp40).offset(0x8L).setu(sp54_s);
           MEMORY.ref(2, sp40).offset(0xaL).setu(sp56_s);
@@ -1100,8 +1101,8 @@ public class WMap {
         setGpuPacketType(0x9L, sp38, transparency, false);
         setGpuPacketType(0x9L, sp3c, transparency, false);
 
-        sp54_s = MEMORY.ref(2, a6).offset(0x0L).get() + sp58_s * sp2c - 0xa0L;
-        sp56_s = MEMORY.ref(2, a6).offset(0x2L).get() + sp5a_s * sp30 - 0x78L;
+        sp54_s = a6.x.get() + sp58_s * sp2c - 160;
+        sp56_s = a6.y.get() + sp5a_s * sp30 - 120;
 
         MEMORY.ref(2, sp38).offset(0x8L).setu(sp54_s);
         MEMORY.ref(2, sp38).offset(0xaL).setu(sp56_s);
@@ -1154,9 +1155,9 @@ public class WMap {
   }
 
   @Method(0x800ce0bcL)
-  public static void FUN_800ce0bc(final WMapRender40 a0, final long a1, final COLOUR a2, final COLOUR a3, final COLOUR a4, final COLOUR a5, final long a6) {
-    a0._3f.set((int)a1);
-    FUN_800cf20c(a0._00.deref(), a1, a0._28.get(), a0._2c.get(), a2, a3, a4, a5, a6);
+  public static void FUN_800ce0bc(final WMapRender40 a0, final int type, final COLOUR a2, final COLOUR a3, final COLOUR a4, final COLOUR a5, final COLOUR a6) {
+    a0.type_3f.set(type);
+    FUN_800cf20c(a0._00.deref(), type, a0._28.get(), a0._2c.get(), a2, a3, a4, a5, a6);
     a0._36.set((short)-1);
   }
 
@@ -1174,10 +1175,10 @@ public class WMap {
 
     if(a0._3d.get() == 9) {
       //LAB_800ce538
-      renderPacket = a0.renderPacket_0c.get(doubleBufferFrame_800bb108.get()).get();
+      renderPacket = a0.renderPacket_0c.get(GPU.getDrawBufferIndex()).get();
 
       if(a0.transparency_3c.get()) {
-        tpagePacket = a0.tpagePacket_04.get(doubleBufferFrame_800bb108.get()).get();
+        tpagePacket = a0.tpagePacket_04.get(GPU.getDrawBufferIndex()).get();
       } else {
         tpagePacket = 0; // Only used if transparency is set, just needs to be initialized
       }
@@ -1259,8 +1260,8 @@ public class WMap {
     v0 = a0._3d.get();
     if(v0 == 0x9L) {
       //LAB_800ceacc
-      long sp4 = a0.renderPacket_0c.get(doubleBufferFrame_800bb108.get()).get();
-      long sp8 = a0.renderPacket_0c.get(doubleBufferFrame_800bb108.get() ^ 1).get();
+      long sp4 = a0.renderPacket_0c.get(GPU.getDrawBufferIndex()).get();
+      long sp8 = a0.renderPacket_0c.get(GPU.getDrawBufferIndex() ^ 1).get();
 
       //LAB_800ceb38
       int n = 0;
@@ -1318,7 +1319,7 @@ public class WMap {
         MEMORY.ref(1, sp8).offset(0x1dL).setu(sp31);
         MEMORY.ref(1, sp8).offset(0x1eL).setu(sp32);
 
-        if(a0._3f.get() != 0) {
+        if(a0.type_3f.get() != 0) {
           n++;
         }
 
@@ -1333,8 +1334,8 @@ public class WMap {
       //LAB_800cf050
       int n = 0;
       for(int i = 0; i < a0._30.get(); i++) {
-        final WMapRender28 spc = a0._14.get(doubleBufferFrame_800bb108.get()).deref().get(i);
-        final WMapRender28 sp10 = a0._14.get(doubleBufferFrame_800bb108.get() ^ 1).deref().get(i);
+        final WMapRender28 spc = a0._14.get(GPU.getDrawBufferIndex()).deref().get(i);
+        final WMapRender28 sp10 = a0._14.get(GPU.getDrawBufferIndex() ^ 1).deref().get(i);
         final WMapRender10 sp14 = a0._00.deref().get(n);
 
         //LAB_800cf074
@@ -1352,7 +1353,7 @@ public class WMap {
         sp10._04.setG((int)sp19);
         sp10._04.setB((int)sp1a);
 
-        if(a0._3f.get() != 0) {
+        if(a0.type_3f.get() != 0) {
           n++;
         }
 
@@ -1368,58 +1369,56 @@ public class WMap {
   }
 
   @Method(0x800cf20cL)
-  public static void FUN_800cf20c(final UnboundedArrayRef<WMapRender10> a0, final long a1, final long a2, final long a3, final COLOUR a4, final COLOUR a5, final COLOUR a6, final COLOUR a7, final long a8) {
+  public static void FUN_800cf20c(final UnboundedArrayRef<WMapRender10> a0, final int type, final int a2, final int a3, final COLOUR colour0, final COLOUR colour1, final COLOUR colour2, final COLOUR colour3, final COLOUR a8) {
     int sp14;
-    long sp18;
-    long sp1c;
-    final long[] sp0x48 = new long[8];
+    final WMapStruct20 sp0x48 = new WMapStruct20();
 
-    switch((int)a1) {
+    switch(type) {
       case 0 -> {
-        a0.get(0)._00.set(a4);
-        a0.get(0)._04.set(a5);
-        a0.get(0)._08.set(a6);
-        a0.get(0)._0c.set(a7);
+        a0.get(0)._00.set(colour0);
+        a0.get(0)._04.set(colour1);
+        a0.get(0)._08.set(colour2);
+        a0.get(0)._0c.set(colour3);
       }
 
       case 1 -> {
-        sp0x48[0] = a4.getAddress();
-        sp0x48[1] = a5.getAddress();
-        sp0x48[2] = a6.getAddress();
-        sp0x48[3] = a7.getAddress();
+        sp0x48.colour0Start_00 = colour0;
+        sp0x48.colour0End_04 = colour1;
+        sp0x48.colour1Start_08 = colour2;
+        sp0x48.colour1End_0c = colour3;
         sp14 = 0;
 
         //LAB_800cf32c
-        for(sp1c = 0; sp1c < a3; sp1c++) {
+        for(int sp1c = 0; sp1c < a3; sp1c++) {
           //LAB_800cf34c
           //LAB_800cf350
-          for(sp18 = 0; sp18 < a2; sp18++) {
+          for(int sp18 = 0; sp18 < a2; sp18++) {
             final WMapRender10 sp20 = a0.get(sp14);
 
             //LAB_800cf370
-            sp0x48[4] = sp18;
-            sp0x48[5] = a2 - sp18;
-            sp0x48[6] = sp1c;
-            sp0x48[7] = a3 - sp1c;
-            FUN_800d112c(sp0x48, sp20._00);
+            sp0x48.colourEndRatio_10 = sp18;
+            sp0x48.colourStartRatio_14 = a2 - sp18;
+            sp0x48.colour1Ratio_18 = sp1c;
+            sp0x48.colour0Ratio_1c = a3 - sp1c;
+            blendColours(sp0x48, sp20._00);
 
-            sp0x48[4] = sp18 + 0x1L;
-            sp0x48[5] = a2 - 0x1L - sp18;
-            sp0x48[6] = sp1c;
-            sp0x48[7] = a3 - sp1c;
-            FUN_800d112c(sp0x48, sp20._04);
+            sp0x48.colourEndRatio_10 = sp18 + 1;
+            sp0x48.colourStartRatio_14 = a2 - 1 - sp18;
+            sp0x48.colour1Ratio_18 = sp1c;
+            sp0x48.colour0Ratio_1c = a3 - sp1c;
+            blendColours(sp0x48, sp20._04);
 
-            sp0x48[4] = sp18;
-            sp0x48[5] = a2 - sp18;
-            sp0x48[6] = sp1c + 0x1L;
-            sp0x48[7] = a3 - 0x1L - sp1c;
-            FUN_800d112c(sp0x48, sp20._08);
+            sp0x48.colourEndRatio_10 = sp18;
+            sp0x48.colourStartRatio_14 = a2 - sp18;
+            sp0x48.colour1Ratio_18 = sp1c + 1;
+            sp0x48.colour0Ratio_1c = a3 - 1 - sp1c;
+            blendColours(sp0x48, sp20._08);
 
-            sp0x48[4] = sp18 + 0x1L;
-            sp0x48[5] = a2 - 0x1L - sp18;
-            sp0x48[6] = sp1c + 0x1L;
-            sp0x48[7] = a3 - 0x1L - sp1c;
-            FUN_800d112c(sp0x48, sp20._0c);
+            sp0x48.colourEndRatio_10 = sp18 + 1;
+            sp0x48.colourStartRatio_14 = a2 - 1 - sp18;
+            sp0x48.colour1Ratio_18 = sp1c + 1;
+            sp0x48.colour0Ratio_1c = a3 - 1 - sp1c;
+            blendColours(sp0x48, sp20._0c);
 
             sp14++;
           }
@@ -1430,43 +1429,43 @@ public class WMap {
 
       //LAB_800cf564
       case 2 -> {
-        sp0x48[0] = a4.getAddress();
-        sp0x48[1] = a5.getAddress();
-        sp0x48[2] = a8;
-        sp0x48[3] = a8;
+        sp0x48.colour0Start_00 = colour0;
+        sp0x48.colour0End_04 = colour1;
+        sp0x48.colour1Start_08 = a8;
+        sp0x48.colour1End_0c = a8;
         sp14 = 0;
 
         //LAB_800cf5a4
-        for(sp1c = 0; sp1c < a3 / 2; sp1c++) {
+        for(int sp1c = 0; sp1c < a3 / 2; sp1c++) {
           //LAB_800cf5d8
           //LAB_800cf5dc
-          for(sp18 = 0; sp18 < a2; sp18++) {
+          for(int sp18 = 0; sp18 < a2; sp18++) {
             final WMapRender10 sp20 = a0.get(sp14);
 
             //LAB_800cf5fc
-            sp0x48[4] = sp18;
-            sp0x48[5] = a2 - sp18;
-            sp0x48[6] = sp1c;
-            sp0x48[7] = a3 / 2 - sp1c;
-            FUN_800d112c(sp0x48, sp20._00);
+            sp0x48.colourEndRatio_10 = sp18;
+            sp0x48.colourStartRatio_14 = a2 - sp18;
+            sp0x48.colour1Ratio_18 = sp1c;
+            sp0x48.colour0Ratio_1c = a3 / 2 - sp1c;
+            blendColours(sp0x48, sp20._00);
 
-            sp0x48[4] = sp18 + 0x1L;
-            sp0x48[5] = a2 - 0x1L - sp18;
-            sp0x48[6] = sp1c;
-            sp0x48[7] = a3 / 2 - sp1c;
-            FUN_800d112c(sp0x48, sp20._04);
+            sp0x48.colourEndRatio_10 = sp18 + 1;
+            sp0x48.colourStartRatio_14 = a2 - 1 - sp18;
+            sp0x48.colour1Ratio_18 = sp1c;
+            sp0x48.colour0Ratio_1c = a3 / 2 - sp1c;
+            blendColours(sp0x48, sp20._04);
 
-            sp0x48[4] = sp18;
-            sp0x48[5] = a2 - sp18;
-            sp0x48[6] = sp1c + 0x1L;
-            sp0x48[7] = a3 / 2 - 0x1L - sp1c;
-            FUN_800d112c(sp0x48, sp20._08);
+            sp0x48.colourEndRatio_10 = sp18;
+            sp0x48.colourStartRatio_14 = a2 - sp18;
+            sp0x48.colour1Ratio_18 = sp1c + 1;
+            sp0x48.colour0Ratio_1c = a3 / 2 - 1 - sp1c;
+            blendColours(sp0x48, sp20._08);
 
-            sp0x48[4] = sp18 + 0x1L;
-            sp0x48[5] = a2 - 0x1L - sp18;
-            sp0x48[6] = sp1c + 0x1L;
-            sp0x48[7] = a3 / 2 - 0x1L - sp1c;
-            FUN_800d112c(sp0x48, sp20._0c);
+            sp0x48.colourEndRatio_10 = sp18 + 1;
+            sp0x48.colourStartRatio_14 = a2 - 1 - sp18;
+            sp0x48.colour1Ratio_18 = sp1c + 1;
+            sp0x48.colour0Ratio_1c = a3 / 2 - 1 - sp1c;
+            blendColours(sp0x48, sp20._0c);
 
             sp14++;
           }
@@ -1475,42 +1474,42 @@ public class WMap {
         }
 
         //LAB_800cf838
-        sp0x48[0] = a8;
-        sp0x48[1] = a8;
-        sp0x48[2] = a6.getAddress();
-        sp0x48[3] = a7.getAddress();
+        sp0x48.colour0Start_00 = a8;
+        sp0x48.colour0End_04 = a8;
+        sp0x48.colour1Start_08 = colour2;
+        sp0x48.colour1End_0c = colour3;
 
         //LAB_800cf870
-        for(sp1c = 0; sp1c < a3 / 2; sp1c++) {
+        for(int sp1c = 0; sp1c < a3 / 2; sp1c++) {
           //LAB_800cf8a4
           //LAB_800cf8a8
-          for(sp18 = 0; sp18 < a2; sp18++) {
+          for(int sp18 = 0; sp18 < a2; sp18++) {
             final WMapRender10 sp20 = a0.get(sp14);
 
             //LAB_800cf8c8
-            sp0x48[4] = sp18;
-            sp0x48[5] = a2 - sp18;
-            sp0x48[6] = sp1c;
-            sp0x48[7] = a3 / 2 - sp1c;
-            FUN_800d112c(sp0x48, sp20._00);
+            sp0x48.colourEndRatio_10 = sp18;
+            sp0x48.colourStartRatio_14 = a2 - sp18;
+            sp0x48.colour1Ratio_18 = sp1c;
+            sp0x48.colour0Ratio_1c = a3 / 2 - sp1c;
+            blendColours(sp0x48, sp20._00);
 
-            sp0x48[4] = sp18 + 0x1L;
-            sp0x48[5] = a2 - 0x1L - sp18;
-            sp0x48[6] = sp1c;
-            sp0x48[7] = a3 / 2 - sp1c;
-            FUN_800d112c(sp0x48, sp20._04);
+            sp0x48.colourEndRatio_10 = sp18 + 1;
+            sp0x48.colourStartRatio_14 = a2 - 1 - sp18;
+            sp0x48.colour1Ratio_18 = sp1c;
+            sp0x48.colour0Ratio_1c = a3 / 2 - sp1c;
+            blendColours(sp0x48, sp20._04);
 
-            sp0x48[4] = sp18;
-            sp0x48[5] = a2 - sp18;
-            sp0x48[6] = sp1c + 0x1L;
-            sp0x48[7] = a3 / 2 - 0x1L - sp1c;
-            FUN_800d112c(sp0x48, sp20._08);
+            sp0x48.colourEndRatio_10 = sp18;
+            sp0x48.colourStartRatio_14 = a2 - sp18;
+            sp0x48.colour1Ratio_18 = sp1c + 1;
+            sp0x48.colour0Ratio_1c = a3 / 2 - 1 - sp1c;
+            blendColours(sp0x48, sp20._08);
 
-            sp0x48[4] = sp18 + 0x1L;
-            sp0x48[5] = a2 - 0x1L - sp18;
-            sp0x48[6] = sp1c + 0x1L;
-            sp0x48[7] = a3 / 2 - 0x1L - sp1c;
-            FUN_800d112c(sp0x48, sp20._0c);
+            sp0x48.colourEndRatio_10 = sp18 + 1;
+            sp0x48.colourStartRatio_14 = a2 - 1 - sp18;
+            sp0x48.colour1Ratio_18 = sp1c + 1;
+            sp0x48.colour0Ratio_1c = a3 / 2 - 1 - sp1c;
+            blendColours(sp0x48, sp20._0c);
 
             sp14++;
           }
@@ -1521,43 +1520,43 @@ public class WMap {
 
       //LAB_800cfb04
       case 3 -> {
-        sp0x48[0] = a4.getAddress();
-        sp0x48[1] = a8;
-        sp0x48[2] = a6.getAddress();
-        sp0x48[3] = a8;
+        sp0x48.colour0Start_00 = colour0;
+        sp0x48.colour0End_04 = a8;
+        sp0x48.colour1Start_08 = colour2;
+        sp0x48.colour1End_0c = a8;
         sp14 = 0;
 
         //LAB_800cfb50
-        for(sp1c = 0; sp1c >= a3; sp1c++) {
+        for(int sp1c = 0; sp1c < a3; sp1c++) {
           //LAB_800cfb70
           //LAB_800cfb74
-          for(sp18 = 0; sp18 < a2 / 2; sp18++) {
+          for(int sp18 = 0; sp18 < a2 / 2; sp18++) {
             final WMapRender10 sp20 = a0.get(sp14);
 
             //LAB_800cfba8
-            sp0x48[4] = sp18;
-            sp0x48[5] = a2 / 2 - sp18;
-            sp0x48[6] = sp1c;
-            sp0x48[7] = a3 - sp1c;
-            FUN_800d112c(sp0x48, sp20._00);
+            sp0x48.colourEndRatio_10 = sp18;
+            sp0x48.colourStartRatio_14 = a2 / 2 - sp18;
+            sp0x48.colour1Ratio_18 = sp1c;
+            sp0x48.colour0Ratio_1c = a3 - sp1c;
+            blendColours(sp0x48, sp20._00);
 
-            sp0x48[4] = sp18 + 0x1L;
-            sp0x48[5] = a2 / 2 - 0x1L - sp18;
-            sp0x48[6] = sp1c;
-            sp0x48[7] = a3 - sp1c;
-            FUN_800d112c(sp0x48, sp20._04);
+            sp0x48.colourEndRatio_10 = sp18 + 1;
+            sp0x48.colourStartRatio_14 = a2 / 2 - 1 - sp18;
+            sp0x48.colour1Ratio_18 = sp1c;
+            sp0x48.colour0Ratio_1c = a3 - sp1c;
+            blendColours(sp0x48, sp20._04);
 
-            sp0x48[4] = sp18;
-            sp0x48[5] = a2 / 2 - sp18;
-            sp0x48[6] = sp1c + 0x1L;
-            sp0x48[7] = a3 - 0x1L - sp1c;
-            FUN_800d112c(sp0x48, sp20._08);
+            sp0x48.colourEndRatio_10 = sp18;
+            sp0x48.colourStartRatio_14 = a2 / 2 - sp18;
+            sp0x48.colour1Ratio_18 = sp1c + 1;
+            sp0x48.colour0Ratio_1c = a3 - 1 - sp1c;
+            blendColours(sp0x48, sp20._08);
 
-            sp0x48[4] = sp18 + 0x1L;
-            sp0x48[5] = a2 / 2 - 0x1L - sp18;
-            sp0x48[6] = sp1c + 0x1L;
-            sp0x48[7] = a3 - 0x1L - sp1c;
-            FUN_800d112c(sp0x48, sp20._0c);
+            sp0x48.colourEndRatio_10 = sp18 + 1;
+            sp0x48.colourStartRatio_14 = a2 / 2 - 1 - sp18;
+            sp0x48.colour1Ratio_18 = sp1c + 1;
+            sp0x48.colour0Ratio_1c = a3 - 1 - sp1c;
+            blendColours(sp0x48, sp20._0c);
 
             sp14++;
           }
@@ -1567,43 +1566,43 @@ public class WMap {
         }
 
         //LAB_800cfe14
-        sp0x48[0] = a8;
-        sp0x48[1] = a5.getAddress();
-        sp0x48[2] = a8;
-        sp0x48[3] = a7.getAddress();
-        sp14 = (int)(a2 / 2);
+        sp0x48.colour0Start_00 = a8;
+        sp0x48.colour0End_04 = colour1;
+        sp0x48.colour1Start_08 = a8;
+        sp0x48.colour1End_0c = colour3;
+        sp14 = a2 / 2;
 
         //LAB_800cfe7c
-        for(sp1c = 0; sp1c < a3; sp1c++) {
+        for(int sp1c = 0; sp1c < a3; sp1c++) {
           //LAB_800cfe9c
           //LAB_800cfea0
-          for(sp18 = 0; sp18 < a2 / 2; sp18++) {
+          for(int sp18 = 0; sp18 < a2 / 2; sp18++) {
             final WMapRender10 sp20 = a0.get(sp14);
 
             //LAB_800cfed4
-            sp0x48[4] = sp18;
-            sp0x48[5] = a2 / 2 - sp18;
-            sp0x48[6] = sp1c;
-            sp0x48[7] = a3 - sp1c;
-            FUN_800d112c(sp0x48, sp20._00);
+            sp0x48.colourEndRatio_10 = sp18;
+            sp0x48.colourStartRatio_14 = a2 / 2 - sp18;
+            sp0x48.colour1Ratio_18 = sp1c;
+            sp0x48.colour0Ratio_1c = a3 - sp1c;
+            blendColours(sp0x48, sp20._00);
 
-            sp0x48[4] = sp18 + 0x1L;
-            sp0x48[5] = a2 / 2 - 0x1L - sp18;
-            sp0x48[6] = sp1c;
-            sp0x48[7] = a3 - sp1c;
-            FUN_800d112c(sp0x48, sp20._04);
+            sp0x48.colourEndRatio_10 = sp18 + 1;
+            sp0x48.colourStartRatio_14 = a2 / 2 - 1 - sp18;
+            sp0x48.colour1Ratio_18 = sp1c;
+            sp0x48.colour0Ratio_1c = a3 - sp1c;
+            blendColours(sp0x48, sp20._04);
 
-            sp0x48[4] = sp18;
-            sp0x48[5] = a2 / 2 - sp18;
-            sp0x48[6] = sp1c + 0x1L;
-            sp0x48[7] = a3 - 0x1L - sp1c;
-            FUN_800d112c(sp0x48, sp20._08);
+            sp0x48.colourEndRatio_10 = sp18;
+            sp0x48.colourStartRatio_14 = a2 / 2 - sp18;
+            sp0x48.colour1Ratio_18 = sp1c + 1;
+            sp0x48.colour0Ratio_1c = a3 - 1 - sp1c;
+            blendColours(sp0x48, sp20._08);
 
-            sp0x48[4] = sp18 + 0x1L;
-            sp0x48[5] = a2 / 2 - 0x1L - sp18;
-            sp0x48[6] = sp1c + 0x1L;
-            sp0x48[7] = a3 - 0x1L - sp1c;
-            FUN_800d112c(sp0x48, sp20._0c);
+            sp0x48.colourEndRatio_10 = sp18 + 1;
+            sp0x48.colourStartRatio_14 = a2 / 2 - 1 - sp18;
+            sp0x48.colour1Ratio_18 = sp1c + 1;
+            sp0x48.colour0Ratio_1c = a3 - 1 - sp1c;
+            blendColours(sp0x48, sp20._0c);
 
             sp14++;
           }
@@ -1615,75 +1614,71 @@ public class WMap {
 
       //LAB_800d0140
       case 4 -> {
-        final Memory.TemporaryReservation sp0x28tmp = MEMORY.temp(4);
-        final Memory.TemporaryReservation sp0x30tmp = MEMORY.temp(4);
-        final Memory.TemporaryReservation sp0x38tmp = MEMORY.temp(4);
-        final Memory.TemporaryReservation sp0x40tmp = MEMORY.temp(4);
-        final COLOUR sp0x28 = sp0x28tmp.get().cast(COLOUR::new);
-        final COLOUR sp0x30 = sp0x30tmp.get().cast(COLOUR::new);
-        final COLOUR sp0x38 = sp0x38tmp.get().cast(COLOUR::new);
-        final COLOUR sp0x40 = sp0x40tmp.get().cast(COLOUR::new);
-        sp0x48[0] = a4.getAddress();
-        sp0x48[1] = a5.getAddress();
-        sp0x48[2] = a6.getAddress();
-        sp0x48[3] = a7.getAddress();
-        sp0x48[4] = a2 / 2;
-        sp0x48[5] = a2 / 2;
-        sp0x48[6] = 0;
-        sp0x48[7] = a3;
-        FUN_800d112c(sp0x48, sp0x28);
-        sp0x48[4] = 0;
-        sp0x48[5] = a2;
-        sp0x48[6] = a3 / 2;
-        sp0x48[7] = a3 / 2;
-        FUN_800d112c(sp0x48, sp0x30);
-        sp0x48[4] = a2;
-        sp0x48[5] = 0;
-        sp0x48[6] = a3 / 2;
-        sp0x48[7] = a3 / 2;
-        FUN_800d112c(sp0x48, sp0x38);
-        sp0x48[4] = a2 / 2;
-        sp0x48[5] = a2 / 2;
-        sp0x48[6] = a3;
-        sp0x48[7] = 0;
-        FUN_800d112c(sp0x48, sp0x40);
-        sp0x48[0] = a4.getAddress();
-        sp0x48[1] = sp0x28.getAddress();
-        sp0x48[2] = sp0x30.getAddress();
-        sp0x48[3] = a8;
+        final COLOUR sp0x28 = new COLOUR();
+        final COLOUR sp0x30 = new COLOUR();
+        final COLOUR sp0x38 = new COLOUR();
+        final COLOUR sp0x40 = new COLOUR();
+        sp0x48.colour0Start_00 = colour0;
+        sp0x48.colour0End_04 = colour1;
+        sp0x48.colour1Start_08 = colour2;
+        sp0x48.colour1End_0c = colour3;
+        sp0x48.colourEndRatio_10 = a2 / 2;
+        sp0x48.colourStartRatio_14 = a2 / 2;
+        sp0x48.colour1Ratio_18 = 0;
+        sp0x48.colour0Ratio_1c = a3;
+        blendColours(sp0x48, sp0x28);
+        sp0x48.colourEndRatio_10 = 0;
+        sp0x48.colourStartRatio_14 = a2;
+        sp0x48.colour1Ratio_18 = a3 / 2;
+        sp0x48.colour0Ratio_1c = a3 / 2;
+        blendColours(sp0x48, sp0x30);
+        sp0x48.colourEndRatio_10 = a2;
+        sp0x48.colourStartRatio_14 = 0;
+        sp0x48.colour1Ratio_18 = a3 / 2;
+        sp0x48.colour0Ratio_1c = a3 / 2;
+        blendColours(sp0x48, sp0x38);
+        sp0x48.colourEndRatio_10 = a2 / 2;
+        sp0x48.colourStartRatio_14 = a2 / 2;
+        sp0x48.colour1Ratio_18 = a3;
+        sp0x48.colour0Ratio_1c = 0;
+        blendColours(sp0x48, sp0x40);
+        sp0x48.colour0Start_00 = colour0;
+        sp0x48.colour0End_04 = sp0x28;
+        sp0x48.colour1Start_08 = sp0x30;
+        sp0x48.colour1End_0c = a8;
         sp14 = 0;
 
         //LAB_800d0334
-        for(sp1c = 0; sp1c < a3 / 2; sp1c++) {
+        for(int sp1c = 0; sp1c < a3 / 2; sp1c++) {
           //LAB_800d0368
           //LAB_800d036c
-          for(sp18 = 0; sp18 < a2 / 2; sp18++) {
+          for(int sp18 = 0; sp18 < a2 / 2; sp18++) {
             final WMapRender10 sp20 = a0.get(sp14);
 
             //LAB_800d03a0
-            sp0x48[4] = sp18;
-            sp0x48[5] = a2 / 2 - sp18;
-            sp0x48[6] = sp1c;
-            sp0x48[7] = a3 / 2 - sp1c;
-            FUN_800d112c(sp0x48, sp20._00);
+            sp0x48.colourEndRatio_10 = sp18;
+            sp0x48.colourStartRatio_14 = a2 / 2 - sp18;
+            sp0x48.colour1Ratio_18 = sp1c;
+            sp0x48.colour0Ratio_1c = a3 / 2 - sp1c;
+            blendColours(sp0x48, sp20._00);
 
-            sp0x48[4] = sp18 + 0x1L;
-            sp0x48[5] = a2 / 2 - 0x1L - sp18;
-            sp0x48[6] = sp1c;
-            sp0x48[7] = a3 / 2 - sp1c;
-            FUN_800d112c(sp0x48, sp20._04);
+            sp0x48.colourEndRatio_10 = sp18 + 1;
+            sp0x48.colourStartRatio_14 = a2 / 2 - 1 - sp18;
+            sp0x48.colour1Ratio_18 = sp1c;
+            sp0x48.colour0Ratio_1c = a3 / 2 - sp1c;
+            blendColours(sp0x48, sp20._04);
 
-            sp0x48[4] = sp18;
-            sp0x48[5] = a2 / 2 - sp18;
-            sp0x48[6] = sp1c + 0x1L;
-            sp0x48[7] = a3 / 2 - 0x1L - sp1c;
-            FUN_800d112c(sp0x48, sp20._08);
+            sp0x48.colourEndRatio_10 = sp18;
+            sp0x48.colourStartRatio_14 = a2 / 2 - sp18;
+            sp0x48.colour1Ratio_18 = sp1c + 1;
+            sp0x48.colour0Ratio_1c = a3 / 2 - 1 - sp1c;
+            blendColours(sp0x48, sp20._08);
 
-            sp0x48[4] = sp18 + 0x1L;
-            sp0x48[5] = a2 / 2 - 0x1L - sp18;
-            sp0x48[6] = sp1c + 0x1L;
-            sp0x48[7] = a3 / 2 - 0x1L - sp1c;
-            FUN_800d112c(sp0x48, sp20._0c);
+            sp0x48.colourEndRatio_10 = sp18 + 1;
+            sp0x48.colourStartRatio_14 = a2 / 2 - 1 - sp18;
+            sp0x48.colour1Ratio_18 = sp1c + 1;
+            sp0x48.colour0Ratio_1c = a3 / 2 - 1 - sp1c;
+            blendColours(sp0x48, sp20._0c);
 
             sp14++;
           }
@@ -1693,43 +1688,43 @@ public class WMap {
         }
 
         //LAB_800d0654
-        sp0x48[0] = sp0x28.getAddress();
-        sp0x48[1] = a5.getAddress();
-        sp0x48[2] = a8;
-        sp0x48[3] = sp0x38.getAddress();
-        sp14 = (int)(a2 / 2);
+        sp0x48.colour0Start_00 = sp0x28;
+        sp0x48.colour0End_04 = colour1;
+        sp0x48.colour1Start_08 = a8;
+        sp0x48.colour1End_0c = sp0x38;
+        sp14 = a2 / 2;
 
         //LAB_800d06b4
-        for(sp1c = 0; sp1c < a3 / 2; sp1c++) {
+        for(int sp1c = 0; sp1c < a3 / 2; sp1c++) {
           //LAB_800d06e8
           //LAB_800d06ec
-          for(sp18 = 0; sp18 < a2 / 2; sp18++) {
+          for(int sp18 = 0; sp18 < a2 / 2; sp18++) {
             final WMapRender10 sp20 = a0.get(sp14);
 
             //LAB_800d0720
-            sp0x48[4] = sp18;
-            sp0x48[5] = a2 / 2 - sp18;
-            sp0x48[6] = sp1c;
-            sp0x48[7] = a3 / 2 - sp1c;
-            FUN_800d112c(sp0x48, sp20._00);
+            sp0x48.colourEndRatio_10 = sp18;
+            sp0x48.colourStartRatio_14 = a2 / 2 - sp18;
+            sp0x48.colour1Ratio_18 = sp1c;
+            sp0x48.colour0Ratio_1c = a3 / 2 - sp1c;
+            blendColours(sp0x48, sp20._00);
 
-            sp0x48[4] = sp18 + 0x1L;
-            sp0x48[5] = a2 / 2 - 0x1L - sp18;
-            sp0x48[6] = sp1c;
-            sp0x48[7] = a3 / 2 - sp1c;
-            FUN_800d112c(sp0x48, sp20._04);
+            sp0x48.colourEndRatio_10 = sp18 + 1;
+            sp0x48.colourStartRatio_14 = a2 / 2 - 1 - sp18;
+            sp0x48.colour1Ratio_18 = sp1c;
+            sp0x48.colour0Ratio_1c = a3 / 2 - sp1c;
+            blendColours(sp0x48, sp20._04);
 
-            sp0x48[4] = sp18;
-            sp0x48[5] = a2 / 2 - sp18;
-            sp0x48[6] = sp1c + 0x1L;
-            sp0x48[7] = a3 / 2 - 0x1L - sp1c;
-            FUN_800d112c(sp0x48, sp20._08);
+            sp0x48.colourEndRatio_10 = sp18;
+            sp0x48.colourStartRatio_14 = a2 / 2 - sp18;
+            sp0x48.colour1Ratio_18 = sp1c + 1;
+            sp0x48.colour0Ratio_1c = a3 / 2 - 1 - sp1c;
+            blendColours(sp0x48, sp20._08);
 
-            sp0x48[4] = sp18 + 0x1L;
-            sp0x48[5] = a2 / 2 - 0x1L - sp18;
-            sp0x48[6] = sp1c + 0x1L;
-            sp0x48[7] = a3 / 2 - 0x1L - sp1c;
-            FUN_800d112c(sp0x48, sp20._0c);
+            sp0x48.colourEndRatio_10 = sp18 + 1;
+            sp0x48.colourStartRatio_14 = a2 / 2 - 1 - sp18;
+            sp0x48.colour1Ratio_18 = sp1c + 1;
+            sp0x48.colour0Ratio_1c = a3 / 2 - 1 - sp1c;
+            blendColours(sp0x48, sp20._0c);
 
             sp14++;
           }
@@ -1739,43 +1734,43 @@ public class WMap {
         }
 
         //LAB_800d09d4
-        sp0x48[0] = sp0x30.getAddress();
-        sp0x48[1] = a8;
-        sp0x48[2] = a6.getAddress();
-        sp0x48[3] = sp0x40.getAddress();
-        sp14 = (int)(a2 * a3 / 2);
+        sp0x48.colour0Start_00 = sp0x30;
+        sp0x48.colour0End_04 = a8;
+        sp0x48.colour1Start_08 = colour2;
+        sp0x48.colour1End_0c = sp0x40;
+        sp14 = a2 * a3 / 2;
 
         //LAB_800d0a40
-        for(sp1c = 0; sp1c < a3 / 2; sp1c++) {
+        for(int sp1c = 0; sp1c < a3 / 2; sp1c++) {
           //LAB_800d0a74
           //LAB_800d0a78
-          for(sp18 = 0; sp18 < a2 / 2; sp18++) {
+          for(int sp18 = 0; sp18 < a2 / 2; sp18++) {
             final WMapRender10 sp20 = a0.get(sp14);
 
             //LAB_800d0aac
-            sp0x48[4] = sp18;
-            sp0x48[5] = a2 / 2 - sp18;
-            sp0x48[6] = sp1c;
-            sp0x48[7] = a3 / 2 - sp1c;
-            FUN_800d112c(sp0x48, sp20._00);
+            sp0x48.colourEndRatio_10 = sp18;
+            sp0x48.colourStartRatio_14 = a2 / 2 - sp18;
+            sp0x48.colour1Ratio_18 = sp1c;
+            sp0x48.colour0Ratio_1c = a3 / 2 - sp1c;
+            blendColours(sp0x48, sp20._00);
 
-            sp0x48[4] = sp18 + 0x1L;
-            sp0x48[5] = a2 / 2 - 0x1L - sp18;
-            sp0x48[6] = sp1c;
-            sp0x48[7] = a3 / 2 - sp1c;
-            FUN_800d112c(sp0x48, sp20._04);
+            sp0x48.colourEndRatio_10 = sp18 + 1;
+            sp0x48.colourStartRatio_14 = a2 / 2 - 1 - sp18;
+            sp0x48.colour1Ratio_18 = sp1c;
+            sp0x48.colour0Ratio_1c = a3 / 2 - sp1c;
+            blendColours(sp0x48, sp20._04);
 
-            sp0x48[4] = sp18;
-            sp0x48[5] = a2 / 2 - sp18;
-            sp0x48[6] = sp1c + 0x1L;
-            sp0x48[7] = a3 / 2 - 0x1L - sp1c;
-            FUN_800d112c(sp0x48, sp20._08);
+            sp0x48.colourEndRatio_10 = sp18;
+            sp0x48.colourStartRatio_14 = a2 / 2 - sp18;
+            sp0x48.colour1Ratio_18 = sp1c + 1;
+            sp0x48.colour0Ratio_1c = a3 / 2 - 1 - sp1c;
+            blendColours(sp0x48, sp20._08);
 
-            sp0x48[4] = sp18 + 0x1L;
-            sp0x48[5] = a2 / 2 - 0x1L - sp18;
-            sp0x48[6] = sp1c + 0x1L;
-            sp0x48[7] = a3 / 2 - 0x1L - sp1c;
-            FUN_800d112c(sp0x48, sp20._0c);
+            sp0x48.colourEndRatio_10 = sp18 + 1;
+            sp0x48.colourStartRatio_14 = a2 / 2 - 1 - sp18;
+            sp0x48.colour1Ratio_18 = sp1c + 1;
+            sp0x48.colour0Ratio_1c = a3 / 2 - 1 - sp1c;
+            blendColours(sp0x48, sp20._0c);
 
             sp14++;
           }
@@ -1785,43 +1780,43 @@ public class WMap {
         }
 
         //LAB_800d0d60
-        sp0x48[0] = a8;
-        sp0x48[1] = sp0x38.getAddress();
-        sp0x48[2] = sp0x40.getAddress();
-        sp0x48[3] = a7.getAddress();
-        sp14 = (int)(a2 * a3 / 2 + a2 / 2);
+        sp0x48.colour0Start_00 = a8;
+        sp0x48.colour0End_04 = sp0x38;
+        sp0x48.colour1Start_08 = sp0x40;
+        sp0x48.colour1End_0c = colour3;
+        sp14 = a2 * a3 / 2 + a2 / 2;
 
         //LAB_800d0df0
-        for(sp1c = 0; sp1c < a3 / 2; sp1c++) {
+        for(int sp1c = 0; sp1c < a3 / 2; sp1c++) {
           //LAB_800d0e24
           //LAB_800d0e28
-          for(sp18 = 0; sp18 < a2 / 2; sp18++) {
+          for(int sp18 = 0; sp18 < a2 / 2; sp18++) {
             final WMapRender10 sp20 = a0.get(sp14);
 
             //LAB_800d0e5c
-            sp0x48[4] = sp18;
-            sp0x48[5] = a2 / 2 - sp18;
-            sp0x48[6] = sp1c;
-            sp0x48[7] = a3 / 2 - sp1c;
-            FUN_800d112c(sp0x48, sp20._00);
+            sp0x48.colourEndRatio_10 = sp18;
+            sp0x48.colourStartRatio_14 = a2 / 2 - sp18;
+            sp0x48.colour1Ratio_18 = sp1c;
+            sp0x48.colour0Ratio_1c = a3 / 2 - sp1c;
+            blendColours(sp0x48, sp20._00);
 
-            sp0x48[4] = sp18 + 0x1L;
-            sp0x48[5] = a2 / 2 - 0x1L - sp18;
-            sp0x48[6] = sp1c;
-            sp0x48[7] = a3 / 2 - sp1c;
-            FUN_800d112c(sp0x48, sp20._04);
+            sp0x48.colourEndRatio_10 = sp18 + 1;
+            sp0x48.colourStartRatio_14 = a2 / 2 - 1 - sp18;
+            sp0x48.colour1Ratio_18 = sp1c;
+            sp0x48.colour0Ratio_1c = a3 / 2 - sp1c;
+            blendColours(sp0x48, sp20._04);
 
-            sp0x48[4] = sp18;
-            sp0x48[5] = a2 / 2 - sp18;
-            sp0x48[6] = sp1c + 0x1L;
-            sp0x48[7] = a3 / 2 - 0x1L - sp1c;
-            FUN_800d112c(sp0x48, sp20._08);
+            sp0x48.colourEndRatio_10 = sp18;
+            sp0x48.colourStartRatio_14 = a2 / 2 - sp18;
+            sp0x48.colour1Ratio_18 = sp1c + 1;
+            sp0x48.colour0Ratio_1c = a3 / 2 - 1 - sp1c;
+            blendColours(sp0x48, sp20._08);
 
-            sp0x48[4] = sp18 + 0x1L;
-            sp0x48[5] = a2 / 2 - 0x1L - sp18;
-            sp0x48[6] = sp1c + 0x1L;
-            sp0x48[7] = a3 / 2 - 0x1L - sp1c;
-            FUN_800d112c(sp0x48, sp20._0c);
+            sp0x48.colourEndRatio_10 = sp18 + 1;
+            sp0x48.colourStartRatio_14 = a2 / 2 - 1 - sp18;
+            sp0x48.colour1Ratio_18 = sp1c + 1;
+            sp0x48.colour0Ratio_1c = a3 / 2 - 1 - sp1c;
+            blendColours(sp0x48, sp20._0c);
 
             sp14++;
           }
@@ -1829,11 +1824,6 @@ public class WMap {
           //LAB_800d10c8
           sp14 += a2 / 2;
         }
-
-        sp0x28tmp.release();
-        sp0x30tmp.release();
-        sp0x38tmp.release();
-        sp0x40tmp.release();
       }
 
       //LAB_800d1110
@@ -1843,18 +1833,18 @@ public class WMap {
   }
 
   @Method(0x800d112cL)
-  public static void FUN_800d112c(final long[] a0, final COLOUR a1) {
-    final long sp10 = (MEMORY.ref(1, a0[1]).offset(0x0L).get() * a0[4] + MEMORY.ref(1, a0[0]).offset(0x0L).get() * a0[5]) / (a0[4] + a0[5]);
-    final long sp14 = (MEMORY.ref(1, a0[1]).offset(0x1L).get() * a0[4] + MEMORY.ref(1, a0[0]).offset(0x1L).get() * a0[5]) / (a0[4] + a0[5]);
-    final long sp18 = (MEMORY.ref(1, a0[1]).offset(0x2L).get() * a0[4] + MEMORY.ref(1, a0[0]).offset(0x2L).get() * a0[5]) / (a0[4] + a0[5]);
+  public static void blendColours(final WMapStruct20 a0, final COLOUR out) {
+    final int r0 = (a0.colour0End_04.getR() * a0.colourEndRatio_10 + a0.colour0Start_00.getR() * a0.colourStartRatio_14) / (a0.colourEndRatio_10 + a0.colourStartRatio_14);
+    final int g0 = (a0.colour0End_04.getG() * a0.colourEndRatio_10 + a0.colour0Start_00.getG() * a0.colourStartRatio_14) / (a0.colourEndRatio_10 + a0.colourStartRatio_14);
+    final int b0 = (a0.colour0End_04.getB() * a0.colourEndRatio_10 + a0.colour0Start_00.getB() * a0.colourStartRatio_14) / (a0.colourEndRatio_10 + a0.colourStartRatio_14);
 
-    final long sp0 = (MEMORY.ref(1, a0[3]).offset(0x0L).get() * a0[4] + MEMORY.ref(1, a0[2]).offset(0x0L).get() * a0[5]) / (a0[4] + a0[5]);
-    final long sp4 = (MEMORY.ref(1, a0[3]).offset(0x1L).get() * a0[4] + MEMORY.ref(1, a0[2]).offset(0x1L).get() * a0[5]) / (a0[4] + a0[5]);
-    final long sp8 = (MEMORY.ref(1, a0[3]).offset(0x2L).get() * a0[4] + MEMORY.ref(1, a0[2]).offset(0x2L).get() * a0[5]) / (a0[4] + a0[5]);
+    final int r1 = (a0.colour1End_0c.getR() * a0.colourEndRatio_10 + a0.colour1Start_08.getR() * a0.colourStartRatio_14) / (a0.colourEndRatio_10 + a0.colourStartRatio_14);
+    final int g1 = (a0.colour1End_0c.getG() * a0.colourEndRatio_10 + a0.colour1Start_08.getG() * a0.colourStartRatio_14) / (a0.colourEndRatio_10 + a0.colourStartRatio_14);
+    final int b1 = (a0.colour1End_0c.getB() * a0.colourEndRatio_10 + a0.colour1Start_08.getB() * a0.colourStartRatio_14) / (a0.colourEndRatio_10 + a0.colourStartRatio_14);
 
-    a1.r.set((int)((a0[6] * sp0 + a0[7] * sp10) / (a0[6] + a0[7])));
-    a1.g.set((int)((a0[6] * sp4 + a0[7] * sp14) / (a0[6] + a0[7])));
-    a1.b.set((int)((a0[6] * sp8 + a0[7] * sp18) / (a0[6] + a0[7])));
+    out.r.set((a0.colour1Ratio_18 * r1 + a0.colour0Ratio_1c * r0) / (a0.colour1Ratio_18 + a0.colour0Ratio_1c));
+    out.g.set((a0.colour1Ratio_18 * g1 + a0.colour0Ratio_1c * g0) / (a0.colour1Ratio_18 + a0.colour0Ratio_1c));
+    out.b.set((a0.colour1Ratio_18 * b1 + a0.colour0Ratio_1c * b0) / (a0.colour1Ratio_18 + a0.colour0Ratio_1c));
   }
 
   @Method(0x800d15d8L)
@@ -1910,9 +1900,9 @@ public class WMap {
   public static void FUN_800d1914() {
     final WMapStruct19c0 v0 = _800c66b0;
 
-    _8007a3a8.set(0);
-    _800bb104.set(0);
-    _800babc0.set(0);
+    clearRed_8007a3a8.set(0);
+    clearGreen_800bb104.set(0);
+    clearBlue_800babc0.set(0);
 
     v0._154[0].index_00 = -1;
     v0._196c = 0;
@@ -1941,7 +1931,6 @@ public class WMap {
     }
 
     //LAB_800d1c88
-    setLightMode(0);
     v0.ambientLight_14c.set((short)0x600, (short)0x600, (short)0x600);
     GsSetAmbient(v0.ambientLight_14c.getX(), v0.ambientLight_14c.getY(), v0.ambientLight_14c.getZ());
     v0._88 = 0;
@@ -2429,7 +2418,7 @@ public class WMap {
         final int sp7c = (int)_800f5a6c.offset(sp20 * 0x2cL).getSigned();
         final int mask = 0x1 << (sp7c & 0x1f);
 
-        if((gameState_800babc8.scriptFlags2_bc.get(sp7c >>> 5).get() & mask) > 0) {
+        if((gameState_800babc8.scriptFlags2_bc[sp7c >>> 5] & mask) > 0) {
           //LAB_800d45cc
           sp24 = sp20;
         }
@@ -2513,7 +2502,7 @@ public class WMap {
           textZ_800bdf00.set(26);
           textboxes_800be358[7].z_0c = 26;
 
-          FUN_800e774c(places_800f0234.get((int)_800f5a94.offset(sp24 * 0x2cL).get()).name_00.deref(), x - width.get() * 3, y - lines.get() * 7, 0, 0);
+          renderCenteredShadowedText(places_800f0234.get((int)_800f5a94.offset(sp24 * 0x2cL).get()).name_00.deref(), x, y - lines.get() * 7 + 1, TextColour.WHITE, 0);
         }
       }
     }
@@ -2815,12 +2804,12 @@ public class WMap {
     FUN_8003b8f0(a0);
     FUN_8003b900(_800c66c0);
 
-    final RECT rect = new RECT((short)imageX, (short)imageY, _800c66c0.imageRect.deref().w.get(), _800c66c0.imageRect.deref().h.get());
-    LoadImage(rect, _800c66c0.imageAddress.get());
+    final RECT rect = new RECT((short)imageX, (short)imageY, _800c66c0.imageRect.w.get(), _800c66c0.imageRect.h.get());
+    LoadImage(rect, _800c66c0.imageAddress);
 
-    if((_800c66c0.flags.get() & 0x8L) != 0 && (short)clutX != -0x1L) {
-      rect.set((short)clutX, (short)clutY, _800c66c0.clutRect.deref().w.get(), _800c66c0.clutRect.deref().h.get());
-      LoadImage(rect, _800c66c0.clutAddress.get());
+    if((_800c66c0.flags & 0x8) != 0 && (short)clutX != -1) {
+      rect.set((short)clutX, (short)clutY, _800c66c0.clutRect.w.get(), _800c66c0.clutRect.h.get());
+      LoadImage(rect, _800c66c0.clutAddress);
     }
 
     //LAB_800d5d84
@@ -3401,18 +3390,7 @@ public class WMap {
     struct258_800c66a8.zoomState_1f8 = 0;
     struct258_800c66a8._220 = 0;
 
-    final Memory.TemporaryReservation sp0x48tmp = MEMORY.temp(4);
-    final Memory.TemporaryReservation sp0x50tmp = MEMORY.temp(8);
-    final Memory.TemporaryReservation sp0x58tmp = MEMORY.temp(8);
-    final COLOUR sp0x48 = sp0x48tmp.get().cast(COLOUR::new);
-    final Value sp0x50 = sp0x50tmp.get();
-    final Value sp0x58 = sp0x58tmp.get();
-
-    MEMORY.memfill(sp0x48.getAddress(), 0x4, 0);
-
-    sp0x50.setu(_800c8778);
-    sp0x58.offset(0x0L).setu(_800c877c.offset(0x0L));
-    sp0x58.offset(0x4L).setu(_800c877c.offset(0x4L));
+    final COLOUR sp0x48 = new COLOUR();
 
     struct258_800c66a8._1fc = FUN_800cd3c8(
       0x80L,
@@ -3420,11 +3398,11 @@ public class WMap {
       sp0x48,
       sp0x48,
       sp0x48,
-      sp0x50.getAddress(),
-      sp0x58.getAddress(),
-      0x4L,
-      0x4L,
-      0x2L,
+      _800c8778,
+      _800c877c,
+      4,
+      4,
+      2,
       true,
       Translucency.B_PLUS_F,
       0x9L,
@@ -3433,10 +3411,6 @@ public class WMap {
       0,
       0
     );
-
-    sp0x48tmp.release();
-    sp0x50tmp.release();
-    sp0x58tmp.release();
   }
 
   @Method(0x800d8e4cL)
@@ -3770,7 +3744,7 @@ public class WMap {
       sp5c = 1 << (sp58 & 0x1f);
       sp58 = sp58 >>> 5;
 
-      if((gameState_800babc8.scriptFlags2_bc.get((int)sp58).get() & sp5c) != 0 && _800c6870.get() == 0) {
+      if((gameState_800babc8.scriptFlags2_bc[(int)sp58] & sp5c) != 0 && _800c6870.get() == 0) {
         renderQueenFuryUi(1);
       }
 
@@ -3788,7 +3762,7 @@ public class WMap {
     sp5c = 1 << (sp60 & 0x1fL);
     sp60 = sp60 >>> 5;
 
-    if((gameState_800babc8.scriptFlags2_bc.get((int)sp60).get() & sp5c) == 0) {
+    if((gameState_800babc8.scriptFlags2_bc[(int)sp60] & sp5c) == 0) {
       return;
     }
 
@@ -3998,14 +3972,9 @@ public class WMap {
       case 6:
         textboxes_800be358[6].z_0c = 18;
 
-        final IntRef width = new IntRef();
-        final IntRef lines = new IntRef();
-        measureText(Move_800f00e8, width, lines);
-        FUN_800e774c(Move_800f00e8, (short)(240 - width.get() * 3), 41, 0, 0);
-        measureText(No_800effa4, width, lines);
-        FUN_800e774c(No_800effa4, (short)(240 - width.get() * 3), 57, 0, 0);
-        measureText(Yes_800effb0, width, lines);
-        FUN_800e774c(Yes_800effb0, (short)(240 - width.get() * 3), 73, 0, 0);
+        renderCenteredShadowedText(Move_800f00e8, 240, 41, TextColour.WHITE, 0);
+        renderCenteredShadowedText(No_800effa4, 240, 57, TextColour.WHITE, 0);
+        renderCenteredShadowedText(Yes_800effb0, 240, 73, TextColour.WHITE, 0);
         renderCoolonMap(0, 0);
 
         if(Input.pressedThisFrame(InputAction.BUTTON_EAST)) {
@@ -4078,7 +4047,7 @@ public class WMap {
 
         if(struct258.coolonWarpIndex_222 == 8) {
           sp60 = coolonWarpDest_800ef228.get(struct258.coolonWarpIndex_222)._10.get();
-          gameState_800babc8._17c.get((int)(sp60 >>> 5)).or(0x1 << (sp60 & 0x1f));
+          gameState_800babc8._17c[(int)(sp60 >>> 5)] |= 0x1 << (sp60 & 0x1f);
 
           //LAB_800db8f4
           _800c6860.setu(_800f0e34.get((int)coolonWarpDest_800ef228.get(struct258.coolonWarpIndex_222)._10.get())._08.get());
@@ -4345,7 +4314,7 @@ public class WMap {
       //LAB_800dcb48
       textZ_800bdf00.set(18);
       textboxes_800be358[7].z_0c = 18;
-      FUN_800e774c(coolonWarpDest_800ef228.get(struct.coolonWarpIndex_222).placeName_1c.deref(), (short)(x - width * 3), (short)(y - lines * 7), 0, 0);
+      renderCenteredShadowedText(coolonWarpDest_800ef228.get(struct.coolonWarpIndex_222).placeName_1c.deref(), x, y - lines * 7 + 1, TextColour.WHITE, 0);
     }
 
     //LAB_800dcc0c
@@ -4681,7 +4650,7 @@ public class WMap {
         struct258_800c66a8.rotation_a4.setY(_800c66b0.mapRotation_70.getY());
       } else if(struct258_800c66a8._248 == 2) {
         //LAB_800e0a6c
-        gameState_800babc8._17c.get(sp3c >>> 5).or(0x1 << (sp3c & 0x1f));
+        gameState_800babc8._17c[sp3c >>> 5] |= 0x1 << (sp3c & 0x1f);
 
         //LAB_800e0b64
         at = 0x800f_0000L; //TODO
@@ -4754,16 +4723,18 @@ public class WMap {
     struct.currentAnimIndex_ac = struct.animIndex_b0;
 
     if(struct.vec_84.getX() != struct.vec_94.getX() || struct.vec_84.getY() != struct.vec_94.getY() || struct.vec_84.getZ() != struct.vec_94.getZ()) {
+      final EncounterRateMode mode = gameState_800babc8.getConfig(CoreMod.ENCOUNTER_RATE_CONFIG.get());
+
       //LAB_800e117c
       //LAB_800e11b0
       if(Input.getButtonState(InputAction.BUTTON_EAST)) { // World Map Running
         //LAB_800e11d0
         struct.animIndex_b0 = 4;
-        handleEncounters(2);
+        handleEncounters(mode.worldMapRunModifier);
       } else {
         //LAB_800e11f4
         struct.animIndex_b0 = 3;
-        handleEncounters(1);
+        handleEncounters(mode.worldMapWalkModifier);
       }
 
       //LAB_800e1210
@@ -5117,21 +5088,19 @@ public class WMap {
   /** Some kind of full-screen effect during the Wingly teleportation between Aglis and Zenebatos */
   @Method(0x800e3304L)
   public static void renderWinglyTeleportScreenEffect() {
-    final int v = doubleBufferFrame_800bb108.get() ^ 1;
-
     final GpuCommandQuad cmd = new GpuCommandQuad()
       .bpp(Bpp.BITS_15)
       .translucent(Translucency.HALF_B_PLUS_HALF_F)
-      .vramPos(0, doubleBufferFrame_800bb108.get() * 256)
+      .vramPos(0, 0)
       .monochrome(0x80)
       .pos(-160, -120, 320, 240)
-      .uv(0, v * 16);
+      .texture(GPU.getDisplayBuffer());
 
     GPU.queueCommand(5, cmd);
   }
 
   @Method(0x800e367cL)
-  public static void handleEncounters(final int encounterRateMultiplier) {
+  public static void handleEncounters(final float encounterRateMultiplier) {
     //LAB_800e36a8
     if(worldMapState_800c6698.get() != 0x5L) {
       return;
@@ -5166,9 +5135,7 @@ public class WMap {
     //LAB_800e3780
     //LAB_800e3794
     final WMapAreaData08 area = areaData_800f2248.get(areaIndex_800c67aa.get());
-    if(!Config.autoCharmPotion()) {
-      encounterAccumulator_800c6ae8.add(area.encounterRate_03.get() * encounterRateMultiplier * 70);
-    }
+    encounterAccumulator_800c6ae8.add(Math.round(area.encounterRate_03.get() * encounterRateMultiplier * 70));
 
     if(encounterAccumulator_800c6ae8.get() >= 5120) {
       encounterAccumulator_800c6ae8.set(0);
@@ -5204,11 +5171,11 @@ public class WMap {
       }
 
       //LAB_800e3a38
-      gameState_800babc8.areaIndex_4de.set(areaIndex_800c67aa.get());
-      gameState_800babc8.pathIndex_4d8.set(pathIndex_800c67ac.get());
-      gameState_800babc8.dotIndex_4da.set(dotIndex_800c67ae.get());
-      gameState_800babc8.dotOffset_4dc.set(dotOffset_800c67b0.get());
-      gameState_800babc8.facing_4dd.set(facing_800c67b4.get());
+      gameState_800babc8.areaIndex_4de = areaIndex_800c67aa.get();
+      gameState_800babc8.pathIndex_4d8 = pathIndex_800c67ac.get();
+      gameState_800babc8.dotIndex_4da = dotIndex_800c67ae.get();
+      gameState_800babc8.dotOffset_4dc = dotOffset_800c67b0.get();
+      gameState_800babc8.facing_4dd = facing_800c67b4.get();
       pregameLoadingStage_800bb10c.set(8);
     }
 
@@ -5554,18 +5521,7 @@ public class WMap {
 
   @Method(0x800e4f60L)
   public static void FUN_800e4f60() {
-    final Memory.TemporaryReservation sp0x48tmp = MEMORY.temp(4);
-    final Memory.TemporaryReservation sp0x50tmp = MEMORY.temp(4);
-    final Memory.TemporaryReservation sp0x58tmp = MEMORY.temp(8);
-
-    final Value sp0x48 = sp0x48tmp.get();
-    final COLOUR sp0x50 = sp0x50tmp.get().cast(COLOUR::new);
-    final Value sp0x58 = sp0x58tmp.get();
-
-    sp0x48.setu(_800c87e8);
-    MEMORY.memfill(sp0x50.getAddress(), 0x4, 0);
-    sp0x58.offset(0x0L).setu(_800c87ec.offset(0x0L));
-    sp0x58.offset(0x4L).setu(_800c87ec.offset(0x4L));
+    final COLOUR sp0x50 = new COLOUR();
 
     _800c6898.set(FUN_800cd3c8(
       0,
@@ -5573,11 +5529,11 @@ public class WMap {
       sp0x50,
       sp0x50,
       sp0x50,
-      sp0x48.getAddress(),
-      sp0x58.getAddress(),
-      0x8L,
-      0x8L,
-      0x4L,
+      _800c87e8,
+      _800c87ec,
+      8,
+      8,
+      4,
       true,
       Translucency.B_MINUS_F,
       0x9L,
@@ -5587,22 +5543,7 @@ public class WMap {
       0
     ));
 
-    sp0x48tmp.release();
-    sp0x50tmp.release();
-    sp0x58tmp.release();
-
-    final Memory.TemporaryReservation sp0x60tmp = MEMORY.temp(4);
-    final Memory.TemporaryReservation sp0x68tmp = MEMORY.temp(4);
-    final Memory.TemporaryReservation sp0x70tmp = MEMORY.temp(8);
-
-    final COLOUR sp0x60 = sp0x60tmp.get().cast(COLOUR::new);
-    final Value sp0x68 = sp0x68tmp.get();
-    final Value sp0x70 = sp0x70tmp.get();
-
-    MEMORY.memfill(sp0x60.getAddress(), 0x4, 0);
-    sp0x68.setu(_800c87f4);
-    sp0x70.offset(0x0L).setu(_800c87f8.offset(0x0L));
-    sp0x70.offset(0x4L).setu(_800c87f8.offset(0x4L));
+    final COLOUR sp0x60 = new COLOUR();
 
     _800c689c.set(FUN_800cd3c8(
       0x80L,
@@ -5610,11 +5551,11 @@ public class WMap {
       sp0x60,
       sp0x60,
       sp0x60,
-      sp0x68.getAddress(),
-      sp0x70.getAddress(),
-      0x4L,
-      0x4L,
-      0x2L,
+      _800c87f4,
+      _800c87f8,
+      4,
+      4,
+      2,
       true,
       Translucency.B_PLUS_F,
       0x9L,
@@ -5623,10 +5564,6 @@ public class WMap {
       0,
       0
     ));
-
-    sp0x60tmp.release();
-    sp0x68tmp.release();
-    sp0x70tmp.release();
   }
 
   @Method(0x800e5150L)
@@ -5755,14 +5692,9 @@ public class WMap {
           sp38 = _800c6862.get() >>> 4 & 0xffffL;
           sp3c = _800c6862.get() & 0xfL;
 
-          final IntRef width = new IntRef();
-          final IntRef height = new IntRef();
-          measureText(No_Entry_800f01e4.deref(), width, height);
-          FUN_800e774c(No_Entry_800f01e4.deref(), 240 - width.get() * 3, 164, 0, 0);
-          measureText(regions_800f01ec.get((int)sp38).deref(), width, height);
-          FUN_800e774c(regions_800f01ec.get((int)sp38).deref(), 240 - width.get() * 3, 182, 0, 0);
-          measureText(regions_800f01ec.get((int)sp3c).deref(), width, height);
-          FUN_800e774c(regions_800f01ec.get((int)sp3c).deref(), 240 - width.get() * 3, 200, 0, 0);
+          renderCenteredShadowedText(No_Entry_800f01e4.deref(), 240, 164, TextColour.WHITE, 0);
+          renderCenteredShadowedText(regions_800f01ec.get((int)sp38).deref(), 240, 182, TextColour.WHITE, 0);
+          renderCenteredShadowedText(regions_800f01ec.get((int)sp3c).deref(), 240, 200, TextColour.WHITE, 0);
 
           if(Input.pressedThisFrame(InputAction.DPAD_UP) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_UP)) {
             _800c86d2.subu(0x1L);
@@ -5791,12 +5723,8 @@ public class WMap {
           _800c689c.deref().y_3a.set((short)_800c86d2.getSigned() * 18 + 8);
         } else { // Entering a town, etc.
           //LAB_800e5a18
-          final IntRef width = new IntRef();
-          final IntRef lines = new IntRef();
-          measureText(No_Entry_800f01e4.deref(), width, lines);
-          FUN_800e774c(No_Entry_800f01e4.deref(), 240 - width.get() * 3, 170, 0, 0);
-          measureText(Enter_800f01e8.deref(), width, lines);
-          FUN_800e774c(Enter_800f01e8.deref(), 240 - width.get() * 3, 190, 0, 0);
+          renderCenteredShadowedText(No_Entry_800f01e4.deref(), 240, 170, TextColour.WHITE, 0);
+          renderCenteredShadowedText(Enter_800f01e8.deref(), 240, 190, TextColour.WHITE, 0);
 
           // World Map Location Menu (No Entry,Enter)
           if(Input.pressedThisFrame(InputAction.DPAD_UP) || Input.pressedThisFrame(InputAction.DPAD_DOWN) ||
@@ -5817,7 +5745,7 @@ public class WMap {
         final IntRef width = new IntRef();
         final IntRef lines = new IntRef();
         measureText(places_800f0234.get(placeIndex).name_00.deref(), width, lines);
-        FUN_800e774c(places_800f0234.get(placeIndex).name_00.deref(), 240 - width.get() * 3, 140 - lines.get() * 7, 0, 0);
+        renderCenteredShadowedText(places_800f0234.get(placeIndex).name_00.deref(), 240, 140 - lines.get() * 7, TextColour.WHITE, 0);
 
         if((filesLoadedFlags_800c66b8.get() & 0x800L) != 0) {
           final GpuCommandPoly cmd = new GpuCommandPoly(4)
@@ -5829,7 +5757,7 @@ public class WMap {
           final int sp54 = 0x1 << (sp50 & 0x1f);
           sp50 = sp50 >>> 5;
 
-          if((gameState_800babc8._17c.get(sp50).get() & sp54) > 0) {
+          if((gameState_800babc8._17c[sp50] & sp54) > 0) {
             //LAB_800e5e98
             cmd.monochrome((int)_800c86d0.getSigned() / 2);
           } else {
@@ -5875,7 +5803,7 @@ public class WMap {
             for(int i = 0; i < 5; i++) {
               //LAB_800e61b8
               if((services & 1L << i) != 0) {
-                FUN_800e774c(services_800f01cc.get(i).deref(), 205, servicesCount * 16 + 30, 0, 0);
+                renderCenteredShadowedText(services_800f01cc.get(i).deref(), 240, servicesCount * 16 + 30, TextColour.WHITE, 0);
                 servicesCount++;
               }
 
@@ -5884,7 +5812,7 @@ public class WMap {
 
             //LAB_800e6260
             if(servicesCount == 0) {
-              FUN_800e774c(_800f01e0.deref(), 201, 62, 0, 0);
+              renderCenteredShadowedText(_800f01e0.deref(), 240, 62, TextColour.WHITE, 0);
             }
 
             //LAB_800e6290
@@ -6027,7 +5955,7 @@ public class WMap {
         sp58 = _800c67a8.get();
         final int sp54 = 0x1 << (sp58 & 0x1f);
         sp58 = sp58 >>> 5;
-        gameState_800babc8._17c.get((int)sp58).or(sp54);
+        gameState_800babc8._17c[(int)sp58] |= sp54;
 
         //LAB_800e6900
         if(_800c6860.get() != 999L) {
@@ -6235,7 +6163,7 @@ public class WMap {
         textZ_800bdf00.set(i + 119);
         textboxes_800be358[i].z_0c = i + 119;
 
-        FUN_800e774c(places_800f0234.get(place).name_00.deref(), (short)(x - width.get() * 3), (short)(y - lines.get() * 7), 0, 0);
+        renderCenteredShadowedText(places_800f0234.get(place).name_00.deref(), x, y - lines.get() * 7 + 1, TextColour.WHITE, 0);
       }
 
       //LAB_800e7590
@@ -6286,12 +6214,15 @@ public class WMap {
   }
 
   @Method(0x800e774cL)
-  public static void FUN_800e774c(final LodString text, final int x, final int y, final long a3, final long a4) {
-    final IntRef width = new IntRef();
-    final IntRef lines = new IntRef();
-    measureText(text, width, lines);
-    renderText(text, x - width.get() + 3, y, (short)a3, (short)a4);
-    renderText(text, x - (width.get() - 1) + 3, y + 1, 9, (short)a4);
+  public static void renderCenteredShadowedText(final LodString text, final int x, final int y, final TextColour colour, final int trim) {
+    final String[] split = text.get().split("\\n");
+
+    for(int i = 0; i < split.length; i++) {
+      final LodString part = new LodString(split[i]);
+      final int textWidth = textWidth(part);
+      renderText(part, x - textWidth / 2, y + i * 12, colour, trim);
+      renderText(part, x - textWidth / 2 + 1, y + i * 12 + 1, TextColour.BLACK, trim);
+    }
   }
 
   @Method(0x800e7854L)
@@ -6308,10 +6239,8 @@ public class WMap {
   @Method(0x800e78c0L)
   public static void FUN_800e78c0() {
     //LAB_800e78d4
-    for(int i = 0; i < 8; i++) {
-      //LAB_800e78f0
-      gameState_800babc8._4b8.get(i).set(gameState_800babc8._15c.get(i).get());
-    }
+    //LAB_800e78f0
+    System.arraycopy(gameState_800babc8._15c, 0, gameState_800babc8._4b8, 0, 8);
 
     //LAB_800e7940
     //LAB_800e7944
@@ -6321,12 +6250,12 @@ public class WMap {
       final long sp4c = 0x1L << (sp48 & 0x1fL);
       sp48 = sp48 >>> 5;
 
-      if((gameState_800babc8.scriptFlags2_bc.get((int)sp48).get() & sp4c) != 0) {
+      if((gameState_800babc8.scriptFlags2_bc[(int)sp48] & sp4c) != 0) {
         //LAB_800e7a38
         //LAB_800e7a3c
         for(int sp24 = 0; sp24 < 8; sp24++) {
           //LAB_800e7a58
-          gameState_800babc8._15c.get(sp24).set((int)_800f5a70.offset(i * 0x2cL).offset(sp24 * 0x4L).get());
+          gameState_800babc8._15c[sp24] = (int)_800f5a70.offset(i * 0x2cL).offset(sp24 * 0x4L).get();
         }
       }
 
@@ -6367,7 +6296,7 @@ public class WMap {
     long sp4c = 0x1L << (sp1c & 0x1fL);
     long sp50 = sp1c >>> 5;
 
-    if((gameState_800babc8._15c.get((int)sp50).get() & sp4c) == 0) {
+    if((gameState_800babc8._15c[(int)sp50] & sp4c) == 0) {
       _800c685c.setu(0xdL);
       _800c685e.setu(0x11L);
       sp1c = 5;
@@ -6415,17 +6344,17 @@ public class WMap {
 
     //LAB_800e7e5c
     //LAB_800e7e88
-    if(sp2c == 0 && _800bdc34.get() == 0 || _80052c6c.get() != 0) {
+    if(sp2c == 0 && !savedGameSelected_800bdc34.get() || _80052c6c.get() != 0) {
       //LAB_800e844c
       _800c686c.setu(0x1L);
       _800c6868.setu(0x1L);
     } else {
       // Transition from combat to world map (maybe also from smap?)
-      areaIndex_800c67aa.set(gameState_800babc8.areaIndex_4de.get());
-      pathIndex_800c67ac.set(gameState_800babc8.pathIndex_4d8.get());
-      dotIndex_800c67ae.set((short)gameState_800babc8.dotIndex_4da.get());
-      dotOffset_800c67b0.set((short)gameState_800babc8.dotOffset_4dc.get());
-      facing_800c67b4.set(gameState_800babc8.facing_4dd.get());
+      areaIndex_800c67aa.set(gameState_800babc8.areaIndex_4de);
+      pathIndex_800c67ac.set(gameState_800babc8.pathIndex_4d8);
+      dotIndex_800c67ae.set((short)gameState_800babc8.dotIndex_4da);
+      dotOffset_800c67b0.set((short)gameState_800babc8.dotOffset_4dc);
+      facing_800c67b4.set(gameState_800babc8.facing_4dd);
       _800c686c.setu(0);
       _800c6868.setu(0);
 
@@ -6492,7 +6421,7 @@ public class WMap {
 
       _800c6890.setu(0);
       _800c6894.setu(0);
-      _800bdc34.setu(0);
+      savedGameSelected_800bdc34.set(false);
     }
 
     //LAB_800e8464
@@ -6520,7 +6449,7 @@ public class WMap {
         sp4c = 0x1L << (sp50 & 0x1fL);
         sp50 = sp50 >>> 5;
 
-        if((gameState_800babc8.scriptFlags2_bc.get((int)sp50).get() & sp4c) != 0) {
+        if((gameState_800babc8.scriptFlags2_bc[(int)sp50] & sp4c) != 0) {
           _800c686c.setu(0);
           _800c6870.setu(0x1L);
           _800c6868.setu(0x1L);
@@ -6531,7 +6460,7 @@ public class WMap {
         sp4c = 0x1L << (sp50 & 0x1fL);
         sp50 = sp50 >>> 5;
 
-        if((gameState_800babc8.scriptFlags2_bc.get((int)sp50).get() & sp4c) != 0) {
+        if((gameState_800babc8.scriptFlags2_bc[(int)sp50] & sp4c) != 0) {
           _800c6868.setu(0x1L);
           _800c686c.setu(0x1L);
           _800c6870.setu(0);
@@ -6558,7 +6487,7 @@ public class WMap {
       sp50 = _800c67a8.get();
       sp4c = 0x1L << (sp50 & 0x1fL);
       sp50 = sp50 >>> 5;
-      gameState_800babc8._17c.get((int)sp50).or((int)sp4c);
+      gameState_800babc8._17c[(int)sp50] |= (int)sp4c;
     }
 
     //LAB_800e8990
@@ -6713,7 +6642,7 @@ public class WMap {
     final long sp14 = 0x1L << (sp10 & 0x1fL);
     sp10 = sp10 >>> 5;
 
-    if((gameState_800babc8.scriptFlags2_bc.get((int)sp10).get() & sp14) != 0) {
+    if((gameState_800babc8.scriptFlags2_bc[(int)sp10] & sp14) != 0) {
       //LAB_800e8f24
       if(struct258_800c66a8.modelIndex_1e4 == 1) {
         //LAB_800e8f48
@@ -7253,7 +7182,7 @@ public class WMap {
     }
 
     //LAB_800eb144
-    if((gameState_800babc8._15c.get(a0 >>> 5).get() & 0x1 << (a0 & 0x1f)) == 0) {
+    if((gameState_800babc8._15c[a0 >>> 5] & 0x1 << (a0 & 0x1f)) == 0) {
       return 1;
     }
 

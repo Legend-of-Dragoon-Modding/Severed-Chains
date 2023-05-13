@@ -44,15 +44,15 @@ public class CharacterStatsEvent extends Event {
   public CharacterStatsEvent(final int characterId) {
     this.characterId = characterId;
 
-    final CharacterData2c charData = gameState_800babc8.charData_32c.get(characterId);
-    this.xp = charData.xp_00.get();
-    this.hp = charData.hp_08.get();
-    this.mp = charData.mp_0a.get();
-    this.sp = charData.sp_0c.get();
-    this.dxp = charData.dlevelXp_0e.get();
-    this.flags = charData.status_10.get();
-    this.level = charData.level_12.get();
-    this.dlevel = charData.dlevel_13.get();
+    final CharacterData2c charData = gameState_800babc8.charData_32c[characterId];
+    this.xp = charData.xp_00;
+    this.hp = charData.hp_08;
+    this.mp = charData.mp_0a;
+    this.sp = charData.sp_0c;
+    this.dxp = charData.dlevelXp_0e;
+    this.flags = charData.status_10;
+    this.level = charData.level_12;
+    this.dlevel = charData.dlevel_13;
 
     final LevelStuff08 levelStuff = levelStuff_800fbd30.get(characterId).deref().get(this.level);
     this.maxHp = levelStuff.hp_00.get();

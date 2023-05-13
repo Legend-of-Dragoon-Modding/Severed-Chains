@@ -13,16 +13,14 @@ import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
-import legend.game.combat.types.BattleStage;
+import legend.game.combat.environment.BattleStage;
 import legend.game.inventory.WhichMenu;
 import legend.game.scripting.ScriptState;
 import legend.game.types.ActiveStatsa0;
-import legend.game.types.Drgn0_6666File;
 import legend.game.types.EquipmentStats1c;
 import legend.game.types.GameState52c;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.InventoryMenuState;
-import legend.game.types.LodString;
 import legend.game.types.McqHeader;
 import legend.game.types.Model124;
 import legend.game.types.Renderable58;
@@ -39,17 +37,18 @@ import legend.game.types.TexPageY;
 import legend.game.types.Textbox4c;
 import legend.game.types.TextboxArrow0c;
 import legend.game.types.Translucency;
+import legend.game.types.UiFile;
+
+import java.util.Arrays;
 
 import static legend.core.GameEngine.MEMORY;
 
 public final class Scus94491BpeSegment_800b {
   private Scus94491BpeSegment_800b() { }
 
-  public static final Value _800ba3b8 = MEMORY.ref(4, 0x800ba3b8L);
+  public static final IntRef clearBlue_800babc0 = MEMORY.ref(4, 0x800babc0L, IntRef::new);
 
-  public static final IntRef _800babc0 = MEMORY.ref(4, 0x800babc0L, IntRef::new);
-
-  public static final GameState52c gameState_800babc8 = MEMORY.ref(4, 0x800babc8L, GameState52c::new);
+  public static GameState52c gameState_800babc8;
 
   // End of game state 800bb0f4
 
@@ -57,8 +56,8 @@ public final class Scus94491BpeSegment_800b {
   public static final IntRef encounterId_800bb0f8 = MEMORY.ref(4, 0x800bb0f8L, IntRef::new);
   public static final IntRef tickCount_800bb0fc = MEMORY.ref(4, 0x800bb0fcL, IntRef::new);
 
-  public static final IntRef _800bb104 = MEMORY.ref(4, 0x800bb104L, IntRef::new);
-  public static final IntRef doubleBufferFrame_800bb108 = MEMORY.ref(4, 0x800bb108L, IntRef::new);
+  public static final IntRef clearGreen_800bb104 = MEMORY.ref(4, 0x800bb104L, IntRef::new);
+
   public static final IntRef pregameLoadingStage_800bb10c = MEMORY.ref(4, 0x800bb10cL, IntRef::new);
   public static final EnumMapRef<Bpp, EnumMapRef<Translucency, EnumMapRef<TexPageY, UnsignedShortRef>>> texPages_800bb110 = MEMORY.ref(2, 0x800bb110L, EnumMapRef.of(Bpp.class, EnumMapRef.classFor(EnumMapRef.classFor(UnsignedShortRef.class)), Bpp.values().length, 0x10, EnumMapRef.of(Translucency.class, EnumMapRef.classFor(UnsignedShortRef.class), Translucency.values().length, 4, EnumMapRef.of(TexPageY.class, UnsignedShortRef.class, 2, 2, UnsignedShortRef::new))));
   public static final ScriptEffectStruct scriptEffect_800bb140 = MEMORY.ref(4, 0x800bb140L, ScriptEffectStruct::new);
@@ -79,7 +78,7 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bc910 = MEMORY.ref(4, 0x800bc910L);
   public static final Value _800bc914 = MEMORY.ref(4, 0x800bc914L);
   public static final Value _800bc918 = MEMORY.ref(4, 0x800bc918L);
-  public static final IntRef _800bc91c = MEMORY.ref(4, 0x800bc91cL, IntRef::new);
+  public static final IntRef postCombatMainCallbackIndex_800bc91c = MEMORY.ref(4, 0x800bc91cL, IntRef::new);
   public static final IntRef goldGainedFromCombat_800bc920 = MEMORY.ref(4, 0x800bc920L, IntRef::new);
 
   public static final ArrayRef<IntRef> itemsDroppedByEnemies_800bc928 = MEMORY.ref(4, 0x800bc928L, ArrayRef.of(IntRef.class, 9, 4, IntRef::new));
@@ -90,7 +89,13 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bc968 = MEMORY.ref(4, 0x800bc968L);
 
-  public static final IntRef _800bc974 = MEMORY.ref(4, 0x800bc974L, IntRef::new);
+  /**
+   * <ol>
+   *   <li value="2">Game over</li>
+   *   <li value="4">FMV</li>
+   * </ol>
+   */
+  public static final IntRef postCombatAction_800bc974 = MEMORY.ref(4, 0x800bc974L, IntRef::new);
   public static final IntRef itemsDroppedByEnemiesCount_800bc978 = MEMORY.ref(4, 0x800bc978L, IntRef::new);
   public static final Value _800bc97c = MEMORY.ref(4, 0x800bc97cL);
   //TODO structure @ 800bc980... 3 * 12?
@@ -164,7 +169,6 @@ public final class Scus94491BpeSegment_800b {
 
   public static final IntRef _800bdb88 = MEMORY.ref(4, 0x800bdb88L, IntRef::new);
 
-  public static final Value _800bdb90 = MEMORY.ref(4, 0x800bdb90L);
   public static Renderable58 saveListUpArrow_800bdb94;
   public static Renderable58 saveListDownArrow_800bdb98;
 
@@ -175,12 +179,11 @@ public final class Scus94491BpeSegment_800b {
 
   public static final ArrayRef<IntRef> secondaryCharIndices_800bdbf8 = MEMORY.ref(4, 0x800bdbf8L, ArrayRef.of(IntRef.class, 9, 4, IntRef::new));
 
-  public static final Value _800bdc24 = MEMORY.ref(4, 0x800bdc24L);
   public static final EnumRef<InventoryMenuState> inventoryMenuState_800bdc28 = MEMORY.ref(4, 0x800bdc28L, EnumRef.of(InventoryMenuState.values()));
   public static final Value _800bdc2c = MEMORY.ref(4, 0x800bdc2cL);
   public static final EnumRef<InventoryMenuState> confirmDest_800bdc30 = MEMORY.ref(4, 0x800bdc30L, EnumRef.of(InventoryMenuState.values()));
 
-  public static final Value _800bdc34 = MEMORY.ref(4, 0x800bdc34L);
+  public static final BoolRef savedGameSelected_800bdc34 = MEMORY.ref(4, 0x800bdc34L, BoolRef::new);
   /**
    * 0xe - load game
    * 0x13 - also load game (maybe save game...?)
@@ -189,7 +192,7 @@ public final class Scus94491BpeSegment_800b {
    * Seems any other value shows the inventory
    */
   public static WhichMenu whichMenu_800bdc38 = WhichMenu.NONE_0;
-  public static final Pointer<Drgn0_6666File> drgn0_6666FilePtr_800bdc3c = MEMORY.ref(4, 0x800bdc3cL, Pointer.deferred(4, Drgn0_6666File::new));
+  public static UiFile uiFile_800bdc3c;
   /** NOTE: same address as previous var */
   public static final Pointer<McqHeader> gameOverMcq_800bdc3c = MEMORY.ref(4, 0x800bdc3cL, Pointer.deferred(4, McqHeader::new));
 
@@ -214,10 +217,6 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bdc58 = MEMORY.ref(4, 0x800bdc58L);
   public static Renderable58 renderablePtr_800bdc5c;
 
-  public static final LodString currentText_800bdca0 = MEMORY.ref(2, 0x800bdca0L, LodString::new);
-
-  public static final Value _800bdd24 = MEMORY.ref(4, 0x800bdd24L);
-
   public static final TextboxArrow0c[] textboxArrows_800bdea0 = new TextboxArrow0c[8];
 
   public static final IntRef textZ_800bdf00 = MEMORY.ref(4, 0x800bdf00L, IntRef::new);
@@ -230,17 +229,17 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Struct84[] _800bdf38 = new Struct84[8];
   public static final Textbox4c[] textboxes_800be358 = new Textbox4c[8];
-  public static final Value _800be5b8 = MEMORY.ref(4, 0x800be5b8L);
-  public static final Value _800be5bc = MEMORY.ref(4, 0x800be5bcL);
-  public static final Value _800be5c0 = MEMORY.ref(4, 0x800be5c0L);
-  public static final Value _800be5c4 = MEMORY.ref(2, 0x800be5c4L);
-  public static final Value _800be5c8 = MEMORY.ref(4, 0x800be5c8L);
+  public static final Value textU_800be5c0 = MEMORY.ref(4, 0x800be5c0L);
+  public static final Value textV_800be5c8 = MEMORY.ref(4, 0x800be5c8L);
 
   public static final Value _800be5d0 = MEMORY.ref(4, 0x800be5d0L);
 
   public static final EquipmentStats1c equipmentStats_800be5d8 = MEMORY.ref(1, 0x800be5d8L, EquipmentStats1c::new);
 
-  public static final ArrayRef<ActiveStatsa0> stats_800be5f8 = MEMORY.ref(4, 0x800be5f8L, ArrayRef.of(ActiveStatsa0.class, 9, 0xa0, ActiveStatsa0::new));
+  public static final ActiveStatsa0[] stats_800be5f8 = new ActiveStatsa0[9];
+  static {
+    Arrays.setAll(stats_800be5f8, i -> new ActiveStatsa0());
+  }
 
   public static final Value _800beb98 = MEMORY.ref(4, 0x800beb98L);
   public static final Value _800bed28 = MEMORY.ref(4, 0x800bed28L);

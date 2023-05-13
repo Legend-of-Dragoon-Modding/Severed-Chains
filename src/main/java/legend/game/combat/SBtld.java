@@ -4,17 +4,18 @@ import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.Pointer;
+import legend.game.combat.bobj.BattleObject27c;
+import legend.game.combat.bobj.MonsterBattleObject;
 import legend.game.combat.deff.DeffManager7cc;
-import legend.game.combat.types.BattleObject27c;
+import legend.game.combat.environment.BattlePreloadedEntities_18cb0;
+import legend.game.combat.environment.EncounterData38;
+import legend.game.combat.environment.StageData10;
 import legend.game.combat.types.BattleScriptDataBase;
-import legend.game.combat.types.BattlePreloadedEntities_18cb0;
 import legend.game.combat.types.CombatantStruct1a8;
-import legend.game.combat.types.EncounterData38;
 import legend.game.combat.types.EnemyRewards08;
 import legend.game.combat.types.MonsterStats1c;
-import legend.game.combat.types.StageData10;
 import legend.game.modding.events.EventManager;
-import legend.game.modding.events.characters.AdditionHitEvent;
+import legend.game.modding.events.characters.BattleMapActiveAdditionHitPropertiesEvent;
 import legend.game.modding.events.combat.EnemyRewardsEvent;
 import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptState;
@@ -47,17 +48,15 @@ import static legend.game.combat.Bttl_800c.addCombatant;
 import static legend.game.combat.Bttl_800c.deffManager_800c693c;
 import static legend.game.combat.Bttl_800c.getCombatant;
 import static legend.game.combat.Bttl_800c.getCombatantIndex;
+import static legend.game.combat.Bttl_800c.melbuStageIndices_800fb064;
 import static legend.game.combat.Bttl_800c.monsterCount_800c6768;
 import static legend.game.combat.Bttl_800c.scriptState_800c674c;
 import static legend.game.combat.Bttl_800c.script_800c66fc;
-import static legend.game.combat.Bttl_800c.melbuStageIndices_800fb064;
 import static legend.game.combat.Bttl_800c.uniqueMonsterCount_800c6698;
 import static legend.game.combat.Bttl_800e.applyStageAmbiance;
 import static legend.game.combat.Bttl_800f.loadMonster;
 
 public class SBtld {
-  private static final Value bpe_800fb77c = MEMORY.ref(4, 0x800fb77cL);
-
   public static final ArrayRef<StageData10> stageData_80109a98 = MEMORY.ref(4, 0x80109a98L, ArrayRef.of(StageData10.class, 0x200, 0x10, StageData10::new));
   public static final ArrayRef<MonsterStats1c> monsterStats_8010ba98 = MEMORY.ref(4, 0x8010ba98L, ArrayRef.of(MonsterStats1c.class, 0x190, 0x1c, MonsterStats1c::new));
   /** TODO 0x80-byte struct array */
@@ -90,8 +89,7 @@ public class SBtld {
     _800c6718.offset(0x24L).setu(stageData._0c.get());
     _800c6718.offset(0x28L).setu(stageData._0e.get());
 
-    final byte[] archive = MEMORY.getBytes(bpe_800fb77c.getAddress(), 26836);
-    script_800c66fc = new ScriptFile("S_BTLD BPE @ 800fb77c", Unpacker.decompress(new FileData(archive)));
+    script_800c66fc = new ScriptFile("player_combat_script", Unpacker.loadFile("player_combat_script").getBytes());
 
     loadDrgnFile(1, "401", SBtld::FUN_80109170);
   }
@@ -120,19 +118,19 @@ public class SBtld {
   public static void battlePrepareSelectedAdditionHitProperties_80109250() {
     //LAB_801092a0
     for(int charSlot = 0; charSlot < 3; charSlot++) {
-      final BattlePreloadedEntities_18cb0.AdditionHits_100 activeAdditionHits = battlePreloadedEntities_1f8003f4.additionHits_38[charSlot];
-      final BattlePreloadedEntities_18cb0.AdditionHits_100 activeDragoonAdditionHits = battlePreloadedEntities_1f8003f4.additionHits_38[charSlot + 3];
-      final int charIndex = gameState_800babc8.charIndex_88.get(charSlot).get();
+      final BattlePreloadedEntities_18cb0.AdditionHits100 activeAdditionHits = battlePreloadedEntities_1f8003f4.additionHits_38[charSlot];
+      final BattlePreloadedEntities_18cb0.AdditionHits100 activeDragoonAdditionHits = battlePreloadedEntities_1f8003f4.additionHits_38[charSlot + 3];
+      final int charIndex = gameState_800babc8.charIds_88[charSlot];
 
       if(charIndex >= 0) {
-        int activeAdditionIndex = gameState_800babc8.charData_32c.get(charIndex).selectedAddition_19.get();
+        int activeAdditionIndex = gameState_800babc8.charData_32c[charIndex].selectedAddition_19;
         if(charIndex == 5) {
           activeAdditionIndex = activeAdditionIndex + 28;
         }
 
         //LAB_801092dc
         final long activeDragoonAdditionIndex;
-        if(charIndex != 0 || (gameState_800babc8.dragoonSpirits_19c.get(0).get() & 0xff) >>> 7 == 0) {
+        if(charIndex != 0 || (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 == 0) {
           //LAB_80109308
           activeDragoonAdditionIndex = _801134e8.offset(charIndex * 0x2L).getSigned();
         } else {
@@ -141,11 +139,14 @@ public class SBtld {
 
         //LAB_80109310
         if(activeAdditionIndex < 0) {
-          activeAdditionHits.hits_00[0].hitProperty_00[15] = 0;
+          activeAdditionHits.hits_00[0].overlayStartingFrameOffset_1e = 0;
         } else {
           //LAB_80109320
           battleMapSelectedAdditionHitProperties_80109454(_8010e658.offset(activeAdditionIndex * 0x80L).getAddress(), activeAdditionHits);
+          EventManager.INSTANCE.postEvent(new BattleMapActiveAdditionHitPropertiesEvent(activeAdditionHits, activeAdditionIndex, charIndex, charSlot, false));
+
           battleMapSelectedAdditionHitProperties_80109454(_8010e658.offset(activeDragoonAdditionIndex * 0x80L).getAddress(), activeDragoonAdditionHits);
+          EventManager.INSTANCE.postEvent(new BattleMapActiveAdditionHitPropertiesEvent(activeAdditionHits, activeAdditionIndex, charIndex, charSlot, true));
         }
       }
 
@@ -158,29 +159,18 @@ public class SBtld {
   }
 
   @Method(0x80109454L)
-  public static void battleMapSelectedAdditionHitProperties_80109454(final long mainAdditionHitsTablePtr, final BattlePreloadedEntities_18cb0.AdditionHits_100 activeAdditionHits) {
+  public static void battleMapSelectedAdditionHitProperties_80109454(final long mainAdditionHitsTablePtr, final BattlePreloadedEntities_18cb0.AdditionHits100 activeAdditionHits) {
     //LAB_80109460
     for(int i = 0; i < activeAdditionHits.hits_00.length; i++) {
-      final BattlePreloadedEntities_18cb0.AdditionHitProperties_20 hitIndex = activeAdditionHits.hits_00[i];
+      final BattlePreloadedEntities_18cb0.AdditionHitProperties20 hitIndex = activeAdditionHits.hits_00[i];
       final long additionHitRefCounter = mainAdditionHitsTablePtr + i * 0x10L;
 
-      for(int j = 0; j < hitIndex.hitProperty_00.length; j++) {
+      for(int j = 0; j < hitIndex.length; j++) {
         if(j > 5 && j < 9) {
-          hitIndex.hitProperty_00[j] = (short)MEMORY.ref(1, additionHitRefCounter).offset(j).getSigned();
+          hitIndex.set(j, (short)MEMORY.ref(1, additionHitRefCounter).offset(j).getSigned());
           continue;
         }
-        hitIndex.hitProperty_00[j] = (short)MEMORY.ref(1, additionHitRefCounter).offset(j).get();
-      }
-    }
-
-    final AdditionHitEvent event = EventManager.INSTANCE.postEvent(new AdditionHitEvent(activeAdditionHits));
-
-    for(int i = 0; i < activeAdditionHits.hits_00.length; i++) {
-      final BattlePreloadedEntities_18cb0.AdditionHitProperties_20 hitIndex = event.addition.hits_00[i];
-      final long additionHitRefCounter = mainAdditionHitsTablePtr + i * 0x10L;
-
-      for(int j = 0; j < hitIndex.hitProperty_00.length; j++) {
-        MEMORY.ref(1, additionHitRefCounter).offset(j).set(hitIndex.hitProperty_00[j]);
+        hitIndex.set(j, (short)MEMORY.ref(1, additionHitRefCounter).offset(j).get());
       }
     }
   }
@@ -210,7 +200,7 @@ public class SBtld {
 
       final int combatantIndex = getCombatantIndex(charIndex);
       final String name = "Enemy combatant index " + combatantIndex;
-      final ScriptState<BattleObject27c> state = SCRIPTS.allocateScriptState(name, new BattleObject27c(name));
+      final ScriptState<MonsterBattleObject> state = SCRIPTS.allocateScriptState(name, new MonsterBattleObject(name));
       state.setTicker(Bttl_800c::bobjTicker);
       state.setDestructor(Bttl_800c::bobjDestructor);
       _8006e398.bobjIndices_e0c[_800c66d0.get()] = state;

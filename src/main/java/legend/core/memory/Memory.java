@@ -5,7 +5,6 @@ import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import legend.core.MathHelper;
-import legend.core.memory.segments.TempSegment;
 import legend.core.memory.types.QuadConsumer;
 import legend.core.memory.types.QuintConsumer;
 import org.apache.logging.log4j.LogManager;
@@ -14,9 +13,7 @@ import org.apache.logging.log4j.Logger;
 import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -39,18 +36,7 @@ public class Memory {
 
   private boolean alignmentChecks = true;
 
-  public static final long TEMP_FLAG = 0xffff_0000L;
-  private static final long TEMP_MASK = 0x0000_ffffL;
-
-  private final TempSegment temp = new TempSegment();
-
-  private final Set<Class<?>> overlays = new LinkedHashSet<>();
-
   public static final IntSet watches = new IntOpenHashSet();
-
-  public Memory() {
-    this.addSegment(this.temp);
-  }
 
   public static void addWatch(final long address) {
     watches.add((int)(address & 0xffffff));
@@ -85,8 +71,8 @@ public class Memory {
       return;
     }
 
-    // Don't check alignment for temps - they use special storage
-    if(size > 4 || (size & 1) != 0 || (address & TEMP_FLAG) == TEMP_FLAG) {
+    // Don't check alignment for large or odd types
+    if(size > 4 || (size & 1) != 0) {
       return;
     }
 
@@ -271,29 +257,10 @@ public class Memory {
     return constructor.apply(this.ref(byteSize, address));
   }
 
-  public TemporaryReservation temp() {
-    return this.temp(4);
-  }
-
-  public TemporaryReservation temp(final int length) {
-    return new TemporaryReservation(this.temp.allocate(length), length);
-  }
-
-  public void releaseTemp(final long address, final int length) {
-    this.temp.release((int)(address & TEMP_MASK), length);
-  }
-
   private record MethodInfo(java.lang.reflect.Method method, boolean ignoreExtraParams) { }
-
-  public Set<Class<?>> getOverlays() {
-    return this.overlays;
-  }
 
   public void addFunctions(final Class<?> cls) {
     LOGGER.info("Adding function references from %s", cls);
-
-    this.overlays.remove(cls); // Ensure that when a duplicate overlay is added, it moves to the top
-    this.overlays.add(cls);
 
     final Long2ObjectMap<MethodInfo> methods = new Long2ObjectOpenHashMap<>();
 
@@ -390,7 +357,7 @@ public class Memory {
         throw new UnsupportedOperationException("Can only dereference 4-byte values %s".formatted(this));
       }
 
-      if((this.address & TEMP_FLAG) != TEMP_FLAG && Memory.this.isFunction(this.address)) {
+      if(Memory.this.isFunction(this.address)) {
         throw new UnsupportedOperationException("Can't dereference callback %s".formatted(this));
       }
 
@@ -589,30 +556,6 @@ public class Memory {
         throw new RuntimeException(e);
       }
       return this;
-    }
-  }
-
-  public final class TemporaryReservation {
-    public final long address;
-    public final int length;
-    private boolean released;
-
-    private TemporaryReservation(final long address, final int length) {
-      this.address = address | TEMP_FLAG;
-      this.length = length;
-    }
-
-    public Value get() {
-      if(this.released) {
-        throw new IllegalStateException("Can't get temporary reservation once released");
-      }
-
-      return Memory.this.ref(4, this.address);
-    }
-
-    public void release() {
-      this.released = true;
-      Memory.this.releaseTemp(this.address, this.length);
     }
   }
 }

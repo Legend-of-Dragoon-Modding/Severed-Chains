@@ -1,12 +1,11 @@
 package legend.game.combat.deff;
 
 import legend.core.gte.TmdObjTable1c;
-import legend.game.combat.types.BattleLightStruct64;
-import legend.game.combat.types.BattleStruct24_2;
-import legend.game.combat.types.BttlLightStruct84;
-import legend.game.combat.types.EffectManagerData6c;
+import legend.game.combat.environment.BattleLightStruct64;
+import legend.game.combat.environment.BttlLightStruct84;
+import legend.game.combat.effects.EffectManagerData6c;
 import legend.game.combat.types.SpriteMetrics08;
-import legend.game.combat.types.StageAmbiance4c;
+import legend.game.combat.environment.StageAmbiance4c;
 import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptState;
 import legend.game.unpacker.FileData;
