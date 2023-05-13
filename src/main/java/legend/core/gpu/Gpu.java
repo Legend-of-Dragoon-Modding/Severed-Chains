@@ -222,7 +222,7 @@ public class Gpu {
       this.mainRenderer.run();
 
       final float fps = 1.0f / ((System.nanoTime() - this.lastFrame) / (1_000_000_000 / 30.0f)) * 30.0f;
-      this.window.setTitle("Legend of Dragoon - FPS: %.2f/%d scale: %d".formatted(fps, this.window.getFpsLimit(), this.scale));
+      this.window.setTitle("Legend of Dragoon - FPS: %.2f/%d scale: %d res: %dx%d".formatted(fps, this.window.getFpsLimit(), this.scale, this.displayTexture.width, this.displayTexture.height));
       this.lastFrame = System.nanoTime();
       this.vsyncCount += 60.0d * Config.getGameSpeedMultiplier() / this.window.getFpsLimit();
     });
@@ -492,7 +492,11 @@ public class Gpu {
   /**
    * GP1(08h) - Display Mode
    */
-  public void displayMode(final int width, final int height) {
+  public void displayMode(int width, final int height) {
+    if(width == 384) {
+      width = 368;
+    }
+
     this.status.horizontalResolution = width;
     this.status.verticalResolution = height;
 
@@ -526,7 +530,11 @@ public class Gpu {
     this.displayTexture.data(0, 0, this.displayTexture.width, this.displayTexture.height, pixels);
   }
 
-  public void drawingArea(final int left, final int top, final int width, final int height) {
+  public void drawingArea(final int left, final int top, int width, final int height) {
+    if(width == 384) {
+      width = 368;
+    }
+
     this.drawingArea.set((short)left, (short)top, (short)width, (short)height);
     this.scaledDrawingArea.set((short)(left * this.scale), (short)(top * this.scale), (short)(width * this.scale), (short)(height * this.scale));
   }
@@ -763,7 +771,9 @@ public class Gpu {
               texel = 0;
               if(palettes == null) {
                 if(texture == this.getDisplayBuffer() || texture == this.getDrawBuffer()) {
-                  texel = texture.getPixel(texelX * this.scale, texelY * this.scale) & 0xffffff;
+                  if(texelX < this.drawingArea.x.get() + this.drawingArea.w.get() && texelY < this.drawingArea.y.get() + this.drawingArea.h.get()) {
+                    texel = texture.getPixel(texelX * this.scale, texelY * this.scale) & 0xffffff;
+                  }
                 } else {
                   texel = texture.getPixel(texelX, texelY) & 0xffffff;
                 }

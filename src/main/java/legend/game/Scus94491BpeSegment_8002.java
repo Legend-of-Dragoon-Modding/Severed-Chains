@@ -1247,7 +1247,7 @@ public final class Scus94491BpeSegment_8002 {
 
           renderablePtr_800bdc5c = null;
           uiFile_800bdc3c = null;
-          resizeDisplay(368, 240);
+          resizeDisplay(384, 240);
           loadDrgnFile(0, 6665, data -> menuAssetsLoaded(data, 0));
           loadDrgnFile(0, 6666, data -> menuAssetsLoaded(data, 1));
           textZ_800bdf00.set(33);
