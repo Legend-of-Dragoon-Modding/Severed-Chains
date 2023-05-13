@@ -1809,7 +1809,6 @@ public final class Scus94491BpeSegment {
       for(int chunkY = 0; chunkY < height; chunkY += 16) {
         GPU.queueCommand(z, new GpuCommandQuad()
           .bpp(Bpp.BITS_4)
-          .translucent(Translucency.HALF_B_PLUS_HALF_F)
           .clut(clutX, clutY)
           .vramPos(vramX, vramY)
           .monochrome(colour)
