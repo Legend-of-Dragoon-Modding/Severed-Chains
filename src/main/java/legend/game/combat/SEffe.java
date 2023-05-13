@@ -4699,8 +4699,7 @@ public final class SEffe {
   @Method(0x80108e40L)
   public static void renderRainEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
     final RainEffect08 effect = (RainEffect08)data.effect_44;
-    final long rainArrayAddress = effect.raindropArray_04.getPointer();
-    final UnboundedArrayRef<RaindropEffect0c> rainArray = MEMORY.ref(4, rainArrayAddress, UnboundedArrayRef.of(0x0c, RaindropEffect0c::new, effect.count_00::get));
+    final UnboundedArrayRef<RaindropEffect0c> rainArray = effect.raindropArray_04.deref();
 
     //LAB_80108e84
     for(int i = 0; i < effect.count_00.get(); i++) {
@@ -4721,8 +4720,7 @@ public final class SEffe {
   @Method(0x80109000L)
   public static void tickRainEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
     final RainEffect08 effect = (RainEffect08)data.effect_44;
-    final long rainArrayAddress = effect.raindropArray_04.getPointer();
-    final UnboundedArrayRef<RaindropEffect0c> rainArray = MEMORY.ref(4, rainArrayAddress, UnboundedArrayRef.of(0x0c, RaindropEffect0c::new, effect.count_00::get));
+    final UnboundedArrayRef<RaindropEffect0c> rainArray = effect.raindropArray_04.deref();
 
     //LAB_80109038
     for(int i = 0; i < effect.count_00.get(); i++) {
