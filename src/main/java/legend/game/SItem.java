@@ -3,7 +3,6 @@ package legend.game;
 import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.gpu.GpuCommandPoly;
-import legend.core.memory.Memory;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
@@ -73,8 +72,8 @@ import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.loadFile;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.memcpy;
-import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment.resizeDisplay;
+import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022a94;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a86c;
@@ -2323,7 +2322,7 @@ public final class SItem {
             FUN_8010d050(InventoryMenuState._18, 0x1L);
           } else {
             // Some items remaining
-            resizeDisplay(368, 240);
+            resizeDisplay(384, 240);
             deallocateRenderables(0xff);
             menuStack.pushScreen(new TooManyItemsScreen());
             inventoryMenuState_800bdc28.set(InventoryMenuState._19);

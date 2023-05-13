@@ -10,7 +10,7 @@ public class RenderScaleConfigEntry extends ConfigEntry<Integer> {
   public static final int MAX = 5;
 
   public RenderScaleConfigEntry() {
-    super(2, RenderScaleConfigEntry::validator, RenderScaleConfigEntry::serializer, RenderScaleConfigEntry::deserializer);
+    super(1, RenderScaleConfigEntry::validator, RenderScaleConfigEntry::serializer, RenderScaleConfigEntry::deserializer);
 
     this.setEditControl((number, gameState) -> {
       final NumberSpinner spinner = new NumberSpinner(number);
@@ -37,6 +37,6 @@ public class RenderScaleConfigEntry extends ConfigEntry<Integer> {
       return IoHelper.readUByte(data, 0);
     }
 
-    return 2;
+    return 1;
   }
 }

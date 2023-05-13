@@ -331,7 +331,7 @@ public final class Ttle {
     hasSavedGames = 0;
     selectedMenuOption = 0;
 
-    resizeDisplay(368, 240);
+    resizeDisplay(384, 240);
     setProjectionPlaneDistance(320);
     GsRVIEW2_800c6760.viewpoint_00.set(0, 0, 2000);
     GsRVIEW2_800c6760.refpoint_0c.set(0, 0, -4000);

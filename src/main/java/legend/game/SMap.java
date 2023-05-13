@@ -3908,7 +3908,7 @@ public final class SMap {
   @Method(0x800e4e5cL)
   public static void FUN_800e4e5c() {
     //LAB_800e4ecc
-    GPU.uploadData(new Rect4i(640, 0, 384, 240), GPU.getDisplayBuffer().getData());
+    GPU.uploadData(new Rect4i(640, 0, 368, 240), GPU.getDisplayBuffer().getData());
     _80052c48.setu(0x1L);
   }
 
@@ -4276,7 +4276,7 @@ public final class SMap {
       _800cab20.subu(0x1L);
 
       if(_800cab20.getSigned() >= 0) {
-        resizeDisplay(368, 240);
+        resizeDisplay(384, 240);
         _800caaf4.set(submapCut_80052c30.get());
         _800caaf8.set(submapScene_80052c34.get());
         return;
@@ -4313,7 +4313,7 @@ public final class SMap {
       case 0x0 -> {
         srand((int)System.nanoTime());
         if(_800cb440.get() == 0) {
-          resizeDisplay(368, 240);
+          resizeDisplay(384, 240);
         }
 
         //LAB_800e5b2c
@@ -6451,7 +6451,7 @@ public final class SMap {
 
   @Method(0x800eaad4L)
   public static void initCredits() {
-    resizeDisplay(368, 240);
+    resizeDisplay(384, 240);
     vsyncMode_8007a3b8.set(2);
 
     //LAB_800eab00
