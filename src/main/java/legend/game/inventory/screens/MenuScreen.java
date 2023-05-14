@@ -57,7 +57,7 @@ public abstract class MenuScreen extends ControlHost {
   @Override
   protected InputPropagation mouseClick(final int x, final int y, final int button, final int mods) {
     this.updateHover(x, y);
-    this.updateFocusFromHover();
+    this.updateFocus(x, y);
 
     if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
@@ -132,7 +132,7 @@ public abstract class MenuScreen extends ControlHost {
   }
 
   private void updateHover(final int x, final int y) {
-    final Control hover = this.findControlAt(x, y);
+    final Control hover = this.findControlAt(x, y, true);
 
     if(hover != this.hover) {
       if(this.hover != null) {
@@ -147,8 +147,10 @@ public abstract class MenuScreen extends ControlHost {
     }
   }
 
-  private void updateFocusFromHover() {
-    if(this.focus != this.hover) {
+  private void updateFocus(final int x, final int y) {
+    final Control focus = this.findControlAt(x, y);
+
+    if(focus != this.focus) {
       this.setFocus(this.hover);
     }
   }
