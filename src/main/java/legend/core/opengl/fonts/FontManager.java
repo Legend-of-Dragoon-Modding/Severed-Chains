@@ -15,4 +15,10 @@ public final class FontManager {
   public static void add(final String name, final Font font) {
     fonts.put(name, font);
   }
+
+  public static void free() {
+    for(final Font font : fonts.values()) {
+      font.free();
+    }
+  }
 }

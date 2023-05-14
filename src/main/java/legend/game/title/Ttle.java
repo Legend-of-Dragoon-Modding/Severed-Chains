@@ -55,9 +55,9 @@ import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static legend.game.Scus94491BpeSegment.playSound;
 import static legend.game.Scus94491BpeSegment.renderMcq;
+import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
-import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a9c0;
 import static legend.game.Scus94491BpeSegment_8002.SetGeomOffset;
@@ -77,7 +77,6 @@ import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndexOnceLoaded_8
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800bb168;
 import static legend.game.Scus94491BpeSegment_800b.afterFmvLoadingStage_800bf0ec;
-import static legend.game.Scus94491BpeSegment_800b.doubleBufferFrame_800bb108;
 import static legend.game.Scus94491BpeSegment_800b.fmvIndex_800bf0dc;
 import static legend.game.Scus94491BpeSegment_800b.gameOverMcq_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -251,7 +250,7 @@ public final class Ttle {
     switch(pregameLoadingStage_800bb10c.get()) {
       case 0 -> {
         FUN_8002a9c0();
-        setWidthAndFlags(640);
+        resizeDisplay(640, 240);
         pregameLoadingStage_800bb10c.set(1);
       }
 
@@ -328,7 +327,7 @@ public final class Ttle {
     hasSavedGames = 0;
     selectedMenuOption = 0;
 
-    setWidthAndFlags(384);
+    resizeDisplay(384, 240);
     setProjectionPlaneDistance(320);
     GsRVIEW2_800c6760.viewpoint_00.set(0, 0, 2000);
     GsRVIEW2_800c6760.refpoint_0c.set(0, 0, -4000);
@@ -1076,8 +1075,6 @@ public final class Ttle {
 
   @Method(0x800cb974L)
   public static void renderLogoFlash() {
-    final int sp24 = doubleBufferFrame_800bb108.get() ^ 1;
-
     if(logoFlashStage == 2) {
       return;
     }
@@ -1103,8 +1100,7 @@ public final class Ttle {
       .bpp(Bpp.BITS_15)
       .monochrome(colour)
       .pos(-192, -120, 384, 240)
-      .uv(0, sp24 * 16)
-      .vramPos(0, doubleBufferFrame_800bb108.get() == 0 ? 0 : 256);
+      .texture(GPU.getDisplayBuffer());
 
     GPU.queueCommand(5, cmd);
 

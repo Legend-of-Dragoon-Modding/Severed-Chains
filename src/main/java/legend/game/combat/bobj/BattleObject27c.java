@@ -19,6 +19,7 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
    *   <li>0x80 - Poison</li>
    *   <li>0x800 - Don't apply elemental effects for this attack (cleared after damage is done)</li>
    *   <li>0x2000 - Can become dragoon</li>
+   *   <li>0x4000 - Divine Dragoon</li>
    * </ul>
    */
   public int status_0e;
@@ -85,7 +86,7 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
    *   <li>0x8 - Fear</li>
    *   <li>0x10 - Stun</li>
    *   <li>0x20 - Arm Block</li>
-   *   <li>0x40 - Despirit</li>
+   *   <li>0x40 - Dispirit</li>
    *   <li>0x80 - Poison</li>
    * </ul>
    */
@@ -123,7 +124,7 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
    *   <li>0x8 - Fear</li>
    *   <li>0x10 - Stun</li>
    *   <li>0x20 - Arm Block</li>
-   *   <li>0x40 - Despirit</li>
+   *   <li>0x40 - Dispirit</li>
    *   <li>0x80 - Poison</li>
    * </ul>
    */
@@ -134,6 +135,15 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
 
   public int itemOrSpellId_52;
   public int guard_54;
+
+  /** Enemy aggressiveness with counters; lower means it can counter tighter timings; 0 = cannot counter */
+  public int hitCounterFrameThreshold_7e;
+  public int _80;
+  public int _82;
+  public int _84;
+  public int _86;
+  public int _88;
+  public int _8a;
 
   public int targetType_94;
   public int _96;
@@ -261,6 +271,14 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
       case 39 -> this.itemOrSpellId_52;
       case 40 -> this.guard_54;
 
+      case 61 -> this.hitCounterFrameThreshold_7e;
+      case 62 -> this._80;
+      case 63 -> this._82;
+      case 64 -> this._84;
+      case 65 -> this._86;
+      case 66 -> this._88;
+      case 67 -> this._8a;
+
       case 72 -> this.targetType_94;
       case 73 -> this._96;
       case 74 -> this.specialEffect_98;
@@ -355,6 +373,14 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
 
       case 39 -> this.itemOrSpellId_52 = value;
       case 40 -> this.guard_54 = value;
+
+      case 61 -> this.hitCounterFrameThreshold_7e = value;
+      case 62 -> this._80 = value;
+      case 63 -> this._82 = value;
+      case 64 -> this._84 = value;
+      case 65 -> this._86 = value;
+      case 66 -> this._88 = value;
+      case 67 -> this._8a = value;
 
       case 72 -> this.targetType_94 = value;
       case 73 -> this._96 = value;

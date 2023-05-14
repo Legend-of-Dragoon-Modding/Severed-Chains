@@ -41,6 +41,10 @@ import static legend.game.Scus94491BpeSegment.getCharacterName;
 public final class Unpacker {
   private Unpacker() { }
 
+  private static final String[] DISK_IDS = {"SCUS94491", "SCUS94584", "SCUS94585", "SCUS94586"};
+  private static final List<String> OTHER_REGION_IDS = List.of("SCES03043", "SCES13043", "SCES23043", "SCES33043", "SCES03044", "SCES13044", "SCES23044", "SCES33044", "SCES03045", "SCES13045", "SCES23045", "SCES33045", "SCES03046", "SCES13046", "SCES23046", "SCES33046", "SCES03047", "SCES13047", "SCES23047", "SCES33047", "SCPS10119", "SCPS10120", "SCPS10121", "SCPS10122", "SCPS45461", "SCPS45462", "SCPS45463", "SCPS45464");
+  private static final int PVD_SECTOR = 16;
+
   private static final Pattern ROOT_MRG = Pattern.compile("^SECT/DRGN0\\.BIN/\\d{4}/\\d+$");
 
   /** Update this any time we make a breaking change */
@@ -72,6 +76,9 @@ public final class Unpacker {
     transformers.put(Unpacker::drgn21_402_3_patcherDiscriminator, Unpacker::drgn21_402_3_patcher);
     transformers.put(Unpacker::drgn21_693_0_patcherDiscriminator, Unpacker::drgn21_693_0_patcher);
     transformers.put(Unpacker::drgn0_142_animPatcherDiscriminator, Unpacker::drgn0_142_animPatcher);
+
+    // Give Dart his hand back during oof
+    transformers.put(Unpacker::drgn0_5546_1_patcherDiscriminator, Unpacker::drgn0_5546_1_patcher);
 
     // Yes there are 3 different magma fish files to patch
     transformers.put(Unpacker::drgn0_3667_16_animPatcherDiscriminator, Unpacker::drgn0_3667_16_animPatcher);
@@ -282,15 +289,43 @@ public final class Unpacker {
 
         final long start = System.nanoTime();
 
+        final IsoReader[] readers = new IsoReader[4];
+        int diskCount = 0;
+
+        try(final DirectoryStream<Path> children = Files.newDirectoryStream(Path.of("isos"))) {
+          for(final Path child : children) {
+            final Tuple<IsoReader, Integer> tuple = getIsoReader(child);
+
+            if(tuple != null) {
+              final int diskNum = tuple.b();
+
+              if(readers[diskNum] != null) {
+                LOGGER.warn("Found duplicate disk %d: %s", diskNum + 1, child);
+                continue;
+              }
+
+              LOGGER.info("Found disk %d: %s", diskNum + 1, child);
+              readers[diskNum] = tuple.a();
+              diskCount++;
+            }
+          }
+        }
+
+        if(diskCount < 4) {
+          for(int i = 0; i < readers.length; i++) {
+            if(readers[i] == null) {
+              LOGGER.error("Failed to find disk %d!", i + 1);
+            }
+          }
+
+          throw new UnpackerException("Failed to locate disk images");
+        }
+
         final DirectoryEntry[] roots = new DirectoryEntry[4];
-        final String[] ids = {"SCUS94491", "SCUS94584", "SCUS94585", "SCUS94586"};
+        final DirectoryEntry root = loadRoot(readers[3], null);
 
-        final IsoReader reader4 = new IsoReader(Path.of(".", "isos", "4.iso"));
-        final DirectoryEntry root = loadRoot(reader4, ids[3], null);
-
-        for(int i = 0; i < roots.length; i++) {
-          final IsoReader reader = new IsoReader(Path.of(".", "isos", (i + 1) + ".iso"));
-          loadRoot(reader, ids[i], root);
+        for(int i = 0; i < roots.length - 1; i++) {
+          loadRoot(readers[i], root);
         }
 
         final Map<String, DirectoryEntry> files = new HashMap<>();
@@ -328,35 +363,50 @@ public final class Unpacker {
     }
   }
 
-  private static DirectoryEntry loadRoot(final IsoReader reader, final String id, @Nullable final DirectoryEntry destinationTree) throws IOException, UnpackerException {
+  private static Tuple<IsoReader, Integer> getIsoReader(final Path path) throws IOException {
+    final long fileSize = Files.size(path);
+
+    if(fileSize < PVD_SECTOR * IsoReader.SYNC_PATTER_SIZE) {
+      return null;
+    }
+
+    final byte[] sectorData = new byte[0x800];
+    final ByteBuffer sectorBuffer = ByteBuffer.wrap(sectorData);
+    sectorBuffer.order(ByteOrder.LITTLE_ENDIAN);
+
+    final IsoReader reader = new IsoReader(path);
+    reader.seekSector(PVD_SECTOR);
+    reader.advance(IsoReader.SYNC_PATTER_SIZE);
+    reader.read(sectorData);
+
+    if(sectorBuffer.get() != 1 || !"CD001".equals(IoHelper.readString(sectorBuffer, 5)) || sectorBuffer.get() != 0x1 || !"PLAYSTATION".equals(IoHelper.readString(sectorBuffer, 32).trim())) {
+      return null;
+    }
+
+    final String readId = IoHelper.readString(sectorBuffer, 32).trim();
+
+    for(int i = 0; i < DISK_IDS.length; i++) {
+      if(DISK_IDS[i].equals(readId)) {
+        return new Tuple<>(reader, i);
+      }
+    }
+
+    if(OTHER_REGION_IDS.contains(readId)) {
+      LOGGER.warn("Found disk %s from another region: %s", readId, path);
+    }
+
+    return null;
+  }
+
+  private static DirectoryEntry loadRoot(final IsoReader reader, @Nullable final DirectoryEntry destinationTree) throws IOException, UnpackerException {
     final byte[] sectorData = new byte[0x800];
     final ByteBuffer sectorBuffer = ByteBuffer.wrap(sectorData);
     sectorBuffer.order(ByteOrder.LITTLE_ENDIAN);
 
     synchronized(reader) {
-      reader.seekSector(16);
-      reader.advance(12);
+      reader.seekSector(PVD_SECTOR);
+      reader.advance(IsoReader.SYNC_PATTER_SIZE);
       reader.read(sectorData);
-    }
-
-    if(sectorBuffer.get() != 1) {
-      throw new UnpackerException("Invalid volume descriptor, expected primary");
-    }
-
-    if(!"CD001".equals(IoHelper.readString(sectorBuffer, 5))) {
-      throw new UnpackerException("Invalid volume descriptor, expected CD001");
-    }
-
-    if(sectorBuffer.get() != 0x1) {
-      throw new UnpackerException("Invalid volume descriptor, expected version 1");
-    }
-
-    if(!"PLAYSTATION".equals(IoHelper.readString(sectorBuffer, 32).trim())) {
-      throw new UnpackerException("Invalid volume descriptor, expected PLAYSTATION");
-    }
-
-    if(!id.equals(IoHelper.readString(sectorBuffer, 32).trim())) {
-      throw new UnpackerException("Invalid volume descriptor, expected " + id);
     }
 
     final DirectoryEntry rootDir = DirectoryEntry.fromArray(reader, sectorData, 0x9c);
@@ -575,6 +625,69 @@ public final class Unpacker {
     System.arraycopy(frame, 0, newData, 0x208, frame.length); // obj 21
     newData[0xc] = 22;
 
+    return Map.of(name, new FileData(newData));
+  }
+
+  /**
+   * During oof, Dart's left hand and forearm are missing for the last parts of the scene.
+   * This is because they were turned off to be replaced by the fancy hand for the hand
+   * clasp close-up, but were never turned back on. This patch replaces a command to turn
+   * off the sword (again, for some reason) with a jump to the end of the script, and
+   * injects extra script ops at the end of file to add the hand and arm back and then
+   * jump back to the original next op.
+   * <p>
+   * They also left Lavitz's damaged chest plate visible behind Albert in the distance.
+   * This patch also replaces a command to turn an object on with a jump to the end and
+   * injects additional script ops to change the z offset of the object to stop it rendering
+   * and then move it back.
+   */
+  private static boolean drgn0_5546_1_patcherDiscriminator(final String name, final FileData data, final Set<String> flags) {
+    return "SECT/DRGN0.BIN/5546/1".equals(name) && data.size() == 0x721c;
+  }
+
+  private static Map<String, FileData> drgn0_5546_1_patcher(final String name, final FileData data, final Set<String> flags) {
+    final byte[] newData = new byte[0x7284];
+    final int jump = 0x0000_0140;
+    final byte[] address1 = {(byte)0x97, 0x0a, 0x00, 0x09, 0x00, 0x00, 0x00, 0x00, 0x00};
+    final byte[] address2 = {(byte)0xcd, 0x08, 0x00, 0x09, 0x00};
+    final int address3 = 0x0900_f566;
+    final int address4 = 0x0900f728;
+
+    final byte[] subfunc160a = {0x38, 0x03, 0x60, 0x01, 0x0c, 0x00, 0x00, 0x02};
+    final byte[] subfunc160b = {0x38, 0x03, 0x60, 0x01, 0x2d, 0x0c, 0x00, 0x0f};
+    final byte[] subfunc160params12a = {0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00};
+    final byte[] subfunc160params12b = {0x0e, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    final byte[] subfunc160params12c = {0x05, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00};
+    final int subfunc273 = 0x0273_0238;
+    final int subfunc273params0 = 0x0f00_1d2d;
+    final int subfunc273params1a = 0xffff_f000;
+    final int subfunc273params1b = 0xffff_fffa;
+
+    data.copyFrom(0, newData, 0, 0x47c0);
+    MathHelper.set(newData, 0x47c0, 4, jump);
+    System.arraycopy(address1, 0, newData, 0x47c4, address1.length);
+    data.copyFrom(0x47cd, newData, 0x47cd, 0x73f);
+    MathHelper.set(newData, 0x4f0c, 4, jump);
+    System.arraycopy(address2, 0, newData, 0x4f10, address2.length);
+    data.copyFrom(0x4f15, newData, 0x4f15, 0x2307);
+    System.arraycopy(subfunc160a, 0, newData, 0x721c, subfunc160a.length);
+    System.arraycopy(subfunc160params12a, 0, newData, 0x7224, subfunc160params12a.length);
+    MathHelper.set(newData, 0x722c, 4, subfunc273);
+    MathHelper.set(newData, 0x7230, 4, subfunc273params0);
+    MathHelper.set(newData, 0x7234, 4, subfunc273params1a);
+    MathHelper.set(newData, 0x7238, 4, jump);
+    MathHelper.set(newData, 0x723c, 4, address3);
+    System.arraycopy(subfunc160b, 0, newData, 0x7240, subfunc160b.length);
+    System.arraycopy(subfunc160params12b, 0, newData, 0x7248, subfunc160params12b.length);
+    System.arraycopy(subfunc160b, 0, newData, 0x7250, subfunc160b.length);
+    System.arraycopy(subfunc160params12c, 0, newData, 0x7258, subfunc160params12c.length);
+    System.arraycopy(subfunc160b, 0, newData, 0x7260, subfunc160b.length);
+    System.arraycopy(subfunc160params12a, 0, newData, 0x7268, subfunc160params12a.length);
+    MathHelper.set(newData, 0x7270, 4, subfunc273);
+    MathHelper.set(newData, 0x7274, 4, subfunc273params0);
+    MathHelper.set(newData, 0x7278, 4, subfunc273params1b);
+    MathHelper.set(newData, 0x727c, 4, jump);
+    MathHelper.set(newData, 0x7280, 4, address4);
     return Map.of(name, new FileData(newData));
   }
 

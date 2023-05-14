@@ -184,11 +184,11 @@ public class UseItemScreen extends MenuScreen {
         }
 
         //LAB_80108544
-        final ActiveStatsa0 stats = stats_800be5f8.get(charIndex);
-        renderFourDigitNumber(x + 25, y + 57, stats.hp_04.get(), stats.maxHp_66.get());
-        renderFourDigitNumber(x + 25, y + 68, stats.maxHp_66.get());
-        renderFourDigitNumber(x + 25, y + 79, stats.mp_06.get());
-        renderFourDigitNumber(x + 25, y + 90, stats.maxMp_6e.get());
+        final ActiveStatsa0 stats = stats_800be5f8[charIndex];
+        renderFourDigitNumber(x + 25, y + 57, stats.hp_04, stats.maxHp_66);
+        renderFourDigitNumber(x + 25, y + 68, stats.maxHp_66);
+        renderFourDigitNumber(x + 25, y + 79, stats.mp_06);
+        renderFourDigitNumber(x + 25, y + 90, stats.maxMp_6e);
       }
     }
   }

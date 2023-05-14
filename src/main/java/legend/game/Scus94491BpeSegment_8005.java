@@ -1,7 +1,5 @@
 package legend.game;
 
-import legend.core.gpu.DISPENV;
-import legend.core.gpu.DRAWENV;
 import legend.core.gte.MATRIX;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
@@ -85,12 +83,6 @@ public final class Scus94491BpeSegment_8005 {
   public static final ArrayRef<IntRef> _80052d6c = MEMORY.ref(4, 0x80052d6cL, ArrayRef.of(IntRef.class, 4, 4, IntRef::new));
   public static final ArrayRef<Pointer<UnboundedArrayRef<FileEntry08>>> diskFmvs_80052d7c = MEMORY.ref(4, 0x80052d7cL, ArrayRef.of(Pointer.classFor(UnboundedArrayRef.classFor(FileEntry08.class)), 5, 0x4, Pointer.deferred(4, UnboundedArrayRef.of(0x8, FileEntry08::new))));
 
-  public static final Value _80054674 = MEMORY.ref(4, 0x80054674L);
-
-  public static final Value _800546bc = MEMORY.ref(1, 0x800546bcL);
-  public static final Value _800546bd = MEMORY.ref(1, 0x800546bdL);
-  public static final Value gpu_debug = MEMORY.ref(1, 0x800546beL);
-
   /**
    * Max RECT width?
    */
@@ -99,14 +91,6 @@ public final class Scus94491BpeSegment_8005 {
    * Max RECT height?
    */
   public static final Value _800546c2 = MEMORY.ref(2, 0x800546c2L);
-
-  public static final DRAWENV DRAWENV_800546cc = MEMORY.ref(4, 0x800546ccL, DRAWENV::new);
-  public static final DISPENV DISPENV_80054728 = MEMORY.ref(4, 0x80054728L, DISPENV::new);
-
-  public static final Value array_8005473c = MEMORY.ref(2, 0x8005473cL);
-  public static final Value array_80054748 = MEMORY.ref(2, 0x80054748L);
-
-  public static final Value GsOUT_PACKET_P = MEMORY.ref(4, 0x8005480cL);
 
   public static final ArrayRef<ShortRef> _80054870 = MEMORY.ref(2, 0x80054870L, ArrayRef.of(ShortRef.class, 192, 2, ShortRef::new));
 

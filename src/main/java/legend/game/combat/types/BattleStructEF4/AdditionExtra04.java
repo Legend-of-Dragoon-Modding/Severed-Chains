@@ -1,17 +1,16 @@
 package legend.game.combat.types.BattleStructEF4;
 
-import legend.core.Config;
+import legend.game.combat.AutoAdditionMode;
 import legend.game.combat.bobj.BattleObject27c;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.scripting.ScriptState;
 
 import static legend.game.Scus94491BpeSegment_8006._8006e398;
+import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 
-/**
- * One for each ally and enemy
- */
+/** One for each ally and enemy */
 public class AdditionExtra04 {
   private final int index;
-
   /**
    * <ul>
    *   <li>0x01 Destroyer Mace </li>
@@ -29,7 +28,7 @@ public class AdditionExtra04 {
   public int pack() {
     int ultimateWargod = 0;
     // This is a cheap way to tell if we're in a combat engine cutscene and turn it off
-    if(Config.autoAddition()) {
+    if(gameState_800babc8.getConfig(CoreMod.AUTO_ADDITION_CONFIG.get()) == AutoAdditionMode.ON) {
       final ScriptState<? extends BattleObject27c> combatant = _8006e398.bobjIndices_e0c[this.index];
 
       if(combatant != null && (combatant.storage_44[7] & 0x4) == 0) {
@@ -40,13 +39,11 @@ public class AdditionExtra04 {
             break;
           }
         }
-
         if(enemyAlive) {
           ultimateWargod = 0x6;
         }
       }
     }
-
     return (this.unknown_01 & 0xff_ffff) << 8 | this.flag_00 & 0xff | ultimateWargod;
   }
 

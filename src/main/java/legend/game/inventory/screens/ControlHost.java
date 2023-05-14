@@ -46,11 +46,22 @@ public abstract class ControlHost implements Iterable<Control> {
   }
 
   protected Control findControlAt(final int x, final int y) {
+    return this.findControlAt(x, y, false);
+  }
+
+  protected Control findControlAt(final int x, final int y, final boolean nested) {
     final List<Control> controls = new ArrayList<>();
 
     for(final Control control : this.controls) {
       if(control.acceptsInput() && control.isVisible() && control.containsPoint(x, y)) {
-        controls.add(control);
+        final Control subcontrol;
+        if(nested) {
+          subcontrol = control.findControlAt(x - control.getX(), y - control.getY());
+        } else {
+          subcontrol = null;
+        }
+
+        controls.add(subcontrol != null ? subcontrol : control);
       }
     }
 

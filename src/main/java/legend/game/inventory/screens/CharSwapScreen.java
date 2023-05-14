@@ -105,15 +105,15 @@ public class CharSwapScreen extends MenuScreen {
       allocateUiElement(0x50, 0x50, x, y).z_3c = 33;
       allocateUiElement(0x9c, 0x9c, x, y);
 
-      if((gameState_800babc8.charData_32c[charIndex].partyFlags_04 & 0x2) == 0) {
+      if(!Config.unlockParty() && (gameState_800babc8.charData_32c[charIndex].partyFlags_04 & 0x2) == 0) {
         allocateUiElement(0x72, 0x72, x, y + 24).z_3c = 33;
       }
 
-      final ActiveStatsa0 stats = stats_800be5f8.get(charIndex);
-      renderFourDigitNumber(x + 25, y + 57, stats.level_0e.get());
-      renderFourDigitNumber(x + 25, y + 68, stats.dlevel_0f.get());
-      renderFourDigitNumber(x + 25, y + 79, stats.hp_04.get(), stats.maxHp_66.get());
-      renderFourDigitNumber(x + 25, y + 90, stats.mp_06.get());
+      final ActiveStatsa0 stats = stats_800be5f8[charIndex];
+      renderFourDigitNumber(x + 25, y + 57, stats.level_0e);
+      renderFourDigitNumber(x + 25, y + 68, stats.dlevel_0f);
+      renderFourDigitNumber(x + 25, y + 79, stats.hp_04, stats.maxHp_66);
+      renderFourDigitNumber(x + 25, y + 90, stats.mp_06);
     }
   }
 
@@ -202,7 +202,7 @@ public class CharSwapScreen extends MenuScreen {
 
           final int secondaryCharIndex = secondaryCharIndices_800bdbf8.get(this.secondaryCharIndex).get();
 
-          if(((Config.unlockParty() && charCount >= 2) || secondaryCharIndex != -1) && (secondaryCharIndex == -1 || (gameState_800babc8.charData_32c[secondaryCharIndex].partyFlags_04 & 0x2) != 0)) {
+          if(((Config.unlockParty() && charCount >= 2) || secondaryCharIndex != -1) && (secondaryCharIndex == -1 || Config.unlockParty() || (gameState_800babc8.charData_32c[secondaryCharIndex].partyFlags_04 & 0x2) != 0)) {
             playSound(2);
             final int charIndex = gameState_800babc8.charIds_88[this.primaryCharIndex];
             gameState_800babc8.charIds_88[this.primaryCharIndex] = secondaryCharIndex;
@@ -318,7 +318,7 @@ public class CharSwapScreen extends MenuScreen {
 
     final int secondaryCharIndex = secondaryCharIndices_800bdbf8.get(this.secondaryCharIndex).get();
 
-    if(((Config.unlockParty() && charCount >= 2) || secondaryCharIndex != -1) && (secondaryCharIndex == -1 || (gameState_800babc8.charData_32c[secondaryCharIndex].partyFlags_04 & 0x2) != 0)) {
+    if(((Config.unlockParty() && charCount >= 2) || secondaryCharIndex != -1) && (secondaryCharIndex == -1 || Config.unlockParty() || (gameState_800babc8.charData_32c[secondaryCharIndex].partyFlags_04 & 0x2) != 0)) {
       playSound(2);
       final int charIndex = gameState_800babc8.charIds_88[this.primaryCharIndex];
       gameState_800babc8.charIds_88[this.primaryCharIndex] = secondaryCharIndex;

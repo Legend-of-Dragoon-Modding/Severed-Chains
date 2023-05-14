@@ -21,6 +21,7 @@ import legend.core.memory.Ref;
 import legend.core.memory.Value;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
+import legend.game.combat.bobj.BattleObject27c;
 import legend.game.combat.bobj.MonsterBattleObject;
 import legend.game.combat.bobj.PlayerBattleObject;
 import legend.game.combat.deff.Anim;
@@ -44,7 +45,6 @@ import legend.game.combat.environment.BattleStruct14;
 import legend.game.combat.environment.BttlLightStruct84;
 import legend.game.combat.environment.BttlLightStruct84Sub38;
 import legend.game.combat.environment.StageAmbiance4c;
-import legend.game.combat.bobj.BattleObject27c;
 import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.combat.types.MonsterStats1c;
@@ -425,6 +425,9 @@ public final class Bttl_800e {
     GsSetAmbient(r, g, b);
   }
 
+  /**
+   * script set back color
+   */
   @Method(0x800e4d2cL)
   public static FlowControl FUN_800e4d2c(final RunningScript<?> script) {
     FUN_800e4cf8(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get());
@@ -870,11 +873,11 @@ public final class Bttl_800e {
     }
 
     if(g < 0) {
-      LOGGER.warn("Negative R! %x", g);
+      LOGGER.warn("Negative G! %x", g);
     }
 
     if(b < 0) {
-      LOGGER.warn("Negative R! %x", b);
+      LOGGER.warn("Negative B! %x", b);
     }
 
     final BattleLightStruct64 v1 = _800c6930;
@@ -900,11 +903,11 @@ public final class Bttl_800e {
     }
 
     if(g < 0) {
-      LOGGER.warn("Negative R! %x", g);
+      LOGGER.warn("Negative G! %x", g);
     }
 
     if(b < 0) {
-      LOGGER.warn("Negative R! %x", b);
+      LOGGER.warn("Negative B! %x", b);
     }
 
     GsSetFlatLight(0, light_800c6ddc);
@@ -1016,7 +1019,7 @@ public final class Bttl_800e {
   @Method(0x800e665cL)
   public static void loadDragoonDeff(final RunningScript<? extends BattleScriptDataBase> script) {
     final int index = script.params_20[0].get() & 0xffff;
-    final int s1 = script.params_20[3].get() & 0xff;
+    final int soundType = script.params_20[3].get() & 0xff;
 
     LOGGER.info(DEFF, "Loading dragoon DEFF (ID: %d, flags: %x)", index, script.params_20[0].get() & 0xffff_0000);
 
@@ -1030,7 +1033,7 @@ public final class Bttl_800e {
     if((deffManager.flags_20 & 0x4_0000) != 0) {
       //LAB_800e66fc
       //LAB_800e670c
-      loadDeffSounds(battle24.bobjState_04, index != 0x2e || s1 != 0 ? 0 : 2);
+      loadDeffSounds(battle24.bobjState_04, index != 0x2e || soundType != 0 ? 0 : 2);
     }
 
     //LAB_800e6714
@@ -1548,6 +1551,10 @@ public final class Bttl_800e {
     //LAB_800e7930
   }
 
+  /**
+   * Renderer for some kind of effect sprites like those in HUD DEFF.
+   * Used for example for sprite effect overlays on red glow in Death Dimension.
+   */
   @Method(0x800e7944L)
   public static void FUN_800e7944(final BattleStruct24 s1, final VECTOR trans, final int a2) {
     if((int)s1.flags_00.get() >= 0) {
@@ -1557,8 +1564,9 @@ public final class Bttl_800e {
       final int x = MathHelper.safeDiv(sp0x18.getX() * projectionPlaneDistance_1f8003f8.get(), sp0x18.getZ());
       final int y = MathHelper.safeDiv(sp0x18.getY() * projectionPlaneDistance_1f8003f8.get(), sp0x18.getZ());
 
+      // a2 needs to be ignored in z check or poly positions will overflow at low z values
       int z = a2 + (sp0x18.getZ() >> 2);
-      if(z >= 0x28) {
+      if(sp0x18.getZ() >> 2 >= 0x28 && z >= 0x28) {
         if(z > 0x3ff8) {
           z = 0x3ff8;
         }
@@ -1575,6 +1583,7 @@ public final class Bttl_800e {
         final GpuCommandPoly cmd = new GpuCommandPoly(4)
           .clut(s1.clutX_10.get(), s1.clutY_12.get())
           .vramPos((s1.tpage_0c.get() & 0b1111) * 64, (s1.tpage_0c.get() & 0b10000) != 0 ? 256 : 0)
+          .rgb(s1.r_14.get(), s1.g_15.get(), s1.b_16.get())
           .pos(0, x + (s5 * cos >> 12) - (s2 * sin >> 12), y + (s5 * sin >> 12) + (s2 * cos >> 12))
           .pos(1, x + (s7 * cos >> 12) - (s2 * sin >> 12), y + (s7 * sin >> 12) + (s2 * cos >> 12))
           .pos(2, x + (s5 * cos >> 12) - (fp * sin >> 12), y + (s5 * sin >> 12) + (fp * cos >> 12))
@@ -1584,7 +1593,7 @@ public final class Bttl_800e {
           .uv(2, s1.u_0e.get(), s1.h_0a.get() + s1.v_0f.get() - 1)
           .uv(3, s1.w_08.get() + s1.u_0e.get() - 1, s1.h_0a.get() + s1.v_0f.get() - 1);
 
-        if((s1.flags_00.get() & 1 << 30) != 0) {
+        if((s1.flags_00.get() & 0x4000_0000) != 0) {
           cmd.translucent(Translucency.of((int)s1.flags_00.get() >>> 28 & 0b11));
         }
 
@@ -2009,6 +2018,7 @@ public final class Bttl_800e {
     return FlowControl.CONTINUE;
   }
 
+  /** Has some relation to rendering of certain effect sprites, like ones from HUD DEFF */
   @Method(0x800e9428L)
   public static void FUN_800e9428(final SpriteMetrics08 metrics, final EffectManagerData6cInner a1, final MATRIX a2) {
     if(a1.flags_00 >= 0) {
@@ -3173,7 +3183,7 @@ public final class Bttl_800e {
     CPU.CTC2(sp0x10.transfer.getX(), 5);
     CPU.CTC2(sp0x10.transfer.getY(), 6);
     CPU.CTC2(sp0x10.transfer.getZ(), 7);
-    Renderer.renderDobj2(s2.ObjTable_0c.top[0], true);
+    Renderer.renderDobj2(s2.ObjTable_0c.top[0], true, 0);
     s2.coord2ArrPtr_04[0].flg--;
   }
 
@@ -3218,7 +3228,7 @@ public final class Bttl_800e {
         CPU.CTC2(ls.transfer.getX(), 5);
         CPU.CTC2(ls.transfer.getY(), 6);
         CPU.CTC2(ls.transfer.getZ(), 7);
-        Renderer.renderDobj2(dobj2, true);
+        Renderer.renderDobj2(dobj2, true, 0);
       }
 
       //LAB_800ec608
@@ -3344,7 +3354,7 @@ public final class Bttl_800e {
         CPU.CTC2(sp0x10.transfer.getX(), 5);
         CPU.CTC2(sp0x10.transfer.getY(), 6);
         CPU.CTC2(sp0x10.transfer.getZ(), 7);
-        Renderer.renderDobj2(s2, true);
+        Renderer.renderDobj2(s2, true, 0);
       }
     }
 
@@ -3882,7 +3892,7 @@ public final class Bttl_800e {
     monster._48 = 0;
     monster.onHitStatus_4a = 0;
     monster.targetArrowPos_78.set(monsterStats.targetArrowX_12.get(), monsterStats.targetArrowY_13.get(), monsterStats.targetArrowZ_14.get());
-    monster._7e = monsterStats._15.get();
+    monster.hitCounterFrameThreshold_7e = monsterStats.hitCounterFrameThreshold_15.get();
     monster._80 = monsterStats._16.get();
     monster._82 = monsterStats._17.get();
     monster._84 = monsterStats._18.get();
@@ -3949,74 +3959,74 @@ public final class Bttl_800e {
       }
 
       //LAB_800ef400
-      final ActiveStatsa0 stats = stats_800be5f8.get(player.charIndex_272);
-      player.level_04 = stats.level_0e.get();
-      player.dlevel_06 = stats.dlevel_0f.get();
-      player.hp_08 = stats.hp_04.get();
-      player.sp_0a = stats.sp_08.get();
-      player.mp_0c = stats.mp_06.get();
-      player.status_0e = stats.flags_0c.get();
-      player.maxHp_10 = stats.maxHp_66.get();
-      player.maxMp_12 = stats.maxMp_6e.get();
-      player.specialEffectFlag_14 = stats.specialEffectFlag_76.get();
-      player._16 = stats._77.get();
-      player._18 = stats._78.get();
-      player._1a = stats._79.get();
-      player.elementFlag_1c = stats.elementFlag_7a.get();
-      player._1e = stats._7b.get();
-      player.elementalResistanceFlag_20 = stats.elementalResistanceFlag_7c.get();
-      player.elementalImmunityFlag_22 = stats.elementalImmunityFlag_7d.get();
-      player.statusResistFlag_24 = stats.statusResistFlag_7e.get();
-      player._26 = stats._7f.get();
-      player._28 = stats._80.get();
-      player._2a = stats.special1_81.get();
-      player._2c = stats.special2_82.get();
-      player._2e = stats._83.get();
-      player._30 = stats._84.get();
-      player.speed_32 = stats.gearSpeed_86.get() + stats.bodySpeed_69.get();
-      player.attack_34 = stats.gearAttack_88.get() + stats.bodyAttack_6a.get();
-      player.magicAttack_36 = stats.gearMagicAttack_8a.get() + stats.bodyMagicAttack_6b.get();
-      player.defence_38 = stats.gearDefence_8c.get() + stats.bodyDefence_6c.get();
-      player.magicDefence_3a = stats.gearMagicDefence_8e.get() + stats.bodyMagicDefence_6d.get();
-      player.attackHit_3c = stats.attackHit_90.get();
-      player.magicHit_3e = stats.magicHit_92.get();
-      player.attackAvoid_40 = stats.attackAvoid_94.get();
-      player.magicAvoid_42 = stats.magicAvoid_96.get();
-      player.onHitStatusChance_44 = stats.onHitStatusChance_98.get();
-      player._46 = stats._99.get();
-      player._48 = stats._9a.get();
-      player.onHitStatus_4a = stats.onHitStatus_9b.get();
-      player.spellId_4e = stats.onHitStatus_9b.get();
-      player.selectedAddition_58 = stats.selectedAddition_35.get();
-      player.dragoonAttack_ac = stats.dragoonAttack_72.get();
-      player.dragoonMagic_ae = stats.dragoonMagicAttack_73.get();
-      player.dragoonDefence_b0 = stats.dragoonDefence_74.get();
-      player.dragoonMagicDefence_b2 = stats.dragoonMagicDefence_75.get();
-      player.physicalImmunity_110 = stats.physicalImmunity_46.get();
-      player.magicalImmunity_112 = stats.magicalImmunity_48.get();
-      player.physicalResistance_114 = stats.physicalResistance_4a.get();
-      player.magicalResistance_116 = stats.magicalResistance_60.get();
-      player._118 = stats._9c.get();
-      player.additionSpMultiplier_11a = stats.additionSpMultiplier_9e.get();
-      player.additionDamageMultiplier_11c = stats.additionDamageMultiplier_9f.get();
-      player.equipment0_11e = stats.equipment_30.get(0).get();
-      player.equipment1_120 = stats.equipment_30.get(1).get();
-      player.equipment2_122 = stats.equipment_30.get(2).get();
-      player.equipment3_124 = stats.equipment_30.get(3).get();
-      player.equipment4_126 = stats.equipment_30.get(4).get();
-      player.spMultiplier_128 = stats.spMultiplier_4c.get();
-      player.spPerPhysicalHit_12a = stats.spPerPhysicalHit_4e.get();
-      player.mpPerPhysicalHit_12c = stats.mpPerPhysicalHit_50.get();
-      player.itemSpPerMagicalHit_12e = stats.spPerMagicalHit_52.get();
-      player.mpPerMagicalHit_130 = stats.mpPerMagicalHit_54.get();
-      player._132 = stats._56.get();
-      player.hpRegen_134 = stats.hpRegen_58.get();
-      player.mpRegen_136 = stats.mpRegen_5a.get();
-      player.spRegen_138 = stats.spRegen_5c.get();
-      player.revive_13a = stats.revive_5e.get();
-      player.hpMulti_13c = stats.hpMulti_62.get();
-      player.mpMulti_13e = stats.mpMulti_64.get();
-      player._142 = stats.onHitStatus_9b.get();
+      final ActiveStatsa0 stats = stats_800be5f8[player.charIndex_272];
+      player.level_04 = stats.level_0e;
+      player.dlevel_06 = stats.dlevel_0f;
+      player.hp_08 = stats.hp_04;
+      player.sp_0a = stats.sp_08;
+      player.mp_0c = stats.mp_06;
+      player.status_0e = stats.flags_0c;
+      player.maxHp_10 = stats.maxHp_66;
+      player.maxMp_12 = stats.maxMp_6e;
+      player.specialEffectFlag_14 = stats.specialEffectFlag_76;
+      player._16 = stats._77;
+      player._18 = stats._78;
+      player._1a = stats._79;
+      player.elementFlag_1c = stats.elementFlag_7a;
+      player._1e = stats._7b;
+      player.elementalResistanceFlag_20 = stats.elementalResistanceFlag_7c;
+      player.elementalImmunityFlag_22 = stats.elementalImmunityFlag_7d;
+      player.statusResistFlag_24 = stats.statusResistFlag_7e;
+      player._26 = stats._7f;
+      player._28 = stats._80;
+      player._2a = stats.special1_81;
+      player._2c = stats.special2_82;
+      player._2e = stats._83;
+      player._30 = stats._84;
+      player.speed_32 = stats.gearSpeed_86 + stats.bodySpeed_69;
+      player.attack_34 = stats.gearAttack_88 + stats.bodyAttack_6a;
+      player.magicAttack_36 = stats.gearMagicAttack_8a + stats.bodyMagicAttack_6b;
+      player.defence_38 = stats.gearDefence_8c + stats.bodyDefence_6c;
+      player.magicDefence_3a = stats.gearMagicDefence_8e + stats.bodyMagicDefence_6d;
+      player.attackHit_3c = stats.attackHit_90;
+      player.magicHit_3e = stats.magicHit_92;
+      player.attackAvoid_40 = stats.attackAvoid_94;
+      player.magicAvoid_42 = stats.magicAvoid_96;
+      player.onHitStatusChance_44 = stats.onHitStatusChance_98;
+      player._46 = stats._99;
+      player._48 = stats._9a;
+      player.onHitStatus_4a = stats.onHitStatus_9b;
+      player.spellId_4e = stats.onHitStatus_9b;
+      player.selectedAddition_58 = stats.selectedAddition_35;
+      player.dragoonAttack_ac = stats.dragoonAttack_72;
+      player.dragoonMagic_ae = stats.dragoonMagicAttack_73;
+      player.dragoonDefence_b0 = stats.dragoonDefence_74;
+      player.dragoonMagicDefence_b2 = stats.dragoonMagicDefence_75;
+      player.physicalImmunity_110 = stats.physicalImmunity_46;
+      player.magicalImmunity_112 = stats.magicalImmunity_48;
+      player.physicalResistance_114 = stats.physicalResistance_4a;
+      player.magicalResistance_116 = stats.magicalResistance_60;
+      player._118 = stats._9c;
+      player.additionSpMultiplier_11a = stats.additionSpMultiplier_9e;
+      player.additionDamageMultiplier_11c = stats.additionDamageMultiplier_9f;
+      player.equipment0_11e = stats.equipment_30[0];
+      player.equipment1_120 = stats.equipment_30[1];
+      player.equipment2_122 = stats.equipment_30[2];
+      player.equipment3_124 = stats.equipment_30[3];
+      player.equipment4_126 = stats.equipment_30[4];
+      player.spMultiplier_128 = stats.spMultiplier_4c;
+      player.spPerPhysicalHit_12a = stats.spPerPhysicalHit_4e;
+      player.mpPerPhysicalHit_12c = stats.mpPerPhysicalHit_50;
+      player.itemSpPerMagicalHit_12e = stats.spPerMagicalHit_52;
+      player.mpPerMagicalHit_130 = stats.mpPerMagicalHit_54;
+      player._132 = stats._56;
+      player.hpRegen_134 = stats.hpRegen_58;
+      player.mpRegen_136 = stats.mpRegen_5a;
+      player.spRegen_138 = stats.spRegen_5c;
+      player.revive_13a = stats.revive_5e;
+      player.hpMulti_13c = stats.hpMulti_62;
+      player.mpMulti_13e = stats.mpMulti_64;
+      player._142 = stats.onHitStatus_9b;
     }
 
     //LAB_800ef798
@@ -4101,7 +4111,7 @@ public final class Bttl_800e {
   public static void FUN_800ef9e4() {
     if(_800c6cf4.get() == 0x6L) {
       if(Config.changeBattleRGB()) {
-        Bttl_800c._800c7004.set(Config.getBattleRGB());
+        Bttl_800c._800c7004.set(Config.getBattleRgb());
       }
 
       final long charCount = charCount_800c677c.get();
