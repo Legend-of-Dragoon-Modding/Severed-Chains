@@ -22,7 +22,7 @@ public enum Translucency {
   /** 0.0 x background + 1.0 x foreground */
   FULL_FOREGROUND,
   /** 0.25 x background + 0.25 x foreground */
-  QUARTER_B_QUARTER_HALF_F,
+  QUARTER_B_QUARTER_F,
   /** 0.75 x background + 0.75 x foreground */
   TQUARTER_B_TQUARTER_F,
   ;

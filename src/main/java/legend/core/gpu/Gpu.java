@@ -1105,7 +1105,7 @@ public class Gpu {
         b = fb;
       }
 
-      case QUARTER_B_QUARTER_HALF_F -> {
+      case QUARTER_B_QUARTER_F -> {
         r = (br + fr) / 4;
         g = (bg + fg) / 4;
         b = (bb + fb) / 4;
