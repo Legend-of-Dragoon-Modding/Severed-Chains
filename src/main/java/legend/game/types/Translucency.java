@@ -24,7 +24,7 @@ public enum Translucency {
   /** 0.25 x background + 0.25 x foreground */
   QUARTER_B_QUARTER_HALF_F,
   /** 0.75 x background + 0.75 x foreground */
-  TQUARTER_B_TQUARTER_HALF_F,
+  TQUARTER_B_TQUARTER__F,
   ;
 
   /** NOTE: returns null if value is -1 */

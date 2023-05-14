@@ -1080,7 +1080,7 @@ public class Gpu {
         g = bg;
         b = bb;
       }
-      
+
       case TQUATER_B_FOREGROUND -> {
         r = Math.min(0xff, (int)Math.floor(br / 1.33) + fr);
         g = Math.min(0xff, (int)Math.floor(bg / 1.33) + fg);
@@ -1111,7 +1111,7 @@ public class Gpu {
         b = (bb + fb) / 4;
       }
 
-      case TQUARTER_B_TQUARTER_HALF_F -> {
+      case TQUARTER_B_TQUARTER__F -> {
         r = Math.min(0xff, (int)Math.floor(br / 1.33) + (int)Math.floor(fr / 1.33));
         g = Math.min(0xff, (int)Math.floor(bg / 1.33) + (int)Math.floor(fg / 1.33));
         b = Math.min(0xff, (int)Math.floor(bb / 1.33) + (int)Math.floor(fb / 1.33));
