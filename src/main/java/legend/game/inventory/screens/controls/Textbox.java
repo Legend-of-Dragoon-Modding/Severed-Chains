@@ -13,7 +13,6 @@ import static legend.core.GameEngine.GPU;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
 import static legend.game.Scus94491BpeSegment_8002.charWidth;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
-import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_BACKSPACE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_DELETE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
@@ -33,6 +32,7 @@ public class Textbox extends Control {
 
   public Textbox() {
     this.background = this.addControl(Panel.subtle());
+    this.background.ignoreInput();
     this.setText("");
   }
 
@@ -81,7 +81,6 @@ public class Textbox extends Control {
 
   @Override
   protected void render(final int x, final int y) {
-    final int oldZ = textZ_800bdf00.get();
     this.textRenderable.render(x + 4, y + (this.getHeight() - 11) / 2 + 1, this.getZ() - 1);
 
     if(this.hasFocus()) {
@@ -90,14 +89,12 @@ public class Textbox extends Control {
       final int caretX = x + offsetX + 4 + this.caretX;
       final int caretY = y + offsetY + 3;
 
-      GPU.queueCommand(textZ_800bdf00.get() - 1, new GpuCommandLine()
+      GPU.queueCommand(this.getZ() - 1, new GpuCommandLine()
         .pos(0, caretX, caretY)
         .pos(1, caretX, caretY + this.getHeight() - 7)
         .rgb(0xa0, 0x80, 0x50)
       );
     }
-
-    textZ_800bdf00.set(oldZ);
   }
 
   @Override
