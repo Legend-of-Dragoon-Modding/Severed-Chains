@@ -29,8 +29,6 @@ public class GlfwController extends Controller {
   private int maxButtons;
   private int maxHats;
 
-  private boolean activityThisFrame;
-
   public GlfwController(final String glfwJoystickName, final String glfwJoystickGuid, final int glfwControllerId) {
     this.glfwJoystickName = glfwJoystickName;
     this.glfwJoystickGuid = glfwJoystickGuid;
@@ -59,8 +57,6 @@ public class GlfwController extends Controller {
 
   @Override
   public void poll() {
-    this.activityThisFrame = false;
-
     if(this.glfwControllerId != -1) {
       this.axis = glfwGetJoystickAxes(this.glfwControllerId);
       this.hats = glfwGetJoystickHats(this.glfwControllerId);
@@ -69,21 +65,12 @@ public class GlfwController extends Controller {
 
     for(final InputBinding binding : this.bindings) {
       binding.poll();
-
-      if(binding.getState() == InputBindingState.PRESSED_THIS_FRAME) {
-        this.activityThisFrame = true;
-      }
     }
   }
 
   @Override
-  public boolean hasActivityThisFrame() {
-    return this.activityThisFrame;
-  }
-
-  @Override
   public boolean readButton(final int glfwCode) {
-    if(this.buttons == null || this.buttons.remaining() == 0 || glfwCode == -1  || glfwCode >= this.maxButtons) {
+    if(this.buttons == null || this.buttons.remaining() == 0 || glfwCode == -1 || glfwCode >= this.maxButtons) {
       return false;
     }
 

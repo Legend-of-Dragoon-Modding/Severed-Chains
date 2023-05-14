@@ -7,7 +7,7 @@ public abstract class Controller {
   public final List<InputBinding> bindings = new ArrayList<>();
 
   public abstract void poll();
-  public abstract boolean hasActivityThisFrame();
+
   public abstract boolean readButton(final int glfwCode);
   public abstract float readAxis(final int glfwCode);
   public abstract boolean readHat(final int glfwCode, final int hatIndex);

@@ -36,8 +36,6 @@ public final class Input {
   private static final Logger LOGGER = LogManager.getFormatterLogger();
   private static final Marker INPUT_MARKER = MarkerManager.getMarker("INPUT");
 
-  private static final float controllerDeadzone = Config.controllerDeadzone();
-
   public static final ControllerManager controllerManager = new ControllerManager(Input::onControllerConnected, Input::onControllerDisconnected);
   private static Controller playerOne;
 
@@ -113,57 +111,16 @@ public final class Input {
     return false;
   }
 
-  public static boolean getButtonState(final InputAction targetKey) {
+  public static boolean getButtonState(final InputAction targetInput) {
     for(final InputBinding inputBinding : playerOne.bindings) {
-      if(inputBinding.getInputAction() == targetKey) {
+      if(inputBinding.getInputAction() == targetInput) {
         if(inputBinding.getState().pressed) {
           return true;
         }
-
-        final InputAxisState axisState = getAxisDirection(inputBinding.getInputAction());
-        if(inputBinding.getInputType() == InputType.GAMEPAD_AXIS_BUTTON_NEGATIVE) {
-          if(axisState == InputAxisState.AXIS_NEGATIVE) {
-            return true;
-          }
-        }
-
-        if(inputBinding.getInputType() == InputType.GAMEPAD_AXIS_BUTTON_POSITIVE) {
-          if(axisState == InputAxisState.AXIS_POSITIVE) {
-            return true;
-          }
-        }
       }
     }
+
     return false;
-  }
-
-  public static InputAxisState getAxisDirection(final InputAction targetKey) {
-    for(final InputBinding inputBinding : playerOne.bindings) {
-      if(inputBinding.getInputAction() == targetKey) {
-        if(inputBinding.getAxisValue() > controllerDeadzone) {
-          return InputAxisState.AXIS_POSITIVE;
-        } else if(inputBinding.getAxisValue() < -controllerDeadzone) {
-          return InputAxisState.AXIS_NEGATIVE;
-        }
-      }
-    }
-    return InputAxisState.AXIS_CENTERED;
-  }
-
-  public static float getAxisValue(final InputAction targetKey) {
-    for(final InputBinding inputBinding : playerOne.bindings) {
-      if(inputBinding.getInputAction() == targetKey) {
-        final float axisValue = inputBinding.getAxisValue();
-        if(axisValue != 0) {
-          return axisValue;
-        }
-      }
-    }
-    return 0;
-  }
-
-  public static boolean hasActivityThisFrame() {
-    return playerOne.hasActivityThisFrame();
   }
 
   private static void keyPress(final Window window, final int key, final int scancode, final int mods) {

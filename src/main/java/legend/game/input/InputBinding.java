@@ -7,10 +7,10 @@ public class InputBinding {
   private final InputAction inputAction; // Identification + Action
   private int hexCode; // Action Retail
   private int glfwKeyCode; // Actual hardware we need to check
+  private boolean keyPressed;
   private int hatIndex;
   private InputBindingState bindingState;
   private InputType inputType;
-  private float axisValue;
   private final float controllerDeadzone;
   private Controller targetController;
   private final float[] pulseTimings = {0.5f, 0.1f};
@@ -56,7 +56,7 @@ public class InputBinding {
   }
 
   public void release() {
-    if(this.axisValue != 0) {
+    if(this.bindingState.pressed) {
       this.handleNoInputState();
     }
   }
@@ -70,16 +70,16 @@ public class InputBinding {
   }
 
   private void pollGamepadAxis() {
-    this.axisValue = this.targetController.readAxis(this.glfwKeyCode);
+    final float axisValue = this.targetController.readAxis(this.glfwKeyCode);
 
     if(this.inputType == InputType.GAMEPAD_AXIS_BUTTON_POSITIVE) {
-      if(this.axisValue > this.controllerDeadzone) {
+      if(axisValue > this.controllerDeadzone) {
         this.handlePositiveState();
       } else {
         this.handleNoInputState();
       }
     } else if(this.inputType == InputType.GAMEPAD_AXIS_BUTTON_NEGATIVE) {
-      if(this.axisValue < -this.controllerDeadzone) {
+      if(axisValue < -this.controllerDeadzone) {
         this.handlePositiveState();
       } else {
         this.handleNoInputState();
@@ -96,9 +96,8 @@ public class InputBinding {
   }
 
   private void handlePositiveState() {
-    if(this.bindingState == InputBindingState.NO_INPUT || this.bindingState == InputBindingState.RELEASED_THIS_FRAME) {
+    if(!this.bindingState.pressed) {
       this.bindingState = InputBindingState.PRESSED_THIS_FRAME;
-      this.axisValue = 1;
       this.lastPressedTriggerTime = glfwGetTime();
       this.pulseTimingsIndex = 0;
     } else if(this.bindingState == InputBindingState.PRESSED_THIS_FRAME || this.bindingState == InputBindingState.PRESSED_REPEAT) {
@@ -116,16 +115,15 @@ public class InputBinding {
   }
 
   private void handleNoInputState() {
-    if(this.bindingState == InputBindingState.PRESSED || this.bindingState == InputBindingState.PRESSED_THIS_FRAME || this.bindingState == InputBindingState.PRESSED_REPEAT) {
+    if(this.bindingState.pressed) {
       this.bindingState = InputBindingState.RELEASED_THIS_FRAME;
-      this.axisValue = 0;
     } else if(this.bindingState == InputBindingState.RELEASED_THIS_FRAME) {
       this.bindingState = InputBindingState.NO_INPUT;
     }
   }
 
   private void pollKeyboardInput() {
-    if(this.axisValue == 1) {
+    if(this.keyPressed) {
       this.handlePositiveState();
     } else {
       this.handleNoInputState();
@@ -133,18 +131,17 @@ public class InputBinding {
   }
 
   public void setPressedForKeyboardInput() {
-    this.axisValue = 1;
+    this.keyPressed = true;
   }
 
   public void setReleasedForKeyboardInput() {
-    this.axisValue = 0;
+    this.keyPressed = false;
   }
 
   public InputAction getInputAction() { return this.inputAction; }
   public int getHexCode() { return this.hexCode; }
   public InputBindingState getState() { return this.bindingState; }
   public InputType getInputType() { return this.inputType; }
-  public float getAxisValue() { return this.axisValue; }
   public int getGlfwKeyCode() { return this.glfwKeyCode; }
   public Controller getTargetController() { return this.targetController; }
   public void setTargetController(final Controller targetController) { this.targetController = targetController; }

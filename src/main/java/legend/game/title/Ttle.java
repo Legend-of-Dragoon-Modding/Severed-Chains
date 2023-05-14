@@ -159,6 +159,7 @@ public final class Ttle {
 
   private static Window.Events.Cursor onMouseMove;
   private static Window.Events.Click onMouseRelease;
+  private static Window.Events.OnPressedWithRepeatPulse onPressedWithRepeatPulse;
 
   @Method(0x800c7194L)
   public static void setUpNewGameData() {
@@ -704,10 +705,6 @@ public final class Ttle {
     }
 
     //LAB_800c8448
-    if(Input.hasActivityThisFrame()) {
-      resetIdleTime();
-    }
-
     //LAB_800c8474
   }
 
@@ -802,13 +799,17 @@ public final class Ttle {
         }
       }
     });
+
+    onPressedWithRepeatPulse = GPU.window().events.onPressedWithRepeatPulse((window, inputAction) -> resetIdleTime());
   }
 
   private static void removeInputHandlers() {
     GPU.window().events.removeMouseMove(onMouseMove);
     GPU.window().events.removeMouseRelease(onMouseRelease);
+    GPU.window().events.removePressedWithRepeatPulse(onPressedWithRepeatPulse);
     onMouseMove = null;
     onMouseRelease = null;
+    onPressedWithRepeatPulse = null;
   }
 
   @Method(0x800c8484L)

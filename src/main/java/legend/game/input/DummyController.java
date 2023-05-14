@@ -17,11 +17,6 @@ public class DummyController extends Controller {
   }
 
   @Override
-  public boolean hasActivityThisFrame() {
-    return this.activityThisFrame;
-  }
-
-  @Override
   public boolean readButton(final int glfwCode) {
     return false;
   }
