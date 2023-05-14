@@ -2704,17 +2704,80 @@ public final class Scus94491BpeSegment_8002 {
         final int x = textbox.x_14 - centreScreenX_1f8003dc.get();
         final int y = textbox.y_16 - centreScreenY_1f8003de.get();
 
-        GPU.queueCommand(textbox.z_0c, new GpuCommandPoly(4)
-          .translucent(Translucency.HALF_B_PLUS_HALF_F)
-          .monochrome(0, 0)
-          .pos(0, x - textbox.width_1c, y - textbox.height_1e)
-          .rgb(1, (int)_80010868.offset(0x0L).get(), (int)_80010868.offset(0x4L).get(), (int)_80010868.offset(0x8L).get())
-          .pos(1, x + textbox.width_1c, y - textbox.height_1e)
-          .rgb(2, (int)_80010868.offset(0x0L).get(), (int)_80010868.offset(0x4L).get(), (int)_80010868.offset(0x8L).get())
-          .pos(2, x - textbox.width_1c, y + textbox.height_1e)
-          .monochrome(3, 0)
-          .pos(3, x + textbox.width_1c, y + textbox.height_1e)
-        );
+        if(Config.textBoxColour()) {
+          if(Config.getTextBoxColourMode() == 0) {
+            GPU.queueCommand(textbox.z_0c, new GpuCommandPoly(4)
+              .translucent(Translucency.of(Config.getTextBoxTransparencyMode()))
+              .rgb(0, Config.getTextBoxRgb(0))
+              .pos(0, x - textbox.width_1c, y - textbox.height_1e)
+              .rgb(1, Config.getTextBoxRgb(1))
+              .pos(1, x + textbox.width_1c, y - textbox.height_1e)
+              .rgb(2, Config.getTextBoxRgb(2))
+              .pos(2, x - textbox.width_1c, y + textbox.height_1e)
+              .rgb(3, Config.getTextBoxRgb(3))
+              .pos(3, x + textbox.width_1c, y + textbox.height_1e)
+            );
+          }else if(Config.getTextBoxColourMode() == 1) {
+            GPU.queueCommand(textbox.z_0c, new GpuCommandPoly(4)
+              .translucent(Translucency.of(Config.getTextBoxTransparencyMode()))
+              .rgb(0, Config.getTextBoxRgb(0))
+              .pos(0, x - textbox.width_1c, y - textbox.height_1e)
+              .rgb(1, Config.getTextBoxRgb(1))
+              .pos(1, x, y - textbox.height_1e)
+              .rgb(2, Config.getTextBoxRgb(2))
+              .pos(2, x - textbox.width_1c, y + textbox.height_1e)
+              .rgb(3, Config.getTextBoxRgb(3))
+              .pos(3, x, y + textbox.height_1e)
+            );
+            GPU.queueCommand(textbox.z_0c, new GpuCommandPoly(4)
+              .translucent(Translucency.of(Config.getTextBoxTransparencyMode()))
+              .rgb(0, Config.getTextBoxRgb(4))
+              .pos(0, x, y - textbox.height_1e)
+              .rgb(1, Config.getTextBoxRgb(5))
+              .pos(1, x + textbox.width_1c, y - textbox.height_1e)
+              .rgb(2, Config.getTextBoxRgb(6))
+              .pos(2, x, y + textbox.height_1e)
+              .rgb(3, Config.getTextBoxRgb(7))
+              .pos(3, x + textbox.width_1c, y + textbox.height_1e)
+            );
+          }else if(Config.getTextBoxColourMode() == 2) {
+            GPU.queueCommand(textbox.z_0c, new GpuCommandPoly(4)
+              .translucent(Translucency.of(Config.getTextBoxTransparencyMode()))
+              .rgb(0, Config.getTextBoxRgb(0))
+              .pos(0, x - textbox.width_1c, y - textbox.height_1e)
+              .rgb(1, Config.getTextBoxRgb(1))
+              .pos(1, x + textbox.width_1c, y - textbox.height_1e)
+              .rgb(2, Config.getTextBoxRgb(2))
+              .pos(2, x - textbox.width_1c, y)
+              .rgb(3, Config.getTextBoxRgb(3))
+              .pos(3, x + textbox.width_1c, y)
+            );
+
+            GPU.queueCommand(textbox.z_0c, new GpuCommandPoly(4)
+              .translucent(Translucency.of(Config.getTextBoxTransparencyMode()))
+              .rgb(0, Config.getTextBoxRgb(4))
+              .pos(0, x - textbox.width_1c, y)
+              .rgb(1, Config.getTextBoxRgb(5))
+              .pos(1, x + textbox.width_1c, y)
+              .rgb(2, Config.getTextBoxRgb(6))
+              .pos(2, x - textbox.width_1c, y + textbox.height_1e)
+              .rgb(3, Config.getTextBoxRgb(7))
+              .pos(3, x + textbox.width_1c, y + textbox.height_1e)
+            );
+          }
+        } else {
+          GPU.queueCommand(textbox.z_0c, new GpuCommandPoly(4)
+            .translucent(Translucency.HALF_B_PLUS_HALF_F)
+            .monochrome(0, 0)
+            .pos(0, x - textbox.width_1c, y - textbox.height_1e)
+            .rgb(1, (int)_80010868.offset(0x0L).get(), (int)_80010868.offset(0x4L).get(), (int)_80010868.offset(0x8L).get())
+            .pos(1, x + textbox.width_1c, y - textbox.height_1e)
+            .rgb(2, (int)_80010868.offset(0x0L).get(), (int)_80010868.offset(0x4L).get(), (int)_80010868.offset(0x8L).get())
+            .pos(2, x - textbox.width_1c, y + textbox.height_1e)
+            .monochrome(3, 0)
+            .pos(3, x + textbox.width_1c, y + textbox.height_1e)
+          );
+        }
 
         if(textbox._06 != 0) {
           renderTextboxBorder(textboxIndex, x - textbox.width_1c, y - textbox.height_1e, x + textbox.width_1c, y + textbox.height_1e);

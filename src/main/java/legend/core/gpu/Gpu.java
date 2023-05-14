@@ -1075,6 +1075,48 @@ public class Gpu {
         b = Math.min(0xff, bb + fb / 4);
       }
 
+      case FULL_BACKGROUND -> {
+        r = br;
+        g = bg;
+        b = bb;
+      }
+      
+      case TQUATER_B_FOREGROUND -> {
+        r = Math.min(0xff, (int)Math.floor(br / 1.33) + fr);
+        g = Math.min(0xff, (int)Math.floor(bg / 1.33) + fg);
+        b = Math.min(0xff, (int)Math.floor(bb / 1.33) + fb);
+      }
+
+      case HALF_B_FOREGROUND -> {
+        r = Math.min(0xff, br / 2 + fr);
+        g = Math.min(0xff, bg / 2 + fg);
+        b = Math.min(0xff, bb / 2 + fb);
+      }
+
+      case QUARTER_B_FOREGROUND -> {
+        r = Math.min(0xff, br / 4 + fr);
+        g = Math.min(0xff, bg / 4 + fg);
+        b = Math.min(0xff, bb / 4 + fb);
+      }
+
+      case FULL_FOREGROUND -> {
+        r = fr;
+        g = fg;
+        b = fb;
+      }
+
+      case QUARTER_B_QUARTER_HALF_F -> {
+        r = (br + fr) / 4;
+        g = (bg + fg) / 4;
+        b = (bb + fb) / 4;
+      }
+
+      case TQUARTER_B_TQUARTER_HALF_F -> {
+        r = Math.min(0xff, (int)Math.floor(br / 1.33) + (int)Math.floor(fr / 1.33));
+        g = Math.min(0xff, (int)Math.floor(bg / 1.33) + (int)Math.floor(fg / 1.33));
+        b = Math.min(0xff, (int)Math.floor(bb / 1.33) + (int)Math.floor(fb / 1.33));
+      }
+
       default -> throw new RuntimeException();
     }
 
