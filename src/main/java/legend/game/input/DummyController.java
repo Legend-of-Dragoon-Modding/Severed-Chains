@@ -1,18 +1,10 @@
 package legend.game.input;
 
 public class DummyController extends Controller {
-  private boolean activityThisFrame;
-
   @Override
   public void poll() {
-    this.activityThisFrame = false;
-
     for(final InputBinding binding : this.bindings) {
       binding.poll();
-
-      if(binding.getState() == InputState.PRESSED_THIS_FRAME) {
-        this.activityThisFrame = true;
-      }
     }
   }
 

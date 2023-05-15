@@ -262,7 +262,7 @@ public class Window {
   }
 
   public void run() {
-    this.addAction(new Action(Input::update, 60));
+    this.addAction(new Action(this::tickInput, 60));
 
     while(!glfwWindowShouldClose(this.window)) {
       Action nextAction = null;
@@ -286,9 +286,13 @@ public class Window {
     glfwDestroyWindow(this.window);
   }
 
+  private void tickInput() {
+    this.eventPoller.run();
+    Input.update();
+  }
+
   private void tickFrame() {
     Input.updateLegacyInput();
-    this.eventPoller.run();
     this.events.onDraw();
     glfwSwapBuffers(this.window);
     Input.clearLegacyInput();

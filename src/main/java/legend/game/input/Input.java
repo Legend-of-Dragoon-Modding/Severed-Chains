@@ -41,8 +41,8 @@ public final class Input {
   public static final ControllerManager controllerManager = new ControllerManager(Input::onControllerConnected, Input::onControllerDisconnected);
   private static Controller playerOne;
 
-  private static final Object2BooleanMap<InputAction> held = new Object2BooleanOpenHashMap<>();
-  private static final Object2BooleanMap<InputAction> pressedThisFrame = new Object2BooleanOpenHashMap<>();
+  private static final Object2BooleanMap<InputBinding> held = new Object2BooleanOpenHashMap<>();
+  private static final Object2BooleanMap<InputBinding> pressedThisFrame = new Object2BooleanOpenHashMap<>();
 
   private Input() {
   }
@@ -56,12 +56,13 @@ public final class Input {
 
     for(final InputBinding binding : playerOne.bindings) {
       if(binding.getState().pressed) {
-        if(!held.containsKey(binding.getInputAction())) {
-          pressedThisFrame.put(binding.getInputAction(), true);
-          held.put(binding.getInputAction(), true);
+        if(!held.containsKey(binding)) {
+          pressedThisFrame.put(binding, true);
+          held.put(binding, true);
         }
-      } else {
-        held.removeBoolean(binding.getInputAction());
+      } else if(held.containsKey(binding)) {
+        held.removeBoolean(binding);
+        keyRepeat.remove(binding.getInputAction().hexCode);
       }
     }
 
@@ -72,17 +73,15 @@ public final class Input {
 
   public static void updateLegacyInput() {
     input_800bee90.set(0);
-    press_800bee94.set(0);
-    repeat_800bee98.set(0);
 
     for(final var entry : held.object2BooleanEntrySet()) {
       if(entry.getBooleanValue()) {
-        input_800bee90.or(entry.getKey().hexCode);
+        input_800bee90.or(entry.getKey().getInputAction().hexCode);
       }
     }
 
     for(final var entry : pressedThisFrame.object2BooleanEntrySet()) {
-      final int hexCode = entry.getKey().hexCode;
+      final int hexCode = entry.getKey().getInputAction().hexCode;
 
       if(entry.getBooleanValue()) {
         input_800bee90.or(hexCode);
@@ -96,6 +95,8 @@ public final class Input {
         keyRepeat.remove(hexCode);
       }
     }
+
+//    System.out.println(pressedThisFrame);
   }
 
   public static void clearLegacyInput() {
@@ -113,7 +114,13 @@ public final class Input {
   }
 
   public static boolean pressedThisFrame(final InputAction targetKey) {
-    return pressedThisFrame.getOrDefault(targetKey, false);
+    for(final var entry : pressedThisFrame.object2BooleanEntrySet()) {
+      if(entry.getKey().getInputAction() == targetKey) {
+        return entry.getBooleanValue();
+      }
+    }
+
+    return false;
   }
 
   public static boolean pressedWithRepeatPulse(final InputAction targetKey) {

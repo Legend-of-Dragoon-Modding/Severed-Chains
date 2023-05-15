@@ -684,13 +684,22 @@ public final class Ttle {
       }
 
       //LAB_800c8380
-    } else if(menuLoadingStage == 3) {
-      //LAB_800c8388
-      handleMainInput();
-      renderMenuLogo();
-      renderMenuOptions();
-      renderMenuLogoFire();
-      renderCopyright();
+    } else {
+      if(menuLoadingStage == 3 || menuLoadingStage == 4) {
+        //LAB_800c8388
+        if(menuLoadingStage == 3) {
+          handleMainInput();
+        }
+
+        renderMenuLogo();
+        renderMenuOptions();
+        renderMenuLogoFire();
+        renderCopyright();
+
+        if(menuLoadingStage == 4) {
+          menuLoadingStage = 3;
+        }
+      }
     }
 
     //LAB_800c83c8
@@ -709,10 +718,11 @@ public final class Ttle {
   }
 
   private static void resetIdleTime() {
-    menuLoadingStage = 3;
-    menuIdleTime = 0;
+    if(menuLoadingStage != 3) {
+      menuLoadingStage = 4;
+      menuIdleTime = 0;
+    }
   }
-
 
   private static void addInputHandlers() {
     onMouseMove = GPU.window().events.onMouseMove((window, x, y) -> {

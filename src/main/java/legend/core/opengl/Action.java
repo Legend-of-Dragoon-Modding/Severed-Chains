@@ -34,8 +34,8 @@ class Action {
   }
 
   private void run() {
-    this.action.run();
     this.updateTimer();
+    this.action.run();
   }
 
   private void updateTimer() {

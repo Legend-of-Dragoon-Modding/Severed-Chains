@@ -97,15 +97,18 @@ public class InputBinding {
   private void handlePositiveState() {
     if(!this.state.pressed) {
       this.state = InputState.PRESSED_THIS_FRAME;
+      System.out.println(this);
       this.lastPressedTriggerTime = glfwGetTime();
       this.pulseTimingsIndex = 0;
     } else if(this.state == InputState.PRESSED_THIS_FRAME || this.state == InputState.PRESSED_REPEAT) {
       this.state = InputState.PRESSED;
+      System.out.println(this);
     } else if(this.state == InputState.PRESSED) {
       final double targetTimeToBeat = this.lastPressedTriggerTime + this.pulseTimings[this.pulseTimingsIndex];
       if(glfwGetTime() >= targetTimeToBeat) {
         this.lastPressedTriggerTime = glfwGetTime();
         this.state = InputState.PRESSED_REPEAT;
+        System.out.println(this);
         if(this.pulseTimingsIndex + 1 < this.pulseTimings.length) {
           this.pulseTimingsIndex++;
         }
@@ -116,8 +119,10 @@ public class InputBinding {
   private void handleNoInputState() {
     if(this.state.pressed) {
       this.state = InputState.RELEASED_THIS_FRAME;
+      System.out.println(this);
     } else if(this.state == InputState.RELEASED_THIS_FRAME) {
       this.state = InputState.NO_INPUT;
+      System.out.println(this);
     }
   }
 
@@ -139,7 +144,7 @@ public class InputBinding {
 
   @Override
   public String toString() {
-    return "[" + this.inputAction + ':' + this.state + ']';
+    return "[" + this.inputType + ':' + this.inputAction + ':' + this.state + ']';
   }
 
   public InputAction getInputAction() { return this.inputAction; }
