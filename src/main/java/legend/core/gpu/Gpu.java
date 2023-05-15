@@ -1082,9 +1082,9 @@ public class Gpu {
       }
 
       case TQUATER_B_FOREGROUND -> {
-        r = Math.min(0xff, (int)Math.floor(br / 1.33) + fr);
-        g = Math.min(0xff, (int)Math.floor(bg / 1.33) + fg);
-        b = Math.min(0xff, (int)Math.floor(bb / 1.33) + fb);
+        r = Math.min(0xff, br * 3 / 4 + fr);
+        g = Math.min(0xff, bg * 3 / 4 + fg);
+        b = Math.min(0xff, bb * 3 / 4 + fb);
       }
 
       case HALF_B_FOREGROUND -> {
@@ -1112,9 +1112,9 @@ public class Gpu {
       }
 
       case TQUARTER_B_TQUARTER_F -> {
-        r = Math.min(0xff, (int)Math.floor(br / 1.33) + (int)Math.floor(fr / 1.33));
-        g = Math.min(0xff, (int)Math.floor(bg / 1.33) + (int)Math.floor(fg / 1.33));
-        b = Math.min(0xff, (int)Math.floor(bb / 1.33) + (int)Math.floor(fb / 1.33));
+        r = Math.min(0xff, br * 3 / 4 + fr * 3 / 4);
+        g = Math.min(0xff, bg * 3 / 4 + fg * 3 / 4);
+        b = Math.min(0xff, bb * 3 / 4 + fb * 3 / 4);
       }
 
       default -> throw new RuntimeException();
