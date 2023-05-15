@@ -15,17 +15,4 @@ public abstract class Controller {
   public void addBinding(final InputBinding binding) {
     this.bindings.add(binding);
   }
-
-  public void removeBinding(final InputBinding binding) {
-    this.bindings.remove(binding);
-  }
-
-  public void removeBinding(final InputAction inputAction, final InputType inputType) {
-    for(final InputBinding binding : this.bindings) {
-      if(binding.getInputAction() == inputAction && binding.getInputType() == inputType) {
-        this.bindings.remove(binding);
-        break;
-      }
-    }
-  }
 }

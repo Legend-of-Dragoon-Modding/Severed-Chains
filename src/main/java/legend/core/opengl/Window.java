@@ -6,7 +6,7 @@ import legend.game.input.Controller;
 import legend.game.input.Input;
 import legend.game.input.InputAction;
 import legend.game.input.InputBinding;
-import legend.game.input.InputBindingState;
+import legend.game.input.InputState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.Version;
@@ -113,7 +113,8 @@ public class Window {
   private float scale = 1.0f;
   private boolean hasFocus;
 
-  private int fpsLimit = Integer.MAX_VALUE;
+  private final List<Action> actions = new ArrayList<>();
+  private final Action render = this.addAction(new Action(this::tickFrame, 60));
 
   public Window(final String title, final int width, final int height) {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -169,6 +170,11 @@ public class Window {
     }
   }
 
+  public Action addAction(final Action action) {
+    this.actions.add(action);
+    return action;
+  }
+
   void makeContextCurrent() {
     glfwMakeContextCurrent(this.window);
     glfwSwapInterval(0);
@@ -179,11 +185,11 @@ public class Window {
   }
 
   public void setFpsLimit(final int limit) {
-    this.fpsLimit = limit;
+    this.render.setExpectedFps(limit);
   }
 
   public int getFpsLimit() {
-    return this.fpsLimit;
+    return this.render.getExpectedFps();
   }
 
   public void show() {
@@ -256,22 +262,21 @@ public class Window {
   }
 
   public void run() {
-    long timer = System.nanoTime() + 1_000_000_000 / this.fpsLimit;
+    this.addAction(new Action(Input::update, 60));
 
     while(!glfwWindowShouldClose(this.window)) {
-      this.eventPoller.run();
-      Input.update();
-      this.events.onDraw();
+      Action nextAction = null;
 
-      glfwSwapBuffers(this.window);
+      for(final Action action : this.actions) {
+        action.tick();
 
-      if(this.fpsLimit != Integer.MAX_VALUE) {
-        while(System.nanoTime() <= timer) {
-
-          DebugHelper.sleep(1);
+        if(nextAction == null || action.nanosUntilNextRun() < nextAction.nanosUntilNextRun()) {
+          nextAction = action;
         }
+      }
 
-        timer = System.nanoTime() + 1_000_000_000 / this.fpsLimit;
+      while(!nextAction.isReady()) {
+        DebugHelper.sleep(1);
       }
     }
 
@@ -279,6 +284,14 @@ public class Window {
 
     glfwFreeCallbacks(this.window);
     glfwDestroyWindow(this.window);
+  }
+
+  private void tickFrame() {
+    Input.updateLegacyInput();
+    this.eventPoller.run();
+    this.events.onDraw();
+    glfwSwapBuffers(this.window);
+    Input.clearLegacyInput();
   }
 
   public static final class Events {
@@ -440,12 +453,12 @@ public class Window {
 
     public void callInputEvents(final Controller controller) {
       for(final InputBinding binding : controller.bindings) {
-        if(binding.getState() == InputBindingState.PRESSED_THIS_FRAME) {
+        if(binding.getState() == InputState.PRESSED_THIS_FRAME) {
           this.onInputPressedThisFrame(binding.getInputAction());
           this.onInputPressedWithRepeat(binding.getInputAction());
-        } else if(binding.getState() == InputBindingState.RELEASED_THIS_FRAME) {
+        } else if(binding.getState() == InputState.RELEASED_THIS_FRAME) {
           this.onInputReleasedThisFrame(binding.getInputAction());
-        } else if(binding.getState() == InputBindingState.PRESSED_REPEAT) {
+        } else if(binding.getState() == InputState.PRESSED_REPEAT) {
           this.onInputPressedWithRepeat(binding.getInputAction());
         }
       }

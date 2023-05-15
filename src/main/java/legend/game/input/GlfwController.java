@@ -36,11 +36,7 @@ public class GlfwController extends Controller {
 
     this.probeInputs();
 
-    this.bindings.addAll(ControllerDatabase.createBindings(this.getGuid()));
-
-    for(final InputBinding binding : this.bindings) {
-      binding.setTargetController(this);
-    }
+    this.bindings.addAll(ControllerDatabase.createBindings(this.getGuid(), this));
   }
 
   public String getName() {

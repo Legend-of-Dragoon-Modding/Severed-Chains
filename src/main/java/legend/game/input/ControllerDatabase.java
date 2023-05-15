@@ -29,13 +29,13 @@ public final class ControllerDatabase {
     }
   }
 
-  public static List<InputBinding> createBindings(final String targetControllerGuid) {
+  public static List<InputBinding> createBindings(final String targetControllerGuid, final Controller controller) {
     final List<InputBinding> returnedBindings = new ArrayList<>();
 
     final String dbMap = getDbMap(targetControllerGuid);
 
     for(final InputAction inputAction : InputAction.values()) {
-      final InputBinding newBinding = new InputBinding(inputAction);
+      final InputBinding newBinding = new InputBinding(inputAction, controller);
       getExistingBindingData(newBinding, dbMap);
       modifyForSpecialCases(newBinding);
       returnedBindings.add(newBinding);
@@ -45,8 +45,6 @@ public final class ControllerDatabase {
   }
 
   public static void getExistingBindingData(final InputBinding inputBinding, final String dbMap) {
-    inputBinding.setHexCode(getHexCode(inputBinding.getInputAction()));
-
     final String textLabel = getTextCodeLabel(inputBinding.getInputAction());
     final String[] mapInfo = dbMap.split(",");
     for(final String mapEntry : mapInfo) {
@@ -134,34 +132,6 @@ public final class ControllerDatabase {
     return defaultMap;
   }
 
-  private static int getHexCode(final InputAction targetInputAction) {
-    return switch(targetInputAction) {
-      case BUTTON_NORTH -> 0x10;
-      case BUTTON_SOUTH -> 0x20;
-      case BUTTON_EAST -> 0x40;
-      case BUTTON_WEST -> 0x80;
-
-      case BUTTON_CENTER_1 -> 0x100;
-      case BUTTON_CENTER_2 -> 0x800;
-
-      case BUTTON_THUMB_1 -> 0x200;
-      case BUTTON_THUMB_2 -> 0x400;
-
-      case BUTTON_SHOULDER_LEFT_1 -> 0x4;
-      case BUTTON_SHOULDER_LEFT_2 -> 0x1;
-
-      case BUTTON_SHOULDER_RIGHT_1 -> 0x8;
-      case BUTTON_SHOULDER_RIGHT_2 -> 0x2;
-
-      case JOYSTICK_LEFT_BUTTON_UP, DPAD_UP -> 0x1000;
-      case JOYSTICK_LEFT_BUTTON_DOWN, DPAD_DOWN -> 0x4000;
-      case JOYSTICK_LEFT_BUTTON_LEFT, DPAD_LEFT -> 0x8000;
-      case JOYSTICK_LEFT_BUTTON_RIGHT, DPAD_RIGHT -> 0x2000;
-
-      default -> -1;
-    };
-  }
-
   private static String getTextCodeLabel(final InputAction targetInputAction) {
     return switch(targetInputAction) {
       case BUTTON_NORTH -> "y";
@@ -187,10 +157,10 @@ public final class ControllerDatabase {
       case DPAD_RIGHT -> "dpright";
 
       case JOYSTICK_LEFT_X, JOYSTICK_LEFT_BUTTON_LEFT, JOYSTICK_LEFT_BUTTON_RIGHT -> "leftx";
-      case JOYSTICK_LEFT_Y,JOYSTICK_LEFT_BUTTON_UP,JOYSTICK_LEFT_BUTTON_DOWN -> "lefty";
+      case JOYSTICK_LEFT_Y, JOYSTICK_LEFT_BUTTON_UP,JOYSTICK_LEFT_BUTTON_DOWN -> "lefty";
 
-      case JOYSTICK_RIGHT_X,  JOYSTICK_RIGHT_BUTTON_LEFT, JOYSTICK_RIGHT_BUTTON_RIGHT -> "rightx";
-      case JOYSTICK_RIGHT_Y,JOYSTICK_RIGHT_BUTTON_UP, JOYSTICK_RIGHT_BUTTON_DOWN-> "righty";
+      case JOYSTICK_RIGHT_X, JOYSTICK_RIGHT_BUTTON_LEFT, JOYSTICK_RIGHT_BUTTON_RIGHT -> "rightx";
+      case JOYSTICK_RIGHT_Y, JOYSTICK_RIGHT_BUTTON_UP, JOYSTICK_RIGHT_BUTTON_DOWN-> "righty";
 
       default -> "nobinding";
     };

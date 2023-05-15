@@ -10,7 +10,7 @@ public class DummyController extends Controller {
     for(final InputBinding binding : this.bindings) {
       binding.poll();
 
-      if(binding.getState() == InputBindingState.PRESSED_THIS_FRAME) {
+      if(binding.getState() == InputState.PRESSED_THIS_FRAME) {
         this.activityThisFrame = true;
       }
     }

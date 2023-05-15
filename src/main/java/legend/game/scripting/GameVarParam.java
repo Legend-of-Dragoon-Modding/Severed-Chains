@@ -27,8 +27,8 @@ public class GameVarParam extends Param {
       case 0 -> Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20.get();
       case 1 -> Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c.get();
       case 2 -> Scus94491BpeSegment_800b.tickCount_800bb0fc.get();
-      case 3 -> Scus94491BpeSegment_800b._800bee90.get();
-      case 4 -> Scus94491BpeSegment_800b._800bee94.get();
+      case 3 -> Scus94491BpeSegment_800b.input_800bee90.get();
+      case 4 -> Scus94491BpeSegment_800b.press_800bee94.get();
       case 5 -> Scus94491BpeSegment_800b.gameState_800babc8.gold_94;
       case 6 -> Scus94491BpeSegment_800b.gameState_800babc8.scriptData_08[0];
       case 7 -> Scus94491BpeSegment_8007.clearRed_8007a3a8.get();
@@ -49,7 +49,7 @@ public class GameVarParam extends Param {
       case 22 -> Scus94491BpeSegment_800b.gameState_800babc8.submapCut_a8;
       case 24 -> Scus94491BpeSegment_800b.gameState_800babc8._b0;
       case 25 -> Scus94491BpeSegment_8007.vsyncMode_8007a3b8.get();
-      case 26 -> Scus94491BpeSegment_800b._800bee98.get();
+      case 26 -> Scus94491BpeSegment_800b.repeat_800bee98.get();
       case 27 -> Scus94491BpeSegment_800b._800beebc.get();
       case 28 -> Scus94491BpeSegment_800b._800bee9c.get();
       case 29 -> Scus94491BpeSegment_800b._800beea4.get();
@@ -158,8 +158,8 @@ public class GameVarParam extends Param {
       case 0 -> Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20.set(val);
       case 1 -> Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c.set(val);
       case 2 -> Scus94491BpeSegment_800b.tickCount_800bb0fc.set(val);
-      case 3 -> Scus94491BpeSegment_800b._800bee90.set(val);
-      case 4 -> Scus94491BpeSegment_800b._800bee94.set(val);
+      case 3 -> Scus94491BpeSegment_800b.input_800bee90.set(val);
+      case 4 -> Scus94491BpeSegment_800b.press_800bee94.set(val);
       case 5 -> Scus94491BpeSegment_800b.gameState_800babc8.gold_94 = val;
       case 6 -> Scus94491BpeSegment_800b.gameState_800babc8.scriptData_08[0] = val;
       case 7 -> Scus94491BpeSegment_8007.clearRed_8007a3a8.set(val);
@@ -180,7 +180,7 @@ public class GameVarParam extends Param {
       case 22 -> Scus94491BpeSegment_800b.gameState_800babc8.submapCut_a8 = val;
       case 24 -> Scus94491BpeSegment_800b.gameState_800babc8._b0 = val;
       case 25 -> Scus94491BpeSegment_8007.vsyncMode_8007a3b8.set(val);
-      case 26 -> Scus94491BpeSegment_800b._800bee98.set(val);
+      case 26 -> Scus94491BpeSegment_800b.repeat_800bee98.set(val);
       case 27 -> Scus94491BpeSegment_800b._800beebc.set(val);
       case 28 -> Scus94491BpeSegment_800b._800bee9c.set(val);
       case 29 -> Scus94491BpeSegment_800b._800beea4.set(val);
