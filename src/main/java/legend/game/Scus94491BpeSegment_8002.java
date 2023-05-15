@@ -2717,7 +2717,7 @@ public final class Scus94491BpeSegment_8002 {
               .rgb(3, Config.getTextBoxRgb(3))
               .pos(3, x + textbox.width_1c, y + textbox.height_1e)
             );
-          }else if(Config.getTextBoxColourMode() == 1) {
+          } else if(Config.getTextBoxColourMode() == 1) {
             GPU.queueCommand(textbox.z_0c, new GpuCommandPoly(4)
               .translucent(Translucency.of(Config.getTextBoxTransparencyMode()))
               .rgb(0, Config.getTextBoxRgb(0))
@@ -2740,7 +2740,7 @@ public final class Scus94491BpeSegment_8002 {
               .rgb(3, Config.getTextBoxRgb(7))
               .pos(3, x + textbox.width_1c, y + textbox.height_1e)
             );
-          }else if(Config.getTextBoxColourMode() == 2) {
+          } else if(Config.getTextBoxColourMode() == 2) {
             GPU.queueCommand(textbox.z_0c, new GpuCommandPoly(4)
               .translucent(Translucency.of(Config.getTextBoxTransparencyMode()))
               .rgb(0, Config.getTextBoxRgb(0))

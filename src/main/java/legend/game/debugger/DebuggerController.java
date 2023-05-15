@@ -226,7 +226,7 @@ public class DebuggerController {
       textBoxBase.setSelected(true);
       textBoxHorizontal.setSelected(false);
       textBoxVertical.setSelected(false);
-    }else if(Config.getTextBoxColourMode() == 1) {
+    } else if(Config.getTextBoxColourMode() == 1) {
       textBoxBase.setSelected(false);
       textBoxHorizontal.setSelected(true);
       textBoxVertical.setSelected(false);
