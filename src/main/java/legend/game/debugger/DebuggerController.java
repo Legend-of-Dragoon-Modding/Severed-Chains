@@ -230,7 +230,7 @@ public class DebuggerController {
       textBoxBase.setSelected(false);
       textBoxHorizontal.setSelected(true);
       textBoxVertical.setSelected(false);
-    }else if(Config.getTextBoxColourMode() == 2) {
+    } else if(Config.getTextBoxColourMode() == 2) {
       textBoxBase.setSelected(false);
       textBoxHorizontal.setSelected(false);
       textBoxVertical.setSelected(true);
@@ -501,12 +501,12 @@ public class DebuggerController {
       textBoxHorizontal.setSelected(false);
       textBoxVertical.setSelected(false);
       Config.setTextBoxColourMode(0);
-    }else if (event.toString().contains("textBoxHorizontal")) {
+    } else if (event.toString().contains("textBoxHorizontal")) {
       textBoxBase.setSelected(false);
       textBoxHorizontal.setSelected(true);
       textBoxVertical.setSelected(false);
       Config.setTextBoxColourMode(1);
-    }else if (event.toString().contains("textBoxVertical")) {
+    } else if (event.toString().contains("textBoxVertical")) {
       textBoxBase.setSelected(false);
       textBoxHorizontal.setSelected(false);
       textBoxVertical.setSelected(true);
