@@ -95,8 +95,6 @@ public final class Input {
         keyRepeat.remove(hexCode);
       }
     }
-
-//    System.out.println(pressedThisFrame);
   }
 
   public static void clearLegacyInput() {
