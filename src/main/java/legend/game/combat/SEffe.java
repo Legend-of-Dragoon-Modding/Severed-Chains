@@ -905,7 +905,7 @@ public final class SEffe {
   @Method(0x800fc42cL)
   public static void FUN_800fc42c(final EffectManagerData6c a0, final ParticleEffectData98 a1, final ParticleEffectInstance94 a2) {
     a2._50.setX((short)(a2._14 + (rcos(a2._1a.getX()) * a2._1a.getZ() >> 12)));
-    a2._50.setY((short)(a2._18 + (rsin(a2._1a.getX()) * a2._1a.getZ() >> 12)));
+    a2._50.setZ((short)(a2._18 + (rsin(a2._1a.getX()) * a2._1a.getZ() >> 12)));
     a2._1a.z.add((short)16);
     a2._1a.x.add(a2._1a.getY());
   }
