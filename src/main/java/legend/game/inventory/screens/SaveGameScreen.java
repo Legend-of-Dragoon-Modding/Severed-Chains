@@ -63,7 +63,7 @@ public class SaveGameScreen extends MenuScreen {
     playSound(2);
 
     if(save == null) {
-      menuStack.pushScreen(new InputBoxScreen("Save name:", SAVES.generateSaveName(gameState_800babc8.campaignName), 2, this::onNewSaveResult));
+      menuStack.pushScreen(new InputBoxScreen("Save name:", SAVES.generateSaveName(gameState_800babc8.campaignName), this::onNewSaveResult));
     } else {
       menuStack.pushScreen(new MessageBoxScreen(Overwrite_save_8011c9e8, 2, result -> this.onOverwriteResult(result, save)));
     }

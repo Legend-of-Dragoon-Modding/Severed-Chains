@@ -969,10 +969,10 @@ public final class Bttl_800f {
     final ScriptState<?> state = scriptStatePtrArr_800bc1c0[bobjIndex];
     final BattleObject27c bobj = (BattleObject27c)state.innerStruct_00;
 
-    final short spPerPhysicalHit;
-    final short mpPerPhysicalHit;
-    final short spPerMagicalHit;
-    final short mpPerMagicalHit;
+    final int spPerPhysicalHit;
+    final int mpPerPhysicalHit;
+    final int spPerMagicalHit;
+    final int mpPerMagicalHit;
     final int speed;
     if((state.storage_44[7] & 0x4) != 0) {
       spPerPhysicalHit = 0;
@@ -982,12 +982,12 @@ public final class Bttl_800f {
       speed = ((MonsterBattleObject)bobj).originalSpeed_64;
     } else {
       //LAB_800f3244
-      final ActiveStatsa0 stats = stats_800be5f8.get(bobj.charIndex_272);
-      spPerPhysicalHit = stats.spPerPhysicalHit_4e.get();
-      mpPerPhysicalHit = stats.mpPerPhysicalHit_50.get();
-      spPerMagicalHit = stats.spPerMagicalHit_52.get();
-      mpPerMagicalHit = stats.mpPerMagicalHit_54.get();
-      speed = stats.gearSpeed_86.get() + stats.bodySpeed_69.get();
+      final ActiveStatsa0 stats = stats_800be5f8[bobj.charIndex_272];
+      spPerPhysicalHit = stats.spPerPhysicalHit_4e;
+      mpPerPhysicalHit = stats.mpPerPhysicalHit_50;
+      spPerMagicalHit = stats.spPerMagicalHit_52;
+      mpPerMagicalHit = stats.mpPerMagicalHit_54;
+      speed = stats.gearSpeed_86 + stats.bodySpeed_69;
     }
 
     //LAB_800f327c

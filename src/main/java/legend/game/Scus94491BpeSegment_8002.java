@@ -142,12 +142,10 @@ import static legend.game.Scus94491BpeSegment_8004.RotMatrixX;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixY;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixZ;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrix_Zyx;
-import static legend.game.Scus94491BpeSegment_8004.height_8004dd34;
 import static legend.game.Scus94491BpeSegment_8004.itemStats_8004f2ac;
 import static legend.game.Scus94491BpeSegment_8004.loadingGameStateOverlay_8004dd08;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
 import static legend.game.Scus94491BpeSegment_8004.setCdVolume;
-import static legend.game.Scus94491BpeSegment_8004.width_8004dd34;
 import static legend.game.Scus94491BpeSegment_8005._8005027c;
 import static legend.game.Scus94491BpeSegment_8005._8005039c;
 import static legend.game.Scus94491BpeSegment_8005._800503b0;
@@ -198,8 +196,6 @@ import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.hasNoEncounters_800bed58;
 import static legend.game.Scus94491BpeSegment_800b.inventoryMenuState_800bdc28;
 import static legend.game.Scus94491BpeSegment_800b.loadedDrgnFiles_800bcf78;
-import static legend.game.Scus94491BpeSegment_800b.oldHeight;
-import static legend.game.Scus94491BpeSegment_800b.oldWidth;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba4;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba8;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
@@ -1253,11 +1249,7 @@ public final class Scus94491BpeSegment_8002 {
 
           renderablePtr_800bdc5c = null;
           uiFile_800bdc3c = null;
-
-          oldWidth = width_8004dd34;
-          oldHeight = height_8004dd34;
-          resizeDisplay(368, 240);
-
+          resizeDisplay(384, 240);
           loadDrgnFile(0, 6665, data -> menuAssetsLoaded(data, 0));
           loadDrgnFile(0, 6666, data -> menuAssetsLoaded(data, 1));
           textZ_800bdf00.set(33);
@@ -1292,8 +1284,6 @@ public final class Scus94491BpeSegment_8002 {
       case RENDER_POST_COMBAT_REPORT_29 -> renderPostCombatReport();
 
       case UNLOAD_CAMPAIGN_SELECTION_MENU, UNLOAD_SAVE_GAME_MENU_20, UNLOAD_CHAR_SWAP_MENU_25, UNLOAD_NEW_CAMPAIGN_MENU -> {
-        resizeDisplay(oldWidth, oldHeight);
-
         menuStack.popScreen();
         decrementOverlayCount();
 
@@ -1317,8 +1307,6 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       case UNLOAD_INVENTORY_MENU_5, UNLOAD_SHOP_MENU_10, UNLOAD_TOO_MANY_ITEMS_MENU_35 -> {
-        resizeDisplay(oldWidth, oldHeight);
-
         decrementOverlayCount();
         FUN_8001e010(-1);
         SCRIPTS.start();
@@ -1326,8 +1314,6 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       case UNLOAD_POST_COMBAT_REPORT_30 -> {
-        resizeDisplay(oldWidth, oldHeight);
-
         decrementOverlayCount();
         SCRIPTS.start();
         whichMenu_800bdc38 = WhichMenu.NONE_0;
@@ -1377,7 +1363,7 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80022998
     //LAB_800229d0
     int spellCount = 0;
-    for(int dlevel = 0; dlevel < stats_800be5f8.get(charIndex).dlevel_0f.get() + 1; dlevel++) {
+    for(int dlevel = 0; dlevel < stats_800be5f8[charIndex].dlevel_0f + 1; dlevel++) {
       final MagicStuff08 spellStuff = magicStuff_80111d20.get(charIndex).deref().get(dlevel);
       final byte spellIndex = spellStuff.spellIndex_02.get();
 
@@ -1461,25 +1447,25 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x80022b50L)
   public static int addHp(final int charIndex, final int amount) {
     final CharacterData2c charData = gameState_800babc8.charData_32c[charIndex];
-    final ActiveStatsa0 stats = stats_800be5f8.get(charIndex);
+    final ActiveStatsa0 stats = stats_800be5f8[charIndex];
 
-    if(charData.hp_08 == stats.maxHp_66.get()) {
+    if(charData.hp_08 == stats.maxHp_66) {
       return -2;
     }
 
     //LAB_80022bb4
     final int ret;
     if(amount == -1) {
-      charData.hp_08 = stats.maxHp_66.get();
+      charData.hp_08 = stats.maxHp_66;
       ret = -1;
     } else {
       //LAB_80022bc8
       charData.hp_08 += amount;
 
-      if(charData.hp_08 < stats.maxHp_66.get()) {
+      if(charData.hp_08 < stats.maxHp_66) {
         ret = amount;
       } else {
-        charData.hp_08 = stats.maxHp_66.get();
+        charData.hp_08 = stats.maxHp_66;
         ret = -1;
       }
     }
@@ -1498,25 +1484,25 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x80022c08L)
   public static int addMp(final int charIndex, final int amount) {
     final CharacterData2c charData = gameState_800babc8.charData_32c[charIndex];
-    final ActiveStatsa0 stats = stats_800be5f8.get(charIndex);
+    final ActiveStatsa0 stats = stats_800be5f8[charIndex];
 
-    if(stats.maxMp_6e.get() == 0 || charData.mp_0a == stats.maxMp_6e.get()) {
+    if(stats.maxMp_6e == 0 || charData.mp_0a == stats.maxMp_6e) {
       return -2;
     }
 
     //LAB_80022c78
     final int ret;
     if(amount == -1) {
-      charData.mp_0a = stats.maxMp_6e.get();
+      charData.mp_0a = stats.maxMp_6e;
       ret = -1;
     } else {
       //LAB_80022c8c
       charData.mp_0a += amount;
 
-      if(charData.mp_0a < stats.maxMp_6e.get()) {
+      if(charData.mp_0a < stats.maxMp_6e) {
         ret = amount;
       } else {
-        charData.mp_0a = stats.maxMp_6e.get();
+        charData.mp_0a = stats.maxMp_6e;
         ret = -1;
       }
     }
@@ -1574,7 +1560,7 @@ public final class Scus94491BpeSegment_8002 {
         amount = -1;
       } else {
         //LAB_80022ef0
-        amount = stats_800be5f8.get(charIndex).maxHp_66.get() * percentage / 100;
+        amount = stats_800be5f8[charIndex].maxHp_66 * percentage / 100;
       }
 
       //LAB_80022f3c
@@ -1591,7 +1577,7 @@ public final class Scus94491BpeSegment_8002 {
         amount = -1;
       } else {
         //LAB_80022fac
-        amount = stats_800be5f8.get(charIndex).maxMp_6e.get() * percentage / 100;
+        amount = stats_800be5f8[charIndex].maxMp_6e * percentage / 100;
       }
 
       //LAB_80022ff8
@@ -2720,17 +2706,80 @@ public final class Scus94491BpeSegment_8002 {
         final int x = textbox.x_14 - centreScreenX_1f8003dc.get();
         final int y = textbox.y_16 - centreScreenY_1f8003de.get();
 
-        GPU.queueCommand(textbox.z_0c, new GpuCommandPoly(4)
-          .translucent(Translucency.HALF_B_PLUS_HALF_F)
-          .monochrome(0, 0)
-          .pos(0, x - textbox.width_1c, y - textbox.height_1e)
-          .rgb(1, (int)_80010868.offset(0x0L).get(), (int)_80010868.offset(0x4L).get(), (int)_80010868.offset(0x8L).get())
-          .pos(1, x + textbox.width_1c, y - textbox.height_1e)
-          .rgb(2, (int)_80010868.offset(0x0L).get(), (int)_80010868.offset(0x4L).get(), (int)_80010868.offset(0x8L).get())
-          .pos(2, x - textbox.width_1c, y + textbox.height_1e)
-          .monochrome(3, 0)
-          .pos(3, x + textbox.width_1c, y + textbox.height_1e)
-        );
+        if(Config.textBoxColour()) {
+          if(Config.getTextBoxColourMode() == 0) {
+            GPU.queueCommand(textbox.z_0c, new GpuCommandPoly(4)
+              .translucent(Translucency.of(Config.getTextBoxTransparencyMode()))
+              .rgb(0, Config.getTextBoxRgb(0))
+              .pos(0, x - textbox.width_1c, y - textbox.height_1e)
+              .rgb(1, Config.getTextBoxRgb(1))
+              .pos(1, x + textbox.width_1c, y - textbox.height_1e)
+              .rgb(2, Config.getTextBoxRgb(2))
+              .pos(2, x - textbox.width_1c, y + textbox.height_1e)
+              .rgb(3, Config.getTextBoxRgb(3))
+              .pos(3, x + textbox.width_1c, y + textbox.height_1e)
+            );
+          } else if(Config.getTextBoxColourMode() == 1) {
+            GPU.queueCommand(textbox.z_0c, new GpuCommandPoly(4)
+              .translucent(Translucency.of(Config.getTextBoxTransparencyMode()))
+              .rgb(0, Config.getTextBoxRgb(0))
+              .pos(0, x - textbox.width_1c, y - textbox.height_1e)
+              .rgb(1, Config.getTextBoxRgb(1))
+              .pos(1, x, y - textbox.height_1e)
+              .rgb(2, Config.getTextBoxRgb(2))
+              .pos(2, x - textbox.width_1c, y + textbox.height_1e)
+              .rgb(3, Config.getTextBoxRgb(3))
+              .pos(3, x, y + textbox.height_1e)
+            );
+            GPU.queueCommand(textbox.z_0c, new GpuCommandPoly(4)
+              .translucent(Translucency.of(Config.getTextBoxTransparencyMode()))
+              .rgb(0, Config.getTextBoxRgb(4))
+              .pos(0, x, y - textbox.height_1e)
+              .rgb(1, Config.getTextBoxRgb(5))
+              .pos(1, x + textbox.width_1c, y - textbox.height_1e)
+              .rgb(2, Config.getTextBoxRgb(6))
+              .pos(2, x, y + textbox.height_1e)
+              .rgb(3, Config.getTextBoxRgb(7))
+              .pos(3, x + textbox.width_1c, y + textbox.height_1e)
+            );
+          } else if(Config.getTextBoxColourMode() == 2) {
+            GPU.queueCommand(textbox.z_0c, new GpuCommandPoly(4)
+              .translucent(Translucency.of(Config.getTextBoxTransparencyMode()))
+              .rgb(0, Config.getTextBoxRgb(0))
+              .pos(0, x - textbox.width_1c, y - textbox.height_1e)
+              .rgb(1, Config.getTextBoxRgb(1))
+              .pos(1, x + textbox.width_1c, y - textbox.height_1e)
+              .rgb(2, Config.getTextBoxRgb(2))
+              .pos(2, x - textbox.width_1c, y)
+              .rgb(3, Config.getTextBoxRgb(3))
+              .pos(3, x + textbox.width_1c, y)
+            );
+
+            GPU.queueCommand(textbox.z_0c, new GpuCommandPoly(4)
+              .translucent(Translucency.of(Config.getTextBoxTransparencyMode()))
+              .rgb(0, Config.getTextBoxRgb(4))
+              .pos(0, x - textbox.width_1c, y)
+              .rgb(1, Config.getTextBoxRgb(5))
+              .pos(1, x + textbox.width_1c, y)
+              .rgb(2, Config.getTextBoxRgb(6))
+              .pos(2, x - textbox.width_1c, y + textbox.height_1e)
+              .rgb(3, Config.getTextBoxRgb(7))
+              .pos(3, x + textbox.width_1c, y + textbox.height_1e)
+            );
+          }
+        } else {
+          GPU.queueCommand(textbox.z_0c, new GpuCommandPoly(4)
+            .translucent(Translucency.HALF_B_PLUS_HALF_F)
+            .monochrome(0, 0)
+            .pos(0, x - textbox.width_1c, y - textbox.height_1e)
+            .rgb(1, (int)_80010868.offset(0x0L).get(), (int)_80010868.offset(0x4L).get(), (int)_80010868.offset(0x8L).get())
+            .pos(1, x + textbox.width_1c, y - textbox.height_1e)
+            .rgb(2, (int)_80010868.offset(0x0L).get(), (int)_80010868.offset(0x4L).get(), (int)_80010868.offset(0x8L).get())
+            .pos(2, x - textbox.width_1c, y + textbox.height_1e)
+            .monochrome(3, 0)
+            .pos(3, x + textbox.width_1c, y + textbox.height_1e)
+          );
+        }
 
         if(textbox._06 != 0) {
           renderTextboxBorder(textboxIndex, x - textbox.width_1c, y - textbox.height_1e, x + textbox.width_1c, y + textbox.height_1e);
@@ -4711,66 +4760,66 @@ public final class Scus94491BpeSegment_8002 {
   public static void clearCharacterStats() {
     //LAB_8002a730
     for(int charIndex = 0; charIndex < 9; charIndex++) {
-      final ActiveStatsa0 stats = stats_800be5f8.get(charIndex);
+      final ActiveStatsa0 stats = stats_800be5f8[charIndex];
 
-      stats.xp_00.set(0);
-      stats.hp_04.set(0);
-      stats.mp_06.set(0);
-      stats.sp_08.set(0);
-      stats.dxp_0a.set(0);
-      stats.flags_0c.set(0);
-      stats.level_0e.set(0);
-      stats.dlevel_0f.set(0);
+      stats.xp_00 = 0;
+      stats.hp_04 = 0;
+      stats.mp_06 = 0;
+      stats.sp_08 = 0;
+      stats.dxp_0a = 0;
+      stats.flags_0c = 0;
+      stats.level_0e = 0;
+      stats.dlevel_0f = 0;
 
       //LAB_8002a758
       for(int i = 0; i < 5; i++) {
-        stats.equipment_30.get(i).set(0xff);
+        stats.equipment_30[i] = 0xff;
       }
 
-      stats.selectedAddition_35.set(0);
+      stats.selectedAddition_35 = 0;
 
       //LAB_8002a780;
       for(int i = 0; i < 8; i++) {
-        stats.additionLevels_36.get(i).set(0);
-        stats.additionXp_3e.get(i).set(0);
+        stats.additionLevels_36[i] = 0;
+        stats.additionXp_3e[i] = 0;
       }
 
-      stats.physicalImmunity_46.set(0);
-      stats.magicalImmunity_48.set(0);
-      stats.physicalResistance_4a.set(0);
-      stats.spMultiplier_4c.set((short)0);
-      stats.spPerPhysicalHit_4e.set((short)0);
-      stats.mpPerPhysicalHit_50.set((short)0);
-      stats.spPerMagicalHit_52.set((short)0);
-      stats.mpPerMagicalHit_54.set((short)0);
-      stats._56.set((short)0);
-      stats.hpRegen_58.set((short)0);
-      stats.mpRegen_5a.set((short)0);
-      stats.spRegen_5c.set((short)0);
-      stats.revive_5e.set((short)0);
-      stats.magicalResistance_60.set(0);
-      stats.hpMulti_62.set((short)0);
-      stats.mpMulti_64.set((short)0);
-      stats.maxHp_66.set(0);
-      stats.addition_68.set(0);
-      stats.bodySpeed_69.set(0);
-      stats.bodyAttack_6a.set(0);
-      stats.bodyMagicAttack_6b.set(0);
-      stats.bodyDefence_6c.set(0);
-      stats.bodyMagicDefence_6d.set(0);
-      stats.maxMp_6e.set(0);
-      stats.spellIndex_70.set(0);
-      stats._71.set(0);
-      stats.dragoonAttack_72.set(0);
-      stats.dragoonMagicAttack_73.set(0);
-      stats.dragoonDefence_74.set(0);
-      stats.dragoonMagicDefence_75.set(0);
+      stats.physicalImmunity_46 = 0;
+      stats.magicalImmunity_48 = 0;
+      stats.physicalResistance_4a = 0;
+      stats.spMultiplier_4c = 0;
+      stats.spPerPhysicalHit_4e = 0;
+      stats.mpPerPhysicalHit_50 = 0;
+      stats.spPerMagicalHit_52 = 0;
+      stats.mpPerMagicalHit_54 = 0;
+      stats._56 = 0;
+      stats.hpRegen_58 = 0;
+      stats.mpRegen_5a = 0;
+      stats.spRegen_5c = 0;
+      stats.revive_5e = 0;
+      stats.magicalResistance_60 = 0;
+      stats.hpMulti_62 = 0;
+      stats.mpMulti_64 = 0;
+      stats.maxHp_66 = 0;
+      stats.addition_68 = 0;
+      stats.bodySpeed_69 = 0;
+      stats.bodyAttack_6a = 0;
+      stats.bodyMagicAttack_6b = 0;
+      stats.bodyDefence_6c = 0;
+      stats.bodyMagicDefence_6d = 0;
+      stats.maxMp_6e = 0;
+      stats.spellIndex_70 = 0;
+      stats._71 = 0;
+      stats.dragoonAttack_72 = 0;
+      stats.dragoonMagicAttack_73 = 0;
+      stats.dragoonDefence_74 = 0;
+      stats.dragoonMagicDefence_75 = 0;
 
       FUN_8002a86c(charIndex);
 
-      stats._9c.set(0);
-      stats.additionSpMultiplier_9e.set(0);
-      stats.additionDamageMultiplier_9f.set(0);
+      stats._9c = 0;
+      stats.additionSpMultiplier_9e = 0;
+      stats.additionDamageMultiplier_9f = 0;
     }
 
     FUN_8002a8f8();
@@ -4779,37 +4828,37 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x8002a86cL)
   public static void FUN_8002a86c(final int charIndex) {
-    final ActiveStatsa0 stats = stats_800be5f8.get(charIndex);
+    final ActiveStatsa0 stats = stats_800be5f8[charIndex];
 
-    stats.specialEffectFlag_76.set(0);
-    stats._77.set(0);
-    stats._78.set(0);
-    stats._79.set(0);
-    stats.elementFlag_7a.set(0);
-    stats._7b.set(0);
-    stats.elementalResistanceFlag_7c.set(0);
-    stats.elementalImmunityFlag_7d.set(0);
-    stats.statusResistFlag_7e.set(0);
-    stats._7f.set(0);
-    stats._80.set(0);
-    stats.special1_81.set(0);
-    stats.special2_82.set(0);
-    stats._83.set(0);
-    stats._84.set(0);
+    stats.specialEffectFlag_76 = 0;
+    stats._77 = 0;
+    stats._78 = 0;
+    stats._79 = 0;
+    stats.elementFlag_7a = 0;
+    stats._7b = 0;
+    stats.elementalResistanceFlag_7c = 0;
+    stats.elementalImmunityFlag_7d = 0;
+    stats.statusResistFlag_7e = 0;
+    stats._7f = 0;
+    stats._80 = 0;
+    stats.special1_81 = 0;
+    stats.special2_82 = 0;
+    stats._83 = 0;
+    stats._84 = 0;
 
-    stats.gearSpeed_86.set((short)0);
-    stats.gearAttack_88.set((short)0);
-    stats.gearMagicAttack_8a.set((short)0);
-    stats.gearDefence_8c.set((short)0);
-    stats.gearMagicDefence_8e.set((short)0);
-    stats.attackHit_90.set((short)0);
-    stats.magicHit_92.set((short)0);
-    stats.attackAvoid_94.set((short)0);
-    stats.magicAvoid_96.set((short)0);
-    stats.onHitStatusChance_98.set(0);
-    stats._99.set(0);
-    stats._9a.set(0);
-    stats.onHitStatus_9b.set(0);
+    stats.gearSpeed_86 = 0;
+    stats.gearAttack_88 = 0;
+    stats.gearMagicAttack_8a = 0;
+    stats.gearDefence_8c = 0;
+    stats.gearMagicDefence_8e = 0;
+    stats.attackHit_90 = 0;
+    stats.magicHit_92 = 0;
+    stats.attackAvoid_94 = 0;
+    stats.magicAvoid_96 = 0;
+    stats.onHitStatusChance_98 = 0;
+    stats._99 = 0;
+    stats._9a = 0;
+    stats.onHitStatus_9b = 0;
   }
 
   @Method(0x8002a8f8L)

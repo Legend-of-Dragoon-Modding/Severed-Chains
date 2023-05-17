@@ -39,6 +39,8 @@ import legend.game.types.TextboxArrow0c;
 import legend.game.types.Translucency;
 import legend.game.types.UiFile;
 
+import java.util.Arrays;
+
 import static legend.core.GameEngine.MEMORY;
 
 public final class Scus94491BpeSegment_800b {
@@ -190,8 +192,6 @@ public final class Scus94491BpeSegment_800b {
    * Seems any other value shows the inventory
    */
   public static WhichMenu whichMenu_800bdc38 = WhichMenu.NONE_0;
-  public static int oldWidth;
-  public static int oldHeight;
   public static UiFile uiFile_800bdc3c;
   /** NOTE: same address as previous var */
   public static final Pointer<McqHeader> gameOverMcq_800bdc3c = MEMORY.ref(4, 0x800bdc3cL, Pointer.deferred(4, McqHeader::new));
@@ -236,7 +236,10 @@ public final class Scus94491BpeSegment_800b {
 
   public static final EquipmentStats1c equipmentStats_800be5d8 = MEMORY.ref(1, 0x800be5d8L, EquipmentStats1c::new);
 
-  public static final ArrayRef<ActiveStatsa0> stats_800be5f8 = MEMORY.ref(4, 0x800be5f8L, ArrayRef.of(ActiveStatsa0.class, 9, 0xa0, ActiveStatsa0::new));
+  public static final ActiveStatsa0[] stats_800be5f8 = new ActiveStatsa0[9];
+  static {
+    Arrays.setAll(stats_800be5f8, i -> new ActiveStatsa0());
+  }
 
   public static final Value _800beb98 = MEMORY.ref(4, 0x800beb98L);
   public static final Value _800bed28 = MEMORY.ref(4, 0x800bed28L);

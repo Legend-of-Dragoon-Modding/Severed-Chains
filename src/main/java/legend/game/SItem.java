@@ -3,7 +3,6 @@ package legend.game;
 import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.gpu.GpuCommandPoly;
-import legend.core.memory.Memory;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
@@ -1479,16 +1478,16 @@ public final class SItem {
         }
 
         //LAB_80108098
-        final ActiveStatsa0 stats = stats_800be5f8.get(charId);
-        renderTwoDigitNumber(x + 154, y + 6, stats.level_0e.get());
-        renderTwoDigitNumber(x + 112, y + 17, stats.dlevel_0f.get());
-        renderThreeDigitNumber(x + 148, y + 17, stats.sp_08.get());
-        renderFourDigitNumber(x + 100, y + 28, stats.hp_04.get(), stats.maxHp_66.get());
+        final ActiveStatsa0 stats = stats_800be5f8[charId];
+        renderTwoDigitNumber(x + 154, y + 6, stats.level_0e);
+        renderTwoDigitNumber(x + 112, y + 17, stats.dlevel_0f);
+        renderThreeDigitNumber(x + 148, y + 17, stats.sp_08);
+        renderFourDigitNumber(x + 100, y + 28, stats.hp_04, stats.maxHp_66);
         renderCharacter(x + 124, y + 28, 11);
-        renderFourDigitNumber(x + 142, y + 28, stats.maxHp_66.get());
-        renderThreeDigitNumber(x + 106, y + 39, stats.mp_06.get());
+        renderFourDigitNumber(x + 142, y + 28, stats.maxHp_66);
+        renderThreeDigitNumber(x + 106, y + 39, stats.mp_06);
         renderCharacter(x + 124, y + 39, 11);
-        renderThreeDigitNumber(x + 148, y + 39, stats.maxMp_6e.get());
+        renderThreeDigitNumber(x + 148, y + 39, stats.maxMp_6e);
         renderSixDigitNumber(x + 88, y + 50, gameState_800babc8.charData_32c[charId].xp_00);
         renderCharacter(x + 124, y + 50, 11);
         renderXp(x + 130, y + 50, getXpToNextLevel(charId));
@@ -1512,8 +1511,7 @@ public final class SItem {
   @Method(0x801085e0L)
   public static void renderCharacterStats(final int charIndex, final int equipmentId, final boolean allocate) {
     if(charIndex != -1) {
-      final Memory.TemporaryReservation sp0x10tmp = MEMORY.temp(0xa0);
-      final ActiveStatsa0 statsTmp = sp0x10tmp.get().cast(ActiveStatsa0::new);
+      final ActiveStatsa0 statsTmp;
 
       if(equipmentId != 0xff) {
         final int[] oldEquipment = Arrays.copyOf(gameState_800babc8.charData_32c[charIndex].equipment_14, 5);
@@ -1523,7 +1521,7 @@ public final class SItem {
         loadCharacterStats(0);
 
         //LAB_80108694
-        memcpy(statsTmp.getAddress(), stats_800be5f8.get(charIndex).getAddress(), 0xa0);
+        statsTmp = new ActiveStatsa0(stats_800be5f8[charIndex]);
 
         //LAB_801086e8
         System.arraycopy(oldEquipment, 0, gameState_800babc8.charData_32c[charIndex].equipment_14, 0, 5);
@@ -1532,61 +1530,59 @@ public final class SItem {
       } else {
         //LAB_80108720
         //LAB_80108740
-        memcpy(statsTmp.getAddress(), stats_800be5f8.get(charIndex).getAddress(), 0xa0);
+        statsTmp = new ActiveStatsa0(stats_800be5f8[charIndex]);
       }
 
       //LAB_80108770
-      final ActiveStatsa0 stats = stats_800be5f8.get(charIndex);
-      renderThreeDigitNumberComparison( 58, 116, stats.bodyAttack_6a.get(), statsTmp.bodyAttack_6a.get());
-      renderThreeDigitNumberComparison( 90, 116, stats.gearAttack_88.get(), statsTmp.gearAttack_88.get());
-      renderThreeDigitNumberComparison(122, 116, stats.bodyAttack_6a.get() + stats.gearAttack_88.get(), statsTmp.bodyAttack_6a.get() + statsTmp.gearAttack_88.get());
+      final ActiveStatsa0 stats = stats_800be5f8[charIndex];
+      renderThreeDigitNumberComparison( 58, 116, stats.bodyAttack_6a, statsTmp.bodyAttack_6a);
+      renderThreeDigitNumberComparison( 90, 116, stats.gearAttack_88, statsTmp.gearAttack_88);
+      renderThreeDigitNumberComparison(122, 116, stats.bodyAttack_6a + stats.gearAttack_88, statsTmp.bodyAttack_6a + statsTmp.gearAttack_88);
 
       if(hasDragoon(gameState_800babc8.goods_19c[0], charIndex)) {
-        renderThreeDigitNumberComparisonWithPercent(159, 116, stats.dragoonAttack_72.get(), statsTmp.dragoonAttack_72.get());
+        renderThreeDigitNumberComparisonWithPercent(159, 116, stats.dragoonAttack_72, statsTmp.dragoonAttack_72);
       }
 
       //LAB_801087fc
-      renderThreeDigitNumberComparison( 58, 128, stats.bodyDefence_6c.get(), statsTmp.bodyDefence_6c.get());
-      renderThreeDigitNumberComparison( 90, 128, stats.gearDefence_8c.get(), statsTmp.gearDefence_8c.get());
-      renderThreeDigitNumberComparison(122, 128, stats.bodyDefence_6c.get() + stats.gearDefence_8c.get(), statsTmp.bodyDefence_6c.get() + statsTmp.gearDefence_8c.get());
+      renderThreeDigitNumberComparison( 58, 128, stats.bodyDefence_6c, statsTmp.bodyDefence_6c);
+      renderThreeDigitNumberComparison( 90, 128, stats.gearDefence_8c, statsTmp.gearDefence_8c);
+      renderThreeDigitNumberComparison(122, 128, stats.bodyDefence_6c + stats.gearDefence_8c, statsTmp.bodyDefence_6c + statsTmp.gearDefence_8c);
 
       if(hasDragoon(gameState_800babc8.goods_19c[0], charIndex)) {
-        renderThreeDigitNumberComparisonWithPercent(159, 128, stats.dragoonDefence_74.get(), statsTmp.dragoonDefence_74.get());
+        renderThreeDigitNumberComparisonWithPercent(159, 128, stats.dragoonDefence_74, statsTmp.dragoonDefence_74);
       }
 
       //LAB_8010886c
-      renderThreeDigitNumberComparison( 58, 140, stats.bodyMagicAttack_6b.get(), statsTmp.bodyMagicAttack_6b.get());
-      renderThreeDigitNumberComparison( 90, 140, stats.gearMagicAttack_8a.get(), statsTmp.gearMagicAttack_8a.get());
-      renderThreeDigitNumberComparison(122, 140, stats.bodyMagicAttack_6b.get() + stats.gearMagicAttack_8a.get(), statsTmp.bodyMagicAttack_6b.get() + statsTmp.gearMagicAttack_8a.get());
+      renderThreeDigitNumberComparison( 58, 140, stats.bodyMagicAttack_6b, statsTmp.bodyMagicAttack_6b);
+      renderThreeDigitNumberComparison( 90, 140, stats.gearMagicAttack_8a, statsTmp.gearMagicAttack_8a);
+      renderThreeDigitNumberComparison(122, 140, stats.bodyMagicAttack_6b + stats.gearMagicAttack_8a, statsTmp.bodyMagicAttack_6b + statsTmp.gearMagicAttack_8a);
 
       if(hasDragoon(gameState_800babc8.goods_19c[0], charIndex)) {
-        renderThreeDigitNumberComparisonWithPercent(159, 140, stats.dragoonMagicAttack_73.get(), statsTmp.dragoonMagicAttack_73.get());
+        renderThreeDigitNumberComparisonWithPercent(159, 140, stats.dragoonMagicAttack_73, statsTmp.dragoonMagicAttack_73);
       }
 
       //LAB_801088dc
-      renderThreeDigitNumberComparison( 58, 152, stats.bodyMagicDefence_6d.get(), statsTmp.bodyMagicDefence_6d.get());
-      renderThreeDigitNumberComparison( 90, 152, stats.gearMagicDefence_8e.get(), statsTmp.gearMagicDefence_8e.get());
-      renderThreeDigitNumberComparison(122, 152, stats.bodyMagicDefence_6d.get() + stats.gearMagicDefence_8e.get(), statsTmp.bodyMagicDefence_6d.get() + statsTmp.gearMagicDefence_8e.get());
+      renderThreeDigitNumberComparison( 58, 152, stats.bodyMagicDefence_6d, statsTmp.bodyMagicDefence_6d);
+      renderThreeDigitNumberComparison( 90, 152, stats.gearMagicDefence_8e, statsTmp.gearMagicDefence_8e);
+      renderThreeDigitNumberComparison(122, 152, stats.bodyMagicDefence_6d + stats.gearMagicDefence_8e, statsTmp.bodyMagicDefence_6d + statsTmp.gearMagicDefence_8e);
 
       if(hasDragoon(gameState_800babc8.goods_19c[0], charIndex)) {
-        renderThreeDigitNumberComparisonWithPercent(159, 152, stats.dragoonMagicDefence_75.get(), statsTmp.dragoonMagicDefence_75.get());
+        renderThreeDigitNumberComparisonWithPercent(159, 152, stats.dragoonMagicDefence_75, statsTmp.dragoonMagicDefence_75);
       }
 
       //LAB_8010894c
-      renderThreeDigitNumberComparison( 58, 164, stats.bodySpeed_69.get(), statsTmp.bodySpeed_69.get());
-      renderThreeDigitNumberComparison( 90, 164, stats.gearSpeed_86.get(), statsTmp.gearSpeed_86.get());
-      renderThreeDigitNumberComparison(122, 164, stats.bodySpeed_69.get() + stats.gearSpeed_86.get(), statsTmp.bodySpeed_69.get() + statsTmp.gearSpeed_86.get());
+      renderThreeDigitNumberComparison( 58, 164, stats.bodySpeed_69, statsTmp.bodySpeed_69);
+      renderThreeDigitNumberComparison( 90, 164, stats.gearSpeed_86, statsTmp.gearSpeed_86);
+      renderThreeDigitNumberComparison(122, 164, stats.bodySpeed_69 + stats.gearSpeed_86, statsTmp.bodySpeed_69 + statsTmp.gearSpeed_86);
 
-      renderThreeDigitNumberComparisonWithPercent( 90, 176, stats.attackHit_90.get(), statsTmp.attackHit_90.get());
-      renderThreeDigitNumberComparisonWithPercent(122, 176, stats.attackHit_90.get(), statsTmp.attackHit_90.get());
-      renderThreeDigitNumberComparisonWithPercent( 90, 188, stats.magicHit_92.get(), statsTmp.magicHit_92.get());
-      renderThreeDigitNumberComparisonWithPercent(122, 188, stats.magicHit_92.get(), statsTmp.magicHit_92.get());
-      renderThreeDigitNumberComparisonWithPercent( 90, 200, stats.attackAvoid_94.get(), statsTmp.attackAvoid_94.get());
-      renderThreeDigitNumberComparisonWithPercent(122, 200, stats.attackAvoid_94.get(), statsTmp.attackAvoid_94.get());
-      renderThreeDigitNumberComparisonWithPercent( 90, 212, stats.magicAvoid_96.get(), statsTmp.magicAvoid_96.get());
-      renderThreeDigitNumberComparisonWithPercent(122, 212, stats.magicAvoid_96.get(), statsTmp.magicAvoid_96.get());
-
-      sp0x10tmp.release();
+      renderThreeDigitNumberComparisonWithPercent( 90, 176, stats.attackHit_90, statsTmp.attackHit_90);
+      renderThreeDigitNumberComparisonWithPercent(122, 176, stats.attackHit_90, statsTmp.attackHit_90);
+      renderThreeDigitNumberComparisonWithPercent( 90, 188, stats.magicHit_92, statsTmp.magicHit_92);
+      renderThreeDigitNumberComparisonWithPercent(122, 188, stats.magicHit_92, statsTmp.magicHit_92);
+      renderThreeDigitNumberComparisonWithPercent( 90, 200, stats.attackAvoid_94, statsTmp.attackAvoid_94);
+      renderThreeDigitNumberComparisonWithPercent(122, 200, stats.attackAvoid_94, statsTmp.attackAvoid_94);
+      renderThreeDigitNumberComparisonWithPercent( 90, 212, stats.magicAvoid_96, statsTmp.magicAvoid_96);
+      renderThreeDigitNumberComparisonWithPercent(122, 212, stats.magicAvoid_96, statsTmp.magicAvoid_96);
 
       if(allocate) {
         allocateUiElement(0x56, 0x56, 16, 94);
@@ -1684,9 +1680,7 @@ public final class SItem {
     for(int i = 0; i < 4; i++) {
       int s4 = 0;
       final int len = Math.min(textLength(s0), 20);
-
-      final Memory.TemporaryReservation sp0x10tmp = MEMORY.temp((len + 1) * 2);
-      final LodString s3 = sp0x10tmp.get().cast(LodString::new);
+      final LodString s3 = new LodString(len + 1);
 
       //LAB_801091bc
       //LAB_801091cc
@@ -1713,8 +1707,6 @@ public final class SItem {
 
       //LAB_80109254
       s0 = s0.slice(textLength(s3) + s4);
-
-      sp0x10tmp.release();
     }
 
     //LAB_80109284
@@ -2361,7 +2353,7 @@ public final class SItem {
             FUN_8010d050(InventoryMenuState._18, 0x1L);
           } else {
             // Some items remaining
-            resizeDisplay(368, 240);
+            resizeDisplay(384, 240);
             deallocateRenderables(0xff);
             menuStack.pushScreen(new TooManyItemsScreen());
             inventoryMenuState_800bdc28.set(InventoryMenuState._19);
@@ -2645,14 +2637,14 @@ public final class SItem {
 
       case 1: // Allocate
         messageBox.state_0c = 2;
-        messageBox.renderable_04 = null;
-        messageBox.renderable_08 = allocateUiElement(149, 142, messageBox.x_1c - 50, messageBox.y_1e - 10);
-        messageBox.renderable_08.z_3c = 32;
-        messageBox.renderable_08._18 = 142;
+        messageBox.highlightRenderable_04 = null;
+        messageBox.backgroundRenderable_08 = allocateUiElement(149, 142, messageBox.x_1c - 50, messageBox.y_1e - 10);
+        messageBox.backgroundRenderable_08.z_3c = 32;
+        messageBox.backgroundRenderable_08._18 = 142;
         msgboxResult_8011e1e8.set(MessageBoxResult.AWAITING_INPUT);
 
       case 2:
-        if(messageBox.renderable_08._0c != 0) {
+        if(messageBox.backgroundRenderable_08._0c != 0) {
           messageBox.state_0c = 3;
         }
 
@@ -2688,12 +2680,12 @@ public final class SItem {
 
         if(messageBox.type_15 == 2) {
           //LAB_8010ef10
-          if(messageBox.renderable_04 == null) {
+          if(messageBox.highlightRenderable_04 == null) {
             renderable = allocateUiElement(125, 125, messageBox.x_1c + 45, messageBox.menuIndex_18 * 14 + y + 5);
-            messageBox.renderable_04 = renderable;
+            messageBox.highlightRenderable_04 = renderable;
             renderable._38 = 0;
             renderable._34 = 0;
-            messageBox.renderable_04.z_3c = 32;
+            messageBox.highlightRenderable_04.z_3c = 32;
           }
 
           //LAB_8010ef64
@@ -2710,20 +2702,20 @@ public final class SItem {
       case 4:
         messageBox.state_0c = 5;
 
-        if(messageBox.renderable_04 != null) {
-          unloadRenderable(messageBox.renderable_04);
+        if(messageBox.highlightRenderable_04 != null) {
+          unloadRenderable(messageBox.highlightRenderable_04);
         }
 
         //LAB_8010f084
-        unloadRenderable(messageBox.renderable_08);
+        unloadRenderable(messageBox.backgroundRenderable_08);
         renderable = allocateUiElement(0x8e, 0x95, messageBox.x_1c - 50, messageBox.y_1e - 10);
-        messageBox.renderable_08 = renderable;
+        messageBox.backgroundRenderable_08 = renderable;
         renderable.z_3c = 32;
-        messageBox.renderable_08.flags_00 |= 0x10;
+        messageBox.backgroundRenderable_08.flags_00 |= 0x10;
         break;
 
       case 5:
-        if(messageBox.renderable_08._0c != 0) {
+        if(messageBox.backgroundRenderable_08._0c != 0) {
           messageBox.state_0c = 6;
         }
 
@@ -2783,65 +2775,65 @@ public final class SItem {
 
     //LAB_80110174
     for(int charId = 0; charId < 9; charId++) {
-      final ActiveStatsa0 stats = stats_800be5f8.get(charId);
+      final ActiveStatsa0 stats = stats_800be5f8[charId];
 
       final CharacterData2c charData = gameState_800babc8.charData_32c[charId];
 
       final CharacterStatsEvent statsEvent = EventManager.INSTANCE.postEvent(new CharacterStatsEvent(charId));
 
-      stats.xp_00.set(statsEvent.xp);
-      stats.hp_04.set(statsEvent.hp);
-      stats.mp_06.set(statsEvent.mp);
-      stats.sp_08.set(statsEvent.sp);
-      stats.dxp_0a.set(statsEvent.dxp);
-      stats.flags_0c.set(statsEvent.flags);
-      stats.level_0e.set(statsEvent.level);
-      stats.dlevel_0f.set(statsEvent.dlevel);
+      stats.xp_00 = statsEvent.xp;
+      stats.hp_04 = statsEvent.hp;
+      stats.mp_06 = statsEvent.mp;
+      stats.sp_08 = statsEvent.sp;
+      stats.dxp_0a = statsEvent.dxp;
+      stats.flags_0c = statsEvent.flags;
+      stats.level_0e = statsEvent.level;
+      stats.dlevel_0f = statsEvent.dlevel;
 
       //LAB_801101e4
       for(int i = 0; i < 5; i++) {
-        stats.equipment_30.get(i).set(charData.equipment_14[i]);
+        stats.equipment_30[i] = charData.equipment_14[i];
       }
 
-      stats.selectedAddition_35.set(charData.selectedAddition_19);
+      stats.selectedAddition_35 = charData.selectedAddition_19;
 
       //LAB_80110220
       for(int i = 0; i < 8; i++) {
-        stats.additionLevels_36.get(i).set(charData.additionLevels_1a[i]);
-        stats.additionXp_3e.get(i).set(charData.additionXp_22[i]);
+        stats.additionLevels_36[i] = charData.additionLevels_1a[i];
+        stats.additionXp_3e[i] = charData.additionXp_22[i];
       }
 
-      stats.maxHp_66.set(statsEvent.maxHp);
-      stats.addition_68.set(statsEvent.addition);
-      stats.bodySpeed_69.set(statsEvent.bodySpeed);
-      stats.bodyAttack_6a.set(statsEvent.bodyAttack);
-      stats.bodyMagicAttack_6b.set(statsEvent.bodyMagicAttack);
-      stats.bodyDefence_6c.set(statsEvent.bodyDefence);
-      stats.bodyMagicDefence_6d.set(statsEvent.bodyMagicDefence);
+      stats.maxHp_66 = statsEvent.maxHp;
+      stats.addition_68 = statsEvent.addition;
+      stats.bodySpeed_69 = statsEvent.bodySpeed;
+      stats.bodyAttack_6a = statsEvent.bodyAttack;
+      stats.bodyMagicAttack_6b = statsEvent.bodyMagicAttack;
+      stats.bodyDefence_6c = statsEvent.bodyDefence;
+      stats.bodyMagicDefence_6d = statsEvent.bodyMagicDefence;
 
-      final MagicStuff08 magicStuff = magicStuff_800fbd54.get(charId).deref().get(stats.dlevel_0f.get());
-      stats.maxMp_6e.set(statsEvent.maxMp);
-      stats.spellIndex_70.set(statsEvent.spellId);
-      stats._71.set(magicStuff._03.get());
-      stats.dragoonAttack_72.set(statsEvent.dragoonAttack);
-      stats.dragoonMagicAttack_73.set(statsEvent.dragoonMagicAttack);
-      stats.dragoonDefence_74.set(statsEvent.dragoonDefence);
-      stats.dragoonMagicDefence_75.set(statsEvent.dragoonMagicDefence);
+      final MagicStuff08 magicStuff = magicStuff_800fbd54.get(charId).deref().get(stats.dlevel_0f);
+      stats.maxMp_6e = statsEvent.maxMp;
+      stats.spellIndex_70 = statsEvent.spellId;
+      stats._71 = magicStuff._03.get();
+      stats.dragoonAttack_72 = statsEvent.dragoonAttack;
+      stats.dragoonMagicAttack_73 = statsEvent.dragoonMagicAttack;
+      stats.dragoonDefence_74 = statsEvent.dragoonDefence;
+      stats.dragoonMagicDefence_75 = statsEvent.dragoonMagicDefence;
 
-      final int additionIndex = stats.selectedAddition_35.get();
+      final int additionIndex = stats.selectedAddition_35;
       if(additionIndex != -1) {
         //TODO straighten this out
-        final long a0 = ptrTable_80114070.offset(additionIndex * 0x4L).deref(4).offset(stats.additionLevels_36.get(additionIndex - additionOffsets_8004f5ac.get(charId).get()).get() * 0x4L).getAddress();
+        final long a0 = ptrTable_80114070.offset(additionIndex * 0x4L).deref(4).offset(stats.additionLevels_36[additionIndex - additionOffsets_8004f5ac.get(charId).get()] * 0x4L).getAddress();
 
-        stats._9c.set((int)MEMORY.ref(2, a0).offset(0x0L).get());
-        stats.additionSpMultiplier_9e.set((int)MEMORY.ref(1, a0).offset(0x2L).get());
-        stats.additionDamageMultiplier_9f.set((int)MEMORY.ref(1, a0).offset(0x3L).get());
+        stats._9c = (int)MEMORY.ref(2, a0).offset(0x0L).get();
+        stats.additionSpMultiplier_9e = (int)MEMORY.ref(1, a0).offset(0x2L).get();
+        stats.additionDamageMultiplier_9f = (int)MEMORY.ref(1, a0).offset(0x3L).get();
 
-        final AdditionHitMultiplierEvent event = EventManager.INSTANCE.postEvent(new AdditionHitMultiplierEvent(additionIndex, stats.additionLevels_36.get(additionIndex - additionOffsets_8004f5ac.get(charId).get()).get(), stats.additionSpMultiplier_9e.get(), stats.additionDamageMultiplier_9f.get()));
-        stats.additionSpMultiplier_9e.set(event.additionSpMulti);
-        stats.additionDamageMultiplier_9f.set(event.additionDmgMulti);
+        final AdditionHitMultiplierEvent event = EventManager.INSTANCE.postEvent(new AdditionHitMultiplierEvent(additionIndex, stats.additionLevels_36[additionIndex - additionOffsets_8004f5ac.get(charId).get()], stats.additionSpMultiplier_9e, stats.additionDamageMultiplier_9f));
+        stats.additionSpMultiplier_9e = event.additionSpMulti;
+        stats.additionDamageMultiplier_9f = event.additionDmgMulti;
       } else {
-        stats.additionDamageMultiplier_9f.set(0);
+        stats.additionDamageMultiplier_9f = 0;
       }
 
       //LAB_8011042c
@@ -2849,19 +2841,19 @@ public final class SItem {
 
       long v0 = _800fbd08.get(charId).get();
       if((gameState_800babc8.goods_19c[0] & 0x1 << v0) != 0) {
-        stats.flags_0c.or(0x2000);
+        stats.flags_0c |= 0x2000;
 
         if((gameState_800babc8.characterInitialized_4e6 >> v0 & 1) == 0) {
           gameState_800babc8.characterInitialized_4e6 |= 1 << v0;
 
-          stats.mp_06.set(statsEvent.maxMp);
-          stats.maxMp_6e.set(statsEvent.maxMp);
+          stats.mp_06 = statsEvent.maxMp;
+          stats.maxMp_6e = statsEvent.maxMp;
         }
       } else {
         //LAB_801104ec
-        stats.mp_06.set(0);
-        stats.maxMp_6e.set(0);
-        stats.dlevel_0f.set(0);
+        stats.mp_06 = 0;
+        stats.maxMp_6e = 0;
+        stats.dlevel_0f = 0;
       }
 
       //LAB_801104f8
@@ -2869,41 +2861,41 @@ public final class SItem {
         v0 = _800fbd08.get(9).get();
 
         if((gameState_800babc8.goods_19c[0] & 0x1 << v0) != 0) {
-          stats.flags_0c.or(0x6000);
+          stats.flags_0c |= 0x6000;
 
-          stats.dlevel_0f.set(gameState_800babc8.charData_32c[0].dlevel_13);
+          stats.dlevel_0f = gameState_800babc8.charData_32c[0].dlevel_13;
 
           final long a1 = _800fbd08.get(0).get();
 
           if((gameState_800babc8.characterInitialized_4e6 >> a1 & 1) == 0) {
             gameState_800babc8.characterInitialized_4e6 |= 1 << a1;
-            stats.mp_06.set(statsEvent.maxMp);
-            stats.maxMp_6e.set(statsEvent.maxMp);
+            stats.mp_06 = statsEvent.maxMp;
+            stats.maxMp_6e = statsEvent.maxMp;
           } else {
             //LAB_80110590
-            stats.mp_06.set(charData.mp_0a);
-            stats.maxMp_6e.set(magicStuff.mp_00.get());
+            stats.mp_06 = charData.mp_0a;
+            stats.maxMp_6e = magicStuff.mp_00.get();
           }
         }
       }
 
       //LAB_801105b0
-      final int maxHp = (int)(stats.maxHp_66.get() * ((stats.hpMulti_62.get() / 100.0) + 1));
+      final int maxHp = (int)(stats.maxHp_66 * ((stats.hpMulti_62 / 100.0) + 1));
 
       //LAB_801105f0
-      stats.maxHp_66.set(maxHp);
+      stats.maxHp_66 = maxHp;
 
-      if(stats.hp_04.get() > maxHp) {
-        stats.hp_04.set(maxHp);
+      if(stats.hp_04 > maxHp) {
+        stats.hp_04 = maxHp;
       }
 
       //LAB_80110608
-      final int maxMp = (int)(stats.maxMp_6e.get() * ((stats.mpMulti_64.get() / 100.0) + 1));
+      final int maxMp = (int)(stats.maxMp_6e * ((stats.mpMulti_64 / 100.0) + 1));
 
-      stats.maxMp_6e.set(maxMp);
+      stats.maxMp_6e = maxMp;
 
-      if(stats.mp_06.get() > maxMp) {
-        stats.mp_06.set(maxMp);
+      if(stats.mp_06 > maxMp) {
+        stats.mp_06 = maxMp;
       }
 
       //LAB_80110654
@@ -2927,123 +2919,123 @@ public final class SItem {
   @Method(0x8011085cL)
   public static void applyEquipmentStats(final int charId) {
     FUN_8002a86c(charId);
-    final ActiveStatsa0 characterStats = stats_800be5f8.get(charId);
+    final ActiveStatsa0 characterStats = stats_800be5f8[charId];
 
     //LAB_801108b0
     for(int equipmentSlot = 0; equipmentSlot < 5; equipmentSlot++) {
-      final int equipmentId = stats_800be5f8.get(charId).equipment_30.get(equipmentSlot).get();
+      final int equipmentId = stats_800be5f8[charId].equipment_30[equipmentSlot];
 
       if(equipmentId != 0xff) {
         FUN_801106cc(equipmentId);
 
         final EquipmentStatsEvent event = EventManager.INSTANCE.postEvent(new EquipmentStatsEvent(charId, equipmentId));
 
-        characterStats.specialEffectFlag_76.or(event.flags);
-        characterStats._77.or(event.type);
-        characterStats._78.or(event._02);
-        characterStats._79.or(event.equipableFlags);
-        characterStats.elementFlag_7a.or(event.element);
-        characterStats._7b.or(event._05);
-        characterStats.elementalResistanceFlag_7c.or(event.elementalResistance);
-        characterStats.elementalImmunityFlag_7d.or(event.elementalImmunity);
-        characterStats.statusResistFlag_7e.or(event.statusResist);
-        characterStats._7f.or(event._09);
-        characterStats._84.add(event.icon);
-        characterStats.gearSpeed_86.add((short)event.speed);
-        characterStats.gearAttack_88.add((short)event.attack);
-        characterStats.gearMagicAttack_8a.add((short)event.magicAttack);
-        characterStats.gearDefence_8c.add((short)event.defence);
-        characterStats.gearMagicDefence_8e.add((short)event.magicDefence);
-        characterStats.attackHit_90.add((short)event.attackHit);
-        characterStats.magicHit_92.add((short)event.magicHit);
-        characterStats.attackAvoid_94.add((short)event.attackAvoid);
-        characterStats.magicAvoid_96.add((short)event.magicAvoid);
-        characterStats.onHitStatusChance_98.add(event.statusChance);
-        characterStats._99.add(event._19);
-        characterStats._9a.add(event._1a);
-        characterStats.onHitStatus_9b.or(event.onHitStatus);
-        characterStats._80.add(event.attack & 0xff); // This used to just be the low attack value, but since we aren't using two values in the event like the old table did, I dunno if this will work
+        characterStats.specialEffectFlag_76 |= event.flags;
+        characterStats._77 |= event.type;
+        characterStats._78 |= event._02;
+        characterStats._79 |= event.equipableFlags;
+        characterStats.elementFlag_7a |= event.element;
+        characterStats._7b |= event._05;
+        characterStats.elementalResistanceFlag_7c |= event.elementalResistance;
+        characterStats.elementalImmunityFlag_7d |= event.elementalImmunity;
+        characterStats.statusResistFlag_7e |= event.statusResist;
+        characterStats._7f |= event._09;
+        characterStats._84 += event.icon;
+        characterStats.gearSpeed_86 += (short)event.speed;
+        characterStats.gearAttack_88 += (short)event.attack;
+        characterStats.gearMagicAttack_8a += (short)event.magicAttack;
+        characterStats.gearDefence_8c += (short)event.defence;
+        characterStats.gearMagicDefence_8e += (short)event.magicDefence;
+        characterStats.attackHit_90 += (short)event.attackHit;
+        characterStats.magicHit_92 += (short)event.magicHit;
+        characterStats.attackAvoid_94 += (short)event.attackAvoid;
+        characterStats.magicAvoid_96 += (short)event.magicAvoid;
+        characterStats.onHitStatusChance_98 += event.statusChance;
+        characterStats._99 += event._19;
+        characterStats._9a += event._1a;
+        characterStats.onHitStatus_9b |= event.onHitStatus;
+        characterStats._80 += event.attack & 0xff; // This used to just be the low attack value, but since we aren't using two values in the event like the old table did, I dunno if this will work
 
         if(event.mpPerMagicalHit != 0) {
-          characterStats.special1_81.or(0x1);
+          characterStats.special1_81 |= 0x1;
         }
 
         if(event.spPerMagicalHit != 0) {
-          characterStats.special1_81.or(0x2);
+          characterStats.special1_81 |= 0x2;
         }
 
         if(event.mpPerPhysicalHit != 0) {
-          characterStats.special1_81.or(0x4);
+          characterStats.special1_81 |= 0x4;
         }
 
         if(event.spPerPhysicalHit != 0) {
-          characterStats.special1_81.or(0x8);
+          characterStats.special1_81 |= 0x8;
         }
 
         if(event.spMultiplier != 0) {
-          characterStats.special1_81.or(0x10);
+          characterStats.special1_81 |= 0x10;
         }
 
         if(event.physicalResistance) {
-          characterStats.special1_81.or(0x20);
+          characterStats.special1_81 |= 0x20;
         }
 
         if(event.magicalImmunity) {
-          characterStats.special1_81.or(0x40);
+          characterStats.special1_81 |= 0x40;
         }
 
         if(event.physicalImmunity) {
-          characterStats.special1_81.or(0x80);
+          characterStats.special1_81 |= 0x80;
         }
 
         if(event.mpMultiplier != 0) {
-          characterStats.special2_82.or(0x1);
+          characterStats.special2_82 |= 0x1;
         }
 
         if(event.hpMultiplier != 0) {
-          characterStats.special2_82.or(0x2);
+          characterStats.special2_82 |= 0x2;
         }
 
         if(event.magicalResistance) {
-          characterStats.special2_82.or(0x4);
+          characterStats.special2_82 |= 0x4;
         }
 
         if(event.revive != 0) {
-          characterStats.special2_82.or(0x8);
+          characterStats.special2_82 |= 0x8;
         }
 
         if(event.spRegen != 0) {
-          characterStats.special2_82.or(0x10);
+          characterStats.special2_82 |= 0x10;
         }
 
         if(event.mpRegen != 0) {
-          characterStats.special2_82.or(0x20);
+          characterStats.special2_82 |= 0x20;
         }
 
         if(event.hpRegen != 0) {
-          characterStats.special2_82.or(0x40);
+          characterStats.special2_82 |= 0x40;
         }
 
         if(event._56 != 0) {
-          characterStats.special2_82.or(0x80);
+          characterStats.special2_82 |= 0x80;
         }
 
-        characterStats.mpPerMagicalHit_54.add((short)event.mpPerMagicalHit);
-        characterStats.spPerMagicalHit_52.add((short)event.spPerMagicalHit);
-        characterStats.mpPerPhysicalHit_50.add((short)event.mpPerPhysicalHit);
-        characterStats.spPerPhysicalHit_4e.add((short)event.spPerPhysicalHit);
-        characterStats.hpMulti_62.add((short)event.hpMultiplier);
-        characterStats.mpMulti_64.add((short)event.mpMultiplier);
-        characterStats.spMultiplier_4c.add((short)event.spMultiplier);
-        characterStats.magicalResistance_60.set(event.magicalResistance ? 1 : 0);
-        characterStats.physicalResistance_4a.set(event.physicalResistance ? 1 : 0);
-        characterStats.magicalImmunity_48.set(event.magicalImmunity ? 1 : 0);
-        characterStats.physicalImmunity_46.set(event.physicalImmunity ? 1 : 0);
-        characterStats.revive_5e.add((short)event.revive);
-        characterStats.hpRegen_58.add((short)event.hpRegen);
-        characterStats.mpRegen_5a.add((short)event.mpRegen);
-        characterStats.spRegen_5c.add((short)event.spRegen);
-        characterStats._56.add((short)event._56);
+        characterStats.mpPerMagicalHit_54 += (short)event.mpPerMagicalHit;
+        characterStats.spPerMagicalHit_52 += (short)event.spPerMagicalHit;
+        characterStats.mpPerPhysicalHit_50 += (short)event.mpPerPhysicalHit;
+        characterStats.spPerPhysicalHit_4e += (short)event.spPerPhysicalHit;
+        characterStats.hpMulti_62 += (short)event.hpMultiplier;
+        characterStats.mpMulti_64 += (short)event.mpMultiplier;
+        characterStats.spMultiplier_4c += (short)event.spMultiplier;
+        characterStats.magicalResistance_60 = event.magicalResistance ? 1 : 0;
+        characterStats.physicalResistance_4a = event.physicalResistance ? 1 : 0;
+        characterStats.magicalImmunity_48 = event.magicalImmunity ? 1 : 0;
+        characterStats.physicalImmunity_46 = event.physicalImmunity ? 1 : 0;
+        characterStats.revive_5e += (short)event.revive;
+        characterStats.hpRegen_58 += (short)event.hpRegen;
+        characterStats.mpRegen_5a += (short)event.mpRegen;
+        characterStats.spRegen_5c += (short)event.spRegen;
+        characterStats._56 += (short)event._56;
       }
     }
   }

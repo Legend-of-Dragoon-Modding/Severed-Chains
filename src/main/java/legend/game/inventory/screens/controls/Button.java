@@ -8,6 +8,7 @@ import legend.game.types.LodString;
 
 import static legend.game.SItem.renderCentredText;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
+import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 
 public class Button extends Control {
@@ -17,11 +18,18 @@ public class Button extends Control {
 
   public Button(final String text) {
     this.hover = this.addControl(new Highlight());
+    this.hover.setZ(this.getZ());
     this.hover.hide();
 
     this.setSize(59, 14);
 
     this.setText(text);
+  }
+
+  @Override
+  public void setZ(final int z) {
+    super.setZ(z);
+    this.hover.setZ(z);
   }
 
   public LodString getText() {
@@ -99,7 +107,10 @@ public class Button extends Control {
 
   @Override
   protected void render(final int x, final int y) {
+    final int oldZ = textZ_800bdf00.get();
+    textZ_800bdf00.set(this.getZ() - 1);
     renderCentredText(this.text, x + this.getWidth() / 2, y + (this.getHeight() - 11) / 2, this.isDisabled() ? TextColour.MIDDLE_BROWN : this.textColour);
+    textZ_800bdf00.set(oldZ);
   }
 
   public void onPressed(final Pressed handler) {

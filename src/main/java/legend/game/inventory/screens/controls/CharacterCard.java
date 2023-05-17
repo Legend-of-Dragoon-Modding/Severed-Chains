@@ -58,12 +58,12 @@ public class CharacterCard extends Control {
   @Override
   protected void render(final int x, final int y) {
     if(this.charId != -1) {
-      final ActiveStatsa0 stats = stats_800be5f8.get(this.charId);
-      this.renderNumber(x + 162, y + 6, stats.level_0e.get(), 2);
-      this.renderNumber(x + 120, y + 17, stats.dlevel_0f.get(), 2);
-      this.renderNumber(x + 156, y + 17, stats.sp_08.get(), 3);
-      renderFraction(x + this.getWidth(), y + 28, stats.hp_04.get(), stats.maxHp_66.get());
-      renderFraction(x + this.getWidth(), y + 39, stats.mp_06.get(), stats.maxMp_6e.get());
+      final ActiveStatsa0 stats = stats_800be5f8[this.charId];
+      this.renderNumber(x + 162, y + 6, stats.level_0e, 2);
+      this.renderNumber(x + 120, y + 17, stats.dlevel_0f, 2);
+      this.renderNumber(x + 156, y + 17, stats.sp_08, 3);
+      renderFraction(x + this.getWidth(), y + 28, stats.hp_04, stats.maxHp_66);
+      renderFraction(x + this.getWidth(), y + 39, stats.mp_06, stats.maxMp_6e);
       renderFraction(x + this.getWidth(), y + 50, gameState_800babc8.charData_32c[this.charId].xp_00, getXpToNextLevel(this.charId));
 
       this.name.setVisibility(!renderCharacterStatusEffect(x + 48, y + 3, this.charId));

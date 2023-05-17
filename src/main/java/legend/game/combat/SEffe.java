@@ -24,7 +24,6 @@ import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.TmdWithId;
 import legend.core.gte.USCOLOUR;
 import legend.core.gte.VECTOR;
-import legend.core.memory.Memory;
 import legend.core.memory.Method;
 import legend.core.memory.Ref;
 import legend.core.memory.Value;
@@ -48,12 +47,12 @@ import legend.game.combat.deff.LmbTransforms14;
 import legend.game.combat.deff.LmbType0;
 import legend.game.combat.deff.LmbType1;
 import legend.game.combat.deff.LmbType2;
+import legend.game.combat.effects.AdditionOverlaysBorder0e;
 import legend.game.combat.effects.AdditionOverlaysEffect44;
 import legend.game.combat.effects.AdditionOverlaysHit20;
-import legend.game.combat.effects.AdditionOverlaysBorder0e;
 import legend.game.combat.effects.AttackHitFlashEffect0c;
 import legend.game.combat.effects.BattleStruct24;
-import legend.game.combat.effects.BttlScriptData6cSub08_3;
+import legend.game.combat.effects.RainEffect08;
 import legend.game.combat.effects.BttlScriptData6cSub10_2;
 import legend.game.combat.effects.BttlScriptData6cSub13c;
 import legend.game.combat.effects.BttlScriptData6cSub14_4;
@@ -80,12 +79,14 @@ import legend.game.combat.effects.DeffTmdRenderer14;
 import legend.game.combat.effects.EffectData98Inner24;
 import legend.game.combat.effects.EffectManagerData6c;
 import legend.game.combat.effects.EffectManagerData6cInner;
+import legend.game.combat.effects.EffectStruct48;
 import legend.game.combat.effects.FrozenJetEffect28;
 import legend.game.combat.effects.GoldDragoonTransformEffect20;
 import legend.game.combat.effects.GoldDragoonTransformEffectInstance84;
 import legend.game.combat.effects.ParticleEffectData98;
 import legend.game.combat.effects.ParticleEffectInstance94;
 import legend.game.combat.effects.ParticleEffectInstance94Sub10;
+import legend.game.combat.effects.RaindropEffect0c;
 import legend.game.combat.effects.ScreenCaptureEffect1c;
 import legend.game.combat.effects.ScreenCaptureEffectMetrics8;
 import legend.game.combat.effects.ScreenDistortionEffectData08;
@@ -263,7 +264,7 @@ public final class SEffe {
    *   <li>{@link SEffe#FUN_800fcf18}</li>
    * </ol>
    */
-  private static final Value _801197c0 = MEMORY.ref(4, 0x801197c0L);
+  private static final ArrayRef<Pointer<BiConsumerRef<EffectManagerData6c, EffectStruct48>>> _801197c0 = MEMORY.ref(4, 0x801197c0L, ArrayRef.of(Pointer.classFor(BiConsumerRef.classFor(EffectManagerData6c.class, EffectStruct48.class)), 3, 4, Pointer.deferred(4, BiConsumerRef::new)));
 
   private static final Value _801197ec = MEMORY.ref(1, 0x801197ecL);
 
@@ -904,16 +905,16 @@ public final class SEffe {
   @Method(0x800fc42cL)
   public static void FUN_800fc42c(final EffectManagerData6c a0, final ParticleEffectData98 a1, final ParticleEffectInstance94 a2) {
     a2._50.setX((short)(a2._14 + (rcos(a2._1a.getX()) * a2._1a.getZ() >> 12)));
-    a2._50.setY((short)(a2._18 + (rsin(a2._1a.getX()) * a2._1a.getZ() >> 12)));
+    a2._50.setZ((short)(a2._18 + (rsin(a2._1a.getX()) * a2._1a.getZ() >> 12)));
     a2._1a.z.add((short)16);
     a2._1a.x.add(a2._1a.getY());
   }
 
   @Method(0x800fc4bcL)
-  public static void FUN_800fc4bc(final MATRIX a0, final EffectManagerData6c a1, final long a2) {
-    RotMatrix_Xyz(MEMORY.ref(4, a2 + 0x38L, SVECTOR::new), a0);
-    TransMatrix(a0, MEMORY.ref(4, a2 + 0x18L, VECTOR::new));
-    ScaleMatrixL(a0, MEMORY.ref(4, a2 + 0x28L, VECTOR::new));
+  public static void FUN_800fc4bc(final MATRIX a0, final EffectManagerData6c a1, final EffectStruct48 a2) {
+    RotMatrix_Xyz(a2._38, a0);
+    TransMatrix(a0, a2._18);
+    ScaleMatrixL(a0, a2._28);
   }
 
   @Method(0x800fc528L)
@@ -1065,14 +1066,14 @@ public final class SEffe {
   }
 
   @Method(0x800fce10L)
-  public static void FUN_800fce10(final EffectManagerData6c a0, final long a1) {
-    if((int)MEMORY.ref(4, a1).offset(0x0L).get() >= 0) {
-      GPU.queueCommand(((int)MEMORY.ref(4, a1).offset(0x04L).get() + a0._10.z_22) / 4, new GpuCommandLine()
+  public static void FUN_800fce10(final EffectManagerData6c a0, final EffectStruct48 a1) {
+    if(a1.flags_00 >= 0) {
+      GPU.queueCommand(a1.z_04 + a0._10.z_22 >> 2, new GpuCommandLine()
         .translucent(Translucency.B_PLUS_F)
-        .rgb(0, 0x40, 0x41, 0x42)
-        .rgb(1, (int)MEMORY.ref(1, a1).offset(0x44L).get(), (int)MEMORY.ref(1, a1).offset(0x45L).get(), (int)MEMORY.ref(1, a1).offset(0x46L).get())
-        .pos(0, (int)MEMORY.ref(2, a1).offset(0x08L).get(), (int)MEMORY.ref(2, a1).offset(0x10L).get())
-        .pos(1, (int)MEMORY.ref(2, a1).offset(0x0cL).get(), (int)MEMORY.ref(2, a1).offset(0x14L).get())
+        .rgb(0, a1.colour0_40.getR(), a1.colour0_40.getG(), a1.colour0_40.getB())
+        .rgb(1, a1.colour1_44.getR(), a1.colour1_44.getG(), a1.colour1_44.getB())
+        .pos(0, a1.x0_08, a1.y0_10)
+        .pos(1, a1.x1_0c, a1.y1_14)
       );
     }
 
@@ -1080,7 +1081,7 @@ public final class SEffe {
   }
 
   @Method(0x800fcf18L)
-  public static void FUN_800fcf18(final EffectManagerData6c a0, final long a1) {
+  public static void FUN_800fcf18(final EffectManagerData6c a0, final EffectStruct48 a1) {
     // no-op
   }
 
@@ -1088,19 +1089,19 @@ public final class SEffe {
    * used renderCtmd
    */
   @Method(0x800fcf20L)
-  public static void FUN_800fcf20(final EffectManagerData6c a0, final TmdObjTable1c tmd, final long a2, final int tpage) {
-    if(MEMORY.ref(4, a2).offset(0x0L).getSigned() >= 0) {
+  public static void FUN_800fcf20(final EffectManagerData6c a0, final TmdObjTable1c tmd, final EffectStruct48 a2, final int tpage) {
+    if(a2.flags_00 >= 0) {
       final MATRIX sp0x10 = new MATRIX();
       FUN_800fc4bc(sp0x10, a0, a2);
-      if((MEMORY.ref(4, a2).offset(0x0L).get() & 0x40L) == 0) {
-        FUN_800e61e4((int)(MEMORY.ref(1, a2).offset(0x40L).get() << 5), (int)(MEMORY.ref(1, a2).offset(0x41L).get() << 5), (int)(MEMORY.ref(1, a2).offset(0x42L).get() << 5));
+      if((a2.flags_00 & 0x40) == 0) {
+        FUN_800e61e4(a2.colour0_40.getR() << 5, a2.colour0_40.getG(), a2.colour0_40.getB());
       }
 
       //LAB_800fcf94
       GsSetLightMatrix(sp0x10);
       final MATRIX sp0x30 = new MATRIX();
       MulMatrix0(worldToScreenMatrix_800c3548, sp0x10, sp0x30);
-      if((MEMORY.ref(4, a2).offset(0x0L).get() & 0x400_0000L) == 0) {
+      if((a2.flags_00 & 0x400_0000) == 0) {
         RotMatrix_Xyz(a0._10.rot_10, sp0x30);
         ScaleMatrixL(sp0x30, new VECTOR().set(a0._10.scale_16));
       }
@@ -1117,7 +1118,7 @@ public final class SEffe {
 
       //LAB_800fd040
       final GsDOBJ2 sp0x60 = new GsDOBJ2();
-      sp0x60.attribute_00 = (int)MEMORY.ref(4, a2).offset(0x0L).get();
+      sp0x60.attribute_00 = a2.flags_00;
       sp0x60.tmd_08 = tmd;
 
       final int oldZShift = zShift_1f8003c4.get();
@@ -1131,7 +1132,7 @@ public final class SEffe {
       zMax_1f8003cc.set(oldZMax);
       zMin = oldZMin;
 
-      if((MEMORY.ref(4, a2).offset(0x0L).get() & 0x40L) == 0) {
+      if((a2.flags_00 & 0x40) == 0) {
         FUN_800e62a8();
       }
     }
@@ -1302,26 +1303,16 @@ public final class SEffe {
         final VECTOR sp0x28 = new VECTOR();
         FUN_800cf37c(data, new SVECTOR(), new VECTOR().set(s3._50), sp0x28);
 
-        final Memory.TemporaryReservation tmp = MEMORY.temp(0x48);
-        final Value sp0x68 = tmp.get();
-        sp0x68.offset(0x00L).setu(data._10.flags_00 & 0xffff_ffffL);
-        sp0x68.offset(0x18L).setu(s3._2c.getX() + sp0x28.getX());
-        sp0x68.offset(0x1cL).setu(s3._2c.getY() + sp0x28.getY());
-        sp0x68.offset(0x20L).setu(s3._2c.getZ() + sp0x28.getZ());
-        sp0x68.offset(0x28L).setu(data._10.scale_16.getX() + s3._06);
-        sp0x68.offset(0x2cL).setu(data._10.scale_16.getY() + s3._08);
-        sp0x68.offset(0x30L).setu(data._10.scale_16.getX() + s3._06); // This is correct
-        sp0x68.offset(0x38L).setu(s3._70.getX() + s3._68.getX());
-        sp0x68.offset(0x3aL).setu(s3._70.getY() + s3._68.getY());
-        sp0x68.offset(0x3cL).setu(s3._70.getZ() + s3._68.getZ());
-        sp0x68.offset(1, 0x40L).setu(sp0x48.getX() >> 8);
-        sp0x68.offset(1, 0x41L).setu(sp0x48.getY() >> 8);
-        sp0x68.offset(1, 0x42L).setu(sp0x48.getZ() >> 8);
-        sp0x68.offset(1, 0x44L).setu(0);
-        sp0x68.offset(1, 0x45L).setu(0);
-        sp0x68.offset(1, 0x46L).setu(0);
-        FUN_800fcf20(data, s1.tmd_30, sp0x68.getAddress(), s1.tpage_56);
-        tmp.release();
+        final EffectStruct48 sp0x68 = new EffectStruct48();
+        sp0x68.flags_00 = data._10.flags_00;
+        sp0x68._18.set(s3._2c).add(sp0x28);
+        sp0x68._28.setX(data._10.scale_16.getX() + s3._06);
+        sp0x68._28.setY(data._10.scale_16.getY() + s3._08);
+        sp0x68._28.setZ(data._10.scale_16.getX() + s3._06); // This is correct
+        sp0x68._38.set(s3._70).add(s3._68);
+        sp0x68.colour0_40.set(sp0x48.getX() >> 8, sp0x48.getY() >> 8, sp0x48.getZ() >> 8);
+        sp0x68.colour1_44.set(0, 0, 0);
+        FUN_800fcf20(data, s1.tmd_30, sp0x68, s1.tpage_56);
       }
 
       //LAB_800fd7e0
@@ -1339,16 +1330,11 @@ public final class SEffe {
 
   @Method(0x800fd87cL)
   public static void FUN_800fd87c(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    long v1;
-    long a0;
-    long s3;
-
     final ParticleEffectData98 s2 = (ParticleEffectData98)data.effect_44;
     s2._52++;
 
     if(s2.count_50 != 0) {
-      final Memory.TemporaryReservation sp0x50tmp = MEMORY.temp(0x48);
-      final Value sp0x50 = sp0x50tmp.get();
+      final EffectStruct48 sp0x50 = new EffectStruct48();
 
       //LAB_800fd8dc
       for(int s7 = 0; s7 < s2.count_50; s7++) {
@@ -1386,9 +1372,9 @@ public final class SEffe {
 
           //LAB_800fdac8
           if((s5._90 & 0x6) != 0) {
-            sp0x50.offset(4, 0x0L).setu(data._10.flags_00 & 0x67ff_ffffL | (s5._90 >>> 1 & 0x3) << 28);
+            sp0x50.flags_00 = data._10.flags_00 & 0x67ff_ffff | (s5._90 >>> 1 & 0x3) << 28;
           } else {
-            sp0x50.offset(4, 0x0L).setu(data._10.flags_00);
+            sp0x50.flags_00 = data._10.flags_00;
           }
 
           //LAB_800fdb14
@@ -1396,41 +1382,37 @@ public final class SEffe {
           sp0x98.setX((short)(sp0x20.getX() / s2.count_54));
           sp0x98.setY((short)(sp0x20.getY() / s2.count_54));
           sp0x98.setZ((short)(sp0x20.getZ() / s2.count_54));
+
           final VECTOR sp0x40 = new VECTOR().set(s5._44[0]);
           final ShortRef refX1 = new ShortRef();
           final ShortRef refY1 = new ShortRef();
-          s3 = FUN_800cfc20(s5._68, s5._2c, sp0x40, refX1, refY1) / 4;
-          sp0x50.offset(2, 0x08L).setu(refX1.get());
-          sp0x50.offset(2, 0x10L).setu(refY1.get());
-          a0 = data._10.z_22;
-          v1 = s3 + a0;
-          if((int)v1 >= 0xa0L) {
-            if((int)v1 >= 0xffeL) {
-              s3 = 0xffeL - a0;
+          int z = FUN_800cfc20(s5._68, s5._2c, sp0x40, refX1, refY1) / 4;
+          sp0x50.x0_08 = refX1.get();
+          sp0x50.y0_10 = refY1.get();
+
+          if(z + data._10.z_22 >= 0xa0) {
+            if(z + data._10.z_22 >= 0xffe) {
+              z = 0xffe - data._10.z_22;
             }
 
             //LAB_800fdbc0
-            sp0x50.offset(4, 0x4L).setu(s3);
+            sp0x50.z_04 = z;
 
             //LAB_800fdbe4
             for(int s0 = 0; s0 < s2.count_54 - 1; s0++) {
-              sp0x50.offset(1, 0x40L).setu(sp0x20.getX() >> 8);
-              sp0x50.offset(1, 0x41L).setu(sp0x20.getY() >> 8);
-              sp0x50.offset(1, 0x42L).setu(sp0x20.getZ() >> 8);
+              sp0x50.colour0_40.set(sp0x20.getX() >> 8, sp0x20.getY() >> 8, sp0x20.getZ() >> 8);
               sp0x20.sub(sp0x98);
-              sp0x50.offset(1, 0x44L).setu(sp0x20.getX() >> 8);
-              sp0x50.offset(1, 0x45L).setu(sp0x20.getY() >> 8);
-              sp0x50.offset(1, 0x46L).setu(sp0x20.getZ() >> 8);
+              sp0x50.colour1_44.set(sp0x20.getX() >> 8, sp0x20.getY() >> 8, sp0x20.getZ() >> 8);
               sp0x40.set(s5._44[s0]);
 
               final ShortRef refX2 = new ShortRef();
               final ShortRef refY2 = new ShortRef();
               FUN_800cfc20(s5._68, s5._2c, sp0x40, refX2, refY2);
-              sp0x50.offset(2, 0x0cL).setu(refX2.get());
-              sp0x50.offset(2, 0x14L).setu(refY2.get());
-              _801197c0.offset((s2._60 - 2) * 0x4L).deref(4).call(data, sp0x50.getAddress());
-              sp0x50.offset(2, 0x08L).setu(sp0x50.offset(2, 0x0cL).get());
-              sp0x50.offset(2, 0x10L).setu(sp0x50.offset(2, 0x14L).get());
+              sp0x50.x1_0c = refX2.get();
+              sp0x50.y1_14 = refY2.get();
+              _801197c0.get(s2._60 - 2).deref().run(data, sp0x50);
+              sp0x50.x0_08 = sp0x50.x1_0c;
+              sp0x50.y0_10 = sp0x50.y1_14;
             }
 
             //LAB_800fdcc8
@@ -1439,8 +1421,6 @@ public final class SEffe {
 
         //LAB_800fdd28
       }
-
-      sp0x50tmp.release();
     }
 
     //LAB_800fdd44
@@ -1510,8 +1490,7 @@ public final class SEffe {
     final SVECTOR sp0x48 = new SVECTOR();
     final ParticleEffectData98 effect = (ParticleEffectData98)manager.effect_44;
 
-    final Memory.TemporaryReservation sp0x28tmp = MEMORY.temp(0x8a);
-    final VECTOR sp0x28 = sp0x28tmp.get().cast(VECTOR::new);
+    final VECTOR sp0x28 = new VECTOR();
 
     effect._52++;
 
@@ -1629,8 +1608,6 @@ public final class SEffe {
 
       //LAB_800fe7b8
     }
-
-    sp0x28tmp.release();
 
     //LAB_800fe7ec
     if(effect._6c != 0) {
@@ -4039,7 +4016,7 @@ public final class SEffe {
   public static void renderAdditionOverlaysEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
     final AdditionOverlaysEffect44 effect = (AdditionOverlaysEffect44)data.effect_44;
 
-    if(effect.pauseTickerAndRenderer_31.get() != 1 && gameState_800babc8.getConfig(CoreMod.AUTO_ADDITION_CONFIG.get()) == AutoAdditionMode.OFF) {
+    if(effect.pauseTickerAndRenderer_31.get() != 1) {
       if(data._10.flags_00 >= 0) {
         final UnboundedArrayRef<AdditionOverlaysHit20> hitArray = effect.hitOverlays_40.deref();
 
@@ -4149,7 +4126,7 @@ public final class SEffe {
             }
 
             //LAB_801075e8
-            if((effect.autoCompleteType_3a.get() < 1 || effect.autoCompleteType_3a.get() > 2) && gameState_800babc8.getConfig(CoreMod.AUTO_ADDITION_CONFIG.get()) == AutoAdditionMode.OFF) {
+            if(effect.autoCompleteType_3a.get() < 1 || effect.autoCompleteType_3a.get() > 2) {
               //LAB_8010763c
               if(effect.autoCompleteType_3a.get() != 3) {
                 final int buttonType;
@@ -4202,7 +4179,7 @@ public final class SEffe {
           //LAB_80107728
           if(effect.numFramesToRenderCenterSquare_38.get() != 0) {
             effect.numFramesToRenderCenterSquare_38.decr();
-            if(gameState_800babc8.getConfig(CoreMod.ADDITION_OVERLAY_CONFIG.get()) != AdditionOverlayMode.OFF && gameState_800babc8.getConfig(CoreMod.AUTO_ADDITION_CONFIG.get()) == AutoAdditionMode.OFF) {
+            if(gameState_800babc8.getConfig(CoreMod.ADDITION_OVERLAY_CONFIG.get()) != AdditionOverlayMode.OFF) {
               renderAdditionCentreSolidSquare(effect, effect.lastCompletedHitOverlay_3c.deref(),
                 additionHitCompletionState_8011a014.get(effect.lastCompletedHit_39.get()).get(), state, data);
             }
@@ -4720,82 +4697,77 @@ public final class SEffe {
   }
 
   @Method(0x80108e40L)
-  public static void FUN_80108e40(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    final BttlScriptData6cSub08_3 s4 = (BttlScriptData6cSub08_3)data.effect_44;
-    long s1 = s4.ptr_04.get();
+  public static void renderRainEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
+    final RainEffect08 effect = (RainEffect08)data.effect_44;
+    final UnboundedArrayRef<RaindropEffect0c> rainArray = effect.raindropArray_04.deref();
 
     //LAB_80108e84
-    for(long s3 = 0; s3 < s4.count_00.get(); s3++) {
-      if(Math.abs(Math.abs(MEMORY.ref(2, s1).offset(0x4L).getSigned() + MEMORY.ref(2, s1).offset(0x2L).getSigned()) - Math.abs(MEMORY.ref(2, s1).offset(0x8L).getSigned() + MEMORY.ref(2, s1).offset(0x6L).getSigned())) > 180) {
+    for(int i = 0; i < effect.count_00.get(); i++) {
+      if(Math.abs(Math.abs(rainArray.get(i).y0_04.get() + rainArray.get(i).x0_02.get()) - Math.abs(rainArray.get(i).y1_08.get() + rainArray.get(i).x1_06.get())) <= 180) {
         GPU.queueCommand(30, new GpuCommandLine()
           .translucent(Translucency.of(data._10.flags_00 >>> 28 & 3))
           .monochrome(0, 0)
           .rgb(1, data._10.colour_1c.getX(), data._10.colour_1c.getY(), data._10.colour_1c.getZ())
-          .pos(0, (int)MEMORY.ref(2, s1).offset(0x06L).get() - 256, (int)MEMORY.ref(2, s1).offset(0x08L).get() - 128)
-          .pos(1, (int)MEMORY.ref(2, s1).offset(0x02L).get() - 256, (int)MEMORY.ref(2, s1).offset(0x04L).get() - 128)
+          .pos(0, (int)rainArray.get(i).x1_06.get() - 256, (int)rainArray.get(i).y1_08.get() - 128)
+          .pos(1, (int)rainArray.get(i).x0_02.get() - 256, (int)rainArray.get(i).y0_04.get() - 128)
         );
       }
-
       //LAB_80108f6c
-      s1 = s1 + 0xcL;
     }
-
     //LAB_80108f84
   }
 
   @Method(0x80109000L)
-  public static void FUN_80109000(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    final BttlScriptData6cSub08_3 s3 = (BttlScriptData6cSub08_3)data.effect_44;
-    long v1 = s3.ptr_04.get();
+  public static void tickRainEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
+    final RainEffect08 effect = (RainEffect08)data.effect_44;
+    final UnboundedArrayRef<RaindropEffect0c> rainArray = effect.raindropArray_04.deref();
 
     //LAB_80109038
-    for(int i = 0; i < s3.count_00.get(); i++) {
-      long sp10 = rsin(data._10.rot_10.getX()) << 5 >> 12;
-      long sp12 = rcos(data._10.rot_10.getX()) << 5 >> 12;
-      sp10 = sp10 * data._10.scale_16.getX() * MEMORY.ref(2, v1).offset(0xaL).getSigned() >> 24;
-      sp12 = sp12 * data._10.scale_16.getX() * MEMORY.ref(2, v1).offset(0xaL).getSigned() >> 24;
-      MEMORY.ref(2, v1).offset(0x6L).setu(MEMORY.ref(2, v1).offset(0x2L).get());
-      MEMORY.ref(2, v1).offset(0x8L).setu(MEMORY.ref(2, v1).offset(0x4L).get());
-      MEMORY.ref(2, v1).offset(0x2L).addu(sp10).and(0x1ff);
-      MEMORY.ref(2, v1).offset(0x4L).addu(sp12).and(0xff);
-      v1 = v1 + 0xcL;
+    for(int i = 0; i < effect.count_00.get(); i++) {
+      long endpointShiftX = rsin(data._10.rot_10.getX()) << 5 >> 12;
+      long endpointShiftY = rcos(data._10.rot_10.getX()) << 5 >> 12;
+      endpointShiftX = endpointShiftX * data._10.scale_16.getX() * rainArray.get(i).angleModifier_0a.get() >> 24;
+      endpointShiftY = endpointShiftY * data._10.scale_16.getX() * rainArray.get(i).angleModifier_0a.get() >> 24;
+      rainArray.get(i).x1_06.set(rainArray.get(i).x0_02.get());
+      rainArray.get(i).y1_08.set(rainArray.get(i).y0_04.get());
+      rainArray.get(i).x0_02.add((short)endpointShiftX).and(0x1ff);
+      rainArray.get(i).y0_04.add((short)endpointShiftY).and(0xff);
     }
-
     //LAB_80109110
   }
 
   @Method(0x8010912cL)
-  public static void FUN_8010912c(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    free(((BttlScriptData6cSub08_3)data.effect_44).ptr_04.get());
+  public static void deallocateRainEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
+    free(((RainEffect08)data.effect_44).raindropArray_04.getPointer());
   }
 
   @Method(0x80109158L)
-  public static FlowControl FUN_80109158(final RunningScript<? extends BattleScriptDataBase> script) {
+  public static FlowControl allocateRainEffect(final RunningScript<? extends BattleScriptDataBase> script) {
     final int count = script.params_20[1].get();
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
-      "BttlScriptData6cSub08_3",
+      "RainEffect08",
       script.scriptState_04,
       0x8,
-      SEffe::FUN_80109000,
-      SEffe::FUN_80108e40,
-      SEffe::FUN_8010912c,
-      BttlScriptData6cSub08_3::new
+      SEffe::tickRainEffect,
+      SEffe::renderRainEffect,
+      SEffe::deallocateRainEffect,
+      RainEffect08::new
     );
 
-    final EffectManagerData6c s1 = state.innerStruct_00;
-    final BttlScriptData6cSub08_3 s0 = (BttlScriptData6cSub08_3)s1.effect_44;
-    long t1 = mallocTail(count * 0xcL);
-    s0.count_00.set(count);
-    s0.ptr_04.set(t1);
-    s1._10.flags_00 = 0x5000_0000;
+    final EffectManagerData6c manager = state.innerStruct_00;
+    final RainEffect08 effect = (RainEffect08)manager.effect_44;
+    final long rainArrayAddress = mallocTail(count * 0xc);
+    effect.count_00.set(count);
+    final UnboundedArrayRef<RaindropEffect0c> rainArray = MEMORY.ref(4, rainArrayAddress, UnboundedArrayRef.of(0x0c, RaindropEffect0c::new, effect.count_00::get));
+    effect.raindropArray_04.set(rainArray);
+    manager._10.flags_00 = 0x5000_0000;
 
     //LAB_80109204
     for(int i = 0; i < count; i++) {
-      MEMORY.ref(1, t1).offset(0x0L).setu(0x1L);
-      MEMORY.ref(2, t1).offset(0x2L).setu(seed_800fa754.advance().get() % 513);
-      MEMORY.ref(2, t1).offset(0x4L).setu(seed_800fa754.advance().get() % 257);
-      MEMORY.ref(2, t1).offset(0xaL).setu(seed_800fa754.advance().get() % 3073 + 1024);
-      t1 = t1 + 0xcL;
+      rainArray.get(i)._00.set(1);
+      rainArray.get(i).x0_02.set((short)(seed_800fa754.advance().get() % 513));
+      rainArray.get(i).y0_04.set((short)(seed_800fa754.advance().get() % 257));
+      rainArray.get(i).angleModifier_0a.set((short)(seed_800fa754.advance().get() % 3073 + 1024));
     }
 
     //LAB_80109328
@@ -8589,7 +8561,6 @@ public final class SEffe {
       sp0x30.set(sp0x10);
     } else {
       //LAB_8011588c
-      final Memory.TemporaryReservation sp0x50tmp = MEMORY.temp(0x6c);
       final EffectManagerData6c sp0x50 = new EffectManagerData6c("Temp");
 
       sp0x50._10.trans_04.set(0, 0, 0);
@@ -8614,8 +8585,6 @@ public final class SEffe {
 
       final VECTOR sp0x100 = new VECTOR().set(sp0x10.transfer).sub(transforms.transfer);
       sp0x30.transfer.set(ApplyMatrixLV(transforms, sp0x100));
-
-      sp0x50tmp.release();
     }
 
     //LAB_801159cc

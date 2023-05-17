@@ -381,7 +381,7 @@ public final class Scus94491BpeSegment {
 
       return (switch(op) {
         case 0 -> "if 0x%x (p0) <= 0x%x (p1)? %s;";
-        case 1 -> "if 0x%x (p0) = 0x%x (p1)? %s;";
+        case 1 -> "if 0x%x (p0) < 0x%x (p1)? %s;";
         case 2 -> "if 0x%x (p0) == 0x%x (p1)? %s;";
         case 3 -> "if 0x%x (p0) != 0x%x (p1)? %s;";
         case 4 -> "if 0x%x (p0) > 0x%x (p1)? %s;";
@@ -398,7 +398,7 @@ public final class Scus94491BpeSegment {
 
       return (switch(op) {
         case 0 -> "if 0 <= 0x%x (p0)? %s;";
-        case 1 -> "if 0 = 0x%x (p0)? %s;";
+        case 1 -> "if 0 < 0x%x (p0)? %s;";
         case 2 -> "if 0 == 0x%x (p0)? %s;";
         case 3 -> "if 0 != 0x%x (p0)? %s;";
         case 4 -> "if 0 > 0x%x (p0)? %s;";
@@ -1809,7 +1809,6 @@ public final class Scus94491BpeSegment {
       for(int chunkY = 0; chunkY < height; chunkY += 16) {
         GPU.queueCommand(z, new GpuCommandQuad()
           .bpp(Bpp.BITS_4)
-          .translucent(Translucency.HALF_B_PLUS_HALF_F)
           .clut(clutX, clutY)
           .vramPos(vramX, vramY)
           .monochrome(colour)
