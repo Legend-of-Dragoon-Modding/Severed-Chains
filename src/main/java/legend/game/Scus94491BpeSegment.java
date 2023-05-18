@@ -145,7 +145,6 @@ import static legend.game.Scus94491BpeSegment_8004.preloadingAudioAssets_8004ddc
 import static legend.game.Scus94491BpeSegment_8004.previousMainCallbackIndex_8004dd28;
 import static legend.game.Scus94491BpeSegment_8004.reinitOrderingTableBits_8004dd38;
 import static legend.game.Scus94491BpeSegment_8004.setMainVolume;
-import static legend.game.Scus94491BpeSegment_8004.setMono;
 import static legend.game.Scus94491BpeSegment_8004.setSpuDmaCompleteCallback;
 import static legend.game.Scus94491BpeSegment_8004.simpleRandSeed_8004dd44;
 import static legend.game.Scus94491BpeSegment_8004.sssqFadeIn;
@@ -2304,7 +2303,6 @@ public final class Scus94491BpeSegment {
     FUN_8004c3f0(8);
     sssqSetReverbType(3);
     SsSetRVol(0x30, 0x30);
-    setMono(gameState_800babc8.mono_4e0);
 
     //LAB_80019654
     for(int i = 0; i < 13; i++) {

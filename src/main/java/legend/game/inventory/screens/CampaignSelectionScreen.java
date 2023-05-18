@@ -9,15 +9,19 @@ import legend.game.inventory.screens.controls.SaveCard;
 import legend.game.modding.events.EventManager;
 import legend.game.modding.events.gamestate.GameLoadedEvent;
 import legend.game.saves.Campaign;
+import legend.game.saves.ConfigCollection;
+import legend.game.saves.ConfigStorage;
+import legend.game.saves.ConfigStorageLocation;
 import legend.game.types.GameState52c;
 import legend.game.types.LodString;
+
+import java.nio.file.Path;
 
 import static legend.core.GameEngine.SAVES;
 import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
-import static legend.game.Scus94491BpeSegment_8004.setMono;
 import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
@@ -26,7 +30,11 @@ import static legend.game.Scus94491BpeSegment_800b.savedGameSelected_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 
 public class CampaignSelectionScreen extends MenuScreen {
-  public CampaignSelectionScreen() {
+  private final ConfigCollection initialConfig;
+
+  public CampaignSelectionScreen(final ConfigCollection initialConfig) {
+    this.initialConfig = initialConfig;
+
     deallocateRenderables(0xff);
     scriptStartEffect(2, 10);
 
@@ -48,10 +56,15 @@ public class CampaignSelectionScreen extends MenuScreen {
   }
 
   private void onSelection(final Campaign campaign) {
+    final ConfigCollection campaignConfig = new ConfigCollection();
+    ConfigStorage.loadConfig(campaignConfig, ConfigStorageLocation.CAMPAIGN, Path.of("saves", campaign.filename(), "campaign_config.dcnf"));
+
     menuStack.pushScreen(new LoadGameScreen(save -> {
       menuStack.popScreen();
 
       final GameState52c state = save.state();
+      state.copyConfigFrom(this.initialConfig);
+      state.copyConfigFrom(campaignConfig);
       final GameLoadedEvent event = EventManager.INSTANCE.postEvent(new GameLoadedEvent(state));
 
       gameState_800babc8 = event.gameState;
@@ -66,8 +79,6 @@ public class CampaignSelectionScreen extends MenuScreen {
       if(gameState_800babc8.submapCut_a8 == 264) { // Somewhere in Home of Giganto
         submapScene_80052c34.set(53);
       }
-
-      setMono(gameState_800babc8.mono_4e0);
     }, () -> {
       menuStack.popScreen();
       scriptStartEffect(2, 10);

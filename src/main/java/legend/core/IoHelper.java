@@ -9,6 +9,7 @@ import legend.core.memory.Value;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SeekableByteChannel;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -40,6 +41,40 @@ public final class IoHelper {
 
     buffer.flip();
     return memSlice(buffer);
+  }
+
+  /** ASCII bytes of a string prefixed with lengthSize-byte length header */
+  public static byte[] stringToBytes(final String string, final int lengthSize) {
+    final byte[] bytes = string.getBytes(StandardCharsets.US_ASCII);
+    final byte[] data = new byte[lengthSize + bytes.length];
+    MathHelper.set(data, 0, lengthSize, bytes.length);
+    System.arraycopy(bytes, 0, data, lengthSize, bytes.length);
+    return data;
+  }
+
+  /** String from ASCII bytes prefixed with lengthSize-byte length header */
+  public static String stringFromBytes(final byte[] bytes, final int lengthSize) {
+    final int length = (int)MathHelper.get(bytes, 0, lengthSize);
+    return new String(bytes, lengthSize, length, StandardCharsets.US_ASCII);
+  }
+
+  /** ASCII bytes of an enum name() prefixed with 1-byte length header */
+  public static byte[] enumToBytes(final Enum<?> inst) {
+    return stringToBytes(inst.name(), 1);
+  }
+
+  /** Enum from ASCII bytes name() prefixed with 1-byte length header */
+  public static <T extends Enum<T>> T enumFromBytes(final Class<T> cls, final byte[] bytes) {
+    return Enum.valueOf(cls, stringFromBytes(bytes, 1));
+  }
+
+  /** Enum from ASCII bytes name() prefixed with 1-byte length header, default value if error occurs */
+  public static <T extends Enum<T>> T enumFromBytes(final Class<T> cls, final byte[] bytes, final T defaultValue) {
+    try {
+      return enumFromBytes(cls, bytes);
+    } catch(final IllegalArgumentException|IndexOutOfBoundsException ignored) { }
+
+    return defaultValue;
   }
 
   public static void write(final ByteBuffer stream, final boolean value) {

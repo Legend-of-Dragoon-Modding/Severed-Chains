@@ -65,6 +65,7 @@ import legend.game.combat.ui.CombatMenua4;
 import legend.game.combat.ui.FloatingNumberC4;
 import legend.game.fmv.Fmv;
 import legend.game.inventory.WhichMenu;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.IntParam;
 import legend.game.scripting.RunningScript;
@@ -940,8 +941,6 @@ public final class Bttl_800c {
     _800c66d0.set(0);
     monsterCount_800c6768.set(0);
     charCount_800c677c.set(0);
-
-    _8006e398.morphMode_ee4 = gameState_800babc8.morphMode_4e2;
 
     loadSupportOverlay(1, SBtld::battlePrepareSelectedAdditionHitProperties_80109250);
 

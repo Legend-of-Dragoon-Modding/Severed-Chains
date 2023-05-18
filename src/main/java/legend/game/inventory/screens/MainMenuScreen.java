@@ -6,10 +6,14 @@ import legend.game.inventory.screens.controls.Button;
 import legend.game.inventory.screens.controls.CharacterCard;
 import legend.game.inventory.screens.controls.DragoonSpirits;
 import legend.game.inventory.screens.controls.Glyph;
+import legend.game.saves.ConfigStorage;
+import legend.game.saves.ConfigStorageLocation;
 import legend.game.types.LodString;
 
 import javax.annotation.Nullable;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.function.Function;
 
@@ -236,7 +240,13 @@ public class MainMenuScreen extends MenuScreen {
   }
 
   private void showOptionsScreen() {
-    this.showScreen(unload -> new OptionsScreen(gameState_800babc8, unload));
+    playSound(2);
+    menuStack.pushScreen(new OptionsScreen(gameState_800babc8, EnumSet.allOf(ConfigStorageLocation.class), () -> {
+      ConfigStorage.saveConfig(gameState_800babc8, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
+      ConfigStorage.saveConfig(gameState_800babc8, ConfigStorageLocation.CAMPAIGN, Path.of("saves", gameState_800babc8.campaignName, "campaign_config.dcnf"));
+      menuStack.popScreen();
+      this.loadingStage = 0;
+    }));
   }
 
   private void showSaveScreen() {
