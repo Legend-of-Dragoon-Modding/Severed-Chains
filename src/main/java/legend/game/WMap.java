@@ -37,7 +37,6 @@ import legend.game.tmd.Renderer;
 import legend.game.types.CContainer;
 import legend.game.types.CoolonWarpDestination20;
 import legend.game.types.Coord2AndThenSomeStruct_60;
-import legend.game.types.GameState52c;
 import legend.game.types.GsF_LIGHT;
 import legend.game.types.LodString;
 import legend.game.types.McqHeader;
@@ -66,6 +65,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
@@ -141,13 +141,13 @@ import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
 import static legend.game.Scus94491BpeSegment_8007.clearRed_8007a3a8;
 import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
-import static legend.game.Scus94491BpeSegment_800b.input_800bee90;
 import static legend.game.Scus94491BpeSegment_800b.clearBlue_800babc0;
 import static legend.game.Scus94491BpeSegment_800b.clearGreen_800bb104;
 import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.continentIndex_800bf0b0;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
+import static legend.game.Scus94491BpeSegment_800b.input_800bee90;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.savedGameSelected_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.texPages_800bb110;
@@ -708,12 +708,11 @@ public class WMap {
   @Method(0x800ccce4L)
   public static void FUN_800ccce4() {
     final long v0 = _800c6798.getAddress();
-    final GameState52c state = gameState_800babc8;
-    state.areaIndex_4de = (int)MEMORY.ref(2, v0).offset(0x12L).get();
-    state.pathIndex_4d8 = (int)MEMORY.ref(2, v0).offset(0x14L).get();
-    state.dotIndex_4da = (int)MEMORY.ref(2, v0).offset(0x16L).get();
-    state.dotOffset_4dc = (int)MEMORY.ref(1, v0).offset(0x18L).get();
-    state.facing_4dd = (byte)MEMORY.ref(1, v0).offset(0x1cL).get();
+    gameState_800babc8.areaIndex_4de = (int)MEMORY.ref(2, v0).offset(0x12L).get();
+    gameState_800babc8.pathIndex_4d8 = (int)MEMORY.ref(2, v0).offset(0x14L).get();
+    gameState_800babc8.dotIndex_4da = (int)MEMORY.ref(2, v0).offset(0x16L).get();
+    gameState_800babc8.dotOffset_4dc = (int)MEMORY.ref(1, v0).offset(0x18L).get();
+    gameState_800babc8.facing_4dd = (byte)MEMORY.ref(1, v0).offset(0x1cL).get();
 
     //LAB_800ccd30
     for(int i = 0; i < 8; i++) {
@@ -4723,7 +4722,7 @@ public class WMap {
     struct.currentAnimIndex_ac = struct.animIndex_b0;
 
     if(struct.vec_84.getX() != struct.vec_94.getX() || struct.vec_84.getY() != struct.vec_94.getY() || struct.vec_84.getZ() != struct.vec_94.getZ()) {
-      final EncounterRateMode mode = gameState_800babc8.getConfig(CoreMod.ENCOUNTER_RATE_CONFIG.get());
+      final EncounterRateMode mode = CONFIG.getConfig(CoreMod.ENCOUNTER_RATE_CONFIG.get());
 
       //LAB_800e117c
       //LAB_800e11b0

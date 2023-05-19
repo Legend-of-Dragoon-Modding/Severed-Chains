@@ -10,8 +10,11 @@ import legend.game.combat.Bttl_800c;
 import legend.game.combat.bobj.BattleObject27c;
 import legend.game.combat.bobj.MonsterBattleObject;
 import legend.game.combat.bobj.PlayerBattleObject;
+import legend.game.combat.effects.TransformationMode;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.types.SubmapObject210;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 
 public class GameVarParam extends Param {
@@ -61,7 +64,7 @@ public class GameVarParam extends Param {
       case 35 -> Bttl_800c.charCount_800c677c.get();
       case 36 -> Scus94491BpeSegment_8006._8006e398.bobjIndices_e50[0] != null ? Scus94491BpeSegment_8006._8006e398.bobjIndices_e50[0].index : -1;
       case 37 -> Bttl_800c.monsterCount_800c6768.get();
-      case 38 -> Scus94491BpeSegment_8006._8006e398.morphMode_ee4;
+      case 38 -> CONFIG.getConfig(CoreMod.TRANSFORMATION_MODE_CONFIG.get()).ordinal();
       case 39 -> Scus94491BpeSegment_8006._8006e398.stageProgression_eec;
       case 40 -> Scus94491BpeSegment_800b.itemsDroppedByEnemiesCount_800bc978.get();
       case 41 -> Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928.get(0).get();
@@ -192,7 +195,7 @@ public class GameVarParam extends Param {
       case 35 -> Bttl_800c.charCount_800c677c.set(val);
       case 36 -> Scus94491BpeSegment_8006._8006e398.bobjIndices_e50[0] = (ScriptState<MonsterBattleObject>)scriptStatePtrArr_800bc1c0[val];
       case 37 -> Bttl_800c.monsterCount_800c6768.set(val);
-      case 38 -> Scus94491BpeSegment_8006._8006e398.morphMode_ee4 = val;
+      case 38 -> CONFIG.setConfig(CoreMod.TRANSFORMATION_MODE_CONFIG.get(), TransformationMode.values()[val]);
       case 39 -> Scus94491BpeSegment_8006._8006e398.stageProgression_eec = val;
       case 40 -> Scus94491BpeSegment_800b.itemsDroppedByEnemiesCount_800bc978.set(val);
       case 41 -> Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928.get(0).set(val);

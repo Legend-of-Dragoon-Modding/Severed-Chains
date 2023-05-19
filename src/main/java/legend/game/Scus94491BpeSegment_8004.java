@@ -1151,16 +1151,8 @@ public final class Scus94491BpeSegment_8004 {
                 case 0x7 -> sssqHandleVolume(spu44.channelIndex_01.get()); // Volume
 
                 case 0xa -> { // Pan
-                  if(spu44.mono_36.get() == 0) {
-                    //LAB_80045f44
-                    sssqHandlePan(spu44.channelIndex_01.get());
-                  } else if(spu124._028.get() == 0) {
-                    //LAB_80045f30
-                    spu124.sssqOffset_00c.add(0x6L);
-                  } else {
-                    sssqDataPointer_800c6680.deref(1).offset(0x4L).setu(sssqPtr_800c4aa4.deref(1).offset(spu124.sssqOffset_00c.get() + 0x2L).get());
-                    spu124.sssqOffset_00c.add(0x3L);
-                  }
+                  //LAB_80045f44
+                  sssqHandlePan(spu44.channelIndex_01.get());
                 }
 
                 case 0x40 -> sssqHandleSustain(spu44.channelIndex_01.get()); // Damper pedal (sustain)
@@ -1394,12 +1386,6 @@ public final class Scus94491BpeSegment_8004 {
       struct66._42.set(0);
     }
 
-    //LAB_800467c8
-    if(_800c6630.mono_36.get() != 0) {
-      l = maxShort(l, r);
-      r = l;
-    }
-
     //LAB_800467f0
     final Voice voice = voicePtr_800c4ac4.deref().voices[voiceIndex];
     voice.LEFT.set(l);
@@ -1573,11 +1559,6 @@ public final class Scus94491BpeSegment_8004 {
           voicePtr_800c4ac4.deref().voices[voiceIndex].ADPCM_SAMPLE_RATE.set(calculateSampleRate(sshd10Ptr_800c6678.deref()._02.get(), s2._002.get(), sshd10Ptr_800c6678.deref()._03.get(), sssqDataPointer_800c6680.deref(1).offset(0xaL).get(), t0));
           int l = FUN_80048ab8(channelIndex, FUN_80048b90(0, 0), 0);
           int r = FUN_80048ab8(channelIndex, FUN_80048b90(0, 0), 1);
-
-          if(_800c6630.mono_36.get() != 0) {
-            l = maxShort(l, r);
-            r = l;
-          }
 
           //LAB_80046f30
           final Voice voice = voicePtr_800c4ac4.deref().voices[voiceIndex];
@@ -1845,12 +1826,6 @@ public final class Scus94491BpeSegment_8004 {
                 //LAB_80047a24
                 l = scaleValue12((short)l, struct124.pitchShiftVolLeft_0ee.get());
                 r = scaleValue12((short)r, struct124.pitchShiftVolRight_0f0.get());
-              }
-
-              //LAB_80047a44
-              if(struct44.mono_36.get() != 0) {
-                r = maxShort((short)l, (short)r);
-                l = r;
               }
 
               //LAB_80047a6c
@@ -3825,19 +3800,9 @@ public final class Scus94491BpeSegment_8004 {
   @Method(0x8004c558L)
   public static void SsSetRVol(final int left, final int right) {
     if(_800c6630.reverbType_34.get() != 0 && left < 0x80 && right < 0x80) {
-      final int r;
-      final int l;
-      if(_800c6630.mono_36.get() != 0) {
-        l = maxShort(left << 8, right << 8);
-        r = l;
-      } else {
-        l = left << 8;
-        r = right << 8;
-      }
-
       //LAB_8004c5d0
-      SPU.REVERB_OUT_L.set(l);
-      SPU.REVERB_OUT_R.set(r);
+      SPU.REVERB_OUT_L.set(left << 8);
+      SPU.REVERB_OUT_R.set(right << 8);
     }
 
     //LAB_8004c5d8
@@ -3851,11 +3816,6 @@ public final class Scus94491BpeSegment_8004 {
   @Method(0x8004c690L)
   public static void FUN_8004c690(final long a0) {
     assert false;
-  }
-
-  @Method(0x8004c6f8L)
-  public static void setMono(final boolean mono) {
-    _800c6630.mono_36.set(mono ? 1 : 0);
   }
 
   @Method(0x8004c894L)
@@ -4067,19 +4027,9 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x8004ced4L)
   public static void setCdVolume(final int left, final int right) {
-    final int l;
-    final int r;
-    if(_800c6630.mono_36.get() != 0) {
-      l = maxShort((byte)left << 8, (byte)right << 8);
-      r = l;
-    } else {
-      l = left << 8;
-      r = right << 8;
-    }
-
     //LAB_8004cf0c
-    voicePtr_800c4ac4.deref().CD_VOL_L.set(l);
-    voicePtr_800c4ac4.deref().CD_VOL_R.set(r);
+    voicePtr_800c4ac4.deref().CD_VOL_L.set(left << 8);
+    voicePtr_800c4ac4.deref().CD_VOL_R.set(right << 8);
   }
 
   @Method(0x8004cf8cL)

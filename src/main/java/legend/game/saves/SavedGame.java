@@ -7,6 +7,6 @@ import legend.game.types.GameState52c;
  *                     3 - chapter title
  *                     other - submap
  */
-public record SavedGame(String filename, int locationType, int locationIndex, GameState52c state) {
+public record SavedGame(String filename, int locationType, int locationIndex, GameState52c state, ConfigCollection config) {
 
 }

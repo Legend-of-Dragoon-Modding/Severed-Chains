@@ -159,6 +159,36 @@ public abstract class Control extends ControlHost {
     SItem.renderNumber(x, y, value, 0x2, digitCount);
   }
 
+  protected void renderNumber(final int x, final int y, final String value, final int digitCount) {
+    for(int i = 0; i < Math.min(digitCount, value.length()); i++) {
+      final Renderable58 struct = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
+      struct.flags_00 |= 0xc;
+      struct.tpage_2c = 0x19;
+      struct.clut_30 = 0;
+      struct.z_3c = 33;
+      struct.x_40 = x + 6 * i;
+      struct.y_44 = y;
+
+      final char digitChar = value.charAt(i);
+
+      final int digit;
+      switch(digitChar) {
+        case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' -> digit = digitChar - 0x30;
+        case '.' -> {
+          // Render the bottom half of a colon, because for some reason that's the easiest way to render a decimal
+          struct.heightCut = 4;
+          digit = 10;
+          struct.y_44 += 1;
+        }
+        default -> {
+          continue;
+        }
+      }
+
+      struct.glyph_04 = digit;
+    }
+  }
+
   protected void renderNumber(final int x, final int y, final int value, final int digitCount, final int flags) {
     SItem.renderNumber(x, y, value, flags | 0x2, digitCount);
   }

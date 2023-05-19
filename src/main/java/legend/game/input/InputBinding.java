@@ -1,7 +1,8 @@
 package legend.game.input;
 
-import legend.core.Config;
+import legend.game.modding.coremod.CoreMod;
 
+import static legend.core.GameEngine.CONFIG;
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
 public class InputBinding {
   private final InputAction inputAction; // Identification + Action
@@ -10,7 +11,6 @@ public class InputBinding {
   private int hatIndex;
   private InputState state;
   private InputType inputType;
-  private final float deadzone;
   private final Controller targetController;
   private final float[] pulseTimings = {0.5f, 0.1f};
   private int pulseTimingsIndex;
@@ -23,7 +23,6 @@ public class InputBinding {
     this.inputType = InputType.GAMEPAD_BUTTON;
 
     this.state = InputState.NO_INPUT;
-    this.deadzone = Config.controllerDeadzone();
   }
 
   public InputBinding(final InputAction inputAction, final Controller controller, final int glfwKeyCode, final InputType inputType) {
@@ -33,7 +32,6 @@ public class InputBinding {
     this.inputType = inputType;
 
     this.state = InputState.NO_INPUT;
-    this.deadzone = Config.controllerDeadzone();
   }
 
   public void poll() {
@@ -72,13 +70,13 @@ public class InputBinding {
     final float axisValue = this.targetController.readAxis(this.glfwKeyCode);
 
     if(this.inputType == InputType.GAMEPAD_AXIS_BUTTON_POSITIVE) {
-      if(axisValue > this.deadzone) {
+      if(axisValue > CONFIG.getConfig(CoreMod.CONTROLLER_DEADZONE_CONFIG.get())) {
         this.handlePositiveState();
       } else {
         this.handleNoInputState();
       }
     } else if(this.inputType == InputType.GAMEPAD_AXIS_BUTTON_NEGATIVE) {
-      if(axisValue < -this.deadzone) {
+      if(axisValue < -CONFIG.getConfig(CoreMod.CONTROLLER_DEADZONE_CONFIG.get())) {
         this.handlePositiveState();
       } else {
         this.handleNoInputState();

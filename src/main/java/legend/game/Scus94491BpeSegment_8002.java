@@ -29,6 +29,7 @@ import legend.game.inventory.screens.CampaignSelectionScreen;
 import legend.game.inventory.screens.CharSwapScreen;
 import legend.game.inventory.screens.MenuScreen;
 import legend.game.inventory.screens.NewCampaignScreen;
+import legend.game.inventory.screens.OptionsScreen;
 import legend.game.inventory.screens.SaveGameScreen;
 import legend.game.inventory.screens.ShopScreen;
 import legend.game.inventory.screens.TextColour;
@@ -36,6 +37,7 @@ import legend.game.inventory.screens.TooManyItemsScreen;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.EventManager;
 import legend.game.modding.events.inventory.TakeItemEvent;
+import legend.game.saves.ConfigStorageLocation;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
 import legend.game.tim.Tim;
@@ -70,8 +72,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Supplier;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
@@ -1234,6 +1238,7 @@ public final class Scus94491BpeSegment_8002 {
       case INIT_CAMPAIGN_SELECTION_MENU -> initMenu(WhichMenu.RENDER_CAMPAIGN_SELECTION_MENU, CampaignSelectionScreen::new);
       case INIT_SAVE_GAME_MENU_16 -> initMenu(WhichMenu.RENDER_SAVE_GAME_MENU_19, () -> new SaveGameScreen(() -> whichMenu_800bdc38 = WhichMenu.UNLOAD_SAVE_GAME_MENU_20));
       case INIT_NEW_CAMPAIGN_MENU -> initMenu(WhichMenu.RENDER_NEW_CAMPAIGN_MENU, NewCampaignScreen::new);
+      case INIT_OPTIONS_MENU -> initMenu(WhichMenu.RENDER_OPTIONS_MENU, () -> new OptionsScreen(CONFIG, Set.of(ConfigStorageLocation.GLOBAL), () -> whichMenu_800bdc38 = WhichMenu.UNLOAD_OPTIONS_MENU));
       case INIT_CHAR_SWAP_MENU_21 -> {
         loadCharacterStats(0);
         cacheCharacterSlots();
@@ -1277,11 +1282,11 @@ public final class Scus94491BpeSegment_8002 {
         }
       }
 
-      case RENDER_SHOP_MENU_9, RENDER_CAMPAIGN_SELECTION_MENU, RENDER_SAVE_GAME_MENU_19, RENDER_CHAR_SWAP_MENU_24, RENDER_TOO_MANY_ITEMS_MENU_34, RENDER_NEW_CAMPAIGN_MENU -> menuStack.render();
+      case RENDER_SHOP_MENU_9, RENDER_CAMPAIGN_SELECTION_MENU, RENDER_SAVE_GAME_MENU_19, RENDER_CHAR_SWAP_MENU_24, RENDER_TOO_MANY_ITEMS_MENU_34, RENDER_NEW_CAMPAIGN_MENU, RENDER_OPTIONS_MENU -> menuStack.render();
       case RENDER_INVENTORY_MENU_4, RENDER_SHOP_CARRIED_ITEMS_36 -> renderMenus();
       case RENDER_POST_COMBAT_REPORT_29 -> renderPostCombatReport();
 
-      case UNLOAD_CAMPAIGN_SELECTION_MENU, UNLOAD_SAVE_GAME_MENU_20, UNLOAD_CHAR_SWAP_MENU_25, UNLOAD_NEW_CAMPAIGN_MENU -> {
+      case UNLOAD_CAMPAIGN_SELECTION_MENU, UNLOAD_SAVE_GAME_MENU_20, UNLOAD_CHAR_SWAP_MENU_25, UNLOAD_NEW_CAMPAIGN_MENU, UNLOAD_OPTIONS_MENU -> {
         menuStack.popScreen();
         decrementOverlayCount();
 
@@ -1699,7 +1704,7 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_800234f4
     final int count = gameState_800babc8.items_2e9.size();
 
-    if(count >= gameState_800babc8.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get())) {
+    if(count >= CONFIG.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get())) {
       //LAB_8002350c
       return 0xff;
     }
@@ -2096,8 +2101,8 @@ public final class Scus94491BpeSegment_8002 {
           }
 
           //LAB_800240e8
-          cmd.pos(0, x1 + x, y1 + y);
-          cmd.pos(1, x2 + x, y1 + y);
+          cmd.pos(0, x1 + x, y1 + y + renderable.heightCut);
+          cmd.pos(1, x2 + x, y1 + y + renderable.heightCut);
           cmd.pos(2, x1 + x, y2 + y);
           cmd.pos(3, x2 + x, y2 + y);
 
@@ -2109,8 +2114,8 @@ public final class Scus94491BpeSegment_8002 {
           v1 = metrics.v_01() + metrics.textureHeight();
           final int v = v1 < 255 ? v1 : v1 - 1;
 
-          cmd.uv(0, metrics.u_00(), metrics.v_01());
-          cmd.uv(1, u, metrics.v_01());
+          cmd.uv(0, metrics.u_00(), metrics.v_01() + renderable.heightCut);
+          cmd.uv(1, u, metrics.v_01() + renderable.heightCut);
           cmd.uv(2, metrics.u_00(), v);
           cmd.uv(3, u, v);
 
@@ -2704,17 +2709,80 @@ public final class Scus94491BpeSegment_8002 {
         final int x = textbox.x_14 - centreScreenX_1f8003dc.get();
         final int y = textbox.y_16 - centreScreenY_1f8003de.get();
 
-        GPU.queueCommand(textbox.z_0c, new GpuCommandPoly(4)
-          .translucent(Translucency.HALF_B_PLUS_HALF_F)
-          .monochrome(0, 0)
-          .pos(0, x - textbox.width_1c, y - textbox.height_1e)
-          .rgb(1, (int)_80010868.offset(0x0L).get(), (int)_80010868.offset(0x4L).get(), (int)_80010868.offset(0x8L).get())
-          .pos(1, x + textbox.width_1c, y - textbox.height_1e)
-          .rgb(2, (int)_80010868.offset(0x0L).get(), (int)_80010868.offset(0x4L).get(), (int)_80010868.offset(0x8L).get())
-          .pos(2, x - textbox.width_1c, y + textbox.height_1e)
-          .monochrome(3, 0)
-          .pos(3, x + textbox.width_1c, y + textbox.height_1e)
-        );
+        if(Config.textBoxColour()) {
+          if(Config.getTextBoxColourMode() == 0) {
+            GPU.queueCommand(textbox.z_0c, new GpuCommandPoly(4)
+              .translucent(Translucency.of(Config.getTextBoxTransparencyMode()))
+              .rgb(0, Config.getTextBoxRgb(0))
+              .pos(0, x - textbox.width_1c, y - textbox.height_1e)
+              .rgb(1, Config.getTextBoxRgb(1))
+              .pos(1, x + textbox.width_1c, y - textbox.height_1e)
+              .rgb(2, Config.getTextBoxRgb(2))
+              .pos(2, x - textbox.width_1c, y + textbox.height_1e)
+              .rgb(3, Config.getTextBoxRgb(3))
+              .pos(3, x + textbox.width_1c, y + textbox.height_1e)
+            );
+          } else if(Config.getTextBoxColourMode() == 1) {
+            GPU.queueCommand(textbox.z_0c, new GpuCommandPoly(4)
+              .translucent(Translucency.of(Config.getTextBoxTransparencyMode()))
+              .rgb(0, Config.getTextBoxRgb(0))
+              .pos(0, x - textbox.width_1c, y - textbox.height_1e)
+              .rgb(1, Config.getTextBoxRgb(1))
+              .pos(1, x, y - textbox.height_1e)
+              .rgb(2, Config.getTextBoxRgb(2))
+              .pos(2, x - textbox.width_1c, y + textbox.height_1e)
+              .rgb(3, Config.getTextBoxRgb(3))
+              .pos(3, x, y + textbox.height_1e)
+            );
+            GPU.queueCommand(textbox.z_0c, new GpuCommandPoly(4)
+              .translucent(Translucency.of(Config.getTextBoxTransparencyMode()))
+              .rgb(0, Config.getTextBoxRgb(4))
+              .pos(0, x, y - textbox.height_1e)
+              .rgb(1, Config.getTextBoxRgb(5))
+              .pos(1, x + textbox.width_1c, y - textbox.height_1e)
+              .rgb(2, Config.getTextBoxRgb(6))
+              .pos(2, x, y + textbox.height_1e)
+              .rgb(3, Config.getTextBoxRgb(7))
+              .pos(3, x + textbox.width_1c, y + textbox.height_1e)
+            );
+          } else if(Config.getTextBoxColourMode() == 2) {
+            GPU.queueCommand(textbox.z_0c, new GpuCommandPoly(4)
+              .translucent(Translucency.of(Config.getTextBoxTransparencyMode()))
+              .rgb(0, Config.getTextBoxRgb(0))
+              .pos(0, x - textbox.width_1c, y - textbox.height_1e)
+              .rgb(1, Config.getTextBoxRgb(1))
+              .pos(1, x + textbox.width_1c, y - textbox.height_1e)
+              .rgb(2, Config.getTextBoxRgb(2))
+              .pos(2, x - textbox.width_1c, y)
+              .rgb(3, Config.getTextBoxRgb(3))
+              .pos(3, x + textbox.width_1c, y)
+            );
+
+            GPU.queueCommand(textbox.z_0c, new GpuCommandPoly(4)
+              .translucent(Translucency.of(Config.getTextBoxTransparencyMode()))
+              .rgb(0, Config.getTextBoxRgb(4))
+              .pos(0, x - textbox.width_1c, y)
+              .rgb(1, Config.getTextBoxRgb(5))
+              .pos(1, x + textbox.width_1c, y)
+              .rgb(2, Config.getTextBoxRgb(6))
+              .pos(2, x - textbox.width_1c, y + textbox.height_1e)
+              .rgb(3, Config.getTextBoxRgb(7))
+              .pos(3, x + textbox.width_1c, y + textbox.height_1e)
+            );
+          }
+        } else {
+          GPU.queueCommand(textbox.z_0c, new GpuCommandPoly(4)
+            .translucent(Translucency.HALF_B_PLUS_HALF_F)
+            .monochrome(0, 0)
+            .pos(0, x - textbox.width_1c, y - textbox.height_1e)
+            .rgb(1, (int)_80010868.offset(0x0L).get(), (int)_80010868.offset(0x4L).get(), (int)_80010868.offset(0x8L).get())
+            .pos(1, x + textbox.width_1c, y - textbox.height_1e)
+            .rgb(2, (int)_80010868.offset(0x0L).get(), (int)_80010868.offset(0x4L).get(), (int)_80010868.offset(0x8L).get())
+            .pos(2, x - textbox.width_1c, y + textbox.height_1e)
+            .monochrome(3, 0)
+            .pos(3, x + textbox.width_1c, y + textbox.height_1e)
+          );
+        }
 
         if(textbox._06 != 0) {
           renderTextboxBorder(textboxIndex, x - textbox.width_1c, y - textbox.height_1e, x + textbox.width_1c, y + textbox.height_1e);

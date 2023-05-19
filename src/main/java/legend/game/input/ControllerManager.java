@@ -1,12 +1,13 @@
 package legend.game.input;
 
-import legend.core.Config;
 import legend.core.opengl.Window;
+import legend.game.modding.coremod.CoreMod;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GPU;
 import static org.lwjgl.glfw.GLFW.GLFW_JOYSTICK_LAST;
 import static org.lwjgl.glfw.GLFW.glfwGetJoystickGUID;
@@ -30,7 +31,7 @@ public class ControllerManager {
   }
 
   public void init() {
-    final String controllerGuidFromConfig = Config.controllerGuid();
+    final String controllerGuidFromConfig = CONFIG.getConfig(CoreMod.CONTROLLER_CONFIG.get());
 
     for(int i = 0; i < GLFW_JOYSTICK_LAST; i++) {
       if(glfwJoystickPresent(i)) {
@@ -50,6 +51,16 @@ public class ControllerManager {
 
   public List<GlfwController> getConnectedControllers() {
     return this.connectedControllers;
+  }
+
+  public GlfwController getControllerByGuid(final String guid) {
+    for(final GlfwController controller : this.connectedControllers) {
+      if(controller.getGuid().equals(guid)) {
+        return controller;
+      }
+    }
+
+    return null;
   }
 
   private void onControllerConnected(final Window window, final int id) {
