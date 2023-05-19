@@ -74,11 +74,20 @@ public class SaveCard extends Control {
       renderCentredText(locationNames.get(this.saveData.locationIndex()).deref(), x + 258, y + 47, TextColour.BROWN); // Location text
 
       final GameState52c state = this.saveData.state();
-      final CharacterData2c char0 = state.charData_32c[0];
+
+      int firstCharId = 0;
+      for(int i = 0; i < state.charIds_88.length; i++) {
+        if(state.charIds_88[i] != -1) {
+          firstCharId = state.charIds_88[i];
+          break;
+        }
+      }
+
+      final CharacterData2c char0 = state.charData_32c[firstCharId];
       this.renderNumber(224, y + 6, char0.level_12, 2); // Level
       this.renderNumber(269, y + 6, char0.dlevel_13, 2); // Dragoon level
       this.renderNumber(302, y + 6, char0.hp_08, 4); // Current HP
-      this.renderNumber(332, y + 6, levelStuff_800fbd30.get(state.charIds_88[0]).deref().get(char0.level_12).hp_00.get(), 4); // Max HP
+      this.renderNumber(332, y + 6, levelStuff_800fbd30.get(firstCharId).deref().get(char0.level_12).hp_00.get(), 4); // Max HP
       this.renderNumber(245, y + 17, state.gold_94, 8); // Gold
       this.renderNumber(306, y + 17, getTimestampPart(state.timestamp_a0, 0), 3); // Time played hour
       this.renderCharacter(324, y + 17, 10); // Hour-minute colon
