@@ -160,6 +160,7 @@ public final class GameEngine {
 
         EventManager.INSTANCE.getClass(); // Trigger load
 
+        Files.createDirectories(Path.of("saves"));
         SAVES.registerDeserializer(SaveSerialization::fromRetailMatcher, SaveSerialization::fromRetail);
         SAVES.registerDeserializer(SaveSerialization::fromV1Matcher, SaveSerialization::fromV1);
         SAVES.registerDeserializer(SaveSerialization::fromV2Matcher, SaveSerialization::fromV2);
