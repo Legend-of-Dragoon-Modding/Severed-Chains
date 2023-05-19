@@ -41,7 +41,6 @@ import legend.game.saves.ConfigStorageLocation;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
 import legend.game.tim.Tim;
-import legend.game.title.Ttle;
 import legend.game.tmd.Renderer;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CContainer;
@@ -76,6 +75,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
@@ -1235,10 +1235,10 @@ public final class Scus94491BpeSegment_8002 {
     switch(whichMenu_800bdc38) {
       case INIT_INVENTORY_MENU_1 -> initMenu(WhichMenu.RENDER_INVENTORY_MENU_4, null);
       case INIT_SHOP_MENU_6 -> initMenu(WhichMenu.RENDER_SHOP_MENU_9, ShopScreen::new);
-      case INIT_CAMPAIGN_SELECTION_MENU -> initMenu(WhichMenu.RENDER_CAMPAIGN_SELECTION_MENU, () -> new CampaignSelectionScreen(Ttle.temporaryConfig));
+      case INIT_CAMPAIGN_SELECTION_MENU -> initMenu(WhichMenu.RENDER_CAMPAIGN_SELECTION_MENU, CampaignSelectionScreen::new);
       case INIT_SAVE_GAME_MENU_16 -> initMenu(WhichMenu.RENDER_SAVE_GAME_MENU_19, () -> new SaveGameScreen(() -> whichMenu_800bdc38 = WhichMenu.UNLOAD_SAVE_GAME_MENU_20));
-      case INIT_NEW_CAMPAIGN_MENU -> initMenu(WhichMenu.RENDER_NEW_CAMPAIGN_MENU, () -> new NewCampaignScreen(Ttle.temporaryConfig));
-      case INIT_OPTIONS_MENU -> initMenu(WhichMenu.RENDER_OPTIONS_MENU, () -> new OptionsScreen(Ttle.temporaryConfig, Set.of(ConfigStorageLocation.GLOBAL), () -> whichMenu_800bdc38 = WhichMenu.UNLOAD_OPTIONS_MENU));
+      case INIT_NEW_CAMPAIGN_MENU -> initMenu(WhichMenu.RENDER_NEW_CAMPAIGN_MENU, NewCampaignScreen::new);
+      case INIT_OPTIONS_MENU -> initMenu(WhichMenu.RENDER_OPTIONS_MENU, () -> new OptionsScreen(CONFIG, Set.of(ConfigStorageLocation.GLOBAL), () -> whichMenu_800bdc38 = WhichMenu.UNLOAD_OPTIONS_MENU));
       case INIT_CHAR_SWAP_MENU_21 -> {
         loadCharacterStats(0);
         cacheCharacterSlots();
@@ -1704,7 +1704,7 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_800234f4
     final int count = gameState_800babc8.items_2e9.size();
 
-    if(count >= gameState_800babc8.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get())) {
+    if(count >= CONFIG.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get())) {
       //LAB_8002350c
       return 0xff;
     }
@@ -2101,8 +2101,8 @@ public final class Scus94491BpeSegment_8002 {
           }
 
           //LAB_800240e8
-          cmd.pos(0, x1 + x, y1 + y);
-          cmd.pos(1, x2 + x, y1 + y);
+          cmd.pos(0, x1 + x, y1 + y + renderable.heightCut);
+          cmd.pos(1, x2 + x, y1 + y + renderable.heightCut);
           cmd.pos(2, x1 + x, y2 + y);
           cmd.pos(3, x2 + x, y2 + y);
 
@@ -2114,8 +2114,8 @@ public final class Scus94491BpeSegment_8002 {
           v1 = metrics.v_01() + metrics.textureHeight();
           final int v = v1 < 255 ? v1 : v1 - 1;
 
-          cmd.uv(0, metrics.u_00(), metrics.v_01());
-          cmd.uv(1, u, metrics.v_01());
+          cmd.uv(0, metrics.u_00(), metrics.v_01() + renderable.heightCut);
+          cmd.uv(1, u, metrics.v_01() + renderable.heightCut);
           cmd.uv(2, metrics.u_00(), v);
           cmd.uv(3, u, v);
 

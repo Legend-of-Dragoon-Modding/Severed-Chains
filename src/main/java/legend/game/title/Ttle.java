@@ -37,6 +37,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SAVES;
@@ -93,8 +94,6 @@ import static legend.game.Scus94491BpeSegment_800c.identityMatrix_800c3568;
 public final class Ttle {
   private Ttle() { }
 
-  public static final ConfigCollection temporaryConfig = new ConfigCollection();
-
   public static TmdRenderingStruct _800c66d0;
   public static final FireAnimationData20[] fireAnimation_800c66d4 = new FireAnimationData20[4];
   public static int hasSavedGames;
@@ -114,8 +113,6 @@ public final class Ttle {
   public static int _800c6728;
   public static int _800c672c;
   public static final int[] menuOptionTransparency = {0, 0, 0};
-
-  public static int _800c6738;
 
   public static int fadeOutTimer_800c6754;
   public static int flamesZ;
@@ -167,7 +164,7 @@ public final class Ttle {
 
   private static Window.Events.Cursor onMouseMove;
   private static Window.Events.Click onMouseRelease;
-  private static Window.Events.Key onKeyPress;
+  private static Window.Events.OnPressedWithRepeatPulse onPressedWithRepeatPulse;
 
   @Method(0x800c7194L)
   public static void setUpNewGameData() {
@@ -321,13 +318,10 @@ public final class Ttle {
 
   @Method(0x800c77e4L)
   public static void initializeMainMenu() {
-    ConfigStorage.loadConfig(temporaryConfig, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
-
     menuLoadingStage = 0;
     menuIdleTime = 0;
     _800c6728 = 0;
     _800c672c = 0;
-    _800c6738 = 0;
     logoFadeInAmount = 0;
     backgroundInitialized = false;
     backgroundScrollAmount = -176;
@@ -606,7 +600,7 @@ public final class Ttle {
 
     if(whichMenu_800bdc38 == WhichMenu.NONE_0) {
       if(_800c6728 == 3) {
-        ConfigStorage.saveConfig(temporaryConfig, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
+        ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
         mainCallbackIndexOnceLoaded_8004dd24.set(2);
         pregameLoadingStage_800bb10c.set(0);
         vsyncMode_8007a3b8.set(2);
@@ -732,13 +726,22 @@ public final class Ttle {
       }
 
       //LAB_800c8380
-    } else if(menuLoadingStage == 3) {
-      //LAB_800c8388
-      handleMainInput();
-      renderMenuLogo();
-      renderMenuOptions();
-      renderMenuLogoFire();
-      renderCopyright();
+    } else {
+      if(menuLoadingStage == 3 || menuLoadingStage == 4) {
+        //LAB_800c8388
+        if(menuLoadingStage == 3) {
+          handleMainInput();
+        }
+
+        renderMenuLogo();
+        renderMenuOptions();
+        renderMenuLogoFire();
+        renderCopyright();
+
+        if(menuLoadingStage == 4) {
+          menuLoadingStage = 3;
+        }
+      }
     }
 
     //LAB_800c83c8
@@ -753,18 +756,15 @@ public final class Ttle {
     }
 
     //LAB_800c8448
-    if(Input.hasActivityThisFrame()) {
-      resetIdleTime();
-    }
-
     //LAB_800c8474
   }
 
   private static void resetIdleTime() {
-    menuLoadingStage = 3;
-    menuIdleTime = 0;
+    if(menuLoadingStage != 3) {
+      menuLoadingStage = 4;
+      menuIdleTime = 0;
+    }
   }
-
 
   private static void addInputHandlers() {
     onMouseMove = GPU.window().events.onMouseMove((window, x, y) -> {
@@ -852,30 +852,16 @@ public final class Ttle {
       }
     });
 
-    onKeyPress = GPU.window().events.onKeyPress((window, key, scancode, mods) -> {
-      if(_800c6728 == 1 && _800c6738 < 3) {
-        if(key == GLFW.GLFW_KEY_ESCAPE) {
-          menuEscape();
-        }
-      }
-    });
-  }
-
-  private static void menuEscape() {
-    playSound(0, 3, 0, 0, (short)0, (short)0);
-    _800c6738 = 3;
-    _800c672c = 0;
-
-    resetIdleTime();
+    onPressedWithRepeatPulse = GPU.window().events.onPressedWithRepeatPulse((window, inputAction) -> resetIdleTime());
   }
 
   private static void removeInputHandlers() {
     GPU.window().events.removeMouseMove(onMouseMove);
     GPU.window().events.removeMouseRelease(onMouseRelease);
-    GPU.window().events.removeKeyPress(onKeyPress);
+    GPU.window().events.removePressedWithRepeatPulse(onPressedWithRepeatPulse);
     onMouseMove = null;
     onMouseRelease = null;
-    onKeyPress = null;
+    onPressedWithRepeatPulse = null;
   }
 
   @Method(0x800c8484L)

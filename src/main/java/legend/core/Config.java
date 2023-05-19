@@ -24,8 +24,6 @@ public final class Config {
   static {
     properties.setProperty("window_width", "320");
     properties.setProperty("window_height", "240");
-    properties.setProperty("controller_guid", "");
-    properties.setProperty("controller_deadzone", "0.3");
     properties.setProperty("unlock_party", "false");
     properties.setProperty("battle_ui_colour_change", "false");
     properties.setProperty("battle_ui_r", "0");
@@ -82,18 +80,6 @@ public final class Config {
 
   public static int windowHeight() {
     return readInt("window_height", 480, 1, Integer.MAX_VALUE);
-  }
-
-  public static String controllerGuid() {
-    return properties.getProperty("controller_guid", "");
-  }
-
-  public static void controllerGuid(final String guid) {
-    properties.setProperty("controller_guid", guid);
-  }
-
-  public static float controllerDeadzone() {
-    return readFloat("controller_deadzone", 0.3f, 0.0f, 1.0f);
   }
 
   public static boolean unlockParty() {
@@ -335,17 +321,6 @@ public final class Config {
     int val;
     try {
       val = Integer.parseInt(properties.getProperty(key, String.valueOf(defaultVal)));
-    } catch(final NumberFormatException e) {
-      val = defaultVal;
-    }
-
-    return MathHelper.clamp(val, min, max);
-  }
-
-  private static float readFloat(final String key, final float defaultVal, final float min, final float max) {
-    float val;
-    try {
-      val = Float.parseFloat(properties.getProperty(key, String.valueOf(defaultVal)));
     } catch(final NumberFormatException e) {
       val = defaultVal;
     }

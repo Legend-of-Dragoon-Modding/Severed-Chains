@@ -9,14 +9,13 @@ import legend.game.inventory.screens.controls.SaveCard;
 import legend.game.modding.events.EventManager;
 import legend.game.modding.events.gamestate.GameLoadedEvent;
 import legend.game.saves.Campaign;
-import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
-import legend.game.types.GameState52c;
 import legend.game.types.LodString;
 
 import java.nio.file.Path;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.SAVES;
 import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
@@ -30,11 +29,7 @@ import static legend.game.Scus94491BpeSegment_800b.savedGameSelected_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 
 public class CampaignSelectionScreen extends MenuScreen {
-  private final ConfigCollection initialConfig;
-
-  public CampaignSelectionScreen(final ConfigCollection initialConfig) {
-    this.initialConfig = initialConfig;
-
+  public CampaignSelectionScreen() {
     deallocateRenderables(0xff);
     scriptStartEffect(2, 10);
 
@@ -56,16 +51,16 @@ public class CampaignSelectionScreen extends MenuScreen {
   }
 
   private void onSelection(final Campaign campaign) {
-    final ConfigCollection campaignConfig = new ConfigCollection();
-    ConfigStorage.loadConfig(campaignConfig, ConfigStorageLocation.CAMPAIGN, Path.of("saves", campaign.filename(), "campaign_config.dcnf"));
+    CONFIG.clearConfig(ConfigStorageLocation.CAMPAIGN);
+    ConfigStorage.loadConfig(CONFIG, ConfigStorageLocation.CAMPAIGN, Path.of("saves", campaign.filename(), "campaign_config.dcnf"));
 
     menuStack.pushScreen(new LoadGameScreen(save -> {
       menuStack.popScreen();
 
-      final GameState52c state = save.state();
-      state.copyConfigFrom(this.initialConfig);
-      state.copyConfigFrom(campaignConfig);
-      final GameLoadedEvent event = EventManager.INSTANCE.postEvent(new GameLoadedEvent(state));
+      CONFIG.clearConfig(ConfigStorageLocation.SAVE);
+      CONFIG.copyConfigFrom(save.config());
+
+      final GameLoadedEvent event = EventManager.INSTANCE.postEvent(new GameLoadedEvent(save.state()));
 
       gameState_800babc8 = event.gameState;
 

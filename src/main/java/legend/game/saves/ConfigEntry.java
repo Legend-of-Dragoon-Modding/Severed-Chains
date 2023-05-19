@@ -5,20 +5,17 @@ import legend.game.modding.registries.RegistryEntry;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.function.Predicate;
 
 public class ConfigEntry<T> extends RegistryEntry {
   public final T defaultValue;
-  public final Predicate<T> validator;
   public final ConfigStorageLocation storageLocation;
   public final Function<T, byte[]> serializer;
   public final Function<byte[], T> deserializer;
 
   private BiFunction<T, ConfigCollection, Control> editControl;
 
-  public ConfigEntry(final T defaultValue, final Predicate<T> validator, final ConfigStorageLocation storageLocation, final Function<T, byte[]> serializer, final Function<byte[], T> deserializer) {
+  public ConfigEntry(final T defaultValue, final ConfigStorageLocation storageLocation, final Function<T, byte[]> serializer, final Function<byte[], T> deserializer) {
     this.defaultValue = defaultValue;
-    this.validator = validator;
     this.storageLocation = storageLocation;
     this.serializer = serializer;
     this.deserializer = deserializer;
@@ -32,8 +29,8 @@ public class ConfigEntry<T> extends RegistryEntry {
     return this.editControl != null;
   }
 
-  public Control makeEditControl(final T value, final ConfigCollection gameState) {
-    return this.editControl.apply(value, gameState);
+  public Control makeEditControl(final T value, final ConfigCollection config) {
+    return this.editControl.apply(value, config);
   }
 
   public void onChange(final T oldValue, final T newValue) {

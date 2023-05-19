@@ -114,6 +114,7 @@ import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.function.BiConsumer;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
@@ -4023,7 +4024,7 @@ public final class SEffe {
         //LAB_801072c4
         int hitNum;
         for(hitNum = 0; hitNum < effect.count_30.get(); hitNum++) {
-          if(gameState_800babc8.getConfig(CoreMod.ADDITION_OVERLAY_CONFIG.get()) == AdditionOverlayMode.FULL) {
+          if(CONFIG.getConfig(CoreMod.ADDITION_OVERLAY_CONFIG.get()) == AdditionOverlayMode.FULL) {
             renderAdditionBorders(hitArray.get(hitNum).borderColoursArrayIndex_02.get(), hitNum, effect, hitArray, state);
           }
         }
@@ -4039,13 +4040,13 @@ public final class SEffe {
         //LAB_80107330
         if(hitNum < effect.count_30.get()) {
           final AdditionOverlaysHit20 hitOverlay = hitArray.get(hitNum);
-          if(gameState_800babc8.getConfig(CoreMod.ADDITION_OVERLAY_CONFIG.get()) == AdditionOverlayMode.FULL) {
+          if(CONFIG.getConfig(CoreMod.ADDITION_OVERLAY_CONFIG.get()) == AdditionOverlayMode.FULL) {
             renderAdditionButton((byte)(hitOverlay.frameSuccessLowerBound_10.get() + (hitOverlay.frameSuccessUpperBound_12.get() - hitOverlay.frameSuccessLowerBound_10.get()) / 2 - effect.currentFrame_34.get() - 0x1L), hitOverlay.isCounter_1c.get());
           }
 
           final byte currentFrame = (byte)effect.currentFrame_34.get();
           if(currentFrame >= hitOverlay.frameSuccessLowerBound_10.get() && currentFrame <= hitOverlay.frameSuccessUpperBound_12.get()) {
-            if(gameState_800babc8.getConfig(CoreMod.ADDITION_OVERLAY_CONFIG.get()) != AdditionOverlayMode.OFF) {
+            if(CONFIG.getConfig(CoreMod.ADDITION_OVERLAY_CONFIG.get()) != AdditionOverlayMode.OFF) {
               renderAdditionCentreSolidSquare(effect, hitOverlay, -2, state, data);
             }
           }
@@ -4179,7 +4180,7 @@ public final class SEffe {
           //LAB_80107728
           if(effect.numFramesToRenderCenterSquare_38.get() != 0) {
             effect.numFramesToRenderCenterSquare_38.decr();
-            if(gameState_800babc8.getConfig(CoreMod.ADDITION_OVERLAY_CONFIG.get()) != AdditionOverlayMode.OFF) {
+            if(CONFIG.getConfig(CoreMod.ADDITION_OVERLAY_CONFIG.get()) != AdditionOverlayMode.OFF) {
               renderAdditionCentreSolidSquare(effect, effect.lastCompletedHitOverlay_3c.deref(),
                 additionHitCompletionState_8011a014.get(effect.lastCompletedHit_39.get()).get(), state, data);
             }

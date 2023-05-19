@@ -19,8 +19,10 @@ public final class ConfigStorage {
   private static final Logger LOGGER = LogManager.getFormatterLogger();
 
   public static void loadConfig(final ConfigCollection configs, final ConfigStorageLocation location, final Path file) {
+    LOGGER.info("Loading config %s from %s", location, file);
+
     if(!Files.exists(file)) {
-      configs.clearConfig();
+      configs.clearConfig(location);
       return;
     }
 
@@ -38,6 +40,8 @@ public final class ConfigStorage {
   }
 
   public static void saveConfig(final ConfigCollection configs, final ConfigStorageLocation location, final Path file) {
+    LOGGER.info("Saving config %s to %s", location, file);
+
     try {
       Files.createDirectories(file.toAbsolutePath().getParent());
     } catch(final IOException e) {
@@ -60,7 +64,7 @@ public final class ConfigStorage {
   public static void loadConfig(final ConfigCollection configs, final ConfigStorageLocation storageLocation, final FileData data) {
     int offset = 0;
 
-    configs.clearConfig();
+    configs.clearConfig(storageLocation);
 
     final int configCount = data.readInt(offset);
     offset += 4;

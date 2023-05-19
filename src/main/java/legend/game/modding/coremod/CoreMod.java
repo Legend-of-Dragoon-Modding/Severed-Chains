@@ -4,13 +4,14 @@ import legend.core.GameEngine;
 import legend.game.modding.Mod;
 import legend.game.modding.coremod.config.AdditionOverlayConfigEntry;
 import legend.game.modding.coremod.config.AutoAdditionConfigEntry;
+import legend.game.modding.coremod.config.ControllerConfigEntry;
+import legend.game.modding.coremod.config.ControllerDeadzoneConfigEntry;
 import legend.game.modding.coremod.config.EncounterRateConfigEntry;
 import legend.game.modding.coremod.config.IndicatorModeConfigEntry;
 import legend.game.modding.coremod.config.InventorySizeConfigEntry;
 import legend.game.modding.coremod.config.RenderScaleConfigEntry;
 import legend.game.modding.coremod.config.TransformationModeConfigEntry;
 import legend.game.modding.events.EventListener;
-import legend.game.modding.events.gamestate.GameLoadedEvent;
 import legend.game.modding.registries.Registrar;
 import legend.game.modding.registries.RegistryDelegate;
 import legend.game.modding.registries.RegistryId;
@@ -27,6 +28,8 @@ public class CoreMod {
 
   // Global config
   public static final RegistryDelegate<RenderScaleConfigEntry> RENDER_SCALE_CONFIG = CONFIG_REGISTRAR.register("render_scale", RenderScaleConfigEntry::new);
+  public static final RegistryDelegate<ControllerConfigEntry> CONTROLLER_CONFIG = CONFIG_REGISTRAR.register("controller", ControllerConfigEntry::new);
+  public static final RegistryDelegate<ControllerDeadzoneConfigEntry> CONTROLLER_DEADZONE_CONFIG = CONFIG_REGISTRAR.register("controller_deadzone", ControllerDeadzoneConfigEntry::new);
 
   // Per-campaign config
   public static final RegistryDelegate<IndicatorModeConfigEntry> INDICATOR_MODE_CONFIG = CONFIG_REGISTRAR.register("indicator_mode", IndicatorModeConfigEntry::new);
@@ -43,10 +46,5 @@ public class CoreMod {
   @EventListener
   public static void registerConfig(final ConfigRegistryEvent event) {
     CONFIG_REGISTRAR.registryEvent(event);
-  }
-
-  @EventListener
-  public static void handleGameLoaded(final GameLoadedEvent event) {
-    GameEngine.GPU.rescale(event.gameState.getConfig(RENDER_SCALE_CONFIG.get()));
   }
 }

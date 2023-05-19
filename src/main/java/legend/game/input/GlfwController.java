@@ -12,59 +12,61 @@ import static org.lwjgl.glfw.GLFW.glfwGetJoystickAxes;
 import static org.lwjgl.glfw.GLFW.glfwGetJoystickButtons;
 import static org.lwjgl.glfw.GLFW.glfwGetJoystickHats;
 
-public class InputControllerData {
+public class GlfwController extends Controller {
   private static final Logger LOGGER = LogManager.getFormatterLogger();
   private static final Marker INPUT_MARKER = MarkerManager.getMarker("INPUT");
   private static final Marker CONTROLLER_VERBOSE_MARKER = MarkerManager.getMarker("CONTROLLER_VERBOSE");
+
   private final String glfwJoystickName;
-  private final String glfwJoystickGUID;
+  private final String glfwJoystickGuid;
   private final int glfwControllerId;
+
   private FloatBuffer axis;
   private ByteBuffer hats;
   private ByteBuffer buttons;
-  private int playerSlot = -1;
 
   private int maxAxis;
   private int maxButtons;
   private int maxHats;
 
-  public InputControllerData(final String glfwJoystickName, final String glfwJoystickGUID, final int glfwControllerId) {
+  public GlfwController(final String glfwJoystickName, final String glfwJoystickGuid, final int glfwControllerId) {
     this.glfwJoystickName = glfwJoystickName;
-    this.glfwJoystickGUID = glfwJoystickGUID;
+    this.glfwJoystickGuid = glfwJoystickGuid;
     this.glfwControllerId = glfwControllerId;
 
-    this.pollControllerForAvailableInputs();
+    this.probeInputs();
+
+    this.bindings.addAll(ControllerDatabase.createBindings(this.getGuid(), this));
   }
 
-  public InputControllerData() {
-    this.glfwJoystickName = "";
-    this.glfwJoystickGUID = "";
-    this.glfwControllerId = -1;
+  public String getName() {
+    return this.glfwJoystickName;
   }
 
-  public void updateState() {
-    if(this.glfwControllerId == -1) {
-      return;
+  public String getGuid() {
+    return this.glfwJoystickGuid;
+  }
+
+  public int getId() {
+    return this.glfwControllerId;
+  }
+
+  @Override
+  public void poll() {
+    if(this.glfwControllerId != -1) {
+      this.axis = glfwGetJoystickAxes(this.glfwControllerId);
+      this.hats = glfwGetJoystickHats(this.glfwControllerId);
+      this.buttons = glfwGetJoystickButtons(this.glfwControllerId);
     }
 
-    this.axis = glfwGetJoystickAxes(this.glfwControllerId);
-    this.hats = glfwGetJoystickHats(this.glfwControllerId);
-    this.buttons = glfwGetJoystickButtons(this.glfwControllerId);
-  }
-
-
-
-  public boolean hasAnyButtonActivity() {
-    for(int i = 0; i < this.maxButtons; i++) {
-      if(this.checkButton(i)) {
-        return true;
-      }
+    for(final InputBinding binding : this.bindings) {
+      binding.poll();
     }
-    return false;
   }
 
-  public boolean checkButton(final int glfwCode) {
-    if(this.buttons == null || this.buttons.remaining() == 0 || glfwCode == -1  || glfwCode >= this.maxButtons) {
+  @Override
+  public boolean readButton(final int glfwCode) {
+    if(this.buttons == null || this.buttons.remaining() == 0 || glfwCode == -1 || glfwCode >= this.maxButtons) {
       return false;
     }
 
@@ -78,10 +80,12 @@ public class InputControllerData {
 
   }
 
-  public float checkAxis(final int glfwCode) {
+  @Override
+  public float readAxis(final int glfwCode) {
     if(this.axis == null || this.axis.remaining() == 0 || glfwCode == -1 || glfwCode >= this.maxAxis) {
       return 0;
     }
+
     try {
       return this.axis.get(glfwCode);
     } catch(final IndexOutOfBoundsException ex) {
@@ -90,10 +94,12 @@ public class InputControllerData {
     }
   }
 
-  public boolean checkHat(final int glfwCode, final int hatIndex) {
+  @Override
+  public boolean readHat(final int glfwCode, final int hatIndex) {
     if(this.hats == null || this.hats.remaining() == 0 || glfwCode == -1 || hatIndex >= this.maxHats) {
       return false;
     }
+
     try {
       final int hat = this.hats.get(hatIndex);
       return (hat & glfwCode) != 0;
@@ -103,15 +109,15 @@ public class InputControllerData {
     }
   }
 
-  private void pollControllerForAvailableInputs() {
-    this.updateState();
+  private void probeInputs() {
+    this.poll();
 
-    this.pollControllerForButtonHardware();
-    this.pollControllerForAxisHardware();
-    this.pollControllerForHatHardware();
+    this.probeButtons();
+    this.probeAxes();
+    this.probeHats();
   }
 
-  private void pollControllerForButtonHardware() {
+  private void probeButtons() {
     this.maxButtons = 0;
     if(this.buttons == null) {
       return;
@@ -129,7 +135,7 @@ public class InputControllerData {
     LOGGER.info(INPUT_MARKER, "Max Buttons %d", this.maxButtons);
   }
 
-  private void pollControllerForAxisHardware() {
+  private void probeAxes() {
     this.maxAxis = 0;
 
     if(this.axis == null) {
@@ -148,7 +154,7 @@ public class InputControllerData {
     LOGGER.info(INPUT_MARKER, "Max Axis: %d", this.maxAxis);
   }
 
-  private void pollControllerForHatHardware() {
+  private void probeHats() {
     this.maxHats = 0;
 
     if(this.hats == null) {
@@ -166,28 +172,12 @@ public class InputControllerData {
     LOGGER.info(INPUT_MARKER, "Max Hats: %d", this.maxHats);
   }
 
-  public String getGlfwJoystickName() {
-    return this.glfwJoystickName;
-  }
+  @Override
+  public boolean equals(final Object obj) {
+    if(obj instanceof final GlfwController other) {
+      return this.glfwJoystickGuid.equals(other.glfwJoystickGuid) || this.glfwControllerId == other.glfwControllerId;
+    }
 
-  public String getGlfwJoystickGUID() {
-    return this.glfwJoystickGUID;
+    return super.equals(obj);
   }
-
-  public int getGlfwControllerId() {
-    return this.glfwControllerId;
-  }
-
-  public int getPlayerSlot() {
-    return this.playerSlot;
-  }
-
-  public void setPlayerSlot(final int playerSlot) {
-    this.playerSlot = playerSlot;
-  }
-
-  public String getInfoString() {
-    return "id: " + this.glfwControllerId + ' ' + this.glfwJoystickName + " Guid: " + this.glfwJoystickGUID;
-  }
-
 }

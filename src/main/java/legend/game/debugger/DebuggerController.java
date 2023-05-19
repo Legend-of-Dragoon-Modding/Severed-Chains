@@ -16,6 +16,7 @@ import legend.game.combat.SEffe;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.types.WMapAreaData08;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.game.SMap.FUN_800e5534;
 import static legend.game.SMap.encounterData_800f64c4;
 import static legend.game.SMap.smapLoadingStage_800cb430;
@@ -441,17 +442,13 @@ public class DebuggerController {
 
   @FXML
   private void toggleAutoAddition(final ActionEvent event) {
-    if(gameState_800babc8 != null) {
-      final boolean autoAddition = gameState_800babc8.getConfig(CoreMod.AUTO_ADDITION_CONFIG.get()) == AutoAdditionMode.ON;
-      gameState_800babc8.setConfig(CoreMod.AUTO_ADDITION_CONFIG.get(), autoAddition ? AutoAdditionMode.OFF : AutoAdditionMode.ON);
-    }
+    final boolean autoAddition = CONFIG.getConfig(CoreMod.AUTO_ADDITION_CONFIG.get()) == AutoAdditionMode.ON;
+    CONFIG.setConfig(CoreMod.AUTO_ADDITION_CONFIG.get(), autoAddition ? AutoAdditionMode.OFF : AutoAdditionMode.ON);
   }
 
   @FXML
   private void refreshAutoAddition(final ActionEvent event) {
-    if(gameState_800babc8 != null) {
-      this.autoAddition.setSelected(gameState_800babc8.getConfig(CoreMod.AUTO_ADDITION_CONFIG.get()) == AutoAdditionMode.ON);
-    }
+    this.autoAddition.setSelected(CONFIG.getConfig(CoreMod.AUTO_ADDITION_CONFIG.get()) == AutoAdditionMode.ON);
   }
 
   @FXML

@@ -17,6 +17,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.function.Function;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.game.SItem.cacheCharacterSlots;
 import static legend.game.SItem.canSave_8011dc88;
 import static legend.game.SItem.chapterNames_80114248;
@@ -241,9 +242,9 @@ public class MainMenuScreen extends MenuScreen {
 
   private void showOptionsScreen() {
     playSound(2);
-    menuStack.pushScreen(new OptionsScreen(gameState_800babc8, EnumSet.allOf(ConfigStorageLocation.class), () -> {
-      ConfigStorage.saveConfig(gameState_800babc8, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
-      ConfigStorage.saveConfig(gameState_800babc8, ConfigStorageLocation.CAMPAIGN, Path.of("saves", gameState_800babc8.campaignName, "campaign_config.dcnf"));
+    menuStack.pushScreen(new OptionsScreen(CONFIG, EnumSet.allOf(ConfigStorageLocation.class), () -> {
+      ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
+      ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.CAMPAIGN, Path.of("saves", gameState_800babc8.campaignName, "campaign_config.dcnf"));
       menuStack.popScreen();
       this.loadingStage = 0;
     }));

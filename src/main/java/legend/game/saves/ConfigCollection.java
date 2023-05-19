@@ -21,6 +21,10 @@ public class ConfigCollection {
     this.configValues.clear();
   }
 
+  public void clearConfig(final ConfigStorageLocation storageLocation) {
+    this.configValues.keySet().removeIf(configEntry -> configEntry.storageLocation == storageLocation);
+  }
+
   public void copyConfigFrom(final ConfigCollection other) {
     this.configValues.putAll(other.configValues);
   }

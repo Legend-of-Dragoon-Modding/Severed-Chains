@@ -5,6 +5,8 @@ import legend.core.gte.BVEC4;
 import legend.core.gte.SVECTOR;
 import legend.core.gte.USCOLOUR;
 import legend.core.memory.Value;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -18,6 +20,8 @@ import static org.lwjgl.system.MemoryUtil.memSlice;
 
 public final class IoHelper {
   private IoHelper() { }
+
+  private static final Logger LOGGER = LogManager.getFormatterLogger();
 
   public static boolean getPackedFlag(final int[] array, final int packed) {
     return (array[packed >>> 5] & 0x1 << (packed & 0x1f)) != 0;
@@ -58,6 +62,16 @@ public final class IoHelper {
     return new String(bytes, lengthSize, length, StandardCharsets.US_ASCII);
   }
 
+  /** String from ASCII bytes prefixed with lengthSize-byte length header, default value if error occurs */
+  public static String stringFromBytes(final byte[] bytes, final int lengthSize, final String defaultValue) {
+    try {
+      final int length = (int)MathHelper.get(bytes, 0, lengthSize);
+      return new String(bytes, lengthSize, length, StandardCharsets.US_ASCII);
+    } catch(final Throwable ignored) { }
+
+    return defaultValue;
+  }
+
   /** ASCII bytes of an enum name() prefixed with 1-byte length header */
   public static byte[] enumToBytes(final Enum<?> inst) {
     return stringToBytes(inst.name(), 1);
@@ -72,7 +86,7 @@ public final class IoHelper {
   public static <T extends Enum<T>> T enumFromBytes(final Class<T> cls, final byte[] bytes, final T defaultValue) {
     try {
       return enumFromBytes(cls, bytes);
-    } catch(final IllegalArgumentException|IndexOutOfBoundsException ignored) { }
+    } catch(final Throwable ignored) { }
 
     return defaultValue;
   }
