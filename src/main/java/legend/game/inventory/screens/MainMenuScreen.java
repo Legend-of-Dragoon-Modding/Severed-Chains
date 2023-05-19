@@ -101,10 +101,40 @@ public class MainMenuScreen extends MenuScreen {
 
     button.onPressedWithRepeatPulse(inputAction -> {
       switch(inputAction) {
-        case DPAD_DOWN, JOYSTICK_LEFT_BUTTON_DOWN -> this.setFocus(this.menuButtons.get(Math.floorMod(index + 1, this.menuButtons.size())));
-        case DPAD_UP, JOYSTICK_LEFT_BUTTON_UP -> this.setFocus(this.menuButtons.get(Math.floorMod(index - 1, this.menuButtons.size())));
-        case DPAD_RIGHT, JOYSTICK_RIGHT_BUTTON_RIGHT -> this.setFocus(this.menuButtons.get(Math.floorMod(index + 5, this.menuButtons.size())));
-        case DPAD_LEFT, JOYSTICK_RIGHT_BUTTON_LEFT -> this.setFocus(this.menuButtons.get(Math.floorMod(index - 5, this.menuButtons.size())));
+        case DPAD_DOWN, JOYSTICK_LEFT_BUTTON_DOWN -> {
+          for(int i = 1; i < this.menuButtons.size(); i++) {
+            final Button otherButton = this.menuButtons.get(Math.floorMod(index + i, this.menuButtons.size()));
+
+            if(!otherButton.isDisabled()) {
+              this.setFocus(otherButton);
+              break;
+            }
+          }
+        }
+        case DPAD_UP, JOYSTICK_LEFT_BUTTON_UP -> {
+          for(int i = 1; i < this.menuButtons.size(); i++) {
+            final Button otherButton = this.menuButtons.get(Math.floorMod(index - i, this.menuButtons.size()));
+
+            if(!otherButton.isDisabled()) {
+              this.setFocus(otherButton);
+              break;
+            }
+          }
+        }
+        case DPAD_RIGHT, JOYSTICK_RIGHT_BUTTON_RIGHT -> {
+          final Button otherButton = this.menuButtons.get(Math.floorMod(index + 5, this.menuButtons.size()));
+
+          if(!otherButton.isDisabled()) {
+            this.setFocus(otherButton);
+          }
+        }
+        case DPAD_LEFT, JOYSTICK_RIGHT_BUTTON_LEFT -> {
+          final Button otherButton = this.menuButtons.get(Math.floorMod(index - 5, this.menuButtons.size()));
+
+          if(!otherButton.isDisabled()) {
+            this.setFocus(otherButton);
+          }
+        }
         case BUTTON_SOUTH -> onClick.run();
       }
 
