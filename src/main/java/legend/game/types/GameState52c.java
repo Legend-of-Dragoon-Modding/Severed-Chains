@@ -2,13 +2,11 @@ package legend.game.types;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
-import legend.game.saves.ConfigEntry;
+import legend.game.saves.ConfigCollection;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
-public class GameState52c {
+public class GameState52c extends ConfigCollection {
   public String campaignName;
 
   /** Maybe flags? Maybe individual bytes? */
@@ -66,31 +64,14 @@ public class GameState52c {
   public int areaIndex_4de;
 
   // Config stuff
-  public boolean mono_4e0;
   public boolean vibrationEnabled_4e1;
-  public int morphMode_4e2;
   public boolean indicatorsDisabled_4e3;
   public boolean isOnWorldMap_4e4;
-
-  private final Map<ConfigEntry<?>, Object> configValues = new HashMap<>();
 
   /** A bitset used to set each char's MP to max the first time each one is loaded */
   public int characterInitialized_4e6;
 
   public GameState52c() {
     Arrays.setAll(this.charData_32c, i -> new CharacterData2c());
-  }
-
-  public <T> T getConfig(final ConfigEntry<T> config) {
-    //noinspection unchecked
-    return (T)this.configValues.getOrDefault(config, config.defaultValue);
-  }
-
-  public <T> void setConfig(final ConfigEntry<T> config, final T value) {
-    this.configValues.put(config, value);
-  }
-
-  public void clearConfig() {
-    this.configValues.clear();
   }
 }

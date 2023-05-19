@@ -3,6 +3,7 @@ package legend.game.combat.types;
 import legend.game.combat.bobj.BattleObject27c;
 import legend.game.combat.bobj.MonsterBattleObject;
 import legend.game.combat.bobj.PlayerBattleObject;
+import legend.game.combat.effects.TransformationMode;
 import legend.game.combat.types.BattleStructEF4.AdditionExtra04;
 import legend.game.combat.types.BattleStructEF4.SpecialEffects20;
 import legend.game.combat.types.BattleStructEF4.Status04;
@@ -281,7 +282,8 @@ public class BattleStructEf4 {
   public final ScriptState<? extends BattleObject27c>[] bobjIndices_e78 = new ScriptState[13];
   public final ScriptState<? extends BattleObject27c>[] bobjIndices_eac = new ScriptState[4];
   public final ScriptState<MonsterBattleObject>[] monsterBobjIndices_ebc = new ScriptState[10];
-  public int morphMode_ee4;
+  // Reads directly from gameState now
+//  public TransformationMode morphMode_ee4;
 
   // nodart code no longer uses this
 //  public final Pointer<PartyPermutation08> partyPermutation_ee8;

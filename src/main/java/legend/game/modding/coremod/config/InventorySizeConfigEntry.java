@@ -4,10 +4,11 @@ import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.game.inventory.screens.controls.NumberSpinner;
 import legend.game.saves.ConfigEntry;
+import legend.game.saves.ConfigStorageLocation;
 
 public class InventorySizeConfigEntry extends ConfigEntry<Integer> {
   public InventorySizeConfigEntry() {
-    super(32, InventorySizeConfigEntry::validator, InventorySizeConfigEntry::serializer, InventorySizeConfigEntry::deserializer);
+    super(32, InventorySizeConfigEntry::validator, ConfigStorageLocation.CAMPAIGN, InventorySizeConfigEntry::serializer, InventorySizeConfigEntry::deserializer);
 
     this.setEditControl((number, gameState) -> {
       final NumberSpinner spinner = new NumberSpinner(number);

@@ -45,7 +45,7 @@ public class SpuStruct44 implements MemoryRef {
   public final UnsignedShortRef fadeOutVolL_30;
   public final UnsignedShortRef fadeOutVolR_32;
   public final UnsignedShortRef reverbType_34;
-  public final UnsignedShortRef mono_36;
+//  public final UnsignedShortRef mono_36;
   public final UnsignedByteRef hasCallback_38;
   public final UnsignedByteRef dmaIndex_39;
   public final UnsignedShortRef keyOnLo_3a;
@@ -87,7 +87,7 @@ public class SpuStruct44 implements MemoryRef {
     this.fadeOutVolL_30 = ref.offset(2, 0x30L).cast(UnsignedShortRef::new);
     this.fadeOutVolR_32 = ref.offset(2, 0x32L).cast(UnsignedShortRef::new);
     this.reverbType_34 = ref.offset(2, 0x34L).cast(UnsignedShortRef::new);
-    this.mono_36 = ref.offset(2, 0x36L).cast(UnsignedShortRef::new);
+//    this.mono_36 = ref.offset(2, 0x36L).cast(UnsignedShortRef::new);
     this.hasCallback_38 = ref.offset(1, 0x38L).cast(UnsignedByteRef::new);
     this.dmaIndex_39 = ref.offset(1, 0x39L).cast(UnsignedByteRef::new);
     this.keyOnLo_3a = ref.offset(2, 0x3aL).cast(UnsignedShortRef::new);
