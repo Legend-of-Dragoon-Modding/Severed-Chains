@@ -22,6 +22,9 @@ import legend.game.fmv.Fmv;
 import legend.game.modding.ModManager;
 import legend.game.modding.events.EventManager;
 import legend.game.modding.registries.Registries;
+import legend.game.saves.ConfigCollection;
+import legend.game.saves.ConfigStorage;
+import legend.game.saves.ConfigStorageLocation;
 import legend.game.saves.SaveManager;
 import legend.game.saves.SaveSerialization;
 import legend.game.scripting.ScriptManager;
@@ -73,6 +76,7 @@ public final class GameEngine {
 
   public static final ScriptManager SCRIPTS = new ScriptManager();
 
+  public static final ConfigCollection CONFIG = new ConfigCollection();
   public static final SaveManager SAVES = new SaveManager(SaveSerialization.MAGIC_V2, SaveSerialization::toV2);
 
   public static final Cpu CPU;
@@ -160,6 +164,7 @@ public final class GameEngine {
 
         EventManager.INSTANCE.getClass(); // Trigger load
 
+        Files.createDirectories(Path.of("saves"));
         SAVES.registerDeserializer(SaveSerialization::fromRetailMatcher, SaveSerialization::fromRetail);
         SAVES.registerDeserializer(SaveSerialization::fromV1Matcher, SaveSerialization::fromV1);
         SAVES.registerDeserializer(SaveSerialization::fromV2Matcher, SaveSerialization::fromV2);
@@ -202,6 +207,8 @@ public final class GameEngine {
           loadXpTables();
 
           REGISTRY_ACCESS.initialize();
+
+          ConfigStorage.loadConfig(CONFIG, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
 
           Scus94491BpeSegment_8002.start();
           loading = false;

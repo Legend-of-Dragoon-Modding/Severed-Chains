@@ -1,12 +1,11 @@
 package legend.game.saves;
 
 import legend.game.inventory.WhichMenu;
-import legend.game.modding.coremod.CoreMod;
-import legend.game.submap.IndicatorMode;
 import legend.game.types.CharacterData2c;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
 import static legend.game.Scus94491BpeSegment_800b.continentIndex_800bf0b0;
 import static legend.game.Scus94491BpeSegment_800b.submapIndex_800bd808;
@@ -28,7 +27,7 @@ public final class SaveSerialization {
   }
 
   public static SavedGame fromRetail(final String name, final FileData data) {
-    return new SavedGame(name, data.readUByte(0x1a9), data.readUByte(0x1a8), deserializeRetailGameState(data.slice(0x1fc)));
+    return new SavedGame(name, data.readUByte(0x1a9), data.readUByte(0x1a8), deserializeRetailGameState(data.slice(0x1fc)), new ConfigCollection());
   }
 
   public static FileData fromV1Matcher(final FileData data) {
@@ -40,7 +39,7 @@ public final class SaveSerialization {
   }
 
   public static SavedGame fromV1(final String name, final FileData data) {
-    return new SavedGame(name, data.readUByte(0x2d), data.readUByte(0x2c), deserializeRetailGameState(data.slice(0x30)));
+    return new SavedGame(name, data.readUByte(0x2d), data.readUByte(0x2c), deserializeRetailGameState(data.slice(0x30)), new ConfigCollection());
   }
 
   public static FileData fromV2Matcher(final FileData data) {
@@ -219,9 +218,10 @@ public final class SaveSerialization {
     state.indicatorsDisabled_4e3 = data.readUByte(offset) != 0;
     offset++;
 
-    ConfigStorage.loadConfig(state, ConfigStorageLocation.SAVE, data.slice(offset));
+    final ConfigCollection config = new ConfigCollection();
+    ConfigStorage.loadConfig(config, ConfigStorageLocation.SAVE, data.slice(offset));
 
-    return new SavedGame(name, locationType, locationIndex, state);
+    return new SavedGame(name, locationType, locationIndex, state, config);
   }
 
   public static int toV2(final FileData data, final GameState52c state) {
@@ -404,7 +404,7 @@ public final class SaveSerialization {
     data.writeByte(offset, state.indicatorsDisabled_4e3 ? 1 : 0);
     offset++;
 
-    offset += ConfigStorage.saveConfig(state, ConfigStorageLocation.SAVE, data.slice(offset));
+    offset += ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.SAVE, data.slice(offset));
 
     return offset;
   }
@@ -524,7 +524,7 @@ public final class SaveSerialization {
     state.isOnWorldMap_4e4 = data.readUByte(0x4e4) != 0;
 
     state.characterInitialized_4e6 = data.readUShort(0x4e6);
-    state.setConfig(CoreMod.INDICATOR_MODE_CONFIG.get(), IndicatorMode.values()[data.readInt(0x4e8)]);
+//    CONFIG.setConfig(CoreMod.INDICATOR_MODE_CONFIG.get(), IndicatorMode.values()[data.readInt(0x4e8)]);
 
     return state;
   }

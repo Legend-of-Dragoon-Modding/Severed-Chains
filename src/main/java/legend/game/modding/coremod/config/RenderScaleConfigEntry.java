@@ -11,12 +11,10 @@ public class RenderScaleConfigEntry extends ConfigEntry<Integer> {
   public static final int MAX = 5;
 
   public RenderScaleConfigEntry() {
-    super(1, RenderScaleConfigEntry::validator, ConfigStorageLocation.GLOBAL, RenderScaleConfigEntry::serializer, RenderScaleConfigEntry::deserializer);
+    super(1, ConfigStorageLocation.GLOBAL, RenderScaleConfigEntry::serializer, RenderScaleConfigEntry::deserializer);
 
     this.setEditControl((number, gameState) -> {
-      final NumberSpinner spinner = new NumberSpinner(number);
-      spinner.setMin(1);
-      spinner.setMax(MAX);
+      final NumberSpinner<Integer> spinner = NumberSpinner.intSpinner(number, 1, MAX);
       spinner.onChange(val -> gameState.setConfig(this, val));
       return spinner;
     });
@@ -26,10 +24,6 @@ public class RenderScaleConfigEntry extends ConfigEntry<Integer> {
   public void onChange(final Integer oldValue, final Integer newValue) {
     super.onChange(oldValue, newValue);
     GPU.rescale(newValue);
-  }
-
-  private static boolean validator(final int val) {
-    return val > 0 && val <= MAX;
   }
 
   private static byte[] serializer(final int val) {

@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.MEMORY;
 import static legend.game.SItem.AcquiredGold_8011cdd4;
 import static legend.game.SItem.AcquiredItems_8011d050;
@@ -253,7 +254,7 @@ public class DabasScreen extends MenuScreen {
       equipmentCount++;
     }
 
-    if(equipmentCount != 0 && gameState_800babc8.equipment_1e8.size() + equipmentCount >= 0x100 || itemCount != 0 && gameState_800babc8.items_2e9.size() + itemCount > gameState_800babc8.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get())) {
+    if(equipmentCount != 0 && gameState_800babc8.equipment_1e8.size() + equipmentCount >= 0x100 || itemCount != 0 && gameState_800babc8.items_2e9.size() + itemCount > CONFIG.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get())) {
       menuStack.pushScreen(new MessageBoxScreen(new LodString("Dabas has more items\nthan you can hold"), 0, result -> {}));
       return;
     }

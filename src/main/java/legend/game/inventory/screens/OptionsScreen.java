@@ -17,7 +17,7 @@ import static legend.game.Scus94491BpeSegment_8002.playSound;
 public class OptionsScreen extends VerticalLayoutScreen {
   private final Runnable unload;
 
-  public OptionsScreen(final ConfigCollection state, final Set<ConfigStorageLocation> validLocations, final Runnable unload) {
+  public OptionsScreen(final ConfigCollection config, final Set<ConfigStorageLocation> validLocations, final Runnable unload) {
     deallocateRenderables(0xff);
     scriptStartEffect(2, 10);
 
@@ -31,7 +31,7 @@ public class OptionsScreen extends VerticalLayoutScreen {
 
       if(validLocations.contains(configEntry.storageLocation) && configEntry.hasEditControl()) {
         //noinspection unchecked
-        this.addRow(configId.toString(), configEntry.makeEditControl(state.getConfig(configEntry), state));
+        this.addRow(configId.toString(), configEntry.makeEditControl(config.getConfig(configEntry), config));
       }
     }
   }

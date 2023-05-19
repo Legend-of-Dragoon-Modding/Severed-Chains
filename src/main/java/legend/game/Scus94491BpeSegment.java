@@ -75,6 +75,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SCRIPTS;
@@ -196,9 +197,9 @@ import static legend.game.Scus94491BpeSegment_800b._800bd710;
 import static legend.game.Scus94491BpeSegment_800b._800bd714;
 import static legend.game.Scus94491BpeSegment_800b._800bd740;
 import static legend.game.Scus94491BpeSegment_800b._800bd774;
-import static legend.game.Scus94491BpeSegment_800b._800bee90;
-import static legend.game.Scus94491BpeSegment_800b._800bee94;
-import static legend.game.Scus94491BpeSegment_800b._800bee98;
+import static legend.game.Scus94491BpeSegment_800b.input_800bee90;
+import static legend.game.Scus94491BpeSegment_800b.press_800bee94;
+import static legend.game.Scus94491BpeSegment_800b.repeat_800bee98;
 import static legend.game.Scus94491BpeSegment_800b.clearBlue_800babc0;
 import static legend.game.Scus94491BpeSegment_800b.clearGreen_800bb104;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
@@ -453,10 +454,10 @@ public final class Scus94491BpeSegment {
           Config.setGameSpeedMultiplier(Config.getGameSpeedMultiplier() + 1);
         } else if((mods & GLFW_MOD_CONTROL) != 0 && gameState_800babc8 != null) {
           final RenderScaleConfigEntry config = CoreMod.RENDER_SCALE_CONFIG.get();
-          final int scale = gameState_800babc8.getConfig(config) + 1;
+          final int scale = CONFIG.getConfig(config) + 1;
 
           if(scale <= RenderScaleConfigEntry.MAX) {
-            gameState_800babc8.setConfig(config, scale);
+            CONFIG.setConfig(config, scale);
             GPU.rescale(scale);
           }
         }
@@ -467,10 +468,10 @@ public final class Scus94491BpeSegment {
           Config.setGameSpeedMultiplier(Config.getGameSpeedMultiplier() - 1);
         } else if((mods & GLFW_MOD_CONTROL) != 0 && gameState_800babc8 != null) {
           final RenderScaleConfigEntry config = CoreMod.RENDER_SCALE_CONFIG.get();
-          final int scale = gameState_800babc8.getConfig(config) - 1;
+          final int scale = CONFIG.getConfig(config) - 1;
 
           if(scale >= 1) {
-            gameState_800babc8.setConfig(config, scale);
+            CONFIG.setConfig(config, scale);
             GPU.rescale(scale);
           }
         }
@@ -503,11 +504,9 @@ public final class Scus94491BpeSegment {
         startSound();
       }
 
-      Input.update();
-
-      joypadPress_8007a398.setu(_800bee94.get());
-      joypadInput_8007a39c.setu(_800bee90.get());
-      joypadRepeat_8007a3a0.setu(_800bee98.get());
+      joypadPress_8007a398.setu(press_800bee94.get());
+      joypadInput_8007a39c.setu(input_800bee90.get());
+      joypadRepeat_8007a3a0.setu(repeat_800bee98.get());
 
       if(mainCallbackIndex_8004dd20.get() > 4) {
         gameState_800babc8.timestamp_a0 += vsyncMode_8007a3b8.get();
@@ -532,13 +531,13 @@ public final class Scus94491BpeSegment {
       tickCount_800bb0fc.incr();
       endFrame();
 
-      _800bee94.set(0);
-      _800bee98.set(0);
+      press_800bee94.set(0);
+      repeat_800bee98.set(0);
 
       if(inputPulse) {
         for(final var entry : keyRepeat.int2IntEntrySet()) {
           if(entry.getIntValue() >= 2) { //TODO adjust for frame rate
-            _800bee98.or(entry.getIntKey());
+            repeat_800bee98.or(entry.getIntKey());
           }
 
           entry.setValue(entry.getIntValue() + 1);

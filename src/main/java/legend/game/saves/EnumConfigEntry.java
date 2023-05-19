@@ -10,7 +10,6 @@ public class EnumConfigEntry<T extends Enum<T>> extends ConfigEntry<T> {
   public EnumConfigEntry(final Class<T> cls, final T defaultValue, final ConfigStorageLocation storageLocation) {
     super(
       defaultValue,
-      t -> true,
       storageLocation,
       IoHelper::enumToBytes,
       bytes -> IoHelper.enumFromBytes(cls, bytes, defaultValue)

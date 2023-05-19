@@ -17,6 +17,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.function.Function;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.game.SItem.cacheCharacterSlots;
 import static legend.game.SItem.canSave_8011dc88;
 import static legend.game.SItem.chapterNames_80114248;
@@ -100,10 +101,40 @@ public class MainMenuScreen extends MenuScreen {
 
     button.onPressedWithRepeatPulse(inputAction -> {
       switch(inputAction) {
-        case DPAD_DOWN, JOYSTICK_LEFT_BUTTON_DOWN -> this.setFocus(this.menuButtons.get(Math.floorMod(index + 1, this.menuButtons.size())));
-        case DPAD_UP, JOYSTICK_LEFT_BUTTON_UP -> this.setFocus(this.menuButtons.get(Math.floorMod(index - 1, this.menuButtons.size())));
-        case DPAD_RIGHT, JOYSTICK_RIGHT_BUTTON_RIGHT -> this.setFocus(this.menuButtons.get(Math.floorMod(index + 5, this.menuButtons.size())));
-        case DPAD_LEFT, JOYSTICK_RIGHT_BUTTON_LEFT -> this.setFocus(this.menuButtons.get(Math.floorMod(index - 5, this.menuButtons.size())));
+        case DPAD_DOWN, JOYSTICK_LEFT_BUTTON_DOWN -> {
+          for(int i = 1; i < this.menuButtons.size(); i++) {
+            final Button otherButton = this.menuButtons.get(Math.floorMod(index + i, this.menuButtons.size()));
+
+            if(!otherButton.isDisabled()) {
+              this.setFocus(otherButton);
+              break;
+            }
+          }
+        }
+        case DPAD_UP, JOYSTICK_LEFT_BUTTON_UP -> {
+          for(int i = 1; i < this.menuButtons.size(); i++) {
+            final Button otherButton = this.menuButtons.get(Math.floorMod(index - i, this.menuButtons.size()));
+
+            if(!otherButton.isDisabled()) {
+              this.setFocus(otherButton);
+              break;
+            }
+          }
+        }
+        case DPAD_RIGHT, JOYSTICK_RIGHT_BUTTON_RIGHT -> {
+          final Button otherButton = this.menuButtons.get(Math.floorMod(index + 5, this.menuButtons.size()));
+
+          if(!otherButton.isDisabled()) {
+            this.setFocus(otherButton);
+          }
+        }
+        case DPAD_LEFT, JOYSTICK_RIGHT_BUTTON_LEFT -> {
+          final Button otherButton = this.menuButtons.get(Math.floorMod(index - 5, this.menuButtons.size()));
+
+          if(!otherButton.isDisabled()) {
+            this.setFocus(otherButton);
+          }
+        }
         case BUTTON_SOUTH -> onClick.run();
       }
 
@@ -241,9 +272,9 @@ public class MainMenuScreen extends MenuScreen {
 
   private void showOptionsScreen() {
     playSound(2);
-    menuStack.pushScreen(new OptionsScreen(gameState_800babc8, EnumSet.allOf(ConfigStorageLocation.class), () -> {
-      ConfigStorage.saveConfig(gameState_800babc8, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
-      ConfigStorage.saveConfig(gameState_800babc8, ConfigStorageLocation.CAMPAIGN, Path.of("saves", gameState_800babc8.campaignName, "campaign_config.dcnf"));
+    menuStack.pushScreen(new OptionsScreen(CONFIG, EnumSet.allOf(ConfigStorageLocation.class), () -> {
+      ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
+      ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.CAMPAIGN, Path.of("saves", gameState_800babc8.campaignName, "campaign_config.dcnf"));
       menuStack.popScreen();
       this.loadingStage = 0;
     }));

@@ -2,11 +2,10 @@ package legend.game.types;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
-import legend.game.saves.ConfigCollection;
 
 import java.util.Arrays;
 
-public class GameState52c extends ConfigCollection {
+public class GameState52c {
   public String campaignName;
 
   /** Maybe flags? Maybe individual bytes? */
