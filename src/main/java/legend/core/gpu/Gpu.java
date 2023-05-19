@@ -913,17 +913,17 @@ public class Gpu {
               handleTranslucence = true;
             }
           } else {
+            texel = colour;
+
             if(translucency != null) {
               handleTranslucence = true;
-            } else {
-              texel = colour;
             }
           }
 
           if(handleTranslucence) {
             for(int xx = 0; xx < this.scale; xx++) {
               for(int yy = 0; yy < this.scale; yy++) {
-                this.getDrawBuffer().setPixel(x * this.scale + xx, y * this.scale + yy, (this.status.setMaskBit ? 1 : 0) << 24 | this.handleTranslucence(x * this.scale + xx, y * this.scale + yy, colour, translucency));
+                this.getDrawBuffer().setPixel(x * this.scale + xx, y * this.scale + yy, (this.status.setMaskBit ? 1 : 0) << 24 | this.handleTranslucence(x * this.scale + xx, y * this.scale + yy, texel, translucency));
               }
             }
           } else {
