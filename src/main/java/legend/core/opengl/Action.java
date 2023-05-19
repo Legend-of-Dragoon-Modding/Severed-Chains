@@ -1,11 +1,11 @@
 package legend.core.opengl;
 
-class Action {
+public class Action {
   private final Runnable action;
   private int expectedFps;
   private long nextRunTime;
 
-  Action(final Runnable action, final int expectedFps) {
+  public Action(final Runnable action, final int expectedFps) {
     this.action = action;
     this.setExpectedFps(expectedFps);
     this.updateTimer();

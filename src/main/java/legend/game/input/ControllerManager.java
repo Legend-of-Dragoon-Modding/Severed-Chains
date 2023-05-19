@@ -41,7 +41,7 @@ public class ControllerManager {
 
         this.onConnect.accept(controller);
 
-        if(controllerGuidFromConfig.equals(controllerGuid)) {
+        if(controllerGuidFromConfig.isBlank() || controllerGuidFromConfig.equals(controllerGuid)) {
           Input.useController(controller);
         }
       }
