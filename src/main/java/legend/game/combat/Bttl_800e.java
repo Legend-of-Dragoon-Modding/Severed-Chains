@@ -58,7 +58,6 @@ import legend.game.combat.ui.CombatMenua4;
 import legend.game.combat.ui.FloatingNumberC4;
 import legend.game.combat.ui.FloatingNumberC4Sub20;
 import legend.game.inventory.screens.TextColour;
-import legend.game.modding.events.EventManager;
 import legend.game.modding.events.combat.MonsterStatsEvent;
 import legend.game.modding.events.inventory.RepeatItemReturnEvent;
 import legend.game.scripting.FlowControl;
@@ -91,6 +90,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static legend.core.GameEngine.CPU;
+import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SCRIPTS;
@@ -3680,7 +3680,7 @@ public final class Bttl_800e {
         //LAB_800ee848
       }
 
-      final RepeatItemReturnEvent repeatItemReturnEvent = EventManager.INSTANCE.postEvent(new RepeatItemReturnEvent(itemId, returnItem));
+      final RepeatItemReturnEvent repeatItemReturnEvent = EVENTS.postEvent(new RepeatItemReturnEvent(itemId, returnItem));
 
       if(repeatItemReturnEvent.returnItem) {
         usedRepeatItems_800c6c3c.add(itemId);
@@ -3859,7 +3859,7 @@ public final class Bttl_800e {
     //LAB_800eefcc
     final MonsterStats1c monsterStats = monsterStats_8010ba98.get(monster.charIndex_272);
 
-    final MonsterStatsEvent statsEvent = EventManager.INSTANCE.postEvent(new MonsterStatsEvent(monster.charIndex_272));
+    final MonsterStatsEvent statsEvent = EVENTS.postEvent(new MonsterStatsEvent(monster.charIndex_272));
 
     monster.hp_08 = statsEvent.hp;
     monster.maxHp_10 = statsEvent.maxHp;

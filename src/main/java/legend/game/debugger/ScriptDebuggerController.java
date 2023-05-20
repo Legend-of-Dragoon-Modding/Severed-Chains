@@ -18,7 +18,6 @@ import javafx.util.StringConverter;
 import legend.core.GameEngine;
 import legend.game.Scus94491BpeSegment;
 import legend.game.modding.events.EventListener;
-import legend.game.modding.events.EventManager;
 import legend.game.modding.events.scripting.ScriptAllocatedEvent;
 import legend.game.modding.events.scripting.ScriptDeallocatedEvent;
 import legend.game.modding.events.scripting.ScriptTickEvent;
@@ -27,6 +26,7 @@ import legend.game.scripting.ScriptState;
 import java.util.HashSet;
 import java.util.Set;
 
+import static legend.core.GameEngine.EVENTS;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 
 public class ScriptDebuggerController {
@@ -104,7 +104,7 @@ public class ScriptDebuggerController {
     this.commandStack.setItems(this.stack);
     this.commandStack.setCellFactory(this.scriptStorage.getCellFactory());
 
-    EventManager.INSTANCE.register(this);
+    EVENTS.register(this);
   }
 
   public void uninitialize() {

@@ -35,7 +35,6 @@ import legend.game.inventory.screens.ShopScreen;
 import legend.game.inventory.screens.TextColour;
 import legend.game.inventory.screens.TooManyItemsScreen;
 import legend.game.modding.coremod.CoreMod;
-import legend.game.modding.events.EventManager;
 import legend.game.modding.events.inventory.TakeItemEvent;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.scripting.FlowControl;
@@ -77,6 +76,7 @@ import java.util.function.Supplier;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.CPU;
+import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SCRIPTS;
@@ -1649,7 +1649,7 @@ public final class Scus94491BpeSegment_8002 {
 
     final int itemId = gameState_800babc8.items_2e9.getInt(itemSlot);
 
-    final TakeItemEvent takeItemEvent = EventManager.INSTANCE.postEvent(new TakeItemEvent(itemId, true));
+    final TakeItemEvent takeItemEvent = EVENTS.postEvent(new TakeItemEvent(itemId, true));
 
     if(takeItemEvent.takeItem) {
       gameState_800babc8.items_2e9.removeInt(itemSlot);

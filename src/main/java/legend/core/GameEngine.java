@@ -40,6 +40,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Set;
 
 import static legend.game.SItem.albertXpTable_801138c0;
 import static legend.game.SItem.dartXpTable_801135e4;
@@ -50,10 +51,7 @@ import static legend.game.SItem.meruXpTable_801137cc;
 import static legend.game.SItem.mirandaXpTable_80113aa8;
 import static legend.game.SItem.roseXpTable_801139b4;
 import static legend.game.SItem.shanaXpTable_80113aa8;
-import static legend.game.Scus94491BpeSegment._80010004;
 import static legend.game.Scus94491BpeSegment.gameLoop;
-import static legend.game.Scus94491BpeSegment.loadFile;
-import static legend.game.Scus94491BpeSegment_8004.overlays_8004db88;
 import static org.lwjgl.opengl.GL11C.GL_BLEND;
 import static org.lwjgl.opengl.GL11C.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11C.GL_SRC_ALPHA;
@@ -69,10 +67,12 @@ public final class GameEngine {
 
   public static final Memory MEMORY = new Memory();
 
-  public static final ModManager MODS = new ModManager();
-
-  public static final Registries REGISTRIES = new Registries();
-  private static final Registries.Access REGISTRY_ACCESS = REGISTRIES.new Access();
+  private static ModManager.Access MOD_ACCESS;
+  private static EventManager.Access EVENT_ACCESS;
+  private static Registries.Access REGISTRY_ACCESS;
+  public static final ModManager MODS = new ModManager(access -> MOD_ACCESS = access);
+  public static final EventManager EVENTS = new EventManager(access -> EVENT_ACCESS = access);
+  public static final Registries REGISTRIES = new Registries(access -> REGISTRY_ACCESS = access);
 
   public static final ScriptManager SCRIPTS = new ScriptManager();
 
@@ -159,11 +159,6 @@ public final class GameEngine {
         loading = true;
         GPU.mainRenderer = GameEngine::loadGfx;
 
-        MODS.loadMods();
-        MODS.instantiateMods();
-
-        EventManager.INSTANCE.getClass(); // Trigger load
-
         Files.createDirectories(Path.of("saves"));
         SAVES.registerDeserializer(SaveSerialization::fromRetailMatcher, SaveSerialization::fromRetail);
         SAVES.registerDeserializer(SaveSerialization::fromV1Matcher, SaveSerialization::fromV1);
@@ -201,12 +196,17 @@ public final class GameEngine {
           MEMORY.addFunctions(Scus94491BpeSegment_8004.class);
           MEMORY.addFunctions(Scus94491BpeSegment_800e.class);
 
-          // Load S_ITEM temporarily to get item names
-          loadFile(overlays_8004db88.get(2), _80010004.get(), (address, size, integer) -> {}, 0, 0x10L);
-
           loadXpTables();
 
-          REGISTRY_ACCESS.initialize();
+          // Find and load all mods so their global config can be shown in the title screen options menu
+          MOD_ACCESS.findMods();
+          MOD_ACCESS.loadMods();
+
+          // Initialize event bus and find all event handlers
+          EVENT_ACCESS.initialize();
+
+          // Initialize config registry and fire off config registry events
+          REGISTRY_ACCESS.initialize(REGISTRIES.config);
 
           ConfigStorage.loadConfig(CONFIG, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
 
@@ -221,6 +221,23 @@ public final class GameEngine {
     time = System.nanoTime();
     thread.start();
     GPU.run();
+  }
+
+  /** Returns missing mod IDs, if any */
+  public static Set<String> rebootMods(final Set<String> modIds) {
+    LOGGER.info("Rebooting mods...");
+
+    MOD_ACCESS.reset();
+    EVENT_ACCESS.reset();
+    REGISTRY_ACCESS.reset();
+
+    LOGGER.info("Loading mods %s...", modIds);
+
+    final Set<String> missingMods = MOD_ACCESS.loadMods(modIds);
+    EVENT_ACCESS.initialize();
+    REGISTRY_ACCESS.initializeRemaining();
+
+    return missingMods;
   }
 
   private static void loadXpTables() throws IOException {

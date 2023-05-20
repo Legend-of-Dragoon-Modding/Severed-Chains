@@ -141,10 +141,6 @@ public final class IoHelper {
     return stream.get() != 0;
   }
 
-  public static <T extends Enum<T>> T readEnum(final ByteBuffer stream, final Class<T> cls) {
-    return cls.getEnumConstants()[stream.get()];
-  }
-
   public static int readUByte(final ByteBuffer stream) {
     return stream.get() & 0xff;
   }

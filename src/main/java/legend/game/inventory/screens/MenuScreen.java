@@ -72,7 +72,7 @@ public abstract class MenuScreen extends ControlHost {
       return InputPropagation.HANDLED;
     }
 
-    if(this.focus != null) {
+    if(this.focus != null && !this.focus.isDisabled()) {
       return this.focus.keyPress(key, scancode, mods);
     }
 
@@ -85,7 +85,7 @@ public abstract class MenuScreen extends ControlHost {
       return InputPropagation.HANDLED;
     }
 
-    if(this.focus != null) {
+    if(this.focus != null && !this.focus.isDisabled()) {
       return this.focus.charPress(codepoint);
     }
 
@@ -98,7 +98,7 @@ public abstract class MenuScreen extends ControlHost {
       return InputPropagation.HANDLED;
     }
 
-    if(this.focus != null) {
+    if(this.focus != null && !this.focus.isDisabled()) {
       return this.focus.pressedThisFrame(inputAction);
     }
 
@@ -111,7 +111,7 @@ public abstract class MenuScreen extends ControlHost {
       return InputPropagation.HANDLED;
     }
 
-    if(this.focus != null) {
+    if(this.focus != null && !this.focus.isDisabled()) {
       return this.focus.pressedWithRepeatPulse(inputAction);
     }
 
@@ -124,7 +124,7 @@ public abstract class MenuScreen extends ControlHost {
       return InputPropagation.HANDLED;
     }
 
-    if(this.focus != null) {
+    if(this.focus != null && !this.focus.isDisabled()) {
       return this.focus.releasedThisFrame(inputAction);
     }
 
