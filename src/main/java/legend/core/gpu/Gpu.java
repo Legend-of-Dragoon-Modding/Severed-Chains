@@ -54,7 +54,7 @@ public class Gpu {
   private final VramTextureSingle[] renderBuffers = new VramTextureSingle[2];
   private int drawBufferIndex;
 
-  private int scale = 2;
+  private int scale = 1;
   private int newScale;
 
   private final int[] vram24 = new int[this.vramWidth * this.vramHeight];
@@ -222,7 +222,7 @@ public class Gpu {
       this.mainRenderer.run();
 
       final float fps = 1.0f / ((System.nanoTime() - this.lastFrame) / (1_000_000_000 / 30.0f)) * 30.0f;
-      this.window.setTitle("Legend of Dragoon - FPS: %.2f/%d scale: %d".formatted(fps, this.window.getFpsLimit(), this.scale));
+      this.window.setTitle("Legend of Dragoon - FPS: %.2f/%d scale: %d res: %dx%d".formatted(fps, this.window.getFpsLimit(), this.scale, this.displayTexture.width, this.displayTexture.height));
       this.lastFrame = System.nanoTime();
       this.vsyncCount += 60.0d * Config.getGameSpeedMultiplier() / this.window.getFpsLimit();
     });
@@ -492,7 +492,11 @@ public class Gpu {
   /**
    * GP1(08h) - Display Mode
    */
-  public void displayMode(final int width, final int height) {
+  public void displayMode(int width, final int height) {
+    if(width == 384) {
+      width = 368;
+    }
+
     this.status.horizontalResolution = width;
     this.status.verticalResolution = height;
 
@@ -526,7 +530,11 @@ public class Gpu {
     this.displayTexture.data(0, 0, this.displayTexture.width, this.displayTexture.height, pixels);
   }
 
-  public void drawingArea(final int left, final int top, final int width, final int height) {
+  public void drawingArea(final int left, final int top, int width, final int height) {
+    if(width == 384) {
+      width = 368;
+    }
+
     this.drawingArea.set((short)left, (short)top, (short)width, (short)height);
     this.scaledDrawingArea.set((short)(left * this.scale), (short)(top * this.scale), (short)(width * this.scale), (short)(height * this.scale));
   }
@@ -763,7 +771,9 @@ public class Gpu {
               texel = 0;
               if(palettes == null) {
                 if(texture == this.getDisplayBuffer() || texture == this.getDrawBuffer()) {
-                  texel = texture.getPixel(texelX * this.scale, texelY * this.scale) & 0xffffff;
+                  if(texelX < this.drawingArea.x.get() + this.drawingArea.w.get() && texelY < this.drawingArea.y.get() + this.drawingArea.h.get()) {
+                    texel = texture.getPixel(texelX * this.scale, texelY * this.scale) & 0xffffff;
+                  }
                 } else {
                   texel = texture.getPixel(texelX, texelY) & 0xffffff;
                 }
@@ -866,7 +876,8 @@ public class Gpu {
             }
           }
 
-          int texel;
+          boolean handleTranslucence = false;
+          int texel = 0;
           if(textured) {
             if(texture == null) {
               texel = this.getTexel(u, v, clutX, clutY, vramX, vramY, bpp);
@@ -899,19 +910,27 @@ public class Gpu {
             }
 
             if(translucency != null && (texel & 0xff00_0000) != 0) {
-              texel = this.handleTranslucence(x * this.scale, y * this.scale, texel, translucency);
+              handleTranslucence = true;
             }
           } else {
+            texel = colour;
+
             if(translucency != null) {
-              texel = this.handleTranslucence(x * this.scale, y * this.scale, colour, translucency);
-            } else {
-              texel = colour;
+              handleTranslucence = true;
             }
           }
 
-          for(int xx = 0; xx < this.scale; xx++) {
-            for(int yy = 0; yy < this.scale; yy++) {
-              this.getDrawBuffer().setPixel(x * this.scale + xx, y * this.scale + yy, (this.status.setMaskBit ? 1 : 0) << 24 | texel);
+          if(handleTranslucence) {
+            for(int xx = 0; xx < this.scale; xx++) {
+              for(int yy = 0; yy < this.scale; yy++) {
+                this.getDrawBuffer().setPixel(x * this.scale + xx, y * this.scale + yy, (this.status.setMaskBit ? 1 : 0) << 24 | this.handleTranslucence(x * this.scale + xx, y * this.scale + yy, texel, translucency));
+              }
+            }
+          } else {
+            for(int xx = 0; xx < this.scale; xx++) {
+              for(int yy = 0; yy < this.scale; yy++) {
+                this.getDrawBuffer().setPixel(x * this.scale + xx, y * this.scale + yy, (this.status.setMaskBit ? 1 : 0) << 24 | texel);
+              }
             }
           }
         }
@@ -1054,6 +1073,48 @@ public class Gpu {
         r = Math.min(0xff, br + fr / 4);
         g = Math.min(0xff, bg + fg / 4);
         b = Math.min(0xff, bb + fb / 4);
+      }
+
+      case FULL_BACKGROUND -> {
+        r = br;
+        g = bg;
+        b = bb;
+      }
+
+      case TQUATER_B_FOREGROUND -> {
+        r = Math.min(0xff, br * 3 / 4 + fr);
+        g = Math.min(0xff, bg * 3 / 4 + fg);
+        b = Math.min(0xff, bb * 3 / 4 + fb);
+      }
+
+      case HALF_B_FOREGROUND -> {
+        r = Math.min(0xff, br / 2 + fr);
+        g = Math.min(0xff, bg / 2 + fg);
+        b = Math.min(0xff, bb / 2 + fb);
+      }
+
+      case QUARTER_B_FOREGROUND -> {
+        r = Math.min(0xff, br / 4 + fr);
+        g = Math.min(0xff, bg / 4 + fg);
+        b = Math.min(0xff, bb / 4 + fb);
+      }
+
+      case FULL_FOREGROUND -> {
+        r = fr;
+        g = fg;
+        b = fb;
+      }
+
+      case QUARTER_B_QUARTER_F -> {
+        r = (br + fr) / 4;
+        g = (bg + fg) / 4;
+        b = (bb + fb) / 4;
+      }
+
+      case TQUARTER_B_TQUARTER_F -> {
+        r = Math.min(0xff, br * 3 / 4 + fr * 3 / 4);
+        g = Math.min(0xff, bg * 3 / 4 + fg * 3 / 4);
+        b = Math.min(0xff, bb * 3 / 4 + fb * 3 / 4);
       }
 
       default -> throw new RuntimeException();

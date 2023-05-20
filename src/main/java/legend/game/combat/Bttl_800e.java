@@ -1566,8 +1566,9 @@ public final class Bttl_800e {
       final int x = MathHelper.safeDiv(sp0x18.getX() * projectionPlaneDistance_1f8003f8.get(), sp0x18.getZ());
       final int y = MathHelper.safeDiv(sp0x18.getY() * projectionPlaneDistance_1f8003f8.get(), sp0x18.getZ());
 
+      // a2 needs to be ignored in z check or poly positions will overflow at low z values
       int z = a2 + (sp0x18.getZ() >> 2);
-      if(z >= 0x28) {
+      if(sp0x18.getZ() >> 2 >= 0x28 && z >= 0x28) {
         if(z > 0x3ff8) {
           z = 0x3ff8;
         }
@@ -3885,7 +3886,7 @@ public final class Bttl_800e {
     monster.equipment_1a_48 = 0;
     monster.equipmentOnHitStatus_4a = 0;
     monster.targetArrowPos_78.set(monsterStats.targetArrowX_12.get(), monsterStats.targetArrowY_13.get(), monsterStats.targetArrowZ_14.get());
-    monster._7e = monsterStats._15.get();
+    monster.hitCounterFrameThreshold_7e = monsterStats.hitCounterFrameThreshold_15.get();
     monster._80 = monsterStats._16.get();
     monster._82 = monsterStats._17.get();
     monster._84 = monsterStats._18.get();

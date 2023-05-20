@@ -192,8 +192,6 @@ public final class Scus94491BpeSegment_800b {
    * Seems any other value shows the inventory
    */
   public static WhichMenu whichMenu_800bdc38 = WhichMenu.NONE_0;
-  public static int oldWidth;
-  public static int oldHeight;
   public static UiFile uiFile_800bdc3c;
   /** NOTE: same address as previous var */
   public static final Pointer<McqHeader> gameOverMcq_800bdc3c = MEMORY.ref(4, 0x800bdc3cL, Pointer.deferred(4, McqHeader::new));
@@ -249,9 +247,9 @@ public final class Scus94491BpeSegment_800b {
   public static final IntRef screenOffsetY_800bed54 = MEMORY.ref(4, 0x800bed54L, IntRef::new);
   public static final Value hasNoEncounters_800bed58 = MEMORY.ref(4, 0x800bed58L);
 
-  public static final IntRef _800bee90 = MEMORY.ref(4, 0x800bee90L, IntRef::new);
-  public static final IntRef _800bee94 = MEMORY.ref(4, 0x800bee94L, IntRef::new);
-  public static final IntRef _800bee98 = MEMORY.ref(4, 0x800bee98L, IntRef::new);
+  public static final IntRef input_800bee90 = MEMORY.ref(4, 0x800bee90L, IntRef::new);
+  public static final IntRef press_800bee94 = MEMORY.ref(4, 0x800bee94L, IntRef::new);
+  public static final IntRef repeat_800bee98 = MEMORY.ref(4, 0x800bee98L, IntRef::new);
   public static final IntRef _800bee9c = MEMORY.ref(4, 0x800bee9cL, IntRef::new);
 
   public static final IntRef _800beea4 = MEMORY.ref(4, 0x800beea4L, IntRef::new);

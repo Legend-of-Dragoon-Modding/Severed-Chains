@@ -24,8 +24,6 @@ public final class Config {
   static {
     properties.setProperty("window_width", "320");
     properties.setProperty("window_height", "240");
-    properties.setProperty("controller_guid", "");
-    properties.setProperty("controller_deadzone", "0.3");
     properties.setProperty("unlock_party", "false");
     properties.setProperty("battle_ui_colour_change", "false");
     properties.setProperty("battle_ui_r", "0");
@@ -47,6 +45,33 @@ public final class Config {
     properties.setProperty("fast_text_speed", "false");
     properties.setProperty("auto_advance_text", "false");
     properties.setProperty("receive_input_on_inactive_window", "false");
+    properties.setProperty("textbox_colour", "false");
+    properties.setProperty("textbox_colour_mode", "0");
+    properties.setProperty("textbox_colour1_r", "0");
+    properties.setProperty("textbox_colour1_g", "0");
+    properties.setProperty("textbox_colour1_b", "0");
+    properties.setProperty("textbox_colour2_r", "0");
+    properties.setProperty("textbox_colour2_g", "0");
+    properties.setProperty("textbox_colour2_b", "0");
+    properties.setProperty("textbox_colour3_r", "0");
+    properties.setProperty("textbox_colour3_g", "0");
+    properties.setProperty("textbox_colour3_b", "0");
+    properties.setProperty("textbox_colour4_r", "0");
+    properties.setProperty("textbox_colour4_g", "0");
+    properties.setProperty("textbox_colour4_b", "0");
+    properties.setProperty("textbox_colour5_r", "0");
+    properties.setProperty("textbox_colour5_g", "0");
+    properties.setProperty("textbox_colour5_b", "0");
+    properties.setProperty("textbox_colour6_r", "0");
+    properties.setProperty("textbox_colour6_g", "0");
+    properties.setProperty("textbox_colour6_b", "0");
+    properties.setProperty("textbox_colour7_r", "0");
+    properties.setProperty("textbox_colour7_g", "0");
+    properties.setProperty("textbox_colour7_b", "0");
+    properties.setProperty("textbox_colour8_r", "0");
+    properties.setProperty("textbox_colour8_g", "0");
+    properties.setProperty("textbox_colour8_b", "0");
+    properties.setProperty("textbox_transparency_mode", "0");
   }
 
   public static int windowWidth() {
@@ -55,18 +80,6 @@ public final class Config {
 
   public static int windowHeight() {
     return readInt("window_height", 480, 1, Integer.MAX_VALUE);
-  }
-
-  public static String controllerGuid() {
-    return properties.getProperty("controller_guid", "");
-  }
-
-  public static void controllerGuid(final String guid) {
-    properties.setProperty("controller_guid", guid);
-  }
-
-  public static float controllerDeadzone() {
-    return readFloat("controller_deadzone", 0.3f, 0.0f, 1.0f);
   }
 
   public static boolean unlockParty() {
@@ -248,21 +261,63 @@ public final class Config {
     properties.setProperty("addition_overlay_colour_change", "true");
   }
 
+  public static boolean textBoxColour() {
+    return readBool("textbox_colour", false);
+  }
+
+  public static void toggleTextBoxColour() {
+    properties.setProperty("textbox_colour", String.valueOf(!textBoxColour()));
+  }
+
+  public static int getTextBoxColourMode() {
+    return readInt("textbox_colour_mode", 0, 0, 2);
+  }
+
+  public static void setTextBoxColourMode(final int value) {
+    properties.setProperty("textbox_colour_mode", String.valueOf(value));
+  }
+
+  public static int getTextBoxRgb(final int textbox) {
+    final int[] rgbArray = {
+      readInt("textbox_colour" + textbox + "_r", 0, 0, 255),
+      readInt("textbox_colour" + textbox + "_g", 0, 0, 255),
+      readInt("textbox_colour" + textbox + "_b", 0, 0, 255),
+      0x00,
+    };
+
+    return (
+      (0xff & rgbArray[3]) << 24 |
+        (0xff & rgbArray[2]) << 16 |
+        (0xff & rgbArray[1]) << 8  |
+        0xff & rgbArray[0]
+    );
+  }
+
+  public static void setTextBoxRgb(final int textbox, final int rgb) {
+    final int[] rgbArray = {
+      ((rgb >> 24) & 0xff),
+      ((rgb >> 16) & 0xff),
+      ((rgb >> 8) & 0xff),
+      (rgb & 0xff)
+    };
+
+    properties.setProperty("textbox_colour" + textbox + "_r", String.valueOf(rgbArray[3]));
+    properties.setProperty("textbox_colour" + textbox + "_g", String.valueOf(rgbArray[2]));
+    properties.setProperty("textbox_colour" + textbox + "_b", String.valueOf(rgbArray[1]));
+  }
+
+  public static int getTextBoxTransparencyMode() {
+    return readInt("textbox_transparency_mode", 0, 0, 10);
+  }
+
+  public static void setTextBoxTransparencyMode(final int value) {
+    properties.setProperty("textbox_transparency_mode", String.valueOf(value));
+  }
+
   private static int readInt(final String key, final int defaultVal, final int min, final int max) {
     int val;
     try {
       val = Integer.parseInt(properties.getProperty(key, String.valueOf(defaultVal)));
-    } catch(final NumberFormatException e) {
-      val = defaultVal;
-    }
-
-    return MathHelper.clamp(val, min, max);
-  }
-
-  private static float readFloat(final String key, final float defaultVal, final float min, final float max) {
-    float val;
-    try {
-      val = Float.parseFloat(properties.getProperty(key, String.valueOf(defaultVal)));
     } catch(final NumberFormatException e) {
       val = defaultVal;
     }

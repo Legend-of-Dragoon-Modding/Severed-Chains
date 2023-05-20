@@ -194,7 +194,7 @@ public final class Renderer {
           CPU.MTC2(poly.vertices[vertexIndex].colour, 6);
 
           final SVECTOR norm;
-          if(vertexIndex < normals.length) {
+          if(poly.vertices[vertexIndex].normalIndex < normals.length) {
             norm = normals[poly.vertices[vertexIndex].normalIndex];
           } else {
             norm = new SVECTOR();

@@ -2320,7 +2320,7 @@ public final class SItem {
             FUN_8010d050(InventoryMenuState._18, 0x1L);
           } else {
             // Some items remaining
-            resizeDisplay(368, 240);
+            resizeDisplay(384, 240);
             deallocateRenderables(0xff);
             menuStack.pushScreen(new TooManyItemsScreen());
             inventoryMenuState_800bdc28.set(InventoryMenuState._19);
@@ -2604,14 +2604,14 @@ public final class SItem {
 
       case 1: // Allocate
         messageBox.state_0c = 2;
-        messageBox.renderable_04 = null;
-        messageBox.renderable_08 = allocateUiElement(149, 142, messageBox.x_1c - 50, messageBox.y_1e - 10);
-        messageBox.renderable_08.z_3c = 32;
-        messageBox.renderable_08._18 = 142;
+        messageBox.highlightRenderable_04 = null;
+        messageBox.backgroundRenderable_08 = allocateUiElement(149, 142, messageBox.x_1c - 50, messageBox.y_1e - 10);
+        messageBox.backgroundRenderable_08.z_3c = 32;
+        messageBox.backgroundRenderable_08._18 = 142;
         msgboxResult_8011e1e8.set(MessageBoxResult.AWAITING_INPUT);
 
       case 2:
-        if(messageBox.renderable_08._0c != 0) {
+        if(messageBox.backgroundRenderable_08._0c != 0) {
           messageBox.state_0c = 3;
         }
 
@@ -2647,12 +2647,12 @@ public final class SItem {
 
         if(messageBox.type_15 == 2) {
           //LAB_8010ef10
-          if(messageBox.renderable_04 == null) {
+          if(messageBox.highlightRenderable_04 == null) {
             renderable = allocateUiElement(125, 125, messageBox.x_1c + 45, messageBox.menuIndex_18 * 14 + y + 5);
-            messageBox.renderable_04 = renderable;
+            messageBox.highlightRenderable_04 = renderable;
             renderable._38 = 0;
             renderable._34 = 0;
-            messageBox.renderable_04.z_3c = 32;
+            messageBox.highlightRenderable_04.z_3c = 32;
           }
 
           //LAB_8010ef64
@@ -2669,20 +2669,20 @@ public final class SItem {
       case 4:
         messageBox.state_0c = 5;
 
-        if(messageBox.renderable_04 != null) {
-          unloadRenderable(messageBox.renderable_04);
+        if(messageBox.highlightRenderable_04 != null) {
+          unloadRenderable(messageBox.highlightRenderable_04);
         }
 
         //LAB_8010f084
-        unloadRenderable(messageBox.renderable_08);
+        unloadRenderable(messageBox.backgroundRenderable_08);
         renderable = allocateUiElement(0x8e, 0x95, messageBox.x_1c - 50, messageBox.y_1e - 10);
-        messageBox.renderable_08 = renderable;
+        messageBox.backgroundRenderable_08 = renderable;
         renderable.z_3c = 32;
-        messageBox.renderable_08.flags_00 |= 0x10;
+        messageBox.backgroundRenderable_08.flags_00 |= 0x10;
         break;
 
       case 5:
-        if(messageBox.renderable_08._0c != 0) {
+        if(messageBox.backgroundRenderable_08._0c != 0) {
           messageBox.state_0c = 6;
         }
 

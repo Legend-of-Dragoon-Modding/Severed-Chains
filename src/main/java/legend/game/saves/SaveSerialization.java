@@ -1,17 +1,11 @@
 package legend.game.saves;
 
-import legend.core.GameEngine;
 import legend.game.inventory.WhichMenu;
-import legend.game.modding.coremod.CoreMod;
-import legend.game.modding.registries.RegistryId;
-import legend.game.submap.IndicatorMode;
 import legend.game.types.CharacterData2c;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import static legend.core.GameEngine.CONFIG;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
 import static legend.game.Scus94491BpeSegment_800b.continentIndex_800bf0b0;
 import static legend.game.Scus94491BpeSegment_800b.submapIndex_800bd808;
@@ -33,7 +27,7 @@ public final class SaveSerialization {
   }
 
   public static SavedGame fromRetail(final String name, final FileData data) {
-    return new SavedGame(name, data.readUByte(0x1a9), data.readUByte(0x1a8), deserializeRetailGameState(data.slice(0x1fc)));
+    return new SavedGame(name, data.readUByte(0x1a9), data.readUByte(0x1a8), deserializeRetailGameState(data.slice(0x1fc)), new ConfigCollection());
   }
 
   public static FileData fromV1Matcher(final FileData data) {
@@ -45,7 +39,7 @@ public final class SaveSerialization {
   }
 
   public static SavedGame fromV1(final String name, final FileData data) {
-    return new SavedGame(name, data.readUByte(0x2d), data.readUByte(0x2c), deserializeRetailGameState(data.slice(0x30)));
+    return new SavedGame(name, data.readUByte(0x2d), data.readUByte(0x2c), deserializeRetailGameState(data.slice(0x30)), new ConfigCollection());
   }
 
   public static FileData fromV2Matcher(final FileData data) {
@@ -215,40 +209,19 @@ public final class SaveSerialization {
     state.isOnWorldMap_4e4 = data.readUByte(offset) != 0;
     offset++;
 
-    state.mono_4e0 = data.readUByte(offset) != 0;
+//    state.mono_4e0 = data.readUByte(offset) != 0;
     offset++;
     state.vibrationEnabled_4e1 = data.readUByte(offset) != 0;
     offset++;
-    state.morphMode_4e2 = data.readUByte(offset);
+//    state.morphMode_4e2 = data.readUByte(offset);
     offset++;
     state.indicatorsDisabled_4e3 = data.readUByte(offset) != 0;
     offset++;
 
-    state.clearConfig();
+    final ConfigCollection config = new ConfigCollection();
+    ConfigStorage.loadConfig(config, ConfigStorageLocation.SAVE, data.slice(offset));
 
-    final int configCount = data.readInt(offset);
-    offset += 4;
-
-    for(int configIndex = 0; configIndex < configCount; configIndex++) {
-      final RegistryId configId = data.readRegistryId(offset);
-      offset += configId.toString().length() + 3;
-
-      //noinspection rawtypes
-      final ConfigEntry configEntry = GameEngine.REGISTRIES.config.getEntry(configId).get();
-
-      final int configValueLength = data.readInt(offset);
-      offset += 4;
-
-      final byte[] configValueRaw = data.slice(offset, configValueLength).getBytes();
-      offset += configValueLength;
-
-      if(configEntry != null) {
-        //noinspection unchecked
-        state.setConfig(configEntry, configEntry.deserializer.apply(configValueRaw));
-      }
-    }
-
-    return new SavedGame(name, locationType, locationIndex, state);
+    return new SavedGame(name, locationType, locationIndex, state, config);
   }
 
   public static int toV2(final FileData data, final GameState52c state) {
@@ -422,42 +395,16 @@ public final class SaveSerialization {
     data.writeByte(offset, state.isOnWorldMap_4e4 ? 1 : 0);
     offset++;
 
-    data.writeByte(offset, state.mono_4e0 ? 1 : 0);
+//    data.writeByte(offset, state.mono_4e0 ? 1 : 0);
     offset++;
     data.writeByte(offset, state.vibrationEnabled_4e1 ? 1 : 0);
     offset++;
-    data.writeByte(offset, state.morphMode_4e2);
+//    data.writeByte(offset, state.morphMode_4e2);
     offset++;
     data.writeByte(offset, state.indicatorsDisabled_4e3 ? 1 : 0);
     offset++;
 
-    final Map<RegistryId, byte[]> config = new HashMap<>();
-
-    for(final RegistryId configId : GameEngine.REGISTRIES.config) {
-      //noinspection rawtypes
-      final ConfigEntry configEntry = GameEngine.REGISTRIES.config.getEntry(configId).get();
-      //noinspection unchecked
-      final Object value = state.getConfig(configEntry);
-
-      if(value != null) {
-        //noinspection unchecked
-        config.put(configId, (byte[])configEntry.serializer.apply(value));
-      }
-    }
-
-    data.writeInt(offset, config.size());
-    offset += 4;
-
-    for(final var entry : config.entrySet()) {
-      data.writeRegistryId(offset, entry.getKey());
-      offset += entry.getKey().toString().length() + 3;
-
-      data.writeInt(offset, entry.getValue().length);
-      offset += 4;
-
-      data.copyTo(0, entry.getValue(), offset, entry.getValue().length);
-      offset += entry.getValue().length;
-    }
+    offset += ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.SAVE, data.slice(offset));
 
     return offset;
   }
@@ -570,14 +517,14 @@ public final class SaveSerialization {
     state.facing_4dd = data.readByte(0x4dd);
     state.areaIndex_4de = data.readUShort(0x4de);
 
-    state.mono_4e0 = data.readUByte(0x4e0) != 0;
+//    state.mono_4e0 = data.readUByte(0x4e0) != 0;
     state.vibrationEnabled_4e1 = data.readUByte(0x4e1) != 0;
-    state.morphMode_4e2 = data.readUByte(0x4e2);
+//    state.morphMode_4e2 = data.readUByte(0x4e2);
     state.indicatorsDisabled_4e3 = data.readUByte(0x4e3) != 0;
     state.isOnWorldMap_4e4 = data.readUByte(0x4e4) != 0;
 
     state.characterInitialized_4e6 = data.readUShort(0x4e6);
-    state.setConfig(CoreMod.INDICATOR_MODE_CONFIG.get(), IndicatorMode.values()[data.readInt(0x4e8)]);
+//    CONFIG.setConfig(CoreMod.INDICATOR_MODE_CONFIG.get(), IndicatorMode.values()[data.readInt(0x4e8)]);
 
     return state;
   }

@@ -911,8 +911,6 @@ public final class Bttl_800c {
     monsterCount_800c6768.set(0);
     charCount_800c677c.set(0);
 
-    battleState_8006e398.morphMode_ee4 = gameState_800babc8.morphMode_4e2;
-
     loadSupportOverlay(1, SBtld::battlePrepareSelectedAdditionHitProperties_80109250);
 
     //LAB_800c7830

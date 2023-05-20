@@ -281,7 +281,8 @@ public class BattleStateEf4 {
   public final ScriptState<? extends BattleObject27c>[] aliveBobjs_e78 = new ScriptState[13];
   public final ScriptState<? extends BattleObject27c>[] aliveCharBobjs_eac = new ScriptState[4];
   public final ScriptState<MonsterBattleObject>[] aliveMonsterBobjs_ebc = new ScriptState[10];
-  public int morphMode_ee4;
+  // Reads directly from gameState now
+//  public TransformationMode morphMode_ee4;
 
   // nodart code no longer uses this
 //  public final Pointer<PartyPermutation08> partyPermutation_ee8;
@@ -291,7 +292,7 @@ public class BattleStateEf4 {
   public BattleStateEf4() {
     Arrays.setAll(this.specialEffect_00, i -> new SpecialEffects20());
     Arrays.setAll(this.status_384, i -> new Status04());
-    Arrays.setAll(this.additionExtra_474, i -> new AdditionExtra04());
+    Arrays.setAll(this.additionExtra_474, AdditionExtra04::new);
     Arrays.setAll(this._d8c, i -> new BattleStateEf4Sub08());
     Arrays.setAll(this._580, i -> new BttlStruct08());
   }

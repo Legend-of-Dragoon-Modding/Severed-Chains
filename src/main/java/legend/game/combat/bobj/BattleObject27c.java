@@ -35,6 +35,7 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
    *   <li>0x80 - Poison</li>
    *   <li>0x800 - Don't apply elemental effects for this attack (cleared after damage is done)</li>
    *   <li>0x2000 - Can become dragoon</li>
+   *   <li>0x4000 - Divine Dragoon</li>
    * </ul>
    */
   public int status_0e;
@@ -62,7 +63,7 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
    *   <li>0x8 - Fear</li>
    *   <li>0x10 - Stun</li>
    *   <li>0x20 - Arm Block</li>
-   *   <li>0x40 - Despirit</li>
+   *   <li>0x40 - Dispirit</li>
    *   <li>0x80 - Poison</li>
    * </ul>
    */
@@ -98,7 +99,7 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
    *   <li>0x8 - Fear</li>
    *   <li>0x10 - Stun</li>
    *   <li>0x20 - Arm Block</li>
-   *   <li>0x40 - Despirit</li>
+   *   <li>0x40 - Dispirit</li>
    *   <li>0x80 - Poison</li>
    * </ul>
    */
@@ -110,7 +111,8 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
   public int itemId_52;
   public int guard_54;
 
-  public int _7e;
+  /** Enemy aggressiveness with counters; lower means it can counter tighter timings; 0 = cannot counter */
+  public int hitCounterFrameThreshold_7e;
   public int _80;
   public int _82;
   public int _84;
@@ -277,7 +279,7 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
       case 39 -> this.itemId_52;
       case 40 -> this.guard_54;
 
-      case 61 -> this._7e;
+      case 61 -> this.hitCounterFrameThreshold_7e;
       case 62 -> this._80;
       case 63 -> this._82;
       case 64 -> this._84;
@@ -373,7 +375,7 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
       case 39 -> this.itemId_52 = value;
       case 40 -> this.guard_54 = value;
 
-      case 61 -> this._7e = value;
+      case 61 -> this.hitCounterFrameThreshold_7e = value;
       case 62 -> this._80 = value;
       case 63 -> this._82 = value;
       case 64 -> this._84 = value;
