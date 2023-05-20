@@ -60,6 +60,8 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
 
     this.addRow("", new Button("Mods")).onPressed(() ->
       SItem.menuStack.pushScreen(new ModsScreen(this.enabledMods, () -> {
+        rebootMods(this.enabledMods);
+
         scriptStartEffect(2, 10);
         SItem.menuStack.popScreen();
       }))
@@ -86,8 +88,6 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
       ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
       ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.CAMPAIGN, Path.of("saves", gameState_800babc8.campaignName, "campaign_config.dcnf"));
 
-      rebootMods(this.enabledMods);
-
       savedGameSelected_800bdc34.set(true);
       playSound(2);
       whichMenu_800bdc38 = WhichMenu.UNLOAD_NEW_CAMPAIGN_MENU;
@@ -97,6 +97,8 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
   private void menuEscape() {
     playSound(3);
     whichMenu_800bdc38 = WhichMenu.UNLOAD_NEW_CAMPAIGN_MENU;
+
+    rebootMods(MODS.getAllModIds());
   }
 
   @Override
