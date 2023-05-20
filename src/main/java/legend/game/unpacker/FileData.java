@@ -102,16 +102,24 @@ public record FileData(byte[] data, int offset, int size, int realFileIndex) {
   }
 
   public void writeAscii(final int offset, final String val) {
-    this.checkBounds(offset, val.length() + 3);
-    MathHelper.set(this.data, this.offset + offset, 3, val.length());
-    System.arraycopy(val.getBytes(StandardCharsets.US_ASCII), 0, this.data, this.offset + offset + 3, val.length());
+    this.writeAscii(offset, val, 3);
+  }
+
+  public void writeAscii(final int offset, final String val, final int lengthSize) {
+    this.checkBounds(offset, val.length() + lengthSize);
+    MathHelper.set(this.data, this.offset + offset, lengthSize, val.length());
+    System.arraycopy(val.getBytes(StandardCharsets.US_ASCII), 0, this.data, this.offset + offset + lengthSize, val.length());
   }
 
   public String readAscii(final int offset) {
-    this.checkBounds(offset, 3);
-    final int length = (int)MathHelper.get(this.data, this.offset + offset, 3);
-    this.checkBounds(offset, length + 3);
-    return new String(this.data, this.offset + offset + 3, length, StandardCharsets.US_ASCII);
+    return this.readAscii(offset, 3);
+  }
+
+  public String readAscii(final int offset, final int lengthSize) {
+    this.checkBounds(offset, lengthSize);
+    final int length = (int)MathHelper.get(this.data, this.offset + offset, lengthSize);
+    this.checkBounds(offset, length + lengthSize);
+    return new String(this.data, this.offset + offset + lengthSize, length, StandardCharsets.US_ASCII);
   }
 
   public void writeRegistryId(final int offset, final RegistryId id) {

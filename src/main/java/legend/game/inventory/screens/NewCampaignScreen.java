@@ -6,6 +6,7 @@ import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.Button;
 import legend.game.inventory.screens.controls.Textbox;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.types.GameState52c;
@@ -13,9 +14,13 @@ import legend.game.types.LodString;
 
 import java.nio.file.Path;
 import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.Set;
 
 import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.MODS;
 import static legend.core.GameEngine.SAVES;
+import static legend.core.GameEngine.rebootMods;
 import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
@@ -26,6 +31,7 @@ import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 
 public class NewCampaignScreen extends VerticalLayoutScreen {
   private final GameState52c state = new GameState52c();
+  private final Set<String> enabledMods = new HashSet<>();
 
   private final Textbox campaignName;
 
@@ -33,6 +39,7 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
 
   public NewCampaignScreen() {
     CONFIG.clearConfig(ConfigStorageLocation.CAMPAIGN);
+    this.enabledMods.addAll(MODS.getAllModIds());
 
     deallocateRenderables(0xff);
     scriptStartEffect(2, 10);
@@ -44,9 +51,15 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
     this.campaignName.setMaxLength(15);
     this.campaignName.setZ(35);
 
-    final Button options = this.addRow("", new Button("Options"));
-    options.onPressed(() ->
+    this.addRow("", new Button("Options")).onPressed(() ->
       SItem.menuStack.pushScreen(new OptionsScreen(CONFIG, EnumSet.allOf(ConfigStorageLocation.class), () -> {
+        scriptStartEffect(2, 10);
+        SItem.menuStack.popScreen();
+      }))
+    );
+
+    this.addRow("", new Button("Mods")).onPressed(() ->
+      SItem.menuStack.pushScreen(new ModsScreen(this.enabledMods, () -> {
         scriptStartEffect(2, 10);
         SItem.menuStack.popScreen();
       }))
@@ -68,8 +81,12 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
       this.state.campaignName = this.campaignName.getText();
       gameState_800babc8 = this.state;
 
+      CONFIG.setConfig(CoreMod.ENABLED_MODS_CONFIG.get(), this.enabledMods.toArray(String[]::new));
+
       ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
       ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.CAMPAIGN, Path.of("saves", gameState_800babc8.campaignName, "campaign_config.dcnf"));
+
+      rebootMods(this.enabledMods);
 
       savedGameSelected_800bdc34.set(true);
       playSound(2);
