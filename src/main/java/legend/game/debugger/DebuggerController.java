@@ -179,7 +179,7 @@ public class DebuggerController {
     this.vsyncMode.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, Integer.MAX_VALUE, 1));
     this.gameSpeedMultiplier.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 16, Config.getGameSpeedMultiplier()));
     this.battleUiColour.setSelected(Config.changeBattleRGB());
-    this.saveAnywhere.setSelected(Config.saveAnywhere());
+    this.saveAnywhere.setSelected(CONFIG.getConfig(CoreMod.SAVE_ANYWHERE_CONFIG.get()));
     this.battleUIColourR.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (Config.getBattleRgb() & 0xff)));
     this.battleUIColourG.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getBattleRgb() >> 8) & 0xff)));
     this.battleUIColourB.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getBattleRgb() >> 16) & 0xff)));
@@ -190,12 +190,12 @@ public class DebuggerController {
     this.counterOverlayR.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (Config.getCounterOverlayRgb() & 0xff)));
     this.counterOverlayG.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getCounterOverlayRgb() >> 8) & 0xff)));
     this.counterOverlayB.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getCounterOverlayRgb() >> 16) & 0xff)));
-    this.autoMeter.setSelected(Config.autoDragoonMeter());
-    this.disableStatusEffects.setSelected(Config.disableStatusEffects());
+    this.autoMeter.setSelected(CONFIG.getConfig(CoreMod.AUTO_DRAGOON_ADDITION_CONFIG.get()));
+    this.disableStatusEffects.setSelected(CONFIG.getConfig(CoreMod.DISABLE_STATUS_EFFECTS_CONFIG.get()));
     this.combatStage.setSelected(Config.combatStage());
     this.combatStageId.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 127, Config.getCombatStage()));
-    this.fastTextSpeed.setSelected(Config.fastTextSpeed());
-    this.autoAdvanceText.setSelected(Config.autoAdvanceText());
+    this.fastTextSpeed.setSelected(CONFIG.getConfig(CoreMod.QUICK_TEXT_CONFIG.get()));
+    this.autoAdvanceText.setSelected(CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get()));
     this.textBoxColour.setSelected(Config.textBoxColour());
     this.textBox1R.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (Config.getTextBoxRgb(0) & 0xff)));
     this.textBox1G.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getTextBoxRgb(0) >> 8) & 0xff)));
@@ -334,7 +334,7 @@ public class DebuggerController {
 
   @FXML
   private void toggleSaveAnywhere(final ActionEvent event) {
-    Config.toggleSaveAnywhere();
+    CONFIG.setConfig(CoreMod.SAVE_ANYWHERE_CONFIG.get(), !CONFIG.getConfig(CoreMod.SAVE_ANYWHERE_CONFIG.get()));
   }
 
   @FXML
@@ -453,12 +453,12 @@ public class DebuggerController {
 
   @FXML
   private void toggleAutoDragoonMeter(final ActionEvent event) {
-    Config.toggleAutoDragoonMeter();
+    CONFIG.setConfig(CoreMod.AUTO_DRAGOON_ADDITION_CONFIG.get(), !CONFIG.getConfig(CoreMod.AUTO_DRAGOON_ADDITION_CONFIG.get()));
   }
 
   @FXML
   private void toggleDisableStatusEffects(final ActionEvent event) {
-    Config.toggleDisableStatusEffects();
+    CONFIG.setConfig(CoreMod.DISABLE_STATUS_EFFECTS_CONFIG.get(), !CONFIG.getConfig(CoreMod.DISABLE_STATUS_EFFECTS_CONFIG.get()));
   }
 
   @FXML
@@ -478,12 +478,12 @@ public class DebuggerController {
 
   @FXML
   private void toggleFastText(final ActionEvent event) {
-    Config.toggleFastText();
+    CONFIG.setConfig(CoreMod.QUICK_TEXT_CONFIG.get(), !CONFIG.getConfig(CoreMod.QUICK_TEXT_CONFIG.get()));
   }
 
   @FXML
   private void toggleAutoAdvanceText(final ActionEvent event) {
-    Config.toggleAutoAdvanceText();
+    CONFIG.setConfig(CoreMod.AUTO_TEXT_CONFIG.get(), !CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get()));
   }
 
   @FXML

@@ -52,7 +52,6 @@ import legend.game.combat.effects.AdditionOverlaysEffect44;
 import legend.game.combat.effects.AdditionOverlaysHit20;
 import legend.game.combat.effects.AttackHitFlashEffect0c;
 import legend.game.combat.effects.BattleStruct24;
-import legend.game.combat.effects.RainEffect08;
 import legend.game.combat.effects.BttlScriptData6cSub10_2;
 import legend.game.combat.effects.BttlScriptData6cSub13c;
 import legend.game.combat.effects.BttlScriptData6cSub14_4;
@@ -86,6 +85,7 @@ import legend.game.combat.effects.GoldDragoonTransformEffectInstance84;
 import legend.game.combat.effects.ParticleEffectData98;
 import legend.game.combat.effects.ParticleEffectInstance94;
 import legend.game.combat.effects.ParticleEffectInstance94Sub10;
+import legend.game.combat.effects.RainEffect08;
 import legend.game.combat.effects.RaindropEffect0c;
 import legend.game.combat.effects.ScreenCaptureEffect1c;
 import legend.game.combat.effects.ScreenCaptureEffectMetrics8;
@@ -174,7 +174,6 @@ import static legend.game.Scus94491BpeSegment_8004.ratan2;
 import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
-import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.model_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.stage_800bda0c;
@@ -4450,13 +4449,13 @@ public final class SEffe {
 
           //LAB_801086bc
           //LAB_801086e0
-          if(FUN_80108460(data, 0) != 0 && data._13 == 1 || (joypadPress_8007a398.get() >>> 4 & 0x2L) != 0 && data._13 == 0 || (Config.autoDragoonMeter() && FUN_80108460(data, 0) != 0)) {
+          if(FUN_80108460(data, 0) != 0 && data._13 == 1 || (joypadPress_8007a398.get() >>> 4 & 0x2L) != 0 && data._13 == 0 || (CONFIG.getConfig(CoreMod.AUTO_DRAGOON_ADDITION_CONFIG.get()) && FUN_80108460(data, 0) != 0)) {
             //LAB_8010870c
             data._11 = 4;
             data._0d = 0;
 
             final int v0 = FUN_80108460(data, 0);
-            if(v0 != 0 || Config.autoDragoonMeter()) {
+            if(v0 != 0 || CONFIG.getConfig(CoreMod.AUTO_DRAGOON_ADDITION_CONFIG.get())) {
               data._07 = v0;
               data._0d = 4;
               _80119f40.setu(0);

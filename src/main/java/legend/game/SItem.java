@@ -1,6 +1,5 @@
 package legend.game;
 
-import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.memory.Method;
@@ -25,6 +24,7 @@ import legend.game.inventory.screens.MainMenuScreen;
 import legend.game.inventory.screens.MenuStack;
 import legend.game.inventory.screens.TextColour;
 import legend.game.inventory.screens.TooManyItemsScreen;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.characters.AdditionHitMultiplierEvent;
 import legend.game.modding.events.characters.AdditionUnlockEvent;
 import legend.game.modding.events.characters.CharacterStatsEvent;
@@ -54,6 +54,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
@@ -517,7 +518,7 @@ public final class SItem {
           canSave_8011dc88.set(true);
         } else {
           gameState_800babc8.isOnWorldMap_4e4 = false;
-          canSave_8011dc88.set(Config.saveAnywhere() || standingInSavePoint_8005a368.get());
+          canSave_8011dc88.set(CONFIG.getConfig(CoreMod.SAVE_ANYWHERE_CONFIG.get()) || standingInSavePoint_8005a368.get());
         }
 
         inventoryMenuState_800bdc28.set(InventoryMenuState.AWAIT_INIT_1);

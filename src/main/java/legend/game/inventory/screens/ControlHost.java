@@ -16,9 +16,37 @@ public abstract class ControlHost implements Iterable<Control> {
   protected int mouseY;
 
   protected abstract MenuScreen getScreen();
+  protected abstract ControlHost getParent();
+  protected abstract int getX();
+  protected abstract int getY();
+  protected abstract int getWidth();
+  protected abstract int getHeight();
+
+  public int calculateTotalX() {
+    int x = this.getX();
+
+    ControlHost current = this;
+    while((current = current.getParent()) != null) {
+      x += current.getX();
+    }
+
+    return x;
+  }
+
+  public int calculateTotalY() {
+    int y = this.getY();
+
+    ControlHost current = this;
+    while((current = current.getParent()) != null) {
+      y += current.getY();
+    }
+
+    return y;
+  }
 
   public <T extends Control> T addControl(final T control) {
     control.setScreen(this.getScreen());
+    control.setParent(this);
     this.controls.add(control);
     this.controls.sort(Comparator.comparingInt(Control::getZ));
     return control;

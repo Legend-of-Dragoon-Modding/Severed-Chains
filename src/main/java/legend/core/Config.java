@@ -22,8 +22,8 @@ public final class Config {
   private static final SortedStoreProperties properties = new SortedStoreProperties();
 
   static {
-    properties.setProperty("window_width", "320");
-    properties.setProperty("window_height", "240");
+    properties.setProperty("window_width", "640");
+    properties.setProperty("window_height", "480");
     properties.setProperty("unlock_party", "false");
     properties.setProperty("battle_ui_colour_change", "false");
     properties.setProperty("battle_ui_r", "0");
@@ -37,14 +37,8 @@ public final class Config {
     properties.setProperty("counter_overlay_g", "96");
     properties.setProperty("counter_overlay_b", "32");
     properties.setProperty("game_speed_multiplier", "1");
-    properties.setProperty("save_anywhere", "false");
-    properties.setProperty("auto_addition", "false");
-    properties.setProperty("auto_dragoon_meter", "false");
     properties.setProperty("combat_stage", "false");
     properties.setProperty("combat_stage_id", "0");
-    properties.setProperty("fast_text_speed", "false");
-    properties.setProperty("auto_advance_text", "false");
-    properties.setProperty("receive_input_on_inactive_window", "false");
     properties.setProperty("textbox_colour", "false");
     properties.setProperty("textbox_colour_mode", "0");
     properties.setProperty("textbox_colour1_r", "0");
@@ -102,30 +96,6 @@ public final class Config {
     properties.setProperty("addition_overlay_colour_change", String.valueOf(!changeAdditionOverlayRgb()));
   }
 
-  public static boolean saveAnywhere() {
-    return readBool("save_anywhere", false);
-  }
-
-  public static void toggleSaveAnywhere() {
-    properties.setProperty("save_anywhere", String.valueOf(!saveAnywhere()));
-  }
-
-  public static boolean autoDragoonMeter() {
-    return readBool("auto_dragoon_meter", false);
-  }
-
-  public static void toggleAutoDragoonMeter() {
-    properties.setProperty("auto_dragoon_meter", String.valueOf(!autoDragoonMeter()));
-  }
-
-  public static boolean disableStatusEffects() {
-    return readBool("disable_status_effects", false);
-  }
-
-  public static void toggleDisableStatusEffects() {
-    properties.setProperty("disable_status_effects", String.valueOf(!disableStatusEffects()));
-  }
-
   public static boolean combatStage() {
     return readBool("combat_stage", false);
   }
@@ -148,30 +118,6 @@ public final class Config {
 
   public static void setGameSpeedMultiplier(final int id) {
     properties.setProperty("game_speed_multiplier", String.valueOf(id));
-  }
-
-  public static  boolean fastTextSpeed() {
-    return readBool("fast_text_speed", false);
-  }
-
-  public static void toggleFastText() {
-    properties.setProperty("fast_text_speed", String.valueOf(!fastTextSpeed()));
-  }
-
-  public static  boolean autoAdvanceText() {
-    return readBool("auto_advance_text", false);
-  }
-
-  public static void toggleAutoAdvanceText() {
-    properties.setProperty("auto_advance_text", String.valueOf(!autoAdvanceText()));
-  }
-
-  public static boolean receiveInputOnInactiveWindow() {
-    return readBool("receive_input_on_inactive_window", false);
-  }
-
-  public static void toggleReceiveInputOnInactiveWindow() {
-    properties.setProperty("receive_input_on_inactive_window", String.valueOf(!receiveInputOnInactiveWindow()));
   }
 
   public static int getBattleRgb() {
