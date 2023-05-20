@@ -59,8 +59,8 @@ public class VerticalLayoutScreen extends MenuScreen {
 
   private void highlightRow(final int index) {
     if(this.highlightedRow != index) {
-      if(this.highlightedRow != -1 && this.rows.get(this.highlightedRow).isHovered()) {
-        this.rows.get(this.highlightedRow).hoverOut();
+      if(this.highlightedRow != -1 && this.configControls.get(this.highlightedRow).isHovered()) {
+        this.configControls.get(this.highlightedRow).hoverOut();
       }
 
       this.highlightedRow = index;
@@ -196,13 +196,13 @@ public class VerticalLayoutScreen extends MenuScreen {
       case DPAD_DOWN, JOYSTICK_LEFT_BUTTON_DOWN -> {
         if(this.highlightedRow < this.scroll + this.visibleEntries() - 1) {
           playSound(1);
-          this.highlightRow(this.highlightedRow);
+          this.highlightRow(this.highlightedRow + 1);
           return InputPropagation.HANDLED;
         } else if(this.scroll < this.rows.size() - MAX_VISIBLE_ENTRIES) {
           playSound(1);
           this.scroll++;
           this.updateEntries();
-          this.highlightRow(this.highlightedRow);
+          this.highlightRow(this.highlightedRow + 1);
           return InputPropagation.HANDLED;
         }
       }
