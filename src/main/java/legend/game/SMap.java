@@ -3788,7 +3788,6 @@ public final class SMap {
     return 3;
   }
 
-  /** TODO contains the encounter rate bug */
   @Method(0x800e49f0L)
   public static boolean hasPlayerMoved(final MATRIX mat) {
     //LAB_800e4a44
