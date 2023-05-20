@@ -83,33 +83,22 @@
                <CheckBox fx:id="battleUiColour" mnemonicParsing="false" onAction="#toggleBattleUiColour" text="UI Colour" />
                <HBox>
                   <children>
-<<<<<<< HEAD
                      <Spinner fx:id="battleUiColourR" editable="true" prefHeight="25.0" prefWidth="75.0" />
                      <Spinner fx:id="battleUiColourG" editable="true" prefHeight="25.0" prefWidth="75.0" />
                      <Spinner fx:id="battleUiColourB" editable="true" prefHeight="25.0" prefWidth="75.0" />
-=======
-                     <Spinner fx:id="battleUIColourR" editable="true" prefHeight="25.0" prefWidth="75.0" />
-                     <Spinner fx:id="battleUIColourG" editable="true" prefHeight="25.0" prefWidth="75.0" />
-                     <Spinner fx:id="battleUIColourB" editable="true" prefHeight="25.0" prefWidth="75.0" />
                      <Button mnemonicParsing="false" onAction="#getBattleUiRgb" text="Get" />
                      <Button mnemonicParsing="false" onAction="#setBattleUiRgb" text="Set" />
->>>>>>> main
                   </children>
                </HBox>
                <CheckBox fx:id="additionOverlayColour" mnemonicParsing="false" onAction="#toggleAdditionOverlayColour" text="Addition Overlay Colour" />
                <Label text="Normal" />
                <HBox>
                   <children>
-<<<<<<< HEAD
-                     <Button mnemonicParsing="false" onAction="#getBattleUiRgb" text="Get" />
-                     <Button mnemonicParsing="false" onAction="#setBattleUiRgb" text="Set" />
-=======
                      <Spinner fx:id="additionOverlayR" editable="true" prefHeight="25.0" prefWidth="75.0" />
                      <Spinner fx:id="additionOverlayG" editable="true" prefHeight="25.0" prefWidth="75.0" />
                      <Spinner fx:id="additionOverlayB" editable="true" prefHeight="25.0" prefWidth="75.0" />
                      <Button mnemonicParsing="false" onAction="#getAdditionOverlayRgb" text="Get" />
                      <Button mnemonicParsing="false" onAction="#setAdditionOverlayRgb" text="Set" />
->>>>>>> main
                   </children>
                </HBox>
                <Label text="Counterattack" />
