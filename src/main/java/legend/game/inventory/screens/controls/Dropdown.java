@@ -161,9 +161,20 @@ public class Dropdown extends Control {
     private final TextRenderable[] textRenderables = new TextRenderable[Dropdown.this.options.size()];
 
     private DropdownScreen() {
-      this.addControl(Dropdown.this.panel);
-      Dropdown.this.panel.setPos(Dropdown.this.calculateTotalX() - 9, Dropdown.this.calculateTotalY() + Dropdown.this.getHeight());
-      Dropdown.this.panel.setWidth(Dropdown.this.getWidth() + 18);
+      final Panel panel = Dropdown.this.panel;
+
+      this.addControl(panel);
+      panel.setPos(Dropdown.this.calculateTotalX() - 9, Dropdown.this.calculateTotalY() + Dropdown.this.getHeight());
+
+      if(panel.getY() + panel.getHeight() > this.getHeight()) {
+        panel.setY(Dropdown.this.calculateTotalY() - panel.getHeight());
+      }
+
+      if(panel.getY() < 0) {
+        panel.setY(0);
+      }
+
+      panel.setWidth(Dropdown.this.getWidth() + 18);
 
       for(int i = 0; i < this.textRenderables.length; i++) {
         this.textRenderables[i] = TextRenderer.prepareShadowText(Dropdown.this.options.get(i), 0, 0, TextColour.BROWN);
