@@ -192,6 +192,7 @@ public class DebuggerController {
     this.counterOverlayR.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (Config.getCounterOverlayRgb() & 0xff)));
     this.counterOverlayG.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getCounterOverlayRgb() >> 8) & 0xff)));
     this.counterOverlayB.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getCounterOverlayRgb() >> 16) & 0xff)));
+    this.autoAddition.setSelected(CONFIG.getConfig(CoreMod.AUTO_ADDITION_CONFIG.get()) == AutoAdditionMode.ON);
     this.autoMeter.setSelected(CONFIG.getConfig(CoreMod.AUTO_DRAGOON_ADDITION_CONFIG.get()));
     this.disableStatusEffects.setSelected(CONFIG.getConfig(CoreMod.DISABLE_STATUS_EFFECTS_CONFIG.get()));
     this.combatStage.setSelected(Config.combatStage());
