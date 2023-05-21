@@ -1,6 +1,6 @@
 package legend.game.saves;
 
-import legend.core.GameEngine;
+import legend.game.modding.events.config.ConfigLoadedEvent;
 import legend.game.modding.registries.RegistryDelegate;
 import legend.game.modding.registries.RegistryId;
 import legend.game.unpacker.FileData;
@@ -13,6 +13,9 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
+import static legend.core.GameEngine.EVENTS;
+import static legend.core.GameEngine.REGISTRIES;
 
 public final class ConfigStorage {
   private ConfigStorage() { }
@@ -74,7 +77,7 @@ public final class ConfigStorage {
       final RegistryId configId = data.readRegistryId(offset);
       offset += configId.toString().length() + 3;
 
-      final RegistryDelegate<ConfigEntry<?>> delegate = GameEngine.REGISTRIES.config.getEntry(configId);
+      final RegistryDelegate<ConfigEntry<?>> delegate = REGISTRIES.config.getEntry(configId);
 
       if(delegate.isValid()) {
         //noinspection rawtypes
@@ -89,7 +92,7 @@ public final class ConfigStorage {
         if(configEntry != null) {
           if(configEntry.storageLocation == storageLocation) {
             //noinspection unchecked
-            configs.setConfig(configEntry, configEntry.deserializer.apply(configValueRaw));
+            configs.setConfigQuietly(configEntry, configEntry.deserializer.apply(configValueRaw));
           }
         } else {
           LOGGER.warn("Unknown config ID %s", configId);
@@ -98,15 +101,17 @@ public final class ConfigStorage {
         LOGGER.warn("Unknown mod ID %s", configId);
       }
     }
+
+    EVENTS.postEvent(new ConfigLoadedEvent(storageLocation));
   }
 
   public static int saveConfig(final ConfigCollection configs, final ConfigStorageLocation storageLocation, final FileData data) {
     final Map<RegistryId, byte[]> config = new HashMap<>();
     int offset = 0;
 
-    for(final RegistryId configId : GameEngine.REGISTRIES.config) {
+    for(final RegistryId configId : REGISTRIES.config) {
       //noinspection rawtypes
-      final ConfigEntry configEntry = GameEngine.REGISTRIES.config.getEntry(configId).get();
+      final ConfigEntry configEntry = REGISTRIES.config.getEntry(configId).get();
 
       if(configEntry.storageLocation == storageLocation) {
         //noinspection unchecked
