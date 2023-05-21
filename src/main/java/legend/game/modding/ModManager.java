@@ -3,6 +3,7 @@ package legend.game.modding;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.reflections.Reflections;
+import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 
 import java.io.IOException;
@@ -66,7 +67,8 @@ public class ModManager {
 
       final Reflections reflections = new Reflections(
         new ConfigurationBuilder()
-          .addUrls(this.getClass().getClassLoader().getResource(""))
+          .addClassLoaders(this.getClass().getClassLoader())
+          .addUrls(ClasspathHelper.forPackage("legend"))
           .addClassLoaders(allModClassLoader).addUrls(urlList)
       );
 
@@ -132,7 +134,8 @@ public class ModManager {
 
   public ConfigurationBuilder addModsToReflectionsConfig(final ConfigurationBuilder builder) {
     return builder
-      .addUrls(this.getClass().getClassLoader().getResource(""))
+      .addClassLoaders(this.getClass().getClassLoader())
+      .addUrls(ClasspathHelper.forPackage("legend"))
       .addClassLoaders(this.loadedModClassLoader).addUrls(this.loadedModUrls);
   }
 }
