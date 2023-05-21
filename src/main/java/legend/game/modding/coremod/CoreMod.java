@@ -13,11 +13,16 @@ import legend.game.modding.coremod.config.InventorySizeConfigEntry;
 import legend.game.modding.coremod.config.RenderScaleConfigEntry;
 import legend.game.modding.coremod.config.TransformationModeConfigEntry;
 import legend.game.modding.events.EventListener;
+import legend.game.modding.events.config.ConfigLoadedEvent;
 import legend.game.modding.registries.Registrar;
 import legend.game.modding.registries.RegistryDelegate;
 import legend.game.modding.registries.RegistryId;
 import legend.game.saves.ConfigEntry;
 import legend.game.saves.ConfigRegistryEvent;
+import legend.game.saves.ConfigStorageLocation;
+
+import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.GPU;
 
 /** Core mod that contains engine-level content. Game can not run without it. */
 @Mod(id = CoreMod.MOD_ID)
@@ -48,5 +53,12 @@ public class CoreMod {
   @EventListener
   public static void registerConfig(final ConfigRegistryEvent event) {
     CONFIG_REGISTRAR.registryEvent(event);
+  }
+
+  @EventListener
+  public static void configLoaded(final ConfigLoadedEvent event) {
+    if(event.storageLocation == ConfigStorageLocation.GLOBAL) {
+      GPU.rescale(CONFIG.getConfig(RENDER_SCALE_CONFIG.get()));
+    }
   }
 }

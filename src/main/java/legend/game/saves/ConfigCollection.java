@@ -17,8 +17,13 @@ public class ConfigCollection {
 
   public <T> void setConfig(final ConfigEntry<T> config, final T value) {
     final T oldValue = this.getConfig(config);
-    this.configValues.put(config.getRegistryId(), value);
+    this.setConfigQuietly(config, value);
     config.onChange(oldValue, value);
+  }
+
+  /** Doesn't trigger onChange */
+  <T> void setConfigQuietly(final ConfigEntry<T> config, final T value) {
+    this.configValues.put(config.getRegistryId(), value);
   }
 
   public void clearConfig() {
