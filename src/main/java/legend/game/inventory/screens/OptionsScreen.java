@@ -1,6 +1,7 @@
 package legend.game.inventory.screens;
 
 import legend.core.GameEngine;
+import legend.game.i18n.I18n;
 import legend.game.input.InputAction;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.modding.registries.RegistryId;
@@ -8,6 +9,8 @@ import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigEntry;
 import legend.game.saves.ConfigStorageLocation;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
@@ -25,15 +28,36 @@ public class OptionsScreen extends VerticalLayoutScreen {
 
     this.addControl(new Background());
 
+    final Map<RegistryId, String> translations = new HashMap<>();
+
     for(final RegistryId configId : GameEngine.REGISTRIES.config) {
+      translations.put(configId, I18n.translate(configId.modId() + ".config." + configId.entryId() + ".label"));
+
+/*
       //noinspection rawtypes
       final ConfigEntry configEntry = GameEngine.REGISTRIES.config.getEntry(configId).get();
 
       if(validLocations.contains(configEntry.storageLocation) && configEntry.hasEditControl()) {
         //noinspection unchecked
-        this.addRow(configId.toString(), configEntry.makeEditControl(config.getConfig(configEntry), config));
+        this.addRow(I18n.translate(configId.modId() + ".config." + configId.entryId() + ".label"), configEntry.makeEditControl(config.getConfig(configEntry), config));
       }
+*/
     }
+
+    translations.entrySet().stream()
+      .sorted((o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(o1.getValue(), o2.getValue()))
+      .forEach(entry -> {
+        final RegistryId configId = entry.getKey();
+        final String label = entry.getValue();
+
+        //noinspection rawtypes
+        final ConfigEntry configEntry = GameEngine.REGISTRIES.config.getEntry(configId).get();
+
+        if(validLocations.contains(configEntry.storageLocation) && configEntry.hasEditControl()) {
+          //noinspection unchecked
+          this.addRow(label, configEntry.makeEditControl(config.getConfig(configEntry), config));
+        }
+      });
   }
 
   @Override
