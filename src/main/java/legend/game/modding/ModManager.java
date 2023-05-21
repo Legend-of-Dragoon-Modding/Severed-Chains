@@ -67,8 +67,8 @@ public class ModManager {
 
       final Reflections reflections = new Reflections(
         new ConfigurationBuilder()
-          .addClassLoaders(this.getClass().getClassLoader())
-          .addUrls(ClasspathHelper.forPackage("legend"))
+          .addUrls(this.getClass().getClassLoader().getResource(""))
+          .addClassLoaders(this.getClass().getClassLoader()).addUrls(ClasspathHelper.forPackage("legend"))
           .addClassLoaders(allModClassLoader).addUrls(urlList)
       );
 
@@ -134,8 +134,8 @@ public class ModManager {
 
   public ConfigurationBuilder addModsToReflectionsConfig(final ConfigurationBuilder builder) {
     return builder
-      .addClassLoaders(this.getClass().getClassLoader())
-      .addUrls(ClasspathHelper.forPackage("legend"))
-      .addClassLoaders(this.loadedModClassLoader).addUrls(this.loadedModUrls);
+      .addUrls(this.getClass().getClassLoader().getResource("")) // Find mods in the current project (finds CoreMod in SC, mod in SCDK)
+      .addClassLoaders(this.getClass().getClassLoader()).addUrls(ClasspathHelper.forPackage("legend")) // Finds CoreMod in SCDK
+      .addClassLoaders(this.loadedModClassLoader).addUrls(this.loadedModUrls); // Finds mods in mods folder
   }
 }
