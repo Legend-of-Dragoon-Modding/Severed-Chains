@@ -1684,8 +1684,11 @@ public final class Scus94491BpeSegment_8004 {
                     }
 
                     //LAB_800473a0
-                    v1 = _800c4ab8.get() + _800c4ab4.deref(2).offset(struct66._10.get() * 0x2L).offset(0x2L).get() + (struct66._12.get() >>> 2);
-                    a3 = MEMORY.ref(1, v1).offset(0x0L).get();
+                    // Temporary patch for GH#506
+                    if(_800c4ab4.deref(2).offset(struct66._10.get() * 0x2L).offset(0x2L).getSigned() != -1) {
+                      v1 = _800c4ab8.get() + _800c4ab4.deref(2).offset(struct66._10.get() * 0x2L).offset(0x2L).get() + (struct66._12.get() >>> 2);
+                      a3 = MEMORY.ref(1, v1).offset(0x0L).get();
+                    }
                   }
                 }
 
@@ -2338,13 +2341,15 @@ public final class Scus94491BpeSegment_8004 {
       return 0;
     }
 
+    //TODO temporary patch for GH#354
+    if((sshd.ptr_1c.get() & 0x1) != 0) {
+      LOGGER.error("PTR_1C HAS INVALID VALUE %08x".formatted(sshd.ptr_1c.get()), new Throwable());
+      return 0;
+    }
+
     a3.sshdPtr_08.set(sshd);
     sshdPtr_800c4ac0.set(sshd);
     final long t1 = sshd.getAddress() + sshd.ptr_1c.get();
-
-    if((sshd.ptr_1c.get() & 0x1) != 0) {
-      LOGGER.error("PTR_1C HAS INVALID VALUE %08x".formatted(sshd.ptr_1c.get()), new Throwable());
-    }
 
     _800c4abc.setu(t1);
 
