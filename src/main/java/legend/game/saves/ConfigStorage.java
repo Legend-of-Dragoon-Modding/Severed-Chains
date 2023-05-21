@@ -1,6 +1,7 @@
 package legend.game.saves;
 
 import legend.core.GameEngine;
+import legend.game.modding.registries.RegistryDelegate;
 import legend.game.modding.registries.RegistryId;
 import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
@@ -73,22 +74,28 @@ public final class ConfigStorage {
       final RegistryId configId = data.readRegistryId(offset);
       offset += configId.toString().length() + 3;
 
-      //noinspection rawtypes
-      final ConfigEntry configEntry = GameEngine.REGISTRIES.config.getEntry(configId).get();
+      final RegistryDelegate<ConfigEntry<?>> delegate = GameEngine.REGISTRIES.config.getEntry(configId);
 
-      final int configValueLength = data.readInt(offset);
-      offset += 4;
+      if(delegate.isValid()) {
+        //noinspection rawtypes
+        final ConfigEntry configEntry = delegate.get();
 
-      final byte[] configValueRaw = data.slice(offset, configValueLength).getBytes();
-      offset += configValueLength;
+        final int configValueLength = data.readInt(offset);
+        offset += 4;
 
-      if(configEntry != null) {
-        if(configEntry.storageLocation == storageLocation) {
-          //noinspection unchecked
-          configs.setConfig(configEntry, configEntry.deserializer.apply(configValueRaw));
+        final byte[] configValueRaw = data.slice(offset, configValueLength).getBytes();
+        offset += configValueLength;
+
+        if(configEntry != null) {
+          if(configEntry.storageLocation == storageLocation) {
+            //noinspection unchecked
+            configs.setConfig(configEntry, configEntry.deserializer.apply(configValueRaw));
+          }
+        } else {
+          LOGGER.warn("Unknown config ID %s", configId);
         }
       } else {
-        LOGGER.warn("Unknown config ID %s", configId);
+        LOGGER.warn("Unknown mod ID %s", configId);
       }
     }
   }
