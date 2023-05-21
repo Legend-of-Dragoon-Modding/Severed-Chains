@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -32,7 +33,8 @@ public class ModManager {
 
   private final List<URL> loadedModUrls = new ArrayList<>();
   private ClassLoader loadedModClassLoader;
-  private final Map<String, Object> loadedModInstances = new HashMap<>();
+  private final Map<String, ModContainer> loadedModInstances = new HashMap<>();
+  private final Collection<ModContainer> unmodifiableLoadedModInstances = Collections.unmodifiableCollection(this.loadedModInstances.values());
 
   public ModManager(final Consumer<Access> access) {
     access.accept(new Access());
@@ -44,6 +46,10 @@ public class ModManager {
 
   public boolean isLoaded(final String modId) {
     return this.loadedModInstances.containsKey(modId);
+  }
+
+  public Collection<ModContainer> getLoadedMods() {
+    return this.unmodifiableLoadedModInstances;
   }
 
   public class Access {
@@ -116,7 +122,8 @@ public class ModManager {
 
     private void instantiateMod(final String modId) {
       try {
-        ModManager.this.loadedModInstances.put(modId, ModManager.this.allModClasses.get(modId).getDeclaredConstructor().newInstance());
+        final ModContainer modContainer = new ModContainer(modId, ModManager.this.allModClasses.get(modId).getDeclaredConstructor().newInstance());
+        ModManager.this.loadedModInstances.put(modId, modContainer);
         ModManager.this.loadedModUrls.add(ModManager.this.allModUrls.get(modId));
         LOGGER.info("Loaded mod: %s", modId);
       } catch(final InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException ex) {

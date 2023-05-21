@@ -19,6 +19,7 @@ import legend.game.Scus94491BpeSegment_8003;
 import legend.game.Scus94491BpeSegment_8004;
 import legend.game.Scus94491BpeSegment_800e;
 import legend.game.fmv.Fmv;
+import legend.game.i18n.LangManager;
 import legend.game.modding.ModManager;
 import legend.game.modding.events.EventManager;
 import legend.game.modding.registries.Registries;
@@ -40,6 +41,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Locale;
 import java.util.Set;
 
 import static legend.game.SItem.albertXpTable_801138c0;
@@ -68,9 +70,11 @@ public final class GameEngine {
   public static final Memory MEMORY = new Memory();
 
   private static ModManager.Access MOD_ACCESS;
+  private static LangManager.Access LANG_ACCESS;
   private static EventManager.Access EVENT_ACCESS;
   private static Registries.Access REGISTRY_ACCESS;
   public static final ModManager MODS = new ModManager(access -> MOD_ACCESS = access);
+  public static final LangManager LANG = new LangManager(access -> LANG_ACCESS = access);
   public static final EventManager EVENTS = new EventManager(access -> EVENT_ACCESS = access);
   public static final Registries REGISTRIES = new Registries(access -> REGISTRY_ACCESS = access);
 
@@ -202,6 +206,9 @@ public final class GameEngine {
           MOD_ACCESS.findMods();
           MOD_ACCESS.loadMods();
 
+          // Initialize language
+          LANG_ACCESS.initialize(Locale.getDefault());
+
           // Initialize event bus and find all event handlers
           EVENT_ACCESS.initialize();
 
@@ -228,12 +235,14 @@ public final class GameEngine {
     LOGGER.info("Rebooting mods...");
 
     MOD_ACCESS.reset();
+    LANG_ACCESS.reset();
     EVENT_ACCESS.reset();
     REGISTRY_ACCESS.reset();
 
     LOGGER.info("Loading mods %s...", modIds);
 
     final Set<String> missingMods = MOD_ACCESS.loadMods(modIds);
+    LANG_ACCESS.initialize(Locale.getDefault());
     EVENT_ACCESS.initialize();
     REGISTRY_ACCESS.initializeRemaining();
 
