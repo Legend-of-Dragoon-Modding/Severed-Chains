@@ -88,6 +88,14 @@ public class Dropdown extends Control {
     return this.selectedIndex;
   }
 
+  public String getSelectedOption() {
+    if(this.selectedIndex == -1) {
+      return null;
+    }
+
+    return this.options.get(this.selectedIndex);
+  }
+
   public int size() {
     return this.options.size();
   }
