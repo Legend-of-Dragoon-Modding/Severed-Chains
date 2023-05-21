@@ -7,6 +7,8 @@ import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.Button;
 import legend.game.inventory.screens.controls.Textbox;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.events.gamestate.GameLoadedEvent;
+import legend.game.modding.events.gamestate.NewGameEvent;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.types.GameState52c;
@@ -18,6 +20,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.MODS;
 import static legend.core.GameEngine.SAVES;
 import static legend.core.GameEngine.rebootMods;
@@ -81,7 +84,11 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
   protected void render() {
     if(this.unload) {
       this.state.campaignName = this.campaignName.getText();
-      gameState_800babc8 = this.state;
+
+      final NewGameEvent newGameEvent = EVENTS.postEvent(new NewGameEvent(this.state));
+      final GameLoadedEvent gameLoadedEvent = EVENTS.postEvent(new GameLoadedEvent(newGameEvent.gameState));
+
+      gameState_800babc8 = gameLoadedEvent.gameState;
 
       CONFIG.setConfig(CoreMod.ENABLED_MODS_CONFIG.get(), this.enabledMods.toArray(String[]::new));
 
