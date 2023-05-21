@@ -170,7 +170,7 @@ public class Dropdown extends Control {
 
     private DropdownScreen() {
       this.addControl(Dropdown.this.panel);
-      Dropdown.this.panel.setPos(Dropdown.this.getX() - 9, Dropdown.this.getY() + Dropdown.this.getHeight());
+      Dropdown.this.panel.setPos(Dropdown.this.calculateTotalX() - 9, Dropdown.this.calculateTotalY() + Dropdown.this.getHeight());
       Dropdown.this.panel.setWidth(Dropdown.this.getWidth() + 18);
 
       for(int i = 0; i < this.textRenderables.length; i++) {

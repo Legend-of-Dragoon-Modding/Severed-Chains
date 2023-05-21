@@ -1,5 +1,6 @@
 package legend.game.inventory.screens.controls;
 
+import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import legend.core.gpu.ModelLoader;
 import legend.core.gpu.Renderable;
 import legend.core.gpu.VramTextureLoader;
@@ -75,6 +76,10 @@ public class Checkbox extends Control {
         this.uncheckedHandler.run();
       }
     }
+
+    if(this.toggledHandler != null) {
+      this.toggledHandler.accept(checked);
+    }
   }
 
   public boolean isChecked() {
@@ -138,6 +143,11 @@ public class Checkbox extends Control {
     this.uncheckedHandler = handler;
   }
 
+  public void onToggled(final BooleanConsumer handler) {
+    this.toggledHandler = handler;
+  }
+
   private Runnable checkedHandler;
   private Runnable uncheckedHandler;
+  private BooleanConsumer toggledHandler;
 }

@@ -14,9 +14,13 @@ import legend.game.combat.AutoAdditionMode;
 import legend.game.combat.Bttl_800c;
 import legend.game.combat.SEffe;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.events.EventListener;
+import legend.game.modding.events.config.ConfigLoadedEvent;
+import legend.game.modding.events.config.ConfigUpdatedEvent;
 import legend.game.types.WMapAreaData08;
 
 import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.EVENTS;
 import static legend.game.SMap.FUN_800e5534;
 import static legend.game.SMap.encounterData_800f64c4;
 import static legend.game.SMap.smapLoadingStage_800cb430;
@@ -113,8 +117,6 @@ public class DebuggerController {
   @FXML
   public CheckBox autoAdvanceText;
   @FXML
-  public Button refreshAutoAddition;
-  @FXML
   public CheckBox textBoxColour;
   @FXML
   public RadioButton textBoxBase;
@@ -179,7 +181,7 @@ public class DebuggerController {
     this.vsyncMode.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, Integer.MAX_VALUE, 1));
     this.gameSpeedMultiplier.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 16, Config.getGameSpeedMultiplier()));
     this.battleUiColour.setSelected(Config.changeBattleRGB());
-    this.saveAnywhere.setSelected(Config.saveAnywhere());
+    this.saveAnywhere.setSelected(CONFIG.getConfig(CoreMod.SAVE_ANYWHERE_CONFIG.get()));
     this.battleUIColourR.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (Config.getBattleRgb() & 0xff)));
     this.battleUIColourG.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getBattleRgb() >> 8) & 0xff)));
     this.battleUIColourB.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getBattleRgb() >> 16) & 0xff)));
@@ -190,12 +192,13 @@ public class DebuggerController {
     this.counterOverlayR.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (Config.getCounterOverlayRgb() & 0xff)));
     this.counterOverlayG.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getCounterOverlayRgb() >> 8) & 0xff)));
     this.counterOverlayB.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getCounterOverlayRgb() >> 16) & 0xff)));
-    this.autoMeter.setSelected(Config.autoDragoonMeter());
-    this.disableStatusEffects.setSelected(Config.disableStatusEffects());
+    this.autoAddition.setSelected(CONFIG.getConfig(CoreMod.AUTO_ADDITION_CONFIG.get()) == AutoAdditionMode.ON);
+    this.autoMeter.setSelected(CONFIG.getConfig(CoreMod.AUTO_DRAGOON_ADDITION_CONFIG.get()));
+    this.disableStatusEffects.setSelected(CONFIG.getConfig(CoreMod.DISABLE_STATUS_EFFECTS_CONFIG.get()));
     this.combatStage.setSelected(Config.combatStage());
     this.combatStageId.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 127, Config.getCombatStage()));
-    this.fastTextSpeed.setSelected(Config.fastTextSpeed());
-    this.autoAdvanceText.setSelected(Config.autoAdvanceText());
+    this.fastTextSpeed.setSelected(CONFIG.getConfig(CoreMod.QUICK_TEXT_CONFIG.get()));
+    this.autoAdvanceText.setSelected(CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get()));
     this.textBoxColour.setSelected(Config.textBoxColour());
     this.textBox1R.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (Config.getTextBoxRgb(0) & 0xff)));
     this.textBox1G.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getTextBoxRgb(0) >> 8) & 0xff)));
@@ -224,17 +227,56 @@ public class DebuggerController {
     this.textBoxTransparencyMode.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10, Config.getTextBoxTransparencyMode()));
 
     if(Config.getTextBoxColourMode() == 0) {
-      textBoxBase.setSelected(true);
-      textBoxHorizontal.setSelected(false);
-      textBoxVertical.setSelected(false);
+      this.textBoxBase.setSelected(true);
+      this.textBoxHorizontal.setSelected(false);
+      this.textBoxVertical.setSelected(false);
     } else if(Config.getTextBoxColourMode() == 1) {
-      textBoxBase.setSelected(false);
-      textBoxHorizontal.setSelected(true);
-      textBoxVertical.setSelected(false);
+      this.textBoxBase.setSelected(false);
+      this.textBoxHorizontal.setSelected(true);
+      this.textBoxVertical.setSelected(false);
     } else if(Config.getTextBoxColourMode() == 2) {
-      textBoxBase.setSelected(false);
-      textBoxHorizontal.setSelected(false);
-      textBoxVertical.setSelected(true);
+      this.textBoxBase.setSelected(false);
+      this.textBoxHorizontal.setSelected(false);
+      this.textBoxVertical.setSelected(true);
+    }
+
+    EVENTS.register(this);
+  }
+
+  @EventListener
+  public void configLoaded(final ConfigLoadedEvent event) {
+    this.saveAnywhere.setSelected(CONFIG.getConfig(CoreMod.SAVE_ANYWHERE_CONFIG.get()));
+    this.fastTextSpeed.setSelected(CONFIG.getConfig(CoreMod.QUICK_TEXT_CONFIG.get()));
+    this.autoAdvanceText.setSelected(CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get()));
+    this.autoAddition.setSelected(CONFIG.getConfig(CoreMod.AUTO_ADDITION_CONFIG.get()) == AutoAdditionMode.ON);
+    this.autoMeter.setSelected(CONFIG.getConfig(CoreMod.AUTO_DRAGOON_ADDITION_CONFIG.get()));
+    this.disableStatusEffects.setSelected(CONFIG.getConfig(CoreMod.DISABLE_STATUS_EFFECTS_CONFIG.get()));
+  }
+
+  @EventListener
+  public void configUpdated(final ConfigUpdatedEvent event) {
+    if(event.config == CoreMod.SAVE_ANYWHERE_CONFIG.get()) {
+      this.saveAnywhere.setSelected(CONFIG.getConfig(CoreMod.SAVE_ANYWHERE_CONFIG.get()));
+    }
+
+    if(event.config == CoreMod.QUICK_TEXT_CONFIG.get()) {
+      this.fastTextSpeed.setSelected(CONFIG.getConfig(CoreMod.QUICK_TEXT_CONFIG.get()));
+    }
+
+    if(event.config == CoreMod.AUTO_TEXT_CONFIG.get()) {
+      this.autoAdvanceText.setSelected(CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get()));
+    }
+
+    if(event.config == CoreMod.AUTO_ADDITION_CONFIG.get()) {
+      this.autoAddition.setSelected(CONFIG.getConfig(CoreMod.AUTO_ADDITION_CONFIG.get()) == AutoAdditionMode.ON);
+    }
+
+    if(event.config == CoreMod.AUTO_DRAGOON_ADDITION_CONFIG.get()) {
+      this.autoMeter.setSelected(CONFIG.getConfig(CoreMod.AUTO_DRAGOON_ADDITION_CONFIG.get()));
+    }
+
+    if(event.config == CoreMod.DISABLE_STATUS_EFFECTS_CONFIG.get()) {
+      this.disableStatusEffects.setSelected(CONFIG.getConfig(CoreMod.DISABLE_STATUS_EFFECTS_CONFIG.get()));
     }
   }
 
@@ -334,7 +376,7 @@ public class DebuggerController {
 
   @FXML
   private void toggleSaveAnywhere(final ActionEvent event) {
-    Config.toggleSaveAnywhere();
+    CONFIG.setConfig(CoreMod.SAVE_ANYWHERE_CONFIG.get(), !CONFIG.getConfig(CoreMod.SAVE_ANYWHERE_CONFIG.get()));
   }
 
   @FXML
@@ -447,18 +489,13 @@ public class DebuggerController {
   }
 
   @FXML
-  private void refreshAutoAddition(final ActionEvent event) {
-    this.autoAddition.setSelected(CONFIG.getConfig(CoreMod.AUTO_ADDITION_CONFIG.get()) == AutoAdditionMode.ON);
-  }
-
-  @FXML
   private void toggleAutoDragoonMeter(final ActionEvent event) {
-    Config.toggleAutoDragoonMeter();
+    CONFIG.setConfig(CoreMod.AUTO_DRAGOON_ADDITION_CONFIG.get(), !CONFIG.getConfig(CoreMod.AUTO_DRAGOON_ADDITION_CONFIG.get()));
   }
 
   @FXML
   private void toggleDisableStatusEffects(final ActionEvent event) {
-    Config.toggleDisableStatusEffects();
+    CONFIG.setConfig(CoreMod.DISABLE_STATUS_EFFECTS_CONFIG.get(), !CONFIG.getConfig(CoreMod.DISABLE_STATUS_EFFECTS_CONFIG.get()));
   }
 
   @FXML
@@ -478,12 +515,12 @@ public class DebuggerController {
 
   @FXML
   private void toggleFastText(final ActionEvent event) {
-    Config.toggleFastText();
+    CONFIG.setConfig(CoreMod.QUICK_TEXT_CONFIG.get(), !CONFIG.getConfig(CoreMod.QUICK_TEXT_CONFIG.get()));
   }
 
   @FXML
   private void toggleAutoAdvanceText(final ActionEvent event) {
-    Config.toggleAutoAdvanceText();
+    CONFIG.setConfig(CoreMod.AUTO_TEXT_CONFIG.get(), !CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get()));
   }
 
   @FXML
@@ -494,19 +531,19 @@ public class DebuggerController {
   @FXML
   private void setTextBoxRadio(final ActionEvent event) {
     if((event.toString().contains("textBoxBase"))) {
-      textBoxBase.setSelected(true);
-      textBoxHorizontal.setSelected(false);
-      textBoxVertical.setSelected(false);
+      this.textBoxBase.setSelected(true);
+      this.textBoxHorizontal.setSelected(false);
+      this.textBoxVertical.setSelected(false);
       Config.setTextBoxColourMode(0);
     } else if (event.toString().contains("textBoxHorizontal")) {
-      textBoxBase.setSelected(false);
-      textBoxHorizontal.setSelected(true);
-      textBoxVertical.setSelected(false);
+      this.textBoxBase.setSelected(false);
+      this.textBoxHorizontal.setSelected(true);
+      this.textBoxVertical.setSelected(false);
       Config.setTextBoxColourMode(1);
     } else if (event.toString().contains("textBoxVertical")) {
-      textBoxBase.setSelected(false);
-      textBoxHorizontal.setSelected(false);
-      textBoxVertical.setSelected(true);
+      this.textBoxBase.setSelected(false);
+      this.textBoxHorizontal.setSelected(false);
+      this.textBoxVertical.setSelected(true);
       Config.setTextBoxColourMode(2);
     }
   }
@@ -657,6 +694,6 @@ public class DebuggerController {
 
   @FXML
   private void setTextBoxTransparencyMode() {
-    Config.setTextBoxTransparencyMode(textBoxTransparencyMode.getValue());
+    Config.setTextBoxTransparencyMode(this.textBoxTransparencyMode.getValue());
   }
 }

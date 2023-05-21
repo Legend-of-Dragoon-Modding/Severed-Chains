@@ -2,8 +2,8 @@ package legend.game.input;
 
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
-import legend.core.Config;
 import legend.core.opengl.Window;
+import legend.game.modding.coremod.CoreMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -11,6 +11,7 @@ import org.apache.logging.log4j.MarkerManager;
 
 import javax.annotation.Nullable;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GPU;
 import static legend.game.Scus94491BpeSegment.keyRepeat;
 import static legend.game.Scus94491BpeSegment_800b.input_800bee90;
@@ -48,7 +49,7 @@ public final class Input {
   }
 
   public static void update() {
-    if(!GPU.window().hasFocus() && !Config.receiveInputOnInactiveWindow() || playerOne == null) {
+    if(!GPU.window().hasFocus() && !CONFIG.getConfig(CoreMod.RECEIVE_INPUT_ON_INACTIVE_WINDOW_CONFIG.get()) || playerOne == null) {
       return;
     }
 

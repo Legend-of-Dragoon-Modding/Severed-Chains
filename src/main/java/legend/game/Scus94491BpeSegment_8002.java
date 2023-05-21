@@ -2926,7 +2926,7 @@ public final class Scus94491BpeSegment_8002 {
           struct84._08 |= 0x1;
         } else {
           //LAB_8002686c
-          if((joypadPress_8007a398.get() & 0x20L) != 0 || Config.autoAdvanceText()) {
+          if((joypadPress_8007a398.get() & 0x20L) != 0 || CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get())) {
             setTextboxArrowPosition(textboxIndex, 0);
 
             v1 = struct84.type_04;
@@ -2945,7 +2945,7 @@ public final class Scus94491BpeSegment_8002 {
       }
     } else if(v1 == 6) {
       //LAB_800268dc
-      if((joypadPress_8007a398.get() & 0x20) != 0 || Config.autoAdvanceText()) {
+      if((joypadPress_8007a398.get() & 0x20) != 0 || CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get())) {
         struct84._00 = 4;
       }
     } else if(v1 == 7) {
@@ -2958,7 +2958,7 @@ public final class Scus94491BpeSegment_8002 {
 
       //LAB_80026928
       if((struct84._08 & 0x20) == 0) {
-        if((joypadInput_8007a39c.get() & 0x20) != 0 || Config.fastTextSpeed()) {
+        if((joypadInput_8007a39c.get() & 0x20) != 0 || CONFIG.getConfig(CoreMod.QUICK_TEXT_CONFIG.get())) {
           s3 = 0;
 
           //LAB_80026954
@@ -3026,7 +3026,7 @@ public final class Scus94491BpeSegment_8002 {
       }
     } else if(v1 == 11) {
       //LAB_80026a98
-      if((joypadPress_8007a398.get() & 0x20L) != 0 || Config.autoAdvanceText()) {
+      if((joypadPress_8007a398.get() & 0x20L) != 0 || CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get())) {
         setTextboxArrowPosition(textboxIndex, 0);
         FUN_8002a2b4(textboxIndex);
 
@@ -3114,7 +3114,7 @@ public final class Scus94491BpeSegment_8002 {
         struct84._00 = 16;
       } else {
         //LAB_80026cd0
-        if((joypadPress_8007a398.get() & 0x20L) != 0 || Config.autoAdvanceText()) {
+        if((joypadPress_8007a398.get() & 0x20L) != 0 || CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get())) {
           free(struct84.ptr_58);
           struct84._00 = 0;
           setTextboxArrowPosition(textboxIndex, 0);

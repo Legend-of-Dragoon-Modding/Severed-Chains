@@ -1,10 +1,12 @@
 package legend.game.saves;
 
+import legend.game.modding.events.config.ConfigUpdatedEvent;
 import legend.game.modding.registries.RegistryId;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.REGISTRIES;
 
 public class ConfigCollection {
@@ -19,6 +21,7 @@ public class ConfigCollection {
     final T oldValue = this.getConfig(config);
     this.setConfigQuietly(config, value);
     config.onChange(oldValue, value);
+    EVENTS.postEvent(new ConfigUpdatedEvent(config));
   }
 
   /** Doesn't trigger onChange */

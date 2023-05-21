@@ -28,6 +28,31 @@ public abstract class MenuScreen extends ControlHost {
     return this;
   }
 
+  @Override
+  protected ControlHost getParent() {
+    return null;
+  }
+
+  @Override
+  protected int getX() {
+    return 0;
+  }
+
+  @Override
+  protected int getY() {
+    return 0;
+  }
+
+  @Override
+  public int getWidth() {
+    return 368;
+  }
+
+  @Override
+  public int getHeight() {
+    return 240;
+  }
+
   protected abstract void render();
 
   protected void renderNumber(final int x, final int y, final int value, final int digitCount) {
