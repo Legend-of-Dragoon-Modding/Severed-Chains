@@ -1,4 +1,4 @@
 @ParametersAreNonnullByDefault
-package legend.lodmod;
+package legend.game.modding.events;
 
 import javax.annotation.ParametersAreNonnullByDefault;

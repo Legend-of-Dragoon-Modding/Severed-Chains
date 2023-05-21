@@ -111,12 +111,7 @@
                      <Button mnemonicParsing="false" onAction="#setCounterOverlayRgb" text="Set" />
                   </children>
                </HBox>
-               <HBox>
-                  <children>
-                     <CheckBox fx:id="autoAddition" mnemonicParsing="false" onAction="#toggleAutoAddition" text="Auto Additions  " />
-                     <Button fx:id="refreshAutoAddition" mnemonicParsing="false" onAction="#refreshAutoAddition" style="-fx-padding: 0 2 0 2;" text="Refresh" />
-                  </children>
-               </HBox>
+               <CheckBox fx:id="autoAddition" mnemonicParsing="false" onAction="#toggleAutoAddition" text="Auto Additions  " />
                <CheckBox fx:id="autoMeter" mnemonicParsing="false" onAction="#toggleAutoDragoonMeter" text="Auto Dragoon Meter" />
                <CheckBox fx:id="disableStatusEffects" mnemonicParsing="false" onAction="#toggleDisableStatusEffects" text="Disable Status Effects" />
             </children>

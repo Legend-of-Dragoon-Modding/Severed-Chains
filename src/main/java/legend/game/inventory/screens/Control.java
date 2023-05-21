@@ -10,6 +10,7 @@ import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 
 public abstract class Control extends ControlHost {
   private MenuScreen screen;
+  private ControlHost parent;
 
   private int x;
   private int y;
@@ -28,8 +29,17 @@ public abstract class Control extends ControlHost {
     return this.screen;
   }
 
+  @Override
+  protected ControlHost getParent() {
+    return this.parent;
+  }
+
   void setScreen(final MenuScreen screen) {
     this.screen = screen;
+  }
+
+  void setParent(final ControlHost parent) {
+    this.parent = parent;
   }
 
   public void setPos(final int x, final int y) {
@@ -41,6 +51,7 @@ public abstract class Control extends ControlHost {
     this.screen.deferAction(action);
   }
 
+  @Override
   public int getX() {
     return this.x;
   }
@@ -49,6 +60,7 @@ public abstract class Control extends ControlHost {
     this.x = x;
   }
 
+  @Override
   public int getY() {
     return this.y;
   }
@@ -71,6 +83,7 @@ public abstract class Control extends ControlHost {
     this.onResize();
   }
 
+  @Override
   public int getWidth() {
     return this.width;
   }
@@ -80,6 +93,7 @@ public abstract class Control extends ControlHost {
     this.onResize();
   }
 
+  @Override
   public int getHeight() {
     return this.height;
   }

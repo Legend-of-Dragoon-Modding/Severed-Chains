@@ -14,7 +14,6 @@ import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.combat.types.EnemyRewards08;
 import legend.game.combat.types.MonsterStats1c;
-import legend.game.modding.events.EventManager;
 import legend.game.modding.events.characters.BattleMapActiveAdditionHitPropertiesEvent;
 import legend.game.modding.events.combat.EnemyRewardsEvent;
 import legend.game.scripting.ScriptFile;
@@ -26,6 +25,7 @@ import legend.game.unpacker.Unpacker;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
+import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
@@ -143,10 +143,10 @@ public class SBtld {
         } else {
           //LAB_80109320
           battleMapSelectedAdditionHitProperties_80109454(_8010e658.offset(activeAdditionIndex * 0x80L).getAddress(), activeAdditionHits);
-          EventManager.INSTANCE.postEvent(new BattleMapActiveAdditionHitPropertiesEvent(activeAdditionHits, activeAdditionIndex, charIndex, charSlot, false));
+          EVENTS.postEvent(new BattleMapActiveAdditionHitPropertiesEvent(activeAdditionHits, activeAdditionIndex, charIndex, charSlot, false));
 
           battleMapSelectedAdditionHitProperties_80109454(_8010e658.offset(activeDragoonAdditionIndex * 0x80L).getAddress(), activeDragoonAdditionHits);
-          EventManager.INSTANCE.postEvent(new BattleMapActiveAdditionHitPropertiesEvent(activeAdditionHits, activeAdditionIndex, charIndex, charSlot, true));
+          EVENTS.postEvent(new BattleMapActiveAdditionHitPropertiesEvent(activeAdditionHits, activeAdditionIndex, charIndex, charSlot, true));
         }
       }
 
@@ -244,7 +244,7 @@ public class SBtld {
       combatant.drops.add(new CombatantStruct1a8.ItemDrop(rewards.itemChance_04.get(), rewards.itemDrop_05.get()));
     }
 
-    final EnemyRewardsEvent event = EventManager.INSTANCE.postEvent(new EnemyRewardsEvent(enemyId, rewards.xp_00.get(), rewards.gold_02.get(), combatant.drops));
+    final EnemyRewardsEvent event = EVENTS.postEvent(new EnemyRewardsEvent(enemyId, rewards.xp_00.get(), rewards.gold_02.get(), combatant.drops));
 
     combatant.xp_194 = event.xp;
     combatant.gold_196 = event.gold;

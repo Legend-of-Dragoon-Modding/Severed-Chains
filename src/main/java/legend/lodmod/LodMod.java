@@ -34,7 +34,9 @@ public class LodMod {
   @EventListener
   public static void registerItems(final ItemRegistryEvent event) {
     for(int itemId = 0; itemId < itemStats_8004f2ac.length; itemId++) {
-      itemStats_8004f2ac[itemId] = ItemStats0c.fromFile(Unpacker.loadFile("items/%d.ditm".formatted(itemId)));
+      if(itemStats_8004f2ac[itemId] == null) {
+        itemStats_8004f2ac[itemId] = ItemStats0c.fromFile(Unpacker.loadFile("items/%d.ditm".formatted(itemId)));
+      }
 
       String name = equipment_8011972c.get(itemId + 0xc0).deref().get();
       if(name.isEmpty()) {
@@ -50,7 +52,9 @@ public class LodMod {
   @EventListener
   public static void registerEquipment(final EquipmentRegistryEvent event) {
     for(int equipmentId = 0; equipmentId < equipmentStats_80111ff0.length; equipmentId++) {
-      equipmentStats_80111ff0[equipmentId] = EquipmentStats1c.fromFile(Unpacker.loadFile("equipment/%d.deqp".formatted(equipmentId)));
+      if(equipmentStats_80111ff0[equipmentId] == null) {
+        equipmentStats_80111ff0[equipmentId] = EquipmentStats1c.fromFile(Unpacker.loadFile("equipment/%d.deqp".formatted(equipmentId)));
+      }
 
       final String name = equipment_8011972c.get(equipmentId).deref().get();
 
@@ -64,7 +68,9 @@ public class LodMod {
   @EventListener
   public static void registerSpells(final SpellRegistryEvent event) {
     for(int spellId = 0; spellId < spellStats_800fa0b8.length; spellId++) {
-      spellStats_800fa0b8[spellId] = SpellStats0c.fromFile(Unpacker.loadFile("spells/%d.dspl".formatted(spellId)));
+      if(spellStats_800fa0b8[spellId] == null) {
+        spellStats_800fa0b8[spellId] = SpellStats0c.fromFile(Unpacker.loadFile("spells/%d.dspl".formatted(spellId)));
+      }
     }
   }
 }

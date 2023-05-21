@@ -1,0 +1,32 @@
+# Global config
+lod-core.config.render_scale.label=Render Scale
+lod-core.config.controller.label=Controller
+lod-core.config.controller_deadzone.label=Controller Deadzone
+lod-core.config.receive_input_on_inactive_window.label=Receive Input on Inactive Window
+
+# Campaign config
+lod-core.config.indicator_mode.label=Indicator Mode
+lod-core.config.indicator_mode.OFF=Off
+lod-core.config.indicator_mode.MOMENTARY=Momentary
+lod-core.config.indicator_mode.ON=On
+lod-core.config.inventory_size.label=Inventory Size
+lod-core.config.encounter_rate.label=Encounter Rate
+lod-core.config.encounter_rate.RETAIL=Retail
+lod-core.config.encounter_rate.AVERAGE=Average
+lod-core.config.encounter_rate.INTENDED=Intended
+lod-core.config.encounter_rate.NONE=None
+lod-core.config.auto_addition.label=Addition Mode
+lod-core.config.auto_addition.OFF=Off
+lod-core.config.auto_addition.ON=On
+lod-core.config.auto_dragoon_addition.label=Automatic Dragoon Addition
+lod-core.config.addition_overlay_mode.label=Addition Overlay Mode
+lod-core.config.addition_overlay_mode.FULL=Normal
+lod-core.config.addition_overlay_mode.PARTIAL=No reticule
+lod-core.config.addition_overlay_mode.OFF=No HUD
+lod-core.config.transformation_mode.label=Transformation Mode
+lod-core.config.transformation_mode.NORMAL=Normal
+lod-core.config.transformation_mode.SHORT=Short
+lod-core.config.quick_text.label=Quick Text
+lod-core.config.auto_text.label=Automatic Text Advance
+lod-core.config.save_anywhere.label=Save Anywhere
+lod-core.config.disable_status_effects.label=Disable Status Effects

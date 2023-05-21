@@ -20,4 +20,15 @@ public class MutableRegistry<Type extends RegistryEntry> extends Registry<Type> 
   void lock() {
     this.locked = true;
   }
+
+  void reset() {
+    this.locked = false;
+
+    for(final RegistryDelegate<Type> delegate : this.delegates.values()) {
+      delegate.clear();
+    }
+
+    this.entries.clear();
+    this.delegates.clear();
+  }
 }

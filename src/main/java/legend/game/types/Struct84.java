@@ -24,8 +24,8 @@ public class Struct84 {
 
   public int _30;
 
-  public int _34;
-  public int _36;
+  public int charX_34;
+  public int charY_36;
   public int _38;
   public int _3a;
   public int _3c;
@@ -33,7 +33,7 @@ public class Struct84 {
   public int _40;
   public int _42;
   public int _44;
-  public final int[] _46 = new int[8];
+  public final int[] digits_46 = new int[10];
 
   public long ptr_58;
   public int _5c;

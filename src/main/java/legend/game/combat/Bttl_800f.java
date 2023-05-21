@@ -28,7 +28,6 @@ import legend.game.combat.ui.FloatingNumberC4;
 import legend.game.combat.ui.FloatingNumberC4Sub20;
 import legend.game.inventory.screens.TextColour;
 import legend.game.modding.coremod.CoreMod;
-import legend.game.modding.events.EventManager;
 import legend.game.modding.events.combat.SpellStatsEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
@@ -44,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
@@ -2784,7 +2784,7 @@ public final class Bttl_800f {
   public static void setTempSpellStats(final BattleObject27c bobj) {
     //LAB_800f7b8c
     if(bobj.spellId_4e != -1 && bobj.spellId_4e <= 127) {
-      bobj.spell_94 = EventManager.INSTANCE.postEvent(new SpellStatsEvent(bobj.spellId_4e, spellStats_800fa0b8[bobj.spellId_4e])).spell;
+      bobj.spell_94 = EVENTS.postEvent(new SpellStatsEvent(bobj.spellId_4e, spellStats_800fa0b8[bobj.spellId_4e])).spell;
     } else {
       if(bobj.spellId_4e > 127) {
         LOGGER.error("Retail bug: spell index out of bounds (%d). This is known to happen during Shana/Miranda's dragoon attack.", bobj.spellId_4e);

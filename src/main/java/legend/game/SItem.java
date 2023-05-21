@@ -1,6 +1,5 @@
 package legend.game;
 
-import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.memory.Method;
@@ -25,7 +24,7 @@ import legend.game.inventory.screens.MainMenuScreen;
 import legend.game.inventory.screens.MenuStack;
 import legend.game.inventory.screens.TextColour;
 import legend.game.inventory.screens.TooManyItemsScreen;
-import legend.game.modding.events.EventManager;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.characters.AdditionHitMultiplierEvent;
 import legend.game.modding.events.characters.AdditionUnlockEvent;
 import legend.game.modding.events.characters.CharacterStatsEvent;
@@ -55,6 +54,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SCRIPTS;
@@ -448,7 +449,7 @@ public final class SItem {
       return 0; // Max level
     }
 
-    final XpToLevelEvent event = EventManager.INSTANCE.postEvent(new XpToLevelEvent(charIndex, level, xpTables[charIndex][level + 1]));
+    final XpToLevelEvent event = EVENTS.postEvent(new XpToLevelEvent(charIndex, level, xpTables[charIndex][level + 1]));
 
     //LAB_800fc70c
     return event.xp;
@@ -515,7 +516,7 @@ public final class SItem {
           canSave_8011dc88.set(true);
         } else {
           gameState_800babc8.isOnWorldMap_4e4 = false;
-          canSave_8011dc88.set(Config.saveAnywhere() || standingInSavePoint_8005a368.get());
+          canSave_8011dc88.set(CONFIG.getConfig(CoreMod.SAVE_ANYWHERE_CONFIG.get()) || standingInSavePoint_8005a368.get());
         }
 
         inventoryMenuState_800bdc28.set(InventoryMenuState.AWAIT_INIT_1);
@@ -902,7 +903,7 @@ public final class SItem {
     int t5 = 0;
     int t0 = 0;
     for(int additionIndex = 0; additionIndex < additionCounts_8004f5c0.get(charIndex).get(); additionIndex++) {
-      final AdditionUnlockEvent event = EventManager.INSTANCE.postEvent(new AdditionUnlockEvent(additionOffsets_8004f5ac.get(charIndex).get() + additionIndex, additionData_80052884.get(additionOffsets_8004f5ac.get(charIndex).get() + additionIndex).level_00.get()));
+      final AdditionUnlockEvent event = EVENTS.postEvent(new AdditionUnlockEvent(additionOffsets_8004f5ac.get(charIndex).get() + additionIndex, additionData_80052884.get(additionOffsets_8004f5ac.get(charIndex).get() + additionIndex).level_00.get()));
       additionData_80052884.get(additionOffsets_8004f5ac.get(charIndex).get() + additionIndex).level_00.set(event.additionLevel);
 
       final int level = additionData_80052884.get(additionOffsets_8004f5ac.get(charIndex).get() + additionIndex).level_00.get();
@@ -2746,7 +2747,7 @@ public final class SItem {
 
       final CharacterData2c charData = gameState_800babc8.charData_32c[charId];
 
-      final CharacterStatsEvent statsEvent = EventManager.INSTANCE.postEvent(new CharacterStatsEvent(charId));
+      final CharacterStatsEvent statsEvent = EVENTS.postEvent(new CharacterStatsEvent(charId));
 
       stats.xp_00 = statsEvent.xp;
       stats.hp_04 = statsEvent.hp;
@@ -2794,7 +2795,7 @@ public final class SItem {
         stats.additionSpMultiplier_9e = (int)MEMORY.ref(1, a0).offset(0x2L).get();
         stats.additionDamageMultiplier_9f = (int)MEMORY.ref(1, a0).offset(0x3L).get();
 
-        final AdditionHitMultiplierEvent event = EventManager.INSTANCE.postEvent(new AdditionHitMultiplierEvent(additionIndex, stats.additionLevels_36[additionIndex - additionOffsets_8004f5ac.get(charId).get()], stats.additionSpMultiplier_9e, stats.additionDamageMultiplier_9f));
+        final AdditionHitMultiplierEvent event = EVENTS.postEvent(new AdditionHitMultiplierEvent(additionIndex, stats.additionLevels_36[additionIndex - additionOffsets_8004f5ac.get(charId).get()], stats.additionSpMultiplier_9e, stats.additionDamageMultiplier_9f));
         stats.additionSpMultiplier_9e = event.additionSpMulti;
         stats.additionDamageMultiplier_9f = event.additionDmgMulti;
       } else {
@@ -2880,7 +2881,7 @@ public final class SItem {
       final int equipmentId = stats_800be5f8[charId].equipment_30[equipmentSlot];
 
       if(equipmentId != 0xff) {
-        final EquipmentStatsEvent event = EventManager.INSTANCE.postEvent(new EquipmentStatsEvent(charId, equipmentId, equipmentStats_80111ff0[equipmentId]));
+        final EquipmentStatsEvent event = EVENTS.postEvent(new EquipmentStatsEvent(charId, equipmentId, equipmentStats_80111ff0[equipmentId]));
 
         characterStats.specialEffectFlag_76 |= event.equipment.flags_00;
         characterStats.equipmentType_77 |= event.equipment.type_01;

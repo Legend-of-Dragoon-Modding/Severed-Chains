@@ -5,7 +5,6 @@ import legend.core.MathHelper;
 import legend.core.memory.Method;
 import legend.game.Scus94491BpeSegment_8004;
 import legend.game.combat.bobj.BattleObject27c;
-import legend.game.modding.events.EventManager;
 import legend.game.modding.events.scripting.ScriptDeallocatedEvent;
 import legend.game.modding.events.scripting.ScriptTickEvent;
 import org.apache.logging.log4j.LogManager;
@@ -17,6 +16,7 @@ import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.function.BiConsumer;
 
+import static legend.core.GameEngine.EVENTS;
 import static legend.game.Scus94491BpeSegment.scriptFunctionDescriptions;
 import static legend.game.Scus94491BpeSegment.scriptLog;
 import static legend.game.Scus94491BpeSegment.simpleRand;
@@ -213,7 +213,7 @@ public class ScriptState<T> {
   public void deallocate() {
     LOGGER.info(SCRIPT_MARKER, "Deallocating script state %d", this.index);
 
-    EventManager.INSTANCE.postEvent(new ScriptDeallocatedEvent(this.index));
+    EVENTS.postEvent(new ScriptDeallocatedEvent(this.index));
 
     if((this.storage_44[7] & 0x810_0000) == 0) {
       try {
@@ -451,7 +451,7 @@ public class ScriptState<T> {
           //LAB_80016584
         }
 
-        EventManager.INSTANCE.postEvent(new ScriptTickEvent(this.index));
+        EVENTS.postEvent(new ScriptTickEvent(this.index));
 
         final int opIndex = this.context.opIndex_10;
 

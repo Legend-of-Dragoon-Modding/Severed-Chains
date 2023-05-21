@@ -14,6 +14,7 @@ import legend.game.modding.coremod.config.AdditionOverlayConfigEntry;
 import legend.game.modding.coremod.config.AutoAdditionConfigEntry;
 import legend.game.modding.coremod.config.ControllerConfigEntry;
 import legend.game.modding.coremod.config.ControllerDeadzoneConfigEntry;
+import legend.game.modding.coremod.config.EnabledModsConfigEntry;
 import legend.game.modding.coremod.config.EncounterRateConfigEntry;
 import legend.game.modding.coremod.config.IndicatorModeConfigEntry;
 import legend.game.modding.coremod.config.InventorySizeConfigEntry;
@@ -30,11 +31,17 @@ import legend.game.modding.coremod.elements.WaterElement;
 import legend.game.modding.coremod.elements.WindElement;
 import legend.game.modding.events.EventListener;
 import legend.game.modding.events.combat.RegisterBattleObjectStatsEvent;
+import legend.game.modding.events.config.ConfigLoadedEvent;
 import legend.game.modding.registries.Registrar;
 import legend.game.modding.registries.RegistryDelegate;
 import legend.game.modding.registries.RegistryId;
+import legend.game.saves.BoolConfigEntry;
 import legend.game.saves.ConfigEntry;
 import legend.game.saves.ConfigRegistryEvent;
+import legend.game.saves.ConfigStorageLocation;
+
+import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.GPU;
 
 /** Core mod that contains engine-level content. Game can not run without it. */
 @Mod(id = CoreMod.MOD_ID)
@@ -70,14 +77,21 @@ public class CoreMod {
   public static final RegistryDelegate<RenderScaleConfigEntry> RENDER_SCALE_CONFIG = CONFIG_REGISTRAR.register("render_scale", RenderScaleConfigEntry::new);
   public static final RegistryDelegate<ControllerConfigEntry> CONTROLLER_CONFIG = CONFIG_REGISTRAR.register("controller", ControllerConfigEntry::new);
   public static final RegistryDelegate<ControllerDeadzoneConfigEntry> CONTROLLER_DEADZONE_CONFIG = CONFIG_REGISTRAR.register("controller_deadzone", ControllerDeadzoneConfigEntry::new);
+  public static final RegistryDelegate<BoolConfigEntry> RECEIVE_INPUT_ON_INACTIVE_WINDOW_CONFIG = CONFIG_REGISTRAR.register("receive_input_on_inactive_window", () -> new BoolConfigEntry(false, ConfigStorageLocation.GLOBAL));
 
   // Per-campaign config
+  public static final RegistryDelegate<EnabledModsConfigEntry> ENABLED_MODS_CONFIG = CONFIG_REGISTRAR.register("enabled_mods", EnabledModsConfigEntry::new);
   public static final RegistryDelegate<IndicatorModeConfigEntry> INDICATOR_MODE_CONFIG = CONFIG_REGISTRAR.register("indicator_mode", IndicatorModeConfigEntry::new);
   public static final RegistryDelegate<InventorySizeConfigEntry> INVENTORY_SIZE_CONFIG = CONFIG_REGISTRAR.register("inventory_size", InventorySizeConfigEntry::new);
   public static final RegistryDelegate<EncounterRateConfigEntry> ENCOUNTER_RATE_CONFIG = CONFIG_REGISTRAR.register("encounter_rate", EncounterRateConfigEntry::new);
   public static final RegistryDelegate<AutoAdditionConfigEntry> AUTO_ADDITION_CONFIG = CONFIG_REGISTRAR.register("auto_addition", AutoAdditionConfigEntry::new);
+  public static final RegistryDelegate<BoolConfigEntry> AUTO_DRAGOON_ADDITION_CONFIG = CONFIG_REGISTRAR.register("auto_dragoon_addition", () -> new BoolConfigEntry(false, ConfigStorageLocation.CAMPAIGN));
   public static final RegistryDelegate<AdditionOverlayConfigEntry> ADDITION_OVERLAY_CONFIG = CONFIG_REGISTRAR.register("addition_overlay_mode", AdditionOverlayConfigEntry::new);
   public static final RegistryDelegate<TransformationModeConfigEntry> TRANSFORMATION_MODE_CONFIG = CONFIG_REGISTRAR.register("transformation_mode", TransformationModeConfigEntry::new);
+  public static final RegistryDelegate<BoolConfigEntry> QUICK_TEXT_CONFIG = CONFIG_REGISTRAR.register("quick_text", () -> new BoolConfigEntry(false, ConfigStorageLocation.CAMPAIGN));
+  public static final RegistryDelegate<BoolConfigEntry> AUTO_TEXT_CONFIG = CONFIG_REGISTRAR.register("auto_text", () -> new BoolConfigEntry(false, ConfigStorageLocation.CAMPAIGN));
+  public static final RegistryDelegate<BoolConfigEntry> SAVE_ANYWHERE_CONFIG = CONFIG_REGISTRAR.register("save_anywhere", () -> new BoolConfigEntry(false, ConfigStorageLocation.CAMPAIGN));
+  public static final RegistryDelegate<BoolConfigEntry> DISABLE_STATUS_EFFECTS_CONFIG = CONFIG_REGISTRAR.register("disable_status_effects", () -> new BoolConfigEntry(false, ConfigStorageLocation.CAMPAIGN));
 
   public static RegistryId id(final String entryId) {
     return new RegistryId(MOD_ID, entryId);
@@ -113,5 +127,12 @@ public class CoreMod {
     }
 
     event.addStat(SPEED_STAT.get());
+  }
+
+  @EventListener
+  public static void configLoaded(final ConfigLoadedEvent event) {
+    if(event.storageLocation == ConfigStorageLocation.GLOBAL) {
+      GPU.rescale(CONFIG.getConfig(RENDER_SCALE_CONFIG.get()));
+    }
   }
 }

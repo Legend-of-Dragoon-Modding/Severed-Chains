@@ -9,7 +9,6 @@ import legend.game.combat.types.AttackType;
 import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.modding.coremod.CoreMod;
-import legend.game.modding.events.EventManager;
 import legend.game.modding.events.combat.RegisterBattleObjectStatsEvent;
 import legend.game.types.ItemStats0c;
 import legend.game.types.Model124;
@@ -17,6 +16,8 @@ import legend.game.types.SpellStats0c;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import static legend.core.GameEngine.EVENTS;
 
 public abstract class BattleObject27c extends BattleScriptDataBase {
   public final BattleObjectType type;
@@ -172,7 +173,7 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
     this.model_148 = new Model124(name);
 
     final Set<StatType> stats = new HashSet<>();
-    EventManager.INSTANCE.postEvent(new RegisterBattleObjectStatsEvent(type, stats));
+    EVENTS.postEvent(new RegisterBattleObjectStatsEvent(type, stats));
     this.stats = new StatCollection(stats.toArray(StatType[]::new));
   }
 
