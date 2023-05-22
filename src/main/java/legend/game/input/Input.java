@@ -94,9 +94,11 @@ public final class Input {
           final float x = playerOne.readAxis(GLFW_GAMEPAD_AXIS_LEFT_X);
           final float y = playerOne.readAxis(GLFW_GAMEPAD_AXIS_LEFT_Y);
 
+          final float deadzone = CONFIG.getConfig(CoreMod.CONTROLLER_DEADZONE_CONFIG.get());
+
           // Map discrete axis values (-1.0..1.0) to angle and magnitude that LOD expects
           final int angle = Math.floorMod((int)(Math.atan2(y, x) * 0x800 / Math.PI) + 0x400, 0x1000); // 0..0x1000, clockwise, up=0
-          final int mag = (int)(Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)) * 0xff); // 0..0xff
+          final int mag = (int)((Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)) - deadzone) / (1.0f - deadzone) * 0xff); // 0..0xff
 
           analogInput_800beebc.set(1);
           analogAngle_800bee9c.set(angle);
