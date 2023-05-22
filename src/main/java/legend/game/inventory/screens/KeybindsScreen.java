@@ -8,10 +8,15 @@ import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.Label;
 import legend.game.inventory.screens.controls.Textbox;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.coremod.config.ControllerKeybindConfigEntry;
 import legend.game.saves.ConfigCollection;
 import legend.game.types.LodString;
+import legend.game.types.MessageBoxResult;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -85,9 +90,12 @@ public class KeybindsScreen extends VerticalLayoutScreen {
     help.hide();
     this.addControl(help);
 
+    final Map<ControllerKeybindConfigEntry, Textbox> textboxes = new HashMap<>();
+
     for(final InputAction inputAction : InputAction.values()) {
       if(CoreMod.KEYBIND_CONFIGS.containsKey(inputAction)) {
         final Textbox textbox = new Textbox();
+        textboxes.put(CoreMod.KEYBIND_CONFIGS.get(inputAction).get(), textbox);
         textbox.setText(this.keysToString(config.getConfig(CoreMod.KEYBIND_CONFIGS.get(inputAction).get())));
 
         final IntSet keycodes = new IntOpenHashSet();
@@ -99,8 +107,30 @@ public class KeybindsScreen extends VerticalLayoutScreen {
         });
 
         textbox.onLostFocus(() -> {
-          config.setConfig(CoreMod.KEYBIND_CONFIGS.get(inputAction).get(), new IntOpenHashSet(keycodes));
-          help.hide();
+          final List<ControllerKeybindConfigEntry> dupes = new ArrayList<>();
+
+          for(final InputAction action : InputAction.values()) {
+            if(action != inputAction && CoreMod.KEYBIND_CONFIGS.containsKey(action) && config.getConfig(CoreMod.KEYBIND_CONFIGS.get(action).get()).intStream().anyMatch(keycodes::contains)) {
+              dupes.add(CoreMod.KEYBIND_CONFIGS.get(action).get());
+            }
+          }
+
+          if(dupes.isEmpty()) {
+            config.setConfig(CoreMod.KEYBIND_CONFIGS.get(inputAction).get(), new IntOpenHashSet(keycodes));
+            help.hide();
+          } else {
+            this.getStack().pushScreen(new MessageBoxScreen(new LodString(I18n.translate("lod-core.keybind.duplicate_input")), 2, result -> {
+              if(result == MessageBoxResult.YES) {
+                for(final ControllerKeybindConfigEntry dupe : dupes) {
+                  config.getConfig(dupe).removeAll(keycodes);
+                  textboxes.get(dupe).setText(this.keysToString(config.getConfig(dupe)));
+                }
+              }
+
+              config.setConfig(CoreMod.KEYBIND_CONFIGS.get(inputAction).get(), new IntOpenHashSet(keycodes));
+              help.hide();
+            }));
+          }
         });
 
         textbox.onKeyPress((key, scancode, mods) -> {

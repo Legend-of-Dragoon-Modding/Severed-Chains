@@ -184,8 +184,13 @@ public class LodString implements MemoryRef {
   }
 
   public void set(final String text) {
+    int usedChars = 0;
     for(int i = 0; i < text.length(); i++) {
-      this.charAt(i, switch(text.charAt(i)) {
+      if(text.charAt(i) == '\r') {
+        continue;
+      }
+
+      this.charAt(usedChars, switch(text.charAt(i)) {
         case ' ' -> 0x00;
         case ',' -> 0x01;
         case '.' -> 0x02;
@@ -275,9 +280,11 @@ public class LodString implements MemoryRef {
         case '\n' -> 0xa1ff;
         default -> 0x05;
       });
+
+      usedChars++;
     }
 
-    this.charAt(text.length(), 0xa0ff);
+    this.charAt(usedChars, 0xa0ff);
   }
 
   public LodString slice(final int index, final int length) {

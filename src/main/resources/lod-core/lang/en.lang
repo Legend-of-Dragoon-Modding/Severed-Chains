@@ -35,6 +35,7 @@ lod-core.config.disable_status_effects.label=Disable Status Effects
 
 lod-core.keybind.help=Press DEL when done
 lod-core.keybind.missing_input=Missing required input
+lod-core.keybind.duplicate_input=Duplicate found, remove?
 lod-core.keybind.BUTTON_NORTH=Triangle
 lod-core.keybind.BUTTON_EAST=Circle
 lod-core.keybind.BUTTON_SOUTH=Cross
