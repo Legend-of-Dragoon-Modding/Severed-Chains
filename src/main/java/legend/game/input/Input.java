@@ -14,9 +14,14 @@ import javax.annotation.Nullable;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GPU;
 import static legend.game.Scus94491BpeSegment.keyRepeat;
+import static legend.game.Scus94491BpeSegment_800b.analogAngle_800bee9c;
+import static legend.game.Scus94491BpeSegment_800b.analogInput_800beebc;
+import static legend.game.Scus94491BpeSegment_800b.analogMagnitude_800beeb4;
 import static legend.game.Scus94491BpeSegment_800b.input_800bee90;
 import static legend.game.Scus94491BpeSegment_800b.press_800bee94;
 import static legend.game.Scus94491BpeSegment_800b.repeat_800bee98;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_X;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_1;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_3;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
@@ -74,26 +79,49 @@ public final class Input {
 
   public static void updateLegacyInput() {
     input_800bee90.set(0);
+    analogAngle_800bee9c.set(0);
+    analogMagnitude_800beeb4.set(0);
 
     for(final var entry : held.object2BooleanEntrySet()) {
       if(entry.getBooleanValue()) {
-        input_800bee90.or(entry.getKey().getInputAction().hexCode);
+        final InputAction inputAction = entry.getKey().getInputAction();
+
+        if(inputAction.hexCode != -1) {
+          input_800bee90.or(inputAction.hexCode);
+        }
+
+        if(inputAction == InputAction.JOYSTICK_LEFT_X || inputAction == InputAction.JOYSTICK_LEFT_Y) {
+          final float x = playerOne.readAxis(GLFW_GAMEPAD_AXIS_LEFT_X);
+          final float y = playerOne.readAxis(GLFW_GAMEPAD_AXIS_LEFT_Y);
+
+          final float deadzone = CONFIG.getConfig(CoreMod.CONTROLLER_DEADZONE_CONFIG.get());
+
+          // Map discrete axis values (-1.0..1.0) to angle and magnitude that LOD expects
+          final int angle = Math.floorMod((int)(Math.atan2(y, x) * 0x800 / Math.PI) + 0x400, 0x1000); // 0..0x1000, clockwise, up=0
+          final int mag = (int)((Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)) - deadzone) / (1.0f - deadzone) * 0xff); // 0..0xff
+
+          analogInput_800beebc.set(1);
+          analogAngle_800bee9c.set(angle);
+          analogMagnitude_800beeb4.set(mag);
+        }
       }
     }
 
     for(final var entry : pressedThisFrame.object2BooleanEntrySet()) {
       final int hexCode = entry.getKey().getInputAction().hexCode;
 
-      if(entry.getBooleanValue()) {
-        input_800bee90.or(hexCode);
-        press_800bee94.or(hexCode);
-        repeat_800bee98.or(hexCode);
-        keyRepeat.put(hexCode, 0);
-      } else {
-        input_800bee90.and(~hexCode);
-        press_800bee94.and(~hexCode);
-        repeat_800bee98.and(~hexCode);
-        keyRepeat.remove(hexCode);
+      if(hexCode != -1) {
+        if(entry.getBooleanValue()) {
+          input_800bee90.or(hexCode);
+          press_800bee94.or(hexCode);
+          repeat_800bee98.or(hexCode);
+          keyRepeat.put(hexCode, 0);
+        } else {
+          input_800bee90.and(~hexCode);
+          press_800bee94.and(~hexCode);
+          repeat_800bee98.and(~hexCode);
+          keyRepeat.remove(hexCode);
+        }
       }
     }
   }

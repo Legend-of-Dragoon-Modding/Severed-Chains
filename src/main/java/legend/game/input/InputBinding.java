@@ -69,7 +69,13 @@ public class InputBinding {
   private void pollGamepadAxis() {
     final float axisValue = this.targetController.readAxis(this.glfwKeyCode);
 
-    if(this.inputType == InputType.GAMEPAD_AXIS_BUTTON_POSITIVE) {
+    if(this.inputType == InputType.GAMEPAD_AXIS) {
+      if(Math.abs(axisValue) > CONFIG.getConfig(CoreMod.CONTROLLER_DEADZONE_CONFIG.get())) {
+        this.state = InputState.PRESSED;
+      } else {
+        this.state = InputState.NO_INPUT;
+      }
+    } else if(this.inputType == InputType.GAMEPAD_AXIS_BUTTON_POSITIVE) {
       if(axisValue > CONFIG.getConfig(CoreMod.CONTROLLER_DEADZONE_CONFIG.get())) {
         this.handlePositiveState();
       } else {
