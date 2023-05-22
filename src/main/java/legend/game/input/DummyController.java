@@ -22,4 +22,9 @@ public class DummyController extends Controller {
   public boolean readHat(final int glfwCode, final int hatIndex) {
     return false;
   }
+
+  @Override
+  public String getGuid() {
+    return "";
+  }
 }

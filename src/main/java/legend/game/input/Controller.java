@@ -15,4 +15,6 @@ public abstract class Controller {
   public void addBinding(final InputBinding binding) {
     this.bindings.add(binding);
   }
+
+  public abstract String getGuid();
 }
