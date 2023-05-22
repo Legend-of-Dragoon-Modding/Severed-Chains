@@ -152,6 +152,10 @@ public class KeybindsScreen extends VerticalLayoutScreen {
         this.addRow(I18n.translate(CoreMod.MOD_ID + ".keybind." + inputAction.name()), textbox);
       }
     }
+
+    this.addRow(I18n.translate(CoreMod.MOD_ID + ".keybind.pause"), new Label("F11"));
+    this.addRow(I18n.translate(CoreMod.MOD_ID + ".keybind.debugger"), new Label("F12"));
+    this.addRow(I18n.translate(CoreMod.MOD_ID + ".keybind.kill_sound"), new Label("DEL"));
   }
 
   private void addKey(final int keycode, final String name) {

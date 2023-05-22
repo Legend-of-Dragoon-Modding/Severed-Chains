@@ -52,3 +52,6 @@ lod-core.keybind.DPAD_UP=Up
 lod-core.keybind.DPAD_RIGHT=Right
 lod-core.keybind.DPAD_DOWN=Down
 lod-core.keybind.DPAD_LEFT=Left
+lod-core.keybind.pause=Pause
+lod-core.keybind.debugger=Debugger
+lod-core.keybind.kill_sound=Kill Stuck Sounds
