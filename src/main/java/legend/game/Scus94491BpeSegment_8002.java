@@ -2418,6 +2418,7 @@ public final class Scus94491BpeSegment_8002 {
     return FlowControl.CONTINUE;
   }
 
+  /** Allocate textbox used in yellow-name textboxes and combat effect popups, maybe others */
   @Method(0x800254bcL)
   public static FlowControl FUN_800254bc(final RunningScript<?> a0) {
     final int textboxIndex = a0.params_20[0].get();
@@ -2494,6 +2495,7 @@ public final class Scus94491BpeSegment_8002 {
     return FlowControl.CONTINUE;
   }
 
+  /** Deallocate textbox used in yellow-name textboxes and combat effect popups, maybe others */
   @Method(0x800257e0L)
   public static void clearTextbox(final int textboxIndex) {
     if(_800bdf38[textboxIndex]._00 != 0) {
@@ -4436,7 +4438,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80029b68L)
-  public static FlowControl FUN_80029b68(final RunningScript<?> script) {
+  public static FlowControl scriptGetFreeTextboxIndex(final RunningScript<?> script) {
     //LAB_80029b7c
     for(int i = 0; i < 8; i++) {
       if(textboxes_800be358[i]._00 == 0 && _800bdf38[i]._00 == 0) {

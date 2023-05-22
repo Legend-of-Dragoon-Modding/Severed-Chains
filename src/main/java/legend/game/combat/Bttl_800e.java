@@ -2015,7 +2015,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e93e0L)
-  public static FlowControl FUN_800e93e0(final RunningScript<? extends BattleScriptDataBase> script) {
+  public static FlowControl scriptAllocateEmptyEffectManagerScript(final RunningScript<? extends BattleScriptDataBase> script) {
     script.params_20[0].set(allocateEffectManager("Unknown, allocated by script %d (%s) from FUN_800e93e0".formatted(script.scriptState_04.index, script.scriptState_04.name), script.scriptState_04, 0, null, null, null, null).index);
     return FlowControl.CONTINUE;
   }

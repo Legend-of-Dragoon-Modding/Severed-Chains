@@ -78,11 +78,21 @@ public class BattleStateEf4 {
   public int _278;
   public int _27c;
   /**
-   * Number of times pressed during the Dragoon addition.
+   * Number of addition hits completed (normal or dragoon).
+   * For normal additions, this includes a final failed press, as it still hits.
+   * For dragoon additions, this means whatever stage was achieved.
    */
-  public int dAttackValue_280;
+  public int numCompleteAdditionHits_280;
   public int _284;
-  public int _288;
+  /**
+   * <ul>
+   *   <li>0x0 no counterattack</li>
+   *   <li>0x1 counterattack effects allocated</li>
+   *   <li>0x2 something related to animation index 25?</li>
+   *   <li>0x3 counter failed?</li>
+   * </ul>
+   */
+  public int counterAttackStage_288;
   public int _28c;
   public int _290;
   public int _294;
@@ -134,7 +144,17 @@ public class BattleStateEf4 {
   public int _318;
   public int _31c;
   public int _320;
-  public int _324;
+  /**
+   * <ul>
+   *   <li>0x0 continue addition</li>
+   *   <li>0x1 counterattack</li>
+   *   <li>0x2 addition failed</li>
+   *   <li>0x10 attack missed</li>
+   *   <li>0x20 addition completed</li>
+   *   <li>0x80 counter blowback</li>
+   * </ul>
+   */
+  public int additionState_324;
   public int _328;
   public int _32c;
   public int _330;
@@ -239,7 +259,7 @@ public class BattleStateEf4 {
   public int _4f4;
   public int _4f8;
   public int _4fc;
-  public int _500;
+  public int damageDealt_500;
   public int _504;
   public int _508;
   public int _50c;
@@ -261,13 +281,13 @@ public class BattleStateEf4 {
   public int _54c;
   public int dragonBlockStaff_550;
   public int _554;
-  public int _558;
+  public int attackTargets_558;
   public int _55c;
   public int _560;
   public int _564;
   public int _568;
   public int _56c;
-  public int _570;
+  public int monsterMoveId_570;
   public int _574;
   public int _578;
   public int _57c;

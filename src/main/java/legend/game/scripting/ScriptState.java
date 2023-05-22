@@ -76,10 +76,11 @@ public class ScriptState<T> {
    *
    *     <p>In combat this variable is used for a few different things:</p>
    *     <ul>
+   *       <li>0x1 - ?</li>
    *       <li>0x2 - dragoon</li>
    *       <li>0x4 - monster</li>
    *       <li>0x8 - it is this character's turn</li>
-   *       <li>0x10 - ?</li>
+   *       <li>0x10 - don't animate or render bobj?</li>
    *       <li>0x20 - forced turn, probably bosses who have reaction attacks</li>
    *       <li>0x40 - dead</li>
    *       <li>0x80 - finish the current animation and then stop animating</li>

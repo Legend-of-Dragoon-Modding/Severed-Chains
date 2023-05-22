@@ -2702,7 +2702,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cba60L)
-  public static FlowControl scriptDisableBobjAnimationLoop(final RunningScript<?> script) {
+  public static FlowControl scriptSetBobjAnimationLoopState(final RunningScript<?> script) {
     //LAB_800cbab0
     if(script.params_20[1].get() != 0) {
       scriptStatePtrArr_800bc1c0[script.params_20[0].get()].storage_44[7] &= 0xffff_ff7f;
