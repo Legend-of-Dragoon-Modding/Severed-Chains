@@ -86,10 +86,10 @@ public class BattleStateEf4 {
   public int _284;
   /**
    * <ul>
-   *   <li>0x0 no counterattack</li>
-   *   <li>0x1 counterattack effects allocated</li>
-   *   <li>0x2 something related to animation index 25?</li>
-   *   <li>0x3 counter failed?</li>
+   *   <li>0x0 - no counterattack</li>
+   *   <li>0x1 - counterattack effects allocated</li>
+   *   <li>0x2 - played monster counter animation</li>
+   *   <li>0x3 - counter failed</li>
    * </ul>
    */
   public int counterAttackStage_288;
@@ -147,11 +147,11 @@ public class BattleStateEf4 {
   /**
    * <ul>
    *   <li>0x0 continue addition</li>
-   *   <li>0x1 counterattack</li>
+   *   <li>0x1 counter succeeded</li>
    *   <li>0x2 addition failed</li>
    *   <li>0x10 attack missed</li>
    *   <li>0x20 addition completed</li>
-   *   <li>0x80 counter blowback</li>
+   *   <li>0x80 counter failed</li>
    * </ul>
    */
   public int additionState_324;
