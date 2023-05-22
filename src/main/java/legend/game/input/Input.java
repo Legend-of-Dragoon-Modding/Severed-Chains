@@ -45,7 +45,7 @@ public final class Input {
   private static final Marker INPUT_MARKER = MarkerManager.getMarker("INPUT");
 
   public static final ControllerManager controllerManager = new ControllerManager(Input::onControllerConnected, Input::onControllerDisconnected);
-  private static Controller playerOne;
+  private static Controller activeController;
 
   private static final Object2BooleanMap<InputBinding> held = new Object2BooleanOpenHashMap<>();
   private static final Object2BooleanMap<InputBinding> pressedThisFrame = new Object2BooleanOpenHashMap<>();
@@ -54,13 +54,13 @@ public final class Input {
   }
 
   public static void update() {
-    if(!GPU.window().hasFocus() && !CONFIG.getConfig(CoreMod.RECEIVE_INPUT_ON_INACTIVE_WINDOW_CONFIG.get()) || playerOne == null) {
+    if(!GPU.window().hasFocus() && !CONFIG.getConfig(CoreMod.RECEIVE_INPUT_ON_INACTIVE_WINDOW_CONFIG.get()) || activeController == null) {
       return;
     }
 
-    playerOne.poll();
+    activeController.poll();
 
-    for(final InputBinding binding : playerOne.bindings) {
+    for(final InputBinding binding : activeController.bindings) {
       if(binding.getState().pressed) {
         if(!held.containsKey(binding)) {
           pressedThisFrame.put(binding, true);
@@ -74,7 +74,7 @@ public final class Input {
 
     InputPlayerUtility.update();
 
-    GPU.window().events.callInputEvents(playerOne);
+    GPU.window().events.callInputEvents(activeController);
   }
 
   public static void updateLegacyInput() {
@@ -91,8 +91,8 @@ public final class Input {
         }
 
         if(inputAction == InputAction.JOYSTICK_LEFT_X || inputAction == InputAction.JOYSTICK_LEFT_Y) {
-          final float x = playerOne.readAxis(GLFW_GAMEPAD_AXIS_LEFT_X);
-          final float y = playerOne.readAxis(GLFW_GAMEPAD_AXIS_LEFT_Y);
+          final float x = activeController.readAxis(GLFW_GAMEPAD_AXIS_LEFT_X);
+          final float y = activeController.readAxis(GLFW_GAMEPAD_AXIS_LEFT_Y);
 
           final float deadzone = CONFIG.getConfig(CoreMod.CONTROLLER_DEADZONE_CONFIG.get());
 
@@ -151,7 +151,7 @@ public final class Input {
   }
 
   public static boolean pressedWithRepeatPulse(final InputAction targetKey) {
-    for(final InputBinding inputBinding : playerOne.bindings) {
+    for(final InputBinding inputBinding : activeController.bindings) {
       if(inputBinding.getInputAction() == targetKey) {
         if(inputBinding.getState() == InputState.PRESSED_THIS_FRAME || inputBinding.getState() == InputState.PRESSED_REPEAT) {
           return true;
@@ -162,7 +162,7 @@ public final class Input {
   }
 
   public static boolean getButtonState(final InputAction targetInput) {
-    for(final InputBinding inputBinding : playerOne.bindings) {
+    for(final InputBinding inputBinding : activeController.bindings) {
       if(inputBinding.getInputAction() == targetInput) {
         if(inputBinding.getState().pressed) {
           return true;
@@ -178,7 +178,7 @@ public final class Input {
       return;
     }
 
-    for(final InputBinding inputBinding : playerOne.bindings) {
+    for(final InputBinding inputBinding : activeController.bindings) {
       if(inputBinding.getInputType() == InputType.KEYBOARD && inputBinding.getGlfwKeyCode() == key) {
         inputBinding.setPressedForKeyboardInput();
       }
@@ -190,7 +190,7 @@ public final class Input {
       return;
     }
 
-    for(final InputBinding inputBinding : playerOne.bindings) {
+    for(final InputBinding inputBinding : activeController.bindings) {
       if(inputBinding.getInputType() == InputType.KEYBOARD && inputBinding.getGlfwKeyCode() == key) {
         inputBinding.setReleasedForKeyboardInput();
       }
@@ -198,31 +198,31 @@ public final class Input {
   }
 
   private static void lostFocus(final Window window) {
-    for(final InputBinding inputBinding : playerOne.bindings) {
+    for(final InputBinding inputBinding : activeController.bindings) {
       inputBinding.release();
     }
   }
 
   public static void useController(@Nullable final Controller controller) {
     if(controller != null) {
-      playerOne = controller;
+      activeController = controller;
     } else {
-      playerOne = new DummyController();
-      addKeyboardBindings(playerOne);
+      activeController = new DummyController();
+      addKeyboardBindings(activeController);
     }
   }
 
   private static void onControllerConnected(final GlfwController controller) {
-    addKeyboardBindings(controller);
+    LOGGER.info("Controller %s (%s) connected", controller.getName(), controller.getGuid());
 
-    if(playerOne.equals(controller)) {
-      LOGGER.info(INPUT_MARKER,"Player 1 has been reconnected");
-    }
+    addKeyboardBindings(controller);
   }
 
   private static void onControllerDisconnected(final GlfwController controller) {
-    if(playerOne.equals(controller)) {
-      LOGGER.info(INPUT_MARKER, "Player 1's controller has been disconnected. Please reconnect the controller, or switch to a different controller using F9.");
+    LOGGER.info("Controller %s (%s) disconnected", controller.getName(), controller.getGuid());
+
+    if(activeController == controller) {
+      useController(null);
     }
   }
 
