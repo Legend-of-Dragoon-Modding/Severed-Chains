@@ -141,6 +141,7 @@ import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
 import static legend.game.Scus94491BpeSegment_8007.clearRed_8007a3a8;
 import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
+import static legend.game.Scus94491BpeSegment_800b.analogMagnitude_800beeb4;
 import static legend.game.Scus94491BpeSegment_800b.clearBlue_800babc0;
 import static legend.game.Scus94491BpeSegment_800b.clearGreen_800bb104;
 import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
@@ -4726,7 +4727,7 @@ public class WMap {
 
       //LAB_800e117c
       //LAB_800e11b0
-      if(Input.getButtonState(InputAction.BUTTON_EAST)) { // World Map Running
+      if(Input.getButtonState(InputAction.BUTTON_EAST) || analogMagnitude_800beeb4.get() >= 0x7f) { // World Map Running
         //LAB_800e11d0
         struct.animIndex_b0 = 4;
         handleEncounters(mode.worldMapRunModifier);
@@ -6745,7 +6746,7 @@ public class WMap {
 
     //LAB_800e9330
     //LAB_800e9364
-    if(Input.getButtonState(InputAction.BUTTON_EAST)) {
+    if(Input.getButtonState(InputAction.BUTTON_EAST) || analogMagnitude_800beeb4.get() >= 0x7f) {
       //LAB_800e9384
       sp4 *= 2; // Running
     }
