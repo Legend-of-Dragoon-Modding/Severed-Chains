@@ -22,7 +22,7 @@ public class LangManager {
   }
 
   public String getTranslation(final String key) {
-    return this.translations.getOrDefault(key, key);
+    return this.translations.getOrDefault(key, key).formatted();
   }
 
   public String getTranslation(final String key, final Object... args) {

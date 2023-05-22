@@ -59,17 +59,17 @@ public final class ControllerDatabase {
 
   private static void setBindingFromText(final InputBinding inputBinding, final String bind) {
     if(bind.length() <= 1) {
-      inputBinding.setGlfwKeyCode(-1);
+      inputBinding.setButtonCode(-1);
       return;
     }
 
     if(bind.charAt(0) == 'b') {
       inputBinding.setInputType(InputType.GAMEPAD_BUTTON);
-      inputBinding.setGlfwKeyCode(parseIntFromBindText(bind.substring(1)));
+      inputBinding.setButtonCode(parseIntFromBindText(bind.substring(1)));
       return;
     } else if(bind.charAt(0) == 'a') {
       inputBinding.setInputType(InputType.GAMEPAD_AXIS);
-      inputBinding.setGlfwKeyCode(parseIntFromBindText(bind.substring(1)));
+      inputBinding.setButtonCode(parseIntFromBindText(bind.substring(1)));
       return;
     } else if(bind.charAt(0) == 'h') {
       inputBinding.setInputType(InputType.GAMEPAD_HAT);
@@ -77,12 +77,12 @@ public final class ControllerDatabase {
       final String[] hatIndexAndCode = dataOnly.split("\\.");
       if(hatIndexAndCode.length > 1) {
         inputBinding.setHatIndex(parseIntFromBindText(hatIndexAndCode[0]));
-        inputBinding.setGlfwKeyCode(parseIntFromBindText(hatIndexAndCode[1]));
+        inputBinding.setButtonCode(parseIntFromBindText(hatIndexAndCode[1]));
         return;
       }
     }
     LOGGER.error(CONTROLLER_DB_MARKER, "Bad data failed to bind with text %s", bind);
-    inputBinding.setGlfwKeyCode(-1);
+    inputBinding.setButtonCode(-1);
   }
 
   private static int parseIntFromBindText(final String bindText) {
