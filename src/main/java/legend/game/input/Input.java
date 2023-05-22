@@ -22,23 +22,6 @@ import static legend.game.Scus94491BpeSegment_800b.press_800bee94;
 import static legend.game.Scus94491BpeSegment_800b.repeat_800bee98;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_X;
 import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_1;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_3;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_C;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_E;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_Q;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_Z;
 
 public final class Input {
   private static final Logger LOGGER = LogManager.getFormatterLogger();
@@ -179,7 +162,7 @@ public final class Input {
     }
 
     for(final InputBinding inputBinding : activeController.bindings) {
-      if(inputBinding.getInputType() == InputType.KEYBOARD && inputBinding.getGlfwKeyCode() == key) {
+      if(inputBinding.getInputType() == InputType.KEYBOARD && CONFIG.getConfig(CoreMod.KEYBIND_CONFIGS.get(inputBinding.getInputAction()).get()).contains(key)) {
         inputBinding.setPressedForKeyboardInput();
       }
     }
@@ -191,7 +174,7 @@ public final class Input {
     }
 
     for(final InputBinding inputBinding : activeController.bindings) {
-      if(inputBinding.getInputType() == InputType.KEYBOARD && inputBinding.getGlfwKeyCode() == key) {
+      if(inputBinding.getInputType() == InputType.KEYBOARD && CONFIG.getConfig(CoreMod.KEYBIND_CONFIGS.get(inputBinding.getInputAction()).get()).contains(key)) {
         inputBinding.setReleasedForKeyboardInput();
       }
     }
@@ -227,25 +210,23 @@ public final class Input {
   }
 
   private static void addKeyboardBindings(final Controller controller) {
-    controller.addBinding(new InputBinding(InputAction.BUTTON_CENTER_1, controller, GLFW_KEY_SPACE, InputType.KEYBOARD));
-    controller.addBinding(new InputBinding(InputAction.BUTTON_THUMB_1, controller, GLFW_KEY_Z, InputType.KEYBOARD));
-    controller.addBinding(new InputBinding(InputAction.BUTTON_THUMB_2, controller, GLFW_KEY_C, InputType.KEYBOARD));
-    controller.addBinding(new InputBinding(InputAction.BUTTON_CENTER_2, controller, GLFW_KEY_ENTER, InputType.KEYBOARD));
-    controller.addBinding(new InputBinding(InputAction.DPAD_UP, controller, GLFW_KEY_UP, InputType.KEYBOARD));
-    controller.addBinding(new InputBinding(InputAction.DPAD_RIGHT, controller, GLFW_KEY_RIGHT, InputType.KEYBOARD));
-    controller.addBinding(new InputBinding(InputAction.DPAD_DOWN, controller, GLFW_KEY_DOWN, InputType.KEYBOARD));
-    controller.addBinding(new InputBinding(InputAction.DPAD_LEFT, controller, GLFW_KEY_LEFT, InputType.KEYBOARD));
+    controller.addBinding(new InputBinding(InputAction.BUTTON_CENTER_1, controller, InputType.KEYBOARD));
+    controller.addBinding(new InputBinding(InputAction.BUTTON_THUMB_1, controller, InputType.KEYBOARD));
+    controller.addBinding(new InputBinding(InputAction.BUTTON_THUMB_2, controller, InputType.KEYBOARD));
+    controller.addBinding(new InputBinding(InputAction.BUTTON_CENTER_2, controller, InputType.KEYBOARD));
+    controller.addBinding(new InputBinding(InputAction.DPAD_UP, controller, InputType.KEYBOARD));
+    controller.addBinding(new InputBinding(InputAction.DPAD_RIGHT, controller, InputType.KEYBOARD));
+    controller.addBinding(new InputBinding(InputAction.DPAD_DOWN, controller, InputType.KEYBOARD));
+    controller.addBinding(new InputBinding(InputAction.DPAD_LEFT, controller, InputType.KEYBOARD));
 
-    controller.addBinding(new InputBinding(InputAction.BUTTON_SHOULDER_LEFT_2, controller, GLFW_KEY_1, InputType.KEYBOARD));
-    controller.addBinding(new InputBinding(InputAction.BUTTON_SHOULDER_RIGHT_2, controller, GLFW_KEY_3, InputType.KEYBOARD));
-    controller.addBinding(new InputBinding(InputAction.BUTTON_SHOULDER_LEFT_1, controller, GLFW_KEY_Q, InputType.KEYBOARD));
-    controller.addBinding(new InputBinding(InputAction.BUTTON_SHOULDER_RIGHT_1, controller, GLFW_KEY_E, InputType.KEYBOARD));
+    controller.addBinding(new InputBinding(InputAction.BUTTON_SHOULDER_LEFT_2, controller, InputType.KEYBOARD));
+    controller.addBinding(new InputBinding(InputAction.BUTTON_SHOULDER_RIGHT_2, controller, InputType.KEYBOARD));
+    controller.addBinding(new InputBinding(InputAction.BUTTON_SHOULDER_LEFT_1, controller, InputType.KEYBOARD));
+    controller.addBinding(new InputBinding(InputAction.BUTTON_SHOULDER_RIGHT_1, controller, InputType.KEYBOARD));
 
-    controller.addBinding(new InputBinding(InputAction.BUTTON_NORTH, controller, GLFW_KEY_W, InputType.KEYBOARD));
-    controller.addBinding(new InputBinding(InputAction.BUTTON_EAST, controller, GLFW_KEY_D, InputType.KEYBOARD));
-    controller.addBinding(new InputBinding(InputAction.BUTTON_SOUTH, controller, GLFW_KEY_S, InputType.KEYBOARD));
-    controller.addBinding(new InputBinding(InputAction.BUTTON_WEST, controller, GLFW_KEY_A, InputType.KEYBOARD));
-
-    controller.addBinding(new InputBinding(InputAction.BUTTON_EAST, controller, GLFW_KEY_ESCAPE, InputType.KEYBOARD));
-    controller.addBinding(new InputBinding(InputAction.BUTTON_SOUTH, controller, GLFW_KEY_ENTER, InputType.KEYBOARD));
-  }}
+    controller.addBinding(new InputBinding(InputAction.BUTTON_NORTH, controller, InputType.KEYBOARD));
+    controller.addBinding(new InputBinding(InputAction.BUTTON_EAST, controller, InputType.KEYBOARD));
+    controller.addBinding(new InputBinding(InputAction.BUTTON_SOUTH, controller, InputType.KEYBOARD));
+    controller.addBinding(new InputBinding(InputAction.BUTTON_WEST, controller, InputType.KEYBOARD));
+  }
+}
