@@ -6,6 +6,7 @@ import legend.game.modding.ModNotLoadedException;
 import java.util.function.Supplier;
 
 import static legend.core.GameEngine.MODS;
+import static legend.core.GameEngine.REGISTRIES;
 
 public class RegistryDelegate<Type extends RegistryEntry> {
   private final RegistryId id;
@@ -19,7 +20,7 @@ public class RegistryDelegate<Type extends RegistryEntry> {
   }
 
   public boolean isValid() {
-    return MODS.isLoaded(this.id.modId());
+    return REGISTRIES.config.hasEntry(this.id);
   }
 
   public void clear() {
