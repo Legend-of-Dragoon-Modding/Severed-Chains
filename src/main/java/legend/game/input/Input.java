@@ -38,7 +38,7 @@ public final class Input {
   }
 
   public static void update() {
-    if(!MODS.isLoaded(CoreMod.MOD_ID)) {
+    if(!CoreMod.RECEIVE_INPUT_ON_INACTIVE_WINDOW_CONFIG.isValid()) {
       return;
     }
 
