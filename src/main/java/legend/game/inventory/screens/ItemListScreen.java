@@ -101,7 +101,7 @@ public class ItemListScreen extends MenuScreen {
 
     final List<MenuItemStruct04> items = new ArrayList<>();
     final List<MenuItemStruct04> equipment = new ArrayList<>();
-    loadItemsAndEquipmentForDisplay(equipment, items, 0x1L);
+    loadItemsAndEquipmentForDisplay(equipment, items, 0);
 
     for(final MenuItemStruct04 item : items) {
       this.itemList.add(item);

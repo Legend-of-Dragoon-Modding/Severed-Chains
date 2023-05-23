@@ -234,6 +234,10 @@ public abstract class Control extends ControlHost {
   }
 
   protected void hoverIn() {
+    if(this.parent instanceof final Control control) {
+      control.hoverIn();
+    }
+
     this.hovered = true;
 
     if(this.hoverInHandler != null) {

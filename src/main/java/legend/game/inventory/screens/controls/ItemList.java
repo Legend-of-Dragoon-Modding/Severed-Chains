@@ -26,13 +26,18 @@ public class ItemList extends Control {
   private int max;
 
   public ItemList() {
-    this(menuItem -> equipment_8011972c.get(menuItem.itemId_00).deref().get(), menuItem -> getItemIcon(menuItem.itemId_00));
+    this(
+      menuItem -> equipment_8011972c.get(menuItem.itemId_00).deref().get(),
+      menuItem -> getItemIcon(menuItem.itemId_00),
+      menuItem -> (menuItem.flags_02 & 0x1000) != 0 ? menuItem.flags_02 & 0xf : -1,
+      menuItem -> (menuItem.flags_02 & 0x1000) != 0
+    );
   }
 
-  public ItemList(final Function<MenuItemStruct04, String> getItemName, @Nullable final Function<MenuItemStruct04, Integer> getItemIcon) {
+  public ItemList(final Function<MenuItemStruct04, String> getItemName, @Nullable final Function<MenuItemStruct04, Integer> getItemIcon, @Nullable final Function<MenuItemStruct04, Integer> getFaceIcon, @Nullable final Function<MenuItemStruct04, Boolean> isDisabled) {
     this.setSize(173, 147);
 
-    this.items = new ListBox<>(getItemName, getItemIcon);
+    this.items = new ListBox<>(getItemName, getItemIcon, getFaceIcon, isDisabled);
     this.items.setPos(0, 26);
     this.items.setSize(173, 119);
     this.addControl(this.items);

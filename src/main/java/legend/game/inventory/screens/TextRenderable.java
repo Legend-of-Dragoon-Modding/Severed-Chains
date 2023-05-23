@@ -21,6 +21,12 @@ public class TextRenderable {
     }
   }
 
+  public void render(final int x, final int y, final int z, final int colour) {
+    for(final Renderable renderable : this.renderables) {
+      renderable.recolour(colour).render(x, y, z);
+    }
+  }
+
   public void render() {
     for(final Renderable renderable : this.renderables) {
       renderable.render();

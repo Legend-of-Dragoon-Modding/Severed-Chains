@@ -34,11 +34,11 @@ public class GoodsScreen extends MenuScreen {
     final Function<MenuItemStruct04, String> getItemName = item -> goodsItemNames_8011c008.get(item.itemId_00).deref().get();
     final ListBox.Highlight<MenuItemStruct04> description = item -> this.description.setText(item.itemId_00 >= 0xff ? "" : _8011b75c.get(item.itemId_00).deref().get());
 
-    this.leftList = new ItemList(getItemName, null);
+    this.leftList = new ItemList(getItemName, null, null, null);
     this.leftList.setPos(8, 15);
     this.leftList.setTitle("Goods");
 
-    this.rightList = new ItemList(getItemName, null);
+    this.rightList = new ItemList(getItemName, null, null, null);
     this.rightList.setPos(188, 15);
     this.rightList.setTitle("Goods");
 
