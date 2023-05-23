@@ -13,6 +13,7 @@ import javax.annotation.Nullable;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.MODS;
 import static legend.game.Scus94491BpeSegment.keyRepeat;
 import static legend.game.Scus94491BpeSegment_800b.analogAngle_800bee9c;
 import static legend.game.Scus94491BpeSegment_800b.analogInput_800beebc;
@@ -37,6 +38,10 @@ public final class Input {
   }
 
   public static void update() {
+    if(!MODS.isLoaded(CoreMod.MOD_ID)) {
+      return;
+    }
+
     if(!GPU.window().hasFocus() && !CONFIG.getConfig(CoreMod.RECEIVE_INPUT_ON_INACTIVE_WINDOW_CONFIG.get()) || activeController == null) {
       return;
     }
