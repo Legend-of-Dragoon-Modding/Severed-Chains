@@ -22,6 +22,10 @@ public class ListBox<T> extends Control {
   private final Function<T, String> entryToString;
   @Nullable
   private final Function<T, Integer> entryToIcon;
+  @Nullable
+  private final Function<T, Integer> entryToRightIcon;
+  @Nullable
+  private final Function<T, Boolean> isDisabled;
   private final List<Entry> entries = new ArrayList<>();
   private final int entryHeight = 17;
   private int maxVisibleEntries;
@@ -35,9 +39,11 @@ public class ListBox<T> extends Control {
   private final Glyph upArrow;
   private final Glyph downArrow;
 
-  public ListBox(final Function<T, String> entryToString, @Nullable final Function<T, Integer> entryToIcon) {
+  public ListBox(final Function<T, String> entryToString, @Nullable final Function<T, Integer> entryToIcon, @Nullable final Function<T, Integer> entryToRightIcon, @Nullable final Function<T, Boolean> isDisabled) {
     this.entryToString = entryToString;
     this.entryToIcon = entryToIcon;
+    this.entryToRightIcon = entryToRightIcon;
+    this.isDisabled = isDisabled;
 
     this.highlight = this.addControl(Glyph.uiElement(118, 118));
     FUN_80104b60(this.highlight.getRenderable()); //TODO not sure exactly what this does but without it the middle part of the highlight doesn't stretch
@@ -161,6 +167,14 @@ public class ListBox<T> extends Control {
       final Entry entry = this.entries.get(i);
 
       if(i >= this.scroll && i < this.scroll + this.maxVisibleEntries) {
+        if(this.isDisabled != null) {
+          if(this.isDisabled.apply(entry.data)) {
+            entry.colour = TextColour.LIGHT_BROWN;
+          } else {
+            entry.colour = TextColour.BROWN;
+          }
+        }
+
         entry.setY((i - this.scroll) * this.entryHeight);
         entry.show();
       } else {
@@ -216,6 +230,10 @@ public class ListBox<T> extends Control {
       if(MathHelper.inBox(x, y, 0, i * this.entryHeight + 1, this.getWidth(), this.entryHeight)) {
         this.select(i);
 
+        if(this.isDisabled != null && this.isDisabled.apply(this.getSelectedEntry())) {
+          return InputPropagation.HANDLED;
+        }
+
         if(this.selectionHandler != null) {
           this.selectionHandler.selection(this.getSelectedEntry());
         }
@@ -248,6 +266,10 @@ public class ListBox<T> extends Control {
     }
 
     if(inputAction == InputAction.BUTTON_SOUTH) {
+      if(this.isDisabled != null && this.isDisabled.apply(this.getSelectedEntry())) {
+        return InputPropagation.HANDLED;
+      }
+
       if(this.selectionHandler != null) {
         this.selectionHandler.selection(this.getSelectedEntry());
       }
@@ -339,18 +361,27 @@ public class ListBox<T> extends Control {
   public class Entry extends Control {
     public final T data;
     private final TextRenderable textRenderable;
+    private TextColour colour = TextColour.BROWN;
 
     public Entry(final T data) {
       this.data = data;
-      this.textRenderable = TextRenderer.prepareShadowText(ListBox.this.entryToString.apply(data), 0, 0, TextColour.BROWN);
+      this.textRenderable = TextRenderer.prepareShadowText(ListBox.this.entryToString.apply(data), 0, 0, this.colour);
     }
 
     @Override
     protected void render(final int x, final int y) {
-      this.textRenderable.render(x + 28, y + 3, this.getZ() - 1);
+      this.textRenderable.render(x + 28, y + 3, this.getZ() - 1, this.colour.colour);
 
       if(ListBox.this.entryToIcon != null) {
         renderItemIcon(ListBox.this.entryToIcon.apply(this.data), x + 13, y + 1, 0x8L);
+      }
+
+      if(ListBox.this.entryToRightIcon != null) {
+        final int icon = ListBox.this.entryToRightIcon.apply(this.data);
+
+        if(icon != -1) {
+          renderItemIcon(48 | icon, x + this.getWidth() - 20, y + 1, 0x8L).clut_30 = (500 + icon & 0x1ff) << 6 | 0x2b;
+        }
       }
     }
 
