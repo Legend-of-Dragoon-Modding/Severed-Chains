@@ -10,17 +10,19 @@ import static legend.core.GameEngine.REGISTRIES;
 
 public class RegistryDelegate<Type extends RegistryEntry> {
   private final RegistryId id;
+  private final Registry<Type> registry;
   private final Class<Registry<Type>> cls;
   private final Latch<Type> latch;
 
-  RegistryDelegate(final RegistryId id, final Class<Registry<Type>> cls, final Supplier<Type> supplier) {
+  RegistryDelegate(final RegistryId id, final Registry<Type> registry, final Class<Registry<Type>> cls, final Supplier<Type> supplier) {
     this.id = id;
+    this.registry = registry;
     this.cls = cls;
     this.latch = new Latch<>(supplier);
   }
 
   public boolean isValid() {
-    return REGISTRIES.config.hasEntry(this.id);
+    return this.registry.hasEntry(this.id);
   }
 
   public void clear() {

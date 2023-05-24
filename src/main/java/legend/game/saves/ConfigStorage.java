@@ -99,6 +99,9 @@ public final class ConfigStorage {
         }
       } else {
         LOGGER.warn("Unknown mod ID %s", configId);
+        final int configValueLength = data.readInt(offset);
+        offset += 4;
+        offset += configValueLength;
       }
     }
 
