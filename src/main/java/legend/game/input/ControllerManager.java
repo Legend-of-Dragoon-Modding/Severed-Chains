@@ -31,22 +31,29 @@ public class ControllerManager {
   }
 
   public void init() {
-    final String controllerGuidFromConfig = CONFIG.getConfig(CoreMod.CONTROLLER_CONFIG.get());
-
     for(int i = 0; i < GLFW_JOYSTICK_LAST; i++) {
       if(glfwJoystickPresent(i)) {
-        final String controllerGuid = glfwGetJoystickGUID(i);
-        final GlfwController controller = new GlfwController(glfwGetJoystickName(i), controllerGuid, i);
-
-        this.connectedControllers.add(controller);
-
-        this.onConnect.accept(controller);
-
-        if(controllerGuidFromConfig.isBlank() || controllerGuidFromConfig.equals(controllerGuid)) {
-          Input.useController(controller);
-        }
+        this.addController(i);
       }
     }
+  }
+
+  private GlfwController addController(final int index) {
+    final String controllerGuid = glfwGetJoystickGUID(index);
+    final GlfwController controller = new GlfwController(glfwGetJoystickName(index), controllerGuid, index);
+
+    this.connectedControllers.add(controller);
+
+    this.onConnect.accept(controller);
+
+    final String controllerGuidFromConfig = CONFIG.getConfig(CoreMod.CONTROLLER_CONFIG.get());
+
+    if(controllerGuidFromConfig.isBlank() || controllerGuidFromConfig.equals(controllerGuid)) {
+      Input.useController(controller);
+      CONFIG.setConfig(CoreMod.CONTROLLER_CONFIG.get(), controller.getGuid());
+    }
+
+    return controller;
   }
 
   public List<GlfwController> getConnectedControllers() {
@@ -67,14 +74,20 @@ public class ControllerManager {
     for(final GlfwController controller : this.connectedControllers) {
       if(controller.getGuid().equals(glfwGetJoystickGUID(id))) {
         this.onConnect.accept(controller);
+        break;
       }
     }
+
+    final GlfwController controller = this.addController(id);
+    this.onConnect.accept(controller);
   }
 
   private void onControllerDisconnected(final Window window, final int id) {
     for(final GlfwController controller : this.connectedControllers) {
       if(controller.getId() == id) {
+        this.connectedControllers.remove(controller);
         this.onDisconnect.accept(controller);
+        break;
       }
     }
   }

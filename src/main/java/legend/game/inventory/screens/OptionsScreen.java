@@ -32,16 +32,6 @@ public class OptionsScreen extends VerticalLayoutScreen {
 
     for(final RegistryId configId : GameEngine.REGISTRIES.config) {
       translations.put(configId, I18n.translate(configId.modId() + ".config." + configId.entryId() + ".label"));
-
-/*
-      //noinspection rawtypes
-      final ConfigEntry configEntry = GameEngine.REGISTRIES.config.getEntry(configId).get();
-
-      if(validLocations.contains(configEntry.storageLocation) && configEntry.hasEditControl()) {
-        //noinspection unchecked
-        this.addRow(I18n.translate(configId.modId() + ".config." + configId.entryId() + ".label"), configEntry.makeEditControl(config.getConfig(configEntry), config));
-      }
-*/
     }
 
     translations.entrySet().stream()

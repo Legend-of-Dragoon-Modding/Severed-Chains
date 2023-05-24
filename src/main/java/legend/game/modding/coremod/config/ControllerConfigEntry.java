@@ -10,6 +10,8 @@ import legend.game.saves.ConfigStorageLocation;
 import java.util.ArrayList;
 import java.util.List;
 
+import static legend.core.GameEngine.CONFIG;
+
 /** Convenience class for simple enum-backed configs */
 public class ControllerConfigEntry extends ConfigEntry<String> {
   public ControllerConfigEntry() {
@@ -30,6 +32,10 @@ public class ControllerConfigEntry extends ConfigEntry<String> {
       for(final GlfwController controller : Input.controllerManager.getConnectedControllers()) {
         dropdown.addOption(controller.getName());
         joypads.add(controller);
+
+        if(controller.getGuid().equals(CONFIG.getConfig(this))) {
+          dropdown.setSelectedIndex(joypads.size());
+        }
       }
 
       return dropdown;

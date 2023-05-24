@@ -13,34 +13,23 @@ import javax.annotation.Nullable;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.MODS;
 import static legend.game.Scus94491BpeSegment.keyRepeat;
+import static legend.game.Scus94491BpeSegment_800b.analogAngle_800bee9c;
+import static legend.game.Scus94491BpeSegment_800b.analogInput_800beebc;
+import static legend.game.Scus94491BpeSegment_800b.analogMagnitude_800beeb4;
 import static legend.game.Scus94491BpeSegment_800b.input_800bee90;
 import static legend.game.Scus94491BpeSegment_800b.press_800bee94;
 import static legend.game.Scus94491BpeSegment_800b.repeat_800bee98;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_1;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_3;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_C;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_E;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_Q;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_Z;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_X;
+import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y;
 
 public final class Input {
   private static final Logger LOGGER = LogManager.getFormatterLogger();
   private static final Marker INPUT_MARKER = MarkerManager.getMarker("INPUT");
 
   public static final ControllerManager controllerManager = new ControllerManager(Input::onControllerConnected, Input::onControllerDisconnected);
-  private static Controller playerOne;
+  private static Controller activeController;
 
   private static final Object2BooleanMap<InputBinding> held = new Object2BooleanOpenHashMap<>();
   private static final Object2BooleanMap<InputBinding> pressedThisFrame = new Object2BooleanOpenHashMap<>();
@@ -49,13 +38,17 @@ public final class Input {
   }
 
   public static void update() {
-    if(!GPU.window().hasFocus() && !CONFIG.getConfig(CoreMod.RECEIVE_INPUT_ON_INACTIVE_WINDOW_CONFIG.get()) || playerOne == null) {
+    if(!CoreMod.RECEIVE_INPUT_ON_INACTIVE_WINDOW_CONFIG.isValid()) {
       return;
     }
 
-    playerOne.poll();
+    if(!GPU.window().hasFocus() && !CONFIG.getConfig(CoreMod.RECEIVE_INPUT_ON_INACTIVE_WINDOW_CONFIG.get()) || activeController == null) {
+      return;
+    }
 
-    for(final InputBinding binding : playerOne.bindings) {
+    activeController.poll();
+
+    for(final InputBinding binding : activeController.bindings) {
       if(binding.getState().pressed) {
         if(!held.containsKey(binding)) {
           pressedThisFrame.put(binding, true);
@@ -69,31 +62,54 @@ public final class Input {
 
     InputPlayerUtility.update();
 
-    GPU.window().events.callInputEvents(playerOne);
+    GPU.window().events.callInputEvents(activeController);
   }
 
   public static void updateLegacyInput() {
     input_800bee90.set(0);
+    analogAngle_800bee9c.set(0);
+    analogMagnitude_800beeb4.set(0);
 
     for(final var entry : held.object2BooleanEntrySet()) {
       if(entry.getBooleanValue()) {
-        input_800bee90.or(entry.getKey().getInputAction().hexCode);
+        final InputAction inputAction = entry.getKey().getInputAction();
+
+        if(inputAction.hexCode != -1) {
+          input_800bee90.or(inputAction.hexCode);
+        }
+
+        if(inputAction == InputAction.JOYSTICK_LEFT_X || inputAction == InputAction.JOYSTICK_LEFT_Y) {
+          final float x = activeController.readAxis(GLFW_GAMEPAD_AXIS_LEFT_X);
+          final float y = activeController.readAxis(GLFW_GAMEPAD_AXIS_LEFT_Y);
+
+          final float deadzone = CONFIG.getConfig(CoreMod.CONTROLLER_DEADZONE_CONFIG.get());
+
+          // Map discrete axis values (-1.0..1.0) to angle and magnitude that LOD expects
+          final int angle = Math.floorMod((int)(Math.atan2(y, x) * 0x800 / Math.PI) + 0x400, 0x1000); // 0..0x1000, clockwise, up=0
+          final int mag = (int)((Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)) - deadzone) / (1.0f - deadzone) * 0xff); // 0..0xff
+
+          analogInput_800beebc.set(1);
+          analogAngle_800bee9c.set(angle);
+          analogMagnitude_800beeb4.set(mag);
+        }
       }
     }
 
     for(final var entry : pressedThisFrame.object2BooleanEntrySet()) {
       final int hexCode = entry.getKey().getInputAction().hexCode;
 
-      if(entry.getBooleanValue()) {
-        input_800bee90.or(hexCode);
-        press_800bee94.or(hexCode);
-        repeat_800bee98.or(hexCode);
-        keyRepeat.put(hexCode, 0);
-      } else {
-        input_800bee90.and(~hexCode);
-        press_800bee94.and(~hexCode);
-        repeat_800bee98.and(~hexCode);
-        keyRepeat.remove(hexCode);
+      if(hexCode != -1) {
+        if(entry.getBooleanValue()) {
+          input_800bee90.or(hexCode);
+          press_800bee94.or(hexCode);
+          repeat_800bee98.or(hexCode);
+          keyRepeat.put(hexCode, 0);
+        } else {
+          input_800bee90.and(~hexCode);
+          press_800bee94.and(~hexCode);
+          repeat_800bee98.and(~hexCode);
+          keyRepeat.remove(hexCode);
+        }
       }
     }
   }
@@ -123,7 +139,7 @@ public final class Input {
   }
 
   public static boolean pressedWithRepeatPulse(final InputAction targetKey) {
-    for(final InputBinding inputBinding : playerOne.bindings) {
+    for(final InputBinding inputBinding : activeController.bindings) {
       if(inputBinding.getInputAction() == targetKey) {
         if(inputBinding.getState() == InputState.PRESSED_THIS_FRAME || inputBinding.getState() == InputState.PRESSED_REPEAT) {
           return true;
@@ -134,7 +150,7 @@ public final class Input {
   }
 
   public static boolean getButtonState(final InputAction targetInput) {
-    for(final InputBinding inputBinding : playerOne.bindings) {
+    for(final InputBinding inputBinding : activeController.bindings) {
       if(inputBinding.getInputAction() == targetInput) {
         if(inputBinding.getState().pressed) {
           return true;
@@ -150,8 +166,8 @@ public final class Input {
       return;
     }
 
-    for(final InputBinding inputBinding : playerOne.bindings) {
-      if(inputBinding.getInputType() == InputType.KEYBOARD && inputBinding.getGlfwKeyCode() == key) {
+    for(final InputBinding inputBinding : activeController.bindings) {
+      if(inputBinding.getInputType() == InputType.KEYBOARD && CONFIG.getConfig(CoreMod.KEYBIND_CONFIGS.get(inputBinding.getInputAction()).get()).contains(key)) {
         inputBinding.setPressedForKeyboardInput();
       }
     }
@@ -162,62 +178,60 @@ public final class Input {
       return;
     }
 
-    for(final InputBinding inputBinding : playerOne.bindings) {
-      if(inputBinding.getInputType() == InputType.KEYBOARD && inputBinding.getGlfwKeyCode() == key) {
+    for(final InputBinding inputBinding : activeController.bindings) {
+      if(inputBinding.getInputType() == InputType.KEYBOARD && CONFIG.getConfig(CoreMod.KEYBIND_CONFIGS.get(inputBinding.getInputAction()).get()).contains(key)) {
         inputBinding.setReleasedForKeyboardInput();
       }
     }
   }
 
   private static void lostFocus(final Window window) {
-    for(final InputBinding inputBinding : playerOne.bindings) {
+    for(final InputBinding inputBinding : activeController.bindings) {
       inputBinding.release();
     }
   }
 
   public static void useController(@Nullable final Controller controller) {
     if(controller != null) {
-      playerOne = controller;
+      activeController = controller;
     } else {
-      playerOne = new DummyController();
-      addKeyboardBindings(playerOne);
+      activeController = new DummyController();
+      addKeyboardBindings(activeController);
     }
   }
 
   private static void onControllerConnected(final GlfwController controller) {
-    addKeyboardBindings(controller);
+    LOGGER.info("Controller %s (%s) connected", controller.getName(), controller.getGuid());
 
-    if(playerOne.equals(controller)) {
-      LOGGER.info(INPUT_MARKER,"Player 1 has been reconnected");
-    }
+    addKeyboardBindings(controller);
   }
 
   private static void onControllerDisconnected(final GlfwController controller) {
-    if(playerOne.equals(controller)) {
-      LOGGER.info(INPUT_MARKER, "Player 1's controller has been disconnected. Please reconnect the controller, or switch to a different controller using F9.");
+    LOGGER.info("Controller %s (%s) disconnected", controller.getName(), controller.getGuid());
+
+    if(activeController == controller) {
+      useController(null);
     }
   }
 
   private static void addKeyboardBindings(final Controller controller) {
-    controller.addBinding(new InputBinding(InputAction.BUTTON_CENTER_1, controller, GLFW_KEY_SPACE, InputType.KEYBOARD));
-    controller.addBinding(new InputBinding(InputAction.BUTTON_THUMB_1, controller, GLFW_KEY_Z, InputType.KEYBOARD));
-    controller.addBinding(new InputBinding(InputAction.BUTTON_THUMB_2, controller, GLFW_KEY_C, InputType.KEYBOARD));
-    controller.addBinding(new InputBinding(InputAction.BUTTON_CENTER_2, controller, GLFW_KEY_ENTER, InputType.KEYBOARD));
-    controller.addBinding(new InputBinding(InputAction.DPAD_UP, controller, GLFW_KEY_UP, InputType.KEYBOARD));
-    controller.addBinding(new InputBinding(InputAction.DPAD_RIGHT, controller, GLFW_KEY_RIGHT, InputType.KEYBOARD));
-    controller.addBinding(new InputBinding(InputAction.DPAD_DOWN, controller, GLFW_KEY_DOWN, InputType.KEYBOARD));
-    controller.addBinding(new InputBinding(InputAction.DPAD_LEFT, controller, GLFW_KEY_LEFT, InputType.KEYBOARD));
+    controller.addBinding(new InputBinding(InputAction.BUTTON_CENTER_1, controller, InputType.KEYBOARD));
+    controller.addBinding(new InputBinding(InputAction.BUTTON_THUMB_1, controller, InputType.KEYBOARD));
+    controller.addBinding(new InputBinding(InputAction.BUTTON_THUMB_2, controller, InputType.KEYBOARD));
+    controller.addBinding(new InputBinding(InputAction.BUTTON_CENTER_2, controller, InputType.KEYBOARD));
+    controller.addBinding(new InputBinding(InputAction.DPAD_UP, controller, InputType.KEYBOARD));
+    controller.addBinding(new InputBinding(InputAction.DPAD_RIGHT, controller, InputType.KEYBOARD));
+    controller.addBinding(new InputBinding(InputAction.DPAD_DOWN, controller, InputType.KEYBOARD));
+    controller.addBinding(new InputBinding(InputAction.DPAD_LEFT, controller, InputType.KEYBOARD));
 
-    controller.addBinding(new InputBinding(InputAction.BUTTON_SHOULDER_LEFT_2, controller, GLFW_KEY_1, InputType.KEYBOARD));
-    controller.addBinding(new InputBinding(InputAction.BUTTON_SHOULDER_RIGHT_2, controller, GLFW_KEY_3, InputType.KEYBOARD));
-    controller.addBinding(new InputBinding(InputAction.BUTTON_SHOULDER_LEFT_1, controller, GLFW_KEY_Q, InputType.KEYBOARD));
-    controller.addBinding(new InputBinding(InputAction.BUTTON_SHOULDER_RIGHT_1, controller, GLFW_KEY_E, InputType.KEYBOARD));
+    controller.addBinding(new InputBinding(InputAction.BUTTON_SHOULDER_LEFT_2, controller, InputType.KEYBOARD));
+    controller.addBinding(new InputBinding(InputAction.BUTTON_SHOULDER_RIGHT_2, controller, InputType.KEYBOARD));
+    controller.addBinding(new InputBinding(InputAction.BUTTON_SHOULDER_LEFT_1, controller, InputType.KEYBOARD));
+    controller.addBinding(new InputBinding(InputAction.BUTTON_SHOULDER_RIGHT_1, controller, InputType.KEYBOARD));
 
-    controller.addBinding(new InputBinding(InputAction.BUTTON_NORTH, controller, GLFW_KEY_W, InputType.KEYBOARD));
-    controller.addBinding(new InputBinding(InputAction.BUTTON_EAST, controller, GLFW_KEY_D, InputType.KEYBOARD));
-    controller.addBinding(new InputBinding(InputAction.BUTTON_SOUTH, controller, GLFW_KEY_S, InputType.KEYBOARD));
-    controller.addBinding(new InputBinding(InputAction.BUTTON_WEST, controller, GLFW_KEY_A, InputType.KEYBOARD));
-
-    controller.addBinding(new InputBinding(InputAction.BUTTON_EAST, controller, GLFW_KEY_ESCAPE, InputType.KEYBOARD));
-    controller.addBinding(new InputBinding(InputAction.BUTTON_SOUTH, controller, GLFW_KEY_ENTER, InputType.KEYBOARD));
-  }}
+    controller.addBinding(new InputBinding(InputAction.BUTTON_NORTH, controller, InputType.KEYBOARD));
+    controller.addBinding(new InputBinding(InputAction.BUTTON_EAST, controller, InputType.KEYBOARD));
+    controller.addBinding(new InputBinding(InputAction.BUTTON_SOUTH, controller, InputType.KEYBOARD));
+    controller.addBinding(new InputBinding(InputAction.BUTTON_WEST, controller, InputType.KEYBOARD));
+  }
+}

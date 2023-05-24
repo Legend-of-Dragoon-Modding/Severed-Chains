@@ -43,6 +43,7 @@ public class GlfwController extends Controller {
     return this.glfwJoystickName;
   }
 
+  @Override
   public String getGuid() {
     return this.glfwJoystickGuid;
   }

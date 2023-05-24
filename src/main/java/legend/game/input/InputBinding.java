@@ -6,7 +6,7 @@ import static legend.core.GameEngine.CONFIG;
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
 public class InputBinding {
   private final InputAction inputAction; // Identification + Action
-  private int glfwKeyCode; // Actual hardware we need to check
+  private int buttonCode; // Actual hardware we need to check
   private boolean keyPressed;
   private int hatIndex;
   private InputState state;
@@ -19,16 +19,15 @@ public class InputBinding {
   public InputBinding(final InputAction inputAction, final Controller controller) {
     this.inputAction = inputAction;
     this.targetController = controller;
-    this.glfwKeyCode = -1;
+    this.buttonCode = -1;
     this.inputType = InputType.GAMEPAD_BUTTON;
 
     this.state = InputState.NO_INPUT;
   }
 
-  public InputBinding(final InputAction inputAction, final Controller controller, final int glfwKeyCode, final InputType inputType) {
+  public InputBinding(final InputAction inputAction, final Controller controller, final InputType inputType) {
     this.inputAction = inputAction;
     this.targetController = controller;
-    this.glfwKeyCode = glfwKeyCode;
     this.inputType = inputType;
 
     this.state = InputState.NO_INPUT;
@@ -59,7 +58,7 @@ public class InputBinding {
   }
 
   private void pollGamepadButtons() {
-    if(this.targetController.readButton(this.glfwKeyCode)) {
+    if(this.targetController.readButton(this.buttonCode)) {
       this.handlePositiveState();
     } else {
       this.handleNoInputState();
@@ -67,9 +66,15 @@ public class InputBinding {
   }
 
   private void pollGamepadAxis() {
-    final float axisValue = this.targetController.readAxis(this.glfwKeyCode);
+    final float axisValue = this.targetController.readAxis(this.buttonCode);
 
-    if(this.inputType == InputType.GAMEPAD_AXIS_BUTTON_POSITIVE) {
+    if(this.inputType == InputType.GAMEPAD_AXIS) {
+      if(Math.abs(axisValue) > CONFIG.getConfig(CoreMod.CONTROLLER_DEADZONE_CONFIG.get())) {
+        this.state = InputState.PRESSED;
+      } else {
+        this.state = InputState.NO_INPUT;
+      }
+    } else if(this.inputType == InputType.GAMEPAD_AXIS_BUTTON_POSITIVE) {
       if(axisValue > CONFIG.getConfig(CoreMod.CONTROLLER_DEADZONE_CONFIG.get())) {
         this.handlePositiveState();
       } else {
@@ -85,7 +90,7 @@ public class InputBinding {
   }
 
   private void pollGamepadHats() {
-    if(this.targetController.readHat(this.glfwKeyCode, this.hatIndex)) {
+    if(this.targetController.readHat(this.buttonCode, this.hatIndex)) {
       this.handlePositiveState();
     } else {
       this.handleNoInputState();
@@ -143,9 +148,8 @@ public class InputBinding {
   public InputAction getInputAction() { return this.inputAction; }
   public InputState getState() { return this.state; }
   public InputType getInputType() { return this.inputType; }
-  public int getGlfwKeyCode() { return this.glfwKeyCode; }
 
-  public void setGlfwKeyCode(final int glfwKeyCode) { this.glfwKeyCode = glfwKeyCode;  }
+  public void setButtonCode(final int buttonCode) { this.buttonCode = buttonCode; }
 
   public void setInputType(final InputType inputType) { this.inputType = inputType;  }
 

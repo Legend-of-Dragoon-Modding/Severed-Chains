@@ -176,7 +176,7 @@ public abstract class MenuScreen extends ControlHost {
     final Control focus = this.findControlAt(x, y);
 
     if(focus != this.focus) {
-      this.setFocus(this.hover);
+      this.setFocus(focus);
     }
   }
 
