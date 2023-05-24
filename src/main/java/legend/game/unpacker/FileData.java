@@ -24,7 +24,7 @@ public record FileData(byte[] data, int offset, int size, int virtualSize, int r
 
   /** Not a virtual file and larger than zero bytes */
   public boolean real() {
-    return this.realFileIndex == -1 && this.size != 0;
+    return this.virtualSize != 0;
   }
 
   public FileData slice(final int offset, final int size) {
