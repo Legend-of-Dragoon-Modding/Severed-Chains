@@ -8014,9 +8014,12 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
-  /** Initializes scale vector scaler for expansion of guard-type effects */
+  /**
+   * Initializes scale vector scaler for expansion of guard-type effects.
+   * has two types, not sure if both are for guard effects.
+   */
   @Method(0x80113db8L)
-  public static FlowControl scriptInitializeGuardEffectScaleScaler(final long a0, final RunningScript<?> script) {
+  public static FlowControl FUN_80113db8(final long a0, final RunningScript<?> script) {
     final int s7 = script.params_20[0].get();
     final int s3 = script.params_20[1].get();
     final int s2 = script.params_20[2].get();
@@ -8080,12 +8083,12 @@ public final class SEffe {
 
   @Method(0x80114070L)
   public static FlowControl FUN_80114070(final RunningScript<?> script) {
-    return scriptInitializeGuardEffectScaleScaler(0, script);
+    return FUN_80113db8(0, script);
   }
 
   @Method(0x80114094L)
   public static FlowControl FUN_80114094(final RunningScript<?> script) {
-    return scriptInitializeGuardEffectScaleScaler(1, script);
+    return FUN_80113db8(1, script);
   }
 
   @Method(0x801143f8L)
