@@ -29,12 +29,12 @@ public class AdditionExtra04 {
     int ultimateWargod = 0;
     // This is a cheap way to tell if we're in a combat engine cutscene and turn it off
     if(CONFIG.getConfig(CoreMod.AUTO_ADDITION_CONFIG.get()) == AutoAdditionMode.ON) {
-      final ScriptState<? extends BattleObject27c> combatant = _8006e398.bobjIndices_e0c[this.index];
+      final ScriptState<? extends BattleObject27c> combatant = _8006e398.allBobjs_e0c[this.index];
 
       if(combatant != null && (combatant.storage_44[7] & 0x4) == 0) {
         boolean enemyAlive = false;
-        for(int i = 0; i < _8006e398.monsterBobjIndices_ebc.length; i++) {
-          if(_8006e398.monsterBobjIndices_ebc[i] != null && _8006e398.monsterBobjIndices_ebc[i].innerStruct_00 != null && _8006e398.monsterBobjIndices_ebc[i].innerStruct_00.hp_08 != 0) {
+        for(int i = 0; i < _8006e398.aliveMonsterBobjs_ebc.length; i++) {
+          if(_8006e398.aliveMonsterBobjs_ebc[i] != null && _8006e398.aliveMonsterBobjs_ebc[i].innerStruct_00 != null && _8006e398.aliveMonsterBobjs_ebc[i].innerStruct_00.hp_08 != 0) {
             enemyAlive = true;
             break;
           }

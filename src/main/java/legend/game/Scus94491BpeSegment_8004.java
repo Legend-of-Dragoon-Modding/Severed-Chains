@@ -288,7 +288,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[198] = Scus94491BpeSegment_8002::scriptAddSobjTextbox;
     scriptSubFunctions_8004e29c[199] = Scus94491BpeSegment_8002::FUN_80029e8c;
     scriptSubFunctions_8004e29c[200] = Scus94491BpeSegment_8002::FUN_800254bc;
-    scriptSubFunctions_8004e29c[201] = Scus94491BpeSegment_8002::FUN_80029d6c;
+    scriptSubFunctions_8004e29c[201] = Scus94491BpeSegment_8002::scriptDeallocateTextbox;
     scriptSubFunctions_8004e29c[202] = Scus94491BpeSegment_8002::FUN_80029e04;
     scriptSubFunctions_8004e29c[203] = Scus94491BpeSegment_8002::FUN_80029ecc;
     scriptSubFunctions_8004e29c[204] = Scus94491BpeSegment_8002::FUN_80028ff8;
@@ -404,7 +404,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[368] = Bttl_800c::scriptLoadStage;
     scriptSubFunctions_8004e29c[369] = Bttl_800c::FUN_800cd910;
     scriptSubFunctions_8004e29c[370] = Bttl_800c::scriptGetCombatantIndex;
-    scriptSubFunctions_8004e29c[371] = Bttl_800c::FUN_800cd998;
+    scriptSubFunctions_8004e29c[371] = Bttl_800c::scriptGetBobjSlot;
     scriptSubFunctions_8004e29c[372] = Bttl_800c::FUN_800cdb74;
 
     scriptSubFunctions_8004e29c[416] = Bttl_800e::FUN_800e6fb4;
@@ -773,7 +773,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
    *   <li>{@link Bttl_800c#deferDoNothing}</li>
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
-   *   <li>{@link Bttl_800c#FUN_800c7a80}</li>
+   *   <li>{@link Bttl_800c#calculateInitialTurnValues}</li>
    *   <li>{@link Bttl_800c#FUN_800c7bb8}</li>
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
    *   <li>{@link Bttl_800c#FUN_800c8068}</li>

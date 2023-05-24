@@ -4491,7 +4491,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80029d6cL)
-  public static FlowControl FUN_80029d6c(final RunningScript<?> script) {
+  public static FlowControl scriptDeallocateTextbox(final RunningScript<?> script) {
     final int s1 = script.params_20[0].get();
     final Struct84 struct84 = _800bdf38[s1];
 

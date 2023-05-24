@@ -41,7 +41,7 @@ import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.combat.Bttl_800c._800c66b0;
-import static legend.game.combat.Bttl_800c._800c66d0;
+import static legend.game.combat.Bttl_800c.allBobjCount_800c66d0;
 import static legend.game.combat.Bttl_800c._800c6718;
 import static legend.game.combat.Bttl_800c._800c6748;
 import static legend.game.combat.Bttl_800c._800c6780;
@@ -215,12 +215,13 @@ public class SBtld {
       final ScriptState<MonsterBattleObject> state = SCRIPTS.allocateScriptState(name, new MonsterBattleObject(name));
       state.setTicker(Bttl_800c::bobjTicker);
       state.setDestructor(Bttl_800c::bobjDestructor);
-      _8006e398.bobjIndices_e0c[_800c66d0.get()] = state;
-      _8006e398.bobjIndices_e50[monsterCount_800c6768.get()] = state;
+      _8006e398.allBobjs_e0c[allBobjCount_800c66d0.get()] = state;
+      _8006e398.monsterBobjs_e50[monsterCount_800c6768.get()] = state;
       final BattleObject27c data = state.innerStruct_00;
+      data.setState(state);
       data.magic_00 = BattleScriptDataBase.BOBJ;
       data.charIndex_272 = charIndex;
-      data._274 = _800c66d0.get();
+      data.combatControllerAllBobjSlot_274 = allBobjCount_800c66d0.get();
       data.charSlot_276 = monsterCount_800c6768.get();
       data.combatant_144 = combatant;
       data.combatantIndex_26c = combatantIndex;
@@ -229,17 +230,17 @@ public class SBtld {
       data.model_148.texture = new Latch<>(() -> combatant.texture);
       data.model_148.palettes = new Latch<>(() -> combatant.palettes);
       state.storage_44[7] |= 0x4;
-      _800c66d0.incr();
+      allBobjCount_800c66d0.incr();
       monsterCount_800c6768.incr();
     }
 
     //LAB_8010975c
-    _8006e398.bobjIndices_e0c[_800c66d0.get()] = null;
-    _8006e398.bobjIndices_e50[monsterCount_800c6768.get()] = null;
+    _8006e398.allBobjs_e0c[allBobjCount_800c66d0.get()] = null;
+    _8006e398.monsterBobjs_e50[monsterCount_800c6768.get()] = null;
 
     //LAB_801097ac
     for(int i = 0; i < monsterCount_800c6768.get(); i++) {
-      loadMonster(_8006e398.bobjIndices_e50[i]);
+      loadMonster(_8006e398.monsterBobjs_e50[i]);
     }
 
     //LAB_801097d0

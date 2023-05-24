@@ -2,9 +2,12 @@ package legend.game.combat.bobj;
 
 import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.CombatantStruct1a8;
+import legend.game.scripting.ScriptState;
 import legend.game.types.Model124;
 
 public abstract class BattleObject27c extends BattleScriptDataBase {
+  private ScriptState<? extends BattleObject27c> state;
+
   public int hp_08;
 
   /**
@@ -221,13 +224,29 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
   public int animIndex_270;
   /** Also monster ID */
   public int charIndex_272;
-  public int _274;
+  public int combatControllerAllBobjSlot_274;
   public int charSlot_276;
   /** Has model? Used to be used to free model, no longer used since it's managed by java */
   public int _278;
 
   public BattleObject27c(final String name) {
     this.model_148 = new Model124(name);
+  }
+
+  public void setState(final ScriptState<? extends BattleObject27c> state) {
+    if(this.state != null) {
+      throw new IllegalStateException("State is already set");
+    }
+
+    this.state = state;
+  }
+
+  public ScriptState<? extends BattleObject27c> getState() {
+    return this.state;
+  }
+
+  public void turnStart() {
+
   }
 
   public int getStat(final int statIndex) {

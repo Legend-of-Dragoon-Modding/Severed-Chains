@@ -30,16 +30,16 @@ public class GameVarArrayParam extends Param {
     return switch(this.varIndex) {
       case 6 -> Scus94491BpeSegment_800b.gameState_800babc8.scriptData_08[this.arrIndex];
       case 17 -> Scus94491BpeSegment_800b.gameState_800babc8.charIds_88[this.arrIndex];
-      case 32 -> Scus94491BpeSegment_8006._8006e398.bobjIndices_e0c[this.arrIndex] != null ? Scus94491BpeSegment_8006._8006e398.bobjIndices_e0c[this.arrIndex].index : -1;
-      case 34 -> Scus94491BpeSegment_8006._8006e398.charBobjIndices_e40[this.arrIndex] != null ? Scus94491BpeSegment_8006._8006e398.charBobjIndices_e40[this.arrIndex].index : -1;
-      case 36 -> Scus94491BpeSegment_8006._8006e398.bobjIndices_e50[this.arrIndex] != null ? Scus94491BpeSegment_8006._8006e398.bobjIndices_e50[this.arrIndex].index : -1;
+      case 32 -> Scus94491BpeSegment_8006._8006e398.allBobjs_e0c[this.arrIndex] != null ? Scus94491BpeSegment_8006._8006e398.allBobjs_e0c[this.arrIndex].index : -1;
+      case 34 -> Scus94491BpeSegment_8006._8006e398.charBobjs_e40[this.arrIndex] != null ? Scus94491BpeSegment_8006._8006e398.charBobjs_e40[this.arrIndex].index : -1;
+      case 36 -> Scus94491BpeSegment_8006._8006e398.monsterBobjs_e50[this.arrIndex] != null ? Scus94491BpeSegment_8006._8006e398.monsterBobjs_e50[this.arrIndex].index : -1;
       case 41 -> Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928[this.arrIndex];
       case 45 -> this.readCombatVar(this.arrIndex);
       // Indices 6-9 are indices for the four camera positions in a battle
       case 46 -> Bttl_800c.intRef_800c6718.get(this.arrIndex).get();
-      case 48 -> Scus94491BpeSegment_8006._8006e398.bobjIndices_e78[this.arrIndex] != null ? Scus94491BpeSegment_8006._8006e398.bobjIndices_e78[this.arrIndex].index : -1;
-      case 50 -> Scus94491BpeSegment_8006._8006e398.bobjIndices_eac[this.arrIndex] != null ? Scus94491BpeSegment_8006._8006e398.bobjIndices_eac[this.arrIndex].index : -1;
-      case 52 -> Scus94491BpeSegment_8006._8006e398.monsterBobjIndices_ebc[this.arrIndex] != null ? Scus94491BpeSegment_8006._8006e398.monsterBobjIndices_ebc[this.arrIndex].index : -1;
+      case 48 -> Scus94491BpeSegment_8006._8006e398.aliveBobjs_e78[this.arrIndex] != null ? Scus94491BpeSegment_8006._8006e398.aliveBobjs_e78[this.arrIndex].index : -1;
+      case 50 -> Scus94491BpeSegment_8006._8006e398.aliveCharBobjs_eac[this.arrIndex] != null ? Scus94491BpeSegment_8006._8006e398.aliveCharBobjs_eac[this.arrIndex].index : -1;
+      case 52 -> Scus94491BpeSegment_8006._8006e398.aliveMonsterBobjs_ebc[this.arrIndex] != null ? Scus94491BpeSegment_8006._8006e398.aliveMonsterBobjs_ebc[this.arrIndex].index : -1;
       case 64 -> SMap.sobjs_800c6880[this.arrIndex] != null ? SMap.sobjs_800c6880[this.arrIndex].index : 0;
       case 73 -> SMap._800c6970.get(this.arrIndex).get();
       case 112 -> Scus94491BpeSegment_800b.gameState_800babc8._15c[this.arrIndex];
@@ -72,15 +72,15 @@ public class GameVarArrayParam extends Param {
     switch(this.varIndex) {
       case 6 -> Scus94491BpeSegment_800b.gameState_800babc8.scriptData_08[this.arrIndex] = val;
       case 17 -> Scus94491BpeSegment_800b.gameState_800babc8.charIds_88[this.arrIndex] = val;
-      case 32 -> Scus94491BpeSegment_8006._8006e398.bobjIndices_e0c[this.arrIndex] = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[val];
-      case 34 -> Scus94491BpeSegment_8006._8006e398.charBobjIndices_e40[this.arrIndex] = (ScriptState<PlayerBattleObject>)scriptStatePtrArr_800bc1c0[val];
-      case 36 -> Scus94491BpeSegment_8006._8006e398.bobjIndices_e50[this.arrIndex] = (ScriptState<MonsterBattleObject>)scriptStatePtrArr_800bc1c0[val];
+      case 32 -> Scus94491BpeSegment_8006._8006e398.allBobjs_e0c[this.arrIndex] = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[val];
+      case 34 -> Scus94491BpeSegment_8006._8006e398.charBobjs_e40[this.arrIndex] = (ScriptState<PlayerBattleObject>)scriptStatePtrArr_800bc1c0[val];
+      case 36 -> Scus94491BpeSegment_8006._8006e398.monsterBobjs_e50[this.arrIndex] = (ScriptState<MonsterBattleObject>)scriptStatePtrArr_800bc1c0[val];
       case 41 -> Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928[this.arrIndex] = val;
       case 45 -> this.writeCombatVar(this.arrIndex, val);
       case 46 -> Bttl_800c.intRef_800c6718.get(this.arrIndex).set(val);
-      case 48 -> Scus94491BpeSegment_8006._8006e398.bobjIndices_e78[this.arrIndex] = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[val];
-      case 50 -> Scus94491BpeSegment_8006._8006e398.bobjIndices_eac[this.arrIndex] = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[val];
-      case 52 -> Scus94491BpeSegment_8006._8006e398.monsterBobjIndices_ebc[this.arrIndex] = (ScriptState<MonsterBattleObject>)scriptStatePtrArr_800bc1c0[val];
+      case 48 -> Scus94491BpeSegment_8006._8006e398.aliveBobjs_e78[this.arrIndex] = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[val];
+      case 50 -> Scus94491BpeSegment_8006._8006e398.aliveCharBobjs_eac[this.arrIndex] = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[val];
+      case 52 -> Scus94491BpeSegment_8006._8006e398.aliveMonsterBobjs_ebc[this.arrIndex] = (ScriptState<MonsterBattleObject>)scriptStatePtrArr_800bc1c0[val];
       case 64 -> SMap.sobjs_800c6880[this.arrIndex] = (ScriptState<SubmapObject210>)scriptStatePtrArr_800bc1c0[val];
       case 73 -> SMap._800c6970.get(this.arrIndex).set(val);
       case 112 -> Scus94491BpeSegment_800b.gameState_800babc8._15c[this.arrIndex] = val;

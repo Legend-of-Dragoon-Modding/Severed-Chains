@@ -3,7 +3,6 @@ package legend.game.combat.types;
 import legend.game.combat.bobj.BattleObject27c;
 import legend.game.combat.bobj.MonsterBattleObject;
 import legend.game.combat.bobj.PlayerBattleObject;
-import legend.game.combat.effects.TransformationMode;
 import legend.game.combat.types.BattleStructEF4.AdditionExtra04;
 import legend.game.combat.types.BattleStructEF4.SpecialEffects20;
 import legend.game.combat.types.BattleStructEF4.Status04;
@@ -114,7 +113,7 @@ public class BattleStructEf4 {
    *   <li>0x06 Meru</li>
    *   <li>0x07 Kongol</li>
    *   <li>0x08 Miranda</li>
-   * <ul>
+   * </ul>
    */
   public int specialFlag_2b0;
   public int _2b4;
@@ -298,12 +297,12 @@ public class BattleStructEf4 {
   // This was used for storing animation files in VRAM
 //  public final int[] y_d80 = new int[3];
   public final BattleStructEf4Sub08[] _d8c = new BattleStructEf4Sub08[150];
-  public final ScriptState<? extends BattleObject27c>[] bobjIndices_e0c = new ScriptState[150];
-  public final ScriptState<PlayerBattleObject>[] charBobjIndices_e40 = new ScriptState[4];
-  public final ScriptState<MonsterBattleObject>[] bobjIndices_e50 = new ScriptState[146];
-  public final ScriptState<? extends BattleObject27c>[] bobjIndices_e78 = new ScriptState[150];
-  public final ScriptState<? extends BattleObject27c>[] bobjIndices_eac = new ScriptState[4];
-  public final ScriptState<MonsterBattleObject>[] monsterBobjIndices_ebc = new ScriptState[146];
+  public final ScriptState<? extends BattleObject27c>[] allBobjs_e0c = new ScriptState[150];
+  public final ScriptState<PlayerBattleObject>[] charBobjs_e40 = new ScriptState[4];
+  public final ScriptState<MonsterBattleObject>[] monsterBobjs_e50 = new ScriptState[146];
+  public final ScriptState<? extends BattleObject27c>[] aliveBobjs_e78 = new ScriptState[150];
+  public final ScriptState<? extends BattleObject27c>[] aliveCharBobjs_eac = new ScriptState[4];
+  public final ScriptState<MonsterBattleObject>[] aliveMonsterBobjs_ebc = new ScriptState[146];
   // Reads directly from gameState now
 //  public TransformationMode morphMode_ee4;
 

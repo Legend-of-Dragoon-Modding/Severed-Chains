@@ -51,27 +51,28 @@ public class ScriptState<T> {
   public final int[] callStack_1c = new int[10];
   /**
    * <ul>
+   *   <li>0 - my index</li>
    *   <li>5 - parent script index</li>
    *   <li>6 - child script index</li>
    *   <li>
    *     <p>7 - flags bit set - which of the pointers at the start of the struct are set</p>
    *
    *     <ul>
-   *       <li>Bit 17 - {@link ScriptState#scriptPtr_14} is unset</li>
-   *       <li>Bit 18 - {@link ScriptState#ticker_04} is unset</li>
-   *       <li>Bit 19 - {@link ScriptState#renderer_08} is unset</li>
-   *       <li>Bit 20 - Child script</li>
-   *       <li>Bit 21 - Parent script</li>
-   *       <li>Bit 26 - {@link ScriptState#tempTicker_10} is set (note: not sure why this is backwards from the others)</li>
-   *       <li>Bit 27 - {@link ScriptState#destructor_0c} is unset</li>
+   *       <li>0x2_0000 - {@link ScriptState#scriptPtr_14} is unset</li>
+   *       <li>0x4_0000 - {@link ScriptState#ticker_04} is unset</li>
+   *       <li>0x8_0000 - {@link ScriptState#renderer_08} is unset</li>
+   *       <li>0x10_0000 - Child script</li>
+   *       <li>0x20_0000 - Parent script</li>
+   *       <li>0x400_0000 - {@link ScriptState#tempTicker_10} is set (note: not sure why this is backwards from the others)</li>
+   *       <li>0x800_0000 - {@link ScriptState#destructor_0c} is unset</li>
    *     </ul>
    *
    *     <ul>
-   *       <li>If bits 17 and 20 are not set, the script will be executed</li>
-   *       <li>If bits 18 and 20 are not set, {@link ScriptState#ticker_04} will be executed</li>
-   *       <li>If bits 19 and 20 are not set, {@link ScriptState#renderer_08} will be executed</li>
-   *       <li>If bit 26 is set and bit 20 is not set, {@link ScriptState#tempTicker_10} will be executed</li>
-   *       <li>If bits 27 and 20 are not set, {@link ScriptState#destructor_0c} will be executed</li>
+   *       <li>If bits 0x2_0000 and 0x10_0000 are not set, the script will be executed</li>
+   *       <li>If bits 0x4_0000 and 0x10_0000 are not set, {@link ScriptState#ticker_04} will be executed</li>
+   *       <li>If bits 0x8_0000 and 0x10_0000 are not set, {@link ScriptState#renderer_08} will be executed</li>
+   *       <li>If bit 0x400_0000 is set and bit 0x10_0000 is not set, {@link ScriptState#tempTicker_10} will be executed</li>
+   *       <li>If bits 0x800_0000 and 0x10_0000 are not set, {@link ScriptState#destructor_0c} will be executed</li>
    *     </ul>
    *
    *     <p>In combat this variable is used for a few different things:</p>
@@ -94,17 +95,28 @@ public class ScriptState<T> {
    *     </ul>
    *   </li>
    *   <li>
-   *     8 - Battle Menu flag - controls which options you can choose from.
+   *     8
    *     <ul>
-   *       <li>0x01 Attack</li>
-   *       <li>0x02 Guard</li>
-   *       <li>0x04 Items</li>
-   *       <li>0x08 Escape</li>
-   *       <li>0x10 Dragoon</li>
-   *       <li>0x20 D-Attack</li>
-   *       <li>0x40 Magic</li>
-   *       <li>0x80 Special</li>
-   *     <ul>
+   *       <li>
+   *         Battle Menu flag - controls which options you can choose from
+   *         <ul>
+   *           <li>0x01 Attack</li>
+   *           <li>0x02 Guard</li>
+   *           <li>0x04 Items</li>
+   *           <li>0x08 Escape</li>
+   *           <li>0x10 Dragoon</li>
+   *           <li>0x20 D-Attack</li>
+   *           <li>0x40 Magic</li>
+   *           <li>0x80 Special</li>
+   *         <ul>
+   *       </li>
+   *       <li>
+   *         Something else
+   *         <ul>
+   *           <li>1 - already handled stunned effect</li>
+   *         </ul>
+   *       </li>
+   *     </ul>
    *   </li>
    *   <li>9 - is dragoon</li>
    * </ul>

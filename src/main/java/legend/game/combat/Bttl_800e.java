@@ -156,7 +156,7 @@ import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.combat.Bttl_800c.FUN_800ca418;
-import static legend.game.combat.Bttl_800c._800c669c;
+import static legend.game.combat.Bttl_800c.aliveBobjCount_800c669c;
 import static legend.game.combat.Bttl_800c._800c6930;
 import static legend.game.combat.Bttl_800c._800c6938;
 import static legend.game.combat.Bttl_800c._800c697e;
@@ -202,7 +202,7 @@ import static legend.game.combat.Bttl_800c.deffManager_800c693c;
 import static legend.game.combat.Bttl_800c.displayStats_800c6c2c;
 import static legend.game.combat.Bttl_800c.dragoonDeffsWithExtraTims_800fb040;
 import static legend.game.combat.Bttl_800c.dragoonSpells_800c6960;
-import static legend.game.combat.Bttl_800c.enemyCount_800c6758;
+import static legend.game.combat.Bttl_800c.aliveMonsterCount_800c6758;
 import static legend.game.combat.Bttl_800c.floatingNumbers_800c6b5c;
 import static legend.game.combat.Bttl_800c.getCombatant;
 import static legend.game.combat.Bttl_800c.lightTicks_800c6928;
@@ -3373,14 +3373,14 @@ public final class Bttl_800e {
       final ScriptState<? extends BattleObject27c> targetState;
       if(targetType == 0) {
         //LAB_800ecb00
-        targetState = _8006e398.charBobjIndices_e40[combatantIdx];
+        targetState = _8006e398.charBobjs_e40[combatantIdx];
       } else if(targetType == 1) {
         //LAB_800ecb1c
-        targetState = _8006e398.monsterBobjIndices_ebc[combatantIdx];
+        targetState = _8006e398.aliveMonsterBobjs_ebc[combatantIdx];
         //LAB_800ecaf0
       } else if(targetType == 2) {
         //LAB_800ecb38
-        targetState = _8006e398.bobjIndices_e0c[combatantIdx];
+        targetState = _8006e398.allBobjs_e0c[combatantIdx];
       } else {
         throw new IllegalStateException("Invalid target type " + targetType);
       }
@@ -3405,11 +3405,11 @@ public final class Bttl_800e {
         count = charCount_800c677c.get();
       } else if(targetType == 1) {
         //LAB_800ecbec
-        count = enemyCount_800c6758.get();
+        count = aliveMonsterCount_800c6758.get();
         //LAB_800ecbc8
       } else if(targetType == 2) {
         //LAB_800ecbfc
-        count = _800c669c.get();
+        count = aliveBobjCount_800c669c.get();
       }
 
       //LAB_800ecc04
@@ -3418,14 +3418,14 @@ public final class Bttl_800e {
         final ScriptState<? extends BattleObject27c> targetBobj;
         if(targetType == 0) {
           //LAB_800ecc50
-          targetBobj = _8006e398.charBobjIndices_e40[i];
+          targetBobj = _8006e398.charBobjs_e40[i];
         } else if(targetType == 1) {
           //LAB_800ecc5c
-          targetBobj = _8006e398.monsterBobjIndices_ebc[i];
+          targetBobj = _8006e398.aliveMonsterBobjs_ebc[i];
           //LAB_800ecc40
         } else if(targetType == 2) {
           //LAB_800ecc68
-          targetBobj = _8006e398.bobjIndices_e78[i];
+          targetBobj = _8006e398.aliveBobjs_e78[i];
         } else {
           throw new IllegalStateException("Invalid target type " + targetType);
         }
@@ -3750,7 +3750,7 @@ public final class Bttl_800e {
     //LAB_800eebb4
     //LAB_800eebd8
     for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
-      final PlayerBattleObject bobj = _8006e398.charBobjIndices_e40[charSlot].innerStruct_00;
+      final PlayerBattleObject bobj = _8006e398.charBobjs_e40[charSlot].innerStruct_00;
       final CharacterData2c charData = gameState_800babc8.charData_32c[bobj.charIndex_272];
 
       //LAB_800eec10
@@ -3949,7 +3949,7 @@ public final class Bttl_800e {
     //LAB_800ef36c
     //LAB_800ef38c
     for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
-      final PlayerBattleObject player = _8006e398.charBobjIndices_e40[charSlot].innerStruct_00;
+      final PlayerBattleObject player = _8006e398.charBobjs_e40[charSlot].innerStruct_00;
       final byte[] spellIndices = new byte[8];
       getUnlockedDragoonSpells(spellIndices, player.charIndex_272);
       dragoonSpells_800c6960.get(charSlot).charIndex_00.set(player.charIndex_272);
@@ -4090,7 +4090,7 @@ public final class Bttl_800e {
   public static void FUN_800ef8d8(final int charSlot) {
     final BattleStruct3c a0_0 = _800c6c40.get(charSlot);
     a0_0.charIndex_00.set((short)charSlot);
-    a0_0._02.set((short)_8006e398.charBobjIndices_e40[charSlot].innerStruct_00.charIndex_272);
+    a0_0._02.set((short)_8006e398.charBobjs_e40[charSlot].innerStruct_00.charIndex_272);
     a0_0._04.set((short)0);
     a0_0.flags_06.or(0x2);
     a0_0.x_08.set((short)(charSlot * 94 + 63));
@@ -4133,7 +4133,7 @@ public final class Bttl_800e {
         final BattleStruct3c s2 = _800c6c40.get(charSlot);
 
         if(s2.charIndex_00.get() != -1 && (s2.flags_06.get() & 0x1L) != 0 && (s2.flags_06.get() & 0x2L) != 0) {
-          final PlayerBattleObject player = _8006e398.charBobjIndices_e40[charSlot].innerStruct_00;
+          final PlayerBattleObject player = _8006e398.charBobjs_e40[charSlot].innerStruct_00;
 
           final int textEffect;
           if(player.hp_08 > player.maxHp_10 / 2) {
@@ -4212,7 +4212,7 @@ public final class Bttl_800e {
         final BattleStruct3c s7 = _800c6c40.get(charSlot);
 
         if(s7.charIndex_00.get() != -1 && (s7.flags_06.get() & 0x1) != 0 && (s7.flags_06.get() & 0x2) != 0) {
-          final ScriptState<PlayerBattleObject> state = _8006e398.charBobjIndices_e40[charSlot];
+          final ScriptState<PlayerBattleObject> state = _8006e398.charBobjs_e40[charSlot];
           final PlayerBattleObject player = state.innerStruct_00;
           final int spec;
           int s5;
@@ -4450,7 +4450,7 @@ public final class Bttl_800e {
           //LAB_800f0bb0
           if(menu.targetType_50.get() == 1) {
             //LAB_800f0ca4
-            targetBobj = _8006e398.monsterBobjIndices_ebc[targetCombatant].innerStruct_00;
+            targetBobj = _8006e398.aliveMonsterBobjs_ebc[targetCombatant].innerStruct_00;
 
             //LAB_800f0cf0
             int enemySlot;
@@ -4464,23 +4464,23 @@ public final class Bttl_800e {
             str = getTargetEnemyName(targetBobj, currentEnemyNames_800c69d0[enemySlot]);
             element = getTargetEnemyElement(targetBobj.elementFlag_1c);
           } else if(menu.targetType_50.get() == 0) {
-            targetBobj = _8006e398.charBobjIndices_e40[targetCombatant].innerStruct_00;
+            targetBobj = _8006e398.charBobjs_e40[targetCombatant].innerStruct_00;
             str = playerNames_800fb378.get(targetBobj.charIndex_272).deref();
             element = (int)_800c6ef0.offset(2, targetBobj.charIndex_272 * 0x2L).get();
 
-            if(targetBobj.charIndex_272 == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0 && (_8006e398.charBobjIndices_e40[menu.combatantIndex.get()].storage_44[7] & 0x2) != 0) {
+            if(targetBobj.charIndex_272 == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0 && (_8006e398.charBobjs_e40[menu.combatantIndex.get()].storage_44[7] & 0x2) != 0) {
               element = (int)_800c6ef0.offset(0x12L).get();
             }
           } else {
             //LAB_800f0d58
             //LAB_800f0d5c
-            final ScriptState<? extends BattleObject27c> state = _8006e398.bobjIndices_e0c[targetCombatant];
+            final ScriptState<? extends BattleObject27c> state = _8006e398.allBobjs_e0c[targetCombatant];
             targetBobj = state.innerStruct_00;
             if((state.storage_44[7] & 0x4) == 0) {
               str = playerNames_800fb378.get(targetBobj.charIndex_272).deref();
               element = (int)_800c6ef0.offset(2, targetBobj.charIndex_272 * 0x2L).get();
 
-              if(targetBobj.charIndex_272 == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0 && (_8006e398.charBobjIndices_e40[menu.combatantIndex.get()].storage_44[7] & 0x2) != 0) {
+              if(targetBobj.charIndex_272 == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0 && (_8006e398.charBobjs_e40[menu.combatantIndex.get()].storage_44[7] & 0x2) != 0) {
                 element = (int)_800c6ef0.offset(0x12L).get();
               }
             } else {

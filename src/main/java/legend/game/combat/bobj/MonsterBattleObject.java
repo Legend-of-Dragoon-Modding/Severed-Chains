@@ -33,6 +33,12 @@ public class MonsterBattleObject extends BattleObject27c {
   }
 
   @Override
+  public void turnStart() {
+    super.turnStart();
+    this.getState().storage_44[7] &= ~0x8;
+  }
+
+  @Override
   public int getStat(final int statIndex) {
     return switch(statIndex) {
       case 44 -> this.originalHp_5c;

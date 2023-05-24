@@ -63,7 +63,7 @@ import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.spGained_800bc950;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
-import static legend.game.combat.Bttl_800c._800c669c;
+import static legend.game.combat.Bttl_800c.aliveBobjCount_800c669c;
 import static legend.game.combat.Bttl_800c._800c66b0;
 import static legend.game.combat.Bttl_800c._800c6748;
 import static legend.game.combat.Bttl_800c._800c697c;
@@ -124,7 +124,7 @@ import static legend.game.combat.Bttl_800c.digitOffsetXy_800c7014;
 import static legend.game.combat.Bttl_800c.digitU_800c7028;
 import static legend.game.combat.Bttl_800c.displayStats_800c6c2c;
 import static legend.game.combat.Bttl_800c.dragoonSpells_800c6960;
-import static legend.game.combat.Bttl_800c.enemyCount_800c6758;
+import static legend.game.combat.Bttl_800c.aliveMonsterCount_800c6758;
 import static legend.game.combat.Bttl_800c.floatingNumbers_800c6b5c;
 import static legend.game.combat.Bttl_800c.getHitProperty;
 import static legend.game.combat.Bttl_800c.intRef_800c6718;
@@ -505,11 +505,11 @@ public final class Bttl_800f {
           final ScriptState<? extends BattleObject27c>[] bobjs;
           if((attackerState.storage_44[7] & 0x4) == 0) {
             count = charCount_800c677c.get();
-            bobjs = _8006e398.charBobjIndices_e40;
+            bobjs = _8006e398.charBobjs_e40;
           } else {
             //LAB_800f21a8
-            count = enemyCount_800c6758.get();
-            bobjs = _8006e398.monsterBobjIndices_ebc;
+            count = aliveMonsterCount_800c6758.get();
+            bobjs = _8006e398.aliveMonsterBobjs_ebc;
           }
 
           //LAB_800f21b0
@@ -1495,7 +1495,7 @@ public final class Bttl_800f {
     //LAB_800f4410
     int charSlot;
     for(charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
-      if(_8006e398.charBobjIndices_e40[charSlot].index == script.params_20[0].get()) {
+      if(_8006e398.charBobjs_e40[charSlot].index == script.params_20[0].get()) {
         break;
       }
     }
@@ -1530,7 +1530,7 @@ public final class Bttl_800f {
     //LAB_800f454c
     int i;
     for(i = 0; i < charCount_800c677c.get(); i++) {
-      if(_8006e398.charBobjIndices_e40[i].index == script.params_20[0].get()) {
+      if(_8006e398.charBobjs_e40[i].index == script.params_20[0].get()) {
         break;
       }
     }
@@ -1586,7 +1586,7 @@ public final class Bttl_800f {
     //LAB_800f4770
     BattleObject27c t0 = null;
     for(int i = 0; i < charCount_800c677c.get(); i++) {
-      t0 = _8006e398.charBobjIndices_e40[i].innerStruct_00;
+      t0 = _8006e398.charBobjs_e40[i].innerStruct_00;
 
       if(t0.charIndex_272 == _800c6b60.deref().charIndex_08.get()) {
         break;
@@ -1630,7 +1630,7 @@ public final class Bttl_800f {
 
     //LAB_800f489c
     for(int a0 = 0; a0 < charCount_800c677c.get(); a0++) {
-      a1 = _8006e398.charBobjIndices_e40[a0].innerStruct_00;
+      a1 = _8006e398.charBobjs_e40[a0].innerStruct_00;
 
       if(struct58.charIndex_04.get() == a1.charIndex_272) {
         break;
@@ -1941,7 +1941,7 @@ public final class Bttl_800f {
           PlayerBattleObject player = null;
 
           for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
-            playerState = _8006e398.charBobjIndices_e40[charSlot];
+            playerState = _8006e398.charBobjs_e40[charSlot];
             player = playerState.innerStruct_00;
 
             if(structa4.charIndex_08.get() == player.charIndex_272) {
@@ -2063,7 +2063,7 @@ public final class Bttl_800f {
         //LAB_800f538c
         int charSlot = 0;
         do {
-          player = _8006e398.charBobjIndices_e40[charSlot].innerStruct_00;
+          player = _8006e398.charBobjs_e40[charSlot].innerStruct_00;
 
           if(structa4.charIndex_08.get() == player.charIndex_272) {
             break;
@@ -2510,14 +2510,14 @@ public final class Bttl_800f {
     //LAB_800f6234
     int a3;
     for(a3 = 0; a3 < charCount_800c677c.get(); a3++) {
-      if(_8006e398.charBobjIndices_e40[a3] == bobjState) {
+      if(_8006e398.charBobjs_e40[a3] == bobjState) {
         break;
       }
     }
 
     //LAB_800f6254
     v0.iconCount_0e.set((short)0);
-    v0.charIndex_04.set((short)_8006e398.charBobjIndices_e40[a3].innerStruct_00.charIndex_272);
+    v0.charIndex_04.set((short)_8006e398.charBobjs_e40[a3].innerStruct_00.charIndex_272);
 
     //LAB_800f62a4
     for(int i = 0, used = 0; i < 8; i++) {
@@ -3063,7 +3063,7 @@ public final class Bttl_800f {
     if(targetType == 1) {
       struct58._4c.set(0x1L);
       //LAB_800f77d4
-      count = enemyCount_800c6758.get();
+      count = aliveMonsterCount_800c6758.get();
 
       //LAB_800f77e8
       _800c697c.setu(_800c697e.get());
@@ -3074,7 +3074,7 @@ public final class Bttl_800f {
         count = charCount_800c677c.get();
       } else {
         //LAB_800f77f0
-        count = _800c669c.get();
+        count = aliveBobjCount_800c669c.get();
       }
     }
 
@@ -3882,16 +3882,16 @@ public final class Bttl_800f {
     final ScriptState<? extends BattleObject27c>[] bobjs;
     final int count;
     if(targetType == 0) {
-      bobjs = _8006e398.charBobjIndices_e40;
+      bobjs = _8006e398.charBobjs_e40;
       count = charCount_800c677c.get();
     } else if(targetType == 1) {
       //LAB_800f9a94
-      bobjs = _8006e398.monsterBobjIndices_ebc;
-      count = enemyCount_800c6758.get();
+      bobjs = _8006e398.aliveMonsterBobjs_ebc;
+      count = aliveMonsterCount_800c6758.get();
     } else {
       //LAB_800f9aac
-      bobjs = _8006e398.bobjIndices_e78;
-      count = _800c669c.get();
+      bobjs = _8006e398.aliveBobjs_e78;
+      count = aliveBobjCount_800c669c.get();
     }
 
     //LAB_800f9abc
@@ -4045,7 +4045,7 @@ public final class Bttl_800f {
 
     //LAB_800f9e8c
     for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
-      final ScriptState<PlayerBattleObject> playerState = _8006e398.charBobjIndices_e40[charSlot];
+      final ScriptState<PlayerBattleObject> playerState = _8006e398.charBobjs_e40[charSlot];
       final PlayerBattleObject player = playerState.innerStruct_00;
 
       if(charIndex == player.charIndex_272) {

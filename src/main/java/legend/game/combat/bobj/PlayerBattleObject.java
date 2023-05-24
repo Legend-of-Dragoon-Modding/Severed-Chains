@@ -1,15 +1,10 @@
 package legend.game.combat.bobj;
 
-import legend.core.Latch;
 import legend.game.modding.coremod.CoreMod;
-import legend.game.scripting.ScriptState;
 
 import static legend.core.GameEngine.CONFIG;
-import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 
 public class PlayerBattleObject extends BattleObject27c {
-  private final Latch<ScriptState<PlayerBattleObject>> scriptState;
-
   public int level_04;
   public int dlevel_06;
 
@@ -56,15 +51,12 @@ public class PlayerBattleObject extends BattleObject27c {
   public int hpMulti_13c;
   public int mpMulti_13e;
 
-  public PlayerBattleObject(final String name, final int scriptIndex) {
+  public PlayerBattleObject(final String name) {
     super(name);
-
-    //noinspection unchecked
-    this.scriptState = new Latch<>(() -> (ScriptState<PlayerBattleObject>)scriptStatePtrArr_800bc1c0[scriptIndex]);
   }
 
   public boolean isDragoon() {
-    return (this.scriptState.get().storage_44[7] & 0x2) != 0;
+    return (this.getState().storage_44[7] & 0x2) != 0;
   }
 
   @Override

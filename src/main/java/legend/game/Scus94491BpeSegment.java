@@ -1927,7 +1927,7 @@ public final class Scus94491BpeSegment {
   public static long FUN_800187cc() {
     //LAB_80018800
     for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
-      if(FUN_800c90b0(_8006e398.charBobjIndices_e40[charSlot].innerStruct_00.combatantIndex_26c) == 0) {
+      if(FUN_800c90b0(_8006e398.charBobjs_e40[charSlot].innerStruct_00.combatantIndex_26c) == 0) {
         return 0;
       }
     }
@@ -1941,7 +1941,7 @@ public final class Scus94491BpeSegment {
   public static long FUN_8001886c() {
     //LAB_800188a09
     for(int i = 0; i < monsterCount_800c6768.get(); i++) {
-      if(FUN_800c90b0(_8006e398.bobjIndices_e50[i].innerStruct_00.combatantIndex_26c) == 0) {
+      if(FUN_800c90b0(_8006e398.monsterBobjs_e50[i].innerStruct_00.combatantIndex_26c) == 0) {
         return 0;
       }
     }
@@ -2610,7 +2610,7 @@ public final class Scus94491BpeSegment {
 
     //LAB_80019fdc
     for(int i = 0; i < monsterCount_800c6768.get(); i++) {
-      final ScriptState<MonsterBattleObject> monster = _8006e398.bobjIndices_e50[i];
+      final ScriptState<MonsterBattleObject> monster = _8006e398.monsterBobjs_e50[i];
 
       if(monster.innerStruct_00.charIndex_272 == charOrMonsterIndex) {
         //LAB_8001a070

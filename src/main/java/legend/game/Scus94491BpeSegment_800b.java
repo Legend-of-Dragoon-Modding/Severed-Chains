@@ -85,6 +85,11 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bc94c = MEMORY.ref(4, 0x800bc94cL);
   public static final ArrayRef<IntRef> spGained_800bc950 = MEMORY.ref(4, 0x800bc950L, ArrayRef.of(IntRef.class, 3, 4, IntRef::new));
   public static final IntRef totalXpFromCombat_800bc95c = MEMORY.ref(4, 0x800bc95cL, IntRef::new);
+  /**
+   * <ul>
+   *   <li>0x10 - initial turn values have been calculated</li>
+   * </ul>
+   */
   public static final IntRef _800bc960 = MEMORY.ref(4, 0x800bc960L, IntRef::new);
 
   public static final Value _800bc968 = MEMORY.ref(4, 0x800bc968L);
