@@ -20,7 +20,7 @@ public class MrgArchive implements Iterable<MrgArchive.Entry> {
 
         for(int duplicateIndex = 0; duplicateIndex < i; duplicateIndex++) {
           if(this.entries[duplicateIndex] != null && this.entries[duplicateIndex].offset == offset) {
-            this.entries[i] = new Entry(offset, size, duplicateIndex);
+            this.entries[i] = new Entry(offset, size, size, duplicateIndex);
             continue outer;
           }
         }
@@ -46,7 +46,7 @@ public class MrgArchive implements Iterable<MrgArchive.Entry> {
 
         if(parentIndex != -1) {
           final Entry parent = this.getEntry(parentIndex);
-          this.entries[i] = new Entry(parent.offset, parent.size, parentIndex);
+          this.entries[i] = new Entry(parent.offset, parent.size, size, parentIndex);
         } else {
           this.entries[i] = new Entry(offset, size);
         }
@@ -89,9 +89,9 @@ public class MrgArchive implements Iterable<MrgArchive.Entry> {
     };
   }
 
-  public record Entry(int offset, int size, int parent) {
+  public record Entry(int offset, int size, int virtualSize, int parent) {
     public Entry(final int offset, final int size) {
-      this(offset, size, -1);
+      this(offset, size, size, -1);
     }
 
     public boolean virtual() {

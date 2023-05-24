@@ -1800,7 +1800,7 @@ public final class Bttl_800c {
       if(!isMonster && files.size() == 64) {
         //LAB_800c9940
         for(int animIndex = 0; animIndex < 32; animIndex++) {
-          if(files.get(32 + animIndex).real()) {
+          if(files.get(32 + animIndex).real() || files.get(32 + animIndex).virtualSize() != 0) {
             if(combatant._14[animIndex] != null && combatant._14[animIndex]._09 != 0) {
               FUN_800c9c7c(combatantIndex, animIndex);
             }
