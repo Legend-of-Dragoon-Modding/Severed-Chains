@@ -1,6 +1,5 @@
 package legend.game.scripting;
 
-import legend.game.modding.events.EventManager;
 import legend.game.modding.events.scripting.ScriptAllocatedEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -8,9 +7,9 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import javax.annotation.Nullable;
-
 import java.util.Arrays;
 
+import static legend.core.GameEngine.EVENTS;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 
 public class ScriptManager {
@@ -105,7 +104,7 @@ public class ScriptManager {
     //LAB_80015a14
     scriptState.ui_fc = a4;
 
-    EventManager.INSTANCE.postEvent(new ScriptAllocatedEvent(index));
+    EVENTS.postEvent(new ScriptAllocatedEvent(index));
 
     //LAB_80015a34
     return scriptState;

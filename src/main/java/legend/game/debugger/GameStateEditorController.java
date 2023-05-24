@@ -1,14 +1,13 @@
 package legend.game.debugger;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextField;
 import legend.game.modding.coremod.CoreMod;
-import legend.game.types.GameState52c;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 
 public class GameStateEditorController {
@@ -18,11 +17,11 @@ public class GameStateEditorController {
   @FXML
   public TextField textData1;
   @FXML
-  public ComboBox getScriptData;
+  public ComboBox<Integer> getScriptData;
   @FXML
   public TextField textScriptData;
   @FXML
-  public ComboBox getParty;
+  public ComboBox<Integer> getParty;
   @FXML
   public TextField textParty;
   @FXML
@@ -44,49 +43,49 @@ public class GameStateEditorController {
   @FXML
   public TextField textScriptEngine3;
   @FXML
-  public ComboBox getScriptFlags1;
+  public ComboBox<Integer> getScriptFlags1;
   @FXML
   public TextField textScriptFlags1;
   @FXML
-  public ComboBox getScriptFlags2;
+  public ComboBox<Integer> getScriptFlags2;
   @FXML
   public TextField textScriptFlags2;
   @FXML
-  public ComboBox getData2;
+  public ComboBox<Integer> getData2;
   @FXML
   public TextField textData2;
   @FXML
-  public ComboBox getData3;
+  public ComboBox<Integer> getData3;
   @FXML
   public TextField textData3;
   @FXML
-  public ComboBox getGoods;
+  public ComboBox<Integer> getGoods;
   @FXML
   public TextField textGoods;
   @FXML
-  public ComboBox getData4;
+  public ComboBox<Integer> getData4;
   @FXML
   public TextField textData4;
   @FXML
-  public ComboBox getChestFlags;
+  public ComboBox<Integer> getChestFlags;
   @FXML
   public TextField textChestFlags;
   @FXML
-  public Spinner getEquipment;
+  public Spinner<Integer> getEquipment;
   @FXML
   public TextField textEquipment;
   @FXML
-  public Spinner getItems;
+  public Spinner<Integer> getItems;
   @FXML
   public TextField textItems;
   @FXML
-  public ComboBox getCharacter;
+  public ComboBox<String> getCharacter;
   @FXML
-  public ComboBox getCharacterData;
+  public ComboBox<String> getCharacterData;
   @FXML
   public TextField textCharacterData;
   @FXML
-  public ComboBox getData5;
+  public ComboBox<Integer> getData5;
   @FXML
   public TextField textData5;
   @FXML
@@ -152,7 +151,7 @@ public class GameStateEditorController {
     this.getGoods.getItems().add(0);
     this.getGoods.getItems().add(1);
     this.getGoods.getSelectionModel().select(0);
-    getGoods();
+    this.getGoods();
 
     for(int i = 0; i < 8; i++) {
       this.getData4.getItems().add(i);
@@ -168,30 +167,30 @@ public class GameStateEditorController {
 
     this.getEquipment.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 254, 0));
     this.getEquipment.valueProperty().addListener((observable, oldValue, newValue) -> {
-      if(oldValue != newValue) {
-        getEquipment();
+      if(!oldValue.equals(newValue)) {
+        this.getEquipment();
       }
     });
-    getEquipment();
+    this.getEquipment();
 
-    this.getItems.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, gameState_800babc8.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get()), 0));
+    this.getItems.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, CONFIG.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get()), 0));
     this.getItems.valueProperty().addListener((observable, oldValue, newValue) -> {
-      if(oldValue != newValue) {
-        getItems();
+      if(!oldValue.equals(newValue)) {
+        this.getItems();
       }
     });
-    getItems();
+    this.getItems();
 
-    for(int i = 0; i < characters.length; i++) {
-      this.getCharacter.getItems().add(characters[i]);
+    for(final String character : this.characters) {
+      this.getCharacter.getItems().add(character);
     }
     this.getCharacter.getSelectionModel().select(0);
 
-    for(int i = 0; i < characterData.length; i++) {
-      this.getCharacterData.getItems().add(characterData[i]);
+    for(final String characterDatum : this.characterData) {
+      this.getCharacterData.getItems().add(characterDatum);
     }
     this.getCharacterData.getSelectionModel().select(0);
-    getCharacter();
+    this.getCharacter();
 
     for(int i = 0; i < 8; i++) {
       this.getData5.getItems().add(i);
@@ -213,7 +212,7 @@ public class GameStateEditorController {
 
   @FXML
   public void setData1() {
-    gameState_800babc8._04 = Integer.valueOf(this.textData1.getText());
+    gameState_800babc8._04 = Integer.parseInt(this.textData1.getText());
   }
 
   @FXML
@@ -223,7 +222,7 @@ public class GameStateEditorController {
 
   @FXML
   public void setScriptData() {
-    gameState_800babc8.scriptData_08[this.getScriptData.getSelectionModel().getSelectedIndex()] = Integer.valueOf(this.textScriptData.getText());
+    gameState_800babc8.scriptData_08[this.getScriptData.getSelectionModel().getSelectedIndex()] = Integer.parseInt(this.textScriptData.getText());
   }
 
   @FXML
@@ -233,7 +232,7 @@ public class GameStateEditorController {
 
   @FXML
   public void setParty() {
-    gameState_800babc8.charIds_88[this.getParty.getSelectionModel().getSelectedIndex()] = Integer.valueOf(this.textParty.getText());
+    gameState_800babc8.charIds_88[this.getParty.getSelectionModel().getSelectedIndex()] = Integer.parseInt(this.textParty.getText());
   }
 
   @FXML
@@ -243,7 +242,7 @@ public class GameStateEditorController {
 
   @FXML
   public void setGold() {
-    gameState_800babc8.gold_94 = Integer.valueOf(this.textGold.getText());
+    gameState_800babc8.gold_94 = Integer.parseInt(this.textGold.getText());
   }
 
   @FXML
@@ -253,7 +252,7 @@ public class GameStateEditorController {
 
   @FXML
   public void setChapter() {
-    gameState_800babc8.chapterIndex_98 = Integer.valueOf(this.textChapter.getText());
+    gameState_800babc8.chapterIndex_98 = Integer.parseInt(this.textChapter.getText());
   }
 
   @FXML
@@ -263,7 +262,7 @@ public class GameStateEditorController {
 
   @FXML
   public void setStardust() {
-    gameState_800babc8.stardust_9c = Integer.valueOf(this.textStardust.getText());
+    gameState_800babc8.stardust_9c = Integer.parseInt(this.textStardust.getText());
   }
 
   @FXML
@@ -273,7 +272,7 @@ public class GameStateEditorController {
 
   @FXML
   public void setTimestamp() {
-    gameState_800babc8.timestamp_a0 = Integer.valueOf(this.textTimestamp.getText());
+    gameState_800babc8.timestamp_a0 = Integer.parseInt(this.textTimestamp.getText());
   }
 
   @FXML
@@ -283,7 +282,7 @@ public class GameStateEditorController {
 
   @FXML
   public void setSubmapScene() {
-    gameState_800babc8.submapScene_a4 = Integer.valueOf(this.textSubmapScene.getText());
+    gameState_800babc8.submapScene_a4 = Integer.parseInt(this.textSubmapScene.getText());
   }
 
   @FXML
@@ -293,7 +292,7 @@ public class GameStateEditorController {
 
   @FXML
   public void setSubmapCut() {
-    gameState_800babc8.submapCut_a8 = Integer.valueOf(this.textSubmapCut.getText());
+    gameState_800babc8.submapCut_a8 = Integer.parseInt(this.textSubmapCut.getText());
   }
 
   @FXML
@@ -303,7 +302,7 @@ public class GameStateEditorController {
 
   @FXML
   public void setScriptEngine1() {
-    gameState_800babc8._b0 = Integer.valueOf(this.textScriptEngine1.getText());
+    gameState_800babc8._b0 = Integer.parseInt(this.textScriptEngine1.getText());
   }
 
   @FXML
@@ -313,7 +312,7 @@ public class GameStateEditorController {
 
   @FXML
   public void setScriptEngine2() {
-    gameState_800babc8._b4 = Integer.valueOf(this.textScriptEngine2.getText());
+    gameState_800babc8._b4 = Integer.parseInt(this.textScriptEngine2.getText());
   }
 
   @FXML
@@ -323,7 +322,7 @@ public class GameStateEditorController {
 
   @FXML
   public void setScriptEngine3() {
-    gameState_800babc8._b8 = Integer.valueOf(this.textScriptEngine3.getText());
+    gameState_800babc8._b8 = Integer.parseInt(this.textScriptEngine3.getText());
   }
 
   @FXML
@@ -333,7 +332,7 @@ public class GameStateEditorController {
 
   @FXML
   public void setScriptFlags1() {
-    gameState_800babc8.scriptFlags2_bc[this.getScriptFlags1.getSelectionModel().getSelectedIndex()] = Integer.valueOf(this.textScriptFlags1.getText());
+    gameState_800babc8.scriptFlags2_bc[this.getScriptFlags1.getSelectionModel().getSelectedIndex()] = Integer.parseInt(this.textScriptFlags1.getText());
   }
 
   @FXML
@@ -343,7 +342,7 @@ public class GameStateEditorController {
 
   @FXML
   public void setScriptFlags2() {
-    gameState_800babc8.scriptFlags1_13c[this.getScriptFlags2.getSelectionModel().getSelectedIndex()] = Integer.valueOf(this.textScriptFlags2.getText());
+    gameState_800babc8.scriptFlags1_13c[this.getScriptFlags2.getSelectionModel().getSelectedIndex()] = Integer.parseInt(this.textScriptFlags2.getText());
   }
 
   @FXML
@@ -353,7 +352,7 @@ public class GameStateEditorController {
 
   @FXML
   public void setData2() {
-    gameState_800babc8._15c[this.getData2.getSelectionModel().getSelectedIndex()] = Integer.valueOf(this.textData2.getText());
+    gameState_800babc8._15c[this.getData2.getSelectionModel().getSelectedIndex()] = Integer.parseInt(this.textData2.getText());
   }
 
   @FXML
@@ -363,7 +362,7 @@ public class GameStateEditorController {
 
   @FXML
   public void setData3() {
-    gameState_800babc8._17c[this.getData3.getSelectionModel().getSelectedIndex()] = Integer.valueOf(this.textData3.getText());
+    gameState_800babc8._17c[this.getData3.getSelectionModel().getSelectedIndex()] = Integer.parseInt(this.textData3.getText());
   }
 
   @FXML
@@ -373,7 +372,7 @@ public class GameStateEditorController {
 
   @FXML
   public void setGoods() {
-    gameState_800babc8.goods_19c[this.getGoods.getSelectionModel().getSelectedIndex()] = Integer.valueOf(this.textGoods.getText());
+    gameState_800babc8.goods_19c[this.getGoods.getSelectionModel().getSelectedIndex()] = Integer.parseInt(this.textGoods.getText());
   }
 
   @FXML
@@ -383,7 +382,7 @@ public class GameStateEditorController {
 
   @FXML
   public void setData4() {
-    gameState_800babc8._1a4[this.getData4.getSelectionModel().getSelectedIndex()] = Integer.valueOf(this.textData4.getText());
+    gameState_800babc8._1a4[this.getData4.getSelectionModel().getSelectedIndex()] = Integer.parseInt(this.textData4.getText());
   }
 
   @FXML
@@ -393,12 +392,12 @@ public class GameStateEditorController {
 
   @FXML
   public void setChestFlags() {
-    gameState_800babc8.chestFlags_1c4[this.getChestFlags.getSelectionModel().getSelectedIndex()] = Integer.valueOf(this.textChestFlags.getText());
+    gameState_800babc8.chestFlags_1c4[this.getChestFlags.getSelectionModel().getSelectedIndex()] = Integer.parseInt(this.textChestFlags.getText());
   }
 
   public void getEquipment() {
-    if(gameState_800babc8.equipment_1e8.size() > 0) {
-      this.textEquipment.setText(String.valueOf(gameState_800babc8.equipment_1e8.getInt((int)this.getEquipment.getValue())));
+    if(!gameState_800babc8.equipment_1e8.isEmpty()) {
+      this.textEquipment.setText(String.valueOf(gameState_800babc8.equipment_1e8.getInt(this.getEquipment.getValue())));
     } else {
       this.textEquipment.setText(String.valueOf(255));
     }
@@ -406,7 +405,7 @@ public class GameStateEditorController {
 
   @FXML
   public void setEquipment() {
-    if((int)this.getEquipment.getValue() >= gameState_800babc8.equipment_1e8.size()) {
+    if(this.getEquipment.getValue() >= gameState_800babc8.equipment_1e8.size()) {
       gameState_800babc8.equipment_1e8.add(Integer.valueOf(this.textEquipment.getText()));
     } else {
       gameState_800babc8.equipment_1e8.set((int)this.getEquipment.getValue(), Integer.valueOf(this.textEquipment.getText()));
@@ -414,8 +413,8 @@ public class GameStateEditorController {
   }
 
   public void getItems() {
-    if(gameState_800babc8.items_2e9.size() > 0) {
-      this.textItems.setText(String.valueOf(gameState_800babc8.items_2e9.getInt((int)this.getItems.getValue())));
+    if(!gameState_800babc8.items_2e9.isEmpty()) {
+      this.textItems.setText(String.valueOf(gameState_800babc8.items_2e9.getInt(this.getItems.getValue())));
     } else {
       this.textEquipment.setText(String.valueOf(255));
     }
@@ -423,7 +422,7 @@ public class GameStateEditorController {
 
   @FXML
   public void setItems() {
-    if((int)this.getItems.getValue() >= gameState_800babc8.items_2e9.size()) {
+    if(this.getItems.getValue() >= gameState_800babc8.items_2e9.size()) {
       gameState_800babc8.items_2e9.add(Integer.valueOf(this.textItems.getText()));
     } else {
       gameState_800babc8.items_2e9.set((int)this.getItems.getValue(), Integer.valueOf(this.textItems.getText()));
@@ -432,138 +431,49 @@ public class GameStateEditorController {
 
   @FXML
   public void getCharacter() {
-    textCharacterData.setText(getCharacterStats());
+    this.textCharacterData.setText(this.getCharacterStats());
   }
 
   @FXML
   public void getCharacterData() {
-    textCharacterData.setText(getCharacterStats());
+    this.textCharacterData.setText(this.getCharacterStats());
   }
 
   public String getCharacterStats() {
-    String text = "";
-    switch(this.getCharacterData.getSelectionModel().getSelectedIndex()) {
-      case 0:
-        text = String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].xp_00);
-        break;
-      case 1:
-        text = String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].partyFlags_04);
-        break;
-      case 2:
-        text = String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].hp_08);
-        break;
-      case 3:
-        text = String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].mp_0a);
-        break;
-      case 4:
-        text = String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].sp_0c);
-        break;
-      case 5:
-        text = String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].dlevelXp_0e);
-        break;
-      case 6:
-        text = String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].status_10);
-        break;
-      case 7:
-        text = String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].level_12);
-        break;
-      case 8:
-        text = String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].dlevel_13);
-        break;
-      case 9:
-      case 10:
-      case 11:
-      case 12:
-      case 13:
-        text = String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].equipment_14[this.getCharacterData.getSelectionModel().getSelectedIndex() - 9]);
-        break;
-      case 14:
-        text = String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].selectedAddition_19);
-        break;
-      case 15:
-      case 16:
-      case 17:
-      case 18:
-      case 19:
-      case 20:
-      case 21:
-      case 22:
-        text = String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].additionLevels_1a[this.getCharacterData.getSelectionModel().getSelectedIndex() - 15]);
-        break;
-      case 23:
-      case 24:
-      case 25:
-      case 26:
-      case 27:
-      case 28:
-      case 29:
-      case 30:
-        text = String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].additionXp_22[this.getCharacterData.getSelectionModel().getSelectedIndex() - 23]);
-        break;
-    }
-    return text;
+    return switch(this.getCharacterData.getSelectionModel().getSelectedIndex()) {
+      case 0 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].xp_00);
+      case 1 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].partyFlags_04);
+      case 2 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].hp_08);
+      case 3 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].mp_0a);
+      case 4 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].sp_0c);
+      case 5 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].dlevelXp_0e);
+      case 6 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].status_10);
+      case 7 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].level_12);
+      case 8 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].dlevel_13);
+      case 9, 10, 11, 12, 13 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].equipment_14[this.getCharacterData.getSelectionModel().getSelectedIndex() - 9]);
+      case 14 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].selectedAddition_19);
+      case 15, 16, 17, 18, 19, 20, 21, 22 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].additionLevels_1a[this.getCharacterData.getSelectionModel().getSelectedIndex() - 15]);
+      case 23, 24, 25, 26, 27, 28, 29, 30 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].additionXp_22[this.getCharacterData.getSelectionModel().getSelectedIndex() - 23]);
+      default -> "";
+    };
   }
 
   @FXML
   public void setCharacterData() {
     switch(this.getCharacterData.getSelectionModel().getSelectedIndex()) {
-      case 0:
-        gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].xp_00 = Integer.valueOf(this.textCharacterData.getText());
-        break;
-      case 1:
-        gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].partyFlags_04 = Integer.valueOf(this.textCharacterData.getText());
-        break;
-      case 2:
-        gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].hp_08 = Integer.valueOf(this.textCharacterData.getText());
-        break;
-      case 3:
-        gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].mp_0a = Integer.valueOf(this.textCharacterData.getText());
-        break;
-      case 4:
-        gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].sp_0c = Integer.valueOf(this.textCharacterData.getText());
-        break;
-      case 5:
-        gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].dlevelXp_0e = Integer.valueOf(this.textCharacterData.getText());
-        break;
-      case 6:
-        gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].status_10 = Integer.valueOf(this.textCharacterData.getText());
-        break;
-      case 7:
-        gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].level_12 = Integer.valueOf(this.textCharacterData.getText());
-        break;
-      case 8:
-        gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].dlevel_13 = Integer.valueOf(this.textCharacterData.getText());
-        break;
-      case 9:
-      case 10:
-      case 11:
-      case 12:
-      case 13:
-        gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].equipment_14[this.getCharacterData.getSelectionModel().getSelectedIndex() - 9] = Integer.valueOf(this.textCharacterData.getText());
-        break;
-      case 14:
-        gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].selectedAddition_19 = Integer.valueOf(this.textCharacterData.getText());
-        break;
-      case 15:
-      case 16:
-      case 17:
-      case 18:
-      case 19:
-      case 20:
-      case 21:
-      case 22:
-        gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].additionLevels_1a[this.getCharacterData.getSelectionModel().getSelectedIndex() - 15] = Integer.valueOf(this.textCharacterData.getText());
-        break;
-      case 23:
-      case 24:
-      case 25:
-      case 26:
-      case 27:
-      case 28:
-      case 29:
-      case 30:
-        gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].additionXp_22[this.getCharacterData.getSelectionModel().getSelectedIndex() - 23] = Integer.valueOf(this.textCharacterData.getText());
-        break;
+      case 0 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].xp_00 = Integer.parseInt(this.textCharacterData.getText());
+      case 1 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].partyFlags_04 = Integer.parseInt(this.textCharacterData.getText());
+      case 2 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].hp_08 = Integer.parseInt(this.textCharacterData.getText());
+      case 3 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].mp_0a = Integer.parseInt(this.textCharacterData.getText());
+      case 4 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].sp_0c = Integer.parseInt(this.textCharacterData.getText());
+      case 5 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].dlevelXp_0e = Integer.parseInt(this.textCharacterData.getText());
+      case 6 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].status_10 = Integer.parseInt(this.textCharacterData.getText());
+      case 7 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].level_12 = Integer.parseInt(this.textCharacterData.getText());
+      case 8 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].dlevel_13 = Integer.parseInt(this.textCharacterData.getText());
+      case 9, 10, 11, 12, 13 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].equipment_14[this.getCharacterData.getSelectionModel().getSelectedIndex() - 9] = Integer.parseInt(this.textCharacterData.getText());
+      case 14 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].selectedAddition_19 = Integer.parseInt(this.textCharacterData.getText());
+      case 15, 16, 17, 18, 19, 20, 21, 22 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].additionLevels_1a[this.getCharacterData.getSelectionModel().getSelectedIndex() - 15] = Integer.parseInt(this.textCharacterData.getText());
+      case 23, 24, 25, 26, 27, 28, 29, 30 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].additionXp_22[this.getCharacterData.getSelectionModel().getSelectedIndex() - 23] = Integer.parseInt(this.textCharacterData.getText());
     }
   }
 
@@ -574,7 +484,7 @@ public class GameStateEditorController {
 
   @FXML
   public void setData5() {
-    gameState_800babc8._4b8[this.getData5.getSelectionModel().getSelectedIndex()] = Integer.valueOf(this.textData5.getText());
+    gameState_800babc8._4b8[this.getData5.getSelectionModel().getSelectedIndex()] = Integer.parseInt(this.textData5.getText());
   }
 
   @FXML
@@ -584,7 +494,7 @@ public class GameStateEditorController {
 
   @FXML
   public void setPathIndex() {
-    gameState_800babc8.dotIndex_4da = Integer.valueOf(this.textDotIndex.getText());
+    gameState_800babc8.dotIndex_4da = Integer.parseInt(this.textDotIndex.getText());
   }
 
   @FXML
@@ -594,7 +504,7 @@ public class GameStateEditorController {
 
   @FXML
   public void setDotIndex() {
-    gameState_800babc8.dotIndex_4da = Integer.valueOf(this.textDotIndex.getText());
+    gameState_800babc8.dotIndex_4da = Integer.parseInt(this.textDotIndex.getText());
   }
 
   @FXML
@@ -604,7 +514,7 @@ public class GameStateEditorController {
 
   @FXML
   public void setDotOffset() {
-    gameState_800babc8.dotOffset_4dc = Integer.valueOf(this.textDotOffset.getText());
+    gameState_800babc8.dotOffset_4dc = Integer.parseInt(this.textDotOffset.getText());
   }
 
   @FXML
@@ -614,7 +524,7 @@ public class GameStateEditorController {
 
   @FXML
   public void setFacing() {
-    gameState_800babc8.facing_4dd = Integer.valueOf(this.textFacing.getText());
+    gameState_800babc8.facing_4dd = Integer.parseInt(this.textFacing.getText());
   }
 
   @FXML
@@ -624,6 +534,6 @@ public class GameStateEditorController {
 
   @FXML
   public void setAreaIndex() {
-    gameState_800babc8.areaIndex_4de = Integer.valueOf(this.textAreaIndex.getText());
+    gameState_800babc8.areaIndex_4de = Integer.parseInt(this.textAreaIndex.getText());
   }
 }

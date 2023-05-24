@@ -148,10 +148,12 @@ public class Textbox extends Control {
     if(key == GLFW_KEY_BACKSPACE && this.caretIndex > 0) {
       this.updateText(this.text.substring(0, this.caretIndex - 1) + this.text.substring(this.caretIndex));
       this.setCaretIndex(this.caretIndex - 1);
+      this.fireChangedEvent();
     }
 
     if(key == GLFW_KEY_DELETE && this.caretIndex < this.text.length()) {
       this.updateText(this.text.substring(0, this.caretIndex) + this.text.substring(this.caretIndex + 1));
+      this.fireChangedEvent();
     }
 
     if(key == GLFW_KEY_ESCAPE) {
@@ -174,6 +176,7 @@ public class Textbox extends Control {
     if(codepoint >= 32 && codepoint < 127) {
       this.updateText(this.text.substring(0, this.caretIndex) + (char)codepoint + this.text.substring(this.caretIndex));
       this.setCaretIndex(this.caretIndex + 1);
+      this.fireChangedEvent();
     }
 
     return InputPropagation.HANDLED;
@@ -188,4 +191,18 @@ public class Textbox extends Control {
   protected InputPropagation pressedWithRepeatPulse(final InputAction inputAction) {
     return InputPropagation.HANDLED;
   }
+
+  public void onChanged(final Changed handler) {
+    this.changedHandler = handler;
+  }
+
+  private void fireChangedEvent() {
+    if(this.changedHandler != null) {
+      this.changedHandler.changed(this.text);
+    }
+  }
+
+  private Changed changedHandler;
+
+  @FunctionalInterface public interface Changed { void changed(final String text); }
 }

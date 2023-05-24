@@ -102,6 +102,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.Arrays;
 import java.util.List;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
@@ -214,9 +215,9 @@ import static legend.game.Scus94491BpeSegment_800b._800bd7b0;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b4;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b8;
 import static legend.game.Scus94491BpeSegment_800b._800bda08;
-import static legend.game.Scus94491BpeSegment_800b._800bee90;
-import static legend.game.Scus94491BpeSegment_800b._800bee94;
-import static legend.game.Scus94491BpeSegment_800b._800bee98;
+import static legend.game.Scus94491BpeSegment_800b.input_800bee90;
+import static legend.game.Scus94491BpeSegment_800b.press_800bee94;
+import static legend.game.Scus94491BpeSegment_800b.repeat_800bee98;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
 import static legend.game.Scus94491BpeSegment_800b.afterFmvLoadingStage_800bf0ec;
 import static legend.game.Scus94491BpeSegment_800b.clearBlue_800babc0;
@@ -3508,9 +3509,9 @@ public final class SMap {
 
   @Method(0x800e3d68L)
   public static void clearJoypadInput() {
-    _800bee90.set(0);
-    _800bee94.set(0);
-    _800bee98.set(0);
+    input_800bee90.set(0);
+    press_800bee94.set(0);
+    repeat_800bee98.set(0);
   }
 
   @Method(0x800e3d80L)
@@ -3787,14 +3788,13 @@ public final class SMap {
     return 3;
   }
 
-  /** TODO contains the encounter rate bug */
   @Method(0x800e49f0L)
   public static boolean hasPlayerMoved(final MATRIX mat) {
     //LAB_800e4a44
     final boolean moved = prevPlayerPos_800c6ab0.getX() != mat.transfer.getX() || prevPlayerPos_800c6ab0.getY() != mat.transfer.getY() || prevPlayerPos_800c6ab0.getZ() != mat.transfer.getZ();
 
     //LAB_800e4a4c
-    final EncounterRateMode mode = gameState_800babc8.getConfig(CoreMod.ENCOUNTER_RATE_CONFIG.get());
+    final EncounterRateMode mode = CONFIG.getConfig(CoreMod.ENCOUNTER_RATE_CONFIG.get());
 
     final int dist = mode.modifyDistance((prevPlayerPos_800c6ab0.getX() - mat.transfer.getX() ^ 2) + (prevPlayerPos_800c6ab0.getZ() - mat.transfer.getZ() ^ 2));
 
@@ -3840,10 +3840,6 @@ public final class SMap {
 
     //LAB_800e4bc0
     if(!isScriptLoaded(0)) {
-      return 0;
-    }
-
-    if(!Input.hasActivity()) {
       return 0;
     }
 
@@ -9334,7 +9330,7 @@ public final class SMap {
       return;
     }
 
-    final IndicatorMode indicatorMode = gameState_800babc8.getConfig(CoreMod.INDICATOR_MODE_CONFIG.get());
+    final IndicatorMode indicatorMode = CONFIG.getConfig(CoreMod.INDICATOR_MODE_CONFIG.get());
     if(indicatorMode != IndicatorMode.MOMENTARY) {
       momentaryIndicatorTicks_800f9e9c.set(0);
     }
@@ -9342,26 +9338,26 @@ public final class SMap {
     //LAB_800f321c
     if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_RIGHT_1)) { // R1
       if(indicatorMode == IndicatorMode.OFF) {
-        gameState_800babc8.setConfig(CoreMod.INDICATOR_MODE_CONFIG.get(), IndicatorMode.MOMENTARY);
+        CONFIG.setConfig(CoreMod.INDICATOR_MODE_CONFIG.get(), IndicatorMode.MOMENTARY);
         //LAB_800f3244
       } else if(indicatorMode == IndicatorMode.MOMENTARY) {
-        gameState_800babc8.setConfig(CoreMod.INDICATOR_MODE_CONFIG.get(), IndicatorMode.ON);
+        CONFIG.setConfig(CoreMod.INDICATOR_MODE_CONFIG.get(), IndicatorMode.ON);
       } else if(indicatorMode == IndicatorMode.ON) {
-        gameState_800babc8.setConfig(CoreMod.INDICATOR_MODE_CONFIG.get(), IndicatorMode.OFF);
+        CONFIG.setConfig(CoreMod.INDICATOR_MODE_CONFIG.get(), IndicatorMode.OFF);
         momentaryIndicatorTicks_800f9e9c.set(0);
       }
       //LAB_800f3260
     } else if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_LEFT_1)) { // L1
       if(indicatorMode == IndicatorMode.OFF) {
         //LAB_800f3274
-        gameState_800babc8.setConfig(CoreMod.INDICATOR_MODE_CONFIG.get(), IndicatorMode.ON);
+        CONFIG.setConfig(CoreMod.INDICATOR_MODE_CONFIG.get(), IndicatorMode.ON);
         //LAB_800f3280
       } else if(indicatorMode == IndicatorMode.MOMENTARY) {
-        gameState_800babc8.setConfig(CoreMod.INDICATOR_MODE_CONFIG.get(), IndicatorMode.OFF);
+        CONFIG.setConfig(CoreMod.INDICATOR_MODE_CONFIG.get(), IndicatorMode.OFF);
         momentaryIndicatorTicks_800f9e9c.set(0);
         //LAB_800f3294
       } else if(indicatorMode == IndicatorMode.ON) {
-        gameState_800babc8.setConfig(CoreMod.INDICATOR_MODE_CONFIG.get(), IndicatorMode.MOMENTARY);
+        CONFIG.setConfig(CoreMod.INDICATOR_MODE_CONFIG.get(), IndicatorMode.MOMENTARY);
 
         //LAB_800f32a4
         momentaryIndicatorTicks_800f9e9c.set(0);
@@ -9370,7 +9366,7 @@ public final class SMap {
 
     //LAB_800f32a8
     //LAB_800f32ac
-    if(gameState_800babc8.getConfig(CoreMod.INDICATOR_MODE_CONFIG.get()) == IndicatorMode.OFF) {
+    if(CONFIG.getConfig(CoreMod.INDICATOR_MODE_CONFIG.get()) == IndicatorMode.OFF) {
       return;
     }
 
@@ -9407,13 +9403,13 @@ public final class SMap {
     _800c69fc.deref().playerX_08.set(sp118.getX());
     _800c69fc.deref().playerY_0c.set(sp118.getY());
 
-    if(gameState_800babc8.getConfig(CoreMod.INDICATOR_MODE_CONFIG.get()) == IndicatorMode.MOMENTARY) {
+    if(CONFIG.getConfig(CoreMod.INDICATOR_MODE_CONFIG.get()) == IndicatorMode.MOMENTARY) {
       if(momentaryIndicatorTicks_800f9e9c.get() < 33) {
         renderTriangleIndicators();
         momentaryIndicatorTicks_800f9e9c.incr();
       }
       //LAB_800f3508
-    } else if(gameState_800babc8.getConfig(CoreMod.INDICATOR_MODE_CONFIG.get()) == IndicatorMode.ON) {
+    } else if(CONFIG.getConfig(CoreMod.INDICATOR_MODE_CONFIG.get()) == IndicatorMode.ON) {
       renderTriangleIndicators();
     }
 
@@ -9552,7 +9548,7 @@ public final class SMap {
 
   @Method(0x800f3af8L)
   public static void resetTriangleIndicators() {
-    if(gameState_800babc8.getConfig(CoreMod.INDICATOR_MODE_CONFIG.get()) != IndicatorMode.OFF) {
+    if(CONFIG.getConfig(CoreMod.INDICATOR_MODE_CONFIG.get()) != IndicatorMode.OFF) {
       momentaryIndicatorTicks_800f9e9c.set(0);
     }
 

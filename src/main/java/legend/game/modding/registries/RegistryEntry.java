@@ -6,4 +6,8 @@ public class RegistryEntry {
   void setRegistryId(final RegistryId id) {
     this.id = id;
   }
+
+  public RegistryId getRegistryId() {
+    return this.id;
+  }
 }

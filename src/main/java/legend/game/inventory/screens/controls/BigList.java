@@ -124,11 +124,7 @@ public class BigList<T> extends Control {
     this.highlight.setY(this.labels.get(index).getY());
 
     if(this.highlightHandler != null) {
-      final T entry = this.getSelected();
-
-      if(entry != null) {
-        this.highlightHandler.highlight(entry);
-      }
+      this.highlightHandler.highlight(this.getSelected());
     }
   }
 

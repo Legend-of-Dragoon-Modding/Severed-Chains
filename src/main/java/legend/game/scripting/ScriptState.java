@@ -5,7 +5,6 @@ import legend.core.MathHelper;
 import legend.core.memory.Method;
 import legend.game.Scus94491BpeSegment_8004;
 import legend.game.combat.bobj.BattleObject27c;
-import legend.game.modding.events.EventManager;
 import legend.game.modding.events.scripting.ScriptDeallocatedEvent;
 import legend.game.modding.events.scripting.ScriptTickEvent;
 import org.apache.logging.log4j.LogManager;
@@ -17,6 +16,7 @@ import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.function.BiConsumer;
 
+import static legend.core.GameEngine.EVENTS;
 import static legend.game.Scus94491BpeSegment.scriptFunctionDescriptions;
 import static legend.game.Scus94491BpeSegment.scriptLog;
 import static legend.game.Scus94491BpeSegment.simpleRand;
@@ -76,11 +76,21 @@ public class ScriptState<T> {
    *
    *     <p>In combat this variable is used for a few different things:</p>
    *     <ul>
+   *       <li>0x1 - ?</li>
    *       <li>0x2 - dragoon</li>
-   *       <li>0x4 - is enemy</li>
+   *       <li>0x4 - monster</li>
    *       <li>0x8 - it is this character's turn</li>
-   *       <li>0x20 - ?</li>
-   *       <li>0x40 - ?</li>
+   *       <li>0x10 - don't animate or render bobj?</li>
+   *       <li>0x20 - forced turn, probably bosses who have reaction attacks</li>
+   *       <li>0x40 - dead</li>
+   *       <li>0x80 - finish the current animation and then stop animating</li>
+   *       <li>0x100 - ?</li>
+   *       <li>0x200 - ?</li>
+   *       <li>0x400 - ?</li>
+   *       <li>0x800 - don't load script (used by cutscene bobjs controlled by other scripts)</li>
+   *       <li>0x1000 - ?</li>
+   *       <li>0x2000 - don't drop loot (set when monster has died to prevent duplicate drops)</li>
+   *       <li>0x4000 - cannot target</li>
    *     </ul>
    *   </li>
    *   <li>
@@ -204,7 +214,7 @@ public class ScriptState<T> {
   public void deallocate() {
     LOGGER.info(SCRIPT_MARKER, "Deallocating script state %d", this.index);
 
-    EventManager.INSTANCE.postEvent(new ScriptDeallocatedEvent(this.index));
+    EVENTS.postEvent(new ScriptDeallocatedEvent(this.index));
 
     if((this.storage_44[7] & 0x810_0000) == 0) {
       try {
@@ -442,7 +452,7 @@ public class ScriptState<T> {
           //LAB_80016584
         }
 
-        EventManager.INSTANCE.postEvent(new ScriptTickEvent(this.index));
+        EVENTS.postEvent(new ScriptTickEvent(this.index));
 
         final int opIndex = this.context.opIndex_10;
 

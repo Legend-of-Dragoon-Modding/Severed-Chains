@@ -5,10 +5,13 @@ import legend.core.gte.BVEC4;
 import legend.core.gte.SVECTOR;
 import legend.core.gte.USCOLOUR;
 import legend.core.memory.Value;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SeekableByteChannel;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -17,6 +20,8 @@ import static org.lwjgl.system.MemoryUtil.memSlice;
 
 public final class IoHelper {
   private IoHelper() { }
+
+  private static final Logger LOGGER = LogManager.getFormatterLogger();
 
   public static boolean getPackedFlag(final int[] array, final int packed) {
     return (array[packed >>> 5] & 0x1 << (packed & 0x1f)) != 0;
@@ -40,6 +45,50 @@ public final class IoHelper {
 
     buffer.flip();
     return memSlice(buffer);
+  }
+
+  /** ASCII bytes of a string prefixed with lengthSize-byte length header */
+  public static byte[] stringToBytes(final String string, final int lengthSize) {
+    final byte[] bytes = string.getBytes(StandardCharsets.US_ASCII);
+    final byte[] data = new byte[lengthSize + bytes.length];
+    MathHelper.set(data, 0, lengthSize, bytes.length);
+    System.arraycopy(bytes, 0, data, lengthSize, bytes.length);
+    return data;
+  }
+
+  /** String from ASCII bytes prefixed with lengthSize-byte length header */
+  public static String stringFromBytes(final byte[] bytes, final int lengthSize) {
+    final int length = (int)MathHelper.get(bytes, 0, lengthSize);
+    return new String(bytes, lengthSize, length, StandardCharsets.US_ASCII);
+  }
+
+  /** String from ASCII bytes prefixed with lengthSize-byte length header, default value if error occurs */
+  public static String stringFromBytes(final byte[] bytes, final int lengthSize, final String defaultValue) {
+    try {
+      final int length = (int)MathHelper.get(bytes, 0, lengthSize);
+      return new String(bytes, lengthSize, length, StandardCharsets.US_ASCII);
+    } catch(final Throwable ignored) { }
+
+    return defaultValue;
+  }
+
+  /** ASCII bytes of an enum name() prefixed with 1-byte length header */
+  public static byte[] enumToBytes(final Enum<?> inst) {
+    return stringToBytes(inst.name(), 1);
+  }
+
+  /** Enum from ASCII bytes name() prefixed with 1-byte length header */
+  public static <T extends Enum<T>> T enumFromBytes(final Class<T> cls, final byte[] bytes) {
+    return Enum.valueOf(cls, stringFromBytes(bytes, 1));
+  }
+
+  /** Enum from ASCII bytes name() prefixed with 1-byte length header, default value if error occurs */
+  public static <T extends Enum<T>> T enumFromBytes(final Class<T> cls, final byte[] bytes, final T defaultValue) {
+    try {
+      return enumFromBytes(cls, bytes);
+    } catch(final Throwable ignored) { }
+
+    return defaultValue;
   }
 
   public static void write(final ByteBuffer stream, final boolean value) {
@@ -90,10 +139,6 @@ public final class IoHelper {
 
   public static boolean readBool(final ByteBuffer stream) {
     return stream.get() != 0;
-  }
-
-  public static <T extends Enum<T>> T readEnum(final ByteBuffer stream, final Class<T> cls) {
-    return cls.getEnumConstants()[stream.get()];
   }
 
   public static int readUByte(final ByteBuffer stream) {

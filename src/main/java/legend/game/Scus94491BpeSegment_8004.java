@@ -245,7 +245,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[143] = Bttl_800c::FUN_800cb9b0;
     scriptSubFunctions_8004e29c[144] = Bttl_800c::scriptPauseAnimation;
     scriptSubFunctions_8004e29c[145] = Bttl_800c::scriptResumeAnimation;
-    scriptSubFunctions_8004e29c[146] = Bttl_800c::FUN_800cba60;
+    scriptSubFunctions_8004e29c[146] = Bttl_800c::scriptSetBobjAnimationLoopState;
     scriptSubFunctions_8004e29c[147] = Bttl_800c::scriptAnimationHasFinished;
     scriptSubFunctions_8004e29c[148] = Bttl_800c::FUN_800cbb00;
     scriptSubFunctions_8004e29c[149] = Bttl_800c::FUN_800cbc14;
@@ -279,7 +279,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[177] = Bttl_800c::FUN_800cce70;
     scriptSubFunctions_8004e29c[178] = Bttl_800c::scriptSetStat;
 
-    scriptSubFunctions_8004e29c[192] = Scus94491BpeSegment_8002::FUN_80029b68;
+    scriptSubFunctions_8004e29c[192] = Scus94491BpeSegment_8002::scriptGetFreeTextboxIndex;
     scriptSubFunctions_8004e29c[193] = Scus94491BpeSegment_8002::FUN_80029bd4;
     scriptSubFunctions_8004e29c[194] = Scus94491BpeSegment_8002::FUN_80025158;
     scriptSubFunctions_8004e29c[195] = Scus94491BpeSegment_8002::FUN_80029c98;
@@ -486,51 +486,51 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[526] = Bttl_800e::scriptSetStageZ;
 
     scriptSubFunctions_8004e29c[544] = SEffe::FUN_801115ec;
-    scriptSubFunctions_8004e29c[545] = SEffe::FUN_80111ae4;
-    scriptSubFunctions_8004e29c[546] = SEffe::FUN_80112704;
-    scriptSubFunctions_8004e29c[547] = SEffe::FUN_80112770;
-    scriptSubFunctions_8004e29c[548] = SEffe::FUN_80113964;
-    scriptSubFunctions_8004e29c[549] = SEffe::FUN_801139d0;
-    scriptSubFunctions_8004e29c[550] = SEffe::FUN_8011452c;
-    scriptSubFunctions_8004e29c[551] = SEffe::FUN_80114598;
+    scriptSubFunctions_8004e29c[545] = SEffe::scriptSetRelativeTranslation;
+    scriptSubFunctions_8004e29c[546] = SEffe::scriptGetRotationDifference;
+    scriptSubFunctions_8004e29c[547] = SEffe::scriptSetRelativeRotation;
+    scriptSubFunctions_8004e29c[548] = SEffe::scriptGetScaleRatio;
+    scriptSubFunctions_8004e29c[549] = SEffe::scriptSetRelativeScale;
+    scriptSubFunctions_8004e29c[550] = SEffe::scriptGetColourDifference;
+    scriptSubFunctions_8004e29c[551] = SEffe::scriptSetRelativeColour;
     scriptSubFunctions_8004e29c[552] = SEffe::FUN_80114e0c;
     scriptSubFunctions_8004e29c[553] = SEffe::FUN_80114e60;
     scriptSubFunctions_8004e29c[554] = SEffe::FUN_80111b60;
     scriptSubFunctions_8004e29c[555] = SEffe::FUN_8011554c;
     scriptSubFunctions_8004e29c[556] = SEffe::FUN_801155a0;
     scriptSubFunctions_8004e29c[557] = SEffe::FUN_80111be8;
-    scriptSubFunctions_8004e29c[558] = SEffe::FUN_80111c2c;
+    scriptSubFunctions_8004e29c[558] = SEffe::FUN_80111c2c; // scaler
     scriptSubFunctions_8004e29c[559] = SEffe::scriptSetTranslationScalerWithRotation0;
-    scriptSubFunctions_8004e29c[560] = SEffe::FUN_80112274;
-    scriptSubFunctions_8004e29c[561] = SEffe::FUN_80112364;
-    scriptSubFunctions_8004e29c[562] = SEffe::FUN_801155f8;
+    scriptSubFunctions_8004e29c[560] = SEffe::FUN_80112274; // scaler
+    scriptSubFunctions_8004e29c[561] = SEffe::FUN_80112364; // scaler
+    scriptSubFunctions_8004e29c[562] = SEffe::FUN_801155f8; // no-op
     scriptSubFunctions_8004e29c[563] = SEffe::FUN_80112900;
     scriptSubFunctions_8004e29c[564] = SEffe::FUN_8011299c;
     scriptSubFunctions_8004e29c[565] = SEffe::FUN_80115440;
     scriptSubFunctions_8004e29c[566] = SEffe::FUN_80111658;
-    scriptSubFunctions_8004e29c[567] = SEffe::scriptSetRotScaler;
+    scriptSubFunctions_8004e29c[567] = SEffe::scriptSetRotationScaler;
     scriptSubFunctions_8004e29c[568] = SEffe::FUN_80112bf0;
-    scriptSubFunctions_8004e29c[569] = SEffe::FUN_80112e00;
-    scriptSubFunctions_8004e29c[570] = SEffe::FUN_8011306c;
-    scriptSubFunctions_8004e29c[571] = SEffe::FUN_801132c8;
-    scriptSubFunctions_8004e29c[572] = SEffe::FUN_80115600;
+    scriptSubFunctions_8004e29c[569] = SEffe::FUN_80112e00; // not implemented
+    scriptSubFunctions_8004e29c[570] = SEffe::FUN_8011306c; // not implemented
+    scriptSubFunctions_8004e29c[571] = SEffe::FUN_801132c8; // not implemented
+    scriptSubFunctions_8004e29c[572] = SEffe::FUN_80115600; // no-op
     scriptSubFunctions_8004e29c[573] = Bttl_800e::FUN_800e9f68;
     scriptSubFunctions_8004e29c[574] = SEffe::FUN_80118984;
     scriptSubFunctions_8004e29c[575] = SEffe::scriptSetScaleVectorScaler;
 
     scriptSubFunctions_8004e29c[576] = SEffe::FUN_80114094;
-    scriptSubFunctions_8004e29c[577] = SEffe::FUN_801143f8;
+    scriptSubFunctions_8004e29c[577] = SEffe::FUN_801143f8; // not implemented
     scriptSubFunctions_8004e29c[578] = SEffe::FUN_80115608;
     scriptSubFunctions_8004e29c[579] = SEffe::FUN_80114070;
-    scriptSubFunctions_8004e29c[580] = SEffe::FUN_801147c8;
+    scriptSubFunctions_8004e29c[580] = SEffe::FUN_801147c8; // not implemented
     scriptSubFunctions_8004e29c[581] = SEffe::scriptSetColorVectorScaler;
-    scriptSubFunctions_8004e29c[582] = SEffe::FUN_80114b00;
+    scriptSubFunctions_8004e29c[582] = SEffe::FUN_80114b00; // not implemented
     scriptSubFunctions_8004e29c[583] = SEffe::FUN_80114eb4;
-    scriptSubFunctions_8004e29c[584] = SEffe::FUN_80114f34;
+    scriptSubFunctions_8004e29c[584] = SEffe::FUN_80114f34; // not implemented
     scriptSubFunctions_8004e29c[585] = SEffe::FUN_80115014;
     scriptSubFunctions_8004e29c[586] = SEffe::FUN_80115058;
-    scriptSubFunctions_8004e29c[587] = SEffe::FUN_80115168;
-    scriptSubFunctions_8004e29c[588] = SEffe::FUN_801152b0;
+    scriptSubFunctions_8004e29c[587] = SEffe::FUN_80115168; // not implemented
+    scriptSubFunctions_8004e29c[588] = SEffe::scriptSetEffectTicksRemaining;
     scriptSubFunctions_8004e29c[589] = SEffe::FUN_80115324;
     scriptSubFunctions_8004e29c[590] = SEffe::FUN_80115388;
     scriptSubFunctions_8004e29c[591] = SEffe::FUN_801153e4;
@@ -538,11 +538,11 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[593] = SEffe::FUN_80112398;
     scriptSubFunctions_8004e29c[594] = Bttl_800e::FUN_800eb518;
     scriptSubFunctions_8004e29c[595] = SEffe::FUN_8011549c;
-    scriptSubFunctions_8004e29c[596] = SEffe::FUN_801122ec;
+    scriptSubFunctions_8004e29c[596] = SEffe::FUN_801122ec; // scaler
     scriptSubFunctions_8004e29c[597] = SEffe::scriptSetTranslationScalerWithRotation1;
     scriptSubFunctions_8004e29c[598] = SEffe::FUN_80111cc4;
     scriptSubFunctions_8004e29c[599] = SEffe::FUN_80111ed4;
-    scriptSubFunctions_8004e29c[600] = Bttl_800e::FUN_800e93e0;
+    scriptSubFunctions_8004e29c[600] = Bttl_800e::scriptAllocateEmptyEffectManagerChild;
     scriptSubFunctions_8004e29c[601] = Bttl_800e::allocateAttackHitFlashEffect;
     scriptSubFunctions_8004e29c[602] = Bttl_800e::FUN_800e9854;
 //    scriptSubFunctions_8004e29c[603] = Temp::FUN_800ca648;
@@ -1151,16 +1151,8 @@ public final class Scus94491BpeSegment_8004 {
                 case 0x7 -> sssqHandleVolume(spu44.channelIndex_01.get()); // Volume
 
                 case 0xa -> { // Pan
-                  if(spu44.mono_36.get() == 0) {
-                    //LAB_80045f44
-                    sssqHandlePan(spu44.channelIndex_01.get());
-                  } else if(spu124._028.get() == 0) {
-                    //LAB_80045f30
-                    spu124.sssqOffset_00c.add(0x6L);
-                  } else {
-                    sssqDataPointer_800c6680.deref(1).offset(0x4L).setu(sssqPtr_800c4aa4.deref(1).offset(spu124.sssqOffset_00c.get() + 0x2L).get());
-                    spu124.sssqOffset_00c.add(0x3L);
-                  }
+                  //LAB_80045f44
+                  sssqHandlePan(spu44.channelIndex_01.get());
                 }
 
                 case 0x40 -> sssqHandleSustain(spu44.channelIndex_01.get()); // Damper pedal (sustain)
@@ -1394,12 +1386,6 @@ public final class Scus94491BpeSegment_8004 {
       struct66._42.set(0);
     }
 
-    //LAB_800467c8
-    if(_800c6630.mono_36.get() != 0) {
-      l = maxShort(l, r);
-      r = l;
-    }
-
     //LAB_800467f0
     final Voice voice = voicePtr_800c4ac4.deref().voices[voiceIndex];
     voice.LEFT.set(l);
@@ -1574,11 +1560,6 @@ public final class Scus94491BpeSegment_8004 {
           int l = FUN_80048ab8(channelIndex, FUN_80048b90(0, 0), 0);
           int r = FUN_80048ab8(channelIndex, FUN_80048b90(0, 0), 1);
 
-          if(_800c6630.mono_36.get() != 0) {
-            l = maxShort(l, r);
-            r = l;
-          }
-
           //LAB_80046f30
           final Voice voice = voicePtr_800c4ac4.deref().voices[voiceIndex];
           voice.LEFT.set(l);
@@ -1703,8 +1684,11 @@ public final class Scus94491BpeSegment_8004 {
                     }
 
                     //LAB_800473a0
-                    v1 = _800c4ab8.get() + _800c4ab4.deref(2).offset(struct66._10.get() * 0x2L).offset(0x2L).get() + (struct66._12.get() >>> 2);
-                    a3 = MEMORY.ref(1, v1).offset(0x0L).get();
+                    // Temporary patch for GH#506
+                    if(_800c4ab4.deref(2).offset(struct66._10.get() * 0x2L).offset(0x2L).getSigned() != -1) {
+                      v1 = _800c4ab8.get() + _800c4ab4.deref(2).offset(struct66._10.get() * 0x2L).offset(0x2L).get() + (struct66._12.get() >>> 2);
+                      a3 = MEMORY.ref(1, v1).offset(0x0L).get();
+                    }
                   }
                 }
 
@@ -1845,12 +1829,6 @@ public final class Scus94491BpeSegment_8004 {
                 //LAB_80047a24
                 l = scaleValue12((short)l, struct124.pitchShiftVolLeft_0ee.get());
                 r = scaleValue12((short)r, struct124.pitchShiftVolRight_0f0.get());
-              }
-
-              //LAB_80047a44
-              if(struct44.mono_36.get() != 0) {
-                r = maxShort((short)l, (short)r);
-                l = r;
               }
 
               //LAB_80047a6c
@@ -2304,11 +2282,11 @@ public final class Scus94491BpeSegment_8004 {
     // There are 12 notes per octave, %12 is likely getting the note, and /12 the octave
 
     if(note < a0) {
-      return (int)(_8005967c.offset(((12 - (a0 - note) % 12) * 16 + (int)a4 * (int)(a3 - 64) / 4 + 0xd0L + (short)a2) * 0x2L).get() >> ((a0 - note) / 12 + 1));
+      return (int)(_8005967c.offset(((12 - (a0 - note) % 12) * 16 + (int)a4 * (int)(a3 - 64) / 4 + 0xd0L + (short)a2) * 0x2L).get() >> ((a0 - note) / 12 + 1)) & 0xffff;
     }
 
     //LAB_80048a38
-    return (int)(_8005967c.offset(((note - a0) % 12 * 16 + (int)a4 * (a3 - 64) / 4 + 0xd0L + (short)a2) * 0x2L).get() << (note - a0) / 12);
+    return (int)(_8005967c.offset(((note - a0) % 12 * 16 + (int)a4 * (a3 - 64) / 4 + 0xd0L + (short)a2) * 0x2L).get() << (note - a0) / 12) & 0xffff;
   }
 
   @Method(0x80048ab8L) //TODO this appears to be calculating volume
@@ -2363,13 +2341,15 @@ public final class Scus94491BpeSegment_8004 {
       return 0;
     }
 
+    //TODO temporary patch for GH#354
+    if((sshd.ptr_1c.get() & 0x1) != 0) {
+      LOGGER.error("PTR_1C HAS INVALID VALUE %08x".formatted(sshd.ptr_1c.get()), new Throwable());
+      return 0;
+    }
+
     a3.sshdPtr_08.set(sshd);
     sshdPtr_800c4ac0.set(sshd);
     final long t1 = sshd.getAddress() + sshd.ptr_1c.get();
-
-    if((sshd.ptr_1c.get() & 0x1) != 0) {
-      LOGGER.error("PTR_1C HAS INVALID VALUE %08x".formatted(sshd.ptr_1c.get()), new Throwable());
-    }
 
     _800c4abc.setu(t1);
 
@@ -3825,19 +3805,9 @@ public final class Scus94491BpeSegment_8004 {
   @Method(0x8004c558L)
   public static void SsSetRVol(final int left, final int right) {
     if(_800c6630.reverbType_34.get() != 0 && left < 0x80 && right < 0x80) {
-      final int r;
-      final int l;
-      if(_800c6630.mono_36.get() != 0) {
-        l = maxShort(left << 8, right << 8);
-        r = l;
-      } else {
-        l = left << 8;
-        r = right << 8;
-      }
-
       //LAB_8004c5d0
-      SPU.REVERB_OUT_L.set(l);
-      SPU.REVERB_OUT_R.set(r);
+      SPU.REVERB_OUT_L.set(left << 8);
+      SPU.REVERB_OUT_R.set(right << 8);
     }
 
     //LAB_8004c5d8
@@ -3851,11 +3821,6 @@ public final class Scus94491BpeSegment_8004 {
   @Method(0x8004c690L)
   public static void FUN_8004c690(final long a0) {
     assert false;
-  }
-
-  @Method(0x8004c6f8L)
-  public static void setMono(final boolean mono) {
-    _800c6630.mono_36.set(mono ? 1 : 0);
   }
 
   @Method(0x8004c894L)
@@ -4067,19 +4032,9 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x8004ced4L)
   public static void setCdVolume(final int left, final int right) {
-    final int l;
-    final int r;
-    if(_800c6630.mono_36.get() != 0) {
-      l = maxShort((byte)left << 8, (byte)right << 8);
-      r = l;
-    } else {
-      l = left << 8;
-      r = right << 8;
-    }
-
     //LAB_8004cf0c
-    voicePtr_800c4ac4.deref().CD_VOL_L.set(l);
-    voicePtr_800c4ac4.deref().CD_VOL_R.set(r);
+    voicePtr_800c4ac4.deref().CD_VOL_L.set(left << 8);
+    voicePtr_800c4ac4.deref().CD_VOL_R.set(right << 8);
   }
 
   @Method(0x8004cf8cL)
