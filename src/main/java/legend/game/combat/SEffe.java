@@ -2980,7 +2980,7 @@ public final class SEffe {
 
   /**
    * Renders some lightning effects (confirmed at the end of Rose's D transformation, Melbu's D Block,
-   * some Haschel stuff)
+   * some Haschel stuff, Doel's fancy lightning bomb attack)
    * Used by allocator 0x801052dc
    */
   @Method(0x80103db0L)
@@ -3050,7 +3050,11 @@ public final class SEffe {
         for(fp = 0; fp < spb8._28.get(); fp++) {
           final BttlScriptData6cSub38Sub14Sub30 s4 = s7.ptr_10.deref().get(fp);
           final long a3 = spbc + fp * 0x8L;
-          s7.sz3_0c.set(FUN_800cfb94(manager, s7._04, new VECTOR().set(s4._00), MEMORY.ref(2, a3, ShortRef::new), MEMORY.ref(2, a3 + 0x4L, ShortRef::new)) / 4);
+          final ShortRef refX = new ShortRef();
+          final ShortRef refY = new ShortRef();
+          s7.sz3_0c.set(FUN_800cfb94(manager, s7._04, new VECTOR().set(s4._00), refX, refY) / 4);
+          MEMORY.ref(4, a3).set(refX.get());
+          MEMORY.ref(4, a3).offset(0x4).set(refY.get());
           s4.colour_10.sub(s4._1c);
           s4.colour_16.sub(s4._22);
           s4._2a.add((short)(spb8._10.get() << 8 >> 8));
@@ -3129,7 +3133,7 @@ public final class SEffe {
                 s0 = spbc + fp * 0x8L;
                 s2 = (int)Math.abs(MEMORY.ref(4, s0).offset(0x0L).get() - MEMORY.ref(4, s0).offset(0x8L).get());
                 s2 = (int)(seed_800fa754.advance().get() % (s2 * 2 + 1) - s2 + MEMORY.ref(4, s0).offset(0x0L).get());
-                s3 = (int)MEMORY.ref(4, s0).offset(0xcL).get();
+                s3 = (int)MEMORY.ref(4, s0).offset(0x0L).get();
                 v1 = (int)MEMORY.ref(4, s0).offset(0x4L).get();
                 int s0_0 = (int)((MEMORY.ref(4, s0).offset(0xcL).get() - MEMORY.ref(4, s0).offset(0x4L).get()) / 2 + MEMORY.ref(4, s0).offset(0x4L).get());
                 spd8 = spc0 >> 2;
@@ -3159,7 +3163,7 @@ public final class SEffe {
                   sp0x90[3].setX((short)s3);
                   renderGradient(s4.colour_16, t4.colour_16, sp0x90, s7.sz3_0c.get(), manager._10.z_22, translucency);
                   sp0x90[0].setX((short)(s2 + spd8));
-                  sp0x90[2].setX((short)spdc);
+                  sp0x90[2].setX((short)(s3 + spdc));
                   renderGradient(s4.colour_10, t4.colour_10, sp0x90, s7.sz3_0c.get(), manager._10.z_22, translucency);
 
                   s3 = s2;
