@@ -4228,6 +4228,7 @@ public final class Bttl_800c {
     return FUN_800cf7d4(sp0x18, sp0x20, a1, outX, outY);
   }
 
+  /** @return Z */
   @Method(0x800cfb94L)
   public static int FUN_800cfb94(final EffectManagerData6c a0, final SVECTOR a1, final VECTOR a2, final ShortRef outX, final ShortRef outY) {
     final SVECTOR sp0x18 = new SVECTOR().set(a0._10.rot_10).add(a1);
@@ -4235,7 +4236,7 @@ public final class Bttl_800c {
     return FUN_800cf7d4(sp0x18, sp0x20, a2, outX, outY);
   }
 
-  /** Returns Z */
+  /** @return Z */
   @Method(0x800cfc20L)
   public static int FUN_800cfc20(final SVECTOR a0, final VECTOR a1, final VECTOR a2, final ShortRef outX, final ShortRef outY) {
     final SVECTOR sp0x18 = new SVECTOR().set(a0);
