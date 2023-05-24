@@ -169,9 +169,9 @@ public class ListBox<T> extends Control {
       if(i >= this.scroll && i < this.scroll + this.maxVisibleEntries) {
         if(this.isDisabled != null) {
           if(this.isDisabled.apply(entry.data)) {
-            entry.colour = TextColour.LIGHT_BROWN;
+            entry.updateText(TextColour.LIGHT_BROWN);
           } else {
-            entry.colour = TextColour.BROWN;
+            entry.updateText(TextColour.BROWN);
           }
         }
 
@@ -360,17 +360,20 @@ public class ListBox<T> extends Control {
 
   public class Entry extends Control {
     public final T data;
-    private final TextRenderable textRenderable;
-    private TextColour colour = TextColour.BROWN;
+    private TextRenderable textRenderable;
 
     public Entry(final T data) {
       this.data = data;
-      this.textRenderable = TextRenderer.prepareShadowText(ListBox.this.entryToString.apply(data), 0, 0, this.colour);
+      this.updateText(TextColour.BROWN);
+    }
+
+    private void updateText(final TextColour colour) {
+      this.textRenderable = TextRenderer.prepareShadowText(ListBox.this.entryToString.apply(this.data), 0, 0, colour);
     }
 
     @Override
     protected void render(final int x, final int y) {
-      this.textRenderable.render(x + 28, y + 3, this.getZ() - 1, this.colour.colour);
+      this.textRenderable.render(x + 28, y + 3, this.getZ() - 1);
 
       if(ListBox.this.entryToIcon != null) {
         renderItemIcon(ListBox.this.entryToIcon.apply(this.data), x + 13, y + 1, 0x8L);
