@@ -5,7 +5,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 
 
-public class FirstTest {
+public final class FirstTest {
+  private FirstTest() {
+  }
+
   public static boolean startOfGame()  {
     DebugHelper.sleep(3000); //wait for game to load
     UserInputs.enter(); // skip first screen
