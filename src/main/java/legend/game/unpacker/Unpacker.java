@@ -39,6 +39,8 @@ import java.util.stream.StreamSupport;
 import static legend.game.Scus94491BpeSegment.getCharacterName;
 
 public final class Unpacker {
+  private static final Pattern MRG_ENTRY = Pattern.compile("[=;]");
+
   private Unpacker() { }
 
   private static final String[] DISK_IDS = {"SCUS94491", "SCUS94584", "SCUS94585", "SCUS94586"};
@@ -138,17 +140,19 @@ public final class Unpacker {
       if(Files.exists(mrg)) {
         try(final BufferedReader reader = Files.newBufferedReader(mrg)) {
           final Int2IntMap fileMap = new Int2IntArrayMap();
+          final Int2IntMap virtualSizeMap = new Int2IntArrayMap();
 
           reader.lines().forEach(line -> {
-            final String[] parts = line.split("=");
+            final String[] parts = MRG_ENTRY.split(line);
 
-            if(parts.length != 2) {
+            if(parts.length != 3) {
               throw new RuntimeException("Invalid MRG entry! " + line);
             }
 
             final int virtual = Integer.parseInt(parts[0]);
             final int real = Integer.parseInt(parts[1]);
             fileMap.put(virtual, real);
+            virtualSizeMap.put(virtual, Integer.parseInt(parts[2]));
           });
 
           final List<FileData> files = new ArrayList<>();
@@ -188,7 +192,7 @@ public final class Unpacker {
 
             final Path file = dir.resolve(String.valueOf(real));
             if(Files.isRegularFile(file)) {
-              files.set(virtual, FileData.virtual(files.get(real), real));
+              files.set(virtual, FileData.virtual(files.get(real), virtualSizeMap.get(virtual), real));
             }
           }
 
@@ -534,7 +538,7 @@ public final class Unpacker {
 
     i = 0;
     for(final MrgArchive.Entry entry : archive) {
-      sb.append(i).append('=').append(entry.virtual() ? entry.parent() : i).append('\n');
+      sb.append(i).append('=').append(entry.virtual() ? entry.parent() : i).append(';').append(entry.virtualSize()).append('\n');
       i++;
     }
 
