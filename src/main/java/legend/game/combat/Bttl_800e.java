@@ -2004,7 +2004,7 @@ public final class Bttl_800e {
 
     //LAB_800e92d4
     for(final FileData file : files) {
-      if(file.real()) {
+      if(file.hasVirtualSize()) {
         new Tim(file).uploadToGpu();
       }
     }
@@ -3714,7 +3714,7 @@ public final class Bttl_800e {
 
     //LAB_800ee9c0
     for(int fileIndex = 0; fileIndex < files.size(); fileIndex++) {
-      if(files.get(fileIndex).real()) {
+      if(files.get(fileIndex).hasVirtualSize()) {
         final Tim tim = new Tim(files.get(fileIndex));
 
         if(fileIndex == 0) {
