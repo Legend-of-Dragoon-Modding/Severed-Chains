@@ -1085,16 +1085,14 @@ public final class SEffe {
     // no-op
   }
 
-  /**
-   * used renderCtmd
-   */
+  /** Used by particle renderer index 1 (renders ice chunk particles and ???). Used renderCtmd */
   @Method(0x800fcf20L)
   public static void FUN_800fcf20(final EffectManagerData6c a0, final TmdObjTable1c tmd, final EffectStruct48 a2, final int tpage) {
     if(a2.flags_00 >= 0) {
       final MATRIX sp0x10 = new MATRIX();
       FUN_800fc4bc(sp0x10, a0, a2);
       if((a2.flags_00 & 0x40) == 0) {
-        FUN_800e61e4(a2.colour0_40.getR() << 5, a2.colour0_40.getG(), a2.colour0_40.getB());
+        FUN_800e61e4(a2.colour0_40.getR() << 5, a2.colour0_40.getG() << 5, a2.colour0_40.getB() << 5);
       }
 
       //LAB_800fcf94
