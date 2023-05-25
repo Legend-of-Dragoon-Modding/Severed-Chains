@@ -1,4 +1,4 @@
-package legend.game.modding.events.combat;
+package legend.game.modding.events.battle;
 
 import legend.game.characters.StatType;
 import legend.game.combat.bobj.BattleObjectType;

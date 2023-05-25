@@ -1,4 +1,4 @@
-package legend.game.modding.events.combat;
+package legend.game.modding.events.battle;
 
 import legend.game.characters.Element;
 import legend.game.characters.ElementSet;

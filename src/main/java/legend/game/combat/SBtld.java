@@ -15,7 +15,7 @@ import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.combat.types.EnemyRewards08;
 import legend.game.combat.types.MonsterStats1c;
 import legend.game.modding.events.characters.BattleMapActiveAdditionHitPropertiesEvent;
-import legend.game.modding.events.combat.EnemyRewardsEvent;
+import legend.game.modding.events.battle.EnemyRewardsEvent;
 import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptState;
 import legend.game.types.LodString;

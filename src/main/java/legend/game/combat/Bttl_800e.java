@@ -61,7 +61,7 @@ import legend.game.combat.ui.FloatingNumberC4;
 import legend.game.combat.ui.FloatingNumberC4Sub20;
 import legend.game.inventory.screens.TextColour;
 import legend.game.modding.coremod.CoreMod;
-import legend.game.modding.events.combat.MonsterStatsEvent;
+import legend.game.modding.events.battle.MonsterStatsEvent;
 import legend.game.modding.events.inventory.RepeatItemReturnEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;

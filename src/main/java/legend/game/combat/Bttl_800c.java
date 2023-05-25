@@ -67,6 +67,9 @@ import legend.game.combat.ui.FloatingNumberC4;
 import legend.game.fmv.Fmv;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.events.battle.BattleEndedEvent;
+import legend.game.modding.events.battle.BattleObjectTurnEvent;
+import legend.game.modding.events.battle.BattleStartedEvent;
 import legend.game.modding.registries.RegistryDelegate;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.IntParam;
@@ -93,6 +96,7 @@ import java.util.List;
 import java.util.function.BiConsumer;
 
 import static legend.core.GameEngine.CPU;
+import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SCRIPTS;
@@ -964,6 +968,9 @@ public final class Bttl_800c {
   public static void FUN_800c79f0() {
     currentTurnBobj_800c66c8 = battleState_8006e398.allBobjs_e0c[0];
     FUN_800f417c();
+
+    EVENTS.postEvent(new BattleStartedEvent());
+
     pregameLoadingStage_800bb10c.incr();
   }
 
@@ -1023,6 +1030,7 @@ public final class Bttl_800c {
         if(forcedTurnBobj != null) { // A bobj has a forced turn
           forcedTurnBobj.storage_44[7] = forcedTurnBobj.storage_44[7] & 0xffff_ffdf | 0x1008;
           currentTurnBobj_800c66c8 = forcedTurnBobj;
+          EVENTS.postEvent(new BattleObjectTurnEvent<>(forcedTurnBobj));
         } else { // Take regular turns
           //LAB_800c7ce8
           if(aliveMonsterCount_800c6758.get() > 0) { // Monsters alive, calculate next bobj turn
@@ -1030,6 +1038,7 @@ public final class Bttl_800c {
             final ScriptState<? extends BattleObject27c> currentTurn = getCurrentTurnBobj();
             currentTurnBobj_800c66c8 = currentTurn;
             currentTurn.storage_44[7] |= 0x1008;
+            EVENTS.postEvent(new BattleObjectTurnEvent<>(currentTurn));
 
             //LAB_800c7d74
           } else { // Monsters dead
@@ -1139,6 +1148,8 @@ public final class Bttl_800c {
 
   @Method(0x800c8068L)
   public static void performPostBattleAction() {
+    EVENTS.postEvent(new BattleEndedEvent());
+
     final int postBattleAction = postBattleAction_800bc974.get();
 
     if(_800c6690.get() == 0) {

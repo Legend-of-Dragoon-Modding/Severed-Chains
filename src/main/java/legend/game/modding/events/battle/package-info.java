@@ -1,4 +1,4 @@
 @ParametersAreNonnullByDefault
-package legend.game.modding.events.combat;
+package legend.game.modding.events.battle;
 
 import javax.annotation.ParametersAreNonnullByDefault;

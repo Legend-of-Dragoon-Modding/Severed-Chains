@@ -1,4 +1,4 @@
-package legend.game.modding.events.combat;
+package legend.game.modding.events.battle;
 
 import legend.game.modding.events.Event;
 import legend.game.types.SpellStats0c;

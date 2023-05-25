@@ -12,6 +12,7 @@ import legend.game.Scus94491BpeSegment_8002;
 import legend.game.characters.Element;
 import legend.game.characters.TurnBasedPercentileBuff;
 import legend.game.characters.VitalsStat;
+import legend.game.combat.bobj.AttackEvent;
 import legend.game.combat.bobj.BattleObject27c;
 import legend.game.combat.bobj.MonsterBattleObject;
 import legend.game.combat.bobj.PlayerBattleObject;
@@ -28,7 +29,7 @@ import legend.game.combat.ui.FloatingNumberC4;
 import legend.game.combat.ui.FloatingNumberC4Sub20;
 import legend.game.inventory.screens.TextColour;
 import legend.game.modding.coremod.CoreMod;
-import legend.game.modding.events.combat.SpellStatsEvent;
+import legend.game.modding.events.battle.SpellStatsEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptState;
@@ -561,7 +562,7 @@ public final class Bttl_800f {
       .then(PhysicalDamageFormula::applyElementalResistanceAndImmunity)
     );
 
-    final int damage = physicalDamage.calculate(attacker, defender);
+    final int damage = EVENTS.postEvent(new AttackEvent(attacker, defender, AttackType.PHYSICAL, physicalDamage.calculate(attacker, defender))).damage;
 
     script.params_20[2].set(damage);
     script.params_20[3].set(determineAttackSpecialEffects(attacker, defender, AttackType.PHYSICAL));
@@ -590,6 +591,8 @@ public final class Bttl_800f {
       damage = defender.applyElementalResistanceAndImmunity(damage, attacker.spell_94.element_08);
     }
 
+    damage = EVENTS.postEvent(new AttackEvent(attacker, defender, AttackType.DRAGOON_MAGIC_STATUS_ITEMS, damage)).damage;
+
     //LAB_800f27ec
     script.params_20[3].set(damage);
     script.params_20[4].set(determineAttackSpecialEffects(attacker, defender, AttackType.DRAGOON_MAGIC_STATUS_ITEMS));
@@ -615,6 +618,8 @@ public final class Bttl_800f {
       damage = defender.applyDamageResistanceAndImmunity(damage, AttackType.ITEM_MAGIC);
       damage = defender.applyElementalResistanceAndImmunity(damage, attacker.item_d4.element_01);
     }
+
+    damage = EVENTS.postEvent(new AttackEvent(attacker, defender, AttackType.ITEM_MAGIC, damage)).damage;
 
     //LAB_800f2970
     script.params_20[3].set(damage);

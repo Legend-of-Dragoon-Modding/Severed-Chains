@@ -1,4 +1,4 @@
-package legend.game.modding.events.combat;
+package legend.game.modding.events.battle;
 
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.modding.events.Event;

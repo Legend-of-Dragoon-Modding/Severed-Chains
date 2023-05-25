@@ -9,7 +9,7 @@ import legend.game.combat.types.AttackType;
 import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.modding.coremod.CoreMod;
-import legend.game.modding.events.combat.RegisterBattleObjectStatsEvent;
+import legend.game.modding.events.battle.RegisterBattleObjectStatsEvent;
 import legend.game.types.ItemStats0c;
 import legend.game.types.Model124;
 import legend.game.types.SpellStats0c;

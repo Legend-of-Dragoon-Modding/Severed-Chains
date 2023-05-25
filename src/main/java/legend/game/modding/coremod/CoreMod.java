@@ -33,7 +33,7 @@ import legend.game.modding.coremod.elements.ThunderElement;
 import legend.game.modding.coremod.elements.WaterElement;
 import legend.game.modding.coremod.elements.WindElement;
 import legend.game.modding.events.EventListener;
-import legend.game.modding.events.combat.RegisterBattleObjectStatsEvent;
+import legend.game.modding.events.battle.RegisterBattleObjectStatsEvent;
 import legend.game.modding.events.config.ConfigLoadedEvent;
 import legend.game.modding.registries.Registrar;
 import legend.game.modding.registries.RegistryDelegate;
