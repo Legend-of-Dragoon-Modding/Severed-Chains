@@ -39,6 +39,8 @@ import java.util.stream.StreamSupport;
 import static legend.game.Scus94491BpeSegment.getCharacterName;
 
 public final class Unpacker {
+  private static final Pattern MRG_ENTRY = Pattern.compile("[=;]");
+
   private Unpacker() { }
 
   private static final String[] DISK_IDS = {"SCUS94491", "SCUS94584", "SCUS94585", "SCUS94586"};
@@ -138,10 +140,10 @@ public final class Unpacker {
       if(Files.exists(mrg)) {
         try(final BufferedReader reader = Files.newBufferedReader(mrg)) {
           final Int2IntMap fileMap = new Int2IntArrayMap();
-          final ArrayList<Integer> fileSizes = new ArrayList<>();
+          final Int2IntMap virtualSizeMap = new Int2IntArrayMap();
 
           reader.lines().forEach(line -> {
-            final String[] parts = line.split("[=;]");
+            final String[] parts = MRG_ENTRY.split(line);
 
             if(parts.length != 3) {
               throw new RuntimeException("Invalid MRG entry! " + line);
@@ -150,9 +152,7 @@ public final class Unpacker {
             final int virtual = Integer.parseInt(parts[0]);
             final int real = Integer.parseInt(parts[1]);
             fileMap.put(virtual, real);
-            if(virtual != real) {
-              fileSizes.add(Integer.parseInt(parts[2]));
-            }
+            virtualSizeMap.put(virtual, Integer.parseInt(parts[2]));
           });
 
           final List<FileData> files = new ArrayList<>();
@@ -192,8 +192,7 @@ public final class Unpacker {
 
             final Path file = dir.resolve(String.valueOf(real));
             if(Files.isRegularFile(file)) {
-              final int virtualSize = fileSizes.remove(0);
-              files.set(virtual, FileData.virtual(files.get(real), virtualSize, real));
+              files.set(virtual, FileData.virtual(files.get(real), virtualSizeMap.get(virtual), real));
             }
           }
 
