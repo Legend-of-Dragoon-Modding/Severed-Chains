@@ -9663,9 +9663,6 @@ public final class SEffe {
   @Method(0x8011826cL)
   public static void renderDeffTmd(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
     final DeffTmdRenderer14 s1 = (DeffTmdRenderer14)data.effect_44;
-    if(state.name.contains("index 4")) {
-      int x = 0;
-    }
 
     if(data._10.flags_00 >= 0) {
       final MATRIX sp0x10 = new MATRIX();
