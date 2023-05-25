@@ -3,6 +3,7 @@ package legend.game.inventory.screens.controls;
 import legend.game.input.InputAction;
 import legend.game.inventory.screens.Control;
 import legend.game.inventory.screens.InputPropagation;
+import legend.game.types.LodString;
 import legend.game.types.MenuItemStruct04;
 import legend.game.types.Renderable58;
 
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import static legend.game.SItem.allocateUiElement;
-import static legend.game.SItem.equipment_8011972c;
+import static legend.game.SItem.getItemName;
 import static legend.game.Scus94491BpeSegment_8002.allocateManualRenderable;
 import static legend.game.Scus94491BpeSegment_8002.getItemIcon;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
@@ -27,7 +28,7 @@ public class ItemList extends Control {
 
   public ItemList() {
     this(
-      menuItem -> equipment_8011972c.get(menuItem.itemId_00).deref().get(),
+      menuItem -> new LodString(getItemName(menuItem.itemId_00)).get(),
       menuItem -> getItemIcon(menuItem.itemId_00),
       menuItem -> (menuItem.flags_02 & 0x1000) != 0 ? menuItem.flags_02 & 0xf : -1,
       menuItem -> (menuItem.flags_02 & 0x1000) != 0

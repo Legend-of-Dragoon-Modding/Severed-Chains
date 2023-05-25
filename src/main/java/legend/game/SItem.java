@@ -91,11 +91,11 @@ import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
 import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
 import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
+import static legend.game.Scus94491BpeSegment_8004.itemStats_8004f2ac;
 import static legend.game.Scus94491BpeSegment_8004.loadingGameStateOverlay_8004dd08;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
 import static legend.game.Scus94491BpeSegment_8005.additionData_80052884;
 import static legend.game.Scus94491BpeSegment_8005.combatants_8005e398;
-import static legend.game.Scus94491BpeSegment_8005.spells_80052734;
 import static legend.game.Scus94491BpeSegment_8005.standingInSavePoint_8005a368;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
@@ -135,6 +135,7 @@ import static legend.game.combat.Bttl_800c.combatantTmdAndAnimLoadedCallback;
 import static legend.game.combat.Bttl_800c.getCombatant;
 import static legend.game.combat.Bttl_800c.loadCombatantTim;
 import static legend.game.combat.Bttl_800c.loadCombatantTmdAndAnims;
+import static legend.game.combat.Bttl_800c.spellStats_800fa0b8;
 import static legend.game.combat.Bttl_800f.FUN_800f863c;
 
 public final class SItem {
@@ -1598,13 +1599,29 @@ public final class SItem {
 
     //LAB_80108f94
     //LAB_80108f98
-    renderText(equipment_8011972c.get(charData.equipment_14[0]).deref(), 220, 19, TextColour.BROWN);
-    renderText(equipment_8011972c.get(charData.equipment_14[1]).deref(), 220, 33, TextColour.BROWN);
-    renderText(equipment_8011972c.get(charData.equipment_14[2]).deref(), 220, 47, TextColour.BROWN);
-    renderText(equipment_8011972c.get(charData.equipment_14[3]).deref(), 220, 61, TextColour.BROWN);
-    renderText(equipment_8011972c.get(charData.equipment_14[4]).deref(), 220, 75, TextColour.BROWN);
+    renderText(new LodString(getItemName(charData.equipment_14[0])), 220, 19, TextColour.BROWN);
+    renderText(new LodString(getItemName(charData.equipment_14[1])), 220, 33, TextColour.BROWN);
+    renderText(new LodString(getItemName(charData.equipment_14[2])), 220, 47, TextColour.BROWN);
+    renderText(new LodString(getItemName(charData.equipment_14[3])), 220, 61, TextColour.BROWN);
+    renderText(new LodString(getItemName(charData.equipment_14[4])), 220, 75, TextColour.BROWN);
 
     //LAB_8010905c
+  }
+
+  public static String getItemName(final int itemId) {
+    if(itemId < 0xc0) {
+      return equipmentStats_80111ff0[itemId].name;
+    }
+
+    return itemStats_8004f2ac[itemId - 0xc0].name;
+  }
+
+  public static String getItemDescription(final int itemId) {
+    if(itemId < 0xc0) {
+      return equipmentStats_80111ff0[itemId].description;
+    }
+
+    return itemStats_8004f2ac[itemId - 0xc0].description;
   }
 
   @Method(0x80109074L)
@@ -1621,8 +1638,8 @@ public final class SItem {
         return;
       }
 
-      s0 = itemDescriptions_80117a10.get(stringIndex).deref();
-    } else if(stringType == 0x1L) {
+      s0 = new LodString(getItemDescription(stringIndex));
+    } else if(stringType == 1) {
       //LAB_8010912c
       if(stringIndex >= 0xff) {
         //LAB_80109140
@@ -1632,7 +1649,7 @@ public final class SItem {
         s0 = _8011b75c.get(stringIndex).deref();
       }
       //LAB_80109108
-    } else if(stringType == 0x2L) {
+    } else if(stringType == 2) {
       //LAB_8010914c
       s0 = switch(stringIndex) {
         case 0 -> new LodString("Send gold and items\nDabas has found to\nthe main game.");
@@ -1690,7 +1707,7 @@ public final class SItem {
       final MenuItemStruct04 menuItem = menuItems.get(s3);
 
       //LAB_801094ac
-      renderText(equipment_8011972c.get(menuItem.itemId_00).deref(), x + 21, y + FUN_800fc814(i) + 2, (menuItem.flags_02 & 0x6000) == 0 ? TextColour.BROWN : TextColour.MIDDLE_BROWN);
+      renderText(new LodString(getItemName(menuItem.itemId_00)), x + 21, y + FUN_800fc814(i) + 2, (menuItem.flags_02 & 0x6000) == 0 ? TextColour.BROWN : TextColour.MIDDLE_BROWN);
       renderItemIcon(getItemIcon(menuItem.itemId_00), x + 4, y + FUN_800fc814(i), 0x8L);
 
       final int s0 = menuItem.flags_02;
@@ -1976,7 +1993,7 @@ public final class SItem {
     FUN_8010d078(x + 1, y + 20 - height + 1, 132, height * 2, 5); // New spell background
 
     if(height >= 20) {
-      Scus94491BpeSegment_8002.renderText(spells_80052734.get(spellIndex).deref(), x - 4, y + 6, TextColour.WHITE, 0);
+      Scus94491BpeSegment_8002.renderText(new LodString(spellStats_800fa0b8[spellIndex].name), x - 4, y + 6, TextColour.WHITE, 0);
       Scus94491BpeSegment_8002.renderText(Spell_Unlocked_8011c5c4, x - 4, y + 20, TextColour.WHITE, 0);
     }
 
@@ -2553,7 +2570,7 @@ public final class SItem {
     for(int i = 0; i < itemsDroppedByEnemiesCount_800bc978.get(); i++) {
       if(itemsDroppedByEnemies_800bc928.get(i).get() != 0xff) {
         renderItemIcon(getItemIcon(itemsDroppedByEnemies_800bc928.get(i).get()), 18, y1, 0x8L);
-        renderText(equipment_8011972c.get(itemsDroppedByEnemies_800bc928.get(i).get()).deref(), 28, y2, TextColour.WHITE);
+        renderText(new LodString(getItemName(itemsDroppedByEnemies_800bc928.get(i).get())), 28, y2, TextColour.WHITE);
       }
 
       //LAB_8010eb38

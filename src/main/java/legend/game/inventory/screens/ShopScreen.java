@@ -33,7 +33,7 @@ import static legend.game.SItem.cacheCharacterSlots;
 import static legend.game.SItem.canEquip;
 import static legend.game.SItem.characterCount_8011d7c4;
 import static legend.game.SItem.equipItem;
-import static legend.game.SItem.equipment_8011972c;
+import static legend.game.SItem.getItemName;
 import static legend.game.SItem.glyph_801142d4;
 import static legend.game.SItem.glyphs_80114510;
 import static legend.game.SItem.initGlyph;
@@ -393,7 +393,7 @@ public class ShopScreen extends MenuScreen {
       for(i = 0; firstItem + i < gameState_800babc8.items_2e9.size() && i < 6; i++) {
         final int itemId = gameState_800babc8.items_2e9.getInt(firstItem + i);
         renderItemIcon(getItemIcon(itemId), 151, FUN_8010a808(i), 0x8L);
-        renderText(equipment_8011972c.get(itemId).deref(), 168, FUN_8010a808(i) + 2, !itemCantBeDiscarded(itemId) ? TextColour.BROWN : TextColour.MIDDLE_BROWN);
+        renderText(new LodString(getItemName(itemId)), 168, FUN_8010a808(i) + 2, !itemCantBeDiscarded(itemId) ? TextColour.BROWN : TextColour.MIDDLE_BROWN);
         this.FUN_801069d0(324, FUN_8010a808(i) + 4, itemPrices_80114310.get(itemId).get());
       }
 
@@ -407,7 +407,7 @@ public class ShopScreen extends MenuScreen {
       for(i = 0; firstItem + i < gameState_800babc8.equipment_1e8.size() && i < 6; i++) {
         final int itemId = gameState_800babc8.equipment_1e8.getInt(firstItem + i);
         renderItemIcon(getItemIcon(itemId), 151, FUN_8010a808(i), 0x8L);
-        renderText(equipment_8011972c.get(itemId).deref(), 168, FUN_8010a808(i) + 2, !itemCantBeDiscarded(itemId) ? TextColour.BROWN : TextColour.MIDDLE_BROWN);
+        renderText(new LodString(getItemName(itemId)), 168, FUN_8010a808(i) + 2, !itemCantBeDiscarded(itemId) ? TextColour.BROWN : TextColour.MIDDLE_BROWN);
 
         if(itemCantBeDiscarded(itemId)) {
           renderItemIcon(58, 330, FUN_8010a808(i), 0x8L).clut_30 = 0x7eaa;
@@ -438,7 +438,7 @@ public class ShopScreen extends MenuScreen {
       }
 
       final MenuItemStruct04 item = this.menuItems[startItemIndex + i];
-      renderText(equipment_8011972c.get(item.itemId_00).deref(), 168, FUN_8010a808(i) + 2, TextColour.BROWN);
+      renderText(new LodString(getItemName(item.itemId_00)), 168, FUN_8010a808(i) + 2, TextColour.BROWN);
       renderFiveDigitNumber(324, FUN_8010a808(i) + 4, item.flags_02);
       renderItemIcon(getItemIcon(item.itemId_00), 151, FUN_8010a808(i), 0x8L);
     }

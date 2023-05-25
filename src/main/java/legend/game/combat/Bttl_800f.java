@@ -58,7 +58,6 @@ import static legend.game.Scus94491BpeSegment_8002.takeItemId;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.Scus94491BpeSegment_8004.itemStats_8004f2ac;
 import static legend.game.Scus94491BpeSegment_8005._80050ae8;
-import static legend.game.Scus94491BpeSegment_8005.spells_80052734;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
 import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
@@ -1885,7 +1884,7 @@ public final class Bttl_800f {
       } else if(type == 1) {
         //LAB_800f5a4c
         int spellId = dragoonSpells_800c6960.get(charSlot).spellIndex_01.get(spellSlot).get();
-        name = spells_80052734.get(spellId).deref();
+        name = new LodString(spellStats_800fa0b8[spellId].name);
 
         if(combatMenu.charIndex_08.get() == 8) {
           if(spellId == 65) {
@@ -2017,14 +2016,14 @@ public final class Bttl_800f {
       }
 
       //LAB_800f5f50
-      if((structa4._02.get() & 0x40L) != 0) {
-        final long s1;
-        if(structa4.menuType_0a.get() == 0) {
+      if((structa4._02.get() & 0x40) != 0) {
+        final int textType;
+        if(structa4.menuType_0a.get() == 0) { // Item
           //LAB_800f5f8c
-          s1 = 0x4L;
-        } else if(structa4.menuType_0a.get() == 0x1L) {
+          textType = 4;
+        } else if(structa4.menuType_0a.get() == 1) { // Spell
           //LAB_800f5f94
-          s1 = 0x5L;
+          textType = 5;
           if((structa4._02.get() & 0x2L) != 0) {
             final BattleObject27c bobj = setActiveCharacterSpell(structa4.itemOrSpellId_1c.get());
             addFloatingNumber(0, 0x1L, 0, bobj.spell_94.mp_06, 280, 135, 0, structa4.menuType_0a.get());
@@ -2039,7 +2038,7 @@ public final class Bttl_800f {
         //LAB_800f6050
         //Selected item description
         renderTextBoxBackground(44, 156, 232, 14, 0x00299f);
-        renderText((short)s1, structa4.itemOrSpellId_1c.get(), 160, 163);
+        renderText(textType, structa4.itemOrSpellId_1c.get(), 160, 163);
       }
     }
 
@@ -3027,9 +3026,27 @@ public final class Bttl_800f {
     addFloatingNumberForBobj(bobjIndex, damage, 0x8L);
   }
 
+  /**
+   * @param textType <ol start="0">
+   *                   <li>Player names</li>
+   *                   <li>Player names</li>
+   *                   <li>Combat item names</li>
+   *                   <li>Dragoon spells</li>
+   *                   <li>Item descriptions</li>
+   *                   <li>Spell descriptions</li>
+   *                 </ol>
+   */
   @Method(0x800f8ac4L)
   public static void renderText(final int textType, final int textIndex, final int x, final int y) {
-    final LodString str = allText_800fb3c0.get(textType).deref().get(textIndex).deref();
+    final LodString str;
+    if(textType == 4) {
+      str = new LodString(itemStats_8004f2ac[textIndex].combatDescription);
+    } else if(textType == 5) {
+      str = new LodString(spellStats_800fa0b8[textIndex].combatDescription);
+    } else {
+      str = allText_800fb3c0.get(textType).deref().get(textIndex).deref();
+    }
+
     Scus94491BpeSegment_8002.renderText(str, x - textWidth(str) / 2, y - 6, TextColour.WHITE, 0);
   }
 

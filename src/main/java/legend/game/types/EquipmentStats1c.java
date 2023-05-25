@@ -5,6 +5,9 @@ import legend.game.characters.ElementSet;
 import legend.game.unpacker.FileData;
 
 public class EquipmentStats1c {
+  public final String name;
+  public final String description;
+
   /**
    * <ul>
    *   <li>0x4 - can't be discarded</li>
@@ -63,7 +66,7 @@ public class EquipmentStats1c {
   public final int _1a;
   public final int onHitStatus_1b;
 
-  public static EquipmentStats1c fromFile(final FileData data) {
+  public static EquipmentStats1c fromFile(final String name, final String description, final FileData data) {
     final int flags = data.readUByte(0x0);
     final int type = data.readUByte(0x1);
     final int _02 = data.readUByte(0x2);
@@ -112,10 +115,12 @@ public class EquipmentStats1c {
     final int _1a = data.readUByte(0x1a);
     final int onHitStatus = data.readUByte(0x1b);
 
-    return new EquipmentStats1c(flags, type, _02, equipableFlags, element, _05, elementalResistance, elementalImmunity, statusResist, _09, atk, mpPerPhysicalHit, spPerPhysicalHit, mpPerMagicalHit, spPerMagicalHit, hpMultiplier, mpMultiplier, spMultiplier, magicalResistance, physicalResistance, magicalImmunity, physicalImmunity, revive, hpRegen, mpRegen, spRegen, special2Flag80, icon, spd, atkHi, matk, def, mdef, aHit, mHit, aAv, mAv, onStatusChance, _19, _1a, onHitStatus);
+    return new EquipmentStats1c(name, description, flags, type, _02, equipableFlags, element, _05, elementalResistance, elementalImmunity, statusResist, _09, atk, mpPerPhysicalHit, spPerPhysicalHit, mpPerMagicalHit, spPerMagicalHit, hpMultiplier, mpMultiplier, spMultiplier, magicalResistance, physicalResistance, magicalImmunity, physicalImmunity, revive, hpRegen, mpRegen, spRegen, special2Flag80, icon, spd, atkHi, matk, def, mdef, aHit, mHit, aAv, mAv, onStatusChance, _19, _1a, onHitStatus);
   }
 
-  public EquipmentStats1c(final int flags, final int type, final int _02, final int equipableFlags, final Element element, final int _05, final ElementSet elementalResistance, final ElementSet elementalImmunity, final int statusResist, final int _09, final int atk, final int mpPerPhysicalHit, final int spPerPhysicalHit, final int mpPerMagicalHit, final int spPerMagicalHit, final int hpMultiplier, final int mpMultiplier, final int spMultiplier, final boolean magicalResistance, final boolean physicalResistance, final boolean magicalImmunity, final boolean physicalImmunity, final int revive, final int hpRegen, final int mpRegen, final int spRegen, final int special2Flag80, final int icon, final int spd, final int atkHi, final int matk, final int def, final int mdef, final int aHit, final int mHit, final int aAv, final int mAv, final int onStatusChance, final int _19, final int _1a, final int onHitStatus) {
+  public EquipmentStats1c(final String name, final String description, final int flags, final int type, final int _02, final int equipableFlags, final Element element, final int _05, final ElementSet elementalResistance, final ElementSet elementalImmunity, final int statusResist, final int _09, final int atk, final int mpPerPhysicalHit, final int spPerPhysicalHit, final int mpPerMagicalHit, final int spPerMagicalHit, final int hpMultiplier, final int mpMultiplier, final int spMultiplier, final boolean magicalResistance, final boolean physicalResistance, final boolean magicalImmunity, final boolean physicalImmunity, final int revive, final int hpRegen, final int mpRegen, final int spRegen, final int special2Flag80, final int icon, final int spd, final int atkHi, final int matk, final int def, final int mdef, final int aHit, final int mHit, final int aAv, final int mAv, final int onStatusChance, final int _19, final int _1a, final int onHitStatus) {
+    this.name = name;
+    this.description = description;
     this.flags_00 = flags;
     this.type_01 = type;
     this._02 = _02;

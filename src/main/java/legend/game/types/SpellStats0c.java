@@ -4,6 +4,9 @@ import legend.game.characters.Element;
 import legend.game.unpacker.FileData;
 
 public class SpellStats0c {
+  public final String name;
+  public final String combatDescription;
+
   /**
    * <ul>
    *   <li>0x8 - attack all</li>
@@ -27,7 +30,7 @@ public class SpellStats0c {
   public final int buffType_0a;
   public final int _0b;
 
-  public static SpellStats0c fromFile(final FileData data) {
+  public static SpellStats0c fromFile(final String name, final String combatDescription, final FileData data) {
     final int targetType_00 = data.readUByte(0x0);
     final int flags_01 = data.readUByte(0x1);
     final int specialEffect_02 = data.readUByte(0x2);
@@ -41,10 +44,12 @@ public class SpellStats0c {
     final int buffType_0a = data.readUByte(0xa);
     final int _0b = data.readUByte(0xb);
 
-    return new SpellStats0c(targetType_00, flags_01, specialEffect_02, damage_03, multi_04, accuracy_05, mp_06, statusChance_07, element_08, statusType_09, buffType_0a, _0b);
+    return new SpellStats0c(name, combatDescription, targetType_00, flags_01, specialEffect_02, damage_03, multi_04, accuracy_05, mp_06, statusChance_07, element_08, statusType_09, buffType_0a, _0b);
   }
 
-  public SpellStats0c(final int targetType, final int flags, final int specialEffect, final int damage, final int multi, final int accuracy, final int mp, final int statusChance, final Element element, final int statusType, final int buffType, final int _0b) {
+  public SpellStats0c(final String name, final String combatDescription, final int targetType, final int flags, final int specialEffect, final int damage, final int multi, final int accuracy, final int mp, final int statusChance, final Element element, final int statusType, final int buffType, final int _0b) {
+    this.name = name;
+    this.combatDescription = combatDescription;
     this.targetType_00 = targetType;
     this.flags_01 = flags;
     this.specialEffect_02 = specialEffect;

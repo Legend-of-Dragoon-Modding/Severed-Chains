@@ -4,6 +4,10 @@ import legend.game.characters.Element;
 import legend.game.unpacker.FileData;
 
 public class ItemStats0c {
+  public final String name;
+  public final String description;
+  public final String combatDescription;
+
   /**
    * <ul>
    *   <li>0x2 - target all</li>
@@ -58,7 +62,7 @@ public class ItemStats0c {
    */
   public final int type_0b;
 
-  public static ItemStats0c fromFile(final FileData data) {
+  public static ItemStats0c fromFile(final String name, final String description, final String combatDescription, final FileData data) {
     final int target = data.readUByte(0x0);
     final Element element = Element.fromFlag(data.readUByte(0x1));
     final int damageMultiplier = data.readUByte(0x2);
@@ -91,10 +95,13 @@ public class ItemStats0c {
     final int percentage = data.readUByte(0x9);
     final int uu2 = data.readUByte(0xa);
     final int type = data.readUByte(0xb);
-    return new ItemStats0c(target, element, damageMultiplier, powerDefence, powerMagicDefence, powerAttack, powerMagicAttack, powerAttackHit, powerMagicAttackHit, powerAttackAvoid, powerMagicAttackAvoid, physicalImmunity, magicalImmunity, speedUp, speedDown, spPerPhysicalHit, mpPerPhysicalHit, spPerMagicalHit, mpPerMagicalHit, damage, icon, status, percentage, uu2, type);
+    return new ItemStats0c(name, description, combatDescription, target, element, damageMultiplier, powerDefence, powerMagicDefence, powerAttack, powerMagicAttack, powerAttackHit, powerMagicAttackHit, powerAttackAvoid, powerMagicAttackAvoid, physicalImmunity, magicalImmunity, speedUp, speedDown, spPerPhysicalHit, mpPerPhysicalHit, spPerMagicalHit, mpPerMagicalHit, damage, icon, status, percentage, uu2, type);
   }
 
-  public ItemStats0c(final int target, final Element element, final int damageMultiplier, final int powerDefence, final int powerMagicDefence, final int powerAttack, final int powerMagicAttack, final int powerAttackHit, final int powerMagicAttackHit, final int powerAttackAvoid, final int powerMagicAttackAvoid, final boolean physicalImmunity, final boolean magicalImmunity, final int speedUp, final int speedDown, final int spPerPhysicalHit, final int mpPerPhysicalHit, final int spPerMagicalHit, final int mpPerMagicalHit, final int damage, final int icon, final int status, final int percentage, final int uu2, final int type) {
+  public ItemStats0c(final String name, final String description, final String combatDescription, final int target, final Element element, final int damageMultiplier, final int powerDefence, final int powerMagicDefence, final int powerAttack, final int powerMagicAttack, final int powerAttackHit, final int powerMagicAttackHit, final int powerAttackAvoid, final int powerMagicAttackAvoid, final boolean physicalImmunity, final boolean magicalImmunity, final int speedUp, final int speedDown, final int spPerPhysicalHit, final int mpPerPhysicalHit, final int spPerMagicalHit, final int mpPerMagicalHit, final int damage, final int icon, final int status, final int percentage, final int uu2, final int type) {
+    this.name = name;
+    this.description = description;
+    this.combatDescription = combatDescription;
     this.target_00 = target;
     this.element_01 = element;
     this.damageMultiplier_02 = damageMultiplier;
