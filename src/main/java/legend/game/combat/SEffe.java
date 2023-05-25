@@ -1085,16 +1085,14 @@ public final class SEffe {
     // no-op
   }
 
-  /**
-   * used renderCtmd
-   */
+  /** Used by particle renderer index 1 (renders ice chunk particles and ???). Used renderCtmd */
   @Method(0x800fcf20L)
   public static void FUN_800fcf20(final EffectManagerData6c a0, final TmdObjTable1c tmd, final EffectStruct48 a2, final int tpage) {
     if(a2.flags_00 >= 0) {
       final MATRIX sp0x10 = new MATRIX();
       FUN_800fc4bc(sp0x10, a0, a2);
       if((a2.flags_00 & 0x40) == 0) {
-        FUN_800e61e4(a2.colour0_40.getR() << 5, a2.colour0_40.getG(), a2.colour0_40.getB());
+        FUN_800e61e4(a2.colour0_40.getR() << 5, a2.colour0_40.getG() << 5, a2.colour0_40.getB() << 5);
       }
 
       //LAB_800fcf94
@@ -2980,7 +2978,7 @@ public final class SEffe {
 
   /**
    * Renders some lightning effects (confirmed at the end of Rose's D transformation, Melbu's D Block,
-   * some Haschel stuff)
+   * some Haschel stuff, Doel's fancy lightning bomb attack)
    * Used by allocator 0x801052dc
    */
   @Method(0x80103db0L)
@@ -3050,7 +3048,11 @@ public final class SEffe {
         for(fp = 0; fp < spb8._28.get(); fp++) {
           final BttlScriptData6cSub38Sub14Sub30 s4 = s7.ptr_10.deref().get(fp);
           final long a3 = spbc + fp * 0x8L;
-          s7.sz3_0c.set(FUN_800cfb94(manager, s7._04, new VECTOR().set(s4._00), MEMORY.ref(2, a3, ShortRef::new), MEMORY.ref(2, a3 + 0x4L, ShortRef::new)) / 4);
+          final ShortRef refX = new ShortRef();
+          final ShortRef refY = new ShortRef();
+          s7.sz3_0c.set(FUN_800cfb94(manager, s7._04, new VECTOR().set(s4._00), refX, refY) / 4);
+          MEMORY.ref(4, a3).set(refX.get());
+          MEMORY.ref(4, a3).offset(0x4).set(refY.get());
           s4.colour_10.sub(s4._1c);
           s4.colour_16.sub(s4._22);
           s4._2a.add((short)(spb8._10.get() << 8 >> 8));
@@ -3129,7 +3131,7 @@ public final class SEffe {
                 s0 = spbc + fp * 0x8L;
                 s2 = (int)Math.abs(MEMORY.ref(4, s0).offset(0x0L).get() - MEMORY.ref(4, s0).offset(0x8L).get());
                 s2 = (int)(seed_800fa754.advance().get() % (s2 * 2 + 1) - s2 + MEMORY.ref(4, s0).offset(0x0L).get());
-                s3 = (int)MEMORY.ref(4, s0).offset(0xcL).get();
+                s3 = (int)MEMORY.ref(4, s0).offset(0x0L).get();
                 v1 = (int)MEMORY.ref(4, s0).offset(0x4L).get();
                 int s0_0 = (int)((MEMORY.ref(4, s0).offset(0xcL).get() - MEMORY.ref(4, s0).offset(0x4L).get()) / 2 + MEMORY.ref(4, s0).offset(0x4L).get());
                 spd8 = spc0 >> 2;
@@ -3159,7 +3161,7 @@ public final class SEffe {
                   sp0x90[3].setX((short)s3);
                   renderGradient(s4.colour_16, t4.colour_16, sp0x90, s7.sz3_0c.get(), manager._10.z_22, translucency);
                   sp0x90[0].setX((short)(s2 + spd8));
-                  sp0x90[2].setX((short)spdc);
+                  sp0x90[2].setX((short)(s3 + spdc));
                   renderGradient(s4.colour_10, t4.colour_10, sp0x90, s7.sz3_0c.get(), manager._10.z_22, translucency);
 
                   s3 = s2;
@@ -6820,9 +6822,7 @@ public final class SEffe {
     rotation.set(bobj.model_148.coord2Param_64.rotate);
   }
 
-  /**
-   * Used in the item throwing parabolic
-   */
+  /** Used in the item throwing parabolic */
   @Method(0x80110120L)
   public static SVECTOR FUN_80110120(final SVECTOR rotation, @Nullable VECTOR translation, final VECTOR in) {
     if(translation == null) {
@@ -6839,17 +6839,15 @@ public final class SEffe {
     return rotation;
   }
 
-  /**
-   * Transform rotation vector of script using rotation and translation of second
-   */
+  /** Transform rotation vector of script using rotation and translation of second */
   @Method(0x80110228L)
-  public static SVECTOR FUN_80110228(final SVECTOR rotation, @Nullable VECTOR translation, final VECTOR in) {
-    if(translation == null) {
-      translation = new VECTOR();
+  public static SVECTOR FUN_80110228(final SVECTOR rotation, @Nullable VECTOR translation1, final VECTOR translation2) {
+    if(translation1 == null) {
+      translation1 = new VECTOR();
     }
 
     //LAB_80110258
-    final VECTOR sp0x10 = new VECTOR().set(in).sub(translation).negate();
+    final VECTOR sp0x10 = new VECTOR().set(translation2).sub(translation1).negate();
     final SVECTOR sp0x30 = new SVECTOR();
     sp0x30.setY((short)ratan2(sp0x10.getX(), sp0x10.getZ()));
 
@@ -6922,11 +6920,9 @@ public final class SEffe {
       .add(translation.get());
   }
 
-  /**
-   * Sets translation on script, from second script if one specified
-   */
+  /** Sets translation on script, from second script if one specified */
   @Method(0x8011066cL)
-  public static BattleScriptDataBase FUN_8011066c(final int scriptIndex1, final int scriptIndex2, final VECTOR translation) {
+  public static BattleScriptDataBase setRelativeTranslation(final int scriptIndex1, final int scriptIndex2, final VECTOR translation) {
     final BattleScriptDataBase obj = (BattleScriptDataBase)scriptStatePtrArr_800bc1c0[scriptIndex1].innerStruct_00;
 
     if(BattleScriptDataBase.EM__.equals(obj.magic_00) && (((EffectManagerData6c)obj).flags_04 & 0x2) != 0) {
@@ -6947,7 +6943,8 @@ public final class SEffe {
   }
 
   /**
-   * Ticks translation scaler, applying additional translation from translation and rotation of a second effect if one specified in scaler
+   * Ticks translation scaler, applying additional translation from translation and rotation
+   * of a second effect if one specified in scaler
    */
   @Method(0x80110740L)
   public static int tickTranslationScalerWithRotation(final EffectManagerData6c manager, final TransformScalerEffect34 scaler) {
@@ -7031,9 +7028,7 @@ public final class SEffe {
     return s2;
   }
 
-  /**
-   * Sets translation scaler with additional scaling based on translation and rotation of a second script
-   */
+  /** Sets translation scaler with additional scaling based on translation and rotation of a second script */
   @Method(0x80110aa8L)
   public static TransformScalerEffect34 setTranslationScalerWithRotation(final int transformType, final int scriptIndex1, final int scriptIndex2, final int stepCount, final int x, final int y, final int z) {
     if(stepCount < 0) {
@@ -7418,9 +7413,9 @@ public final class SEffe {
   }
 
   @Method(0x80111ae4L)
-  public static FlowControl FUN_80111ae4(final RunningScript<?> script) {
+  public static FlowControl scriptSetRelativeTranslation(final RunningScript<?> script) {
     final VECTOR sp0x10 = new VECTOR().set(script.params_20[2].get(), script.params_20[3].get(), script.params_20[4].get());
-    FUN_8011066c(script.params_20[0].get(), script.params_20[1].get(), sp0x10);
+    setRelativeTranslation(script.params_20[0].get(), script.params_20[1].get(), sp0x10);
     return FlowControl.CONTINUE;
   }
 
@@ -7592,24 +7587,22 @@ public final class SEffe {
   }
 
   @Method(0x80112474L)
-  public static void FUN_80112474(final int a0, final int a1, final SVECTOR a2) {
-    final SVECTOR s0 = getScriptedObjectRotation(a0);
+  public static void getRotationDifference(final int scriptIndex1, final int scriptIndex2, final SVECTOR outRotation) {
+    final SVECTOR rotation = getScriptedObjectRotation(scriptIndex1);
 
-    if(a1 == -1) {
-      a2.set(s0);
+    if(scriptIndex2 == -1) {
+      outRotation.set(rotation);
     } else {
       //LAB_801124c8
-      a2.set(s0).sub(getScriptedObjectRotation(a1)).and(0xfff);
+      outRotation.set(rotation).sub(getScriptedObjectRotation(scriptIndex2)).and(0xfff);
     }
 
     //LAB_80112518
   }
 
-  /**
-   * Sets rotation on script from given vector, adding from second script if one is specified
-   */
+  /** Sets rotation on script from given vector, adding from second script if one is specified */
   @Method(0x80112530L)
-  public static long FUN_80112530(final int scriptIndex1, final int scriptIndex2, final SVECTOR inVec) {
+  public static long setRelativeRotation(final int scriptIndex1, final int scriptIndex2, final SVECTOR inVec) {
     final EffectManagerData6c data = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[scriptIndex1].innerStruct_00;
 
     if(BattleScriptDataBase.EM__.equals(data.magic_00) && (data.flags_04 & 0x4) != 0) {
@@ -7632,11 +7625,9 @@ public final class SEffe {
     return 0;
   }
 
-  /**
-   * Scales rotation vector for altering effect orientation
-   */
+  /** Scales rotation vector for altering effect orientation */
   @Method(0x80112638L)
-  public static int tickRotScaler(final EffectManagerData6c manager, final TransformScalerEffect34 scaler) {
+  public static int tickRotationScaler(final EffectManagerData6c manager, final TransformScalerEffect34 scaler) {
     scaler.velocity_18.add(scaler.acceleration_24);
     scaler.value_0c.add(scaler.velocity_18);
     manager._10.rot_10.set(scaler.value_0c);
@@ -7654,9 +7645,9 @@ public final class SEffe {
   }
 
   @Method(0x80112704L)
-  public static FlowControl FUN_80112704(final RunningScript<?> script) {
+  public static FlowControl scriptGetRotationDifference(final RunningScript<?> script) {
     final SVECTOR sp0x10 = new SVECTOR();
-    FUN_80112474(script.params_20[0].get(), script.params_20[1].get(), sp0x10);
+    getRotationDifference(script.params_20[0].get(), script.params_20[1].get(), sp0x10);
     script.params_20[2].set(sp0x10.getX());
     script.params_20[3].set(sp0x10.getY());
     script.params_20[4].set(sp0x10.getZ());
@@ -7664,8 +7655,8 @@ public final class SEffe {
   }
 
   @Method(0x80112770L)
-  public static FlowControl FUN_80112770(final RunningScript<?> script) {
-    FUN_80112530(
+  public static FlowControl scriptSetRelativeRotation(final RunningScript<?> script) {
+    setRelativeRotation(
       script.params_20[0].get(),
       script.params_20[1].get(),
       new SVECTOR().set(
@@ -7715,18 +7706,16 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
-  /**
-   * Calculates rotation of one script based on position of a second script
-   */
+  /** Calculates rotation of one script based on position of a second script */
   @Method(0x8011299cL)
   public static FlowControl FUN_8011299c(final RunningScript<?> script) {
     final int targetScript = script.params_20[1].get();
 
-    final VECTOR inVec = new VECTOR().set(script.params_20[2].get(), script.params_20[3].get(), script.params_20[4].get());
+    final VECTOR translationFinal = new VECTOR().set(script.params_20[2].get(), script.params_20[3].get(), script.params_20[4].get());
     final Ref<SVECTOR> rotation = new Ref<>(new SVECTOR());
-    final Ref<VECTOR> translation = new Ref<>(new VECTOR());
+    final Ref<VECTOR> translation1 = new Ref<>(new VECTOR());
 
-    getScriptedObjectRotationAndTranslation(script.params_20[0].get(), rotation, translation);
+    getScriptedObjectRotationAndTranslation(script.params_20[0].get(), rotation, translation1);
 
     if(targetScript != -1) {
       final Ref<SVECTOR> targetRotation = new Ref<>(new SVECTOR());
@@ -7736,26 +7725,24 @@ public final class SEffe {
 
       final MATRIX rotMatrix = new MATRIX();
       RotMatrix_Xyz(targetRotation.get(), rotMatrix);
-      inVec.set(ApplyMatrixLV(rotMatrix, inVec)).add(targetTranslation.get());
+      translationFinal.set(ApplyMatrixLV(rotMatrix, translationFinal)).add(targetTranslation.get());
     }
 
     //LAB_80112a80
-    FUN_80110228(rotation.get(), translation.get(), inVec);
+    FUN_80110228(rotation.get(), translation1.get(), translationFinal);
     return FlowControl.CONTINUE;
   }
 
-  /**
-   * Set rotation value and rate of change factors
-   */
+  /** Set rotation value and rate of change factors */
   @Method(0x80112aa4L)
-  public static FlowControl scriptSetRotScaler(final RunningScript<?> script) {
+  public static FlowControl scriptSetRotationScaler(final RunningScript<?> script) {
     final EffectManagerData6c s0 = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     if((s0.flags_04 & 0x4) != 0) {
       FUN_800e8d04(s0, 0x2L);
     }
 
     //LAB_80112b58
-    final TransformScalerEffect34 v0 = FUN_800e8dd4(s0, 2, 0, SEffe::tickRotScaler, 0x34, new TransformScalerEffect34());
+    final TransformScalerEffect34 v0 = FUN_800e8dd4(s0, 2, 0, SEffe::tickRotationScaler, 0x34, new TransformScalerEffect34());
     v0.scriptIndex_30 = -1;
     v0.stepTicker_32 = -1;
     v0.value_0c.set(s0._10.rot_10);
@@ -7779,7 +7766,7 @@ public final class SEffe {
 
     if(s2 >= 0) {
       final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[s0].innerStruct_00;
-      final TransformScalerEffect34 effect = FUN_800e8dd4(manager, 2, 0, SEffe::tickRotScaler, 0x34, new TransformScalerEffect34());
+      final TransformScalerEffect34 effect = FUN_800e8dd4(manager, 2, 0, SEffe::tickRotationScaler, 0x34, new TransformScalerEffect34());
 
       final SVECTOR v1 = getScriptedObjectRotation(s0);
       final int sp18;
@@ -7840,9 +7827,13 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
+  /**
+   * This may be bugged in retail when given a second script index,
+   * as it gets the ratio of script index 1 to itself.
+   */
   @Method(0x80113624L)
-  public static SVECTOR FUN_80113624(final int scriptIndex, final int a1, final SVECTOR a2) {
-    ScriptState<?> a3 = scriptStatePtrArr_800bc1c0[scriptIndex];
+  public static SVECTOR getScaleRatio(final int scriptIndex1, final int scriptIndex2, final SVECTOR outScale) {
+    ScriptState<?> a3 = scriptStatePtrArr_800bc1c0[scriptIndex1];
     BattleScriptDataBase t0 = (BattleScriptDataBase)a3.innerStruct_00;
 
     final SVECTOR t1;
@@ -7854,11 +7845,11 @@ public final class SEffe {
     }
 
     //LAB_801136a0
-    if(a1 == -1) {
-      a2.set(t1);
+    if(scriptIndex2 == -1) {
+      outScale.set(t1);
     } else {
       //LAB_801136d0
-      a3 = scriptStatePtrArr_800bc1c0[scriptIndex];
+      a3 = scriptStatePtrArr_800bc1c0[scriptIndex1];
       t0 = (BattleScriptDataBase)a3.innerStruct_00;
 
       final SVECTOR svec;
@@ -7885,17 +7876,17 @@ public final class SEffe {
       }
 
       //LAB_80113780
-      a2.setX((short)((t1.getX() << 12) / svec.getX()));
-      a2.setY((short)((t1.getY() << 12) / svec.getY()));
-      a2.setZ((short)((t1.getZ() << 12) / svec.getZ()));
+      outScale.setX((short)((t1.getX() << 12) / svec.getX()));
+      outScale.setY((short)((t1.getY() << 12) / svec.getY()));
+      outScale.setZ((short)((t1.getZ() << 12) / svec.getZ()));
     }
 
     //LAB_801137ec
-    return a2;
+    return outScale;
   }
 
   @Method(0x801137f8L)
-  public static SVECTOR FUN_801137f8(final int scriptIndex1, final int scriptIndex2, final SVECTOR a2) {
+  public static SVECTOR getScaleDifference(final int scriptIndex1, final int scriptIndex2, final SVECTOR a2) {
     ScriptState<?> a0_0 = scriptStatePtrArr_800bc1c0[scriptIndex1];
     BattleScriptDataBase a3 = (BattleScriptDataBase)a0_0.innerStruct_00;
 
@@ -7932,9 +7923,9 @@ public final class SEffe {
   }
 
   @Method(0x80113964L)
-  public static FlowControl FUN_80113964(final RunningScript<?> script) {
+  public static FlowControl scriptGetScaleRatio(final RunningScript<?> script) {
     final SVECTOR sp0x10 = new SVECTOR();
-    FUN_80113624(script.params_20[0].get(), script.params_20[1].get(), sp0x10);
+    getScaleRatio(script.params_20[0].get(), script.params_20[1].get(), sp0x10);
     script.params_20[2].set(sp0x10.getX());
     script.params_20[3].set(sp0x10.getY());
     script.params_20[4].set(sp0x10.getZ());
@@ -7943,7 +7934,7 @@ public final class SEffe {
 
   /** Set model scale, transfer from second script if included */
   @Method(0x801139d0L)
-  public static FlowControl FUN_801139d0(final RunningScript<?> script) {
+  public static FlowControl scriptSetRelativeScale(final RunningScript<?> script) {
     final int t1 = script.params_20[0].get();
     final int a1 = script.params_20[1].get();
     final short x = (short)script.params_20[2].get();
@@ -7987,9 +7978,7 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
-  /**
-   * Scales scale vector for changing effect size
-   */
+  /** Scales scale vector for changing effect size */
   @Method(0x80113ba0L)
   public static int tickScaleScaler(final EffectManagerData6c manager, final TransformScalerEffect34 scaler) {
     scaler.velocity_18.add(scaler.acceleration_24);
@@ -8008,9 +7997,7 @@ public final class SEffe {
     return 1;
   }
 
-  /**
-   * Set scale value and rate of change factors
-   */
+  /** Set scale value and rate of change factors */
   @Method(0x80113c6cL)
   public static FlowControl scriptSetScaleVectorScaler(final RunningScript<?> script) {
     final EffectManagerData6c scalerManager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
@@ -8029,6 +8016,10 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
+  /**
+   * Initializes scale vector scaler for expansion of guard-type effects.
+   * has two types, not sure if both are for guard effects.
+   */
   @Method(0x80113db8L)
   public static FlowControl FUN_80113db8(final long a0, final RunningScript<?> script) {
     final int s7 = script.params_20[0].get();
@@ -8052,14 +8043,14 @@ public final class SEffe {
       if(a0 == 0) {
         //LAB_80113eac
         final SVECTOR sp0x28 = new SVECTOR();
-        FUN_801137f8(s7, s3, sp0x28);
+        getScaleDifference(s7, s3, sp0x28);
         sp0x18.sub(sp0x28);
       } else if(a0 == 1) {
         //LAB_80113ee8
         if(s3 != -1) {
           //LAB_80113f04
           final SVECTOR sp0x28 = new SVECTOR();
-          FUN_80113624(s3, -1, sp0x28);
+          getScaleRatio(s3, -1, sp0x28);
 
           //LAB_80113f2c
           //LAB_80113f50
@@ -8107,9 +8098,9 @@ public final class SEffe {
     throw new RuntimeException("Not implemented");
   }
 
-  /** Set color from script, transfer from second script if included */
+  /** Gets color from script, transfer from second script if included */
   @Method(0x8011441cL)
-  public static long FUN_8011441c(final int scriptIndex1, final int scriptIndex2, final USCOLOUR a2) {
+  public static long getColourDifference(final int scriptIndex1, final int scriptIndex2, final USCOLOUR outColour) {
     final BattleScriptDataBase data1 = (BattleScriptDataBase)scriptStatePtrArr_800bc1c0[scriptIndex1].innerStruct_00;
     final USCOLOUR c;
     if(BattleScriptDataBase.EM__.equals(data1.magic_00)) {
@@ -8120,7 +8111,7 @@ public final class SEffe {
 
     //LAB_80114480
     if(scriptIndex2 == -1) {
-      a2.set(c);
+      outColour.set(c);
     } else {
       //LAB_801144b0
       final BattleScriptDataBase data2 = (BattleScriptDataBase)scriptStatePtrArr_800bc1c0[scriptIndex2].innerStruct_00;
@@ -8132,7 +8123,7 @@ public final class SEffe {
       }
 
       //LAB_801144e4
-      a2.set(c).sub(c2);
+      outColour.set(c).sub(c2);
     }
 
     //LAB_80114520
@@ -8140,9 +8131,9 @@ public final class SEffe {
   }
 
   @Method(0x8011452cL)
-  public static FlowControl FUN_8011452c(final RunningScript<?> script) {
+  public static FlowControl scriptGetColourDifference(final RunningScript<?> script) {
     final USCOLOUR sp0x10 = new USCOLOUR();
-    FUN_8011441c(script.params_20[0].get(), script.params_20[1].get(), sp0x10);
+    getColourDifference(script.params_20[0].get(), script.params_20[1].get(), sp0x10);
     script.params_20[2].set(sp0x10.getX());
     script.params_20[3].set(sp0x10.getY());
     script.params_20[4].set(sp0x10.getZ());
@@ -8150,7 +8141,7 @@ public final class SEffe {
   }
 
   @Method(0x80114598L)
-  public static FlowControl FUN_80114598(final RunningScript<?> script) {
+  public static FlowControl scriptSetRelativeColour(final RunningScript<?> script) {
     BattleScriptDataBase a1 = (BattleScriptDataBase)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
 
     final USCOLOUR a3;
@@ -8186,9 +8177,7 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
-  /**
-   * Scales color vector for fading color in/out
-   */
+  /** Scales color vector for fading color in/out */
   @Method(0x801146fcL)
   public static int tickColorScaler(final EffectManagerData6c manager, final TransformScalerEffect34 scaler) {
     scaler.velocity_18.add(scaler.acceleration_24);
@@ -8215,9 +8204,7 @@ public final class SEffe {
     throw new RuntimeException("Not implemented");
   }
 
-  /**
-   * Set color value and rate of change factors
-   */
+  /** Set color value and rate of change factors */
   @Method(0x80114920L)
   public static FlowControl scriptSetColorVectorScaler(final RunningScript<?> script) {
     final int scriptIndex1 = script.params_20[0].get();
@@ -8238,7 +8225,7 @@ public final class SEffe {
       //LAB_801149d0
       final TransformScalerEffect34 colorScaler = FUN_800e8dd4(scalerManager, 4, 0, SEffe::tickColorScaler, 0x34, new TransformScalerEffect34());
       final USCOLOUR sp0x28 = new USCOLOUR();
-      FUN_8011441c(scriptIndex1, scriptIndex2, sp0x28);
+      getColourDifference(scriptIndex1, scriptIndex2, sp0x28);
       colorScaler.scriptIndex_30 = -1;
       colorScaler.stepTicker_32 = (short)scalerStepCount;
       colorScaler.value_0c.set(scalerManager._10.colour_1c).mul(0x100);
@@ -8410,7 +8397,7 @@ public final class SEffe {
   }
 
   @Method(0x801152b0L)
-  public static FlowControl FUN_801152b0(final RunningScript<?> script) {
+  public static FlowControl scriptSetEffectTicksRemaining(final RunningScript<?> script) {
     final BttlScriptData6cSub1c_3 v0 = FUN_800e8dd4((EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00, 0, 0, SEffe::FUN_80115288, 0x1c, new BttlScriptData6cSub1c_3());
     v0.ticksRemaining_1a = (short)script.params_20[1].get();
     return FlowControl.CONTINUE;

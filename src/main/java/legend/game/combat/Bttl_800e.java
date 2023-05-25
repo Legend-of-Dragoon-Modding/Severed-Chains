@@ -2006,7 +2006,7 @@ public final class Bttl_800e {
 
     //LAB_800e92d4
     for(final FileData file : files) {
-      if(file.real()) {
+      if(file.hasVirtualSize()) {
         new Tim(file).uploadToGpu();
       }
     }
@@ -2015,8 +2015,8 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e93e0L)
-  public static FlowControl FUN_800e93e0(final RunningScript<? extends BattleScriptDataBase> script) {
-    script.params_20[0].set(allocateEffectManager("Unknown, allocated by script %d (%s) from FUN_800e93e0".formatted(script.scriptState_04.index, script.scriptState_04.name), script.scriptState_04, 0, null, null, null, null).index);
+  public static FlowControl scriptAllocateEmptyEffectManagerChild(final RunningScript<? extends BattleScriptDataBase> script) {
+    script.params_20[0].set(allocateEffectManager("Empty EffectManager child, allocated by script %d (%s) from FUN_800e93e0".formatted(script.scriptState_04.index, script.scriptState_04.name), script.scriptState_04, 0, null, null, null, null).index);
     return FlowControl.CONTINUE;
   }
 
@@ -3718,7 +3718,7 @@ public final class Bttl_800e {
 
     //LAB_800ee9c0
     for(int fileIndex = 0; fileIndex < files.size(); fileIndex++) {
-      if(files.get(fileIndex).real()) {
+      if(files.get(fileIndex).hasVirtualSize()) {
         final Tim tim = new Tim(files.get(fileIndex));
 
         if(fileIndex == 0) {
