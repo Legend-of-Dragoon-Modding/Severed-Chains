@@ -26,6 +26,9 @@ public class GpuCommandQuad extends GpuCommand {
   private int vramX;
   private int vramY;
 
+  private VramTexture texture;
+  private VramTexture[] palettes;
+
   public GpuCommandQuad bpp(final Bpp bpp) {
     this.bpp = bpp;
     return this;
@@ -52,11 +55,11 @@ public class GpuCommandQuad extends GpuCommand {
     }
 
     if(g < 0) {
-      LOGGER.warn("Negative R! %x", g);
+      LOGGER.warn("Negative G! %x", g);
     }
 
     if(b < 0) {
-      LOGGER.warn("Negative R! %x", b);
+      LOGGER.warn("Negative B! %x", b);
     }
 
     return this.rgb(b << 16 | g << 8 | r);
@@ -103,12 +106,25 @@ public class GpuCommandQuad extends GpuCommand {
     return this;
   }
 
+  public GpuCommandQuad texture(final VramTexture texture) {
+    this.texture = texture;
+    this.textured = true;
+    return this;
+  }
+
+  public GpuCommandQuad texture(final VramTexture texture, final VramTexture[] palettes) {
+    this.texture = texture;
+    this.palettes = palettes;
+    this.textured = true;
+    return this;
+  }
+
   @Override
   public void render(final Gpu gpu) {
     final int x1 = Math.max(this.x + gpu.getOffsetX(), gpu.drawingArea.x.get());
     final int y1 = Math.max(this.y + gpu.getOffsetY(), gpu.drawingArea.y.get());
-    final int x2 = Math.min(this.x + gpu.getOffsetX() + this.w, gpu.drawingArea.w.get());
-    final int y2 = Math.min(this.y + gpu.getOffsetY() + this.h, gpu.drawingArea.h.get());
+    final int x2 = Math.min(this.x + gpu.getOffsetX() + this.w, gpu.drawingArea.x.get() + gpu.drawingArea.w.get());
+    final int y2 = Math.min(this.y + gpu.getOffsetY() + this.h, gpu.drawingArea.y.get() + gpu.drawingArea.h.get());
 
     final int u1;
     final int v1;
@@ -120,39 +136,6 @@ public class GpuCommandQuad extends GpuCommand {
       v1 = 0;
     }
 
-    for(int y = y1, v = v1; y < y2; y++, v++) {
-      for(int x = x1, u = u1; x < x2; x++, u++) {
-        // Check background mask
-        if(gpu.status.drawPixels == Gpu.DRAW_PIXELS.NOT_TO_MASKED_AREAS) {
-          if((gpu.getPixel(x, y) & 0xff00_0000L) != 0) {
-            continue;
-          }
-        }
-
-        int texel;
-        if(this.textured) {
-          texel = gpu.getTexel(u, v, this.clutX, this.clutY, this.vramX, this.vramY, this.bpp);
-          if(texel == 0) {
-            continue;
-          }
-
-          if(!this.raw) {
-            texel = Gpu.applyBlending(this.colour, texel);
-          }
-
-          if(this.translucence != null && (texel & 0xff00_0000) != 0) {
-            texel = gpu.handleTranslucence(x, y, texel, this.translucence);
-          }
-        } else {
-          if(this.translucence != null) {
-            texel = gpu.handleTranslucence(x, y, this.colour, this.translucence);
-          } else {
-            texel = this.colour;
-          }
-        }
-
-        gpu.setPixel(x, y, (gpu.status.setMaskBit ? 1 : 0) << 24 | texel);
-      }
-    }
+    gpu.rasterizeQuad(x1, y1, x2, y2, this.colour, this.raw, this.textured, u1, v1, this.clutX, this.clutY, this.vramX, this.vramY, this.bpp, this.translucence, this.texture, this.palettes);
   }
 }

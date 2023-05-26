@@ -39,7 +39,13 @@ import java.util.stream.StreamSupport;
 import static legend.game.Scus94491BpeSegment.getCharacterName;
 
 public final class Unpacker {
+  private static final Pattern MRG_ENTRY = Pattern.compile("[=;]");
+
   private Unpacker() { }
+
+  private static final String[] DISK_IDS = {"SCUS94491", "SCUS94584", "SCUS94585", "SCUS94586"};
+  private static final List<String> OTHER_REGION_IDS = List.of("SCES03043", "SCES13043", "SCES23043", "SCES33043", "SCES03044", "SCES13044", "SCES23044", "SCES33044", "SCES03045", "SCES13045", "SCES23045", "SCES33045", "SCES03046", "SCES13046", "SCES23046", "SCES33046", "SCES03047", "SCES13047", "SCES23047", "SCES33047", "SCPS10119", "SCPS10120", "SCPS10121", "SCPS10122", "SCPS45461", "SCPS45462", "SCPS45463", "SCPS45464");
+  private static final int PVD_SECTOR = 16;
 
   private static final Pattern ROOT_MRG = Pattern.compile("^SECT/DRGN0\\.BIN/\\d{4}/\\d+$");
 
@@ -134,17 +140,19 @@ public final class Unpacker {
       if(Files.exists(mrg)) {
         try(final BufferedReader reader = Files.newBufferedReader(mrg)) {
           final Int2IntMap fileMap = new Int2IntArrayMap();
+          final Int2IntMap virtualSizeMap = new Int2IntArrayMap();
 
           reader.lines().forEach(line -> {
-            final String[] parts = line.split("=");
+            final String[] parts = MRG_ENTRY.split(line);
 
-            if(parts.length != 2) {
+            if(parts.length != 3) {
               throw new RuntimeException("Invalid MRG entry! " + line);
             }
 
             final int virtual = Integer.parseInt(parts[0]);
             final int real = Integer.parseInt(parts[1]);
             fileMap.put(virtual, real);
+            virtualSizeMap.put(virtual, Integer.parseInt(parts[2]));
           });
 
           final List<FileData> files = new ArrayList<>();
@@ -184,7 +192,7 @@ public final class Unpacker {
 
             final Path file = dir.resolve(String.valueOf(real));
             if(Files.isRegularFile(file)) {
-              files.set(virtual, FileData.virtual(files.get(real), real));
+              files.set(virtual, FileData.virtual(files.get(real), virtualSizeMap.get(virtual), real));
             }
           }
 
@@ -285,15 +293,43 @@ public final class Unpacker {
 
         final long start = System.nanoTime();
 
+        final IsoReader[] readers = new IsoReader[4];
+        int diskCount = 0;
+
+        try(final DirectoryStream<Path> children = Files.newDirectoryStream(Path.of("isos"))) {
+          for(final Path child : children) {
+            final Tuple<IsoReader, Integer> tuple = getIsoReader(child);
+
+            if(tuple != null) {
+              final int diskNum = tuple.b();
+
+              if(readers[diskNum] != null) {
+                LOGGER.warn("Found duplicate disk %d: %s", diskNum + 1, child);
+                continue;
+              }
+
+              LOGGER.info("Found disk %d: %s", diskNum + 1, child);
+              readers[diskNum] = tuple.a();
+              diskCount++;
+            }
+          }
+        }
+
+        if(diskCount < 4) {
+          for(int i = 0; i < readers.length; i++) {
+            if(readers[i] == null) {
+              LOGGER.error("Failed to find disk %d!", i + 1);
+            }
+          }
+
+          throw new UnpackerException("Failed to locate disk images");
+        }
+
         final DirectoryEntry[] roots = new DirectoryEntry[4];
-        final String[] ids = {"SCUS94491", "SCUS94584", "SCUS94585", "SCUS94586"};
+        final DirectoryEntry root = loadRoot(readers[3], null);
 
-        final IsoReader reader4 = new IsoReader(Path.of(".", "isos", "4.iso"));
-        final DirectoryEntry root = loadRoot(reader4, ids[3], null);
-
-        for(int i = 0; i < roots.length; i++) {
-          final IsoReader reader = new IsoReader(Path.of(".", "isos", (i + 1) + ".iso"));
-          loadRoot(reader, ids[i], root);
+        for(int i = 0; i < roots.length - 1; i++) {
+          loadRoot(readers[i], root);
         }
 
         final Map<String, DirectoryEntry> files = new HashMap<>();
@@ -331,35 +367,50 @@ public final class Unpacker {
     }
   }
 
-  private static DirectoryEntry loadRoot(final IsoReader reader, final String id, @Nullable final DirectoryEntry destinationTree) throws IOException, UnpackerException {
+  private static Tuple<IsoReader, Integer> getIsoReader(final Path path) throws IOException {
+    final long fileSize = Files.size(path);
+
+    if(fileSize < PVD_SECTOR * IsoReader.SYNC_PATTER_SIZE) {
+      return null;
+    }
+
+    final byte[] sectorData = new byte[0x800];
+    final ByteBuffer sectorBuffer = ByteBuffer.wrap(sectorData);
+    sectorBuffer.order(ByteOrder.LITTLE_ENDIAN);
+
+    final IsoReader reader = new IsoReader(path);
+    reader.seekSector(PVD_SECTOR);
+    reader.advance(IsoReader.SYNC_PATTER_SIZE);
+    reader.read(sectorData);
+
+    if(sectorBuffer.get() != 1 || !"CD001".equals(IoHelper.readString(sectorBuffer, 5)) || sectorBuffer.get() != 0x1 || !"PLAYSTATION".equals(IoHelper.readString(sectorBuffer, 32).trim())) {
+      return null;
+    }
+
+    final String readId = IoHelper.readString(sectorBuffer, 32).trim();
+
+    for(int i = 0; i < DISK_IDS.length; i++) {
+      if(DISK_IDS[i].equals(readId)) {
+        return new Tuple<>(reader, i);
+      }
+    }
+
+    if(OTHER_REGION_IDS.contains(readId)) {
+      LOGGER.warn("Found disk %s from another region: %s", readId, path);
+    }
+
+    return null;
+  }
+
+  private static DirectoryEntry loadRoot(final IsoReader reader, @Nullable final DirectoryEntry destinationTree) throws IOException, UnpackerException {
     final byte[] sectorData = new byte[0x800];
     final ByteBuffer sectorBuffer = ByteBuffer.wrap(sectorData);
     sectorBuffer.order(ByteOrder.LITTLE_ENDIAN);
 
     synchronized(reader) {
-      reader.seekSector(16);
-      reader.advance(12);
+      reader.seekSector(PVD_SECTOR);
+      reader.advance(IsoReader.SYNC_PATTER_SIZE);
       reader.read(sectorData);
-    }
-
-    if(sectorBuffer.get() != 1) {
-      throw new UnpackerException("Invalid volume descriptor, expected primary");
-    }
-
-    if(!"CD001".equals(IoHelper.readString(sectorBuffer, 5))) {
-      throw new UnpackerException("Invalid volume descriptor, expected CD001");
-    }
-
-    if(sectorBuffer.get() != 0x1) {
-      throw new UnpackerException("Invalid volume descriptor, expected version 1");
-    }
-
-    if(!"PLAYSTATION".equals(IoHelper.readString(sectorBuffer, 32).trim())) {
-      throw new UnpackerException("Invalid volume descriptor, expected PLAYSTATION");
-    }
-
-    if(!id.equals(IoHelper.readString(sectorBuffer, 32).trim())) {
-      throw new UnpackerException("Invalid volume descriptor, expected " + id);
     }
 
     final DirectoryEntry rootDir = DirectoryEntry.fromArray(reader, sectorData, 0x9c);
@@ -487,7 +538,7 @@ public final class Unpacker {
 
     i = 0;
     for(final MrgArchive.Entry entry : archive) {
-      sb.append(i).append('=').append(entry.virtual() ? entry.parent() : i).append('\n');
+      sb.append(i).append('=').append(entry.virtual() ? entry.parent() : i).append(';').append(entry.virtualSize()).append('\n');
       i++;
     }
 

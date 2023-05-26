@@ -18,10 +18,12 @@ public enum TextColour {
   public final int r;
   public final int g;
   public final int b;
+  public final int colour;
 
   TextColour(final int r, final int g, final int b) {
     this.r = r;
     this.g = g;
     this.b = b;
+    this.colour = b << 16 | g << 8 | r;
   }
 }

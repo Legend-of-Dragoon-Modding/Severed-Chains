@@ -1,0 +1,50 @@
+package legend.game.modding.coremod.config;
+
+import legend.core.IoHelper;
+import legend.game.input.GlfwController;
+import legend.game.input.Input;
+import legend.game.inventory.screens.controls.Dropdown;
+import legend.game.saves.ConfigEntry;
+import legend.game.saves.ConfigStorageLocation;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static legend.core.GameEngine.CONFIG;
+
+/** Convenience class for simple enum-backed configs */
+public class ControllerConfigEntry extends ConfigEntry<String> {
+  public ControllerConfigEntry() {
+    super(
+      "",
+      ConfigStorageLocation.GLOBAL,
+      str -> IoHelper.stringToBytes(str, 1),
+      bytes -> IoHelper.stringFromBytes(bytes, 1, "")
+    );
+
+    this.setEditControl((current, gameState) -> {
+      final List<GlfwController> joypads = new ArrayList<>();
+
+      final Dropdown dropdown = new Dropdown();
+      dropdown.onSelection(index -> gameState.setConfig(this, index == 0 ? "" : joypads.get(index - 1).getGuid()));
+      dropdown.addOption("<none>");
+
+      for(final GlfwController controller : Input.controllerManager.getConnectedControllers()) {
+        dropdown.addOption(controller.getName());
+        joypads.add(controller);
+
+        if(controller.getGuid().equals(CONFIG.getConfig(this))) {
+          dropdown.setSelectedIndex(joypads.size());
+        }
+      }
+
+      return dropdown;
+    });
+  }
+
+  @Override
+  public void onChange(final String oldValue, final String newValue) {
+    super.onChange(oldValue, newValue);
+    Input.useController(Input.controllerManager.getControllerByGuid(newValue));
+  }
+}

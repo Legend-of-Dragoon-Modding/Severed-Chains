@@ -44,7 +44,7 @@ import static legend.core.GameEngine.MEMORY;
 public final class Scus94491BpeSegment_800b {
   private Scus94491BpeSegment_800b() { }
 
-  public static final IntRef _800babc0 = MEMORY.ref(4, 0x800babc0L, IntRef::new);
+  public static final IntRef clearBlue_800babc0 = MEMORY.ref(4, 0x800babc0L, IntRef::new);
 
   public static GameState52c gameState_800babc8;
 
@@ -54,8 +54,8 @@ public final class Scus94491BpeSegment_800b {
   public static final IntRef encounterId_800bb0f8 = MEMORY.ref(4, 0x800bb0f8L, IntRef::new);
   public static final IntRef tickCount_800bb0fc = MEMORY.ref(4, 0x800bb0fcL, IntRef::new);
 
-  public static final IntRef _800bb104 = MEMORY.ref(4, 0x800bb104L, IntRef::new);
-  public static final IntRef doubleBufferFrame_800bb108 = MEMORY.ref(4, 0x800bb108L, IntRef::new);
+  public static final IntRef clearGreen_800bb104 = MEMORY.ref(4, 0x800bb104L, IntRef::new);
+
   public static final IntRef pregameLoadingStage_800bb10c = MEMORY.ref(4, 0x800bb10cL, IntRef::new);
   public static final EnumMapRef<Bpp, EnumMapRef<Translucency, EnumMapRef<TexPageY, UnsignedShortRef>>> texPages_800bb110 = MEMORY.ref(2, 0x800bb110L, EnumMapRef.of(Bpp.class, EnumMapRef.classFor(EnumMapRef.classFor(UnsignedShortRef.class)), Bpp.values().length, 0x10, EnumMapRef.of(Translucency.class, EnumMapRef.classFor(UnsignedShortRef.class), Translucency.values().length, 4, EnumMapRef.of(TexPageY.class, UnsignedShortRef.class, 2, 2, UnsignedShortRef::new))));
   public static final ScriptEffectStruct scriptEffect_800bb140 = MEMORY.ref(4, 0x800bb140L, ScriptEffectStruct::new);
@@ -175,7 +175,6 @@ public final class Scus94491BpeSegment_800b {
 
   public static final IntRef _800bdb88 = MEMORY.ref(4, 0x800bdb88L, IntRef::new);
 
-  public static final Value _800bdb90 = MEMORY.ref(4, 0x800bdb90L);
   public static Renderable58 saveListUpArrow_800bdb94;
   public static Renderable58 saveListDownArrow_800bdb98;
 
@@ -186,7 +185,6 @@ public final class Scus94491BpeSegment_800b {
 
   public static final ArrayRef<IntRef> secondaryCharIndices_800bdbf8 = MEMORY.ref(4, 0x800bdbf8L, ArrayRef.of(IntRef.class, 9, 4, IntRef::new));
 
-  public static final Value _800bdc24 = MEMORY.ref(4, 0x800bdc24L);
   public static final EnumRef<InventoryMenuState> inventoryMenuState_800bdc28 = MEMORY.ref(4, 0x800bdc28L, EnumRef.of(InventoryMenuState.values()));
   public static final Value _800bdc2c = MEMORY.ref(4, 0x800bdc2cL);
   public static final EnumRef<InventoryMenuState> confirmDest_800bdc30 = MEMORY.ref(4, 0x800bdc30L, EnumRef.of(InventoryMenuState.values()));
@@ -244,7 +242,10 @@ public final class Scus94491BpeSegment_800b {
 
   public static final EquipmentStats1c equipmentStats_800be5d8 = MEMORY.ref(1, 0x800be5d8L, EquipmentStats1c::new);
 
-  public static final ArrayRef<ActiveStatsa0> stats_800be5f8 = MEMORY.ref(4, 0x800be5f8L, ArrayRef.of(ActiveStatsa0.class, 9, 0xa0, ActiveStatsa0::new));
+  public static final ActiveStatsa0[] stats_800be5f8 = new ActiveStatsa0[9];
+  static {
+    Arrays.setAll(stats_800be5f8, i -> new ActiveStatsa0());
+  }
 
   public static final Value _800beb98 = MEMORY.ref(4, 0x800beb98L);
   public static final Value _800bed28 = MEMORY.ref(4, 0x800bed28L);
@@ -254,18 +255,69 @@ public final class Scus94491BpeSegment_800b {
   public static final IntRef screenOffsetY_800bed54 = MEMORY.ref(4, 0x800bed54L, IntRef::new);
   public static final Value hasNoEncounters_800bed58 = MEMORY.ref(4, 0x800bed58L);
 
-  public static final IntRef _800bee90 = MEMORY.ref(4, 0x800bee90L, IntRef::new);
-  public static final IntRef _800bee94 = MEMORY.ref(4, 0x800bee94L, IntRef::new);
-  public static final IntRef _800bee98 = MEMORY.ref(4, 0x800bee98L, IntRef::new);
-  public static final IntRef _800bee9c = MEMORY.ref(4, 0x800bee9cL, IntRef::new);
+  /**
+   * Remains set for the duration of the button press
+   * <ul>
+   *   <li>0x01 - L2</li>
+   *   <li>0x02 - R2</li>
+   *   <li>0x04 - L1</li>
+   *   <li>0x08 - R1</li>
+   *   <li>0x10 - Triangle</li>
+   *   <li>0x20 - Cross</li>
+   *   <li>0x40 - Circle</li>
+   *   <li>0x80 - Square</li>
+   *   <li>0x1000 - Up</li>
+   *   <li>0x2000 - Right</li>
+   *   <li>0x4000 - Down</li>
+   *   <li>0x8000 - Left</li>
+   * </ul>
+   */
+  public static final IntRef input_800bee90 = MEMORY.ref(4, 0x800bee90L, IntRef::new);
+  /**
+   * Only set for an instant after buttons are pressed
+   * <ul>
+   *   <li>0x01 - L2</li>
+   *   <li>0x02 - R2</li>
+   *   <li>0x04 - L1</li>
+   *   <li>0x08 - R1</li>
+   *   <li>0x10 - Triangle</li>
+   *   <li>0x20 - Cross</li>
+   *   <li>0x40 - Circle</li>
+   *   <li>0x80 - Square</li>
+   *   <li>0x1000 - Up</li>
+   *   <li>0x2000 - Right</li>
+   *   <li>0x4000 - Down</li>
+   *   <li>0x8000 - Left</li>
+   * </ul>
+   */
+  public static final IntRef press_800bee94 = MEMORY.ref(4, 0x800bee94L, IntRef::new);
+  /**
+   * Only set for an instant after buttons are pressed, but repeats while button is held
+   * <ul>
+   *   <li>0x01 - L2</li>
+   *   <li>0x02 - R2</li>
+   *   <li>0x04 - L1</li>
+   *   <li>0x08 - R1</li>
+   *   <li>0x10 - Triangle</li>
+   *   <li>0x20 - Cross</li>
+   *   <li>0x40 - Circle</li>
+   *   <li>0x80 - Square</li>
+   *   <li>0x1000 - Up</li>
+   *   <li>0x2000 - Right</li>
+   *   <li>0x4000 - Down</li>
+   *   <li>0x8000 - Left</li>
+   * </ul>
+   */
+  public static final IntRef repeat_800bee98 = MEMORY.ref(4, 0x800bee98L, IntRef::new);
+  public static final IntRef analogAngle_800bee9c = MEMORY.ref(4, 0x800bee9cL, IntRef::new);
 
   public static final IntRef _800beea4 = MEMORY.ref(4, 0x800beea4L, IntRef::new);
 
   public static final IntRef _800beeac = MEMORY.ref(4, 0x800beeacL, IntRef::new);
 
-  public static final IntRef _800beeb4 = MEMORY.ref(4, 0x800beeb4L, IntRef::new);
+  public static final IntRef analogMagnitude_800beeb4 = MEMORY.ref(4, 0x800beeb4L, IntRef::new);
 
-  public static final IntRef _800beebc = MEMORY.ref(4, 0x800beebcL, IntRef::new);
+  public static final IntRef analogInput_800beebc = MEMORY.ref(4, 0x800beebcL, IntRef::new);
 
   public static final IntRef continentIndex_800bf0b0 = MEMORY.ref(4, 0x800bf0b0L, IntRef::new);
 

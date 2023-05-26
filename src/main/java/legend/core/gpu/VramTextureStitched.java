@@ -56,6 +56,11 @@ public class VramTextureStitched extends VramTexture {
   }
 
   @Override
+  public void setPixel(final int x, final int y, final int colour) {
+    throw new IllegalStateException("Can't set raw pixel of stitched texture");
+  }
+
+  @Override
   public void copyRow(final int y, final int[] dest, final int destOffset) {
 
   }
@@ -86,5 +91,12 @@ public class VramTextureStitched extends VramTexture {
     }
 
     throw new IllegalArgumentException("Texture does not contain region %s".formatted(region));
+  }
+
+  @Override
+  public void fill(final int colour) {
+    for(final VramTexture texture : this.textures) {
+      texture.fill(colour);
+    }
   }
 }

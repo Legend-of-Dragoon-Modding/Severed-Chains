@@ -1,6 +1,6 @@
 package legend.game.input;
 
-public enum InputBindingState {
+public enum InputState {
   NO_INPUT(false),
   PRESSED_THIS_FRAME(true),
   RELEASED_THIS_FRAME(false),
@@ -10,7 +10,7 @@ public enum InputBindingState {
 
   public final boolean pressed;
 
-  InputBindingState(final boolean pressed) {
+  InputState(final boolean pressed) {
     this.pressed = pressed;
   }
 }

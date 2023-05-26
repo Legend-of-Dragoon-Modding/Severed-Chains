@@ -6,15 +6,26 @@ import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.BigList;
 import legend.game.inventory.screens.controls.SaveCard;
+import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.events.gamestate.GameLoadedEvent;
 import legend.game.saves.Campaign;
+import legend.game.saves.ConfigStorage;
+import legend.game.saves.ConfigStorageLocation;
 import legend.game.types.LodString;
+import legend.game.types.MessageBoxResult;
 
+import java.nio.file.Path;
+import java.util.Set;
+
+import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.EVENTS;
+import static legend.core.GameEngine.MODS;
 import static legend.core.GameEngine.SAVES;
+import static legend.core.GameEngine.rebootMods;
 import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
-import static legend.game.Scus94491BpeSegment_8004.setMono;
 import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
@@ -45,10 +56,27 @@ public class CampaignSelectionScreen extends MenuScreen {
   }
 
   private void onSelection(final Campaign campaign) {
-    menuStack.pushScreen(new LoadGameScreen(save -> {
+    CONFIG.clearConfig(ConfigStorageLocation.CAMPAIGN);
+    ConfigStorage.loadConfig(CONFIG, ConfigStorageLocation.CAMPAIGN, Path.of("saves", campaign.filename(), "campaign_config.dcnf"));
+
+    final String[] modIds = CONFIG.getConfig(CoreMod.ENABLED_MODS_CONFIG.get());
+    final Set<String> missingMods;
+    if(modIds.length != 0) {
+      missingMods = rebootMods(Set.of(modIds));
+    } else {
+      // Fallback for old saves from before the config key existed
+      missingMods = rebootMods(MODS.getAllModIds());
+    }
+
+    final Runnable loadGameScreen = () -> menuStack.pushScreen(new LoadGameScreen(save -> {
       menuStack.popScreen();
 
-      gameState_800babc8 = save.state();
+      CONFIG.clearConfig(ConfigStorageLocation.SAVE);
+      CONFIG.copyConfigFrom(save.config());
+
+      final GameLoadedEvent event = EVENTS.postEvent(new GameLoadedEvent(save.state()));
+
+      gameState_800babc8 = event.gameState;
 
       savedGameSelected_800bdc34.set(true);
       whichMenu_800bdc38 = WhichMenu.UNLOAD_CAMPAIGN_SELECTION_MENU;
@@ -60,12 +88,20 @@ public class CampaignSelectionScreen extends MenuScreen {
       if(gameState_800babc8.submapCut_a8 == 264) { // Somewhere in Home of Giganto
         submapScene_80052c34.set(53);
       }
-
-      setMono(gameState_800babc8.mono_4e0);
     }, () -> {
       menuStack.popScreen();
       scriptStartEffect(2, 10);
     }, campaign));
+
+    if(missingMods.isEmpty()) {
+      loadGameScreen.run();
+    } else {
+      menuStack.pushScreen(new MessageBoxScreen(new LodString("Missing mods, continue?"), 2, result -> {
+        if(result == MessageBoxResult.YES) {
+          loadGameScreen.run();
+        }
+      }));
+    }
   }
 
   @Override
@@ -76,6 +112,9 @@ public class CampaignSelectionScreen extends MenuScreen {
   private void menuEscape() {
     playSound(3);
     whichMenu_800bdc38 = WhichMenu.UNLOAD_CAMPAIGN_SELECTION_MENU;
+
+    // Restore all mods when going back to the title screen
+    rebootMods(MODS.getAllModIds());
   }
 
   @Override

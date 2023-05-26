@@ -266,21 +266,23 @@ public class Voice implements MemoryRef {
 
     @Override
     public long get(final int offset, final int size) {
-      if(size != 2) {
-        throw new MisalignedAccessException("SPU registers may only be accessed via 16-bit reads or writes");
-      }
+      synchronized(Spu.class) {
+        if(size != 2) {
+          throw new MisalignedAccessException("SPU registers may only be accessed via 16-bit reads or writes");
+        }
 
-      return switch(offset & 0xe) {
-        case 0x0 -> Voice.this.volumeLeft.get();
-        case 0x2 -> Voice.this.volumeRight.get();
-        case 0x4 -> Voice.this.pitch & 0xffffL;
-        case 0x6 -> Voice.this.startAddress & 0xffffL;
-        case 0x8 -> Voice.this.adsr.lo & 0xffffL;
-        case 0xa -> Voice.this.adsr.hi & 0xffffL;
-        case 0xc -> Voice.this.adsrVolume & 0xffffL;
-        case 0xe -> Voice.this.adpcmRepeatAddress & 0xffffL;
-        default -> throw new MisalignedAccessException("SPU voice port " + Long.toHexString(offset) + " does not exist");
-      };
+        return switch(offset & 0xe) {
+          case 0x0 -> Voice.this.volumeLeft.get();
+          case 0x2 -> Voice.this.volumeRight.get();
+          case 0x4 -> Voice.this.pitch & 0xffffL;
+          case 0x6 -> Voice.this.startAddress & 0xffffL;
+          case 0x8 -> Voice.this.adsr.lo & 0xffffL;
+          case 0xa -> Voice.this.adsr.hi & 0xffffL;
+          case 0xc -> Voice.this.adsrVolume & 0xffffL;
+          case 0xe -> Voice.this.adpcmRepeatAddress & 0xffffL;
+          default -> throw new MisalignedAccessException("SPU voice port " + Long.toHexString(offset) + " does not exist");
+        };
+      }
     }
 
     @Override
@@ -290,26 +292,28 @@ public class Voice implements MemoryRef {
 
     @Override
     public void set(final int offset, final int size, final long value) {
-      if(size != 2) {
-        throw new MisalignedAccessException("SPU registers may only be accessed via 16-bit reads or writes");
-      }
+      synchronized(Spu.class) {
+        if(size != 2) {
+          throw new MisalignedAccessException("SPU registers may only be accessed via 16-bit reads or writes");
+        }
 
-      switch(offset & 0xe) {
-        case 0x0 -> Voice.this.volumeLeft.set(value);
-        case 0x2 -> Voice.this.volumeRight.set(value);
-        case 0x4 -> Voice.this.pitch = (int)(value & 0xffff);
-        case 0x6 -> {
-          assert value * 8 < 512 * 1024;
-          Voice.this.startAddress = (int)(value & 0xffff);
+        switch(offset & 0xe) {
+          case 0x0 -> Voice.this.volumeLeft.set(value);
+          case 0x2 -> Voice.this.volumeRight.set(value);
+          case 0x4 -> Voice.this.pitch = (int)(value & 0xffff);
+          case 0x6 -> {
+            assert value * 8 < 512 * 1024;
+            Voice.this.startAddress = (int)(value & 0xffff);
+          }
+          case 0x8 -> Voice.this.adsr.lo = (int)(value & 0xffff);
+          case 0xa -> Voice.this.adsr.hi = (int)(value & 0xffff);
+          case 0xc -> Voice.this.adsrVolume = (int)(value & 0xffff);
+          case 0xe -> {
+            assert value * 8 < 512 * 1024;
+            Voice.this.adpcmRepeatAddress = (int)(value & 0xffff);
+          }
+          default -> throw new MisalignedAccessException("SPU voice port " + Long.toHexString(offset) + " does not exist");
         }
-        case 0x8 -> Voice.this.adsr.lo = (int)(value & 0xffff);
-        case 0xa -> Voice.this.adsr.hi = (int)(value & 0xffff);
-        case 0xc -> Voice.this.adsrVolume = (int)(value & 0xffff);
-        case 0xe -> {
-          assert value * 8 < 512 * 1024;
-          Voice.this.adpcmRepeatAddress = (int)(value & 0xffff);
-        }
-        default -> throw new MisalignedAccessException("SPU voice port " + Long.toHexString(offset) + " does not exist");
       }
     }
   }

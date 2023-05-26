@@ -1,57 +1,53 @@
 package legend.game.inventory.screens;
 
 import legend.core.GameEngine;
+import legend.game.i18n.I18n;
 import legend.game.input.InputAction;
 import legend.game.inventory.screens.controls.Background;
-import legend.game.inventory.screens.controls.Dropdown;
 import legend.game.modding.registries.RegistryId;
+import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigEntry;
-import legend.game.types.GameState52c;
+import legend.game.saves.ConfigStorageLocation;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
 
 public class OptionsScreen extends VerticalLayoutScreen {
-  private final GameState52c state;
   private final Runnable unload;
 
-  public OptionsScreen(final GameState52c state, final Runnable unload) {
+  public OptionsScreen(final ConfigCollection config, final Set<ConfigStorageLocation> validLocations, final Runnable unload) {
     deallocateRenderables(0xff);
     scriptStartEffect(2, 10);
 
-    this.state = state;
     this.unload = unload;
 
     this.addControl(new Background());
 
-    final Dropdown sound = this.addDropdown("Sound", "Stereo", "Mono");
-    sound.setSelectedIndex(this.state.mono_4e0 ? 1 : 0);
-    sound.onSelection(index -> this.state.mono_4e0 = index == 1);
-
-    final Dropdown transforms = this.addDropdown("Dragoon Transformation", "Normal", "Short");
-    transforms.setSelectedIndex(this.state.morphMode_4e2);
-    transforms.onSelection(index -> this.state.morphMode_4e2 = index);
+    final Map<RegistryId, String> translations = new HashMap<>();
 
     for(final RegistryId configId : GameEngine.REGISTRIES.config) {
-      //noinspection rawtypes
-      final ConfigEntry configEntry = GameEngine.REGISTRIES.config.getEntry(configId).get();
-
-      if(configEntry.hasEditControl()) {
-        //noinspection unchecked
-        this.addRow(configId.toString(), configEntry.makeEditControl(this.state.getConfig(configEntry), this.state));
-      }
-    }
-  }
-
-  private Dropdown addDropdown(final String name, final String... options) {
-    final Dropdown dropdown = new Dropdown();
-
-    for(final String option : options) {
-      dropdown.addOption(option);
+      translations.put(configId, I18n.translate(configId.modId() + ".config." + configId.entryId() + ".label"));
     }
 
-    return this.addRow(name, dropdown);
+    translations.entrySet().stream()
+      .sorted((o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(o1.getValue(), o2.getValue()))
+      .forEach(entry -> {
+        final RegistryId configId = entry.getKey();
+        final String label = entry.getValue();
+
+        //noinspection rawtypes
+        final ConfigEntry configEntry = GameEngine.REGISTRIES.config.getEntry(configId).get();
+
+        if(validLocations.contains(configEntry.storageLocation) && configEntry.hasEditControl()) {
+          //noinspection unchecked
+          this.addRow(label, configEntry.makeEditControl(config.getConfig(configEntry), config));
+        }
+      });
   }
 
   @Override

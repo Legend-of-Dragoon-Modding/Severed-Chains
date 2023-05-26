@@ -16,9 +16,37 @@ public abstract class ControlHost implements Iterable<Control> {
   protected int mouseY;
 
   protected abstract MenuScreen getScreen();
+  protected abstract ControlHost getParent();
+  protected abstract int getX();
+  protected abstract int getY();
+  protected abstract int getWidth();
+  protected abstract int getHeight();
+
+  public int calculateTotalX() {
+    int x = this.getX();
+
+    ControlHost current = this;
+    while((current = current.getParent()) != null) {
+      x += current.getX();
+    }
+
+    return x;
+  }
+
+  public int calculateTotalY() {
+    int y = this.getY();
+
+    ControlHost current = this;
+    while((current = current.getParent()) != null) {
+      y += current.getY();
+    }
+
+    return y;
+  }
 
   public <T extends Control> T addControl(final T control) {
     control.setScreen(this.getScreen());
+    control.setParent(this);
     this.controls.add(control);
     this.controls.sort(Comparator.comparingInt(Control::getZ));
     return control;
@@ -46,11 +74,22 @@ public abstract class ControlHost implements Iterable<Control> {
   }
 
   protected Control findControlAt(final int x, final int y) {
+    return this.findControlAt(x, y, false);
+  }
+
+  protected Control findControlAt(final int x, final int y, final boolean nested) {
     final List<Control> controls = new ArrayList<>();
 
     for(final Control control : this.controls) {
       if(control.acceptsInput() && control.isVisible() && control.containsPoint(x, y)) {
-        controls.add(control);
+        final Control subcontrol;
+        if(nested) {
+          subcontrol = control.findControlAt(x - control.getX(), y - control.getY());
+        } else {
+          subcontrol = null;
+        }
+
+        controls.add(subcontrol != null ? subcontrol : control);
       }
     }
 
@@ -68,7 +107,7 @@ public abstract class ControlHost implements Iterable<Control> {
 
     final Control control = this.findControlAt(x, y);
 
-    if(control != null) {
+    if(control != null && !control.isDisabled()) {
       return control.mouseMove(x - control.getX(), y - control.getY());
     }
 
@@ -78,7 +117,7 @@ public abstract class ControlHost implements Iterable<Control> {
   protected InputPropagation mouseClick(final int x, final int y, final int button, final int mods) {
     final Control control = this.findControlAt(x, y);
 
-    if(control != null) {
+    if(control != null && !control.isDisabled()) {
       return control.mouseClick(x - control.getX(), y - control.getY(), button, mods);
     }
 
@@ -88,7 +127,7 @@ public abstract class ControlHost implements Iterable<Control> {
   protected InputPropagation mouseScroll(final int deltaX, final int deltaY) {
     final Control control = this.findControlAt(this.mouseX, this.mouseY);
 
-    if(control != null) {
+    if(control != null && !control.isDisabled()) {
       return control.mouseScroll(deltaX, deltaY);
     }
 
@@ -98,7 +137,7 @@ public abstract class ControlHost implements Iterable<Control> {
   protected InputPropagation mouseScrollHighRes(final double deltaX, final double deltaY) {
     final Control control = this.findControlAt(this.mouseX, this.mouseY);
 
-    if(control != null) {
+    if(control != null && !control.isDisabled()) {
       return control.mouseScrollHighRes(deltaX, deltaY);
     }
 

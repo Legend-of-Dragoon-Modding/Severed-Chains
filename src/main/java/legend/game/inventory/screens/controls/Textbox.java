@@ -13,7 +13,6 @@ import static legend.core.GameEngine.GPU;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
 import static legend.game.Scus94491BpeSegment_8002.charWidth;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
-import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_BACKSPACE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_DELETE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
@@ -33,6 +32,7 @@ public class Textbox extends Control {
 
   public Textbox() {
     this.background = this.addControl(Panel.subtle());
+    this.background.ignoreInput();
     this.setText("");
   }
 
@@ -81,7 +81,6 @@ public class Textbox extends Control {
 
   @Override
   protected void render(final int x, final int y) {
-    final int oldZ = textZ_800bdf00.get();
     this.textRenderable.render(x + 4, y + (this.getHeight() - 11) / 2 + 1, this.getZ() - 1);
 
     if(this.hasFocus()) {
@@ -90,14 +89,12 @@ public class Textbox extends Control {
       final int caretX = x + offsetX + 4 + this.caretX;
       final int caretY = y + offsetY + 3;
 
-      GPU.queueCommand(textZ_800bdf00.get() - 1, new GpuCommandLine()
+      GPU.queueCommand(this.getZ() - 1, new GpuCommandLine()
         .pos(0, caretX, caretY)
         .pos(1, caretX, caretY + this.getHeight() - 7)
         .rgb(0xa0, 0x80, 0x50)
       );
     }
-
-    textZ_800bdf00.set(oldZ);
   }
 
   @Override
@@ -151,10 +148,12 @@ public class Textbox extends Control {
     if(key == GLFW_KEY_BACKSPACE && this.caretIndex > 0) {
       this.updateText(this.text.substring(0, this.caretIndex - 1) + this.text.substring(this.caretIndex));
       this.setCaretIndex(this.caretIndex - 1);
+      this.fireChangedEvent();
     }
 
     if(key == GLFW_KEY_DELETE && this.caretIndex < this.text.length()) {
       this.updateText(this.text.substring(0, this.caretIndex) + this.text.substring(this.caretIndex + 1));
+      this.fireChangedEvent();
     }
 
     if(key == GLFW_KEY_ESCAPE) {
@@ -177,6 +176,7 @@ public class Textbox extends Control {
     if(codepoint >= 32 && codepoint < 127) {
       this.updateText(this.text.substring(0, this.caretIndex) + (char)codepoint + this.text.substring(this.caretIndex));
       this.setCaretIndex(this.caretIndex + 1);
+      this.fireChangedEvent();
     }
 
     return InputPropagation.HANDLED;
@@ -191,4 +191,18 @@ public class Textbox extends Control {
   protected InputPropagation pressedWithRepeatPulse(final InputAction inputAction) {
     return InputPropagation.HANDLED;
   }
+
+  public void onChanged(final Changed handler) {
+    this.changedHandler = handler;
+  }
+
+  private void fireChangedEvent() {
+    if(this.changedHandler != null) {
+      this.changedHandler.changed(this.text);
+    }
+  }
+
+  private Changed changedHandler;
+
+  @FunctionalInterface public interface Changed { void changed(final String text); }
 }

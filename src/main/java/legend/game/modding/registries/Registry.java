@@ -6,10 +6,14 @@ import java.util.Map;
 
 public class Registry<Type extends RegistryEntry> implements Iterable<RegistryId> {
   protected final Map<RegistryId, Type> entries = new HashMap<>();
-  private final Map<RegistryId, RegistryDelegate<Type>> delegates = new HashMap<>();
+  protected final Map<RegistryId, RegistryDelegate<Type>> delegates = new HashMap<>();
+
+  public boolean hasEntry(final RegistryId id) {
+    return this.entries.containsKey(id);
+  }
 
   public RegistryDelegate<Type> getEntry(final RegistryId id) {
-    return this.delegates.computeIfAbsent(id, key -> new RegistryDelegate<>(() -> this.entries.get(key)));
+    return this.delegates.computeIfAbsent(id, key -> new RegistryDelegate<>(id, this, (Class<Registry<Type>>)this.getClass(), () -> this.entries.get(key)));
   }
 
   public RegistryDelegate<Type> getEntry(final String id) {

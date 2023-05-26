@@ -113,9 +113,9 @@ import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static legend.game.Scus94491BpeSegment.renderMcq;
+import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment.setDepthResolution;
-import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80020308;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021520;
@@ -144,11 +144,9 @@ import static legend.game.Scus94491BpeSegment_8005.combatants_8005e398;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
 import static legend.game.Scus94491BpeSegment_8006._8006e398;
-import static legend.game.Scus94491BpeSegment_8007._8007a3a8;
+import static legend.game.Scus94491BpeSegment_8007.clearRed_8007a3a8;
 import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
-import static legend.game.Scus94491BpeSegment_800b._800babc0;
-import static legend.game.Scus94491BpeSegment_800b._800bb104;
 import static legend.game.Scus94491BpeSegment_800b._800bb168;
 import static legend.game.Scus94491BpeSegment_800b._800bc910;
 import static legend.game.Scus94491BpeSegment_800b._800bc914;
@@ -158,6 +156,8 @@ import static legend.game.Scus94491BpeSegment_800b._800bc960;
 import static legend.game.Scus94491BpeSegment_800b._800bc968;
 import static legend.game.Scus94491BpeSegment_800b._800bc97c;
 import static legend.game.Scus94491BpeSegment_800b.afterFmvLoadingStage_800bf0ec;
+import static legend.game.Scus94491BpeSegment_800b.clearBlue_800babc0;
+import static legend.game.Scus94491BpeSegment_800b.clearGreen_800bb104;
 import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.fmvIndex_800bf0dc;
@@ -845,13 +845,13 @@ public final class Bttl_800c {
   }
 
   @Method(0x800c7488L)
-  public static int getHitMultiplier(final int charSlot, final int hitNum, final int a2) {
+  public static int getHitProperty(final int charSlot, final int hitNum, final int hitPropertyIndex) {
     if((_8006e398.charBobjIndices_e40[charSlot].storage_44[7] & 0x2) != 0) { // Is dragoon
-      return battlePreloadedEntities_1f8003f4.additionHits_38[charSlot + 3].hits_00[hitNum].hitProperty_00[a2];
+      return battlePreloadedEntities_1f8003f4.additionHits_38[charSlot + 3].hits_00[hitNum].get(hitPropertyIndex);
     }
 
     //LAB_800c74fc
-    return battlePreloadedEntities_1f8003f4.additionHits_38[charSlot].hits_00[hitNum].hitProperty_00[a2];
+    return battlePreloadedEntities_1f8003f4.additionHits_38[charSlot].hits_00[hitNum].get(hitPropertyIndex);
   }
 
   @Method(0x800c7524L)
@@ -910,7 +910,7 @@ public final class Bttl_800c {
   @Method(0x800c76a0L)
   public static void FUN_800c76a0() {
     if((_800bc960.get() & 0x3) == 0x3) {
-      setWidthAndFlags(320);
+      resizeDisplay(320, 240);
       setDepthResolution(12);
       vsyncMode_8007a3b8.set(3);
       _800bc960.or(0x40);
@@ -940,8 +940,6 @@ public final class Bttl_800c {
     _800c66d0.set(0);
     monsterCount_800c6768.set(0);
     charCount_800c677c.set(0);
-
-    _8006e398.morphMode_ee4 = gameState_800babc8.morphMode_4e2;
 
     loadSupportOverlay(1, SBtld::battlePrepareSelectedAdditionHitProperties_80109250);
 
@@ -1368,9 +1366,9 @@ public final class Bttl_800c {
     if(_800c6764.get() == 0 || _800c66d4.get() == 0 || (_800bc960.get() & 0x80) == 0) {
       //LAB_800c8ad8
       //LAB_800c8adc
-      _800babc0.set(0);
-      _800bb104.set(0);
-      _8007a3a8.set(0);
+      clearBlue_800babc0.set(0);
+      clearGreen_800bb104.set(0);
+      clearRed_8007a3a8.set(0);
     } else {
       _800c6774.add(_800c676c.get());
       _800c6778.add(_800c6770.get());
@@ -1394,14 +1392,14 @@ public final class Bttl_800c {
       //LAB_800c8a04
       final int colour = mcqColour_800fa6dc.get();
       if(y >= -centreScreenY_1f8003de.get()) {
-        _8007a3a8.set(battlePreloadedEntities_1f8003f4.stageMcq_9cb0._18.get() * colour / 0x80);
-        _800bb104.set(battlePreloadedEntities_1f8003f4.stageMcq_9cb0._19.get() * colour / 0x80);
-        _800babc0.set(battlePreloadedEntities_1f8003f4.stageMcq_9cb0._1a.get() * colour / 0x80);
+        clearRed_8007a3a8.set(battlePreloadedEntities_1f8003f4.stageMcq_9cb0._18.get() * colour / 0x80);
+        clearGreen_800bb104.set(battlePreloadedEntities_1f8003f4.stageMcq_9cb0._19.get() * colour / 0x80);
+        clearBlue_800babc0.set(battlePreloadedEntities_1f8003f4.stageMcq_9cb0._1a.get() * colour / 0x80);
       } else {
         //LAB_800c8a74
-        _8007a3a8.set(battlePreloadedEntities_1f8003f4.stageMcq_9cb0._20.get() * colour / 0x80);
-        _800bb104.set(battlePreloadedEntities_1f8003f4.stageMcq_9cb0._21.get() * colour / 0x80);
-        _800babc0.set(battlePreloadedEntities_1f8003f4.stageMcq_9cb0._22.get() * colour / 0x80);
+        clearRed_8007a3a8.set(battlePreloadedEntities_1f8003f4.stageMcq_9cb0._20.get() * colour / 0x80);
+        clearGreen_800bb104.set(battlePreloadedEntities_1f8003f4.stageMcq_9cb0._21.get() * colour / 0x80);
+        clearBlue_800babc0.set(battlePreloadedEntities_1f8003f4.stageMcq_9cb0._22.get() * colour / 0x80);
       }
     }
 
@@ -1411,7 +1409,7 @@ public final class Bttl_800c {
   @Method(0x800c8b20L)
   public static void loadStage(final int stage) {
     loadDrgnDir(0, 2497 + stage, files -> {
-      if(files.get(0).real()) {
+      if(files.get(0).hasVirtualSize()) {
         if(battlePreloadedEntities_1f8003f4.stageMcq_9cb0 != null) {
           free(battlePreloadedEntities_1f8003f4.stageMcq_9cb0.getAddress());
         }
@@ -1583,7 +1581,7 @@ public final class Bttl_800c {
   @Method(0x800c90b0L)
   public static long FUN_800c90b0(final int combatantIndex) {
     //LAB_800c9114
-    if((combatants_8005e398[combatantIndex]._1a4 >= 0 || combatants_8005e398[combatantIndex].mrg_00 != null && combatants_8005e398[combatantIndex].mrg_00.get(32).real()) && FUN_800ca054(combatantIndex, 0) != 0) {
+    if((combatants_8005e398[combatantIndex]._1a4 >= 0 || combatants_8005e398[combatantIndex].mrg_00 != null && combatants_8005e398[combatantIndex].mrg_00.get(32).hasVirtualSize()) && FUN_800ca054(combatantIndex, 0) != 0) {
       return 0x1L;
     }
 
@@ -1684,14 +1682,14 @@ public final class Bttl_800c {
     combatant.mrg_00 = files;
 
     // I don't think this is actually used?
-    if(files.get(34).real()) {
+    if(files.get(34).hasVirtualSize()) {
       combatant.scriptPtr_10 = new ScriptFile("%s %d file 34".formatted(isMonster ? "monster" : "char", combatant.charSlot_19c), files.get(34).getBytes());
     }
 
     //LAB_800c94a0
     //LAB_800c94a4
     for(int animIndex = 0; animIndex < 32; animIndex++) {
-      if(files.get(animIndex).real()) {
+      if(files.get(animIndex).hasVirtualSize()) {
         FUN_800c9a80(files.get(animIndex), 1, 0, combatantIndex, animIndex);
       }
 
@@ -1716,7 +1714,7 @@ public final class Bttl_800c {
       tmd = new CContainer(model.name, FUN_800cad34(s0._1a4));
     } else {
       //LAB_800c9590
-      if(s0.mrg_00 != null && s0.mrg_00.get(32).real()) {
+      if(s0.mrg_00 != null && s0.mrg_00.get(32).hasVirtualSize()) {
         tmd = new CContainer(model.name, s0.mrg_00.get(32));
       } else {
         throw new RuntimeException("anim undefined");
@@ -1801,7 +1799,7 @@ public final class Bttl_800c {
       if(!isMonster && files.size() == 64) {
         //LAB_800c9940
         for(int animIndex = 0; animIndex < 32; animIndex++) {
-          if(files.get(32 + animIndex).real()) {
+          if(files.get(32 + animIndex).hasVirtualSize()) {
             if(combatant._14[animIndex] != null && combatant._14[animIndex]._09 != 0) {
               FUN_800c9c7c(combatantIndex, animIndex);
             }
@@ -1818,7 +1816,7 @@ public final class Bttl_800c {
 
       //LAB_800c99e8
       for(int animIndex = 0; animIndex < 32; animIndex++) {
-        if(files.get(animIndex).real()) {
+        if(files.get(animIndex).hasVirtualSize()) {
           if(combatant._14[animIndex] != null && combatant._14[animIndex]._09 != 0) {
             FUN_800c9c7c(combatantIndex, animIndex);
           }
@@ -2734,7 +2732,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cba60L)
-  public static FlowControl FUN_800cba60(final RunningScript<?> script) {
+  public static FlowControl scriptSetBobjAnimationLoopState(final RunningScript<?> script) {
     //LAB_800cbab0
     if(script.params_20[1].get() != 0) {
       scriptStatePtrArr_800bc1c0[script.params_20[0].get()].storage_44[7] &= 0xffff_ff7f;
@@ -3257,7 +3255,7 @@ public final class Bttl_800c {
   @Method(0x800cd0ecL)
   public static FlowControl FUN_800cd0ec(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    script.params_20[3].set(getHitMultiplier(
+    script.params_20[3].set(getHitProperty(
       bobj.charSlot_276,
       script.params_20[1].get(),
       script.params_20[2].get()
@@ -4230,6 +4228,7 @@ public final class Bttl_800c {
     return FUN_800cf7d4(sp0x18, sp0x20, a1, outX, outY);
   }
 
+  /** @return Z */
   @Method(0x800cfb94L)
   public static int FUN_800cfb94(final EffectManagerData6c a0, final SVECTOR a1, final VECTOR a2, final ShortRef outX, final ShortRef outY) {
     final SVECTOR sp0x18 = new SVECTOR().set(a0._10.rot_10).add(a1);
@@ -4237,7 +4236,7 @@ public final class Bttl_800c {
     return FUN_800cf7d4(sp0x18, sp0x20, a2, outX, outY);
   }
 
-  /** Returns Z */
+  /** @return Z */
   @Method(0x800cfc20L)
   public static int FUN_800cfc20(final SVECTOR a0, final VECTOR a1, final VECTOR a2, final ShortRef outX, final ShortRef outY) {
     final SVECTOR sp0x18 = new SVECTOR().set(a0);

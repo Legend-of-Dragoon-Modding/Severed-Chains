@@ -1,6 +1,7 @@
 package legend.game.inventory.screens;
 
 import legend.game.SItem;
+import legend.game.input.InputAction;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.BigList;
 import legend.game.inventory.screens.controls.Glyph;
@@ -62,7 +63,7 @@ public class SaveGameScreen extends MenuScreen {
     playSound(2);
 
     if(save == null) {
-      menuStack.pushScreen(new InputBoxScreen("Save name:", SAVES.generateSaveName(gameState_800babc8.campaignName), 2, this::onNewSaveResult));
+      menuStack.pushScreen(new InputBoxScreen("Save name:", SAVES.generateSaveName(gameState_800babc8.campaignName), this::onNewSaveResult));
     } else {
       menuStack.pushScreen(new MessageBoxScreen(Overwrite_save_8011c9e8, 2, result -> this.onOverwriteResult(result, save)));
     }
@@ -93,5 +94,24 @@ public class SaveGameScreen extends MenuScreen {
 
       this.unload.run();
     }
+  }
+
+  private void menuEscape() {
+    playSound(3);
+    this.unload.run();
+  }
+
+  @Override
+  public InputPropagation pressedThisFrame(final InputAction inputAction) {
+    if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
+      return InputPropagation.HANDLED;
+    }
+
+    if(inputAction == InputAction.BUTTON_EAST) {
+      this.menuEscape();
+      return InputPropagation.HANDLED;
+    }
+
+    return InputPropagation.PROPAGATE;
   }
 }

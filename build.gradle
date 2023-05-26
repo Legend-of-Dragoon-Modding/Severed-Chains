@@ -3,7 +3,7 @@ import org.apache.tools.ant.filters.ReplaceTokens
 
 plugins {
   id 'java'
-  id 'org.openjfx.javafxplugin' version '0.0.13'
+  id 'org.openjfx.javafxplugin' version '0.0.14'
   id 'java-library'
   id 'maven-publish'
 }
@@ -36,6 +36,8 @@ if(DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX()) {
 }
 
 if(hasProperty("os")) {
+  println "Building for OS " + os
+
   switch(os) {
     case "windows":
       project.ext.lwjglNatives = "natives-windows"
@@ -96,12 +98,20 @@ javafx {
   modules = ['javafx.controls', 'javafx.fxml']
 }
 
+if(hasProperty("os")) {
+  javafx.platform = os;
+}
+
 jar {
   manifest {
     attributes(
       'Main-Class': 'legend.game.Main'
     )
   }
+}
+
+task sourceJar(type: Jar) {
+  from sourceSets.main.allJava
 }
 
 task clearOutput(type: Delete) {
@@ -144,6 +154,10 @@ publishing {
       from components.java
       pom {
         name = 'LoD Engine'
+      }
+
+      artifact sourceJar {
+        classifier "sources"
       }
     }
   }

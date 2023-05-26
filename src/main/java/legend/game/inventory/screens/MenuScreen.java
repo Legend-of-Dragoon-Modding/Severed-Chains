@@ -28,6 +28,31 @@ public abstract class MenuScreen extends ControlHost {
     return this;
   }
 
+  @Override
+  protected ControlHost getParent() {
+    return null;
+  }
+
+  @Override
+  protected int getX() {
+    return 0;
+  }
+
+  @Override
+  protected int getY() {
+    return 0;
+  }
+
+  @Override
+  public int getWidth() {
+    return 368;
+  }
+
+  @Override
+  public int getHeight() {
+    return 240;
+  }
+
   protected abstract void render();
 
   protected void renderNumber(final int x, final int y, final int value, final int digitCount) {
@@ -57,7 +82,7 @@ public abstract class MenuScreen extends ControlHost {
   @Override
   protected InputPropagation mouseClick(final int x, final int y, final int button, final int mods) {
     this.updateHover(x, y);
-    this.updateFocusFromHover();
+    this.updateFocus(x, y);
 
     if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
@@ -72,7 +97,7 @@ public abstract class MenuScreen extends ControlHost {
       return InputPropagation.HANDLED;
     }
 
-    if(this.focus != null) {
+    if(this.focus != null && !this.focus.isDisabled()) {
       return this.focus.keyPress(key, scancode, mods);
     }
 
@@ -85,7 +110,7 @@ public abstract class MenuScreen extends ControlHost {
       return InputPropagation.HANDLED;
     }
 
-    if(this.focus != null) {
+    if(this.focus != null && !this.focus.isDisabled()) {
       return this.focus.charPress(codepoint);
     }
 
@@ -98,7 +123,7 @@ public abstract class MenuScreen extends ControlHost {
       return InputPropagation.HANDLED;
     }
 
-    if(this.focus != null) {
+    if(this.focus != null && !this.focus.isDisabled()) {
       return this.focus.pressedThisFrame(inputAction);
     }
 
@@ -111,7 +136,7 @@ public abstract class MenuScreen extends ControlHost {
       return InputPropagation.HANDLED;
     }
 
-    if(this.focus != null) {
+    if(this.focus != null && !this.focus.isDisabled()) {
       return this.focus.pressedWithRepeatPulse(inputAction);
     }
 
@@ -124,7 +149,7 @@ public abstract class MenuScreen extends ControlHost {
       return InputPropagation.HANDLED;
     }
 
-    if(this.focus != null) {
+    if(this.focus != null && !this.focus.isDisabled()) {
       return this.focus.releasedThisFrame(inputAction);
     }
 
@@ -132,7 +157,7 @@ public abstract class MenuScreen extends ControlHost {
   }
 
   private void updateHover(final int x, final int y) {
-    final Control hover = this.findControlAt(x, y);
+    final Control hover = this.findControlAt(x, y, true);
 
     if(hover != this.hover) {
       if(this.hover != null) {
@@ -147,9 +172,11 @@ public abstract class MenuScreen extends ControlHost {
     }
   }
 
-  private void updateFocusFromHover() {
-    if(this.focus != this.hover) {
-      this.setFocus(this.hover);
+  private void updateFocus(final int x, final int y) {
+    final Control focus = this.findControlAt(x, y);
+
+    if(focus != this.focus) {
+      this.setFocus(focus);
     }
   }
 

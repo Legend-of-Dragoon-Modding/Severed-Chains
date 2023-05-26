@@ -24,10 +24,10 @@ public class SoundEnv44 {
   /** Was two ushorts */
   public int noiseMode_16;
 
-  /** No longer used */
-  public int eventSpuIrq_1c;
-  /** No longer used */
-  public boolean spuDmaTransferInProgress_20;
+//  /** No longer used */
+//  public int eventSpuIrq_1c;
+//  /** No longer used */
+//  public boolean spuDmaTransferInProgress_20;
   /** ubyte */
   public boolean pitchShifted_22;
   /** ubyte */
@@ -51,12 +51,12 @@ public class SoundEnv44 {
   /** ushort */
   public int fadeOutVolR_32;
   public int reverbType_34;
-  /** ushort */
-  public boolean mono_36;
+//  /** ushort */
+//  public boolean mono_36;
   /** ubyte */
   public boolean hasCallback_38;
-  /** No longer used */
-  public int dmaIndex_39;
+//  /** No longer used */
+//  public int dmaIndex_39;
   /** Was two ushorts */
   public int keyOn_3a;
   /** Was two ushorts */

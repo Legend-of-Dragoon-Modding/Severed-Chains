@@ -1,9 +1,10 @@
 package legend.game.combat.bobj;
 
-import legend.core.Config;
 import legend.core.Latch;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.scripting.ScriptState;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 
 public class PlayerBattleObject extends BattleObject27c {
@@ -70,7 +71,7 @@ public class PlayerBattleObject extends BattleObject27c {
   public int getStat(final int statIndex) {
     int disableStatusFlag = 0x0;
     if(statIndex == 5 || statIndex == 16) {
-      disableStatusFlag = Config.disableStatusEffects() ? 0xff : 0x0;
+      disableStatusFlag = CONFIG.getConfig(CoreMod.DISABLE_STATUS_EFFECTS_CONFIG.get()) ? 0xff : 0x0;
       if(disableStatusFlag == 0xff) {
         this.status_0e &= 0xff00;
       }

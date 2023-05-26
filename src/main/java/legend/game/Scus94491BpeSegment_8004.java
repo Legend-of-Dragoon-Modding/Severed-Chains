@@ -128,8 +128,8 @@ public final class Scus94491BpeSegment_8004 {
   /** The previous index before the file finished loading */
   public static final IntRef previousMainCallbackIndex_8004dd28 = MEMORY.ref(4, 0x8004dd28L, IntRef::new);
 
-  public static final Value _8004dd30 = MEMORY.ref(4, 0x8004dd30L);
-  public static final Value width_8004dd34 = MEMORY.ref(2, 0x8004dd34L);
+  public static int width_8004dd34 = 320;
+  public static int height_8004dd34 = 240;
 
   public static final UnsignedShortRef reinitOrderingTableBits_8004dd38 = MEMORY.ref(2, 0x8004dd38L, UnsignedShortRef::new);
 
@@ -239,7 +239,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[143] = Bttl_800c::FUN_800cb9b0;
     scriptSubFunctions_8004e29c[144] = Bttl_800c::scriptPauseAnimation;
     scriptSubFunctions_8004e29c[145] = Bttl_800c::scriptResumeAnimation;
-    scriptSubFunctions_8004e29c[146] = Bttl_800c::FUN_800cba60;
+    scriptSubFunctions_8004e29c[146] = Bttl_800c::scriptSetBobjAnimationLoopState;
     scriptSubFunctions_8004e29c[147] = Bttl_800c::scriptAnimationHasFinished;
     scriptSubFunctions_8004e29c[148] = Bttl_800c::FUN_800cbb00;
     scriptSubFunctions_8004e29c[149] = Bttl_800c::FUN_800cbc14;
@@ -273,7 +273,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[177] = Bttl_800c::FUN_800cce70;
     scriptSubFunctions_8004e29c[178] = Bttl_800c::scriptSetStat;
 
-    scriptSubFunctions_8004e29c[192] = Scus94491BpeSegment_8002::FUN_80029b68;
+    scriptSubFunctions_8004e29c[192] = Scus94491BpeSegment_8002::scriptGetFreeTextboxIndex;
     scriptSubFunctions_8004e29c[193] = Scus94491BpeSegment_8002::FUN_80029bd4;
     scriptSubFunctions_8004e29c[194] = Scus94491BpeSegment_8002::FUN_80025158;
     scriptSubFunctions_8004e29c[195] = Scus94491BpeSegment_8002::FUN_80029c98;
@@ -480,51 +480,51 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[526] = Bttl_800e::scriptSetStageZ;
 
     scriptSubFunctions_8004e29c[544] = SEffe::FUN_801115ec;
-    scriptSubFunctions_8004e29c[545] = SEffe::FUN_80111ae4;
-    scriptSubFunctions_8004e29c[546] = SEffe::FUN_80112704;
-    scriptSubFunctions_8004e29c[547] = SEffe::FUN_80112770;
-    scriptSubFunctions_8004e29c[548] = SEffe::FUN_80113964;
-    scriptSubFunctions_8004e29c[549] = SEffe::FUN_801139d0;
-    scriptSubFunctions_8004e29c[550] = SEffe::FUN_8011452c;
-    scriptSubFunctions_8004e29c[551] = SEffe::FUN_80114598;
+    scriptSubFunctions_8004e29c[545] = SEffe::scriptSetRelativeTranslation;
+    scriptSubFunctions_8004e29c[546] = SEffe::scriptGetRotationDifference;
+    scriptSubFunctions_8004e29c[547] = SEffe::scriptSetRelativeRotation;
+    scriptSubFunctions_8004e29c[548] = SEffe::scriptGetScaleRatio;
+    scriptSubFunctions_8004e29c[549] = SEffe::scriptSetRelativeScale;
+    scriptSubFunctions_8004e29c[550] = SEffe::scriptGetColourDifference;
+    scriptSubFunctions_8004e29c[551] = SEffe::scriptSetRelativeColour;
     scriptSubFunctions_8004e29c[552] = SEffe::FUN_80114e0c;
     scriptSubFunctions_8004e29c[553] = SEffe::FUN_80114e60;
     scriptSubFunctions_8004e29c[554] = SEffe::FUN_80111b60;
     scriptSubFunctions_8004e29c[555] = SEffe::FUN_8011554c;
     scriptSubFunctions_8004e29c[556] = SEffe::FUN_801155a0;
     scriptSubFunctions_8004e29c[557] = SEffe::FUN_80111be8;
-    scriptSubFunctions_8004e29c[558] = SEffe::FUN_80111c2c;
+    scriptSubFunctions_8004e29c[558] = SEffe::FUN_80111c2c; // scaler
     scriptSubFunctions_8004e29c[559] = SEffe::scriptSetTranslationScalerWithRotation0;
-    scriptSubFunctions_8004e29c[560] = SEffe::FUN_80112274;
-    scriptSubFunctions_8004e29c[561] = SEffe::FUN_80112364;
-    scriptSubFunctions_8004e29c[562] = SEffe::FUN_801155f8;
+    scriptSubFunctions_8004e29c[560] = SEffe::FUN_80112274; // scaler
+    scriptSubFunctions_8004e29c[561] = SEffe::FUN_80112364; // scaler
+    scriptSubFunctions_8004e29c[562] = SEffe::FUN_801155f8; // no-op
     scriptSubFunctions_8004e29c[563] = SEffe::FUN_80112900;
     scriptSubFunctions_8004e29c[564] = SEffe::FUN_8011299c;
     scriptSubFunctions_8004e29c[565] = SEffe::FUN_80115440;
     scriptSubFunctions_8004e29c[566] = SEffe::FUN_80111658;
-    scriptSubFunctions_8004e29c[567] = SEffe::scriptSetRotScaler;
+    scriptSubFunctions_8004e29c[567] = SEffe::scriptSetRotationScaler;
     scriptSubFunctions_8004e29c[568] = SEffe::FUN_80112bf0;
-    scriptSubFunctions_8004e29c[569] = SEffe::FUN_80112e00;
-    scriptSubFunctions_8004e29c[570] = SEffe::FUN_8011306c;
-    scriptSubFunctions_8004e29c[571] = SEffe::FUN_801132c8;
-    scriptSubFunctions_8004e29c[572] = SEffe::FUN_80115600;
+    scriptSubFunctions_8004e29c[569] = SEffe::FUN_80112e00; // not implemented
+    scriptSubFunctions_8004e29c[570] = SEffe::FUN_8011306c; // not implemented
+    scriptSubFunctions_8004e29c[571] = SEffe::FUN_801132c8; // not implemented
+    scriptSubFunctions_8004e29c[572] = SEffe::FUN_80115600; // no-op
     scriptSubFunctions_8004e29c[573] = Bttl_800e::FUN_800e9f68;
     scriptSubFunctions_8004e29c[574] = SEffe::FUN_80118984;
     scriptSubFunctions_8004e29c[575] = SEffe::scriptSetScaleVectorScaler;
 
     scriptSubFunctions_8004e29c[576] = SEffe::FUN_80114094;
-    scriptSubFunctions_8004e29c[577] = SEffe::FUN_801143f8;
+    scriptSubFunctions_8004e29c[577] = SEffe::FUN_801143f8; // not implemented
     scriptSubFunctions_8004e29c[578] = SEffe::FUN_80115608;
     scriptSubFunctions_8004e29c[579] = SEffe::FUN_80114070;
-    scriptSubFunctions_8004e29c[580] = SEffe::FUN_801147c8;
+    scriptSubFunctions_8004e29c[580] = SEffe::FUN_801147c8; // not implemented
     scriptSubFunctions_8004e29c[581] = SEffe::scriptSetColorVectorScaler;
-    scriptSubFunctions_8004e29c[582] = SEffe::FUN_80114b00;
+    scriptSubFunctions_8004e29c[582] = SEffe::FUN_80114b00; // not implemented
     scriptSubFunctions_8004e29c[583] = SEffe::FUN_80114eb4;
-    scriptSubFunctions_8004e29c[584] = SEffe::FUN_80114f34;
+    scriptSubFunctions_8004e29c[584] = SEffe::FUN_80114f34; // not implemented
     scriptSubFunctions_8004e29c[585] = SEffe::FUN_80115014;
     scriptSubFunctions_8004e29c[586] = SEffe::FUN_80115058;
-    scriptSubFunctions_8004e29c[587] = SEffe::FUN_80115168;
-    scriptSubFunctions_8004e29c[588] = SEffe::FUN_801152b0;
+    scriptSubFunctions_8004e29c[587] = SEffe::FUN_80115168; // not implemented
+    scriptSubFunctions_8004e29c[588] = SEffe::scriptSetEffectTicksRemaining;
     scriptSubFunctions_8004e29c[589] = SEffe::FUN_80115324;
     scriptSubFunctions_8004e29c[590] = SEffe::FUN_80115388;
     scriptSubFunctions_8004e29c[591] = SEffe::FUN_801153e4;
@@ -532,11 +532,11 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[593] = SEffe::FUN_80112398;
     scriptSubFunctions_8004e29c[594] = Bttl_800e::FUN_800eb518;
     scriptSubFunctions_8004e29c[595] = SEffe::FUN_8011549c;
-    scriptSubFunctions_8004e29c[596] = SEffe::FUN_801122ec;
+    scriptSubFunctions_8004e29c[596] = SEffe::FUN_801122ec; // scaler
     scriptSubFunctions_8004e29c[597] = SEffe::scriptSetTranslationScalerWithRotation1;
     scriptSubFunctions_8004e29c[598] = SEffe::FUN_80111cc4;
     scriptSubFunctions_8004e29c[599] = SEffe::FUN_80111ed4;
-    scriptSubFunctions_8004e29c[600] = Bttl_800e::FUN_800e93e0;
+    scriptSubFunctions_8004e29c[600] = Bttl_800e::scriptAllocateEmptyEffectManagerChild;
     scriptSubFunctions_8004e29c[601] = Bttl_800e::allocateAttackHitFlashEffect;
     scriptSubFunctions_8004e29c[602] = Bttl_800e::FUN_800e9854;
 //    scriptSubFunctions_8004e29c[603] = Temp::FUN_800ca648;
@@ -556,7 +556,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[616] = Bttl_800e::FUN_800eb01c;
 //    scriptSubFunctions_8004e29c[617] = Temp::FUN_800caae4;
     scriptSubFunctions_8004e29c[618] = SEffe::scriptLoadSameScriptAndJump;
-    scriptSubFunctions_8004e29c[619] = SEffe::FUN_80118df4;
+    scriptSubFunctions_8004e29c[619] = SEffe::allocateShirleyTransformWipeEffect;
     scriptSubFunctions_8004e29c[620] = SEffe::FUN_80111a58;
     scriptSubFunctions_8004e29c[621] = Bttl_800e::FUN_800ea384;
     scriptSubFunctions_8004e29c[622] = SEffe::FUN_80119484;
@@ -658,12 +658,12 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[751] = Bttl_800d::allocateAdditionSparksEffect;
     scriptSubFunctions_8004e29c[752] = SEffe::FUN_80102608;
     scriptSubFunctions_8004e29c[753] = SEffe::allocateAdditionOverlaysEffect;
-    scriptSubFunctions_8004e29c[754] = SEffe::FUN_801077bc;
+    scriptSubFunctions_8004e29c[754] = SEffe::scriptGetHitCompletionState;
     scriptSubFunctions_8004e29c[755] = SEffe::FUN_80108de8;
     scriptSubFunctions_8004e29c[756] = Bttl_800d::allocateAdditionStarburstEffect;
     scriptSubFunctions_8004e29c[757] = Bttl_800d::FUN_800d1cac;
     scriptSubFunctions_8004e29c[758] = Bttl_800d::FUN_800d1cf4;
-    scriptSubFunctions_8004e29c[759] = SEffe::FUN_801078c0;
+    scriptSubFunctions_8004e29c[759] = SEffe::scriptAlterAdditionContinuationState;
     scriptSubFunctions_8004e29c[760] = SEffe::FUN_80108df0;
     scriptSubFunctions_8004e29c[761] = Bttl_800d::allocateGuardEffect;
     scriptSubFunctions_8004e29c[762] = Bttl_800c::allocateWeaponTrailEffect;
@@ -710,7 +710,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[833] = SEffe::FUN_80108df8;
     scriptSubFunctions_8004e29c[834] = SEffe::FUN_80102610;
     scriptSubFunctions_8004e29c[835] = Bttl_800c::scriptGetBobjDimension;
-    scriptSubFunctions_8004e29c[836] = SEffe::FUN_80109158;
+    scriptSubFunctions_8004e29c[836] = SEffe::allocateRainEffect;
     scriptSubFunctions_8004e29c[837] = Bttl_800c::FUN_800ce9b0;
     scriptSubFunctions_8004e29c[838] = SEffe::FUN_801052dc;
     scriptSubFunctions_8004e29c[839] = SEffe::FUN_80105604;
@@ -728,7 +728,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[851] = SEffe::FUN_8010a3fc;
     scriptSubFunctions_8004e29c[852] = Bttl_800d::allocateMonsterDeathEffect;
     scriptSubFunctions_8004e29c[853] = Bttl_800d::FUN_800d0124;
-    scriptSubFunctions_8004e29c[854] = SEffe::FUN_801079a4;
+    scriptSubFunctions_8004e29c[854] = SEffe::scriptGetAdditionOverlayActiveStatus;
 
     scriptSubFunctions_8004e29c[864] = Scus94491BpeSegment_8002::scriptGiveChestContents;
     scriptSubFunctions_8004e29c[865] = Scus94491BpeSegment_8002::scriptTakeItem;
@@ -1534,27 +1534,12 @@ public final class Scus94491BpeSegment_8004 {
   @Method(0x8004c558L)
   public static void sssqSetReverbVolume(final int left, final int right) {
     if(soundEnv_800c6630.reverbType_34 != 0 && left < 0x80 && right < 0x80) {
-      final int r;
-      final int l;
-      if(soundEnv_800c6630.mono_36) {
-        l = Math.max(left << 8, right << 8);
-        r = l;
-      } else {
-        l = left << 8;
-        r = right << 8;
-      }
-
       //LAB_8004c5d0
-      SPU.REVERB_OUT_L.set(l);
-      SPU.REVERB_OUT_R.set(r);
+      SPU.REVERB_OUT_L.set(left << 8);
+      SPU.REVERB_OUT_R.set(right << 8);
     }
 
     //LAB_8004c5d8
-  }
-
-  @Method(0x8004c6f8L)
-  public static void setMono(final boolean mono) {
-    soundEnv_800c6630.mono_36 = mono;
   }
 
   @Method(0x8004c894L)
@@ -1747,19 +1732,9 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x8004ced4L)
   public static void setCdVolume(final int left, final int right) {
-    final int l;
-    final int r;
-    if(soundEnv_800c6630.mono_36) {
-      l = Math.max(left << 8, right << 8);
-      r = l;
-    } else {
-      l = left << 8;
-      r = right << 8;
-    }
-
     //LAB_8004cf0c
-    voicePtr_800c4ac4.deref().CD_VOL_L.set(l);
-    voicePtr_800c4ac4.deref().CD_VOL_R.set(r);
+    voicePtr_800c4ac4.deref().CD_VOL_L.set(left << 8);
+    voicePtr_800c4ac4.deref().CD_VOL_R.set(right << 8);
   }
 
   @Method(0x8004cf8cL)

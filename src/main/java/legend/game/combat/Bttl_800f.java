@@ -21,7 +21,6 @@ import legend.game.combat.ui.CombatMenua4;
 import legend.game.combat.ui.FloatingNumberC4;
 import legend.game.combat.ui.FloatingNumberC4Sub20;
 import legend.game.inventory.screens.TextColour;
-import legend.game.modding.events.EventManager;
 import legend.game.modding.events.combat.SpellStatsEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
@@ -38,6 +37,7 @@ import javax.annotation.Nullable;
 import java.util.Arrays;
 
 import static java.lang.Math.round;
+import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
@@ -80,8 +80,6 @@ import static legend.game.combat.Bttl_800c._800c6c40;
 import static legend.game.combat.Bttl_800c._800c6f30;
 import static legend.game.combat.Bttl_800c._800c6f4c;
 import static legend.game.combat.Bttl_800c._800c6fec;
-import static legend.game.combat.Bttl_800c.digitOffsetXy_800c7014;
-import static legend.game.combat.Bttl_800c.digitU_800c7028;
 import static legend.game.combat.Bttl_800c._800c703c;
 import static legend.game.combat.Bttl_800c._800c70a4;
 import static legend.game.combat.Bttl_800c._800c70e0;
@@ -122,11 +120,13 @@ import static legend.game.combat.Bttl_800c.cameraPositionIndices_800c6c30;
 import static legend.game.combat.Bttl_800c.charCount_800c677c;
 import static legend.game.combat.Bttl_800c.characterElements_800c706c;
 import static legend.game.combat.Bttl_800c.combatItems_800c6988;
+import static legend.game.combat.Bttl_800c.digitOffsetXy_800c7014;
+import static legend.game.combat.Bttl_800c.digitU_800c7028;
 import static legend.game.combat.Bttl_800c.displayStats_800c6c2c;
 import static legend.game.combat.Bttl_800c.dragoonSpells_800c6960;
 import static legend.game.combat.Bttl_800c.enemyCount_800c6758;
 import static legend.game.combat.Bttl_800c.floatingNumbers_800c6b5c;
-import static legend.game.combat.Bttl_800c.getHitMultiplier;
+import static legend.game.combat.Bttl_800c.getHitProperty;
 import static legend.game.combat.Bttl_800c.intRef_800c6718;
 import static legend.game.combat.Bttl_800c.protectedItems_800c72cc;
 import static legend.game.combat.Bttl_800c.spellStats_800fa0b8;
@@ -812,7 +812,7 @@ public final class Bttl_800f {
       //LAB_800f2b94
       int additionMultiplier = 0;
       for(int i = 0; i < attacker.additionHits_56; i++) {
-        additionMultiplier += getHitMultiplier(attacker.charSlot_276, i, 4);
+        additionMultiplier += getHitProperty(attacker.charSlot_276, i, 4);
       }
 
       //LAB_800f2bb4
@@ -969,10 +969,10 @@ public final class Bttl_800f {
     final ScriptState<?> state = scriptStatePtrArr_800bc1c0[bobjIndex];
     final BattleObject27c bobj = (BattleObject27c)state.innerStruct_00;
 
-    final short spPerPhysicalHit;
-    final short mpPerPhysicalHit;
-    final short spPerMagicalHit;
-    final short mpPerMagicalHit;
+    final int spPerPhysicalHit;
+    final int mpPerPhysicalHit;
+    final int spPerMagicalHit;
+    final int mpPerMagicalHit;
     final int speed;
     if((state.storage_44[7] & 0x4) != 0) {
       spPerPhysicalHit = 0;
@@ -982,12 +982,12 @@ public final class Bttl_800f {
       speed = ((MonsterBattleObject)bobj).originalSpeed_64;
     } else {
       //LAB_800f3244
-      final ActiveStatsa0 stats = stats_800be5f8.get(bobj.charIndex_272);
-      spPerPhysicalHit = stats.spPerPhysicalHit_4e.get();
-      mpPerPhysicalHit = stats.mpPerPhysicalHit_50.get();
-      spPerMagicalHit = stats.spPerMagicalHit_52.get();
-      mpPerMagicalHit = stats.mpPerMagicalHit_54.get();
-      speed = stats.gearSpeed_86.get() + stats.bodySpeed_69.get();
+      final ActiveStatsa0 stats = stats_800be5f8[bobj.charIndex_272];
+      spPerPhysicalHit = stats.spPerPhysicalHit_4e;
+      mpPerPhysicalHit = stats.mpPerPhysicalHit_50;
+      spPerMagicalHit = stats.spPerMagicalHit_52;
+      mpPerMagicalHit = stats.mpPerMagicalHit_54;
+      speed = stats.gearSpeed_86 + stats.bodySpeed_69;
     }
 
     //LAB_800f327c
@@ -3235,7 +3235,7 @@ public final class Bttl_800f {
       bobj.buffType_a8 = spellStats.buffType_0a.get();
       bobj._aa = spellStats._0b.get();
 
-      final SpellStatsEvent event = EventManager.INSTANCE.postEvent(new SpellStatsEvent(bobj.spellId_4e, bobj.targetType_94, bobj._96, bobj.specialEffect_98, bobj.spellDamage_9a, bobj.spellMulti_9c, bobj.spellAccuracy_9e, bobj.spellMp_a0, bobj.statusChance_a2, bobj.spellElement_a4, bobj.statusType_a6, bobj.buffType_a8, bobj._aa));
+      final SpellStatsEvent event = EVENTS.postEvent(new SpellStatsEvent(bobj.spellId_4e, bobj.targetType_94, bobj._96, bobj.specialEffect_98, bobj.spellDamage_9a, bobj.spellMulti_9c, bobj.spellAccuracy_9e, bobj.spellMp_a0, bobj.statusChance_a2, bobj.spellElement_a4, bobj.statusType_a6, bobj.buffType_a8, bobj._aa));
       bobj.targetType_94 = event.targetType;
       bobj._96 = event._01;
       bobj.specialEffect_98 = event.specialEffect;

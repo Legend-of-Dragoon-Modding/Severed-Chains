@@ -27,7 +27,7 @@ public class MonsterStats1c implements MemoryRef {
   public final ByteRef targetArrowX_12;
   public final ByteRef targetArrowY_13;
   public final ByteRef targetArrowZ_14;
-  public final UnsignedByteRef _15;
+  public final UnsignedByteRef hitCounterFrameThreshold_15;
   public final UnsignedByteRef _16;
   public final UnsignedByteRef _17;
   public final ByteRef _18;
@@ -55,7 +55,7 @@ public class MonsterStats1c implements MemoryRef {
     this.targetArrowX_12 = ref.offset(1, 0x12L).cast(ByteRef::new);
     this.targetArrowY_13 = ref.offset(1, 0x13L).cast(ByteRef::new);
     this.targetArrowZ_14 = ref.offset(1, 0x14L).cast(ByteRef::new);
-    this._15 = ref.offset(1, 0x15L).cast(UnsignedByteRef::new);
+    this.hitCounterFrameThreshold_15 = ref.offset(1, 0x15L).cast(UnsignedByteRef::new);
     this._16 = ref.offset(1, 0x16L).cast(UnsignedByteRef::new);
     this._17 = ref.offset(1, 0x17L).cast(UnsignedByteRef::new);
     this._18 = ref.offset(1, 0x18L).cast(ByteRef::new);

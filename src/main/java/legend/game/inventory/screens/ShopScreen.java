@@ -1,11 +1,9 @@
 package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
-import legend.core.memory.Memory;
-import legend.game.modding.coremod.CoreMod;
 import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
-import legend.game.modding.events.EventManager;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.inventory.ShopItemEvent;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.LodString;
@@ -16,7 +14,8 @@ import legend.game.types.Renderable58;
 import java.util.Arrays;
 import java.util.Objects;
 
-import static legend.core.GameEngine.MEMORY;
+import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.EVENTS;
 import static legend.game.SItem.Buy_8011c6a4;
 import static legend.game.SItem.Cannot_be_armed_with_8011c6d4;
 import static legend.game.SItem.Carried_8011c6b8;
@@ -53,7 +52,6 @@ import static legend.game.SItem.renderThreeDigitNumberComparison;
 import static legend.game.SItem.renderTwoDigitNumber;
 import static legend.game.SMap.FUN_800e3fac;
 import static legend.game.SMap.shops_800f4930;
-import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment_8002.addGold;
 import static legend.game.Scus94491BpeSegment_8002.allocateRenderable;
@@ -143,7 +141,7 @@ public class ShopScreen extends MenuScreen {
 
         for(int i = 0; i < 16; i++) {
           final int menuItemIndex = this.itemCount;
-          final ShopItemEvent event = EventManager.INSTANCE.postEvent(new ShopItemEvent(shopId_8007a3b4.get(), this.itemCount, shops_800f4930.get(shopId_8007a3b4.get()).item_00.get(this.itemCount).id_01.get()));
+          final ShopItemEvent event = EVENTS.postEvent(new ShopItemEvent(shopId_8007a3b4.get(), this.itemCount, shops_800f4930.get(shopId_8007a3b4.get()).item_00.get(this.itemCount).id_01.get()));
           shops_800f4930.get(shopId_8007a3b4.get()).item_00.get(menuItemIndex).id_01.set(event.itemId);
 
           final int itemId = shops_800f4930.get(shopId_8007a3b4.get()).item_00.get(menuItemIndex).id_01.get();
@@ -328,7 +326,7 @@ public class ShopScreen extends MenuScreen {
     if(isItemMenu != 0) {
       renderTwoDigitNumber(105, 36, gameState_800babc8.items_2e9.size(), 0x2);
       allocateOneFrameGlyph(94, 16, 16);
-      renderTwoDigitNumber(123, 36, gameState_800babc8.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get()), 0x2);
+      renderTwoDigitNumber(123, 36, CONFIG.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get()), 0x2);
     } else {
       renderThreeDigitNumber(93, 36, gameState_800babc8.equipment_1e8.size(), 0x2);
       allocateOneFrameGlyph(95, 16, 16);
@@ -340,10 +338,7 @@ public class ShopScreen extends MenuScreen {
 
   private void renderEquipmentStatChange(final int equipmentId, final int charIndex) {
     if(charIndex != -1) {
-      final Memory.TemporaryReservation tmp = MEMORY.temp(0xa0);
-      final ActiveStatsa0 oldStats = new ActiveStatsa0(tmp.get());
-
-      memcpy(oldStats.getAddress(), stats_800be5f8.get(charIndex).getAddress(), 0xa0);
+      final ActiveStatsa0 oldStats = new ActiveStatsa0(stats_800be5f8[charIndex]);
 
       final int[] oldEquipment = Arrays.copyOf(gameState_800babc8.charData_32c[charIndex].equipment_14, 5);
 
@@ -352,20 +347,20 @@ public class ShopScreen extends MenuScreen {
         allocateOneFrameGlyph(0x68, 210, 137);
         allocateOneFrameGlyph(0x69, 210, 147);
         allocateOneFrameGlyph(0x6a, 210, 157);
-        final ActiveStatsa0 newStats = stats_800be5f8.get(charIndex);
-        renderThreeDigitNumber(246, 127, newStats.gearAttack_88.get(), 0x2);
-        renderThreeDigitNumber(246, 137, newStats.gearDefence_8c.get(), 0x2);
-        renderThreeDigitNumber(246, 147, newStats.gearMagicAttack_8a.get(), 0x2);
-        renderThreeDigitNumber(246, 157, newStats.gearMagicDefence_8e.get(), 0x2);
+        final ActiveStatsa0 newStats = stats_800be5f8[charIndex];
+        renderThreeDigitNumber(246, 127, newStats.gearAttack_88, 0x2);
+        renderThreeDigitNumber(246, 137, newStats.gearDefence_8c, 0x2);
+        renderThreeDigitNumber(246, 147, newStats.gearMagicAttack_8a, 0x2);
+        renderThreeDigitNumber(246, 157, newStats.gearMagicDefence_8e, 0x2);
         allocateOneFrameGlyph(0x6b, 274, 127);
         allocateOneFrameGlyph(0x6b, 274, 137);
         allocateOneFrameGlyph(0x6b, 274, 147);
         allocateOneFrameGlyph(0x6b, 274, 157);
         loadCharacterStats(0);
-        renderThreeDigitNumberComparison(284, 127, oldStats.gearAttack_88.get(), newStats.gearAttack_88.get());
-        renderThreeDigitNumberComparison(284, 137, oldStats.gearDefence_8c.get(), newStats.gearDefence_8c.get());
-        renderThreeDigitNumberComparison(284, 147, oldStats.gearMagicAttack_8a.get(), newStats.gearMagicAttack_8a.get());
-        renderThreeDigitNumberComparison(284, 157, oldStats.gearMagicDefence_8e.get(), newStats.gearMagicDefence_8e.get());
+        renderThreeDigitNumberComparison(284, 127, oldStats.gearAttack_88, newStats.gearAttack_88);
+        renderThreeDigitNumberComparison(284, 137, oldStats.gearDefence_8c, newStats.gearDefence_8c);
+        renderThreeDigitNumberComparison(284, 147, oldStats.gearMagicAttack_8a, newStats.gearMagicAttack_8a);
+        renderThreeDigitNumberComparison(284, 157, oldStats.gearMagicDefence_8e, newStats.gearMagicDefence_8e);
       } else {
         renderText(Cannot_be_armed_with_8011c6d4, 228, 137, TextColour.BROWN);
       }
@@ -373,8 +368,6 @@ public class ShopScreen extends MenuScreen {
       System.arraycopy(oldEquipment, 0, gameState_800babc8.charData_32c[charIndex].equipment_14, 0, 5);
 
       loadCharacterStats(0);
-
-      tmp.release();
     }
   }
 
@@ -597,7 +590,7 @@ public class ShopScreen extends MenuScreen {
             if(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00 < 0xc0) {
               hasSpace = gameState_800babc8.equipment_1e8.size() < 255;
             } else {
-              hasSpace = gameState_800babc8.items_2e9.size() < gameState_800babc8.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get());
+              hasSpace = gameState_800babc8.items_2e9.size() < CONFIG.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get());
             }
 
             if(!hasSpace) {
@@ -837,7 +830,7 @@ public class ShopScreen extends MenuScreen {
       if(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00 < 0xc0) {
         hasSpace = gameState_800babc8.equipment_1e8.size() < 255;
       } else {
-        hasSpace = gameState_800babc8.items_2e9.size() < gameState_800babc8.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get());
+        hasSpace = gameState_800babc8.items_2e9.size() < CONFIG.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get());
       }
 
       if(!hasSpace) {

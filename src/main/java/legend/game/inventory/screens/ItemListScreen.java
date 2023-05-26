@@ -14,6 +14,7 @@ import legend.game.types.MessageBoxResult;
 import java.util.ArrayList;
 import java.util.List;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.game.SItem.itemDescriptions_80117a10;
 import static legend.game.SItem.loadItemsAndEquipmentForDisplay;
 import static legend.game.SItem.menuStack;
@@ -39,7 +40,7 @@ public class ItemListScreen extends MenuScreen {
 
     this.itemList.setPos(8, 15);
     this.itemList.setTitle("Items");
-    this.itemList.setMax(gameState_800babc8.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get()));
+    this.itemList.setMax(CONFIG.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get()));
 
     this.equipmentList.setPos(188, 15);
     this.equipmentList.setTitle("Equipment");
@@ -100,7 +101,7 @@ public class ItemListScreen extends MenuScreen {
 
     final List<MenuItemStruct04> items = new ArrayList<>();
     final List<MenuItemStruct04> equipment = new ArrayList<>();
-    loadItemsAndEquipmentForDisplay(equipment, items, 0x1L);
+    loadItemsAndEquipmentForDisplay(equipment, items, 0);
 
     for(final MenuItemStruct04 item : items) {
       this.itemList.add(item);

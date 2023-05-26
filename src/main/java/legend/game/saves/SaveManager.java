@@ -175,18 +175,18 @@ public final class SaveManager {
     this.overwriteSave(saveName, state);
   }
 
-  public SavedGame loadGame(final String campaign, final String filename) {
+  public SavedGame loadGame(final String campaign, final String filename) throws InvalidSaveException {
     final Path file = this.dir.resolve(campaign).resolve(filename + ".dsav");
 
     if(!Files.exists(file)) {
-      throw new RuntimeException("No saved game " + filename);
+      throw new InvalidSaveException("No saved game " + filename);
     }
 
     final FileData data;
     try {
       data = new FileData(Files.readAllBytes(file));
     } catch(final IOException e) {
-      throw new RuntimeException("Failed to load saved game", e);
+      throw new InvalidSaveException("Failed to load saved game " + filename, e);
     }
 
     //LAB_80109e38
@@ -200,18 +200,27 @@ public final class SaveManager {
       }
     }
 
-    throw new RuntimeException("Invalid save data for file " + filename);
+    throw new InvalidSaveException("Invalid save data " + filename);
   }
 
   public List<Campaign> loadAllCampaigns() {
     final List<Campaign> campaigns = new ArrayList<>();
 
+    campaignLoop:
     for(final Path child : this.getCampaigns()) {
       final String filename = child.getFileName().toString();
 
       final List<SavedGame> saves = this.loadAllSaves(filename);
 
       if(!saves.isEmpty()) {
+        // Display the first valid save, and use the first save if no valid ones are found
+        for(final SavedGame save : saves) {
+          if(save.isValid()) {
+            campaigns.add(new Campaign(filename, save));
+            continue campaignLoop;
+          }
+        }
+
         campaigns.add(new Campaign(filename, saves.get(0)));
       }
     }
@@ -224,7 +233,13 @@ public final class SaveManager {
 
     for(final Path child : this.getSaves(campaign)) {
       final String filename = child.getFileName().toString();
-      saves.add(this.loadGame(campaign, filename.substring(0, filename.lastIndexOf('.'))));
+      final String name = filename.substring(0, filename.lastIndexOf('.'));
+
+      try {
+        saves.add(this.loadGame(campaign, name));
+      } catch(final InvalidSaveException e) {
+        saves.add(SavedGame.invalid(name));
+      }
     }
 
     return saves;

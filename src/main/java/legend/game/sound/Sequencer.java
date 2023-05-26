@@ -7,9 +7,9 @@ import java.util.function.Supplier;
 
 import static legend.core.GameEngine.SPU;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004ad2c;
-import static legend.game.Scus94491BpeSegment_8004.calculateNoteVolume;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004c8dc;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004d034;
+import static legend.game.Scus94491BpeSegment_8004.calculateNoteVolume;
 import static legend.game.Scus94491BpeSegment_8004.setKeyOff;
 import static legend.game.Scus94491BpeSegment_8004.setKeyOn;
 import static legend.game.Scus94491BpeSegment_8004.setMainVolume;
@@ -19,14 +19,14 @@ import static legend.game.Scus94491BpeSegment_8005._8005967c;
 import static legend.game.Scus94491BpeSegment_8005._80059b3c;
 import static legend.game.Scus94491BpeSegment_8005.panVolume_80059f3c;
 import static legend.game.Scus94491BpeSegment_8005.sssqFadeCurrent_8005a1ce;
-import static legend.game.Scus94491BpeSegment_800c.playingNotes_800c3a40;
-import static legend.game.Scus94491BpeSegment_800c.soundEnv_800c6630;
 import static legend.game.Scus94491BpeSegment_800c.instrumentLayerIndex_800c6678;
 import static legend.game.Scus94491BpeSegment_800c.instrumentLayer_800c6678;
 import static legend.game.Scus94491BpeSegment_800c.instrumentLayers_800c6678;
 import static legend.game.Scus94491BpeSegment_800c.instrument_800c6674;
 import static legend.game.Scus94491BpeSegment_800c.instruments_800c4aa8;
+import static legend.game.Scus94491BpeSegment_800c.playingNotes_800c3a40;
 import static legend.game.Scus94491BpeSegment_800c.sequenceData_800c4ac8;
+import static legend.game.Scus94491BpeSegment_800c.soundEnv_800c6630;
 import static legend.game.Scus94491BpeSegment_800c.sshdPtr_800c4ac0;
 import static legend.game.Scus94491BpeSegment_800c.sssqChannelInfo_800C6680;
 import static legend.game.Scus94491BpeSegment_800c.sssqReader_800c667c;
@@ -91,16 +91,8 @@ public class Sequencer {
                   case 0x7 -> this.sssqHandleVolume(sequenceData); // Volume
 
                   case 0xa -> { // Pan
-                    if(!soundEnv.mono_36) {
-                      //LAB_80045f44
-                      this.sssqHandlePan(sequenceData);
-                    } else if(sequenceData._028 == 0) {
-                      //LAB_80045f30
-                      sequenceData.sssqReader_010.advance(6);
-                    } else {
-                      sssqChannelInfo_800C6680.pan_04 = sequenceData.sssqReader_010.readByte(2);
-                      sequenceData.sssqReader_010.advance(3);
-                    }
+                    //LAB_80045f44
+                    this.sssqHandlePan(sequenceData);
                   }
 
                   case 0x40 -> this.sssqHandleSustain(sequenceData); // Damper pedal (sustain)
@@ -322,11 +314,6 @@ public class Sequencer {
     }
 
     //LAB_800467c8
-    if(soundEnv_800c6630.mono_36) {
-      l = Math.max(l, r);
-      r = l;
-    }
-
     //LAB_800467f0
     final Voice voice = voicePtr_800c4ac4.deref().voices[voiceIndex];
     voice.LEFT.set(l);
@@ -482,11 +469,6 @@ public class Sequencer {
           voicePtr_800c4ac4.deref().voices[voiceIndex].ADPCM_SAMPLE_RATE.set(this.calculateSampleRate(instrumentLayer_800c6678.rootKey_02, sequenceData.param0_002, instrumentLayer_800c6678.cents_03, sssqChannelInfo_800C6680.pitchBend_0a, t0));
           int l = this.calculateVolume(sequenceData, this.calculatePan(0, 0), 0);
           int r = this.calculateVolume(sequenceData, this.calculatePan(0, 0), 1);
-
-          if(soundEnv_800c6630.mono_36) {
-            l = Math.max(l, r);
-            r = l;
-          }
 
           //LAB_80046f30
           final Voice voice = voicePtr_800c4ac4.deref().voices[voiceIndex];
@@ -718,11 +700,6 @@ public class Sequencer {
               }
 
               //LAB_80047a44
-              if(soundEnv.mono_36) {
-                r = Math.max(l, r);
-                l = r;
-              }
-
               //LAB_80047a6c
               voice.LEFT.set(l);
               voice.RIGHT.set(r);

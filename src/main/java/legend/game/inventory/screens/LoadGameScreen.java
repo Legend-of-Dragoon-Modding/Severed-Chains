@@ -52,8 +52,13 @@ public class LoadGameScreen extends MenuScreen {
   }
 
   private void onSelection(final SavedGame save) {
-    playSound(2);
-    menuStack.pushScreen(new MessageBoxScreen(new LodString("Load this save?"), 2, result -> this.onMessageboxResult(result, save)));
+    if(save.isValid()) {
+      playSound(2);
+      menuStack.pushScreen(new MessageBoxScreen(new LodString("Load this save?"), 2, result -> this.onMessageboxResult(result, save)));
+    } else {
+      playSound(4);
+      menuStack.pushScreen(new MessageBoxScreen(new LodString("This save cannot be loaded"), 0, result -> { }));
+    }
   }
 
   private void onMessageboxResult(final MessageBoxResult result, final SavedGame save) {

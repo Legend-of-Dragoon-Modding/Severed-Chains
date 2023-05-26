@@ -1,191 +1,143 @@
 package legend.game.inventory.screens;
 
-import legend.core.MathHelper;
 import legend.game.input.InputAction;
+import legend.game.inventory.screens.controls.Brackets;
+import legend.game.inventory.screens.controls.Button;
+import legend.game.inventory.screens.controls.Label;
+import legend.game.inventory.screens.controls.Panel;
 import legend.game.inventory.screens.controls.Textbox;
-import legend.game.types.LodString;
-import legend.game.types.MessageBox20;
 import legend.game.types.MessageBoxResult;
 
 import java.util.function.BiConsumer;
 
 import static legend.game.SItem.menuStack;
-import static legend.game.SItem.messageBox;
-import static legend.game.SItem.setMessageBoxOptions;
-import static legend.game.SItem.setMessageBoxText;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 
 public class InputBoxScreen extends MenuScreen {
-  private final MessageBox20 messageBox = new MessageBox20();
   private final BiConsumer<MessageBoxResult, String> onResult;
-  private MessageBoxResult result;
 
+  private final Brackets highlight;
   private final Textbox text;
+  private final Button accept;
+  private final Button cancel;
+  private int selectedIndex;
 
-  public InputBoxScreen(final String message, final String defaultText, final int type, final BiConsumer<MessageBoxResult, String> onResult) {
-    setMessageBoxText(this.messageBox, new LodString(message + '\n'), type);
-    setMessageBoxOptions(this.messageBox, new LodString("Accept"), new LodString("Cancel"));
+  public InputBoxScreen(final String message, final String defaultText, final BiConsumer<MessageBoxResult, String> onResult) {
+    final Panel panel = this.addControl(Panel.panel());
+    panel.setPos(75, 75);
+    panel.setSize(215, 90);
+    panel.setZ(32);
+
     this.onResult = onResult;
 
-    this.text = this.addControl(new Textbox());
+    final Label label = panel.addControl(new Label(message));
+    label.setAutoSize(true);
+    label.setHorizontalAlign(Label.HorizontalAlign.CENTRE);
+    label.setPos((panel.getWidth() - label.getWidth()) / 2, 12);
+    label.setZ(31);
+
+    this.text = panel.addControl(new Textbox());
     this.text.setSize(165, 16);
-    this.text.setPos(100, 124);
+    this.text.setPos(25, 28);
     this.text.setZ(1);
     this.text.setText(defaultText);
     this.text.setMaxLength(15);
 
-    this.text.onGotFocus(() -> this.messageBox.ignoreInput = true);
-    this.text.onLostFocus(() -> this.messageBox.ignoreInput = false);
     this.text.onKeyPress((key, scancode, mods) -> {
-      if(key == GLFW_KEY_ESCAPE) {
-        this.setFocus(null);
+      if(key == GLFW_KEY_ESCAPE || key == GLFW_KEY_ENTER) {
+        this.deferAction(() -> this.setFocus(null));
         return InputPropagation.HANDLED;
       }
 
       return InputPropagation.PROPAGATE;
     });
 
-    this.setFocus(this.text);
+    this.accept = panel.addControl(new Button("Accept"));
+    this.accept.setSize(112, 14);
+    this.accept.setPos((panel.getWidth() - this.accept.getWidth()) / 2, this.text.getY() + this.text.getHeight() + 4);
+    this.accept.setZ(31);
+    this.accept.onPressed(() -> {
+      menuStack.popScreen();
+      this.onResult.accept(MessageBoxResult.YES, this.text.getText());
+    });
+
+    this.cancel = panel.addControl(new Button("Cancel"));
+    this.cancel.setSize(112, 14);
+    this.cancel.setPos((panel.getWidth() - this.cancel.getWidth()) / 2, this.accept.getY() + this.accept.getHeight() + 2);
+    this.cancel.setZ(31);
+    this.cancel.onPressed(this::menuCancel);
+
+    this.highlight = panel.addControl(new Brackets());
+    this.highlight.setPos(this.text.getX() - 4, this.text.getY() - 4);
+    this.highlight.setSize(this.text.getWidth() + 8, this.text.getHeight() + 8);
+    this.highlight.setClut(0xfc29);
+    this.highlight.setZ(31);
+
+    this.text.onHoverIn(this.highlight::show);
+    this.text.onHoverOut(this.highlight::hide);
+  }
+
+  private Control getSelectedControl() {
+    return switch(this.selectedIndex) {
+      case 0 -> this.text;
+      case 1 -> this.accept;
+      case 2 -> this.cancel;
+      default -> throw new IllegalStateException("Invalid control index " + this.selectedIndex);
+    };
   }
 
   @Override
   protected void render() {
-    messageBox(this.messageBox);
 
-    if(this.messageBox.state_0c == 0) {
-      menuStack.popScreen();
-      this.onResult.accept(this.result, this.text.getText());
-    }
-  }
-
-  @Override
-  protected InputPropagation mouseMove(final int x, final int y) {
-    if(super.mouseMove(x, y) == InputPropagation.HANDLED) {
-      return InputPropagation.HANDLED;
-    }
-
-    if(this.messageBox.state_0c != 3) {
-      return InputPropagation.PROPAGATE;
-    }
-
-    // Yes/no
-    if(this.messageBox.type_15 == 2) {
-      final int selectionY = this.messageBox.y_1e + 7 + this.messageBox.text_00.length * 14 + 7;
-
-      if(this.messageBox.menuIndex_18 != 0 && MathHelper.inBox(x, y, this.messageBox.x_1c + 4, selectionY, 112, 14)) {
-        playSound(1);
-        this.messageBox.menuIndex_18 = 0;
-
-        if(this.messageBox.renderable_04 != null) {
-          this.messageBox.renderable_04.y_44 = selectionY - 2;
-        }
-      } else if(this.messageBox.menuIndex_18 != 1 && MathHelper.inBox(x, y, this.messageBox.x_1c + 4, selectionY + 14, 112, 14)) {
-        playSound(1);
-        this.messageBox.menuIndex_18 = 1;
-
-        if(this.messageBox.renderable_04 != null) {
-          this.messageBox.renderable_04.y_44 = selectionY + 12;
-        }
-      }
-    }
-
-    return InputPropagation.PROPAGATE;
-  }
-
-  @Override
-  protected InputPropagation mouseClick(final int x, final int y, final int button, final int mods) {
-    if(super.mouseClick(x, y, button, mods) == InputPropagation.HANDLED) {
-      return InputPropagation.HANDLED;
-    }
-
-    if(this.messageBox.state_0c != 3) {
-      return InputPropagation.PROPAGATE;
-    }
-
-    if(this.messageBox.type_15 == 0) {
-      playSound(2);
-      this.result = MessageBoxResult.YES;
-      this.messageBox.state_0c = 4;
-    } else if(this.messageBox.type_15 == 2) {
-      // Yes/no
-      final int selectionY = this.messageBox.y_1e + 7 + this.messageBox.text_00.length * 14 + 7;
-
-      if(MathHelper.inBox(x, y, this.messageBox.x_1c + 4, selectionY, 112, 14)) {
-        playSound(2);
-        this.messageBox.menuIndex_18 = 0;
-
-        if(this.messageBox.renderable_04 != null) {
-          this.messageBox.renderable_04.y_44 = selectionY - 2;
-        }
-
-        this.result = MessageBoxResult.YES;
-        this.messageBox.state_0c = 4;
-      } else if(MathHelper.inBox(x, y, this.messageBox.x_1c + 4, selectionY + 14, 112, 14)) {
-        playSound(2);
-        this.messageBox.menuIndex_18 = 1;
-
-        if(this.messageBox.renderable_04 != null) {
-          this.messageBox.renderable_04.y_44 = selectionY + 12;
-        }
-
-        this.result = MessageBoxResult.NO;
-        this.messageBox.state_0c = 4;
-      }
-    }
-
-    return InputPropagation.PROPAGATE;
   }
 
   private void menuNavigateUp() {
     playSound(1);
-    this.messageBox.menuIndex_18 = 0;
 
-    final int selectionY = this.messageBox.y_1e + 7 + this.messageBox.text_00.length * 14 + 7;
-    if(this.messageBox.renderable_04 != null) {
-      this.messageBox.renderable_04.y_44 = selectionY - 2;
+    this.getSelectedControl().hoverOut();
+
+    this.selectedIndex--;
+    this.selectedIndex = Math.floorMod(this.selectedIndex, 3);
+
+    this.highlight.setVisibility(this.selectedIndex == 0);
+
+    if(this.selectedIndex != 0) {
+      this.getSelectedControl().hoverIn();
     }
   }
 
   private void menuNavigateDown() {
     playSound(1);
-    this.messageBox.menuIndex_18 = 1;
 
-    final int selectionY = this.messageBox.y_1e + 7 + this.messageBox.text_00.length * 14 + 7;
-    if(this.messageBox.renderable_04 != null) {
-      this.messageBox.renderable_04.y_44 = selectionY + 12;
+    this.getSelectedControl().hoverOut();
+
+    this.selectedIndex++;
+    this.selectedIndex %= 3;
+
+    this.highlight.setVisibility(this.selectedIndex == 0);
+
+    if(this.selectedIndex != 0) {
+      this.getSelectedControl().hoverIn();
     }
   }
 
   private void menuSelect() {
     playSound(2);
 
-    if(this.messageBox.menuIndex_18 == 0) {
-      this.result = MessageBoxResult.YES;
+    if(this.selectedIndex == 0) {
+      this.deferAction(this.text::focus);
     } else {
-      this.result = MessageBoxResult.NO;
+      this.deferAction(((Button)this.getSelectedControl())::press);
     }
-
-    this.messageBox.state_0c = 4;
   }
 
   private void menuCancel() {
     playSound(3);
 
-    this.result = MessageBoxResult.CANCEL;
-
-    this.messageBox.state_0c = 4;
-  }
-
-  private boolean skipInput() {
-    if(this.messageBox.type_15 == 0) {
-      playSound(2);
-      this.result = MessageBoxResult.YES;
-      this.messageBox.state_0c = 4;
-      return true;
-    }
-
-    return this.messageBox.state_0c != 3 || this.messageBox.type_15 != 2;
+    menuStack.popScreen();
+    this.onResult.accept(MessageBoxResult.CANCEL, this.text.getText());
   }
 
   @Override
@@ -197,10 +149,6 @@ public class InputBoxScreen extends MenuScreen {
   public InputPropagation pressedThisFrame(final InputAction inputAction) {
     if(super.pressedThisFrame(inputAction) == InputPropagation.HANDLED) {
       return InputPropagation.HANDLED;
-    }
-
-    if(this.skipInput()) {
-      return InputPropagation.PROPAGATE;
     }
 
     if(inputAction == InputAction.DPAD_UP || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_UP) {
