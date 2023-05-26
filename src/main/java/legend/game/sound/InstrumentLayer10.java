@@ -19,6 +19,7 @@ public class InstrumentLayer10 implements Sshd.Subfile {
   /**
    * <ul>
    *   <li>0x2 - noise on</li>
+   *   <li>0x10 - use instrument's pitchBendMultiplier instead of instrument layer's</li>
    *   <li>0x20 - modulation on</li>
    *   <li>0x80 - reverb on</li>
    * </ul>

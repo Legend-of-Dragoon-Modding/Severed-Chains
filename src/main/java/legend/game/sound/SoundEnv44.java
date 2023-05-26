@@ -13,7 +13,7 @@ public class SoundEnv44 {
 
   public Sshd sshdPtr_08;
   /** ubyte */
-  public boolean _0c;
+  public boolean onlyPlayFirstMatchingInstrument_0c;
   /** ubyte */
   public int _0d;
 

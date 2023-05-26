@@ -6,7 +6,7 @@ public class PlayingNote66 {
   public int noteNumber_02;
   public int sequenceChannel_04;
   public SequenceData124 sequenceData_06;
-  public int _08;
+  public boolean finished_08;
   public int _0a;
   public int _0c;
   public int instrumentIndex_0e;
@@ -15,7 +15,7 @@ public class PlayingNote66 {
   public boolean modulationEnabled_14;
   public int modulation_16;
   public int _18;
-  public int _1a;
+  public boolean isPolyphonicKeyPressure_1a;
   public int _1c;
   public int maxKeyRange_1e;
   public int minKeyRange_20;
@@ -33,9 +33,9 @@ public class PlayingNote66 {
   public int pitchBend_38;
   public int pitchBendMultiplier_3a;
   public int breath_3c;
-  public int _3e;
+  public int nextCommand_3e;
   public int rootKey_40;
-  public int _42;
+  public int pitchShifted_42;
   public boolean portamentoChanging_44;
   public boolean volumeChanging_46;
   public boolean panChanging_48;
@@ -61,7 +61,7 @@ public class PlayingNote66 {
     this.noteNumber_02 = 0;
     this.sequenceChannel_04 = 0;
     this.sequenceData_06 = null;
-    this._08 = 0;
+    this.finished_08 = false;
     this._0a = 0;
     this._0c = 0;
     this.instrumentIndex_0e = 0;
@@ -70,7 +70,7 @@ public class PlayingNote66 {
     this.modulationEnabled_14 = false;
     this.modulation_16 = 0;
     this._18 = 0;
-    this._1a = 0;
+    this.isPolyphonicKeyPressure_1a = false;
     this._1c = 0;
     this.maxKeyRange_1e = 0;
     this.minKeyRange_20 = 0;
@@ -88,9 +88,9 @@ public class PlayingNote66 {
     this.pitchBend_38 = 0;
     this.pitchBendMultiplier_3a = 0;
     this.breath_3c = 0;
-    this._3e = 0;
+    this.nextCommand_3e = 0;
     this.rootKey_40 = 0;
-    this._42 = 0;
+    this.pitchShifted_42 = 0;
     this.portamentoChanging_44 = false;
     this.volumeChanging_46 = false;
     this.panChanging_48 = false;

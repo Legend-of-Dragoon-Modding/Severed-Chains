@@ -8,13 +8,13 @@ public class SoundFileIndices {
 
     for(int i = 0; i < indices.length; i++) {
       indices[i] = new SoundFileIndices();
-      indices[i]._00 = fileData.readUByte(i * 2);
+      indices[i].patchIndex_00 = fileData.readUByte(i * 2);
       indices[i].sequenceIndex_01 = fileData.readUByte(i * 2 + 1);
     }
 
     return indices;
   }
 
-  public int _00;
+  public int patchIndex_00;
   public int sequenceIndex_01;
 }

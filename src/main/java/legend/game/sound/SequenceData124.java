@@ -93,7 +93,7 @@ public class SequenceData124 {
   /** How many ticks have passed since the last message (command) */
   public int deltaTime_118;
   /** ubyte */
-  public int _11c;
+  public int portamentoNote_11c;
   /** ubyte */
   public int repeatCount_11d;
   /** Set for NRPN commands that have an LSB so it knows which NRPN it's working with (ubyte) */

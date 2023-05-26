@@ -110,7 +110,7 @@ import static legend.core.GameEngine.SCRIPTS;
 import static legend.core.MemoryHelper.getBiFunctionAddress;
 import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.SItem.loadCharacterStats;
-import static legend.game.Scus94491BpeSegment.FUN_80019610;
+import static legend.game.Scus94491BpeSegment.reinitSound;
 import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
 import static legend.game.Scus94491BpeSegment.FUN_8001ada0;
 import static legend.game.Scus94491BpeSegment.FUN_8001ae90;
@@ -666,7 +666,7 @@ public final class SMap {
     drgnBinIndex_800bc058.set(diskNum_8004ddc0.get());
 
     // Reload main sounds after disk swap?
-    FUN_80019610();
+    reinitSound();
     loadMenuSounds();
     sssqFadeIn(0x3c, 0x7f);
 

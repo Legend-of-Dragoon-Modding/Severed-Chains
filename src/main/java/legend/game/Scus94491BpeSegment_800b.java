@@ -15,7 +15,7 @@ import legend.core.memory.types.UnsignedShortRef;
 import legend.game.combat.environment.BattleStage;
 import legend.game.inventory.WhichMenu;
 import legend.game.scripting.ScriptState;
-import legend.game.sound.PlayingSound28;
+import legend.game.sound.QueuedSound28;
 import legend.game.sound.SequenceData124;
 import legend.game.sound.SoundFile;
 import legend.game.sound.SpuStruct08;
@@ -107,9 +107,9 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bca6c = MEMORY.ref(4, 0x800bca6cL);
 
-  public static final PlayingSound28[] playingSoundsBackup_800bca78 = new PlayingSound28[32];
+  public static final QueuedSound28[] playingSoundsBackup_800bca78 = new QueuedSound28[32];
   static {
-    Arrays.setAll(playingSoundsBackup_800bca78, i -> new PlayingSound28());
+    Arrays.setAll(playingSoundsBackup_800bca78, i -> new QueuedSound28());
   }
 
   /**
@@ -132,9 +132,9 @@ public final class Scus94491BpeSegment_800b {
   public static final IntRef sssqTempo_800bd104 = MEMORY.ref(4, 0x800bd104L, IntRef::new);
   public static final Value _800bd108 = MEMORY.ref(2, 0x800bd108L);
 
-  public static final PlayingSound28[] playingSounds_800bd110 = new PlayingSound28[32];
+  public static final QueuedSound28[] queuedSounds_800bd110 = new QueuedSound28[32];
   static {
-    Arrays.setAll(playingSounds_800bd110, i -> new PlayingSound28());
+    Arrays.setAll(queuedSounds_800bd110, i -> new QueuedSound28());
   }
   /** NOTE: this used to be an array, but only the 6th element was used */
   public static final EncounterSoundEffects10 encounterSoundEffects_800bd610 = new EncounterSoundEffects10();

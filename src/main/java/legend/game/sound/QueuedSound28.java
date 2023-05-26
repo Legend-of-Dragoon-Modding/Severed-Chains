@@ -2,7 +2,7 @@ package legend.game.sound;
 
 import legend.game.combat.bobj.BattleObject27c;
 
-public class PlayingSound28 {
+public class QueuedSound28 {
   /**
    * <ol start="0">
    *   <li>unused</li>
@@ -10,7 +10,7 @@ public class PlayingSound28 {
    *   <li>?</li>
    *   <li>sounds?</li>
    *   <li>?</li>
-   * </ul>
+   * </ol>
    * (ubyte)
    */
   public int type_00;
@@ -32,13 +32,13 @@ public class PlayingSound28 {
   public int pitch_1a;
   public int _1c;
   /** short */
-  public int _20;
+  public int repeatDelayTotal_20;
   /** short */
-  public int _22;
+  public int repeatDelayCurrent_22;
   /** short */
-  public int _24;
+  public int initialDelay_24;
 
-  public PlayingSound28 set(final PlayingSound28 other) {
+  public QueuedSound28 set(final QueuedSound28 other) {
     this.type_00 = other.type_00;
     this.bobj_04 = other.bobj_04;
     this.soundFile_08 = other.soundFile_08;
@@ -50,9 +50,9 @@ public class PlayingSound28 {
     this.pitchShiftVolLeft_18 = other.pitchShiftVolLeft_18;
     this.pitch_1a = other.pitch_1a;
     this._1c = other._1c;
-    this._20 = other._20;
-    this._22 = other._22;
-    this._24 = other._24;
+    this.repeatDelayTotal_20 = other.repeatDelayTotal_20;
+    this.repeatDelayCurrent_22 = other.repeatDelayCurrent_22;
+    this.initialDelay_24 = other.initialDelay_24;
     return this;
   }
 }

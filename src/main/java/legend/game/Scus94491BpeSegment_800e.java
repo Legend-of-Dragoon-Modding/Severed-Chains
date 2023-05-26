@@ -20,7 +20,7 @@ import java.util.Arrays;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SCRIPTS;
-import static legend.game.Scus94491BpeSegment.FUN_80019500;
+import static legend.game.Scus94491BpeSegment.initSound;
 import static legend.game.Scus94491BpeSegment._1f8003fc;
 import static legend.game.Scus94491BpeSegment.allocateHeap;
 import static legend.game.Scus94491BpeSegment.extendedTmd_800103d0;
@@ -97,7 +97,7 @@ public final class Scus94491BpeSegment_800e {
 
     InitGeom();
     setProjectionPlaneDistance(640);
-    FUN_80019500();
+    initSound();
 
     mainCallbackIndexOnceLoaded_8004dd24.set(0);
     pregameLoadingStage_800bb10c.set(0);

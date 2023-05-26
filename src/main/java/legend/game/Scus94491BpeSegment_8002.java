@@ -39,7 +39,7 @@ import legend.game.modding.events.inventory.TakeItemEvent;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
-import legend.game.sound.PlayingSound28;
+import legend.game.sound.QueuedSound28;
 import legend.game.sound.EncounterSoundEffects10;
 import legend.game.tim.Tim;
 import legend.game.tmd.Renderer;
@@ -292,11 +292,11 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80020360L)
-  public static void copyPlayingSounds(final PlayingSound28[] sources, final PlayingSound28[] dests) {
+  public static void copyPlayingSounds(final QueuedSound28[] sources, final QueuedSound28[] dests) {
     //LAB_8002036c
     for(int playingSoundIndex = 0; playingSoundIndex < 32; playingSoundIndex++) {
-      final PlayingSound28 source = sources[playingSoundIndex];
-      final PlayingSound28 dest = dests[playingSoundIndex];
+      final QueuedSound28 source = sources[playingSoundIndex];
+      final QueuedSound28 dest = dests[playingSoundIndex];
 
       //LAB_80020378
       dest.set(source);
