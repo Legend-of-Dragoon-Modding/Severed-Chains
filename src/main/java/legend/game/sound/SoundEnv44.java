@@ -6,10 +6,10 @@ public class SoundEnv44 {
   /** ubyte */
   public int channelIndex_01;
 
+  /** The max number of playing sounds allowed (inclusive) (ubyte) */
+  public int playingSoundsUpperBound_03;
   /** ubyte */
-  public int _03;
-  /** ubyte */
-  public int _04;
+  public boolean sequenceLoaded_04;
 
   public Sshd sshdPtr_08;
   /** ubyte */

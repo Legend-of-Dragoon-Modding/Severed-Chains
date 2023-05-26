@@ -35,7 +35,7 @@ public class PlayingNote66 {
   public int breath_3c;
   public int nextCommand_3e;
   public int rootKey_40;
-  public int pitchShifted_42;
+  public boolean pitchShifted_42;
   public boolean portamentoChanging_44;
   public boolean volumeChanging_46;
   public boolean panChanging_48;
@@ -90,7 +90,7 @@ public class PlayingNote66 {
     this.breath_3c = 0;
     this.nextCommand_3e = 0;
     this.rootKey_40 = 0;
-    this.pitchShifted_42 = 0;
+    this.pitchShifted_42 = false;
     this.portamentoChanging_44 = false;
     this.volumeChanging_46 = false;
     this.panChanging_48 = false;

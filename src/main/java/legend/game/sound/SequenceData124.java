@@ -1,5 +1,7 @@
 package legend.game.sound;
 
+import java.util.Arrays;
+
 public class SequenceData124 {
   /** ubyte Upper nibble is message, lower nibble is channel */
   public int command_000;
@@ -15,7 +17,7 @@ public class SequenceData124 {
   /** Can either be a full SSSQ file, or just a sequence */
   public SssqReader sssqReader_010;
 
-  public int _018;
+  public boolean _018;
 
   /** ubyte */
   public int startingInstrument_01e;
@@ -29,13 +31,13 @@ public class SequenceData124 {
   /** ubyte */
   public int endingInstrument_026;
   /** ubyte */
-  public int _027;
+  public boolean musicLoaded_027;
   /** ubyte */
-  public int _028;
+  public boolean musicPlaying_028;
   /** ubyte */
-  public int _029;
+  public boolean soundLoaded_029;
   /** ubyte */
-  public int _02a;
+  public boolean soundPlaying_02a;
 
   public int repeatOffset_02c;
 
@@ -48,27 +50,27 @@ public class SequenceData124 {
   /** Pretty sure this is the command at the destination after jumping to a new position in the sequence(ubyte) */
   public int repeatDestCommand_039;
   /** ubyte */
-  public int _03a;
+  public boolean volumeIsDecreasing_03a;
 
   /** ubyte */
-  public int _03c;
+  public boolean volumeIsChanging_03c;
 
-  /** Second index is channel */
-  public final int[][] _03e = new int[10][16];
+  /** Index is channel */
+  public final SequenceVolume[] volumeChange_03e = new SequenceVolume[16];
   /** Was two ushorts */
   public int keyOn_0de;
   /** Was two ushorts */
   public int keyOff_0e2;
   /** ubyte */
-  public int _0e6;
+  public boolean _0e6;
   /** ubyte */
-  public int _0e7;
+  public boolean soundEnded_0e7;
   /** ubyte */
-  public int _0e8;
+  public boolean _0e8;
   /** ushort */
-  public int pitchShifted_0e9;
+  public boolean pitchShifted_0e9;
   /** ushort */
-  public int reverbEnabled_0ea;
+  public boolean reverbEnabled_0ea;
   /** 12-bit fixed-point short - 0x1000 is normal pitch */
   public int pitch_0ec;
   /** 12-bit fixed-point short */
@@ -77,18 +79,18 @@ public class SequenceData124 {
   public int pitchShiftVolRight_0f0;
 
   /** ubyte */
-  public int _104;
+  public boolean _104;
   /** ubyte */
-  public int _105;
+  public boolean _105;
 
   /** Beats per minute (ushort) */
   public int tempo_108;
   /** How many ticks there are per quarter note (ushort) */
   public int ticksPerQuarterNote_10a;
-  /** ubyte */
-  public int _10c;
+  /** If the remaining time on the tick is less than half of the tick time, we tick at the next interval. Otherwise, we skip an interval (long tick) (ubyte) */
+  public boolean longTick_10c;
 
-  public int _110;
+  public int remainderTime_110;
   public int deltaTimeFixedPoint10_114;
   /** How many ticks have passed since the last message (command) */
   public int deltaTime_118;
@@ -105,4 +107,8 @@ public class SequenceData124 {
 
   /** Opposite value from ADSR register - 0x4000 = increase, 0 = decrease (ushort) */
   public int sustainDirection_122;
+
+  public SequenceData124() {
+    Arrays.setAll(this.volumeChange_03e, i -> new SequenceVolume());
+  }
 }

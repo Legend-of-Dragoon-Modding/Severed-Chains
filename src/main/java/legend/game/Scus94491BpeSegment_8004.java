@@ -319,8 +319,8 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[250] = Scus94491BpeSegment::FUN_8001b13c;
     scriptSubFunctions_8004e29c[251] = Scus94491BpeSegment::FUN_8001b144;
     scriptSubFunctions_8004e29c[252] = Scus94491BpeSegment::scriptSetMainVolume;
-    scriptSubFunctions_8004e29c[253] = Scus94491BpeSegment::FUN_8001b17c;
-    scriptSubFunctions_8004e29c[254] = Scus94491BpeSegment::FUN_8001b208;
+    scriptSubFunctions_8004e29c[253] = Scus94491BpeSegment::scriptSetSequenceVolume;
+    scriptSubFunctions_8004e29c[254] = Scus94491BpeSegment::scriptSetAllSoundSequenceVolumes;
     scriptSubFunctions_8004e29c[255] = Scus94491BpeSegment::scriptSssqFadeIn;
 
     scriptSubFunctions_8004e29c[256] = SMap::FUN_800e67d4;
@@ -624,16 +624,16 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[702] = SMap::scriptIsChapterTitleCardLoaded;
     scriptSubFunctions_8004e29c[703] = SMap::FUN_800e0c9c;
 
-    scriptSubFunctions_8004e29c[704] = Scus94491BpeSegment::FUN_8001b2ac;
+    scriptSubFunctions_8004e29c[704] = Scus94491BpeSegment::scriptStartSequenceAndChangeVolumeOverTime;
     scriptSubFunctions_8004e29c[705] = Scus94491BpeSegment::scriptSssqFadeOut;
-    scriptSubFunctions_8004e29c[706] = Scus94491BpeSegment::FUN_8001b33c;
-    scriptSubFunctions_8004e29c[707] = Scus94491BpeSegment::FUN_8001b3a0;
+    scriptSubFunctions_8004e29c[706] = Scus94491BpeSegment::scriptChangeSequenceVolumeOverTime;
+    scriptSubFunctions_8004e29c[707] = Scus94491BpeSegment::scriptGetSequenceFlags;
     scriptSubFunctions_8004e29c[708] = Scus94491BpeSegment::scriptGetSssqTempoScale;
     scriptSubFunctions_8004e29c[709] = Scus94491BpeSegment::scriptSetSssqTempoScale;
-    scriptSubFunctions_8004e29c[710] = Scus94491BpeSegment::FUN_8001ffc0;
-    scriptSubFunctions_8004e29c[711] = Scus94491BpeSegment::FUN_8001b1ec;
+    scriptSubFunctions_8004e29c[710] = Scus94491BpeSegment::scriptGetLoadedSoundFiles;
+    scriptSubFunctions_8004e29c[711] = Scus94491BpeSegment::scriptGetSequenceVolume;
     scriptSubFunctions_8004e29c[712] = Scus94491BpeSegment::scriptPlayCombatantSound;
-    scriptSubFunctions_8004e29c[713] = Scus94491BpeSegment::FUN_8001acd8;
+    scriptSubFunctions_8004e29c[713] = Scus94491BpeSegment::scriptStopBobjSound;
     scriptSubFunctions_8004e29c[714] = Scus94491BpeSegment_8002::FUN_80020060;
     scriptSubFunctions_8004e29c[715] = Scus94491BpeSegment::scriptLoadPlayerAttackSounds;
     scriptSubFunctions_8004e29c[716] = Scus94491BpeSegment_8002::FUN_800203f0;
@@ -1107,7 +1107,7 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x80048c38L)
-  public static SssqReader FUN_80048c38(final PlayableSound0c playableSound, final int patchIndex, final int sequenceIndex) {
+  public static SssqReader getSequence(final PlayableSound0c playableSound, final int patchIndex, final int sequenceIndex) {
     assert patchIndex >= 0;
     assert sequenceIndex >= 0;
 
@@ -1120,7 +1120,7 @@ public final class Scus94491BpeSegment_8004 {
     patchList_800c4abc = patchList;
 
     if(sshd.hasSubfile(4)) {
-      if(soundEnv._03 != 0) {
+      if(soundEnv.playingSoundsUpperBound_03 != 0) {
         if(playableSound.used_00) {
           if(patchIndex <= patchList.patchCount_00) {
             if(patchList.patches_02[patchIndex] != null) {
@@ -1144,39 +1144,39 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x80048d44L)
   public static int loadSoundIntoSequencer(final PlayableSound0c playableSound, final int patchIndex, final int sequenceIndex) {
-    final SssqReader reader = FUN_80048c38(playableSound, patchIndex, sequenceIndex);
+    final SssqReader reader = getSequence(playableSound, patchIndex, sequenceIndex);
     final SoundEnv44 soundEnv = soundEnv_800c6630;
 
     //LAB_80048dac
     for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
       final SequenceData124 sequenceData = sequenceData_800c4ac8[voiceIndex];
-      if(sequenceData._027 == 0 && sequenceData._029 == 0) {
-        sequenceData._029 = 1;
-        sequenceData._02a = 1;
-        sequenceData._028 = 0;
-        sequenceData._027 = 0;
+      if(!sequenceData.musicLoaded_027 && !sequenceData.soundLoaded_029) {
+        sequenceData.musicLoaded_027 = false;
+        sequenceData.musicPlaying_028 = false;
+        sequenceData.soundLoaded_029 = true;
+        sequenceData.soundPlaying_02a = true;
         sequenceData.deltaTime_118 = 0;
-        sequenceData._0e7 = 0;
+        sequenceData.soundEnded_0e7 = false;
         sequenceData.sssqReader_010 = reader;
         sequenceData.playableSound_020 = playableSound;
         sequenceData.sequenceIndex_022 = sequenceIndex;
         sequenceData.patchIndex_024 = patchIndex;
 
         if(soundEnv.reverbEnabled_23) {
-          sequenceData.reverbEnabled_0ea = 1;
+          sequenceData.reverbEnabled_0ea = true;
           soundEnv.reverbEnabled_23 = false;
         }
 
         //LAB_80048e10
         sequenceData.repeatCounter_035 = 0;
         sequenceData.repeat_037 = false;
-        sequenceData._0e6 = 0;
+        sequenceData._0e6 = false;
         sequenceData.pitchShiftVolLeft_0ee = 0;
-        sequenceData.pitchShifted_0e9 = 0;
+        sequenceData.pitchShifted_0e9 = false;
         sequenceData.pitchShiftVolRight_0f0 = 0;
 
         if(soundEnv.pitchShifted_22) {
-          sequenceData.pitchShifted_0e9 = 1;
+          sequenceData.pitchShifted_0e9 = true;
           sequenceData.pitch_0ec = soundEnv.pitch_24;
           sequenceData.pitchShiftVolLeft_0ee = soundEnv.pitchShiftVolLeft_26;
           sequenceData.pitchShiftVolRight_0f0 = soundEnv.pitchShiftVolRight_28;
@@ -1208,7 +1208,7 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004ad2cL)
-  public static void FUN_8004ad2c(final int voiceIndex) {
+  public static void updateVoiceVolume(final int voiceIndex) {
     final PlayingNote66 playingNote = playingNotes_800c3a40[voiceIndex];
     final SequenceData124 sequenceData = playingNote.sequenceData_06;
 
@@ -1241,44 +1241,32 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004b1e8L)
-  public static short FUN_8004b1e8(final SequenceData124 sequenceData, final int a1, final short channel, final int a3) {
-    final short ret;
+  public static int changeSequenceVolumeOverTime(final SequenceData124 sequenceData, final int transitionTime, final int channel, final int newVolume) {
+    final int ret;
     if(channel == -1) {
       sssqReader_800c667c = sequenceData.sssqReader_010;
-      sequenceData._03e[5][0] = 1;
-      sequenceData._03e[6][0] = a3;
-      sequenceData._03e[7][0] = a1;
-      sequenceData._03e[8][0] = a1;
-      sequenceData._03e[9][0] = sssqReader_800c667c.baseVolume();
+      sequenceData.volumeChange_03e[0].used_0a = true;
+      sequenceData.volumeChange_03e[0].newValue_0c = newVolume;
+      sequenceData.volumeChange_03e[0].remainingTime_0e = transitionTime;
+      sequenceData.volumeChange_03e[0].totalTime_10 = transitionTime;
+      sequenceData.volumeChange_03e[0].oldValue_12 = sssqReader_800c667c.baseVolume();
 
-      ret = (short)sssqReader_800c667c.baseVolume();
+      ret = sssqReader_800c667c.baseVolume();
     } else {
       //LAB_8004b268
       sssqChannelInfo_800C6680 = sequenceData.sssqReader_010.channelInfo(channel);
-      sequenceData._03e[0][channel] = 1;
-      sequenceData._03e[1][channel] = a3;
-      sequenceData._03e[2][channel] = a1;
-      sequenceData._03e[3][channel] = a1;
-      sequenceData._03e[4][channel] = sssqChannelInfo_800C6680.volume_03;
+      sequenceData.volumeChange_03e[channel].used_00 = true;
+      sequenceData.volumeChange_03e[channel].newValue_02 = newVolume;
+      sequenceData.volumeChange_03e[channel].remainingTime_04 = transitionTime;
+      sequenceData.volumeChange_03e[channel].totalTime_06 = transitionTime;
+      sequenceData.volumeChange_03e[channel].oldValue_08 = sssqChannelInfo_800C6680.volume_03;
 
-      ret = (short)sssqChannelInfo_800C6680.volume_03;
+      ret = sssqChannelInfo_800C6680.volume_03;
     }
 
     //LAB_8004b2b8
-    sequenceData._03c = 1;
+    sequenceData.volumeIsChanging_03c = true;
     return ret;
-  }
-
-  @Method(0x8004b5e4L)
-  public static short FUN_8004b5e4(final short a0, final short a1) {
-    if(a1 < 0) {
-      //LAB_8004b618
-      return (short)-Math.min(a0, -a1);
-    }
-
-    //LAB_8004b620
-    //LAB_8004b638
-    return (short)Math.min(a0, a1);
   }
 
   @Method(0x8004b694L)
@@ -1303,7 +1291,7 @@ public final class Scus94491BpeSegment_8004 {
 
     voicePtr_800c4ac4.set(SPU);
 
-    soundEnv._03 = 8;
+    soundEnv.playingSoundsUpperBound_03 = 8;
     soundEnv._00 = 0;
     soundEnv._0d = 0;
     soundEnv.ticksPerSecond_42 = 60;
@@ -1417,33 +1405,31 @@ public final class Scus94491BpeSegment_8004 {
     for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
       final SequenceData124 sequenceData = sequenceData_800c4ac8[voiceIndex];
 
-      if(sequenceData._027 == 0) {
-        if(sequenceData._029 == 0) {
-          if(!playableSound.used_00) {
-            throw new RuntimeException("Found sound but it wasn't used");
-          }
-
-          sequenceData._027 = 1;
-          sequenceData._028 = 0;
-          sequenceData._029 = 0;
-          sequenceData._02a = 0;
-          sequenceData.deltaTime_118 = 0;
-          sequenceData.sssqReader_010 = sssq.reader();
-          sequenceData.command_000 = sequenceData.sssqReader_010.readByte(0);
-          sequenceData.previousCommand_001 = sequenceData.command_000;
-          sequenceData.param0_002 = sequenceData.sssqReader_010.readByte(1);
-          sequenceData.param1_003 = sequenceData.sssqReader_010.readByte(2);
-          sequenceData.playableSound_020 = playableSound;
-
-          //LAB_8004c308
-          for(int n = 0; n < 16; n++) {
-            sequenceData.sssqReader_010.channelInfo(n).volume_0e = sssq.volume_00 * sequenceData.sssqReader_010.channelInfo(n).volume_03 / 0x100;
-          }
-
-          sequenceData.ticksPerQuarterNote_10a = sssq.ticksPerQuarterNote_02;
-          sequenceData.tempo_108 = sssq.tempo_04;
-          return sequenceData;
+      if(!sequenceData.musicLoaded_027 && !sequenceData.soundLoaded_029) {
+        if(!playableSound.used_00) {
+          throw new RuntimeException("Found sound but it wasn't used");
         }
+
+        sequenceData.musicLoaded_027 = true;
+        sequenceData.musicPlaying_028 = false;
+        sequenceData.soundLoaded_029 = false;
+        sequenceData.soundPlaying_02a = false;
+        sequenceData.deltaTime_118 = 0;
+        sequenceData.sssqReader_010 = sssq.reader();
+        sequenceData.command_000 = sequenceData.sssqReader_010.readByte(0);
+        sequenceData.previousCommand_001 = sequenceData.command_000;
+        sequenceData.param0_002 = sequenceData.sssqReader_010.readByte(1);
+        sequenceData.param1_003 = sequenceData.sssqReader_010.readByte(2);
+        sequenceData.playableSound_020 = playableSound;
+
+        //LAB_8004c308
+        for(int n = 0; n < 16; n++) {
+          sequenceData.sssqReader_010.channelInfo(n).volume_0e = sssq.volume_00 * sequenceData.sssqReader_010.channelInfo(n).volume_03 / 0x100;
+        }
+
+        sequenceData.ticksPerQuarterNote_10a = sssq.ticksPerQuarterNote_02;
+        sequenceData.tempo_108 = sssq.tempo_04;
+        return sequenceData;
       }
 
       //LAB_8004c364
@@ -1456,48 +1442,45 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004c390L)
-  public static long FUN_8004c390(final SequenceData124 sequenceData) {
-    if(sequenceData._028 != 0) {
+  public static long freeSequence(final SequenceData124 sequenceData) {
+    if(sequenceData.musicPlaying_028) {
       assert false : "Error";
       return -0x1L;
     }
 
     //LAB_8004c3d0
-    sequenceData._027 = 0;
-    sequenceData._028 = 0;
-    sequenceData._029 = 0;
-    sequenceData._02a = 0;
+    sequenceData.musicLoaded_027 = false;
+    sequenceData.musicPlaying_028 = false;
+    sequenceData.soundLoaded_029 = false;
+    sequenceData.soundPlaying_02a = false;
 
     //LAB_8004c3e4
     return 0;
   }
 
   @Method(0x8004c3f0L)
-  public static long FUN_8004c3f0(final int a0) {
-    assert a0 >= 0;
-
-    if(a0 >= 24) {
-      assert false;
-      return -0x1L;
+  public static long setMaxSounds(final int playingSoundsUpperBound) {
+    if(playingSoundsUpperBound < 0 || playingSoundsUpperBound >= 24) {
+      throw new IllegalArgumentException("Must be [0, 24)");
     }
 
     //LAB_8004c420
-    int a1 = 0;
+    int playingSounds = 0;
     for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
       if(playingNotes_800c3a40[voiceIndex].isPolyphonicKeyPressure_1a) {
-        a1++;
+        playingSounds++;
       }
 
       //LAB_8004c44c
     }
 
-    if(a0 < a1) {
+    if(playingSounds > playingSoundsUpperBound) {
       //LAB_8004c484
       assert false;
       return -0x1L;
     }
 
-    soundEnv_800c6630._03 = a0;
+    soundEnv_800c6630.playingSoundsUpperBound_03 = playingSoundsUpperBound;
 
     //LAB_8004c488
     return 0;
@@ -1567,13 +1550,13 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004c8dcL)
-  public static int FUN_8004c8dc(@Nullable final SequenceData124 sequenceData, final int volume) {
+  public static int setSequenceVolume(@Nullable final SequenceData124 sequenceData, final int volume) {
     if(volume >= 128) {
       assert false : "Error";
       return -1;
     }
 
-    if(sequenceData == null || sequenceData._027 == 0) {
+    if(sequenceData == null || !sequenceData.musicLoaded_027) {
       // This is normal
 //      assert false : "Error";
       return -1;
@@ -1594,7 +1577,7 @@ public final class Scus94491BpeSegment_8004 {
       final PlayingNote66 playingNote = playingNotes_800c3a40[voiceIndex];
 
       if(playingNote.used_00 && playingNote.playableSound_22 == sequenceData.playableSound_020 && !playingNote.isPolyphonicKeyPressure_1a && playingNote.sequenceData_06 == sequenceData) {
-        FUN_8004ad2c(voiceIndex);
+        updateVoiceVolume(voiceIndex);
       }
 
       //LAB_8004ca44
@@ -1606,7 +1589,7 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004cb0cL)
-  public static long FUN_8004cb0c(final PlayableSound0c playableSound, int volume) {
+  public static long setSoundSequenceVolume(final PlayableSound0c playableSound, int volume) {
     if(volume < 0) {
       //TODO GH#3, GH#193
       // This happens during the killing blow in the first virage fight. In retail, a1 counts down from 0x7f to 0 (I'm assuming it's volume).
@@ -1650,7 +1633,7 @@ public final class Scus94491BpeSegment_8004 {
       final PlayingNote66 playingNote = playingNotes_800c3a40[voiceIndex];
 
       if(playingNote.used_00 && playingNote.isPolyphonicKeyPressure_1a && playingNote.playableSound_22 == playableSound) {
-        FUN_8004ad2c(voiceIndex);
+        updateVoiceVolume(voiceIndex);
       }
 
       //LAB_8004cc6c
@@ -1738,83 +1721,83 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004cf8cL)
-  public static void FUN_8004cf8c(final SequenceData124 sequenceData) {
+  public static void startMusicSequence(final SequenceData124 sequenceData) {
     final PlayableSound0c playableSound = sequenceData.playableSound_020;
 
     sshdPtr_800c4ac0 = playableSound.sshdPtr_04;
 
-    if(sequenceData._027 == 1) {
+    if(sequenceData.musicLoaded_027) {
       if(sshdPtr_800c4ac0.hasSubfile(0)) {
         if(playableSound.used_00) {
-          sequenceData._028 = 1;
-          sequenceData._0e8 = 0;
+          sequenceData.musicPlaying_028 = true;
+          sequenceData._0e8 = false;
         }
       }
     }
 
     //LAB_8004d02c
-    sequenceData._018 = 0;
+    sequenceData._018 = false;
   }
 
   @Method(0x8004d034L)
-  public static void FUN_8004d034(final SequenceData124 sequenceData, final int a1) {
+  public static void stopMusicSequence(final SequenceData124 sequenceData, final int a1) {
     boolean resetAdsr = false;
     final PlayableSound0c playableSound = sequenceData.playableSound_020;
     final Sshd sshd = playableSound.sshdPtr_04;
 
     sshdPtr_800c4ac0 = sshd;
 
-    if(sequenceData._027 == 1) {
+    if(sequenceData.musicLoaded_027) {
       if(sshd.hasSubfile(0)) {
         if(playableSound.used_00) {
-          boolean doIt = false;
+          boolean stopNotes = false;
 
           if(a1 == 0) {
             //LAB_8004d13c
             sequenceData.sssqReader_010.jump(0x110);
-            sequenceData._028 = 0;
-            sequenceData._018 = 1;
-            sequenceData._0e8 = 0;
+            sequenceData.musicPlaying_028 = false;
+            sequenceData._018 = true;
+            sequenceData._0e8 = false;
             sequenceData.repeatCounter_035 = 0;
-            doIt = true;
+            stopNotes = true;
           } else if(a1 == 1) {
             //LAB_8004d134
             resetAdsr = true;
 
             //LAB_8004d13c
             sequenceData.sssqReader_010.jump(0x110);
-            sequenceData._028 = 0;
-            sequenceData._018 = 1;
-            sequenceData._0e8 = 0;
+            sequenceData.musicPlaying_028 = false;
+            sequenceData._018 = true;
+            sequenceData._0e8 = false;
             sequenceData.repeatCounter_035 = 0;
-            doIt = true;
+            stopNotes = true;
             //LAB_8004d11c
           } else if(a1 == 2) {
             //LAB_8004d154
-            if(sequenceData._028 != 0) {
-              sequenceData._028 = 0;
-              sequenceData._0e8 = 1;
-              doIt = true;
+            if(sequenceData.musicPlaying_028) {
+              sequenceData.musicPlaying_028 = false;
+              sequenceData._0e8 = true;
+              stopNotes = true;
               //LAB_8004d170
-            } else if(sequenceData._018 == 1) {
-              doIt = true;
+            } else if(sequenceData._018) {
+              stopNotes = true;
             } else {
-              sequenceData._028 = 1;
-              sequenceData._0e8 = 0;
+              sequenceData.musicPlaying_028 = true;
+              sequenceData._0e8 = false;
             }
           } else if(a1 == 3) {
             //LAB_8004d188
-            if(sequenceData._028 != 0) {
+            if(sequenceData.musicPlaying_028) {
               //LAB_8004d1b4
-              sequenceData._028 = 0;
-              sequenceData._0e8 = 1;
-            } else if(sequenceData._018 != 1) {
-              sequenceData._028 = 1;
-              sequenceData._0e8 = 0;
+              sequenceData.musicPlaying_028 = false;
+              sequenceData._0e8 = true;
+            } else if(!sequenceData._018) {
+              sequenceData.musicPlaying_028 = true;
+              sequenceData._0e8 = false;
             }
           }
 
-          if(doIt) {
+          if(stopNotes) {
             //LAB_8004d1c0
             //LAB_8004d1c4
             //LAB_8004d1d8
@@ -1855,26 +1838,26 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004d2fcL)
-  public static short FUN_8004d2fc(final SequenceData124 sequenceData, final short a1, final short a2) {
+  public static int startSequenceAndChangeVolumeOverTime(final SequenceData124 sequenceData, final short transitionTime, final short newVolume) {
     sssqReader_800c667c = sequenceData.sssqReader_010;
 
-    short ret = -1;
+    int ret = -1;
 
-    if(a1 >= 0x100 || a2 >= 0x80) {
-      throw new IllegalArgumentException("I don't know what these values are, but I know they're wrong");
+    if(transitionTime >= 0x100 || newVolume >= 0x80) {
+      throw new IllegalArgumentException("Invalid transitionTime or newVolume");
     }
 
-    if(sequenceData._028 == 0) {
+    if(!sequenceData.musicPlaying_028) {
       //LAB_8004d3b0
-      FUN_8004c8dc(sequenceData, 0);
-      FUN_8004cf8c(sequenceData);
-      sequenceData._03a = 0;
+      setSequenceVolume(sequenceData, 0);
+      startMusicSequence(sequenceData);
+      sequenceData.volumeIsDecreasing_03a = false;
 
       //LAB_8004d3c8
-      ret = FUN_8004b1e8(sequenceData, a1, (short)-1, a2);
-    } else if(sequenceData._028 == 1 && sequenceData.sssqReader_010.baseVolume() < a2) {
-      sequenceData._03a = 0;
-      ret = FUN_8004b1e8(sequenceData, a1, (short)-1, a2);
+      ret = changeSequenceVolumeOverTime(sequenceData, transitionTime, -1, newVolume);
+    } else if(sequenceData.musicPlaying_028 && sequenceData.sssqReader_010.baseVolume() < newVolume) {
+      sequenceData.volumeIsDecreasing_03a = false;
+      ret = changeSequenceVolumeOverTime(sequenceData, transitionTime, -1, newVolume);
     }
 
     //LAB_8004d3f4
@@ -1883,33 +1866,32 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004d41cL)
-  public static long FUN_8004d41c(final SequenceData124 sequenceData, final int a1, final int a2) {
-    assert (short)a1 >= 0;
-    assert (short)a2 >= 0;
+  public static int changeSequenceVolumeOverTime(final SequenceData124 sequenceData, final int transitionTime, final int newVolume) {
+    assert (short)transitionTime >= 0;
+    assert (short)newVolume >= 0;
 
-    if(a1 >= 0x100) {
+    if(transitionTime >= 0x100) {
       //LAB_8004d49c
       assert false : "Error";
       return -1;
     }
 
-    if(a2 >= 0x80) {
+    if(newVolume >= 0x80) {
       assert false : "Error";
       return -1;
     }
 
-    if(sequenceData._028 == 0) {
-      assert false : "Error";
+    if(!sequenceData.musicPlaying_028) {
       return -1;
     }
 
-    if(a2 == 0) {
-      sequenceData._03a = 1;
+    if(newVolume == 0) {
+      sequenceData.volumeIsDecreasing_03a = true;
     }
 
     //LAB_8004d48c
     //LAB_8004d4a4
-    return FUN_8004b1e8(sequenceData, a1, (short)-1, a2);
+    return changeSequenceVolumeOverTime(sequenceData, transitionTime, -1, newVolume);
   }
 
   @Method(0x8004d4b4L)
@@ -1925,21 +1907,36 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004d52cL)
-  public static int FUN_8004d52c(final SequenceData124 sequenceData) {
-    int a0 = sequenceData._0e8 << 1 | sequenceData._028;
+  public static int getSequenceFlags(final SequenceData124 sequenceData) {
+    int flags = 0;
 
-    if(sequenceData._03c != 0) {
-      if(sequenceData._03a == 0) {
-        a0 = a0 | 1 << 2;
-      }
-
-      //LAB_8004d58c
-      a0 = sequenceData._03a << 3 | a0;
+    if(sequenceData.musicPlaying_028) {
+      flags |= 0x1;
     }
 
-    //LAB_8004d59c
+    if(sequenceData._0e8) {
+      flags |= 0x2;
+    }
+
+    if(sequenceData.volumeIsChanging_03c) {
+      if(!sequenceData.volumeIsDecreasing_03a) {
+        flags |= 0x4;
+      } else {
+        flags |= 0x8;
+      }
+    }
+
     final SoundEnv44 soundEnv = soundEnv_800c6630;
-    return (soundEnv.fadingOut_2b ? 1 << 5 : 0) | (soundEnv.fadingIn_2a ? 1 << 4 : 1) | a0;
+
+    if(soundEnv.fadingIn_2a) {
+      flags |= 0x10;
+    }
+
+    if(soundEnv.fadingOut_2b) {
+      flags |= 0x20;
+    }
+
+    return flags;
   }
 
   @Method(0x8004d648L)
@@ -1961,8 +1958,8 @@ public final class Scus94491BpeSegment_8004 {
 //      }
 
       //LAB_8004d714
-      soundEnv.pitchShiftVolLeft_26 = FUN_8004b5e4((short)0x1000, (short)pitchShiftVolLeft);
-      soundEnv.pitchShiftVolRight_28 = FUN_8004b5e4((short)0x1000, (short)pitchShiftVolRight);
+      soundEnv.pitchShiftVolLeft_26 = MathHelper.clamp(pitchShiftVolLeft, -0x1000, 0x1000);
+      soundEnv.pitchShiftVolRight_28 = MathHelper.clamp(pitchShiftVolRight, -0x1000, 0x1000);
       soundEnv.pitch_24 = pitch;
       soundEnv.pitchShifted_22 = true;
 
@@ -1974,14 +1971,14 @@ public final class Scus94491BpeSegment_8004 {
   @Method(0x8004d78cL)
   public static void stopSoundSequence(final SequenceData124 sequenceData, final boolean reset) {
     SEQUENCER.waitForLock(() -> {
-      if(sequenceData._029 != 0) {
+      if(sequenceData.soundLoaded_029) {
         sequenceData.deltaTime_118 = 0;
-        sequenceData._02a = 0;
-        sequenceData._029 = 0;
-        sequenceData._0e7 = 0;
-        sequenceData._105 = 0;
-        sequenceData._104 = 0;
-        sequenceData._0e6 = 0;
+        sequenceData.soundPlaying_02a = false;
+        sequenceData.soundLoaded_029 = false;
+        sequenceData.soundEnded_0e7 = false;
+        sequenceData._105 = false;
+        sequenceData._104 = false;
+        sequenceData._0e6 = false;
         sequenceData.repeatCounter_035 = 0;
         sequenceData.repeat_037 = false;
       }
@@ -2039,16 +2036,16 @@ public final class Scus94491BpeSegment_8004 {
 
         //LAB_8004d9f0
         final SequenceData124 sequenceData = sequenceData_800c4ac8[voiceIndex];
-        if(sequenceData._029 != 0) {
+        if(sequenceData.soundLoaded_029) {
           sequenceData.deltaTime_118 = 0;
-          sequenceData._029 = 0;
-          sequenceData._02a = 0;
-          sequenceData._105 = 0;
-          sequenceData._104 = 0;
+          sequenceData.soundLoaded_029 = false;
+          sequenceData.soundPlaying_02a = false;
+          sequenceData._105 = false;
+          sequenceData._104 = false;
           sequenceData.pitchShiftVolRight_0f0 = 0;
           sequenceData.pitchShiftVolLeft_0ee = 0;
-          sequenceData.pitchShifted_0e9 = 0;
-          sequenceData._0e7 = 0;
+          sequenceData.pitchShifted_0e9 = false;
+          sequenceData.soundEnded_0e7 = false;
         }
 
         //LAB_8004da24

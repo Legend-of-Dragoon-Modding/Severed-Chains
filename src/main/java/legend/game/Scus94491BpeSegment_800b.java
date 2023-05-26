@@ -130,7 +130,7 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bd0fc = MEMORY.ref(4, 0x800bd0fcL);
   public static final IntRef sssqTempoScale_800bd100 = MEMORY.ref(4, 0x800bd100L, IntRef::new);
   public static final IntRef sssqTempo_800bd104 = MEMORY.ref(4, 0x800bd104L, IntRef::new);
-  public static final Value _800bd108 = MEMORY.ref(2, 0x800bd108L);
+  public static final Value sequenceVolume_800bd108 = MEMORY.ref(2, 0x800bd108L);
 
   public static final QueuedSound28[] queuedSounds_800bd110 = new QueuedSound28[32];
   static {

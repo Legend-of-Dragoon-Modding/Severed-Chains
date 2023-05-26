@@ -23,7 +23,7 @@ public class MusicDebuggerGui extends Gui {
 
       final SequenceData124 sequenceData = sequenceData_800c4ac8[this.sequenceIndex.get(0)];
 
-      if(sequenceData._028 == 1 || sequenceData._02a == 1) {
+      if(sequenceData.musicPlaying_028 || sequenceData.soundPlaying_02a) {
         this.row(manager, 24.0f, 5, row -> {
           row.nextColumn(0.1f);
           this.label(manager, "Offset:");

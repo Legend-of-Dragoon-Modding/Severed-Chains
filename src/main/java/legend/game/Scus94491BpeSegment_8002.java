@@ -139,8 +139,8 @@ import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
 import static legend.game.Scus94491BpeSegment_8003.TransMatrix;
 import static legend.game.Scus94491BpeSegment_8003.TransposeMatrix;
 import static legend.game.Scus94491BpeSegment_8003.bzero;
-import static legend.game.Scus94491BpeSegment_8004.FUN_8004c390;
-import static legend.game.Scus94491BpeSegment_8004.FUN_8004d034;
+import static legend.game.Scus94491BpeSegment_8004.freeSequence;
+import static legend.game.Scus94491BpeSegment_8004.stopMusicSequence;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixX;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixY;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixZ;
@@ -261,8 +261,8 @@ public final class Scus94491BpeSegment_8002 {
     final EncounterSoundEffects10 encounterSoundEffects = encounterSoundEffects_800bd610;
 
     if(encounterSoundEffects._00 != 0) {
-      FUN_8004d034(encounterSoundEffects.sequenceData_0c, 1);
-      FUN_8004c390(encounterSoundEffects.sequenceData_0c);
+      stopMusicSequence(encounterSoundEffects.sequenceData_0c, 1);
+      freeSequence(encounterSoundEffects.sequenceData_0c);
       encounterSoundEffects.sssq_08 = null;
       encounterSoundEffects._00 = 0;
     }
