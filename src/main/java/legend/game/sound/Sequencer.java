@@ -804,7 +804,7 @@ public class Sequencer {
         soundEnv_800c6630.voiceIndex_10 = 0;
       }
 
-      if(playingNotes_800c3a40[soundEnv_800c6630.voiceIndex_10].breathControlListIndex_10 == 0) {
+      if(!playingNotes_800c3a40[soundEnv_800c6630.voiceIndex_10].used_00) {
         return soundEnv_800c6630.voiceIndex_10;
       }
     }
