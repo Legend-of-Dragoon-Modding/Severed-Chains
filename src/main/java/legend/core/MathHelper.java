@@ -32,6 +32,15 @@ public final class MathHelper {
     return (a & 0xff) << 24 | (b & 0xff) << 16 | (g & 0xff) << 8 | r & 0xff;
   }
 
+  public static int colour15To24Bgr(final int colour) {
+    final byte r = (byte)((colour        & 0b1_1111) * 8);
+    final byte g = (byte)((colour >>>  5 & 0b1_1111) * 8);
+    final byte b = (byte)((colour >>> 10 & 0b1_1111) * 8);
+    final byte a = (byte)((colour >>> 15) * 255);
+
+    return (a & 0xff) << 24 | (r & 0xff) << 16 | (g & 0xff) << 8 | b & 0xff;
+  }
+
   public static int colour24To15(final int colour) {
     final byte m = (byte)((colour & 0xff000000) >>> 24);
     final byte r = (byte)((colour & 0x00ff0000) >>> 16 + 3);
@@ -49,6 +58,14 @@ public final class MathHelper {
     }
 
     return 16;
+  }
+
+  public static int digitCount(final int number) {
+    if(number == 0) {
+      return 1;
+    }
+
+    return (int)(Math.log10(number) + 1);
   }
 
   public static int assertPositive(final int val) {
@@ -92,6 +109,14 @@ public final class MathHelper {
     return x / 10L << 4L | x % 10L;
   }
 
+  private static final float PSX_DEG_TO_DEG = 360.0f / 4096.0f;
+  private static final float DEG_TO_RAD = (float)(Math.PI / 180.0f);
+  private static final float PSX_DEG_TO_RAD = PSX_DEG_TO_DEG * DEG_TO_RAD;
+
+  public static float psxDegToRad(final int psxDeg) {
+    return psxDeg * PSX_DEG_TO_RAD;
+  }
+
   public static int roundUp(final int val, final int step) {
     return val + step - 1 & -step;
   }
@@ -128,5 +153,9 @@ public final class MathHelper {
     }
     final long i = (val >> (shr - 1)) & 1;
     return (val >> shr) + i;
+  }
+
+  public static boolean flEq(final float a, final float b, final float epsilon) {
+    return Math.abs(a - b) < epsilon;
   }
 }

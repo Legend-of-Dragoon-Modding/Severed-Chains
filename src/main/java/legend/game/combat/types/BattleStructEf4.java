@@ -1,5 +1,9 @@
 package legend.game.combat.types;
 
+import legend.game.combat.bobj.BattleObject27c;
+import legend.game.combat.bobj.MonsterBattleObject;
+import legend.game.combat.bobj.PlayerBattleObject;
+import legend.game.combat.effects.TransformationMode;
 import legend.game.combat.types.BattleStructEF4.AdditionExtra04;
 import legend.game.combat.types.BattleStructEF4.SpecialEffects20;
 import legend.game.combat.types.BattleStructEF4.Status04;
@@ -75,11 +79,21 @@ public class BattleStructEf4 {
   public int _278;
   public int _27c;
   /**
-   * Number of times pressed during the Dragoon addition.
+   * Number of addition hits completed (normal or dragoon).
+   * For normal additions, this includes a final failed press, as it still hits.
+   * For dragoon additions, this means whatever stage was achieved.
    */
-  public int dAttackValue_280;
+  public int numCompleteAdditionHits_280;
   public int _284;
-  public int _288;
+  /**
+   * <ul>
+   *   <li>0x0 - no counterattack</li>
+   *   <li>0x1 - counterattack effects allocated</li>
+   *   <li>0x2 - played monster counter animation</li>
+   *   <li>0x3 - counter failed</li>
+   * </ul>
+   */
+  public int counterAttackStage_288;
   public int _28c;
   public int _290;
   public int _294;
@@ -131,7 +145,17 @@ public class BattleStructEf4 {
   public int _318;
   public int _31c;
   public int _320;
-  public int _324;
+  /**
+   * <ul>
+   *   <li>0x0 continue addition</li>
+   *   <li>0x1 counter succeeded</li>
+   *   <li>0x2 addition failed</li>
+   *   <li>0x10 attack missed</li>
+   *   <li>0x20 addition completed</li>
+   *   <li>0x80 counter failed</li>
+   * </ul>
+   */
+  public int additionState_324;
   public int _328;
   public int _32c;
   public int _330;
@@ -236,7 +260,7 @@ public class BattleStructEf4 {
   public int _4f4;
   public int _4f8;
   public int _4fc;
-  public int _500;
+  public int damageDealt_500;
   public int _504;
   public int _508;
   public int _50c;
@@ -258,26 +282,30 @@ public class BattleStructEf4 {
   public int _54c;
   public int dragonBlockStaff_550;
   public int _554;
-  public int _558;
+  /** Bit set specifying which bobj indices are being targeted */
+  public int attackTargets_558;
   public int _55c;
   public int _560;
   public int _564;
   public int _568;
   public int _56c;
-  public int _570;
+  /** Used to store index into spellId array */
+  public int monsterMoveId_570;
   public int _574;
   public int _578;
   public int _57c;
   public final BttlStruct08[] _580 = new BttlStruct08[0x100];
-  public final int[] y_d80 = new int[3];
+  // This was used for storing animation files in VRAM
+//  public final int[] y_d80 = new int[3];
   public final BattleStructEf4Sub08[] _d8c = new BattleStructEf4Sub08[16];
-  public final ScriptState<BattleObject27c>[] bobjIndices_e0c = new ScriptState[13];
-  public final ScriptState<BattleObject27c>[] charBobjIndices_e40 = new ScriptState[4];
-  public final ScriptState<BattleObject27c>[] bobjIndices_e50 = new ScriptState[10];
-  public final ScriptState<BattleObject27c>[] bobjIndices_e78 = new ScriptState[13];
-  public final ScriptState<BattleObject27c>[] bobjIndices_eac = new ScriptState[4];
-  public final ScriptState<BattleObject27c>[] enemyBobjIndices_ebc = new ScriptState[10];
-  public int morphMode_ee4;
+  public final ScriptState<? extends BattleObject27c>[] bobjIndices_e0c = new ScriptState[13];
+  public final ScriptState<PlayerBattleObject>[] charBobjIndices_e40 = new ScriptState[4];
+  public final ScriptState<MonsterBattleObject>[] bobjIndices_e50 = new ScriptState[10];
+  public final ScriptState<? extends BattleObject27c>[] bobjIndices_e78 = new ScriptState[13];
+  public final ScriptState<? extends BattleObject27c>[] bobjIndices_eac = new ScriptState[4];
+  public final ScriptState<MonsterBattleObject>[] monsterBobjIndices_ebc = new ScriptState[10];
+  // Reads directly from gameState now
+//  public TransformationMode morphMode_ee4;
 
   // nodart code no longer uses this
 //  public final Pointer<PartyPermutation08> partyPermutation_ee8;
@@ -287,7 +315,7 @@ public class BattleStructEf4 {
   public BattleStructEf4() {
     Arrays.setAll(this.specialEffect_00, i -> new SpecialEffects20());
     Arrays.setAll(this.status_384, i -> new Status04());
-    Arrays.setAll(this.additionExtra_474, i -> new AdditionExtra04());
+    Arrays.setAll(this.additionExtra_474, AdditionExtra04::new);
     Arrays.setAll(this._d8c, i -> new BattleStructEf4Sub08());
     Arrays.setAll(this._580, i -> new BttlStruct08());
   }

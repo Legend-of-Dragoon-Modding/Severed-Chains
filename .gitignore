@@ -1,8 +1,8 @@
-/saves
 *.rom
 *.mcr
 *.ddmp
 *.conf
+*.dcnf
 
 
 

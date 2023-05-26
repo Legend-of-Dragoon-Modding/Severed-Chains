@@ -1,10 +1,14 @@
 package legend.core.gpu;
 
 import legend.game.types.Translucency;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Arrays;
 
 public class GpuCommandPoly extends GpuCommand {
+  private static final Logger LOGGER = LogManager.getFormatterLogger(GpuCommandPoly.class);
+
   private final int vertexCount;
 
   private Bpp bpp = Bpp.BITS_4;
@@ -23,6 +27,9 @@ public class GpuCommandPoly extends GpuCommand {
   private int clutY;
   private int vramX;
   private int vramY;
+
+  private VramTexture texture;
+  private VramTexture[] palettes;
 
   public GpuCommandPoly(final int vertexCount) {
     this.vertexCount = vertexCount;
@@ -75,6 +82,18 @@ public class GpuCommandPoly extends GpuCommand {
   }
 
   public GpuCommandPoly rgb(final int r, final int g, final int b) {
+    if(r < 0) {
+      LOGGER.warn("Negative R! %x", r);
+    }
+
+    if(g < 0) {
+      LOGGER.warn("Negative G! %x", g);
+    }
+
+    if(b < 0) {
+      LOGGER.warn("Negative B! %x", b);
+    }
+
     return this.rgb(b << 16 | g << 8 | r);
   }
 
@@ -89,6 +108,18 @@ public class GpuCommandPoly extends GpuCommand {
   }
 
   public GpuCommandPoly rgb(final int vertex, final int r, final int g, final int b) {
+    if(r < 0) {
+      LOGGER.warn("Negative R! %x", r);
+    }
+
+    if(g < 0) {
+      LOGGER.warn("Negative G! %x", g);
+    }
+
+    if(b < 0) {
+      LOGGER.warn("Negative B! %x", b);
+    }
+
     return this.rgb(vertex, b << 16 | g << 8 | r);
   }
 
@@ -140,6 +171,17 @@ public class GpuCommandPoly extends GpuCommand {
     return this;
   }
 
+  public GpuCommandPoly texture(final VramTexture texture) {
+    this.texture = texture;
+    return this;
+  }
+
+  public GpuCommandPoly texture(final VramTexture texture, final VramTexture[] palettes) {
+    this.texture = texture;
+    this.palettes = palettes;
+    return this;
+  }
+
   @Override
   public void render(final Gpu gpu) {
     for(int i = 0; i < this.vertexCount; i++) {
@@ -147,10 +189,10 @@ public class GpuCommandPoly extends GpuCommand {
       this.y[i] += gpu.getOffsetY();
     }
 
-    gpu.rasterizeTriangle(this.x[0], this.y[0], this.x[1], this.y[1], this.x[2], this.y[2], this.u[0], this.v[0], this.u[1], this.v[1], this.u[2], this.v[2], this.colour[0], this.colour[1], this.colour[2], this.clutX, this.clutY, this.vramX, this.vramY, this.bpp, this.textured, this.shaded, this.translucence != null, this.raw, this.translucence);
+    gpu.rasterizeTriangle(this.x[0], this.y[0], this.x[1], this.y[1], this.x[2], this.y[2], this.u[0], this.v[0], this.u[1], this.v[1], this.u[2], this.v[2], this.colour[0], this.colour[1], this.colour[2], this.clutX, this.clutY, this.vramX, this.vramY, this.bpp, this.textured, this.shaded, this.translucence != null, this.raw, this.translucence, this.texture, this.palettes);
 
     if(this.vertexCount == 4) {
-      gpu.rasterizeTriangle(this.x[1], this.y[1], this.x[2], this.y[2], this.x[3], this.y[3], this.u[1], this.v[1], this.u[2], this.v[2], this.u[3], this.v[3], this.colour[1], this.colour[2], this.colour[3], this.clutX, this.clutY, this.vramX, this.vramY, this.bpp, this.textured, this.shaded, this.translucence != null, this.raw, this.translucence);
+      gpu.rasterizeTriangle(this.x[1], this.y[1], this.x[2], this.y[2], this.x[3], this.y[3], this.u[1], this.v[1], this.u[2], this.v[2], this.u[3], this.v[3], this.colour[1], this.colour[2], this.colour[3], this.clutX, this.clutY, this.vramX, this.vramY, this.bpp, this.textured, this.shaded, this.translucence != null, this.raw, this.translucence, this.texture, this.palettes);
     }
   }
 }

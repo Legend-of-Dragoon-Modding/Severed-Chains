@@ -366,8 +366,8 @@ public class GuiManager {
     glBindVertexArray(0);
   }
 
-  public void setFont(final Font font) {
-    nk_style_set_font(this.ctx, font.font);
+  public void setFont(final NuklearFont nuklearFont) {
+    nk_style_set_font(this.ctx, nuklearFont.font);
   }
 
   public void captureInput() {
@@ -450,7 +450,7 @@ public class GuiManager {
           .vertex_layout(VERTEX_LAYOUT)
           .vertex_size(20)
           .vertex_alignment(4)
-          .null_texture(this.nullTexture)
+          .tex_null(this.nullTexture)
           .circle_segment_count(22)
           .curve_segment_count(22)
           .arc_segment_count(22)

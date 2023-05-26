@@ -13,10 +13,12 @@ import legend.game.types.Model124;
 import legend.game.types.TexPageY;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
+import legend.game.unpacker.FileData;
 
 import java.util.Arrays;
 
 import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Scus94491BpeSegment.FUN_80019500;
 import static legend.game.Scus94491BpeSegment._1f8003fc;
@@ -27,7 +29,7 @@ import static legend.game.Scus94491BpeSegment.loadMenuSounds;
 import static legend.game.Scus94491BpeSegment.orderingTableBits_1f8003c0;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static legend.game.Scus94491BpeSegment.ovalBlobTimHeader_80010548;
-import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
+import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.tmdAnimFile_8001051c;
 import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
 import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
@@ -36,35 +38,27 @@ import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.loadBasicUiTexturesAndSomethingElse;
 import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
 import static legend.game.Scus94491BpeSegment_8002.prepareObjTable2;
-import static legend.game.Scus94491BpeSegment_8002.setCdMix;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003c5e0;
 import static legend.game.Scus94491BpeSegment_8003.GetTPage;
-import static legend.game.Scus94491BpeSegment_8003.GsDefDispBuff;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
-import static legend.game.Scus94491BpeSegment_8003.GsInitGraph;
 import static legend.game.Scus94491BpeSegment_8003.InitGeom;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.ResetGraph;
-import static legend.game.Scus94491BpeSegment_8003.SetGraphDebug;
-import static legend.game.Scus94491BpeSegment_8003.adjustTmdPointers;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
+import static legend.game.Scus94491BpeSegment_8003.setDrawOffset;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
-import static legend.game.Scus94491BpeSegment_8004._8004dd30;
 import static legend.game.Scus94491BpeSegment_8004.enableAudioSource;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndexOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8004.setCdVolume;
-import static legend.game.Scus94491BpeSegment_8007._8007a3a8;
+import static legend.game.Scus94491BpeSegment_8007.clearRed_8007a3a8;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
-import static legend.game.Scus94491BpeSegment_800b._800babc0;
-import static legend.game.Scus94491BpeSegment_800b._800bb104;
 import static legend.game.Scus94491BpeSegment_800b._800bb228;
 import static legend.game.Scus94491BpeSegment_800b._800bb348;
-import static legend.game.Scus94491BpeSegment_800b._800bdb90;
-import static legend.game.Scus94491BpeSegment_800b._800bdc24;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
 import static legend.game.Scus94491BpeSegment_800b._800bf0d0;
 import static legend.game.Scus94491BpeSegment_800b.afterFmvLoadingStage_800bf0ec;
 import static legend.game.Scus94491BpeSegment_800b.array_800bb198;
+import static legend.game.Scus94491BpeSegment_800b.clearBlue_800babc0;
+import static legend.game.Scus94491BpeSegment_800b.clearGreen_800bb104;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.fmvIndex_800bf0dc;
 import static legend.game.Scus94491BpeSegment_800b.fmvStage_800bf0d8;
@@ -87,11 +81,7 @@ public final class Scus94491BpeSegment_800e {
 
   @Method(0x800e5d64L) //TODO can rename most of these functions
   public static void gameInit() {
-    ResetGraph(0);
-    SetGraphDebug(2);
-
-    GsInitGraph((short)640, (short)480, 0b110100);
-    GsDefDispBuff((short)0, (short)16, (short)0, (short)16);
+    ResetGraph();
 
     orderingTableBits_1f8003c0.set(14);
     zShift_1f8003c4.set(0);
@@ -99,11 +89,11 @@ public final class Scus94491BpeSegment_800e {
     zMax_1f8003cc.set(0x3ffe);
     GPU.updateOrderingTableSize(orderingTableSize_1f8003c8.get());
 
-    FUN_8003c5e0();
+    setDrawOffset();
 
-    _8007a3a8.set(0);
-    _800bb104.set(0);
-    _800babc0.set(0);
+    clearRed_8007a3a8.set(0);
+    clearGreen_800bb104.set(0);
+    clearBlue_800babc0.set(0);
 
     InitGeom();
     setProjectionPlaneDistance(640);
@@ -117,7 +107,7 @@ public final class Scus94491BpeSegment_800e {
     precalculateTpages();
     loadSystemFont();
     SCRIPTS.clear();
-    allocateHeap(heap_8011e210.getAddress(), 0x5d_edf0);
+    allocateHeap(heap_8011e210.getAddress(), 0x7d_edf0);
     loadOvalBlobTexture();
     FUN_800e6d60();
     initFmvs();
@@ -143,14 +133,13 @@ public final class Scus94491BpeSegment_800e {
     drgnBinIndex_800bc058.set(1);
 
     loadMenuSounds();
-    setWidthAndFlags(320);
+    resizeDisplay(320, 240);
     vsyncMode_8007a3b8.set(2);
 
     //LAB_800e600c
     loadBasicUiTexturesAndSomethingElse();
 
     //LAB_800e6040
-    _8004dd30.setu(0);
     fmvIndex_800bf0dc.setu(0);
     afterFmvLoadingStage_800bf0ec.set(2);
   }
@@ -200,13 +189,14 @@ public final class Scus94491BpeSegment_800e {
     }
 
     //LAB_800e6af0
-    FUN_800e6b3c(model_800bda10, extendedTmd_800103d0, tmdAnimFile_8001051c);
+    final CContainer container = new CContainer("Oval blob", new FileData(MEMORY.getBytes(extendedTmd_800103d0.getAddress(), 0x14c)));
+    final TmdAnimationFile animation = new TmdAnimationFile(new FileData(MEMORY.getBytes(tmdAnimFile_8001051c.getAddress(), 0x28)));
 
-    model_800bda10.coord2Param_64.rotate.x.set((short)0);
-    model_800bda10.coord2Param_64.rotate.y.set((short)0);
-    model_800bda10.coord2Param_64.rotate.z.set((short)0);
+    FUN_800e6b3c(model_800bda10, container, animation);
+
+    model_800bda10.coord2Param_64.rotate.set((short)0, (short)0, (short)0);
     model_800bda10.colourMap_9d = 0;
-    model_800bda10.b_cc = 0;
+    model_800bda10.movementType_cc = 0;
   }
 
   /** Very similar to {@link Scus94491BpeSegment_8002#FUN_80020718(Model124, CContainer, TmdAnimationFile)} */
@@ -218,29 +208,29 @@ public final class Scus94491BpeSegment_800e {
 
     //LAB_800e6b7c
     for(int i = 0; i < 7; i++) {
-      model.aub_ec[i] = 0;
+      model.animateTextures_ec[i] = false;
     }
 
-    model.dobj2ArrPtr_00 = new GsDOBJ2[tmdAnimFile.count_0c.get()];
-    model.coord2ArrPtr_04 = new GsCOORDINATE2[tmdAnimFile.count_0c.get()];
-    model.coord2ParamArrPtr_08 = new GsCOORD2PARAM[tmdAnimFile.count_0c.get()];
-    model.count_c8 = tmdAnimFile.count_0c.get();
+    model.dobj2ArrPtr_00 = new GsDOBJ2[tmdAnimFile.modelPartCount_0c];
+    model.coord2ArrPtr_04 = new GsCOORDINATE2[tmdAnimFile.modelPartCount_0c];
+    model.coord2ParamArrPtr_08 = new GsCOORD2PARAM[tmdAnimFile.modelPartCount_0c];
+    model.count_c8 = tmdAnimFile.modelPartCount_0c;
 
     Arrays.setAll(model.dobj2ArrPtr_00, i -> new GsDOBJ2());
     Arrays.setAll(model.coord2ArrPtr_04, i -> new GsCOORDINATE2());
     Arrays.setAll(model.coord2ParamArrPtr_08, i -> new GsCOORD2PARAM());
 
-    final Tmd tmd = cContainer.tmdPtr_00.deref().tmd;
+    final Tmd tmd = cContainer.tmdPtr_00.tmd;
     model.tmd_8c = tmd;
-    model.tmdNobj_ca = tmd.header.nobj.get();
-    model.scaleVector_fc.setPad((int)((cContainer.tmdPtr_00.deref().id.get() & 0xffff0000L) >>> 11));
+    model.tmdNobj_ca = tmd.header.nobj;
+    model.tpage_108 = (int)((cContainer.tmdPtr_00.id & 0xffff0000L) >>> 11);
 
-    if(!cContainer.ptr_08.isNull()) {
-      model.ptr_a8 = cContainer.ptr_08.deref();
+    if(cContainer.ptr_08 != null) {
+      model.ptr_a8 = cContainer.ptr_08;
 
       //LAB_800e6c00
       for(int i = 0; i < 7; i++) {
-        model.ptrs_d0[i] = model.ptr_a8._00.get(i).deref();
+        model.ptrs_d0[i] = model.ptr_a8._00[i];
         FUN_8002246c(model, i);
       }
     } else {
@@ -254,7 +244,6 @@ public final class Scus94491BpeSegment_800e {
     }
 
     //LAB_800e6c64
-    adjustTmdPointers(model.tmd_8c);
     initObjTable2(model.ObjTable_0c, model.dobj2ArrPtr_00, model.coord2ArrPtr_04, model.coord2ParamArrPtr_08, model.count_c8);
     model.coord2_14.param = model.coord2Param_64;
     GsInitCoordinate2(null, model.coord2_14);
@@ -263,29 +252,19 @@ public final class Scus94491BpeSegment_800e {
     model.zOffset_a0 = 0;
     model.ub_a2 = 0;
     model.ub_a3 = 0;
-    model.ui_f4 = 0;
+    model.partInvisible_f4 = 0;
 
     loadModelStandardAnimation(model, tmdAnimFile);
 
-    model.coord2_14.coord.transfer.setX(x);
-    model.coord2_14.coord.transfer.setY(y);
-    model.coord2_14.coord.transfer.setZ(z);
-    model.b_cc = 0;
-    model.scaleVector_fc.setX(0x1000);
-    model.scaleVector_fc.setY(0x1000);
-    model.scaleVector_fc.setZ(0x1000);
-    model.vector_10c.setX(0x1000);
-    model.vector_10c.setY(0x1000);
-    model.vector_10c.setZ(0x1000);
-    model.vector_118.setX(0);
-    model.vector_118.setY(0);
-    model.vector_118.setZ(0);
+    model.coord2_14.coord.transfer.set(x, y, z);
+    model.movementType_cc = 0;
+    model.scaleVector_fc.set(0x1000, 0x1000, 0x1000);
+    model.vector_10c.set(0x1000, 0x1000, 0x1000);
+    model.vector_118.set(0, 0, 0);
   }
 
   @Method(0x800e6d60L)
   public static void FUN_800e6d60() {
-    _800bdb90.setu(0);
-    _800bdc24.setu(0);
     renderablePtr_800bdc5c = null;
   }
 
@@ -293,7 +272,6 @@ public final class Scus94491BpeSegment_800e {
   public static void initFmvs() {
     enableAudioSource(0x1L, 0x1L);
     setCdVolume(0x7f, 0x7f);
-    setCdMix(0x3f);
 
     _800bf0cf.setu(0);
     _800bf0d0.setu(0);

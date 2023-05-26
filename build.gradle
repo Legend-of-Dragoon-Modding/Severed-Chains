@@ -1,19 +1,27 @@
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
+import org.apache.tools.ant.filters.ReplaceTokens
 
 plugins {
   id 'java'
-  id 'org.openjfx.javafxplugin' version '0.0.13'
+  id 'org.openjfx.javafxplugin' version '0.0.14'
   id 'java-library'
   id 'maven-publish'
 }
 
+project.ext.hash = System.getenv("GITHUB_SHA");
+
+if(project.ext.hash == null) {
+  project.ext.hash = 'snapshot'
+}
+
 group 'legend'
-version '1.0-SNAPSHOT'
+version project.ext.hash
 
 sourceCompatibility = targetCompatibility = 1.17
+compileJava.options.encoding = 'UTF-8'
 
-project.ext.lwjglVersion = "3.2.3"
-project.ext.jomlVersion = "1.10.1"
+project.ext.lwjglVersion = "3.3.2"
+project.ext.jomlVersion = "1.10.5"
 
 if(DefaultNativePlatform.getCurrentOperatingSystem().isWindows()) {
   project.ext.lwjglNatives = "natives-windows"
@@ -28,6 +36,8 @@ if(DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX()) {
 }
 
 if(hasProperty("os")) {
+  println "Building for OS " + os
+
   switch(os) {
     case "windows":
       project.ext.lwjglNatives = "natives-windows"
@@ -65,25 +75,29 @@ dependencies {
   runtimeOnly "org.lwjgl:lwjgl-stb::$lwjglNatives"
   api "org.joml:joml:${jomlVersion}"
 
-  api group: 'com.github.slugify', name: 'slugify', version: '3.0.2'
+  api group: 'com.github.slugify', name: 'slugify', version: '3.0.4'
 
-  api group: 'it.unimi.dsi', name: 'fastutil', version: '8.5.9'
+  api group: 'it.unimi.dsi', name: 'fastutil', version: '8.5.12'
 
   implementation group: 'org.reflections', name: 'reflections', version: '0.10.2'
   // To quiet no logger found for reflections
-  implementation group: 'org.slf4j', name: 'slf4j-nop', version: '2.0.5'
+  implementation group: 'org.slf4j', name: 'slf4j-nop', version: '2.0.7'
 
   implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.2'
 
-  implementation group: 'net.java.dev.jna', name: 'jna', version: '5.12.1'
+  implementation group: 'net.java.dev.jna', name: 'jna', version: '5.13.0'
 
-  testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
-  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+  testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.3'
+  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.3'
 }
 
 javafx {
   version = "18.0.2"
   modules = ['javafx.controls', 'javafx.fxml']
+}
+
+if(hasProperty("os")) {
+  javafx.platform = os;
 }
 
 jar {
@@ -92,6 +106,10 @@ jar {
       'Main-Class': 'legend.game.Main'
     )
   }
+}
+
+task sourceJar(type: Jar) {
+  from sourceSets.main.allJava
 }
 
 task clearOutput(type: Delete) {
@@ -112,8 +130,16 @@ task copySupportFiles(type: Copy) {
   }
 
   into(".") {
-    from 'launch.bat'
+    from('launch.bat') {
+      filter(ReplaceTokens, tokens: [version: project.ext.hash])
+    }
+    from('launch') {
+      filter(ReplaceTokens, tokens: [version: project.ext.hash])
+    }
     from 'log4j2.xml'
+    from 'gamecontrollerdb.txt'
+    from 'README.md'
+    from 'LICENSE'
   }
 }
 
@@ -126,6 +152,10 @@ publishing {
       from components.java
       pom {
         name = 'LoD Engine'
+      }
+
+      artifact sourceJar {
+        classifier "sources"
       }
     }
   }

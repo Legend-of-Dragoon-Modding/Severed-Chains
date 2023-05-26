@@ -2,6 +2,11 @@ package legend.core.opengl;
 
 import legend.core.Config;
 import legend.core.DebugHelper;
+import legend.game.input.Controller;
+import legend.game.input.Input;
+import legend.game.input.InputAction;
+import legend.game.input.InputBinding;
+import legend.game.input.InputState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.Version;
@@ -50,11 +55,13 @@ import static org.lwjgl.glfw.GLFW.glfwSetCharCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetClipboardString;
 import static org.lwjgl.glfw.GLFW.glfwSetCursorPos;
 import static org.lwjgl.glfw.GLFW.glfwSetCursorPosCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetErrorCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetInputMode;
 import static org.lwjgl.glfw.GLFW.glfwSetJoystickCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetScrollCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetWindowFocusCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowSize;
@@ -72,29 +79,28 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 public class Window {
   private static final Logger LOGGER = LogManager.getLogger(Window.class.getName());
 
-  private static final GLFWErrorCallback ERROR_CALLBACK;
-
   static {
     LOGGER.info("Initialising LWJGL version {}", Version.getVersion());
 
-    ERROR_CALLBACK = GLFWErrorCallback.createPrint(System.err).set();
+    GLFWErrorCallback.createPrint(System.err).set();
 
     if(!glfwInit()) {
       throw new IllegalStateException("Unable to initialize GLFW");
     }
+  }
 
-    Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-      LOGGER.info("Shutting down...");
+  public static void free() {
+    LOGGER.info("Shutting down...");
 
-      glfwTerminate();
-      ERROR_CALLBACK.free();
+    glfwSetErrorCallback(null).free();
+    glfwSetJoystickCallback(null).free();
+    glfwTerminate();
 
-      try {
-        Config.save();
-      } catch (final IOException e) {
-        System.err.println("Failed to save config");
-      }
-    }));
+    try {
+      Config.save();
+    } catch(final IOException e) {
+      System.err.println("Failed to save config");
+    }
   }
 
   private final long window;
@@ -105,8 +111,10 @@ public class Window {
   private int width;
   private int height;
   private float scale = 1.0f;
+  private boolean hasFocus;
 
-  private int fpsLimit = Integer.MAX_VALUE;
+  private final List<Action> actions = new ArrayList<>();
+  private final Action render = this.addAction(new Action(this::tickFrame, 60));
 
   public Window(final String title, final int width, final int height) {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -128,6 +136,7 @@ public class Window {
     }
 
     glfwSetWindowSizeCallback(this.window, this.events::onResize);
+    glfwSetWindowFocusCallback(this.window,this.events::onFocus);
     glfwSetKeyCallback(this.window, this.events::onKey);
     glfwSetCharCallback(this.window, this.events::onChar);
     glfwSetCursorPosCallback(this.window, this.events::onMouseMove);
@@ -161,9 +170,14 @@ public class Window {
     }
   }
 
+  public Action addAction(final Action action) {
+    this.actions.add(action);
+    return action;
+  }
+
   void makeContextCurrent() {
     glfwMakeContextCurrent(this.window);
-    glfwSwapInterval(1);
+    glfwSwapInterval(0);
   }
 
   public void setEventPoller(final Runnable poller) {
@@ -171,29 +185,22 @@ public class Window {
   }
 
   public void setFpsLimit(final int limit) {
-    this.fpsLimit = limit;
+    this.render.setExpectedFps(limit);
   }
 
   public int getFpsLimit() {
-    return this.fpsLimit;
+    return this.render.getExpectedFps();
   }
 
   public void show() {
     glfwShowWindow(this.window);
 
-    // Well this is bad code
-    if(!System.getProperty("os.name").startsWith("Windows")) {
-      try(final MemoryStack stack = MemoryStack.stackPush()) {
-        final IntBuffer x = stack.mallocInt(1);
-        final IntBuffer y = stack.mallocInt(1);
-        glfwGetWindowSize(this.window, x, y);
+    try(final MemoryStack stack = MemoryStack.stackPush()) {
+      final IntBuffer x = stack.mallocInt(1);
+      final IntBuffer y = stack.mallocInt(1);
+      glfwGetWindowSize(this.window, x, y);
 
-        final FloatBuffer scaleX = stack.mallocFloat(1);
-        final FloatBuffer scaleY = stack.mallocFloat(1);
-        glfwGetWindowContentScale(this.window, scaleX, scaleY);
-
-        this.events.onResize(this.window, (int)(x.get() / scaleX.get()), (int)(y.get() / scaleY.get()));
-      }
+      this.events.onResize(this.window, x.get(0), y.get(0));
     }
   }
 
@@ -215,6 +222,10 @@ public class Window {
 
   public boolean isKeyPressed(final int key) {
     return glfwGetKey(this.window, key) == GLFW_PRESS;
+  }
+
+  public boolean hasFocus() {
+    return this.hasFocus;
   }
 
   public void setTitle(final String title) {
@@ -251,20 +262,21 @@ public class Window {
   }
 
   public void run() {
-    long timer = System.nanoTime() + 1_000_000_000 / this.fpsLimit;
+    this.addAction(new Action(this::tickInput, 60));
 
     while(!glfwWindowShouldClose(this.window)) {
-      this.eventPoller.run();
-      this.events.onDraw();
+      Action nextAction = null;
 
-      glfwSwapBuffers(this.window);
+      for(final Action action : this.actions) {
+        action.tick();
 
-      if(this.fpsLimit != Integer.MAX_VALUE) {
-        while(System.nanoTime() <= timer) {
-          DebugHelper.sleep(0);
+        if(nextAction == null || action.nanosUntilNextRun() < nextAction.nanosUntilNextRun()) {
+          nextAction = action;
         }
+      }
 
-        timer = System.nanoTime() + 1_000_000_000 / this.fpsLimit;
+      while(!nextAction.isReady()) {
+        DebugHelper.sleep(1);
       }
     }
 
@@ -274,10 +286,24 @@ public class Window {
     glfwDestroyWindow(this.window);
   }
 
+  private void tickInput() {
+    this.eventPoller.run();
+    Input.update();
+  }
+
+  private void tickFrame() {
+    Input.updateLegacyInput();
+    this.events.onDraw();
+    glfwSwapBuffers(this.window);
+    Input.clearLegacyInput();
+  }
+
   public static final class Events {
     private static final Object LOCK = new Object();
 
     private final List<Resize> resize = new ArrayList<>();
+    private final List<Focus> gotFocus = new ArrayList<>();
+    private final List<Focus> lostFocus = new ArrayList<>();
     private final List<Key> keyPress = new ArrayList<>();
     private final List<Key> keyRelease = new ArrayList<>();
     private final List<Key> keyRepeat = new ArrayList<>();
@@ -288,6 +314,9 @@ public class Window {
     private final List<Scroll> mouseScroll = new ArrayList<>();
     private final List<ControllerState> controllerConnected = new ArrayList<>();
     private final List<ControllerState> controllerDisconnected = new ArrayList<>();
+    private final List<OnPressedThisFrame> pressedThisFrame = new ArrayList<>();
+    private final List<OnReleasedThisFrame> releasedThisFrame = new ArrayList<>();
+    private final List<OnPressedWithRepeatPulse> pressedWithRepeatPulse = new ArrayList<>();
     private final List<Runnable> draw = new ArrayList<>();
     private final List<Runnable> shutdown = new ArrayList<>();
     private final Window window;
@@ -325,6 +354,44 @@ public class Window {
     public void removeOnResize(final Resize callback) {
       synchronized(LOCK) {
         this.resize.remove(callback);
+      }
+    }
+
+    private void onFocus(final long window, final boolean focus) {
+      synchronized(LOCK) {
+        this.window.hasFocus = focus;
+
+        if(focus) {
+          this.gotFocus.forEach(cb -> cb.focus(this.window));
+        } else {
+          this.lostFocus.forEach(cb -> cb.focus(this.window));
+        }
+      }
+    }
+
+    public Focus onGotFocus(final Focus callback) {
+      synchronized(LOCK) {
+        this.gotFocus.add(callback);
+        return callback;
+      }
+    }
+
+    public Focus onLostFocus(final Focus callback) {
+      synchronized(LOCK) {
+        this.lostFocus.add(callback);
+        return callback;
+      }
+    }
+
+    public void removeOnGotFocus(final Focus callback) {
+      synchronized(LOCK) {
+        this.gotFocus.remove(callback);
+      }
+    }
+
+    public void removeOnLostFocus(final Focus callback) {
+      synchronized(LOCK) {
+        this.lostFocus.remove(callback);
       }
     }
 
@@ -367,6 +434,37 @@ public class Window {
     private void onMouseScroll(final long window, final double deltaX, final double deltaY) {
       synchronized(LOCK) {
         this.mouseScroll.forEach(cb -> cb.action(this.window, deltaX, deltaY));
+      }
+    }
+
+    private void onInputPressedThisFrame(final InputAction inputAction) {
+      synchronized(LOCK) {
+        this.pressedThisFrame.forEach(cb -> cb.action(this.window, inputAction));
+      }
+    }
+
+    private void onInputReleasedThisFrame(final InputAction inputAction) {
+      synchronized(LOCK) {
+        this.releasedThisFrame.forEach(cb -> cb.action(this.window, inputAction));
+      }
+    }
+
+    private void onInputPressedWithRepeat(final InputAction inputAction) {
+      synchronized(LOCK) {
+        this.pressedWithRepeatPulse.forEach(cb -> cb.action(this.window, inputAction));
+      }
+    }
+
+    public void callInputEvents(final Controller controller) {
+      for(final InputBinding binding : controller.bindings) {
+        if(binding.getState() == InputState.PRESSED_THIS_FRAME) {
+          this.onInputPressedThisFrame(binding.getInputAction());
+          this.onInputPressedWithRepeat(binding.getInputAction());
+        } else if(binding.getState() == InputState.RELEASED_THIS_FRAME) {
+          this.onInputReleasedThisFrame(binding.getInputAction());
+        } else if(binding.getState() == InputState.PRESSED_REPEAT) {
+          this.onInputPressedWithRepeat(binding.getInputAction());
+        }
       }
     }
 
@@ -486,6 +584,45 @@ public class Window {
       }
     }
 
+    public OnPressedThisFrame onPressedThisFrame(final OnPressedThisFrame callback) {
+      synchronized(LOCK) {
+        this.pressedThisFrame.add(callback);
+        return callback;
+      }
+    }
+
+    public void removePressedThisFrame(final OnPressedThisFrame callback) {
+      synchronized(LOCK) {
+        this.pressedThisFrame.remove(callback);
+      }
+    }
+
+    public OnReleasedThisFrame onReleasedThisFrame(final OnReleasedThisFrame callback) {
+      synchronized(LOCK) {
+        this.releasedThisFrame.add(callback);
+        return callback;
+      }
+    }
+
+    public void removeReleasedThisFrame(final OnReleasedThisFrame callback) {
+      synchronized(LOCK) {
+        this.releasedThisFrame.remove(callback);
+      }
+    }
+
+    public OnPressedWithRepeatPulse onPressedWithRepeatPulse(final OnPressedWithRepeatPulse callback) {
+      synchronized(LOCK) {
+        this.pressedWithRepeatPulse.add(callback);
+        return callback;
+      }
+    }
+
+    public void removePressedWithRepeatPulse(final OnPressedWithRepeatPulse callback) {
+      synchronized(LOCK) {
+        this.pressedWithRepeatPulse.remove(callback);
+      }
+    }
+
     public ControllerState onControllerConnected(final ControllerState callback) {
       synchronized(LOCK) {
         this.controllerConnected.add(callback);
@@ -554,32 +691,59 @@ public class Window {
       }
     }
 
-    @FunctionalInterface public interface Resize {
+    @FunctionalInterface
+    public interface Resize {
       void resize(final Window window, final int width, final int height);
     }
 
-    @FunctionalInterface public interface Key {
+    @FunctionalInterface
+    public interface Focus {
+      void focus(final Window window);
+    }
+
+    @FunctionalInterface
+    public interface Key {
       void action(final Window window, final int key, final int scancode, final int mods);
     }
 
-    @FunctionalInterface public interface Char {
+    @FunctionalInterface
+    public interface Char {
       void action(final Window window, final int codepoint);
     }
 
-    @FunctionalInterface public interface Cursor {
+    @FunctionalInterface
+    public interface Cursor {
       void action(final Window window, final double x, final double y);
     }
 
-    @FunctionalInterface public interface Click {
+    @FunctionalInterface
+    public interface Click {
       void action(final Window window, final double x, final double y, final int button, final int mods);
     }
 
-    @FunctionalInterface public interface Scroll {
+    @FunctionalInterface
+    public interface Scroll {
       void action(final Window window, final double deltaX, final double deltaY);
     }
 
-    @FunctionalInterface public interface ControllerState {
+    @FunctionalInterface
+    public interface ControllerState {
       void action(final Window window, final int id);
+    }
+
+    @FunctionalInterface
+    public interface OnPressedThisFrame {
+      void action(final Window window, final InputAction inputAction);
+    }
+
+    @FunctionalInterface
+    public interface OnReleasedThisFrame {
+      void action(final Window window, final InputAction inputAction);
+    }
+
+    @FunctionalInterface
+    public interface OnPressedWithRepeatPulse {
+      void action(final Window window, final InputAction inputAction);
     }
   }
 }

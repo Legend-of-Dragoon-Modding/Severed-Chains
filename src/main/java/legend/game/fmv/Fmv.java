@@ -4,6 +4,8 @@ import legend.core.DebugHelper;
 import legend.core.MathHelper;
 import legend.core.opengl.Window;
 import legend.core.spu.XaAdpcm;
+import legend.game.input.Input;
+import legend.game.input.InputAction;
 import legend.game.types.FileEntry08;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
@@ -18,7 +20,7 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 import static legend.core.GameEngine.GPU;
-import static legend.game.Scus94491BpeSegment.setWidthAndFlags;
+import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndexOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8005._80052d6c;
 import static legend.game.Scus94491BpeSegment_8005.diskFmvs_80052d7c;
@@ -188,6 +190,7 @@ public class Fmv {
   private static int oldFps;
   private static int oldWidth;
   private static int oldHeight;
+  private static int oldScale;
   private static int sector;
 
   private static SourceDataLine sound;
@@ -197,17 +200,13 @@ public class Fmv {
   private static boolean shouldStop;
 
   public static void playCurrentFmv() {
-//TODO this might be necessary for the post-game cutscene or something?
-//      creditsLoaded_800d1cb8.setu(0);
-//      loadDrgnBinFile(0, 5721, 0, SMap::loadCreditsMrg, (int)fmvIndex_800bf0dc.get(), 0x4L);
-
     final int width = switch((int)fmvIndex_800bf0dc.get()) {
       case 0, 2, 3, 4, 6, 7, 8, 9, 14, 15, 16, 17 -> 320;
       case 1, 5, 10, 11, 12, 13 -> 640;
       default -> throw new RuntimeException("Bad FMV index");
     };
 
-    setWidthAndFlags(width);
+    resizeDisplay(width, 240);
 
     submapIndex_800bd808.set(-1);
 
@@ -236,11 +235,13 @@ public class Fmv {
       DebugHelper.sleep(1);
     }
 
+    oldScale = GPU.getScale();
     oldRenderer = GPU.mainRenderer;
     oldFps = GPU.window().getFpsLimit();
     oldWidth = GPU.window().getWidth();
     oldHeight = GPU.window().getHeight();
     GPU.window().setFpsLimit(15);
+    GPU.rescaleNow(1);
 
     try {
       sound = AudioSystem.getSourceDataLine(new AudioFormat(44100, 16, 2, true, false));
@@ -254,6 +255,12 @@ public class Fmv {
     click = GPU.window().events.onMouseRelease((window, x, y, button, mods) -> shouldStop = true);
 
     GPU.mainRenderer = () -> {
+      if(Input.pressedThisFrame(InputAction.BUTTON_CENTER_2)
+        || Input.pressedThisFrame(InputAction.BUTTON_NORTH) || Input.pressedThisFrame(InputAction.BUTTON_SOUTH)
+        || Input.pressedThisFrame(InputAction.BUTTON_EAST) || Input.pressedThisFrame(InputAction.BUTTON_WEST)) {
+        shouldStop = true;
+      }
+
       if(shouldStop) {
         stop();
       }
@@ -263,7 +270,7 @@ public class Fmv {
       // Demultiplex the sectors
       Arrays.fill(demuxedRaw, (byte)0);
       for(int sectorIndex = 0, videoSectorIndex = 0; sectorIndex < sectorCount; sectorIndex++, sector++) {
-        fileData.copyTo(sector * data.length, data, 0, data.length);
+        fileData.copyFrom(sector * data.length, data, 0, data.length);
 
         if(header.submode.isEof()) {
           stop();
@@ -456,6 +463,7 @@ public class Fmv {
 
       GPU.mainRenderer = oldRenderer;
       GPU.window().setFpsLimit(oldFps);
+      GPU.rescaleNow(oldScale);
       GPU.displaySize(oldWidth, oldHeight);
       oldRenderer = null;
 
@@ -546,10 +554,10 @@ public class Fmv {
 
         psxycc.toRgb(rgb1, rgb2, rgb3, rgb4);
 
-        dest[iDestOfs1++] = rgb1.toRgba();
-        dest[iDestOfs1++] = rgb2.toRgba();
-        dest[iDestOfs2++] = rgb3.toRgba();
-        dest[iDestOfs2++] = rgb4.toRgba();
+        dest[iDestOfs1++] = rgb1.toArgb();
+        dest[iDestOfs1++] = rgb2.toArgb();
+        dest[iDestOfs2++] = rgb3.toArgb();
+        dest[iDestOfs2++] = rgb4.toArgb();
       }
 
       if(iX < destW) {
@@ -564,8 +572,8 @@ public class Fmv {
 
         psxycc.toRgb(rgb1, rgb2, rgb3, rgb4); // rgb2,4 ignored
 
-        dest[iDestOfs1] = rgb1.toRgba();
-        dest[iDestOfs2] = rgb3.toRgba();
+        dest[iDestOfs1] = rgb1.toArgb();
+        dest[iDestOfs2] = rgb3.toArgb();
       }
     }
 
@@ -585,8 +593,8 @@ public class Fmv {
 
         psxycc.toRgb(rgb1, rgb2, rgb3, rgb4); // rgb3,4 ignored
 
-        dest[iDestOfs1++] = rgb1.toRgba();
-        dest[iDestOfs1++] = rgb2.toRgba();
+        dest[iDestOfs1++] = rgb1.toArgb();
+        dest[iDestOfs1++] = rgb2.toArgb();
       }
 
       if(iX < destW) {
@@ -601,8 +609,48 @@ public class Fmv {
 
         psxycc.toRgb(rgb1, rgb2, rgb3, rgb4); // rgb2,3,4 ignored
 
-        dest[iDestOfs1] = rgb1.toRgba();
+        dest[iDestOfs1] = rgb1.toArgb();
       }
     }
+  }
+
+  public static void playXa(final int archiveIndex, final int fileIndex) {
+    final byte[] data = new byte[2352];
+    final SectorHeader header = new SectorHeader(data);
+
+    final int offset = archiveIndex == 3 ? 4 : 16;
+
+    final byte[] fileData = Unpacker.loadFile(System.getProperty("user.dir") + "\\files\\XA\\LODXA0" + archiveIndex + ".XA").data();
+    sector = 0;
+
+    try {
+      sound = AudioSystem.getSourceDataLine(new AudioFormat(44100, 16, 2, true, false));
+      sound.open();
+      sound.start();
+    } catch(final LineUnavailableException|IllegalArgumentException e) {
+      LOGGER.error("Failed to start audio for FMV");
+    }
+
+    for(int sector = fileIndex; sector < fileData.length / 0x930; sector += offset) {
+      System.arraycopy(fileData, sector * data.length, data, 0, data.length);
+
+      final byte[] decodedXaAdpcm = XaAdpcm.decode(data, data[19]);
+
+      // Halve the volume
+      for(int i = 0; i < decodedXaAdpcm.length; i++) {
+        decodedXaAdpcm[i] >>= 1;
+      }
+
+      if(sound != null) {
+        sound.write(decodedXaAdpcm, 0, decodedXaAdpcm.length);
+      }
+
+      if(header.submode.isEof()) {
+        break;
+      }
+    }
+
+    sound.close();
+    sound = null;
   }
 }

@@ -12,9 +12,9 @@ public final class CtmdTransformer {
   private CtmdTransformer() { }
 
   /** Example file: 4146/0/0 */
-  public static boolean ctmdDiscriminator(final String name, final FileData data, final Set<Unpacker.Flags> flags) {
+  public static boolean ctmdDiscriminator(final String name, final FileData data, final Set<String> flags) {
     // Check if in DEFF and if file is large enough
-    if(!flags.contains(Unpacker.Flags.DEFF) || data.size() < 0x14) {
+    if(!flags.contains("DEFF") || data.size() < 0x14) {
       return false;
     }
 
@@ -47,11 +47,19 @@ public final class CtmdTransformer {
     return (data.readInt(containerOffset + 0x10) & 0x2) != 0;
   }
 
-  public static Map<String, FileData> ctmdTransformer(final String name, final FileData data, final Set<Unpacker.Flags> flags) {
+  public static Map<String, FileData> ctmdTransformer(final String name, final FileData data, final Set<String> flags) {
     final int containerOffset = data.readInt(0xc);
-    final int nextOffset = data.readInt(0x10);
+    int nextOffset = data.readInt(0x10);
 
-    final FileData containerData = data.slice(containerOffset, (nextOffset == containerOffset ? data.size() : nextOffset) - containerOffset);
+    if(nextOffset == 0) {
+      final int type = data.readByte(3);
+
+      if(type == 1) {
+        nextOffset = data.readInt(0x14);
+      }
+    }
+
+    final FileData containerData = data.slice(containerOffset, (nextOffset == containerOffset || nextOffset == 0 ? data.size() : nextOffset) - containerOffset);
     int ctmdEnd = containerData.size();
     for(int i = 0; i < 2; i++) {
       final int subfile = containerData.readInt(4 + i * 4);
@@ -110,7 +118,8 @@ public final class CtmdTransformer {
       final FileData vertices = ctmdData.slice(0xc + objTable.vertices_00);
       for(int i = 0; i < vertexCount; i++) {
         final BVEC4 lo = new BVEC4().set(vertices.readByte(i * 4), vertices.readByte(i * 4 + 1), vertices.readByte(i * 4 + 2), vertices.readByte(i * 4 + 3));
-        final BVEC4 hi = new BVEC4().set(vertices.readByte(lo.getW() * 4), vertices.readByte(lo.getW() * 4 + 1), vertices.readByte(lo.getW() * 4 + 2), vertices.readByte(lo.getW() * 4 + 3));
+        final int hiIndex = lo.getW() & 0xff;
+        final BVEC4 hi = new BVEC4().set(vertices.readByte(hiIndex * 4), vertices.readByte(hiIndex * 4 + 1), vertices.readByte(hiIndex * 4 + 2), vertices.readByte(hiIndex * 4 + 3));
         final SVECTOR vert = new SVECTOR();
         vert.setX((short)(lo.getX() + ((hi.getX() & 0xff) << 8)));
         vert.setY((short)(lo.getY() + ((hi.getY() & 0xff) << 8)));
@@ -210,8 +219,8 @@ public final class CtmdTransformer {
     final byte[] newData = new byte[newSize];
 
     // Copy data before what we modified
-    data.copyTo(0, newData, 0, containerOffset);
-    containerData.copyTo(0, newData, containerOffset, 0xc);
+    data.copyFrom(0, newData, 0, containerOffset);
+    containerData.copyFrom(0, newData, containerOffset, 0xc);
 
     // Adjust DEFF container pointers
     final int deffContainerPtr10 = (int)MathHelper.get(newData, 0x10, 2);
@@ -241,15 +250,16 @@ public final class CtmdTransformer {
     System.arraycopy(tmdData, 0, newData, containerOffset + 0xc, tmdData.length);
 
     // Copy unmodified data at the end of the 0xc container
-    containerData.copyTo(ctmdEnd, newData, containerOffset + 0xc + tmdData.length, containerData.size() - ctmdEnd);
+    containerData.copyFrom(ctmdEnd, newData, containerOffset + 0xc + tmdData.length, containerData.size() - ctmdEnd);
 
     // Copy unmodified data at the end of the DEFF container
-    data.copyTo(containerOffset + containerData.size(), newData, containerOffset + newContainerSize, data.size() - containerOffset - containerData.size());
+    data.copyFrom(containerOffset + containerData.size(), newData, containerOffset + newContainerSize, data.size() - containerOffset - containerData.size());
 
     return Map.of(name, new FileData(newData));
   }
 
-  private static int primitivePacketSize(final int command) {
+  /** Does not include header */
+  public static int primitivePacketSize(final int command) {
     final int primitiveId = command >>> 24;
     final boolean gradated = (command & 0x4_0000) != 0;
     final boolean normals = (command & 0x1_0000) == 0;

@@ -1,26 +1,29 @@
 package legend.game.types;
 
-import legend.core.memory.Value;
-import legend.core.memory.types.ArrayRef;
-import legend.core.memory.types.MemoryRef;
-import legend.core.memory.types.RelativePointer;
-import legend.core.memory.types.ShortRef;
-import legend.core.memory.types.UnboundedArrayRef;
+import it.unimi.dsi.fastutil.shorts.ShortArrayList;
+import it.unimi.dsi.fastutil.shorts.ShortList;
+import legend.game.unpacker.FileData;
 
-public class CContainerSubfile2 implements MemoryRef {
-  private final Value ref;
-
+public class CContainerSubfile2 {
   /** Sometimes 7, sometimes 10 elements */
-  public final ArrayRef<RelativePointer<UnboundedArrayRef<ShortRef>>> _00;
+  public final short[][] _00 = new short[10][];
 
-  public CContainerSubfile2(final Value ref) {
-    this.ref = ref;
+  public CContainerSubfile2(final FileData data, final int count) {
+    for(int i = 0; i < count; i++) {
+      final int subOffset = data.readInt(i * 0x4);
 
-    this._00 = ref.offset(4, 0x00L).cast(ArrayRef.of(RelativePointer.classFor(UnboundedArrayRef.classFor(ShortRef.class)), 10, 4, RelativePointer.deferred(2, ref.getAddress(), UnboundedArrayRef.of(2, ShortRef::new))));
-  }
+      final ShortList shorts = new ShortArrayList();
 
-  @Override
-  public long getAddress() {
-    return this.ref.getAddress();
+      for(int n = 0; ; n++) {
+        final short val = data.readShort(subOffset + n * 0x2);
+        shorts.add(val);
+
+        if(val == -1) {
+          break;
+        }
+      }
+
+      this._00[i] = shorts.toShortArray();
+    }
   }
 }

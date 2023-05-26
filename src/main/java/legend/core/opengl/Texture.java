@@ -32,7 +32,7 @@ import static org.lwjgl.opengl.GL11C.glTexImage2D;
 import static org.lwjgl.opengl.GL11C.glTexParameteri;
 import static org.lwjgl.opengl.GL11C.glTexSubImage2D;
 import static org.lwjgl.opengl.GL12C.GL_TEXTURE_MAX_LEVEL;
-import static org.lwjgl.opengl.GL12C.GL_UNSIGNED_INT_8_8_8_8;
+import static org.lwjgl.opengl.GL12C.GL_UNSIGNED_INT_8_8_8_8_REV;
 import static org.lwjgl.opengl.GL13C.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13C.glActiveTexture;
 import static org.lwjgl.opengl.GL21C.GL_SRGB_ALPHA;
@@ -40,13 +40,15 @@ import static org.lwjgl.opengl.GL30C.glGenerateMipmap;
 import static org.lwjgl.stb.STBImage.stbi_failure_reason;
 import static org.lwjgl.stb.STBImage.stbi_load_from_memory;
 import static org.lwjgl.system.MemoryStack.stackPush;
+import static org.lwjgl.system.MemoryUtil.memFree;
 
 public final class Texture {
   public static Texture create(final Consumer<Builder> callback) {
     final Builder builder = new Builder();
-
     callback.accept(builder);
-    return builder.build();
+    final Texture texture = builder.build();
+    builder.free();
+    return texture;
   }
 
   public static Texture empty(final int w, final int h) {
@@ -94,6 +96,11 @@ public final class Texture {
       glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, w, h, 0, dataFormat, dataType, data);
     }
 
+    final int error = glGetError();
+    if(error != GL_NO_ERROR) {
+      throw new RuntimeException("Failed to create texture, glError: " + Long.toString(error, 16));
+    }
+
     if(generateMipmaps) {
       glGenerateMipmap(GL_TEXTURE_2D);
     } else {
@@ -116,7 +123,7 @@ public final class Texture {
 
   public void data(final int x, final int y, final int w, final int h, final int[] data) {
     this.use();
-    glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, w, h, this.dataFormat, GL_UNSIGNED_INT_8_8_8_8, data);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, w, h, this.dataFormat, GL_UNSIGNED_INT_8_8_8_8_REV, data);
 
     final int error = glGetError();
     if(error != GL_NO_ERROR) {
@@ -158,7 +165,15 @@ public final class Texture {
     private boolean generateMipmaps;
     private final List<MipmapBuilder> mipmaps = new ArrayList<>();
 
+    private final List<Runnable> cleanup = new ArrayList<>();
+
     Builder() {}
+
+    public void free() {
+      for(final Runnable runnable : this.cleanup) {
+        runnable.run();
+      }
+    }
 
     public void png(final Path path) {
       final ByteBuffer imageBuffer;
@@ -179,6 +194,8 @@ public final class Texture {
         }
 
         this.data(data, w.get(0), h.get(0));
+
+        this.cleanup.add(() -> memFree(data));
       }
     }
 

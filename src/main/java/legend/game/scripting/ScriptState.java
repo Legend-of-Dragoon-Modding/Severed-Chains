@@ -4,8 +4,7 @@ import legend.core.DebugHelper;
 import legend.core.MathHelper;
 import legend.core.memory.Method;
 import legend.game.Scus94491BpeSegment_8004;
-import legend.game.combat.types.BattleObject27c;
-import legend.game.modding.events.EventManager;
+import legend.game.combat.bobj.BattleObject27c;
 import legend.game.modding.events.scripting.ScriptDeallocatedEvent;
 import legend.game.modding.events.scripting.ScriptTickEvent;
 import org.apache.logging.log4j.LogManager;
@@ -17,6 +16,7 @@ import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.function.BiConsumer;
 
+import static legend.core.GameEngine.EVENTS;
 import static legend.game.Scus94491BpeSegment.scriptFunctionDescriptions;
 import static legend.game.Scus94491BpeSegment.scriptLog;
 import static legend.game.Scus94491BpeSegment.simpleRand;
@@ -31,16 +31,12 @@ public class ScriptState<T> {
   private static final Logger LOGGER = LogManager.getFormatterLogger(ScriptState.class);
   private static final Marker SCRIPT_MARKER = MarkerManager.getMarker("SCRIPT");
 
-  public static <T> Class<ScriptState<T>> classFor(final Class<T> cls) {
-    //noinspection unchecked
-    return (Class<ScriptState<T>>)(Class<?>)ScriptState.class;
-  }
-
   private final ScriptManager manager;
   final RunningScript<T> context = new RunningScript<>(this);
 
   /** This script's index */
   public final int index;
+  public final String name;
   public final T innerStruct_00;
   public BiConsumer<ScriptState<T>, T> ticker_04;
   public BiConsumer<ScriptState<T>, T> renderer_08;
@@ -80,11 +76,21 @@ public class ScriptState<T> {
    *
    *     <p>In combat this variable is used for a few different things:</p>
    *     <ul>
+   *       <li>0x1 - ?</li>
    *       <li>0x2 - dragoon</li>
-   *       <li>0x4 - is enemy</li>
+   *       <li>0x4 - monster</li>
    *       <li>0x8 - it is this character's turn</li>
-   *       <li>0x20 - ?</li>
-   *       <li>0x40 - ?</li>
+   *       <li>0x10 - don't animate or render bobj?</li>
+   *       <li>0x20 - forced turn, probably bosses who have reaction attacks</li>
+   *       <li>0x40 - dead</li>
+   *       <li>0x80 - finish the current animation and then stop animating</li>
+   *       <li>0x100 - ?</li>
+   *       <li>0x200 - ?</li>
+   *       <li>0x400 - ?</li>
+   *       <li>0x800 - don't load script (used by cutscene bobjs controlled by other scripts)</li>
+   *       <li>0x1000 - ?</li>
+   *       <li>0x2000 - don't drop loot (set when monster has died to prevent duplicate drops)</li>
+   *       <li>0x4000 - cannot target</li>
    *     </ul>
    *   </li>
    *   <li>
@@ -116,12 +122,12 @@ public class ScriptState<T> {
   public int _ec;
   public int _f0;
   public int _f4;
-  public String type_f8;
   public int ui_fc;
 
-  public ScriptState(final ScriptManager manager, final int index, @Nullable final T innerStruct) {
+  public ScriptState(final ScriptManager manager, final int index, final String name, @Nullable final T innerStruct) {
     this.manager = manager;
     this.index = index;
+    this.name = name;
     this.innerStruct_00 = innerStruct;
   }
 
@@ -208,7 +214,7 @@ public class ScriptState<T> {
   public void deallocate() {
     LOGGER.info(SCRIPT_MARKER, "Deallocating script state %d", this.index);
 
-    EventManager.INSTANCE.postEvent(new ScriptDeallocatedEvent(this.index));
+    EVENTS.postEvent(new ScriptDeallocatedEvent(this.index));
 
     if((this.storage_44[7] & 0x810_0000) == 0) {
       try {
@@ -247,7 +253,7 @@ public class ScriptState<T> {
   }
 
   public ScriptState<?> fork() {
-    final ScriptState<?> childScript = this.manager.allocateScriptState(null);
+    final ScriptState<?> childScript = this.manager.allocateScriptState("Forked " + this.name, null);
 
     if(LOGGER.isInfoEnabled(SCRIPT_MARKER)) {
       final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
@@ -406,7 +412,7 @@ public class ScriptState<T> {
             this.context.params_20[paramIndex] = new GameVarArrayParam(cmd0 + this.storage_44[cmd1], cmd2);
           } else if(paramType == 0x11) {
             //LAB_80016468
-            assert false;
+            this.context.params_20[paramIndex] = new GameVarArrayParam(cmd0 + cmd1, this.storage_44[cmd2]); // Haven't verified this, afaik it's never used
           } else if(paramType == 0x12) {
             //LAB_80016138
             //LAB_8001648c
@@ -446,7 +452,7 @@ public class ScriptState<T> {
           //LAB_80016584
         }
 
-        EventManager.INSTANCE.postEvent(new ScriptTickEvent(this.index));
+        EVENTS.postEvent(new ScriptTickEvent(this.index));
 
         final int opIndex = this.context.opIndex_10;
 
@@ -526,7 +532,7 @@ public class ScriptState<T> {
       case 42 -> this.FUN_80016b8c();
 
       case 48 -> this.scriptSquareRoot();
-      case 49 -> this.FUN_80016c00();
+      case 49 -> this.scriptRandom();
       case 50 -> this.scriptSin();
       case 51 -> this.scriptCos();
       case 52 -> this.scriptRatan2();
@@ -864,7 +870,7 @@ public class ScriptState<T> {
   }
 
   @Method(0x80016c00L)
-  public FlowControl FUN_80016c00() {
+  public FlowControl scriptRandom() {
     this.context.params_20[1].set(this.context.params_20[0].get() * simpleRand() >>> 16);
     return FlowControl.CONTINUE;
   }

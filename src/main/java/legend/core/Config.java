@@ -1,65 +1,79 @@
 package legend.core;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Enumeration;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
+import java.util.TreeSet;
 
 public final class Config {
-  private Config() { }
+  private Config() {
+  }
 
   private static final Path path = Paths.get(".", "config.conf");
-  private static final Properties properties = new Properties();
+  private static final SortedStoreProperties properties = new SortedStoreProperties();
 
   static {
-    properties.setProperty("window_width", "320");
-    properties.setProperty("window_height", "240");
-    properties.setProperty("controller_config", "false");
-    properties.setProperty("controller_guid", "");
-    properties.setProperty("controller_deadzone", "0.3");
-    properties.setProperty("inventory_size", "32");
+    properties.setProperty("window_width", "640");
+    properties.setProperty("window_height", "480");
     properties.setProperty("unlock_party", "false");
     properties.setProperty("battle_ui_colour_change", "false");
     properties.setProperty("battle_ui_r", "0");
     properties.setProperty("battle_ui_g", "41");
     properties.setProperty("battle_ui_b", "159");
-    properties.setProperty("save_anywhere", "false");
-    properties.setProperty("auto_addition", "false");
-    properties.setProperty("auto_dragoon_meter", "false");
+    properties.setProperty("addition_overlay_colour_change", "false");
+    properties.setProperty("addition_overlay_r", "72");
+    properties.setProperty("addition_overlay_g", "96");
+    properties.setProperty("addition_overlay_b", "255");
+    properties.setProperty("counter_overlay_r", "216");
+    properties.setProperty("counter_overlay_g", "96");
+    properties.setProperty("counter_overlay_b", "32");
+    properties.setProperty("game_speed_multiplier", "1");
+    properties.setProperty("combat_stage", "false");
+    properties.setProperty("combat_stage_id", "0");
+    properties.setProperty("textbox_colour", "false");
+    properties.setProperty("textbox_colour_mode", "0");
+    properties.setProperty("textbox_colour1_r", "0");
+    properties.setProperty("textbox_colour1_g", "0");
+    properties.setProperty("textbox_colour1_b", "0");
+    properties.setProperty("textbox_colour2_r", "0");
+    properties.setProperty("textbox_colour2_g", "0");
+    properties.setProperty("textbox_colour2_b", "0");
+    properties.setProperty("textbox_colour3_r", "0");
+    properties.setProperty("textbox_colour3_g", "0");
+    properties.setProperty("textbox_colour3_b", "0");
+    properties.setProperty("textbox_colour4_r", "0");
+    properties.setProperty("textbox_colour4_g", "0");
+    properties.setProperty("textbox_colour4_b", "0");
+    properties.setProperty("textbox_colour5_r", "0");
+    properties.setProperty("textbox_colour5_g", "0");
+    properties.setProperty("textbox_colour5_b", "0");
+    properties.setProperty("textbox_colour6_r", "0");
+    properties.setProperty("textbox_colour6_g", "0");
+    properties.setProperty("textbox_colour6_b", "0");
+    properties.setProperty("textbox_colour7_r", "0");
+    properties.setProperty("textbox_colour7_g", "0");
+    properties.setProperty("textbox_colour7_b", "0");
+    properties.setProperty("textbox_colour8_r", "0");
+    properties.setProperty("textbox_colour8_g", "0");
+    properties.setProperty("textbox_colour8_b", "0");
+    properties.setProperty("textbox_transparency_mode", "0");
   }
 
   public static int windowWidth() {
-    return readInt("window_width", 320, 1, Integer.MAX_VALUE);
+    return readInt("window_width", 640, 1, Integer.MAX_VALUE);
   }
 
   public static int windowHeight() {
-    return readInt("window_height", 240, 1, Integer.MAX_VALUE);
-  }
-
-  public static boolean controllerConfig() {
-    return readBool("controller_config", false);
-  }
-
-  public static void controllerConfig(final boolean config) {
-    properties.setProperty("controller_config", String.valueOf(config));
-  }
-
-  public static String controllerGuid() {
-    return properties.getProperty("controller_guid", "");
-  }
-
-  public static void controllerGuid(final String guid) {
-    properties.setProperty("controller_guid", guid);
-  }
-
-  public static float controllerDeadzone() {
-    return readFloat("controller_deadzone", 0.3f, 0.0f, 1.0f);
-  }
-
-  public static int inventorySize() {
-    return readInt("inventory_size", 32, 1, 64);
+    return readInt("window_height", 480, 1, Integer.MAX_VALUE);
   }
 
   public static boolean unlockParty() {
@@ -74,32 +88,40 @@ public final class Config {
     properties.setProperty("battle_ui_colour_change", String.valueOf(!changeBattleRGB()));
   }
 
-  public static boolean saveAnywhere() {
-    return readBool("save_anywhere", false);
+  public static boolean changeAdditionOverlayRgb() {
+    return readBool("addition_overlay_colour_change", false);
   }
 
-  public static void toggleSaveAnywhere() {
-    properties.setProperty("save_anywhere", String.valueOf(!saveAnywhere()));
+  public static void toggleAdditionOverlayColour() {
+    properties.setProperty("addition_overlay_colour_change", String.valueOf(!changeAdditionOverlayRgb()));
   }
 
-  public static boolean autoAddition() {
-    return readBool("auto_addition", false);
+  public static boolean combatStage() {
+    return readBool("combat_stage", false);
   }
 
-  public static void toggleAutoAddition() {
-    properties.setProperty("auto_addition", String.valueOf(!autoAddition()));
+  public static void toggleCombatStage() {
+    properties.setProperty("combat_stage", String.valueOf(!combatStage()));
   }
 
-  public static boolean autoDragoonMeter() {
-    return readBool("auto_dragoon_meter", false);
+  public static int getCombatStage() {
+    return readInt("combat_stage_id", 0, 1, 127);
   }
 
-  public static void toggleAutoDragoonMeter() {
-    properties.setProperty("auto_dragoon_meter", String.valueOf(!autoDragoonMeter()));
+  public static void setCombatStage(final int id) {
+    properties.setProperty("combat_stage_id", String.valueOf(id));
   }
 
-  public static int getBattleRGB() {
-    int[] rgbArray = new int[] {
+  public static int getGameSpeedMultiplier() {
+    return readInt("game_speed_multiplier", 1, 1, 16);
+  }
+
+  public static void setGameSpeedMultiplier(final int id) {
+    properties.setProperty("game_speed_multiplier", String.valueOf(id));
+  }
+
+  public static int getBattleRgb() {
+    final int[] rgbArray = {
       readInt("battle_ui_r", 0, 0, 255),
       readInt("battle_ui_g", 0, 0, 255),
       readInt("battle_ui_b", 0, 0, 255),
@@ -108,18 +130,18 @@ public final class Config {
 
     return (
       (0xff & rgbArray[3]) << 24 |
-        (0xff & rgbArray[2]) << 16 |
-        (0xff & rgbArray[1]) << 8  |
-        (0xff & rgbArray[0]) << 0
+      (0xff & rgbArray[2]) << 16 |
+      (0xff & rgbArray[1]) << 8  |
+       0xff & rgbArray[0]
     );
   }
 
-  public static void setBattleRGB(int rgb) {
-    int[] rgbArray = new int[] {
+  public static void setBattleRgb(final int rgb) {
+    final int[] rgbArray = {
       ((rgb >> 24) & 0xff),
       ((rgb >> 16) & 0xff),
-      ((rgb >> 8)  & 0xff),
-      ((rgb >> 0)  & 0xff)
+      ((rgb >> 8) & 0xff),
+      (rgb & 0xff)
     };
 
     properties.setProperty("battle_ui_r", String.valueOf(rgbArray[3]));
@@ -128,21 +150,123 @@ public final class Config {
     properties.setProperty("battle_ui_colour_change", "true");
   }
 
+  public static int getAdditionOverlayRgb() {
+    final int[] rgbArray = {
+      readInt("addition_overlay_r", 72, 0, 255),
+      readInt("addition_overlay_g", 96, 0, 255),
+      readInt("addition_overlay_b", 255, 0, 255),
+      0x00,
+    };
+
+    return (
+      (0xff & rgbArray[3]) << 24 |
+        (0xff & rgbArray[2]) << 16 |
+        (0xff & rgbArray[1]) << 8 |
+        0xff & rgbArray[0]
+    );
+  }
+
+  public static void setAdditionOverlayRgb(final int rgb) {
+    final int[] rgbArray = {
+      ((rgb >> 24) & 0xff),
+      ((rgb >> 16) & 0xff),
+      ((rgb >> 8) & 0xff),
+      (rgb & 0xff)
+    };
+
+    properties.setProperty("addition_overlay_r", String.valueOf(rgbArray[3]));
+    properties.setProperty("addition_overlay_g", String.valueOf(rgbArray[2]));
+    properties.setProperty("addition_overlay_b", String.valueOf(rgbArray[1]));
+    properties.setProperty("addition_overlay_colour_change", "true");
+  }
+
+  public static int getCounterOverlayRgb() {
+    final int[] rgbArray = {
+      readInt("counter_overlay_r", 216, 0, 255),
+      readInt("counter_overlay_g", 96, 0, 255),
+      readInt("counter_overlay_b", 32, 0, 255),
+      0x00,
+    };
+
+    return (
+      (0xff & rgbArray[3]) << 24 |
+        (0xff & rgbArray[2]) << 16 |
+        (0xff & rgbArray[1]) << 8 |
+        0xff & rgbArray[0]
+    );
+  }
+
+  public static void setCounterOverlayRgb(final int rgb) {
+    final int[] rgbArray = {
+      ((rgb >> 24) & 0xff),
+      ((rgb >> 16) & 0xff),
+      ((rgb >> 8) & 0xff),
+      (rgb & 0xff)
+    };
+
+    properties.setProperty("counter_overlay_r", String.valueOf(rgbArray[3]));
+    properties.setProperty("counter_overlay_g", String.valueOf(rgbArray[2]));
+    properties.setProperty("counter_overlay_b", String.valueOf(rgbArray[1]));
+    properties.setProperty("addition_overlay_colour_change", "true");
+  }
+
+  public static boolean textBoxColour() {
+    return readBool("textbox_colour", false);
+  }
+
+  public static void toggleTextBoxColour() {
+    properties.setProperty("textbox_colour", String.valueOf(!textBoxColour()));
+  }
+
+  public static int getTextBoxColourMode() {
+    return readInt("textbox_colour_mode", 0, 0, 2);
+  }
+
+  public static void setTextBoxColourMode(final int value) {
+    properties.setProperty("textbox_colour_mode", String.valueOf(value));
+  }
+
+  public static int getTextBoxRgb(final int textbox) {
+    final int[] rgbArray = {
+      readInt("textbox_colour" + textbox + "_r", 0, 0, 255),
+      readInt("textbox_colour" + textbox + "_g", 0, 0, 255),
+      readInt("textbox_colour" + textbox + "_b", 0, 0, 255),
+      0x00,
+    };
+
+    return (
+      (0xff & rgbArray[3]) << 24 |
+        (0xff & rgbArray[2]) << 16 |
+        (0xff & rgbArray[1]) << 8  |
+        0xff & rgbArray[0]
+    );
+  }
+
+  public static void setTextBoxRgb(final int textbox, final int rgb) {
+    final int[] rgbArray = {
+      ((rgb >> 24) & 0xff),
+      ((rgb >> 16) & 0xff),
+      ((rgb >> 8) & 0xff),
+      (rgb & 0xff)
+    };
+
+    properties.setProperty("textbox_colour" + textbox + "_r", String.valueOf(rgbArray[3]));
+    properties.setProperty("textbox_colour" + textbox + "_g", String.valueOf(rgbArray[2]));
+    properties.setProperty("textbox_colour" + textbox + "_b", String.valueOf(rgbArray[1]));
+  }
+
+  public static int getTextBoxTransparencyMode() {
+    return readInt("textbox_transparency_mode", 0, 0, 10);
+  }
+
+  public static void setTextBoxTransparencyMode(final int value) {
+    properties.setProperty("textbox_transparency_mode", String.valueOf(value));
+  }
+
   private static int readInt(final String key, final int defaultVal, final int min, final int max) {
     int val;
     try {
       val = Integer.parseInt(properties.getProperty(key, String.valueOf(defaultVal)));
-    } catch(final NumberFormatException e) {
-      val = defaultVal;
-    }
-
-    return legend.core.MathHelper.clamp(val, min, max);
-  }
-
-  private static float readFloat(final String key, final float defaultVal, final float min, final float max) {
-    float val;
-    try {
-      val = Float.parseFloat(properties.getProperty(key, String.valueOf(defaultVal)));
     } catch(final NumberFormatException e) {
       val = defaultVal;
     }
@@ -172,5 +296,32 @@ public final class Config {
 
   public static void save() throws IOException {
     properties.store(Files.newOutputStream(path, StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING), "");
+  }
+
+  private static class SortedStoreProperties extends Properties {
+    @Override
+    public void store(final OutputStream out, final String comments) throws IOException {
+      final Properties sortedProps = new Properties() {
+        @Override
+        public Set<Map.Entry<Object, Object>> entrySet() {
+          final Set<Map.Entry<Object, Object>> sortedSet = new TreeSet<>(Comparator.comparing(o -> o.getKey().toString()));
+          sortedSet.addAll(super.entrySet());
+          return sortedSet;
+        }
+
+        @Override
+        public Set<Object> keySet() {
+          return new TreeSet<>(super.keySet());
+        }
+
+        @Override
+        public synchronized Enumeration<Object> keys() {
+          return Collections.enumeration(new TreeSet<>(super.keySet()));
+        }
+      };
+
+      sortedProps.putAll(this);
+      sortedProps.store(out, comments);
+    }
   }
 }

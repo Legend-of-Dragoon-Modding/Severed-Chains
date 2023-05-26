@@ -21,22 +21,33 @@ import java.util.function.Consumer;
 public class EventManager {
   private static final Logger LOGGER = LogManager.getFormatterLogger(EventManager.class);
 
-  public static final EventManager INSTANCE = new EventManager();
-
   private final Map<Consumer<Event>, Class<?>> listeners = new HashMap<>();
   private final Set<Consumer<Event>> staleListeners = Collections.synchronizedSet(new HashSet<>());
 
-  private EventManager() {
-    LOGGER.info("Scanning for event consumers...");
+  public EventManager(final Consumer<Access> access) {
+    access.accept(new Access());
+  }
 
-    final ConfigurationBuilder config = new ConfigurationBuilder()
-      .addClassLoaders(this.getClass().getClassLoader())
-      .addUrls(ClasspathHelper.forPackage("legend"));
-    final Reflections reflections = new Reflections(GameEngine.MODS.addModsToReflectionsConfig(config));
-    final Set<Class<?>> listeners = reflections.getTypesAnnotatedWith(EventListener.class);
+  public class Access {
+    private Access() { }
 
-    for(final Class<?> listener : listeners) {
-      this.register(listener, null);
+    public void initialize() {
+      LOGGER.info("Scanning for event consumers...");
+
+      final ConfigurationBuilder config = new ConfigurationBuilder()
+        .addClassLoaders(this.getClass().getClassLoader())
+        .addUrls(ClasspathHelper.forPackage("legend"));
+      final Reflections reflections = new Reflections(GameEngine.MODS.addModsToReflectionsConfig(config));
+      final Set<Class<?>> listeners = reflections.getTypesAnnotatedWith(EventListener.class);
+
+      for(final Class<?> listener : listeners) {
+        EventManager.this.register(listener, null);
+      }
+    }
+
+    public void reset() {
+      EventManager.this.listeners.clear();
+      EventManager.this.staleListeners.clear();
     }
   }
 
@@ -62,7 +73,7 @@ public class EventManager {
           this.listeners.put(event -> {
             try {
               method.invoke(null, event);
-            } catch(IllegalAccessException | InvocationTargetException e) {
+            } catch(final IllegalAccessException | InvocationTargetException e) {
               LOGGER.error("Failed to deliver event", e);
             }
           }, method.getParameters()[0].getType());
@@ -76,7 +87,7 @@ public class EventManager {
               } else {
                 try {
                   method.invoke(ref.get(), event);
-                } catch(IllegalAccessException | InvocationTargetException e) {
+                } catch(final IllegalAccessException | InvocationTargetException e) {
                   LOGGER.error("Failed to deliver event", e);
                 }
               }

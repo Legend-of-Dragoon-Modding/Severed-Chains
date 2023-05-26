@@ -1,12 +1,17 @@
 package legend.core;
 
 import legend.core.gpu.RECT;
+import legend.core.gte.BVEC4;
 import legend.core.gte.SVECTOR;
+import legend.core.gte.USCOLOUR;
 import legend.core.memory.Value;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SeekableByteChannel;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -15,6 +20,12 @@ import static org.lwjgl.system.MemoryUtil.memSlice;
 
 public final class IoHelper {
   private IoHelper() { }
+
+  private static final Logger LOGGER = LogManager.getFormatterLogger();
+
+  public static boolean getPackedFlag(final int[] array, final int packed) {
+    return (array[packed >>> 5] & 0x1 << (packed & 0x1f)) != 0;
+  }
 
   /**
    * Reads the specified resource and returns the raw data as a ByteBuffer.
@@ -34,6 +45,50 @@ public final class IoHelper {
 
     buffer.flip();
     return memSlice(buffer);
+  }
+
+  /** ASCII bytes of a string prefixed with lengthSize-byte length header */
+  public static byte[] stringToBytes(final String string, final int lengthSize) {
+    final byte[] bytes = string.getBytes(StandardCharsets.US_ASCII);
+    final byte[] data = new byte[lengthSize + bytes.length];
+    MathHelper.set(data, 0, lengthSize, bytes.length);
+    System.arraycopy(bytes, 0, data, lengthSize, bytes.length);
+    return data;
+  }
+
+  /** String from ASCII bytes prefixed with lengthSize-byte length header */
+  public static String stringFromBytes(final byte[] bytes, final int lengthSize) {
+    final int length = (int)MathHelper.get(bytes, 0, lengthSize);
+    return new String(bytes, lengthSize, length, StandardCharsets.US_ASCII);
+  }
+
+  /** String from ASCII bytes prefixed with lengthSize-byte length header, default value if error occurs */
+  public static String stringFromBytes(final byte[] bytes, final int lengthSize, final String defaultValue) {
+    try {
+      final int length = (int)MathHelper.get(bytes, 0, lengthSize);
+      return new String(bytes, lengthSize, length, StandardCharsets.US_ASCII);
+    } catch(final Throwable ignored) { }
+
+    return defaultValue;
+  }
+
+  /** ASCII bytes of an enum name() prefixed with 1-byte length header */
+  public static byte[] enumToBytes(final Enum<?> inst) {
+    return stringToBytes(inst.name(), 1);
+  }
+
+  /** Enum from ASCII bytes name() prefixed with 1-byte length header */
+  public static <T extends Enum<T>> T enumFromBytes(final Class<T> cls, final byte[] bytes) {
+    return Enum.valueOf(cls, stringFromBytes(bytes, 1));
+  }
+
+  /** Enum from ASCII bytes name() prefixed with 1-byte length header, default value if error occurs */
+  public static <T extends Enum<T>> T enumFromBytes(final Class<T> cls, final byte[] bytes, final T defaultValue) {
+    try {
+      return enumFromBytes(cls, bytes);
+    } catch(final Throwable ignored) { }
+
+    return defaultValue;
   }
 
   public static void write(final ByteBuffer stream, final boolean value) {
@@ -86,24 +141,52 @@ public final class IoHelper {
     return stream.get() != 0;
   }
 
-  public static <T extends Enum<T>> T readEnum(final ByteBuffer stream, final Class<T> cls) {
-    return cls.getEnumConstants()[stream.get()];
+  public static int readUByte(final ByteBuffer stream) {
+    return stream.get() & 0xff;
+  }
+
+  public static int readUByte(final byte[] data, final int offset) {
+    return data[offset] & 0xff;
   }
 
   public static byte readByte(final ByteBuffer stream) {
     return stream.get();
   }
 
+  public static byte readByte(final byte[] data, final int offset) {
+    return data[offset];
+  }
+
+  public static int readUShort(final ByteBuffer stream) {
+    return stream.getShort() & 0xffff;
+  }
+
+  public static int readUShort(final byte[] data, final int offset) {
+    return (int)MathHelper.get(data, offset, 2);
+  }
+
   public static short readShort(final ByteBuffer stream) {
     return stream.getShort();
+  }
+
+  public static short readShort(final byte[] data, final int offset) {
+    return (short)MathHelper.get(data, offset, 2);
   }
 
   public static int readInt(final ByteBuffer stream) {
     return stream.getInt();
   }
 
-  public static long readLong(final ByteBuffer stream) {
+  public static int readInt(final byte[] data, final int offset) {
+    return (int)MathHelper.get(data, offset, 4);
+  }
+
+  public static long readUInt(final ByteBuffer stream) {
     return readInt(stream) & 0xffff_ffffL;
+  }
+
+  public static long readUInt(final byte[] data, final int offset) {
+    return MathHelper.get(data, offset, 4);
   }
 
   public static double readDouble(final ByteBuffer stream) {
@@ -120,12 +203,35 @@ public final class IoHelper {
     return new String(data);
   }
 
-  public static void readRect(final ByteBuffer stream, final RECT rect) {
-    rect.set(readShort(stream), readShort(stream), readShort(stream), readShort(stream));
+  public static RECT readRect(final ByteBuffer stream, final RECT rect) {
+    return rect.set(readShort(stream), readShort(stream), readShort(stream), readShort(stream));
   }
 
-  /** NOTE: DOES NOT READ PADDING */
-  public static void readSvec(final ByteBuffer stream, final SVECTOR svec) {
-    svec.set(readShort(stream), readShort(stream), readShort(stream));
+  public static RECT readRect(final byte[] data, final int offset, final RECT rect) {
+    return rect.set(readShort(data, offset), readShort(data, offset), readShort(data, offset), readShort(data, offset));
+  }
+
+  public static BVEC4 readBvec3(final ByteBuffer stream, final BVEC4 bvec) {
+    return bvec.set(readByte(stream), readByte(stream), readByte(stream));
+  }
+
+  public static BVEC4 readBvec3(final byte[] data, final int offset, final BVEC4 bvec) {
+    return bvec.set(readByte(data, offset), readByte(data, offset), readByte(data, offset));
+  }
+
+  public static SVECTOR readSvec3(final ByteBuffer stream, final SVECTOR svec) {
+    return svec.set(readShort(stream), readShort(stream), readShort(stream));
+  }
+
+  public static SVECTOR readSvec3(final byte[] data, final int offset, final SVECTOR svec) {
+    return svec.set(readShort(data, offset), readShort(data, offset), readShort(data, offset));
+  }
+
+  public static USCOLOUR readColour(final ByteBuffer stream, final USCOLOUR colour) {
+    return colour.set(readUShort(stream), readUShort(stream), readUShort(stream));
+  }
+
+  public static USCOLOUR readColour(final byte[] data, final int offset, final USCOLOUR colour) {
+    return colour.set(readUShort(data, offset), readUShort(data, offset), readUShort(data, offset));
   }
 }

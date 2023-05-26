@@ -13,6 +13,15 @@ public class MenuGlyph06 implements MemoryRef {
   public final ShortRef x_02;
   public final ShortRef y_04;
 
+  public MenuGlyph06(final int glyph, final int x, final int y) {
+    this.ref = null;
+
+    this.glyph_00 = new UnsignedByteRef().set(glyph);
+
+    this.x_02 = new ShortRef().set((short)x);
+    this.y_04 = new ShortRef().set((short)y);
+  }
+
   public MenuGlyph06(final Value ref) {
     this.ref = ref;
 

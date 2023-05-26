@@ -1,6 +1,5 @@
 package legend.game.scripting;
 
-import legend.game.modding.events.EventManager;
 import legend.game.modding.events.scripting.ScriptAllocatedEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -9,6 +8,7 @@ import org.apache.logging.log4j.MarkerManager;
 
 import javax.annotation.Nullable;
 
+import static legend.core.GameEngine.EVENTS;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 
 public class ScriptManager {
@@ -83,18 +83,18 @@ public class ScriptManager {
     throw new RuntimeException("Ran out of script states");
   }
 
-  public <T> ScriptState<T> allocateScriptState(@Nullable final T type) {
-    return this.allocateScriptState(this.findFreeScriptState(), null, 0, type);
+  public <T> ScriptState<T> allocateScriptState(final String name, @Nullable final T type) {
+    return this.allocateScriptState(this.findFreeScriptState(), name, 0, type);
   }
 
-  public <T> ScriptState<T> allocateScriptState(final int index, @Nullable final String typeName, final int a4, @Nullable final T type) {
-    LOGGER.info(SCRIPT_MARKER, "Allocating script index %d (%s)", index, type != null ? type.getClass().getSimpleName() : "empty");
+  public <T> ScriptState<T> allocateScriptState(final int index, final String name, final int a4, @Nullable final T type) {
+    LOGGER.info(SCRIPT_MARKER, "Allocating script index %d (%s)", index, name);
 
-    final ScriptState<T> scriptState = new ScriptState<>(this, index, type);
+    final ScriptState<T> scriptState = new ScriptState<>(this, index, name, type);
     scriptStatePtrArr_800bc1c0[index] = scriptState;
 
     //LAB_800159c0
-    for(int i = 1; i < 25; i++) {
+    for(int i = 1; i < 33; i++) {
       scriptState.storage_44[i] = -1;
     }
 
@@ -103,10 +103,9 @@ public class ScriptManager {
 
     //LAB_800159f8
     //LAB_80015a14
-    scriptState.type_f8 = typeName;
     scriptState.ui_fc = a4;
 
-    EventManager.INSTANCE.postEvent(new ScriptAllocatedEvent(index));
+    EVENTS.postEvent(new ScriptAllocatedEvent(index));
 
     //LAB_80015a34
     return scriptState;
