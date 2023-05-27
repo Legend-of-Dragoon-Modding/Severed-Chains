@@ -129,12 +129,12 @@ public class SBtld {
         }
 
         //LAB_801092dc
-        final long activeDragoonAdditionIndex;
+        final int activeDragoonAdditionIndex;
         if(charIndex != 0 || (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 == 0) {
           //LAB_80109308
-          activeDragoonAdditionIndex = _801134e8.offset(charIndex * 0x2L).getSigned();
+          activeDragoonAdditionIndex = (int)_801134e8.offset(charIndex * 0x2L).getSigned();
         } else {
-          activeDragoonAdditionIndex = _801134e8.offset(0x12L).getSigned();
+          activeDragoonAdditionIndex = (int)_801134e8.offset(0x12L).getSigned();
         }
 
         //LAB_80109310
@@ -146,7 +146,7 @@ public class SBtld {
           EVENTS.postEvent(new BattleMapActiveAdditionHitPropertiesEvent(activeAdditionHits, activeAdditionIndex, charIndex, charSlot, false));
 
           battleMapSelectedAdditionHitProperties_80109454(_8010e658.offset(activeDragoonAdditionIndex * 0x80L).getAddress(), activeDragoonAdditionHits);
-          EVENTS.postEvent(new BattleMapActiveAdditionHitPropertiesEvent(activeAdditionHits, activeAdditionIndex, charIndex, charSlot, true));
+          EVENTS.postEvent(new BattleMapActiveAdditionHitPropertiesEvent(activeAdditionHits, activeDragoonAdditionIndex, charIndex, charSlot, true));
         }
       }
 
