@@ -44,6 +44,8 @@ import legend.game.types.SubmapMusic08;
 import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.joml.Matrix4f;
 
 import javax.annotation.Nullable;
@@ -75,6 +77,7 @@ public final class Scus94491BpeSegment_8004 {
   private Scus94491BpeSegment_8004() { }
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(Scus94491BpeSegment_8004.class);
+  private static final Marker SEQUENCER_MARKER = MarkerManager.getMarker("SEQUENCER");
 
   public static final UnboundedArrayRef<FileEntry08> overlays_8004db88 = MEMORY.ref(2, 0x8004db88L, UnboundedArrayRef.of(0x8, FileEntry08::new));
 
@@ -294,7 +297,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[225] = Scus94491BpeSegment::FUN_8001e918;
     scriptSubFunctions_8004e29c[226] = Scus94491BpeSegment::FUN_8001e920;
     scriptSubFunctions_8004e29c[227] = Scus94491BpeSegment::FUN_8001eb30;
-    scriptSubFunctions_8004e29c[228] = Scus94491BpeSegment::FUN_8001eccc;
+    scriptSubFunctions_8004e29c[228] = Scus94491BpeSegment::scriptLoadBattleCutsceneSounds;
     scriptSubFunctions_8004e29c[229] = Scus94491BpeSegment::scriptLoadMonsterAttackSounds;
     scriptSubFunctions_8004e29c[230] = Scus94491BpeSegment::scriptLoadMusicPackage;
     scriptSubFunctions_8004e29c[231] = Scus94491BpeSegment::FUN_8001fe28;
@@ -1215,7 +1218,7 @@ public final class Scus94491BpeSegment_8004 {
     if(playingNote.isPolyphonicKeyPressure_1a) {
       final Sshd sshd = sequenceData.playableSound_020.sshdPtr_04;
       sshdPtr_800c4ac0 = sshd;
-      sssqChannelInfo_800C6680 = sshd.getSubfile(4, Sssq::new).channelInfo_10[playingNote.sequenceChannel_04];
+      sssqChannelInfo_800C6680 = sshd.getSubfile(4, (data, offset) -> new Sssqish(data, offset, sshd.getSubfileSize(4))).entries_10[playingNote.sequenceChannel_04];
     } else {
       //LAB_8004adf4
       sssqChannelInfo_800C6680 = sequenceData.sssqReader_010.channelInfo(playingNote.sequenceChannel_04);
@@ -1748,7 +1751,8 @@ public final class Scus94491BpeSegment_8004 {
     sshdPtr_800c4ac0 = sshd;
 
     if(sequenceData.musicLoaded_027) {
-      if(sshd.hasSubfile(0)) {
+      // Retail NPE when transitioning from combat into post-combat scene (happens after Kongol I and Divine Dragon)
+      if(sshd != null && sshd.hasSubfile(0)) {
         if(playableSound.used_00) {
           boolean stopNotes = false;
 

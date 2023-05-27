@@ -27,7 +27,7 @@ public final class Scus94491BpeSegment_8005 {
   public static final ArrayRef<IntRef> monsterSoundFileIndices_800500e8 = MEMORY.ref(4, 0x800500e8L, ArrayRef.of(IntRef.class, 4, 4, IntRef::new));
   public static final ArrayRef<IntRef> characterSoundFileIndices_800500f8 = MEMORY.ref(4, 0x800500f8L, ArrayRef.of(IntRef.class, 3, 4, IntRef::new));
 
-  public static final Value _80050190 = MEMORY.ref(4, 0x80050190L);
+  public static final ArrayRef<IntRef> charSlotSpuOffsets_80050190 = MEMORY.ref(4, 0x80050190L, ArrayRef.of(IntRef.class, 3, 4, IntRef::new));
 
   public static final ArrayRef<UnsignedByteRef> combatSoundEffectsTypes_8005019c = MEMORY.ref(1, 0x8005019cL, ArrayRef.of(UnsignedByteRef.class, 32, 1, UnsignedByteRef::new));
   public static final ArrayRef<UnsignedIntRef> combatMusicFileIndices_800501bc = MEMORY.ref(4, 0x800501bcL, ArrayRef.of(UnsignedIntRef.class, 32, 4, UnsignedIntRef::new));

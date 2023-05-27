@@ -13,6 +13,7 @@
         <MarkerFilter marker="CONTROLLER_VERBOSE" onMatch="DENY" onMismatch="NEUTRAL" />
         <MarkerFilter marker="CAMERA" onMatch="DENY" onMismatch="NEUTRAL"/>
         <MarkerFilter marker="SPU" onMatch="DENY" onMismatch="NEUTRAL"/>
+        <MarkerFilter marker="SEQUENCER" onMatch="DENY" onMismatch="NEUTRAL"/>
       </Filters>
     </Console>
     <File name="file" fileName="debug.log" immediateFlush="false" append="false">
@@ -27,6 +28,7 @@
         <MarkerFilter marker="CONTROLLER_VERBOSE" onMatch="DENY" onMismatch="NEUTRAL" />
         <MarkerFilter marker="CAMERA" onMatch="DENY" onMismatch="NEUTRAL"/>
         <MarkerFilter marker="SPU" onMatch="DENY" onMismatch="NEUTRAL"/>
+        <MarkerFilter marker="SEQUENCER" onMatch="DENY" onMismatch="NEUTRAL"/>
       </Filters>
     </File>
   </Appenders>

@@ -764,11 +764,15 @@ public class Sequencer {
     final int instrumentIndex = sequenceData.sssqReader_010.channelInfo(channel).instrumentIndex_02;
 
     if(command < 0xa0) {
-      if(instruments_800c4aa8.instruments_02[instrumentIndex] == null) {
+      if(instrumentIndex < 0) {
         return false;
       }
 
       if(instrumentIndex > instruments_800c4aa8.count_00) {
+        return false;
+      }
+
+      if(instruments_800c4aa8.instruments_02[instrumentIndex] == null) {
         return false;
       }
 
