@@ -35,6 +35,8 @@ import legend.game.modding.coremod.elements.WindElement;
 import legend.game.modding.events.EventListener;
 import legend.game.modding.events.battle.RegisterBattleObjectStatsEvent;
 import legend.game.modding.events.config.ConfigLoadedEvent;
+import legend.game.modding.events.inventory.ShopItemEvent;
+import legend.game.modding.events.inventory.ShopSellPriceEvent;
 import legend.game.modding.registries.Registrar;
 import legend.game.modding.registries.RegistryDelegate;
 import legend.game.modding.registries.RegistryId;
@@ -180,5 +182,15 @@ public class CoreMod {
     if(event.storageLocation == ConfigStorageLocation.GLOBAL) {
       GPU.rescale(CONFIG.getConfig(RENDER_SCALE_CONFIG.get()));
     }
+  }
+
+  @EventListener
+  public static void testShopPrice(final ShopItemEvent event) {
+    event.price *= 10;
+  }
+
+  @EventListener
+  public static void testShopShell(final ShopSellPriceEvent event) {
+    event.price = 5;
   }
 }

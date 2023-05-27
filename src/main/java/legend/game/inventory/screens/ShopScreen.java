@@ -5,6 +5,7 @@ import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.inventory.ShopItemEvent;
+import legend.game.modding.events.inventory.ShopSellPriceEvent;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.LodString;
 import legend.game.types.MenuItemStruct04;
@@ -141,15 +142,15 @@ public class ShopScreen extends MenuScreen {
 
         for(int i = 0; i < 16; i++) {
           final int menuItemIndex = this.itemCount;
-          final ShopItemEvent event = EVENTS.postEvent(new ShopItemEvent(shopId_8007a3b4.get(), this.itemCount, shops_800f4930.get(shopId_8007a3b4.get()).item_00.get(this.itemCount).id_01.get()));
-          shops_800f4930.get(shopId_8007a3b4.get()).item_00.get(menuItemIndex).id_01.set(event.itemId);
-
           final int itemId = shops_800f4930.get(shopId_8007a3b4.get()).item_00.get(menuItemIndex).id_01.get();
 
           if(itemId != 0xff) {
             final MenuItemStruct04 menuItem = this.menuItems[menuItemIndex];
-            menuItem.itemId_00 = itemId;
-            menuItem.flags_02 = itemPrices_80114310.get(itemId).get() * 2;
+
+            final ShopItemEvent event = EVENTS.postEvent(new ShopItemEvent(shopId_8007a3b4.get(), menuItemIndex, shops_800f4930.get(shopId_8007a3b4.get()).item_00.get(this.itemCount).id_01.get(), itemPrices_80114310.get(itemId).get() * 2));
+
+            menuItem.itemId_00 = event.itemId;
+            menuItem.flags_02 = event.price;
             this.itemCount++;
           } else {
             final MenuItemStruct04 menuItem = this.menuItems[i];
@@ -394,7 +395,9 @@ public class ShopScreen extends MenuScreen {
         final int itemId = gameState_800babc8.items_2e9.getInt(firstItem + i);
         renderItemIcon(getItemIcon(itemId), 151, FUN_8010a808(i), 0x8L);
         renderText(new LodString(getItemName(itemId)), 168, FUN_8010a808(i) + 2, !itemCantBeDiscarded(itemId) ? TextColour.BROWN : TextColour.MIDDLE_BROWN);
-        this.FUN_801069d0(324, FUN_8010a808(i) + 4, itemPrices_80114310.get(itemId).get());
+
+        final ShopSellPriceEvent event = EVENTS.postEvent(new ShopSellPriceEvent(shopId_8007a3b4.get(), itemId, itemPrices_80114310.get(itemId).get()));
+        this.FUN_801069d0(324, FUN_8010a808(i) + 4, event.price);
       }
 
       if(firstItem + 6 > gameState_800babc8.items_2e9.size() - 1) {
@@ -412,7 +415,8 @@ public class ShopScreen extends MenuScreen {
         if(itemCantBeDiscarded(itemId)) {
           renderItemIcon(58, 330, FUN_8010a808(i), 0x8L).clut_30 = 0x7eaa;
         } else {
-          renderFiveDigitNumber(322, FUN_8010a808(i) + 4, itemPrices_80114310.get(itemId).get());
+          final ShopSellPriceEvent event = EVENTS.postEvent(new ShopSellPriceEvent(shopId_8007a3b4.get(), itemId, itemPrices_80114310.get(itemId).get()));
+          renderFiveDigitNumber(322, FUN_8010a808(i) + 4, event.price);
         }
       }
 
@@ -672,7 +676,8 @@ public class ShopScreen extends MenuScreen {
                 }
 
                 if(v0 == 0) {
-                  addGold(itemPrices_80114310.get(itemId).get());
+                  final ShopSellPriceEvent event = EVENTS.postEvent(new ShopSellPriceEvent(shopId_8007a3b4.get(), itemId, itemPrices_80114310.get(itemId).get()));
+                  addGold(event.price);
 
                   if(this.menuScroll_8011e0e4 > 0 && this.menuScroll_8011e0e4 + 6 > count - 1) {
                     this.menuScroll_8011e0e4--;
@@ -965,7 +970,8 @@ public class ShopScreen extends MenuScreen {
           }
 
           if(v0 == 0) {
-            addGold(itemPrices_80114310.get(itemId).get());
+            final ShopSellPriceEvent event = EVENTS.postEvent(new ShopSellPriceEvent(shopId_8007a3b4.get(), itemId, itemPrices_80114310.get(itemId).get()));
+            addGold(event.price);
 
             if(this.menuScroll_8011e0e4 > 0 && this.menuScroll_8011e0e4 + 6 > count) {
               this.menuScroll_8011e0e4--;
