@@ -1,6 +1,6 @@
 package legend.game.combat.types.BattleStructEF4;
 
-import legend.game.combat.AutoAdditionMode;
+import legend.game.combat.AdditionMode;
 import legend.game.combat.bobj.BattleObject27c;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.scripting.ScriptState;
@@ -28,7 +28,7 @@ public class AdditionExtra04 {
   public int pack() {
     int ultimateWargod = 0;
     // This is a cheap way to tell if we're in a combat engine cutscene and turn it off
-    if(CONFIG.getConfig(CoreMod.AUTO_ADDITION_CONFIG.get()) == AutoAdditionMode.ON) {
+    if(CONFIG.getConfig(CoreMod.ADDITION_MODE_CONFIG.get()) == AdditionMode.AUTOMATIC) {
       final ScriptState<? extends BattleObject27c> combatant = _8006e398.bobjIndices_e0c[this.index];
 
       if(combatant != null && (combatant.storage_44[7] & 0x4) == 0) {
