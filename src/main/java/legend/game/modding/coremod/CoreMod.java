@@ -12,7 +12,7 @@ import legend.game.combat.bobj.BattleObjectTypeRegistryEvent;
 import legend.game.input.InputAction;
 import legend.game.modding.Mod;
 import legend.game.modding.coremod.config.AdditionOverlayConfigEntry;
-import legend.game.modding.coremod.config.AutoAdditionConfigEntry;
+import legend.game.modding.coremod.config.AdditionModeConfigEntry;
 import legend.game.modding.coremod.config.ControllerConfigEntry;
 import legend.game.modding.coremod.config.ControllerDeadzoneConfigEntry;
 import legend.game.modding.coremod.config.ControllerKeybindConfigEntry;
@@ -130,7 +130,7 @@ public class CoreMod {
   public static final RegistryDelegate<IndicatorModeConfigEntry> INDICATOR_MODE_CONFIG = CONFIG_REGISTRAR.register("indicator_mode", IndicatorModeConfigEntry::new);
   public static final RegistryDelegate<InventorySizeConfigEntry> INVENTORY_SIZE_CONFIG = CONFIG_REGISTRAR.register("inventory_size", InventorySizeConfigEntry::new);
   public static final RegistryDelegate<EncounterRateConfigEntry> ENCOUNTER_RATE_CONFIG = CONFIG_REGISTRAR.register("encounter_rate", EncounterRateConfigEntry::new);
-  public static final RegistryDelegate<AutoAdditionConfigEntry> AUTO_ADDITION_CONFIG = CONFIG_REGISTRAR.register("auto_addition", AutoAdditionConfigEntry::new);
+  public static final RegistryDelegate<AdditionModeConfigEntry> ADDITION_MODE_CONFIG = CONFIG_REGISTRAR.register("addition_mode", AdditionModeConfigEntry::new);
   public static final RegistryDelegate<BoolConfigEntry> AUTO_DRAGOON_ADDITION_CONFIG = CONFIG_REGISTRAR.register("auto_dragoon_addition", () -> new BoolConfigEntry(false, ConfigStorageLocation.CAMPAIGN));
   public static final RegistryDelegate<AdditionOverlayConfigEntry> ADDITION_OVERLAY_CONFIG = CONFIG_REGISTRAR.register("addition_overlay_mode", AdditionOverlayConfigEntry::new);
   public static final RegistryDelegate<TransformationModeConfigEntry> TRANSFORMATION_MODE_CONFIG = CONFIG_REGISTRAR.register("transformation_mode", TransformationModeConfigEntry::new);
