@@ -29,6 +29,7 @@ import legend.game.combat.ui.FloatingNumberC4;
 import legend.game.combat.ui.FloatingNumberC4Sub20;
 import legend.game.inventory.screens.TextColour;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.events.battle.BattleDescriptionEvent;
 import legend.game.modding.events.battle.SpellStatsEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
@@ -3052,7 +3053,8 @@ public final class Bttl_800f {
       str = allText_800fb3c0.get(textType).deref().get(textIndex).deref();
     }
 
-    Scus94491BpeSegment_8002.renderText(str, x - textWidth(str) / 2, y - 6, TextColour.WHITE, 0);
+    final BattleDescriptionEvent event = EVENTS.postEvent(new BattleDescriptionEvent(textType, textIndex, str));
+    Scus94491BpeSegment_8002.renderText(event.string, x - textWidth(event.string) / 2, y - 6, TextColour.WHITE, 0);
   }
 
   @Method(0x800f8b74L)
