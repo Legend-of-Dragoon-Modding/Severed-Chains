@@ -32,7 +32,7 @@ import legend.game.combat.effects.EffectManagerData6c;
 import legend.game.combat.effects.EffectManagerData6cInner;
 import legend.game.combat.effects.GuardEffect06;
 import legend.game.combat.effects.MonsterDeathEffect34;
-import legend.game.combat.effects.PotionEffect14;
+import legend.game.combat.effects.RadialGradientEffect14;
 import legend.game.combat.effects.ProjectileHitEffect14;
 import legend.game.combat.effects.ProjectileHitEffect14Sub48;
 import legend.game.combat.environment.BattleCamera;
@@ -153,7 +153,7 @@ import static legend.game.combat.Bttl_800c.camera_800c67f0;
 import static legend.game.combat.Bttl_800c.charWidthAdjustTable_800fa7cc;
 import static legend.game.combat.Bttl_800c.currentAddition_800c6790;
 import static legend.game.combat.Bttl_800c.deffManager_800c693c;
-import static legend.game.combat.Bttl_800c.effectRenderers_800fa758;
+import static legend.game.combat.Bttl_800c.radialGradientEffectRenderers_800fa758;
 import static legend.game.combat.Bttl_800c.screenOffsetX_800c67bc;
 import static legend.game.combat.Bttl_800c.screenOffsetY_800c67c0;
 import static legend.game.combat.Bttl_800c.scriptGetScriptedObjectPos;
@@ -636,8 +636,9 @@ public final class Bttl_800d {
     return FlowControl.CONTINUE;
   }
 
+  /** Renders things like the two-tone disc at the start of Detonating Arrow */
   @Method(0x800d1d3cL)
-  public static void FUN_800d1d3c(final EffectManagerData6c manager, final int angle, final short[] vertices, final PotionEffect14 effect, final Translucency translucency) {
+  public static void renderDiscGradientEffect(final EffectManagerData6c manager, final int angle, final short[] vertices, final RadialGradientEffect14 effect, final Translucency translucency) {
     if(manager._10.flags_00 >= 0) {
       GPU.queueCommand(effect.z_04.get() + manager._10.z_22 >> 2, new GpuCommandPoly(3)
         .translucent(translucency)
@@ -653,8 +654,9 @@ public final class Bttl_800d {
     //LAB_800d1e70
   }
 
+  /** Renders things like the ring effect when using a healing potion */
   @Method(0x800d21b8L)
-  public static void FUN_800d21b8(final EffectManagerData6c manager, final int angle, final short[] vertices, final PotionEffect14 effect, final Translucency translucency) {
+  public static void renderRingGradientEffect(final EffectManagerData6c manager, final int angle, final short[] vertices, final RadialGradientEffect14 effect, final Translucency translucency) {
     if(manager._10.flags_00 >= 0) {
       final VECTOR sp0x20 = new VECTOR().set(
         rcos(angle) * (manager._10.scale_16.getX() / effect._01.get() + manager._10._28) >> 12,
@@ -693,8 +695,8 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d247cL)
-  public static void renderPotionEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
-    final PotionEffect14 effect = (PotionEffect14)manager.effect_44;
+  public static void renderRadialGradientEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+    final RadialGradientEffect14 effect = (RadialGradientEffect14)manager.effect_44;
     effect.angleStep_08.set(0x1000 / (0x4 << effect._00.get()));
 
     final ShortRef sp0x48 = new ShortRef();
@@ -742,18 +744,18 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d2734L)
-  public static FlowControl allocatePotionEffect(final RunningScript<? extends BattleScriptDataBase> script) {
+  public static FlowControl allocateRadialGradientEffect(final RunningScript<? extends BattleScriptDataBase> script) {
     final int s2 = script.params_20[1].get();
     final int s1 = script.params_20[2].get();
 
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
-      "PotionEffect14",
+      "RadialGradientEffect14",
       script.scriptState_04,
       0x14,
       null,
-      Bttl_800d::renderPotionEffect,
+      Bttl_800d::renderRadialGradientEffect,
       null,
-      PotionEffect14::new
+      RadialGradientEffect14::new
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
@@ -761,10 +763,10 @@ public final class Bttl_800d {
     //LAB_800d27b4
     manager._10.scale_16.set((short)0x1000, (short)0x1000, (short)0x1000);
 
-    final PotionEffect14 effect = (PotionEffect14)manager.effect_44;
+    final RadialGradientEffect14 effect = (RadialGradientEffect14)manager.effect_44;
     effect._00.set(s2);
-    effect._01.set(s1 - 3 > 1 ? 4 : 1);
-    effect.renderer_10.set(effectRenderers_800fa758.get(s1).deref());
+    effect._01.set((s1 - 3 & 0xffff_ffffL) >= 2 ? 4 : 1);
+    effect.renderer_10.set(radialGradientEffectRenderers_800fa758.get(s1).deref());
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }

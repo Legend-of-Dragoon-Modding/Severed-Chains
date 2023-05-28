@@ -673,7 +673,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[760] = SEffe::FUN_80108df0;
     scriptSubFunctions_8004e29c[761] = Bttl_800d::allocateGuardEffect;
     scriptSubFunctions_8004e29c[762] = Bttl_800c::allocateWeaponTrailEffect;
-    scriptSubFunctions_8004e29c[763] = Bttl_800d::allocatePotionEffect;
+    scriptSubFunctions_8004e29c[763] = Bttl_800d::allocateRadialGradientEffect;
     scriptSubFunctions_8004e29c[764] = Bttl_800d::scriptAllocateAdditionScript;
     scriptSubFunctions_8004e29c[765] = Bttl_800c::FUN_800cfccc;
     scriptSubFunctions_8004e29c[766] = Bttl_800d::FUN_800d4338;

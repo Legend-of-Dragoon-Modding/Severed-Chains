@@ -8,7 +8,7 @@ import legend.core.memory.types.QuintConsumerRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.game.types.Translucency;
 
-public class PotionEffect14 implements BttlScriptData6cSubBase1, MemoryRef {
+public class RadialGradientEffect14 implements BttlScriptData6cSubBase1, MemoryRef {
   private final Value ref;
 
   public final UnsignedByteRef _00;
@@ -20,9 +20,9 @@ public class PotionEffect14 implements BttlScriptData6cSubBase1, MemoryRef {
   public final UnsignedByteRef _0d;
   public final UnsignedByteRef _0e;
 
-  public final Pointer<QuintConsumerRef<EffectManagerData6c, Integer, short[], PotionEffect14, Translucency>> renderer_10;
+  public final Pointer<QuintConsumerRef<EffectManagerData6c, Integer, short[], RadialGradientEffect14, Translucency>> renderer_10;
 
-  public PotionEffect14(final Value ref) {
+  public RadialGradientEffect14(final Value ref) {
     this.ref = ref;
 
     this._00 = ref.offset(1, 0x00L).cast(UnsignedByteRef::new);
