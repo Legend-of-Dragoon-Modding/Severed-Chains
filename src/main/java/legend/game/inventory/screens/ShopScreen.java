@@ -144,11 +144,10 @@ public class ShopScreen extends MenuScreen {
           final int menuItemIndex = this.itemCount;
           final int itemId = shops_800f4930.get(shopId_8007a3b4.get()).item_00.get(menuItemIndex).id_01.get();
 
-          if(itemId != 0xff) {
+          final ShopItemEvent event = EVENTS.postEvent(new ShopItemEvent(shopId_8007a3b4.get(), menuItemIndex, itemId, itemId == 0xff ? 0 : itemPrices_80114310.get(itemId).get() * 2));
+
+          if(event.itemId != 0xff) {
             final MenuItemStruct04 menuItem = this.menuItems[menuItemIndex];
-
-            final ShopItemEvent event = EVENTS.postEvent(new ShopItemEvent(shopId_8007a3b4.get(), menuItemIndex, shops_800f4930.get(shopId_8007a3b4.get()).item_00.get(this.itemCount).id_01.get(), itemPrices_80114310.get(itemId).get() * 2));
-
             menuItem.itemId_00 = event.itemId;
             menuItem.flags_02 = event.price;
             this.itemCount++;
