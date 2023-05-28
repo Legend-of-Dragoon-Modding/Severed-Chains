@@ -2,6 +2,7 @@
   <configuration default="false" name="TestHarness" type="Application" factoryName="Application" nameIsGenerated="true">
     <option name="MAIN_CLASS_NAME" value="legend.game.TestHarness" />
     <module name="lod-game.test" />
+    <option name="VM_PARAMETERS" value="-XstartOnFirstThread" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="legend.game.*" />
