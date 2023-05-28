@@ -80,7 +80,6 @@ import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
-import static legend.core.GameEngine.OPENAL;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.core.GameEngine.SEQUENCER;
 import static legend.core.GameEngine.SPU;
@@ -560,7 +559,6 @@ public final class Scus94491BpeSegment {
     GPU.window().events.onShutdown(() -> {
       stopSound();
       SPU.stop();
-      OPENAL.destroy();
       Platform.exit();
     });
   }

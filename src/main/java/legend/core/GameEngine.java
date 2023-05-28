@@ -4,7 +4,6 @@ import legend.core.gpu.Gpu;
 import legend.core.memory.Memory;
 import legend.core.memory.Value;
 import legend.core.memory.segments.RamSegment;
-import legend.core.openal.Context;
 import legend.core.opengl.Mesh;
 import legend.core.opengl.Shader;
 import legend.core.opengl.ShaderManager;
@@ -82,8 +81,6 @@ public final class GameEngine {
 
   public static final ScriptManager SCRIPTS = new ScriptManager();
   public static final Sequencer SEQUENCER = new Sequencer();
-
-  public static final Context OPENAL = new Context();
 
   public static final ConfigCollection CONFIG = new ConfigCollection();
   public static final SaveManager SAVES = new SaveManager(SaveSerialization.MAGIC_V2, SaveSerialization::toV2);
