@@ -377,7 +377,7 @@ public final class Unpacker {
   private static Tuple<IsoReader, Integer> getIsoReader(final Path path) throws IOException {
     final long fileSize = Files.size(path);
 
-    if(fileSize < PVD_SECTOR * IsoReader.SYNC_PATTER_SIZE) {
+    if(fileSize < (PVD_SECTOR + 1) * IsoReader.SECTOR_SIZE) {
       return null;
     }
 
