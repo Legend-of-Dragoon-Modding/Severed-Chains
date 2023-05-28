@@ -643,8 +643,8 @@ public final class Bttl_800d {
       GPU.queueCommand(effect.z_04.get() + manager._10.z_22 >> 2, new GpuCommandPoly(3)
         .translucent(translucency)
         .rgb(0, manager._10.colour_1c.getX(), manager._10.colour_1c.getY(), manager._10.colour_1c.getZ())
-        .rgb(1, effect._0c.get(), effect._0d.get(), effect._0e.get())
-        .rgb(2, effect._0c.get(), effect._0d.get(), effect._0e.get())
+        .rgb(1, effect.r_0c.get(), effect.g_0d.get(), effect.b_0e.get())
+        .rgb(2, effect.r_0c.get(), effect.g_0d.get(), effect.b_0e.get())
         .pos(0, vertices[0], vertices[1])
         .pos(1, vertices[2], vertices[3])
         .pos(2, vertices[4], vertices[5])
@@ -659,8 +659,8 @@ public final class Bttl_800d {
   public static void renderRingGradientEffect(final EffectManagerData6c manager, final int angle, final short[] vertices, final RadialGradientEffect14 effect, final Translucency translucency) {
     if(manager._10.flags_00 >= 0) {
       final VECTOR sp0x20 = new VECTOR().set(
-        rcos(angle) * (manager._10.scale_16.getX() / effect._01.get() + manager._10._28) >> 12,
-        rsin(angle) * (manager._10.scale_16.getY() / effect._01.get() + manager._10._28) >> 12, // X is correct
+        rcos(angle) * (manager._10.scale_16.getX() / effect.scaleModifier_01.get() + manager._10._28) >> 12,
+        rsin(angle) * (manager._10.scale_16.getY() / effect.scaleModifier_01.get() + manager._10._28) >> 12, // X is correct
         manager._10._2c
       );
 
@@ -669,8 +669,8 @@ public final class Bttl_800d {
       FUN_800cfb14(manager, sp0x20, sp0x10, sp0x14);
 
       final VECTOR sp0x30 = new VECTOR().set(
-        rcos(angle + effect.angleStep_08.get()) * (manager._10.scale_16.getX() / effect._01.get() + manager._10._28) >> 12,
-        rsin(angle + effect.angleStep_08.get()) * (manager._10.scale_16.getY() / effect._01.get() + manager._10._28) >> 12,
+        rcos(angle + effect.angleStep_08.get()) * (manager._10.scale_16.getX() / effect.scaleModifier_01.get() + manager._10._28) >> 12,
+        rsin(angle + effect.angleStep_08.get()) * (manager._10.scale_16.getY() / effect.scaleModifier_01.get() + manager._10._28) >> 12,
         manager._10._2c
       );
 
@@ -682,8 +682,8 @@ public final class Bttl_800d {
         .translucent(translucency)
         .rgb(0, manager._10.colour_1c.getX(), manager._10.colour_1c.getY(), manager._10.colour_1c.getZ())
         .rgb(1, manager._10.colour_1c.getX(), manager._10.colour_1c.getY(), manager._10.colour_1c.getZ())
-        .rgb(2, effect._0c.get(), effect._0d.get(), effect._0e.get())
-        .rgb(3, effect._0c.get(), effect._0d.get(), effect._0e.get())
+        .rgb(2, effect.r_0c.get(), effect.g_0d.get(), effect.b_0e.get())
+        .rgb(3, effect.r_0c.get(), effect.g_0d.get(), effect.b_0e.get())
         .pos(0, sp0x10.get(), sp0x14.get())
         .pos(1, sp0x18.get(), sp0x1c.get())
         .pos(2, vertices[2], vertices[3])
@@ -697,7 +697,7 @@ public final class Bttl_800d {
   @Method(0x800d247cL)
   public static void renderRadialGradientEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
     final RadialGradientEffect14 effect = (RadialGradientEffect14)manager.effect_44;
-    effect.angleStep_08.set(0x1000 / (0x4 << effect._00.get()));
+    effect.angleStep_08.set(0x1000 / (0x4 << effect.circleSubdivisionModifier_00.get()));
 
     final ShortRef sp0x48 = new ShortRef();
     final ShortRef sp0x4c = new ShortRef();
@@ -711,17 +711,17 @@ public final class Bttl_800d {
 
       //LAB_800d2510
       final VECTOR sp0x38 = new VECTOR().set(
-        rcos(0) * (manager._10.scale_16.getX() / effect._01.get()) >> 12,
-        rsin(0) * (manager._10.scale_16.getY() / effect._01.get()) >> 12,
+        rcos(0) * (manager._10.scale_16.getX() / effect.scaleModifier_01.get()) >> 12,
+        rsin(0) * (manager._10.scale_16.getY() / effect.scaleModifier_01.get()) >> 12,
         0
       );
 
       final ShortRef sp0x58 = new ShortRef();
       final ShortRef sp0x5c = new ShortRef();
       FUN_800cfb14(manager, sp0x38, sp0x58, sp0x5c);
-      effect._0c.set(manager._10._24 >>> 16 & 0xff);
-      effect._0d.set(manager._10._24 >>>  8 & 0xff);
-      effect._0e.set(manager._10._24        & 0xff);
+      effect.r_0c.set(manager._10._24 >>> 16 & 0xff);
+      effect.g_0d.set(manager._10._24 >>>  8 & 0xff);
+      effect.b_0e.set(manager._10._24        & 0xff);
 
       //LAB_800d25b4
       for(int angle = 0; angle < 0x1000; ) {
@@ -729,8 +729,8 @@ public final class Bttl_800d {
         final ShortRef sp0x54 = new ShortRef().set(sp0x5c.get());
 
         sp0x38.set(
-          rcos(angle + effect.angleStep_08.get()) * (manager._10.scale_16.getX() / effect._01.get()) >> 12,
-          rsin(angle + effect.angleStep_08.get()) * (manager._10.scale_16.getY() / effect._01.get()) >> 12,
+          rcos(angle + effect.angleStep_08.get()) * (manager._10.scale_16.getX() / effect.scaleModifier_01.get()) >> 12,
+          rsin(angle + effect.angleStep_08.get()) * (manager._10.scale_16.getY() / effect.scaleModifier_01.get()) >> 12,
           0
         );
 
@@ -764,8 +764,8 @@ public final class Bttl_800d {
     manager._10.scale_16.set((short)0x1000, (short)0x1000, (short)0x1000);
 
     final RadialGradientEffect14 effect = (RadialGradientEffect14)manager.effect_44;
-    effect._00.set(s2);
-    effect._01.set((s1 - 3 & 0xffff_ffffL) >= 2 ? 4 : 1);
+    effect.circleSubdivisionModifier_00.set(s2);
+    effect.scaleModifier_01.set((s1 - 3 & 0xffff_ffffL) >= 2 ? 4 : 1);
     effect.renderer_10.set(radialGradientEffectRenderers_800fa758.get(s1).deref());
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
