@@ -2147,8 +2147,7 @@ public final class SEffe {
       scriptGetScriptedObjectPos(a2.scriptIndex_04, sp0x30);
 
       final VECTOR sp0x10 = new VECTOR().set(sp0x20).sub(sp0x30);
-      a3._50.set(sp0x10);
-      a3._50.set(sp0x10);
+      a3._50.sub(sp0x10);
     }
 
     //LAB_80100e14

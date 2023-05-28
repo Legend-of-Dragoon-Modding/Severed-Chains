@@ -41,7 +41,7 @@ import legend.game.combat.deff.DeffManager7cc;
 import legend.game.combat.effects.BttlScriptData6cSub13c;
 import legend.game.combat.effects.EffectManagerData6c;
 import legend.game.combat.effects.FullScreenOverlayEffect0e;
-import legend.game.combat.effects.PotionEffect14;
+import legend.game.combat.effects.RadialGradientEffect14;
 import legend.game.combat.effects.WeaponTrailEffect3c;
 import legend.game.combat.effects.WeaponTrailEffectSegment2c;
 import legend.game.combat.environment.BattleCamera;
@@ -448,14 +448,14 @@ public final class Bttl_800c {
   public static final MersenneTwisterSeed seed_800fa754 = MEMORY.ref(4, 0x800fa754L, MersenneTwisterSeed::new);
   /**
    * <ol start="0">
-   *   <li>{@link Bttl_800d#FUN_800d1d3c}</li>
+   *   <li>{@link Bttl_800d#renderDiscGradientEffect}</li>
    *   <li>{@link Bttl_800d#FUN_800d1e80}</li>
-   *   <li>{@link Bttl_800d#FUN_800d21b8}</li>
-   *   <li>{@link Bttl_800d#FUN_800d1d3c}</li>
-   *   <li>{@link Bttl_800d#FUN_800d21b8}</li>
+   *   <li>{@link Bttl_800d#renderRingGradientEffect}</li>
+   *   <li>{@link Bttl_800d#renderDiscGradientEffect}</li>
+   *   <li>{@link Bttl_800d#renderRingGradientEffect}</li>
    * </ol>
    */
-  public static final ArrayRef<Pointer<QuintConsumerRef<EffectManagerData6c, Integer, short[], PotionEffect14, Translucency>>> effectRenderers_800fa758 = MEMORY.ref(4, 0x800fa758L, ArrayRef.of(Pointer.classFor(QuintConsumerRef.classFor(EffectManagerData6c.class, int.class, short[].class, PotionEffect14.class, Translucency.class)), 5, 4, Pointer.deferred(4, QuintConsumerRef::new)));
+  public static final ArrayRef<Pointer<QuintConsumerRef<EffectManagerData6c, Integer, short[], RadialGradientEffect14, Translucency>>> radialGradientEffectRenderers_800fa758 = MEMORY.ref(4, 0x800fa758L, ArrayRef.of(Pointer.classFor(QuintConsumerRef.classFor(EffectManagerData6c.class, int.class, short[].class, RadialGradientEffect14.class, Translucency.class)), 5, 4, Pointer.deferred(4, QuintConsumerRef::new)));
 
   public static final Value _800fa76c = MEMORY.ref(4, 0x800fa76cL);
 
