@@ -183,14 +183,4 @@ public class CoreMod {
       GPU.rescale(CONFIG.getConfig(RENDER_SCALE_CONFIG.get()));
     }
   }
-
-  @EventListener
-  public static void testShopPrice(final ShopItemEvent event) {
-    event.price *= 10;
-  }
-
-  @EventListener
-  public static void testShopShell(final ShopSellPriceEvent event) {
-    event.price = 5;
-  }
 }
