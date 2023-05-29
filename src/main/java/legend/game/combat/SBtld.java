@@ -146,7 +146,7 @@ public class SBtld {
           EVENTS.postEvent(new BattleMapActiveAdditionHitPropertiesEvent(activeAdditionHits, activeAdditionIndex, charIndex, charSlot, false));
 
           battleMapSelectedAdditionHitProperties_80109454(_8010e658.offset(activeDragoonAdditionIndex * 0x80L).getAddress(), activeDragoonAdditionHits);
-          EVENTS.postEvent(new BattleMapActiveAdditionHitPropertiesEvent(activeAdditionHits, activeDragoonAdditionIndex, charIndex, charSlot, true));
+          EVENTS.postEvent(new BattleMapActiveAdditionHitPropertiesEvent(activeDragoonAdditionHits, activeDragoonAdditionIndex, charIndex, charSlot, true));
         }
       }
 
