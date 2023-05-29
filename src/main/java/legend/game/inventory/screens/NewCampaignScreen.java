@@ -43,6 +43,7 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
   public NewCampaignScreen() {
     CONFIG.clearConfig(ConfigStorageLocation.CAMPAIGN);
     this.enabledMods.addAll(MODS.getAllModIds());
+    rebootMods(this.enabledMods);
 
     deallocateRenderables(0xff);
     scriptStartEffect(2, 10);
