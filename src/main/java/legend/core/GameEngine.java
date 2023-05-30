@@ -110,7 +110,7 @@ public final class GameEngine {
 
     CPU = new Cpu();
     GPU = new Gpu();
-    SPU = new Spu(MEMORY);
+    SPU = new Spu();
 
     hardwareThread = Thread.currentThread();
     hardwareThread.setName("Hardware");

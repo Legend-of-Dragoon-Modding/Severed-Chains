@@ -2,15 +2,6 @@ package legend.core.spu;
 
 import legend.core.DebugHelper;
 import legend.core.MathHelper;
-import legend.core.memory.IllegalAddressException;
-import legend.core.memory.Memory;
-import legend.core.memory.MisalignedAccessException;
-import legend.core.memory.Segment;
-import legend.core.memory.Value;
-import legend.core.memory.segments.RamSegment;
-import legend.core.memory.types.MemoryRef;
-import legend.core.memory.types.UnsignedIntRef;
-import legend.core.memory.types.UnsignedShortRef;
 import legend.game.Scus94491BpeSegment_8004;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,94 +12,41 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
-import java.util.ArrayDeque;
-import java.util.Queue;
 
 import static legend.core.GameEngine.MEMORY;
 
-public class Spu implements Runnable, MemoryRef {
+public class Spu implements Runnable {
   private static final Logger LOGGER = LogManager.getFormatterLogger(Spu.class);
   private static final Marker SPU_MARKER = MarkerManager.getMarker("SPU");
 
   private static final int NANOS_PER_TICK = 1_000_000_000 / 50;
   private static final int SAMPLES_PER_TICK = 44_100 / 50;
 
-  public final UnsignedIntRef MAIN_VOL = MEMORY.ref(4, 0x1f801d80L, UnsignedIntRef::new);
-  public final UnsignedShortRef MAIN_VOL_L = MEMORY.ref(2, 0x1f801d80L, UnsignedShortRef::new);
-  public final UnsignedShortRef MAIN_VOL_R = MEMORY.ref(2, 0x1f801d82L, UnsignedShortRef::new);
-  public final Value REVERB_OUT = MEMORY.ref(4, 0x1f801d84L);
-  public final UnsignedShortRef REVERB_OUT_L = MEMORY.ref(2, 0x1f801d84L, UnsignedShortRef::new);
-  public final UnsignedShortRef REVERB_OUT_R = MEMORY.ref(2, 0x1f801d86L, UnsignedShortRef::new);
-  public final UnsignedIntRef VOICE_KEY_ON = MEMORY.ref(4, 0x1f801d88L, UnsignedIntRef::new);
-  public final UnsignedShortRef VOICE_KEY_ON_LO = MEMORY.ref(2, 0x1f801d88L, UnsignedShortRef::new);
-  public final UnsignedShortRef VOICE_KEY_ON_HI = MEMORY.ref(2, 0x1f801d8aL, UnsignedShortRef::new);
-  public final UnsignedIntRef VOICE_KEY_OFF = MEMORY.ref(4, 0x1f801d8cL, UnsignedIntRef::new);
-  /** 0x18c */
-  public final UnsignedShortRef VOICE_KEY_OFF_LO = MEMORY.ref(2, 0x1f801d8cL, UnsignedShortRef::new);
-  /** 0x18e */
-  public final UnsignedShortRef VOICE_KEY_OFF_HI = MEMORY.ref(2, 0x1f801d8eL, UnsignedShortRef::new);
-  public final UnsignedIntRef VOICE_CHN_FM_MODE = MEMORY.ref(4, 0x1f801d90L, UnsignedIntRef::new);
-  public final UnsignedIntRef VOICE_CHN_NOISE_MODE = MEMORY.ref(4, 0x1f801d94L, UnsignedIntRef::new);
-  public final UnsignedIntRef VOICE_CHN_REVERB_MODE = MEMORY.ref(4, 0x1f801d98L, UnsignedIntRef::new);
-  public final UnsignedIntRef VOICE_CHN_ON_OFF_STATUS = MEMORY.ref(4, 0x1f801d9cL, UnsignedIntRef::new);
-  public final UnsignedShortRef SOUND_RAM_REVERB_WORK_ADDR = MEMORY.ref(2, 0x1f801da2L, UnsignedShortRef::new);
-  public final UnsignedShortRef SOUND_RAM_IRQ_ADDR = MEMORY.ref(2, 0x1f801da4L, UnsignedShortRef::new);
-  public final UnsignedShortRef SOUND_RAM_DATA_TRANSFER_ADDR = MEMORY.ref(2, 0x1f801da6L, UnsignedShortRef::new);
-  public final UnsignedShortRef SOUND_RAM_DATA_TRANSFER_FIFO = MEMORY.ref(2, 0x1f801da8L, UnsignedShortRef::new);
-  public final UnsignedShortRef SPUCNT = MEMORY.ref(2, 0x1f801daaL, UnsignedShortRef::new);
-  public final UnsignedShortRef SOUND_RAM_DATA_TRANSFER_CTRL = MEMORY.ref(2, 0x1f801dacL, UnsignedShortRef::new);
-  public final UnsignedShortRef SPUSTAT = MEMORY.ref(2, 0x1f801daeL, UnsignedShortRef::new);
-  public final UnsignedIntRef CD_VOL = MEMORY.ref(4, 0x1f801db0L, UnsignedIntRef::new);
-  public final UnsignedShortRef CD_VOL_L = MEMORY.ref(2, 0x1f801db0L, UnsignedShortRef::new);
-  public final UnsignedShortRef CD_VOL_R = MEMORY.ref(2, 0x1f801db2L, UnsignedShortRef::new);
-  public final UnsignedIntRef EXT_VOL = MEMORY.ref(4, 0x1f801db4L, UnsignedIntRef::new);
-  public final UnsignedShortRef EXT_VOL_L = MEMORY.ref(2, 0x1f801db4L, UnsignedShortRef::new);
-  public final UnsignedShortRef EXT_VOL_R = MEMORY.ref(2, 0x1f801db6L, UnsignedShortRef::new);
-  public final UnsignedIntRef CURR_MAIN_VOL = MEMORY.ref(4, 0x1f801db8L, UnsignedIntRef::new);
-  /** 1b8 */
-  public final UnsignedShortRef CURR_MAIN_VOL_L = MEMORY.ref(2, 0x1f801db8L, UnsignedShortRef::new);
-  /** 1ba */
-  public final UnsignedShortRef CURR_MAIN_VOL_R = MEMORY.ref(2, 0x1f801dbaL, UnsignedShortRef::new);
-
   private SourceDataLine sound;
 
   private final byte[] spuOutput = new byte[SAMPLES_PER_TICK * 4];
-  private final Queue<Byte> cdBuffer = new ArrayDeque<>();
-
   private final byte[] ram = new byte[512 * 1024];
   public final Voice[] voices = new Voice[24];
 
-  private int ramDataTransferAddressInternal;
-
-  private int captureBufferPos;
-
-  private long mainVolumeL;
-  private long mainVolumeR;
-  private long reverbOutputVolumeL;
-  private long reverbOutputVolumeR;
-  private long keyOn;
-  private long keyOff;
-  private long channelFmMode;
-  private long channelNoiseMode;
-  private long channelReverbMode;
-  private long channelOnOffStatus;
-  private long reverbWorkAreaAddress;
-  private long irqAddress;
-  private long dataTransferAddress;
-  private long dataTransferFifo;
+  private int mainVolumeL;
+  private int mainVolumeR;
+  private int reverbOutputVolumeL;
+  private int reverbOutputVolumeR;
+  private int keyOn;
+  private int keyOff;
+  private int channelFmMode;
+  private int channelNoiseMode;
+  private int channelReverbMode;
+  private int reverbWorkAreaAddress;
   private final Control control = new Control();
-  private long dataTransferControl;
-  private short status;
-  private long cdVolumeL;
-  private long cdVolumeR;
-  private long externalVolumeL;
-  private long externalVolumeR;
-  private long currentMainVolumeL;
-  private long currentMainVolumeR;
+  private boolean reverbEnabled;
+  private boolean muted = true;
+  private int noiseFrequencyShift;
+  private int noiseFrequencyStep;
 
   private boolean running;
 
-  public Spu(final Memory memory) {
+  public Spu() {
     try {
       this.sound = AudioSystem.getSourceDataLine(new AudioFormat(44100, 16, 2, true, false));
       this.sound.open();
@@ -119,11 +57,13 @@ public class Spu implements Runnable, MemoryRef {
     }
 
     for(int i = 0; i < this.voices.length; i++) {
-      this.voices[i] = new Voice(memory, i);
+      this.voices[i] = new Voice(i);
     }
 
-    memory.addSegment(new SpuSegment(0x1f80_1d80L));
-    memory.addSegment(new RamSegment(0x1f80_1dc0L, 0x40)); //TODO GH#1
+    // Initialize silent loop, voices start pointing to this
+    for(int i = 0x1010; i < 0x1020; i++) {
+      this.ram[i] = 0x7;
+    }
   }
 
   @Override
@@ -161,8 +101,8 @@ public class Spu implements Runnable, MemoryRef {
         int sumLeft = 0;
         int sumRight = 0;
 
-        final int edgeKeyOn = (int)this.keyOn;
-        final int edgeKeyOff = (int)this.keyOff;
+        final int edgeKeyOn = this.keyOn;
+        final int edgeKeyOff = this.keyOff;
         this.keyOn = 0;
         this.keyOff = 0;
 
@@ -182,7 +122,6 @@ public class Spu implements Runnable, MemoryRef {
           //keyOn and KeyOff are edge triggered on 0 to 1
           if((edgeKeyOn & 0x1 << voiceIndex) != 0) {
             LOGGER.info(SPU_MARKER, "Keying on voice %d", voiceIndex);
-            this.channelOnOffStatus &= ~(1L << voiceIndex);
             v.keyOn();
           }
 
@@ -197,10 +136,8 @@ public class Spu implements Runnable, MemoryRef {
           }
 
           short sample;
-          if((this.channelNoiseMode & 1L << voiceIndex) == 0) {
+          if((this.channelNoiseMode & 0x1 << voiceIndex) == 0) {
             sample = this.sampleVoice(voiceIndex);
-            //Read irqAddress Irq
-            v.readRamIrq = false;
           } else {
             //Generated by tickNoiseGenerator
             sample = (short)this.noiseLevel;
@@ -208,54 +145,21 @@ public class Spu implements Runnable, MemoryRef {
 
           //Handle ADSR Envelope
           sample = (short)(sample * v.adsrVolume >> 15);
-          v.tickAdsr(voiceIndex);
+          v.tickAdsr();
 
           //Save sample for possible pitch modulation
           v.latest = sample;
 
           //Sum each voice sample
-          sumLeft += sample * v.processVolume(v.volumeLeft) >> 15;
-          sumRight += sample * v.processVolume(v.volumeRight) >> 15;
-        }
-
-        if(!this.control.spuUnmuted()) { //todo merge this on the for voice loop
-          //On mute the spu still ticks but output is 0 for voices (not for cdInput)
-          sumLeft = 0;
-          sumRight = 0;
-        }
-
-        //Merge in CD audio (CDDA or XA)
-        short cdL = 0;
-        short cdR = 0;
-        synchronized(this.cdBuffer) {
-          if(this.control.cdAudioEnabled() && this.cdBuffer.size() > 3) { //Be sure theres something on the queue...
-            final byte cdLLo = this.cdBuffer.remove();
-            final byte cdLHi = this.cdBuffer.remove();
-            final byte cdRLo = this.cdBuffer.remove();
-            final byte cdRHi = this.cdBuffer.remove();
-
-            cdL = (short)((cdLHi & 0xff) << 8 | cdLLo & 0xff);
-            cdR = (short)((cdRHi & 0xff) << 8 | cdRLo & 0xff);
-
-            //Apply Spu Cd In (CDDA/XA) Volume
-            cdL = (short)(cdL * this.cdVolumeL >> 15);
-            cdR = (short)(cdR * this.cdVolumeR >> 15);
-
-            sumLeft += cdL;
-            sumRight += cdR;
+          if(!this.muted) {
+            sumLeft += sample * v.processVolume(v.volumeLeft) >> 15;
+            sumRight += sample * v.processVolume(v.volumeRight) >> 15;
           }
         }
 
-        //Write to capture buffers and check ram irq
-        this.handleCaptureBuffer(0 * 1024 + this.captureBufferPos, cdL);
-        this.handleCaptureBuffer(1 * 1024 + this.captureBufferPos, cdR);
-        this.handleCaptureBuffer(2 * 1024 + this.captureBufferPos, this.voices[1].latest);
-        this.handleCaptureBuffer(3 * 1024 + this.captureBufferPos, this.voices[3].latest);
-        this.captureBufferPos = this.captureBufferPos + 2 & 0x3FF;
-
         //Clamp sum
-        sumLeft = MathHelper.clamp(sumLeft, -0x8000, 0x7FFF) * (short)this.mainVolumeL >> 15;
-        sumRight = MathHelper.clamp(sumRight, -0x8000, 0x7FFF) * (short)this.mainVolumeR >> 15;
+        sumLeft = MathHelper.clamp(sumLeft, -0x8000, 0x7fff) * (short)this.mainVolumeL >> 15;
+        sumRight = MathHelper.clamp(sumRight, -0x8000, 0x7fff) * (short)this.mainVolumeR >> 15;
 
         //Add to samples bytes to output list
         this.spuOutput[dataIndex++] = (byte)sumLeft;
@@ -268,13 +172,6 @@ public class Spu implements Runnable, MemoryRef {
         this.sound.write(this.spuOutput, 0, this.spuOutput.length);
       }
     }
-  }
-
-  private boolean handleCaptureBuffer(final int address, final short sample) {
-    this.ram[address] = (byte)(sample & 0xFF);
-    this.ram[address + 1] = (byte)(sample >> 8 & 0xFF);
-
-    return address >> 3 == this.irqAddress;
   }
 
   //Wait(1 cycle); at 44.1kHz clock
@@ -303,12 +200,12 @@ public class Spu implements Runnable, MemoryRef {
     }
   }
 
-  public short sampleVoice(final int v) {
+  private short sampleVoice(final int v) {
     final Voice voice = this.voices[v];
 
     //Decode samples if its empty / next block
     if(!voice.hasSamples) {
-      voice.decodeSamples(this.ram, (int)this.irqAddress);
+      voice.decodeSamples(this.ram);
       voice.hasSamples = true;
 
       final byte flags = this.voices[v].spuAdpcm[1];
@@ -331,7 +228,7 @@ public class Spu implements Runnable, MemoryRef {
     interpolated  = gaussTable[0x0FF - interpolationIndex] * voice.getSample(sampleIndex - 3);
     interpolated += gaussTable[0x1FF - interpolationIndex] * voice.getSample(sampleIndex - 2);
     interpolated += gaussTable[0x100 + interpolationIndex] * voice.getSample(sampleIndex - 1);
-    interpolated += gaussTable[0x000 + interpolationIndex] * voice.getSample(sampleIndex - 0);
+    interpolated += gaussTable[interpolationIndex] * voice.getSample(sampleIndex);
     interpolated >>= 15;
 
     //Pitch modulation: Starts at voice 1 as it needs the last voice
@@ -345,7 +242,6 @@ public class Spu implements Runnable, MemoryRef {
       step = 0x4000;
     }
 
-    //Console.WriteLine("step u " + ((uint)step).ToString("x8") + "step i" + ((int)step).ToString("x8") + " " + voice.counter.register.ToString("x8"));
     voice.counter.register += step;
 
     if(voice.counter.currentSampleIndex() >= 28) {
@@ -360,8 +256,6 @@ public class Spu implements Runnable, MemoryRef {
       final boolean loopRepeat = (flags & 0x2) != 0;
 
       if(loopEnd) {
-        this.channelOnOffStatus |= 1L << v;
-
         if(loopRepeat) {
           assert voice.adpcmRepeatAddress >= 0 : "Negative address";
           assert voice.adpcmRepeatAddress < this.ram.length : "Address overflow";
@@ -378,22 +272,138 @@ public class Spu implements Runnable, MemoryRef {
 
   public void directWrite(final int spuRamOffset, final long ramOffset, final int size) {
     LOGGER.info("Performing direct write from RAM @ %08x to SPU @ %04x (%d bytes)", ramOffset, spuRamOffset, size);
-    final byte[] data = MEMORY.getBytes(ramOffset, size);
-    this.directWrite(spuRamOffset, data);
+
+    synchronized(Spu.class) {
+      final byte[] data = MEMORY.getBytes(ramOffset, size);
+      this.directWrite(spuRamOffset, data);
+    }
   }
 
   public void directWrite(final int spuRamOffset, final byte[] dma) {
-    System.arraycopy(dma, 0, this.ram, spuRamOffset, dma.length);
-    Scus94491BpeSegment_8004.spuDmaCallback();
+    LOGGER.info("Performing direct write from stack to SPU @ %04x (%d bytes)", spuRamOffset, dma.length);
+
+    synchronized(Spu.class) {
+      System.arraycopy(dma, 0, this.ram, spuRamOffset, dma.length);
+      Scus94491BpeSegment_8004.spuDmaCallback();
+    }
   }
 
-  public void pushCdBufferSamples(final byte[] decodedXaAdpcm) {
-    synchronized(this.cdBuffer) {
-//      this.cdBuffer.clear(); // TODO is not clearing the buffer going to be a problem?
+  public void setMainVolume(final int left, final int right) {
+    LOGGER.info(SPU_MARKER, "Setting SPU main volume to %04x, %04x", left, right);
 
-      for(final byte b : decodedXaAdpcm) {
-        this.cdBuffer.add(b);
-      }
+    synchronized(Spu.class) {
+      this.mainVolumeL = left;
+      this.mainVolumeR = right;
+    }
+  }
+
+  public int getMainVolumeLeft() {
+    synchronized(Spu.class) {
+      return this.mainVolumeL;
+    }
+  }
+
+  public int getMainVolumeRight() {
+    synchronized(Spu.class) {
+      return this.mainVolumeR;
+    }
+  }
+
+  public void setReverbVolume(final int left, final int right) {
+    LOGGER.info(SPU_MARKER, "Setting SPU reverb volume to %04x, %04x", left, right);
+
+    synchronized(Spu.class) {
+      this.reverbOutputVolumeL = left;
+      this.reverbOutputVolumeR = right;
+    }
+  }
+
+  public void keyOff(final int voices) {
+    LOGGER.info(SPU_MARKER, "Setting SPU key off to %08x", voices);
+
+    synchronized(Spu.class) {
+      this.keyOff |= voices;
+    }
+  }
+
+  public void keyOn(final int voices) {
+    LOGGER.info(SPU_MARKER, "Setting SPU key on to %08x", voices);
+
+    synchronized(Spu.class) {
+      this.keyOn |= voices;
+    }
+  }
+
+  public void clearKeyOn() {
+    LOGGER.info(SPU_MARKER, "Clearing SPU key on");
+
+    synchronized(Spu.class) {
+      this.keyOn = 0;
+    }
+  }
+
+  public void setNoiseMode(final int noiseMode) {
+    LOGGER.info(SPU_MARKER, "Setting SPU noise mode to %x", noiseMode);
+
+    synchronized(Spu.class) {
+      this.channelNoiseMode = noiseMode;
+    }
+  }
+
+  public void setReverbMode(final int reverbMode) {
+    LOGGER.info(SPU_MARKER, "Setting SPU reverb mode to %x", reverbMode);
+
+    synchronized(Spu.class) {
+      this.channelReverbMode = reverbMode;
+    }
+  }
+
+  public void setReverbWorkAreaAddress(final int workArea) {
+    LOGGER.info(SPU_MARKER, "Setting SPU work area address to %x", workArea);
+
+    synchronized(Spu.class) {
+      this.reverbWorkAreaAddress = workArea;
+    }
+  }
+
+  public void mute() {
+    LOGGER.info(SPU_MARKER, "Muting SPU");
+
+    synchronized(Spu.class) {
+      this.muted = true;
+    }
+  }
+
+  public void unmute() {
+    LOGGER.info(SPU_MARKER, "Unmuting SPU");
+
+    synchronized(Spu.class) {
+      this.muted = false;
+    }
+  }
+
+  public void enableReverb() {
+    LOGGER.info(SPU_MARKER, "Enabling SPU reverb");
+
+    synchronized(Spu.class) {
+      this.reverbEnabled = true;
+    }
+  }
+
+  public void disableReverb() {
+    LOGGER.info(SPU_MARKER, "Disabling SPU reverb");
+
+    synchronized(Spu.class) {
+      this.reverbEnabled = false;
+    }
+  }
+
+  public void setNoiseFrequency(final int packed) {
+    LOGGER.info(SPU_MARKER, "Setting SPU noise frequency %x", packed);
+
+    synchronized(Spu.class) {
+      this.noiseFrequencyShift = packed >> 2 & 0xf;
+      this.noiseFrequencyStep = packed & 0x3;
     }
   }
 
@@ -463,238 +473,4 @@ public class Spu implements Runnable, MemoryRef {
     0x593A, 0x5949, 0x5958, 0x5965, 0x5971, 0x597C, 0x5986, 0x598F,
     0x5997, 0x599E, 0x59A4, 0x59A9, 0x59AD, 0x59B0, 0x59B2, 0x59B3,
   };
-
-  @Override
-  public long getAddress() {
-    return 0x1f80_1c00L;
-  }
-
-  public class SpuSegment extends Segment {
-    public SpuSegment(final long address) {
-      super(address, 0x40);
-    }
-
-    @Override
-    public byte get(final int offset) {
-      throw new MisalignedAccessException("SPU registers may not be accessed via 8-bit reads or writes");
-    }
-
-    @Override
-    public long get(final int offset, final int size) {
-      synchronized(Spu.class) {
-        if(size == 1) {
-          return this.get(offset);
-        }
-
-        if(size == 2) {
-          return switch(offset & 0x3e) {
-            case 0x00 -> Spu.this.mainVolumeL;
-            case 0x02 -> Spu.this.mainVolumeR;
-            case 0x04 -> Spu.this.reverbOutputVolumeL;
-            case 0x06 -> Spu.this.reverbOutputVolumeR;
-            case 0x22 -> Spu.this.reverbWorkAreaAddress;
-            case 0x24 -> Spu.this.irqAddress;
-            case 0x26 -> Spu.this.dataTransferAddress;
-            case 0x28 -> Spu.this.dataTransferFifo;
-            case 0x2a -> Spu.this.control.register & 0xffffL;
-            case 0x2c -> Spu.this.dataTransferControl;
-            case 0x2e -> Spu.this.status & 0xffffL;
-            case 0x30 -> Spu.this.cdVolumeL;
-            case 0x32 -> Spu.this.cdVolumeR;
-            case 0x34 -> Spu.this.externalVolumeL;
-            case 0x36 -> Spu.this.externalVolumeR;
-            case 0x38 -> Spu.this.currentMainVolumeL;
-            case 0x3a -> Spu.this.currentMainVolumeR;
-            default -> throw new MisalignedAccessException("SPU port " + Long.toHexString(offset) + " may not be accessed with 16-bit reads or writes");
-          };
-        }
-
-        return switch(offset & 0x3c) {
-          case 0x00 -> Spu.this.mainVolumeR << 16 | Spu.this.mainVolumeL;
-          case 0x04 -> Spu.this.reverbOutputVolumeR << 16 | Spu.this.reverbOutputVolumeL;
-          case 0x08 -> Spu.this.keyOn;
-          case 0x0c -> Spu.this.keyOff;
-          case 0x10 -> Spu.this.channelFmMode;
-          case 0x14 -> Spu.this.channelNoiseMode;
-          case 0x18 -> Spu.this.channelReverbMode;
-          case 0x1c -> Spu.this.channelOnOffStatus;
-          case 0x30 -> Spu.this.cdVolumeR << 16 | Spu.this.cdVolumeL;
-          case 0x34 -> Spu.this.externalVolumeR << 16 | Spu.this.externalVolumeL;
-          case 0x38 -> Spu.this.currentMainVolumeR << 16 | Spu.this.currentMainVolumeL;
-          default -> throw new MisalignedAccessException("SPU port " + Long.toHexString(offset) + " may not be accessed with 32-bit reads or writes");
-        };
-      }
-    }
-
-    @Override
-    public void set(final int offset, final byte value) {
-      throw new MisalignedAccessException("SPU registers may not be accessed via 8-bit reads or writes");
-    }
-
-    @Override
-    public void set(final int offset, final int size, final long value) {
-      synchronized(Spu.class) {
-        if(size == 1) {
-          this.set(offset, (byte)value);
-          return;
-        }
-
-        if(size == 2) {
-          switch(offset & 0x3e) {
-            case 0x00 -> {
-              LOGGER.info(SPU_MARKER, "Setting SPU main volume left to %04x", value);
-              Spu.this.mainVolumeL = value;
-            }
-
-            case 0x02 -> {
-              LOGGER.info(SPU_MARKER, "Setting SPU main volume right to %04x", value);
-              Spu.this.mainVolumeR = value;
-            }
-
-            case 0x04 -> {
-              LOGGER.info(SPU_MARKER, "Setting SPU reverb output volume left to %04x", value);
-              Spu.this.reverbOutputVolumeL = value;
-            }
-
-            case 0x06 -> {
-              LOGGER.info(SPU_MARKER, "Setting SPU reverb output volume right to %04x", value);
-              Spu.this.reverbOutputVolumeR = value;
-            }
-
-            case 0x22 -> {
-              LOGGER.info(SPU_MARKER, "Setting SPU reverb work area address to %04x", value);
-              Spu.this.reverbWorkAreaAddress = value;
-            }
-
-            case 0x24 -> {
-              LOGGER.info("Setting SPU IRQ address to %04x", value);
-              Spu.this.irqAddress = value;
-            }
-
-            case 0x26 -> {
-              LOGGER.info(SPU_MARKER, "Setting SPU data transfer address to %04x", value);
-              Spu.this.dataTransferAddress = value;
-              Spu.this.ramDataTransferAddressInternal = (int)(value * 8);
-            }
-
-            case 0x28 -> {
-              LOGGER.info(SPU_MARKER, "Setting SPU data transfer FIFO to %04x", value);
-              Spu.this.dataTransferFifo = value;
-              Spu.this.ram[Spu.this.ramDataTransferAddressInternal++ & 0xffff] = (byte)(value & 0xff);
-              Spu.this.ram[Spu.this.ramDataTransferAddressInternal++ & 0xffff] = (byte)(value >>> 8 & 0xff);
-            }
-
-            case 0x2a -> {
-              LOGGER.info(SPU_MARKER, "Setting SPU control to %04x", value);
-              Spu.this.control.register = (short)value;
-
-              //Status lower 5 bits are the same as control
-              Spu.this.status &= 0xFFE0;
-              Spu.this.status |= (short)(value & 0x1F);
-            }
-
-            case 0x2c -> {
-              LOGGER.info(SPU_MARKER, "Setting SPU data transfer control to %04x", value);
-              Spu.this.dataTransferControl = value;
-            }
-
-            case 0x2e -> throw new IllegalAddressException("SPU status register is read-only");
-
-            case 0x30 -> {
-              LOGGER.info(SPU_MARKER, "Setting SPU CD volume left to %04x", value);
-              Spu.this.cdVolumeL = value;
-            }
-
-            case 0x32 -> {
-              LOGGER.info(SPU_MARKER, "Setting SPU CD volume right to %04x", value);
-              Spu.this.cdVolumeR = value;
-            }
-
-            case 0x34 -> {
-              LOGGER.info(SPU_MARKER, "Setting SPU external volume left to %04x", value);
-              Spu.this.externalVolumeL = value;
-            }
-
-            case 0x36 -> {
-              LOGGER.info(SPU_MARKER, "Setting SPU external volume right to %04x", value);
-              Spu.this.externalVolumeR = value;
-            }
-
-            case 0x38 -> {
-              LOGGER.info(SPU_MARKER, "Setting SPU current volume left to %04x", value);
-              Spu.this.currentMainVolumeL = value;
-            }
-
-            case 0x3a -> {
-              LOGGER.info(SPU_MARKER, "Setting SPU current volume right to %04x", value);
-              Spu.this.currentMainVolumeR = value;
-            }
-          }
-
-          return;
-        }
-
-        if(size == 4) {
-          switch(offset & 0x3c) {
-            case 0x00 -> {
-              LOGGER.info(SPU_MARKER, "Setting SPU main volume to %08x", value);
-              Spu.this.mainVolumeL = value & 0xffffL;
-              Spu.this.mainVolumeR = value >>> 16;
-            }
-
-            case 0x04 -> {
-              LOGGER.info(SPU_MARKER, "Setting SPU reverb output volume to %08x", value);
-              Spu.this.reverbOutputVolumeL = value & 0xffffL;
-              Spu.this.reverbOutputVolumeR = value >>> 16;
-            }
-
-            case 0x08 -> {
-              LOGGER.info(SPU_MARKER, "Setting SPU key on to %08x", value);
-              Spu.this.keyOn |= value;
-            }
-
-            case 0x0c -> {
-              LOGGER.info(SPU_MARKER, "Setting SPU key off to %08x", value);
-              Spu.this.keyOff |= value;
-            }
-
-            case 0x10 -> {
-              LOGGER.info(SPU_MARKER, "Setting SPU channel FM mode to %08x", value);
-              Spu.this.channelFmMode = value;
-            }
-
-            case 0x14 -> {
-//              LOGGER.info(SPU_MARKER, "Setting SPU channel noise mode to %08x", value);
-              Spu.this.channelNoiseMode = value;
-            }
-
-            case 0x18 -> {
-//              LOGGER.info(SPU_MARKER, "Setting SPU channel reverb mode to %08x", value);
-              Spu.this.channelReverbMode = value;
-            }
-
-            case 0x1c -> throw new IllegalAddressException("SPU channel on/off status is read-only");
-
-            case 0x30 -> {
-              LOGGER.info(SPU_MARKER, "Setting SPU CD volume to %08x", value);
-              Spu.this.cdVolumeL = value & 0xffffL;
-              Spu.this.cdVolumeR = value >>> 16;
-            }
-
-            case 0x34 -> {
-              LOGGER.info(SPU_MARKER, "Setting SPU external volume to %08x", value);
-              Spu.this.externalVolumeL = value & 0xffffL;
-              Spu.this.externalVolumeR = value >>> 16;
-            }
-
-            case 0x38 -> {
-              LOGGER.info(SPU_MARKER, "Setting SPU current volume to %08x", value);
-              Spu.this.currentMainVolumeL = value & 0xffffL;
-              Spu.this.currentMainVolumeR = value >>> 16;
-            }
-          }
-        }
-      }
-    }
-  }
 }

@@ -59,8 +59,6 @@ public final class Input {
       }
     }
 
-    InputPlayerUtility.update();
-
     GPU.window().events.callInputEvents(activeController);
   }
 

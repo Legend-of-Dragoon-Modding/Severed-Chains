@@ -15,7 +15,6 @@ import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedShortRef;
-import legend.core.spu.Spu;
 import legend.core.spu.Voice;
 import legend.game.combat.Bttl_800c;
 import legend.game.combat.Bttl_800d;
@@ -56,7 +55,6 @@ import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SEQUENCER;
 import static legend.core.GameEngine.SPU;
-import static legend.game.Scus94491BpeSegment._80011db0;
 import static legend.game.Scus94491BpeSegment_8005._80059f7c;
 import static legend.game.Scus94491BpeSegment_8005.atanTable_80058d0c;
 import static legend.game.Scus94491BpeSegment_8005.sin_cos_80054d0c;
@@ -70,7 +68,6 @@ import static legend.game.Scus94491BpeSegment_800c.sshdPtr_800c4ac0;
 import static legend.game.Scus94491BpeSegment_800c.sssqChannelInfo_800C6680;
 import static legend.game.Scus94491BpeSegment_800c.sssqReader_800c667c;
 import static legend.game.Scus94491BpeSegment_800c.sssqish_800c4aa8;
-import static legend.game.Scus94491BpeSegment_800c.voicePtr_800c4ac4;
 import static legend.game.Scus94491BpeSegment_800c.volumeRamp_800c4ab0;
 
 public final class Scus94491BpeSegment_8004 {
@@ -1202,8 +1199,6 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x8004ab2cL)
   public static void spuDmaCallback() {
-    voicePtr_800c4ac4.deref().SPUCNT.and(0xffcf);
-
     //LAB_8004ab5c
     if(soundEnv_800c6630.hasCallback_38) {
       spuDmaCompleteCallback_800c6628.run();
@@ -1226,8 +1221,8 @@ public final class Scus94491BpeSegment_8004 {
 
     //LAB_8004ae10
     playingNote.channelVolume_28 = sssqChannelInfo_800C6680.volume_0e;
-    voicePtr_800c4ac4.deref().voices[voiceIndex].LEFT.set(calculateNoteVolume(voiceIndex, 0));
-    voicePtr_800c4ac4.deref().voices[voiceIndex].RIGHT.set(calculateNoteVolume(voiceIndex, 1));
+    SPU.voices[voiceIndex].volumeLeft.set(calculateNoteVolume(voiceIndex, 0));
+    SPU.voices[voiceIndex].volumeRight.set(calculateNoteVolume(voiceIndex, 1));
   }
 
   @Method(0x8004ae94L)
@@ -1286,35 +1281,13 @@ public final class Scus94491BpeSegment_8004 {
     final SoundEnv44 soundEnv = soundEnv_800c6630;
 
     //LAB_8004b8ac
-    for(int registerIndex = 0; registerIndex < 0x100; registerIndex++) {
-      if(registerIndex != 0xd7) { // Status register is read-only
-        MEMORY.ref(2, SPU.getAddress()).offset(registerIndex * 2).setu(0);
-      }
-    }
-
-    voicePtr_800c4ac4.set(SPU);
-
     soundEnv.playingSoundsUpperBound_03 = 8;
     soundEnv._00 = 0;
     soundEnv._0d = 0;
     soundEnv.ticksPerSecond_42 = 60;
-    voicePtr_800c4ac4.deref().SPUCNT.set(0xc000); // SPU control - unmute; enable
-    spuDmaTransfer(0, MEMORY.getBytes(_80011db0.getAddress(), 0x10), 0x1010);
+    SPU.unmute();
 
     //LAB_8004b9e8
-    for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
-      final Voice voice = voicePtr_800c4ac4.deref().voices[voiceIndex];
-      voice.LEFT.set(0);
-      voice.RIGHT.set(0);
-      voice.ADPCM_SAMPLE_RATE.set(0x1000);
-      voice.ADPCM_START_ADDR.set(0x1010);
-      voice.ADSR_LO.set(0);
-      voice.ADSR_HI.set(0);
-    }
-
-    voicePtr_800c4ac4.deref().VOICE_KEY_ON.set(0xff_ffffL);
-    voicePtr_800c4ac4.deref().VOICE_KEY_OFF.set(0xff_ffffL);
-
     //LAB_8004ba58
     for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
       //LAB_8004ba74
@@ -1494,9 +1467,9 @@ public final class Scus94491BpeSegment_8004 {
     soundEnv_800c6630.reverbType_34 = type;
 
     if(type != 0) {
-      SPU.VOICE_CHN_REVERB_MODE.set(0);
-      SPU.SPUCNT.or(0x80); // Reverb enable
-      SPU.SOUND_RAM_REVERB_WORK_ADDR.set((int)_80059f7c.offset((type - 1) * 0x42L).get());
+      SPU.setReverbMode(0);
+      SPU.enableReverb();
+      SPU.setReverbWorkAreaAddress((int)_80059f7c.offset((type - 1) * 0x42L).get());
 
       //LAB_8004c4fc
       for(int i = 0; i < 32; i++) {
@@ -1508,10 +1481,9 @@ public final class Scus94491BpeSegment_8004 {
     }
 
     //LAB_8004c538
-    SPU.VOICE_KEY_ON.set(0);
-    SPU.REVERB_OUT_L.set(0);
-    SPU.REVERB_OUT_R.set(0);
-    SPU.SPUCNT.and(0xff7f); // Reverb disable
+    SPU.clearKeyOn();
+    SPU.setReverbVolume(0, 0);
+    SPU.disableReverb();
   }
 
   /**
@@ -1521,8 +1493,7 @@ public final class Scus94491BpeSegment_8004 {
   public static void sssqSetReverbVolume(final int left, final int right) {
     if(soundEnv_800c6630.reverbType_34 != 0 && left < 0x80 && right < 0x80) {
       //LAB_8004c5d0
-      SPU.REVERB_OUT_L.set(left << 8);
-      SPU.REVERB_OUT_R.set(right << 8);
+      SPU.setReverbVolume(left << 8, right << 8);
     }
 
     //LAB_8004c5d8
@@ -1548,8 +1519,7 @@ public final class Scus94491BpeSegment_8004 {
     }
 
     //LAB_8004c8c4
-    voicePtr_800c4ac4.deref().MAIN_VOL_L.set(l);
-    voicePtr_800c4ac4.deref().MAIN_VOL_R.set(r);
+    SPU.setMainVolume(l, r);
   }
 
   @Method(0x8004c8dcL)
@@ -1681,46 +1651,15 @@ public final class Scus94491BpeSegment_8004 {
   @Method(0x8004cd50L)
   public static long sssqFadeOut(final short fadeTime) {
     if(fadeTime < 256 && !soundEnv_800c6630.fadingIn_2a) {
-      final Spu spu = voicePtr_800c4ac4.deref();
       soundEnv_800c6630.fadingOut_2b = true;
       soundEnv_800c6630.fadeTime_2c = fadeTime;
-      soundEnv_800c6630.fadeOutVolL_30 = spu.CURR_MAIN_VOL_L.get() >>> 8;
-      soundEnv_800c6630.fadeOutVolR_32 = spu.CURR_MAIN_VOL_R.get() >>> 8;
+      soundEnv_800c6630.fadeOutVolL_30 = SPU.getMainVolumeLeft() >>> 8;
+      soundEnv_800c6630.fadeOutVolR_32 = SPU.getMainVolumeRight() >>> 8;
       return 0;
     }
 
     //LAB_8004cdb0
     return -1;
-  }
-
-  @Method(0x8004cdbcL)
-  public static void enableAudioSource(final long enabled, final long useCdAudio) {
-    if(enabled != 0) {
-      if(useCdAudio != 0) {
-        voicePtr_800c4ac4.deref().SPUCNT.or(0x1); // Enable CD audio
-        return;
-      }
-
-      //LAB_8004cdec
-      voicePtr_800c4ac4.deref().SPUCNT.or(0x2); // Enable external audio
-      return;
-    }
-
-    //LAB_8004ce08
-    if(useCdAudio != 0) {
-      voicePtr_800c4ac4.deref().SPUCNT.and(0xfffe); // Disable CD audio
-      return;
-    }
-
-    //LAB_8004ce2c
-    voicePtr_800c4ac4.deref().SPUCNT.and(0xfffd); // Disable external audio
-  }
-
-  @Method(0x8004ced4L)
-  public static void setCdVolume(final int left, final int right) {
-    //LAB_8004cf0c
-    voicePtr_800c4ac4.deref().CD_VOL_L.set(left << 8);
-    voicePtr_800c4ac4.deref().CD_VOL_R.set(right << 8);
   }
 
   @Method(0x8004cf8cL)
@@ -1818,9 +1757,9 @@ public final class Scus94491BpeSegment_8004 {
                   setKeyOff(sequenceData, i);
 
                   if(resetAdsr) {
-                    final Voice voice = voicePtr_800c4ac4.deref().voices[i];
-                    voice.ADSR_LO.set(0);
-                    voice.ADSR_HI.set(0);
+                    final Voice voice = SPU.voices[i];
+                    voice.adsr.lo = 0;
+                    voice.adsr.hi = 0;
                   }
                 }
               }
@@ -1831,7 +1770,7 @@ public final class Scus94491BpeSegment_8004 {
               sequenceData.sssqReader_010.channelInfo(i).modulation_09 = 0;
             }
 
-            voicePtr_800c4ac4.deref().VOICE_KEY_OFF.set(sequenceData.keyOff_0e2);
+            SPU.keyOff(sequenceData.keyOff_0e2);
             sequenceData.keyOff_0e2 = 0;
           }
         }
@@ -1995,16 +1934,16 @@ public final class Scus94491BpeSegment_8004 {
         if(playingNote.isPolyphonicKeyPressure_1a && playingNote.sequenceData_06 == sequenceData) {
           //LAB_8004d880
           if(reset) {
-            final Voice voice = voicePtr_800c4ac4.deref().voices[voiceIndex];
-            voice.ADSR_LO.set(0);
-            voice.ADSR_HI.set(0);
+            final Voice voice = SPU.voices[voiceIndex];
+            voice.adsr.lo = 0;
+            voice.adsr.hi = 0;
             playingNote.used_00 = false;
           }
 
           //LAB_8004d8a0
           playingNote.finished_08 = true;
 
-          voicePtr_800c4ac4.deref().VOICE_KEY_OFF.set(1 << voiceIndex);
+          SPU.keyOff(1 << voiceIndex);
         }
       }
 
@@ -2025,14 +1964,14 @@ public final class Scus94491BpeSegment_8004 {
           playingNote.finished_08 = true;
 
           if(resetVoice) {
-            final Voice voice = voicePtr_800c4ac4.deref().voices[voiceIndex];
-            voice.ADSR_LO.set(0);
-            voice.ADSR_HI.set(0);
+            final Voice voice = SPU.voices[voiceIndex];
+            voice.adsr.lo = 0;
+            voice.adsr.hi = 0;
             playingNote.used_00 = false;
           }
 
           //LAB_8004d9b8
-          voicePtr_800c4ac4.deref().VOICE_KEY_OFF.set(1L << voiceIndex);
+          SPU.keyOff(1 << voiceIndex);
 
           //LAB_8004d9e8
 //          wasteSomeCycles(0x2L);

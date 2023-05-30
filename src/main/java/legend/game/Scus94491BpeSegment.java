@@ -286,8 +286,6 @@ public final class Scus94491BpeSegment {
   /** TODO 0x60-byte struct */
   public static final Value _800108b0 = MEMORY.ref(4, 0x800108b0L);
 
-  public static final Value _80011db0 = MEMORY.ref(4, 0x80011db0L);
-
   public static final Value heap_8011e210 = MEMORY.ref(4, 0x8011e210L);
 
   public static boolean[] scriptLog = new boolean[0x48];
@@ -431,8 +429,8 @@ public final class Scus94491BpeSegment {
       // Add killswitch in case sounds get stuck on
       if(key == GLFW_KEY_DELETE) {
         for(int i = 0; i < 24; i++) {
-          SPU.voices[i].LEFT.set(0);
-          SPU.voices[i].RIGHT.set(0);
+          SPU.voices[i].volumeLeft.set(0);
+          SPU.voices[i].volumeRight.set(0);
         }
       }
 

@@ -1,41 +1,23 @@
 package legend.core.spu;
 
 import legend.core.MathHelper;
-import legend.core.memory.Memory;
-import legend.core.memory.MisalignedAccessException;
-import legend.core.memory.Segment;
-import legend.core.memory.types.MemoryRef;
-import legend.core.memory.types.UnsignedShortRef;
 
-public class Voice implements MemoryRef {
+import static legend.game.unpacker.Unpacker.LOGGER;
+
+public class Voice {
   private static final int[] positiveXaAdpcmTable = {0, 60, 115, 98, 122};
   private static final int[] negativeXaAdpcmTable = {0, 0, -52, -55, -60};
 
-  /** 0x00 */
-  public final UnsignedShortRef LEFT;
-  /** 0x02 */
-  public final UnsignedShortRef RIGHT;
-  /** 0x04 */
-  public final UnsignedShortRef ADPCM_SAMPLE_RATE;
-  /** 0x06 */
-  public final UnsignedShortRef ADPCM_START_ADDR;
-  /** 0x08 */
-  public final UnsignedShortRef ADSR_LO;
-  /** 0x0a */
-  public final UnsignedShortRef ADSR_HI;
-  /** 0x0c */
-  public final UnsignedShortRef ADSR_CURR_VOL;
-  /** 0x0e */
-  public final UnsignedShortRef ADPCM_REPEAT_ADDR;
+  public final int voiceIndex;
 
-  public Volume volumeLeft = new Volume();           //0
-  public Volume volumeRight = new Volume();          //2
+  public final Volume volumeLeft = new Volume();           //0
+  public final Volume volumeRight = new Volume();          //2
 
-  public int pitch;                //4
-  public int startAddress;         //6
+  public int pitch = 0x1000;                //4
+  public int startAddress = 0x1010;         //6
   public int currentAddress;       //6 Internal
 
-  public ADSR adsr = new ADSR();
+  public final ADSR adsr = new ADSR();
 
   public int adsrVolume;           //C
   public int adpcmRepeatAddress;   //E
@@ -55,20 +37,8 @@ public class Voice implements MemoryRef {
 
   public boolean hasSamples;
 
-  public boolean readRamIrq;
-
-  public Voice(final Memory memory, final int voiceIndex) {
-    memory.addSegment(new VoiceSegment(0x1f801c00L + voiceIndex * 0x10L));
-
-    this.LEFT = memory.ref(2, 0x1f801c00L).offset(voiceIndex * 0x10L).cast(UnsignedShortRef::new);
-    this.RIGHT = memory.ref(2, 0x1f801c02L).offset(voiceIndex * 0x10L).cast(UnsignedShortRef::new);
-    this.ADPCM_SAMPLE_RATE = memory.ref(2, 0x1f801c04L).offset(voiceIndex * 0x10L).cast(UnsignedShortRef::new);
-    this.ADPCM_START_ADDR = memory.ref(2, 0x1f801c06L).offset(voiceIndex * 0x10L).cast(UnsignedShortRef::new);
-    this.ADSR_LO = memory.ref(2, 0x1f801c08L).offset(voiceIndex * 0x10L).cast(UnsignedShortRef::new);
-    this.ADSR_HI = memory.ref(2, 0x1f801c0aL).offset(voiceIndex * 0x10L).cast(UnsignedShortRef::new);
-    this.ADSR_CURR_VOL = memory.ref(2, 0x1f801c0cL).offset(voiceIndex * 0x10L).cast(UnsignedShortRef::new);
-    this.ADPCM_REPEAT_ADDR = memory.ref(2, 0x1f801c0eL).offset(voiceIndex * 0x10L).cast(UnsignedShortRef::new);
-
+  public Voice(final int voiceIndex) {
+    this.voiceIndex = voiceIndex;
     this.adsrPhase = Phase.Off;
   }
 
@@ -91,7 +61,7 @@ public class Voice implements MemoryRef {
   public byte[] spuAdpcm = new byte[16];
   public short[] decodedSamples = new short[28];
 
-  public void decodeSamples(final byte[] ram, final int ramIrqAddress) {
+  public void decodeSamples(final byte[] ram) {
     //save the last 3 samples from the last decoded block
     //this are needed for interpolation in case the index is 0 1 or 2
     this.lastBlockSample28 = this.decodedSamples[this.decodedSamples.length - 1];
@@ -101,12 +71,9 @@ public class Voice implements MemoryRef {
     try {
       System.arraycopy(ram, this.currentAddress * 8, this.spuAdpcm, 0, 16);
     } catch(final ArrayIndexOutOfBoundsException e) {
-//      LOGGER.warn("SPU voice %d overflow", this.voiceIndex);
+      LOGGER.warn("SPU voice %d overflow", this.voiceIndex);
       this.currentAddress = 0;
     }
-
-    //ramIrqAddress is >> 8 so we only need to check for currentAddress and + 1
-    this.readRamIrq |= this.currentAddress == ramIrqAddress || this.currentAddress + 1 == ramIrqAddress;
 
     final int shift = 12 - (this.spuAdpcm[0] & 0x0f);
     int filter = (this.spuAdpcm[0] & 0x70) >> 4; //filter on SPU adpcm is 0-4 vs XA which is 0-3
@@ -166,7 +133,7 @@ public class Voice implements MemoryRef {
 
   int adsrCounter;
 
-  public void tickAdsr(final int v) {
+  public void tickAdsr() {
     if(this.adsrPhase == Phase.Off) {
       this.adsrVolume = 0;
       return;
@@ -246,75 +213,6 @@ public class Voice implements MemoryRef {
     if(nextPhase && this.adsrPhase != Phase.Sustain) {
       this.adsrPhase = this.adsrPhase.next();
       this.adsrCounter = 0;
-    }
-  }
-
-  @Override
-  public long getAddress() {
-    return this.LEFT.getAddress();
-  }
-
-  public class VoiceSegment extends Segment {
-    public VoiceSegment(final long address) {
-      super(address, 0x10);
-    }
-
-    @Override
-    public byte get(final int offset) {
-      throw new MisalignedAccessException("SPU registers may only be accessed via 16-bit reads or writes");
-    }
-
-    @Override
-    public long get(final int offset, final int size) {
-      synchronized(Spu.class) {
-        if(size != 2) {
-          throw new MisalignedAccessException("SPU registers may only be accessed via 16-bit reads or writes");
-        }
-
-        return switch(offset & 0xe) {
-          case 0x0 -> Voice.this.volumeLeft.get();
-          case 0x2 -> Voice.this.volumeRight.get();
-          case 0x4 -> Voice.this.pitch & 0xffffL;
-          case 0x6 -> Voice.this.startAddress & 0xffffL;
-          case 0x8 -> Voice.this.adsr.lo & 0xffffL;
-          case 0xa -> Voice.this.adsr.hi & 0xffffL;
-          case 0xc -> Voice.this.adsrVolume & 0xffffL;
-          case 0xe -> Voice.this.adpcmRepeatAddress & 0xffffL;
-          default -> throw new MisalignedAccessException("SPU voice port " + Long.toHexString(offset) + " does not exist");
-        };
-      }
-    }
-
-    @Override
-    public void set(final int offset, final byte value) {
-      throw new MisalignedAccessException("SPU registers may only be accessed via 16-bit reads or writes");
-    }
-
-    @Override
-    public void set(final int offset, final int size, final long value) {
-      synchronized(Spu.class) {
-        if(size != 2) {
-          throw new MisalignedAccessException("SPU registers may only be accessed via 16-bit reads or writes");
-        }
-
-        switch(offset & 0xe) {
-          case 0x0 -> Voice.this.volumeLeft.set(value);
-          case 0x2 -> Voice.this.volumeRight.set(value);
-          case 0x4 -> Voice.this.pitch = (int)(value & 0xffff);
-          case 0x6 -> {
-            assert value * 8 < 512 * 1024;
-            Voice.this.startAddress = (int)(value & 0xffff);
-          }
-          case 0x8 -> Voice.this.adsr.lo = (int)(value & 0xffff);
-          case 0xa -> Voice.this.adsr.hi = (int)(value & 0xffff);
-          case 0xc -> Voice.this.adsrVolume = (int)(value & 0xffff);
-          case 0xe -> {
-            assert value * 8 < 512 * 1024;
-            Voice.this.adpcmRepeatAddress = (int)(value & 0xffff);
-          }
-          default -> throw new MisalignedAccessException("SPU voice port " + Long.toHexString(offset) + " does not exist");
-        }
-      }
     }
   }
 }
