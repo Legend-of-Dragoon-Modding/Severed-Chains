@@ -153,6 +153,7 @@ import static legend.game.Scus94491BpeSegment_8004.sssqUnloadPlayableSound;
 import static legend.game.Scus94491BpeSegment_8004.startMusicSequence;
 import static legend.game.Scus94491BpeSegment_8004.startPitchShiftedSound;
 import static legend.game.Scus94491BpeSegment_8004.startRegularSound;
+import static legend.game.Scus94491BpeSegment_8004.startSequenceAndChangeVolumeOverTime;
 import static legend.game.Scus94491BpeSegment_8004.stopMusicSequence;
 import static legend.game.Scus94491BpeSegment_8004.stopSoundSequence;
 import static legend.game.Scus94491BpeSegment_8004.swapDisplayBuffer_8004dd40;
@@ -3003,12 +3004,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001b2acL)
   public static FlowControl scriptStartSequenceAndChangeVolumeOverTime(final RunningScript<?> script) {
-    //TODO GH#3 (re-enabling this causes code to fail later - after one fight, subsequent fights will have completely broken audio, repeatedly crashing the sound thread)
-//    if(true) {
-//      return FlowControl.CONTINUE;
-//    }
-
-    Scus94491BpeSegment_8004.startSequenceAndChangeVolumeOverTime(currentSequenceData_800bd0f8, (short)script.params_20[0].get(), (short)script.params_20[1].get());
+    startSequenceAndChangeVolumeOverTime(currentSequenceData_800bd0f8, (short)script.params_20[0].get(), (short)script.params_20[1].get());
     sequenceVolume_800bd108.setu(script.params_20[1].get());
     return FlowControl.CONTINUE;
   }
@@ -3024,11 +3020,6 @@ public final class Scus94491BpeSegment {
    */
   @Method(0x8001b33cL)
   public static FlowControl scriptChangeSequenceVolumeOverTime(final RunningScript<?> script) {
-    //TODO GH#3
-//    if(true) {
-//      return FlowControl.CONTINUE;
-//    }
-
     changeSequenceVolumeOverTime(currentSequenceData_800bd0f8, (short)script.params_20[0].get(), (short)script.params_20[1].get());
     sequenceVolume_800bd108.setu(script.params_20[1].get());
     return FlowControl.CONTINUE;
@@ -3638,9 +3629,7 @@ public final class Scus94491BpeSegment {
     final StageData10 stageData = stageData_80109a98.get(encounterId_800bb0f8.get());
 
     if(stageData.musicIndex_01.get() != 0xff) {
-      loadedDrgnFiles_800bcf78.oru(0x80L); //TODO GH#3
-//      musicLoaded_800bd782.incr();
-//      if(true) return;
+      loadedDrgnFiles_800bcf78.oru(0x80L);
 
       final int fileIndex;
       final Consumer<List<FileData>> callback;
@@ -3813,8 +3802,6 @@ public final class Scus94491BpeSegment {
       unloadSoundFile(8);
       unloadSoundFile(8);
 
-      //TODO GH#3
-//      musicLoaded_800bd782.incr();
       loadedDrgnFiles_800bcf78.oru(0x80L);
       loadDrgnDir(0, 5815, files -> Scus94491BpeSegment.musicPackageLoadedCallback(files, 5815 << 8));
       //LAB_8001e044
@@ -3825,8 +3812,6 @@ public final class Scus94491BpeSegment {
       unloadSoundFile(8);
 
       //LAB_8001e0bc
-      //TODO GH#3
-//      musicLoaded_800bd782.incr();
       loadedDrgnFiles_800bcf78.oru(0x80L);
       loadDrgnDir(0, 5900, files -> Scus94491BpeSegment.musicPackageLoadedCallback(files, 5900 << 8));
     } else if(a0 == -1) {
@@ -3835,8 +3820,6 @@ public final class Scus94491BpeSegment {
         if(mainCallbackIndex_8004dd20.get() == 8 && gameState_800babc8.isOnWorldMap_4e4) {
           sssqResetStuff();
           unloadSoundFile(8);
-          //TODO GH#3
-//          musicLoaded_800bd782.incr();
           loadedDrgnFiles_800bcf78.oru(0x80L);
           loadDrgnDir(0, 5850, files -> Scus94491BpeSegment.musicPackageLoadedCallback(files, 5850 << 8));
         }
@@ -3868,8 +3851,6 @@ public final class Scus94491BpeSegment {
             final int fileIndex = 5815 + musicIndex * 5;
 
             //LAB_8001e23c
-            //TODO GH#3
-//            musicLoaded_800bd782.incr();
             loadedDrgnFiles_800bcf78.oru(0x80L);
             loadDrgnDir(0, fileIndex, files -> Scus94491BpeSegment.musicPackageLoadedCallback(files, fileIndex << 8));
           }
@@ -4115,11 +4096,6 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001ecccL)
   public static FlowControl scriptLoadBattleCutsceneSounds(final RunningScript<?> script) {
-    //TODO GH#3
-//    sssqResetStuff();
-//    musicLoaded_800bd782.incr();
-//    if(true) return FlowControl.CONTINUE;
-
     loadedDrgnFiles_800bcf78.oru(0x4L);
     sssqResetStuff();
     loadDrgnDir(0, 2437 + script.params_20[0].get() * 3, fileData -> battleCutsceneSoundsLoaded(fileData, "Cutscene %d sounds (file %d)".formatted(script.params_20[0].get(), 2437 + script.params_20[0].get() * 3)));
@@ -4250,8 +4226,6 @@ public final class Scus94491BpeSegment {
   @Method(0x8001f450L)
   public static FlowControl scriptLoadMusicPackage(final RunningScript<?> script) {
     unloadSoundFile(8);
-    //TODO GH#3
-//    musicLoaded_800bd782.incr();
     loadedDrgnFiles_800bcf78.oru(0x80L);
     final int fileIndex = 5815 + script.params_20[0].get() * 5;
     loadDrgnDir(0, fileIndex, files -> Scus94491BpeSegment.musicPackageLoadedCallback(files, fileIndex << 8 | script.params_20[1].get()));
@@ -4261,8 +4235,6 @@ public final class Scus94491BpeSegment {
   @Method(0x8001f560L)
   public static FlowControl FUN_8001f560(final RunningScript<?> script) {
     unloadSoundFile(8);
-    //TODO GH#3
-//    musicLoaded_800bd782.incr();
     loadedDrgnFiles_800bcf78.oru(0x80L);
     final int fileIndex = 732 + script.params_20[0].get() * 5;
     loadDrgnDir(0, fileIndex, files -> Scus94491BpeSegment.musicPackageLoadedCallback(files, fileIndex << 8 | script.params_20[1].get()));
@@ -4272,8 +4244,6 @@ public final class Scus94491BpeSegment {
   @Method(0x8001f674L)
   public static FlowControl FUN_8001f674(final RunningScript<?> script) {
     unloadSoundFile(8);
-    //TODO GH#3
-//    musicLoaded_800bd782.incr();
     loadedDrgnFiles_800bcf78.oru(0x80L);
     final int fileIndex = 2353 + script.params_20[0].get() * 6;
     loadDrgnDir(0, fileIndex, files -> Scus94491BpeSegment.musicPackageLoadedCallback(files, fileIndex << 8 | script.params_20[1].get()));
@@ -4283,8 +4253,6 @@ public final class Scus94491BpeSegment {
   @Method(0x8001f708L)
   public static void FUN_8001f708(final int chapterIndex, final int a1) {
     unloadSoundFile(8);
-    //TODO GH#3
-//    musicLoaded_800bd782.incr();
     loadedDrgnFiles_800bcf78.oru(0x80L);
     final int fileIndex = 5850 + chapterIndex * 5;
     loadDrgnDir(0, fileIndex, files -> Scus94491BpeSegment.musicPackageLoadedCallback(files, fileIndex << 8 | a1));

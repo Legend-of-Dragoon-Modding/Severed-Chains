@@ -1531,7 +1531,7 @@ public final class Scus94491BpeSegment_8004 {
   @Method(0x8004c894L)
   public static void setMainVolume(final int left, final int right) {
     final int l;
-    if((left & 0x80L) != 0) {
+    if((left & 0x80) != 0) {
       l = (left << 7) + 0x7fff;
     } else {
       //LAB_8004c8a8
@@ -1540,7 +1540,7 @@ public final class Scus94491BpeSegment_8004 {
 
     //LAB_8004c8ac
     final int r;
-    if((right & 0x80L) != 0) {
+    if((right & 0x80) != 0) {
       r = (right << 7) + 0x7fff;
     } else {
       //LAB_8004c8c0
@@ -1594,7 +1594,7 @@ public final class Scus94491BpeSegment_8004 {
   @Method(0x8004cb0cL)
   public static long setSoundSequenceVolume(final PlayableSound0c playableSound, int volume) {
     if(volume < 0) {
-      //TODO GH#3, GH#193
+      //TODO GH#193
       // This happens during the killing blow in the first virage fight. In retail, a1 counts down from 0x7f to 0 (I'm assuming it's volume).
       // In the decomp, it jumps down from 0x7f to 0 to -3. It seems like the previous script frame is setting it to a position vector value...?
       LOGGER.error("Negative volume, changing to 0");
