@@ -83,6 +83,7 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -1319,8 +1320,22 @@ public final class Bttl_800e {
   public static void loadDeffPackage(final List<FileData> files, final ScriptState<EffectManagerData6c> state) {
     LOGGER.info(DEFF, "Loading DEFF files");
 
-    deffManager_800c693c.deffPackage_5a8 = files;
-    prepareDeffFiles(files, state);
+    deffManager_800c693c.deffPackage_5a8 = new ArrayList<>();
+    for(int i = 0; i < files.size(); i++) {
+      final FileData data = files.get(i);
+      final int flags = data.readInt(0);
+      final DeffPart deffPart = switch(flags >>> 24) {
+        case 0 -> new DeffPart.LmbType(data);
+        case 1, 2 -> new DeffPart.AnimatedTmdType("DEFF index %d (flags %08x)".formatted(i, flags), data);
+        case 3 -> new DeffPart.TmdType("DEFF index %d (flags %08x)".formatted(i, flags), data);
+        case 4 -> new DeffPart.SpriteType(data);
+        // Example: d-attack (DRGN0.4236.0.0)
+        case 5 -> new DeffPart.AnimatedTmdType("DEFF index %d (flags %08x)".formatted(i, flags), data);
+        default -> throw new IllegalArgumentException("Invalid DEFF type %x".formatted(flags & 0xff00_0000));
+      };
+      deffManager_800c693c.deffPackage_5a8.add(deffPart);
+      prepareDeffFiles(files, state);
+    }
   }
 
   @Method(0x800e70bcL)
@@ -2647,24 +2662,13 @@ public final class Bttl_800e {
   /** See {@link DeffPart#flags_00} */
   @Method(0x800eac58L)
   public static DeffPart getDeffPart(final int flags) {
-    final List<FileData> deff = deffManager_800c693c.deffPackage_5a8;
+    final List<DeffPart> deff = deffManager_800c693c.deffPackage_5a8;
 
     //LAB_800eac84
-    for(int i = 0; i < deff.size(); i++) {
-      final FileData data = deff.get(i);
-
-      if(data.readInt(0) == flags) {
-        return switch(flags >>> 24) {
-          case 0 -> new DeffPart.LmbType(data);
-          case 1, 2 -> new DeffPart.AnimatedTmdType("DEFF index %d (flags %08x)".formatted(i, flags), data);
-          case 3 -> new DeffPart.TmdType("DEFF index %d (flags %08x)".formatted(i, flags), data);
-          case 4 -> new DeffPart.SpriteType(data);
-          // Example: d-attack (DRGN0.4236.0.0)
-          case 5 -> new DeffPart.AnimatedTmdType("DEFF index %d (flags %08x)".formatted(i, flags), data);
-          default -> throw new IllegalArgumentException("Invalid DEFF type %x".formatted(flags & 0xff00_0000));
-        };
+    for(final DeffPart deffPart : deff) {
+      if(deffPart.flags_00 == flags) {
+        return deffPart;
       }
-
       //LAB_800eaca0
     }
 

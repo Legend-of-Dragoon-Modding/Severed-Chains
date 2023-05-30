@@ -4887,7 +4887,7 @@ public final class SEffe {
     //LAB_80109ce0
   }
 
-  /** Kubila demon frog, Lloyd's cape, ??? */
+  /** Kubila demon frog, Lloyd's cape, Selebus' strapple and zambo hands, Grand Jewel heal, etc. */
   @Method(0x80109d30L)
   public static FlowControl allocateVertexDifferenceAnimation(final RunningScript<?> script) {
     final int ticksRemaining = script.params_20[2].get();
