@@ -43,6 +43,7 @@ public class Spu implements Runnable {
   private boolean muted = true;
   private int noiseFrequencyShift;
   private int noiseFrequencyStep;
+  public ReverbConfig reverb;
 
   private boolean running;
 

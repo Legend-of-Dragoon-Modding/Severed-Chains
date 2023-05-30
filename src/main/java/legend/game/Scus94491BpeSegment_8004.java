@@ -55,7 +55,7 @@ import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SEQUENCER;
 import static legend.core.GameEngine.SPU;
-import static legend.game.Scus94491BpeSegment_8005._80059f7c;
+import static legend.game.Scus94491BpeSegment_8005.reverbConfigs_80059f7c;
 import static legend.game.Scus94491BpeSegment_8005.atanTable_80058d0c;
 import static legend.game.Scus94491BpeSegment_8005.sin_cos_80054d0c;
 import static legend.game.Scus94491BpeSegment_800c.patchList_800c4abc;
@@ -1469,14 +1469,8 @@ public final class Scus94491BpeSegment_8004 {
     if(type != 0) {
       SPU.setReverbMode(0);
       SPU.enableReverb();
-      SPU.setReverbWorkAreaAddress((int)_80059f7c.offset((type - 1) * 0x42L).get());
-
-      //LAB_8004c4fc
-      for(int i = 0; i < 32; i++) {
-        //TODO reverb setup
-        MEMORY.ref(2, SPU.getAddress()).offset(0x1c0L).offset(i * 0x2L).setu(_80059f7c.offset(((type - 0x1L) * 0x21 + i + 0x1L) * 0x2L).get());
-      }
-
+      SPU.setReverbWorkAreaAddress(reverbConfigs_80059f7c.get(type - 1).address_00.get());
+      SPU.reverb = reverbConfigs_80059f7c.get(type - 1).config_02;
       return;
     }
 

@@ -12,6 +12,7 @@ import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.sound.Pan;
+import legend.game.sound.ReverbConfigAndLocation;
 import legend.game.types.AdditionData0e;
 import legend.game.types.DeferredReallocOrFree0c;
 import legend.game.types.FileEntry08;
@@ -109,7 +110,7 @@ public final class Scus94491BpeSegment_8005 {
   /**
    * Start of a fairly large block of data - something to do with SPU reverb initialisation. Stride is 66 bytes. Unknown length.
    */
-  public static final Value _80059f7c = MEMORY.ref(2, 0x80059f7cL);
+  public static final ArrayRef<ReverbConfigAndLocation> reverbConfigs_80059f7c = MEMORY.ref(2, 0x80059f7cL, ArrayRef.of(ReverbConfigAndLocation.class, 9, 0x42, ReverbConfigAndLocation::new));
 
   /** short */
   public static int sssqFadeCurrent_8005a1ce;
