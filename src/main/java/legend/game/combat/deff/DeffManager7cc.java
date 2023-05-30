@@ -10,7 +10,6 @@ import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptState;
 
 import java.util.Arrays;
-import java.util.List;
 
 public class DeffManager7cc {
   public Struct08 _00 = new Struct08();
@@ -40,7 +39,7 @@ public class DeffManager7cc {
   public final TmdObjTable1c[] tmds_2f8 = new TmdObjTable1c[38];
   public final DeffPart.LmbType[] lmbs_390 = new DeffPart.LmbType[3];
   public final SpriteMetrics08[] spriteMetrics_39c = new SpriteMetrics08[65];
-  public List<DeffPart> deffPackage_5a8;
+  public DeffPart[] deffPackage_5a8;
 //  public DeffFile deff_5ac; // No longer needed
 
   public final BattleStruct24_2 _5b8 = new BattleStruct24_2();
