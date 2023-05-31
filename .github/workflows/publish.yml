@@ -105,7 +105,7 @@ jobs:
     - name: Upload Release
       uses: ncipollo/release-action@v1
       with:
-        artifacts: 'build/libs/windows-snapshot.zip,build/libs/linux-snapshot.zip,build/libs/macos-snapshot.zip'
+        artifacts: 'build/libs/*.zip'
         token: ${{ secrets.GITHUB_TOKEN }}
         commit: ${{ github.sha }}
         name: 'Latest Development Build'
