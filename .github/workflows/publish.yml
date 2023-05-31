@@ -35,7 +35,7 @@ jobs:
       uses: thedoctor0/zip-release@main
       with:
         type: 'zip'
-        filename: 'Severed-Chains-(Windows).zip'
+        filename: 'Severed_Chains_(Windows).zip'
         directory: 'build/libs'
         exclusions: '*.zip*'
 
@@ -46,7 +46,7 @@ jobs:
       uses: thedoctor0/zip-release@main
       with:
         type: 'zip'
-        filename: 'Severed-Chains-(Windows-ARM64).zip'
+        filename: 'Severed_Chains_(Windows_ARM64).zip'
         directory: 'build/libs'
         exclusions: '*.zip*'
 
@@ -57,7 +57,7 @@ jobs:
       uses: thedoctor0/zip-release@main
       with:
         type: 'zip'
-        filename: 'Severed-Chains-(Linux/Steam-Deck).zip'
+        filename: 'Severed_Chains_(Linux).zip'
         directory: 'build/libs'
         exclusions: '*.zip*'
 
@@ -68,7 +68,7 @@ jobs:
       uses: thedoctor0/zip-release@main
       with:
         type: 'zip'
-        filename: 'Severed-Chains-(Linux-ARM64).zip'
+        filename: 'Severed_Chains_(Linux_ARM64).zip'
         directory: 'build/libs'
         exclusions: '*.zip*'
 
@@ -79,7 +79,7 @@ jobs:
       uses: thedoctor0/zip-release@main
       with:
         type: 'zip'
-        filename: 'Severed-Chains-(MacOS-Intel).zip'
+        filename: 'Severed_Chains_(MacOS_Intel).zip'
         directory: 'build/libs'
         exclusions: '*.zip*'
 
@@ -90,7 +90,7 @@ jobs:
       uses: thedoctor0/zip-release@main
       with:
         type: 'zip'
-        filename: 'Severed-Chains-(MacOS-M1).zip'
+        filename: 'Severed_Chains_(MacOS_M1).zip'
         directory: 'build/libs'
         exclusions: '*.zip*'
 
