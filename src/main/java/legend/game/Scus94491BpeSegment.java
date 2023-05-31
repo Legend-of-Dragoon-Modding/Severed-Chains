@@ -2575,7 +2575,12 @@ public final class Scus94491BpeSegment {
       if(queuedSound.type_00 == 0) {
         //LAB_80019eac
         final SoundFile soundFile = soundFiles_800bcf80[soundFileIndex];
-        playSound(type, soundFile, soundIndex, queuedSound, soundFile.playableSound_10, soundFile.indices_08[soundIndex], 0, (short)-1, (short)-1, (short)-1, (short)repeatDelay, (short)initialDelay, state);
+
+        // Retail bug: one of the Divine Dragon Spirit's attack scripts tries to play soundIndex 10 but there are only 10 elements in the patch/sequence file (DRGN0.1225.1.1)
+        if(soundIndex < soundFile.indices_08.length) {
+          playSound(type, soundFile, soundIndex, queuedSound, soundFile.playableSound_10, soundFile.indices_08[soundIndex], 0, (short)-1, (short)-1, (short)-1, (short)repeatDelay, (short)initialDelay, state);
+        }
+
         break;
       }
     }
