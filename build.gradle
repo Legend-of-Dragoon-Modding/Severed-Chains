@@ -1,5 +1,5 @@
-import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 import org.apache.tools.ant.filters.ReplaceTokens
+import org.gradle.internal.os.OperatingSystem
 
 plugins {
   id 'java'
@@ -23,33 +23,26 @@ compileJava.options.encoding = 'UTF-8'
 project.ext.lwjglVersion = "3.3.2"
 project.ext.jomlVersion = "1.10.5"
 
-if(DefaultNativePlatform.getCurrentOperatingSystem().isWindows()) {
-  project.ext.lwjglNatives = "natives-windows"
+final def operatingSystem = hasProperty("os") ? OperatingSystem.forName(os) : OperatingSystem.current()
+final def architecture = hasProperty("arch") ? arch : System.getProperty("os.arch")
+
+switch(operatingSystem) {
+  case OperatingSystem.LINUX:
+    project.ext.lwjglNatives = architecture.startsWith("arm") || architecture.startsWith("aarch64")
+      ? "natives-linux-arm64"
+      : "natives-linux"
+    break
+
+  case OperatingSystem.MAC_OS:
+    project.ext.lwjglNatives = architecture.startsWith("aarch64") ? "natives-macos-arm64" : "natives-macos"
+    break
+
+  case OperatingSystem.WINDOWS:
+    project.ext.lwjglNatives = "natives-windows${architecture.startsWith("aarch64") ? "-arm64" : ""}"
+    break
 }
 
-if(DefaultNativePlatform.getCurrentOperatingSystem().isLinux()) {
-  project.ext.lwjglNatives = "natives-linux"
-}
-
-if(DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX()) {
-  project.ext.lwjglNatives = "natives-macos"
-}
-
-if(hasProperty("os")) {
-  println "Building for OS " + os
-
-  switch(os) {
-    case "windows":
-      project.ext.lwjglNatives = "natives-windows"
-      break;
-    case "linux":
-      project.ext.lwjglNatives = "natives-linux"
-      break;
-    case "macos":
-      project.ext.lwjglNatives = "natives-macos"
-      break;
-  }
-}
+println "Building for " + operatingSystem.familyName + " " + architecture
 
 repositories {
   mavenCentral()
@@ -97,7 +90,7 @@ javafx {
 }
 
 if(hasProperty("os")) {
-  javafx.platform = os;
+  javafx.platform = os + (!operatingSystem.windows && (architecture.startsWith("arm") || architecture.startsWith("aarch64")) ? "-aarch64" : "");
 }
 
 jar {
@@ -130,12 +123,28 @@ task copySupportFiles(type: Copy) {
   }
 
   into(".") {
-    from('launch.bat') {
-      filter(ReplaceTokens, tokens: [version: project.ext.hash])
+    switch(operatingSystem) {
+      case OperatingSystem.LINUX:
+        from('launch-linux') {
+          filter(ReplaceTokens, tokens: [version: project.ext.hash])
+          rename("-linux", "")
+        }
+        break
+
+      case OperatingSystem.MAC_OS:
+        from('launch-macos') {
+          filter(ReplaceTokens, tokens: [version: project.ext.hash])
+          rename("-macos", "")
+        }
+        break
+
+      case OperatingSystem.WINDOWS:
+        from('launch.bat') {
+          filter(ReplaceTokens, tokens: [version: project.ext.hash])
+        }
+        break
     }
-    from('launch') {
-      filter(ReplaceTokens, tokens: [version: project.ext.hash])
-    }
+
     from 'log4j2.xml'
     from 'gamecontrollerdb.txt'
     from 'README.md'
