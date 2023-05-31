@@ -1,5 +1,5 @@
-import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 import org.apache.tools.ant.filters.ReplaceTokens
+import org.gradle.internal.os.OperatingSystem
 
 plugins {
   id 'java'
@@ -23,32 +23,22 @@ compileJava.options.encoding = 'UTF-8'
 project.ext.lwjglVersion = "3.3.2"
 project.ext.jomlVersion = "1.10.5"
 
-if(DefaultNativePlatform.getCurrentOperatingSystem().isWindows()) {
-  project.ext.lwjglNatives = "natives-windows"
-}
-
-if(DefaultNativePlatform.getCurrentOperatingSystem().isLinux()) {
-  project.ext.lwjglNatives = "natives-linux"
-}
-
-if(DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX()) {
-  project.ext.lwjglNatives = "natives-macos"
-}
-
-if(hasProperty("os")) {
-  println "Building for OS " + os
-
-  switch(os) {
-    case "windows":
-      project.ext.lwjglNatives = "natives-windows"
-      break;
-    case "linux":
-      project.ext.lwjglNatives = "natives-linux"
-      break;
-    case "macos":
-      project.ext.lwjglNatives = "natives-macos"
-      break;
-  }
+// https://www.lwjgl.org/customize
+def final osArch = System.getProperty("os.arch")
+switch (OperatingSystem.current()) {
+  case OperatingSystem.LINUX:
+    project.ext.lwjglNatives = osArch.startsWith("arm") || osArch.startsWith("aarch64")
+            ? "natives-linux-${osArch.contains("64") || osArch.startsWith("armv8") ? "arm64" : "arm32"}"
+            : "natives-linux"
+    break
+  case OperatingSystem.MAC_OS:
+    project.ext.lwjglNatives = osArch.startsWith("aarch64") ? "natives-macos-arm64" : "natives-macos"
+    break
+  case OperatingSystem.WINDOWS:
+    project.ext.lwjglNatives = osArch.contains("64")
+            ? "natives-windows${osArch.startsWith("aarch64") ? "-arm64" : ""}"
+            : "natives-windows-x86"
+    break
 }
 
 repositories {
