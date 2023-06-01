@@ -273,7 +273,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[171] = Bttl_800c::FUN_800ccec8;
     scriptSubFunctions_8004e29c[172] = Bttl_800c::FUN_800ccef8;
     scriptSubFunctions_8004e29c[173] = Bttl_800c::scriptSetBobjDeadAndDropLoot;
-    scriptSubFunctions_8004e29c[174] = Bttl_800c::scriptGetHitMultiplier;
+    scriptSubFunctions_8004e29c[174] = Bttl_800c::scriptGetHitProperty;
     scriptSubFunctions_8004e29c[175] = Bttl_800c::scriptSetBobjDead;
     scriptSubFunctions_8004e29c[176] = Bttl_800c::levelUpAddition;
     scriptSubFunctions_8004e29c[177] = Bttl_800c::scriptGetBobjStat2;

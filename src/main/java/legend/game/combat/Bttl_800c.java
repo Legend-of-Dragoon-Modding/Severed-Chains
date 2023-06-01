@@ -3227,7 +3227,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cd0ecL)
-  public static FlowControl scriptGetHitMultiplier(final RunningScript<?> script) {
+  public static FlowControl scriptGetHitProperty(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     script.params_20[3].set(getHitProperty(
       bobj.charSlot_276,
