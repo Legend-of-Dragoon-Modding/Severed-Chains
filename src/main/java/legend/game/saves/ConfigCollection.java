@@ -20,7 +20,7 @@ public class ConfigCollection {
   public <T> void setConfig(final ConfigEntry<T> config, final T value) {
     final T oldValue = this.getConfig(config);
     this.setConfigQuietly(config, value);
-    config.onChange(oldValue, value);
+    config.onChange(this, oldValue, value);
     EVENTS.postEvent(new ConfigUpdatedEvent(config));
   }
 

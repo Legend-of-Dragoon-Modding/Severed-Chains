@@ -2,6 +2,7 @@ package legend.game.modding.coremod.config;
 
 import legend.core.IoHelper;
 import legend.game.inventory.screens.controls.NumberSpinner;
+import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigEntry;
 import legend.game.saves.ConfigStorageLocation;
 
@@ -21,8 +22,8 @@ public class RenderScaleConfigEntry extends ConfigEntry<Integer> {
   }
 
   @Override
-  public void onChange(final Integer oldValue, final Integer newValue) {
-    super.onChange(oldValue, newValue);
+  public void onChange(final ConfigCollection configCollection, final Integer oldValue, final Integer newValue) {
+    super.onChange(configCollection, oldValue, newValue);
     GPU.rescale(newValue);
   }
 

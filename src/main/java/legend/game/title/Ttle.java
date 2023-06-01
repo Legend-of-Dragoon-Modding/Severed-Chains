@@ -21,7 +21,6 @@ import legend.game.fmv.Fmv;
 import legend.game.input.Input;
 import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
-import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.tim.Tim;
@@ -40,7 +39,9 @@ import java.util.List;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
+import static legend.core.GameEngine.MODS;
 import static legend.core.GameEngine.SAVES;
+import static legend.core.GameEngine.bootMods;
 import static legend.core.gpu.VramTextureLoader.palettesFromTim;
 import static legend.core.gpu.VramTextureLoader.palettesFromTims;
 import static legend.core.gpu.VramTextureLoader.stitch;
@@ -255,6 +256,8 @@ public final class Ttle {
   public static void gameOver() {
     switch(pregameLoadingStage_800bb10c.get()) {
       case 0 -> {
+        bootMods(MODS.getAllModIds());
+
         FUN_8002a9c0();
         resizeDisplay(640, 240);
         pregameLoadingStage_800bb10c.set(1);
