@@ -3725,11 +3725,11 @@ public final class Bttl_800c {
     final WeaponTrailEffect3c effect = (WeaponTrailEffect3c)data.effect_44;
     effect._00++;
     if(effect._00 == 0) {
-      final IntRef largestVertexIndex = new IntRef();
       final IntRef smallestVertexIndex = new IntRef();
+      final IntRef largestVertexIndex = new IntRef();
       FUN_800cdcec(effect.parentModel_30, effect.dobjIndex_08, effect.smallestVertex_20, effect.largestVertex_10, data, smallestVertexIndex, largestVertexIndex);
-      effect.smallestVertexIndex_0a = smallestVertexIndex.get();
-      effect.largestVertexIndex_0c = largestVertexIndex.get();
+      effect.smallestVertexIndex_0c = smallestVertexIndex.get();
+      effect.largestVertexIndex_0a = largestVertexIndex.get();
       return;
     }
 
