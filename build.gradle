@@ -25,21 +25,25 @@ project.ext.jomlVersion = "1.10.5"
 
 final def operatingSystem = hasProperty("os") ? OperatingSystem.forName(os) : OperatingSystem.current()
 final def architecture = hasProperty("arch") ? arch : System.getProperty("os.arch")
+final def isArm = architecture.startsWith("arm") || architecture.startsWith("aarch64")
+final def isSteamDeck = hasProperty("steamdeck") && "true" == steamdeck;
 
 switch(operatingSystem) {
   case OperatingSystem.LINUX:
-    project.ext.lwjglNatives = architecture.startsWith("arm") || architecture.startsWith("aarch64")
-      ? "natives-linux-arm64"
-      : "natives-linux"
+    project.ext.lwjglNatives = "natives-linux"
     break
 
   case OperatingSystem.MAC_OS:
-    project.ext.lwjglNatives = architecture.startsWith("aarch64") ? "natives-macos-arm64" : "natives-macos"
+    project.ext.lwjglNatives = "natives-macos"
     break
 
   case OperatingSystem.WINDOWS:
-    project.ext.lwjglNatives = "natives-windows${architecture.startsWith("aarch64") ? "-arm64" : ""}"
+    project.ext.lwjglNatives = "natives-windows"
     break
+}
+
+if(isArm) {
+  project.ext.lwjglNatives += "-arm64"
 }
 
 println "Building for " + operatingSystem.familyName + " " + architecture
@@ -90,7 +94,7 @@ javafx {
 }
 
 if(hasProperty("os")) {
-  javafx.platform = os + (!operatingSystem.windows && (architecture.startsWith("arm") || architecture.startsWith("aarch64")) ? "-aarch64" : "");
+  javafx.platform = os + (!operatingSystem.windows && isArm ? "-aarch64" : "");
 }
 
 jar {
@@ -125,9 +129,12 @@ task copySupportFiles(type: Copy) {
   into(".") {
     switch(operatingSystem) {
       case OperatingSystem.LINUX:
-        from('launch-linux') {
+        from(isSteamDeck ? 'launch-steamdeck' : 'launch-linux') {
           filter(ReplaceTokens, tokens: [version: project.ext.hash])
-          rename("-linux", "")
+          rename("-\\w+", "")
+        }
+        from('download-java') {
+          filter(ReplaceTokens, tokens: [os: 'linux', arch: isArm ? "aarch64" : "x64"])
         }
         break
 
@@ -135,6 +142,9 @@ task copySupportFiles(type: Copy) {
         from('launch-macos') {
           filter(ReplaceTokens, tokens: [version: project.ext.hash])
           rename("-macos", "")
+        }
+        from('download-java') {
+          filter(ReplaceTokens, tokens: [os: 'macos', arch: isArm ? "aarch64" : "x64"])
         }
         break
 

@@ -1,36 +1,23 @@
 @echo off
 
-:: Is Java on the path?
-where java 2>NUL
-if errorlevel 1 goto NO_JAVA
-
-:: Check Java version
-setlocal EnableDelayedExpansion
-for /f "tokens=3" %%i in ('java -version 2^>^&1 ^| findstr /i "version"') do set version=%%i
-
-for /f "tokens=1,2 delims=." %%a in (%version%) do (
-   set major=%%a
-   set minor=%%b
+if exist ".\jdk\bin\java.exe" (
+  goto LAUNCH
 )
 
-if %major% equ 1 (if %minor% lss 17 goto OLD_JAVA) else (if %major% lss 17 goto OLD_JAVA)
+: DOWNLOAD_JAVA
+if exist ".\jdk\" (
+  @rmdir /S /Q ".\jdk"
+)
 
-java -cp "lod-game-@version@.jar;libs/*" legend.game.MainWindows -ea || pause
+echo Downloading java...
+powershell -Command "$ProgressPreference = 'SilentlyContinue'; Invoke-WebRequest -Uri 'https://corretto.aws/downloads/latest/amazon-corretto-17-x64-windows-jdk.zip' -OutFile '.\jdk.zip'"
 
-goto EOF
+echo Extracting java...
+powershell Expand-Archive ".\jdk.zip" -DestinationPath "."
 
-: NO_JAVA
-echo Severed Chains requires Java 17, but Java is not installed.
-echo Please download and install it using the link below.
-echo https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html
+echo Cleaning up...
+move ".\jdk17.0.7_7" ".\jdk"
+del ".\jdk.zip"
 
-pause
-goto EOF
-
-: OLD_JAVA
-echo Severed Chains requires Java 17, but Java %minor% is installed.
-echo Please uninstall your current version of Java and download Java 17.
-echo https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html
-
-pause
-goto EOF
+: LAUNCH
+".\jdk\bin\java" -cp "lod-game-@version@.jar;libs/*" legend.game.MainWindows -ea || pause
