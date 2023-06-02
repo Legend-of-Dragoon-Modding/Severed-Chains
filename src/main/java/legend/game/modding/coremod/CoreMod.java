@@ -9,10 +9,12 @@ import legend.game.characters.UnaryStat;
 import legend.game.characters.VitalsStat;
 import legend.game.combat.bobj.BattleObjectType;
 import legend.game.combat.bobj.BattleObjectTypeRegistryEvent;
+import legend.game.combat.formula.Formula;
+import legend.game.combat.formula.PhysicalDamageFormula;
 import legend.game.input.InputAction;
 import legend.game.modding.Mod;
-import legend.game.modding.coremod.config.AdditionOverlayConfigEntry;
 import legend.game.modding.coremod.config.AdditionModeConfigEntry;
+import legend.game.modding.coremod.config.AdditionOverlayConfigEntry;
 import legend.game.modding.coremod.config.ControllerConfigEntry;
 import legend.game.modding.coremod.config.ControllerDeadzoneConfigEntry;
 import legend.game.modding.coremod.config.ControllerKeybindConfigEntry;
@@ -35,8 +37,6 @@ import legend.game.modding.coremod.elements.WindElement;
 import legend.game.modding.events.EventListener;
 import legend.game.modding.events.battle.RegisterBattleObjectStatsEvent;
 import legend.game.modding.events.config.ConfigLoadedEvent;
-import legend.game.modding.events.inventory.ShopItemEvent;
-import legend.game.modding.events.inventory.ShopSellPriceEvent;
 import legend.game.modding.registries.Registrar;
 import legend.game.modding.registries.RegistryDelegate;
 import legend.game.modding.registries.RegistryId;
@@ -140,6 +140,18 @@ public class CoreMod {
   public static final RegistryDelegate<BoolConfigEntry> AUTO_TEXT_CONFIG = CONFIG_REGISTRAR.register("auto_text", () -> new BoolConfigEntry(false, ConfigStorageLocation.CAMPAIGN));
   public static final RegistryDelegate<BoolConfigEntry> SAVE_ANYWHERE_CONFIG = CONFIG_REGISTRAR.register("save_anywhere", () -> new BoolConfigEntry(false, ConfigStorageLocation.CAMPAIGN));
   public static final RegistryDelegate<BoolConfigEntry> DISABLE_STATUS_EFFECTS_CONFIG = CONFIG_REGISTRAR.register("disable_status_effects", () -> new BoolConfigEntry(false, ConfigStorageLocation.CAMPAIGN));
+
+  public static final Formula<Integer, Integer> PHYSICAL_DAMAGE_FORMULA = Formula.make(PhysicalDamageFormula::calculatePhysicalDamage, builder -> builder
+    .then(PhysicalDamageFormula::applyElementalInteractions)
+    .then(PhysicalDamageFormula::applyPower)
+    .then(PhysicalDamageFormula::applyDragoonSpace)
+    .then(PhysicalDamageFormula.minimum(0))
+    .then(PhysicalDamageFormula::applyDamageMultipliers)
+    .then(PhysicalDamageFormula::applyAttackEffects)
+    .then(PhysicalDamageFormula.minimum(1))
+    .then(PhysicalDamageFormula::applyResistanceAndImmunity)
+    .then(PhysicalDamageFormula::applyElementalResistanceAndImmunity)
+  );
 
   public static RegistryId id(final String entryId) {
     return new RegistryId(MOD_ID, entryId);
