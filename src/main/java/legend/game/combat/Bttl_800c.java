@@ -3652,6 +3652,7 @@ public final class Bttl_800c {
 
   @Method(0x800cde94L)
   public static void renderWeaponTrailEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
+    // Prevent garbage trails from rendering across the screen
     final int renderCoordThreshold = 5000;
     boolean renderCoordThresholdExceeded;
 
