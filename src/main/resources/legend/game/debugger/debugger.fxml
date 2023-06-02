@@ -83,9 +83,9 @@
                <CheckBox fx:id="battleUiColour" mnemonicParsing="false" onAction="#toggleBattleUiColour" text="UI Colour" />
                <HBox>
                   <children>
-                     <Spinner fx:id="battleUIColourR" editable="true" prefHeight="25.0" prefWidth="75.0" />
-                     <Spinner fx:id="battleUIColourG" editable="true" prefHeight="25.0" prefWidth="75.0" />
-                     <Spinner fx:id="battleUIColourB" editable="true" prefHeight="25.0" prefWidth="75.0" />
+                     <Spinner fx:id="battleUiColourR" editable="true" prefHeight="25.0" prefWidth="75.0" />
+                     <Spinner fx:id="battleUiColourG" editable="true" prefHeight="25.0" prefWidth="75.0" />
+                     <Spinner fx:id="battleUiColourB" editable="true" prefHeight="25.0" prefWidth="75.0" />
                      <Button mnemonicParsing="false" onAction="#getBattleUiRgb" text="Get" />
                      <Button mnemonicParsing="false" onAction="#setBattleUiRgb" text="Set" />
                   </children>

@@ -675,12 +675,12 @@ public final class SMap {
   }
 
   @Method(0x800d9b08L)
-  public static void FUN_800d9b08(final int a0) {
-    loadCharacterStats(0);
+  public static void FUN_800d9b08(final int charId) {
+    loadCharacterStats();
 
-    if(a0 >= 0) {
-      final ActiveStatsa0 stats = stats_800be5f8[a0];
-      final CharacterData2c charData = gameState_800babc8.charData_32c[a0];
+    if(charId >= 0) {
+      final ActiveStatsa0 stats = stats_800be5f8[charId];
+      final CharacterData2c charData = gameState_800babc8.charData_32c[charId];
       charData.hp_08 = stats.maxHp_66;
       charData.mp_0a = stats.maxMp_6e;
     } else {

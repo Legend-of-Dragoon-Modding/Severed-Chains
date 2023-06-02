@@ -5,6 +5,8 @@ import legend.game.types.CContainer;
 import legend.game.types.TmdAnimationFile;
 import legend.game.unpacker.FileData;
 
+import java.util.List;
+
 public class DeffPart {
   /**
    * MSB is type, LSB is index, middle bytes are some kind of ID?
@@ -22,6 +24,20 @@ public class DeffPart {
 
   public DeffPart(final FileData data) {
     this.flags_00 = data.readInt(0);
+  }
+
+  public static DeffPart getDeffPart(final List<FileData> files, final int i) {
+    final FileData data = files.get(i);
+    final int flags = data.readInt(0);
+    return switch(flags >>> 24) {
+      case 0 -> new DeffPart.LmbType(data);
+      case 1, 2 -> new DeffPart.AnimatedTmdType("DEFF index %d (flags %08x)".formatted(i, flags), data);
+      case 3 -> new DeffPart.TmdType("DEFF index %d (flags %08x)".formatted(i, flags), data);
+      case 4 -> new DeffPart.SpriteType(data);
+      // Example: d-attack (DRGN0.4236.0.0)
+      case 5 -> new DeffPart.AnimatedTmdType("DEFF index %d (flags %08x)".formatted(i, flags), data);
+      default -> throw new IllegalArgumentException("Invalid DEFF type %x".formatted(flags & 0xff00_0000));
+    };
   }
 
   public static class LmbType extends DeffPart {

@@ -1,9 +1,9 @@
 package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
-import legend.game.modding.coremod.CoreMod;
 import legend.game.DabasManager;
 import legend.game.input.InputAction;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.types.DabasData100;
 import legend.game.types.LodString;
 import legend.game.types.MenuItemStruct04;
@@ -26,7 +26,7 @@ import static legend.game.SItem.SpecialItem_8011d054;
 import static legend.game.SItem.Take_8011d058;
 import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.dabasMenuGlyphs_80114228;
-import static legend.game.SItem.equipment_8011972c;
+import static legend.game.SItem.getItemName;
 import static legend.game.SItem.menuStack;
 import static legend.game.SItem.messageBox;
 import static legend.game.SItem.messageBox_8011dc90;
@@ -609,7 +609,7 @@ public class DabasScreen extends MenuScreen {
 
     if(this.specialItem != null) {
       renderItemIcon(getItemIcon(this.specialItem.itemId_00), 198, 192, 0x8L);
-      renderText(equipment_8011972c.get(this.specialItem.itemId_00).deref(), 214, 194, TextColour.BROWN);
+      renderText(new LodString(getItemName(this.specialItem.itemId_00)), 214, 194, TextColour.BROWN);
     }
 
     //LAB_80103390

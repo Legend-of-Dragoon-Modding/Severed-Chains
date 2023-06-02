@@ -1,5 +1,6 @@
 package legend.game.inventory.screens;
 
+import legend.core.GameEngine;
 import legend.game.SItem;
 import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
@@ -23,7 +24,7 @@ import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.MODS;
 import static legend.core.GameEngine.SAVES;
-import static legend.core.GameEngine.rebootMods;
+import static legend.core.GameEngine.bootMods;
 import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
@@ -63,7 +64,7 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
 
     this.addRow("", new Button("Mods")).onPressed(() ->
       SItem.menuStack.pushScreen(new ModsScreen(this.enabledMods, () -> {
-        rebootMods(this.enabledMods);
+        bootMods(this.enabledMods);
 
         scriptStartEffect(2, 10);
         SItem.menuStack.popScreen();
@@ -83,6 +84,8 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
   @Override
   protected void render() {
     if(this.unload) {
+      GameEngine.bootRegistries();
+
       this.state.campaignName = this.campaignName.getText();
 
       final NewGameEvent newGameEvent = EVENTS.postEvent(new NewGameEvent(this.state));
@@ -105,7 +108,7 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
     playSound(3);
     whichMenu_800bdc38 = WhichMenu.UNLOAD_NEW_CAMPAIGN_MENU;
 
-    rebootMods(MODS.getAllModIds());
+    bootMods(MODS.getAllModIds());
   }
 
   @Override

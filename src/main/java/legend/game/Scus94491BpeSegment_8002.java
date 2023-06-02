@@ -194,7 +194,6 @@ import static legend.game.Scus94491BpeSegment_800b._800bed28;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.encounterSoundEffects_800bd610;
-import static legend.game.Scus94491BpeSegment_800b.equipmentStats_800be5d8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.hasNoEncounters_800bed58;
 import static legend.game.Scus94491BpeSegment_800b.inventoryMenuState_800bdc28;
@@ -1234,7 +1233,7 @@ public final class Scus94491BpeSegment_8002 {
       case INIT_NEW_CAMPAIGN_MENU -> initMenu(WhichMenu.RENDER_NEW_CAMPAIGN_MENU, NewCampaignScreen::new);
       case INIT_OPTIONS_MENU -> initMenu(WhichMenu.RENDER_OPTIONS_MENU, () -> new OptionsScreen(CONFIG, Set.of(ConfigStorageLocation.GLOBAL), () -> whichMenu_800bdc38 = WhichMenu.UNLOAD_OPTIONS_MENU));
       case INIT_CHAR_SWAP_MENU_21 -> {
-        loadCharacterStats(0);
+        loadCharacterStats();
         cacheCharacterSlots();
         initMenu(WhichMenu.RENDER_CHAR_SWAP_MENU_24, () -> new CharSwapScreen(() -> whichMenu_800bdc38 = WhichMenu.UNLOAD_CHAR_SWAP_MENU_25));
       }
@@ -1324,17 +1323,17 @@ public final class Scus94491BpeSegment_8002 {
       return false;
     }
 
-    return (equipmentStats_80111ff0.get(itemId).flags_00.get() & 0x4) != 0;
+    return (equipmentStats_80111ff0[itemId].flags_00 & 0x4) != 0;
   }
 
   @Method(0x800228d0L)
   public static int getItemIcon(final int itemId) {
     if(itemId >= 0xc0) {
-      return itemStats_8004f2ac.get(itemId - 0xc0).icon_07.get();
+      return itemStats_8004f2ac[itemId - 0xc0].icon_07;
     }
 
     //LAB_80022908
-    return equipmentStats_80111ff0.get(itemId).icon_0e.get();
+    return equipmentStats_80111ff0[itemId].icon_0e;
   }
 
   @Method(0x80022928L)
@@ -1426,7 +1425,7 @@ public final class Scus94491BpeSegment_8002 {
       return 0;
     }
 
-    final int target = itemStats_8004f2ac.get(itemId - 0xc0).target_00.get();
+    final int target = itemStats_8004f2ac[itemId - 0xc0].target_00;
 
     if((target & 0x10L) == 0) {
       //LAB_80022b40
@@ -1468,7 +1467,7 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80022bec
-    loadCharacterStats(0);
+    loadCharacterStats();
 
     //LAB_80022bf8
     return ret;
@@ -1505,7 +1504,7 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80022cb4
-    loadCharacterStats(0);
+    loadCharacterStats();
 
     //LAB_80022cc0
     return ret;
@@ -1546,11 +1545,11 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80022e94
-    final ItemStats0c itemStats = itemStats_8004f2ac.get(itemId - 0xc0);
-    final int percentage = itemStats.percentage_09.get();
-    if((itemStats.type_0b.get() & 0x80) != 0) {
+    final ItemStats0c itemStats = itemStats_8004f2ac[itemId - 0xc0];
+    final int percentage = itemStats.percentage_09;
+    if((itemStats.type_0b & 0x80) != 0) {
       //LAB_80022edc
-      response._00 = (itemStats.target_00.get() & 0x2) == 0 ? 2 : 3;
+      response._00 = (itemStats.target_00 & 0x2) == 0 ? 2 : 3;
 
       final int amount;
       if(percentage == 100) {
@@ -1565,9 +1564,9 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80022f50
-    if((itemStats.type_0b.get() & 0x40) != 0) {
+    if((itemStats.type_0b & 0x40) != 0) {
       //LAB_80022f98
-      response._00 = (itemStats.target_00.get() & 0x2) == 0 ? 4 : 5;
+      response._00 = (itemStats.target_00 & 0x2) == 0 ? 4 : 5;
 
       final int amount;
       if(percentage == 100) {
@@ -1582,7 +1581,7 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_8002300c
-    if((itemStats.type_0b.get() & 0x20) != 0) {
+    if((itemStats.type_0b & 0x20) != 0) {
       response._00 = 6;
 
       final int amount;
@@ -1597,10 +1596,10 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80023068
-    if((itemStats.type_0b.get() & 0x8) != 0) {
+    if((itemStats.type_0b & 0x8) != 0) {
       final int status = gameState_800babc8.charData_32c[charIndex].status_10;
 
-      if((itemStats.status_08.get() & status) != 0) {
+      if((itemStats.status_08 & status) != 0) {
         response.value_04 = status;
         gameState_800babc8.charData_32c[charIndex].status_10 &= ~status;
       }
@@ -4786,22 +4785,22 @@ public final class Scus94491BpeSegment_8002 {
         stats.additionXp_3e[i] = 0;
       }
 
-      stats.physicalImmunity_46 = 0;
-      stats.magicalImmunity_48 = 0;
-      stats.physicalResistance_4a = 0;
-      stats.spMultiplier_4c = 0;
-      stats.spPerPhysicalHit_4e = 0;
-      stats.mpPerPhysicalHit_50 = 0;
-      stats.spPerMagicalHit_52 = 0;
-      stats.mpPerMagicalHit_54 = 0;
-      stats._56 = 0;
-      stats.hpRegen_58 = 0;
-      stats.mpRegen_5a = 0;
-      stats.spRegen_5c = 0;
-      stats.revive_5e = 0;
-      stats.magicalResistance_60 = 0;
-      stats.hpMulti_62 = 0;
-      stats.mpMulti_64 = 0;
+      stats.equipmentPhysicalImmunity_46 = false;
+      stats.equipmentMagicalImmunity_48 = false;
+      stats.equipmentPhysicalResistance_4a = false;
+      stats.equipmentSpMultiplier_4c = 0;
+      stats.equipmentSpPerPhysicalHit_4e = 0;
+      stats.equipmentMpPerPhysicalHit_50 = 0;
+      stats.equipmentSpPerMagicalHit_52 = 0;
+      stats.equipmentMpPerMagicalHit_54 = 0;
+      stats.equipmentSpecial2Flag80_56 = 0;
+      stats.equipmentHpRegen_58 = 0;
+      stats.equipmentMpRegen_5a = 0;
+      stats.equipmentSpRegen_5c = 0;
+      stats.equipmentRevive_5e = 0;
+      stats.equipmentMagicalResistance_60 = false;
+      stats.equipmentHpMulti_62 = 0;
+      stats.equipmentMpMulti_64 = 0;
       stats.maxHp_66 = 0;
       stats.addition_68 = 0;
       stats.bodySpeed_69 = 0;
@@ -4810,62 +4809,54 @@ public final class Scus94491BpeSegment_8002 {
       stats.bodyDefence_6c = 0;
       stats.bodyMagicDefence_6d = 0;
       stats.maxMp_6e = 0;
-      stats.spellIndex_70 = 0;
+      stats.spellId_70 = 0;
       stats._71 = 0;
       stats.dragoonAttack_72 = 0;
       stats.dragoonMagicAttack_73 = 0;
       stats.dragoonDefence_74 = 0;
       stats.dragoonMagicDefence_75 = 0;
 
-      FUN_8002a86c(charIndex);
+      clearEquipmentStats(charIndex);
 
-      stats._9c = 0;
+      stats.addition_00_9c = 0;
       stats.additionSpMultiplier_9e = 0;
       stats.additionDamageMultiplier_9f = 0;
     }
 
-    FUN_8002a8f8();
     _800be5d0.setu(0);
   }
 
   @Method(0x8002a86cL)
-  public static void FUN_8002a86c(final int charIndex) {
+  public static void clearEquipmentStats(final int charIndex) {
     final ActiveStatsa0 stats = stats_800be5f8[charIndex];
 
     stats.specialEffectFlag_76 = 0;
-    stats._77 = 0;
-    stats._78 = 0;
-    stats._79 = 0;
-    stats.elementFlag_7a = 0;
-    stats._7b = 0;
-    stats.elementalResistanceFlag_7c = 0;
-    stats.elementalImmunityFlag_7d = 0;
-    stats.statusResistFlag_7e = 0;
-    stats._7f = 0;
-    stats._80 = 0;
-    stats.special1_81 = 0;
-    stats.special2_82 = 0;
+    stats.equipmentType_77 = 0;
+    stats.equipment_02_78 = 0;
+    stats.equipmentEquipableFlags_79 = 0;
+    stats.equipmentAttackElements_7a.clear();
+    stats.equipment_05_7b = 0;
+    stats.equipmentElementalResistance_7c.clear();
+    stats.equipmentElementalImmunity_7d.clear();
+    stats.equipmentStatusResist_7e = 0;
+    stats.equipment_09_7f = 0;
+    stats.equipmentAttack1_80 = 0;
     stats._83 = 0;
-    stats._84 = 0;
+    stats.equipmentIcon_84 = 0;
 
-    stats.gearSpeed_86 = 0;
-    stats.gearAttack_88 = 0;
-    stats.gearMagicAttack_8a = 0;
-    stats.gearDefence_8c = 0;
-    stats.gearMagicDefence_8e = 0;
-    stats.attackHit_90 = 0;
-    stats.magicHit_92 = 0;
-    stats.attackAvoid_94 = 0;
-    stats.magicAvoid_96 = 0;
-    stats.onHitStatusChance_98 = 0;
-    stats._99 = 0;
-    stats._9a = 0;
-    stats.onHitStatus_9b = 0;
-  }
-
-  @Method(0x8002a8f8L)
-  public static void FUN_8002a8f8() {
-    bzero(equipmentStats_800be5d8.getAddress(), 0x1c);
+    stats.equipmentSpeed_86 = 0;
+    stats.equipmentAttack_88 = 0;
+    stats.equipmentMagicAttack_8a = 0;
+    stats.equipmentDefence_8c = 0;
+    stats.equipmentMagicDefence_8e = 0;
+    stats.equipmentAttackHit_90 = 0;
+    stats.equipmentMagicHit_92 = 0;
+    stats.equipmentAttackAvoid_94 = 0;
+    stats.equipmentMagicAvoid_96 = 0;
+    stats.equipmentOnHitStatusChance_98 = 0;
+    stats.equipment_19_99 = 0;
+    stats.equipment_1a_9a = 0;
+    stats.equipmentOnHitStatus_9b = 0;
   }
 
   @Method(0x8002a9c0L)

@@ -9,20 +9,24 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
+import legend.game.characters.UnaryStat;
+import legend.game.characters.VitalsStat;
 import legend.game.combat.bobj.BattleObject27c;
 import legend.game.combat.bobj.MonsterBattleObject;
 import legend.game.combat.bobj.PlayerBattleObject;
 import legend.game.combat.types.CombatantStruct1a8;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.scripting.ScriptState;
 
 import static legend.game.Scus94491BpeSegment_8005.combatants_8005e398;
-import static legend.game.Scus94491BpeSegment_8006._8006e398;
+import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.combat.Bttl_800c.currentEnemyNames_800c69d0;
 import static legend.game.combat.Bttl_800c.playerNames_800fb378;
 
@@ -51,6 +55,8 @@ public class CombatDebuggerController {
 
   @FXML
   public Spinner<Integer> spd;
+  @FXML
+  public Label spdMod;
   @FXML
   public Spinner<Integer> turn;
   @FXML
@@ -125,7 +131,7 @@ public class CombatDebuggerController {
   }
 
   private void displayStats(final int index) {
-    final ScriptState<? extends BattleObject27c> state = _8006e398.bobjIndices_e0c[index];
+    final ScriptState<? extends BattleObject27c> state = battleState_8006e398.allBobjs_e0c[index];
 
     if(state == null) {
       return;
@@ -136,11 +142,14 @@ public class CombatDebuggerController {
     this.scriptIndex.setText("View script %d".formatted(state.index));
 
     if(bobj instanceof final PlayerBattleObject player) {
+      final VitalsStat mp = player.stats.getStat(CoreMod.MP_STAT.get());
+      final VitalsStat sp = player.stats.getStat(CoreMod.SP_STAT.get());
+
       this.level.getValueFactory().setValue(player.level_04);
       this.dlevel.getValueFactory().setValue(player.dlevel_06);
-      this.mp.getValueFactory().setValue(player.mp_0c);
-      this.maxMp.getValueFactory().setValue(player.maxMp_12);
-      this.sp.getValueFactory().setValue(player.sp_0a);
+      this.mp.getValueFactory().setValue(mp.getCurrent());
+      this.maxMp.getValueFactory().setValue(mp.getMaxRaw());
+      this.sp.getValueFactory().setValue(sp.getCurrent());
       this.level.setVisible(true);
       this.dlevel.setVisible(true);
       this.mp.setVisible(true);
@@ -154,10 +163,15 @@ public class CombatDebuggerController {
       this.sp.setVisible(false);
     }
 
-    this.hp.getValueFactory().setValue(bobj.hp_08);
-    this.maxHp.getValueFactory().setValue(bobj.maxHp_10);
+    final VitalsStat hp = bobj.stats.getStat(CoreMod.HP_STAT.get());
+    this.hp.getValueFactory().setValue(hp.getCurrent());
+    this.maxHp.getValueFactory().setValue(hp.getMaxRaw());
 
-    this.spd.getValueFactory().setValue(bobj.speed_32);
+    final UnaryStat speedStat = bobj.stats.getStat(CoreMod.SPEED_STAT.get());
+    final int speedMod = speedStat.getMods();
+    this.spd.getValueFactory().setValue(speedStat.getRaw());
+    this.spdMod.setText(speedMod < 0 ? Integer.toString(speedMod) : "+" + speedMod);
+
     this.turn.getValueFactory().setValue(bobj.turnValue_4c);
     this.atk.getValueFactory().setValue(bobj.attack_34);
     this.def.getValueFactory().setValue(bobj.defence_38);
@@ -170,7 +184,7 @@ public class CombatDebuggerController {
   }
 
   private String getCombatantName(final int combatantIndex) {
-    final ScriptState<? extends BattleObject27c> state = _8006e398.bobjIndices_e0c[combatantIndex];
+    final ScriptState<? extends BattleObject27c> state = battleState_8006e398.allBobjs_e0c[combatantIndex];
 
     if(state == null) {
       return "unused";
@@ -188,7 +202,7 @@ public class CombatDebuggerController {
       return currentEnemyNames_800c69d0.get(bobj.charSlot_276).get();
     }
 
-    return bobj.charIndex_272 == 8 ? "Who?" : playerNames_800fb378.get(bobj.charIndex_272).deref().get();
+    return bobj.charId_272 == 8 ? "Who?" : playerNames_800fb378.get(bobj.charId_272).deref().get();
   }
 
   public void openScriptDebugger(final ActionEvent event) throws Exception {
@@ -196,7 +210,7 @@ public class CombatDebuggerController {
       return;
     }
 
-    final ScriptState<? extends BattleObject27c> state = _8006e398.bobjIndices_e0c[this.bobjList.getSelectionModel().getSelectedIndex()];
+    final ScriptState<? extends BattleObject27c> state = battleState_8006e398.allBobjs_e0c[this.bobjList.getSelectionModel().getSelectedIndex()];
 
     final ScriptDebugger scriptDebugger = new ScriptDebugger();
     scriptDebugger.preselectScript(state.index).start(new Stage());
@@ -208,7 +222,7 @@ public class CombatDebuggerController {
 
   public void updateStats(final ActionEvent event) {
     final int index = this.bobjList.getSelectionModel().getSelectedIndex();
-    final ScriptState<? extends BattleObject27c> state = _8006e398.bobjIndices_e0c[index];
+    final ScriptState<? extends BattleObject27c> state = battleState_8006e398.allBobjs_e0c[index];
 
     if(state == null) {
       return;
@@ -217,17 +231,21 @@ public class CombatDebuggerController {
     final BattleObject27c bobj = state.innerStruct_00;
 
     if(bobj instanceof final PlayerBattleObject player) {
+      final VitalsStat mp = player.stats.getStat(CoreMod.MP_STAT.get());
+      final VitalsStat sp = player.stats.getStat(CoreMod.SP_STAT.get());
+
       player.level_04 = this.level.getValue();
       player.dlevel_06 = this.dlevel.getValue();
-      player.mp_0c = this.mp.getValue();
-      player.maxMp_12 = this.maxMp.getValue();
-      player.sp_0a = this.sp.getValue().shortValue();
+      mp.setCurrent(this.mp.getValue());
+      mp.setMaxRaw(this.maxMp.getValue());
+      sp.setCurrent(this.sp.getValue());
     }
 
-    bobj.hp_08 = this.hp.getValue();
-    bobj.maxHp_10 = this.maxHp.getValue();
+    final VitalsStat hp = bobj.stats.getStat(CoreMod.HP_STAT.get());
+    hp.setCurrent(this.hp.getValue());
+    hp.setMaxRaw(this.maxHp.getValue());
 
-    bobj.speed_32 = this.spd.getValue();
+    bobj.stats.getStat(CoreMod.SPEED_STAT.get()).setRaw(this.spd.getValue());
     bobj.turnValue_4c = this.turn.getValue().shortValue();
     bobj.attack_34 = this.atk.getValue();
     bobj.defence_38 = this.def.getValue();

@@ -1,12 +1,12 @@
 package legend.game.inventory.screens;
 
 import it.unimi.dsi.fastutil.ints.IntList;
-import legend.game.modding.coremod.CoreMod;
 import legend.game.input.InputAction;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.Glyph;
 import legend.game.inventory.screens.controls.ItemList;
 import legend.game.inventory.screens.controls.Label;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.types.LodString;
 import legend.game.types.MenuItemStruct04;
 import legend.game.types.MessageBoxResult;
@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static legend.core.GameEngine.CONFIG;
-import static legend.game.SItem.itemDescriptions_80117a10;
+import static legend.game.SItem.getItemDescription;
 import static legend.game.SItem.loadItemsAndEquipmentForDisplay;
 import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
@@ -60,7 +60,7 @@ public class ItemListScreen extends MenuScreen {
 
       return InputPropagation.PROPAGATE;
     });
-    this.itemList.onHighlight(item -> this.description.setText(itemDescriptions_80117a10.get(item.itemId_00).deref().get()));
+    this.itemList.onHighlight(item -> this.description.setText(getItemDescription(item.itemId_00)));
 
     this.equipmentList.onHoverIn(() -> this.setFocus(this.equipmentList));
     this.equipmentList.onGotFocus(() -> {

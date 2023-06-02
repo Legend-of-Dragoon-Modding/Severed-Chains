@@ -249,29 +249,29 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[153] = Bttl_800c::FUN_800cc1cc;
     scriptSubFunctions_8004e29c[154] = Bttl_800c::FUN_800cc364;
     scriptSubFunctions_8004e29c[155] = Bttl_800c::FUN_800cc46c;
-    scriptSubFunctions_8004e29c[156] = Bttl_800c::FUN_800cc608;
+    scriptSubFunctions_8004e29c[156] = Bttl_800c::scriptBobjLookAtBobj;
     scriptSubFunctions_8004e29c[157] = Bttl_800c::FUN_800cc698;
     scriptSubFunctions_8004e29c[158] = Bttl_800c::FUN_800cc784;
-    scriptSubFunctions_8004e29c[159] = Bttl_800c::FUN_800cc8f4;
+    scriptSubFunctions_8004e29c[159] = Bttl_800c::scriptLoadAttackAnimations;
     scriptSubFunctions_8004e29c[160] = Bttl_800c::FUN_800cca34;
     scriptSubFunctions_8004e29c[161] = Scus94491BpeSegment::scriptRewindAndPause2;
     scriptSubFunctions_8004e29c[162] = Scus94491BpeSegment::scriptRewindAndPause2;
     scriptSubFunctions_8004e29c[163] = Scus94491BpeSegment::scriptRewindAndPause2;
     scriptSubFunctions_8004e29c[164] = Bttl_800c::scriptRenderDamage;
-    scriptSubFunctions_8004e29c[165] = Bttl_800c::FUN_800ccb70;
+    scriptSubFunctions_8004e29c[165] = Bttl_800c::scriptAddFloatingNumberForBobj;
     scriptSubFunctions_8004e29c[166] = Bttl_800c::FUN_800ccba4;
-    scriptSubFunctions_8004e29c[167] = Bttl_800c::FUN_800cccf4;
-    scriptSubFunctions_8004e29c[168] = Bttl_800c::FUN_800ccd34;
-    scriptSubFunctions_8004e29c[169] = Bttl_800c::scriptGetStat;
-    scriptSubFunctions_8004e29c[170] = Bttl_800c::FUN_800ccf0c;
+    scriptSubFunctions_8004e29c[167] = Bttl_800c::scriptGetCharOrMonsterId;
+    scriptSubFunctions_8004e29c[168] = Bttl_800c::scriptSetBobjStat;
+    scriptSubFunctions_8004e29c[169] = Bttl_800c::scriptGetBobjStat;
+    scriptSubFunctions_8004e29c[170] = Bttl_800c::scriptSetPostBattleAction;
     scriptSubFunctions_8004e29c[171] = Bttl_800c::FUN_800ccec8;
     scriptSubFunctions_8004e29c[172] = Bttl_800c::FUN_800ccef8;
-    scriptSubFunctions_8004e29c[173] = Bttl_800c::FUN_800ccf2c;
-    scriptSubFunctions_8004e29c[174] = Bttl_800c::FUN_800cd0ec;
-    scriptSubFunctions_8004e29c[175] = Bttl_800c::FUN_800cd078;
+    scriptSubFunctions_8004e29c[173] = Bttl_800c::scriptSetBobjDeadAndDropLoot;
+    scriptSubFunctions_8004e29c[174] = Bttl_800c::scriptGetHitProperty;
+    scriptSubFunctions_8004e29c[175] = Bttl_800c::scriptSetBobjDead;
     scriptSubFunctions_8004e29c[176] = Bttl_800c::levelUpAddition;
-    scriptSubFunctions_8004e29c[177] = Bttl_800c::FUN_800cce70;
-    scriptSubFunctions_8004e29c[178] = Bttl_800c::scriptSetStat;
+    scriptSubFunctions_8004e29c[177] = Bttl_800c::scriptGetBobjStat2;
+    scriptSubFunctions_8004e29c[178] = Bttl_800c::scriptSetBobjRawStat;
 
     scriptSubFunctions_8004e29c[192] = Scus94491BpeSegment_8002::scriptGetFreeTextboxIndex;
     scriptSubFunctions_8004e29c[193] = Scus94491BpeSegment_8002::FUN_80029bd4;
@@ -432,36 +432,36 @@ public final class Scus94491BpeSegment_8004 {
 
 //    scriptSubFunctions_8004e29c[445] = Temp::FUN_800ca734;
 
-    scriptSubFunctions_8004e29c[480] = Bttl_800f::FUN_800f95d0;
-    scriptSubFunctions_8004e29c[481] = Bttl_800f::FUN_800f2500;
-    scriptSubFunctions_8004e29c[482] = Bttl_800f::FUN_800f96d4;
-    scriptSubFunctions_8004e29c[483] = Bttl_800f::FUN_800f9730;
-    scriptSubFunctions_8004e29c[484] = Bttl_800f::FUN_800f95d0;
-    scriptSubFunctions_8004e29c[485] = Bttl_800f::FUN_800f95d0;
-    scriptSubFunctions_8004e29c[486] = Bttl_800f::FUN_800f95d0;
-    scriptSubFunctions_8004e29c[487] = Bttl_800f::FUN_800f43dc;
-    scriptSubFunctions_8004e29c[488] = Bttl_800f::FUN_800f4518;
-    scriptSubFunctions_8004e29c[489] = Bttl_800f::FUN_800f97d8;
+    scriptSubFunctions_8004e29c[480] = Bttl_800f::scriptCheckPhysicalHit;
+    scriptSubFunctions_8004e29c[481] = Bttl_800f::scriptPhysicalAttack;
+    scriptSubFunctions_8004e29c[482] = Bttl_800f::scriptGetBobjPos;
+    scriptSubFunctions_8004e29c[483] = Bttl_800f::scriptAddFloatingNumber;
+    scriptSubFunctions_8004e29c[484] = Bttl_800f::scriptCheckPhysicalHit;
+    scriptSubFunctions_8004e29c[485] = Bttl_800f::scriptCheckPhysicalHit;
+    scriptSubFunctions_8004e29c[486] = Bttl_800f::scriptCheckPhysicalHit;
+    scriptSubFunctions_8004e29c[487] = Bttl_800f::scriptGiveSp;
+    scriptSubFunctions_8004e29c[488] = Bttl_800f::scriptConsumeSp;
+    scriptSubFunctions_8004e29c[489] = Bttl_800f::scriptInitCombatMenu;
     scriptSubFunctions_8004e29c[490] = Bttl_800f::FUN_800f4600;
     scriptSubFunctions_8004e29c[491] = Bttl_800f::FUN_800f480c;
-    scriptSubFunctions_8004e29c[492] = Bttl_800f::FUN_800f2694;
-    scriptSubFunctions_8004e29c[493] = Bttl_800f::FUN_800f96a8;
+    scriptSubFunctions_8004e29c[492] = Bttl_800f::scriptDragoonMagicStatusItemAttack;
+    scriptSubFunctions_8004e29c[493] = Bttl_800f::scriptSetTempSpellStats;
     scriptSubFunctions_8004e29c[494] = Bttl_800f::scriptRenderRecover;
-    scriptSubFunctions_8004e29c[495] = Bttl_800f::FUN_800f2838;
-    scriptSubFunctions_8004e29c[496] = Bttl_800f::FUN_800f9884;
-    scriptSubFunctions_8004e29c[497] = Bttl_800f::FUN_800f98b0;
-    scriptSubFunctions_8004e29c[498] = Bttl_800f::FUN_800f99ec;
+    scriptSubFunctions_8004e29c[495] = Bttl_800f::scriptItemMagicAttack;
+    scriptSubFunctions_8004e29c[496] = Bttl_800f::scriptSetTempItemMagicStats;
+    scriptSubFunctions_8004e29c[497] = Bttl_800f::scriptTakeItem;
+    scriptSubFunctions_8004e29c[498] = Bttl_800f::scriptGiveItem;
     scriptSubFunctions_8004e29c[499] = Bttl_800f::FUN_800f9a50;
     scriptSubFunctions_8004e29c[500] = Bttl_800f::scriptIsFloatingNumberOnScreen;
-    scriptSubFunctions_8004e29c[501] = Bttl_800f::FUN_800f9b78;
+    scriptSubFunctions_8004e29c[501] = Bttl_800f::scriptSetDragoonSpaceElementIndex;
     scriptSubFunctions_8004e29c[502] = Bttl_800f::FUN_800f9b94;
     scriptSubFunctions_8004e29c[503] = Bttl_800f::FUN_800f9bd4;
     scriptSubFunctions_8004e29c[504] = Bttl_800f::FUN_800f9c00;
     scriptSubFunctions_8004e29c[505] = Bttl_800f::FUN_800f9c2c;
     scriptSubFunctions_8004e29c[506] = Bttl_800f::FUN_800f9cac;
-    scriptSubFunctions_8004e29c[507] = Bttl_800f::FUN_800f9618;
-    scriptSubFunctions_8004e29c[508] = Bttl_800f::FUN_800f9660;
-    scriptSubFunctions_8004e29c[509] = Bttl_800f::scriptTickTemporaryStatMods;
+    scriptSubFunctions_8004e29c[507] = Bttl_800f::scriptCheckSpellOrStatusHit;
+    scriptSubFunctions_8004e29c[508] = Bttl_800f::scriptCheckItemHit;
+    scriptSubFunctions_8004e29c[509] = Bttl_800f::scriptFinishBobjTurn;
 
     scriptSubFunctions_8004e29c[512] = Bttl_800e::scriptSetBobjZOffset;
     scriptSubFunctions_8004e29c[513] = Bttl_800e::scriptSetBobjScaleUniform;
@@ -667,7 +667,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[760] = SEffe::FUN_80108df0;
     scriptSubFunctions_8004e29c[761] = Bttl_800d::allocateGuardEffect;
     scriptSubFunctions_8004e29c[762] = Bttl_800c::allocateWeaponTrailEffect;
-    scriptSubFunctions_8004e29c[763] = Bttl_800d::allocatePotionEffect;
+    scriptSubFunctions_8004e29c[763] = Bttl_800d::allocateRadialGradientEffect;
     scriptSubFunctions_8004e29c[764] = Bttl_800d::scriptAllocateAdditionScript;
     scriptSubFunctions_8004e29c[765] = Bttl_800c::FUN_800cfccc;
     scriptSubFunctions_8004e29c[766] = Bttl_800d::FUN_800d4338;
@@ -740,7 +740,7 @@ public final class Scus94491BpeSegment_8004 {
   // 8004f29c end of jump table
 
   public static final Value _8004f2a8 = MEMORY.ref(4, 0x8004f2a8L);
-  public static final ArrayRef<ItemStats0c> itemStats_8004f2ac = MEMORY.ref(1, 0x8004f2acL, ArrayRef.of(ItemStats0c.class, 0x40, 0xc, ItemStats0c::new));
+  public static final ItemStats0c[] itemStats_8004f2ac = new ItemStats0c[64];
   public static final ArrayRef<ShortRef> additionOffsets_8004f5ac = MEMORY.ref(2, 0x8004f5acL, ArrayRef.of(ShortRef.class, 10, 0x2, ShortRef::new));
   public static final ArrayRef<ShortRef> additionCounts_8004f5c0 = MEMORY.ref(2, 0x8004f5c0L, ArrayRef.of(ShortRef.class, 10, 0x2, ShortRef::new));
   /**
@@ -768,9 +768,9 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link Bttl_800c#deferDoNothing}</li>
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
    *   <li>{@link Bttl_800c#FUN_800c7a80}</li>
-   *   <li>{@link Bttl_800c#FUN_800c7bb8}</li>
+   *   <li>{@link Bttl_800c#battleTick}</li>
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
-   *   <li>{@link Bttl_800c#FUN_800c8068}</li>
+   *   <li>{@link Bttl_800c#performPostBattleAction}</li>
    *   <li>{@link Bttl_800c#deallocateCombat}</li>
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_80018998}</li>

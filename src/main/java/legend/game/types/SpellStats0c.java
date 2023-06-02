@@ -1,44 +1,66 @@
 package legend.game.types;
 
-import legend.core.memory.Value;
-import legend.core.memory.types.MemoryRef;
-import legend.core.memory.types.UnsignedByteRef;
+import legend.game.characters.Element;
+import legend.game.unpacker.FileData;
 
-public class SpellStats0c implements MemoryRef {
-  private final Value ref;
+public class SpellStats0c {
+  public final String name;
+  public final String combatDescription;
 
-  public final UnsignedByteRef targetType_00;
-  public final UnsignedByteRef _01;
-  public final UnsignedByteRef specialEffect_02;
-  public final UnsignedByteRef damage_03;
-  public final UnsignedByteRef multi_04;
-  public final UnsignedByteRef accuracy_05;
-  public final UnsignedByteRef mp_06;
-  public final UnsignedByteRef statusChance_07;
-  public final UnsignedByteRef element_08;
-  public final UnsignedByteRef statusType_09;
-  public final UnsignedByteRef buffType_0a;
-  public final UnsignedByteRef _0b;
+  /**
+   * <ul>
+   *   <li>0x8 - attack all</li>
+   * </ul>
+   */
+  public final int targetType_00;
+  /**
+   * <ul>
+   *   <li>0x4 - either buff spell or always hit (or both)</li>
+   * </ul>
+   */
+  public final int flags_01;
+  public final int specialEffect_02;
+  public final int damageMultiplier_03;
+  public final int multi_04;
+  public final int accuracy_05;
+  public final int mp_06;
+  public final int statusChance_07;
+  public final Element element_08;
+  public final int statusType_09;
+  public final int buffType_0a;
+  public final int _0b;
 
-  public SpellStats0c(final Value ref) {
-    this.ref = ref;
+  public static SpellStats0c fromFile(final String name, final String combatDescription, final FileData data) {
+    final int targetType_00 = data.readUByte(0x0);
+    final int flags_01 = data.readUByte(0x1);
+    final int specialEffect_02 = data.readUByte(0x2);
+    final int damage_03 = data.readUByte(0x3);
+    final int multi_04 = data.readUByte(0x4);
+    final int accuracy_05 = data.readUByte(0x5);
+    final int mp_06 = data.readUByte(0x6);
+    final int statusChance_07 = data.readUByte(0x7);
+    final Element element_08 = Element.fromFlag(data.readUByte(0x8));
+    final int statusType_09 = data.readUByte(0x9);
+    final int buffType_0a = data.readUByte(0xa);
+    final int _0b = data.readUByte(0xb);
 
-    this.targetType_00 = ref.offset(1, 0x00L).cast(UnsignedByteRef::new);
-    this._01 = ref.offset(1, 0x01L).cast(UnsignedByteRef::new);
-    this.specialEffect_02 = ref.offset(1, 0x02L).cast(UnsignedByteRef::new);
-    this.damage_03 = ref.offset(1, 0x03L).cast(UnsignedByteRef::new);
-    this.multi_04 = ref.offset(1, 0x04L).cast(UnsignedByteRef::new);
-    this.accuracy_05 = ref.offset(1, 0x05L).cast(UnsignedByteRef::new);
-    this.mp_06 = ref.offset(1, 0x06L).cast(UnsignedByteRef::new);
-    this.statusChance_07 = ref.offset(1, 0x07L).cast(UnsignedByteRef::new);
-    this.element_08 = ref.offset(1, 0x08L).cast(UnsignedByteRef::new);
-    this.statusType_09 = ref.offset(1, 0x09L).cast(UnsignedByteRef::new);
-    this.buffType_0a = ref.offset(1, 0x0aL).cast(UnsignedByteRef::new);
-    this._0b = ref.offset(1, 0x0bL).cast(UnsignedByteRef::new);
+    return new SpellStats0c(name, combatDescription, targetType_00, flags_01, specialEffect_02, damage_03, multi_04, accuracy_05, mp_06, statusChance_07, element_08, statusType_09, buffType_0a, _0b);
   }
 
-  @Override
-  public long getAddress() {
-    return this.ref.getAddress();
+  public SpellStats0c(final String name, final String combatDescription, final int targetType, final int flags, final int specialEffect, final int damage, final int multi, final int accuracy, final int mp, final int statusChance, final Element element, final int statusType, final int buffType, final int _0b) {
+    this.name = name;
+    this.combatDescription = combatDescription;
+    this.targetType_00 = targetType;
+    this.flags_01 = flags;
+    this.specialEffect_02 = specialEffect;
+    this.damageMultiplier_03 = damage;
+    this.multi_04 = multi;
+    this.accuracy_05 = accuracy;
+    this.mp_06 = mp;
+    this.statusChance_07 = statusChance;
+    this.element_08 = element;
+    this.statusType_09 = statusType;
+    this.buffType_0a = buffType;
+    this._0b = _0b;
   }
 }

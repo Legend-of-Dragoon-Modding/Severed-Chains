@@ -43,6 +43,8 @@ public class VerticalLayoutScreen extends MenuScreen {
     label.setSize(this.getWidth() - 64, 16);
     label.setPos(32, 32 + this.rows.size() * 20);
 
+    label.onGotFocus(() -> this.setFocus(control));
+
     control.setSize(140, 16);
     control.setPos(label.getWidth() - control.getWidth(), 0);
     label.addControl(control);
