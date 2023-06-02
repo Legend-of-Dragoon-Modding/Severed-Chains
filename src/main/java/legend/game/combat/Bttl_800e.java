@@ -4089,17 +4089,6 @@ public final class Bttl_800e {
   @Method(0x800ef9e4L)
   public static void FUN_800ef9e4() {
     if(_800c6cf4.get() == 0x6L) {
-      if(Config.changeBattleRgb()) {
-        final int rgb = Config.getBattleRgb();
-        final int r = rgb       & 0xff;
-        final int g = rgb >>  8 & 0xff;
-        final int b = rgb >> 16 & 0xff;
-
-        textboxColours_800c6fec.get(8).get(0).set(r);
-        textboxColours_800c6fec.get(8).get(1).set(g);
-        textboxColours_800c6fec.get(8).get(2).set(b);
-      }
-
       final int charCount = charCount_800c677c.get();
 
       //LAB_800efa34
@@ -4414,7 +4403,8 @@ public final class Bttl_800e {
       //LAB_800f0ad4
       // Background
       if(_800c6c40.get(0).charIndex_00.get() != -1 && (_800c6c40.get(0).flags_06.get() & 0x1) != 0) {
-        renderTextBoxBackground(16, (int)_800fb198.offset(2, _800c6c38.get() * 0x2L).get() - 26, 288, 40, 0x00299f);
+
+        renderTextBoxBackground(16, (int)_800fb198.offset(2, _800c6c38.get() * 0x2L).get() - 26, 288, 40, Config.changeBattleRgb() ? Config.getBattleRgb() : 0x00299f);
       }
 
       //LAB_800f0b3c

@@ -1,5 +1,6 @@
 package legend.game.combat;
 
+import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandLine;
@@ -1980,7 +1981,7 @@ public final class Bttl_800f {
         //Item menu
         final int a2 = structa4._10.get() + 6;
         final int a3 = structa4._12.get() + 17;
-        renderTextBoxBackground(structa4.x_04.get() - a2 / 2, structa4.y_06.get() - a3, a2, a3, 0x00299f);
+        renderTextBoxBackground(structa4.x_04.get() - a2 / 2, structa4.y_06.get() - a3, a2, a3, Config.changeBattleRgb() ? Config.getBattleRgb() : 0x00299f);
       }
 
       //LAB_800f5f50
@@ -1996,7 +1997,7 @@ public final class Bttl_800f {
             final BattleObject27c bobj = setActiveCharacterSpell(structa4.itemOrSpellId_1c.get());
             addFloatingNumber(0, 0x1L, 0, bobj.spell_94.mp_06, 280, 135, 0, structa4.menuType_0a.get());
             FUN_800f8cd8(236 - centreScreenX_1f8003dc.get(), 130 - centreScreenY_1f8003de.get(), 16, 128, 24, 16, 0x2c, null);
-            renderTextBoxBackground(236, 130, 64, 14, 0x00299f);
+            renderTextBoxBackground(236, 130, 64, 14, Config.changeBattleRgb() ? Config.getBattleRgb() : 0x00299f);
           }
         } else {
           throw new RuntimeException("Undefined s1");
@@ -2005,7 +2006,7 @@ public final class Bttl_800f {
         //LAB_800f604c
         //LAB_800f6050
         //Selected item description
-        renderTextBoxBackground(44, 156, 232, 14, 0x00299f);
+        renderTextBoxBackground(44, 156, 232, 14, Config.changeBattleRgb() ? Config.getBattleRgb() : 0x00299f);
         renderText(textType, structa4.itemOrSpellId_1c.get(), 160, 163);
       }
     }
