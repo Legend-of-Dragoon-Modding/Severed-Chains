@@ -24,6 +24,9 @@ import java.util.function.ToIntBiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static legend.core.GameEngine.CONFIG;
+import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
+
 public final class SaveManager {
   private static final Logger LOGGER = LogManager.getFormatterLogger();
 
@@ -158,6 +161,8 @@ public final class SaveManager {
 
   public void overwriteSave(final String filename, final GameState52c state) {
     try {
+      ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.CAMPAIGN, Path.of("saves", gameState_800babc8.campaignName, "campaign_config.dcnf"));
+
       final FileData data = new FileData(new byte[0x4000]); // Lots of extra space
       data.writeInt(0x0, this.serializerMagic);
       final int length = this.serializer.applyAsInt(data.slice(0x4), state);

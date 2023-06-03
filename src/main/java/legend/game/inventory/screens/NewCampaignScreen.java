@@ -59,6 +59,9 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
       SItem.menuStack.pushScreen(new OptionsScreen(CONFIG, EnumSet.allOf(ConfigStorageLocation.class), () -> {
         scriptStartEffect(2, 10);
         SItem.menuStack.popScreen();
+
+        // Update global config but don't save campaign config until an actual save file is made so we don't end up with orphan campaigns
+        ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
       }))
     );
 
@@ -94,9 +97,6 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
       gameState_800babc8 = gameLoadedEvent.gameState;
 
       CONFIG.setConfig(CoreMod.ENABLED_MODS_CONFIG.get(), this.enabledMods.toArray(String[]::new));
-
-      ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
-      ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.CAMPAIGN, Path.of("saves", gameState_800babc8.campaignName, "campaign_config.dcnf"));
 
       savedGameSelected_800bdc34.set(true);
       playSound(2);
