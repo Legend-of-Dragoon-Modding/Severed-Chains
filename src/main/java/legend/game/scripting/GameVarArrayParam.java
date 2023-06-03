@@ -8,8 +8,11 @@ import legend.game.combat.bobj.BattleObject27c;
 import legend.game.combat.bobj.MonsterBattleObject;
 import legend.game.combat.bobj.PlayerBattleObject;
 import legend.game.combat.types.battlestate.SpecialEffects20;
+import legend.game.modding.events.battle.BattleObjectTurnEvent;
+import legend.game.modding.events.battle.DragonBlockStaffEvent;
 import legend.game.types.SubmapObject210;
 
+import static legend.core.GameEngine.EVENTS;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 
 public class GameVarArrayParam extends Param {
@@ -615,7 +618,10 @@ public class GameVarArrayParam extends Param {
       case 241 -> Scus94491BpeSegment_8006.battleState_8006e398._544 = val;
       case 242 -> Scus94491BpeSegment_8006.battleState_8006e398._548 = val;
       case 243 -> Scus94491BpeSegment_8006.battleState_8006e398._54c = val;
-      case 244 -> Scus94491BpeSegment_8006.battleState_8006e398.dragonBlockStaff_550 = val;
+      case 244 -> {
+        Scus94491BpeSegment_8006.battleState_8006e398.dragonBlockStaff_550 = val;
+        EVENTS.postEvent(new DragonBlockStaffEvent());
+      }
       case 245 -> Scus94491BpeSegment_8006.battleState_8006e398._554 = val;
       case 246 -> Scus94491BpeSegment_8006.battleState_8006e398.attackTargets_558 = val;
       case 247 -> Scus94491BpeSegment_8006.battleState_8006e398._55c = val;
