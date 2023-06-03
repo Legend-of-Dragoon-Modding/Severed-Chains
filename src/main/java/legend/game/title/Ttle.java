@@ -26,6 +26,7 @@ import legend.game.saves.ConfigStorageLocation;
 import legend.game.tim.Tim;
 import legend.game.types.CharacterData2c;
 import legend.game.types.GsRVIEW2;
+import legend.game.types.McqHeader;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import org.lwjgl.glfw.GLFW;
@@ -38,7 +39,6 @@ import java.util.List;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GPU;
-import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.MODS;
 import static legend.core.GameEngine.SAVES;
 import static legend.core.GameEngine.bootMods;
@@ -53,8 +53,6 @@ import static legend.game.SItem.levelStuff_80111cfc;
 import static legend.game.SItem.magicStuff_80111d20;
 import static legend.game.SItem.xpTables;
 import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
-import static legend.game.Scus94491BpeSegment.free;
-import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
@@ -240,16 +238,18 @@ public final class Ttle {
   }
 
   @Method(0x800c7558L)
-  public static void FUN_800c7558(final long address, final int fileSize, final int param) {
-    final RECT rect = new RECT().set((short)640, (short)0, (short)MEMORY.ref(2, address).offset(0x8L).get(), (short)MEMORY.ref(2, address).offset(0xaL).get());
-    gameOverMcq_800bdc3c.setPointer(address);
-    LoadImage(rect, address + MEMORY.ref(4, address).offset(0x4L).get());
+  public static void FUN_800c7558(final FileData data) {
+    final McqHeader mcq = new McqHeader(data);
+
+    final RECT rect = new RECT().set((short)640, (short)0, (short)mcq.vramWidth_08, (short)mcq.vramHeight_0a);
+    gameOverMcq_800bdc3c = mcq;
+    LoadImage(rect, mcq.imageData);
     pregameLoadingStage_800bb10c.set(3);
   }
 
   @Method(0x800c75b4L)
   public static void renderGameOver() {
-    renderMcq(gameOverMcq_800bdc3c.deref(), 640, 0, -320, -108, 36, 128);
+    renderMcq(gameOverMcq_800bdc3c, 640, 0, -320, -108, 36, 128);
   }
 
   @Method(0x800c75fcL)
@@ -265,7 +265,7 @@ public final class Ttle {
 
       case 1 -> {
         pregameLoadingStage_800bb10c.set(2);
-        loadDrgnBinFile(0, 6667, 0, Ttle::FUN_800c7558, 0, 0x2L);
+        loadDrgnFile(0, 6667, Ttle::FUN_800c7558);
       }
 
       case 3 -> {
@@ -297,7 +297,7 @@ public final class Ttle {
       case 6 -> {
         deallocateRenderables(0xffL);
         uiFile_800bdc3c = null;
-        free(gameOverMcq_800bdc3c.getPointer());
+        gameOverMcq_800bdc3c = null;
         mainCallbackIndexOnceLoaded_8004dd24.set(2);
         pregameLoadingStage_800bb10c.set(0);
         vsyncMode_8007a3b8.set(2);
