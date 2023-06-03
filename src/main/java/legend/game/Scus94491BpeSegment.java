@@ -1767,16 +1767,16 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_800180e8
-    if(mcq.magic_00.get() != McqHeader.MAGIC_1 && mcq.magic_00.get() != McqHeader.MAGIC_2) {
+    if(mcq.magic_00 != McqHeader.MAGIC_1 && mcq.magic_00 != McqHeader.MAGIC_2) {
       throw new RuntimeException("Invalid MCQ");
     }
 
     //LAB_80018104
-    if(mcq.vramHeight_0a.get() != 256) {
+    if(mcq.vramHeight_0a != 256) {
       throw new RuntimeException("Invalid MCQ");
     }
 
-    LoadImage(new RECT((short)x, (short)y, mcq.vramWidth_08.get(), mcq.vramHeight_0a.get()), mcq.getImageDataAddress());
+    LoadImage(new RECT((short)x, (short)y, (short)mcq.vramWidth_08, (short)mcq.vramHeight_0a), mcq.imageData);
 
     //LAB_8001813c
     return 0;
@@ -1784,19 +1784,19 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001814cL)
   public static void renderMcq(final McqHeader mcq, final int vramOffsetX, final int vramOffsetY, int x, int y, final int z, final int colour) {
-    final int width = mcq.screenWidth_14.get();
-    final int height = mcq.screenHeight_16.get();
-    int clutX = mcq.clutX_0c.get() + vramOffsetX;
-    int clutY = mcq.clutY_0e.get() + vramOffsetY;
-    int u = mcq.u_10.get() + vramOffsetX;
-    int v = mcq.v_12.get() + vramOffsetY;
+    final int width = mcq.screenWidth_14;
+    final int height = mcq.screenHeight_16;
+    int clutX = mcq.clutX_0c + vramOffsetX;
+    int clutY = mcq.clutY_0e + vramOffsetY;
+    int u = mcq.u_10 + vramOffsetX;
+    int v = mcq.v_12 + vramOffsetY;
     int vramX = u & 0x3c0;
     final int vramY = v & 0x100;
     u = u * 4 & 0xfc;
 
-    if(mcq.magic_00.get() == McqHeader.MAGIC_2) {
-      x += mcq.screenOffsetX_28.get();
-      y += mcq.screenOffsetY_2a.get();
+    if(mcq.magic_00 == McqHeader.MAGIC_2) {
+      x += mcq.screenOffsetX_28;
+      y += mcq.screenOffsetY_2a;
     }
 
     //LAB_800181e4

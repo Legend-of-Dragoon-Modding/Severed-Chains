@@ -3,6 +3,7 @@ package legend.game.unpacker;
 import legend.core.MathHelper;
 import legend.core.gpu.RECT;
 import legend.core.gte.BVEC4;
+import legend.core.gte.COLOUR;
 import legend.core.gte.SVECTOR;
 import legend.game.modding.registries.RegistryId;
 
@@ -147,6 +148,11 @@ public record FileData(byte[] data, int offset, int size, int virtualSize, int r
   public SVECTOR readSvec3(final int offset, final SVECTOR svec) {
     this.checkBounds(offset, 6);
     return svec.set(this.readShort(offset), this.readShort(offset + 0x2), this.readShort(offset + 0x4));
+  }
+
+  public COLOUR readColour(final int offset, final COLOUR colour) {
+    this.checkBounds(offset, 3);
+    return colour.set(this.readUByte(offset), this.readUByte(offset + 0x1), this.readUByte(offset + 0x2));
   }
 
   private void checkBounds(final int offset, final int size) {
