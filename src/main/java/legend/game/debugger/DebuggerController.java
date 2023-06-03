@@ -385,22 +385,10 @@ public class DebuggerController {
   }
 
   @FXML
-  private void getBattleUiRgb(final ActionEvent event) {
-    this.battleUiColourR.getValueFactory().setValue(Bttl_800c.textboxColours_800c6fec.get(8).get(0).get());
-    this.battleUiColourG.getValueFactory().setValue(Bttl_800c.textboxColours_800c6fec.get(8).get(1).get());
-    this.battleUiColourB.getValueFactory().setValue(Bttl_800c.textboxColours_800c6fec.get(8).get(2).get());
-  }
-
-  @FXML
   private void setBattleUiRgb(final ActionEvent event) {
-    Bttl_800c.textboxColours_800c6fec.get(8).get(0).set(this.battleUiColourR.getValueFactory().getValue().byteValue());
-    Bttl_800c.textboxColours_800c6fec.get(8).get(1).set(this.battleUiColourG.getValueFactory().getValue().byteValue());
-    Bttl_800c.textboxColours_800c6fec.get(8).get(2).set(this.battleUiColourB.getValueFactory().getValue().byteValue());
-
-    final int rgb =
-      Bttl_800c.textboxColours_800c6fec.get(8).get(2).get() << 16 |
-      Bttl_800c.textboxColours_800c6fec.get(8).get(1).get() << 8  |
-      Bttl_800c.textboxColours_800c6fec.get(8).get(0).get();
+    final int rgb = ((this.battleUiColourR.getValueFactory().getValue().byteValue() & 0xff) << 16) |
+      ((this.battleUiColourG.getValueFactory().getValue().byteValue() & 0xff) << 8) |
+      ((this.battleUiColourB.getValueFactory().getValue().byteValue() & 0xff));
 
     Config.setBattleRgb(rgb);
     this.battleUiColour.setSelected(true);
