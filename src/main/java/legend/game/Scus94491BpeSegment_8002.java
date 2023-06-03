@@ -311,7 +311,7 @@ public final class Scus94491BpeSegment_8002 {
   public static FlowControl FUN_800203f0(final RunningScript<?> script) {
     unloadSoundFile(3);
     loadedDrgnFiles_800bcf78.oru(0x10L);
-    loadDrgnDir(0, 1290 + "/" + script.params_20[0].get(), files -> Scus94491BpeSegment.FUN_8001d51c(files, "Can't you catch your breath? soundbank", script.params_20[0].get()));
+    loadDrgnDir(0, 1290 + script.params_20[0].get(), files -> Scus94491BpeSegment.FUN_8001d51c(files, "Cutscene sounds? soundbank", script.params_20[0].get()));
     return FlowControl.CONTINUE;
   }
 
