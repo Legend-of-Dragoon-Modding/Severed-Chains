@@ -298,7 +298,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[229] = Scus94491BpeSegment::scriptLoadMonsterAttackSounds;
     scriptSubFunctions_8004e29c[230] = Scus94491BpeSegment::scriptLoadMusicPackage;
     scriptSubFunctions_8004e29c[231] = Scus94491BpeSegment::FUN_8001fe28;
-    scriptSubFunctions_8004e29c[232] = Scus94491BpeSegment::FUN_8001ffdc;
+    scriptSubFunctions_8004e29c[232] = Scus94491BpeSegment::scriptUnloadSoundFile;
     scriptSubFunctions_8004e29c[233] = Scus94491BpeSegment_8002::FUN_8002013c;
     scriptSubFunctions_8004e29c[234] = Scus94491BpeSegment_8002::FUN_80020230;
     scriptSubFunctions_8004e29c[235] = Scus94491BpeSegment_8002::FUN_800202a4;
@@ -1361,7 +1361,7 @@ public final class Scus94491BpeSegment_8004 {
 
       if(playingNote.used_00 && playingNote.playableSound_22 == playableSound) {
         //LAB_8004c1e8
-        LOGGER.error("Tried to unload PlayableSound %d while still in use", playableSound);
+        LOGGER.error("Tried to unload PlayingNote %d playableSound_22 while still in use", voiceIndex);
         LOGGER.error("", new Throwable());
         return -0x1L;
       }
