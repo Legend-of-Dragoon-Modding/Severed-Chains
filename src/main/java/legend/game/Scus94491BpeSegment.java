@@ -2751,10 +2751,12 @@ public final class Scus94491BpeSegment {
       );
     }
 
-    final SpuStruct08 struct08 = _800bc9a8[voiceIndex];
-    struct08.soundFile_02 = playingSound.soundFile_08;
-    struct08.soundIndex_03 = playingSound.soundIndex_0c;
-    struct08.bobj_04 = playingSound.bobj_04;
+    if(voiceIndex != -1) {
+      final SpuStruct08 struct08 = _800bc9a8[voiceIndex];
+      struct08.soundFile_02 = playingSound.soundFile_08;
+      struct08.soundIndex_03 = playingSound.soundIndex_0c;
+      struct08.bobj_04 = playingSound.bobj_04;
+    }
 
     //LAB_8001a704
   }

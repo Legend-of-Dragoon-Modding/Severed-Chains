@@ -1139,62 +1139,67 @@ public final class Scus94491BpeSegment_8004 {
     }
 
     //LAB_80048d3c
-    throw new RuntimeException("Failed to find sequence");
+    LOGGER.warn("Failed to find sequence"); // Known to happen in Archangel sword attack
+    return null;
   }
 
   @Method(0x80048d44L)
   public static int loadSoundIntoSequencer(final PlayableSound0c playableSound, final int patchIndex, final int sequenceIndex) {
     final SssqReader reader = getSequence(playableSound, patchIndex, sequenceIndex);
-    final SoundEnv44 soundEnv = soundEnv_800c6630;
 
-    //LAB_80048dac
-    for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
-      final SequenceData124 sequenceData = sequenceData_800c4ac8[voiceIndex];
-      if(!sequenceData.musicLoaded_027 && !sequenceData.soundLoaded_029) {
-        sequenceData.musicLoaded_027 = false;
-        sequenceData.musicPlaying_028 = false;
-        sequenceData.soundLoaded_029 = true;
-        sequenceData.soundPlaying_02a = true;
-        sequenceData.deltaTime_118 = 0;
-        sequenceData.soundEnded_0e7 = false;
-        sequenceData.sssqReader_010 = reader;
-        sequenceData.playableSound_020 = playableSound;
-        sequenceData.sequenceIndex_022 = sequenceIndex;
-        sequenceData.patchIndex_024 = patchIndex;
+    if(reader != null) {
+      final SoundEnv44 soundEnv = soundEnv_800c6630;
 
-        if(soundEnv.reverbEnabled_23) {
-          sequenceData.reverbEnabled_0ea = true;
-          soundEnv.reverbEnabled_23 = false;
+      //LAB_80048dac
+      for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
+        final SequenceData124 sequenceData = sequenceData_800c4ac8[voiceIndex];
+        if(!sequenceData.musicLoaded_027 && !sequenceData.soundLoaded_029) {
+          sequenceData.musicLoaded_027 = false;
+          sequenceData.musicPlaying_028 = false;
+          sequenceData.soundLoaded_029 = true;
+          sequenceData.soundPlaying_02a = true;
+          sequenceData.deltaTime_118 = 0;
+          sequenceData.soundEnded_0e7 = false;
+          sequenceData.sssqReader_010 = reader;
+          sequenceData.playableSound_020 = playableSound;
+          sequenceData.sequenceIndex_022 = sequenceIndex;
+          sequenceData.patchIndex_024 = patchIndex;
+
+          if(soundEnv.reverbEnabled_23) {
+            sequenceData.reverbEnabled_0ea = true;
+            soundEnv.reverbEnabled_23 = false;
+          }
+
+          //LAB_80048e10
+          sequenceData.repeatCounter_035 = 0;
+          sequenceData.repeat_037 = false;
+          sequenceData._0e6 = false;
+          sequenceData.pitchShiftVolLeft_0ee = 0;
+          sequenceData.pitchShifted_0e9 = false;
+          sequenceData.pitchShiftVolRight_0f0 = 0;
+
+          if(soundEnv.pitchShifted_22) {
+            sequenceData.pitchShifted_0e9 = true;
+            sequenceData.pitch_0ec = soundEnv.pitch_24;
+            sequenceData.pitchShiftVolLeft_0ee = soundEnv.pitchShiftVolLeft_26;
+            sequenceData.pitchShiftVolRight_0f0 = soundEnv.pitchShiftVolRight_28;
+            soundEnv.pitchShifted_22 = false;
+            soundEnv.pitch_24 = 0;
+            soundEnv.pitchShiftVolLeft_26 = 0;
+            soundEnv.pitchShiftVolRight_28 = 0;
+          }
+
+          return voiceIndex;
         }
 
-        //LAB_80048e10
-        sequenceData.repeatCounter_035 = 0;
-        sequenceData.repeat_037 = false;
-        sequenceData._0e6 = false;
-        sequenceData.pitchShiftVolLeft_0ee = 0;
-        sequenceData.pitchShifted_0e9 = false;
-        sequenceData.pitchShiftVolRight_0f0 = 0;
-
-        if(soundEnv.pitchShifted_22) {
-          sequenceData.pitchShifted_0e9 = true;
-          sequenceData.pitch_0ec = soundEnv.pitch_24;
-          sequenceData.pitchShiftVolLeft_0ee = soundEnv.pitchShiftVolLeft_26;
-          sequenceData.pitchShiftVolRight_0f0 = soundEnv.pitchShiftVolRight_28;
-          soundEnv.pitchShifted_22 = false;
-          soundEnv.pitch_24 = 0;
-          soundEnv.pitchShiftVolLeft_26 = 0;
-          soundEnv.pitchShiftVolRight_28 = 0;
-        }
-
-        return voiceIndex;
+        //LAB_80048e74
       }
-
-      //LAB_80048e74
     }
 
     //LAB_80048e8c
     //LAB_80048e90
-    throw new RuntimeException("No empty sequence data");
+    LOGGER.warn("No empty sequence data"); // Known to happen in Archangel sword attack
+    return -1;
   }
 
   @Method(0x8004ab2cL)
@@ -1267,15 +1272,6 @@ public final class Scus94491BpeSegment_8004 {
     return ret;
   }
 
-  @Method(0x8004b694L)
-  public static void spuDmaTransfer(final int transferDirection, final byte[] data, final int addressInSoundBuffer) {
-    if(transferDirection != 0) {
-      throw new RuntimeException("Read from SPU not supported");
-    }
-
-    SPU.directWrite(addressInSoundBuffer, data);
-  }
-
   @Method(0x8004b834L)
   public static void initSpu() {
     final SoundEnv44 soundEnv = soundEnv_800c6630;
@@ -1337,7 +1333,7 @@ public final class Scus94491BpeSegment_8004 {
         sound.soundBufferPtr_08 = addressInSoundBuffer / 8;
 
         if(sshd.soundBankSize_04 != 0) {
-          spuDmaTransfer(0, soundbank.getBytes(), addressInSoundBuffer);
+          SPU.directWrite(addressInSoundBuffer, soundbank.getBytes());
         }
 
         return sound;
