@@ -1316,10 +1316,6 @@ public final class Bttl_800c {
 
   @Method(0x800c8748L)
   public static void FUN_800c8748() {
-    if(battlePreloadedEntities_1f8003f4.stageMcq_9cb0 != null) {
-      free(battlePreloadedEntities_1f8003f4.stageMcq_9cb0.getAddress());
-    }
-
     battlePreloadedEntities_1f8003f4 = null;
     battleState_8006e398 = null;
     targetBobjs_800c71f0 = null;
@@ -1351,36 +1347,38 @@ public final class Bttl_800c {
       clearGreen_800bb104.set(0);
       clearRed_8007a3a8.set(0);
     } else {
+      final McqHeader mcq = battlePreloadedEntities_1f8003f4.stageMcq_9cb0;
+
       _800c6774.add(_800c676c.get());
       _800c6778.add(_800c6770.get());
-      final int x0 = ((int)_800c66cc.getSigned() * FUN_800dd118() / 0x1000 + _800c6774.get()) % battlePreloadedEntities_1f8003f4.stageMcq_9cb0.screenWidth_14.get() - centreScreenX_1f8003dc.get();
-      final int x1 = x0 - battlePreloadedEntities_1f8003f4.stageMcq_9cb0.screenWidth_14.get();
-      final int x2 = x0 + battlePreloadedEntities_1f8003f4.stageMcq_9cb0.screenWidth_14.get();
+      final int x0 = ((int)_800c66cc.getSigned() * FUN_800dd118() / 0x1000 + _800c6774.get()) % mcq.screenWidth_14 - centreScreenX_1f8003dc.get();
+      final int x1 = x0 - mcq.screenWidth_14;
+      final int x2 = x0 + mcq.screenWidth_14;
       int y = _800c6778.get() - (FUN_800dd0d4() + 0x800 & 0xfff) + 0x760 - centreScreenY_1f8003de.get();
-      renderMcq(battlePreloadedEntities_1f8003f4.stageMcq_9cb0, 320, 0, x0, y, orderingTableSize_1f8003c8.get() - 2, mcqColour_800fa6dc.get());
-      renderMcq(battlePreloadedEntities_1f8003f4.stageMcq_9cb0, 320, 0, x1, y, orderingTableSize_1f8003c8.get() - 2, mcqColour_800fa6dc.get());
+      renderMcq(mcq, 320, 0, x0, y, orderingTableSize_1f8003c8.get() - 2, mcqColour_800fa6dc.get());
+      renderMcq(mcq, 320, 0, x1, y, orderingTableSize_1f8003c8.get() - 2, mcqColour_800fa6dc.get());
 
       if(centreScreenX_1f8003dc.get() >= x2) {
-        renderMcq(battlePreloadedEntities_1f8003f4.stageMcq_9cb0, 320, 0, x2, y, orderingTableSize_1f8003c8.get() - 2, mcqColour_800fa6dc.get());
+        renderMcq(mcq, 320, 0, x2, y, orderingTableSize_1f8003c8.get() - 2, mcqColour_800fa6dc.get());
       }
 
       //LAB_800c89d4
-      if(battlePreloadedEntities_1f8003f4.stageMcq_9cb0.magic_00.get() != McqHeader.MAGIC_1) {
+      if(mcq.magic_00 != McqHeader.MAGIC_1) {
         //LAB_800c89f8
-        y += battlePreloadedEntities_1f8003f4.stageMcq_9cb0.screenOffsetY_2a.get();
+        y += mcq.screenOffsetY_2a;
       }
 
       //LAB_800c8a04
       final int colour = mcqColour_800fa6dc.get();
       if(y >= -centreScreenY_1f8003de.get()) {
-        clearRed_8007a3a8.set(battlePreloadedEntities_1f8003f4.stageMcq_9cb0._18.get() * colour / 0x80);
-        clearGreen_800bb104.set(battlePreloadedEntities_1f8003f4.stageMcq_9cb0._19.get() * colour / 0x80);
-        clearBlue_800babc0.set(battlePreloadedEntities_1f8003f4.stageMcq_9cb0._1a.get() * colour / 0x80);
+        clearRed_8007a3a8.set(mcq.colour0_18.getR() * colour / 0x80);
+        clearGreen_800bb104.set(mcq.colour0_18.getG() * colour / 0x80);
+        clearBlue_800babc0.set(mcq.colour0_18.getB() * colour / 0x80);
       } else {
         //LAB_800c8a74
-        clearRed_8007a3a8.set(battlePreloadedEntities_1f8003f4.stageMcq_9cb0._20.get() * colour / 0x80);
-        clearGreen_800bb104.set(battlePreloadedEntities_1f8003f4.stageMcq_9cb0._21.get() * colour / 0x80);
-        clearBlue_800babc0.set(battlePreloadedEntities_1f8003f4.stageMcq_9cb0._22.get() * colour / 0x80);
+        clearRed_8007a3a8.set(mcq.colour1_20.getR() * colour / 0x80);
+        clearGreen_800bb104.set(mcq.colour1_20.getG() * colour / 0x80);
+        clearBlue_800babc0.set(mcq.colour1_20.getB() * colour / 0x80);
       }
     }
 
@@ -1391,13 +1389,7 @@ public final class Bttl_800c {
   public static void loadStage(final int stage) {
     loadDrgnDir(0, 2497 + stage, files -> {
       if(files.get(0).hasVirtualSize()) {
-        if(battlePreloadedEntities_1f8003f4.stageMcq_9cb0 != null) {
-          free(battlePreloadedEntities_1f8003f4.stageMcq_9cb0.getAddress());
-        }
-
-        final McqHeader mcq = MEMORY.ref(4, mallocTail(files.get(0).size()), McqHeader::new);
-        MEMORY.setBytes(mcq.getAddress(), files.get(0).getBytes());
-        loadStageMcq(mcq);
+        loadStageMcq(new McqHeader(files.get(0)));
       }
 
       if(files.get(1).size() != 0) {
@@ -1459,13 +1451,13 @@ public final class Bttl_800c {
     battlePreloadedEntities_1f8003f4.stageMcq_9cb0 = mcq;
 
     _800c66d4.setu(0x1L);
-    _800c66cc.setu((0x400L / mcq.screenWidth_14.get() + 0x1L) * mcq.screenWidth_14.get());
+    _800c66cc.setu((0x400 / mcq.screenWidth_14 + 1) * mcq.screenWidth_14);
   }
 
   @Method(0x800c8e48L)
   public static void FUN_800c8e48() {
     if(_800c66d4.get() != 0 && (_800bc960.get() & 0x80) == 0) {
-      final RECT sp0x10 = new RECT((short)512, (short)0, battlePreloadedEntities_1f8003f4.stageMcq_9cb0.vramWidth_08.get(), (short)256);
+      final RECT sp0x10 = new RECT((short)512, (short)0, (short)battlePreloadedEntities_1f8003f4.stageMcq_9cb0.vramWidth_08, (short)256);
       MoveImage(sp0x10, 320, 0);
       _800c6764.set(1);
       _800bc960.or(0x80);
