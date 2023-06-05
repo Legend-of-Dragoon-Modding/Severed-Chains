@@ -1,5 +1,6 @@
 package legend.game.inventory.screens;
 
+import legend.core.GameEngine;
 import legend.game.SItem;
 import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
@@ -21,7 +22,7 @@ import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.MODS;
 import static legend.core.GameEngine.SAVES;
-import static legend.core.GameEngine.rebootMods;
+import static legend.core.GameEngine.bootMods;
 import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
@@ -62,10 +63,10 @@ public class CampaignSelectionScreen extends MenuScreen {
     final String[] modIds = CONFIG.getConfig(CoreMod.ENABLED_MODS_CONFIG.get());
     final Set<String> missingMods;
     if(modIds.length != 0) {
-      missingMods = rebootMods(Set.of(modIds));
+      missingMods = bootMods(Set.of(modIds));
     } else {
       // Fallback for old saves from before the config key existed
-      missingMods = rebootMods(MODS.getAllModIds());
+      missingMods = bootMods(MODS.getAllModIds());
     }
 
     final Runnable loadGameScreen = () -> menuStack.pushScreen(new LoadGameScreen(save -> {
@@ -73,6 +74,8 @@ public class CampaignSelectionScreen extends MenuScreen {
 
       CONFIG.clearConfig(ConfigStorageLocation.SAVE);
       CONFIG.copyConfigFrom(save.config());
+
+      GameEngine.bootRegistries();
 
       final GameLoadedEvent event = EVENTS.postEvent(new GameLoadedEvent(save.state()));
 
@@ -114,7 +117,7 @@ public class CampaignSelectionScreen extends MenuScreen {
     whichMenu_800bdc38 = WhichMenu.UNLOAD_CAMPAIGN_SELECTION_MENU;
 
     // Restore all mods when going back to the title screen
-    rebootMods(MODS.getAllModIds());
+    bootMods(MODS.getAllModIds());
   }
 
   @Override

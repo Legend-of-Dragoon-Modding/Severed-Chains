@@ -73,14 +73,12 @@ import static legend.core.MemoryHelper.getBiFunctionAddress;
 import static legend.game.Scus94491BpeSegment.FUN_80019c80;
 import static legend.game.Scus94491BpeSegment.FUN_8001eea8;
 import static legend.game.Scus94491BpeSegment.FUN_8001f708;
-import static legend.game.Scus94491BpeSegment.deferReallocOrFree;
 import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.mallocTail;
-import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static legend.game.Scus94491BpeSegment.playSound;
 import static legend.game.Scus94491BpeSegment.qsort;
@@ -183,7 +181,7 @@ public class WMap {
   private static final IntRef tempZ_800c66d8 = MEMORY.ref(4, 0x800c66d8L, IntRef::new);
   private static final Value _800c66dc = MEMORY.ref(2, 0x800c66dcL);
 
-  private static final McqHeader mcqHeader_800c6768 = MEMORY.ref(4, 0x800c6768L, McqHeader::new);
+  private static McqHeader mcqHeader_800c6768;
 
   private static final Value _800c6794 = MEMORY.ref(2, 0x800c6794L);
 
@@ -2687,29 +2685,19 @@ public class WMap {
   }
 
   @Method(0x800d562cL)
-  public static void FUN_800d562c(final long address, final int size, final int param) {
-    final McqHeader mcq = MEMORY.ref(4, address, McqHeader::new);
-    final int x = 320 + (int)(param & 0xffff_fffeL) * 64;
-
-    final int y;
-    if((param & 0x1) != 0) {
-      y = 256;
-    } else {
-      //LAB_800d5688
-      y = 0;
-    }
+  public static void FUN_800d562c(final FileData data) {
+    final McqHeader mcq = new McqHeader(data);
 
     //LAB_800d568c
     final RECT sp0x18 = new RECT(
-      (short)x,
-      (short)y,
-      mcq.vramWidth_08.get(),
-      mcq.vramHeight_0a.get()
+      (short)320,
+      (short)0,
+      (short)mcq.vramWidth_08,
+      (short)mcq.vramHeight_0a
     );
 
-    LoadImage(sp0x18, mcq.getAddress() + mcq.imageDataOffset_04.get());
-    memcpy(mcqHeader_800c6768.getAddress(), mcq.getAddress(), 0x2c);
-    deferReallocOrFree(address, 0, 1);
+    LoadImage(sp0x18, mcq.imageData);
+    mcqHeader_800c6768 = mcq;
 
     filesLoadedFlags_800c66b8.oru(0x1L);
   }
@@ -5439,12 +5427,12 @@ public class WMap {
 
   @Method(0x800e4934L)
   public static void renderMcq(final McqHeader mcq, final int vramOffsetX, final int vramOffsetY, final int x, final int y, final int z, final int a6, final int colour) {
-    int clutX = vramOffsetX + mcq.clutX_0c.get();
-    int clutY = vramOffsetY + mcq.clutY_0e.get();
-    final int width = mcq.screenWidth_14.get();
-    final int height = mcq.screenHeight_16.get();
-    int u = vramOffsetX + mcq.u_10.get();
-    int v = vramOffsetY + mcq.v_12.get();
+    int clutX = vramOffsetX + mcq.clutX_0c;
+    int clutY = vramOffsetY + mcq.clutY_0e;
+    final int width = mcq.screenWidth_14;
+    final int height = mcq.screenHeight_16;
+    int u = vramOffsetX + mcq.u_10;
+    int v = vramOffsetY + mcq.v_12;
     int vramX = u & 0x3c0;
     final int vramY = v & 0x100;
     u = u * 4 & 0xfc;
@@ -5495,7 +5483,7 @@ public class WMap {
   @Method(0x800e4e1cL)
   public static void FUN_800e4e1c() {
     filesLoadedFlags_800c66b8.and(0xffff_fffeL);
-    loadDrgnBinFile(0, 5696, 0, WMap::FUN_800d562c, 0, 0x4L);
+    loadDrgnFile(0, 5696, WMap::FUN_800d562c);
     _800c6794.setu(0);
   }
 

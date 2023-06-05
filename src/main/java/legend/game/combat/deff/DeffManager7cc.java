@@ -1,17 +1,15 @@
 package legend.game.combat.deff;
 
 import legend.core.gte.TmdObjTable1c;
+import legend.game.combat.effects.EffectManagerData6c;
 import legend.game.combat.environment.BattleLightStruct64;
 import legend.game.combat.environment.BttlLightStruct84;
-import legend.game.combat.effects.EffectManagerData6c;
-import legend.game.combat.types.SpriteMetrics08;
 import legend.game.combat.environment.StageAmbiance4c;
+import legend.game.combat.types.SpriteMetrics08;
 import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptState;
-import legend.game.unpacker.FileData;
 
 import java.util.Arrays;
-import java.util.List;
 
 public class DeffManager7cc {
   public Struct08 _00 = new Struct08();
@@ -41,7 +39,7 @@ public class DeffManager7cc {
   public final TmdObjTable1c[] tmds_2f8 = new TmdObjTable1c[38];
   public final DeffPart.LmbType[] lmbs_390 = new DeffPart.LmbType[3];
   public final SpriteMetrics08[] spriteMetrics_39c = new SpriteMetrics08[65];
-  public List<FileData> deffPackage_5a8;
+  public DeffPart[] deffPackage_5a8;
 //  public DeffFile deff_5ac; // No longer needed
 
   public final BattleStruct24_2 _5b8 = new BattleStruct24_2();

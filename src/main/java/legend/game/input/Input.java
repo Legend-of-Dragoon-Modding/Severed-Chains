@@ -4,6 +4,8 @@ import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import legend.core.opengl.Window;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.events.input.InputPressedEvent;
+import legend.game.modding.events.input.InputReleasedEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -12,6 +14,7 @@ import org.apache.logging.log4j.MarkerManager;
 import javax.annotation.Nullable;
 
 import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.game.Scus94491BpeSegment.keyRepeat;
 import static legend.game.Scus94491BpeSegment_800b.analogAngle_800bee9c;
@@ -52,14 +55,14 @@ public final class Input {
         if(!held.containsKey(binding)) {
           pressedThisFrame.put(binding, true);
           held.put(binding, true);
+          EVENTS.postEvent(new InputPressedEvent(binding.getInputAction()));
         }
       } else if(held.containsKey(binding)) {
         held.removeBoolean(binding);
         keyRepeat.remove(binding.getInputAction().hexCode);
+        EVENTS.postEvent(new InputReleasedEvent(binding.getInputAction()));
       }
     }
-
-    InputPlayerUtility.update();
 
     GPU.window().events.callInputEvents(activeController);
   }

@@ -21,7 +21,6 @@ import legend.game.sound.SoundFile;
 import legend.game.sound.SpuStruct08;
 import legend.game.sound.EncounterSoundEffects10;
 import legend.game.types.ActiveStatsa0;
-import legend.game.types.EquipmentStats1c;
 import legend.game.types.GameState52c;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.InventoryMenuState;
@@ -89,11 +88,12 @@ public final class Scus94491BpeSegment_800b {
 
   /**
    * <ol>
+   *   <li value="1">Combat victory</li>
    *   <li value="2">Game over</li>
    *   <li value="4">FMV</li>
    * </ol>
    */
-  public static final IntRef postCombatAction_800bc974 = MEMORY.ref(4, 0x800bc974L, IntRef::new);
+  public static final IntRef postBattleAction_800bc974 = MEMORY.ref(4, 0x800bc974L, IntRef::new);
   public static final IntRef itemsDroppedByEnemiesCount_800bc978 = MEMORY.ref(4, 0x800bc978L, IntRef::new);
   public static final Value _800bc97c = MEMORY.ref(4, 0x800bc97cL);
 
@@ -200,7 +200,7 @@ public final class Scus94491BpeSegment_800b {
   public static WhichMenu whichMenu_800bdc38 = WhichMenu.NONE_0;
   public static UiFile uiFile_800bdc3c;
   /** NOTE: same address as previous var */
-  public static final Pointer<McqHeader> gameOverMcq_800bdc3c = MEMORY.ref(4, 0x800bdc3cL, Pointer.deferred(4, McqHeader::new));
+  public static McqHeader gameOverMcq_800bdc3c;
 
   /**
    * <ul>
@@ -239,8 +239,6 @@ public final class Scus94491BpeSegment_800b {
   public static final Value textV_800be5c8 = MEMORY.ref(4, 0x800be5c8L);
 
   public static final Value _800be5d0 = MEMORY.ref(4, 0x800be5d0L);
-
-  public static final EquipmentStats1c equipmentStats_800be5d8 = MEMORY.ref(1, 0x800be5d8L, EquipmentStats1c::new);
 
   public static final ActiveStatsa0[] stats_800be5f8 = new ActiveStatsa0[9];
   static {

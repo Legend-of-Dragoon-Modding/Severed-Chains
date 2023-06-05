@@ -2147,8 +2147,7 @@ public final class SEffe {
       scriptGetScriptedObjectPos(a2.scriptIndex_04, sp0x30);
 
       final VECTOR sp0x10 = new VECTOR().set(sp0x20).sub(sp0x30);
-      a3._50.set(sp0x10);
-      a3._50.set(sp0x10);
+      a3._50.sub(sp0x10);
     }
 
     //LAB_80100e14
@@ -4888,7 +4887,7 @@ public final class SEffe {
     //LAB_80109ce0
   }
 
-  /** Kubila demon frog, Lloyd's cape, ??? */
+  /** Kubila demon frog, Lloyd's cape, Selebus' strapple and zambo hands, Grand Jewel heal, etc. */
   @Method(0x80109d30L)
   public static FlowControl allocateVertexDifferenceAnimation(final RunningScript<?> script) {
     final int ticksRemaining = script.params_20[2].get();

@@ -15,7 +15,7 @@ import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.combat.types.EnemyRewards08;
 import legend.game.combat.types.MonsterStats1c;
 import legend.game.modding.events.characters.BattleMapActiveAdditionHitPropertiesEvent;
-import legend.game.modding.events.combat.EnemyRewardsEvent;
+import legend.game.modding.events.battle.EnemyRewardsEvent;
 import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptState;
 import legend.game.types.LodString;
@@ -34,13 +34,13 @@ import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.loadFile;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.simpleRand;
-import static legend.game.Scus94491BpeSegment_8006._8006e398;
+import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_800b._800bc960;
 import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.combat.Bttl_800c._800c66b0;
-import static legend.game.combat.Bttl_800c._800c66d0;
+import static legend.game.combat.Bttl_800c.allBobjCount_800c66d0;
 import static legend.game.combat.Bttl_800c._800c6718;
 import static legend.game.combat.Bttl_800c._800c6748;
 import static legend.game.combat.Bttl_800c._800c6780;
@@ -62,7 +62,7 @@ public class SBtld {
   /** TODO 0x80-byte struct array */
   public static final Value _8010e658 = MEMORY.ref(4, 0x8010e658L);
 
-  public static final ArrayRef<Pointer<LodString>> enemyNames_80112068 = MEMORY.ref(4, 0x80112068L, ArrayRef.of(Pointer.classFor(LodString.class), 0x200, 4, Pointer.deferred(4, LodString::new)));
+  public static final ArrayRef<Pointer<LodString>> monsterNames_80112068 = MEMORY.ref(4, 0x80112068L, ArrayRef.of(Pointer.classFor(LodString.class), 0x200, 4, Pointer.deferred(4, LodString::new)));
 
   public static final ArrayRef<EnemyRewards08> enemyRewards_80112868 = MEMORY.ref(4, 0x80112868L, ArrayRef.of(EnemyRewards08.class, 400, 0x8, EnemyRewards08::new));
   public static final Value _801134e8 = MEMORY.ref(2, 0x801134e8L);
@@ -129,12 +129,12 @@ public class SBtld {
         }
 
         //LAB_801092dc
-        final long activeDragoonAdditionIndex;
+        final int activeDragoonAdditionIndex;
         if(charIndex != 0 || (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 == 0) {
           //LAB_80109308
-          activeDragoonAdditionIndex = _801134e8.offset(charIndex * 0x2L).getSigned();
+          activeDragoonAdditionIndex = (int)_801134e8.offset(charIndex * 0x2L).getSigned();
         } else {
-          activeDragoonAdditionIndex = _801134e8.offset(0x12L).getSigned();
+          activeDragoonAdditionIndex = (int)_801134e8.offset(0x12L).getSigned();
         }
 
         //LAB_80109310
@@ -146,7 +146,7 @@ public class SBtld {
           EVENTS.postEvent(new BattleMapActiveAdditionHitPropertiesEvent(activeAdditionHits, activeAdditionIndex, charIndex, charSlot, false));
 
           battleMapSelectedAdditionHitProperties_80109454(_8010e658.offset(activeDragoonAdditionIndex * 0x80L).getAddress(), activeDragoonAdditionHits);
-          EVENTS.postEvent(new BattleMapActiveAdditionHitPropertiesEvent(activeAdditionHits, activeAdditionIndex, charIndex, charSlot, true));
+          EVENTS.postEvent(new BattleMapActiveAdditionHitPropertiesEvent(activeDragoonAdditionHits, activeDragoonAdditionIndex, charIndex, charSlot, true));
         }
       }
 
@@ -203,29 +203,29 @@ public class SBtld {
       final ScriptState<MonsterBattleObject> state = SCRIPTS.allocateScriptState(name, new MonsterBattleObject(name));
       state.setTicker(Bttl_800c::bobjTicker);
       state.setDestructor(Bttl_800c::bobjDestructor);
-      _8006e398.bobjIndices_e0c[_800c66d0.get()] = state;
-      _8006e398.bobjIndices_e50[monsterCount_800c6768.get()] = state;
+      battleState_8006e398.allBobjs_e0c[allBobjCount_800c66d0.get()] = state;
+      battleState_8006e398.monsterBobjs_e50[monsterCount_800c6768.get()] = state;
       final BattleObject27c data = state.innerStruct_00;
       data.magic_00 = BattleScriptDataBase.BOBJ;
-      data.charIndex_272 = charIndex;
-      data._274 = _800c66d0.get();
+      data.charId_272 = charIndex;
+      data.bobjIndex_274 = allBobjCount_800c66d0.get();
       data.charSlot_276 = monsterCount_800c6768.get();
       data.combatant_144 = getCombatant(combatantIndex);
       data.combatantIndex_26c = combatantIndex;
       data.model_148.coord2_14.coord.transfer.set(s5.pos_02);
       data.model_148.coord2Param_64.rotate.set((short)0, (short)0xc01, (short)0);
       state.storage_44[7] |= 0x4;
-      _800c66d0.incr();
+      allBobjCount_800c66d0.incr();
       monsterCount_800c6768.incr();
     }
 
     //LAB_8010975c
-    _8006e398.bobjIndices_e0c[_800c66d0.get()] = null;
-    _8006e398.bobjIndices_e50[monsterCount_800c6768.get()] = null;
+    battleState_8006e398.allBobjs_e0c[allBobjCount_800c66d0.get()] = null;
+    battleState_8006e398.monsterBobjs_e50[monsterCount_800c6768.get()] = null;
 
     //LAB_801097ac
     for(int i = 0; i < monsterCount_800c6768.get(); i++) {
-      loadMonster(_8006e398.bobjIndices_e50[i]);
+      loadMonster(battleState_8006e398.monsterBobjs_e50[i]);
     }
 
     //LAB_801097d0

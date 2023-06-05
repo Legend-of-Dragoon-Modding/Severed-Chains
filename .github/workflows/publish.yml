@@ -28,36 +28,80 @@ jobs:
         distribution: 'temurin'
         cache: gradle
 
-    - name: Build Windows with Gradle
-      run: ./gradlew build -Pos=windows
+    - name: Build Windows x64 with Gradle
+      run: ./gradlew build -Pos=windows -Parch=x86_64
 
-    - name: ZIP Windows Build
+    - name: ZIP Windows x64 Build
       uses: thedoctor0/zip-release@main
       with:
         type: 'zip'
-        filename: 'windows-snapshot.zip'
+        filename: 'Severed_Chains_Windows.zip'
         directory: 'build/libs'
         exclusions: '*.zip*'
 
-    - name: Build Linux with Gradle
-      run: ./gradlew build -Pos=linux
+    - name: Build Windows ARM64 with Gradle
+      run: ./gradlew build -Pos=windows -Parch=aarch64
 
-    - name: ZIP Linux Build
+    - name: ZIP Windows ARM64 Build
       uses: thedoctor0/zip-release@main
       with:
         type: 'zip'
-        filename: 'linux-snapshot.zip'
+        filename: 'Severed_Chains_Windows_ARM64.zip'
         directory: 'build/libs'
         exclusions: '*.zip*'
 
-    - name: Build MacOS with Gradle
-      run: ./gradlew build -Pos=macos
+    - name: Build Steam Deck x64 with Gradle
+      run: ./gradlew build -Pos=linux -Parch=x86_64 -Psteamdeck=true
 
-    - name: ZIP MacOS Build
+    - name: ZIP Steam Deck x64 Build
       uses: thedoctor0/zip-release@main
       with:
         type: 'zip'
-        filename: 'macos-snapshot.zip'
+        filename: 'Severed_Chains_Steam_Deck.zip'
+        directory: 'build/libs'
+        exclusions: '*.zip*'
+
+    - name: Build Linux x64 with Gradle
+      run: ./gradlew build -Pos=linux -Parch=x86_64
+
+    - name: ZIP Linux x64 Build
+      uses: thedoctor0/zip-release@main
+      with:
+        type: 'zip'
+        filename: 'Severed_Chains_Linux.zip'
+        directory: 'build/libs'
+        exclusions: '*.zip*'
+
+    - name: Build Linux ARM64 with Gradle
+      run: ./gradlew build -Pos=linux -Parch=aarch64
+
+    - name: ZIP Linux ARM64 Build
+      uses: thedoctor0/zip-release@main
+      with:
+        type: 'zip'
+        filename: 'Severed_Chains_Linux_ARM64.zip'
+        directory: 'build/libs'
+        exclusions: '*.zip*'
+
+    - name: Build MacOS x64 with Gradle
+      run: ./gradlew build -Pos=osx -Parch=x86_64
+
+    - name: ZIP MacOS x64 Build
+      uses: thedoctor0/zip-release@main
+      with:
+        type: 'zip'
+        filename: 'Severed_Chains_MacOS_Intel.zip'
+        directory: 'build/libs'
+        exclusions: '*.zip*'
+
+    - name: Build MacOS ARM64 with Gradle
+      run: ./gradlew build -Pos=osx -Parch=aarch64
+
+    - name: ZIP MacOS ARM64 Build
+      uses: thedoctor0/zip-release@main
+      with:
+        type: 'zip'
+        filename: 'Severed_Chains_MacOS_M1.zip'
         directory: 'build/libs'
         exclusions: '*.zip*'
 
@@ -72,7 +116,7 @@ jobs:
     - name: Upload Release
       uses: ncipollo/release-action@v1
       with:
-        artifacts: 'build/libs/windows-snapshot.zip,build/libs/linux-snapshot.zip,build/libs/macos-snapshot.zip'
+        artifacts: 'build/libs/*.zip'
         token: ${{ secrets.GITHUB_TOKEN }}
         commit: ${{ github.sha }}
         name: 'Latest Development Build'

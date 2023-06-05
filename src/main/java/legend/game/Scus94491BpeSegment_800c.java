@@ -4,8 +4,6 @@ import legend.core.gpu.RECT;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MATRIX;
 import legend.core.memory.Value;
-import legend.core.memory.types.Pointer;
-import legend.core.spu.Spu;
 import legend.game.sound.Instrument;
 import legend.game.sound.InstrumentLayer10;
 import legend.game.sound.InstrumentsSubfile;
@@ -61,7 +59,6 @@ public final class Scus94491BpeSegment_800c {
   public static WaveformList waveforms_800c4ab8;
   public static PatchList patchList_800c4abc;
   public static Sshd sshdPtr_800c4ac0;
-  public static final Pointer<Spu> voicePtr_800c4ac4 = MEMORY.ref(4, 0x800c4ac4L, Pointer.deferred(4, ref -> {throw new RuntimeException("Can't instantiate");}));
   /** One per loaded sequence */
   public static final SequenceData124[] sequenceData_800c4ac8 = new SequenceData124[24];
   static {

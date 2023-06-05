@@ -12,7 +12,7 @@
         <MarkerFilter marker="CONTROLLER_DB" onMatch="ACCEPT" onMismatch="NEUTRAL" />
         <MarkerFilter marker="CONTROLLER_VERBOSE" onMatch="DENY" onMismatch="NEUTRAL" />
         <MarkerFilter marker="CAMERA" onMatch="DENY" onMismatch="NEUTRAL"/>
-        <MarkerFilter marker="SPU" onMatch="DENY" onMismatch="NEUTRAL"/>
+        <MarkerFilter marker="SPU" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
         <MarkerFilter marker="SEQUENCER" onMatch="DENY" onMismatch="NEUTRAL"/>
       </Filters>
     </Console>
