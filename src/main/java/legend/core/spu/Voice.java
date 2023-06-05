@@ -81,6 +81,7 @@ public class Voice implements MemoryRef {
     this.adsrCounter = 0;
     this.adsrVolume = 0;
     this.adsrPhase = Phase.Attack;
+    this.counter.register = 0x2000;
   }
 
   public void keyOff() {

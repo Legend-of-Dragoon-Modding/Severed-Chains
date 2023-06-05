@@ -1,6 +1,7 @@
 package legend.game.sound;
 
 import legend.core.memory.Method;
+import legend.core.spu.Spu;
 import legend.core.spu.Voice;
 
 import java.util.function.Supplier;
@@ -15,7 +16,6 @@ import static legend.game.Scus94491BpeSegment_8004.sssqSetReverbType;
 import static legend.game.Scus94491BpeSegment_8004.sssqSetReverbVolume;
 import static legend.game.Scus94491BpeSegment_8004.stopMusicSequence;
 import static legend.game.Scus94491BpeSegment_8004.updateVoiceVolume;
-import static legend.game.Scus94491BpeSegment_8005._8005967c;
 import static legend.game.Scus94491BpeSegment_8005._80059b3c;
 import static legend.game.Scus94491BpeSegment_8005.panVolume_80059f3c;
 import static legend.game.Scus94491BpeSegment_8005.sssqFadeCurrent_8005a1ce;
@@ -295,14 +295,14 @@ public class Sequencer {
     //LAB_8004666c
     if(sequenceData.pitchShifted_0e9) {
       //LAB_8004669c
-      voicePtr_800c4ac4.deref().voices[voiceIndex].ADPCM_SAMPLE_RATE.set(this.calculateSampleRate(instrumentLayer_800c6678.rootKey_02, sequenceData.param0_002, instrumentLayer_800c6678.cents_03, sssqChannelInfo_800C6680.pitchBend_0a, pitchBendMultiplier) * sequenceData.pitch_0ec / 0x1000);
+      voicePtr_800c4ac4.deref().voices[voiceIndex].ADPCM_SAMPLE_RATE.set(this.calculateSampleRate(instrumentLayer_800c6678.rootKey_02, sequenceData.param0_002, instrumentLayer_800c6678.cents_03 * 4, sssqChannelInfo_800C6680.pitchBend_0a, pitchBendMultiplier) * sequenceData.pitch_0ec / 0x1000);
       l = this.scaleValue12((short)l, (short)sequenceData.pitchShiftVolLeft_0ee);
       r = this.scaleValue12((short)r, (short)sequenceData.pitchShiftVolRight_0f0);
       playingNote.pitchShifted_42 = true;
     } else {
       //LAB_80046730
       //LAB_80046750
-      voicePtr_800c4ac4.deref().voices[voiceIndex].ADPCM_SAMPLE_RATE.set(this.calculateSampleRate(instrumentLayer_800c6678.rootKey_02, sequenceData.param0_002, instrumentLayer_800c6678.cents_03, sssqChannelInfo_800C6680.pitchBend_0a, pitchBendMultiplier));
+      voicePtr_800c4ac4.deref().voices[voiceIndex].ADPCM_SAMPLE_RATE.set(this.calculateSampleRate(instrumentLayer_800c6678.rootKey_02, sequenceData.param0_002, instrumentLayer_800c6678.cents_03 * 4, sssqChannelInfo_800C6680.pitchBend_0a, pitchBendMultiplier));
       l = this.scaleValue12((short)l, (short)0x1000);
       r = this.scaleValue12((short)r, (short)0x1000);
       playingNote.pitchShifted_42 = false;
@@ -459,7 +459,7 @@ public class Sequencer {
 
           //LAB_80046e80
           //LAB_80046ea0
-          voicePtr_800c4ac4.deref().voices[voiceIndex].ADPCM_SAMPLE_RATE.set(this.calculateSampleRate(instrumentLayer_800c6678.rootKey_02, sequenceData.param0_002, instrumentLayer_800c6678.cents_03, sssqChannelInfo_800C6680.pitchBend_0a, pitchBendMultiplier));
+          voicePtr_800c4ac4.deref().voices[voiceIndex].ADPCM_SAMPLE_RATE.set(this.calculateSampleRate(instrumentLayer_800c6678.rootKey_02, sequenceData.param0_002, instrumentLayer_800c6678.cents_03 * 4, sssqChannelInfo_800C6680.pitchBend_0a, pitchBendMultiplier));
           final int l = this.calculateVolume(sequenceData, this.calculatePan(0, 0), 0);
           final int r = this.calculateVolume(sequenceData, this.calculatePan(0, 0), 1);
 
@@ -523,7 +523,7 @@ public class Sequencer {
           if(playingNote.modulationEnabled_14 || playingNote.portamentoChanging_44 || sequenceData._104) {
             //LAB_800471d0
             //LAB_800471d4
-            int cents = playingNote.cents_36;
+            int sixtyFourths = playingNote.cents_36 * 4;
             int note = playingNote.noteNumber_02;
             int rootKey = playingNote.rootKey_40;
             int pitchBend = playingNote.pitchBend_38;
@@ -577,7 +577,7 @@ public class Sequencer {
                 if(playingNote._1c == 0) {
                   final int _64ths = (playingNote.pitchBend_38 - 64) * playingNote.pitchBendMultiplier_3a; // 64ths of notes
                   note = note + _64ths / 64; // Add whole number of notes
-                  cents = cents + Math.floorMod(_64ths / 4, 16);
+                  sixtyFourths = sixtyFourths + Math.floorMod(_64ths, 64);
                   pitchBendMultiplier = 1;
                 }
 
@@ -593,12 +593,14 @@ public class Sequencer {
                   if(playingNote.newPortamento_60 < 0) {
                     final int portamentoTimeElapsed = playingNote.portamentoTimeTotal_64 - playingNote.portamentoTimeRemaining_62;
                     note = playingNote.portamentoNote_4e - portamentoTimeElapsed * (256 - playingNote.newPortamento_60) / 10 / playingNote.portamentoTimeTotal_64;
-                    cents = cents - portamentoTimeElapsed * playingNote.newPortamento_60 * 192 / (playingNote.portamentoTimeTotal_64 * 120) % 16;
+                    //TODO remove the *4 by increasing resolution
+                    sixtyFourths = sixtyFourths - (portamentoTimeElapsed * playingNote.newPortamento_60 * 192 / (playingNote.portamentoTimeTotal_64 * 120) % 16) * 4;
                   } else {
                     //LAB_8004762c
                     final int portamentoTimeElapsed = (playingNote.portamentoTimeTotal_64 - playingNote.portamentoTimeRemaining_62) * playingNote.newPortamento_60;
                     note = playingNote.portamentoNote_4e + portamentoTimeElapsed / 10 / playingNote.portamentoTimeTotal_64;
-                    cents = cents + portamentoTimeElapsed * 192 / (playingNote.portamentoTimeTotal_64 * 120) % 16;
+                    //TODO remove the *4 by increasing resolution
+                    sixtyFourths = sixtyFourths + (portamentoTimeElapsed * 192 / (playingNote.portamentoTimeTotal_64 * 120) % 16) * 4;
                   }
 
                   //LAB_800476f4
@@ -634,7 +636,7 @@ public class Sequencer {
 
             //LAB_800477a0
             //LAB_800477a4
-            voice.ADPCM_SAMPLE_RATE.set(pitch * this.calculateSampleRate(rootKey, note, cents, pitchBend, pitchBendMultiplier) >> 12);
+            voice.ADPCM_SAMPLE_RATE.set(pitch * this.calculateSampleRate(rootKey, note, sixtyFourths, pitchBend, pitchBendMultiplier) >> 12);
           }
 
           //LAB_800477ec
@@ -1110,26 +1112,22 @@ public class Sequencer {
    * @param note 0-127, numeric representation of musical note, e.g. 60 = middle C
    */
   @Method(0x80048998L)
-  public int calculateSampleRate(final int rootKey, final int note, final int cents, final int pitchBend, final int pitchBendMultiplier) {
-    // There are 12 notes per octave, %12 is likely getting the note, and /12 the octave
+  public int calculateSampleRate(final int rootKey, final int note, final int sixtyFourths, final int pitchBend, final int pitchBendMultiplier) {
+    final int offsetIn64ths = (note - rootKey) * 64 + sixtyFourths + (pitchBend - 64) * pitchBendMultiplier;
 
-    if(note < rootKey) {
-      final int semitoneOffset = 12 - (rootKey - note) % 12;
-      final int octaveShift = ((rootKey - note) / 12 + 1);
 
-      final int actualOctaveShift = (rootKey - note - 1) / 12 + 1;
-      final int actualSemitoneOffset =  (actualOctaveShift * 12 - (rootKey - note)) % 12;
-
-      final int i = (int)(_8005967c.offset((semitoneOffset * 16 + pitchBendMultiplier * (pitchBend - 64) / 4 + 0xd0L + cents) * 0x2L).get() >> octaveShift);
-      final double semitoneMulti = Math.pow(1.05946d, actualSemitoneOffset);
-      final double centMulti = 1 + (cents * 0.0005946d);
-      final int correct = (int) ((0x1000 >> actualOctaveShift) * semitoneMulti * centMulti);
-      return i & 0xffff;
+    if(offsetIn64ths >= 0) {
+      final int octaveOffset = offsetIn64ths / 768;
+      final int i = offsetIn64ths - octaveOffset * 768;
+      final int sampleRate = Spu.sampleRates[i] << octaveOffset;
+      return sampleRate;
     }
 
-    //LAB_80048a38
-    final int i = (int)(_8005967c.offset(((note - rootKey) % 12 * 16 + pitchBendMultiplier * (pitchBend - 64) / 4 + 0xd0L + cents) * 0x2L).get() << (note - rootKey) / 12);
-    return i & 0xffff;
+    final int octaveOffset = (offsetIn64ths + 1) / -768 + 1;
+    final int i = offsetIn64ths + octaveOffset * 768;
+    final int sampleRate = Spu.sampleRates[i] >> octaveOffset;
+    return sampleRate;
+
   }
 
   @Method(0x80048ab8L)
@@ -1710,7 +1708,7 @@ public class Sequencer {
         if(playingNote.playableSound_22 == sequenceData.playableSound_020) {
           if(playingNote.sequenceData_06 == sequenceData) {
             if(playingNote.used_00) {
-              voicePtr_800c4ac4.deref().voices[voiceIndex].ADPCM_SAMPLE_RATE.set(this.calculateSampleRate(playingNote.rootKey_40, playingNote.noteNumber_02, playingNote.cents_36, sssqChannelInfo_800C6680.pitchBend_0a, playingNote.pitchBendMultiplier_3a));
+              voicePtr_800c4ac4.deref().voices[voiceIndex].ADPCM_SAMPLE_RATE.set(this.calculateSampleRate(playingNote.rootKey_40, playingNote.noteNumber_02, playingNote.cents_36 * 4, sssqChannelInfo_800C6680.pitchBend_0a, playingNote.pitchBendMultiplier_3a));
               playingNote.pitchBend_38 = sequenceData.sssqReader_010.readByte(1);
             }
           }
