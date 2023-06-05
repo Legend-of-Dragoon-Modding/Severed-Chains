@@ -218,6 +218,10 @@ public final class GameEngine {
     GPU.run();
   }
 
+  public static boolean isLoading() {
+    return loading;
+  }
+
   /** Returns missing mod IDs, if any */
   public static Set<String> bootMods(final Set<String> modIds) {
     LOGGER.info("Booting mods...");
