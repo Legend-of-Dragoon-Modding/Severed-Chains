@@ -1046,7 +1046,7 @@ public final class Bttl_800c {
 
             if(encounterId_800bb0f8.get() != 443) { // Standard victory
               postBattleAction_800bc974.set(1);
-              FUN_8001af00(6);
+              FUN_8001af00();
             } else { // Melbu Victory
               //LAB_800c7d30
               postBattleAction_800bc974.set(4);
@@ -2187,7 +2187,7 @@ public final class Bttl_800c {
     } else {
       final RECT imageRect = tim.getImageRect();
 
-      // This is a fix for a retail bug where they try to load a TMD as a TIM (it has a 0 w/h anyway so no data gets loaded) see GH#330
+      // This is a fix for a retail bug where they try to load a TMD as a TIM (it has a 0 w/h anyway so no data gets loaded) see GH#330b
       if(imageRect.x.get() == 0x41 && imageRect.y.get() == 0 && imageRect.w.get() == 0 && imageRect.h.get() == 0) {
         return;
       }

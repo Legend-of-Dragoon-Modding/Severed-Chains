@@ -21,6 +21,7 @@ import java.util.Arrays;
 
 import static legend.core.GameEngine.GPU;
 import static legend.game.Scus94491BpeSegment.resizeDisplay;
+import static legend.game.Scus94491BpeSegment_8002.sssqResetStuff;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndexOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8005._80052d6c;
 import static legend.game.Scus94491BpeSegment_8005.diskFmvs_80052d7c;
@@ -200,6 +201,8 @@ public class Fmv {
   private static boolean shouldStop;
 
   public static void playCurrentFmv() {
+    sssqResetStuff();
+
     final int width = switch((int)fmvIndex_800bf0dc.get()) {
       case 0, 2, 3, 4, 6, 7, 8, 9, 14, 15, 16, 17 -> 320;
       case 1, 5, 10, 11, 12, 13 -> 640;

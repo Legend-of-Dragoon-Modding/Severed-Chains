@@ -9,13 +9,17 @@ import legend.core.memory.types.EnumMapRef;
 import legend.core.memory.types.EnumRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.Pointer;
-import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.combat.environment.BattleStage;
 import legend.game.inventory.WhichMenu;
 import legend.game.scripting.ScriptState;
+import legend.game.sound.QueuedSound28;
+import legend.game.sound.SequenceData124;
+import legend.game.sound.SoundFile;
+import legend.game.sound.SpuStruct08;
+import legend.game.sound.EncounterSoundEffects10;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.GameState52c;
 import legend.game.types.GsRVIEW2;
@@ -25,12 +29,6 @@ import legend.game.types.Model124;
 import legend.game.types.Renderable58;
 import legend.game.types.ScriptEffectStruct;
 import legend.game.types.SobjPos14;
-import legend.game.types.SoundFile;
-import legend.game.types.SpuStruct08;
-import legend.game.types.SpuStruct10;
-import legend.game.types.SpuStruct28;
-import legend.game.types.SshdFile;
-import legend.game.types.SssqFile;
 import legend.game.types.Struct84;
 import legend.game.types.TexPageY;
 import legend.game.types.Textbox4c;
@@ -98,16 +96,21 @@ public final class Scus94491BpeSegment_800b {
   public static final IntRef postBattleAction_800bc974 = MEMORY.ref(4, 0x800bc974L, IntRef::new);
   public static final IntRef itemsDroppedByEnemiesCount_800bc978 = MEMORY.ref(4, 0x800bc978L, IntRef::new);
   public static final Value _800bc97c = MEMORY.ref(4, 0x800bc97cL);
-  //TODO structure @ 800bc980... 3 * 12?
-  public static final Value _800bc980 = MEMORY.ref(4, 0x800bc980L);
 
-  public static final ArrayRef<SpuStruct08> _800bc9a8 = MEMORY.ref(4, 0x800bc9a8L, ArrayRef.of(SpuStruct08.class, 24, 0x8, SpuStruct08::new));
+  /** One per voice */
+  public static final SpuStruct08[] _800bc9a8 = new SpuStruct08[24];
+  static {
+    Arrays.setAll(_800bc9a8, i -> new SpuStruct08());
+  }
 
   public static final Value _800bca68 = MEMORY.ref(1, 0x800bca68L);
 
   public static final Value _800bca6c = MEMORY.ref(4, 0x800bca6cL);
 
-  public static final ArrayRef<SpuStruct28> spu28Arr_800bca78 = MEMORY.ref(1, 0x800bca78L, ArrayRef.of(SpuStruct28.class, 32, 0x28, SpuStruct28::new));
+  public static final QueuedSound28[] playingSoundsBackup_800bca78 = new QueuedSound28[32];
+  static {
+    Arrays.setAll(playingSoundsBackup_800bca78, i -> new QueuedSound28());
+  }
 
   /**
    * Bits:
@@ -115,20 +118,26 @@ public final class Scus94491BpeSegment_800b {
    */
   public static final Value loadedDrgnFiles_800bcf78 = MEMORY.ref(4, 0x800bcf78L);
 
-  public static final ArrayRef<SoundFile> soundFileArr_800bcf80 = MEMORY.ref(2, 0x800bcf80L, ArrayRef.of(SoundFile.class, 13, 0x1c, SoundFile::new));
+  public static final SoundFile[] soundFiles_800bcf80 = new SoundFile[13];
+  static {
+    Arrays.setAll(soundFiles_800bcf80, i -> new SoundFile());
+  }
 
   public static final Value _800bd0f0 = MEMORY.ref(2, 0x800bd0f0L);
 
-  public static final ShortRef sssqChannelIndex_800bd0f8 = MEMORY.ref(2, 0x800bd0f8L, ShortRef::new);
+  public static SequenceData124 currentSequenceData_800bd0f8;
 
   public static final Value _800bd0fc = MEMORY.ref(4, 0x800bd0fcL);
   public static final IntRef sssqTempoScale_800bd100 = MEMORY.ref(4, 0x800bd100L, IntRef::new);
   public static final IntRef sssqTempo_800bd104 = MEMORY.ref(4, 0x800bd104L, IntRef::new);
-  public static final Value _800bd108 = MEMORY.ref(2, 0x800bd108L);
+  public static final Value sequenceVolume_800bd108 = MEMORY.ref(2, 0x800bd108L);
 
-  public static final ArrayRef<SpuStruct28> spu28Arr_800bd110 = MEMORY.ref(1, 0x800bd110L, ArrayRef.of(SpuStruct28.class, 32, 0x28, SpuStruct28::new));
-  public static final SpuStruct10[] spu10Arr_800bd610 = {new SpuStruct10(), new SpuStruct10(), new SpuStruct10(), new SpuStruct10(), new SpuStruct10(), new SpuStruct10(), new SpuStruct10()};
-  public static final Value _800bd680 = MEMORY.ref(4, 0x800bd680L);
+  public static final QueuedSound28[] queuedSounds_800bd110 = new QueuedSound28[32];
+  static {
+    Arrays.setAll(queuedSounds_800bd110, i -> new QueuedSound28());
+  }
+  /** NOTE: this used to be an array, but only the 6th element was used */
+  public static final EncounterSoundEffects10 encounterSoundEffects_800bd610 = new EncounterSoundEffects10();
 
   public static final Value _800bd6f8 = MEMORY.ref(4, 0x800bd6f8L);
 
@@ -146,9 +155,6 @@ public final class Scus94491BpeSegment_800b {
   public static final BoolRef melbuSoundsLoaded_800bd780 = MEMORY.ref(1, 0x800bd780L, BoolRef::new);
   public static final BoolRef melbuMusicLoaded_800bd781 = MEMORY.ref(1, 0x800bd781L, BoolRef::new);
   public static final UnsignedByteRef musicLoaded_800bd782 = MEMORY.ref(1, 0x800bd782L, UnsignedByteRef::new);
-
-  public static final Pointer<SshdFile> melbuSoundMrgSshdPtr_800bd784 = MEMORY.ref(4, 0x800bd784L, Pointer.deferred(4, SshdFile::new));
-  public static final Pointer<SssqFile> melbuSoundMrgSssqPtr_800bd788 = MEMORY.ref(4, 0x800bd788L, Pointer.deferred(4, SssqFile::new));
 
   public static final Value _800bd7ac = MEMORY.ref(4, 0x800bd7acL);
   public static final IntRef _800bd7b0 = MEMORY.ref(4, 0x800bd7b0L, IntRef::new);

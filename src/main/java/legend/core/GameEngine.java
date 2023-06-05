@@ -29,6 +29,7 @@ import legend.game.saves.ConfigStorageLocation;
 import legend.game.saves.SaveManager;
 import legend.game.saves.SaveSerialization;
 import legend.game.scripting.ScriptManager;
+import legend.game.sound.Sequencer;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
 import legend.game.unpacker.UnpackerException;
@@ -79,6 +80,7 @@ public final class GameEngine {
   public static final Registries REGISTRIES = new Registries(access -> REGISTRY_ACCESS = access);
 
   public static final ScriptManager SCRIPTS = new ScriptManager();
+  public static final Sequencer SEQUENCER = new Sequencer();
 
   public static final ConfigCollection CONFIG = new ConfigCollection();
   public static final SaveManager SAVES = new SaveManager(SaveSerialization.MAGIC_V2, SaveSerialization::toV2);
@@ -108,7 +110,7 @@ public final class GameEngine {
 
     CPU = new Cpu();
     GPU = new Gpu();
-    SPU = new Spu(MEMORY);
+    SPU = new Spu();
 
     hardwareThread = Thread.currentThread();
     hardwareThread.setName("Hardware");
