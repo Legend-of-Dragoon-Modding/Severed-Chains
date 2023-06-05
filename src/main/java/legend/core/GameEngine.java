@@ -29,6 +29,7 @@ import legend.game.saves.ConfigStorageLocation;
 import legend.game.saves.SaveManager;
 import legend.game.saves.SaveSerialization;
 import legend.game.scripting.ScriptManager;
+import legend.game.sound.Sequencer;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
 import legend.game.unpacker.UnpackerException;
@@ -79,6 +80,7 @@ public final class GameEngine {
   public static final Registries REGISTRIES = new Registries(access -> REGISTRY_ACCESS = access);
 
   public static final ScriptManager SCRIPTS = new ScriptManager();
+  public static final Sequencer SEQUENCER = new Sequencer();
 
   public static final ConfigCollection CONFIG = new ConfigCollection();
   public static final SaveManager SAVES = new SaveManager(SaveSerialization.MAGIC_V2, SaveSerialization::toV2);
@@ -108,7 +110,7 @@ public final class GameEngine {
 
     CPU = new Cpu();
     GPU = new Gpu();
-    SPU = new Spu(MEMORY);
+    SPU = new Spu();
 
     hardwareThread = Thread.currentThread();
     hardwareThread.setName("Hardware");
@@ -187,12 +189,7 @@ public final class GameEngine {
             return;
           }
 
-          final FileData fileData = Unpacker.loadFile("SCUS_944.91");
-          MEMORY.setBytes(fileData.readUInt(0x18), fileData.getBytes(), 0x800, fileData.readInt(0x1c));
-
-          final byte[] archive = MEMORY.getBytes(bpe_80188a88.getAddress(), 221736);
-          final byte[] decompressed = Unpacker.decompress(new FileData(archive));
-          MEMORY.setBytes(_80010000.getAddress(), decompressed);
+          MEMORY.setBytes(_80010000.getAddress(), Unpacker.loadFile("lod_engine").getBytes());
 
           MEMORY.addFunctions(Scus94491BpeSegment.class);
           MEMORY.addFunctions(Scus94491BpeSegment_8002.class);
@@ -204,16 +201,7 @@ public final class GameEngine {
 
           // Find and load all mods so their global config can be shown in the title screen options menu
           MOD_ACCESS.findMods();
-          MOD_ACCESS.loadMods();
-
-          // Initialize language
-          LANG_ACCESS.initialize(Locale.getDefault());
-
-          // Initialize event bus and find all event handlers
-          EVENT_ACCESS.initialize();
-
-          // Initialize config registry and fire off config registry events
-          REGISTRY_ACCESS.initialize(REGISTRIES.config);
+          bootMods(MODS.getAllModIds());
 
           ConfigStorage.loadConfig(CONFIG, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
 
@@ -230,9 +218,13 @@ public final class GameEngine {
     GPU.run();
   }
 
+  public static boolean isLoading() {
+    return loading;
+  }
+
   /** Returns missing mod IDs, if any */
-  public static Set<String> rebootMods(final Set<String> modIds) {
-    LOGGER.info("Rebooting mods...");
+  public static Set<String> bootMods(final Set<String> modIds) {
+    LOGGER.info("Booting mods...");
 
     MOD_ACCESS.reset();
     LANG_ACCESS.reset();
@@ -242,11 +234,21 @@ public final class GameEngine {
     LOGGER.info("Loading mods %s...", modIds);
 
     final Set<String> missingMods = MOD_ACCESS.loadMods(modIds);
+
+    // Initialize language
     LANG_ACCESS.initialize(Locale.getDefault());
+
+    // Initialize event bus and find all event handlers
     EVENT_ACCESS.initialize();
-    REGISTRY_ACCESS.initializeRemaining();
+
+    // Initialize config registry and fire off config registry events
+    REGISTRY_ACCESS.initialize(REGISTRIES.config);
 
     return missingMods;
+  }
+
+  public static void bootRegistries() {
+    REGISTRY_ACCESS.initializeRemaining();
   }
 
   private static void loadXpTables() throws IOException {

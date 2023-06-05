@@ -1046,6 +1046,7 @@ public class Gpu {
     final int fr = texel        & 0xff;
     final int fg = texel >>>  8 & 0xff;
     final int fb = texel >>> 16 & 0xff;
+    final int tp = texel >>> 24 & 0x1;
     final int r;
     final int g;
     final int b;
@@ -1120,7 +1121,7 @@ public class Gpu {
       default -> throw new RuntimeException();
     }
 
-    return b << 16 | g << 8 | r;
+    return tp << 24 | b << 16 | g << 8 | r;
   }
 
   public int getShadedColor(final int w0, final int w1, final int w2, final int c0, final int c1, final int c2, final int area) {

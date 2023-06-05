@@ -1,0 +1,10 @@
+#!/bin/bash
+
+JAVA=./jdk/bin/java
+
+if [[ ! -f $JAVA ]]
+then
+  LD_PRELOAD=${LD_PRELOAD/_32/_64} konsole --fullscreen -e /bin/bash -c './download-java'
+fi
+
+"$JAVA" -cp "lod-game-@version@.jar:libs/*" legend.game.Main -ea

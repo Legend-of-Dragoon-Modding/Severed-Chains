@@ -81,11 +81,11 @@ public class DebuggerController {
   @FXML
   public CheckBox battleUiColour;
   @FXML
-  public Spinner<Integer> battleUIColourR;
+  public Spinner<Integer> battleUiColourR;
   @FXML
-  public Spinner<Integer> battleUIColourG;
+  public Spinner<Integer> battleUiColourG;
   @FXML
-  public Spinner<Integer> battleUIColourB;
+  public Spinner<Integer> battleUiColourB;
   @FXML
   public CheckBox additionOverlayColour;
   @FXML
@@ -180,11 +180,11 @@ public class DebuggerController {
     this.mapId.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0));
     this.vsyncMode.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, Integer.MAX_VALUE, 1));
     this.gameSpeedMultiplier.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 16, Config.getGameSpeedMultiplier()));
-    this.battleUiColour.setSelected(Config.changeBattleRGB());
+    this.battleUiColour.setSelected(Config.changeBattleRgb());
     this.saveAnywhere.setSelected(CONFIG.getConfig(CoreMod.SAVE_ANYWHERE_CONFIG.get()));
-    this.battleUIColourR.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (Config.getBattleRgb() & 0xff)));
-    this.battleUIColourG.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getBattleRgb() >> 8) & 0xff)));
-    this.battleUIColourB.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getBattleRgb() >> 16) & 0xff)));
+    this.battleUiColourR.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (Config.getBattleRgb() & 0xff)));
+    this.battleUiColourG.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getBattleRgb() >> 8) & 0xff)));
+    this.battleUiColourB.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getBattleRgb() >> 16) & 0xff)));
     this.additionOverlayColour.setSelected(Config.changeAdditionOverlayRgb());
     this.additionOverlayR.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (Config.getAdditionOverlayRgb() & 0xff)));
     this.additionOverlayG.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getAdditionOverlayRgb() >> 8) & 0xff)));
@@ -381,41 +381,16 @@ public class DebuggerController {
 
   @FXML
   private void toggleBattleUiColour(final ActionEvent event) {
-    Config.toggleBattleUIColour();
-  }
-
-  @FXML
-  private void getBattleUiRgb(final ActionEvent event) {
-    final int rgb = (int)Bttl_800c._800c7004.get();
-    final int[] rgbArray = {
-      rgb >> 24 & 0xff,
-      rgb >> 16 & 0xff,
-      rgb >> 8 & 0xff,
-      rgb & 0xff
-    };
-
-    this.battleUIColourR.getValueFactory().setValue(rgbArray[3]);
-    this.battleUIColourG.getValueFactory().setValue(rgbArray[2]);
-    this.battleUIColourB.getValueFactory().setValue(rgbArray[1]);
+    Config.toggleBattleUiColour();
   }
 
   @FXML
   private void setBattleUiRgb(final ActionEvent event) {
-    final byte[] rgbArray = {
-      this.battleUIColourR.getValueFactory().getValue().byteValue(),
-      this.battleUIColourG.getValueFactory().getValue().byteValue(),
-      this.battleUIColourB.getValueFactory().getValue().byteValue(),
-      (byte)0x00,
-    };
-
-    final int rgb =
-      (0xff & rgbArray[3]) << 24 |
-        (0xff & rgbArray[2]) << 16 |
-        (0xff & rgbArray[1]) << 8 |
-        0xff & rgbArray[0];
+    final int rgb = ((this.battleUiColourR.getValueFactory().getValue().byteValue() & 0xff) << 16) |
+      ((this.battleUiColourG.getValueFactory().getValue().byteValue() & 0xff) << 8) |
+      ((this.battleUiColourB.getValueFactory().getValue().byteValue() & 0xff));
 
     Config.setBattleRgb(rgb);
-    Bttl_800c._800c7004.set(rgb);
     this.battleUiColour.setSelected(true);
   }
 

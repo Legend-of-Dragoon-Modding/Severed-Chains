@@ -105,7 +105,7 @@ public final class ConfigStorage {
       }
     }
 
-    EVENTS.postEvent(new ConfigLoadedEvent(storageLocation));
+    EVENTS.postEvent(new ConfigLoadedEvent(configs, storageLocation));
   }
 
   public static int saveConfig(final ConfigCollection configs, final ConfigStorageLocation storageLocation, final FileData data) {

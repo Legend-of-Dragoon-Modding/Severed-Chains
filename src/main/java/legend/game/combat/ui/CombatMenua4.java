@@ -4,14 +4,13 @@ import legend.core.memory.Value;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.ShortRef;
-import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 
 /** Used for rendering the spell menu, maybe other stuff? */
 public class CombatMenua4 implements MemoryRef {
   private final Value ref;
 
-  public final ShortRef _00;
+  public final ShortRef menuState_00;
   public final UnsignedShortRef _02;
   public final UnsignedShortRef x_04;
   public final UnsignedShortRef y_06;
@@ -32,14 +31,14 @@ public class CombatMenua4 implements MemoryRef {
   public final ShortRef textX_18;
   public final ShortRef _1a;
   public final ShortRef itemOrSpellId_1c;
-  public final ShortRef _1e;
+  public final ShortRef listIndex_1e;
   public final ShortRef _20;
   public final ShortRef count_22;
-  public final ShortRef _24;
+  public final ShortRef listScroll_24;
   public final ShortRef _26;
   public final ShortRef _28;
   public final ShortRef _2a;
-  public final UnsignedIntRef _2c;
+  public final IntRef _2c;
   public final ShortRef _30;
 
   public final IntRef _7c;
@@ -47,15 +46,16 @@ public class CombatMenua4 implements MemoryRef {
   public final IntRef _84;
   public final IntRef _88;
   public final IntRef _8c;
-  public final UnsignedIntRef _90;
-  public final UnsignedIntRef _94;
-
+  public final IntRef _90;
+  public final IntRef _94;
+  public final IntRef _98;
+  public final IntRef _9c;
   public final IntRef _a0;
 
   public CombatMenua4(final Value ref) {
     this.ref = ref;
 
-    this._00 = ref.offset(2, 0x00L).cast(ShortRef::new);
+    this.menuState_00 = ref.offset(2, 0x00L).cast(ShortRef::new);
     this._02 = ref.offset(2, 0x02L).cast(UnsignedShortRef::new);
     this.x_04 = ref.offset(2, 0x04L).cast(UnsignedShortRef::new);
     this.y_06 = ref.offset(2, 0x06L).cast(UnsignedShortRef::new);
@@ -70,14 +70,14 @@ public class CombatMenua4 implements MemoryRef {
     this.textX_18 = ref.offset(2, 0x18L).cast(ShortRef::new);
     this._1a = ref.offset(2, 0x1aL).cast(ShortRef::new);
     this.itemOrSpellId_1c = ref.offset(2, 0x1cL).cast(ShortRef::new);
-    this._1e = ref.offset(2, 0x1eL).cast(ShortRef::new);
+    this.listIndex_1e = ref.offset(2, 0x1eL).cast(ShortRef::new);
     this._20 = ref.offset(2, 0x20L).cast(ShortRef::new);
     this.count_22 = ref.offset(2, 0x22L).cast(ShortRef::new);
-    this._24 = ref.offset(2, 0x24L).cast(ShortRef::new);
+    this.listScroll_24 = ref.offset(2, 0x24L).cast(ShortRef::new);
     this._26 = ref.offset(2, 0x26L).cast(ShortRef::new);
     this._28 = ref.offset(2, 0x28L).cast(ShortRef::new);
     this._2a = ref.offset(2, 0x2aL).cast(ShortRef::new);
-    this._2c = ref.offset(4, 0x2cL).cast(UnsignedIntRef::new);
+    this._2c = ref.offset(4, 0x2cL).cast(IntRef::new);
     this._30 = ref.offset(2, 0x30L).cast(ShortRef::new);
 
     this._7c = ref.offset(4, 0x7cL).cast(IntRef::new);
@@ -85,9 +85,10 @@ public class CombatMenua4 implements MemoryRef {
     this._84 = ref.offset(4, 0x84L).cast(IntRef::new);
     this._88 = ref.offset(4, 0x88L).cast(IntRef::new);
     this._8c = ref.offset(4, 0x8cL).cast(IntRef::new);
-    this._90 = ref.offset(4, 0x90L).cast(UnsignedIntRef::new);
-    this._94 = ref.offset(4, 0x94L).cast(UnsignedIntRef::new);
-
+    this._90 = ref.offset(4, 0x90L).cast(IntRef::new);
+    this._94 = ref.offset(4, 0x94L).cast(IntRef::new);
+    this._98 = ref.offset(4, 0x98L).cast(IntRef::new);
+    this._9c = ref.offset(4, 0x9cL).cast(IntRef::new);
     this._a0 = ref.offset(4, 0xa0L).cast(IntRef::new);
   }
 

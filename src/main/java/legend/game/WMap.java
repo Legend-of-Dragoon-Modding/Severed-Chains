@@ -73,14 +73,12 @@ import static legend.core.MemoryHelper.getBiFunctionAddress;
 import static legend.game.Scus94491BpeSegment.FUN_80019c80;
 import static legend.game.Scus94491BpeSegment.FUN_8001eea8;
 import static legend.game.Scus94491BpeSegment.FUN_8001f708;
-import static legend.game.Scus94491BpeSegment.deferReallocOrFree;
 import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.mallocTail;
-import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static legend.game.Scus94491BpeSegment.playSound;
 import static legend.game.Scus94491BpeSegment.qsort;
@@ -151,6 +149,7 @@ import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.input_800bee90;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.savedGameSelected_800bdc34;
+import static legend.game.Scus94491BpeSegment_800b.soundFiles_800bcf80;
 import static legend.game.Scus94491BpeSegment_800b.texPages_800bb110;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static legend.game.Scus94491BpeSegment_800b.textboxes_800be358;
@@ -182,7 +181,7 @@ public class WMap {
   private static final IntRef tempZ_800c66d8 = MEMORY.ref(4, 0x800c66d8L, IntRef::new);
   private static final Value _800c66dc = MEMORY.ref(2, 0x800c66dcL);
 
-  private static final McqHeader mcqHeader_800c6768 = MEMORY.ref(4, 0x800c6768L, McqHeader::new);
+  private static McqHeader mcqHeader_800c6768;
 
   private static final Value _800c6794 = MEMORY.ref(2, 0x800c6794L);
 
@@ -672,7 +671,7 @@ public class WMap {
   public static void FUN_800ccbe0() {
     resizeDisplay(320, 240);
     vsyncMode_8007a3b8.set(3);
-    unloadSoundFile((int)0x9L);
+    unloadSoundFile(9);
     FUN_8001f708(gameState_800babc8.chapterIndex_98, 0);
     pregameLoadingStage_800bb10c.set(1);
   }
@@ -2686,29 +2685,19 @@ public class WMap {
   }
 
   @Method(0x800d562cL)
-  public static void FUN_800d562c(final long address, final int size, final int param) {
-    final McqHeader mcq = MEMORY.ref(4, address, McqHeader::new);
-    final int x = 320 + (int)(param & 0xffff_fffeL) * 64;
-
-    final int y;
-    if((param & 0x1) != 0) {
-      y = 256;
-    } else {
-      //LAB_800d5688
-      y = 0;
-    }
+  public static void FUN_800d562c(final FileData data) {
+    final McqHeader mcq = new McqHeader(data);
 
     //LAB_800d568c
     final RECT sp0x18 = new RECT(
-      (short)x,
-      (short)y,
-      mcq.vramWidth_08.get(),
-      mcq.vramHeight_0a.get()
+      (short)320,
+      (short)0,
+      (short)mcq.vramWidth_08,
+      (short)mcq.vramHeight_0a
     );
 
-    LoadImage(sp0x18, mcq.getAddress() + mcq.imageDataOffset_04.get());
-    memcpy(mcqHeader_800c6768.getAddress(), mcq.getAddress(), 0x2c);
-    deferReallocOrFree(address, 0, 1);
+    LoadImage(sp0x18, mcq.imageData);
+    mcqHeader_800c6768 = mcq;
 
     filesLoadedFlags_800c66b8.oru(0x1L);
   }
@@ -4043,7 +4032,7 @@ public class WMap {
         break;
 
       case 8:
-        FUN_80019c80(12, 1, 1);
+        FUN_80019c80(soundFiles_800bcf80[12], 1, 1);
 
         if(struct258.coolonWarpIndex_222 == 8) {
           sp60 = coolonWarpDest_800ef228.get(struct258.coolonWarpIndex_222)._10.get();
@@ -4086,7 +4075,7 @@ public class WMap {
         struct258.models_0c[2].scaleVector_fc.setZ((int)a0);
         struct258._220 = 11;
 
-        FUN_80019c80(12, 1, 1);
+        FUN_80019c80(soundFiles_800bcf80[12], 1, 1);
 
         // Fall through
 
@@ -5438,12 +5427,12 @@ public class WMap {
 
   @Method(0x800e4934L)
   public static void renderMcq(final McqHeader mcq, final int vramOffsetX, final int vramOffsetY, final int x, final int y, final int z, final int a6, final int colour) {
-    int clutX = vramOffsetX + mcq.clutX_0c.get();
-    int clutY = vramOffsetY + mcq.clutY_0e.get();
-    final int width = mcq.screenWidth_14.get();
-    final int height = mcq.screenHeight_16.get();
-    int u = vramOffsetX + mcq.u_10.get();
-    int v = vramOffsetY + mcq.v_12.get();
+    int clutX = vramOffsetX + mcq.clutX_0c;
+    int clutY = vramOffsetY + mcq.clutY_0e;
+    final int width = mcq.screenWidth_14;
+    final int height = mcq.screenHeight_16;
+    int u = vramOffsetX + mcq.u_10;
+    int v = vramOffsetY + mcq.v_12;
     int vramX = u & 0x3c0;
     final int vramY = v & 0x100;
     u = u * 4 & 0xfc;
@@ -5494,7 +5483,7 @@ public class WMap {
   @Method(0x800e4e1cL)
   public static void FUN_800e4e1c() {
     filesLoadedFlags_800c66b8.and(0xffff_fffeL);
-    loadDrgnBinFile(0, 5696, 0, WMap::FUN_800d562c, 0, 0x4L);
+    loadDrgnFile(0, 5696, WMap::FUN_800d562c);
     _800c6794.setu(0);
   }
 
@@ -5841,7 +5830,7 @@ public class WMap {
               final int soundIndex = places_800f0234.get(_800f0e34.get((int)_800c67a8.get()).placeIndex_02.get()).soundIndices_06.get(i).get();
 
               if(soundIndex > 0) {
-                FUN_80019c80(12, soundIndex, 1);
+                FUN_80019c80(soundFiles_800bcf80[12], soundIndex, 1);
               }
 
               //LAB_800e63ec
@@ -5863,7 +5852,7 @@ public class WMap {
               final int soundIndex = places_800f0234.get(_800f0e34.get((int)_800c67a8.get()).placeIndex_02.get()).soundIndices_06.get(i).get();
 
               if(soundIndex > 0) {
-                FUN_80019c80(12, soundIndex, 1);
+                FUN_80019c80(soundFiles_800bcf80[12], soundIndex, 1);
               }
 
               //LAB_800e6504
@@ -5882,7 +5871,7 @@ public class WMap {
               final int soundIndex = places_800f0234.get(_800f0e34.get((int)_800c67a8.get()).placeIndex_02.get()).soundIndices_06.get(i).get();
 
               if(soundIndex > 0) {
-                FUN_80019c80(12, soundIndex, 1);
+                FUN_80019c80(soundFiles_800bcf80[12], soundIndex, 1);
               }
 
               //LAB_800e65fc

@@ -1,21 +1,22 @@
 package legend.game.inventory.screens;
 
 import it.unimi.dsi.fastutil.ints.IntList;
-import legend.game.modding.coremod.CoreMod;
 import legend.game.input.InputAction;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.Glyph;
 import legend.game.inventory.screens.controls.ItemList;
 import legend.game.inventory.screens.controls.Label;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.types.LodString;
 import legend.game.types.MenuItemStruct04;
 import legend.game.types.MessageBoxResult;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
 import static legend.core.GameEngine.CONFIG;
-import static legend.game.SItem.itemDescriptions_80117a10;
+import static legend.game.SItem.getItemDescription;
 import static legend.game.SItem.loadItemsAndEquipmentForDisplay;
 import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
@@ -50,7 +51,7 @@ public class ItemListScreen extends MenuScreen {
     this.itemList.onGotFocus(() -> {
       this.itemList.showHighlight();
       this.equipmentList.hideHighlight();
-      this.description.show();
+      this.updateDescription(this.itemList.getSelectedItem());
     });
     this.itemList.onPressedThisFrame(inputAction -> {
       if(inputAction == InputAction.DPAD_RIGHT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_RIGHT) {
@@ -60,12 +61,13 @@ public class ItemListScreen extends MenuScreen {
 
       return InputPropagation.PROPAGATE;
     });
-    this.itemList.onHighlight(item -> this.description.setText(itemDescriptions_80117a10.get(item.itemId_00).deref().get()));
+    this.itemList.onHighlight(this::updateDescription);
 
     this.equipmentList.onHoverIn(() -> this.setFocus(this.equipmentList));
     this.equipmentList.onGotFocus(() -> {
       this.itemList.hideHighlight();
       this.equipmentList.showHighlight();
+      this.updateDescription(this.equipmentList.getSelectedItem());
     });
     this.equipmentList.onPressedThisFrame(inputAction -> {
       if(inputAction == InputAction.DPAD_LEFT || inputAction == InputAction.JOYSTICK_LEFT_BUTTON_LEFT) {
@@ -75,6 +77,7 @@ public class ItemListScreen extends MenuScreen {
 
       return InputPropagation.PROPAGATE;
     });
+    this.equipmentList.onHighlight(this::updateDescription);
 
     this.addControl(new Background());
     this.addControl(Glyph.glyph(83)).setPos( 16, 164); // Button prompt pane
@@ -91,7 +94,6 @@ public class ItemListScreen extends MenuScreen {
     discardButton.getRenderable().clut_30 = 0x7ceb;
 
     this.description.setPos(194, 178);
-    this.description.hide();
 
     this.addControl(this.itemList);
     this.addControl(this.equipmentList);
@@ -110,6 +112,17 @@ public class ItemListScreen extends MenuScreen {
     for(final MenuItemStruct04 item : equipment) {
       this.equipmentList.add(item);
     }
+
+    this.updateDescription(this.itemList.getSelectedItem());
+  }
+
+  private void updateDescription(@Nullable final MenuItemStruct04 item) {
+    if(item == null) {
+      this.description.setText("");
+      return;
+    }
+
+    this.description.setText(getItemDescription(item.itemId_00));
   }
 
   @Override

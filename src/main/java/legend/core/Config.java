@@ -80,12 +80,12 @@ public final class Config {
     return readBool("unlock_party", false);
   }
 
-  public static boolean changeBattleRGB() {
+  public static boolean changeBattleRgb() {
     return readBool("battle_ui_colour_change", false);
   }
 
-  public static void toggleBattleUIColour() {
-    properties.setProperty("battle_ui_colour_change", String.valueOf(!changeBattleRGB()));
+  public static void toggleBattleUiColour() {
+    properties.setProperty("battle_ui_colour_change", String.valueOf(!changeBattleRgb()));
   }
 
   public static boolean changeAdditionOverlayRgb() {
@@ -125,11 +125,9 @@ public final class Config {
       readInt("battle_ui_r", 0, 0, 255),
       readInt("battle_ui_g", 0, 0, 255),
       readInt("battle_ui_b", 0, 0, 255),
-      0x00,
     };
 
     return (
-      (0xff & rgbArray[3]) << 24 |
       (0xff & rgbArray[2]) << 16 |
       (0xff & rgbArray[1]) << 8  |
        0xff & rgbArray[0]
@@ -138,15 +136,14 @@ public final class Config {
 
   public static void setBattleRgb(final int rgb) {
     final int[] rgbArray = {
-      ((rgb >> 24) & 0xff),
       ((rgb >> 16) & 0xff),
       ((rgb >> 8) & 0xff),
       (rgb & 0xff)
     };
 
-    properties.setProperty("battle_ui_r", String.valueOf(rgbArray[3]));
-    properties.setProperty("battle_ui_g", String.valueOf(rgbArray[2]));
-    properties.setProperty("battle_ui_b", String.valueOf(rgbArray[1]));
+    properties.setProperty("battle_ui_r", String.valueOf(rgbArray[2]));
+    properties.setProperty("battle_ui_g", String.valueOf(rgbArray[1]));
+    properties.setProperty("battle_ui_b", String.valueOf(rgbArray[0]));
     properties.setProperty("battle_ui_colour_change", "true");
   }
 

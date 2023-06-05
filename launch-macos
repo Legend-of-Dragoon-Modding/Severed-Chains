@@ -1,0 +1,13 @@
+#!/bin/bash
+
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+cd $SCRIPT_DIR
+
+JAVA=./jdk/Contents/Home/bin/java
+
+if [[ ! -f $JAVA ]]
+then
+  ./download-java
+fi
+
+"$JAVA" -XstartOnFirstThread -cp "libs/*:lod-game-@version@.jar" legend.game.Main

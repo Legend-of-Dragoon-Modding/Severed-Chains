@@ -1,3 +1,0 @@
-#!/bin/bash
-
-java -cp "lod-game-@version@.jar:libs/*" legend.game.Main -ea

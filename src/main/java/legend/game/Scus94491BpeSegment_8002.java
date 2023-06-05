@@ -39,6 +39,9 @@ import legend.game.modding.events.inventory.TakeItemEvent;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
+import legend.game.sound.EncounterSoundEffects10;
+import legend.game.sound.QueuedSound28;
+import legend.game.sound.SoundFile;
 import legend.game.tim.Tim;
 import legend.game.tmd.Renderer;
 import legend.game.types.ActiveStatsa0;
@@ -53,8 +56,6 @@ import legend.game.types.Model124;
 import legend.game.types.ModelPartTransforms0c;
 import legend.game.types.Renderable58;
 import legend.game.types.RenderableMetrics14;
-import legend.game.types.SpuStruct10;
-import legend.game.types.SpuStruct28;
 import legend.game.types.Struct84;
 import legend.game.types.Textbox4c;
 import legend.game.types.TextboxArrow0c;
@@ -63,6 +64,7 @@ import legend.game.types.Translucency;
 import legend.game.types.UiPart;
 import legend.game.types.UiType;
 import legend.game.unpacker.FileData;
+import legend.game.unpacker.Unpacker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -113,6 +115,7 @@ import static legend.game.SMap.renderSmapModel;
 import static legend.game.SMap.unloadSmap;
 import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
 import static legend.game.Scus94491BpeSegment.FUN_8001ae90;
+import static legend.game.Scus94491BpeSegment.FUN_8001d51c;
 import static legend.game.Scus94491BpeSegment.FUN_8001e010;
 import static legend.game.Scus94491BpeSegment._80010868;
 import static legend.game.Scus94491BpeSegment._800108b0;
@@ -126,10 +129,10 @@ import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.mallocHead;
-import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.rectArray28_80010770;
 import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
+import static legend.game.Scus94491BpeSegment.soundBufferOffset;
 import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
@@ -140,16 +143,15 @@ import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
 import static legend.game.Scus94491BpeSegment_8003.TransMatrix;
 import static legend.game.Scus94491BpeSegment_8003.TransposeMatrix;
 import static legend.game.Scus94491BpeSegment_8003.bzero;
-import static legend.game.Scus94491BpeSegment_8004.FUN_8004c390;
-import static legend.game.Scus94491BpeSegment_8004.FUN_8004d034;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixX;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixY;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixZ;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrix_Zyx;
+import static legend.game.Scus94491BpeSegment_8004.freeSequence;
 import static legend.game.Scus94491BpeSegment_8004.itemStats_8004f2ac;
 import static legend.game.Scus94491BpeSegment_8004.loadingGameStateOverlay_8004dd08;
 import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
-import static legend.game.Scus94491BpeSegment_8004.setCdVolume;
+import static legend.game.Scus94491BpeSegment_8004.stopMusicSequence;
 import static legend.game.Scus94491BpeSegment_8005._8005027c;
 import static legend.game.Scus94491BpeSegment_8005._8005039c;
 import static legend.game.Scus94491BpeSegment_8005._800503b0;
@@ -169,6 +171,7 @@ import static legend.game.Scus94491BpeSegment_8005._8005a1d8;
 import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.lodXa00Xa_80052c74;
 import static legend.game.Scus94491BpeSegment_8005.lodXa00Xa_80052c94;
+import static legend.game.Scus94491BpeSegment_8005.monsterSoundFileIndices_800500e8;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c3c;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
@@ -195,7 +198,7 @@ import static legend.game.Scus94491BpeSegment_800b._800beb98;
 import static legend.game.Scus94491BpeSegment_800b._800bed28;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
-import static legend.game.Scus94491BpeSegment_800b.equipmentStats_800be5d8;
+import static legend.game.Scus94491BpeSegment_800b.encounterSoundEffects_800bd610;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.hasNoEncounters_800bed58;
 import static legend.game.Scus94491BpeSegment_800b.inventoryMenuState_800bdc28;
@@ -205,7 +208,7 @@ import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba8;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
 import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
-import static legend.game.Scus94491BpeSegment_800b.spu10Arr_800bd610;
+import static legend.game.Scus94491BpeSegment_800b.soundFiles_800bcf80;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.textU_800be5c0;
 import static legend.game.Scus94491BpeSegment_800b.textV_800be5c8;
@@ -236,7 +239,7 @@ public final class Scus94491BpeSegment_8002 {
     unloadSoundFile(5);
     unloadSoundFile(6);
     unloadSoundFile(8);
-    FUN_800201c8(6);
+    unloadEncounterSoundEffects();
   }
 
   @Method(0x80020060L)
@@ -248,7 +251,7 @@ public final class Scus94491BpeSegment_8002 {
     unloadSoundFile(5);
     unloadSoundFile(6);
     unloadSoundFile(8);
-    FUN_800201c8(6);
+    unloadEncounterSoundEffects();
     return FlowControl.CONTINUE;
   }
 
@@ -258,15 +261,14 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x800201c8L)
-  public static void FUN_800201c8(final int index) {
-    final SpuStruct10 struct10 = spu10Arr_800bd610[index];
+  public static void unloadEncounterSoundEffects() {
+    final EncounterSoundEffects10 encounterSoundEffects = encounterSoundEffects_800bd610;
 
-    if(struct10._00 != 0) {
-      FUN_8004d034(struct10.channelIndex_0c, 1);
-      FUN_8004c390(struct10.channelIndex_0c);
-      free(struct10.sssq_08.getAddress());
-      struct10.sssq_08 = null;
-      struct10._00 = 0;
+    if(encounterSoundEffects._00 != 0) {
+      stopMusicSequence(encounterSoundEffects.sequenceData_0c, 1);
+      freeSequence(encounterSoundEffects.sequenceData_0c);
+      encounterSoundEffects.sssq_08 = null;
+      encounterSoundEffects._00 = 0;
     }
 
     //LAB_80020220
@@ -294,31 +296,43 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80020360L)
-  public static void FUN_80020360(final ArrayRef<SpuStruct28> a0, final ArrayRef<SpuStruct28> a1) {
+  public static void copyPlayingSounds(final QueuedSound28[] sources, final QueuedSound28[] dests) {
     //LAB_8002036c
-    for(int i = 0; i < 32; i++) {
-      final SpuStruct28 a0_0 = a0.get(i);
-      final SpuStruct28 a1_0 = a1.get(i);
+    for(int playingSoundIndex = 0; playingSoundIndex < 32; playingSoundIndex++) {
+      final QueuedSound28 source = sources[playingSoundIndex];
+      final QueuedSound28 dest = dests[playingSoundIndex];
 
       //LAB_80020378
-      memcpy(a1_0.getAddress(), a0_0.getAddress(), 0x28);
+      dest.set(source);
 
-      if(a1_0.type_00.get() == 4) {
-        if(a1_0._1c.get() != 0) {
-          a1_0.type_00.set(3);
-        }
+      if(dest.type_00 == 4 && dest._1c != 0) {
+        dest.type_00 = 3;
       }
 
       //LAB_800203d8
     }
   }
 
+  /** Used when Melbu changes forms (not sure if used elsewhere too) */
   @Method(0x800203f0L)
-  public static FlowControl FUN_800203f0(final RunningScript<?> script) {
+  public static FlowControl scriptReplaceMonsterSounds(final RunningScript<?> script) {
     unloadSoundFile(3);
-    //TODO GH#3
-//    loadedDrgnFiles_800bcf78.oru(0x10L);
-//    loadDrgnBinFile(0, 1290 + script.params_20.get(0).deref().get(), 0, getMethodAddress(Scus94491BpeSegment.class, "FUN_8001d51c", long.class, long.class, long.class), 0, 0x4L);
+    loadedDrgnFiles_800bcf78.oru(0x10L);
+    soundBufferOffset = 0;
+
+    final int fileIndex = 1290 + script.params_20[0].get();
+    for(int monsterSlot = 0; monsterSlot < 4; monsterSlot++) {
+      final SoundFile file = soundFiles_800bcf80[monsterSoundFileIndices_800500e8.get(monsterSlot).get()];
+      file.charId_02 = -1;
+      file.used_00 = false;
+
+      if(Unpacker.exists("SECT/DRGN0.BIN/%d/%d".formatted(fileIndex, monsterSlot))) {
+        final int finalMonsterSlot = monsterSlot;
+        loadDrgnDir(0, fileIndex + "/" + monsterSlot, files -> FUN_8001d51c(files, "Monster slot %d (file %d) (replaced)".formatted(finalMonsterSlot, fileIndex), finalMonsterSlot));
+      }
+    }
+
+    loadedDrgnFiles_800bcf78.and(0xffff_ffefL);
     return FlowControl.CONTINUE;
   }
 
@@ -1096,16 +1110,16 @@ public final class Scus94491BpeSegment_8002 {
     final int x;
     final int y;
     if((a0.colourMap_9d & 0x80) == 0) {
-      x = (int)_800503b0.offset(a0.colourMap_9d * 0x2).get();
-      y = (int)_800503d4.offset(a0.colourMap_9d * 0x2).get();
+      x = _800503b0.get(a0.colourMap_9d).get();
+      y = _800503d4.get(a0.colourMap_9d).get();
     } else {
       //LAB_80022098
       if(a0.colourMap_9d == 0x80) {
         return;
       }
 
-      x = (int)_800503f8.offset((a0.colourMap_9d & 0x7f) * 0x2).get();
-      y = (int)_80050424.offset((a0.colourMap_9d & 0x7f) * 0x2).get();
+      x = _800503f8.get(a0.colourMap_9d & 0x7f).get();
+      y = _80050424.get(a0.colourMap_9d & 0x7f).get();
     }
 
     //LAB_800220c0
@@ -1240,7 +1254,7 @@ public final class Scus94491BpeSegment_8002 {
       case INIT_NEW_CAMPAIGN_MENU -> initMenu(WhichMenu.RENDER_NEW_CAMPAIGN_MENU, NewCampaignScreen::new);
       case INIT_OPTIONS_MENU -> initMenu(WhichMenu.RENDER_OPTIONS_MENU, () -> new OptionsScreen(CONFIG, Set.of(ConfigStorageLocation.GLOBAL), () -> whichMenu_800bdc38 = WhichMenu.UNLOAD_OPTIONS_MENU));
       case INIT_CHAR_SWAP_MENU_21 -> {
-        loadCharacterStats(0);
+        loadCharacterStats();
         cacheCharacterSlots();
         initMenu(WhichMenu.RENDER_CHAR_SWAP_MENU_24, () -> new CharSwapScreen(() -> whichMenu_800bdc38 = WhichMenu.UNLOAD_CHAR_SWAP_MENU_25));
       }
@@ -1330,17 +1344,17 @@ public final class Scus94491BpeSegment_8002 {
       return false;
     }
 
-    return (equipmentStats_80111ff0.get(itemId).flags_00.get() & 0x4) != 0;
+    return (equipmentStats_80111ff0[itemId].flags_00 & 0x4) != 0;
   }
 
   @Method(0x800228d0L)
   public static int getItemIcon(final int itemId) {
     if(itemId >= 0xc0) {
-      return itemStats_8004f2ac.get(itemId - 0xc0).icon_07.get();
+      return itemStats_8004f2ac[itemId - 0xc0].icon_07;
     }
 
     //LAB_80022908
-    return equipmentStats_80111ff0.get(itemId).icon_0e.get();
+    return equipmentStats_80111ff0[itemId].icon_0e;
   }
 
   @Method(0x80022928L)
@@ -1432,7 +1446,7 @@ public final class Scus94491BpeSegment_8002 {
       return 0;
     }
 
-    final int target = itemStats_8004f2ac.get(itemId - 0xc0).target_00.get();
+    final int target = itemStats_8004f2ac[itemId - 0xc0].target_00;
 
     if((target & 0x10L) == 0) {
       //LAB_80022b40
@@ -1474,7 +1488,7 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80022bec
-    loadCharacterStats(0);
+    loadCharacterStats();
 
     //LAB_80022bf8
     return ret;
@@ -1511,7 +1525,7 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80022cb4
-    loadCharacterStats(0);
+    loadCharacterStats();
 
     //LAB_80022cc0
     return ret;
@@ -1552,11 +1566,11 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80022e94
-    final ItemStats0c itemStats = itemStats_8004f2ac.get(itemId - 0xc0);
-    final int percentage = itemStats.percentage_09.get();
-    if((itemStats.type_0b.get() & 0x80) != 0) {
+    final ItemStats0c itemStats = itemStats_8004f2ac[itemId - 0xc0];
+    final int percentage = itemStats.percentage_09;
+    if((itemStats.type_0b & 0x80) != 0) {
       //LAB_80022edc
-      response._00 = (itemStats.target_00.get() & 0x2) == 0 ? 2 : 3;
+      response._00 = (itemStats.target_00 & 0x2) == 0 ? 2 : 3;
 
       final int amount;
       if(percentage == 100) {
@@ -1571,9 +1585,9 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80022f50
-    if((itemStats.type_0b.get() & 0x40) != 0) {
+    if((itemStats.type_0b & 0x40) != 0) {
       //LAB_80022f98
-      response._00 = (itemStats.target_00.get() & 0x2) == 0 ? 4 : 5;
+      response._00 = (itemStats.target_00 & 0x2) == 0 ? 4 : 5;
 
       final int amount;
       if(percentage == 100) {
@@ -1588,7 +1602,7 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_8002300c
-    if((itemStats.type_0b.get() & 0x20) != 0) {
+    if((itemStats.type_0b & 0x20) != 0) {
       response._00 = 6;
 
       final int amount;
@@ -1603,10 +1617,10 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80023068
-    if((itemStats.type_0b.get() & 0x8) != 0) {
+    if((itemStats.type_0b & 0x8) != 0) {
       final int status = gameState_800babc8.charData_32c[charIndex].status_10;
 
-      if((itemStats.status_08.get() & status) != 0) {
+      if((itemStats.status_08 & status) != 0) {
         response.value_04 = status;
         gameState_800babc8.charData_32c[charIndex].status_10 &= ~status;
       }
@@ -4792,22 +4806,22 @@ public final class Scus94491BpeSegment_8002 {
         stats.additionXp_3e[i] = 0;
       }
 
-      stats.physicalImmunity_46 = 0;
-      stats.magicalImmunity_48 = 0;
-      stats.physicalResistance_4a = 0;
-      stats.spMultiplier_4c = 0;
-      stats.spPerPhysicalHit_4e = 0;
-      stats.mpPerPhysicalHit_50 = 0;
-      stats.spPerMagicalHit_52 = 0;
-      stats.mpPerMagicalHit_54 = 0;
-      stats._56 = 0;
-      stats.hpRegen_58 = 0;
-      stats.mpRegen_5a = 0;
-      stats.spRegen_5c = 0;
-      stats.revive_5e = 0;
-      stats.magicalResistance_60 = 0;
-      stats.hpMulti_62 = 0;
-      stats.mpMulti_64 = 0;
+      stats.equipmentPhysicalImmunity_46 = false;
+      stats.equipmentMagicalImmunity_48 = false;
+      stats.equipmentPhysicalResistance_4a = false;
+      stats.equipmentSpMultiplier_4c = 0;
+      stats.equipmentSpPerPhysicalHit_4e = 0;
+      stats.equipmentMpPerPhysicalHit_50 = 0;
+      stats.equipmentSpPerMagicalHit_52 = 0;
+      stats.equipmentMpPerMagicalHit_54 = 0;
+      stats.equipmentSpecial2Flag80_56 = 0;
+      stats.equipmentHpRegen_58 = 0;
+      stats.equipmentMpRegen_5a = 0;
+      stats.equipmentSpRegen_5c = 0;
+      stats.equipmentRevive_5e = 0;
+      stats.equipmentMagicalResistance_60 = false;
+      stats.equipmentHpMulti_62 = 0;
+      stats.equipmentMpMulti_64 = 0;
       stats.maxHp_66 = 0;
       stats.addition_68 = 0;
       stats.bodySpeed_69 = 0;
@@ -4816,62 +4830,54 @@ public final class Scus94491BpeSegment_8002 {
       stats.bodyDefence_6c = 0;
       stats.bodyMagicDefence_6d = 0;
       stats.maxMp_6e = 0;
-      stats.spellIndex_70 = 0;
+      stats.spellId_70 = 0;
       stats._71 = 0;
       stats.dragoonAttack_72 = 0;
       stats.dragoonMagicAttack_73 = 0;
       stats.dragoonDefence_74 = 0;
       stats.dragoonMagicDefence_75 = 0;
 
-      FUN_8002a86c(charIndex);
+      clearEquipmentStats(charIndex);
 
-      stats._9c = 0;
+      stats.addition_00_9c = 0;
       stats.additionSpMultiplier_9e = 0;
       stats.additionDamageMultiplier_9f = 0;
     }
 
-    FUN_8002a8f8();
     _800be5d0.setu(0);
   }
 
   @Method(0x8002a86cL)
-  public static void FUN_8002a86c(final int charIndex) {
+  public static void clearEquipmentStats(final int charIndex) {
     final ActiveStatsa0 stats = stats_800be5f8[charIndex];
 
     stats.specialEffectFlag_76 = 0;
-    stats._77 = 0;
-    stats._78 = 0;
-    stats._79 = 0;
-    stats.elementFlag_7a = 0;
-    stats._7b = 0;
-    stats.elementalResistanceFlag_7c = 0;
-    stats.elementalImmunityFlag_7d = 0;
-    stats.statusResistFlag_7e = 0;
-    stats._7f = 0;
-    stats._80 = 0;
-    stats.special1_81 = 0;
-    stats.special2_82 = 0;
+    stats.equipmentType_77 = 0;
+    stats.equipment_02_78 = 0;
+    stats.equipmentEquipableFlags_79 = 0;
+    stats.equipmentAttackElements_7a.clear();
+    stats.equipment_05_7b = 0;
+    stats.equipmentElementalResistance_7c.clear();
+    stats.equipmentElementalImmunity_7d.clear();
+    stats.equipmentStatusResist_7e = 0;
+    stats.equipment_09_7f = 0;
+    stats.equipmentAttack1_80 = 0;
     stats._83 = 0;
-    stats._84 = 0;
+    stats.equipmentIcon_84 = 0;
 
-    stats.gearSpeed_86 = 0;
-    stats.gearAttack_88 = 0;
-    stats.gearMagicAttack_8a = 0;
-    stats.gearDefence_8c = 0;
-    stats.gearMagicDefence_8e = 0;
-    stats.attackHit_90 = 0;
-    stats.magicHit_92 = 0;
-    stats.attackAvoid_94 = 0;
-    stats.magicAvoid_96 = 0;
-    stats.onHitStatusChance_98 = 0;
-    stats._99 = 0;
-    stats._9a = 0;
-    stats.onHitStatus_9b = 0;
-  }
-
-  @Method(0x8002a8f8L)
-  public static void FUN_8002a8f8() {
-    bzero(equipmentStats_800be5d8.getAddress(), 0x1c);
+    stats.equipmentSpeed_86 = 0;
+    stats.equipmentAttack_88 = 0;
+    stats.equipmentMagicAttack_8a = 0;
+    stats.equipmentDefence_8c = 0;
+    stats.equipmentMagicDefence_8e = 0;
+    stats.equipmentAttackHit_90 = 0;
+    stats.equipmentMagicHit_92 = 0;
+    stats.equipmentAttackAvoid_94 = 0;
+    stats.equipmentMagicAvoid_96 = 0;
+    stats.equipmentOnHitStatusChance_98 = 0;
+    stats.equipment_19_99 = 0;
+    stats.equipment_1a_9a = 0;
+    stats.equipmentOnHitStatus_9b = 0;
   }
 
   @Method(0x8002a9c0L)
@@ -4994,8 +5000,6 @@ public final class Scus94491BpeSegment_8002 {
 
     if(xaLoadingStage == 3) {
       LOGGER.info("Playing XA archive %d file %d", xaArchiveIndex, xaFileIndex);
-
-      setCdVolume(0x7f, 0x7f);
 
       final long v1;
       if(drgnBinIndex_800bc058.get() == 0x4L) {

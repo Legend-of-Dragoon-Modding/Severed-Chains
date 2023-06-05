@@ -205,12 +205,12 @@ public class UseItemScreen extends MenuScreen {
       final int itemId = gameState_800babc8.items_2e9.getInt(i);
 
       if(itemCanBeUsedInMenu(itemId) != 0) {
-        final ItemStats0c itemStats = itemStats_8004f2ac.get(itemId - 0xc0);
+        final ItemStats0c itemStats = itemStats_8004f2ac[itemId - 0xc0];
         final MenuItemStruct04 item = new MenuItemStruct04();
         item.itemId_00 = itemId;
         item.flags_02 = 0;
 
-        if(itemStats.type_0b.get() == 0x8 && (itemStats.status_08.get() & allStatus) == 0) {
+        if(itemStats.type_0b == 0x8 && (itemStats.status_08 & allStatus) == 0) {
           item.flags_02 = 0x4000;
         }
 
@@ -311,7 +311,7 @@ public class UseItemScreen extends MenuScreen {
           playSound(2);
           takeItemId(this.menuItems.get(this.selectedSlot + this.slotScroll).itemId_00);
           this.itemCount = this.getUsableItemsInMenu();
-          loadCharacterStats(0);
+          loadCharacterStats();
           this.getItemResponseText(this.useItemResponse);
           menuStack.pushScreen(new MessageBoxScreen(this.useItemResponse.string_08, 0, result -> {}));
           this.loadingStage = 1;
@@ -517,7 +517,7 @@ public class UseItemScreen extends MenuScreen {
     playSound(2);
     takeItemId(this.menuItems.get(this.selectedSlot + this.slotScroll).itemId_00);
     this.itemCount = this.getUsableItemsInMenu();
-    loadCharacterStats(0);
+    loadCharacterStats();
     this.getItemResponseText(this.useItemResponse);
     menuStack.pushScreen(new MessageBoxScreen(this.useItemResponse.string_08, 0, result -> {}));
     this.loadingStage = 1;

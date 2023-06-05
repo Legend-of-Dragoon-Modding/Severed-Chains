@@ -1,7 +1,7 @@
 package legend.core.spu;
 
 public class Counter {            //internal
-  public int register;
+  public int register = 0x2000;
 
   public int currentSampleIndex() {
     return this.register >> 12 & 0x1F;
@@ -13,6 +13,6 @@ public class Counter {            //internal
   }
 
   public int interpolationIndex() {
-    return this.register >> 3 & 0xFF;
+    return this.register >> 3 & 0x1FF;
   }
 }

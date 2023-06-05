@@ -4,15 +4,22 @@ import legend.core.gpu.RECT;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MATRIX;
 import legend.core.memory.Value;
-import legend.core.memory.types.ArrayRef;
-import legend.core.memory.types.Pointer;
-import legend.core.spu.Spu;
-import legend.game.types.PlayableSoundStruct;
-import legend.game.types.SpuStruct124;
-import legend.game.types.SpuStruct44;
-import legend.game.types.SpuStruct66;
-import legend.game.types.SshdFile;
-import legend.game.types.SshdStruct10;
+import legend.game.sound.Instrument;
+import legend.game.sound.InstrumentLayer10;
+import legend.game.sound.InstrumentsSubfile;
+import legend.game.sound.PatchList;
+import legend.game.sound.PlayableSound0c;
+import legend.game.sound.PlayingNote66;
+import legend.game.sound.SequenceData124;
+import legend.game.sound.SoundEnv44;
+import legend.game.sound.Sshd;
+import legend.game.sound.Sssq;
+import legend.game.sound.SssqReader;
+import legend.game.sound.Sssqish;
+import legend.game.sound.VolumeRamp;
+import legend.game.sound.WaveformList;
+
+import java.util.Arrays;
 
 import static legend.core.GameEngine.MEMORY;
 
@@ -35,29 +42,37 @@ public final class Scus94491BpeSegment_800c {
 
   public static final GsCOORDINATE2[] coord2s_800c35a8 = new GsCOORDINATE2[31];
 
-  /** 0x990 bytes long, I think these map to voices, not channels */
-  public static final ArrayRef<SpuStruct66> _800c3a40 = MEMORY.ref(2, 0x800c3a40L, ArrayRef.of(SpuStruct66.class, 24, 0x66, SpuStruct66::new));
+  /** 0x990 bytes long, one per voice */
+  public static final PlayingNote66[] playingNotes_800c3a40 = new PlayingNote66[24];
+  static {
+    Arrays.setAll(playingNotes_800c3a40, i -> new PlayingNote66());
+  }
   /** 0x5f4 bytes long */
-  public static final ArrayRef<PlayableSoundStruct> playableSoundPtrArr_800c43d0 = MEMORY.ref(4, 0x800c43d0L, ArrayRef.of(PlayableSoundStruct.class, 127, 0xc, PlayableSoundStruct::new));
+  public static final PlayableSound0c[] playableSounds_800c43d0 = new PlayableSound0c[127];
+  static {
+    Arrays.setAll(playableSounds_800c43d0, i -> new PlayableSound0c());
+  }
 
-  /** NOTE: this pointer can be misaligned, hence being a Value */
-  public static final Value sssqPtr_800c4aa4 = MEMORY.ref(4, 0x800c4aa4L);
-  public static final Value _800c4aa8 = MEMORY.ref(4, 0x800c4aa8L);
-  public static final Value _800c4aac = MEMORY.ref(4, 0x800c4aacL);
-  public static final Value _800c4ab0 = MEMORY.ref(4, 0x800c4ab0L);
-  public static final Value _800c4ab4 = MEMORY.ref(4, 0x800c4ab4L);
-  public static final Value _800c4ab8 = MEMORY.ref(4, 0x800c4ab8L);
-  public static final Value _800c4abc = MEMORY.ref(4, 0x800c4abcL);
-  public static final Pointer<SshdFile> sshdPtr_800c4ac0 = MEMORY.ref(4, 0x800c4ac0L, Pointer.deferred(4, SshdFile::new));
-  public static final Pointer<Spu> voicePtr_800c4ac4 = MEMORY.ref(4, 0x800c4ac4L, Pointer.deferred(4, ref -> {throw new RuntimeException("Can't instantiate");}));
-  public static final ArrayRef<SpuStruct124> _800c4ac8 = MEMORY.ref(4, 0x800c4ac8L, ArrayRef.of(SpuStruct124.class, 24, 0x124, SpuStruct124::new));
+  public static InstrumentsSubfile instruments_800c4aa8;
+  public static Sssqish sssqish_800c4aa8;
+  public static VolumeRamp volumeRamp_800c4ab0;
+  public static WaveformList waveforms_800c4ab8;
+  public static PatchList patchList_800c4abc;
+  public static Sshd sshdPtr_800c4ac0;
+  /** One per loaded sequence */
+  public static final SequenceData124[] sequenceData_800c4ac8 = new SequenceData124[24];
+  static {
+    Arrays.setAll(sequenceData_800c4ac8, i -> new SequenceData124());
+  }
   public static Runnable spuDmaCompleteCallback_800c6628;
 
-  public static final SpuStruct44 _800c6630 = MEMORY.ref(4, 0x800c6630L, SpuStruct44::new);
-  public static final Value _800c6674 = MEMORY.ref(4, 0x800c6674L);
-  public static final Pointer<SshdStruct10> sshd10Ptr_800c6678 = MEMORY.ref(4, 0x800c6678L, Pointer.deferred(1, SshdStruct10::new));
-  public static final Value sssqPtr_800c667c = MEMORY.ref(4, 0x800c667cL);
-  public static final Value sssqDataPointer_800c6680 = MEMORY.ref(4, 0x800c6680L);
+  public static final SoundEnv44 soundEnv_800c6630 = new SoundEnv44();
+  public static Instrument instrument_800c6674;
+  public static InstrumentLayer10[] instrumentLayers_800c6678;
+  public static InstrumentLayer10 instrumentLayer_800c6678;
+  public static int instrumentLayerIndex_800c6678;
+  public static SssqReader sssqReader_800c667c;
+  public static Sssq.ChannelInfo sssqChannelInfo_800C6680;
 
   public static final Value timHeader_800c6748 = MEMORY.ref(4, 0x800c6748L);
 }

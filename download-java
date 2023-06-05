@@ -1,0 +1,10 @@
+#!/bin/bash
+
+if [[ -d ./jdk ]]
+then
+  rm -rf ./jdk
+fi
+
+echo Downloading java...
+mkdir "jdk"
+curl -s -L "https://corretto.aws/downloads/latest/amazon-corretto-17-@arch@-@os@-jdk.tar.gz" | tar -vxz -C jdk --strip-components=1
