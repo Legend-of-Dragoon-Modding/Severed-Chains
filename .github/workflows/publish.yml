@@ -37,7 +37,7 @@ jobs:
         type: 'zip'
         filename: 'Severed_Chains_Windows.zip'
         directory: 'build/libs'
-        exclusions: '*.zip*'
+        exclusions: '*.zip* *.tar.gz*'
 
     - name: Build Windows ARM64 with Gradle
       run: ./gradlew build -Pos=windows -Parch=aarch64
@@ -48,7 +48,7 @@ jobs:
         type: 'zip'
         filename: 'Severed_Chains_Windows_ARM64.zip'
         directory: 'build/libs'
-        exclusions: '*.zip*'
+        exclusions: '*.zip* *.tar.gz*'
 
     - name: Build Steam Deck x64 with Gradle
       run: ./gradlew build -Pos=linux -Parch=x86_64 -Psteamdeck=true
@@ -56,10 +56,10 @@ jobs:
     - name: ZIP Steam Deck x64 Build
       uses: thedoctor0/zip-release@main
       with:
-        type: 'zip'
-        filename: 'Severed_Chains_Steam_Deck.zip'
+        type: 'tar'
+        filename: 'Severed_Chains_Steam_Deck.tar.gz'
         directory: 'build/libs'
-        exclusions: '*.zip*'
+        exclusions: '*.zip* *.tar.gz*'
 
     - name: Build Linux x64 with Gradle
       run: ./gradlew build -Pos=linux -Parch=x86_64
@@ -67,10 +67,10 @@ jobs:
     - name: ZIP Linux x64 Build
       uses: thedoctor0/zip-release@main
       with:
-        type: 'zip'
-        filename: 'Severed_Chains_Linux.zip'
+        type: 'tar'
+        filename: 'Severed_Chains_Linux.tar.gz'
         directory: 'build/libs'
-        exclusions: '*.zip*'
+        exclusions: '*.zip* *.tar.gz*'
 
     - name: Build Linux ARM64 with Gradle
       run: ./gradlew build -Pos=linux -Parch=aarch64
@@ -78,10 +78,10 @@ jobs:
     - name: ZIP Linux ARM64 Build
       uses: thedoctor0/zip-release@main
       with:
-        type: 'zip'
-        filename: 'Severed_Chains_Linux_ARM64.zip'
+        type: 'tar'
+        filename: 'Severed_Chains_Linux_ARM64.tar.gz'
         directory: 'build/libs'
-        exclusions: '*.zip*'
+        exclusions: '*.zip* *.tar.gz*'
 
     - name: Build MacOS x64 with Gradle
       run: ./gradlew build -Pos=osx -Parch=x86_64
@@ -89,10 +89,10 @@ jobs:
     - name: ZIP MacOS x64 Build
       uses: thedoctor0/zip-release@main
       with:
-        type: 'zip'
-        filename: 'Severed_Chains_MacOS_Intel.zip'
+        type: 'tar'
+        filename: 'Severed_Chains_MacOS_Intel.tar.gz'
         directory: 'build/libs'
-        exclusions: '*.zip*'
+        exclusions: '*.zip* *.tar.gz*'
 
     - name: Build MacOS ARM64 with Gradle
       run: ./gradlew build -Pos=osx -Parch=aarch64
@@ -100,10 +100,10 @@ jobs:
     - name: ZIP MacOS ARM64 Build
       uses: thedoctor0/zip-release@main
       with:
-        type: 'zip'
-        filename: 'Severed_Chains_MacOS_M1.zip'
+        type: 'tar'
+        filename: 'Severed_Chains_MacOS_M1.tar.gz'
         directory: 'build/libs'
-        exclusions: '*.zip*'
+        exclusions: '*.zip* *.tar.gz*'
 
     - name: Delete Tag and Release
       uses: dev-drprasad/delete-tag-and-release@v0.2.1
@@ -116,7 +116,7 @@ jobs:
     - name: Upload Release
       uses: ncipollo/release-action@v1
       with:
-        artifacts: 'build/libs/*.zip'
+        artifacts: 'build/libs/*.zip,build/libs/*.tar.gz'
         token: ${{ secrets.GITHUB_TOKEN }}
         commit: ${{ github.sha }}
         name: 'Latest Development Build'
