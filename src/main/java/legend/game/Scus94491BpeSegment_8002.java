@@ -41,6 +41,7 @@ import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
 import legend.game.sound.EncounterSoundEffects10;
 import legend.game.sound.QueuedSound28;
+import legend.game.sound.SoundFile;
 import legend.game.tim.Tim;
 import legend.game.tmd.Renderer;
 import legend.game.types.ActiveStatsa0;
@@ -63,6 +64,7 @@ import legend.game.types.Translucency;
 import legend.game.types.UiPart;
 import legend.game.types.UiType;
 import legend.game.unpacker.FileData;
+import legend.game.unpacker.Unpacker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -113,6 +115,7 @@ import static legend.game.SMap.renderSmapModel;
 import static legend.game.SMap.unloadSmap;
 import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
 import static legend.game.Scus94491BpeSegment.FUN_8001ae90;
+import static legend.game.Scus94491BpeSegment.FUN_8001d51c;
 import static legend.game.Scus94491BpeSegment.FUN_8001e010;
 import static legend.game.Scus94491BpeSegment._80010868;
 import static legend.game.Scus94491BpeSegment._800108b0;
@@ -129,6 +132,7 @@ import static legend.game.Scus94491BpeSegment.mallocHead;
 import static legend.game.Scus94491BpeSegment.rectArray28_80010770;
 import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
+import static legend.game.Scus94491BpeSegment.soundBufferOffset;
 import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
@@ -167,6 +171,7 @@ import static legend.game.Scus94491BpeSegment_8005._8005a1d8;
 import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.lodXa00Xa_80052c74;
 import static legend.game.Scus94491BpeSegment_8005.lodXa00Xa_80052c94;
+import static legend.game.Scus94491BpeSegment_8005.monsterSoundFileIndices_800500e8;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c3c;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
@@ -203,6 +208,7 @@ import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba8;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
 import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
+import static legend.game.Scus94491BpeSegment_800b.soundFiles_800bcf80;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.textU_800be5c0;
 import static legend.game.Scus94491BpeSegment_800b.textV_800be5c8;
@@ -307,11 +313,26 @@ public final class Scus94491BpeSegment_8002 {
     }
   }
 
+  /** Used when Melbu changes forms (not sure if used elsewhere too) */
   @Method(0x800203f0L)
-  public static FlowControl FUN_800203f0(final RunningScript<?> script) {
+  public static FlowControl scriptReplaceMonsterSounds(final RunningScript<?> script) {
     unloadSoundFile(3);
     loadedDrgnFiles_800bcf78.oru(0x10L);
-    loadDrgnDir(0, 1290 + script.params_20[0].get(), files -> Scus94491BpeSegment.FUN_8001d51c(files, "Cutscene sounds? soundbank", script.params_20[0].get()));
+    soundBufferOffset = 0;
+
+    final int fileIndex = 1290 + script.params_20[0].get();
+    for(int monsterSlot = 0; monsterSlot < 4; monsterSlot++) {
+      final SoundFile file = soundFiles_800bcf80[monsterSoundFileIndices_800500e8.get(monsterSlot).get()];
+      file.charId_02 = -1;
+      file.used_00 = false;
+
+      if(Unpacker.exists("SECT/DRGN0.BIN/%d/%d".formatted(fileIndex, monsterSlot))) {
+        final int finalMonsterSlot = monsterSlot;
+        loadDrgnDir(0, fileIndex + "/" + monsterSlot, files -> FUN_8001d51c(files, "Monster slot %d (file %d) (replaced)".formatted(finalMonsterSlot, fileIndex), finalMonsterSlot));
+      }
+    }
+
+    loadedDrgnFiles_800bcf78.and(0xffff_ffefL);
     return FlowControl.CONTINUE;
   }
 

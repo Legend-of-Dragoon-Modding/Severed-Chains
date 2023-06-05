@@ -108,11 +108,11 @@ public class Spu implements Runnable {
         this.keyOff = 0;
 
         if(edgeKeyOn != 0) {
-          LOGGER.info(SPU_MARKER, "Keying on %x", edgeKeyOn);
+          LOGGER.debug(SPU_MARKER, "Keying on %x", edgeKeyOn);
         }
 
         if(edgeKeyOff != 0) {
-          LOGGER.info(SPU_MARKER, "Keying off %x", edgeKeyOff);
+          LOGGER.debug(SPU_MARKER, "Keying off %x", edgeKeyOff);
         }
 
         this.tickNoiseGenerator();
@@ -122,12 +122,12 @@ public class Spu implements Runnable {
 
           //keyOn and KeyOff are edge triggered on 0 to 1
           if((edgeKeyOn & 0x1 << voiceIndex) != 0) {
-            LOGGER.info(SPU_MARKER, "Keying on voice %d", voiceIndex);
+            LOGGER.debug(SPU_MARKER, "Keying on voice %d", voiceIndex);
             v.keyOn();
           }
 
           if((edgeKeyOff & 0x1 << voiceIndex) != 0) {
-            LOGGER.info(SPU_MARKER, "Keying off voice %d", voiceIndex);
+            LOGGER.debug(SPU_MARKER, "Keying off voice %d", voiceIndex);
             v.keyOff();
           }
 
@@ -320,7 +320,7 @@ public class Spu implements Runnable {
   }
 
   public void keyOff(final int voices) {
-    LOGGER.info(SPU_MARKER, "Setting SPU key off to %08x", voices);
+    LOGGER.debug(SPU_MARKER, "Setting SPU key off to %08x", voices);
 
     synchronized(Spu.class) {
       this.keyOff |= voices;
@@ -328,7 +328,7 @@ public class Spu implements Runnable {
   }
 
   public void keyOn(final int voices) {
-    LOGGER.info(SPU_MARKER, "Setting SPU key on to %08x", voices);
+    LOGGER.debug(SPU_MARKER, "Setting SPU key on to %08x", voices);
 
     synchronized(Spu.class) {
       this.keyOn |= voices;
@@ -344,7 +344,7 @@ public class Spu implements Runnable {
   }
 
   public void setNoiseMode(final int noiseMode) {
-    LOGGER.info(SPU_MARKER, "Setting SPU noise mode to %x", noiseMode);
+    LOGGER.debug(SPU_MARKER, "Setting SPU noise mode to %x", noiseMode);
 
     synchronized(Spu.class) {
       this.channelNoiseMode = noiseMode;
@@ -352,7 +352,7 @@ public class Spu implements Runnable {
   }
 
   public void setReverbMode(final int reverbMode) {
-    LOGGER.info(SPU_MARKER, "Setting SPU reverb mode to %x", reverbMode);
+    LOGGER.debug(SPU_MARKER, "Setting SPU reverb mode to %x", reverbMode);
 
     synchronized(Spu.class) {
       this.channelReverbMode = reverbMode;

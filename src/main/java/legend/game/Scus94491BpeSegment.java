@@ -3554,7 +3554,7 @@ public final class Scus94491BpeSegment {
     //LAB_8001d50c
   }
 
-  private static int soundBufferOffset;
+  public static int soundBufferOffset;
 
   /** TODO this isn't thread-safe */
   private static void loadMonsterSounds(final int fileIndex) {
@@ -3568,7 +3568,7 @@ public final class Scus94491BpeSegment {
 
       if(Unpacker.exists("SECT/DRGN0.BIN/%d/%d".formatted(fileIndex, monsterSlot))) {
         final int finalMonsterSlot = monsterSlot;
-        loadDrgnDir(0, fileIndex + "/" + monsterSlot, files -> Scus94491BpeSegment.FUN_8001d51c(files, "Monster slot %d (file %d)".formatted(finalMonsterSlot, fileIndex), finalMonsterSlot));
+        loadDrgnDir(0, fileIndex + "/" + monsterSlot, files -> FUN_8001d51c(files, "Monster slot %d (file %d)".formatted(finalMonsterSlot, fileIndex), finalMonsterSlot));
       }
     }
 

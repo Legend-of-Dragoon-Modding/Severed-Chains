@@ -636,7 +636,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[713] = Scus94491BpeSegment::scriptStopBobjSound;
     scriptSubFunctions_8004e29c[714] = Scus94491BpeSegment_8002::FUN_80020060;
     scriptSubFunctions_8004e29c[715] = Scus94491BpeSegment::scriptLoadPlayerAttackSounds;
-    scriptSubFunctions_8004e29c[716] = Scus94491BpeSegment_8002::FUN_800203f0;
+    scriptSubFunctions_8004e29c[716] = Scus94491BpeSegment_8002::scriptReplaceMonsterSounds;
     scriptSubFunctions_8004e29c[717] = Scus94491BpeSegment::FUN_8001f674;
     scriptSubFunctions_8004e29c[718] = Scus94491BpeSegment::FUN_8001f560;
 
