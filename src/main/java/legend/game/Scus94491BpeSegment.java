@@ -44,7 +44,6 @@ import legend.game.scripting.Param;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptState;
 import legend.game.sound.EncounterSoundEffects10;
-import legend.game.sound.MusicDebugger;
 import legend.game.sound.PlayableSound0c;
 import legend.game.sound.QueuedSound28;
 import legend.game.sound.SoundFile;
@@ -70,7 +69,6 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import javax.annotation.Nullable;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -483,19 +481,6 @@ public final class Scus94491BpeSegment {
         } else {
           Platform.runLater(Debugger::show);
         }
-      }
-
-      if(key == GLFW_KEY_F11) {
-        final Thread musicDebuggerThread = new Thread(() -> {
-          try {
-            new MusicDebugger();
-          } catch(final IOException e) {
-            throw new RuntimeException(e);
-          }
-        });
-
-        musicDebuggerThread.setName("Music Debugger");
-        musicDebuggerThread.start();
       }
     });
 
