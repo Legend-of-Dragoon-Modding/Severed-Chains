@@ -7,4 +7,4 @@ fi
 
 echo Downloading java...
 mkdir "jdk"
-wget -qO- "https://corretto.aws/downloads/latest/amazon-corretto-17-@arch@-@os@-jdk.tar.gz" | tar -vxz -C jdk --strip-components=1
+curl -s -L "https://corretto.aws/downloads/latest/amazon-corretto-17-@arch@-@os@-jdk.tar.gz" | tar -vxz -C jdk --strip-components=1
