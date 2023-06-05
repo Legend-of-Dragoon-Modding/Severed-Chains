@@ -131,10 +131,10 @@ public class Spu implements Runnable, MemoryRef {
       final double pow3 = pow2 * pow1;
 
       interpolationWeights[i] = new double[] {
-        0.5d * (-pow3 + 2 * pow2 - pow1),
-        0.5d * (3 * pow3 - 5 * pow2 + 2),
-        0.5d * (-3 * pow3 + 4 * pow2 + pow1),
-        0.5 * (pow3 - pow2)
+        0.45d * (-pow3 + 2 * pow2 - pow1),
+        0.45d * (3 * pow3 - 5 * pow2 + 2),
+        0.45d * (-3 * pow3 + 4 * pow2 + pow1),
+        0.45d * (pow3 - pow2)
       };
     }
 
