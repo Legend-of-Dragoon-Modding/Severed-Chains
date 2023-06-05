@@ -1,15 +1,14 @@
 package legend.game;
 
 import legend.core.DebugHelper;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Assertions;
+import java.awt.*;
 
 
 public final class FirstTest {
   private FirstTest() {
   }
 
-  public static boolean startOfGame()  {
+  public static boolean startOfGame() throws AWTException {
     DebugHelper.sleep(3000); //wait for game to load
     UserInputs.enter(); // skip first screen
     DebugHelper.sleep(3000);
@@ -35,8 +34,8 @@ public final class FirstTest {
     UserInputs.arrowLeft(3000); // move character left for 3 seconds
     //
     // start of loop to get through dialog before fight with commander
-    long t= System.currentTimeMillis();
-    long end = t+120000;
+    final long t= System.currentTimeMillis();
+    final long end = t+120000;
     while(System.currentTimeMillis() < end) {
       UserInputs.sKey(); // skip dialog
       DebugHelper.sleep( 2000 );
