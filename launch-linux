@@ -1,0 +1,10 @@
+#!/bin/bash
+
+JAVA=./jdk/bin/java
+
+if [[ ! -f $JAVA ]]
+then
+  ./download-java
+fi
+
+"$JAVA" -cp "lod-game-@version@.jar:libs/*" legend.game.Main -ea

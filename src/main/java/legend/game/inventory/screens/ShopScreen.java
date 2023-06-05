@@ -5,6 +5,7 @@ import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.inventory.ShopItemEvent;
+import legend.game.modding.events.inventory.ShopSellPriceEvent;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.LodString;
 import legend.game.types.MenuItemStruct04;
@@ -33,7 +34,7 @@ import static legend.game.SItem.cacheCharacterSlots;
 import static legend.game.SItem.canEquip;
 import static legend.game.SItem.characterCount_8011d7c4;
 import static legend.game.SItem.equipItem;
-import static legend.game.SItem.equipment_8011972c;
+import static legend.game.SItem.getItemName;
 import static legend.game.SItem.glyph_801142d4;
 import static legend.game.SItem.glyphs_80114510;
 import static legend.game.SItem.initGlyph;
@@ -118,7 +119,7 @@ public class ShopScreen extends MenuScreen {
     switch(this.menuState) {
       case INIT_0 -> {
         Arrays.setAll(this.menuItems, i -> new MenuItemStruct04());
-        loadCharacterStats(0);
+        loadCharacterStats();
         this.menuIndex_8011e0dc = 0;
         this.menuIndex_8011e0e0 = 0;
         this.menuScroll_8011e0e4 = 0;
@@ -141,15 +142,14 @@ public class ShopScreen extends MenuScreen {
 
         for(int i = 0; i < 16; i++) {
           final int menuItemIndex = this.itemCount;
-          final ShopItemEvent event = EVENTS.postEvent(new ShopItemEvent(shopId_8007a3b4.get(), this.itemCount, shops_800f4930.get(shopId_8007a3b4.get()).item_00.get(this.itemCount).id_01.get()));
-          shops_800f4930.get(shopId_8007a3b4.get()).item_00.get(menuItemIndex).id_01.set(event.itemId);
-
           final int itemId = shops_800f4930.get(shopId_8007a3b4.get()).item_00.get(menuItemIndex).id_01.get();
 
-          if(itemId != 0xff) {
+          final ShopItemEvent event = EVENTS.postEvent(new ShopItemEvent(shopId_8007a3b4.get(), menuItemIndex, itemId, itemId == 0xff ? 0 : itemPrices_80114310.get(itemId).get() * 2));
+
+          if(event.itemId != 0xff) {
             final MenuItemStruct04 menuItem = this.menuItems[menuItemIndex];
-            menuItem.itemId_00 = itemId;
-            menuItem.flags_02 = itemPrices_80114310.get(itemId).get() * 2;
+            menuItem.itemId_00 = event.itemId;
+            menuItem.flags_02 = event.price;
             this.itemCount++;
           } else {
             final MenuItemStruct04 menuItem = this.menuItems[i];
@@ -348,26 +348,26 @@ public class ShopScreen extends MenuScreen {
         allocateOneFrameGlyph(0x69, 210, 147);
         allocateOneFrameGlyph(0x6a, 210, 157);
         final ActiveStatsa0 newStats = stats_800be5f8[charIndex];
-        renderThreeDigitNumber(246, 127, newStats.gearAttack_88, 0x2);
-        renderThreeDigitNumber(246, 137, newStats.gearDefence_8c, 0x2);
-        renderThreeDigitNumber(246, 147, newStats.gearMagicAttack_8a, 0x2);
-        renderThreeDigitNumber(246, 157, newStats.gearMagicDefence_8e, 0x2);
+        renderThreeDigitNumber(246, 127, newStats.equipmentAttack_88, 0x2);
+        renderThreeDigitNumber(246, 137, newStats.equipmentDefence_8c, 0x2);
+        renderThreeDigitNumber(246, 147, newStats.equipmentMagicAttack_8a, 0x2);
+        renderThreeDigitNumber(246, 157, newStats.equipmentMagicDefence_8e, 0x2);
         allocateOneFrameGlyph(0x6b, 274, 127);
         allocateOneFrameGlyph(0x6b, 274, 137);
         allocateOneFrameGlyph(0x6b, 274, 147);
         allocateOneFrameGlyph(0x6b, 274, 157);
-        loadCharacterStats(0);
-        renderThreeDigitNumberComparison(284, 127, oldStats.gearAttack_88, newStats.gearAttack_88);
-        renderThreeDigitNumberComparison(284, 137, oldStats.gearDefence_8c, newStats.gearDefence_8c);
-        renderThreeDigitNumberComparison(284, 147, oldStats.gearMagicAttack_8a, newStats.gearMagicAttack_8a);
-        renderThreeDigitNumberComparison(284, 157, oldStats.gearMagicDefence_8e, newStats.gearMagicDefence_8e);
+        loadCharacterStats();
+        renderThreeDigitNumberComparison(284, 127, oldStats.equipmentAttack_88, newStats.equipmentAttack_88);
+        renderThreeDigitNumberComparison(284, 137, oldStats.equipmentDefence_8c, newStats.equipmentDefence_8c);
+        renderThreeDigitNumberComparison(284, 147, oldStats.equipmentMagicAttack_8a, newStats.equipmentMagicAttack_8a);
+        renderThreeDigitNumberComparison(284, 157, oldStats.equipmentMagicDefence_8e, newStats.equipmentMagicDefence_8e);
       } else {
         renderText(Cannot_be_armed_with_8011c6d4, 228, 137, TextColour.BROWN);
       }
 
       System.arraycopy(oldEquipment, 0, gameState_800babc8.charData_32c[charIndex].equipment_14, 0, 5);
 
-      loadCharacterStats(0);
+      loadCharacterStats();
     }
   }
 
@@ -393,8 +393,10 @@ public class ShopScreen extends MenuScreen {
       for(i = 0; firstItem + i < gameState_800babc8.items_2e9.size() && i < 6; i++) {
         final int itemId = gameState_800babc8.items_2e9.getInt(firstItem + i);
         renderItemIcon(getItemIcon(itemId), 151, FUN_8010a808(i), 0x8L);
-        renderText(equipment_8011972c.get(itemId).deref(), 168, FUN_8010a808(i) + 2, !itemCantBeDiscarded(itemId) ? TextColour.BROWN : TextColour.MIDDLE_BROWN);
-        this.FUN_801069d0(324, FUN_8010a808(i) + 4, itemPrices_80114310.get(itemId).get());
+        renderText(new LodString(getItemName(itemId)), 168, FUN_8010a808(i) + 2, !itemCantBeDiscarded(itemId) ? TextColour.BROWN : TextColour.MIDDLE_BROWN);
+
+        final ShopSellPriceEvent event = EVENTS.postEvent(new ShopSellPriceEvent(shopId_8007a3b4.get(), itemId, itemPrices_80114310.get(itemId).get()));
+        this.FUN_801069d0(324, FUN_8010a808(i) + 4, event.price);
       }
 
       if(firstItem + 6 > gameState_800babc8.items_2e9.size() - 1) {
@@ -407,12 +409,13 @@ public class ShopScreen extends MenuScreen {
       for(i = 0; firstItem + i < gameState_800babc8.equipment_1e8.size() && i < 6; i++) {
         final int itemId = gameState_800babc8.equipment_1e8.getInt(firstItem + i);
         renderItemIcon(getItemIcon(itemId), 151, FUN_8010a808(i), 0x8L);
-        renderText(equipment_8011972c.get(itemId).deref(), 168, FUN_8010a808(i) + 2, !itemCantBeDiscarded(itemId) ? TextColour.BROWN : TextColour.MIDDLE_BROWN);
+        renderText(new LodString(getItemName(itemId)), 168, FUN_8010a808(i) + 2, !itemCantBeDiscarded(itemId) ? TextColour.BROWN : TextColour.MIDDLE_BROWN);
 
         if(itemCantBeDiscarded(itemId)) {
           renderItemIcon(58, 330, FUN_8010a808(i), 0x8L).clut_30 = 0x7eaa;
         } else {
-          renderFiveDigitNumber(322, FUN_8010a808(i) + 4, itemPrices_80114310.get(itemId).get());
+          final ShopSellPriceEvent event = EVENTS.postEvent(new ShopSellPriceEvent(shopId_8007a3b4.get(), itemId, itemPrices_80114310.get(itemId).get()));
+          renderFiveDigitNumber(322, FUN_8010a808(i) + 4, event.price);
         }
       }
 
@@ -438,7 +441,7 @@ public class ShopScreen extends MenuScreen {
       }
 
       final MenuItemStruct04 item = this.menuItems[startItemIndex + i];
-      renderText(equipment_8011972c.get(item.itemId_00).deref(), 168, FUN_8010a808(i) + 2, TextColour.BROWN);
+      renderText(new LodString(getItemName(item.itemId_00)), 168, FUN_8010a808(i) + 2, TextColour.BROWN);
       renderFiveDigitNumber(324, FUN_8010a808(i) + 4, item.flags_02);
       renderItemIcon(getItemIcon(item.itemId_00), 151, FUN_8010a808(i), 0x8L);
     }
@@ -672,7 +675,8 @@ public class ShopScreen extends MenuScreen {
                 }
 
                 if(v0 == 0) {
-                  addGold(itemPrices_80114310.get(itemId).get());
+                  final ShopSellPriceEvent event = EVENTS.postEvent(new ShopSellPriceEvent(shopId_8007a3b4.get(), itemId, itemPrices_80114310.get(itemId).get()));
+                  addGold(event.price);
 
                   if(this.menuScroll_8011e0e4 > 0 && this.menuScroll_8011e0e4 + 6 > count - 1) {
                     this.menuScroll_8011e0e4--;
@@ -965,7 +969,8 @@ public class ShopScreen extends MenuScreen {
           }
 
           if(v0 == 0) {
-            addGold(itemPrices_80114310.get(itemId).get());
+            final ShopSellPriceEvent event = EVENTS.postEvent(new ShopSellPriceEvent(shopId_8007a3b4.get(), itemId, itemPrices_80114310.get(itemId).get()));
+            addGold(event.price);
 
             if(this.menuScroll_8011e0e4 > 0 && this.menuScroll_8011e0e4 + 6 > count) {
               this.menuScroll_8011e0e4--;

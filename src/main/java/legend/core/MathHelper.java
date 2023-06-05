@@ -89,6 +89,26 @@ public final class MathHelper {
     }
   }
 
+  public static byte getByte(final byte[] data, final int index) {
+    return data[index];
+  }
+
+  public static int getUbyte(final byte[] data, final int index) {
+    return data[index] & 0xff;
+  }
+
+  public static short getShort(final byte[] data, final int index) {
+    return (short)((data[index + 1] & 0xff) << 8 | data[index] & 0xff);
+  }
+
+  public static int getUshort(final byte[] data, final int index) {
+    return (data[index + 1] & 0xff) << 8 | data[index] & 0xff;
+  }
+
+  public static int getInt(final byte[] data, final int index) {
+    return (data[index + 3] & 0xff) << 24 | (data[index + 2] & 0xff) << 16 | (data[index + 1] & 0xff) << 8 | data[index] & 0xff;
+  }
+
   public static long sign(final long value, final int numberOfBytes) {
     if((value & 1L << numberOfBytes * 8 - 1) != 0) {
       return value | -(1L << numberOfBytes * 8);

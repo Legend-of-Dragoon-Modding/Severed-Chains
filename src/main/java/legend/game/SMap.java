@@ -110,7 +110,7 @@ import static legend.core.GameEngine.SCRIPTS;
 import static legend.core.MemoryHelper.getBiFunctionAddress;
 import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.SItem.loadCharacterStats;
-import static legend.game.Scus94491BpeSegment.FUN_80019610;
+import static legend.game.Scus94491BpeSegment.reinitSound;
 import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
 import static legend.game.Scus94491BpeSegment.FUN_8001ada0;
 import static legend.game.Scus94491BpeSegment.FUN_8001ae90;
@@ -666,7 +666,7 @@ public final class SMap {
     drgnBinIndex_800bc058.set(diskNum_8004ddc0.get());
 
     // Reload main sounds after disk swap?
-    FUN_80019610();
+    reinitSound();
     loadMenuSounds();
     sssqFadeIn(0x3c, 0x7f);
 
@@ -675,12 +675,12 @@ public final class SMap {
   }
 
   @Method(0x800d9b08L)
-  public static void FUN_800d9b08(final int a0) {
-    loadCharacterStats(0);
+  public static void FUN_800d9b08(final int charId) {
+    loadCharacterStats();
 
-    if(a0 >= 0) {
-      final ActiveStatsa0 stats = stats_800be5f8[a0];
-      final CharacterData2c charData = gameState_800babc8.charData_32c[a0];
+    if(charId >= 0) {
+      final ActiveStatsa0 stats = stats_800be5f8[charId];
+      final CharacterData2c charData = gameState_800babc8.charData_32c[charId];
       charData.hp_08 = stats.maxHp_66;
       charData.mp_0a = stats.maxMp_6e;
     } else {
@@ -1024,9 +1024,9 @@ public final class SMap {
       smallerStruct.uba_04[index] = false;
     } else {
       //LAB_800ddeac
-      final int v1 = (struct.colourMap_9d & 0x7f) * 2;
-      final int y = (int)_80050424.offset(v1).getSigned() + 112;
-      final int x = (int)_800503f8.offset(v1).getSigned();
+      final int colourMap = (struct.colourMap_9d & 0x7f);
+      final int x = _800503f8.get(colourMap).get();
+      final int y = _80050424.get(colourMap).get() + 112;
 
       final TmdSubExtension v = smallerStruct.tmdSubExtensionArr_20[index];
       int a1 = 0;

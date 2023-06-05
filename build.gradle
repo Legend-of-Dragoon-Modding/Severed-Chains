@@ -1,5 +1,5 @@
-import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 import org.apache.tools.ant.filters.ReplaceTokens
+import org.gradle.internal.os.OperatingSystem
 
 plugins {
   id 'java'
@@ -23,33 +23,30 @@ compileJava.options.encoding = 'UTF-8'
 project.ext.lwjglVersion = "3.3.2"
 project.ext.jomlVersion = "1.10.5"
 
-if(DefaultNativePlatform.getCurrentOperatingSystem().isWindows()) {
-  project.ext.lwjglNatives = "natives-windows"
+final def operatingSystem = hasProperty("os") ? OperatingSystem.forName(os) : OperatingSystem.current()
+final def architecture = hasProperty("arch") ? arch : System.getProperty("os.arch")
+final def isArm = architecture.startsWith("arm") || architecture.startsWith("aarch64")
+final def isSteamDeck = hasProperty("steamdeck") && "true" == steamdeck;
+
+switch(operatingSystem) {
+  case OperatingSystem.LINUX:
+    project.ext.lwjglNatives = "natives-linux"
+    break
+
+  case OperatingSystem.MAC_OS:
+    project.ext.lwjglNatives = "natives-macos"
+    break
+
+  case OperatingSystem.WINDOWS:
+    project.ext.lwjglNatives = "natives-windows"
+    break
 }
 
-if(DefaultNativePlatform.getCurrentOperatingSystem().isLinux()) {
-  project.ext.lwjglNatives = "natives-linux"
+if(isArm) {
+  project.ext.lwjglNatives += "-arm64"
 }
 
-if(DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX()) {
-  project.ext.lwjglNatives = "natives-macos"
-}
-
-if(hasProperty("os")) {
-  println "Building for OS " + os
-
-  switch(os) {
-    case "windows":
-      project.ext.lwjglNatives = "natives-windows"
-      break;
-    case "linux":
-      project.ext.lwjglNatives = "natives-linux"
-      break;
-    case "macos":
-      project.ext.lwjglNatives = "natives-macos"
-      break;
-  }
-}
+println "Building for " + operatingSystem.familyName + " " + architecture
 
 repositories {
   mavenCentral()
@@ -97,7 +94,7 @@ javafx {
 }
 
 if(hasProperty("os")) {
-  javafx.platform = os;
+  javafx.platform = os + (!operatingSystem.windows && isArm ? "-aarch64" : "");
 }
 
 jar {
@@ -130,12 +127,34 @@ task copySupportFiles(type: Copy) {
   }
 
   into(".") {
-    from('launch.bat') {
-      filter(ReplaceTokens, tokens: [version: project.ext.hash])
+    switch(operatingSystem) {
+      case OperatingSystem.LINUX:
+        from(isSteamDeck ? 'launch-steamdeck' : 'launch-linux') {
+          filter(ReplaceTokens, tokens: [version: project.ext.hash])
+          rename("-\\w+", "")
+        }
+        from('download-java') {
+          filter(ReplaceTokens, tokens: [os: 'linux', arch: isArm ? "aarch64" : "x64"])
+        }
+        break
+
+      case OperatingSystem.MAC_OS:
+        from('launch-macos') {
+          filter(ReplaceTokens, tokens: [version: project.ext.hash])
+          rename("-macos", "")
+        }
+        from('download-java') {
+          filter(ReplaceTokens, tokens: [os: 'macos', arch: isArm ? "aarch64" : "x64"])
+        }
+        break
+
+      case OperatingSystem.WINDOWS:
+        from('launch.bat') {
+          filter(ReplaceTokens, tokens: [version: project.ext.hash])
+        }
+        break
     }
-    from('launch') {
-      filter(ReplaceTokens, tokens: [version: project.ext.hash])
-    }
+
     from 'log4j2.xml'
     from 'gamecontrollerdb.txt'
     from 'README.md'

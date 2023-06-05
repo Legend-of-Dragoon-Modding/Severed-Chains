@@ -19,8 +19,14 @@ public class Registrar<Type extends RegistryEntry, EventType extends RegistryEve
 
   @SuppressWarnings("unchecked")
   public <T extends Type> RegistryDelegate<T> register(final String entryId, final Supplier<T> entry) {
-    this.entries.put(new RegistryId(this.modId, entryId), (Supplier<Type>)entry);
-    return (RegistryDelegate<T>)this.registry.getEntry(new RegistryId(this.modId, entryId));
+    final RegistryId id = new RegistryId(this.modId, entryId);
+
+    if(this.entries.containsKey(id)) {
+      throw new DuplicateRegistryIdException("Registry ID " + id + " already registered");
+    }
+
+    this.entries.put(id, (Supplier<Type>)entry);
+    return (RegistryDelegate<T>)this.registry.getEntry(id);
   }
 
   public void registryEvent(final EventType registryEvent) {

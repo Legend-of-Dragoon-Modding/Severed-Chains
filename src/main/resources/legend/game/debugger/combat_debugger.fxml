@@ -121,6 +121,11 @@
                   </HBox.margin>
                </Label>
                <Spinner fx:id="spd" editable="true" prefHeight="26.0" prefWidth="65.0" />
+               <Label fx:id="spdMod" text="(0)">
+                  <HBox.margin>
+                     <Insets left="4.0" right="4.0" />
+                  </HBox.margin>
+               </Label>
                <Label text="Turn">
                   <HBox.margin>
                      <Insets left="4.0" right="4.0" />

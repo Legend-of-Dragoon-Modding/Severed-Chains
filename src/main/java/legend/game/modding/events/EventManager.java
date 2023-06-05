@@ -12,16 +12,16 @@ import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 public class EventManager {
   private static final Logger LOGGER = LogManager.getFormatterLogger(EventManager.class);
 
-  private final Map<Consumer<Event>, Class<?>> listeners = new HashMap<>();
+  private final Map<Consumer<Event>, Class<?>> listeners = new ConcurrentHashMap<>();
   private final Set<Consumer<Event>> staleListeners = Collections.synchronizedSet(new HashSet<>());
 
   public EventManager(final Consumer<Access> access) {

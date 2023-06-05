@@ -33,7 +33,7 @@ public class ConfigEntry<T> extends RegistryEntry {
     return this.editControl.apply(value, config);
   }
 
-  public void onChange(final T oldValue, final T newValue) {
+  public void onChange(final ConfigCollection configCollection, final T oldValue, final T newValue) {
 
   }
 }

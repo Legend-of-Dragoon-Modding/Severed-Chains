@@ -11,6 +11,8 @@ import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.game.combat.types.CombatantStruct1a8;
+import legend.game.sound.Pan;
+import legend.game.sound.ReverbConfigAndLocation;
 import legend.game.types.AdditionData0e;
 import legend.game.types.DeferredReallocOrFree0c;
 import legend.game.types.FileEntry08;
@@ -26,7 +28,7 @@ public final class Scus94491BpeSegment_8005 {
   public static final ArrayRef<IntRef> monsterSoundFileIndices_800500e8 = MEMORY.ref(4, 0x800500e8L, ArrayRef.of(IntRef.class, 4, 4, IntRef::new));
   public static final ArrayRef<IntRef> characterSoundFileIndices_800500f8 = MEMORY.ref(4, 0x800500f8L, ArrayRef.of(IntRef.class, 3, 4, IntRef::new));
 
-  public static final Value _80050190 = MEMORY.ref(4, 0x80050190L);
+  public static final ArrayRef<IntRef> charSlotSpuOffsets_80050190 = MEMORY.ref(4, 0x80050190L, ArrayRef.of(IntRef.class, 3, 4, IntRef::new));
 
   public static final ArrayRef<UnsignedByteRef> combatSoundEffectsTypes_8005019c = MEMORY.ref(1, 0x8005019cL, ArrayRef.of(UnsignedByteRef.class, 32, 1, UnsignedByteRef::new));
   public static final ArrayRef<UnsignedIntRef> combatMusicFileIndices_800501bc = MEMORY.ref(4, 0x800501bcL, ArrayRef.of(UnsignedIntRef.class, 32, 4, UnsignedIntRef::new));
@@ -37,15 +39,16 @@ public final class Scus94491BpeSegment_8005 {
 
   public static final Value _8005039c = MEMORY.ref(2, 0x8005039cL);
 
-  public static final Value _800503b0 = MEMORY.ref(2, 0x800503b0L);
-
-  public static final Value _800503d4 = MEMORY.ref(2, 0x800503d4L);
-
-  public static final Value _800503f8 = MEMORY.ref(2, 0x800503f8L);
-
-  public static final Value _80050424 = MEMORY.ref(2, 0x80050424L);
+  public static final ArrayRef<ShortRef> _800503b0 = MEMORY.ref(2, 0x800503b0L, ArrayRef.of(ShortRef.class, 18, 2, ShortRef::new));
+  public static final ArrayRef<ShortRef> _800503d4 = MEMORY.ref(2, 0x800503d4L, ArrayRef.of(ShortRef.class, 18, 2, ShortRef::new));
+  public static final ArrayRef<ShortRef> _800503f8 = MEMORY.ref(2, 0x800503f8L, ArrayRef.of(ShortRef.class, 22, 2, ShortRef::new));
+  public static final ArrayRef<ShortRef> _80050424 = MEMORY.ref(2, 0x80050424L, ArrayRef.of(ShortRef.class, 22, 2, ShortRef::new));
 
   public static final ArrayRef<Pointer<LodString>> _80050ae8 = MEMORY.ref(4, 0x80050ae8L, ArrayRef.of(Pointer.classFor(LodString.class), 0x40, 4, Pointer.deferred(4, LodString::new)));
+
+  public static final ArrayRef<Pointer<LodString>> itemCombatDescriptions_80051758 = MEMORY.ref(4, 0x80051758L, ArrayRef.of(Pointer.classFor(LodString.class), 0x40, 4, Pointer.deferred(4, LodString::new)));
+
+  public static final ArrayRef<Pointer<LodString>> spellCombatDescriptions_80052018 = MEMORY.ref(4, 0x80052018L, ArrayRef.of(Pointer.classFor(LodString.class), 0x54, 4, Pointer.deferred(4, LodString::new)));
 
   public static final ArrayRef<Pointer<LodString>> spells_80052734 = MEMORY.ref(4, 0x80052734L, ArrayRef.of(Pointer.classFor(LodString.class), 0x54, 4, Pointer.deferred(4, LodString::new)));
   public static final ArrayRef<AdditionData0e> additionData_80052884 = MEMORY.ref(1, 0x80052884L, ArrayRef.of(AdditionData0e.class, 43, 0xe, AdditionData0e::new));
@@ -106,15 +109,15 @@ public final class Scus94491BpeSegment_8005 {
 
   public static final Value _80059b3c = MEMORY.ref(1, 0x80059b3cL);
 
-  public static final Value _80059f3c = MEMORY.ref(1, 0x80059f3cL);
+  public static final ArrayRef<Pan> panVolume_80059f3c = MEMORY.ref(1, 0x80059f3cL, ArrayRef.of(Pan.class, 32, 2, Pan::new));
 
   /**
    * Start of a fairly large block of data - something to do with SPU reverb initialisation. Stride is 66 bytes. Unknown length.
    */
-  public static final Value _80059f7c = MEMORY.ref(2, 0x80059f7cL);
+  public static final ArrayRef<ReverbConfigAndLocation> reverbConfigs_80059f7c = MEMORY.ref(2, 0x80059f7cL, ArrayRef.of(ReverbConfigAndLocation.class, 9, 0x42, ReverbConfigAndLocation::new));
 
-  public static final Value sssqFadeCurrent_8005a1ce = MEMORY.ref(2, 0x8005a1ceL);
-  public static final Value sssqStatus_8005a1d0 = MEMORY.ref(4, 0x8005a1d0L);
+  /** short */
+  public static int sssqFadeCurrent_8005a1ce;
 
   public static final Value _8005a1d8 = MEMORY.ref(4, 0x8005a1d8L);
 
