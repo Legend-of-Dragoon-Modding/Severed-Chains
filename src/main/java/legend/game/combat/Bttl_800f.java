@@ -3431,10 +3431,14 @@ public final class Bttl_800f {
     dragoonSpaceElement_800c6b64 = null;
 
     if(characterId != -1) {
-      for(int i = 0; i < charCount_800c677c.get(); i++) {
-        if(battleState_8006e398.charBobjs_e40[i].innerStruct_00.charId_272 == characterId) {
-          dragoonSpaceElement_800c6b64 = battleState_8006e398.charBobjs_e40[i].innerStruct_00.element;
-          break;
+      if(characterId == 9) { //TODO stupid special case handling for DD Dart
+        dragoonSpaceElement_800c6b64 = CoreMod.DIVINE_ELEMENT.get();
+      } else {
+        for(int i = 0; i < charCount_800c677c.get(); i++) {
+          if(battleState_8006e398.charBobjs_e40[i].innerStruct_00.charId_272 == characterId) {
+            dragoonSpaceElement_800c6b64 = battleState_8006e398.charBobjs_e40[i].innerStruct_00.element;
+            break;
+          }
         }
       }
     }
