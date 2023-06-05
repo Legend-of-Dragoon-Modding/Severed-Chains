@@ -305,14 +305,14 @@ public class Sequencer {
 
     if(sequenceData.pitchShifted_0e9) {
       //LAB_8004669c
-      voice.pitch = this.calculateSampleRate(instrumentLayer_800c6678.rootKey_02, sequenceData.param0_002, instrumentLayer_800c6678.cents_03, sssqChannelInfo_800C6680.pitchBend_0a, pitchBendMultiplier) * sequenceData.pitch_0ec / 0x1000;
+      voice.pitch = this.calculateSampleRate(instrumentLayer_800c6678.rootKey_02, sequenceData.param0_002, instrumentLayer_800c6678.cents_03 * 4, sssqChannelInfo_800C6680.pitchBend_0a, pitchBendMultiplier) * sequenceData.pitch_0ec / 0x1000;
       l = this.scaleValue12((short)l, (short)sequenceData.pitchShiftVolLeft_0ee);
       r = this.scaleValue12((short)r, (short)sequenceData.pitchShiftVolRight_0f0);
       playingNote.pitchShifted_42 = true;
     } else {
       //LAB_80046730
       //LAB_80046750
-      voice.pitch = this.calculateSampleRate(instrumentLayer_800c6678.rootKey_02, sequenceData.param0_002, instrumentLayer_800c6678.cents_03, sssqChannelInfo_800C6680.pitchBend_0a, pitchBendMultiplier);
+      voice.pitch = this.calculateSampleRate(instrumentLayer_800c6678.rootKey_02, sequenceData.param0_002, instrumentLayer_800c6678.cents_03 * 4, sssqChannelInfo_800C6680.pitchBend_0a, pitchBendMultiplier);
       l = this.scaleValue12((short)l, (short)0x1000);
       r = this.scaleValue12((short)r, (short)0x1000);
       playingNote.pitchShifted_42 = false;
@@ -468,7 +468,7 @@ public class Sequencer {
 
           //LAB_80046e80
           //LAB_80046ea0
-          SPU.voices[voiceIndex].pitch = this.calculateSampleRate(instrumentLayer_800c6678.rootKey_02, sequenceData.param0_002, instrumentLayer_800c6678.cents_03, sssqChannelInfo_800C6680.pitchBend_0a, pitchBendMultiplier);
+          SPU.voices[voiceIndex].pitch = this.calculateSampleRate(instrumentLayer_800c6678.rootKey_02, sequenceData.param0_002, instrumentLayer_800c6678.cents_03 * 4, sssqChannelInfo_800C6680.pitchBend_0a, pitchBendMultiplier);
           final int l = this.calculateVolume(sequenceData, this.calculatePan(0, 0), 0);
           final int r = this.calculateVolume(sequenceData, this.calculatePan(0, 0), 1);
 
