@@ -7,9 +7,9 @@ import legend.game.types.GameState52c;
  *                     3 - chapter title
  *                     other - submap
  */
-public record SavedGame(String filename, int locationType, int locationIndex, GameState52c state, ConfigCollection config) {
-  public static SavedGame invalid(final String filename) {
-    return new SavedGame(filename, 0, 0, null, null);
+public record SavedGame(String fileName, String saveName, int locationType, int locationIndex, GameState52c state, ConfigCollection config, int maxHp, int maxMp) {
+  public static SavedGame invalid(final String fileName) {
+    return new SavedGame(fileName, fileName, 0, 0, null, null, 0, 0);
   }
 
   public boolean isValid() {

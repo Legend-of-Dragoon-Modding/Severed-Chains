@@ -12,7 +12,6 @@ import legend.game.types.LodString;
 import javax.annotation.Nullable;
 
 import static legend.game.SItem.chapterNames_80114248;
-import static legend.game.SItem.levelStuff_800fbd30;
 import static legend.game.SItem.renderCentredText;
 import static legend.game.SItem.submapNames_8011c108;
 import static legend.game.SItem.worldMapNames_8011c1ec;
@@ -98,7 +97,7 @@ public class SaveCard extends Control {
         this.renderNumber(224, y + 6, char0.level_12, 2); // Level
         this.renderNumber(269, y + 6, char0.dlevel_13, 2); // Dragoon level
         this.renderNumber(302, y + 6, char0.hp_08, 4); // Current HP
-        this.renderNumber(332, y + 6, levelStuff_800fbd30.get(firstCharId).deref().get(char0.level_12).hp_00.get(), 4); // Max HP
+        this.renderNumber(332, y + 6, this.saveData.maxHp(), 4); // Max HP
         this.renderNumber(245, y + 17, state.gold_94, 8); // Gold
         this.renderNumber(306, y + 17, getTimestampPart(state.timestamp_a0, 0), 3); // Time played hour
         this.renderCharacter(324, y + 17, 10); // Hour-minute colon

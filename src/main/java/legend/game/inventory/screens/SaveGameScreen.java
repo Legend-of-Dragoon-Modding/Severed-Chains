@@ -6,9 +6,12 @@ import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.BigList;
 import legend.game.inventory.screens.controls.Glyph;
 import legend.game.inventory.screens.controls.SaveCard;
+import legend.game.saves.SaveFailedException;
 import legend.game.saves.SavedGame;
 import legend.game.types.LodString;
 import legend.game.types.MessageBoxResult;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
 
@@ -21,8 +24,11 @@ import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
 import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
+import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 
 public class SaveGameScreen extends MenuScreen {
+  private static final Logger LOGGER = LogManager.getFormatterLogger();
+
   private final Runnable unload;
 
   public SaveGameScreen(final Runnable unload) {
@@ -40,7 +46,7 @@ public class SaveGameScreen extends MenuScreen {
     final SaveCard saveCard = this.addControl(new SaveCard());
     saveCard.setPos(16, 160);
 
-    final BigList<SavedGame> saveList = this.addControl(new BigList<>(savedGame -> savedGame != null ? savedGame.filename() : "<new save>"));
+    final BigList<SavedGame> saveList = this.addControl(new BigList<>(savedGame -> savedGame != null ? savedGame.saveName() : "<new save>"));
     saveList.setPos(16, 16);
     saveList.setSize(360, 144);
     saveList.onHighlight(saveCard::setSaveData);
@@ -79,9 +85,13 @@ public class SaveGameScreen extends MenuScreen {
       gameState_800babc8.submapScene_a4 = index_80052c38.get();
       gameState_800babc8.submapCut_a8 = (int)_800cb450.get();
 
-      SAVES.newSave(name, gameState_800babc8);
-
-      this.unload.run();
+      try {
+        SAVES.newSave(name, gameState_800babc8, stats_800be5f8);
+        this.unload.run();
+      } catch(final SaveFailedException e) {
+        menuStack.pushScreen(new MessageBoxScreen(new LodString("Failed to save game"), 0, r -> { }));
+        LOGGER.error("Failed to save game", e);
+      }
     }
   }
 
@@ -90,9 +100,13 @@ public class SaveGameScreen extends MenuScreen {
       gameState_800babc8.submapScene_a4 = index_80052c38.get();
       gameState_800babc8.submapCut_a8 = (int)_800cb450.get();
 
-      SAVES.overwriteSave(save.filename(), gameState_800babc8);
-
-      this.unload.run();
+      try {
+        SAVES.overwriteSave(save.fileName(), save.saveName(), gameState_800babc8, stats_800be5f8);
+        this.unload.run();
+      } catch(final SaveFailedException e) {
+        menuStack.pushScreen(new MessageBoxScreen(new LodString("Failed to save game"), 0, r -> { }));
+        LOGGER.error("Failed to save game", e);
+      }
     }
   }
 

@@ -27,7 +27,10 @@ import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.saves.SaveManager;
-import legend.game.saves.SaveSerialization;
+import legend.game.saves.serializers.RetailSerializer;
+import legend.game.saves.serializers.V1Serializer;
+import legend.game.saves.serializers.V2Serializer;
+import legend.game.saves.serializers.V3Serializer;
 import legend.game.scripting.ScriptManager;
 import legend.game.sound.Sequencer;
 import legend.game.unpacker.FileData;
@@ -83,7 +86,7 @@ public final class GameEngine {
   public static final Sequencer SEQUENCER = new Sequencer();
 
   public static final ConfigCollection CONFIG = new ConfigCollection();
-  public static final SaveManager SAVES = new SaveManager(SaveSerialization.MAGIC_V2, SaveSerialization::toV2);
+  public static final SaveManager SAVES = new SaveManager(V3Serializer.MAGIC_V3, V3Serializer::toV3);
 
   public static final Cpu CPU;
   public static final Gpu GPU;
@@ -119,7 +122,6 @@ public final class GameEngine {
   }
 
   private static final Value _80010000 = MEMORY.ref(4, 0x80010000L);
-  private static final Value bpe_80188a88 = MEMORY.ref(4, 0x80188a88L);
 
   private static final Object LOCK = new Object();
 
@@ -166,9 +168,10 @@ public final class GameEngine {
         GPU.mainRenderer = GameEngine::loadGfx;
 
         Files.createDirectories(Path.of("saves"));
-        SAVES.registerDeserializer(SaveSerialization::fromRetailMatcher, SaveSerialization::fromRetail);
-        SAVES.registerDeserializer(SaveSerialization::fromV1Matcher, SaveSerialization::fromV1);
-        SAVES.registerDeserializer(SaveSerialization::fromV2Matcher, SaveSerialization::fromV2);
+        SAVES.registerDeserializer(RetailSerializer::fromRetailMatcher, RetailSerializer::fromRetail);
+        SAVES.registerDeserializer(V1Serializer::fromV1Matcher, V1Serializer::fromV1);
+        SAVES.registerDeserializer(V2Serializer::fromV2Matcher, V2Serializer::fromV2);
+        SAVES.registerDeserializer(V3Serializer::fromV3Matcher, V3Serializer::fromV3);
 
         synchronized(LOCK) {
           Unpacker.setStatusListener(status -> {
