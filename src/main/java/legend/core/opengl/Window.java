@@ -275,9 +275,7 @@ public class Window {
         }
       }
 
-      while(!nextAction.isReady()) {
-        DebugHelper.sleep(1);
-      }
+      DebugHelper.sleep(Math.max(0, nextAction.nanosUntilNextRun() / 1_000_000));
     }
 
     this.events.onShutdown();
