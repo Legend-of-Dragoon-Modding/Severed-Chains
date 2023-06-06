@@ -37,6 +37,7 @@ jobs:
         type: 'zip'
         filename: 'Severed_Chains_Windows.zip'
         directory: 'build/libs'
+        path: '../..'
         exclusions: '*.zip* *.tar.gz*'
 
     - name: Build Windows ARM64 with Gradle
@@ -48,6 +49,7 @@ jobs:
         type: 'zip'
         filename: 'Severed_Chains_Windows_ARM64.zip'
         directory: 'build/libs'
+        path: '../..'
         exclusions: '*.zip* *.tar.gz*'
 
     - name: Build Steam Deck x64 with Gradle
@@ -59,6 +61,7 @@ jobs:
         type: 'tar'
         filename: 'Severed_Chains_Steam_Deck.tar.gz'
         directory: 'build/libs'
+        path: '../..'
         exclusions: '*.zip* *.tar.gz*'
 
     - name: Build Linux x64 with Gradle
@@ -70,6 +73,7 @@ jobs:
         type: 'tar'
         filename: 'Severed_Chains_Linux.tar.gz'
         directory: 'build/libs'
+        path: '../..'
         exclusions: '*.zip* *.tar.gz*'
 
     - name: Build Linux ARM64 with Gradle
@@ -81,6 +85,7 @@ jobs:
         type: 'tar'
         filename: 'Severed_Chains_Linux_ARM64.tar.gz'
         directory: 'build/libs'
+        path: '../..'
         exclusions: '*.zip* *.tar.gz*'
 
     - name: Build MacOS x64 with Gradle
@@ -92,6 +97,7 @@ jobs:
         type: 'tar'
         filename: 'Severed_Chains_MacOS_Intel.tar.gz'
         directory: 'build/libs'
+        path: '../..'
         exclusions: '*.zip* *.tar.gz*'
 
     - name: Build MacOS ARM64 with Gradle
@@ -103,6 +109,7 @@ jobs:
         type: 'tar'
         filename: 'Severed_Chains_MacOS_M1.tar.gz'
         directory: 'build/libs'
+        path: '../..'
         exclusions: '*.zip* *.tar.gz*'
 
     - name: Delete Tag and Release
@@ -116,7 +123,7 @@ jobs:
     - name: Upload Release
       uses: ncipollo/release-action@v1
       with:
-        artifacts: 'build/libs/*.zip,build/libs/*.tar.gz'
+        artifacts: '*.zip,*.tar.gz'
         token: ${{ secrets.GITHUB_TOKEN }}
         commit: ${{ github.sha }}
         name: 'Latest Development Build'
