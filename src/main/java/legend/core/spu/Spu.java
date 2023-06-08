@@ -13,8 +13,6 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 
-import static legend.core.GameEngine.MEMORY;
-
 public class Spu implements Runnable {
   private static final Logger LOGGER = LogManager.getFormatterLogger(Spu.class);
   private static final Marker SPU_MARKER = MarkerManager.getMarker("SPU");
@@ -288,15 +286,6 @@ public class Spu implements Runnable {
     }
 
     return (short)interpolated;
-  }
-
-  public void directWrite(final int spuRamOffset, final long ramOffset, final int size) {
-    LOGGER.info("Performing direct write from RAM @ %08x to SPU @ %04x (%d bytes)", ramOffset, spuRamOffset, size);
-
-    synchronized(Spu.class) {
-      final byte[] data = MEMORY.getBytes(ramOffset, size);
-      this.directWrite(spuRamOffset, data);
-    }
   }
 
   public void directWrite(final int spuRamOffset, final byte[] dma) {
