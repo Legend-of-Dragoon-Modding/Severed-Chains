@@ -49,6 +49,36 @@ public final class AdsrPhase {
       ((lo >> 15) & 0x01) != 0
     );
 
+    //Decay
+    phases[1] = new AdsrPhase(
+      ((lo & 0x0f) + 1) * 0x800,
+      (lo >> 4) & 0x0f,
+      -8,
+      true,
+      true
+    );
+
+    //Sustain
+    final boolean sustainDecreasing = ((hi >> 14) & 0x01) != 0;
+    final int sustainStep = (hi >> 6) & 0x03;
+
+    phases[2] = new AdsrPhase(
+      sustainDecreasing ? 0 : 0x7FFF,
+      (hi >> 8) & 0x1f,
+      sustainDecreasing ? -8 + sustainStep : 7 - sustainStep,
+      sustainDecreasing,
+      ((hi >> 15) & 0x01) != 0
+    );
+
+    //Release
+    phases[3] = new AdsrPhase(
+      0,
+      hi & 0x1f,
+      -8,
+      true,
+      ((hi >> 5) & 0x01) != 0
+    );
+
 
     return phases;
   }
