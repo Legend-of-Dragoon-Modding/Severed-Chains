@@ -44,11 +44,11 @@ import static org.lwjgl.glfw.GLFW.GLFW_VISIBLE;
 import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
 import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
 import static org.lwjgl.glfw.GLFW.glfwGetClipboardString;
+import static org.lwjgl.glfw.GLFW.glfwGetFramebufferSize;
 import static org.lwjgl.glfw.GLFW.glfwGetKey;
 import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
 import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
 import static org.lwjgl.glfw.GLFW.glfwGetWindowContentScale;
-import static org.lwjgl.glfw.GLFW.glfwGetWindowSize;
 import static org.lwjgl.glfw.GLFW.glfwInit;
 import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
 import static org.lwjgl.glfw.GLFW.glfwSetCharCallback;
@@ -56,6 +56,7 @@ import static org.lwjgl.glfw.GLFW.glfwSetClipboardString;
 import static org.lwjgl.glfw.GLFW.glfwSetCursorPos;
 import static org.lwjgl.glfw.GLFW.glfwSetCursorPosCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetErrorCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetFramebufferSizeCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetInputMode;
 import static org.lwjgl.glfw.GLFW.glfwSetJoystickCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
@@ -65,7 +66,6 @@ import static org.lwjgl.glfw.GLFW.glfwSetWindowFocusCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowSize;
-import static org.lwjgl.glfw.GLFW.glfwSetWindowSizeCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowTitle;
 import static org.lwjgl.glfw.GLFW.glfwShowWindow;
 import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
@@ -135,7 +135,7 @@ public class Window {
       throw new RuntimeException("Failed to create the GLFW window");
     }
 
-    glfwSetWindowSizeCallback(this.window, this.events::onResize);
+    glfwSetFramebufferSizeCallback(this.window, this.events::onResize);
     glfwSetWindowFocusCallback(this.window,this.events::onFocus);
     glfwSetKeyCallback(this.window, this.events::onKey);
     glfwSetCharCallback(this.window, this.events::onChar);
@@ -154,7 +154,7 @@ public class Window {
       final IntBuffer pWidth = stack.mallocInt(1);
       final IntBuffer pHeight = stack.mallocInt(1);
 
-      glfwGetWindowSize(this.window, pWidth, pHeight);
+      glfwGetFramebufferSize(this.window, pWidth, pHeight);
 
       final GLFWVidMode vidMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
@@ -198,7 +198,7 @@ public class Window {
     try(final MemoryStack stack = MemoryStack.stackPush()) {
       final IntBuffer x = stack.mallocInt(1);
       final IntBuffer y = stack.mallocInt(1);
-      glfwGetWindowSize(this.window, x, y);
+      glfwGetFramebufferSize(this.window, x, y);
 
       this.events.onResize(this.window, x.get(0), y.get(0));
     }
@@ -275,9 +275,7 @@ public class Window {
         }
       }
 
-      while(!nextAction.isReady()) {
-        DebugHelper.sleep(1);
-      }
+      DebugHelper.sleep(Math.max(0, nextAction.nanosUntilNextRun() / 1_000_000));
     }
 
     this.events.onShutdown();

@@ -795,12 +795,14 @@ public class Sequencer {
     //LAB_80047d7c
     //LAB_80047d80
     if(instrumentIndex != -1) {
-      instrument_800c6674 = instruments_800c4aa8.instruments_02[instrumentIndex];
-      instrumentLayerIndex_800c6678 = 0;
+      if(instrumentIndex <= instruments_800c4aa8.count_00) { // Not 100% sure this is okay, but it fixes Battle 3 post-combat song crashing the sound thread and doesn't seem to cause any other problems
+        instrument_800c6674 = instruments_800c4aa8.instruments_02[instrumentIndex];
+        instrumentLayerIndex_800c6678 = 0;
 
-      if(instruments_800c4aa8.instruments_02[instrumentIndex] != null) { // Not 100% sure this is okay, but it fixes Kazas BGM crashing the sound thread and doesn't seem to cause any other problems
-        instrumentLayers_800c6678 = instruments_800c4aa8.instruments_02[instrumentIndex].layers_08;
-        instrumentLayer_800c6678 = instrumentLayers_800c6678[instrumentLayerIndex_800c6678];
+        if(instruments_800c4aa8.instruments_02[instrumentIndex] != null) { // Not 100% sure this is okay, but it fixes Kazas BGM crashing the sound thread and doesn't seem to cause any other problems
+          instrumentLayers_800c6678 = instruments_800c4aa8.instruments_02[instrumentIndex].layers_08;
+          instrumentLayer_800c6678 = instrumentLayers_800c6678[instrumentLayerIndex_800c6678];
+        }
       }
     }
 

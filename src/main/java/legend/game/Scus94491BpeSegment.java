@@ -4252,7 +4252,7 @@ public final class Scus94491BpeSegment {
   public static void loadExtraSoundbanks() {
     //LAB_8001f860
     for(int extraSoundbankIndex = 0; extraSoundbankIndex < soundFiles_800bcf80[11].numberOfExtraSoundbanks_18; extraSoundbankIndex++) {
-      final FileLoadedCallback<Integer> callback;
+      final Consumer<FileData> callback;
       if(extraSoundbankIndex < soundFiles_800bcf80[11].numberOfExtraSoundbanks_18 - 1) {
         callback = Scus94491BpeSegment::FUN_8001f8e0;
       } else {
@@ -4261,7 +4261,7 @@ public final class Scus94491BpeSegment {
       }
 
       //LAB_8001f88c
-      loadDrgnBinFile(0, ((int)_800bd0fc.get() >> 8) + extraSoundbankIndex + 1, 0, callback, 0, 0x4L);
+      loadDrgnFile(0, ((int)_800bd0fc.get() >> 8) + extraSoundbankIndex + 1, callback);
     }
 
     //LAB_8001f8b4
@@ -4269,26 +4269,24 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001f8e0L)
-  public static void FUN_8001f8e0(final long audioAddress, final int spuTransferSize, final int unused) {
+  public static void FUN_8001f8e0(final FileData data) {
     setSpuDmaCompleteCallback(null);
 
-    SPU.directWrite(0x2_1f70 + soundFiles_800bcf80[11].spuRamOffset_14, audioAddress, spuTransferSize);
+    SPU.directWrite(0x2_1f70 + soundFiles_800bcf80[11].spuRamOffset_14, data.getBytes());
 
-    soundFiles_800bcf80[11].spuRamOffset_14 += spuTransferSize;
-    free(audioAddress);
+    soundFiles_800bcf80[11].spuRamOffset_14 += data.size();
   }
 
   @Method(0x8001f968L)
-  public static void FUN_8001f968(final long audioAddress, final long spuTransferSize, final long unused) {
+  public static void FUN_8001f968(final FileData data) {
     setSpuDmaCompleteCallback(null);
 
-    SPU.directWrite(0x2_1f70 + soundFiles_800bcf80[11].spuRamOffset_14, audioAddress, (int)spuTransferSize);
+    SPU.directWrite(0x2_1f70 + soundFiles_800bcf80[11].spuRamOffset_14, data.getBytes());
 
     if(_800bd0fc.get(0x1L) == 0) {
       startMusicSequence(currentSequenceData_800bd0f8);
     }
 
-    free(audioAddress);
     loadedDrgnFiles_800bcf78.and(0xffff_ff7fL);
   }
 

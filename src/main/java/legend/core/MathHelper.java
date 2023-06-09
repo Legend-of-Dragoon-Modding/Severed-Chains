@@ -23,6 +23,10 @@ public final class MathHelper {
     return x >= left && x < left + width && y >= top && y < top + height;
   }
 
+  public static boolean contains(final int value, final int min, final int max) {
+    return value >= min && value < max;
+  }
+
   public static int colour15To24(final int colour) {
     final byte r = (byte)((colour        & 0b1_1111) * 8);
     final byte g = (byte)((colour >>>  5 & 0b1_1111) * 8);

@@ -39,7 +39,7 @@ public class LoadGameScreen extends MenuScreen {
     final SaveCard saveCard = this.addControl(new SaveCard());
     saveCard.setPos(16, 160);
 
-    final BigList<SavedGame> saveList = this.addControl(new BigList<>(SavedGame::filename));
+    final BigList<SavedGame> saveList = this.addControl(new BigList<>(SavedGame::saveName));
     saveList.setPos(16, 16);
     saveList.setSize(360, 144);
     saveList.onHighlight(saveCard::setSaveData);

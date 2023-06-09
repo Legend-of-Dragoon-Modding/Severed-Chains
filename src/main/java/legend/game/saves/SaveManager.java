@@ -1,5 +1,7 @@
 package legend.game.saves;
 
+import com.github.slugify.Slugify;
+import legend.game.types.ActiveStatsa0;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
@@ -18,9 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.function.ToIntBiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -30,19 +30,21 @@ import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 public final class SaveManager {
   private static final Logger LOGGER = LogManager.getFormatterLogger();
 
+  private static final Slugify slug = Slugify.builder().underscoreSeparator(true).customReplacement("'", "").build();
+
   private final Path dir = Paths.get("saves");
   private final PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:*.dsav");
 
-  private final Map<Function<FileData, FileData>, BiFunction<String, FileData, SavedGame>> deserializers = new HashMap<>();
+  private final Map<Function<FileData, FileData>, SaveDeserializer> deserializers = new HashMap<>();
   private final int serializerMagic;
-  private final ToIntBiFunction<FileData, GameState52c> serializer;
+  private final SaveSerializer serializer;
 
-  public SaveManager(final int serializerMagic, final ToIntBiFunction<FileData, GameState52c> serializer) {
+  public SaveManager(final int serializerMagic, final SaveSerializer serializer) {
     this.serializerMagic = serializerMagic;
     this.serializer = serializer;
   }
 
-  public void registerDeserializer(final Function<FileData, FileData> matcher, final BiFunction<String, FileData, SavedGame> deserializer) {
+  public void registerDeserializer(final Function<FileData, FileData> matcher, final SaveDeserializer deserializer) {
     this.deserializers.put(matcher, deserializer);
   }
 
@@ -62,8 +64,12 @@ public final class SaveManager {
     return Files.exists(this.dir.resolve(campaign));
   }
 
-  public boolean saveExists(final String campaign, final String name) {
-    return Files.exists(this.dir.resolve(campaign).resolve(name + ".dsav"));
+  public String slugName(final String name) {
+    return slug.slugify(name);
+  }
+
+  public boolean saveExists(final String campaign, final String saveName) {
+    return Files.exists(this.dir.resolve(campaign).resolve(this.slugName(saveName) + ".dsav"));
   }
 
   public String generateSaveName(final String campaign) {
@@ -92,7 +98,7 @@ public final class SaveManager {
         }
       }
     } catch(final IOException e) {
-      throw new RuntimeException(e);
+      LOGGER.error("Failed to update legacy saves to campaigns");
     }
   }
 
@@ -159,25 +165,25 @@ public final class SaveManager {
     return !this.getCampaigns().isEmpty();
   }
 
-  public void overwriteSave(final String filename, final GameState52c state) {
+  public void overwriteSave(final String fileName, final String saveName, final GameState52c state, final ActiveStatsa0[] activeStats) throws SaveFailedException {
     try {
       ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.CAMPAIGN, Path.of("saves", gameState_800babc8.campaignName, "campaign_config.dcnf"));
 
       final FileData data = new FileData(new byte[0x4000]); // Lots of extra space
       data.writeInt(0x0, this.serializerMagic);
-      final int length = this.serializer.applyAsInt(data.slice(0x4), state);
+      final int length = this.serializer.serializer(saveName, data.slice(0x4), state, activeStats);
 
       final Path dir = this.dir.resolve(state.campaignName);
 
       Files.createDirectories(dir);
-      Files.write(dir.resolve(filename + ".dsav"), data.slice(0x0, length + 0x4).getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
+      Files.write(dir.resolve(fileName + ".dsav"), data.slice(0x0, length + 0x4).getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
     } catch(final IOException e) {
-      throw new RuntimeException("Failed to save game", e);
+      throw new SaveFailedException("Failed to save game", e);
     }
   }
 
-  public void newSave(final String saveName, final GameState52c state) {
-    this.overwriteSave(saveName, state);
+  public void newSave(final String saveName, final GameState52c state, final ActiveStatsa0[] activeStats) throws SaveFailedException {
+    this.overwriteSave(slug.slugify(saveName), saveName, state, activeStats);
   }
 
   public SavedGame loadGame(final String campaign, final String filename) throws InvalidSaveException {
@@ -199,7 +205,7 @@ public final class SaveManager {
       final FileData slice = entry.getKey().apply(data);
 
       if(slice != null) {
-        final SavedGame savedGame = entry.getValue().apply(filename, slice);
+        final SavedGame savedGame = entry.getValue().deserialize(filename, slice);
         savedGame.state().campaignName = campaign;
         return savedGame;
       }

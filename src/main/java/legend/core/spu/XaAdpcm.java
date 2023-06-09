@@ -116,25 +116,19 @@ public final class XaAdpcm {
     }
 
     if(isStereo) {
-      final ShortList resampledL = resampleTo44100Hz(l, is18900hz, 0);
-      final ShortList resampledR = resampleTo44100Hz(r, is18900hz, 1);
-      //Console.WriteLine("Sizes" + resampledL.Count + " " + resampledR.Count);
-
-      for(int sample = 0; sample < resampledL.size(); sample++) {
-        decoded.add((byte)resampledL.getShort(sample));
-        decoded.add((byte)(resampledL.getShort(sample) >> 8));
-        decoded.add((byte)resampledR.getShort(sample));
-        decoded.add((byte)(resampledR.getShort(sample) >> 8));
+      for(int sample = 0; sample < l.size(); sample++) {
+        decoded.add((byte)l.getShort(sample));
+        decoded.add((byte)(l.getShort(sample) >> 8));
+        decoded.add((byte)r.getShort(sample));
+        decoded.add((byte)(r.getShort(sample) >> 8));
       }
     } else {
-      final ShortList resampledMono = resampleTo44100Hz(l, is18900hz, 0);
-
-      for(int sample = 0; sample < resampledMono.size(); sample++) {
+      for(int sample = 0; sample < l.size(); sample++) {
         //duplicating because out output expects 44100 Stereo
-        decoded.add((byte)resampledMono.getShort(sample));
-        decoded.add((byte)(resampledMono.getShort(sample) >> 8));
-        decoded.add((byte)resampledMono.getShort(sample));
-        decoded.add((byte)(resampledMono.getShort(sample) >> 8));
+        decoded.add((byte)l.getShort(sample));
+        decoded.add((byte)(l.getShort(sample) >> 8));
+        decoded.add((byte)l.getShort(sample));
+        decoded.add((byte)(l.getShort(sample) >> 8));
       }
     }
 

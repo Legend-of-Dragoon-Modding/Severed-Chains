@@ -285,9 +285,9 @@ public class UseItemScreen extends MenuScreen {
           } else {
             playSound(40);
           }
-        }
 
-        return InputPropagation.HANDLED;
+          return InputPropagation.HANDLED;
+        }
       }
     } else if(this.loadingStage == 3) {
       for(int slot = 0; slot < characterCount_8011d7c4.get(); slot++) {
