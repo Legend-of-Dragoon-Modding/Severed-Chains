@@ -20,6 +20,8 @@ import legend.game.sound.VolumeRamp;
 import legend.game.sound.WaveformList;
 
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import static legend.core.GameEngine.MEMORY;
 
@@ -48,10 +50,7 @@ public final class Scus94491BpeSegment_800c {
     Arrays.setAll(playingNotes_800c3a40, i -> new PlayingNote66());
   }
   /** 0x5f4 bytes long */
-  public static final PlayableSound0c[] playableSounds_800c43d0 = new PlayableSound0c[127];
-  static {
-    Arrays.setAll(playableSounds_800c43d0, i -> new PlayableSound0c());
-  }
+  public static final Queue<PlayableSound0c> playableSounds_800c43d0 = new LinkedList<>();
 
   public static InstrumentsSubfile instruments_800c4aa8;
   public static Sssqish sssqish_800c4aa8;

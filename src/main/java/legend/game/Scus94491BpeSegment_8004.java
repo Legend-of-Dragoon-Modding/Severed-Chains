@@ -1291,12 +1291,7 @@ public final class Scus94491BpeSegment_8004 {
     }
 
     //LAB_8004bab8
-    for(int soundIndex = 0; soundIndex < 127; soundIndex++) {
-      //LAB_8004bacc
-      playableSounds_800c43d0[soundIndex].used_00 = false;
-      playableSounds_800c43d0[soundIndex].sshdPtr_04 = null;
-      playableSounds_800c43d0[soundIndex].soundBufferPtr_08 = 0;
-    }
+    playableSounds_800c43d0.clear();
 
     //LAB_8004bb14
     for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
@@ -1323,27 +1318,21 @@ public final class Scus94491BpeSegment_8004 {
       throw new IllegalArgumentException("Invalid sound buffer offset");
     }
 
-    for(short i = 0; i < 127; i++) {
-      final PlayableSound0c sound = playableSounds_800c43d0[i];
+    LOGGER.info(SEQUENCER_MARKER, "Loaded SShd into playableSound %s", name);
 
-      if(!sound.used_00) {
-        LOGGER.info(SEQUENCER_MARKER, "Loaded SShd %s into playableSound %d", name, i);
+    //LAB_8004bfc8
+    final PlayableSound0c sound = new PlayableSound0c();
+    sound.name = name;
+    sound.used_00 = true;
+    sound.sshdPtr_04 = sshd;
+    sound.soundBufferPtr_08 = addressInSoundBuffer / 8;
 
-        //LAB_8004bfc8
-        sound.name = name;
-        sound.used_00 = true;
-        sound.sshdPtr_04 = sshd;
-        sound.soundBufferPtr_08 = addressInSoundBuffer / 8;
-
-        if(sshd.soundBankSize_04 != 0) {
-          SPU.directWrite(addressInSoundBuffer, soundbank.getBytes());
-        }
-
-        return sound;
-      }
+    if(sshd.soundBankSize_04 != 0) {
+      SPU.directWrite(addressInSoundBuffer, soundbank.getBytes());
     }
 
-    throw new RuntimeException("Ran out of playable sounds");
+    playableSounds_800c43d0.add(sound);
+    return sound;
   }
 
   @Method(0x8004c114L)
@@ -1370,9 +1359,7 @@ public final class Scus94491BpeSegment_8004 {
 
     LOGGER.info("Unloading playableSound %s", playableSound.name);
 
-    playableSound.used_00 = false;
-    playableSound.sshdPtr_04 = null;
-    playableSound.soundBufferPtr_08 = 0;
+    playableSounds_800c43d0.remove(playableSound);
     return 0;
   }
 
