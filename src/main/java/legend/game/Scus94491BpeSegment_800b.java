@@ -8,18 +8,17 @@ import legend.core.memory.types.BoolRef;
 import legend.core.memory.types.EnumMapRef;
 import legend.core.memory.types.EnumRef;
 import legend.core.memory.types.IntRef;
-import legend.core.memory.types.Pointer;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.combat.environment.BattleStage;
 import legend.game.inventory.WhichMenu;
 import legend.game.scripting.ScriptState;
+import legend.game.sound.EncounterSoundEffects10;
 import legend.game.sound.QueuedSound28;
 import legend.game.sound.SequenceData124;
 import legend.game.sound.SoundFile;
 import legend.game.sound.SpuStruct08;
-import legend.game.sound.EncounterSoundEffects10;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.GameState52c;
 import legend.game.types.GsRVIEW2;
@@ -37,6 +36,8 @@ import legend.game.types.Translucency;
 import legend.game.types.UiFile;
 
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import static legend.core.GameEngine.MEMORY;
 
@@ -107,10 +108,7 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bca6c = MEMORY.ref(4, 0x800bca6cL);
 
-  public static final QueuedSound28[] playingSoundsBackup_800bca78 = new QueuedSound28[32];
-  static {
-    Arrays.setAll(playingSoundsBackup_800bca78, i -> new QueuedSound28());
-  }
+  public static final Queue<QueuedSound28> playingSoundsBackup_800bca78 = new LinkedList<>();
 
   /**
    * Bits:
@@ -132,10 +130,7 @@ public final class Scus94491BpeSegment_800b {
   public static final IntRef sssqTempo_800bd104 = MEMORY.ref(4, 0x800bd104L, IntRef::new);
   public static final Value sequenceVolume_800bd108 = MEMORY.ref(2, 0x800bd108L);
 
-  public static final QueuedSound28[] queuedSounds_800bd110 = new QueuedSound28[32];
-  static {
-    Arrays.setAll(queuedSounds_800bd110, i -> new QueuedSound28());
-  }
+  public static final Queue<QueuedSound28> queuedSounds_800bd110 = new LinkedList<>();
   /** NOTE: this used to be an array, but only the 6th element was used */
   public static final EncounterSoundEffects10 encounterSoundEffects_800bd610 = new EncounterSoundEffects10();
 

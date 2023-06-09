@@ -73,6 +73,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Queue;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -296,20 +297,16 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80020360L)
-  public static void copyPlayingSounds(final QueuedSound28[] sources, final QueuedSound28[] dests) {
+  public static void copyPlayingSounds(final Queue<QueuedSound28> sources, final Queue<QueuedSound28> dests) {
     //LAB_8002036c
-    for(int playingSoundIndex = 0; playingSoundIndex < 32; playingSoundIndex++) {
-      final QueuedSound28 source = sources[playingSoundIndex];
-      final QueuedSound28 dest = dests[playingSoundIndex];
+    dests.clear();
 
-      //LAB_80020378
-      dest.set(source);
+    for(final QueuedSound28 queuedSound : sources) {
+      dests.add(queuedSound);
 
-      if(dest.type_00 == 4 && dest._1c != 0) {
-        dest.type_00 = 3;
+      if(queuedSound.type_00 == 4 && queuedSound._1c != 0) {
+        queuedSound.type_00 = 3;
       }
-
-      //LAB_800203d8
     }
   }
 

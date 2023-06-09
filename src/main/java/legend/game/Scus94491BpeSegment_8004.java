@@ -1318,7 +1318,7 @@ public final class Scus94491BpeSegment_8004 {
    * @return Index into {@link Scus94491BpeSegment_800c#playableSounds_800c43d0}, or -1 on error
    */
   @Method(0x8004bea4L)
-  public static PlayableSound0c loadSshdAndSoundbank(final FileData soundbank, final Sshd sshd, final int addressInSoundBuffer) {
+  public static PlayableSound0c loadSshdAndSoundbank(final String name, final FileData soundbank, final Sshd sshd, final int addressInSoundBuffer) {
     if(addressInSoundBuffer > 0x8_0000 || (addressInSoundBuffer & 0xf) != 0) {
       throw new IllegalArgumentException("Invalid sound buffer offset");
     }
@@ -1327,7 +1327,10 @@ public final class Scus94491BpeSegment_8004 {
       final PlayableSound0c sound = playableSounds_800c43d0[i];
 
       if(!sound.used_00) {
+        LOGGER.info(SEQUENCER_MARKER, "Loaded SShd %s into playableSound %d", name, i);
+
         //LAB_8004bfc8
+        sound.name = name;
         sound.used_00 = true;
         sound.sshdPtr_04 = sshd;
         sound.soundBufferPtr_08 = addressInSoundBuffer / 8;
@@ -1364,6 +1367,8 @@ public final class Scus94491BpeSegment_8004 {
 
       //LAB_8004c19c
     }
+
+    LOGGER.info("Unloading playableSound %s", playableSound.name);
 
     playableSound.used_00 = false;
     playableSound.sshdPtr_04 = null;

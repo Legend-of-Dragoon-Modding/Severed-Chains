@@ -40,7 +40,7 @@ import static legend.game.Scus94491BpeSegment_800c.waveforms_800c4ab8;
 
 public class Sequencer {
   private static final Logger LOGGER = LogManager.getFormatterLogger();
-  private static final Marker SEQUENCER_MARKER = MarkerManager.getMarker("SEQUENCER");
+  private static final Marker SEQUENCE_MARKER = MarkerManager.getMarker("SEQUENCE");
 
   private final Object lock = new Object();
 
@@ -197,7 +197,7 @@ public class Sequencer {
 
   @Method(0x80046224L)
   public void sssqHandlePolyphonicKeyPressure(final SequenceData124 sequenceData) {
-    LOGGER.info(SEQUENCER_MARKER, "Polyphonic key pressure channel %d, note %d, velocity %d", sequenceData.command_000 & 0xf, sequenceData.param0_002, sequenceData.param1_003);
+    LOGGER.info(SEQUENCE_MARKER, "Polyphonic key pressure channel %d, note %d, velocity %d", sequenceData.command_000 & 0xf, sequenceData.param0_002, sequenceData.param1_003);
 
     if(sequenceData.param1_003 == 0) { // Velocity
       this.keyOffMatchingNotes(sequenceData);
@@ -354,7 +354,7 @@ public class Sequencer {
 
   @Method(0x80046a04L)
   public void sssqHandleKeyOn(final SequenceData124 sequenceData) {
-    LOGGER.info(SEQUENCER_MARKER, "Key on channel %d, note %d, velocity %d", sequenceData.command_000 & 0xf, sequenceData.param0_002, sequenceData.param1_003);
+    LOGGER.info(SEQUENCE_MARKER, "Key on channel %d, note %d, velocity %d", sequenceData.command_000 & 0xf, sequenceData.param0_002, sequenceData.param1_003);
 
     if(sequenceData.param1_003 == 0) { // Velocity
       this.sssqHandleKeyOff(sequenceData);
@@ -1060,7 +1060,7 @@ public class Sequencer {
 
   @Method(0x800486d4L)
   public void sssqHandleKeyOff(final SequenceData124 sequenceData) {
-    LOGGER.info(SEQUENCER_MARKER, "Key off channel %d, note %d", sequenceData.command_000 & 0xf, sequenceData.param0_002);
+    LOGGER.info(SEQUENCE_MARKER, "Key off channel %d, note %d", sequenceData.command_000 & 0xf, sequenceData.param0_002);
 
     //LAB_80048724
     for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
@@ -1219,7 +1219,7 @@ public class Sequencer {
     sequenceData.tempo_108 = sequenceData.sssqReader_010.readShort(2);
     sequenceData.sssqReader_010.advance(4);
 
-    LOGGER.info(SEQUENCER_MARKER, "Tempo %d", sequenceData.tempo_108);
+    LOGGER.info(SEQUENCE_MARKER, "Tempo %d", sequenceData.tempo_108);
   }
 
   @Method(0x80048fecL)
@@ -1229,7 +1229,7 @@ public class Sequencer {
       sssqChannelInfo_800C6680.pitchBend_0a = 0x40;
       sssqChannelInfo_800C6680._0b = 0x40;
 
-      LOGGER.info(SEQUENCER_MARKER, "Program change program %d", sssqChannelInfo_800C6680.instrumentIndex_02);
+      LOGGER.info(SEQUENCE_MARKER, "Program change program %d", sssqChannelInfo_800C6680.instrumentIndex_02);
     }
 
     //LAB_80049058
@@ -1239,7 +1239,7 @@ public class Sequencer {
   @Method(0x8004906cL)
   public void sssqHandleModulationWheel(final SequenceData124 sequenceData) {
     if(sequenceData.soundPlaying_02a) {
-      LOGGER.info(SEQUENCER_MARKER, "Mod wheel (sound) mod %d", sequenceData.sssqReader_010.readByte(2));
+      LOGGER.info(SEQUENCE_MARKER, "Mod wheel (sound) mod %d", sequenceData.sssqReader_010.readByte(2));
 
       //LAB_800490b8
       for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
@@ -1267,7 +1267,7 @@ public class Sequencer {
       return;
     }
 
-    LOGGER.info(SEQUENCER_MARKER, "Mod wheel (music) channel %d, mod %d", sequenceData.command_000 & 0xf, sequenceData.sssqReader_010.readByte(2));
+    LOGGER.info(SEQUENCE_MARKER, "Mod wheel (music) channel %d, mod %d", sequenceData.command_000 & 0xf, sequenceData.sssqReader_010.readByte(2));
 
     //LAB_80049178
     sssqChannelInfo_800C6680.modulation_09 = sequenceData.sssqReader_010.readByte(2);
@@ -1300,7 +1300,7 @@ public class Sequencer {
     //LAB_800492f4
 
     if(sequenceData.soundPlaying_02a) {
-      LOGGER.info(SEQUENCER_MARKER, "Breath control (sound) breath %d", breath);
+      LOGGER.info(SEQUENCE_MARKER, "Breath control (sound) breath %d", breath);
 
       //LAB_80049318
       for(int i = 0; i < 24; i++) {
@@ -1327,7 +1327,7 @@ public class Sequencer {
       return;
     }
 
-    LOGGER.info(SEQUENCER_MARKER, "Breath control (music) channel %d, breath %d", sequenceData.command_000 & 0xf, breath);
+    LOGGER.info(SEQUENCE_MARKER, "Breath control (music) channel %d, breath %d", sequenceData.command_000 & 0xf, breath);
 
     //LAB_800493d4
     sssqChannelInfo_800C6680.breath_0c = breath;
@@ -1354,7 +1354,7 @@ public class Sequencer {
 
   @Method(0x80049480L)
   public void sssqHandlePortamento(final SequenceData124 sequenceData) {
-    LOGGER.info(SEQUENCER_MARKER, "Portamento (sound) portamento %d, time %d", sequenceData.sssqReader_010.readByte(3), sequenceData.sssqReader_010.readByte(2));
+    LOGGER.info(SEQUENCE_MARKER, "Portamento (sound) portamento %d, time %d", sequenceData.sssqReader_010.readByte(3), sequenceData.sssqReader_010.readByte(2));
 
     final SoundEnv44 soundEnv = soundEnv_800c6630;
 
@@ -1393,7 +1393,7 @@ public class Sequencer {
     final SoundEnv44 soundEnv = soundEnv_800c6630;
 
     if(sequenceData.soundPlaying_02a) {
-      LOGGER.info(SEQUENCER_MARKER, "Volume (sound) vol %d time %d", sequenceData.sssqReader_010.readByte(3), sequenceData.sssqReader_010.readByte(2));
+      LOGGER.info(SEQUENCE_MARKER, "Volume (sound) vol %d time %d", sequenceData.sssqReader_010.readByte(3), sequenceData.sssqReader_010.readByte(2));
 
       //LAB_800496bc
       for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
@@ -1423,7 +1423,7 @@ public class Sequencer {
       //LAB_80049950
       sequenceData.sssqReader_010.advance(6);
     } else {
-      LOGGER.info(SEQUENCER_MARKER, "Volume (music) channel %d, vol %d", sequenceData.command_000 & 0xf, sequenceData.sssqReader_010.readByte(2));
+      LOGGER.info(SEQUENCE_MARKER, "Volume (music) channel %d, vol %d", sequenceData.command_000 & 0xf, sequenceData.sssqReader_010.readByte(2));
 
       //LAB_800497fc
       sssqChannelInfo_800C6680.volume_03 = sequenceData.sssqReader_010.readByte(2);
@@ -1458,7 +1458,7 @@ public class Sequencer {
   @Method(0x80049980L)
   public void sssqHandlePan(final SequenceData124 sequenceData) {
     if(sequenceData.soundPlaying_02a) {
-      LOGGER.info(SEQUENCER_MARKER, "Pan (sound) pan %d, time %d", sequenceData.sssqReader_010.readByte(3), sequenceData.sssqReader_010.readByte(2));
+      LOGGER.info(SEQUENCE_MARKER, "Pan (sound) pan %d, time %d", sequenceData.sssqReader_010.readByte(3), sequenceData.sssqReader_010.readByte(2));
 
       //LAB_80049a08
       for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
@@ -1487,7 +1487,7 @@ public class Sequencer {
       //LAB_80049c88
       sequenceData.sssqReader_010.advance(6);
     } else {
-      LOGGER.info(SEQUENCER_MARKER, "Pan (music) channel %d, pan %d", sequenceData.command_000 & 0xf, sequenceData.sssqReader_010.readByte(2));
+      LOGGER.info(SEQUENCE_MARKER, "Pan (music) channel %d, pan %d", sequenceData.command_000 & 0xf, sequenceData.sssqReader_010.readByte(2));
 
       //LAB_80049b48
       sssqChannelInfo_800C6680.pan_04 = sequenceData.sssqReader_010.readByte(2);
@@ -1534,7 +1534,7 @@ public class Sequencer {
       sequenceData.repeat_037 = true;
       sequenceData._0e6 = true;
 
-      LOGGER.info(SEQUENCER_MARKER, "Repeat offset %d, count %d", sequenceData.repeatOffset_02c, repeatCount);
+      LOGGER.info(SEQUENCE_MARKER, "Repeat offset %d, count %d", sequenceData.repeatOffset_02c, repeatCount);
     } else if(repeatCount != sequenceData.repeatCounter_035) {
       //LAB_80049ea0
       sequenceData.repeatOffset_02c = sequenceData.sssqReader_010.readShort(2);
@@ -1543,13 +1543,13 @@ public class Sequencer {
       sequenceData.repeat_037 = true;
       sequenceData._0e6 = true;
 
-      LOGGER.info(SEQUENCER_MARKER, "Repeat offset %d, count %d", sequenceData.repeatOffset_02c, repeatCount);
+      LOGGER.info(SEQUENCE_MARKER, "Repeat offset %d, count %d", sequenceData.repeatOffset_02c, repeatCount);
     } else {
       sequenceData.repeatCounter_035 = 0;
       sequenceData.repeat_037 = false;
       sequenceData._0e6 = false;
 
-      LOGGER.info(SEQUENCER_MARKER, "Repeat finished");
+      LOGGER.info(SEQUENCE_MARKER, "Repeat finished");
     }
 
     //LAB_80049f00
@@ -1558,7 +1558,7 @@ public class Sequencer {
 
   @Method(0x80049f14L)
   public void sssqHandleDataEntry(final SequenceData124 sequenceData) {
-    LOGGER.info(SEQUENCER_MARKER, "Data entry channel %d, param0 %d, param1 %d", sequenceData.command_000 & 0xf, sequenceData.param0_002, sequenceData.param1_003);
+    LOGGER.info(SEQUENCE_MARKER, "Data entry channel %d, param0 %d, param1 %d", sequenceData.command_000 & 0xf, sequenceData.param0_002, sequenceData.param1_003);
 
     switch(sequenceData.nrpn_11f) {
       case 0 -> {
@@ -1687,12 +1687,12 @@ public class Sequencer {
       sequenceData.nrpn_11f = 0;
       sequenceData.repeatCount_11d = sequenceData.param1_003;
 
-      LOGGER.info(SEQUENCER_MARKER, "NRPN LSB repeat count %d", sequenceData.repeatCount_11d);
+      LOGGER.info(SEQUENCE_MARKER, "NRPN LSB repeat count %d", sequenceData.repeatCount_11d);
     } else if(type == 1 || type == 2) {
       //LAB_8004a32c
       sequenceData.nrpn_11f = sequenceData.param1_003;
 
-      LOGGER.info(SEQUENCER_MARKER, "NRPN LSB %d", sequenceData.nrpn_11f);
+      LOGGER.info(SEQUENCE_MARKER, "NRPN LSB %d", sequenceData.nrpn_11f);
     }
 
     //LAB_8004a338
@@ -1705,7 +1705,7 @@ public class Sequencer {
 
     final int nrpn = sequenceData.param1_003; // NRPN
 
-    LOGGER.info(SEQUENCER_MARKER, "NRPN MSB %d", nrpn);
+    LOGGER.info(SEQUENCE_MARKER, "NRPN MSB %d", nrpn);
 
     if(nrpn >= 0 && nrpn < 0x10) {
       //LAB_8004a44c
@@ -1752,7 +1752,7 @@ public class Sequencer {
 
   @Method(0x8004a46cL)
   public void sssqHandlePitchBend(final SequenceData124 sequenceData) {
-    LOGGER.info(SEQUENCER_MARKER, "Pitch bend channel %d, pitch %d", sequenceData.command_000 & 0xf, sequenceData.sssqReader_010.readByte(1));
+    LOGGER.info(SEQUENCE_MARKER, "Pitch bend channel %d, pitch %d", sequenceData.command_000 & 0xf, sequenceData.sssqReader_010.readByte(1));
 
     sssqChannelInfo_800C6680.pitchBend_0a = sequenceData.sssqReader_010.readByte(1);
 
