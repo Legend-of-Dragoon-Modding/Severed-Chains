@@ -39,6 +39,9 @@ jobs:
         directory: 'build/libs'
         exclusions: '*.zip* *.tar.gz*'
 
+    - name: Clean up Windows x64
+      run: 'rm launch.bat'
+
     - name: Build Windows ARM64 with Gradle
       run: ./gradlew build -Pos=windows -Parch=aarch64
 
@@ -49,6 +52,9 @@ jobs:
         filename: '../Severed_Chains_Windows_ARM64.zip'
         directory: 'build/libs'
         exclusions: '*.zip* *.tar.gz*'
+
+    - name: Clean up Windows ARM64
+      run: 'rm launch.bat'
 
     - name: Build Steam Deck x64 with Gradle
       run: ./gradlew build -Pos=linux -Parch=x86_64 -Psteamdeck=true
@@ -61,6 +67,9 @@ jobs:
         directory: 'build/libs'
         exclusions: '*.zip* *.tar.gz*'
 
+    - name: Clean up Steam Deck x64
+      run: 'rm launch download-java'
+
     - name: Build Linux x64 with Gradle
       run: ./gradlew build -Pos=linux -Parch=x86_64
 
@@ -71,6 +80,9 @@ jobs:
         filename: '../Severed_Chains_Linux.tar.gz'
         directory: 'build/libs'
         exclusions: '*.zip* *.tar.gz*'
+
+    - name: Clean up Linux x64
+      run: 'rm launch download-java'
 
     - name: Build Linux ARM64 with Gradle
       run: ./gradlew build -Pos=linux -Parch=aarch64
@@ -83,6 +95,9 @@ jobs:
         directory: 'build/libs'
         exclusions: '*.zip* *.tar.gz*'
 
+    - name: Clean up Linux ARM64
+      run: 'rm launch download-java'
+
     - name: Build MacOS x64 with Gradle
       run: ./gradlew build -Pos=osx -Parch=x86_64
 
@@ -94,6 +109,9 @@ jobs:
         directory: 'build/libs'
         exclusions: '*.zip* *.tar.gz*'
 
+    - name: Clean up MacOS x64
+      run: 'rm launch download-java'
+
     - name: Build MacOS ARM64 with Gradle
       run: ./gradlew build -Pos=osx -Parch=aarch64
 
@@ -104,6 +122,9 @@ jobs:
         filename: '../Severed_Chains_MacOS_M1.tar.gz'
         directory: 'build/libs'
         exclusions: '*.zip* *.tar.gz*'
+
+    - name: Clean up MacOS ARM64 x64
+      run: 'rm launch download-java'
 
     - name: Delete Tag and Release
       uses: dev-drprasad/delete-tag-and-release@v0.2.1
