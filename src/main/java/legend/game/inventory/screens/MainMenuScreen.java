@@ -121,14 +121,14 @@ public class MainMenuScreen extends MenuScreen {
             }
           }
         }
-        case DPAD_RIGHT, JOYSTICK_RIGHT_BUTTON_RIGHT -> {
+        case DPAD_RIGHT, JOYSTICK_LEFT_BUTTON_RIGHT -> {
           final Button otherButton = this.menuButtons.get(Math.floorMod(index + 5, this.menuButtons.size()));
 
           if(!otherButton.isDisabled()) {
             this.setFocus(otherButton);
           }
         }
-        case DPAD_LEFT, JOYSTICK_RIGHT_BUTTON_LEFT -> {
+        case DPAD_LEFT, JOYSTICK_LEFT_BUTTON_LEFT -> {
           final Button otherButton = this.menuButtons.get(Math.floorMod(index - 5, this.menuButtons.size()));
 
           if(!otherButton.isDisabled()) {
