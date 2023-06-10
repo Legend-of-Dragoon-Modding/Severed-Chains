@@ -36,6 +36,14 @@ final class Voice {
 
   //TODO stereo probably shouldn't be passed here, doesn't sound too safe for changing
   void tick(final boolean stereo) {
+    if(this.used) {
+      if(this.adsrEnvelope.isFinished()
+      || (this.soundBankEntry.isEnd() && this.counter.getCurrentSampleIndex() >= 2)) {
+        this.used = false;
+        System.out.printf("[VOICE] Clearing Voice %d%n", this.index);
+      }
+    }
+
     if(!this.used) {
       for(int channel = 0; channel < (stereo ? 2 : 1); channel++) {
         this.sound.bufferSample((short)0);
@@ -51,11 +59,6 @@ final class Voice {
     final short adsrApplied = (short)((sample * this.adsrEnvelope.getCurrentLevel()) / 0x8000);
 
     this.sound.bufferSample(adsrApplied);
-
-    if((this.soundBankEntry.isEnd() && this.counter.getCurrentSampleIndex() >= 2)
-      || this.adsrEnvelope.isFinished()) {
-      this.used = false;
-    }
   }
 
   private short sampleVoice() {

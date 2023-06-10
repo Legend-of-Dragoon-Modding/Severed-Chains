@@ -34,13 +34,12 @@ final class AdsrEnvelope {
     }
 
     if(isExponential && isDecreasing) {
-      adsrStep = (adsrStep * this.currentLevel) / 0x8000;
+      adsrStep = (adsrStep * this.currentLevel) >> 15;
     }
 
-    this.currentLevel += adsrStep;
-    this.currentLevel = MathHelper.clamp(this.currentLevel, 0, 0x7fff);
+    this.currentLevel = MathHelper.clamp(this.currentLevel + adsrStep, 0, 0x7fff);
 
-    this.counter += adsrCycles;
+    this.counter = adsrCycles;
 
     final boolean nextPhase = isDecreasing ? this.currentLevel <= target : this.currentLevel >= target;
 
