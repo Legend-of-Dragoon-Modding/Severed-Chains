@@ -978,9 +978,9 @@ public class Gpu {
     this.vram15[index] = pixel15;
   }
 
-  public static int interpolateCoords(final int w0, final int w1, final int w2, final int t0, final int t1, final int t2, final int area) {
+  public static int interpolateCoords(final long w0, final long w1, final long w2, final int t0, final int t1, final int t2, final long area) {
     //https://codeplea.com/triangular-interpolation
-    return (t0 * w0 + t1 * w1 + t2 * w2) / area;
+    return (int)((t0 * w0 + t1 * w1 + t2 * w2) / area);
   }
 
   private static int interpolateColours(final int c1, final int c2, final float ratio) {
