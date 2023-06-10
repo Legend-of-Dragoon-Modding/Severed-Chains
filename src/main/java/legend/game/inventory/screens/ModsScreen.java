@@ -6,6 +6,7 @@ import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.Checkbox;
 import legend.game.inventory.screens.controls.Label;
 import legend.game.modding.coremod.CoreMod;
+import legend.lodmod.LodMod;
 
 import java.util.Comparator;
 import java.util.List;
@@ -44,7 +45,7 @@ public class ModsScreen extends VerticalLayoutScreen {
   }
 
   private boolean isRequired(final String modId) {
-    return CoreMod.MOD_ID.equals(modId);
+    return CoreMod.MOD_ID.equals(modId) || LodMod.MOD_ID.equals(modId);
   }
 
   @Override
