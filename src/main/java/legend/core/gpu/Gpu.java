@@ -947,32 +947,15 @@ public class Gpu {
   }
 
   public int getPixel(final int x, final int y) {
-    if(x < this.drawingArea.x.get() + this.drawingArea.w.get()) {
-      throw new IllegalArgumentException("Use render buffer textures instead of double buffer VRAM region (%d, %d)".formatted(x, y));
-    }
-
     return this.vram24[y * this.vramWidth + x];
   }
 
   public int getPixel15(final int x, final int y) {
-    if(x < this.drawingArea.x.get() + this.drawingArea.w.get()) {
-      throw new IllegalArgumentException("Use render buffer textures instead of double buffer VRAM region (%d, %d)".formatted(x, y));
-    }
-
     final int index = y * this.vramWidth + x;
-
-    if(index < 0 || index >= this.vram15.length) {
-      throw new IndexOutOfBoundsException("Index %d out of bounds for length %d".formatted(index, this.vram15.length));
-    }
-
     return this.vram15[index];
   }
 
   private void setVramPixel(final int x, final int y, final int pixel24, final int pixel15) {
-    if(x < this.drawingArea.x.get() + this.drawingArea.w.get()) {
-      throw new IllegalArgumentException("Use render buffer textures instead of double buffer VRAM region (%d, %d)".formatted(x, y));
-    }
-
     final int index = y * this.vramWidth + x;
     this.vram24[index] = pixel24;
     this.vram15[index] = pixel15;
