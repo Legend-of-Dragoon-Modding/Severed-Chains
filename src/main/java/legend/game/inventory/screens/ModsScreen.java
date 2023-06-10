@@ -1,11 +1,14 @@
 package legend.game.inventory.screens;
 
+import legend.game.i18n.I18n;
 import legend.game.input.InputAction;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.Checkbox;
 import legend.game.inventory.screens.controls.Label;
 import legend.game.modding.coremod.CoreMod;
 
+import java.util.Comparator;
+import java.util.List;
 import java.util.Set;
 
 import static legend.core.GameEngine.MODS;
@@ -24,7 +27,10 @@ public class ModsScreen extends VerticalLayoutScreen {
 
     this.addControl(new Background());
 
-    for(final String modId : MODS.getAllModIds()) {
+    // Sort mods by their translated names
+    final List<String> modIds = MODS.getAllModIds().stream().sorted(Comparator.comparing(o -> I18n.translate(o + ".name"))).toList();
+
+    for(final String modId : modIds) {
       final Checkbox checkbox = new Checkbox();
       checkbox.setChecked(enabledMods.contains(modId));
       checkbox.setHorizontalAlign(Label.HorizontalAlign.RIGHT);
@@ -33,7 +39,7 @@ public class ModsScreen extends VerticalLayoutScreen {
       checkbox.onChecked(() -> enabledMods.add(modId));
       checkbox.onUnchecked(() -> enabledMods.remove(modId));
 
-      this.addRow(modId, checkbox);
+      this.addRow(I18n.translate(modId + ".name"), checkbox);
     }
   }
 
