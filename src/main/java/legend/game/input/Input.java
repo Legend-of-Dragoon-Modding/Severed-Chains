@@ -72,6 +72,10 @@ public final class Input {
     analogAngle_800bee9c.set(0);
     analogMagnitude_800beeb4.set(0);
 
+    if(!GPU.window().hasFocus() && !CONFIG.getConfig(CoreMod.RECEIVE_INPUT_ON_INACTIVE_WINDOW_CONFIG.get()) || activeController == null) {
+      return;
+    }
+
     for(final var entry : held.object2BooleanEntrySet()) {
       if(entry.getBooleanValue()) {
         final InputAction inputAction = entry.getKey().getInputAction();
