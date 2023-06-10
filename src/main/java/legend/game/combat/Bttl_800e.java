@@ -62,6 +62,7 @@ import legend.game.combat.ui.FloatingNumberC4Sub20;
 import legend.game.inventory.screens.TextColour;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.battle.MonsterStatsEvent;
+import legend.game.modding.events.battle.StatDisplayEvent;
 import legend.game.modding.events.inventory.RepeatItemReturnEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
@@ -4130,6 +4131,7 @@ public final class Bttl_800e {
           renderNumber(charSlot, 2, playerMp.getCurrent(), 1);
           renderNumber(charSlot, 3, playerMp.getMax(), 1);
           renderNumber(charSlot, 4, playerSp.getCurrent() / 100, 1);
+          EVENTS.postEvent(new StatDisplayEvent(charSlot, player));
 
           s2._14.get(1).set(tickCount_800bb0fc.get() & 0x3);
 
