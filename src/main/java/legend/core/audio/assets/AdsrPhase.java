@@ -10,7 +10,7 @@ public final class AdsrPhase {
   private final boolean isExponential;
 
   AdsrPhase(final int target, final int shift, final int step, final boolean isDecreasing, final boolean isExponential) {
-    this.target = MathHelper.clamp(target, 0, 0x7FFF);
+    this.target = target;
     this.shift = shift;
     this.step = step;
     this.isDecreasing = isDecreasing;
@@ -51,7 +51,7 @@ public final class AdsrPhase {
 
     //Decay
     phases[1] = new AdsrPhase(
-      ((lo & 0x0f) + 1) * 0x800,
+      Math.min(((lo & 0x0f) + 1) * 0x800, 0x7fff),
       (lo >> 4) & 0x0f,
       -8,
       true,
@@ -63,7 +63,7 @@ public final class AdsrPhase {
     final int sustainStep = (hi >> 6) & 0x03;
 
     phases[2] = new AdsrPhase(
-      sustainDecreasing ? 0 : 0x7FFF,
+      sustainDecreasing ? 15 : 0x7FFF,
       (hi >> 8) & 0x1f,
       sustainDecreasing ? -8 + sustainStep : 7 - sustainStep,
       sustainDecreasing,
@@ -72,7 +72,7 @@ public final class AdsrPhase {
 
     //Release
     phases[3] = new AdsrPhase(
-      0,
+      15,
       hi & 0x1f,
       -8,
       true,

@@ -37,39 +37,39 @@ public final class InstrumentLayer {
     return note >= this.keyRangeMinimum && note <= this.keyRangeMaximum;
   }
 
-  int getKeyRoot() {
+  public int getKeyRoot() {
     return this.keyRoot;
   }
 
-  int getSixtyFourths() {
+  public int getSixtyFourths() {
     return this.sixtyFourths;
   }
 
-  Pair<short[][], int[]> getPcm() {
+  public Pair<short[][], int[]> getPcm() {
     return this.pcm;
   }
 
-  AdsrPhase[] getAdsr() {
+  public AdsrPhase[] getAdsr() {
     return this.adsr;
   }
 
-  int getLockedVolume() {
+  public int getLockedVolume() {
     return this.lockedVolume;
   }
 
-  int getVolume() {
+  public int getVolume() {
     return this.volume;
   }
 
-  int getPan() {
+  public int getPan() {
     return this.pan;
   }
 
-  int getPitchBendMultiplier() {
+  public int getPitchBendMultiplier() {
     return this.pitchBendMultiplier;
   }
 
-  int getBreathControlIndex() {
+  public int getBreathControlIndex() {
     return this.breathControlIndex;
   }
 }

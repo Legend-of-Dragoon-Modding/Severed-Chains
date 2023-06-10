@@ -4,7 +4,7 @@ import legend.game.unpacker.FileData;
 import legend.game.unpacker.UnpackerException;
 
 public final class Sssq {
-  //TODO channels
+  private final Channel[] channels;
   private final byte[][] sequences;
   private final int ticksPerQuarterNote;
   private int tempo;
@@ -20,14 +20,30 @@ public final class Sssq {
     final int tempo = data.readUShort(4);
     this.setTempo(tempo);
 
-    //TODO channels
+    this.channels = new Channel[16];
+    for(int channel = 0; channel < this.channels.length; channel++) {
+      this.channels[channel] = new Channel(data.slice(16 + channel * 16, 16), soundFont);
+    }
+
 
     this.sequences = new byte[1][];
     this.sequences[0] = data.slice(0x110, data.size() - 0x110).getBytes();
   }
 
-  public void setTempo(final int tempo) {
+  void setTempo(final int tempo) {
     this.tempo = tempo;
     this.ticksPerMs = (this.tempo * this.ticksPerQuarterNote) / 60_000d;
+  }
+
+  Channel getChannel(final int channelIndex) {
+    return this.channels[channelIndex];
+  }
+
+  byte[] getSequence(final int index) {
+    return this.sequences[index];
+  }
+
+  double getTicksPerMs() {
+    return this.ticksPerMs;
   }
 }
