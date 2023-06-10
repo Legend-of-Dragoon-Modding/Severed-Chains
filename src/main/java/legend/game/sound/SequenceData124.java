@@ -58,9 +58,9 @@ public class SequenceData124 {
   /** Index is channel */
   public final SequenceVolume[] volumeChange_03e = new SequenceVolume[16];
   /** Was two ushorts */
-  public int keyOn_0de;
+  public long keyOn_0de;
   /** Was two ushorts */
-  public int keyOff_0e2;
+  public long keyOff_0e2;
   /** ubyte */
   public boolean _0e6;
   /** ubyte */

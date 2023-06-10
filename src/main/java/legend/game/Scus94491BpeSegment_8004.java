@@ -1098,12 +1098,12 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x80048828L)
   public static void setKeyOn(final SequenceData124 sequenceData, final long voiceIndex) {
-    sequenceData.keyOn_0de |= 1 << voiceIndex;
+    sequenceData.keyOn_0de |= 0x1L << voiceIndex;
   }
 
   @Method(0x800488d4L)
   public static void setKeyOff(final SequenceData124 sequenceData, final int voiceIndex) {
-    sequenceData.keyOff_0e2 |= 1 << voiceIndex;
+    sequenceData.keyOff_0e2 |= 0x1L << voiceIndex;
   }
 
   @Method(0x80048c38L)
@@ -1151,8 +1151,8 @@ public final class Scus94491BpeSegment_8004 {
       final SoundEnv44 soundEnv = soundEnv_800c6630;
 
       //LAB_80048dac
-      for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
-        final SequenceData124 sequenceData = sequenceData_800c4ac8[voiceIndex];
+      for(int loadedSequenceIndex = 0; loadedSequenceIndex < 24; loadedSequenceIndex++) {
+        final SequenceData124 sequenceData = sequenceData_800c4ac8[loadedSequenceIndex];
         if(!sequenceData.musicLoaded_027 && !sequenceData.soundLoaded_029) {
           sequenceData.musicLoaded_027 = false;
           sequenceData.musicPlaying_028 = false;
@@ -1189,7 +1189,7 @@ public final class Scus94491BpeSegment_8004 {
             soundEnv.pitchShiftVolRight_28 = 0;
           }
 
-          return voiceIndex;
+          return loadedSequenceIndex;
         }
 
         //LAB_80048e74
@@ -1285,7 +1285,7 @@ public final class Scus94491BpeSegment_8004 {
 
     //LAB_8004b9e8
     //LAB_8004ba58
-    for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
+    for(int voiceIndex = 0; voiceIndex < SPU.voices.length; voiceIndex++) {
       //LAB_8004ba74
       playingNotes_800c3a40[voiceIndex].clear();
     }
@@ -1294,7 +1294,7 @@ public final class Scus94491BpeSegment_8004 {
     playableSounds_800c43d0.clear();
 
     //LAB_8004bb14
-    for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
+    for(int voiceIndex = 0; voiceIndex < SPU.voices.length; voiceIndex++) {
       playingNotes_800c3a40[voiceIndex].portamentoNote_4e = 120;
     }
   }
@@ -1344,7 +1344,7 @@ public final class Scus94491BpeSegment_8004 {
     }
 
     //LAB_8004c160
-    for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
+    for(int voiceIndex = 0; voiceIndex < SPU.voices.length; voiceIndex++) {
       final PlayingNote66 playingNote = playingNotes_800c3a40[voiceIndex];
 
       if(playingNote.used_00 && playingNote.playableSound_22 == playableSound) {
@@ -1366,8 +1366,8 @@ public final class Scus94491BpeSegment_8004 {
   @Method(0x8004c1f8L)
   public static SequenceData124 loadSssq(final PlayableSound0c playableSound, final Sssq sssq) {
     //LAB_8004c258
-    for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
-      final SequenceData124 sequenceData = sequenceData_800c4ac8[voiceIndex];
+    for(int sequenceIndex = 0; sequenceIndex < 24; sequenceIndex++) {
+      final SequenceData124 sequenceData = sequenceData_800c4ac8[sequenceIndex];
 
       if(!sequenceData.musicLoaded_027 && !sequenceData.soundLoaded_029) {
         if(!playableSound.used_00) {
@@ -1430,7 +1430,7 @@ public final class Scus94491BpeSegment_8004 {
 
     //LAB_8004c420
     int playingSounds = 0;
-    for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
+    for(int voiceIndex = 0; voiceIndex < SPU.voices.length; voiceIndex++) {
       if(playingNotes_800c3a40[voiceIndex].isPolyphonicKeyPressure_1a) {
         playingSounds++;
       }
@@ -1528,7 +1528,7 @@ public final class Scus94491BpeSegment_8004 {
     }
 
     //LAB_8004c9d8
-    for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
+    for(int voiceIndex = 0; voiceIndex < SPU.voices.length; voiceIndex++) {
       final PlayingNote66 playingNote = playingNotes_800c3a40[voiceIndex];
 
       if(playingNote.used_00 && playingNote.playableSound_22 == sequenceData.playableSound_020 && !playingNote.isPolyphonicKeyPressure_1a && playingNote.sequenceData_06 == sequenceData) {
@@ -1584,7 +1584,7 @@ public final class Scus94491BpeSegment_8004 {
     }
 
     //LAB_8004cc1c
-    for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
+    for(int voiceIndex = 0; voiceIndex < SPU.voices.length; voiceIndex++) {
       final PlayingNote66 playingNote = playingNotes_800c3a40[voiceIndex];
 
       if(playingNote.used_00 && playingNote.isPolyphonicKeyPressure_1a && playingNote.playableSound_22 == playableSound) {
@@ -1726,8 +1726,8 @@ public final class Scus94491BpeSegment_8004 {
             //LAB_8004d1c0
             //LAB_8004d1c4
             //LAB_8004d1d8
-            for(int i = 0; i < 24; i++) {
-              final PlayingNote66 playingNote = playingNotes_800c3a40[i];
+            for(int voiceIndex = 0; voiceIndex < SPU.voices.length; voiceIndex++) {
+              final PlayingNote66 playingNote = playingNotes_800c3a40[voiceIndex];
 
               if(playingNote.sequenceData_06 == sequenceData) {
                 if(!playingNote.isPolyphonicKeyPressure_1a) {
@@ -1736,10 +1736,10 @@ public final class Scus94491BpeSegment_8004 {
                   playingNote.pitchBend_38 = 0x40;
                   playingNote.modulationEnabled_14 = false;
                   playingNote.modulation_16 = 0;
-                  setKeyOff(sequenceData, i);
+                  setKeyOff(sequenceData, voiceIndex);
 
                   if(resetAdsr) {
-                    final Voice voice = SPU.voices[i];
+                    final Voice voice = SPU.voices[voiceIndex];
                     voice.adsr.lo = 0;
                     voice.adsr.hi = 0;
                   }
@@ -1910,7 +1910,7 @@ public final class Scus94491BpeSegment_8004 {
 
       //LAB_8004d824
       //LAB_8004d83c
-      for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
+      for(int voiceIndex = 0; voiceIndex < SPU.voices.length; voiceIndex++) {
         final PlayingNote66 playingNote = playingNotes_800c3a40[voiceIndex];
 
         if(playingNote.isPolyphonicKeyPressure_1a && playingNote.sequenceData_06 == sequenceData) {
@@ -1939,7 +1939,7 @@ public final class Scus94491BpeSegment_8004 {
   public static void FUN_8004d91c(final boolean resetVoice) {
     SEQUENCER.waitForLock(() -> {
       //LAB_8004d96c
-      for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
+      for(int voiceIndex = 0; voiceIndex < SPU.voices.length; voiceIndex++) {
         final PlayingNote66 playingNote = playingNotes_800c3a40[voiceIndex];
 
         if(playingNote.isPolyphonicKeyPressure_1a) {
@@ -1958,9 +1958,11 @@ public final class Scus94491BpeSegment_8004 {
           //LAB_8004d9e8
 //          wasteSomeCycles(0x2L);
         }
+      }
 
+      for(int sequenceIndex = 0; sequenceIndex < 24; sequenceIndex++) {
         //LAB_8004d9f0
-        final SequenceData124 sequenceData = sequenceData_800c4ac8[voiceIndex];
+        final SequenceData124 sequenceData = sequenceData_800c4ac8[sequenceIndex];
         if(sequenceData.soundLoaded_029) {
           sequenceData.deltaTime_118 = 0;
           sequenceData.soundLoaded_029 = false;
