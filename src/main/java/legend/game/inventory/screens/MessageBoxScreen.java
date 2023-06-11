@@ -160,7 +160,7 @@ public class MessageBoxScreen extends MenuScreen {
   }
 
   private boolean skipInput() {
-    if(this.messageBox.state_0c == 5) {
+    if(this.messageBox.state_0c == 5 || this.messageBox.state_0c == 4) {
       return true;
     }
 
