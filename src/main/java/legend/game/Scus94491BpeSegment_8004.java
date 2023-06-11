@@ -1925,7 +1925,7 @@ public final class Scus94491BpeSegment_8004 {
           //LAB_8004d8a0
           playingNote.finished_08 = true;
 
-          SPU.keyOff(1 << voiceIndex);
+          SPU.keyOff(0x1L << voiceIndex);
         }
       }
 
@@ -1953,7 +1953,7 @@ public final class Scus94491BpeSegment_8004 {
           }
 
           //LAB_8004d9b8
-          SPU.keyOff(1 << voiceIndex);
+          SPU.keyOff(0x1L << voiceIndex);
 
           //LAB_8004d9e8
 //          wasteSomeCycles(0x2L);

@@ -24,7 +24,7 @@ public class Spu implements Runnable {
 
   private final byte[] spuOutput = new byte[SAMPLES_PER_TICK * 4];
   private final byte[] ram = new byte[512 * 1024];
-  public final Voice[] voices = new Voice[48];
+  public final Voice[] voices = new Voice[24];
 
   private int mainVolumeL;
   private int mainVolumeR;
@@ -352,7 +352,7 @@ public class Spu implements Runnable {
   }
 
   public void setNoiseMode(final long noiseMode) {
-    LOGGER.debug(SPU_MARKER, "Setting SPU noise mode to %x", noiseMode);
+//    LOGGER.debug(SPU_MARKER, "Setting SPU noise mode to %x", noiseMode);
 
     synchronized(Spu.class) {
       this.channelNoiseMode = noiseMode;
@@ -360,7 +360,7 @@ public class Spu implements Runnable {
   }
 
   public void setReverbMode(final long reverbMode) {
-    LOGGER.debug(SPU_MARKER, "Setting SPU reverb mode to %x", reverbMode);
+//    LOGGER.debug(SPU_MARKER, "Setting SPU reverb mode to %x", reverbMode);
 
     synchronized(Spu.class) {
       this.channelReverbMode = reverbMode;
