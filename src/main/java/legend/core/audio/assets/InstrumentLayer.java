@@ -16,7 +16,15 @@ public final class InstrumentLayer {
   private final int pan;
   private final int pitchBendMultiplier;
   private final int breathControlIndex;
-  private final int flags;
+
+  /** Flags */
+  private final boolean lowPrioriy;
+  private final boolean noise;
+  private final boolean pitchBendMultiplierFromInstrument;
+  private final boolean modulation;
+  private final boolean breathControlIndexFromInstrument;
+  private final boolean reverb;
+
 
   InstrumentLayer(final FileData data, final SoundBank soundBank) {
     this.keyRangeMinimum = data.readUByte(0x00);
@@ -30,7 +38,14 @@ public final class InstrumentLayer {
     this.pan = data.readUByte(0x0C);
     this.pitchBendMultiplier = data.readUByte(0x0D);
     this.breathControlIndex = data.readUByte(0x0E);
-    this.flags = data.readUByte(0x0F);
+
+    final int flags = data.readUByte(0x0F);
+    this.lowPrioriy = (flags & 0x01) != 0;
+    this.noise = (flags & 0x02) != 0;
+    this.pitchBendMultiplierFromInstrument = (flags & 0x10) != 0;
+    this.modulation = (flags & 0x20) != 0;
+    this.breathControlIndexFromInstrument = (flags & 0x40) != 0;
+    this.reverb = (flags & 0x80) != 0;
   }
 
   boolean canPlayNote(final int note) {
@@ -71,5 +86,29 @@ public final class InstrumentLayer {
 
   public int getBreathControlIndex() {
     return this.breathControlIndex;
+  }
+
+  public boolean isLowPriority() {
+    return this.lowPrioriy;
+  }
+
+  public boolean isNoise() {
+    return this.noise;
+  }
+
+  public boolean isPitchBendMultiplierFromInstrument() {
+    return this.pitchBendMultiplierFromInstrument;
+  }
+
+  public boolean isModulation() {
+    return this.modulation;
+  }
+
+  public boolean isBreathControlIndexFromInstrument() {
+    return this.breathControlIndexFromInstrument;
+  }
+
+  public boolean isReverb() {
+    return this.reverb;
   }
 }

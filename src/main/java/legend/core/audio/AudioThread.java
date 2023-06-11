@@ -29,6 +29,7 @@ public final class AudioThread implements Runnable {
   private final boolean stereo;
   private final Voice[] voices;
   private int voiceIndex;
+  private int playingVoices;
 
   private long time;
   private boolean running;
@@ -121,6 +122,20 @@ public final class AudioThread implements Runnable {
 
   private void tick() {
     for(int sample = 0; sample < this.samplesPerTick; sample++) {
+      for(final Voice voice : this.voices) {
+        if(voice.isUsed() && voice.isFinished()) {
+          if(this.playingVoices > 0) {
+            this.playingVoices--;
+          }
+
+          for(final Voice voice2 : this.voices) {
+            if(voice2.getPriorityOrder() > voice.getPriorityOrder()) {
+              voice2.setPriorityOrder(voice2.getPriorityOrder() - 1);
+            }
+          }
+          voice.clear();
+        }
+      }
 
       for(final Sequence sequence : this.sequences) {
         if(sequence.samplesToProcess > 0) {
@@ -135,7 +150,7 @@ public final class AudioThread implements Runnable {
             case KEY_ON -> this.keyOn(sequence.getSequencedAudio(), command.getChannel(), command.getValue1(), command.getValue2());
             case KEY_OFF -> this.keyOff(sequence.getSequencedAudio(), command.getChannel(), command.getValue1());
             case POLYPHONIC_KEY_PRESSURE -> this.polyphonicKeyPressure();
-            case CONTROL_CHANGE -> this.controlChange();
+            case CONTROL_CHANGE -> this.controlChange(sequence.getSequencedAudio(), command.getChannel(), command.getValue1(), command.getValue2());
             case PROGRAM_CHANGE -> this.programChange();
             case PITCH_BEND -> this.pitchBend(sequence.getSequencedAudio(), command.getChannel(), command.getValue1());
             case META -> this.meta(sequence.getSequencedAudio(), command.getValue1(), command.getValue2());
@@ -167,7 +182,7 @@ public final class AudioThread implements Runnable {
     for(final InstrumentLayer layer : instrument.getLayers(note)) {
       final Voice voice = this.selectVoice();
 
-      voice.keyOn(channel, instrument, layer, note, velocity);
+      voice.keyOn(channel, instrument, layer, note, sequencedAudio.getVelocity(velocity), sequencedAudio.getBreathControls(), this.playingVoices);
     }
   }
 
@@ -176,13 +191,38 @@ public final class AudioThread implements Runnable {
       this.voiceIndex = ++this.voiceIndex % this.voices.length;
 
       if(!this.voices[this.voiceIndex].isUsed()) {
+        this.playingVoices++;
         return this.voices[this.voiceIndex];
       }
     }
 
-    //TODO empty voice not found
+    int lastVoice = this.voices.length;
+    int voiceIndex = this.voices.length;
 
-    throw new RuntimeException("Voice pool overflow");
+    for(int i = 0; i < this.voices.length; i++) {
+      final Voice voice = this.voices[i];
+
+      if(voice.isLowPriority()) {
+        final int currentPriority = voice.getPriorityOrder();
+
+        if(currentPriority < lastVoice) {
+          lastVoice = currentPriority;
+          voiceIndex = i;
+        }
+      }
+    }
+
+    if(voiceIndex == this.voices.length) {
+      throw new RuntimeException("Voice pool overflow");
+    }
+
+    for(final Voice voice : this.voices) {
+      if(voiceIndex < voice.getPriorityOrder()) {
+        voice.setPriorityOrder(voice.getPriorityOrder() - 1);
+      }
+    }
+
+    return this.voices[voiceIndex];
   }
 
   private void keyOff(final SequencedAudio sequencedAudio, final int channelIndex, final int note) {
@@ -200,7 +240,60 @@ public final class AudioThread implements Runnable {
 
   }
 
-  private void controlChange() {
+  private void controlChange(final SequencedAudio sequencedAudio, final int channelIndex, final int control, final int value) {
+    switch(control) {
+      case 0x01 -> this.modulation(sequencedAudio, channelIndex, value);
+      case 0x02 -> this.breathControl(sequencedAudio, channelIndex, value);
+      case 0x07 -> this.volume(sequencedAudio, channelIndex, value);
+      case 0x0A -> this.pan();
+      default -> System.err.printf("[SEQUENCER] Bad Control Change Channel: %d Command: 0x%x Value: 0x%x%n", channelIndex, control, value);
+    }
+  }
+
+  private void modulation(final SequencedAudio sequencedAudio, final int channelIndex, final int value) {
+    System.out.printf("[SEQUENCER] Control Change Channel: %d Modulation: %d%n", channelIndex, value);
+
+    final Channel channel = sequencedAudio.getChannel(channelIndex);
+    channel.setModulation(value);
+
+    for(final Voice voice : this.voices) {
+      if(voice.isUsed() && voice.getChannel() == channel) {
+        voice.setModulation(value);
+      }
+    }
+  }
+
+  private void breathControl(final SequencedAudio sequencedAudio, final int channelIndex, final int value) {
+    System.out.printf("[SEQUENCER] Control Change Channel: %d Breath Control: %d%n", channelIndex, value);
+
+    final int breath = 240 / (60 - value * 58 / 127);
+
+    final Channel channel = sequencedAudio.getChannel(channelIndex);
+    channel.setBreath(breath);
+
+    for(final Voice voice : this.voices) {
+      if(voice.isUsed() && voice.getChannel() == channel) {
+        voice.setBreath(breath);
+      }
+    }
+  }
+
+  private void volume(final SequencedAudio sequencedAudio, final int channelIndex, final int value) {
+    System.out.printf("[SEQUENCER] Control Change Channel: %d Volume: %d%n", channelIndex, value);
+
+    final Channel channel = sequencedAudio.getChannel(channelIndex);
+    channel.setVolume(value);
+    //TODO multiply by sssq reader value and div by 0x80
+    channel.setAdjustedVolume(value);
+
+    for(final Voice voice : this.voices) {
+      if(voice.isUsed() && voice.getChannel() == channel) {
+        voice.updateVolume();
+      }
+    }
+  }
+
+  private void pan() {
 
   }
 

@@ -1,7 +1,8 @@
 package legend.core.audio;
 
 final class VoiceCounter {
-  private int counter = 0x2000;
+  private final static int START_OFFSET = 0x3000;
+  private int counter = START_OFFSET;
 
   int getCurrentSampleIndex() {
     return (this.counter >> 12) & 0x1f;
@@ -25,6 +26,6 @@ final class VoiceCounter {
   }
 
   void reset() {
-    this.counter = 0x2000;
+    this.counter = START_OFFSET;
   }
 }

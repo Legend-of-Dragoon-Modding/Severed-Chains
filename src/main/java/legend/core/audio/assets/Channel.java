@@ -5,13 +5,13 @@ import legend.game.unpacker.FileData;
 public final class Channel {
   private final int index;
   private Instrument instrument;
-  private int volume_03;
+  private int volume;
   private int pan;
   private int modulation;
   private int pitchBend;
   private int _0b;
   private int breath;
-  private int volume_0e;
+  private int adjustedVolume;
 
   private final SoundFont soundFont;
 
@@ -25,7 +25,7 @@ public final class Channel {
       this.instrument = soundFont.getInstrument(instrumentIndex);
     }
 
-    this.volume_03 = data.readUByte(0x03);
+    this.volume = data.readUByte(0x03);
     this.pan = data.readUByte(0x04);
 
     this.modulation = data.readUByte(0x09);
@@ -34,7 +34,7 @@ public final class Channel {
     this._0b = data.readUByte(0x0b);
     this.breath = data.readUByte(0x0c);
 
-    this.volume_0e = data.readUByte(0x0e);
+    this.adjustedVolume = data.readUByte(0x0e);
   }
 
   public Instrument getInstrument() {
@@ -45,12 +45,12 @@ public final class Channel {
     this.instrument = this.soundFont.getInstrument(instrumentIndex);
   }
 
-  public int getVolume_03() {
-    return this.volume_03;
+  public int getVolume() {
+    return this.volume;
   }
 
-  public void setVolume_03(final int value) {
-    this.volume_03 = value;
+  public void setVolume(final int value) {
+    this.volume = value;
   }
 
   public int getPan() {
@@ -75,6 +75,24 @@ public final class Channel {
 
   public void setPitchBend(final int value) {
     this.pitchBend = value;
+  }
+
+  public int getBreath() {
+    return this.breath;
+  }
+
+  public void setBreath(final int value) {
+    this.breath = value;
+  }
+
+
+
+  public int getAdjustedVolume() {
+    return this.adjustedVolume;
+  }
+
+  public void setAdjustedVolume(final int value) {
+    this.adjustedVolume = value;
   }
 
 }

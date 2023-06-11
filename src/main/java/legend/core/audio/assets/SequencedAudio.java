@@ -26,4 +26,12 @@ public final class SequencedAudio {
   public void setTempo(final int value) {
     this.sssq.setTempo(value);
   }
+
+  public int getVelocity(final int index) {
+    return this.velocityRamp[index];
+  }
+
+  public byte[][] getBreathControls() {
+    return this.breathControls;
+  }
 }
