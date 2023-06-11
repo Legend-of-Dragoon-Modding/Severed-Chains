@@ -24,6 +24,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import static legend.core.GameEngine.MEMORY;
+import static legend.core.GameEngine.SPU;
 
 public final class Scus94491BpeSegment_800c {
   private Scus94491BpeSegment_800c() { }
@@ -45,7 +46,7 @@ public final class Scus94491BpeSegment_800c {
   public static final GsCOORDINATE2[] coord2s_800c35a8 = new GsCOORDINATE2[31];
 
   /** 0x990 bytes long, one per voice */
-  public static final PlayingNote66[] playingNotes_800c3a40 = new PlayingNote66[24];
+  public static final PlayingNote66[] playingNotes_800c3a40 = new PlayingNote66[SPU.voices.length];
   static {
     Arrays.setAll(playingNotes_800c3a40, i -> new PlayingNote66());
   }

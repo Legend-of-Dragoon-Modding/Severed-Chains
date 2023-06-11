@@ -24,6 +24,7 @@ import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedShortRef;
+import legend.core.spu.Voice;
 import legend.game.combat.Bttl_800c;
 import legend.game.combat.Bttl_800d;
 import legend.game.combat.Bttl_800e;
@@ -427,9 +428,9 @@ public final class Scus94491BpeSegment {
     GPU.events().onKeyPress((window, key, scancode, mods) -> {
       // Add killswitch in case sounds get stuck on
       if(key == GLFW_KEY_DELETE) {
-        for(int i = 0; i < 24; i++) {
-          SPU.voices[i].volumeLeft.set(0);
-          SPU.voices[i].volumeRight.set(0);
+        for(final Voice voice : SPU.voices) {
+          voice.volumeLeft.set(0);
+          voice.volumeRight.set(0);
         }
       }
 
@@ -2464,11 +2465,11 @@ public final class Scus94491BpeSegment {
   @Method(0x80019c80L)
   public static void FUN_80019c80(final SoundFile soundFile, final int soundIndex, final int a2) {
     //LAB_80019cc4
-    for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
-      final SpuStruct08 s0 = _800bc9a8[voiceIndex];
+    for(int sequenceIndex = 0; sequenceIndex < 24; sequenceIndex++) {
+      final SpuStruct08 s0 = _800bc9a8[sequenceIndex];
 
       if(s0.soundFile_02 == soundFile && s0.soundIndex_03 == soundIndex) {
-        stopSoundSequence(sequenceData_800c4ac8[voiceIndex], true);
+        stopSoundSequence(sequenceData_800c4ac8[sequenceIndex], true);
 
         if((a2 & 0x1) == 0) {
           break;
@@ -2598,11 +2599,11 @@ public final class Scus94491BpeSegment {
   @Method(0x8001a164L)
   public static void stopBobjSound(final long a0, final BattleObject27c bobj, final long soundIndex, final long a3) {
     //LAB_8001a1a8
-    for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
-      final SpuStruct08 s0 = _800bc9a8[voiceIndex];
+    for(int sequenceIndex = 0; sequenceIndex < 24; sequenceIndex++) {
+      final SpuStruct08 s0 = _800bc9a8[sequenceIndex];
 
       if(s0.soundIndex_03 == soundIndex && s0.bobj_04 == bobj) {
-        stopSoundSequence(sequenceData_800c4ac8[voiceIndex], true);
+        stopSoundSequence(sequenceData_800c4ac8[sequenceIndex], true);
 
         if((a3 & 0x1) == 0) {
           break;
@@ -2673,16 +2674,16 @@ public final class Scus94491BpeSegment {
   /** Actually starts playing the sound */
   @Method(0x8001a5fcL)
   public static void startQueuedSound(final QueuedSound28 playingSound) {
-    final int voiceIndex;
+    final int sequenceIndex;
 
     if(playingSound.pitchShiftVolRight_16 == -1 && playingSound.pitchShiftVolLeft_18 == -1 && playingSound.pitch_1a == -1) {
-      voiceIndex = startRegularSound(
+      sequenceIndex = startRegularSound(
         playingSound.playableSound_10,
         playingSound.patchIndex_12,
         playingSound.sequenceIndex_14
       );
     } else {
-      voiceIndex = startPitchShiftedSound(
+      sequenceIndex = startPitchShiftedSound(
         playingSound.playableSound_10,
         playingSound.patchIndex_12,
         playingSound.sequenceIndex_14,
@@ -2692,8 +2693,8 @@ public final class Scus94491BpeSegment {
       );
     }
 
-    if(voiceIndex != -1) {
-      final SpuStruct08 struct08 = _800bc9a8[voiceIndex];
+    if(sequenceIndex != -1) {
+      final SpuStruct08 struct08 = _800bc9a8[sequenceIndex];
       struct08.soundFile_02 = playingSound.soundFile_08;
       struct08.soundIndex_03 = playingSound.soundIndex_0c;
       struct08.bobj_04 = playingSound.bobj_04;
