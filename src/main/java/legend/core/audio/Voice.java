@@ -225,6 +225,15 @@ final class Voice {
 
   void clear() {
     this.used = false;
+    this.note = 0;
+    this.channel = null;
+    this.layer = null;
+    this.instrument = null;
+    this.isModulation = false;
+    this.modulation = 0;
+    this.breath = 0;
+    this.isPortamento = false;
+    this.portamentoNote = 0;
     System.out.printf("[VOICE] Clearing Voice %d%n", this.index);
   }
 
