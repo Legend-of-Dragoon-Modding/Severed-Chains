@@ -28,11 +28,11 @@ jobs:
         distribution: 'temurin'
         cache: gradle
 
-    - name: Write ISOs help file
-      run: mkdir ./build/libs/isos && echo "Place your ISOs or BINs in this folder" > ./build/libs/isos/help.txt
-
     - name: Build Windows x64 with Gradle
       run: ./gradlew build -Pos=windows -Parch=x86_64
+
+    - name: Write ISOs help file
+      run: mkdir ./build/libs/isos && echo "Place your ISOs or BINs in this folder" > ./build/libs/isos/help.txt
 
     - name: ZIP Windows x64 Build
       uses: thedoctor0/zip-release@main
