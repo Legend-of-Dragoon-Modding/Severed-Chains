@@ -19,7 +19,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -46,6 +45,10 @@ public class ModManager {
 
   public boolean isLoaded(final String modId) {
     return this.loadedModInstances.containsKey(modId);
+  }
+
+  public boolean isReady(final String modId) {
+    return this.loadedModInstances.containsKey(modId) && this.loadedModInstances.get(modId).state.isReady();
   }
 
   public Collection<ModContainer> getLoadedMods() {
@@ -129,6 +132,12 @@ public class ModManager {
       } catch(final InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException ex) {
         LOGGER.warn("FAILED TO LOAD MOD: %s", modId);
         LOGGER.warn("Exception:", ex);
+      }
+    }
+
+    public void loadingComplete() {
+      for(final ModContainer container : ModManager.this.loadedModInstances.values()) {
+        container.state = ModState.READY;
       }
     }
 
