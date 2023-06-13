@@ -1,4 +1,4 @@
-package legend.game.types;
+package legend.game.wmap;
 
 import legend.core.gte.DVECTOR;
 import legend.core.memory.Value;

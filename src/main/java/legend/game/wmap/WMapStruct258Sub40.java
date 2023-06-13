@@ -1,4 +1,7 @@
-package legend.game.types;
+package legend.game.wmap;
+
+import legend.game.types.CContainer;
+import legend.game.types.TmdAnimationFile;
 
 public class WMapStruct258Sub40  {
   public CContainer extendedTmd_00;

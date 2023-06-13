@@ -1,8 +1,8 @@
-package legend.game.types;
+package legend.game.wmap;
 
 import legend.core.gte.COLOUR;
 
-public class WMapStruct20 {
+public class ColourBlending20 {
   public COLOUR colour0Start_00;
   public COLOUR colour0End_04;
   public COLOUR colour1Start_08;

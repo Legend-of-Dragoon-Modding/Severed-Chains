@@ -1,5 +1,6 @@
 package legend.core.gpu;
 
+import legend.core.gte.COLOUR;
 import legend.game.types.Translucency;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -105,6 +106,10 @@ public class GpuCommandPoly extends GpuCommand {
     this.shaded = true;
     this.colour[vertex] = colour;
     return this;
+  }
+
+  public GpuCommandPoly rgb(final int vertex, final COLOUR colour) {
+    return this.rgb(vertex, colour.getR(), colour.getG(), colour.getB());
   }
 
   public GpuCommandPoly rgb(final int vertex, final int r, final int g, final int b) {

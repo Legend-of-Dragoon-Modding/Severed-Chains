@@ -220,9 +220,9 @@ import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800e.main;
-import static legend.game.WMap.FUN_800c8d90;
-import static legend.game.WMap.adjustWmapUvs;
-import static legend.game.WMap.renderWmapModel;
+import static legend.game.wmap.WMap.FUN_800c8d90;
+import static legend.game.wmap.WMap.adjustWmapUvs;
+import static legend.game.wmap.WMap.renderWmapModel;
 import static legend.game.combat.Bttl_800e.FUN_800ec258;
 import static legend.game.combat.Bttl_800e.renderBttlModel;
 

@@ -41,6 +41,7 @@ import legend.game.types.ItemStats0c;
 import legend.game.types.MoonMusic08;
 import legend.game.types.SubmapMusic08;
 import legend.game.unpacker.FileData;
+import legend.game.wmap.WMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;

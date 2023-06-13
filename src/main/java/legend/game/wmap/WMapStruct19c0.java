@@ -1,9 +1,11 @@
-package legend.game.types;
+package legend.game.wmap;
 
 import legend.core.gte.COLOUR;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.SVECTOR;
 import legend.core.gte.VECTOR;
+import legend.game.types.GsF_LIGHT;
+import legend.game.types.GsRVIEW2;
 
 import java.util.Arrays;
 

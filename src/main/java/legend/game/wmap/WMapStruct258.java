@@ -1,9 +1,11 @@
-package legend.game.types;
+package legend.game.wmap;
 
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.SVECTOR;
 import legend.core.gte.VECTOR;
-import legend.core.memory.types.UnboundedArrayRef;
+import legend.game.types.Model124;
+import legend.game.types.MrgFile;
+import legend.game.unpacker.FileData;
 
 public class WMapStruct258 {
   public int _00;
@@ -14,16 +16,14 @@ public class WMapStruct258 {
 
   public WMapTmdRenderingStruct18 tmdRendering_08;
   public final Model124[] models_0c = new Model124[4];
-  public long ptr_1c; //TODO pointer to a struct
+  public TextureAnimation20 textureAnimation_1c;
   /** short */
   public int colour_20;
 
   public WMapStruct258Sub60[] _24;
   public int _28;
-  /** TODO ptr */
-  public long imageData_2c;
-  /** TODO ptr */
-  public long imageData_30;
+  public FileData imageData_2c;
+  public FileData imageData_30;
   public final GsCOORDINATE2 coord2_34 = new GsCOORDINATE2();
   public final VECTOR vec_84 = new VECTOR();
   public final VECTOR vec_94 = new VECTOR();
@@ -59,10 +59,9 @@ public class WMapStruct258 {
   public int coolonWarpIndex_222;
   /** ubyte */
   public int _223;
-  public UnboundedArrayRef<VECTOR> vecs_224;
-  public UnboundedArrayRef<VECTOR> vecs_228;
-  /** TODO pointer */
-  public long ptr_22c;
+  public VECTOR[] vecs_224;
+  public VECTOR[] vecs_228;
+  public int[] ptr_22c;
   public int _230;
   public int _234;
   public int _238;
