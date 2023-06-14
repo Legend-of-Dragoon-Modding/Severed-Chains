@@ -74,8 +74,10 @@ public final class AudioThread implements Runnable {
 
     this.voices = new Voice[voiceCount];
 
-    for(int voice = 0; voice < this.voices.length; voice++) {
-      this.voices[voice] = new Voice(voice, lookupTables, this.samplesPerTick, stereo);
+    this.voices[0] = new Voice(0, lookupTables, this.samplesPerTick, stereo, null);
+
+    for(int voice = 1; voice < this.voices.length; voice++) {
+      this.voices[voice] = new Voice(voice, lookupTables, this.samplesPerTick, stereo, this.voices[voice - 1]);
     }
   }
 
@@ -245,7 +247,7 @@ public final class AudioThread implements Runnable {
       case 0x01 -> this.modulation(sequencedAudio, channelIndex, value);
       case 0x02 -> this.breathControl(sequencedAudio, channelIndex, value);
       case 0x07 -> this.volume(sequencedAudio, channelIndex, value);
-      case 0x0A -> this.pan();
+      case 0x0A -> this.pan(sequencedAudio, channelIndex, value);
       default -> System.err.printf("[SEQUENCER] Bad Control Change Channel: %d Command: 0x%x Value: 0x%x%n", channelIndex, control, value);
     }
   }
@@ -293,8 +295,23 @@ public final class AudioThread implements Runnable {
     }
   }
 
-  private void pan() {
+  private void pan(final SequencedAudio sequencedAudio, final int channelIndex, final int value) {
+    System.out.printf("[SEQUENCER] Control Change Channel: %d Pan: %d%n", channelIndex, value);
 
+    final Channel channel = sequencedAudio.getChannel(channelIndex);
+
+    if(!this.stereo) {
+      channel.setPan(64);
+      return;
+    }
+
+    channel.setPan(value);
+
+    for(final Voice voice : this.voices) {
+      if(voice.isUsed() && voice.getChannel() == channel) {
+        voice.updateVolume();
+      }
+    }
   }
 
   private void programChange() {

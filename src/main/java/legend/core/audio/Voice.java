@@ -41,12 +41,15 @@ final class Voice {
 
   private boolean hasSamples;
   private final short[] samples = new short[31];
+  private final Voice previousVoice;
+  private short latestSample;
 
 
-  Voice(final int index, final LookupTables lookupTables, final int bufferSize, final boolean stereo) {
+  Voice(final int index, final LookupTables lookupTables, final int bufferSize, final boolean stereo, final Voice previousVoice) {
     this.index = index;
     this.lookupTables = lookupTables;
     this.sound = new BufferedSound(bufferSize, stereo);
+    this.previousVoice = previousVoice;
   }
 
   //TODO stereo probably shouldn't be passed here, doesn't sound too safe for changing
@@ -67,7 +70,13 @@ final class Voice {
 
     final short adsrApplied = (short)((sample * this.adsrEnvelope.getCurrentLevel()) >> 15);
 
+    this.latestSample = adsrApplied;
+
     this.sound.bufferSample((short)(adsrApplied * this.volumeLeft));
+
+    if(stereo) {
+      this.sound.bufferSample((short)(adsrApplied * this.volumeRight));
+    }
   }
 
   private short sampleVoice() {
@@ -90,7 +99,12 @@ final class Voice {
 
     int step = this.sampleRate;
 
-    //TODO modulation
+    //TODO channelFmMode is set how?
+    if(this.index > 0 && false) {
+      final int factor = this.previousVoice.latestSample + 0x8000;
+      step = step * factor >> 15;
+      step &= 0xFFFF;
+    }
 
     if(step > 0x3fff) {
       step = 0x4000;
@@ -204,7 +218,8 @@ final class Voice {
     this.soundBankEntry.load(layer.getPcm());
 
     this.sampleRate = this.calculateSampleRate(this.layer.getKeyRoot(), note, this.layer.getSixtyFourths(), this.channel.getPitchBend(), this.pitchBendMultiplier);
-    this.volumeLeft = this.calculateVolume();
+    this.volumeLeft = this.calculateVolume(true);
+    this.volumeRight = this.calculateVolume(false);
 
     this.used = true;
   }
@@ -224,6 +239,8 @@ final class Voice {
   }
 
   void clear() {
+    System.out.printf("[VOICE] Clearing Voice %d%n", this.index);
+
     this.used = false;
     this.note = 0;
     this.channel = null;
@@ -234,7 +251,8 @@ final class Voice {
     this.breath = 0;
     this.isPortamento = false;
     this.portamentoNote = 0;
-    System.out.printf("[VOICE] Clearing Voice %d%n", this.index);
+
+    this.latestSample = 0;
   }
 
   boolean isLowPriority() {
@@ -278,19 +296,34 @@ final class Voice {
     }
   }
 
-  private double calculateVolume() {
-    final double volume = (this.channel.getAdjustedVolume() / 128d)
-      * (this.instrument.getVolume() / 128d)
-      * (this.velocity / 128d)
-      * (this.layer.getVolume() / 128d);
+  private double calculateVolume(final boolean left) {
+    double volume = this.channel.getAdjustedVolume() * this.instrument.getVolume() * this.layer.getVolume() * this.velocity;
+    volume /= 0x4000;
+    volume *= this.calculatePan(left);
 
-    return volume;
+    if(this.layer.getLockedVolume() == 0) {
+      return volume / 0x8000;
+    }
+
+    return (double)((this.layer.getLockedVolume() << 8) | ((int)volume >> 7)) / 0x8000 ;
   }
 
   void updateVolume() {
     if(this.layer != null) {
-      this.volumeLeft = this.calculateVolume();
+      this.volumeLeft = this.calculateVolume(true);
+      this.volumeRight = this.calculateVolume(false);
     }
+  }
+
+  private double calculatePan(final boolean left) {
+    double pan = this.lookupTables.getPan(this.channel.getPan(), left);
+
+    //TODO only if poly
+
+    pan *= this.lookupTables.getPan(this.instrument.getPan(), left);
+    pan *= this.lookupTables.getPan(this.layer.getPan(), left);
+
+    return pan;
   }
 
   void setModulation(final int value) {

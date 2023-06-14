@@ -16,6 +16,9 @@ final class SoundBankEntry {
   }
 
   void loadSamples(final short[] samples) {
+
+
+
     switch(this.pcm.right()[this.index]) {
       case 0, 2 -> this.index++;
       case 1 -> {
@@ -27,7 +30,9 @@ final class SoundBankEntry {
         this.repeatIndex = this.index;
         this.index++;
       }
-      default -> throw new RuntimeException("Unknown Sound Bank Flag!");
+      case 7 -> {
+      }
+      default -> throw new RuntimeException("Unknown Sound Bank Flag " + this.pcm.right()[this.index] + " !");
     }
 
     System.arraycopy(this.pcm.left()[this.index], 0, samples, 3, 28);

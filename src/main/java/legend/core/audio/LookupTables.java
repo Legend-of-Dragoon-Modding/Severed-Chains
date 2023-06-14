@@ -4,6 +4,7 @@ final class LookupTables {
   private static final int BASE_SAMPLE_RATE = 0x1000;
   private final int[] sampleRates;
   private final double[][] interpolationWeights;
+  private final double[] pan;
 
   LookupTables(final int sampleRateStep, final int interpolationStep) {
     this.sampleRates = new int[sampleRateStep * 12];
@@ -27,6 +28,15 @@ final class LookupTables {
         0.45d * (pow3 - pow2)
       };
     }
+
+    this.pan = new double[128];
+    for(int i = 0; i < 61; i++) {
+      this.pan[i] = i / 64d;
+    }
+
+    for(int i = 61; i < 128; i++) {
+      this.pan[i] = 1;
+    }
   }
 
   int getSampleRate(final int index) {
@@ -35,5 +45,13 @@ final class LookupTables {
 
   double[] getInterpolationWeights(final int index) {
     return this.interpolationWeights[index];
+  }
+
+  double getPan(final int value, final boolean left) {
+    if(left) {
+      return this.pan[127 - value];
+    }
+
+    return this.pan[value];
   }
 }
