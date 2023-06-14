@@ -33,6 +33,7 @@ import legend.game.modding.events.inventory.EquipmentStatsEvent;
 import legend.game.scripting.ScriptState;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CharacterData2c;
+import legend.game.types.EngineState;
 import legend.game.types.EquipmentStats1c;
 import legend.game.types.InventoryMenuState;
 import legend.game.types.LevelStuff08;
@@ -93,17 +94,16 @@ import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 import static legend.game.Scus94491BpeSegment_8004.itemStats_8004f2ac;
 import static legend.game.Scus94491BpeSegment_8004.loadingGameStateOverlay_8004dd08;
-import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
+import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment_8005.additionData_80052884;
 import static legend.game.Scus94491BpeSegment_8005.combatants_8005e398;
 import static legend.game.Scus94491BpeSegment_8005.standingInSavePoint_8005a368;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
-import static legend.game.Scus94491BpeSegment_800b._800bb168;
-import static legend.game.Scus94491BpeSegment_800b._800bc910;
+import static legend.game.Scus94491BpeSegment_800b.unlockedUltimateAddition_800bc910;
 import static legend.game.Scus94491BpeSegment_800b._800bc960;
-import static legend.game.Scus94491BpeSegment_800b._800bc968;
-import static legend.game.Scus94491BpeSegment_800b._800bc97c;
+import static legend.game.Scus94491BpeSegment_800b.livingCharIds_800bc968;
+import static legend.game.Scus94491BpeSegment_800b.livingCharCount_800bc97c;
 import static legend.game.Scus94491BpeSegment_800b._800bdc2c;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.confirmDest_800bdc30;
@@ -118,6 +118,7 @@ import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba4;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba8;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
 import static legend.game.Scus94491BpeSegment_800b.savedGameSelected_800bdc34;
+import static legend.game.Scus94491BpeSegment_800b.scriptEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.secondaryCharIndices_800bdbf8;
 import static legend.game.Scus94491BpeSegment_800b.spGained_800bc950;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
@@ -512,7 +513,7 @@ public final class SItem {
         messageBox_8011dc90.state_0c = 0;
         loadCharacterStats();
 
-        if(mainCallbackIndex_8004dd20.get() == 8) {
+        if(engineState_8004dd20 == EngineState.WORLD_MAP_08) {
           gameState_800babc8.isOnWorldMap_4e4 = true;
           canSave_8011dc88.set(true);
         } else {
@@ -565,7 +566,7 @@ public final class SItem {
           }
         }
 
-        if(mainCallbackIndex_8004dd20.get() == 5 && loadingGameStateOverlay_8004dd08.get() == 0) {
+        if(engineState_8004dd20 == EngineState.SUBMAP_05 && loadingGameStateOverlay_8004dd08.get() == 0) {
           FUN_800e3fac();
         }
 
@@ -1961,8 +1962,8 @@ public final class SItem {
 
     if(charIndex != -1) {
       //LAB_8010d36c
-      for(int i = 0; i < _800bc97c.get(); i++) {
-        if(_800bc968.offset(i * 0x4L).get() == charIndex) {
+      for(int i = 0; i < livingCharCount_800bc97c.get(); i++) {
+        if(livingCharIds_800bc968.get(i).get() == charIndex) {
           return true;
         }
 
@@ -2001,26 +2002,26 @@ public final class SItem {
   }
 
   @Method(0x8010d598L)
-  public static int FUN_8010d598(final int charSlot) {
+  public static int getUltimateAdditionIdIfUnlocked(final int charSlot) {
     final int charIndex = gameState_800babc8.charIds_88[charSlot];
 
     if(charIndex == -1) {
       return 0;
     }
 
-    if(_800bc910.offset(charSlot * 0x4L).get() == 0) {
+    if(!unlockedUltimateAddition_800bc910[charSlot]) {
       //LAB_8010d5d0
       return 0;
     }
 
     //LAB_8010d5d8
-    final int a0 = additionOffsets_8004f5ac.get(charIndex).get() + additionCounts_8004f5c0.get(charIndex).get();
-    if(a0 == -1) {
+    final int additionId = additionOffsets_8004f5ac.get(charIndex).get() + additionCounts_8004f5c0.get(charIndex).get();
+    if(additionId == -1) {
       return 0;
     }
 
     //LAB_8010d60c
-    return a0;
+    return additionId;
   }
 
   @Method(0x8010d614L)
@@ -2046,7 +2047,7 @@ public final class SItem {
         break;
 
       case _2:
-        if(_800bb168.get() == 0) {
+        if(scriptEffect_800bb140.currentColour_28.get() == 0) {
           deallocateRenderables(0xffL);
           Renderable58 glyph = FUN_8010cfa0(0, 0, 165, 21, 720, 497);
           glyph._34 = 0;
@@ -2082,9 +2083,9 @@ public final class SItem {
             pendingXp_8011e180.get(i).set(0);
           }
 
-          additionsUnlocked_8011e1b8.get(0).set(FUN_8010d598(0));
-          additionsUnlocked_8011e1b8.get(1).set(FUN_8010d598(1));
-          additionsUnlocked_8011e1b8.get(2).set(FUN_8010d598(2));
+          additionsUnlocked_8011e1b8.get(0).set(getUltimateAdditionIdIfUnlocked(0));
+          additionsUnlocked_8011e1b8.get(1).set(getUltimateAdditionIdIfUnlocked(1));
+          additionsUnlocked_8011e1b8.get(2).set(getUltimateAdditionIdIfUnlocked(2));
 
           xpDivisor_8011e174.set(0);
           for(int charSlot = 0; charSlot < 3; charSlot++) {
@@ -2357,7 +2358,7 @@ public final class SItem {
       case _17:
         FUN_8010e9a8(0);
 
-        if(_800bb168.get() >= 0xff) {
+        if(scriptEffect_800bb140.currentColour_28.get() >= 0xff) {
           inventoryMenuState_800bdc28.set(confirmDest_800bdc30.get());
           FUN_80019470();
         }

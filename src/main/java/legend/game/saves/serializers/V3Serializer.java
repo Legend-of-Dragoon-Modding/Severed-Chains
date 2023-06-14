@@ -7,11 +7,12 @@ import legend.game.saves.ConfigStorageLocation;
 import legend.game.saves.SavedGame;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CharacterData2c;
+import legend.game.types.EngineState;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
 
 import static legend.core.GameEngine.CONFIG;
-import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
+import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment_800b.continentIndex_800bf0b0;
 import static legend.game.Scus94491BpeSegment_800b.submapIndex_800bd808;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
@@ -214,7 +215,7 @@ public final class V3Serializer {
   public static int toV3(final String name, final FileData data, final GameState52c state, final ActiveStatsa0[] activeStats) {
     final int locationType;
     final int locationIndex;
-    if(mainCallbackIndex_8004dd20.get() == 8) {
+    if(engineState_8004dd20 == EngineState.WORLD_MAP_08) {
       locationType = 1;
       locationIndex = continentIndex_800bf0b0.get();
       //LAB_80103c98

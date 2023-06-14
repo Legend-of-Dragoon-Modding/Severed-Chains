@@ -52,7 +52,7 @@ import legend.game.sound.Sshd;
 import legend.game.sound.Sssq;
 import legend.game.title.Ttle;
 import legend.game.types.CharacterData2c;
-import legend.game.types.DeferredReallocOrFree0c;
+import legend.game.types.EngineState;
 import legend.game.types.FileEntry08;
 import legend.game.types.FileLoadedCallback;
 import legend.game.types.LoadingOverlay;
@@ -106,7 +106,6 @@ import static legend.game.Scus94491BpeSegment_8003.bzero;
 import static legend.game.Scus94491BpeSegment_8003.setDrawOffset;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004d91c;
-import static legend.game.Scus94491BpeSegment_8004._8004dd00;
 import static legend.game.Scus94491BpeSegment_8004._8004dd0c;
 import static legend.game.Scus94491BpeSegment_8004._8004dd48;
 import static legend.game.Scus94491BpeSegment_8004._8004f2a8;
@@ -119,6 +118,8 @@ import static legend.game.Scus94491BpeSegment_8004._8004fa98;
 import static legend.game.Scus94491BpeSegment_8004._8004fb00;
 import static legend.game.Scus94491BpeSegment_8004.changeSequenceVolumeOverTime;
 import static legend.game.Scus94491BpeSegment_8004.currentlyLoadingFileEntry_8004dd04;
+import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
+import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment_8004.freeSequence;
 import static legend.game.Scus94491BpeSegment_8004.gameStateCallbacks_8004dbc0;
 import static legend.game.Scus94491BpeSegment_8004.getSequenceFlags;
@@ -129,13 +130,11 @@ import static legend.game.Scus94491BpeSegment_8004.loadSssq;
 import static legend.game.Scus94491BpeSegment_8004.loadedOverlayIndex_8004dd10;
 import static legend.game.Scus94491BpeSegment_8004.loadingGameStateOverlay_8004dd08;
 import static legend.game.Scus94491BpeSegment_8004.loadingOverlay_8004dd1e;
-import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndexOnceLoaded_8004dd24;
-import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
 import static legend.game.Scus94491BpeSegment_8004.moonMusic_8004ff10;
 import static legend.game.Scus94491BpeSegment_8004.overlaysLoadedCount_8004dd1c;
 import static legend.game.Scus94491BpeSegment_8004.overlays_8004db88;
 import static legend.game.Scus94491BpeSegment_8004.preloadingAudioAssets_8004ddcc;
-import static legend.game.Scus94491BpeSegment_8004.previousMainCallbackIndex_8004dd28;
+import static legend.game.Scus94491BpeSegment_8004.previousEngineState_8004dd28;
 import static legend.game.Scus94491BpeSegment_8004.reinitOrderingTableBits_8004dd38;
 import static legend.game.Scus94491BpeSegment_8004.setMainVolume;
 import static legend.game.Scus94491BpeSegment_8004.setMaxSounds;
@@ -162,7 +161,6 @@ import static legend.game.Scus94491BpeSegment_8005.charSlotSpuOffsets_80050190;
 import static legend.game.Scus94491BpeSegment_8005.characterSoundFileIndices_800500f8;
 import static legend.game.Scus94491BpeSegment_8005.combatMusicFileIndices_800501bc;
 import static legend.game.Scus94491BpeSegment_8005.combatSoundEffectsTypes_8005019c;
-import static legend.game.Scus94491BpeSegment_8005.deferredReallocOrFree_8005a1e0;
 import static legend.game.Scus94491BpeSegment_8005.heapHead_8005a2a0;
 import static legend.game.Scus94491BpeSegment_8005.heapTail_8005a2a4;
 import static legend.game.Scus94491BpeSegment_8005.loadingOverlay_8005a2a8;
@@ -176,8 +174,6 @@ import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
 import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.joypadRepeat_8007a3a0;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
-import static legend.game.Scus94491BpeSegment_800b._800bb168;
-import static legend.game.Scus94491BpeSegment_800b._800bc94c;
 import static legend.game.Scus94491BpeSegment_800b._800bc960;
 import static legend.game.Scus94491BpeSegment_800b._800bc9a8;
 import static legend.game.Scus94491BpeSegment_800b._800bca68;
@@ -193,6 +189,7 @@ import static legend.game.Scus94491BpeSegment_800b._800bd710;
 import static legend.game.Scus94491BpeSegment_800b._800bd714;
 import static legend.game.Scus94491BpeSegment_800b._800bd740;
 import static legend.game.Scus94491BpeSegment_800b._800bd774;
+import static legend.game.Scus94491BpeSegment_800b.battleLoaded_800bc94c;
 import static legend.game.Scus94491BpeSegment_800b.clearBlue_800babc0;
 import static legend.game.Scus94491BpeSegment_800b.clearGreen_800bb104;
 import static legend.game.Scus94491BpeSegment_800b.currentSequenceData_800bd0f8;
@@ -260,7 +257,6 @@ public final class Scus94491BpeSegment {
 
   public static BattlePreloadedEntities_18cb0 battlePreloadedEntities_1f8003f4;
   public static final IntRef projectionPlaneDistance_1f8003f8 = MEMORY.ref(4, 0x1f8003f8L, IntRef::new);
-  public static final Value _1f8003fc = MEMORY.ref(4, 0x1f8003fcL);
 
   public static final Value _80010000 = MEMORY.ref(4, 0x80010000L);
   public static final Value _80010004 = MEMORY.ref(4, 0x80010004L);
@@ -502,14 +498,13 @@ public final class Scus94491BpeSegment {
       joypadInput_8007a39c.setu(input_800bee90.get());
       joypadRepeat_8007a3a0.setu(repeat_800bee98.get());
 
-      if(mainCallbackIndex_8004dd20.get() > 4) {
+      if(engineState_8004dd20.isInGame()) {
         gameState_800babc8.timestamp_a0 += vsyncMode_8007a3b8.get();
       }
 
       final int frames = Math.max(1, vsyncMode_8007a3b8.get());
       GPU.window().setFpsLimit((60 / frames) * Config.getGameSpeedMultiplier());
 
-      tickDeferredReallocOrFree();
       executeLoadersAndScripts();
       FUN_8001b410();
       FUN_80013778();
@@ -591,32 +586,8 @@ public final class Scus94491BpeSegment {
   @Method(0x80011ec8L)
   public static void executeLoadersAndScripts() {
     if(loadQueuedOverlay() != 0) {
-      gameStateCallbacks_8004dbc0.get(mainCallbackIndex_8004dd20.get()).callback_00.deref().run();
+      gameStateCallbacks_8004dbc0.get(engineState_8004dd20.ordinal()).callback_00.deref().run();
       SCRIPTS.tick();
-    }
-  }
-
-  @Method(0x80011f6cL)
-  public static void tickDeferredReallocOrFree() {
-    //LAB_80011f88
-    for(int i = 0; i < 16; i++) {
-      final DeferredReallocOrFree0c struct = deferredReallocOrFree_8005a1e0.get(i);
-
-      if(struct.frames_0a.get() != 0) {
-        struct.frames_0a.decr();
-
-        if(struct.frames_0a.get() == 0) {
-          if(struct.size_04.get() == 0) {
-            //LAB_80011fdc
-            free(struct.ptr_00.get());
-          } else {
-            realloc2(struct.ptr_00.get(), struct.size_04.get());
-          }
-        }
-      }
-
-      //LAB_80011ffc
-      //LAB_80012000
     }
   }
 
@@ -752,89 +723,6 @@ public final class Scus94491BpeSegment {
     throw new RuntimeException("Failed to allocate entry on linked list (size 0x" + Long.toHexString(size) + ')');
   }
 
-  @Method(0x80012444L)
-  public static long realloc2(long address, int newSize) {
-    address = address - 0xcL;
-    newSize = newSize + 0xf & 0xffff_fffc; // Add 0xc and 4-byte align
-    int blockSize = (int)MEMORY.ref(4, address).offset(0x4L).get();
-
-    //LAB_80012494
-    final int size = Math.min(newSize, blockSize);
-    final long s0 = mallocTail(newSize - 0xc) - 0xcL;
-
-    if(address < s0) {
-      //LAB_800124d0
-      memcpy(s0 + 0xcL, address + 0xcL, size - 0xc);
-      free(address + 0xcL);
-
-      //LAB_80012740
-      return s0 + 0xcL;
-    }
-
-    //LAB_800124f8
-    free(s0 + 0xcL);
-
-    //LAB_80012508
-    // Merge with previous memory block if possible
-    final long previousBlock = MEMORY.ref(4, address).offset(0x0L).get();
-    final long dest;
-    if(MEMORY.ref(2, previousBlock).offset(0x8L).get() == 0) { // If free space
-      dest = previousBlock;
-      blockSize += (int)MEMORY.ref(4, dest).offset(0x4L).get();
-    } else { // If not free space
-      dest = address;
-    }
-
-    //LAB_80012530
-    // Merge with next memory block if possible
-    final long nextBlock = address + MEMORY.ref(4, address).offset(0x4L).get();
-    if(MEMORY.ref(2, nextBlock).offset(0x8L).get() == 0) { // If free space
-      blockSize += (int)MEMORY.ref(4, nextBlock).offset(0x4L).get();
-    }
-
-    //LAB_8001255c
-    // If it doesn't fit, allocate a new block
-    if(blockSize < newSize) {
-      //LAB_800126d8
-      final long newBlock = mallocTail(newSize - 0xc) - 0xcL;
-
-      //LAB_80012710
-      memcpy(newBlock + 0xcL, address + 0xcL, size - 0xc);
-      free(address + 0xcL);
-
-      //LAB_80012740
-      return newBlock + 0xcL;
-    }
-
-    // If there's more than enough space, split the block and only use what's needed
-    final int deltaSize = blockSize - newSize;
-    if(deltaSize >= 0xc) {
-      final long t0 = dest + deltaSize;
-      memcpy(t0 + 0xcL, address + 0xcL, size - 0xc);
-
-      //LAB_80012604
-      MEMORY.ref(4, dest).offset(0x0L).offset(deltaSize).setu(dest);
-      MEMORY.ref(4, dest).offset(0x4L).setu(deltaSize);
-      MEMORY.ref(2, dest).offset(0x8L).setu(0);
-
-      MEMORY.ref(4, t0).offset(0x0L).offset(newSize).setu(t0);
-      MEMORY.ref(4, t0).offset(0x4L).setu(newSize);
-      MEMORY.ref(2, t0).offset(0x8L).setu(1);
-      return t0 + 0xcL;
-    }
-
-    //LAB_80012630
-    // Otherwise, the data just fits
-    memcpy(dest + 0xcL, address + 0xcL, size - 0xc);
-
-    //LAB_800126c0
-    //LAB_800126c4
-    MEMORY.ref(4, dest).offset(0x0L).offset(blockSize).setu(dest);
-    MEMORY.ref(4, dest).offset(0x4L).setu(blockSize);
-    MEMORY.ref(2, dest).offset(0x8L).setu(2);
-    return dest + 0xcL;
-  }
-
   @Method(0x80012764L)
   public static void free(long address) {
     allocations--;
@@ -864,105 +752,39 @@ public final class Scus94491BpeSegment {
     MEMORY.ref(4, address).offset(a1).setu(address);
   }
 
-  /**
-   * Realloc or free an address after a number of frames
-   *
-   * @param size    Realloc size, or 0 to free
-   * @param frames  The number of frames to wait
-   */
-  @Method(0x800127ccL)
-  public static int deferReallocOrFree(final long address, final int size, int frames) {
-    _8004dd00.incr();
-
-    if(_8004dd00.get() >= 16) {
-      _8004dd00.set(0);
-    }
-
-    //LAB_800127f0
-    //LAB_8001281c
-    for(int i = _8004dd00.get(); i < 16; i++) {
-      final DeferredReallocOrFree0c v1 = deferredReallocOrFree_8005a1e0.get(i);
-
-      if(v1.size_04.get() == 0) {
-        //LAB_80012888
-        if(frames <= 0) {
-          frames = 1;
-        }
-
-        //LAB_80012894
-        v1.ptr_00.set(address);
-        v1.size_04.set(size);
-        v1.frames_0a.set(frames);
-        return i;
-      }
-    }
-
-    //LAB_80012840
-    //LAB_80012860
-    for(int i = 0; i < _8004dd00.get(); i++) {
-      final DeferredReallocOrFree0c v1 = deferredReallocOrFree_8005a1e0.get(i);
-
-      if(v1.size_04.get() == 0) {
-        //LAB_80012888
-        if(frames <= 0) {
-          frames = 1;
-        }
-
-        //LAB_80012894
-        v1.ptr_00.set(address);
-        v1.size_04.set(size);
-        v1.frames_0a.set(frames);
-        return i;
-      }
-    }
-
-    //LAB_80012880
-    return -1;
-  }
-
-  @Method(0x800128a8L)
-  public static int getMallocSize(final long address) {
-    if(address != 0) {
-      return (int)MEMORY.ref(4, address).offset(-0x8L).get() - 0xc;
-    }
-
-    //LAB_800128bc
-    return 0;
-  }
-
   @Method(0x800128c4L)
   public static long loadQueuedOverlay() {
     if(!loadingOverlay_8004dd1e) {
       if(loadingOverlay_8005a2a8 != null) {
         loadingOverlay_8004dd1e = true;
         loadedOverlayIndex_8004dd10 = loadingOverlay_8005a2a8.overlayIndex();
-        loadFile(overlays_8004db88.get(loadedOverlayIndex_8004dd10), _80010004.get(), Scus94491BpeSegment::overlayLoadedCallback, 0, 0x10L);
+        loadFile(overlays_8004db88.get(loadedOverlayIndex_8004dd10), _80010004.get(), Scus94491BpeSegment::overlayLoadedCallback, 0);
       }
     }
 
     //LAB_800129c0
     //LAB_800129c4
-    if(mainCallbackIndexOnceLoaded_8004dd24.get() != -1) {
+    if(engineStateOnceLoaded_8004dd24 != null) {
       if(loadingGameStateOverlay_8004dd08.get() != 0) {
         return 0;
       }
 
       pregameLoadingStage_800bb10c.set(0);
-      previousMainCallbackIndex_8004dd28.set(mainCallbackIndex_8004dd20.get());
-      mainCallbackIndex_8004dd20.set(mainCallbackIndexOnceLoaded_8004dd24.get());
-      mainCallbackIndexOnceLoaded_8004dd24.set(-1);
+      previousEngineState_8004dd28 = engineState_8004dd20;
+      engineState_8004dd20 = engineStateOnceLoaded_8004dd24;
+      engineStateOnceLoaded_8004dd24 = null;
       FUN_80019710();
       vsyncMode_8007a3b8.set(2);
-      loadGameStateOverlay(mainCallbackIndex_8004dd20.get());
+      loadGameStateOverlay(engineState_8004dd20);
 
-      if(mainCallbackIndex_8004dd20.get() == 6) { // Starting combat
+      if(engineState_8004dd20 == EngineState.COMBAT_06) { // Starting combat
         FUN_8001c4ec();
       }
     }
 
     //LAB_80012a34
     //LAB_80012a38
-    if(loadingGameStateOverlay_8004dd08.get() == 0 || (gameStateCallbacks_8004dbc0.get(mainCallbackIndex_8004dd20.get()).uint_0c.get() & 0xff00L) != 0) {
+    if(loadingGameStateOverlay_8004dd08.get() == 0 || (gameStateCallbacks_8004dbc0.get(engineState_8004dd20.ordinal()).uint_0c.get() & 0xff00L) != 0) {
       //LAB_80012a6c
       return 1;
     }
@@ -972,14 +794,14 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80012a84L)
-  public static long loadGameStateOverlay(final int callbackIndex) {
-    LOGGER.info("Loading game state overlay %d", callbackIndex);
+  public static long loadGameStateOverlay(final EngineState engineState) {
+    LOGGER.info("Loading game state overlay %s", engineState);
 
-    final FileEntry08 entry = gameStateCallbacks_8004dbc0.get(callbackIndex).entry_04.derefNullable();
+    final FileEntry08 entry = gameStateCallbacks_8004dbc0.get(engineState.ordinal()).entry_04.derefNullable();
 
     if(entry == null || entry.getAddress() == currentlyLoadingFileEntry_8004dd04.getPointer()) {
       //LAB_80012ac0
-      FUN_80012bd4(callbackIndex);
+      FUN_80012bd4(engineState);
       loadingGameStateOverlay_8004dd08.setu(0);
       return 0x1L;
     }
@@ -987,7 +809,7 @@ public final class Scus94491BpeSegment {
     //LAB_80012ad8
     currentlyLoadingFileEntry_8004dd04.set(entry);
     loadingGameStateOverlay_8004dd08.setu(0x1L);
-    loadFile(entry, _80010000.get(), Scus94491BpeSegment::gameStateOverlayLoadedCallback, callbackIndex, 0x10L);
+    loadFile(entry, _80010000.get(), Scus94491BpeSegment::gameStateOverlayLoadedCallback, 0);
     return 0;
   }
 
@@ -1027,14 +849,14 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80012bd4L)
-  public static void FUN_80012bd4(final int callbackIndex) {
+  public static void FUN_80012bd4(final EngineState engineState) {
     if(_8004dd0c.get() != 0) {
       _8004dd0c.setu(0);
       return;
     }
 
     //LAB_80012bf0
-    final long v0 = gameStateCallbacks_8004dbc0.get(callbackIndex).ptr_08.get();
+    final long v0 = gameStateCallbacks_8004dbc0.get(engineState.ordinal()).ptr_08.get();
     if(v0 != 0) {
       bzero(MEMORY.ref(4, v0).offset(0x0L).get(), (int)MEMORY.ref(4, v0).offset(0x4L).get());
     }
@@ -1255,7 +1077,7 @@ public final class Scus94491BpeSegment {
 
     //LAB_80013880
     //LAB_80013884
-    _800bb168.set(colour);
+    scriptEffect_800bb140.currentColour_28.set(colour);
 
     if(colour != 0) {
       //LAB_800138f0
@@ -1268,7 +1090,7 @@ public final class Scus94491BpeSegment {
           for(int s1 = 0; s1 < 8; s1++) {
             //LAB_800138f8
             for(int s0 = 0; s0 < 6; s0++) {
-              FUN_80013d78(colour - (0xcL - (s0 + s1)) * 11, s1, s0);
+              drawBoxagonEffect(colour - (12 - (s0 + s1)) * 11, s1, s0);
             }
           }
         }
@@ -1277,7 +1099,7 @@ public final class Scus94491BpeSegment {
           for(int s1 = 0; s1 < 8; s1++) {
             //LAB_80013950
             for(int s0 = 0; s0 < 6; s0++) {
-              FUN_80013d78(colour - (s1 + s0) * 11, s1, s0);
+              drawBoxagonEffect(colour - (s1 + s0) * 11, s1, s0);
             }
           }
         }
@@ -1322,15 +1144,39 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80013d78L)
-  public static void FUN_80013d78(final long a0, final long a1, final long a2) {
-    assert false;
+  public static void drawBoxagonEffect(final int angle, final int x, final int y) {
+    if(angle > 0) {
+      final int sin;
+      final int cos;
+      if(angle >= 124) {
+        sin = 20;
+        cos = 0;
+      } else {
+        final int theta = angle * 0x400 / 123;
+        sin = rsin(theta) * 20 / 0x1000;
+        cos = rcos(theta) / 17;
+      }
+
+      //LAB_80013e18
+      final int x0 = x * 40;
+      final int y0 = y * 40;
+
+      GPU.queueCommand(30, new GpuCommandPoly(4)
+        .rgb(cos, cos, cos)
+        .pos(0, x0 - (sin - 20) - centreScreenX_1f8003dc.get(), y0 - (sin - 20) - centreScreenY_1f8003de.get())
+        .pos(1, x0 - (centreScreenX_1f8003dc.get() - 40), y0 - centreScreenY_1f8003de.get())
+        .pos(2, x0 - centreScreenX_1f8003dc.get(), y0 - (centreScreenY_1f8003de.get() - 40))
+        .pos(3, x0 + sin + 20 - centreScreenX_1f8003dc.get(), y0 + sin + 20 - centreScreenY_1f8003de.get())
+      );
+    }
+
+    //LAB_80013f1c
   }
 
   @Deprecated
   @Method(0x8001524cL)
-  public static <Param> long loadFile(final FileEntry08 entry, final long fileTransferDest, @Nullable final FileLoadedCallback<Param> callback, final Param callbackParam, final long flags) {
+  public static <Param> long loadFile(final FileEntry08 entry, final long fileTransferDest, @Nullable final FileLoadedCallback<Param> callback, final Param callbackParam) {
     final String name = entry.name_04.deref().get();
-    final int type = FUN_800155b8(fileTransferDest, (int)flags);
 
     final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
 
@@ -1338,18 +1184,8 @@ public final class Scus94491BpeSegment {
     final FileData data = Unpacker.loadFile(name);
 
     LOGGER.info("Loading file %s, size %d from %s.%s(%s:%d)", name, data.size(), frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
-
-    final long transferDest;
-    if((type & 0x2) != 0) {
-      transferDest = mallocTail(data.size());
-    } else if((type & 0x4) != 0) {
-      transferDest = mallocHead(data.size());
-    } else {
-      transferDest = fileTransferDest;
-    }
-
-    LOGGER.info("Loading file %s to %08x", name, transferDest);
-    MEMORY.setBytes(transferDest, data.getBytes());
+    LOGGER.info("Loading file %s to %08x", name, fileTransferDest);
+    MEMORY.setBytes(fileTransferDest, data.getBytes());
 
     switch(name) {
       case "\\OVL\\SMAP.OV_" -> MEMORY.addFunctions(SMap.class);
@@ -1370,7 +1206,7 @@ public final class Scus94491BpeSegment {
 
     if(callback != null) {
       LOGGER.info("Executing file callback (param %08x)", callbackParam);
-      callback.onLoad(transferDest, data.size(), callbackParam);
+      callback.onLoad(fileTransferDest, data.size(), callbackParam);
     }
 
     return 0;
@@ -1797,7 +1633,7 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_8001852c
-    if(postCombatMainCallbackIndex_800bc91c.get() != 5 || postBattleAction_800bc974.get() == 3) {
+    if(postCombatMainCallbackIndex_800bc91c != EngineState.SUBMAP_05 || postBattleAction_800bc974.get() == 3) {
       //LAB_80018550
       if(whichMenu_800bdc38 == WhichMenu.NONE_0) {
         pregameLoadingStage_800bb10c.incr();
@@ -1808,7 +1644,7 @@ public final class Scus94491BpeSegment {
 
       if(v1 == 0xaL) {
         //LAB_800185a8
-        loadGameStateOverlay(5);
+        loadGameStateOverlay(EngineState.SUBMAP_05);
         _8004f2a8.addu(0x1L);
       } else if(v1 == 0xbL) {
         //LAB_800185c4
@@ -1841,11 +1677,11 @@ public final class Scus94491BpeSegment {
 
   @Method(0x800186a0L)
   public static void FUN_800186a0() {
-    if(_800bc94c.get() != 0) {
+    if(battleLoaded_800bc94c.get()) {
       FUN_80018744();
       _8004f5d4.get(pregameLoadingStage_800bb10c.get()).deref().run();
 
-      if(_800bc94c.get() != 0) {
+      if(battleLoaded_800bc94c.get()) {
         FUN_8001890c();
       }
     } else {
@@ -1925,7 +1761,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x800189b0L)
   public static void FUN_800189b0() {
-    if(postCombatMainCallbackIndex_800bc91c.get() == 5 && postBattleAction_800bc974.get() != 3) {
+    if(postCombatMainCallbackIndex_800bc91c == EngineState.SUBMAP_05 && postBattleAction_800bc974.get() != 3) {
       FUN_800e5934();
     }
 
@@ -1935,7 +1771,7 @@ public final class Scus94491BpeSegment {
       unloadEncounterSoundEffects();
       pregameLoadingStage_800bb10c.set(0);
       vsyncMode_8007a3b8.set(2);
-      mainCallbackIndexOnceLoaded_8004dd24.set(postCombatMainCallbackIndex_800bc91c.get());
+      engineStateOnceLoaded_8004dd24 = postCombatMainCallbackIndex_800bc91c;
     }
 
     //LAB_80018a4c
@@ -2267,14 +2103,14 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80019710L)
   public static void FUN_80019710() {
-    if(mainCallbackIndex_8004dd20.get() != 5 && previousMainCallbackIndex_8004dd28.get() == 5) {
+    if(engineState_8004dd20 != EngineState.SUBMAP_05 && previousEngineState_8004dd28 == EngineState.SUBMAP_05) {
       sssqResetStuff();
       melbuSoundsLoaded_800bd780.set(false);
     }
 
     //LAB_8001978c
     //LAB_80019790
-    if(mainCallbackIndex_8004dd20.get() != 6 && previousMainCallbackIndex_8004dd28.get() == 6) {
+    if(engineState_8004dd20 != EngineState.COMBAT_06 && previousEngineState_8004dd28 == EngineState.COMBAT_06) {
       sssqResetStuff();
 
       //LAB_800197c0
@@ -2285,8 +2121,8 @@ public final class Scus94491BpeSegment {
 
     //LAB_80019824
     //LAB_80019828
-    switch(mainCallbackIndex_8004dd20.get()) {
-      case 2 -> { // ?
+    switch(engineState_8004dd20) {
+      case TITLE_02 -> {
         setMainVolume(0x7f, 0x7f);
         sssqResetStuff();
         FUN_8001aa90();
@@ -2300,7 +2136,7 @@ public final class Scus94491BpeSegment {
         }
       }
 
-      case 5 -> { // SMAP
+      case SUBMAP_05 -> {
         sssqResetStuff();
 
         if(!melbuSoundsLoaded_800bd780.get()) {
@@ -2309,7 +2145,7 @@ public final class Scus94491BpeSegment {
         }
       }
 
-      case 6 -> { // Combat
+      case COMBAT_06 -> {
         sssqResetStuff();
 
         //LAB_800198e8
@@ -2319,7 +2155,7 @@ public final class Scus94491BpeSegment {
         }
       }
 
-      case 15 -> { // ?
+      case _15 -> {
         FUN_8004d91c(true);
         stopMusicSequence(currentSequenceData_800bd0f8, 0);
         freeSequence(currentSequenceData_800bd0f8);
@@ -2327,26 +2163,26 @@ public final class Scus94491BpeSegment {
         sssqUnloadPlayableSound(soundFiles_800bcf80[0].playableSound_10);
       }
 
-      case 12 -> { // ?
+      case _12 -> {
         sssqResetStuff();
 
         //LAB_80019a00
         loadMusicPackage(60, 0);
       }
 
-      case 10 -> { // ?
+      case DISK_SWAP_10 -> {
         unloadSoundFile(0);
         sssqResetStuff();
       }
 
-      case 4, 7, 8, 9, 11 -> // ?, game over, wmap, fmv, credits
+      case THE_END_04, GAME_OVER_07, WORLD_MAP_08, FMV_09, CREDITS_11 ->
         sssqResetStuff();
     }
 
     //case 3, d, e
     //LAB_80019a20
     //LAB_80019a24
-    if(mainCallbackIndex_8004dd20.get() != 5) {
+    if(engineState_8004dd20 != EngineState.SUBMAP_05) {
       submapIndex_800bd808.set(-1);
     }
 
@@ -2373,14 +2209,14 @@ public final class Scus94491BpeSegment {
 
       case 8 -> {
         //LAB_80019bd4
-        if((loadedDrgnFiles_800bcf78.get() & 0x2L) != 0 || mainCallbackIndex_8004dd20.get() != 5) {
+        if((loadedDrgnFiles_800bcf78.get() & 0x2L) != 0 || engineState_8004dd20 != EngineState.SUBMAP_05) {
           return;
         }
       }
 
       case 9 -> {
         //LAB_80019bd4
-        if((loadedDrgnFiles_800bcf78.get() & 0x4L) != 0 || mainCallbackIndex_8004dd20.get() != 6) {
+        if((loadedDrgnFiles_800bcf78.get() & 0x4L) != 0 || engineState_8004dd20 != EngineState.COMBAT_06) {
           return;
         }
       }
@@ -2393,7 +2229,7 @@ public final class Scus94491BpeSegment {
 
       case 0xc -> {
         //LAB_80019bd4
-        if((loadedDrgnFiles_800bcf78.get() & 0x8000L) != 0 || mainCallbackIndex_8004dd20.get() != 8) {
+        if((loadedDrgnFiles_800bcf78.get() & 0x8000L) != 0 || engineState_8004dd20 != EngineState.WORLD_MAP_08) {
           return;
         }
       }
@@ -3541,7 +3377,7 @@ public final class Scus94491BpeSegment {
     sound.used_00 = true;
     sound.name = "Music package (file %d)".formatted(a2 >> 8);
 
-    if(mainCallbackIndex_8004dd20.get() == 5 || mainCallbackIndex_8004dd20.get() == 6 && encounterId_800bb0f8.get() == 443) { // Melbu
+    if(engineState_8004dd20 == EngineState.SUBMAP_05 || engineState_8004dd20 == EngineState.COMBAT_06 && encounterId_800bb0f8.get() == 443) { // Melbu
       //LAB_8001db1c
       _800bd0fc.setu(a2);
       sound.charId_02 = files.get(0).readShort(0);
@@ -3700,7 +3536,7 @@ public final class Scus94491BpeSegment {
     } else if(a0 == -1) {
       //LAB_8001e0f8
       if(savedGameSelected_800bdc34.get()) {
-        if(mainCallbackIndex_8004dd20.get() == 8 && gameState_800babc8.isOnWorldMap_4e4) {
+        if(engineState_8004dd20 == EngineState.WORLD_MAP_08 && gameState_800babc8.isOnWorldMap_4e4) {
           sssqResetStuff();
           unloadSoundFile(8);
           loadedDrgnFiles_800bcf78.oru(0x80L);
@@ -3711,8 +3547,8 @@ public final class Scus94491BpeSegment {
         unloadEncounterSoundEffects();
         unloadSoundFile(8);
 
-        final long callbackIndex = mainCallbackIndex_8004dd20.get();
-        if(callbackIndex == 5) {
+        final EngineState engineState = engineState_8004dd20;
+        if(engineState == EngineState.SUBMAP_05) {
           //LAB_8001e1ac
           final int musicIndex = getSubmapMusicChange();
           //LAB_8001e1dc
@@ -3737,10 +3573,10 @@ public final class Scus94491BpeSegment {
             loadedDrgnFiles_800bcf78.oru(0x80L);
             loadDrgnDir(0, fileIndex, files -> Scus94491BpeSegment.musicPackageLoadedCallback(files, fileIndex << 8));
           }
-        } else if(callbackIndex == 6) {
+        } else if(engineState == EngineState.COMBAT_06) {
           //LAB_8001e264
           sssqResetStuff();
-        } else if(callbackIndex == 8) {
+        } else if(engineState == EngineState.WORLD_MAP_08) {
           unloadSoundFile(8);
         }
       }

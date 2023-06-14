@@ -62,6 +62,7 @@ import legend.game.types.CharacterData2c;
 import legend.game.types.CreditStruct1c;
 import legend.game.types.DR_TPAGE;
 import legend.game.types.DustRenderData54;
+import legend.game.types.EngineState;
 import legend.game.types.EnvironmentFile;
 import legend.game.types.EnvironmentStruct;
 import legend.game.types.GsF_LIGHT;
@@ -96,6 +97,7 @@ import legend.game.types.UnknownStruct;
 import legend.game.types.UnknownStruct2;
 import legend.game.types.WeirdTimHeader;
 import legend.game.unpacker.FileData;
+import legend.game.unpacker.Unpacker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -110,7 +112,6 @@ import static legend.core.GameEngine.SCRIPTS;
 import static legend.core.MemoryHelper.getBiFunctionAddress;
 import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.SItem.loadCharacterStats;
-import static legend.game.Scus94491BpeSegment.reinitSound;
 import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
 import static legend.game.Scus94491BpeSegment.FUN_8001ada0;
 import static legend.game.Scus94491BpeSegment.FUN_8001ae90;
@@ -132,6 +133,7 @@ import static legend.game.Scus94491BpeSegment.memcpy;
 import static legend.game.Scus94491BpeSegment.orderingTableBits_1f8003c0;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static legend.game.Scus94491BpeSegment.rcos;
+import static legend.game.Scus94491BpeSegment.reinitSound;
 import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
@@ -191,10 +193,8 @@ import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrix_Zyx;
-import static legend.game.Scus94491BpeSegment_8004.diskNum_8004ddc0;
-import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndexOnceLoaded_8004dd24;
+import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
-import static legend.game.Scus94491BpeSegment_8004.setMainVolume;
 import static legend.game.Scus94491BpeSegment_8004.sssqFadeIn;
 import static legend.game.Scus94491BpeSegment_8005._80050274;
 import static legend.game.Scus94491BpeSegment_8005._800503f8;
@@ -207,33 +207,28 @@ import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c3c;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
-import static legend.game.Scus94491BpeSegment_8007.clearRed_8007a3a8;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
-import static legend.game.Scus94491BpeSegment_800b._800bb168;
-import static legend.game.Scus94491BpeSegment_800b._800bc05c;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b0;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b4;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b8;
 import static legend.game.Scus94491BpeSegment_800b._800bda08;
-import static legend.game.Scus94491BpeSegment_800b.input_800bee90;
-import static legend.game.Scus94491BpeSegment_800b.press_800bee94;
-import static legend.game.Scus94491BpeSegment_800b.repeat_800bee98;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
 import static legend.game.Scus94491BpeSegment_800b.afterFmvLoadingStage_800bf0ec;
-import static legend.game.Scus94491BpeSegment_800b.clearBlue_800babc0;
-import static legend.game.Scus94491BpeSegment_800b.clearGreen_800bb104;
 import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.fmvIndex_800bf0dc;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.hasNoEncounters_800bed58;
+import static legend.game.Scus94491BpeSegment_800b.input_800bee90;
 import static legend.game.Scus94491BpeSegment_800b.loadedDrgnFiles_800bcf78;
 import static legend.game.Scus94491BpeSegment_800b.matrix_800bed30;
 import static legend.game.Scus94491BpeSegment_800b.model_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.musicLoaded_800bd782;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
+import static legend.game.Scus94491BpeSegment_800b.press_800bee94;
 import static legend.game.Scus94491BpeSegment_800b.projectionPlaneDistance_800bd810;
+import static legend.game.Scus94491BpeSegment_800b.repeat_800bee98;
 import static legend.game.Scus94491BpeSegment_800b.rview2_800bd7e8;
 import static legend.game.Scus94491BpeSegment_800b.savedGameSelected_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.screenOffsetX_800bed50;
@@ -625,55 +620,6 @@ public final class SMap {
   public static final IntRef _800f9eac = MEMORY.ref(4, 0x800f9eacL, IntRef::new);
   public static final Value _800f9eb0 = MEMORY.ref(4, 0x800f9eb0L);
 
-  @Method(0x800d92a0L)
-  public static void swapDiskLoadingStage() {
-    LOGGER.info("Disk swap loading stage %d", pregameLoadingStage_800bb10c.get());
-
-    final int v1 = switch(pregameLoadingStage_800bb10c.get()) {
-      case 0 -> loadDiskSwapScreen();
-      case 1 -> FUN_800d96b8();
-      default -> throw new RuntimeException("Invalid stage");
-    };
-
-    if(v1 == 1) {
-      //LAB_800d930c
-      pregameLoadingStage_800bb10c.incr();
-    } else if(v1 == 2) {
-      //LAB_800d9320
-      mainCallbackIndexOnceLoaded_8004dd24.set(_800bc05c.get());
-      pregameLoadingStage_800bb10c.set(0);
-      vsyncMode_8007a3b8.set(2);
-    }
-
-    //LAB_800d9370
-    //LAB_800d9374
-    //LAB_800d93c4
-  }
-
-  @Method(0x800d93dcL)
-  public static int loadDiskSwapScreen() {
-    clearBlue_800babc0.set(0);
-    clearGreen_800bb104.set(0);
-    clearRed_8007a3a8.set(0);
-    setMainVolume(0, 0);
-    vsyncMode_8007a3b8.set(1);
-    return 1;
-  }
-
-  @Method(0x800d96b8L)
-  public static int FUN_800d96b8() {
-    //LAB_800d988c
-    drgnBinIndex_800bc058.set(diskNum_8004ddc0.get());
-
-    // Reload main sounds after disk swap?
-    reinitSound();
-    loadMenuSounds();
-    sssqFadeIn(0x3c, 0x7f);
-
-    //LAB_800d9a6c
-    return 2;
-  }
-
   @Method(0x800d9b08L)
   public static void FUN_800d9b08(final int charId) {
     loadCharacterStats();
@@ -760,7 +706,7 @@ public final class SMap {
 
     if(pregameLoadingStage_800bb10c.get() > 94) {
       fmvIndex_800bf0dc.setu(0x11L);
-      afterFmvLoadingStage_800bf0ec.set(4);
+      afterFmvLoadingStage_800bf0ec = EngineState.THE_END_04;
       pregameLoadingStage_800bb10c.set(0);
       vsyncMode_8007a3b8.set(2);
       Fmv.playCurrentFmv();
@@ -2958,7 +2904,7 @@ public final class SMap {
       }
 
       case 10 -> {
-        if(_800bb168.get() != 0 || _800c6aac.get() != 0) {
+        if(scriptEffect_800bb140.currentColour_28.get() != 0 || _800c6aac.get() != 0) {
           //LAB_800e1f24
           if(_800c6aac.get() != 0) {
             _800c6aac.subu(0x1L);
@@ -3986,7 +3932,7 @@ public final class SMap {
     _800c6ae0.addu(0x1L);
 
     if(gameState_800babc8.indicatorsDisabled_4e3) {
-      _800c6ae4.setu(-0x1eL);
+      _800c6ae4.setu(-30);
     }
 
     //LAB_800e5184
@@ -4093,10 +4039,9 @@ public final class SMap {
   }
 
   @Method(0x800e54a4L)
-  public static void newrootCallback_800e54a4(final long address, final int fileSize, final int param) {
+  public static void newrootCallback_800e54a4(final FileData data) {
     newrootPtr_800cab04.set(newroot_800c6af0);
-    memcpy(newroot_800c6af0.getAddress(), address, fileSize);
-    free(address);
+    MEMORY.setBytes(newroot_800c6af0.getAddress(), data.getBytes());
     FUN_800e6640(newrootPtr_800cab04.deref());
     newrootLoaded_800cab1c.setu(0x1L);
   }
@@ -4141,7 +4086,7 @@ public final class SMap {
 
     if(newCut > 0x7ff) {
       fmvIndex_800bf0dc.setu(newCut - 0x800L);
-      afterFmvLoadingStage_800bf0ec.set(newScene);
+      afterFmvLoadingStage_800bf0ec = EngineState.values()[newScene];
       smapLoadingStage_800cb430.setu(0x15L);
       _800f7e4c.setu(0x1L);
       return 1;
@@ -4320,7 +4265,7 @@ public final class SMap {
 
       case 0x1 -> { // Load newroot
         newrootLoaded_800cab1c.setu(0);
-        loadFile(_80052c4c, 0, SMap::newrootCallback_800e54a4, 0x62, 0);
+        loadFile(_80052c4c.name_04.deref().get(), SMap::newrootCallback_800e54a4);
         smapLoadingStage_800cb430.setu(0x2L);
       }
 
@@ -4340,10 +4285,12 @@ public final class SMap {
         getDrgnFileFromNewRoot(submapCut_80052c30.get(), drgnIndex, fileIndex);
         if(drgnIndex.get() != drgnBinIndex_800bc058.get()) {
           //LAB_800e5c9c
-          diskNum_8004ddc0.set(drgnIndex.get());
-          _800bc05c.set(5);
-          smapLoadingStage_800cb430.setu(0x16L);
-          break;
+          drgnBinIndex_800bc058.set(drgnIndex.get());
+
+          // Not sure if we still need to reinit the sound or not, but this is what retail did
+          reinitSound();
+          loadMenuSounds();
+          sssqFadeIn(0x3c, 0x7f);
         }
 
         //LAB_800e5ccc
@@ -4555,7 +4502,7 @@ public final class SMap {
 
         //LAB_800e62cc
         if(a0) {
-          mainCallbackIndexOnceLoaded_8004dd24.set(8);
+          engineStateOnceLoaded_8004dd24 = EngineState.WORLD_MAP_08;
           pregameLoadingStage_800bb10c.set(0);
           vsyncMode_8007a3b8.set(2);
           _80052c44.setu(0x5L);
@@ -4567,7 +4514,7 @@ public final class SMap {
       case 0x13 -> {
         FUN_800e5104(_800caaf8.get(), _800cab24.deref());
         _80052c44.setu(0x5L);
-        mainCallbackIndexOnceLoaded_8004dd24.set(6);
+        engineStateOnceLoaded_8004dd24 = EngineState.COMBAT_06;
         pregameLoadingStage_800bb10c.set(0);
         vsyncMode_8007a3b8.set(2);
         _800f7e4c.setu(0);
@@ -4592,7 +4539,7 @@ public final class SMap {
         //LAB_800e6458
         if(a0) {
           FUN_8002a9c0();
-          mainCallbackIndexOnceLoaded_8004dd24.set(2);
+          engineStateOnceLoaded_8004dd24 = EngineState.TITLE_02;
           vsyncMode_8007a3b8.set(2);
           pregameLoadingStage_800bb10c.set(0);
 
@@ -4630,15 +4577,8 @@ public final class SMap {
         }
       }
 
-      case 0x16 -> {
-        mainCallbackIndexOnceLoaded_8004dd24.set(10);
-        vsyncMode_8007a3b8.set(2);
-        _80052c44.setu(0x1L);
-        pregameLoadingStage_800bb10c.set(0);
-      }
-
       case 0x17 -> {
-        mainCallbackIndexOnceLoaded_8004dd24.set(2);
+        engineStateOnceLoaded_8004dd24 = EngineState.TITLE_02;
         vsyncMode_8007a3b8.set(2);
         pregameLoadingStage_800bb10c.set(0);
       }
@@ -6545,7 +6485,7 @@ public final class SMap {
   public static void deallocateCreditsAndReturnToMenu() {
     //LAB_800eaedc
     creditTims_800d1ae0 = null;
-    mainCallbackIndexOnceLoaded_8004dd24.set(5);
+    engineStateOnceLoaded_8004dd24 = EngineState.SUBMAP_05;
     pregameLoadingStage_800bb10c.set(0);
     vsyncMode_8007a3b8.set(2);
 
@@ -9326,7 +9266,7 @@ public final class SMap {
       return;
     }
 
-    if(_800bb168.get() != 0) {
+    if(scriptEffect_800bb140.currentColour_28.get() != 0) {
       return;
     }
 

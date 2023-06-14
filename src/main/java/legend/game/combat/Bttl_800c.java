@@ -79,6 +79,7 @@ import legend.game.scripting.ScriptState;
 import legend.game.tim.Tim;
 import legend.game.types.CContainer;
 import legend.game.types.CharacterData2c;
+import legend.game.types.EngineState;
 import legend.game.types.GsF_LIGHT;
 import legend.game.types.LodString;
 import legend.game.types.McqHeader;
@@ -144,7 +145,7 @@ import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
-import static legend.game.Scus94491BpeSegment_8004.previousMainCallbackIndex_8004dd28;
+import static legend.game.Scus94491BpeSegment_8004.previousEngineState_8004dd28;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
 import static legend.game.Scus94491BpeSegment_8004.sssqFadeOut;
 import static legend.game.Scus94491BpeSegment_8005.combatants_8005e398;
@@ -154,14 +155,10 @@ import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_8007.clearRed_8007a3a8;
 import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
-import static legend.game.Scus94491BpeSegment_800b._800bb168;
-import static legend.game.Scus94491BpeSegment_800b._800bc910;
-import static legend.game.Scus94491BpeSegment_800b._800bc914;
-import static legend.game.Scus94491BpeSegment_800b._800bc918;
-import static legend.game.Scus94491BpeSegment_800b._800bc94c;
+import static legend.game.Scus94491BpeSegment_800b.battleLoaded_800bc94c;
 import static legend.game.Scus94491BpeSegment_800b._800bc960;
-import static legend.game.Scus94491BpeSegment_800b._800bc968;
-import static legend.game.Scus94491BpeSegment_800b._800bc97c;
+import static legend.game.Scus94491BpeSegment_800b.livingCharIds_800bc968;
+import static legend.game.Scus94491BpeSegment_800b.livingCharCount_800bc97c;
 import static legend.game.Scus94491BpeSegment_800b.afterFmvLoadingStage_800bf0ec;
 import static legend.game.Scus94491BpeSegment_800b.clearBlue_800babc0;
 import static legend.game.Scus94491BpeSegment_800b.clearGreen_800bb104;
@@ -175,9 +172,11 @@ import static legend.game.Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc92
 import static legend.game.Scus94491BpeSegment_800b.postBattleAction_800bc974;
 import static legend.game.Scus94491BpeSegment_800b.postCombatMainCallbackIndex_800bc91c;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
+import static legend.game.Scus94491BpeSegment_800b.scriptEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.spGained_800bc950;
 import static legend.game.Scus94491BpeSegment_800b.totalXpFromCombat_800bc95c;
+import static legend.game.Scus94491BpeSegment_800b.unlockedUltimateAddition_800bc910;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.combat.Bttl_800d.FUN_800dabec;
@@ -833,9 +832,7 @@ public final class Bttl_800c {
     FUN_800c8624();
 
     gameState_800babc8._b4++;
-    _800bc910.setu(0);
-    _800bc914.setu(0);
-    _800bc918.setu(0);
+    Arrays.fill(unlockedUltimateAddition_800bc910, false);
     goldGainedFromCombat_800bc920.set(0);
 
     spGained_800bc950.get(0).set(0);
@@ -900,7 +897,7 @@ public final class Bttl_800c {
   public static void battleInitiateAndPreload_800c772c() {
     FUN_800c8e48();
 
-    _800bc94c.setu(0x1L);
+    battleLoaded_800bc94c.set(true);
 
     scriptStartEffect(4, 30);
 
@@ -1162,11 +1159,11 @@ public final class Bttl_800c {
 
       //LAB_800c80c8
       final int aliveCharBobjs = aliveCharCount_800c6760.get();
-      _800bc97c.setu(aliveCharBobjs);
+      livingCharCount_800bc97c.set(aliveCharBobjs);
 
       //LAB_800c8104
       for(int i = 0; i < aliveCharBobjs; i++) {
-        _800bc968.offset(i * 0x4L).setu(battleState_8006e398.aliveCharBobjs_eac[i].innerStruct_00.charId_272);
+        livingCharIds_800bc968.get(i).set(battleState_8006e398.aliveCharBobjs_eac[i].innerStruct_00.charId_272);
       }
 
       //LAB_800c8144
@@ -1188,7 +1185,7 @@ public final class Bttl_800c {
       decrementOverlayCount();
       loadSupportOverlay(2, Scus94491BpeSegment::decrementOverlayCount);
 
-      if(_800bb168.get() == 0) {
+      if(scriptEffect_800bb140.currentColour_28.get() == 0) {
         scriptStartEffect(1, (int)_800fa6d0.offset(postBattleAction * 0x2L).getSigned());
       }
 
@@ -1207,7 +1204,7 @@ public final class Bttl_800c {
 
   @Method(0x800c82b8L)
   public static void deallocateCombat() {
-    if(_800bb168.get() == 0xffL) {
+    if(scriptEffect_800bb140.currentColour_28.get() == 0xff) {
       updateGameStateAndDeallocateMenu();
       setStageHasNoModel();
 
@@ -1252,9 +1249,9 @@ public final class Bttl_800c {
       deallocateStageDarkeningStorage();
       FUN_800c8748();
 
-      int postCombatMainCallbackIndex = previousMainCallbackIndex_8004dd28.get();
-      if(postCombatMainCallbackIndex == 9) { // FMV
-        postCombatMainCallbackIndex = 5; // SMAP
+      EngineState postCombatMainCallbackIndex = previousEngineState_8004dd28;
+      if(postCombatMainCallbackIndex == EngineState.FMV_09) {
+        postCombatMainCallbackIndex = EngineState.SUBMAP_05;
       }
 
       //LAB_800c84b4
@@ -1266,19 +1263,19 @@ public final class Bttl_800c {
             gameState_800babc8.scriptFlags2_bc[0x1d] |= 0x800_0000; // Died in arena fight
           } else {
             //LAB_800c8534
-            postCombatMainCallbackIndex = 7; // Game over screen
+            postCombatMainCallbackIndex = EngineState.GAME_OVER_07;
           }
         }
 
         case 4 -> {
           fmvIndex_800bf0dc.setu(0x10L);
-          afterFmvLoadingStage_800bf0ec.set(11);
+          afterFmvLoadingStage_800bf0ec = EngineState.CREDITS_11;
           Fmv.playCurrentFmv();
         }
       }
 
       //LAB_800c8558
-      postCombatMainCallbackIndex_800bc91c.set(postCombatMainCallbackIndex);
+      postCombatMainCallbackIndex_800bc91c = postCombatMainCallbackIndex;
 
       final int postCombatSubmapStage = (int)_800c6718.offset(0xcL).get();
       if(postCombatSubmapStage != 0xff) {
@@ -1293,7 +1290,7 @@ public final class Bttl_800c {
 
       //LAB_800c8590
       setDepthResolution(14);
-      _800bc94c.setu(0);
+      battleLoaded_800bc94c.set(false);
 
       switch(postBattleAction_800bc974.get()) {
         case 1, 3 -> whichMenu_800bdc38 = WhichMenu.INIT_POST_COMBAT_REPORT_26;
@@ -3255,7 +3252,7 @@ public final class Bttl_800c {
 
       //LAB_800cd2ac
       int nonMaxedAdditions = additionCounts_8004f5c0.get(charIndex).get();
-      int firstNonMaxAdditionIndex = -1;
+      int lastNonMaxAdditionIndex = -1;
 
       // Find the first addition that isn't already maxed out
       //LAB_800cd2ec
@@ -3264,22 +3261,23 @@ public final class Bttl_800c {
           nonMaxedAdditions--;
         } else {
           //LAB_800cd308
-          firstNonMaxAdditionIndex = additionIndex2;
+          lastNonMaxAdditionIndex = additionIndex2;
         }
 
         //LAB_800cd30c
       }
 
+      // If there's only one addition that isn't maxed (the ultimate addition), unlock it
       //LAB_800cd31c
       if(nonMaxedAdditions < 2 && (charData.partyFlags_04 & 0x40) == 0) {
         charData.partyFlags_04 |= 0x40;
 
-        if(firstNonMaxAdditionIndex >= 0) {
-          charData.additionLevels_1a[firstNonMaxAdditionIndex] = 1;
+        if(lastNonMaxAdditionIndex >= 0) {
+          charData.additionLevels_1a[lastNonMaxAdditionIndex] = 1;
         }
 
         //LAB_800cd36c
-        _800bc910.offset(bobj.charSlot_276 * 0x4L).setu(0x1L);
+        unlockedUltimateAddition_800bc910[bobj.charSlot_276] = true;
       }
 
       //LAB_800cd390

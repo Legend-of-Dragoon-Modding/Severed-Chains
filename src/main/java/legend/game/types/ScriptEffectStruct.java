@@ -17,6 +17,7 @@ public class ScriptEffectStruct implements MemoryRef {
   public final IntRef green0_1c;
   public final IntRef red0_20;
   public final IntRef _24;
+  public final IntRef currentColour_28;
 
   public ScriptEffectStruct(final Value ref) {
     this.ref = ref;
@@ -31,6 +32,7 @@ public class ScriptEffectStruct implements MemoryRef {
     this.green0_1c = ref.offset(4, 0x1cL).cast(IntRef::new);
     this.red0_20 = ref.offset(4, 0x20L).cast(IntRef::new);
     this._24 = ref.offset(4, 0x24L).cast(IntRef::new);
+    this.currentColour_28 = ref.offset(4, 0x28L).cast(IntRef::new);
   }
 
   @Override

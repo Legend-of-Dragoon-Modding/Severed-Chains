@@ -35,6 +35,7 @@ import legend.game.tmd.Renderer;
 import legend.game.types.CContainer;
 import legend.game.types.CoolonWarpDestination20;
 import legend.game.types.Coord2AndThenSomeStruct_60;
+import legend.game.types.EngineState;
 import legend.game.types.GsF_LIGHT;
 import legend.game.types.LodString;
 import legend.game.types.McqHeader;
@@ -109,8 +110,8 @@ import static legend.game.Scus94491BpeSegment_8003.perspectiveTransformTriple;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
 import static legend.game.Scus94491BpeSegment_8004.FUN_80040e40;
-import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndexOnceLoaded_8004dd24;
-import static legend.game.Scus94491BpeSegment_8004.previousMainCallbackIndex_8004dd28;
+import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
+import static legend.game.Scus94491BpeSegment_8004.previousEngineState_8004dd28;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
 import static legend.game.Scus94491BpeSegment_8005._80052c6c;
 import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
@@ -661,7 +662,7 @@ public class WMap {
     FUN_800cd278();
 
     _80052c6c.setu(0);
-    mainCallbackIndexOnceLoaded_8004dd24.set(5);
+    engineStateOnceLoaded_8004dd24 = EngineState.SUBMAP_05;
     pregameLoadingStage_800bb10c.set(0);
     vsyncMode_8007a3b8.set(2);
   }
@@ -678,7 +679,7 @@ public class WMap {
     FUN_800cd278();
 
     _80052c6c.setu(0);
-    mainCallbackIndexOnceLoaded_8004dd24.set(6);
+    engineStateOnceLoaded_8004dd24 = EngineState.COMBAT_06;
     pregameLoadingStage_800bb10c.set(0);
     vsyncMode_8007a3b8.set(2);
   }
@@ -3685,7 +3686,7 @@ public class WMap {
           submapCut_80052c30.set(mapState_800c6798.submapCut_c8);
           index_80052c38.set(mapState_800c6798.submapScene_ca);
           struct258._250 = 3;
-          previousMainCallbackIndex_8004dd28.set(-1);
+          previousEngineState_8004dd28 = null;
         }
 
         //LAB_800dba98
@@ -5881,7 +5882,7 @@ public class WMap {
 
     mapState_800c6798._d8 = 0;
 
-    boolean sp2c = previousMainCallbackIndex_8004dd28.get() == 6 && mapState_800c6798.submapCut_c4 != 999;
+    boolean sp2c = previousEngineState_8004dd28 == EngineState.COMBAT_06 && mapState_800c6798.submapCut_c4 != 999;
 
     //LAB_800e7e2c
     if(mapState_800c6798._c6 == 31 && mapState_800c6798.submapCut_c4 == 279) {
@@ -5966,7 +5967,7 @@ public class WMap {
     }
 
     //LAB_800e8464
-    if(previousMainCallbackIndex_8004dd28.get() == 6 && mapState_800c6798.submapCut_c4 == 999) {
+    if(previousEngineState_8004dd28 == EngineState.COMBAT_06 && mapState_800c6798.submapCut_c4 == 999) {
       submapCut_80052c30.set(0);
     }
 

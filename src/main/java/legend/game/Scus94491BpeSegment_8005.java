@@ -14,7 +14,6 @@ import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.sound.Pan;
 import legend.game.sound.ReverbConfigAndLocation;
 import legend.game.types.AdditionData0e;
-import legend.game.types.DeferredReallocOrFree0c;
 import legend.game.types.FileEntry08;
 import legend.game.types.LoadingOverlay;
 import legend.game.types.LodString;
@@ -105,8 +104,6 @@ public final class Scus94491BpeSegment_8005 {
 
   public static final Value atanTable_80058d0c = MEMORY.ref(2, 0x80058d0cL);
 
-  public static final Value _8005967c = MEMORY.ref(2, 0x8005967cL);
-
   public static final Value _80059b3c = MEMORY.ref(1, 0x80059b3cL);
 
   public static final ArrayRef<Pan> panVolume_80059f3c = MEMORY.ref(1, 0x80059f3cL, ArrayRef.of(Pan.class, 32, 2, Pan::new));
@@ -121,7 +118,6 @@ public final class Scus94491BpeSegment_8005 {
 
   public static final Value _8005a1d8 = MEMORY.ref(4, 0x8005a1d8L);
 
-  public static final ArrayRef<DeferredReallocOrFree0c> deferredReallocOrFree_8005a1e0 = MEMORY.ref(4, 0x8005a1e0L, ArrayRef.of(DeferredReallocOrFree0c.class, 16, 0xc, DeferredReallocOrFree0c::new));
   public static final Value heapHead_8005a2a0 = MEMORY.ref(4, 0x8005a2a0L);
   public static final Value heapTail_8005a2a4 = MEMORY.ref(4, 0x8005a2a4L);
   public static LoadingOverlay loadingOverlay_8005a2a8;

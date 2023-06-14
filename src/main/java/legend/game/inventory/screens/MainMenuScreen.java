@@ -8,6 +8,7 @@ import legend.game.inventory.screens.controls.DragoonSpirits;
 import legend.game.inventory.screens.controls.Glyph;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
+import legend.game.types.EngineState;
 import legend.game.types.LodString;
 
 import javax.annotation.Nullable;
@@ -31,14 +32,14 @@ import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.getTimestampPart;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
-import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
-import static legend.game.Scus94491BpeSegment_800b._800bb168;
+import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment_800b.continentIndex_800bf0b0;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba4;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba8;
 import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
+import static legend.game.Scus94491BpeSegment_800b.scriptEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.submapIndex_800bd808;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 
@@ -193,7 +194,7 @@ public class MainMenuScreen extends MenuScreen {
       case 101 -> {
         this.renderInventoryMenu(0);
 
-        if(_800bb168.get() >= 0xff) {
+        if(scriptEffect_800bb140.currentColour_28.get() >= 0xff) {
           this.unload.run();
         }
       }
@@ -215,7 +216,7 @@ public class MainMenuScreen extends MenuScreen {
     renderCentredText(chapterNames_80114248.get(gameState_800babc8.chapterIndex_98).deref(), 94, 24, TextColour.BROWN);
 
     final LodString name;
-    if(mainCallbackIndex_8004dd20.get() == 5) {
+    if(engineState_8004dd20 == EngineState.SUBMAP_05) {
       name = submapNames_8011c108.get(submapIndex_800bd808.get()).deref();
     } else {
       name = worldMapNames_8011c1ec.get(continentIndex_800bf0b0.get()).deref();

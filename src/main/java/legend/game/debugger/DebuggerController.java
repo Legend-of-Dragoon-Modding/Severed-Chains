@@ -16,6 +16,7 @@ import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.EventListener;
 import legend.game.modding.events.config.ConfigLoadedEvent;
 import legend.game.modding.events.config.ConfigUpdatedEvent;
+import legend.game.types.EngineState;
 import legend.game.wmap.WMapAreaData08;
 
 import static legend.core.GameEngine.CONFIG;
@@ -23,7 +24,7 @@ import static legend.core.GameEngine.EVENTS;
 import static legend.game.SMap.FUN_800e5534;
 import static legend.game.SMap.encounterData_800f64c4;
 import static legend.game.SMap.smapLoadingStage_800cb430;
-import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
+import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
@@ -309,14 +310,14 @@ public class DebuggerController {
   private void startEncounter(final ActionEvent event) {
     encounterId_800bb0f8.set(this.encounterId.getValue());
 
-    if(mainCallbackIndex_8004dd20.get() == 5) {
+    if(engineState_8004dd20 == EngineState.SUBMAP_05) {
       if(Config.combatStage()) {
         combatStage_800bb0f4.set(Config.getCombatStage());
       } else {
         combatStage_800bb0f4.set(encounterData_800f64c4.get(submapCut_80052c30.get()).stage_03.get());
       }
       FUN_800e5534(-1, 0);
-    } else if(mainCallbackIndex_8004dd20.get() == 8) {
+    } else if(engineState_8004dd20 == EngineState.WORLD_MAP_08) {
       final WMapAreaData08 area = areaData_800f2248.get(mapState_800c6798.areaIndex_12);
 
       if(Config.combatStage()) {

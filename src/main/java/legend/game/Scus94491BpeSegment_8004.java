@@ -9,7 +9,6 @@ import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BoolRef;
-import legend.core.memory.types.IntRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.ShortRef;
@@ -36,6 +35,7 @@ import legend.game.sound.Sssqish;
 import legend.game.sound.VolumeRamp;
 import legend.game.title.Ttle;
 import legend.game.types.CallbackStruct;
+import legend.game.types.EngineState;
 import legend.game.types.FileEntry08;
 import legend.game.types.ItemStats0c;
 import legend.game.types.MoonMusic08;
@@ -56,8 +56,8 @@ import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SEQUENCER;
 import static legend.core.GameEngine.SPU;
-import static legend.game.Scus94491BpeSegment_8005.reverbConfigs_80059f7c;
 import static legend.game.Scus94491BpeSegment_8005.atanTable_80058d0c;
+import static legend.game.Scus94491BpeSegment_8005.reverbConfigs_80059f7c;
 import static legend.game.Scus94491BpeSegment_8005.sin_cos_80054d0c;
 import static legend.game.Scus94491BpeSegment_800c.patchList_800c4abc;
 import static legend.game.Scus94491BpeSegment_800c.playableSounds_800c43d0;
@@ -82,7 +82,7 @@ public final class Scus94491BpeSegment_8004 {
   /**
    * <ol start="0">
    *   <li>{@link Scus94491BpeSegment_800e#preload()}</li>
-   *   <li>{@link Scus94491BpeSegment_800e#finalizePregameLoading()}</li>
+   *   <li>finalizePregameLoading</li>
    *   <li>{@link Ttle#executeTtleLoadingStage()}</li>
    *   <li>{@link Ttle#executeTtleUnloadingStage()}</li>
    *   <li>{@link SMap#theEnd}</li>
@@ -91,7 +91,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link Ttle#gameOver()}</li>
    *   <li>{@link WMap#FUN_800cc738()}</li>
    *   <li>{@link SMap#startFmvLoadingStage()}</li>
-   *   <li>{@link SMap#swapDiskLoadingStage()}</li>
+   *   <li>swapDiskLoadingStage</li>
    *   <li>{@link SMap#FUN_800d9e08()}</li>
    *   <li>0x800c6eb8 (TODO)</li>
    *   <li>0x800cab8c (TODO)</li>
@@ -105,7 +105,6 @@ public final class Scus94491BpeSegment_8004 {
    */
   public static final ArrayRef<CallbackStruct> gameStateCallbacks_8004dbc0 = MEMORY.ref(4, 0x8004dbc0L, ArrayRef.of(CallbackStruct.class, 20, 0x10, CallbackStruct::new));
 
-  public static final IntRef _8004dd00 = MEMORY.ref(4, 0x8004dd00L, IntRef::new);
   public static final Pointer<FileEntry08> currentlyLoadingFileEntry_8004dd04 = MEMORY.ref(4, 0x8004dd04L, Pointer.deferred(4, FileEntry08::new));
   public static final Value loadingGameStateOverlay_8004dd08 = MEMORY.ref(4, 0x8004dd08L);
   public static final Value _8004dd0c = MEMORY.ref(4, 0x8004dd0cL);
@@ -123,11 +122,11 @@ public final class Scus94491BpeSegment_8004 {
    *   <li value="11">Credits?</li>
    * </ol>
    */
-  public static final IntRef mainCallbackIndex_8004dd20 = MEMORY.ref(4, 0x8004dd20L, IntRef::new);
+  public static EngineState engineState_8004dd20 = EngineState.PRELOAD_00;
   /** When the overlay finishes loading, switch to this */
-  public static final IntRef mainCallbackIndexOnceLoaded_8004dd24 = MEMORY.ref(4, 0x8004dd24L, IntRef::new);
-  /** The previous index before the file finished loading */
-  public static final IntRef previousMainCallbackIndex_8004dd28 = MEMORY.ref(4, 0x8004dd28L, IntRef::new);
+  public static EngineState engineStateOnceLoaded_8004dd24 = EngineState.PRELOAD_00;
+  /** The previous state before the file finished loading */
+  public static EngineState previousEngineState_8004dd28;
 
   public static int width_8004dd34 = 320;
   public static int height_8004dd34 = 240;
@@ -138,9 +137,6 @@ public final class Scus94491BpeSegment_8004 {
   public static Runnable swapDisplayBuffer_8004dd40;
   public static final Value simpleRandSeed_8004dd44 = MEMORY.ref(4, 0x8004dd44L);
   public static final Value _8004dd48 = MEMORY.ref(2, 0x8004dd48L);
-
-  /** The current disk number, 1-indexed */
-  public static final IntRef diskNum_8004ddc0 = MEMORY.ref(4, 0x8004ddc0L, IntRef::new);
 
   public static final BoolRef preloadingAudioAssets_8004ddcc = MEMORY.ref(1, 0x8004ddccL, BoolRef::new);
 

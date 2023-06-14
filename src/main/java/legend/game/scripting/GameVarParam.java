@@ -12,6 +12,7 @@ import legend.game.combat.bobj.MonsterBattleObject;
 import legend.game.combat.bobj.PlayerBattleObject;
 import legend.game.combat.effects.TransformationMode;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.types.EngineState;
 import legend.game.types.SubmapObject210;
 
 import static legend.core.GameEngine.CONFIG;
@@ -27,7 +28,7 @@ public class GameVarParam extends Param {
   @Override
   public int get() {
     return switch(this.index) {
-      case 0 -> Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20.get();
+      case 0 -> Scus94491BpeSegment_8004.engineState_8004dd20.ordinal();
       case 1 -> Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c.get();
       case 2 -> Scus94491BpeSegment_800b.tickCount_800bb0fc.get();
       case 3 -> Scus94491BpeSegment_800b.input_800bee90.get();
@@ -37,7 +38,7 @@ public class GameVarParam extends Param {
       case 7 -> Scus94491BpeSegment_8007.clearRed_8007a3a8.get();
       case 8 -> Scus94491BpeSegment_800b.clearGreen_800bb104.get();
       case 9 -> Scus94491BpeSegment_800b.clearBlue_800babc0.get();
-      case 10 -> Scus94491BpeSegment_800b._800bb168.get();
+      case 10 -> Scus94491BpeSegment_800b.scriptEffect_800bb140.currentColour_28.get();
       case 11 -> Scus94491BpeSegment_800b.scriptEffect_800bb140.red0_20.get();
       case 12 -> Scus94491BpeSegment_800b.scriptEffect_800bb140.green0_1c.get();
       case 13 -> Scus94491BpeSegment_800b.scriptEffect_800bb140.blue0_14.get();
@@ -158,7 +159,7 @@ public class GameVarParam extends Param {
   @Override
   public Param set(final int val) {
     switch(this.index) {
-      case 0 -> Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20.set(val);
+      case 0 -> Scus94491BpeSegment_8004.engineState_8004dd20 = EngineState.values()[val];
       case 1 -> Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c.set(val);
       case 2 -> Scus94491BpeSegment_800b.tickCount_800bb0fc.set(val);
       case 3 -> Scus94491BpeSegment_800b.input_800bee90.set(val);
@@ -168,7 +169,7 @@ public class GameVarParam extends Param {
       case 7 -> Scus94491BpeSegment_8007.clearRed_8007a3a8.set(val);
       case 8 -> Scus94491BpeSegment_800b.clearGreen_800bb104.set(val);
       case 9 -> Scus94491BpeSegment_800b.clearBlue_800babc0.set(val);
-      case 10 -> Scus94491BpeSegment_800b._800bb168.set(val);
+      case 10 -> Scus94491BpeSegment_800b.scriptEffect_800bb140.currentColour_28.set(val);
       case 11 -> Scus94491BpeSegment_800b.scriptEffect_800bb140.red0_20.set(val);
       case 12 -> Scus94491BpeSegment_800b.scriptEffect_800bb140.green0_1c.set(val);
       case 13 -> Scus94491BpeSegment_800b.scriptEffect_800bb140.blue0_14.set(val);

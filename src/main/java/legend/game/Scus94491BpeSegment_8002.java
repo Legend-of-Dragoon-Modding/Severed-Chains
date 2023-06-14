@@ -47,6 +47,7 @@ import legend.game.tmd.Renderer;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CContainer;
 import legend.game.types.CharacterData2c;
+import legend.game.types.EngineState;
 import legend.game.types.InventoryMenuState;
 import legend.game.types.ItemStats0c;
 import legend.game.types.LodString;
@@ -151,7 +152,7 @@ import static legend.game.Scus94491BpeSegment_8004.RotMatrix_Zyx;
 import static legend.game.Scus94491BpeSegment_8004.freeSequence;
 import static legend.game.Scus94491BpeSegment_8004.itemStats_8004f2ac;
 import static legend.game.Scus94491BpeSegment_8004.loadingGameStateOverlay_8004dd08;
-import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
+import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment_8004.stopMusicSequence;
 import static legend.game.Scus94491BpeSegment_8005._8005027c;
 import static legend.game.Scus94491BpeSegment_8005._8005039c;
@@ -370,7 +371,7 @@ public final class Scus94491BpeSegment_8002 {
     model.tmd_8c = tmd;
     model.tmdNobj_ca = tmd.header.nobj;
 
-    if(mainCallbackIndex_8004dd20.get() == 5) { // SMAP
+    if(engineState_8004dd20 == EngineState.SUBMAP_05) {
       FUN_800de004(model, cContainer);
     }
 
@@ -437,7 +438,7 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80020b98L)
   public static void animateModel(final Model124 model) {
-    if(mainCallbackIndex_8004dd20.get() == 5) { // SMAP
+    if(engineState_8004dd20 == EngineState.SUBMAP_05) {
       FUN_800da114(model);
       return;
     }
@@ -537,7 +538,7 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80020ed8L)
   public static void FUN_80020ed8() {
-    if(_800bdb88.get() == 5) {
+    if(_800bdb88 == EngineState.SUBMAP_05) {
       if(loadingGameStateOverlay_8004dd08.get() == 0) {
         if(_800bd7b4.get() == 0x1L) {
           FUN_800e4708();
@@ -551,28 +552,28 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_80020f30
     //LAB_80020f34
-    final int a0 = _800bdb88.get();
+    final EngineState a0 = _800bdb88;
     _800bd7b4.setu(0);
-    if(a0 != mainCallbackIndex_8004dd20.get()) {
-      _800bd80c.setu(a0);
-      _800bdb88.set(mainCallbackIndex_8004dd20.get());
+    if(a0 != engineState_8004dd20) {
+      _800bd80c = a0;
+      _800bdb88 = engineState_8004dd20;
 
-      if(mainCallbackIndex_8004dd20.get() == 5) {
+      if(engineState_8004dd20 == EngineState.SUBMAP_05) {
         _800bd7b0.set(2);
         _800bd7b8.setu(0);
 
-        if(a0 == 0x2L) {
+        if(a0 == EngineState.TITLE_02) {
           _800bd7b0.set(9);
         }
 
         //LAB_80020f84
-        if(a0 == 0x6L) {
+        if(a0 == EngineState.COMBAT_06) {
           _800bd7b0.set(-4);
           _800bd7b8.setu(0x1L);
         }
 
         //LAB_80020fa4
-        if(a0 == 0x8L) {
+        if(a0 == EngineState.WORLD_MAP_08) {
           _800bd7b0.set(3);
         }
       }
@@ -580,7 +581,7 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_80020fb4
     //LAB_80020fb8
-    if(_800bdb88.get() == 2) {
+    if(_800bdb88 == EngineState.TITLE_02) {
       _800bd7ac.setu(0x1L);
     }
 
@@ -629,13 +630,13 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x800211d8L)
   public static void renderModel(final Model124 model) {
-    if(mainCallbackIndex_8004dd20.get() == 5) {
+    if(engineState_8004dd20 == EngineState.SUBMAP_05) {
       //LAB_80021230
       renderSmapModel(model);
-    } else if(mainCallbackIndex_8004dd20.get() == 6) {
+    } else if(engineState_8004dd20 == EngineState.COMBAT_06) {
       //LAB_80021220
       renderBttlModel(model);
-    } else if(mainCallbackIndex_8004dd20.get() == 8) {
+    } else if(engineState_8004dd20 == EngineState.WORLD_MAP_08) {
       //LAB_8002120c
       //LAB_80021240
       renderWmapModel(model);
@@ -646,20 +647,20 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80021258L)
   public static void renderDobj2(final GsDOBJ2 dobj2) {
-    if(mainCallbackIndex_8004dd20.get() == 5) {
+    if(engineState_8004dd20 == EngineState.SUBMAP_05) {
       //LAB_800212b0
       Renderer.renderDobj2(dobj2, false, 0);
       return;
     }
 
-    if(mainCallbackIndex_8004dd20.get() == 6) {
+    if(engineState_8004dd20 == EngineState.COMBAT_06) {
       //LAB_800212a0
       Renderer.renderDobj2(dobj2, true, 0);
       return;
     }
 
     //LAB_8002128c
-    if(mainCallbackIndex_8004dd20.get() == 8) {
+    if(engineState_8004dd20 == EngineState.WORLD_MAP_08) {
       //LAB_800212c0
       Renderer.renderDobj2(dobj2, false, 0);
     }
@@ -757,11 +758,11 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80021628L)
   public static void adjustModelUvs(final Model124 model) {
-    if(mainCallbackIndex_8004dd20.get() == 5) { // SMAP
+    if(engineState_8004dd20 == EngineState.SUBMAP_05) {
       for(int i = 0; i < model.ObjTable_0c.nobj; i++) {
         adjustSmapUvs(model.ObjTable_0c.top[i], model.colourMap_9d);
       }
-    } else if(mainCallbackIndex_8004dd20.get() == 8) { // WMAP
+    } else if(engineState_8004dd20 == EngineState.WORLD_MAP_08) {
       for(int i = 0; i < model.ObjTable_0c.nobj; i++) {
         adjustWmapUvs(model.ObjTable_0c.top[i], model.colourMap_9d);
       }
@@ -774,15 +775,15 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80021724L)
   public static void FUN_80021724(final Model124 model) {
-    final int v1 = mainCallbackIndex_8004dd20.get();
-    if(v1 == 5) {
+    final EngineState state = engineState_8004dd20;
+    if(state == EngineState.SUBMAP_05) {
       //LAB_8002177c
       FUN_800da524(model);
       //LAB_80021758
-    } else if(v1 == 6) {
+    } else if(state == EngineState.COMBAT_06) {
       //LAB_8002176c
       FUN_800ec258(model);
-    } else if(v1 == 8) {
+    } else if(state == EngineState.WORLD_MAP_08) {
       //LAB_8002178c
       FUN_800c8d90(model);
     }
@@ -1313,7 +1314,7 @@ public final class Scus94491BpeSegment_8002 {
 
         scriptStartEffect(2, 10);
 
-        if(mainCallbackIndex_8004dd20.get() == 5 && loadingGameStateOverlay_8004dd08.get() == 0) {
+        if(engineState_8004dd20 == EngineState.SUBMAP_05 && loadingGameStateOverlay_8004dd08.get() == 0) {
           FUN_800e3fac();
         }
 
@@ -1548,7 +1549,7 @@ public final class Scus94491BpeSegment_8002 {
     response._00 = 1;
 
     if(itemId == 0xdf) { // Charm potion
-      if(mainCallbackIndex_8004dd20.get() == 8 || hasNoEncounters_800bed58.get() == 0) {
+      if(engineState_8004dd20 == EngineState.WORLD_MAP_08 || hasNoEncounters_800bed58.get() == 0) {
         //LAB_80022e40
         response._00 = 8;
         encounterAccumulator_800c6ae8.set(0);
@@ -3824,7 +3825,7 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x80027d74L)
   public static void FUN_80027d74(final int textboxIndex, final int x, final int y) {
     final int maxX;
-    if(mainCallbackIndex_8004dd20.get() == 5) {
+    if(engineState_8004dd20 == EngineState.SUBMAP_05) {
       maxX = 350;
     } else {
       maxX = 310;
@@ -4086,7 +4087,7 @@ public final class Scus94491BpeSegment_8002 {
     final int textHeight = textbox.lines_1a * 6;
 
     final int width;
-    if(mainCallbackIndex_8004dd20.get() != 5) {
+    if(engineState_8004dd20 != EngineState.SUBMAP_05) {
       width = 320;
     } else {
       width = 360;
@@ -4229,7 +4230,7 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x80028f20L)
   public static boolean textboxFits(final int textboxIndex, final int x, final int y) {
     final int maxX;
-    if(mainCallbackIndex_8004dd20.get() == 5) {
+    if(engineState_8004dd20 == EngineState.SUBMAP_05) {
       maxX = 350;
     } else {
       maxX = 310;
