@@ -361,7 +361,7 @@ public final class Ttle {
       fireAnimation_800c66d4[i] = FUN_800cdaa0(rect, _800ce7b0[i]);
     }
 
-    scriptStartEffect(6, 15);
+    scriptStartEffect(2, 15);
     SetGeomOffset(0, 0);
     pregameLoadingStage_800bb10c.set(3);
 
