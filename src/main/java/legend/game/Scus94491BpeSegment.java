@@ -19,9 +19,7 @@ import legend.core.gte.COLOUR;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
-import legend.core.memory.types.BiFunctionRef;
 import legend.core.memory.types.IntRef;
-import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.core.spu.Voice;
@@ -1168,58 +1166,6 @@ public final class Scus94491BpeSegment {
     }
 
     return (a1 * 2 + a0 * a2 * (1 - a2)) / a2 / 2;
-  }
-
-  @Method(0x80013434L)
-  public static <T extends MemoryRef> void qsort(final ArrayRef<T> data, final int count, final int stride, final BiFunctionRef<T, T, Long> comparator) {
-    //LAB_8001347c
-    // Find the first Mersenne number >= count
-    int s4 = 0;
-    while(s4 * 2 < count) {
-      s4 += s4 + 1;
-    }
-
-    //LAB_80013490
-    //LAB_800134a4
-    while(s4 > 0) {
-      final int s5 = s4;
-      int s3 = s4;
-
-      //LAB_800134b8
-      while(s3 < count) {
-        int s2 = s3 - s5;
-
-        //LAB_800134c4
-        while(s2 >= 0) {
-          final T s0 = data.get(s2);
-          final T s1 = data.get(s2 + s5);
-
-          if(comparator.run(s0, s1) <= 0) {
-            break;
-          }
-
-          //LAB_80013500
-          // Swap values
-          for(int i = 0; i < stride; i += 4) {
-            final long v1 = MEMORY.get(s0.getAddress() + i, 4);
-            final long v0 = MEMORY.get(s1.getAddress() + i, 4);
-            MEMORY.set(s0.getAddress() + i, 4, v0);
-            MEMORY.set(s1.getAddress() + i, 4, v1);
-          }
-
-          //LAB_80013524
-          s2 -= s5;
-        }
-
-        //LAB_80013530
-        s3++;
-      }
-
-      //LAB_80013540
-      s4 >>= 1;
-    }
-
-    //LAB_8001354c
   }
 
   @Method(0x80013598L)

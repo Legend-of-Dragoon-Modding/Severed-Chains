@@ -47,6 +47,7 @@ import legend.game.types.WeirdTimHeader;
 import legend.game.unpacker.FileData;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -55,7 +56,6 @@ import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
-import static legend.core.MemoryHelper.getBiFunctionAddress;
 import static legend.game.Scus94491BpeSegment.FUN_80019c80;
 import static legend.game.Scus94491BpeSegment.FUN_8001eea8;
 import static legend.game.Scus94491BpeSegment.FUN_8001f708;
@@ -66,7 +66,6 @@ import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static legend.game.Scus94491BpeSegment.playSound;
-import static legend.game.Scus94491BpeSegment.qsort;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.rsin;
@@ -174,14 +173,12 @@ public class WMap {
   private static final Value _800c68a4 = MEMORY.ref(4, 0x800c68a4L);
   private static final Value _800c68a8 = MEMORY.ref(4, 0x800c68a8L);
 
-  private static final UnboundedArrayRef<WMapStruct0c_2> _800c68ac = MEMORY.ref(4, 0x800c68acL, UnboundedArrayRef.of(0xc, WMapStruct0c_2::new));
-
   private static final IntRef encounterAccumulator_800c6ae8 = MEMORY.ref(4, 0x800c6ae8L, IntRef::new);
 
   private static final ArrayRef<VECTOR> _800c74b8 = MEMORY.ref(4, 0x800c74b8L, ArrayRef.of(VECTOR.class, 0x101, 0x10, VECTOR::new));
   private static final ArrayRef<ShortRef> _800c84c8 = MEMORY.ref(2, 0x800c84c8L, ArrayRef.of(ShortRef.class, 0x101, 2, ShortRef::new));
 
-  private static final Value _800c86cc = MEMORY.ref(4, 0x800c86ccL);
+  private static final IntRef _800c86cc = MEMORY.ref(4, 0x800c86ccL, IntRef::new);
 
   private static final Value _800c86d0 = MEMORY.ref(2, 0x800c86d0L);
   private static final Value _800c86d2 = MEMORY.ref(1, 0x800c86d2L);
@@ -5142,11 +5139,6 @@ public class WMap {
 
   @Method(0x800e5150L)
   public static void handleMapTransitions() {
-    final long sp20;
-    final long sp2c;
-    final long sp38;
-    final long sp3c;
-
     if(_800c6690.get() != 0) {
       return;
     }
@@ -5180,6 +5172,7 @@ public class WMap {
 
     //LAB_800e5248
     int sp28;
+    final int sp2c;
     switch((int)_800c68a4.get()) {
       case 0:
         sp2c = -areaData_800f2248.get(mapState_800c6798._dc[0])._00.get();
@@ -5261,12 +5254,12 @@ public class WMap {
         FUN_800ce4dc(_800c6898);
 
         if(mapState_800c6798.submapCut_c8 == 999) { // Going to a different region
-          sp38 = mapState_800c6798.submapScene_ca >>> 4 & 0xffff;
-          sp3c = mapState_800c6798.submapScene_ca & 0xf;
+          final int sp38 = mapState_800c6798.submapScene_ca >>> 4 & 0xffff;
+          final int sp3c = mapState_800c6798.submapScene_ca & 0xf;
 
           renderCenteredShadowedText(No_Entry_800f01e4.deref(), 240, 164, TextColour.WHITE, 0);
-          renderCenteredShadowedText(regions_800f01ec.get((int)sp38).deref(), 240, 182, TextColour.WHITE, 0);
-          renderCenteredShadowedText(regions_800f01ec.get((int)sp3c).deref(), 240, 200, TextColour.WHITE, 0);
+          renderCenteredShadowedText(regions_800f01ec.get(sp38).deref(), 240, 182, TextColour.WHITE, 0);
+          renderCenteredShadowedText(regions_800f01ec.get(sp3c).deref(), 240, 200, TextColour.WHITE, 0);
 
           if(Input.pressedThisFrame(InputAction.DPAD_UP) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_UP)) {
             _800c86d2.subu(0x1L);
@@ -5535,6 +5528,7 @@ public class WMap {
           //LAB_800e693c
           submapCut_80052c30.set(_800f0e34.get(mapState_800c6798._10).submapCut_04.get());
 
+          final int sp20;
           if(_800c86d2.getSigned() == 0x1L) {
             sp20 = mapState_800c6798.submapScene_ca >>> 4 & 0xffff;
           } else {
@@ -5543,7 +5537,7 @@ public class WMap {
           }
 
           //LAB_800e69b8
-          index_80052c38.set((int)sp20);
+          index_80052c38.set(sp20);
         }
 
         //LAB_800e69c4
@@ -5623,8 +5617,9 @@ public class WMap {
     //LAB_800e6c00
     rotateCoord2(struct258_800c66a8.tmdRendering_08.rotations_08[0], struct258_800c66a8.tmdRendering_08.coord2s_04[0]);
 
+    final List<WMapStruct0c_2> structs = new ArrayList<>();
+
     //LAB_800e6c38
-    int count = 0;
     for(int i = 0; i < _800c86cc.get(); i++) {
       //LAB_800e6c5c
       if(!places_800f0234.get(_800f0e34.get(_800c84c8.get(i).get()).placeIndex_02.get()).name_00.isNull()) {
@@ -5651,11 +5646,11 @@ public class WMap {
           if(y >= -32 && y < 273) {
             //LAB_800e6e64
             if(z >= 6 && z < orderingTableSize_1f8003c8.get() - 1) {
-              final WMapStruct0c_2 struct = _800c68ac.get(count);
-              struct.z_00.set(z);
-              struct._04.set(_800c84c8.get(i).get());
+              final WMapStruct0c_2 struct = new WMapStruct0c_2();
+              struct.z_00 = z;
+              struct._04 = _800c84c8.get(i).get();
               struct.xy_08.setXY(sp58.getXY());
-              count++;
+              structs.add(struct);
             }
           }
         }
@@ -5665,20 +5660,19 @@ public class WMap {
     // Render world map place names when start is held down
 
     //LAB_800e6f54
-    _800c68ac.get(count)._04.set(-1);
-
-    qsort(_800c68ac.bound(WMapStruct0c_2.class, count), count, 0xc, getBiFunctionAddress(WMap.class, "sortPlaceNamesByZ", WMapStruct0c_2.class, WMapStruct0c_2.class, long.class));
+    structs.sort(Comparator.comparingInt(o -> o.z_00));
 
     //LAB_800e6fa0
     int i;
-    WMapStruct0c_2 struct;
-    for(i = 0, struct = _800c68ac.get(0); i < 7 && struct._04.get() >= 0; i++, struct = _800c68ac.get(i)) {
+    for(i = 0; i < Math.min(7, structs.size()); i++) {
+      final WMapStruct0c_2 struct = structs.get(i);
+
       //LAB_800e6fec
       //LAB_800e6fec
       //LAB_800e6ff4
       final int x = struct.xy_08.getX() + 160;
       final int y = struct.xy_08.getY() + 104;
-      final int place = _800f0e34.get(struct._04.get()).placeIndex_02.get();
+      final int place = _800f0e34.get(struct._04).placeIndex_02.get();
 
       if(!places_800f0234.get(place).name_00.isNull()) {
         //LAB_800e70f4
@@ -5788,11 +5782,6 @@ public class WMap {
       renderText(part, x - textWidth / 2, y + i * 12, colour, trim);
       renderText(part, x - textWidth / 2 + 1, y + i * 12 + 1, TextColour.BLACK, trim);
     }
-  }
-
-  @Method(0x800e7854L)
-  public static long sortPlaceNamesByZ(final WMapStruct0c_2 a, final WMapStruct0c_2 b) {
-    return a.z_00.get() - b.z_00.get();
   }
 
   @Method(0x800e7888L)
@@ -6825,7 +6814,7 @@ public class WMap {
     }
 
     //LAB_800eb8f4
-    _800c86cc.setu(sp24);
+    _800c86cc.set(sp24);
   }
 
   @Method(0x800eb914L)
