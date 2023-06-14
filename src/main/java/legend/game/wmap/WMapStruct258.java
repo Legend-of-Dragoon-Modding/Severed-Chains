@@ -4,7 +4,6 @@ import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.SVECTOR;
 import legend.core.gte.VECTOR;
 import legend.game.types.Model124;
-import legend.game.types.MrgFile;
 import legend.game.unpacker.FileData;
 
 public class WMapStruct258 {
@@ -31,7 +30,7 @@ public class WMapStruct258 {
   public int currentAnimIndex_ac;
   public int animIndex_b0;
   public final WMapStruct258Sub40[] _b4 = {new WMapStruct258Sub40(), new WMapStruct258Sub40(), new WMapStruct258Sub40(), new WMapStruct258Sub40()};
-  public final MrgFile[] _1b4 = new MrgFile[4];
+
   /** short */
   public final int[] _1c4 = new int[16];
   public int modelIndex_1e4;
