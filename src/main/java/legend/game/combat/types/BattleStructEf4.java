@@ -301,7 +301,7 @@ public class BattleStructEf4 {
   public final ScriptState<PlayerBattleObject>[] charBobjs_e40 = new ScriptState[4];
   public final ScriptState<MonsterBattleObject>[] monsterBobjs_e50 = new ScriptState[146];
   public final ScriptState<? extends BattleObject27c>[] aliveBobjs_e78 = new ScriptState[150];
-  public final ScriptState<? extends BattleObject27c>[] aliveCharBobjs_eac = new ScriptState[4];
+  public final ScriptState<PlayerBattleObject>[] aliveCharBobjs_eac = new ScriptState[4];
   public final ScriptState<MonsterBattleObject>[] aliveMonsterBobjs_ebc = new ScriptState[146];
   // Reads directly from gameState now
 //  public TransformationMode morphMode_ee4;

@@ -1,6 +1,14 @@
 package legend.game.combat.bobj;
 
 import legend.core.gte.SVECTOR;
+import legend.game.scripting.Param;
+import legend.game.scripting.RunningScript;
+import legend.game.scripting.ScriptState;
+
+import java.util.function.Function;
+
+import static legend.game.Scus94491BpeSegment_8006._8006e398;
+import static legend.game.combat.Bttl_800f.renderDamage;
 
 public class MonsterBattleObject extends BattleObject27c {
   public int originalHp_5c;
@@ -35,7 +43,99 @@ public class MonsterBattleObject extends BattleObject27c {
   @Override
   public void turnStart() {
     super.turnStart();
-    this.getState().storage_44[7] &= ~0x8;
+//    this.getState().storage_44[7] &= ~0x8;
+
+    final ScriptState<MonsterBattleObject> state = (ScriptState<MonsterBattleObject>)this.getState();
+
+    // sub 0x1c40
+    _8006e398.monsterMoveId_570 = 0x20;
+    _8006e398._3d0 = 0;
+
+    this.guard_54 = 0;
+
+/*
+    final SpecialEffects20 effects = _8006e398.specialEffect_00[this.combatControllerAllBobjSlot_274];
+
+    if((effects.shieldsSigStoneCharmTurns_1c & 0x3) != 0) {
+      effects.shieldsSigStoneCharmTurns_1c--;
+    }
+
+    if((effects.shieldsSigStoneCharmTurns_1c & 0xc) != 0) {
+      effects.shieldsSigStoneCharmTurns_1c -= 0x4;
+    }
+
+    state.storage_44[8] = 0; // able to act
+
+    // sub 6694
+    final Status04 status = _8006e398.status_384[this.combatControllerAllBobjSlot_274];
+    if((status.statusEffect_00 & 0x80) != 0) {
+      status.statusEffect_00 |= 0x40;
+    }
+    // ret
+
+    if((state.storage_44[7] & 0x40) != 0) { // dead
+      state.storage_44[8] = 1; // unable to act
+    } else {
+      // sub 1d78
+      state.storage_44[10] = this.combatControllerAllBobjSlot_274;
+
+      if((effects.shieldsSigStoneCharmTurns_1c & 0x30) != 0) {
+        effects.shieldsSigStoneCharmTurns_1c -= 0x10;
+        this.model_148.animationState_9c = 2;
+
+        // sub 21c8
+        final ScriptState<EffectManagerData6c> childScript = allocateEffectManager("Empty EffectManager child, custom monster %s".formatted(this), state, 0, (forkedState, effectManagerData6c) -> {
+          if(forkedState.storage_44[10] != 0) {
+            forkedState.storage_44[10]--;
+            return;
+          }
+
+          final Param textboxIndex = new IntParam(0);
+          this.callScriptFunc(Scus94491BpeSegment_8002::scriptGetFreeTextboxIndex, textboxIndex);
+          this.callScriptFunc(Scus94491BpeSegment_8002::FUN_800254bc, textboxIndex, new IntParam(0x1121), new IntParam(0xa0), new IntParam(0x32), new IntParam(0x1c), new IntParam(0x1), new StringParam(new LodString("Cannot Move")));
+
+          if(forkedState.storage_44[9] != 0) {
+            forkedState.storage_44[9]--;
+            return;
+          }
+
+          this.callScriptFunc(Scus94491BpeSegment_8002::scriptDeallocateTextbox, textboxIndex);
+          forkedState.deallocate();
+        }, null, null, null);
+        childScript.storage_44[8] = 14; // text index for textbox (cannot move)
+        childScript.storage_44[9] = 30; // frames to wait before hiding textbox
+        childScript.loadScriptFile(state.scriptPtr_14, 0);
+        childScript.scriptPtr_14 = state.scriptPtr_14;
+        childScript.offset_18 = 0x2204;
+        // ret
+
+        //TODO wait 30 frames
+        this.model_148.animationState_9c = 1;
+        state.storage_44[8] = 1; // unable to act
+      }
+      // ret
+
+      //TODO implement from 001d48 on
+    }
+    // ret
+*/
+    final ScriptState<PlayerBattleObject> targetState = _8006e398.aliveCharBobjs_eac[1];
+    final PlayerBattleObject target = targetState.innerStruct_00;
+    target.hp_08 -= 10;
+    renderDamage(targetState.index, 999999999);
+
+    if(target.hp_08 <= 0) {
+      target.hp_08 = 0;
+      targetState.storage_44[7] |= 0x40;
+    }
+
+//    this.getState().storage_44[7] &= ~0x8;
+  }
+
+  private <T> T callScriptFunc(final Function<RunningScript<? extends BattleObject27c>, T> func, final Param... params) {
+    final RunningScript<? extends BattleObject27c> script = new RunningScript<>(this.getState());
+    System.arraycopy(params, 0, script.params_20, 0, params.length);
+    return func.apply(script);
   }
 
   @Override

@@ -207,7 +207,7 @@ public class GameVarParam extends Param {
       case 47 -> Scus94491BpeSegment_800b.combatStage_800bb0f4.set(val);
       case 48 -> Scus94491BpeSegment_8006._8006e398.aliveBobjs_e78[0] = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[val];
       case 49 -> Bttl_800c.aliveBobjCount_800c669c.set(val);
-      case 50 -> Scus94491BpeSegment_8006._8006e398.aliveCharBobjs_eac[0] = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[val];
+      case 50 -> Scus94491BpeSegment_8006._8006e398.aliveCharBobjs_eac[0] = (ScriptState<PlayerBattleObject>)scriptStatePtrArr_800bc1c0[val];
       case 51 -> Bttl_800c.aliveCharCount_800c6760.set(val);
       case 52 -> Scus94491BpeSegment_8006._8006e398.aliveMonsterBobjs_ebc[0] = (ScriptState<MonsterBattleObject>)scriptStatePtrArr_800bc1c0[val];
       case 53 -> Bttl_800c.aliveMonsterCount_800c6758.set(val);

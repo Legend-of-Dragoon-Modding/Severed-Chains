@@ -79,7 +79,7 @@ public class GameVarArrayParam extends Param {
       case 45 -> this.writeCombatVar(this.arrIndex, val);
       case 46 -> Bttl_800c.intRef_800c6718.get(this.arrIndex).set(val);
       case 48 -> Scus94491BpeSegment_8006._8006e398.aliveBobjs_e78[this.arrIndex] = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[val];
-      case 50 -> Scus94491BpeSegment_8006._8006e398.aliveCharBobjs_eac[this.arrIndex] = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[val];
+      case 50 -> Scus94491BpeSegment_8006._8006e398.aliveCharBobjs_eac[this.arrIndex] = (ScriptState<PlayerBattleObject>)scriptStatePtrArr_800bc1c0[val];
       case 52 -> Scus94491BpeSegment_8006._8006e398.aliveMonsterBobjs_ebc[this.arrIndex] = (ScriptState<MonsterBattleObject>)scriptStatePtrArr_800bc1c0[val];
       case 64 -> SMap.sobjs_800c6880[this.arrIndex] = (ScriptState<SubmapObject210>)scriptStatePtrArr_800bc1c0[val];
       case 73 -> SMap._800c6970.get(this.arrIndex).set(val);

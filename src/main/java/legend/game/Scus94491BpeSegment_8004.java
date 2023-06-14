@@ -405,7 +405,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[369] = Bttl_800c::FUN_800cd910;
     scriptSubFunctions_8004e29c[370] = Bttl_800c::scriptGetCombatantIndex;
     scriptSubFunctions_8004e29c[371] = Bttl_800c::scriptGetBobjSlot;
-    scriptSubFunctions_8004e29c[372] = Bttl_800c::FUN_800cdb74;
+    scriptSubFunctions_8004e29c[372] = Bttl_800c::scriptUnloadPlayerScripts;
 
     scriptSubFunctions_8004e29c[416] = Bttl_800e::FUN_800e6fb4;
 

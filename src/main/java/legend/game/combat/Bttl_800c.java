@@ -219,7 +219,7 @@ public final class Bttl_800c {
 
   public static final Value _800c66b4 = MEMORY.ref(4, 0x800c66b4L);
   public static final BoolRef stageHasModel_800c66b8 = MEMORY.ref(1, 0x800c66b8L, BoolRef::new);
-  public static final Value _800c66b9 = MEMORY.ref(1, 0x800c66b9L);
+  public static final BoolRef playerScriptsUnloaded_800c66b9 = MEMORY.ref(1, 0x800c66b9L, BoolRef::new);
 
   public static ScriptState<? extends BattleObject27c> scriptIndex_800c66bc;
   public static final Value _800c66c0 = MEMORY.ref(1, 0x800c66c0L);
@@ -1044,7 +1044,7 @@ public final class Bttl_800c {
       return;
     }
 
-    if(allBobjCount_800c66d0.get() > 0 && _800c66b9.get() == 0 && FUN_800c7da8() != 0) {
+    if(allBobjCount_800c66d0.get() > 0 && !playerScriptsUnloaded_800c66b9.get() && readyToStartTurn()) {
       vsyncMode_8007a3b8.set(3);
       mcqColour_800fa6dc.set(0x80);
       currentTurnBobj_800c66c8.storage_44[7] &= 0xffff_efff;
@@ -1096,18 +1096,18 @@ public final class Bttl_800c {
   }
 
   @Method(0x800c7da8L)
-  public static long FUN_800c7da8() {
+  public static boolean readyToStartTurn() {
     //LAB_800c7dd8
     for(int i = 0; i < allBobjCount_800c66d0.get(); i++) {
       if((_8006e398.allBobjs_e0c[i].storage_44[7] & 0x408) != 0) {
-        return 0;
+        return false;
       }
 
       //LAB_800c7e10
     }
 
     //LAB_800c7e1c
-    return 0x1L;
+    return true;
   }
 
   @Method(0x800c7e24L)
@@ -3551,8 +3551,8 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cdb74L)
-  public static FlowControl FUN_800cdb74(final RunningScript<?> script) {
-    _800c66b9.setu(0x1L);
+  public static FlowControl scriptUnloadPlayerScripts(final RunningScript<?> script) {
+    playerScriptsUnloaded_800c66b9.set(true);
 
     //LAB_800cdbb8
     for(int i = 0; i < charCount_800c677c.get(); i++) {

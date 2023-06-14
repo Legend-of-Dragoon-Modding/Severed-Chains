@@ -156,12 +156,12 @@ public class SBtld {
 
 //    loadFile("encounters", file -> battlePreloadedEntities_1f8003f4.encounterData_00 = EncounterData38.fromOverlay(file.getBytes(), encounterId_800bb0f8.get() * 0x38));
 
-    final int[] enemyIndices = new int[45];
+    final int[] enemyIndices = new int[6];
     final EncounterData38.EnemyInfo08[] enemyInfo = new EncounterData38.EnemyInfo08[enemyIndices.length];
 
     for(int i = 0; i < enemyIndices.length; i++) {
       enemyIndices[i] = 27;
-      enemyInfo[i] = new EncounterData38.EnemyInfo08(enemyIndices[i], new SVECTOR().set((short)(0xf180 + i / 6 * 0x400), (short)0, (short)(0x480 + ((i % 6) - 3) * 0x400)));
+      enemyInfo[i] = new EncounterData38.EnemyInfo08(enemyIndices[i], new SVECTOR().set((short)(0xf180 + i / 6 * 0x400), (short)0, (short)(0x380 + (i % 6 - 3) * 0x400)));
     }
 
     battlePreloadedEntities_1f8003f4.encounterData_00 = new EncounterData38(enemyIndices, enemyInfo);
