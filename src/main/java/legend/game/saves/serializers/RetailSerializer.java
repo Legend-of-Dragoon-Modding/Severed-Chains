@@ -6,8 +6,8 @@ import legend.game.types.CharacterData2c;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
 
-import static legend.game.SItem.levelStuff_800fbd30;
-import static legend.game.SItem.magicStuff_800fbd54;
+import static legend.game.SItem.characterStats;
+import static legend.game.SItem.dragoonStats;
 
 public final class RetailSerializer {
   private RetailSerializer() { }
@@ -25,8 +25,8 @@ public final class RetailSerializer {
   public static SavedGame fromRetail(final String name, final FileData data) {
     final GameState52c state = deserializeRetailGameState(data.slice(0x1fc));
     final CharacterData2c charData = state.charData_32c[state.charIds_88[0]];
-    final int maxHp = levelStuff_800fbd30.get(state.charIds_88[0]).deref().get(charData.level_12).hp_00.get();
-    final int maxMp = magicStuff_800fbd54.get(state.charIds_88[0]).deref().get(charData.dlevel_13).mp_00.get();
+    final int maxHp = characterStats[state.charIds_88[0]][charData.level_12].hp_00;
+    final int maxMp = dragoonStats[state.charIds_88[0]][charData.dlevel_13].mp_00;
     return new SavedGame(name, name, data.readUByte(0x1a9), data.readUByte(0x1a8), state, new ConfigCollection(), maxHp, maxMp);
   }
 

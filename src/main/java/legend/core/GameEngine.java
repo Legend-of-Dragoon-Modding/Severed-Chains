@@ -33,6 +33,8 @@ import legend.game.saves.serializers.V2Serializer;
 import legend.game.saves.serializers.V3Serializer;
 import legend.game.scripting.ScriptManager;
 import legend.game.sound.Sequencer;
+import legend.game.types.LevelStuff08;
+import legend.game.types.MagicStuff08;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
 import legend.game.unpacker.UnpackerException;
@@ -48,14 +50,41 @@ import java.nio.file.Paths;
 import java.util.Locale;
 import java.util.Set;
 
+import static legend.game.SItem.albertDragoonStats;
+import static legend.game.SItem.albertDxpTable;
 import static legend.game.SItem.albertXpTable_801138c0;
+import static legend.game.SItem.albertCharacterStats;
+import static legend.game.SItem.dartCharacterStats;
+import static legend.game.SItem.dartDragoonStats;
+import static legend.game.SItem.dartDxpTable;
 import static legend.game.SItem.dartXpTable_801135e4;
+import static legend.game.SItem.haschelCharacterStats;
+import static legend.game.SItem.haschelDragoonStats;
+import static legend.game.SItem.haschelDxpTable;
 import static legend.game.SItem.haschelXpTable_801136d8;
+import static legend.game.SItem.kongolCharacterStats;
+import static legend.game.SItem.kongolDragoonStats;
+import static legend.game.SItem.kongolDxpTable;
 import static legend.game.SItem.kongolXpTable_801134f0;
+import static legend.game.SItem.lavitzCharacterStats;
+import static legend.game.SItem.lavitzDragoonStats;
+import static legend.game.SItem.lavitzDxpTable;
 import static legend.game.SItem.lavitzXpTable_801138c0;
+import static legend.game.SItem.meruCharacterStats;
+import static legend.game.SItem.meruDragoonStats;
+import static legend.game.SItem.meruDxpTable;
 import static legend.game.SItem.meruXpTable_801137cc;
+import static legend.game.SItem.mirandaCharacterStats;
+import static legend.game.SItem.mirandaDragoonStats;
+import static legend.game.SItem.mirandaDxpTable;
 import static legend.game.SItem.mirandaXpTable_80113aa8;
+import static legend.game.SItem.roseCharacterStats;
+import static legend.game.SItem.roseDragoonStats;
+import static legend.game.SItem.roseDxpTable;
 import static legend.game.SItem.roseXpTable_801139b4;
+import static legend.game.SItem.shanaCharacterStats;
+import static legend.game.SItem.shanaDragoonStats;
+import static legend.game.SItem.shanaDxpTable;
 import static legend.game.SItem.shanaXpTable_80113aa8;
 import static legend.game.Scus94491BpeSegment.gameLoop;
 import static org.lwjgl.opengl.GL11C.GL_BLEND;
@@ -200,7 +229,7 @@ public final class GameEngine {
           MEMORY.addFunctions(Scus94491BpeSegment_8004.class);
           MEMORY.addFunctions(Scus94491BpeSegment_800e.class);
 
-          loadXpTables();
+          loadStatTables();
 
           // Find and load all mods so their global config can be shown in the title screen options menu
           MOD_ACCESS.findMods();
@@ -250,51 +279,186 @@ public final class GameEngine {
     REGISTRY_ACCESS.initializeRemaining();
   }
 
-  private static void loadXpTables() throws IOException {
-    final FileData dart = new FileData(Files.readAllBytes(Paths.get("./files/characters/dart/xp")));
-    final FileData lavitz = new FileData(Files.readAllBytes(Paths.get("./files/characters/lavitz/xp")));
-    final FileData albert = new FileData(Files.readAllBytes(Paths.get("./files/characters/albert/xp")));
-    final FileData shana = new FileData(Files.readAllBytes(Paths.get("./files/characters/shana/xp")));
-    final FileData miranda = new FileData(Files.readAllBytes(Paths.get("./files/characters/miranda/xp")));
-    final FileData rose = new FileData(Files.readAllBytes(Paths.get("./files/characters/rose/xp")));
-    final FileData haschel = new FileData(Files.readAllBytes(Paths.get("./files/characters/haschel/xp")));
-    final FileData kongol = new FileData(Files.readAllBytes(Paths.get("./files/characters/kongol/xp")));
-    final FileData meru = new FileData(Files.readAllBytes(Paths.get("./files/characters/meru/xp")));
+  private static void loadStatTables() throws IOException {
+    final FileData dartXp = new FileData(Files.readAllBytes(Paths.get("./files/characters/dart/xp")));
+    final FileData lavitzXp = new FileData(Files.readAllBytes(Paths.get("./files/characters/lavitz/xp")));
+    final FileData albertXp = new FileData(Files.readAllBytes(Paths.get("./files/characters/albert/xp")));
+    final FileData shanaXp = new FileData(Files.readAllBytes(Paths.get("./files/characters/shana/xp")));
+    final FileData mirandaXp = new FileData(Files.readAllBytes(Paths.get("./files/characters/miranda/xp")));
+    final FileData roseXp = new FileData(Files.readAllBytes(Paths.get("./files/characters/rose/xp")));
+    final FileData haschelXp = new FileData(Files.readAllBytes(Paths.get("./files/characters/haschel/xp")));
+    final FileData kongolXp = new FileData(Files.readAllBytes(Paths.get("./files/characters/kongol/xp")));
+    final FileData meruXp = new FileData(Files.readAllBytes(Paths.get("./files/characters/meru/xp")));
+    final FileData dartDxp = new FileData(Files.readAllBytes(Paths.get("./files/characters/dart/dxp")));
+    final FileData lavitzDxp = new FileData(Files.readAllBytes(Paths.get("./files/characters/lavitz/dxp")));
+    final FileData albertDxp = new FileData(Files.readAllBytes(Paths.get("./files/characters/albert/dxp")));
+    final FileData shanaDxp = new FileData(Files.readAllBytes(Paths.get("./files/characters/shana/dxp")));
+    final FileData mirandaDxp = new FileData(Files.readAllBytes(Paths.get("./files/characters/miranda/dxp")));
+    final FileData roseDxp = new FileData(Files.readAllBytes(Paths.get("./files/characters/rose/dxp")));
+    final FileData haschelDxp = new FileData(Files.readAllBytes(Paths.get("./files/characters/haschel/dxp")));
+    final FileData kongolDxp = new FileData(Files.readAllBytes(Paths.get("./files/characters/kongol/dxp")));
+    final FileData meruDxp = new FileData(Files.readAllBytes(Paths.get("./files/characters/meru/dxp")));
+    final FileData dartStats = new FileData(Files.readAllBytes(Paths.get("./files/characters/dart/stats")));
+    final FileData lavitzStats = new FileData(Files.readAllBytes(Paths.get("./files/characters/lavitz/stats")));
+    final FileData albertStats = new FileData(Files.readAllBytes(Paths.get("./files/characters/albert/stats")));
+    final FileData shanaStats = new FileData(Files.readAllBytes(Paths.get("./files/characters/shana/stats")));
+    final FileData mirandaStats = new FileData(Files.readAllBytes(Paths.get("./files/characters/miranda/stats")));
+    final FileData roseStats = new FileData(Files.readAllBytes(Paths.get("./files/characters/rose/stats")));
+    final FileData haschelStats = new FileData(Files.readAllBytes(Paths.get("./files/characters/haschel/stats")));
+    final FileData kongolStats = new FileData(Files.readAllBytes(Paths.get("./files/characters/kongol/stats")));
+    final FileData meruStats = new FileData(Files.readAllBytes(Paths.get("./files/characters/meru/stats")));
+    final FileData dartDstats = new FileData(Files.readAllBytes(Paths.get("./files/characters/dart/dstats")));
+    final FileData lavitzDstats = new FileData(Files.readAllBytes(Paths.get("./files/characters/lavitz/dstats")));
+    final FileData albertDstats = new FileData(Files.readAllBytes(Paths.get("./files/characters/albert/dstats")));
+    final FileData shanaDstats = new FileData(Files.readAllBytes(Paths.get("./files/characters/shana/dstats")));
+    final FileData mirandaDstats = new FileData(Files.readAllBytes(Paths.get("./files/characters/miranda/dstats")));
+    final FileData roseDstats = new FileData(Files.readAllBytes(Paths.get("./files/characters/rose/dstats")));
+    final FileData haschelDstats = new FileData(Files.readAllBytes(Paths.get("./files/characters/haschel/dstats")));
+    final FileData kongolDstats = new FileData(Files.readAllBytes(Paths.get("./files/characters/kongol/dstats")));
+    final FileData meruDstats = new FileData(Files.readAllBytes(Paths.get("./files/characters/meru/dstats")));
 
     for(int i = 0; i < dartXpTable_801135e4.length; i++) {
-      dartXpTable_801135e4[i] = dart.readInt(i * 4);
+      dartXpTable_801135e4[i] = dartXp.readInt(i * 4);
     }
 
     for(int i = 0; i < lavitzXpTable_801138c0.length; i++) {
-      lavitzXpTable_801138c0[i] = lavitz.readInt(i * 4);
+      lavitzXpTable_801138c0[i] = lavitzXp.readInt(i * 4);
     }
 
     for(int i = 0; i < albertXpTable_801138c0.length; i++) {
-      albertXpTable_801138c0[i] = albert.readInt(i * 4);
+      albertXpTable_801138c0[i] = albertXp.readInt(i * 4);
     }
 
     for(int i = 0; i < shanaXpTable_80113aa8.length; i++) {
-      shanaXpTable_80113aa8[i] = shana.readInt(i * 4);
+      shanaXpTable_80113aa8[i] = shanaXp.readInt(i * 4);
     }
 
     for(int i = 0; i < mirandaXpTable_80113aa8.length; i++) {
-      mirandaXpTable_80113aa8[i] = miranda.readInt(i * 4);
+      mirandaXpTable_80113aa8[i] = mirandaXp.readInt(i * 4);
     }
 
     for(int i = 0; i < roseXpTable_801139b4.length; i++) {
-      roseXpTable_801139b4[i] = rose.readInt(i * 4);
+      roseXpTable_801139b4[i] = roseXp.readInt(i * 4);
     }
 
     for(int i = 0; i < haschelXpTable_801136d8.length; i++) {
-      haschelXpTable_801136d8[i] = haschel.readInt(i * 4);
+      haschelXpTable_801136d8[i] = haschelXp.readInt(i * 4);
     }
 
     for(int i = 0; i < kongolXpTable_801134f0.length; i++) {
-      kongolXpTable_801134f0[i] = kongol.readInt(i * 4);
+      kongolXpTable_801134f0[i] = kongolXp.readInt(i * 4);
     }
 
     for(int i = 0; i < meruXpTable_801137cc.length; i++) {
-      meruXpTable_801137cc[i] = meru.readInt(i * 4);
+      meruXpTable_801137cc[i] = meruXp.readInt(i * 4);
+    }
+
+    for(int i = 0; i < dartDxpTable.length; i++) {
+      dartDxpTable[i] = dartDxp.readUShort(i * 2);
+    }
+
+    for(int i = 0; i < lavitzDxpTable.length; i++) {
+      lavitzDxpTable[i] = lavitzDxp.readUShort(i * 2);
+    }
+
+    for(int i = 0; i < albertDxpTable.length; i++) {
+      albertDxpTable[i] = albertDxp.readUShort(i * 2);
+    }
+
+    for(int i = 0; i < shanaDxpTable.length; i++) {
+      shanaDxpTable[i] = shanaDxp.readUShort(i * 2);
+    }
+
+    for(int i = 0; i < mirandaDxpTable.length; i++) {
+      mirandaDxpTable[i] = mirandaDxp.readUShort(i * 2);
+    }
+
+    for(int i = 0; i < roseDxpTable.length; i++) {
+      roseDxpTable[i] = roseDxp.readUShort(i * 2);
+    }
+
+    for(int i = 0; i < haschelDxpTable.length; i++) {
+      haschelDxpTable[i] = haschelDxp.readUShort(i * 2);
+    }
+
+    for(int i = 0; i < meruDxpTable.length; i++) {
+      meruDxpTable[i] = meruDxp.readUShort(i * 2);
+    }
+
+    for(int i = 0; i < kongolDxpTable.length; i++) {
+      kongolDxpTable[i] = kongolDxp.readUShort(i * 2);
+    }
+
+    for (int i = 0; i < dartCharacterStats.length; i++) {
+      dartCharacterStats[i] = new LevelStuff08(dartStats.readUShort(i * 8), dartStats.readByte(i * 8 + 2), dartStats.readUByte(i * 8 + 3), dartStats.readUByte(i * 8 + 4), dartStats.readUByte(i * 8 + 5), dartStats.readUByte(i * 8 + 6), dartStats.readUByte(i * 8 + 7));
+    }
+
+    for (int i = 0; i < lavitzCharacterStats.length; i++) {
+      lavitzCharacterStats[i] = new LevelStuff08(lavitzStats.readUShort(i * 8), lavitzStats.readByte(i * 8 + 2), lavitzStats.readUByte(i * 8 + 3), lavitzStats.readUByte(i * 8 + 4), lavitzStats.readUByte(i * 8 + 5), lavitzStats.readUByte(i * 8 + 6), lavitzStats.readUByte(i * 8 + 7));
+    }
+
+    for (int i = 0; i < albertCharacterStats.length; i++) {
+      albertCharacterStats[i] = new LevelStuff08(albertStats.readUShort(i * 8), albertStats.readByte(i * 8 + 2), albertStats.readUByte(i * 8 + 3), albertStats.readUByte(i * 8 + 4), albertStats.readUByte(i * 8 + 5), albertStats.readUByte(i * 8 + 6), albertStats.readUByte(i * 8 + 7));
+    }
+
+    for (int i = 0; i < shanaCharacterStats.length; i++) {
+      shanaCharacterStats[i] = new LevelStuff08(shanaStats.readUShort(i * 8), shanaStats.readByte(i * 8 + 2), shanaStats.readUByte(i * 8 + 3), shanaStats.readUByte(i * 8 + 4), shanaStats.readUByte(i * 8 + 5), shanaStats.readUByte(i * 8 + 6), shanaStats.readUByte(i * 8 + 7));
+    }
+
+    for (int i = 0; i < mirandaCharacterStats.length; i++) {
+      mirandaCharacterStats[i] = new LevelStuff08(mirandaStats.readUShort(i * 8), mirandaStats.readByte(i * 8 + 2), mirandaStats.readUByte(i * 8 + 3), mirandaStats.readUByte(i * 8 + 4), mirandaStats.readUByte(i * 8 + 5), mirandaStats.readUByte(i * 8 + 6), mirandaStats.readUByte(i * 8 + 7));
+    }
+
+    for (int i = 0; i < roseCharacterStats.length; i++) {
+      roseCharacterStats[i] = new LevelStuff08(roseStats.readUShort(i * 8), roseStats.readByte(i * 8 + 2), roseStats.readUByte(i * 8 + 3), roseStats.readUByte(i * 8 + 4), roseStats.readUByte(i * 8 + 5), roseStats.readUByte(i * 8 + 6), roseStats.readUByte(i * 8 + 7));
+    }
+
+    for (int i = 0; i < haschelCharacterStats.length; i++) {
+      haschelCharacterStats[i] = new LevelStuff08(haschelStats.readUShort(i * 8), haschelStats.readByte(i * 8 + 2), haschelStats.readUByte(i * 8 + 3), haschelStats.readUByte(i * 8 + 4), haschelStats.readUByte(i * 8 + 5), haschelStats.readUByte(i * 8 + 6), haschelStats.readUByte(i * 8 + 7));
+    }
+
+    for (int i = 0; i < meruCharacterStats.length; i++) {
+      meruCharacterStats[i] = new LevelStuff08(meruStats.readUShort(i * 8), meruStats.readByte(i * 8 + 2), meruStats.readUByte(i * 8 + 3), meruStats.readUByte(i * 8 + 4), meruStats.readUByte(i * 8 + 5), meruStats.readUByte(i * 8 + 6), meruStats.readUByte(i * 8 + 7));
+    }
+
+    for (int i = 0; i < kongolCharacterStats.length; i++) {
+      kongolCharacterStats[i] = new LevelStuff08(kongolStats.readUShort(i * 8), kongolStats.readByte(i * 8 + 2), kongolStats.readUByte(i * 8 + 3), kongolStats.readUByte(i * 8 + 4), kongolStats.readUByte(i * 8 + 5), kongolStats.readUByte(i * 8 + 6), kongolStats.readUByte(i * 8 + 7));
+    }
+
+    for (int i = 0; i < dartDragoonStats.length; i++) {
+      dartDragoonStats[i] = new MagicStuff08(dartDstats.readUShort(i * 8), dartDstats.readByte(i * 8 + 2), dartDstats.readUByte(i * 8 + 3), dartDstats.readUByte(i * 8 + 4), dartDstats.readUByte(i * 8 + 5), dartDstats.readUByte(i * 8 + 6), dartDstats.readUByte(i * 8 + 7));
+    }
+
+    for (int i = 0; i < lavitzDragoonStats.length; i++) {
+      lavitzDragoonStats[i] = new MagicStuff08(lavitzDstats.readUShort(i * 8), lavitzDstats.readByte(i * 8 + 2), lavitzDstats.readUByte(i * 8 + 3), lavitzDstats.readUByte(i * 8 + 4), lavitzDstats.readUByte(i * 8 + 5), lavitzDstats.readUByte(i * 8 + 6), lavitzDstats.readUByte(i * 8 + 7));
+    }
+
+    for (int i = 0; i < albertDragoonStats.length; i++) {
+      albertDragoonStats[i] = new MagicStuff08(albertDstats.readUShort(i * 8), albertDstats.readByte(i * 8 + 2), albertDstats.readUByte(i * 8 + 3), albertDstats.readUByte(i * 8 + 4), albertDstats.readUByte(i * 8 + 5), albertDstats.readUByte(i * 8 + 6), albertDstats.readUByte(i * 8 + 7));
+    }
+
+    for (int i = 0; i < shanaDragoonStats.length; i++) {
+      shanaDragoonStats[i] = new MagicStuff08(shanaDstats.readUShort(i * 8), shanaDstats.readByte(i * 8 + 2), shanaDstats.readUByte(i * 8 + 3), shanaDstats.readUByte(i * 8 + 4), shanaDstats.readUByte(i * 8 + 5), shanaDstats.readUByte(i * 8 + 6), shanaDstats.readUByte(i * 8 + 7));
+    }
+
+    for (int i = 0; i < mirandaDragoonStats.length; i++) {
+      mirandaDragoonStats[i] = new MagicStuff08(mirandaDstats.readUShort(i * 8), mirandaDstats.readByte(i * 8 + 2), mirandaDstats.readUByte(i * 8 + 3), mirandaDstats.readUByte(i * 8 + 4), mirandaDstats.readUByte(i * 8 + 5), mirandaDstats.readUByte(i * 8 + 6), mirandaDstats.readUByte(i * 8 + 7));
+    }
+
+    for (int i = 0; i < roseDragoonStats.length; i++) {
+      roseDragoonStats[i] = new MagicStuff08(roseDstats.readUShort(i * 8), roseDstats.readByte(i * 8 + 2), roseDstats.readUByte(i * 8 + 3), roseDstats.readUByte(i * 8 + 4), roseDstats.readUByte(i * 8 + 5), roseDstats.readUByte(i * 8 + 6), roseDstats.readUByte(i * 8 + 7));
+    }
+
+    for (int i = 0; i < haschelDragoonStats.length; i++) {
+      haschelDragoonStats[i] = new MagicStuff08(haschelDstats.readUShort(i * 8), haschelDstats.readByte(i * 8 + 2), haschelDstats.readUByte(i * 8 + 3), haschelDstats.readUByte(i * 8 + 4), haschelDstats.readUByte(i * 8 + 5), haschelDstats.readUByte(i * 8 + 6), haschelDstats.readUByte(i * 8 + 7));
+    }
+
+    for (int i = 0; i < meruDragoonStats.length; i++) {
+      meruDragoonStats[i] = new MagicStuff08(meruDstats.readUShort(i * 8), meruDstats.readByte(i * 8 + 2), meruDstats.readUByte(i * 8 + 3), meruDstats.readUByte(i * 8 + 4), meruDstats.readUByte(i * 8 + 5), meruDstats.readUByte(i * 8 + 6), meruDstats.readUByte(i * 8 + 7));
+    }
+
+    for (int i = 0; i < kongolDragoonStats.length; i++) {
+      kongolDragoonStats[i] = new MagicStuff08(kongolDstats.readUShort(i * 8), kongolDstats.readByte(i * 8 + 2), kongolDstats.readUByte(i * 8 + 3), kongolDstats.readUByte(i * 8 + 4), kongolDstats.readUByte(i * 8 + 5), kongolDstats.readUByte(i * 8 + 6), kongolDstats.readUByte(i * 8 + 7));
     }
   }
 

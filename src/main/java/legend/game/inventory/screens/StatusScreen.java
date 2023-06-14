@@ -8,6 +8,8 @@ import static legend.game.SItem._80114290;
 import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.characterCount_8011d7c4;
 import static legend.game.SItem.characterStatusGlyphs_801141a4;
+import static legend.game.SItem.dartDragoonStats;
+import static legend.game.SItem.dragoonStats;
 import static legend.game.SItem.hasDragoon;
 import static legend.game.SItem.renderCharacter;
 import static legend.game.SItem.renderCharacterEquipment;
@@ -108,20 +110,18 @@ public class StatusScreen extends MenuScreen {
     if(hasDragoon(gameState_800babc8.goods_19c[0], charIndex)) {
       final byte[] spellIndices = new byte[8];
       getUnlockedDragoonSpells(spellIndices, charIndex);
-      final int unlockedSpellCount = getUnlockedSpellCount(charIndex);
+      for (int i = 0; i < 7; i++) {
+        renderCharacter(200, 127 + i * 14, i + 1);
+      }
 
-      for(int i = 0; i < 4; i++) {
-        if(allocate && i < unlockedSpellCount) {
-          renderCharacter(200, 127 + i * 14, i + 1);
-        }
-
+      for(int i = 0; i < dragoonStats[charIndex].length; i++) {
         //LAB_80109370
-        final byte spellIndex = spellIndices[i];
+        final int spellIndex = spellIndices[i];
         if(spellIndex != -1) {
           renderText(new LodString(spellStats_800fa0b8[spellIndex].name), 210, 125 + i * 14, TextColour.BROWN);
 
           if(allocate) {
-            renderThreeDigitNumber(342, 128 + i * 14, (int)_80114290.offset(spellIndex).get());
+            renderThreeDigitNumber(342, 128 + i * 14, spellStats_800fa0b8[spellIndex].mp_06);
           }
         }
       }

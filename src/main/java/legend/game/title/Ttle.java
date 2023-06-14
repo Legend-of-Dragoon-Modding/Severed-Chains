@@ -49,8 +49,8 @@ import static legend.core.gpu.VramTextureLoader.stitchHorizontal;
 import static legend.core.gpu.VramTextureLoader.stitchVertical;
 import static legend.core.gpu.VramTextureLoader.textureFromPngOneChannelBlue;
 import static legend.core.gpu.VramTextureLoader.textureFromTim;
-import static legend.game.SItem.levelStuff_80111cfc;
-import static legend.game.SItem.magicStuff_80111d20;
+import static legend.game.SItem.characterStats;
+import static legend.game.SItem.dragoonStats;
 import static legend.game.SItem.xpTables;
 import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
@@ -176,8 +176,8 @@ public final class Ttle {
       final CharacterData2c charData = gameState_800babc8.charData_32c[charIndex];
       final int level = characterStartingLevels[charIndex];
       charData.xp_00 = xpTables[charIndex][level];
-      charData.hp_08 = levelStuff_80111cfc.get(charIndex).deref().get(level).hp_00.get();
-      charData.mp_0a = magicStuff_80111d20.get(charIndex).deref().get(1).mp_00.get();
+      charData.hp_08 = characterStats[charIndex][level].hp_00;
+      charData.mp_0a = dragoonStats[charIndex][1].mp_00;
       charData.sp_0c = 0;
       charData.dlevelXp_0e = 0;
       charData.status_10 = 0;
@@ -194,7 +194,7 @@ public final class Ttle {
 
       //LAB_800c72d4
       for(int i = 1; i < level; i++) {
-        final int index = levelStuff_80111cfc.get(charIndex).deref().get(i).addition_02.get();
+        final int index = characterStats[charIndex][i].addition_02;
 
         if(index != -1) {
           final int offset = additionOffsets_8004f5ac.get(charIndex).get();

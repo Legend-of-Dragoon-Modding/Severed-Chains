@@ -180,9 +180,9 @@ public class GameVarArrayParam extends Param {
       case 66 -> Scus94491BpeSegment_8006.battleState_8006e398.counterAttackStage_288;
       case 67 -> Scus94491BpeSegment_8006.battleState_8006e398._28c;
       case 68 -> Scus94491BpeSegment_8006.battleState_8006e398._290;
-      case 69 -> Scus94491BpeSegment_8006.battleState_8006e398._294;
-      case 70 -> Scus94491BpeSegment_8006.battleState_8006e398._298;
-      case 71 -> Scus94491BpeSegment_8006.battleState_8006e398._29c;
+      case 69 -> Scus94491BpeSegment_8006.battleState_8006e398.dragoonTurnsSlot1;
+      case 70 -> Scus94491BpeSegment_8006.battleState_8006e398.dragoonTurnsSlot2;
+      case 71 -> Scus94491BpeSegment_8006.battleState_8006e398.dragoonTurnsSlot3;
       case 72 -> Scus94491BpeSegment_8006.battleState_8006e398._2a0;
       case 73 -> Scus94491BpeSegment_8006.battleState_8006e398._2a4;
       case 74 -> Scus94491BpeSegment_8006.battleState_8006e398._2a8;
@@ -443,9 +443,9 @@ public class GameVarArrayParam extends Param {
       case 66 -> Scus94491BpeSegment_8006.battleState_8006e398.counterAttackStage_288 = val;
       case 67 -> Scus94491BpeSegment_8006.battleState_8006e398._28c = val;
       case 68 -> Scus94491BpeSegment_8006.battleState_8006e398._290 = val;
-      case 69 -> Scus94491BpeSegment_8006.battleState_8006e398._294 = val;
-      case 70 -> Scus94491BpeSegment_8006.battleState_8006e398._298 = val;
-      case 71 -> Scus94491BpeSegment_8006.battleState_8006e398._29c = val;
+      case 69 -> Scus94491BpeSegment_8006.battleState_8006e398.dragoonTurnsSlot1 = val;
+      case 70 -> Scus94491BpeSegment_8006.battleState_8006e398.dragoonTurnsSlot2 = val;
+      case 71 -> Scus94491BpeSegment_8006.battleState_8006e398.dragoonTurnsSlot3 = val;
       case 72 -> Scus94491BpeSegment_8006.battleState_8006e398._2a0 = val;
       case 73 -> Scus94491BpeSegment_8006.battleState_8006e398._2a4 = val;
       case 74 -> Scus94491BpeSegment_8006.battleState_8006e398._2a8 = val;

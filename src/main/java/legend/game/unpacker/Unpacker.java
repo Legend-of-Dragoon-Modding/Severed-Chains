@@ -82,9 +82,9 @@ public final class Unpacker {
     transformers.put(Unpacker::drgn21_693_0_patcherDiscriminator, Unpacker::drgn21_693_0_patcher);
     transformers.put(Unpacker::drgn0_142_animPatcherDiscriminator, Unpacker::drgn0_142_animPatcher);
 
-    // Item, equipment, spells, XP
+    // Item, equipment, spells, XP, DEXP, Stats, DStats
     transformers.put(Unpacker::itemTableDiscriminator, Unpacker::itemTableExtractor);
-    transformers.put(Unpacker::equipmentAndXpDiscriminator, Unpacker::equipmentAndXpExtractor);
+    transformers.put(Unpacker::statDiscriminator, Unpacker::statExtractor);
     transformers.put(Unpacker::spellsDiscriminator, Unpacker::spellsExtractor);
 
     // Give Dart his hand back during oof
@@ -672,11 +672,11 @@ public final class Unpacker {
     return files;
   }
 
-  private static boolean equipmentAndXpDiscriminator(final String name, final FileData data, final Set<String> flags) {
+  private static boolean statDiscriminator(final String name, final FileData data, final Set<String> flags) {
     return "OVL/S_ITEM.OV_".equals(name) && !flags.contains("S_ITEM");
   }
 
-  private static Map<String, FileData> equipmentAndXpExtractor(final String name, final FileData data, final Set<String> flags) {
+  private static Map<String, FileData> statExtractor(final String name, final FileData data, final Set<String> flags) {
     flags.add("S_ITEM");
 
     final Map<String, FileData> files = new HashMap<>();
@@ -690,6 +690,33 @@ public final class Unpacker {
     files.put("characters/rose/xp", new FileData(data.data(), 0x1823c, 61 * 4));
     files.put("characters/shana/xp", new FileData(data.data(), 0x18330, 61 * 4));
     files.put("characters/miranda/xp", new FileData(data.data(), 0x18330, 61 * 4));
+    files.put("characters/kongol/dxp", new FileData(data.data(), 0x18426, 6 * 2));
+    files.put("characters/dart/dxp", new FileData(data.data(), 0x18432, 6 * 2));
+    files.put("characters/haschel/dxp", new FileData(data.data(), 0x1843e, 6 * 2));
+    files.put("characters/meru/dxp", new FileData(data.data(), 0x1844a, 6 * 2));
+    files.put("characters/lavitz/dxp", new FileData(data.data(), 0x18456, 6 * 2));
+    files.put("characters/albert/dxp", new FileData(data.data(), 0x18456, 6 * 2));
+    files.put("characters/rose/dxp", new FileData(data.data(), 0x18462, 6 * 2));
+    files.put("characters/shana/dxp", new FileData(data.data(), 0x1846e, 6 * 2));
+    files.put("characters/miranda/dxp", new FileData(data.data(), 0x1846e, 6 * 2));
+    files.put("characters/kongol/stats", new FileData(data.data(), 0x1567c, 61 * 8));
+    files.put("characters/dart/stats", new FileData(data.data(), 0x15864, 61 * 8));
+    files.put("characters/haschel/stats", new FileData(data.data(), 0x15a4c, 61 * 8));
+    files.put("characters/meru/stats", new FileData(data.data(), 0x15c34, 61 * 8));
+    files.put("characters/lavitz/stats", new FileData(data.data(), 0x15e1c, 61 * 8));
+    files.put("characters/albert/stats", new FileData(data.data(), 0x15e1c, 61 * 8));
+    files.put("characters/rose/stats", new FileData(data.data(), 0x16004, 61 * 8));
+    files.put("characters/shana/stats", new FileData(data.data(), 0x161ec, 61 * 8));
+    files.put("characters/miranda/stats", new FileData(data.data(), 0x161ec, 61 * 8));
+    files.put("characters/kongol/dstats", new FileData(data.data(), 0x16404, 6 * 8));
+    files.put("characters/dart/dstats", new FileData(data.data(), 0x16434, 6 * 8));
+    files.put("characters/haschel/dstats", new FileData(data.data(), 0x16464, 6 * 8));
+    files.put("characters/meru/dstats", new FileData(data.data(), 0x16494, 6 * 8));
+    files.put("characters/lavitz/dstats", new FileData(data.data(), 0x164f4, 6 * 8));
+    files.put("characters/albert/dstats", new FileData(data.data(), 0x163d4, 6 * 8));
+    files.put("characters/rose/dstats", new FileData(data.data(), 0x16524, 6 * 8));
+    files.put("characters/shana/dstats", new FileData(data.data(), 0x164c4, 6 * 8));
+    files.put("characters/miranda/dstats", new FileData(data.data(), 0x164c4, 6 * 8));
 
     for(int i = 0; i < 192; i++) {
       files.put("equipment/%d.deqp".formatted(i), data.slice(0x16878 + i * 0x1c, 0x1c));

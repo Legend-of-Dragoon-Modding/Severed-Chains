@@ -150,7 +150,16 @@ public final class SItem {
   public static final ArrayRef<MenuStatus08> menuStatus_800fba7c = MEMORY.ref(4, 0x800fba7cL, ArrayRef.of(MenuStatus08.class, 8, 8, MenuStatus08::new));
   public static final ArrayRef<IntRef> dragoonSpiritGoodsBits_800fbabc = MEMORY.ref(4, 0x800fbabcL, ArrayRef.of(IntRef.class, 8, 4, IntRef::new));
 
-  public static final Value _800fbbf0 = MEMORY.ref(4, 0x800fbbf0L);
+  public static final int[] dartDxpTable = new int[6];
+  public static final int[] lavitzDxpTable = new int[6];
+  public static final int[] shanaDxpTable = new int[6];
+  public static final int[] roseDxpTable = new int[6];
+  public static final int[] haschelDxpTable = new int[6];
+  public static final int[] albertDxpTable = new int[6];
+  public static final int[] meruDxpTable = new int[6];
+  public static final int[] kongolDxpTable = new int[6];
+  public static final int[] mirandaDxpTable = new int[6];
+  public static final int[][] dxpTables = {dartDxpTable, lavitzDxpTable, shanaDxpTable, roseDxpTable, haschelDxpTable, albertDxpTable, meruDxpTable, kongolDxpTable, mirandaDxpTable};
 
   public static final Value _800fbc88 = MEMORY.ref(2, 0x800fbc88L);
 
@@ -159,11 +168,26 @@ public final class SItem {
   public static final Value _800fbca8 = MEMORY.ref(1, 0x800fbca8L);
 
   public static final ArrayRef<UnsignedIntRef> _800fbd08 = MEMORY.ref(4, 0x800fbd08L, ArrayRef.of(UnsignedIntRef.class, 10, 4, UnsignedIntRef::new));
-  public static final ArrayRef<Pointer<ArrayRef<LevelStuff08>>> levelStuff_800fbd30 = MEMORY.ref(4, 0x800fbd30L, ArrayRef.of(Pointer.classFor(ArrayRef.classFor(LevelStuff08.class)), 9, 4, Pointer.deferred(4, ArrayRef.of(LevelStuff08.class, 61, 8, LevelStuff08::new))));
-  public static final ArrayRef<Pointer<ArrayRef<MagicStuff08>>> magicStuff_800fbd54 = MEMORY.ref(4, 0x800fbd54L, ArrayRef.of(Pointer.classFor(ArrayRef.classFor(MagicStuff08.class)), 9, 4, Pointer.deferred(4, ArrayRef.of(MagicStuff08.class, 6, 8, MagicStuff08::new))));
-
-  public static final ArrayRef<Pointer<ArrayRef<LevelStuff08>>> levelStuff_80111cfc = MEMORY.ref(4, 0x80111cfcL, ArrayRef.of(Pointer.classFor(ArrayRef.classFor(LevelStuff08.class)), 9, 4, Pointer.deferred(4, ArrayRef.of(LevelStuff08.class, 61, 8, LevelStuff08::new))));
-  public static final ArrayRef<Pointer<ArrayRef<MagicStuff08>>> magicStuff_80111d20 = MEMORY.ref(4, 0x80111d20L, ArrayRef.of(Pointer.classFor(ArrayRef.classFor(MagicStuff08.class)), 9, 4, Pointer.deferred(4, ArrayRef.of(MagicStuff08.class, 6, 8, MagicStuff08::new))));
+  public static final LevelStuff08[] dartCharacterStats = new LevelStuff08[61];
+  public static final LevelStuff08[] lavitzCharacterStats = new LevelStuff08[61];
+  public static final LevelStuff08[] shanaCharacterStats = new LevelStuff08[61];
+  public static final LevelStuff08[] roseCharacterStats = new LevelStuff08[61];
+  public static final LevelStuff08[] haschelCharacterStats = new LevelStuff08[61];
+  public static final LevelStuff08[] albertCharacterStats = new LevelStuff08[61];
+  public static final LevelStuff08[] meruCharacterStats = new LevelStuff08[61];
+  public static final LevelStuff08[] kongolCharacterStats = new LevelStuff08[61];
+  public static final LevelStuff08[] mirandaCharacterStats = new LevelStuff08[61];
+  public static final LevelStuff08[][] characterStats = {dartCharacterStats, lavitzCharacterStats, shanaCharacterStats, roseCharacterStats, haschelCharacterStats, albertCharacterStats, meruCharacterStats, kongolCharacterStats, mirandaCharacterStats};
+  public static final MagicStuff08[] dartDragoonStats = new MagicStuff08[6];
+  public static final MagicStuff08[] lavitzDragoonStats = new MagicStuff08[6];
+  public static final MagicStuff08[] shanaDragoonStats = new MagicStuff08[6];
+  public static final MagicStuff08[] roseDragoonStats = new MagicStuff08[6];
+  public static final MagicStuff08[] haschelDragoonStats = new MagicStuff08[6];
+  public static final MagicStuff08[] albertDragoonStats = new MagicStuff08[6];
+  public static final MagicStuff08[] meruDragoonStats = new MagicStuff08[6];
+  public static final MagicStuff08[] kongolDragoonStats = new MagicStuff08[6];
+  public static final MagicStuff08[] mirandaDragoonStats = new MagicStuff08[6];
+  public static final MagicStuff08[][] dragoonStats = {dartDragoonStats, lavitzDragoonStats, shanaDragoonStats, roseDragoonStats, haschelDragoonStats, albertDragoonStats, meruDragoonStats, kongolDragoonStats, mirandaDragoonStats};
 
   public static final Value _80111d38 = MEMORY.ref(4, 0x80111d38L);
 
@@ -1808,13 +1832,11 @@ public final class SItem {
     if(charIndex != -1) {
       gameState_800babc8.charData_32c[charIndex].dlevelXp_0e += spGained_800bc950.get(charSlot).get();
 
-      if(gameState_800babc8.charData_32c[charIndex].dlevelXp_0e > 32000) {
-        gameState_800babc8.charData_32c[charIndex].dlevelXp_0e = 32000;
-      }
-
       //LAB_8010ceb0
       //LAB_8010cecc
-      while(gameState_800babc8.charData_32c[charIndex].dlevelXp_0e >= _800fbbf0.offset(charIndex * 0x4L).deref(2).offset(gameState_800babc8.charData_32c[charIndex].dlevel_13 * 0x2L).offset(0x2L).get() && gameState_800babc8.charData_32c[charIndex].dlevel_13 < 5) {
+      //Level 0 has 0 by default, but so does level 5 so neither of these would level up normally
+      while(gameState_800babc8.charData_32c[charIndex].dlevelXp_0e >= dxpTables[charIndex][gameState_800babc8.charData_32c[charIndex].dlevel_13] && dxpTables[charIndex][gameState_800babc8.charData_32c[charIndex].dlevel_13] > 0) {
+
         loadCharacterStats();
         final byte[] spellIndices = new byte[8];
         final int spellCount = getUnlockedDragoonSpells(spellIndices, charIndex);
@@ -1826,7 +1848,6 @@ public final class SItem {
         if(spellCount != getUnlockedDragoonSpells(spellIndices, charIndex)) {
           spellsUnlocked_8011e1a8.get(charSlot).set(spellIndices[spellCount] + 1);
         }
-
         //LAB_8010cf70
       }
     }
@@ -2520,7 +2541,7 @@ public final class SItem {
       FUN_8010e630(x + 84, y + 40, xp);
 
 
-      final int dxp = (int) _800fbbf0.offset(charIndex * 0x4L).deref(2).offset(gameState_800babc8.charData_32c[charIndex].dlevel_13 * 0x2L).offset(0x2L).get();
+      final int dxp = dxpTables[charIndex][gameState_800babc8.charData_32c[charIndex].dlevel_13];
       FUN_8010e340(x + 76 - getXpWidth(dxp), y + 52, gameState_800babc8.charData_32c[charIndex].dlevelXp_0e);
       FUN_8010cfa0(0x22, 0x22, x - (getXpWidth(dxp) - 114), y + 52, 736, 497).flags_00 |= 0x8;
       FUN_8010e630(x + 84, y + 52, dxp);
@@ -2794,10 +2815,10 @@ public final class SItem {
       stats.bodyDefence_6c = statsEvent.bodyDefence;
       stats.bodyMagicDefence_6d = statsEvent.bodyMagicDefence;
 
-      final MagicStuff08 magicStuff = magicStuff_800fbd54.get(charId).deref().get(stats.dlevel_0f);
+      final MagicStuff08 magicStuff = dragoonStats[charId][stats.dlevel_0f];
       stats.maxMp_6e = statsEvent.maxMp;
       stats.spellId_70 = statsEvent.spellId;
-      stats._71 = magicStuff._03.get();
+      stats._71 = magicStuff._03;
       stats.dragoonAttack_72 = statsEvent.dragoonAttack;
       stats.dragoonMagicAttack_73 = statsEvent.dragoonMagicAttack;
       stats.dragoonDefence_74 = statsEvent.dragoonDefence;
@@ -2857,7 +2878,7 @@ public final class SItem {
           } else {
             //LAB_80110590
             stats.mp_06 = charData.mp_0a;
-            stats.maxMp_6e = magicStuff.mp_00.get();
+            stats.maxMp_6e = charData.mp_0a;
           }
         }
       }

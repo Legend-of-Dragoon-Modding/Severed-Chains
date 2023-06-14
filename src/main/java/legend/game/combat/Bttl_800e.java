@@ -61,6 +61,7 @@ import legend.game.combat.ui.FloatingNumberC4;
 import legend.game.combat.ui.FloatingNumberC4Sub20;
 import legend.game.inventory.screens.TextColour;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.events.battle.DragoonDEFFLoadedEvent;
 import legend.game.modding.events.battle.MonsterStatsEvent;
 import legend.game.modding.events.battle.StatDisplayEvent;
 import legend.game.modding.events.inventory.RepeatItemReturnEvent;
@@ -1059,8 +1060,9 @@ public final class Bttl_800e {
     loadDrgnDir(0, 4139 + index * 2, Bttl_800e::uploadTims);
     loadDrgnDir(0, 4140 + index * 2 + "/0", files -> Bttl_800e.loadDeffPackage(files, battle24.managerState_18));
     loadDrgnFile(0, 4140 + index * 2 + "/1", file -> {
-      LOGGER.info(DEFF, "Loading DEFF script");
+      LOGGER.info(DEFF, "Loading Dragoon DEFF script");
       _800c6938.script_14 = new ScriptFile(4140 + index * 2 + "/1", file.getBytes());
+      EVENTS.postEvent(new DragoonDEFFLoadedEvent(4140 + index * 2));
     });
     _800fafe8.setu(0x1L);
   }
@@ -1085,7 +1087,7 @@ public final class Bttl_800e {
     loadDrgnDir(0, 4307 + s0, Bttl_800e::uploadTims);
     loadDrgnDir(0, 4308 + s0 + "/0", files -> Bttl_800e.loadDeffPackage(files, t0.managerState_18));
     loadDrgnFile(0, 4308 + s0 + "/1", file -> {
-      LOGGER.info(DEFF, "Loading DEFF script");
+      LOGGER.info(DEFF, "Loading Spell Item DEFF script");
       _800c6938.script_14 = new ScriptFile(4308 + s0 + "/1", file.getBytes());
     });
     _800fafe8.setu(0x1L);
@@ -1121,7 +1123,7 @@ public final class Bttl_800e {
       loadDrgnDir(0, 4434 + monsterIndex * 2 + "/0", files -> Bttl_800e.loadDeffPackage(files, v1.managerState_18));
       final int finalSp2 = monsterIndex;
       loadDrgnFile(0, 4434 + monsterIndex * 2 + "/1", file -> {
-        LOGGER.info(DEFF, "Loading DEFF script");
+        LOGGER.info(DEFF, "Loading Enemy or Boss DEFF script");
         _800c6938.script_14 = new ScriptFile(4434 + finalSp2 * 2 + "/1", file.getBytes());
       });
     } else {
@@ -1138,7 +1140,7 @@ public final class Bttl_800e {
       loadDrgnDir(0, 4946 + fileIndex + "/0", files -> Bttl_800e.loadDeffPackage(files, v1.managerState_18));
       final int finalFileIndex = fileIndex;
       loadDrgnFile(0, 4946 + fileIndex + "/1", file -> {
-        LOGGER.info(DEFF, "Loading DEFF script");
+        LOGGER.info(DEFF, "Loading Enemy or Boss DEFF script");
         _800c6938.script_14 = new ScriptFile(4946 + finalFileIndex + "/1", file.getBytes());
       });
     }
@@ -1179,7 +1181,7 @@ public final class Bttl_800e {
     loadDrgnDir(0, 5511 + cutsceneIndex * 2, Bttl_800e::uploadTims);
     loadDrgnDir(0, 5512 + cutsceneIndex * 2 + "/0", files -> Bttl_800e.loadDeffPackage(files, a0_0.managerState_18));
     loadDrgnFile(0, 5512 + cutsceneIndex * 2 + "/1", file -> {
-      LOGGER.info(DEFF, "Loading DEFF script");
+      LOGGER.info(DEFF, "Loading Cutscene DEFF script");
       _800c6938.script_14 = new ScriptFile(5512 + cutsceneIndex * 2 + "/1", file.getBytes());
     });
 
