@@ -50,6 +50,7 @@ import legend.game.sound.SoundFileIndices;
 import legend.game.sound.SpuStruct08;
 import legend.game.sound.Sshd;
 import legend.game.sound.Sssq;
+import legend.game.title.GameOver;
 import legend.game.title.Ttle;
 import legend.game.types.CharacterData2c;
 import legend.game.types.EngineState;
@@ -1190,7 +1191,10 @@ public final class Scus94491BpeSegment {
 
     switch(name) {
       case "\\OVL\\SMAP.OV_" -> MEMORY.addFunctions(SMap.class);
-      case "\\OVL\\TTLE.OV_" -> MEMORY.addFunctions(Ttle.class);
+      case "\\OVL\\TTLE.OV_" -> {
+        MEMORY.addFunctions(Ttle.class);
+        MEMORY.addFunctions(GameOver.class);
+      }
       case "\\OVL\\S_ITEM.OV_" -> MEMORY.addFunctions(SItem.class);
       case "\\OVL\\WMAP.OV_" -> MEMORY.addFunctions(WMap.class);
       case "\\OVL\\BTTL.OV_" -> {

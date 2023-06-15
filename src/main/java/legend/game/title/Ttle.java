@@ -4,7 +4,6 @@ import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.ModelLoader;
-import legend.core.gpu.RECT;
 import legend.core.gpu.Rect4i;
 import legend.core.gpu.Renderable;
 import legend.core.gpu.VramTexture;
@@ -16,7 +15,6 @@ import legend.core.gte.TmdWithId;
 import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
 import legend.core.opengl.Window;
-import legend.game.Scus94491BpeSegment_8002;
 import legend.game.fmv.Fmv;
 import legend.game.input.Input;
 import legend.game.input.InputAction;
@@ -27,7 +25,6 @@ import legend.game.tim.Tim;
 import legend.game.types.CharacterData2c;
 import legend.game.types.EngineState;
 import legend.game.types.GsRVIEW2;
-import legend.game.types.McqHeader;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import org.lwjgl.glfw.GLFW;
@@ -40,9 +37,7 @@ import java.util.List;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GPU;
-import static legend.core.GameEngine.MODS;
 import static legend.core.GameEngine.SAVES;
-import static legend.core.GameEngine.bootMods;
 import static legend.core.gpu.VramTextureLoader.palettesFromTim;
 import static legend.core.gpu.VramTextureLoader.palettesFromTims;
 import static legend.core.gpu.VramTextureLoader.stitch;
@@ -59,20 +54,16 @@ import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static legend.game.Scus94491BpeSegment.playSound;
-import static legend.game.Scus94491BpeSegment.renderMcq;
 import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
-import static legend.game.Scus94491BpeSegment_8002.FUN_8002a9c0;
 import static legend.game.Scus94491BpeSegment_8002.SetGeomOffset;
-import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.loadAndRenderMenus;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8003.GsSetRefView2;
-import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
 import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
@@ -82,12 +73,9 @@ import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd2
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b.afterFmvLoadingStage_800bf0ec;
 import static legend.game.Scus94491BpeSegment_800b.fmvIndex_800bf0dc;
-import static legend.game.Scus94491BpeSegment_800b.gameOverMcq_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.savedGameSelected_800bdc34;
-import static legend.game.Scus94491BpeSegment_800b.scriptEffect_800bb140;
-import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.identityMatrix_800c3568;
 
@@ -236,76 +224,6 @@ public final class Ttle {
   @Method(0x800c7524L)
   public static void loadSItemAndSetUpNewGameData() {
     loadSupportOverlay(2, Ttle::setUpNewGameData);
-  }
-
-  @Method(0x800c7558L)
-  public static void FUN_800c7558(final FileData data) {
-    final McqHeader mcq = new McqHeader(data);
-
-    final RECT rect = new RECT().set((short)640, (short)0, (short)mcq.vramWidth_08, (short)mcq.vramHeight_0a);
-    gameOverMcq_800bdc3c = mcq;
-    LoadImage(rect, mcq.imageData);
-    pregameLoadingStage_800bb10c.set(3);
-  }
-
-  @Method(0x800c75b4L)
-  public static void renderGameOver() {
-    renderMcq(gameOverMcq_800bdc3c, 640, 0, -320, -108, 36, 128);
-  }
-
-  @Method(0x800c75fcL)
-  public static void gameOver() {
-    switch(pregameLoadingStage_800bb10c.get()) {
-      case 0 -> {
-        bootMods(MODS.getAllModIds());
-
-        FUN_8002a9c0();
-        resizeDisplay(640, 240);
-        pregameLoadingStage_800bb10c.set(1);
-      }
-
-      case 1 -> {
-        pregameLoadingStage_800bb10c.set(2);
-        loadDrgnFile(0, 6667, Ttle::FUN_800c7558);
-      }
-
-      case 3 -> {
-        deallocateRenderables(0xffL);
-        scriptStartEffect(2, 10);
-        pregameLoadingStage_800bb10c.set(4);
-      }
-
-      // Game Over Screen
-      case 4 -> {
-        if(Input.pressedThisFrame(InputAction.BUTTON_CENTER_2) || Input.pressedThisFrame(InputAction.BUTTON_SOUTH)) {
-          Scus94491BpeSegment_8002.playSound(2);
-          pregameLoadingStage_800bb10c.set(5);
-          scriptStartEffect(1, 10);
-        }
-
-        renderGameOver();
-      }
-
-      case 5 -> {
-        if(scriptEffect_800bb140.currentColour_28.get() >= 0xff) {
-          pregameLoadingStage_800bb10c.set(6);
-        }
-
-        //LAB_800c7740
-        renderGameOver();
-      }
-
-      case 6 -> {
-        deallocateRenderables(0xffL);
-        uiFile_800bdc3c = null;
-        gameOverMcq_800bdc3c = null;
-        engineStateOnceLoaded_8004dd24 = EngineState.TITLE_02;
-        pregameLoadingStage_800bb10c.set(0);
-        vsyncMode_8007a3b8.set(2);
-      }
-    }
-
-    //LAB_800c7788
   }
 
   @Method(0x800c7798L)

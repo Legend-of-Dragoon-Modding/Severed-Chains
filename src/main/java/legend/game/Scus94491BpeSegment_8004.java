@@ -33,6 +33,7 @@ import legend.game.sound.Sssq;
 import legend.game.sound.SssqReader;
 import legend.game.sound.Sssqish;
 import legend.game.sound.VolumeRamp;
+import legend.game.title.GameOver;
 import legend.game.title.Ttle;
 import legend.game.types.CallbackStruct;
 import legend.game.types.EngineState;
@@ -88,7 +89,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link SMap#theEnd}</li>
    *   <li>{@link SMap#executeSmapLoadingStage()} Sets up rendering and loads scene</li>
    *   <li>{@link Scus94491BpeSegment#FUN_80018658()}</li>
-   *   <li>{@link Ttle#gameOver()}</li>
+   *   <li>{@link GameOver#gameOver()}</li>
    *   <li>{@link WMap#FUN_800cc738()}</li>
    *   <li>{@link SMap#startFmvLoadingStage()}</li>
    *   <li>swapDiskLoadingStage</li>
