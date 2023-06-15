@@ -172,9 +172,6 @@ import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapMusic_80050068;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_8007.clearRed_8007a3a8;
-import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
-import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
-import static legend.game.Scus94491BpeSegment_8007.joypadRepeat_8007a3a0;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800bc960;
 import static legend.game.Scus94491BpeSegment_800b._800bc9a8;
@@ -199,7 +196,6 @@ import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.encounterSoundEffects_800bd610;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.Scus94491BpeSegment_800b.input_800bee90;
 import static legend.game.Scus94491BpeSegment_800b.loadedDrgnFiles_800bcf78;
 import static legend.game.Scus94491BpeSegment_800b.melbuMusicLoaded_800bd781;
 import static legend.game.Scus94491BpeSegment_800b.melbuSoundsLoaded_800bd780;
@@ -495,10 +491,6 @@ public final class Scus94491BpeSegment {
       if(!soundRunning) {
         startSound();
       }
-
-      joypadPress_8007a398.setu(press_800bee94.get());
-      joypadInput_8007a39c.setu(input_800bee90.get());
-      joypadRepeat_8007a3a0.setu(repeat_800bee98.get());
 
       if(engineState_8004dd20.isInGame()) {
         gameState_800babc8.timestamp_a0 += vsyncMode_8007a3b8.get();

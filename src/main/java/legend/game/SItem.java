@@ -92,18 +92,14 @@ import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
 import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
 import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
+import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment_8004.itemStats_8004f2ac;
 import static legend.game.Scus94491BpeSegment_8004.loadingGameStateOverlay_8004dd08;
-import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment_8005.additionData_80052884;
 import static legend.game.Scus94491BpeSegment_8005.combatants_8005e398;
 import static legend.game.Scus94491BpeSegment_8005.standingInSavePoint_8005a368;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
-import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
-import static legend.game.Scus94491BpeSegment_800b.unlockedUltimateAddition_800bc910;
 import static legend.game.Scus94491BpeSegment_800b._800bc960;
-import static legend.game.Scus94491BpeSegment_800b.livingCharIds_800bc968;
-import static legend.game.Scus94491BpeSegment_800b.livingCharCount_800bc97c;
 import static legend.game.Scus94491BpeSegment_800b._800bdc2c;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.confirmDest_800bdc30;
@@ -114,6 +110,9 @@ import static legend.game.Scus94491BpeSegment_800b.inventoryJoypadInput_800bdc44
 import static legend.game.Scus94491BpeSegment_800b.inventoryMenuState_800bdc28;
 import static legend.game.Scus94491BpeSegment_800b.itemsDroppedByEnemiesCount_800bc978;
 import static legend.game.Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928;
+import static legend.game.Scus94491BpeSegment_800b.livingCharCount_800bc97c;
+import static legend.game.Scus94491BpeSegment_800b.livingCharIds_800bc968;
+import static legend.game.Scus94491BpeSegment_800b.press_800bee94;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba4;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba8;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
@@ -126,6 +125,7 @@ import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.totalXpFromCombat_800bc95c;
 import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
+import static legend.game.Scus94491BpeSegment_800b.unlockedUltimateAddition_800bc910;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.combat.Bttl_800c.addCombatant;
 import static legend.game.combat.Bttl_800c.allBobjCount_800c66d0;
@@ -1768,7 +1768,7 @@ public final class SItem {
 
     //LAB_8010cc70
     final int cappedPendingXp;
-    if((joypadPress_8007a398.get() & 0x20L) != 0 || pendingXp < 10) {
+    if((press_800bee94.get() & 0x20) != 0 || pendingXp < 10) {
       cappedPendingXp = pendingXp;
     } else {
       cappedPendingXp = 10;
@@ -2119,7 +2119,7 @@ public final class SItem {
         break;
 
       case INIT_MAIN_MENU_3:
-        if((joypadPress_8007a398.get() & 0x20L) != 0) {
+        if((press_800bee94.get() & 0x20) != 0) {
           //LAB_8010da84
           if(goldGainedFromCombat_800bc920.get() == 0) {
             inventoryMenuState_800bdc28.set(InventoryMenuState._5);
@@ -2133,7 +2133,7 @@ public final class SItem {
 
       case MAIN_MENU_4:
         final int goldTick;
-        if((joypadPress_8007a398.get() & 0x20L) != 0) {
+        if((press_800bee94.get() & 0x20) != 0) {
           goldTick = goldGainedFromCombat_800bc920.get();
         } else {
           //LAB_8010dab4
@@ -2195,7 +2195,7 @@ public final class SItem {
           if(additionsUnlocked_8011e1b8.get(0).get() + additionsUnlocked_8011e1b8.get(1).get() + additionsUnlocked_8011e1b8.get(2).get() == 0) {
             //LAB_8010dc9c
             inventoryMenuState_800bdc28.set(InventoryMenuState.REPLACE_INIT_8);
-          } else if((joypadPress_8007a398.get() & 0x20L) != 0) {
+          } else if((press_800bee94.get() & 0x20) != 0) {
             playSound(0x2L);
             _8011e178.setu(0);
             inventoryMenuState_800bdc28.set(InventoryMenuState.CONFIG_6);
@@ -2210,7 +2210,7 @@ public final class SItem {
           _8011e178.addu(0x2L);
         } else {
           //LAB_8010dcc8
-          if((joypadPress_8007a398.get() & 0x20L) != 0) {
+          if((press_800bee94.get() & 0x20) != 0) {
             playSound(0x2L);
 
             //LAB_8010dcf0
@@ -2255,7 +2255,7 @@ public final class SItem {
       case _9:
         FUN_8010e708(24, 152, secondaryCharIndices_800bdbf8.get((int)(_8011e170.get() - 3)).get());
 
-        if((joypadPress_8007a398.get() & 0x60L) != 0) {
+        if((press_800bee94.get() & 0x60) != 0) {
           playSound(0x2L);
           _8011e1c8.offset(_8011e170.get()).setu(0);
           inventoryMenuState_800bdc28.set(InventoryMenuState.REPLACE_INIT_8);
@@ -2284,7 +2284,7 @@ public final class SItem {
         break;
 
       case _11:
-        if((joypadPress_8007a398.get() & 0x20L) != 0) {
+        if((press_800bee94.get() & 0x20) != 0) {
           _8011e178.setu(0);
           playSound(0x2L);
 
@@ -2300,7 +2300,7 @@ public final class SItem {
           _8011e178.addu(0x2L);
         } else {
           //LAB_8010def4
-          if((joypadPress_8007a398.get() & 0x20L) != 0) {
+          if((press_800bee94.get() & 0x20) != 0) {
             playSound(0x2L);
 
             //LAB_8010df1c
@@ -2330,7 +2330,7 @@ public final class SItem {
         break;
 
       case _14:
-        if((joypadPress_8007a398.get() & 0x60L) != 0) {
+        if((press_800bee94.get() & 0x60) != 0) {
           playSound(3);
 
           if(itemsDroppedByEnemiesCount_800bc978.get() == 0 || (giveItems(itemsDroppedByEnemies_800bc928, itemsDroppedByEnemiesCount_800bc978) & 0xff) == 0) {

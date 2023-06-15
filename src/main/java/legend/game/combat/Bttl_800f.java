@@ -60,11 +60,11 @@ import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.Scus94491BpeSegment_8004.itemStats_8004f2ac;
 import static legend.game.Scus94491BpeSegment_8005._80050ae8;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
-import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
-import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800be5d0;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
+import static legend.game.Scus94491BpeSegment_800b.input_800bee90;
+import static legend.game.Scus94491BpeSegment_800b.press_800bee94;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.spGained_800bc950;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
@@ -1365,7 +1365,7 @@ public final class Bttl_800f {
         combatMenu._02.and(0xfcff);
         combatMenu.itemOrSpellId_1c.set((short)getItemOrSpellId());
 
-        if((joypadPress_8007a398.get() & 0x4) != 0) { // L1
+        if((press_800bee94.get() & 0x4) != 0) { // L1
           if(combatMenu.listScroll_24.get() != 0) {
             combatMenu._88.set(2);
             combatMenu.listScroll_24.set((short)0);
@@ -1377,7 +1377,7 @@ public final class Bttl_800f {
         }
 
         //LAB_800f4d54
-        if((joypadPress_8007a398.get() & 0x1) != 0) { // L2
+        if((press_800bee94.get() & 0x1) != 0) { // L2
           s0 = combatMenu.listScroll_24.get();
 
           if(combatMenu.count_22.get() - 1 >= combatMenu.listIndex_1e.get() + 6) {
@@ -1399,7 +1399,7 @@ public final class Bttl_800f {
         }
 
         //LAB_800f4dc4
-        if((joypadPress_8007a398.get() & 0x8) != 0) { // R1
+        if((press_800bee94.get() & 0x8) != 0) { // R1
           if(combatMenu.listIndex_1e.get() == 0) {
             break;
           }
@@ -1423,7 +1423,7 @@ public final class Bttl_800f {
         }
 
         //LAB_800f4e40
-        if((joypadPress_8007a398.get() & 0x2) != 0) { // R2
+        if((press_800bee94.get() & 0x2) != 0) { // R2
           if(combatMenu.listIndex_1e.get() + 6 >= combatMenu.count_22.get() - 1) {
             break;
           }
@@ -1444,7 +1444,7 @@ public final class Bttl_800f {
         }
 
         //LAB_800f4ecc
-        if((joypadInput_8007a39c.get() & 0x1000) != 0) { // Up
+        if((input_800bee90.get() & 0x1000) != 0) { // Up
           if(combatMenu.listScroll_24.get() != 0) {
             combatMenu.menuState_00.set((short)5);
             combatMenu.listScroll_24.decr();
@@ -1468,7 +1468,7 @@ public final class Bttl_800f {
         }
 
         //LAB_800f4f74
-        if((joypadInput_8007a39c.get() & 0x4000) != 0) { // Down
+        if((input_800bee90.get() & 0x4000) != 0) { // Down
           if(combatMenu.listScroll_24.get() != combatMenu.count_22.get() - 1) {
             if(combatMenu.listIndex_1e.get() + combatMenu.listScroll_24.get() + 1 < combatMenu.count_22.get()) {
               playSound(0, 1, 0, 0, (short)0, (short)0);
@@ -1495,7 +1495,7 @@ public final class Bttl_800f {
         //LAB_800f5044
         combatMenu._90.set(0);
 
-        if((joypadPress_8007a398.get() & 0x20) != 0) { // X
+        if((press_800bee94.get() & 0x20) != 0) { // X
           //LAB_800f5078
           PlayerBattleObject player = null;
 
@@ -1556,7 +1556,7 @@ public final class Bttl_800f {
         }
 
         //LAB_800f5208
-        if((joypadPress_8007a398.get() & 0x40) != 0) { // O
+        if((press_800bee94.get() & 0x40) != 0) { // O
           playSound(0, 3, 0, 0, (short)0, (short)0);
           combatMenu.menuState_00.set((short)8);
           combatMenu._02.and(0xfff7);
@@ -2169,7 +2169,7 @@ public final class Bttl_800f {
         struct58._44.set(0);
 
         // Input for changing camera angles
-        if(a0 >= 0x2L && (joypadInput_8007a39c.get() & 0x2L) != 0) {
+        if(a0 >= 0x2L && (input_800bee90.get() & 0x2) != 0) {
           _800c6ba1.addu(0x1L);
           if(_800c6ba1.get() >= a0) {
             _800c6ba1.setu(0);
@@ -2186,7 +2186,7 @@ public final class Bttl_800f {
 
         // Input for cycling right on menu bar
         //LAB_800f65b8
-        if((joypadInput_8007a39c.get() & 0x2000L) != 0) {
+        if((input_800bee90.get() & 0x2000) != 0) {
           playSound(0, 1, 0, 0, (short)0, (short)0);
 
           if(struct58.selectedIcon_22.get() < struct58.iconCount_0e.get() - 1) {
@@ -2215,7 +2215,7 @@ public final class Bttl_800f {
 
         // Input for cycling left on menu bar
         //LAB_800f6664
-        if((joypadInput_8007a39c.get() & 0x8000L) != 0) {
+        if((input_800bee90.get() & 0x8000) != 0) {
           playSound(0, 1, 0, 0, (short)0, (short)0);
 
           if(struct58.selectedIcon_22.get() != 0) {
@@ -2246,7 +2246,7 @@ public final class Bttl_800f {
 
         // Input for pressing X on menu bar
         //LAB_800f671c
-        if((joypadPress_8007a398.get() & 0x20L) != 0) {
+        if((press_800bee94.get() & 0x20) != 0) {
           v1 = struct58.iconFlags_10.get(struct58.selectedIcon_22.get()).get();
           if((v1 & 0x80L) != 0) {
             playSound(0, 3, 0, 0, (short)0, (short)0);
@@ -2296,7 +2296,7 @@ public final class Bttl_800f {
           }
           //LAB_800f6898
           // Input for pressing circle on menu bar
-        } else if((joypadPress_8007a398.get() & 0x40L) != 0) {
+        } else if((press_800bee94.get() & 0x40) != 0) {
           //LAB_800f68a4
           //LAB_800f68bc
           playSound(0, 3, 0, 0, (short)0, (short)0);
@@ -2643,7 +2643,7 @@ public final class Bttl_800f {
     }
 
     //LAB_800f77f4
-    if((joypadPress_8007a398.get() & 0x3000) != 0) {
+    if((press_800bee94.get() & 0x3000) != 0) {
       _800c697c.addu(0x1L);
       if(_800c697c.getSigned() >= count) {
         _800c697c.setu(0);
@@ -2651,7 +2651,7 @@ public final class Bttl_800f {
     }
 
     //LAB_800f7830
-    if((joypadPress_8007a398.get() & 0xc000L) != 0) {
+    if((press_800bee94.get() & 0xc000) != 0) {
       _800c697c.subu(0x1L);
       if(_800c697c.getSigned() < 0) {
         _800c697c.setu(count - 1);
@@ -2720,14 +2720,14 @@ public final class Bttl_800f {
     //LAB_800f7a0c
     //LAB_800f7a10
     int ret = 0;
-    if((joypadPress_8007a398.get() & 0x20) != 0) { // Cross
+    if((press_800bee94.get() & 0x20) != 0) { // Cross
       ret = 1;
       _800c697c.setu(0);
       battleMenu._4c.set(0);
     }
 
     //LAB_800f7a38
-    if((joypadPress_8007a398.get() & 0x40L) != 0) { // Circle
+    if((press_800bee94.get() & 0x40) != 0) { // Circle
       ret = -1;
       _800c697c.setu(0);
       battleMenu.target_48.set(-1);

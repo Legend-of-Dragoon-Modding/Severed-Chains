@@ -119,7 +119,6 @@ import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
 import static legend.game.Scus94491BpeSegment_8007.clearRed_8007a3a8;
-import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b.analogMagnitude_800beeb4;
 import static legend.game.Scus94491BpeSegment_800b.clearBlue_800babc0;
@@ -483,7 +482,7 @@ public class WMap {
   @Method(0x800cc83cL)
   public static void FUN_800cc83c() {
     if(_800c6690.get() == 0) {
-      if((joypadInput_8007a39c.get() & 0x1af) == 0) {
+      if((input_800bee90.get() & 0x1af) == 0) {
         final WMapStruct19c0 v1 = _800c66b0;
 
         if(v1._c5 == 0) {

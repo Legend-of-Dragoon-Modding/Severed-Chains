@@ -149,10 +149,10 @@ import static legend.game.Scus94491BpeSegment_8004.RotMatrixX;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixY;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixZ;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrix_Zyx;
+import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment_8004.freeSequence;
 import static legend.game.Scus94491BpeSegment_8004.itemStats_8004f2ac;
 import static legend.game.Scus94491BpeSegment_8004.loadingGameStateOverlay_8004dd08;
-import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment_8004.stopMusicSequence;
 import static legend.game.Scus94491BpeSegment_8005._8005027c;
 import static legend.game.Scus94491BpeSegment_8005._8005039c;
@@ -179,9 +179,6 @@ import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c3c;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
 import static legend.game.Scus94491BpeSegment_8005.textboxVramX_80052bc8;
 import static legend.game.Scus94491BpeSegment_8005.textboxVramY_80052bf4;
-import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
-import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
-import static legend.game.Scus94491BpeSegment_8007.joypadRepeat_8007a3a0;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800bd7ac;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b0;
@@ -203,11 +200,14 @@ import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.encounterSoundEffects_800bd610;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.hasNoEncounters_800bed58;
+import static legend.game.Scus94491BpeSegment_800b.input_800bee90;
 import static legend.game.Scus94491BpeSegment_800b.inventoryMenuState_800bdc28;
 import static legend.game.Scus94491BpeSegment_800b.loadedDrgnFiles_800bcf78;
+import static legend.game.Scus94491BpeSegment_800b.press_800bee94;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba4;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba8;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
+import static legend.game.Scus94491BpeSegment_800b.repeat_800bee98;
 import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
 import static legend.game.Scus94491BpeSegment_800b.soundFiles_800bcf80;
@@ -221,11 +221,11 @@ import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800e.main;
+import static legend.game.combat.Bttl_800e.FUN_800ec258;
+import static legend.game.combat.Bttl_800e.renderBttlModel;
 import static legend.game.wmap.WMap.FUN_800c8d90;
 import static legend.game.wmap.WMap.adjustWmapUvs;
 import static legend.game.wmap.WMap.renderWmapModel;
-import static legend.game.combat.Bttl_800e.FUN_800ec258;
-import static legend.game.combat.Bttl_800e.renderBttlModel;
 
 public final class Scus94491BpeSegment_8002 {
   private Scus94491BpeSegment_8002() { }
@@ -1801,67 +1801,67 @@ public final class Scus94491BpeSegment_8002 {
    * Gets the highest priority button on the joypad that is currently pressed. "Priority" is likely arbitrary.
    */
   @Method(0x800238a4L)
-  public static long getJoypadInputByPriority() {
-    final long repeat = joypadRepeat_8007a3a0.get();
+  public static int getJoypadInputByPriority() {
+    final int repeat = repeat_800bee98.get();
 
-    if((repeat & 0x4L) != 0) {
-      return 0x4L;
+    if((repeat & 0x4) != 0) {
+      return 0x4;
     }
 
     //LAB_800238c4
-    if((repeat & 0x8L) != 0) {
-      return 0x8L;
+    if((repeat & 0x8) != 0) {
+      return 0x8;
     }
 
     //LAB_800238d4
-    if((repeat & 0x1L) != 0) {
-      return 0x1L;
+    if((repeat & 0x1) != 0) {
+      return 0x1;
     }
 
     //LAB_800238e4
-    if((repeat & 0x2L) != 0) {
-      return 0x2L;
+    if((repeat & 0x2) != 0) {
+      return 0x2;
     }
 
     //LAB_800238f4
-    if((repeat & 0x1000L) != 0) {
-      return 0x1000L;
+    if((repeat & 0x1000) != 0) {
+      return 0x1000;
     }
 
     //LAB_80023904
-    if((repeat & 0x4000L) != 0) {
-      return 0x4000L;
+    if((repeat & 0x4000) != 0) {
+      return 0x4000;
     }
 
     //LAB_80023914
-    if((repeat & 0x8000L) != 0) {
-      return 0x8000L;
+    if((repeat & 0x8000) != 0) {
+      return 0x8000;
     }
 
     //LAB_80023924
-    if((repeat & 0x2000L) != 0) {
-      return 0x2000L;
+    if((repeat & 0x2000) != 0) {
+      return 0x2000;
     }
 
     //LAB_80023934
-    final long press = joypadPress_8007a398.get();
+    final int press = press_800bee94.get();
 
-    if((press & 0x10L) != 0) {
-      return 0x10L;
+    if((press & 0x10) != 0) {
+      return 0x10;
     }
 
     //LAB_80023950
-    if((press & 0x40L) != 0) {
-      return 0x40L;
+    if((press & 0x40) != 0) {
+      return 0x40;
     }
 
     //LAB_80023960
-    if((press & 0x80L) != 0) {
-      return 0x80L;
+    if((press & 0x80) != 0) {
+      return 0x80;
     }
 
     //LAB_80023970
-    return press & 0x20L;
+    return press & 0x20;
   }
 
   @Method(0x800239e0L)
@@ -2941,7 +2941,7 @@ public final class Scus94491BpeSegment_8002 {
           struct84._08 |= 0x1;
         } else {
           //LAB_8002686c
-          if((joypadPress_8007a398.get() & 0x20L) != 0 || CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get())) {
+          if((press_800bee94.get() & 0x20) != 0 || CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get())) {
             setTextboxArrowPosition(textboxIndex, 0);
 
             v1 = struct84.type_04;
@@ -2960,7 +2960,7 @@ public final class Scus94491BpeSegment_8002 {
       }
     } else if(v1 == 6) {
       //LAB_800268dc
-      if((joypadPress_8007a398.get() & 0x20) != 0 || CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get())) {
+      if((press_800bee94.get() & 0x20) != 0 || CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get())) {
         struct84._00 = 4;
       }
     } else if(v1 == 7) {
@@ -2973,7 +2973,7 @@ public final class Scus94491BpeSegment_8002 {
 
       //LAB_80026928
       if((struct84._08 & 0x20) == 0) {
-        if((joypadInput_8007a39c.get() & 0x20) != 0 || CONFIG.getConfig(CoreMod.QUICK_TEXT_CONFIG.get())) {
+        if((input_800bee90.get() & 0x20) != 0 || CONFIG.getConfig(CoreMod.QUICK_TEXT_CONFIG.get())) {
           s3 = 0;
 
           //LAB_80026954
@@ -3041,7 +3041,7 @@ public final class Scus94491BpeSegment_8002 {
       }
     } else if(v1 == 11) {
       //LAB_80026a98
-      if((joypadPress_8007a398.get() & 0x20L) != 0 || CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get())) {
+      if((press_800bee94.get() & 0x20) != 0 || CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get())) {
         setTextboxArrowPosition(textboxIndex, 0);
         FUN_8002a2b4(textboxIndex);
 
@@ -3129,7 +3129,7 @@ public final class Scus94491BpeSegment_8002 {
         struct84._00 = 16;
       } else {
         //LAB_80026cd0
-        if((joypadPress_8007a398.get() & 0x20L) != 0 || CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get())) {
+        if((press_800bee94.get() & 0x20) != 0 || CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get())) {
           free(struct84.ptr_58);
           struct84._00 = 0;
           setTextboxArrowPosition(textboxIndex, 0);
@@ -3173,14 +3173,14 @@ public final class Scus94491BpeSegment_8002 {
       //LAB_80026d94
       renderTextboxSelection(textboxIndex, (short)struct84._60);
 
-      if((joypadPress_8007a398.get() & 0x20) != 0) {
+      if((press_800bee94.get() & 0x20) != 0) {
         Scus94491BpeSegment.playSound(0, 2, 0, 0, (short)0, (short)0);
         free(struct84.ptr_58);
         struct84._00 = 0;
         struct84._6c = struct84._68;
       } else {
         //LAB_80026df0
-        if((joypadInput_8007a39c.get() & 0x4000L) == 0) {
+        if((input_800bee90.get() & 0x4000) == 0) {
           //LAB_80026ee8
           if(Input.getButtonState(InputAction.DPAD_UP) || Input.getButtonState(InputAction.JOYSTICK_LEFT_BUTTON_UP)) {
             if((struct84._08 & 0x100) == 0 || struct84._68 != 0) {
@@ -3464,7 +3464,7 @@ public final class Scus94491BpeSegment_8002 {
       //LAB_80027354
       renderTextboxSelection(textboxIndex, (short)struct84._68);
 
-      if((joypadPress_8007a398.get() & 0x20L) != 0) {
+      if((press_800bee94.get() & 0x20) != 0) {
         Scus94491BpeSegment.playSound(0, 2, 0, 0, (short)0, (short)0);
         free(struct84.ptr_58);
         struct84._00 = 0;

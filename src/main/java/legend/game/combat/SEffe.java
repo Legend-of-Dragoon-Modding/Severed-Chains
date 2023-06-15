@@ -171,10 +171,10 @@ import static legend.game.Scus94491BpeSegment_8004.RotMatrixZ;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrix_Zyx;
 import static legend.game.Scus94491BpeSegment_8004.doNothingScript_8004f650;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
-import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
 import static legend.game.Scus94491BpeSegment_800b.model_800bda10;
+import static legend.game.Scus94491BpeSegment_800b.press_800bee94;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.stage_800bda0c;
 import static legend.game.Scus94491BpeSegment_800c.identityMatrix_800c3568;
@@ -4128,7 +4128,7 @@ public final class SEffe {
                 }
 
                 //LAB_80107664
-                final long buttonPressed = joypadPress_8007a398.get();
+                final int buttonPressed = press_800bee94.get();
 
                 if((buttonPressed & 0x60) != 0) {
                   additionHitCompletionState_8011a014.get(hitNum).set(-1);
@@ -4414,7 +4414,7 @@ public final class SEffe {
         data._12--;
         if(data._12 == 0) {
           state.deallocateWithChildren();
-        } else if((joypadPress_8007a398.get() >>> 4 & 0x2L) != 0 && data._13 != 2) {
+        } else if((press_800bee94.get() >>> 4 & 0x2) != 0 && data._13 != 2) {
           data._10 = 1;
           daddyOverlayActive_80119f42.set(1);
         }
@@ -4450,7 +4450,7 @@ public final class SEffe {
 
           //LAB_801086bc
           //LAB_801086e0
-          if(FUN_80108460(data, 0) != 0 && data._13 == 1 || (joypadPress_8007a398.get() >>> 4 & 0x2L) != 0 && data._13 == 0 || (CONFIG.getConfig(CoreMod.AUTO_DRAGOON_ADDITION_CONFIG.get()) && FUN_80108460(data, 0) != 0)) {
+          if(FUN_80108460(data, 0) != 0 && data._13 == 1 || (press_800bee94.get() >>> 4 & 0x2) != 0 && data._13 == 0 || (CONFIG.getConfig(CoreMod.AUTO_DRAGOON_ADDITION_CONFIG.get()) && FUN_80108460(data, 0) != 0)) {
             //LAB_8010870c
             data._11 = 4;
             data._0d = 0;
