@@ -2364,6 +2364,7 @@ public final class Scus94491BpeSegment_8002 {
     textboxText._08 |= 0x1000;
     textboxText.str_24 = LodString.fromParam(script.params_20[2]);
     textboxText.chars_58 = new TextboxChar08[textboxText.chars_1c * (textboxText.lines_1e + 1)];
+    Arrays.setAll(textboxText.chars_58, i -> new TextboxChar08());
     FUN_80027d74(textboxIndex, textboxText.x_14, textboxText.y_16);
     return FlowControl.CONTINUE;
   }
@@ -2409,6 +2410,7 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_800253d4
     textboxText._08 |= 0x1000;
     textboxText.chars_58 = new TextboxChar08[textboxText.chars_1c * (textboxText.lines_1e + 1)];
+    Arrays.setAll(textboxText.chars_58, i -> new TextboxChar08());
     positionSobjTextbox(textboxIndex, script.params_20[1].get());
 
     if(type == 2) {
@@ -2473,6 +2475,7 @@ public final class Scus94491BpeSegment_8002 {
       //LAB_80025690
       textboxText._08 |= 0x1000;
       textboxText.chars_58 = new TextboxChar08[textboxText.chars_1c * (textboxText.lines_1e + 1)];
+      Arrays.setAll(textboxText.chars_58, i -> new TextboxChar08());
       FUN_80027d74(textboxIndex, textboxText.x_14, textboxText.y_16);
     }
 
@@ -2503,7 +2506,9 @@ public final class Scus94491BpeSegment_8002 {
   /** Deallocate textbox used in yellow-name textboxes and combat effect popups, maybe others */
   @Method(0x800257e0L)
   public static void clearTextbox(final int textboxIndex) {
-    textboxText_800bdf38[textboxIndex].chars_58 = null;
+    if(textboxText_800bdf38[textboxIndex]._00 != 0) {
+      textboxText_800bdf38[textboxIndex].chars_58 = null;
+    }
 
     //LAB_80025824
     final Textbox4c textbox = textboxes_800be358[textboxIndex];
@@ -4244,6 +4249,7 @@ public final class Scus94491BpeSegment_8002 {
     textboxText._08 |= 0x40;
 
     textboxText.chars_58 = new TextboxChar08[textboxText.chars_1c * (textboxText.lines_1e + 1)];
+    Arrays.setAll(textboxText.chars_58, i -> new TextboxChar08());
 
     //LAB_80029100
     FUN_80027d74(0, textboxText.x_14, textboxText.y_16);
