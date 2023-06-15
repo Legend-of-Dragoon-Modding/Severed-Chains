@@ -41,8 +41,8 @@ public class GameVarArrayParam extends Param {
       case 52 -> Scus94491BpeSegment_8006.battleState_8006e398.aliveMonsterBobjs_ebc[this.arrIndex] != null ? Scus94491BpeSegment_8006.battleState_8006e398.aliveMonsterBobjs_ebc[this.arrIndex].index : -1;
       case 64 -> SMap.sobjs_800c6880[this.arrIndex] != null ? SMap.sobjs_800c6880[this.arrIndex].index : 0;
       case 73 -> SMap._800c6970.get(this.arrIndex).get();
-      case 112 -> Scus94491BpeSegment_800b.gameState_800babc8._15c[this.arrIndex];
-      case 113 -> Scus94491BpeSegment_800b.gameState_800babc8._17c[this.arrIndex];
+      case 112 -> Scus94491BpeSegment_800b.gameState_800babc8.wmapFlags_15c.getRaw(this.arrIndex);
+      case 113 -> Scus94491BpeSegment_800b.gameState_800babc8._17c.getRaw(this.arrIndex);
       case 114 -> Scus94491BpeSegment_800b.gameState_800babc8.goods_19c[this.arrIndex];
       case 126 -> Scus94491BpeSegment_800b.gameState_800babc8._1a4[this.arrIndex];
       case 127 -> Scus94491BpeSegment_800b.gameState_800babc8.chestFlags_1c4[this.arrIndex];
@@ -77,8 +77,8 @@ public class GameVarArrayParam extends Param {
       case 52 -> Scus94491BpeSegment_8006.battleState_8006e398.aliveMonsterBobjs_ebc[this.arrIndex] = (ScriptState<MonsterBattleObject>)scriptStatePtrArr_800bc1c0[val];
       case 64 -> SMap.sobjs_800c6880[this.arrIndex] = (ScriptState<SubmapObject210>)scriptStatePtrArr_800bc1c0[val];
       case 73 -> SMap._800c6970.get(this.arrIndex).set(val);
-      case 112 -> Scus94491BpeSegment_800b.gameState_800babc8._15c[this.arrIndex] = val;
-      case 113 -> Scus94491BpeSegment_800b.gameState_800babc8._17c[this.arrIndex] = val;
+      case 112 -> Scus94491BpeSegment_800b.gameState_800babc8.wmapFlags_15c.setRaw(this.arrIndex, val);
+      case 113 -> Scus94491BpeSegment_800b.gameState_800babc8._17c.setRaw(this.arrIndex, val);
       case 114 -> Scus94491BpeSegment_800b.gameState_800babc8.goods_19c[this.arrIndex] = val;
       case 126 -> Scus94491BpeSegment_800b.gameState_800babc8._1a4[this.arrIndex] = val;
       case 127 -> Scus94491BpeSegment_800b.gameState_800babc8.chestFlags_1c4[this.arrIndex] = val;

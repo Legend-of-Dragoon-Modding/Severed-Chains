@@ -1260,7 +1260,7 @@ public final class Bttl_800c {
           final int encounter = encounterId_800bb0f8.get();
           if(encounter == 391 || encounter >= 404 && encounter < 408) { // Arena fights in Lohan
             //LAB_800c8514
-            gameState_800babc8.scriptFlags2_bc[0x1d] |= 0x800_0000; // Died in arena fight
+            gameState_800babc8.scriptFlags2_bc.set(29, 27, true); // Died in arena fight
           } else {
             //LAB_800c8534
             postCombatMainCallbackIndex = EngineState.GAME_OVER_07;

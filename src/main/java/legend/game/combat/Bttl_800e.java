@@ -3763,7 +3763,7 @@ public final class Bttl_800e {
     }
 
     //LAB_800eecf4
-    if((gameState_800babc8.scriptFlags2_bc[13] & 0x4_0000) != 0) { // Used Psych Bomb X this battle
+    if(gameState_800babc8.scriptFlags2_bc.get(13, 18)) { // Used Psych Bomb X this battle
       //LAB_800eed30
       boolean hasPsychBombX = false;
       for(int i = 0; i < gameState_800babc8.items_2e9.size(); i++) {

@@ -83,23 +83,23 @@ public final class V3Serializer {
     state._b8 = data.readInt(offset);
     offset += 4;
 
-    for(int i = 0; i < state.scriptFlags2_bc.length; i++) {
-      state.scriptFlags2_bc[i] = data.readInt(offset);
+    for(int i = 0; i < state.scriptFlags2_bc.count(); i++) {
+      state.scriptFlags2_bc.setRaw(i, data.readInt(offset));
       offset += 4;
     }
 
-    for(int i = 0; i < state.scriptFlags1_13c.length; i++) {
-      state.scriptFlags1_13c[i] = data.readInt(offset);
+    for(int i = 0; i < state.scriptFlags1_13c.count(); i++) {
+      state.scriptFlags1_13c.setRaw(i, data.readInt(offset));
       offset += 4;
     }
 
-    for(int i = 0; i < state._15c.length; i++) {
-      state._15c[i] = data.readInt(offset);
+    for(int i = 0; i < state.wmapFlags_15c.count(); i++) {
+      state.wmapFlags_15c.setRaw(i, data.readInt(offset));
       offset += 4;
     }
 
-    for(int i = 0; i < state._17c.length; i++) {
-      state._17c[i] = data.readInt(i);
+    for(int i = 0; i < state._17c.count(); i++) {
+      state._17c.setRaw(i, data.readInt(i));
       offset += 4;
     }
 
@@ -175,8 +175,8 @@ public final class V3Serializer {
       }
     }
 
-    for(int i = 0; i < state._4b8.length; i++) {
-      state._4b8[i] = data.readInt(offset);
+    for(int i = 0; i < 8; i++) {
+//      state._4b8[i] = data.readInt(offset);
       offset += 4;
     }
 
@@ -278,23 +278,23 @@ public final class V3Serializer {
     data.writeInt(offset, state._b8);
     offset += 4;
 
-    for(final int scriptFlags2 : state.scriptFlags2_bc) {
-      data.writeInt(offset, scriptFlags2);
+    for(int i = 0; i < state.scriptFlags2_bc.count(); i++) {
+      data.writeInt(offset, state.scriptFlags2_bc.getRaw(i));
       offset += 4;
     }
 
-    for(final int scriptFlags1 : state.scriptFlags1_13c) {
-      data.writeInt(offset, scriptFlags1);
+    for(int i = 0; i < state.scriptFlags1_13c.count(); i++) {
+      data.writeInt(offset, state.scriptFlags1_13c.getRaw(i));
       offset += 4;
     }
 
-    for(final int _15c : state._15c) {
-      data.writeInt(offset, _15c);
+    for(int i = 0; i < state.wmapFlags_15c.count(); i++) {
+      data.writeInt(offset, state.wmapFlags_15c.getRaw(i));
       offset += 4;
     }
 
-    for(final int _17c :  state._17c) {
-      data.writeInt(offset, _17c);
+    for(int i = 0; i < state._17c.count(); i++) {
+      data.writeInt(offset, state._17c.getRaw(i));
       offset += 4;
     }
 
@@ -370,8 +370,8 @@ public final class V3Serializer {
       }
     }
 
-    for(final int _4b8 : state._4b8) {
-      data.writeInt(offset, _4b8);
+    for(int i = 0; i < 8; i++) {
+//      data.writeInt(offset, _4b8);
       offset += 4;
     }
 

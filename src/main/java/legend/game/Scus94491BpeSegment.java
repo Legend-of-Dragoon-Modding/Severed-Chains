@@ -55,6 +55,7 @@ import legend.game.types.CharacterData2c;
 import legend.game.types.EngineState;
 import legend.game.types.FileEntry08;
 import legend.game.types.FileLoadedCallback;
+import legend.game.types.Flags;
 import legend.game.types.LoadingOverlay;
 import legend.game.types.McqHeader;
 import legend.game.types.MoonMusic08;
@@ -1390,21 +1391,16 @@ public final class Scus94491BpeSegment {
     final int shift = script.params_20[0].get() & 0x1f;
     final int index = script.params_20[0].get() >>> 5;
 
-    final int[] flags;
+    final Flags flags;
     if(index < 8) {
       flags = gameState_800babc8.scriptFlags1_13c;
     } else if(index < 16) {
-      flags = gameState_800babc8._15c;
+      flags = gameState_800babc8.wmapFlags_15c;
     } else {
       throw new RuntimeException("Are there more flags?");
     }
 
-    if(script.params_20[1].get() != 0) {
-      flags[index % 8] |= 0x1 << shift;
-    } else {
-      //LAB_800173dc
-      flags[index % 8] &= ~(0x1 << shift);
-    }
+    flags.set(index % 8, shift, script.params_20[1].get() != 0);
 
     //LAB_800173f4
     return FlowControl.CONTINUE;
@@ -1425,25 +1421,14 @@ public final class Scus94491BpeSegment {
       return FlowControl.CONTINUE;
     }
 
-    final int shift = value & 0x1f;
-    final int index = value >>> 5;
-
-    script.params_20[1].set((gameState_800babc8.scriptFlags1_13c[index] & 0x1 << shift) != 0 ? 1 : 0);
+    script.params_20[1].set(gameState_800babc8.scriptFlags1_13c.get(value) ? 1 : 0);
 
     return FlowControl.CONTINUE;
   }
 
   @Method(0x80017440L)
   public static FlowControl scriptSetGlobalFlag2(final RunningScript<?> script) {
-    final int shift = script.params_20[0].get() & 0x1f;
-    final int index = script.params_20[0].get() >>> 5;
-
-    if(script.params_20[1].get() != 0) {
-      gameState_800babc8.scriptFlags2_bc[index] |= 0x1 << shift;
-    } else {
-      //LAB_8001748c
-      gameState_800babc8.scriptFlags2_bc[index] &= ~(0x1 << shift);
-    }
+    gameState_800babc8.scriptFlags2_bc.set(script.params_20[0].get(), script.params_20[1].get() != 0);
 
     //LAB_800174a4
     if((gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0) {
@@ -1471,10 +1456,7 @@ public final class Scus94491BpeSegment {
       return FlowControl.CONTINUE;
     }
 
-    final int shift = val & 0x1f;
-    final int index = val >>> 5;
-
-    script.params_20[1].set((gameState_800babc8.scriptFlags2_bc[index] & 0x1L << shift) != 0 ? 1 : 0);
+    script.params_20[1].set(gameState_800babc8.scriptFlags2_bc.get(val) ? 1 : 0);
 
     return FlowControl.CONTINUE;
   }

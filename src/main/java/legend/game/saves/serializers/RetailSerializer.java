@@ -55,19 +55,19 @@ public final class RetailSerializer {
     state._b8 = data.readInt(0xb8);
 
     for(int i = 0; i < 0x20; i++) {
-      state.scriptFlags2_bc[i] = data.readInt(0xbc + i * 0x4);
+      state.scriptFlags2_bc.setRaw(i, data.readInt(0xbc + i * 0x4));
     }
 
     for(int i = 0; i < 8; i++) {
-      state.scriptFlags1_13c[i] = data.readInt(0x13c + i * 0x4);
+      state.scriptFlags1_13c.setRaw(i, data.readInt(0x13c + i * 0x4));
     }
 
     for(int i = 0; i < 8; i++) {
-      state._15c[i] = data.readInt(0x15c + i * 0x4);
+      state.wmapFlags_15c.setRaw(i, data.readInt(0x15c + i * 0x4));
     }
 
     for(int i = 0; i < 8; i++) {
-      state._17c[i] = data.readInt(0x17c + i * 0x4);
+      state._17c.setRaw(i, data.readInt(0x17c + i * 0x4));
     }
 
     for(int i = 0; i < 2; i++) {
@@ -128,9 +128,9 @@ public final class RetailSerializer {
       }
     }
 
-    for(int i = 0; i < 8; i++) {
-      state._4b8[i] = data.readInt(0x4b8 + i * 0x4);
-    }
+//    for(int i = 0; i < 8; i++) {
+//      state._4b8[i] = data.readInt(0x4b8 + i * 0x4);
+//    }
 
     state.pathIndex_4d8 = data.readUShort(0x4d8);
     state.dotIndex_4da = data.readUShort(0x4da);

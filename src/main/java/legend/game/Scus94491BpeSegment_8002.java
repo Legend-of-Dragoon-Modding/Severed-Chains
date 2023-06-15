@@ -1635,11 +1635,7 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80023264L)
   public static void checkForPsychBombX() {
-    if(gameState_800babc8.items_2e9.contains(0xfa)) { // Psych Bomb X
-      gameState_800babc8.scriptFlags2_bc[13] |= 0x4_0000;
-    } else {
-      gameState_800babc8.scriptFlags2_bc[13] &= 0xfffb_ffff;
-    }
+    gameState_800babc8.scriptFlags2_bc.set(13, 18, gameState_800babc8.items_2e9.contains(0xfa)); // Psych Bomb X
   }
 
   public static int takeItemId(final int itemId) {
