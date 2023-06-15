@@ -154,7 +154,7 @@ public class MainMenuScreen extends MenuScreen {
   @Override
   public void setFocus(@Nullable final Control control) {
     // Don't allow complete unfocusing
-    if(control != null) {
+    if(control instanceof Button) {
       super.setFocus(control);
     }
   }

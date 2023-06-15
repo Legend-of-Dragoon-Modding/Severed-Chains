@@ -5,12 +5,12 @@
 # This workflow will build a package using Gradle and then publish it to GitHub packages when a release is created
 # For more information see: https://github.com/actions/setup-java/blob/main/docs/advanced-usage.md#Publishing-using-gradle
 
-name: Gradle Package
+name: Gradle Package (RC)
 
 on:
   push:
     branches:
-    - main
+    - rc
 
 jobs:
   build-linux:
@@ -133,7 +133,7 @@ jobs:
       uses: dev-drprasad/delete-tag-and-release@v0.2.1
       with:
         delete_release: 'true'
-        tag_name: 'devbuild'
+        tag_name: 'release-candidate'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -143,7 +143,7 @@ jobs:
         artifacts: 'build/*.zip,build/*.tar.gz'
         token: ${{ secrets.GITHUB_TOKEN }}
         commit: ${{ github.sha }}
-        name: 'Latest Development Build'
+        name: 'Latest Release Candidate Build'
         allowUpdates: 'true'
         prerelease: 'true'
-        tag: 'devbuild'
+        tag: 'release-candidate'

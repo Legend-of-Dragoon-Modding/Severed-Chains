@@ -10,6 +10,7 @@ import java.util.Properties;
 public class ModContainer {
   public final String modId;
   public final Object mod;
+  ModState state = ModState.INITIALIZED;
 
   public ModContainer(final String modId, final Object mod) {
     this.modId = modId;

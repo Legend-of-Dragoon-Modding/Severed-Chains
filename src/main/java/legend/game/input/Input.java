@@ -16,6 +16,7 @@ import javax.annotation.Nullable;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.MODS;
 import static legend.game.Scus94491BpeSegment.keyRepeat;
 import static legend.game.Scus94491BpeSegment_800b.analogAngle_800bee9c;
 import static legend.game.Scus94491BpeSegment_800b.analogInput_800beebc;
@@ -40,7 +41,7 @@ public final class Input {
   }
 
   public static void update() {
-    if(!CoreMod.RECEIVE_INPUT_ON_INACTIVE_WINDOW_CONFIG.isValid()) {
+    if(!MODS.isReady(CoreMod.MOD_ID)) {
       return;
     }
 
@@ -71,6 +72,14 @@ public final class Input {
     input_800bee90.set(0);
     analogAngle_800bee9c.set(0);
     analogMagnitude_800beeb4.set(0);
+
+    if(!MODS.isReady(CoreMod.MOD_ID)) {
+      return;
+    }
+
+    if(!GPU.window().hasFocus() && !CONFIG.getConfig(CoreMod.RECEIVE_INPUT_ON_INACTIVE_WINDOW_CONFIG.get()) || activeController == null) {
+      return;
+    }
 
     for(final var entry : held.object2BooleanEntrySet()) {
       if(entry.getBooleanValue()) {

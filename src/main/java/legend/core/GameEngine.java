@@ -188,6 +188,10 @@ public final class GameEngine {
 
   private static boolean loading;
 
+  public static boolean isLoading() {
+    return loading;
+  }
+
   public static void start() throws IOException {
     final Thread thread = new Thread(() -> {
       try {
@@ -271,6 +275,8 @@ public final class GameEngine {
 
     // Initialize config registry and fire off config registry events
     REGISTRY_ACCESS.initialize(REGISTRIES.config);
+
+    MOD_ACCESS.loadingComplete();
 
     return missingMods;
   }
