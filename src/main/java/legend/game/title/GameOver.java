@@ -22,7 +22,7 @@ import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd2
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b.gameOverMcq_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
-import static legend.game.Scus94491BpeSegment_800b.scriptEffect_800bb140;
+import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 
 public final class GameOver {
@@ -77,7 +77,7 @@ public final class GameOver {
       }
 
       case 5 -> {
-        if(scriptEffect_800bb140.currentColour_28.get() >= 0xff) {
+        if(fullScreenEffect_800bb140.currentColour_28 >= 0xff) {
           pregameLoadingStage_800bb10c.set(6);
         }
 

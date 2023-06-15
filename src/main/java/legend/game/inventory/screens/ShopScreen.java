@@ -71,7 +71,7 @@ import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment_8007.shopId_8007a3b4;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.Scus94491BpeSegment_800b.scriptEffect_800bb140;
+import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
@@ -269,7 +269,7 @@ public class ShopScreen extends MenuScreen {
           this.menuState = MenuState._17;
         }
 
-        if(scriptEffect_800bb140.currentColour_28.get() >= 0xff) {
+        if(fullScreenEffect_800bb140.currentColour_28 >= 0xff) {
           this.menuState = this.confirmDest;
         }
 

@@ -172,7 +172,7 @@ import static legend.game.Scus94491BpeSegment_800b.postBattleAction_800bc974;
 import static legend.game.Scus94491BpeSegment_800b.postCombatMainCallbackIndex_800bc91c;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.press_800bee94;
-import static legend.game.Scus94491BpeSegment_800b.scriptEffect_800bb140;
+import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.spGained_800bc950;
 import static legend.game.Scus94491BpeSegment_800b.totalXpFromCombat_800bc95c;
@@ -1185,7 +1185,7 @@ public final class Bttl_800c {
       decrementOverlayCount();
       loadSupportOverlay(2, Scus94491BpeSegment::decrementOverlayCount);
 
-      if(scriptEffect_800bb140.currentColour_28.get() == 0) {
+      if(fullScreenEffect_800bb140.currentColour_28 == 0) {
         scriptStartEffect(1, (int)_800fa6d0.offset(postBattleAction * 0x2L).getSigned());
       }
 
@@ -1204,7 +1204,7 @@ public final class Bttl_800c {
 
   @Method(0x800c82b8L)
   public static void deallocateCombat() {
-    if(scriptEffect_800bb140.currentColour_28.get() == 0xff) {
+    if(fullScreenEffect_800bb140.currentColour_28 == 0xff) {
       updateGameStateAndDeallocateMenu();
       setStageHasNoModel();
 

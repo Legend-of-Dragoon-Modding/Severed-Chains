@@ -97,7 +97,6 @@ import legend.game.types.UnknownStruct;
 import legend.game.types.UnknownStruct2;
 import legend.game.types.WeirdTimHeader;
 import legend.game.unpacker.FileData;
-import legend.game.unpacker.Unpacker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -233,7 +232,7 @@ import static legend.game.Scus94491BpeSegment_800b.rview2_800bd7e8;
 import static legend.game.Scus94491BpeSegment_800b.savedGameSelected_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.screenOffsetX_800bed50;
 import static legend.game.Scus94491BpeSegment_800b.screenOffsetY_800bed54;
-import static legend.game.Scus94491BpeSegment_800b.scriptEffect_800bb140;
+import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.sobjPositions_800bd818;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
@@ -2904,7 +2903,7 @@ public final class SMap {
       }
 
       case 10 -> {
-        if(scriptEffect_800bb140.currentColour_28.get() != 0 || _800c6aac.get() != 0) {
+        if(fullScreenEffect_800bb140.currentColour_28 != 0 || _800c6aac.get() != 0) {
           //LAB_800e1f24
           if(_800c6aac.get() != 0) {
             _800c6aac.subu(0x1L);
@@ -4073,7 +4072,7 @@ public final class SMap {
     _800c6aac.setu(0xaL);
     _800bd7b4.setu(0);
     if(_800cab28.get() == 0) {
-      if(scriptEffect_800bb140._24.get() == 0) {
+      if(fullScreenEffect_800bb140._24 == 0) {
         scriptStartEffect(1, 10);
         _800cab28.addu(0x1L);
       }
@@ -4375,8 +4374,8 @@ public final class SMap {
       case 0xd -> {
         FUN_800e5104(_800caaf8.get(), _800cab24.deref());
         _800bd7b4.setu(0);
-        if(_800cab28.get() != 0 || scriptEffect_800bb140._24.get() == 0) {
-          if(scriptEffect_800bb140._24.get() == 0) {
+        if(_800cab28.get() != 0 || fullScreenEffect_800bb140._24 == 0) {
+          if(fullScreenEffect_800bb140._24 == 0) {
             scriptStartEffect(1, 10);
           }
 
@@ -4456,8 +4455,8 @@ public final class SMap {
 
         //LAB_800e61bc
         _800bd7b4.setu(0);
-        if(_800cab28.get() != 0 || scriptEffect_800bb140._24.get() == 0) {
-          if(scriptEffect_800bb140._24.get() == 0) {
+        if(_800cab28.get() != 0 || fullScreenEffect_800bb140._24 == 0) {
+          if(fullScreenEffect_800bb140._24 == 0) {
             scriptStartEffect(1, 10);
           }
 
@@ -4488,8 +4487,8 @@ public final class SMap {
       case 0x12 -> {
         FUN_800e5104(_800caaf8.get(), _800cab24.deref());
         _800bd7b4.setu(0);
-        if(_800cab28.get() != 0 || scriptEffect_800bb140._24.get() == 0) {
-          if(scriptEffect_800bb140._24.get() == 0) {
+        if(_800cab28.get() != 0 || fullScreenEffect_800bb140._24 == 0) {
+          if(fullScreenEffect_800bb140._24 == 0) {
             scriptStartEffect(1, 10);
           }
 
@@ -4524,8 +4523,8 @@ public final class SMap {
       case 0x14 -> {
         FUN_800e5104(_800caaf8.get(), _800cab24.deref());
         _800bd7b4.setu(0);
-        if(_800cab28.get() != 0 || scriptEffect_800bb140._24.get() == 0) {
-          if(scriptEffect_800bb140._24.get() == 0) {
+        if(_800cab28.get() != 0 || fullScreenEffect_800bb140._24 == 0) {
+          if(fullScreenEffect_800bb140._24 == 0) {
             scriptStartEffect(1, 10);
           }
 
@@ -4555,8 +4554,8 @@ public final class SMap {
       case 0x15 -> {
         FUN_800e5104(_800caaf8.get(), _800cab24.deref());
         _800bd7b4.setu(0);
-        if(_800cab28.get() != 0 || scriptEffect_800bb140._24.get() == 0) {
-          if(scriptEffect_800bb140._24.get() == 0) {
+        if(_800cab28.get() != 0 || fullScreenEffect_800bb140._24 == 0) {
+          if(fullScreenEffect_800bb140._24 == 0) {
             scriptStartEffect(1, 10);
           }
 
@@ -9266,7 +9265,7 @@ public final class SMap {
       return;
     }
 
-    if(scriptEffect_800bb140.currentColour_28.get() != 0) {
+    if(fullScreenEffect_800bb140.currentColour_28 != 0) {
       return;
     }
 

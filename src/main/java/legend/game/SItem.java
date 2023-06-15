@@ -117,7 +117,7 @@ import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba4;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba8;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
 import static legend.game.Scus94491BpeSegment_800b.savedGameSelected_800bdc34;
-import static legend.game.Scus94491BpeSegment_800b.scriptEffect_800bb140;
+import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.secondaryCharIndices_800bdbf8;
 import static legend.game.Scus94491BpeSegment_800b.spGained_800bc950;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
@@ -2047,7 +2047,7 @@ public final class SItem {
         break;
 
       case _2:
-        if(scriptEffect_800bb140.currentColour_28.get() == 0) {
+        if(fullScreenEffect_800bb140.currentColour_28 == 0) {
           deallocateRenderables(0xff);
           Renderable58 glyph = FUN_8010cfa0(0, 0, 165, 21, 720, 497);
           glyph._34 = 0;
@@ -2358,7 +2358,7 @@ public final class SItem {
       case _17:
         FUN_8010e9a8(0);
 
-        if(scriptEffect_800bb140.currentColour_28.get() >= 0xff) {
+        if(fullScreenEffect_800bb140.currentColour_28 >= 0xff) {
           inventoryMenuState_800bdc28.set(confirmDest_800bdc30.get());
           FUN_80019470();
         }

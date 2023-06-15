@@ -39,7 +39,7 @@ import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba4;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba8;
 import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
-import static legend.game.Scus94491BpeSegment_800b.scriptEffect_800bb140;
+import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.submapIndex_800bd808;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 
@@ -194,7 +194,7 @@ public class MainMenuScreen extends MenuScreen {
       case 101 -> {
         this.renderInventoryMenu(0);
 
-        if(scriptEffect_800bb140.currentColour_28.get() >= 0xff) {
+        if(fullScreenEffect_800bb140.currentColour_28 >= 0xff) {
           this.unload.run();
         }
       }

@@ -208,7 +208,7 @@ import static legend.game.Scus94491BpeSegment_800b.press_800bee94;
 import static legend.game.Scus94491BpeSegment_800b.queuedSounds_800bd110;
 import static legend.game.Scus94491BpeSegment_800b.repeat_800bee98;
 import static legend.game.Scus94491BpeSegment_800b.savedGameSelected_800bdc34;
-import static legend.game.Scus94491BpeSegment_800b.scriptEffect_800bb140;
+import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.sequenceVolume_800bd108;
 import static legend.game.Scus94491BpeSegment_800b.soundFiles_800bcf80;
@@ -501,7 +501,7 @@ public final class Scus94491BpeSegment {
 
       executeLoadersAndScripts();
       FUN_8001b410();
-      FUN_80013778();
+      handleFullScreenEffects();
 
       // SPU stuff
       startQueuedSounds();
@@ -1017,20 +1017,20 @@ public final class Scus94491BpeSegment {
   @Method(0x800136dcL)
   public static void scriptStartEffect(final int effectType, final int frames) {
     //LAB_800136f4
-    scriptEffect_800bb140.type_00.set(effectType);
-    scriptEffect_800bb140.totalFrames_08.set(frames > 0 ? frames : 15);
-    scriptEffect_800bb140.startTime_04.set(GPU.getVsyncCount());
+    fullScreenEffect_800bb140.type_00 = effectType;
+    fullScreenEffect_800bb140.totalFrames_08 = frames > 0 ? frames : 15;
+    fullScreenEffect_800bb140.startTime_04 = GPU.getVsyncCount();
 
     if(_8004dd48.offset(effectType * 2).get() == 2) {
-      scriptEffect_800bb140.blue1_0c.set(0);
-      scriptEffect_800bb140.green1_10.set(0);
-      scriptEffect_800bb140.blue0_14.set(0);
-      scriptEffect_800bb140.red1_18.set(0);
-      scriptEffect_800bb140.green0_1c.set(0);
-      scriptEffect_800bb140.red0_20.set(0);
+      fullScreenEffect_800bb140.blue1_0c = 0;
+      fullScreenEffect_800bb140.green1_10 = 0;
+      fullScreenEffect_800bb140.blue0_14 = 0;
+      fullScreenEffect_800bb140.red1_18 = 0;
+      fullScreenEffect_800bb140.green0_1c = 0;
+      fullScreenEffect_800bb140.red0_20 = 0;
     }
 
-    scriptEffect_800bb140._24.set((int)_8004dd48.offset(effectType * 2).get());
+    fullScreenEffect_800bb140._24 = (int)_8004dd48.offset(effectType * 2).get();
 
     //LAB_80013768
   }
@@ -1039,44 +1039,44 @@ public final class Scus94491BpeSegment {
    * This handles the lightning flashes/darkening, the scene fade-in, etc.
    */
   @Method(0x80013778L)
-  public static void FUN_80013778() {
-    final int v1 = Math.min(scriptEffect_800bb140.totalFrames_08.get(), (GPU.getVsyncCount() - scriptEffect_800bb140.startTime_04.get()) / 2);
+  public static void handleFullScreenEffects() {
+    final int v1 = Math.min(fullScreenEffect_800bb140.totalFrames_08, (GPU.getVsyncCount() - fullScreenEffect_800bb140.startTime_04) / 2);
 
     //LAB_800137d0
     final int colour;
-    if(scriptEffect_800bb140.totalFrames_08.get() == 0) {
+    if(fullScreenEffect_800bb140.totalFrames_08 == 0) {
       colour = 0;
     } else {
-      final int a1 = scriptEffect_800bb140._24.get();
+      final int a1 = fullScreenEffect_800bb140._24;
       if(a1 == 0) {
         colour = 0;
       } else if(a1 == 1) {
         //LAB_80013818
-        colour = v1 * 255 / scriptEffect_800bb140.totalFrames_08.get();
+        colour = v1 * 255 / fullScreenEffect_800bb140.totalFrames_08;
         //LAB_80013808
       } else if(a1 == 2) { // a1 == 2
         //LAB_8001383c
-        colour = v1 * 255 / scriptEffect_800bb140.totalFrames_08.get() ^ 0xff;
+        colour = v1 * 255 / fullScreenEffect_800bb140.totalFrames_08 ^ 0xff;
 
         if(colour == 0) {
           //LAB_80013874
-          scriptEffect_800bb140._24.set(0);
+          fullScreenEffect_800bb140._24 = 0;
         }
       } else {
-        scriptEffect_800bb140.type_00.set(0);
-        scriptEffect_800bb140._24.set(0);
+        fullScreenEffect_800bb140.type_00 = 0;
+        fullScreenEffect_800bb140._24 = 0;
         colour = 0;
       }
     }
 
     //LAB_80013880
     //LAB_80013884
-    scriptEffect_800bb140.currentColour_28.set(colour);
+    fullScreenEffect_800bb140.currentColour_28 = colour;
 
     if(colour != 0) {
       //LAB_800138f0
       //LAB_80013948
-      switch(scriptEffect_800bb140.type_00.get()) {
+      switch(fullScreenEffect_800bb140.type_00) {
         case 1, 2 -> drawFullScreenRect(colour, Translucency.B_MINUS_F);
         case 3, 4 -> drawFullScreenRect(colour, Translucency.B_PLUS_F);
 
@@ -1104,11 +1104,11 @@ public final class Scus94491BpeSegment {
     //LAB_80013994
 
     // This causes the bright flash of light from the lightning, etc.
-    if(scriptEffect_800bb140.red0_20.get() != 0 || scriptEffect_800bb140.green0_1c.get() != 0 || scriptEffect_800bb140.blue0_14.get() != 0) {
+    if(fullScreenEffect_800bb140.red0_20 != 0 || fullScreenEffect_800bb140.green0_1c != 0 || fullScreenEffect_800bb140.blue0_14 != 0) {
       //LAB_800139c4
       GPU.queueCommand(39, new GpuCommandQuad()
         .translucent(Translucency.B_PLUS_F)
-        .rgb(scriptEffect_800bb140.red0_20.get(), scriptEffect_800bb140.green0_1c.get(), scriptEffect_800bb140.blue0_14.get())
+        .rgb(fullScreenEffect_800bb140.red0_20, fullScreenEffect_800bb140.green0_1c, fullScreenEffect_800bb140.blue0_14)
         .pos(-centreScreenX_1f8003dc.get(), -centreScreenY_1f8003de.get(), displayWidth_1f8003e0.get() + 1, displayHeight_1f8003e4.get() + 1)
       );
     }
@@ -1116,11 +1116,11 @@ public final class Scus94491BpeSegment {
     //LAB_80013adc
 
     // This causes the screen darkening from the lightning, etc.
-    if(scriptEffect_800bb140.red1_18.get() != 0 || scriptEffect_800bb140.green1_10.get() != 0 || scriptEffect_800bb140.blue1_0c.get() != 0) {
+    if(fullScreenEffect_800bb140.red1_18 != 0 || fullScreenEffect_800bb140.green1_10 != 0 || fullScreenEffect_800bb140.blue1_0c != 0) {
       //LAB_80013b10
       GPU.queueCommand(39, new GpuCommandQuad()
         .translucent(Translucency.B_MINUS_F)
-        .rgb(scriptEffect_800bb140.red1_18.get(), scriptEffect_800bb140.green1_10.get(), scriptEffect_800bb140.blue1_0c.get())
+        .rgb(fullScreenEffect_800bb140.red1_18, fullScreenEffect_800bb140.green1_10, fullScreenEffect_800bb140.blue1_0c)
         .pos(-centreScreenX_1f8003dc.get(), -centreScreenY_1f8003de.get(), displayWidth_1f8003e0.get() + 1, displayHeight_1f8003e4.get() + 1)
       );
     }
