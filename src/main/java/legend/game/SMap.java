@@ -3662,7 +3662,7 @@ public final class SMap {
   @Method(0x800e4708L)
   public static void FUN_800e4708() {
     FUN_800f047c();
-    FUN_800f3abc();
+    renderSubmapOverlays();
     FUN_800f4354();
     applyModelRotationAndScale(playerModel_800c6748);
     callbackArr_800f5ad4.get((int)callbackIndex_800c6968.get()).deref().run();
@@ -9477,7 +9477,7 @@ public final class SMap {
   }
 
   @Method(0x800f3abcL)
-  public static void FUN_800f3abc() {
+  public static void renderSubmapOverlays() {
     handleTriangleIndicators();
 
     if(hasSavePoint_800d5620.get()) {

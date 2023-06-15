@@ -2250,16 +2250,6 @@ public final class Scus94491BpeSegment_8002 {
     return FlowControl.CONTINUE;
   }
 
-  @Method(0x8002498cL)
-  public static void noop_8002498c() {
-    // empty
-  }
-
-  @Method(0x80024994L)
-  public static void FUN_80024994() {
-    // empty
-  }
-
   /**
    * Loads DRGN0 MRG @ 77382 (basic UI textures)
    * <ol start="0">
@@ -2324,7 +2314,6 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x8002504cL)
   public static void loadBasicUiTexturesAndSomethingElse() {
     loadDrgnDir(0, 6669, Scus94491BpeSegment_8002::basicUiTexturesLoaded);
-    noop_8002498c();
 
     textZ_800bdf00.set(13);
     _800bdf04.setu(0);
@@ -4554,8 +4543,6 @@ public final class Scus94491BpeSegment_8002 {
         FUN_800264b0(i); // Animates the textbox arrow
       }
     }
-
-    FUN_80024994();
   }
 
   @Method(0x8002a0e4L)
