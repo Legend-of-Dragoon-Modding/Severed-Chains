@@ -1,4 +1,4 @@
-package legend.game.combat.bobj;
+package legend.game.modding.events.battle;
 
 import legend.game.modding.events.Event;
 

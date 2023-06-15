@@ -95,9 +95,9 @@ public class BattleStateEf4 {
   public int counterAttackStage_288;
   public int _28c;
   public int _290;
-  public int dragoonTurnsSlot1;
-  public int dragoonTurnsSlot2;
-  public int dragoonTurnsSlot3;
+  public int dragoonTurnsSlot1_294;
+  public int dragoonTurnsSlot2_298;
+  public int dragoonTurnsSlot3_29c;
   public int _2a0;
   public int _2a4;
   public int _2a8;

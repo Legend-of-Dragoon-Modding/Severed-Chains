@@ -13,7 +13,7 @@ import legend.game.Scus94491BpeSegment_8002;
 import legend.game.characters.Element;
 import legend.game.characters.TurnBasedPercentileBuff;
 import legend.game.characters.VitalsStat;
-import legend.game.combat.bobj.AttackEvent;
+import legend.game.modding.events.battle.AttackEvent;
 import legend.game.combat.bobj.BattleObject27c;
 import legend.game.combat.bobj.MonsterBattleObject;
 import legend.game.combat.bobj.PlayerBattleObject;

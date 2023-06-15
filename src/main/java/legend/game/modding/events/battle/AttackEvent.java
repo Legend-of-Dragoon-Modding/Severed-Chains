@@ -1,5 +1,6 @@
-package legend.game.combat.bobj;
+package legend.game.modding.events.battle;
 
+import legend.game.combat.bobj.BattleObject27c;
 import legend.game.combat.types.AttackType;
 
 public class AttackEvent extends BattleEvent {
