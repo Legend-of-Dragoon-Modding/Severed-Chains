@@ -2181,7 +2181,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002437cL)
-  public static void deallocateRenderables(final long a0) {
+  public static void deallocateRenderables(final int a0) {
     Renderable58 s0 = renderablePtr_800bdc5c;
 
     if(s0 != null) {

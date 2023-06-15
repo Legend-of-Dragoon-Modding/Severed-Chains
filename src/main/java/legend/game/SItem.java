@@ -2048,7 +2048,7 @@ public final class SItem {
 
       case _2:
         if(scriptEffect_800bb140.currentColour_28.get() == 0) {
-          deallocateRenderables(0xffL);
+          deallocateRenderables(0xff);
           Renderable58 glyph = FUN_8010cfa0(0, 0, 165, 21, 720, 497);
           glyph._34 = 0;
           glyph._38 = 0;
@@ -2367,7 +2367,7 @@ public final class SItem {
 
       case _18:
         scriptStartEffect(2, 10);
-        deallocateRenderables(0xffL);
+        deallocateRenderables(0xff);
         uiFile_800bdc3c = null;
         whichMenu_800bdc38 = WhichMenu.UNLOAD_POST_COMBAT_REPORT_30;
         textZ_800bdf00.set(13);

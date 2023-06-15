@@ -29,7 +29,7 @@ public final class GameOver {
   private GameOver() { }
 
   @Method(0x800c7558L)
-  public static void FUN_800c7558(final FileData data) {
+  public static void gameOverLoaded(final FileData data) {
     final McqHeader mcq = new McqHeader(data);
 
     final RECT rect = new RECT().set((short)640, (short)0, (short)mcq.vramWidth_08, (short)mcq.vramHeight_0a);
@@ -56,11 +56,11 @@ public final class GameOver {
 
       case 1 -> {
         pregameLoadingStage_800bb10c.set(2);
-        loadDrgnFile(0, 6667, GameOver::FUN_800c7558);
+        loadDrgnFile(0, 6667, GameOver::gameOverLoaded);
       }
 
       case 3 -> {
-        deallocateRenderables(0xffL);
+        deallocateRenderables(0xff);
         scriptStartEffect(2, 10);
         pregameLoadingStage_800bb10c.set(4);
       }
