@@ -28,7 +28,7 @@ import legend.game.types.Model124;
 import legend.game.types.Renderable58;
 import legend.game.types.FullScreenEffect;
 import legend.game.types.SobjPos14;
-import legend.game.types.Struct84;
+import legend.game.types.TextboxText84;
 import legend.game.types.TexPageY;
 import legend.game.types.Textbox4c;
 import legend.game.types.TextboxArrow0c;
@@ -216,7 +216,7 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bdf18 = MEMORY.ref(4, 0x800bdf18L);
 
-  public static final Struct84[] _800bdf38 = new Struct84[8];
+  public static final TextboxText84[] textboxText_800bdf38 = new TextboxText84[8];
   public static final Textbox4c[] textboxes_800be358 = new Textbox4c[8];
   public static final Value textU_800be5c0 = MEMORY.ref(4, 0x800be5c0L);
   public static final Value textV_800be5c8 = MEMORY.ref(4, 0x800be5c8L);

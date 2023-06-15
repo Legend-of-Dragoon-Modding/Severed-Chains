@@ -1,6 +1,6 @@
 package legend.game.types;
 
-public class Struct84 {
+public class TextboxText84 {
   public int _00;
   public int type_04;
 
@@ -34,8 +34,7 @@ public class Struct84 {
   public int _42;
   public int _44;
   public final int[] digits_46 = new int[10];
-
-  public long ptr_58;
+  public TextboxChar08[] chars_58;
   public int _5c;
   public int _60;
   public int _64;
