@@ -24,12 +24,14 @@ public class RadialElectricityEffect38 implements BttlScriptData6cSubBase1, Memo
   public final IntRef _18;
   /** The lower the value, the wider the angle in which the bolt can be drawn */
   public final ShortRef boltAngleRangeCutoff_1c;
-  public final ShortRef _1e;
+  /** Length of hypotenuse of translation, most often added to segment origin */
+  public final ShortRef originTranslationMagnitude_1e;
   public final ShortRef callbackIndex_20;
-  public final UnsignedByteRef _22;
+  public final UnsignedByteRef colourShouldFade_22;
   /** If 0, colour will be progressively faded for each successive segment. */
   public final UnsignedByteRef fadeSuccessiveSegments_23;
-  public final ByteRef _24;
+  /** If 0, re-call initializeRadialElectricityNodes in renderer */
+  public final ByteRef reinitializeNodes_24;
 
   /**
    * Bit 7 of effect flag, multiplied by random value to determine whether
@@ -58,11 +60,11 @@ public class RadialElectricityEffect38 implements BttlScriptData6cSubBase1, Memo
     this._14 = ref.offset(4, 0x14L).cast(IntRef::new);
     this._18 = ref.offset(4, 0x18L).cast(IntRef::new);
     this.boltAngleRangeCutoff_1c = ref.offset(2, 0x1cL).cast(ShortRef::new);
-    this._1e = ref.offset(2, 0x1eL).cast(ShortRef::new);
+    this.originTranslationMagnitude_1e = ref.offset(2, 0x1eL).cast(ShortRef::new);
     this.callbackIndex_20 = ref.offset(2, 0x20L).cast(ShortRef::new);
-    this._22 = ref.offset(1, 0x22L).cast(UnsignedByteRef::new);
+    this.colourShouldFade_22 = ref.offset(1, 0x22L).cast(UnsignedByteRef::new);
     this.fadeSuccessiveSegments_23 = ref.offset(1, 0x23L).cast(UnsignedByteRef::new);
-    this._24 = ref.offset(1, 0x24L).cast(ByteRef::new);
+    this.reinitializeNodes_24 = ref.offset(1, 0x24L).cast(ByteRef::new);
 
     this.varyBoltSegmentAngle_26 = ref.offset(2, 0x26L).cast(UnsignedShortRef::new);
     this.boltSegmentCount_28 = ref.offset(1, 0x28L).cast(UnsignedByteRef::new);
