@@ -3172,16 +3172,16 @@ public final class SEffe {
   }
 
   @Method(0x80104954L)
-  public static void deallocateElectricityEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    final ElectricityEffect38 s2 = (ElectricityEffect38)data.effect_44;
+  public static void deallocateElectricityEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+    final ElectricityEffect38 electricEffect = (ElectricityEffect38)manager.effect_44;
 
     //LAB_80104984
-    for(int i = 0; i < s2.boltCount_00.get(); i++) {
-      free(s2.bolts_34.deref().get(i).boltSegments_10.getPointer());
+    for(int i = 0; i < electricEffect.boltCount_00.get(); i++) {
+      free(electricEffect.bolts_34.deref().get(i).boltSegments_10.getPointer());
     }
 
     //LAB_801049ac
-    free(s2.bolts_34.getPointer());
+    free(electricEffect.bolts_34.getPointer());
   }
 
   @Method(0x801049d4L)
