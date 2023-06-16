@@ -6,7 +6,7 @@ import legend.core.audio.assets.SoundFactory;
 
 public final class SoundTest {
   public static void main(final String[] args) {
-    final AudioThread audioThread = new AudioThread(100, false, 24);
+    final AudioThread audioThread = new AudioThread(100, true, 24);
     final SequencedAudio bgm = SoundFactory.backgroundMusic(5820);
 
     audioThread.loadSequence(bgm, 0);

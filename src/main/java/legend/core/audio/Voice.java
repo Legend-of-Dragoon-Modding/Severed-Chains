@@ -5,6 +5,7 @@ import legend.core.audio.assets.Instrument;
 import legend.core.audio.assets.InstrumentLayer;
 
 final class Voice {
+  private static final short[] EMPTY = new short[] {0, 0, 0};
   private final int index;
   private final LookupTables lookupTables;
 
@@ -253,6 +254,8 @@ final class Voice {
     this.portamentoNote = 0;
 
     this.latestSample = 0;
+
+    System.arraycopy(EMPTY, 0, this.samples, 0, 3);
   }
 
   boolean isLowPriority() {
@@ -316,14 +319,12 @@ final class Voice {
   }
 
   private double calculatePan(final boolean left) {
-    double pan = this.lookupTables.getPan(this.channel.getPan(), left);
+    int pan = this.channel.getPan();
 
-    //TODO only if poly
+    //TODO only if not poly
+    pan = this.lookupTables.mergePan(pan, this.lookupTables.mergePan(this.instrument.getPan(), this.layer.getPan()));
 
-    pan *= this.lookupTables.getPan(this.instrument.getPan(), left);
-    pan *= this.lookupTables.getPan(this.layer.getPan(), left);
-
-    return pan;
+    return this.lookupTables.getPan(pan, left);
   }
 
   void setModulation(final int value) {
