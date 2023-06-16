@@ -3196,10 +3196,10 @@ public final class SEffe {
   }
 
   @Method(0x80104a14L)
-  public static void FUN_80104a14(final EffectManagerData6c a0, final ElectricityEffect38 a1, final LightningBoltEffect14 a2, final int a3) {
-    a2.rotation_04.setX((short)(seed_800fa754.advance().get() % 4097));
-    a2.rotation_04.setY((short)(seed_800fa754.advance().get() % 4097));
-    a2.rotation_04.setZ((short)(seed_800fa754.advance().get() % 4097));
+  public static void FUN_80104a14(final EffectManagerData6c a0, final ElectricityEffect38 a1, final LightningBoltEffect14 bolt, final int a3) {
+    bolt.rotation_04.setX((short)(seed_800fa754.advance().get() % 4097));
+    bolt.rotation_04.setY((short)(seed_800fa754.advance().get() % 4097));
+    bolt.rotation_04.setZ((short)(seed_800fa754.advance().get() % 4097));
   }
 
   @Method(0x80104b10L)
@@ -3272,13 +3272,13 @@ public final class SEffe {
   }
 
   @Method(0x80104f70L)
-  public static void FUN_80104f70(final EffectManagerData6c manager, final ElectricityEffect38 effect, final LightningBoltEffect14 a2, final int a3) {
+  public static void FUN_80104f70(final EffectManagerData6c manager, final ElectricityEffect38 effect, final LightningBoltEffect14 bolt, final int a3) {
     final int angleStep = 0x1000 / (effect.boltSegmentCount_28.get() - 1);
     int angle = 0;
 
     //LAB_80104fb8
     for(int i = 0; i < effect.boltSegmentCount_28.get(); i++) {
-      final LightningBoltEffectSegment30 segment = a2.boltSegments_10.deref().get(i);
+      final LightningBoltEffectSegment30 segment = bolt.boltSegments_10.deref().get(i);
       segment.origin_00.x.add(rsin(angle) * effect.segmentOriginTranslationMagnitude_1e.get() >> 12);
       segment.origin_00.z.add(rcos(angle) * effect.segmentOriginTranslationMagnitude_1e.get() >> 12);
       segment.origin_00.y.set(0);
