@@ -708,7 +708,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[835] = Bttl_800c::scriptGetBobjDimension;
     scriptSubFunctions_8004e29c[836] = SEffe::allocateRainEffect;
     scriptSubFunctions_8004e29c[837] = Bttl_800c::FUN_800ce9b0;
-    scriptSubFunctions_8004e29c[838] = SEffe::FUN_801052dc;
+    scriptSubFunctions_8004e29c[838] = SEffe::allocateElectricityEffect;
     scriptSubFunctions_8004e29c[839] = SEffe::FUN_80105604;
     scriptSubFunctions_8004e29c[840] = SEffe::allocateDragoonAdditionScript;
     scriptSubFunctions_8004e29c[841] = SEffe::FUN_80105c38;

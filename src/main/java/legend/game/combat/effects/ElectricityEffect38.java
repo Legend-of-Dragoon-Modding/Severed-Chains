@@ -11,7 +11,7 @@ import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedShortRef;
 
-public class RadialElectricityEffect38 implements BttlScriptData6cSubBase1, MemoryRef {
+public class ElectricityEffect38 implements BttlScriptData6cSubBase1, MemoryRef {
   private final Value ref;
 
   public final UnsignedShortRef boltCount_00;
@@ -42,11 +42,11 @@ public class RadialElectricityEffect38 implements BttlScriptData6cSubBase1, Memo
   /** Effect is only meant to send new render commands every other frame if manager._10._24 != 0 */
   public final UnsignedByteRef frameNum_2a;
 
-  public final Pointer<QuadConsumerRef<EffectManagerData6c, RadialElectricityEffect38, LightningBoltEffect14, Integer>> callback_2c;
+  public final Pointer<QuadConsumerRef<EffectManagerData6c, ElectricityEffect38, LightningBoltEffect14, Integer>> callback_2c;
 
   public final Pointer<UnboundedArrayRef<LightningBoltEffect14>> bolts_34;
 
-  public RadialElectricityEffect38(final Value ref) {
+  public ElectricityEffect38(final Value ref) {
     this.ref = ref;
 
     this.boltCount_00 = ref.offset(2, 0x00L).cast(UnsignedShortRef::new);
