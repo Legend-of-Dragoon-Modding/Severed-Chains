@@ -19,8 +19,9 @@ public class LightningBoltEffectSegment30 implements MemoryRef {
   public final USCOLOUR outerColourFadeStep_22;
   public final ByteRef scaleMultiplier_28;
 
-  public final ShortRef _2a;
-  public final ShortRef _2c;
+  /** incremented while rendering, but never used for anything */
+  public final ShortRef unused_2a;
+  public final ShortRef originTranslationMagnitude_2c;
   public final ShortRef _2e;
 
   public LightningBoltEffectSegment30(final Value ref) {
@@ -33,8 +34,8 @@ public class LightningBoltEffectSegment30 implements MemoryRef {
     this.outerColourFadeStep_22 = ref.offset(2, 0x22L).cast(USCOLOUR::new);
     this.scaleMultiplier_28 = ref.offset(1, 0x28L).cast(ByteRef::new);
 
-    this._2a = ref.offset(2, 0x2aL).cast(ShortRef::new);
-    this._2c = ref.offset(2, 0x2cL).cast(ShortRef::new);
+    this.unused_2a = ref.offset(2, 0x2aL).cast(ShortRef::new);
+    this.originTranslationMagnitude_2c = ref.offset(2, 0x2cL).cast(ShortRef::new);
     this._2e = ref.offset(2, 0x2eL).cast(ShortRef::new);
   }
 

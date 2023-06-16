@@ -67,9 +67,6 @@ import legend.game.combat.effects.BttlScriptData6cSub24;
 import legend.game.combat.effects.BttlScriptData6cSub24_2;
 import legend.game.combat.effects.BttlScriptData6cSub30;
 import legend.game.combat.effects.BttlScriptData6cSub30Sub10;
-import legend.game.combat.effects.RadialElectricityEffect38;
-import legend.game.combat.effects.LightningBoltEffect14;
-import legend.game.combat.effects.LightningBoltEffectSegment30;
 import legend.game.combat.effects.BttlScriptData6cSub50;
 import legend.game.combat.effects.BttlScriptData6cSub50Sub3c;
 import legend.game.combat.effects.BttlScriptData6cSub5c;
@@ -82,9 +79,13 @@ import legend.game.combat.effects.EffectStruct48;
 import legend.game.combat.effects.FrozenJetEffect28;
 import legend.game.combat.effects.GoldDragoonTransformEffect20;
 import legend.game.combat.effects.GoldDragoonTransformEffectInstance84;
+import legend.game.combat.effects.LightningBoltEffect14;
+import legend.game.combat.effects.LightningBoltEffectSegment30;
+import legend.game.combat.effects.LightningBoltEffectSegmentOrigin08;
 import legend.game.combat.effects.ParticleEffectData98;
 import legend.game.combat.effects.ParticleEffectInstance94;
 import legend.game.combat.effects.ParticleEffectInstance94Sub10;
+import legend.game.combat.effects.RadialElectricityEffect38;
 import legend.game.combat.effects.RainEffect08;
 import legend.game.combat.effects.RaindropEffect0c;
 import legend.game.combat.effects.ScreenCaptureEffect1c;
@@ -2654,8 +2655,8 @@ public final class SEffe {
         final LightningBoltEffectSegment30 boltSegment = boltEffect.boltSegments_10.deref().get(i);
         boltSegment.segmentOrigin_00.set(sp0x20);
 
-        sp0x20.x.add((int)((seed_800fa754.advance().get() % 257 - 128) * electricEffect.varyBoltSegmentAngle_26.get() >>> 7));
-        sp0x20.z.add((int)((seed_800fa754.advance().get() % 257 - 128) * electricEffect.varyBoltSegmentAngle_26.get() >>> 7));
+        sp0x20.x.add((int)((seed_800fa754.advance().get() % 257 - 128) * electricEffect.segmentOriginTranslationModifier_26.get() >>> 7));
+        sp0x20.z.add((int)((seed_800fa754.advance().get() % 257 - 128) * electricEffect.segmentOriginTranslationModifier_26.get() >>> 7));
         sp0x20.add(secondaryScriptTranslation);
       }
     }
@@ -2756,17 +2757,17 @@ public final class SEffe {
       final LightningBoltEffectSegment30 segment = bolt.boltSegments_10.deref().get(i);
       segment.segmentOrigin_00.set(segmentOriginX, segmentOriginY * i, segmentOriginZ); // position?
       segment.scaleMultiplier_28.set((int)(seed_800fa754.advance().get() % 7 + 5));
-      segment._2a.set((short)0);
-      segment._2c.set((short)(segmentOriginX >> 4));
+      segment.unused_2a.set((short)0);
+      segment.originTranslationMagnitude_2c.set((short)(segmentOriginX >> 4));
       segment._2e.set((short)(seed_800fa754.advance().get() % 193 + 64));
 
-      if(electricEffect._14.get() == 0) {
-        segmentOriginX += (seed_800fa754.advance().get() % 257 - 128) * electricEffect.varyBoltSegmentAngle_26.get() >>> 7;
-        segmentOriginZ += (seed_800fa754.advance().get() % 257 - 128) * electricEffect.varyBoltSegmentAngle_26.get() >>> 7;
+      if(electricEffect.addSuccessiveSegmentOriginTranslations_14.get() == 0) {
+        segmentOriginX += (seed_800fa754.advance().get() % 257 - 128) * electricEffect.segmentOriginTranslationModifier_26.get() >>> 7;
+        segmentOriginZ += (seed_800fa754.advance().get() % 257 - 128) * electricEffect.segmentOriginTranslationModifier_26.get() >>> 7;
         //LAB_80102e58
       } else if(i < electricEffect.boltSegmentCount_28.get() - 2) {
-        segmentOriginX = (short)((seed_800fa754.advance().get() % 257 - 128) * electricEffect.varyBoltSegmentAngle_26.get() >>> 7);
-        segmentOriginZ = (short)((seed_800fa754.advance().get() % 257 - 128) * electricEffect.varyBoltSegmentAngle_26.get() >>> 7);
+        segmentOriginX = (short)((seed_800fa754.advance().get() % 257 - 128) * electricEffect.segmentOriginTranslationModifier_26.get() >>> 7);
+        segmentOriginZ = (short)((seed_800fa754.advance().get() % 257 - 128) * electricEffect.segmentOriginTranslationModifier_26.get() >>> 7);
       } else {
         //LAB_80102f44
         segmentOriginX = 0;
@@ -2807,7 +2808,7 @@ public final class SEffe {
    */
   @Method(0x801030d8L)
   public static void FUN_801030d8(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
-    final RadialElectricityEffect38 electricEffect = (RadialElectricityEffect38)manager.effect_44;
+    /*final RadialElectricityEffect38 electricEffect = (RadialElectricityEffect38)manager.effect_44;
 
     if(electricEffect.currentColourFadeStep_04.get() + 1 == electricEffect.numColourFadeSteps_0c.get()) {
       return;
@@ -2854,7 +2855,7 @@ public final class SEffe {
 
       //LAB_8010324c
       electricEffect.callback_2c.deref().run(manager, electricEffect, bolt, boltNum);
-      bolt.angle_02.sub((short)(electricEffect._10.get() << 7 >> 8));
+      bolt.angle_02.sub((short)(electricEffect.boltAngleStep_10.get() << 7 >> 8));
       segmentOrigin.set(bolt.boltSegments_10.deref().get(0).segmentOrigin_00);
       int zMod = FUN_800cfb94(manager, bolt.rotation_04, segmentOrigin, refOuterOriginXa, refOuterOriginYa) >> 2;
       segmentOrigin.set(bolt.boltSegments_10.deref().get(electricEffect.boltSegmentCount_28.get() - 1).segmentOrigin_00);
@@ -2881,7 +2882,7 @@ public final class SEffe {
         final LightningBoltEffectSegment30 segment = bolt.boltSegments_10.deref().get(segmentNum);
         segment.innerSegmentColour_10.sub(segment.innerColourFadeStep_1c);
         segment.outerSegmentColour_16.sub(segment.outerColourFadeStep_22);
-        segment._2a.add((short)(electricEffect._10.get() << 8 >> 8));
+        segment.unused_2a.add((short)(electricEffect.boltAngleStep_10.get() << 8 >> 8));
       }
 
       //LAB_80103538
@@ -2903,10 +2904,10 @@ public final class SEffe {
             int centerLineEndpointY = centerLineOriginY + segmentLengthY;
             final int currentSegmentEndpointX = centerLineOriginX + segmentLengthX;
             final int currentSegmentEndpointY = centerLineOriginY + segmentLengthY;
-            centerLineOriginX += rcos(angle) * currentSegment._2c.get() >> 12 << 8;
-            centerLineOriginY += rsin(angle) * currentSegment._2c.get() >> 12 << 8;
-            centerLineEndpointX += rcos(angle) * nextSegment._2c.get() >> 12 << 8;
-            centerLineEndpointY += rsin(angle) * nextSegment._2c.get() >> 12 << 8;
+            centerLineOriginX += rcos(angle) * currentSegment.originTranslationMagnitude_2c.get() >> 12 << 8;
+            centerLineOriginY += rsin(angle) * currentSegment.originTranslationMagnitude_2c.get() >> 12 << 8;
+            centerLineEndpointX += rcos(angle) * nextSegment.originTranslationMagnitude_2c.get() >> 12 << 8;
+            centerLineEndpointY += rsin(angle) * nextSegment.originTranslationMagnitude_2c.get() >> 12 << 8;
             final int scale = currentSegment.scaleMultiplier_28.get() * manager._10.scale_16.getX() >> 12;
             final int outerEndpointXa = (centerLineEndpointX >> 8) + (rcos(angle) * scale >> 12);
             final int outerEndpointYa = (centerLineEndpointY >> 8) + (rsin(angle) * scale >> 12);
@@ -2920,7 +2921,7 @@ public final class SEffe {
               final int baseY2 = (centerLineEndpointY - centerLineOriginY >> 8) * currentSegment._2e.get() + centerLineOriginY;
 
               //LAB_80103808
-              int baseColour = currentSegment.innerSegmentColour_10.getX() + Math.abs(currentSegment._2c.get() - nextSegment._2c.get()) * 8;
+              int baseColour = currentSegment.innerSegmentColour_10.getX() + Math.abs(currentSegment.originTranslationMagnitude_2c.get() - nextSegment.originTranslationMagnitude_2c.get()) * 8;
               if((baseColour & 0xffff) > 0xff00) {
                 baseColour = 0xff00;
               }
@@ -2981,7 +2982,7 @@ public final class SEffe {
           //LAB_80103ca0
         }
       }
-    }
+    }*/
   }
 
   /**
@@ -2991,51 +2992,30 @@ public final class SEffe {
    */
   @Method(0x80103db0L)
   public static void FUN_80103db0(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
-    int v1;
-    int a0;
-    long s0;
-    int s2;
-    int s3;
-    int s5;
-    int sp3c;
-    int spdc;
-    int sp38;
-    int sp2c;
-    int spd8;
-    int sp34;
-    int sp30;
-    int sp28;
-    int sp1c;
-    int sp24;
-    int sp20;
-    int sp18;
-    int spc4;
-    int spc0;
-    boolean spb4 = true;
     final RadialElectricityEffect38 electricEffect = (RadialElectricityEffect38)manager.effect_44;
 
     if(electricEffect.currentColourFadeStep_04.get() + 1 == electricEffect.numColourFadeSteps_0c.get()) {
       return;
     }
 
-    final long spbc = mallocTail(electricEffect.boltSegmentCount_28.get() * 0x8L);
     electricEffect.currentColourFadeStep_04.incr();
 
     //LAB_80103e40
     if(electricEffect.currentColourFadeStep_04.get() == 1) {
       initializeRadialElectricityBoltColour(manager, electricEffect);
-      free(spbc);
 
       //LAB_80103e8c
       for(int i = 0; i < electricEffect.boltCount_00.get(); i++) {
         electricEffect.callback_2c.deref().run(manager, electricEffect, electricEffect.bolts_34.deref().get(i), i);
       }
     } else {
+      final UnboundedArrayRef<LightningBoltEffectSegmentOrigin08> segmentArray = MEMORY.ref(4, mallocTail(electricEffect.boltSegmentCount_28.get() * 0x8), UnboundedArrayRef.of(0x8, LightningBoltEffectSegmentOrigin08::new, electricEffect.boltSegmentCount_28::get));
+      LightningBoltEffectSegmentOrigin08 currentSegmentOrigin;
+      LightningBoltEffectSegmentOrigin08 nextSegmentOrigin;
+
       //LAB_80103ee4
       electricEffect.frameNum_2a.incr().and(0x1f);
-      if((manager._10._24 >> electricEffect.frameNum_2a.get() & 0x1) == 0) {
-        spb4 = false;
-      }
+      final boolean effectShouldRender = (manager._10._24 >> electricEffect.frameNum_2a.get() & 0x1) == 0;
 
       //LAB_80103f18
       //LAB_80103f44
@@ -3049,144 +3029,145 @@ public final class SEffe {
         //LAB_80103f6c
         electricEffect.callback_2c.deref().run(manager, electricEffect, bolt, i);
 
-        bolt.angle_02.sub((short)(electricEffect._10.get() << 7 >> 8));
+        bolt.angle_02.sub((short)(electricEffect.boltAngleStep_10.get() << 7 >> 8));
 
         //LAB_80103fc4
-        int fp;
-        for(fp = 0; fp < electricEffect.boltSegmentCount_28.get(); fp++) {
-          final LightningBoltEffectSegment30 s4 = bolt.boltSegments_10.deref().get(fp);
-          final long a3 = spbc + fp * 0x8L;
+        int segmentNum;
+        for(segmentNum = 0; segmentNum < electricEffect.boltSegmentCount_28.get(); segmentNum++) {
+          final LightningBoltEffectSegment30 segment = bolt.boltSegments_10.deref().get(segmentNum);
+          final LightningBoltEffectSegmentOrigin08 segmentOrigin = segmentArray.get(segmentNum);
           final ShortRef refX = new ShortRef();
           final ShortRef refY = new ShortRef();
-          bolt.sz3_0c.set(FUN_800cfb94(manager, bolt.rotation_04, new VECTOR().set(s4.segmentOrigin_00), refX, refY) / 4);
-          MEMORY.ref(4, a3).set(refX.get());
-          MEMORY.ref(4, a3).offset(0x4).set(refY.get());
-          s4.innerSegmentColour_10.sub(s4.innerColourFadeStep_1c);
-          s4.outerSegmentColour_16.sub(s4.outerColourFadeStep_22);
-          s4._2a.add((short)(electricEffect._10.get() << 8 >> 8));
+          bolt.sz3_0c.set(FUN_800cfb94(manager, bolt.rotation_04, new VECTOR().set(segment.segmentOrigin_00), refX, refY) / 4);
+          segmentOrigin.x_00.set(refX.get());
+          segmentOrigin.y_04.set(refY.get());
+          segment.innerSegmentColour_10.sub(segment.innerColourFadeStep_1c);
+          segment.outerSegmentColour_16.sub(segment.outerColourFadeStep_22);
+          segment.unused_2a.add((short)(electricEffect.boltAngleStep_10.get() << 8 >> 8));
         }
 
         //LAB_801040d0
-        sp38 = (int)(MEMORY.ref(4, spbc).offset((fp - 1) * 0x8L).offset(0x0L).get() - MEMORY.ref(4, spbc).offset(0x0L).get());
-        sp3c = (int)(MEMORY.ref(4, spbc).offset((fp - 1) * 0x8L).offset(0x4L).get() - MEMORY.ref(4, spbc).offset(0x4L).get());
-        spc4 = -ratan2(sp38, sp3c);
-        s5 = bolt.boltSegments_10.deref().get(0).scaleMultiplier_28.get() * manager._10.scale_16.getX() >> 12;
-        sp18 = (int)(MEMORY.ref(4, spbc).offset(0x0L).get() + (rcos(spc4) * s5 >> 12));
-        sp1c = (int)(MEMORY.ref(4, spbc).offset(0x4L).get() + (rsin(spc4) * s5 >> 12));
-        sp20 = (int)(MEMORY.ref(4, spbc).offset(0x0L).get() - (rcos(spc4) * s5 >> 12));
-        sp24 = (int)(MEMORY.ref(4, spbc).offset(0x4L).get() - (rsin(spc4) * s5 >> 12));
+        final int boltLengthX = segmentArray.get(segmentNum - 1).x_00.get() - segmentArray.get(0).x_00.get();
+        final int boltLengthY = segmentArray.get(segmentNum - 1).y_04.get() - segmentArray.get(0).y_04.get();
+        final int angle = -ratan2(boltLengthX, boltLengthY);
+        int currentSegmentScale = bolt.boltSegments_10.deref().get(0).scaleMultiplier_28.get() * manager._10.scale_16.getX() >> 12;
+        int outerOriginXa = segmentArray.get(0).x_00.get() + (rcos(angle) * currentSegmentScale >> 12);
+        int outerOriginYa = segmentArray.get(0).y_04.get() + (rsin(angle) * currentSegmentScale >> 12);
+        int outerOriginXb = segmentArray.get(0).x_00.get() - (rcos(angle) * currentSegmentScale >> 12);
+        int outerOriginYb = segmentArray.get(0).y_04.get() - (rsin(angle) * currentSegmentScale >> 12);
 
-        if(!spb4) {
+        if(effectShouldRender) {
           final Translucency translucency = Translucency.of(manager._10.flags_00 >>> 28 & 3);
 
-          a0 = manager._10.z_22;
-          v1 = a0 + bolt.sz3_0c.get();
-          if(v1 >= 0xa0) {
-            if(v1 >= 0xffe) {
-              bolt.sz3_0c.set(0xffe - a0);
+          final int z = manager._10.z_22 + bolt.sz3_0c.get();
+          if(z >= 0xa0) {
+            if(z >= 0xffe) {
+              bolt.sz3_0c.set(0xffe - manager._10.z_22);
             }
 
             //LAB_8010422c
             //LAB_8010424c
-            for(fp = 0; fp < electricEffect.boltSegmentCount_28.get() - 1; fp++) {
-              final LightningBoltEffectSegment30 s4 = bolt.boltSegments_10.deref().get(fp);
-              final LightningBoltEffectSegment30 t4 = bolt.boltSegments_10.deref().get(fp + 1);
-              s5 = s4.scaleMultiplier_28.get() * manager._10.scale_16.getX() >> 12;
-              spc0 = t4.scaleMultiplier_28.get() * manager._10.scale_16.getX() >> 12;
+            for(segmentNum = 0; segmentNum < electricEffect.boltSegmentCount_28.get() - 1; segmentNum++) {
+              final LightningBoltEffectSegment30 currentSegment = bolt.boltSegments_10.deref().get(segmentNum);
+              final LightningBoltEffectSegment30 nextSegment = bolt.boltSegments_10.deref().get(segmentNum + 1);
+              currentSegmentScale = currentSegment.scaleMultiplier_28.get() * manager._10.scale_16.getX() >> 12;
+              final int nextSegmentScale = nextSegment.scaleMultiplier_28.get() * manager._10.scale_16.getX() >> 12;
 
               if(electricEffect._18.get() == 0) {
-                s0 = spbc + fp * 0x8L;
-                sp28 = (int)(MEMORY.ref(4, s0).offset(0x8L).get() + (rcos(spc4) * s5 >> 12));
-                sp2c = (int)(MEMORY.ref(4, s0).offset(0xcL).get() + (rsin(spc4) * s5 >> 12));
-                sp30 = (int)(MEMORY.ref(4, s0).offset(0x8L).get() - (rcos(spc4) * s5 >> 12));
-                sp34 = (int)(MEMORY.ref(4, s0).offset(0xcL).get() - (rsin(spc4) * s5 >> 12));
+                currentSegmentOrigin = segmentArray.get(segmentNum);
+                nextSegmentOrigin = segmentArray.get(segmentNum + 1);
+                final int outerEndpointXa = nextSegmentOrigin.x_00.get() + (rcos(angle) * currentSegmentScale >> 12);
+                final int outerEndpointYa = nextSegmentOrigin.y_04.get() + (rsin(angle) * currentSegmentScale >> 12);
+                final int outerEndpointXb = nextSegmentOrigin.x_00.get() - (rcos(angle) * currentSegmentScale >> 12);
+                final int outerEndpointYb = nextSegmentOrigin.y_04.get() - (rsin(angle) * currentSegmentScale >> 12);
 
-                final DVECTOR[] sp0x50 = new DVECTOR[4];
-                Arrays.setAll(sp0x50, n -> new DVECTOR());
+                final DVECTOR[] vertexArray = new DVECTOR[4];
+                Arrays.setAll(vertexArray, n -> new DVECTOR());
 
-                sp0x50[1].setX((short)MEMORY.ref(4, s0).offset(0x8L).get());
-                sp0x50[1].setY((short)MEMORY.ref(4, s0).offset(0xcL).get());
-                sp0x50[3].setX((short)MEMORY.ref(4, s0).offset(0x0L).get());
-                sp0x50[3].setY((short)MEMORY.ref(4, s0).offset(0x4L).get());
+                vertexArray[1].setX((short)nextSegmentOrigin.x_00.get());
+                vertexArray[1].setY((short)nextSegmentOrigin.y_04.get());
+                vertexArray[3].setX((short)currentSegmentOrigin.x_00.get());
+                vertexArray[3].setY((short)currentSegmentOrigin.y_04.get());
 
-                sp0x50[0].setX((short)sp28);
-                sp0x50[0].setY((short)sp2c);
-                sp0x50[2].setX((short)sp18);
-                sp0x50[2].setY((short)sp1c);
-                renderSegmentGradient(s4.outerSegmentColour_16, t4.outerSegmentColour_16, sp0x50, bolt.sz3_0c.get(), manager._10.z_22, translucency);
-                sp0x50[0].setX((short)((sp0x50[0].getX() - sp0x50[1].getX()) / manager._10._30 + sp0x50[1].getX()));
-                sp0x50[0].setY((short)((sp0x50[0].getY() - sp0x50[1].getY()) / manager._10._30 + sp0x50[1].getY()));
-                sp0x50[2].setX((short)((sp0x50[2].getX() - sp0x50[3].getX()) / manager._10._30 + sp0x50[3].getX()));
-                sp0x50[2].setY((short)((sp0x50[2].getY() - sp0x50[3].getY()) / manager._10._30 + sp0x50[3].getY()));
-                renderSegmentGradient(s4.innerSegmentColour_10, t4.innerSegmentColour_10, sp0x50, bolt.sz3_0c.get(), manager._10.z_22, translucency);
-                sp0x50[0].setX((short)sp30);
-                sp0x50[0].setY((short)sp34);
-                sp0x50[2].setX((short)sp20);
-                sp0x50[2].setY((short)sp24);
-                renderSegmentGradient(s4.outerSegmentColour_16, t4.outerSegmentColour_16, sp0x50, bolt.sz3_0c.get(), manager._10.z_22, translucency);
-                sp0x50[0].setX((short)((sp0x50[0].getX() - sp0x50[1].getX()) / manager._10._30 + sp0x50[1].getX()));
-                sp0x50[0].setY((short)((sp0x50[0].getY() - sp0x50[1].getY()) / manager._10._30 + sp0x50[1].getY()));
-                sp0x50[2].setX((short)((sp0x50[2].getX() - sp0x50[3].getX()) / manager._10._30 + sp0x50[3].getX()));
-                sp0x50[2].setY((short)((sp0x50[2].getY() - sp0x50[3].getY()) / manager._10._30 + sp0x50[3].getY()));
-                renderSegmentGradient(s4.innerSegmentColour_10, t4.innerSegmentColour_10, sp0x50, bolt.sz3_0c.get(), manager._10.z_22, translucency);
+                vertexArray[0].setX((short)outerEndpointXa);
+                vertexArray[0].setY((short)outerEndpointYa);
+                vertexArray[2].setX((short)outerOriginXa);
+                vertexArray[2].setY((short)outerOriginYa);
+                renderSegmentGradient(currentSegment.outerSegmentColour_16, nextSegment.outerSegmentColour_16, vertexArray, bolt.sz3_0c.get(), manager._10.z_22, translucency);
 
-                sp18 = sp28;
-                sp1c = sp2c;
-                sp20 = sp30;
-                sp24 = sp34;
+                vertexArray[0].setX((short)((vertexArray[0].getX() - vertexArray[1].getX()) / manager._10._30 + vertexArray[1].getX()));
+                vertexArray[0].setY((short)((vertexArray[0].getY() - vertexArray[1].getY()) / manager._10._30 + vertexArray[1].getY()));
+                vertexArray[2].setX((short)((vertexArray[2].getX() - vertexArray[3].getX()) / manager._10._30 + vertexArray[3].getX()));
+                vertexArray[2].setY((short)((vertexArray[2].getY() - vertexArray[3].getY()) / manager._10._30 + vertexArray[3].getY()));
+                renderSegmentGradient(currentSegment.innerSegmentColour_10, nextSegment.innerSegmentColour_10, vertexArray, bolt.sz3_0c.get(), manager._10.z_22, translucency);
+
+                vertexArray[0].setX((short)outerEndpointXb);
+                vertexArray[0].setY((short)outerEndpointYb);
+                vertexArray[2].setX((short)outerOriginXb);
+                vertexArray[2].setY((short)outerOriginYb);
+                renderSegmentGradient(currentSegment.outerSegmentColour_16, nextSegment.outerSegmentColour_16, vertexArray, bolt.sz3_0c.get(), manager._10.z_22, translucency);
+
+                vertexArray[0].setX((short)((vertexArray[0].getX() - vertexArray[1].getX()) / manager._10._30 + vertexArray[1].getX()));
+                vertexArray[0].setY((short)((vertexArray[0].getY() - vertexArray[1].getY()) / manager._10._30 + vertexArray[1].getY()));
+                vertexArray[2].setX((short)((vertexArray[2].getX() - vertexArray[3].getX()) / manager._10._30 + vertexArray[3].getX()));
+                vertexArray[2].setY((short)((vertexArray[2].getY() - vertexArray[3].getY()) / manager._10._30 + vertexArray[3].getY()));
+                renderSegmentGradient(currentSegment.innerSegmentColour_10, nextSegment.innerSegmentColour_10, vertexArray, bolt.sz3_0c.get(), manager._10.z_22, translucency);
+
+                outerOriginXa = outerEndpointXa;
+                outerOriginYa = outerEndpointYa;
+                outerOriginXb = outerEndpointXb;
+                outerOriginYb = outerEndpointYb;
               } else {
                 //LAB_801045e8
-                s0 = spbc + fp * 0x8L;
-                s2 = (int)Math.abs(MEMORY.ref(4, s0).offset(0x0L).get() - MEMORY.ref(4, s0).offset(0x8L).get());
-                s2 = (int)(seed_800fa754.advance().get() % (s2 * 2 + 1) - s2 + MEMORY.ref(4, s0).offset(0x0L).get());
-                s3 = (int)MEMORY.ref(4, s0).offset(0x0L).get();
-                v1 = (int)MEMORY.ref(4, s0).offset(0x4L).get();
-                int s0_0 = (int)((MEMORY.ref(4, s0).offset(0xcL).get() - MEMORY.ref(4, s0).offset(0x4L).get()) / 2 + MEMORY.ref(4, s0).offset(0x4L).get());
-                spd8 = spc0 >> 2;
-                spdc = s5 >> 2;
+                currentSegmentOrigin = segmentArray.get(segmentNum);
+                nextSegmentOrigin = segmentArray.get(segmentNum + 1);
+                int centerLineEndpointX = Math.abs(currentSegmentOrigin.x_00.get() - nextSegmentOrigin.x_00.get());
+                centerLineEndpointX = (int)(seed_800fa754.advance().get() % (centerLineEndpointX * 2 + 1) - centerLineEndpointX + currentSegmentOrigin.x_00.get());
+                int centerLineOriginX = currentSegmentOrigin.x_00.get();
+                int centerLineOriginY = currentSegmentOrigin.y_04.get();
+                int centerLineEndpointY = (nextSegmentOrigin.y_04.get() - currentSegmentOrigin.y_04.get()) / 2 + currentSegmentOrigin.y_04.get();
+                final int nextSegmentQuarterScale = nextSegmentScale >> 2;
+                final int currentSegmentQuarterScale = currentSegmentScale >> 2;
 
                 //LAB_801046c4
-                for(int s1 = 2; s1 > 0; s1--) {
-                  final DVECTOR[] sp0x90 = new DVECTOR[4];
-                  Arrays.setAll(sp0x90, n -> new DVECTOR());
+                for(int j = 2; j > 0; j--) {
+                  final DVECTOR[] vertexArray = new DVECTOR[4];
+                  Arrays.setAll(vertexArray, n -> new DVECTOR());
 
-                  sp0x90[0].setY((short)s0_0);
-                  sp0x90[1].setY((short)s0_0);
-                  sp0x90[2].setY((short)v1);
-                  sp0x90[3].setY((short)v1);
+                  vertexArray[0].setY((short)centerLineEndpointY);
+                  vertexArray[1].setY((short)centerLineEndpointY);
+                  vertexArray[2].setY((short)centerLineOriginY);
+                  vertexArray[3].setY((short)centerLineOriginY);
 
-                  sp0x90[0].setX((short)(s2 - spc0));
-                  sp0x90[1].setX((short)(s2 + 1));
-                  sp0x90[2].setX((short)(s3 - s5));
-                  sp0x90[3].setX((short)(s3 + 1));
-                  renderSegmentGradient(s4.outerSegmentColour_16, t4.outerSegmentColour_16, sp0x90, bolt.sz3_0c.get(), manager._10.z_22, translucency);
-                  sp0x90[0].setX((short)(s2 - spd8));
-                  sp0x90[2].setX((short)(s3 - spdc));
-                  renderSegmentGradient(s4.innerSegmentColour_10, t4.innerSegmentColour_10, sp0x90, bolt.sz3_0c.get(), manager._10.z_22, translucency);
-                  sp0x90[0].setX((short)(s2 + spc0));
-                  sp0x90[1].setX((short)s2);
-                  sp0x90[2].setX((short)(s3 + s5));
-                  sp0x90[3].setX((short)s3);
-                  renderSegmentGradient(s4.outerSegmentColour_16, t4.outerSegmentColour_16, sp0x90, bolt.sz3_0c.get(), manager._10.z_22, translucency);
-                  sp0x90[0].setX((short)(s2 + spd8));
-                  sp0x90[2].setX((short)(s3 + spdc));
-                  renderSegmentGradient(s4.innerSegmentColour_10, t4.innerSegmentColour_10, sp0x90, bolt.sz3_0c.get(), manager._10.z_22, translucency);
+                  vertexArray[0].setX((short)(centerLineEndpointX - nextSegmentScale));
+                  vertexArray[1].setX((short)(centerLineEndpointX + 1));
+                  vertexArray[2].setX((short)(centerLineOriginX - currentSegmentScale));
+                  vertexArray[3].setX((short)(centerLineOriginX + 1));
+                  renderSegmentGradient(currentSegment.outerSegmentColour_16, nextSegment.outerSegmentColour_16, vertexArray, bolt.sz3_0c.get(), manager._10.z_22, translucency);
+                  vertexArray[0].setX((short)(centerLineEndpointX - nextSegmentQuarterScale));
+                  vertexArray[2].setX((short)(centerLineOriginX - currentSegmentQuarterScale));
+                  renderSegmentGradient(currentSegment.innerSegmentColour_10, nextSegment.innerSegmentColour_10, vertexArray, bolt.sz3_0c.get(), manager._10.z_22, translucency);
+                  vertexArray[0].setX((short)(centerLineEndpointX + nextSegmentScale));
+                  vertexArray[1].setX((short)centerLineEndpointX);
+                  vertexArray[2].setX((short)(centerLineOriginX + currentSegmentScale));
+                  vertexArray[3].setX((short)centerLineOriginX);
+                  renderSegmentGradient(currentSegment.outerSegmentColour_16, nextSegment.outerSegmentColour_16, vertexArray, bolt.sz3_0c.get(), manager._10.z_22, translucency);
+                  vertexArray[0].setX((short)(centerLineEndpointX + nextSegmentQuarterScale));
+                  vertexArray[2].setX((short)(centerLineOriginX + currentSegmentQuarterScale));
+                  renderSegmentGradient(currentSegment.innerSegmentColour_10, nextSegment.innerSegmentColour_10, vertexArray, bolt.sz3_0c.get(), manager._10.z_22, translucency);
 
-                  s3 = s2;
-                  v1 = s0_0;
-                  s2 = (int)MEMORY.ref(4, spbc).offset(fp * 0x8L).offset(0x8L).get();
-                  s0_0 = (int)MEMORY.ref(4, spbc).offset(fp * 0x8L).offset(0xcL).get();
+                  centerLineOriginX = centerLineEndpointX;
+                  centerLineOriginY = centerLineEndpointY;
+                  centerLineEndpointX = nextSegmentOrigin.x_00.get();
+                  centerLineEndpointY = nextSegmentOrigin.y_04.get();
                 }
               }
             }
           }
         }
       }
-
       //LAB_8010490c
-      free(spbc);
     }
-
     //LAB_8010491c
   }
 
@@ -3211,7 +3192,7 @@ public final class SEffe {
   @Method(0x801049dcL)
   public static void FUN_801049dc(final EffectManagerData6c a0, final RadialElectricityEffect38 electricEffect, final LightningBoltEffect14 boltEffect, final int boltIndex) {
     boltEffect.rotation_04.setY((short)(0x1000 / electricEffect.boltCount_00.get() * boltIndex));
-    boltEffect.rotation_04.setZ((short)(electricEffect.originTranslationMagnitude_1e.get() * 2));
+    boltEffect.rotation_04.setZ((short)(electricEffect.segmentOriginTranslationMagnitude_1e.get() * 2));
   }
 
   @Method(0x80104a14L)
@@ -3229,8 +3210,8 @@ public final class SEffe {
     //LAB_80104b58
     for(int i = 0; i < electricEffect.boltSegmentCount_28.get(); i++) {
       final LightningBoltEffectSegment30 segment = bolt.boltSegments_10.deref().get(i);
-      segment.segmentOrigin_00.x.add(rcos(angle) * electricEffect.originTranslationMagnitude_1e.get() >> 12);
-      segment.segmentOrigin_00.z.add(rsin(angle) * electricEffect.originTranslationMagnitude_1e.get() >> 12);
+      segment.segmentOrigin_00.x.add(rcos(angle) * electricEffect.segmentOriginTranslationMagnitude_1e.get() >> 12);
+      segment.segmentOrigin_00.z.add(rsin(angle) * electricEffect.segmentOriginTranslationMagnitude_1e.get() >> 12);
       angle = angle + angleStep;
     }
 
@@ -3245,7 +3226,7 @@ public final class SEffe {
     //LAB_80104c34
     for(int i = 0; i < electricEffect.boltSegmentCount_28.get(); i++) {
       final LightningBoltEffectSegment30 segment = bolt.boltSegments_10.deref().get(i);
-      segment.segmentOrigin_00.z.add(rsin(angle) * electricEffect.originTranslationMagnitude_1e.get() >> 12);
+      segment.segmentOrigin_00.z.add(rsin(angle) * electricEffect.segmentOriginTranslationMagnitude_1e.get() >> 12);
       angle = angle + angleStep;
     }
 
@@ -3264,7 +3245,7 @@ public final class SEffe {
     for(int i = 1; i < electricEffect.boltSegmentCount_28.get(); i++) {
       final LightningBoltEffectSegment30 segment = bolt.boltSegments_10.deref().get(i);
       translationMagnitudeModifier = translationMagnitudeModifier + segmentIndex;
-      final int translationMagnitude = translationMagnitudeModifier * electricEffect.originTranslationMagnitude_1e.get();
+      final int translationMagnitude = translationMagnitudeModifier * electricEffect.segmentOriginTranslationMagnitude_1e.get();
       final int x = translationMagnitude * (rsin(angle1) + rcos(angle2)) >> 12;
       final int y = translationMagnitude * (rcos(angle0) + rcos(angle2)) >> 12;
       final int z = translationMagnitude * (rcos(angle1) + rsin(angle0)) >> 12;
@@ -3275,7 +3256,7 @@ public final class SEffe {
 
   @Method(0x80104e40L)
   public static void FUN_80104e40(final EffectManagerData6c manager, final RadialElectricityEffect38 electricEffect, final LightningBoltEffect14 bolt, final int a3) {
-    final int translationMagnitude = electricEffect.originTranslationMagnitude_1e.get() / electricEffect.boltCount_00.get() & 0xffff;
+    final int translationMagnitude = electricEffect.segmentOriginTranslationMagnitude_1e.get() / electricEffect.boltCount_00.get() & 0xffff;
     final int angle = 0x1000 / electricEffect.boltCount_00.get() * a3;
 
     //LAB_80104ec4
@@ -3298,8 +3279,8 @@ public final class SEffe {
     //LAB_80104fb8
     for(int i = 0; i < effect.boltSegmentCount_28.get(); i++) {
       final LightningBoltEffectSegment30 s0 = a2.boltSegments_10.deref().get(i);
-      s0.segmentOrigin_00.x.add(rsin(angle) * effect.originTranslationMagnitude_1e.get() >> 12);
-      s0.segmentOrigin_00.z.add(rcos(angle) * effect.originTranslationMagnitude_1e.get() >> 12);
+      s0.segmentOrigin_00.x.add(rsin(angle) * effect.segmentOriginTranslationMagnitude_1e.get() >> 12);
+      s0.segmentOrigin_00.z.add(rcos(angle) * effect.segmentOriginTranslationMagnitude_1e.get() >> 12);
       s0.segmentOrigin_00.y.set(0);
       angle += angleStep;
     }
@@ -3315,9 +3296,9 @@ public final class SEffe {
     //LAB_801050c0
     for(int i = 0; i < segmentCount; i++) {
       final LightningBoltEffectSegment30 segment = bolt.boltSegments_10.deref().get(i);
-      segment.segmentOrigin_00.x.add(rcos(angle) * electricEffect.originTranslationMagnitude_1e.get() >> 12);
-      segment.segmentOrigin_00.y.set((rsin(angle) * rsin(angle) >> 12) * electricEffect.originTranslationMagnitude_1e.get() >> 12);
-      segment.segmentOrigin_00.z.add((rsin(angle) * rcos(boltAngleZ) >> 12) * electricEffect.originTranslationMagnitude_1e.get() >> 12);
+      segment.segmentOrigin_00.x.add(rcos(angle) * electricEffect.segmentOriginTranslationMagnitude_1e.get() >> 12);
+      segment.segmentOrigin_00.y.set((rsin(angle) * rsin(angle) >> 12) * electricEffect.segmentOriginTranslationMagnitude_1e.get() >> 12);
+      segment.segmentOrigin_00.z.add((rsin(angle) * rcos(boltAngleZ) >> 12) * electricEffect.segmentOriginTranslationMagnitude_1e.get() >> 12);
       angle += angleStep;
     }
   }
@@ -3333,9 +3314,9 @@ public final class SEffe {
     //LAB_80105210
     for(int i = 0; i < segmentCount; i++) {
       final LightningBoltEffectSegment30 segment = bolt.boltSegments_10.deref().get(i);
-      segment.segmentOrigin_00.x.add(rsin(angleXZ) * electricEffect.originTranslationMagnitude_1e.get() >> 12);
-      segment.segmentOrigin_00.y.set(rsin(angleY) * electricEffect.originTranslationMagnitude_1e.get() / 4 >> 12);
-      segment.segmentOrigin_00.z.add(rcos(angleXZ) * electricEffect.originTranslationMagnitude_1e.get() >> 12);
+      segment.segmentOrigin_00.x.add(rsin(angleXZ) * electricEffect.segmentOriginTranslationMagnitude_1e.get() >> 12);
+      segment.segmentOrigin_00.y.set(rsin(angleY) * electricEffect.segmentOriginTranslationMagnitude_1e.get() / 4 >> 12);
+      segment.segmentOrigin_00.z.add(rcos(angleXZ) * electricEffect.segmentOriginTranslationMagnitude_1e.get() >> 12);
       angleXZ = angleXZ + angleStepXZ;
       angleY = angleY + angleStepY;
     }
@@ -3368,16 +3349,16 @@ public final class SEffe {
     electricEffect.currentColourFadeStep_04.set(0);
     electricEffect.scriptIndex_08.set(script.params_20[1].get());
     electricEffect.numColourFadeSteps_0c.set(effectFlag >> 16 & 0xff);
-    electricEffect._10.set(script.params_20[5].get());
-    electricEffect._14.set(effectFlag >>> 24 & 0x8);
+    electricEffect.boltAngleStep_10.set(script.params_20[5].get());
+    electricEffect.addSuccessiveSegmentOriginTranslations_14.set(effectFlag >>> 24 & 0x8);
     electricEffect._18.set(effectFlag >>> 24 & 0x10);
     electricEffect.boltAngleRangeCutoff_1c.set((short)script.params_20[2].get());
-    electricEffect.originTranslationMagnitude_1e.set((short)script.params_20[4].get());
+    electricEffect.segmentOriginTranslationMagnitude_1e.set((short)script.params_20[4].get());
     electricEffect.callbackIndex_20.set((short)callbackIndex);
     electricEffect.colourShouldFade_22.set(effectFlag >>> 24 & 0x1);
     electricEffect.fadeSuccessiveSegments_23.set(effectFlag >>> 24 & 0x2);
     electricEffect.reinitializeNodes_24.set(effectFlag >>> 24 & 0x4);
-    electricEffect.varyBoltSegmentAngle_26.set(effectFlag & 0xff);
+    electricEffect.segmentOriginTranslationModifier_26.set(effectFlag & 0xff);
     electricEffect.boltSegmentCount_28.set(effectFlag >> 8 & 0xff);
     electricEffect.hasMonochromeBase_29.set(effectFlag >>> 24 & 0x20);
     electricEffect.frameNum_2a.set(0);

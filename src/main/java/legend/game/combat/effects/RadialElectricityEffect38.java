@@ -19,13 +19,15 @@ public class RadialElectricityEffect38 implements BttlScriptData6cSubBase1, Memo
   public final IntRef currentColourFadeStep_04;
   public final IntRef scriptIndex_08;
   public final IntRef numColourFadeSteps_0c;
-  public final IntRef _10;
-  public final IntRef _14;
+  public final IntRef boltAngleStep_10;
+  /** If 0, add origin translation of current segment to that of previous segment */
+  public final IntRef addSuccessiveSegmentOriginTranslations_14;
+  /** Related to which rendering branch to use in 80103db0 */
   public final IntRef _18;
   /** The lower the value, the wider the angle in which the bolt can be drawn */
   public final ShortRef boltAngleRangeCutoff_1c;
   /** Length of hypotenuse of translation, most often added to segment origin */
-  public final ShortRef originTranslationMagnitude_1e;
+  public final ShortRef segmentOriginTranslationMagnitude_1e;
   public final ShortRef callbackIndex_20;
   public final UnsignedByteRef colourShouldFade_22;
   /** If 0, colour will be progressively faded for each successive segment. */
@@ -33,11 +35,7 @@ public class RadialElectricityEffect38 implements BttlScriptData6cSubBase1, Memo
   /** If 0, re-call initializeRadialElectricityNodes in renderer */
   public final ByteRef reinitializeNodes_24;
 
-  /**
-   * Bit 7 of effect flag, multiplied by random value to determine whether
-   * segment angle should change each segment
-   */
-  public final UnsignedShortRef varyBoltSegmentAngle_26;
+  public final UnsignedShortRef segmentOriginTranslationModifier_26;
   public final UnsignedByteRef boltSegmentCount_28;
   /** 0 = render monochrome base triangles */
   public final UnsignedByteRef hasMonochromeBase_29;
@@ -56,17 +54,17 @@ public class RadialElectricityEffect38 implements BttlScriptData6cSubBase1, Memo
     this.currentColourFadeStep_04 = ref.offset(4, 0x04L).cast(IntRef::new);
     this.scriptIndex_08 = ref.offset(4, 0x08L).cast(IntRef::new);
     this.numColourFadeSteps_0c = ref.offset(4, 0x0cL).cast(IntRef::new);
-    this._10 = ref.offset(4, 0x10L).cast(IntRef::new);
-    this._14 = ref.offset(4, 0x14L).cast(IntRef::new);
+    this.boltAngleStep_10 = ref.offset(4, 0x10L).cast(IntRef::new);
+    this.addSuccessiveSegmentOriginTranslations_14 = ref.offset(4, 0x14L).cast(IntRef::new);
     this._18 = ref.offset(4, 0x18L).cast(IntRef::new);
     this.boltAngleRangeCutoff_1c = ref.offset(2, 0x1cL).cast(ShortRef::new);
-    this.originTranslationMagnitude_1e = ref.offset(2, 0x1eL).cast(ShortRef::new);
+    this.segmentOriginTranslationMagnitude_1e = ref.offset(2, 0x1eL).cast(ShortRef::new);
     this.callbackIndex_20 = ref.offset(2, 0x20L).cast(ShortRef::new);
     this.colourShouldFade_22 = ref.offset(1, 0x22L).cast(UnsignedByteRef::new);
     this.fadeSuccessiveSegments_23 = ref.offset(1, 0x23L).cast(UnsignedByteRef::new);
     this.reinitializeNodes_24 = ref.offset(1, 0x24L).cast(ByteRef::new);
 
-    this.varyBoltSegmentAngle_26 = ref.offset(2, 0x26L).cast(UnsignedShortRef::new);
+    this.segmentOriginTranslationModifier_26 = ref.offset(2, 0x26L).cast(UnsignedShortRef::new);
     this.boltSegmentCount_28 = ref.offset(1, 0x28L).cast(UnsignedByteRef::new);
     this.hasMonochromeBase_29 = ref.offset(1, 0x29L).cast(UnsignedByteRef::new);
     this.frameNum_2a = ref.offset(1, 0x2aL).cast(UnsignedByteRef::new);
