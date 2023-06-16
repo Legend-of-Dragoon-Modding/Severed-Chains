@@ -94,7 +94,6 @@ import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment_8004.itemStats_8004f2ac;
-import static legend.game.Scus94491BpeSegment_8004.loadingGameStateOverlay_8004dd08;
 import static legend.game.Scus94491BpeSegment_8005.additionData_80052884;
 import static legend.game.Scus94491BpeSegment_8005.combatants_8005e398;
 import static legend.game.Scus94491BpeSegment_8005.standingInSavePoint_8005a368;
@@ -104,6 +103,7 @@ import static legend.game.Scus94491BpeSegment_800b._800bdc2c;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.confirmDest_800bdc30;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
+import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.goldGainedFromCombat_800bc920;
 import static legend.game.Scus94491BpeSegment_800b.inventoryJoypadInput_800bdc44;
@@ -117,7 +117,6 @@ import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba4;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba8;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
 import static legend.game.Scus94491BpeSegment_800b.savedGameSelected_800bdc34;
-import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.secondaryCharIndices_800bdbf8;
 import static legend.game.Scus94491BpeSegment_800b.spGained_800bc950;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
@@ -566,7 +565,7 @@ public final class SItem {
           }
         }
 
-        if(engineState_8004dd20 == EngineState.SUBMAP_05 && loadingGameStateOverlay_8004dd08.get() == 0) {
+        if(engineState_8004dd20 == EngineState.SUBMAP_05) {
           FUN_800e3fac();
         }
 

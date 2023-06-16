@@ -66,12 +66,11 @@ import static legend.game.Scus94491BpeSegment_8002.playSound;
 import static legend.game.Scus94491BpeSegment_8002.takeEquipment;
 import static legend.game.Scus94491BpeSegment_8002.takeItem;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
-import static legend.game.Scus94491BpeSegment_8004.loadingGameStateOverlay_8004dd08;
 import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment_8007.shopId_8007a3b4;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
-import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
+import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
@@ -280,7 +279,7 @@ public class ShopScreen extends MenuScreen {
         scriptStartEffect(2, 10);
         deallocateRenderables(0xff);
 
-        if(engineState_8004dd20 == EngineState.SUBMAP_05 && loadingGameStateOverlay_8004dd08.get() == 0) {
+        if(engineState_8004dd20 == EngineState.SUBMAP_05) {
           FUN_800e3fac();
         }
 

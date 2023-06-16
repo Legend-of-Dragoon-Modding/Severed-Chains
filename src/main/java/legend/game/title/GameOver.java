@@ -91,7 +91,7 @@ public final class GameOver {
         gameOverMcq_800bdc3c = null;
         engineStateOnceLoaded_8004dd24 = EngineState.TITLE_02;
         pregameLoadingStage_800bb10c.set(0);
-        vsyncMode_8007a3b8.set(2);
+        vsyncMode_8007a3b8 = 2;
       }
     }
 

@@ -352,12 +352,12 @@ public class DebuggerController {
 
   @FXML
   private void getVsyncMode(final ActionEvent event) {
-    this.vsyncMode.getValueFactory().setValue(vsyncMode_8007a3b8.get());
+    this.vsyncMode.getValueFactory().setValue(vsyncMode_8007a3b8);
   }
 
   @FXML
   private void setVsyncMode(final ActionEvent event) {
-    vsyncMode_8007a3b8.set(this.vsyncMode.getValue());
+    vsyncMode_8007a3b8 = this.vsyncMode.getValue();
   }
 
   @FXML

@@ -667,7 +667,7 @@ public final class Bttl_800f {
     num._10 = clutCol;
 
     if(clutCol == 2 && a6 == 0) {
-      a6 = 60 / vsyncMode_8007a3b8.get() * 2;
+      a6 = 60 / vsyncMode_8007a3b8 * 2;
     }
 
     //LAB_800f35dc
@@ -910,7 +910,7 @@ public final class Bttl_800f {
                   num.g_0d = 0x60;
                   num.r_0e = 0x60;
 
-                  final int a2 = 60 / vsyncMode_8007a3b8.get() / 2;
+                  final int a2 = 60 / vsyncMode_8007a3b8 / 2;
                   num._14 = a2;
                   num._18 = 96 / a2;
                 } else {
@@ -1068,7 +1068,7 @@ public final class Bttl_800f {
     final DVECTOR screenCoords = perspectiveTransformXyz(bobj.model_148, x, y, z);
 
     //LAB_800f4394
-    FUN_800f89f4(bobjIndex, 0, 0x2L, damage, clampX(screenCoords.getX() + centreScreenX_1f8003dc.get()), clampY(screenCoords.getY() + centreScreenY_1f8003de.get()), 60 / vsyncMode_8007a3b8.get() / 4, s4);
+    FUN_800f89f4(bobjIndex, 0, 0x2L, damage, clampX(screenCoords.getX() + centreScreenX_1f8003dc.get()), clampY(screenCoords.getY() + centreScreenY_1f8003de.get()), 60 / vsyncMode_8007a3b8 / 4, s4);
   }
 
   @Method(0x800f43dcL)
@@ -2179,7 +2179,7 @@ public final class Bttl_800f {
           _800c6748.set(0x21);
           struct58._00.set((short)5);
           _800c66b0.set(cameraPositionIndices_800c6c30.get((int)_800c6ba1.get()).get());
-          struct58._44.set(60 / vsyncMode_8007a3b8.get() + 2);
+          struct58._44.set(60 / vsyncMode_8007a3b8 + 2);
           FUN_800f8c38(0);
           break;
         }
@@ -3287,7 +3287,7 @@ public final class Bttl_800f {
       final FloatingNumberC4 num = floatingNumbers_800c6b5c[i];
 
       if(num.state_00 == 0) {
-        addFloatingNumber(i, 0, 0, script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), 60 / vsyncMode_8007a3b8.get() * 5, 0);
+        addFloatingNumber(i, 0, 0, script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), 60 / vsyncMode_8007a3b8 * 5, 0);
         break;
       }
 

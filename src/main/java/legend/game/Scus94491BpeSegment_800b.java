@@ -8,7 +8,6 @@ import legend.core.memory.types.BoolRef;
 import legend.core.memory.types.EnumMapRef;
 import legend.core.memory.types.EnumRef;
 import legend.core.memory.types.IntRef;
-import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.combat.environment.BattleStage;
 import legend.game.inventory.WhichMenu;
@@ -20,18 +19,18 @@ import legend.game.sound.SoundFile;
 import legend.game.sound.SpuStruct08;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.EngineState;
+import legend.game.types.FullScreenEffect;
 import legend.game.types.GameState52c;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.InventoryMenuState;
 import legend.game.types.McqHeader;
 import legend.game.types.Model124;
 import legend.game.types.Renderable58;
-import legend.game.types.FullScreenEffect;
 import legend.game.types.SobjPos14;
-import legend.game.types.TextboxText84;
 import legend.game.types.TexPageY;
 import legend.game.types.Textbox4c;
 import legend.game.types.TextboxArrow0c;
+import legend.game.types.TextboxText84;
 import legend.game.types.Translucency;
 import legend.game.types.UiFile;
 
@@ -114,9 +113,9 @@ public final class Scus94491BpeSegment_800b {
   public static SequenceData124 currentSequenceData_800bd0f8;
 
   public static final Value _800bd0fc = MEMORY.ref(4, 0x800bd0fcL);
-  public static final IntRef sssqTempoScale_800bd100 = MEMORY.ref(4, 0x800bd100L, IntRef::new);
-  public static final IntRef sssqTempo_800bd104 = MEMORY.ref(4, 0x800bd104L, IntRef::new);
-  public static final Value sequenceVolume_800bd108 = MEMORY.ref(2, 0x800bd108L);
+  public static int sssqTempoScale_800bd100;
+  public static int sssqTempo_800bd104;
+  public static int sequenceVolume_800bd108;
 
   public static final Queue<QueuedSound28> queuedSounds_800bd110 = new LinkedList<>();
   /** NOTE: this used to be an array, but only the 6th element was used */
@@ -135,9 +134,9 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bd774 = MEMORY.ref(4, 0x800bd774L);
 
-  public static final BoolRef melbuSoundsLoaded_800bd780 = MEMORY.ref(1, 0x800bd780L, BoolRef::new);
-  public static final BoolRef melbuMusicLoaded_800bd781 = MEMORY.ref(1, 0x800bd781L, BoolRef::new);
-  public static final UnsignedByteRef musicLoaded_800bd782 = MEMORY.ref(1, 0x800bd782L, UnsignedByteRef::new);
+  public static boolean melbuSoundsLoaded_800bd780;
+  public static boolean melbuMusicLoaded_800bd781;
+  public static boolean musicLoaded_800bd782;
 
   public static final Value _800bd7ac = MEMORY.ref(4, 0x800bd7acL);
   public static final IntRef _800bd7b0 = MEMORY.ref(4, 0x800bd7b0L, IntRef::new);

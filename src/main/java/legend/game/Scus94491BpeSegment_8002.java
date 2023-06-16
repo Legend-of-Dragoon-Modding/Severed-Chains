@@ -151,7 +151,6 @@ import static legend.game.Scus94491BpeSegment_8004.RotMatrix_Zyx;
 import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment_8004.freeSequence;
 import static legend.game.Scus94491BpeSegment_8004.itemStats_8004f2ac;
-import static legend.game.Scus94491BpeSegment_8004.loadingGameStateOverlay_8004dd08;
 import static legend.game.Scus94491BpeSegment_8004.stopMusicSequence;
 import static legend.game.Scus94491BpeSegment_8005._8005027c;
 import static legend.game.Scus94491BpeSegment_8005._8005039c;
@@ -538,15 +537,13 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x80020ed8L)
   public static void FUN_80020ed8() {
     if(_800bdb88 == EngineState.SUBMAP_05) {
-      if(loadingGameStateOverlay_8004dd08.get() == 0) {
-        if(_800bd7b4.get() == 0x1L) {
-          FUN_800e4708();
-        }
-
-        //LAB_80020f20
-        FUN_8002aae8();
-        FUN_800e4018();
+      if(_800bd7b4.get() == 0x1L) {
+        FUN_800e4708();
       }
+
+      //LAB_80020f20
+      FUN_8002aae8();
+      FUN_800e4018();
     }
 
     //LAB_80020f30
@@ -1313,7 +1310,7 @@ public final class Scus94491BpeSegment_8002 {
 
         scriptStartEffect(2, 10);
 
-        if(engineState_8004dd20 == EngineState.SUBMAP_05 && loadingGameStateOverlay_8004dd08.get() == 0) {
+        if(engineState_8004dd20 == EngineState.SUBMAP_05) {
           FUN_800e3fac();
         }
 
@@ -2590,7 +2587,7 @@ public final class Scus94491BpeSegment_8002 {
           textbox._00 = 2;
           textbox._08 |= 0x1;
           textbox._10 = 0;
-          textbox._24 = 60 / vsyncMode_8007a3b8.get() / 4;
+          textbox._24 = 60 / vsyncMode_8007a3b8 / 4;
 
           if((textbox._08 & 0x2) != 0) {
             textbox._30 = (textbox._28 - textbox._38) / textbox._24;
@@ -2685,7 +2682,7 @@ public final class Scus94491BpeSegment_8002 {
             textbox._00 = 3;
             textbox._08 |= 0x1;
 
-            final int v0 = 60 / vsyncMode_8007a3b8.get() / 4;
+            final int v0 = 60 / vsyncMode_8007a3b8 / 4;
             textbox._10 = v0;
             textbox._24 = v0;
           } else {
@@ -3649,7 +3646,7 @@ public final class Scus94491BpeSegment_8002 {
 
         case 0xa6 -> {
           textboxText._00 = 8;
-          textboxText._44 = 60 / vsyncMode_8007a3b8.get() * (a0_0 & 0xff);
+          textboxText._44 = 60 / vsyncMode_8007a3b8 * (a0_0 & 0xff);
           s1 = 0;
         }
 
@@ -3717,7 +3714,7 @@ public final class Scus94491BpeSegment_8002 {
         case 0xb0 -> {
           textboxText._00 = 13;
 
-          final int v0 = 60 / vsyncMode_8007a3b8.get() * (a0_0 & 0xff);
+          final int v0 = 60 / vsyncMode_8007a3b8 * (a0_0 & 0xff);
           textboxText._3e = v0;
           textboxText._40 = v0;
 

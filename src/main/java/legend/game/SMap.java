@@ -707,7 +707,7 @@ public final class SMap {
       fmvIndex_800bf0dc.setu(0x11L);
       afterFmvLoadingStage_800bf0ec = EngineState.THE_END_04;
       pregameLoadingStage_800bb10c.set(0);
-      vsyncMode_8007a3b8.set(2);
+      vsyncMode_8007a3b8 = 2;
       Fmv.playCurrentFmv();
     }
 
@@ -2555,14 +2555,14 @@ public final class SMap {
           //LAB_800e1584
         }
 
-        musicLoaded_800bd782.set(0);
+        musicLoaded_800bd782 = false;
 
         final int ret = getSubmapMusicChange();
         if(ret == -1) {
           FUN_8001ae90();
 
           //LAB_800e15b8
-          musicLoaded_800bd782.set(1);
+          musicLoaded_800bd782 = true;
           loadingStage_800c68e4.addu(0x1L);
           break;
         }
@@ -2571,14 +2571,14 @@ public final class SMap {
           FUN_8001ada0();
 
           //LAB_800e15b8
-          musicLoaded_800bd782.set(1);
+          musicLoaded_800bd782 = true;
           loadingStage_800c68e4.addu(0x1L);
           break;
         }
 
         if(ret == -3) {
           //LAB_800e15b8
-          musicLoaded_800bd782.set(1);
+          musicLoaded_800bd782 = true;
           loadingStage_800c68e4.addu(0x1L);
           break;
         }
@@ -2589,7 +2589,7 @@ public final class SMap {
       }
 
       case 2 -> {
-        if(musicLoaded_800bd782.get() != 0 && (getLoadedDrgnFiles() & 0x2L) == 0) {
+        if(musicLoaded_800bd782 && (getLoadedDrgnFiles() & 0x2) == 0) {
           loadingStage_800c68e4.addu(0x1L);
         }
       }
@@ -4503,7 +4503,7 @@ public final class SMap {
         if(a0) {
           engineStateOnceLoaded_8004dd24 = EngineState.WORLD_MAP_08;
           pregameLoadingStage_800bb10c.set(0);
-          vsyncMode_8007a3b8.set(2);
+          vsyncMode_8007a3b8 = 2;
           _80052c44.setu(0x5L);
           _800f7e4c.setu(0);
           SCRIPTS.resume();
@@ -4515,7 +4515,7 @@ public final class SMap {
         _80052c44.setu(0x5L);
         engineStateOnceLoaded_8004dd24 = EngineState.COMBAT_06;
         pregameLoadingStage_800bb10c.set(0);
-        vsyncMode_8007a3b8.set(2);
+        vsyncMode_8007a3b8 = 2;
         _800f7e4c.setu(0);
         SCRIPTS.resume();
       }
@@ -4539,7 +4539,7 @@ public final class SMap {
         if(a0) {
           FUN_8002a9c0();
           engineStateOnceLoaded_8004dd24 = EngineState.TITLE_02;
-          vsyncMode_8007a3b8.set(2);
+          vsyncMode_8007a3b8 = 2;
           pregameLoadingStage_800bb10c.set(0);
 
           //LAB_800e6484
@@ -4578,7 +4578,7 @@ public final class SMap {
 
       case 0x17 -> {
         engineStateOnceLoaded_8004dd24 = EngineState.TITLE_02;
-        vsyncMode_8007a3b8.set(2);
+        vsyncMode_8007a3b8 = 2;
         pregameLoadingStage_800bb10c.set(0);
       }
     }
@@ -6387,7 +6387,7 @@ public final class SMap {
   @Method(0x800eaad4L)
   public static void initCredits() {
     resizeDisplay(384, 240);
-    vsyncMode_8007a3b8.set(2);
+    vsyncMode_8007a3b8 = 2;
 
     //LAB_800eab00
     for(int creditSlot = 0; creditSlot < 16; creditSlot++) {
@@ -6486,7 +6486,7 @@ public final class SMap {
     creditTims_800d1ae0 = null;
     engineStateOnceLoaded_8004dd24 = EngineState.SUBMAP_05;
     pregameLoadingStage_800bb10c.set(0);
-    vsyncMode_8007a3b8.set(2);
+    vsyncMode_8007a3b8 = 2;
 
     //LAB_800eaf14
   }

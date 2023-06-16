@@ -217,7 +217,7 @@ public final class Ttle {
   public static void executeTtleUnloadingStage() {
     loadSItemAndSetUpNewGameData();
     engineStateOnceLoaded_8004dd24 = EngineState.SUBMAP_05;
-    vsyncMode_8007a3b8.set(2);
+    vsyncMode_8007a3b8 = 2;
     pregameLoadingStage_800bb10c.set(0);
   }
 
@@ -264,7 +264,7 @@ public final class Ttle {
     GsRVIEW2_800c6760.super_1c = null;
     GsSetRefView2(GsRVIEW2_800c6760);
 
-    vsyncMode_8007a3b8.set(2);
+    vsyncMode_8007a3b8 = 2;
 
     loadDrgnDir(0, 5718, Ttle::menuTexturesMrgLoaded);
     loadDrgnFile(0, 5719, file -> menuFireTmdLoaded("DRGN0/5719", file));
@@ -489,7 +489,7 @@ public final class Ttle {
       if(_800c6728 == 3) {
         engineStateOnceLoaded_8004dd24 = EngineState.TITLE_02;
         pregameLoadingStage_800bb10c.set(0);
-        vsyncMode_8007a3b8.set(2);
+        vsyncMode_8007a3b8 = 2;
       } else {
         renderMenuLogo();
         renderMenuOptions();
@@ -525,7 +525,7 @@ public final class Ttle {
         ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
         engineStateOnceLoaded_8004dd24 = EngineState.TITLE_02;
         pregameLoadingStage_800bb10c.set(0);
-        vsyncMode_8007a3b8.set(2);
+        vsyncMode_8007a3b8 = 2;
       } else {
         renderMenuLogo();
         renderMenuOptions();
@@ -567,7 +567,7 @@ public final class Ttle {
         }
 
         pregameLoadingStage_800bb10c.set(0);
-        vsyncMode_8007a3b8.set(2);
+        vsyncMode_8007a3b8 = 2;
 
         //LAB_800c80c4
         return;
@@ -577,7 +577,7 @@ public final class Ttle {
       if(_800c6728 == 3) {
         engineStateOnceLoaded_8004dd24 = EngineState.TITLE_02;
         pregameLoadingStage_800bb10c.set(0);
-        vsyncMode_8007a3b8.set(2);
+        vsyncMode_8007a3b8 = 2;
       } else {
         //LAB_800c8108
         renderMenuLogo();

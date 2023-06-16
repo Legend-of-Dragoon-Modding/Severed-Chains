@@ -9,6 +9,7 @@ import legend.game.types.LodString;
 import legend.game.types.MenuItemStruct04;
 import legend.game.types.MessageBoxResult;
 import legend.game.types.Renderable58;
+import legend.game.unpacker.FileData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +40,7 @@ import static legend.game.SItem.renderString;
 import static legend.game.SItem.renderText;
 import static legend.game.SItem.setMessageBoxText;
 import static legend.game.Scus94491BpeSegment.free;
-import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
+import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment_8002.allocateRenderable;
@@ -61,7 +62,7 @@ public class DabasScreen extends MenuScreen {
   private DabasData100 dabasData_8011d7c0;
   private Renderable58 renderable1;
   private Renderable58 renderable2;
-  private long dabasFilePtr_8011dd00;
+  private FileData dabasFilePtr_8011dd00;
 
   private int menuIndex;
 
@@ -86,7 +87,7 @@ public class DabasScreen extends MenuScreen {
         bzero(this.dabasData_8011d7c0.getAddress(), 0x100);
 
         //TODO this is the Pocketstation minigame to upload to the memcard
-        loadDrgnBinFile(0, 6668, 0, (address, size, unused) -> this.dabasFilePtr_8011dd00 = address, 0, 0x2);
+        loadDrgnFile(0, 6668, file -> this.dabasFilePtr_8011dd00 = file);
 
         scriptStartEffect(2, 10);
         this.menuIndex = 0;
@@ -225,7 +226,6 @@ public class DabasScreen extends MenuScreen {
 
       case 100 -> {
         this.renderDabasMenu(this.menuIndex);
-        free(this.dabasFilePtr_8011dd00);
         free(this.dabasData_8011d7c0.getAddress());
         this.unload.run();
       }

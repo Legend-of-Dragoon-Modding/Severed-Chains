@@ -219,7 +219,6 @@ import static legend.game.combat.Bttl_800c.spriteMetrics_800c6948;
 import static legend.game.combat.Bttl_800c.stageDarkeningClutCount_800c695c;
 import static legend.game.combat.Bttl_800c.stageDarkening_800c6958;
 import static legend.game.combat.Bttl_800c.targeting_800fb36c;
-import static legend.game.combat.Bttl_800c.textboxColours_800c6fec;
 import static legend.game.combat.Bttl_800c.tmds_800c6944;
 import static legend.game.combat.Bttl_800c.usedRepeatItems_800c6c3c;
 import static legend.game.combat.Bttl_800d.FUN_800dd89c;
@@ -1332,7 +1331,7 @@ public final class Bttl_800e {
     final BattleStruct24_2 a0 = _800c6938;
 
     if(a0.frameCount_20 != -1) {
-      a0.frameCount_20 += vsyncMode_8007a3b8.get();
+      a0.frameCount_20 += vsyncMode_8007a3b8;
     }
 
     //LAB_800e70fc
@@ -1489,7 +1488,7 @@ public final class Bttl_800e {
     } else if(v1 == 3) {
       //LAB_800e7574
       if(struct24.frameCount_20 >= 0) {
-        struct24.frameCount_20 += vsyncMode_8007a3b8.get();
+        struct24.frameCount_20 += vsyncMode_8007a3b8;
       }
     }
 

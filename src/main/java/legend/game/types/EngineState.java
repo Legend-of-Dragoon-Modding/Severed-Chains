@@ -13,10 +13,6 @@ public enum EngineState {
   FMV_09,
   DISK_SWAP_10,
   CREDITS_11,
-  _12,
-  _13,
-  _14,
-  _15,
   ;
 
   public boolean isInGame() {

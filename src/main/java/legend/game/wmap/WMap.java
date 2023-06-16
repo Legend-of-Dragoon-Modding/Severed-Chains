@@ -543,7 +543,7 @@ public class WMap {
   @Method(0x800cca74L)
   public static void FUN_800cca74() {
     final WMapStruct258 struct = struct258_800c66a8;
-    vsyncMode_8007a3b8.set(3);
+    vsyncMode_8007a3b8 = 3;
     scriptStartEffect(2, 15);
     LoadImage(_800c8700, struct.imageData_2c);
     LoadImage(new RECT().set((short)320, (short)0, (short)64, (short)512), struct.imageData_30);
@@ -574,7 +574,7 @@ public class WMap {
   @Method(0x800ccbe0L)
   public static void FUN_800ccbe0() {
     resizeDisplay(320, 240);
-    vsyncMode_8007a3b8.set(3);
+    vsyncMode_8007a3b8 = 3;
     unloadSoundFile(9);
     FUN_8001f708(gameState_800babc8.chapterIndex_98, 0);
     pregameLoadingStage_800bb10c.set(1);
@@ -648,7 +648,7 @@ public class WMap {
     _80052c6c.setu(0);
     engineStateOnceLoaded_8004dd24 = EngineState.SUBMAP_05;
     pregameLoadingStage_800bb10c.set(0);
-    vsyncMode_8007a3b8.set(2);
+    vsyncMode_8007a3b8 = 2;
   }
 
   @Method(0x800cce1cL)
@@ -665,7 +665,7 @@ public class WMap {
     _80052c6c.setu(0);
     engineStateOnceLoaded_8004dd24 = EngineState.COMBAT_06;
     pregameLoadingStage_800bb10c.set(0);
-    vsyncMode_8007a3b8.set(2);
+    vsyncMode_8007a3b8 = 2;
   }
 
   @Method(0x800cce9cL)
@@ -806,7 +806,7 @@ public class WMap {
     }
 
     //LAB_800cd32c
-    vsyncMode_8007a3b8.set(2);
+    vsyncMode_8007a3b8 = 2;
   }
 
   @Method(0x800cd3c8L)

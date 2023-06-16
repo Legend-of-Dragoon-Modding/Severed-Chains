@@ -883,7 +883,7 @@ public final class Bttl_800c {
     if((_800bc960.get() & 0x3) == 0x3) {
       resizeDisplay(320, 240);
       setDepthResolution(12);
-      vsyncMode_8007a3b8.set(3);
+      vsyncMode_8007a3b8 = 3;
       _800bc960.or(0x40);
       setProjectionPlaneDistance(320);
       FUN_800dabec();
@@ -1015,7 +1015,7 @@ public final class Bttl_800c {
     }
 
     if(allBobjCount_800c66d0.get() > 0 && _800c66b9.get() == 0 && FUN_800c7da8()) {
-      vsyncMode_8007a3b8.set(3);
+      vsyncMode_8007a3b8 = 3;
       mcqColour_800fa6dc.set(0x80);
       currentTurnBobj_800c66c8.storage_44[7] &= 0xffff_efff;
 

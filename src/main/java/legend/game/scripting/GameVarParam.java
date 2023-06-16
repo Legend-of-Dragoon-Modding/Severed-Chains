@@ -52,7 +52,7 @@ public class GameVarParam extends Param {
       case 21, 23 -> Scus94491BpeSegment_800b.gameState_800babc8.submapScene_a4;
       case 22 -> Scus94491BpeSegment_800b.gameState_800babc8.submapCut_a8;
       case 24 -> Scus94491BpeSegment_800b.gameState_800babc8._b0;
-      case 25 -> Scus94491BpeSegment_8007.vsyncMode_8007a3b8.get();
+      case 25 -> Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
       case 26 -> Scus94491BpeSegment_800b.repeat_800bee98.get();
       case 27 -> Scus94491BpeSegment_800b.analogInput_800beebc.get();
       case 28 -> Scus94491BpeSegment_800b.analogAngle_800bee9c.get();
@@ -183,7 +183,7 @@ public class GameVarParam extends Param {
       case 21, 23 -> Scus94491BpeSegment_800b.gameState_800babc8.submapScene_a4 = val;
       case 22 -> Scus94491BpeSegment_800b.gameState_800babc8.submapCut_a8 = val;
       case 24 -> Scus94491BpeSegment_800b.gameState_800babc8._b0 = val;
-      case 25 -> Scus94491BpeSegment_8007.vsyncMode_8007a3b8.set(val);
+      case 25 -> Scus94491BpeSegment_8007.vsyncMode_8007a3b8 = val;
       case 26 -> Scus94491BpeSegment_800b.repeat_800bee98.set(val);
       case 27 -> Scus94491BpeSegment_800b.analogInput_800beebc.set(val);
       case 28 -> Scus94491BpeSegment_800b.analogAngle_800bee9c.set(val);

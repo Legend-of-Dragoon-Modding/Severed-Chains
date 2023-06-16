@@ -107,11 +107,9 @@ public final class Scus94491BpeSegment_8004 {
   public static final ArrayRef<CallbackStruct> gameStateCallbacks_8004dbc0 = MEMORY.ref(4, 0x8004dbc0L, ArrayRef.of(CallbackStruct.class, 20, 0x10, CallbackStruct::new));
 
   public static final Pointer<FileEntry08> currentlyLoadingFileEntry_8004dd04 = MEMORY.ref(4, 0x8004dd04L, Pointer.deferred(4, FileEntry08::new));
-  public static final Value loadingGameStateOverlay_8004dd08 = MEMORY.ref(4, 0x8004dd08L);
   public static final Value _8004dd0c = MEMORY.ref(4, 0x8004dd0cL);
   public static int loadedOverlayIndex_8004dd10;
   public static int overlaysLoadedCount_8004dd1c;
-  public static boolean loadingOverlay_8004dd1e;
 
   /**
    * <ol>

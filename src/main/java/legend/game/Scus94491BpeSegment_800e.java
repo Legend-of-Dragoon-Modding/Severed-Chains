@@ -96,7 +96,7 @@ public final class Scus94491BpeSegment_800e {
 
     engineStateOnceLoaded_8004dd24 = EngineState.PRELOAD_00;
     pregameLoadingStage_800bb10c.set(0);
-    vsyncMode_8007a3b8.set(2);
+    vsyncMode_8007a3b8 = 2;
     tickCount_800bb0fc.set(0);
 
     precalculateTpages();
@@ -124,7 +124,7 @@ public final class Scus94491BpeSegment_800e {
 
     loadMenuSounds();
     resizeDisplay(320, 240);
-    vsyncMode_8007a3b8.set(2);
+    vsyncMode_8007a3b8 = 2;
 
     //LAB_800e600c
     loadBasicUiTexturesAndSomethingElse();
