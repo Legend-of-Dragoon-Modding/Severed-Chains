@@ -553,32 +553,32 @@ public final class SEffe {
   // }
   /**
    * <ol start="0">
-   *   <li>{@link SEffe#FUN_801030d8}</li>
-   *   <li>{@link SEffe#FUN_801030d8}</li>
-   *   <li>{@link SEffe#FUN_801030d8}</li>
-   *   <li>{@link SEffe#FUN_80103db0}</li>
-   *   <li>{@link SEffe#FUN_80103db0}</li>
-   *   <li>{@link SEffe#FUN_80103db0}</li>
-   *   <li>{@link SEffe#FUN_80103db0}</li>
-   *   <li>{@link SEffe#FUN_80103db0}</li>
-   *   <li>{@link SEffe#FUN_80103db0}</li>
-   *   <li>{@link SEffe#FUN_80103db0}</li>
-   *   <li>{@link SEffe#FUN_80103db0}</li>
+   *   <li>{@link SEffe#renderElectricEffectType0}</li>
+   *   <li>{@link SEffe#renderElectricEffectType0}</li>
+   *   <li>{@link SEffe#renderElectricEffectType0}</li>
+   *   <li>{@link SEffe#renderElectricEffectType1}</li>
+   *   <li>{@link SEffe#renderElectricEffectType1}</li>
+   *   <li>{@link SEffe#renderElectricEffectType1}</li>
+   *   <li>{@link SEffe#renderElectricEffectType1}</li>
+   *   <li>{@link SEffe#renderElectricEffectType1}</li>
+   *   <li>{@link SEffe#renderElectricEffectType1}</li>
+   *   <li>{@link SEffe#renderElectricEffectType1}</li>
+   *   <li>{@link SEffe#renderElectricEffectType1}</li>
    * </ol>
    */
   private static final BiConsumer<ScriptState<EffectManagerData6c>, EffectManagerData6c>[] electricityEffectRenderers_80119f14 = new BiConsumer[11];
   static {
-    electricityEffectRenderers_80119f14[0] = SEffe::FUN_801030d8;
-    electricityEffectRenderers_80119f14[1] = SEffe::FUN_801030d8;
-    electricityEffectRenderers_80119f14[2] = SEffe::FUN_801030d8;
-    electricityEffectRenderers_80119f14[3] = SEffe::FUN_80103db0;
-    electricityEffectRenderers_80119f14[4] = SEffe::FUN_80103db0;
-    electricityEffectRenderers_80119f14[5] = SEffe::FUN_80103db0;
-    electricityEffectRenderers_80119f14[6] = SEffe::FUN_80103db0;
-    electricityEffectRenderers_80119f14[7] = SEffe::FUN_80103db0;
-    electricityEffectRenderers_80119f14[8] = SEffe::FUN_80103db0;
-    electricityEffectRenderers_80119f14[9] = SEffe::FUN_80103db0;
-    electricityEffectRenderers_80119f14[10] = SEffe::FUN_80103db0;
+    electricityEffectRenderers_80119f14[0] = SEffe::renderElectricEffectType0;
+    electricityEffectRenderers_80119f14[1] = SEffe::renderElectricEffectType0;
+    electricityEffectRenderers_80119f14[2] = SEffe::renderElectricEffectType0;
+    electricityEffectRenderers_80119f14[3] = SEffe::renderElectricEffectType1;
+    electricityEffectRenderers_80119f14[4] = SEffe::renderElectricEffectType1;
+    electricityEffectRenderers_80119f14[5] = SEffe::renderElectricEffectType1;
+    electricityEffectRenderers_80119f14[6] = SEffe::renderElectricEffectType1;
+    electricityEffectRenderers_80119f14[7] = SEffe::renderElectricEffectType1;
+    electricityEffectRenderers_80119f14[8] = SEffe::renderElectricEffectType1;
+    electricityEffectRenderers_80119f14[9] = SEffe::renderElectricEffectType1;
+    electricityEffectRenderers_80119f14[10] = SEffe::renderElectricEffectType1;
   }
 
   /**
@@ -2643,21 +2643,21 @@ public final class SEffe {
   }
 
   @Method(0x80102618L)
-  public static void FUN_80102618(final EffectManagerData6c manager, final ElectricityEffect38 electricEffect, final LightningBoltEffect14 boltEffect) {
+  public static void modifyLightningSegmentOriginsBySecondaryScriptTranslation(final EffectManagerData6c manager, final ElectricityEffect38 electricEffect, final LightningBoltEffect14 boltEffect) {
     if(electricEffect.scriptIndex_08.get() != -1) {
       final VECTOR secondaryScriptTranslation = new VECTOR();
-      final VECTOR sp0x20 = new VECTOR();
+      final VECTOR newOrigin = new VECTOR();
       scriptGetScriptedObjectPos(electricEffect.scriptIndex_08.get(), secondaryScriptTranslation);
       secondaryScriptTranslation.sub(manager._10.trans_04).div(electricEffect.boltSegmentCount_28.get());
 
       //LAB_801026f0
       for(int i = 0; i < electricEffect.boltSegmentCount_28.get(); i++) {
         final LightningBoltEffectSegment30 boltSegment = boltEffect.boltSegments_10.deref().get(i);
-        boltSegment.origin_00.set(sp0x20);
+        boltSegment.origin_00.set(newOrigin);
 
-        sp0x20.x.add((int)((seed_800fa754.advance().get() % 257 - 128) * electricEffect.segmentOriginTranslationModifier_26.get() >>> 7));
-        sp0x20.z.add((int)((seed_800fa754.advance().get() % 257 - 128) * electricEffect.segmentOriginTranslationModifier_26.get() >>> 7));
-        sp0x20.add(secondaryScriptTranslation);
+        newOrigin.x.add((int)((seed_800fa754.advance().get() % 257 - 128) * electricEffect.segmentOriginTranslationModifier_26.get() >>> 7));
+        newOrigin.z.add((int)((seed_800fa754.advance().get() % 257 - 128) * electricEffect.segmentOriginTranslationModifier_26.get() >>> 7));
+        newOrigin.add(secondaryScriptTranslation);
       }
     }
 
@@ -2740,7 +2740,7 @@ public final class SEffe {
       }
 
       //LAB_80102bb8
-      FUN_80102618(manager, electricEffect, bolt);
+      modifyLightningSegmentOriginsBySecondaryScriptTranslation(manager, electricEffect, bolt);
     }
 
     //LAB_80102be0
@@ -2778,7 +2778,7 @@ public final class SEffe {
     }
 
     //LAB_80102f64
-    FUN_80102618(manager, electricEffect, bolt);
+    modifyLightningSegmentOriginsBySecondaryScriptTranslation(manager, electricEffect, bolt);
   }
 
   /**
@@ -2803,11 +2803,11 @@ public final class SEffe {
   }
 
   /**
-   * renderer used for many (though not all) lightning effects. (Confirmed for Rose's D transformation)
+   * Renders certain types of lightning effects. (Confirmed for Rose's D transformation)
    * Used by allocator 0x801052dc
    */
   @Method(0x801030d8L)
-  public static void FUN_801030d8(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void renderElectricEffectType0(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
     final ElectricityEffect38 electricEffect = (ElectricityEffect38)manager.effect_44;
 
     if(electricEffect.currentColourFadeStep_04.get() + 1 == electricEffect.numColourFadeSteps_0c.get()) {
@@ -2991,7 +2991,7 @@ public final class SEffe {
    * Used by allocator 0x801052dc
    */
   @Method(0x80103db0L)
-  public static void FUN_80103db0(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void renderElectricEffectType1(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
     final ElectricityEffect38 electricEffect = (ElectricityEffect38)manager.effect_44;
 
     if(electricEffect.currentColourFadeStep_04.get() + 1 == electricEffect.numColourFadeSteps_0c.get()) {
