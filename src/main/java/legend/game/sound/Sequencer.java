@@ -20,8 +20,6 @@ import static legend.game.Scus94491BpeSegment_8004.sssqSetReverbType;
 import static legend.game.Scus94491BpeSegment_8004.sssqSetReverbVolume;
 import static legend.game.Scus94491BpeSegment_8004.stopMusicSequence;
 import static legend.game.Scus94491BpeSegment_8004.updateVoiceVolume;
-import static legend.game.Scus94491BpeSegment_8005._80059b3c;
-import static legend.game.Scus94491BpeSegment_8005.panVolume_80059f3c;
 import static legend.game.Scus94491BpeSegment_8005.sssqFadeCurrent_8005a1ce;
 import static legend.game.Scus94491BpeSegment_800c.instrumentLayerIndex_800c6678;
 import static legend.game.Scus94491BpeSegment_800c.instrumentLayer_800c6678;
@@ -252,8 +250,8 @@ public class Sequencer {
     playingNote.instrumentVolume_2a = instrument_800c6674.patchVolume_01;
     playingNote.velocityVolume_2c = volumeRamp_800c4ab0.ramp_02[sequenceData.param1_003];
     playingNote.instrumentLayerVolume_2e = instrumentLayer_800c6678.volume_0b;
-    playingNote.volumeLeftRight_30[0] = panVolume_80059f3c.get((this.calculatePan(4, 0) / 2 & 0x7ffe) / 2).left_00.get();
-    playingNote.volumeLeftRight_30[1] = panVolume_80059f3c.get((this.calculatePan(4, 0) / 2 & 0x7ffe) / 2).right_01.get();
+    playingNote.volumeLeftRight_30[0] = getPanVolume(this.calculatePan(4, 0), 0);
+    playingNote.volumeLeftRight_30[1] = getPanVolume(this.calculatePan(4, 0), 1);
     playingNote.volume_34 = sssqChannelInfo_800C6680.volume_03;
     playingNote.cents_36 = instrumentLayer_800c6678.cents_03;
     playingNote.pitchBend_38 = sssqChannelInfo_800C6680.pitchBend_0a;
@@ -424,8 +422,8 @@ public class Sequencer {
           playingNote.instrumentVolume_2a = instrument_800c6674.patchVolume_01;
           playingNote.velocityVolume_2c = volumeRamp_800c4ab0.ramp_02[sequenceData.param1_003];
           playingNote.instrumentLayerVolume_2e = instrumentLayer_800c6678.volume_0b;
-          playingNote.volumeLeftRight_30[0] = panVolume_80059f3c.get((this.calculatePan(0, 0) / 2 & 0x7ffe) / 2).left_00.get();
-          playingNote.volumeLeftRight_30[1] = panVolume_80059f3c.get((this.calculatePan(0, 0) / 2 & 0x7ffe) / 2).right_01.get();
+          playingNote.volumeLeftRight_30[0] = getPanVolume(this.calculatePan(0, 0), 0);
+          playingNote.volumeLeftRight_30[1] = getPanVolume(this.calculatePan(0, 0), 1);
           playingNote.volume_34 = sssqChannelInfo_800C6680.volume_03;
           playingNote.cents_36 = instrumentLayer_800c6678.cents_03;
           playingNote.pitchBend_38 = sssqChannelInfo_800C6680.pitchBend_0a;
@@ -694,8 +692,8 @@ public class Sequencer {
                   }
 
                   //LAB_80047964
-                  playingNote.volumeLeftRight_30[0] = panVolume_80059f3c.get(playingNote.pan_4c >>> 2).left_00.get();
-                  playingNote.volumeLeftRight_30[1] = panVolume_80059f3c.get(playingNote.pan_4c >>> 2).right_01.get();
+                  playingNote.volumeLeftRight_30[0] = getPanVolume(playingNote.pan_4c, 0);
+                  playingNote.volumeLeftRight_30[1] = getPanVolume(playingNote.pan_4c, 1);
                 }
               }
 
@@ -1159,7 +1157,7 @@ public class Sequencer {
       * volumeRamp_800c4ab0.ramp_02[sequenceData.param1_003]
       * instrumentLayer_800c6678.volume_0b
       / 0x4000
-      * panVolume_80059f3c.get((pan / 2 & 0x7ffe) / 2).val_00.get(leftRight).get()
+      * getPanVolume(pan, leftRight)
       / 0x80;
 
     //LAB_80048b88
@@ -1186,7 +1184,7 @@ public class Sequencer {
     return pan;
   }
 
-  private static final int[] panMergeTable = new int[] {
+  private static final int[] panMergeTable = {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -1203,6 +1201,35 @@ public class Sequencer {
     0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F,
     0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F,
     0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F
+  };
+
+  private static int getPanVolume(final int value, final int leftRight) {
+    final int index;
+    if(leftRight == 0) {
+      index = 0x7F - value;
+    } else {
+      index = value;
+    }
+    return panVolumeTable[index];
+  }
+
+  private static final int[] panVolumeTable = {
+    0x00, 0x02, 0x04, 0x06, 0x08, 0x0A, 0x0C, 0x0E,
+    0x10, 0x12, 0x14, 0x16, 0x18, 0x1A, 0x1C, 0x1E,
+    0x20, 0x22, 0x24, 0x26, 0x28, 0x2A, 0x2C, 0x2E,
+    0x30, 0x32, 0x34, 0x36, 0x38, 0x3A, 0x3C, 0x3E,
+    0x40, 0x42, 0x44, 0x46, 0x48, 0x4A, 0x4C, 0x4E,
+    0x50, 0x52, 0x54, 0x56, 0x58, 0x5A, 0x5C, 0x5E,
+    0x60, 0x62, 0x64, 0x66, 0x68, 0x6A, 0x6C, 0x6E,
+    0x70, 0x72, 0x74, 0x76, 0x78, 0x78, 0x78, 0x78,
+    0x78, 0x7A, 0x7C, 0x7E, 0x80, 0x80, 0x80, 0x80,
+    0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
+    0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
+    0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
+    0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
+    0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
+    0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
+    0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80
   };
 
   @Method(0x80048eb8L)

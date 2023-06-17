@@ -11,7 +11,6 @@ import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.game.combat.types.CombatantStruct1a8;
-import legend.game.sound.Pan;
 import legend.game.sound.ReverbConfigAndLocation;
 import legend.game.types.AdditionData0e;
 import legend.game.types.FileEntry08;
@@ -103,10 +102,6 @@ public final class Scus94491BpeSegment_8005 {
   public static final Value sin_cos_80054d0c = MEMORY.ref(4, 0x80054d0cL);
 
   public static final Value atanTable_80058d0c = MEMORY.ref(2, 0x80058d0cL);
-
-  public static final Value _80059b3c = MEMORY.ref(1, 0x80059b3cL);
-
-  public static final ArrayRef<Pan> panVolume_80059f3c = MEMORY.ref(1, 0x80059f3cL, ArrayRef.of(Pan.class, 32, 2, Pan::new));
 
   /**
    * Start of a fairly large block of data - something to do with SPU reverb initialisation. Stride is 66 bytes. Unknown length.
