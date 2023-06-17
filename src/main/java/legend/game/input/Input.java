@@ -15,8 +15,8 @@ import javax.annotation.Nullable;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
-import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MODS;
+import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment.keyRepeat;
 import static legend.game.Scus94491BpeSegment_800b.analogAngle_800bee9c;
 import static legend.game.Scus94491BpeSegment_800b.analogInput_800beebc;
@@ -45,7 +45,7 @@ public final class Input {
       return;
     }
 
-    if(!GPU.window().hasFocus() && !CONFIG.getConfig(CoreMod.RECEIVE_INPUT_ON_INACTIVE_WINDOW_CONFIG.get()) || activeController == null) {
+    if(!RENDERER.window().hasFocus() && !CONFIG.getConfig(CoreMod.RECEIVE_INPUT_ON_INACTIVE_WINDOW_CONFIG.get()) || activeController == null) {
       return;
     }
 
@@ -65,7 +65,7 @@ public final class Input {
       }
     }
 
-    GPU.window().events.callInputEvents(activeController);
+    RENDERER.events().callInputEvents(activeController);
   }
 
   public static void updateLegacyInput() {
@@ -77,7 +77,7 @@ public final class Input {
       return;
     }
 
-    if(!GPU.window().hasFocus() && !CONFIG.getConfig(CoreMod.RECEIVE_INPUT_ON_INACTIVE_WINDOW_CONFIG.get()) || activeController == null) {
+    if(!RENDERER.window().hasFocus() && !CONFIG.getConfig(CoreMod.RECEIVE_INPUT_ON_INACTIVE_WINDOW_CONFIG.get()) || activeController == null) {
       return;
     }
 
@@ -130,9 +130,9 @@ public final class Input {
   }
 
   public static void init() {
-    GPU.window().events.onKeyPress(Input::keyPress);
-    GPU.window().events.onKeyRelease(Input::keyRelease);
-    GPU.window().events.onLostFocus(Input::lostFocus);
+    RENDERER.events().onKeyPress(Input::keyPress);
+    RENDERER.events().onKeyRelease(Input::keyRelease);
+    RENDERER.events().onLostFocus(Input::lostFocus);
 
     useController(null);
 

@@ -37,6 +37,7 @@ import java.util.List;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SAVES;
 import static legend.core.gpu.VramTextureLoader.palettesFromTim;
 import static legend.core.gpu.VramTextureLoader.palettesFromTims;
@@ -689,7 +690,7 @@ public final class Ttle {
   }
 
   private static void addInputHandlers() {
-    onMouseMove = GPU.window().events.onMouseMove((window, x, y) -> {
+    onMouseMove = RENDERER.events().onMouseMove((window, x, y) -> {
       final float aspect = (float)GPU.getDisplayTextureWidth() / GPU.getDisplayTextureHeight();
 
       float w = window.getWidth();
@@ -730,7 +731,7 @@ public final class Ttle {
       menuIdleTime = 0;
     });
 
-    onMouseRelease = GPU.window().events.onMouseRelease((window, x, y, button, mods) -> {
+    onMouseRelease = RENDERER.events().onMouseRelease((window, x, y, button, mods) -> {
       if(button != GLFW.GLFW_MOUSE_BUTTON_LEFT) {
         return;
       }
@@ -774,13 +775,13 @@ public final class Ttle {
       }
     });
 
-    onPressedWithRepeatPulse = GPU.window().events.onPressedWithRepeatPulse((window, inputAction) -> resetIdleTime());
+    onPressedWithRepeatPulse = RENDERER.events().onPressedWithRepeatPulse((window, inputAction) -> resetIdleTime());
   }
 
   private static void removeInputHandlers() {
-    GPU.window().events.removeMouseMove(onMouseMove);
-    GPU.window().events.removeMouseRelease(onMouseRelease);
-    GPU.window().events.removePressedWithRepeatPulse(onPressedWithRepeatPulse);
+    RENDERER.events().removeMouseMove(onMouseMove);
+    RENDERER.events().removeMouseRelease(onMouseRelease);
+    RENDERER.events().removePressedWithRepeatPulse(onPressedWithRepeatPulse);
     onMouseMove = null;
     onMouseRelease = null;
     onPressedWithRepeatPulse = null;

@@ -12,6 +12,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
 
 public class MenuStack {
@@ -118,29 +119,29 @@ public class MenuStack {
   }
 
   public void registerInputHandlers() {
-    this.onMouseMove = GPU.window().events.onMouseMove(this::mouseMove);
-    this.onMousePress = GPU.window().events.onMousePress(this::mousePress);
-    this.onMouseRelease = GPU.window().events.onMouseRelease(this::mouseRelease);
-    this.onMouseScroll = GPU.window().events.onMouseScroll(this::mouseScroll);
-    this.onKeyPress = GPU.window().events.onKeyPress(this::keyPress);
-    this.onKeyRepeat = GPU.window().events.onKeyRepeat(this::keyPress);
-    this.onCharPress = GPU.window().events.onCharPress(this::charPress);
-    this.onPressedThisFrame = GPU.window().events.onPressedThisFrame(this::pressedThisFrame);
-    this.onReleasedThisFrame = GPU.window().events.onReleasedThisFrame(this::releasedThisFrame);
-    this.onPressedWithRepeatPulse = GPU.window().events.onPressedWithRepeatPulse(this::pressedWithRepeatPulse);
+    this.onMouseMove = RENDERER.events().onMouseMove(this::mouseMove);
+    this.onMousePress = RENDERER.events().onMousePress(this::mousePress);
+    this.onMouseRelease = RENDERER.events().onMouseRelease(this::mouseRelease);
+    this.onMouseScroll = RENDERER.events().onMouseScroll(this::mouseScroll);
+    this.onKeyPress = RENDERER.events().onKeyPress(this::keyPress);
+    this.onKeyRepeat = RENDERER.events().onKeyRepeat(this::keyPress);
+    this.onCharPress = RENDERER.events().onCharPress(this::charPress);
+    this.onPressedThisFrame = RENDERER.events().onPressedThisFrame(this::pressedThisFrame);
+    this.onReleasedThisFrame = RENDERER.events().onReleasedThisFrame(this::releasedThisFrame);
+    this.onPressedWithRepeatPulse = RENDERER.events().onPressedWithRepeatPulse(this::pressedWithRepeatPulse);
   }
 
   public void removeInputHandlers() {
-    GPU.window().events.removeMouseMove(this.onMouseMove);
-    GPU.window().events.removeMousePress(this.onMousePress);
-    GPU.window().events.removeMouseRelease(this.onMouseRelease);
-    GPU.window().events.removeMouseScroll(this.onMouseScroll);
-    GPU.window().events.removeKeyPress(this.onKeyPress);
-    GPU.window().events.removeKeyRepeat(this.onKeyRepeat);
-    GPU.window().events.removeCharPress(this.onCharPress);
-    GPU.window().events.removePressedThisFrame(this.onPressedThisFrame);
-    GPU.window().events.removeReleasedThisFrame(this.onReleasedThisFrame);
-    GPU.window().events.removePressedWithRepeatPulse(this.onPressedWithRepeatPulse);
+    RENDERER.events().removeMouseMove(this.onMouseMove);
+    RENDERER.events().removeMousePress(this.onMousePress);
+    RENDERER.events().removeMouseRelease(this.onMouseRelease);
+    RENDERER.events().removeMouseScroll(this.onMouseScroll);
+    RENDERER.events().removeKeyPress(this.onKeyPress);
+    RENDERER.events().removeKeyRepeat(this.onKeyRepeat);
+    RENDERER.events().removeCharPress(this.onCharPress);
+    RENDERER.events().removePressedThisFrame(this.onPressedThisFrame);
+    RENDERER.events().removeReleasedThisFrame(this.onReleasedThisFrame);
+    RENDERER.events().removePressedWithRepeatPulse(this.onPressedWithRepeatPulse);
   }
 
   private void mouseMove(final Window window, final double x, final double y) {

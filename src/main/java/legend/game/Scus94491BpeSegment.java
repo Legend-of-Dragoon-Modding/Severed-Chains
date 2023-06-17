@@ -81,6 +81,7 @@ import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
+import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.core.GameEngine.SEQUENCER;
 import static legend.core.GameEngine.SPU;
@@ -416,7 +417,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80011e1cL)
   public static void gameLoop() {
-    GPU.events().onKeyPress((window, key, scancode, mods) -> {
+    RENDERER.events().onKeyPress((window, key, scancode, mods) -> {
       // Add killswitch in case sounds get stuck on
       if(key == GLFW_KEY_DELETE) {
         for(final Voice voice : SPU.voices) {
@@ -495,7 +496,7 @@ public final class Scus94491BpeSegment {
       }
 
       final int frames = Math.max(1, vsyncMode_8007a3b8);
-      GPU.window().setFpsLimit((60 / frames) * Config.getGameSpeedMultiplier());
+      RENDERER.window().setFpsLimit((60 / frames) * Config.getGameSpeedMultiplier());
 
       executeLoadersAndScripts();
       FUN_8001b410();
@@ -528,7 +529,7 @@ public final class Scus94491BpeSegment {
       inputPulse = !inputPulse;
     };
 
-    GPU.window().events.onShutdown(() -> {
+    RENDERER.events().onShutdown(() -> {
       stopSound();
       SPU.stop();
       Platform.exit();
@@ -932,7 +933,7 @@ public final class Scus94491BpeSegment {
   public static int simpleRand() {
     final long v1;
     if(simpleRandSeed_8004dd44.get(0xfffL) == 0) {
-      v1 = GPU.getVsyncCount() * 9; // If seed is 0, seed with vblanks
+      v1 = RENDERER.getVsyncCount() * 9; // If seed is 0, seed with vblanks
     } else {
       v1 = simpleRandSeed_8004dd44.get();
     }
@@ -986,7 +987,7 @@ public final class Scus94491BpeSegment {
     //LAB_800136f4
     fullScreenEffect_800bb140.type_00 = effectType;
     fullScreenEffect_800bb140.totalFrames_08 = frames > 0 ? frames : 15;
-    fullScreenEffect_800bb140.startTime_04 = GPU.getVsyncCount();
+    fullScreenEffect_800bb140.startTime_04 = RENDERER.getVsyncCount();
 
     if(_8004dd48.offset(effectType * 2).get() == 2) {
       fullScreenEffect_800bb140.blue1_0c = 0;
@@ -1007,7 +1008,7 @@ public final class Scus94491BpeSegment {
    */
   @Method(0x80013778L)
   public static void handleFullScreenEffects() {
-    final int v1 = Math.min(fullScreenEffect_800bb140.totalFrames_08, (GPU.getVsyncCount() - fullScreenEffect_800bb140.startTime_04) / 2);
+    final int v1 = Math.min(fullScreenEffect_800bb140.totalFrames_08, (RENDERER.getVsyncCount() - fullScreenEffect_800bb140.startTime_04) / 2);
 
     //LAB_800137d0
     final int colour;

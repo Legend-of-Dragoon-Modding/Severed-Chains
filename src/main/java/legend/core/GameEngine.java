@@ -88,6 +88,8 @@ public final class GameEngine {
   public static final ConfigCollection CONFIG = new ConfigCollection();
   public static final SaveManager SAVES = new SaveManager(V3Serializer.MAGIC_V3, V3Serializer::toV3);
 
+  public static final RenderEngine RENDERER = new RenderEngine();
+
   public static final Cpu CPU;
   public static final Gpu GPU;
   public static final Spu SPU;
@@ -222,7 +224,9 @@ public final class GameEngine {
 
     time = System.nanoTime();
     thread.start();
-    GPU.run();
+    RENDERER.init();
+    GPU.init(RENDERER);
+    RENDERER.run();
   }
 
   /** Returns missing mod IDs, if any */
@@ -363,22 +367,22 @@ public final class GameEngine {
     }
 
     if(onResize != null) {
-      GPU.window().events.removeOnResize(onResize);
+      RENDERER.events().removeOnResize(onResize);
       onResize = null;
     }
 
     if(onKeyPress != null) {
-      GPU.window().events.removeKeyPress(onKeyPress);
+      RENDERER.events().removeKeyPress(onKeyPress);
       onKeyPress = null;
     }
 
     if(onMouseRelease != null) {
-      GPU.window().events.removeMouseRelease(onMouseRelease);
+      RENDERER.events().removeMouseRelease(onMouseRelease);
       onMouseRelease = null;
     }
 
     if(onShutdown != null) {
-      GPU.window().events.removeShutdown(onShutdown);
+      RENDERER.events().removeShutdown(onShutdown);
       onShutdown = null;
     }
 
@@ -433,13 +437,13 @@ public final class GameEngine {
 
     font = FontManager.get("default");
 
-    onResize = GPU.window().events.onResize(GameEngine::windowResize);
-    windowResize(GPU.window(), (int)(GPU.window().getWidth() * GPU.window().getScale()), (int)(GPU.window().getHeight() * GPU.window().getScale()));
+    onResize = RENDERER.events().onResize(GameEngine::windowResize);
+    windowResize(RENDERER.window(), (int)(RENDERER.window().getWidth() * RENDERER.window().getScale()), (int)(RENDERER.window().getHeight() * RENDERER.window().getScale()));
     GPU.mainRenderer = GameEngine::renderIntro;
 
-    onKeyPress = GPU.window().events.onKeyPress((window, key, scancode, mods) -> skip());
-    onMouseRelease = GPU.window().events.onMouseRelease((window, x, y, button, mods) -> skip());
-    onShutdown = GPU.window().events.onShutdown(Unpacker::stop);
+    onKeyPress = RENDERER.events().onKeyPress((window, key, scancode, mods) -> skip());
+    onMouseRelease = RENDERER.events().onMouseRelease((window, x, y, button, mods) -> skip());
+    onShutdown = RENDERER.events().onShutdown(Unpacker::stop);
   }
 
   private static void skip() {

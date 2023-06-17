@@ -1,29 +1,17 @@
 package legend.core.gpu;
 
-import legend.core.Config;
 import legend.core.MathHelper;
-import legend.core.opengl.Camera;
-import legend.core.opengl.Context;
+import legend.core.RenderEngine;
 import legend.core.opengl.Mesh;
 import legend.core.opengl.Shader;
-import legend.core.opengl.ShaderManager;
 import legend.core.opengl.Texture;
-import legend.core.opengl.Window;
-import legend.core.opengl.fonts.Font;
-import legend.core.opengl.fonts.FontManager;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.joml.Matrix4f;
-import org.lwjgl.BufferUtils;
-import org.lwjgl.system.MemoryUtil;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -32,24 +20,17 @@ import java.util.LinkedList;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.MathHelper.colour24To15;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_TAB;
 import static org.lwjgl.glfw.GLFW.glfwGetCurrentContext;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
 public class Gpu {
-  private static final Logger LOGGER = LogManager.getFormatterLogger(Gpu.class);
+  private static final Logger LOGGER = LogManager.getFormatterLogger();
 
   private static final int STANDARD_VRAM_WIDTH = 1024;
   private static final int STANDARD_VRAM_HEIGHT = 512;
 
   public final int vramWidth = STANDARD_VRAM_WIDTH;
   public final int vramHeight = STANDARD_VRAM_HEIGHT;
-
-  private Camera camera;
-  private Window window;
-  private Context ctx;
-  private Shader.UniformBuffer transforms2;
-  private final Matrix4f transforms = new Matrix4f();
 
   private final VramTextureSingle[] renderBuffers = new VramTextureSingle[2];
   private int drawBufferIndex;
@@ -60,11 +41,7 @@ public class Gpu {
   private final int[] vram24 = new int[this.vramWidth * this.vramHeight];
   private final int[] vram15 = new int[this.vramWidth * this.vramHeight];
 
-  private boolean isVramViewer;
-
   private Shader vramShader;
-  private Texture vramTexture;
-  private Mesh vramMesh;
 
   private Texture displayTexture;
   private Mesh displayMesh;
@@ -84,23 +61,8 @@ public class Gpu {
 
   private boolean displayChanged;
 
-  private boolean ready;
-  private double vsyncCount;
-  private long lastFrame;
   public Runnable mainRenderer;
   public Runnable subRenderer = () -> { };
-
-  public Window.Events events() {
-    return this.window.events;
-  }
-
-  public Window window() {
-    return this.window;
-  }
-
-  public int getVsyncCount() {
-    return (int)this.vsyncCount;
-  }
 
   public int getDrawBufferIndex() {
     return this.drawBufferIndex;
@@ -130,83 +92,10 @@ public class Gpu {
     this.drawingArea(this.drawingArea.x.get(), this.drawingArea.y.get(), this.drawingArea.w.get(), this.drawingArea.h.get());
   }
 
-  public boolean isReady() {
-    return this.ready;
-  }
-
-  public void run() {
-    this.init();
-
-    this.window.show();
-
-    this.ready = true;
-    this.lastFrame = System.nanoTime();
-
-    try {
-      this.window.run();
-    } catch(final Throwable t) {
-      LOGGER.error("Shutting down due to GPU exception:", t);
-      this.window.close();
-    } finally {
-      FontManager.free();
-      Window.free();
-    }
-  }
-
-  private void init() {
-    this.camera = new Camera(0.0f, 0.0f);
-    this.window = new Window("Legend of Dragoon", Config.windowWidth(), Config.windowHeight());
-    this.window.setFpsLimit(60);
-    this.ctx = new Context(this.window, this.camera);
-
-    this.window.events.onKeyPress((window, key, scancode, mods) -> {
-      if(mods != 0) {
-        return;
-      }
-
-      if(key == GLFW_KEY_TAB) {
-        this.isVramViewer = !this.isVramViewer;
-
-        if(this.isVramViewer) {
-          this.window.resize(this.vramTexture.width, this.vramTexture.height);
-        } else {
-          this.window.resize(this.windowWidth, this.windowHeight);
-        }
-      }
-    });
-
-    this.window.events.onResize((window1, width, height) -> this.updateDisplayTexture((int)(width / window1.getScale()), (int)(height / window1.getScale())));
-
-    try {
-      final Shader fontShader = new Shader(Paths.get("gfx/shaders/font.vsh"), Paths.get("gfx/shaders/font.fsh"));
-      fontShader.bindUniformBlock("transforms", Shader.UniformBuffer.TRANSFORM);
-      fontShader.bindUniformBlock("transforms2", Shader.UniformBuffer.TRANSFORM2);
-      fontShader.use();
-      fontShader.bindUniform("colour");
-      ShaderManager.addShader("font", fontShader);
-
-      FontManager.add("default", new Font(Paths.get("gfx/fonts/consolas.ttf")));
-    } catch(final IOException e) {
-      throw new RuntimeException("Failed to load font", e);
-    }
-
-    final FloatBuffer transform2Buffer = BufferUtils.createFloatBuffer(4 * 4);
-    this.transforms2 = ShaderManager.addUniformBuffer("transforms2", new Shader.UniformBuffer((long)transform2Buffer.capacity() * Float.BYTES, Shader.UniformBuffer.TRANSFORM2));
-
-    final int hr = this.vramWidth;
-    final int vr = this.vramHeight;
+  public void init(final RenderEngine renderEngine) {
+    renderEngine.events().onResize((window1, width, height) -> this.updateDisplayTexture((int)(width / window1.getScale()), (int)(height / window1.getScale())));
 
     this.vramShader = this.loadShader(Paths.get("gfx", "shaders", "vram.vsh"), Paths.get("gfx", "shaders", "vram.fsh"));
-    this.vramTexture = Texture.empty(hr, vr);
-
-    this.vramMesh = new Mesh(GL_TRIANGLE_STRIP, new float[] {
-      0,   0, 0, 0,
-      0,  vr, 0, 1,
-      hr,  0, 1, 0,
-      hr, vr, 1, 1,
-    }, 4);
-    this.vramMesh.attribute(0, 0L, 2, 4);
-    this.vramMesh.attribute(1, 2L, 2, 4);
 
     this.displaySize(320, 240);
 
@@ -214,53 +103,43 @@ public class Gpu {
       this.setStandardRenderer();
     }
 
-    this.ctx.onDraw(() -> {
-      // Restore model buffer to identity
-      this.transforms.identity();
-      this.transforms2.set(this.transforms);
-
+    renderEngine.setRenderCallback(() -> {
       this.mainRenderer.run();
-
-      final float fps = 1.0f / ((System.nanoTime() - this.lastFrame) / (1_000_000_000 / 30.0f)) * 30.0f;
-      this.window.setTitle("Legend of Dragoon - FPS: %.2f/%d scale: %d res: %dx%d".formatted(fps, this.window.getFpsLimit(), this.scale, this.displayTexture.width, this.displayTexture.height));
-      this.lastFrame = System.nanoTime();
-      this.vsyncCount += 60.0d * Config.getGameSpeedMultiplier() / this.window.getFpsLimit();
+      renderEngine.window().setTitle("Legend of Dragoon - FPS: %.2f/%d scale: %d res: %dx%d".formatted(renderEngine.getFps(), renderEngine.window().getFpsLimit(), this.scale, this.displayTexture.width, this.displayTexture.height));
     });
   }
 
   private void updateDisplayTexture(final int width, final int height) {
-    if(!this.isVramViewer) {
-      this.windowWidth = width;
-      this.windowHeight = height;
+    this.windowWidth = width;
+    this.windowHeight = height;
 
-      if(this.displayMesh != null) {
-        this.displayMesh.delete();
-      }
-
-      final float aspect = (float)this.displayTexture.width / this.displayTexture.height;
-
-      float w = width;
-      float h = w / aspect;
-
-      if(h > height) {
-        h = height;
-        w = h * aspect;
-      }
-
-      final float l = (width - w) / 2;
-      final float t = (height - h) / 2;
-      final float r = l + w;
-      final float b = t + h;
-
-      this.displayMesh = new Mesh(GL_TRIANGLE_STRIP, new float[] {
-        l, t, 0, 0,
-        l, b, 0, 1,
-        r, t, 1, 0,
-        r, b, 1, 1,
-      }, 4);
-      this.displayMesh.attribute(0, 0L, 2, 4);
-      this.displayMesh.attribute(1, 2L, 2, 4);
+    if(this.displayMesh != null) {
+      this.displayMesh.delete();
     }
+
+    final float aspect = (float)this.displayTexture.width / this.displayTexture.height;
+
+    float w = width;
+    float h = w / aspect;
+
+    if(h > height) {
+      h = height;
+      w = h * aspect;
+    }
+
+    final float l = (width - w) / 2;
+    final float t = (height - h) / 2;
+    final float r = l + w;
+    final float b = t + h;
+
+    this.displayMesh = new Mesh(GL_TRIANGLE_STRIP, new float[] {
+      l, t, 0, 0,
+      l, b, 0, 1,
+      r, t, 1, 0,
+      r, b, 1, 1,
+    }, 4);
+    this.displayMesh.attribute(0, 0L, 2, 4);
+    this.displayMesh.attribute(1, 2L, 2, 4);
   }
 
   public void setStandardRenderer() {
@@ -280,25 +159,8 @@ public class Gpu {
       this.displayChanged = false;
     }
 
-    if(this.isVramViewer) {
-      final int size = this.vramWidth * this.vramHeight;
-      final ByteBuffer pixels = MemoryUtil.memAlloc(size * 4);
-      final IntBuffer intPixels = pixels.asIntBuffer();
-      intPixels.put(this.vram24);
-
-      pixels.flip();
-
-      this.vramTexture.data(0, 0, this.vramWidth, this.vramHeight, pixels);
-
-      this.vramShader.use();
-      this.vramTexture.use();
-      this.vramMesh.draw();
-
-      MemoryUtil.memFree(pixels);
-    } else { // 15bpp
-      this.displayTexture.data(0, 0, this.displayTexture.width, this.displayTexture.height, this.getDisplayBuffer().getData());
-      this.drawMesh();
-    }
+    this.displayTexture.data(0, 0, this.displayTexture.width, this.displayTexture.height, this.getDisplayBuffer().getData());
+    this.drawMesh();
 
     if(this.zQueues != null) {
       for(int z = this.zQueues.length - 1; z >= 0; z--) {

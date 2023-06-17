@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import static legend.core.GameEngine.CONFIG;
-import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.RENDERER;
 import static org.lwjgl.glfw.GLFW.GLFW_JOYSTICK_LAST;
 import static org.lwjgl.glfw.GLFW.glfwGetJoystickGUID;
 import static org.lwjgl.glfw.GLFW.glfwGetJoystickName;
@@ -26,8 +26,8 @@ public class ControllerManager {
 
     ControllerDatabase.loadControllerDb();
 
-    GPU.window().events.onControllerConnected(this::onControllerConnected);
-    GPU.window().events.onControllerDisconnected(this::onControllerDisconnected);
+    RENDERER.events().onControllerConnected(this::onControllerConnected);
+    RENDERER.events().onControllerDisconnected(this::onControllerDisconnected);
   }
 
   public void init() {

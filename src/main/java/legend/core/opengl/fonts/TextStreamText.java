@@ -10,7 +10,7 @@ public class TextStreamText implements TextStreamable {
 
   public TextStreamText(final Font font, final CharSequence text) {
     this.drawable = font.buildTextQuads(text);
-    this.width = font.getCurrentX() / GameEngine.GPU.window().getScale();
+    this.width = font.getCurrentX() / GameEngine.RENDERER.window().getScale();
   }
 
   @Override

@@ -1,6 +1,5 @@
 package legend.game.fmv;
 
-import legend.core.DebugHelper;
 import legend.core.MathHelper;
 import legend.core.opengl.Window;
 import legend.core.spu.XaAdpcm;
@@ -20,6 +19,7 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment_8002.sssqResetStuff;
 import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
@@ -234,16 +234,12 @@ public class Fmv {
     final FileData fileData = Unpacker.loadFile(file);
     sector = 0;
 
-    while(!GPU.isReady()) {
-      DebugHelper.sleep(1);
-    }
-
     oldScale = GPU.getScale();
     oldRenderer = GPU.mainRenderer;
-    oldFps = GPU.window().getFpsLimit();
-    oldWidth = GPU.window().getWidth();
-    oldHeight = GPU.window().getHeight();
-    GPU.window().setFpsLimit(15);
+    oldFps = RENDERER.window().getFpsLimit();
+    oldWidth = RENDERER.window().getWidth();
+    oldHeight = RENDERER.window().getHeight();
+    RENDERER.window().setFpsLimit(15);
     GPU.rescaleNow(1);
 
     try {
@@ -254,8 +250,8 @@ public class Fmv {
       LOGGER.error("Failed to start audio for FMV");
     }
 
-    charPress = GPU.window().events.onCharPress((window, codepoint) -> shouldStop = true);
-    click = GPU.window().events.onMouseRelease((window, x, y, button, mods) -> shouldStop = true);
+    charPress = RENDERER.events().onCharPress((window, codepoint) -> shouldStop = true);
+    click = RENDERER.events().onMouseRelease((window, x, y, button, mods) -> shouldStop = true);
 
     GPU.mainRenderer = () -> {
       if(Input.pressedThisFrame(InputAction.BUTTON_CENTER_2)
@@ -455,17 +451,17 @@ public class Fmv {
   public static void stop() {
     GPU.mainRenderer = () -> {
       if(charPress != null) {
-        GPU.window().events.removeCharPress(charPress);
+        RENDERER.events().removeCharPress(charPress);
         charPress = null;
       }
 
       if(click != null) {
-        GPU.window().events.removeMouseRelease(click);
+        RENDERER.events().removeMouseRelease(click);
         click = null;
       }
 
       GPU.mainRenderer = oldRenderer;
-      GPU.window().setFpsLimit(oldFps);
+      RENDERER.window().setFpsLimit(oldFps);
       GPU.rescaleNow(oldScale);
       GPU.displaySize(oldWidth, oldHeight);
       oldRenderer = null;
