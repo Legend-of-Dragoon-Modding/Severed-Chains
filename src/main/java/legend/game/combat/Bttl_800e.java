@@ -102,7 +102,6 @@ import static legend.game.SItem.loadCharacterStats;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
-import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
 import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.loadDeffSounds;
@@ -941,7 +940,6 @@ public final class Bttl_800e {
 
     struct7cc.deffPackage_5a8 = null;
 
-    decrementOverlayCount();
     _800fafe8.setu(0x4L);
 
     if((struct7cc.flags_20 & 0x4_0000) != 0) {
@@ -3896,9 +3894,6 @@ public final class Bttl_800e {
     if((monster.damageReductionFlags_6e & 0x4) != 0) {
       monster.magicalImmunity_112 = true;
     }
-
-    //LAB_800ef274
-    decrementOverlayCount();
   }
 
   @Method(0x800ef28cL)
@@ -3908,7 +3903,6 @@ public final class Bttl_800e {
     //memcpy(sp0x18, _800c6e68.getAddress(), 0x28);
 
     loadCharacterStats();
-    decrementOverlayCount();
     _800be5d0.setu(1);
 
     //LAB_800ef31c

@@ -57,7 +57,6 @@ import legend.game.types.EngineState;
 import legend.game.types.FileEntry08;
 import legend.game.types.FileLoadedCallback;
 import legend.game.types.Flags;
-import legend.game.types.LoadingOverlay;
 import legend.game.types.McqHeader;
 import legend.game.types.MoonMusic08;
 import legend.game.types.SubmapMusic08;
@@ -132,7 +131,6 @@ import static legend.game.Scus94491BpeSegment_8004.loadSshdAndSoundbank;
 import static legend.game.Scus94491BpeSegment_8004.loadSssq;
 import static legend.game.Scus94491BpeSegment_8004.loadedOverlayIndex_8004dd10;
 import static legend.game.Scus94491BpeSegment_8004.moonMusic_8004ff10;
-import static legend.game.Scus94491BpeSegment_8004.overlaysLoadedCount_8004dd1c;
 import static legend.game.Scus94491BpeSegment_8004.overlays_8004db88;
 import static legend.game.Scus94491BpeSegment_8004.preloadingAudioAssets_8004ddcc;
 import static legend.game.Scus94491BpeSegment_8004.previousEngineState_8004dd28;
@@ -164,7 +162,6 @@ import static legend.game.Scus94491BpeSegment_8005.combatMusicFileIndices_800501
 import static legend.game.Scus94491BpeSegment_8005.combatSoundEffectsTypes_8005019c;
 import static legend.game.Scus94491BpeSegment_8005.heapHead_8005a2a0;
 import static legend.game.Scus94491BpeSegment_8005.heapTail_8005a2a4;
-import static legend.game.Scus94491BpeSegment_8005.loadingOverlay_8005a2a8;
 import static legend.game.Scus94491BpeSegment_8005.monsterSoundFileIndices_800500e8;
 import static legend.game.Scus94491BpeSegment_8005.sin_cos_80054d0c;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
@@ -746,12 +743,6 @@ public final class Scus94491BpeSegment {
 
   @Method(0x800128c4L)
   public static void loadQueuedOverlay() {
-    if(loadingOverlay_8005a2a8 != null) {
-      loadedOverlayIndex_8004dd10 = loadingOverlay_8005a2a8.overlayIndex();
-      loadOverlay(overlays_8004db88.get(loadedOverlayIndex_8004dd10).name_04.deref().get(), _80010004.get());
-      removeLoadedOverlayFromQueue();
-    }
-
     //LAB_800129c0
     //LAB_800129c4
     if(engineStateOnceLoaded_8004dd24 != null) {
@@ -802,23 +793,18 @@ public final class Scus94491BpeSegment {
     LOGGER.info("Loading support overlay %d", overlayIndex);
 
     if(loadedOverlayIndex_8004dd10 == overlayIndex) {
-      overlaysLoadedCount_8004dd1c++;
       overlayMethod.run();
       return;
     }
 
     //LAB_80012b6c
     //LAB_80012b70
-    loadingOverlay_8005a2a8 = new LoadingOverlay(overlayIndex, overlayMethod);
+    loadedOverlayIndex_8004dd10 = overlayIndex;
+    loadOverlay(overlays_8004db88.get(loadedOverlayIndex_8004dd10).name_04.deref().get(), _80010004.get());
+
+    overlayMethod.run();
 
     //LAB_80012ba4
-  }
-
-  @Method(0x80012bb4L)
-  public static void decrementOverlayCount() {
-    if(overlaysLoadedCount_8004dd1c > 0) {
-      overlaysLoadedCount_8004dd1c--;
-    }
   }
 
   @Method(0x80012bd4L)
@@ -833,23 +819,6 @@ public final class Scus94491BpeSegment {
     if(v0 != 0) {
       bzero(MEMORY.ref(4, v0).offset(0x0L).get(), (int)MEMORY.ref(4, v0).offset(0x4L).get());
     }
-  }
-
-  @Method(0x80012c7cL)
-  public static void removeLoadedOverlayFromQueue() {
-    final LoadingOverlay loadingOverlay = loadingOverlay_8005a2a8;
-    if(loadingOverlay_8005a2a8 != null) {
-      if(loadedOverlayIndex_8004dd10 == loadingOverlay_8005a2a8.overlayIndex()) {
-        if(loadingOverlay.loadedCallback() != null) {
-          overlaysLoadedCount_8004dd1c++;
-          loadingOverlay_8005a2a8.loadedCallback().run();
-        }
-      }
-
-      loadingOverlay_8005a2a8 = null;
-    }
-
-    //LAB_80012d30
   }
 
   @Method(0x80012df8L)
@@ -3386,7 +3355,6 @@ public final class Scus94491BpeSegment {
     }
 
     loadMonsterSounds();
-    decrementOverlayCount();
   }
 
   public static String getCharacterName(final int id) {

@@ -124,7 +124,6 @@ import static legend.game.Scus94491BpeSegment._80010868;
 import static legend.game.Scus94491BpeSegment._800108b0;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
-import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
@@ -1296,7 +1295,6 @@ public final class Scus94491BpeSegment_8002 {
 
       case UNLOAD_CAMPAIGN_SELECTION_MENU, UNLOAD_SAVE_GAME_MENU_20, UNLOAD_CHAR_SWAP_MENU_25, UNLOAD_NEW_CAMPAIGN_MENU, UNLOAD_OPTIONS_MENU -> {
         menuStack.popScreen();
-        decrementOverlayCount();
 
         if(whichMenu_800bdc38 != WhichMenu.UNLOAD_SAVE_GAME_MENU_20) {
           FUN_8001e010(-1);
@@ -1318,14 +1316,12 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       case UNLOAD_INVENTORY_MENU_5, UNLOAD_SHOP_MENU_10, UNLOAD_TOO_MANY_ITEMS_MENU_35 -> {
-        decrementOverlayCount();
         FUN_8001e010(-1);
         SCRIPTS.start();
         whichMenu_800bdc38 = WhichMenu.NONE_0;
       }
 
       case UNLOAD_POST_COMBAT_REPORT_30 -> {
-        decrementOverlayCount();
         SCRIPTS.start();
         whichMenu_800bdc38 = WhichMenu.NONE_0;
       }

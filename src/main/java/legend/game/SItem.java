@@ -65,7 +65,6 @@ import static legend.game.Scus94491BpeSegment.FUN_80018e84;
 import static legend.game.Scus94491BpeSegment.FUN_800192d8;
 import static legend.game.Scus94491BpeSegment.FUN_80019470;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
-import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
 import static legend.game.Scus94491BpeSegment.getCharacterName;
 import static legend.game.Scus94491BpeSegment.loadDir;
@@ -335,7 +334,6 @@ public final class SItem {
     battleState_8006e398.charBobjs_e40[charCount_800c677c.get()] = null;
 
     FUN_800f863c();
-    decrementOverlayCount();
   }
 
   @Method(0x800fbfe0L)
@@ -361,7 +359,6 @@ public final class SItem {
     loadSupportOverlay(2, SItem::deferLoadPartyTims);
     loadSupportOverlay(2, SItem::deferLoadPartyTmdAndAnims);
     _800bc960.or(0x400);
-    decrementOverlayCount();
   }
 
   @Method(0x800fc210L)
@@ -374,7 +371,6 @@ public final class SItem {
 
     //LAB_800fc34c
     _800bc960.or(0x4);
-    decrementOverlayCount();
   }
 
   @Method(0x800fc3c0L)
@@ -403,9 +399,6 @@ public final class SItem {
         }
       }
     }
-
-    //LAB_800fc4cc
-    decrementOverlayCount();
   }
 
   @Method(0x800fc504L)
@@ -422,8 +415,6 @@ public final class SItem {
   public static void loadCharacterTim(final FileData file, final int charSlot) {
     final BattleObject27c bobj = battleState_8006e398.charBobjs_e40[charSlot].innerStruct_00;
     loadCombatantTim(bobj.combatantIndex_26c, file);
-
-    decrementOverlayCount();
   }
 
   @Method(0x800fc654L)

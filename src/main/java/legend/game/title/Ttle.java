@@ -49,7 +49,6 @@ import static legend.core.gpu.VramTextureLoader.textureFromTim;
 import static legend.game.SItem.levelStuff_80111cfc;
 import static legend.game.SItem.magicStuff_80111d20;
 import static legend.game.SItem.xpTables;
-import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
@@ -211,7 +210,6 @@ public final class Ttle {
 
     //LAB_800c7404
     gameState_800babc8.gold_94 = 20;
-    decrementOverlayCount();
   }
 
   @Method(0x800c7424L)

@@ -109,7 +109,6 @@ public final class Scus94491BpeSegment_8004 {
   public static final Pointer<FileEntry08> currentlyLoadingFileEntry_8004dd04 = MEMORY.ref(4, 0x8004dd04L, Pointer.deferred(4, FileEntry08::new));
   public static final Value _8004dd0c = MEMORY.ref(4, 0x8004dd0cL);
   public static int loadedOverlayIndex_8004dd10;
-  public static int overlaysLoadedCount_8004dd1c;
 
   /**
    * <ol>
