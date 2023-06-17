@@ -1,7 +1,5 @@
 package legend.game;
 
-import it.unimi.dsi.fastutil.ints.Int2IntMap;
-import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import javafx.application.Application;
@@ -398,9 +396,6 @@ public final class Scus94491BpeSegment {
     scriptFunctionDescriptions.put(82, r -> "deallocate children; pause; rewind;");
     scriptFunctionDescriptions.put(83, r -> "deallocate %s (p0);%s".formatted(r.params_20[0], r.scriptState_04.index == r.params_20[0].get() ? "; pause; rewind;" : ""));
   }
-  private static boolean inputPulse;
-  public static final Int2IntMap keyRepeat = new Int2IntOpenHashMap();
-
   @Method(0x80011e1cL)
   public static void gameLoop() {
     RENDERER.events().onKeyPress((window, key, scancode, mods) -> {
@@ -455,21 +450,6 @@ public final class Scus94491BpeSegment {
       FUN_80020ed8();
       tickCount_800bb0fc.incr();
       endFrame();
-
-      press_800bee94.set(0);
-      repeat_800bee98.set(0);
-
-      if(inputPulse) {
-        for(final var entry : keyRepeat.int2IntEntrySet()) {
-          if(entry.getIntValue() >= 2) { //TODO adjust for frame rate
-            repeat_800bee98.or(entry.getIntKey());
-          }
-
-          entry.setValue(entry.getIntValue() + 1);
-        }
-      }
-
-      inputPulse = !inputPulse;
     };
 
     RENDERER.events().onShutdown(() -> {
