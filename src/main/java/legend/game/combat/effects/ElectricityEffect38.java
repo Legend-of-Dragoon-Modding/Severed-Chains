@@ -2,6 +2,8 @@ package legend.game.combat.effects;
 
 import legend.core.memory.types.QuadConsumer;
 
+import java.util.Arrays;
+
 public class ElectricityEffect38 implements BttlScriptData6cSubBase1 {
   /** ushort */
   public int boltCount_00;
@@ -13,7 +15,7 @@ public class ElectricityEffect38 implements BttlScriptData6cSubBase1 {
   /** ushort; If true, add origin translation of current segment to that of previous segment */
   public boolean addSuccessiveSegmentOriginTranslations_14;
   /** int; Related to which rendering branch to use in 80103db0 */
-  public boolean _18;
+  public boolean type1RendererType_18;
   /** short; The lower the value, the wider the angle in which the bolt can be drawn */
   public int boltAngleRangeCutoff_1c;
   /** short; Length of hypotenuse of translation, most often added to segment origin */
@@ -39,4 +41,11 @@ public class ElectricityEffect38 implements BttlScriptData6cSubBase1 {
   public QuadConsumer<EffectManagerData6c, ElectricityEffect38, LightningBoltEffect14, Integer> callback_2c;
 
   public LightningBoltEffect14[] bolts_34;
+
+  public ElectricityEffect38(final int boltCount, final int boltSegmentCount) {
+    this.boltCount_00 = boltCount;
+    this.boltSegmentCount_28 = boltSegmentCount;
+    this.bolts_34 = new LightningBoltEffect14[boltCount];
+    Arrays.setAll(this.bolts_34, i -> new LightningBoltEffect14(i, boltSegmentCount));
+  }
 }

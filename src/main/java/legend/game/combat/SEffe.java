@@ -3058,7 +3058,7 @@ public final class SEffe {
               currentSegmentScale = currentSegment.scaleMultiplier_28 * manager._10.scale_16.getX() >> 12;
               final int nextSegmentScale = nextSegment.scaleMultiplier_28 * manager._10.scale_16.getX() >> 12;
 
-              if(electricEffect._18) {
+              if(electricEffect.type1RendererType_18) {
                 currentSegmentOrigin = segmentArray[segmentNum];
                 nextSegmentOrigin = segmentArray[segmentNum + 1];
                 final int outerEndpointXa = nextSegmentOrigin.x_00 + (rcos(angle) * currentSegmentScale >> 12);
@@ -3307,26 +3307,27 @@ public final class SEffe {
   public static FlowControl allocateElectricityEffect(final RunningScript<? extends BattleScriptDataBase> script) {
     final int effectFlag = script.params_20[6].get();
     final int callbackIndex = script.params_20[7].get();
+    final int boltCount = script.params_20[3].get();
+    final int boltSegmentCount = effectFlag >> 8 & 0xff;
 
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
-      "Electricity",
+      "Electricity Effect",
       script.scriptState_04,
       0,
       null,
       electricityEffectRenderers_80119f14[callbackIndex],
       SEffe::deallocateElectricityEffect,
-      value -> new ElectricityEffect38()
+      value -> new ElectricityEffect38(boltCount, boltSegmentCount)
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
     final ElectricityEffect38 electricEffect = (ElectricityEffect38)manager.effect_44;
-    electricEffect.boltCount_00 = script.params_20[3].get();
     electricEffect.currentColourFadeStep_04 = 0;
     electricEffect.scriptIndex_08 = script.params_20[1].get();
     electricEffect.numColourFadeSteps_0c = effectFlag >> 16 & 0xff;
     electricEffect.boltAngleStep_10 = script.params_20[5].get();
     electricEffect.addSuccessiveSegmentOriginTranslations_14 = (effectFlag >>> 24 & 0x8) == 0;
-    electricEffect._18 = (effectFlag >>> 24 & 0x10) == 0;
+    electricEffect.type1RendererType_18 = (effectFlag >>> 24 & 0x10) == 0;
     electricEffect.boltAngleRangeCutoff_1c = script.params_20[2].get();
     electricEffect.segmentOriginTranslationMagnitude_1e = script.params_20[4].get();
     electricEffect.callbackIndex_20 = callbackIndex;
@@ -3334,12 +3335,9 @@ public final class SEffe {
     electricEffect.fadeSuccessiveSegments_23 = (effectFlag >>> 24 & 0x2) == 0;
     electricEffect.reinitializeNodes_24 = (effectFlag >>> 24 & 0x4) == 0;
     electricEffect.segmentOriginTranslationModifier_26 = effectFlag & 0xff;
-    electricEffect.boltSegmentCount_28 = effectFlag >> 8 & 0xff;
     electricEffect.hasMonochromeBase_29 = (effectFlag >>> 24 & 0x20) == 0;
     electricEffect.frameNum_2a = 0;
     electricEffect.callback_2c = electricityEffectCallbacks_80119ee8[callbackIndex];
-    electricEffect.bolts_34 = new LightningBoltEffect14[electricEffect.boltCount_00];
-    Arrays.setAll(electricEffect.bolts_34, LightningBoltEffect14::new);
 
     if(electricEffect.numColourFadeSteps_0c == 0) {
       electricEffect.numColourFadeSteps_0c = -1;
@@ -3352,8 +3350,6 @@ public final class SEffe {
       boltEffect.unused_00 = 1;
       boltEffect.angle_02 = (short)seed_800fa754.advance().get() % 4097;
       boltEffect.rotation_04.set((short)0, (short)0, (short)0);
-      boltEffect.boltSegments_10 = new LightningBoltEffectSegment30[electricEffect.boltSegmentCount_28];
-      Arrays.setAll(boltEffect.boltSegments_10, LightningBoltEffectSegment30::new);
       // Ran callback here from method array _80119ebc, which was filled with copies of the same no-op method FUN_801052d4
       initializeElectricityNodes(manager, electricEffect, boltEffect);
     }

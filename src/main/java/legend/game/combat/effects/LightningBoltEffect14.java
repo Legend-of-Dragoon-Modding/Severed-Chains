@@ -2,6 +2,8 @@ package legend.game.combat.effects;
 
 import legend.core.gte.SVECTOR;
 
+import java.util.Arrays;
+
 public class LightningBoltEffect14 {
   public final int index;
 
@@ -15,7 +17,9 @@ public class LightningBoltEffect14 {
   public int sz3_0c;
   public LightningBoltEffectSegment30[] boltSegments_10;
 
-  public LightningBoltEffect14(final int index) {
+  public LightningBoltEffect14(final int index, final int count) {
     this.index = index;
+    this.boltSegments_10 = new LightningBoltEffectSegment30[count];
+    Arrays.setAll(this.boltSegments_10, LightningBoltEffectSegment30::new);
   }
 }
