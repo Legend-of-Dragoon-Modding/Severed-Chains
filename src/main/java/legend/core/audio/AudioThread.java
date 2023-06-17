@@ -153,7 +153,7 @@ public final class AudioThread implements Runnable {
             case KEY_OFF -> this.keyOff(sequence.getSequencedAudio(), command.getChannel(), command.getValue1());
             case POLYPHONIC_KEY_PRESSURE -> this.polyphonicKeyPressure();
             case CONTROL_CHANGE -> this.controlChange(sequence.getSequencedAudio(), command.getChannel(), command.getValue1(), command.getValue2());
-            case PROGRAM_CHANGE -> this.programChange();
+            case PROGRAM_CHANGE -> this.programChange(sequence.getSequencedAudio(), command.getChannel(), command.getValue1());
             case PITCH_BEND -> this.pitchBend(sequence.getSequencedAudio(), command.getChannel(), command.getValue1());
             case META -> this.meta(sequence.getSequencedAudio(), command.getValue1(), command.getValue2());
             default -> System.err.println("Unhandled message " + command.getMidiCommand());
@@ -246,8 +246,11 @@ public final class AudioThread implements Runnable {
     switch(control) {
       case 0x01 -> this.modulation(sequencedAudio, channelIndex, value);
       case 0x02 -> this.breathControl(sequencedAudio, channelIndex, value);
+      case 0x06 -> this.dataEntry(sequencedAudio, value);
       case 0x07 -> this.volume(sequencedAudio, channelIndex, value);
       case 0x0A -> this.pan(sequencedAudio, channelIndex, value);
+      case 0x62 -> this.dataEntryLsb(sequencedAudio, value);
+      case 0x63 -> this.dataEntryMsb(sequencedAudio, value);
       default -> System.err.printf("[SEQUENCER] Bad Control Change Channel: %d Command: 0x%x Value: 0x%x%n", channelIndex, control, value);
     }
   }
@@ -277,6 +280,55 @@ public final class AudioThread implements Runnable {
       if(voice.isUsed() && voice.getChannel() == channel) {
         voice.setBreath(breath);
       }
+    }
+  }
+
+  private void dataEntry(final SequencedAudio sequencedAudio, final int value) {
+    System.out.printf("[SEQUENCER] Data Entry NRPN: 0x%x Value: 0x%x%n", sequencedAudio.getNrpn(), value);
+    switch(sequencedAudio.getNrpn()) {
+      case 0x00 -> {
+        //TODO repeat Count
+      }
+      case 0x04 -> {
+        //TODO attack linear
+      }
+      case 0x05 -> {
+        //TODO Attack exponential
+      }
+      case 0x06 -> {
+        //TODO decay Shift
+      }
+      case 0x07 -> {
+        //TODO sustain level
+      }
+      case 0x08 -> {
+        //TODO sustain linear
+      }
+      case 0x09 -> {
+        //TODO sustain exponential
+      }
+      case 0x0A -> {
+        //TODO release linear
+      }
+      case 0x0B -> {
+        //TODO release exponential
+      }
+      case 0x0C -> {
+        //TODO sustain direction
+      }
+      case 0x0F -> {
+        //TODO reverb type
+      }
+      case 0x10 -> {
+        //TODO reverb volume
+      }
+      case 0x11 -> {
+        //TODO something??
+      }
+      case 0x12, 0x13 -> {
+        //TODO something??
+      }
+
     }
   }
 
@@ -314,8 +366,46 @@ public final class AudioThread implements Runnable {
     }
   }
 
-  private void programChange() {
+  private void dataEntryLsb(final SequencedAudio sequencedAudio, final int value) {
+    System.out.printf("[SEQUENCER] Data Entry LSB Value: 0x%x%n", value);
+    final int type = sequencedAudio.getLsbType();
 
+    if(type == 0) {
+      sequencedAudio.setNrpn(0);
+      //TODO repeatCount = value;
+    } else if (type == 1 || type == 2) {
+      sequencedAudio.setNrpn(value);
+    }
+  }
+
+  private void dataEntryMsb(final SequencedAudio sequencedAudio, final int command) {
+    System.out.printf("[SEQUENCER] Data Entry MSB Command: 0x%x%n", command);
+    if(command >= 0 && command < 0x10) {
+      sequencedAudio.setLsbType(0x10);
+      sequencedAudio.setDataInstrumentIndex(command);
+    } else if(command == 0x10) {
+      sequencedAudio.setLsbType(0x01);
+    } else if(command == 0x14) {
+      sequencedAudio.setLsbType(0x00);
+      sequencedAudio.setNrpn(0x00);
+      //TODO command
+      //TODO offset
+    } else if(command == 0x1E) {
+      sequencedAudio.setLsbType(0x00);
+
+      //TODO repeat stuff
+    } else if(command == 0x7F) {
+      sequencedAudio.setLsbType(0x02);
+      sequencedAudio.setDataInstrumentIndex(0xFF);
+    }
+  }
+
+  private void programChange(final SequencedAudio sequencedAudio, final int channelIndex, final int value) {
+    System.out.printf("[SEQUENCER] Program Change Channel: %d, Value: %d%n", channelIndex, value);
+    final Channel channel = sequencedAudio.getChannel(channelIndex);
+    channel.setInstrument(value);
+    channel.setPitchBend(0x40);
+    channel.set_0b(0x40);
   }
 
   private void pitchBend(final SequencedAudio sequencedAudio, final int channelIndex, final int value) {

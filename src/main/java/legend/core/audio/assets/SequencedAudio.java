@@ -5,6 +5,10 @@ public final class SequencedAudio {
   private final byte[][] breathControls;
   private final byte[] velocityRamp;
 
+  private int lsbType;
+  private int nrpn;
+  private int dataInstrumentIndex;
+
   SequencedAudio(final Sssq sssq, final byte[][] breathControls, final byte[] velocityRamp) {
     this.sssq = sssq;
     this.breathControls = breathControls;
@@ -33,5 +37,29 @@ public final class SequencedAudio {
 
   public byte[][] getBreathControls() {
     return this.breathControls;
+  }
+
+  public int getLsbType() {
+    return this.lsbType;
+  }
+
+  public void setLsbType(final int value) {
+    this.lsbType = value;
+  }
+
+  public int getNrpn() {
+    return this.nrpn;
+  }
+
+  public void setNrpn(final int value) {
+    this.nrpn = value;
+  }
+
+  public int getDataInstrumentIndex() {
+    return this.dataInstrumentIndex;
+  }
+
+  public void setDataInstrumentIndex(final int value) {
+    this.dataInstrumentIndex = value;
   }
 }

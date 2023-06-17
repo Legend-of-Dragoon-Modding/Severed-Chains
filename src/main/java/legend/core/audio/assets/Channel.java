@@ -29,8 +29,7 @@ public final class Channel {
     this.pan = data.readUByte(0x04);
 
     this.modulation = data.readUByte(0x09);
-    //this.pitchBend = data.readUByte(0x0a);
-    this.pitchBend = 64;
+    this.pitchBend = data.readUByte(0x0a);
     this._0b = data.readUByte(0x0b);
     this.breath = data.readUByte(0x0c);
 
@@ -41,7 +40,7 @@ public final class Channel {
     return this.instrument;
   }
 
-  public void setIndex(final int instrumentIndex) {
+  public void setInstrument(final int instrumentIndex) {
     this.instrument = this.soundFont.getInstrument(instrumentIndex);
   }
 
@@ -75,6 +74,10 @@ public final class Channel {
 
   public void setPitchBend(final int value) {
     this.pitchBend = value;
+  }
+
+  public void set_0b(final int value) {
+    this._0b = value;
   }
 
   public int getBreath() {
