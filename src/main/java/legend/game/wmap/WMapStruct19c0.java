@@ -22,7 +22,7 @@ public class WMapStruct19c0 {
   /** short */
   public int mapRotationCounter_7e;
   /** ubyte */
-  public int mapRotating_80;
+  public boolean mapRotating_80;
 
   public int _84;
   public int _88;

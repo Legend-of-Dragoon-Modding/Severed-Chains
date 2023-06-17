@@ -8,13 +8,13 @@ import legend.core.memory.types.MemoryRef;
 public class WMapStruct0c implements MemoryRef {
   private final Value ref;
 
-  public final IntRef _00;
+  public final IntRef locationIndex_00;
   public final SVECTOR _04;
 
   public WMapStruct0c(final Value ref) {
     this.ref = ref;
 
-    this._00 = ref.offset(4, 0x00L).cast(IntRef::new);
+    this.locationIndex_00 = ref.offset(4, 0x00L).cast(IntRef::new);
     this._04 = ref.offset(2, 0x04L).cast(SVECTOR::new);
   }
 

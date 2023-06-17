@@ -5,7 +5,7 @@ import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedByteRef;
 
-public class WMapStruct14 implements MemoryRef {
+public class Location14 implements MemoryRef {
   private final Value ref;
 
   public final ShortRef areaIndex_00;
@@ -15,11 +15,12 @@ public class WMapStruct14 implements MemoryRef {
   public final ShortRef submapCut_08;
   public final ShortRef submapScene_0a;
   public final ShortRef _0c;
-  public final UnsignedByteRef _0e;
+  /** 1-based, because why not */
+  public final UnsignedByteRef continentNumber_0e;
   public final UnsignedByteRef _10;
   public final UnsignedByteRef _12;
 
-  public WMapStruct14(final Value ref) {
+  public Location14(final Value ref) {
     this.ref = ref;
 
     this.areaIndex_00 = ref.offset(2, 0x00L).cast(ShortRef::new);
@@ -29,7 +30,7 @@ public class WMapStruct14 implements MemoryRef {
     this.submapCut_08 = ref.offset(2, 0x08L).cast(ShortRef::new);
     this.submapScene_0a = ref.offset(2, 0x0aL).cast(ShortRef::new);
     this._0c = ref.offset(2, 0x0cL).cast(ShortRef::new);
-    this._0e = ref.offset(1, 0x0eL).cast(UnsignedByteRef::new);
+    this.continentNumber_0e = ref.offset(1, 0x0eL).cast(UnsignedByteRef::new);
     this._10 = ref.offset(1, 0x10L).cast(UnsignedByteRef::new);
     this._12 = ref.offset(1, 0x12L).cast(UnsignedByteRef::new);
   }

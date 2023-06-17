@@ -3863,7 +3863,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001f708L)
-  public static void FUN_8001f708(final int chapterIndex, final int a1) {
+  public static void loadWmapMusic(final int chapterIndex, final int a1) {
     unloadSoundFile(8);
     loadedDrgnFiles_800bcf78.oru(0x80L);
     final int fileIndex = 5850 + chapterIndex * 5;

@@ -5,16 +5,28 @@ import legend.core.gte.VECTOR;
 import java.util.Arrays;
 
 public class MapState100 {
-  /** 800c6798 */
-  public int _00;
+  /**
+   * <ol start="0">
+   *   <li>South Serdio</li>
+   *   <li>North Serdio</li>
+   *   <li>Tiberoa</li>
+   *   <li>Illisa Bay</li>
+   *   <li>Mille Seseau</li>
+   *   <li>Gloriano</li>
+   *   <li>Death Frontier</li>
+   *   <li>Teleportation</li>
+   * </ol>
+   * 800c6798
+   */
+  public int continentIndex_00;
   /** 800c679c */
-  public int _04;
+//  public int _04; // was just a copy of continentIndex_00
   /** 800c67a0 */
-  public int _08;
+  public int locationCount_08;
   /** 800c67a4 */
-  public int _0c;
+  public int areaCount_0c;
   /** 800c67a8 */
-  public int _10;
+  public int locationIndex_10;
   /** 800c67aa */
   public int areaIndex_12;
   /** The section of the path that the player is on (800c67ac) */
@@ -41,7 +53,7 @@ public class MapState100 {
   /** 800c685c */
   public int submapCut_c4;
   /** 800c685e */
-  public int _c6;
+  public int submapScene_c6;
   /** 800c6860 */
   public short submapCut_c8;
   /** 800c6862 */

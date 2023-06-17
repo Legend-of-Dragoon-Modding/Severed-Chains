@@ -41,7 +41,6 @@ import legend.game.types.GsF_LIGHT;
 import legend.game.types.LodString;
 import legend.game.types.McqHeader;
 import legend.game.types.Model124;
-import legend.game.types.Place0c;
 import legend.game.types.TexPageY;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
@@ -60,12 +59,12 @@ import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
 import static legend.game.Scus94491BpeSegment.FUN_80019c80;
 import static legend.game.Scus94491BpeSegment.FUN_8001eea8;
-import static legend.game.Scus94491BpeSegment.FUN_8001f708;
 import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
+import static legend.game.Scus94491BpeSegment.loadWmapMusic;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static legend.game.Scus94491BpeSegment.playSound;
 import static legend.game.Scus94491BpeSegment.rcos;
@@ -76,7 +75,7 @@ import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
-import static legend.game.Scus94491BpeSegment_8002.FUN_8002a32c;
+import static legend.game.Scus94491BpeSegment_8002.initTextbox;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a3ec;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a488;
 import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
@@ -181,7 +180,7 @@ public class WMap {
 
   private static final IntRef _800c86cc = MEMORY.ref(4, 0x800c86ccL, IntRef::new);
 
-  private static final Value _800c86d0 = MEMORY.ref(2, 0x800c86d0L);
+  private static final Value colour_800c86d0 = MEMORY.ref(2, 0x800c86d0L);
   private static final Value _800c86d2 = MEMORY.ref(1, 0x800c86d2L);
 
   private static final int[] _800c86d4 = new int[8];
@@ -204,8 +203,8 @@ public class WMap {
 
   /**
    * <ol start="0">
-   *   <li>{@link WMap#FUN_800ccbe0}</li>
-   *   <li>{@link WMap#FUN_800ccc30}</li>
+   *   <li>{@link WMap#initWmap}</li>
+   *   <li>{@link WMap#waitForWmapMusicToLoad}</li>
    *   <li>{@link WMap#FUN_800ccc64}</li>
    *   <li>{@link WMap#FUN_800cccbc}</li>
    *   <li>{@link WMap#FUN_800ccce4}</li>
@@ -221,10 +220,10 @@ public class WMap {
    */
   private static final ArrayRef<Pointer<RunnableRef>> _800ef000 = MEMORY.ref(4, 0x800ef000L, ArrayRef.of(Pointer.classFor(RunnableRef.class), 13, 4, Pointer.deferred(4, RunnableRef::new)));
 
-  private static final Value _800ef0d4 = MEMORY.ref(2, 0x800ef0d4L);
-  private static final Value _800ef0d6 = MEMORY.ref(2, 0x800ef0d6L);
-  private static final Value _800ef0d8 = MEMORY.ref(2, 0x800ef0d8L);
-  private static final Value _800ef0da = MEMORY.ref(2, 0x800ef0daL);
+  private static final UnsignedShortRef vramX_800ef0d4 = MEMORY.ref(2, 0x800ef0d4L, UnsignedShortRef::new);
+  private static final UnsignedShortRef vramY_800ef0d6 = MEMORY.ref(2, 0x800ef0d6L, UnsignedShortRef::new);
+  private static final UnsignedShortRef clutX_800ef0d8 = MEMORY.ref(2, 0x800ef0d8L, UnsignedShortRef::new);
+  private static final UnsignedShortRef clutY_800ef0da = MEMORY.ref(2, 0x800ef0daL, UnsignedShortRef::new);
 
   /** array of 8-byte structs */
   private static final Value imageX_800ef0cc = MEMORY.ref(2, 0x800ef0ccL);
@@ -251,7 +250,7 @@ public class WMap {
   private static final Value _800ef19c = MEMORY.ref(1, 0x800ef19cL);
 
   private static final Value _800ef1a4 = MEMORY.ref(2, 0x800ef1a4L);
-  private static final ArrayRef<VECTOR> vec_800ef1a8 = MEMORY.ref(4, 0x800ef1a8L, ArrayRef.of(VECTOR.class, 8, 0x10, VECTOR::new));
+  private static final ArrayRef<VECTOR> mapPositions_800ef1a8 = MEMORY.ref(4, 0x800ef1a8L, ArrayRef.of(VECTOR.class, 8, 0x10, VECTOR::new));
   private static final ArrayRef<CoolonWarpDestination20> coolonWarpDest_800ef228 = MEMORY.ref(4, 0x800ef228L, ArrayRef.of(CoolonWarpDestination20.class, 9, 0x20, CoolonWarpDestination20::new));
 
   private static final Value _800ef348 = MEMORY.ref(2, 0x800ef348L);
@@ -290,12 +289,8 @@ public class WMap {
 
   private static final UnboundedArrayRef<Place0c> places_800f0234 = MEMORY.ref(4, 0x800f0234L, UnboundedArrayRef.of(0xc, Place0c::new));
 
-  private static final UnboundedArrayRef<WMapStruct14> _800f0e34 = MEMORY.ref(2, 0x800f0e34L, UnboundedArrayRef.of(0x14, WMapStruct14::new));
-
-  private static final Value _800f1580 = MEMORY.ref(2, 0x800f1580L);
-  private static final Value _800f1582 = MEMORY.ref(2, 0x800f1582L);
-
-  public static final ArrayRef<WMapAreaData08> areaData_800f2248 = MEMORY.ref(2, 0x800f2248L, ArrayRef.of(WMapAreaData08.class, 133, 8, WMapAreaData08::new));
+  private static final ArrayRef<Location14> locations_800f0e34 = MEMORY.ref(2, 0x800f0e34L, ArrayRef.of(Location14.class, 0x100, 0x14, Location14::new));
+  public static final ArrayRef<AreaData08> areaData_800f2248 = MEMORY.ref(2, 0x800f2248L, ArrayRef.of(AreaData08.class, 133, 8, AreaData08::new));
 
   private static final ArrayRef<IntRef> _800f5810 = MEMORY.ref(4, 0x800f5810L, ArrayRef.of(IntRef.class, 0x43, 4, IntRef::new));
 
@@ -469,7 +464,7 @@ public class WMap {
       } else {
         //LAB_800cc804
         resizeDisplay(320, 240);
-        FUN_8001f708(gameState_800babc8.chapterIndex_98, 0);
+        loadWmapMusic(gameState_800babc8.chapterIndex_98, 0);
         pregameLoadingStage_800bb10c.set(12);
       }
 
@@ -572,16 +567,16 @@ public class WMap {
   }
 
   @Method(0x800ccbe0L)
-  public static void FUN_800ccbe0() {
+  public static void initWmap() {
     resizeDisplay(320, 240);
     vsyncMode_8007a3b8 = 3;
     unloadSoundFile(9);
-    FUN_8001f708(gameState_800babc8.chapterIndex_98, 0);
+    loadWmapMusic(gameState_800babc8.chapterIndex_98, 0);
     pregameLoadingStage_800bb10c.set(1);
   }
 
   @Method(0x800ccc30L)
-  public static void FUN_800ccc30() {
+  public static void waitForWmapMusicToLoad() {
     if((getLoadedDrgnFiles() & 0x80L) == 0) {
       pregameLoadingStage_800bb10c.set(2);
     }
@@ -702,7 +697,7 @@ public class WMap {
 
     FUN_800e3fac(0);
     FUN_800e78c0();
-    FUN_800d6880();
+    loadWmapTextures();
     FUN_800d177c();
     FUN_800d8d18();
     FUN_800dfa70();
@@ -710,11 +705,11 @@ public class WMap {
     FUN_800eb914();
     FUN_800e4e1c();
 
-    if(mapState_800c6798._00 < 3) {
+    if(mapState_800c6798.continentIndex_00 < 3) { // South Serdio, North Serdio, Tiberoa
       FUN_8001eea8(1);
     } else {
       //LAB_800cd004
-      FUN_8001eea8(mapState_800c6798._00 + 1);
+      FUN_8001eea8(mapState_800c6798.continentIndex_00 + 1);
     }
 
     //LAB_800cd020
@@ -1575,7 +1570,7 @@ public class WMap {
 
   @Method(0x800d1d28L)
   public static void FUN_800d1d28() {
-    _800c66b0.mapRotating_80 = 0;
+    _800c66b0.mapRotating_80 = false;
     _800c66b0.mapRotationStep_7c = 0;
     _800c66b0._c5 = 0;
     _800c66b0._c4 = 0;
@@ -1599,9 +1594,9 @@ public class WMap {
 
     //LAB_800d1e14
     int count = 0;
-    for(int i = 0; i < mapState_800c6798._08; i++) {
+    for(int i = 0; i < mapState_800c6798.locationCount_08; i++) {
       //LAB_800d1e38
-      if(!places_800f0234.get(_800f0e34.get(i).placeIndex_02.get()).name_00.isNull()) {
+      if(!places_800f0234.get(locations_800f0e34.get(i).placeIndex_02.get()).name_00.isNull()) {
         //LAB_800d1e90
         if(FUN_800eb09c(i, 1, _800c66b0._154[count].vec_08) == 0) {
           //LAB_800d1ee0
@@ -1760,38 +1755,36 @@ public class WMap {
 
     //LAB_800d3014
     if(struct.mapRotationStep_7c == 0) {
-      struct.mapRotating_80 = 0;
+      struct.mapRotating_80 = false;
     }
 
     //LAB_800d3040
     if(struct._110 == 0) {
       if(struct258_800c66a8.zoomState_1f8 == 0) {
         if(struct._c4 == 0) {
-          if(mapState_800c6798._00 != 7) {
-            final long mapRotating = struct.mapRotating_80;
-
-            if(mapRotating == 0) {
+          if(mapState_800c6798.continentIndex_00 != 7) { // Not teleporting
+            if(!struct.mapRotating_80) {
               //LAB_800d30d8
               if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_RIGHT_1)) { // R1
                 startMapRotation(1);
-                struct.mapRotating_80 = 1;
+                struct.mapRotating_80 = true;
               }
 
               //LAB_800d310c
               if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_LEFT_1)) { // L1
                 startMapRotation(-1);
-                struct.mapRotating_80 = 1;
+                struct.mapRotating_80 = true;
               }
 
               //LAB_800d3140
-            } else if(mapRotating == 1) {
+            } else {
               //LAB_800d3148
               struct.mapRotation_70.y.add((short)struct.mapRotationStep_7c);
               struct.mapRotationCounter_7e++;
 
               if(struct.mapRotationCounter_7e > 5) {
                 struct.mapRotation_70.setY((short)struct.mapRotationEndAngle_7a);
-                struct.mapRotating_80 = 0;
+                struct.mapRotating_80 = false;
               }
             }
           }
@@ -1855,10 +1848,10 @@ public class WMap {
       //LAB_800d3654
       //LAB_800d3670
       //LAB_800d368c
-      if(mapState_800c6798._00 != 7 && mapState_800c6798._d8 == 0 && _800c6690.get() == 0) {
+      if(mapState_800c6798.continentIndex_00 != 7 && mapState_800c6798._d8 == 0 && _800c6690.get() == 0) {
         //LAB_800d36a8
         if(mapState_800c6798._fc != 1) {
-          if(_800c66b0.mapRotating_80 == 0) {
+          if(!_800c66b0.mapRotating_80) {
             if(struct258_800c66a8._05 == 0) {
               if(_800c66b0._110 == 0) {
                 if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_RIGHT_2)) { // R2
@@ -2093,7 +2086,7 @@ public class WMap {
             //LAB_800d4974
           } else if(v0 == 0) {
             //LAB_800d4988
-            FUN_8002a32c(7, 0, x, y, width.get() - 1, lines.get() - 1);
+            initTextbox(7, 0, x, y, width.get() - 1, lines.get() - 1);
             _800c86f0.setu(0x1L);
 
             //LAB_800d49e4
@@ -2595,9 +2588,9 @@ public class WMap {
   }
 
   @Method(0x800d6880L)
-  public static void FUN_800d6880() {
+  public static void loadWmapTextures() {
     filesLoadedFlags_800c66b8.and(0xffff_efffL);
-    loadDrgnDir(0, 5695, files -> WMap.timsLoaded(files, 0x1_1000));
+    loadDrgnDir(0, 5695, files -> timsLoaded(files, 0x1_1000));
     struct258_800c66a8.colour_20 = 0;
   }
 
@@ -2621,7 +2614,7 @@ public class WMap {
       .clut(640, 497)
       .vramPos(640, 256)
       .pos(-144, -104, 128, 24)
-      .uv(128, mapState_800c6798._00 * 24)
+      .uv(128, mapState_800c6798.continentIndex_00 * 24)
     );
 
     struct258_800c66a8.colour_20 += 0x10;
@@ -2633,7 +2626,7 @@ public class WMap {
     //LAB_800d6b5c
     renderPath();
 
-    if(mapState_800c6798._00 == 7) {
+    if(mapState_800c6798.continentIndex_00 == 7) {
       return;
     }
 
@@ -2812,11 +2805,11 @@ public class WMap {
     setRotTransMatrix(sp0x18);
 
     //LAB_800d7d6c
-    for(int i = 0; i < mapState_800c6798._08; i++) {
+    for(int i = 0; i < mapState_800c6798.locationCount_08; i++) {
       //LAB_800d7d90
       if(FUN_800eb09c(i, 1, sp0x40) == 0) {
         //LAB_800d7db4
-        if(mapState_800c6798._00 != 7 || i == 31 || i == 78) {
+        if(mapState_800c6798.continentIndex_00 != 7 || i == 31 || i == 78) {
           //LAB_800d7df0
           sp0x70.set(sp0x40);
 
@@ -2878,13 +2871,13 @@ public class WMap {
 
     //LAB_800d852c
     //LAB_800d8540
-    for(int i = 0; i < mapState_800c6798._08; i++) {
+    for(int i = 0; i < mapState_800c6798.locationCount_08; i++) {
       //LAB_800d8564
       if(FUN_800eb09c(i, 0, null) == 0) {
         //LAB_800d8584
-        if(mapState_800c6798._00 != 7 || i == 31 || i == 78) {
+        if(mapState_800c6798.continentIndex_00 != 7 || i == 31 || i == 78) {
           //LAB_800d85c0
-          final int sp88 = areaData_800f2248.get(_800f0e34.get(i).areaIndex_00.get())._00.get();
+          final int sp88 = areaData_800f2248.get(locations_800f0e34.get(i).areaIndex_00.get())._00.get();
           final int sp80 = Math.abs(sp88) - 1;
 
           if(sp0xb0[sp80] == 0) {
@@ -2973,7 +2966,7 @@ public class WMap {
 
   @Method(0x800d8d18L)
   public static void FUN_800d8d18() {
-    FUN_800d8e4c(mapState_800c6798._00);
+    loadMapModelAndTexture(mapState_800c6798.continentIndex_00);
 
     struct258_800c66a8.zoomState_1f8 = 0;
     struct258_800c66a8._220 = 0;
@@ -2998,10 +2991,10 @@ public class WMap {
   }
 
   @Method(0x800d8e4cL)
-  public static void FUN_800d8e4c(final int index) {
+  public static void loadMapModelAndTexture(final int index) {
     filesLoadedFlags_800c66b8.and(0xffff_fffdL);
-    loadDrgnDir(0, 5697 + index, files -> WMap.timsLoaded(files, 0x2));
-    loadDrgnFile(0, 5705 + index, files -> WMap.loadTmdCallback("DRGN0/" + (5705 + index), files));
+    loadDrgnDir(0, 5697 + index, files -> timsLoaded(files, 0x2));
+    loadDrgnFile(0, 5705 + index, files -> loadTmdCallback("DRGN0/" + (5705 + index), files));
   }
 
   @Method(0x800d8efcL)
@@ -3010,7 +3003,7 @@ public class WMap {
     struct258_800c66a8.textureAnimation_1c = prepareAnimationStruct(size, 0, 3, 1);
     struct258_800c66a8._28 = 0;
 
-    if(mapState_800c6798._00 == 2) {
+    if(mapState_800c6798.continentIndex_00 == 2) { // Tiberoa
       //LAB_800d8f94
       for(int i = 0; i < struct258_800c66a8.tmdRendering_08.count_0c; i++) {
         //LAB_800d8fc4
@@ -3046,9 +3039,9 @@ public class WMap {
       final SVECTOR rotation = struct258_800c66a8.tmdRendering_08.rotations_08[i];
 
       //LAB_800d9180
-      if(mapState_800c6798._00 != 7) {
+      if(mapState_800c6798.continentIndex_00 != 7) {
         //LAB_800d91cc
-        if(_800ef194.offset(mapState_800c6798._00).get() == i || _800ef19c.offset(mapState_800c6798._00).get() == i) {
+        if(_800ef194.offset(mapState_800c6798.continentIndex_00).get() == i || _800ef19c.offset(mapState_800c6798.continentIndex_00).get() == i) {
           zOffset_1f8003e8.set(500);
         } else {
           //LAB_800d9204
@@ -3059,12 +3052,12 @@ public class WMap {
       //LAB_800d9210
       rotateCoord2(rotation, coord2);
 
-      if(mapState_800c6798._00 == 2) {
+      if(mapState_800c6798.continentIndex_00 == 2) { // Tiberoa
         //LAB_800d9264
         if(i >= 2 && i < 9 || i >= 15 && i < 17) {
           //LAB_800d9294
           final int sin = rsin(struct258_800c66a8.tmdRendering_08._10[i]) * 0x20 / 0x1000;
-          if((i & 0x1L) != 0) {
+          if((i & 0x1) != 0) {
             coord2.coord.transfer.setY(sin);
           } else {
             //LAB_800d92d8
@@ -3081,7 +3074,7 @@ public class WMap {
       GsSetLightMatrix(sp0x10);
       setRotTransMatrix(sp0x30);
 
-      if(mapState_800c6798._00 < 9 && i == 0) {
+      if(mapState_800c6798.continentIndex_00 < 9 && i == 0) {
         tempZ_800c66d8.set(orderingTableSize_1f8003c8.get() - 3);
         renderSpecialDobj2(dobj2);
         tempZ_800c66d8.set(0);
@@ -3096,7 +3089,7 @@ public class WMap {
     }
 
     //LAB_800d942c
-    if(mapState_800c6798._00 < 9) {
+    if(mapState_800c6798.continentIndex_00 < 9) {
       animateTextures(struct258_800c66a8.textureAnimation_1c);
     }
 
@@ -3127,7 +3120,7 @@ public class WMap {
     }
 
     //LAB_800d9540
-    if(mapState_800c6798._00 == 7) {
+    if(mapState_800c6798.continentIndex_00 == 7) {
       return;
     }
 
@@ -3162,7 +3155,7 @@ public class WMap {
         struct258_800c66a8._1f9++;
 
         if(struct258_800c66a8._1f9 >= 6) {
-          _800c66b0.coord2_20.coord.transfer.set(vec_800ef1a8.get(mapState_800c6798._00));
+          _800c66b0.coord2_20.coord.transfer.set(mapPositions_800ef1a8.get(mapState_800c6798.continentIndex_00));
           struct258_800c66a8.zoomState_1f8 = 3;
 
           //LAB_800d97bc
@@ -3255,7 +3248,7 @@ public class WMap {
    */
   @Method(0x800d9d24L)
   public static void FUN_800d9d24(final int zoomDirection) {
-    final VECTOR vec = vec_800ef1a8.get(mapState_800c6798._00);
+    final VECTOR vec = mapPositions_800ef1a8.get(mapState_800c6798.continentIndex_00);
     final WMapStruct258 wmap = struct258_800c66a8;
     wmap.svec_1f0.setX((short)((vec.getX() - wmap.svec_1e8.getX()) * zoomDirection / 6));
     wmap.svec_1f0.setY((short)((vec.getY() - wmap.svec_1e8.getY()) * zoomDirection / 6));
@@ -3448,7 +3441,7 @@ public class WMap {
         boolean sp24 = false;
         for(int i = 0; i < 9; i++) {
           //LAB_800dac9c
-          if(_800f0e34.get(coolonWarpDest_800ef228.get(i)._10.get())._0e.get() == mapState_800c6798._00 + 1) {
+          if(locations_800f0e34.get(coolonWarpDest_800ef228.get(i)._10.get()).continentNumber_0e.get() == mapState_800c6798.continentIndex_00 + 1) {
             struct258.coolonWarpIndex_221 = i;
             sp24 = true;
             break;
@@ -3463,7 +3456,7 @@ public class WMap {
         }
 
         //LAB_800dad4c
-        if(mapState_800c6798._00 == 4) {
+        if(mapState_800c6798.continentIndex_00 == 4) { // Mille Seseau
           if(struct258.vec_94.getZ() >> 12 < -400) {
             struct258.coolonWarpIndex_221 = 5;
           } else {
@@ -3490,8 +3483,8 @@ public class WMap {
 
           //LAB_800daf44
           if(struct258._254 != 0) {
-            mapState_800c6798.submapCut_c8 = _800f0e34.get(mapState_800c6798._10).submapCut_08.get();
-            mapState_800c6798.submapScene_ca = _800f0e34.get(mapState_800c6798._10).submapScene_0a.get();
+            mapState_800c6798.submapCut_c8 = locations_800f0e34.get(mapState_800c6798.locationIndex_10).submapCut_08.get();
+            mapState_800c6798.submapScene_ca = locations_800f0e34.get(mapState_800c6798.locationIndex_10).submapScene_0a.get();
             submapCut_80052c30.set(mapState_800c6798.submapCut_c8);
             submapScene_80052c34.set(mapState_800c6798.submapScene_ca);
 
@@ -3508,7 +3501,7 @@ public class WMap {
         //LAB_800db00c
         if(Input.pressedThisFrame(InputAction.BUTTON_SOUTH)) {
           playSound(0, 2, 0, 0, (short)0, (short)0);
-          FUN_8002a32c(6, 1, 240, 64, 9, 4);
+          initTextbox(6, 1, 240, 64, 9, 4);
           struct258._220 = 4;
         }
 
@@ -3616,14 +3609,14 @@ public class WMap {
           gameState_800babc8._17c.set(coolonWarpDest_800ef228.get(struct258.coolonWarpIndex_222)._10.get(), true);
 
           //LAB_800db8f4
-          mapState_800c6798.submapCut_c8 = _800f0e34.get(coolonWarpDest_800ef228.get(struct258.coolonWarpIndex_222)._10.get()).submapCut_08.get();
-          mapState_800c6798.submapScene_ca = _800f0e34.get(coolonWarpDest_800ef228.get(struct258.coolonWarpIndex_222)._10.get()).submapScene_0a.get();
+          mapState_800c6798.submapCut_c8 = locations_800f0e34.get(coolonWarpDest_800ef228.get(struct258.coolonWarpIndex_222)._10.get()).submapCut_08.get();
+          mapState_800c6798.submapScene_ca = locations_800f0e34.get(coolonWarpDest_800ef228.get(struct258.coolonWarpIndex_222)._10.get()).submapScene_0a.get();
           submapCut_80052c30.set(mapState_800c6798.submapCut_c8);
           submapScene_80052c34.set(mapState_800c6798.submapScene_ca);
         } else {
           //LAB_800db9bc
-          mapState_800c6798.submapCut_c8 = _800f0e34.get(coolonWarpDest_800ef228.get(struct258.coolonWarpIndex_222)._10.get()).submapCut_04.get();
-          mapState_800c6798.submapScene_ca = _800f0e34.get(coolonWarpDest_800ef228.get(struct258.coolonWarpIndex_222)._10.get()).submapScene_06.get();
+          mapState_800c6798.submapCut_c8 = locations_800f0e34.get(coolonWarpDest_800ef228.get(struct258.coolonWarpIndex_222)._10.get()).submapCut_04.get();
+          mapState_800c6798.submapScene_ca = locations_800f0e34.get(coolonWarpDest_800ef228.get(struct258.coolonWarpIndex_222)._10.get()).submapScene_06.get();
           submapCut_80052c30.set(mapState_800c6798.submapCut_c8);
           index_80052c38.set(mapState_800c6798.submapScene_ca);
           struct258._250 = 3;
@@ -3829,7 +3822,7 @@ public class WMap {
       final long v0 = _800c86f0.get();
       if(v0 == 0) {
         //LAB_800dc9e4
-        FUN_8002a32c(7, 0, x, y, (short)((width & 0xffff) - 1), (short)((lines & 0xffff) - 1));
+        initTextbox(7, 0, x, y, width - 1, lines - 1);
         _800c86f0.setu(1);
 
         //LAB_800dca40
@@ -3994,14 +3987,14 @@ public class WMap {
   public static void FUN_800dfa70() {
     filesLoadedFlags_800c66b8.and(0xffff_fd57L);
 
-    loadDrgnDir(0, 5713, files -> WMap.timsLoaded(files, 0x2a8));
+    loadDrgnDir(0, 5713, files -> timsLoaded(files, 0x2a8));
 
     //LAB_800dfacc
     for(int i = 0; i < 4; i++) {
       //LAB_800dfae8
       struct258_800c66a8.models_0c[i] = new Model124("Player " + i);
       final int finalI = i;
-      loadDrgnDir(0, 5714 + i, files -> WMap.FUN_800d5a30(files, finalI));
+      loadDrgnDir(0, 5714 + i, files -> FUN_800d5a30(files, finalI));
       struct258_800c66a8.models_0c[i].colourMap_9d = (int)_800ef694.offset(i).get() + 0x80;
     }
 
@@ -4052,7 +4045,7 @@ public class WMap {
       model.scaleVector_fc.set(0x800, 0x666, 0x800);
     } else if(modelIndex == 1) {
       //LAB_800e0114
-      if(mapState_800c6798._00 == 7) {
+      if(mapState_800c6798.continentIndex_00 == 7) { // Teleporting
         model.scaleVector_fc.set(0x1000, 0x1000, 0x1000);
       } else {
         model.scaleVector_fc.set(0x2000, 0x2000, 0x2000);
@@ -4099,7 +4092,7 @@ public class WMap {
       GsSetAmbient(0x800, 0x800, 0x800);
 
 
-      if(mapState_800c6798._00 == 7) {
+      if(mapState_800c6798.continentIndex_00 == 7) { // Teleporting
         struct.models_0c[1].scaleVector_fc.set(0x1000, 0x1000, 0x1000);
       } else {
         struct.models_0c[1].scaleVector_fc.set(0x2000, 0x2000, 0x2000);
@@ -4145,7 +4138,7 @@ public class WMap {
       int sp3c = 0;
       for(int i = 0; i < 6; i++) {
         //LAB_800e0790
-        if(mapState_800c6798._10 == _800ef698.get(i)._00.get()) {
+        if(mapState_800c6798.locationIndex_10 == _800ef698.get(i).locationIndex_00.get()) {
           sp3c = _800ef698.get(i)._04.get();
           break;
         }
@@ -4154,7 +4147,7 @@ public class WMap {
       //LAB_800e0810
       final SVECTOR sp0x18 = new SVECTOR();
       final SVECTOR sp0x20 = new SVECTOR();
-      FUN_800e0d70(mapState_800c6798._10, sp0x18);
+      FUN_800e0d70(mapState_800c6798.locationIndex_10, sp0x18);
       FUN_800e0d70(sp3c, sp0x20);
 
       //LAB_800e0878
@@ -4185,8 +4178,8 @@ public class WMap {
         gameState_800babc8._17c.set(sp3c, true);
 
         //LAB_800e0b64
-        mapState_800c6798.submapCut_c8 = _800f0e34.get(sp3c).submapCut_08.get();
-        mapState_800c6798.submapScene_ca = _800f0e34.get(sp3c).submapScene_0a.get();
+        mapState_800c6798.submapCut_c8 = locations_800f0e34.get(sp3c).submapCut_08.get();
+        mapState_800c6798.submapScene_ca = locations_800f0e34.get(sp3c).submapScene_0a.get();
         submapCut_80052c30.set(mapState_800c6798.submapCut_c8);
         submapScene_80052c34.set(mapState_800c6798.submapScene_ca);
 
@@ -4218,11 +4211,11 @@ public class WMap {
   }
 
   @Method(0x800e0d70L)
-  public static void FUN_800e0d70(final int a0, final SVECTOR a1) {
+  public static void FUN_800e0d70(final int locationIndex, final SVECTOR a1) {
     //LAB_800e0d84
     for(int i = 0; i < 6; i++) {
       //LAB_800e0da0
-      if(a0 == _800ef6c8.get(i)._00.get()) {
+      if(locationIndex == _800ef6c8.get(i).locationIndex_00.get()) {
         a1.set(_800ef6c8.get(i)._04);
         break;
       }
@@ -4644,7 +4637,7 @@ public class WMap {
 
     //LAB_800e3780
     //LAB_800e3794
-    final WMapAreaData08 area = areaData_800f2248.get(mapState_800c6798.areaIndex_12);
+    final AreaData08 area = areaData_800f2248.get(mapState_800c6798.areaIndex_12);
     encounterAccumulator_800c6ae8.add(Math.round(area.encounterRate_03.get() * encounterRateMultiplier * 70));
 
     if(encounterAccumulator_800c6ae8.get() >= 5120) {
@@ -5107,7 +5100,7 @@ public class WMap {
         sp2c = -areaData_800f2248.get(mapState_800c6798._dc[0])._00.get();
 
         //LAB_800e52cc
-        for(sp28 = 0; sp28 < mapState_800c6798._0c && areaData_800f2248.get(sp28)._00.get() != sp2c; sp28++) {
+        for(sp28 = 0; sp28 < mapState_800c6798.areaCount_0c && areaData_800f2248.get(sp28)._00.get() != sp2c; sp28++) {
           // intentionally empty
         }
 
@@ -5116,7 +5109,7 @@ public class WMap {
 
         mapState_800c6798.facing_1c = -mapState_800c6798.facing_1c;
 
-        FUN_800eab94(mapState_800c6798._10);
+        FUN_800eab94(mapState_800c6798.locationIndex_10);
 
         mapState_800c6798.disableInput_d0 = true;
         mapState_800c6798._fc = 1;
@@ -5129,25 +5122,25 @@ public class WMap {
 
         //LAB_800e53e0
         textZ_800bdf00.set(13);
-        mapState_800c6798.submapCut_c8 = _800f0e34.get(mapState_800c6798._10).submapCut_08.get();
-        mapState_800c6798.submapScene_ca = _800f0e34.get(mapState_800c6798._10).submapScene_0a.get();
+        mapState_800c6798.submapCut_c8 = locations_800f0e34.get(mapState_800c6798.locationIndex_10).submapCut_08.get();
+        mapState_800c6798.submapScene_ca = locations_800f0e34.get(mapState_800c6798.locationIndex_10).submapScene_0a.get();
         _800c68a4.setu(0x1L);
 
-        if(places_800f0234.get(_800f0e34.get(mapState_800c6798._10).placeIndex_02.get()).name_00.isNull()) {
+        if(places_800f0234.get(locations_800f0e34.get(mapState_800c6798.locationIndex_10).placeIndex_02.get()).name_00.isNull()) {
           _800c68a4.setu(0x8L);
         }
 
         //LAB_800e54c4
         _800c6898._34 = 0;
-        _800c86d0.setu(0x100L);
+        colour_800c86d0.setu(0x100L);
         _800c86d2.setu(0);
         break;
 
       case 1:
         filesLoadedFlags_800c66b8.and(0xffff_f7ffL);
 
-        loadDrgnBinFile(0, 5655 + places_800f0234.get(_800f0e34.get(mapState_800c6798._10).placeIndex_02.get()).fileIndex_04.get(), 0, WMap::FUN_800d5768, 1, 0x4L);
-        FUN_8002a32c(7, 1, 240, 120, 14, 16);
+        loadDrgnBinFile(0, 5655 + places_800f0234.get(locations_800f0e34.get(mapState_800c6798.locationIndex_10).placeIndex_02.get()).fileIndex_04.get(), 0, WMap::FUN_800d5768, 1, 0x4L);
+        initTextbox(7, 1, 240, 120, 14, 16);
 
         _800c68a4.setu(0x2L);
 
@@ -5156,7 +5149,7 @@ public class WMap {
         //LAB_800e55f0
         for(int i = 0; i < 4; i++) {
           //LAB_800e560c
-          final int soundIndex = places_800f0234.get(_800f0e34.get(mapState_800c6798._10).placeIndex_02.get()).soundIndices_06.get(i).get();
+          final int soundIndex = places_800f0234.get(locations_800f0e34.get(mapState_800c6798.locationIndex_10).placeIndex_02.get()).soundIndices_06.get(i).get();
 
           if(soundIndex > 0) {
             playSound(0xc, soundIndex, 0, 0, (short)0, (short)0);
@@ -5170,7 +5163,7 @@ public class WMap {
 
       case 2:
         if(FUN_8002a488(7) != 0) {
-          FUN_8002a32c(6, 0, 240, 70, 13, 7);
+          initTextbox(6, 0, 240, 70, 13, 7);
           _800c68a4.setu(0x3L);
         }
 
@@ -5235,7 +5228,7 @@ public class WMap {
         //LAB_800e5b68
         FUN_800ce4dc(_800c689c);
 
-        final int placeIndex = _800f0e34.get(mapState_800c6798._10).placeIndex_02.get();
+        final int placeIndex = locations_800f0e34.get(mapState_800c6798.locationIndex_10).placeIndex_02.get();
         final IntRef width = new IntRef();
         final IntRef lines = new IntRef();
         measureText(places_800f0234.get(placeIndex).name_00.deref(), width, lines);
@@ -5244,20 +5237,20 @@ public class WMap {
         if((filesLoadedFlags_800c66b8.get() & 0x800L) != 0) {
           final GpuCommandPoly cmd = new GpuCommandPoly(4)
             .bpp(Bpp.BITS_8)
-            .clut((int)_800ef0d8.get(), (int)_800ef0da.get())
-            .vramPos((int)_800ef0d4.get(), (int)_800ef0d6.get());
+            .clut(clutX_800ef0d8.get(), clutY_800ef0da.get())
+            .vramPos(vramX_800ef0d4.get(), vramY_800ef0d6.get());
 
-          if(gameState_800babc8._17c.get(mapState_800c6798._10)) {
+          if(gameState_800babc8._17c.get(mapState_800c6798.locationIndex_10)) {
             //LAB_800e5e98
-            cmd.monochrome((int)_800c86d0.getSigned() / 2);
+            cmd.monochrome((int)colour_800c86d0.getSigned() / 2);
           } else {
             //LAB_800e5e18
-            cmd.monochrome((int)_800c86d0.getSigned() * 0x30 / 0x100);
+            cmd.monochrome((int)colour_800c86d0.getSigned() * 0x30 / 0x100);
           }
 
           //LAB_800e5f04
-          if(_800f0e34.get(mapState_800c6798._10)._10.get() != 0) {
-            cmd.monochrome((int)_800c86d0.getSigned() / 2);
+          if(locations_800f0e34.get(mapState_800c6798.locationIndex_10)._10.get() != 0) {
+            cmd.monochrome((int)colour_800c86d0.getSigned() / 2);
           }
 
           //LAB_800e5fa4
@@ -5279,20 +5272,20 @@ public class WMap {
 
           //LAB_800e60d0
           if(Input.getButtonState(InputAction.BUTTON_WEST) && mapState_800c6798.submapCut_c8 != 999) { // Square
-            _800c86d0.subu(0x80L);
+            colour_800c86d0.subu(0x80L);
 
-            if(_800c86d0.getSigned() < 0x80L) {
-              _800c86d0.setu(0x40L);
+            if(colour_800c86d0.getSigned() < 0x80L) {
+              colour_800c86d0.setu(0x40L);
             }
 
             //LAB_800e6138
-            final long services = places_800f0234.get(placeIndex).services_05.get();
+            final int services = places_800f0234.get(placeIndex).services_05.get();
 
             //LAB_800e619c
             int servicesCount = 0;
             for(int i = 0; i < 5; i++) {
               //LAB_800e61b8
-              if((services & 1L << i) != 0) {
+              if((services & 0x1 << i) != 0) {
                 renderCenteredShadowedText(services_800f01cc.get(i).deref(), 240, servicesCount * 16 + 30, TextColour.WHITE, 0);
                 servicesCount++;
               }
@@ -5308,10 +5301,10 @@ public class WMap {
             //LAB_800e6290
           } else {
             //LAB_800e6298
-            _800c86d0.addu(0x40L);
+            colour_800c86d0.addu(0x40L);
 
-            if(_800c86d0.getSigned() > 0x100L) {
-              _800c86d0.setu(0x100L);
+            if(colour_800c86d0.getSigned() > 0x100L) {
+              colour_800c86d0.setu(0x100L);
             }
           }
         }
@@ -5328,7 +5321,7 @@ public class WMap {
             //LAB_800e6350
             for(int i = 0; i < 4; i++) {
               //LAB_800e636c
-              final int soundIndex = places_800f0234.get(_800f0e34.get(mapState_800c6798._10).placeIndex_02.get()).soundIndices_06.get(i).get();
+              final int soundIndex = places_800f0234.get(locations_800f0e34.get(mapState_800c6798.locationIndex_10).placeIndex_02.get()).soundIndices_06.get(i).get();
 
               if(soundIndex > 0) {
                 FUN_80019c80(soundFiles_800bcf80[12], soundIndex, 1);
@@ -5350,7 +5343,7 @@ public class WMap {
             //LAB_800e6468
             for(int i = 0; i < 4; i++) {
               //LAB_800e6484
-              final int soundIndex = places_800f0234.get(_800f0e34.get(mapState_800c6798._10).placeIndex_02.get()).soundIndices_06.get(i).get();
+              final int soundIndex = places_800f0234.get(locations_800f0e34.get(mapState_800c6798.locationIndex_10).placeIndex_02.get()).soundIndices_06.get(i).get();
 
               if(soundIndex > 0) {
                 FUN_80019c80(soundFiles_800bcf80[12], soundIndex, 1);
@@ -5369,7 +5362,7 @@ public class WMap {
             //LAB_800e6560
             for(int i = 0; i < 4; i++) {
               //LAB_800e657c
-              final int soundIndex = places_800f0234.get(_800f0e34.get(mapState_800c6798._10).placeIndex_02.get()).soundIndices_06.get(i).get();
+              final int soundIndex = places_800f0234.get(locations_800f0e34.get(mapState_800c6798.locationIndex_10).placeIndex_02.get()).soundIndices_06.get(i).get();
 
               if(soundIndex > 0) {
                 FUN_80019c80(soundFiles_800bcf80[12], soundIndex, 1);
@@ -5442,7 +5435,7 @@ public class WMap {
         break;
 
       case 9:
-        gameState_800babc8._17c.set(mapState_800c6798._10, true);
+        gameState_800babc8._17c.set(mapState_800c6798.locationIndex_10, true);
 
         //LAB_800e6900
         if(mapState_800c6798.submapCut_c8 != 999) {
@@ -5450,7 +5443,7 @@ public class WMap {
           submapScene_80052c34.set(mapState_800c6798.submapScene_ca);
         } else {
           //LAB_800e693c
-          submapCut_80052c30.set(_800f0e34.get(mapState_800c6798._10).submapCut_04.get());
+          submapCut_80052c30.set(locations_800f0e34.get(mapState_800c6798.locationIndex_10).submapCut_04.get());
 
           final int sp20;
           if(_800c86d2.getSigned() == 0x1L) {
@@ -5546,7 +5539,7 @@ public class WMap {
     //LAB_800e6c38
     for(int i = 0; i < _800c86cc.get(); i++) {
       //LAB_800e6c5c
-      if(!places_800f0234.get(_800f0e34.get(_800c84c8.get(i).get()).placeIndex_02.get()).name_00.isNull()) {
+      if(!places_800f0234.get(locations_800f0e34.get(_800c84c8.get(i).get()).placeIndex_02.get()).name_00.isNull()) {
         //LAB_800e6ccc
         sp0x30.set(_800c74b8.get(i));
 
@@ -5596,7 +5589,7 @@ public class WMap {
       //LAB_800e6ff4
       final int x = struct.xy_08.getX() + 160;
       final int y = struct.xy_08.getY() + 104;
-      final int place = _800f0e34.get(struct._04).placeIndex_02.get();
+      final int place = locations_800f0e34.get(struct._04).placeIndex_02.get();
 
       if(!places_800f0234.get(place).name_00.isNull()) {
         //LAB_800e70f4
@@ -5607,7 +5600,7 @@ public class WMap {
         final int v0 = _800c86d4[i];
         if(v0 == 0) {
           //LAB_800e7168
-          FUN_8002a32c(i, 0, x, y, width.get() - 1, lines.get() - 1);
+          initTextbox(i, 0, x, y, width.get() - 1, lines.get() - 1);
 
           _800c86d4[i] = 1;
 
@@ -5734,20 +5727,20 @@ public class WMap {
 
     //LAB_800e7ae4
     mapState_800c6798.submapCut_c4 = submapCut_80052c30.get();
-    mapState_800c6798._c6 = index_80052c38.get();
+    mapState_800c6798.submapScene_c6 = index_80052c38.get();
 
-    if(mapState_800c6798.submapCut_c4 == 0 && mapState_800c6798._c6 == 0) {
-      mapState_800c6798.submapCut_c4 = 13;
-      mapState_800c6798._c6 = 17;
+    if(mapState_800c6798.submapCut_c4 == 0 && mapState_800c6798.submapScene_c6 == 0) {
+      mapState_800c6798.submapCut_c4 = 13; // Hellena
+      mapState_800c6798.submapScene_c6 = 17;
     }
 
     //LAB_800e7b44
     //LAB_800e7b54
     boolean sp18 = false;
-    int sp1c;
-    for(sp1c = 0; sp1c < 0x100; sp1c++) {
+    int locationIndex;
+    for(locationIndex = 0; locationIndex < 0x100; locationIndex++) {
       //LAB_800e7b70
-      if(_800f0e34.get(sp1c).submapCut_04.get() == mapState_800c6798.submapCut_c4 && _800f0e34.get(sp1c).submapScene_06.get() == mapState_800c6798._c6) {
+      if(locations_800f0e34.get(locationIndex).submapCut_04.get() == mapState_800c6798.submapCut_c4 && locations_800f0e34.get(locationIndex).submapScene_06.get() == mapState_800c6798.submapScene_c6) {
         sp18 = true;
         break;
       }
@@ -5756,52 +5749,40 @@ public class WMap {
     }
 
     //LAB_800e7be8
-    if(!sp18) {
-      mapState_800c6798.submapCut_c4 = 13;
-      mapState_800c6798._c6 = 17;
-      sp1c = 5;
-    }
-
     //LAB_800e7c18
-
-    if(!gameState_800babc8.wmapFlags_15c.get(sp1c)) {
-      mapState_800c6798.submapCut_c4 = 13;
-      mapState_800c6798._c6 = 17;
-      sp1c = 5;
+    if(!sp18 || !gameState_800babc8.wmapFlags_15c.get(locationIndex)) {
+      mapState_800c6798.submapCut_c4 = 13; // Hellena
+      mapState_800c6798.submapScene_c6 = 17;
+      locationIndex = 5;
     }
 
     //LAB_800e7cb8
     //LAB_800e7cbc
-    int sp24;
-    for(sp24 = 0; _800f0e34.get(sp24).areaIndex_00.get() != -2; sp24++) {
-      // intentionally empty
-    }
-
     //LAB_800e7d0c
-    mapState_800c6798._08 = sp24;
+    mapState_800c6798.locationCount_08 = locations_800f0e34.length();
 
     //LAB_800e7d1c
+    int sp24;
     for(sp24 = 0; areaData_800f2248.get(sp24)._00.get() != 0; sp24++) {
       // intentionally empty
     }
 
     //LAB_800e7d64
-    mapState_800c6798._0c = sp24;
+    mapState_800c6798.areaCount_0c = sp24;
 
     GsInitCoordinate2(null, struct258_800c66a8.coord2_34);
 
-    mapState_800c6798._00 = _800f0e34.get(sp1c)._0e.get() - 1;
-    mapState_800c6798._04 = mapState_800c6798._00;
-    continentIndex_800bf0b0.set(mapState_800c6798._00);
+    mapState_800c6798.continentIndex_00 = locations_800f0e34.get(locationIndex).continentNumber_0e.get() - 1;
+    continentIndex_800bf0b0.set(mapState_800c6798.continentIndex_00);
 
-    FUN_800ea630(sp1c);
+    FUN_800ea630(locationIndex);
 
     mapState_800c6798._d8 = 0;
 
     boolean sp2c = previousEngineState_8004dd28 == EngineState.COMBAT_06 && mapState_800c6798.submapCut_c4 != 999;
 
     //LAB_800e7e2c
-    if(mapState_800c6798._c6 == 31 && mapState_800c6798.submapCut_c4 == 279) {
+    if(mapState_800c6798.submapScene_c6 == 31 && mapState_800c6798.submapCut_c4 == 279) { // Ship (maybe when you watch the ship moving on the world map while Puler sails?)
       sp2c = true;
     }
 
@@ -5822,16 +5803,16 @@ public class WMap {
       mapState_800c6798.disableInput_d0 = false;
 
       //LAB_800e7f00
-      for(int i = 0; i < mapState_800c6798._08; i++) {
+      for(int i = 0; i < mapState_800c6798.locationCount_08; i++) {
         //LAB_800e7f24
-        final int areaIndex = _800f0e34.get(i).areaIndex_00.get();
+        final int areaIndex = locations_800f0e34.get(i).areaIndex_00.get();
 
         if(areaIndex != -1) {
           //LAB_800e7f68
           if(FUN_800eb09c(i, -1, null) == 0) {
             //LAB_800e7f88
             if(areaIndex == mapState_800c6798.areaIndex_12) {
-              sp1c = i;
+              locationIndex = i;
               break;
             }
           }
@@ -5841,12 +5822,11 @@ public class WMap {
       }
 
       //LAB_800e7fcc
-      mapState_800c6798._10 = sp1c;
-      mapState_800c6798._00 = _800f0e34.get(sp1c)._0e.get() - 1;
-      mapState_800c6798._04 = mapState_800c6798._00;
-      continentIndex_800bf0b0.set(mapState_800c6798._00);
+      mapState_800c6798.locationIndex_10 = locationIndex;
+      mapState_800c6798.continentIndex_00 = locations_800f0e34.get(locationIndex).continentNumber_0e.get() - 1;
+      continentIndex_800bf0b0.set(mapState_800c6798.continentIndex_00);
 
-      final WMapAreaData08 area = areaData_800f2248.get(mapState_800c6798.areaIndex_12);
+      final AreaData08 area = areaData_800f2248.get(mapState_800c6798.areaIndex_12);
 
       //LAB_800e8064
       //LAB_800e8068
@@ -5888,33 +5868,31 @@ public class WMap {
     }
 
     //LAB_800e8494
-    mapState_800c6798.submapCut_c8 = _800f0e34.get(sp1c).submapCut_08.get();
-    mapState_800c6798.submapScene_ca = _800f0e34.get(sp1c).submapScene_0a.get();
+    mapState_800c6798.submapCut_c8 = locations_800f0e34.get(locationIndex).submapCut_08.get();
+    mapState_800c6798.submapScene_ca = locations_800f0e34.get(locationIndex).submapScene_0a.get();
 
-    final VECTOR sp0x58 = new VECTOR();
-    final VECTOR sp0x68 = new VECTOR();
-    final VECTOR sp0x78 = new VECTOR();
+    final VECTOR avg = new VECTOR();
+    final VECTOR playerPos = new VECTOR();
+    final VECTOR nextPathPos = new VECTOR();
 
-    getPathPositions(sp0x68, sp0x78);
-    weightedAvg(4 - mapState_800c6798.dotOffset_18, mapState_800c6798.dotOffset_18, sp0x58, sp0x68, sp0x78);
+    getPathPositions(playerPos, nextPathPos);
+    weightedAvg(4 - mapState_800c6798.dotOffset_18, mapState_800c6798.dotOffset_18, avg, playerPos, nextPathPos);
 
-    struct258_800c66a8.coord2_34.coord.transfer.set(sp0x58).div(0x1000);
+    struct258_800c66a8.coord2_34.coord.transfer.set(avg).div(0x1000);
     struct258_800c66a8.coord2_34.coord.transfer.y.sub(2);
 
-    if(mapState_800c6798.submapCut_c4 == 242) {
-      if(mapState_800c6798._c6 == 3) {
-        if(gameState_800babc8.scriptFlags2_bc.get(0x8f)) {
-          mapState_800c6798._d4 = 0;
-          mapState_800c6798._d8 = 1;
-          mapState_800c6798.disableInput_d0 = true;
-        }
+    if(mapState_800c6798.submapCut_c4 == 242 && mapState_800c6798.submapScene_c6 == 3) { // Donau
+      if(gameState_800babc8.scriptFlags2_bc.get(0x8f)) {
+        mapState_800c6798._d4 = 0;
+        mapState_800c6798._d8 = 1;
+        mapState_800c6798.disableInput_d0 = true;
+      }
 
-        //LAB_800e8684
-        if(gameState_800babc8.scriptFlags2_bc.get(0x90)) {
-          mapState_800c6798.disableInput_d0 = true;
-          mapState_800c6798._d4 = 1;
-          mapState_800c6798._d8 = 0;
-        }
+      //LAB_800e8684
+      if(gameState_800babc8.scriptFlags2_bc.get(0x90)) {
+        mapState_800c6798.disableInput_d0 = true;
+        mapState_800c6798._d4 = 1;
+        mapState_800c6798._d8 = 0;
       }
     }
 
@@ -5926,14 +5904,17 @@ public class WMap {
     //LAB_800e87a0
     //LAB_800e87d0
     //LAB_800e8800
-    if(mapState_800c6798.submapCut_c4 == 528 && mapState_800c6798._c6 == 13 || mapState_800c6798.submapCut_c4 == 528 && mapState_800c6798._c6 == 14 || mapState_800c6798.submapCut_c4 == 528 && mapState_800c6798._c6 == 15 || mapState_800c6798.submapCut_c4 == 540 && mapState_800c6798._c6 == 0x13L || mapState_800c6798.submapCut_c4 == 572 && mapState_800c6798._c6 == 23) {
+    // Zenebatos
+    if(mapState_800c6798.submapCut_c4 == 528 && mapState_800c6798.submapScene_c6 == 13 || mapState_800c6798.submapCut_c4 == 528 && mapState_800c6798.submapScene_c6 == 14 || mapState_800c6798.submapCut_c4 == 528 && mapState_800c6798.submapScene_c6 == 15 || mapState_800c6798.submapCut_c4 == 540 && mapState_800c6798.submapScene_c6 == 19 || mapState_800c6798.submapCut_c4 == 572 && mapState_800c6798.submapScene_c6 == 23) {
       //LAB_800e8830
       struct258_800c66a8._250 = 1;
       //LAB_800e8848
-    } else if(mapState_800c6798.submapCut_c4 == 529 && mapState_800c6798._c6 == 41) {
+
+      // Zenebatos
+    } else if(mapState_800c6798.submapCut_c4 == 529 && mapState_800c6798.submapScene_c6 == 41) {
       struct258_800c66a8._250 = 2;
       struct258_800c66a8._254 = 1;
-      gameState_800babc8._17c.set(mapState_800c6798._10, true);
+      gameState_800babc8._17c.set(mapState_800c6798.locationIndex_10, true);
     }
 
     //LAB_800e8990
@@ -6108,8 +6089,8 @@ public class WMap {
                           //LAB_800e9078
                           if(Input.pressedThisFrame(InputAction.BUTTON_WEST)) { // Square
                             if(mapState_800c6798._fc != 1) {
-                              mapState_800c6798.submapCut_c8 = (short)_800f1580.get();
-                              mapState_800c6798.submapScene_ca = (short)_800f1582.get();
+                              mapState_800c6798.submapCut_c8 = locations_800f0e34.get(93).submapCut_08.get();
+                              mapState_800c6798.submapScene_ca = locations_800f0e34.get(93).submapScene_0a.get();
                               submapCut_80052c30.set(mapState_800c6798.submapCut_c8);
                               submapScene_80052c34.set(mapState_800c6798.submapScene_ca);
                               FUN_800e3fac(1);
@@ -6254,13 +6235,13 @@ public class WMap {
     int sp4c = 0;
 
     //LAB_800e9864
-    for(int i = 0; i < mapState_800c6798._08; i++) {
+    for(int i = 0; i < mapState_800c6798.locationCount_08; i++) {
       //LAB_800e9888
       if(FUN_800eb09c(i, 0, null) == 0) {
         //LAB_800e98a8
-        if(_800f0e34.get(i)._0c.get() != -1) {
+        if(locations_800f0e34.get(i)._0c.get() != -1) {
           //LAB_800e98e0
-          final int sp54 = _800f0e34.get(i).areaIndex_00.get();
+          final int sp54 = locations_800f0e34.get(i).areaIndex_00.get();
           final int sp50 = areaData_800f2248.get(sp54)._00.get();
 
           if(mapState_800c6798.facing_1c <= 0 || sp50 >= 0) {
@@ -6383,7 +6364,7 @@ public class WMap {
 
     FUN_800ea4dc(mapState_800c6798._dc[sp18]);
 
-    final WMapAreaData08 area = areaData_800f2248.get(mapState_800c6798.areaIndex_12);
+    final AreaData08 area = areaData_800f2248.get(mapState_800c6798.areaIndex_12);
 
     //LAB_800ea1dc
     final UnboundedArrayRef<VECTOR> dots = pathDotPosPtrArr_800f591c.get(mapState_800c6798.pathIndex_14).deref();
@@ -6435,15 +6416,15 @@ public class WMap {
 
     //LAB_800ea4fc
     int i;
-    for(i = 0; i < mapState_800c6798._08; i++) {
+    for(i = 0; i < mapState_800c6798.locationCount_08; i++) {
       //LAB_800ea520
-      if(_800f0e34.get(i).areaIndex_00.get() != -1) {
+      if(locations_800f0e34.get(i).areaIndex_00.get() != -1) {
         //LAB_800ea558
         if(FUN_800eb09c(i, 0, null) == 0) {
           //LAB_800ea578
-          if(_800f0e34.get(i)._0e.get() == mapState_800c6798._00 + 1) {
+          if(locations_800f0e34.get(i).continentNumber_0e.get() == mapState_800c6798.continentIndex_00 + 1) {
             //LAB_800ea5bc
-            if(_800f0e34.get(i).areaIndex_00.get() == areaIndex) {
+            if(locations_800f0e34.get(i).areaIndex_00.get() == areaIndex) {
               break;
             }
           }
@@ -6458,26 +6439,26 @@ public class WMap {
   }
 
   @Method(0x800ea630L)
-  public static void FUN_800ea630(final int a0) {
-    if(_800f0e34.get(a0).areaIndex_00.get() == -1) {
+  public static void FUN_800ea630(final int locationIndex) {
+    if(locations_800f0e34.get(locationIndex).areaIndex_00.get() == -1) {
       return;
     }
 
     //LAB_800ea678
-    if(_800f0e34.get(a0)._0e.get() != mapState_800c6798._00 + 1) {
+    if(locations_800f0e34.get(locationIndex).continentNumber_0e.get() != mapState_800c6798.continentIndex_00 + 1) {
       return;
     }
 
     //LAB_800ea6bc
-    if(FUN_800eb09c(a0, 0, null) != 0) {
+    if(FUN_800eb09c(locationIndex, 0, null) != 0) {
       return;
     }
 
     //LAB_800ea6dc
-    mapState_800c6798._10 = a0;
-    mapState_800c6798.areaIndex_12 = _800f0e34.get(a0).areaIndex_00.get();
+    mapState_800c6798.locationIndex_10 = locationIndex;
+    mapState_800c6798.areaIndex_12 = locations_800f0e34.get(locationIndex).areaIndex_00.get();
 
-    final WMapAreaData08 area = areaData_800f2248.get(mapState_800c6798.areaIndex_12);
+    final AreaData08 area = areaData_800f2248.get(mapState_800c6798.areaIndex_12);
     mapState_800c6798.pathIndex_14 = Math.abs(area._00.get()) - 1; // Transition to a different path
 
     //LAB_800ea790
@@ -6521,26 +6502,26 @@ public class WMap {
   }
 
   @Method(0x800eab94L)
-  public static void FUN_800eab94(final int a0) {
-    if(_800f0e34.get(a0).areaIndex_00.get() == -1) {
+  public static void FUN_800eab94(final int locationIndex) {
+    if(locations_800f0e34.get(locationIndex).areaIndex_00.get() == -1) {
       return;
     }
 
     //LAB_800eabdc
-    if(_800f0e34.get(a0)._0e.get() != mapState_800c6798._00 + 1) {
+    if(locations_800f0e34.get(locationIndex).continentNumber_0e.get() != mapState_800c6798.continentIndex_00 + 1) {
       return;
     }
 
     //LAB_800eac20
-    if(FUN_800eb09c(a0, 0, null) != 0) {
+    if(FUN_800eb09c(locationIndex, 0, null) != 0) {
       return;
     }
 
     //LAB_800eac40
-    mapState_800c6798._10 = a0;
-    mapState_800c6798.areaIndex_12 = _800f0e34.get(a0).areaIndex_00.get();
+    mapState_800c6798.locationIndex_10 = locationIndex;
+    mapState_800c6798.areaIndex_12 = locations_800f0e34.get(locationIndex).areaIndex_00.get();
 
-    final WMapAreaData08 areaData = areaData_800f2248.get(mapState_800c6798.areaIndex_12);
+    final AreaData08 areaData = areaData_800f2248.get(mapState_800c6798.areaIndex_12);
     mapState_800c6798.pathIndex_14 = Math.abs(areaData._00.get()) - 1;
 
     final WMapStruct258 struct258 = struct258_800c66a8;
@@ -6578,20 +6559,20 @@ public class WMap {
    * a1 used to be either 0, -1, or a VECTOR. If passing a VECTOR, pass it as vec and set a1 to 1
    */
   @Method(0x800eb09cL)
-  public static int FUN_800eb09c(final int a0, final int a1, @Nullable final VECTOR vec) {
-    if(_800f0e34.get(a0).areaIndex_00.get() == -1) {
+  public static int FUN_800eb09c(final int locationIndex, final int a1, @Nullable final VECTOR vec) {
+    if(locations_800f0e34.get(locationIndex).areaIndex_00.get() == -1) {
       return -1;
     }
 
     //LAB_800eb0ec
     if(a1 != -1) {
-      if(_800f0e34.get(a0)._0e.get() != mapState_800c6798._00 + 1) {
+      if(locations_800f0e34.get(locationIndex).continentNumber_0e.get() != mapState_800c6798.continentIndex_00 + 1) {
         return -2;
       }
     }
 
     //LAB_800eb144
-    if(!gameState_800babc8.wmapFlags_15c.get(a0)) {
+    if(!gameState_800babc8.wmapFlags_15c.get(locationIndex)) {
       return 1;
     }
 
@@ -6602,7 +6583,7 @@ public class WMap {
     }
 
     //LAB_800eb204
-    final int sp14 = areaData_800f2248.get(_800f0e34.get(a0).areaIndex_00.get())._00.get();
+    final int sp14 = areaData_800f2248.get(locations_800f0e34.get(locationIndex).areaIndex_00.get())._00.get();
 
     if(sp14 == 0) {
       return -3;
@@ -6640,23 +6621,23 @@ public class WMap {
 
     //LAB_800eb420
     //LAB_800eb424
-    for(int i = 0; i < mapState_800c6798._08; i++) {
+    for(int i = 0; i < mapState_800c6798.locationCount_08; i++) {
       //LAB_800eb448
       if(FUN_800eb09c(i, 0, null) == 0) {
         //LAB_800eb468
         if(!sp0xd0[i]) {
           //LAB_800eb48c
-          final int placeIndex0 = _800f0e34.get(i).placeIndex_02.get();
+          final int placeIndex0 = locations_800f0e34.get(i).placeIndex_02.get();
           int sp20 = 0;
 
           //LAB_800eb4c8
-          for(int sp1c = i; sp1c < mapState_800c6798._08; sp1c++) {
+          for(int sp1c = i; sp1c < mapState_800c6798.locationCount_08; sp1c++) {
             //LAB_800eb4ec
             if(FUN_800eb09c(sp1c, 0, null) == 0) {
               //LAB_800eb50c
               if(!sp0xd0[sp1c]) {
                 //LAB_800eb530
-                final int placeIndex1 = _800f0e34.get(sp1c).placeIndex_02.get();
+                final int placeIndex1 = locations_800f0e34.get(sp1c).placeIndex_02.get();
 
                 if(!places_800f0234.get(placeIndex0).name_00.isNull() || !places_800f0234.get(placeIndex1).name_00.isNull()) {
                   // Added this check since these pointers can be null
@@ -6713,7 +6694,7 @@ public class WMap {
 
   @Method(0x800eb914L)
   public static void FUN_800eb914() {
-    _800f6598.setu((_800f0e34.get(mapState_800c6798._10)._12.get() & 0x30) >>> 4);
+    _800f6598.setu((locations_800f0e34.get(mapState_800c6798.locationIndex_10)._12.get() & 0x30) >>> 4);
     _800f659c.setu(_800f6598);
     _800f65a0.setu(0);
 
@@ -7174,7 +7155,7 @@ public class WMap {
 
       case 5:
         _800f659c.setu(_800f6598);
-        _800f6598.setu((_800f0e34.get(mapState_800c6798._10)._12.get() & 0x30) >>> 4);
+        _800f6598.setu((locations_800f0e34.get(mapState_800c6798.locationIndex_10)._12.get() & 0x30) >>> 4);
 
         if(_800f6598.get() != _800f659c.get()) {
           _800f65bc.get((int)_800f659c.get()).deref().run();
@@ -7236,13 +7217,13 @@ public class WMap {
       final Coord2AndThenSomeStruct_60 struct = _800c86f8[i];
 
       //LAB_800edccc
-      if(!places_800f0234.get(_800f0e34.get(_800c84c8.get(i).get()).placeIndex_02.get()).name_00.isNull()) {
+      if(!places_800f0234.get(locations_800f0e34.get(_800c84c8.get(i).get()).placeIndex_02.get()).name_00.isNull()) {
         //LAB_800edd3c
-        final int sp18 = _800f0e34.get(_800c84c8.get(i).get())._12.get() & 0xc;
+        final int sp18 = locations_800f0e34.get(_800c84c8.get(i).get())._12.get() & 0xc;
 
         if(sp18 != 0) {
           //LAB_800edda0
-          if(_800f0e34.get(_800c84c8.get(i).get())._0e.get() == mapState_800c6798._00 + 1) {
+          if(locations_800f0e34.get(_800c84c8.get(i).get()).continentNumber_0e.get() == mapState_800c6798.continentIndex_00 + 1) {
             //LAB_800eddfc
             if(i >= 9) {
               break;
@@ -7279,7 +7260,7 @@ public class WMap {
               struct.coord2_00.coord.transfer.setY(_800c74b8.get(i).getY() + struct.svec_54.getY() * struct._50 / 4);
               struct.coord2_00.coord.transfer.setZ(_800c74b8.get(i).getZ() + struct.svec_54.getZ() * struct._50 / 16);
 
-              if(mapState_800c6798._00 == 0) {
+              if(mapState_800c6798.continentIndex_00 == 0) {
                 if(sp18 == 4) {
                   //LAB_800ee0e4
                   struct.coord2_00.coord.transfer.setX(_800c74b8.get(i).getX() + struct.svec_54.getX() * struct._50 / 16);
@@ -7295,7 +7276,7 @@ public class WMap {
 
                 //LAB_800ee32c
                 //LAB_800ee334
-              } else if(mapState_800c6798._00 == 1) {
+              } else if(mapState_800c6798.continentIndex_00 == 1) {
                 if(sp18 == 4) {
                   //LAB_800ee3a4
                   struct.coord2_00.coord.transfer.setX(_800c74b8.get(i).getX() + struct.svec_54.getX() * struct._50 / 16);

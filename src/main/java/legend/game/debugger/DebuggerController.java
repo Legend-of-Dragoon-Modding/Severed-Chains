@@ -17,7 +17,7 @@ import legend.game.modding.events.EventListener;
 import legend.game.modding.events.config.ConfigLoadedEvent;
 import legend.game.modding.events.config.ConfigUpdatedEvent;
 import legend.game.types.EngineState;
-import legend.game.wmap.WMapAreaData08;
+import legend.game.wmap.AreaData08;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
@@ -318,7 +318,7 @@ public class DebuggerController {
       }
       FUN_800e5534(-1, 0);
     } else if(engineState_8004dd20 == EngineState.WORLD_MAP_08) {
-      final WMapAreaData08 area = areaData_800f2248.get(mapState_800c6798.areaIndex_12);
+      final AreaData08 area = areaData_800f2248.get(mapState_800c6798.areaIndex_12);
 
       if(Config.combatStage()) {
         combatStage_800bb0f4.set(Config.getCombatStage());

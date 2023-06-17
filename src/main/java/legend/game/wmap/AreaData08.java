@@ -6,7 +6,7 @@ import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedByteRef;
 
-public class WMapAreaData08 implements MemoryRef {
+public class AreaData08 implements MemoryRef {
   private final Value ref;
 
   public final ShortRef _00;
@@ -17,7 +17,7 @@ public class WMapAreaData08 implements MemoryRef {
   public final ByteRef encounterIndex_05;
   public final UnsignedByteRef modelIndex_06;
 
-  public WMapAreaData08(final Value ref) {
+  public AreaData08(final Value ref) {
     this.ref = ref;
 
     this._00 = ref.offset(2, 0x00L).cast(ShortRef::new);
