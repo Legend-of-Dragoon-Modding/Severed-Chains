@@ -77,7 +77,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static legend.core.GameEngine.CONFIG;
-import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.RENDERER;
@@ -224,7 +223,6 @@ import static legend.game.combat.Bttl_800d.FUN_800d8f10;
 import static legend.game.combat.SBtld.stageData_80109a98;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_DELETE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_EQUAL;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_F11;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F12;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_MINUS;
 import static org.lwjgl.glfw.GLFW.GLFW_MOD_CONTROL;
@@ -410,8 +408,6 @@ public final class Scus94491BpeSegment {
   private static boolean inputPulse;
   public static final Int2IntMap keyRepeat = new Int2IntOpenHashMap();
 
-  private static boolean paused;
-
   @Method(0x80011e1cL)
   public static void gameLoop() {
     RENDERER.events().onKeyPress((window, key, scancode, mods) -> {
@@ -420,16 +416,6 @@ public final class Scus94491BpeSegment {
         for(final Voice voice : SPU.voices) {
           voice.volumeLeft.set(0);
           voice.volumeRight.set(0);
-        }
-      }
-
-      if(key == GLFW_KEY_F11) {
-        paused = !paused;
-
-        if(paused) {
-          LOGGER.info("Pausing");
-        } else {
-          LOGGER.info("Unpausing");
         }
       }
 
@@ -478,12 +464,6 @@ public final class Scus94491BpeSegment {
     Input.init();
 
     GPU.subRenderer = () -> {
-      EVENTS.clearStaleRefs();
-
-      if(paused) {
-        return;
-      }
-
       if(!soundRunning) {
         startSound();
       }
@@ -495,7 +475,10 @@ public final class Scus94491BpeSegment {
       final int frames = Math.max(1, vsyncMode_8007a3b8);
       RENDERER.window().setFpsLimit((60 / frames) * Config.getGameSpeedMultiplier());
 
-      executeLoadersAndScripts();
+      loadQueuedOverlay();
+      gameStateCallbacks_8004dbc0.get(engineState_8004dd20.ordinal()).callback_00.deref().run();
+      SCRIPTS.tick();
+
       FUN_8001b410();
       handleFullScreenEffects();
 
@@ -571,13 +554,6 @@ public final class Scus94491BpeSegment {
       DebugHelper.sleep(toSleep);
       time += NANOS_PER_TICK;
     }
-  }
-
-  @Method(0x80011ec8L)
-  public static void executeLoadersAndScripts() {
-    loadQueuedOverlay();
-    gameStateCallbacks_8004dbc0.get(engineState_8004dd20.ordinal()).callback_00.deref().run();
-    SCRIPTS.tick();
   }
 
   @Method(0x80012094L)

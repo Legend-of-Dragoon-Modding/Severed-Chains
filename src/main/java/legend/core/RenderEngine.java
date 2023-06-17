@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.file.Paths;
 
+import static legend.core.GameEngine.EVENTS;
+
 public class RenderEngine {
   private static final Logger LOGGER = LogManager.getFormatterLogger();
 
@@ -60,6 +62,15 @@ public class RenderEngine {
     this.ctx = new Context(this.window, this.camera);
 
     try {
+      final Shader simpleShader = new Shader(Paths.get("gfx/shaders/simple.vsh"), Paths.get("gfx/shaders/simple.fsh"));
+      simpleShader.bindUniformBlock("transforms", Shader.UniformBuffer.TRANSFORM);
+      simpleShader.bindUniformBlock("transforms2", Shader.UniformBuffer.TRANSFORM2);
+      ShaderManager.addShader("simple", simpleShader);
+    } catch(final IOException e) {
+      throw new RuntimeException("Failed to load simple shader", e);
+    }
+
+    try {
       final Shader fontShader = new Shader(Paths.get("gfx/shaders/font.vsh"), Paths.get("gfx/shaders/font.fsh"));
       fontShader.bindUniformBlock("transforms", Shader.UniformBuffer.TRANSFORM);
       fontShader.bindUniformBlock("transforms2", Shader.UniformBuffer.TRANSFORM2);
@@ -76,6 +87,8 @@ public class RenderEngine {
     this.transforms2 = ShaderManager.addUniformBuffer("transforms2", new Shader.UniformBuffer((long)transform2Buffer.capacity() * Float.BYTES, Shader.UniformBuffer.TRANSFORM2));
 
     this.ctx.onDraw(() -> {
+      EVENTS.clearStaleRefs();
+
       // Restore model buffer to identity
       this.transforms.identity();
       this.transforms2.set(this.transforms);

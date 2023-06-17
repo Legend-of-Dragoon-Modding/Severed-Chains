@@ -1,7 +1,6 @@
 package legend.core.gpu;
 
 import legend.core.MathHelper;
-import legend.core.RenderEngine;
 import legend.core.opengl.Mesh;
 import legend.core.opengl.Shader;
 import legend.core.opengl.Texture;
@@ -18,6 +17,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 
 import static legend.core.GameEngine.MEMORY;
+import static legend.core.GameEngine.RENDERER;
 import static legend.core.MathHelper.colour24To15;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static org.lwjgl.glfw.GLFW.glfwGetCurrentContext;
@@ -61,7 +61,6 @@ public class Gpu {
 
   private boolean displayChanged;
 
-  public Runnable mainRenderer;
   public Runnable subRenderer = () -> { };
 
   public int getDrawBufferIndex() {
@@ -92,20 +91,24 @@ public class Gpu {
     this.drawingArea(this.drawingArea.x.get(), this.drawingArea.y.get(), this.drawingArea.w.get(), this.drawingArea.h.get());
   }
 
-  public void init(final RenderEngine renderEngine) {
-    renderEngine.events().onResize((window1, width, height) -> this.updateDisplayTexture((int)(width / window1.getScale()), (int)(height / window1.getScale())));
+  public void init() {
+    RENDERER.events().onResize((window1, width, height) -> this.updateDisplayTexture((int)(width / window1.getScale()), (int)(height / window1.getScale())));
 
-    this.vramShader = this.loadShader(Paths.get("gfx", "shaders", "vram.vsh"), Paths.get("gfx", "shaders", "vram.fsh"));
+    this.vramShader = this.loadShader(Paths.get("gfx", "shaders", "simple.vsh"), Paths.get("gfx", "shaders", "simple.fsh"));
 
     this.displaySize(320, 240);
+  }
 
-    if(this.mainRenderer == null) {
-      this.setStandardRenderer();
-    }
+  public void attachToRenderEngine() {
+    RENDERER.setRenderCallback(() -> {
+      if(this.zMax != orderingTableSize_1f8003c8.get()) {
+        this.updateOrderingTableSize(orderingTableSize_1f8003c8.get());
+      }
 
-    renderEngine.setRenderCallback(() -> {
-      this.mainRenderer.run();
-      renderEngine.window().setTitle("Legend of Dragoon - FPS: %.2f/%d scale: %d res: %dx%d".formatted(renderEngine.getFps(), renderEngine.window().getFpsLimit(), this.scale, this.displayTexture.width, this.displayTexture.height));
+      this.subRenderer.run();
+      this.tick();
+
+      RENDERER.window().setTitle("Legend of Dragoon - FPS: %.2f/%d scale: %d res: %dx%d".formatted(RENDERER.getFps(), RENDERER.window().getFpsLimit(), this.scale, this.displayTexture.width, this.displayTexture.height));
     });
   }
 
@@ -142,18 +145,7 @@ public class Gpu {
     this.displayMesh.attribute(1, 2L, 2, 4);
   }
 
-  public void setStandardRenderer() {
-    this.mainRenderer = () -> {
-      if(this.zMax != orderingTableSize_1f8003c8.get()) {
-        this.updateOrderingTableSize(orderingTableSize_1f8003c8.get());
-      }
-
-      this.subRenderer.run();
-      this.tick();
-    };
-  }
-
-  public void tick() {
+  private void tick() {
     if(this.displayChanged) {
       this.displaySize(this.status.horizontalResolution, this.status.verticalResolution);
       this.displayChanged = false;

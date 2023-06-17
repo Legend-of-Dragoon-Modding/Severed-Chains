@@ -171,7 +171,7 @@ public final class GameEngine {
         LOGGER.info("--- Legend start ---");
 
         loading = true;
-        GPU.mainRenderer = GameEngine::loadGfx;
+        RENDERER.setRenderCallback(GameEngine::loadGfx);
 
         Files.createDirectories(Path.of("saves"));
         SAVES.registerDeserializer(RetailSerializer::fromRetailMatcher, RetailSerializer::fromRetail);
@@ -225,7 +225,7 @@ public final class GameEngine {
     time = System.nanoTime();
     thread.start();
     RENDERER.init();
-    GPU.init(RENDERER);
+    GPU.init();
     RENDERER.run();
   }
 
@@ -387,9 +387,9 @@ public final class GameEngine {
     }
 
     spuThread.start();
-    GPU.setStandardRenderer();
 
     synchronized(LOCK) {
+      GPU.attachToRenderEngine();
       Fmv.playCurrentFmv();
       gameLoop();
     }
@@ -399,7 +399,7 @@ public final class GameEngine {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    final Path vsh = Paths.get("gfx", "shaders", "vram.vsh");
+    final Path vsh = Paths.get("gfx", "shaders", "simple.vsh");
     shader = loadShader(vsh, Paths.get("gfx", "shaders", "title.fsh"));
     shader.use();
     shaderAlpha = shader.new UniformFloat("alpha");
@@ -439,7 +439,7 @@ public final class GameEngine {
 
     onResize = RENDERER.events().onResize(GameEngine::windowResize);
     windowResize(RENDERER.window(), (int)(RENDERER.window().getWidth() * RENDERER.window().getScale()), (int)(RENDERER.window().getHeight() * RENDERER.window().getScale()));
-    GPU.mainRenderer = GameEngine::renderIntro;
+    RENDERER.setRenderCallback(GameEngine::renderIntro);
 
     onKeyPress = RENDERER.events().onKeyPress((window, key, scancode, mods) -> skip());
     onMouseRelease = RENDERER.events().onMouseRelease((window, x, y, button, mods) -> skip());
