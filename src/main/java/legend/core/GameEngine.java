@@ -393,7 +393,6 @@ public final class GameEngine {
     synchronized(LOCK) {
       Input.init();
 
-      GPU.attachToRenderEngine();
       Fmv.playCurrentFmv();
       startSound();
       gameLoop();

@@ -70,8 +70,6 @@ public class Gpu {
 
   private boolean displayChanged;
 
-  public Runnable subRenderer = () -> { };
-
   public int getDrawBufferIndex() {
     return this.drawBufferIndex;
   }
@@ -138,17 +136,15 @@ public class Gpu {
     this.displaySize(320, 240);
   }
 
-  public void attachToRenderEngine() {
-    RENDERER.setRenderCallback(() -> {
-      if(this.zMax != orderingTableSize_1f8003c8.get()) {
-        this.updateOrderingTableSize(orderingTableSize_1f8003c8.get());
-      }
+  public void startFrame() {
+    if(this.zMax != orderingTableSize_1f8003c8.get()) {
+      this.updateOrderingTableSize(orderingTableSize_1f8003c8.get());
+    }
+  }
 
-      this.subRenderer.run();
-      this.tick();
-
-      RENDERER.window().setTitle("Legend of Dragoon - FPS: %.2f/%d scale: %d res: %dx%d".formatted(RENDERER.getFps(), RENDERER.window().getFpsLimit(), this.scale, this.displayTexture.width, this.displayTexture.height));
-    });
+  public void endFrame() {
+    this.tick();
+    RENDERER.window().setTitle("Legend of Dragoon - FPS: %.2f/%d scale: %d res: %dx%d".formatted(RENDERER.getFps(), RENDERER.window().getFpsLimit(), this.scale, this.displayTexture.width, this.displayTexture.height));
   }
 
   private void updateDisplayTexture(final int width, final int height) {

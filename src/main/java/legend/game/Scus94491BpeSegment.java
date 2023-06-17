@@ -419,7 +419,9 @@ public final class Scus94491BpeSegment {
       }
     });
 
-    GPU.subRenderer = () -> {
+    RENDERER.setRenderCallback(() -> {
+      GPU.startFrame();
+
       if(engineState_8004dd20.isInGame()) {
         gameState_800babc8.timestamp_a0 += vsyncMode_8007a3b8;
       }
@@ -444,7 +446,9 @@ public final class Scus94491BpeSegment {
       FUN_80020ed8();
       tickCount_800bb0fc.incr();
       endFrame();
-    };
+
+      GPU.endFrame();
+    });
 
     RENDERER.events().onShutdown(() -> {
       stopSound();
