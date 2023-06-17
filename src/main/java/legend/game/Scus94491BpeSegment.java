@@ -194,9 +194,7 @@ import static legend.game.Scus94491BpeSegment_800b.playingSoundsBackup_800bca78;
 import static legend.game.Scus94491BpeSegment_800b.postBattleAction_800bc974;
 import static legend.game.Scus94491BpeSegment_800b.postCombatMainCallbackIndex_800bc91c;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
-import static legend.game.Scus94491BpeSegment_800b.press_800bee94;
 import static legend.game.Scus94491BpeSegment_800b.queuedSounds_800bd110;
-import static legend.game.Scus94491BpeSegment_800b.repeat_800bee98;
 import static legend.game.Scus94491BpeSegment_800b.savedGameSelected_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.sequenceVolume_800bd108;
@@ -422,10 +420,6 @@ public final class Scus94491BpeSegment {
     });
 
     GPU.subRenderer = () -> {
-      if(!soundRunning) {
-        startSound();
-      }
-
       if(engineState_8004dd20.isInGame()) {
         gameState_800babc8.timestamp_a0 += vsyncMode_8007a3b8;
       }
@@ -463,7 +457,7 @@ public final class Scus94491BpeSegment {
   private static final int NANOS_PER_TICK = 1_000_000_000 / SOUND_TPS;
   private static boolean soundRunning;
 
-  private static void startSound() {
+  public static void startSound() {
     soundRunning = true;
     new Thread(Scus94491BpeSegment::soundLoop).start();
   }
@@ -480,7 +474,6 @@ public final class Scus94491BpeSegment {
         SEQUENCER.tick();
       } catch(final Throwable t) {
         LOGGER.error("Sound thread crashed!", t);
-        soundRunning = false;
       }
 
 

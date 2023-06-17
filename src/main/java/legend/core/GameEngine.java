@@ -59,6 +59,7 @@ import static legend.game.SItem.mirandaXpTable_80113aa8;
 import static legend.game.SItem.roseXpTable_801139b4;
 import static legend.game.SItem.shanaXpTable_80113aa8;
 import static legend.game.Scus94491BpeSegment.gameLoop;
+import static legend.game.Scus94491BpeSegment.startSound;
 import static org.lwjgl.opengl.GL11C.GL_BLEND;
 import static org.lwjgl.opengl.GL11C.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11C.GL_SRC_ALPHA;
@@ -394,6 +395,7 @@ public final class GameEngine {
 
       GPU.attachToRenderEngine();
       Fmv.playCurrentFmv();
+      startSound();
       gameLoop();
     }
   }
