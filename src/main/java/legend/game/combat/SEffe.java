@@ -3107,7 +3107,7 @@ public final class SEffe {
                 currentSegmentOrigin = segmentArray[segmentNum];
                 nextSegmentOrigin = segmentArray[segmentNum + 1];
                 int centerLineEndpointX = Math.abs(currentSegmentOrigin.x_00 - nextSegmentOrigin.x_00);
-                centerLineEndpointX = (int)seed_800fa754.advance().get() % (centerLineEndpointX * 2 + 1) - centerLineEndpointX + currentSegmentOrigin.x_00;
+                centerLineEndpointX = (int)(seed_800fa754.advance().get() % (centerLineEndpointX * 2 + 1) - centerLineEndpointX + currentSegmentOrigin.x_00);
                 int centerLineOriginX = currentSegmentOrigin.x_00;
                 int centerLineOriginY = currentSegmentOrigin.y_04;
                 int centerLineEndpointY = (nextSegmentOrigin.y_04 - currentSegmentOrigin.y_04) / 2 + currentSegmentOrigin.y_04;
