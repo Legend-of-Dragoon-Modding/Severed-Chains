@@ -34,10 +34,7 @@ import legend.game.combat.bobj.MonsterBattleObject;
 import legend.game.combat.environment.BattlePreloadedEntities_18cb0;
 import legend.game.combat.environment.StageData10;
 import legend.game.debugger.Debugger;
-import legend.game.input.Input;
 import legend.game.inventory.WhichMenu;
-import legend.game.modding.coremod.CoreMod;
-import legend.game.modding.coremod.config.RenderScaleConfigEntry;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.Param;
 import legend.game.scripting.RunningScript;
@@ -76,7 +73,6 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.RENDERER;
@@ -222,10 +218,7 @@ import static legend.game.combat.Bttl_800c.monsterCount_800c6768;
 import static legend.game.combat.Bttl_800d.FUN_800d8f10;
 import static legend.game.combat.SBtld.stageData_80109a98;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_DELETE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_EQUAL;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F12;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_MINUS;
-import static org.lwjgl.glfw.GLFW.GLFW_MOD_CONTROL;
 
 public final class Scus94491BpeSegment {
   private Scus94491BpeSegment() { }
@@ -419,34 +412,6 @@ public final class Scus94491BpeSegment {
         }
       }
 
-      if(key == GLFW_KEY_EQUAL) {
-        if(mods == 0) {
-          Config.setGameSpeedMultiplier(Config.getGameSpeedMultiplier() + 1);
-        } else if((mods & GLFW_MOD_CONTROL) != 0 && gameState_800babc8 != null) {
-          final RenderScaleConfigEntry config = CoreMod.RENDER_SCALE_CONFIG.get();
-          final int scale = CONFIG.getConfig(config) + 1;
-
-          if(scale <= RenderScaleConfigEntry.MAX) {
-            CONFIG.setConfig(config, scale);
-            GPU.rescale(scale);
-          }
-        }
-      }
-
-      if(key == GLFW_KEY_MINUS) {
-        if(mods == 0) {
-          Config.setGameSpeedMultiplier(Config.getGameSpeedMultiplier() - 1);
-        } else if((mods & GLFW_MOD_CONTROL) != 0 && gameState_800babc8 != null) {
-          final RenderScaleConfigEntry config = CoreMod.RENDER_SCALE_CONFIG.get();
-          final int scale = CONFIG.getConfig(config) - 1;
-
-          if(scale >= 1) {
-            CONFIG.setConfig(config, scale);
-            GPU.rescale(scale);
-          }
-        }
-      }
-
       if(key == GLFW_KEY_F12) {
         if(!Debugger.isRunning()) {
           try {
@@ -460,8 +425,6 @@ public final class Scus94491BpeSegment {
         }
       }
     });
-
-    Input.init();
 
     GPU.subRenderer = () -> {
       if(!soundRunning) {

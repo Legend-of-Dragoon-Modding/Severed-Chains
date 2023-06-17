@@ -1,9 +1,12 @@
 package legend.core.gpu;
 
+import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.opengl.Mesh;
 import legend.core.opengl.Shader;
 import legend.core.opengl.Texture;
+import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.coremod.config.RenderScaleConfigEntry;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
@@ -16,10 +19,16 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.LinkedList;
 
+import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.MathHelper.colour24To15;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
+import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_EQUAL;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_MINUS;
+import static org.lwjgl.glfw.GLFW.GLFW_MOD_CONTROL;
 import static org.lwjgl.glfw.GLFW.glfwGetCurrentContext;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
@@ -93,6 +102,36 @@ public class Gpu {
 
   public void init() {
     RENDERER.events().onResize((window1, width, height) -> this.updateDisplayTexture((int)(width / window1.getScale()), (int)(height / window1.getScale())));
+
+    RENDERER.events().onKeyPress((window, key, scancode, mods) -> {
+      if(key == GLFW_KEY_EQUAL) {
+        if(mods == 0) {
+          Config.setGameSpeedMultiplier(Config.getGameSpeedMultiplier() + 1);
+        } else if((mods & GLFW_MOD_CONTROL) != 0 && gameState_800babc8 != null) {
+          final RenderScaleConfigEntry config = CoreMod.RENDER_SCALE_CONFIG.get();
+          final int scale = CONFIG.getConfig(config) + 1;
+
+          if(scale <= RenderScaleConfigEntry.MAX) {
+            CONFIG.setConfig(config, scale);
+            GPU.rescale(scale);
+          }
+        }
+      }
+
+      if(key == GLFW_KEY_MINUS) {
+        if(mods == 0) {
+          Config.setGameSpeedMultiplier(Config.getGameSpeedMultiplier() - 1);
+        } else if((mods & GLFW_MOD_CONTROL) != 0 && gameState_800babc8 != null) {
+          final RenderScaleConfigEntry config = CoreMod.RENDER_SCALE_CONFIG.get();
+          final int scale = CONFIG.getConfig(config) - 1;
+
+          if(scale >= 1) {
+            CONFIG.setConfig(config, scale);
+            GPU.rescale(scale);
+          }
+        }
+      }
+    });
 
     this.vramShader = this.loadShader(Paths.get("gfx", "shaders", "simple.vsh"), Paths.get("gfx", "shaders", "simple.fsh"));
 
