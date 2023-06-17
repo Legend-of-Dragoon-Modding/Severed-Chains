@@ -506,22 +506,6 @@ public final class SEffe {
     _80119db4[64] = SEffe::FUN_80100d00;
   }
 
-  // /**
-  //  * <ol start="0">
-  //  *   <li>{@link SEffe#FUN_801052d4}</li>
-  //  *   <li>{@link SEffe#FUN_801052d4}</li>
-  //  *   <li>{@link SEffe#FUN_801052d4}</li>
-  //  *   <li>{@link SEffe#FUN_801052d4}</li>
-  //  *   <li>{@link SEffe#FUN_801052d4}</li>
-  //  *   <li>{@link SEffe#FUN_801052d4}</li>
-  //  *   <li>{@link SEffe#FUN_801052d4}</li>
-  //  *   <li>{@link SEffe#FUN_801052d4}</li>
-  //  *   <li>{@link SEffe#FUN_801052d4}</li>
-  //  *   <li>{@link SEffe#FUN_801052d4}</li>
-  //  *   <li>{@link SEffe#FUN_801052d4}</li>
-  //  * </ol>
-  //  */
-  // private static final ArrayRef<Pointer<QuadConsumerRef<EffectManagerData6c, ElectricityEffect38, LightningBoltEffect14, Integer>>> _80119ebc = MEMORY.ref(4, 0x80119ebcL, ArrayRef.of(Pointer.classFor(QuadConsumerRef.classFor(EffectManagerData6c.class, ElectricityEffect38.class, LightningBoltEffect14.class, int.class)), 11, 4, Pointer.deferred(4, QuadConsumerRef::new)));
   /**
    * <ol start="0">
    *   <li>{@link SEffe#FUN_801049d4}</li>
@@ -3322,11 +3306,6 @@ public final class SEffe {
     }
   }
 
-  @Method(0x801052d4L)
-  public static void FUN_801052d4(final EffectManagerData6c a0, final ElectricityEffect38 a1, final LightningBoltEffect14 a2, final int a3) {
-    // no-op
-  }
-
   @Method(0x801052dcL)
   public static FlowControl allocateElectricityEffect(final RunningScript<? extends BattleScriptDataBase> script) {
     final int effectFlag = script.params_20[6].get();
@@ -3378,7 +3357,7 @@ public final class SEffe {
       boltEffect.rotation_04.set((short)0, (short)0, (short)0);
       final UnboundedArrayRef<LightningBoltEffectSegment30> segmentArray = MEMORY.ref(4, mallocTail(electricEffect.boltSegmentCount_28.get() * 0x30L), UnboundedArrayRef.of(0x30, LightningBoltEffectSegment30::new, electricEffect.boltSegmentCount_28::get));
       boltEffect.boltSegments_10.set(segmentArray);
-      // _80119ebc.get(effect.callbackIndex_20.get()).deref().run(manager, effect, struct, i); // always same no-op method
+      // Ran callback here from method array _80119ebc, which was filled with copies of the same no-op method FUN_801052d4
       initializeElectricityNodes(manager, electricEffect, boltEffect);
     }
 
