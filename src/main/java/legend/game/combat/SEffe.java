@@ -4657,17 +4657,17 @@ public final class SEffe {
   @Method(0x80108e40L)
   public static void renderRainEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
     final RainEffect08 effect = (RainEffect08)data.effect_44;
-    final UnboundedArrayRef<RaindropEffect0c> rainArray = effect.raindropArray_04.deref();
+    final RaindropEffect0c[] rainArray = effect.raindropArray_04;
 
     //LAB_80108e84
-    for(int i = 0; i < effect.count_00.get(); i++) {
-      if(Math.abs(Math.abs(rainArray.get(i).y0_04.get() + rainArray.get(i).x0_02.get()) - Math.abs(rainArray.get(i).y1_08.get() + rainArray.get(i).x1_06.get())) <= 180) {
+    for(int i = 0; i < effect.count_00; i++) {
+      if(Math.abs(Math.abs(rainArray[i].y0_04 + rainArray[i].x0_02) - Math.abs(rainArray[i].y1_08 + rainArray[i].x1_06)) <= 180) {
         GPU.queueCommand(30, new GpuCommandLine()
           .translucent(Translucency.of(data._10.flags_00 >>> 28 & 3))
           .monochrome(0, 0)
           .rgb(1, data._10.colour_1c.getX(), data._10.colour_1c.getY(), data._10.colour_1c.getZ())
-          .pos(0, (int)rainArray.get(i).x1_06.get() - 256, (int)rainArray.get(i).y1_08.get() - 128)
-          .pos(1, (int)rainArray.get(i).x0_02.get() - 256, (int)rainArray.get(i).y0_04.get() - 128)
+          .pos(0, rainArray[i].x1_06 - 256, rainArray[i].y1_08 - 128)
+          .pos(1, rainArray[i].x0_02 - 256, rainArray[i].y0_04 - 128)
         );
       }
       //LAB_80108f6c
@@ -4678,25 +4678,25 @@ public final class SEffe {
   @Method(0x80109000L)
   public static void tickRainEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
     final RainEffect08 effect = (RainEffect08)data.effect_44;
-    final UnboundedArrayRef<RaindropEffect0c> rainArray = effect.raindropArray_04.deref();
+    final RaindropEffect0c[] rainArray = effect.raindropArray_04;
 
     //LAB_80109038
-    for(int i = 0; i < effect.count_00.get(); i++) {
-      long endpointShiftX = rsin(data._10.rot_10.getX()) << 5 >> 12;
-      long endpointShiftY = rcos(data._10.rot_10.getX()) << 5 >> 12;
-      endpointShiftX = endpointShiftX * data._10.scale_16.getX() * rainArray.get(i).angleModifier_0a.get() >> 24;
-      endpointShiftY = endpointShiftY * data._10.scale_16.getX() * rainArray.get(i).angleModifier_0a.get() >> 24;
-      rainArray.get(i).x1_06.set(rainArray.get(i).x0_02.get());
-      rainArray.get(i).y1_08.set(rainArray.get(i).y0_04.get());
-      rainArray.get(i).x0_02.add((short)endpointShiftX).and(0x1ff);
-      rainArray.get(i).y0_04.add((short)endpointShiftY).and(0xff);
+    for(int i = 0; i < effect.count_00; i++) {
+      int endpointShiftX = rsin(data._10.rot_10.getX()) << 5 >> 12;
+      int endpointShiftY = rcos(data._10.rot_10.getX()) << 5 >> 12;
+      endpointShiftX = endpointShiftX * data._10.scale_16.getX() * rainArray[i].angleModifier_0a >> 24;
+      endpointShiftY = endpointShiftY * data._10.scale_16.getX() * rainArray[i].angleModifier_0a >> 24;
+      rainArray[i].x1_06 = rainArray[i].x0_02;
+      rainArray[i].y1_08 = rainArray[i].y0_04;
+      rainArray[i].x0_02 = (rainArray[i].x0_02 + endpointShiftX) & 0x1ff;
+      rainArray[i].y0_04 = (rainArray[i].y0_04 + endpointShiftY) & 0xff;
     }
     //LAB_80109110
   }
 
   @Method(0x8010912cL)
   public static void deallocateRainEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    free(((RainEffect08)data.effect_44).raindropArray_04.getPointer());
+    ((RainEffect08)data.effect_44).raindropArray_04 = null;
   }
 
   @Method(0x80109158L)
@@ -4705,27 +4705,24 @@ public final class SEffe {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "RainEffect08",
       script.scriptState_04,
-      0x8,
+      0,
       SEffe::tickRainEffect,
       SEffe::renderRainEffect,
       SEffe::deallocateRainEffect,
-      RainEffect08::new
+      value -> new RainEffect08(count)
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
     final RainEffect08 effect = (RainEffect08)manager.effect_44;
-    final long rainArrayAddress = mallocTail(count * 0xc);
-    effect.count_00.set(count);
-    final UnboundedArrayRef<RaindropEffect0c> rainArray = MEMORY.ref(4, rainArrayAddress, UnboundedArrayRef.of(0x0c, RaindropEffect0c::new, effect.count_00::get));
-    effect.raindropArray_04.set(rainArray);
     manager._10.flags_00 = 0x5000_0000;
 
     //LAB_80109204
+    final RaindropEffect0c[] rainArray = effect.raindropArray_04;
     for(int i = 0; i < count; i++) {
-      rainArray.get(i)._00.set(1);
-      rainArray.get(i).x0_02.set((short)(seed_800fa754.advance().get() % 513));
-      rainArray.get(i).y0_04.set((short)(seed_800fa754.advance().get() % 257));
-      rainArray.get(i).angleModifier_0a.set((short)(seed_800fa754.advance().get() % 3073 + 1024));
+      rainArray[i]._00 = 1;
+      rainArray[i].x0_02 = (short)(seed_800fa754.advance().get() % 513);
+      rainArray[i].y0_04 = (short)(seed_800fa754.advance().get() % 257);
+      rainArray[i].angleModifier_0a = (short)(seed_800fa754.advance().get() % 3073 + 1024);
     }
 
     //LAB_80109328
