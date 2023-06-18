@@ -408,14 +408,12 @@ public class DebuggerController {
       this.additionOverlayR.getValueFactory().getValue().byteValue(),
       this.additionOverlayG.getValueFactory().getValue().byteValue(),
       this.additionOverlayB.getValueFactory().getValue().byteValue(),
-      (byte)0x00,
     };
 
     final int rgb =
-      (0xff & rgbArray[3]) << 24 |
-        (0xff & rgbArray[2]) << 16 |
-        (0xff & rgbArray[1]) << 8 |
-        0xff & rgbArray[0];
+      (0xff & rgbArray[2]) << 16 |
+      (0xff & rgbArray[1]) << 8 |
+      0xff & rgbArray[0];
 
     Config.setAdditionOverlayRgb(rgb);
     SEffe.additionBorderColours_800fb7f0.get(9).set(rgbArray[0] & 0xff);
@@ -437,14 +435,12 @@ public class DebuggerController {
       this.counterOverlayR.getValueFactory().getValue().byteValue(),
       this.counterOverlayG.getValueFactory().getValue().byteValue(),
       this.counterOverlayB.getValueFactory().getValue().byteValue(),
-      (byte)0x00,
     };
 
     final int rgb =
-      (0xff & rgbArray[3]) << 24 |
-        (0xff & rgbArray[2]) << 16 |
-        (0xff & rgbArray[1]) << 8 |
-        0xff & rgbArray[0];
+      (0xff & rgbArray[2]) << 16 |
+      (0xff & rgbArray[1]) << 8 |
+      0xff & rgbArray[0];
 
     Config.setCounterOverlayRgb(rgb);
     SEffe.additionBorderColours_800fb7f0.get(6).set(rgbArray[0] & 0xff);
