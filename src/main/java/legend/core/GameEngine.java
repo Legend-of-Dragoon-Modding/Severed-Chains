@@ -158,6 +158,8 @@ public final class GameEngine {
 
   private static Shader.UniformBuffer transforms2;
   private static final Matrix4f identity = new Matrix4f();
+  private static final Matrix4f backgroundTransforms = new Matrix4f();
+  private static final Matrix4f textTransforms = new Matrix4f();
   private static final Matrix4f eyeTransforms = new Matrix4f();
   private static final Matrix4f loadingTransforms = new Matrix4f();
 
@@ -393,13 +395,15 @@ public final class GameEngine {
     synchronized(LOCK) {
       Input.init();
 
-      Fmv.playCurrentFmv();
       startSound();
       gameLoop();
+      Fmv.playCurrentFmv();
     }
   }
 
   private static void loadGfx() {
+    RENDERER.camera().moveTo(0.0f, 0.0f, -2.0f);
+
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -408,8 +412,8 @@ public final class GameEngine {
     shader.use();
     shaderAlpha = shader.new UniformFloat("alpha");
 
-    title1Texture = Texture.png(Path.of(".", "gfx", "textures", "intro", "title1.png"));
-    title2Texture = Texture.png(Path.of(".", "gfx", "textures", "intro", "title2.png"));
+    title1Texture = Texture.filteredPng(Path.of(".", "gfx", "textures", "intro", "title1.png"));
+    title2Texture = Texture.filteredPng(Path.of(".", "gfx", "textures", "intro", "title2.png"));
     loadingTexture = Texture.png(Path.of(".", "gfx", "textures", "intro", "loading.png"));
     eye = Texture.png(Path.of(".", "gfx", "textures", "loading.png"));
 
@@ -419,22 +423,22 @@ public final class GameEngine {
     eyeShaderTicks = eyeShader.new UniformFloat("ticks");
 
     eyeMesh = new Mesh(GL_TRIANGLE_STRIP, new float[] {
-       0,  0, 0, 0,
-       0, 32, 0, 1,
-      32,  0, 1, 0,
-      32, 32, 1, 1,
+      0.0f, 0.0f, 0, 0, 0,
+      0.0f, 0.1f, 0, 0, 1,
+      0.1f, 0.0f, 0, 1, 0,
+      0.1f, 0.1f, 0, 1, 1,
     }, 4);
-    eyeMesh.attribute(0, 0L, 2, 4);
-    eyeMesh.attribute(1, 2L, 2, 4);
+    eyeMesh.attribute(0, 0L, 3, 5);
+    eyeMesh.attribute(1, 3L, 2, 5);
 
     loadingMesh = new Mesh(GL_TRIANGLE_STRIP, new float[] {
-        0,  0, 0, 0,
-        0, 32, 0, 1,
-      130,  0, 1, 0,
-      130, 32, 1, 1,
+          0.0f, 0.0f, 0, 0, 0,
+          0.0f, 0.1f, 0, 0, 1,
+      0.40625f, 0.0f, 0, 1, 0,
+      0.40625f, 0.1f, 0, 1, 1,
     }, 4);
-    loadingMesh.attribute(0, 0L, 2, 4);
-    loadingMesh.attribute(1, 2L, 2, 4);
+    loadingMesh.attribute(0, 0L, 3, 5);
+    loadingMesh.attribute(1, 3L, 2, 5);
 
     transforms2 = ShaderManager.getUniformBuffer("transforms2");
     identity.identity();
@@ -503,11 +507,12 @@ public final class GameEngine {
 
     shader.use();
 
-    transforms2.set(identity);
+    transforms2.set(backgroundTransforms);
     shaderAlpha.set(fade1 * fade1 * fade1);
     title1Texture.use();
     fullScrenMesh.draw();
 
+    transforms2.set(textTransforms);
     shaderAlpha.set(fade2 * fade2 * fade2);
     title2Texture.use();
     fullScrenMesh.draw();
@@ -554,7 +559,7 @@ public final class GameEngine {
       fullScrenMesh.delete();
     }
 
-    final float aspect = (float)4 / 3;
+    final float aspect = (float)width / height;
 
     float w = unscaledWidth;
     float h = w / aspect;
@@ -566,22 +571,20 @@ public final class GameEngine {
 
     screenWidth = w;
 
-    final float l = (unscaledWidth - w) / 2;
-    final float t = (unscaledHeight - h) / 2;
-    final float r = l + w;
-    final float b = t + h;
-
+    final float textureWidth = (float)title1Texture.width / title1Texture.height;
     fullScrenMesh = new Mesh(GL_TRIANGLE_STRIP, new float[] {
-      l, t, 0, 0,
-      l, b, 0, 1,
-      r, t, 1, 0,
-      r, b, 1, 1,
+      -textureWidth, -1.0f, 0.0f, 0, 0,
+      -textureWidth,  1.0f, 0.0f, 0, 1,
+       textureWidth, -1.0f, 0.0f, 1, 0,
+       textureWidth,  1.0f, 0.0f, 1, 1,
     }, 4);
-    fullScrenMesh.attribute(0, 0L, 2, 4);
-    fullScrenMesh.attribute(1, 2L, 2, 4);
+    fullScrenMesh.attribute(0, 0L, 3, 5);
+    fullScrenMesh.attribute(1, 3L, 2, 5);
 
-    eyeTransforms.translation(10.0f, unscaledHeight - 42.0f, 0.0f);
-    loadingTransforms.translation(46.0f, unscaledHeight - 42.0f, 0.0f);
+    backgroundTransforms.translation(0.0f, 0.0f, 0.4f);
+    textTransforms.translation(0.0f, 0.0f, 0.3f);
+    loadingTransforms.translation(-0.85f * aspect + 0.075f, -0.88f, 0.2f);
+    eyeTransforms.translation(-0.85f * aspect, -0.85f, 0.1f);
   }
 
   private static Shader loadShader(final Path vsh, final Path fsh) {

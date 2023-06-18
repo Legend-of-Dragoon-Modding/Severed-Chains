@@ -155,29 +155,29 @@ public class Gpu {
       this.displayMesh.delete();
     }
 
-    final float aspect = (float)this.displayTexture.width / this.displayTexture.height;
+    final float aspect = 4.0f / 3.0f;
+    final float scale = RENDERER.window().getScale();
 
-    float w = width;
-    float h = w / aspect;
+    final float newAspect = (float)width / height;
 
-    if(h > height) {
-      h = height;
+    final float w;
+    final float h;
+    if(newAspect >= aspect) {
+      w = aspect * scale;
+      h = scale;
+    } else {
+      h = 1.0f / aspect * newAspect * scale;
       w = h * aspect;
     }
 
-    final float l = (width - w) / 2;
-    final float t = (height - h) / 2;
-    final float r = l + w;
-    final float b = t + h;
-
     this.displayMesh = new Mesh(GL_TRIANGLE_STRIP, new float[] {
-      l, t, 0, 0,
-      l, b, 0, 1,
-      r, t, 1, 0,
-      r, b, 1, 1,
+      -w, -h, 1.0f, 0, 1,
+      -w,  h, 1.0f, 0, 0,
+       w, -h, 1.0f, 1, 1,
+       w,  h, 1.0f, 1, 0,
     }, 4);
-    this.displayMesh.attribute(0, 0L, 2, 4);
-    this.displayMesh.attribute(1, 2L, 2, 4);
+    this.displayMesh.attribute(0, 0L, 3, 5);
+    this.displayMesh.attribute(1, 3L, 2, 5);
   }
 
   private void tick() {

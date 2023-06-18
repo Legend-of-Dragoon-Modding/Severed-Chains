@@ -9,18 +9,20 @@ import org.lwjgl.opengl.GLUtil;
 
 import java.nio.FloatBuffer;
 
-import static org.lwjgl.opengl.GL11.glDisable;
 import static org.lwjgl.opengl.GL11C.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11C.GL_CULL_FACE;
+import static org.lwjgl.opengl.GL11C.GL_CW;
 import static org.lwjgl.opengl.GL11C.GL_DEPTH_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11C.GL_DEPTH_TEST;
 import static org.lwjgl.opengl.GL11C.GL_VENDOR;
 import static org.lwjgl.opengl.GL11C.GL_VERSION;
 import static org.lwjgl.opengl.GL11C.glClear;
 import static org.lwjgl.opengl.GL11C.glClearColor;
+import static org.lwjgl.opengl.GL11C.glEnable;
+import static org.lwjgl.opengl.GL11C.glFrontFace;
 import static org.lwjgl.opengl.GL11C.glGetString;
 import static org.lwjgl.opengl.GL11C.glViewport;
-import static org.lwjgl.opengl.GL20.GL_SHADING_LANGUAGE_VERSION;
+import static org.lwjgl.opengl.GL20C.GL_SHADING_LANGUAGE_VERSION;
 
 public class Context {
   private static final Logger LOGGER = LogManager.getLogger(Context.class.getName());
@@ -53,8 +55,9 @@ public class Context {
       GLUtil.setupDebugMessageCallback(System.err);
     }
 
-    glDisable(GL_DEPTH_TEST);
-    glDisable(GL_CULL_FACE);
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
+    glFrontFace(GL_CW);
 
     this.setClearColour(0.0f, 0.0f, 0.0f);
 
@@ -109,6 +112,6 @@ public class Context {
     this.width = width;
     this.height = height;
 
-    this.proj.setOrtho2D(0.0f, width / window.getScale(), height / window.getScale(), 0.0f);
+    this.proj.setPerspectiveLH((float)Math.toRadians(45.0f), (float)width / height, 0.1f, 500.0f);
   }
 }

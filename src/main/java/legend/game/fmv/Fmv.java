@@ -444,7 +444,7 @@ public final class Fmv {
           displayTexture.delete();
         }
 
-        displayTexture = Texture.empty(frameHeader.getWidth(), frameHeader.getHeight());
+        displayTexture = Texture.filteredEmpty(frameHeader.getWidth(), frameHeader.getHeight());
       }
 
       simpleShader.use();
@@ -501,29 +501,29 @@ public final class Fmv {
       fullScrenMesh.delete();
     }
 
-    final float aspect = (float)4 / 3;
+    final float aspect = 4.0f / 3.0f;
+    final float scale = RENDERER.window().getScale();
 
-    float w = unscaledWidth;
-    float h = w / aspect;
+    final float newAspect = (float)width / height;
 
-    if(h > unscaledHeight) {
-      h = unscaledHeight;
+    final float w;
+    final float h;
+    if(newAspect >= aspect) {
+      w = aspect * scale;
+      h = scale;
+    } else {
+      h = 1.0f / aspect * newAspect * scale;
       w = h * aspect;
     }
 
-    final float l = (unscaledWidth - w) / 2;
-    final float t = (unscaledHeight - h) / 2;
-    final float r = l + w;
-    final float b = t + h;
-
     fullScrenMesh = new Mesh(GL_TRIANGLE_STRIP, new float[] {
-      l, t, 0, 0,
-      l, b, 0, 1,
-      r, t, 1, 0,
-      r, b, 1, 1,
+      -w, -h, 1.0f, 0, 1,
+      -w,  h, 1.0f, 0, 0,
+       w, -h, 1.0f, 1, 1,
+       w,  h, 1.0f, 1, 0,
     }, 4);
-    fullScrenMesh.attribute(0, 0L, 2, 4);
-    fullScrenMesh.attribute(1, 2L, 2, 4);
+    fullScrenMesh.attribute(0, 0L, 3, 5);
+    fullScrenMesh.attribute(1, 3L, 2, 5);
   }
 
   private static boolean getNextVlc(final VariableLengthCode vlc, final ArrayBitReader bitReader) {

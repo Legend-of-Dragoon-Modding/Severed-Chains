@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import static legend.core.IoHelper.pathToByteBuffer;
+import static org.lwjgl.opengl.GL11C.GL_LINEAR;
 import static org.lwjgl.opengl.GL11C.GL_NEAREST;
 import static org.lwjgl.opengl.GL11C.GL_NO_ERROR;
 import static org.lwjgl.opengl.GL11C.GL_REPEAT;
@@ -39,6 +40,7 @@ import static org.lwjgl.opengl.GL21C.GL_SRGB_ALPHA;
 import static org.lwjgl.opengl.GL30C.glGenerateMipmap;
 import static org.lwjgl.stb.STBImage.stbi_failure_reason;
 import static org.lwjgl.stb.STBImage.stbi_load_from_memory;
+import static org.lwjgl.stb.STBImage.stbi_set_flip_vertically_on_load;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.memFree;
 
@@ -61,12 +63,32 @@ public final class Texture {
     });
   }
 
+  public static Texture filteredEmpty(final int w, final int h) {
+    return Texture.create(builder -> {
+      builder.size(w, h);
+      builder.internalFormat(GL_RGBA);
+      builder.dataFormat(GL_RGBA);
+      builder.minFilter(GL_LINEAR);
+      builder.magFilter(GL_LINEAR);
+    });
+  }
+
   public static Texture png(final Path path) {
     return Texture.create(builder -> {
       builder.internalFormat(GL_RGBA);
       builder.dataFormat(GL_RGBA);
       builder.minFilter(GL_NEAREST);
       builder.magFilter(GL_NEAREST);
+      builder.png(path);
+    });
+  }
+
+  public static Texture filteredPng(final Path path) {
+    return Texture.create(builder -> {
+      builder.internalFormat(GL_RGBA);
+      builder.dataFormat(GL_RGBA);
+      builder.minFilter(GL_LINEAR);
+      builder.magFilter(GL_LINEAR);
       builder.png(path);
     });
   }
@@ -188,6 +210,7 @@ public final class Texture {
         final IntBuffer h = stack.mallocInt(1);
         final IntBuffer comp = stack.mallocInt(1);
 
+        stbi_set_flip_vertically_on_load(true);
         final ByteBuffer data = stbi_load_from_memory(imageBuffer, w, h, comp, 4);
         if(data == null) {
           throw new RuntimeException("Failed to load image: " + stbi_failure_reason());
