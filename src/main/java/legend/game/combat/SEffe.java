@@ -3311,7 +3311,7 @@ public final class SEffe {
     final int boltSegmentCount = effectFlag >> 8 & 0xff;
 
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
-      "Electricity Effect",
+      "ElectricityEffect38",
       script.scriptState_04,
       0,
       null,
