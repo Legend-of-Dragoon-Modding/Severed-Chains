@@ -34,9 +34,9 @@ import legend.game.combat.effects.EffectManagerData6c;
 import legend.game.combat.effects.EffectManagerData6cInner;
 import legend.game.combat.effects.GuardEffect06;
 import legend.game.combat.effects.MonsterDeathEffect34;
-import legend.game.combat.effects.RadialGradientEffect14;
 import legend.game.combat.effects.ProjectileHitEffect14;
 import legend.game.combat.effects.ProjectileHitEffect14Sub48;
+import legend.game.combat.effects.RadialGradientEffect14;
 import legend.game.combat.environment.BattleCamera;
 import legend.game.combat.types.AdditionCharEffectData0c;
 import legend.game.combat.types.AdditionScriptData1c;
@@ -122,8 +122,8 @@ import static legend.game.combat.Bttl_800c._800c67e4;
 import static legend.game.combat.Bttl_800c._800c67e8;
 import static legend.game.combat.Bttl_800c._800c6912;
 import static legend.game.combat.Bttl_800c._800c6913;
-import static legend.game.combat.Bttl_800c._800c6d94;
-import static legend.game.combat.Bttl_800c._800c6dac;
+import static legend.game.combat.Bttl_800c.completedAdditionStarburstTranslationMagnitudes_800c6d94;
+import static legend.game.combat.Bttl_800c.completedAdditionStarburstAngleModifiers_800c6dac;
 import static legend.game.combat.Bttl_800c._800fa76c;
 import static legend.game.combat.Bttl_800c._800faa90;
 import static legend.game.combat.Bttl_800c._800faa92;
@@ -468,62 +468,63 @@ public final class Bttl_800d {
     return FlowControl.CONTINUE;
   }
 
+  /** If a secondary script is specified, modifies the translations of the starburst rays by the secondary script's translation. */
   @Method(0x800d1194L)
-  public static void FUN_800d1194(final EffectManagerData6c a0, final AdditionStarburstEffect10 a1, final IntRef[] a2) {
-    if(a1.scriptIndex_00.get() == -1) {
-      a2[0].set(0);
-      a2[1].set(0);
+  public static void modifyAdditionStarburstTranslation(final EffectManagerData6c manager, final AdditionStarburstEffect10 starburstEffect, final IntRef[] outTranslations) {
+    if(starburstEffect.scriptIndex_00.get() == -1) {
+      outTranslations[0].set(0);
+      outTranslations[1].set(0);
     } else {
       //LAB_800d11c4
-      final VECTOR sp0x10 = new VECTOR();
-      scriptGetScriptedObjectPos(a1.scriptIndex_00.get(), sp0x10);
-      sp0x10.add(a0._10.trans_04);
-      transformWorldspaceToScreenspace(sp0x10, a2[0], a2[1]);
+      final VECTOR scriptTranslation = new VECTOR();
+      scriptGetScriptedObjectPos(starburstEffect.scriptIndex_00.get(), scriptTranslation);
+      scriptTranslation.add(manager._10.trans_04);
+      transformWorldspaceToScreenspace(scriptTranslation, outTranslations[0], outTranslations[1]);
     }
 
     //LAB_800d120c
   }
 
   @Method(0x800d1220L)
-  public static void renderAdditionHitStarburst(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    final int[] sp0x48 = {-16, 16};
-    final AdditionStarburstEffect10 starburstEffect = (AdditionStarburstEffect10)data.effect_44;
+  public static void renderAdditionHitStarburst(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+    final int[] baseAngle = {-16, 16};
+    final AdditionStarburstEffect10 starburstEffect = (AdditionStarburstEffect10)manager.effect_44;
     final UnboundedArrayRef<AdditionStarburstEffectRay10> rayArray = starburstEffect.rayArray_0c.deref();
 
     //LAB_800d128c
     for(int rayNum = 0; rayNum < starburstEffect.rayCount_04.get(); rayNum++) {
-      if(rayArray.get(rayNum)._00.get() != 0) {
+      if(rayArray.get(rayNum).renderRay_00.get() != 0) {
         //LAB_800d12a4
-        for(int s5 = 0; s5 < 2; s5++) {
-          int s1 = sp0x48[s5] + (int)rayArray.get(rayNum)._0a.get();
-          int s0 = 30 + (int)rayArray.get(rayNum)._06.get();
-          int sp18 = rcos(rayArray.get(rayNum)._02.get() + s1) * s0 >> 12;
-          int sp28 = rsin(rayArray.get(rayNum)._02.get() + s1) * s0 >> 12;
-          int sp20 = rcos(rayArray.get(rayNum)._02.get()) * s0 >> 12;
-          int sp30 = rsin(rayArray.get(rayNum)._02.get()) * s0 >> 12;
-          s1 = sp0x48[s5] + (int)rayArray.get(rayNum)._0a.get();
-          s0 = 210 + (int)rayArray.get(rayNum)._06.get();
-          final int sp1c = rcos(rayArray.get(rayNum)._02.get() + s1) * s0 >> 12;
-          final int sp2c = rsin(rayArray.get(rayNum)._02.get() + s1) * s0 >> 12;
-          final int sp24 = rcos(rayArray.get(rayNum)._02.get()) * s0 >> 12;
-          final int sp34 = rsin(rayArray.get(rayNum)._02.get()) * s0 >> 12;
-          final IntRef[] sp0x50 = {new IntRef(), new IntRef()};
-          FUN_800d1194(data, starburstEffect, sp0x50);
-          sp18 = sp18 + sp0x50[0].get();
-          sp28 = sp28 + sp0x50[1].get();
-          sp20 = sp20 + sp0x50[0].get();
-          sp30 = sp30 + sp0x50[1].get();
+        for(int i = 0; i < 2; i++) {
+          int angleModifier = baseAngle[i] + (int)rayArray.get(rayNum).angleModifier_0a.get();
+          int translationScale = 30 + (int)rayArray.get(rayNum).endpointTranslationMagnitude_06.get();
+          int x2 = rcos(rayArray.get(rayNum).angle_02.get() + angleModifier) * translationScale >> 12;
+          int y2 = rsin(rayArray.get(rayNum).angle_02.get() + angleModifier) * translationScale >> 12;
+          int x3 = rcos(rayArray.get(rayNum).angle_02.get()) * translationScale >> 12;
+          int y3 = rsin(rayArray.get(rayNum).angle_02.get()) * translationScale >> 12;
+          angleModifier = baseAngle[i] + (int)rayArray.get(rayNum).angleModifier_0a.get();
+          translationScale = 210 + (int)rayArray.get(rayNum).endpointTranslationMagnitude_06.get();
+          final int x0 = rcos(rayArray.get(rayNum).angle_02.get() + angleModifier) * translationScale >> 12;
+          final int y0 = rsin(rayArray.get(rayNum).angle_02.get() + angleModifier) * translationScale >> 12;
+          final int x1 = rcos(rayArray.get(rayNum).angle_02.get()) * translationScale >> 12;
+          final int y1 = rsin(rayArray.get(rayNum).angle_02.get()) * translationScale >> 12;
+          final IntRef[] translationRefs = {new IntRef(), new IntRef()};
+          modifyAdditionStarburstTranslation(manager, starburstEffect, translationRefs);
+          x2 = x2 + translationRefs[0].get();
+          y2 = y2 + translationRefs[1].get();
+          x3 = x3 + translationRefs[0].get();
+          y3 = y3 + translationRefs[1].get();
 
           GPU.queueCommand(30, new GpuCommandPoly(4)
             .translucent(Translucency.B_PLUS_F)
             .monochrome(0, 0)
-            .rgb(1, data._10.colour_1c.getX(), data._10.colour_1c.getY(), data._10.colour_1c.getZ())
+            .rgb(1, manager._10.colour_1c.getX(), manager._10.colour_1c.getY(), manager._10.colour_1c.getZ())
             .monochrome(2, 0)
             .rgb(3, 0)
-            .pos(0, sp1c, sp2c)
-            .pos(1, sp24, sp34)
-            .pos(2, sp18, sp28)
-            .pos(3, sp20, sp30)
+            .pos(0, x0, y0)
+            .pos(1, x1, y1)
+            .pos(2, x2, y2)
+            .pos(3, x3, y3)
           );
         }
       }
@@ -537,27 +538,27 @@ public final class Bttl_800d {
     final AdditionStarburstEffect10 starburstEffect = (AdditionStarburstEffect10)manager.effect_44;
     final UnboundedArrayRef<AdditionStarburstEffectRay10> rayArray = starburstEffect.rayArray_0c.deref();
 
-    final int[] sp0x18 = new int[3];
-    final int[] sp0x28 = new int[3];
+    final int[] xArray = new int[3];
+    final int[] yArray = new int[3];
 
     //LAB_800d16fc
     for(int rayNum = 0; rayNum < starburstEffect.rayCount_04.get(); rayNum++) {
-      if(rayArray.get(rayNum)._00.get() != 0) {
-        rayArray.get(rayNum)._06.add(rayArray.get(rayNum)._08.get());
+      if(rayArray.get(rayNum).renderRay_00.get() != 0) {
+        rayArray.get(rayNum).endpointTranslationMagnitude_06.add(rayArray.get(rayNum).endpointTranslationMagnitudeVelocity_08.get());
 
         //LAB_800d1728
-        for(int s7 = 0; s7 < 4; s7++) {
-          final IntRef[] sp0x38 = {new IntRef(), new IntRef()};
-          FUN_800d1194(manager, starburstEffect, sp0x38);
+        for(int i = 0; i < 4; i++) {
+          final IntRef[] translationRefs = {new IntRef(), new IntRef()};
+          modifyAdditionStarburstTranslation(manager, starburstEffect, translationRefs);
 
           //LAB_800d174c
-          for(int s4 = 0; s4 < 3; s4++) {
-            final int s0 = (int)Math.max(0, _800c6d94.offset(s7 * 0x6L).offset(s4 * 0x2L).get() - rayArray.get(rayNum)._06.get());
+          for(int j = 0; j < 3; j++) {
+            final int translationScale = Math.max(0, completedAdditionStarburstTranslationMagnitudes_800c6d94.get(i).get(j) - rayArray.get(rayNum).endpointTranslationMagnitude_06.get());
 
             //LAB_800d1784
-            final long s2 = _800c6dac.offset(s7 * 0x6L).offset(s4 * 0x2L).getAddress();
-            sp0x18[s4] = (rcos(rayArray.get(rayNum)._02.get() + MEMORY.ref(2, s2).offset(0x0L).getSigned()) * s0 >> 12) + sp0x38[0].get();
-            sp0x28[s4] = (rsin(rayArray.get(rayNum)._02.get() + MEMORY.ref(2, s2).offset(0x0L).getSigned()) * s0 >> 12) + sp0x38[1].get();
+            final int angleModifier = completedAdditionStarburstAngleModifiers_800c6dac.get(i).get(j);
+            xArray[j] = (rcos(rayArray.get(rayNum).angle_02.get() + angleModifier) * translationScale >> 12) + translationRefs[0].get();
+            yArray[j] = (rsin(rayArray.get(rayNum).angle_02.get() + angleModifier) * translationScale >> 12) + translationRefs[1].get();
           }
 
           GPU.queueCommand(30, new GpuCommandPoly(3)
@@ -565,9 +566,9 @@ public final class Bttl_800d {
             .monochrome(0, 0)
             .monochrome(1, 0)
             .rgb(2, manager._10.colour_1c.getX(), manager._10.colour_1c.getY(), manager._10.colour_1c.getZ())
-            .pos(0, sp0x18[0], sp0x28[0])
-            .pos(1, sp0x18[1], sp0x28[1])
-            .pos(2, sp0x18[2], sp0x28[2])
+            .pos(0, xArray[0], yArray[0])
+            .pos(1, xArray[1], yArray[1])
+            .pos(2, xArray[2], yArray[2])
           );
         }
       }
@@ -605,13 +606,13 @@ public final class Bttl_800d {
 
     //LAB_800d1ac4
     for(int rayNum = 0; rayNum < rayCount; rayNum++) {
-      rayArray.get(rayNum)._00.set(1);
-      rayArray.get(rayNum)._02.set((short)(seed_800fa754.advance().get() % 4097));
-      rayArray.get(rayNum)._04.set((short)0x10);
-      rayArray.get(rayNum)._06.set((short)(seed_800fa754.advance().get() % 31));
-      rayArray.get(rayNum)._08.set((short)(seed_800fa754.advance().get() % 21 + 10));
-      rayArray.get(rayNum)._0a.set((short)(seed_800fa754.advance().get() % 11 - 5));
-      rayArray.get(rayNum)._0c.set(0);
+      rayArray.get(rayNum).renderRay_00.set(1);
+      rayArray.get(rayNum).angle_02.set((short)(seed_800fa754.advance().get() % 4097));
+      rayArray.get(rayNum).unused_04.set((short)0x10);
+      rayArray.get(rayNum).endpointTranslationMagnitude_06.set((short)(seed_800fa754.advance().get() % 31));
+      rayArray.get(rayNum).endpointTranslationMagnitudeVelocity_08.set((short)(seed_800fa754.advance().get() % 21 + 10));
+      rayArray.get(rayNum).angleModifier_0a.set((short)(seed_800fa754.advance().get() % 11 - 5));
+      rayArray.get(rayNum).unused_0c.set(0);
     }
 
     //LAB_800d1c7c

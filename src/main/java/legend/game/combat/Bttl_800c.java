@@ -345,8 +345,8 @@ public final class Bttl_800c {
 
   public static final Value _800c6cf4 = MEMORY.ref(4, 0x800c6cf4L);
 
-  public static final Value _800c6d94 = MEMORY.ref(2, 0x800c6d94L);
-  public static final Value _800c6dac = MEMORY.ref(2, 0x800c6dacL);
+  public static final ArrayRef<SVECTOR> completedAdditionStarburstTranslationMagnitudes_800c6d94 = MEMORY.ref(2, 0x800c6d94L, ArrayRef.of(SVECTOR.class, 4, 6, SVECTOR::new));
+  public static final ArrayRef<SVECTOR> completedAdditionStarburstAngleModifiers_800c6dac = MEMORY.ref(2, 0x800c6dacL, ArrayRef.of(SVECTOR.class, 4, 6, SVECTOR::new));
 
   /**
    * <ol start="0">
