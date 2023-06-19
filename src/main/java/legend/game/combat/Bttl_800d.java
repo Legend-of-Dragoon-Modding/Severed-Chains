@@ -18,6 +18,7 @@ import legend.core.memory.Method;
 import legend.core.memory.types.CString;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.ShortRef;
+import legend.core.memory.types.UnboundedArrayRef;
 import legend.game.combat.bobj.BattleObject27c;
 import legend.game.combat.deff.Anim;
 import legend.game.combat.deff.Cmb;
@@ -27,6 +28,7 @@ import legend.game.combat.deff.LmbType0;
 import legend.game.combat.effects.AdditionSparksEffect08;
 import legend.game.combat.effects.AdditionSparksEffectInstance4c;
 import legend.game.combat.effects.AdditionStarburstEffect10;
+import legend.game.combat.effects.AdditionStarburstEffectRay10;
 import legend.game.combat.effects.BttlScriptData6cSub13c;
 import legend.game.combat.effects.EffectManagerData6c;
 import legend.game.combat.effects.EffectManagerData6cInner;
@@ -400,7 +402,7 @@ public final class Bttl_800d {
             .pos(1, endX.get(), endY.get());
 
           //LAB_800d0c84
-          GPU.queueCommand(s7 + a3 >> 2, cmd);
+          // GPU.queueCommand(s7 + a3 >> 2, cmd);
         }
 
         //LAB_800d0ca0
@@ -485,28 +487,28 @@ public final class Bttl_800d {
   @Method(0x800d1220L)
   public static void renderAdditionHitStarburst(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
     final int[] sp0x48 = {-16, 16};
-    final AdditionStarburstEffect10 s7 = (AdditionStarburstEffect10)data.effect_44;
-    long s6 = s7._0c.get();
+    final AdditionStarburstEffect10 starburstEffect = (AdditionStarburstEffect10)data.effect_44;
+    final UnboundedArrayRef<AdditionStarburstEffectRay10> rayArray = starburstEffect.rayArray_0c.deref();
 
     //LAB_800d128c
-    for(int fp = 0; fp < s7.count_04.get(); fp++) {
-      if(MEMORY.ref(1, s6).offset(0x0L).get() != 0) {
+    for(int rayNum = 0; rayNum < starburstEffect.rayCount_04.get(); rayNum++) {
+      if(rayArray.get(rayNum)._00.get() != 0) {
         //LAB_800d12a4
         for(int s5 = 0; s5 < 2; s5++) {
-          int s1 = sp0x48[s5] + (int)MEMORY.ref(2, s6).offset(0xaL).get();
-          int s0 = 30 + (int)MEMORY.ref(2, s6).offset(0x6L).get();
-          int sp18 = rcos(MEMORY.ref(2, s6).offset(0x2L).getSigned() + s1) * s0 >> 12;
-          int sp28 = rsin(MEMORY.ref(2, s6).offset(0x2L).getSigned() + s1) * s0 >> 12;
-          int sp20 = rcos(MEMORY.ref(2, s6).offset(0x2L).getSigned()) * s0 >> 12;
-          int sp30 = rsin(MEMORY.ref(2, s6).offset(0x2L).getSigned()) * s0 >> 12;
-          s1 = sp0x48[s5] + (int)MEMORY.ref(2, s6).offset(0xaL).get();
-          s0 = 210 + (int)MEMORY.ref(2, s6).offset(0x6L).get();
-          final int sp1c = rcos(MEMORY.ref(2, s6).offset(0x2L).getSigned() + s1) * s0 >> 12;
-          final int sp2c = rsin(MEMORY.ref(2, s6).offset(0x2L).getSigned() + s1) * s0 >> 12;
-          final int sp24 = rcos(MEMORY.ref(2, s6).offset(0x2L).getSigned()) * s0 >> 12;
-          final int sp34 = rsin(MEMORY.ref(2, s6).offset(0x2L).getSigned()) * s0 >> 12;
+          int s1 = sp0x48[s5] + (int)rayArray.get(rayNum)._0a.get();
+          int s0 = 30 + (int)rayArray.get(rayNum)._06.get();
+          int sp18 = rcos(rayArray.get(rayNum)._02.get() + s1) * s0 >> 12;
+          int sp28 = rsin(rayArray.get(rayNum)._02.get() + s1) * s0 >> 12;
+          int sp20 = rcos(rayArray.get(rayNum)._02.get()) * s0 >> 12;
+          int sp30 = rsin(rayArray.get(rayNum)._02.get()) * s0 >> 12;
+          s1 = sp0x48[s5] + (int)rayArray.get(rayNum)._0a.get();
+          s0 = 210 + (int)rayArray.get(rayNum)._06.get();
+          final int sp1c = rcos(rayArray.get(rayNum)._02.get() + s1) * s0 >> 12;
+          final int sp2c = rsin(rayArray.get(rayNum)._02.get() + s1) * s0 >> 12;
+          final int sp24 = rcos(rayArray.get(rayNum)._02.get()) * s0 >> 12;
+          final int sp34 = rsin(rayArray.get(rayNum)._02.get()) * s0 >> 12;
           final IntRef[] sp0x50 = {new IntRef(), new IntRef()};
-          FUN_800d1194(data, s7, sp0x50);
+          FUN_800d1194(data, starburstEffect, sp0x50);
           sp18 = sp18 + sp0x50[0].get();
           sp28 = sp28 + sp0x50[1].get();
           sp20 = sp20 + sp0x50[0].get();
@@ -525,69 +527,63 @@ public final class Bttl_800d {
           );
         }
       }
-
       //LAB_800d1538
-      s6 = s6 + 0x10L;
     }
-
     //LAB_800d1558
   }
 
   @Method(0x800d15d8L)
-  public static void renderAdditionCompletedStarburst(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    final AdditionStarburstEffect10 sp80 = (AdditionStarburstEffect10)data.effect_44;
-    long sp84 = sp80._0c.get();
+  public static void renderAdditionCompletedStarburst(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+    final AdditionStarburstEffect10 starburstEffect = (AdditionStarburstEffect10)manager.effect_44;
+    final UnboundedArrayRef<AdditionStarburstEffectRay10> rayArray = starburstEffect.rayArray_0c.deref();
 
     final int[] sp0x18 = new int[3];
     final int[] sp0x28 = new int[3];
 
     //LAB_800d16fc
-    for(int sp78 = 0; sp78 < sp80.count_04.get(); sp78++) {
-      if(MEMORY.ref(1, sp84).offset(0x0L).get() != 0) {
-        MEMORY.ref(2, sp84).offset(0x6L).addu(MEMORY.ref(2, sp84).offset(0x8L).get());
+    for(int rayNum = 0; rayNum < starburstEffect.rayCount_04.get(); rayNum++) {
+      if(rayArray.get(rayNum)._00.get() != 0) {
+        rayArray.get(rayNum)._06.add(rayArray.get(rayNum)._08.get());
 
         //LAB_800d1728
         for(int s7 = 0; s7 < 4; s7++) {
           final IntRef[] sp0x38 = {new IntRef(), new IntRef()};
-          FUN_800d1194(data, sp80, sp0x38);
+          FUN_800d1194(manager, starburstEffect, sp0x38);
 
           //LAB_800d174c
           for(int s4 = 0; s4 < 3; s4++) {
-            final int s0 = (int)Math.max(0, _800c6d94.offset(s7 * 0x6L).offset(s4 * 0x2L).get() - MEMORY.ref(2, sp84).offset(0x6L).get());
+            final int s0 = (int)Math.max(0, _800c6d94.offset(s7 * 0x6L).offset(s4 * 0x2L).get() - rayArray.get(rayNum)._06.get());
 
             //LAB_800d1784
             final long s2 = _800c6dac.offset(s7 * 0x6L).offset(s4 * 0x2L).getAddress();
-            sp0x18[s4] = (rcos(MEMORY.ref(2, sp84).offset(0x2L).getSigned() + MEMORY.ref(2, s2).offset(0x0L).getSigned()) * s0 >> 12) + sp0x38[0].get();
-            sp0x28[s4] = (rsin(MEMORY.ref(2, sp84).offset(0x2L).getSigned() + MEMORY.ref(2, s2).offset(0x0L).getSigned()) * s0 >> 12) + sp0x38[1].get();
+            sp0x18[s4] = (rcos(rayArray.get(rayNum)._02.get() + MEMORY.ref(2, s2).offset(0x0L).getSigned()) * s0 >> 12) + sp0x38[0].get();
+            sp0x28[s4] = (rsin(rayArray.get(rayNum)._02.get() + MEMORY.ref(2, s2).offset(0x0L).getSigned()) * s0 >> 12) + sp0x38[1].get();
           }
 
           GPU.queueCommand(30, new GpuCommandPoly(3)
             .translucent(Translucency.B_PLUS_F)
             .monochrome(0, 0)
             .monochrome(1, 0)
-            .rgb(2, data._10.colour_1c.getX(), data._10.colour_1c.getY(), data._10.colour_1c.getZ())
+            .rgb(2, manager._10.colour_1c.getX(), manager._10.colour_1c.getY(), manager._10.colour_1c.getZ())
             .pos(0, sp0x18[0], sp0x28[0])
             .pos(1, sp0x18[1], sp0x28[1])
             .pos(2, sp0x18[2], sp0x28[2])
           );
         }
       }
-
       //LAB_800d190c
-      sp84 = sp84 + 0x10L;
     }
-
     //LAB_800d1940
   }
 
   @Method(0x800d19c0L)
   public static void deallocateAdditionStarburstEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    free(((AdditionStarburstEffect10)data.effect_44)._0c.get());
+    free(((AdditionStarburstEffect10)data.effect_44).rayArray_0c.getPointer());
   }
 
   @Method(0x800d19ecL)
   public static FlowControl allocateAdditionStarburstEffect(final RunningScript<? extends BattleScriptDataBase> script) {
-    final int count = script.params_20[2].get();
+    final int rayCount = script.params_20[2].get();
 
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "AdditionStarburstEffect10",
@@ -601,22 +597,21 @@ public final class Bttl_800d {
 
     final EffectManagerData6c manager = state.innerStruct_00;
     final AdditionStarburstEffect10 effect = (AdditionStarburstEffect10)manager.effect_44;
-    long t4 = mallocTail(count * 0x10L);
     effect.scriptIndex_00.set(script.params_20[1].get());
-    effect.count_04.set(count);
-    effect._08.set(0);
-    effect._0c.set(t4);
+    effect.rayCount_04.set(rayCount);
+    effect.unused_08.set(0);
+    final UnboundedArrayRef<AdditionStarburstEffectRay10> rayArray = MEMORY.ref(4, mallocTail(rayCount * 0x10L), UnboundedArrayRef.of(0x10, AdditionStarburstEffectRay10::new, effect.rayCount_04::get));
+    effect.rayArray_0c.set(rayArray);
 
     //LAB_800d1ac4
-    for(int i = 0; i < count; i++) {
-      MEMORY.ref(1, t4).offset(0x0L).setu(0x1L);
-      MEMORY.ref(2, t4).offset(0x2L).setu(seed_800fa754.advance().get() % 4097);
-      MEMORY.ref(2, t4).offset(0x4L).setu(0x10L);
-      MEMORY.ref(2, t4).offset(0x6L).setu(seed_800fa754.advance().get() % 31);
-      MEMORY.ref(2, t4).offset(0x8L).setu(seed_800fa754.advance().get() % 21 + 10);
-      MEMORY.ref(2, t4).offset(0xaL).setu(seed_800fa754.advance().get() % 11 - 5);
-      MEMORY.ref(4, t4).offset(0xcL).setu(0);
-      t4 = t4 + 0x10L;
+    for(int rayNum = 0; rayNum < rayCount; rayNum++) {
+      rayArray.get(rayNum)._00.set(1);
+      rayArray.get(rayNum)._02.set((short)(seed_800fa754.advance().get() % 4097));
+      rayArray.get(rayNum)._04.set((short)0x10);
+      rayArray.get(rayNum)._06.set((short)(seed_800fa754.advance().get() % 31));
+      rayArray.get(rayNum)._08.set((short)(seed_800fa754.advance().get() % 21 + 10));
+      rayArray.get(rayNum)._0a.set((short)(seed_800fa754.advance().get() % 11 - 5));
+      rayArray.get(rayNum)._0c.set(0);
     }
 
     //LAB_800d1c7c
