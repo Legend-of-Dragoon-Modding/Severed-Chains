@@ -72,6 +72,10 @@ public class RenderEngine {
     return this.window;
   }
 
+  public Context context() {
+    return this.ctx;
+  }
+
   public Camera camera() {
     return this.camera;
   }

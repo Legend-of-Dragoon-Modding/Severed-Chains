@@ -27,6 +27,8 @@ import static org.lwjgl.opengl.GL20C.GL_SHADING_LANGUAGE_VERSION;
 public class Context {
   private static final Logger LOGGER = LogManager.getLogger(Context.class.getName());
 
+  private static final float FOV = (float)(Math.PI / 4.0f);
+
   public final Camera camera;
   private final Matrix4f proj = new Matrix4f();
   private final Shader.UniformBuffer transforms;
@@ -88,6 +90,12 @@ public class Context {
     glClear(GL_COLOR_BUFFER_BIT);
   }
 
+  public void setTransforms(final Camera camera, final Matrix4f projection) {
+    camera.get(this.transformsBuffer);
+    projection.get(16, this.transformsBuffer);
+    this.transforms.set(this.transformsBuffer);
+  }
+
   private void draw() {
     glViewport(0, 0, this.width, this.height);
     this.pre();
@@ -96,9 +104,8 @@ public class Context {
 
   private void pre() {
     // Update global transforms
-    this.camera.get(this.transformsBuffer);
-    this.proj.get(16, this.transformsBuffer);
-    this.transforms.set(this.transformsBuffer);
+    this.proj.setPerspectiveLH(FOV, (float)this.width / this.height, 0.1f, 500.0f);
+    this.setTransforms(this.camera, this.proj);
 
     // Render scene
     this.clear();
@@ -111,7 +118,5 @@ public class Context {
 
     this.width = width;
     this.height = height;
-
-    this.proj.setPerspectiveLH((float)Math.toRadians(45.0f), (float)width / height, 0.1f, 500.0f);
   }
 }

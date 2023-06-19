@@ -1,6 +1,8 @@
 package legend.game.fmv;
 
 import legend.core.MathHelper;
+import legend.core.opengl.BasicCamera;
+import legend.core.opengl.Camera;
 import legend.core.opengl.Mesh;
 import legend.core.opengl.Shader;
 import legend.core.opengl.ShaderManager;
@@ -14,6 +16,7 @@ import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.joml.Matrix4f;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
@@ -32,7 +35,9 @@ import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.fmvIndex_800bf0dc;
 import static legend.game.Scus94491BpeSegment_800b.fmvStage_800bf0d8;
 import static legend.game.Scus94491BpeSegment_800b.submapIndex_800bd808;
+import static org.lwjgl.opengl.GL11C.GL_CCW;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
+import static org.lwjgl.opengl.GL11C.glFrontFace;
 
 public final class Fmv {
   private Fmv() { }
@@ -250,6 +255,9 @@ public final class Fmv {
     onResize = RENDERER.events().onResize(Fmv::windowResize);
     windowResize(RENDERER.window(), (int)(RENDERER.window().getWidth() * RENDERER.window().getScale()), (int)(RENDERER.window().getHeight() * RENDERER.window().getScale()));
 
+    final Camera orthoCamera = new BasicCamera(0.0f, 0.0f);
+    final Matrix4f orthoProjection = new Matrix4f();
+
     oldRenderer = RENDERER.setRenderCallback(() -> {
       if(Input.pressedThisFrame(InputAction.BUTTON_CENTER_2)
         || Input.pressedThisFrame(InputAction.BUTTON_NORTH) || Input.pressedThisFrame(InputAction.BUTTON_SOUTH)
@@ -447,6 +455,12 @@ public final class Fmv {
         displayTexture = Texture.filteredEmpty(frameHeader.getWidth(), frameHeader.getHeight());
       }
 
+      glFrontFace(GL_CCW);
+
+      final Window window = RENDERER.window();
+      orthoProjection.setOrtho2D(0.0f, window.getWidth(), window.getHeight(), 0.0f);
+      RENDERER.context().setTransforms(orthoCamera, orthoProjection);
+
       simpleShader.use();
       displayTexture.use();
       displayTexture.data(0, 0, frameHeader.getWidth(), frameHeader.getHeight(), framePixels);
@@ -502,25 +516,25 @@ public final class Fmv {
     }
 
     final float aspect = 4.0f / 3.0f;
-    final float scale = RENDERER.window().getScale();
 
-    final float newAspect = (float)width / height;
+    float w = unscaledWidth;
+    float h = w / aspect;
 
-    final float w;
-    final float h;
-    if(newAspect >= aspect) {
-      w = aspect * scale;
-      h = scale;
-    } else {
-      h = 1.0f / aspect * newAspect * scale;
+    if(h > unscaledHeight) {
+      h = unscaledHeight;
       w = h * aspect;
     }
 
+    final float l = (unscaledWidth - w) / 2;
+    final float t = (unscaledHeight - h) / 2;
+    final float r = l + w;
+    final float b = t + h;
+
     fullScrenMesh = new Mesh(GL_TRIANGLE_STRIP, new float[] {
-      -w, -h, 1.0f, 0, 1,
-      -w,  h, 1.0f, 0, 0,
-       w, -h, 1.0f, 1, 1,
-       w,  h, 1.0f, 1, 0,
+      l, t, 1.0f, 0, 0,
+      l, b, 1.0f, 0, 1,
+      r, t, 1.0f, 1, 0,
+      r, b, 1.0f, 1, 1,
     }, 4);
     fullScrenMesh.attribute(0, 0L, 3, 5);
     fullScrenMesh.attribute(1, 3L, 2, 5);

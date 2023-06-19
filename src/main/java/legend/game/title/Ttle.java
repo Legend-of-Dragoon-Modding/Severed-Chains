@@ -689,7 +689,7 @@ public final class Ttle {
 
   private static void addInputHandlers() {
     onMouseMove = RENDERER.events().onMouseMove((window, x, y) -> {
-      final float aspect = (float)GPU.getDisplayTextureWidth() / GPU.getDisplayTextureHeight();
+      final float aspect = 4.0f / 3.0f;
 
       float w = window.getWidth();
       float h = w / aspect;
@@ -737,7 +737,7 @@ public final class Ttle {
       if(menuLoadingStage < 3) {
         menuLoadingStage = 3;
       } else {
-        final float aspect = (float)GPU.getDisplayTextureWidth() / GPU.getDisplayTextureHeight();
+        final float aspect = 4.0f / 3.0f;
 
         float w = window.getWidth();
         float h = w / aspect;

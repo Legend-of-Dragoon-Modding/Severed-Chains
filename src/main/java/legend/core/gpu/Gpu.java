@@ -2,15 +2,19 @@ package legend.core.gpu;
 
 import legend.core.Config;
 import legend.core.MathHelper;
+import legend.core.opengl.BasicCamera;
+import legend.core.opengl.Camera;
 import legend.core.opengl.Mesh;
 import legend.core.opengl.Shader;
 import legend.core.opengl.Texture;
+import legend.core.opengl.Window;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.coremod.config.RenderScaleConfigEntry;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.joml.Matrix4f;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -30,7 +34,9 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_EQUAL;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_MINUS;
 import static org.lwjgl.glfw.GLFW.GLFW_MOD_CONTROL;
 import static org.lwjgl.glfw.GLFW.glfwGetCurrentContext;
+import static org.lwjgl.opengl.GL11C.GL_CCW;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
+import static org.lwjgl.opengl.GL11C.glFrontFace;
 
 public class Gpu {
   private static final Logger LOGGER = LogManager.getFormatterLogger();
@@ -69,6 +75,9 @@ public class Gpu {
   private LinkedList<GpuCommand>[] zQueues;
 
   private boolean displayChanged;
+
+  private final Camera orthoCamera = new BasicCamera(0.0f, 0.0f);
+  private final Matrix4f orthoProjection = new Matrix4f();
 
   public int getDrawBufferIndex() {
     return this.drawBufferIndex;
@@ -156,25 +165,25 @@ public class Gpu {
     }
 
     final float aspect = 4.0f / 3.0f;
-    final float scale = RENDERER.window().getScale();
 
-    final float newAspect = (float)width / height;
+    float w = width;
+    float h = w / aspect;
 
-    final float w;
-    final float h;
-    if(newAspect >= aspect) {
-      w = aspect * scale;
-      h = scale;
-    } else {
-      h = 1.0f / aspect * newAspect * scale;
+    if(h > height) {
+      h = height;
       w = h * aspect;
     }
 
+    final float l = (width - w) / 2;
+    final float t = (height - h) / 2;
+    final float r = l + w;
+    final float b = t + h;
+
     this.displayMesh = new Mesh(GL_TRIANGLE_STRIP, new float[] {
-      -w, -h, 1.0f, 0, 1,
-      -w,  h, 1.0f, 0, 0,
-       w, -h, 1.0f, 1, 1,
-       w,  h, 1.0f, 1, 0,
+      l, t, 1.0f, 0, 0,
+      l, b, 1.0f, 0, 1,
+      r, t, 1.0f, 1, 0,
+      r, b, 1.0f, 1, 1,
     }, 4);
     this.displayMesh.attribute(0, 0L, 3, 5);
     this.displayMesh.attribute(1, 3L, 2, 5);
@@ -456,6 +465,12 @@ public class Gpu {
   }
 
   public void drawMesh() {
+    glFrontFace(GL_CCW);
+
+    final Window window = RENDERER.window();
+    this.orthoProjection.setOrtho2D(0.0f, window.getWidth(), window.getHeight(), 0.0f);
+    RENDERER.context().setTransforms(this.orthoCamera, this.orthoProjection);
+
     this.vramShader.use();
     this.displayTexture.use();
     this.displayMesh.draw();
