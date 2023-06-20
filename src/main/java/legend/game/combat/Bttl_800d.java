@@ -30,11 +30,12 @@ import legend.game.combat.effects.AdditionStarburstEffect10;
 import legend.game.combat.effects.BttlScriptData6cSub13c;
 import legend.game.combat.effects.EffectManagerData6c;
 import legend.game.combat.effects.EffectManagerData6cInner;
+import legend.game.combat.effects.GenericSpriteEffectAnimState30;
 import legend.game.combat.effects.GuardEffect06;
 import legend.game.combat.effects.MonsterDeathEffect34;
-import legend.game.combat.effects.RadialGradientEffect14;
 import legend.game.combat.effects.ProjectileHitEffect14;
 import legend.game.combat.effects.ProjectileHitEffect14Sub48;
+import legend.game.combat.effects.RadialGradientEffect14;
 import legend.game.combat.environment.BattleCamera;
 import legend.game.combat.types.AdditionCharEffectData0c;
 import legend.game.combat.types.AdditionScriptData1c;
@@ -939,24 +940,21 @@ public final class Bttl_800d {
   @Method(0x800d30c0L)
   public static void monsterDeathEffectRenderer(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
     final MonsterDeathEffect34 s1 = (MonsterDeathEffect34)data.effect_44;
-    long s2 = s1.ptr_30.get();
+    GenericSpriteEffectAnimState30[] s2 = s1.animStateArray_30;
 
     //LAB_800d30fc
-    for(int animIndex = 0; animIndex < s1.animCount_04.get(); animIndex++) {
-      if(MEMORY.ref(1, s2).offset(0x0L).getSigned() == 0x1L) {
-        s1._0c.r_14.set((int)(MEMORY.ref(2, s2).offset(0x24L).get() >>> 8));
-        s1._0c.g_15.set((int)(MEMORY.ref(2, s2).offset(0x26L).get() >>> 8));
-        s1._0c.b_16.set((int)(MEMORY.ref(2, s2).offset(0x28L).get() >>> 8));
-        s1._0c.rotation_20.set((int)MEMORY.ref(4, s2).offset(0x0cL).get());
-        s1._0c.scaleX_1c.set((short)(data._10.scale_16.getX() + MEMORY.ref(2, s2).offset(0x04L).get()));
-        s1._0c.scaleY_1e.set((short)(data._10.scale_16.getY() + MEMORY.ref(2, s2).offset(0x04L).get()));
-        FUN_800e7ea4(s1._0c, MEMORY.ref(4, s2 + 0x14L, VECTOR::new));
+    for(int animIndex = 0; animIndex < s1.animCount_04; animIndex++) {
+      if(s2[animIndex]._00 == 1) {
+        s1.sprite_0c.r_14 = s2[animIndex].r_24 >>> 8;
+        s1.sprite_0c.g_15 = s2[animIndex].g_26 >>> 8;
+        s1.sprite_0c.b_16 = s2[animIndex].b_28 >>> 8;
+        s1.sprite_0c.rotation_20 = s2[animIndex]._0c;
+        s1.sprite_0c.scaleX_1c = (short)(data._10.scale_16.getX() + s2[animIndex]._04);
+        s1.sprite_0c.scaleY_1e = (short)(data._10.scale_16.getY() + s2[animIndex]._04);
+        FUN_800e7ea4(s1.sprite_0c, s2[animIndex].translation_14);
       }
-
       //LAB_800d3174
-      s2 = s2 + 0x30L;
     }
-
     //LAB_800d3190
   }
 
@@ -964,111 +962,105 @@ public final class Bttl_800d {
   public static void monsterDeathEffectTicker(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
     final MonsterDeathEffect34 s1 = (MonsterDeathEffect34)data.effect_44;
 
-    s1._02.decr();
-    if(s1._02.get() == 0) {
+    s1._02--;
+    if(s1._02 == 0) {
       state.deallocateWithChildren();
     } else {
       //LAB_800d320c
-      long s2 = s1.ptr_30.get();
-      s1._00.add((short)2);
+      GenericSpriteEffectAnimState30[] s2 = s1.animStateArray_30;
+      s1._00 += 2;
 
       //LAB_800d322c
-      for(int animIndex = 0; animIndex < s1.animCount_04.get(); animIndex++) {
-        if(s1._00.get() >= animIndex + 1 && MEMORY.ref(1, s2).offset(0x0L).getSigned() == -1) {
-          MEMORY.ref(1, s2).offset(0x0L).setu(0x1L);
-          MEMORY.ref(1, s2).offset(0x1L).setu(0x8L);
-          MEMORY.ref(4, s2).offset(0x10L).setu(0);
-          MEMORY.ref(4, s2).offset(0x04L).setu(0);
-          MEMORY.ref(4, s2).offset(0x0cL).setu(seed_800fa754.advance().get() % 4097);
-          MEMORY.ref(4, s2).offset(0x08L).setu(seed_800fa754.advance().get() % 49 + 104);
-          MEMORY.ref(2, s2).offset(0x24L).setu(data._10.colour_1c.getX() << 8);
-          MEMORY.ref(2, s2).offset(0x26L).setu(data._10.colour_1c.getY() << 8);
-          MEMORY.ref(2, s2).offset(0x28L).setu(data._10.colour_1c.getZ() << 8);
-          MEMORY.ref(2, s2).offset(0x2aL).setu(MEMORY.ref(2, s2).offset(0x24L).get() / MEMORY.ref(1, s2).offset(0x01L).getSigned());
-          MEMORY.ref(2, s2).offset(0x2cL).setu(MEMORY.ref(2, s2).offset(0x26L).get() / MEMORY.ref(1, s2).offset(0x01L).getSigned());
-          MEMORY.ref(2, s2).offset(0x2eL).setu(MEMORY.ref(2, s2).offset(0x28L).get() / MEMORY.ref(1, s2).offset(0x01L).getSigned());
+      for(int animIndex = 0; animIndex < s1.animCount_04; animIndex++) {
+        if(s1._00 >= animIndex + 1 && s2[animIndex]._00 == -1) {
+          s2[animIndex]._00 = 1;
+          s2[animIndex].stepCount_01 = 8;
+          s2[animIndex]._10 = 0;
+          s2[animIndex]._04 = 0;
+          s2[animIndex]._0c = (int)(seed_800fa754.advance().get() % 4097);
+          s2[animIndex]._08 = (int)(seed_800fa754.advance().get() % 49 + 104);
+          s2[animIndex].r_24 = data._10.colour_1c.getX() << 8;
+          s2[animIndex].g_26 = data._10.colour_1c.getY() << 8;
+          s2[animIndex].b_28 = data._10.colour_1c.getZ() << 8;
+          s2[animIndex].stepR_2a = s2[animIndex].r_24 / s2[animIndex].stepCount_01;
+          s2[animIndex].stepG_2c = s2[animIndex].g_26 / s2[animIndex].stepCount_01;
+          s2[animIndex].stepB_2e = s2[animIndex].b_28 / s2[animIndex].stepCount_01;
           final VECTOR sp0x10 = new VECTOR();
-          FUN_800cffd8(s1.scriptIndex_08.get(), sp0x10, animIndex);
-          MEMORY.ref(4, s2).offset(0x14L).setu(sp0x10.getX());
-          MEMORY.ref(4, s2).offset(0x18L).setu(sp0x10.getY());
-          MEMORY.ref(4, s2).offset(0x1cL).setu(sp0x10.getZ());
-          FUN_800d0094(s1.scriptIndex_08.get(), animIndex, false);
+          FUN_800cffd8(s1.scriptIndex_08, sp0x10, animIndex);
+          s2[animIndex].translation_14.set(sp0x10);
+          FUN_800d0094(s1.scriptIndex_08, animIndex, false);
         }
 
         //LAB_800d33d0
-        if(MEMORY.ref(1, s2).offset(0x00L).getSigned() > 0) {
-          MEMORY.ref(1, s2).offset(0x01L).subu(0x1L);
+        if(s2[animIndex]._00 > 0) {
+          s2[animIndex].stepCount_01--;
 
-          if(MEMORY.ref(1, s2).offset(0x01L).get() == 0) {
-            MEMORY.ref(1, s2).offset(0x00L).setu(0);
+          if(s2[animIndex].stepCount_01 == 0) {
+            s2[animIndex]._00 = 0;
           }
 
           //LAB_800d3400
-          MEMORY.ref(4, s2).offset(0x0cL).addu(MEMORY.ref(4, s2).offset(0x10L).get());
-          MEMORY.ref(2, s2).offset(0x24L).subu(MEMORY.ref(2, s2).offset(0x2aL).get());
-          MEMORY.ref(2, s2).offset(0x26L).subu(MEMORY.ref(2, s2).offset(0x2cL).get());
-          MEMORY.ref(2, s2).offset(0x28L).subu(MEMORY.ref(2, s2).offset(0x2eL).get());
-          MEMORY.ref(4, s2).offset(0x04L).addu(MEMORY.ref(4, s2).offset(0x08L).get());
+          s2[animIndex]._0c +=  s2[animIndex]._10;
+          s2[animIndex].r_24 -= s2[animIndex].stepR_2a;
+          s2[animIndex].g_26 -= s2[animIndex].stepG_2c;
+          s2[animIndex].b_28 -= s2[animIndex].stepB_2e;
+          s2[animIndex]._04 +=  s2[animIndex]._08;
         }
-
         //LAB_800d3450
-        s2 = s2 + 0x30L;
       }
     }
-
     //LAB_800d346c
   }
 
   @Method(0x800d3490L)
   public static void deallocateMonsterDeathEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    free(((MonsterDeathEffect34)data.effect_44).ptr_30.get());
+    ((MonsterDeathEffect34)data.effect_44).animStateArray_30 = null;
   }
 
   @Method(0x800d34bcL)
   public static FlowControl allocateMonsterDeathEffect(final RunningScript<? extends BattleScriptDataBase> script) {
+    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00;
+    final int animCount = bobj.model_148.partCount_98;
+
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "MonsterDeathEffect34",
       script.scriptState_04,
-      0x34,
+      0,
       Bttl_800d::monsterDeathEffectTicker,
       Bttl_800d::monsterDeathEffectRenderer,
       Bttl_800d::deallocateMonsterDeathEffect,
-      MonsterDeathEffect34::new
+      value -> new MonsterDeathEffect34(animCount)
     );
 
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00;
-    final int animCount = bobj.model_148.partCount_98;
     final EffectManagerData6c manager = state.innerStruct_00;
     final MonsterDeathEffect34 effect = (MonsterDeathEffect34)manager.effect_44;
-    long s4 = mallocTail(animCount * 0x30L);
-    effect.ptr_30.set(s4); //TODO
-    effect._00.set((short)0);
-    effect._02.set(animCount + 8);
-    effect.animCount_04.set(animCount);
-    effect._06.set(0);
-    effect.scriptIndex_08.set(script.params_20[1].get());
+
+    effect._00 = 0;
+    effect._02 = animCount + 8;
+    effect.unused_06 = 0;
+    effect.scriptIndex_08 = script.params_20[1].get();
 
     //LAB_800d35a0
-    for(int animIndex = 0; animIndex < effect.animCount_04.get(); animIndex++) {
-      FUN_800d0094(effect.scriptIndex_08.get(), animIndex, true);
-      MEMORY.ref(1, s4).offset(0x0L).setu(-0x1L);
-      s4 = s4 + 0x30L;
+    final GenericSpriteEffectAnimState30[] animStateArray = effect.animStateArray_30;
+    for(int animIndex = 0; animIndex < effect.animCount_04; animIndex++) {
+      FUN_800d0094(effect.scriptIndex_08, animIndex, true);
+      animStateArray[animIndex]._00 = -1;
     }
 
     //LAB_800d35cc
     final SpriteMetrics08 metrics = spriteMetrics_800c6948[script.params_20[2].get() & 0xff];
-    effect._0c.flags_00.set(manager._10.flags_00 & 0xffff_ffffL);
-    effect._0c.w_08.set(metrics.w_04.get());
-    effect._0c.h_0a.set(metrics.h_05.get());
-    effect._0c.x_04.set((short)(-effect._0c.w_08.get() >> 1));
-    effect._0c.y_06.set((short)(-effect._0c.h_0a.get() >> 1));
-    effect._0c.tpage_0c.set((metrics.v_02.get() & 0x100) >>> 4 | (metrics.u_00.get() & 0x3ff) >>> 6);
-    effect._0c.u_0e.set((metrics.u_00.get() & 0x3f) * 4);
-    effect._0c.v_0f.set(metrics.v_02.get());
-    effect._0c.clutX_10.set(metrics.clut_06.get() << 4 & 0x3ff);
-    effect._0c.clutY_12.set(metrics.clut_06.get() >>> 6 & 0x1ff);
-    effect._0c._18.set((short)0);
-    effect._0c._1a.set((short)0);
+    effect.sprite_0c.flags_00 = manager._10.flags_00 & 0xffff_ffffL;
+    effect.sprite_0c.w_08 = metrics.w_04.get();
+    effect.sprite_0c.h_0a = metrics.h_05.get();
+    effect.sprite_0c.x_04 = (short)(-effect.sprite_0c.w_08 >> 1);
+    effect.sprite_0c.y_06 = (short)(-effect.sprite_0c.h_0a >> 1);
+    effect.sprite_0c.tpage_0c = (metrics.v_02.get() & 0x100) >>> 4 | (metrics.u_00.get() & 0x3ff) >>> 6;
+    effect.sprite_0c.u_0e = (metrics.u_00.get() & 0x3f) * 4;
+    effect.sprite_0c.v_0f = metrics.v_02.get();
+    effect.sprite_0c.clutX_10 = metrics.clut_06.get() << 4 & 0x3ff;
+    effect.sprite_0c.clutY_12 = metrics.clut_06.get() >>> 6 & 0x1ff;
+    effect.sprite_0c.unused_18 = 0;
+    effect.sprite_0c.unused_1a = 0;
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }

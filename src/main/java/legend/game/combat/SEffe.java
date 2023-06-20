@@ -49,7 +49,7 @@ import legend.game.combat.effects.AdditionOverlaysBorder0e;
 import legend.game.combat.effects.AdditionOverlaysEffect44;
 import legend.game.combat.effects.AdditionOverlaysHit20;
 import legend.game.combat.effects.AttackHitFlashEffect0c;
-import legend.game.combat.effects.BattleStruct24;
+import legend.game.combat.effects.GenericSpriteEffect24;
 import legend.game.combat.effects.BttlScriptData6cSub10_2;
 import legend.game.combat.effects.BttlScriptData6cSub13c;
 import legend.game.combat.effects.BttlScriptData6cSub14_4;
@@ -5905,20 +5905,20 @@ public final class SEffe {
     final BttlScriptData6cSub14_4 effect = (BttlScriptData6cSub14_4)manager.effect_44;
     effect._02.incr();
 
-    final BattleStruct24 sp0x10 = new BattleStruct24();
+    final GenericSpriteEffect24 sp0x10 = new GenericSpriteEffect24();
 
-    sp0x10.flags_00.set(manager._10.flags_00);
-    sp0x10.x_04.set((short)(-effect.width_0a.get() / 2));
-    sp0x10.y_06.set((short)(-effect.height_0c.get() / 2));
-    sp0x10.w_08.set(effect.width_0a.get());
-    sp0x10.h_0a.set(effect.height_0c.get());
-    sp0x10.tpage_0c.set((effect.v_08.get() & 0x100) >>> 4 | (effect.u_06.get() & 0x3ff) >>> 6);
-    sp0x10.u_0e.set((effect.u_06.get() & 0x3f) * 4);
-    sp0x10.v_0f.set(effect.v_08.get());
-    sp0x10.clutX_10.set(effect.clut_0e.get() << 4 & 0x3ff);
-    sp0x10.clutY_12.set(effect.clut_0e.get() >>> 6 & 0x1ff);
-    sp0x10._18.set((short)0);
-    sp0x10._1a.set((short)0);
+    sp0x10.flags_00 = manager._10.flags_00;
+    sp0x10.x_04 = (short)(-effect.width_0a.get() / 2);
+    sp0x10.y_06 = (short)(-effect.height_0c.get() / 2);
+    sp0x10.w_08 = effect.width_0a.get();
+    sp0x10.h_0a = effect.height_0c.get();
+    sp0x10.tpage_0c = (effect.v_08.get() & 0x100) >>> 4 | (effect.u_06.get() & 0x3ff) >>> 6;
+    sp0x10.u_0e = (effect.u_06.get() & 0x3f) * 4;
+    sp0x10.v_0f = effect.v_08.get();
+    sp0x10.clutX_10 = effect.clut_0e.get() << 4 & 0x3ff;
+    sp0x10.clutY_12 = effect.clut_0e.get() >>> 6 & 0x1ff;
+    sp0x10.unused_18 = 0;
+    sp0x10.unused_1a = 0;
 
     final VECTOR sp0x38 = new VECTOR();
 
@@ -5928,20 +5928,20 @@ public final class SEffe {
 
       if(s3._00.get() != 0) {
         if(s3._38.get() == 0x7f && s3._39.get() == 0x7f && s3._3a.get() == 0x7f) {
-          sp0x10.r_14.set(manager._10.colour_1c.getX());
-          sp0x10.g_15.set(manager._10.colour_1c.getY());
-          sp0x10.b_16.set(manager._10.colour_1c.getZ());
+          sp0x10.r_14 = manager._10.colour_1c.getX();
+          sp0x10.g_15 = manager._10.colour_1c.getY();
+          sp0x10.b_16 = manager._10.colour_1c.getZ();
         } else {
           //LAB_8010d718
-          sp0x10.r_14.set(s3._38.get());
-          sp0x10.g_15.set(s3._39.get());
-          sp0x10.b_16.set(s3._3a.get());
+          sp0x10.r_14 = s3._38.get();
+          sp0x10.g_15 = s3._39.get();
+          sp0x10.b_16 = s3._3a.get();
         }
 
         //LAB_8010d73c
-        sp0x10.scaleX_1c.set(manager._10.scale_16.getX());
-        sp0x10.scaleY_1e.set(manager._10.scale_16.getY());
-        sp0x10.rotation_20.set(s3._6e.get());
+        sp0x10.scaleX_1c = manager._10.scale_16.getX();
+        sp0x10.scaleY_1e = manager._10.scale_16.getY();
+        sp0x10.rotation_20 = s3._6e.get();
         sp0x38.setX(manager._10.trans_04.getX() + (s3._08.get() >> 8));
         sp0x38.setY(manager._10.trans_04.getY() + (s3._0c.get() >> 8));
         sp0x38.setZ(manager._10.trans_04.getZ() + (s3._10.get() >> 8));
@@ -6345,19 +6345,19 @@ public final class SEffe {
   public static void FUN_8010ec08(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
     final BttlScriptData6cSub18 effect = (BttlScriptData6cSub18)manager.effect_44;
 
-    final BattleStruct24 sp0x10 = new BattleStruct24();
-    sp0x10.flags_00.set(manager._10.flags_00 & 0xffff_ffffL);
-    sp0x10.x_04.set((short)(-effect.metrics_04.w_04.get() / 2));
-    sp0x10.y_06.set((short)(-effect.metrics_04.h_05.get() / 2));
-    sp0x10.w_08.set(effect.metrics_04.w_04.get());
-    sp0x10.h_0a.set(effect.metrics_04.h_05.get());
-    sp0x10.tpage_0c.set((effect.metrics_04.v_02.get() & 0x100) >>> 4 | (effect.metrics_04.u_00.get() & 0x3ff) >>> 6);
-    sp0x10.u_0e.set((effect.metrics_04.u_00.get() & 0x3f) << 2);
-    sp0x10.v_0f.set(effect.metrics_04.v_02.get());
-    sp0x10.clutX_10.set(effect.metrics_04.clut_06.get() << 4 & 0x3ff);
-    sp0x10.clutY_12.set(effect.metrics_04.clut_06.get() >>> 6 & 0x1ff);
-    sp0x10._18.set((short)0);
-    sp0x10._1a.set((short)0);
+    final GenericSpriteEffect24 sp0x10 = new GenericSpriteEffect24();
+    sp0x10.flags_00 = manager._10.flags_00 & 0xffff_ffffL;
+    sp0x10.x_04 = (short)(-effect.metrics_04.w_04.get() / 2);
+    sp0x10.y_06 = (short)(-effect.metrics_04.h_05.get() / 2);
+    sp0x10.w_08 = effect.metrics_04.w_04.get();
+    sp0x10.h_0a = effect.metrics_04.h_05.get();
+    sp0x10.tpage_0c = (effect.metrics_04.v_02.get() & 0x100) >>> 4 | (effect.metrics_04.u_00.get() & 0x3ff) >>> 6;
+    sp0x10.u_0e = (effect.metrics_04.u_00.get() & 0x3f) << 2;
+    sp0x10.v_0f = effect.metrics_04.v_02.get();
+    sp0x10.clutX_10 = effect.metrics_04.clut_06.get() << 4 & 0x3ff;
+    sp0x10.clutY_12 = effect.metrics_04.clut_06.get() >>> 6 & 0x1ff;
+    sp0x10.unused_18 = 0;
+    sp0x10.unused_1a = 0;
 
     final VECTOR sp0x38 = new VECTOR();
 
@@ -6369,12 +6369,12 @@ public final class SEffe {
         break;
       }
 
-      sp0x10.r_14.set(manager._10.colour_1c.getX());
-      sp0x10.g_15.set(manager._10.colour_1c.getY());
-      sp0x10.b_16.set(manager._10.colour_1c.getZ());
-      sp0x10.scaleX_1c.set(manager._10.scale_16.getX());
-      sp0x10.scaleY_1e.set(manager._10.scale_16.getY());
-      sp0x10.rotation_20.set(manager._10.rot_10.getX());
+      sp0x10.r_14 = manager._10.colour_1c.getX();
+      sp0x10.g_15 = manager._10.colour_1c.getY();
+      sp0x10.b_16 = manager._10.colour_1c.getZ();
+      sp0x10.scaleX_1c = manager._10.scale_16.getX();
+      sp0x10.scaleY_1e = manager._10.scale_16.getY();
+      sp0x10.rotation_20 = manager._10.rot_10.getX();
       sp0x38.setX(manager._10.trans_04.getX() + v1._04.get());
       sp0x38.setY(manager._10.trans_04.getY() + v1._06.get());
       sp0x38.setZ(manager._10.trans_04.getZ() + v1._08.get());

@@ -31,7 +31,7 @@ import legend.game.combat.deff.BattleStruct24_2;
 import legend.game.combat.deff.DeffManager7cc;
 import legend.game.combat.deff.DeffPart;
 import legend.game.combat.effects.AttackHitFlashEffect0c;
-import legend.game.combat.effects.BattleStruct24;
+import legend.game.combat.effects.GenericSpriteEffect24;
 import legend.game.combat.effects.BttlScriptData6cSub13c;
 import legend.game.combat.effects.BttlScriptData6cSub1c;
 import legend.game.combat.effects.BttlScriptData6cSub20;
@@ -1495,7 +1495,7 @@ public final class Bttl_800e {
 
   /** Used in Astral Drain */
   @Method(0x800e75acL)
-  public static void FUN_800e75ac(final BattleStruct24 a0, final MATRIX a1) {
+  public static void FUN_800e75ac(final GenericSpriteEffect24 spriteEffect, final MATRIX a1) {
     final MATRIX sp0x40 = new MATRIX();
     FUN_8003ec90(worldToScreenMatrix_800c3548, a1, sp0x40);
     final int z = Math.min(0x3ff8, zOffset_1f8003e8.get() + sp0x40.transfer.getZ() / 4);
@@ -1510,10 +1510,10 @@ public final class Bttl_800e {
       CPU.CTC2(sp0x40.transfer.getX(), 5);
       CPU.CTC2(sp0x40.transfer.getY(), 6);
       CPU.CTC2(sp0x40.transfer.getZ(), 7);
-      final SVECTOR sp0x10 = new SVECTOR().set((short)(a0.x_04.get() * 64), (short)(a0.y_06.get() * 64), (short)0);
-      final SVECTOR sp0x18 = new SVECTOR().set((short)((a0.x_04.get() + a0.w_08.get()) * 64), (short)(a0.y_06.get() * 64), (short)0);
-      final SVECTOR sp0x20 = new SVECTOR().set((short)(a0.x_04.get() * 64), (short)((a0.y_06.get() + a0.h_0a.get()) * 64), (short)0);
-      final SVECTOR sp0x28 = new SVECTOR().set((short)((a0.x_04.get() + a0.w_08.get()) * 64), (short)((a0.y_06.get() + a0.h_0a.get()) * 64), (short)0);
+      final SVECTOR sp0x10 = new SVECTOR().set((short)(spriteEffect.x_04 * 64), (short)(spriteEffect.y_06 * 64), (short)0);
+      final SVECTOR sp0x18 = new SVECTOR().set((short)((spriteEffect.x_04 + spriteEffect.w_08) * 64), (short)(spriteEffect.y_06 * 64), (short)0);
+      final SVECTOR sp0x20 = new SVECTOR().set((short)(spriteEffect.x_04 * 64), (short)((spriteEffect.y_06 + spriteEffect.h_0a) * 64), (short)0);
+      final SVECTOR sp0x28 = new SVECTOR().set((short)((spriteEffect.x_04 + spriteEffect.w_08) * 64), (short)((spriteEffect.y_06 + spriteEffect.h_0a) * 64), (short)0);
       CPU.MTC2(sp0x10.getXY(), 0);
       CPU.MTC2(sp0x10.getZ(),  1);
       CPU.MTC2(sp0x18.getXY(), 2);
@@ -1530,20 +1530,20 @@ public final class Bttl_800e {
       final DVECTOR sxy3 = new DVECTOR().setXY(CPU.MFC2(14));
 
       final GpuCommandPoly cmd = new GpuCommandPoly(4)
-        .clut(a0.clutX_10.get(), a0.clutY_12.get())
-        .vramPos((a0.tpage_0c.get() & 0b1111) * 64, (a0.tpage_0c.get() & 0b10000) != 0 ? 256 : 0)
-        .rgb(a0.r_14.get(), a0.g_15.get(), a0.b_16.get())
+        .clut(spriteEffect.clutX_10, spriteEffect.clutY_12)
+        .vramPos((spriteEffect.tpage_0c & 0b1111) * 64, (spriteEffect.tpage_0c & 0b10000) != 0 ? 256 : 0)
+        .rgb(spriteEffect.r_14, spriteEffect.g_15, spriteEffect.b_16)
         .pos(0, sxy0.getX(), sxy0.getY())
         .pos(1, sxy1.getX(), sxy1.getY())
         .pos(2, sxy2.getX(), sxy2.getY())
         .pos(3, sxy3.getX(), sxy3.getY())
-        .uv(0, a0.u_0e.get(), a0.v_0f.get())
-        .uv(1, a0.u_0e.get() + a0.w_08.get(), a0.v_0f.get())
-        .uv(2, a0.u_0e.get(), a0.v_0f.get() + a0.h_0a.get())
-        .uv(3, a0.u_0e.get() + a0.w_08.get(), a0.v_0f.get() + a0.h_0a.get());
+        .uv(0, spriteEffect.u_0e, spriteEffect.v_0f)
+        .uv(1, spriteEffect.u_0e + spriteEffect.w_08, spriteEffect.v_0f)
+        .uv(2, spriteEffect.u_0e, spriteEffect.v_0f + spriteEffect.h_0a)
+        .uv(3, spriteEffect.u_0e + spriteEffect.w_08, spriteEffect.v_0f + spriteEffect.h_0a);
 
-      if((a0.flags_00.get() >>> 30 & 1) != 0) {
-        cmd.translucent(Translucency.of((int)a0.flags_00.get() >>> 28 & 0b11));
+      if((spriteEffect.flags_00 >>> 30 & 1) != 0) {
+        cmd.translucent(Translucency.of((int)spriteEffect.flags_00 >>> 28 & 0b11));
       }
 
       GPU.queueCommand(z >> 2, cmd);
@@ -1557,8 +1557,8 @@ public final class Bttl_800e {
    * Used for example for sprite effect overlays on red glow in Death Dimension.
    */
   @Method(0x800e7944L)
-  public static void FUN_800e7944(final BattleStruct24 s1, final VECTOR trans, final int a2) {
-    if((int)s1.flags_00.get() >= 0) {
+  public static void FUN_800e7944(final GenericSpriteEffect24 s1, final VECTOR trans, final int a2) {
+    if((int)s1.flags_00 >= 0) {
       final VECTOR sp0x18 = ApplyMatrixLV(worldToScreenMatrix_800c3548, trans);
       sp0x18.add(worldToScreenMatrix_800c3548.transfer);
 
@@ -1574,28 +1574,28 @@ public final class Bttl_800e {
 
         //LAB_800e7a38
         final int a1 = MathHelper.safeDiv(projectionPlaneDistance_1f8003f8.get() << 10, sp0x18.getZ() >> 2);
-        final int s5 = s1.x_04.get() * s1.scaleX_1c.get() / 8 * a1 / 8 >> 12;
-        final int s7 = s5 + (s1.w_08.get() * s1.scaleX_1c.get() / 8 * a1 / 8 >> 12);
-        final int s2 = s1.y_06.get() * s1.scaleY_1e.get() / 8 * a1 / 8 >> 12;
-        final int fp = s2 + (s1.h_0a.get() * s1.scaleY_1e.get() / 8 * a1 / 8 >> 12);
-        final int sin = rsin(s1.rotation_20.get());
-        final int cos = rcos(s1.rotation_20.get());
+        final int s5 = s1.x_04 * s1.scaleX_1c / 8 * a1 / 8 >> 12;
+        final int s7 = s5 + (s1.w_08 * s1.scaleX_1c / 8 * a1 / 8 >> 12);
+        final int s2 = s1.y_06 * s1.scaleY_1e / 8 * a1 / 8 >> 12;
+        final int fp = s2 + (s1.h_0a * s1.scaleY_1e / 8 * a1 / 8 >> 12);
+        final int sin = rsin(s1.rotation_20);
+        final int cos = rcos(s1.rotation_20);
 
         final GpuCommandPoly cmd = new GpuCommandPoly(4)
-          .clut(s1.clutX_10.get(), s1.clutY_12.get())
-          .vramPos((s1.tpage_0c.get() & 0b1111) * 64, (s1.tpage_0c.get() & 0b10000) != 0 ? 256 : 0)
-          .rgb(s1.r_14.get(), s1.g_15.get(), s1.b_16.get())
+          .clut(s1.clutX_10, s1.clutY_12)
+          .vramPos((s1.tpage_0c & 0b1111) * 64, (s1.tpage_0c & 0b10000) != 0 ? 256 : 0)
+          .rgb(s1.r_14, s1.g_15, s1.b_16)
           .pos(0, x + (s5 * cos >> 12) - (s2 * sin >> 12), y + (s5 * sin >> 12) + (s2 * cos >> 12))
           .pos(1, x + (s7 * cos >> 12) - (s2 * sin >> 12), y + (s7 * sin >> 12) + (s2 * cos >> 12))
           .pos(2, x + (s5 * cos >> 12) - (fp * sin >> 12), y + (s5 * sin >> 12) + (fp * cos >> 12))
           .pos(3, x + (s7 * cos >> 12) - (fp * sin >> 12), y + (s7 * sin >> 12) + (fp * cos >> 12))
-          .uv(0, s1.u_0e.get(), s1.v_0f.get())
-          .uv(1, s1.w_08.get() + s1.u_0e.get() - 1, s1.v_0f.get())
-          .uv(2, s1.u_0e.get(), s1.h_0a.get() + s1.v_0f.get() - 1)
-          .uv(3, s1.w_08.get() + s1.u_0e.get() - 1, s1.h_0a.get() + s1.v_0f.get() - 1);
+          .uv(0, s1.u_0e, s1.v_0f)
+          .uv(1, s1.w_08 + s1.u_0e - 1, s1.v_0f)
+          .uv(2, s1.u_0e, s1.h_0a + s1.v_0f - 1)
+          .uv(3, s1.w_08 + s1.u_0e - 1, s1.h_0a + s1.v_0f - 1);
 
-        if((s1.flags_00.get() & 0x4000_0000) != 0) {
-          cmd.translucent(Translucency.of((int)s1.flags_00.get() >>> 28 & 0b11));
+        if((s1.flags_00 & 0x4000_0000) != 0) {
+          cmd.translucent(Translucency.of((int)s1.flags_00 >>> 28 & 0b11));
         }
 
         GPU.queueCommand(z >> 2, cmd);
@@ -1622,8 +1622,8 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e7ea4L)
-  public static void FUN_800e7ea4(final BattleStruct24 a0, final VECTOR a1) {
-    FUN_800e7944(a0, a1, 0);
+  public static void FUN_800e7ea4(final GenericSpriteEffect24 spriteEffect, final VECTOR a1) {
+    FUN_800e7944(spriteEffect, a1, 0);
   }
 
   @Method(0x800e7ec4L)
@@ -2023,29 +2023,29 @@ public final class Bttl_800e {
   @Method(0x800e9428L)
   public static void FUN_800e9428(final SpriteMetrics08 metrics, final EffectManagerData6cInner a1, final MATRIX a2) {
     if(a1.flags_00 >= 0) {
-      final BattleStruct24 sp0x10 = new BattleStruct24();
-      sp0x10.flags_00.set(a1.flags_00 & 0xffff_ffffL);
-      sp0x10.x_04.set((short)(-metrics.w_04.get() / 2));
-      sp0x10.y_06.set((short)(-metrics.h_05.get() / 2));
-      sp0x10.w_08.set(metrics.w_04.get());
-      sp0x10.h_0a.set(metrics.h_05.get());
-      sp0x10.tpage_0c.set((metrics.v_02.get() & 0x100) >>> 4 | (metrics.u_00.get() & 0x3ff) >>> 6);
-      sp0x10.u_0e.set((metrics.u_00.get() & 0x3f) * 4);
-      sp0x10.v_0f.set(metrics.v_02.get());
-      sp0x10.clutX_10.set(metrics.clut_06.get() << 4 & 0x3ff);
-      sp0x10.clutY_12.set(metrics.clut_06.get() >>> 6 & 0x1ff);
-      sp0x10.r_14.set(a1.colour_1c.getX() & 0xff);
-      sp0x10.g_15.set(a1.colour_1c.getY() & 0xff);
-      sp0x10.b_16.set(a1.colour_1c.getZ() & 0xff);
-      sp0x10.scaleX_1c.set(a1.scale_16.getX());
-      sp0x10.scaleY_1e.set(a1.scale_16.getY());
-      sp0x10.rotation_20.set(a1.rot_10.getZ()); // This is correct, different svec for Z
+      final GenericSpriteEffect24 spriteEffect = new GenericSpriteEffect24();
+      spriteEffect.flags_00 = a1.flags_00 & 0xffff_ffffL;
+      spriteEffect.x_04 = (short)(-metrics.w_04.get() / 2);
+      spriteEffect.y_06 = (short)(-metrics.h_05.get() / 2);
+      spriteEffect.w_08 = metrics.w_04.get();
+      spriteEffect.h_0a = metrics.h_05.get();
+      spriteEffect.tpage_0c = (metrics.v_02.get() & 0x100) >>> 4 | (metrics.u_00.get() & 0x3ff) >>> 6;
+      spriteEffect.u_0e = (metrics.u_00.get() & 0x3f) * 4;
+      spriteEffect.v_0f = metrics.v_02.get();
+      spriteEffect.clutX_10 = metrics.clut_06.get() << 4 & 0x3ff;
+      spriteEffect.clutY_12 = metrics.clut_06.get() >>> 6 & 0x1ff;
+      spriteEffect.r_14 = a1.colour_1c.getX() & 0xff;
+      spriteEffect.g_15 = a1.colour_1c.getY() & 0xff;
+      spriteEffect.b_16 = a1.colour_1c.getZ() & 0xff;
+      spriteEffect.scaleX_1c = a1.scale_16.getX();
+      spriteEffect.scaleY_1e = a1.scale_16.getY();
+      spriteEffect.rotation_20 = a1.rot_10.getZ(); // This is correct, different svec for Z
       if((a1.flags_00 & 0x400_0000) != 0) {
         zOffset_1f8003e8.set(a1.z_22);
-        FUN_800e75ac(sp0x10, a2);
+        FUN_800e75ac(spriteEffect, a2);
       } else {
         //LAB_800e9574
-        FUN_800e7944(sp0x10, a2.transfer, a1.z_22);
+        FUN_800e7944(spriteEffect, a2.transfer, a1.z_22);
       }
     }
 
