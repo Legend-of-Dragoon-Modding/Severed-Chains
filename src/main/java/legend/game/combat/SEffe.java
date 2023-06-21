@@ -49,7 +49,6 @@ import legend.game.combat.effects.AdditionOverlaysBorder0e;
 import legend.game.combat.effects.AdditionOverlaysEffect44;
 import legend.game.combat.effects.AdditionOverlaysHit20;
 import legend.game.combat.effects.AttackHitFlashEffect0c;
-import legend.game.combat.effects.GenericSpriteEffect24;
 import legend.game.combat.effects.BttlScriptData6cSub10_2;
 import legend.game.combat.effects.BttlScriptData6cSub13c;
 import legend.game.combat.effects.BttlScriptData6cSub14_4;
@@ -76,6 +75,7 @@ import legend.game.combat.effects.EffectManagerData6cInner;
 import legend.game.combat.effects.EffectStruct48;
 import legend.game.combat.effects.ElectricityEffect38;
 import legend.game.combat.effects.FrozenJetEffect28;
+import legend.game.combat.effects.GenericSpriteEffect24;
 import legend.game.combat.effects.GoldDragoonTransformEffect20;
 import legend.game.combat.effects.GoldDragoonTransformEffectInstance84;
 import legend.game.combat.effects.LightningBoltEffect14;
@@ -183,11 +183,11 @@ import static legend.game.combat.Bttl_800c.FUN_800cf4f4;
 import static legend.game.combat.Bttl_800c.FUN_800cf684;
 import static legend.game.combat.Bttl_800c.FUN_800cfb94;
 import static legend.game.combat.Bttl_800c.FUN_800cfc20;
-import static legend.game.combat.Bttl_800c.FUN_800cffd8;
 import static legend.game.combat.Bttl_800c._800fb0ec;
 import static legend.game.combat.Bttl_800c.callScriptFunction;
 import static legend.game.combat.Bttl_800c.currentStage_800c66a4;
 import static legend.game.combat.Bttl_800c.deffManager_800c693c;
+import static legend.game.combat.Bttl_800c.getModelObjectTranslation;
 import static legend.game.combat.Bttl_800c.melbuStageIndices_800fb064;
 import static legend.game.combat.Bttl_800c.scriptGetScriptedObjectPos;
 import static legend.game.combat.Bttl_800c.seed_800fa754;
@@ -205,7 +205,6 @@ import static legend.game.combat.Bttl_800e.FUN_800e6170;
 import static legend.game.combat.Bttl_800e.FUN_800e61e4;
 import static legend.game.combat.Bttl_800e.FUN_800e62a8;
 import static legend.game.combat.Bttl_800e.FUN_800e7dbc;
-import static legend.game.combat.Bttl_800e.FUN_800e7ea4;
 import static legend.game.combat.Bttl_800e.FUN_800e8594;
 import static legend.game.combat.Bttl_800e.FUN_800e8c84;
 import static legend.game.combat.Bttl_800e.FUN_800e8d04;
@@ -217,6 +216,7 @@ import static legend.game.combat.Bttl_800e.allocateEffectManager;
 import static legend.game.combat.Bttl_800e.applyScreenDarkening;
 import static legend.game.combat.Bttl_800e.getDeffPart;
 import static legend.game.combat.Bttl_800e.perspectiveTransformXyz;
+import static legend.game.combat.Bttl_800e.renderGenericSpriteAtZOffset0;
 
 public final class SEffe {
   private SEffe() { }
@@ -2121,10 +2121,10 @@ public final class SEffe {
   }
 
   @Method(0x80100d00L)
-  public static void FUN_80100d00(final EffectManagerData6c a0, final ParticleEffectData98 a1, final ParticleEffectInstance94 a2, final EffectData98Inner24 a3) {
-    final VECTOR sp0x10 = new VECTOR();
-    FUN_800cffd8(a3.scriptIndex_04, sp0x10, (int)_8011a008.get());
-    a2._50.set(sp0x10);
+  public static void FUN_80100d00(final EffectManagerData6c manager, final ParticleEffectData98 particleEffect, final ParticleEffectInstance94 particleInstance, final EffectData98Inner24 a3) {
+    final VECTOR translation = new VECTOR();
+    getModelObjectTranslation(a3.scriptIndex_04, translation, (int)_8011a008.get());
+    particleInstance._50.set(translation);
   }
 
   @Method(0x80100d58L)
@@ -5941,11 +5941,11 @@ public final class SEffe {
         //LAB_8010d73c
         sp0x10.scaleX_1c = manager._10.scale_16.getX();
         sp0x10.scaleY_1e = manager._10.scale_16.getY();
-        sp0x10.rotation_20 = s3._6e.get();
+        sp0x10.angle_20 = s3._6e.get();
         sp0x38.setX(manager._10.trans_04.getX() + (s3._08.get() >> 8));
         sp0x38.setY(manager._10.trans_04.getY() + (s3._0c.get() >> 8));
         sp0x38.setZ(manager._10.trans_04.getZ() + (s3._10.get() >> 8));
-        FUN_800e7ea4(sp0x10, sp0x38);
+        renderGenericSpriteAtZOffset0(sp0x10, sp0x38);
       }
     }
   }
@@ -6374,11 +6374,11 @@ public final class SEffe {
       sp0x10.b_16 = manager._10.colour_1c.getZ();
       sp0x10.scaleX_1c = manager._10.scale_16.getX();
       sp0x10.scaleY_1e = manager._10.scale_16.getY();
-      sp0x10.rotation_20 = manager._10.rot_10.getX();
+      sp0x10.angle_20 = manager._10.rot_10.getX();
       sp0x38.setX(manager._10.trans_04.getX() + v1._04.get());
       sp0x38.setY(manager._10.trans_04.getY() + v1._06.get());
       sp0x38.setZ(manager._10.trans_04.getZ() + v1._08.get());
-      FUN_800e7ea4(sp0x10, sp0x38);
+      renderGenericSpriteAtZOffset0(sp0x10, sp0x38);
     }
 
     //LAB_8010edac

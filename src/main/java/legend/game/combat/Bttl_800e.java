@@ -31,7 +31,6 @@ import legend.game.combat.deff.BattleStruct24_2;
 import legend.game.combat.deff.DeffManager7cc;
 import legend.game.combat.deff.DeffPart;
 import legend.game.combat.effects.AttackHitFlashEffect0c;
-import legend.game.combat.effects.GenericSpriteEffect24;
 import legend.game.combat.effects.BttlScriptData6cSub13c;
 import legend.game.combat.effects.BttlScriptData6cSub1c;
 import legend.game.combat.effects.BttlScriptData6cSub20;
@@ -40,6 +39,7 @@ import legend.game.combat.effects.BttlScriptData6cSubBase2;
 import legend.game.combat.effects.DeffTmdRenderer14;
 import legend.game.combat.effects.EffectManagerData6c;
 import legend.game.combat.effects.EffectManagerData6cInner;
+import legend.game.combat.effects.GenericSpriteEffect24;
 import legend.game.combat.environment.BattleLightStruct64;
 import legend.game.combat.environment.BattleStage;
 import legend.game.combat.environment.BattleStageDarkening1800;
@@ -1557,45 +1557,45 @@ public final class Bttl_800e {
    * Used for example for sprite effect overlays on red glow in Death Dimension.
    */
   @Method(0x800e7944L)
-  public static void FUN_800e7944(final GenericSpriteEffect24 s1, final VECTOR trans, final int a2) {
-    if((int)s1.flags_00 >= 0) {
-      final VECTOR sp0x18 = ApplyMatrixLV(worldToScreenMatrix_800c3548, trans);
-      sp0x18.add(worldToScreenMatrix_800c3548.transfer);
+  public static void FUN_800e7944(final GenericSpriteEffect24 spriteEffect, final VECTOR translation, final int zMod) {
+    if((int)spriteEffect.flags_00 >= 0) {
+      final VECTOR finalTranslation = ApplyMatrixLV(worldToScreenMatrix_800c3548, translation);
+      finalTranslation.add(worldToScreenMatrix_800c3548.transfer);
 
-      final int x = MathHelper.safeDiv(sp0x18.getX() * projectionPlaneDistance_1f8003f8.get(), sp0x18.getZ());
-      final int y = MathHelper.safeDiv(sp0x18.getY() * projectionPlaneDistance_1f8003f8.get(), sp0x18.getZ());
+      final int x0 = MathHelper.safeDiv(finalTranslation.getX() * projectionPlaneDistance_1f8003f8.get(), finalTranslation.getZ());
+      final int y0 = MathHelper.safeDiv(finalTranslation.getY() * projectionPlaneDistance_1f8003f8.get(), finalTranslation.getZ());
 
-      // a2 needs to be ignored in z check or poly positions will overflow at low z values
-      int z = a2 + (sp0x18.getZ() >> 2);
-      if(sp0x18.getZ() >> 2 >= 0x28 && z >= 0x28) {
+      // zMod needs to be ignored in z check or poly positions will overflow at low z values
+      int z = zMod + (finalTranslation.getZ() >> 2);
+      if(finalTranslation.getZ() >> 2 >= 0x28 && z >= 0x28) {
         if(z > 0x3ff8) {
           z = 0x3ff8;
         }
 
         //LAB_800e7a38
-        final int a1 = MathHelper.safeDiv(projectionPlaneDistance_1f8003f8.get() << 10, sp0x18.getZ() >> 2);
-        final int s5 = s1.x_04 * s1.scaleX_1c / 8 * a1 / 8 >> 12;
-        final int s7 = s5 + (s1.w_08 * s1.scaleX_1c / 8 * a1 / 8 >> 12);
-        final int s2 = s1.y_06 * s1.scaleY_1e / 8 * a1 / 8 >> 12;
-        final int fp = s2 + (s1.h_0a * s1.scaleY_1e / 8 * a1 / 8 >> 12);
-        final int sin = rsin(s1.rotation_20);
-        final int cos = rcos(s1.rotation_20);
+        final int zDepth = MathHelper.safeDiv(projectionPlaneDistance_1f8003f8.get() << 10, finalTranslation.getZ() >> 2);
+        final int x1 = spriteEffect.x_04 * spriteEffect.scaleX_1c / 8 * zDepth / 8 >> 12;
+        final int x2 = x1 + (spriteEffect.w_08 * spriteEffect.scaleX_1c / 8 * zDepth / 8 >> 12);
+        final int y1 = spriteEffect.y_06 * spriteEffect.scaleY_1e / 8 * zDepth / 8 >> 12;
+        final int y2 = y1 + (spriteEffect.h_0a * spriteEffect.scaleY_1e / 8 * zDepth / 8 >> 12);
+        final int sin = rsin(spriteEffect.angle_20);
+        final int cos = rcos(spriteEffect.angle_20);
 
         final GpuCommandPoly cmd = new GpuCommandPoly(4)
-          .clut(s1.clutX_10, s1.clutY_12)
-          .vramPos((s1.tpage_0c & 0b1111) * 64, (s1.tpage_0c & 0b10000) != 0 ? 256 : 0)
-          .rgb(s1.r_14, s1.g_15, s1.b_16)
-          .pos(0, x + (s5 * cos >> 12) - (s2 * sin >> 12), y + (s5 * sin >> 12) + (s2 * cos >> 12))
-          .pos(1, x + (s7 * cos >> 12) - (s2 * sin >> 12), y + (s7 * sin >> 12) + (s2 * cos >> 12))
-          .pos(2, x + (s5 * cos >> 12) - (fp * sin >> 12), y + (s5 * sin >> 12) + (fp * cos >> 12))
-          .pos(3, x + (s7 * cos >> 12) - (fp * sin >> 12), y + (s7 * sin >> 12) + (fp * cos >> 12))
-          .uv(0, s1.u_0e, s1.v_0f)
-          .uv(1, s1.w_08 + s1.u_0e - 1, s1.v_0f)
-          .uv(2, s1.u_0e, s1.h_0a + s1.v_0f - 1)
-          .uv(3, s1.w_08 + s1.u_0e - 1, s1.h_0a + s1.v_0f - 1);
+          .clut(spriteEffect.clutX_10, spriteEffect.clutY_12)
+          .vramPos((spriteEffect.tpage_0c & 0b1111) * 64, (spriteEffect.tpage_0c & 0b10000) != 0 ? 256 : 0)
+          .rgb(spriteEffect.r_14, spriteEffect.g_15, spriteEffect.b_16)
+          .pos(0, x0 + (x1 * cos >> 12) - (y1 * sin >> 12), y0 + (x1 * sin >> 12) + (y1 * cos >> 12))
+          .pos(1, x0 + (x2 * cos >> 12) - (y1 * sin >> 12), y0 + (x2 * sin >> 12) + (y1 * cos >> 12))
+          .pos(2, x0 + (x1 * cos >> 12) - (y2 * sin >> 12), y0 + (x1 * sin >> 12) + (y2 * cos >> 12))
+          .pos(3, x0 + (x2 * cos >> 12) - (y2 * sin >> 12), y0 + (x2 * sin >> 12) + (y2 * cos >> 12))
+          .uv(0, spriteEffect.u_0e, spriteEffect.v_0f)
+          .uv(1, spriteEffect.w_08 + spriteEffect.u_0e - 1, spriteEffect.v_0f)
+          .uv(2, spriteEffect.u_0e, spriteEffect.h_0a + spriteEffect.v_0f - 1)
+          .uv(3, spriteEffect.w_08 + spriteEffect.u_0e - 1, spriteEffect.h_0a + spriteEffect.v_0f - 1);
 
-        if((s1.flags_00 & 0x4000_0000) != 0) {
-          cmd.translucent(Translucency.of((int)s1.flags_00 >>> 28 & 0b11));
+        if((spriteEffect.flags_00 & 0x4000_0000) != 0) {
+          cmd.translucent(Translucency.of((int)spriteEffect.flags_00 >>> 28 & 0b11));
         }
 
         GPU.queueCommand(z >> 2, cmd);
@@ -1622,8 +1622,8 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e7ea4L)
-  public static void FUN_800e7ea4(final GenericSpriteEffect24 spriteEffect, final VECTOR a1) {
-    FUN_800e7944(spriteEffect, a1, 0);
+  public static void renderGenericSpriteAtZOffset0(final GenericSpriteEffect24 spriteEffect, final VECTOR translation) {
+    FUN_800e7944(spriteEffect, translation, 0);
   }
 
   @Method(0x800e7ec4L)
@@ -2039,7 +2039,7 @@ public final class Bttl_800e {
       spriteEffect.b_16 = a1.colour_1c.getZ() & 0xff;
       spriteEffect.scaleX_1c = a1.scale_16.getX();
       spriteEffect.scaleY_1e = a1.scale_16.getY();
-      spriteEffect.rotation_20 = a1.rot_10.getZ(); // This is correct, different svec for Z
+      spriteEffect.angle_20 = a1.rot_10.getZ(); // This is correct, different svec for Z
       if((a1.flags_00 & 0x400_0000) != 0) {
         zOffset_1f8003e8.set(a1.z_22);
         FUN_800e75ac(spriteEffect, a2);

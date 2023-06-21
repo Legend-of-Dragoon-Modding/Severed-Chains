@@ -36,5 +36,5 @@ public class GenericSpriteEffect24 {
   public int scaleX_1c;
   /** short */
   public int scaleY_1e;
-  public int rotation_20;
+  public int angle_20;
 }

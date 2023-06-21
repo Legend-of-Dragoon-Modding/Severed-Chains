@@ -30,9 +30,9 @@ import legend.game.combat.effects.AdditionStarburstEffect10;
 import legend.game.combat.effects.BttlScriptData6cSub13c;
 import legend.game.combat.effects.EffectManagerData6c;
 import legend.game.combat.effects.EffectManagerData6cInner;
-import legend.game.combat.effects.GenericSpriteEffectAnimState30;
 import legend.game.combat.effects.GuardEffect06;
 import legend.game.combat.effects.MonsterDeathEffect34;
+import legend.game.combat.effects.MonsterDeathEffectObjectDestructor30;
 import legend.game.combat.effects.ProjectileHitEffect14;
 import legend.game.combat.effects.ProjectileHitEffect14Sub48;
 import legend.game.combat.effects.RadialGradientEffect14;
@@ -112,7 +112,6 @@ import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.combat.Bttl_800c.FUN_800cf37c;
 import static legend.game.combat.Bttl_800c.FUN_800cf4f4;
 import static legend.game.combat.Bttl_800c.FUN_800cfb14;
-import static legend.game.combat.Bttl_800c.FUN_800cffd8;
 import static legend.game.combat.Bttl_800c._800c6798;
 import static legend.game.combat.Bttl_800c._800c67c4;
 import static legend.game.combat.Bttl_800c._800c67d4;
@@ -154,6 +153,7 @@ import static legend.game.combat.Bttl_800c.camera_800c67f0;
 import static legend.game.combat.Bttl_800c.charWidthAdjustTable_800fa7cc;
 import static legend.game.combat.Bttl_800c.currentAddition_800c6790;
 import static legend.game.combat.Bttl_800c.deffManager_800c693c;
+import static legend.game.combat.Bttl_800c.getModelObjectTranslation;
 import static legend.game.combat.Bttl_800c.radialGradientEffectRenderers_800fa758;
 import static legend.game.combat.Bttl_800c.screenOffsetX_800c67bc;
 import static legend.game.combat.Bttl_800c.screenOffsetY_800c67c0;
@@ -161,8 +161,8 @@ import static legend.game.combat.Bttl_800c.scriptGetScriptedObjectPos;
 import static legend.game.combat.Bttl_800c.seed_800fa754;
 import static legend.game.combat.Bttl_800c.spriteMetrics_800c6948;
 import static legend.game.combat.Bttl_800c.transformWorldspaceToScreenspace;
-import static legend.game.combat.Bttl_800e.FUN_800e7ea4;
 import static legend.game.combat.Bttl_800e.allocateEffectManager;
+import static legend.game.combat.Bttl_800e.renderGenericSpriteAtZOffset0;
 
 public final class Bttl_800d {
   private Bttl_800d() { }
@@ -171,15 +171,15 @@ public final class Bttl_800d {
   private static final Marker CAMERA = MarkerManager.getMarker("CAMERA");
 
   @Method(0x800d0094L)
-  public static void FUN_800d0094(final int scriptIndex, final int animIndex, final boolean clearBit) {
-    final BattleObject27c v1 = (BattleObject27c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
+  public static void setModelObjectVisibility(final int scriptIndex, final int objIndex, final boolean clearBit) {
+    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
 
     //LAB_800d00d4
     if(clearBit) {
-      v1.model_148.partInvisible_f4 &= ~(0x1L << animIndex);
+      bobj.model_148.partInvisible_f4 &= ~(0x1L << objIndex);
     } else {
       //LAB_800d0104
-      v1.model_148.partInvisible_f4 |= 0x1L << animIndex;
+      bobj.model_148.partInvisible_f4 |= 0x1L << objIndex;
     }
   }
 
@@ -938,20 +938,20 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d30c0L)
-  public static void monsterDeathEffectRenderer(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    final MonsterDeathEffect34 s1 = (MonsterDeathEffect34)data.effect_44;
-    GenericSpriteEffectAnimState30[] s2 = s1.animStateArray_30;
+  public static void monsterDeathEffectRenderer(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+    final MonsterDeathEffect34 deathEffect = (MonsterDeathEffect34)manager.effect_44;
+    final MonsterDeathEffectObjectDestructor30[] objArray = deathEffect.objectDestructorArray_30;
 
     //LAB_800d30fc
-    for(int animIndex = 0; animIndex < s1.animCount_04; animIndex++) {
-      if(s2[animIndex]._00 == 1) {
-        s1.sprite_0c.r_14 = s2[animIndex].r_24 >>> 8;
-        s1.sprite_0c.g_15 = s2[animIndex].g_26 >>> 8;
-        s1.sprite_0c.b_16 = s2[animIndex].b_28 >>> 8;
-        s1.sprite_0c.rotation_20 = s2[animIndex]._0c;
-        s1.sprite_0c.scaleX_1c = (short)(data._10.scale_16.getX() + s2[animIndex]._04);
-        s1.sprite_0c.scaleY_1e = (short)(data._10.scale_16.getY() + s2[animIndex]._04);
-        FUN_800e7ea4(s1.sprite_0c, s2[animIndex].translation_14);
+    for(int objIndex = 0; objIndex < deathEffect.modelObjectCount_04; objIndex++) {
+      if(objArray[objIndex].destructionState_00 == 1) {
+        deathEffect.sprite_0c.r_14 = objArray[objIndex].r_24 >>> 8;
+        deathEffect.sprite_0c.g_15 = objArray[objIndex].g_26 >>> 8;
+        deathEffect.sprite_0c.b_16 = objArray[objIndex].b_28 >>> 8;
+        deathEffect.sprite_0c.angle_20 = objArray[objIndex].angleModifier_0c;
+        deathEffect.sprite_0c.scaleX_1c = (short)(manager._10.scale_16.getX() + objArray[objIndex].scaleModifier_04);
+        deathEffect.sprite_0c.scaleY_1e = (short)(manager._10.scale_16.getY() + objArray[objIndex].scaleModifier_04);
+        renderGenericSpriteAtZOffset0(deathEffect.sprite_0c, objArray[objIndex].translation_14);
       }
       //LAB_800d3174
     }
@@ -959,52 +959,52 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d31b0L)
-  public static void monsterDeathEffectTicker(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    final MonsterDeathEffect34 s1 = (MonsterDeathEffect34)data.effect_44;
+  public static void monsterDeathEffectTicker(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+    final MonsterDeathEffect34 deathEffect = (MonsterDeathEffect34)manager.effect_44;
 
-    s1._02--;
-    if(s1._02 == 0) {
+    deathEffect.remainingFrameLimit_02--;
+    if(deathEffect.remainingFrameLimit_02 == 0) {
       state.deallocateWithChildren();
     } else {
       //LAB_800d320c
-      GenericSpriteEffectAnimState30[] s2 = s1.animStateArray_30;
-      s1._00 += 2;
+      final MonsterDeathEffectObjectDestructor30[] objArray = deathEffect.objectDestructorArray_30;
+      deathEffect.destroyedPartsCutoffIndex_00 += 2;
 
       //LAB_800d322c
-      for(int animIndex = 0; animIndex < s1.animCount_04; animIndex++) {
-        if(s1._00 >= animIndex + 1 && s2[animIndex]._00 == -1) {
-          s2[animIndex]._00 = 1;
-          s2[animIndex].stepCount_01 = 8;
-          s2[animIndex]._10 = 0;
-          s2[animIndex]._04 = 0;
-          s2[animIndex]._0c = (int)(seed_800fa754.advance().get() % 4097);
-          s2[animIndex]._08 = (int)(seed_800fa754.advance().get() % 49 + 104);
-          s2[animIndex].r_24 = data._10.colour_1c.getX() << 8;
-          s2[animIndex].g_26 = data._10.colour_1c.getY() << 8;
-          s2[animIndex].b_28 = data._10.colour_1c.getZ() << 8;
-          s2[animIndex].stepR_2a = s2[animIndex].r_24 / s2[animIndex].stepCount_01;
-          s2[animIndex].stepG_2c = s2[animIndex].g_26 / s2[animIndex].stepCount_01;
-          s2[animIndex].stepB_2e = s2[animIndex].b_28 / s2[animIndex].stepCount_01;
-          final VECTOR sp0x10 = new VECTOR();
-          FUN_800cffd8(s1.scriptIndex_08, sp0x10, animIndex);
-          s2[animIndex].translation_14.set(sp0x10);
-          FUN_800d0094(s1.scriptIndex_08, animIndex, false);
+      for(int objIndex = 0; objIndex < deathEffect.modelObjectCount_04; objIndex++) {
+        if(deathEffect.destroyedPartsCutoffIndex_00 >= objIndex + 1 && objArray[objIndex].destructionState_00 == -1) {
+          objArray[objIndex].destructionState_00 = 1;
+          objArray[objIndex].stepCount_01 = 8;
+          objArray[objIndex].scaleModifier_04 = 0;
+          objArray[objIndex].scaleModifierVelocity_08 = (int)(seed_800fa754.advance().get() % 49 + 104);
+          objArray[objIndex].angleModifier_0c = (int)(seed_800fa754.advance().get() % 4097);
+          objArray[objIndex].angleModifierVelocity_10 = 0;
+          objArray[objIndex].r_24 = manager._10.colour_1c.getX() << 8;
+          objArray[objIndex].g_26 = manager._10.colour_1c.getY() << 8;
+          objArray[objIndex].b_28 = manager._10.colour_1c.getZ() << 8;
+          objArray[objIndex].stepR_2a = objArray[objIndex].r_24 / objArray[objIndex].stepCount_01;
+          objArray[objIndex].stepG_2c = objArray[objIndex].g_26 / objArray[objIndex].stepCount_01;
+          objArray[objIndex].stepB_2e = objArray[objIndex].b_28 / objArray[objIndex].stepCount_01;
+          final VECTOR translation = new VECTOR();
+          getModelObjectTranslation(deathEffect.scriptIndex_08, translation, objIndex);
+          objArray[objIndex].translation_14.set(translation);
+          setModelObjectVisibility(deathEffect.scriptIndex_08, objIndex, false);
         }
 
         //LAB_800d33d0
-        if(s2[animIndex]._00 > 0) {
-          s2[animIndex].stepCount_01--;
+        if(objArray[objIndex].destructionState_00 > 0) {
+          objArray[objIndex].stepCount_01--;
 
-          if(s2[animIndex].stepCount_01 == 0) {
-            s2[animIndex]._00 = 0;
+          if(objArray[objIndex].stepCount_01 == 0) {
+            objArray[objIndex].destructionState_00 = 0;
           }
 
           //LAB_800d3400
-          s2[animIndex]._0c +=  s2[animIndex]._10;
-          s2[animIndex].r_24 -= s2[animIndex].stepR_2a;
-          s2[animIndex].g_26 -= s2[animIndex].stepG_2c;
-          s2[animIndex].b_28 -= s2[animIndex].stepB_2e;
-          s2[animIndex]._04 +=  s2[animIndex]._08;
+          objArray[objIndex].angleModifier_0c +=  objArray[objIndex].angleModifierVelocity_10;
+          objArray[objIndex].r_24 -= objArray[objIndex].stepR_2a;
+          objArray[objIndex].g_26 -= objArray[objIndex].stepG_2c;
+          objArray[objIndex].b_28 -= objArray[objIndex].stepB_2e;
+          objArray[objIndex].scaleModifier_04 +=  objArray[objIndex].scaleModifierVelocity_08;
         }
         //LAB_800d3450
       }
@@ -1014,13 +1014,13 @@ public final class Bttl_800d {
 
   @Method(0x800d3490L)
   public static void deallocateMonsterDeathEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    ((MonsterDeathEffect34)data.effect_44).animStateArray_30 = null;
+    ((MonsterDeathEffect34)data.effect_44).objectDestructorArray_30 = null;
   }
 
   @Method(0x800d34bcL)
   public static FlowControl allocateMonsterDeathEffect(final RunningScript<? extends BattleScriptDataBase> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00;
-    final int animCount = bobj.model_148.partCount_98;
+    final int modelObjectCount = bobj.model_148.partCount_98;
 
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "MonsterDeathEffect34",
@@ -1029,38 +1029,38 @@ public final class Bttl_800d {
       Bttl_800d::monsterDeathEffectTicker,
       Bttl_800d::monsterDeathEffectRenderer,
       Bttl_800d::deallocateMonsterDeathEffect,
-      value -> new MonsterDeathEffect34(animCount)
+      value -> new MonsterDeathEffect34(modelObjectCount)
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
-    final MonsterDeathEffect34 effect = (MonsterDeathEffect34)manager.effect_44;
+    final MonsterDeathEffect34 deathEffect = (MonsterDeathEffect34)manager.effect_44;
 
-    effect._00 = 0;
-    effect._02 = animCount + 8;
-    effect.unused_06 = 0;
-    effect.scriptIndex_08 = script.params_20[1].get();
+    deathEffect.destroyedPartsCutoffIndex_00 = 0;
+    deathEffect.remainingFrameLimit_02 = modelObjectCount + 8;
+    deathEffect.unused_06 = 0;
+    deathEffect.scriptIndex_08 = script.params_20[1].get();
 
     //LAB_800d35a0
-    final GenericSpriteEffectAnimState30[] animStateArray = effect.animStateArray_30;
-    for(int animIndex = 0; animIndex < effect.animCount_04; animIndex++) {
-      FUN_800d0094(effect.scriptIndex_08, animIndex, true);
-      animStateArray[animIndex]._00 = -1;
+    final MonsterDeathEffectObjectDestructor30[] objArray = deathEffect.objectDestructorArray_30;
+    for(int objIndex = 0; objIndex < deathEffect.modelObjectCount_04; objIndex++) {
+      setModelObjectVisibility(deathEffect.scriptIndex_08, objIndex, true);
+      objArray[objIndex].destructionState_00 = -1;
     }
 
     //LAB_800d35cc
     final SpriteMetrics08 metrics = spriteMetrics_800c6948[script.params_20[2].get() & 0xff];
-    effect.sprite_0c.flags_00 = manager._10.flags_00 & 0xffff_ffffL;
-    effect.sprite_0c.w_08 = metrics.w_04.get();
-    effect.sprite_0c.h_0a = metrics.h_05.get();
-    effect.sprite_0c.x_04 = (short)(-effect.sprite_0c.w_08 >> 1);
-    effect.sprite_0c.y_06 = (short)(-effect.sprite_0c.h_0a >> 1);
-    effect.sprite_0c.tpage_0c = (metrics.v_02.get() & 0x100) >>> 4 | (metrics.u_00.get() & 0x3ff) >>> 6;
-    effect.sprite_0c.u_0e = (metrics.u_00.get() & 0x3f) * 4;
-    effect.sprite_0c.v_0f = metrics.v_02.get();
-    effect.sprite_0c.clutX_10 = metrics.clut_06.get() << 4 & 0x3ff;
-    effect.sprite_0c.clutY_12 = metrics.clut_06.get() >>> 6 & 0x1ff;
-    effect.sprite_0c.unused_18 = 0;
-    effect.sprite_0c.unused_1a = 0;
+    deathEffect.sprite_0c.flags_00 = manager._10.flags_00 & 0xffff_ffffL;
+    deathEffect.sprite_0c.w_08 = metrics.w_04.get();
+    deathEffect.sprite_0c.h_0a = metrics.h_05.get();
+    deathEffect.sprite_0c.x_04 = (short)(-deathEffect.sprite_0c.w_08 >> 1);
+    deathEffect.sprite_0c.y_06 = (short)(-deathEffect.sprite_0c.h_0a >> 1);
+    deathEffect.sprite_0c.tpage_0c = (metrics.v_02.get() & 0x100) >>> 4 | (metrics.u_00.get() & 0x3ff) >>> 6;
+    deathEffect.sprite_0c.u_0e = (metrics.u_00.get() & 0x3f) * 4;
+    deathEffect.sprite_0c.v_0f = metrics.v_02.get();
+    deathEffect.sprite_0c.clutX_10 = metrics.clut_06.get() << 4 & 0x3ff;
+    deathEffect.sprite_0c.clutY_12 = metrics.clut_06.get() >>> 6 & 0x1ff;
+    deathEffect.sprite_0c.unused_18 = 0;
+    deathEffect.sprite_0c.unused_1a = 0;
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }
