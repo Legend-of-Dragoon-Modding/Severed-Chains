@@ -1493,39 +1493,39 @@ public final class Bttl_800e {
     //LAB_800e759c
   }
 
-  /** Used in Astral Drain */
+  /** Used in Astral Drain (ground glow) */
   @Method(0x800e75acL)
-  public static void FUN_800e75ac(final GenericSpriteEffect24 spriteEffect, final MATRIX a1) {
-    final MATRIX sp0x40 = new MATRIX();
-    FUN_8003ec90(worldToScreenMatrix_800c3548, a1, sp0x40);
-    final int z = Math.min(0x3ff8, zOffset_1f8003e8.get() + sp0x40.transfer.getZ() / 4);
+  public static void FUN_800e75ac(final GenericSpriteEffect24 spriteEffect, final MATRIX transformMatrix) {
+    final MATRIX finalTransform = new MATRIX();
+    FUN_8003ec90(worldToScreenMatrix_800c3548, transformMatrix, finalTransform);
+    final int z = Math.min(0x3ff8, zOffset_1f8003e8.get() + finalTransform.transfer.getZ() / 4);
 
     if(z >= 40) {
       //LAB_800e7610
-      CPU.CTC2(sp0x40.getPacked(0), 0);
-      CPU.CTC2(sp0x40.getPacked(2), 1);
-      CPU.CTC2(sp0x40.getPacked(4), 2);
-      CPU.CTC2(sp0x40.getPacked(6), 3);
-      CPU.CTC2(sp0x40.getPacked(8), 4);
-      CPU.CTC2(sp0x40.transfer.getX(), 5);
-      CPU.CTC2(sp0x40.transfer.getY(), 6);
-      CPU.CTC2(sp0x40.transfer.getZ(), 7);
-      final SVECTOR sp0x10 = new SVECTOR().set((short)(spriteEffect.x_04 * 64), (short)(spriteEffect.y_06 * 64), (short)0);
-      final SVECTOR sp0x18 = new SVECTOR().set((short)((spriteEffect.x_04 + spriteEffect.w_08) * 64), (short)(spriteEffect.y_06 * 64), (short)0);
-      final SVECTOR sp0x20 = new SVECTOR().set((short)(spriteEffect.x_04 * 64), (short)((spriteEffect.y_06 + spriteEffect.h_0a) * 64), (short)0);
-      final SVECTOR sp0x28 = new SVECTOR().set((short)((spriteEffect.x_04 + spriteEffect.w_08) * 64), (short)((spriteEffect.y_06 + spriteEffect.h_0a) * 64), (short)0);
-      CPU.MTC2(sp0x10.getXY(), 0);
-      CPU.MTC2(sp0x10.getZ(),  1);
-      CPU.MTC2(sp0x18.getXY(), 2);
-      CPU.MTC2(sp0x18.getZ(),  3);
-      CPU.MTC2(sp0x20.getXY(), 4);
-      CPU.MTC2(sp0x20.getZ(),  5);
+      CPU.CTC2(finalTransform.getPacked(0), 0);
+      CPU.CTC2(finalTransform.getPacked(2), 1);
+      CPU.CTC2(finalTransform.getPacked(4), 2);
+      CPU.CTC2(finalTransform.getPacked(6), 3);
+      CPU.CTC2(finalTransform.getPacked(8), 4);
+      CPU.CTC2(finalTransform.transfer.getX(), 5);
+      CPU.CTC2(finalTransform.transfer.getY(), 6);
+      CPU.CTC2(finalTransform.transfer.getZ(), 7);
+      final SVECTOR xyz0 = new SVECTOR().set((short)(spriteEffect.x_04 * 64), (short)(spriteEffect.y_06 * 64), (short)0);
+      final SVECTOR xyz1 = new SVECTOR().set((short)((spriteEffect.x_04 + spriteEffect.w_08) * 64), (short)(spriteEffect.y_06 * 64), (short)0);
+      final SVECTOR xyz2 = new SVECTOR().set((short)(spriteEffect.x_04 * 64), (short)((spriteEffect.y_06 + spriteEffect.h_0a) * 64), (short)0);
+      final SVECTOR xyz3 = new SVECTOR().set((short)((spriteEffect.x_04 + spriteEffect.w_08) * 64), (short)((spriteEffect.y_06 + spriteEffect.h_0a) * 64), (short)0);
+      CPU.MTC2(xyz0.getXY(), 0);
+      CPU.MTC2(xyz0.getZ(),  1);
+      CPU.MTC2(xyz1.getXY(), 2);
+      CPU.MTC2(xyz1.getZ(),  3);
+      CPU.MTC2(xyz2.getXY(), 4);
+      CPU.MTC2(xyz2.getZ(),  5);
       CPU.COP2(0x280030L);
       final DVECTOR sxy0 = new DVECTOR().setXY(CPU.MFC2(12));
       final DVECTOR sxy1 = new DVECTOR().setXY(CPU.MFC2(13));
       final DVECTOR sxy2 = new DVECTOR().setXY(CPU.MFC2(14));
-      CPU.MTC2(sp0x28.getXY(), 0);
-      CPU.MTC2(sp0x28.getZ(), 1);
+      CPU.MTC2(xyz3.getXY(), 0);
+      CPU.MTC2(xyz3.getZ(), 1);
       CPU.COP2(0x180001L);
       final DVECTOR sxy3 = new DVECTOR().setXY(CPU.MFC2(14));
 
@@ -1759,10 +1759,10 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e8594L)
-  public static void FUN_800e8594(final MATRIX a0, final EffectManagerData6c a1) {
-    RotMatrix_Xyz(a1._10.rot_10, a0);
-    TransMatrix(a0, a1._10.trans_04);
-    ScaleMatrixL_SVEC(a0, a1._10.scale_16);
+  public static void FUN_800e8594(final MATRIX transformMatrix, final EffectManagerData6c a1) {
+    RotMatrix_Xyz(a1._10.rot_10, transformMatrix);
+    TransMatrix(transformMatrix, a1._10.trans_04);
+    ScaleMatrixL_SVEC(transformMatrix, a1._10.scale_16);
 
     EffectManagerData6c s3 = a1;
     int scriptIndex = a1.scriptIndex_0c;
@@ -1772,7 +1772,7 @@ public final class Bttl_800e {
       final ScriptState<?> state = scriptStatePtrArr_800bc1c0[scriptIndex];
       if(state == null) {
         a1._10.flags_00 |= 0x8000_0000;
-        a0.transfer.setZ(-0x7fff);
+        transformMatrix.transfer.setZ(-0x7fff);
         scriptIndex = -2;
         break;
       }
@@ -1790,7 +1790,7 @@ public final class Bttl_800e {
         }
 
         //LAB_800e86ac
-        MulMatrix0(sp0x10, a0, a0);
+        MulMatrix0(sp0x10, transformMatrix, transformMatrix);
         s3 = manager;
         scriptIndex = s3.scriptIndex_0c;
         //LAB_800e86c8
@@ -1810,14 +1810,14 @@ public final class Bttl_800e {
         }
 
         //LAB_800e8774
-        MulMatrix0(sp0x10, a0, a0);
+        MulMatrix0(sp0x10, transformMatrix, transformMatrix);
         s3 = null;
         scriptIndex = -1;
       } else {
         //LAB_800e878c
         //LAB_800e8790
         a1._10.flags_00 |= 0x8000_0000;
-        a0.transfer.setZ(-0x7fff);
+        transformMatrix.transfer.setZ(-0x7fff);
         scriptIndex = -2;
         break;
       }
@@ -1830,7 +1830,7 @@ public final class Bttl_800e {
       TransposeMatrix(worldToScreenMatrix_800c3548, transposedWs);
       sp0x30.set(worldToScreenMatrix_800c3548.transfer).negate();
       transposedWs.transfer.set(ApplyMatrixLV(transposedWs, sp0x30));
-      MulMatrix0(transposedWs, a0, a0);
+      MulMatrix0(transposedWs, transformMatrix, transformMatrix);
     }
 
     //LAB_800e8814
@@ -2021,10 +2021,10 @@ public final class Bttl_800e {
 
   /** Has some relation to rendering of certain effect sprites, like ones from HUD DEFF */
   @Method(0x800e9428L)
-  public static void FUN_800e9428(final SpriteMetrics08 metrics, final EffectManagerData6cInner a1, final MATRIX a2) {
-    if(a1.flags_00 >= 0) {
+  public static void FUN_800e9428(final SpriteMetrics08 metrics, final EffectManagerData6cInner managerInner, final MATRIX transformMatrix) {
+    if(managerInner.flags_00 >= 0) {
       final GenericSpriteEffect24 spriteEffect = new GenericSpriteEffect24();
-      spriteEffect.flags_00 = a1.flags_00 & 0xffff_ffffL;
+      spriteEffect.flags_00 = managerInner.flags_00 & 0xffff_ffffL;
       spriteEffect.x_04 = (short)(-metrics.w_04.get() / 2);
       spriteEffect.y_06 = (short)(-metrics.h_05.get() / 2);
       spriteEffect.w_08 = metrics.w_04.get();
@@ -2034,18 +2034,18 @@ public final class Bttl_800e {
       spriteEffect.v_0f = metrics.v_02.get();
       spriteEffect.clutX_10 = metrics.clut_06.get() << 4 & 0x3ff;
       spriteEffect.clutY_12 = metrics.clut_06.get() >>> 6 & 0x1ff;
-      spriteEffect.r_14 = a1.colour_1c.getX() & 0xff;
-      spriteEffect.g_15 = a1.colour_1c.getY() & 0xff;
-      spriteEffect.b_16 = a1.colour_1c.getZ() & 0xff;
-      spriteEffect.scaleX_1c = a1.scale_16.getX();
-      spriteEffect.scaleY_1e = a1.scale_16.getY();
-      spriteEffect.angle_20 = a1.rot_10.getZ(); // This is correct, different svec for Z
-      if((a1.flags_00 & 0x400_0000) != 0) {
-        zOffset_1f8003e8.set(a1.z_22);
-        FUN_800e75ac(spriteEffect, a2);
+      spriteEffect.r_14 = managerInner.colour_1c.getX() & 0xff;
+      spriteEffect.g_15 = managerInner.colour_1c.getY() & 0xff;
+      spriteEffect.b_16 = managerInner.colour_1c.getZ() & 0xff;
+      spriteEffect.scaleX_1c = managerInner.scale_16.getX();
+      spriteEffect.scaleY_1e = managerInner.scale_16.getY();
+      spriteEffect.angle_20 = managerInner.rot_10.getZ(); // This is correct, different svec for Z
+      if((managerInner.flags_00 & 0x400_0000) != 0) {
+        zOffset_1f8003e8.set(managerInner.z_22);
+        FUN_800e75ac(spriteEffect, transformMatrix);
       } else {
         //LAB_800e9574
-        FUN_800e7944(spriteEffect, a2.transfer, a1.z_22);
+        FUN_800e7944(spriteEffect, transformMatrix.transfer, managerInner.z_22);
       }
     }
 
@@ -2053,10 +2053,10 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e9590L)
-  public static void renderAttackHitFlashEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    final MATRIX sp0x10 = new MATRIX();
-    FUN_800e8594(sp0x10, data);
-    FUN_800e9428(((AttackHitFlashEffect0c)data.effect_44).metrics_04, data._10, sp0x10);
+  public static void renderAttackHitFlashEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+    final MATRIX transfromMatrix = new MATRIX();
+    FUN_800e8594(transfromMatrix, manager);
+    FUN_800e9428(((AttackHitFlashEffect0c)manager.effect_44).metrics_04, manager._10, transfromMatrix);
   }
 
   @Method(0x800e95f0L)

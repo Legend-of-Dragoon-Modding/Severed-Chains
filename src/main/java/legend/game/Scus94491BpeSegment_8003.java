@@ -1555,43 +1555,43 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x8003ec90L)
-  public static MATRIX FUN_8003ec90(final MATRIX a0, final MATRIX a1, final MATRIX a2) {
-    CPU.CTC2(a0.getPacked(0), 0); //
-    CPU.CTC2(a0.getPacked(2), 1); //
-    CPU.CTC2(a0.getPacked(4), 2); // Rotation
-    CPU.CTC2(a0.getPacked(6), 3); //
-    CPU.CTC2(a0.getPacked(8), 4); //
+  public static MATRIX FUN_8003ec90(final MATRIX transformMatrix0, final MATRIX transformMatrix1, final MATRIX outMatrix) {
+    CPU.CTC2(transformMatrix0.getPacked(0), 0); //
+    CPU.CTC2(transformMatrix0.getPacked(2), 1); //
+    CPU.CTC2(transformMatrix0.getPacked(4), 2); // Rotation
+    CPU.CTC2(transformMatrix0.getPacked(6), 3); //
+    CPU.CTC2(transformMatrix0.getPacked(8), 4); //
 
-    CPU.MTC2((a1.get(3) & 0xffff) << 16 | a1.get(0) & 0xffff, 0); // VXY0
-    CPU.MTC2(a1.get(6), 1); // VZ0
+    CPU.MTC2((transformMatrix1.get(3) & 0xffff) << 16 | transformMatrix1.get(0) & 0xffff, 0); // VXY0
+    CPU.MTC2(transformMatrix1.get(6), 1); // VZ0
     CPU.COP2(0x486012L);
-    a2.set(0, (short)CPU.MFC2( 9)); // IR1
-    a2.set(3, (short)CPU.MFC2(10)); // IR2
-    a2.set(6, (short)CPU.MFC2(11)); // IR3
+    outMatrix.set(0, (short)CPU.MFC2( 9)); // IR1
+    outMatrix.set(3, (short)CPU.MFC2(10)); // IR2
+    outMatrix.set(6, (short)CPU.MFC2(11)); // IR3
 
-    CPU.MTC2((a1.get(4) & 0xffff) << 16 | a1.get(1) & 0xffff, 0); // VXY0
-    CPU.MTC2(a1.get(7), 1); // VZ0
+    CPU.MTC2((transformMatrix1.get(4) & 0xffff) << 16 | transformMatrix1.get(1) & 0xffff, 0); // VXY0
+    CPU.MTC2(transformMatrix1.get(7), 1); // VZ0
     CPU.COP2(0x486012L);
-    a2.set(1, (short)CPU.MFC2( 9)); // IR1
-    a2.set(4, (short)CPU.MFC2(10)); // IR2
-    a2.set(7, (short)CPU.MFC2(11)); // IR3
+    outMatrix.set(1, (short)CPU.MFC2( 9)); // IR1
+    outMatrix.set(4, (short)CPU.MFC2(10)); // IR2
+    outMatrix.set(7, (short)CPU.MFC2(11)); // IR3
 
-    CPU.MTC2((a1.get(5) & 0xffff) << 16 | a1.get(2) & 0xffff, 0); // VXY0
-    CPU.MTC2(a1.get(8), 1); // VZ0
+    CPU.MTC2((transformMatrix1.get(5) & 0xffff) << 16 | transformMatrix1.get(2) & 0xffff, 0); // VXY0
+    CPU.MTC2(transformMatrix1.get(8), 1); // VZ0
     CPU.COP2(0x486012L);
-    a2.set(2, (short)CPU.MFC2( 9)); // IR1
-    a2.set(5, (short)CPU.MFC2(10)); // IR2
-    a2.set(8, (short)CPU.MFC2(11)); // IR3
+    outMatrix.set(2, (short)CPU.MFC2( 9)); // IR1
+    outMatrix.set(5, (short)CPU.MFC2(10)); // IR2
+    outMatrix.set(8, (short)CPU.MFC2(11)); // IR3
 
-    CPU.MTC2((a1.transfer.getY() & 0xffff) << 16 | a1.transfer.getX(), 0); // VXY0
-    CPU.MTC2(a1.transfer.getZ(), 1); // VZ0
+    CPU.MTC2((transformMatrix1.transfer.getY() & 0xffff) << 16 | transformMatrix1.transfer.getX(), 0); // VXY0
+    CPU.MTC2(transformMatrix1.transfer.getZ(), 1); // VZ0
     CPU.COP2(0x486012L);
 
-    a2.transfer.set(a0.transfer);
-    a2.transfer.x.add((int)CPU.MFC2(25));
-    a2.transfer.y.add((int)CPU.MFC2(26));
-    a2.transfer.z.add((int)CPU.MFC2(27));
-    return a2;
+    outMatrix.transfer.set(transformMatrix0.transfer);
+    outMatrix.transfer.x.add((int)CPU.MFC2(25));
+    outMatrix.transfer.y.add((int)CPU.MFC2(26));
+    outMatrix.transfer.z.add((int)CPU.MFC2(27));
+    return outMatrix;
   }
 
   /**
