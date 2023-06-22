@@ -36,6 +36,7 @@ import legend.core.memory.types.QuadConsumer;
 import legend.core.memory.types.QuadConsumerRef;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.TriConsumer;
+import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.game.combat.bobj.BattleObject27c;
 import legend.game.combat.deff.Anim;
@@ -65,6 +66,7 @@ import legend.game.combat.effects.FrozenJetEffect28;
 import legend.game.combat.effects.GoldDragoonTransformEffect20;
 import legend.game.combat.effects.GoldDragoonTransformEffectInstance84;
 import legend.game.combat.effects.GradientRaysEffect24;
+import legend.game.combat.effects.GradientRaysEffectInstance04;
 import legend.game.combat.effects.LensFlareEffect50;
 import legend.game.combat.effects.LensFlareEffectInstance3c;
 import legend.game.combat.effects.LightningBoltEffect14;
@@ -4997,13 +4999,13 @@ public final class SEffe {
     effect._1c.set(script.params_20[7].get());
     effect._20.set((int)(CPU.CFC2(26) >> 2));
 
-    long s2 = mallocTail(effect.count_04.get() * 4);
-    effect.ptr_00.set(s2);
+    final UnboundedArrayRef<GradientRaysEffectInstance04> rayArray = MEMORY.ref(4, mallocTail(effect.count_04.get() * 4), UnboundedArrayRef.of(4, GradientRaysEffectInstance04::new));
+    effect.rayArray_00.set(rayArray);
 
     //LAB_8010a754
     for(int i = 0; i < effect.count_04.get(); i++) {
       //LAB_8010a770
-      MEMORY.ref(2, s2).offset(0x0L).setu(rand() % 0x1000);
+      rayArray.get(i)._00.set((short)(rand() % 0x1000));
 
       final int v0;
       if((effect._18.get() & 0x2L) == 0) {
@@ -5016,13 +5018,11 @@ public final class SEffe {
       }
 
       //LAB_8010a7d4
-      MEMORY.ref(2, s2).offset(0x2L).setu(v0);
+      rayArray.get(i)._02.set((short)v0);
       if((effect._18.get() & 0x1L) != 0) {
-        MEMORY.ref(2, s2).offset(0x2L).addu(0x70L);
+        rayArray.get(i)._02.add((short)0x70);
       }
-
       //LAB_8010a800
-      s2 = s2 + 0x4L;
     }
 
     //LAB_8010a818
@@ -5033,7 +5033,7 @@ public final class SEffe {
 
   /** Used in Rose transform */
   @Method(0x8010a860L)
-  public static void FUN_8010a860(final EffectManagerData6c manager, final long a1) {
+  public static void FUN_8010a860(final EffectManagerData6c manager, final GradientRaysEffectInstance04 gradientRay) {
     final SVECTOR sp0x38 = new SVECTOR();
     final SVECTOR sp0x40 = new SVECTOR();
     final SVECTOR sp0x48 = new SVECTOR();
@@ -5051,15 +5051,15 @@ public final class SEffe {
 
     //LAB_8010a968
     if((effect._18.get() & 0x4L) == 0) {
-      if(effect._10.get() * 2 < MEMORY.ref(2, a1).offset(0x2L).getSigned() * effect._08.get()) {
+      if(effect._10.get() * 2 < gradientRay._02.get() * effect._08.get()) {
         sp0x40.setY((short)-effect._10.get());
         sp0x48.setY((short)-effect._10.get());
         sp0x50.setY((short)(-effect._10.get() * 2));
       } else {
         //LAB_8010a9ec
-        sp0x40.setY((short)(MEMORY.ref(2, a1).offset(0x2L).getSigned() * -effect._08.get() / 2));
-        sp0x48.setY((short)(MEMORY.ref(2, a1).offset(0x2L).getSigned() * -effect._08.get() / 2));
-        sp0x50.setY((short)(MEMORY.ref(2, a1).offset(0x2L).getSigned() * -effect._08.get()));
+        sp0x40.setY((short)(gradientRay._02.get() * -effect._08.get() / 2));
+        sp0x48.setY((short)(gradientRay._02.get() * -effect._08.get() / 2));
+        sp0x50.setY((short)(gradientRay._02.get() * -effect._08.get()));
       }
 
       //LAB_8010aa34
@@ -5068,8 +5068,8 @@ public final class SEffe {
     }
 
     //LAB_8010aa54
-    final VECTOR sp0x28 = new VECTOR().set(0, (int)(MEMORY.ref(2, a1).offset(0x2L).getSigned() * effect._08.get()), 0);
-    final SVECTOR sp0x78 = new SVECTOR().set((short)MEMORY.ref(2, a1).offset(0x0L).get(), (short)0, (short)0);
+    final VECTOR sp0x28 = new VECTOR().set(0, gradientRay._02.get() * effect._08.get(), 0);
+    final SVECTOR sp0x78 = new SVECTOR().set(gradientRay._00.get(), (short)0, (short)0);
     RotMatrix_Xyz(sp0x78, sp0xa0);
     TransMatrix(sp0x80, sp0x28);
     MulMatrix0(sp0xa0, sp0x80, sp0xc0);
@@ -5095,7 +5095,7 @@ public final class SEffe {
 
       if(effect._1c.get() == 1) {
         //LAB_8010abf4
-        final int v0 = (0x80 - (short)MEMORY.ref(2, a1).offset(0x2L).getSigned()) * manager._10.colour_1c.getX() / 0x80;
+        final int v0 = (0x80 - gradientRay._02.get()) * manager._10.colour_1c.getX() / 0x80;
         final int v1 = (short)v0 / 2;
 
         cmd
@@ -5105,9 +5105,9 @@ public final class SEffe {
           .rgb(3, v0, v1, v1);
       } else if(effect._1c.get() == 2) {
         //LAB_8010ac68
-        final short s3 = (short)(FUN_8010b058((short)MEMORY.ref(2, a1).offset(0x2L).getSigned()) * manager._10.colour_1c.getX() * 8 / 0x80);
-        final short s2 = (short)(FUN_8010b0dc((short)MEMORY.ref(2, a1).offset(0x2L).getSigned()) * manager._10.colour_1c.getY() * 8 / 0x80);
-        final short a2 = (short)(FUN_8010b160((short)MEMORY.ref(2, a1).offset(0x2L).getSigned()) * manager._10.colour_1c.getZ() * 8 / 0x80);
+        final short s3 = (short)(FUN_8010b058(gradientRay._02.get()) * manager._10.colour_1c.getX() * 8 / 0x80);
+        final short s2 = (short)(FUN_8010b0dc(gradientRay._02.get()) * manager._10.colour_1c.getY() * 8 / 0x80);
+        final short a2 = (short)(FUN_8010b160(gradientRay._02.get()) * manager._10.colour_1c.getZ() * 8 / 0x80);
 
         cmd
           .monochrome(0, 0)
@@ -5132,48 +5132,48 @@ public final class SEffe {
 
   @Method(0x8010ae40L)
   public static void FUN_8010ae40(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    final GradientRaysEffect24 a2 = (GradientRaysEffect24)data.effect_44;
+    final GradientRaysEffect24 rayEffect = (GradientRaysEffect24)data.effect_44;
 
     //LAB_8010ae80
-    for(int i = 0; i < a2.count_04.get(); i++) {
-      final long a1 = a2.ptr_00.get() + i * 0x4L;
+    final UnboundedArrayRef<GradientRaysEffectInstance04> rayArray = rayEffect.rayArray_00.deref();
+    for(int i = 0; i < rayEffect.count_04.get(); i++) {
+      final GradientRaysEffectInstance04 ray = rayArray.get(i);
 
-      if((a2._18.get() & 0x1L) == 0) {
+      if((rayEffect._18.get() & 0x1) == 0) {
         //LAB_8010aee8
-        MEMORY.ref(2, a1).offset(0x2L).addu(a2._14.get());
+        ray._02.add((short)rayEffect._14.get());
 
-        if((a2._18.get() & 0x2L) != 0 && (short)MEMORY.ref(2, a1).offset(0x2L).get() >= 0x80) {
-          MEMORY.ref(2, a1).offset(0x2L).setu(0x80L);
+        if((rayEffect._18.get() & 0x2) != 0 && ray._02.get() >= 0x80) {
+          ray._02.set((short)0x80);
         } else {
           //LAB_8010af28
           //LAB_8010af3c
-          MEMORY.ref(2, a1).offset(0x2L).modu(0x80);
+          ray._02.mod((short)0x80);
         }
       } else {
-        MEMORY.ref(2, a1).offset(0x2L).subu(a2._14.get());
+        ray._02.sub((short)rayEffect._14.get());
 
-        if((a2._18.get() & 0x2L) != 0 && (short)MEMORY.ref(2, a1).offset(0x2L).get() <= 0) {
-          MEMORY.ref(2, a1).offset(0x2L).setu(0);
+        if((rayEffect._18.get() & 0x2) != 0 && ray._02.get() <= 0) {
+          ray._02.set((short)0);
         } else {
           //LAB_8010aecc
-          MEMORY.ref(2, a1).offset(0x2L).addu(0x80).modu(0x80);
+          ray._02.add((short)0x80).mod((short)0x80);
         }
       }
-
       //LAB_8010af4c
     }
-
     //LAB_8010af64
   }
 
   @Method(0x8010af6cL)
   public static void FUN_8010af6c(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
     if(manager._10.flags_00 >= 0) {
-      final GradientRaysEffect24 s2 = (GradientRaysEffect24)manager.effect_44;
+      final GradientRaysEffect24 rayEffect = (GradientRaysEffect24)manager.effect_44;
 
       //LAB_8010afcc
-      for(int i = 0; i < s2.count_04.get(); i++) {
-        FUN_8010a860(manager, s2.ptr_00.get() + i * 0x4L);
+      final UnboundedArrayRef<GradientRaysEffectInstance04> rayArray = rayEffect.rayArray_00.deref();
+      for(int i = 0; i < rayEffect.count_04.get(); i++) {
+        FUN_8010a860(manager, rayArray.get(i));
       }
     }
 
@@ -5182,7 +5182,7 @@ public final class SEffe {
 
   @Method(0x8010b00cL)
   public static void FUN_8010b00c(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
-    free(((GradientRaysEffect24)manager.effect_44).ptr_00.get());
+    free(((GradientRaysEffect24)manager.effect_44).rayArray_00.getPointer());
   }
 
   @Method(0x8010b058L)
