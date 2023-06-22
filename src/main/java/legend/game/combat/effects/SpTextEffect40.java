@@ -1,5 +1,7 @@
 package legend.game.combat.effects;
 
+import legend.core.memory.types.ArrayRef;
+
 public class SpTextEffect40 {
   public int _00;
   public int _01;
@@ -16,6 +18,5 @@ public class SpTextEffect40 {
   public int _2c;
   public int _30;
 
-  /** TODO */
-  public long ptr_3c;
+  public ArrayRef<SpTextEffectTrail10> charArray_3c;
 }
