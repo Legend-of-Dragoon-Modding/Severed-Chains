@@ -3,7 +3,6 @@ package legend.game.combat.effects;
 import legend.core.gte.TmdObjTable1c;
 import legend.game.combat.deff.Lmb;
 import legend.game.combat.deff.LmbTransforms14;
-import legend.game.combat.types.SpriteMetrics08;
 
 public class BttlScriptData6cSub5c implements BttlScriptData6cSubBase1 {
   public int lmbType_00;

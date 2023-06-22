@@ -4,7 +4,6 @@ import legend.core.memory.Value;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.UnsignedIntRef;
-import legend.game.combat.types.SpriteMetrics08;
 
 public class StarChildrenMeteorEffect10 implements BttlScriptData6cSubBase1, MemoryRef {
   private final Value ref;

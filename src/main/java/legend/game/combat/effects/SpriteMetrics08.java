@@ -1,4 +1,4 @@
-package legend.game.combat.types;
+package legend.game.combat.effects;
 
 import legend.core.memory.Value;
 import legend.core.memory.types.MemoryRef;

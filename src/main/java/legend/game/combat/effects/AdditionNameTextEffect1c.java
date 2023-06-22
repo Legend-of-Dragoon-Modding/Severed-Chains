@@ -1,8 +1,8 @@
-package legend.game.combat.types;
+package legend.game.combat.effects;
 
 import legend.core.memory.types.QuadConsumer;
 
-public class AdditionScriptData1c {
+public class AdditionNameTextEffect1c {
   /** ushort */
   public int _00;
   /** ushort */
@@ -12,6 +12,6 @@ public class AdditionScriptData1c {
   /** ubyte */
   public int _0c;
   public int _10;
-  public QuadConsumer<AdditionScriptData1c, AdditionCharEffectData0c, Long, Long> renderer_14;
+  public QuadConsumer<AdditionNameTextEffect1c, AdditionCharEffectData0c, Long, Long> renderer_14;
   public AdditionCharEffectData0c[] ptr_18;
 }

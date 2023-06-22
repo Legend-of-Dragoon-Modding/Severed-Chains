@@ -24,6 +24,8 @@ import legend.game.combat.deff.Cmb;
 import legend.game.combat.deff.Lmb;
 import legend.game.combat.deff.LmbTransforms14;
 import legend.game.combat.deff.LmbType0;
+import legend.game.combat.effects.AdditionCharEffectData0c;
+import legend.game.combat.effects.AdditionNameTextEffect1c;
 import legend.game.combat.effects.AdditionSparksEffect08;
 import legend.game.combat.effects.AdditionSparksEffectInstance4c;
 import legend.game.combat.effects.AdditionStarburstEffect10;
@@ -32,15 +34,13 @@ import legend.game.combat.effects.EffectManagerData6c;
 import legend.game.combat.effects.EffectManagerData6cInner;
 import legend.game.combat.effects.GuardEffect06;
 import legend.game.combat.effects.MonsterDeathEffect34;
-import legend.game.combat.effects.RadialGradientEffect14;
 import legend.game.combat.effects.ProjectileHitEffect14;
 import legend.game.combat.effects.ProjectileHitEffect14Sub48;
+import legend.game.combat.effects.RadialGradientEffect14;
+import legend.game.combat.effects.SpTextEffect40;
+import legend.game.combat.effects.SpriteMetrics08;
 import legend.game.combat.environment.BattleCamera;
-import legend.game.combat.types.AdditionCharEffectData0c;
-import legend.game.combat.types.AdditionScriptData1c;
 import legend.game.combat.types.BattleScriptDataBase;
-import legend.game.combat.types.BttlScriptData40;
-import legend.game.combat.types.SpriteMetrics08;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptState;
@@ -1168,12 +1168,12 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d3a20L)
-  public static void renderAdditionNameChar(final AdditionScriptData1c additionStruct, final AdditionCharEffectData0c charStruct, final long charAlpha, final long charIdx) {
+  public static void renderAdditionNameChar(final AdditionNameTextEffect1c additionStruct, final AdditionCharEffectData0c charStruct, final long charAlpha, final long charIdx) {
     renderAdditionNameChar((short)charStruct.position_04, (short)charStruct.offsetY_06, (short)additionStruct.addition_02, (short)charIdx, (int)charAlpha);
   }
 
   @Method(0x800d3a64L)
-  public static void FUN_800d3a64(final AdditionScriptData1c a0, final AdditionCharEffectData0c a1, final long charAlpha, final long a3) {
+  public static void FUN_800d3a64(final AdditionNameTextEffect1c a0, final AdditionCharEffectData0c a1, final long charAlpha, final long a3) {
     final String sp0x18 = String.valueOf(a0._10);
 
     long s4;
@@ -1205,7 +1205,7 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d3bb8L)
-  public static void FUN_800d3bb8(final ScriptState<AdditionScriptData1c> state, final AdditionScriptData1c additionStruct) {
+  public static void FUN_800d3bb8(final ScriptState<AdditionNameTextEffect1c> state, final AdditionNameTextEffect1c additionStruct) {
     additionStruct._04++;
 
     if(_800faa9d.get() == 0) {
@@ -1258,7 +1258,7 @@ public final class Bttl_800d {
     } else {
       //LAB_800d3dc0
       final int addition = gameState_800babc8.charData_32c[script.params_20[0].get()].selectedAddition_19;
-      final ScriptState<AdditionScriptData1c> state = SCRIPTS.allocateScriptState("AdditionScriptData1c", new AdditionScriptData1c());
+      final ScriptState<AdditionNameTextEffect1c> state = SCRIPTS.allocateScriptState("AdditionNameTextEffect1c", new AdditionNameTextEffect1c());
       state.loadScriptFile(doNothingScript_8004f650);
       state.setTicker(Bttl_800d::FUN_800d3bb8);
       final CString additionName = getAdditionName(0, addition);
@@ -1270,7 +1270,7 @@ public final class Bttl_800d {
       }
 
       //LAB_800d3e7c
-      final AdditionScriptData1c additionStruct = state.innerStruct_00;
+      final AdditionNameTextEffect1c additionStruct = state.innerStruct_00;
       additionStruct._00 = 0;
       additionStruct.addition_02 = addition;
       additionStruct._04 = 0;
@@ -1310,7 +1310,7 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d4018L)
-  public static void FUN_800d4018(final ScriptState<BttlScriptData40> state, final BttlScriptData40 s3) {
+  public static void FUN_800d4018(final ScriptState<SpTextEffect40> state, final SpTextEffect40 s3) {
     long v0;
     long v1;
     long t0;
@@ -1419,7 +1419,7 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d430cL)
-  public static void FUN_800d430c(final ScriptState<BttlScriptData40> state, final BttlScriptData40 data) {
+  public static void FUN_800d430c(final ScriptState<SpTextEffect40> state, final SpTextEffect40 data) {
     free(state.innerStruct_00.ptr_3c);
   }
 
@@ -1433,12 +1433,12 @@ public final class Bttl_800d {
       script.params_20[1].set(0);
     } else {
       //LAB_800d4388
-      final ScriptState<BttlScriptData40> state = SCRIPTS.allocateScriptState("BttlScriptData40", new BttlScriptData40());
+      final ScriptState<SpTextEffect40> state = SCRIPTS.allocateScriptState("SpTextEffect40", new SpTextEffect40());
       state.loadScriptFile(doNothingScript_8004f650);
       state.setTicker(Bttl_800d::FUN_800d4018);
       state.setDestructor(Bttl_800d::FUN_800d430c);
 
-      final BttlScriptData40 s1 = state.innerStruct_00;
+      final SpTextEffect40 s1 = state.innerStruct_00;
       s1._00 = 1;
       s1._02 = 0x80;
       s1._04 = 0;
@@ -1497,10 +1497,10 @@ public final class Bttl_800d {
   public static FlowControl FUN_800d4580(final RunningScript<?> script) {
     final int s2 = script.params_20[0].get();
     if(s2 != -1) {
-      final ScriptState<AdditionScriptData1c> state = SCRIPTS.allocateScriptState("AdditionScriptData1c", new AdditionScriptData1c());
+      final ScriptState<AdditionNameTextEffect1c> state = SCRIPTS.allocateScriptState("AdditionScriptData1c", new AdditionNameTextEffect1c());
       state.loadScriptFile(doNothingScript_8004f650);
       state.setTicker(Bttl_800d::FUN_800d3bb8);
-      final AdditionScriptData1c s0 = state.innerStruct_00;
+      final AdditionNameTextEffect1c s0 = state.innerStruct_00;
       s0.ptr_18 = new AdditionCharEffectData0c[] {new AdditionCharEffectData0c()};
       _800faa9c.setu(0x1L);
       s0._0c = 40;

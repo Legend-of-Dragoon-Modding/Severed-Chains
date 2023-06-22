@@ -5,7 +5,6 @@ import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedShortRef;
-import legend.game.combat.types.SpriteMetrics08;
 
 public class MoonlightStarsEffect18 implements BttlScriptData6cSubBase1, MemoryRef {
   private final Value ref;

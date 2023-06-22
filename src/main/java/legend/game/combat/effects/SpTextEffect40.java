@@ -1,6 +1,6 @@
-package legend.game.combat.types;
+package legend.game.combat.effects;
 
-public class BttlScriptData40 {
+public class SpTextEffect40 {
   public int _00;
   public int _01;
   public int _02;
