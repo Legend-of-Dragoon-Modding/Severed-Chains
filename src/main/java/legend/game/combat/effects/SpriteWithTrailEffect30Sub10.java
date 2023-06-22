@@ -3,7 +3,8 @@ package legend.game.combat.effects;
 import legend.core.gte.TmdObjTable1c;
 import legend.game.combat.deff.DeffPart;
 
-public class BttlScriptData6cSub30Sub10 extends BttlScriptData6cSub30.Sub {
+/** Cannot find instance of animation using this branch of the SpriteWithTrailEffect30 code */
+public class SpriteWithTrailEffect30Sub10 extends SpriteWithTrailEffect30.Sub {
   public int flags_00;
   public DeffPart.TmdType tmdType_04;
   public TmdObjTable1c tmd_08;

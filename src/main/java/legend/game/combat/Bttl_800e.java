@@ -34,7 +34,7 @@ import legend.game.combat.effects.AttackHitFlashEffect0c;
 import legend.game.combat.effects.BattleStruct24;
 import legend.game.combat.effects.BttlScriptData6cSub13c;
 import legend.game.combat.effects.BttlScriptData6cSub1c;
-import legend.game.combat.effects.BttlScriptData6cSub20;
+import legend.game.combat.effects.RedEyeDragoonTransformationFlameArmorEffect20;
 import legend.game.combat.effects.BttlScriptData6cSubBase1;
 import legend.game.combat.effects.BttlScriptData6cSubBase2;
 import legend.game.combat.effects.DeffTmdRenderer14;
@@ -2897,7 +2897,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800eb7c4L)
-  public static int FUN_800eb7c4(final EffectManagerData6c manager, final BttlScriptData6cSub20 effect) {
+  public static int FUN_800eb7c4(final EffectManagerData6c manager, final RedEyeDragoonTransformationFlameArmorEffect20 effect) {
     int a2 = effect._14 / 256;
 
     //LAB_800eb7e8
@@ -2939,7 +2939,7 @@ public final class Bttl_800e {
     }
 
     //LAB_800eb934
-    final BttlScriptData6cSub20 sub = FUN_800e8dd4(manager, 10, 0, Bttl_800e::FUN_800eb7c4, 0x20, new BttlScriptData6cSub20());
+    final RedEyeDragoonTransformationFlameArmorEffect20 sub = FUN_800e8dd4(manager, 10, 0, Bttl_800e::FUN_800eb7c4, 0x20, new RedEyeDragoonTransformationFlameArmorEffect20());
     sub._0c.set(textureInfo1.vramPos_00);
     sub._14 = 0;
     sub._18 = script.params_20[3].get();

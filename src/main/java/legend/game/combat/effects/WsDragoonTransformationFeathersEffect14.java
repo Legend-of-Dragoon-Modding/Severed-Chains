@@ -7,7 +7,7 @@ import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedShortRef;
 
-public class BttlScriptData6cSub14_4 implements BttlScriptData6cSubBase1, MemoryRef {
+public class WsDragoonTransformationFeathersEffect14 implements BttlScriptData6cSubBase1, MemoryRef {
   private final Value ref;
 
   public final UnsignedShortRef count_00;
@@ -18,9 +18,9 @@ public class BttlScriptData6cSub14_4 implements BttlScriptData6cSubBase1, Memory
   public final ShortRef width_0a;
   public final ShortRef height_0c;
   public final ShortRef clut_0e;
-  public final Pointer<UnboundedArrayRef<BttlScriptData6cSub14_4Sub70>> ptr_10;
+  public final Pointer<UnboundedArrayRef<WsDragoonTransformationFeatherInstance70>> ptr_10;
 
-  public BttlScriptData6cSub14_4(final Value ref) {
+  public WsDragoonTransformationFeathersEffect14(final Value ref) {
     this.ref = ref;
 
     this.count_00 = ref.offset(2, 0x00L).cast(UnsignedShortRef::new);
@@ -31,7 +31,7 @@ public class BttlScriptData6cSub14_4 implements BttlScriptData6cSubBase1, Memory
     this.width_0a = ref.offset(2, 0x0aL).cast(ShortRef::new);
     this.height_0c = ref.offset(2, 0x0cL).cast(ShortRef::new);
     this.clut_0e = ref.offset(2, 0x0eL).cast(ShortRef::new);
-    this.ptr_10 = ref.offset(4, 0x10L).cast(Pointer.deferred(4, UnboundedArrayRef.of(0x70, BttlScriptData6cSub14_4Sub70::new)));
+    this.ptr_10 = ref.offset(4, 0x10L).cast(Pointer.deferred(4, UnboundedArrayRef.of(0x70, WsDragoonTransformationFeatherInstance70::new)));
   }
 
   @Override

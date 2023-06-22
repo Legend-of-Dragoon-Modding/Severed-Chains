@@ -2,7 +2,7 @@ package legend.game.combat.effects;
 
 import legend.core.gte.USCOLOUR;
 
-public class BttlScriptData6cSub1c_2Sub1e {
+public class ThunderArrowEffectBolt1e {
   public short x_00;
   public short y_02;
   public final USCOLOUR colour_04 = new USCOLOUR();

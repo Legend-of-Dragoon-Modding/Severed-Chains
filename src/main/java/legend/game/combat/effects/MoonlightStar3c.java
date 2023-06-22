@@ -5,7 +5,7 @@ import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedByteRef;
 
-public class BttlScriptData6cSub18Sub3c implements MemoryRef {
+public class MoonlightStar3c implements MemoryRef {
   private final Value ref;
 
   public final ShortRef _00;
@@ -18,7 +18,7 @@ public class BttlScriptData6cSub18Sub3c implements MemoryRef {
   public final ShortRef _36;
   public final ShortRef _38;
 
-  public BttlScriptData6cSub18Sub3c(final Value ref) {
+  public MoonlightStar3c(final Value ref) {
     this.ref = ref;
 
     this._00 = ref.offset(2, 0x00L).cast(ShortRef::new);
