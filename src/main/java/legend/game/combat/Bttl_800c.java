@@ -345,8 +345,8 @@ public final class Bttl_800c {
 
   public static final Value _800c6cf4 = MEMORY.ref(4, 0x800c6cf4L);
 
-  public static final Value _800c6d94 = MEMORY.ref(2, 0x800c6d94L);
-  public static final Value _800c6dac = MEMORY.ref(2, 0x800c6dacL);
+  public static final ArrayRef<SVECTOR> completedAdditionStarburstTranslationMagnitudes_800c6d94 = MEMORY.ref(2, 0x800c6d94L, ArrayRef.of(SVECTOR.class, 4, 6, SVECTOR::new));
+  public static final ArrayRef<SVECTOR> completedAdditionStarburstAngleModifiers_800c6dac = MEMORY.ref(2, 0x800c6dacL, ArrayRef.of(SVECTOR.class, 4, 6, SVECTOR::new));
 
   /**
    * <ol start="0">
@@ -3577,8 +3577,8 @@ public final class Bttl_800c {
     WeaponTrailEffectSegment2c segment = trail.currentSegment_38;
 
     //LAB_800cddfc
-    while(!segment.previousSegmentRef_24.isNull()) {
-      segment = segment.previousSegmentRef_24.deref();
+    while(segment.previousSegmentRef_24 != null) {
+      segment = segment.previousSegmentRef_24;
     }
 
     //LAB_800cde14
@@ -3587,22 +3587,22 @@ public final class Bttl_800c {
 
   @Method(0x800cde1cL)
   public static WeaponTrailEffectSegment2c FUN_800cde1c(final WeaponTrailEffect3c trail) {
-    WeaponTrailEffectSegment2c segment = trail.segments_34.get(0);
+    WeaponTrailEffectSegment2c segment = trail.segments_34[0];
 
     int segmentIndex = 0;
     //LAB_800cde3c
-    while(segment._03.get() != 0) {
+    while(segment._03) {
       segmentIndex++;
-      segment = trail.segments_34.get(segmentIndex);
+      segment = trail.segments_34[segmentIndex];
     }
 
     //LAB_800cde50
     if(segmentIndex == 64) {
       segment = getRootSegment(trail);
-      segment._03.set(0);
+      segment._03 = false;
 
-      if(!segment.nextSegmentRef_28.isNull()) {
-        segment.nextSegmentRef_28.deref().previousSegmentRef_24.clear();
+      if(segment.nextSegmentRef_28 != null) {
+        segment.nextSegmentRef_28.previousSegmentRef_24 = null;
       }
     }
 
@@ -3626,24 +3626,24 @@ public final class Bttl_800c {
 
       final IntRef x0 = new IntRef();
       final IntRef y0 = new IntRef();
-      transformWorldspaceToScreenspace(segment.endpointCoords_04.get(0), x0, y0);
+      transformWorldspaceToScreenspace(segment.endpointCoords_04[0], x0, y0);
       renderCoordThresholdExceeded = Math.abs(x0.get()) > renderCoordThreshold || Math.abs(y0.get()) > renderCoordThreshold;
 
       final IntRef x2 = new IntRef();
       final IntRef y2 = new IntRef();
-      final int z = transformWorldspaceToScreenspace(segment.endpointCoords_04.get(1), x2, y2) >> 2;
+      final int z = transformWorldspaceToScreenspace(segment.endpointCoords_04[1], x2, y2) >> 2;
       renderCoordThresholdExceeded = renderCoordThresholdExceeded || Math.abs(x2.get()) > renderCoordThreshold || Math.abs(y2.get()) > renderCoordThreshold;
 
       //LAB_800cdf94
-      segment = segment.previousSegmentRef_24.derefNullable();
+      segment = segment.previousSegmentRef_24;
       for(int i = 0; i < trail.segmentCount_0e && segment != null; i++) {
         final IntRef x1 = new IntRef();
         final IntRef y1 = new IntRef();
-        transformWorldspaceToScreenspace(segment.endpointCoords_04.get(0), x1, y1);
+        transformWorldspaceToScreenspace(segment.endpointCoords_04[0], x1, y1);
         renderCoordThresholdExceeded = renderCoordThresholdExceeded || Math.abs(x1.get()) > renderCoordThreshold || Math.abs(y1.get()) > renderCoordThreshold;
         final IntRef x3 = new IntRef();
         final IntRef y3 = new IntRef();
-        transformWorldspaceToScreenspace(segment.endpointCoords_04.get(1), x3, y3);
+        transformWorldspaceToScreenspace(segment.endpointCoords_04[1], x3, y3);
         renderCoordThresholdExceeded = renderCoordThresholdExceeded || Math.abs(x3.get()) > renderCoordThreshold || Math.abs(y3.get()) > renderCoordThreshold;
 
         final GpuCommandPoly cmd = new GpuCommandPoly(4)
@@ -3675,7 +3675,7 @@ public final class Bttl_800c {
         y0.set(y1.get());
         x2.set(x3.get());
         y2.set(y3.get());
-        segment = segment.previousSegmentRef_24.derefNullable();
+        segment = segment.previousSegmentRef_24;
         renderCoordThresholdExceeded = (
           Math.abs(x0.get()) > renderCoordThreshold ||
             Math.abs(y0.get()) > renderCoordThreshold ||
@@ -3693,8 +3693,6 @@ public final class Bttl_800c {
 
   @Method(0x800ce254L)
   public static void tickWeaponTrailEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    long s6;
-
     final WeaponTrailEffect3c trail = (WeaponTrailEffect3c)data.effect_44;
     trail.currentSegmentIndex_00++;
     if(trail.currentSegmentIndex_00 == 0) {
@@ -3710,16 +3708,16 @@ public final class Bttl_800c {
     WeaponTrailEffectSegment2c segment = FUN_800cde1c(trail);
 
     if(trail.currentSegment_38 != null) {
-      trail.currentSegment_38.nextSegmentRef_28.set(segment);
+      trail.currentSegment_38.nextSegmentRef_28 = segment;
     }
 
     //LAB_800ce2e4
-    segment.unused_00.set(0x6c);
-    segment.unused_01.set(0x63);
-    segment.unused_02.set(0x73);
-    segment._03.set(0x1);
-    segment.nextSegmentRef_28.clear();
-    segment.previousSegmentRef_24.setNullable(trail.currentSegment_38);
+    segment.unused_00 = 0x6c;
+    segment.unused_01 = 0x63;
+    segment.unused_02 = 0x73;
+    segment._03 = true;
+    segment.nextSegmentRef_28 = null;
+    segment.previousSegmentRef_24 = trail.currentSegment_38;
     trail.currentSegment_38 = segment;
 
     //LAB_800ce320
@@ -3728,59 +3726,60 @@ public final class Bttl_800c {
       GsGetLw(trail.parentModel_30.coord2ArrPtr_04[trail.dobjIndex_08], perspectiveTransformMatrix);
       final VECTOR transformedVertex = ApplyMatrixLV(perspectiveTransformMatrix, i == 0 ? trail.smallestVertex_20 : trail.largestVertex_10);
       transformedVertex.add(perspectiveTransformMatrix.transfer);
-      segment.endpointCoords_04.get(i).set(transformedVertex);
+      segment.endpointCoords_04[i].set(transformedVertex);
     }
 
     //LAB_800ce3e0
     segment = trail.currentSegment_38;
     while(segment != null) {
-      FUN_800ce880(segment.endpointCoords_04.get(1), segment.endpointCoords_04.get(0), 0x1000, 0x400);
-      segment = segment.previousSegmentRef_24.derefNullable();
+      FUN_800ce880(segment.endpointCoords_04[1], segment.endpointCoords_04[0], 0x1000, 0x400);
+      segment = segment.previousSegmentRef_24;
     }
 
     //LAB_800ce404
     //LAB_800ce40c
+    int s6;
     for(int i = 0; i < 2; i++) {
       segment = trail.currentSegment_38;
       s6 = 0;
 
       //LAB_800ce41c
       while(segment != null) {
-        if(!segment.nextSegmentRef_28.isNull()) {
-          if(!segment.previousSegmentRef_24.isNull()) {
-            WeaponTrailEffectSegment2c previousSegment = segment.previousSegmentRef_24.deref();
+        if(segment.nextSegmentRef_28 != null) {
+          if(segment.previousSegmentRef_24 != null) {
+            WeaponTrailEffectSegment2c previousSegment = segment.previousSegmentRef_24;
 
             //LAB_800ce444
             final WeaponTrailEffectSegment2c[] sp0x50 = new WeaponTrailEffectSegment2c[2];
             for(int j = 0; j < 2; j++) {
               final WeaponTrailEffectSegment2c v0 = FUN_800cde1c(trail);
               sp0x50[j] = v0;
-              v0.unused_00.set(0x6c);
-              v0.unused_01.set(0x63);
-              v0.unused_02.set(0x73);
-              v0._03.set(0x1);
-              v0.endpointCoords_04.get(0).set(previousSegment.endpointCoords_04.get(0)).sub(segment.endpointCoords_04.get(0)).div(3).add(segment.endpointCoords_04.get(0));
-              v0.endpointCoords_04.get(1).set(previousSegment.endpointCoords_04.get(1)).sub(segment.endpointCoords_04.get(1)).div(3).add(segment.endpointCoords_04.get(1));
-              previousSegment = segment.nextSegmentRef_28.deref();
+              v0.unused_00 = 0x6c;
+              v0.unused_01 = 0x63;
+              v0.unused_02 = 0x73;
+              v0._03 = true;
+              v0.endpointCoords_04[0].set(previousSegment.endpointCoords_04[0]).sub(segment.endpointCoords_04[0]).div(3).add(segment.endpointCoords_04[0]);
+              v0.endpointCoords_04[1].set(previousSegment.endpointCoords_04[1]).sub(segment.endpointCoords_04[1]).div(3).add(segment.endpointCoords_04[1]);
+              previousSegment = segment.nextSegmentRef_28;
             }
 
-            sp0x50[0].previousSegmentRef_24.set(segment.previousSegmentRef_24.deref());
-            sp0x50[1].previousSegmentRef_24.set(sp0x50[0]);
-            sp0x50[1].nextSegmentRef_28.set(segment.nextSegmentRef_28.deref());
-            sp0x50[0].nextSegmentRef_28.set(sp0x50[1]);
-            segment.nextSegmentRef_28.deref().previousSegmentRef_24.set(sp0x50[1]);
-            segment.previousSegmentRef_24.deref().nextSegmentRef_28.set(sp0x50[0]);
-            segment._03.set(0);
-            segment = segment.previousSegmentRef_24.derefNullable();
+            sp0x50[0].previousSegmentRef_24 = segment.previousSegmentRef_24;
+            sp0x50[1].previousSegmentRef_24 = sp0x50[0];
+            sp0x50[1].nextSegmentRef_28 = segment.nextSegmentRef_28;
+            sp0x50[0].nextSegmentRef_28 = sp0x50[1];
+            segment.nextSegmentRef_28.previousSegmentRef_24 = sp0x50[1];
+            segment.previousSegmentRef_24.nextSegmentRef_28 = sp0x50[0];
+            segment._03 = false;
+            segment = segment.previousSegmentRef_24;
             s6++;
-            if(s6 > i * 0x2L || segment == null) {
+            if(s6 > i * 2 || segment == null) {
               break;
             }
           }
         }
 
         //LAB_800ce630
-        segment = segment.previousSegmentRef_24.derefNullable();
+        segment = segment.previousSegmentRef_24;
       }
 
       //LAB_800ce640
@@ -3791,7 +3790,7 @@ public final class Bttl_800c {
 
   @Method(0x800ce678L)
   public static void deallocateWeaponTrailEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    free(((WeaponTrailEffect3c)data.effect_44).segments_34.getAddress());
+    ((WeaponTrailEffect3c)data.effect_44).segments_34 = null;
   }
 
   @Method(0x800ce6a8L)
@@ -3808,17 +3807,16 @@ public final class Bttl_800c {
 
     final EffectManagerData6c manager = state.innerStruct_00;
     final WeaponTrailEffect3c trail = (WeaponTrailEffect3c)manager.effect_44;
-    trail.segments_34 = MEMORY.ref(4, mallocTail(0x2c * 65), ArrayRef.of(WeaponTrailEffectSegment2c.class, 65, 0x2c, WeaponTrailEffectSegment2c::new));
 
     //LAB_800ce75c
     for(int i = 0; i < 65; i++) {
-      final WeaponTrailEffectSegment2c segment = trail.segments_34.get(i);
-      segment.unused_00.set(0x6c);
-      segment.unused_01.set(0x63);
-      segment.unused_02.set(0x73);
-      segment._03.set(0);
-      segment.previousSegmentRef_24.clear();
-      segment.nextSegmentRef_28.clear();
+      final WeaponTrailEffectSegment2c segment = trail.segments_34[i];
+      segment.unused_00 = 0x6c;
+      segment.unused_01 = 0x63;
+      segment.unused_02 = 0x73;
+      segment._03 = false;
+      segment.previousSegmentRef_24 = null;
+      segment.nextSegmentRef_28 = null;
     }
 
     trail.currentSegment_38 = null;
