@@ -7,7 +7,7 @@ import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedShortRef;
 
-public class BttlScriptData6cSub14_4Sub70 implements MemoryRef {
+public class WsDragoonTransformationFeatherInstance70 implements MemoryRef {
   private final Value ref;
 
   public final UnsignedByteRef _00;
@@ -43,7 +43,7 @@ public class BttlScriptData6cSub14_4Sub70 implements MemoryRef {
   public final UnsignedShortRef _6c;
   public final ShortRef _6e;
 
-  public BttlScriptData6cSub14_4Sub70(final Value ref) {
+  public WsDragoonTransformationFeatherInstance70(final Value ref) {
     this.ref = ref;
 
     this._00 = ref.offset(1, 0x00L).cast(UnsignedByteRef::new);

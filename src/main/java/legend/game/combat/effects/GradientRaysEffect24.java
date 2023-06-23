@@ -5,7 +5,7 @@ import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.UnsignedIntRef;
 
-public class BttlScriptData6cSub24 implements BttlScriptData6cSubBase1, MemoryRef {
+public class GradientRaysEffect24 implements BttlScriptData6cSubBase1, MemoryRef {
   private final Value ref;
 
   /** TODO */
@@ -19,7 +19,7 @@ public class BttlScriptData6cSub24 implements BttlScriptData6cSubBase1, MemoryRe
   public final IntRef _1c;
   public final IntRef _20;
 
-  public BttlScriptData6cSub24(final Value ref) {
+  public GradientRaysEffect24(final Value ref) {
     this.ref = ref;
 
     this.ptr_00 = ref.offset(4, 0x00L).cast(UnsignedIntRef::new);

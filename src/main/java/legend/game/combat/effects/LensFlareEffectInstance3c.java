@@ -6,7 +6,7 @@ import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedShortRef;
 
-public class BttlScriptData6cSub50Sub3c implements MemoryRef {
+public class LensFlareEffectInstance3c implements MemoryRef {
   private final Value ref;
 
   public final UnsignedByteRef _02;
@@ -30,7 +30,7 @@ public class BttlScriptData6cSub50Sub3c implements MemoryRef {
   public final UnsignedShortRef _32;
   public final UnsignedShortRef _34;
 
-  public BttlScriptData6cSub50Sub3c(final Value ref) {
+  public LensFlareEffectInstance3c(final Value ref) {
     this.ref = ref;
 
     this._02 = ref.offset(1, 0x02L).cast(UnsignedByteRef::new);

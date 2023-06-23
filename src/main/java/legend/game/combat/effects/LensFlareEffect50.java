@@ -8,7 +8,7 @@ import legend.core.memory.types.Pointer;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedShortRef;
 
-public class BttlScriptData6cSub50 implements BttlScriptData6cSubBase1, MemoryRef {
+public class LensFlareEffect50 implements BttlScriptData6cSubBase1, MemoryRef {
   private final Value ref;
 
   public final UnsignedShortRef _00;
@@ -19,7 +19,7 @@ public class BttlScriptData6cSub50 implements BttlScriptData6cSubBase1, MemoryRe
   public final ArrayRef<UnsignedShortRef> h_22;
   public final ArrayRef<UnsignedShortRef> clut_2c;
 
-  public final Pointer<ArrayRef<BttlScriptData6cSub50Sub3c>> _38;
+  public final Pointer<ArrayRef<LensFlareEffectInstance3c>> _38;
   public final IntRef bobjIndex_3c;
   public final ShortRef _40;
   public final ShortRef _42;
@@ -28,7 +28,7 @@ public class BttlScriptData6cSub50 implements BttlScriptData6cSubBase1, MemoryRe
   public final ShortRef _48;
   public final ShortRef _4a;
 
-  public BttlScriptData6cSub50(final Value ref) {
+  public LensFlareEffect50(final Value ref) {
     this.ref = ref;
 
     this._00 = ref.offset(2, 0x00L).cast(UnsignedShortRef::new);
@@ -39,7 +39,7 @@ public class BttlScriptData6cSub50 implements BttlScriptData6cSubBase1, MemoryRe
     this.h_22 = ref.offset(2, 0x22L).cast(ArrayRef.of(UnsignedShortRef.class, 5, 2, UnsignedShortRef::new));
     this.clut_2c = ref.offset(2, 0x2cL).cast(ArrayRef.of(UnsignedShortRef.class, 5, 2, UnsignedShortRef::new));
 
-    this._38 = ref.offset(4, 0x38L).cast(Pointer.deferred(4, ArrayRef.of(BttlScriptData6cSub50Sub3c.class, 5, 0x3c, BttlScriptData6cSub50Sub3c::new)));
+    this._38 = ref.offset(4, 0x38L).cast(Pointer.deferred(4, ArrayRef.of(LensFlareEffectInstance3c.class, 5, 0x3c, LensFlareEffectInstance3c::new)));
     this.bobjIndex_3c = ref.offset(4, 0x3cL).cast(IntRef::new);
     this._40 = ref.offset(2, 0x40L).cast(ShortRef::new);
     this._42 = ref.offset(2, 0x42L).cast(ShortRef::new);

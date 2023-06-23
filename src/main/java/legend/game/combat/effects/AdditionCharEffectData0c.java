@@ -1,4 +1,4 @@
-package legend.game.combat.types;
+package legend.game.combat.effects;
 
 public class AdditionCharEffectData0c {
   /** 1 when character is scrolling, 0 when set **/

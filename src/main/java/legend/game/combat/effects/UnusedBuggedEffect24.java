@@ -3,7 +3,7 @@ package legend.game.combat.effects;
 import legend.core.gte.SVECTOR;
 import legend.game.combat.deff.DeffPart;
 
-public class BttlScriptData6cSub24_2 extends BttlScriptData6cSubBase2 {
+public class UnusedBuggedEffect24 extends BttlScriptData6cSubBase2 {
   public int _0c;
   public int _10;
   public DeffPart.LmbType lmb_14;
