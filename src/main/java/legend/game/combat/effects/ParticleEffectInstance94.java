@@ -33,6 +33,7 @@ public class ParticleEffectInstance94 {
   public final SVECTOR _3c = new SVECTOR();
   public SVECTOR[] _44;
   public final SVECTOR _48 = new SVECTOR();
+  /** Translation of an attached model object? */
   public final SVECTOR _50 = new SVECTOR();
   public final SVECTOR _58 = new SVECTOR();
   public final SVECTOR _60 = new SVECTOR();
