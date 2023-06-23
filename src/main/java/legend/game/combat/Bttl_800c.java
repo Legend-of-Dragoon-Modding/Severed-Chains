@@ -4301,11 +4301,12 @@ public final class Bttl_800c {
     MEMORY.ref(4, func).call(script);
   }
 
+  /** Sets translation vector to position of individual part of model associated with scriptIndex */
   @Method(0x800cffd8L)
-  public static void FUN_800cffd8(final int scriptIndex, final VECTOR a1, final int animIndex) {
-    final MATRIX sp0x10 = new MATRIX();
-    GsGetLw(((BattleObject27c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00).model_148.coord2ArrPtr_04[animIndex], sp0x10);
-    a1.set(ApplyMatrixLV(sp0x10, new VECTOR()));
-    a1.add(sp0x10.transfer);
+  public static void getModelObjectTranslation(final int scriptIndex, final VECTOR translation, final int objIndex) {
+    final MATRIX transformMatrix = new MATRIX();
+    GsGetLw(((BattleObject27c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00).model_148.coord2ArrPtr_04[objIndex], transformMatrix);
+    translation.set(ApplyMatrixLV(transformMatrix, new VECTOR()));
+    translation.add(transformMatrix.transfer);
   }
 }
