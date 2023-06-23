@@ -6240,33 +6240,33 @@ public final class SEffe {
 
     //LAB_8010e6ec
     final UnboundedArrayRef<StarChildrenMeteorEffectInstance10> s2 = effect.meteorArray_0c.deref();
-    for(int s3 = 0; s3 < effect.count_00.get(); s3++) {
-      s2.get(s3)._06.set(s2.get(s3)._02.get());
-      s2.get(s3)._08.set(s2.get(s3)._04.get());
-      s2.get(s3)._02.add((short)((rsin(manager._10.rot_10.getX()) * 32 >> 12) * manager._10.scale_16.getX() * s2.get(s3)._06.get() >> 24));
-      s2.get(s3)._04.add((short)((rcos(manager._10.rot_10.getX()) * 32 >> 12) * manager._10.scale_16.getX() * s2.get(s3)._06.get() >> 24));
+    for(int i = 0; i < effect.count_00.get(); i++) {
+      s2.get(i)._06.set(s2.get(i)._02.get());
+      s2.get(i)._08.set(s2.get(i)._04.get());
+      s2.get(i)._02.add((short)((rsin(manager._10.rot_10.getX()) * 32 >> 12) * manager._10.scale_16.getX() * s2.get(i)._0a.get() >> 24));
+      s2.get(i)._04.add((short)((rcos(manager._10.rot_10.getX()) * 32 >> 12) * manager._10.scale_16.getX() * s2.get(i)._0a.get() >> 24));
 
-      if(s2.get(s3)._0a.get() * 120 + 50 >> 12 < s2.get(s3)._04.get()) {
-        s2.get(s3)._08.set((short)-120);
-        s2.get(s3)._04.set((short)-120);
+      if(s2.get(i)._0a.get() * 120 + 50 >> 12 < s2.get(i)._04.get()) {
+        s2.get(i)._08.set((short)-120);
+        s2.get(i)._04.set((short)-120);
         final long v0 = rand() % 321 - 160;
-        s2.get(s3)._06.set((short)v0);
-        s2.get(s3)._02.set((short)v0);
-        s2.get(s3)._00.set(1);
+        s2.get(i)._06.set((short)v0);
+        s2.get(i)._02.set((short)v0);
+        s2.get(i)._00.set(1);
       }
 
       //LAB_8010e828
-      final long v1 = s2.get(s3)._02.get();
+      final long v1 = s2.get(i)._02.get();
       if(v1 > 0xa0) {
-        s2.get(s3)._06.set((short)-0xa0);
-        s2.get(s3)._02.set((short)-0xa0);
-        s2.get(s3)._08.set(s2.get(s3)._04.get());
+        s2.get(i)._06.set((short)-0xa0);
+        s2.get(i)._02.set((short)-0xa0);
+        s2.get(i)._08.set(s2.get(i)._04.get());
         //LAB_8010e848
       } else if(v1 < -0xa0) {
         //LAB_8010e854
-        s2.get(s3)._06.set((short)0xa0);
-        s2.get(s3)._02.set((short)0xa0);
-        s2.get(s3)._08.set(s2.get(s3)._04.get());
+        s2.get(i)._06.set((short)0xa0);
+        s2.get(i)._02.set((short)0xa0);
+        s2.get(i)._08.set(s2.get(i)._04.get());
       }
       //LAB_8010e860
     }
