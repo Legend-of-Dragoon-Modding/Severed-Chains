@@ -401,7 +401,7 @@ public final class Bttl_800d {
             .pos(1, endX.get(), endY.get());
 
           //LAB_800d0c84
-          // GPU.queueCommand(s7 + a3 >> 2, cmd);
+          GPU.queueCommand(s7 + a3 >> 2, cmd);
         }
 
         //LAB_800d0ca0
