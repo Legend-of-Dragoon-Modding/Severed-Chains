@@ -50,7 +50,6 @@ import legend.game.combat.effects.AdditionOverlaysBorder0e;
 import legend.game.combat.effects.AdditionOverlaysEffect44;
 import legend.game.combat.effects.AdditionOverlaysHit20;
 import legend.game.combat.effects.AttackHitFlashEffect0c;
-import legend.game.combat.effects.BattleStruct24;
 import legend.game.combat.effects.BttlScriptData6cSub13c;
 import legend.game.combat.effects.BttlScriptData6cSub1c_3;
 import legend.game.combat.effects.BttlScriptData6cSub20_2Suba8;
@@ -63,6 +62,7 @@ import legend.game.combat.effects.EffectManagerData6cInner;
 import legend.game.combat.effects.EffectStruct48;
 import legend.game.combat.effects.ElectricityEffect38;
 import legend.game.combat.effects.FrozenJetEffect28;
+import legend.game.combat.effects.GenericSpriteEffect24;
 import legend.game.combat.effects.GoldDragoonTransformEffect20;
 import legend.game.combat.effects.GoldDragoonTransformEffectInstance84;
 import legend.game.combat.effects.GradientRaysEffect24;
@@ -185,11 +185,11 @@ import static legend.game.combat.Bttl_800c.FUN_800cf4f4;
 import static legend.game.combat.Bttl_800c.FUN_800cf684;
 import static legend.game.combat.Bttl_800c.FUN_800cfb94;
 import static legend.game.combat.Bttl_800c.FUN_800cfc20;
-import static legend.game.combat.Bttl_800c.FUN_800cffd8;
 import static legend.game.combat.Bttl_800c._800fb0ec;
 import static legend.game.combat.Bttl_800c.callScriptFunction;
 import static legend.game.combat.Bttl_800c.currentStage_800c66a4;
 import static legend.game.combat.Bttl_800c.deffManager_800c693c;
+import static legend.game.combat.Bttl_800c.getModelObjectTranslation;
 import static legend.game.combat.Bttl_800c.melbuStageIndices_800fb064;
 import static legend.game.combat.Bttl_800c.scriptGetScriptedObjectPos;
 import static legend.game.combat.Bttl_800c.seed_800fa754;
@@ -207,7 +207,6 @@ import static legend.game.combat.Bttl_800e.FUN_800e6170;
 import static legend.game.combat.Bttl_800e.FUN_800e61e4;
 import static legend.game.combat.Bttl_800e.FUN_800e62a8;
 import static legend.game.combat.Bttl_800e.FUN_800e7dbc;
-import static legend.game.combat.Bttl_800e.FUN_800e7ea4;
 import static legend.game.combat.Bttl_800e.FUN_800e8594;
 import static legend.game.combat.Bttl_800e.FUN_800e8c84;
 import static legend.game.combat.Bttl_800e.FUN_800e8d04;
@@ -219,6 +218,7 @@ import static legend.game.combat.Bttl_800e.allocateEffectManager;
 import static legend.game.combat.Bttl_800e.applyScreenDarkening;
 import static legend.game.combat.Bttl_800e.getDeffPart;
 import static legend.game.combat.Bttl_800e.perspectiveTransformXyz;
+import static legend.game.combat.Bttl_800e.renderGenericSpriteAtZOffset0;
 
 public final class SEffe {
   private SEffe() { }
@@ -2123,10 +2123,10 @@ public final class SEffe {
   }
 
   @Method(0x80100d00L)
-  public static void FUN_80100d00(final EffectManagerData6c a0, final ParticleEffectData98 a1, final ParticleEffectInstance94 a2, final EffectData98Inner24 a3) {
-    final VECTOR sp0x10 = new VECTOR();
-    FUN_800cffd8(a3.scriptIndex_04, sp0x10, (int)_8011a008.get());
-    a2._50.set(sp0x10);
+  public static void FUN_80100d00(final EffectManagerData6c manager, final ParticleEffectData98 particleEffect, final ParticleEffectInstance94 particleInstance, final EffectData98Inner24 a3) {
+    final VECTOR translation = new VECTOR();
+    getModelObjectTranslation(a3.scriptIndex_04, translation, (int)_8011a008.get());
+    particleInstance._50.set(translation);
   }
 
   @Method(0x80100d58L)
@@ -5905,22 +5905,22 @@ public final class SEffe {
     final WsDragoonTransformationFeathersEffect14 effect = (WsDragoonTransformationFeathersEffect14)manager.effect_44;
     effect._02.incr();
 
-    final BattleStruct24 sp0x10 = new BattleStruct24();
+    final GenericSpriteEffect24 spriteEffect = new GenericSpriteEffect24();
 
-    sp0x10.flags_00.set(manager._10.flags_00);
-    sp0x10.x_04.set((short)(-effect.width_0a.get() / 2));
-    sp0x10.y_06.set((short)(-effect.height_0c.get() / 2));
-    sp0x10.w_08.set(effect.width_0a.get());
-    sp0x10.h_0a.set(effect.height_0c.get());
-    sp0x10.tpage_0c.set((effect.v_08.get() & 0x100) >>> 4 | (effect.u_06.get() & 0x3ff) >>> 6);
-    sp0x10.u_0e.set((effect.u_06.get() & 0x3f) * 4);
-    sp0x10.v_0f.set(effect.v_08.get());
-    sp0x10.clutX_10.set(effect.clut_0e.get() << 4 & 0x3ff);
-    sp0x10.clutY_12.set(effect.clut_0e.get() >>> 6 & 0x1ff);
-    sp0x10._18.set((short)0);
-    sp0x10._1a.set((short)0);
+    spriteEffect.flags_00 = manager._10.flags_00;
+    spriteEffect.x_04 = (short)(-effect.width_0a.get() / 2);
+    spriteEffect.y_06 = (short)(-effect.height_0c.get() / 2);
+    spriteEffect.w_08 = effect.width_0a.get();
+    spriteEffect.h_0a = effect.height_0c.get();
+    spriteEffect.tpage_0c = (effect.v_08.get() & 0x100) >>> 4 | (effect.u_06.get() & 0x3ff) >>> 6;
+    spriteEffect.u_0e = (effect.u_06.get() & 0x3f) * 4;
+    spriteEffect.v_0f = effect.v_08.get();
+    spriteEffect.clutX_10 = effect.clut_0e.get() << 4 & 0x3ff;
+    spriteEffect.clutY_12 = effect.clut_0e.get() >>> 6 & 0x1ff;
+    spriteEffect.unused_18 = 0;
+    spriteEffect.unused_1a = 0;
 
-    final VECTOR sp0x38 = new VECTOR();
+    final VECTOR translation = new VECTOR();
 
     //LAB_8010d6c8
     for(int s4 = 0; s4 < effect.count_00.get(); s4++) {
@@ -5928,24 +5928,24 @@ public final class SEffe {
 
       if(s3._00.get() != 0) {
         if(s3._38.get() == 0x7f && s3._39.get() == 0x7f && s3._3a.get() == 0x7f) {
-          sp0x10.r_14.set(manager._10.colour_1c.getX());
-          sp0x10.g_15.set(manager._10.colour_1c.getY());
-          sp0x10.b_16.set(manager._10.colour_1c.getZ());
+          spriteEffect.r_14 = manager._10.colour_1c.getX();
+          spriteEffect.g_15 = manager._10.colour_1c.getY();
+          spriteEffect.b_16 = manager._10.colour_1c.getZ();
         } else {
           //LAB_8010d718
-          sp0x10.r_14.set(s3._38.get());
-          sp0x10.g_15.set(s3._39.get());
-          sp0x10.b_16.set(s3._3a.get());
+          spriteEffect.r_14 = s3._38.get();
+          spriteEffect.g_15 = s3._39.get();
+          spriteEffect.b_16 = s3._3a.get();
         }
 
         //LAB_8010d73c
-        sp0x10.scaleX_1c.set(manager._10.scale_16.getX());
-        sp0x10.scaleY_1e.set(manager._10.scale_16.getY());
-        sp0x10.rotation_20.set(s3._6e.get());
-        sp0x38.setX(manager._10.trans_04.getX() + (s3._08.get() >> 8));
-        sp0x38.setY(manager._10.trans_04.getY() + (s3._0c.get() >> 8));
-        sp0x38.setZ(manager._10.trans_04.getZ() + (s3._10.get() >> 8));
-        FUN_800e7ea4(sp0x10, sp0x38);
+        spriteEffect.scaleX_1c = manager._10.scale_16.getX();
+        spriteEffect.scaleY_1e = manager._10.scale_16.getY();
+        spriteEffect.angle_20 = s3._6e.get();
+        translation.setX(manager._10.trans_04.getX() + (s3._08.get() >> 8));
+        translation.setY(manager._10.trans_04.getY() + (s3._0c.get() >> 8));
+        translation.setZ(manager._10.trans_04.getZ() + (s3._10.get() >> 8));
+        renderGenericSpriteAtZOffset0(spriteEffect, translation);
       }
     }
   }
@@ -6345,21 +6345,21 @@ public final class SEffe {
   public static void FUN_8010ec08(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
     final MoonlightStarsEffect18 effect = (MoonlightStarsEffect18)manager.effect_44;
 
-    final BattleStruct24 sp0x10 = new BattleStruct24();
-    sp0x10.flags_00.set(manager._10.flags_00 & 0xffff_ffffL);
-    sp0x10.x_04.set((short)(-effect.metrics_04.w_04.get() / 2));
-    sp0x10.y_06.set((short)(-effect.metrics_04.h_05.get() / 2));
-    sp0x10.w_08.set(effect.metrics_04.w_04.get());
-    sp0x10.h_0a.set(effect.metrics_04.h_05.get());
-    sp0x10.tpage_0c.set((effect.metrics_04.v_02.get() & 0x100) >>> 4 | (effect.metrics_04.u_00.get() & 0x3ff) >>> 6);
-    sp0x10.u_0e.set((effect.metrics_04.u_00.get() & 0x3f) << 2);
-    sp0x10.v_0f.set(effect.metrics_04.v_02.get());
-    sp0x10.clutX_10.set(effect.metrics_04.clut_06.get() << 4 & 0x3ff);
-    sp0x10.clutY_12.set(effect.metrics_04.clut_06.get() >>> 6 & 0x1ff);
-    sp0x10._18.set((short)0);
-    sp0x10._1a.set((short)0);
+    final GenericSpriteEffect24 spriteEffect = new GenericSpriteEffect24();
+    spriteEffect.flags_00 = manager._10.flags_00 & 0xffff_ffffL;
+    spriteEffect.x_04 = (short)(-effect.metrics_04.w_04.get() / 2);
+    spriteEffect.y_06 = (short)(-effect.metrics_04.h_05.get() / 2);
+    spriteEffect.w_08 = effect.metrics_04.w_04.get();
+    spriteEffect.h_0a = effect.metrics_04.h_05.get();
+    spriteEffect.tpage_0c = (effect.metrics_04.v_02.get() & 0x100) >>> 4 | (effect.metrics_04.u_00.get() & 0x3ff) >>> 6;
+    spriteEffect.u_0e = (effect.metrics_04.u_00.get() & 0x3f) << 2;
+    spriteEffect.v_0f = effect.metrics_04.v_02.get();
+    spriteEffect.clutX_10 = effect.metrics_04.clut_06.get() << 4 & 0x3ff;
+    spriteEffect.clutY_12 = effect.metrics_04.clut_06.get() >>> 6 & 0x1ff;
+    spriteEffect.unused_18 = 0;
+    spriteEffect.unused_1a = 0;
 
-    final VECTOR sp0x38 = new VECTOR();
+    final VECTOR translation = new VECTOR();
 
     //LAB_8010ed00
     for(int i = 0; i < effect.count_00.get(); i++) {
@@ -6369,16 +6369,16 @@ public final class SEffe {
         break;
       }
 
-      sp0x10.r_14.set(manager._10.colour_1c.getX());
-      sp0x10.g_15.set(manager._10.colour_1c.getY());
-      sp0x10.b_16.set(manager._10.colour_1c.getZ());
-      sp0x10.scaleX_1c.set(manager._10.scale_16.getX());
-      sp0x10.scaleY_1e.set(manager._10.scale_16.getY());
-      sp0x10.rotation_20.set(manager._10.rot_10.getX());
-      sp0x38.setX(manager._10.trans_04.getX() + v1._04.get());
-      sp0x38.setY(manager._10.trans_04.getY() + v1._06.get());
-      sp0x38.setZ(manager._10.trans_04.getZ() + v1._08.get());
-      FUN_800e7ea4(sp0x10, sp0x38);
+      spriteEffect.r_14 = manager._10.colour_1c.getX();
+      spriteEffect.g_15 = manager._10.colour_1c.getY();
+      spriteEffect.b_16 = manager._10.colour_1c.getZ();
+      spriteEffect.scaleX_1c = manager._10.scale_16.getX();
+      spriteEffect.scaleY_1e = manager._10.scale_16.getY();
+      spriteEffect.angle_20 = manager._10.rot_10.getX();
+      translation.setX(manager._10.trans_04.getX() + v1._04.get());
+      translation.setY(manager._10.trans_04.getY() + v1._06.get());
+      translation.setZ(manager._10.trans_04.getZ() + v1._08.get());
+      renderGenericSpriteAtZOffset0(spriteEffect, translation);
     }
 
     //LAB_8010edac
