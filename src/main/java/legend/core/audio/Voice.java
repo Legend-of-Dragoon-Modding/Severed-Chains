@@ -36,6 +36,9 @@ final class Voice {
   private int breath;
   private int breathControlPosition;
 
+  private boolean _18;
+  private boolean _0c;
+
   private double volumeLeft;
   private double volumeRight;
 
@@ -200,7 +203,13 @@ final class Voice {
     this.breathControlPosition = 0;
     this.priorityOrder = playingVoices;
 
-    this.lowPriority = this.layer.isLowPriority();
+    if(this.layer.isLowPriority()) {
+      this.lowPriority = false;
+      this._0c = true;
+    } else {
+      this.lowPriority = true;
+      this._0c = false;
+    }
 
     if(this.layer.isModulation() && this.channel.getModulation() != 0) {
       this.breathControlIndex = this.layer.isBreathControlIndexFromInstrument() ? this.instrument.getBreathControlIndex() : this.layer.getBreathControlIndex();
@@ -213,6 +222,10 @@ final class Voice {
     }
 
     this.portamentoNote = 120;
+
+    if(this.channel.get_0b() == 0x7F) {
+      this._18 = true;
+    }
 
     this.counter.reset();
     this.adsrEnvelope.load(layer.getAdsr());
@@ -228,7 +241,15 @@ final class Voice {
   void keyOff() {
     System.out.printf("[VOICE] Voice %d Key Off%n", this.index);
     this.adsrEnvelope.keyOff();
-    this.lowPriority = true;
+
+    if(!this._0c) {
+      this.lowPriority = true;
+      this._18 = false;
+    } else if (!this._18) {
+      this.lowPriority = true;
+    } else {
+      this._18 = false;
+    }
   }
 
   boolean isUsed() {
@@ -252,6 +273,9 @@ final class Voice {
     this.breath = 0;
     this.isPortamento = false;
     this.portamentoNote = 0;
+
+    this._0c = false;
+    this._18 = false;
 
     this.latestSample = 0;
 

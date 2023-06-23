@@ -76,6 +76,9 @@ public final class Channel {
     this.pitchBend = value;
   }
 
+  public int get_0b() {
+    return this._0b;
+  }
   public void set_0b(final int value) {
     this._0b = value;
   }

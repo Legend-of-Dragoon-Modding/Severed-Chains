@@ -214,6 +214,21 @@ public final class AudioThread implements Runnable {
       }
     }
 
+    if(lastVoice == this.voices.length) {
+      for(int i = 0; i < this.voices.length; i++) {
+        final Voice voice = this.voices[i];
+
+        //TODO if not poly pressure
+
+        final int currentPriority = voice.getPriorityOrder();
+
+        if(currentPriority < this.voices.length) {
+          voiceIndex = i;
+          break;
+        }
+      }
+    }
+
     if(voiceIndex == this.voices.length) {
       throw new RuntimeException("Voice pool overflow");
     }
@@ -402,6 +417,8 @@ public final class AudioThread implements Runnable {
 
   private void programChange(final SequencedAudio sequencedAudio, final int channelIndex, final int value) {
     System.out.printf("[SEQUENCER] Program Change Channel: %d, Value: %d%n", channelIndex, value);
+
+    //TODO this should only happen, if sound isn't playing yet.
     final Channel channel = sequencedAudio.getChannel(channelIndex);
     channel.setInstrument(value);
     channel.setPitchBend(0x40);
