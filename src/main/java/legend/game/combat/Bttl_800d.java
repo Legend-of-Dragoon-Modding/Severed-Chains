@@ -15,6 +15,7 @@ import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.TmdWithId;
 import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
+import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.CString;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.ShortRef;
@@ -40,6 +41,7 @@ import legend.game.combat.effects.ProjectileHitEffect14;
 import legend.game.combat.effects.ProjectileHitEffect14Sub48;
 import legend.game.combat.effects.RadialGradientEffect14;
 import legend.game.combat.effects.SpTextEffect40;
+import legend.game.combat.effects.SpTextEffectTrail10;
 import legend.game.combat.effects.SpriteMetrics08;
 import legend.game.combat.environment.BattleCamera;
 import legend.game.combat.types.BattleScriptDataBase;
@@ -1296,19 +1298,6 @@ public final class Bttl_800d {
 
   @Method(0x800d4018L)
   public static void FUN_800d4018(final ScriptState<SpTextEffect40> state, final SpTextEffect40 s3) {
-    long v0;
-    long v1;
-    long t0;
-    long s2;
-    long s4;
-    long s5;
-    long s6;
-    long fp;
-    final long sp20;
-    long sp30;
-    final long sp28;
-    final long sp2c;
-
     if(_800faa94.get() == 0 && s3._00 == 0) {
       if(s3._02 == 0) {
         state.deallocateWithChildren();
@@ -1337,75 +1326,57 @@ public final class Bttl_800d {
     }
 
     //LAB_800d4108
-    v0 = s3.ptr_3c;
-    s6 = 0x1L;
-    s4 = v0 + 0x70L;
-    v1 = v0 + 0x74L;
+    final ArrayRef<SpTextEffectTrail10> charArray = s3.charArray_3c;
 
     //LAB_800d4118
-    do {
-      MEMORY.ref(4, s4).offset(0x0L).setu(MEMORY.ref(4, v1).offset(-0x14L).get());
-      MEMORY.ref(4, v1).offset(0x0L).setu(MEMORY.ref(4, v1).offset(-0x10L).get());
-      s4 = s4 - 0x10L;
-      v1 = v1 - 0x10L;
-      s6 = s6 + 0x1L;
-    } while((int)s6 < 0x8L);
+    int i;
+    for (i = 7; i > 0; i--) {
+      charArray.get(i)._00.set(charArray.get(i - 1)._00.get());
+      charArray.get(i)._04.set(charArray.get(i - 1)._04.get());
+    }
 
-    MEMORY.ref(4, s4).offset(0x0L).setu(s3._0c);
-    MEMORY.ref(4, s4).offset(0x4L).setu(s3._10);
-    s6 = 0;
+    charArray.get(0)._00.set(s3._0c);
+    charArray.get(0)._04.set(s3._10);
     final String sp0x18 = Integer.toString(s3._08);
-    fp = s3._02;
-    s4 = s3.ptr_3c;
-    v1 = fp & 0xffL;
-    v0 = s3._01 + 0x21L;
-    v1 = v1 >>> 3;
-    v0 = v0 & 0xffL;
-    t0 = v0;
-    sp2c = t0;
-    t0 = s4 + 0x4L;
-    sp20 = v1;
-    sp28 = v0;
+    int fp = s3._02;
+    final int sp20 = (fp & 0xff) >>> 3;
+    final int sp2c = (s3._01 + 0x21 & 0xff);
 
     //LAB_800d419c
-    do {
-      sp30 = t0;
+    short s2;
+    short s5;
+    for (i = 0; i < 8; i++) {
       fp = fp - sp20;
 
-      if(s6 == 0 || MEMORY.ref(4, s4).offset(0x0L).get() != s3._0c || MEMORY.ref(4, sp30).offset(0x0L).get() != s3._10) {
+      if(i == 0 || charArray.get(i)._00.get() != s3._0c || charArray.get(i)._04.get() != s3._10) {
         //LAB_800d41d8
-        s2 = (int)MEMORY.ref(4, s4).offset(0x0L).get() >> 8;
-        s5 = (int)MEMORY.ref(4, sp30).offset(0x0L).get() >> 8;
+        s2 = (short)(charArray.get(i)._00.get() >> 8);
+        s5 = (short)(charArray.get(i)._04.get() >> 8);
 
         if(s3._01 != 0) {
-          FUN_800d3f98((short)s2, (short)s5, 10, (short)sp28, (int)(fp & 0xff));
-          s2 = s2 + 0x8L;
+          FUN_800d3f98(s2, s5, 10, (short)sp2c, fp & 0xff);
+          s2 += 8;
         }
 
         //LAB_800d4224
         //LAB_800d423c
-        for(int i = 0; i < sp0x18.length(); i++) {
-          FUN_800d3f98((short)s2, (short)s5, sp0x18.charAt(i) - 0x30, (short)sp28, (int)(fp & 0xff));
-          s2 = s2 + 0x8L;
+        for(int j = 0; j < sp0x18.length(); j++) {
+          FUN_800d3f98(s2, s5, sp0x18.charAt(j) - 0x30, (short)sp2c, fp & 0xff);
+          s2 += 8;
         }
 
         //LAB_800d4274
-        FUN_800d3f98((short)(s2 - 0x2L), (short)s5, 11, (short)sp2c, (int)(fp & 0xff));
-        FUN_800d3f98((short)(s2 + 0x4L), (short)s5, 12, (short)sp2c, (int)(fp & 0xff));
+        FUN_800d3f98((short)(s2 - 2), s5, 11, (short)sp2c, fp & 0xff);
+        FUN_800d3f98((short)(s2 + 4), s5, 12, (short)sp2c, fp & 0xff);
       }
-
       //LAB_800d42c0
-      s6 = s6 + 0x1L;
-      s4 = s4 + 0x10L;
-      t0 = sp30 + 0x10L;
-    } while((int)s6 < 0x8L);
-
+    }
     //LAB_800d42dc
   }
 
   @Method(0x800d430cL)
   public static void FUN_800d430c(final ScriptState<SpTextEffect40> state, final SpTextEffect40 data) {
-    free(state.innerStruct_00.ptr_3c);
+    state.innerStruct_00.charArray_3c = null;
   }
 
   @Method(0x800d4338L)
@@ -1415,7 +1386,6 @@ public final class Bttl_800d {
 
     if(s2 == -1) {
       _800faa94.setu(0);
-      script.params_20[1].set(0);
     } else {
       //LAB_800d4388
       final ScriptState<SpTextEffect40> state = SCRIPTS.allocateScriptState("SpTextEffect40", new SpTextEffect40());
@@ -1432,7 +1402,8 @@ public final class Bttl_800d {
       s1._10 = 30;
       s1._1c = (int)(_800faa90.getSigned() << 8);
       s1._20 = 0x5000;
-      s1.ptr_3c = mallocTail(0x80);
+      final ArrayRef<SpTextEffectTrail10> charArray = MEMORY.ref(4, mallocTail(0x80), ArrayRef.of(SpTextEffectTrail10.class, 0x8, 0x10, SpTextEffectTrail10::new));
+      s1.charArray_3c = charArray;
 
       if(s3 == 1) {
         _800faa92.setu(0);
@@ -1453,11 +1424,9 @@ public final class Bttl_800d {
       _800faa98.addu(s2);
 
       //LAB_800d44dc
-      long a2 = s1.ptr_3c;
-      for(long a3 = 0; a3 < 8; a3++) {
-        MEMORY.ref(4, a2).offset(0x0L).setu(s1._0c);
-        MEMORY.ref(4, a2).offset(0x4L).setu(s1._10);
-        a2 = a2 + 0x10L;
+      for(int i = 0; i < 8; i++) {
+        charArray.get(i)._00.set(s1._0c);
+        charArray.get(i)._04.set(s1._10);
       }
 
       final int strLen = String.valueOf(s1._08).length();
@@ -1471,8 +1440,9 @@ public final class Bttl_800d {
 
       //LAB_800d453c
       _800faa90.setu((s1._1c >> 8) + v1 * 8 - 3);
-      script.params_20[1].set(0);
     }
+
+    script.params_20[1].set(0);
 
     //LAB_800d4560
     return FlowControl.CONTINUE;

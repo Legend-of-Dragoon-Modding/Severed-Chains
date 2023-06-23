@@ -36,6 +36,7 @@ import legend.core.memory.types.QuadConsumer;
 import legend.core.memory.types.QuadConsumerRef;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.TriConsumer;
+import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.game.combat.bobj.BattleObject27c;
 import legend.game.combat.deff.Anim;
@@ -65,6 +66,7 @@ import legend.game.combat.effects.GenericSpriteEffect24;
 import legend.game.combat.effects.GoldDragoonTransformEffect20;
 import legend.game.combat.effects.GoldDragoonTransformEffectInstance84;
 import legend.game.combat.effects.GradientRaysEffect24;
+import legend.game.combat.effects.GradientRaysEffectInstance04;
 import legend.game.combat.effects.LensFlareEffect50;
 import legend.game.combat.effects.LensFlareEffectInstance3c;
 import legend.game.combat.effects.LightningBoltEffect14;
@@ -85,6 +87,7 @@ import legend.game.combat.effects.SpriteWithTrailEffect30;
 import legend.game.combat.effects.SpriteWithTrailEffect30Sub10;
 import legend.game.combat.effects.StarChildrenImpactEffect20;
 import legend.game.combat.effects.StarChildrenMeteorEffect10;
+import legend.game.combat.effects.StarChildrenMeteorEffectInstance10;
 import legend.game.combat.effects.ThunderArrowEffect1c;
 import legend.game.combat.effects.ThunderArrowEffectBolt1e;
 import legend.game.combat.effects.TransformScalerEffect34;
@@ -4997,13 +5000,13 @@ public final class SEffe {
     effect._1c.set(script.params_20[7].get());
     effect._20.set((int)(CPU.CFC2(26) >> 2));
 
-    long s2 = mallocTail(effect.count_04.get() * 4);
-    effect.ptr_00.set(s2);
+    final UnboundedArrayRef<GradientRaysEffectInstance04> rayArray = MEMORY.ref(4, mallocTail(effect.count_04.get() * 4), UnboundedArrayRef.of(4, GradientRaysEffectInstance04::new));
+    effect.rayArray_00.set(rayArray);
 
     //LAB_8010a754
     for(int i = 0; i < effect.count_04.get(); i++) {
       //LAB_8010a770
-      MEMORY.ref(2, s2).offset(0x0L).setu(rand() % 0x1000);
+      rayArray.get(i)._00.set((short)(rand() % 0x1000));
 
       final int v0;
       if((effect._18.get() & 0x2L) == 0) {
@@ -5016,13 +5019,11 @@ public final class SEffe {
       }
 
       //LAB_8010a7d4
-      MEMORY.ref(2, s2).offset(0x2L).setu(v0);
+      rayArray.get(i)._02.set((short)v0);
       if((effect._18.get() & 0x1L) != 0) {
-        MEMORY.ref(2, s2).offset(0x2L).addu(0x70L);
+        rayArray.get(i)._02.add((short)0x70);
       }
-
       //LAB_8010a800
-      s2 = s2 + 0x4L;
     }
 
     //LAB_8010a818
@@ -5033,7 +5034,7 @@ public final class SEffe {
 
   /** Used in Rose transform */
   @Method(0x8010a860L)
-  public static void FUN_8010a860(final EffectManagerData6c manager, final long a1) {
+  public static void FUN_8010a860(final EffectManagerData6c manager, final GradientRaysEffectInstance04 gradientRay) {
     final SVECTOR sp0x38 = new SVECTOR();
     final SVECTOR sp0x40 = new SVECTOR();
     final SVECTOR sp0x48 = new SVECTOR();
@@ -5051,15 +5052,15 @@ public final class SEffe {
 
     //LAB_8010a968
     if((effect._18.get() & 0x4L) == 0) {
-      if(effect._10.get() * 2 < MEMORY.ref(2, a1).offset(0x2L).getSigned() * effect._08.get()) {
+      if(effect._10.get() * 2 < gradientRay._02.get() * effect._08.get()) {
         sp0x40.setY((short)-effect._10.get());
         sp0x48.setY((short)-effect._10.get());
         sp0x50.setY((short)(-effect._10.get() * 2));
       } else {
         //LAB_8010a9ec
-        sp0x40.setY((short)(MEMORY.ref(2, a1).offset(0x2L).getSigned() * -effect._08.get() / 2));
-        sp0x48.setY((short)(MEMORY.ref(2, a1).offset(0x2L).getSigned() * -effect._08.get() / 2));
-        sp0x50.setY((short)(MEMORY.ref(2, a1).offset(0x2L).getSigned() * -effect._08.get()));
+        sp0x40.setY((short)(gradientRay._02.get() * -effect._08.get() / 2));
+        sp0x48.setY((short)(gradientRay._02.get() * -effect._08.get() / 2));
+        sp0x50.setY((short)(gradientRay._02.get() * -effect._08.get()));
       }
 
       //LAB_8010aa34
@@ -5068,8 +5069,8 @@ public final class SEffe {
     }
 
     //LAB_8010aa54
-    final VECTOR sp0x28 = new VECTOR().set(0, (int)(MEMORY.ref(2, a1).offset(0x2L).getSigned() * effect._08.get()), 0);
-    final SVECTOR sp0x78 = new SVECTOR().set((short)MEMORY.ref(2, a1).offset(0x0L).get(), (short)0, (short)0);
+    final VECTOR sp0x28 = new VECTOR().set(0, gradientRay._02.get() * effect._08.get(), 0);
+    final SVECTOR sp0x78 = new SVECTOR().set(gradientRay._00.get(), (short)0, (short)0);
     RotMatrix_Xyz(sp0x78, sp0xa0);
     TransMatrix(sp0x80, sp0x28);
     MulMatrix0(sp0xa0, sp0x80, sp0xc0);
@@ -5095,7 +5096,7 @@ public final class SEffe {
 
       if(effect._1c.get() == 1) {
         //LAB_8010abf4
-        final int v0 = (0x80 - (short)MEMORY.ref(2, a1).offset(0x2L).getSigned()) * manager._10.colour_1c.getX() / 0x80;
+        final int v0 = (0x80 - gradientRay._02.get()) * manager._10.colour_1c.getX() / 0x80;
         final int v1 = (short)v0 / 2;
 
         cmd
@@ -5105,9 +5106,9 @@ public final class SEffe {
           .rgb(3, v0, v1, v1);
       } else if(effect._1c.get() == 2) {
         //LAB_8010ac68
-        final short s3 = (short)(FUN_8010b058((short)MEMORY.ref(2, a1).offset(0x2L).getSigned()) * manager._10.colour_1c.getX() * 8 / 0x80);
-        final short s2 = (short)(FUN_8010b0dc((short)MEMORY.ref(2, a1).offset(0x2L).getSigned()) * manager._10.colour_1c.getY() * 8 / 0x80);
-        final short a2 = (short)(FUN_8010b160((short)MEMORY.ref(2, a1).offset(0x2L).getSigned()) * manager._10.colour_1c.getZ() * 8 / 0x80);
+        final short s3 = (short)(FUN_8010b058(gradientRay._02.get()) * manager._10.colour_1c.getX() * 8 / 0x80);
+        final short s2 = (short)(FUN_8010b0dc(gradientRay._02.get()) * manager._10.colour_1c.getY() * 8 / 0x80);
+        final short a2 = (short)(FUN_8010b160(gradientRay._02.get()) * manager._10.colour_1c.getZ() * 8 / 0x80);
 
         cmd
           .monochrome(0, 0)
@@ -5132,48 +5133,48 @@ public final class SEffe {
 
   @Method(0x8010ae40L)
   public static void FUN_8010ae40(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    final GradientRaysEffect24 a2 = (GradientRaysEffect24)data.effect_44;
+    final GradientRaysEffect24 rayEffect = (GradientRaysEffect24)data.effect_44;
 
     //LAB_8010ae80
-    for(int i = 0; i < a2.count_04.get(); i++) {
-      final long a1 = a2.ptr_00.get() + i * 0x4L;
+    final UnboundedArrayRef<GradientRaysEffectInstance04> rayArray = rayEffect.rayArray_00.deref();
+    for(int i = 0; i < rayEffect.count_04.get(); i++) {
+      final GradientRaysEffectInstance04 ray = rayArray.get(i);
 
-      if((a2._18.get() & 0x1L) == 0) {
+      if((rayEffect._18.get() & 0x1) == 0) {
         //LAB_8010aee8
-        MEMORY.ref(2, a1).offset(0x2L).addu(a2._14.get());
+        ray._02.add((short)rayEffect._14.get());
 
-        if((a2._18.get() & 0x2L) != 0 && (short)MEMORY.ref(2, a1).offset(0x2L).get() >= 0x80) {
-          MEMORY.ref(2, a1).offset(0x2L).setu(0x80L);
+        if((rayEffect._18.get() & 0x2) != 0 && ray._02.get() >= 0x80) {
+          ray._02.set((short)0x80);
         } else {
           //LAB_8010af28
           //LAB_8010af3c
-          MEMORY.ref(2, a1).offset(0x2L).modu(0x80);
+          ray._02.mod((short)0x80);
         }
       } else {
-        MEMORY.ref(2, a1).offset(0x2L).subu(a2._14.get());
+        ray._02.sub((short)rayEffect._14.get());
 
-        if((a2._18.get() & 0x2L) != 0 && (short)MEMORY.ref(2, a1).offset(0x2L).get() <= 0) {
-          MEMORY.ref(2, a1).offset(0x2L).setu(0);
+        if((rayEffect._18.get() & 0x2) != 0 && ray._02.get() <= 0) {
+          ray._02.set((short)0);
         } else {
           //LAB_8010aecc
-          MEMORY.ref(2, a1).offset(0x2L).addu(0x80).modu(0x80);
+          ray._02.add((short)0x80).mod((short)0x80);
         }
       }
-
       //LAB_8010af4c
     }
-
     //LAB_8010af64
   }
 
   @Method(0x8010af6cL)
   public static void FUN_8010af6c(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
     if(manager._10.flags_00 >= 0) {
-      final GradientRaysEffect24 s2 = (GradientRaysEffect24)manager.effect_44;
+      final GradientRaysEffect24 rayEffect = (GradientRaysEffect24)manager.effect_44;
 
       //LAB_8010afcc
-      for(int i = 0; i < s2.count_04.get(); i++) {
-        FUN_8010a860(manager, s2.ptr_00.get() + i * 0x4L);
+      final UnboundedArrayRef<GradientRaysEffectInstance04> rayArray = rayEffect.rayArray_00.deref();
+      for(int i = 0; i < rayEffect.count_04.get(); i++) {
+        FUN_8010a860(manager, rayArray.get(i));
       }
     }
 
@@ -5182,7 +5183,7 @@ public final class SEffe {
 
   @Method(0x8010b00cL)
   public static void FUN_8010b00c(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
-    free(((GradientRaysEffect24)manager.effect_44).ptr_00.get());
+    free(((GradientRaysEffect24)manager.effect_44).rayArray_00.getPointer());
   }
 
   @Method(0x8010b058L)
@@ -6138,21 +6139,20 @@ public final class SEffe {
     manager._10.flags_00 |= 0x5000_0000;
 
     final StarChildrenMeteorEffect10 effect = (StarChildrenMeteorEffect10)manager.effect_44;
-    long addr = mallocTail(count * 0x10);
+    final UnboundedArrayRef<StarChildrenMeteorEffectInstance10> addr = MEMORY.ref(4, mallocTail(count * 0x10), UnboundedArrayRef.of(0x10, StarChildrenMeteorEffectInstance10::new));
     effect.count_00.set(count);
-    effect.ptr_0c.set(addr);
+    effect.meteorArray_0c.set(addr);
 
     //LAB_8010e100
     for(int i = 0; i < count; i++) {
-      MEMORY.ref(1, addr).offset(0x0L).setu(0x1L);
-      MEMORY.ref(2, addr).offset(0x2L).setu(rand() % 321 - 160);
-      MEMORY.ref(2, addr).offset(0x4L).setu(rand() % 241 - 120);
-      final long v0 = rand() % 1025 + 1024;
-      MEMORY.ref(2, addr).offset(0xaL).setu(v0);
-      MEMORY.ref(2, addr).offset(0xcL).setu(v0);
-      MEMORY.ref(2, addr).offset(0xeL).setu(v0);
-      MEMORY.ref(2, addr).offset(0xaL).shl(1);
-      addr += 0x10L;
+      addr.get(i)._00.set(1);
+      addr.get(i)._02.set((short)(rand() % 321 - 160));
+      addr.get(i)._04.set((short)(rand() % 241 - 120));
+      final int v0 = (rand() % 1025 + 1024) & 0xffff;
+      addr.get(i)._0a.set((short)v0);
+      addr.get(i).scaleW_0c.set(v0);
+      addr.get(i).scaleH_0e.set(v0);
+      addr.get(i)._0a.shl(1);
     }
 
     //LAB_8010e1d8
@@ -6199,15 +6199,15 @@ public final class SEffe {
     final int r = manager._10.colour_1c.getX();
     final int g = manager._10.colour_1c.getY();
     final int b = manager._10.colour_1c.getZ();
-    long s2 = s1.ptr_0c.get();
+    UnboundedArrayRef<StarChildrenMeteorEffectInstance10> s2 = s1.meteorArray_0c.deref();
 
     //LAB_8010e414
     for(int s3 = 0; s3 < s1.count_00.get(); s3++) {
-      if(MEMORY.ref(1, s2).offset(0x0L).getSigned() != 0) {
-        final int w = (int)MEMORY.ref(2, s2).offset(0xcL).getSigned() * s1.metrics_04.w_04.get() >> 12;
-        final int h = (int)MEMORY.ref(2, s2).offset(0xeL).getSigned() * s1.metrics_04.h_05.get() >> 12;
-        final int x = (int)MEMORY.ref(2, s2).offset(0x2L).get() - w / 2;
-        final int y = (int)MEMORY.ref(2, s2).offset(0x4L).get() - h / 2;
+      if(s2.get(s3)._00.get() != 0) {
+        final int w = s2.get(s3).scaleW_0c.get() * s1.metrics_04.w_04.get() >> 12;
+        final int h = s2.get(s3).scaleH_0e.get() * s1.metrics_04.h_05.get() >> 12;
+        final int x = (int)s2.get(s3)._02.get() - w / 2;
+        final int y = (int)s2.get(s3)._04.get() - h / 2;
 
         final GpuCommandPoly cmd = new GpuCommandPoly(4)
           .bpp(Bpp.BITS_4)
@@ -6229,11 +6229,8 @@ public final class SEffe {
 
         GPU.queueCommand(30, cmd);
       }
-
       //LAB_8010e678
-      s2 += 0x10L;
     }
-
     //LAB_8010e694
   }
 
@@ -6242,40 +6239,37 @@ public final class SEffe {
     final StarChildrenMeteorEffect10 effect = (StarChildrenMeteorEffect10)manager.effect_44;
 
     //LAB_8010e6ec
-    long s2 = effect.ptr_0c.get();
+    final UnboundedArrayRef<StarChildrenMeteorEffectInstance10> s2 = effect.meteorArray_0c.deref();
     for(int s3 = 0; s3 < effect.count_00.get(); s3++) {
-      MEMORY.ref(2, s2).offset(0x6L).setu(MEMORY.ref(2, s2).offset(0x2L).get());
-      MEMORY.ref(2, s2).offset(0x8L).setu(MEMORY.ref(2, s2).offset(0x4L).get());
-      MEMORY.ref(2, s2).offset(0x2L).addu((rsin(manager._10.rot_10.getX()) * 32 >> 12) * manager._10.scale_16.getX() * MEMORY.ref(2, s2).offset(0x6L).getSigned() >> 24);
-      MEMORY.ref(2, s2).offset(0x4L).addu((rcos(manager._10.rot_10.getX()) * 32 >> 12) * manager._10.scale_16.getX() * MEMORY.ref(2, s2).offset(0x6L).getSigned() >> 24);
+      s2.get(s3)._06.set(s2.get(s3)._02.get());
+      s2.get(s3)._08.set(s2.get(s3)._04.get());
+      s2.get(s3)._02.add((short)((rsin(manager._10.rot_10.getX()) * 32 >> 12) * manager._10.scale_16.getX() * s2.get(s3)._06.get() >> 24));
+      s2.get(s3)._04.add((short)((rcos(manager._10.rot_10.getX()) * 32 >> 12) * manager._10.scale_16.getX() * s2.get(s3)._06.get() >> 24));
 
-      if(MEMORY.ref(2, s2).offset(0xaL).getSigned() * 120 + 50 >> 12 < MEMORY.ref(2, s2).offset(0x4L).getSigned()) {
-        MEMORY.ref(2, s2).offset(0x8L).setu(-120);
-        MEMORY.ref(2, s2).offset(0x4L).setu(-120);
+      if(s2.get(s3)._0a.get() * 120 + 50 >> 12 < s2.get(s3)._04.get()) {
+        s2.get(s3)._08.set((short)-120);
+        s2.get(s3)._04.set((short)-120);
         final long v0 = rand() % 321 - 160;
-        MEMORY.ref(2, s2).offset(0x6L).setu(v0);
-        MEMORY.ref(2, s2).offset(0x2L).setu(v0);
-        MEMORY.ref(1, s2).offset(0x0L).setu(0x1L);
+        s2.get(s3)._06.set((short)v0);
+        s2.get(s3)._02.set((short)v0);
+        s2.get(s3)._00.set(1);
       }
 
       //LAB_8010e828
-      final long v1 = MEMORY.ref(2, s2).offset(0x2L).getSigned();
+      final long v1 = s2.get(s3)._02.get();
       if(v1 > 0xa0) {
-        MEMORY.ref(2, s2).offset(0x6L).setu(-0xa0);
-        MEMORY.ref(2, s2).offset(0x2L).setu(-0xa0);
-        MEMORY.ref(2, s2).offset(0x8L).setu(MEMORY.ref(2, s2).offset(0x4L).get());
+        s2.get(s3)._06.set((short)-0xa0);
+        s2.get(s3)._02.set((short)-0xa0);
+        s2.get(s3)._08.set(s2.get(s3)._04.get());
         //LAB_8010e848
       } else if(v1 < -0xa0) {
         //LAB_8010e854
-        MEMORY.ref(2, s2).offset(0x6L).setu(0xa0);
-        MEMORY.ref(2, s2).offset(0x2L).setu(0xa0);
-        MEMORY.ref(2, s2).offset(0x8L).setu(MEMORY.ref(2, s2).offset(0x4L).get());
+        s2.get(s3)._06.set((short)0xa0);
+        s2.get(s3)._02.set((short)0xa0);
+        s2.get(s3)._08.set(s2.get(s3)._04.get());
       }
-
       //LAB_8010e860
-      s2 += 0x10L;
     }
-
     //LAB_8010e87c
   }
 
@@ -6704,7 +6698,7 @@ public final class SEffe {
 
   @Method(0x8010feb8L)
   public static void FUN_8010feb8(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
-    free(((StarChildrenMeteorEffect10)manager.effect_44).ptr_0c.get());
+    free(((StarChildrenMeteorEffect10)manager.effect_44).meteorArray_0c.getPointer());
   }
 
   @Method(0x8010ff10L)

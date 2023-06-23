@@ -3,13 +3,13 @@ package legend.game.combat.effects;
 import legend.core.memory.Value;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
-import legend.core.memory.types.UnsignedIntRef;
+import legend.core.memory.types.Pointer;
+import legend.core.memory.types.UnboundedArrayRef;
 
 public class GradientRaysEffect24 implements BttlScriptData6cSubBase1, MemoryRef {
   private final Value ref;
 
-  /** TODO */
-  public final UnsignedIntRef ptr_00;
+  public final Pointer<UnboundedArrayRef<GradientRaysEffectInstance04>> rayArray_00;
   public final IntRef count_04;
   public final IntRef _08;
   public final IntRef _0c;
@@ -22,7 +22,7 @@ public class GradientRaysEffect24 implements BttlScriptData6cSubBase1, MemoryRef
   public GradientRaysEffect24(final Value ref) {
     this.ref = ref;
 
-    this.ptr_00 = ref.offset(4, 0x00L).cast(UnsignedIntRef::new);
+    this.rayArray_00 = ref.offset(4, 0x00L).cast(Pointer.deferred(4, UnboundedArrayRef.of(4, GradientRaysEffectInstance04::new)));
     this.count_04 = ref.offset(4, 0x04L).cast(IntRef::new);
     this._08 = ref.offset(4, 0x08L).cast(IntRef::new);
     this._0c = ref.offset(4, 0x0cL).cast(IntRef::new);
