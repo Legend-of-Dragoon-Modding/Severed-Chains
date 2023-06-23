@@ -3693,8 +3693,6 @@ public final class Bttl_800c {
 
   @Method(0x800ce254L)
   public static void tickWeaponTrailEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    long s6;
-
     final WeaponTrailEffect3c trail = (WeaponTrailEffect3c)data.effect_44;
     trail.currentSegmentIndex_00++;
     if(trail.currentSegmentIndex_00 == 0) {
@@ -3740,6 +3738,7 @@ public final class Bttl_800c {
 
     //LAB_800ce404
     //LAB_800ce40c
+    int s6;
     for(int i = 0; i < 2; i++) {
       segment = trail.currentSegment_38;
       s6 = 0;
@@ -3773,7 +3772,7 @@ public final class Bttl_800c {
             segment._03 = false;
             segment = segment.previousSegmentRef_24;
             s6++;
-            if(s6 > i * 2) {
+            if(s6 > i * 2 || segment == null) {
               break;
             }
           }
