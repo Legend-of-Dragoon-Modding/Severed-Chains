@@ -6407,7 +6407,7 @@ public final class SEffe {
       addr._00 = false;
       addr._01 = false;
       addr._04 = rand() % s5 + 1;
-      final int s3 = rand() * (sp38 + 1);
+      final int s3 = rand() % (sp38 + 1);
       final int s2 = rand() % 4096;
       addr._08 = rand() % s5 + 1;
       addr._0c[0].setX((rcos(s2) - rsin(s2)) * s3 >> 12);
@@ -6417,7 +6417,9 @@ public final class SEffe {
       addr._0c[1].setY(addr._0c[0].getY() - 0x100);
       addr._0c[1].setZ(addr._0c[0].getZ());
       addr._2c[0].set(0, 0, 0);
-      addr._2c[1].set(0, 0, 0);
+      addr._2c[1].setX(0);
+      addr._2c[1].setY(rand() % 4096);
+      addr._2c[1].setZ(0);
       addr._4c = rand() % 4096;
       addr._6c[0].set(0, 0, 0);
       addr._6c[1].set(0xc00, 0x400, 0xc00);
@@ -6431,7 +6433,7 @@ public final class SEffe {
     }
 
     //LAB_8010f0d0
-    manager._10.flags_00 |= 0x1400_0000;
+    manager._10.flags_00 = 0x1400_0000;
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }
@@ -6466,14 +6468,13 @@ public final class SEffe {
 
               //LAB_8010f1f0
               s1._2c[1].y.add(0x80);
-              s1.rotY_a0 = 0x200;
+              s1.rotY_a0 += 0x200;
               s1._6c[1].x.sub(0x1c0);
               s1._6c[1].y.add(0x600);
               s1._6c[1].z.sub(0x1c0);
             }
 
             //LAB_8010f22c
-            s1._a2++;
           } else {
             //LAB_8010f240
             s1._00 = true;
@@ -6490,8 +6491,8 @@ public final class SEffe {
             s1._8c[0].r.sub(23);
             s1._8c[0].g.sub(23);
             s1._8c[0].b.sub(23);
-            s1._a2++;
           }
+          s1._a2++;
         }
       }
     }
