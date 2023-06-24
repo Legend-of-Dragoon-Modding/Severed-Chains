@@ -6,8 +6,8 @@ public class StarChildrenMeteorEffectInstance10 {
   // public boolean renderMeteor_00;
 
   /** shorts */
-  public int currentCenterOffsetX_02;
-  public int currentCenterOffsetY_04;
+  public int centerOffsetX_02;
+  public int centerOffsetY_04;
   /* Fields repeatedly set but never used
   public int previousCenterOffsetX_06;
   public int previousCenterOffsetY_08; */

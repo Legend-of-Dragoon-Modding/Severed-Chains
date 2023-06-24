@@ -6142,8 +6142,8 @@ public final class SEffe {
     //LAB_8010e100
     for(int i = 0; i < meteorCount; i++) {
       final StarChildrenMeteorEffectInstance10 meteor = meteorArray[i];
-      meteor.currentCenterOffsetX_02 = rand() % 321 - 160;
-      meteor.currentCenterOffsetY_04 = rand() % 241 - 120;
+      meteor.centerOffsetX_02 = rand() % 321 - 160;
+      meteor.centerOffsetY_04 = rand() % 241 - 120;
       final int sideScale = rand() % 1025 + 1024;
       meteor.scale_0a = sideScale << 1;
       meteor.scaleW_0c = sideScale;
@@ -6198,8 +6198,8 @@ public final class SEffe {
 
       final int w = meteor.scaleW_0c * meteorEffect.metrics_04.w_04.get() >> 12;
       final int h = meteor.scaleH_0e * meteorEffect.metrics_04.h_05.get() >> 12;
-      final int x = meteor.currentCenterOffsetX_02 - w / 2;
-      final int y = meteor.currentCenterOffsetY_04 - h / 2;
+      final int x = meteor.centerOffsetX_02 - w / 2;
+      final int y = meteor.centerOffsetY_04 - h / 2;
 
       final GpuCommandPoly cmd = new GpuCommandPoly(4)
         .bpp(Bpp.BITS_4)
@@ -6233,22 +6233,22 @@ public final class SEffe {
     final StarChildrenMeteorEffectInstance10[] meteorArray = meteorEffect.meteorArray_0c;
     for(int i = 0; i < meteorEffect.count_00; i++) {
       final StarChildrenMeteorEffectInstance10 meteor = meteorArray[i];
-      meteor.currentCenterOffsetX_02 += (short)((rsin(manager._10.rot_10.getX()) * 32 >> 12) * manager._10.scale_16.getX() * meteor.scale_0a >> 24);
-      meteor.currentCenterOffsetY_04 += (short)((rcos(manager._10.rot_10.getX()) * 32 >> 12) * manager._10.scale_16.getX() * meteor.scale_0a >> 24);
+      meteor.centerOffsetX_02 += (short)((rsin(manager._10.rot_10.getX()) * 32 >> 12) * manager._10.scale_16.getX() * meteor.scale_0a >> 24);
+      meteor.centerOffsetY_04 += (short)((rcos(manager._10.rot_10.getX()) * 32 >> 12) * manager._10.scale_16.getX() * meteor.scale_0a >> 24);
 
-      if(meteor.scale_0a * 120 + 50 >> 12 < meteor.currentCenterOffsetY_04) {
-        meteor.currentCenterOffsetY_04 = -120;
-        meteor.currentCenterOffsetX_02 = rand() % 321 - 160;
+      if(meteor.scale_0a * 120 + 50 >> 12 < meteor.centerOffsetY_04) {
+        meteor.centerOffsetY_04 = -120;
+        meteor.centerOffsetX_02 = rand() % 321 - 160;
       }
 
       //LAB_8010e828
-      final int centerOffsetX = meteor.currentCenterOffsetX_02;
+      final int centerOffsetX = meteor.centerOffsetX_02;
       if(centerOffsetX > 160) {
-        meteor.currentCenterOffsetX_02 = -160;
+        meteor.centerOffsetX_02 = -160;
         //LAB_8010e848
       } else if(centerOffsetX < -160) {
         //LAB_8010e854
-        meteor.currentCenterOffsetX_02 = 160;
+        meteor.centerOffsetX_02 = 160;
       }
       //LAB_8010e860
     }
