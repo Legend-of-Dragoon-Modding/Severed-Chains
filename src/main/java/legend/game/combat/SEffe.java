@@ -255,8 +255,6 @@ public final class SEffe {
   private static final Value _800fb910 = MEMORY.ref(4, 0x800fb910L);
   private static final Value _800fb930 = MEMORY.ref(1, 0x800fb930L);
 
-  private static final Value _800fb940 = MEMORY.ref(4, 0x800fb940L);
-
   private static final USCOLOUR _800fb94c = MEMORY.ref(2, 0x800fb94cL, USCOLOUR::new);
 
   /**
@@ -6379,10 +6377,7 @@ public final class SEffe {
   }
 
   @Method(0x8010edc8L)
-  public static FlowControl FUN_8010edc8(final RunningScript<? extends BattleScriptDataBase> script) {
-    final int explosionDeffFlag = (int)_800fb940.offset(0x0L).get();
-    final int shockwaveDeffFlag = (int)_800fb940.offset(0x4L).get();
-    final int plumeDeffFlag = (int)_800fb940.offset(0x8L).get();
+  public static FlowControl allocateStarChildrenImpactEffect(final RunningScript<? extends BattleScriptDataBase> script) {
     final int impactCount = script.params_20[1].get();
     final int maxStartingFrame = script.params_20[2].get();
     final int maxTranslationMagnitude = script.params_20[3].get();
@@ -6391,8 +6386,8 @@ public final class SEffe {
       "StarChildrenImpactEffect20",
       script.scriptState_04,
       0,
-      SEffe::FUN_8010f124,
-      SEffe::FUN_8010f340,
+      SEffe::tickStarChildrenImpactEffect,
+      SEffe::renderStarChildrenImpactEffect,
       null,
       value -> new StarChildrenImpactEffect20(impactCount)
     );
@@ -6422,9 +6417,9 @@ public final class SEffe {
       impact.scale_6c[1].set(0xc00, 0x400, 0xc00);
       impact.opacity_8c[0].set(0xff, 0xff, 0xff);
       impact.opacity_8c[1].set(0xff, 0xff, 0xff);
-      impact.explosionObjTable_94 = ((DeffPart.TmdType)getDeffPart(explosionDeffFlag | 0x300_0000)).tmd_0c.tmdPtr_00.tmd.objTable[0];
-      impact.shockwaveObjTable_98 = ((DeffPart.TmdType)getDeffPart(shockwaveDeffFlag | 0x300_0000)).tmd_0c.tmdPtr_00.tmd.objTable[0];
-      impact.plumeObjTable_9c = ((DeffPart.TmdType)getDeffPart(plumeDeffFlag | 0x300_0000)).tmd_0c.tmdPtr_00.tmd.objTable[0];
+      impact.explosionObjTable_94 = ((DeffPart.TmdType)getDeffPart(0x300_7100)).tmd_0c.tmdPtr_00.tmd.objTable[0];
+      impact.shockwaveObjTable_98 = ((DeffPart.TmdType)getDeffPart(0x300_7101)).tmd_0c.tmdPtr_00.tmd.objTable[0];
+      impact.plumeObjTable_9c = ((DeffPart.TmdType)getDeffPart(0x300_7103)).tmd_0c.tmdPtr_00.tmd.objTable[0];
       impact.explosionHeightAngle_a0 = 0;
       impact.animationFrame_a2 = 0;
     }
@@ -6436,7 +6431,7 @@ public final class SEffe {
   }
 
   @Method(0x8010f124L)
-  public static void FUN_8010f124(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void tickStarChildrenImpactEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
     final StarChildrenImpactEffect20 impactEffect = (StarChildrenImpactEffect20)manager.effect_44;
 
     //LAB_8010f168
@@ -6501,13 +6496,12 @@ public final class SEffe {
     if(impactEffect.impactArray_08.length == 0) {
       state.deallocateWithChildren();
     }
-
     //LAB_8010f31c
   }
 
-  /** used renderCtmd */
+  /** Used renderCtmd */
   @Method(0x8010f340L)
-  public static void FUN_8010f340(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void renderStarChildrenImpactEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
     final StarChildrenImpactEffect20 impactEffect = (StarChildrenImpactEffect20)manager.effect_44;
     if(manager._10.flags_00 >= 0) {
       final VECTOR translation = new VECTOR();
@@ -6516,7 +6510,6 @@ public final class SEffe {
       final MATRIX finalTransformMatrix1 = new MATRIX();
       final VECTOR scale = new VECTOR();
       final MATRIX transformMatrix0 = new MATRIX();
-      final MATRIX finalTransformMatrix0 = new MATRIX();
 
       final GsDOBJ2 dobj = new GsDOBJ2();
 
@@ -6546,8 +6539,6 @@ public final class SEffe {
 
           //LAB_8010f50c
           GsSetLightMatrix(transformMatrix0);
-          MulMatrix0(worldToScreenMatrix_800c3548, transformMatrix0, finalTransformMatrix0);
-          setRotTransMatrix(finalTransformMatrix0);
           RotMatrix_Xyz(rotation, transformMatrix1);
           TransMatrix(transformMatrix1, translation);
           scale.setX(scaleX);
@@ -6592,7 +6583,6 @@ public final class SEffe {
         }
       }
     }
-
     //LAB_8010f640
   }
 
