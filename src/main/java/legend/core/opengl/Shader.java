@@ -3,7 +3,9 @@ package legend.core.opengl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Matrix4fc;
+import org.joml.Vector2fc;
 import org.joml.Vector3fc;
+import org.joml.Vector4fc;
 import org.lwjgl.BufferUtils;
 
 import java.io.IOException;
@@ -37,8 +39,12 @@ import static org.lwjgl.opengl.GL20C.glLinkProgram;
 import static org.lwjgl.opengl.GL20C.glShaderSource;
 import static org.lwjgl.opengl.GL20C.glUniform1f;
 import static org.lwjgl.opengl.GL20C.glUniform1i;
+import static org.lwjgl.opengl.GL20C.glUniform2f;
+import static org.lwjgl.opengl.GL20C.glUniform2fv;
 import static org.lwjgl.opengl.GL20C.glUniform3f;
 import static org.lwjgl.opengl.GL20C.glUniform3fv;
+import static org.lwjgl.opengl.GL20C.glUniform4f;
+import static org.lwjgl.opengl.GL20C.glUniform4fv;
 import static org.lwjgl.opengl.GL20C.glUniformMatrix4fv;
 import static org.lwjgl.opengl.GL20C.glUseProgram;
 import static org.lwjgl.opengl.GL30C.glBindBufferBase;
@@ -197,6 +203,24 @@ public class Shader {
     }
   }
 
+  public class UniformVec2 extends Uniform {
+    public UniformVec2(final String name) {
+      super(name);
+    }
+
+    public void set(final FloatBuffer buffer) {
+      glUniform2fv(this.loc, buffer);
+    }
+
+    public void set(final Vector2fc vec) {
+      glUniform2f(this.loc, vec.x(), vec.y());
+    }
+
+    public void set(final float x, final float y) {
+      glUniform2f(this.loc, x, y);
+    }
+  }
+
   public class UniformVec3 extends Uniform {
     public UniformVec3(final String name) {
       super(name);
@@ -212,6 +236,24 @@ public class Shader {
 
     public void set(final float x, final float y, final float z) {
       glUniform3f(this.loc, x, y, z);
+    }
+  }
+
+  public class UniformVec4 extends Uniform {
+    public UniformVec4(final String name) {
+      super(name);
+    }
+
+    public void set(final FloatBuffer buffer) {
+      glUniform4fv(this.loc, buffer);
+    }
+
+    public void set(final Vector4fc vec) {
+      glUniform4f(this.loc, vec.x(), vec.y(), vec.z(), vec.w());
+    }
+
+    public void set(final float x, final float y, final float z, final float w) {
+      glUniform4f(this.loc, x, y, z, w);
     }
   }
 

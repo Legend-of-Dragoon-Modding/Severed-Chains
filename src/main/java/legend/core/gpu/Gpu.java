@@ -2,24 +2,21 @@ package legend.core.gpu;
 
 import legend.core.Config;
 import legend.core.MathHelper;
-import legend.core.opengl.BasicCamera;
-import legend.core.opengl.Camera;
+import legend.core.ProjectionMode;
 import legend.core.opengl.Mesh;
 import legend.core.opengl.Shader;
+import legend.core.opengl.ShaderManager;
 import legend.core.opengl.Texture;
-import legend.core.opengl.Window;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.coremod.config.RenderScaleConfigEntry;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.joml.Matrix4f;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.LinkedList;
 
@@ -34,9 +31,9 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_EQUAL;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_MINUS;
 import static org.lwjgl.glfw.GLFW.GLFW_MOD_CONTROL;
 import static org.lwjgl.glfw.GLFW.glfwGetCurrentContext;
-import static org.lwjgl.opengl.GL11C.GL_CCW;
+import static org.lwjgl.opengl.GL11C.GL_BLEND;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
-import static org.lwjgl.opengl.GL11C.glFrontFace;
+import static org.lwjgl.opengl.GL11C.glDisable;
 
 public class Gpu {
   private static final Logger LOGGER = LogManager.getFormatterLogger();
@@ -57,6 +54,7 @@ public class Gpu {
   private final int[] vram15 = new int[this.vramWidth * this.vramHeight];
 
   private Shader vramShader;
+  private Shader.UniformVec4 vramShaderColour;
 
   private Texture displayTexture;
   private Mesh displayMesh;
@@ -75,9 +73,6 @@ public class Gpu {
   private LinkedList<GpuCommand>[] zQueues;
 
   private boolean displayChanged;
-
-  private final Camera orthoCamera = new BasicCamera(0.0f, 0.0f);
-  private final Matrix4f orthoProjection = new Matrix4f();
 
   public int getDrawBufferIndex() {
     return this.drawBufferIndex;
@@ -108,7 +103,7 @@ public class Gpu {
   }
 
   public void init() {
-    RENDERER.events().onResize((window1, width, height) -> this.updateDisplayTexture((int)(width / window1.getScale()), (int)(height / window1.getScale())));
+    RENDERER.events().onResize((window1, width, height) -> this.updateDisplayTexture(width, height));
 
     RENDERER.events().onKeyPress((window, key, scancode, mods) -> {
       if(key == GLFW_KEY_EQUAL) {
@@ -140,7 +135,8 @@ public class Gpu {
       }
     });
 
-    this.vramShader = this.loadShader(Paths.get("gfx", "shaders", "simple.vsh"), Paths.get("gfx", "shaders", "simple.fsh"));
+    this.vramShader = ShaderManager.getShader("simple");
+    this.vramShaderColour = this.vramShader.new UniformVec4("recolour");
 
     this.displaySize(320, 240);
   }
@@ -424,10 +420,6 @@ public class Gpu {
     this.updateDisplayTexture(this.windowWidth, this.windowHeight);
   }
 
-  public void displayTexture(final int[] pixels) {
-    this.displayTexture.data(0, 0, this.displayTexture.width, this.displayTexture.height, pixels);
-  }
-
   public void drawingArea(final int left, final int top, int width, final int height) {
     if(width == 384) {
       width = 368;
@@ -465,13 +457,12 @@ public class Gpu {
   }
 
   public void drawMesh() {
-    glFrontFace(GL_CCW);
+    RENDERER.setProjectionMode(ProjectionMode._2D);
 
-    final Window window = RENDERER.window();
-    this.orthoProjection.setOrtho2D(0.0f, window.getWidth(), window.getHeight(), 0.0f);
-    RENDERER.context().setTransforms(this.orthoCamera, this.orthoProjection);
+    glDisable(GL_BLEND);
 
     this.vramShader.use();
+    this.vramShaderColour.set(1.0f, 1.0f, 1.0f, 1.0f);
     this.displayTexture.use();
     this.displayMesh.draw();
   }

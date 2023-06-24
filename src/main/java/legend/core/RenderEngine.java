@@ -1,7 +1,7 @@
 package legend.core;
 
+import legend.core.opengl.BasicCamera;
 import legend.core.opengl.Camera;
-import legend.core.opengl.Context;
 import legend.core.opengl.QuaternionCamera;
 import legend.core.opengl.Shader;
 import legend.core.opengl.ShaderManager;
@@ -26,19 +26,40 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_TAB;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
+import static org.lwjgl.opengl.GL11C.GL_CCW;
+import static org.lwjgl.opengl.GL11C.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11C.GL_CULL_FACE;
+import static org.lwjgl.opengl.GL11C.GL_CW;
+import static org.lwjgl.opengl.GL11C.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11C.GL_DEPTH_TEST;
 import static org.lwjgl.opengl.GL11C.GL_FILL;
 import static org.lwjgl.opengl.GL11C.GL_FRONT_AND_BACK;
 import static org.lwjgl.opengl.GL11C.GL_LINE;
+import static org.lwjgl.opengl.GL11C.glClear;
+import static org.lwjgl.opengl.GL11C.glClearColor;
+import static org.lwjgl.opengl.GL11C.glDisable;
+import static org.lwjgl.opengl.GL11C.glEnable;
+import static org.lwjgl.opengl.GL11C.glFrontFace;
 import static org.lwjgl.opengl.GL11C.glPolygonMode;
+import static org.lwjgl.opengl.GL11C.glViewport;
 
 public class RenderEngine {
   private static final Logger LOGGER = LogManager.getFormatterLogger();
 
-  private Camera camera;
+  private static final float FOV = (float)(Math.PI / 4.0f);
+
+  private Camera camera2d;
+  private Camera camera3d;
   private Window window;
-  private Context ctx;
-  private Shader.UniformBuffer transforms2;
+  private Shader.UniformBuffer transformsUniform;
+  private Shader.UniformBuffer transforms2Uniform;
+  private final Matrix4f perspectiveProjection = new Matrix4f();
+  private final Matrix4f orthographicProjection = new Matrix4f();
   private final Matrix4f transforms = new Matrix4f();
+  private final FloatBuffer transformsBuffer = BufferUtils.createFloatBuffer(4 * 4 * 2);
+
+  private int width;
+  private int height;
 
   private long lastFrame;
   private double vsyncCount;
@@ -72,12 +93,8 @@ public class RenderEngine {
     return this.window;
   }
 
-  public Context context() {
-    return this.ctx;
-  }
-
   public Camera camera() {
-    return this.camera;
+    return this.camera3d;
   }
 
   public int getVsyncCount() {
@@ -88,6 +105,18 @@ public class RenderEngine {
     return this.fps;
   }
 
+  public void setClearColour(final float red, final float green, final float blue) {
+    glClearColor(red, green, blue, 1.0f);
+  }
+
+  public void clear() {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  }
+
+  public void clearColour() {
+    glClear(GL_COLOR_BUFFER_BIT);
+  }
+
   public Runnable setRenderCallback(final Runnable renderCallback) {
     final Runnable oldCallback = this.renderCallback;
     this.renderCallback = renderCallback;
@@ -95,17 +124,17 @@ public class RenderEngine {
   }
 
   public void init() {
-//    this.camera = new BasicCamera(0.0f, 0.0f);
-    this.camera = new QuaternionCamera(0.0f, 0.0f, 0.0f);
+    this.camera2d = new BasicCamera(0.0f, 0.0f);
+    this.camera3d = new QuaternionCamera(0.0f, 0.0f, 0.0f);
     this.window = new Window("Legend of Dragoon", Config.windowWidth(), Config.windowHeight());
     this.window.setFpsLimit(60);
+
+    this.window.events.onResize(this::onResize);
 
 //    this.window.events.onMouseMove(this::onMouseMove);
 //    this.window.events.onKeyPress(this::onKeyPress);
 //    this.window.events.onKeyRelease(this::onKeyRelease);
 //    this.window.hideCursor();
-
-    this.ctx = new Context(this.window, this.camera);
 
     try {
       final Shader simpleShader = new Shader(Paths.get("gfx/shaders/simple.vsh"), Paths.get("gfx/shaders/simple.fsh"));
@@ -130,14 +159,17 @@ public class RenderEngine {
     }
 
     final FloatBuffer transform2Buffer = BufferUtils.createFloatBuffer(4 * 4);
-    this.transforms2 = ShaderManager.addUniformBuffer("transforms2", new Shader.UniformBuffer((long)transform2Buffer.capacity() * Float.BYTES, Shader.UniformBuffer.TRANSFORM2));
+    this.transformsUniform = new Shader.UniformBuffer((long)this.transformsBuffer.capacity() * Float.BYTES, Shader.UniformBuffer.TRANSFORM);
+    this.transforms2Uniform = ShaderManager.addUniformBuffer("transforms2", new Shader.UniformBuffer((long)transform2Buffer.capacity() * Float.BYTES, Shader.UniformBuffer.TRANSFORM2));
 
-    this.ctx.onDraw(() -> {
+    this.window.events.onDraw(() -> {
+      this.pre();
+
       EVENTS.clearStaleRefs();
 
       // Restore model buffer to identity
       this.transforms.identity();
-      this.transforms2.set(this.transforms);
+      this.transforms2Uniform.set(this.transforms);
 
       this.renderCallback.run();
 
@@ -146,29 +178,63 @@ public class RenderEngine {
       this.vsyncCount += 60.0d * Config.getGameSpeedMultiplier() / this.window.getFpsLimit();
 
       if(this.movingLeft) {
-        this.ctx.camera.strafe(-MOVE_SPEED);
+        this.camera3d.strafe(-MOVE_SPEED);
       }
 
       if(this.movingRight) {
-        this.ctx.camera.strafe(MOVE_SPEED);
+        this.camera3d.strafe(MOVE_SPEED);
       }
 
       if(this.movingForward) {
-        this.ctx.camera.move(-MOVE_SPEED);
+        this.camera3d.move(-MOVE_SPEED);
       }
 
       if(this.movingBackward) {
-        this.ctx.camera.move(MOVE_SPEED);
+        this.camera3d.move(MOVE_SPEED);
       }
 
       if(this.movingUp) {
-        this.ctx.camera.jump(MOVE_SPEED);
+        this.camera3d.jump(MOVE_SPEED);
       }
 
       if(this.movingDown) {
-        this.ctx.camera.jump(-MOVE_SPEED);
+        this.camera3d.jump(-MOVE_SPEED);
       }
     });
+  }
+
+  public void setProjectionMode(final ProjectionMode projectionMode) {
+    switch(projectionMode) {
+      case _2D -> {
+        glFrontFace(GL_CCW);
+        glDisable(GL_CULL_FACE);
+        glDisable(GL_DEPTH_TEST);
+        this.setTransforms(this.camera2d, this.orthographicProjection);
+      }
+
+      case _3D -> {
+        glFrontFace(GL_CW);
+        glEnable(GL_CULL_FACE);
+        glEnable(GL_DEPTH_TEST);
+        this.setTransforms(this.camera3d, this.perspectiveProjection);
+      }
+    }
+  }
+
+  private void setTransforms(final Camera camera, final Matrix4f projection) {
+    camera.get(this.transformsBuffer);
+    projection.get(16, this.transformsBuffer);
+    this.transformsUniform.set(this.transformsBuffer);
+  }
+
+  private void pre() {
+    glViewport(0, 0, (int)(this.width * this.window.getScale()), (int)(this.height * this.window.getScale()));
+
+    // Update global transforms (default to 3D)
+    this.setProjectionMode(ProjectionMode._3D);
+
+    // Render scene
+    this.clear();
   }
 
   public void run() {
@@ -187,6 +253,18 @@ public class RenderEngine {
     }
   }
 
+  private void onResize(final Window window, final int width, final int height) {
+    if(width == 0 && height == 0) {
+      return;
+    }
+
+    this.perspectiveProjection.setPerspectiveLH(FOV, (float)width / height, 0.1f, 500.0f);
+    this.orthographicProjection.setOrtho2D(0.0f, width, height, 0.0f);
+
+    this.width = width;
+    this.height = height;
+  }
+
   private void onMouseMove(final Window window, final double x, final double y) {
     if(this.firstMouse) {
       this.lastX = x;
@@ -202,7 +280,7 @@ public class RenderEngine {
     this.lastX = x;
     this.lastY = y;
 
-    this.ctx.camera.look(-this.yaw, this.pitch);
+    this.camera3d.look(-this.yaw, this.pitch);
   }
 
   private void onKeyPress(final Window window, final int key, final int scancode, final int mods) {

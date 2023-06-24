@@ -13,6 +13,7 @@ import legend.core.opengl.fonts.Font;
 import legend.core.opengl.fonts.FontManager;
 import legend.core.opengl.fonts.TextStream;
 import legend.core.spu.Spu;
+import legend.core.ui.ScreenStack;
 import legend.game.Scus94491BpeSegment;
 import legend.game.Scus94491BpeSegment_8002;
 import legend.game.Scus94491BpeSegment_8003;
@@ -91,6 +92,7 @@ public final class GameEngine {
   public static final SaveManager SAVES = new SaveManager(V3Serializer.MAGIC_V3, V3Serializer::toV3);
 
   public static final RenderEngine RENDERER = new RenderEngine();
+  public static final ScreenStack SCREENS = new ScreenStack();
 
   public static final Cpu CPU;
   public static final Gpu GPU;
@@ -98,6 +100,8 @@ public final class GameEngine {
 
   public static final Thread hardwareThread;
   public static final Thread spuThread;
+
+  public static boolean legacyUi;
 
   static {
     try {
@@ -551,21 +555,17 @@ public final class GameEngine {
   }
 
   private static void windowResize(final Window window, final int width, final int height) {
-    final float windowScale = window.getScale();
-    final float unscaledWidth = width / windowScale;
-    final float unscaledHeight = height / windowScale;
-
     if(fullScrenMesh != null) {
       fullScrenMesh.delete();
     }
 
     final float aspect = (float)width / height;
 
-    float w = unscaledWidth;
+    float w = width;
     float h = w / aspect;
 
-    if(h > unscaledHeight) {
-      h = unscaledHeight;
+    if(h > height) {
+      h = height;
       w = h * aspect;
     }
 

@@ -20,6 +20,8 @@ import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedShortRef;
+import legend.core.opengl.MatrixStack;
+import legend.core.opengl.ScissorStack;
 import legend.core.spu.Voice;
 import legend.game.combat.Bttl_800c;
 import legend.game.combat.Bttl_800d;
@@ -74,9 +76,11 @@ import java.util.function.Function;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.RENDERER;
+import static legend.core.GameEngine.SCREENS;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.core.GameEngine.SEQUENCER;
 import static legend.core.GameEngine.SPU;
+import static legend.core.GameEngine.legacyUi;
 import static legend.game.SMap.FUN_800e5934;
 import static legend.game.SMap.chapterTitleCardMrg_800c6710;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80020ed8;
@@ -419,8 +423,15 @@ public final class Scus94491BpeSegment {
       }
     });
 
+    final MatrixStack matrixStack = new MatrixStack();
+    final ScissorStack scissorStack = new ScissorStack(RENDERER.window());
+
+    legacyUi = true;
+
     RENDERER.setRenderCallback(() -> {
-      GPU.startFrame();
+      if(legacyUi) {
+        GPU.startFrame();
+      }
 
       if(engineState_8004dd20.isInGame()) {
         gameState_800babc8.timestamp_a0 += vsyncMode_8007a3b8;
@@ -431,6 +442,9 @@ public final class Scus94491BpeSegment {
 
       loadQueuedOverlay();
       gameStateCallbacks_8004dbc0.get(engineState_8004dd20.ordinal()).callback_00.deref().run();
+
+      SCREENS.render(RENDERER, matrixStack, scissorStack);
+
       SCRIPTS.tick();
 
       FUN_8001b410();
@@ -447,7 +461,9 @@ public final class Scus94491BpeSegment {
       tickCount_800bb0fc.incr();
       endFrame();
 
-      GPU.endFrame();
+      if(legacyUi) {
+        GPU.endFrame();
+      }
     });
 
     RENDERER.events().onShutdown(() -> {

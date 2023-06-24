@@ -239,6 +239,9 @@ public final class Ttle {
 
   @Method(0x800c77e4L)
   public static void initializeMainMenu() {
+//    SCREENS.pushScreen(new TitleScreen());
+//    GameEngine.legacyUi = false;
+
     menuLoadingStage = 0;
     menuIdleTime = 0;
     _800c6728 = 0;
