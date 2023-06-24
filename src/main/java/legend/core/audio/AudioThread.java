@@ -199,7 +199,6 @@ public final class AudioThread implements Runnable {
     }
 
     int lastVoice = this.voices.length;
-    int voiceIndex = this.voices.length;
 
     for(int i = 0; i < this.voices.length; i++) {
       final Voice voice = this.voices[i];
@@ -209,7 +208,7 @@ public final class AudioThread implements Runnable {
 
         if(currentPriority < lastVoice) {
           lastVoice = currentPriority;
-          voiceIndex = i;
+          this.voiceIndex = i;
         }
       }
     }
@@ -223,23 +222,24 @@ public final class AudioThread implements Runnable {
         final int currentPriority = voice.getPriorityOrder();
 
         if(currentPriority < this.voices.length) {
-          voiceIndex = i;
+          lastVoice = currentPriority;
+          this.voiceIndex = i;
           break;
         }
       }
     }
 
-    if(voiceIndex == this.voices.length) {
+    if(this.voiceIndex == this.voices.length) {
       throw new RuntimeException("Voice pool overflow");
     }
 
     for(final Voice voice : this.voices) {
-      if(voiceIndex < voice.getPriorityOrder()) {
+      if(lastVoice < voice.getPriorityOrder()) {
         voice.setPriorityOrder(voice.getPriorityOrder() - 1);
       }
     }
 
-    return this.voices[voiceIndex];
+    return this.voices[this.voiceIndex];
   }
 
   private void keyOff(final SequencedAudio sequencedAudio, final int channelIndex, final int note) {
