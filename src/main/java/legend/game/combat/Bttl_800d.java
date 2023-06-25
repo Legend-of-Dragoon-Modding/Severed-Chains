@@ -1045,15 +1045,15 @@ public final class Bttl_800d {
     //LAB_800d35cc
     final SpriteMetrics08 metrics = spriteMetrics_800c6948[script.params_20[2].get() & 0xff];
     deathEffect.sprite_0c.flags_00 = manager._10.flags_00 & 0xffff_ffffL;
-    deathEffect.sprite_0c.w_08 = metrics.w_04.get();
-    deathEffect.sprite_0c.h_0a = metrics.h_05.get();
+    deathEffect.sprite_0c.w_08 = metrics.w_04;
+    deathEffect.sprite_0c.h_0a = metrics.h_05;
     deathEffect.sprite_0c.x_04 = (short)(-deathEffect.sprite_0c.w_08 >> 1);
     deathEffect.sprite_0c.y_06 = (short)(-deathEffect.sprite_0c.h_0a >> 1);
-    deathEffect.sprite_0c.tpage_0c = (metrics.v_02.get() & 0x100) >>> 4 | (metrics.u_00.get() & 0x3ff) >>> 6;
-    deathEffect.sprite_0c.u_0e = (metrics.u_00.get() & 0x3f) * 4;
-    deathEffect.sprite_0c.v_0f = metrics.v_02.get();
-    deathEffect.sprite_0c.clutX_10 = metrics.clut_06.get() << 4 & 0x3ff;
-    deathEffect.sprite_0c.clutY_12 = metrics.clut_06.get() >>> 6 & 0x1ff;
+    deathEffect.sprite_0c.tpage_0c = (metrics.v_02 & 0x100) >>> 4 | (metrics.u_00 & 0x3ff) >>> 6;
+    deathEffect.sprite_0c.u_0e = (metrics.u_00 & 0x3f) * 4;
+    deathEffect.sprite_0c.v_0f = metrics.v_02;
+    deathEffect.sprite_0c.clutX_10 = metrics.clut_06 << 4 & 0x3ff;
+    deathEffect.sprite_0c.clutY_12 = metrics.clut_06 >>> 6 & 0x1ff;
     deathEffect.sprite_0c.unused_18 = 0;
     deathEffect.sprite_0c.unused_1a = 0;
     script.params_20[0].set(state.index);
