@@ -185,6 +185,11 @@ public final class AudioThread implements Runnable {
     }
 
     final Instrument instrument = channel.getInstrument();
+
+    if(instrument == null) {
+      return;
+    }
+
     for(final InstrumentLayer layer : instrument.getLayers(note)) {
       final Voice voice = this.selectVoice();
 
@@ -306,7 +311,7 @@ public final class AudioThread implements Runnable {
     System.out.printf("[SEQUENCER] Data Entry NRPN: 0x%x Value: 0x%x%n", sequencedAudio.getNrpn(), value);
     switch(sequencedAudio.getNrpn()) {
       case 0x00 -> {
-        //TODO repeat Count
+        sequencedAudio.repeatCount = value;
       }
       case 0x04 -> {
         //TODO attack linear
@@ -391,7 +396,7 @@ public final class AudioThread implements Runnable {
 
     if(type == 0) {
       sequencedAudio.setNrpn(0);
-      //TODO repeatCount = value;
+      sequencedAudio.repeatCount = value;
     } else if (type == 1 || type == 2) {
       sequencedAudio.setNrpn(value);
     }
@@ -412,7 +417,16 @@ public final class AudioThread implements Runnable {
     } else if(command == 0x1E) {
       sequencedAudio.setLsbType(0x00);
 
-      //TODO repeat stuff
+      if(sequencedAudio.repeatCount == 0x7F) {
+        sequencedAudio.repeat = true;
+      } else if(sequencedAudio.repeatCounter < sequencedAudio.repeatCount) {
+        sequencedAudio.repeatCounter++;
+        sequencedAudio.repeat = true;
+      } else {
+        //TODO repeatOffset = 0;
+        sequencedAudio.repeatCounter = 0;
+        sequencedAudio.repeat = false;
+      }
     } else if(command == 0x7F) {
       sequencedAudio.setLsbType(0x02);
       sequencedAudio.setDataInstrumentIndex(0xFF);

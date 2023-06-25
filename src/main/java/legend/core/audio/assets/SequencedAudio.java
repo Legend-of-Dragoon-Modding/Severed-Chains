@@ -1,5 +1,7 @@
 package legend.core.audio.assets;
 
+import legend.core.audio.Sequence;
+
 public final class SequencedAudio {
   private final Sssq sssq;
   private final byte[][] breathControls;
@@ -8,6 +10,10 @@ public final class SequencedAudio {
   private int lsbType;
   private int nrpn;
   private int dataInstrumentIndex;
+  public int repeatCount;
+  public int repeatCounter;
+  public Sequence.Command repeatCommand;
+  public boolean repeat;
 
   SequencedAudio(final Sssq sssq, final byte[][] breathControls, final byte[] velocityRamp) {
     this.sssq = sssq;

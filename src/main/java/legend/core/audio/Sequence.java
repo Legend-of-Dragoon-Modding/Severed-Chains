@@ -3,7 +3,7 @@ package legend.core.audio;
 import legend.core.audio.assets.SequencedAudio;
 import legend.game.unpacker.FileData;
 
-final class Sequence {
+public final class Sequence {
   private final SequencedAudio sequencedAudio;
   private final FileData sequenceData;
   private int sequenceOffset;
@@ -62,6 +62,10 @@ final class Sequence {
       default -> throw new RuntimeException("Bad message: " + this.previousCommand.command);
     }
 
+    if(this.sequencedAudio.repeat) {
+
+    }
+
     this.previousCommand.deltaTime = this.readDeltaTime();
     return this.previousCommand;
   }
@@ -82,7 +86,7 @@ final class Sequence {
     return deltaTime;
   }
 
-  final class Command {
+  public final class Command {
     private MidiCommand command;
     private int channel;
     private int value1;
