@@ -175,11 +175,15 @@ public final class AudioThread implements Runnable {
     System.out.printf("[SEQUENCER] Key On Channel: %d Note: %d Velocity: %d%n", channelIndex, note, velocity);
     if(velocity == 0) {
       this.keyOff(sequencedAudio, channelIndex, note);
+      return;
     }
 
-    //TODO volume 0
-
     final Channel channel = sequencedAudio.getChannel(channelIndex);
+
+    if(channel.getVolume() == 0) {
+      return;
+    }
+
     final Instrument instrument = channel.getInstrument();
     for(final InstrumentLayer layer : instrument.getLayers(note)) {
       final Voice voice = this.selectVoice();
@@ -247,7 +251,7 @@ public final class AudioThread implements Runnable {
     final Channel channel = sequencedAudio.getChannel(channelIndex);
 
     for(final Voice voice : this.voices) {
-      if(voice.getChannel() == channel && voice.getNote() == note) {
+      if(voice.isUsed() && voice.getChannel() == channel && voice.getNote() == note) {
         voice.keyOff();
       }
     }
