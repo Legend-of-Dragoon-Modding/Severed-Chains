@@ -2025,15 +2025,15 @@ public final class Bttl_800e {
     if(managerInner.flags_00 >= 0) {
       final GenericSpriteEffect24 spriteEffect = new GenericSpriteEffect24();
       spriteEffect.flags_00 = managerInner.flags_00 & 0xffff_ffffL;
-      spriteEffect.x_04 = (short)(-metrics.w_04.get() / 2);
-      spriteEffect.y_06 = (short)(-metrics.h_05.get() / 2);
-      spriteEffect.w_08 = metrics.w_04.get();
-      spriteEffect.h_0a = metrics.h_05.get();
-      spriteEffect.tpage_0c = (metrics.v_02.get() & 0x100) >>> 4 | (metrics.u_00.get() & 0x3ff) >>> 6;
-      spriteEffect.u_0e = (metrics.u_00.get() & 0x3f) * 4;
-      spriteEffect.v_0f = metrics.v_02.get();
-      spriteEffect.clutX_10 = metrics.clut_06.get() << 4 & 0x3ff;
-      spriteEffect.clutY_12 = metrics.clut_06.get() >>> 6 & 0x1ff;
+      spriteEffect.x_04 = (short)(-metrics.w_04 / 2);
+      spriteEffect.y_06 = (short)(-metrics.h_05 / 2);
+      spriteEffect.w_08 = metrics.w_04;
+      spriteEffect.h_0a = metrics.h_05;
+      spriteEffect.tpage_0c = (metrics.v_02 & 0x100) >>> 4 | (metrics.u_00 & 0x3ff) >>> 6;
+      spriteEffect.u_0e = (metrics.u_00 & 0x3f) * 4;
+      spriteEffect.v_0f = metrics.v_02;
+      spriteEffect.clutX_10 = metrics.clut_06 << 4 & 0x3ff;
+      spriteEffect.clutY_12 = metrics.clut_06 >>> 6 & 0x1ff;
       spriteEffect.r_14 = managerInner.colour_1c.getX() & 0xff;
       spriteEffect.g_15 = managerInner.colour_1c.getY() & 0xff;
       spriteEffect.b_16 = managerInner.colour_1c.getZ() & 0xff;
@@ -2065,20 +2065,20 @@ public final class Bttl_800e {
 
     if((a1 & 0xf_ff00) == 0xf_ff00) {
       final SpriteMetrics08 metrics = deffManager_800c693c.spriteMetrics_39c[a1 & 0xff];
-      a0.metrics_04.u_00.set(metrics.u_00.get());
-      a0.metrics_04.v_02.set(metrics.v_02.get());
-      a0.metrics_04.w_04.set(metrics.w_04.get());
-      a0.metrics_04.h_05.set(metrics.h_05.get());
-      a0.metrics_04.clut_06.set(metrics.clut_06.get());
+      a0.metrics_04.u_00 = metrics.u_00;
+      a0.metrics_04.v_02 = metrics.v_02;
+      a0.metrics_04.w_04 = metrics.w_04;
+      a0.metrics_04.h_05 = metrics.h_05;
+      a0.metrics_04.clut_06 = metrics.clut_06;
     } else {
       //LAB_800e9658
       final DeffPart.SpriteType spriteType = (DeffPart.SpriteType)getDeffPart(a1 | 0x400_0000);
       final DeffPart.SpriteMetrics deffMetrics = spriteType.metrics_08;
-      a0.metrics_04.u_00.set(deffMetrics.u_00);
-      a0.metrics_04.v_02.set(deffMetrics.v_02);
-      a0.metrics_04.w_04.set(deffMetrics.w_04 * 4);
-      a0.metrics_04.h_05.set(deffMetrics.h_06);
-      a0.metrics_04.clut_06.set(deffMetrics.clutY_0a << 6 | (deffMetrics.clutX_08 & 0x3f0) >>> 4);
+      a0.metrics_04.u_00 = deffMetrics.u_00;
+      a0.metrics_04.v_02 = deffMetrics.v_02;
+      a0.metrics_04.w_04 = deffMetrics.w_04 * 4;
+      a0.metrics_04.h_05 = deffMetrics.h_06;
+      a0.metrics_04.clut_06 = deffMetrics.clutY_0a << 6 | (deffMetrics.clutX_08 & 0x3f0) >>> 4;
     }
 
     //LAB_800e96bc
@@ -2608,11 +2608,11 @@ public final class Bttl_800e {
       final DeffPart.SpriteType spriteType = new DeffPart.SpriteType(files.get(i));
       final DeffPart.SpriteMetrics deffMetrics = spriteType.metrics_08;
       final SpriteMetrics08 metrics = struct7cc.spriteMetrics_39c[flags & 0xff];
-      metrics.u_00.set(deffMetrics.u_00);
-      metrics.v_02.set(deffMetrics.v_02);
-      metrics.w_04.set(deffMetrics.w_04 * 4);
-      metrics.h_05.set(deffMetrics.h_06);
-      metrics.clut_06.set(deffMetrics.clutY_0a << 6 | (deffMetrics.clutX_08 & 0x3f0) >>> 4);
+      metrics.u_00 = deffMetrics.u_00;
+      metrics.v_02 = deffMetrics.v_02;
+      metrics.w_04 = deffMetrics.w_04 * 4;
+      metrics.h_05 = deffMetrics.h_06;
+      metrics.clut_06 = deffMetrics.clutY_0a << 6 | (deffMetrics.clutX_08 & 0x3f0) >>> 4;
     }
 
     //LAB_800eaa00

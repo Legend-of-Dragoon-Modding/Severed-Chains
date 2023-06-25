@@ -72,7 +72,7 @@ import legend.game.combat.effects.LensFlareEffectInstance3c;
 import legend.game.combat.effects.LightningBoltEffect14;
 import legend.game.combat.effects.LightningBoltEffectSegment30;
 import legend.game.combat.effects.LightningBoltEffectSegmentOrigin08;
-import legend.game.combat.effects.MoonlightStar3c;
+import legend.game.combat.effects.MoonlightStarsEffectInstance3c;
 import legend.game.combat.effects.MoonlightStarsEffect18;
 import legend.game.combat.effects.ParticleEffectData98;
 import legend.game.combat.effects.ParticleEffectInstance94;
@@ -2460,11 +2460,11 @@ public final class SEffe {
     //LAB_80101f70
     if((flags & 0xf_ff00) == 0xf_ff00) {
       final SpriteMetrics08 metrics = spriteMetrics_800c6948[(int)(flags & 0xff)];
-      a0.u_58 = metrics.u_00.get();
-      a0.v_5a = metrics.v_02.get();
-      a0.w_5e = metrics.w_04.get();
-      a0.h_5f = metrics.h_05.get();
-      a0.clut_5c = metrics.clut_06.get();
+      a0.u_58 = metrics.u_00;
+      a0.v_5a = metrics.v_02;
+      a0.w_5e = metrics.w_04;
+      a0.h_5f = metrics.h_05;
+      a0.clut_5c = metrics.clut_06;
     } else {
       //LAB_80101fec
       final DeffPart.SpriteType spriteType = (DeffPart.SpriteType)getDeffPart((int)flags | 0x400_0000);
@@ -5630,11 +5630,11 @@ public final class SEffe {
 
         if((a1 & 0xf_ff00) == 0xf_ff00) {
           final SpriteMetrics08 metrics = spriteMetrics_800c6948[a1 & 0xff];
-          effect.u_04.get(i).set(metrics.u_00.get());
-          effect.v_0e.get(i).set(metrics.v_02.get());
-          effect.w_18.get(i).set(metrics.w_04.get());
-          effect.h_22.get(i).set(metrics.h_05.get());
-          effect.clut_2c.get(i).set(metrics.clut_06.get());
+          effect.u_04.get(i).set(metrics.u_00);
+          effect.v_0e.get(i).set(metrics.v_02);
+          effect.w_18.get(i).set(metrics.w_04);
+          effect.h_22.get(i).set(metrics.h_05);
+          effect.clut_2c.get(i).set(metrics.clut_06);
         } else {
           //LAB_8010c5a8
           final DeffPart.SpriteType spriteType = (DeffPart.SpriteType)getDeffPart(a1 | 0x400_0000);
@@ -5877,11 +5877,11 @@ public final class SEffe {
     //LAB_8010d4a4
     if((s5 & 0xf_ff00) == 0xf_ff00) {
       final SpriteMetrics08 metrics = spriteMetrics_800c6948[s5 & 0xff];
-      effect.u_06.set((short)metrics.u_00.get());
-      effect.v_08.set((short)metrics.v_02.get());
-      effect.width_0a.set((short)metrics.w_04.get());
-      effect.height_0c.set((short)metrics.h_05.get());
-      effect.clut_0e.set((short)metrics.clut_06.get());
+      effect.u_06.set((short)metrics.u_00);
+      effect.v_08.set((short)metrics.v_02);
+      effect.width_0a.set((short)metrics.w_04);
+      effect.height_0c.set((short)metrics.h_05);
+      effect.clut_0e.set((short)metrics.clut_06);
     } else {
       //LAB_8010d508
       final DeffPart.SpriteType spriteType = (DeffPart.SpriteType)getDeffPart(s5 | 0x400_0000);
@@ -6153,20 +6153,20 @@ public final class SEffe {
     //LAB_8010e1d8
     if((effectFlag & 0xf_ff00) == 0xf_ff00) {
       final SpriteMetrics08 metrics = spriteMetrics_800c6948[effectFlag & 0xff];
-      meteorEffect.metrics_04.u_00.set(metrics.u_00.get());
-      meteorEffect.metrics_04.v_02.set(metrics.v_02.get());
-      meteorEffect.metrics_04.w_04.set(metrics.w_04.get());
-      meteorEffect.metrics_04.h_05.set(metrics.h_05.get());
-      meteorEffect.metrics_04.clut_06.set(metrics.clut_06.get());
+      meteorEffect.metrics_04.u_00 = metrics.u_00;
+      meteorEffect.metrics_04.v_02 = metrics.v_02;
+      meteorEffect.metrics_04.w_04 = metrics.w_04;
+      meteorEffect.metrics_04.h_05 = metrics.h_05;
+      meteorEffect.metrics_04.clut_06 = metrics.clut_06;
     } else {
       //LAB_8010e254
       final DeffPart.SpriteType spriteType = (DeffPart.SpriteType)getDeffPart(effectFlag | 0x400_0000);
       final DeffPart.SpriteMetrics deffMetrics = spriteType.metrics_08;
-      meteorEffect.metrics_04.u_00.set(deffMetrics.u_00);
-      meteorEffect.metrics_04.v_02.set(deffMetrics.v_02);
-      meteorEffect.metrics_04.w_04.set(deffMetrics.w_04 * 4);
-      meteorEffect.metrics_04.h_05.set(deffMetrics.h_06);
-      meteorEffect.metrics_04.clut_06.set(GetClut(deffMetrics.clutX_08, deffMetrics.clutY_0a));
+      meteorEffect.metrics_04.u_00 = deffMetrics.u_00;
+      meteorEffect.metrics_04.v_02 = deffMetrics.v_02;
+      meteorEffect.metrics_04.w_04 = deffMetrics.w_04 * 4;
+      meteorEffect.metrics_04.h_05 = deffMetrics.h_06;
+      meteorEffect.metrics_04.clut_06 = GetClut(deffMetrics.clutX_08, deffMetrics.clutY_0a);
     }
 
     //LAB_8010e2b0
@@ -6178,15 +6178,15 @@ public final class SEffe {
   public static void renderStarChildrenMeteorEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
     final StarChildrenMeteorEffect10 meteorEffect = (StarChildrenMeteorEffect10)manager.effect_44;
     final int flags = manager._10.flags_00;
-    final int tpage = (meteorEffect.metrics_04.v_02.get() & 0x100) >>> 4 | (meteorEffect.metrics_04.u_00.get() & 0x3ff) >>> 6;
+    final int tpage = (meteorEffect.metrics_04.v_02 & 0x100) >>> 4 | (meteorEffect.metrics_04.u_00 & 0x3ff) >>> 6;
     final int vramX = (tpage & 0b1111) * 64;
     final int vramY = (tpage & 0b10000) != 0 ? 256 : 0;
-    final int leftU = (meteorEffect.metrics_04.u_00.get() & 0x3f) * 4;
-    final int rightU = leftU + meteorEffect.metrics_04.w_04.get();
-    final int bottomV = meteorEffect.metrics_04.v_02.get();
-    final int topV = bottomV + meteorEffect.metrics_04.h_05.get();
-    final int clutX = meteorEffect.metrics_04.clut_06.get() << 4 & 0x3ff;
-    final int clutY = meteorEffect.metrics_04.clut_06.get() >>> 6 & 0x1ff;
+    final int leftU = (meteorEffect.metrics_04.u_00 & 0x3f) * 4;
+    final int rightU = leftU + meteorEffect.metrics_04.w_04;
+    final int bottomV = meteorEffect.metrics_04.v_02;
+    final int topV = bottomV + meteorEffect.metrics_04.h_05;
+    final int clutX = meteorEffect.metrics_04.clut_06 << 4 & 0x3ff;
+    final int clutY = meteorEffect.metrics_04.clut_06 >>> 6 & 0x1ff;
     final int r = manager._10.colour_1c.getX();
     final int g = manager._10.colour_1c.getY();
     final int b = manager._10.colour_1c.getZ();
@@ -6196,8 +6196,8 @@ public final class SEffe {
     for(int i = 0; i < meteorEffect.count_00; i++) {
       final StarChildrenMeteorEffectInstance10 meteor = meteorArray[i];
 
-      final int w = meteor.scaleW_0c * meteorEffect.metrics_04.w_04.get() >> 12;
-      final int h = meteor.scaleH_0e * meteorEffect.metrics_04.h_05.get() >> 12;
+      final int w = meteor.scaleW_0c * meteorEffect.metrics_04.w_04 >> 12;
+      final int h = meteor.scaleH_0e * meteorEffect.metrics_04.h_05 >> 12;
       final int x = meteor.centerOffsetX_02 - w / 2;
       final int y = meteor.centerOffsetY_04 - h / 2;
 
@@ -6256,92 +6256,90 @@ public final class SEffe {
   }
 
   @Method(0x8010e89cL)
-  public static FlowControl FUN_8010e89c(final RunningScript<? extends BattleScriptDataBase> script) {
-    final int count = script.params_20[4].get();
-    final int sp1c = script.params_20[1].get();
-    final int sp20 = script.params_20[2].get();
-    final int sp24 = script.params_20[3].get();
+  public static FlowControl allocateMoonlightStarsEffect(final RunningScript<? extends BattleScriptDataBase> script) {
+    final int starCount = script.params_20[4].get();
+    final int effectFlags = script.params_20[1].get();
+    final int maxToggleFrameThreshold = script.params_20[2].get();
+    final int maxScale = script.params_20[3].get();
 
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "MoonlightStarsEffect18",
       script.scriptState_04,
-      0x18,
-      SEffe::FUN_8010ff10,
-      SEffe::FUN_8010ec08,
-      SEffe::FUN_8010ffd8,
-      MoonlightStarsEffect18::new
+      0,
+      SEffe::tickMoonlightStarsEffect,
+      SEffe::renderMoonlightStarsEffect,
+      SEffe::deallocateMoonlightStarsEffect,
+      value -> new MoonlightStarsEffect18(starCount)
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
-    final MoonlightStarsEffect18 effect = (MoonlightStarsEffect18)manager.effect_44;
-    effect.count_00.set(count);
-    effect.ptr_0c.setPointer(mallocTail(count * 0x3c));
-    manager._10.flags_00 |= 0x5000_0000;
+    final MoonlightStarsEffect18 starEffect = (MoonlightStarsEffect18)manager.effect_44;
+    manager._10.flags_00 = 0x5000_0000;
 
     //LAB_8010e980
-    for(int i = 0; i < count; i++) {
-      final MoonlightStar3c s4 = effect.ptr_0c.deref().get(i);
-      s4._00.set((short)0);
-      s4._03.set(1);
-      s4._06.set((short)0);
-      s4._36.set((short)sp20);
-      s4._38.set((short)(seed_800fa754.advance().get() % 181));
-      final int s2 = (int)(seed_800fa754.advance().get() % (sp24 + 1));
-      final int s1 = (int)(seed_800fa754.advance().get() & 0xfff);
-      s4._04.set((short)((rcos(s1) - rsin(s1)) * s2 >> 12));
-      s4._08.set((short)((rcos(s1) + rsin(s1)) * s2 >> 12));
+    for(int i = 0; i < starCount; i++) {
+      final MoonlightStarsEffectInstance3c star = starEffect.starArray_0c[i];
+      star.currentFrame_00 = 0;
+      star.renderStars_03 = true;
+      star.maxToggleFrameThreshold_36 = maxToggleFrameThreshold;
+      star.toggleOffFrameThreshold_38 = (int)(seed_800fa754.advance().get() % 181);
+      final int scale = (int)(seed_800fa754.advance().get() % (maxScale + 1));
+      final int angle = (int)(seed_800fa754.advance().get() & 0xfff);
+      final short x = (short)((rcos(angle) - rsin(angle)) * scale >> 12);
+      final short z = (short)((rcos(angle) + rsin(angle)) * scale >> 12);
+      star.translation_04.set(x, (short)0, z);
     }
 
     //LAB_8010ead0
-    if((sp1c & 0xf_ff00) == 0xf_ff00) {
-      final SpriteMetrics08 metrics = spriteMetrics_800c6948[sp1c & 0xff];
-      effect.metrics_04.u_00.set(metrics.u_00.get());
-      effect.metrics_04.v_02.set(metrics.v_02.get());
-      effect.metrics_04.w_04.set(metrics.w_04.get());
-      effect.metrics_04.h_05.set(metrics.h_05.get());
-      effect.metrics_04.clut_06.set(metrics.clut_06.get());
+    if((effectFlags & 0xf_ff00) == 0xf_ff00) {
+      final SpriteMetrics08 metrics = spriteMetrics_800c6948[effectFlags & 0xff];
+      starEffect.metrics_04.u_00 = metrics.u_00;
+      starEffect.metrics_04.v_02 = metrics.v_02;
+      starEffect.metrics_04.w_04 = metrics.w_04;
+      starEffect.metrics_04.h_05 = metrics.h_05;
+      starEffect.metrics_04.clut_06 = metrics.clut_06;
     } else {
       //LAB_8010eb50
-      final DeffPart.SpriteType spriteType = (DeffPart.SpriteType)getDeffPart(sp1c | 0x400_0000);
+      final DeffPart.SpriteType spriteType = (DeffPart.SpriteType)getDeffPart(effectFlags | 0x400_0000);
       final DeffPart.SpriteMetrics deffMetrics = spriteType.metrics_08;
-      effect.metrics_04.u_00.set(deffMetrics.u_00);
-      effect.metrics_04.v_02.set(deffMetrics.v_02);
-      effect.metrics_04.w_04.set(deffMetrics.w_04 * 4);
-      effect.metrics_04.h_05.set(deffMetrics.h_06);
-      effect.metrics_04.clut_06.set(GetClut(deffMetrics.clutX_08, deffMetrics.clutY_0a));
+      starEffect.metrics_04.u_00 = deffMetrics.u_00;
+      starEffect.metrics_04.v_02 = deffMetrics.v_02;
+      starEffect.metrics_04.w_04 = deffMetrics.w_04 * 4;
+      starEffect.metrics_04.h_05 = deffMetrics.h_06;
+      starEffect.metrics_04.clut_06 = GetClut(deffMetrics.clutX_08, deffMetrics.clutY_0a);
     }
 
     //LAB_8010ebac
-    manager._10.flags_00 |= 0x5000_0000;
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x8010ec08L)
-  public static void FUN_8010ec08(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
-    final MoonlightStarsEffect18 effect = (MoonlightStarsEffect18)manager.effect_44;
+  public static void renderMoonlightStarsEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+    final MoonlightStarsEffect18 starEffect = (MoonlightStarsEffect18)manager.effect_44;
 
     final GenericSpriteEffect24 spriteEffect = new GenericSpriteEffect24();
     spriteEffect.flags_00 = manager._10.flags_00 & 0xffff_ffffL;
-    spriteEffect.x_04 = (short)(-effect.metrics_04.w_04.get() / 2);
-    spriteEffect.y_06 = (short)(-effect.metrics_04.h_05.get() / 2);
-    spriteEffect.w_08 = effect.metrics_04.w_04.get();
-    spriteEffect.h_0a = effect.metrics_04.h_05.get();
-    spriteEffect.tpage_0c = (effect.metrics_04.v_02.get() & 0x100) >>> 4 | (effect.metrics_04.u_00.get() & 0x3ff) >>> 6;
-    spriteEffect.u_0e = (effect.metrics_04.u_00.get() & 0x3f) << 2;
-    spriteEffect.v_0f = effect.metrics_04.v_02.get();
-    spriteEffect.clutX_10 = effect.metrics_04.clut_06.get() << 4 & 0x3ff;
-    spriteEffect.clutY_12 = effect.metrics_04.clut_06.get() >>> 6 & 0x1ff;
+    spriteEffect.x_04 = (short)(-starEffect.metrics_04.w_04 / 2);
+    spriteEffect.y_06 = (short)(-starEffect.metrics_04.h_05 / 2);
+    spriteEffect.w_08 = starEffect.metrics_04.w_04;
+    spriteEffect.h_0a = starEffect.metrics_04.h_05;
+    spriteEffect.tpage_0c = (starEffect.metrics_04.v_02 & 0x100) >>> 4 | (starEffect.metrics_04.u_00 & 0x3ff) >>> 6;
+    spriteEffect.u_0e = (starEffect.metrics_04.u_00 & 0x3f) << 2;
+    spriteEffect.v_0f = starEffect.metrics_04.v_02;
+    spriteEffect.clutX_10 = starEffect.metrics_04.clut_06 << 4 & 0x3ff;
+    spriteEffect.clutY_12 = starEffect.metrics_04.clut_06 >>> 6 & 0x1ff;
     spriteEffect.unused_18 = 0;
     spriteEffect.unused_1a = 0;
 
     final VECTOR translation = new VECTOR();
 
     //LAB_8010ed00
-    for(int i = 0; i < effect.count_00.get(); i++) {
-      final MoonlightStar3c v1 = effect.ptr_0c.deref().get(i);
+    for(int i = 0; i < starEffect.count_00; i++) {
+      final MoonlightStarsEffectInstance3c star = starEffect.starArray_0c[i];
 
-      if(v1._03.get() == 0) {
+      // If a star is set not to render, do not render subsequent stars either.
+      if(!star.renderStars_03) {
         break;
       }
 
@@ -6351,9 +6349,7 @@ public final class SEffe {
       spriteEffect.scaleX_1c = manager._10.scale_16.getX();
       spriteEffect.scaleY_1e = manager._10.scale_16.getY();
       spriteEffect.angle_20 = manager._10.rot_10.getX();
-      translation.setX(manager._10.trans_04.getX() + v1._04.get());
-      translation.setY(manager._10.trans_04.getY() + v1._06.get());
-      translation.setZ(manager._10.trans_04.getZ() + v1._08.get());
+      translation.set(manager._10.trans_04).add(star.translation_04);
       renderGenericSpriteAtZOffset0(spriteEffect, translation);
     }
 
@@ -6670,28 +6666,31 @@ public final class SEffe {
   }
 
   @Method(0x8010ff10L)
-  public static void FUN_8010ff10(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
-    final MoonlightStarsEffect18 effect = (MoonlightStarsEffect18)manager.effect_44;
+  public static void tickMoonlightStarsEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+    final MoonlightStarsEffect18 starEffect = (MoonlightStarsEffect18)manager.effect_44;
 
     //LAB_8010ff34
-    for(int i = 0; i < effect.count_00.get(); i++) {
-      final MoonlightStar3c a2 = effect.ptr_0c.deref().get(i);
+    for(int i = 0; i < starEffect.count_00; i++) {
+      final MoonlightStarsEffectInstance3c star = starEffect.starArray_0c[i];
 
-      a2._00.incr();
-      if(a2._38.get() < a2._00.get()) {
-        a2._03.set(0);
-        a2._00.set((short)0);
-        a2._38.set((short)(seed_800fa754.advance().get() % (a2._36.get() + 1)));
+      // Seems like stars stop rendering when the current frame exceeds a randomized threshold.
+      // The threshold is then re-randomized each tick until the current frame falls below the
+      // threshold again, and then the star is rendered again.
+      star.currentFrame_00++;
+      if(star.currentFrame_00 > star.toggleOffFrameThreshold_38) {
+        star.renderStars_03 = false;
+        star.currentFrame_00 = 0;
+        star.toggleOffFrameThreshold_38 = (short)(seed_800fa754.advance().get() % (star.maxToggleFrameThreshold_36 + 1));
       } else {
         //LAB_8010ffb0
-        a2._03.set(1);
+        star.renderStars_03 = true;
       }
     }
   }
 
   @Method(0x8010ffd8L)
-  public static void FUN_8010ffd8(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
-    free(((MoonlightStarsEffect18)manager.effect_44).ptr_0c.getPointer());
+  public static void deallocateMoonlightStarsEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+    ((MoonlightStarsEffect18)manager.effect_44).starArray_0c = null;
   }
 
   @Method(0x80110030L)
@@ -8671,10 +8670,10 @@ public final class SEffe {
           } else if(v1 == 0x400_0000) {
             //LAB_8011602c
             final StarChildrenMeteorEffect10 effect = (StarChildrenMeteorEffect10)manager.effect_44;
-            u = effect.metrics_04.u_00.get();
-            v = effect.metrics_04.v_02.get();
-            w = effect.metrics_04.w_04.get();
-            h = effect.metrics_04.h_05.get();
+            u = effect.metrics_04.u_00;
+            v = effect.metrics_04.v_02;
+            w = effect.metrics_04.w_04;
+            h = effect.metrics_04.h_05;
           } else {
             throw new RuntimeException("Invalid state");
           }
@@ -8709,10 +8708,10 @@ public final class SEffe {
       //LAB_801160f4
       final AttackHitFlashEffect0c sp0x10 = new AttackHitFlashEffect0c();
       FUN_800e95f0(sp0x10, a2 & 0xff_ffff);
-      u = sp0x10.metrics_04.u_00.get();
-      v = sp0x10.metrics_04.v_02.get();
-      w = sp0x10.metrics_04.w_04.get();
-      h = sp0x10.metrics_04.h_05.get();
+      u = sp0x10.metrics_04.u_00;
+      v = sp0x10.metrics_04.v_02;
+      w = sp0x10.metrics_04.w_04;
+      h = sp0x10.metrics_04.h_05;
     } else {
       throw new RuntimeException("Invalid state");
     }
@@ -8777,19 +8776,19 @@ public final class SEffe {
         final AttackHitFlashEffect0c sp0x48 = new AttackHitFlashEffect0c();
 
         FUN_800e95f0(sp0x48, deffFlags);
-        effect.metrics_54.u_00.set(sp0x48.metrics_04.u_00.get());
-        effect.metrics_54.v_02.set(sp0x48.metrics_04.v_02.get());
-        effect.metrics_54.w_04.set(sp0x48.metrics_04.w_04.get());
-        effect.metrics_54.h_05.set(sp0x48.metrics_04.h_05.get());
-        effect.metrics_54.clut_06.set(sp0x48.metrics_04.clut_06.get());
+        effect.metrics_54.u_00 = sp0x48.metrics_04.u_00;
+        effect.metrics_54.v_02 = sp0x48.metrics_04.v_02;
+        effect.metrics_54.w_04 = sp0x48.metrics_04.w_04;
+        effect.metrics_54.h_05 = sp0x48.metrics_04.h_05;
+        effect.metrics_54.clut_06 = sp0x48.metrics_04.clut_06;
         effect.deffSpriteFlags_50 = deffFlags;
       }
 
-      final int u = (effect.metrics_54.u_00.get() & 0x3f) * 4;
-      final int v = effect.metrics_54.v_02.get() & 0xff;
-      final int w = effect.metrics_54.w_04.get() & 0xff;
-      final int h = effect.metrics_54.h_05.get() & 0xff;
-      final int clut = effect.metrics_54.clut_06.get();
+      final int u = (effect.metrics_54.u_00 & 0x3f) * 4;
+      final int v = effect.metrics_54.v_02 & 0xff;
+      final int w = effect.metrics_54.w_04 & 0xff;
+      final int h = effect.metrics_54.h_05 & 0xff;
+      final int clut = effect.metrics_54.clut_06;
 
       //LAB_8011633c
       final SVECTOR sp0x58 = new SVECTOR();
@@ -8819,7 +8818,7 @@ public final class SEffe {
 
         final GpuCommandPoly cmd = new GpuCommandPoly(4)
           .clut((clut & 0b111111) * 16, clut >>> 6)
-          .vramPos(effect.metrics_54.u_00.get() & 0x3c0, (effect.metrics_54.v_02.get() & 0x100) != 0 ? 256 : 0)
+          .vramPos(effect.metrics_54.u_00 & 0x3c0, (effect.metrics_54.v_02 & 0x100) != 0 ? 256 : 0)
           .rgb(manager._10.colour_1c.getX(), manager._10.colour_1c.getY(), manager._10.colour_1c.getZ())
           .pos(0, sp0x80.getX() + cosL - sinT, sp0x80.getY() + sinL + cosT)
           .pos(1, sp0x80.getX() + cosR - sinT, sp0x80.getY() + sinR + cosT)

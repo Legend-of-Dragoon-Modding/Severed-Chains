@@ -697,7 +697,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[802] = SEffe::allocateGoldDragoonTransformEffect;
     scriptSubFunctions_8004e29c[803] = SEffe::allocateStarChildrenMeteorEffect;
     scriptSubFunctions_8004e29c[804] = SEffe::allocateStarChildrenImpactEffect;
-    scriptSubFunctions_8004e29c[805] = SEffe::FUN_8010e89c;
+    scriptSubFunctions_8004e29c[805] = SEffe::allocateMoonlightStarsEffect;
     scriptSubFunctions_8004e29c[806] = Scus94491BpeSegment::FUN_8001c5fc;
     scriptSubFunctions_8004e29c[807] = Scus94491BpeSegment::FUN_8001c604;
 
