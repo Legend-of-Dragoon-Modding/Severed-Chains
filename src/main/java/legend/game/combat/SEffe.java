@@ -52,7 +52,7 @@ import legend.game.combat.effects.AdditionOverlaysHit20;
 import legend.game.combat.effects.AttackHitFlashEffect0c;
 import legend.game.combat.effects.BttlScriptData6cSub13c;
 import legend.game.combat.effects.BttlScriptData6cSub1c_3;
-import legend.game.combat.effects.BttlScriptData6cSub20_2Suba8;
+import legend.game.combat.effects.StarChildrenImpactEffectInstancea8;
 import legend.game.combat.effects.BttlScriptData6cSub5c;
 import legend.game.combat.effects.BttlScriptData6cSubBase1;
 import legend.game.combat.effects.DeffTmdRenderer14;
@@ -254,8 +254,6 @@ public final class SEffe {
   private static final Value _800fb8fc = MEMORY.ref(4, 0x800fb8fcL);
   private static final Value _800fb910 = MEMORY.ref(4, 0x800fb910L);
   private static final Value _800fb930 = MEMORY.ref(1, 0x800fb930L);
-
-  private static final Value _800fb940 = MEMORY.ref(4, 0x800fb940L);
 
   private static final USCOLOUR _800fb94c = MEMORY.ref(2, 0x800fb94cL, USCOLOUR::new);
 
@@ -6121,152 +6119,136 @@ public final class SEffe {
   }
 
   @Method(0x8010e04cL)
-  public static FlowControl FUN_8010e04c(final RunningScript<? extends BattleScriptDataBase> script) {
-    final int count = script.params_20[2].get();
-    final int s4 = script.params_20[1].get();
+  public static FlowControl allocateStarChildrenMeteorEffect(final RunningScript<? extends BattleScriptDataBase> script) {
+    final int meteorCount = script.params_20[2].get();
+    final int effectFlag = script.params_20[1].get();
 
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "StarChildrenMeteorEffect10",
       script.scriptState_04,
-      0x10,
-      SEffe::FUN_8010e6b0,
-      SEffe::FUN_8010e2fc,
-      SEffe::FUN_8010feb8,
-      StarChildrenMeteorEffect10::new
+      0,
+      SEffe::tickStarChildrenMeteorEffect,
+      SEffe::renderStarChildrenMeteorEffect,
+      SEffe::deallocateStarChildrenMeteorEffect,
+      value -> new StarChildrenMeteorEffect10(meteorCount)
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
-    manager._10.flags_00 |= 0x5000_0000;
+    manager._10.flags_00 = 0x5000_0000;
 
-    final StarChildrenMeteorEffect10 effect = (StarChildrenMeteorEffect10)manager.effect_44;
-    final UnboundedArrayRef<StarChildrenMeteorEffectInstance10> addr = MEMORY.ref(4, mallocTail(count * 0x10), UnboundedArrayRef.of(0x10, StarChildrenMeteorEffectInstance10::new));
-    effect.count_00.set(count);
-    effect.meteorArray_0c.set(addr);
+    final StarChildrenMeteorEffect10 meteorEffect = (StarChildrenMeteorEffect10)manager.effect_44;
+    final StarChildrenMeteorEffectInstance10[] meteorArray = meteorEffect.meteorArray_0c;
 
     //LAB_8010e100
-    for(int i = 0; i < count; i++) {
-      addr.get(i)._00.set(1);
-      addr.get(i)._02.set((short)(rand() % 321 - 160));
-      addr.get(i)._04.set((short)(rand() % 241 - 120));
-      final int v0 = (rand() % 1025 + 1024) & 0xffff;
-      addr.get(i)._0a.set((short)v0);
-      addr.get(i).scaleW_0c.set(v0);
-      addr.get(i).scaleH_0e.set(v0);
-      addr.get(i)._0a.shl(1);
+    for(int i = 0; i < meteorCount; i++) {
+      final StarChildrenMeteorEffectInstance10 meteor = meteorArray[i];
+      meteor.centerOffsetX_02 = rand() % 321 - 160;
+      meteor.centerOffsetY_04 = rand() % 241 - 120;
+      final int sideScale = rand() % 1025 + 1024;
+      meteor.scale_0a = sideScale << 1;
+      meteor.scaleW_0c = sideScale;
+      meteor.scaleH_0e = sideScale;
     }
 
     //LAB_8010e1d8
-    if((s4 & 0xf_ff00) == 0xf_ff00) {
-      final SpriteMetrics08 metrics = spriteMetrics_800c6948[s4 & 0xff];
-      effect.metrics_04.u_00.set(metrics.u_00.get());
-      effect.metrics_04.v_02.set(metrics.v_02.get());
-      effect.metrics_04.w_04.set(metrics.w_04.get());
-      effect.metrics_04.h_05.set(metrics.h_05.get());
-      effect.metrics_04.clut_06.set(metrics.clut_06.get());
+    if((effectFlag & 0xf_ff00) == 0xf_ff00) {
+      final SpriteMetrics08 metrics = spriteMetrics_800c6948[effectFlag & 0xff];
+      meteorEffect.metrics_04.u_00.set(metrics.u_00.get());
+      meteorEffect.metrics_04.v_02.set(metrics.v_02.get());
+      meteorEffect.metrics_04.w_04.set(metrics.w_04.get());
+      meteorEffect.metrics_04.h_05.set(metrics.h_05.get());
+      meteorEffect.metrics_04.clut_06.set(metrics.clut_06.get());
     } else {
       //LAB_8010e254
-      final DeffPart.SpriteType spriteType = (DeffPart.SpriteType)getDeffPart(s4 | 0x400_0000);
+      final DeffPart.SpriteType spriteType = (DeffPart.SpriteType)getDeffPart(effectFlag | 0x400_0000);
       final DeffPart.SpriteMetrics deffMetrics = spriteType.metrics_08;
-      effect.metrics_04.u_00.set(deffMetrics.u_00);
-      effect.metrics_04.v_02.set(deffMetrics.v_02);
-      effect.metrics_04.w_04.set(deffMetrics.w_04 * 4);
-      effect.metrics_04.h_05.set(deffMetrics.h_06);
-      effect.metrics_04.clut_06.set(GetClut(deffMetrics.clutX_08, deffMetrics.clutY_0a));
+      meteorEffect.metrics_04.u_00.set(deffMetrics.u_00);
+      meteorEffect.metrics_04.v_02.set(deffMetrics.v_02);
+      meteorEffect.metrics_04.w_04.set(deffMetrics.w_04 * 4);
+      meteorEffect.metrics_04.h_05.set(deffMetrics.h_06);
+      meteorEffect.metrics_04.clut_06.set(GetClut(deffMetrics.clutX_08, deffMetrics.clutY_0a));
     }
 
     //LAB_8010e2b0
-    manager._10.flags_00 |= 0x5000_0000;
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }
 
-  /** Used in Star Children */
   @Method(0x8010e2fcL)
-  public static void FUN_8010e2fc(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
-    final StarChildrenMeteorEffect10 s1 = (StarChildrenMeteorEffect10)manager.effect_44;
+  public static void renderStarChildrenMeteorEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+    final StarChildrenMeteorEffect10 meteorEffect = (StarChildrenMeteorEffect10)manager.effect_44;
     final int flags = manager._10.flags_00;
-    final int sp14 = -s1.metrics_04.w_04.get() / 2;
-    final int sp16 = -s1.metrics_04.h_05.get() / 2;
-    final int tw = s1.metrics_04.w_04.get();
-    final int th = s1.metrics_04.h_05.get();
-    final int tpage = (s1.metrics_04.v_02.get() & 0x100) >>> 4 | (s1.metrics_04.u_00.get() & 0x3ff) >>> 6;
-    final int u = (s1.metrics_04.u_00.get() & 0x3f) * 4;
-    final int v = s1.metrics_04.v_02.get();
-    final int clutX = s1.metrics_04.clut_06.get() << 4 & 0x3ff;
-    final int sp28 = 0;
-    final int sp2a = 0;
-    final int clutY = s1.metrics_04.clut_06.get() >>> 6 & 0x1ff;
+    final int tpage = (meteorEffect.metrics_04.v_02.get() & 0x100) >>> 4 | (meteorEffect.metrics_04.u_00.get() & 0x3ff) >>> 6;
+    final int vramX = (tpage & 0b1111) * 64;
+    final int vramY = (tpage & 0b10000) != 0 ? 256 : 0;
+    final int leftU = (meteorEffect.metrics_04.u_00.get() & 0x3f) * 4;
+    final int rightU = leftU + meteorEffect.metrics_04.w_04.get();
+    final int bottomV = meteorEffect.metrics_04.v_02.get();
+    final int topV = bottomV + meteorEffect.metrics_04.h_05.get();
+    final int clutX = meteorEffect.metrics_04.clut_06.get() << 4 & 0x3ff;
+    final int clutY = meteorEffect.metrics_04.clut_06.get() >>> 6 & 0x1ff;
     final int r = manager._10.colour_1c.getX();
     final int g = manager._10.colour_1c.getY();
     final int b = manager._10.colour_1c.getZ();
-    UnboundedArrayRef<StarChildrenMeteorEffectInstance10> s2 = s1.meteorArray_0c.deref();
+    final StarChildrenMeteorEffectInstance10[] meteorArray = meteorEffect.meteorArray_0c;
 
     //LAB_8010e414
-    for(int s3 = 0; s3 < s1.count_00.get(); s3++) {
-      if(s2.get(s3)._00.get() != 0) {
-        final int w = s2.get(s3).scaleW_0c.get() * s1.metrics_04.w_04.get() >> 12;
-        final int h = s2.get(s3).scaleH_0e.get() * s1.metrics_04.h_05.get() >> 12;
-        final int x = (int)s2.get(s3)._02.get() - w / 2;
-        final int y = (int)s2.get(s3)._04.get() - h / 2;
+    for(int i = 0; i < meteorEffect.count_00; i++) {
+      final StarChildrenMeteorEffectInstance10 meteor = meteorArray[i];
 
-        final GpuCommandPoly cmd = new GpuCommandPoly(4)
-          .bpp(Bpp.BITS_4)
-          .clut(clutX, clutY)
-          .vramPos((tpage & 0b1111) * 64, (tpage & 0b10000) != 0 ? 256 : 0)
-          .rgb(r, g, b)
-          .pos(0, x, y)
-          .pos(1, x + w, y)
-          .pos(2, x, y + h)
-          .pos(3, x + w, y + h)
-          .uv(0, u, v)
-          .uv(1, u + tw, v)
-          .uv(2, u, v + th)
-          .uv(3, u + tw, v + th);
+      final int w = meteor.scaleW_0c * meteorEffect.metrics_04.w_04.get() >> 12;
+      final int h = meteor.scaleH_0e * meteorEffect.metrics_04.h_05.get() >> 12;
+      final int x = meteor.centerOffsetX_02 - w / 2;
+      final int y = meteor.centerOffsetY_04 - h / 2;
 
-        if((flags >>> 30 & 1) != 0) {
-          cmd.translucent(Translucency.of(flags >>> 28 & 0b11));
-        }
+      final GpuCommandPoly cmd = new GpuCommandPoly(4)
+        .bpp(Bpp.BITS_4)
+        .clut(clutX, clutY)
+        .vramPos(vramX, vramY)
+        .rgb(r, g, b)
+        .pos(0, x, y)
+        .pos(1, x + w, y)
+        .pos(2, x, y + h)
+        .pos(3, x + w, y + h)
+        .uv(0, leftU, bottomV)
+        .uv(1, rightU, bottomV)
+        .uv(2, leftU, topV)
+        .uv(3, rightU, topV);
 
-        GPU.queueCommand(30, cmd);
+      if((flags >>> 30 & 1) != 0) {
+        cmd.translucent(Translucency.of(flags >>> 28 & 0b11));
       }
+
+      GPU.queueCommand(30, cmd);
       //LAB_8010e678
     }
     //LAB_8010e694
   }
 
   @Method(0x8010e6b0L)
-  public static void FUN_8010e6b0(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
-    final StarChildrenMeteorEffect10 effect = (StarChildrenMeteorEffect10)manager.effect_44;
+  public static void tickStarChildrenMeteorEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+    final StarChildrenMeteorEffect10 meteorEffect = (StarChildrenMeteorEffect10)manager.effect_44;
 
     //LAB_8010e6ec
-    final UnboundedArrayRef<StarChildrenMeteorEffectInstance10> s2 = effect.meteorArray_0c.deref();
-    for(int s3 = 0; s3 < effect.count_00.get(); s3++) {
-      s2.get(s3)._06.set(s2.get(s3)._02.get());
-      s2.get(s3)._08.set(s2.get(s3)._04.get());
-      s2.get(s3)._02.add((short)((rsin(manager._10.rot_10.getX()) * 32 >> 12) * manager._10.scale_16.getX() * s2.get(s3)._06.get() >> 24));
-      s2.get(s3)._04.add((short)((rcos(manager._10.rot_10.getX()) * 32 >> 12) * manager._10.scale_16.getX() * s2.get(s3)._06.get() >> 24));
+    final StarChildrenMeteorEffectInstance10[] meteorArray = meteorEffect.meteorArray_0c;
+    for(int i = 0; i < meteorEffect.count_00; i++) {
+      final StarChildrenMeteorEffectInstance10 meteor = meteorArray[i];
+      meteor.centerOffsetX_02 += (short)((rsin(manager._10.rot_10.getX()) * 32 >> 12) * manager._10.scale_16.getX() * meteor.scale_0a >> 24);
+      meteor.centerOffsetY_04 += (short)((rcos(manager._10.rot_10.getX()) * 32 >> 12) * manager._10.scale_16.getX() * meteor.scale_0a >> 24);
 
-      if(s2.get(s3)._0a.get() * 120 + 50 >> 12 < s2.get(s3)._04.get()) {
-        s2.get(s3)._08.set((short)-120);
-        s2.get(s3)._04.set((short)-120);
-        final long v0 = rand() % 321 - 160;
-        s2.get(s3)._06.set((short)v0);
-        s2.get(s3)._02.set((short)v0);
-        s2.get(s3)._00.set(1);
+      if(meteor.scale_0a * 120 + 50 >> 12 < meteor.centerOffsetY_04) {
+        meteor.centerOffsetY_04 = -120;
+        meteor.centerOffsetX_02 = rand() % 321 - 160;
       }
 
       //LAB_8010e828
-      final long v1 = s2.get(s3)._02.get();
-      if(v1 > 0xa0) {
-        s2.get(s3)._06.set((short)-0xa0);
-        s2.get(s3)._02.set((short)-0xa0);
-        s2.get(s3)._08.set(s2.get(s3)._04.get());
+      final int centerOffsetX = meteor.centerOffsetX_02;
+      if(centerOffsetX > 160) {
+        meteor.centerOffsetX_02 = -160;
         //LAB_8010e848
-      } else if(v1 < -0xa0) {
+      } else if(centerOffsetX < -160) {
         //LAB_8010e854
-        s2.get(s3)._06.set((short)0xa0);
-        s2.get(s3)._02.set((short)0xa0);
-        s2.get(s3)._08.set(s2.get(s3)._04.get());
+        meteor.centerOffsetX_02 = 160;
       }
       //LAB_8010e860
     }
@@ -6379,190 +6361,177 @@ public final class SEffe {
   }
 
   @Method(0x8010edc8L)
-  public static FlowControl FUN_8010edc8(final RunningScript<? extends BattleScriptDataBase> script) {
-    final int sp18 = (int)_800fb940.offset(0x0L).get();
-    final int sp1c = (int)_800fb940.offset(0x4L).get();
-    final int sp20 = (int)_800fb940.offset(0x8L).get();
-    final int count = script.params_20[1].get();
-    final int s5 = script.params_20[2].get();
-    final int sp38 = script.params_20[3].get();
+  public static FlowControl allocateStarChildrenImpactEffect(final RunningScript<? extends BattleScriptDataBase> script) {
+    final int impactCount = script.params_20[1].get();
+    final int maxStartingFrame = script.params_20[2].get();
+    final int maxTranslationMagnitude = script.params_20[3].get();
 
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "StarChildrenImpactEffect20",
       script.scriptState_04,
       0,
-      SEffe::FUN_8010f124,
-      SEffe::FUN_8010f340,
+      SEffe::tickStarChildrenImpactEffect,
+      SEffe::renderStarChildrenImpactEffect,
       null,
-      value -> new StarChildrenImpactEffect20(count)
+      value -> new StarChildrenImpactEffect20(impactCount)
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
-    final StarChildrenImpactEffect20 effect = (StarChildrenImpactEffect20)manager.effect_44;
+    final StarChildrenImpactEffect20 impactEffect = (StarChildrenImpactEffect20)manager.effect_44;
 
     //LAB_8010eecc
-    for(int i = 0; i < count; i++) {
-      final BttlScriptData6cSub20_2Suba8 addr = effect.ptr_08[i];
+    for(int i = 0; i < impactCount; i++) {
+      final StarChildrenImpactEffectInstancea8 impact = impactEffect.impactArray_08[i];
 
-      addr._00 = false;
-      addr._01 = false;
-      addr._04 = rand() % s5 + 1;
-      final int s3 = rand() * (sp38 + 1);
-      final int s2 = rand() % 4096;
-      addr._08 = rand() % s5 + 1;
-      addr._0c[0].setX((rcos(s2) - rsin(s2)) * s3 >> 12);
-      addr._0c[0].setY(0);
-      addr._0c[0].setZ((rcos(s2) + rsin(s2)) * s3 >> 12);
-      addr._0c[1].setX(addr._0c[0].getX());
-      addr._0c[1].setY(addr._0c[0].getY() - 0x100);
-      addr._0c[1].setZ(addr._0c[0].getZ());
-      addr._2c[0].set(0, 0, 0);
-      addr._2c[1].set(0, 0, 0);
-      addr._4c = rand() % 4096;
-      addr._6c[0].set(0, 0, 0);
-      addr._6c[1].set(0xc00, 0x400, 0xc00);
-      addr._8c[0].set(0xff, 0xff, 0xff);
-      addr._8c[1].set(0xff, 0xff, 0xff);
-      addr.objTable_94 = ((DeffPart.TmdType)getDeffPart(sp18 | 0x300_0000)).tmd_0c.tmdPtr_00.tmd.objTable[0];
-      addr.objTable_98 = ((DeffPart.TmdType)getDeffPart(sp1c | 0x300_0000)).tmd_0c.tmdPtr_00.tmd.objTable[0];
-      addr.objTable_9c = ((DeffPart.TmdType)getDeffPart(sp20 | 0x300_0000)).tmd_0c.tmdPtr_00.tmd.objTable[0];
-      addr.rotY_a0 = 0;
-      addr._a2 = 0;
+      impact.renderImpact_00 = false;
+      impact.renderShockwave_01 = false;
+      impact.startingFrame_04 = rand() % maxStartingFrame + 1;
+      final int translationMagnitude = rand() % (maxTranslationMagnitude + 1);
+      final int angle = rand() % 4096;
+      impact.unused_08 = rand() % maxStartingFrame + 1;
+      impact.translation_0c[0].setX((rcos(angle) - rsin(angle)) * translationMagnitude >> 12);
+      impact.translation_0c[0].setY(0);
+      impact.translation_0c[0].setZ((rcos(angle) + rsin(angle)) * translationMagnitude >> 12);
+      impact.translation_0c[1].setX(impact.translation_0c[0].getX());
+      impact.translation_0c[1].setY(impact.translation_0c[0].getY() - 0x100);
+      impact.translation_0c[1].setZ(impact.translation_0c[0].getZ());
+      impact.rotation_2c[0].set(0, rand() % 4096, 0);
+      impact.rotation_2c[1].set(0, rand() % 4096, 0);
+      impact.scale_6c[0].set(0, 0, 0);
+      impact.scale_6c[1].set(0xc00, 0x400, 0xc00);
+      impact.opacity_8c[0].set(0xff, 0xff, 0xff);
+      impact.opacity_8c[1].set(0xff, 0xff, 0xff);
+      impact.explosionObjTable_94 = ((DeffPart.TmdType)getDeffPart(0x300_7100)).tmd_0c.tmdPtr_00.tmd.objTable[0];
+      impact.shockwaveObjTable_98 = ((DeffPart.TmdType)getDeffPart(0x300_7101)).tmd_0c.tmdPtr_00.tmd.objTable[0];
+      impact.plumeObjTable_9c = ((DeffPart.TmdType)getDeffPart(0x300_7103)).tmd_0c.tmdPtr_00.tmd.objTable[0];
+      impact.explosionHeightAngle_a0 = 0;
+      impact.animationFrame_a2 = 0;
     }
 
     //LAB_8010f0d0
-    manager._10.flags_00 |= 0x1400_0000;
+    manager._10.flags_00 = 0x1400_0000;
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x8010f124L)
-  public static void FUN_8010f124(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
-    final StarChildrenImpactEffect20 effect = (StarChildrenImpactEffect20)manager.effect_44;
+  public static void tickStarChildrenImpactEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+    final StarChildrenImpactEffect20 impactEffect = (StarChildrenImpactEffect20)manager.effect_44;
 
     //LAB_8010f168
-    for(int i = 0; i < effect.ptr_08.length; i++) {
-      final BttlScriptData6cSub20_2Suba8 s1 = effect.ptr_08[i];
+    for(int i = 0; i < impactEffect.impactArray_08.length; i++) {
+      final StarChildrenImpactEffectInstancea8 impact = impactEffect.impactArray_08[i];
 
-      if(s1._04 < effect._04) {
-        if(s1.rotY_a0 >= 0x1000) {
-          s1._00 = false;
+      if(impactEffect.currentFrame_04 > impact.startingFrame_04) {
+        if(impact.explosionHeightAngle_a0 >= 0x1000) {
+          impact.renderImpact_00 = false;
         } else {
           //LAB_8010f19c
-          final int v1 = s1._a2;
+          final int currentAnimFrame = impact.animationFrame_a2;
 
-          if(v1 >= 9) {
-            if(v1 == 9) {
-              s1._0c[0].setY(-0x800);
-              s1._6c[0].setX(0x6800);
-              s1._6c[0].setZ(0x6800);
+          // Stage 0
+          if(currentAnimFrame < 9) {
+            //LAB_8010f240
+            impact.renderImpact_00 = true;
+            impact.renderShockwave_01 = true;
+            impact.rotation_2c[0].y.add(0x80);
+            impact.scale_6c[0].x.add(0x266);
+            impact.scale_6c[0].z.add(0x266);
+            impact.explosionHeightAngle_a0 += 0xcc;
+
+            final int explosionHeight = rsin(impact.explosionHeightAngle_a0) * 0x1600 >> 12;
+            impact.scale_6c[0].setY(Math.max(explosionHeight, 0));
+
+            //LAB_8010f2a8
+            impact.opacity_8c[0].r.sub(23);
+            impact.opacity_8c[0].g.sub(23);
+            impact.opacity_8c[0].b.sub(23);
+          } else { // Stage 1
+            if(currentAnimFrame == 9) {
+              impact.translation_0c[0].setY(-0x800);
+              impact.scale_6c[0].setX(0x6800);
+              impact.scale_6c[0].setZ(0x6800);
             }
 
             //LAB_8010f1dc
-            if(v1 >= 10) {
-              if(v1 == 10) {
-                s1._01 = false;
+            // Start transforming plume
+            if(currentAnimFrame >= 10) {
+              if(currentAnimFrame == 10) {
+                impact.renderShockwave_01 = false;
               }
 
               //LAB_8010f1f0
-              s1._2c[1].y.add(0x80);
-              s1.rotY_a0 = 0x200;
-              s1._6c[1].x.sub(0x1c0);
-              s1._6c[1].y.add(0x600);
-              s1._6c[1].z.sub(0x1c0);
+              impact.rotation_2c[1].y.add(0x80);
+              impact.explosionHeightAngle_a0 += 0x200;
+              impact.scale_6c[1].x.sub(0x1c0);
+              impact.scale_6c[1].y.add(0x600);
+              impact.scale_6c[1].z.sub(0x1c0);
             }
-
             //LAB_8010f22c
-            s1._a2++;
-          } else {
-            //LAB_8010f240
-            s1._00 = true;
-            s1._01 = true;
-            s1._2c[0].y.add(0x80);
-            s1._6c[0].x.add(0x266);
-            s1._6c[0].z.add(0x266);
-            s1.rotY_a0 += 0xcc;
-
-            final int sin = rsin(s1.rotY_a0) * 0x1600 >> 12;
-            s1._6c[0].setY(Math.max(sin, 0));
-
-            //LAB_8010f2a8
-            s1._8c[0].r.sub(23);
-            s1._8c[0].g.sub(23);
-            s1._8c[0].b.sub(23);
-            s1._a2++;
           }
+          impact.animationFrame_a2++;
         }
       }
     }
 
     //LAB_8010f2f4
-    effect._04++;
+    impactEffect.currentFrame_04++;
 
-    if(effect.ptr_08.length == 0) {
+    if(impactEffect.impactArray_08.length == 0) {
       state.deallocateWithChildren();
     }
-
     //LAB_8010f31c
   }
 
-  /**
-   * used renderCtmd
-   */
+  /** Used renderCtmd */
   @Method(0x8010f340L)
-  public static void FUN_8010f340(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
-    final StarChildrenImpactEffect20 effect = (StarChildrenImpactEffect20)manager.effect_44;
+  public static void renderStarChildrenImpactEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+    final StarChildrenImpactEffect20 impactEffect = (StarChildrenImpactEffect20)manager.effect_44;
     if(manager._10.flags_00 >= 0) {
-      final VECTOR sp0x14 = new VECTOR();
-      final SVECTOR sp0x20 = new SVECTOR();
-      final MATRIX sp0x3c = new MATRIX();
-      final MATRIX sp0x88 = new MATRIX();
-      final VECTOR sp0xa8 = new VECTOR();
-      final MATRIX sp0xb8 = new MATRIX();
-      final MATRIX sp0xd8 = new MATRIX();
+      final VECTOR translation = new VECTOR();
+      final SVECTOR rotation = new SVECTOR();
+      final MATRIX transformMatrix1 = new MATRIX();
+      final MATRIX finalTransformMatrix1 = new MATRIX();
+      final VECTOR scale = new VECTOR();
+      final MATRIX transformMatrix0 = new MATRIX();
 
-      final GsDOBJ2 sp0xf8 = new GsDOBJ2();
+      final GsDOBJ2 dobj = new GsDOBJ2();
 
       //LAB_8010f3a4
-      for(int i = 0; i < effect.ptr_08.length; i++) {
-        final BttlScriptData6cSub20_2Suba8 s3 = effect.ptr_08[i];
+      for(int i = 0; i < impactEffect.impactArray_08.length; i++) {
+        final StarChildrenImpactEffectInstancea8 impact = impactEffect.impactArray_08[i];
 
-        if(s3._00) {
-          FUN_800e8594(sp0xb8, manager);
-          final int a1 = s3._a2 >= 10 ? 1 : 0;
-          final long sp10 = 0x5000_0000L;
-          sp0x14.setX(s3._0c[a1].getX() + manager._10.trans_04.getX());
-          sp0x14.setY(s3._0c[a1].getY() + manager._10.trans_04.getY());
-          sp0x14.setZ(s3._0c[a1].getZ() + manager._10.trans_04.getZ());
-          sp0x20.setX((short)s3._2c[a1].getX());
-          sp0x20.setY((short)s3._2c[a1].getY());
-          sp0x20.setZ((short)s3._2c[a1].getZ());
-          final short sp26 = (short)(s3._6c[a1].getX() * manager._10.scale_16.getX() >> 12);
-          final short sp28 = (short)(s3._6c[a1].getY() * manager._10.scale_16.getY() >> 12);
-          final short sp2a = (short)(s3._6c[a1].getZ() * manager._10.scale_16.getZ() >> 12);
-          final int sp2c = s3._8c[a1].getR() * manager._10.colour_1c.getX() >> 8;
-          final int sp2e = s3._8c[a1].getG() * manager._10.colour_1c.getY() >> 8;
-          final int sp30 = s3._8c[a1].getB() * manager._10.colour_1c.getZ() >> 8;
+        if(impact.renderImpact_00) {
+          FUN_800e8594(transformMatrix0, manager);
+          final int stageNum = impact.animationFrame_a2 >= 10 ? 1 : 0;
+          translation.setX(impact.translation_0c[stageNum].getX() + manager._10.trans_04.getX());
+          translation.setY(impact.translation_0c[stageNum].getY() + manager._10.trans_04.getY());
+          translation.setZ(impact.translation_0c[stageNum].getZ() + manager._10.trans_04.getZ());
+          rotation.setX((short)impact.rotation_2c[stageNum].getX());
+          rotation.setY((short)impact.rotation_2c[stageNum].getY());
+          rotation.setZ((short)impact.rotation_2c[stageNum].getZ());
+          final short scaleX = (short)(impact.scale_6c[stageNum].getX() * manager._10.scale_16.getX() >> 12);
+          final short scaleY = (short)(impact.scale_6c[stageNum].getY() * manager._10.scale_16.getY() >> 12);
+          final short scaleZ = (short)(impact.scale_6c[stageNum].getZ() * manager._10.scale_16.getZ() >> 12);
+          final int r = impact.opacity_8c[stageNum].getR() * manager._10.colour_1c.getX() >> 8;
+          final int g = impact.opacity_8c[stageNum].getG() * manager._10.colour_1c.getY() >> 8;
+          final int b = impact.opacity_8c[stageNum].getB() * manager._10.colour_1c.getZ() >> 8;
 
           if((manager._10.flags_00 & 0x40) == 0) {
-            FUN_800e61e4(sp2c << 5, sp2e << 5, sp30 << 5);
+            FUN_800e61e4(r << 5, g << 5, b << 5);
           }
 
           //LAB_8010f50c
-          GsSetLightMatrix(sp0xb8);
-          MulMatrix0(worldToScreenMatrix_800c3548, sp0xb8, sp0xd8);
-          setRotTransMatrix(sp0xd8);
-          RotMatrix_Xyz(sp0x20, sp0x3c);
-          TransMatrix(sp0x3c, sp0x14);
-          sp0xa8.setX(sp26);
-          sp0xa8.setY(sp28);
-          sp0xa8.setZ(sp2a);
-          ScaleMatrix(sp0x3c, sp0xa8);
-          final long sp80 = 0;
-          final long sp38 = 0;
-          sp0xf8.attribute_00 = manager._10.flags_00;
-          MulMatrix0(worldToScreenMatrix_800c3548, sp0x3c, sp0x88);
-          setRotTransMatrix(sp0x88);
+          GsSetLightMatrix(transformMatrix0);
+          RotMatrix_Xyz(rotation, transformMatrix1);
+          TransMatrix(transformMatrix1, translation);
+          scale.setX(scaleX);
+          scale.setY(scaleY);
+          scale.setZ(scaleZ);
+          ScaleMatrix(transformMatrix1, scale);
+          dobj.attribute_00 = manager._10.flags_00;
+          MulMatrix0(worldToScreenMatrix_800c3548, transformMatrix1, finalTransformMatrix1);
+          setRotTransMatrix(finalTransformMatrix1);
           zOffset_1f8003e8.set(0);
           tmdGp0Tpage_1f8003ec.set(manager._10.flags_00 >>> 23 & 0x60);
 
@@ -6573,18 +6542,18 @@ public final class SEffe {
           zMax_1f8003cc.set(0xffe);
           zMin = 0xb;
 
-          if(s3._01) {
-            sp0xf8.tmd_08 = s3.objTable_98;
-            Renderer.renderDobj2(sp0xf8, false, 0x20);
+          if(impact.renderShockwave_01) {
+            dobj.tmd_08 = impact.shockwaveObjTable_98;
+            Renderer.renderDobj2(dobj, false, 0x20);
           }
 
           //LAB_8010f5d0
-          if(s3._a2 < 9) {
-            sp0xf8.tmd_08 = s3.objTable_94;
-            Renderer.renderDobj2(sp0xf8, false, 0x20);
-          } else if(s3._a2 >= 11) {
-            sp0xf8.tmd_08 = s3.objTable_9c;
-            Renderer.renderDobj2(sp0xf8, false, 0x20);
+          if(impact.animationFrame_a2 < 9) {
+            dobj.tmd_08 = impact.explosionObjTable_94;
+            Renderer.renderDobj2(dobj, false, 0x20);
+          } else if(impact.animationFrame_a2 >= 11) {
+            dobj.tmd_08 = impact.plumeObjTable_9c;
+            Renderer.renderDobj2(dobj, false, 0x20);
           }
 
           zShift_1f8003c4.set(oldZShift);
@@ -6598,7 +6567,6 @@ public final class SEffe {
         }
       }
     }
-
     //LAB_8010f640
   }
 
@@ -6697,8 +6665,8 @@ public final class SEffe {
   }
 
   @Method(0x8010feb8L)
-  public static void FUN_8010feb8(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
-    free(((StarChildrenMeteorEffect10)manager.effect_44).meteorArray_0c.getPointer());
+  public static void deallocateStarChildrenMeteorEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+    ((StarChildrenMeteorEffect10)manager.effect_44).meteorArray_0c = null;
   }
 
   @Method(0x8010ff10L)

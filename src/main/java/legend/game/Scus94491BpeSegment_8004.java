@@ -425,7 +425,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[443] = Bttl_800e::FUN_800e596c;
     scriptSubFunctions_8004e29c[444] = Bttl_800e::FUN_800e59d8;
 
-//    scriptSubFunctions_8004e29c[445] = Temp::FUN_800ca734;
+    // scriptSubFunctions_8004e29c[445] = Temp::FUN_800ca734;
 
     scriptSubFunctions_8004e29c[480] = Bttl_800f::scriptCheckPhysicalHit;
     scriptSubFunctions_8004e29c[481] = Bttl_800f::scriptPhysicalAttack;
@@ -534,7 +534,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[600] = Bttl_800e::scriptAllocateEmptyEffectManagerChild;
     scriptSubFunctions_8004e29c[601] = Bttl_800e::allocateAttackHitFlashEffect;
     scriptSubFunctions_8004e29c[602] = Bttl_800e::FUN_800e9854;
-//    scriptSubFunctions_8004e29c[603] = Temp::FUN_800ca648;
+    // scriptSubFunctions_8004e29c[603] = Temp::FUN_800ca648;
 
     scriptSubFunctions_8004e29c[605] = SEffe::FUN_80117eb0;
     scriptSubFunctions_8004e29c[606] = SEffe::allocateDeffTmd;
@@ -549,7 +549,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[614] = Bttl_800e::FUN_800eb84c;
     scriptSubFunctions_8004e29c[615] = Bttl_800e::FUN_800eb188;
     scriptSubFunctions_8004e29c[616] = Bttl_800e::FUN_800eb01c;
-//    scriptSubFunctions_8004e29c[617] = Temp::FUN_800caae4;
+    // scriptSubFunctions_8004e29c[617] = Temp::FUN_800caae4;
     scriptSubFunctions_8004e29c[618] = SEffe::scriptLoadSameScriptAndJump;
     scriptSubFunctions_8004e29c[619] = SEffe::allocateShirleyTransformWipeEffect;
     scriptSubFunctions_8004e29c[620] = SEffe::FUN_80111a58;
@@ -695,8 +695,8 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[800] = SEffe::FUN_8010c378;
     scriptSubFunctions_8004e29c[801] = SEffe::FUN_8010d1dc;
     scriptSubFunctions_8004e29c[802] = SEffe::allocateGoldDragoonTransformEffect;
-    scriptSubFunctions_8004e29c[803] = SEffe::FUN_8010e04c;
-    scriptSubFunctions_8004e29c[804] = SEffe::FUN_8010edc8;
+    scriptSubFunctions_8004e29c[803] = SEffe::allocateStarChildrenMeteorEffect;
+    scriptSubFunctions_8004e29c[804] = SEffe::allocateStarChildrenImpactEffect;
     scriptSubFunctions_8004e29c[805] = SEffe::FUN_8010e89c;
     scriptSubFunctions_8004e29c[806] = Scus94491BpeSegment::FUN_8001c5fc;
     scriptSubFunctions_8004e29c[807] = Scus94491BpeSegment::FUN_8001c604;
@@ -711,7 +711,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[839] = SEffe::FUN_80105604;
     scriptSubFunctions_8004e29c[840] = SEffe::allocateDragoonAdditionScript;
     scriptSubFunctions_8004e29c[841] = SEffe::FUN_80105c38;
-//    scriptSubFunctions_8004e29c[842] = Temp::FUN_800c6968;
+    // scriptSubFunctions_8004e29c[842] = Temp::FUN_800c6968;
     scriptSubFunctions_8004e29c[843] = SEffe::allocateScreenDistortionEffect;
     scriptSubFunctions_8004e29c[844] = SEffe::FUN_801089cc;
     scriptSubFunctions_8004e29c[845] = SEffe::FUN_801023f4;
