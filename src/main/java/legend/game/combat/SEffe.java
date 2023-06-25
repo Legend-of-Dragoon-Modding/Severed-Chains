@@ -6258,9 +6258,9 @@ public final class SEffe {
   @Method(0x8010e89cL)
   public static FlowControl allocateMoonlightStarsEffect(final RunningScript<? extends BattleScriptDataBase> script) {
     final int starCount = script.params_20[4].get();
-    final int sp1c = script.params_20[1].get();
-    final int sp20 = script.params_20[2].get();
-    final int sp24 = script.params_20[3].get();
+    final int effectFlags = script.params_20[1].get();
+    final int maxFrameToggleThreshold = script.params_20[2].get();
+    final int maxScale = script.params_20[3].get();
 
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "MoonlightStarsEffect18",
@@ -6275,26 +6275,24 @@ public final class SEffe {
     final EffectManagerData6c manager = state.innerStruct_00;
     final MoonlightStarsEffect18 starEffect = (MoonlightStarsEffect18)manager.effect_44;
     manager._10.flags_00 = 0x5000_0000;
-    
-    final MoonlightStarsEffectInstance3c[] starArray = starEffect.starArray_0c;
 
     //LAB_8010e980
     for(int i = 0; i < starCount; i++) {
-      final MoonlightStarsEffectInstance3c star = starArray[i];
-      star._00 = 0;
-      star._03 = true;
-      star._06 = 0;
-      star._36 = sp20;
-      star._38 = (int)(seed_800fa754.advance().get() % 181);
-      final int s2 = (int)(seed_800fa754.advance().get() % (sp24 + 1));
-      final int s1 = (int)(seed_800fa754.advance().get() & 0xfff);
-      star._04 = (short)((rcos(s1) - rsin(s1)) * s2 >> 12);
-      star._08 = (short)((rcos(s1) + rsin(s1)) * s2 >> 12);
+      final MoonlightStarsEffectInstance3c star = starEffect.starArray_0c[i];
+      star.currentFrame_00 = 0;
+      star.renderStars_03 = true;
+      star.maxFrameToggleThreshold_36 = maxFrameToggleThreshold;
+      star.toggleOffFrameThreshold_38 = (int)(seed_800fa754.advance().get() % 181);
+      final int scale = (int)(seed_800fa754.advance().get() % (maxScale + 1));
+      final int angle = (int)(seed_800fa754.advance().get() & 0xfff);
+      final short x = (short)((rcos(angle) - rsin(angle)) * scale >> 12);
+      final short z = (short)((rcos(angle) + rsin(angle)) * scale >> 12);
+      star.translation_04.set(x, (short)0, z);
     }
 
     //LAB_8010ead0
-    if((sp1c & 0xf_ff00) == 0xf_ff00) {
-      final SpriteMetrics08 metrics = spriteMetrics_800c6948[sp1c & 0xff];
+    if((effectFlags & 0xf_ff00) == 0xf_ff00) {
+      final SpriteMetrics08 metrics = spriteMetrics_800c6948[effectFlags & 0xff];
       starEffect.metrics_04.u_00 = metrics.u_00;
       starEffect.metrics_04.v_02 = metrics.v_02;
       starEffect.metrics_04.w_04 = metrics.w_04;
@@ -6302,7 +6300,7 @@ public final class SEffe {
       starEffect.metrics_04.clut_06 = metrics.clut_06;
     } else {
       //LAB_8010eb50
-      final DeffPart.SpriteType spriteType = (DeffPart.SpriteType)getDeffPart(sp1c | 0x400_0000);
+      final DeffPart.SpriteType spriteType = (DeffPart.SpriteType)getDeffPart(effectFlags | 0x400_0000);
       final DeffPart.SpriteMetrics deffMetrics = spriteType.metrics_08;
       starEffect.metrics_04.u_00 = deffMetrics.u_00;
       starEffect.metrics_04.v_02 = deffMetrics.v_02;
@@ -6312,36 +6310,36 @@ public final class SEffe {
     }
 
     //LAB_8010ebac
-    manager._10.flags_00 |= 0x5000_0000;
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x8010ec08L)
   public static void renderMoonlightStarsEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
-    final MoonlightStarsEffect18 effect = (MoonlightStarsEffect18)manager.effect_44;
+    final MoonlightStarsEffect18 starEffect = (MoonlightStarsEffect18)manager.effect_44;
 
     final GenericSpriteEffect24 spriteEffect = new GenericSpriteEffect24();
     spriteEffect.flags_00 = manager._10.flags_00 & 0xffff_ffffL;
-    spriteEffect.x_04 = (short)(-effect.metrics_04.w_04 / 2);
-    spriteEffect.y_06 = (short)(-effect.metrics_04.h_05 / 2);
-    spriteEffect.w_08 = effect.metrics_04.w_04;
-    spriteEffect.h_0a = effect.metrics_04.h_05;
-    spriteEffect.tpage_0c = (effect.metrics_04.v_02 & 0x100) >>> 4 | (effect.metrics_04.u_00 & 0x3ff) >>> 6;
-    spriteEffect.u_0e = (effect.metrics_04.u_00 & 0x3f) << 2;
-    spriteEffect.v_0f = effect.metrics_04.v_02;
-    spriteEffect.clutX_10 = effect.metrics_04.clut_06 << 4 & 0x3ff;
-    spriteEffect.clutY_12 = effect.metrics_04.clut_06 >>> 6 & 0x1ff;
+    spriteEffect.x_04 = (short)(-starEffect.metrics_04.w_04 / 2);
+    spriteEffect.y_06 = (short)(-starEffect.metrics_04.h_05 / 2);
+    spriteEffect.w_08 = starEffect.metrics_04.w_04;
+    spriteEffect.h_0a = starEffect.metrics_04.h_05;
+    spriteEffect.tpage_0c = (starEffect.metrics_04.v_02 & 0x100) >>> 4 | (starEffect.metrics_04.u_00 & 0x3ff) >>> 6;
+    spriteEffect.u_0e = (starEffect.metrics_04.u_00 & 0x3f) << 2;
+    spriteEffect.v_0f = starEffect.metrics_04.v_02;
+    spriteEffect.clutX_10 = starEffect.metrics_04.clut_06 << 4 & 0x3ff;
+    spriteEffect.clutY_12 = starEffect.metrics_04.clut_06 >>> 6 & 0x1ff;
     spriteEffect.unused_18 = 0;
     spriteEffect.unused_1a = 0;
 
     final VECTOR translation = new VECTOR();
 
     //LAB_8010ed00
-    for(int i = 0; i < effect.count_00; i++) {
-      final MoonlightStarsEffectInstance3c star = effect.starArray_0c[i];
+    for(int i = 0; i < starEffect.count_00; i++) {
+      final MoonlightStarsEffectInstance3c star = starEffect.starArray_0c[i];
 
-      if(!star._03) {
+      // If a star is set not to render, do not render subsequent stars either.
+      if(!star.renderStars_03) {
         break;
       }
 
@@ -6351,9 +6349,7 @@ public final class SEffe {
       spriteEffect.scaleX_1c = manager._10.scale_16.getX();
       spriteEffect.scaleY_1e = manager._10.scale_16.getY();
       spriteEffect.angle_20 = manager._10.rot_10.getX();
-      translation.setX(manager._10.trans_04.getX() + star._04);
-      translation.setY(manager._10.trans_04.getY() + star._06);
-      translation.setZ(manager._10.trans_04.getZ() + star._08);
+      translation.set(manager._10.trans_04).add(star.translation_04);
       renderGenericSpriteAtZOffset0(spriteEffect, translation);
     }
 
@@ -6671,20 +6667,23 @@ public final class SEffe {
 
   @Method(0x8010ff10L)
   public static void tickMoonlightStarsEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
-    final MoonlightStarsEffect18 effect = (MoonlightStarsEffect18)manager.effect_44;
+    final MoonlightStarsEffect18 starEffect = (MoonlightStarsEffect18)manager.effect_44;
 
     //LAB_8010ff34
-    for(int i = 0; i < effect.count_00; i++) {
-      final MoonlightStarsEffectInstance3c a2 = effect.starArray_0c[i];
+    for(int i = 0; i < starEffect.count_00; i++) {
+      final MoonlightStarsEffectInstance3c star = starEffect.starArray_0c[i];
 
-      a2._00++;
-      if(a2._38 < a2._00) {
-        a2._03 = false;
-        a2._00 = 0;
-        a2._38 = (short)(seed_800fa754.advance().get() % (a2._36 + 1));
+      // Seems like stars stop rendering when the current frame exceeds a randomized threshold.
+      // The threshold is then re-randomized each tick until the current frame falls below the
+      // threshold again, and then the star is rendered again.
+      star.currentFrame_00++;
+      if(star.currentFrame_00 > star.toggleOffFrameThreshold_38) {
+        star.renderStars_03 = false;
+        star.currentFrame_00 = 0;
+        star.toggleOffFrameThreshold_38 = (short)(seed_800fa754.advance().get() % (star.maxFrameToggleThreshold_36 + 1));
       } else {
         //LAB_8010ffb0
-        a2._03 = true;
+        star.renderStars_03 = true;
       }
     }
   }
