@@ -13,7 +13,7 @@ public class MoonlightStarsEffectInstance3c {
   /** 3 shorts */
   public SVECTOR translation_04 = new SVECTOR();
 
-  public int maxFrameToggleThreshold_36;
+  public int maxToggleFrameThreshold_36;
   public int toggleOffFrameThreshold_38;
 
   public MoonlightStarsEffectInstance3c(final int index) {

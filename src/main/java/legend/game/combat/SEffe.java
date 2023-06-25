@@ -6259,7 +6259,7 @@ public final class SEffe {
   public static FlowControl allocateMoonlightStarsEffect(final RunningScript<? extends BattleScriptDataBase> script) {
     final int starCount = script.params_20[4].get();
     final int effectFlags = script.params_20[1].get();
-    final int maxFrameToggleThreshold = script.params_20[2].get();
+    final int maxToggleFrameThreshold = script.params_20[2].get();
     final int maxScale = script.params_20[3].get();
 
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
@@ -6281,7 +6281,7 @@ public final class SEffe {
       final MoonlightStarsEffectInstance3c star = starEffect.starArray_0c[i];
       star.currentFrame_00 = 0;
       star.renderStars_03 = true;
-      star.maxFrameToggleThreshold_36 = maxFrameToggleThreshold;
+      star.maxToggleFrameThreshold_36 = maxToggleFrameThreshold;
       star.toggleOffFrameThreshold_38 = (int)(seed_800fa754.advance().get() % 181);
       final int scale = (int)(seed_800fa754.advance().get() % (maxScale + 1));
       final int angle = (int)(seed_800fa754.advance().get() & 0xfff);
@@ -6680,7 +6680,7 @@ public final class SEffe {
       if(star.currentFrame_00 > star.toggleOffFrameThreshold_38) {
         star.renderStars_03 = false;
         star.currentFrame_00 = 0;
-        star.toggleOffFrameThreshold_38 = (short)(seed_800fa754.advance().get() % (star.maxFrameToggleThreshold_36 + 1));
+        star.toggleOffFrameThreshold_38 = (short)(seed_800fa754.advance().get() % (star.maxToggleFrameThreshold_36 + 1));
       } else {
         //LAB_8010ffb0
         star.renderStars_03 = true;
