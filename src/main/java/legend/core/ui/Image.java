@@ -1,5 +1,6 @@
 package legend.core.ui;
 
+import legend.core.gpu.Rect4i;
 import legend.core.opengl.MatrixStack;
 import legend.core.opengl.Mesh;
 import legend.core.opengl.Shader;
@@ -11,7 +12,13 @@ import org.lwjgl.BufferUtils;
 
 import java.nio.FloatBuffer;
 
+import static org.lwjgl.opengl.GL11C.GL_DST_COLOR;
+import static org.lwjgl.opengl.GL11C.GL_ONE_MINUS_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11C.GL_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11C.GL_SRC_COLOR;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
+import static org.lwjgl.opengl.GL11C.glBlendFunc;
+import static org.lwjgl.opengl.GL14C.glBlendFuncSeparate;
 
 public class Image extends Control {
   private HorizontalAlign horizontalAlign = HorizontalAlign.CENTRE;
@@ -24,13 +31,20 @@ public class Image extends Control {
   private Shader.UniformVec4 uniformColour;
   private final FloatBuffer transformsBuffer = BufferUtils.createFloatBuffer(4 * 4);
   private final Texture texture;
+  private final Rect4i uv;
   private Mesh mesh;
 
-  private final Vector2f uv = new Vector2f();
+  private final Vector2f uvOffset = new Vector2f();
   private final Vector4f colour = new Vector4f(1.0f, 1.0f, 1.0f, 1.0f);
+  private BlendingMode blendingMode = BlendingMode.ALPHA;
+
+  public Image(final Texture texture, final Rect4i uv) {
+    this.texture = texture;
+    this.uv = uv;
+  }
 
   public Image(final Texture texture) {
-    this.texture = texture;
+    this(texture, new Rect4i(0, 0, texture.width, texture.height));
   }
 
   public HorizontalAlign getHorizontalAlign() {
@@ -60,12 +74,20 @@ public class Image extends Control {
     this.deferAction(this::updateLayout);
   }
 
-  public void setUv(final float u, final float v) {
-    this.uv.set(u, v);
+  public void setUvOffset(final float u, final float v) {
+    this.uvOffset.set(u, v);
   }
 
   public void setColour(final float r, final float g, final float b, final float a) {
     this.colour.set(r, g, b, a);
+  }
+
+  public BlendingMode getBlendingMode() {
+    return this.blendingMode;
+  }
+
+  public void setBlendingMode(final BlendingMode blendingMode) {
+    this.blendingMode = blendingMode;
   }
 
   @Override
@@ -80,6 +102,8 @@ public class Image extends Control {
   protected void updateLayout() {
     final int width = this.getWidth();
     final int height = this.getHeight();
+    final float tw = this.uv.w();
+    final float th = this.uv.h();
 
     final float l;
     final float t;
@@ -90,25 +114,25 @@ public class Image extends Control {
         if(this.getHorizontalAlign() == HorizontalAlign.LEFT) {
           l = 0;
         } else if(this.getHorizontalAlign() == HorizontalAlign.RIGHT) {
-          l = width - this.texture.width;
+          l = width - tw;
         } else {
-          l = (width - this.texture.width) / 2.0f;
+          l = (width - tw) / 2.0f;
         }
 
         if(this.getVerticalAlign() == VerticalAlign.TOP) {
           t = 0;
         } else if(this.getVerticalAlign() == VerticalAlign.BOTTOM) {
-          t = height - this.texture.height;
+          t = height - th;
         } else {
-          t = (height - this.texture.height) / 2.0f;
+          t = (height - th) / 2.0f;
         }
 
-        r = l + this.texture.width;
-        b = t + this.texture.height;
+        r = l + tw;
+        b = t + th;
       }
 
       case SCALE -> {
-        final float aspect = (float)this.texture.width / this.texture.height;
+        final float aspect = tw / th;
 
         float w = width;
         float h = w / aspect;
@@ -139,7 +163,7 @@ public class Image extends Control {
       }
 
       case SCALE_TO_WIDTH -> {
-        final float aspect = (float)this.texture.width / this.texture.height;
+        final float aspect = tw / th;
 
         final float h = width / aspect;
 
@@ -157,7 +181,7 @@ public class Image extends Control {
       }
 
       case SCALE_TO_HEIGHT -> {
-        final float aspect = (float)this.texture.width / this.texture.height;
+        final float aspect = tw / th;
 
         final float w = height * aspect;
 
@@ -185,10 +209,10 @@ public class Image extends Control {
     }
 
     this.mesh = new Mesh(GL_TRIANGLE_STRIP, new float[] {
-      l, t, 0, 0, 0,
-      l, b, 0, 0, 1,
-      r, t, 0, 1, 0,
-      r, b, 0, 1, 1,
+      l, t, 0, (this.uv.x()              ) / (float)this.texture.width, (this.uv.y()              ) / (float)this.texture.height,
+      l, b, 0, (this.uv.x()              ) / (float)this.texture.width, (this.uv.y() + this.uv.h()) / (float)this.texture.height,
+      r, t, 0, (this.uv.x() + this.uv.w()) / (float)this.texture.width, (this.uv.y()              ) / (float)this.texture.height,
+      r, b, 0, (this.uv.x() + this.uv.w()) / (float)this.texture.width, (this.uv.y() + this.uv.h()) / (float)this.texture.height,
     }, 4);
     this.mesh.attribute(0, 0L, 3, 5);
     this.mesh.attribute(1, 3L, 2, 5);
@@ -199,8 +223,10 @@ public class Image extends Control {
     matrixStack.get(this.transformsBuffer);
     this.transforms2.set(this.transformsBuffer);
 
+    this.blendingMode.use();
+
     this.shader.use();
-    this.uniformUv.set(this.uv.x / this.texture.width, this.uv.y / this.texture.height);
+    this.uniformUv.set(this.uvOffset.x / this.texture.width, this.uvOffset.y / this.texture.height);
     this.uniformColour.set(this.colour);
     this.texture.use();
     this.mesh.draw();
@@ -218,5 +244,23 @@ public class Image extends Control {
     SCALE_TO_HEIGHT,
     /** Stretches texture to fit control */
     STRETCH,
+  }
+
+  public enum BlendingMode {
+    /** Standard alpha blending */
+    ALPHA(() -> glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)),
+    /** Adds foreground colour to background colour */
+    ADD_COLOURS(() -> glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_COLOR, GL_DST_COLOR)),
+    ;
+
+    private final Runnable use;
+
+    BlendingMode(final Runnable use) {
+      this.use = use;
+    }
+
+    public void use() {
+      this.use.run();
+    }
   }
 }

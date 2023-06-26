@@ -38,8 +38,8 @@ public class GridLayout implements Layout {
 
     control.setWidth(cellWidth);
     control.setHeight(cellHeight);
-    control.setX(this.layoutDirection.calculateX(index, this.rowCount, this.columnCount));
-    control.setY(this.layoutDirection.calculateY(index, this.rowCount, this.columnCount));
+    control.setX(this.layoutDirection.calculateX(index, this.rowCount, this.columnCount) * cellWidth);
+    control.setY(this.layoutDirection.calculateY(index, this.rowCount, this.columnCount) * cellHeight);
   }
 
   public enum LayoutDirection {
