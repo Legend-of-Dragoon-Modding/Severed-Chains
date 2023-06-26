@@ -19,10 +19,12 @@ import legend.core.memory.types.BoolRef;
 import legend.core.memory.types.ByteRef;
 import legend.core.memory.types.CString;
 import legend.core.memory.types.IntRef;
+import legend.core.memory.types.OctConsumer;
 import legend.core.memory.types.Pointer;
-import legend.core.memory.types.QuadConsumerRef;
+import legend.core.memory.types.QuadConsumer;
 import legend.core.memory.types.QuintConsumerRef;
-import legend.core.memory.types.RunnableRef;
+import legend.core.memory.types.ComponentFunction;
+import legend.core.memory.types.SeptConsumer;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
@@ -485,7 +487,17 @@ public final class Bttl_800c {
    *   <li>{@link Bttl_800d#FUN_800daf6c}</li>
    * </ol>
    */
-  public static final ArrayRef<Pointer<QuadConsumerRef<Integer, Integer, Integer, Integer>>> _800fabbc = MEMORY.ref(4, 0x800fabbcL, ArrayRef.of(Pointer.classFor(QuadConsumerRef.classFor(Integer.class, Integer.class, Integer.class, Integer.class)), 8, 4, Pointer.deferred(4, QuadConsumerRef::new)));
+  public static final QuadConsumer<Integer, Integer, Integer, Integer>[] _800fabbc = new QuadConsumer[8];
+  static {
+    _800fabbc[0] = Bttl_800d::FUN_800dacc4;
+    _800fabbc[1] = Bttl_800d::FUN_800dad14;
+    _800fabbc[2] = Bttl_800d::FUN_800dadc0;
+    _800fabbc[3] = Bttl_800d::FUN_800dadc8;
+    _800fabbc[4] = Bttl_800d::FUN_800dadd0;
+    _800fabbc[5] = Bttl_800d::FUN_800dae3c;
+    _800fabbc[6] = Bttl_800d::FUN_800daedc;
+    _800fabbc[7] = Bttl_800d::FUN_800daf6c;
+  }
   /**
    * <ol start="0">
    *   <li>{@link Bttl_800d#FUN_800db0d8}</li>
@@ -498,7 +510,17 @@ public final class Bttl_800c {
    *   <li>{@link Bttl_800d#FUN_800db398}</li>
    * </ol>
    */
-  public static final ArrayRef<Pointer<QuadConsumerRef<Integer, Integer, Integer, Integer>>> _800fabdc = MEMORY.ref(4, 0x800fabdcL, ArrayRef.of(Pointer.classFor(QuadConsumerRef.classFor(Integer.class, Integer.class, Integer.class, Integer.class)), 8, 4, Pointer.deferred(4, QuadConsumerRef::new)));
+  public static final QuadConsumer<Integer, Integer, Integer, Integer>[] _800fabdc = new QuadConsumer[8];
+  static {
+    _800fabdc[0] = Bttl_800d::FUN_800db0d8;
+    _800fabdc[1] = Bttl_800d::FUN_800db128;
+    _800fabdc[2] = Bttl_800d::FUN_800db1d4;
+    _800fabdc[3] = Bttl_800d::FUN_800db240;
+    _800fabdc[4] = Bttl_800d::FUN_800db2e0;
+    _800fabdc[5] = Bttl_800d::FUN_800db2e8;
+    _800fabdc[6] = Bttl_800d::FUN_800db2f0;
+    _800fabdc[7] = Bttl_800d::FUN_800db398;
+  }
   /**
    * <ol start="0">
    *   <li>{@link Bttl_800d#FUN_800d47dc}</li>
@@ -511,7 +533,17 @@ public final class Bttl_800c {
    *   <li>{@link Bttl_800d#FUN_800d519c}</li>
    * </ol>
    */
-  public static final Value _800fabfc = MEMORY.ref(4, 0x800fabfcL);
+  public static final SeptConsumer<Integer, Integer, Integer, Integer, Integer, Integer, Integer>[] _800fabfc = new SeptConsumer[8];
+  static {
+    _800fabfc[0] = Bttl_800d::FUN_800d47dc;
+    _800fabfc[1] = Bttl_800d::FUN_800d496c;
+    _800fabfc[2] = Bttl_800d::FUN_800db564;
+    _800fabfc[3] = Bttl_800d::FUN_800db56c;
+    _800fabfc[4] = Bttl_800d::FUN_800d4bac;
+    _800fabfc[5] = Bttl_800d::FUN_800d4d7c;
+    _800fabfc[6] = Bttl_800d::FUN_800d4fbc;
+    _800fabfc[7] = Bttl_800d::FUN_800d519c;
+  }
   /**
    * <ol start="0">
    *   <li>{@link Bttl_800d#FUN_800d53e4}</li>
@@ -524,7 +556,17 @@ public final class Bttl_800c {
    *   <li>{@link Bttl_800d#FUN_800d5cf4}</li>
    * </ol>
    */
-  public static final Value _800fac1c = MEMORY.ref(4, 0x800fac1cL);
+  public static final SeptConsumer<Integer, Integer, Integer, Integer, Integer, Integer, Integer>[] _800fac1c = new SeptConsumer[8];
+  static {
+    _800fac1c[0] = Bttl_800d::FUN_800d53e4;
+    _800fac1c[1] = null;
+    _800fac1c[2] = null;
+    _800fac1c[3] = null;
+    _800fac1c[4] = null;
+    _800fac1c[5] = null;
+    _800fac1c[6] = null;
+    _800fac1c[7] = null;
+  }
   /**
    * <ol start="0">
    *   <li>{@link Bttl_800d#FUN_800d5ec8}</li>
@@ -537,7 +579,17 @@ public final class Bttl_800c {
    *   <li>{@link Bttl_800d#FUN_800d6960}</li>
    * </ol>
    */
-  public static final Value _800fac3c = MEMORY.ref(4, 0x800fac3cL);
+  public static final OctConsumer<Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer>[] _800fac3c = new OctConsumer[8];
+  static {
+    _800fac3c[0] = Bttl_800d::FUN_800d5ec8;
+    _800fac3c[1] = Bttl_800d::FUN_800d60b0;
+    _800fac3c[2] = Bttl_800d::FUN_800db9d0;
+    _800fac3c[3] = Bttl_800d::FUN_800db9d8;
+    _800fac3c[4] = Bttl_800d::FUN_800d62d8;
+    _800fac3c[5] = Bttl_800d::FUN_800d64e4;
+    _800fac3c[6] = Bttl_800d::FUN_800d670c;
+    _800fac3c[7] = Bttl_800d::FUN_800d6960;
+  }
   /**
    * <ol start="0">
    *   <li>{@link Bttl_800d#FUN_800d6b90}</li>
@@ -550,7 +602,17 @@ public final class Bttl_800c {
    *   <li>{@link Bttl_800d#FUN_800d7548}</li>
    * </ol>
    */
-  public static final Value _800fac5c = MEMORY.ref(4, 0x800fac5cL);
+  public static final SeptConsumer<Integer, Integer, Integer, Integer, Integer, Integer, Integer>[] _800fac5c = new SeptConsumer[8];
+  static {
+    _800fac5c[0] = Bttl_800d::FUN_800d6b90;
+    _800fac5c[1] = Bttl_800d::FUN_800d6d18;
+    _800fac5c[2] = Bttl_800d::FUN_800d6f58;
+    _800fac5c[3] = Bttl_800d::FUN_800d7128;
+    _800fac5c[4] = Bttl_800d::FUN_800db678;
+    _800fac5c[5] = Bttl_800d::FUN_800db680;
+    _800fac5c[6] = Bttl_800d::FUN_800d7368;
+    _800fac5c[7] = Bttl_800d::FUN_800d7548;
+  }
   /**
    * <ol start="0">
    *   <li>{@link Bttl_800d#FUN_800d7790}</li>
@@ -563,7 +625,17 @@ public final class Bttl_800c {
    *   <li>{@link Bttl_800d#FUN_800d80a0}</li>
    * </ol>
    */
-  public static final Value _800fac7c = MEMORY.ref(4, 0x800fac7cL);
+  public static final SeptConsumer<Integer, Integer, Integer, Integer, Integer, Integer, Integer>[] _800fac7c = new SeptConsumer[8];
+  static {
+    _800fac7c[0] = Bttl_800d::FUN_800d7790;
+    _800fac7c[1] = Bttl_800d::FUN_800d7920;
+    _800fac7c[2] = Bttl_800d::FUN_800d7aec;
+    _800fac7c[3] = Bttl_800d::FUN_800d7cdc;
+    _800fac7c[4] = null;
+    _800fac7c[5] = null;
+    _800fac7c[6] = null;
+    _800fac7c[7] = null;
+  }
   /**
    * <ol start="0">
    *   <li>{@link Bttl_800d#FUN_800d8274}</li>
@@ -576,7 +648,17 @@ public final class Bttl_800c {
    *   <li>{@link Bttl_800d#FUN_800d8bf4}</li>
    * </ol>
    */
-  public static final Value _800fac9c = MEMORY.ref(4, 0x800fac9cL);
+  public static final OctConsumer<Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer>[] _800fac9c = new OctConsumer[8];
+  static {
+    _800fac9c[0] = Bttl_800d::FUN_800d8274;
+    _800fac9c[1] = Bttl_800d::FUN_800d8424;
+    _800fac9c[2] = Bttl_800d::FUN_800d8614;
+    _800fac9c[3] = Bttl_800d::FUN_800d8808;
+    _800fac9c[4] = Bttl_800d::FUN_800dbb00;
+    _800fac9c[5] = Bttl_800d::FUN_800dbb08;
+    _800fac9c[6] = Bttl_800d::FUN_800d89f8;
+    _800fac9c[7] = Bttl_800d::FUN_800d8bf4;
+  }
   /**
    * <ol start="0">
    *   <li>{@link Bttl_800d#FUN_800dbe40}</li>
@@ -605,7 +687,33 @@ public final class Bttl_800c {
    *   <li>{@link Bttl_800d#FUN_800d9bd4}</li>
    * </ol>
    */
-  public static final ArrayRef<Pointer<RunnableRef>> _800facbc = MEMORY.ref(4, 0x800facbcL, ArrayRef.of(Pointer.classFor(RunnableRef.class), 24, 4, Pointer.deferred(4, RunnableRef::new)));
+  public static final Runnable[] _800facbc = new Runnable[24];
+  static {
+    _800facbc[0] = Bttl_800d::FUN_800dbe40;
+    _800facbc[1] = Bttl_800d::FUN_800dbe60;
+    _800facbc[2] = Bttl_800d::FUN_800dbe80;
+    _800facbc[3] = Bttl_800d::FUN_800dbe8c;
+    _800facbc[4] = Bttl_800d::FUN_800dbe98;
+    _800facbc[5] = Bttl_800d::FUN_800dbef0;
+    _800facbc[6] = Bttl_800d::FUN_800dbf70;
+    _800facbc[7] = Bttl_800d::FUN_800dbfd4;
+    _800facbc[8] = Bttl_800d::FUN_800d90c8;
+    _800facbc[9] = Bttl_800d::FUN_800d9154;
+    _800facbc[10] = Bttl_800d::FUN_800dc070;
+    _800facbc[11] = Bttl_800d::FUN_800dc078;
+    _800facbc[12] = Bttl_800d::FUN_800d9220;
+    _800facbc[13] = Bttl_800d::FUN_800d92bc;
+    _800facbc[14] = Bttl_800d::FUN_800d9380;
+    _800facbc[15] = Bttl_800d::FUN_800d9438;
+    _800facbc[16] = Bttl_800d::FUN_800d9518;
+    _800facbc[17] = Bttl_800d::FUN_800d9650;
+    _800facbc[18] = Bttl_800d::FUN_800dc080;
+    _800facbc[19] = Bttl_800d::FUN_800dc088;
+    _800facbc[20] = Bttl_800d::FUN_800d9788;
+    _800facbc[21] = Bttl_800d::FUN_800d98d0;
+    _800facbc[22] = Bttl_800d::FUN_800d9a68;
+    _800facbc[23] = Bttl_800d::FUN_800d9bd4;
+  }
   /**
    * <ol start="0">
    *   <li>{@link Bttl_800d#FUN_800dc090}</li>
@@ -634,7 +742,33 @@ public final class Bttl_800c {
    *   <li>{@link Bttl_800d#FUN_800da8bc}</li>
    * </ol>
    */
-  public static final ArrayRef<Pointer<RunnableRef>> _800fad1c = MEMORY.ref(4, 0x800fad1cL, ArrayRef.of(Pointer.classFor(RunnableRef.class), 24, 4, Pointer.deferred(4, RunnableRef::new)));
+  public static final Runnable[] _800fad1c = new Runnable[24];
+  static {
+    _800fad1c[0] = Bttl_800d::FUN_800dc090;
+    _800fad1c[1] = Bttl_800d::FUN_800dc0b0;
+    _800fad1c[2] = Bttl_800d::FUN_800dc0d0;
+    _800fad1c[3] = Bttl_800d::FUN_800dc128;
+    _800fad1c[4] = Bttl_800d::FUN_800dc1a8;
+    _800fad1c[5] = Bttl_800d::FUN_800dc1b0;
+    _800fad1c[6] = Bttl_800d::FUN_800dc1b8;
+    _800fad1c[7] = Bttl_800d::FUN_800dc21c;
+    _800fad1c[8] = Bttl_800d::FUN_800d9da0;
+    _800fad1c[9] = Bttl_800d::FUN_800d9e2c;
+    _800fad1c[10] = Bttl_800d::FUN_800d9ef8;
+    _800fad1c[11] = Bttl_800d::FUN_800d9f94;
+    _800fad1c[12] = Bttl_800d::FUN_800dc2b8;
+    _800fad1c[13] = Bttl_800d::FUN_800dc2c0;
+    _800fad1c[14] = Bttl_800d::FUN_800da058;
+    _800fad1c[15] = Bttl_800d::FUN_800da110;
+    _800fad1c[16] = Bttl_800d::FUN_800da1f0;
+    _800fad1c[17] = Bttl_800d::FUN_800da328;
+    _800fad1c[18] = Bttl_800d::FUN_800da460;
+    _800fad1c[19] = Bttl_800d::FUN_800da5b0;
+    _800fad1c[20] = Bttl_800d::FUN_800dc2c8;
+    _800fad1c[21] = Bttl_800d::FUN_800dc2d0;
+    _800fad1c[22] = Bttl_800d::FUN_800da750;
+    _800fad1c[23] = Bttl_800d::FUN_800da8bc;
+  }
   /**
    * <ol start="0">
    *   <li>{@link Bttl_800d#FUN_800dc408}</li>
@@ -647,7 +781,17 @@ public final class Bttl_800c {
    *   <li>{@link Bttl_800d#FUN_800dc6d8}</li>
    * </ol>
    */
-  public static final Value _800fad7c = MEMORY.ref(4, 0x800fad7cL);
+  public static final ComponentFunction<Integer, Integer, Integer, Integer, Integer>[] _800fad7c = new ComponentFunction[8];
+  static {
+    _800fad7c[0] = Bttl_800d::FUN_800dc408;
+    _800fad7c[1] = Bttl_800d::FUN_800dc45c;
+    _800fad7c[2] = Bttl_800d::FUN_800dc504;
+    _800fad7c[3] = Bttl_800d::FUN_800dc50c;
+    _800fad7c[4] = Bttl_800d::FUN_800dc514;
+    _800fad7c[5] = Bttl_800d::FUN_800dc580;
+    _800fad7c[6] = Bttl_800d::FUN_800dc630;
+    _800fad7c[7] = Bttl_800d::FUN_800dc6d8;
+  }
   /**
    * <ol start="0">
    *   <li>{@link Bttl_800d#FUN_800dc798}</li>
@@ -660,7 +804,17 @@ public final class Bttl_800c {
    *   <li>{@link Bttl_800d#FUN_800dca68}</li>
    * </ol>
    */
-  public static final Value _800fad9c = MEMORY.ref(4, 0x800fad9cL);
+  public static final ComponentFunction<Integer, Integer, Integer, Integer, Integer>[] _800fad9c = new ComponentFunction[8];
+  static {
+    _800fad9c[0] = Bttl_800d::FUN_800dc798;
+    _800fad9c[1] = Bttl_800d::FUN_800dc7ec;
+    _800fad9c[2] = Bttl_800d::FUN_800dc894;
+    _800fad9c[3] = Bttl_800d::FUN_800dc900;
+    _800fad9c[4] = Bttl_800d::FUN_800dc9b0;
+    _800fad9c[5] = Bttl_800d::FUN_800dc9b8;
+    _800fad9c[6] = Bttl_800d::FUN_800dc9c0;
+    _800fad9c[7] = Bttl_800d::FUN_800dca68;
+  }
 
   public static final Value _800faec4 = MEMORY.ref(2, 0x800faec4L);
 
