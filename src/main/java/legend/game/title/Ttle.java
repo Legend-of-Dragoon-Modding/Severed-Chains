@@ -1,6 +1,5 @@
 package legend.game.title;
 
-import legend.core.GameEngine;
 import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandQuad;
@@ -27,7 +26,6 @@ import legend.game.types.CharacterData2c;
 import legend.game.types.EngineState;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.Translucency;
-import legend.game.ui.TitleScreen;
 import legend.game.unpacker.FileData;
 import org.lwjgl.glfw.GLFW;
 
@@ -41,7 +39,6 @@ import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SAVES;
-import static legend.core.GameEngine.SCREENS;
 import static legend.core.gpu.VramTextureLoader.palettesFromTim;
 import static legend.core.gpu.VramTextureLoader.palettesFromTims;
 import static legend.core.gpu.VramTextureLoader.stitch;
@@ -242,8 +239,8 @@ public final class Ttle {
 
   @Method(0x800c77e4L)
   public static void initializeMainMenu() {
-    SCREENS.pushScreen(new TitleScreen());
-    GameEngine.legacyUi = false;
+//    SCREENS.pushScreen(new TitleScreen());
+//    GameEngine.legacyUi = false;
 
     menuLoadingStage = 0;
     menuIdleTime = 0;
@@ -678,7 +675,7 @@ public final class Ttle {
       menuIdleTime += 2;
 
       if(menuIdleTime > 1680) {
-//        pregameLoadingStage_800bb10c.set(6);
+        pregameLoadingStage_800bb10c.set(6);
       }
     }
 
