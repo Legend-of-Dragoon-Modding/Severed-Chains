@@ -1,6 +1,7 @@
 package legend.game.types;
 
 import legend.game.characters.Element;
+import legend.game.modding.coremod.elements.NoElement;
 import legend.game.unpacker.FileData;
 
 public class SpellStats0c {
@@ -58,7 +59,7 @@ public class SpellStats0c {
     this.accuracy_05 = 0;
     this.mp_06 = 0;
     this.statusChance_07 = 0;
-    this.element_08 = Element.fromFlag(0);
+    this.element_08 = new NoElement();
     this.statusType_09 = 0;
     this.buffType_0a = 0;
     this._0b = 0;
