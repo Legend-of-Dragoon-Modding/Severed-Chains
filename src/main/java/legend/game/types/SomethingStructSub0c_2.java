@@ -1,29 +1,17 @@
 package legend.game.types;
 
-import legend.core.memory.Value;
-import legend.core.memory.types.IntRef;
-import legend.core.memory.types.MemoryRef;
-import legend.core.memory.types.ShortRef;
+import legend.game.unpacker.FileData;
 
-public class SomethingStructSub0c_2 implements MemoryRef {
-  private final Value ref;
+public class SomethingStructSub0c_2 {
+  public short x_00;
+  public short y_02;
+  public int _04;
+  public int _08;
 
-  public final ShortRef _00;
-  public final ShortRef _02;
-  public final IntRef _04;
-  public final IntRef _08;
-
-  public SomethingStructSub0c_2(final Value ref) {
-    this.ref = ref;
-
-    this._00 = ref.offset(2, 0x00L).cast(ShortRef::new);
-    this._02 = ref.offset(2, 0x02L).cast(ShortRef::new);
-    this._04 = ref.offset(4, 0x04L).cast(IntRef::new);
-    this._08 = ref.offset(4, 0x08L).cast(IntRef::new);
-  }
-
-  @Override
-  public long getAddress() {
-    return this.ref.getAddress();
+  public SomethingStructSub0c_2(final FileData data) {
+    this.x_00 = data.readShort(0x00);
+    this.y_02 = data.readShort(0x02);
+    this._04 = data.readInt(0x04);
+    this._08 = data.readInt(0x08);
   }
 }

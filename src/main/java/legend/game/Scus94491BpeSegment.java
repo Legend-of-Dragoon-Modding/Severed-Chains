@@ -557,45 +557,6 @@ public final class Scus94491BpeSegment {
     } while(entryType != 3);
   }
 
-  @Method(0x800120f0L)
-  public static long mallocHead(long size) {
-    size = size + 0xfL & 0xffff_fffcL;
-
-    long currentEntry = heapHead_8005a2a0.get();
-    long entryType = MEMORY.ref(2, currentEntry).offset(0x8L).get();
-
-    //LAB_80012120
-    while(entryType != 0x3L) {
-      final long spaceAvailable = MEMORY.ref(4, currentEntry).offset(0x4L).get();
-
-      if(entryType == 0) {
-        if(spaceAvailable >= size) {
-          MEMORY.ref(2, currentEntry).offset(0x8L).setu(0x1L);
-
-          if(size + 0xcL < spaceAvailable) {
-            MEMORY.ref(2, currentEntry).offset(size).offset(0x8L).setu(0);
-            MEMORY.ref(4, currentEntry).offset(0x4L).setu(size);
-            MEMORY.ref(4, currentEntry).offset(size).offset(0x0L).setu(currentEntry);
-            MEMORY.ref(4, currentEntry).offset(size).offset(0x4L).setu(spaceAvailable - size);
-            MEMORY.ref(4, currentEntry).offset(spaceAvailable).setu(currentEntry + size);
-          }
-
-          allocations++;
-          LOGGER.info(MALLOC_MARKER, "Allocating 0x%x bytes on head @ %08x (%d total)", size, currentEntry + 0xcL, allocations);
-          return currentEntry + 0xcL;
-        }
-      }
-
-      //LAB_80012170
-      currentEntry += MEMORY.ref(4, currentEntry).offset(0x4L).get();
-      entryType = MEMORY.ref(2, currentEntry).offset(0x8L).get();
-    }
-
-    //LAB_8001218c
-    dumpHeap();
-    throw new RuntimeException("Failed to allocate entry on linked list (size 0x" + Long.toHexString(size) + ')');
-  }
-
   @Method(0x80012194L)
   public static long mallocTail(long size) {
     size = size + 0xfL & 0xffff_fffcL;
@@ -1169,10 +1130,8 @@ public final class Scus94491BpeSegment {
     final FileData data = Unpacker.loadFile(path);
 
     final long transferDest;
-    if((type & 0x3) != 0) {
+    if((type & 0x7) != 0) {
       transferDest = mallocTail(data.size());
-    } else if((type & 0x4) != 0) {
-      transferDest = mallocHead(data.size());
     } else {
       transferDest = fileTransferDest;
     }
