@@ -4245,7 +4245,7 @@ public final class SEffe {
       final int colour = a0._11 * 0x40 - 1;
       final COLOUR rgb = new COLOUR().set(colour, colour, colour);
       callScriptFunction(func, 20, fp - 4, s7 - 4, 1, 128);
-      FUN_80018a5c((short)fp - 2, (short)s7 - 5, 232, 120, 255, 143, 0xcL, Translucency.B_PLUS_F, rgb, a0._11 * 256 + 6404, a0._11 * 256 + 4096);
+      FUN_80018a5c((short)fp - 2, (short)s7 - 5, 232, 120, 255, 143, 0xc, Translucency.B_PLUS_F, rgb, a0._11 * 256 + 6404, a0._11 * 256 + 4096);
     }
 
     //LAB_80107bf0
@@ -4305,7 +4305,7 @@ public final class SEffe {
 
     //LAB_801081a8
     for(int i = 0; i < a0._0d; i++) {
-      FUN_80018d60((short)_8011a01c.get() + 18, (short)_8011a020.get() + 16, 224, 208, 31, 31, _800fb84c.offset(1, a0._18).get(), Translucency.B_PLUS_F, rgb, 0x1000);
+      FUN_80018d60((short)_8011a01c.get() + 18, (short)_8011a020.get() + 16, 224, 208, 31, 31, (int)_800fb84c.offset(1, a0._18).get(), Translucency.B_PLUS_F, rgb, 0x1000);
 
       if(a0._18 == 9) {
         FUN_80018dec((int)_8011a01c.getSigned() + 23, (int)_8011a020.getSigned() + 21, 232, 120, 23, 23, 12, Translucency.B_PLUS_F, rgb, 0x800, 0x1800);
@@ -4316,10 +4316,10 @@ public final class SEffe {
 
     //LAB_80108268
     FUN_80018d60((short)_8011a01c.get() + 32, (short)_8011a020.get() -  4, 152, 208,  8, 24, 50, Translucency.HALF_B_PLUS_HALF_F, rgb, 0x1000);
-    FUN_80018d60((short)_8011a01c.get() + 18, (short)_8011a020.get() + 16, 224, 208, 31, 31, _800fb84c.offset(1, a0._18).getSigned(), Translucency.of((int)_800fb7fc.offset(1, a1 * 2).getSigned()), rgb, 0x1000);
+    FUN_80018d60((short)_8011a01c.get() + 18, (short)_8011a020.get() + 16, 224, 208, 31, 31, (int)_800fb84c.offset(1, a0._18).getSigned(), Translucency.of((int)_800fb7fc.offset(1, a1 * 2).getSigned()), rgb, 0x1000);
     FUN_80018d60((short)_8011a01c.get() + 17, (short)_8011a020.get() + 14, 112, 200, 40, 40, 52, Translucency.of((int)_800fb7fc.offset(1, a1 * 2).offset(0x1L).getSigned()), rgb, 0x1000);
-    FUN_80018d60((short)_8011a01c.get(),      (short)_8011a020.get(),      160, 192, 64, 48, _800fb840.offset(1, a0._18).getSigned(), null, rgb, 0x1000);
-    FUN_80018d60((short)_8011a01c.get() +  8, (short)_8011a020.get() + 48, 200,  80, 42,  8, _800fb840.offset(1, a0._18).getSigned(), null, rgb, 0x1000);
+    FUN_80018d60((short)_8011a01c.get(),      (short)_8011a020.get(),      160, 192, 64, 48, (int)_800fb840.offset(1, a0._18).getSigned(), null, rgb, 0x1000);
+    FUN_80018d60((short)_8011a01c.get() +  8, (short)_8011a020.get() + 48, 200,  80, 42,  8, (int)_800fb840.offset(1, a0._18).getSigned(), null, rgb, 0x1000);
     _80119fb4.setu(1 - _80119fb4.get());
   }
 

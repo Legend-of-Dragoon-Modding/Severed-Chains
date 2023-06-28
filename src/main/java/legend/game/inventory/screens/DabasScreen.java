@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static legend.core.GameEngine.CONFIG;
-import static legend.core.GameEngine.MEMORY;
 import static legend.game.SItem.AcquiredGold_8011cdd4;
 import static legend.game.SItem.AcquiredItems_8011d050;
 import static legend.game.SItem.DigDabas_8011d04c;
@@ -39,9 +38,7 @@ import static legend.game.SItem.renderMenuItems;
 import static legend.game.SItem.renderString;
 import static legend.game.SItem.renderText;
 import static legend.game.SItem.setMessageBoxText;
-import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
-import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment_8002.allocateRenderable;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
@@ -49,7 +46,6 @@ import static legend.game.Scus94491BpeSegment_8002.getItemIcon;
 import static legend.game.Scus94491BpeSegment_8002.giveItem;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
-import static legend.game.Scus94491BpeSegment_8003.bzero;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.inventoryJoypadInput_800bdc44;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
@@ -68,7 +64,7 @@ public class DabasScreen extends MenuScreen {
 
   private int gold;
   private boolean hasItems;
-  private int _8011e094;
+  private boolean newDigEnabled;
 
   private final Runnable unload;
 
@@ -83,9 +79,6 @@ public class DabasScreen extends MenuScreen {
   protected void render() {
     switch(this.loadingStage) {
       case 0 -> {
-        this.dabasData_8011d7c0 = MEMORY.ref(4, mallocTail(0x100), DabasData100::new);
-        bzero(this.dabasData_8011d7c0.getAddress(), 0x100);
-
         //TODO this is the Pocketstation minigame to upload to the memcard
         loadDrgnFile(0, 6668, file -> this.dabasFilePtr_8011dd00 = file);
 
@@ -98,7 +91,7 @@ public class DabasScreen extends MenuScreen {
         FUN_80104b60(this.renderable1);
         this.renderDabasMenu(0);
 
-        this._8011e094 = 0;
+        this.newDigEnabled = false;
         this.gold = 0;
         this.hasItems = false;
 
@@ -113,12 +106,11 @@ public class DabasScreen extends MenuScreen {
       case 1 -> {
         this.renderDabasMenu(this.menuIndex);
 
-        MEMORY.setBytes(this.dabasData_8011d7c0.getAddress(), DabasManager.loadSave(), 0x580, 0x80);
-
-        final DabasData100 dabasData = this.dabasData_8011d7c0;
+        final DabasData100 dabasData = new DabasData100(DabasManager.loadSave());
+        this.dabasData_8011d7c0 = dabasData;
 
         for(int i = 0; i < 6; i++) {
-          final int itemId = dabasData.items_14.get(i).get();
+          final int itemId = dabasData.items_14[i];
 
           if(itemId != 0) {
             final MenuItemStruct04 item = new MenuItemStruct04();
@@ -128,7 +120,7 @@ public class DabasScreen extends MenuScreen {
           }
         }
 
-        final int specialItemId = dabasData.specialItem_2c.get();
+        final int specialItemId = dabasData.specialItem_2c;
         if(specialItemId != 0) {
           this.hasItems = true;
 
@@ -136,10 +128,10 @@ public class DabasScreen extends MenuScreen {
           this.specialItem.itemId_00 = specialItemId;
         }
 
-        this.gold = dabasData.gold_34.get();
+        this.gold = dabasData.gold_34;
 
-        if(dabasData._3c.get() == 1) {
-          this._8011e094 = dabasData._3c.get();
+        if(dabasData._3c == 1) {
+          this.newDigEnabled = true;
         }
 
         this.loadingStage = 2;
@@ -226,7 +218,7 @@ public class DabasScreen extends MenuScreen {
 
       case 100 -> {
         this.renderDabasMenu(this.menuIndex);
-        free(this.dabasData_8011d7c0.getAddress());
+        this.dabasData_8011d7c0 = null;
         this.unload.run();
       }
     }
@@ -234,11 +226,11 @@ public class DabasScreen extends MenuScreen {
 
   private void takeItems() {
     final DabasData100 dabasData = this.dabasData_8011d7c0;
-    dabasData.chapterIndex_00.set(gameState_800babc8.chapterIndex_98);
+    dabasData.chapterIndex_00 = gameState_800babc8.chapterIndex_98;
 
     int equipmentCount = 0;
     int itemCount = 0;
-    dabasData.gold_34.set(0);
+    dabasData.gold_34 = 0;
 
     for(final MenuItemStruct04 item : this.menuItems) {
       if(item != null) {
@@ -275,10 +267,10 @@ public class DabasScreen extends MenuScreen {
     this.specialItem = null;
 
     for(int i = 0; i < 6; i++) {
-      dabasData.items_14.get(i).set(0);
+      dabasData.items_14[i] = 0;
     }
 
-    dabasData.specialItem_2c.set(0);
+    dabasData.specialItem_2c = 0;
 
     setMessageBoxText(messageBox_8011dc90, new LodString(TAKE_RESPONSES[ThreadLocalRandom.current().nextInt(TAKE_RESPONSES.length)]), 0x1);
     this.renderable2 = null;
@@ -287,14 +279,14 @@ public class DabasScreen extends MenuScreen {
 
   private void discardItems() {
     final DabasData100 dabasData = this.dabasData_8011d7c0;
-    dabasData.chapterIndex_00.set(gameState_800babc8.chapterIndex_98);
+    dabasData.chapterIndex_00 = gameState_800babc8.chapterIndex_98;
 
     for(int i = 0; i < 6; i++) {
-      dabasData.items_14.get(i).set(0);
+      dabasData.items_14[i] = 0;
     }
 
     this.hasItems = false;
-    dabasData.specialItem_2c.set(0);
+    dabasData.specialItem_2c = 0;
 
     this.menuItems.clear();
     this.specialItem = null;
@@ -304,14 +296,14 @@ public class DabasScreen extends MenuScreen {
 
   private void newDig() {
     final DabasData100 dabasData = this.dabasData_8011d7c0;
-    dabasData.chapterIndex_00.set(gameState_800babc8.chapterIndex_98);
+    dabasData.chapterIndex_00 = gameState_800babc8.chapterIndex_98;
 
     this.menuItems.clear();
     this.specialItem = null;
 
-    dabasData._3c.set(2);
-    dabasData.specialItem_2c.set(0);
-    this._8011e094 = 0;
+    dabasData._3c = 2;
+    dabasData.specialItem_2c = 0;
+    this.newDigEnabled = false;
 
     menuStack.pushScreen(new MessageBoxScreen(new LodString(NEW_DIG_RESPONSES[ThreadLocalRandom.current().nextInt(NEW_DIG_RESPONSES.length)]), 0, result -> this.loadingStage = 2));
   }
@@ -378,7 +370,7 @@ public class DabasScreen extends MenuScreen {
 
         return InputPropagation.HANDLED;
       } else if(MathHelper.inBox(x, y, 52, this.getDabasMenuY(2), 85, 14)) {
-        if(this._8011e094 != 0) {
+        if(this.newDigEnabled) {
           playSound(2);
 
           menuStack.pushScreen(new MessageBoxScreen(new LodString("Begin new expedition?"), 2, result -> {
@@ -603,7 +595,7 @@ public class DabasScreen extends MenuScreen {
     renderText(AcquiredGold_8011cdd4, 30, 124, TextColour.BROWN);
     renderCentredText(Take_8011d058, 94, this.getDabasMenuY(0) + 2, selectedSlot == 0 ? TextColour.RED : !this.hasItems && this.gold == 0 ? TextColour.MIDDLE_BROWN : TextColour.BROWN);
     renderCentredText(Discard_8011d05c, 94, this.getDabasMenuY(1) + 2, selectedSlot == 1 ? TextColour.RED : !this.hasItems ? TextColour.MIDDLE_BROWN : TextColour.BROWN);
-    renderCentredText(NextDig_8011d064, 94, this.getDabasMenuY(2) + 2, selectedSlot == 2 ? TextColour.RED : this._8011e094 == 0 ? TextColour.MIDDLE_BROWN : TextColour.BROWN);
+    renderCentredText(NextDig_8011d064, 94, this.getDabasMenuY(2) + 2, selectedSlot == 2 ? TextColour.RED : !this.newDigEnabled ? TextColour.MIDDLE_BROWN : TextColour.BROWN);
     renderMenuItems(194, 37, this.menuItems, 0, 6, null, null);
     renderEightDigitNumber(100, 147, this.gold, 0x2);
 

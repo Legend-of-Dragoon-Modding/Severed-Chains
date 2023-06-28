@@ -52,10 +52,11 @@ import legend.game.title.Ttle;
 import legend.game.types.CharacterData2c;
 import legend.game.types.EngineState;
 import legend.game.types.FileEntry08;
-import legend.game.types.FileLoadedCallback;
 import legend.game.types.Flags;
 import legend.game.types.McqHeader;
 import legend.game.types.MoonMusic08;
+import legend.game.types.Struct0e;
+import legend.game.types.Struct10;
 import legend.game.types.SubmapMusic08;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
@@ -1107,65 +1108,6 @@ public final class Scus94491BpeSegment {
     onCompletion.accept(Unpacker.loadDirectory("SECT/DRGN%d.BIN/%s".formatted(drgnBinIndex, directory)));
   }
 
-  @Deprecated
-  @Method(0x80015310L)
-  public static <Param> long loadDrgnBinFile(final int index, final int fileIndex, final long fileTransferDest, @Nullable final FileLoadedCallback<Param> callback, final Param callbackParam, final long flags) {
-    final int drgnIndex;
-    if(index < 2) {
-      drgnIndex = index;
-    } else {
-      drgnIndex = 20 + drgnBinIndex_800bc058.get();
-    }
-
-    //LAB_80015388
-    //LAB_8001538c
-    final int type = FUN_800155b8(fileTransferDest, (int)flags);
-
-    final String path = "SECT/DRGN%d.BIN/%d".formatted(drgnIndex, fileIndex);
-
-    final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
-    LOGGER.info("Loading %s from %s.%s(%s:%d)", path, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
-
-    // Insta-load
-    final FileData data = Unpacker.loadFile(path);
-
-    final long transferDest;
-    if((type & 0x7) != 0) {
-      transferDest = mallocTail(data.size());
-    } else {
-      transferDest = fileTransferDest;
-    }
-
-    MEMORY.setBytes(transferDest, data.getBytes());
-
-    if(callback != null) {
-      LOGGER.info("Executing file callback (param %08x)", callbackParam);
-      callback.onLoad(transferDest, data.size(), callbackParam);
-    }
-
-    //LAB_80015424
-    return 0;
-  }
-
-  @Method(0x800155b8L)
-  public static int FUN_800155b8(final long fileTransferDest, int flags) {
-    flags = flags & 0xffff_ffef | 0x8;
-
-    //LAB_800155d0
-    if(fileTransferDest == 0 && (flags & 0x8000) == 0) {
-      //LAB_800155ec
-      if((flags & 0x6) == 0) {
-        flags |= 0x2;
-      }
-
-      return flags;
-    }
-
-    //LAB_800155e4
-    //LAB_800155fc
-    return flags & 0xffff_fff9;
-  }
-
   @Method(0x800156f4L)
   public static void setPreloadingAudioAssets(final boolean loading) {
     preloadingAudioAssets_8004ddcc.set(loading);
@@ -1565,7 +1507,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80018a5cL)
-  public static void FUN_80018a5c(final int x, final int y, final int leftU, final int topV, final int rightU, final int bottomV, final long a6, @Nullable final Translucency transMode, final COLOUR colour, final long a9, final long a10) {
+  public static void FUN_80018a5c(final int x, final int y, final int leftU, final int topV, final int rightU, final int bottomV, final int clutButNotExactly, @Nullable final Translucency transMode, final COLOUR colour, final long a9, final long a10) {
     final int w = Math.abs(rightU - leftU);
     final int h = Math.abs(bottomV - topV);
 
@@ -1605,15 +1547,15 @@ public final class Scus94491BpeSegment {
       .uv(2, leftU, bottomV)
       .uv(3, rightU, bottomV);
 
-    final int a2 = (short)a6 / 16;
-    final int a1 = (short)a6 % 16;
+    final int a2 = clutButNotExactly / 16;
+    final int a1 = clutButNotExactly % 16;
     final int clutY;
     final int clutX;
     if(a2 >= 4) {
-      clutX = (a2 << 4) + 832;
+      clutX = a2 * 16 + 832;
       clutY = a1 + 304;
     } else {
-      clutX = (a2 << 4) + 704;
+      clutX = a2 * 16 + 704;
       clutY = a1 + 496;
     }
 
@@ -1628,207 +1570,180 @@ public final class Scus94491BpeSegment {
 
   /** Some kind of intermediate rect render method **/
   @Method(0x80018d60L)
-  public static void FUN_80018d60(final int displayX, final int displayY, final int originU, final int originV, final int width, final int height, final long a6, @Nullable final Translucency transMode, final COLOUR colour, final long a9) {
-    FUN_80018a5c((short)displayX, (short)displayY, originU & 0xff, originV & 0xff, originU + width & 0xff, originV + height & 0xff, (short)a6, transMode, colour, (short)a9, (short)a9);
+  public static void FUN_80018d60(final int displayX, final int displayY, final int originU, final int originV, final int width, final int height, final int clutButNotExactly, @Nullable final Translucency transMode, final COLOUR colour, final long a9) {
+    FUN_80018a5c((short)displayX, (short)displayY, originU & 0xff, originV & 0xff, originU + width & 0xff, originV + height & 0xff, (short)clutButNotExactly, transMode, colour, (short)a9, (short)a9);
   }
 
   @Method(0x80018decL)
-  public static void FUN_80018dec(final int x, final int y, final int u, final int v, final int width, final int height, final long a6, @Nullable final Translucency transMode, final COLOUR colour, final long a9, final long a10) {
-    FUN_80018a5c(x, y, u, v, u + width, v + height, a6, transMode, colour, a9, a10);
+  public static void FUN_80018dec(final int x, final int y, final int u, final int v, final int width, final int height, final int clutButNotExactly, @Nullable final Translucency transMode, final COLOUR colour, final long a9, final long a10) {
+    FUN_80018a5c(x, y, u, v, u + width, v + height, clutButNotExactly, transMode, colour, a9, a10);
   }
 
-  /** TODO */
   @Method(0x80018e84L)
   public static void FUN_80018e84() {
-    final long[] sp0x30 = {0x42L, 0x43L, _80010320.offset(0x0L).get(), _80010320.offset(0x4L).get()};
+    final int[] sp0x30 = {0x42, 0x43, (int)_80010320.offset(0x0L).get(), (int)_80010320.offset(0x4L).get()};
 
     //LAB_80018f04
-    long s1 = _8004f658.get();
-    while(s1 != 0) {
+    Struct10 s1 = _8004f658;
+    while(s1 != null) {
       do {
-        MEMORY.ref(1, s1).offset(0x3L).subu(0x1L);
+        s1._03--;
 
-        if(MEMORY.ref(1, s1).offset(0x3L).get() != 0) {
+        if(s1._03 != 0) {
           break;
         }
 
-        final long v0 = MEMORY.ref(4, s1).offset(0x8L).get();
-
-        if(v0 == 0) {
+        if(s1.next_08 == null) {
           //LAB_80018f48
-          _8004f658.setu(MEMORY.ref(4, s1).offset(0xcL).get());
+          _8004f658 = s1.prev_0c;
         } else {
           //LAB_80018f50
-          MEMORY.ref(4, v0).offset(0xcL).setu(0);
+          s1.next_08.prev_0c = null;
         }
 
         //LAB_80018f54
-        final long s0 = MEMORY.ref(4, s1).offset(0xcL).get();
+        final Struct10 s0 = s1.prev_0c;
 
-        if(s0 != 0) {
-          if(MEMORY.ref(4, s1).offset(0x8L).get() == 0) {
-            MEMORY.ref(4, s0).offset(0x8L).setu(0);
-            _8004f658.setu(MEMORY.ref(4, s1).offset(0xcL).get());
+        if(s0 != null) {
+          if(s1.next_08 == null) {
+            s0.next_08 = null;
+            _8004f658 = s1.prev_0c;
           } else {
             //LAB_80018f84
-            MEMORY.ref(4, s1).offset(0xcL).deref(4).offset(0x8L).setu(MEMORY.ref(4, s1).offset(0x8L).get());
-            MEMORY.ref(4, s1).offset(0x8L).deref(4).offset(0xcL).setu(MEMORY.ref(4, s1).offset(0xcL).get());
+            s1.prev_0c.next_08 = s1.next_08;
+            s1.next_08.prev_0c = s1.prev_0c;
           }
         }
 
         //LAB_80018fa0
-        free(MEMORY.ref(4, s1).offset(0x4L).get());
-        free(s1);
-        if(s0 == 0) {
+        if(s0 == null) {
           return;
         }
         s1 = s0;
       } while(true);
 
       //LAB_80018fd0
-      long s0 = MEMORY.ref(4, s1).offset(0x4L).get();
-
       //LAB_80018fd4
       for(int s2 = 0; s2 < 8; s2++) {
-        MEMORY.ref(1, s0).offset(0x8L).addu(0x1L);
+        final Struct0e s0 = s1.ptr_04[s2];
 
-        if(MEMORY.ref(1, s0).offset(0x8L).getSigned() >= 0) {
-          final int v1 = (int)MEMORY.ref(2, s0).offset(0xcL).get() >>> 8 & 0xf;
+        s0._08++;
+
+        if(s0._08 >= 0) {
+          final int v1 = s0.clutAndTranslucency_0c >>> 8 & 0xf;
 
           if(v1 == 0) {
             //LAB_80019040
-            MEMORY.ref(1, s0).offset(0x9L).subu(1);
+            s0._09--;
 
-            if(MEMORY.ref(2, s0).offset(0x4L).get() != 0) {
-              MEMORY.ref(2, s0).offset(0x4L).subu(0x492);
-              MEMORY.ref(2, s0).offset(0x6L).subu(0x492);
+            if(s0._04 != 0) {
+              s0._04 -= 0x492;
+              s0._06 -= 0x492;
             } else {
               //LAB_80019084
-              MEMORY.ref(2, s0).offset(0xcL).and(0x8fff);
+              s0.clutAndTranslucency_0c &= 0x8fff;
             }
 
             //LAB_80019094
-            if(MEMORY.ref(1, s0).offset(0x9L).getSigned() == 0) {
-              MEMORY.ref(2, s0).offset(0xcL).and(0x7fff);
-              MEMORY.ref(1, s0).offset(0x8L).setu(0);
-              MEMORY.ref(2, s0).offset(0xcL).and(0xf0ff).oru(((MEMORY.ref(2, s0).offset(0xcL).get() >>> 8 & 0xf) + 1 & 0xf) << 8);
+            if(s0._09 == 0) {
+              s0.clutAndTranslucency_0c &= 0x7fff;
+              s0._08 = 0;
+              s0.clutAndTranslucency_0c &= 0xf0ff;
+              s0.clutAndTranslucency_0c |= ((s0.clutAndTranslucency_0c >>> 8 & 0xf) + 1 & 0xf) << 8;
             }
           } else if(v1 == 1) {
             //LAB_800190d4
-            final int a0 = (int)MEMORY.ref(2, s0).offset(0xcL).get() >>> 15;
-            MEMORY.ref(2, s0).offset(0xcL).and(0x7fff).oru((a0 + 1 & 0xff) << 15);
-            MEMORY.ref(1, s0).offset(0xcL).setu(sp0x30[a0]);
+            s0.clutAndTranslucency_0c = sp0x30[s0.clutAndTranslucency_0c >>> 15];
 
-            if(MEMORY.ref(1, s0).offset(0x8L).getSigned() == 10) {
-              MEMORY.ref(1, s0).offset(0x9L).setu(simpleRand() % 10 + 2);
-              MEMORY.ref(2, s0).offset(0xcL).and(0xf0ff).oru(((MEMORY.ref(2, s0).offset(0xcL).get() >>> 8 & 0xf) + 1 & 0xf) << 8);
+            if(s0._08 == 10) {
+              s0._09 = (byte)(simpleRand() % 10 + 2);
+              s0.clutAndTranslucency_0c &= 0xf0ff;
+              s0.clutAndTranslucency_0c |= ((s0.clutAndTranslucency_0c >>> 8 & 0xf) + 1 & 0xf) << 8;
             }
             //LAB_80019028
           } else if(v1 == 2) {
             //LAB_80019164
-            MEMORY.ref(1, s0).offset(0x9L).subu(1);
+            s0._09--;
 
-            if(MEMORY.ref(1, s0).offset(0x9L).get() == 0) {
+            if(s0._09 == 0) {
               //LAB_80019180
-              MEMORY.ref(1, s0).offset(0x9L).setu(8);
-              MEMORY.ref(2, s0).offset(0xcL).and(0xf0ff).oru(((MEMORY.ref(2, s0).offset(0xcL).get() >>> 8 & 0xf) + 1 & 0xf) << 8);
+              s0._09 = 8;
+              s0.clutAndTranslucency_0c &= 0xf0ff;
+              s0.clutAndTranslucency_0c |= ((s0.clutAndTranslucency_0c >>> 8 & 0xf) + 1 & 0xf) << 8;
             }
           } else if(v1 == 3) {
             //LAB_800191b8
-            MEMORY.ref(1, s0).offset(0x9L).subu(1);
+            s0._09--;
 
-            if((MEMORY.ref(1, s0).offset(0x9L).get() & 0x1) != 0) {
-              MEMORY.ref(2, s0).offset(0x2L).addu(1);
+            if((s0._09 & 0x1) != 0) {
+              s0.y_02++;
             }
 
             //LAB_800191e4
-            MEMORY.ref(2, s0).offset(0x6L).subu(0x200);
+            s0._06 -= 0x200;
 
-            if(MEMORY.ref(1, s0).offset(0x9L).getSigned() == 0) {
-              MEMORY.ref(1, s0).offset(0x8L).setu(-100);
+            if(s0._09 == 0) {
+              s0._08 = -100;
             }
           }
 
           //LAB_80019208
           FUN_80018a5c(
-            (int)MEMORY.ref(2, s0).offset(0x0L).getSigned(),
-            (int)MEMORY.ref(2, s0).offset(0x2L).getSigned(),
-            (int)MEMORY.ref(1, s0).offset(0xbL).get(),
+            s0.x_00,
+            s0.y_02,
+            s0.u_0b,
             64,
-            (int)MEMORY.ref(1, s0).offset(0xbL).get() + 7,
+            s0.u_0b + 7,
             79,
-            MEMORY.ref(1, s0).offset(0xcL).get(),
-            Translucency.of(((int)MEMORY.ref(2, s0).offset(0xcL).get() >>> 12 & 0x7) - 1),
+            s0.clutAndTranslucency_0c,
+            Translucency.of((s0.clutAndTranslucency_0c >>> 12 & 0x7) - 1),
             colour_80010328,
-            MEMORY.ref(2, s0).offset(0x4L).get() + 0x1000,
-            MEMORY.ref(2, s0).offset(0x6L).get() + 0x1000
+            s0._04 + 0x1000,
+            s0._06 + 0x1000
           );
         }
-
-        //LAB_80019294
-        s0 = s0 + 0xeL;
       }
 
-      s1 = MEMORY.ref(4, s1).offset(0xcL).get();
+      s1 = s1.prev_0c;
     }
 
     //LAB_800192b4
   }
 
-  /** TODO */
   @Method(0x800192d8L)
-  public static void FUN_800192d8(long a0, final long a1) {
-    final long s0 = mallocTail(0x10L);
-    MEMORY.ref(1, s0).offset(0x3L).setu(0x34L);
-    MEMORY.ref(4, s0).offset(0x4L).setu(mallocTail(0x70L));
-    MEMORY.ref(4, s0).offset(0x8L).setu(0);
-    MEMORY.ref(4, s0).offset(0xcL).setu(_8004f658.get());
-    MEMORY.ref(1, s0).offset(0x0L).setu(0x61L);
-    MEMORY.ref(1, s0).offset(0x1L).setu(0x6cL);
-    MEMORY.ref(1, s0).offset(0x2L).setu(0x64L);
+  public static void FUN_800192d8(int x, final int y) {
+    final Struct10 s0 = new Struct10();
+    s0._00 = 0x61;
+    s0._01 = 0x6c;
+    s0._02 = 0x64;
+    s0._03 = 0x34;
+    s0.prev_0c = _8004f658;
 
-    final long v0 = MEMORY.ref(4, s0).offset(0xcL).get();
-    if(v0 != 0) {
-      MEMORY.ref(4, v0).offset(0x8L).setu(s0);
+    if(s0.prev_0c != null) {
+      s0.prev_0c.next_08 = s0;
     }
 
     //LAB_800193b4
-    _8004f658.setu(s0);
+    _8004f658 = s0;
 
     //LAB_800193dc
-    long v1 = MEMORY.ref(4, s0).offset(0x4L).get();
     for(int i = 0; i < 8; i++) {
-      MEMORY.ref(2, v1).offset(0x0L).setu(a0 - 0x6L);
-      MEMORY.ref(2, v1).offset(0x2L).setu(a1 - 0x10L);
-      MEMORY.ref(2, v1).offset(0x4L).setu(0x1ffeL);
-      MEMORY.ref(2, v1).offset(0x6L).setu(0x1ffeL);
-      MEMORY.ref(1, v1).offset(0x8L).setu(~i);
-      MEMORY.ref(1, v1).offset(0x9L).setu(0x14L - i);
-      MEMORY.ref(1, v1).offset(0xbL).setu(_8001032c.offset(i).get());
-      MEMORY.ref(2, v1).offset(0xcL).and(0xf0ffL);
-      MEMORY.ref(1, v1).offset(0xcL).setu(0x4aL);
-      MEMORY.ref(2, v1).offset(0xcL).oru(0x2000L).and(0x2fffL);
-      a0 = a0 + _80010334.offset(i).get();
-      v1 = v1 + 0xeL;
+      final Struct0e v1 = s0.ptr_04[i];
+      v1.x_00 = (short)(x - 6);
+      v1.y_02 = (short)(y - 16);
+      v1._04 = 0x1ffe;
+      v1._06 = 0x1ffe;
+      v1._08 = (byte)~i;
+      v1._09 = (byte)(20 - i);
+      v1.u_0b = (int)_8001032c.offset(i).get();
+      v1.clutAndTranslucency_0c = 0x204a;
+      x += (int)_80010334.offset(i).get();
     }
   }
 
-  /** TODO */
   @Method(0x80019470L)
   public static void FUN_80019470() {
-    long s0 = _8004f658.get();
-
-    //LAB_80019494
-    while(s0 != 0) {
-      final long s1 = MEMORY.ref(4, s0).offset(0xcL).get();
-      free(MEMORY.ref(4, s0).offset(0x4L).get());
-      free(s0);
-      s0 = s1;
-    }
-
-    _8004f658.setu(0);
-
-    //LAB_800194c8
+    _8004f658 = null;
   }
 
   @Method(0x80019500L)

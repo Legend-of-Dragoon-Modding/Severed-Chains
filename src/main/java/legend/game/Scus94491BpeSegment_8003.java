@@ -20,7 +20,6 @@ import legend.game.types.DR_TPAGE;
 import legend.game.types.GsF_LIGHT;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.Translucency;
-import legend.game.types.WeirdTimHeader;
 import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -52,7 +51,6 @@ import static legend.game.Scus94491BpeSegment_8005._80054870;
 import static legend.game.Scus94491BpeSegment_8005.matrixStackIndex_80054a08;
 import static legend.game.Scus94491BpeSegment_8005.matrixStack_80054a0c;
 import static legend.game.Scus94491BpeSegment_800c.PSDCNT_800c34d0;
-import static legend.game.Scus94491BpeSegment_800c._800c3410;
 import static legend.game.Scus94491BpeSegment_800c.coord2s_800c35a8;
 import static legend.game.Scus94491BpeSegment_800c.displayRect_800c34c8;
 import static legend.game.Scus94491BpeSegment_800c.identityAspectMatrix_800c3588;
@@ -225,66 +223,6 @@ public final class Scus94491BpeSegment_8003 {
     //LAB_8003b80c
     //LAB_8003b810
     return -0x1L;
-  }
-
-  @Method(0x8003b8f0L)
-  public static void FUN_8003b8f0(final long a0) {
-    _800c3410.setu(a0);
-  }
-
-  @Method(0x8003b900L)
-  public static WeirdTimHeader FUN_8003b900(final WeirdTimHeader timHeader) {
-    final long ret = FUN_8003b964(_800c3410.get(), timHeader);
-
-    if(ret == -0x1L) {
-      //LAB_8003b950
-      return null;
-    }
-
-    _800c3410.addu(ret * 0x4L);
-
-    //LAB_8003b954
-    return timHeader;
-  }
-
-  /**
-   * TODO figure out what this is doing - looks important... TIM loader? Why is this one different?
-   * Seems to be used for "The End", which isn't rendering correctly (no overlay on the text)
-   */
-  @Method(0x8003b964L)
-  public static long FUN_8003b964(final long a0, final WeirdTimHeader timHeader) {
-    if(MEMORY.ref(4, a0).get() != 0x10L) {
-      return -0x1L;
-    }
-
-    //LAB_8003b998
-    timHeader.flags = (int)MEMORY.ref(4, a0).offset(0x4L).get();
-
-    LOGGER.info("id  =%08x", 0x10L);
-    LOGGER.info("mode=%08x", timHeader.flags);
-    LOGGER.info("timaddr=%08x", a0 + 0x8L);
-
-    //LAB_8003ba04
-    final long a0_0;
-    if((timHeader.flags & 0b1000) != 0) {
-      timHeader.clutRect.set(MEMORY.ref(4, a0).offset(0xcL).cast(RECT::new));
-      timHeader.clutAddress = a0 + 0x14L;
-      a0_0 = MEMORY.ref(4, a0).offset(0x8L).get() / 0x4L;
-    } else {
-      //LAB_8003ba38
-      timHeader.clutRect.clear();
-      timHeader.clutAddress = 0;
-      a0_0 = 0;
-    }
-
-    final long s0 = a0 + a0_0 * 0x4L;
-
-    //LAB_8003ba44
-    timHeader.imageRect.set(MEMORY.ref(4, s0).offset(0xcL).cast(RECT::new));
-    timHeader.imageAddress = s0 + 0x14L;
-
-    //LAB_8003ba64
-    return MEMORY.ref(4, s0).offset(0x8L).get() / 0x4L + 0x2L + a0_0; // +8 CLUT data pointer / 4 + 2 (plus CLUT data pointer if CLUT present) ???
   }
 
   /**

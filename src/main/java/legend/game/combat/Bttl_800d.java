@@ -1114,7 +1114,7 @@ public final class Bttl_800d {
     } while(true);
 
     //LAB_800d3864
-    FUN_80018d60(displayX, displayY, charIdx % 21 * 12 & 0xfc, charIdx / 21 * 12 + 144 & 0xfc, 12, 12, 0xaL, Translucency.B_PLUS_F, new COLOUR().set(charAlpha, charAlpha, charAlpha), 0x1000L);
+    FUN_80018d60(displayX, displayY, charIdx % 21 * 12 & 0xfc, charIdx / 21 * 12 + 144 & 0xfc, 12, 12, 0xa, Translucency.B_PLUS_F, new COLOUR().set(charAlpha, charAlpha, charAlpha), 0x1000L);
   }
 
   /**
@@ -1488,10 +1488,10 @@ public final class Bttl_800d {
     final COLOUR colour = new COLOUR().set(script.params_20[4].get(), script.params_20[4].get(), script.params_20[4].get());
 
     if(MEMORY.ref(1, v1).offset(0x0L).get() == 0) {
-      FUN_80018d60(script.params_20[1].get(), script.params_20[2].get(), (int)MEMORY.ref(1, v1).offset(0x1L).get(), (int)MEMORY.ref(1, v1).offset(0x2L).get(), (int)MEMORY.ref(1, v1).offset(0x3L).get(), (int)MEMORY.ref(1, v1).offset(0x4L).get(), MEMORY.ref(1, v1).offset(0x5L).get(), Translucency.of(script.params_20[3].get()), colour, 0x1000L);
+      FUN_80018d60(script.params_20[1].get(), script.params_20[2].get(), (int)MEMORY.ref(1, v1).offset(0x1L).get(), (int)MEMORY.ref(1, v1).offset(0x2L).get(), (int)MEMORY.ref(1, v1).offset(0x3L).get(), (int)MEMORY.ref(1, v1).offset(0x4L).get(), (int)MEMORY.ref(1, v1).offset(0x5L).get(), Translucency.of(script.params_20[3].get()), colour, 0x1000L);
     } else {
       //LAB_800d4784
-      FUN_80018a5c(script.params_20[1].get(), script.params_20[2].get(), (int)MEMORY.ref(1, v1).offset(0x1L).get(), (int)MEMORY.ref(1, v1).offset(0x2L).get(), (int)MEMORY.ref(1, v1).offset(0x3L).get(), (int)MEMORY.ref(1, v1).offset(0x4L).get(), MEMORY.ref(1, v1).offset(0x5L).get(), Translucency.of(script.params_20[3].get()), colour, 0x1000L, 0x1000L);
+      FUN_80018a5c(script.params_20[1].get(), script.params_20[2].get(), (int)MEMORY.ref(1, v1).offset(0x1L).get(), (int)MEMORY.ref(1, v1).offset(0x2L).get(), (int)MEMORY.ref(1, v1).offset(0x3L).get(), (int)MEMORY.ref(1, v1).offset(0x4L).get(), (int)MEMORY.ref(1, v1).offset(0x5L).get(), Translucency.of(script.params_20[3].get()), colour, 0x1000L, 0x1000L);
     }
 
     //LAB_800d47cc

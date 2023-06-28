@@ -22,7 +22,6 @@ import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
-import legend.core.memory.types.BiFunctionRef;
 import legend.core.memory.types.BoolRef;
 import legend.core.memory.types.ConsumerRef;
 import legend.core.memory.types.EnumRef;
@@ -33,6 +32,7 @@ import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedShortRef;
+import legend.game.combat.types.Ptr;
 import legend.game.fmv.Fmv;
 import legend.game.input.Input;
 import legend.game.input.InputAction;
@@ -90,7 +90,6 @@ import legend.game.types.Structb0;
 import legend.game.types.SubmapEncounterData_04;
 import legend.game.types.SubmapObject210;
 import legend.game.types.TexPageY;
-import legend.game.types.TimFile;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.TmdSubExtension;
 import legend.game.types.Translucency;
@@ -98,7 +97,6 @@ import legend.game.types.TriangleIndicator140;
 import legend.game.types.TriangleIndicator44;
 import legend.game.types.UnknownStruct;
 import legend.game.types.UnknownStruct2;
-import legend.game.types.WeirdTimHeader;
 import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -111,24 +109,21 @@ import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SCRIPTS;
-import static legend.core.MemoryHelper.getBiFunctionAddress;
 import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
 import static legend.game.Scus94491BpeSegment.FUN_8001ada0;
 import static legend.game.Scus94491BpeSegment.FUN_8001ae90;
 import static legend.game.Scus94491BpeSegment._80010544;
-import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.getSubmapMusicChange;
-import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
+import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.loadFile;
 import static legend.game.Scus94491BpeSegment.loadMenuSounds;
 import static legend.game.Scus94491BpeSegment.loadMusicPackage;
 import static legend.game.Scus94491BpeSegment.loadSubmapSounds;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
-import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.orderingTableBits_1f8003c0;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static legend.game.Scus94491BpeSegment.rcos;
@@ -164,8 +159,6 @@ import static legend.game.Scus94491BpeSegment_8002.renderDobj2;
 import static legend.game.Scus94491BpeSegment_8002.renderModel;
 import static legend.game.Scus94491BpeSegment_8002.srand;
 import static legend.game.Scus94491BpeSegment_8003.ApplyMatrixSV;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003b8f0;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003b900;
 import static legend.game.Scus94491BpeSegment_8003.GetTPage;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLs;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
@@ -312,7 +305,7 @@ public final class SMap {
   public static final Value _800c6ae0 = MEMORY.ref(4, 0x800c6ae0L);
   public static final Value _800c6ae4 = MEMORY.ref(4, 0x800c6ae4L);
   public static final IntRef encounterAccumulator_800c6ae8 = MEMORY.ref(4, 0x800c6ae8L, IntRef::new);
-  public static final Pointer<UnknownStruct> _800c6aec = MEMORY.ref(4, 0x800c6aecL, Pointer.deferred(4, UnknownStruct::new));
+  public static UnknownStruct _800c6aec;
   /** 14576 bytes - contains the contents of NEWROOT.RDT */
   public static final NewRootStruct newroot_800c6af0 = MEMORY.ref(4, 0x800c6af0L, NewRootStruct::new);
 
@@ -368,8 +361,8 @@ public final class SMap {
   public static final GsRVIEW2 rview2_800cbd10 = new GsRVIEW2();
   public static final Value _800cbd30 = MEMORY.ref(4, 0x800cbd30L);
   public static final Value _800cbd34 = MEMORY.ref(4, 0x800cbd34L);
-  public static final Pointer<UnknownStruct2> _800cbd38 = MEMORY.ref(4, 0x800cbd38L, Pointer.deferred(4, UnknownStruct2::new));
-  public static final Pointer<UnknownStruct2> _800cbd3c = MEMORY.ref(4, 0x800cbd3cL, Pointer.deferred(4, UnknownStruct2::new));
+  public static UnknownStruct2 _800cbd38;
+  public static UnknownStruct2 _800cbd3c;
   public static final MATRIX matrix_800cbd40 = MEMORY.ref(4, 0x800cbd40L, MATRIX::new);
   public static final Value _800cbd60 = MEMORY.ref(4, 0x800cbd60L);
   public static final Value _800cbd64 = MEMORY.ref(4, 0x800cbd64L);
@@ -384,8 +377,8 @@ public final class SMap {
   public static final GsDOBJ2 GsDOBJ2_800cbdf8 = new GsDOBJ2();
   public static final SomethingStruct SomethingStruct_800cbe08 = new SomethingStruct();
   public static final Value _800cbe30 = MEMORY.ref(4, 0x800cbe30L);
-  public static final Pointer<UnknownStruct2> _800cbe34 = MEMORY.ref(4, 0x800cbe34L, Pointer.deferred(4, UnknownStruct2::new));
-  public static final Pointer<UnknownStruct2> _800cbe38 = MEMORY.ref(4, 0x800cbe38L, Pointer.deferred(4, UnknownStruct2::new));
+  public static UnknownStruct2 _800cbe34;
+  public static UnknownStruct2 _800cbe38;
 
   public static final Value _800cbe48 = MEMORY.ref(4, 0x800cbe48L);
 
@@ -397,7 +390,7 @@ public final class SMap {
   public static final Value _800d1a84 = MEMORY.ref(4, 0x800d1a84L);
 
   public static SomethingStruct SomethingStructPtr_800d1a88;
-  public static final Pointer<UnknownStruct2> _800d1a8c = MEMORY.ref(4, 0x800d1a8cL, Pointer.deferred(4, UnknownStruct2::new));
+  public static UnknownStruct2 _800d1a8c;
   public static final MediumStruct _800d1a90 = MEMORY.ref(4, 0x800d1a90L, MediumStruct::new);
 
   public static List<FileData> creditTims_800d1ae0;
@@ -420,7 +413,7 @@ public final class SMap {
   public static TmdAnimationFile submapCutAnim;
   public static Tim submapCutTexture;
   public static MATRIX submapCutMatrix;
-  public static final Pointer<TimFile> theEndTim_800d4bf0 = MEMORY.ref(4, 0x800d4bf0L, Pointer.deferred(4, TimFile::new));
+  public static Tim theEndTim_800d4bf0;
 
   public static final Model124 submapModel_800d4bf8 = new Model124("Submap");
 
@@ -546,7 +539,7 @@ public final class SMap {
   public static final ArrayRef<ArrayRef<UnsignedShortRef>> sceneEncounterIds_800f74c4 = MEMORY.ref(2, 0x800f74c4L, ArrayRef.of(ArrayRef.classFor(UnsignedShortRef.class), 300, 8, ArrayRef.of(UnsignedShortRef.class, 4, 2, UnsignedShortRef::new)));
 
   public static final Value _800f7e24 = MEMORY.ref(4, 0x800f7e24L);
-  public static final Pointer<Pointer<UnknownStruct>> _800f7e28 = MEMORY.ref(4, 0x800f7e28L, Pointer.deferred(4, Pointer.deferred(4, UnknownStruct::new)));
+  public static Ptr<UnknownStruct> _800f7e28 = new Ptr<>(() -> _800c6aec, val -> _800c6aec = val);
   public static final Value _800f7e2c = MEMORY.ref(4, 0x800f7e2cL);
   public static final Value _800f7e30 = MEMORY.ref(4, 0x800f7e30L);
 
@@ -3838,70 +3831,40 @@ public final class SMap {
     _80052c48.setu(0x1L);
   }
 
-  @Method(0x800e4f74L)
-  public static long FUN_800e4f74(final UnknownStruct2 a0, final long a1) {
-    if(a0 == null) {
-      return 1;
-    }
-
-    a0._00.set(0);
-    return 0;
-  }
-
   @Method(0x800e4f8cL)
   public static void FUN_800e4f8c() {
-    UnknownStruct a0 = _800c6aec.derefNullable();
-
-    //LAB_800e4fac
-    while(a0 != null) {
-      _800c6aec.setNullable(a0.parent_00.derefNullable());
-      free(a0.getAddress());
-      a0 = _800c6aec.derefNullable();
-    }
-
     //LAB_800e4fd4
-    _800f7e28.set(_800c6aec);
+    _800f7e28 = new Ptr<>(() -> _800c6aec, val -> _800c6aec = val);
   }
 
   @Method(0x800e4ff4L)
   public static void FUN_800e4ff4() {
-    UnknownStruct s0 = _800c6aec.deref();
-    Pointer<UnknownStruct> s1 = _800c6aec;
+    UnknownStruct s0 = _800c6aec;
+    Ptr<UnknownStruct> s1 = new Ptr<>(() -> _800c6aec, val -> _800c6aec = val);
 
     //LAB_800e5018
     while(s0 != null) {
-      if(s0.callback_04.deref().run(s0.inner_08.deref(), s0._0c.get()) != 0) {
-        s1.set(s0.parent_00.deref());
-        free(s0.getAddress());
-      } else {
-        //LAB_800e5054
-        s1 = s0.parent_00;
-      }
+      s0.inner_08._00 = false;
+
+      //LAB_800e5054
+      final UnknownStruct finalS0 = s0;
+      s1 = new Ptr<>(() -> finalS0.parent_00, val -> finalS0.parent_00 = val);
 
       //LAB_800e5058
-      s0 = s1.derefNullable();
+      s0 = s1.get();
     }
 
     //LAB_800e5068
-    _800f7e28.setNullable(s1);
+    _800f7e28 = s1;
   }
 
   @Method(0x800e5084L)
-  public static long FUN_800e5084(final BiFunctionRef<UnknownStruct2, Long, Long> callback, final UnknownStruct2 a1, final long a2) {
-    final UnknownStruct v0 = MEMORY.ref(4, mallocTail(0x10L), UnknownStruct::new);
+  public static long FUN_800e5084(final UnknownStruct2 a1) {
+    final UnknownStruct v0 = new UnknownStruct();
+    v0.inner_08 = a1;
 
-    if(v0 == null) {
-      //LAB_800e50e8
-      return 0;
-    }
-
-    v0.parent_00.clear();
-    v0.callback_04.set(callback);
-    v0.inner_08.set(a1);
-    v0._0c.set(a2);
-
-    _800f7e28.deref().set(v0);
-    _800f7e28.set(v0.parent_00); //TODO I dunno if this is right...
+    _800f7e28.set(v0);
+    _800f7e28 = new Ptr<>(() -> v0.parent_00, val -> v0.parent_00 = val);
 
     //LAB_800e50ec
     return 0x1L;
@@ -5058,8 +5021,8 @@ public final class SMap {
 
   @Method(0x800e7604L)
   public static void setGeomOffsetIfNotSet(final int x, final int y) {
-    if(_800cbd3c.deref()._00.get() == 0) {
-      _800cbd3c.deref()._00.set(0x1L);
+    if(!_800cbd3c._00) {
+      _800cbd3c._00 = true;
       SetGeomOffset(x, y);
     }
   }
@@ -5067,8 +5030,8 @@ public final class SMap {
   @Method(0x800e7650L)
   public static void setScreenOffsetIfNotSet(final int x, final int y) {
     // Added null check - bug in game code
-    if(!_800cbd38.isNull() && _800cbd38.deref()._00.get() == 0) {
-      _800cbd38.deref()._00.set(0x1L);
+    if(_800cbd38 != null && !_800cbd38._00) {
+      _800cbd38._00 = true;
       screenOffsetX_800cb568.set(x);
       screenOffsetY_800cb56c.set(y);
     }
@@ -5396,8 +5359,8 @@ public final class SMap {
 
   @Method(0x800e8104L)
   public static void FUN_800e8104(final SVECTOR v0) {
-    if(_800cbd38.deref()._00.get() == 0) {
-      _800cbd38.deref()._00.set(0x1L);
+    if(!_800cbd38._00) {
+      _800cbd38._00 = true;
 
       final IntRef transformedX = new IntRef();
       final IntRef transformedY = new IntRef();
@@ -5412,15 +5375,13 @@ public final class SMap {
 
   @Method(0x800e81a0L)
   public static void FUN_800e81a0(final int index) {
-    final UnknownStruct2 s0_0 = MEMORY.ref(4, mallocTail(0x8L), UnknownStruct2::new);
-    MEMORY.memfill(s0_0.getAddress(), 0x8, 0);
-    FUN_800e5084(getBiFunctionAddress(SMap.class, "FUN_800e4f74", UnknownStruct2.class, long.class, long.class), s0_0, 0);
-    _800cbd38.set(s0_0);
+    final UnknownStruct2 s0_0 = new UnknownStruct2();
+    FUN_800e5084(s0_0);
+    _800cbd38 = s0_0;
 
-    final UnknownStruct2 s0_1 = MEMORY.ref(4, mallocTail(0x8L), UnknownStruct2::new);
-    MEMORY.memfill(s0_1.getAddress(), 0x8, 0);
-    FUN_800e5084(getBiFunctionAddress(SMap.class, "FUN_800e4f74", UnknownStruct2.class, long.class, long.class), s0_1, 0);
-    _800cbd3c.set(s0_1);
+    final UnknownStruct2 s0_1 = new UnknownStruct2();
+    FUN_800e5084(s0_1);
+    _800cbd3c = s0_1;
 
     final SVECTOR avg = new SVECTOR();
     get3dAverageOfSomething(index, avg);
@@ -5429,8 +5390,8 @@ public final class SMap {
 
   @Method(0x800e828cL)
   public static void FUN_800e828c() {
-    free(_800cbd38.getPointer());
-    free(_800cbd3c.getPointer());
+    _800cbd38 = null;
+    _800cbd3c = null;
   }
 
   @Method(0x800e82ccL)
@@ -5465,8 +5426,8 @@ public final class SMap {
     }
 
     //LAB_800e88d8
-    if(_800cbe34.deref()._00.get() == 0) {
-      _800cbe34.deref()._00.set(0x1L);
+    if(!_800cbe34._00) {
+      _800cbe34._00 = true;
 
       //LAB_800e8908
       _800cbd94.setu(FUN_800e9430(0, playerTransforms.transfer.getX(), playerTransforms.transfer.getY(), playerTransforms.transfer.getZ(), playerMovement));
@@ -5534,14 +5495,22 @@ public final class SMap {
   }
 
   @Method(0x800e8b40L)
-  public static void FUN_800e8b40(final SomethingStruct a0, final FileData a1) {
+  public static void FUN_800e8b40(final SomethingStruct a0, FileData a1) {
     final int count = a0.count_0c;
+
+    if(a1.size() < count * 5 * 0xc) {
+      LOGGER.warn("Submap file too short, padding with 0's");
+      final byte[] newData = new byte[count * 5 * 0xc];
+      a1.copyFrom(0, newData, 0, a1.size());
+      a1 = new FileData(newData);
+    }
 
     a0.ptr_14 = new SomethingStructSub0c_1[count];
     a0.ptr_18 = new SomethingStructSub0c_2[count * 4];
 
-    Arrays.setAll(a0.ptr_14, i -> new SomethingStructSub0c_1(a1.slice(i * 0xc, 0xc)));
-    Arrays.setAll(a0.ptr_18, i -> new SomethingStructSub0c_2(a1.slice((count + i) * 0xc, 0xc)));
+    final FileData finalA1 = a1;
+    Arrays.setAll(a0.ptr_14, i -> new SomethingStructSub0c_1(finalA1.slice(i * 0xc, 0xc)));
+    Arrays.setAll(a0.ptr_18, i -> new SomethingStructSub0c_2(finalA1.slice((count + i) * 0xc, 0xc)));
   }
 
   @Method(0x800e8bd8L)
@@ -5578,20 +5547,17 @@ public final class SMap {
     _800f7f10.setu(0);
     _800f7f14.setu(0x1L);
 
-    final UnknownStruct2 s0_0 = MEMORY.ref(4, mallocTail(0x8L), UnknownStruct2::new);
-    MEMORY.memfill(s0_0.getAddress(), 0x8, 0);
-    FUN_800e5084(getBiFunctionAddress(SMap.class, "FUN_800e4f74", UnknownStruct2.class, long.class, long.class), s0_0, 0);
-    _800cbe34.set(s0_0);
+    final UnknownStruct2 s0_0 = new UnknownStruct2();
+    FUN_800e5084(s0_0);
+    _800cbe34 = s0_0;
 
-    final UnknownStruct2 s0_1 = MEMORY.ref(4, mallocTail(0x8L), UnknownStruct2::new);
-    MEMORY.memfill(s0_1.getAddress(), 0x8, 0);
-    FUN_800e5084(getBiFunctionAddress(SMap.class, "FUN_800e4f74", UnknownStruct2.class, long.class, long.class), s0_1, 0);
-    _800d1a8c.set(s0_1);
+    final UnknownStruct2 s0_1 = new UnknownStruct2();
+    FUN_800e5084(s0_1);
+    _800d1a8c = s0_1;
 
-    final UnknownStruct2 s0_2 = MEMORY.ref(4, mallocTail(0x8L), UnknownStruct2::new);
-    MEMORY.memfill(s0_2.getAddress(), 0x8, 0);
-    FUN_800e5084(getBiFunctionAddress(SMap.class, "FUN_800e4f74", UnknownStruct2.class, long.class, long.class), s0_2, 0);
-    _800cbe38.set(s0_2);
+    final UnknownStruct2 s0_2 = new UnknownStruct2();
+    FUN_800e5084(s0_2);
+    _800cbe38 = s0_2;
 
     FUN_800e866c();
   }
@@ -5601,9 +5567,9 @@ public final class SMap {
   public static void FUN_800e8e50() {
     _800f7f14.setu(0);
 
-    free(_800cbe34.getPointer());
-    free(_800d1a8c.getPointer());
-    free(_800cbe38.getPointer());
+    _800cbe34 = null;
+    _800d1a8c = null;
+    _800cbe38 = null;
   }
 
   @Method(0x800e9018L)
@@ -5963,8 +5929,8 @@ public final class SMap {
           playerMovement.setY((short)((-normal.getX() * (x + playerMovement.getX()) - normal.getZ() * (z + playerMovement.getZ()) - struct._08) / normal.getY()));
 
           //LAB_800ea390
-          if(_800d1a8c.deref()._00.get() == 0) {
-            _800d1a8c.deref()._00.set(0x1L);
+          if(!_800d1a8c._00) {
+            _800d1a8c._00 = true;
             //LAB_800ea3b4
             _800d1a84.setu(ratan2(playerMovement.getX(), playerMovement.getZ()) + 0x800 & 0xfff);
           }
@@ -6035,8 +6001,8 @@ public final class SMap {
           //LAB_800e9f70
           sp38 = s0;
 
-          if(_800cbe38.deref()._00.get() == 0) {
-            _800cbe38.deref()._00.set(0x1L);
+          if(!_800cbe38._00) {
+            _800cbe38._00 = true;
           }
 
           v1 = s0 - s3;
@@ -6194,10 +6160,10 @@ public final class SMap {
     }
 
     //LAB_800ea390
-    if(_800d1a8c.deref()._00.get() == 0) {
-      _800d1a8c.deref()._00.set(0x1L);
+    if(!_800d1a8c._00) {
+      _800d1a8c._00 = true;
       //LAB_800ea3b4
-      _800d1a84.setu(ratan2(playerMovement.getX(), playerMovement.getZ()) + 0x800L & 0xfffL);
+      _800d1a84.setu(ratan2(playerMovement.getX(), playerMovement.getZ()) + 0x800 & 0xfff);
     }
 
     //LAB_800ea3e0
@@ -6213,20 +6179,20 @@ public final class SMap {
     if((int)_800d1a78.get() > 0) {
       _800d1a84.setu(_800d1a80);
 
-      if(_800d1a8c.deref()._00.get() == 0) {
-        _800d1a8c.deref()._00.set(0x1L);
+      if(!_800d1a8c._00) {
+        _800d1a8c._00 = true;
       }
     }
 
     //LAB_800ea534
     //LAB_800ea538
-    if((int)_800c6ae0.get() <= 0x400L) {
+    if((int)_800c6ae0.get() <= 0x400) {
       v0 = 0x1L;
-    } else if(_800d1a8c.deref()._00.get() != 0) {
+    } else if(_800d1a8c._00) {
       v0 = 0;
     } else {
       v0 = 0x1L;
-      _800d1a8c.deref()._00.set(0x1L);
+      _800d1a8c._00 = true;
     }
 
     //LAB_800ea570
@@ -6952,7 +6918,7 @@ public final class SMap {
         submapCutModelAndAnimLoaded_800d4bdc.set(false);
         submapTextureAndMatrixLoaded_800d4be0.set(false);
         theEndTimLoaded_800d4be4.set(false);
-        theEndTim_800d4bf0.clear();
+        theEndTim_800d4bf0 = null;
 
         final int fileIndex = smapFileIndices_800f982c.get(submapCut_80052c30.get()).get();
         if(fileIndex != 0) {
@@ -6982,10 +6948,10 @@ public final class SMap {
           });
 
           if(submapCut_80052c30.get() == 673) { // End cutscene, loads "The End" TIM
-            loadDrgnBinFile(0, 7610, 0, (address, fileSize, param) -> {
+            loadDrgnFile(0, 7610, data -> {
               theEndTimLoaded_800d4be4.set(true);
-              theEndTim_800d4bf0.setPointer(address);
-            }, 2, 0x4L);
+              theEndTim_800d4bf0 = new Tim(data);
+            });
           }
         }
 
@@ -7011,9 +6977,8 @@ public final class SMap {
             break;
           }
 
-          FUN_800f4244(theEndTim_800d4bf0.deref().getAddress(), tpage_800f9e5c, clut_800f9e5e, Translucency.B_PLUS_F); //TODO
+          FUN_800f4244(theEndTim_800d4bf0, tpage_800f9e5c, clut_800f9e5e, Translucency.B_PLUS_F);
           StoreImage(_800d6b48, _800d4bd4);
-          free(theEndTim_800d4bf0.getPointer());
         }
 
         _800f9e5a.addu(0x1L);
@@ -9633,24 +9598,18 @@ public final class SMap {
   }
 
   @Method(0x800f4244L)
-  public static void FUN_800f4244(final long timFile, final UnsignedShortRef tpageOut, final UnsignedShortRef clutOut, final Translucency transMode) {
-    FUN_8003b8f0(timFile);
-
-    final WeirdTimHeader tim = new WeirdTimHeader(); // sp+0x10
-
+  public static void FUN_800f4244(final Tim tim, final UnsignedShortRef tpageOut, final UnsignedShortRef clutOut, final Translucency transMode) {
     //LAB_800f427c
-    while(FUN_8003b900(tim) != null) {
-      if(tim.clutAddress != 0) {
-        clutOut.set(tim.clutRect.y.get() << 6 | (tim.clutRect.x.get() & 0x3f0) >> 4);
-        LoadImage(tim.clutRect, tim.clutAddress);
-      }
-
-      //LAB_800f42d0
-      if(tim.imageAddress != 0) {
-        tpageOut.set(texPages_800bb110.get(Bpp.values()[tim.flags & 0b11]).get(transMode).get(TexPageY.fromY(tim.imageRect.y.get())).get() | (tim.imageRect.x.get() & 0x3c0) >> 6);
-        LoadImage(tim.imageRect, tim.imageAddress);
-      }
+    if(tim.hasClut()) {
+      final RECT clutRect = tim.getClutRect();
+      clutOut.set(clutRect.y.get() << 6 | (clutRect.x.get() & 0x3f0) >> 4);
+      LoadImage(clutRect, tim.getClutData());
     }
+
+    //LAB_800f42d0
+    final RECT imageRect = tim.getImageRect();
+    tpageOut.set(texPages_800bb110.get(Bpp.values()[tim.getFlags() & 0b11]).get(transMode).get(TexPageY.fromY(imageRect.y.get())).get() | (imageRect.x.get() & 0x3c0) >> 6);
+    LoadImage(imageRect, tim.getImageData());
 
     //LAB_800f4338
   }

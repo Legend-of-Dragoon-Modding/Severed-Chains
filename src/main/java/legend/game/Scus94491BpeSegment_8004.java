@@ -40,6 +40,7 @@ import legend.game.types.EngineState;
 import legend.game.types.FileEntry08;
 import legend.game.types.ItemStats0c;
 import legend.game.types.MoonMusic08;
+import legend.game.types.Struct10;
 import legend.game.types.SubmapMusic08;
 import legend.game.unpacker.FileData;
 import legend.game.wmap.WMap;
@@ -776,7 +777,7 @@ public final class Scus94491BpeSegment_8004 {
   public static final ArrayRef<Pointer<RunnableRef>> _8004f5d4 = MEMORY.ref(4, 0x8004f5d4L, ArrayRef.of(Pointer.classFor(RunnableRef.class), 31, 4, Pointer.deferred(4, RunnableRef::new)));
 
   public static final ScriptFile doNothingScript_8004f650 = new ScriptFile("Do nothing", new int[] {0x4, 0x1});
-  public static final Value _8004f658 = MEMORY.ref(4, 0x8004f658L);
+  public static Struct10 _8004f658;
 
   public static final Value _8004f6e4 = MEMORY.ref(4, 0x8004f6e4L);
   public static final Value _8004f6e8 = MEMORY.ref(4, 0x8004f6e8L);

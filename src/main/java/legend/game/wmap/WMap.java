@@ -44,7 +44,6 @@ import legend.game.types.Model124;
 import legend.game.types.TexPageY;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
-import legend.game.types.WeirdTimHeader;
 import legend.game.unpacker.FileData;
 
 import javax.annotation.Nullable;
@@ -59,9 +58,7 @@ import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
 import static legend.game.Scus94491BpeSegment.FUN_80019c80;
 import static legend.game.Scus94491BpeSegment.FUN_8001eea8;
-import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
-import static legend.game.Scus94491BpeSegment.loadDrgnBinFile;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.loadWmapMusic;
@@ -75,7 +72,6 @@ import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
-import static legend.game.Scus94491BpeSegment_8002.initTextbox;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a3ec;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a488;
 import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
@@ -83,6 +79,7 @@ import static legend.game.Scus94491BpeSegment_8002.animateModel;
 import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.clearTextbox;
 import static legend.game.Scus94491BpeSegment_8002.initModel;
+import static legend.game.Scus94491BpeSegment_8002.initTextbox;
 import static legend.game.Scus94491BpeSegment_8002.loadAndRenderMenus;
 import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
 import static legend.game.Scus94491BpeSegment_8002.rand;
@@ -91,8 +88,6 @@ import static legend.game.Scus94491BpeSegment_8002.renderModel;
 import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8002.strcmp;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003b8f0;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003b900;
 import static legend.game.Scus94491BpeSegment_8003.FUN_8003ea80;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLs;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
@@ -155,8 +150,6 @@ public class WMap {
    * </ul>
    */
   private static final Value filesLoadedFlags_800c66b8 = MEMORY.ref(4, 0x800c66b8L);
-
-  private static final WeirdTimHeader _800c66c0 = new WeirdTimHeader();
 
   private static final IntRef tempZ_800c66d8 = MEMORY.ref(4, 0x800c66d8L, IntRef::new);
   private static final Value _800c66dc = MEMORY.ref(2, 0x800c66dcL);
@@ -2317,13 +2310,12 @@ public class WMap {
   }
 
   @Method(0x800d5768L)
-  public static void FUN_800d5768(final long address, final int size, final int param) {
+  public static void FUN_800d5768(final Tim tim, final int param) {
     final long ix = imageX_800ef0cc.offset(param * 0x8L).getSigned();
     final long iy = imageY_800ef0ce.offset(param * 0x8L).getSigned();
     final long cx = clutX_800ef0d0.offset(param * 0x8L).getSigned();
     final long cy = clutY_800ef0d2.offset(param * 0x8L).getSigned();
-    FUN_800d5c50(address, ix, iy, cx, cy);
-    free(address);
+    FUN_800d5c50(tim, ix, iy, cx, cy);
     filesLoadedFlags_800c66b8.oru(0x800L);
 
     //LAB_800d5848
@@ -2396,16 +2388,15 @@ public class WMap {
   }
 
   @Method(0x800d5c50L)
-  public static void FUN_800d5c50(final long a0, final long imageX, final long imageY, final long clutX, final long clutY) {
-    FUN_8003b8f0(a0);
-    FUN_8003b900(_800c66c0);
+  public static void FUN_800d5c50(final Tim tim, final long imageX, final long imageY, final long clutX, final long clutY) {
+    final RECT imageRect = tim.getImageRect();
+    final RECT rect = new RECT((short)imageX, (short)imageY, imageRect.w.get(), imageRect.h.get());
+    LoadImage(rect, tim.getImageData());
 
-    final RECT rect = new RECT((short)imageX, (short)imageY, _800c66c0.imageRect.w.get(), _800c66c0.imageRect.h.get());
-    LoadImage(rect, _800c66c0.imageAddress);
-
-    if((_800c66c0.flags & 0x8) != 0 && (short)clutX != -1) {
-      rect.set((short)clutX, (short)clutY, _800c66c0.clutRect.w.get(), _800c66c0.clutRect.h.get());
-      LoadImage(rect, _800c66c0.clutAddress);
+    if((tim.getFlags() & 0x8) != 0 && (short)clutX != -1) {
+      final RECT clutRect = tim.getClutRect();
+      rect.set((short)clutX, (short)clutY, clutRect.w.get(), clutRect.h.get());
+      LoadImage(rect, tim.getClutData());
     }
 
     //LAB_800d5d84
@@ -5139,7 +5130,7 @@ public class WMap {
       case 1:
         filesLoadedFlags_800c66b8.and(0xffff_f7ffL);
 
-        loadDrgnBinFile(0, 5655 + places_800f0234.get(locations_800f0e34.get(mapState_800c6798.locationIndex_10).placeIndex_02.get()).fileIndex_04.get(), 0, WMap::FUN_800d5768, 1, 0x4L);
+        loadDrgnFile(0, 5655 + places_800f0234.get(locations_800f0e34.get(mapState_800c6798.locationIndex_10).placeIndex_02.get()).fileIndex_04.get(), data -> FUN_800d5768(new Tim(data), 1));
         initTextbox(7, 1, 240, 120, 14, 16);
 
         _800c68a4.setu(0x2L);

@@ -2231,8 +2231,8 @@ public final class SItem {
           //LAB_8010dd90
           inventoryMenuState_800bdc28.set(InventoryMenuState.REPLACE_MENU_10);
         } else if(_8011e1c8.offset(_8011e170.get()).get() != 0) {
-          FUN_800192d8(-0x50L, 0x2cL);
-          playSound(0x9L);
+          FUN_800192d8(-80, 44);
+          playSound(9);
           inventoryMenuState_800bdc28.set(InventoryMenuState._9);
         } else {
           //LAB_8010dd88
