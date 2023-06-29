@@ -135,7 +135,6 @@ import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.GsSetAmbient;
 import static legend.game.Scus94491BpeSegment_8003.GsSetFlatLight;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
-import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.MulMatrix0;
 import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
 import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
@@ -176,7 +175,6 @@ import static legend.game.combat.Bttl_800c._800faec4;
 import static legend.game.combat.Bttl_800c._800fafe8;
 import static legend.game.combat.Bttl_800c._800fafec;
 import static legend.game.combat.Bttl_800c._800fb06c;
-import static legend.game.combat.Bttl_800c._800fb148;
 import static legend.game.combat.Bttl_800c._800fb188;
 import static legend.game.combat.Bttl_800c._800fb198;
 import static legend.game.combat.Bttl_800c._800fb444;
@@ -215,7 +213,7 @@ import static legend.game.combat.Bttl_800c.monsterCount_800c6b9c;
 import static legend.game.combat.Bttl_800c.playerNames_800fb378;
 import static legend.game.combat.Bttl_800c.repeatItemIds_800c6e34;
 import static legend.game.combat.Bttl_800c.spriteMetrics_800c6948;
-import static legend.game.combat.Bttl_800c.stageDarkeningClutCount_800c695c;
+import static legend.game.combat.Bttl_800c.stageDarkeningClutWidth_800c695c;
 import static legend.game.combat.Bttl_800c.stageDarkening_800c6958;
 import static legend.game.combat.Bttl_800c.targeting_800fb36c;
 import static legend.game.combat.Bttl_800c.tmds_800c6944;
@@ -2993,14 +2991,13 @@ public final class Bttl_800e {
 
   @Method(0x800ebb58L)
   public static void applyScreenDarkening(final int multiplier) {
-    final BattleStageDarkening1800 darkening = stageDarkening_800c6958.deref();
+    final BattleStageDarkening1800 darkening = stageDarkening_800c6958;
 
     //LAB_800ebb7c
-    int t2;
-    for(t2 = 0; t2 < stageDarkeningClutCount_800c695c.get(); t2++) {
+    for(int y = 0; y < 16; y++) {
       //LAB_800ebb80
-      for(int a3 = 0; a3 < 0x10; a3++) {
-        final int colour = darkening._000.get(t2).get(a3).get();
+      for(int x = 0; x < stageDarkeningClutWidth_800c695c; x++) {
+        final int colour = darkening.original_000[y][x] & 0xffff;
         final int mask = colour >>> 15 & 0x1;
         final int b = (colour >>> 10 & 0x1f) * multiplier >> 4 & 0x1f;
         final int g = (colour >>> 5 & 0x1f) * multiplier >> 4 & 0x1f;
@@ -3008,37 +3005,18 @@ public final class Bttl_800e {
 
         final int v0;
         if(r != 0 || g != 0 || b != 0 || colour == 0) {
-          //LAB_800ebbf0
           v0 = mask << 15 | b << 10 | g << 5 | r;
         } else {
-          //LAB_800ebc0c
           v0 = colour & 0xffff_8000 | 0x1;
         }
 
-        //LAB_800ebc18
-        darkening._800.get(t2).get(a3).set(v0);
+        darkening.modified_800[y][x] = (short)v0;
       }
     }
 
-    //LAB_800ebc44
-    //LAB_800ebc58
-    for(; t2 < 0x40; t2++) {
-      //LAB_800ebc5c
-      for(int a3 = 0; a3 < 0x10; a3++) {
-        darkening._800.get(t2).get(a3).set(darkening._000.get(t2).get(a3).get());
-      }
+    for(int y = 0; y < 16; y++) {
+      GPU.uploadData(new RECT().set((short)448, (short)(240 + y), (short)64, (short)1), stageDarkening_800c6958.modified_800[y]);
     }
-
-    //LAB_800ebc88
-    //LAB_800ebca4
-    for(t2 = 0; t2 < 0x40; t2++) {
-      //LAB_800ebcb0
-      for(int a3 = 0; a3 < 0x10; a3++) {
-        darkening._1000.get(t2).get(a3).set(darkening._800.get(_800fb148.get(t2).get()).get(a3).get());
-      }
-    }
-
-    LoadImage(new RECT().set((short)448, (short)240, (short)64, (short)16), stageDarkening_800c6958.deref()._1000.getAddress());
   }
 
   @Method(0x800ebd34L)
@@ -3177,12 +3155,12 @@ public final class Bttl_800e {
 
   @Method(0x800ec4bcL)
   public static void allocateStageDarkeningStorage() {
-    stageDarkening_800c6958.setPointer(mallocTail(0x1800L));
+    stageDarkening_800c6958 = new BattleStageDarkening1800();
   }
 
   @Method(0x800ec4f0L)
   public static void deallocateStageDarkeningStorage() {
-    free(stageDarkening_800c6958.getPointer());
+    stageDarkening_800c6958 = null;
   }
 
   @Method(0x800ec51cL)
@@ -3299,26 +3277,24 @@ public final class Bttl_800e {
 
   /** Stage darkening for counterattacks change the clut, this saves a backup copy */
   @Method(0x800ec8d0L)
-  public static void backupStageClut(final long timFile) {
-    final BattleStageDarkening1800 darkening = stageDarkening_800c6958.deref();
+  public static void backupStageClut(final FileData timFile) {
+    final BattleStageDarkening1800 darkening = stageDarkening_800c6958;
 
     //LAB_800ec8ec
-    for(int a3 = 0; a3 < 0x40; a3++) {
+    for(int a1 = 0; a1 < 0x10; a1++) {
       //LAB_800ec8f4
-      for(int a1 = 0; a1 < 0x10; a1++) {
-        darkening._000.get(_800fb148.get(a3).get()).get(a1).set((int)MEMORY.ref(2, timFile).offset(0x14L).offset(a3 * 0x20L).offset(a1 * 0x2L).get());
+      for(int a3 = 0; a3 < 0x40; a3++) {
+        darkening.original_000[a1][a3] = timFile.readShort(0x14 + a1 * 0x80 + a3 * 0x2);
       }
     }
 
-    if(MEMORY.ref(2, timFile).offset(0x8812L).offset(0x0L).get() == 0x7422L) {
-      stageDarkeningClutCount_800c695c.set((int)MEMORY.ref(2, timFile).offset(0x8812L).offset(0x4L).get());
+    // I don't think this condition is used?
+    if(timFile.readUShort(0x8812) == 0x7422) {
+      stageDarkeningClutWidth_800c695c = timFile.readUShort(0x8812 + 0x4) + 1;
     } else {
       //LAB_800ec954
-      stageDarkeningClutCount_800c695c.set(63);
+      stageDarkeningClutWidth_800c695c = 64;
     }
-
-    //LAB_800ec95c
-    stageDarkeningClutCount_800c695c.incr();
   }
 
   @Method(0x800ec974L)

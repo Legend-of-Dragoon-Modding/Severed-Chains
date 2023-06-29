@@ -6,7 +6,6 @@ import legend.core.MathHelper;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.RECT;
-import legend.core.gpu.TimHeader;
 import legend.core.gte.DVECTOR;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MATRIX;
@@ -107,7 +106,6 @@ import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
 import static legend.game.Scus94491BpeSegment.btldLoadEncounterSoundEffectsAndMusic;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
-import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.getCharacterName;
 import static legend.game.Scus94491BpeSegment.loadDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
@@ -116,7 +114,6 @@ import static legend.game.Scus94491BpeSegment.loadFile;
 import static legend.game.Scus94491BpeSegment.loadMcq;
 import static legend.game.Scus94491BpeSegment.loadMusicPackage;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
-import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static legend.game.Scus94491BpeSegment.renderMcq;
 import static legend.game.Scus94491BpeSegment.resizeDisplay;
@@ -139,7 +136,6 @@ import static legend.game.Scus94491BpeSegment_8003.MoveImage;
 import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
 import static legend.game.Scus94491BpeSegment_8003.TransMatrix;
 import static legend.game.Scus94491BpeSegment_8003.getProjectionPlaneDistance;
-import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
@@ -296,8 +292,8 @@ public final class Bttl_800c {
   public static TmdObjTable1c[] tmds_800c6944;
   public static SpriteMetrics08[] spriteMetrics_800c6948;
 
-  public static final Pointer<BattleStageDarkening1800> stageDarkening_800c6958 = MEMORY.ref(4, 0x800c6958L, Pointer.deferred(4, BattleStageDarkening1800::new));
-  public static final UnsignedShortRef stageDarkeningClutCount_800c695c = MEMORY.ref(2, 0x800c695cL, UnsignedShortRef::new);
+  public static BattleStageDarkening1800 stageDarkening_800c6958;
+  public static int stageDarkeningClutWidth_800c695c;
 
   public static final ArrayRef<DragoonSpells09> dragoonSpells_800c6960 = MEMORY.ref(1, 0x800c6960L, ArrayRef.of(DragoonSpells09.class, 3, 9, DragoonSpells09::new));
 
@@ -732,8 +728,6 @@ public final class Bttl_800c {
   public static final Value _800fb06c = MEMORY.ref(1, 0x800fb06cL);
 
   public static final Value _800fb0ec = MEMORY.ref(4, 0x800fb0ecL);
-
-  public static final ArrayRef<UnsignedByteRef> _800fb148 = MEMORY.ref(1, 0x800fb148L, ArrayRef.of(UnsignedByteRef.class, 0x40, 1, UnsignedByteRef::new));
 
   /** TODO array of unsigned shorts */
   public static final Value _800fb188 = MEMORY.ref(2, 0x800fb188L);
@@ -1387,10 +1381,7 @@ public final class Bttl_800c {
       }
 
       if(files.get(1).size() != 0) {
-        final long tim = mallocTail(files.get(1).size());
-        MEMORY.setBytes(tim, files.get(1).getBytes());
-        loadStageTim(tim);
-        free(tim);
+        loadStageTim(files.get(1));
       }
     });
 
@@ -1400,16 +1391,17 @@ public final class Bttl_800c {
   }
 
   @Method(0x800c8c84L)
-  public static void loadStageTim(final long a0) {
-    final TimHeader tim = parseTimHeader(MEMORY.ref(4, a0 + 0x4L));
-    LoadImage(tim.getImageRect(), tim.getImageAddress());
+  public static void loadStageTim(final FileData data) {
+    final Tim tim = new Tim(data);
+
+    LoadImage(tim.getImageRect(), tim.getImageData());
 
     if(tim.hasClut()) {
-      LoadImage(tim.getClutRect(), tim.getClutAddress());
+      LoadImage(tim.getClutRect(), tim.getClutData());
     }
 
     //LAB_800c8ccc
-    backupStageClut(a0);
+    backupStageClut(data);
   }
 
   @Method(0x800c8ce4L)

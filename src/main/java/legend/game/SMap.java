@@ -213,15 +213,12 @@ import static legend.game.Scus94491BpeSegment_800b.fmvIndex_800bf0dc;
 import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.hasNoEncounters_800bed58;
-import static legend.game.Scus94491BpeSegment_800b.input_800bee90;
 import static legend.game.Scus94491BpeSegment_800b.loadedDrgnFiles_800bcf78;
 import static legend.game.Scus94491BpeSegment_800b.matrix_800bed30;
 import static legend.game.Scus94491BpeSegment_800b.model_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.musicLoaded_800bd782;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
-import static legend.game.Scus94491BpeSegment_800b.press_800bee94;
 import static legend.game.Scus94491BpeSegment_800b.projectionPlaneDistance_800bd810;
-import static legend.game.Scus94491BpeSegment_800b.repeat_800bee98;
 import static legend.game.Scus94491BpeSegment_800b.rview2_800bd7e8;
 import static legend.game.Scus94491BpeSegment_800b.savedGameSelected_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.screenOffsetX_800bed50;
@@ -466,9 +463,6 @@ public final class SMap {
   public static final Value _800d673c = MEMORY.ref(4, 0x800d673cL);
 
   public static final Value timFile_800d689c = MEMORY.ref(4, 0x800d689cL);
-
-  public static final RECT _800d69fc = MEMORY.ref(4, 0x800d69fcL, RECT::new);
-  public static final RECT _800d6a04 = MEMORY.ref(4, 0x800d6a04L, RECT::new);
 
   public static final RECT _800d6b48 = MEMORY.ref(4, 0x800d6b48L, RECT::new);
 
@@ -3428,13 +3422,6 @@ public final class SMap {
     if(header.hasClut()) {
       LoadImage(header.clutRect, header.clutAddress.get());
     }
-  }
-
-  @Method(0x800e3d68L)
-  public static void clearJoypadInput() {
-    input_800bee90.set(0);
-    press_800bee94.set(0);
-    repeat_800bee98.set(0);
   }
 
   @Method(0x800e3d80L)

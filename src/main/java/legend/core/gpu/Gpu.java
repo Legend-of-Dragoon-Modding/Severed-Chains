@@ -280,6 +280,26 @@ public class Gpu {
     }
   }
 
+  public void uploadData(final RECT rect, final short[] data) {
+    final int rectX = rect.x.get();
+    final int rectY = rect.y.get();
+    final int rectW = rect.w.get();
+    final int rectH = rect.h.get();
+
+    assert rectX + rectW <= this.vramWidth : "Rect right (" + (rectX + rectW) + ") overflows VRAM width (" + this.vramWidth + ')';
+    assert rectY + rectH <= this.vramHeight : "Rect bottom (" + (rectY + rectH) + ") overflows VRAM height (" + this.vramHeight + ')';
+
+    LOGGER.debug("Copying (%d, %d, %d, %d) from CPU to VRAM", rectX, rectY, rectW, rectH);
+
+    int i = 0;
+    for(int y = rectY; y < rectY + rectH; y++) {
+      for(int x = rectX; x < rectX + rectW; x++) {
+        this.setVramPixel(x, y, MathHelper.colour15To24(data[i]), data[i]);
+        i++;
+      }
+    }
+  }
+
   public void uploadData(final Rect4i rect, final int[] data) {
     final int rectX = rect.x();
     final int rectY = rect.y();
