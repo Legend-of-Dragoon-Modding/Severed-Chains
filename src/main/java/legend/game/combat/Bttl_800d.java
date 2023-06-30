@@ -67,8 +67,6 @@ import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Scus94491BpeSegment.FUN_80018a5c;
 import static legend.game.Scus94491BpeSegment.FUN_80018d60;
-import static legend.game.Scus94491BpeSegment.free;
-import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
@@ -207,28 +205,28 @@ public final class Bttl_800d {
     final ProjectileHitEffect14 effect = (ProjectileHitEffect14)data.effect_44;
 
     //LAB_800d01ec
-    for(int s7 = 0; s7 < effect.count_00.get(); s7++) {
-      final ProjectileHitEffect14Sub48 s4 = effect._08.deref().get(s7);
+    for(int s7 = 0; s7 < effect.count_00; s7++) {
+      final ProjectileHitEffect14Sub48 s4 = effect._08[s7];
 
-      if(s4.used_00.get()) {
-        s4._40.incr();
-        s4.frames_44.decr();
+      if(s4.used_00) {
+        s4._40++;
+        s4.frames_44--;
 
-        if(s4.frames_44.get() == 0) {
-          s4.used_00.set(false);
+        if(s4.frames_44 == 0) {
+          s4.used_00 = false;
         }
 
         //LAB_800d0220
-        s4.r_34.sub(s4.fadeR_3a.get());
-        s4.g_36.sub(s4.fadeG_3c.get());
-        s4.b_38.sub(s4.fadeB_3e.get());
+        s4.r_34 -= s4.fadeR_3a;
+        s4.g_36 -= s4.fadeG_3c;
+        s4.b_38 -= s4.fadeB_3e;
 
         //LAB_800d0254
         final ShortRef[] x = {new ShortRef(), new ShortRef()};
         final ShortRef[] y = {new ShortRef(), new ShortRef()};
         for(int s3 = 0; s3 < 2; s3++) {
-          final VECTOR s1 = s4._04.get(s3);
-          final SVECTOR a1 = s4._24.get(s3);
+          final VECTOR s1 = s4._04[s3];
+          final SVECTOR a1 = s4._24[s3];
           a0 = FUN_800cfb14(data, s1, x[s3], y[s3]);
           s1.add(a1);
           a1.y.add((short)25);
@@ -264,7 +262,7 @@ public final class Bttl_800d {
             GPU.queueCommand(s1_0 + a2_0 >> 2, new GpuCommandLine()
               .translucent(Translucency.B_PLUS_F)
               .monochrome(0, 0)
-              .rgb(1, s4.r_34.get() >>> 8, s4.g_36.get() >>> 8, s4.b_38.get() >>> 8)
+              .rgb(1, s4.r_34 >>> 8, s4.g_36 >>> 8, s4.b_38 >>> 8)
               .pos(0, x[0].get(), y[0].get())
               .pos(1, x[1].get(), y[1].get())
             );
@@ -278,57 +276,49 @@ public final class Bttl_800d {
     //LAB_800d0508
   }
 
-  @Method(0x800d0538L)
-  public static void deallocateProjectileHitEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
-    free(((ProjectileHitEffect14)manager.effect_44)._08.getPointer());
-  }
-
   @Method(0x800d0564L)
   public static FlowControl allocateProjectileHitEffect(final RunningScript<? extends BattleScriptDataBase> script) {
+    final int count = script.params_20[1].get();
+
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "ProjectileHitEffect14",
       script.scriptState_04,
-      0x14,
+      0,
       null,
       Bttl_800d::renderProjectileHitEffect,
-      Bttl_800d::deallocateProjectileHitEffect,
-      ProjectileHitEffect14::new
+      null,
+      ref -> new ProjectileHitEffect14(count)
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
     final ProjectileHitEffect14 effect = (ProjectileHitEffect14)manager.effect_44;
 
-    final int count = script.params_20[1].get();
-    effect.count_00.set(count);
-    effect._04.set(0);
-    effect._08.setPointer(mallocTail(count * 0x48));
-
     //LAB_800d0634
     for(int i = 0; i < count; i++) {
-      final ProjectileHitEffect14Sub48 struct = effect._08.deref().get(i);
+      final ProjectileHitEffect14Sub48 struct = effect._08[i];
 
-      struct.used_00.set(true);
-      struct.r_34.set(script.params_20[2].get() << 8);
-      struct.g_36.set(script.params_20[3].get() << 8);
-      struct.b_38.set(script.params_20[4].get() << 8);
+      struct.used_00 = true;
+      struct.r_34 = script.params_20[2].get() << 8;
+      struct.g_36 = script.params_20[3].get() << 8;
+      struct.b_38 = script.params_20[4].get() << 8;
 
       final short x = (short)(seed_800fa754.advance().get() % 301 + 200);
       final short y = (short)(seed_800fa754.advance().get() % 401 - 300);
       final short z = (short)(seed_800fa754.advance().get() % 601 - 300);
-      struct._24.get(0).set(x, y, z);
-      struct._24.get(1).set(x, y, z);
+      struct._24[0].set(x, y, z);
+      struct._24[1].set(x, y, z);
 
-      struct._04.get(0).setX(0);
-      struct._04.get(0).setY((int)(seed_800fa754.advance().get() % 101 - 50));
-      struct._04.get(0).setZ((int)(seed_800fa754.advance().get() % 101 - 50));
-      struct.frames_44.set((int)(seed_800fa754.advance().get() % 9 + 7));
+      struct._04[0].setX(0);
+      struct._04[0].setY((int)(seed_800fa754.advance().get() % 101 - 50));
+      struct._04[0].setZ((int)(seed_800fa754.advance().get() % 101 - 50));
+      struct.frames_44 = (int)(seed_800fa754.advance().get() % 9 + 7);
 
-      struct._40.set(0);
-      struct._24.get(1).y.add((short)25);
-      struct._04.get(1).set(struct._04.get(0)).add(struct._24.get(0));
-      struct.fadeR_3a.set(struct.r_34.get() / struct.frames_44.get());
-      struct.fadeG_3c.set(struct.g_36.get() / struct.frames_44.get());
-      struct.fadeB_3e.set(struct.b_38.get() / struct.frames_44.get());
+      struct._40 = 0;
+      struct._24[1].y.add((short)25);
+      struct._04[1].set(struct._04[0]).add(struct._24[0]);
+      struct.fadeR_3a = struct.r_34 / struct.frames_44;
+      struct.fadeG_3c = struct.g_36 / struct.frames_44;
+      struct.fadeB_3e = struct.b_38 / struct.frames_44;
     }
 
     //LAB_800d0980
