@@ -313,7 +313,6 @@ public final class Bttl_800c {
   public static final Pointer<CombatMenua4> combatMenu_800c6b60 = MEMORY.ref(4, 0x800c6b60L, Pointer.deferred(4, CombatMenua4::new));
   public static Element dragoonSpaceElement_800c6b64;
   public static final IntRef itemTargetType_800c6b68 = MEMORY.ref(4, 0x800c6b68L, IntRef::new);
-  public static final Value _800c6b6c = MEMORY.ref(4, 0x800c6b6cL);
 
   public static final ArrayRef<IntRef> monsterBobjs_800c6b78 = MEMORY.ref(4, 0x800c6b78L, ArrayRef.of(IntRef.class, 9, 4, IntRef::new));
   public static final IntRef monsterCount_800c6b9c = MEMORY.ref(4, 0x800c6b9cL, IntRef::new);

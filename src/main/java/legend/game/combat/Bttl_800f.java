@@ -75,7 +75,6 @@ import static legend.game.combat.Bttl_800c._800c6748;
 import static legend.game.combat.Bttl_800c._800c697c;
 import static legend.game.combat.Bttl_800c._800c697e;
 import static legend.game.combat.Bttl_800c._800c6980;
-import static legend.game.combat.Bttl_800c._800c6b6c;
 import static legend.game.combat.Bttl_800c._800c6ba1;
 import static legend.game.combat.Bttl_800c._800c6c40;
 import static legend.game.combat.Bttl_800c._800c6f4c;
@@ -200,7 +199,7 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f1268L)
-  public static void renderTextBoxBackground(final int x, final int y, final int width, final int height, int colour) {
+  public static void renderTextBoxBackground(final int x, final int y, final int width, final int height, final int colour) {
     //LAB_800f1340
     final int left = x - centreScreenX_1f8003dc.get();
     final int top = y - centreScreenY_1f8003de.get();
@@ -3056,23 +3055,6 @@ public final class Bttl_800f {
     //LAB_800f8c98
   }
 
-  @Method(0x800f8ca0L)
-  public static int getFirstSetBitIndex(final int bitset) {
-    //LAB_800f8cac
-    int bitIndex = -1;
-    for(int i = 0; i < 32; i++) {
-      if((bitset & 1 << i) != 0) {
-        bitIndex = i;
-        break;
-      }
-
-      //LAB_800f8cc0
-    }
-
-    //LAB_800f8cd0
-    return bitIndex;
-  }
-
   @Method(0x800f8cd8L)
   public static void FUN_800f8cd8(final int x, final int y, final int u, final int v, final int w, final int h, final int a6, @Nullable final Translucency transMode) {
     final GpuCommandPoly cmd = new GpuCommandPoly(4)
@@ -3227,25 +3209,6 @@ public final class Bttl_800f {
     //LAB_800f9578
     //LAB_800f957c
     return damage;
-  }
-
-  @Method(0x800f9584L)
-  public static void FUN_800f9584() {
-    final long v0 = _800c6b6c.get();
-    MEMORY.ref(2, v0).offset(0x00L).setu(0);
-    MEMORY.ref(2, v0).offset(0x02L).setu(0);
-    MEMORY.ref(2, v0).offset(0x04L).setu(0);
-    MEMORY.ref(2, v0).offset(0x06L).setu(0);
-    MEMORY.ref(2, v0).offset(0x08L).setu(0);
-    MEMORY.ref(2, v0).offset(0x0aL).setu(0);
-    MEMORY.ref(2, v0).offset(0x0cL).setu(0);
-    MEMORY.ref(2, v0).offset(0x0eL).setu(0);
-    MEMORY.ref(2, v0).offset(0x10L).setu(0);
-
-    //LAB_800f95b8
-    for(int i = 0; i < 10; i++) {
-      MEMORY.ref(4, v0).offset(0x14L).offset(i * 0x4L).setu(0);
-    }
   }
 
   @Method(0x800f95d0L)
@@ -3449,24 +3412,19 @@ public final class Bttl_800f {
 
   @Method(0x800f9b94L)
   public static FlowControl FUN_800f9b94(final RunningScript<?> script) {
-    final long v1 = _800c6b6c.get();
-    MEMORY.ref(2, v1).offset(0x0L).setu(0x1L);
-    MEMORY.ref(2, v1).offset(0x6L).setu(script.params_20[0].get());
-    MEMORY.ref(2, v1).offset(0x8L).setu(script.params_20[1].get());
+    // Unused menu-related code
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800f9bd4L)
   public static FlowControl FUN_800f9bd4(final RunningScript<?> script) {
-    final long v1 = _800c6b6c.get();
-    MEMORY.ref(2, v1).offset(0x0L).setu(0x4L);
-    MEMORY.ref(2, v1).offset(0x8L).setu(script.params_20[0].get());
+    // Unused menu-related code
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800f9c00L)
   public static FlowControl FUN_800f9c00(final RunningScript<?> script) {
-    FUN_800fa018(script.params_20[0].get());
+    // Unused menu-related code
     return FlowControl.CONTINUE;
   }
 
@@ -3583,22 +3541,6 @@ public final class Bttl_800f {
     }
 
     GPU.queueCommand(31, cmd);
-  }
-
-  @Method(0x800fa018L)
-  public static void FUN_800fa018(final long a0) {
-    final long v1 = _800c6b6c.get();
-
-    if(MEMORY.ref(2, v1).offset(0x0L).getSigned() != 0) {
-      if(a0 == 0x1L) {
-        MEMORY.ref(2, v1).offset(0x2L).oru(0x1L);
-      } else {
-        //LAB_800fa050
-        MEMORY.ref(2, v1).offset(0x2L).and(0xfffeL);
-      }
-    }
-
-    //LAB_800fa060
   }
 
   @Method(0x800fa068L)

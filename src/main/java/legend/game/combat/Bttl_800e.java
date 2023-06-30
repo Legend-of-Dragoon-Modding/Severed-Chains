@@ -162,7 +162,6 @@ import static legend.game.combat.Bttl_800c._800c6930;
 import static legend.game.combat.Bttl_800c._800c6938;
 import static legend.game.combat.Bttl_800c._800c697e;
 import static legend.game.combat.Bttl_800c._800c6980;
-import static legend.game.combat.Bttl_800c._800c6b6c;
 import static legend.game.combat.Bttl_800c._800c6c38;
 import static legend.game.combat.Bttl_800c._800c6c40;
 import static legend.game.combat.Bttl_800c._800c6cf4;
@@ -227,7 +226,6 @@ import static legend.game.combat.Bttl_800d.optimisePacketsIfNecessary;
 import static legend.game.combat.Bttl_800f.FUN_800f3940;
 import static legend.game.combat.Bttl_800f.FUN_800f4b80;
 import static legend.game.combat.Bttl_800f.FUN_800f60ac;
-import static legend.game.combat.Bttl_800f.FUN_800f9584;
 import static legend.game.combat.Bttl_800f.drawFloatingNumbers;
 import static legend.game.combat.Bttl_800f.drawItemMenuElements;
 import static legend.game.combat.Bttl_800f.drawLine;
@@ -3590,7 +3588,6 @@ public final class Bttl_800e {
     _800c6c38.setu(0x1L);
     combatMenu_800c6b60.setPointer(mallocTail(0xa4L));
     battleMenu_800c6c34.setPointer(mallocTail(0x58L));
-    _800c6b6c.setu(mallocTail(0x3cL));
 
     FUN_800ef7c4();
     resetCombatMenu();
@@ -3603,7 +3600,6 @@ public final class Bttl_800e {
     v0._30.set((short)0);
 
     FUN_800f60ac();
-    FUN_800f9584();
 
     monsterCount_800c6b9c.set(0);
     itemTargetAll_800c69c8.set(false);
@@ -3777,7 +3773,6 @@ public final class Bttl_800e {
 
     free(combatMenu_800c6b60.getPointer());
     free(battleMenu_800c6c34.getPointer());
-    free(_800c6b6c.get());
   }
 
   @Method(0x800eee80L)
