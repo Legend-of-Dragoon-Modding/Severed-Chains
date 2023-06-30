@@ -332,7 +332,7 @@ public final class Bttl_800c {
 
   public static final ArrayRef<UnsignedByteRef> cameraPositionIndices_800c6c30 = MEMORY.ref(4, 0x800c6c30L, ArrayRef.of(UnsignedByteRef.class, 4, 1, UnsignedByteRef::new));
 
-  public static final Pointer<BattleMenuStruct58> battleMenu_800c6c34 = MEMORY.ref(4, 0x800c6c34L, Pointer.deferred(4, BattleMenuStruct58::new));
+  public static BattleMenuStruct58 battleMenu_800c6c34;
   public static final Value _800c6c38 = MEMORY.ref(4, 0x800c6c38L);
   public static final IntList usedRepeatItems_800c6c3c = new IntArrayList();
 

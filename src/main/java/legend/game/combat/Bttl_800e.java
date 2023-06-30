@@ -3587,7 +3587,7 @@ public final class Bttl_800e {
     _800c6cf4.setu(0);
     _800c6c38.setu(0x1L);
     combatMenu_800c6b60 = new CombatMenua4();
-    battleMenu_800c6c34.setPointer(mallocTail(0x58L));
+    battleMenu_800c6c34 = new BattleMenuStruct58();
 
     FUN_800ef7c4();
     resetCombatMenu();
@@ -3772,7 +3772,7 @@ public final class Bttl_800e {
     usedRepeatItems_800c6c3c.clear();
 
     combatMenu_800c6b60 = null;
-    free(battleMenu_800c6c34.getPointer());
+    battleMenu_800c6c34 = null;
   }
 
   @Method(0x800eee80L)
@@ -4380,27 +4380,27 @@ public final class Bttl_800e {
       drawItemMenuElements();
 
       // Targeting
-      final BattleMenuStruct58 menu = battleMenu_800c6c34.deref();
-      if(menu._4c.get() != 0) {
-        drawTargetArrow(menu.targetType_50.get(), menu.combatantIndex.get());
-        final int targetCombatant = menu.combatantIndex.get();
+      final BattleMenuStruct58 menu = battleMenu_800c6c34;
+      if(menu._4c) {
+        drawTargetArrow(menu.targetType_50, menu.combatantIndex_54);
+        final int targetCombatant = menu.combatantIndex_54;
         LodString str;
         Element element;
         if(targetCombatant == -1) {  // Target all
-          str = targeting_800fb36c.get(menu.targetType_50.get()).deref();
+          str = targeting_800fb36c.get(menu.targetType_50).deref();
           element = CoreMod.DIVINE_ELEMENT.get();
         } else {  // Target single
           final BattleObject27c targetBobj;
 
           //LAB_800f0bb0
-          if(menu.targetType_50.get() == 1) {
+          if(menu.targetType_50 == 1) {
             //LAB_800f0ca4
             final MonsterBattleObject monsterBobj = battleState_8006e398.aliveMonsterBobjs_ebc[targetCombatant].innerStruct_00;
 
             //LAB_800f0cf0
             int enemySlot;
             for(enemySlot = 0; enemySlot < monsterCount_800c6768.get(); enemySlot++) {
-              if(monsterBobjs_800c6b78.get(enemySlot).get() == menu.target_48.get()) {
+              if(monsterBobjs_800c6b78.get(enemySlot).get() == menu.target_48) {
                 break;
               }
             }
@@ -4409,12 +4409,12 @@ public final class Bttl_800e {
             str = getTargetEnemyName(monsterBobj, currentEnemyNames_800c69d0.get(enemySlot));
             element = monsterBobj.displayElement_1c;
             targetBobj = monsterBobj;
-          } else if(menu.targetType_50.get() == 0) {
+          } else if(menu.targetType_50 == 0) {
             targetBobj = battleState_8006e398.charBobjs_e40[targetCombatant].innerStruct_00;
             str = playerNames_800fb378.get(targetBobj.charId_272).deref();
             element = targetBobj.getElement();
 
-            if(targetBobj.charId_272 == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0 && battleState_8006e398.charBobjs_e40[menu.combatantIndex.get()].innerStruct_00.isDragoon()) {
+            if(targetBobj.charId_272 == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0 && battleState_8006e398.charBobjs_e40[menu.combatantIndex_54].innerStruct_00.isDragoon()) {
               element = CoreMod.DIVINE_ELEMENT.get();
             }
           } else {
@@ -4430,7 +4430,7 @@ public final class Bttl_800e {
               str = playerNames_800fb378.get(targetBobj.charId_272).deref();
               element = targetBobj.getElement();
 
-              if(targetBobj.charId_272 == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0 && battleState_8006e398.charBobjs_e40[menu.combatantIndex.get()].innerStruct_00.isDragoon()) {
+              if(targetBobj.charId_272 == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0 && battleState_8006e398.charBobjs_e40[menu.combatantIndex_54].innerStruct_00.isDragoon()) {
                 element = CoreMod.DIVINE_ELEMENT.get();
               }
             }

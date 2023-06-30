@@ -1146,7 +1146,7 @@ public final class Bttl_800f {
     //LAB_800f4704
     //LAB_800f4708
     script.params_20[0].set(combatMenu._a0);
-    script.params_20[1].set(battleMenu_800c6c34.deref().target_48.get());
+    script.params_20[1].set(battleMenu_800c6c34.target_48);
     script.params_20[2].set(itemOrSpellId);
 
     //LAB_800f4770
@@ -1185,13 +1185,13 @@ public final class Bttl_800f {
 
     int targetMode = script.params_20[0].get();
 
-    final BattleMenuStruct58 struct58 = battleMenu_800c6c34.deref();
+    final BattleMenuStruct58 struct58 = battleMenu_800c6c34;
 
     //LAB_800f489c
     for(int a0 = 0; a0 < charCount_800c677c.get(); a0++) {
       a1 = battleState_8006e398.charBobjs_e40[a0].innerStruct_00;
 
-      if(struct58.charIndex_04.get() == a1.charId_272) {
+      if(struct58.charIndex_04 == a1.charId_272) {
         break;
       }
     }
@@ -1209,7 +1209,7 @@ public final class Bttl_800f {
 
     if(ret == 1) { // Pressed X
       //LAB_800f4930
-      ret = struct58.target_48.get();
+      ret = struct58.target_48;
     } else { // Pressed O
       //LAB_800f4944
       //LAB_800f4948
@@ -2017,56 +2017,70 @@ public final class Bttl_800f {
 
   @Method(0x800f60acL)
   public static void FUN_800f60ac() {
-    final BattleMenuStruct58 v0 = battleMenu_800c6c34.deref();
-    v0._00.set((short)0);
-    v0._02.set(0);
-    v0.charIndex_04.set((short)0xff);
-    v0.x_06.set((short)0);
-    v0.y_08.set((short)0);
-    v0._0a.set((short)0);
-    v0._0c.set((short)0);
-    v0.iconCount_0e.set((short)0);
-    v0.selectedIcon_22.set((short)0);
-    v0._24.set((short)0);
-    v0._26.set((short)0);
-    v0._28.set((short)0);
-    v0._2a.set((short)0);
-    v0.colour_2c.set((short)0);
+    final BattleMenuStruct58 v0 = battleMenu_800c6c34;
+    v0._00 = 0;
+    v0._02 = 0;
+    v0.charIndex_04 = 0xff;
+    v0.x_06 = 0;
+    v0.y_08 = 0;
+    v0._0a = 0;
+    v0._0c = 0;
+    v0.iconCount_0e = 0;
+    v0.selectedIcon_22 = 0;
+    v0._24 = 0;
+    v0._26 = 0;
+    v0._28 = 0;
+    v0._2a = 0;
+    v0.colour_2c = 0;
 
     //LAB_800f60fc
     for(int i = 0; i < 9; i++) {
-      v0.iconFlags_10.get(i).set((short)-1);
+      v0.iconFlags_10[i] = -1;
     }
 
     //LAB_800f611c
-    for(int i = 0; i < 10; i++) {
-      v0.all_30.get(i).set(0);
-    }
+    v0._30 = 0;
+    v0._34 = 0;
+    v0._38 = 0;
+    v0._3c = 0;
+    v0._40 = false;
+    v0._44 = 0;
+    v0.target_48 = 0;
+    v0._4c = false;
+    v0.targetType_50 = 0;
+    v0.combatantIndex_54 = 0;
   }
 
   @Method(0x800f6134L)
   public static void FUN_800f6134(final ScriptState<? extends BattleObject27c> bobjState, final long a1, final long a2) {
-    final BattleMenuStruct58 v0 = battleMenu_800c6c34.deref();
-    v0._00.set((short)1);
-    v0._02.set(2);
-    v0.x_06.set((short)160);
-    v0.y_08.set((short)172);
-    v0.selectedIcon_22.set((short)0);
-    v0._24.set((short)0);
-    v0._26.set((short)0);
-    v0._28.set((short)0);
-    v0._2a.set((short)0);
-    v0.colour_2c.set((short)128);
+    final BattleMenuStruct58 v0 = battleMenu_800c6c34;
+    v0._00 = 1;
+    v0._02 = 2;
+    v0.x_06 = 160;
+    v0.y_08 = 172;
+    v0.selectedIcon_22 = 0;
+    v0._24 = 0;
+    v0._26 = 0;
+    v0._28 = 0;
+    v0._2a = 0;
+    v0.colour_2c = 128;
 
     //LAB_800f61d8
     for(int i = 0; i < 9; i++) {
-      v0.iconFlags_10.get(i).set((short)-1);
+      v0.iconFlags_10[i] = -1;
     }
 
     //LAB_800f61f8
-    for(int i = 0; i < 10; i++) {
-      v0.all_30.get(i).set(0);
-    }
+    v0._30 = 0;
+    v0._34 = 0;
+    v0._38 = 0;
+    v0._3c = 0;
+    v0._40 = false;
+    v0._44 = 0;
+    v0.target_48 = 0;
+    v0._4c = false;
+    v0.targetType_50 = 0;
+    v0.combatantIndex_54 = 0;
 
     //LAB_800f6224
     //LAB_800f6234
@@ -2078,21 +2092,21 @@ public final class Bttl_800f {
     }
 
     //LAB_800f6254
-    v0.iconCount_0e.set((short)0);
-    v0.charIndex_04.set((short)battleState_8006e398.charBobjs_e40[a3].innerStruct_00.charId_272);
+    v0.iconCount_0e = 0;
+    v0.charIndex_04 = (short)battleState_8006e398.charBobjs_e40[a3].innerStruct_00.charId_272;
 
     //LAB_800f62a4
     for(int i = 0, used = 0; i < 8; i++) {
       if((a1 & 1 << i) != 0) {
-        v0.iconFlags_10.get(used++).set(_800c7194.get(i).get());
-        v0.iconCount_0e.incr();
+        v0.iconFlags_10[used++] = _800c7194.get(i).get();
+        v0.iconCount_0e++;
       }
 
       //LAB_800f62d0
     }
 
-    v0._0c.set((short)0);
-    v0._0a.set((short)((v0.iconCount_0e.get() * 19 - 3) / 2));
+    v0._0c = 0;
+    v0._0a = (short)((v0.iconCount_0e * 19 - 3) / 2);
     FUN_800f8b74(a2);
   }
 
@@ -2103,24 +2117,31 @@ public final class Bttl_800f {
     long a1;
     int cameraPositionIndicesIndex;
     long s1;
-    final BattleMenuStruct58 struct58 = battleMenu_800c6c34.deref();
+    final BattleMenuStruct58 struct58 = battleMenu_800c6c34;
 
-    if(struct58._00.get() == 0) {
+    if(struct58._00 == 0) {
       return 0;
     }
 
     s1 = 0;
 
-    switch(struct58._00.get() - 1) {
+    switch(struct58._00 - 1) {
       case 0 -> {  // Set up camera position list at battle start or camera reset (like dragoon or after trying to run)
-        struct58._00.set((short)2);
-        struct58._28.set((short)(struct58.x_06.get() - struct58._0a.get() + struct58.selectedIcon_22.get() * 19 - 4));
-        struct58._2a.set((short)(struct58.y_08.get() - 22));
+        struct58._00 = 2;
+        struct58._28 = (short)(struct58.x_06 - struct58._0a + struct58.selectedIcon_22 * 19 - 4);
+        struct58._2a = (short)(struct58.y_08 - 22);
 
         //LAB_800f63e8
-        for(int i = 0; i < 10; i++) {
-          struct58.all_30.get(i).set(0);
-        }
+        struct58._30 = 0;
+        struct58._34 = 0;
+        struct58._38 = 0;
+        struct58._3c = 0;
+        struct58._40 = false;
+        struct58._44 = 0;
+        struct58.target_48 = 0;
+        struct58._4c = false;
+        struct58.targetType_50 = 0;
+        struct58.combatantIndex_54 = 0;
 
         _800c697c.setu(0);
         _800c6ba1.setu(0);
@@ -2166,8 +2187,8 @@ public final class Bttl_800f {
 
       case 1 -> {  // Checking for input
         a0 = cameraPositionIndicesIndex_800c6ba0.get();
-        struct58._40.set(0);
-        struct58._44.set(0);
+        struct58._40 = false;
+        struct58._44 = 0;
 
         // Input for changing camera angles
         if(a0 >= 0x2L && (input_800bee90.get() & 0x2) != 0) {
@@ -2178,9 +2199,9 @@ public final class Bttl_800f {
 
           //LAB_800f6560
           _800c6748.set(0x21);
-          struct58._00.set((short)5);
+          struct58._00 = 5;
           _800c66b0.set(cameraPositionIndices_800c6c30.get((int)_800c6ba1.get()).get());
-          struct58._44.set(60 / vsyncMode_8007a3b8 + 2);
+          struct58._44 = 60 / vsyncMode_8007a3b8 + 2;
           FUN_800f8c38(0);
           break;
         }
@@ -2190,27 +2211,27 @@ public final class Bttl_800f {
         if((input_800bee90.get() & 0x2000) != 0) {
           playSound(0, 1, 0, 0, (short)0, (short)0);
 
-          if(struct58.selectedIcon_22.get() < struct58.iconCount_0e.get() - 1) {
+          if(struct58.selectedIcon_22 < struct58.iconCount_0e - 1) {
             //LAB_800f6640
-            struct58.selectedIcon_22.incr();
-            struct58._00.set((short)3);
+            struct58.selectedIcon_22++;
+            struct58._00 = 3;
 
             //LAB_800f664c
-            struct58._30.set(3);
-            struct58._34.set(19);
-            struct58._38.set(0);
-            struct58._26.set((short)0);
+            struct58._30 = 3;
+            struct58._34 = 19;
+            struct58._38 = 0;
+            struct58._26 = 0;
             break;
           }
 
-          struct58._00.set((short)4);
-          struct58._02.or(1);
-          struct58.selectedIcon_22.set((short)0);
-          struct58._26.set((short)0);
-          struct58._30.set(3);
-          struct58._34.set(19);
-          struct58._38.set(0);
-          struct58._3c.set(struct58.x_06.get() - struct58._0a.get() - 23);
+          struct58._00 = 4;
+          struct58._02 |= 1;
+          struct58.selectedIcon_22 = 0;
+          struct58._26 = 0;
+          struct58._30 = 3;
+          struct58._34 = 19;
+          struct58._38 = 0;
+          struct58._3c = struct58.x_06 - struct58._0a - 23;
           break;
         }
 
@@ -2219,36 +2240,36 @@ public final class Bttl_800f {
         if((input_800bee90.get() & 0x8000) != 0) {
           playSound(0, 1, 0, 0, (short)0, (short)0);
 
-          if(struct58.selectedIcon_22.get() != 0) {
+          if(struct58.selectedIcon_22 != 0) {
             //LAB_800f66f0
-            struct58.selectedIcon_22.decr();
-            struct58._00.set((short)3);
+            struct58.selectedIcon_22--;
+            struct58._00 = 3;
 
             //LAB_800f66fc
-            struct58._30.set(3);
-            struct58._34.set(-19);
+            struct58._30 = 3;
+            struct58._34 = -19;
 
             //LAB_800f6710
-            struct58._38.set(0);
-            struct58._26.set((short)0);
+            struct58._38 = 0;
+            struct58._26 = 0;
             break;
           }
 
-          struct58._00.set((short)4);
-          struct58._02.or(1);
-          struct58.selectedIcon_22.set((short)(struct58.iconCount_0e.get() - 1));
-          struct58._3c.set(struct58.x_06.get() - struct58._0a.get() + struct58.iconCount_0e.get() * 19 - 4);
-          struct58._30.set(3);
-          struct58._34.set(-19);
-          struct58._38.set(0);
-          struct58._26.set((short)0);
+          struct58._00 = 4;
+          struct58._02 |= 1;
+          struct58.selectedIcon_22 = (short)(struct58.iconCount_0e - 1);
+          struct58._3c = struct58.x_06 - struct58._0a + struct58.iconCount_0e * 19 - 4;
+          struct58._30 = 3;
+          struct58._34 = -19;
+          struct58._38 = 0;
+          struct58._26 = 0;
           break;
         }
 
         // Input for pressing X on menu bar
         //LAB_800f671c
         if((press_800bee94.get() & 0x20) != 0) {
-          v1 = struct58.iconFlags_10.get(struct58.selectedIcon_22.get()).get();
+          v1 = struct58.iconFlags_10[struct58.selectedIcon_22];
           if((v1 & 0x80L) != 0) {
             playSound(0, 3, 0, 0, (short)0, (short)0);
           } else {
@@ -2260,14 +2281,14 @@ public final class Bttl_800f {
                 playSound(0, 3, 0, 0, (short)0, (short)0);
               } else {
                 playSound(0, 2, 0, 0, (short)0, (short)0);
-                s1 = struct58.iconFlags_10.get(struct58.selectedIcon_22.get()).get() & 0xfL;
+                s1 = struct58.iconFlags_10[struct58.selectedIcon_22] & 0xf;
               }
               //LAB_800f6790
             } else if(v1 == 0x3L) {
               //LAB_800f67b8
               int charSlot;
               for(charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
-                if(dragoonSpells_800c6960.get(charSlot).charIndex_00.get() == struct58.charIndex_04.get()) {
+                if(dragoonSpells_800c6960.get(charSlot).charIndex_00.get() == struct58.charIndex_04) {
                   break;
                 }
               }
@@ -2286,13 +2307,13 @@ public final class Bttl_800f {
                 playSound(0, 3, 0, 0, (short)0, (short)0);
               } else {
                 playSound(0, 2, 0, 0, (short)0, (short)0);
-                s1 = struct58.iconFlags_10.get(struct58.selectedIcon_22.get()).get() & 0xfL;
+                s1 = struct58.iconFlags_10[struct58.selectedIcon_22] & 0xf;
               }
             } else {
               //LAB_800f6858
               //LAB_800f6860
               playSound(0, 2, 0, 0, (short)0, (short)0);
-              s1 = struct58.iconFlags_10.get(struct58.selectedIcon_22.get()).get() & 0xfL;
+              s1 = struct58.iconFlags_10[struct58.selectedIcon_22] & 0xf;
             }
           }
           //LAB_800f6898
@@ -2305,58 +2326,58 @@ public final class Bttl_800f {
 
         //LAB_800f68c4
         //LAB_800f68c8
-        struct58._40.set(0x1L);
+        struct58._40 = true;
       }
 
       case 2 -> {  // Cycle to adjacent menu bar icon
-        struct58._38.incr();
-        struct58._28.add((short)(struct58._34.get() / struct58._30.get()));
+        struct58._38++;
+        struct58._28 += (short)(struct58._34 / struct58._30);
 
-        if(struct58._38.get() >= struct58._30.get()) {
-          struct58._00.set((short)2);
-          struct58._30.set(0);
-          struct58._34.set(0);
-          struct58._38.set(0);
-          struct58._28.set((short)(struct58.x_06.get() - struct58._0a.get() + struct58.selectedIcon_22.get() * 19 - 4));
-          struct58._2a.set((short)(struct58.y_08.get() - 22));
+        if(struct58._38 >= struct58._30) {
+          struct58._00 = 2;
+          struct58._30 = 0;
+          struct58._34 = 0;
+          struct58._38 = 0;
+          struct58._28 = (short)(struct58.x_06 - struct58._0a + struct58.selectedIcon_22 * 19 - 4);
+          struct58._2a = (short)(struct58.y_08 - 22);
         }
       }
 
       case 3 -> {  // Wrap menu bar icon
-        struct58._38.incr();
-        struct58._28.add((short)(struct58._34.get() / struct58._30.get()));
-        struct58._3c.add(struct58._34.get() / struct58._30.get());
-        struct58.colour_2c.add((short)(0x80 / struct58._30.get()));
+        struct58._38++;
+        struct58._28 += (short)(struct58._34 / struct58._30);
+        struct58._3c += struct58._34 / struct58._30;
+        struct58.colour_2c += (short)(0x80 / struct58._30);
 
-        if(struct58._38.get() >= struct58._30.get()) {
-          struct58._00.set((short)2);
-          struct58.colour_2c.set((short)0x80);
-          struct58._38.set(0);
-          struct58._34.set(0);
-          struct58._30.set(0);
-          struct58._28.set((short)(struct58.x_06.get() - struct58._0a.get() + struct58.selectedIcon_22.get() * 19 - 4));
-          struct58._2a.set((short)(struct58.y_08.get() - 22));
-          struct58._02.and(0xfffe);
+        if(struct58._38 >= struct58._30) {
+          struct58._00 = 2;
+          struct58.colour_2c = 0x80;
+          struct58._38 = 0;
+          struct58._34 = 0;
+          struct58._30 = 0;
+          struct58._28 = (short)(struct58.x_06 - struct58._0a + struct58.selectedIcon_22 * 19 - 4);
+          struct58._2a = (short)(struct58.y_08 - 22);
+          struct58._02 &= 0xfffe;
         }
       }
 
       case 4 -> {  // Seems to be related to switching camera views
-        struct58._44.decr();
-        if(struct58._44.get() == 1) {
+        struct58._44--;
+        if(struct58._44 == 1) {
           FUN_800f8c38(0x1L);
-          struct58._00.set((short)2);
+          struct58._00 = 2;
         }
       }
     }
 
     //LAB_800f6a88
     //LAB_800f6a8c
-    struct58._24.incr();
-    if(struct58._24.get() >= 4) {
-      struct58._24.set((short)0);
-      struct58._26.incr();
-      if(struct58._26.get() >= 4) {
-        struct58._26.set((short)0);
+    struct58._24++;
+    if(struct58._24 >= 4) {
+      struct58._24 = 0;
+      struct58._26++;
+      if(struct58._26 >= 4) {
+        struct58._26 = 0;
       }
     }
 
@@ -2383,40 +2404,39 @@ public final class Bttl_800f {
     int s4;
     long s6;
     final long s7;
-    long fp;
 
-    final BattleMenuStruct58 menu = battleMenu_800c6c34.deref();
-    if(menu._00.get() != 0 && (menu._02.get() & 0x2L) != 0) {
+    final BattleMenuStruct58 menu = battleMenu_800c6c34;
+    if(menu._00 != 0 && (menu._02 & 0x2) != 0) {
       //LAB_800f6c48
-      for(int iconIndex = 0; iconIndex < menu.iconCount_0e.get(); iconIndex++) {
-        fp = (menu.iconFlags_10.get(iconIndex).get() & 0xfL) - 0x1L;
-        if(menu.selectedIcon_22.get() == iconIndex) {
-          s6 = _800c71e4.get(menu._26.get()).get();
+      for(int iconIndex = 0; iconIndex < menu.iconCount_0e; iconIndex++) {
+        final int fp = (menu.iconFlags_10[iconIndex] & 0xf) - 1;
+        if(menu.selectedIcon_22 == iconIndex) {
+          s6 = _800c71e4.get(menu._26).get();
         } else {
           //LAB_800f6c88
           s6 = 0;
         }
 
         //LAB_800f6c90
-        s3 = menu.x_06.get() - menu._0a.get() + iconIndex * 19 - centreScreenX_1f8003dc.get();
-        s4 = menu.y_08.get() - (int)_800fb6bc.offset(2, fp * 6 + s6 * 2).get() - centreScreenY_1f8003de.get();
-        if((menu.iconFlags_10.get(iconIndex).get() & 0x80L) != 0) {
+        s3 = menu.x_06 - menu._0a + iconIndex * 19 - centreScreenX_1f8003dc.get();
+        s4 = menu.y_08 - (int)_800fb6bc.offset(2, fp * 6 + s6 * 2).get() - centreScreenY_1f8003de.get();
+        if((menu.iconFlags_10[iconIndex] & 0x80) != 0) {
           // "X" icon over attack icon if attack is disabled
-          FUN_800f8cd8(s3, menu.y_08.get() - (centreScreenY_1f8003de.get() + 16), 96, 112, 16, 16, 0x19, null);
+          FUN_800f8cd8(s3, menu.y_08 - (centreScreenY_1f8003de.get() + 16), 96, 112, 16, 16, 0x19, null);
         }
 
         //LAB_800f6d70
-        if((menu.iconFlags_10.get(iconIndex).get() & 0xfL) != 0x2L) {
+        if((menu.iconFlags_10[iconIndex] & 0xf) != 0x2) {
           //LAB_800f6e24
           s0 = _800fb674.offset(fp * 0x8L).offset(2, 0x4L).get();
-        } else if(menu.charIndex_04.get() == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0) {
+        } else if(menu.charIndex_04 == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0) {
           s0 = _800c71d0.get(9).get();
           if(s6 != 0) {
             //LAB_800f6de0
             FUN_800f8cd8(s3 + 4, s4, s6 != 1 ? 88 : 80, 112, 8, 16, 0x98, Translucency.B_PLUS_F);
           }
         } else {
-          s0 = _800c71d0.get(menu.charIndex_04.get()).get();
+          s0 = _800c71d0.get(menu.charIndex_04).get();
         }
 
         //LAB_800f6e34
@@ -2429,10 +2449,10 @@ public final class Bttl_800f {
         // Combat menu icons
         FUN_800f8cd8(s3, s4, (int)MEMORY.ref(1, t1).offset(0x0L).get(), (int)(MEMORY.ref(1, t1).offset(0x2L).get() + MEMORY.ref(1, t0).offset(0x0L).get()) & 0xff, 16, (int)MEMORY.ref(2, v1).getSigned(), (int)s0, Translucency.of((int)MEMORY.ref(2, t1).offset(0x6L).getSigned()));
 
-        if(menu.selectedIcon_22.get() == iconIndex && menu._40.get() == 0x1L) {
+        if(menu.selectedIcon_22 == iconIndex && menu._40) {
           t1 = _800fb72c.offset(fp * 8).getAddress();
           // Selected combat menu icon text
-          FUN_800f8cd8(menu.x_06.get() - menu._0a.get() + iconIndex * 19 - centreScreenX_1f8003dc.get() - (int)MEMORY.ref(2, t1).offset(0x4L).get() / 2 + 8, menu.y_08.get() - centreScreenY_1f8003de.get() - 24, (int)MEMORY.ref(1, t1).offset(0x0L).get(), (int)MEMORY.ref(1, t1).offset(0x2L).get(), (int)MEMORY.ref(2, t1).offset(0x4L).get(), 8, (int)MEMORY.ref(2, t1).offset(0x6L).getSigned(), null);
+          FUN_800f8cd8(menu.x_06 - menu._0a + iconIndex * 19 - centreScreenX_1f8003dc.get() - (int)MEMORY.ref(2, t1).offset(0x4L).get() / 2 + 8, menu.y_08 - centreScreenY_1f8003de.get() - 24, (int)MEMORY.ref(1, t1).offset(0x0L).get(), (int)MEMORY.ref(1, t1).offset(0x2L).get(), (int)MEMORY.ref(2, t1).offset(0x4L).get(), 8, (int)MEMORY.ref(2, t1).offset(0x6L).getSigned(), null);
         }
 
         //LAB_800f6fa4
@@ -2440,16 +2460,16 @@ public final class Bttl_800f {
 
       //LAB_800f6fc8
       // Draw red glow underneath selected menu item
-      FUN_800f7210(menu._28.get(), menu._2a.get(), _800c71bc, 31, 0xc, Translucency.B_PLUS_F, menu.colour_2c.get());
+      FUN_800f7210(menu._28, menu._2a, _800c71bc, 31, 0xc, Translucency.B_PLUS_F, menu.colour_2c);
 
-      if((menu._02.get() & 0x1L) != 0) {
-        FUN_800f7210(menu._3c.get(), menu._2a.get(), _800c71bc, 31, 0xc, Translucency.B_PLUS_F, Math.max(0, 0x80 - menu.colour_2c.get()));
+      if((menu._02 & 0x1) != 0) {
+        FUN_800f7210(menu._3c, menu._2a, _800c71bc, 31, 0xc, Translucency.B_PLUS_F, Math.max(0, 0x80 - menu.colour_2c));
       }
 
       //LAB_800f704c
-      s0 = menu.iconCount_0e.get() * 19 + 1;
-      s1 = menu.x_06.get() - s0 / 2;
-      s2 = menu.y_08.get() - 10;
+      s0 = menu.iconCount_0e * 19 + 1;
+      s1 = menu.x_06 - s0 / 2;
+      s2 = menu.y_08 - 10;
       FUN_800f74f4(_800fb5dc.getAddress(), (int)s1, (int)s2, (int)s0, 2, 0x2bL, Translucency.B_PLUS_F, (short)_800fb5dc.offset(1, 0x4L).get());
 
       final long[] sp0x20 = new long[4];
@@ -2458,7 +2478,7 @@ public final class Bttl_800f {
       sp0x20[0] = s1;
       sp0x20[2] = s1;
       s1 = s1 + s0;
-      s3 = menu.y_08.get() - 8;
+      s3 = menu.y_08 - 8;
       sp0x20[1] = s1;
       sp0x20[3] = s1;
       sp0x28[0] = s2;
@@ -2468,7 +2488,7 @@ public final class Bttl_800f {
 
       //LAB_800f710c
       s7 = _800fb5dc.getAddress();
-      fp = _800fb5dc.getAddress() + 0x6L;
+      final long fp = _800fb5dc.getAddress() + 0x6L;
       s6 = _800fb614.getAddress();
       for(int i = 0; i < 8; i++) {
         t0 = s6 + i * 0xcL;
@@ -2623,17 +2643,17 @@ public final class Bttl_800f {
     final int count;
     long t3 = 0x1L;
 
-    final BattleMenuStruct58 battleMenu = battleMenu_800c6c34.deref();
+    final BattleMenuStruct58 battleMenu = battleMenu_800c6c34;
 
     if(targetType == 1) {
-      battleMenu._4c.set(0x1L);
+      battleMenu._4c = true;
       //LAB_800f77d4
       count = aliveMonsterCount_800c6758.get();
 
       //LAB_800f77e8
       _800c697c.setu(_800c697e.get());
     } else {
-      battleMenu._4c.set(0x1L);
+      battleMenu._4c = true;
       if(targetType == 0) {
         _800c697c.setu(_800c6980.get());
         count = charCount_800c677c.get();
@@ -2700,16 +2720,16 @@ public final class Bttl_800f {
     }
 
     //LAB_800f7998
-    battleMenu.targetType_50.set(targetType);
+    battleMenu.targetType_50 = targetType;
     if(!targetAll) {
-      battleMenu.combatantIndex.set((int)_800c697c.getSigned());
+      battleMenu.combatantIndex_54 = (int)_800c697c.getSigned();
     } else {
       //LAB_800f79b4
-      battleMenu.combatantIndex.set(-1);
+      battleMenu.combatantIndex_54 = -1;
     }
 
     //LAB_800f79bc
-    battleMenu.target_48.set(target.index);
+    battleMenu.target_48 = target.index;
 
     if(targetType == 1) {
       //LAB_800f79fc
@@ -2724,15 +2744,15 @@ public final class Bttl_800f {
     if((press_800bee94.get() & 0x20) != 0) { // Cross
       ret = 1;
       _800c697c.setu(0);
-      battleMenu._4c.set(0);
+      battleMenu._4c = false;
     }
 
     //LAB_800f7a38
     if((press_800bee94.get() & 0x40) != 0) { // Circle
       ret = -1;
       _800c697c.setu(0);
-      battleMenu.target_48.set(-1);
-      battleMenu._4c.set(0);
+      battleMenu.target_48 = -1;
+      battleMenu._4c = false;
     }
 
     //LAB_800f7a68
@@ -3023,15 +3043,15 @@ public final class Bttl_800f {
 
   @Method(0x800f8b74L)
   public static void FUN_800f8b74(final long a0) {
-    final BattleMenuStruct58 struct58 = battleMenu_800c6c34.deref();
+    final BattleMenuStruct58 struct58 = battleMenu_800c6c34;
 
     //LAB_800f8bd8
     for(int t1 = 0; t1 < 8; t1++) {
       if((a0 & 0x1L << t1) != 0) {
         //LAB_800f8bf4
         for(int a3 = 0; a3 < 8; a3++) {
-          if((struct58.iconFlags_10.get(a3).get() & 0xfL) == _800c7194.get(t1).get()) {
-            struct58.iconFlags_10.get(a3).or(0x80);
+          if((struct58.iconFlags_10[a3] & 0xf) == _800c7194.get(t1).get()) {
+            struct58.iconFlags_10[a3] |= 0x80;
             break;
           }
         }
@@ -3041,15 +3061,15 @@ public final class Bttl_800f {
 
   @Method(0x800f8c38L)
   public static void FUN_800f8c38(final long a0) {
-    final BattleMenuStruct58 struct58 = battleMenu_800c6c34.deref();
+    final BattleMenuStruct58 struct58 = battleMenu_800c6c34;
 
-    if(struct58._00.get() != 0) {
+    if(struct58._00 != 0) {
       //LAB_800f8c78
-      if(a0 != 0x1L || struct58._44.get() != 0) {
+      if(a0 != 0x1L || struct58._44 != 0) {
         //LAB_800f8c64
-        struct58._02.and(0xfffd);
+        struct58._02 &= 0xfffd;
       } else {
-        struct58._02.or(0x2);
+        struct58._02 |= 0x2;
       }
     }
 
@@ -3450,7 +3470,7 @@ public final class Bttl_800f {
 
   @Method(0x800f9cacL)
   public static FlowControl FUN_800f9cac(final RunningScript<?> script) {
-    final BattleMenuStruct58 menu = battleMenu_800c6c34.deref();
+    final BattleMenuStruct58 menu = battleMenu_800c6c34;
     final int t2 = script.params_20[0].get();
 
     //LAB_800f9d18
@@ -3458,8 +3478,8 @@ public final class Bttl_800f {
       if((t2 & 1 << t0) != 0) {
         //LAB_800f9d34
         for(int icon = 0; icon < 8; icon++) {
-          if((menu.iconFlags_10.get(icon).get() & 0xf) == _800c7194.get(t0).get()) {
-            menu.iconFlags_10.get(icon).or(0x80);
+          if((menu.iconFlags_10[icon] & 0xf) == _800c7194.get(t0).get()) {
+            menu.iconFlags_10[icon] |= 0x80;
             break;
           }
         }
