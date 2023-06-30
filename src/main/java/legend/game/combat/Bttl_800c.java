@@ -310,7 +310,7 @@ public final class Bttl_800c {
   static {
     Arrays.setAll(floatingNumbers_800c6b5c, i -> new FloatingNumberC4());
   }
-  public static final Pointer<CombatMenua4> combatMenu_800c6b60 = MEMORY.ref(4, 0x800c6b60L, Pointer.deferred(4, CombatMenua4::new));
+  public static CombatMenua4 combatMenu_800c6b60;
   public static Element dragoonSpaceElement_800c6b64;
   public static final IntRef itemTargetType_800c6b68 = MEMORY.ref(4, 0x800c6b68L, IntRef::new);
 

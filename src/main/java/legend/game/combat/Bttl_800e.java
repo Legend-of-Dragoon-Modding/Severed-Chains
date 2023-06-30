@@ -3586,18 +3586,18 @@ public final class Bttl_800e {
   public static void FUN_800ee610() {
     _800c6cf4.setu(0);
     _800c6c38.setu(0x1L);
-    combatMenu_800c6b60.setPointer(mallocTail(0xa4L));
+    combatMenu_800c6b60 = new CombatMenua4();
     battleMenu_800c6c34.setPointer(mallocTail(0x58L));
 
     FUN_800ef7c4();
     resetCombatMenu();
 
-    final CombatMenua4 v0 = combatMenu_800c6b60.deref();
-    v0._26.set((short)0);
-    v0._28.set((short)0);
-    v0._2a.set((short)0);
-    v0._2c.set(0);
-    v0._30.set((short)0);
+    final CombatMenua4 v0 = combatMenu_800c6b60;
+    v0._26 = 0;
+    v0._28 = 0;
+    v0._2a = 0;
+    v0._2c = 0;
+    v0._30 = 0;
 
     FUN_800f60ac();
 
@@ -3771,7 +3771,7 @@ public final class Bttl_800e {
 
     usedRepeatItems_800c6c3c.clear();
 
-    free(combatMenu_800c6b60.getPointer());
+    combatMenu_800c6b60 = null;
     free(battleMenu_800c6c34.getPointer());
   }
 

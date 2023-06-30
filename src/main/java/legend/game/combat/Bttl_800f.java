@@ -1125,9 +1125,9 @@ public final class Bttl_800f {
 
   @Method(0x800f4600L)
   public static FlowControl FUN_800f4600(final RunningScript<?> script) {
-    final CombatMenua4 combatMenu = combatMenu_800c6b60.deref();
-    int itemOrSpellId = combatMenu.itemOrSpellId_1c.get();
-    if(combatMenu.charIndex_08.get() == 8 && combatMenu.menuType_0a.get() == 1) {
+    final CombatMenua4 combatMenu = combatMenu_800c6b60;
+    int itemOrSpellId = combatMenu.itemOrSpellId_1c;
+    if(combatMenu.charIndex_08 == 8 && combatMenu.menuType_0a == 1) {
       if(itemOrSpellId == 10) {
         itemOrSpellId = 65;
       }
@@ -1145,7 +1145,7 @@ public final class Bttl_800f {
 
     //LAB_800f4704
     //LAB_800f4708
-    script.params_20[0].set(combatMenu._a0.get());
+    script.params_20[0].set(combatMenu._a0);
     script.params_20[1].set(battleMenu_800c6c34.deref().target_48.get());
     script.params_20[2].set(itemOrSpellId);
 
@@ -1154,7 +1154,7 @@ public final class Bttl_800f {
     for(int i = 0; i < charCount_800c677c.get(); i++) {
       playerBobj = battleState_8006e398.charBobjs_e40[i].innerStruct_00;
 
-      if(playerBobj.charId_272 == combatMenu_800c6b60.deref().charIndex_08.get()) {
+      if(playerBobj.charId_272 == combatMenu.charIndex_08) {
         break;
       }
     }
@@ -1162,7 +1162,7 @@ public final class Bttl_800f {
     //LAB_800f47ac
     playerBobj.spellId_4e = itemOrSpellId;
 
-    if(combatMenu._a0.get() == 1 && combatMenu.menuType_0a.get() == 0) {
+    if(combatMenu._a0 == 1 && combatMenu.menuType_0a == 0) {
       //LAB_800f47e4
       for(int i = 0; i < 17; i++) {
         if(targetAllItemIds_800c7124.get(i).get() == itemOrSpellId + 0xc0) {
@@ -1225,57 +1225,57 @@ public final class Bttl_800f {
 
   @Method(0x800f4964L)
   public static void resetCombatMenu() {
-    final CombatMenua4 combatMenu = combatMenu_800c6b60.deref();
-    combatMenu.menuState_00.set((short)0);
-    combatMenu._02.set(0);
-    combatMenu.x_04.set(0);
-    combatMenu.y_06.set(0);
-    combatMenu.charIndex_08.set((short)0);
-    combatMenu.menuType_0a.set((short)0);
-    combatMenu._0c.set(0);
-    combatMenu._0e.set(0);
-    combatMenu._10.set(0);
-    combatMenu._12.set(0);
-    combatMenu._14.set(0);
-    combatMenu._16.set(0x1000);
-    combatMenu.textX_18.set((short)0);
-    combatMenu._1a.set((short)0);
-    combatMenu.itemOrSpellId_1c.set((short)-1);
-    combatMenu.count_22.set((short)0);
-    combatMenu.listScroll_24.set((short)0);
+    final CombatMenua4 combatMenu = combatMenu_800c6b60;
+    combatMenu.menuState_00 = 0;
+    combatMenu._02 = 0;
+    combatMenu.x_04 = 0;
+    combatMenu.y_06 = 0;
+    combatMenu.charIndex_08 = 0;
+    combatMenu.menuType_0a = 0;
+    combatMenu._0c = 0;
+    combatMenu._0e = 0;
+    combatMenu._10 = 0;
+    combatMenu._12 = 0;
+    combatMenu._14 = 0;
+    combatMenu._16 = 0x1000;
+    combatMenu.textX_18 = 0;
+    combatMenu._1a = 0;
+    combatMenu.itemOrSpellId_1c = -1;
+    combatMenu.count_22 = 0;
+    combatMenu.listScroll_24 = 0;
   }
 
   @Method(0x800f49bcL)
   public static void initCombatMenu(final int charIndex, final int menuType) {
-    final CombatMenua4 combatMenu = combatMenu_800c6b60.deref();
-    combatMenu.menuState_00.set((short)1);
-    combatMenu.x_04.set(160);
-    combatMenu.y_06.set(144);
-    combatMenu.charIndex_08.set((short)charIndex);
-    combatMenu.menuType_0a.set((short)(menuType & 1));
-    combatMenu._0c.set(0x20);
-    combatMenu._0e.set(0x2b);
-    combatMenu._10.set(0);
-    combatMenu._12.set(0);
-    combatMenu._14.set(0x1);
-    combatMenu._16.set(0x1000);
-    combatMenu.textX_18.set((short)0);
-    combatMenu._1a.set((short)0);
-    combatMenu.itemOrSpellId_1c.set((short)-1);
-    combatMenu.listIndex_1e.set((short)0);
-    combatMenu._20.set((short)0);
+    final CombatMenua4 combatMenu = combatMenu_800c6b60;
+    combatMenu.menuState_00 = 1;
+    combatMenu.x_04 = 160;
+    combatMenu.y_06 = 144;
+    combatMenu.charIndex_08 = (short)charIndex;
+    combatMenu.menuType_0a = (short)(menuType & 0x1);
+    combatMenu._0c = 0x20;
+    combatMenu._0e = 0x2b;
+    combatMenu._10 = 0;
+    combatMenu._12 = 0;
+    combatMenu._14 = 0x1;
+    combatMenu._16 = 0x1000;
+    combatMenu.textX_18 = 0;
+    combatMenu._1a = 0;
+    combatMenu.itemOrSpellId_1c = -1;
+    combatMenu.listIndex_1e = 0;
+    combatMenu._20 = 0;
 
     //LAB_800f4a58
     if(menuType == 0) {
       //LAB_800f4a9c
       prepareItemList();
-      combatMenu.count_22.set((short)combatItems_800c6988.size());
+      combatMenu.count_22 = (short)combatItems_800c6988.size();
     } else if(menuType == 1) {
       //LAB_800f4abc
       //LAB_800f4ae0
       int charSlot;
       for(charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
-        if(dragoonSpells_800c6960.get(charSlot).charIndex_00.get() == combatMenu.charIndex_08.get()) {
+        if(dragoonSpells_800c6960.get(charSlot).charIndex_00.get() == combatMenu.charIndex_08) {
           break;
         }
       }
@@ -1290,31 +1290,31 @@ public final class Bttl_800f {
       }
 
       //LAB_800f4b3c
-      combatMenu.count_22.set(spellIndex);
+      combatMenu.count_22 = spellIndex;
     } else if(menuType == 2) {
       //LAB_800f4b4c
-      combatMenu.count_22.set((short)0);
+      combatMenu.count_22 = 0;
     }
 
     //LAB_800f4b50
     //LAB_800f4b54
     //LAB_800f4b60
-    combatMenu._7c.set(0);
-    combatMenu._80.set(0);
-    combatMenu._84.set(0);
-    combatMenu._88.set(0);
-    combatMenu._8c.set(0);
-    combatMenu._90.set(0);
-    combatMenu._94.set(0);
-    combatMenu._98.set(0);
-    combatMenu._9c.set(0);
-    combatMenu._a0.set(0);
+    combatMenu._7c = 0;
+    combatMenu._80 = 0;
+    combatMenu._84 = 0;
+    combatMenu._88 = 0;
+    combatMenu._8c = 0;
+    combatMenu._90 = 0;
+    combatMenu._94 = 0;
+    combatMenu._98 = 0;
+    combatMenu._9c = 0;
+    combatMenu._a0 = 0;
   }
 
   @Method(0x800f4b80L)
   public static void FUN_800f4b80() {
-    final CombatMenua4 combatMenu = combatMenu_800c6b60.deref();
-    if(combatMenu.menuState_00.get() == 0) {
+    final CombatMenua4 combatMenu = combatMenu_800c6b60;
+    if(combatMenu.menuState_00 == 0) {
       return;
     }
 
@@ -1323,53 +1323,53 @@ public final class Bttl_800f {
     int s0;
 
     //LAB_800f4bc0
-    switch(combatMenu.menuState_00.get()) {
+    switch(combatMenu.menuState_00) {
       case 1 -> {
-        combatMenu._90.set(0);
-        combatMenu._a0.set(0);
-        combatMenu._12.set(0);
-        combatMenu._10.set(0);
+        combatMenu._90 = 0;
+        combatMenu._a0 = 0;
+        combatMenu._12 = 0;
+        combatMenu._10 = 0;
 
-        if(combatMenu.menuType_0a.get() == 0) {
-          combatMenu.listScroll_24.set(combatMenu._26.get());
-          combatMenu._02.or(0x20);
-          combatMenu.listIndex_1e.set(combatMenu._28.get());
-          combatMenu._20.set(combatMenu._2a.get());
-          combatMenu._94.set(combatMenu._2c.get());
+        if(combatMenu.menuType_0a == 0) {
+          combatMenu.listScroll_24 = combatMenu._26;
+          combatMenu._02 |= 0x20;
+          combatMenu.listIndex_1e = combatMenu._28;
+          combatMenu._20 = combatMenu._2a;
+          combatMenu._94 = combatMenu._2c;
 
-          if(combatMenu.count_22.get() - 1 < combatMenu.listScroll_24.get() + combatMenu.listIndex_1e.get()) {
-            combatMenu.listScroll_24.decr();
+          if(combatMenu.count_22 - 1 < combatMenu.listScroll_24 + combatMenu.listIndex_1e) {
+            combatMenu.listScroll_24--;
 
-            if(combatMenu.listScroll_24.get() < 0) {
-              combatMenu.listScroll_24.set((short)0);
-              combatMenu.listIndex_1e.set((short)0);
-              combatMenu._20.set(combatMenu._1a.get());
-              combatMenu._94.set(0); // This was a3.1a - a3.1a
+            if(combatMenu.listScroll_24 < 0) {
+              combatMenu.listScroll_24 = 0;
+              combatMenu.listIndex_1e = 0;
+              combatMenu._20 = combatMenu._1a;
+              combatMenu._94 = 0; // This was a3.1a - a3.1a
             }
           }
         } else {
           //LAB_800f4ca0
-          combatMenu.listIndex_1e.set((short)0);
-          combatMenu._20.set((short)0);
-          combatMenu._94.set(0);
-          combatMenu.listScroll_24.set(combatMenu._30.get());
+          combatMenu.listIndex_1e = 0;
+          combatMenu._20 = 0;
+          combatMenu._94 = 0;
+          combatMenu.listScroll_24 = combatMenu._30;
         }
 
         //LAB_800f4cb4
-        combatMenu.itemOrSpellId_1c.set((short)getItemOrSpellId());
-        combatMenu.menuState_00.set((short)7);
-        combatMenu._02.or(0x40);
+        combatMenu.itemOrSpellId_1c = (short)getItemOrSpellId();
+        combatMenu.menuState_00 = 7;
+        combatMenu._02 |= 0x40;
       }
 
       case 2 -> {
-        combatMenu._02.and(0xfcff);
-        combatMenu.itemOrSpellId_1c.set((short)getItemOrSpellId());
+        combatMenu._02 &= 0xfcff;
+        combatMenu.itemOrSpellId_1c = (short)getItemOrSpellId();
 
         if((press_800bee94.get() & 0x4) != 0) { // L1
-          if(combatMenu.listScroll_24.get() != 0) {
-            combatMenu._88.set(2);
-            combatMenu.listScroll_24.set((short)0);
-            combatMenu.menuState_00.set((short)5);
+          if(combatMenu.listScroll_24 != 0) {
+            combatMenu._88 = 2;
+            combatMenu.listScroll_24 = 0;
+            combatMenu.menuState_00 = 5;
             playSound(0, 1, 0, 0, (short)0, (short)0);
           }
 
@@ -1378,20 +1378,20 @@ public final class Bttl_800f {
 
         //LAB_800f4d54
         if((press_800bee94.get() & 0x1) != 0) { // L2
-          s0 = combatMenu.listScroll_24.get();
+          s0 = combatMenu.listScroll_24;
 
-          if(combatMenu.count_22.get() - 1 >= combatMenu.listIndex_1e.get() + 6) {
-            combatMenu.listScroll_24.set((short)6);
+          if(combatMenu.count_22 - 1 >= combatMenu.listIndex_1e + 6) {
+            combatMenu.listScroll_24 = 6;
           } else {
             //LAB_800f4d8c
-            combatMenu.listScroll_24.set((short)(combatMenu.count_22.get() - (combatMenu.listIndex_1e.get() + 1)));
+            combatMenu.listScroll_24 = (short)(combatMenu.count_22 - (combatMenu.listIndex_1e + 1));
           }
 
           //LAB_800f4d90
-          combatMenu._88.set(2);
-          combatMenu.menuState_00.set((short)5);
+          combatMenu._88 = 2;
+          combatMenu.menuState_00 = 5;
 
-          if(s0 != combatMenu.listScroll_24.get()) {
+          if(s0 != combatMenu.listScroll_24) {
             playSound(0, 1, 0, 0, (short)0, (short)0);
           }
 
@@ -1400,67 +1400,67 @@ public final class Bttl_800f {
 
         //LAB_800f4dc4
         if((press_800bee94.get() & 0x8) != 0) { // R1
-          if(combatMenu.listIndex_1e.get() == 0) {
+          if(combatMenu.listIndex_1e == 0) {
             break;
           }
 
-          if(combatMenu.listIndex_1e.get() < 7) {
-            combatMenu.listScroll_24.set((short)0);
-            combatMenu.listIndex_1e.set((short)0);
-            combatMenu._20.set(combatMenu._1a.get());
+          if(combatMenu.listIndex_1e < 7) {
+            combatMenu.listScroll_24 = 0;
+            combatMenu.listIndex_1e = 0;
+            combatMenu._20 = combatMenu._1a;
           } else {
             //LAB_800f4df4
-            combatMenu.listIndex_1e.sub((short)7);
-            combatMenu._20.add((short)98);
+            combatMenu.listIndex_1e -= 7;
+            combatMenu._20 += 98;
           }
 
           //LAB_800f4e00
-          combatMenu._88.set(2);
-          combatMenu.menuState_00.set((short)5);
-          combatMenu._94.set(combatMenu._1a.get() - combatMenu._20.get());
+          combatMenu._88 = 2;
+          combatMenu.menuState_00 = 5;
+          combatMenu._94 = combatMenu._1a - combatMenu._20;
           playSound(0, 1, 0, 0, (short)0, (short)0);
           break;
         }
 
         //LAB_800f4e40
         if((press_800bee94.get() & 0x2) != 0) { // R2
-          if(combatMenu.listIndex_1e.get() + 6 >= combatMenu.count_22.get() - 1) {
+          if(combatMenu.listIndex_1e + 6 >= combatMenu.count_22 - 1) {
             break;
           }
 
-          combatMenu.listIndex_1e.add((short)7);
-          combatMenu._20.sub((short)98);
+          combatMenu.listIndex_1e += 7;
+          combatMenu._20 -= 98;
 
-          if(combatMenu.listIndex_1e.get() + 6 >= combatMenu.count_22.get() - 1) {
-            combatMenu.listScroll_24.set((short)0);
+          if(combatMenu.listIndex_1e + 6 >= combatMenu.count_22 - 1) {
+            combatMenu.listScroll_24 = 0;
           }
 
           //LAB_800f4e98
-          combatMenu._88.set(2);
-          combatMenu.menuState_00.set((short)5);
-          combatMenu._94.set(combatMenu._1a.get() - combatMenu._20.get());
+          combatMenu._88 = 2;
+          combatMenu.menuState_00 = 5;
+          combatMenu._94 = combatMenu._1a - combatMenu._20;
           playSound(0, 1, 0, 0, (short)0, (short)0);
           break;
         }
 
         //LAB_800f4ecc
         if((input_800bee90.get() & 0x1000) != 0) { // Up
-          if(combatMenu.listScroll_24.get() != 0) {
-            combatMenu.menuState_00.set((short)5);
-            combatMenu.listScroll_24.decr();
-            combatMenu._88.set(2);
+          if(combatMenu.listScroll_24 != 0) {
+            combatMenu.menuState_00 = 5;
+            combatMenu.listScroll_24--;
+            combatMenu._88 = 2;
           } else {
             //LAB_800f4f18
-            if(combatMenu.listIndex_1e.get() == 0) {
+            if(combatMenu.listIndex_1e == 0) {
               break;
             }
 
-            combatMenu.menuState_00.set((short)3);
-            combatMenu._02.or(0x200);
-            combatMenu._80.set(5);
-            combatMenu._7c.set(combatMenu._20.get());
-            combatMenu._20.add((short)5);
-            combatMenu.listIndex_1e.decr();
+            combatMenu.menuState_00 = 3;
+            combatMenu._02 |= 0x200;
+            combatMenu._80 = 5;
+            combatMenu._7c = combatMenu._20;
+            combatMenu._20 += 5;
+            combatMenu.listIndex_1e--;
           }
 
           playSound(0, 1, 0, 0, (short)0, (short)0);
@@ -1469,22 +1469,22 @@ public final class Bttl_800f {
 
         //LAB_800f4f74
         if((input_800bee90.get() & 0x4000) != 0) { // Down
-          if(combatMenu.listScroll_24.get() != combatMenu.count_22.get() - 1) {
-            if(combatMenu.listIndex_1e.get() + combatMenu.listScroll_24.get() + 1 < combatMenu.count_22.get()) {
+          if(combatMenu.listScroll_24 != combatMenu.count_22 - 1) {
+            if(combatMenu.listIndex_1e + combatMenu.listScroll_24 + 1 < combatMenu.count_22) {
               playSound(0, 1, 0, 0, (short)0, (short)0);
 
-              if(combatMenu.listScroll_24.get() != 6) {
-                combatMenu.listScroll_24.incr();
-                combatMenu._88.set(2);
-                combatMenu.menuState_00.set((short)5);
+              if(combatMenu.listScroll_24 != 6) {
+                combatMenu.listScroll_24++;
+                combatMenu._88 = 2;
+                combatMenu.menuState_00 = 5;
               } else {
                 //LAB_800f4ff8
-                combatMenu._80.set(-5);
-                combatMenu.menuState_00.set((short)4);
-                combatMenu._7c.set(combatMenu._20.get());
-                combatMenu._20.sub((short)5);
-                combatMenu.listIndex_1e.incr();
-                combatMenu._02.or(0x100);
+                combatMenu._80 = -5;
+                combatMenu.menuState_00 = 4;
+                combatMenu._7c = combatMenu._20;
+                combatMenu._20 -= 5;
+                combatMenu.listIndex_1e++;
+                combatMenu._02 |= 0x100;
               }
             }
           }
@@ -1493,7 +1493,7 @@ public final class Bttl_800f {
         }
 
         //LAB_800f5044
-        combatMenu._90.set(0);
+        combatMenu._90 = 0;
 
         if((press_800bee94.get() & 0x20) != 0) { // X
           //LAB_800f5078
@@ -1502,7 +1502,7 @@ public final class Bttl_800f {
           for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
             player = battleState_8006e398.charBobjs_e40[charSlot].innerStruct_00;
 
-            if(combatMenu.charIndex_08.get() == player.charId_272) {
+            if(combatMenu.charIndex_08 == player.charId_272) {
               //LAB_800f503c
               _800c6980.setu(charSlot);
               break;
@@ -1510,8 +1510,8 @@ public final class Bttl_800f {
           }
 
           //LAB_800f50b8
-          if(combatMenu.menuType_0a.get() == 0) {
-            player.itemId_52 = combatMenu.itemOrSpellId_1c.get();
+          if(combatMenu.menuType_0a == 0) {
+            player.itemId_52 = combatMenu.itemOrSpellId_1c;
             setTempItemMagicStats(player);
 
             if((player.item_d4.target_00 & 0x4) != 0) {
@@ -1526,7 +1526,7 @@ public final class Bttl_800f {
             itemTargetAll_800c69c8.set((player.item_d4.target_00 & 0x2) != 0);
           } else {
             //LAB_800f5134
-            final PlayerBattleObject caster = setActiveCharacterSpell(combatMenu.itemOrSpellId_1c.get());
+            final PlayerBattleObject caster = setActiveCharacterSpell(combatMenu.itemOrSpellId_1c);
 
             if(caster.stats.getStat(CoreMod.MP_STAT.get()).getCurrent() < caster.spell_94.mp_06) {
               //LAB_800f5160
@@ -1543,75 +1543,75 @@ public final class Bttl_800f {
 
           //LAB_800f5190
           playSound(0, 2, 0, 0, (short)0, (short)0);
-          combatMenu._8c.set(0);
-          combatMenu._02.or(0x4);
-          if(combatMenu.menuType_0a.get() == 0) {
-            combatMenu._94.set(combatMenu._1a.get() - combatMenu._20.get());
+          combatMenu._8c = 0;
+          combatMenu._02 |= 0x4;
+          if(combatMenu.menuType_0a == 0) {
+            combatMenu._94 = combatMenu._1a - combatMenu._20;
           }
 
           //LAB_800f51e8
-          combatMenu.menuState_00.set((short)6);
-          combatMenu._02.and(0xfffd);
+          combatMenu.menuState_00 = 6;
+          combatMenu._02 &= 0xfffd;
           break;
         }
 
         //LAB_800f5208
         if((press_800bee94.get() & 0x40) != 0) { // O
           playSound(0, 3, 0, 0, (short)0, (short)0);
-          combatMenu.menuState_00.set((short)8);
-          combatMenu._02.and(0xfff7);
+          combatMenu.menuState_00 = 8;
+          combatMenu._02 &= 0xfff7;
         }
       }
 
       case 3 -> {
-        s0 = combatMenu._80.get();
-        combatMenu._90.incr();
-        if(combatMenu._90.get() >= 0x3L) {
-          s0 = s0 * 2;
+        s0 = combatMenu._80;
+        combatMenu._90++;
+        if(combatMenu._90 >= 3) {
+          s0 *= 2;
         }
 
         //LAB_800f5278
-        a1 = combatMenu._7c.get() + 14;
-        combatMenu._20.add((short)s0);
-        if(combatMenu._20.get() >= a1) {
-          combatMenu._20.set((short)a1);
-          combatMenu.menuState_00.set((short)2);
+        a1 = combatMenu._7c + 14;
+        combatMenu._20 += s0;
+        if(combatMenu._20 >= a1) {
+          combatMenu._20 = (short)a1;
+          combatMenu.menuState_00 = 2;
         }
       }
 
       case 4 -> {
-        s0 = combatMenu._80.get();
-        combatMenu._90.incr();
-        if(combatMenu._90.get() >= 3) {
+        s0 = combatMenu._80;
+        combatMenu._90++;
+        if(combatMenu._90 >= 3) {
           s0 = s0 * 2;
         }
 
         //LAB_800f52d4
-        a1 = combatMenu._7c.get() - 14;
-        combatMenu._20.add((short)s0);
-        if(combatMenu._20.get() <= a1) {
+        a1 = combatMenu._7c - 14;
+        combatMenu._20 += s0;
+        if(combatMenu._20 <= a1) {
           //LAB_800f5300
-          combatMenu._20.set((short)a1);
-          combatMenu.menuState_00.set((short)2);
+          combatMenu._20 = (short)a1;
+          combatMenu.menuState_00 = 2;
         }
       }
 
       case 5 -> {
-        s0 = combatMenu._88.get();
-        combatMenu._90.incr();
-        if(combatMenu._90.get() >= 3) {
+        s0 = combatMenu._88;
+        combatMenu._90++;
+        if(combatMenu._90 >= 3) {
           s0 = s0 / 2;
         }
 
         //LAB_800f5338
         if(s0 <= 1) {
-          combatMenu.menuState_00.set((short)2);
+          combatMenu.menuState_00 = 2;
         }
       }
 
       case 6 -> {
-        combatMenu._a0.set(0);
-        combatMenu.itemOrSpellId_1c.set((short)getItemOrSpellId());
+        combatMenu._a0 = 0;
+        combatMenu.itemOrSpellId_1c = (short)getItemOrSpellId();
         PlayerBattleObject player;
 
         //LAB_800f538c
@@ -1619,7 +1619,7 @@ public final class Bttl_800f {
         do {
           player = battleState_8006e398.charBobjs_e40[charSlot].innerStruct_00;
 
-          if(combatMenu.charIndex_08.get() == player.charId_272) {
+          if(combatMenu.charIndex_08 == player.charId_272) {
             break;
           }
 
@@ -1629,7 +1629,7 @@ public final class Bttl_800f {
         //LAB_800f53c8
         final int targetType;
         final boolean targetAll;
-        if(combatMenu.menuType_0a.get() == 0) { // Items
+        if(combatMenu.menuType_0a == 0) { // Items
           targetType = itemTargetType_800c6b68.get();
           targetAll = itemTargetAll_800c69c8.get();
         } else { // Spells
@@ -1642,77 +1642,78 @@ public final class Bttl_800f {
         //LAB_800f5410
         final int ret = FUN_800f7768(targetType, targetAll);
         if(ret == 1) { // Pressed X
-          if(combatMenu.menuType_0a.get() == 0) {
-            takeItemId(combatMenu.itemOrSpellId_1c.get() + 192);
+          if(combatMenu.menuType_0a == 0) {
+            takeItemId(combatMenu.itemOrSpellId_1c + 192);
           }
 
           //LAB_800f545c
-          if(combatMenu.menuType_0a.get() == 1) {
+          if(combatMenu.menuType_0a == 1) {
             final VitalsStat mp = player.stats.getStat(CoreMod.MP_STAT.get());
             mp.setCurrent(mp.getCurrent() - player.spell_94.mp_06);
           }
 
           //LAB_800f5488
           playSound(0, 2, 0, 0, (short)0, (short)0);
-          combatMenu._a0.set(1);
-          combatMenu.menuState_00.set((short)9);
+          combatMenu._a0 = 1;
+          combatMenu.menuState_00 = 9;
         } else if(ret == -1) { // Pressed O
           //LAB_800f54b4
           playSound(0, 0, 3, 0, (short)0, (short)0);
-          combatMenu.menuState_00.set((short)7);
-          combatMenu._02.and(0xfffb).or(0x20);
+          combatMenu.menuState_00 = 7;
+          combatMenu._02 &= 0xfffb;
+          combatMenu._02 |= 0x20;
         }
       }
 
       case 7 -> {
-        if(combatMenu.menuType_0a.get() != 0) {
+        if(combatMenu.menuType_0a != 0) {
           s0 = 0x80;
         } else {
           s0 = 0xba;
         }
 
-        combatMenu.menuState_00.set((short)2);
+        combatMenu.menuState_00 = 2;
         playSound(0, 4, 0, 0, (short)0, (short)0);
-        combatMenu._12.set(0x52);
-        combatMenu._10.set(s0);
-        combatMenu.textX_18.set((short)(combatMenu.x_04.get() - s0 / 2 + 9));
-        v0 = (combatMenu.y_06.get() - combatMenu._12.get()) - 16;
-        combatMenu._1a.set((short)v0);
-        combatMenu._20.set((short)v0);
-        combatMenu._02.or(0xb);
-        if((combatMenu._02.get() & 0x20L) != 0) {
-          v0 = v0 - combatMenu._94.get();
-          combatMenu._20.set((short)v0);
+        combatMenu._12 = 0x52;
+        combatMenu._10 = s0;
+        combatMenu.textX_18 = (short)(combatMenu.x_04 - s0 / 2 + 9);
+        v0 = (combatMenu.y_06 - combatMenu._12) - 16;
+        combatMenu._1a = (short)v0;
+        combatMenu._20 = (short)v0;
+        combatMenu._02 |= 0xb;
+        if((combatMenu._02 & 0x20) != 0) {
+          v0 = v0 - combatMenu._94;
+          combatMenu._20 = (short)v0;
         }
 
         //LAB_800f5588
-        if(combatMenu.menuType_0a.get() != 0) {
-          combatMenu.itemOrSpellId_1c.set((short)getItemOrSpellId());
-          addFloatingNumber(0, 0x1L, 0, setActiveCharacterSpell(combatMenu.itemOrSpellId_1c.get()).spell_94.mp_06, 280, 135, 0, 0x1L);
+        if(combatMenu.menuType_0a != 0) {
+          combatMenu.itemOrSpellId_1c = (short)getItemOrSpellId();
+          addFloatingNumber(0, 0x1L, 0, setActiveCharacterSpell(combatMenu.itemOrSpellId_1c).spell_94.mp_06, 280, 135, 0, 0x1L);
         }
       }
 
       case 8 -> {
         itemTargetAll_800c69c8.set(false);
         itemTargetType_800c6b68.set(0);
-        combatMenu._a0.set(-1);
-        combatMenu.menuState_00.set((short)9);
-        combatMenu._12.set(0);
-        combatMenu._10.set(0);
-        combatMenu._02.and(0xfffc);
+        combatMenu._a0 = -1;
+        combatMenu.menuState_00 = 9;
+        combatMenu._12 = 0;
+        combatMenu._10 = 0;
+        combatMenu._02 &= 0xfffc;
         final FloatingNumberC4 num = floatingNumbers_800c6b5c[0];
         num.state_00 = 0;
         num.flags_02 = 0;
       }
 
       case 9 -> {
-        if(combatMenu.menuType_0a.get() == 0) {
-          v0 = combatMenu._1a.get() - combatMenu._20.get();
-          combatMenu._26.set(combatMenu.listScroll_24.get());
-          combatMenu._28.set(combatMenu.listIndex_1e.get());
-          combatMenu._2a.set(combatMenu._20.get());
-          combatMenu._94.set(v0);
-          combatMenu._2c.set(v0);
+        if(combatMenu.menuType_0a == 0) {
+          v0 = combatMenu._1a - combatMenu._20;
+          combatMenu._26 = combatMenu.listScroll_24;
+          combatMenu._28 = combatMenu.listIndex_1e;
+          combatMenu._2a = combatMenu._20;
+          combatMenu._94 = v0;
+          combatMenu._2c = v0;
         }
 
         //LAB_800f568c
@@ -1722,19 +1723,19 @@ public final class Bttl_800f {
 
     //LAB_800f5694
     //LAB_800f5698
-    combatMenu._84.set(tickCount_800bb0fc.get() & 0x7);
+    combatMenu._84 = tickCount_800bb0fc.get() & 0x7;
 
     //LAB_800f56ac
   }
 
   @Method(0x800f56c4L)
   public static int getItemOrSpellId() {
-    final CombatMenua4 combatMenu = combatMenu_800c6b60.deref();
-    final short menuType = combatMenu.menuType_0a.get();
+    final CombatMenua4 combatMenu = combatMenu_800c6b60;
+    final short menuType = combatMenu.menuType_0a;
 
     if(menuType == 0) {
       //LAB_800f56f0
-      return combatItems_800c6988.get(combatMenu.listScroll_24.get() + combatMenu.listIndex_1e.get()).itemId - 0xc0;
+      return combatItems_800c6988.get(combatMenu.listScroll_24 + combatMenu.listIndex_1e).itemId - 0xc0;
     }
 
     if(menuType == 1) {
@@ -1742,14 +1743,14 @@ public final class Bttl_800f {
       //LAB_800f5740
       int charSlot;
       for(charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
-        if(dragoonSpells_800c6960.get(charSlot).charIndex_00.get() == combatMenu.charIndex_08.get()) {
+        if(dragoonSpells_800c6960.get(charSlot).charIndex_00.get() == combatMenu.charIndex_08) {
           break;
         }
       }
 
       //LAB_800f5778
-      int spellIndex = dragoonSpells_800c6960.get(charSlot).spellIndex_01.get(combatMenu.listScroll_24.get() + combatMenu.listIndex_1e.get()).get();
-      if(combatMenu.charIndex_08.get() == 8) {
+      int spellIndex = dragoonSpells_800c6960.get(charSlot).spellIndex_01.get(combatMenu.listScroll_24 + combatMenu.listIndex_1e).get();
+      if(combatMenu.charIndex_08 == 8) {
         if(spellIndex == 65) {
           spellIndex = 10;
         }
@@ -1778,16 +1779,16 @@ public final class Bttl_800f {
   public static void renderList(final int type) {
     int trim;
 
-    final CombatMenua4 combatMenu = combatMenu_800c6b60.deref();
+    final CombatMenua4 combatMenu = combatMenu_800c6b60;
 
-    int y1 = combatMenu._20.get();
-    final int y2 = combatMenu._1a.get();
-    final int sp68 = combatMenu.y_06.get();
+    int y1 = combatMenu._20;
+    final int y2 = combatMenu._1a;
+    final int sp68 = combatMenu.y_06;
 
     //LAB_800f5860
     int charSlot;
     for(charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
-      if(dragoonSpells_800c6960.get(charSlot).charIndex_00.get() == combatMenu.charIndex_08.get()) {
+      if(dragoonSpells_800c6960.get(charSlot).charIndex_00.get() == combatMenu.charIndex_08) {
         break;
       }
     }
@@ -1800,7 +1801,7 @@ public final class Bttl_800f {
     final LodString itemCount = new LodString(12);
 
     //LAB_800f58e0
-    for(int spellSlot = 0; spellSlot < combatMenu.count_22.get(); spellSlot++) {
+    for(int spellSlot = 0; spellSlot < combatMenu.count_22; spellSlot++) {
       if(y1 >= sp68) {
         break;
       }
@@ -1855,7 +1856,7 @@ public final class Bttl_800f {
         int spellId = dragoonSpells_800c6960.get(charSlot).spellIndex_01.get(spellSlot).get();
         name = new LodString(spellStats_800fa0b8[spellId].name);
 
-        if(combatMenu.charIndex_08.get() == 8) {
+        if(combatMenu.charIndex_08 == 8) {
           if(spellId == 65) {
             spellId = 10;
           }
@@ -1892,28 +1893,28 @@ public final class Bttl_800f {
         }
 
         //LAB_800f5bb4
-        if((combatMenu._02.get() & 0x4) != 0) {
-          trim = (short)combatMenu._8c.get();
+        if((combatMenu._02 & 0x4) != 0) {
+          trim = (short)combatMenu._8c;
         }
 
         //LAB_800f5bd8
-        Scus94491BpeSegment_8002.renderText(name, combatMenu.textX_18.get(), y1, textColour, trim);
+        Scus94491BpeSegment_8002.renderText(name, combatMenu.textX_18, y1, textColour, trim);
 
         if(type == 0) {
-          Scus94491BpeSegment_8002.renderText(sp0x40, combatMenu.textX_18.get() + 128, y1, textColour, trim);
+          Scus94491BpeSegment_8002.renderText(sp0x40, combatMenu.textX_18 + 128, y1, textColour, trim);
         }
       } else if(y2 < y1 + 12) {
-        if((combatMenu._02.get() & 0x4) != 0) {
-          trim = combatMenu._8c.get();
+        if((combatMenu._02 & 0x4) != 0) {
+          trim = combatMenu._8c;
         } else {
           trim = y1 - y2;
         }
 
         //LAB_800f5b40
-        Scus94491BpeSegment_8002.renderText(name, combatMenu.textX_18.get(), y2, textColour, trim);
+        Scus94491BpeSegment_8002.renderText(name, combatMenu.textX_18, y2, textColour, trim);
 
         if(type == 0) {
-          Scus94491BpeSegment_8002.renderText(sp0x40, combatMenu.textX_18.get() + 128, y2, textColour, trim);
+          Scus94491BpeSegment_8002.renderText(sp0x40, combatMenu.textX_18 + 128, y2, textColour, trim);
         }
       }
 
@@ -1932,19 +1933,19 @@ public final class Bttl_800f {
    *   - Dragoon magic MP cost background and normal text (excluding the number value) */
   @Method(0x800f5c94L)
   public static void drawItemMenuElements() {
-    final CombatMenua4 structa4 = combatMenu_800c6b60.deref();
+    final CombatMenua4 structa4 = combatMenu_800c6b60;
 
-    if(structa4.menuState_00.get() != 0 && (structa4._02.get() & 0x1L) != 0) {
-      if((structa4._02.get() & 0x2L) != 0) {
-        renderList(structa4.menuType_0a.get());
+    if(structa4.menuState_00 != 0 && (structa4._02 & 0x1) != 0) {
+      if((structa4._02 & 0x2) != 0) {
+        renderList(structa4.menuType_0a);
 
-        if((structa4._02.get() & 0x8L) != 0) {
+        if((structa4._02 & 0x8) != 0) {
           //LAB_800f5d78
           //LAB_800f5d90
-          FUN_800f8cd8(structa4.textX_18.get() - centreScreenX_1f8003dc.get() - 16, structa4._1a.get() - centreScreenY_1f8003de.get() + structa4.listScroll_24.get() * 14 + 2, structa4._84.get() % 4 * 16 + 192 & 0xf0, structa4._84.get() / 4 * 8 + 32 & 0xf8, 15, 8, 0xd, Translucency.B_PLUS_F);
+          FUN_800f8cd8(structa4.textX_18 - centreScreenX_1f8003dc.get() - 16, structa4._1a - centreScreenY_1f8003de.get() + structa4.listScroll_24 * 14 + 2, structa4._84 % 4 * 16 + 192 & 0xf0, structa4._84 / 4 * 8 + 32 & 0xf8, 15, 8, 0xd, Translucency.B_PLUS_F);
 
           final int s0;
-          if(structa4.menuType_0a.get() != 0) {
+          if(structa4.menuType_0a != 0) {
             s0 = 0;
           } else {
             s0 = 26;
@@ -1952,7 +1953,7 @@ public final class Bttl_800f {
 
           //LAB_800f5e00
           final int s1;
-          if((structa4._02.get() & 0x100L) != 0) {
+          if((structa4._02 & 0x100) != 0) {
             s1 = 2;
           } else {
             s1 = 0;
@@ -1960,42 +1961,42 @@ public final class Bttl_800f {
 
           //LAB_800f5e18
           final int t0;
-          if((structa4._02.get() & 0x200L) != 0) {
+          if((structa4._02 & 0x200) != 0) {
             t0 = -2;
           } else {
             t0 = 0;
           }
 
           //LAB_800f5e24
-          if(structa4.listIndex_1e.get() > 0) {
-            FUN_800f74f4(_800c7190.getAddress(), structa4.x_04.get() + s0 + 56, structa4.y_06.get() + t0 - 100, (int)_800c7192.get(), (int)_800c7193.get(), 0xdL, null, (short)0);
+          if(structa4.listIndex_1e > 0) {
+            FUN_800f74f4(_800c7190.getAddress(), structa4.x_04 + s0 + 56, structa4.y_06 + t0 - 100, (int)_800c7192.get(), (int)_800c7193.get(), 0xdL, null, (short)0);
           }
 
           //LAB_800f5e7c
-          if(structa4.listIndex_1e.get() + 6 < structa4.count_22.get() - 1) {
-            FUN_800f74f4(_800c7190.getAddress(), structa4.x_04.get() + s0 + 56, structa4.y_06.get() + s1 - 7, (int)_800c7192.get(), (int)_800c7193.get(), 0xdL, null, (short)1);
+          if(structa4.listIndex_1e + 6 < structa4.count_22 - 1) {
+            FUN_800f74f4(_800c7190.getAddress(), structa4.x_04 + s0 + 56, structa4.y_06 + s1 - 7, (int)_800c7192.get(), (int)_800c7193.get(), 0xdL, null, (short)1);
           }
         }
 
         //LAB_800f5ee8
         //Item menu
-        final int a2 = structa4._10.get() + 6;
-        final int a3 = structa4._12.get() + 17;
-        renderTextBoxBackground(structa4.x_04.get() - a2 / 2, structa4.y_06.get() - a3, a2, a3, Config.changeBattleRgb() ? Config.getBattleRgb() : 0x00299f);
+        final int a2 = structa4._10 + 6;
+        final int a3 = structa4._12 + 17;
+        renderTextBoxBackground(structa4.x_04 - a2 / 2, structa4.y_06 - a3, a2, a3, Config.changeBattleRgb() ? Config.getBattleRgb() : 0x00299f);
       }
 
       //LAB_800f5f50
-      if((structa4._02.get() & 0x40) != 0) {
+      if((structa4._02 & 0x40) != 0) {
         final int textType;
-        if(structa4.menuType_0a.get() == 0) { // Item
+        if(structa4.menuType_0a == 0) { // Item
           //LAB_800f5f8c
           textType = 4;
-        } else if(structa4.menuType_0a.get() == 1) { // Spell
+        } else if(structa4.menuType_0a == 1) { // Spell
           //LAB_800f5f94
           textType = 5;
-          if((structa4._02.get() & 0x2L) != 0) {
-            final BattleObject27c bobj = setActiveCharacterSpell(structa4.itemOrSpellId_1c.get());
-            addFloatingNumber(0, 0x1L, 0, bobj.spell_94.mp_06, 280, 135, 0, structa4.menuType_0a.get());
+          if((structa4._02 & 0x2) != 0) {
+            final BattleObject27c bobj = setActiveCharacterSpell(structa4.itemOrSpellId_1c);
+            addFloatingNumber(0, 0x1L, 0, bobj.spell_94.mp_06, 280, 135, 0, structa4.menuType_0a);
             FUN_800f8cd8(236 - centreScreenX_1f8003dc.get(), 130 - centreScreenY_1f8003de.get(), 16, 128, 24, 16, 0x2c, null);
             renderTextBoxBackground(236, 130, 64, 14, Config.changeBattleRgb() ? Config.getBattleRgb() : 0x00299f);
           }
@@ -2007,7 +2008,7 @@ public final class Bttl_800f {
         //LAB_800f6050
         //Selected item description
         renderTextBoxBackground(44, 156, 232, 14, Config.changeBattleRgb() ? Config.getBattleRgb() : 0x00299f);
-        renderText(textType, structa4.itemOrSpellId_1c.get(), 160, 163);
+        renderText(textType, structa4.itemOrSpellId_1c, 160, 163);
       }
     }
 
@@ -3510,7 +3511,7 @@ public final class Bttl_800f {
 
   @Method(0x800f9e50L)
   public static PlayerBattleObject setActiveCharacterSpell(final int spellId) {
-    final int charIndex = combatMenu_800c6b60.deref().charIndex_08.get();
+    final int charIndex = combatMenu_800c6b60.charIndex_08;
 
     //LAB_800f9e8c
     for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
