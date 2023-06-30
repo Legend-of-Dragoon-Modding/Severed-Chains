@@ -15,7 +15,6 @@ import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.TmdWithId;
 import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
-import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.CString;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.ShortRef;
@@ -1326,17 +1325,17 @@ public final class Bttl_800d {
     }
 
     //LAB_800d4108
-    final ArrayRef<SpTextEffectTrail10> charArray = s3.charArray_3c;
+    final SpTextEffectTrail10[] charArray = s3.charArray_3c;
 
     //LAB_800d4118
     int i;
     for (i = 7; i > 0; i--) {
-      charArray.get(i)._00.set(charArray.get(i - 1)._00.get());
-      charArray.get(i)._04.set(charArray.get(i - 1)._04.get());
+      charArray[i]._00 = charArray[i - 1]._00;
+      charArray[i]._04 = charArray[i - 1]._04;
     }
 
-    charArray.get(0)._00.set(s3._0c);
-    charArray.get(0)._04.set(s3._10);
+    charArray[0]._00 = s3._0c;
+    charArray[0]._04 = s3._10;
     final String sp0x18 = Integer.toString(s3._08);
     int fp = s3._02;
     final int sp20 = (fp & 0xff) >>> 3;
@@ -1348,10 +1347,10 @@ public final class Bttl_800d {
     for (i = 0; i < 8; i++) {
       fp = fp - sp20;
 
-      if(i == 0 || charArray.get(i)._00.get() != s3._0c || charArray.get(i)._04.get() != s3._10) {
+      if(i == 0 || charArray[i]._00 != s3._0c || charArray[i]._04 != s3._10) {
         //LAB_800d41d8
-        s2 = (short)(charArray.get(i)._00.get() >> 8);
-        s5 = (short)(charArray.get(i)._04.get() >> 8);
+        s2 = (short)(charArray[i]._00 >> 8);
+        s5 = (short)(charArray[i]._04 >> 8);
 
         if(s3._01 != 0) {
           FUN_800d3f98(s2, s5, 10, (short)sp2c, fp & 0xff);
@@ -1374,11 +1373,6 @@ public final class Bttl_800d {
     //LAB_800d42dc
   }
 
-  @Method(0x800d430cL)
-  public static void FUN_800d430c(final ScriptState<SpTextEffect40> state, final SpTextEffect40 data) {
-    state.innerStruct_00.charArray_3c = null;
-  }
-
   @Method(0x800d4338L)
   public static FlowControl FUN_800d4338(final RunningScript<?> script) {
     final int s2 = script.params_20[0].get();
@@ -1391,7 +1385,6 @@ public final class Bttl_800d {
       final ScriptState<SpTextEffect40> state = SCRIPTS.allocateScriptState("SpTextEffect40", new SpTextEffect40());
       state.loadScriptFile(doNothingScript_8004f650);
       state.setTicker(Bttl_800d::FUN_800d4018);
-      state.setDestructor(Bttl_800d::FUN_800d430c);
 
       final SpTextEffect40 s1 = state.innerStruct_00;
       s1._00 = 1;
@@ -1402,8 +1395,6 @@ public final class Bttl_800d {
       s1._10 = 30;
       s1._1c = (int)(_800faa90.getSigned() << 8);
       s1._20 = 0x5000;
-      final ArrayRef<SpTextEffectTrail10> charArray = MEMORY.ref(4, mallocTail(0x80), ArrayRef.of(SpTextEffectTrail10.class, 0x8, 0x10, SpTextEffectTrail10::new));
-      s1.charArray_3c = charArray;
 
       if(s3 == 1) {
         _800faa92.setu(0);
@@ -1425,8 +1416,8 @@ public final class Bttl_800d {
 
       //LAB_800d44dc
       for(int i = 0; i < 8; i++) {
-        charArray.get(i)._00.set(s1._0c);
-        charArray.get(i)._04.set(s1._10);
+        s1.charArray_3c[i]._00 = s1._0c;
+        s1.charArray_3c[i]._04 = s1._10;
       }
 
       final int strLen = String.valueOf(s1._08).length();

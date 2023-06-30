@@ -1,6 +1,6 @@
 package legend.game.combat.effects;
 
-import legend.core.memory.types.ArrayRef;
+import java.util.Arrays;
 
 public class SpTextEffect40 {
   public int _00;
@@ -18,5 +18,9 @@ public class SpTextEffect40 {
   public int _2c;
   public int _30;
 
-  public ArrayRef<SpTextEffectTrail10> charArray_3c;
+  public final SpTextEffectTrail10[] charArray_3c = new SpTextEffectTrail10[8];
+
+  public SpTextEffect40() {
+    Arrays.setAll(this.charArray_3c, i -> new SpTextEffectTrail10());
+  }
 }
