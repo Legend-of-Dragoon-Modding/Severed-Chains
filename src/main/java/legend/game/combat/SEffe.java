@@ -115,13 +115,13 @@ import org.apache.logging.log4j.Logger;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SCRIPTS;
-import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.Scus94491BpeSegment.FUN_80018a5c;
 import static legend.game.Scus94491BpeSegment.FUN_80018d60;
 import static legend.game.Scus94491BpeSegment.FUN_80018dec;
@@ -3528,7 +3528,7 @@ public final class SEffe {
   /** Runs callbacks to render correct button icon effects during addition */
   @Method(0x80106050L)
   public static void renderAdditionButton(final long a0, final boolean isCounter) {
-    final long callback = getMethodAddress(Bttl_800d.class, "FUN_800d46d4", RunningScript.class);
+    final Consumer<RunningScript<?>> callback = Bttl_800d::FUN_800d46d4;
 
     // Params: ?, x, y, translucency, colour
     final int offset = isCounter ? 1 : 0;
@@ -4223,7 +4223,7 @@ public final class SEffe {
     final int s3 = (int)_8011a020.get();
     final int fp = s4 + 16;
     final int s7 = s3 + 70;
-    final long func = getMethodAddress(Bttl_800d.class, "FUN_800d46d4", RunningScript.class);
+    final Consumer<RunningScript<?>> func = Bttl_800d::FUN_800d46d4;
 
     final int a2;
     if(FUN_80108460(a0, 0) != 0) {

@@ -93,6 +93,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.EVENTS;
@@ -4287,7 +4288,7 @@ public final class Bttl_800c {
    * This method allows you to call a script function from the main game engine. Variadic params get passed in as the param array.
    */
   @Method(0x800cff54L)
-  public static void callScriptFunction(final long func, final int... params) {
+  public static void callScriptFunction(final Consumer<RunningScript<?>> func, final int... params) {
     final RunningScript<Void> script = new RunningScript<>(null);
 
     //LAB_800cff90
@@ -4296,7 +4297,7 @@ public final class Bttl_800c {
     }
 
     //LAB_800cffbc
-    MEMORY.ref(4, func).call(script);
+    func.accept(script);
   }
 
   /** Sets translation vector to position of individual part of model associated with scriptIndex */
