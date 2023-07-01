@@ -730,7 +730,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[865] = Scus94491BpeSegment_8002::scriptTakeItem;
     scriptSubFunctions_8004e29c[866] = Scus94491BpeSegment_8002::scriptGiveGold;
 
-    scriptSubFunctions_8004e29c[896] = SEffe::FUN_8010a610;
+    scriptSubFunctions_8004e29c[896] = SEffe::allocateGradientRaysEffect;
     scriptSubFunctions_8004e29c[897] = SEffe::allocateScreenCaptureEffect;
   }
   // 8004f29c end of jump table
