@@ -35,6 +35,7 @@ import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptState;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.LodString;
+import legend.game.types.SpellStats0c;
 import legend.game.types.Translucency;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -2758,7 +2759,7 @@ public final class Bttl_800f {
         LOGGER.error("Retail bug: spell index out of bounds (%d). This is known to happen during Shana/Miranda's dragoon attack.", bobj.spellId_4e);
       }
 
-      bobj.spell_94 = null;
+      bobj.spell_94 = new SpellStats0c();
     }
 
     //LAB_800f7c54
