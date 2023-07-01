@@ -693,7 +693,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[789] = SMap::FUN_800f25a8;
     scriptSubFunctions_8004e29c[790] = SMap::FUN_800f1274;
 
-    scriptSubFunctions_8004e29c[800] = SEffe::FUN_8010c378;
+    scriptSubFunctions_8004e29c[800] = SEffe::allocateLensFlareEffect;
     scriptSubFunctions_8004e29c[801] = SEffe::FUN_8010d1dc;
     scriptSubFunctions_8004e29c[802] = SEffe::allocateGoldDragoonTransformEffect;
     scriptSubFunctions_8004e29c[803] = SEffe::allocateStarChildrenMeteorEffect;
@@ -730,7 +730,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[865] = Scus94491BpeSegment_8002::scriptTakeItem;
     scriptSubFunctions_8004e29c[866] = Scus94491BpeSegment_8002::scriptGiveGold;
 
-    scriptSubFunctions_8004e29c[896] = SEffe::FUN_8010a610;
+    scriptSubFunctions_8004e29c[896] = SEffe::allocateGradientRaysEffect;
     scriptSubFunctions_8004e29c[897] = SEffe::allocateScreenCaptureEffect;
   }
   // 8004f29c end of jump table

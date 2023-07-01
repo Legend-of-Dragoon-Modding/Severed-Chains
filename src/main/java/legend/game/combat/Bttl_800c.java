@@ -21,7 +21,7 @@ import legend.core.memory.types.CString;
 import legend.core.memory.types.ComponentFunction;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.Pointer;
-import legend.core.memory.types.QuintConsumerRef;
+import legend.core.memory.types.QuintConsumer;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
@@ -95,6 +95,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.EVENTS;
@@ -447,7 +448,14 @@ public final class Bttl_800c {
    *   <li>{@link Bttl_800d#renderRingGradientEffect}</li>
    * </ol>
    */
-  public static final ArrayRef<Pointer<QuintConsumerRef<EffectManagerData6c, Integer, short[], RadialGradientEffect14, Translucency>>> radialGradientEffectRenderers_800fa758 = MEMORY.ref(4, 0x800fa758L, ArrayRef.of(Pointer.classFor(QuintConsumerRef.classFor(EffectManagerData6c.class, int.class, short[].class, RadialGradientEffect14.class, Translucency.class)), 5, 4, Pointer.deferred(4, QuintConsumerRef::new)));
+  public static final QuintConsumer<EffectManagerData6c, Integer, short[], RadialGradientEffect14, Translucency>[] radialGradientEffectRenderers_800fa758 = new QuintConsumer[5];
+  static {
+    radialGradientEffectRenderers_800fa758[0] = Bttl_800d::renderDiscGradientEffect;
+    radialGradientEffectRenderers_800fa758[1] = Bttl_800d::FUN_800d1e80;
+    radialGradientEffectRenderers_800fa758[2] = Bttl_800d::renderRingGradientEffect;
+    radialGradientEffectRenderers_800fa758[3] = Bttl_800d::renderDiscGradientEffect;
+    radialGradientEffectRenderers_800fa758[4] = Bttl_800d::renderRingGradientEffect;
+  }
 
   public static final Value _800fa76c = MEMORY.ref(4, 0x800fa76cL);
 
@@ -4048,11 +4056,11 @@ public final class Bttl_800c {
   public static void tickFullScreenOverlay(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
     final FullScreenOverlayEffect0e effect = (FullScreenOverlayEffect0e)manager.effect_44;
 
-    if(effect.ticksRemaining_0c.get() != 0) {
-      effect.r_00.add(effect.stepR_06.get());
-      effect.g_02.add(effect.stepG_08.get());
-      effect.b_04.add(effect.stepB_0a.get());
-      effect.ticksRemaining_0c.decr();
+    if(effect.ticksRemaining_0c != 0) {
+      effect.r_00 += effect.stepR_06;
+      effect.g_02 += effect.stepG_08;
+      effect.b_04 += effect.stepB_0a;
+      effect.ticksRemaining_0c--;
     }
 
     //LAB_800ceb20
@@ -4064,7 +4072,7 @@ public final class Bttl_800c {
 
     GPU.queueCommand(30, new GpuCommandQuad()
       .translucent(Translucency.of(manager._10.flags_00 >>> 28 & 0b11))
-      .rgb(a0.r_00.get() >> 8, a0.g_02.get() >> 8, a0.b_04.get() >> 8)
+      .rgb(a0.r_00 >> 8, a0.g_02 >> 8, a0.b_04 >> 8)
       .pos(-160, -120, 320, 280)
     );
   }
@@ -4075,32 +4083,32 @@ public final class Bttl_800c {
     final int r = script.params_20[1].get() << 8;
     final int g = script.params_20[2].get() << 8;
     final int b = script.params_20[3].get() << 8;
-    final int sp20 = (script.params_20[4].get() << 8) & 0xffff; // Retail bug in violet dragon - overflow
-    final int sp22 = (script.params_20[5].get() << 8) & 0xffff; //
-    final int sp24 = (script.params_20[6].get() << 8) & 0xffff; //
-    final int s1 = script.params_20[7].get() & 0xffff;
+    final int fullR = (script.params_20[4].get() << 8) & 0xffff; // Retail bug in violet dragon - overflow
+    final int fullG = (script.params_20[5].get() << 8) & 0xffff; //
+    final int fullB = (script.params_20[6].get() << 8) & 0xffff; //
+    final int ticks = script.params_20[7].get() & 0xffff;
 
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
-      "Full screen overlay rgb(%x, %x, %x) -> rgb(%x, %x, %x)".formatted(r, g, b, sp20, sp22, sp24),
+      "Full screen overlay rgb(%x, %x, %x) -> rgb(%x, %x, %x)".formatted(r, g, b, fullR, fullG, fullB),
       script.scriptState_04,
-      0xe,
+      0,
       Bttl_800c::tickFullScreenOverlay,
       Bttl_800c::renderFullScreenOverlay,
       null,
-      FullScreenOverlayEffect0e::new
+      value -> new FullScreenOverlayEffect0e()
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
     manager._10.flags_00 = 0x5000_0000;
 
     final FullScreenOverlayEffect0e effect = (FullScreenOverlayEffect0e)manager.effect_44;
-    effect.r_00.set(r);
-    effect.g_02.set(g);
-    effect.b_04.set(b);
-    effect.stepR_06.set((short)((sp20 - r) / s1));
-    effect.stepG_08.set((short)((sp22 - g) / s1));
-    effect.stepB_0a.set((short)((sp24 - b) / s1));
-    effect.ticksRemaining_0c.set(s1);
+    effect.r_00 = r;
+    effect.g_02 = g;
+    effect.b_04 = b;
+    effect.stepR_06 = (short)((fullR - r) / ticks);
+    effect.stepG_08 = (short)((fullG - g) / ticks);
+    effect.stepB_0a = (short)((fullB - b) / ticks);
+    effect.ticksRemaining_0c = ticks;
 
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
@@ -4432,7 +4440,7 @@ public final class Bttl_800c {
    * This method allows you to call a script function from the main game engine. Variadic params get passed in as the param array.
    */
   @Method(0x800cff54L)
-  public static void callScriptFunction(final long func, final int... params) {
+  public static void callScriptFunction(final Consumer<RunningScript<?>> func, final int... params) {
     final RunningScript<Void> script = new RunningScript<>(null);
 
     //LAB_800cff90
@@ -4441,7 +4449,7 @@ public final class Bttl_800c {
     }
 
     //LAB_800cffbc
-    MEMORY.ref(4, func).call(script);
+    func.accept(script);
   }
 
   /** Sets translation vector to position of individual part of model associated with scriptIndex */
