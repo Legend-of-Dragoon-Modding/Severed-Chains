@@ -14,22 +14,22 @@ public class ParticleEffectInstance94 {
   public int _02;
 
   public short framesUntilRender_04;
-  public short _06; // instance scale x?
-  public short _08; // instance scale y?
-  public short _0a; // instance scale z?
-  public short _0c;
-  public short _0e;
-  public short _10;
-  public short _12; // Might be a color step count
-  public short _14; // position x
-  public short _16; // position y
+  public short scaleHorizontal_06;
+  public short scaleVertical_08;
+  public short scaleHorizontalStep_0a;
+  public short scaleVerticalStep_0c;
+  public short rotation_0e;
+  public short rotationStep_10;
+  public short ticksRemaining_12; // Scales colour, rotation, ... over time
+  public short _14; // position x // Monoxide: not sure what these are, they're set to x/y/z at one point, but definitely not used as a position
+  public short _16; // position y // Monoxide: actually, maybe multipurpose, depending on effect? Sometimes used as angles, sometimes seem to be used as position modifiers
   public short _18; // position z
   public final SVECTOR _1a = new SVECTOR(); // position noise velocity?
-  public short _20;
-  public short _22;
-  public short _24;
+  public short verticalPositionScale_20;
+  public short ticksUntilMovementModeChanges_22; // Once this ticks down to 0, it looks like the particle movement changes (starts to accelerate, ???)
+  public short rotationStep_24;
 
-  public final VECTOR _2c = new VECTOR();
+  public final VECTOR translation_2c = new VECTOR();
   /** particle position copied from effect */
   public final SVECTOR _3c = new SVECTOR();
   public SVECTOR[] _44;

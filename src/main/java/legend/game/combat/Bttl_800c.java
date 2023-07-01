@@ -4006,38 +4006,34 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cf37cL)
-  public static void FUN_800cf37c(final EffectManagerData6c a0, @Nullable final SVECTOR a1, final VECTOR a2, final VECTOR out) {
-    final VECTOR sp0x10 = new VECTOR();
-    final SVECTOR sp0x20 = new SVECTOR();
-    final MATRIX sp0x28 = new MATRIX();
+  public static void rotateAndTranslateEffect(final EffectManagerData6c a0, @Nullable final SVECTOR extraRotation, final VECTOR vertex, final VECTOR out) {
+    final SVECTOR rotations = new SVECTOR().set(a0._10.rot_10);
 
-    sp0x20.set(a0._10.rot_10);
-
-    if(a1 != null) {
+    if(extraRotation != null) {
       //LAB_800cf3c4
-      sp0x20.add(a1);
+      rotations.add(extraRotation);
     }
 
     //LAB_800cf400
-    RotMatrix_Xyz(sp0x20, sp0x28);
-    TransMatrix(sp0x28, sp0x10);
-    CPU.CTC2(sp0x28.getPacked(0), 0);
-    CPU.CTC2(sp0x28.getPacked(2), 1);
-    CPU.CTC2(sp0x28.getPacked(4), 2);
-    CPU.CTC2(sp0x28.getPacked(6), 3);
-    CPU.CTC2(sp0x28.getPacked(8), 4);
-    CPU.CTC2(sp0x28.transfer.getX(), 5);
-    CPU.CTC2(sp0x28.transfer.getY(), 6);
-    CPU.CTC2(sp0x28.transfer.getZ(), 7);
+    final MATRIX transforms = new MATRIX();
+    RotMatrix_Xyz(rotations, transforms);
+    TransMatrix(transforms, new VECTOR()); // This probably isn't necessary
 
-    sp0x20.set(a2);
-    CPU.MTC2(sp0x20.getXY(), 0);
-    CPU.MTC2(sp0x20.getZ(),  1);
-    CPU.COP2(0x480012L);
-    sp0x10.setX((int)CPU.MFC2(25));
-    sp0x10.setY((int)CPU.MFC2(26));
-    sp0x10.setZ((int)CPU.MFC2(27));
-    out.set(sp0x10);
+    CPU.CTC2(transforms.getPacked(0), 0); //
+    CPU.CTC2(transforms.getPacked(2), 1); //
+    CPU.CTC2(transforms.getPacked(4), 2); // Rotation
+    CPU.CTC2(transforms.getPacked(6), 3); //
+    CPU.CTC2(transforms.getPacked(8), 4); //
+    CPU.CTC2(transforms.transfer.getX(), 5); //
+    CPU.CTC2(transforms.transfer.getY(), 6); // Translation
+    CPU.CTC2(transforms.transfer.getZ(), 7); //
+
+    final SVECTOR vert = new SVECTOR().set(vertex);
+    CPU.MTC2(vert.getXY(), 0); // VXY0
+    CPU.MTC2(vert.getZ(),  1); // VZ0
+    CPU.COP2(0x480012L); // MVMVA
+
+    out.set((int)CPU.MFC2(25), (int)CPU.MFC2(26), (int)CPU.MFC2(27)); // MAC1/2/3
   }
 
   @Method(0x800cf4f4L)
