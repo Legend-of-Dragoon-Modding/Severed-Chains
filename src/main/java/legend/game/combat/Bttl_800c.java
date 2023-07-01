@@ -278,8 +278,6 @@ public final class Bttl_800c {
 
   public static final BattleCamera camera_800c67f0 = new BattleCamera();
 
-  public static final Value _800c6912 = MEMORY.ref(1, 0x800c6912L);
-  public static final Value _800c6913 = MEMORY.ref(1, 0x800c6913L);
   public static ScriptState<? extends BattleObject27c> scriptState_800c6914;
   public static final IntRef _800c6918 = MEMORY.ref(4, 0x800c6918L, IntRef::new);
 
@@ -687,32 +685,32 @@ public final class Bttl_800c {
    *   <li>{@link Bttl_800d#FUN_800d9bd4}</li>
    * </ol>
    */
-  public static final Runnable[] _800facbc = new Runnable[24];
+  public static final Runnable[] cameraViewpointMethods_800facbc = new Runnable[24];
   static {
-    _800facbc[0] = Bttl_800d::FUN_800dbe40;
-    _800facbc[1] = Bttl_800d::FUN_800dbe60;
-    _800facbc[2] = Bttl_800d::FUN_800dbe80;
-    _800facbc[3] = Bttl_800d::FUN_800dbe8c;
-    _800facbc[4] = Bttl_800d::FUN_800dbe98;
-    _800facbc[5] = Bttl_800d::FUN_800dbef0;
-    _800facbc[6] = Bttl_800d::FUN_800dbf70;
-    _800facbc[7] = Bttl_800d::FUN_800dbfd4;
-    _800facbc[8] = Bttl_800d::FUN_800d90c8;
-    _800facbc[9] = Bttl_800d::FUN_800d9154;
-    _800facbc[10] = Bttl_800d::FUN_800dc070;
-    _800facbc[11] = Bttl_800d::FUN_800dc078;
-    _800facbc[12] = Bttl_800d::FUN_800d9220;
-    _800facbc[13] = Bttl_800d::FUN_800d92bc;
-    _800facbc[14] = Bttl_800d::FUN_800d9380;
-    _800facbc[15] = Bttl_800d::FUN_800d9438;
-    _800facbc[16] = Bttl_800d::FUN_800d9518;
-    _800facbc[17] = Bttl_800d::FUN_800d9650;
-    _800facbc[18] = Bttl_800d::FUN_800dc080;
-    _800facbc[19] = Bttl_800d::FUN_800dc088;
-    _800facbc[20] = Bttl_800d::FUN_800d9788;
-    _800facbc[21] = Bttl_800d::FUN_800d98d0;
-    _800facbc[22] = Bttl_800d::FUN_800d9a68;
-    _800facbc[23] = Bttl_800d::FUN_800d9bd4;
+    cameraViewpointMethods_800facbc[0] = Bttl_800d::FUN_800dbe40;
+    cameraViewpointMethods_800facbc[1] = Bttl_800d::FUN_800dbe60;
+    cameraViewpointMethods_800facbc[2] = Bttl_800d::FUN_800dbe80;
+    cameraViewpointMethods_800facbc[3] = Bttl_800d::FUN_800dbe8c;
+    cameraViewpointMethods_800facbc[4] = Bttl_800d::FUN_800dbe98;
+    cameraViewpointMethods_800facbc[5] = Bttl_800d::FUN_800dbef0;
+    cameraViewpointMethods_800facbc[6] = Bttl_800d::FUN_800dbf70;
+    cameraViewpointMethods_800facbc[7] = Bttl_800d::FUN_800dbfd4;
+    cameraViewpointMethods_800facbc[8] = Bttl_800d::FUN_800d90c8;
+    cameraViewpointMethods_800facbc[9] = Bttl_800d::FUN_800d9154;
+    cameraViewpointMethods_800facbc[10] = Bttl_800d::FUN_800dc070;
+    cameraViewpointMethods_800facbc[11] = Bttl_800d::FUN_800dc078;
+    cameraViewpointMethods_800facbc[12] = Bttl_800d::FUN_800d9220;
+    cameraViewpointMethods_800facbc[13] = Bttl_800d::FUN_800d92bc;
+    cameraViewpointMethods_800facbc[14] = Bttl_800d::FUN_800d9380;
+    cameraViewpointMethods_800facbc[15] = Bttl_800d::FUN_800d9438;
+    cameraViewpointMethods_800facbc[16] = Bttl_800d::FUN_800d9518;
+    cameraViewpointMethods_800facbc[17] = Bttl_800d::FUN_800d9650;
+    cameraViewpointMethods_800facbc[18] = Bttl_800d::FUN_800dc080;
+    cameraViewpointMethods_800facbc[19] = Bttl_800d::FUN_800dc088;
+    cameraViewpointMethods_800facbc[20] = Bttl_800d::FUN_800d9788;
+    cameraViewpointMethods_800facbc[21] = Bttl_800d::FUN_800d98d0;
+    cameraViewpointMethods_800facbc[22] = Bttl_800d::FUN_800d9a68;
+    cameraViewpointMethods_800facbc[23] = Bttl_800d::FUN_800d9bd4;
   }
   /**
    * <ol start="0">
@@ -742,32 +740,32 @@ public final class Bttl_800c {
    *   <li>{@link Bttl_800d#FUN_800da8bc}</li>
    * </ol>
    */
-  public static final Runnable[] _800fad1c = new Runnable[24];
+  public static final Runnable[] cameraRefpointMethods_800fad1c = new Runnable[24];
   static {
-    _800fad1c[0] = Bttl_800d::FUN_800dc090;
-    _800fad1c[1] = Bttl_800d::FUN_800dc0b0;
-    _800fad1c[2] = Bttl_800d::FUN_800dc0d0;
-    _800fad1c[3] = Bttl_800d::FUN_800dc128;
-    _800fad1c[4] = Bttl_800d::FUN_800dc1a8;
-    _800fad1c[5] = Bttl_800d::FUN_800dc1b0;
-    _800fad1c[6] = Bttl_800d::FUN_800dc1b8;
-    _800fad1c[7] = Bttl_800d::FUN_800dc21c;
-    _800fad1c[8] = Bttl_800d::FUN_800d9da0;
-    _800fad1c[9] = Bttl_800d::FUN_800d9e2c;
-    _800fad1c[10] = Bttl_800d::FUN_800d9ef8;
-    _800fad1c[11] = Bttl_800d::FUN_800d9f94;
-    _800fad1c[12] = Bttl_800d::FUN_800dc2b8;
-    _800fad1c[13] = Bttl_800d::FUN_800dc2c0;
-    _800fad1c[14] = Bttl_800d::FUN_800da058;
-    _800fad1c[15] = Bttl_800d::FUN_800da110;
-    _800fad1c[16] = Bttl_800d::FUN_800da1f0;
-    _800fad1c[17] = Bttl_800d::FUN_800da328;
-    _800fad1c[18] = Bttl_800d::FUN_800da460;
-    _800fad1c[19] = Bttl_800d::FUN_800da5b0;
-    _800fad1c[20] = Bttl_800d::FUN_800dc2c8;
-    _800fad1c[21] = Bttl_800d::FUN_800dc2d0;
-    _800fad1c[22] = Bttl_800d::FUN_800da750;
-    _800fad1c[23] = Bttl_800d::FUN_800da8bc;
+    cameraRefpointMethods_800fad1c[0] = Bttl_800d::FUN_800dc090;
+    cameraRefpointMethods_800fad1c[1] = Bttl_800d::FUN_800dc0b0;
+    cameraRefpointMethods_800fad1c[2] = Bttl_800d::FUN_800dc0d0;
+    cameraRefpointMethods_800fad1c[3] = Bttl_800d::FUN_800dc128;
+    cameraRefpointMethods_800fad1c[4] = Bttl_800d::FUN_800dc1a8;
+    cameraRefpointMethods_800fad1c[5] = Bttl_800d::FUN_800dc1b0;
+    cameraRefpointMethods_800fad1c[6] = Bttl_800d::FUN_800dc1b8;
+    cameraRefpointMethods_800fad1c[7] = Bttl_800d::FUN_800dc21c;
+    cameraRefpointMethods_800fad1c[8] = Bttl_800d::FUN_800d9da0;
+    cameraRefpointMethods_800fad1c[9] = Bttl_800d::FUN_800d9e2c;
+    cameraRefpointMethods_800fad1c[10] = Bttl_800d::FUN_800d9ef8;
+    cameraRefpointMethods_800fad1c[11] = Bttl_800d::FUN_800d9f94;
+    cameraRefpointMethods_800fad1c[12] = Bttl_800d::FUN_800dc2b8;
+    cameraRefpointMethods_800fad1c[13] = Bttl_800d::FUN_800dc2c0;
+    cameraRefpointMethods_800fad1c[14] = Bttl_800d::FUN_800da058;
+    cameraRefpointMethods_800fad1c[15] = Bttl_800d::FUN_800da110;
+    cameraRefpointMethods_800fad1c[16] = Bttl_800d::FUN_800da1f0;
+    cameraRefpointMethods_800fad1c[17] = Bttl_800d::FUN_800da328;
+    cameraRefpointMethods_800fad1c[18] = Bttl_800d::FUN_800da460;
+    cameraRefpointMethods_800fad1c[19] = Bttl_800d::FUN_800da5b0;
+    cameraRefpointMethods_800fad1c[20] = Bttl_800d::FUN_800dc2c8;
+    cameraRefpointMethods_800fad1c[21] = Bttl_800d::FUN_800dc2d0;
+    cameraRefpointMethods_800fad1c[22] = Bttl_800d::FUN_800da750;
+    cameraRefpointMethods_800fad1c[23] = Bttl_800d::FUN_800da8bc;
   }
   /**
    * <ol start="0">

@@ -16,8 +16,8 @@ import legend.core.gte.TmdWithId;
 import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
 import legend.core.memory.types.CString;
-import legend.core.memory.types.IntRef;
 import legend.core.memory.types.ComponentFunction;
+import legend.core.memory.types.IntRef;
 import legend.core.memory.types.ShortRef;
 import legend.game.combat.bobj.BattleObject27c;
 import legend.game.combat.deff.Anim;
@@ -119,8 +119,6 @@ import static legend.game.combat.Bttl_800c._800c67d4;
 import static legend.game.combat.Bttl_800c._800c67d8;
 import static legend.game.combat.Bttl_800c._800c67e4;
 import static legend.game.combat.Bttl_800c._800c67e8;
-import static legend.game.combat.Bttl_800c._800c6912;
-import static legend.game.combat.Bttl_800c._800c6913;
 import static legend.game.combat.Bttl_800c._800fa76c;
 import static legend.game.combat.Bttl_800c._800faa90;
 import static legend.game.combat.Bttl_800c._800faa92;
@@ -141,13 +139,13 @@ import static legend.game.combat.Bttl_800c._800fac3c;
 import static legend.game.combat.Bttl_800c._800fac5c;
 import static legend.game.combat.Bttl_800c._800fac7c;
 import static legend.game.combat.Bttl_800c._800fac9c;
-import static legend.game.combat.Bttl_800c._800facbc;
-import static legend.game.combat.Bttl_800c._800fad1c;
 import static legend.game.combat.Bttl_800c._800fad7c;
 import static legend.game.combat.Bttl_800c._800fad9c;
 import static legend.game.combat.Bttl_800c.additionNames_800fa8d4;
 import static legend.game.combat.Bttl_800c.additionStarburstRenderers_800c6dc4;
 import static legend.game.combat.Bttl_800c.asciiTable_800fa788;
+import static legend.game.combat.Bttl_800c.cameraRefpointMethods_800fad1c;
+import static legend.game.combat.Bttl_800c.cameraViewpointMethods_800facbc;
 import static legend.game.combat.Bttl_800c.camera_800c67f0;
 import static legend.game.combat.Bttl_800c.charWidthAdjustTable_800fa7cc;
 import static legend.game.combat.Bttl_800c.completedAdditionStarburstAngleModifiers_800c6dac;
@@ -2390,13 +2388,13 @@ public final class Bttl_800d {
     if(cam._11c != 0) {
       if((cam._11c & 0x1) != 0) {
         LOGGER.info(CAMERA, "[CAMERA] Array=_800facbc, FUN index=%d", cam._120);
-        _800facbc[cam._120].run();
+        cameraViewpointMethods_800facbc[cam._120].run();
       }
 
       //LAB_800d8f80
       if((cam._11c & 0x2) != 0) {
         LOGGER.info(CAMERA, "[CAMERA] Array=_800fad1c, FUN index=%d", cam._121);
-        _800fad1c[cam._121].run();
+        cameraRefpointMethods_800fad1c[cam._121].run();
       }
     }
 
@@ -3507,14 +3505,15 @@ public final class Bttl_800d {
 
   @Method(0x800dbb10L)
   public static FlowControl FUN_800dbb10(final RunningScript<?> script) {
+    final BattleCamera cam = camera_800c67f0;
     final int v1 = script.params_20[0].get();
     final int a1;
     if(v1 == 0) {
       //LAB_800dbb3c
-      a1 = (int)_800c6912.get();
+      a1 = cam._122;
     } else if(v1 == 1) {
       //LAB_800dbb48
-      a1 = (int)_800c6913.get();
+      a1 = cam._123;
     } else {
       throw new RuntimeException("Undefined a1");
     }
@@ -3585,12 +3584,12 @@ public final class Bttl_800d {
 
   @Method(0x800dbe80L)
   public static void FUN_800dbe80() {
-    _800c6912.setu(0);
+    camera_800c67f0._122 = 0;
   }
 
   @Method(0x800dbe8cL)
   public static void FUN_800dbe8c() {
-    _800c6912.setu(0);
+    camera_800c67f0._122 = 0;
   }
 
   @Method(0x800dbe98L)
