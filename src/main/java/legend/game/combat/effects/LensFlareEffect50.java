@@ -18,7 +18,7 @@ public class LensFlareEffect50 implements BttlScriptData6cSubBase1 {
   public short z_44;
 
   public short brightness_48;
-  public short _4a;
+  public short shouldRender_4a;
 
   public LensFlareEffect50() {
     Arrays.setAll(this.instances_38, i -> new LensFlareEffectInstance3c());
