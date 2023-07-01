@@ -4726,7 +4726,7 @@ public final class SEffe {
 
     //LAB_801093f0
     for(int s3 = 1; s3 >= -1; s3 -= 2) {
-      final int angle = sp48.angle_00.get();
+      final int angle = sp48.angle_00;
       int angle1 = angle;
       int angle2 = angle;
       int s5 = s3 == 1 ? 0 : -1;
@@ -4781,7 +4781,7 @@ public final class SEffe {
   @Method(0x80109a4cL)
   public static void FUN_80109a4c(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
     final ScreenDistortionEffectData08 effect = (ScreenDistortionEffectData08)data.effect_44;
-    effect.angle_00.add(effect.angleStep_04.get());
+    effect.angle_00 += effect.angleStep_04;
   }
 
   @Method(0x80109a6cL)
@@ -4794,18 +4794,18 @@ public final class SEffe {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "Screen distortion",
       script.scriptState_04,
-      0x8,
+      0,
       // Ticker and renderer are swapped for some reason
       screenDistortionEffectRenderers_80119fd4[script.params_20[2].get()],
       screenDistortionEffectTickers_80119fe0[script.params_20[2].get()],
       null,
-      ScreenDistortionEffectData08::new
+      value -> new ScreenDistortionEffectData08()
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
     final ScreenDistortionEffectData08 effect = (ScreenDistortionEffectData08)manager.effect_44;
-    effect.angle_00.set(0x800);
-    effect.angleStep_04.set(script.params_20[1].get());
+    effect.angle_00 = 0x800;
+    effect.angleStep_04 = script.params_20[1].get();
     manager._10.flags_00 = 0x4000_0000;
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
