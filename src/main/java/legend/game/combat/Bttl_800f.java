@@ -3476,7 +3476,7 @@ public final class Bttl_800f {
     final int r = textboxColours_800c6fec.get(colourIndex).get(0).get();
     final int g = textboxColours_800c6fec.get(colourIndex).get(1).get();
     final int b = textboxColours_800c6fec.get(colourIndex).get(2).get();
-    final int colour = b << 16 | g << 8 | b;
+    final int colour = r << 16 | g << 8 | b;
 
     renderTextBoxBackground(
       (short)script.params_20[0].get() - script.params_20[2].get() / 2,
