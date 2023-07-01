@@ -18,13 +18,10 @@ import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BoolRef;
 import legend.core.memory.types.ByteRef;
 import legend.core.memory.types.CString;
-import legend.core.memory.types.IntRef;
-import legend.core.memory.types.OctConsumer;
-import legend.core.memory.types.Pointer;
-import legend.core.memory.types.QuadConsumer;
-import legend.core.memory.types.QuintConsumerRef;
 import legend.core.memory.types.ComponentFunction;
-import legend.core.memory.types.SeptConsumer;
+import legend.core.memory.types.IntRef;
+import legend.core.memory.types.Pointer;
+import legend.core.memory.types.QuintConsumerRef;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
@@ -51,6 +48,9 @@ import legend.game.combat.environment.BattlePreloadedEntities_18cb0;
 import legend.game.combat.environment.BattleStage;
 import legend.game.combat.environment.BattleStageDarkening1800;
 import legend.game.combat.environment.BttlLightStruct84;
+import legend.game.combat.environment.CameraOctParamCallback;
+import legend.game.combat.environment.CameraQuadParamCallback;
+import legend.game.combat.environment.CameraSeptParamCallback;
 import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.BattleStateEf4;
 import legend.game.combat.types.BttlStruct08;
@@ -485,7 +485,7 @@ public final class Bttl_800c {
    *   <li>{@link Bttl_800d#FUN_800daf6c}</li>
    * </ol>
    */
-  public static final QuadConsumer<Integer, Integer, Integer, Integer>[] _800fabbc = new QuadConsumer[8];
+  public static final CameraQuadParamCallback[] _800fabbc = new CameraQuadParamCallback[8];
   static {
     _800fabbc[0] = Bttl_800d::FUN_800dacc4;
     _800fabbc[1] = Bttl_800d::FUN_800dad14;
@@ -508,7 +508,7 @@ public final class Bttl_800c {
    *   <li>{@link Bttl_800d#FUN_800db398}</li>
    * </ol>
    */
-  public static final QuadConsumer<Integer, Integer, Integer, Integer>[] _800fabdc = new QuadConsumer[8];
+  public static final CameraQuadParamCallback[] _800fabdc = new CameraQuadParamCallback[8];
   static {
     _800fabdc[0] = Bttl_800d::FUN_800db0d8;
     _800fabdc[1] = Bttl_800d::FUN_800db128;
@@ -531,7 +531,7 @@ public final class Bttl_800c {
    *   <li>{@link Bttl_800d#FUN_800d519c}</li>
    * </ol>
    */
-  public static final SeptConsumer<Integer, Integer, Integer, Integer, Integer, Integer, Integer>[] _800fabfc = new SeptConsumer[8];
+  public static final CameraSeptParamCallback[] _800fabfc = new CameraSeptParamCallback[8];
   static {
     _800fabfc[0] = Bttl_800d::FUN_800d47dc;
     _800fabfc[1] = Bttl_800d::FUN_800d496c;
@@ -554,7 +554,7 @@ public final class Bttl_800c {
    *   <li>{@link Bttl_800d#FUN_800d5cf4}</li>
    * </ol>
    */
-  public static final SeptConsumer<Integer, Integer, Integer, Integer, Integer, Integer, Integer>[] _800fac1c = new SeptConsumer[8];
+  public static final CameraSeptParamCallback[] _800fac1c = new CameraSeptParamCallback[8];
   static {
     _800fac1c[0] = Bttl_800d::FUN_800d53e4;
     _800fac1c[1] = null;
@@ -577,7 +577,7 @@ public final class Bttl_800c {
    *   <li>{@link Bttl_800d#FUN_800d6960}</li>
    * </ol>
    */
-  public static final OctConsumer<Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer>[] _800fac3c = new OctConsumer[8];
+  public static final CameraOctParamCallback[] _800fac3c = new CameraOctParamCallback[8];
   static {
     _800fac3c[0] = Bttl_800d::FUN_800d5ec8;
     _800fac3c[1] = Bttl_800d::FUN_800d60b0;
@@ -600,7 +600,7 @@ public final class Bttl_800c {
    *   <li>{@link Bttl_800d#FUN_800d7548}</li>
    * </ol>
    */
-  public static final SeptConsumer<Integer, Integer, Integer, Integer, Integer, Integer, Integer>[] _800fac5c = new SeptConsumer[8];
+  public static final CameraSeptParamCallback[] _800fac5c = new CameraSeptParamCallback[8];
   static {
     _800fac5c[0] = Bttl_800d::FUN_800d6b90;
     _800fac5c[1] = Bttl_800d::FUN_800d6d18;
@@ -623,7 +623,7 @@ public final class Bttl_800c {
    *   <li>{@link Bttl_800d#FUN_800d80a0}</li>
    * </ol>
    */
-  public static final SeptConsumer<Integer, Integer, Integer, Integer, Integer, Integer, Integer>[] _800fac7c = new SeptConsumer[8];
+  public static final CameraSeptParamCallback[] _800fac7c = new CameraSeptParamCallback[8];
   static {
     _800fac7c[0] = Bttl_800d::FUN_800d7790;
     _800fac7c[1] = Bttl_800d::FUN_800d7920;
@@ -646,7 +646,7 @@ public final class Bttl_800c {
    *   <li>{@link Bttl_800d#FUN_800d8bf4}</li>
    * </ol>
    */
-  public static final OctConsumer<Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer>[] _800fac9c = new OctConsumer[8];
+  public static final CameraOctParamCallback[] _800fac9c = new CameraOctParamCallback[8];
   static {
     _800fac9c[0] = Bttl_800d::FUN_800d8274;
     _800fac9c[1] = Bttl_800d::FUN_800d8424;
