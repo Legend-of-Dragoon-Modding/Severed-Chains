@@ -771,8 +771,8 @@ public final class Bttl_800d {
     Arrays.setAll(sp0x38, i -> new IntRef());
 
     final GuardEffect06 s7 = (GuardEffect06)data.effect_44;
-    s7._02.incr();
-    s7._04.add((short)0x400);
+    s7._02++;
+    s7._04 += 0x400;
 
     //LAB_800d2888
     int s3 = 0;
@@ -827,7 +827,7 @@ public final class Bttl_800d {
     //LAB_800d2cfc
     int s7_0 = 0;
     for(int i = 0; i < 4; i++) {
-      s6 = s6 + s7._04.get() / 4;
+      s6 = s6 + s7._04 / 4;
       s7_0 = s7_0 + data._10.scale_16.getX() / 4;
       sp78 = sp78 - sp80;
       sp7a = sp7a - sp82;
@@ -871,18 +871,18 @@ public final class Bttl_800d {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "GuardEffect06",
       script.scriptState_04,
-      0x6,
+      0,
       null,
       Bttl_800d::renderGuardEffect,
       null,
-      GuardEffect06::new
+      value -> new GuardEffect06()
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
     final GuardEffect06 effect = (GuardEffect06)manager.effect_44;
-    effect._00.set(1);
-    effect._02.set(0);
-    effect._04.set((short)0);
+    effect._00 = 1;
+    effect._02 = 0;
+    effect._04 = 0;
 
     // Hack to make shield color default if counter overlay color is default
     // Otherwise, just use the overlay color. Maybe we can make shields toggleable later.
