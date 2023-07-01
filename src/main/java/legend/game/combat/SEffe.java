@@ -5738,9 +5738,9 @@ public final class SEffe {
                 .pos(2, sp0x48[_800fb930.get(j).get(2).get()][0], sp0x48[_800fb930.get(j).get(2).get()][1])
                 .pos(3, sp0x48[_800fb930.get(j).get(3).get()][0], sp0x48[_800fb930.get(j).get(3).get()][1])
                 .uv(0, u, v)
-                .uv(1, u + w, v)
-                .uv(2, u, v + h)
-                .uv(3, u + w, v + h);
+                .uv(1, u + w - 1, v)
+                .uv(2, u, v + h - 1)
+                .uv(3, u + w - 1, v + h - 1);
 
               if((sp10 >>> 30 & 1) != 0) {
                 cmd.translucent(Translucency.of(sp10 >>> 28 & 0b11));
@@ -5767,9 +5767,9 @@ public final class SEffe {
               .pos(2, x, y + h2)
               .pos(3, x + w2, y + h2)
               .uv(0, u, v)
-              .uv(1, u + w, v)
-              .uv(2, u, v + h)
-              .uv(3, u + w, v + h);
+              .uv(1, u + w - 1, v)
+              .uv(2, u, v + h - 1)
+              .uv(3, u + w - 1, v + h - 1);
 
             if((sp10 >>> 30 & 1) != 0) {
               cmd.translucent(Translucency.of(sp10 >>> 28 & 0b11));
