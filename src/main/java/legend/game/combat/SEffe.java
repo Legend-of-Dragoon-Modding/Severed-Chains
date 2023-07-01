@@ -29,7 +29,6 @@ import legend.core.memory.Ref;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BiConsumerRef;
-import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.QuadConsumer;
@@ -654,7 +653,6 @@ public final class SEffe {
 
   private static final Value _8011a030 = MEMORY.ref(1, 0x8011a030L);
 
-  private static final ArrayRef<IntRef> _8011a034 = MEMORY.ref(4, 0x8011a034L, ArrayRef.of(IntRef.class, 5, 4, IntRef::new));
   private static final Value _8011a048 = MEMORY.ref(1, 0x8011a048L);
 
   @Method(0x800fb95cL)
@@ -5565,131 +5563,126 @@ public final class SEffe {
   }
 
   @Method(0x8010c378L)
-  public static FlowControl FUN_8010c378(final RunningScript<? extends BattleScriptDataBase> script) {
-    final int sp18 = script.params_20[1].get();
-    final int sp1c = script.params_20[1].get();
-    final int sp20 = script.params_20[3].get();
-    final int sp24 = script.params_20[4].get();
-    _8011a034.get(0).set(script.params_20[5].get());
-    _8011a034.get(1).set(script.params_20[6].get());
-    _8011a034.get(2).set(script.params_20[7].get());
-    _8011a034.get(3).set(script.params_20[8].get());
-    _8011a034.get(4).set(script.params_20[9].get());
+  public static FlowControl allocateLensFlareEffect(final RunningScript<? extends BattleScriptDataBase> script) {
+    final int bobjIndex = script.params_20[1].get();
+    final int x = script.params_20[2].get();
+    final int y = script.params_20[3].get();
+    final int z = script.params_20[4].get();
 
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "LensFlareEffect50",
       script.scriptState_04,
-      0x50,
-      SEffe::FUN_8010c69c,
-      SEffe::FUN_8010c8f8,
-      SEffe::FUN_8010f94c,
-      LensFlareEffect50::new
+      0,
+      SEffe::tickLensFlareEffect,
+      SEffe::renderLensFlareEffect,
+      null,
+      value -> new LensFlareEffect50()
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
     final LensFlareEffect50 effect = (LensFlareEffect50)manager.effect_44;
-    effect._00.set(5);
-    effect._02.set(0);
-    effect._38.setPointer(mallocTail(0x12cL));
+    effect._00 = 5;
+    effect._02 = 0;
 
     //LAB_8010c4a4
     for(int i = 0; i < 5; i++) {
-      final LensFlareEffectInstance3c s0 = effect._38.deref().get(i);
-      s0._03.set(1);
-      s0.x_04.set((short)0);
-      s0.y_06.set((short)0);
-      s0._08.set(0);
-      s0._0c.set(0);
-      s0._0e.set(0);
-      s0._10.set(0);
-      s0._14.set(0);
-      s0._16.set(0);
-      s0._18.set(0);
-      s0._28.set(0);
-      s0._2e.set((short)0x1600);
-      s0._30.set((short)0x1600);
-      s0._32.set(0);
-      s0._34.set(0);
+      final LensFlareEffectInstance3c s0 = effect.instances_38[i];
+      s0.onScreen_03 = true;
+      s0.x_04 = 0;
+      s0.y_06 = 0;
+      s0._08 = 0;
+      s0._0c = 0;
+      s0._0e = 0;
+      s0._10 = 0;
+      s0._14 = 0;
+      s0._16 = 0;
+      s0._18 = 0;
+      s0._28 = 0;
+      s0.widthScale_2e = 0x1600;
+      s0.heightScale_30 = 0x1600;
+      s0._32 = 0;
+      s0._34 = 0;
 
-      final int a1 = _8011a034.get(i).get();
+      final int a1 = script.params_20[5 + i].get();
       if(a1 == -1) {
-        s0._02.set(0);
+        s0.enabled_02 = false;
       } else {
         //LAB_8010c500
-        s0._02.set(1);
+        s0.enabled_02 = true;
 
         if((a1 & 0xf_ff00) == 0xf_ff00) {
           final SpriteMetrics08 metrics = spriteMetrics_800c6948[a1 & 0xff];
-          effect.u_04.get(i).set(metrics.u_00);
-          effect.v_0e.get(i).set(metrics.v_02);
-          effect.w_18.get(i).set(metrics.w_04);
-          effect.h_22.get(i).set(metrics.h_05);
-          effect.clut_2c.get(i).set(metrics.clut_06);
+          effect.u_04[i] = metrics.u_00;
+          effect.v_0e[i] = metrics.v_02;
+          effect.w_18[i] = metrics.w_04;
+          effect.h_22[i] = metrics.h_05;
+          effect.clut_2c[i] = metrics.clut_06;
         } else {
           //LAB_8010c5a8
           final DeffPart.SpriteType spriteType = (DeffPart.SpriteType)getDeffPart(a1 | 0x400_0000);
           final DeffPart.SpriteMetrics deffMetrics = spriteType.metrics_08;
-          effect.u_04.get(i).set(deffMetrics.u_00);
-          effect.v_0e.get(i).set(deffMetrics.v_02);
-          effect.w_18.get(i).set(deffMetrics.w_04 * 4);
-          effect.h_22.get(i).set(deffMetrics.h_06);
-          effect.clut_2c.get(i).set(GetClut(deffMetrics.clutX_08, deffMetrics.clutY_0a));
+          effect.u_04[i] = deffMetrics.u_00;
+          effect.v_0e[i] = deffMetrics.v_02;
+          effect.w_18[i] = deffMetrics.w_04 * 4;
+          effect.h_22[i] = deffMetrics.h_06;
+          effect.clut_2c[i] = GetClut(deffMetrics.clutX_08, deffMetrics.clutY_0a);
         }
       }
 
       //LAB_8010c608
     }
 
-    effect.bobjIndex_3c.set(sp18);
-    effect._40.set((short)sp1c);
-    effect._42.set((short)sp20);
-    effect._44.set((short)sp24);
-    effect._48.set((short)0);
+    effect.bobjIndex_3c = bobjIndex;
+    effect.x_40 = (short)x;
+    effect.y_42 = (short)y;
+    effect.z_44 = (short)z;
+    effect.brightness_48 = 0;
     manager._10.flags_00 |= 0x5000_0000;
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x8010c69cL)
-  public static void FUN_8010c69c(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void tickLensFlareEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
     final LensFlareEffect50 effect = (LensFlareEffect50)manager.effect_44;
-    effect._4a.set((short)(rand() % 30));
+    effect._4a = (short)(rand() % 30);
 
-    if(effect._4a.get() != 0) {
-      final DVECTOR screenCoords = perspectiveTransformXyz(((BattleObject27c)scriptStatePtrArr_800bc1c0[effect.bobjIndex_3c.get()].innerStruct_00).model_148, effect._40.get(), effect._42.get(), effect._44.get());
-      final int t4 = (int)-(screenCoords.getX() * 2.5f);
-      final int t3 = (int)-(screenCoords.getY() * 2.5f);
+    if(effect._4a != 0) {
+      final DVECTOR screenCoords = perspectiveTransformXyz(((BattleObject27c)scriptStatePtrArr_800bc1c0[effect.bobjIndex_3c].innerStruct_00).model_148, effect.x_40, effect.y_42, effect.z_44);
+      final int x = (int)-(screenCoords.getX() * 2.5f);
+      final int y = (int)-(screenCoords.getY() * 2.5f);
 
       //LAB_8010c7c0
       for(int i = 0; i < 5; i++) {
-        final LensFlareEffectInstance3c s2 = effect._38.deref().get(i);
+        final LensFlareEffectInstance3c inst = effect.instances_38[i];
         final int dispW = displayWidth_1f8003e0.get();
         final int dispH = displayHeight_1f8003e4.get();
-        s2.x_04.set((short)(screenCoords.getX() + dispW / 2));
-        s2.y_06.set((short)(screenCoords.getY() + dispH / 2));
+        inst.x_04 = (short)(screenCoords.getX() + dispW / 2);
+        inst.y_06 = (short)(screenCoords.getY() + dispH / 2);
 
-        if(s2.x_04.get() > 0 && s2.x_04.get() < dispW && s2.y_06.get() > 0 && s2.y_06.get() < dispH) {
-          s2._03.set(1);
+        if(inst.x_04 > 0 && inst.x_04 < dispW && inst.y_06 > 0 && inst.y_06 < dispH) {
+          inst.onScreen_03 = true;
 
           final int scale = (int)_800fb8fc.offset(i * 0x4L).get();
-          s2.x_04.add((short)(t4 * scale >> 8));
-          s2.y_06.add((short)(t3 * scale >> 8));
+          inst.x_04 += (short)(x * scale >> 8);
+          inst.y_06 += (short)(y * scale >> 8);
         } else {
           //LAB_8010c870
-          s2._03.set(0);
+          inst.onScreen_03 = false;
         }
 
         //LAB_8010c874
       }
 
-      int a0 = Math.abs(screenCoords.getX());
-      final int v1 = displayWidth_1f8003e0.get() / 2;
-      if(v1 < a0) {
-        a0 = v1;
+      // Adjust brightness based on X position
+      int screenX = Math.abs(screenCoords.getX());
+      final int screenWidth = displayWidth_1f8003e0.get() / 2;
+      if(screenX > screenWidth) {
+        screenX = screenWidth;
       }
 
       //LAB_8010c8b8
-      effect._48.set((short)(0xff - (0xff00 / v1 * a0 >> 8)));
+      effect.brightness_48 = (short)(0xff - (0xff00 / screenWidth * screenX >> 8));
     }
 
     //LAB_8010c8e0
@@ -5697,47 +5690,45 @@ public final class SEffe {
 
   /** Used in Shana transform */
   @Method(0x8010c8f8L)
-  public static void FUN_8010c8f8(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void renderLensFlareEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
     final LensFlareEffect50 s5 = (LensFlareEffect50)manager.effect_44;
 
-    if(s5._4a.get() != 0) {
-      s5._02.incr();
+    if(s5._4a != 0) {
+      s5._02++;
       final int sp10 = manager._10.flags_00;
 
       //LAB_8010c9fc
-      for(int s6 = 0; s6 < 5; s6++) {
-        final LensFlareEffectInstance3c s0 = s5._38.deref().get(s6);
+      for(int i = 0; i < 5; i++) {
+        final LensFlareEffectInstance3c inst = s5.instances_38[i];
 
-        if(s0._03.get() != 0 && s0._02.get() == 1) {
-          final int sp14 = -s5.w_18.get(s6).get() / 2;
-          final int sp16 = -s5.h_22.get(s6).get() / 2;
-          final int w = s5.w_18.get(s6).get();
-          final int h = s5.h_22.get(s6).get();
-          final int tpage = (s5.v_0e.get(s6).get() & 0x100) >>> 4 | (s5.u_04.get(s6).get() & 0x3ff) >>> 6;
-          final int u = (s5.u_04.get(s6).get() & 0x3f) << 2;
-          final int v = s5.v_0e.get(s6).get() & 0xff;
-          final int clutX = s5.clut_2c.get(s6).get() << 4 & 0x3ff;
-          final int clutY = s5.clut_2c.get(s6).get() >>> 6 & 0x1ff;
-          final int r = manager._10.colour_1c.getX() * s5._48.get() >> 8;
-          final int g = manager._10.colour_1c.getY() * s5._48.get() >> 8;
-          final int b = manager._10.colour_1c.getZ() * s5._48.get() >> 8;
+        if(inst.enabled_02 && inst.onScreen_03) {
+          final int w = s5.w_18[i];
+          final int h = s5.h_22[i];
+          final int tpage = (s5.v_0e[i] & 0x100) >>> 4 | (s5.u_04[i] & 0x3ff) >>> 6;
+          final int u = (s5.u_04[i] & 0x3f) * 4;
+          final int v = s5.v_0e[i] & 0xff;
+          final int clutX = s5.clut_2c[i] << 4 & 0x3ff;
+          final int clutY = s5.clut_2c[i] >>> 6 & 0x1ff;
+          final int r = manager._10.colour_1c.getX() * s5.brightness_48 >> 8;
+          final int g = manager._10.colour_1c.getY() * s5.brightness_48 >> 8;
+          final int b = manager._10.colour_1c.getZ() * s5.brightness_48 >> 8;
 
-          if(s6 == 0) {
+          if(i == 0) {
             //LAB_8010cb38
             for(int s3 = 0; s3 < 4; s3++) {
-              final int x = (s0._2e.get() * s5.w_18.get(s6).get() >> 12) * (int)_800fb910.offset(s3 * 0x8L).offset(0x0L).get();
-              final int y = (s0._30.get() * s5.h_22.get(s6).get() >> 12) * (int)_800fb910.offset(s3 * 0x8L).offset(0x4L).get();
+              final int x = (inst.widthScale_2e * w >> 12) * (int)_800fb910.offset(s3 * 0x8L).offset(0x0L).get();
+              final int y = (inst.heightScale_30 * h >> 12) * (int)_800fb910.offset(s3 * 0x8L).offset(0x4L).get();
               final int halfW = displayWidth_1f8003e0.get() / 2;
               final int halfH = displayHeight_1f8003e4.get() / 2;
               final int[] sp0x48 = new int[8];
-              sp0x48[0] = s0.x_04.get() - halfW + x;
-              sp0x48[1] = s0.y_06.get() - halfH + y;
-              sp0x48[2] = s0.x_04.get() - halfW + x + (s5.w_18.get(s6).get() * s0._2e.get() >> 12);
-              sp0x48[3] = s0.y_06.get() - halfH + y;
-              sp0x48[4] = s0.x_04.get() - halfW + x;
-              sp0x48[5] = s0.y_06.get() - halfH + y + (s5.h_22.get(s6).get() * s0._30.get() >> 12);
-              sp0x48[6] = s0.x_04.get() - halfW + x + (s5.w_18.get(s6).get() * s0._2e.get() >> 12);
-              sp0x48[7] = s0.y_06.get() - halfH + y + (s5.h_22.get(s6).get() * s0._30.get() >> 12);
+              sp0x48[0] = inst.x_04 - halfW + x;
+              sp0x48[1] = inst.y_06 - halfH + y;
+              sp0x48[2] = inst.x_04 - halfW + x + (w * inst.widthScale_2e >> 12);
+              sp0x48[3] = inst.y_06 - halfH + y;
+              sp0x48[4] = inst.x_04 - halfW + x;
+              sp0x48[5] = inst.y_06 - halfH + y + (h * inst.heightScale_30 >> 12);
+              sp0x48[6] = inst.x_04 - halfW + x + (w * inst.widthScale_2e >> 12);
+              sp0x48[7] = inst.y_06 - halfH + y + (h * inst.heightScale_30 >> 12);
 
               final GpuCommandPoly cmd = new GpuCommandPoly(4)
                 .bpp(Bpp.BITS_4)
@@ -5763,10 +5754,10 @@ public final class SEffe {
             //LAB_8010ceec
             final int halfW = displayWidth_1f8003e0.get() / 2;
             final int halfH = displayHeight_1f8003e4.get() / 2;
-            final int x = s0.x_04.get() - halfW - (s0._2e.get() * s5.w_18.get(s6).get() >> 12) / 2;
-            final int y = s0.y_06.get() - halfH - (s0._30.get() * s5.h_22.get(s6).get() >> 12) / 2;
-            final int w2 = s5.w_18.get(s6).get() * s0._2e.get() >> 12;
-            final int h2 = s5.h_22.get(s6).get() * s0._30.get() >> 12;
+            final int x = inst.x_04 - halfW - (inst.widthScale_2e * w >> 12) / 2;
+            final int y = inst.y_06 - halfH - (inst.heightScale_30 * h >> 12) / 2;
+            final int w2 = w * inst.widthScale_2e >> 12;
+            final int h2 = h * inst.heightScale_30 >> 12;
 
             final GpuCommandPoly cmd = new GpuCommandPoly(4)
               .bpp(Bpp.BITS_4)
@@ -6554,11 +6545,6 @@ public final class SEffe {
       }
     }
     //LAB_8010f640
-  }
-
-  @Method(0x8010f94cL)
-  public static void FUN_8010f94c(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
-    free(((LensFlareEffect50)manager.effect_44)._38.getPointer());
   }
 
   @Method(0x8010f978L)
