@@ -779,16 +779,16 @@ public final class Bttl_800c {
    *   <li>{@link Bttl_800d#FUN_800dc6d8}</li>
    * </ol>
    */
-  public static final ComponentFunction<Integer, Integer, Integer, Integer, Integer>[] _800fad7c = new ComponentFunction[8];
+  public static final ComponentFunction<Integer, Integer, Integer, Integer, Integer>[] refpointComponentMethods_800fad7c = new ComponentFunction[8];
   static {
-    _800fad7c[0] = Bttl_800d::FUN_800dc408;
-    _800fad7c[1] = Bttl_800d::FUN_800dc45c;
-    _800fad7c[2] = Bttl_800d::FUN_800dc504;
-    _800fad7c[3] = Bttl_800d::FUN_800dc50c;
-    _800fad7c[4] = Bttl_800d::FUN_800dc514;
-    _800fad7c[5] = Bttl_800d::FUN_800dc580;
-    _800fad7c[6] = Bttl_800d::FUN_800dc630;
-    _800fad7c[7] = Bttl_800d::FUN_800dc6d8;
+    refpointComponentMethods_800fad7c[0] = Bttl_800d::FUN_800dc408;
+    refpointComponentMethods_800fad7c[1] = Bttl_800d::FUN_800dc45c;
+    refpointComponentMethods_800fad7c[2] = Bttl_800d::FUN_800dc504;
+    refpointComponentMethods_800fad7c[3] = Bttl_800d::FUN_800dc50c;
+    refpointComponentMethods_800fad7c[4] = Bttl_800d::FUN_800dc514;
+    refpointComponentMethods_800fad7c[5] = Bttl_800d::FUN_800dc580;
+    refpointComponentMethods_800fad7c[6] = Bttl_800d::FUN_800dc630;
+    refpointComponentMethods_800fad7c[7] = Bttl_800d::FUN_800dc6d8;
   }
   /**
    * <ol start="0">
@@ -802,16 +802,16 @@ public final class Bttl_800c {
    *   <li>{@link Bttl_800d#FUN_800dca68}</li>
    * </ol>
    */
-  public static final ComponentFunction<Integer, Integer, Integer, Integer, Integer>[] _800fad9c = new ComponentFunction[8];
+  public static final ComponentFunction<Integer, Integer, Integer, Integer, Integer>[] viewpointComponentMethods_800fad9c = new ComponentFunction[8];
   static {
-    _800fad9c[0] = Bttl_800d::FUN_800dc798;
-    _800fad9c[1] = Bttl_800d::FUN_800dc7ec;
-    _800fad9c[2] = Bttl_800d::FUN_800dc894;
-    _800fad9c[3] = Bttl_800d::FUN_800dc900;
-    _800fad9c[4] = Bttl_800d::FUN_800dc9b0;
-    _800fad9c[5] = Bttl_800d::FUN_800dc9b8;
-    _800fad9c[6] = Bttl_800d::FUN_800dc9c0;
-    _800fad9c[7] = Bttl_800d::FUN_800dca68;
+    viewpointComponentMethods_800fad9c[0] = Bttl_800d::FUN_800dc798;
+    viewpointComponentMethods_800fad9c[1] = Bttl_800d::FUN_800dc7ec;
+    viewpointComponentMethods_800fad9c[2] = Bttl_800d::FUN_800dc894;
+    viewpointComponentMethods_800fad9c[3] = Bttl_800d::FUN_800dc900;
+    viewpointComponentMethods_800fad9c[4] = Bttl_800d::FUN_800dc9b0;
+    viewpointComponentMethods_800fad9c[5] = Bttl_800d::FUN_800dc9b8;
+    viewpointComponentMethods_800fad9c[6] = Bttl_800d::FUN_800dc9c0;
+    viewpointComponentMethods_800fad9c[7] = Bttl_800d::FUN_800dca68;
   }
 
   public static final Value _800faec4 = MEMORY.ref(2, 0x800faec4L);

@@ -139,8 +139,8 @@ import static legend.game.combat.Bttl_800c._800fac3c;
 import static legend.game.combat.Bttl_800c._800fac5c;
 import static legend.game.combat.Bttl_800c._800fac7c;
 import static legend.game.combat.Bttl_800c._800fac9c;
-import static legend.game.combat.Bttl_800c._800fad7c;
-import static legend.game.combat.Bttl_800c._800fad9c;
+import static legend.game.combat.Bttl_800c.refpointComponentMethods_800fad7c;
+import static legend.game.combat.Bttl_800c.viewpointComponentMethods_800fad9c;
 import static legend.game.combat.Bttl_800c.additionNames_800fa8d4;
 import static legend.game.combat.Bttl_800c.additionStarburstRenderers_800c6dc4;
 import static legend.game.combat.Bttl_800c.asciiTable_800fa788;
@@ -3763,13 +3763,13 @@ public final class Bttl_800d {
       x = cam.rview2_00.viewpoint_00.getX();
       y = cam.rview2_00.viewpoint_00.getY();
       z = cam.rview2_00.viewpoint_00.getZ();
-      v1 = _800fad7c;
+      v1 = refpointComponentMethods_800fad7c;
     } else {
       //LAB_800dc32c
       x = cam.rview2_00.refpoint_0c.getX();
       y = cam.rview2_00.refpoint_0c.getY();
       z = cam.rview2_00.refpoint_0c.getZ();
-      v1 = _800fad9c;
+      v1 = viewpointComponentMethods_800fad9c;
     }
 
     //LAB_800dc344
@@ -3789,13 +3789,13 @@ public final class Bttl_800d {
       x = cam.rview2_00.refpoint_0c.getX();
       y = cam.rview2_00.refpoint_0c.getY();
       z = cam.rview2_00.refpoint_0c.getZ();
-      v1 = _800fad9c;
+      v1 = viewpointComponentMethods_800fad9c;
     } else {
       //LAB_800dc3bc
       x = cam.rview2_00.viewpoint_00.getX();
       y = cam.rview2_00.viewpoint_00.getY();
       z = cam.rview2_00.viewpoint_00.getZ();
-      v1 = _800fad7c;
+      v1 = refpointComponentMethods_800fad7c;
     }
 
     //LAB_800dc3dc
@@ -4303,13 +4303,13 @@ public final class Bttl_800d {
   @Method(0x800dd0d4L)
   public static int FUN_800dd0d4() {
     final BattleCamera cam = camera_800c67f0;
-    return _800fad7c[5].apply(1, 0, cam.rview2_00.viewpoint_00.getX(), cam.rview2_00.viewpoint_00.getY(), cam.rview2_00.viewpoint_00.getZ());
+    return refpointComponentMethods_800fad7c[5].apply(1, 0, cam.rview2_00.viewpoint_00.getX(), cam.rview2_00.viewpoint_00.getY(), cam.rview2_00.viewpoint_00.getZ());
   }
 
   @Method(0x800dd118L)
   public static int FUN_800dd118() {
     final BattleCamera cam = camera_800c67f0;
-    return _800fad7c[5].apply(0, 0, cam.rview2_00.viewpoint_00.getX(), cam.rview2_00.viewpoint_00.getY(), cam.rview2_00.viewpoint_00.getZ());
+    return refpointComponentMethods_800fad7c[5].apply(0, 0, cam.rview2_00.viewpoint_00.getX(), cam.rview2_00.viewpoint_00.getY(), cam.rview2_00.viewpoint_00.getZ());
   }
 
   @Method(0x800dd15cL)
