@@ -21,7 +21,7 @@ import legend.core.memory.types.CString;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.QuadConsumerRef;
-import legend.core.memory.types.QuintConsumerRef;
+import legend.core.memory.types.QuintConsumer;
 import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnboundedArrayRef;
@@ -447,7 +447,14 @@ public final class Bttl_800c {
    *   <li>{@link Bttl_800d#renderRingGradientEffect}</li>
    * </ol>
    */
-  public static final ArrayRef<Pointer<QuintConsumerRef<EffectManagerData6c, Integer, short[], RadialGradientEffect14, Translucency>>> radialGradientEffectRenderers_800fa758 = MEMORY.ref(4, 0x800fa758L, ArrayRef.of(Pointer.classFor(QuintConsumerRef.classFor(EffectManagerData6c.class, int.class, short[].class, RadialGradientEffect14.class, Translucency.class)), 5, 4, Pointer.deferred(4, QuintConsumerRef::new)));
+  public static final QuintConsumer<EffectManagerData6c, Integer, short[], RadialGradientEffect14, Translucency>[] radialGradientEffectRenderers_800fa758 = new QuintConsumer[5];
+  static {
+    radialGradientEffectRenderers_800fa758[0] = Bttl_800d::renderDiscGradientEffect;
+    radialGradientEffectRenderers_800fa758[1] = Bttl_800d::FUN_800d1e80;
+    radialGradientEffectRenderers_800fa758[2] = Bttl_800d::renderRingGradientEffect;
+    radialGradientEffectRenderers_800fa758[3] = Bttl_800d::renderDiscGradientEffect;
+    radialGradientEffectRenderers_800fa758[4] = Bttl_800d::renderRingGradientEffect;
+  }
 
   public static final Value _800fa76c = MEMORY.ref(4, 0x800fa76cL);
 
