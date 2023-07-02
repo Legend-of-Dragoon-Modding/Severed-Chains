@@ -80,13 +80,13 @@ import legend.game.combat.effects.ScreenCaptureEffectMetrics8;
 import legend.game.combat.effects.ScreenDistortionEffectData08;
 import legend.game.combat.effects.SpriteMetrics08;
 import legend.game.combat.effects.SpriteWithTrailEffect30;
-import legend.game.combat.effects.TmdSpriteEffect10;
 import legend.game.combat.effects.StarChildrenImpactEffect20;
 import legend.game.combat.effects.StarChildrenImpactEffectInstancea8;
 import legend.game.combat.effects.StarChildrenMeteorEffect10;
 import legend.game.combat.effects.StarChildrenMeteorEffectInstance10;
 import legend.game.combat.effects.ThunderArrowEffect1c;
 import legend.game.combat.effects.ThunderArrowEffectBolt1e;
+import legend.game.combat.effects.TmdSpriteEffect10;
 import legend.game.combat.effects.TransformScalerEffect34;
 import legend.game.combat.effects.UnusedBuggedEffect24;
 import legend.game.combat.effects.WsDragoonTransformationFeatherInstance70;
@@ -208,12 +208,12 @@ import static legend.game.combat.Bttl_800e.FUN_800e8c84;
 import static legend.game.combat.Bttl_800e.FUN_800e8d04;
 import static legend.game.combat.Bttl_800e.FUN_800e8dd4;
 import static legend.game.combat.Bttl_800e.FUN_800e9178;
-import static legend.game.combat.Bttl_800e.renderBillboardSpriteEffect_;
-import static legend.game.combat.Bttl_800e.getSpriteMetricsFromSource;
 import static legend.game.combat.Bttl_800e.allocateEffectManager;
 import static legend.game.combat.Bttl_800e.applyScreenDarkening;
 import static legend.game.combat.Bttl_800e.getDeffPart;
+import static legend.game.combat.Bttl_800e.getSpriteMetricsFromSource;
 import static legend.game.combat.Bttl_800e.perspectiveTransformXyz;
+import static legend.game.combat.Bttl_800e.renderBillboardSpriteEffect_;
 import static legend.game.combat.Bttl_800e.renderGenericSpriteAtZOffset0;
 
 public final class SEffe {
@@ -9952,17 +9952,16 @@ public final class SEffe {
             //LAB_80119348
             //LAB_80119360
             //LAB_80119378
-            final MATRIX finalTransformMatrix = new MATRIX().set(transformMatrix);
-            finalTransformMatrix.transfer.set(x >> 12, y >> 12, z >> 12);
+            transformMatrix.transfer.set(x >> 12, y >> 12, z >> 12);
 
-            ScaleMatrixL_SVEC(finalTransformMatrix, managerInner.scale_16);
+            ScaleMatrixL_SVEC(transformMatrix, managerInner.scale_16);
             if(type == 0x300_0000) {
               //LAB_801193f0
               final TmdSpriteEffect10 subEffect = (TmdSpriteEffect10)effect.subEffect_1c;
-              FUN_800de3f4(subEffect.tmd_08, managerInner, finalTransformMatrix);
+              FUN_800de3f4(subEffect.tmd_08, managerInner, transformMatrix);
             } else if(type == 0x400_0000) {
               final BillboardSpriteEffect0c subEffect = (BillboardSpriteEffect0c)effect.subEffect_1c;
-              renderBillboardSpriteEffect_(subEffect.metrics_04, managerInner, finalTransformMatrix);
+              renderBillboardSpriteEffect_(subEffect.metrics_04, managerInner, transformMatrix);
             }
             //LAB_80119400
             //LAB_80119404
