@@ -27,7 +27,6 @@ import legend.core.memory.types.EnumRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.RelativePointer;
-import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedShortRef;
@@ -518,7 +517,11 @@ public final class SMap {
    *
    * All other indices are {@link SMap#FUN_800e4994()}
    */
-  public static final ArrayRef<Pointer<RunnableRef>> callbackArr_800f5ad4 = MEMORY.ref(4, 0x800f5ad4L, ArrayRef.of(Pointer.classFor(RunnableRef.class), 0x80, 4, Pointer.deferred(4, RunnableRef::new)));
+  public static final Runnable[] callbackArr_800f5ad4 = new Runnable[0x80];
+  static {
+    Arrays.setAll(callbackArr_800f5ad4, i -> SMap::FUN_800e4994);
+    callbackArr_800f5ad4[65] = SMap::FUN_800eddb4;
+  }
   public static final Value _800f5cd4 = MEMORY.ref(2, 0x800f5cd4L);
 
   public static final Value _800f64ac = MEMORY.ref(4, 0x800f64acL);
@@ -562,7 +565,17 @@ public final class SMap {
    *   <li>{@link SMap#deallocateCreditsAndReturnToMenu}</li>
    * </ol>
    */
-  public static final ArrayRef<Pointer<RunnableRef>> theEndStates_800f9378 = MEMORY.ref(4, 0x800f9378L, ArrayRef.of(Pointer.classFor(RunnableRef.class), 8, 4, Pointer.deferred(4, RunnableRef::new)));
+  public static final Runnable[] theEndStates_800f9378 = new Runnable[8];
+  static {
+    theEndStates_800f9378[0] = SMap::initCredits;
+    theEndStates_800f9378[1] = SMap::loadCredits;
+    theEndStates_800f9378[2] = SMap::waitForCreditsToLoadAndPlaySong;
+    theEndStates_800f9378[3] = SMap::fadeInCredits;
+    theEndStates_800f9378[4] = SMap::renderCredits;
+    theEndStates_800f9378[5] = SMap::fadeOutCredits;
+    theEndStates_800f9378[6] = SMap::waitForCreditsFadeOut;
+    theEndStates_800f9378[7] = SMap::deallocateCreditsAndReturnToMenu;
+  }
 
   public static final Value _800f93b0 = MEMORY.ref(4, 0x800f93b0L);
 
@@ -2684,7 +2697,7 @@ public final class SMap {
       }
 
       case 8 -> {
-        callbackArr_800f5ad4.get((int)callbackIndex_800c6968.get()).deref().run();
+        callbackArr_800f5ad4[(int)callbackIndex_800c6968.get()].run();
 
         if(_800c686c.get() != 0) {
           //LAB_800e18a4
@@ -3036,7 +3049,7 @@ public final class SMap {
     FUN_80029e04(null);
 
     _800c6870.setu(-0x1L);
-    callbackArr_800f5ad4.get((int)callbackIndex_800c6968.get()).deref().run();
+    callbackArr_800f5ad4[(int)callbackIndex_800c6968.get()].run();
 
     _800f9eac.set(-1);
     loadSmapMedia();
@@ -3628,7 +3641,7 @@ public final class SMap {
     renderSubmapOverlays();
     FUN_800f4354();
     applyModelRotationAndScale(playerModel_800c6748);
-    callbackArr_800f5ad4.get((int)callbackIndex_800c6968.get()).deref().run();
+    callbackArr_800f5ad4[(int)callbackIndex_800c6968.get()].run();
   }
 
   /**
@@ -6307,7 +6320,7 @@ public final class SMap {
 
   @Method(0x800eaa88L)
   public static void theEnd() {
-    theEndStates_800f9378.get(pregameLoadingStage_800bb10c.get()).deref().run();
+    theEndStates_800f9378[pregameLoadingStage_800bb10c.get()].run();
   }
 
   @Method(0x800eaad4L)

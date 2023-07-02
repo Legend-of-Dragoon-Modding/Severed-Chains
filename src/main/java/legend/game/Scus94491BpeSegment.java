@@ -23,12 +23,6 @@ import legend.core.memory.types.UnsignedShortRef;
 import legend.core.opengl.MatrixStack;
 import legend.core.opengl.ScissorStack;
 import legend.core.spu.Voice;
-import legend.game.combat.Bttl_800c;
-import legend.game.combat.Bttl_800d;
-import legend.game.combat.Bttl_800e;
-import legend.game.combat.Bttl_800f;
-import legend.game.combat.SBtld;
-import legend.game.combat.SEffe;
 import legend.game.combat.bobj.BattleObject27c;
 import legend.game.combat.bobj.MonsterBattleObject;
 import legend.game.combat.environment.BattlePreloadedEntities_18cb0;
@@ -47,8 +41,7 @@ import legend.game.sound.SoundFileIndices;
 import legend.game.sound.SpuStruct08;
 import legend.game.sound.Sshd;
 import legend.game.sound.Sssq;
-import legend.game.title.GameOver;
-import legend.game.title.Ttle;
+import legend.game.types.CallbackStruct;
 import legend.game.types.CharacterData2c;
 import legend.game.types.EngineState;
 import legend.game.types.FileEntry08;
@@ -61,7 +54,6 @@ import legend.game.types.SubmapMusic08;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
-import legend.game.wmap.WMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -435,7 +427,7 @@ public final class Scus94491BpeSegment {
       RENDERER.window().setFpsLimit((60 / frames) * Config.getGameSpeedMultiplier());
 
       loadQueuedOverlay();
-      gameStateCallbacks_8004dbc0.get(engineState_8004dd20.ordinal()).callback_00.deref().run();
+      gameStateCallbacks_8004dbc0[engineState_8004dd20.ordinal()].callback_00.run();
 
       SCREENS.render(RENDERER, matrixStack, scissorStack);
 
@@ -529,7 +521,7 @@ public final class Scus94491BpeSegment {
   public static void loadGameStateOverlay(final EngineState engineState) {
     LOGGER.info("Loading game state overlay %s", engineState);
 
-    final FileEntry08 entry = gameStateCallbacks_8004dbc0.get(engineState.ordinal()).entry_04.derefNullable();
+    final FileEntry08 entry = gameStateCallbacks_8004dbc0[engineState.ordinal()].entry_04;
 
     if(entry == null || entry.getAddress() == currentlyLoadingFileEntry_8004dd04.getPointer()) {
       //LAB_80012ac0
@@ -580,9 +572,9 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_80012bf0
-    final long v0 = gameStateCallbacks_8004dbc0.get(engineState.ordinal()).ptr_08.get();
-    if(v0 != 0) {
-      bzero(MEMORY.ref(4, v0).offset(0x0L).get(), (int)MEMORY.ref(4, v0).offset(0x4L).get());
+    final CallbackStruct callback = gameStateCallbacks_8004dbc0[engineState.ordinal()];
+    if(callback.addressToClear_08 != 0) {
+      bzero(callback.addressToClear_08, callback.clearSize);
     }
   }
 
@@ -878,26 +870,6 @@ public final class Scus94491BpeSegment {
     LOGGER.info("Loading file %s, size %d from %s.%s(%s:%d)", name, data.size(), frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
     LOGGER.info("Loading file %s to %08x", name, fileTransferDest);
     MEMORY.setBytes(fileTransferDest, data.getBytes());
-
-    switch(name) {
-      case "\\OVL\\SMAP.OV_" -> MEMORY.addFunctions(SMap.class);
-      case "\\OVL\\TTLE.OV_" -> {
-        MEMORY.addFunctions(Ttle.class);
-        MEMORY.addFunctions(GameOver.class);
-      }
-      case "\\OVL\\S_ITEM.OV_" -> MEMORY.addFunctions(SItem.class);
-      case "\\OVL\\WMAP.OV_" -> MEMORY.addFunctions(WMap.class);
-      case "\\OVL\\BTTL.OV_" -> {
-        MEMORY.addFunctions(Bttl_800c.class);
-        MEMORY.addFunctions(Bttl_800d.class);
-        MEMORY.addFunctions(Bttl_800e.class);
-        MEMORY.addFunctions(Bttl_800f.class);
-      }
-      case "\\OVL\\S_BTLD.OV_" -> MEMORY.addFunctions(SBtld.class);
-      case "\\OVL\\S_EFFE.OV_" -> MEMORY.addFunctions(SEffe.class);
-      case "\\SUBMAP\\NEWROOT.RDT" -> { }
-      default -> throw new RuntimeException("Loaded unknown file " + name);
-    }
   }
 
   public static void loadFile(final String file, final Consumer<FileData> onCompletion) {
@@ -1285,14 +1257,14 @@ public final class Scus94491BpeSegment {
   public static void FUN_800186a0() {
     if(battleLoaded_800bc94c.get()) {
       FUN_80018744();
-      _8004f5d4.get(pregameLoadingStage_800bb10c.get()).deref().run();
+      _8004f5d4[pregameLoadingStage_800bb10c.get()].run();
 
       if(battleLoaded_800bc94c.get()) {
         FUN_8001890c();
       }
     } else {
       //LAB_8001870c
-      _8004f5d4.get(pregameLoadingStage_800bb10c.get()).deref().run();
+      _8004f5d4[pregameLoadingStage_800bb10c.get()].run();
     }
 
     //LAB_80018734
