@@ -694,7 +694,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[790] = SMap::FUN_800f1274;
 
     scriptSubFunctions_8004e29c[800] = SEffe::allocateLensFlareEffect;
-    scriptSubFunctions_8004e29c[801] = SEffe::FUN_8010d1dc;
+    scriptSubFunctions_8004e29c[801] = SEffe::allocateWsDragoonTransformationFeathersEffect;
     scriptSubFunctions_8004e29c[802] = SEffe::allocateGoldDragoonTransformEffect;
     scriptSubFunctions_8004e29c[803] = SEffe::allocateStarChildrenMeteorEffect;
     scriptSubFunctions_8004e29c[804] = SEffe::allocateStarChildrenImpactEffect;

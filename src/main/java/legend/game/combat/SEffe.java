@@ -128,8 +128,6 @@ import static legend.game.Scus94491BpeSegment.FUN_80018dec;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
 import static legend.game.Scus94491BpeSegment.displayHeight_1f8003e4;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
-import static legend.game.Scus94491BpeSegment.free;
-import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.playSound;
 import static legend.game.Scus94491BpeSegment.projectionPlaneDistance_1f8003f8;
 import static legend.game.Scus94491BpeSegment.rcos;
@@ -632,14 +630,21 @@ public final class SEffe {
 
   /**
    * <ol start="0">
-   *   <li>{@link SEffe#FUN_8010fa4c}</li>
-   *   <li>{@link SEffe#FUN_8010fa88}</li>
-   *   <li>{@link SEffe#FUN_8010fbd4}</li>
-   *   <li>{@link SEffe#FUN_8010fd34}</li>
-   *   <li>{@link SEffe#FUN_8010fe84}</li>
+   *   <li>{@link SEffe#initializeWsDragoonTransformationEffect}</li>
+   *   <li>{@link SEffe#expandWsDragoonTransformationEffect}</li>
+   *   <li>{@link SEffe#spinWsDragoonTransformationEffect}</li>
+   *   <li>{@link SEffe#contractWsDragoonTransformationEffect}</li>
+   *   <li>{@link SEffe#WsDragoonTransformationCallback4}</li>
    * </ol>
    */
-  private static final ArrayRef<Pointer<BiConsumerRef<EffectManagerData6c, WsDragoonTransformationFeatherInstance70>>> _80119ff4 = MEMORY.ref(4, 0x80119ff4L, ArrayRef.of(Pointer.classFor(BiConsumerRef.classFor(EffectManagerData6c.class, WsDragoonTransformationFeatherInstance70.class)), 5, 4, Pointer.deferred(4, BiConsumerRef::new)));
+  private static final BiConsumer<EffectManagerData6c, WsDragoonTransformationFeatherInstance70>[] WsDragoonTransformationFeatherCallbacks_80119ff4 = new BiConsumer[5];
+  static {
+    WsDragoonTransformationFeatherCallbacks_80119ff4[0] = SEffe::initializeWsDragoonTransformationEffect;
+    WsDragoonTransformationFeatherCallbacks_80119ff4[1] = SEffe::expandWsDragoonTransformationEffect;
+    WsDragoonTransformationFeatherCallbacks_80119ff4[2] = SEffe::spinWsDragoonTransformationEffect;
+    WsDragoonTransformationFeatherCallbacks_80119ff4[3] = SEffe::contractWsDragoonTransformationEffect;
+    WsDragoonTransformationFeatherCallbacks_80119ff4[4] = SEffe::WsDragoonTransformationCallback4; // no-op
+  }
 
   private static final Value _8011a008 = MEMORY.ref(4, 0x8011a008L);
   private static ParticleEffectData98 _8011a00c;
@@ -5786,88 +5791,82 @@ public final class SEffe {
   }
 
   @Method(0x8010d1dcL)
-  public static FlowControl FUN_8010d1dc(final RunningScript<? extends BattleScriptDataBase> script) {
-    final int count = script.params_20[1].get();
-    final int s5 = script.params_20[2].get();
+  public static FlowControl allocateWsDragoonTransformationFeathersEffect(final RunningScript<? extends BattleScriptDataBase> script) {
+    final int featherCount = script.params_20[1].get();
+    final int effectFlags = script.params_20[2].get();
 
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "WsDragoonTransformationFeathersEffect14",
       script.scriptState_04,
-      0x14,
-      SEffe::FUN_8010f978,
-      SEffe::FUN_8010d5b4,
-      SEffe::FUN_8010fa20,
-      WsDragoonTransformationFeathersEffect14::new
+      0,
+      SEffe::tickWsDragoonTransformationFeathersEffect,
+      SEffe::renderWsDragoonTransformationFeathersEffect,
+      null,
+      Value -> new WsDragoonTransformationFeathersEffect14(featherCount)
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
-    final WsDragoonTransformationFeathersEffect14 effect = (WsDragoonTransformationFeathersEffect14)manager.effect_44;
-    effect.count_00.set(count);
-    effect._02.set(0);
-
-    effect.ptr_10.setPointer(mallocTail(count * 0x70));
+    final WsDragoonTransformationFeathersEffect14 featherEffect = (WsDragoonTransformationFeathersEffect14)manager.effect_44;
+    featherEffect.unused_02 = 0;
 
     //LAB_8010d298
-    for(int s2 = 0; s2 < count; s2++) {
-      final WsDragoonTransformationFeatherInstance70 s4 = effect.ptr_10.deref().get(s2);
-      s4._00.set(0);
-      s4._02.set(0);
-      s4._04.set(0);
-      s4._08.set(0);
-      s4._10.set(0);
-      s4._64.set((short)1);
-      int v0 = -1500 / count * s2 << 8;
-      s4._54.set(v0);
-      s4._0c.set(v0);
-      s4._48.set(rand() % 0x361 + 0x100 << 8);
-      v0 = rand() % 13 + 8;
-      s4._4c.set((short)v0);
-      final int v1 = s4._48.get() * 2 / v0;
-      v0 = -v1 / s4._4c.get();
-      s4._40.set(v1);
-      s4._44.set(v0);
+    for(int i = 0; i < featherCount; i++) {
+      final WsDragoonTransformationFeatherInstance70 feather = featherEffect.featherArray_10[i];
+      feather.renderFeather_00 = false;
+      feather.callbackIndex_02 = 0;
+      feather.currentFrame_04 = 0;
+      feather.countCallback0Frames_64 = 1;
+      final int yOffset = -1500 / featherCount * i << 8;
+      feather.translation_08.set(0, yOffset, 0);
+      feather.yOrigin_54 = yOffset;
+      feather.xOffset_48 = rand() % 0x361 + 0x100 << 8;
+      feather.countCallback1and3Frames_4c = rand() % 13 + 8;
+      final int stepOffsetX = feather.xOffset_48 * 2 / feather.countCallback1and3Frames_4c;
+      feather.velocityTranslationMagnitudeXz_40 = stepOffsetX;
+      feather.accelerationTranslationMagnitudeXz_44 = -stepOffsetX / feather.countCallback1and3Frames_4c;
 
+      final int angleStep;
       if((simpleRand() & 1) != 0) {
-        v0 = 0x5000 - s4._48.get() >> 4 << 1;
+        angleStep = 0x5000 - feather.xOffset_48 >> 4 << 1;
       } else {
         //LAB_8010d3b4
-        v0 = -(0x5000 - (s4._48.get() >> 4) << 1);
+        angleStep = -(0x5000 - (feather.xOffset_48 >> 4) << 1);
       }
 
       //LAB_8010d3cc
-      s4._60.set(v0);
-      s4._50.set(rand() % 0x178 << 8);
+      feather.angleStep_60 = angleStep;
+      feather.translationMagnitudeY_50 = rand() % 0x178 << 8;
       simpleRand();
-      s4._6e.set((short)(rand() % 0x1000));
-      s4._3c.set(0);
-      s4._58.set(0);
-      s4._5c.set(rand() % 0x1000 << 8);
-      s4._38.set(0x7f);
-      s4._39.set(0x7f);
-      s4._3a.set(0x7f);
-      s4._66.set(0);
-      s4._68.set(0);
-      s4._6a.set(0);
-      s4._6c.set(0);
+      feather.spriteAngle_6e = rand() % 0x1000;
+      feather.translationMagnitudeXz_3c = 0;
+      feather.angle_58 = 0;
+      feather.angleNoiseXz_5c = rand() % 0x1000 << 8;
+      feather.r_38 = 0x7f;
+      feather.g_39 = 0x7f;
+      feather.b_3a = 0x7f;
+      feather.unused_66 = 0;
+      feather.unused_68 = 0;
+      feather.unused_6a = 0;
+      feather.unused_6c = 0;
     }
 
     //LAB_8010d4a4
-    if((s5 & 0xf_ff00) == 0xf_ff00) {
-      final SpriteMetrics08 metrics = spriteMetrics_800c6948[s5 & 0xff];
-      effect.u_06.set((short)metrics.u_00);
-      effect.v_08.set((short)metrics.v_02);
-      effect.width_0a.set((short)metrics.w_04);
-      effect.height_0c.set((short)metrics.h_05);
-      effect.clut_0e.set((short)metrics.clut_06);
+    if((effectFlags & 0xf_ff00) == 0xf_ff00) {
+      final SpriteMetrics08 metrics = spriteMetrics_800c6948[effectFlags & 0xff];
+      featherEffect.u_06 = (short)metrics.u_00;
+      featherEffect.v_08 = (short)metrics.v_02;
+      featherEffect.width_0a = (short)metrics.w_04;
+      featherEffect.height_0c = (short)metrics.h_05;
+      featherEffect.clut_0e = (short)metrics.clut_06;
     } else {
       //LAB_8010d508
-      final DeffPart.SpriteType spriteType = (DeffPart.SpriteType)getDeffPart(s5 | 0x400_0000);
+      final DeffPart.SpriteType spriteType = (DeffPart.SpriteType)getDeffPart(effectFlags | 0x400_0000);
       final DeffPart.SpriteMetrics deffMetrics = spriteType.metrics_08;
-      effect.u_06.set((short)deffMetrics.u_00);
-      effect.v_08.set((short)deffMetrics.v_02);
-      effect.width_0a.set((short)(deffMetrics.w_04 * 4));
-      effect.height_0c.set((short)deffMetrics.h_06);
-      effect.clut_0e.set((short)GetClut(deffMetrics.clutX_08, deffMetrics.clutY_0a));
+      featherEffect.u_06 = (short)deffMetrics.u_00;
+      featherEffect.v_08 = (short)deffMetrics.v_02;
+      featherEffect.width_0a = (short)(deffMetrics.w_04 * 4);
+      featherEffect.height_0c = (short)deffMetrics.h_06;
+      featherEffect.clut_0e = (short)GetClut(deffMetrics.clutX_08, deffMetrics.clutY_0a);
     }
 
     //LAB_8010d564
@@ -5877,50 +5876,46 @@ public final class SEffe {
   }
 
   @Method(0x8010d5b4L)
-  public static void FUN_8010d5b4(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void renderWsDragoonTransformationFeathersEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
     final WsDragoonTransformationFeathersEffect14 effect = (WsDragoonTransformationFeathersEffect14)manager.effect_44;
-    effect._02.incr();
-
     final GenericSpriteEffect24 spriteEffect = new GenericSpriteEffect24();
 
     spriteEffect.flags_00 = manager._10.flags_00;
-    spriteEffect.x_04 = (short)(-effect.width_0a.get() / 2);
-    spriteEffect.y_06 = (short)(-effect.height_0c.get() / 2);
-    spriteEffect.w_08 = effect.width_0a.get();
-    spriteEffect.h_0a = effect.height_0c.get();
-    spriteEffect.tpage_0c = (effect.v_08.get() & 0x100) >>> 4 | (effect.u_06.get() & 0x3ff) >>> 6;
-    spriteEffect.u_0e = (effect.u_06.get() & 0x3f) * 4;
-    spriteEffect.v_0f = effect.v_08.get();
-    spriteEffect.clutX_10 = effect.clut_0e.get() << 4 & 0x3ff;
-    spriteEffect.clutY_12 = effect.clut_0e.get() >>> 6 & 0x1ff;
+    spriteEffect.x_04 = (short)(-effect.width_0a / 2);
+    spriteEffect.y_06 = (short)(-effect.height_0c / 2);
+    spriteEffect.w_08 = effect.width_0a;
+    spriteEffect.h_0a = effect.height_0c;
+    spriteEffect.tpage_0c = (effect.v_08 & 0x100) >>> 4 | (effect.u_06 & 0x3ff) >>> 6;
+    spriteEffect.u_0e = (effect.u_06 & 0x3f) * 4;
+    spriteEffect.v_0f = effect.v_08;
+    spriteEffect.clutX_10 = effect.clut_0e << 4 & 0x3ff;
+    spriteEffect.clutY_12 = effect.clut_0e >>> 6 & 0x1ff;
     spriteEffect.unused_18 = 0;
     spriteEffect.unused_1a = 0;
 
     final VECTOR translation = new VECTOR();
 
     //LAB_8010d6c8
-    for(int s4 = 0; s4 < effect.count_00.get(); s4++) {
-      final WsDragoonTransformationFeatherInstance70 s3 = effect.ptr_10.deref().get(s4);
+    for(int i = 0; i < effect.count_00; i++) {
+      final WsDragoonTransformationFeatherInstance70 feather = effect.featherArray_10[i];
 
-      if(s3._00.get() != 0) {
-        if(s3._38.get() == 0x7f && s3._39.get() == 0x7f && s3._3a.get() == 0x7f) {
+      if(feather.renderFeather_00) {
+        if(feather.r_38 == 0x7f && feather.g_39 == 0x7f && feather.b_3a == 0x7f) {
           spriteEffect.r_14 = manager._10.colour_1c.getX();
           spriteEffect.g_15 = manager._10.colour_1c.getY();
           spriteEffect.b_16 = manager._10.colour_1c.getZ();
         } else {
           //LAB_8010d718
-          spriteEffect.r_14 = s3._38.get();
-          spriteEffect.g_15 = s3._39.get();
-          spriteEffect.b_16 = s3._3a.get();
+          spriteEffect.r_14 = feather.r_38;
+          spriteEffect.g_15 = feather.g_39;
+          spriteEffect.b_16 = feather.b_3a;
         }
 
         //LAB_8010d73c
         spriteEffect.scaleX_1c = manager._10.scale_16.getX();
         spriteEffect.scaleY_1e = manager._10.scale_16.getY();
-        spriteEffect.angle_20 = s3._6e.get();
-        translation.setX(manager._10.trans_04.getX() + (s3._08.get() >> 8));
-        translation.setY(manager._10.trans_04.getY() + (s3._0c.get() >> 8));
-        translation.setZ(manager._10.trans_04.getZ() + (s3._10.get() >> 8));
+        spriteEffect.angle_20 = feather.spriteAngle_6e;
+        translation.set(feather.translation_08).shra(8).add(manager._10.trans_04);
         renderGenericSpriteAtZOffset0(spriteEffect, translation);
       }
     }
@@ -6544,91 +6539,85 @@ public final class SEffe {
   }
 
   @Method(0x8010f978L)
-  public static void FUN_8010f978(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void tickWsDragoonTransformationFeathersEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
     final WsDragoonTransformationFeathersEffect14 effect = (WsDragoonTransformationFeathersEffect14)manager.effect_44;
 
     //LAB_8010f9c0
-    for(int i = 0; i < effect.count_00.get(); i++) {
-      final WsDragoonTransformationFeatherInstance70 s0 = effect.ptr_10.deref().get(i);
-      _80119ff4.get(s0._02.get()).deref().run(manager, s0);
+    for(int i = 0; i < effect.count_00; i++) {
+      final WsDragoonTransformationFeatherInstance70 feather = effect.featherArray_10[i];
+      WsDragoonTransformationFeatherCallbacks_80119ff4[feather.callbackIndex_02].accept(manager, feather);
     }
-
     //LAB_8010f9fc
   }
 
-  @Method(0x8010fa20L)
-  public static void FUN_8010fa20(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
-    free(((WsDragoonTransformationFeathersEffect14)manager.effect_44).ptr_10.getPointer());
-  }
-
   @Method(0x8010fa4cL)
-  public static void FUN_8010fa4c(final EffectManagerData6c manager, final WsDragoonTransformationFeatherInstance70 a2) {
-    a2._04.incr();
+  public static void initializeWsDragoonTransformationEffect(final EffectManagerData6c manager, final WsDragoonTransformationFeatherInstance70 feather) {
+    feather.currentFrame_04++;
 
-    if(a2._04.get() >= a2._64.get()) {
-      a2._00.set(1);
-      a2._04.set(0);
-      a2._02.incr();
+    if(feather.currentFrame_04 >= feather.countCallback0Frames_64) {
+      feather.renderFeather_00 = true;
+      feather.currentFrame_04 = 0;
+      feather.callbackIndex_02++;
     }
   }
 
   @Method(0x8010fa88L)
-  public static void FUN_8010fa88(final EffectManagerData6c manager, final WsDragoonTransformationFeatherInstance70 a2) {
-    a2._58.add(a2._60.get());
-    a2._40.add(a2._44.get());
-    a2._3c.add(a2._40.get());
-    a2._08.set((rcos(a2._58.get() + a2._5c.get() >> 8) - rsin(a2._58.get() + a2._5c.get() >> 8)) * (a2._3c.get() >> 8) >> 4);
-    a2._0c.set(a2._54.get() + (a2._50.get() * rsin(a2._58.get() >> 8 & 0xfff) >> 12));
-    a2._10.set((rcos(a2._58.get() + a2._5c.get() >> 8) + rsin(a2._58.get() + a2._5c.get() >> 8)) * (a2._3c.get() >> 8) >> 4);
+  public static void expandWsDragoonTransformationEffect(final EffectManagerData6c manager, final WsDragoonTransformationFeatherInstance70 feather) {
+    feather.angle_58 += feather.angleStep_60;
+    feather.velocityTranslationMagnitudeXz_40 += feather.accelerationTranslationMagnitudeXz_44;
+    feather.translationMagnitudeXz_3c += feather.velocityTranslationMagnitudeXz_40;
+    final int x = (rcos(feather.angle_58 + feather.angleNoiseXz_5c >> 8) - rsin(feather.angle_58 + feather.angleNoiseXz_5c >> 8)) * (feather.translationMagnitudeXz_3c >> 8) >> 4;
+    final int y = feather.yOrigin_54 + (feather.translationMagnitudeY_50 * rsin(feather.angle_58 >> 8 & 0xfff) >> 12);
+    final int z = (rcos(feather.angle_58 + feather.angleNoiseXz_5c >> 8) + rsin(feather.angle_58 + feather.angleNoiseXz_5c >> 8)) * (feather.translationMagnitudeXz_3c >> 8) >> 4;
+    feather.translation_08.set(x, y, z);
 
-    a2._04.incr();
-    if(a2._04.get() >= a2._4c.get()) {
-      a2._04.set(0);
-      a2._02.incr();
+    feather.currentFrame_04++;
+    if(feather.currentFrame_04 >= feather.countCallback1and3Frames_4c) {
+      feather.currentFrame_04 = 0;
+      feather.callbackIndex_02++;
     }
-
     //LAB_8010fbc0
   }
 
   @Method(0x8010fbd4L)
-  public static void FUN_8010fbd4(final EffectManagerData6c manager, final WsDragoonTransformationFeatherInstance70 a2) {
-    a2._58.add(a2._60.get());
-    a2._08.set((rcos(a2._58.get() + a2._5c.get() >> 8) - rsin(a2._58.get() + a2._5c.get() >> 8)) * (a2._3c.get() >> 8) >> 4);
-    a2._0c.set(a2._54.get() + (a2._50.get() * rsin(a2._58.get() >> 8 & 0xfff) >> 12));
-    a2._10.set((rcos(a2._58.get() + a2._5c.get() >> 8) + rsin(a2._58.get() + a2._5c.get() >> 8)) * (a2._3c.get() >> 8) >> 4);
+  public static void spinWsDragoonTransformationEffect(final EffectManagerData6c manager, final WsDragoonTransformationFeatherInstance70 feather) {
+    feather.angle_58 += feather.angleStep_60;
+    final int x = (rcos(feather.angle_58 + feather.angleNoiseXz_5c >> 8) - rsin(feather.angle_58 + feather.angleNoiseXz_5c >> 8)) * (feather.translationMagnitudeXz_3c >> 8) >> 4;
+    final int y = feather.yOrigin_54 + (feather.translationMagnitudeY_50 * rsin(feather.angle_58 >> 8 & 0xfff) >> 12);
+    final int z = (rcos(feather.angle_58 + feather.angleNoiseXz_5c >> 8) + rsin(feather.angle_58 + feather.angleNoiseXz_5c >> 8)) * (feather.translationMagnitudeXz_3c >> 8) >> 4;
+    feather.translation_08.set(x, y, z);
 
-    a2._04.incr();
-    if(a2._04.get() >= 0xf) {
-      a2._04.set(0);
-      a2._02.incr();
-      a2._40.set(-a2._3c.get() / a2._4c.get());
-      a2._1c.set(-a2._50.get() / a2._4c.get());
+    feather.currentFrame_04++;
+    if(feather.currentFrame_04 >= 0xf) {
+      feather.currentFrame_04 = 0;
+      feather.callbackIndex_02++;
+      feather.velocityTranslationMagnitudeXz_40 = -feather.translationMagnitudeXz_3c / feather.countCallback1and3Frames_4c;
+      feather.velocityTranslationMagnitudeY_1c = -feather.translationMagnitudeY_50 / feather.countCallback1and3Frames_4c;
     }
-
     //LAB_8010fd20
   }
 
   @Method(0x8010fd34L)
-  public static void FUN_8010fd34(final EffectManagerData6c manager, final WsDragoonTransformationFeatherInstance70 a2) {
-    a2._58.add(a2._60.get());
-    a2._3c.add(a2._40.get());
-    a2._08.set((rcos(a2._58.get() + a2._5c.get() >> 8) - rsin(a2._58.get() + a2._5c.get() >> 8)) * (a2._3c.get() >> 8) >> 4);
-    a2._0c.set(a2._54.get() + (a2._50.get() * rsin(a2._58.get() >> 8 & 0xfff) >> 12));
-    a2._50.add(a2._1c.get());
-    a2._10.set((rcos(a2._58.get() + a2._5c.get() >> 8) + rsin(a2._58.get() + a2._5c.get() >> 8)) * (a2._3c.get() >> 8) >> 4);
+  public static void contractWsDragoonTransformationEffect(final EffectManagerData6c manager, final WsDragoonTransformationFeatherInstance70 feather) {
+    feather.angle_58 += feather.angleStep_60;
+    feather.translationMagnitudeXz_3c += feather.velocityTranslationMagnitudeXz_40;
+    final int x = (rcos(feather.angle_58 + feather.angleNoiseXz_5c >> 8) - rsin(feather.angle_58 + feather.angleNoiseXz_5c >> 8)) * (feather.translationMagnitudeXz_3c >> 8) >> 4;
+    final int y = feather.yOrigin_54 + (feather.translationMagnitudeY_50 * rsin(feather.angle_58 >> 8 & 0xfff) >> 12);
+    final int z = (rcos(feather.angle_58 + feather.angleNoiseXz_5c >> 8) + rsin(feather.angle_58 + feather.angleNoiseXz_5c >> 8)) * (feather.translationMagnitudeXz_3c >> 8) >> 4;
+    feather.translation_08.set(x, y, z);
+    feather.translationMagnitudeY_50 += feather.velocityTranslationMagnitudeY_1c;
 
-    a2._04.incr();
-    if(a2._04.get() >= a2._4c.get()) {
-      a2._00.set(0);
-      a2._04.set(0);
-      a2._02.incr();
+    feather.currentFrame_04++;
+    if(feather.currentFrame_04 >= feather.countCallback1and3Frames_4c) {
+      feather.renderFeather_00 = false;
+      feather.currentFrame_04 = 0;
+      feather.callbackIndex_02++;
     }
-
     //LAB_8010fe70
   }
 
   @Method(0x8010fe84L)
-  public static void FUN_8010fe84(final EffectManagerData6c manager, final WsDragoonTransformationFeatherInstance70 a2) {
+  public static void WsDragoonTransformationCallback4(final EffectManagerData6c manager, final WsDragoonTransformationFeatherInstance70 a2) {
     // no-op
   }
 
