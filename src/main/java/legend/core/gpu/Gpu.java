@@ -320,30 +320,6 @@ public class Gpu {
     }
   }
 
-  public void commandC0CopyRectFromVramToCpu(final RECT rect, final long address) {
-    assert address != 0;
-
-    final int rectX = rect.x.get();
-    final int rectY = rect.y.get();
-    final int rectW = rect.w.get();
-    final int rectH = rect.h.get();
-
-    assert rectX + rectW <= this.vramWidth : "Rect right (" + (rectX + rectW) + ") overflows VRAM width (" + this.vramWidth + ')';
-    assert rectY + rectH <= this.vramHeight : "Rect bottom (" + (rectY + rectH) + ") overflows VRAM height (" + this.vramHeight + ')';
-
-    LOGGER.debug("Copying (%d, %d, %d, %d) from VRAM to CPU (address: %08x)", rectX, rectY, rectW, rectH, address);
-
-    MEMORY.waitForLock(() -> {
-      int i = 0;
-      for(int y = rectY; y < rectY + rectH; y++) {
-        for(int x = rectX; x < rectX + rectW; x++) {
-          MEMORY.set(address + i, 2, this.getPixel15(x, y));
-          i += 2;
-        }
-      }
-    });
-  }
-
   public void commandC0CopyRectFromVramToCpu(final RECT rect, final FileData out) {
     final int rectX = rect.x.get();
     final int rectY = rect.y.get();

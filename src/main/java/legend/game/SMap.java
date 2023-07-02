@@ -67,7 +67,6 @@ import legend.game.types.MediumStruct;
 import legend.game.types.Model124;
 import legend.game.types.ModelPartTransforms0c;
 import legend.game.types.MrgFile;
-import legend.game.types.SubmapCutInfo;
 import legend.game.types.NewRootStruct;
 import legend.game.types.SMapStruct3c;
 import legend.game.types.SavePointRenderData44;
@@ -85,6 +84,7 @@ import legend.game.types.Struct20;
 import legend.game.types.Struct34;
 import legend.game.types.Struct34_2;
 import legend.game.types.Structb0;
+import legend.game.types.SubmapCutInfo;
 import legend.game.types.SubmapEncounterData_04;
 import legend.game.types.SubmapObject210;
 import legend.game.types.TexPageY;
@@ -191,7 +191,6 @@ import static legend.game.Scus94491BpeSegment_8005._80050424;
 import static legend.game.Scus94491BpeSegment_8005._80052c40;
 import static legend.game.Scus94491BpeSegment_8005._80052c44;
 import static legend.game.Scus94491BpeSegment_8005._80052c48;
-import static legend.game.Scus94491BpeSegment_8005._80052c4c;
 import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c3c;
@@ -250,7 +249,7 @@ public final class SMap {
 
   public static final Value _800c672c = MEMORY.ref(4, 0x800c672cL);
   public static final IntRef sobjCount_800c6730 = MEMORY.ref(4, 0x800c6730L, IntRef::new);
-  public static int[] _800c6734;
+
   /**
    * Lower 4 bits are chapter title num (starting at 1), used for displaying chapter title cards
    *
@@ -686,7 +685,7 @@ public final class SMap {
     pregameLoadingStage_800bb10c.incr();
 
     if(pregameLoadingStage_800bb10c.get() > 94) {
-      fmvIndex_800bf0dc.setu(0x11L);
+      fmvIndex_800bf0dc = 17;
       afterFmvLoadingStage_800bf0ec = EngineState.THE_END_04;
       pregameLoadingStage_800bb10c.set(0);
       vsyncMode_8007a3b8 = 2;
@@ -2864,7 +2863,6 @@ public final class SMap {
         chapterTitleCardLoaded_800c68e0.set(false);
         loadingStage_800c68e4.addu(0x1L);
 
-        _800c6734 = new int[10];
         _800c69fc = new TriangleIndicator140();
 
         cameraPos_800c6aa0.set(rview2_800bd7e8.viewpoint_00).sub(rview2_800bd7e8.refpoint_0c);
@@ -3049,7 +3047,6 @@ public final class SMap {
 
     _800f9eac.set(-1);
     loadSmapMedia();
-    _800c6734 = null;
     _800c69fc = null;
     loadTimImage(_80010544.getAddress());
   }
@@ -3424,10 +3421,10 @@ public final class SMap {
   @Method(0x800e3cc8L)
   public static void loadTimImage(final long address) {
     final TimHeader header = parseTimHeader(MEMORY.ref(4, address).offset(0x4L));
-    LoadImage(header.imageRect, header.imageAddress.get());
+    LoadImage(header.imageRect, header.imageAddress);
 
     if(header.hasClut()) {
-      LoadImage(header.clutRect, header.clutAddress.get());
+      LoadImage(header.clutRect, header.clutAddress);
     }
   }
 
@@ -4008,7 +4005,7 @@ public final class SMap {
     _800f7e4c.setu(0x1L);
 
     if(newCut > 0x7ff) {
-      fmvIndex_800bf0dc.setu(newCut - 0x800L);
+      fmvIndex_800bf0dc = newCut - 0x800;
       afterFmvLoadingStage_800bf0ec = EngineState.values()[newScene];
       smapLoadingStage_800cb430.setu(0x15L);
       _800f7e4c.setu(0x1L);
@@ -4187,7 +4184,7 @@ public final class SMap {
       }
 
       case 0x1 -> { // Load newroot
-        loadFile(_80052c4c.name_04.deref().get(), data -> newrootPtr_800cab04 = new NewRootStruct(data));
+        loadFile("\\SUBMAP\\NEWROOT.RDT", data -> newrootPtr_800cab04 = new NewRootStruct(data));
         smapLoadingStage_800cb430.setu(0x2L);
       }
 
@@ -4205,9 +4202,9 @@ public final class SMap {
 
         // Detect if we need to change disks
         getDrgnFileFromNewRoot(submapCut_80052c30.get(), drgnIndex, fileIndex);
-        if(drgnIndex.get() != drgnBinIndex_800bc058.get()) {
+        if(drgnIndex.get() != drgnBinIndex_800bc058) {
           //LAB_800e5c9c
-          drgnBinIndex_800bc058.set(drgnIndex.get());
+          drgnBinIndex_800bc058 = drgnIndex.get();
 
           // Not sure if we still need to reinit the sound or not, but this is what retail did
           reinitSound();
@@ -4518,7 +4515,7 @@ public final class SMap {
 
     // Once you reach a certain chapter, some maps will load from a different disk (like Fletz with the docks in chapter 4)
     final boolean useLateGameMap;
-    if(drgnIndex1 == drgnBinIndex_800bc058.get() - 1 || drgnIndex2 > gameState_800babc8.chapterIndex_98) {
+    if(drgnIndex1 == drgnBinIndex_800bc058 - 1 || drgnIndex2 > gameState_800babc8.chapterIndex_98) {
       drgnIndexOut.set(drgnIndex1);
       useLateGameMap = false;
     } else {
@@ -6814,11 +6811,6 @@ public final class SMap {
   @Method(0x800ed5b0L)
   public static void startFmvLoadingStage() {
     throw new RuntimeException("No longer used");
-  }
-
-  @Method(0x800edb8cL)
-  public static void FUN_800edb8c() {
-    assert false;
   }
 
   @Method(0x800eddb4L)
@@ -9645,12 +9637,12 @@ public final class SMap {
     //LAB_800f47f0
     for(int textureIndex = 0; textureIndex < textureCount; textureIndex++) {
       final TimHeader header = parseTimHeader(_800f9eb0.offset(textureIndex * 0x4L).deref(4).offset(0x4L));
-      LoadImage(header.imageRect, header.imageAddress.get());
+      LoadImage(header.imageRect, header.imageAddress);
 
-      texPages_800d6050.get(textureIndex).set(texPages_800bb110.get(Bpp.values()[(int)(header.flags.get() & 0b11)]).get(miscTextureTransModes_800d6cf0.get(textureIndex).get()).get(TexPageY.fromY(header.imageRect.y.get())).get() | (header.imageRect.x.get() & 0x3c0) >>> 6);
+      texPages_800d6050.get(textureIndex).set(texPages_800bb110.get(Bpp.values()[header.flags & 0b11]).get(miscTextureTransModes_800d6cf0.get(textureIndex).get()).get(TexPageY.fromY(header.imageRect.y.get())).get() | (header.imageRect.x.get() & 0x3c0) >>> 6);
       cluts_800d6068.get(textureIndex).set(header.clutRect.y.get() << 6 | (header.clutRect.x.get() & 0x3f0) >>> 4);
 
-      LoadImage(header.clutRect, header.clutAddress.get());
+      LoadImage(header.clutRect, header.clutAddress);
     }
 
     //LAB_800f48a8

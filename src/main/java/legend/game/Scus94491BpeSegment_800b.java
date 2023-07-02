@@ -59,7 +59,7 @@ public final class Scus94491BpeSegment_800b {
   public static final EnumMapRef<Bpp, EnumMapRef<Translucency, EnumMapRef<TexPageY, UnsignedShortRef>>> texPages_800bb110 = MEMORY.ref(2, 0x800bb110L, EnumMapRef.of(Bpp.class, EnumMapRef.classFor(EnumMapRef.classFor(UnsignedShortRef.class)), Bpp.values().length, 0x10, EnumMapRef.of(Translucency.class, EnumMapRef.classFor(UnsignedShortRef.class), Translucency.values().length, 4, EnumMapRef.of(TexPageY.class, UnsignedShortRef.class, 2, 2, UnsignedShortRef::new))));
   public static final FullScreenEffect fullScreenEffect_800bb140 = new FullScreenEffect();
 
-  public static final IntRef drgnBinIndex_800bc058 = MEMORY.ref(4, 0x800bc058L, IntRef::new);
+  public static int drgnBinIndex_800bc058;
 
   public static final ScriptState<?>[] scriptStatePtrArr_800bc1c0 = new ScriptState[72];
 
@@ -146,7 +146,7 @@ public final class Scus94491BpeSegment_800b {
 
   public static final GsRVIEW2 rview2_800bd7e8 = new GsRVIEW2();
   public static final IntRef submapIndex_800bd808 = MEMORY.ref(4, 0x800bd808L, IntRef::new);
-  public static EngineState _800bd80c = EngineState.PRELOAD_00;
+
   public static final Value projectionPlaneDistance_800bd810 = MEMORY.ref(4, 0x800bd810L);
 
   public static final ArrayRef<SobjPos14> sobjPositions_800bd818 = MEMORY.ref(4, 0x800bd818L, ArrayRef.of(SobjPos14.class, 24, 0x14, SobjPos14::new));
@@ -305,7 +305,7 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value fmvStage_800bf0d8 = MEMORY.ref(4, 0x800bf0d8L);
 
-  public static final Value fmvIndex_800bf0dc = MEMORY.ref(4, 0x800bf0dcL);
+  public static int fmvIndex_800bf0dc;
 
   public static EngineState afterFmvLoadingStage_800bf0ec = EngineState.PRELOAD_00;
 }

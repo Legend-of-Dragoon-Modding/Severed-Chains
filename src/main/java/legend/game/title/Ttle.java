@@ -480,7 +480,7 @@ public final class Ttle {
         removeInputHandlers();
         deallocateFire();
 
-        fmvIndex_800bf0dc.setu(0x2L);
+        fmvIndex_800bf0dc = 2;
         afterFmvLoadingStage_800bf0ec = EngineState.TRANSITION_TO_NEW_GAME_03;
         Fmv.playCurrentFmv();
 
@@ -611,7 +611,7 @@ public final class Ttle {
       removeInputHandlers();
       deallocateFire();
 
-      fmvIndex_800bf0dc.setu(0);
+      fmvIndex_800bf0dc = 0;
       afterFmvLoadingStage_800bf0ec = EngineState.TITLE_02;
       Fmv.playCurrentFmv();
 

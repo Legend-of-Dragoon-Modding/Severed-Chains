@@ -117,7 +117,7 @@ public final class Scus94491BpeSegment_800e {
 
   @Method(0x800e6184L)
   public static void preload() {
-    drgnBinIndex_800bc058.set(1);
+    drgnBinIndex_800bc058 = 1;
 
     loadMenuSounds();
     resizeDisplay(320, 240);
@@ -127,7 +127,7 @@ public final class Scus94491BpeSegment_800e {
     loadBasicUiTexturesAndSomethingElse();
 
     //LAB_800e6040
-    fmvIndex_800bf0dc.setu(0);
+    fmvIndex_800bf0dc = 0;
     afterFmvLoadingStage_800bf0ec = EngineState.TITLE_02;
   }
 

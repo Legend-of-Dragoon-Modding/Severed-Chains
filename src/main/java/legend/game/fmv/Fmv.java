@@ -10,7 +10,6 @@ import legend.core.opengl.Window;
 import legend.core.spu.XaAdpcm;
 import legend.game.input.Input;
 import legend.game.input.InputAction;
-import legend.game.types.FileEntry08;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
 import org.apache.logging.log4j.LogManager;
@@ -212,8 +211,7 @@ public final class Fmv {
 
     submapIndex_800bd808.set(-1);
 
-    final FileEntry08 file = diskFmvs_80052d7c.get(drgnBinIndex_800bc058.get()).deref().get((int)(fmvIndex_800bf0dc.get() - _80052d6c.get(drgnBinIndex_800bc058.get() - 1).get()));
-    Fmv.play(file.name_04.deref().get(), true);
+    Fmv.play(diskFmvs_80052d7c[drgnBinIndex_800bc058 - 1][fmvIndex_800bf0dc - _80052d6c.get(drgnBinIndex_800bc058 - 1).get()], true);
     fmvStage_800bf0d8.setu(0);
     engineStateOnceLoaded_8004dd24 = afterFmvLoadingStage_800bf0ec;
   }

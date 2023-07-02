@@ -9,10 +9,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.function.Function;
 
 public class Pointer<T extends MemoryRef> implements MemoryRef {
-  public static <T extends MemoryRef> Function<Value, Pointer<T>> of(final int size, final Function<Value, T> constructor) {
-    return ref -> new Pointer<>(ref, constructor, size, true);
-  }
-
   /**
    * Lazy mode - don't resolve pointer until used
    */
@@ -85,21 +81,6 @@ public class Pointer<T extends MemoryRef> implements MemoryRef {
     return this.cache;
   }
 
-  public <U extends T> U derefAs(final Class<U> cls) {
-    return cls.cast(this.deref());
-  }
-
-  @Nullable
-  public <U extends T> U derefNullableAs(final Class<U> cls) {
-    final T t = this.derefNullable();
-
-    if(t == null) {
-      return null;
-    }
-
-    return cls.cast(t);
-  }
-
   public Pointer<T> set(final T ref) {
     this.ref.setu(ref.getAddress());
     this.cache = ref;
@@ -142,12 +123,6 @@ public class Pointer<T extends MemoryRef> implements MemoryRef {
 
   public long getPointer() {
     return this.ref.get();
-  }
-
-  public Pointer<T> setPointer(final long address) {
-    this.ref.setu(address);
-    this.cache = null;
-    return this;
   }
 
   public Pointer<T> set(final long address, final Class<? extends T> type) {

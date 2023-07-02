@@ -94,22 +94,6 @@ public final class Scus94491BpeSegment_8003 {
     GPU.uploadData(rect, data);
   }
 
-  @Method(0x80038818L)
-  public static long StoreImage(final RECT rect, final long address) {
-    validateRect("StoreImage", rect);
-
-    rect.w.set(MathHelper.clamp(rect.w.get(), (short)0, (short)_800546c0.get()));
-    rect.h.set(MathHelper.clamp(rect.h.get(), (short)0, (short)_800546c2.get()));
-
-    if(rect.w.get() <= 0 || rect.h.get() <= 0) {
-      throw new IllegalArgumentException("RECT width and height must be greater than 0");
-    }
-
-    GPU.commandC0CopyRectFromVramToCpu(rect, address);
-
-    return 0;
-  }
-
   public static long StoreImage(final RECT rect, final FileData data) {
     validateRect("StoreImage", rect);
 
@@ -508,7 +492,7 @@ public final class Scus94491BpeSegment_8003 {
   @Method(0x8003cdf0L)
   public static TimHeader parseTimHeader(final Value baseAddress) {
     final TimHeader header = new TimHeader();
-    header.flags.set(baseAddress.offset(4, 0x0L).get());
+    header.flags = (int)baseAddress.offset(4, 0x0L).get();
 
     if(baseAddress.get(0b1000L) == 0) { // No CLUT
       //LAB_8003ce94

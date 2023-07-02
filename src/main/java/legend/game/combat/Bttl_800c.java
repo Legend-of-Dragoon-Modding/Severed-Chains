@@ -1418,7 +1418,7 @@ public final class Bttl_800c {
         }
 
         case 4 -> {
-          fmvIndex_800bf0dc.setu(0x10L);
+          fmvIndex_800bf0dc = 16;
           afterFmvLoadingStage_800bf0ec = EngineState.CREDITS_11;
           Fmv.playCurrentFmv();
         }

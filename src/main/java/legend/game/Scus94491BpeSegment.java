@@ -44,7 +44,6 @@ import legend.game.sound.Sssq;
 import legend.game.types.CallbackStruct;
 import legend.game.types.CharacterData2c;
 import legend.game.types.EngineState;
-import legend.game.types.FileEntry08;
 import legend.game.types.Flags;
 import legend.game.types.McqHeader;
 import legend.game.types.MoonMusic08;
@@ -118,7 +117,6 @@ import static legend.game.Scus94491BpeSegment_8004.loadSshdAndSoundbank;
 import static legend.game.Scus94491BpeSegment_8004.loadSssq;
 import static legend.game.Scus94491BpeSegment_8004.loadedOverlayIndex_8004dd10;
 import static legend.game.Scus94491BpeSegment_8004.moonMusic_8004ff10;
-import static legend.game.Scus94491BpeSegment_8004.overlays_8004db88;
 import static legend.game.Scus94491BpeSegment_8004.preloadingAudioAssets_8004ddcc;
 import static legend.game.Scus94491BpeSegment_8004.previousEngineState_8004dd28;
 import static legend.game.Scus94491BpeSegment_8004.reinitOrderingTableBits_8004dd38;
@@ -140,6 +138,7 @@ import static legend.game.Scus94491BpeSegment_8004.startRegularSound;
 import static legend.game.Scus94491BpeSegment_8004.startSequenceAndChangeVolumeOverTime;
 import static legend.game.Scus94491BpeSegment_8004.stopMusicSequence;
 import static legend.game.Scus94491BpeSegment_8004.stopSoundSequence;
+import static legend.game.Scus94491BpeSegment_8004.supportOverlays_8004db88;
 import static legend.game.Scus94491BpeSegment_8004.swapDisplayBuffer_8004dd40;
 import static legend.game.Scus94491BpeSegment_8004.syncFrame_8004dd3c;
 import static legend.game.Scus94491BpeSegment_8004.width_8004dd34;
@@ -520,17 +519,17 @@ public final class Scus94491BpeSegment {
   public static void loadGameStateOverlay(final EngineState engineState) {
     LOGGER.info("Loading game state overlay %s", engineState);
 
-    final FileEntry08 entry = gameStateCallbacks_8004dbc0[engineState.ordinal()].entry_04;
+    final String file = gameStateCallbacks_8004dbc0[engineState.ordinal()].file_04;
 
-    if(entry == null || entry.getAddress() == currentlyLoadingFileEntry_8004dd04.getPointer()) {
+    if(file == null || file == currentlyLoadingFileEntry_8004dd04) {
       //LAB_80012ac0
       FUN_80012bd4(engineState);
       return;
     }
 
     //LAB_80012ad8
-    currentlyLoadingFileEntry_8004dd04.set(entry);
-    loadOverlay(entry.name_04.deref().get(), _80010000.get());
+    currentlyLoadingFileEntry_8004dd04 = file;
+    loadOverlay(file, _80010000.get());
   }
 
   /**
@@ -556,7 +555,7 @@ public final class Scus94491BpeSegment {
     //LAB_80012b6c
     //LAB_80012b70
     loadedOverlayIndex_8004dd10 = overlayIndex;
-    loadOverlay(overlays_8004db88.get(loadedOverlayIndex_8004dd10).name_04.deref().get(), _80010004.get());
+    loadOverlay(supportOverlays_8004db88[loadedOverlayIndex_8004dd10], _80010004.get());
 
     overlayMethod.run();
 
@@ -685,23 +684,6 @@ public final class Scus94491BpeSegment {
   @Method(0x800135b8L)
   public static short rcos(final long theta) {
     return (short)sin_cos_80054d0c.offset(2, 0x2L).offset((theta & 0xfffL) * 4).getSigned();
-  }
-
-  /**
-   * 800135d8
-   *
-   * Copies the first n bytes of src to dest.
-   *
-   * @param dest Pointer to copy destination memory block
-   * @param src Pointer to copy source memory block
-   * @param length Number of bytes copied
-   *
-   * @return Pointer to destination (dest)
-   */
-  @Method(0x800135d8L)
-  public static long memcpy(final long dest, final long src, final int length) {
-    MEMORY.memcpy(dest, src, length);
-    return dest;
   }
 
   /**
@@ -895,7 +877,7 @@ public final class Scus94491BpeSegment {
 
   public static void loadDrgnFiles(int drgnBinIndex, final Consumer<List<FileData>> onCompletion, final String... files) {
     if(drgnBinIndex >= 2) {
-      drgnBinIndex = 20 + drgnBinIndex_800bc058.get();
+      drgnBinIndex = 20 + drgnBinIndex_800bc058;
     }
 
     final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
@@ -917,7 +899,7 @@ public final class Scus94491BpeSegment {
 
   public static void loadDrgnFile(int drgnBinIndex, final String file, final Consumer<FileData> onCompletion) {
     if(drgnBinIndex >= 2) {
-      drgnBinIndex = 20 + drgnBinIndex_800bc058.get();
+      drgnBinIndex = 20 + drgnBinIndex_800bc058;
     }
 
     final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
@@ -930,7 +912,7 @@ public final class Scus94491BpeSegment {
 
   public static void loadDrgnDir(int drgnBinIndex, final int directory, final Consumer<List<FileData>> onCompletion) {
     if(drgnBinIndex >= 2) {
-      drgnBinIndex = 20 + drgnBinIndex_800bc058.get();
+      drgnBinIndex = 20 + drgnBinIndex_800bc058;
     }
 
     final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
@@ -941,7 +923,7 @@ public final class Scus94491BpeSegment {
 
   public static void loadDrgnDir(int drgnBinIndex, final String directory, final Consumer<List<FileData>> onCompletion) {
     if(drgnBinIndex >= 2) {
-      drgnBinIndex = 20 + drgnBinIndex_800bc058.get();
+      drgnBinIndex = 20 + drgnBinIndex_800bc058;
     }
 
     final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
@@ -1668,7 +1650,7 @@ public final class Scus94491BpeSegment {
         FUN_8001aa90();
 
         //LAB_80019a00
-        if(drgnBinIndex_800bc058.get() == 1) {
+        if(drgnBinIndex_800bc058 == 1) {
           // Load main menu background music
           loadMusicPackage(1, 0);
         } else {
