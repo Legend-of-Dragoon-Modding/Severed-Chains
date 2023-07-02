@@ -557,7 +557,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[598] = SEffe::FUN_80111cc4;
     scriptSubFunctions_8004e29c[599] = SEffe::FUN_80111ed4;
     scriptSubFunctions_8004e29c[600] = Bttl_800e::scriptAllocateEmptyEffectManagerChild;
-    scriptSubFunctions_8004e29c[601] = Bttl_800e::allocateAttackHitFlashEffect;
+    scriptSubFunctions_8004e29c[601] = Bttl_800e::allocateBillboardSpriteEffect;
     scriptSubFunctions_8004e29c[602] = Bttl_800e::FUN_800e9854;
     // scriptSubFunctions_8004e29c[603] = Temp::FUN_800ca648;
 
@@ -579,7 +579,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[619] = SEffe::allocateShirleyTransformWipeEffect;
     scriptSubFunctions_8004e29c[620] = SEffe::FUN_80111a58;
     scriptSubFunctions_8004e29c[621] = Bttl_800e::FUN_800ea384;
-    scriptSubFunctions_8004e29c[622] = SEffe::FUN_80119484;
+    scriptSubFunctions_8004e29c[622] = SEffe::allocateSpriteWithTrailEffect;
     scriptSubFunctions_8004e29c[623] = Bttl_800e::scriptLoadDeff;
     scriptSubFunctions_8004e29c[624] = Bttl_800e::FUN_800e6db4;
     scriptSubFunctions_8004e29c[625] = Bttl_800e::FUN_800e7490;

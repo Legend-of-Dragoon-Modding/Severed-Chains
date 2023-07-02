@@ -46,7 +46,7 @@ import legend.game.combat.deff.LmbType2;
 import legend.game.combat.effects.AdditionOverlaysBorder0e;
 import legend.game.combat.effects.AdditionOverlaysEffect44;
 import legend.game.combat.effects.AdditionOverlaysHit20;
-import legend.game.combat.effects.AttackHitFlashEffect0c;
+import legend.game.combat.effects.BillboardSpriteEffect0c;
 import legend.game.combat.effects.BttlScriptData6cSub13c;
 import legend.game.combat.effects.BttlScriptData6cSub1c_3;
 import legend.game.combat.effects.BttlScriptData6cSub5c;
@@ -80,13 +80,13 @@ import legend.game.combat.effects.ScreenCaptureEffectMetrics8;
 import legend.game.combat.effects.ScreenDistortionEffectData08;
 import legend.game.combat.effects.SpriteMetrics08;
 import legend.game.combat.effects.SpriteWithTrailEffect30;
-import legend.game.combat.effects.SpriteWithTrailEffect30Sub10;
 import legend.game.combat.effects.StarChildrenImpactEffect20;
 import legend.game.combat.effects.StarChildrenImpactEffectInstancea8;
 import legend.game.combat.effects.StarChildrenMeteorEffect10;
 import legend.game.combat.effects.StarChildrenMeteorEffectInstance10;
 import legend.game.combat.effects.ThunderArrowEffect1c;
 import legend.game.combat.effects.ThunderArrowEffectBolt1e;
+import legend.game.combat.effects.TmdSpriteEffect10;
 import legend.game.combat.effects.TransformScalerEffect34;
 import legend.game.combat.effects.UnusedBuggedEffect24;
 import legend.game.combat.effects.WsDragoonTransformationFeatherInstance70;
@@ -192,7 +192,7 @@ import static legend.game.combat.Bttl_800c.seed_800fa754;
 import static legend.game.combat.Bttl_800c.spriteMetrics_800c6948;
 import static legend.game.combat.Bttl_800c.tmds_800c6944;
 import static legend.game.combat.Bttl_800d.FUN_800dc408;
-import static legend.game.combat.Bttl_800d.FUN_800de3f4;
+import static legend.game.combat.Bttl_800d.renderTmdSpriteEffect;
 import static legend.game.combat.Bttl_800d.ScaleMatrixL_SVEC;
 import static legend.game.combat.Bttl_800d.getRotationAndScaleFromTransforms;
 import static legend.game.combat.Bttl_800d.getRotationFromTransforms;
@@ -208,12 +208,12 @@ import static legend.game.combat.Bttl_800e.FUN_800e8c84;
 import static legend.game.combat.Bttl_800e.FUN_800e8d04;
 import static legend.game.combat.Bttl_800e.FUN_800e8dd4;
 import static legend.game.combat.Bttl_800e.FUN_800e9178;
-import static legend.game.combat.Bttl_800e.FUN_800e9428;
-import static legend.game.combat.Bttl_800e.FUN_800e95f0;
 import static legend.game.combat.Bttl_800e.allocateEffectManager;
 import static legend.game.combat.Bttl_800e.applyScreenDarkening;
 import static legend.game.combat.Bttl_800e.getDeffPart;
+import static legend.game.combat.Bttl_800e.getSpriteMetricsFromSource;
 import static legend.game.combat.Bttl_800e.perspectiveTransformXyz;
+import static legend.game.combat.Bttl_800e.renderBillboardSpriteEffect_;
 import static legend.game.combat.Bttl_800e.renderGenericSpriteAtZOffset0;
 
 public final class SEffe {
@@ -8633,8 +8633,8 @@ public final class SEffe {
       //LAB_80115f34
     } else if(type == 0x400_0000) {
       //LAB_801160f4
-      final AttackHitFlashEffect0c sp0x10 = new AttackHitFlashEffect0c();
-      FUN_800e95f0(sp0x10, a2 & 0xff_ffff);
+      final BillboardSpriteEffect0c sp0x10 = new BillboardSpriteEffect0c();
+      getSpriteMetricsFromSource(sp0x10, a2 & 0xff_ffff);
       u = sp0x10.metrics_04.u_00;
       v = sp0x10.metrics_04.v_02;
       w = sp0x10.metrics_04.w_04;
@@ -8696,13 +8696,13 @@ public final class SEffe {
       }
 
       //LAB_80116778
-      FUN_800de3f4(tmdObjTable, manager._10, sp0x10);
+      renderTmdSpriteEffect(tmdObjTable, manager._10, sp0x10);
     } else if(type == 0x400_0000) {
       if(effect.deffSpriteFlags_50 != deffFlags) {
         //LAB_801162e8
-        final AttackHitFlashEffect0c sp0x48 = new AttackHitFlashEffect0c();
+        final BillboardSpriteEffect0c sp0x48 = new BillboardSpriteEffect0c();
 
-        FUN_800e95f0(sp0x48, deffFlags);
+        getSpriteMetricsFromSource(sp0x48, deffFlags);
         effect.metrics_54.u_00 = sp0x48.metrics_04.u_00;
         effect.metrics_54.v_02 = sp0x48.metrics_04.v_02;
         effect.metrics_54.w_04 = sp0x48.metrics_04.w_04;
@@ -9533,7 +9533,7 @@ public final class SEffe {
         zMin = oldZMin;
       } else {
         //LAB_80118370
-        FUN_800de3f4(s1.tmd_08, data._10, sp0x10);
+        renderTmdSpriteEffect(s1.tmd_08, data._10, sp0x10);
       }
 
       //LAB_80118380
@@ -9660,21 +9660,20 @@ public final class SEffe {
   }
 
   @Method(0x801186f8L)
-  public static void FUN_801186f8(final SpriteWithTrailEffect30Sub10 a0, final int flags) {
-    a0.flags_00 = flags | 0x300_0000;
+  public static void getSpriteTmdFromSource(final TmdSpriteEffect10 spriteEffect, final int flags) {
+    spriteEffect.flags_00 = flags | 0x300_0000;
     if((flags & 0xf_ff00) == 0xf_ff00) {
-      a0.tmdType_04 = null;
-      a0.tmd_08 = deffManager_800c693c.tmds_2f8[flags & 0xff];
-      a0.tpage_10 = 0x20;
+      spriteEffect.tmdType_04 = null;
+      spriteEffect.tmd_08 = deffManager_800c693c.tmds_2f8[flags & 0xff];
+      spriteEffect.tpage_10 = 0x20;
     } else {
       //LAB_80118750
       final DeffPart.TmdType tmdType = (DeffPart.TmdType)getDeffPart(flags | 0x300_0000);
       final TmdWithId tmdWithId = tmdType.tmd_0c.tmdPtr_00;
-      a0.tmdType_04 = tmdType;
-      a0.tmd_08 = tmdWithId.tmd.objTable[0];
-      a0.tpage_10 = (int)((tmdWithId.id & 0xffff_0000L) >>> 11);
+      spriteEffect.tmdType_04 = tmdType;
+      spriteEffect.tmd_08 = tmdWithId.tmd.objTable[0];
+      spriteEffect.tpage_10 = (int)((tmdWithId.id & 0xffff_0000L) >>> 11);
     }
-
     //LAB_80118780
   }
 
@@ -9702,7 +9701,7 @@ public final class SEffe {
       tmdGp0Tpage_1f8003ec.set(manager._10.flags_00 >>> 23 & 0x60);
       zOffset_1f8003e8.set(manager._10.z_22);
       FUN_800e60e0(manager._10.colour_1c.getX() << 5, manager._10.colour_1c.getY() << 5, manager._10.colour_1c.getZ() << 5);
-      FUN_800de3f4(model_800bda10.dobj2ArrPtr_00[0].tmd_08, manager._10, sp0x10);
+      renderTmdSpriteEffect(model_800bda10.dobj2ArrPtr_00[0].tmd_08, manager._10, sp0x10);
       FUN_800e6170();
     }
 
@@ -9839,28 +9838,24 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
-  /** TODO some effects use CTMD render pipeline if type == 0x300_0000 */
+  /** Some effects use CTMD render pipeline if type == 0x300_0000 */
   @Method(0x80118e98L)
-  public static void FUN_80118e98(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
-    final VECTOR sp0x84 = new VECTOR();
-    final VECTOR sp0x90 = new VECTOR();
-    final VECTOR sp0x9c = new VECTOR();
-
+  public static void renderSpriteWithTrailEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
     final SpriteWithTrailEffect30 effect = (SpriteWithTrailEffect30)manager.effect_44;
     if(manager._10.flags_00 >= 0) {
-      final MATRIX sp0x10 = new MATRIX();
-      FUN_800e8594(sp0x10, manager);
+      final MATRIX transformMatrix = new MATRIX();
+      FUN_800e8594(transformMatrix, manager);
 
-      final int type = effect._04 & 0xff00_0000;
+      final int type = effect.effectFlag_04 & 0xff00_0000;
       if(type == 0x300_0000) {
-        final SpriteWithTrailEffect30Sub10 struct = (SpriteWithTrailEffect30Sub10)effect._1c;
+        final TmdSpriteEffect10 sprite = (TmdSpriteEffect10)effect.subEffect_1c;
 
         //LAB_80118f38
         if((manager._10.flags_00 & 0x4000_0000) != 0) {
           tmdGp0Tpage_1f8003ec.set(manager._10.flags_00 >>> 23 & 0x60);
         } else {
           //LAB_80118f5c
-          tmdGp0Tpage_1f8003ec.set(struct.tpage_10);
+          tmdGp0Tpage_1f8003ec.set(sprite.tpage_10);
         }
 
         //LAB_80118f68
@@ -9871,81 +9866,82 @@ public final class SEffe {
         }
 
         //LAB_80118f9c
-        FUN_800de3f4(struct.tmd_08, manager._10, sp0x10);
+        renderTmdSpriteEffect(sprite.tmd_08, manager._10, transformMatrix);
       } else if(type == 0x400_0000) {
-        final AttackHitFlashEffect0c struct = (AttackHitFlashEffect0c)effect._1c;
-        FUN_800e9428(struct.metrics_04, manager._10, sp0x10);
+        final BillboardSpriteEffect0c sprite = (BillboardSpriteEffect0c)effect.subEffect_1c;
+        renderBillboardSpriteEffect_(sprite.metrics_04, manager._10, transformMatrix);
       }
 
       //LAB_80118fac
-      if(effect.count_08 != 0) {
-        final EffectManagerData6cInner sp0x50 = new EffectManagerData6cInner();
+      if(effect.countCopies_08 != 0) {
+        final EffectManagerData6cInner managerInner = new EffectManagerData6cInner();
+        final VECTOR colour = new VECTOR();
+        final VECTOR scale = new VECTOR();
+        final VECTOR stepScale = new VECTOR();
 
         //LAB_80118fc4
-        sp0x50.set(manager._10);
+        managerInner.set(manager._10);
 
-        final int a2 = effect.count_08 * (effect._0c + 1);
-        if((effect._00 & 0x4) != 0) {
-          final int v0 = effect._10 - 0x1000;
-          sp0x50._28 = sp0x50.colour_1c.getX() << 12;
-          sp0x50._2c = sp0x50.colour_1c.getY() << 12;
-          sp0x50._30 = sp0x50.colour_1c.getZ() << 12;
-          sp0x84.setX(sp0x50.colour_1c.getX() * v0 / a2);
-          sp0x84.setY(sp0x50.colour_1c.getY() * v0 / a2);
-          sp0x84.setZ(sp0x50.colour_1c.getZ() * v0 / a2);
+        final int combinedSteps = effect.countCopies_08 * (effect.countTransformSteps_0c + 1);
+        if((effect.colourAndScaleFlags_00 & 0x4) != 0) {
+          final int brightness = effect.colourAndScaleTransformModifier_10 - 0x1000;
+          managerInner._28 = managerInner.colour_1c.getX() << 12;
+          managerInner._2c = managerInner.colour_1c.getY() << 12;
+          managerInner._30 = managerInner.colour_1c.getZ() << 12;
+          colour.setX(managerInner.colour_1c.getX() * brightness / combinedSteps);
+          colour.setY(managerInner.colour_1c.getY() * brightness / combinedSteps);
+          colour.setZ(managerInner.colour_1c.getZ() * brightness / combinedSteps);
         }
 
         //LAB_801190a8
-        if((effect._00 & 0x8) != 0) {
-          final int v0 = effect._10 - 0x1000;
-          sp0x90.setX(sp0x50.scale_16.getX() << 12);
-          sp0x90.setY(sp0x50.scale_16.getY() << 12);
-          sp0x90.setZ(sp0x50.scale_16.getZ() << 12);
-          sp0x9c.setX(sp0x50.scale_16.getX() * v0 / a2);
-          sp0x9c.setY(sp0x50.scale_16.getY() * v0 / a2);
-          sp0x9c.setZ(sp0x50.scale_16.getZ() * v0 / a2);
+        if((effect.colourAndScaleFlags_00 & 0x8) != 0) {
+          final int scaleModifier = effect.colourAndScaleTransformModifier_10 - 0x1000;
+          scale.setX(managerInner.scale_16.getX() << 12);
+          scale.setY(managerInner.scale_16.getY() << 12);
+          scale.setZ(managerInner.scale_16.getZ() << 12);
+          stepScale.setX(managerInner.scale_16.getX() * scaleModifier / combinedSteps);
+          stepScale.setY(managerInner.scale_16.getY() * scaleModifier / combinedSteps);
+          stepScale.setZ(managerInner.scale_16.getZ() * scaleModifier / combinedSteps);
         }
 
         //LAB_80119130
         //LAB_8011914c
-        for(int s6 = 1; s6 < effect.count_08 && s6 < effect._14; s6++) {
-          final VECTOR a1 = effect._18[(effect._14 - s6 - 1) % effect.count_08];
+        for(int i = 1; i < effect.countCopies_08 && i < effect.translationIndexBase_14; i++) {
+          final VECTOR instTranslation = effect.instanceTranslations_18[(effect.translationIndexBase_14 - i - 1) % effect.countCopies_08];
 
-          final int steps = effect._0c + 1;
-          final int stepX = (a1.getX() - sp0x10.transfer.getX() << 12) / steps;
-          final int stepY = (a1.getY() - sp0x10.transfer.getY() << 12) / steps;
-          final int stepZ = (a1.getZ() - sp0x10.transfer.getZ() << 12) / steps;
+          final int steps = effect.countTransformSteps_0c + 1;
+          final int stepX = (instTranslation.getX() - transformMatrix.transfer.getX() << 12) / steps;
+          final int stepY = (instTranslation.getY() - transformMatrix.transfer.getY() << 12) / steps;
+          final int stepZ = (instTranslation.getZ() - transformMatrix.transfer.getZ() << 12) / steps;
 
-          int x = sp0x10.transfer.getX() << 12;
-          int y = sp0x10.transfer.getY() << 12;
-          int z = sp0x10.transfer.getZ() << 12;
-
-          final int s5 = effect._04 & 0xff00_0000;
+          int x = transformMatrix.transfer.getX() << 12;
+          int y = transformMatrix.transfer.getY() << 12;
+          int z = transformMatrix.transfer.getZ() << 12;
 
           //LAB_80119204
-          for(int s1 = effect._0c; s1 >= 0; s1--) {
-            if((effect._00 & 0x4) != 0) {
-              sp0x50._28 += sp0x84.getX();
-              sp0x50._2c += sp0x84.getY();
-              sp0x50._30 += sp0x84.getZ();
+          for(int j = effect.countTransformSteps_0c; j >= 0; j--) {
+            if((effect.colourAndScaleFlags_00 & 0x4) != 0) {
+              managerInner._28 += colour.getX();
+              managerInner._2c += colour.getY();
+              managerInner._30 += colour.getZ();
               //LAB_80119254
               //LAB_80119270
               //LAB_8011928c
-              sp0x50.colour_1c.setX(sp0x50._28 >> 12);
-              sp0x50.colour_1c.setY(sp0x50._2c >> 12);
-              sp0x50.colour_1c.setZ(sp0x50._30 >> 12);
+              managerInner.colour_1c.setX(managerInner._28 >> 12);
+              managerInner.colour_1c.setY(managerInner._2c >> 12);
+              managerInner.colour_1c.setZ(managerInner._30 >> 12);
             }
 
             //LAB_80119294
-            if((effect._00 & 0x8) != 0) {
-              sp0x90.add(sp0x9c);
+            if((effect.colourAndScaleFlags_00 & 0x8) != 0) {
+              scale.add(stepScale);
 
               //LAB_801192e4
               //LAB_80119300
               //LAB_8011931c
-              sp0x50.scale_16.setX((short)(sp0x90.getX() >> 12));
-              sp0x50.scale_16.setY((short)(sp0x90.getY() >> 12));
-              sp0x50.scale_16.setZ((short)(sp0x90.getZ() >> 12));
+              managerInner.scale_16.setX((short)(scale.getX() >> 12));
+              managerInner.scale_16.setY((short)(scale.getY() >> 12));
+              managerInner.scale_16.setZ((short)(scale.getZ() >> 12));
             }
 
             //LAB_80119324
@@ -9956,33 +9952,29 @@ public final class SEffe {
             //LAB_80119348
             //LAB_80119360
             //LAB_80119378
-            final MATRIX sp0x30 = new MATRIX().set(sp0x10);
-            sp0x30.transfer.set(x >> 12, y >> 12, z >> 12);
+            transformMatrix.transfer.set(x >> 12, y >> 12, z >> 12);
 
-            ScaleMatrixL_SVEC(sp0x30, sp0x50.scale_16);
-            if(s5 == 0x300_0000) {
+            ScaleMatrixL_SVEC(transformMatrix, managerInner.scale_16);
+            if(type == 0x300_0000) {
               //LAB_801193f0
-              final SpriteWithTrailEffect30Sub10 struct = (SpriteWithTrailEffect30Sub10)effect._1c;
-              FUN_800de3f4(struct.tmd_08, sp0x50, sp0x30);
-            } else if(s5 == 0x400_0000) {
-              final AttackHitFlashEffect0c struct = (AttackHitFlashEffect0c)effect._1c;
-              FUN_800e9428(struct.metrics_04, sp0x50, sp0x30);
+              final TmdSpriteEffect10 subEffect = (TmdSpriteEffect10)effect.subEffect_1c;
+              renderTmdSpriteEffect(subEffect.tmd_08, managerInner, transformMatrix);
+            } else if(type == 0x400_0000) {
+              final BillboardSpriteEffect0c subEffect = (BillboardSpriteEffect0c)effect.subEffect_1c;
+              renderBillboardSpriteEffect_(subEffect.metrics_04, managerInner, transformMatrix);
             }
-
             //LAB_80119400
             //LAB_80119404
           }
-
           //LAB_8011940c
         }
 
         //LAB_80119420
-        if((effect._04 & 0xff00_0000) == 0x300_0000 && (manager._10.flags_00 & 0x40) == 0) {
+        if(type == 0x300_0000 && (manager._10.flags_00 & 0x40) == 0) {
           FUN_800e62a8();
         }
       }
     }
-
     //LAB_80119454
   }
 
@@ -9992,77 +9984,42 @@ public final class SEffe {
    * generic sprite animations where multiple instances create a "trail" of effect copies.
    */
   @Method(0x80119484L)
-  public static FlowControl FUN_80119484(final RunningScript<? extends BattleScriptDataBase> script) {
-    final int s4 = script.params_20[1].get();
-    final int s2 = script.params_20[2].get();
-    final int count = script.params_20[3].get();
-    final int s0 = script.params_20[4].get();
-    final int s1 = script.params_20[5].get();
+  public static FlowControl allocateSpriteWithTrailEffect(final RunningScript<? extends BattleScriptDataBase> script) {
+    final int effectFlag = script.params_20[1].get();
 
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "SpriteWithTrailEffect30",
       script.scriptState_04,
-      SEffe::FUN_801196bc,
-      SEffe::FUN_80118e98,
+      SEffe::tickSpriteWithTrailEffect,
+      SEffe::renderSpriteWithTrailEffect,
       null,
-      new SpriteWithTrailEffect30()
+      new SpriteWithTrailEffect30(script.params_20[3].get())
     );
 
-    final EffectManagerData6c data = state.innerStruct_00;
+    final EffectManagerData6c manager = state.innerStruct_00;
 
-    final SpriteWithTrailEffect30 s3 = (SpriteWithTrailEffect30)data.effect_44;
-    s3._00 = s2;
-    s3._04 = s4;
-    s3.count_08 = count;
-    s3._0c = s0;
-    s3._10 = s1;
-    s3._14 = 0;
-
-    if(count != 0) {
-      s3._18 = new VECTOR[count];
-      Arrays.setAll(s3._18, i -> new VECTOR());
-    } else {
-      //LAB_80119568
-      s3._18 = null;
-    }
+    final SpriteWithTrailEffect30 effect = (SpriteWithTrailEffect30)manager.effect_44;
+    effect.colourAndScaleFlags_00 = script.params_20[2].get();
+    effect.effectFlag_04 = effectFlag;
+    effect.countTransformSteps_0c = script.params_20[4].get();
+    effect.colourAndScaleTransformModifier_10 = script.params_20[5].get();
+    effect.translationIndexBase_14 = 0;
 
     //LAB_8011956c
-    final int v1 = s4 & 0xff00_0000;
-    if(v1 == 0x400_0000) {
+    final int effectType = effectFlag & 0xff00_0000;
+    if(effectType == 0x400_0000) {
       //LAB_80119640
-      s3._1c = new AttackHitFlashEffect0c();
-      FUN_800e95f0((AttackHitFlashEffect0c)s3._1c, s4);
-      data._10.flags_00 = data._10.flags_00 & 0xfbff_ffff | 0x5000_0000;
-    } else if(v1 == 0x300_0000) {
+      effect.subEffect_1c = new BillboardSpriteEffect0c();
+      getSpriteMetricsFromSource((BillboardSpriteEffect0c)effect.subEffect_1c, effectFlag);
+      manager._10.flags_00 = manager._10.flags_00 & 0xfbff_ffff | 0x5000_0000;
+    } else if(effectType == 0x300_0000) {
       //LAB_80119668
-      s3._1c = new SpriteWithTrailEffect30Sub10();
-      FUN_801186f8((SpriteWithTrailEffect30Sub10)s3._1c, s4);
-      data._10.flags_00 = 0x1400_0000;
-    } else if(v1 == 0) {
+      effect.subEffect_1c = new TmdSpriteEffect10();
+      getSpriteTmdFromSource((TmdSpriteEffect10)effect.subEffect_1c, effectFlag);
+      manager._10.flags_00 = 0x1400_0000;
+    } else if(effectType == 0) {
       //LAB_801195a8
-      throw new RuntimeException("The type is " + ((EffectManagerData6c)scriptStatePtrArr_800bc1c0[s4].innerStruct_00).effect_44.getClass().getSimpleName());
-
-/*
-      final BttlScriptData6cSubBase1 v1_0 = ((EffectManagerData6c)scriptStatePtrArr_800bc1c0[s4].innerStruct_00).effect_44;
-      s4 = v1_0._00.get();
-      s3._04.set(s4);
-
-      final long a1 = s4 & 0xff00_0000L;
-      if(a1 == 0x300_0000L) {
-        //LAB_8011960c
-        //TODO
-        MEMORY.ref(4, s3.getAddress()).offset(0x1cL).setu(MEMORY.ref(4, v1_0.getAddress()).offset(0x0L).get());
-        MEMORY.ref(4, s3.getAddress()).offset(0x20L).setu(MEMORY.ref(4, v1_0.getAddress()).offset(0x4L).get());
-        MEMORY.ref(4, s3.getAddress()).offset(0x24L).setu(MEMORY.ref(4, v1_0.getAddress()).offset(0x8L).get());
-        MEMORY.ref(4, s3.getAddress()).offset(0x28L).setu(MEMORY.ref(4, v1_0.getAddress()).offset(0xcL).get());
-        MEMORY.ref(4, s3.getAddress()).offset(0x2cL).setu(MEMORY.ref(4, v1_0.getAddress()).offset(0x10L).get());
-      } else if(a1 == 0x400_0000L) {
-        //TODO
-        MEMORY.ref(4, s3.getAddress()).offset(0x1cL).setu(MEMORY.ref(4, v1_0.getAddress()).offset(0x0L).get());
-        MEMORY.ref(4, s3.getAddress()).offset(0x20L).setu(MEMORY.ref(4, v1_0.getAddress()).offset(0x4L).get());
-        MEMORY.ref(4, s3.getAddress()).offset(0x24L).setu(MEMORY.ref(4, v1_0.getAddress()).offset(0x8L).get());
-      }
-*/
+      throw new RuntimeException("The type is " + ((EffectManagerData6c)scriptStatePtrArr_800bc1c0[effectFlag].innerStruct_00).effect_44.getClass().getSimpleName());
     }
 
     //LAB_8011967c
@@ -10071,16 +10028,15 @@ public final class SEffe {
   }
 
   @Method(0x801196bcL)
-  public static void FUN_801196bc(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
-    final SpriteWithTrailEffect30 s0 = (SpriteWithTrailEffect30)manager.effect_44;
+  public static void tickSpriteWithTrailEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+    final SpriteWithTrailEffect30 effect = (SpriteWithTrailEffect30)manager.effect_44;
 
-    if(s0.count_08 != 0) {
-      final MATRIX sp0x10 = new MATRIX();
-      FUN_800e8594(sp0x10, manager);
-      s0._18[s0._14 % s0.count_08].set(sp0x10.transfer);
-      s0._14++;
+    if(effect.countCopies_08 != 0) {
+      final MATRIX transformMatrix = new MATRIX();
+      FUN_800e8594(transformMatrix, manager);
+      effect.instanceTranslations_18[effect.translationIndexBase_14 % effect.countCopies_08].set(transformMatrix.transfer);
+      effect.translationIndexBase_14++;
     }
-
     //LAB_80119778
   }
 }
