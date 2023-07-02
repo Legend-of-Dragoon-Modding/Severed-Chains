@@ -274,7 +274,11 @@ public class WMap {
   private static final Pointer<LodString> Enter_800f01e8 = MEMORY.ref(4, 0x800f01e8L, Pointer.deferred(4, LodString::new));
   private static final ArrayRef<Pointer<LodString>> regions_800f01ec = MEMORY.ref(4, 0x800f01ecL, ArrayRef.of(Pointer.classFor(LodString.class), 3, 4, Pointer.deferred(4, LodString::new)));
 
-  private static final Value _800f01fc = MEMORY.ref(4, 0x800f01fcL);
+  private static final Runnable[] _800f01fc = new Runnable[2];
+  static {
+    _800f01fc[0] = WMap::FUN_800e406c;
+    _800f01fc[1] = WMap::FUN_800e469c;
+  }
 
   private static final ArrayRef<UnsignedByteRef> _800f0204 = MEMORY.ref(1, 0x800f0204L, ArrayRef.of(UnsignedByteRef.class, 0xc, 1, UnsignedByteRef::new));
   private static final ArrayRef<UnsignedByteRef> _800f0210 = MEMORY.ref(1, 0x800f0210L, ArrayRef.of(UnsignedByteRef.class, 0xc, 1, UnsignedByteRef::new));
@@ -4751,7 +4755,7 @@ public class WMap {
   public static void FUN_800e3ff0() {
     if(struct258_800c66a8._05 != 0) {
       //LAB_800e4020
-      _800f01fc.offset((struct258_800c66a8._05 - 1) * 0x4L).deref(4).call();
+      _800f01fc[struct258_800c66a8._05 - 1].run();
     }
 
     //LAB_800e4058

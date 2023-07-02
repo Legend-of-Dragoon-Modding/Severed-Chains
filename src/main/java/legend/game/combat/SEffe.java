@@ -28,13 +28,10 @@ import legend.core.memory.Method;
 import legend.core.memory.Ref;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
-import legend.core.memory.types.BiConsumerRef;
 import legend.core.memory.types.ByteRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
-import legend.core.memory.types.Pointer;
 import legend.core.memory.types.QuadConsumer;
-import legend.core.memory.types.QuadConsumerRef;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.TriConsumer;
 import legend.core.memory.types.UnsignedByteRef;
@@ -53,8 +50,8 @@ import legend.game.combat.effects.AttackHitFlashEffect0c;
 import legend.game.combat.effects.BttlScriptData6cSub13c;
 import legend.game.combat.effects.BttlScriptData6cSub1c_3;
 import legend.game.combat.effects.BttlScriptData6cSub5c;
-import legend.game.combat.effects.Effect;
 import legend.game.combat.effects.DeffTmdRenderer14;
+import legend.game.combat.effects.Effect;
 import legend.game.combat.effects.EffectData98Inner24;
 import legend.game.combat.effects.EffectManagerData6c;
 import legend.game.combat.effects.EffectManagerData6cInner;
@@ -262,7 +259,12 @@ public final class SEffe {
    *   <li>{@link SEffe#FUN_800fcf18}</li>
    * </ol>
    */
-  private static final ArrayRef<Pointer<BiConsumerRef<EffectManagerData6c, EffectStruct48>>> _801197c0 = MEMORY.ref(4, 0x801197c0L, ArrayRef.of(Pointer.classFor(BiConsumerRef.classFor(EffectManagerData6c.class, EffectStruct48.class)), 3, 4, Pointer.deferred(4, BiConsumerRef::new)));
+  private static final BiConsumer<EffectManagerData6c, EffectStruct48>[] _801197c0 = new BiConsumer[3];
+  static {
+    _801197c0[0] = SEffe::FUN_800fce10;
+    _801197c0[1] = null;
+    _801197c0[2] = SEffe::FUN_800fcf18;
+  }
 
   private static final Value _801197ec = MEMORY.ref(1, 0x801197ecL);
 
@@ -297,7 +299,16 @@ public final class SEffe {
    *   <li>{@link SEffe#FUN_80101c74}</li>
    * </ol>
    */
-  private static final ArrayRef<Pointer<QuadConsumerRef<ParticleEffectData98, ParticleEffectInstance94, EffectData98Inner24, Integer>>> _80119b94 = MEMORY.ref(4, 0x80119b94L, ArrayRef.of(Pointer.classFor(QuadConsumerRef.classFor(ParticleEffectData98.class, ParticleEffectInstance94.class, EffectData98Inner24.class, int.class)), 6, 4, Pointer.deferred(4, QuadConsumerRef::new)));
+  private static final QuadConsumer<ParticleEffectData98, ParticleEffectInstance94, EffectData98Inner24, Integer>[] _80119b94 = new QuadConsumer[6];
+  static {
+    _80119b94[0] = SEffe::FUN_80101e84;
+    _80119b94[1] = SEffe::FUN_80101d3c;
+    _80119b94[2] = SEffe::FUN_80101c74;
+    _80119b94[3] = SEffe::FUN_80101c68;
+    _80119b94[4] = SEffe::FUN_80101c74;
+    _80119b94[5] = SEffe::FUN_80101c74;
+  }
+
   private static final TriConsumer<EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94>[] _80119bac = new TriConsumer[65];
   static {
     _80119bac[0] = SEffe::FUN_800fb9c0;
@@ -1412,7 +1423,7 @@ public final class SEffe {
               FUN_800cfc20(s5._68, s5._2c, sp0x40, refX2, refY2);
               sp0x50.x1_0c = refX2.get();
               sp0x50.y1_14 = refY2.get();
-              _801197c0.get(s2._60 - 2).deref().run(data, sp0x50);
+              _801197c0[s2._60 - 2].accept(data, sp0x50);
               sp0x50.x0_08 = sp0x50.x1_0c;
               sp0x50.y0_10 = sp0x50.y1_14;
             }
@@ -2560,7 +2571,7 @@ public final class SEffe {
 
     //LAB_801022d4
     effect.count_54 = 0;
-    _80119b94.get(script.params_20[2].get() >> 20).deref().run(effect, null/*s2_0 see above*/, effect._08, script.params_20[2].get());
+    _80119b94[script.params_20[2].get() >> 20].accept(effect, null/*s2_0 see above*/, effect._08, script.params_20[2].get());
     manager._10.flags_00 |= 0x5000_0000;
     manager.flags_04 |= 0x4_0000;
     return FlowControl.CONTINUE;
