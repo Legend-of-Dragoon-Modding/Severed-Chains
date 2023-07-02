@@ -65,11 +65,6 @@ public final class Scus94491BpeSegment_8003 {
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(Scus94491BpeSegment_8003.class);
 
-  @Method(0x800309f0L)
-  public static void bzero(final long address, final int size) {
-    MEMORY.memfill(address, size, 0);
-  }
-
   @Method(0x80038190L)
   public static void ResetGraph() {
     GPU.resetCommandBuffer();

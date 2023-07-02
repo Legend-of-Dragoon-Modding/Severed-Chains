@@ -25,7 +25,6 @@ import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BoolRef;
 import legend.core.memory.types.EnumRef;
 import legend.core.memory.types.IntRef;
-import legend.core.memory.types.Pointer;
 import legend.core.memory.types.RelativePointer;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnboundedArrayRef;
@@ -68,7 +67,7 @@ import legend.game.types.MediumStruct;
 import legend.game.types.Model124;
 import legend.game.types.ModelPartTransforms0c;
 import legend.game.types.MrgFile;
-import legend.game.types.NewRootEntryStruct;
+import legend.game.types.SubmapCutInfo;
 import legend.game.types.NewRootStruct;
 import legend.game.types.SMapStruct3c;
 import legend.game.types.SavePointRenderData44;
@@ -79,6 +78,7 @@ import legend.game.types.SobjPos14;
 import legend.game.types.SomethingStruct;
 import legend.game.types.SomethingStructSub0c_1;
 import legend.game.types.SomethingStructSub0c_2;
+import legend.game.types.Struct0c;
 import legend.game.types.Struct14;
 import legend.game.types.Struct18;
 import legend.game.types.Struct20;
@@ -300,19 +300,16 @@ public final class SMap {
   public static final Value _800c6ae4 = MEMORY.ref(4, 0x800c6ae4L);
   public static final IntRef encounterAccumulator_800c6ae8 = MEMORY.ref(4, 0x800c6ae8L, IntRef::new);
   public static UnknownStruct _800c6aec;
-  /** 14576 bytes - contains the contents of NEWROOT.RDT */
-  public static final NewRootStruct newroot_800c6af0 = MEMORY.ref(4, 0x800c6af0L, NewRootStruct::new);
 
   public static WhichMenu _800caaf0;
   public static final IntRef _800caaf4 = MEMORY.ref(4, 0x800caaf4L, IntRef::new);
   public static final IntRef _800caaf8 = MEMORY.ref(4, 0x800caaf8L, IntRef::new);
   public static final IntRef _800caafc = MEMORY.ref(4, 0x800caafcL, IntRef::new);
   public static final IntRef _800cab00 = MEMORY.ref(4, 0x800cab00L, IntRef::new);
-  public static final Pointer<NewRootStruct> newrootPtr_800cab04 = MEMORY.ref(4, 0x800cab04L, Pointer.deferred(4, NewRootStruct::new));
+  public static NewRootStruct newrootPtr_800cab04;
 
   public static final Value backgroundLoaded_800cab10 = MEMORY.ref(4, 0x800cab10L);
 
-  public static final Value newrootLoaded_800cab1c = MEMORY.ref(4, 0x800cab1cL);
   public static final Value _800cab20 = MEMORY.ref(4, 0x800cab20L);
   public static MediumStruct _800cab24;
   public static final Value _800cab28 = MEMORY.ref(4, 0x800cab28L);
@@ -327,9 +324,7 @@ public final class SMap {
 
   public static final Value _800cb450 = MEMORY.ref(4, 0x800cb450L);
 
-  public static final Pointer<NewRootStruct> newRootPtr_800cb458 = MEMORY.ref(4, 0x800cb458L, Pointer.deferred(4, NewRootStruct::new));
-
-  public static final ArrayRef<IntRef> arr_800cb460 = MEMORY.ref(4, 0x800cb460L, ArrayRef.of(IntRef.class, 0x40, 4, IntRef::new));
+  public static final int[] collisionAndTransitions_800cb460 = new int[64];
 
   public static final Value _800cb560 = MEMORY.ref(4, 0x800cb560L); //TODO something X
   public static final Value _800cb564 = MEMORY.ref(4, 0x800cb564L); //TODO something Y
@@ -342,9 +337,10 @@ public final class SMap {
   public static final IntRef _800cb580 = MEMORY.ref(4, 0x800cb580L, IntRef::new);
   public static final Value backgroundObjectsCount_800cb584 = MEMORY.ref(4, 0x800cb584L);
 
-  //TODO array of VECTORs?
-  public static final Value _800cb590 = MEMORY.ref(4, 0x800cb590L);
-
+  public static final Struct0c[] _800cb590 = new Struct0c[32];
+  static {
+    Arrays.setAll(_800cb590, i -> new Struct0c());
+  }
   /** Array of 0x24 (tpage packet, then a quad packet, then more data used elsewhere?) TODO */
   public static final Value _800cb710 = MEMORY.ref(1, 0x800cb710L);
 
@@ -3755,7 +3751,7 @@ public final class SMap {
     // The first condition is to fix what we believe is caused by menus loading too fast in SC. Submaps still take several frames to initialize,
     // and if you spam triangle and escape immediately after the post-combat screen it's possible to get into this method when index_80052c38 is
     // still set to -1. See #304 for more details.
-    if(index_80052c38.get() >= 0 && index_80052c38.get() < 0x40L && arr_800cb460.get(index_80052c38.get()).get() != 0) {
+    if(index_80052c38.get() >= 0 && index_80052c38.get() < 0x40L && collisionAndTransitions_800cb460[index_80052c38.get()] != 0) {
       return 0;
     }
 
@@ -3971,14 +3967,6 @@ public final class SMap {
     _80052c44.setu(0x2L);
     _80052c48.setu(0);
     _800cab20.setu(0x2L);
-  }
-
-  @Method(0x800e54a4L)
-  public static void newrootCallback_800e54a4(final FileData data) {
-    newrootPtr_800cab04.set(newroot_800c6af0);
-    MEMORY.setBytes(newroot_800c6af0.getAddress(), data.getBytes());
-    FUN_800e6640(newrootPtr_800cab04.deref());
-    newrootLoaded_800cab1c.setu(0x1L);
   }
 
   @Method(0x800e5518L)
@@ -4199,13 +4187,12 @@ public final class SMap {
       }
 
       case 0x1 -> { // Load newroot
-        newrootLoaded_800cab1c.setu(0);
-        loadFile(_80052c4c.name_04.deref().get(), SMap::newrootCallback_800e54a4);
+        loadFile(_80052c4c.name_04.deref().get(), data -> newrootPtr_800cab04 = new NewRootStruct(data));
         smapLoadingStage_800cb430.setu(0x2L);
       }
 
       case 0x2 -> { // Wait for newroot to load
-        if(newrootLoaded_800cab1c.get() != 0) {
+        if(newrootPtr_800cab04 != null) {
           smapLoadingStage_800cb430.setu(0x3L);
         }
       }
@@ -4260,7 +4247,7 @@ public final class SMap {
       case 0x9 -> {
         FUN_800e4d00(submapCut_80052c30.get(), submapScene_80052c34.get());
         FUN_800e81a0(submapScene_80052c34.get());
-        FUN_800e664c(submapCut_80052c30.get(), 0x1L);
+        loadCollisionAndTransitions(submapCut_80052c30.get());
         FUN_800e6d4c();
         if(_800cab2c.get() != 0) { // This might be to transition to another map or something?
           FUN_800e7328();
@@ -4524,106 +4511,67 @@ public final class SMap {
 
   @Method(0x800e6504L)
   public static void getDrgnFileFromNewRoot(final int submapCut, final IntRef drgnIndexOut, final IntRef fileIndexOut) {
-    final NewRootEntryStruct entry = newRootPtr_800cb458.deref().entries_0000.get(submapCut);
+    final SubmapCutInfo entry = newrootPtr_800cab04.submapCutInfo_0000[submapCut];
 
-    final int drgnIndexA = entry.ub_01.get() >>> 5;
-    final int chapterIndex = entry.ub_03.get() >>> 5;
+    final int drgnIndex1 = entry.earlyGameFile_00 >>> 13;
+    final int drgnIndex2 = entry.lateGameFile_02 >>> 13;
 
-    final boolean second;
-    if(drgnIndexA == drgnBinIndex_800bc058.get() - 1) {
-      drgnIndexOut.set(drgnIndexA);
-      second = false;
-    } else if(chapterIndex == drgnBinIndex_800bc058.get() - 1 && chapterIndex <= gameState_800babc8.chapterIndex_98) {
-      drgnIndexOut.set(chapterIndex);
-      second = true;
-      //LAB_800e6570
-    } else if(chapterIndex >= 4) {
-      drgnIndexOut.set(drgnIndexA);
-      second = false;
-    } else if(chapterIndex <= gameState_800babc8.chapterIndex_98) {
-      //LAB_800e6580
-      drgnIndexOut.set(chapterIndex);
-      second = true;
+    // Once you reach a certain chapter, some maps will load from a different disk (like Fletz with the docks in chapter 4)
+    final boolean useLateGameMap;
+    if(drgnIndex1 == drgnBinIndex_800bc058.get() - 1 || drgnIndex2 > gameState_800babc8.chapterIndex_98) {
+      drgnIndexOut.set(drgnIndex1);
+      useLateGameMap = false;
     } else {
-      //LAB_800e658c
-      drgnIndexOut.set(drgnIndexA);
-      second = false;
+      drgnIndexOut.set(drgnIndex2);
+      useLateGameMap = true;
     }
 
-    //LAB_800e6594
-    final int t0;
-    if(drgnIndexOut.get() == 0 || drgnIndexOut.get() == 1 || drgnIndexOut.get() == 2 || drgnIndexOut.get() == 3) {
-      //LAB_800e65bc
-      //LAB_800e65cc
-      t0 = 4;
-    } else {
-      t0 = 0;
-    }
+    final int t0 = drgnIndexOut.get() >= 0 && drgnIndexOut.get() <= 3 ? 4 : 0;
 
-    //LAB_800e65d0
     drgnIndexOut.incr();
-
-    final int v1;
-    int v0;
-    if(second) {
-      v1 = entry.ub_02.get();
-      v0 = entry.ub_03.get();
-    } else {
-      //LAB_800e6604
-      v1 = entry.ub_00.get();
-      v0 = entry.ub_01.get();
-    }
-
-    //LAB_800e6624
-    v0 = (v0 & 0x1f) << 8 | v1;
-    fileIndexOut.set(v0 * 3 + t0);
-  }
-
-  @Method(0x800e6640L)
-  public static void FUN_800e6640(final NewRootStruct newRoot) {
-    newRootPtr_800cb458.set(newRoot);
+    fileIndexOut.set(((useLateGameMap ? entry.lateGameFile_02 : entry.earlyGameFile_00) & 0x1fff) * 3 + t0);
   }
 
   @Method(0x800e664cL)
-  public static void FUN_800e664c(final int submapCut, final long a1) {
-    MEMORY.memfill(arr_800cb460.getAddress(), 0x100, 0);
+  public static void loadCollisionAndTransitions(final int submapCut) {
+    Arrays.fill(collisionAndTransitions_800cb460, 0);
 
-    final NewRootEntryStruct entry = newRootPtr_800cb458.deref().entries_0000.get(submapCut);
-    final short offset = (short)(entry.ub_05.get() << 8 | entry.ub_04.get());
+    final SubmapCutInfo entry = newrootPtr_800cab04.submapCutInfo_0000[submapCut];
+    final short offset = entry.collisionAndTransitionOffset_04;
 
     if(offset < 0) {
       return;
     }
 
     //LAB_800e66dc
-    for(int i = 0; i < (entry.ub_07.get() << 8 | entry.ub_06.get()); i++) {
-      final int v1 = (int)newRootPtr_800cb458.deref().uia_2000.get(offset / 4 + i).get();
-      arr_800cb460.get((v1 >> 8 & 0xfc) / 4).set(v1);
+    for(int i = 0; i < entry.collisionAndTransitionCount_06; i++) {
+      final int v1 = newrootPtr_800cab04.collisionAndTransitions_2000[offset / 4 + i];
+      collisionAndTransitions_800cb460[(v1 >> 8 & 0xfc) / 4] = v1;
     }
 
     //LAB_800e671c
   }
 
   @Method(0x800e6730L)
-  public static int FUN_800e6730(final int index) {
+  public static int getCollisionAndTransitionInfo(final int index) {
     // This did unsigned comparison, so -1 was >= 0x40
     if(index < 0 || index >= 0x40) {
       return 0;
     }
 
-    return arr_800cb460.get(index).get();
+    return collisionAndTransitions_800cb460[index];
   }
 
   @Method(0x800e675cL)
   public static void FUN_800e675c(final int a0) {
-    arr_800cb460.get((a0 >> 8 & 0xfc) >> 2).set(a0);
+    collisionAndTransitions_800cb460[(a0 >> 8 & 0xfc) / 4] = a0;
   }
 
   @Method(0x800e6798L)
   public static int FUN_800e6798(final int index, final long a1, final long x, final long y, final long z, final SVECTOR playerMovement) {
-    final long v1 = FUN_800e6730(index);
+    final int v1 = getCollisionAndTransitionInfo(index);
 
-    if((v1 & 0x8L) != 0) {
+    if((v1 & 0x8) != 0) {
       return 0;
     }
 
@@ -4653,7 +4601,7 @@ public final class SMap {
 
     //LAB_800e686c
     if(script.params_20[0].get() == 3) {
-      FUN_800e76b0(0x400L, 0x400L, script.params_20[1].get());
+      FUN_800e76b0(0x400, 0x400, script.params_20[1].get());
     }
 
     //LAB_800e688c
@@ -4697,7 +4645,7 @@ public final class SMap {
 
   @Method(0x800e69a4L)
   public static FlowControl FUN_800e69a4(final RunningScript<?> script) {
-    script.params_20[0].set(FUN_800e6730(script.params_20[1].get()));
+    script.params_20[0].set(getCollisionAndTransitionInfo(script.params_20[1].get()));
     return FlowControl.CONTINUE;
   }
 
@@ -4708,13 +4656,13 @@ public final class SMap {
 
   @Method(0x800e69f0L)
   public static FlowControl FUN_800e69f0(final RunningScript<?> script) {
-    FUN_800e675c(FUN_800e6730(script.params_20[0].get()) | 0x8);
+    FUN_800e675c(getCollisionAndTransitionInfo(script.params_20[0].get()) | 0x8);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e6a28L)
   public static FlowControl FUN_800e6a28(final RunningScript<?> script) {
-    FUN_800e675c(FUN_800e6730(script.params_20[0].get()) & 0xffff_fff7);
+    FUN_800e675c(getCollisionAndTransitionInfo(script.params_20[0].get()) & 0xffff_fff7);
     return FlowControl.CONTINUE;
   }
 
@@ -5014,7 +4962,10 @@ public final class SMap {
 
     envStruct_800cab30 = envFile.environments_18;
     buildBackgroundRenderingPacket(envStruct_800cab30);
-    MEMORY.memfill(_800cb590.getAddress(), 0x180, 0);
+
+    for(final Struct0c struct : _800cb590) {
+      struct.clear();
+    }
   }
 
   @Method(0x800e7604L)
@@ -5042,17 +4993,17 @@ public final class SMap {
   }
 
   @Method(0x800e76b0L)
-  public static void FUN_800e76b0(final long a0, final long a1, final long a2) {
-    if(a0 == 0x400L && a1 == 0x400L) {
-      _800cb590.offset(4, a2 * 0xcL).offset(0x8L).setu(0x1L);
+  public static void FUN_800e76b0(final int x, final int y, final int index) {
+    if(x == 0x400 && y == 0x400) {
+      _800cb590[index]._08 = true;
       return;
     }
 
     //LAB_800e76e8
     //LAB_800e76ec
-    _800cb590.offset(4, a2 * 0xcL).setu(a0);
-    _800cb590.offset(4, a2 * 0xcL).offset(0x4L).setu(a1);
-    _800cb590.offset(4, a2 * 0xcL).offset(0x8L).setu(0);
+    _800cb590[index].x_00 = x;
+    _800cb590[index].y_04 = y;
+    _800cb590[index]._08 = false;
   }
 
   @Method(0x800e770cL)
@@ -5248,9 +5199,9 @@ public final class SMap {
 
     //LAB_800e7de0
     for(int i = 0; i < _800cb580.get(); i++) {
-      if(_800cb590.offset(i * 0xcL).offset(0x8L).get() == 0) {
-        MEMORY.ref(2, s1).offset(0x10L).setu(_800cb560.getSigned() + screenOffsetX_800cb568.get() + MEMORY.ref(2, s1).offset(0x1cL).get() + _800cb590.offset(i * 0xcL).offset(0x0L).get());
-        MEMORY.ref(2, s1).offset(0x12L).setu(_800cb564.getSigned() + screenOffsetY_800cb56c.get() + MEMORY.ref(2, s1).offset(0x1eL).get() + _800cb590.offset(i * 0xcL).offset(0x4L).get());
+      if(!_800cb590[i]._08) {
+        MEMORY.ref(2, s1).offset(0x10L).setu(_800cb560.getSigned() + screenOffsetX_800cb568.get() + MEMORY.ref(2, s1).offset(0x1cL).get() + _800cb590[i].x_00);
+        MEMORY.ref(2, s1).offset(0x12L).setu(_800cb564.getSigned() + screenOffsetY_800cb56c.get() + MEMORY.ref(2, s1).offset(0x1eL).get() + _800cb590[i].y_04);
 
         final int clut = (int)MEMORY.get(s1 + 0x16L, 2);
         final int tpage = (int)MEMORY.get(s1 + 0x4L, 3);
@@ -5939,7 +5890,7 @@ public final class SMap {
       }
 
       //LAB_800e9c58
-      if((FUN_800e6730(s4) & 0x20L) != 0) {
+      if((getCollisionAndTransitionInfo(s4) & 0x20) != 0) {
         return -1;
       }
 

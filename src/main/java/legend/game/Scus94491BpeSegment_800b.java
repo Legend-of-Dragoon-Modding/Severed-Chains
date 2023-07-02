@@ -227,7 +227,6 @@ public final class Scus94491BpeSegment_800b {
     Arrays.setAll(stats_800be5f8, i -> new ActiveStatsa0());
   }
 
-  public static final Value _800beb98 = MEMORY.ref(4, 0x800beb98L);
   public static final Value _800bed28 = MEMORY.ref(4, 0x800bed28L);
 
   public static final MATRIX matrix_800bed30 = MEMORY.ref(4, 0x800bed30L, MATRIX::new);

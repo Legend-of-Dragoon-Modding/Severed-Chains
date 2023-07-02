@@ -105,7 +105,7 @@ import static legend.game.SMap.FUN_800e4e5c;
 import static legend.game.SMap.FUN_800e4f8c;
 import static legend.game.SMap.FUN_800e519c;
 import static legend.game.SMap.FUN_800e5534;
-import static legend.game.SMap.FUN_800e6730;
+import static legend.game.SMap.getCollisionAndTransitionInfo;
 import static legend.game.SMap.FUN_800e828c;
 import static legend.game.SMap.FUN_800e8e50;
 import static legend.game.SMap.FUN_800ea4c8;
@@ -142,7 +142,6 @@ import static legend.game.Scus94491BpeSegment_8003.ScaleMatrix;
 import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
 import static legend.game.Scus94491BpeSegment_8003.TransMatrix;
 import static legend.game.Scus94491BpeSegment_8003.TransposeMatrix;
-import static legend.game.Scus94491BpeSegment_8003.bzero;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixX;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixY;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixZ;
@@ -189,7 +188,6 @@ import static legend.game.Scus94491BpeSegment_800b._800bdf08;
 import static legend.game.Scus94491BpeSegment_800b._800bdf10;
 import static legend.game.Scus94491BpeSegment_800b._800bdf18;
 import static legend.game.Scus94491BpeSegment_800b._800be5d0;
-import static legend.game.Scus94491BpeSegment_800b._800beb98;
 import static legend.game.Scus94491BpeSegment_800b._800bed28;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
@@ -4843,7 +4841,6 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x8002aa04L)
   public static void FUN_8002aa04() {
-    MEMORY.memfill(_800beb98.getAddress(), 0x190, 0);
     _800bed28.setu(0);
   }
 
@@ -4895,9 +4892,9 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_8002abdc
     //LAB_8002abe0
-    final int a0 = FUN_800e6730(index_80052c38.get());
-    if((a0 & 0x10) != 0) {
-      FUN_800e5534(a0 >>> 22, a0 >>> 16 & 0x3f);
+    final int collisionAndTransitionInfo = getCollisionAndTransitionInfo(index_80052c38.get());
+    if((collisionAndTransitionInfo & 0x10) != 0) {
+      FUN_800e5534(collisionAndTransitionInfo >>> 22, collisionAndTransitionInfo >>> 16 & 0x3f);
     }
 
     //LAB_8002ac10
@@ -4979,7 +4976,7 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x8002ced8L)
   public static void start() {
-    bzero(_8005a1d8.getAddress(), 0x6c4b0);
+    MEMORY.memfill(_8005a1d8.getAddress(), 0x6c4b0, 0);
     main();
   }
 

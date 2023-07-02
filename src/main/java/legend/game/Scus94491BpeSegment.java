@@ -92,7 +92,6 @@ import static legend.game.Scus94491BpeSegment_8003.GsSetDrawBuffOffset;
 import static legend.game.Scus94491BpeSegment_8003.GsSortClear;
 import static legend.game.Scus94491BpeSegment_8003.GsSwapDispBuff;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
-import static legend.game.Scus94491BpeSegment_8003.bzero;
 import static legend.game.Scus94491BpeSegment_8003.setDrawOffset;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004.FUN_8004d91c;
@@ -574,7 +573,7 @@ public final class Scus94491BpeSegment {
     //LAB_80012bf0
     final CallbackStruct callback = gameStateCallbacks_8004dbc0[engineState.ordinal()];
     if(callback.addressToClear_08 != 0) {
-      bzero(callback.addressToClear_08, callback.clearSize);
+      MEMORY.memfill(callback.addressToClear_08, callback.clearSize, 0);
     }
   }
 
