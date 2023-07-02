@@ -28,7 +28,7 @@ import legend.game.combat.deff.Anim;
 import legend.game.combat.deff.BattleStruct24_2;
 import legend.game.combat.deff.DeffManager7cc;
 import legend.game.combat.deff.DeffPart;
-import legend.game.combat.effects.AttackHitFlashEffect0c;
+import legend.game.combat.effects.BillboardSpriteEffect0c;
 import legend.game.combat.effects.BttlScriptData6cSub13c;
 import legend.game.combat.effects.BttlScriptData6cSub1c;
 import legend.game.combat.effects.BttlScriptData6cSubBase2;
@@ -1538,7 +1538,6 @@ public final class Bttl_800e {
 
       GPU.queueCommand(z >> 2, cmd);
     }
-
     //LAB_800e7930
   }
 
@@ -1736,19 +1735,19 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e8594L)
-  public static void FUN_800e8594(final MATRIX transformMatrix, final EffectManagerData6c a1) {
-    RotMatrix_Xyz(a1._10.rot_10, transformMatrix);
-    TransMatrix(transformMatrix, a1._10.trans_04);
-    ScaleMatrixL_SVEC(transformMatrix, a1._10.scale_16);
+  public static void FUN_800e8594(final MATRIX transformMatrix, final EffectManagerData6c manager) {
+    RotMatrix_Xyz(manager._10.rot_10, transformMatrix);
+    TransMatrix(transformMatrix, manager._10.trans_04);
+    ScaleMatrixL_SVEC(transformMatrix, manager._10.scale_16);
 
-    EffectManagerData6c s3 = a1;
-    int scriptIndex = a1.scriptIndex_0c;
+    EffectManagerData6c currentManager = manager;
+    int scriptIndex = manager.scriptIndex_0c;
 
     //LAB_800e8604
     while(scriptIndex >= 0) {
       final ScriptState<?> state = scriptStatePtrArr_800bc1c0[scriptIndex];
       if(state == null) {
-        a1._10.flags_00 |= 0x8000_0000;
+        manager._10.flags_00 |= 0x8000_0000;
         transformMatrix.transfer.setZ(-0x7fff);
         scriptIndex = -2;
         break;
@@ -1756,26 +1755,26 @@ public final class Bttl_800e {
 
       final BattleScriptDataBase base = (BattleScriptDataBase)state.innerStruct_00;
       if(BattleScriptDataBase.EM__.equals(base.magic_00)) {
-        final EffectManagerData6c manager = (EffectManagerData6c)base;
-        final MATRIX sp0x10 = new MATRIX();
-        RotMatrix_Xyz(manager._10.rot_10, sp0x10);
-        TransMatrix(sp0x10, manager._10.trans_04);
-        ScaleMatrixL_SVEC(sp0x10, manager._10.scale_16);
-        if(s3.coord2Index_0d != -1) {
+        final EffectManagerData6c baseManager = (EffectManagerData6c)base;
+        final MATRIX baseTransformMatrix = new MATRIX();
+        RotMatrix_Xyz(baseManager._10.rot_10, baseTransformMatrix);
+        TransMatrix(baseTransformMatrix, baseManager._10.trans_04);
+        ScaleMatrixL_SVEC(baseTransformMatrix, baseManager._10.scale_16);
+        if(currentManager.coord2Index_0d != -1) {
           //LAB_800e866c
-          MulMatrix0(sp0x10, FUN_800ea0f4(manager, s3.coord2Index_0d).coord, sp0x10);
+          MulMatrix0(baseTransformMatrix, FUN_800ea0f4(baseManager, currentManager.coord2Index_0d).coord, baseTransformMatrix);
         }
 
         //LAB_800e86ac
-        MulMatrix0(sp0x10, transformMatrix, transformMatrix);
-        s3 = manager;
-        scriptIndex = s3.scriptIndex_0c;
+        MulMatrix0(baseTransformMatrix, transformMatrix, transformMatrix);
+        currentManager = baseManager;
+        scriptIndex = currentManager.scriptIndex_0c;
         //LAB_800e86c8
       } else if(BattleScriptDataBase.BOBJ.equals(base.magic_00)) {
         final BattleObject27c bobj = (BattleObject27c)base;
         final Model124 s1 = bobj.model_148;
         applyModelRotationAndScale(s1);
-        final int coord2Index = s3.coord2Index_0d;
+        final int coord2Index = currentManager.coord2Index_0d;
 
         final MATRIX sp0x10 = new MATRIX();
         if(coord2Index == -1) {
@@ -1788,12 +1787,12 @@ public final class Bttl_800e {
 
         //LAB_800e8774
         MulMatrix0(sp0x10, transformMatrix, transformMatrix);
-        s3 = null;
+        currentManager = null;
         scriptIndex = -1;
       } else {
         //LAB_800e878c
         //LAB_800e8790
-        a1._10.flags_00 |= 0x8000_0000;
+        manager._10.flags_00 |= 0x8000_0000;
         transformMatrix.transfer.setZ(-0x7fff);
         scriptIndex = -2;
         break;
@@ -1803,13 +1802,12 @@ public final class Bttl_800e {
     //LAB_800e87b4
     if(scriptIndex == -2) {
       final MATRIX transposedWs = new MATRIX();
-      final VECTOR sp0x30 = new VECTOR();
+      final VECTOR transposedTranslation = new VECTOR();
       TransposeMatrix(worldToScreenMatrix_800c3548, transposedWs);
-      sp0x30.set(worldToScreenMatrix_800c3548.transfer).negate();
-      transposedWs.transfer.set(ApplyMatrixLV(transposedWs, sp0x30));
+      transposedTranslation.set(worldToScreenMatrix_800c3548.transfer).negate();
+      transposedWs.transfer.set(ApplyMatrixLV(transposedWs, transposedTranslation));
       MulMatrix0(transposedWs, transformMatrix, transformMatrix);
     }
-
     //LAB_800e8814
   }
 
@@ -1998,7 +1996,7 @@ public final class Bttl_800e {
 
   /** Has some relation to rendering of certain effect sprites, like ones from HUD DEFF */
   @Method(0x800e9428L)
-  public static void FUN_800e9428(final SpriteMetrics08 metrics, final EffectManagerData6cInner managerInner, final MATRIX transformMatrix) {
+  public static void renderBillboardSpriteEffect_(final SpriteMetrics08 metrics, final EffectManagerData6cInner managerInner, final MATRIX transformMatrix) {
     if(managerInner.flags_00 >= 0) {
       final GenericSpriteEffect24 spriteEffect = new GenericSpriteEffect24();
       spriteEffect.flags_00 = managerInner.flags_00 & 0xffff_ffffL;
@@ -2025,57 +2023,55 @@ public final class Bttl_800e {
         FUN_800e7944(spriteEffect, transformMatrix.transfer, managerInner.z_22);
       }
     }
-
     //LAB_800e9580
   }
 
   @Method(0x800e9590L)
-  public static void renderAttackHitFlashEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
-    final MATRIX transfromMatrix = new MATRIX();
-    FUN_800e8594(transfromMatrix, manager);
-    FUN_800e9428(((AttackHitFlashEffect0c)manager.effect_44).metrics_04, manager._10, transfromMatrix);
+  public static void renderBillboardSpriteEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+    final MATRIX transformMatrix = new MATRIX();
+    FUN_800e8594(transformMatrix, manager);
+    renderBillboardSpriteEffect_(((BillboardSpriteEffect0c)manager.effect_44).metrics_04, manager._10, transformMatrix);
   }
 
   @Method(0x800e95f0L)
-  public static void FUN_800e95f0(final AttackHitFlashEffect0c a0, final int a1) {
-    a0.flags_00 = a1 | 0x400_0000;
+  public static void getSpriteMetricsFromSource(final BillboardSpriteEffect0c spriteEffect, final int flag) {
+    spriteEffect.flags_00 = flag | 0x400_0000;
 
-    if((a1 & 0xf_ff00) == 0xf_ff00) {
-      final SpriteMetrics08 metrics = deffManager_800c693c.spriteMetrics_39c[a1 & 0xff];
-      a0.metrics_04.u_00 = metrics.u_00;
-      a0.metrics_04.v_02 = metrics.v_02;
-      a0.metrics_04.w_04 = metrics.w_04;
-      a0.metrics_04.h_05 = metrics.h_05;
-      a0.metrics_04.clut_06 = metrics.clut_06;
+    if((flag & 0xf_ff00) == 0xf_ff00) {
+      final SpriteMetrics08 metrics = deffManager_800c693c.spriteMetrics_39c[flag & 0xff];
+      spriteEffect.metrics_04.u_00 = metrics.u_00;
+      spriteEffect.metrics_04.v_02 = metrics.v_02;
+      spriteEffect.metrics_04.w_04 = metrics.w_04;
+      spriteEffect.metrics_04.h_05 = metrics.h_05;
+      spriteEffect.metrics_04.clut_06 = metrics.clut_06;
     } else {
       //LAB_800e9658
-      final DeffPart.SpriteType spriteType = (DeffPart.SpriteType)getDeffPart(a1 | 0x400_0000);
+      final DeffPart.SpriteType spriteType = (DeffPart.SpriteType)getDeffPart(flag | 0x400_0000);
       final DeffPart.SpriteMetrics deffMetrics = spriteType.metrics_08;
-      a0.metrics_04.u_00 = deffMetrics.u_00;
-      a0.metrics_04.v_02 = deffMetrics.v_02;
-      a0.metrics_04.w_04 = deffMetrics.w_04 * 4;
-      a0.metrics_04.h_05 = deffMetrics.h_06;
-      a0.metrics_04.clut_06 = deffMetrics.clutY_0a << 6 | (deffMetrics.clutX_08 & 0x3f0) >>> 4;
+      spriteEffect.metrics_04.u_00 = deffMetrics.u_00;
+      spriteEffect.metrics_04.v_02 = deffMetrics.v_02;
+      spriteEffect.metrics_04.w_04 = deffMetrics.w_04 * 4;
+      spriteEffect.metrics_04.h_05 = deffMetrics.h_06;
+      spriteEffect.metrics_04.clut_06 = deffMetrics.clutY_0a << 6 | (deffMetrics.clutX_08 & 0x3f0) >>> 4;
     }
-
     //LAB_800e96bc
   }
 
   /** TODO This is probably just a billboard sprite, not specifically this one effect */
   @Method(0x800e96ccL)
-  public static FlowControl allocateAttackHitFlashEffect(final RunningScript<? extends BattleScriptDataBase> script) {
+  public static FlowControl allocateBillboardSpriteEffect(final RunningScript<? extends BattleScriptDataBase> script) {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
-      "AttackHitFlashEffect0c",
+      "BillboardSpriteEffect0c",
       script.scriptState_04,
       null,
-      Bttl_800e::renderAttackHitFlashEffect,
+      Bttl_800e::renderBillboardSpriteEffect,
       null,
-      new AttackHitFlashEffect0c()
+      new BillboardSpriteEffect0c()
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
     manager.flags_04 = 0x400_0000;
-    FUN_800e95f0(((AttackHitFlashEffect0c)manager.effect_44), script.params_20[1].get());
+    getSpriteMetricsFromSource(((BillboardSpriteEffect0c)manager.effect_44), script.params_20[1].get());
     manager._10.flags_00 = manager._10.flags_00 & 0xfbff_ffff | 0x5000_0000;
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
