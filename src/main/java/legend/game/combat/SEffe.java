@@ -260,7 +260,7 @@ public final class SEffe {
    *   <li>{@link SEffe#FUN_800fcf18}</li>
    * </ol>
    */
-  private static final BiConsumer<EffectManagerData6c, EffectStruct48>[] _801197c0 = new BiConsumer[3];
+  private static final BiConsumer<EffectManagerData6c, ParticleMetrics48>[] _801197c0 = new BiConsumer[3];
   static {
     _801197c0[0] = SEffe::FUN_800fce10;
     _801197c0[1] = null;
