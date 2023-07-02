@@ -12,7 +12,7 @@ public class ParticleEffectData98 implements Effect {
   public ScriptState<EffectManagerData6c> myState_00;
   /** Can be -1 */
   public int parentScriptIndex_04;
-  public final EffectData98Inner24 _08 = new EffectData98Inner24();
+  public final ParticleEffectData98Inner24 _08 = new ParticleEffectData98Inner24();
 
   public TmdObjTable1c tmd_30;
   public short halfW_34;
@@ -44,14 +44,14 @@ public class ParticleEffectData98 implements Effect {
   // public int size_64;
   public ParticleEffectInstance94[] particleArray_68;
   /** Binary flag to control whether to recalculate a vector (usually vec_70) */
-  public byte _6c;
+  public boolean _6c;
 
   public final VECTOR vec_70 = new VECTOR();
   /** Something that is used to modify vec_70 */
   public int _80;
   public TriConsumer<EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94> callback_84;
   public QuadConsumer<ScriptState<EffectManagerData6c>, EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94> callback_88;
-  public QuadConsumer<EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94, EffectData98Inner24> callback_8c;
+  public QuadConsumer<EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94, ParticleEffectData98Inner24> callback_8c;
   public QuadConsumer<ScriptState<EffectManagerData6c>, EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94> callback_90;
   public ParticleEffectData98 next_94;
 

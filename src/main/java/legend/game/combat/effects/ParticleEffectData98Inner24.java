@@ -1,6 +1,6 @@
 package legend.game.combat.effects;
 
-public class EffectData98Inner24 {
+public class ParticleEffectData98Inner24 {
   public int scriptIndex_00; // unused
   public int parentScriptIndex_04;
   public int particleTypeId_08;
