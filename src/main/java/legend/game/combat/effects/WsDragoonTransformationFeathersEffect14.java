@@ -2,7 +2,7 @@ package legend.game.combat.effects;
 
 import java.util.Arrays;
 
-public class WsDragoonTransformationFeathersEffect14 implements BttlScriptData6cSubBase1 {
+public class WsDragoonTransformationFeathersEffect14 implements Effect {
   /** ushort */
   public final int count_00;
   /** ushort */

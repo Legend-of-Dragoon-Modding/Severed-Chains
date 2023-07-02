@@ -5,7 +5,7 @@ import legend.game.combat.deff.DeffPart;
 import legend.game.types.CContainer;
 import legend.game.types.Model124;
 
-public class BttlScriptData6cSub13c implements BttlScriptData6cSubBase1 {
+public class BttlScriptData6cSub13c implements Effect {
   public int _00;
   /** Can be LMB or CMB subtype */
   public DeffPart.TmdType tmdType_04;

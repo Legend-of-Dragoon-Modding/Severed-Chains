@@ -3939,21 +3939,15 @@ public final class Bttl_800c {
     //LAB_800ce650
   }
 
-  @Method(0x800ce678L)
-  public static void deallocateWeaponTrailEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    ((WeaponTrailEffect3c)data.effect_44).segments_34 = null;
-  }
-
   @Method(0x800ce6a8L)
   public static FlowControl allocateWeaponTrailEffect(final RunningScript<? extends BattleScriptDataBase> script) {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "Weapon trail",
       script.scriptState_04,
-      0,
       Bttl_800c::tickWeaponTrailEffect,
       Bttl_800c::renderWeaponTrailEffect,
-      Bttl_800c::deallocateWeaponTrailEffect,
-      value -> new WeaponTrailEffect3c()
+      null,
+      new WeaponTrailEffect3c()
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
@@ -4091,11 +4085,10 @@ public final class Bttl_800c {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "Full screen overlay rgb(%x, %x, %x) -> rgb(%x, %x, %x)".formatted(r, g, b, fullR, fullG, fullB),
       script.scriptState_04,
-      0,
       Bttl_800c::tickFullScreenOverlay,
       Bttl_800c::renderFullScreenOverlay,
       null,
-      value -> new FullScreenOverlayEffect0e()
+      new FullScreenOverlayEffect0e()
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;

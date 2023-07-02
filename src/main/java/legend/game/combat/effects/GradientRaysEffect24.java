@@ -2,7 +2,7 @@ package legend.game.combat.effects;
 
 import java.util.Arrays;
 
-public class GradientRaysEffect24 implements BttlScriptData6cSubBase1 {
+public class GradientRaysEffect24 implements Effect {
   public final GradientRaysEffectInstance04[] rays_00;
   public final int count_04;
   public int _08;

@@ -64,8 +64,6 @@ import legend.game.unpacker.Unpacker;
 import legend.game.wmap.WMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -158,8 +156,6 @@ import static legend.game.Scus94491BpeSegment_8005.charSlotSpuOffsets_80050190;
 import static legend.game.Scus94491BpeSegment_8005.characterSoundFileIndices_800500f8;
 import static legend.game.Scus94491BpeSegment_8005.combatMusicFileIndices_800501bc;
 import static legend.game.Scus94491BpeSegment_8005.combatSoundEffectsTypes_8005019c;
-import static legend.game.Scus94491BpeSegment_8005.heapHead_8005a2a0;
-import static legend.game.Scus94491BpeSegment_8005.heapTail_8005a2a4;
 import static legend.game.Scus94491BpeSegment_8005.monsterSoundFileIndices_800500e8;
 import static legend.game.Scus94491BpeSegment_8005.sin_cos_80054d0c;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
@@ -225,7 +221,6 @@ public final class Scus94491BpeSegment {
   private Scus94491BpeSegment() { }
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(Scus94491BpeSegment.class);
-  private static final Marker MALLOC_MARKER = MarkerManager.getMarker("MALLOC");
 
   public static final IntRef orderingTableBits_1f8003c0 = MEMORY.ref(4, 0x1f8003c0L, IntRef::new);
   public static final IntRef zShift_1f8003c4 = MEMORY.ref(4, 0x1f8003c4L, IntRef::new);
@@ -266,8 +261,6 @@ public final class Scus94491BpeSegment {
 
   /** TODO 0x60-byte struct */
   public static final Value _800108b0 = MEMORY.ref(4, 0x800108b0L);
-
-  public static final Value heap_8011e210 = MEMORY.ref(4, 0x8011e210L);
 
   public static boolean[] scriptLog = new boolean[0x48];
 
@@ -511,128 +504,6 @@ public final class Scus94491BpeSegment {
       DebugHelper.sleep(toSleep);
       time += NANOS_PER_TICK;
     }
-  }
-
-  @Method(0x80012094L)
-  public static void allocateHeap(long address, int size) {
-    LOGGER.info("Allocating memory manager at %08x (0x%x bytes)", address, size);
-
-    size = size - 0x18 & 0xffff_fffc;
-    address = address + 0x3L & 0xffff_fffcL;
-
-    MEMORY.ref(4, address).offset(0x00L).setu(0);
-    MEMORY.ref(4, address).offset(0x04L).setu(0xcL);
-    MEMORY.ref(2, address).offset(0x08L).setu(0x3L);
-    MEMORY.ref(4, address).offset(0x0cL).setu(address);
-    MEMORY.ref(4, address).offset(0x10L).setu(size);
-    MEMORY.ref(2, address).offset(0x14L).setu(0);
-    MEMORY.ref(4, address).offset(size).offset(0x0cL).setu(address).addu(0xcL);
-    MEMORY.ref(4, address).offset(size).offset(0x10L).setu(0);
-    MEMORY.ref(2, address).offset(size).offset(0x14L).setu(0x3L);
-
-    heapHead_8005a2a0.setu(address).addu(0xcL);
-    heapTail_8005a2a4.setu(address).addu(0xcL).addu(size);
-  }
-
-  private static int allocations;
-
-  public static void dumpHeap() {
-    Value entry = heapHead_8005a2a0.deref(4);
-    long entryType = entry.offset(2, 0x8L).get();
-
-    do {
-      final long size = entry.offset(4, 0x4L).get();
-
-      final String type = switch((int)entryType) {
-        case 0 -> "free space";
-        case 1 -> "allocated on head";
-        case 2 -> "allocated on tail";
-        case 3 -> "end of list";
-        default -> "unknown type " + entryType;
-      };
-
-      LOGGER.error("%08x (0x%x bytes), %s", entry.getAddress() + 0xcL, size, type);
-
-      entry = entry.offset(size);
-      entryType = entry.offset(2, 0x8L).get();
-    } while(entryType != 3);
-  }
-
-  @Method(0x80012194L)
-  public static long mallocTail(long size) {
-    size = size + 0xfL & 0xffff_fffcL;
-
-    Value currentEntry = heapTail_8005a2a4;
-    Value nextEntry = heapTail_8005a2a4.deref(4);
-    long entryType = nextEntry.deref(2).offset(0x8L).get();
-    // Known entry types:
-    // 0: empty space?
-    // 2: used?
-    // 3: end of list?
-
-    //LAB_800121cc
-    while(entryType != 0x3L) {
-      final long spaceAvailable = nextEntry.deref(4).offset(0x4L).get();
-      if(entryType == 0 && spaceAvailable >= size) {
-        if(spaceAvailable > size + 0xcL) {
-          currentEntry.deref(2).offset(-size).offset(0x8L).setu(0x2L); // Mark as used
-          nextEntry.deref(2).offset(0x8L).setu(0); // Mark as empty space
-          nextEntry.deref(4).offset(0x4L).setu(spaceAvailable - size);
-          nextEntry.deref(4).offset(-size).offset(spaceAvailable).setu(nextEntry);
-          currentEntry.deref(4).offset(-size).offset(0x4L).setu(size);
-          currentEntry.deref(4).setu(currentEntry.get() - size);
-
-          allocations++;
-          LOGGER.info(MALLOC_MARKER, "Allocating 0x%x bytes on tail @ %08x (%d total)", size, currentEntry.get() - size + 0xcL, allocations);
-          return currentEntry.get() - size + 0xcL;
-        }
-
-        //LAB_80012214
-        nextEntry.deref(2).offset(0x8L).setu(0x2L); // Mark as used
-
-        allocations++;
-        LOGGER.info(MALLOC_MARKER, "Allocating 0x%x bytes on tail @ %08x (%d total)", size, nextEntry.get() + 0xcL, allocations);
-        return nextEntry.get() + 0xcL;
-      }
-
-      //LAB_80012220
-      currentEntry = nextEntry;
-      nextEntry = nextEntry.deref(4);
-      entryType = nextEntry.deref(2).offset(0x8L).get();
-    }
-
-    //LAB_8001223c
-    dumpHeap();
-    throw new RuntimeException("Failed to allocate entry on linked list (size 0x" + Long.toHexString(size) + ')');
-  }
-
-  @Method(0x80012764L)
-  public static void free(long address) {
-    allocations--;
-    LOGGER.info(MALLOC_MARKER, "Deallocating %08x (%d remaining)", address, allocations);
-
-    if(allocations < 0) {
-      LOGGER.error("Negative allocations!", new Throwable());
-    }
-
-    address -= 0xcL;
-    long a1 = MEMORY.ref(4, address).offset(0x4L).get(); // Remaining size?
-    MEMORY.ref(2, address).offset(0x8L).setu(0); // Entry type?
-
-    if(MEMORY.ref(2, address).offset(a1).offset(0x8L).get() == 0) {
-      a1 += MEMORY.ref(4, address).offset(a1).offset(0x4L).get();
-    }
-
-    //LAB_80012794
-    final long v1 = MEMORY.ref(4, address).get();
-    if(MEMORY.ref(2, v1).offset(0x8L).get() == 0) {
-      a1 += MEMORY.ref(4, v1).offset(0x4L).get();
-      address = v1;
-    }
-
-    //LAB_800127bc
-    MEMORY.ref(4, address).offset(0x4L).setu(a1);
-    MEMORY.ref(4, address).offset(a1).setu(address);
   }
 
   @Method(0x800128c4L)

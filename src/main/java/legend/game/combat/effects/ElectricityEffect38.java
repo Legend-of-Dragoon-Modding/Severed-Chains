@@ -4,7 +4,7 @@ import legend.core.memory.types.QuadConsumer;
 
 import java.util.Arrays;
 
-public class ElectricityEffect38 implements BttlScriptData6cSubBase1 {
+public class ElectricityEffect38 implements Effect {
   /** ushort */
   public int boltCount_00;
 

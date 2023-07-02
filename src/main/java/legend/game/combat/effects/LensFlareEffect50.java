@@ -2,7 +2,7 @@ package legend.game.combat.effects;
 
 import java.util.Arrays;
 
-public class LensFlareEffect50 implements BttlScriptData6cSubBase1 {
+public class LensFlareEffect50 implements Effect {
   public int _00;
   public int _02;
   public final int[] u_04 = new int[5];

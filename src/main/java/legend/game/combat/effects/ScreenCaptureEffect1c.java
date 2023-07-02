@@ -1,6 +1,6 @@
 package legend.game.combat.effects;
 
-public class ScreenCaptureEffect1c implements BttlScriptData6cSubBase1 {
+public class ScreenCaptureEffect1c implements Effect {
   public final ScreenCaptureEffectMetrics8 metrics_00 = new ScreenCaptureEffectMetrics8();
   public int captureW_04;
   public int captureH_08;

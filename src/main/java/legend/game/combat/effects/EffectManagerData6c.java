@@ -9,13 +9,12 @@ public class EffectManagerData6c extends BattleScriptDataBase {
   public final String name;
 
   public int flags_04;
-  public int size_08;
   public int scriptIndex_0c;
   public int coord2Index_0d;
   public ScriptState<EffectManagerData6c> myScriptState_0e;
 
   public final EffectManagerData6cInner _10 = new EffectManagerData6cInner();
-  public BttlScriptData6cSubBase1 effect_44;
+  public Effect effect_44;
   public BiConsumer<ScriptState<EffectManagerData6c>, EffectManagerData6c> ticker_48;
   public BiConsumer<ScriptState<EffectManagerData6c>, EffectManagerData6c> destructor_4c;
   public ScriptState<EffectManagerData6c> parentScript_50;
@@ -33,7 +32,6 @@ public class EffectManagerData6c extends BattleScriptDataBase {
 
   public void set(final EffectManagerData6c other) {
     this.flags_04 = other.flags_04;
-    this.size_08 = other.size_08;
     this.scriptIndex_0c = other.scriptIndex_0c;
     this.coord2Index_0d = other.coord2Index_0d;
     this.myScriptState_0e = other.myScriptState_0e;

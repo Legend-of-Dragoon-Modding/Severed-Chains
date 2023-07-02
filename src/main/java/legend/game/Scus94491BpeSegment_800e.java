@@ -21,9 +21,7 @@ import java.util.Arrays;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SCRIPTS;
-import static legend.game.Scus94491BpeSegment.allocateHeap;
 import static legend.game.Scus94491BpeSegment.extendedTmd_800103d0;
-import static legend.game.Scus94491BpeSegment.heap_8011e210;
 import static legend.game.Scus94491BpeSegment.initSound;
 import static legend.game.Scus94491BpeSegment.loadMenuSounds;
 import static legend.game.Scus94491BpeSegment.orderingTableBits_1f8003c0;
@@ -102,7 +100,6 @@ public final class Scus94491BpeSegment_800e {
     precalculateTpages();
     loadSystemFont();
     SCRIPTS.clear();
-    allocateHeap(heap_8011e210.getAddress(), 0x7d_edf0);
     loadOvalBlobTexture();
     FUN_800e6d60();
     initFmvs();

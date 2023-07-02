@@ -18,9 +18,7 @@ import legend.core.gte.TmdWithId;
 import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
 import legend.core.memory.Ref;
-import legend.core.memory.Value;
 import legend.core.memory.types.IntRef;
-import legend.core.memory.types.MemoryRef;
 import legend.game.characters.Element;
 import legend.game.characters.VitalsStat;
 import legend.game.combat.bobj.BattleObject27c;
@@ -33,9 +31,9 @@ import legend.game.combat.deff.DeffPart;
 import legend.game.combat.effects.AttackHitFlashEffect0c;
 import legend.game.combat.effects.BttlScriptData6cSub13c;
 import legend.game.combat.effects.BttlScriptData6cSub1c;
-import legend.game.combat.effects.BttlScriptData6cSubBase1;
 import legend.game.combat.effects.BttlScriptData6cSubBase2;
 import legend.game.combat.effects.DeffTmdRenderer14;
+import legend.game.combat.effects.Effect;
 import legend.game.combat.effects.EffectManagerData6c;
 import legend.game.combat.effects.EffectManagerData6cInner;
 import legend.game.combat.effects.GenericSpriteEffect24;
@@ -91,7 +89,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
 import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.EVENTS;
@@ -102,13 +99,11 @@ import static legend.game.SItem.loadCharacterStats;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
-import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.loadDeffSounds;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
-import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.projectionPlaneDistance_1f8003f8;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.rsin;
@@ -986,7 +981,6 @@ public final class Bttl_800e {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "DEFF ticker for script %d (%s)".formatted(script.scriptState_04.index, script.scriptState_04.name),
       script.scriptState_04,
-      0,
       Bttl_800e::scriptDeffTicker,
       null,
       Bttl_800e::scriptDeffDeallocator,
@@ -1664,11 +1658,6 @@ public final class Bttl_800e {
       struct.destructor_4c.accept(state, struct);
     }
 
-    //LAB_800e805c
-    if(struct.effect_44 instanceof MemoryRef) {
-      free(((MemoryRef)struct.effect_44).getAddress());
-    }
-
     //LAB_800e8074
     //TODO this can probably be removed
     while(struct._58 != null) {
@@ -1680,7 +1669,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e80c4L)
-  public static ScriptState<EffectManagerData6c> allocateEffectManager(final String name, @Nullable ScriptState<? extends BattleScriptDataBase> parentState, final int subStructSize, @Nullable final BiConsumer<ScriptState<EffectManagerData6c>, EffectManagerData6c> ticker, @Nullable final BiConsumer<ScriptState<EffectManagerData6c>, EffectManagerData6c> renderer, @Nullable final BiConsumer<ScriptState<EffectManagerData6c>, EffectManagerData6c> destructor, @Nullable final Function<Value, BttlScriptData6cSubBase1> subStructConstructor) {
+  public static ScriptState<EffectManagerData6c> allocateEffectManager(final String name, @Nullable ScriptState<? extends BattleScriptDataBase> parentState, @Nullable final BiConsumer<ScriptState<EffectManagerData6c>, EffectManagerData6c> ticker, @Nullable final BiConsumer<ScriptState<EffectManagerData6c>, EffectManagerData6c> renderer, @Nullable final BiConsumer<ScriptState<EffectManagerData6c>, EffectManagerData6c> destructor, @Nullable final Effect effect) {
     final ScriptState<EffectManagerData6c> state = SCRIPTS.allocateScriptState(name, new EffectManagerData6c(name));
     final EffectManagerData6c manager = state.innerStruct_00;
 
@@ -1695,19 +1684,11 @@ public final class Bttl_800e {
 
     final StackWalker.StackFrame caller = DebugHelper.getCallerFrame();
 
-    manager.size_08 = subStructSize;
-    if(subStructSize != 0) { // Memulated
-      manager.effect_44 = MEMORY.ref(4, mallocTail(subStructSize), subStructConstructor);
-      LOGGER.info(EFFECTS, "Allocating memulated effect manager %d for %s (parent: %d) @ %08x from %s.%s(%s:%d)", state.index, manager.effect_44.getClass().getSimpleName(), parentState != null ? parentState.index : -1, ((MemoryRef)manager.effect_44).getAddress(), caller.getClassName(), caller.getMethodName(), caller.getFileName(), caller.getLineNumber());
+    manager.effect_44 = effect;
 
-      if(!(manager.effect_44 instanceof MemoryRef)) {
-        throw new RuntimeException("Size for non-memulated effect managers should be set to 0");
-      }
-    } else if(subStructConstructor != null) { // Not memulated
-      manager.effect_44 = subStructConstructor.apply(null);
+    if(effect != null) {
       LOGGER.info(EFFECTS, "Allocating effect manager %d for %s (parent: %d) from %s.%s(%s:%d)", state.index, manager.effect_44.getClass().getSimpleName(), parentState != null ? parentState.index : -1, caller.getClassName(), caller.getMethodName(), caller.getFileName(), caller.getLineNumber());
     } else {
-      manager.effect_44 = null;
       LOGGER.info(EFFECTS, "Allocating empty effect manager %d (parent: %d) from %s.%s(%s:%d)", state.index, parentState != null ? parentState.index : -1, caller.getClassName(), caller.getMethodName(), caller.getFileName(), caller.getLineNumber());
     }
 
@@ -1952,7 +1933,7 @@ public final class Bttl_800e {
     tmds_800c6944 = deffManager.tmds_2f8;
     deffManager_800c693c = deffManager;
     spriteMetrics_800c6948 = deffManager.spriteMetrics_39c;
-    final ScriptState<EffectManagerData6c> manager = allocateEffectManager("DEFF manager", null, 0, null, null, null, null);
+    final ScriptState<EffectManagerData6c> manager = allocateEffectManager("DEFF manager", null, null, null, null, null);
     manager.innerStruct_00.flags_04 = 0x600_0400;
     deffManager.scriptState_1c = manager;
     allocateLighting();
@@ -1987,7 +1968,7 @@ public final class Bttl_800e {
       //LAB_800e9214
       FUN_800eab8c();
       deffManager_800c693c.scriptState_1c.deallocateWithChildren();
-      final ScriptState<EffectManagerData6c> manager = allocateEffectManager("DEFF manager (but different)", null, 0, null, null, null, null);
+      final ScriptState<EffectManagerData6c> manager = allocateEffectManager("DEFF manager (but different)", null, null, null, null, null);
       deffManager_800c693c.scriptState_1c = manager;
       manager.innerStruct_00.flags_04 = 0x600_0400;
     }
@@ -2011,7 +1992,7 @@ public final class Bttl_800e {
 
   @Method(0x800e93e0L)
   public static FlowControl scriptAllocateEmptyEffectManagerChild(final RunningScript<? extends BattleScriptDataBase> script) {
-    script.params_20[0].set(allocateEffectManager("Empty EffectManager child, allocated by script %d (%s) from FUN_800e93e0".formatted(script.scriptState_04.index, script.scriptState_04.name), script.scriptState_04, 0, null, null, null, null).index);
+    script.params_20[0].set(allocateEffectManager("Empty EffectManager child, allocated by script %d (%s) from FUN_800e93e0".formatted(script.scriptState_04.index, script.scriptState_04.name), script.scriptState_04, null, null, null, null).index);
     return FlowControl.CONTINUE;
   }
 
@@ -2086,11 +2067,10 @@ public final class Bttl_800e {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "AttackHitFlashEffect0c",
       script.scriptState_04,
-      0,
       null,
       Bttl_800e::renderAttackHitFlashEffect,
       null,
-      value -> new AttackHitFlashEffect0c()
+      new AttackHitFlashEffect0c()
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
@@ -2143,11 +2123,10 @@ public final class Bttl_800e {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       animatedTmdType.name,
       script.scriptState_04,
-      0,
       Bttl_800e::FUN_800ea3f8,
       Bttl_800e::FUN_800ea510,
       null,
-      value -> new BttlScriptData6cSub13c("Script " + script.scriptState_04.index)
+      new BttlScriptData6cSub13c("Script " + script.scriptState_04.index)
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
@@ -2185,11 +2164,10 @@ public final class Bttl_800e {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       animatedTmdType.name,
       script.scriptState_04,
-      0,
       Bttl_800e::FUN_800ea3f8,
       Bttl_800e::FUN_800ea510,
       null,
-      value -> new BttlScriptData6cSub13c("Script " + script.scriptState_04.index)
+      new BttlScriptData6cSub13c("Script " + script.scriptState_04.index)
     );
 
     final EffectManagerData6c data = state.innerStruct_00;
@@ -2314,11 +2292,10 @@ public final class Bttl_800e {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "Unknown (FUN_800e9f68, s2 = 0x%x)".formatted(s2),
       script.scriptState_04,
-      0,
       Bttl_800e::FUN_800ea3f8,
       Bttl_800e::FUN_800ea510,
       null,
-      value -> new BttlScriptData6cSub13c("Script " + script.scriptState_04.index)
+      new BttlScriptData6cSub13c("Script " + script.scriptState_04.index)
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
@@ -2618,19 +2595,6 @@ public final class Bttl_800e {
   @Method(0x800eab8cL)
   public static void FUN_800eab8c() {
     final DeffManager7cc struct7cc = deffManager_800c693c;
-
-    long a0 = struct7cc.ptr_34;
-    if(a0 != 0) {
-      free(a0);
-      struct7cc.ptr_34 = 0;
-    }
-
-    //LAB_800eabc4
-    a0 = struct7cc.ptr_30;
-    if(a0 != 0) {
-      free(a0);
-      struct7cc.ptr_30 = 0;
-    }
 
     //LAB_800eabf4
     //LAB_800eac1c

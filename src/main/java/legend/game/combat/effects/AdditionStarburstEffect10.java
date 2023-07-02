@@ -2,7 +2,7 @@ package legend.game.combat.effects;
 
 import java.util.Arrays;
 
-public class AdditionStarburstEffect10 implements BttlScriptData6cSubBase1 {
+public class AdditionStarburstEffect10 implements Effect {
   public int scriptIndex_00;
   /** ushort */
   public int rayCount_04;

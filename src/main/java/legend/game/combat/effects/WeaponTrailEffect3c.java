@@ -5,7 +5,7 @@ import legend.game.types.Model124;
 
 import java.util.Arrays;
 
-public class WeaponTrailEffect3c implements BttlScriptData6cSubBase1 {
+public class WeaponTrailEffect3c implements Effect {
   public int currentSegmentIndex_00;
   public int unused_04;
   public int dobjIndex_08;

@@ -2,7 +2,7 @@ package legend.game.combat.effects;
 
 import legend.core.gte.VECTOR;
 
-public class AdditionOverlaysEffect44 implements BttlScriptData6cSubBase1 {
+public class AdditionOverlaysEffect44 implements Effect {
   public int attackerScriptIndex_00;
   public int targetScriptIndex_04;
 

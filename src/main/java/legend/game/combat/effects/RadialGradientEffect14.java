@@ -3,7 +3,7 @@ package legend.game.combat.effects;
 import legend.core.memory.types.QuintConsumer;
 import legend.game.types.Translucency;
 
-public class RadialGradientEffect14 implements BttlScriptData6cSubBase1 {
+public class RadialGradientEffect14 implements Effect {
   public int circleSubdivisionModifier_00;
   public int scaleModifier_01;
 

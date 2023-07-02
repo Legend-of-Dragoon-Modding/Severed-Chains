@@ -2,7 +2,7 @@ package legend.game.combat.effects;
 
 import java.util.Arrays;
 
-public class MoonlightStarsEffect18 implements BttlScriptData6cSubBase1 {
+public class MoonlightStarsEffect18 implements Effect {
   /** ushort */
   public int count_00;
 

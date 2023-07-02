@@ -6,7 +6,9 @@ import legend.core.memory.types.QuadConsumer;
 import legend.core.memory.types.TriConsumer;
 import legend.game.scripting.ScriptState;
 
-public class ParticleEffectData98 implements BttlScriptData6cSubBase1 {
+import java.util.Arrays;
+
+public class ParticleEffectData98 implements Effect {
   public ScriptState<EffectManagerData6c> myState_00;
   /** Parent? Can be -1 */
   public int scriptIndex_04;
@@ -17,7 +19,7 @@ public class ParticleEffectData98 implements BttlScriptData6cSubBase1 {
   public short _36;
 
   /** ushort */
-  public int count_50;
+  public final int count_50;
   /** ushort */
   public int _52;
   /** ushort */
@@ -39,7 +41,7 @@ public class ParticleEffectData98 implements BttlScriptData6cSubBase1 {
 
   /** Size in bytes of following array of structs */
 //  public int size_64;
-  public ParticleEffectInstance94[] _68;
+  public final ParticleEffectInstance94[] instances_68;
   public byte _6c;
 
   public final VECTOR vec_70 = new VECTOR();
@@ -48,5 +50,11 @@ public class ParticleEffectData98 implements BttlScriptData6cSubBase1 {
   public QuadConsumer<ScriptState<EffectManagerData6c>, EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94> _88;
   public QuadConsumer<EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94, EffectData98Inner24> _8c;
   public QuadConsumer<ScriptState<EffectManagerData6c>, EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94> _90;
-  public ParticleEffectData98 _94;
+  public ParticleEffectData98 next_94;
+
+  public ParticleEffectData98(final int count) {
+    this.count_50 = count;
+    this.instances_68 = new ParticleEffectInstance94[count];
+    Arrays.setAll(this.instances_68, ParticleEffectInstance94::new);
+  }
 }

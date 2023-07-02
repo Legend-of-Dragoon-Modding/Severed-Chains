@@ -282,11 +282,10 @@ public final class Bttl_800d {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "ProjectileHitEffect14",
       script.scriptState_04,
-      0,
       null,
       Bttl_800d::renderProjectileHitEffect,
       null,
-      ref -> new ProjectileHitEffect14(count)
+      new ProjectileHitEffect14(count)
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
@@ -418,11 +417,10 @@ public final class Bttl_800d {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "AdditionSparksEffect08",
       script.scriptState_04,
-      0,
       null,
       Bttl_800d::renderAdditionSparks,
       null,
-      value -> new AdditionSparksEffect08(count)
+      new AdditionSparksEffect08(count)
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
@@ -567,11 +565,6 @@ public final class Bttl_800d {
     //LAB_800d1940
   }
 
-  @Method(0x800d19c0L)
-  public static void deallocateAdditionStarburstEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    ((AdditionStarburstEffect10)data.effect_44).rayArray_0c = null;
-  }
-
   @Method(0x800d19ecL)
   public static FlowControl allocateAdditionStarburstEffect(final RunningScript<? extends BattleScriptDataBase> script) {
     final int rayCount = script.params_20[2].get();
@@ -579,11 +572,10 @@ public final class Bttl_800d {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "AdditionStarburstEffect10",
       script.scriptState_04,
-      0,
       null,
       additionStarburstRenderers_800c6dc4[script.params_20[3].get()],
-      Bttl_800d::deallocateAdditionStarburstEffect,
-      value -> new AdditionStarburstEffect10(rayCount)
+      null,
+      new AdditionStarburstEffect10(rayCount)
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
@@ -610,13 +602,13 @@ public final class Bttl_800d {
 
   @Method(0x800d1cacL)
   public static FlowControl FUN_800d1cac(final RunningScript<? extends BattleScriptDataBase> script) {
-    script.params_20[0].set(allocateEffectManager("Unknown (FUN_800d1cac)", script.scriptState_04, 0, null, null, null, null).index);
+    script.params_20[0].set(allocateEffectManager("Unknown (FUN_800d1cac)", script.scriptState_04, null, null, null, null).index);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800d1cf4L)
   public static FlowControl FUN_800d1cf4(final RunningScript<? extends BattleScriptDataBase> script) {
-    script.params_20[0].set(allocateEffectManager("Unknown (FUN_800d1cf4)", script.scriptState_04, 0, null, null, null, null).index);
+    script.params_20[0].set(allocateEffectManager("Unknown (FUN_800d1cf4)", script.scriptState_04, null, null, null, null).index);
     return FlowControl.CONTINUE;
   }
 
@@ -740,11 +732,10 @@ public final class Bttl_800d {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "RadialGradientEffect14",
       script.scriptState_04,
-      0,
       null,
       Bttl_800d::renderRadialGradientEffect,
       null,
-      value -> new RadialGradientEffect14()
+      new RadialGradientEffect14()
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
@@ -870,11 +861,10 @@ public final class Bttl_800d {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "GuardEffect06",
       script.scriptState_04,
-      0,
       null,
       Bttl_800d::renderGuardEffect,
       null,
-      value -> new GuardEffect06()
+      new GuardEffect06()
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
@@ -1000,11 +990,6 @@ public final class Bttl_800d {
     //LAB_800d346c
   }
 
-  @Method(0x800d3490L)
-  public static void deallocateMonsterDeathEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    ((MonsterDeathEffect34)data.effect_44).objectDestructorArray_30 = null;
-  }
-
   @Method(0x800d34bcL)
   public static FlowControl allocateMonsterDeathEffect(final RunningScript<? extends BattleScriptDataBase> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00;
@@ -1013,11 +998,10 @@ public final class Bttl_800d {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "MonsterDeathEffect34",
       script.scriptState_04,
-      0,
       Bttl_800d::monsterDeathEffectTicker,
       Bttl_800d::monsterDeathEffectRenderer,
-      Bttl_800d::deallocateMonsterDeathEffect,
-      value -> new MonsterDeathEffect34(modelObjectCount)
+      null,
+      new MonsterDeathEffect34(modelObjectCount)
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;

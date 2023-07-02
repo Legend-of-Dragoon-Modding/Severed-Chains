@@ -1,6 +1,6 @@
 package legend.game.combat.effects;
 
-public class FullScreenOverlayEffect0e implements BttlScriptData6cSubBase1 {
+public class FullScreenOverlayEffect0e implements Effect {
   public int r_00;
   public int g_02;
   public int b_04;

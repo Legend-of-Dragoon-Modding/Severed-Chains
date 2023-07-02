@@ -53,7 +53,7 @@ import legend.game.combat.effects.AttackHitFlashEffect0c;
 import legend.game.combat.effects.BttlScriptData6cSub13c;
 import legend.game.combat.effects.BttlScriptData6cSub1c_3;
 import legend.game.combat.effects.BttlScriptData6cSub5c;
-import legend.game.combat.effects.BttlScriptData6cSubBase1;
+import legend.game.combat.effects.Effect;
 import legend.game.combat.effects.DeffTmdRenderer14;
 import legend.game.combat.effects.EffectData98Inner24;
 import legend.game.combat.effects.EffectManagerData6c;
@@ -647,8 +647,8 @@ public final class SEffe {
   }
 
   private static final Value _8011a008 = MEMORY.ref(4, 0x8011a008L);
-  private static ParticleEffectData98 _8011a00c;
-  private static ParticleEffectData98 _8011a010;
+  private static ParticleEffectData98 firstParticle_8011a00c;
+  private static ParticleEffectData98 lastParticle_8011a010;
   /** Success values for each addition hit: 0 = not attempted, 1 = success, -1 = too early, -2 = too late, -3 = wrong button */
   private static final byte[] additionHitCompletionState_8011a014 = new byte[8];
 
@@ -1296,7 +1296,7 @@ public final class SEffe {
 
     //LAB_800fd660
     for(int i = 0; i < s1.count_50; i++) {
-      final ParticleEffectInstance94 s3 = s1._68[i];
+      final ParticleEffectInstance94 s3 = s1.instances_68[i];
       if(FUN_800fd460(state, data, s1, s3) == 0) {
         s1._84.accept(data, s1, s3);
         final VECTOR sp0x48 = new VECTOR();
@@ -1340,7 +1340,7 @@ public final class SEffe {
 
       //LAB_800fd8dc
       for(int s7 = 0; s7 < s2.count_50; s7++) {
-        final ParticleEffectInstance94 s5 = s2._68[s7];
+        final ParticleEffectInstance94 s5 = s2.instances_68[s7];
 
         if(FUN_800fd460(state, data, s2, s5) == 0) {
           //LAB_800fd918
@@ -1445,7 +1445,7 @@ public final class SEffe {
 
     //LAB_800fde38
     for(int i = 0; i < s2.count_50; i++) {
-      final ParticleEffectInstance94 s4 = s2._68[i];
+      final ParticleEffectInstance94 s4 = s2.instances_68[i];
 
       if(FUN_800fd460(state, data, s2, s4) == 0) {
         s2._84.accept(data, s2, s4);
@@ -1498,7 +1498,7 @@ public final class SEffe {
 
     //LAB_800fe180
     for(int i = 0; i < effect.count_50; i++) {
-      final ParticleEffectInstance94 inst = effect._68[i];
+      final ParticleEffectInstance94 inst = effect.instances_68[i];
 
       if(FUN_800fd460(state, manager, effect, inst) == 0) {
         //LAB_800fe1bc
@@ -1623,40 +1623,40 @@ public final class SEffe {
 
   @Method(0x800fe878L)
   @Nullable
-  public static ParticleEffectData98 FUN_800fe878(final ParticleEffectData98 a0) {
-    if(_8011a00c == a0) {
+  public static ParticleEffectData98 findParticleParent(final ParticleEffectData98 particle) {
+    if(firstParticle_8011a00c == particle) {
       return null;
     }
 
     //LAB_800fe894
-    ParticleEffectData98 v0 = _8011a00c;
+    ParticleEffectData98 parent = firstParticle_8011a00c;
     do {
-      if(v0._94 == a0) {
+      if(parent.next_94 == particle) {
         break;
       }
 
-      v0 = v0._94;
-    } while(v0 != null);
+      parent = parent.next_94;
+    } while(parent != null);
 
     //LAB_800fe8b0
-    return v0;
+    return parent;
   }
 
   @Method(0x800fe8b8L)
-  public static void FUN_800fe8b8(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    final ParticleEffectData98 s2 = (ParticleEffectData98)data.effect_44;
-    final ParticleEffectData98 a0 = FUN_800fe878(s2);
+  public static void particleEffectDestructor(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
+    final ParticleEffectData98 particle = (ParticleEffectData98)data.effect_44;
+    final ParticleEffectData98 parent = findParticleParent(particle);
 
-    if(a0 == null) {
-      _8011a00c = s2._94;
+    if(parent == null) {
+      firstParticle_8011a00c = particle.next_94;
     } else {
       //LAB_800fe8f0
-      a0._94 = s2._94;
+      parent.next_94 = particle.next_94;
     }
 
     //LAB_800fe8fc
-    if(s2._94 == null) {
-      _8011a010 = a0;
+    if(particle.next_94 == null) {
+      lastParticle_8011a010 = parent;
     }
 
     //LAB_800fea30
@@ -2395,7 +2395,7 @@ public final class SEffe {
 
     //LAB_80101cb0
     for(int s3 = 0; s3 < a0.count_50; s3++) {
-      final ParticleEffectInstance94 s2 = a0._68[s3];
+      final ParticleEffectInstance94 s2 = a0.instances_68[s3];
       s2._44 = new SVECTOR[a0.count_54];
       Arrays.setAll(s2._44, i -> new SVECTOR());
 
@@ -2435,8 +2435,8 @@ public final class SEffe {
 
       //LAB_80101e3c
       for(int i = 0; i < a0.count_50; i++) {
-        a0._68[i]._44 = new SVECTOR[a0.count_54];
-        Arrays.setAll(a0._68[i]._44, n -> new SVECTOR());
+        a0.instances_68[i]._44 = new SVECTOR[a0.count_54];
+        Arrays.setAll(a0.instances_68[i]._44, n -> new SVECTOR());
       }
     }
 
@@ -2454,7 +2454,7 @@ public final class SEffe {
 
       //LAB_80101f2c
       for(int i = 0; i < a0.count_50; i++) {
-        final ParticleEffectInstance94 s2 = a0._68[i];
+        final ParticleEffectInstance94 s2 = a0.instances_68[i];
         //TODO why is a GP0 packet started here but not used?
 //        final long v1 = gpuPacketAddr_1f8003d8.get();
 //        gpuPacketAddr_1f8003d8.addu(0x28L);
@@ -2491,32 +2491,30 @@ public final class SEffe {
 
   @Method(0x80102088L)
   public static FlowControl allocateParticleEffect(final RunningScript<? extends BattleScriptDataBase> script) {
+    final int count = script.params_20[3].get();
+
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "Particle effect %x".formatted(script.params_20[2].get()),
       script.scriptState_04,
-      0,
       null,
       _80119b7c[script.params_20[2].get() >> 20],
-      SEffe::FUN_800fe8b8,
-      value -> new ParticleEffectData98()
+      SEffe::particleEffectDestructor,
+      new ParticleEffectData98(count)
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
     final ParticleEffectData98 effect = (ParticleEffectData98)manager.effect_44;
-    effect.count_50 = script.params_20[3].get();
-    effect._68 = new ParticleEffectInstance94[effect.count_50];
-    Arrays.setAll(effect._68, ParticleEffectInstance94::new);
 
-    if(_8011a00c == null) {
-      _8011a00c = effect;
+    if(firstParticle_8011a00c == null) {
+      firstParticle_8011a00c = effect;
     }
 
     //LAB_801021a8
-    if(_8011a010 != null) {
-      _8011a010._94 = effect;
+    if(lastParticle_8011a010 != null) {
+      lastParticle_8011a010.next_94 = effect;
     }
 
-    _8011a010 = effect;
+    lastParticle_8011a010 = effect;
 
     //LAB_801021c0
     effect.myState_00 = state;
@@ -2527,7 +2525,7 @@ public final class SEffe {
     effect._34 = 0;
     effect._36 = 0;
     effect._6c = 0;
-    effect._94 = null;
+    effect.next_94 = null;
     effect._8c = _80119db4[script.params_20[8].get()];
     script.params_20[0].set(state.index);
 
@@ -2544,7 +2542,7 @@ public final class SEffe {
 
     //LAB_80102278
     for(int i = 0; i < effect.count_50; i++) {
-      final ParticleEffectInstance94 s2_0 = effect._68[i];
+      final ParticleEffectInstance94 s2_0 = effect.instances_68[i];
       _8011a008.setu(i);
       FUN_80101308(manager, effect, s2_0, effect._08);
       s2_0._3c.set(s2_0._50);
@@ -2601,7 +2599,7 @@ public final class SEffe {
 
     //LAB_8010243c
     for(int i = 0; i < a2.count_50; i++) {
-      final ParticleEffectInstance94 a0 = a2._68[i];
+      final ParticleEffectInstance94 a0 = a2.instances_68[i];
       script.params_20[1].array(i).set(a0._90 & 1);
     }
 
@@ -2612,7 +2610,7 @@ public final class SEffe {
   @Method(0x8010246cL)
   public static FlowControl FUN_8010246c(final RunningScript<?> script) {
     final ParticleEffectData98 effect = (ParticleEffectData98)((EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00).effect_44;
-    final ParticleEffectInstance94 a1 = effect._68[script.params_20[1].get()];
+    final ParticleEffectInstance94 a1 = effect.instances_68[script.params_20[1].get()];
 
     final VECTOR sp0x20 = new VECTOR();
     FUN_800cf684(a1._68, a1._2c, new VECTOR().set(a1._50), sp0x20);
@@ -3162,15 +3160,6 @@ public final class SEffe {
     //LAB_8010491c
   }
 
-  @Method(0x80104954L)
-  public static void deallocateElectricityEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
-    final ElectricityEffect38 electricEffect = (ElectricityEffect38)manager.effect_44;
-
-    //LAB_80104984
-    //LAB_801049ac
-    electricEffect.bolts_34 = null;
-  }
-
   @Method(0x801049d4L)
   public static void FUN_801049d4(final EffectManagerData6c a0, final ElectricityEffect38 a1, final LightningBoltEffect14 a2, final int a3) {
     // no-op
@@ -3319,11 +3308,10 @@ public final class SEffe {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "ElectricityEffect38",
       script.scriptState_04,
-      0,
       null,
       electricityEffectRenderers_80119f14[callbackIndex],
-      SEffe::deallocateElectricityEffect,
-      value -> new ElectricityEffect38(boltCount, boltSegmentCount)
+      null,
+      new ElectricityEffect38(boltCount, boltSegmentCount)
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
@@ -3728,7 +3716,7 @@ public final class SEffe {
   }
 
   @Method(0x80106808L)
-  public static void renderAdditionCentreSolidSquare(final BttlScriptData6cSubBase1 a0, final AdditionOverlaysHit20 hitOverlay, final int completionState, final ScriptState<EffectManagerData6c> a3, final EffectManagerData6c effect) {
+  public static void renderAdditionCentreSolidSquare(final Effect a0, final AdditionOverlaysHit20 hitOverlay, final int completionState, final ScriptState<EffectManagerData6c> a3, final EffectManagerData6c effect) {
     if(effect._10.flags_00 >= 0) {
       final AdditionOverlaysBorder0e[] targetBorderArray = hitOverlay.borderArray_18;
 
@@ -4140,11 +4128,6 @@ public final class SEffe {
     //LAB_80107764
   }
 
-  @Method(0x80107790L)
-  public static void deallocateAdditionOverlaysEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    ((AdditionOverlaysEffect44)data.effect_44).hitOverlays_40 = null;
-  }
-
   @Method(0x801077bcL)
   public static FlowControl scriptGetHitCompletionState(final RunningScript<?> script) {
     script.params_20[2].set(additionHitCompletionState_8011a014[script.params_20[1].get()]);
@@ -4156,11 +4139,10 @@ public final class SEffe {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "Addition overlays",
       script.scriptState_04,
-      0,
       SEffe::tickAdditionOverlaysEffect,
       SEffe::renderAdditionOverlaysEffect,
-      SEffe::deallocateAdditionOverlaysEffect,
-      value -> new AdditionOverlaysEffect44()
+      null,
+      new AdditionOverlaysEffect44()
     );
 
     initializeAdditionOverlaysEffect(script.params_20[0].get(), script.params_20[1].get(), (AdditionOverlaysEffect44)state.innerStruct_00.effect_44, script.params_20[2].get());
@@ -4642,7 +4624,7 @@ public final class SEffe {
 
   @Method(0x80108df8L)
   public static FlowControl FUN_80108df8(final RunningScript<? extends BattleScriptDataBase> script) {
-    script.params_20[0].set(allocateEffectManager("Unknown (FUN_80108df8)", script.scriptState_04, 0, null, null, null, null).index);
+    script.params_20[0].set(allocateEffectManager("Unknown (FUN_80108df8)", script.scriptState_04, null, null, null, null).index);
     return FlowControl.CONTINUE;
   }
 
@@ -4686,22 +4668,16 @@ public final class SEffe {
     //LAB_80109110
   }
 
-  @Method(0x8010912cL)
-  public static void deallocateRainEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    ((RainEffect08)data.effect_44).raindropArray_04 = null;
-  }
-
   @Method(0x80109158L)
   public static FlowControl allocateRainEffect(final RunningScript<? extends BattleScriptDataBase> script) {
     final int count = script.params_20[1].get();
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "RainEffect08",
       script.scriptState_04,
-      0,
       SEffe::tickRainEffect,
       SEffe::renderRainEffect,
-      SEffe::deallocateRainEffect,
-      value -> new RainEffect08(count)
+      null,
+      new RainEffect08(count)
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
@@ -4799,12 +4775,11 @@ public final class SEffe {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "Screen distortion",
       script.scriptState_04,
-      0,
       // Ticker and renderer are swapped for some reason
       screenDistortionEffectRenderers_80119fd4[script.params_20[2].get()],
       screenDistortionEffectTickers_80119fe0[script.params_20[2].get()],
       null,
-      value -> new ScreenDistortionEffectData08()
+      new ScreenDistortionEffectData08()
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
@@ -4966,11 +4941,10 @@ public final class SEffe {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "FrozenJetEffect28",
       script.scriptState_04,
-      0,
       SEffe::FUN_80109fc4,
       null,
       null,
-      value -> new FrozenJetEffect28(tmd.vert_top_00, tmd.normal_top_08, tmd.primitives_10, s4, sp18 & 0xff)
+      new FrozenJetEffect28(tmd.vert_top_00, tmd.normal_top_08, tmd.primitives_10, s4, sp18 & 0xff)
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
@@ -4991,11 +4965,10 @@ public final class SEffe {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "GradientRaysEffect24",
       script.scriptState_04,
-      0,
       SEffe::gradientRaysEffectTicker,
       SEffe::gradientRaysEffectRenderer,
       null,
-      value -> new GradientRaysEffect24(count)
+      new GradientRaysEffect24(count)
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
@@ -5224,11 +5197,10 @@ public final class SEffe {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "Screen capture",
       script.scriptState_04,
-      0,
       null,
       SEffe::renderScreenCaptureEffect,
       null,
-      value -> new ScreenCaptureEffect1c()
+      new ScreenCaptureEffect1c()
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
@@ -5579,11 +5551,10 @@ public final class SEffe {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "LensFlareEffect50",
       script.scriptState_04,
-      0,
       SEffe::tickLensFlareEffect,
       SEffe::renderLensFlareEffect,
       null,
-      value -> new LensFlareEffect50()
+      new LensFlareEffect50()
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
@@ -5798,11 +5769,10 @@ public final class SEffe {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "WsDragoonTransformationFeathersEffect14",
       script.scriptState_04,
-      0,
       SEffe::tickWsDragoonTransformationFeathersEffect,
       SEffe::renderWsDragoonTransformationFeathersEffect,
       null,
-      Value -> new WsDragoonTransformationFeathersEffect14(featherCount)
+      new WsDragoonTransformationFeathersEffect14(featherCount)
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
@@ -5935,11 +5905,10 @@ public final class SEffe {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "GoldDragoonTransformEffect20",
       script.scriptState_04,
-      0,
       SEffe::goldDragoonTransformEffectTicker,
       SEffe::goldDragoonTransformEffectRenderer,
       null,
-      value -> new GoldDragoonTransformEffect20(count)
+      new GoldDragoonTransformEffect20(count)
     );
 
     final GoldDragoonTransformEffect20 effect = (GoldDragoonTransformEffect20)state.innerStruct_00.effect_44;
@@ -6098,11 +6067,10 @@ public final class SEffe {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "StarChildrenMeteorEffect10",
       script.scriptState_04,
-      0,
       SEffe::tickStarChildrenMeteorEffect,
       SEffe::renderStarChildrenMeteorEffect,
-      SEffe::deallocateStarChildrenMeteorEffect,
-      value -> new StarChildrenMeteorEffect10(meteorCount)
+      null,
+      new StarChildrenMeteorEffect10(meteorCount)
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
@@ -6237,11 +6205,10 @@ public final class SEffe {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "MoonlightStarsEffect18",
       script.scriptState_04,
-      0,
       SEffe::tickMoonlightStarsEffect,
       SEffe::renderMoonlightStarsEffect,
-      SEffe::deallocateMoonlightStarsEffect,
-      value -> new MoonlightStarsEffect18(starCount)
+      null,
+      new MoonlightStarsEffect18(starCount)
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
@@ -6337,11 +6304,10 @@ public final class SEffe {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "StarChildrenImpactEffect20",
       script.scriptState_04,
-      0,
       SEffe::tickStarChildrenImpactEffect,
       SEffe::renderStarChildrenImpactEffect,
       null,
-      value -> new StarChildrenImpactEffect20(impactCount)
+      new StarChildrenImpactEffect20(impactCount)
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
@@ -6621,11 +6587,6 @@ public final class SEffe {
     // no-op
   }
 
-  @Method(0x8010feb8L)
-  public static void deallocateStarChildrenMeteorEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
-    ((StarChildrenMeteorEffect10)manager.effect_44).meteorArray_0c = null;
-  }
-
   @Method(0x8010ff10L)
   public static void tickMoonlightStarsEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
     final MoonlightStarsEffect18 starEffect = (MoonlightStarsEffect18)manager.effect_44;
@@ -6647,11 +6608,6 @@ public final class SEffe {
         star.renderStars_03 = true;
       }
     }
-  }
-
-  @Method(0x8010ffd8L)
-  public static void deallocateMoonlightStarsEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
-    ((MoonlightStarsEffect18)manager.effect_44).starArray_0c = null;
   }
 
   @Method(0x80110030L)
@@ -8515,7 +8471,6 @@ public final class SEffe {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "Screen darkening",
       deffManager_800c693c.scriptState_1c,
-      0,
       SEffe::screenDarkeningTicker,
       null,
       SEffe::screenDarkeningDestructor,
@@ -9429,11 +9384,10 @@ public final class SEffe {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "BttlScriptData6cSub5c",
       script.scriptState_04,
-      0,
       null,
       SEffe::FUN_801179f0,
-      SEffe::FUN_80118148,
-      value -> new BttlScriptData6cSub5c()
+      null,
+      new BttlScriptData6cSub5c()
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
@@ -9497,15 +9451,6 @@ public final class SEffe {
     manager._10._28 = 0x1000;
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
-  }
-
-  @Method(0x80118148L)
-  public static void FUN_80118148(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
-    final BttlScriptData6cSub5c s0 = (BttlScriptData6cSub5c)manager.effect_44;
-
-    s0.ptr_10 = null;
-
-    //LAB_80118198
   }
 
   @Method(0x801181a8L)
@@ -9606,11 +9551,10 @@ public final class SEffe {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "DEFF TMD " + name,
       script.scriptState_04,
-      0,
       null,
       SEffe::renderDeffTmd,
       null,
-      value -> new DeffTmdRenderer14()
+      new DeffTmdRenderer14()
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
@@ -9682,11 +9626,10 @@ public final class SEffe {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       objTable != null ? "Obj table renderer FUN_801184e4 " + objTable.name : "TMD renderer with no TMD? FUN_801184e4",
       script.scriptState_04,
-      0,
       null,
       SEffe::renderDeffTmd,
       null,
-      value -> new DeffTmdRenderer14()
+      new DeffTmdRenderer14()
     );
 
     final EffectManagerData6c s4 = state.innerStruct_00;
@@ -9760,7 +9703,6 @@ public final class SEffe {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "Unknown (FUN_801188ec, %s)".formatted(model_800bda10.dobj2ArrPtr_00[0].tmd_08.name),
       script.scriptState_04,
-      0,
       null,
       SEffe::FUN_80118790,
       null,
@@ -9871,7 +9813,6 @@ public final class SEffe {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "Shirley transform wipe effect",
       script.scriptState_04,
-      0,
       null,
       SEffe::renderShirleyTransformWipeEffect,
       null,
@@ -10050,11 +9991,10 @@ public final class SEffe {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "SpriteWithTrailEffect30",
       script.scriptState_04,
-      0,
       SEffe::FUN_801196bc,
       SEffe::FUN_80118e98,
       null,
-      value -> new SpriteWithTrailEffect30()
+      new SpriteWithTrailEffect30()
     );
 
     final EffectManagerData6c data = state.innerStruct_00;

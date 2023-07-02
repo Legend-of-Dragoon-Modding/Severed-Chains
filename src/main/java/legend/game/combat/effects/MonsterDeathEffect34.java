@@ -2,7 +2,7 @@ package legend.game.combat.effects;
 
 import java.util.Arrays;
 
-public class MonsterDeathEffect34 implements BttlScriptData6cSubBase1 {
+public class MonsterDeathEffect34 implements Effect {
   /** short; Indicates highest part index to turn off. Parts at index <= value are "destroyed" */
   public int destroyedPartsCutoffIndex_00;
   /** ushort */
