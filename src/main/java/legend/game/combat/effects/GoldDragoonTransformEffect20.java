@@ -2,7 +2,7 @@ package legend.game.combat.effects;
 
 import java.util.Arrays;
 
-public class GoldDragoonTransformEffect20 implements BttlScriptData6cSubBase1 {
+public class GoldDragoonTransformEffect20 implements Effect {
 //  public int count_00;
   public int _04;
   public final GoldDragoonTransformEffectInstance84[] parts_08;

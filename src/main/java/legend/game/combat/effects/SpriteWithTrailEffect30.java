@@ -2,7 +2,7 @@ package legend.game.combat.effects;
 
 import legend.core.gte.VECTOR;
 
-public class SpriteWithTrailEffect30 implements BttlScriptData6cSubBase1 {
+public class SpriteWithTrailEffect30 implements Effect {
   public int _00;
   public int _04;
   public int count_08;

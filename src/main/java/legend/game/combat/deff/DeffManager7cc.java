@@ -29,8 +29,8 @@ public class DeffManager7cc {
 //  public final Value _28;
   //TODO sub-structs from here down?
   public ScriptFile[] scripts_2c;
-  public long ptr_30;
-  public long ptr_34;
+//  public long ptr_30;
+//  public long ptr_34;
 
   public final StageAmbiance4c stageAmbiance_4c = new StageAmbiance4c();
   /** One instance for each dragoon */

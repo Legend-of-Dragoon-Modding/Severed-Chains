@@ -4,7 +4,7 @@ import legend.core.gte.TmdObjTable1c;
 import legend.game.combat.deff.Lmb;
 import legend.game.combat.deff.LmbTransforms14;
 
-public class BttlScriptData6cSub5c implements BttlScriptData6cSubBase1 {
+public class BttlScriptData6cSub5c implements Effect {
   public int lmbType_00;
   public int _04;
   public int _08;

@@ -14,11 +14,7 @@ import legend.core.opengl.fonts.FontManager;
 import legend.core.opengl.fonts.TextStream;
 import legend.core.spu.Spu;
 import legend.core.ui.ScreenStack;
-import legend.game.Scus94491BpeSegment;
 import legend.game.Scus94491BpeSegment_8002;
-import legend.game.Scus94491BpeSegment_8003;
-import legend.game.Scus94491BpeSegment_8004;
-import legend.game.Scus94491BpeSegment_800e;
 import legend.game.fmv.Fmv;
 import legend.game.i18n.LangManager;
 import legend.game.input.Input;
@@ -207,12 +203,6 @@ public final class GameEngine {
           }
 
           MEMORY.setBytes(_80010000.getAddress(), Unpacker.loadFile("lod_engine").getBytes());
-
-          MEMORY.addFunctions(Scus94491BpeSegment.class);
-          MEMORY.addFunctions(Scus94491BpeSegment_8002.class);
-          MEMORY.addFunctions(Scus94491BpeSegment_8003.class);
-          MEMORY.addFunctions(Scus94491BpeSegment_8004.class);
-          MEMORY.addFunctions(Scus94491BpeSegment_800e.class);
 
           loadXpTables();
 

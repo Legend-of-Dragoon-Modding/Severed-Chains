@@ -1,14 +1,8 @@
 package legend.core.memory;
 
 import legend.core.MathHelper;
-import legend.core.memory.types.QuadConsumer;
-import legend.core.memory.types.QuintConsumer;
 
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class Value {
   private final int size;
@@ -104,10 +98,6 @@ public class Value {
     return sb.toString();
   }
 
-  public Object call(final Object... params) {
-    throw new RuntimeException("Can't call a register");
-  }
-
   protected void validateUnsigned(final long value) {
     if(value < 0 || value >= 0b1L << this.size * 8) {
       throw new RuntimeException("Can't set " + this.size + "-byte value to " + Long.toString(value, 16));
@@ -163,46 +153,6 @@ public class Value {
 
     this.offset(string.length()).set(0x0L);
     return this;
-  }
-
-  public Value set(final Runnable function) {
-    throw new RuntimeException("Can't store functions in registers");
-  }
-
-  public <T> Value set(final Consumer<T> function) {
-    throw new RuntimeException("Can't store functions in registers");
-  }
-
-  public <T, U> Value set(final BiConsumer<T, U> function) {
-    throw new RuntimeException("Can't store functions in registers");
-  }
-
-  public <T, U, V, W> Value set(final QuadConsumer<T, U, V, W> function) {
-    throw new RuntimeException("Can't store functions in registers");
-  }
-
-  public <T, U, V, W, X> Value set(final QuintConsumer<T, U, V, W, X> function) {
-    throw new RuntimeException("Can't store functions in registers");
-  }
-
-  public Value set(final Function<?, ?> function) {
-    throw new RuntimeException("Can't store functions in registers");
-  }
-
-  public Value set(final BiFunction<?, ?, ?> function) {
-    throw new RuntimeException("Can't store functions in registers");
-  }
-
-  public Value set(final TriFunction<?, ?, ?, ?> function) {
-    throw new RuntimeException("Can't store functions in registers");
-  }
-
-  public Value set(final QuadFunction<?, ?, ?, ?, ?> function) {
-    throw new RuntimeException("Can't store functions in registers");
-  }
-
-  public <T> Value set(final Supplier<T> function) {
-    throw new RuntimeException("Can't store functions in registers");
   }
 
   public Value add(final long amount) {
@@ -369,15 +319,5 @@ public class Value {
   @Override
   public String toString() {
     return '[' + Long.toString(this.get(), 16) + "] (" + this.size + "b)";
-  }
-
-  @FunctionalInterface
-  public interface TriFunction<T, U, V, R>  {
-    R apply(T t, U u, V v);
-  }
-
-  @FunctionalInterface
-  public interface QuadFunction<T, U, V, W, R>  {
-    R apply(T t, U u, V v, W w);
   }
 }

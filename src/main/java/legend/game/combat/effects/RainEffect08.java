@@ -2,7 +2,7 @@ package legend.game.combat.effects;
 
 import java.util.Arrays;
 
-public class RainEffect08 implements BttlScriptData6cSubBase1 {
+public class RainEffect08 implements Effect {
   public int count_00;
   public RaindropEffect0c[] raindropArray_04;
 

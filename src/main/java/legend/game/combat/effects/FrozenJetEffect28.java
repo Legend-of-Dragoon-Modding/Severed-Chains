@@ -2,11 +2,10 @@ package legend.game.combat.effects;
 
 import legend.core.gte.SVECTOR;
 import legend.core.gte.TmdObjTable1c;
-import legend.game.combat.effects.BttlScriptData6cSubBase1;
 
 import java.util.Arrays;
 
-public class FrozenJetEffect28 implements BttlScriptData6cSubBase1 {
+public class FrozenJetEffect28 implements Effect {
 //  public final int vertexCount_00;
 //  public final int normalCount_04;
 //  public final int primitiveCount_08;

@@ -6,7 +6,9 @@ import legend.core.memory.types.QuadConsumer;
 import legend.core.memory.types.TriConsumer;
 import legend.game.scripting.ScriptState;
 
-public class ParticleEffectData98 implements BttlScriptData6cSubBase1 {
+import java.util.Arrays;
+
+public class ParticleEffectData98 implements Effect {
   public ScriptState<EffectManagerData6c> myState_00;
   /** Can be -1 */
   public int parentScriptIndex_04;
@@ -51,6 +53,11 @@ public class ParticleEffectData98 implements BttlScriptData6cSubBase1 {
   public QuadConsumer<ScriptState<EffectManagerData6c>, EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94> callback_88;
   public QuadConsumer<EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94, EffectData98Inner24> callback_8c;
   public QuadConsumer<ScriptState<EffectManagerData6c>, EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94> callback_90;
-  /** Child particle effect? */
-  public ParticleEffectData98 _94;
+  public ParticleEffectData98 next_94;
+
+  public ParticleEffectData98(final int count) {
+    this.countParticleInstance_50 = count;
+    this.particleArray_68 = new ParticleEffectInstance94[count];
+    Arrays.setAll(this.particleArray_68, ParticleEffectInstance94::new);
+  }
 }

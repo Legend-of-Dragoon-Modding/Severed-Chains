@@ -20,7 +20,6 @@ import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.Pointer;
-import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
@@ -211,7 +210,22 @@ public class WMap {
    *   <li>{@link WMap#FUN_800ccef4}</li>
    * </ol>
    */
-  private static final ArrayRef<Pointer<RunnableRef>> _800ef000 = MEMORY.ref(4, 0x800ef000L, ArrayRef.of(Pointer.classFor(RunnableRef.class), 13, 4, Pointer.deferred(4, RunnableRef::new)));
+  private static final Runnable[] _800ef000 = new Runnable[13];
+  static {
+    _800ef000[0] = WMap::initWmap;
+    _800ef000[1] = WMap::waitForWmapMusicToLoad;
+    _800ef000[2] = WMap::FUN_800ccc64;
+    _800ef000[3] = WMap::FUN_800cccbc;
+    _800ef000[4] = WMap::FUN_800ccce4;
+    _800ef000[5] = WMap::FUN_800cc758;
+    _800ef000[6] = WMap::FUN_800ccd70;
+    _800ef000[7] = WMap::FUN_800ccda4;
+    _800ef000[8] = WMap::transitionToCombat;
+    _800ef000[9] = WMap::FUN_800cce9c;
+    _800ef000[10] = WMap::FUN_800ccecc;
+    _800ef000[11] = WMap::FUN_800ccbd8;
+    _800ef000[12] = WMap::FUN_800ccef4;
+  }
 
   private static final UnsignedShortRef vramX_800ef0d4 = MEMORY.ref(2, 0x800ef0d4L, UnsignedShortRef::new);
   private static final UnsignedShortRef vramY_800ef0d6 = MEMORY.ref(2, 0x800ef0d6L, UnsignedShortRef::new);
@@ -257,7 +271,13 @@ public class WMap {
    *   <li>{@link WMap#FUN_800e32fc}</li>
    * </ul>
    */
-  private static final ArrayRef<Pointer<RunnableRef>> shadowRenderers_800ef684 = MEMORY.ref(4, 0x800ef684L, ArrayRef.of(Pointer.classFor(RunnableRef.class), 4, 4, Pointer.deferred(4, RunnableRef::new)));
+  private static final Runnable[] shadowRenderers_800ef684 = new Runnable[4];
+  static {
+    shadowRenderers_800ef684[0] = WMap::renderDartShadow;
+    shadowRenderers_800ef684[1] = WMap::renderQueenFuryShadow;
+    shadowRenderers_800ef684[2] = WMap::FUN_800e32fc;
+    shadowRenderers_800ef684[3] = WMap::FUN_800e32fc;
+  }
 
   private static final Value _800ef694 = MEMORY.ref(1, 0x800ef694L);
   private static final ArrayRef<WMapStruct08> _800ef698 = MEMORY.ref(4, 0x800ef698L, ArrayRef.of(WMapStruct08.class, 6, 0x8, WMapStruct08::new));
@@ -274,7 +294,11 @@ public class WMap {
   private static final Pointer<LodString> Enter_800f01e8 = MEMORY.ref(4, 0x800f01e8L, Pointer.deferred(4, LodString::new));
   private static final ArrayRef<Pointer<LodString>> regions_800f01ec = MEMORY.ref(4, 0x800f01ecL, ArrayRef.of(Pointer.classFor(LodString.class), 3, 4, Pointer.deferred(4, LodString::new)));
 
-  private static final Value _800f01fc = MEMORY.ref(4, 0x800f01fcL);
+  private static final Runnable[] _800f01fc = new Runnable[2];
+  static {
+    _800f01fc[0] = WMap::FUN_800e406c;
+    _800f01fc[1] = WMap::FUN_800e469c;
+  }
 
   private static final ArrayRef<UnsignedByteRef> _800f0204 = MEMORY.ref(1, 0x800f0204L, ArrayRef.of(UnsignedByteRef.class, 0xc, 1, UnsignedByteRef::new));
   private static final ArrayRef<UnsignedByteRef> _800f0210 = MEMORY.ref(1, 0x800f0210L, ArrayRef.of(UnsignedByteRef.class, 0xc, 1, UnsignedByteRef::new));
@@ -295,28 +319,43 @@ public class WMap {
   private static final Value _800f65a0 = MEMORY.ref(4, 0x800f65a0L);
   /**
    * <ol start="0">
-   *   <li>{{@link WMap#FUN_800ebb2c}}</li>
-   *   <li>{{@link WMap#FUN_800ebb44}}</li>
-   *   <li>{{@link WMap#FUN_800eca3c}}</li>
+   *   <li>{@link WMap#FUN_800ebb2c}</li>
+   *   <li>{@link WMap#FUN_800ebb44}</li>
+   *   <li>{@link WMap#FUN_800eca3c}</li>
    * </ol>
    */
-  private static final ArrayRef<Pointer<RunnableRef>> _800f65a4 = MEMORY.ref(4, 0x800f65a4L, ArrayRef.of(Pointer.classFor(RunnableRef.class), 3, 4, Pointer.deferred(4, RunnableRef::new)));
+  private static final Runnable[] _800f65a4 = new Runnable[3];
+  static {
+    _800f65a4[0] = WMap::FUN_800ebb2c;
+    _800f65a4[1] = WMap::FUN_800ebb44;
+    _800f65a4[2] = WMap::FUN_800eca3c;
+  }
   /**
    * <ol start="0">
-   *   <li>{{@link WMap#FUN_800ebb34}}</li>
-   *   <li>{{@link WMap#FUN_800ebfc0}}</li>
-   *   <li>{{@link WMap#FUN_800ecd10}}</li>
+   *   <li>{@link WMap#FUN_800ebb34}</li>
+   *   <li>{@link WMap#FUN_800ebfc0}</li>
+   *   <li>{@link WMap#FUN_800ecd10}</li>
    * </ol>
    */
-  private static final ArrayRef<Pointer<RunnableRef>> _800f65b0 = MEMORY.ref(4, 0x800f65b0L, ArrayRef.of(Pointer.classFor(RunnableRef.class), 3, 4, Pointer.deferred(4, RunnableRef::new)));
+  private static final Runnable[] _800f65b0 = new Runnable[3];
+  static {
+    _800f65b0[0] = WMap::FUN_800ebb34;
+    _800f65b0[1] = WMap::FUN_800ebfc0;
+    _800f65b0[2] = WMap::FUN_800ecd10;
+  }
   /**
    * <ol start="0">
-   *   <li>{{@link WMap#FUN_800ebb3c}}</li>
-   *   <li>{{@link WMap#FUN_800eed3c}}</li>
-   *   <li>{{@link WMap#FUN_800eed90}}</li>
+   *   <li>{@link WMap#FUN_800ebb3c}</li>
+   *   <li>{@link WMap#FUN_800eed3c}</li>
+   *   <li>{@link WMap#FUN_800eed90}</li>
    * </ol>
    */
-  private static final ArrayRef<Pointer<RunnableRef>> _800f65bc = MEMORY.ref(4, 0x800f65bcL, ArrayRef.of(Pointer.classFor(RunnableRef.class), 3, 4, Pointer.deferred(4, RunnableRef::new)));
+  private static final Runnable[] _800f65bc = new Runnable[3];
+  static {
+    _800f65bc[0] = WMap::FUN_800ebb3c;
+    _800f65bc[1] = WMap::FUN_800eed3c;
+    _800f65bc[2] = WMap::FUN_800eed90;
+  }
 
   private static final Value _800f65c8 = MEMORY.ref(1, 0x800f65c8L);
 
@@ -551,7 +590,7 @@ public class WMap {
 
   @Method(0x800ccb98L)
   public static void FUN_800ccb98() {
-    _800ef000.get(pregameLoadingStage_800bb10c.get()).deref().run();
+    _800ef000[pregameLoadingStage_800bb10c.get()].run();
   }
 
   @Method(0x800ccbd8L)
@@ -4571,7 +4610,7 @@ public class WMap {
 
   @Method(0x800e32a8L)
   public static void renderPlayerShadow() {
-    shadowRenderers_800ef684.get(struct258_800c66a8.modelIndex_1e4).deref().run();
+    shadowRenderers_800ef684[struct258_800c66a8.modelIndex_1e4].run();
   }
 
   @Method(0x800e32fcL)
@@ -4751,7 +4790,7 @@ public class WMap {
   public static void FUN_800e3ff0() {
     if(struct258_800c66a8._05 != 0) {
       //LAB_800e4020
-      _800f01fc.offset((struct258_800c66a8._05 - 1) * 0x4L).deref(4).call();
+      _800f01fc[struct258_800c66a8._05 - 1].run();
     }
 
     //LAB_800e4058
@@ -7131,7 +7170,7 @@ public class WMap {
         break;
 
       case 3:
-        _800f65a4.get((int)_800f6598.get()).deref().run();
+        _800f65a4[(int)_800f6598.get()].run();
         _800c66a4.setu(0x4L);
         break;
 
@@ -7149,11 +7188,11 @@ public class WMap {
         _800f6598.setu((locations_800f0e34.get(mapState_800c6798.locationIndex_10)._12.get() & 0x30) >>> 4);
 
         if(_800f6598.get() != _800f659c.get()) {
-          _800f65bc.get((int)_800f659c.get()).deref().run();
+          _800f65bc[(int)_800f659c.get()].run();
           _800c66a4.setu(0x3L);
         } else {
           //LAB_800edb5c
-          _800f65b0.get((int)_800f6598.get()).deref().run();
+          _800f65b0[(int)_800f6598.get()].run();
         }
 
         break;
@@ -7405,6 +7444,6 @@ public class WMap {
   @Method(0x800eede4L)
   public static void FUN_800eede4() {
     _800c86f8 = null;
-    _800f65bc.get((int)_800f6598.get()).deref().run();
+    _800f65bc[(int)_800f6598.get()].run();
   }
 }
