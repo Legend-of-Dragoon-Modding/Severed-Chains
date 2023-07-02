@@ -6592,7 +6592,7 @@ public final class SEffe {
       feather.currentFrame_04 = 0;
       feather.callbackIndex_02++;
       feather.velocityTranslationMagnitudeXz_40 = -feather.translationMagnitudeXz_3c / feather.countCallback1and3Frames_4c;
-      feather.velocityTranslationMagnitudeY_1c = 0;
+      feather.velocityTranslationMagnitudeY_1c = -feather.translationMagnitudeY_50 / feather.countCallback1and3Frames_4c;
     }
     //LAB_8010fd20
   }
