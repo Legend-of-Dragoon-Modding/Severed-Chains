@@ -5791,7 +5791,7 @@ public final class SEffe {
   }
 
   @Method(0x8010d1dcL)
-  public static FlowControl FUN_8010d1dc(final RunningScript<? extends BattleScriptDataBase> script) {
+  public static FlowControl allocateWsDragoonTransformationFeathersEffect(final RunningScript<? extends BattleScriptDataBase> script) {
     final int featherCount = script.params_20[1].get();
     final int effectFlags = script.params_20[2].get();
 
