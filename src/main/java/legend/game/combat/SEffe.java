@@ -115,13 +115,13 @@ import org.apache.logging.log4j.Logger;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SCRIPTS;
-import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.Scus94491BpeSegment.FUN_80018a5c;
 import static legend.game.Scus94491BpeSegment.FUN_80018d60;
 import static legend.game.Scus94491BpeSegment.FUN_80018dec;
@@ -3533,7 +3533,7 @@ public final class SEffe {
   /** Runs callbacks to render correct button icon effects during addition */
   @Method(0x80106050L)
   public static void renderAdditionButton(final long a0, final boolean isCounter) {
-    final long callback = getMethodAddress(Bttl_800d.class, "FUN_800d46d4", RunningScript.class);
+    final Consumer<RunningScript<?>> callback = Bttl_800d::FUN_800d46d4;
 
     // Params: ?, x, y, translucency, colour
     final int offset = isCounter ? 1 : 0;
@@ -4228,7 +4228,7 @@ public final class SEffe {
     final int s3 = (int)_8011a020.get();
     final int fp = s4 + 16;
     final int s7 = s3 + 70;
-    final long func = getMethodAddress(Bttl_800d.class, "FUN_800d46d4", RunningScript.class);
+    final Consumer<RunningScript<?>> func = Bttl_800d::FUN_800d46d4;
 
     final int a2;
     if(FUN_80108460(a0, 0) != 0) {
@@ -5719,8 +5719,8 @@ public final class SEffe {
 
           if(i == 0) {
             for(int j = 0; j < 4; j++) {
-              final int x = (inst.widthScale_2e * w >> 12) * _800fb910.get(i).get(0).get();
-              final int y = (inst.heightScale_30 * h >> 12) * _800fb910.get(i).get(1).get();
+              final int x = (inst.widthScale_2e * w >> 12) * _800fb910.get(j).get(0).get();
+              final int y = (inst.heightScale_30 * h >> 12) * _800fb910.get(j).get(1).get();
               final int halfW = displayWidth_1f8003e0.get() / 2;
               final int halfH = displayHeight_1f8003e4.get() / 2;
               final int[][] sp0x48 = new int[4][2];
@@ -5738,14 +5738,14 @@ public final class SEffe {
                 .clut(clutX, clutY)
                 .vramPos((tpage & 0b1111) * 64, (tpage & 0b10000) != 0 ? 256 : 0)
                 .rgb(r, g, b)
-                .pos(0, sp0x48[_800fb930.get(i).get(0).get()][0], sp0x48[_800fb930.get(i).get(0).get()][1])
-                .pos(1, sp0x48[_800fb930.get(i).get(1).get()][0], sp0x48[_800fb930.get(i).get(1).get()][1])
-                .pos(2, sp0x48[_800fb930.get(i).get(2).get()][0], sp0x48[_800fb930.get(i).get(2).get()][1])
-                .pos(3, sp0x48[_800fb930.get(i).get(3).get()][0], sp0x48[_800fb930.get(i).get(3).get()][1])
+                .pos(0, sp0x48[_800fb930.get(j).get(0).get()][0], sp0x48[_800fb930.get(j).get(0).get()][1])
+                .pos(1, sp0x48[_800fb930.get(j).get(1).get()][0], sp0x48[_800fb930.get(j).get(1).get()][1])
+                .pos(2, sp0x48[_800fb930.get(j).get(2).get()][0], sp0x48[_800fb930.get(j).get(2).get()][1])
+                .pos(3, sp0x48[_800fb930.get(j).get(3).get()][0], sp0x48[_800fb930.get(j).get(3).get()][1])
                 .uv(0, u, v)
-                .uv(1, u + w, v)
-                .uv(2, u, v + h)
-                .uv(3, u + w, v + h);
+                .uv(1, u + w - 1, v)
+                .uv(2, u, v + h - 1)
+                .uv(3, u + w - 1, v + h - 1);
 
               if((sp10 >>> 30 & 1) != 0) {
                 cmd.translucent(Translucency.of(sp10 >>> 28 & 0b11));
@@ -5772,9 +5772,9 @@ public final class SEffe {
               .pos(2, x, y + h2)
               .pos(3, x + w2, y + h2)
               .uv(0, u, v)
-              .uv(1, u + w, v)
-              .uv(2, u, v + h)
-              .uv(3, u + w, v + h);
+              .uv(1, u + w - 1, v)
+              .uv(2, u, v + h - 1)
+              .uv(3, u + w - 1, v + h - 1);
 
             if((sp10 >>> 30 & 1) != 0) {
               cmd.translucent(Translucency.of(sp10 >>> 28 & 0b11));
