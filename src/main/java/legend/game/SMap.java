@@ -23,7 +23,6 @@ import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BoolRef;
-import legend.core.memory.types.ConsumerRef;
 import legend.core.memory.types.EnumRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.Pointer;
@@ -109,7 +108,6 @@ import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SCRIPTS;
-import static legend.core.MemoryHelper.getMethodAddress;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
 import static legend.game.Scus94491BpeSegment.FUN_8001ada0;
@@ -317,7 +315,7 @@ public final class SMap {
 
   public static final Value newrootLoaded_800cab1c = MEMORY.ref(4, 0x800cab1cL);
   public static final Value _800cab20 = MEMORY.ref(4, 0x800cab20L);
-  public static final Pointer<MediumStruct> _800cab24 = MEMORY.ref(4, 0x800cab24L, Pointer.deferred(4, MediumStruct::new));
+  public static MediumStruct _800cab24;
   public static final Value _800cab28 = MEMORY.ref(4, 0x800cab28L);
   public static final Value _800cab2c = MEMORY.ref(4, 0x800cab2cL);
   public static EnvironmentStruct[] envStruct_800cab30;
@@ -388,7 +386,7 @@ public final class SMap {
 
   public static SomethingStruct SomethingStructPtr_800d1a88;
   public static UnknownStruct2 _800d1a8c;
-  public static final MediumStruct _800d1a90 = MEMORY.ref(4, 0x800d1a90L, MediumStruct::new);
+  public static final MediumStruct _800d1a90 = new MediumStruct();
 
   public static List<FileData> creditTims_800d1ae0;
   public static final IntRef fadeOutTicks_800d1ae4 = MEMORY.ref(4, 0x800d1ae4L, IntRef::new);
@@ -3861,7 +3859,7 @@ public final class SMap {
   public static void FUN_800e5104(final int index, final MediumStruct a1) {
     executeSceneGraphicsLoadingStage(index);
 
-    a1.callback_48.deref().run(a1);
+    a1.callback_48.accept(a1);
 
     _800c6ae0.addu(0x1L);
 
@@ -4069,7 +4067,7 @@ public final class SMap {
       _800f7e30.setu(index_80052c38.get());
       index_80052c38.set((int)_800f7e30.offset(gameState_800babc8.chapterIndex_98 * 0x8L).get());
       _800cb450.setu(_800f7e2c.offset(gameState_800babc8.chapterIndex_98 * 0x8L).get());
-      _800cab24.set(FUN_800ea974(-0x1L));
+      _800cab24 = FUN_800ea974(-0x1L);
       SCRIPTS.pause();
       return 1;
     }
@@ -4224,7 +4222,7 @@ public final class SMap {
       }
 
       case 0x4 -> {
-        FUN_800e5104(_800caaf8.get(), _800cab24.deref());
+        FUN_800e5104(_800caaf8.get(), _800cab24);
         _800caafc.set(submapCut_80052c30.get());
         _800cab00.set(submapScene_80052c34.get());
         getDrgnFileFromNewRoot(submapCut_80052c30.get(), drgnIndex, fileIndex);
@@ -4280,7 +4278,7 @@ public final class SMap {
           savedGameSelected_800bdc34.set(false);
           _80052c44.setu(0);
           scriptStartEffect(2, 10);
-          _800cab24.set(FUN_800ea974(_800caaf4.get()));
+          _800cab24 = FUN_800ea974(_800caaf4.get());
           cacheHasNoEncounters();
           smapLoadingStage_800cb430.setu(0xcL);
           SCRIPTS.resume();
@@ -4290,14 +4288,14 @@ public final class SMap {
 
       case 0xc -> {
         _80052c44.setu(0);
-        FUN_800e5104(_800caaf8.get(), _800cab24.deref());
+        FUN_800e5104(_800caaf8.get(), _800cab24);
         if(Input.pressedThisFrame(InputAction.BUTTON_NORTH) && !gameState_800babc8.indicatorsDisabled_4e3) {
           FUN_800e5534(-1, 0x3ff);
         }
       }
 
       case 0xd -> {
-        FUN_800e5104(_800caaf8.get(), _800cab24.deref());
+        FUN_800e5104(_800caaf8.get(), _800cab24);
         _800bd7b4.setu(0);
         if(_800cab28.get() != 0 || fullScreenEffect_800bb140._24 == 0) {
           if(fullScreenEffect_800bb140._24 == 0) {
@@ -4357,7 +4355,7 @@ public final class SMap {
 
       case 0xf -> {
         _80052c44.setu(0);
-        FUN_800e5104(_800caaf8.get(), _800cab24.deref());
+        FUN_800e5104(_800caaf8.get(), _800cab24);
         SCRIPTS.resume();
         _800f7e4c.setu(0);
         smapLoadingStage_800cb430.setu(0xcL);
@@ -4373,7 +4371,7 @@ public final class SMap {
       }
 
       case 0x11 -> {
-        FUN_800e5104(_800caaf8.get(), _800cab24.deref());
+        FUN_800e5104(_800caaf8.get(), _800cab24);
         if(isScriptLoaded(0)) {
           sobjs_800c6880[0].innerStruct_00.us_12a = 1;
         }
@@ -4410,7 +4408,7 @@ public final class SMap {
       }
 
       case 0x12 -> {
-        FUN_800e5104(_800caaf8.get(), _800cab24.deref());
+        FUN_800e5104(_800caaf8.get(), _800cab24);
         _800bd7b4.setu(0);
         if(_800cab28.get() != 0 || fullScreenEffect_800bb140._24 == 0) {
           if(fullScreenEffect_800bb140._24 == 0) {
@@ -4436,7 +4434,7 @@ public final class SMap {
       }
 
       case 0x13 -> {
-        FUN_800e5104(_800caaf8.get(), _800cab24.deref());
+        FUN_800e5104(_800caaf8.get(), _800cab24);
         _80052c44.setu(0x5L);
         engineStateOnceLoaded_8004dd24 = EngineState.COMBAT_06;
         pregameLoadingStage_800bb10c.set(0);
@@ -4446,7 +4444,7 @@ public final class SMap {
       }
 
       case 0x14 -> {
-        FUN_800e5104(_800caaf8.get(), _800cab24.deref());
+        FUN_800e5104(_800caaf8.get(), _800cab24);
         _800bd7b4.setu(0);
         if(_800cab28.get() != 0 || fullScreenEffect_800bb140._24 == 0) {
           if(fullScreenEffect_800bb140._24 == 0) {
@@ -4477,7 +4475,7 @@ public final class SMap {
       }
 
       case 0x15 -> {
-        FUN_800e5104(_800caaf8.get(), _800cab24.deref());
+        FUN_800e5104(_800caaf8.get(), _800cab24);
         _800bd7b4.setu(0);
         if(_800cab28.get() != 0 || fullScreenEffect_800bb140._24 == 0) {
           if(fullScreenEffect_800bb140._24 == 0) {
@@ -6239,13 +6237,13 @@ public final class SMap {
   @Method(0x800ea84cL)
   public static void FUN_800ea84c(final MediumStruct a0) {
     if(isScriptLoaded(0)) {
-      if(a0._44.get() != 0) {
+      if(a0._44) {
         index_80052c38.set(sobjs_800c6880[0].innerStruct_00.ui_16c);
 
         //LAB_800ea8d4
-        for(int i = 0; i < a0.count_40.get(); i++) {
-          if(index_80052c38.get() == a0.arr_00.get(i).get()) {
-            a0._44.set(0);
+        for(int i = 0; i < a0.count_40; i++) {
+          if(index_80052c38.get() == a0.arr_00[i]) {
+            a0._44 = false;
           }
 
           //LAB_800ea8ec
@@ -6271,10 +6269,10 @@ public final class SMap {
   @Method(0x800ea974L)
   public static MediumStruct FUN_800ea974(final long a0) {
     if((int)a0 < 0) {
-      _800d1a90.callback_48.set(MEMORY.ref(4, getMethodAddress(SMap.class, "FUN_800ea96c", MediumStruct.class), ConsumerRef::new));
+      _800d1a90.callback_48 = SMap::FUN_800ea96c;
     } else {
       //LAB_800ea9a4
-      MEMORY.memfill(_800d1a90.getAddress(), 0x4c, 0);
+      _800d1a90.clear();
 
       final long a3 = _800f7f74.getAddress();
       final MediumStruct a2 = _800d1a90;
@@ -6283,8 +6281,8 @@ public final class SMap {
       for(int i = 0; i < _800f9374.get(); i++) {
         if(a0 != 0) {
           if(MEMORY.ref(2, a3).offset(i * 0x14L).offset(0x4L).get() == a0) {
-            a2.arr_00.get((int)a2.count_40.get()).set(MEMORY.ref(2, a3).offset(i * 0x14L).offset(0x6L).get());
-            a2.count_40.incr();
+            a2.arr_00[a2.count_40] = (int)MEMORY.ref(2, a3).offset(i * 0x14L).offset(0x6L).get();
+            a2.count_40++;
           }
         }
 
@@ -6292,12 +6290,12 @@ public final class SMap {
       }
 
       //LAB_800eaa30
-      if(_800d1a90.count_40.get() != 0) {
-        _800d1a90.callback_48.set(MEMORY.ref(4, getMethodAddress(SMap.class, "FUN_800ea84c", MediumStruct.class), ConsumerRef::new));
-        _800d1a90._44.set(0x1L);
+      if(_800d1a90.count_40 != 0) {
+        _800d1a90.callback_48 = SMap::FUN_800ea84c;
+        _800d1a90._44 = true;
       } else {
         //LAB_800eaa5c
-        _800d1a90.callback_48.set(MEMORY.ref(4, getMethodAddress(SMap.class, "FUN_800ea90c", MediumStruct.class), ConsumerRef::new));
+        _800d1a90.callback_48 = SMap::FUN_800ea90c;
       }
 
       //LAB_800eaa6c
