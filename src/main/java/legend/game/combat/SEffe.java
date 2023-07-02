@@ -192,7 +192,7 @@ import static legend.game.combat.Bttl_800c.seed_800fa754;
 import static legend.game.combat.Bttl_800c.spriteMetrics_800c6948;
 import static legend.game.combat.Bttl_800c.tmds_800c6944;
 import static legend.game.combat.Bttl_800d.FUN_800dc408;
-import static legend.game.combat.Bttl_800d.FUN_800de3f4;
+import static legend.game.combat.Bttl_800d.renderTmdSpriteEffect;
 import static legend.game.combat.Bttl_800d.ScaleMatrixL_SVEC;
 import static legend.game.combat.Bttl_800d.getRotationAndScaleFromTransforms;
 import static legend.game.combat.Bttl_800d.getRotationFromTransforms;
@@ -8696,7 +8696,7 @@ public final class SEffe {
       }
 
       //LAB_80116778
-      FUN_800de3f4(tmdObjTable, manager._10, sp0x10);
+      renderTmdSpriteEffect(tmdObjTable, manager._10, sp0x10);
     } else if(type == 0x400_0000) {
       if(effect.deffSpriteFlags_50 != deffFlags) {
         //LAB_801162e8
@@ -9533,7 +9533,7 @@ public final class SEffe {
         zMin = oldZMin;
       } else {
         //LAB_80118370
-        FUN_800de3f4(s1.tmd_08, data._10, sp0x10);
+        renderTmdSpriteEffect(s1.tmd_08, data._10, sp0x10);
       }
 
       //LAB_80118380
@@ -9701,7 +9701,7 @@ public final class SEffe {
       tmdGp0Tpage_1f8003ec.set(manager._10.flags_00 >>> 23 & 0x60);
       zOffset_1f8003e8.set(manager._10.z_22);
       FUN_800e60e0(manager._10.colour_1c.getX() << 5, manager._10.colour_1c.getY() << 5, manager._10.colour_1c.getZ() << 5);
-      FUN_800de3f4(model_800bda10.dobj2ArrPtr_00[0].tmd_08, manager._10, sp0x10);
+      renderTmdSpriteEffect(model_800bda10.dobj2ArrPtr_00[0].tmd_08, manager._10, sp0x10);
       FUN_800e6170();
     }
 
@@ -9848,14 +9848,14 @@ public final class SEffe {
 
       final int type = effect.effectFlag_04 & 0xff00_0000;
       if(type == 0x300_0000) {
-        final TmdSpriteEffect10 struct = (TmdSpriteEffect10)effect.subEffect_1c;
+        final TmdSpriteEffect10 sprite = (TmdSpriteEffect10)effect.subEffect_1c;
 
         //LAB_80118f38
         if((manager._10.flags_00 & 0x4000_0000) != 0) {
           tmdGp0Tpage_1f8003ec.set(manager._10.flags_00 >>> 23 & 0x60);
         } else {
           //LAB_80118f5c
-          tmdGp0Tpage_1f8003ec.set(struct.tpage_10);
+          tmdGp0Tpage_1f8003ec.set(sprite.tpage_10);
         }
 
         //LAB_80118f68
@@ -9866,10 +9866,10 @@ public final class SEffe {
         }
 
         //LAB_80118f9c
-        FUN_800de3f4(struct.tmd_08, manager._10, transformMatrix);
+        renderTmdSpriteEffect(sprite.tmd_08, manager._10, transformMatrix);
       } else if(type == 0x400_0000) {
-        final BillboardSpriteEffect0c struct = (BillboardSpriteEffect0c)effect.subEffect_1c;
-        renderBillboardSpriteEffect_(struct.metrics_04, manager._10, transformMatrix);
+        final BillboardSpriteEffect0c sprite = (BillboardSpriteEffect0c)effect.subEffect_1c;
+        renderBillboardSpriteEffect_(sprite.metrics_04, manager._10, transformMatrix);
       }
 
       //LAB_80118fac
@@ -9958,7 +9958,7 @@ public final class SEffe {
             if(type == 0x300_0000) {
               //LAB_801193f0
               final TmdSpriteEffect10 subEffect = (TmdSpriteEffect10)effect.subEffect_1c;
-              FUN_800de3f4(subEffect.tmd_08, managerInner, transformMatrix);
+              renderTmdSpriteEffect(subEffect.tmd_08, managerInner, transformMatrix);
             } else if(type == 0x400_0000) {
               final BillboardSpriteEffect0c subEffect = (BillboardSpriteEffect0c)effect.subEffect_1c;
               renderBillboardSpriteEffect_(subEffect.metrics_04, managerInner, transformMatrix);
