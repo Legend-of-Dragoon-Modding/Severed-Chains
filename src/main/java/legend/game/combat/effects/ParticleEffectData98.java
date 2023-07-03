@@ -12,7 +12,7 @@ public class ParticleEffectData98 implements Effect {
   public ScriptState<EffectManagerData6c> myState_00;
   /** Can be -1 */
   public int parentScriptIndex_04;
-  public final ParticleEffectData98Inner24 _08 = new ParticleEffectData98Inner24();
+  public final ParticleEffectData98Inner24 effectInner_08 = new ParticleEffectData98Inner24();
 
   public TmdObjTable1c tmd_30;
   public short halfW_34;
@@ -36,19 +36,20 @@ public class ParticleEffectData98 implements Effect {
   public int w_5e;
   /** ubyte */
   public int h_5f;
-  /** Some kind of effect type flag or something */
+  /**
+   * Some kind of effect type flag or something; possibly multiuse? Gets used as a callback index at one point,
+   * but can have values greater than length of callback array.
+   */
   public byte _60;
   public byte callback90Type_61;
 
   /** Size in bytes of following array of structs */
   // public int size_64;
   public ParticleEffectInstance94[] particleArray_68;
-  /** Binary flag to control whether to recalculate a vector (usually vec_70) */
-  public boolean _6c;
+  public boolean scaleOrUseParticleAcceleration_6c;
 
-  public final VECTOR vec_70 = new VECTOR();
-  /** Something that is used to modify vec_70 */
-  public int _80;
+  public final VECTOR particleAcceleration_70 = new VECTOR();
+  public int scaleParticleAcceleration_80;
   public TriConsumer<EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94> callback_84;
   public QuadConsumer<ScriptState<EffectManagerData6c>, EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94> callback_88;
   public QuadConsumer<EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94, ParticleEffectData98Inner24> callback_8c;
