@@ -3435,7 +3435,7 @@ public final class Bttl_800d {
 
   @Method(0x800db828L)
   public static void FUN_800db828(final int callbackIndex, final int x, final int y, final int z, final int a4, final int a5, final int a6, final int a7) {
-    LOGGER.info(CAMERA, "[CAMERA] Array=_800fac7c, FUN index=%d, x=%d, y=%d, z=%d, a4=%d, a5=%d, a6=%d, a7=%d, script index=%d", callbackIndex, x, y, z, a4, a5, a6, a7);
+    LOGGER.info(CAMERA, "[CAMERA] Array=_800fac7c, FUN index=%d, x=%d, y=%d, z=%d, a4=%d, a5=%d, a6=%d, a7=%d", callbackIndex, x, y, z, a4, a5, a6, a7);
     _800fac7c[callbackIndex].accept(x, y, z, a4, a5, a6, a7);
     final BattleCamera cam = camera_800c67f0;
     cam.callbackIndex_88 = callbackIndex;
