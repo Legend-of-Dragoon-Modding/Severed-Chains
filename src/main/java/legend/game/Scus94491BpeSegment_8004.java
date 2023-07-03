@@ -9,9 +9,7 @@ import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BoolRef;
-import legend.core.memory.types.Pointer;
 import legend.core.memory.types.ShortRef;
-import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.core.spu.Voice;
 import legend.game.combat.Bttl_800c;
@@ -36,7 +34,6 @@ import legend.game.title.GameOver;
 import legend.game.title.Ttle;
 import legend.game.types.CallbackStruct;
 import legend.game.types.EngineState;
-import legend.game.types.FileEntry08;
 import legend.game.types.ItemStats0c;
 import legend.game.types.MoonMusic08;
 import legend.game.types.Struct10;
@@ -78,12 +75,13 @@ public final class Scus94491BpeSegment_8004 {
   private static final Logger LOGGER = LogManager.getFormatterLogger(Scus94491BpeSegment_8004.class);
   private static final Marker SEQUENCER_MARKER = MarkerManager.getMarker("SEQUENCER");
 
-  public static final FileEntry08 ttle_8004db58 = MEMORY.ref(4, 0x8004db58L, FileEntry08::new);
-  public static final FileEntry08 bttl_8004db60 = MEMORY.ref(4, 0x8004db60L, FileEntry08::new);
-  public static final FileEntry08 smap_8004db68 = MEMORY.ref(4, 0x8004db68L, FileEntry08::new);
-  public static final FileEntry08 wmap_8004db70 = MEMORY.ref(4, 0x8004db70L, FileEntry08::new);
-
-  public static final UnboundedArrayRef<FileEntry08> overlays_8004db88 = MEMORY.ref(2, 0x8004db88L, UnboundedArrayRef.of(0x8, FileEntry08::new));
+  public static final String[] supportOverlays_8004db88 = {
+    "\\OVL\\S_INIT.OV_",
+    "\\OVL\\S_BTLD.OV_",
+    "\\OVL\\S_ITEM.OV_",
+    "\\OVL\\S_EFFE.OV_",
+    "\\OVL\\S_STRM.OV_",
+  };
 
   /**
    * <ol start="0">
@@ -113,16 +111,16 @@ public final class Scus94491BpeSegment_8004 {
   static {
     gameStateCallbacks_8004dbc0[0] = new CallbackStruct(Scus94491BpeSegment_800e::preload, null, 0, 0);
 //    gameStateCallbacks_8004dbc0[1] = new CallbackStruct(finalizePregameLoading);
-    gameStateCallbacks_8004dbc0[2] = new CallbackStruct(Ttle::executeTtleLoadingStage, ttle_8004db58, 0x800c6690L, 0xf0);
-    gameStateCallbacks_8004dbc0[3] = new CallbackStruct(Ttle::executeTtleUnloadingStage, ttle_8004db58, 0x800c6690L, 0xf0);
-    gameStateCallbacks_8004dbc0[4] = new CallbackStruct(SMap::theEnd, smap_8004db68, 0x800c6690L, 0xf9f0);
-    gameStateCallbacks_8004dbc0[5] = new CallbackStruct(SMap::executeSmapLoadingStage, smap_8004db68, 0x800c6690L, 0xf9f0);
-    gameStateCallbacks_8004dbc0[6] = new CallbackStruct(Scus94491BpeSegment::FUN_80018658, bttl_8004db60, 0x800c6690L, 0x668);
-    gameStateCallbacks_8004dbc0[7] = new CallbackStruct(GameOver::gameOver, ttle_8004db58, 0x800c6690L, 0xf0);
-    gameStateCallbacks_8004dbc0[8] = new CallbackStruct(WMap::FUN_800cc738, wmap_8004db70, 0x800c6690L, 0x2070);
-    gameStateCallbacks_8004dbc0[9] = new CallbackStruct(SMap::startFmvLoadingStage, smap_8004db68, 0x800c6690L, 0xf9f0);
+    gameStateCallbacks_8004dbc0[2] = new CallbackStruct(Ttle::executeTtleLoadingStage, "\\OVL\\TTLE.OV_", 0x800c6690L, 0xf0);
+    gameStateCallbacks_8004dbc0[3] = new CallbackStruct(Ttle::executeTtleUnloadingStage, "\\OVL\\TTLE.OV_", 0x800c6690L, 0xf0);
+    gameStateCallbacks_8004dbc0[4] = new CallbackStruct(SMap::theEnd, "\\OVL\\SMAP.OV_", 0x800c6690L, 0xf9f0);
+    gameStateCallbacks_8004dbc0[5] = new CallbackStruct(SMap::executeSmapLoadingStage, "\\OVL\\SMAP.OV_", 0x800c6690L, 0xf9f0);
+    gameStateCallbacks_8004dbc0[6] = new CallbackStruct(Scus94491BpeSegment::FUN_80018658, "\\OVL\\BTTL.OV_", 0x800c6690L, 0x668);
+    gameStateCallbacks_8004dbc0[7] = new CallbackStruct(GameOver::gameOver, "\\OVL\\TTLE.OV_", 0x800c6690L, 0xf0);
+    gameStateCallbacks_8004dbc0[8] = new CallbackStruct(WMap::FUN_800cc738, "\\OVL\\WMAP.OV_", 0x800c6690L, 0x2070);
+    gameStateCallbacks_8004dbc0[9] = new CallbackStruct(SMap::startFmvLoadingStage, "\\OVL\\SMAP.OV_", 0x800c6690L, 0xf9f0);
 //    gameStateCallbacks_8004dbc0[10] = new CallbackStruct(swapDiskLoadingStage);
-    gameStateCallbacks_8004dbc0[11] = new CallbackStruct(SMap::FUN_800d9e08, smap_8004db68, 0x800c6690L, 0xf9f0);
+    gameStateCallbacks_8004dbc0[11] = new CallbackStruct(SMap::FUN_800d9e08, "\\OVL\\SMAP.OV_", 0x800c6690L, 0xf9f0);
 //    gameStateCallbacks_8004dbc0[12] = new CallbackStruct(0x800c6eb8);
 //    gameStateCallbacks_8004dbc0[13] = new CallbackStruct(0x800cab8c);
 //    gameStateCallbacks_8004dbc0[14] = new CallbackStruct(null);
@@ -133,7 +131,7 @@ public final class Scus94491BpeSegment_8004 {
 //    gameStateCallbacks_8004dbc0[19] = new CallbackStruct(null);
   }
 
-  public static final Pointer<FileEntry08> currentlyLoadingFileEntry_8004dd04 = MEMORY.ref(4, 0x8004dd04L, Pointer.deferred(4, FileEntry08::new));
+  public static String currentlyLoadingFileEntry_8004dd04;
   public static final Value _8004dd0c = MEMORY.ref(4, 0x8004dd0cL);
   public static int loadedOverlayIndex_8004dd10;
 
@@ -390,7 +388,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[313] = SMap::FUN_800e0a48;
     scriptSubFunctions_8004e29c[314] = SMap::FUN_800e0a94;
     scriptSubFunctions_8004e29c[315] = SMap::scriptCheckPlayerCollision;
-    scriptSubFunctions_8004e29c[316] = SMap::FUN_800e0af4;
+    scriptSubFunctions_8004e29c[316] = SMap::scriptGetPlayerMovement;
     scriptSubFunctions_8004e29c[317] = SMap::FUN_800e0b34;
     scriptSubFunctions_8004e29c[318] = SMap::FUN_800e0ba0;
     scriptSubFunctions_8004e29c[319] = SMap::FUN_800e0cb8;
@@ -559,7 +557,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[598] = SEffe::FUN_80111cc4;
     scriptSubFunctions_8004e29c[599] = SEffe::FUN_80111ed4;
     scriptSubFunctions_8004e29c[600] = Bttl_800e::scriptAllocateEmptyEffectManagerChild;
-    scriptSubFunctions_8004e29c[601] = Bttl_800e::allocateAttackHitFlashEffect;
+    scriptSubFunctions_8004e29c[601] = Bttl_800e::allocateBillboardSpriteEffect;
     scriptSubFunctions_8004e29c[602] = Bttl_800e::FUN_800e9854;
     // scriptSubFunctions_8004e29c[603] = Temp::FUN_800ca648;
 
@@ -581,7 +579,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[619] = SEffe::allocateShirleyTransformWipeEffect;
     scriptSubFunctions_8004e29c[620] = SEffe::FUN_80111a58;
     scriptSubFunctions_8004e29c[621] = Bttl_800e::FUN_800ea384;
-    scriptSubFunctions_8004e29c[622] = SEffe::FUN_80119484;
+    scriptSubFunctions_8004e29c[622] = SEffe::allocateSpriteWithTrailEffect;
     scriptSubFunctions_8004e29c[623] = Bttl_800e::scriptLoadDeff;
     scriptSubFunctions_8004e29c[624] = Bttl_800e::FUN_800e6db4;
     scriptSubFunctions_8004e29c[625] = Bttl_800e::FUN_800e7490;

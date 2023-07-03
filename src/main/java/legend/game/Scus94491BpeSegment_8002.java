@@ -57,6 +57,7 @@ import legend.game.types.Model124;
 import legend.game.types.ModelPartTransforms0c;
 import legend.game.types.Renderable58;
 import legend.game.types.RenderableMetrics14;
+import legend.game.types.SubmapStruct80;
 import legend.game.types.Textbox4c;
 import legend.game.types.TextboxArrow0c;
 import legend.game.types.TextboxChar08;
@@ -105,15 +106,15 @@ import static legend.game.SMap.FUN_800e4e5c;
 import static legend.game.SMap.FUN_800e4f8c;
 import static legend.game.SMap.FUN_800e519c;
 import static legend.game.SMap.FUN_800e5534;
-import static legend.game.SMap.FUN_800e6730;
 import static legend.game.SMap.FUN_800e828c;
 import static legend.game.SMap.FUN_800e8e50;
 import static legend.game.SMap.FUN_800ea4c8;
 import static legend.game.SMap._800f7e54;
 import static legend.game.SMap.adjustSmapUvs;
 import static legend.game.SMap.encounterAccumulator_800c6ae8;
+import static legend.game.SMap.getCollisionAndTransitionInfo;
 import static legend.game.SMap.handleEncounters;
-import static legend.game.SMap.playerPos_800c68e8;
+import static legend.game.SMap._800c68e8;
 import static legend.game.SMap.renderSmapModel;
 import static legend.game.SMap.unloadSmap;
 import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
@@ -142,7 +143,6 @@ import static legend.game.Scus94491BpeSegment_8003.ScaleMatrix;
 import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
 import static legend.game.Scus94491BpeSegment_8003.TransMatrix;
 import static legend.game.Scus94491BpeSegment_8003.TransposeMatrix;
-import static legend.game.Scus94491BpeSegment_8003.bzero;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixX;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixY;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixZ;
@@ -168,8 +168,6 @@ import static legend.game.Scus94491BpeSegment_8005._80052c40;
 import static legend.game.Scus94491BpeSegment_8005._80052c44;
 import static legend.game.Scus94491BpeSegment_8005._8005a1d8;
 import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
-import static legend.game.Scus94491BpeSegment_8005.lodXa00Xa_80052c74;
-import static legend.game.Scus94491BpeSegment_8005.lodXa00Xa_80052c94;
 import static legend.game.Scus94491BpeSegment_8005.monsterSoundFileIndices_800500e8;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c3c;
@@ -181,7 +179,6 @@ import static legend.game.Scus94491BpeSegment_800b._800bd7ac;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b0;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b4;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b8;
-import static legend.game.Scus94491BpeSegment_800b._800bd80c;
 import static legend.game.Scus94491BpeSegment_800b._800bdb88;
 import static legend.game.Scus94491BpeSegment_800b._800bdc58;
 import static legend.game.Scus94491BpeSegment_800b._800bdf04;
@@ -189,10 +186,8 @@ import static legend.game.Scus94491BpeSegment_800b._800bdf08;
 import static legend.game.Scus94491BpeSegment_800b._800bdf10;
 import static legend.game.Scus94491BpeSegment_800b._800bdf18;
 import static legend.game.Scus94491BpeSegment_800b._800be5d0;
-import static legend.game.Scus94491BpeSegment_800b._800beb98;
 import static legend.game.Scus94491BpeSegment_800b._800bed28;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
-import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.encounterSoundEffects_800bd610;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.hasNoEncounters_800bed58;
@@ -550,7 +545,6 @@ public final class Scus94491BpeSegment_8002 {
     final EngineState a0 = _800bdb88;
     _800bd7b4.setu(0);
     if(a0 != engineState_8004dd20) {
-      _800bd80c = a0;
       _800bdb88 = engineState_8004dd20;
 
       if(engineState_8004dd20 == EngineState.SUBMAP_05) {
@@ -4040,13 +4034,13 @@ public final class Scus94491BpeSegment_8002 {
     final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
 
     FUN_800e2428(sobjIndex);
-    final long struct = playerPos_800c68e8.getAddress();
-    final int s4 = (int)MEMORY.ref(4, struct).offset(0x70L).get();
+    final SubmapStruct80 struct = _800c68e8;
+    final int s4 = struct.x2_70;
     textbox._28 = s4;
-    final int sp10 = ((int)MEMORY.ref(4, struct).offset(0x74L).getSigned() - (int)MEMORY.ref(4, struct).offset(0x7cL).getSigned()) / 2;
-    final int sp18 = (int)MEMORY.ref(4, struct).offset(0x74L).getSigned() - sp10;
+    final int sp10 = (struct.y2_74 - struct.y3_7c) / 2;
+    final int sp18 = struct.y2_74 - sp10;
     textbox._2c = sp18;
-    final int sp14 = textbox._28 - (int)MEMORY.ref(4, struct).offset(0x68L).get();
+    final int sp14 = textbox._28 - struct.x1_68;
     final int textWidth = textbox.chars_18 * 9 / 2;
     final int textHeight = textbox.lines_1a * 6;
 
@@ -4843,7 +4837,6 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x8002aa04L)
   public static void FUN_8002aa04() {
-    MEMORY.memfill(_800beb98.getAddress(), 0x190, 0);
     _800bed28.setu(0);
   }
 
@@ -4895,9 +4888,9 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_8002abdc
     //LAB_8002abe0
-    final int a0 = FUN_800e6730(index_80052c38.get());
-    if((a0 & 0x10) != 0) {
-      FUN_800e5534(a0 >>> 22, a0 >>> 16 & 0x3f);
+    final int collisionAndTransitionInfo = getCollisionAndTransitionInfo(index_80052c38.get());
+    if((collisionAndTransitionInfo & 0x10) != 0) {
+      FUN_800e5534(collisionAndTransitionInfo >>> 22, collisionAndTransitionInfo >>> 16 & 0x3f);
     }
 
     //LAB_8002ac10
@@ -4952,16 +4945,7 @@ public final class Scus94491BpeSegment_8002 {
     if(xaLoadingStage == 3) {
       LOGGER.info("Playing XA archive %d file %d", xaArchiveIndex, xaFileIndex);
 
-      final long v1;
-      if(drgnBinIndex_800bc058.get() == 0x4L) {
-        v1 = lodXa00Xa_80052c94.getAddress();
-      } else {
-        //LAB_8002c438
-        v1 = lodXa00Xa_80052c74.getAddress();
-      }
-
       //LAB_8002c448
-      LOGGER.info("PLAY XA %d", MEMORY.ref(2, v1).offset(xaArchiveIndex * 0x8L).getSigned());
       //TODO don't do this.
       new Thread(() -> Fmv.playXa(xaArchiveIndex, xaFileIndex)).start();
 //      final CdlLOC pos = CdlFILE_800bb4c8.get((int)MEMORY.ref(2, v1).offset(xaArchiveIndex * 0x8L).getSigned()).pos;
@@ -4979,7 +4963,7 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x8002ced8L)
   public static void start() {
-    bzero(_8005a1d8.getAddress(), 0x6c4b0);
+    MEMORY.memfill(_8005a1d8.getAddress(), 0x6c4b0, 0);
     main();
   }
 

@@ -185,7 +185,7 @@ public class WMap {
   private static final COLOUR _800c8778 = MEMORY.ref(4, 0x800c8778L, COLOUR::new);
   private static final RECT _800c877c = MEMORY.ref(4, 0x800c877cL, RECT::new);
 
-  private static final VECTOR _800c87d8 = MEMORY.ref(4, 0x800c87d8L, VECTOR::new);
+  private static final VECTOR _800c87d8 = new VECTOR(0, 0x1000, 0);
   private static final COLOUR _800c87e8 = MEMORY.ref(4, 0x800c87e8L, COLOUR::new);
   private static final RECT _800c87ec = MEMORY.ref(4, 0x800c87ecL, RECT::new);
   private static final COLOUR _800c87f4 = MEMORY.ref(4, 0x800c87f4L, COLOUR::new);
@@ -259,7 +259,6 @@ public class WMap {
   private static final Value _800ef1a4 = MEMORY.ref(2, 0x800ef1a4L);
   private static final ArrayRef<VECTOR> mapPositions_800ef1a8 = MEMORY.ref(4, 0x800ef1a8L, ArrayRef.of(VECTOR.class, 8, 0x10, VECTOR::new));
   private static final ArrayRef<CoolonWarpDestination20> coolonWarpDest_800ef228 = MEMORY.ref(4, 0x800ef228L, ArrayRef.of(CoolonWarpDestination20.class, 9, 0x20, CoolonWarpDestination20::new));
-
   private static final Value _800ef348 = MEMORY.ref(2, 0x800ef348L);
 
   private static final ArrayRef<ArrayRef<UnsignedShortRef>> encounterIds_800ef364 = MEMORY.ref(2, 0x800ef364L, ArrayRef.of(ArrayRef.classFor(UnsignedShortRef.class), 100, 8, ArrayRef.of(UnsignedShortRef.class, 4, 2, UnsignedShortRef::new)));
@@ -1582,9 +1581,9 @@ public class WMap {
       v0._19ae[i] = 315;
 
       final GsF_LIGHT light = v0.lights_11c[i];
-      light.r_0c.set(0x20);
-      light.g_0d.set(0x20);
-      light.b_0e.set(0x20);
+      light.r_0c = 0x20;
+      light.g_0d = 0x20;
+      light.b_0e = 0x20;
       light.direction_00.setX(rsin((v0._19a8[i] << 12) / 360) << 12 >> 12);
       light.direction_00.setY(rcos((v0._19ae[i] << 12) / 360) << 12 >> 12);
       light.direction_00.setZ(rcos((v0._19a8[i] << 12) / 360) << 12 >> 12);
@@ -1669,9 +1668,9 @@ public class WMap {
           for(int i = 0; i < 3; i++) {
             //LAB_800d2278
             final WMapStruct19c0 struct = _800c66b0;
-            struct.colour_8c[i].setR(struct.lights_11c[i].r_0c.get());
-            struct.colour_8c[i].setG(struct.lights_11c[i].g_0d.get());
-            struct.colour_8c[i].setB(struct.lights_11c[i].b_0e.get());
+            struct.colour_8c[i].setR(struct.lights_11c[i].r_0c);
+            struct.colour_8c[i].setG(struct.lights_11c[i].g_0d);
+            struct.colour_8c[i].setB(struct.lights_11c[i].b_0e);
           }
 
           //LAB_800d235c
@@ -1696,9 +1695,9 @@ public class WMap {
           //LAB_800d2464
           //LAB_800d24d0
           //LAB_800d253c
-          light.r_0c.set(_800c66b0.colour_8c[i].getR() * _800c66b0._84 / 0x100);
-          light.g_0d.set(_800c66b0.colour_8c[i].getG() * _800c66b0._84 / 0x100);
-          light.b_0e.set(_800c66b0.colour_8c[i].getB() * _800c66b0._84 / 0x100);
+          light.r_0c = _800c66b0.colour_8c[i].getR() * _800c66b0._84 / 0x100;
+          light.g_0d = _800c66b0.colour_8c[i].getG() * _800c66b0._84 / 0x100;
+          light.b_0e = _800c66b0.colour_8c[i].getB() * _800c66b0._84 / 0x100;
           GsSetFlatLight(i, _800c66b0.lights_11c[i]);
         }
       }
@@ -1734,9 +1733,9 @@ public class WMap {
         //LAB_800d2710
         //LAB_800d277c
         //LAB_800d27e8
-        light.r_0c.set(_800c66b0.colour_8c[i].getR() * _800c66b0._84 / 0x100);
-        light.g_0d.set(_800c66b0.colour_8c[i].getG() * _800c66b0._84 / 0x100);
-        light.b_0e.set(_800c66b0.colour_8c[i].getB() * _800c66b0._84 / 0x100);
+        light.r_0c = _800c66b0.colour_8c[i].getR() * _800c66b0._84 / 0x100;
+        light.g_0d = _800c66b0.colour_8c[i].getG() * _800c66b0._84 / 0x100;
+        light.b_0e = _800c66b0.colour_8c[i].getB() * _800c66b0._84 / 0x100;
         GsSetFlatLight(i, _800c66b0.lights_11c[i]);
       }
     }
@@ -3226,9 +3225,9 @@ public class WMap {
             //LAB_800d996c
             //LAB_800d99c4
             //LAB_800d9a1c
-            _800c66b0.lights_11c[i].r_0c.set(_800c66b0.colour_8c[i].r.get() / 4);
-            _800c66b0.lights_11c[i].g_0d.set(_800c66b0.colour_8c[i].g.get() / 4);
-            _800c66b0.lights_11c[i].b_0e.set(_800c66b0.colour_8c[i].b.get() / 4);
+            _800c66b0.lights_11c[i].r_0c = _800c66b0.colour_8c[i].r.get() / 4;
+            _800c66b0.lights_11c[i].g_0d = _800c66b0.colour_8c[i].g.get() / 4;
+            _800c66b0.lights_11c[i].b_0e = _800c66b0.colour_8c[i].b.get() / 4;
 
             GsSetFlatLight(i, _800c66b0.lights_11c[i]);
           }

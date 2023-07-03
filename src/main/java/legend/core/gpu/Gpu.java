@@ -17,8 +17,9 @@ import org.apache.logging.log4j.Logger;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
+import java.util.List;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GPU;
@@ -70,7 +71,7 @@ public class Gpu {
   private short offsetY;
 
   private int zMax;
-  private LinkedList<GpuCommand>[] zQueues;
+  private List<GpuCommand>[] zQueues;
 
   private boolean displayChanged;
 
@@ -196,11 +197,13 @@ public class Gpu {
 
     if(this.zQueues != null) {
       for(int z = this.zQueues.length - 1; z >= 0; z--) {
-        for(final GpuCommand command : this.zQueues[z]) {
-          command.render(this);
+        final List<GpuCommand> queue = this.zQueues[z];
+
+        for(int i = queue.size() - 1; i >= 0; i--) {
+          queue.get(i).render(this);
         }
 
-        this.zQueues[z].clear();
+        queue.clear();
       }
     }
 
@@ -320,30 +323,6 @@ public class Gpu {
     }
   }
 
-  public void commandC0CopyRectFromVramToCpu(final RECT rect, final long address) {
-    assert address != 0;
-
-    final int rectX = rect.x.get();
-    final int rectY = rect.y.get();
-    final int rectW = rect.w.get();
-    final int rectH = rect.h.get();
-
-    assert rectX + rectW <= this.vramWidth : "Rect right (" + (rectX + rectW) + ") overflows VRAM width (" + this.vramWidth + ')';
-    assert rectY + rectH <= this.vramHeight : "Rect bottom (" + (rectY + rectH) + ") overflows VRAM height (" + this.vramHeight + ')';
-
-    LOGGER.debug("Copying (%d, %d, %d, %d) from VRAM to CPU (address: %08x)", rectX, rectY, rectW, rectH, address);
-
-    MEMORY.waitForLock(() -> {
-      int i = 0;
-      for(int y = rectY; y < rectY + rectH; y++) {
-        for(int x = rectX; x < rectX + rectW; x++) {
-          MEMORY.set(address + i, 2, this.getPixel15(x, y));
-          i += 2;
-        }
-      }
-    });
-  }
-
   public void commandC0CopyRectFromVramToCpu(final RECT rect, final FileData out) {
     final int rectX = rect.x.get();
     final int rectY = rect.y.get();
@@ -389,7 +368,7 @@ public class Gpu {
   }
 
   public void queueCommand(final int z, final GpuCommand command) {
-    this.zQueues[z].addFirst(command);
+    this.zQueues[z].add(command);
   }
 
   /**
@@ -469,8 +448,8 @@ public class Gpu {
   }
 
   public void updateOrderingTableSize(final int size) {
-    final LinkedList<GpuCommand>[] list = new LinkedList[size];
-    Arrays.setAll(list, key -> new LinkedList<>());
+    final List<GpuCommand>[] list = new ArrayList[size];
+    Arrays.setAll(list, key -> new ArrayList<>());
 
     this.zMax = size;
     this.zQueues = list;

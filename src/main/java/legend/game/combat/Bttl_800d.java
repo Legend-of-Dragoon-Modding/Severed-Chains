@@ -4811,11 +4811,9 @@ public final class Bttl_800d {
     //LAB_800de3e4
   }
 
-  /**
-   * used renderCtmd
-   */
+  /** used renderCtmd */
   @Method(0x800de3f4L)
-  public static void FUN_800de3f4(final TmdObjTable1c a0, final EffectManagerData6cInner a1, final MATRIX a2) {
+  public static void renderTmdSpriteEffect(final TmdObjTable1c a0, final EffectManagerData6cInner a1, final MATRIX a2) {
     final int s0 = deffManager_800c693c.flags_20 & 0x4;
 
     final MATRIX sp0x10 = new MATRIX();

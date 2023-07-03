@@ -263,7 +263,7 @@ public final class Bttl_800c {
 
   public static final Pointer<CString> currentAddition_800c6790 = MEMORY.ref(4, 0x800c6790L, Pointer.deferred(1, CString.maxLength(30)));
 
-  public static final MATRIX _800c6798 = MEMORY.ref(4, 0x800c6798L, MATRIX::new);
+  public static final MATRIX _800c6798 = new MATRIX();
 //  public static final UnsignedIntRef flags_800c67b8 = MEMORY.ref(4, 0x800c67b8L, UnsignedIntRef::new);
   public static final IntRef screenOffsetX_800c67bc = MEMORY.ref(4, 0x800c67bcL, IntRef::new);
   public static final IntRef screenOffsetY_800c67c0 = MEMORY.ref(4, 0x800c67c0L, IntRef::new);
@@ -273,7 +273,7 @@ public final class Bttl_800c {
   public static final IntRef _800c67d0 = MEMORY.ref(4, 0x800c67d0L, IntRef::new);
 
   public static final Value _800c67d4 = MEMORY.ref(4, 0x800c67d4L);
-  public static final VECTOR _800c67d8 = MEMORY.ref(4, 0x800c67d8L, VECTOR::new);
+  public static final VECTOR _800c67d8 = new VECTOR();
   public static final Value _800c67e4 = MEMORY.ref(4, 0x800c67e4L);
   public static final Value _800c67e8 = MEMORY.ref(4, 0x800c67e8L);
 
@@ -358,7 +358,7 @@ public final class Bttl_800c {
     additionStarburstRenderers_800c6dc4[2] = Bttl_800d::renderAdditionCompletedStarburst;
   }
 
-  public static final GsF_LIGHT light_800c6ddc = MEMORY.ref(4, 0x800c6ddcL, GsF_LIGHT::new);
+  public static final GsF_LIGHT light_800c6ddc = new GsF_LIGHT(0x1000, 0x1000, 0x1000);
 
   public static final ArrayRef<UnsignedShortRef> repeatItemIds_800c6e34 = MEMORY.ref(2, 0x800c6e34L, ArrayRef.of(UnsignedShortRef.class, 9, 2, UnsignedShortRef::new));
 
@@ -475,9 +475,9 @@ public final class Bttl_800c {
 
   public static final Value _800faaa0 = MEMORY.ref(4, 0x800faaa0L);
 
-  public static final SVECTOR _800fab98 = MEMORY.ref(2, 0x800fab98L, SVECTOR::new);
-  public static final SVECTOR _800faba0 = MEMORY.ref(2, 0x800faba0L, SVECTOR::new);
-  public static final VECTOR _800faba8 = MEMORY.ref(4, 0x800faba8L, VECTOR::new);
+  public static final SVECTOR _800fab98 = new SVECTOR();
+  public static final SVECTOR _800faba0 = new SVECTOR();
+  public static final VECTOR _800faba8 = new VECTOR();
 
   public static final Value _800fabb8 = MEMORY.ref(1, 0x800fabb8L);
 
@@ -1418,7 +1418,7 @@ public final class Bttl_800c {
         }
 
         case 4 -> {
-          fmvIndex_800bf0dc.setu(0x10L);
+          fmvIndex_800bf0dc = 16;
           afterFmvLoadingStage_800bf0ec = EngineState.CREDITS_11;
           Fmv.playCurrentFmv();
         }
@@ -3875,9 +3875,8 @@ public final class Bttl_800c {
     for(int i = 0; i < 2; i++) {
       final MATRIX perspectiveTransformMatrix = new MATRIX();
       GsGetLw(trail.parentModel_30.coord2ArrPtr_04[trail.dobjIndex_08], perspectiveTransformMatrix);
-      final VECTOR transformedVertex = ApplyMatrixLV(perspectiveTransformMatrix, i == 0 ? trail.smallestVertex_20 : trail.largestVertex_10);
-      transformedVertex.add(perspectiveTransformMatrix.transfer);
-      segment.endpointCoords_04[i].set(transformedVertex);
+      ApplyMatrixLV(perspectiveTransformMatrix, i == 0 ? trail.smallestVertex_20 : trail.largestVertex_10, segment.endpointCoords_04[i]);
+      segment.endpointCoords_04[i].add(perspectiveTransformMatrix.transfer);
     }
 
     //LAB_800ce3e0
@@ -4446,7 +4445,7 @@ public final class Bttl_800c {
   public static void getModelObjectTranslation(final int scriptIndex, final VECTOR translation, final int objIndex) {
     final MATRIX transformMatrix = new MATRIX();
     GsGetLw(((BattleObject27c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00).model_148.coord2ArrPtr_04[objIndex], transformMatrix);
-    translation.set(ApplyMatrixLV(transformMatrix, new VECTOR()));
+    ApplyMatrixLV(transformMatrix, new VECTOR(), translation);
     translation.add(transformMatrix.transfer);
   }
 }

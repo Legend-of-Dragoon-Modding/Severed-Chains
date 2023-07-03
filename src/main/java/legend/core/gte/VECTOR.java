@@ -13,14 +13,17 @@ public class VECTOR implements MemoryRef {
   public final IntRef x;
   public final IntRef y;
   public final IntRef z;
-  public final IntRef pad;
 
   public VECTOR() {
     this.ref = null;
     this.x = new IntRef();
     this.y = new IntRef();
     this.z = new IntRef();
-    this.pad = new IntRef();
+  }
+
+  public VECTOR(final int x, final int y, final int z) {
+    this();
+    this.set(x, y, z);
   }
 
   public VECTOR(final Value ref) {
@@ -28,7 +31,6 @@ public class VECTOR implements MemoryRef {
     this.x = new IntRef(ref.offset(4, 0x0L));
     this.y = new IntRef(ref.offset(4, 0x4L));
     this.z = new IntRef(ref.offset(4, 0x8L));
-    this.pad = new IntRef(ref.offset(4, 0xcL));
   }
 
   /** NOTE: does NOT set pad */
@@ -103,14 +105,6 @@ public class VECTOR implements MemoryRef {
 
   public void setZ(final int z) {
     this.z.set(z);
-  }
-
-  public int getPad() {
-    return this.pad.get();
-  }
-
-  public void setPad(final int pad) {
-    this.pad.set(pad);
   }
 
   public VECTOR add(final VECTOR other) {
