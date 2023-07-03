@@ -404,9 +404,9 @@ public final class Scus94491BpeSegment_8003 {
     final int x = light.direction_00.getX();
     final int y = light.direction_00.getY();
     final int z = light.direction_00.getZ();
-    final int r = light.r_0c.get();
-    final int g = light.g_0d.get();
-    final int b = light.b_0e.get();
+    final int r = light.r_0c;
+    final int g = light.g_0d;
+    final int b = light.b_0e;
 
     // Normalize vector - calculate magnitude
     final long mag = SquareRoot0(x * x + y * y + z * z);
@@ -1592,7 +1592,7 @@ public final class Scus94491BpeSegment_8003 {
     }
 
     //LAB_8003efc0
-    final MATRIX matrix = matrixStack_80054a0c.get(i / 32);
+    final MATRIX matrix = matrixStack_80054a0c[i / 32];
     matrix.setPacked(0, CPU.CFC2(0)); //
     matrix.setPacked(2, CPU.CFC2(1)); //
     matrix.setPacked(4, CPU.CFC2(2)); // Rotation matrix
@@ -1614,10 +1614,10 @@ public final class Scus94491BpeSegment_8003 {
     }
 
     //LAB_8003f060
-    i -= 0x20L;
+    i -= 0x20;
     matrixStackIndex_80054a08.subu(0x20L);
 
-    final MATRIX matrix = matrixStack_80054a0c.get(i / 32);
+    final MATRIX matrix = matrixStack_80054a0c[i / 32];
     CPU.CTC2(matrix.getPacked(0), 0); //
     CPU.CTC2(matrix.getPacked(2), 1); //
     CPU.CTC2(matrix.getPacked(4), 2); // Rotation matrix

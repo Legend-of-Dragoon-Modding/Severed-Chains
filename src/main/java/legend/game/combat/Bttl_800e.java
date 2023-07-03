@@ -266,9 +266,9 @@ public final class Bttl_800e {
 
     final BttlLightStruct84 a0 = lights_800c692c[0];
     a0.light_00.direction_00.set(0, 1 << 12, 0);
-    a0.light_00.r_0c.set(0x80);
-    a0.light_00.g_0d.set(0x80);
-    a0.light_00.b_0e.set(0x80);
+    a0.light_00.r_0c = 0x80;
+    a0.light_00.g_0d = 0x80;
+    a0.light_00.b_0e = 0x80;
     a0._10._00 = 0;
     a0._4c._00 = 0;
 
@@ -388,9 +388,9 @@ public final class Bttl_800e {
   @Method(0x800e4bc0L)
   public static void FUN_800e4bc0(final int lightIndex, final int r, final int g, final int b) {
     final BttlLightStruct84 light = lights_800c692c[lightIndex];
-    light.light_00.r_0c.set(r);
-    light.light_00.g_0d.set(g);
-    light.light_00.b_0e.set(b);
+    light.light_00.r_0c = r;
+    light.light_00.g_0d = g;
+    light.light_00.b_0e = b;
     light._4c._00 = 0;
   }
 
@@ -403,9 +403,9 @@ public final class Bttl_800e {
   @Method(0x800e4c90L)
   public static FlowControl FUN_800e4c90(final RunningScript<?> script) {
     final BttlLightStruct84 light = lights_800c692c[script.params_20[0].get()];
-    script.params_20[1].set(light.light_00.r_0c.get());
-    script.params_20[2].set(light.light_00.g_0d.get());
-    script.params_20[3].set(light.light_00.b_0e.get());
+    script.params_20[1].set(light.light_00.r_0c);
+    script.params_20[2].set(light.light_00.g_0d);
+    script.params_20[3].set(light.light_00.b_0e);
     return FlowControl.CONTINUE;
   }
 
@@ -617,9 +617,9 @@ public final class Bttl_800e {
     final BttlLightStruct84Sub38 t0 = light._4c;
 
     t0._00 = 0;
-    t0.vec_04.setX(light.light_00.r_0c.get() << 12);
-    t0.vec_04.setY(light.light_00.g_0d.get() << 12);
-    t0.vec_04.setZ(light.light_00.b_0e.get() << 12);
+    t0.vec_04.setX(light.light_00.r_0c << 12);
+    t0.vec_04.setY(light.light_00.g_0d << 12);
+    t0.vec_04.setZ(light.light_00.b_0e << 12);
     t0.vec_28.set(script.params_20[1].get() << 12, script.params_20[2].get() << 12, script.params_20[3].get() << 12);
     t0._34 = t1;
 
@@ -638,7 +638,7 @@ public final class Bttl_800e {
     final BttlLightStruct84 light = lights_800c692c[script.params_20[0].get()];
     final BttlLightStruct84Sub38 v1 = light._4c;
     v1._00 = 0;
-    v1.vec_04.set(light.light_00.r_0c.get() << 12, light.light_00.g_0d.get() << 12, light.light_00.b_0e.get() << 12);
+    v1.vec_04.set(light.light_00.r_0c << 12, light.light_00.g_0d << 12, light.light_00.b_0e << 12);
     v1.vec_10.set(script.params_20[1].get() << 12, script.params_20[2].get() << 12, script.params_20[3].get() << 12);
     v1.vec_1c.set(script.params_20[4].get() << 12, script.params_20[5].get() << 12, script.params_20[6].get() << 12);
 
@@ -672,9 +672,9 @@ public final class Bttl_800e {
       final BttlLightStruct84 a1 = lights_800c692c[i];
       final BattleStruct14 a0 = ambiance._10[i];
       a1.light_00.direction_00.set(a0.lightDirection_00);
-      a1.light_00.r_0c.set(a0.lightColour_0a.getR());
-      a1.light_00.g_0d.set(a0.lightColour_0a.getG());
-      a1.light_00.b_0e.set(a0.lightColour_0a.getB());
+      a1.light_00.r_0c = a0.lightColour_0a.getR();
+      a1.light_00.g_0d = a0.lightColour_0a.getG();
+      a1.light_00.b_0e = a0.lightColour_0a.getB();
 
       if((a0._06 | a0._08) != 0) {
         a1._10._00 = 0x3;
@@ -688,7 +688,7 @@ public final class Bttl_800e {
       //LAB_800e58d0
       if(a0._12 != 0) {
         a1._4c._00 = 0x3;
-        a1._4c.vec_04.set(a1.light_00.r_0c.get(), a1.light_00.g_0d.get(), a1.light_00.b_0e.get());
+        a1._4c.vec_04.set(a1.light_00.r_0c, a1.light_00.g_0d, a1.light_00.b_0e);
         a1._4c.vec_10.set(a0._0d.getR(), a0._0d.getG(), a0._0d.getB());
         a1._4c.vec_28.setX(a0._10);
         a1._4c.vec_28.setY(a0._12);
@@ -818,17 +818,17 @@ public final class Bttl_800e {
         }
 
         //LAB_800e5e90
-        lights_800c692c[i].light_00.r_0c.set(s0.vec_04.getX() >> 12);
-        lights_800c692c[i].light_00.g_0d.set(s0.vec_04.getY() >> 12);
-        lights_800c692c[i].light_00.b_0e.set(s0.vec_04.getZ() >> 12);
+        lights_800c692c[i].light_00.r_0c = s0.vec_04.getX() >> 12;
+        lights_800c692c[i].light_00.g_0d = s0.vec_04.getY() >> 12;
+        lights_800c692c[i].light_00.b_0e = s0.vec_04.getZ() >> 12;
       } else if(v1 == 3) {
         //LAB_800e5ed0
         final short theta = rcos(((lightTicks_800c6928.get() + s0.vec_28.getX()) % s0.vec_28.getY() << 12) / s0.vec_28.getY());
         final int a3_0 = 0x1000 + theta;
         final int a2_0 = 0x1000 - theta;
-        lights_800c692c[i].light_00.r_0c.set((s0.vec_04.getX() * a3_0 + s0.vec_10.getX() * a2_0) / 0x2000);
-        lights_800c692c[i].light_00.g_0d.set((s0.vec_04.getY() * a3_0 + s0.vec_10.getY() * a2_0) / 0x2000);
-        lights_800c692c[i].light_00.b_0e.set((s0.vec_04.getZ() * a3_0 + s0.vec_10.getZ() * a2_0) / 0x2000);
+        lights_800c692c[i].light_00.r_0c = (s0.vec_04.getX() * a3_0 + s0.vec_10.getX() * a2_0) / 0x2000;
+        lights_800c692c[i].light_00.g_0d = (s0.vec_04.getY() * a3_0 + s0.vec_10.getY() * a2_0) / 0x2000;
+        lights_800c692c[i].light_00.b_0e = (s0.vec_04.getZ() * a3_0 + s0.vec_10.getZ() * a2_0) / 0x2000;
       }
 
       //LAB_800e5fb8

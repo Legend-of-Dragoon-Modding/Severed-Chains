@@ -149,7 +149,10 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value projectionPlaneDistance_800bd810 = MEMORY.ref(4, 0x800bd810L);
 
-  public static final ArrayRef<SobjPos14> sobjPositions_800bd818 = MEMORY.ref(4, 0x800bd818L, ArrayRef.of(SobjPos14.class, 24, 0x14, SobjPos14::new));
+  public static final SobjPos14[] sobjPositions_800bd818 = new SobjPos14[24];
+  static {
+    Arrays.setAll(sobjPositions_800bd818, i -> new SobjPos14());
+  }
 
   public static final IntRef _800bda08 = MEMORY.ref(4, 0x800bda08L, IntRef::new);
   public static BattleStage stage_800bda0c;
@@ -229,7 +232,7 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bed28 = MEMORY.ref(4, 0x800bed28L);
 
-  public static final MATRIX matrix_800bed30 = MEMORY.ref(4, 0x800bed30L, MATRIX::new);
+  public static final MATRIX matrix_800bed30 = new MATRIX();
   public static final IntRef screenOffsetX_800bed50 = MEMORY.ref(4, 0x800bed50L, IntRef::new);
   public static final IntRef screenOffsetY_800bed54 = MEMORY.ref(4, 0x800bed54L, IntRef::new);
   public static final Value hasNoEncounters_800bed58 = MEMORY.ref(4, 0x800bed58L);

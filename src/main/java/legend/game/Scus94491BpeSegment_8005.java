@@ -14,6 +14,8 @@ import legend.game.sound.ReverbConfigAndLocation;
 import legend.game.types.AdditionData0e;
 import legend.game.types.LodString;
 
+import java.util.Arrays;
+
 import static legend.core.GameEngine.MEMORY;
 
 public final class Scus94491BpeSegment_8005 {
@@ -93,7 +95,10 @@ public final class Scus94491BpeSegment_8005 {
   public static final ArrayRef<ShortRef> _80054870 = MEMORY.ref(2, 0x80054870L, ArrayRef.of(ShortRef.class, 192, 2, ShortRef::new));
 
   public static final Value matrixStackIndex_80054a08 = MEMORY.ref(4, 0x80054a08L);
-  public static final ArrayRef<MATRIX> matrixStack_80054a0c = MEMORY.ref(4, 0x80054a0cL, ArrayRef.of(MATRIX.class, 20, 32, MATRIX::new));
+  public static final MATRIX[] matrixStack_80054a0c = new MATRIX[20];
+  static {
+    Arrays.setAll(matrixStack_80054a0c, i -> new MATRIX());
+  }
 
   /** Precomputed sin/cos table */
   public static final Value sin_cos_80054d0c = MEMORY.ref(4, 0x80054d0cL);

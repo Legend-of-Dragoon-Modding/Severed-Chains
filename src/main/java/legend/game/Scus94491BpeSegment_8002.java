@@ -57,6 +57,7 @@ import legend.game.types.Model124;
 import legend.game.types.ModelPartTransforms0c;
 import legend.game.types.Renderable58;
 import legend.game.types.RenderableMetrics14;
+import legend.game.types.SubmapStruct80;
 import legend.game.types.Textbox4c;
 import legend.game.types.TextboxArrow0c;
 import legend.game.types.TextboxChar08;
@@ -113,7 +114,7 @@ import static legend.game.SMap.adjustSmapUvs;
 import static legend.game.SMap.encounterAccumulator_800c6ae8;
 import static legend.game.SMap.getCollisionAndTransitionInfo;
 import static legend.game.SMap.handleEncounters;
-import static legend.game.SMap.playerPos_800c68e8;
+import static legend.game.SMap._800c68e8;
 import static legend.game.SMap.renderSmapModel;
 import static legend.game.SMap.unloadSmap;
 import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
@@ -4033,13 +4034,13 @@ public final class Scus94491BpeSegment_8002 {
     final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
 
     FUN_800e2428(sobjIndex);
-    final long struct = playerPos_800c68e8.getAddress();
-    final int s4 = (int)MEMORY.ref(4, struct).offset(0x70L).get();
+    final SubmapStruct80 struct = _800c68e8;
+    final int s4 = struct.x2_70;
     textbox._28 = s4;
-    final int sp10 = ((int)MEMORY.ref(4, struct).offset(0x74L).getSigned() - (int)MEMORY.ref(4, struct).offset(0x7cL).getSigned()) / 2;
-    final int sp18 = (int)MEMORY.ref(4, struct).offset(0x74L).getSigned() - sp10;
+    final int sp10 = (struct.y2_74 - struct.y3_7c) / 2;
+    final int sp18 = struct.y2_74 - sp10;
     textbox._2c = sp18;
-    final int sp14 = textbox._28 - (int)MEMORY.ref(4, struct).offset(0x68L).get();
+    final int sp14 = textbox._28 - struct.x1_68;
     final int textWidth = textbox.chars_18 * 9 / 2;
     final int textHeight = textbox.lines_1a * 6;
 

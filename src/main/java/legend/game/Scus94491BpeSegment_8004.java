@@ -388,7 +388,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[313] = SMap::FUN_800e0a48;
     scriptSubFunctions_8004e29c[314] = SMap::FUN_800e0a94;
     scriptSubFunctions_8004e29c[315] = SMap::scriptCheckPlayerCollision;
-    scriptSubFunctions_8004e29c[316] = SMap::FUN_800e0af4;
+    scriptSubFunctions_8004e29c[316] = SMap::scriptGetPlayerMovement;
     scriptSubFunctions_8004e29c[317] = SMap::FUN_800e0b34;
     scriptSubFunctions_8004e29c[318] = SMap::FUN_800e0ba0;
     scriptSubFunctions_8004e29c[319] = SMap::FUN_800e0cb8;
