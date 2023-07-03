@@ -63,6 +63,7 @@ import legend.game.inventory.screens.TextColour;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.battle.DragoonDEFFLoadedEvent;
 import legend.game.modding.events.battle.MonsterStatsEvent;
+import legend.game.modding.events.battle.SingleMonsterTargetEvent;
 import legend.game.modding.events.battle.StatDisplayEvent;
 import legend.game.modding.events.inventory.RepeatItemReturnEvent;
 import legend.game.scripting.FlowControl;
@@ -4447,6 +4448,7 @@ public final class Bttl_800e {
             str = getTargetEnemyName(monsterBobj, currentEnemyNames_800c69d0.get(enemySlot));
             element = monsterBobj.displayElement_1c;
             targetBobj = monsterBobj;
+            EVENTS.postEvent(new SingleMonsterTargetEvent(monsterBobj));
           } else if(menu.targetType_50.get() == 0) {
             targetBobj = battleState_8006e398.charBobjs_e40[targetCombatant].innerStruct_00;
             str = playerNames_800fb378.get(targetBobj.charId_272).deref();

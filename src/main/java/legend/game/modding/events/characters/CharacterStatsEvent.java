@@ -53,7 +53,6 @@ public class CharacterStatsEvent extends Event {
     this.flags = charData.status_10;
     this.level = charData.level_12;
     this.dlevel = charData.dlevel_13;
-    System.out.println("TEST: " + this.dlevel + " for char id " + characterId + " / " + charData.dlevel_13);
 
     final LevelStuff08 levelStuff = characterStats[characterId][this.level];
     this.maxHp = levelStuff.hp_00;
