@@ -4224,7 +4224,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cf684L)
-  public static void FUN_800cf684(final SVECTOR a0, final VECTOR a1, final VECTOR a2, final VECTOR a3) {
+  public static void FUN_800cf684(final SVECTOR a0, final VECTOR a1, final VECTOR a2, final VECTOR out) {
     final SVECTOR sp0x20 = new SVECTOR().set(a0);
     final VECTOR sp0x10 = new VECTOR().set(a1);
     final MATRIX sp0x28 = new MATRIX();
@@ -4243,7 +4243,7 @@ public final class Bttl_800c {
     CPU.MTC2(sp0x20.getZ(),  1);
     CPU.COP2(0x480012L);
     sp0x10.set((int)CPU.MFC2(25), (int)CPU.MFC2(26), (int)CPU.MFC2(27));
-    a3.set(sp0x10);
+    out.set(sp0x10);
   }
 
   /** @return Z */
