@@ -170,8 +170,8 @@ import static legend.game.Scus94491BpeSegment_8003.MargePrim;
 import static legend.game.Scus94491BpeSegment_8003.PopMatrix;
 import static legend.game.Scus94491BpeSegment_8003.PushMatrix;
 import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
+import static legend.game.Scus94491BpeSegment_8003.RotTransPers;
 import static legend.game.Scus94491BpeSegment_8003.RotTransPers4;
-import static legend.game.Scus94491BpeSegment_8003.RotTransPersN;
 import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
 import static legend.game.Scus94491BpeSegment_8003.SetDrawTPage;
 import static legend.game.Scus94491BpeSegment_8003.StoreImage;
@@ -914,12 +914,12 @@ public final class SMap {
     tmdGp0Tpage_1f8003ec.set(a0.tpage_108);
 
     //LAB_800daaa8
+    final MATRIX lw = new MATRIX();
+    final MATRIX ls = new MATRIX();
     for(int i = 0; i < a0.ObjTable_0c.nobj; i++) {
       if((a0.partInvisible_f4 & 1L << i) == 0) {
         final GsDOBJ2 dobj2 = a0.ObjTable_0c.top[i];
 
-        final MATRIX lw = new MATRIX();
-        final MATRIX ls = new MATRIX();
         GsGetLws(dobj2.coord2_04, lw, ls);
         GsSetLightMatrix(lw);
         CPU.CTC2(ls.getPacked(0), 0);
@@ -2418,32 +2418,31 @@ public final class SMap {
   public static void submapObjectRenderer(final ScriptState<SubmapObject210> state, final SubmapObject210 sobj) {
     if(sobj.s_128 == 0) {
       if(sobj.flatLightingEnabled_1c4) {
-        final GsF_LIGHT light0 = new GsF_LIGHT();
-        light0.direction_00.setX(0);
-        light0.direction_00.setY(0x1000);
-        light0.direction_00.setZ(0);
-        light0.r_0c.set(sobj.flatLightRed_1c5);
-        light0.g_0d.set(sobj.flatLightGreen_1c6);
-        light0.b_0e.set(sobj.flatLightBlue_1c7);
-        GsSetFlatLight(0, light0);
+        final GsF_LIGHT light = new GsF_LIGHT();
 
-        final GsF_LIGHT light1 = new GsF_LIGHT();
-        light1.direction_00.setX(0x1000);
-        light1.direction_00.setY(0);
-        light1.direction_00.setZ(0);
-        light1.r_0c.set(sobj.flatLightRed_1c5);
-        light1.g_0d.set(sobj.flatLightGreen_1c6);
-        light1.b_0e.set(sobj.flatLightBlue_1c7);
-        GsSetFlatLight(1, light1);
+        light.direction_00.setX(0);
+        light.direction_00.setY(0x1000);
+        light.direction_00.setZ(0);
+        light.r_0c.set(sobj.flatLightRed_1c5);
+        light.g_0d.set(sobj.flatLightGreen_1c6);
+        light.b_0e.set(sobj.flatLightBlue_1c7);
+        GsSetFlatLight(0, light);
 
-        final GsF_LIGHT light2 = new GsF_LIGHT();
-        light2.direction_00.setX(0);
-        light2.direction_00.setY(0);
-        light2.direction_00.setZ(0x1000);
-        light2.r_0c.set(sobj.flatLightRed_1c5);
-        light2.g_0d.set(sobj.flatLightGreen_1c6);
-        light2.b_0e.set(sobj.flatLightBlue_1c7);
-        GsSetFlatLight(2, light2);
+        light.direction_00.setX(0x1000);
+        light.direction_00.setY(0);
+        light.direction_00.setZ(0);
+        light.r_0c.set(sobj.flatLightRed_1c5);
+        light.g_0d.set(sobj.flatLightGreen_1c6);
+        light.b_0e.set(sobj.flatLightBlue_1c7);
+        GsSetFlatLight(1, light);
+
+        light.direction_00.setX(0);
+        light.direction_00.setY(0);
+        light.direction_00.setZ(0x1000);
+        light.r_0c.set(sobj.flatLightRed_1c5);
+        light.g_0d.set(sobj.flatLightGreen_1c6);
+        light.b_0e.set(sobj.flatLightBlue_1c7);
+        GsSetFlatLight(2, light);
       }
 
       //LAB_800e1310
@@ -4166,9 +4165,6 @@ public final class SMap {
       smapLoadingStage_800cb430.setu(0);
     }
 
-    final IntRef drgnIndex = new IntRef();
-    final IntRef fileIndex = new IntRef();
-
     //LAB_800e5ac4
     switch((int)smapLoadingStage_800cb430.get()) {
       case 0x0 -> {
@@ -4201,6 +4197,9 @@ public final class SMap {
         _800caaf8.set(submapScene_80052c34.get());
 
         // Detect if we need to change disks
+        final IntRef drgnIndex = new IntRef();
+        final IntRef fileIndex = new IntRef();
+
         getDrgnFileFromNewRoot(submapCut_80052c30.get(), drgnIndex, fileIndex);
         if(drgnIndex.get() != drgnBinIndex_800bc058) {
           //LAB_800e5c9c
@@ -4222,7 +4221,6 @@ public final class SMap {
         FUN_800e5104(_800caaf8.get(), _800cab24);
         _800caafc.set(submapCut_80052c30.get());
         _800cab00.set(submapScene_80052c34.get());
-        getDrgnFileFromNewRoot(submapCut_80052c30.get(), drgnIndex, fileIndex);
         smapLoadingStage_800cb430.setu(0x11L);
       }
 
@@ -5227,10 +5225,10 @@ public final class SMap {
 
   @Method(0x800e7f00L)
   public static void transformVertex(final IntRef x, final IntRef y, final SVECTOR v0) {
-    final DVECTOR[] v1 = {new DVECTOR()};
-    RotTransPersN(new SVECTOR[] {v0}, v1, new UnsignedShortRef[] {new UnsignedShortRef()}, new UnsignedShortRef[] {new UnsignedShortRef()}, new UnsignedShortRef[] {new UnsignedShortRef()}, 1);
-    x.set(v1[0].getX());
-    y.set(v1[0].getY());
+    final DVECTOR sxy = new DVECTOR();
+    RotTransPers(v0, sxy, null, null, null);
+    x.set(sxy.getX());
+    y.set(sxy.getY());
   }
 
   @Method(0x800e7f68L)

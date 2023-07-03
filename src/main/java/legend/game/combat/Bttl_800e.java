@@ -1805,7 +1805,7 @@ public final class Bttl_800e {
       final VECTOR transposedTranslation = new VECTOR();
       TransposeMatrix(worldToScreenMatrix_800c3548, transposedWs);
       transposedTranslation.set(worldToScreenMatrix_800c3548.transfer).negate();
-      transposedWs.transfer.set(ApplyMatrixLV(transposedWs, transposedTranslation));
+      ApplyMatrixLV(transposedWs, transposedTranslation, transposedWs.transfer);
       MulMatrix0(transposedWs, transformMatrix, transformMatrix);
     }
     //LAB_800e8814

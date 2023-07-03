@@ -3,7 +3,6 @@ package legend.game.tmd;
 import legend.core.IoHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandPoly;
-import legend.core.gte.DVECTOR;
 import legend.core.gte.GsDOBJ2;
 import legend.core.gte.SVECTOR;
 import legend.core.gte.TmdObjTable1c;
@@ -139,9 +138,9 @@ public final class Renderer {
           continue outer;
         }
 
-        final DVECTOR xy = new DVECTOR().setXY(CPU.MFC2(14));
+        final long xy = CPU.MFC2(14);
 
-        cmd.pos(vertexIndex, xy.getX(), xy.getY());
+        cmd.pos(vertexIndex, (short)xy, (short)(xy >>> 16));
 
         if(textured) {
           cmd.uv(vertexIndex, poly.vertices[vertexIndex].u, poly.vertices[vertexIndex].v);

@@ -3526,7 +3526,7 @@ public final class SEffe {
 
     //LAB_80105fec
     GsGetLw(coord2, transformationMatrix);
-    out.set(ApplyMatrixLV(transformationMatrix, zeroVec)).add(transformationMatrix.transfer);
+    ApplyMatrixLV(transformationMatrix, zeroVec, out).add(transformationMatrix.transfer);
   }
 
   /** Runs callbacks to render correct button icon effects during addition */
@@ -6750,9 +6750,7 @@ public final class SEffe {
     final MATRIX rotMatrix = new MATRIX();
     RotMatrix_Xyz(rotation.get(), rotMatrix);
 
-    out
-      .set(ApplyMatrixLV(rotMatrix, in))
-      .add(translation.get());
+    ApplyMatrixLV(rotMatrix, in, out).add(translation.get());
   }
 
   /** Sets translation on script, from second script if one specified */
@@ -6798,7 +6796,7 @@ public final class SEffe {
       RotMatrix_Xyz(scriptRot.get(), rotMatrix);
 
       final VECTOR transScalerValue = new VECTOR().set(scaler.value_0c).shra(8);
-      manager._10.trans_04.set(ApplyMatrixLV(rotMatrix, transScalerValue)).add(scriptTrans.get());
+      ApplyMatrixLV(rotMatrix, transScalerValue, manager._10.trans_04).add(scriptTrans.get());
     }
 
     //LAB_801108bc
@@ -7560,7 +7558,7 @@ public final class SEffe {
 
       final MATRIX rotMatrix = new MATRIX();
       RotMatrix_Xyz(targetRotation.get(), rotMatrix);
-      translationFinal.set(ApplyMatrixLV(rotMatrix, translationFinal)).add(targetTranslation.get());
+      ApplyMatrixLV(rotMatrix, translationFinal, translationFinal).add(targetTranslation.get());
     }
 
     //LAB_80112a80
@@ -8396,7 +8394,7 @@ public final class SEffe {
       FUN_80021de4(transforms, sp0x10, sp0x30);
 
       final VECTOR sp0x100 = new VECTOR().set(sp0x10.transfer).sub(transforms.transfer);
-      sp0x30.transfer.set(ApplyMatrixLV(transforms, sp0x100));
+      ApplyMatrixLV(transforms, sp0x100, sp0x30.transfer);
     }
 
     //LAB_801159cc

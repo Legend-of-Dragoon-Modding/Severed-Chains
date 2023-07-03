@@ -3875,9 +3875,8 @@ public final class Bttl_800c {
     for(int i = 0; i < 2; i++) {
       final MATRIX perspectiveTransformMatrix = new MATRIX();
       GsGetLw(trail.parentModel_30.coord2ArrPtr_04[trail.dobjIndex_08], perspectiveTransformMatrix);
-      final VECTOR transformedVertex = ApplyMatrixLV(perspectiveTransformMatrix, i == 0 ? trail.smallestVertex_20 : trail.largestVertex_10);
-      transformedVertex.add(perspectiveTransformMatrix.transfer);
-      segment.endpointCoords_04[i].set(transformedVertex);
+      ApplyMatrixLV(perspectiveTransformMatrix, i == 0 ? trail.smallestVertex_20 : trail.largestVertex_10, segment.endpointCoords_04[i]);
+      segment.endpointCoords_04[i].add(perspectiveTransformMatrix.transfer);
     }
 
     //LAB_800ce3e0
@@ -4450,7 +4449,7 @@ public final class Bttl_800c {
   public static void getModelObjectTranslation(final int scriptIndex, final VECTOR translation, final int objIndex) {
     final MATRIX transformMatrix = new MATRIX();
     GsGetLw(((BattleObject27c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00).model_148.coord2ArrPtr_04[objIndex], transformMatrix);
-    translation.set(ApplyMatrixLV(transformMatrix, new VECTOR()));
+    ApplyMatrixLV(transformMatrix, new VECTOR(), translation);
     translation.add(transformMatrix.transfer);
   }
 }
