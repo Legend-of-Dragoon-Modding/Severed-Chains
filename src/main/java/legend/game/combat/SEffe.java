@@ -1682,7 +1682,7 @@ public final class SEffe {
   @Method(0x800fea70L)
   public static long FUN_800fea70(final EffectManagerData6c a0, final ParticleEffectData98 a1, final ParticleEffectInstance94 a2, final EffectData98Inner24 a3) {
     seed_800fa754.advance();
-    final long theta = seed_800fa754.get() % 4097;
+    final int theta = (int)(seed_800fa754.get() % 4097);
     a2._58.setX((short)(rcos(theta) >> 8));
     a2._58.setZ((short)(rsin(theta) >> 8));
 
@@ -1700,7 +1700,7 @@ public final class SEffe {
 
   @Method(0x800fec3cL)
   public static void FUN_800fec3c(final EffectManagerData6c a0, final ParticleEffectData98 a1, final ParticleEffectInstance94 a2, final EffectData98Inner24 a3) {
-    final long s0 = (short)FUN_800fea70(a0, a1, a2, a3);
+    final int s0 = (short)FUN_800fea70(a0, a1, a2, a3);
     seed_800fa754.advance();
     a2._58.setX((short)(rcos(s0) >> 6));
     a2._58.setY((short)0);
@@ -1710,7 +1710,7 @@ public final class SEffe {
   @Method(0x800fecccL)
   public static void FUN_800feccc(final EffectManagerData6c u0, final ParticleEffectData98 u1, final ParticleEffectInstance94 s2, final EffectData98Inner24 a3) {
     seed_800fa754.advance();
-    final long s0 = seed_800fa754.get() % 4097;
+    final int s0 = (int)(seed_800fa754.get() % 4097);
     s2._58.setX((short)(rcos(s0) >> 10));
     seed_800fa754.advance();
     s2._58.setY((short)-(seed_800fa754.get() % 33 + 13));
@@ -1725,7 +1725,7 @@ public final class SEffe {
   @Method(0x800fee9cL)
   public static void FUN_800fee9c(final EffectManagerData6c u0, final ParticleEffectData98 u1, final ParticleEffectInstance94 a2, final EffectData98Inner24 a3) {
     seed_800fa754.advance();
-    final long theta = seed_800fa754.get() % 4097;
+    final int theta = (int)(seed_800fa754.get() % 4097);
     a2._58.setX((short)(rcos(theta) / 0x80));
     a2._58.setY((short)0);
     a2._58.setZ((short)(rsin(theta) / 0x80));
@@ -1870,10 +1870,10 @@ public final class SEffe {
   public static void FUN_800ff890(final EffectManagerData6c u0, final ParticleEffectData98 u1, final ParticleEffectInstance94 a2, final EffectData98Inner24 a3) {
     seed_800fa754.advance();
     seed_800fa754.advance();
-    final long s1 = seed_800fa754.get() % 4097;
+    final int s1 = (int)(seed_800fa754.get() % 4097);
 
     seed_800fa754.advance();
-    final long s0 = seed_800fa754.get() % 2049;
+    final int s0 = (int)(seed_800fa754.get() % 2049);
 
     a2._58.setX((short)(rcos(s1) * rsin(s0) / 0x40000));
     a2._58.setY((short)(rcos(s0) / 0x40));
@@ -2009,7 +2009,7 @@ public final class SEffe {
   @Method(0x8010025cL)
   public static void FUN_8010025c(final EffectManagerData6c a0, final ParticleEffectData98 a1, final ParticleEffectInstance94 a2, final EffectData98Inner24 a3) {
     a2._58.setY((short)64);
-    final long theta = seed_800fa754.advance().get() % 4097;
+    final int theta = (int)(seed_800fa754.advance().get() % 4097);
     if(a3._20 == 0x2a) {
       final int s0 = (a3._10 & 0xffff) >>> 5;
       a2._58.setX((short)(rcos(theta) * s0 >> 12));
@@ -2026,8 +2026,8 @@ public final class SEffe {
     final int s4 = a3._10; //TODO read with lw here but as a short everywhere else? Is this a bug?
     FUN_800ff890(a0, a1, a2, a3);
 
-    final long s1 = seed_800fa754.advance().get() % 4097;
-    final long s0 = seed_800fa754.advance().get() % 2049;
+    final int s1 = (int)(seed_800fa754.advance().get() % 4097);
+    final int s0 = (int)(seed_800fa754.advance().get() % 2049);
     a2._12 = (short)(a3._1c >>> 16 & 0xff);
     a2._50.setX((short)((rcos(s1) * rsin(s0) >> 12) * s4 >> 12));
     a2._50.setY((short)(rcos(s0) * s4 >> 12));
@@ -2284,8 +2284,8 @@ public final class SEffe {
     final long a1;
     final long t2;
     final long s0;
-    final long s2;
-    final long s4;
+    final int s2;
+    final int s4;
     final long s5;
     final long s7;
 
@@ -2347,7 +2347,7 @@ public final class SEffe {
     s7 = a4._20;
     if(v1 == 1) {
       //LAB_80101840
-      s2 = seed_800fa754.advance().get() % 4097;
+      s2 = (int)(seed_800fa754.advance().get() % 4097);
       s0 = a4._10;
       s3._50.setX((short)(rcos(s2) * (int)s0 >> MEMORY.ref(2, s5).offset(0x2L).getSigned()));
       s3._50.setY((short)0);
@@ -2355,8 +2355,8 @@ public final class SEffe {
       //LAB_80101824
     } else if(v1 == 2) {
       //LAB_801018c8
-      s2 = seed_800fa754.advance().get() % 4097;
-      s4 = seed_800fa754.advance().get() % (a4._10 + 1);
+      s2 = (int)(seed_800fa754.advance().get() % 4097);
+      s4 = (int)(seed_800fa754.advance().get() % (a4._10 + 1));
       s3._50.setX((short)(rcos(s2) * s4 >> MEMORY.ref(2, s5).offset(0x2L).getSigned()));
       s3._50.setY((short)0);
       s3._50.setZ((short)(rsin(s2) * s4 >> MEMORY.ref(2, s5).offset(0x2L).getSigned()));
@@ -2365,8 +2365,8 @@ public final class SEffe {
       s3._50.setY((short)(seed_800fa754.advance().get() % (MEMORY.ref(2, s5).offset(0x4L).getSigned() - MEMORY.ref(2, s5).offset(0x2L).getSigned() + 1) + MEMORY.ref(2, s5).offset(0x2L).getSigned()));
     } else if(v1 == 4) {
       //LAB_801019e4
-      s2 = seed_800fa754.advance().get() % 4097;
-      s4 = seed_800fa754.advance().get() % 2049;
+      s2 = (int)(seed_800fa754.advance().get() % 4097);
+      s4 = (int)(seed_800fa754.advance().get() % 2049);
       s3._50.setX((short)((rcos(s2) * rsin(s4) >> MEMORY.ref(2, s5).offset(0x2L).getSigned()) * a4._10 >> MEMORY.ref(2, s5).offset(0x4L).getSigned()));
       s3._50.setY((short)(rcos(s4) * a4._10 >> MEMORY.ref(2, s5).offset(0x4L).getSigned()));
       s3._50.setZ((short)((rsin(s2) * rsin(s4) >> MEMORY.ref(2, s5).offset(0x2L).getSigned()) * a4._10 >> MEMORY.ref(2, s5).offset(0x4L).getSigned()));

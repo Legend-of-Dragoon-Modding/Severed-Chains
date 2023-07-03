@@ -54,9 +54,10 @@ import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SEQUENCER;
 import static legend.core.GameEngine.SPU;
+import static legend.game.Scus94491BpeSegment.cos;
+import static legend.game.Scus94491BpeSegment.sin;
 import static legend.game.Scus94491BpeSegment_8005.atanTable_80058d0c;
 import static legend.game.Scus94491BpeSegment_8005.reverbConfigs_80059f7c;
-import static legend.game.Scus94491BpeSegment_8005.sin_cos_80054d0c;
 import static legend.game.Scus94491BpeSegment_800c.patchList_800c4abc;
 import static legend.game.Scus94491BpeSegment_800c.playableSounds_800c43d0;
 import static legend.game.Scus94491BpeSegment_800c.playingNotes_800c3a40;
@@ -854,20 +855,8 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x800402a0L)
   public static void RotMatrixX(final int rotation, final MATRIX matrixOut) {
-    final int sinCos;
-    final short sin;
-
-    if(rotation < 0) {
-      //LAB_800402bc
-      sinCos = (int)sin_cos_80054d0c.offset((-rotation & 0xfff) * 4).get();
-      sin = (short)-(short)sinCos;
-    } else {
-      //LAB_800402e4
-      sinCos = (int)sin_cos_80054d0c.offset((rotation & 0xfff) * 4).get();
-      sin = (short)sinCos;
-    }
-
-    final short cos = (short)(sinCos >> 16);
+    final short sin = sin(rotation);
+    final short cos = cos(rotation);
 
     //LAB_80040304
     final long m10 = matrixOut.get(1, 0);
@@ -887,20 +876,8 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x80040440L)
   public static void RotMatrixY(final int rotation, final MATRIX matrixOut) {
-    final int sinCos;
-    final short sin;
-
-    if(rotation < 0) {
-      //LAB_8004045c
-      sinCos = (int)sin_cos_80054d0c.offset((-rotation & 0xfff) * 4).get();
-      sin = (short)sinCos;
-    } else {
-      //LAB_80040480
-      sinCos = (int)sin_cos_80054d0c.offset((rotation & 0xfff) * 4).get();
-      sin = (short)-(short)sinCos;
-    }
-
-    final short cos = (short)(sinCos >> 16);
+    final short sin = sin(rotation);
+    final short cos = cos(rotation);
 
     //LAB_800404a4
     final short m0 = matrixOut.get(0);
@@ -919,20 +896,8 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x800405e0L)
   public static void RotMatrixZ(final int rotation, final MATRIX matrixOut) {
-    final int sinCos;
-    final short sin;
-
-    if(rotation < 0) {
-      //LAB_800405fc
-      sinCos = (int)sin_cos_80054d0c.offset((-rotation & 0xfff) * 4).get();
-      sin = (short)-(short)sinCos;
-    } else {
-      //LAB_80040624
-      sinCos = (int)sin_cos_80054d0c.offset((rotation & 0xfff) * 4).get();
-      sin = (short)sinCos;
-    }
-
-    final short cos = (short)(sinCos >> 16);
+    final short sin = sin(rotation);
+    final short cos = cos(rotation);
 
     //LAB_80040644
     final long m00 = matrixOut.get(0, 0);
@@ -990,7 +955,7 @@ public final class Scus94491BpeSegment_8004 {
       }
 
       //LAB_80040c44
-      atan = (int)atanTable_80058d0c.offset(x * 0x2L).getSigned();
+      atan = atanTable_80058d0c.get(x).get();
     } else {
       //LAB_80040c58
       if((y & 0x7fe0_0000) == 0) {
@@ -1003,7 +968,7 @@ public final class Scus94491BpeSegment_8004 {
       }
 
       //LAB_80040ccc
-      atan = 0x400 - (int)atanTable_80058d0c.offset(x * 0x2L).getSigned();
+      atan = 0x400 - atanTable_80058d0c.get(x).get();
     }
 
     //LAB_80040ce0

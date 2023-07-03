@@ -676,14 +676,34 @@ public final class Scus94491BpeSegment {
     return (a1 * 2 + a0 * a2 * (1 - a2)) / a2 / 2;
   }
 
+  /** ALWAYS returns a positive value even for negative angles */
   @Method(0x80013598L)
-  public static short rsin(final long theta) {
-    return (short)sin_cos_80054d0c.offset(2, 0x0L).offset((theta & 0xfffL) * 4).getSigned();
+  public static short rsin(final int theta) {
+    return sin_cos_80054d0c.get((theta & 0xfff) * 2).get();
+  }
+
+  /** ALWAYS returns a positive value even for negative angles */
+  @Method(0x800135b8L)
+  public static short rcos(final int theta) {
+    return sin_cos_80054d0c.get((theta & 0xfff) * 2 + 1).get();
+  }
+
+  @Method(0x80013598L)
+  public static short sin(final int theta) {
+    if(theta < 0) {
+      return (short)-rsin(-theta);
+    }
+
+    return rsin(theta);
   }
 
   @Method(0x800135b8L)
-  public static short rcos(final long theta) {
-    return (short)sin_cos_80054d0c.offset(2, 0x2L).offset((theta & 0xfffL) * 4).getSigned();
+  public static short cos(final int theta) {
+    if(theta < 0) {
+      return rcos(-theta);
+    }
+
+    return rcos(theta);
   }
 
   /**

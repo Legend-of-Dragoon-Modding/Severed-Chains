@@ -136,7 +136,7 @@ public final class Bttl_800f {
     //LAB_800f0fe8
     final int[] sp0x20 = new int[80];
     for(int i = 0; i < sp0x20.length; i++) {
-      sp0x20[i] = (int)_800c6f4c.offset(i * 0x2L).get();
+      sp0x20[i] = _800c6f4c.get(i).get();
     }
 
     //LAB_800f1014
@@ -972,8 +972,8 @@ public final class Bttl_800f {
                   t0 = v1;
                 }
 
-                final int clutY = (int)_800c7114.offset(2, (t1 * 2 + 1) * 0x4L).get() + t0 % 16;
-                final int clutX = (int)_800c7114.offset(2, t1 * 2 * 0x4L).get() + t0 / 16 * 16 & 0x3f0;
+                final int clutY = _800c7114.get(t1).y_04.get() + t0 % 16;
+                final int clutX = _800c7114.get(t1).x_00.get() + t0 / 16 * 16 & 0x3f0;
 
                 final GpuCommandPoly cmd = new GpuCommandPoly(4)
                   .bpp(Bpp.BITS_4)
@@ -3087,21 +3087,13 @@ public final class Bttl_800f {
 
   @Method(0x800f8dfcL)
   public static void drawUiTextureElement(final int x, final int y, final int u, final int v, final int w, final int h, final int a6, final int a7, final int a8) {
-    final long t3 = _800c71ec.getAddress();
-
-    final byte[] sp0x20 = {
-      (byte)MEMORY.ref(1, t3).offset(0x0L).getSigned(),
-      (byte)MEMORY.ref(1, t3).offset(0x1L).getSigned(),
-      (byte)MEMORY.ref(1, t3).offset(0x2L).getSigned(),
-    };
-
     final GpuCommandPoly cmd = new GpuCommandPoly(4);
 
     if(a8 < 6) {
-      cmd.monochrome((byte)(sp0x20[a7] + 0x80) / 6 * a8 - 0x80 & 0xff);
+      cmd.monochrome((byte)(_800c71ec.get(a7).get() + 0x80) / 6 * a8 - 0x80 & 0xff);
     } else {
       //LAB_800f8ef4
-      cmd.monochrome(sp0x20[a7] & 0xff);
+      cmd.monochrome(_800c71ec.get(a7).get() & 0xff);
     }
 
     setGpuPacketParams(cmd, x, y, u, v, w, h, true);
@@ -3143,8 +3135,8 @@ public final class Bttl_800f {
     //LAB_800f9088
     //LAB_800f9098
     //LAB_800f90a8
-    final int clutY = (int)_800c7114.offset(2, t1 * 0x8L + 0x4L).get() + t0 % 16;
-    final int clutX = (int)_800c7114.offset(2, t1 * 0x8L).get() + t0 / 16 * 16 & 0x3f0;
+    final int clutY = _800c7114.get(t1).y_04.get() + t0 % 16;
+    final int clutX = _800c7114.get(t1).x_00.get() + t0 / 16 * 16 & 0x3f0;
 
     cmd
       .bpp(Bpp.BITS_4)

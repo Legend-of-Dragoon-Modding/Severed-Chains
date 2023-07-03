@@ -18,7 +18,10 @@ import legend.core.gte.TmdWithId;
 import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
 import legend.core.memory.Ref;
+import legend.core.memory.types.ArrayRef;
+import legend.core.memory.types.ByteRef;
 import legend.core.memory.types.IntRef;
+import legend.core.memory.types.UnsignedByteRef;
 import legend.game.characters.Element;
 import legend.game.characters.VitalsStat;
 import legend.game.combat.bobj.BattleObject27c;
@@ -50,6 +53,7 @@ import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.combat.types.MonsterStats1c;
 import legend.game.combat.types.Ptr;
+import legend.game.combat.types.UiMetrics0c;
 import legend.game.combat.ui.BattleDisplayStats144;
 import legend.game.combat.ui.BattleDisplayStats144Sub10;
 import legend.game.combat.ui.BattleMenuStruct58;
@@ -93,7 +97,6 @@ import java.util.function.BiFunction;
 import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
-import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
@@ -739,7 +742,7 @@ public final class Bttl_800e {
   public static void tickLighting(final ScriptState<Void> state, final Void struct) {
     final BattleLightStruct64 light1 = _800c6930;
 
-    lightTicks_800c6928.addu(0x1L);
+    lightTicks_800c6928.incr();
 
     if(light1._24 == 3) { // Dragoon space lighting is handled here, I think this is for flickering light
       final int angle = rcos(((lightTicks_800c6928.get() + light1._2c) % light1._2e << 12) / light1._2e);
@@ -791,7 +794,7 @@ public final class Bttl_800e {
         //LAB_800e5d6c
         final SVECTOR sp0x18 = new SVECTOR();
 
-        final int ticks = (int)lightTicks_800c6928.get() & 0xfff;
+        final int ticks = lightTicks_800c6928.get() & 0xfff;
         sp0x18.setX((short)(a2.vec_04.getX() + a2.vec_10.getX() * ticks));
         sp0x18.setY((short)(a2.vec_04.getY() + a2.vec_10.getY() * ticks));
         sp0x18.setZ((short)(a2.vec_04.getZ() + a2.vec_10.getZ() * ticks));
@@ -3545,7 +3548,7 @@ public final class Bttl_800e {
   @Method(0x800ee610L)
   public static void FUN_800ee610() {
     _800c6cf4.setu(0);
-    _800c6c38.setu(0x1L);
+    _800c6c38.set(1);
     combatMenu_800c6b60 = new CombatMenua4();
     battleMenu_800c6c34 = new BattleMenuStruct58();
 
@@ -4081,14 +4084,13 @@ public final class Bttl_800e {
       }
 
       //LAB_800efcac
-      final long v1 = _800fb198.offset(_800c6c38.get() * 0x2L).getAddress();
-
       //LAB_800efcdc
       for(int charSlot = 0; charSlot < charCount; charSlot++) {
         final BattleDisplayStats144 displayStats = displayStats_800c6c2c[charSlot];
         final BattleStruct3c a1 = _800c6c40.get(charSlot);
-        a1.y_0a.set((short)MEMORY.ref(2, v1).offset(0x0L).get());
-        displayStats.y_02 = (short)MEMORY.ref(2, v1).offset(0x0L).get();
+        final short y = _800fb198.get(_800c6c38.get()).get();
+        a1.y_0a.set(y);
+        displayStats.y_02 = y;
       }
 
       //LAB_800efd00
@@ -4164,25 +4166,25 @@ public final class Bttl_800e {
           }
 
           //LAB_800f01f0
-          final long s0 = _800fb444.offset(player.charId_272 * 0x4L).get();
+          final ArrayRef<UnsignedByteRef> s0 = _800fb444.get(player.charId_272).deref();
 
           // Names
-          drawUiTextureElement(displayStats.x_00 - centreScreenX_1f8003dc.get() + 1, displayStats.y_02 - centreScreenY_1f8003de.get() - 25, (int)MEMORY.ref(1, s0).offset(0x0L).get(), (int)MEMORY.ref(1, s0).offset(0x1L).get(), (int)MEMORY.ref(1, s0).offset(0x2L).get(), (int)MEMORY.ref(1, s0).offset(0x3L).get(), 0x2c, spec, s7._14.get(2).get());
+          drawUiTextureElement(displayStats.x_00 - centreScreenX_1f8003dc.get() + 1, displayStats.y_02 - centreScreenY_1f8003de.get() - 25, s0.get(0).get(), s0.get(1).get(), s0.get(2).get(), s0.get(3).get(), 0x2c, spec, s7._14.get(2).get());
 
           // Portraits
-          drawUiTextureElement(displayStats.x_00 - centreScreenX_1f8003dc.get() - 44, displayStats.y_02 - centreScreenY_1f8003de.get() - 22, (int)MEMORY.ref(1, s0).offset(0x4L).get(), (int)MEMORY.ref(1, s0).offset(0x5L).get(), (int)MEMORY.ref(1, s0).offset(0x6L).get(), (int)MEMORY.ref(1, s0).offset(0x7L).get(), (int)MEMORY.ref(1, s0).offset(0x8L).get(), s5, s7._14.get(2).get());
+          drawUiTextureElement(displayStats.x_00 - centreScreenX_1f8003dc.get() - 44, displayStats.y_02 - centreScreenY_1f8003de.get() - 22, s0.get(4).get(), s0.get(5).get(), s0.get(6).get(), s0.get(7).get(), s0.get(8).get(), s5, s7._14.get(2).get());
 
           if(spec != 0) {
             final int v1_0 = (6 - s7._14.get(2).get()) * 8 + 100;
-            final int x = displayStats.x_00 - centreScreenX_1f8003dc.get() + (int)MEMORY.ref(1, s0).offset(0x6L).get() / 2 - 44;
-            final int y = displayStats.y_02 - centreScreenY_1f8003de.get() + (int)MEMORY.ref(1, s0).offset(0x7L).get() / 2 - 22;
-            int v1 = ((int)MEMORY.ref(1, s0).offset(0x6L).get() + 2) * v1_0 / 100 / 2;
+            final int x = displayStats.x_00 - centreScreenX_1f8003dc.get() + s0.get(6).get() / 2 - 44;
+            final int y = displayStats.y_02 - centreScreenY_1f8003de.get() + s0.get(7).get() / 2 - 22;
+            int v1 = (s0.get(6).get() + 2) * v1_0 / 100 / 2;
             final int x0 = x - v1;
             final int x1 = x + v1 - 1;
 
             final short[] xs = {(short)x0, (short)x1, (short)x0, (short)x1};
 
-            v1 = ((int)MEMORY.ref(1, s0).offset(0x7L).get() + 2) * v1_0 / 100 / 2;
+            v1 = (s0.get(7).get() + 2) * v1_0 / 100 / 2;
             final int y0 = y - v1;
             final int y1 = y + v1 - 1;
 
@@ -4211,14 +4213,14 @@ public final class Bttl_800e {
               //LAB_800f0470
               //LAB_800f047c
               final int t5 = i / 4;
-              final long t0 = _800c6e9c.offset(i % 4 * 0xcL).getAddress();
+              final ArrayRef<ByteRef> t0 = _800c6e9c.get(i % 4);
 
               // Draw border around currently active character's portrait
               drawLine(
-                xs[(int)MEMORY.ref(1, t0).offset(0x0L).getSigned()] + (int)MEMORY.ref(1, t0).offset(0x4L).getSigned() + (int)MEMORY.ref(1, t0).offset(0x8L).getSigned() * t5,
-                ys[(int)MEMORY.ref(1, t0).offset(0x1L).getSigned()] + (int)MEMORY.ref(1, t0).offset(0x5L).getSigned() + (int)MEMORY.ref(1, t0).offset(0x9L).getSigned() * t5,
-                xs[(int)MEMORY.ref(1, t0).offset(0x2L).getSigned()] + (int)MEMORY.ref(1, t0).offset(0x6L).getSigned() + (int)MEMORY.ref(1, t0).offset(0xaL).getSigned() * t5,
-                ys[(int)MEMORY.ref(1, t0).offset(0x3L).getSigned()] + (int)MEMORY.ref(1, t0).offset(0x7L).getSigned() + (int)MEMORY.ref(1, t0).offset(0xbL).getSigned() * t5,
+                xs[t0.get(0).get()] + t0.get(4).get() + t0.get(8).get() * t5,
+                ys[t0.get(1).get()] + t0.get(5).get() + t0.get(9).get() * t5,
+                xs[t0.get(2).get()] + t0.get(6).get() + t0.get(10).get() * t5,
+                ys[t0.get(3).get()] + t0.get(7).get() + t0.get(11).get() * t5,
                 r,
                 g,
                 b,
@@ -4238,17 +4240,17 @@ public final class Bttl_800e {
             }
 
             //LAB_800f060c
-            final long v1_0 = _800c6ecc.offset(i * 0xcL).getAddress();
+            final UiMetrics0c v1_0 = _800c6ecc.get(i);
 
             // HP: /  MP: /  SP:
             //LAB_800f0610
             drawUiTextureElement(
-              (short)MEMORY.ref(2, v1_0).offset(0x0L).get() + displayStats.x_00 - centreScreenX_1f8003dc.get(),
-              (short)MEMORY.ref(2, v1_0).offset(0x2L).get() + displayStats.y_02 - centreScreenY_1f8003de.get(),
-              (int)MEMORY.ref(1, v1_0).offset(0x4L).get(),
-              (int)MEMORY.ref(1, v1_0).offset(0x6L).get(),
-              (short)MEMORY.ref(2, v1_0).offset(0x8L).getSigned(),
-              (short)MEMORY.ref(2, v1_0).offset(0xaL).get() + s3,
+              v1_0.x_00.get() + displayStats.x_00 - centreScreenX_1f8003dc.get(),
+              v1_0.y_02.get() + displayStats.y_02 - centreScreenY_1f8003de.get(),
+              v1_0.u_04.get(),
+              v1_0.v_06.get(),
+              v1_0.w_08.get(),
+              v1_0.h_0a.get() + s3,
               0x2c,
               spec,
               s7._14.get(2).get()
@@ -4290,17 +4292,15 @@ public final class Bttl_800e {
                 .pos(2, left, bottom)
                 .pos(3, right, bottom);
 
-              long addr = _800c6f04.offset(spf0 * 0x6L).getAddress();
+              final ArrayRef<UnsignedByteRef> addr = _800c6f04.get(spf0);
 
               cmd
-                .rgb(0, (int)MEMORY.ref(1, addr).offset(0x0L).get(), (int)MEMORY.ref(1, addr).offset(0x1L).get(), (int)MEMORY.ref(1, addr).offset(0x2L).get())
-                .rgb(1, (int)MEMORY.ref(1, addr).offset(0x0L).get(), (int)MEMORY.ref(1, addr).offset(0x1L).get(), (int)MEMORY.ref(1, addr).offset(0x2L).get());
-
-              addr = _800c6f04.offset(spf0 * 0x6L + 0x3L).getAddress();
+                .rgb(0, addr.get(0).get(), addr.get(1).get(), addr.get(2).get())
+                .rgb(1, addr.get(0).get(), addr.get(1).get(), addr.get(2).get());
 
               cmd
-                .rgb(2, (int)MEMORY.ref(1, addr).offset(0x0L).get(), (int)MEMORY.ref(1, addr).offset(0x1L).get(), (int)MEMORY.ref(1, addr).offset(0x2L).get())
-                .rgb(3, (int)MEMORY.ref(1, addr).offset(0x0L).get(), (int)MEMORY.ref(1, addr).offset(0x1L).get(), (int)MEMORY.ref(1, addr).offset(0x2L).get());
+                .rgb(2, addr.get(3).get(), addr.get(4).get(), addr.get(5).get())
+                .rgb(3, addr.get(3).get(), addr.get(4).get(), addr.get(5).get());
 
               GPU.queueCommand(31, cmd);
             }
@@ -4329,8 +4329,7 @@ public final class Bttl_800e {
       //LAB_800f0ad4
       // Background
       if(_800c6c40.get(0).charIndex_00.get() != -1 && (_800c6c40.get(0).flags_06.get() & 0x1) != 0) {
-
-        renderTextBoxBackground(16, (int)_800fb198.offset(2, _800c6c38.get() * 0x2L).get() - 26, 288, 40, Config.changeBattleRgb() ? Config.getBattleRgb() : 0x00299f);
+        renderTextBoxBackground(16, _800fb198.get(_800c6c38.get()).get() - 26, 288, 40, Config.changeBattleRgb() ? Config.getBattleRgb() : 0x00299f);
       }
 
       //LAB_800f0b3c
