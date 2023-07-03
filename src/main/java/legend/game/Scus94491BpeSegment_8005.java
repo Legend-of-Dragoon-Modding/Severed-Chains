@@ -101,9 +101,8 @@ public final class Scus94491BpeSegment_8005 {
   }
 
   /** Precomputed sin/cos table */
-  public static final Value sin_cos_80054d0c = MEMORY.ref(4, 0x80054d0cL);
-
-  public static final Value atanTable_80058d0c = MEMORY.ref(2, 0x80058d0cL);
+  public static final ArrayRef<ShortRef> sin_cos_80054d0c = MEMORY.ref(2, 0x80054d0cL, ArrayRef.of(ShortRef.class, 0x2000, 2, ShortRef::new));
+  public static final ArrayRef<ShortRef> atanTable_80058d0c = MEMORY.ref(2, 0x80058d0cL, ArrayRef.of(ShortRef.class, 0x401, 2, ShortRef::new));
 
   /**
    * Start of a fairly large block of data - something to do with SPU reverb initialisation. Stride is 66 bytes. Unknown length.

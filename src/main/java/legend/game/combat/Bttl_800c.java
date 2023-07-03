@@ -58,6 +58,8 @@ import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.combat.types.CombatantStruct1a8_c;
 import legend.game.combat.types.DragoonSpells09;
 import legend.game.combat.types.MersenneTwisterSeed;
+import legend.game.combat.types.UiMetrics0c;
+import legend.game.combat.types.Vec2;
 import legend.game.combat.ui.BattleDisplayStats144;
 import legend.game.combat.ui.BattleMenuStruct58;
 import legend.game.combat.ui.BattleStruct3c;
@@ -282,7 +284,7 @@ public final class Bttl_800c {
   public static ScriptState<? extends BattleObject27c> scriptState_800c6914;
   public static final IntRef _800c6918 = MEMORY.ref(4, 0x800c6918L, IntRef::new);
 
-  public static final Value lightTicks_800c6928 = MEMORY.ref(4, 0x800c6928L);
+  public static final IntRef lightTicks_800c6928 = MEMORY.ref(4, 0x800c6928L, IntRef::new);
   public static BttlLightStruct84[] lights_800c692c;
   public static BattleLightStruct64 _800c6930;
 
@@ -334,7 +336,7 @@ public final class Bttl_800c {
   public static final ArrayRef<UnsignedByteRef> cameraPositionIndices_800c6c30 = MEMORY.ref(4, 0x800c6c30L, ArrayRef.of(UnsignedByteRef.class, 4, 1, UnsignedByteRef::new));
 
   public static BattleMenuStruct58 battleMenu_800c6c34;
-  public static final Value _800c6c38 = MEMORY.ref(4, 0x800c6c38L);
+  public static final IntRef _800c6c38 = MEMORY.ref(4, 0x800c6c38L, IntRef::new);
   public static final IntList usedRepeatItems_800c6c3c = new IntArrayList();
 
   public static final ArrayRef<BattleStruct3c> _800c6c40 = MEMORY.ref(2, 0x800c6c40L, ArrayRef.of(BattleStruct3c.class, 3, 0x3c, BattleStruct3c::new));
@@ -369,24 +371,17 @@ public final class Bttl_800c {
 
   public static final ArrayRef<IntRef> melbuMonsterNameIndices = MEMORY.ref(4, 0x800c6e90L, ArrayRef.of(IntRef.class, 3, 4, IntRef::new));
 
-  /** TODO unknown size, maybe struct or array */
-  public static final Value _800c6e9c = MEMORY.ref(2, 0x800c6e9cL);
+  public static final ArrayRef<ArrayRef<ByteRef>> _800c6e9c = MEMORY.ref(2, 0x800c6e9cL, ArrayRef.of(ArrayRef.classFor(ByteRef.class), 4, 0xc, ArrayRef.of(ByteRef.class, 0xc, 1, ByteRef::new)));
+  public static final ArrayRef<UiMetrics0c> _800c6ecc = MEMORY.ref(1, 0x800c6eccL, ArrayRef.of(UiMetrics0c.class, 3, 0xc, UiMetrics0c::new));
 
-  /** TODO unknown size, maybe struct or array */
-  public static final Value _800c6ecc = MEMORY.ref(1, 0x800c6eccL);
-
-  public static final ArrayRef<UnsignedShortRef> elements_800c6ef0 = MEMORY.ref(2, 0x800c6ef0L, ArrayRef.of(UnsignedShortRef.class, 10, 2, UnsignedShortRef::new));
-  /** TODO unknown size, maybe struct or array */
-  public static final Value _800c6f04 = MEMORY.ref(1, 0x800c6f04L);
+  public static final ArrayRef<ArrayRef<UnsignedByteRef>> _800c6f04 = MEMORY.ref(1, 0x800c6f04L, ArrayRef.of(ArrayRef.classFor(UnsignedByteRef.class), 7, 6, ArrayRef.of(UnsignedByteRef.class, 6, 1, UnsignedByteRef::new)));
 
   public static final ArrayRef<IntRef> melbuStageToMonsterNameIndices_800c6f30 = MEMORY.ref(4, 0x800c6f30L, ArrayRef.of(IntRef.class, 7, 4, IntRef::new));
-  public static final Value _800c6f4c = MEMORY.ref(2, 0x800c6f4cL);
-
+  public static final ArrayRef<UnsignedShortRef> _800c6f4c = MEMORY.ref(2, 0x800c6f4cL, ArrayRef.of(UnsignedShortRef.class, 80, 2, UnsignedShortRef::new));
   public static final ArrayRef<ArrayRef<UnsignedByteRef>> textboxColours_800c6fec = MEMORY.ref(1, 0x800c6fecL, ArrayRef.of(ArrayRef.classFor(UnsignedByteRef.class), 9, 3, ArrayRef.of(UnsignedByteRef.class, 3, 1, UnsignedByteRef::new)));
 
   public static final ArrayRef<ShortRef> digitOffsetXy_800c7014 = MEMORY.ref(2, 0x800c7014L, ArrayRef.of(ShortRef.class, 10, 2, ShortRef::new));
   public static final ArrayRef<UnsignedShortRef> digitU_800c7028 = MEMORY.ref(2, 0x800c7028L, ArrayRef.of(UnsignedShortRef.class, 10, 2, UnsignedShortRef::new));
-  public static final Value _800c703c = MEMORY.ref(4, 0x800c703cL);
 
   @SuppressWarnings("unchecked")
   public static final RegistryDelegate<Element>[] characterElements_800c706c = new RegistryDelegate[] {CoreMod.FIRE_ELEMENT, CoreMod.WIND_ELEMENT, CoreMod.LIGHT_ELEMENT, CoreMod.DARK_ELEMENT, CoreMod.THUNDER_ELEMENT, CoreMod.WIND_ELEMENT, CoreMod.WATER_ELEMENT, CoreMod.EARTH_ELEMENT, CoreMod.LIGHT_ELEMENT};
@@ -397,7 +392,7 @@ public final class Bttl_800c {
   /** TODO array of shorts, 0x1e bytes total */
   public static final Value _800c70f4 = MEMORY.ref(2, 0x800c70f4L);
 
-  public static final Value _800c7114 = MEMORY.ref(2, 0x800c7114L);
+  public static final ArrayRef<Vec2> _800c7114 = MEMORY.ref(4, 0x800c7114L, ArrayRef.of(Vec2.class, 2, 8, Vec2::new));
 
   public static final ArrayRef<UnsignedShortRef> targetAllItemIds_800c7124 = MEMORY.ref(2, 0x800c7124L, ArrayRef.of(UnsignedShortRef.class, 17, 2, UnsignedShortRef::new));
 
@@ -410,7 +405,7 @@ public final class Bttl_800c {
   public static final ArrayRef<ShortRef> _800c71bc = MEMORY.ref(2, 0x800c71bcL, ArrayRef.of(ShortRef.class, 10, 2, ShortRef::new));
   public static final ArrayRef<ShortRef> _800c71d0 = MEMORY.ref(2, 0x800c71d0L, ArrayRef.of(ShortRef.class, 10, 2, ShortRef::new));
   public static final ArrayRef<ShortRef> _800c71e4 = MEMORY.ref(2, 0x800c71e4L, ArrayRef.of(ShortRef.class, 10, 2, ShortRef::new));
-  public static final Value _800c71ec = MEMORY.ref(1, 0x800c71ecL);
+  public static final ArrayRef<ByteRef> _800c71ec = MEMORY.ref(1, 0x800c71ecL, ArrayRef.of(ByteRef.class, 3, 1, ByteRef::new));
 
   /** Different sets of bobjs for different target types (chars, monsters, all) */
   public static ScriptState<BattleObject27c>[][] targetBobjs_800c71f0;
@@ -891,8 +886,7 @@ public final class Bttl_800c {
   /** TODO array of unsigned shorts */
   public static final Value _800fb188 = MEMORY.ref(2, 0x800fb188L);
 
-  /** TODO array of unsigned shorts */
-  public static final Value _800fb198 = MEMORY.ref(2, 0x800fb198L);
+  public static final ArrayRef<ShortRef> _800fb198 = MEMORY.ref(2, 0x800fb198L, ArrayRef.of(ShortRef.class, 4, 2, ShortRef::new));
 
   /** Targeting ("All allies", "All players", "All") */
   public static final ArrayRef<Pointer<LodString>> targeting_800fb36c = MEMORY.ref(4, 0x800fb36cL, ArrayRef.of(Pointer.classFor(LodString.class),  3, 4, Pointer.deferred(4, LodString::new)));
@@ -903,9 +897,7 @@ public final class Bttl_800c {
   /** Player names, player names, item names, dragoon spells, item descriptions, spell descriptions */
   public static final ArrayRef<Pointer<UnboundedArrayRef<Pointer<LodString>>>> allText_800fb3c0 = MEMORY.ref(4, 0x800fb3c0L, ArrayRef.of(Pointer.classFor(UnboundedArrayRef.classFor(Pointer.classFor(LodString.class))),  6, 4, Pointer.deferred(4, UnboundedArrayRef.of(4, Pointer.deferred(4, LodString::new)))));
 
-  /** TODO array of pointers to shorts? */
-  public static final Value _800fb444 = MEMORY.ref(4, 0x800fb444L);
-
+  public static final ArrayRef<Pointer<ArrayRef<UnsignedByteRef>>> _800fb444 = MEMORY.ref(4, 0x800fb444L, ArrayRef.of(Pointer.classFor(ArrayRef.classFor(UnsignedByteRef.class)), 10, 4, Pointer.deferred(4, ArrayRef.of(UnsignedByteRef.class, 12, 1, UnsignedByteRef::new))));
   public static final ArrayRef<ByteRef> _800fb46c = MEMORY.ref(1, 0x800fb46cL, ArrayRef.of(ByteRef.class, 0x10, 1, ByteRef::new));
   public static final ArrayRef<ByteRef> _800fb47c = MEMORY.ref(1, 0x800fb47cL, ArrayRef.of(ByteRef.class, 0x10, 1, ByteRef::new));
 

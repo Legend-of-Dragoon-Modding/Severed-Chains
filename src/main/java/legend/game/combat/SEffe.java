@@ -1668,7 +1668,7 @@ public final class SEffe {
   @Method(0x800fea70L)
   public static long FUN_800fea70(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
     seed_800fa754.advance();
-    final long angle = seed_800fa754.get() % 4097;
+    final int angle = (int)(seed_800fa754.get() % 4097);
     particle.particleVelocity_58.setX((short)(rcos(angle) >> 8));
     particle.particleVelocity_58.setZ((short)(rsin(angle) >> 8));
 
@@ -1686,7 +1686,7 @@ public final class SEffe {
 
   @Method(0x800fec3cL)
   public static void FUN_800fec3c(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
-    final long s0 = (short)FUN_800fea70(manager, effect, particle, effectInner);
+    final int s0 = (short)FUN_800fea70(manager, effect, particle, effectInner);
     seed_800fa754.advance();
     particle.particleVelocity_58.setX((short)(rcos(s0) >> 6));
     particle.particleVelocity_58.setY((short)0);
@@ -1696,7 +1696,7 @@ public final class SEffe {
   @Method(0x800fecccL)
   public static void FUN_800feccc(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
     seed_800fa754.advance();
-    final long angle = seed_800fa754.get() % 4097;
+    final int angle = (int)(seed_800fa754.get() % 4097);
     particle.particleVelocity_58.setX((short)(rcos(angle) >> 10));
     seed_800fa754.advance();
     particle.particleVelocity_58.setY((short)-(seed_800fa754.get() % 33 + 13));
@@ -1711,7 +1711,7 @@ public final class SEffe {
   @Method(0x800fee9cL)
   public static void FUN_800fee9c(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
     seed_800fa754.advance();
-    final long angle = seed_800fa754.get() % 4097;
+    final int angle = (int)(seed_800fa754.get() % 4097);
     particle.particleVelocity_58.setX((short)(rcos(angle) / 0x80));
     particle.particleVelocity_58.setY((short)0);
     particle.particleVelocity_58.setZ((short)(rsin(angle) / 0x80));
@@ -1851,10 +1851,10 @@ public final class SEffe {
   public static void FUN_800ff890(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
     seed_800fa754.advance();
     seed_800fa754.advance();
-    final long angle1 = seed_800fa754.get() % 4097;
+    final int angle1 = (int)(seed_800fa754.get() % 4097);
 
     seed_800fa754.advance();
-    final long angle2 = seed_800fa754.get() % 2049;
+    final int angle2 = (int)(seed_800fa754.get() % 2049);
 
     particle.particleVelocity_58.setX((short)(rcos(angle1) * rsin(angle2) / 0x40000));
     particle.particleVelocity_58.setY((short)(rcos(angle2) / 0x40));
@@ -1989,7 +1989,7 @@ public final class SEffe {
   @Method(0x8010025cL)
   public static void FUN_8010025c(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
     particle.particleVelocity_58.setY((short)64);
-    final long angle = seed_800fa754.advance().get() % 4097;
+    final int angle = (int)(seed_800fa754.advance().get() % 4097);
     if(effectInner.callbackIndex_20 == 0x2a) {
       final int velocityMagnitude = (effectInner._10 & 0xffff) >>> 5;
       particle.particleVelocity_58.setX((short)(rcos(angle) * velocityMagnitude >> 12));
@@ -2006,8 +2006,8 @@ public final class SEffe {
     final int s4 = effectInner._10; //TODO read with lw here but as a short everywhere else? Is this a bug?
     FUN_800ff890(manager, effect, particle, effectInner);
 
-    final long angle1 = seed_800fa754.advance().get() % 4097;
-    final long angle2 = seed_800fa754.advance().get() % 2049;
+    final int angle1 = (int)(seed_800fa754.advance().get() % 4097);
+    final int angle2 = (int)(seed_800fa754.advance().get() % 2049);
     particle.ticksRemaining_12 = (short)(effectInner.particleInnerStuff_1c >>> 16 & 0xff);
     particle.particlePosition_50.setX((short)((rcos(angle1) * rsin(angle2) >> 12) * s4 >> 12));
     particle.particlePosition_50.setY((short)(rcos(angle2) * s4 >> 12));
@@ -2315,8 +2315,8 @@ public final class SEffe {
       //LAB_80101824
     } else if(v1 == 2) {
       //LAB_801018c8
-      final long s2 = seed_800fa754.advance().get() % 4097;
-      final long s4 = seed_800fa754.advance().get() % (effectInner._10 + 1);
+      final int s2 = (int)(seed_800fa754.advance().get() % 4097);
+      final int s4 = (int)(seed_800fa754.advance().get() % (effectInner._10 + 1));
       particle.particlePosition_50.setX((short)(rcos(s2) * s4 >> s5.initialTranslationScaleReduction_02.get()));
       particle.particlePosition_50.setY((short)0);
       particle.particlePosition_50.setZ((short)(rsin(s2) * s4 >> s5.initialTranslationScaleReduction_02.get()));

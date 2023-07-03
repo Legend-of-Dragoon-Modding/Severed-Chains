@@ -13,14 +13,12 @@ public class SVECTOR implements MemoryRef {
   public final ShortRef x;
   public final ShortRef y;
   public final ShortRef z;
-  public final ShortRef pad;
 
   public SVECTOR() {
     this.ref = null;
     this.x = new ShortRef();
     this.y = new ShortRef();
     this.z = new ShortRef();
-    this.pad = new ShortRef();
   }
 
   public SVECTOR(final Value ref) {
@@ -28,7 +26,6 @@ public class SVECTOR implements MemoryRef {
     this.x = new ShortRef(ref.offset(2, 0x0L));
     this.y = new ShortRef(ref.offset(2, 0x2L));
     this.z = new ShortRef(ref.offset(2, 0x4L));
-    this.pad = new ShortRef(ref.offset(2, 0x6L));
   }
 
   public SVECTOR set(final SVECTOR other) {
@@ -101,15 +98,6 @@ public class SVECTOR implements MemoryRef {
 
   public SVECTOR setZ(final short z) {
     this.z.set(z);
-    return this;
-  }
-
-  public short getPad() {
-    return this.pad.get();
-  }
-
-  public SVECTOR setPad(final short pad) {
-    this.pad.set(pad);
     return this;
   }
 

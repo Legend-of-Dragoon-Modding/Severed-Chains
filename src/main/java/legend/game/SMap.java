@@ -341,8 +341,10 @@ public final class SMap {
   /** Array of 0x24 (tpage packet, then a quad packet, then more data used elsewhere?) TODO */
   public static final Value _800cb710 = MEMORY.ref(1, 0x800cb710L);
 
-  public static final UnboundedArrayRef<SVECTOR> _800cbb90 = MEMORY.ref(2, 0x800cbb90L, UnboundedArrayRef.of(0x8, SVECTOR::new));
-
+  public static final SVECTOR[] _800cbb90 = new SVECTOR[32];
+  static {
+    Arrays.setAll(_800cbb90, i -> new SVECTOR());
+  }
   public static final Value _800cbc90 = MEMORY.ref(4, 0x800cbc90L);
 
   public static final GsRVIEW2 rview2_800cbd10 = new GsRVIEW2();
@@ -356,8 +358,7 @@ public final class SMap {
   public static final MATRIX matrix_800cbd68 = new MATRIX();
 
   public static final Value _800cbd94 = MEMORY.ref(4, 0x800cbd94L);
-  public static final SVECTOR _800cbd98 = MEMORY.ref(2, 0x800cbd98L, SVECTOR::new);
-  public static final Value _800cbda0 = MEMORY.ref(2, 0x800cbda0L);
+  public static final SVECTOR _800cbd98 = new SVECTOR();
 
   public static final Value _800cbda4 = MEMORY.ref(4, 0x800cbda4L);
   public static final GsCOORDINATE2 GsCOORDINATE2_800cbda8 = new GsCOORDINATE2();
@@ -433,11 +434,17 @@ public final class SMap {
 
   public static final AnimatedSprite08 playerIndicatorAnimation_800d5588 = MEMORY.ref(4, 0x800d5588L, AnimatedSprite08::new);
   public static final AnimatedSprite08 doorIndicatorAnimation_800d5590 = MEMORY.ref(4, 0x800d5590L, AnimatedSprite08::new);
-  public static final ArrayRef<SavePointRenderData44> savePoint_800d5598 = MEMORY.ref(4, 0x800d5598L, ArrayRef.of(SavePointRenderData44.class, 2, 0x44, SavePointRenderData44::new));
-  public static final BoolRef hasSavePoint_800d5620 = MEMORY.ref(2, 0x800d5620L, BoolRef::new);
-  public static final SVECTOR savePointPos_800d5622 = MEMORY.ref(2, 0x800d5622L, SVECTOR::new);
+  public static final SavePointRenderData44[] savePoint_800d5598 = new SavePointRenderData44[2];
+  static {
+    Arrays.setAll(savePoint_800d5598, i -> new SavePointRenderData44());
+  }
+  public static boolean hasSavePoint_800d5620;
+  public static final SVECTOR savePointPos_800d5622 = new SVECTOR();
 
-  public static final ArrayRef<SavePointRenderData44> savePoint_800d5630 = MEMORY.ref(4, 0x800d5630L, ArrayRef.of(SavePointRenderData44.class, 32, 0x44, SavePointRenderData44::new));
+  public static final SavePointRenderData44[] savePoint_800d5630 = new SavePointRenderData44[32];
+  static {
+    Arrays.setAll(savePoint_800d5630, i -> new SavePointRenderData44());
+  }
   public static final Model124 savePointModel_800d5eb0 = new Model124("Save point");
 
   public static final SMapStruct3c struct3c_800d5fd8 = new SMapStruct3c();
@@ -457,7 +464,6 @@ public final class SMap {
   public static final RECT _800d6b48 = MEMORY.ref(4, 0x800d6b48L, RECT::new);
 
   public static final ArrayRef<SVECTOR> _800d6b7c = MEMORY.ref(4, 0x800d6b7cL, ArrayRef.of(SVECTOR.class, 12, 8, SVECTOR::new));
-
   public static final ArrayRef<IntRef> _800d6bdc = MEMORY.ref(4, 0x800d6bdcL, ArrayRef.of(IntRef.class, 4, 4, IntRef::new));
   public static final ArrayRef<IntRef> smokeTextureWidths_800d6bec = MEMORY.ref(4, 0x800d6becL, ArrayRef.of(IntRef.class, 4, 4, IntRef::new));
   public static final ArrayRef<IntRef> smokeTextureHeights_800d6bfc = MEMORY.ref(4, 0x800d6bfcL, ArrayRef.of(IntRef.class, 4, 4, IntRef::new));
@@ -470,11 +476,9 @@ public final class SMap {
   public static final SVECTOR savePointV3_800d6c40 = MEMORY.ref(4, 0x800d6c40L, SVECTOR::new);
   public static final SVECTOR _800d6c48 = MEMORY.ref(4, 0x800d6c48L, SVECTOR::new);
   public static final SVECTOR _800d6c50 = MEMORY.ref(4, 0x800d6c50L, SVECTOR::new);
-
   public static final ArrayRef<IntRef> _800d6c58 = MEMORY.ref(4, 0x800d6c58L, ArrayRef.of(IntRef.class, 8, 4, IntRef::new));
   public static final ArrayRef<ShortRef> _800d6c78 = MEMORY.ref(2, 0x800d6c78L, ArrayRef.of(ShortRef.class, 8, 2, ShortRef::new));
   public static final ArrayRef<IntRef> savePointFloatiesRotations_800d6c88 = MEMORY.ref(4, 0x800d6c88L, ArrayRef.of(IntRef.class, 8, 4, IntRef::new));
-
   public static final IntRef dartArrowU_800d6ca8 = MEMORY.ref(4, 0x800d6ca8L, IntRef::new);
   public static final IntRef dartArrowV_800d6cac = MEMORY.ref(4, 0x800d6cacL, IntRef::new);
   public static final IntRef doorArrowU_800d6cb0 = MEMORY.ref(4, 0x800d6cb0L, IntRef::new);
@@ -484,7 +488,6 @@ public final class SMap {
   public static final ArrayRef<IntRef> _800d6cc8 = MEMORY.ref(4, 0x800d6cc8L, ArrayRef.of(IntRef.class, 4, 4, IntRef::new));
   public static final ArrayRef<IntRef> _800d6cd8 = MEMORY.ref(4, 0x800d6cd8L, ArrayRef.of(IntRef.class, 3, 4, IntRef::new));
   public static final ArrayRef<IntRef> _800d6ce4 = MEMORY.ref(4, 0x800d6ce4L, ArrayRef.of(IntRef.class, 3, 4, IntRef::new));
-
   public static final ArrayRef<EnumRef<Translucency>> miscTextureTransModes_800d6cf0 = MEMORY.ref(4, 0x800d6cf0L, ArrayRef.of(EnumRef.classFor(Translucency.class), 11, 4, EnumRef.of(Translucency.values())));
   /**
    * Savepoint MRG (0x904 bytes)
@@ -4095,7 +4098,8 @@ public final class SMap {
       final SubmapObject210 sobj = sobjs_800c6880[0].innerStruct_00;
       final Model124 model = sobj.model_00;
 
-      getScreenOffset(screenOffsetX_800bed50, screenOffsetY_800bed54);
+      screenOffsetX_800bed50.set(screenOffsetX_800cb568.get());
+      screenOffsetY_800bed54.set(screenOffsetY_800cb56c.get());
       submapCut_80052c3c.set(cut);
       matrix_800bed30.set(model.coord2_14.coord);
       matrix_800bed30.transfer.set(model.coord2_14.coord.transfer);
@@ -4604,11 +4608,8 @@ public final class SMap {
 
   @Method(0x800e68b4L)
   public static FlowControl FUN_800e68b4(final RunningScript<?> script) {
-    final IntRef x = new IntRef();
-    final IntRef y = new IntRef();
-    getScreenOffset(x, y);
-    script.params_20[0].set(x.get());
-    script.params_20[1].set(y.get());
+    script.params_20[0].set(screenOffsetX_800cb568.get());
+    script.params_20[1].set(screenOffsetY_800cb56c.get());
     return FlowControl.CONTINUE;
   }
 
@@ -4835,7 +4836,7 @@ public final class SMap {
         }
       } else {
         //LAB_800e7010
-        _800cbb90.get(i - _800cb57c.get()).set(s0.svec_14);
+        _800cbb90[i - _800cb57c.get()].set(s0.svec_14);
         _800cbc90.offset((i - _800cb57c.get()) * 0x4L).setu(s0.ui_1c);
       }
 
@@ -4979,12 +4980,6 @@ public final class SMap {
     }
   }
 
-  @Method(0x800e7690L)
-  public static void getScreenOffset(final IntRef offsetX, final IntRef offsetY) {
-    offsetX.set(screenOffsetX_800cb568.get());
-    offsetY.set(screenOffsetY_800cb56c.get());
-  }
-
   @Method(0x800e76b0L)
   public static void FUN_800e76b0(final int x, final int y, final int index) {
     if(x == 0x400 && y == 0x400) {
@@ -5104,7 +5099,6 @@ public final class SMap {
     //LAB_800e7b08
     s3 = _800cb710.getAddress();
     s0 = _800cb57c.get();
-    final long s4 = _800cbb90.getAddress();
 
     //LAB_800e7b40
     outerForLoop:
@@ -5133,9 +5127,9 @@ public final class SMap {
         //LAB_800e7c0c
         while(a2_0 >= _800cbd60.get()) {
           v1 = _800cbc90.offset(i * 0x4L).get();
-          v1 += MEMORY.ref(2, s4).offset(i * 0x8L).offset(0x0L).getSigned() * a1[(int)a2_0].transfer.getX();
-          v1 += MEMORY.ref(2, s4).offset(i * 0x8L).offset(0x2L).getSigned() * a1[(int)a2_0].transfer.getY();
-          v1 += MEMORY.ref(2, s4).offset(i * 0x8L).offset(0x4L).getSigned() * a1[(int)a2_0].transfer.getZ();
+          v1 += _800cbb90[i].getX() * a1[(int)a2_0].transfer.getX();
+          v1 += _800cbb90[i].getY() * a1[(int)a2_0].transfer.getY();
+          v1 += _800cbb90[i].getZ() * a1[(int)a2_0].transfer.getZ();
           final long a1_0 = sp10[(int)a2_0] & 0xffffL;
           if(a1_0 != 0xfffbL) {
             if((int)v1 < 0) {
@@ -6182,9 +6176,6 @@ public final class SMap {
     }
 
     //LAB_800ea6a4
-    _800cbda0.setu(v0);
-
-    v0 = _800cbda0.get();
     _800f7f6c.offset(s2 * 0x2L).setu(v0);
 
     //LAB_800ea6dc
@@ -7560,11 +7551,8 @@ public final class SMap {
     final int[] v = new int[4];
     v[3] = 64; // Other values are 0
 
-    final IntRef sox = new IntRef();
-    final IntRef soy = new IntRef();
-    getScreenOffset(sox, soy);
-    final int screenOffsetX = sox.get();
-    final int screenOffsetY = soy.get();
+    final int screenOffsetX = screenOffsetX_800cb568.get();
+    final int screenOffsetY = screenOffsetY_800cb56c.get();
 
     //LAB_800ef9cc
     DustRenderData54 s1 = dust_800d4e68;
@@ -7665,10 +7653,6 @@ public final class SMap {
 
   @Method(0x800efe7cL)
   public static void FUN_800efe7c() {
-    final IntRef refX = new IntRef();
-    final IntRef refY = new IntRef();
-    getScreenOffset(refX, refY);
-
     SMapStruct3c s1 = struct3c_800d4f50;
     SMapStruct3c s0 = s1.parent_38;
 
@@ -7689,8 +7673,8 @@ public final class SMap {
         final int clut = cluts_800d6068.get(6).get();
         final int tpage = texPages_800d6050.get(6).get();
 
-        final int x = refX.get() - s0.x_0c + (s0._10 & 0xffff);
-        final int y = refY.get() - s0.y_0e + (s0._14 >> 16) - (s0._24 >> 16);
+        final int x = screenOffsetX_800cb568.get() - s0.x_0c + (s0._10 & 0xffff);
+        final int y = screenOffsetY_800cb56c.get() - s0.y_0e + (s0._14 >> 16) - (s0._24 >> 16);
 
         //LAB_800eff7c
         GPU.queueCommand(40, new GpuCommandPoly(4)
@@ -7725,18 +7709,14 @@ public final class SMap {
       //LAB_800f0100
       while(s1 != null) {
         if(s1._08 >= s1._02) {
-          final IntRef refX = new IntRef();
-          final IntRef refY = new IntRef();
-          getScreenOffset(refX, refY);
-
           if(s1._02 % s1._04 == 0) {
             //LAB_800f0148
             for(int i = 0; i < 4; i++) {
               final SMapStruct3c s0 = FUN_800eed44(struct3c_800d4f50);
               s0._02 = 0;
               s0._06 = s1._06;
-              s0.x_0c = (short)refX.get();
-              s0.y_0e = (short)refY.get();
+              s0.x_0c = (short)screenOffsetX_800cb568.get();
+              s0.y_0e = (short)screenOffsetY_800cb56c.get();
               s0._10 = s1.x_1c + (simpleRand() * s1._18 >> 16);
               s0._14 = s1.y_20 << 16;
               s0._1c = -s1._0c;
@@ -7769,9 +7749,6 @@ public final class SMap {
     //LAB_800f023c
     if(MEMORY.ref(4, a1).get() == 0x1L) {
       final long s1 = _800d4ee0.getAddress();
-      final IntRef refX = new IntRef();
-      final IntRef refY = new IntRef();
-      getScreenOffset(refX, refY);
 
       if(MEMORY.ref(2, s1).offset(0x02L).getSigned() % MEMORY.ref(2, s1).offset(0x04L).getSigned() == 0) {
         //LAB_800f0284
@@ -7779,8 +7756,8 @@ public final class SMap {
           final SMapStruct3c s0 = FUN_800eed44(struct3c_800d4f50);
           s0._02 = 0;
           s0._06 = (short)MEMORY.ref(2, s1).offset(0x06L).get();
-          s0.x_0c = (short)refX.get();
-          s0.y_0e = (short)refY.get();
+          s0.x_0c = (short)screenOffsetX_800cb568.get();
+          s0.y_0e = (short)screenOffsetY_800cb56c.get();
           s0._10 = (int)(MEMORY.ref(4, s1).offset(0x1cL).get() + (simpleRand() * MEMORY.ref(2, s1).offset(0x18L).getSigned() >> 16));
           s0._14 = (int)(MEMORY.ref(4, s1).offset(0x20L).get() << 16);
           s0._1c = (int)-MEMORY.ref(4, s1).offset(0x0cL).get();
@@ -7928,10 +7905,6 @@ public final class SMap {
         s1.next_10 = s4.next_10;
         s4.next_10 = s1;
 
-        final IntRef screenX = new IntRef();
-        final IntRef screenY = new IntRef();
-        getScreenOffset(screenX, screenY);
-
         sp0x10.setX((short)-s2.width_08);
         sp0x18.setX(s2.width_08);
 
@@ -7966,10 +7939,10 @@ public final class SMap {
         s3._00 = 0;
         s3.tpage_04 = GetTPage(Bpp.BITS_4, Translucency.of(s2.translucency_0c), 972, 320);
         FUN_800f0df0(s2, s3);
-        s1.vert0_00.x.sub((short)screenX.get());
-        s1.vert0_00.y.sub((short)screenY.get());
-        s1.vert1_08.x.sub((short)screenX.get());
-        s1.vert1_08.y.sub((short)screenY.get());
+        s1.vert0_00.x.sub((short)screenOffsetX_800cb568.get());
+        s1.vert0_00.y.sub((short)screenOffsetY_800cb56c.get());
+        s1.vert1_08.x.sub((short)screenOffsetX_800cb568.get());
+        s1.vert1_08.y.sub((short)screenOffsetY_800cb56c.get());
 
         if(s2._01 == 0) {
           s2._14 = s1;
@@ -7999,11 +7972,8 @@ public final class SMap {
     Struct34_2 s3 = _800d4f90;
     Struct34_2 s1 = s3.next_30;
 
-    final IntRef sox = new IntRef();
-    final IntRef soy = new IntRef();
-    getScreenOffset(sox, soy);
-    final int screenOffsetX = sox.get();
-    final int screenOffsetY = soy.get();
+    final int screenOffsetX = screenOffsetX_800cb568.get();
+    final int screenOffsetY = screenOffsetY_800cb56c.get();
 
     //LAB_800f09c0
     while(s1 != null) {
@@ -8274,9 +8244,6 @@ public final class SMap {
     final GsCOORDINATE2 sp0x48 = new GsCOORDINATE2();
     GsInitCoordinate2(null, sp0x48);
 
-    final IntRef screenOffsetX = new IntRef();
-    final IntRef screenOffsetY = new IntRef();
-    getScreenOffset(screenOffsetX, screenOffsetY);
     sp0x48.coord.transfer.set(script.params_20[3].get(), script.params_20[4].get(), script.params_20[5].get());
     final MATRIX sp0x28 = new MATRIX();
     GsGetLs(sp0x48, sp0x28);
@@ -8314,8 +8281,8 @@ public final class SMap {
     s1._18 = (short)script.params_20[7].get();
     s1.x_1c = sp0x10.getX();
     s1.y_20 = sp0x10.getY();
-    s1.screenOffsetX_24 = screenOffsetX.get();
-    s1.screenOffsetY_28 = screenOffsetY.get();
+    s1.screenOffsetX_24 = screenOffsetX_800cb568.get();
+    s1.screenOffsetY_28 = screenOffsetY_800cb56c.get();
     s1.sz3_2c = spa8;
 
     return FlowControl.CONTINUE;
@@ -8400,7 +8367,7 @@ public final class SMap {
     final DVECTOR sp0x50 = new DVECTOR();
     final GsCOORDINATE2 coord2 = new GsCOORDINATE2();
 
-    hasSavePoint_800d5620.set(script.params_20[0].get() != 0);
+    hasSavePoint_800d5620 = script.params_20[0].get() != 0;
     GsInitCoordinate2(null, coord2);
 
     coord2.coord.transfer.setX(script.params_20[1].get());
@@ -8423,9 +8390,9 @@ public final class SMap {
 
     //LAB_800f195c
     for(int s3 = 0; s3 < 2; s3++) {
-      final SavePointRenderData44 struct = savePoint_800d5598.get(s3);
+      final SavePointRenderData44 struct = savePoint_800d5598[s3];
 
-      struct.z_40.set(RotTransPers4(savePointV0_800d6c28, savePointV1_800d6c30, savePointV2_800d6c38, savePointV3_800d6c40, struct.vert0_00, struct.vert1_08, struct.vert2_10, struct.vert3_18, null, null));
+      struct.z_40 = RotTransPers4(savePointV0_800d6c28, savePointV1_800d6c30, savePointV2_800d6c38, savePointV3_800d6c40, struct.vert0_00, struct.vert1_08, struct.vert2_10, struct.vert3_18, null, null);
 
       if(s3 == 0) {
         perspectiveTransform(_800d6c48, sp0x48, null, null);
@@ -8453,7 +8420,8 @@ public final class SMap {
       struct.vert3_18.setY((short)y1);
 
       //LAB_800f1b04
-      getScreenOffset(struct.screenOffsetX_20, struct.screenOffsetY_24);
+      struct.screenOffsetX_20 = screenOffsetX_800cb568.get();
+      struct.screenOffsetY_24 = screenOffsetY_800cb56c.get();
     }
 
     PopMatrix();
@@ -8467,10 +8435,7 @@ public final class SMap {
     final GsCOORDINATE2 sp0x18 = new GsCOORDINATE2();
     final SVECTOR sp0x68 = new SVECTOR();
     final MATRIX sp0x70 = new MATRIX();
-    final IntRef sp90 = new IntRef();
-    final IntRef sp94 = new IntRef();
 
-    getScreenOffset(sp90, sp94);
     GsInitCoordinate2(null, sp0x18);
 
     final TriangleIndicator140 a0 = _800c69fc;
@@ -8509,8 +8474,8 @@ public final class SMap {
       a0._18[i] = (short)ints.array(s0++).get();
       a0.x_40[i] = (short)(sp0x68.getX() + ints.array(s0++).get());
       a0.y_68[i] = (short)(sp0x68.getY() + ints.array(s0++).get());
-      a0.screenOffsetX_90[i] = sp90.get();
-      a0.screenOffsetY_e0[i] = sp94.get();
+      a0.screenOffsetX_90[i] = screenOffsetX_800cb568.get();
+      a0.screenOffsetY_e0[i] = screenOffsetY_800cb56c.get();
     }
 
     //LAB_800f1cf0
@@ -8852,11 +8817,8 @@ public final class SMap {
 
   @Method(0x800f2618L)
   public static FlowControl FUN_800f2618(final RunningScript<?> script) {
-    final IntRef refOffsetX = new IntRef();
-    final IntRef refOffsetY = new IntRef();
-    getScreenOffset(refOffsetX, refOffsetY);
-    final int x = refOffsetX.get();
-    final int y = refOffsetY.get();
+    final int x = screenOffsetX_800cb568.get();
+    final int y = screenOffsetY_800cb56c.get();
 
     final TriangleIndicator140 v1 = _800c69fc;
 
@@ -8888,43 +8850,40 @@ public final class SMap {
   @Method(0x800f2788L)
   public static void initSavePoint() {
     initModel(savePointModel_800d5eb0, new CContainer("Save point", new FileData(MEMORY.getBytes(mrg_800d6d1c.getFile(2), mrg_800d6d1c.entries.get(2).size.get()))), new TmdAnimationFile(new FileData(MEMORY.getBytes(mrg_800d6d1c.getFile(3), mrg_800d6d1c.entries.get(3).size.get()))));
-    savePoint_800d5598.get(0).rotation_28.set(0);
-    savePoint_800d5598.get(0).colour_34.set(0x50);
-    savePoint_800d5598.get(1).rotation_28.set(0);
-    savePoint_800d5598.get(1).fadeAmount_2c.set(0x1_f800);
-    savePoint_800d5598.get(1).fadeAccumulator_30.set(0);
-    savePoint_800d5598.get(1).colour_34.set(0);
-    savePoint_800d5598.get(1).fadeState_38.set((short)0);
+    savePoint_800d5598[0].rotation_28 = 0;
+    savePoint_800d5598[0].colour_34 = 0x50;
+    savePoint_800d5598[1].rotation_28 = 0;
+    savePoint_800d5598[1].fadeAmount_2c = 0x1_f800;
+    savePoint_800d5598[1].fadeAccumulator_30 = 0;
+    savePoint_800d5598[1].colour_34 = 0;
+    savePoint_800d5598[1].fadeState_38 = 0;
 
     //LAB_800f285c
     for(int i = 0; i < 8; i++) {
-      final SavePointRenderData44 struct0 = savePoint_800d5630.get(i * 4);
-      final SavePointRenderData44 struct1 = savePoint_800d5630.get(i * 4 + 1);
-      final SavePointRenderData44 struct2 = savePoint_800d5630.get(i * 4 + 2);
-      final SavePointRenderData44 struct3 = savePoint_800d5630.get(i * 4 + 3);
-      struct0.colour_34.set(0x80);
-      struct0.fadeAmount_2c.set(0x1_fc00);
-      struct0.fadeAccumulator_30.set(0);
-      struct0.fadeState_38.set((short)0);
-      struct0.rotation_28.set(_800d6c58.get(i).get());
-      struct1.colour_34.set(0x60);
-      struct2.colour_34.set(struct0.colour_34.get() - 0x40);
-      struct3.colour_34.set(struct0.colour_34.get() - 0x60);
+      final SavePointRenderData44 struct0 = savePoint_800d5630[i * 4];
+      final SavePointRenderData44 struct1 = savePoint_800d5630[i * 4 + 1];
+      final SavePointRenderData44 struct2 = savePoint_800d5630[i * 4 + 2];
+      final SavePointRenderData44 struct3 = savePoint_800d5630[i * 4 + 3];
+      struct0.colour_34 = 0x80;
+      struct0.fadeAmount_2c = 0x1_fc00;
+      struct0.fadeAccumulator_30 = 0;
+      struct0.fadeState_38 = 0;
+      struct0.rotation_28 = _800d6c58.get(i).get();
+      struct1.colour_34 = 0x60;
+      struct2.colour_34 = struct0.colour_34 - 0x40;
+      struct3.colour_34 = struct0.colour_34 - 0x60;
     }
   }
 
   @Method(0x800f28d8L)
   public static void renderSavePoint() {
-    long minX = 0;
-    long maxX = 0;
-    long minY = 0;
-    long maxY = 0;
+    int minX = 0;
+    int maxX = 0;
+    int minY = 0;
+    int maxY = 0;
 
-    final IntRef refOffsetX = new IntRef();
-    final IntRef refOffsetY = new IntRef();
-    getScreenOffset(refOffsetX, refOffsetY);
-    final int screenOffsetX = refOffsetX.get();
-    final int screenOffsetY = refOffsetY.get();
+    final int screenOffsetX = screenOffsetX_800cb568.get();
+    final int screenOffsetY = screenOffsetY_800cb56c.get();
 
     final Model124 model = savePointModel_800d5eb0;
     model.scaleVector_fc.setX(0x1800);
@@ -8944,10 +8903,10 @@ public final class SMap {
     //LAB_800f2a44
     // This loop renders the central circle
     for(int i = 0; i < 2; i++) {
-      final SavePointRenderData44 s0 = savePoint_800d5598.get(i);
+      final SavePointRenderData44 s0 = savePoint_800d5598[i];
 
-      final int offsetX = screenOffsetX - s0.screenOffsetX_20.get();
-      final int offsetY = screenOffsetY - s0.screenOffsetY_24.get();
+      final int offsetX = screenOffsetX - s0.screenOffsetX_20;
+      final int offsetY = screenOffsetY - s0.screenOffsetY_24;
 
       final int x0 = offsetX + s0.vert0_00.getX();
       final int y0 = offsetY + s0.vert0_00.getY();
@@ -8967,37 +8926,37 @@ public final class SMap {
 
       //LAB_800f2af8
       if(i == 1) {
-        if(s0.fadeState_38.get() == 0) {
+        if(s0.fadeState_38 == 0) {
           //LAB_800f2b44
-          s0.fadeAccumulator_30.add(s0.fadeAmount_2c.get());
-          s0.colour_34.set(s0.fadeAccumulator_30.get() >> 16);
+          s0.fadeAccumulator_30 += s0.fadeAmount_2c;
+          s0.colour_34 = s0.fadeAccumulator_30 >> 16;
 
-          if(s0.colour_34.get() > 0x7f) {
-            s0.fadeAccumulator_30.set(0x7f_0000);
-            s0.colour_34.set(0x7f);
-            s0.fadeState_38.set((short)1);
+          if(s0.colour_34 > 0x7f) {
+            s0.fadeAccumulator_30 = 0x7f_0000;
+            s0.colour_34 = 0x7f;
+            s0.fadeState_38 = 1;
           }
         } else {
-          s0.fadeAccumulator_30.sub(s0.fadeAmount_2c.get());
-          s0.colour_34.set(s0.fadeAccumulator_30.get() >> 16);
+          s0.fadeAccumulator_30 -= s0.fadeAmount_2c;
+          s0.colour_34 = s0.fadeAccumulator_30 >> 16;
 
-          if(s0.colour_34.get() < 0) {
-            s0.fadeAccumulator_30.set(0);
-            s0.colour_34.set(0);
-            s0.fadeState_38.set((short)0);
+          if(s0.colour_34 < 0) {
+            s0.fadeAccumulator_30 = 0;
+            s0.colour_34 = 0;
+            s0.fadeState_38 = 0;
           }
         }
       }
 
       //LAB_800f2b80
-      if(s0.z_40.get() == 0) {
-        s0.z_40.incr();
+      if(s0.z_40 == 0) {
+        s0.z_40++;
       }
 
-      GPU.queueCommand(s0.z_40.get(), new GpuCommandPoly(4)
+      GPU.queueCommand(s0.z_40, new GpuCommandPoly(4)
         .bpp(Bpp.of(texPages_800d6050.get(5).get() >>> 7 * 0b11))
         .translucent(Translucency.B_PLUS_F)
-        .monochrome(s0.colour_34.get())
+        .monochrome(s0.colour_34)
         .clut((cluts_800d6068.get(5).get() & 0b111111) * 16, cluts_800d6068.get(5).get() >>> 6)
         .vramPos((texPages_800d6050.get(5).get() & 0b1111) * 64, (texPages_800d6050.get(5).get() & 0b10000) != 0 ? 256 : 0)
         .pos(0, x0, y0)
@@ -9018,37 +8977,37 @@ public final class SMap {
 
     //LAB_800f2de8
     for(int fp = 0; fp < 8; fp++) {
-      final SavePointRenderData44 struct0 = savePoint_800d5630.get(fp * 4);
-      final SavePointRenderData44 struct1 = savePoint_800d5630.get(fp * 4 + 1);
-      final SavePointRenderData44 struct2 = savePoint_800d5630.get(fp * 4 + 2);
-      final SavePointRenderData44 struct3 = savePoint_800d5630.get(fp * 4 + 3);
+      final SavePointRenderData44 struct0 = savePoint_800d5630[fp * 4];
+      final SavePointRenderData44 struct1 = savePoint_800d5630[fp * 4 + 1];
+      final SavePointRenderData44 struct2 = savePoint_800d5630[fp * 4 + 2];
+      final SavePointRenderData44 struct3 = savePoint_800d5630[fp * 4 + 3];
       struct3.vert0_00.setX(struct2.vert0_00.getX());
       struct3.vert0_00.setY(struct2.vert0_00.getY());
       struct2.vert0_00.setX(struct1.vert0_00.getX());
       struct2.vert0_00.setY(struct1.vert0_00.getY());
       struct1.vert0_00.setX(struct0.vert0_00.getX());
       struct1.vert0_00.setY(struct0.vert0_00.getY());
-      struct0.vert0_00.setX((short)(sp68 + ((sp80 + _800d6c78.get(fp).get()) * rsin(struct0.rotation_28.get()) >> 12)));
-      struct0.vert0_00.setY((short)(sp6a + ((sp78 + _800d6c78.get(fp).get()) * rcos(struct0.rotation_28.get()) >> 12)));
+      struct0.vert0_00.setX((short)(sp68 + ((sp80 + _800d6c78.get(fp).get()) * rsin(struct0.rotation_28) >> 12)));
+      struct0.vert0_00.setY((short)(sp6a + ((sp78 + _800d6c78.get(fp).get()) * rcos(struct0.rotation_28) >> 12)));
 
-      if(struct0.fadeState_38.get() != 0) {
-        struct0.fadeAccumulator_30.sub(struct0.fadeAmount_2c.get());
-        struct0.colour_34.set(struct0.fadeAccumulator_30.get() >> 16);
+      if(struct0.fadeState_38 != 0) {
+        struct0.fadeAccumulator_30 -= struct0.fadeAmount_2c;
+        struct0.colour_34 = struct0.fadeAccumulator_30 >> 16;
 
-        if(struct0.colour_34.get() < 0) {
-          struct0.fadeAccumulator_30.set(0);
-          struct0.colour_34.set(0);
-          struct0.fadeState_38.set((short)0);
+        if(struct0.colour_34 < 0) {
+          struct0.fadeAccumulator_30 = 0;
+          struct0.colour_34 = 0;
+          struct0.fadeState_38 = 0;
         }
       } else {
         //LAB_800f2f0c
-        struct0.fadeAccumulator_30.add(struct0.fadeAmount_2c.get());
-        struct0.colour_34.set(struct0.fadeAccumulator_30.get() >> 16);
+        struct0.fadeAccumulator_30 += struct0.fadeAmount_2c;
+        struct0.colour_34 = struct0.fadeAccumulator_30 >> 16;
 
-        if(struct0.colour_34.get() > 0x7f) {
-          struct0.fadeAccumulator_30.set(0x7f_0000);
-          struct0.colour_34.set(0x7f);
-          struct0.fadeState_38.set((short)1);
+        if(struct0.colour_34 > 0x7f) {
+          struct0.fadeAccumulator_30 = 0x7f_0000;
+          struct0.colour_34 = 0x7f;
+          struct0.fadeState_38 = 1;
         }
       }
 
@@ -9056,12 +9015,12 @@ public final class SMap {
       //LAB_800f2f50
       //LAB_800f2f78
       for(int s4 = 0; s4 < 4; s4++) {
-        final SavePointRenderData44 struct = savePoint_800d5630.get(fp + s4);
+        final SavePointRenderData44 struct = savePoint_800d5630[fp + s4];
 
         final GpuCommandPoly cmd = new GpuCommandPoly(4)
           .bpp(Bpp.of(texPages_800d6050.get(4).get() >>> 7 * 0b11))
           .translucent(Translucency.B_PLUS_F)
-          .monochrome(struct.colour_34.get())
+          .monochrome(struct.colour_34)
           .clut((cluts_800d6068.get(4).get() & 0b111111) * 16, cluts_800d6068.get(4).get() >>> 6)
           .vramPos((texPages_800d6050.get(4).get() & 0b1111) * 64, (texPages_800d6050.get(4).get() & 0b10000) != 0 ? 256 : 0)
           .pos(0, struct.vert0_00.getX(), struct.vert0_00.getY())
@@ -9087,7 +9046,8 @@ public final class SMap {
         GPU.queueCommand(41, cmd);
       }
 
-      struct0.rotation_28.add(savePointFloatiesRotations_800d6c88.get(fp).get()).and(0xfff);
+      struct0.rotation_28 += savePointFloatiesRotations_800d6c88.get(fp).get();
+      struct0.rotation_28 &= 0xfff;
     }
 
     _800f9ea4.incr();
@@ -9317,7 +9277,7 @@ public final class SMap {
   public static void renderSubmapOverlays() {
     handleTriangleIndicators();
 
-    if(hasSavePoint_800d5620.get()) {
+    if(hasSavePoint_800d5620) {
       renderSavePoint();
     }
   }
@@ -9382,7 +9342,7 @@ public final class SMap {
 
   @Method(0x800f3b3cL)
   public static void deallocateSavePoint() {
-    hasSavePoint_800d5620.set(false);
+    hasSavePoint_800d5620 = false;
   }
 
   @Method(0x800f3c98L)
@@ -9466,11 +9426,8 @@ public final class SMap {
     SMapStruct3c s1 = struct3c_800d5fd8;
     SMapStruct3c s0 = s1.parent_38;
 
-    final IntRef sox = new IntRef();
-    final IntRef soy = new IntRef();
-    getScreenOffset(sox, soy);
-    final int sp20 = sox.get();
-    final int sp24 = soy.get();
+    final int sp20 = screenOffsetX_800cb568.get();
+    final int sp24 = screenOffsetY_800cb56c.get();
 
     //LAB_800f3fb0
     while(s0 != null) {

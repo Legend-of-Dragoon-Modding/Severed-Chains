@@ -109,12 +109,12 @@ import static legend.game.SMap.FUN_800e5534;
 import static legend.game.SMap.FUN_800e828c;
 import static legend.game.SMap.FUN_800e8e50;
 import static legend.game.SMap.FUN_800ea4c8;
+import static legend.game.SMap._800c68e8;
 import static legend.game.SMap._800f7e54;
 import static legend.game.SMap.adjustSmapUvs;
 import static legend.game.SMap.encounterAccumulator_800c6ae8;
 import static legend.game.SMap.getCollisionAndTransitionInfo;
 import static legend.game.SMap.handleEncounters;
-import static legend.game.SMap._800c68e8;
 import static legend.game.SMap.renderSmapModel;
 import static legend.game.SMap.unloadSmap;
 import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
@@ -138,11 +138,9 @@ import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
-import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Yxz;
 import static legend.game.Scus94491BpeSegment_8003.ScaleMatrix;
 import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
 import static legend.game.Scus94491BpeSegment_8003.TransMatrix;
-import static legend.game.Scus94491BpeSegment_8003.TransposeMatrix;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixX;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixY;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixZ;
@@ -782,19 +780,8 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x800217a4L)
   public static void FUN_800217a4(final Model124 model) {
-    if(model.coord2Param_64.rotate.pad.get() == -1) {
-      final MATRIX mat = new MATRIX();
-      RotMatrix_Yxz(model.coord2Param_64.rotate, mat);
-      TransposeMatrix(mat, model.coord2_14.coord);
-      model.coord2Param_64.rotate.x.set((short)0);
-      model.coord2Param_64.rotate.y.set((short)0);
-      model.coord2Param_64.rotate.z.set((short)0);
-      model.coord2Param_64.rotate.pad.set((short)0);
-    } else {
-      model.coord2Param_64.rotate.y.set(FUN_800ea4c8(model.coord2Param_64.rotate.y.get()));
-      RotMatrix_Xyz(model.coord2Param_64.rotate, model.coord2_14.coord);
-    }
-
+    model.coord2Param_64.rotate.y.set(FUN_800ea4c8(model.coord2Param_64.rotate.y.get()));
+    RotMatrix_Xyz(model.coord2Param_64.rotate, model.coord2_14.coord);
     ScaleMatrix(model.coord2_14.coord, model.scaleVector_fc);
     model.coord2_14.flg = 0;
   }

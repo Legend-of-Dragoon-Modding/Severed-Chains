@@ -1022,7 +1022,7 @@ public class Gte {
 
   public long loadControl(final int fs) {
     return switch(fs) {
-      case  0 -> (this.RT.v11 & 0xffffL) << 16 | this.RT.v00 & 0xffffL;
+      case  0 -> (this.RT.v01 & 0xffffL) << 16 | this.RT.v00 & 0xffffL;
       case  1 -> (this.RT.v10 & 0xffffL) << 16 | this.RT.v02 & 0xffffL;
       case  2 -> (this.RT.v12 & 0xffffL) << 16 | this.RT.v11 & 0xffffL;
       case  3 -> (this.RT.v21 & 0xffffL) << 16 | this.RT.v20 & 0xffffL;

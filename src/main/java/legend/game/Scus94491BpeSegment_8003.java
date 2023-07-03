@@ -706,7 +706,7 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x8003d5d0L)
-  public static void FUN_8003d5d0(final MATRIX matrix, final long angle) {
+  public static void FUN_8003d5d0(final MATRIX matrix, final int angle) {
     if(angle != 0) {
       final short cos = rcos(angle / 360);
       final short sin = rsin(angle / 360);
