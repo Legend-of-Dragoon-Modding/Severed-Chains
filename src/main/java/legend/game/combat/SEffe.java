@@ -256,16 +256,16 @@ public final class SEffe {
 
   /**
    * <ol start="0">
-   *   <li>{@link SEffe#FUN_800fce10}</li>
+   *   <li>{@link SEffe#renderLineParticlesWithSubs}</li>
    *   <li>null</li>
    *   <li>{@link SEffe#FUN_800fcf18}</li>
    * </ol>
    */
-  private static final BiConsumer<EffectManagerData6c, ParticleMetrics48>[] _801197c0 = new BiConsumer[3];
+  private static final BiConsumer<EffectManagerData6c, ParticleMetrics48>[] lineParticleRenderers_801197c0 = new BiConsumer[3];
   static {
-    _801197c0[0] = SEffe::FUN_800fce10;
-    _801197c0[1] = null;
-    _801197c0[2] = SEffe::FUN_800fcf18; // no-op
+    lineParticleRenderers_801197c0[0] = SEffe::renderLineParticlesWithSubs;
+    lineParticleRenderers_801197c0[1] = null;
+    lineParticleRenderers_801197c0[2] = SEffe::FUN_800fcf18; // no-op
   }
 
   private static final ArrayRef<ParticleInnerStuff04> particleInnerStuffDefaultsArray_801197ec = MEMORY.ref(4, 0x801197ecL, ArrayRef.of(ParticleInnerStuff04.class, 65, 0x4, ParticleInnerStuff04::new));
@@ -303,14 +303,14 @@ public final class SEffe {
    *   <li>{@link SEffe#FUN_80101c74}</li>
    * </ol>
    */
-  private static final QuadConsumer<ParticleEffectData98, ParticleEffectInstance94, ParticleEffectData98Inner24, Integer>[] _80119b94 = new QuadConsumer[6];
+  private static final QuadConsumer<ParticleEffectData98, ParticleEffectInstance94, ParticleEffectData98Inner24, Integer>[] subParticleInitializers_80119b94 = new QuadConsumer[6];
   static {
-    _80119b94[0] = SEffe::FUN_80101e84;
-    _80119b94[1] = SEffe::FUN_80101d3c;
-    _80119b94[2] = SEffe::FUN_80101c74;
-    _80119b94[3] = SEffe::FUN_80101c68;
-    _80119b94[4] = SEffe::FUN_80101c74;
-    _80119b94[5] = SEffe::FUN_80101c74;
+    subParticleInitializers_80119b94[0] = SEffe::FUN_80101e84;
+    subParticleInitializers_80119b94[1] = SEffe::FUN_80101d3c;
+    subParticleInitializers_80119b94[2] = SEffe::FUN_80101c74;
+    subParticleInitializers_80119b94[3] = SEffe::FUN_80101c68;
+    subParticleInitializers_80119b94[4] = SEffe::FUN_80101c74;
+    subParticleInitializers_80119b94[5] = SEffe::FUN_80101c74;
   }
 
   private static final TriConsumer<EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94>[] prerenderCallbacks_80119bac = new TriConsumer[65];
@@ -1085,7 +1085,7 @@ public final class SEffe {
   }
 
   @Method(0x800fce10L)
-  public static void FUN_800fce10(final EffectManagerData6c manager, final ParticleMetrics48 particleMetrics) {
+  public static void renderLineParticlesWithSubs(final EffectManagerData6c manager, final ParticleMetrics48 particleMetrics) {
     if(particleMetrics.flags_00 >= 0) {
       GPU.queueCommand(particleMetrics.z_04 + manager._10.z_22 >> 2, new GpuCommandLine()
         .translucent(Translucency.B_PLUS_F)
@@ -1262,11 +1262,11 @@ public final class SEffe {
       if((manager._10._24 & 0x10) != 0) {
         particle.particlePosition_50.setY((short)0);
 
-        if(effect._60 == 2 || effect._60 == 5) {
+        if(effect.subParticleType_60 == 2 || effect.subParticleType_60 == 5) {
           //LAB_800fd4f0
           //LAB_800fd504
           for(int i = 0; i < effect.countParticleSub_54; i++) {
-            particle.subParticlePosition_44[i].setY((short)0);
+            particle.subParticlePositionsArray_44[i].setY((short)0);
           }
         }
       }
@@ -1351,11 +1351,11 @@ public final class SEffe {
         if(checkParticleShouldRender(state, manager, effect, particle)) {
           //LAB_800fd918
           for(int j = effect.countParticleSub_54 - 1; j > 0; j--) {
-            particle.subParticlePosition_44[j].set(particle.subParticlePosition_44[j - 1]);
+            particle.subParticlePositionsArray_44[j].set(particle.subParticlePositionsArray_44[j - 1]);
           }
 
           //LAB_800fd950
-          particle.subParticlePosition_44[0].sub(particle.particlePosition_50);
+          particle.subParticlePositionsArray_44[0].sub(particle.particlePosition_50);
           effect.prerenderCallback_84.accept(manager, effect, particle);
 
           final VECTOR colour = new VECTOR();
@@ -1391,10 +1391,10 @@ public final class SEffe {
           stepColour.setY((short)(colour.getY() / effect.countParticleSub_54));
           stepColour.setZ((short)(colour.getZ() / effect.countParticleSub_54));
 
-          final VECTOR sp0x40 = new VECTOR().set(particle.subParticlePosition_44[0]);
+          final VECTOR subTranslation = new VECTOR().set(particle.subParticlePositionsArray_44[0]);
           final ShortRef refX1 = new ShortRef();
           final ShortRef refY1 = new ShortRef();
-          int z = FUN_800cfc20(particle.managerRotation_68, particle.translation_2c, sp0x40, refX1, refY1) / 4;
+          int z = FUN_800cfc20(particle.managerRotation_68, particle.translation_2c, subTranslation, refX1, refY1) / 4;
           particleMetrics.x0_08 = refX1.get();
           particleMetrics.y0_10 = refY1.get();
 
@@ -1411,14 +1411,14 @@ public final class SEffe {
               particleMetrics.colour0_40.set(colour.getX() >> 8, colour.getY() >> 8, colour.getZ() >> 8);
               colour.sub(stepColour);
               particleMetrics.colour1_44.set(colour.getX() >> 8, colour.getY() >> 8, colour.getZ() >> 8);
-              sp0x40.set(particle.subParticlePosition_44[k]);
+              subTranslation.set(particle.subParticlePositionsArray_44[k]);
 
               final ShortRef refX2 = new ShortRef();
               final ShortRef refY2 = new ShortRef();
-              FUN_800cfc20(particle.managerRotation_68, particle.translation_2c, sp0x40, refX2, refY2);
+              FUN_800cfc20(particle.managerRotation_68, particle.translation_2c, subTranslation, refX2, refY2);
               particleMetrics.x1_0c = refX2.get();
               particleMetrics.y1_14 = refY2.get();
-              _801197c0[effect._60 - 2].accept(manager, particleMetrics);
+              lineParticleRenderers_801197c0[effect.subParticleType_60 - 2].accept(manager, particleMetrics);
               particleMetrics.x0_08 = particleMetrics.x1_0c;
               particleMetrics.y0_10 = particleMetrics.y1_14;
             }
@@ -2200,7 +2200,7 @@ public final class SEffe {
     initializeParticleInstance(manager, effect, particle, effect.effectInner_08);
 
     if(effect.countParticleSub_54 != 0) {
-      final int v1 = effect._60;
+      final int v1 = effect.subParticleType_60;
 
       if(v1 == 0) {
         //LAB_801011a0
@@ -2226,7 +2226,7 @@ public final class SEffe {
         //LAB_80101160
         //LAB_80101170
         for(int i = 0; i < effect.countParticleSub_54; i++) {
-          particle.subParticlePosition_44[i].set(particle.particlePosition_50);
+          particle.subParticlePositionsArray_44[i].set(particle.particlePosition_50);
         }
       }
     }
@@ -2352,25 +2352,21 @@ public final class SEffe {
   }
 
   @Method(0x80101c68L)
-  public static void FUN_80101c68(final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner, final long a3) {
-    effect._60 = 3;
+  public static void FUN_80101c68(final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner, final int flags) {
+    effect.subParticleType_60 = 3;
   }
 
   @Method(0x80101c74L)
-  public static void FUN_80101c74(final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner, final int count) {
-    effect._60 = (byte)(count >> 20);
-    effect.countParticleSub_54 = count;
+  public static void FUN_80101c74(final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner, final int flags) {
+    effect.subParticleType_60 = (byte)(flags >> 20);
+    effect.countParticleSub_54 = (short)flags;
 
     //LAB_80101cb0
     for(int i = 0; i < effect.countParticleInstance_50; i++) {
-      final ParticleEffectInstance94 s2 = effect.particleArray_68[i];
-      s2.subParticlePosition_44 = new SVECTOR[effect.countParticleSub_54];
-      Arrays.setAll(s2.subParticlePosition_44, n -> new SVECTOR());
-
+      final ParticleEffectInstance94 inst = effect.particleArray_68[i];
+      inst.subParticlePositionsArray_44 = new SVECTOR[effect.countParticleSub_54];
+      Arrays.setAll(inst.subParticlePositionsArray_44, n -> new SVECTOR().set(inst.particlePosition_50));
       //LAB_80101cdc
-      for(int j = 0; j < effect.countParticleSub_54; j++) {
-        s2.subParticlePosition_44[j].set(s2.particlePosition_50);
-      }
       //LAB_80101d04
     }
     //LAB_80101d1c
@@ -2379,7 +2375,7 @@ public final class SEffe {
   @Method(0x80101d3cL)
   public static void FUN_80101d3c(final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner, final int flags) {
     effect.countParticleSub_54 = 0;
-    effect._60 = 1;
+    effect.subParticleType_60 = 1;
 
     if((flags & 0xf_ff00) == 0xf_ff00) {
       //TODO I added the first deref here, this might have been a retail bug...
@@ -2401,8 +2397,8 @@ public final class SEffe {
 
       //LAB_80101e3c
       for(int i = 0; i < effect.countParticleInstance_50; i++) {
-        effect.particleArray_68[i].subParticlePosition_44 = new SVECTOR[effect.countParticleSub_54];
-        Arrays.setAll(effect.particleArray_68[i].subParticlePosition_44, n -> new SVECTOR());
+        effect.particleArray_68[i].subParticlePositionsArray_44 = new SVECTOR[effect.countParticleSub_54];
+        Arrays.setAll(effect.particleArray_68[i].subParticlePositionsArray_44, n -> new SVECTOR());
       }
     }
     //LAB_80101e6c
@@ -2410,7 +2406,7 @@ public final class SEffe {
 
   @Method(0x80101e84L)
   public static void FUN_80101e84(final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner, final int flags) {
-    effect._60 = 0;
+    effect.subParticleType_60 = 0;
     effect.countParticleSub_54 = 0;
 
     if((effect.effectInner_08.particleInnerStuff_1c & 0x6000_0000) != 0) {
@@ -2525,7 +2521,7 @@ public final class SEffe {
 
     //LAB_801022d4
     effect.countParticleSub_54 = 0;
-    _80119b94[script.params_20[2].get() >> 20].accept(effect, null/*s2_0 see above*/, effect.effectInner_08, script.params_20[2].get());
+    subParticleInitializers_80119b94[script.params_20[2].get() >> 20].accept(effect, null/*s2_0 see above*/, effect.effectInner_08, script.params_20[2].get());
     manager._10.flags_00 |= 0x5000_0000;
     manager.flags_04 |= 0x4_0000;
     return FlowControl.CONTINUE;

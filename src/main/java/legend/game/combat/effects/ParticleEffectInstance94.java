@@ -31,7 +31,7 @@ public class ParticleEffectInstance94 {
 
   public final VECTOR translation_2c = new VECTOR();
   public final SVECTOR particlePositionCopy1 = new SVECTOR();
-  public SVECTOR[] subParticlePosition_44;
+  public SVECTOR[] subParticlePositionsArray_44;
   public final SVECTOR particlePositionCopy2_48 = new SVECTOR();
   /** Translation of an attached model object? */
   public final SVECTOR particlePosition_50 = new SVECTOR();

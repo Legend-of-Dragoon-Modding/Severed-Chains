@@ -40,7 +40,7 @@ public class ParticleEffectData98 implements Effect {
    * Some kind of effect type flag or something; possibly multiuse? Gets used as a callback index at one point,
    * but can have values greater than length of callback array.
    */
-  public byte _60;
+  public byte subParticleType_60;
   public byte callback90Type_61;
 
   /** Size in bytes of following array of structs */
