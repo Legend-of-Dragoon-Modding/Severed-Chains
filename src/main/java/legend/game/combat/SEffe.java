@@ -275,22 +275,22 @@ public final class SEffe {
   /**
    * Particle effect renderers
    * <ol start="0">
-   *   <li>{@link SEffe#FUN_800fe120}</li>
+   *   <li>{@link SEffe#renderQuadParticleEffect}</li>
    *   <li>{@link SEffe#renderTmdParticleEffect}</li>
-   *   <li>{@link SEffe#FUN_800fd87c}</li>
+   *   <li>{@link SEffe#renderLineParticleEffect}</li>
    *   <li>{@link SEffe#renderPixelParticleEffect}</li>
-   *   <li>{@link SEffe#FUN_800fd87c}</li>
-   *   <li>{@link SEffe#FUN_800fddd0}</li>
+   *   <li>{@link SEffe#renderLineParticleEffect}</li>
+   *   <li>{@link SEffe#renderNoParticlesWhatsoever}</li>
    * </ol>
    */
   private static final BiConsumer<ScriptState<EffectManagerData6c>, EffectManagerData6c>[] particleEffectRenderers_80119b7c = new BiConsumer[6];
   static {
-    particleEffectRenderers_80119b7c[0] = SEffe::FUN_800fe120;
+    particleEffectRenderers_80119b7c[0] = SEffe::renderQuadParticleEffect;
     particleEffectRenderers_80119b7c[1] = SEffe::renderTmdParticleEffect;
-    particleEffectRenderers_80119b7c[2] = SEffe::FUN_800fd87c;
+    particleEffectRenderers_80119b7c[2] = SEffe::renderLineParticleEffect;
     particleEffectRenderers_80119b7c[3] = SEffe::renderPixelParticleEffect;
-    particleEffectRenderers_80119b7c[4] = SEffe::FUN_800fd87c;
-    particleEffectRenderers_80119b7c[5] = SEffe::FUN_800fddd0; // no-op
+    particleEffectRenderers_80119b7c[4] = SEffe::renderLineParticleEffect;
+    particleEffectRenderers_80119b7c[5] = SEffe::renderNoParticlesWhatsoever; // no-op
   }
 
   /**
@@ -1337,7 +1337,7 @@ public final class SEffe {
   }
 
   @Method(0x800fd87cL)
-  public static void FUN_800fd87c(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void renderLineParticleEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
     final ParticleEffectData98 effect = (ParticleEffectData98)manager.effect_44;
     effect.countFramesRendered_52++;
 
@@ -1437,7 +1437,7 @@ public final class SEffe {
   }
 
   @Method(0x800fddd0L)
-  public static void FUN_800fddd0(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void renderNoParticlesWhatsoever(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
     // no-op
   }
 
@@ -1487,7 +1487,7 @@ public final class SEffe {
 
   /** Has some kind of sub-particles */
   @Method(0x800fe120L)
-  public static void FUN_800fe120(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void renderQuadParticleEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
     final ParticleEffectData98 effect = (ParticleEffectData98)manager.effect_44;
 
     effect.countFramesRendered_52++;
