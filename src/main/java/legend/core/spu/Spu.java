@@ -1,7 +1,9 @@
 package legend.core.spu;
 
 import legend.core.DebugHelper;
+import legend.core.IoHelper;
 import legend.core.MathHelper;
+import legend.core.memory.types.ShortRef;
 import legend.game.Scus94491BpeSegment_8004;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,7 +25,7 @@ public class Spu implements Runnable {
   private SourceDataLine sound;
 
   private final byte[] spuOutput = new byte[SAMPLES_PER_TICK * 4];
-  private final byte[] ram = new byte[512 * 1024];
+  private final byte[] ram = new byte[512 * 1024]; // 0x8_0000
   public final Voice[] voices = new Voice[24];
 
   private int mainVolumeL;
@@ -36,12 +38,15 @@ public class Spu implements Runnable {
   private long channelNoiseMode;
   private long channelReverbMode;
   private int reverbWorkAreaAddress;
+  private int reverbCurrentAddress;
   private final Control control = new Control();
   private boolean reverbEnabled;
   private boolean muted = true;
   private int noiseFrequencyShift;
   private int noiseFrequencyStep;
-  public ReverbConfig reverb;
+  private ReverbConfig reverb;
+
+  private int reverbCounter;
 
   private boolean running;
 
@@ -110,12 +115,18 @@ public class Spu implements Runnable {
     this.running = false;
   }
 
+  private final ShortRef reverbL = new ShortRef();
+  private final ShortRef reverbR = new ShortRef();
+
   private void tick() {
     synchronized(Spu.class) {
       int dataIndex = 0;
       for(int i = 0; i < SAMPLES_PER_TICK; i++) {
         int sumLeft = 0;
         int sumRight = 0;
+
+        int sumLeftReverb = 0;
+        int sumRightReverb = 0;
 
         final long edgeKeyOn = this.keyOn;
         final long edgeKeyOff = this.keyOff;
@@ -171,7 +182,22 @@ public class Spu implements Runnable {
             sumLeft += sample * v.processVolume(v.volumeLeft) >> 15;
             sumRight += sample * v.processVolume(v.volumeRight) >> 15;
           }
+
+          if((this.channelReverbMode & 0x1L << i) != 0) {
+            sumLeftReverb += sample * v.processVolume(v.volumeLeft) >> 15;
+            sumRightReverb += sample * v.processVolume(v.volumeRight) >> 15;
+          }
         }
+
+        if(this.reverbCounter == 0) {
+          this.processReverb(this.reverbL, this.reverbR, sumLeftReverb, sumRightReverb);
+
+          sumLeft += this.reverbL.get();
+          sumRight += this.reverbR.get();
+        }
+
+        // Retail alternates processing L/R with each sample, we're just processing both every other sample
+        this.reverbCounter = this.reverbCounter + 1 & 0x1;
 
         //Clamp sum
         sumLeft = MathHelper.clamp(sumLeft, -0x8000, 0x7fff) * (short)this.mainVolumeL >> 15;
@@ -188,6 +214,123 @@ public class Spu implements Runnable {
         this.sound.write(this.spuOutput, 0, this.spuOutput.length);
       }
     }
+  }
+
+  public void processReverb(final ShortRef reverbL, final ShortRef reverbR, final int lInput, final int rInput) {
+    final int dAPF1 = this.reverb.dApf1.get() << 3;
+    final int dAPF2 = this.reverb.dApf2.get() << 3;
+    final short vIIR = this.reverb.vIir.get();
+    final short vCOMB1 = this.reverb.vComb1.get();
+    final short vCOMB2 = this.reverb.vComb2.get();
+    final short vCOMB3 = this.reverb.vComb3.get();
+    final short vCOMB4 = this.reverb.vComb4.get();
+    final short vWALL = this.reverb.vWall.get();
+    final short vAPF1 = this.reverb.vApf1.get();
+    final short vAPF2 = this.reverb.vApf2.get();
+    final int mLSAME = this.reverb.mLSame.get() << 3;
+    final int mRSAME = this.reverb.mRSame.get() << 3;
+    final int mLCOMB1 = this.reverb.mLComb1.get() << 3;
+    final int mRCOMB1 = this.reverb.mRComb1.get() << 3;
+    final int mLCOMB2 = this.reverb.mLComb2.get() << 3;
+    final int mRCOMB2 = this.reverb.mRComb2.get() << 3;
+    final int dLSAME = this.reverb.dLSame.get() << 3;
+    final int dRSAME = this.reverb.dRSame.get() << 3;
+    final int mLDIFF = this.reverb.mLDiff.get() << 3;
+    final int mRDIFF = this.reverb.mRDiff.get() << 3;
+    final int mLCOMB3 = this.reverb.mLComb3.get() << 3;
+    final int mRCOMB3 = this.reverb.mRComb3.get() << 3;
+    final int mLCOMB4 = this.reverb.mLComb4.get() << 3;
+    final int mRCOMB4 = this.reverb.mRComb4.get() << 3;
+    final int dLDIFF = this.reverb.dLDiff.get() << 3;
+    final int dRDIFF = this.reverb.dRDiff.get() << 3;
+    final int mLAPF1 = this.reverb.mLApf1.get() << 3;
+    final int mRAPF1 = this.reverb.mRApf1.get() << 3;
+    final int mLAPF2 = this.reverb.mLApf2.get() << 3;
+    final int mRAPF2 = this.reverb.mRApf2.get() << 3;
+    final short vLIN = this.reverb.vLIn.get();
+    final short vRIN = this.reverb.vRIn.get();
+
+    // Input from mixer
+    final int Lin = vLIN * lInput >> 15;
+    final int Rin = vRIN * rInput >> 15;
+
+    // Same side reflection L->L and R->R
+    final short mlSame = this.saturateSample(((Lin + (this.loadReverb(dLSAME) * vWALL >> 15) - this.loadReverb(mLSAME - 2)) * vIIR >> 15) + this.loadReverb(mLSAME - 2));
+    final short mrSame = this.saturateSample(((Rin + (this.loadReverb(dRSAME) * vWALL >> 15) - this.loadReverb(mRSAME - 2)) * vIIR >> 15) + this.loadReverb(mRSAME - 2));
+
+    this.writeReverb(mLSAME, mlSame);
+    this.writeReverb(mRSAME, mrSame);
+
+    // Different side reflection L->R and R->L
+    final short mlDiff = this.saturateSample(((Lin + (this.loadReverb(dRDIFF) * vWALL >> 15) - this.loadReverb(mLDIFF - 2)) * vIIR >> 15) + this.loadReverb(mLDIFF - 2));
+    final short mrDiff = this.saturateSample(((Rin + (this.loadReverb(dLDIFF) * vWALL >> 15) - this.loadReverb(mRDIFF - 2)) * vIIR >> 15) + this.loadReverb(mRDIFF - 2));
+
+    this.writeReverb(mLDIFF, mlDiff);
+    this.writeReverb(mRDIFF, mrDiff);
+
+    // Early echo (comb filter with input from buffer)
+    short l = this.saturateSample((vCOMB1 * this.loadReverb(mLCOMB1) >> 15) + (vCOMB2 * this.loadReverb(mLCOMB2) >> 15) + (vCOMB3 * this.loadReverb(mLCOMB3) >> 15) + (vCOMB4 * this.loadReverb(mLCOMB4) >> 15));
+    short r = this.saturateSample((vCOMB1 * this.loadReverb(mRCOMB1) >> 15) + (vCOMB2 * this.loadReverb(mRCOMB2) >> 15) + (vCOMB3 * this.loadReverb(mRCOMB3) >> 15) + (vCOMB4 * this.loadReverb(mRCOMB4) >> 15));
+
+    // Late reverb APF1 (All pass filter 1 with input from COMB)
+    l = this.saturateSample(l - this.saturateSample(vAPF1 * this.loadReverb(mLAPF1 - dAPF1) >> 15));
+    r = this.saturateSample(r - this.saturateSample(vAPF1 * this.loadReverb(mRAPF1 - dAPF1) >> 15));
+
+    this.writeReverb(mLAPF1, l);
+    this.writeReverb(mRAPF1, r);
+
+    l = this.saturateSample((l * vAPF1 >> 15) + this.loadReverb(mLAPF1 - dAPF1));
+    r = this.saturateSample((r * vAPF1 >> 15) + this.loadReverb(mRAPF1 - dAPF1));
+
+    // Late reverb APF2 (All pass filter 2 with input from APF1)
+    l = this.saturateSample(l - this.saturateSample(vAPF2 * this.loadReverb(mLAPF2 - dAPF2) >> 15));
+    r = this.saturateSample(r - this.saturateSample(vAPF2 * this.loadReverb(mRAPF2 - dAPF2) >> 15));
+
+    this.writeReverb(mLAPF2, l);
+    this.writeReverb(mRAPF2, r);
+
+    l = this.saturateSample((l * vAPF2 >> 15) + this.loadReverb(mLAPF2 - dAPF2));
+    r = this.saturateSample((r * vAPF2 >> 15) + this.loadReverb(mRAPF2 - dAPF2));
+
+    // Output to mixer (output volume multiplied with input from APF2)
+    l = this.saturateSample(l * this.reverbOutputVolumeL >> 15);
+    r = this.saturateSample(r * this.reverbOutputVolumeR >> 15);
+
+    // Saturate address
+    this.reverbCurrentAddress = Math.max(this.reverbWorkAreaAddress, this.reverbCurrentAddress + 2 & 0x7_fffe);
+
+    reverbL.set(l);
+    reverbR.set(r);
+  }
+
+  public short saturateSample(final int sample) {
+    if(sample < -0x8000) {
+      return -0x8000;
+    }
+
+    if(sample > 0x7fff) {
+      return 0x7fff;
+    }
+
+    return (short)sample;
+  }
+
+  private void writeReverb(final int addr, final short value) {
+    if(!this.reverbEnabled) {
+      return;
+    }
+
+    final int relative = (addr + this.reverbCurrentAddress - this.reverbWorkAreaAddress) % (0x8_0000 - this.reverbWorkAreaAddress);
+    final int address = this.reverbWorkAreaAddress + relative & 0x7_fffe;
+
+    MathHelper.set(this.ram, address, 2, value);
+  }
+
+  private short loadReverb(final int addr) {
+    final int relative = (addr + this.reverbCurrentAddress - this.reverbWorkAreaAddress) % (0x8_0000 - this.reverbWorkAreaAddress);
+    final int address = this.reverbWorkAreaAddress + relative & 0x7_fffe;
+
+    return IoHelper.readShort(this.ram, address);
   }
 
   //Wait(1 cycle); at 44.1kHz clock
@@ -371,7 +514,14 @@ public class Spu implements Runnable {
     LOGGER.info(SPU_MARKER, "Setting SPU work area address to %x", workArea);
 
     synchronized(Spu.class) {
-      this.reverbWorkAreaAddress = workArea;
+      this.reverbWorkAreaAddress = workArea * 8;
+      this.reverbCurrentAddress = this.reverbWorkAreaAddress;
+    }
+  }
+
+  public void setReverb(final ReverbConfig reverb) {
+    synchronized(Spu.class) {
+      this.reverb = reverb;
     }
   }
 
