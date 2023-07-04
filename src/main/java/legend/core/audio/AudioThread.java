@@ -361,8 +361,7 @@ public final class AudioThread implements Runnable {
 
     final Channel channel = sequencedAudio.getChannel(channelIndex);
     channel.setVolume(value);
-    //TODO multiply by sssq reader value and div by 0x80
-    channel.setAdjustedVolume(value);
+    channel.setAdjustedVolume((value * sequencedAudio.getVolume()) / 0x80);
 
     for(final Voice voice : this.voices) {
       if(voice.isUsed() && voice.getChannel() == channel) {

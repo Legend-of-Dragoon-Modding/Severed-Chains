@@ -33,6 +33,10 @@ public final class SequencedAudio {
     return this.sssq.getTicksPerMs();
   }
 
+  public int getVolume() {
+    return this.sssq.getVolume();
+  }
+
   public void setTempo(final int value) {
     this.sssq.setTempo(value);
   }
