@@ -265,7 +265,7 @@ public final class SEffe {
   static {
     _801197c0[0] = SEffe::FUN_800fce10;
     _801197c0[1] = null;
-    _801197c0[2] = SEffe::FUN_800fcf18;
+    _801197c0[2] = SEffe::FUN_800fcf18; // no-op
   }
 
   private static final ArrayRef<ParticleInnerStuff04> particleInnerStuffDefaultsArray_801197ec = MEMORY.ref(4, 0x801197ecL, ArrayRef.of(ParticleInnerStuff04.class, 65, 0x4, ParticleInnerStuff04::new));
@@ -276,9 +276,9 @@ public final class SEffe {
    * Particle effect renderers
    * <ol start="0">
    *   <li>{@link SEffe#FUN_800fe120}</li>
-   *   <li>{@link SEffe#FUN_800fd600}</li>
+   *   <li>{@link SEffe#renderTmdParticleEffect}</li>
    *   <li>{@link SEffe#FUN_800fd87c}</li>
-   *   <li>{@link SEffe#FUN_800fddd8}</li>
+   *   <li>{@link SEffe#renderPixelParticleEffect}</li>
    *   <li>{@link SEffe#FUN_800fd87c}</li>
    *   <li>{@link SEffe#FUN_800fddd0}</li>
    * </ol>
@@ -286,9 +286,9 @@ public final class SEffe {
   private static final BiConsumer<ScriptState<EffectManagerData6c>, EffectManagerData6c>[] particleEffectRenderers_80119b7c = new BiConsumer[6];
   static {
     particleEffectRenderers_80119b7c[0] = SEffe::FUN_800fe120;
-    particleEffectRenderers_80119b7c[1] = SEffe::FUN_800fd600;
+    particleEffectRenderers_80119b7c[1] = SEffe::renderTmdParticleEffect;
     particleEffectRenderers_80119b7c[2] = SEffe::FUN_800fd87c;
-    particleEffectRenderers_80119b7c[3] = SEffe::FUN_800fddd8;
+    particleEffectRenderers_80119b7c[3] = SEffe::renderPixelParticleEffect;
     particleEffectRenderers_80119b7c[4] = SEffe::FUN_800fd87c;
     particleEffectRenderers_80119b7c[5] = SEffe::FUN_800fddd0; // no-op
   }
@@ -313,74 +313,74 @@ public final class SEffe {
     _80119b94[5] = SEffe::FUN_80101c74;
   }
 
-  private static final TriConsumer<EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94>[] _80119bac = new TriConsumer[65];
+  private static final TriConsumer<EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94>[] prerenderCallbacks_80119bac = new TriConsumer[65];
 
   static {
-    _80119bac[0] = SEffe::FUN_800fb9c0; // no-op
-    _80119bac[1] = SEffe::FUN_800fb9c0; // no-op
-    _80119bac[2] = SEffe::FUN_800fb9c8;
-    _80119bac[3] = SEffe::FUN_800fb9c0; // no-op
-    _80119bac[4] = SEffe::FUN_800fb9ec;
-    _80119bac[5] = SEffe::FUN_800fba58;
-    _80119bac[6] = SEffe::FUN_800fbb14;
-    _80119bac[7] = SEffe::FUN_800fbb14;
-    _80119bac[8] = SEffe::FUN_800fbbe0;
-    _80119bac[9] = SEffe::FUN_800fbbe0;
-    _80119bac[10] = SEffe::FUN_800fbd04;
-    _80119bac[11] = SEffe::FUN_800fbd04;
-    _80119bac[12] = SEffe::FUN_800fba58;
-    _80119bac[13] = SEffe::FUN_800fb9c0; // no-op
-    _80119bac[14] = SEffe::FUN_800fb9c0; // no-op
-    _80119bac[15] = SEffe::FUN_800fb9c0; // no-op
-    _80119bac[16] = SEffe::FUN_800fbd68;
-    _80119bac[17] = SEffe::FUN_800fb9c0; // no-op
-    _80119bac[18] = SEffe::FUN_800fb9c0; // no-op
-    _80119bac[19] = SEffe::FUN_800fb9c0; // no-op
-    _80119bac[20] = SEffe::FUN_800fbe94;
-    _80119bac[21] = SEffe::FUN_800fb9c0; // no-op
-    _80119bac[22] = SEffe::FUN_800fbf50;
-    _80119bac[23] = SEffe::FUN_800fbfd0;
-    _80119bac[24] = SEffe::FUN_800fc068;
-    _80119bac[25] = SEffe::FUN_800fc0d0;
-    _80119bac[26] = SEffe::FUN_800fb9c0; // no-op
-    _80119bac[27] = SEffe::FUN_800fc1fc;
-    _80119bac[28] = SEffe::FUN_800fc068;
-    _80119bac[29] = SEffe::FUN_800fb9c0; // no-op
-    _80119bac[30] = SEffe::FUN_800fb9c0; // no-op
-    _80119bac[31] = SEffe::FUN_800fb9c0; // no-op
-    _80119bac[32] = SEffe::FUN_800fc280;
-    _80119bac[33] = SEffe::FUN_800fb9c0; // no-op
-    _80119bac[34] = SEffe::FUN_800fc348;
-    _80119bac[35] = SEffe::FUN_800fb9c0; // no-op
-    _80119bac[36] = SEffe::FUN_800fb9c0; // no-op
-    _80119bac[37] = SEffe::FUN_800fb9c0; // no-op
-    _80119bac[38] = SEffe::FUN_800fb9c0; // no-op
-    _80119bac[39] = SEffe::FUN_800fc410;
-    _80119bac[40] = SEffe::FUN_800fb9c0; // no-op
-    _80119bac[41] = SEffe::FUN_800fc42c;
-    _80119bac[42] = SEffe::FUN_800fb9c0; // no-op
-    _80119bac[43] = SEffe::FUN_800fb9c0; // no-op
-    _80119bac[44] = SEffe::FUN_800fc410;
-    _80119bac[45] = SEffe::FUN_800fb9c0; // no-op
-    _80119bac[46] = SEffe::FUN_800fb9c0; // no-op
-    _80119bac[47] = SEffe::FUN_800fb9c0; // no-op
-    _80119bac[48] = SEffe::FUN_800fb9c0; // no-op
-    _80119bac[49] = SEffe::FUN_800fc528;
-    _80119bac[50] = SEffe::FUN_800fc5a8;
-    _80119bac[51] = SEffe::FUN_800fb9c0; // no-op
-    _80119bac[52] = SEffe::FUN_800fc61c;
-    _80119bac[53] = SEffe::FUN_800fc6bc;
-    _80119bac[54] = SEffe::FUN_800fb9c0; // no-op
-    _80119bac[55] = SEffe::FUN_800fb9c0; // no-op
-    _80119bac[56] = SEffe::FUN_800fb9c0; // no-op
-    _80119bac[57] = SEffe::FUN_800fb9c0; // no-op
-    _80119bac[58] = SEffe::FUN_800fc768;
-    _80119bac[59] = SEffe::FUN_800fb9c0; // no-op
-    _80119bac[60] = SEffe::FUN_800fc7c8;
-    _80119bac[61] = SEffe::FUN_800fb9c0; // no-op
-    _80119bac[62] = SEffe::FUN_800fb9c0; // no-op
-    _80119bac[63] = SEffe::FUN_800fb9c0; // no-op
-    _80119bac[64] = SEffe::FUN_800fb9c0; // no-op
+    prerenderCallbacks_80119bac[0] = SEffe::FUN_800fb9c0; // no-op
+    prerenderCallbacks_80119bac[1] = SEffe::FUN_800fb9c0; // no-op
+    prerenderCallbacks_80119bac[2] = SEffe::FUN_800fb9c8;
+    prerenderCallbacks_80119bac[3] = SEffe::FUN_800fb9c0; // no-op
+    prerenderCallbacks_80119bac[4] = SEffe::FUN_800fb9ec;
+    prerenderCallbacks_80119bac[5] = SEffe::FUN_800fba58;
+    prerenderCallbacks_80119bac[6] = SEffe::FUN_800fbb14;
+    prerenderCallbacks_80119bac[7] = SEffe::FUN_800fbb14;
+    prerenderCallbacks_80119bac[8] = SEffe::FUN_800fbbe0;
+    prerenderCallbacks_80119bac[9] = SEffe::FUN_800fbbe0;
+    prerenderCallbacks_80119bac[10] = SEffe::FUN_800fbd04;
+    prerenderCallbacks_80119bac[11] = SEffe::FUN_800fbd04;
+    prerenderCallbacks_80119bac[12] = SEffe::FUN_800fba58;
+    prerenderCallbacks_80119bac[13] = SEffe::FUN_800fb9c0; // no-op
+    prerenderCallbacks_80119bac[14] = SEffe::FUN_800fb9c0; // no-op
+    prerenderCallbacks_80119bac[15] = SEffe::FUN_800fb9c0; // no-op
+    prerenderCallbacks_80119bac[16] = SEffe::FUN_800fbd68;
+    prerenderCallbacks_80119bac[17] = SEffe::FUN_800fb9c0; // no-op
+    prerenderCallbacks_80119bac[18] = SEffe::FUN_800fb9c0; // no-op
+    prerenderCallbacks_80119bac[19] = SEffe::FUN_800fb9c0; // no-op
+    prerenderCallbacks_80119bac[20] = SEffe::FUN_800fbe94;
+    prerenderCallbacks_80119bac[21] = SEffe::FUN_800fb9c0; // no-op
+    prerenderCallbacks_80119bac[22] = SEffe::FUN_800fbf50;
+    prerenderCallbacks_80119bac[23] = SEffe::FUN_800fbfd0;
+    prerenderCallbacks_80119bac[24] = SEffe::FUN_800fc068;
+    prerenderCallbacks_80119bac[25] = SEffe::FUN_800fc0d0;
+    prerenderCallbacks_80119bac[26] = SEffe::FUN_800fb9c0; // no-op
+    prerenderCallbacks_80119bac[27] = SEffe::FUN_800fc1fc;
+    prerenderCallbacks_80119bac[28] = SEffe::FUN_800fc068;
+    prerenderCallbacks_80119bac[29] = SEffe::FUN_800fb9c0; // no-op
+    prerenderCallbacks_80119bac[30] = SEffe::FUN_800fb9c0; // no-op
+    prerenderCallbacks_80119bac[31] = SEffe::FUN_800fb9c0; // no-op
+    prerenderCallbacks_80119bac[32] = SEffe::FUN_800fc280;
+    prerenderCallbacks_80119bac[33] = SEffe::FUN_800fb9c0; // no-op
+    prerenderCallbacks_80119bac[34] = SEffe::FUN_800fc348;
+    prerenderCallbacks_80119bac[35] = SEffe::FUN_800fb9c0; // no-op
+    prerenderCallbacks_80119bac[36] = SEffe::FUN_800fb9c0; // no-op
+    prerenderCallbacks_80119bac[37] = SEffe::FUN_800fb9c0; // no-op
+    prerenderCallbacks_80119bac[38] = SEffe::FUN_800fb9c0; // no-op
+    prerenderCallbacks_80119bac[39] = SEffe::FUN_800fc410;
+    prerenderCallbacks_80119bac[40] = SEffe::FUN_800fb9c0; // no-op
+    prerenderCallbacks_80119bac[41] = SEffe::FUN_800fc42c;
+    prerenderCallbacks_80119bac[42] = SEffe::FUN_800fb9c0; // no-op
+    prerenderCallbacks_80119bac[43] = SEffe::FUN_800fb9c0; // no-op
+    prerenderCallbacks_80119bac[44] = SEffe::FUN_800fc410;
+    prerenderCallbacks_80119bac[45] = SEffe::FUN_800fb9c0; // no-op
+    prerenderCallbacks_80119bac[46] = SEffe::FUN_800fb9c0; // no-op
+    prerenderCallbacks_80119bac[47] = SEffe::FUN_800fb9c0; // no-op
+    prerenderCallbacks_80119bac[48] = SEffe::FUN_800fb9c0; // no-op
+    prerenderCallbacks_80119bac[49] = SEffe::FUN_800fc528;
+    prerenderCallbacks_80119bac[50] = SEffe::FUN_800fc5a8;
+    prerenderCallbacks_80119bac[51] = SEffe::FUN_800fb9c0; // no-op
+    prerenderCallbacks_80119bac[52] = SEffe::FUN_800fc61c;
+    prerenderCallbacks_80119bac[53] = SEffe::FUN_800fc6bc;
+    prerenderCallbacks_80119bac[54] = SEffe::FUN_800fb9c0; // no-op
+    prerenderCallbacks_80119bac[55] = SEffe::FUN_800fb9c0; // no-op
+    prerenderCallbacks_80119bac[56] = SEffe::FUN_800fb9c0; // no-op
+    prerenderCallbacks_80119bac[57] = SEffe::FUN_800fb9c0; // no-op
+    prerenderCallbacks_80119bac[58] = SEffe::FUN_800fc768;
+    prerenderCallbacks_80119bac[59] = SEffe::FUN_800fb9c0; // no-op
+    prerenderCallbacks_80119bac[60] = SEffe::FUN_800fc7c8;
+    prerenderCallbacks_80119bac[61] = SEffe::FUN_800fb9c0; // no-op
+    prerenderCallbacks_80119bac[62] = SEffe::FUN_800fb9c0; // no-op
+    prerenderCallbacks_80119bac[63] = SEffe::FUN_800fb9c0; // no-op
+    prerenderCallbacks_80119bac[64] = SEffe::FUN_800fb9c0; // no-op
   }
   private static final QuadConsumer<ScriptState<EffectManagerData6c>, EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94>[] _80119cb0 = new QuadConsumer[65];
   static {
@@ -874,9 +874,9 @@ public final class SEffe {
     } else if(effect.parentScriptIndex_04 != -1 && particle._14 == 0) {
       final VECTOR sp0x10 = new VECTOR();
       scriptGetScriptedObjectPos(effect.parentScriptIndex_04, sp0x10);
-      particle.particleVelocity_58.setX((short)((sp0x10.getX() - (particle._3c.getX() + particle.translation_2c.getX())) / particle._1a.getZ()));
-      particle.particleVelocity_58.setY((short)((sp0x10.getY() - (particle._3c.getY() + particle.translation_2c.getY())) / particle._1a.getZ()));
-      particle.particleVelocity_58.setZ((short)((sp0x10.getZ() - (particle._3c.getZ() + particle.translation_2c.getZ())) / particle._1a.getZ()));
+      particle.particleVelocity_58.setX((short)((sp0x10.getX() - (particle.particlePositionCopy1.getX() + particle.translation_2c.getX())) / particle._1a.getZ()));
+      particle.particleVelocity_58.setY((short)((sp0x10.getY() - (particle.particlePositionCopy1.getY() + particle.translation_2c.getY())) / particle._1a.getZ()));
+      particle.particleVelocity_58.setZ((short)((sp0x10.getZ() - (particle.particlePositionCopy1.getZ() + particle.translation_2c.getZ())) / particle._1a.getZ()));
       particle.particleVelocity_58.x.add(particle._18);
       particle.particleVelocity_58.y.add(particle._1a.getX());
       particle.particleVelocity_58.z.add(particle._1a.getY());
@@ -998,46 +998,45 @@ public final class SEffe {
   }
 
   @Method(0x800fc8f8L)
-  public static void FUN_800fc8f8(@Nullable VECTOR a0, @Nullable final SVECTOR a1) {
-    if(a0 == null) {
-      a0 = new VECTOR();
+  public static void FUN_800fc8f8(@Nullable VECTOR in, @Nullable final SVECTOR out) {
+    if(in == null) {
+      in = new VECTOR();
     }
 
     //LAB_800fc920
-    final MATRIX s1 = worldToScreenMatrix_800c3548;
-    final VECTOR sp0x30 = new VECTOR().set(s1.transfer).negate();
-    ApplyTransposeMatrixLV(s1, sp0x30, a0);
+    final MATRIX ws = worldToScreenMatrix_800c3548;
+    final VECTOR wsNegated = new VECTOR().set(ws.transfer).negate();
+    ApplyTransposeMatrixLV(ws, wsNegated, in);
 
-    if(a1 != null) {
-      sp0x30.set(s1.transfer).negate();
-      sp0x30.z.add(0x1000);
+    if(out != null) {
+      wsNegated.set(ws.transfer).negate();
+      wsNegated.z.add(0x1000);
 
       final VECTOR sp0x10 = new VECTOR();
-      ApplyTransposeMatrixLV(s1, sp0x30, sp0x10);
-      sp0x10.sub(a0);
+      ApplyTransposeMatrixLV(ws, wsNegated, sp0x10);
+      sp0x10.sub(in);
       final short angle = (short)ratan2(sp0x10.getX(), sp0x10.getZ());
-      a1.setY(angle);
+      out.setY(angle);
 
       //LAB_800fca44
-      a1.setX((short)ratan2(-sp0x10.getY(), (rcos(-angle) * sp0x10.getZ() - rsin(-angle) * sp0x10.getX()) / 0x1000));
-      a1.setZ((short)0);
+      out.setX((short)ratan2(-sp0x10.getY(), (rcos(-angle) * sp0x10.getZ() - rsin(-angle) * sp0x10.getX()) / 0x1000));
+      out.setZ((short)0);
     }
     //LAB_800fca5c
   }
 
   /** Returns Z */
   @Method(0x800fca78L)
-  public static int FUN_800fca78(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final VECTOR s2, final GpuCommandPoly cmd) {
+  public static int FUN_800fca78(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final VECTOR translation, final GpuCommandPoly cmd) {
     final ShortRef refX = new ShortRef();
     final ShortRef refY = new ShortRef();
-    final int z = FUN_800cfc20(particle.managerRotation_68, particle.translation_2c, s2, refX, refY);
+    final int z = FUN_800cfc20(particle.managerRotation_68, particle.translation_2c, translation, refX, refY);
     if(z >= 40) {
       final int zScale = 0x50_0000 / z;
       final int horizontalScale = zScale * (manager._10.scale_16.getX() + particle.scaleHorizontal_06) >> 12;
       final int verticalScale = zScale * (manager._10.scale_16.getY() + particle.scaleVertical_08) >> 12;
 
-      int angle = particle.angle_0e + manager._10.rot_10.getX() - 0xa00;
-
+      final int angle;
       if((manager._10._24 & 0x2) != 0) {
         final VECTOR sp0x28 = new VECTOR();
         final SVECTOR sp0x38 = new SVECTOR();
@@ -1045,10 +1044,12 @@ public final class SEffe {
 
         //LAB_800fcb90
         //LAB_800fcbd4
-        final int sp18 = (particle._48.getZ() - s2.getZ()) * -Math.abs(rsin(sp0x38.getY() - manager._10.rot_10.getY())) / 0x1000 - (s2.getX() - particle._48.getX()) * -Math.abs(rcos(sp0x38.getY() + manager._10.rot_10.getY())) / 0x1000;
-        final int sp1c = s2.getY() - particle._48.getY();
+        final int sp18 = (particle.particlePositionCopy2_48.getZ() - translation.getZ()) * -Math.abs(rsin(sp0x38.getY() - manager._10.rot_10.getY())) / 0x1000 - (translation.getX() - particle.particlePositionCopy2_48.getX()) * -Math.abs(rcos(sp0x38.getY() + manager._10.rot_10.getY())) / 0x1000;
+        final int sp1c = translation.getY() - particle.particlePositionCopy2_48.getY();
         angle = -ratan2(sp1c, sp18) + 0x400;
-        particle._48.set(s2);
+        particle.particlePositionCopy2_48.set(translation);
+      } else {
+        angle = particle.angle_0e + manager._10.rot_10.getX() - 0xa00;
       }
 
       //LAB_800fcc20
@@ -1062,21 +1063,21 @@ public final class SEffe {
       final int sin = rsin(angle);
 
       // Rotate coords
-      final int sp50 = (short)left * sin >> 12;
-      final int sp60 = (short)left * cos >> 12;
-      final int sp58 = (short)right * sin >> 12;
-      final int sp68 = (short)right * cos >> 12;
-      final int sp62 = (short)top * cos >> 12;
-      final int sp52 = (short)top * sin >> 12;
-      final int sp5a = (short)bottom * sin >> 12;
-      final int sp6a = (short)bottom * cos >> 12;
+      final int rotX0 = (short)left * cos >> 12;
+      final int rotY0 = (short)left * sin >> 12;
+      final int rotX1 = (short)right * cos >> 12;
+      final int rotY1 = (short)right * sin >> 12;
+      final int rotX2 = (short)top * sin >> 12;
+      final int rotY2 = (short)top * cos >> 12;
+      final int rotX3 = (short)bottom * sin >> 12;
+      final int rotY3 = (short)bottom * cos >> 12;
 
       final short x = refX.get();
       final short y = refY.get();
-      cmd.pos(0, (short)(x + sp60 - sp52), (short)(y + sp62 + sp50));
-      cmd.pos(1, (short)(x + sp68 - sp52), (short)(y + sp62 + sp58));
-      cmd.pos(2, (short)(x + sp60 - sp5a), (short)(y + sp6a + sp50));
-      cmd.pos(3, (short)(x + sp68 - sp5a), (short)(y + sp6a + sp58));
+      cmd.pos(0, (short)(x + rotX0 - rotX2), (short)(y + rotY0 + rotY2));
+      cmd.pos(1, (short)(x + rotX1 - rotX2), (short)(y + rotY1 + rotY2));
+      cmd.pos(2, (short)(x + rotX0 - rotX3), (short)(y + rotY0 + rotY3));
+      cmd.pos(3, (short)(x + rotX1 - rotX3), (short)(y + rotY1 + rotY3));
     }
 
     //LAB_800fcde0
@@ -1084,14 +1085,14 @@ public final class SEffe {
   }
 
   @Method(0x800fce10L)
-  public static void FUN_800fce10(final EffectManagerData6c manager, final ParticleMetrics48 particleMetric) {
-    if(particleMetric.flags_00 >= 0) {
-      GPU.queueCommand(particleMetric.z_04 + manager._10.z_22 >> 2, new GpuCommandLine()
+  public static void FUN_800fce10(final EffectManagerData6c manager, final ParticleMetrics48 particleMetrics) {
+    if(particleMetrics.flags_00 >= 0) {
+      GPU.queueCommand(particleMetrics.z_04 + manager._10.z_22 >> 2, new GpuCommandLine()
         .translucent(Translucency.B_PLUS_F)
-        .rgb(0, particleMetric.colour0_40.getR(), particleMetric.colour0_40.getG(), particleMetric.colour0_40.getB())
-        .rgb(1, particleMetric.colour1_44.getR(), particleMetric.colour1_44.getG(), particleMetric.colour1_44.getB())
-        .pos(0, particleMetric.x0_08, particleMetric.y0_10)
-        .pos(1, particleMetric.x1_0c, particleMetric.y1_14)
+        .rgb(0, particleMetrics.colour0_40.getR(), particleMetrics.colour0_40.getG(), particleMetrics.colour0_40.getB())
+        .rgb(1, particleMetrics.colour1_44.getR(), particleMetrics.colour1_44.getG(), particleMetrics.colour1_44.getB())
+        .pos(0, particleMetrics.x0_08, particleMetrics.y0_10)
+        .pos(1, particleMetrics.x1_0c, particleMetrics.y1_14)
       );
     }
     //LAB_800fcf08
@@ -1102,29 +1103,32 @@ public final class SEffe {
     // no-op
   }
 
-  /** Used by particle renderer index 1 (renders ice chunk particles and ???). Used renderCtmd */
+  /**
+   * Used by particle renderer index 1 (renders ice chunk particles and ???). Used renderCtmd
+   * Seems to involve lit TMDs.
+   */
   @Method(0x800fcf20L)
-  public static void FUN_800fcf20(final EffectManagerData6c manager, final TmdObjTable1c tmd, final ParticleMetrics48 particleMetric, final int tpage) {
-    if(particleMetric.flags_00 >= 0) {
-      final MATRIX sp0x10 = new MATRIX();
-      FUN_800fc4bc(sp0x10, manager, particleMetric);
-      if((particleMetric.flags_00 & 0x40) == 0) {
-        FUN_800e61e4(particleMetric.colour0_40.getR() << 5, particleMetric.colour0_40.getG() << 5, particleMetric.colour0_40.getB() << 5);
+  public static void renderTmdParticle(final EffectManagerData6c manager, final TmdObjTable1c tmd, final ParticleMetrics48 particleMetrics, final int tpage) {
+    if(particleMetrics.flags_00 >= 0) {
+      final MATRIX lightMatrix = new MATRIX();
+      FUN_800fc4bc(lightMatrix, manager, particleMetrics);
+      if((particleMetrics.flags_00 & 0x40) == 0) {
+        FUN_800e61e4(particleMetrics.colour0_40.getR() << 5, particleMetrics.colour0_40.getG() << 5, particleMetrics.colour0_40.getB() << 5);
       }
 
       //LAB_800fcf94
-      GsSetLightMatrix(sp0x10);
-      final MATRIX sp0x30 = new MATRIX();
-      MulMatrix0(worldToScreenMatrix_800c3548, sp0x10, sp0x30);
-      if((particleMetric.flags_00 & 0x400_0000) == 0) {
-        RotMatrix_Xyz(manager._10.rot_10, sp0x30);
-        ScaleMatrixL(sp0x30, new VECTOR().set(manager._10.scale_16));
+      GsSetLightMatrix(lightMatrix);
+      final MATRIX transformMatrix = new MATRIX();
+      MulMatrix0(worldToScreenMatrix_800c3548, lightMatrix, transformMatrix);
+      if((particleMetrics.flags_00 & 0x400_0000) == 0) {
+        RotMatrix_Xyz(manager._10.rot_10, transformMatrix);
+        ScaleMatrixL(transformMatrix, new VECTOR().set(manager._10.scale_16));
       }
 
       //LAB_800fcff8
-      setRotTransMatrix(sp0x30);
+      setRotTransMatrix(transformMatrix);
       zOffset_1f8003e8.set(0);
-      if((manager._10.flags_00 & 0x4000_0000L) != 0) {
+      if((manager._10.flags_00 & 0x4000_0000) != 0) {
         tmdGp0Tpage_1f8003ec.set(manager._10.flags_00 >>> 23 & 0x60);
       } else {
         //LAB_800fd038
@@ -1132,9 +1136,9 @@ public final class SEffe {
       }
 
       //LAB_800fd040
-      final GsDOBJ2 sp0x60 = new GsDOBJ2();
-      sp0x60.attribute_00 = particleMetric.flags_00;
-      sp0x60.tmd_08 = tmd;
+      final GsDOBJ2 dobj = new GsDOBJ2();
+      dobj.attribute_00 = particleMetrics.flags_00;
+      dobj.tmd_08 = tmd;
 
       final int oldZShift = zShift_1f8003c4.get();
       final int oldZMax = zMax_1f8003cc.get();
@@ -1142,12 +1146,12 @@ public final class SEffe {
       zShift_1f8003c4.set(2);
       zMax_1f8003cc.set(0xffe);
       zMin = 0xb;
-      Renderer.renderDobj2(sp0x60, false, 0x20);
+      Renderer.renderDobj2(dobj, false, 0x20);
       zShift_1f8003c4.set(oldZShift);
       zMax_1f8003cc.set(oldZMax);
       zMin = oldZMin;
 
-      if((particleMetric.flags_00 & 0x40) == 0) {
+      if((particleMetrics.flags_00 & 0x40) == 0) {
         FUN_800e62a8();
       }
     }
@@ -1186,7 +1190,7 @@ public final class SEffe {
   }
 
   @Method(0x800fd1dcL)
-  public static void FUN_800fd1dc(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final VECTOR colour) {
+  public static void tickParticleAttributes(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final VECTOR colour) {
     if((effect.effectInner_08.particleInnerStuff_1c & 0x800_0000) == 0 || (manager._10._24 & 0x1) != 0) {
       //LAB_800fd23c
       particle.r_84 -= particle.stepR_8a;
@@ -1236,14 +1240,14 @@ public final class SEffe {
     //LAB_800fd3f8
     particle.particleVelocity_58.y.add((short)(manager._10._2c >> 8));
 
-    if(effect.scaleOrUseParticleAcceleration_6c) {
-      particle.particleVelocity_58.add(effect.particleAcceleration_70).shra(8);
+    if(effect.scaleOrUseEffectAcceleration_6c) {
+      particle.particleVelocity_58.add(effect.effectAcceleration_70).shra(8);
     }
     //LAB_800fd458
   }
 
   @Method(0x800fd460L)
-  public static long FUN_800fd460(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  public static boolean checkParticleShouldRender(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
     particle.framesUntilRender_04--;
 
     final short framesUntilRender = particle.framesUntilRender_04;
@@ -1251,7 +1255,7 @@ public final class SEffe {
     //LAB_800fd53c
     if(framesUntilRender >= 0)  {
       if(framesUntilRender != 0) {
-        return 1;
+        return false;
       }
       FUN_800fd084(manager, effect, particle);
 
@@ -1262,7 +1266,7 @@ public final class SEffe {
           //LAB_800fd4f0
           //LAB_800fd504
           for(int i = 0; i < effect.countParticleSub_54; i++) {
-            particle._44[i].setY((short)0);
+            particle.subParticlePosition_44[i].setY((short)0);
           }
         }
       }
@@ -1277,7 +1281,7 @@ public final class SEffe {
     effect.callback_88.accept(state, manager, effect, particle);
 
     if((particle.flags_90 & 0x1) == 0) {
-      return 1;
+      return false;
     }
 
     if(particle.ticksRemaining_12 > 0) {
@@ -1288,46 +1292,46 @@ public final class SEffe {
     if(particle.ticksRemaining_12 == 0 && (manager._10._24 & 0x80) == 0) {
       particle.flags_90 &= 0xffff_fffe;
       effect.callback_90.accept(state, manager, effect, particle);
-      return 1;
+      return false;
     }
 
     //LAB_800fd5e0
-    return 0;
+    return true;
   }
 
   @Method(0x800fd600L)
-  public static void FUN_800fd600(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void renderTmdParticleEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
     final ParticleEffectData98 effect = (ParticleEffectData98)manager.effect_44;
     effect.countFramesRendered_52++;
 
     //LAB_800fd660
     for(int i = 0; i < effect.countParticleInstance_50; i++) {
       final ParticleEffectInstance94 particle = effect.particleArray_68[i];
-      if(FUN_800fd460(state, manager, effect, particle) == 0) {
-        effect.callback_84.accept(manager, effect, particle);
+      if(checkParticleShouldRender(state, manager, effect, particle)) {
+        effect.prerenderCallback_84.accept(manager, effect, particle);
         final VECTOR colour = new VECTOR();
-        FUN_800fd1dc(manager, effect, particle, colour);
+        tickParticleAttributes(manager, effect, particle, colour);
 
         final VECTOR rotatedAndTranslatedPosition = new VECTOR();
         rotateAndTranslateEffect(manager, null, new VECTOR().set(particle.particlePosition_50), rotatedAndTranslatedPosition);
 
-        final ParticleMetrics48 metrics = new ParticleMetrics48();
-        metrics.flags_00 = manager._10.flags_00;
-        metrics.translation_18.set(particle.translation_2c).add(rotatedAndTranslatedPosition);
-        metrics.scale_28.setX(manager._10.scale_16.getX() + particle.scaleHorizontal_06);
-        metrics.scale_28.setY(manager._10.scale_16.getY() + particle.scaleVertical_08);
-        metrics.scale_28.setZ(manager._10.scale_16.getX() + particle.scaleHorizontal_06); // This is correct
-        metrics.rotation_38.set(particle.spriteRotation_70).add(particle.managerRotation_68);
-        metrics.colour0_40.set(colour.getX() >> 8, colour.getY() >> 8, colour.getZ() >> 8);
-        metrics.colour1_44.set(0, 0, 0);
-        FUN_800fcf20(manager, effect.tmd_30, metrics, effect.tpage_56);
+        final ParticleMetrics48 particleMetrics = new ParticleMetrics48();
+        particleMetrics.flags_00 = manager._10.flags_00;
+        particleMetrics.translation_18.set(particle.translation_2c).add(rotatedAndTranslatedPosition);
+        particleMetrics.scale_28.setX(manager._10.scale_16.getX() + particle.scaleHorizontal_06);
+        particleMetrics.scale_28.setY(manager._10.scale_16.getY() + particle.scaleVertical_08);
+        particleMetrics.scale_28.setZ(manager._10.scale_16.getX() + particle.scaleHorizontal_06); // This is correct
+        particleMetrics.rotation_38.set(particle.spriteRotation_70).add(particle.managerRotation_68);
+        particleMetrics.colour0_40.set(colour.getX() >> 8, colour.getY() >> 8, colour.getZ() >> 8);
+        particleMetrics.colour1_44.set(0, 0, 0);
+        renderTmdParticle(manager, effect.tmd_30, particleMetrics, effect.tpage_56);
       }
       //LAB_800fd7e0
     }
 
     //LAB_800fd7fc
-    if(effect.scaleOrUseParticleAcceleration_6c) {
-      effect.particleAcceleration_70.mul(effect.scaleParticleAcceleration_80).shra(8);
+    if(effect.scaleOrUseEffectAcceleration_6c) {
+      effect.effectAcceleration_70.mul(effect.scaleParticleAcceleration_80).shra(8);
     }
     //LAB_800fd858
   }
@@ -1344,25 +1348,25 @@ public final class SEffe {
       for(int i = 0; i < effect.countParticleInstance_50; i++) {
         final ParticleEffectInstance94 particle = effect.particleArray_68[i];
 
-        if(FUN_800fd460(state, manager, effect, particle) == 0) {
+        if(checkParticleShouldRender(state, manager, effect, particle)) {
           //LAB_800fd918
           for(int j = effect.countParticleSub_54 - 1; j > 0; j--) {
-            particle._44[j].set(particle._44[j - 1]);
+            particle.subParticlePosition_44[j].set(particle.subParticlePosition_44[j - 1]);
           }
 
           //LAB_800fd950
-          particle._44[0].sub(particle.particlePosition_50);
-          effect.callback_84.accept(manager, effect, particle);
+          particle.subParticlePosition_44[0].sub(particle.particlePosition_50);
+          effect.prerenderCallback_84.accept(manager, effect, particle);
 
-          final VECTOR sp0x20 = new VECTOR();
-          FUN_800fd1dc(manager, effect, particle, sp0x20);
+          final VECTOR colour = new VECTOR();
+          tickParticleAttributes(manager, effect, particle, colour);
 
-          final VECTOR sp0x30 = new VECTOR();
+          final VECTOR colourMod = new VECTOR();
           if((effect.effectInner_08.particleInnerStuff_1c & 0x1000_0000) == 0 || (particle.flags_90 & 0x8) == 0) {
             //LAB_800fd9f4
-            sp0x30.set(0, 0, 0);
+            colourMod.set(0, 0, 0);
           } else {
-            sp0x30.set(sp0x20).negate().div(2);
+            colourMod.set(colour).negate().div(2);
           }
 
           //LAB_800fda00
@@ -1370,9 +1374,9 @@ public final class SEffe {
 
           //LAB_800fda58
           //LAB_800fda90
-          sp0x20.setX(MathHelper.clamp(sp0x20.getX() + sp0x30.getX(), 0, 0x8000));
-          sp0x20.setY(MathHelper.clamp(sp0x20.getY() + sp0x30.getY(), 0, 0x8000));
-          sp0x20.setZ(MathHelper.clamp(sp0x20.getZ() + sp0x30.getZ(), 0, 0x8000));
+          colour.setX(MathHelper.clamp(colour.getX() + colourMod.getX(), 0, 0x8000));
+          colour.setY(MathHelper.clamp(colour.getY() + colourMod.getY(), 0, 0x8000));
+          colour.setZ(MathHelper.clamp(colour.getZ() + colourMod.getZ(), 0, 0x8000));
 
           //LAB_800fdac8
           if((particle.flags_90 & 0x6) != 0) {
@@ -1382,12 +1386,12 @@ public final class SEffe {
           }
 
           //LAB_800fdb14
-          final SVECTOR sp0x98 = new SVECTOR();
-          sp0x98.setX((short)(sp0x20.getX() / effect.countParticleSub_54));
-          sp0x98.setY((short)(sp0x20.getY() / effect.countParticleSub_54));
-          sp0x98.setZ((short)(sp0x20.getZ() / effect.countParticleSub_54));
+          final SVECTOR stepColour = new SVECTOR();
+          stepColour.setX((short)(colour.getX() / effect.countParticleSub_54));
+          stepColour.setY((short)(colour.getY() / effect.countParticleSub_54));
+          stepColour.setZ((short)(colour.getZ() / effect.countParticleSub_54));
 
-          final VECTOR sp0x40 = new VECTOR().set(particle._44[0]);
+          final VECTOR sp0x40 = new VECTOR().set(particle.subParticlePosition_44[0]);
           final ShortRef refX1 = new ShortRef();
           final ShortRef refY1 = new ShortRef();
           int z = FUN_800cfc20(particle.managerRotation_68, particle.translation_2c, sp0x40, refX1, refY1) / 4;
@@ -1404,10 +1408,10 @@ public final class SEffe {
 
             //LAB_800fdbe4
             for(int k = 0; k < effect.countParticleSub_54 - 1; k++) {
-              particleMetrics.colour0_40.set(sp0x20.getX() >> 8, sp0x20.getY() >> 8, sp0x20.getZ() >> 8);
-              sp0x20.sub(sp0x98);
-              particleMetrics.colour1_44.set(sp0x20.getX() >> 8, sp0x20.getY() >> 8, sp0x20.getZ() >> 8);
-              sp0x40.set(particle._44[k]);
+              particleMetrics.colour0_40.set(colour.getX() >> 8, colour.getY() >> 8, colour.getZ() >> 8);
+              colour.sub(stepColour);
+              particleMetrics.colour1_44.set(colour.getX() >> 8, colour.getY() >> 8, colour.getZ() >> 8);
+              sp0x40.set(particle.subParticlePosition_44[k]);
 
               final ShortRef refX2 = new ShortRef();
               final ShortRef refY2 = new ShortRef();
@@ -1426,8 +1430,8 @@ public final class SEffe {
     }
 
     //LAB_800fdd44
-    if(effect.scaleOrUseParticleAcceleration_6c) {
-      effect.particleAcceleration_70.mul(effect.scaleParticleAcceleration_80).shra(8);
+    if(effect.scaleOrUseEffectAcceleration_6c) {
+      effect.effectAcceleration_70.mul(effect.scaleParticleAcceleration_80).shra(8);
     }
     //LAB_800fdda0
   }
@@ -1438,7 +1442,7 @@ public final class SEffe {
   }
 
   @Method(0x800fddd8L)
-  public static void FUN_800fddd8(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void renderPixelParticleEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
     final ParticleEffectData98 effect = (ParticleEffectData98)manager.effect_44;
     effect.countFramesRendered_52++;
 
@@ -1446,28 +1450,28 @@ public final class SEffe {
     for(int i = 0; i < effect.countParticleInstance_50; i++) {
       final ParticleEffectInstance94 particle = effect.particleArray_68[i];
 
-      if(FUN_800fd460(state, manager, effect, particle) == 0) {
-        effect.callback_84.accept(manager, effect, particle);
+      if(checkParticleShouldRender(state, manager, effect, particle)) {
+        effect.prerenderCallback_84.accept(manager, effect, particle);
 
-        final VECTOR sp0x20 = new VECTOR();
-        FUN_800fd1dc(manager, effect, particle, sp0x20);
+        final VECTOR colour = new VECTOR();
+        tickParticleAttributes(manager, effect, particle, colour);
 
-        final VECTOR sp0x50 = new VECTOR().set(particle.particlePosition_50);
-        final ShortRef sp0x60 = new ShortRef();
-        final ShortRef sp0x64 = new ShortRef();
+        final VECTOR translation = new VECTOR().set(particle.particlePosition_50);
+        final ShortRef refX = new ShortRef();
+        final ShortRef refY = new ShortRef();
 
-        int s1 = FUN_800cfc20(particle.managerRotation_68, particle.translation_2c, sp0x50, sp0x60, sp0x64) >> 2;
-        final int v1 = s1 + manager._10.z_22;
-        if(v1 >= 0xa0) {
-          if(v1 >= 0xffe) {
-            s1 = 0xffe - manager._10.z_22;
+        int z = FUN_800cfc20(particle.managerRotation_68, particle.translation_2c, translation, refX, refY) >> 2;
+        final int zCombined = z + manager._10.z_22;
+        if(zCombined >= 0xa0) {
+          if(zCombined >= 0xffe) {
+            z = 0xffe - manager._10.z_22;
           }
 
           //LAB_800fdf44
-          //TODO 1x1?
-          GPU.queueCommand(s1 + manager._10.z_22 >> 2, new GpuCommandQuad()
-            .rgb(sp0x20.getX() >> 8, sp0x20.getY() >> 8, sp0x20.getZ() >> 8)
-            .pos(sp0x60.get(), sp0x64.get(), 1, 1)
+          // gp0 command 68h, which is an opaque dot (1x1)
+          GPU.queueCommand(z + manager._10.z_22 >> 2, new GpuCommandQuad()
+            .rgb(colour.getX() >> 8, colour.getY() >> 8, colour.getZ() >> 8)
+            .pos(refX.get(), refY.get(), 1, 1)
           );
         }
       }
@@ -1475,12 +1479,13 @@ public final class SEffe {
     }
 
     //LAB_800fdfe8
-    if(effect.scaleOrUseParticleAcceleration_6c) {
-      effect.particleAcceleration_70.mul(effect.scaleParticleAcceleration_80).shra(8);
+    if(effect.scaleOrUseEffectAcceleration_6c) {
+      effect.effectAcceleration_70.mul(effect.scaleParticleAcceleration_80).shra(8);
     }
     //LAB_800fe044
   }
 
+  /** Has some kind of sub-particles */
   @Method(0x800fe120L)
   public static void FUN_800fe120(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
     final ParticleEffectData98 effect = (ParticleEffectData98)manager.effect_44;
@@ -1495,16 +1500,16 @@ public final class SEffe {
     for(int i = 0; i < effect.countParticleInstance_50; i++) {
       final ParticleEffectInstance94 particle = effect.particleArray_68[i];
 
-      if(FUN_800fd460(state, manager, effect, particle) == 0) {
+      if(checkParticleShouldRender(state, manager, effect, particle)) {
         //LAB_800fe1bc
         for(int j = effect.countParticleSub_54 - 1; j > 0; j--) {
           particle.particleInstanceSubArray_80[j].copy(particle.particleInstanceSubArray_80[j - 1]);
         }
 
         //LAB_800fe1fc
-        effect.callback_84.accept(manager, effect, particle);
+        effect.prerenderCallback_84.accept(manager, effect, particle);
 
-        FUN_800fd1dc(manager, effect, particle, colour);
+        tickParticleAttributes(manager, effect, particle, colour);
 
         if((effect.effectInner_08.particleInnerStuff_1c & 0x1000_0000) == 0 || (particle.flags_90 & 0x8) == 0) {
           //LAB_800fe280
@@ -1606,8 +1611,8 @@ public final class SEffe {
     }
 
     //LAB_800fe7ec
-    if(effect.scaleOrUseParticleAcceleration_6c) {
-      effect.particleAcceleration_70.mul(effect.scaleParticleAcceleration_80).shra(8);
+    if(effect.scaleOrUseEffectAcceleration_6c) {
+      effect.effectAcceleration_70.mul(effect.scaleParticleAcceleration_80).shra(8);
     }
     //LAB_800fe848
   }
@@ -2205,8 +2210,8 @@ public final class SEffe {
         for(int i = 0; i < effect.countParticleSub_54; i++) {
           final ParticleEffectInstance94Sub10 s0 = particle.particleInstanceSubArray_80[i];
 
-          final VECTOR sp0x18 = new VECTOR().set(particle.particlePosition_50);
-          FUN_800fca78(manager, effect, particle, sp0x18, cmd);
+          final VECTOR translation = new VECTOR().set(particle.particlePosition_50);
+          FUN_800fca78(manager, effect, particle, translation, cmd);
           s0.x0_00 = cmd.getX(0);
           s0.y0_02 = cmd.getY(0);
           s0.x1_04 = cmd.getX(1);
@@ -2221,7 +2226,7 @@ public final class SEffe {
         //LAB_80101160
         //LAB_80101170
         for(int i = 0; i < effect.countParticleSub_54; i++) {
-          particle._44[i].set(particle.particlePosition_50);
+          particle.subParticlePosition_44[i].set(particle.particlePosition_50);
         }
       }
     }
@@ -2301,51 +2306,49 @@ public final class SEffe {
     if(v1 == 1) {
       //LAB_80101840
       final int angle = (int)(seed_800fa754.advance().get() % 4097);
-      final short s0 = effectInner._10;
-      particle.particlePosition_50.setX((short)(rcos(angle) * (int)s0 >> s5.initialTranslationScaleReduction_02.get()));
+      final short baseTranslationMagnitude = effectInner._10;
+      particle.particlePosition_50.setX((short)(rcos(angle) * (int)baseTranslationMagnitude >> s5.initialTranslationMagnitudeReduction_02.get()));
       particle.particlePosition_50.setY((short)0);
-      particle.particlePosition_50.setZ((short)(rsin(angle) * (int)s0 >> s5.initialTranslationScaleReduction_02.get()));
+      particle.particlePosition_50.setZ((short)(rsin(angle) * (int)baseTranslationMagnitude >> s5.initialTranslationMagnitudeReduction_02.get()));
       //LAB_80101824
     } else if(v1 == 2) {
       //LAB_801018c8
-      final int s2 = (int)(seed_800fa754.advance().get() % 4097);
-      final int s4 = (int)(seed_800fa754.advance().get() % (effectInner._10 + 1));
-      particle.particlePosition_50.setX((short)(rcos(s2) * s4 >> s5.initialTranslationScaleReduction_02.get()));
+      final int angle = (int)(seed_800fa754.advance().get() % 4097);
+      final int baseTranslationMagnitude = (int)(seed_800fa754.advance().get() % (effectInner._10 + 1));
+      particle.particlePosition_50.setX((short)(rcos(angle) * baseTranslationMagnitude >> s5.initialTranslationMagnitudeReduction_02.get()));
       particle.particlePosition_50.setY((short)0);
-      particle.particlePosition_50.setZ((short)(rsin(s2) * s4 >> s5.initialTranslationScaleReduction_02.get()));
+      particle.particlePosition_50.setZ((short)(rsin(angle) * baseTranslationMagnitude >> s5.initialTranslationMagnitudeReduction_02.get()));
     } else if(v1 == 3) {
       //LAB_80101990
-      particle.particlePosition_50.setY((short)(seed_800fa754.advance().get() % (s5._04.get() - s5.initialTranslationScaleReduction_02.get() + 1) + s5.initialTranslationScaleReduction_02.get()));
+      particle.particlePosition_50.setY((short)(seed_800fa754.advance().get() % (s5._04.get() - s5.initialTranslationMagnitudeReduction_02.get() + 1) + s5.initialTranslationMagnitudeReduction_02.get()));
     } else if(v1 == 4) {
       //LAB_801019e4
       final int angle1 = (int)(seed_800fa754.advance().get() % 4097);
       final int angle2 = (int)(seed_800fa754.advance().get() % 2049);
-      particle.particlePosition_50.setX((short)((rcos(angle1) * rsin(angle2) >> s5.initialTranslationScaleReduction_02.get()) * effectInner._10 >> s5._04.get()));
+      particle.particlePosition_50.setX((short)((rcos(angle1) * rsin(angle2) >> s5.initialTranslationMagnitudeReduction_02.get()) * effectInner._10 >> s5._04.get()));
       particle.particlePosition_50.setY((short)(rcos(angle2) * effectInner._10 >> s5._04.get()));
-      particle.particlePosition_50.setZ((short)((rsin(angle1) * rsin(angle2) >> s5.initialTranslationScaleReduction_02.get()) * effectInner._10 >> s5._04.get()));
+      particle.particlePosition_50.setZ((short)((rsin(angle1) * rsin(angle2) >> s5.initialTranslationMagnitudeReduction_02.get()) * effectInner._10 >> s5._04.get()));
     }
 
     //LAB_80101b10
     //LAB_80101b18
     effect.callback_8c.accept(manager, effect, particle, effectInner);
 
-    // TODO double check because I think a1 is redundant with s5
-    final SomeParticleStruct10 a1 = _801198f0.get(effectInner.callbackIndex_20);
-    if(a1.hasVelocity_06.get() == 1) {
+    if(s5.hasVelocity_06.get() == 1) {
       particle.particleVelocity_58.setX((short)(particle.particleVelocity_58.getX() * effectInner._18 >> 8));
       particle.particleVelocity_58.setY((short)(particle.particleVelocity_58.getY() * effectInner._18 >> 8));
       particle.particleVelocity_58.setZ((short)(particle.particleVelocity_58.getZ() * effectInner._18 >> 8));
     }
 
     //LAB_80101ba4
-    if(a1.hasScaleStep_07.get() == 1) {
-      final byte scaleStep = (byte)(seed_800fa754.advance().get() % (a1._09.get() - a1._08.get() + 1) + a1._08.get());
+    if(s5.hasScaleStep_07.get() == 1) {
+      final byte scaleStep = (byte)(seed_800fa754.advance().get() % (s5._09.get() - s5._08.get() + 1) + s5._08.get());
       particle.scaleHorizontalStep_0a = scaleStep;
       particle.scaleVerticalStep_0c = scaleStep;
     }
 
     //LAB_80101c20
-    particle._48.set(particle.particlePosition_50);
+    particle.particlePositionCopy2_48.set(particle.particlePosition_50);
   }
 
   @Method(0x80101c68L)
@@ -2361,12 +2364,12 @@ public final class SEffe {
     //LAB_80101cb0
     for(int i = 0; i < effect.countParticleInstance_50; i++) {
       final ParticleEffectInstance94 s2 = effect.particleArray_68[i];
-      s2._44 = new SVECTOR[effect.countParticleSub_54];
-      Arrays.setAll(s2._44, n -> new SVECTOR());
+      s2.subParticlePosition_44 = new SVECTOR[effect.countParticleSub_54];
+      Arrays.setAll(s2.subParticlePosition_44, n -> new SVECTOR());
 
       //LAB_80101cdc
       for(int j = 0; j < effect.countParticleSub_54; j++) {
-        s2._44[j].set(s2.particlePosition_50);
+        s2.subParticlePosition_44[j].set(s2.particlePosition_50);
       }
       //LAB_80101d04
     }
@@ -2398,8 +2401,8 @@ public final class SEffe {
 
       //LAB_80101e3c
       for(int i = 0; i < effect.countParticleInstance_50; i++) {
-        effect.particleArray_68[i]._44 = new SVECTOR[effect.countParticleSub_54];
-        Arrays.setAll(effect.particleArray_68[i]._44, n -> new SVECTOR());
+        effect.particleArray_68[i].subParticlePosition_44 = new SVECTOR[effect.countParticleSub_54];
+        Arrays.setAll(effect.particleArray_68[i].subParticlePosition_44, n -> new SVECTOR());
       }
     }
     //LAB_80101e6c
@@ -2481,12 +2484,12 @@ public final class SEffe {
     //LAB_801021c0
     effect.myState_00 = state;
     effect.parentScriptIndex_04 = script.params_20[1].get();
-    effect.callback_84 = _80119bac[script.params_20[8].get()];
+    effect.prerenderCallback_84 = prerenderCallbacks_80119bac[script.params_20[8].get()];
     effect.callback_88 = _80119cb0[script.params_20[8].get()];
     effect.countFramesRendered_52 = 0;
     effect.halfW_34 = 0;
     effect.halfH_36 = 0;
-    effect.scaleOrUseParticleAcceleration_6c = false;
+    effect.scaleOrUseEffectAcceleration_6c = false;
     effect.next_94 = null;
     effect.callback_8c = _80119db4[script.params_20[8].get()];
     script.params_20[0].set(state.index);
@@ -2507,7 +2510,7 @@ public final class SEffe {
       final ParticleEffectInstance94 particle = effect.particleArray_68[i];
       currentParticleIndex_8011a008.set(i);
       initializeParticleInstance(manager, effect, particle, effect.effectInner_08);
-      particle._3c.set(particle.particlePosition_50);
+      particle.particlePositionCopy1.set(particle.particlePosition_50);
     }
 
     //final EffectData98Sub94 s2_0 = effect._68[effect.count_50]; // This looks like a retail bug - index out of bounds
@@ -2534,12 +2537,12 @@ public final class SEffe {
 
     final int a2 = script.params_20[0].get();
     if(a2 == 0) {
-      effect.scaleOrUseParticleAcceleration_6c = true;
-      effect.particleAcceleration_70.set(script.params_20[2].get(), script.params_20[3].get(), script.params_20[4].get());
+      effect.scaleOrUseEffectAcceleration_6c = true;
+      effect.effectAcceleration_70.set(script.params_20[2].get(), script.params_20[3].get(), script.params_20[4].get());
       effect.scaleParticleAcceleration_80 = script.params_20[5].get();
       //LAB_801023d0
     } else if(a2 == 1) {
-      effect.scaleOrUseParticleAcceleration_6c = false;
+      effect.scaleOrUseEffectAcceleration_6c = false;
       //LAB_801023e0
     } else if(a2 == 2) {
       //LAB_801023e8

@@ -30,10 +30,9 @@ public class ParticleEffectInstance94 {
   public short angleAcceleration_24;
 
   public final VECTOR translation_2c = new VECTOR();
-  /** particle position copied from effect */
-  public final SVECTOR _3c = new SVECTOR();
-  public SVECTOR[] _44;
-  public final SVECTOR _48 = new SVECTOR(); // particle position (origin?)
+  public final SVECTOR particlePositionCopy1 = new SVECTOR();
+  public SVECTOR[] subParticlePosition_44;
+  public final SVECTOR particlePositionCopy2_48 = new SVECTOR();
   /** Translation of an attached model object? */
   public final SVECTOR particlePosition_50 = new SVECTOR();
   public final SVECTOR particleVelocity_58 = new SVECTOR();

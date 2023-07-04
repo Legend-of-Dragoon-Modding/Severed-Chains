@@ -3773,22 +3773,22 @@ public final class Bttl_800d {
     final int x;
     final int y;
     final int z;
-    final ComponentFunction<Integer, Integer, Integer, Integer, Integer>[] v1;
+    final ComponentFunction<Integer, Integer, Integer, Integer, Integer>[] componentMethod;
     if(a0 != 0) {
       x = cam.rview2_00.refpoint_0c.getX();
       y = cam.rview2_00.refpoint_0c.getY();
       z = cam.rview2_00.refpoint_0c.getZ();
-      v1 = viewpointComponentMethods_800fad9c;
+      componentMethod = viewpointComponentMethods_800fad9c;
     } else {
       //LAB_800dc3bc
       x = cam.rview2_00.viewpoint_00.getX();
       y = cam.rview2_00.viewpoint_00.getY();
       z = cam.rview2_00.viewpoint_00.getZ();
-      v1 = refpointComponentMethods_800fad7c;
+      componentMethod = refpointComponentMethods_800fad7c;
     }
 
     //LAB_800dc3dc
-    return v1[callbackIndex].apply(component, scriptIndex, x, y, z);
+    return componentMethod[callbackIndex].apply(component, scriptIndex, x, y, z);
   }
 
   @Method(0x800dc408L)

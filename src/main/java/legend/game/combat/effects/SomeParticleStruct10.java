@@ -10,7 +10,7 @@ public class SomeParticleStruct10 implements MemoryRef {
 
   public final ByteRef _00;
 
-  public final ShortRef initialTranslationScaleReduction_02;
+  public final ShortRef initialTranslationMagnitudeReduction_02;
   public final ShortRef _04;
   public final ByteRef hasVelocity_06;
   public final ByteRef hasScaleStep_07;
@@ -21,7 +21,7 @@ public class SomeParticleStruct10 implements MemoryRef {
     this.ref = ref;
 
     this._00 = ref.offset(1, 0x00).cast(ByteRef::new);
-    this.initialTranslationScaleReduction_02 = ref.offset(2, 0x02).cast(ShortRef::new);
+    this.initialTranslationMagnitudeReduction_02 = ref.offset(2, 0x02).cast(ShortRef::new);
     this._04 = ref.offset(2, 0x04).cast(ShortRef::new);
     this.hasVelocity_06 = ref.offset(1, 0x06).cast(ByteRef::new);
     this.hasScaleStep_07 = ref.offset(1, 0x07).cast(ByteRef::new);

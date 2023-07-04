@@ -6,7 +6,7 @@ public class ParticleEffectData98Inner24 {
   public int particleTypeId_08;
   public short totalCountParticleInstance_0c;
 
-  public short _10; // Used in calculations for X, Y, and Z values; entirely scripted
+  public short _10; // Used in calculations for X, Y, and Z values; entirely scripted; used to scale starting position during initialization
 
   public short _14;
 

@@ -46,11 +46,11 @@ public class ParticleEffectData98 implements Effect {
   /** Size in bytes of following array of structs */
   // public int size_64;
   public ParticleEffectInstance94[] particleArray_68;
-  public boolean scaleOrUseParticleAcceleration_6c;
+  public boolean scaleOrUseEffectAcceleration_6c;
 
-  public final VECTOR particleAcceleration_70 = new VECTOR();
+  public final VECTOR effectAcceleration_70 = new VECTOR();
   public int scaleParticleAcceleration_80;
-  public TriConsumer<EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94> callback_84;
+  public TriConsumer<EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94> prerenderCallback_84;
   public QuadConsumer<ScriptState<EffectManagerData6c>, EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94> callback_88;
   public QuadConsumer<EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94, ParticleEffectData98Inner24> callback_8c;
   public QuadConsumer<ScriptState<EffectManagerData6c>, EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94> callback_90;
