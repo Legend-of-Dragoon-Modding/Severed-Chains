@@ -450,73 +450,73 @@ public final class SEffe {
     _80119cb0[63] = SEffe::FUN_80100d58; // no-op
     _80119cb0[64] = SEffe::FUN_80100d58; // no-op
   }
-  private static final QuadConsumer<EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94, ParticleEffectData98Inner24>[] _80119db4 = new QuadConsumer[65];
+  private static final QuadConsumer<EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94, ParticleEffectData98Inner24>[] initializerCallbacks_80119db4 = new QuadConsumer[65];
   static {
-    _80119db4[0] = SEffe::FUN_800fea70;
-    _80119db4[1] = SEffe::FUN_800fec3c;
-    _80119db4[2] = SEffe::FUN_800feccc;
-    _80119db4[3] = SEffe::FUN_800fee9c;
-    _80119db4[4] = SEffe::FUN_800fefe4;
-    _80119db4[5] = SEffe::FUN_800ff15c;
-    _80119db4[6] = SEffe::FUN_800ff3e0;
-    _80119db4[7] = SEffe::FUN_800ff3e0;
-    _80119db4[8] = SEffe::FUN_800ff430;
-    _80119db4[9] = SEffe::FUN_800ff590;
-    _80119db4[10] = SEffe::FUN_800ff5c4;
-    _80119db4[11] = SEffe::FUN_800ff6d4;
-    _80119db4[12] = SEffe::FUN_800ff15c;
-    _80119db4[13] = SEffe::FUN_800fea68; // no-op
-    _80119db4[14] = SEffe::FUN_800fea68; // no-op
-    _80119db4[15] = SEffe::FUN_800fea68; // no-op
-    _80119db4[16] = SEffe::FUN_800ff6fc;
-    _80119db4[17] = SEffe::FUN_800fea68; // no-op
-    _80119db4[18] = SEffe::FUN_800fea70;
-    _80119db4[19] = SEffe::FUN_800fea68; // no-op
-    _80119db4[20] = SEffe::FUN_800ff788;
-    _80119db4[21] = SEffe::FUN_800ff890;
-    _80119db4[22] = SEffe::FUN_800ffa80;
-    _80119db4[23] = SEffe::FUN_800ffadc;
-    _80119db4[24] = SEffe::FUN_800ffb80;
-    _80119db4[25] = SEffe::FUN_800ffbd8;
-    _80119db4[26] = SEffe::FUN_800fea68; // no-op
-    _80119db4[27] = SEffe::FUN_800ffb80;
-    _80119db4[28] = SEffe::FUN_800ffe80;
-    _80119db4[29] = SEffe::FUN_800fea68; // no-op
-    _80119db4[30] = SEffe::FUN_800ffefc; // no-op
-    _80119db4[31] = SEffe::FUN_800fea70;
-    _80119db4[32] = SEffe::FUN_800fff04;
-    _80119db4[33] = SEffe::FUN_800fff30;
-    _80119db4[34] = SEffe::FUN_800fffa0;
-    _80119db4[35] = SEffe::FUN_801000b8;
-    _80119db4[36] = SEffe::FUN_800fea68; // no-op
-    _80119db4[37] = SEffe::FUN_800fea68; // no-op
-    _80119db4[38] = SEffe::FUN_800fea68; // no-op
-    _80119db4[39] = SEffe::FUN_801000f8;
-    _80119db4[40] = SEffe::FUN_800fea68; // no-op
-    _80119db4[41] = SEffe::FUN_80100150;
-    _80119db4[42] = SEffe::FUN_8010025c;
-    _80119db4[43] = SEffe::FUN_8010025c;
-    _80119db4[44] = SEffe::FUN_80100364;
-    _80119db4[45] = SEffe::FUN_800fea68; // no-op
-    _80119db4[46] = SEffe::FUN_801003e8;
-    _80119db4[47] = SEffe::FUN_801005b8;
-    _80119db4[48] = SEffe::FUN_801007b4;
-    _80119db4[49] = SEffe::FUN_80100800;
-    _80119db4[50] = SEffe::FUN_80100878;
-    _80119db4[51] = SEffe::FUN_800fea68; // no-op
-    _80119db4[52] = SEffe::FUN_801008f8;
-    _80119db4[53] = SEffe::FUN_80100978;
-    _80119db4[54] = SEffe::FUN_80100af4;
-    _80119db4[55] = SEffe::FUN_80100bb4;
-    _80119db4[56] = SEffe::FUN_800fea68; // no-op
-    _80119db4[57] = SEffe::FUN_800fea68; // no-op
-    _80119db4[58] = SEffe::FUN_80100c18;
-    _80119db4[59] = SEffe::FUN_80100cac;
-    _80119db4[60] = SEffe::FUN_80100cec;
-    _80119db4[61] = SEffe::FUN_800fea68; // no-op
-    _80119db4[62] = SEffe::FUN_800fea70;
-    _80119db4[63] = SEffe::FUN_800fea68; // no-op
-    _80119db4[64] = SEffe::FUN_80100d00;
+    initializerCallbacks_80119db4[0] = SEffe::FUN_800fea70;
+    initializerCallbacks_80119db4[1] = SEffe::FUN_800fec3c;
+    initializerCallbacks_80119db4[2] = SEffe::FUN_800feccc;
+    initializerCallbacks_80119db4[3] = SEffe::FUN_800fee9c;
+    initializerCallbacks_80119db4[4] = SEffe::FUN_800fefe4;
+    initializerCallbacks_80119db4[5] = SEffe::FUN_800ff15c;
+    initializerCallbacks_80119db4[6] = SEffe::FUN_800ff3e0;
+    initializerCallbacks_80119db4[7] = SEffe::FUN_800ff3e0;
+    initializerCallbacks_80119db4[8] = SEffe::FUN_800ff430;
+    initializerCallbacks_80119db4[9] = SEffe::FUN_800ff590;
+    initializerCallbacks_80119db4[10] = SEffe::FUN_800ff5c4;
+    initializerCallbacks_80119db4[11] = SEffe::FUN_800ff6d4;
+    initializerCallbacks_80119db4[12] = SEffe::FUN_800ff15c;
+    initializerCallbacks_80119db4[13] = SEffe::FUN_800fea68; // no-op
+    initializerCallbacks_80119db4[14] = SEffe::FUN_800fea68; // no-op
+    initializerCallbacks_80119db4[15] = SEffe::FUN_800fea68; // no-op
+    initializerCallbacks_80119db4[16] = SEffe::FUN_800ff6fc;
+    initializerCallbacks_80119db4[17] = SEffe::FUN_800fea68; // no-op
+    initializerCallbacks_80119db4[18] = SEffe::FUN_800fea70;
+    initializerCallbacks_80119db4[19] = SEffe::FUN_800fea68; // no-op
+    initializerCallbacks_80119db4[20] = SEffe::FUN_800ff788;
+    initializerCallbacks_80119db4[21] = SEffe::FUN_800ff890;
+    initializerCallbacks_80119db4[22] = SEffe::FUN_800ffa80;
+    initializerCallbacks_80119db4[23] = SEffe::FUN_800ffadc;
+    initializerCallbacks_80119db4[24] = SEffe::FUN_800ffb80;
+    initializerCallbacks_80119db4[25] = SEffe::FUN_800ffbd8;
+    initializerCallbacks_80119db4[26] = SEffe::FUN_800fea68; // no-op
+    initializerCallbacks_80119db4[27] = SEffe::FUN_800ffb80;
+    initializerCallbacks_80119db4[28] = SEffe::FUN_800ffe80;
+    initializerCallbacks_80119db4[29] = SEffe::FUN_800fea68; // no-op
+    initializerCallbacks_80119db4[30] = SEffe::FUN_800ffefc; // no-op
+    initializerCallbacks_80119db4[31] = SEffe::FUN_800fea70;
+    initializerCallbacks_80119db4[32] = SEffe::FUN_800fff04;
+    initializerCallbacks_80119db4[33] = SEffe::FUN_800fff30;
+    initializerCallbacks_80119db4[34] = SEffe::FUN_800fffa0;
+    initializerCallbacks_80119db4[35] = SEffe::FUN_801000b8;
+    initializerCallbacks_80119db4[36] = SEffe::FUN_800fea68; // no-op
+    initializerCallbacks_80119db4[37] = SEffe::FUN_800fea68; // no-op
+    initializerCallbacks_80119db4[38] = SEffe::FUN_800fea68; // no-op
+    initializerCallbacks_80119db4[39] = SEffe::FUN_801000f8;
+    initializerCallbacks_80119db4[40] = SEffe::FUN_800fea68; // no-op
+    initializerCallbacks_80119db4[41] = SEffe::FUN_80100150;
+    initializerCallbacks_80119db4[42] = SEffe::FUN_8010025c;
+    initializerCallbacks_80119db4[43] = SEffe::FUN_8010025c;
+    initializerCallbacks_80119db4[44] = SEffe::FUN_80100364;
+    initializerCallbacks_80119db4[45] = SEffe::FUN_800fea68; // no-op
+    initializerCallbacks_80119db4[46] = SEffe::FUN_801003e8;
+    initializerCallbacks_80119db4[47] = SEffe::FUN_801005b8;
+    initializerCallbacks_80119db4[48] = SEffe::FUN_801007b4;
+    initializerCallbacks_80119db4[49] = SEffe::FUN_80100800;
+    initializerCallbacks_80119db4[50] = SEffe::FUN_80100878;
+    initializerCallbacks_80119db4[51] = SEffe::FUN_800fea68; // no-op
+    initializerCallbacks_80119db4[52] = SEffe::FUN_801008f8;
+    initializerCallbacks_80119db4[53] = SEffe::FUN_80100978;
+    initializerCallbacks_80119db4[54] = SEffe::FUN_80100af4;
+    initializerCallbacks_80119db4[55] = SEffe::FUN_80100bb4;
+    initializerCallbacks_80119db4[56] = SEffe::FUN_800fea68; // no-op
+    initializerCallbacks_80119db4[57] = SEffe::FUN_800fea68; // no-op
+    initializerCallbacks_80119db4[58] = SEffe::FUN_80100c18;
+    initializerCallbacks_80119db4[59] = SEffe::FUN_80100cac;
+    initializerCallbacks_80119db4[60] = SEffe::FUN_80100cec;
+    initializerCallbacks_80119db4[61] = SEffe::FUN_800fea68; // no-op
+    initializerCallbacks_80119db4[62] = SEffe::FUN_800fea70;
+    initializerCallbacks_80119db4[63] = SEffe::FUN_800fea68; // no-op
+    initializerCallbacks_80119db4[64] = SEffe::FUN_80100d00;
   }
 
   /**
@@ -2132,14 +2132,14 @@ public final class SEffe {
   @Method(0x80100d60L)
   public static void FUN_80100d60(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
     if(particle.framesUntilRender_04 == 0 && effect.parentScriptIndex_04 != -1) {
-      final VECTOR sp0x20 = new VECTOR();
-      scriptGetScriptedObjectPos(state.index, sp0x20);
+      final VECTOR translation = new VECTOR();
+      scriptGetScriptedObjectPos(state.index, translation);
 
-      final VECTOR sp0x30 = new VECTOR();
-      scriptGetScriptedObjectPos(effect.parentScriptIndex_04, sp0x30);
+      final VECTOR parentTranslation = new VECTOR();
+      scriptGetScriptedObjectPos(effect.parentScriptIndex_04, parentTranslation);
 
-      final VECTOR sp0x10 = new VECTOR().set(sp0x20).sub(sp0x30);
-      particle.particlePosition_50.sub(sp0x10);
+      final VECTOR diffTranslation = new VECTOR().set(translation).sub(parentTranslation);
+      particle.particlePosition_50.sub(diffTranslation);
     }
     //LAB_80100e14
   }
@@ -2332,7 +2332,7 @@ public final class SEffe {
 
     //LAB_80101b10
     //LAB_80101b18
-    effect.callback_8c.accept(manager, effect, particle, effectInner);
+    effect.initializerCallback_8c.accept(manager, effect, particle, effectInner);
 
     if(s5.hasVelocity_06.get() == 1) {
       particle.particleVelocity_58.setX((short)(particle.particleVelocity_58.getX() * effectInner._18 >> 8));
@@ -2487,7 +2487,7 @@ public final class SEffe {
     effect.halfH_36 = 0;
     effect.scaleOrUseEffectAcceleration_6c = false;
     effect.next_94 = null;
-    effect.callback_8c = _80119db4[script.params_20[8].get()];
+    effect.initializerCallback_8c = initializerCallbacks_80119db4[script.params_20[8].get()];
     script.params_20[0].set(state.index);
 
     //LAB_8010223c
