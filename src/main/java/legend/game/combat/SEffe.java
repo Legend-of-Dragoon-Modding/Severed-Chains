@@ -752,10 +752,10 @@ public final class SEffe {
     if(particle._18 == 1) {
       if(particle.ticksUntilMovementModeChanges_22 != 0) {
         //LAB_800fbca4
-        particle.particlePosition_50.setY((short)-particle.translation_2c.getY());
+        particle.particlePosition_50.setY((short)-particle.managerTranslation_2c.getY());
         particle.ticksUntilMovementModeChanges_22--;
       } else {
-        particle.particlePosition_50.setY((short)((rsin(particle._1a.getX()) * particle.verticalPositionScale_20 >> 12) - (short)particle.translation_2c.getY()));
+        particle.particlePosition_50.setY((short)((rsin(particle._1a.getX()) * particle.verticalPositionScale_20 >> 12) - (short)particle.managerTranslation_2c.getY()));
         particle._1a.x.add((short)0x7f);
         particle.scaleHorizontalStep_0a = particle._1a.getZ();
         particle.scaleVerticalStep_0c = particle._1a.getZ();
@@ -763,7 +763,7 @@ public final class SEffe {
         particle.verticalPositionScale_20 += 20;
       }
       //LAB_800fbcc0
-    } else if(particle.translation_2c.getY() + particle.particlePosition_50.getY() >= -1000) {
+    } else if(particle.managerTranslation_2c.getY() + particle.particlePosition_50.getY() >= -1000) {
       particle._1a.setY((short)0);
       particle._18 = 1;
       particle.scaleHorizontalStep_0a = particle._1a.getZ();
@@ -859,7 +859,7 @@ public final class SEffe {
 
     particle._16 += particle._18;
 
-    if(particle.particlePosition_50.getY() + particle.translation_2c.getY() >= manager._10._30) {
+    if(particle.particlePosition_50.getY() + particle.managerTranslation_2c.getY() >= manager._10._30) {
       particle.ticksRemaining_12 = 1;
     }
     //LAB_800fc0bc
@@ -867,16 +867,16 @@ public final class SEffe {
 
   @Method(0x800fc0d0L)
   public static void FUN_800fc0d0(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
-    if(particle.particlePosition_50.getY() + particle.translation_2c.getY() >= -400 && particle._14 == 0) {
+    if(particle.particlePosition_50.getY() + particle.managerTranslation_2c.getY() >= -400 && particle._14 == 0) {
       particle._14 = 1;
       particle.particleAcceleration_60.setY((short)-8);
       //LAB_800fc11c
     } else if(effect.parentScriptIndex_04 != -1 && particle._14 == 0) {
       final VECTOR sp0x10 = new VECTOR();
       scriptGetScriptedObjectPos(effect.parentScriptIndex_04, sp0x10);
-      particle.particleVelocity_58.setX((short)((sp0x10.getX() - (particle.particlePositionCopy1.getX() + particle.translation_2c.getX())) / particle._1a.getZ()));
-      particle.particleVelocity_58.setY((short)((sp0x10.getY() - (particle.particlePositionCopy1.getY() + particle.translation_2c.getY())) / particle._1a.getZ()));
-      particle.particleVelocity_58.setZ((short)((sp0x10.getZ() - (particle.particlePositionCopy1.getZ() + particle.translation_2c.getZ())) / particle._1a.getZ()));
+      particle.particleVelocity_58.setX((short)((sp0x10.getX() - (particle.particlePositionCopy1.getX() + particle.managerTranslation_2c.getX())) / particle._1a.getZ()));
+      particle.particleVelocity_58.setY((short)((sp0x10.getY() - (particle.particlePositionCopy1.getY() + particle.managerTranslation_2c.getY())) / particle._1a.getZ()));
+      particle.particleVelocity_58.setZ((short)((sp0x10.getZ() - (particle.particlePositionCopy1.getZ() + particle.managerTranslation_2c.getZ())) / particle._1a.getZ()));
       particle.particleVelocity_58.x.add(particle._18);
       particle.particleVelocity_58.y.add(particle._1a.getX());
       particle.particleVelocity_58.z.add(particle._1a.getY());
@@ -889,8 +889,8 @@ public final class SEffe {
     FUN_800fb95c(particle);
 
     particle._16 += particle._18;
-    if(particle.particlePosition_50.getY() + particle.translation_2c.getY() >= manager._10._30) {
-      particle.particlePosition_50.setY((short)(manager._10._30 - particle.translation_2c.getY()));
+    if(particle.particlePosition_50.getY() + particle.managerTranslation_2c.getY() >= manager._10._30) {
+      particle.particlePosition_50.setY((short)(manager._10._30 - particle.managerTranslation_2c.getY()));
       particle.particleVelocity_58.y.neg().shra(1);
     }
     //LAB_800fc26c
@@ -982,8 +982,8 @@ public final class SEffe {
 
   @Method(0x800fc7c8L)
   public static void FUN_800fc7c8(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
-    if(particle.particlePosition_50.getY() + particle.translation_2c.getY() >= manager._10._30) {
-      particle.particlePosition_50.setY((short)(manager._10._30 - particle.translation_2c.getY()));
+    if(particle.particlePosition_50.getY() + particle.managerTranslation_2c.getY() >= manager._10._30) {
+      particle.particlePosition_50.setY((short)(manager._10._30 - particle.managerTranslation_2c.getY()));
       particle.particleVelocity_58.y.neg().shra(1);
       if(particle._14 == 0) {
         final int angle = (int)(seed_800fa754.advance().get() % 0x1001);
@@ -1030,7 +1030,7 @@ public final class SEffe {
   public static int FUN_800fca78(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final VECTOR translation, final GpuCommandPoly cmd) {
     final ShortRef refX = new ShortRef();
     final ShortRef refY = new ShortRef();
-    final int z = FUN_800cfc20(particle.managerRotation_68, particle.translation_2c, translation, refX, refY);
+    final int z = FUN_800cfc20(particle.managerRotation_68, particle.managerTranslation_2c, translation, refX, refY);
     if(z >= 40) {
       final int zScale = 0x50_0000 / z;
       final int horizontalScale = zScale * (manager._10.scale_16.getX() + particle.scaleHorizontal_06) >> 12;
@@ -1160,7 +1160,7 @@ public final class SEffe {
 
   @Method(0x800fd084L)
   public static void FUN_800fd084(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
-    particle.translation_2c.set(manager._10.trans_04);
+    particle.managerTranslation_2c.set(manager._10.trans_04);
     particle.managerRotation_68.set(manager._10.rot_10);
 
     if(particle.ticksRemaining_12 == 0) {
@@ -1210,14 +1210,14 @@ public final class SEffe {
     particle.particlePosition_50.add(particle.particleVelocity_58);
     particle.particleVelocity_58.add(particle.particleAcceleration_60);
 
-    if(particle.particlePosition_50.getY() + particle.translation_2c.getY() >= manager._10._30) {
+    if(particle.particlePosition_50.getY() + particle.managerTranslation_2c.getY() >= manager._10._30) {
       if((manager._10._24 & 0x20) != 0) {
         particle.ticksRemaining_12 = 1;
       }
 
       //LAB_800fd324
       if((manager._10._24 & 0x8) != 0) {
-        particle.particlePosition_50.setY((short)(manager._10._30 - particle.translation_2c.getY()));
+        particle.particlePosition_50.setY((short)(manager._10._30 - particle.managerTranslation_2c.getY()));
         particle.particleVelocity_58.setY((short)(-particle.particleVelocity_58.getY() / 2));
       }
     }
@@ -1317,7 +1317,7 @@ public final class SEffe {
 
         final ParticleMetrics48 particleMetrics = new ParticleMetrics48();
         particleMetrics.flags_00 = manager._10.flags_00;
-        particleMetrics.translation_18.set(particle.translation_2c).add(rotatedAndTranslatedPosition);
+        particleMetrics.translation_18.set(particle.managerTranslation_2c).add(rotatedAndTranslatedPosition);
         particleMetrics.scale_28.setX(manager._10.scale_16.getX() + particle.scaleHorizontal_06);
         particleMetrics.scale_28.setY(manager._10.scale_16.getY() + particle.scaleVertical_08);
         particleMetrics.scale_28.setZ(manager._10.scale_16.getX() + particle.scaleHorizontal_06); // This is correct
@@ -1394,7 +1394,7 @@ public final class SEffe {
           final VECTOR subTranslation = new VECTOR().set(particle.subParticlePositionsArray_44[0]);
           final ShortRef refX1 = new ShortRef();
           final ShortRef refY1 = new ShortRef();
-          int z = FUN_800cfc20(particle.managerRotation_68, particle.translation_2c, subTranslation, refX1, refY1) / 4;
+          int z = FUN_800cfc20(particle.managerRotation_68, particle.managerTranslation_2c, subTranslation, refX1, refY1) / 4;
           particleMetrics.x0_08 = refX1.get();
           particleMetrics.y0_10 = refY1.get();
 
@@ -1415,7 +1415,7 @@ public final class SEffe {
 
               final ShortRef refX2 = new ShortRef();
               final ShortRef refY2 = new ShortRef();
-              FUN_800cfc20(particle.managerRotation_68, particle.translation_2c, subTranslation, refX2, refY2);
+              FUN_800cfc20(particle.managerRotation_68, particle.managerTranslation_2c, subTranslation, refX2, refY2);
               particleMetrics.x1_0c = refX2.get();
               particleMetrics.y1_14 = refY2.get();
               lineParticleRenderers_801197c0[effect.subParticleType_60 - 2].accept(manager, particleMetrics);
@@ -1460,7 +1460,7 @@ public final class SEffe {
         final ShortRef refX = new ShortRef();
         final ShortRef refY = new ShortRef();
 
-        int z = FUN_800cfc20(particle.managerRotation_68, particle.translation_2c, translation, refX, refY) >> 2;
+        int z = FUN_800cfc20(particle.managerRotation_68, particle.managerTranslation_2c, translation, refX, refY) >> 2;
         final int zCombined = z + manager._10.z_22;
         if(zCombined >= 0xa0) {
           if(zCombined >= 0xffe) {
@@ -2574,7 +2574,7 @@ public final class SEffe {
     final ParticleEffectInstance94 particle = effect.particleArray_68[script.params_20[1].get()];
 
     final VECTOR sp0x20 = new VECTOR();
-    FUN_800cf684(particle.managerRotation_68, particle.translation_2c, new VECTOR().set(particle.particlePosition_50), sp0x20);
+    FUN_800cf684(particle.managerRotation_68, particle.managerTranslation_2c, new VECTOR().set(particle.particlePosition_50), sp0x20);
     script.params_20[2].set(sp0x20.getX());
     script.params_20[3].set(sp0x20.getY());
     script.params_20[4].set(sp0x20.getZ());

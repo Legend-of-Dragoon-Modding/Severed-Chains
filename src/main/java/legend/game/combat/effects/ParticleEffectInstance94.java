@@ -29,7 +29,7 @@ public class ParticleEffectInstance94 {
   public short ticksUntilMovementModeChanges_22; // Once this ticks down to 0, it looks like the particle movement changes (starts to accelerate, ???)
   public short angleAcceleration_24;
 
-  public final VECTOR translation_2c = new VECTOR();
+  public final VECTOR managerTranslation_2c = new VECTOR();
   public final SVECTOR particlePositionCopy1 = new SVECTOR();
   public SVECTOR[] subParticlePositionsArray_44;
   public final SVECTOR particlePositionCopy2_48 = new SVECTOR();
