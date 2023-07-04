@@ -256,14 +256,14 @@ public final class SEffe {
 
   /**
    * <ol start="0">
-   *   <li>{@link SEffe#renderLineParticlesWithSubs}</li>
+   *   <li>{@link SEffe#renderLineParticles}</li>
    *   <li>null</li>
    *   <li>{@link SEffe#FUN_800fcf18}</li>
    * </ol>
    */
   private static final BiConsumer<EffectManagerData6c, ParticleMetrics48>[] lineParticleRenderers_801197c0 = new BiConsumer[3];
   static {
-    lineParticleRenderers_801197c0[0] = SEffe::renderLineParticlesWithSubs;
+    lineParticleRenderers_801197c0[0] = SEffe::renderLineParticles;
     lineParticleRenderers_801197c0[1] = null;
     lineParticleRenderers_801197c0[2] = SEffe::FUN_800fcf18; // no-op
   }
@@ -1085,7 +1085,7 @@ public final class SEffe {
   }
 
   @Method(0x800fce10L)
-  public static void renderLineParticlesWithSubs(final EffectManagerData6c manager, final ParticleMetrics48 particleMetrics) {
+  public static void renderLineParticles(final EffectManagerData6c manager, final ParticleMetrics48 particleMetrics) {
     if(particleMetrics.flags_00 >= 0) {
       GPU.queueCommand(particleMetrics.z_04 + manager._10.z_22 >> 2, new GpuCommandLine()
         .translucent(Translucency.B_PLUS_F)
@@ -1355,7 +1355,7 @@ public final class SEffe {
           }
 
           //LAB_800fd950
-          particle.subParticlePositionsArray_44[0].sub(particle.particlePosition_50);
+          particle.subParticlePositionsArray_44[0].set(particle.particlePosition_50);
           effect.prerenderCallback_84.accept(manager, effect, particle);
 
           final VECTOR colour = new VECTOR();
