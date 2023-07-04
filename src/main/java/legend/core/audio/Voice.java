@@ -236,6 +236,8 @@ final class Voice {
     this.volumeRight = this.calculateVolume(false);
 
     this.used = true;
+    this.hasSamples = false;
+    System.arraycopy(EMPTY, 0, this.samples, 0, 3);
   }
 
   void keyOff() {
@@ -278,8 +280,6 @@ final class Voice {
     this._18 = false;
 
     this.latestSample = 0;
-
-    System.arraycopy(EMPTY, 0, this.samples, 0, 3);
   }
 
   boolean isLowPriority() {
