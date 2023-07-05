@@ -3,7 +3,6 @@ package legend.game.sound;
 import legend.core.memory.Value;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.UnsignedShortRef;
-import legend.core.spu.ReverbConfig;
 
 public class ReverbConfigAndLocation implements MemoryRef {
   private final Value ref;
