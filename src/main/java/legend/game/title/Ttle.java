@@ -754,7 +754,7 @@ public final class Ttle {
       menuIdleTime += 2;
 
       if(menuIdleTime > 1680) {
-//        pregameLoadingStage_800bb10c.set(6);
+        pregameLoadingStage_800bb10c.set(6);
       }
     }
 
