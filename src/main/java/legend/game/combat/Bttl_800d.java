@@ -16,6 +16,7 @@ import legend.core.gte.TmdWithId;
 import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
 import legend.core.memory.types.CString;
+import legend.core.memory.types.ComponentFunction;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.ShortRef;
 import legend.game.combat.bobj.BattleObject27c;
@@ -24,23 +25,26 @@ import legend.game.combat.deff.Cmb;
 import legend.game.combat.deff.Lmb;
 import legend.game.combat.deff.LmbTransforms14;
 import legend.game.combat.deff.LmbType0;
+import legend.game.combat.effects.AdditionCharEffectData0c;
+import legend.game.combat.effects.AdditionNameTextEffect1c;
 import legend.game.combat.effects.AdditionSparksEffect08;
 import legend.game.combat.effects.AdditionSparksEffectInstance4c;
 import legend.game.combat.effects.AdditionStarburstEffect10;
+import legend.game.combat.effects.AdditionStarburstEffectRay10;
 import legend.game.combat.effects.BttlScriptData6cSub13c;
 import legend.game.combat.effects.EffectManagerData6c;
 import legend.game.combat.effects.EffectManagerData6cInner;
 import legend.game.combat.effects.GuardEffect06;
 import legend.game.combat.effects.MonsterDeathEffect34;
-import legend.game.combat.effects.RadialGradientEffect14;
+import legend.game.combat.effects.MonsterDeathEffectObjectDestructor30;
 import legend.game.combat.effects.ProjectileHitEffect14;
 import legend.game.combat.effects.ProjectileHitEffect14Sub48;
+import legend.game.combat.effects.RadialGradientEffect14;
+import legend.game.combat.effects.SpTextEffect40;
+import legend.game.combat.effects.SpTextEffectTrail10;
+import legend.game.combat.effects.SpriteMetrics08;
 import legend.game.combat.environment.BattleCamera;
-import legend.game.combat.types.AdditionCharEffectData0c;
-import legend.game.combat.types.AdditionScriptData1c;
 import legend.game.combat.types.BattleScriptDataBase;
-import legend.game.combat.types.BttlScriptData40;
-import legend.game.combat.types.SpriteMetrics08;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptState;
@@ -64,8 +68,6 @@ import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Scus94491BpeSegment.FUN_80018a5c;
 import static legend.game.Scus94491BpeSegment.FUN_80018d60;
-import static legend.game.Scus94491BpeSegment.free;
-import static legend.game.Scus94491BpeSegment.mallocTail;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
@@ -111,17 +113,12 @@ import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.combat.Bttl_800c.FUN_800cf37c;
 import static legend.game.combat.Bttl_800c.FUN_800cf4f4;
 import static legend.game.combat.Bttl_800c.FUN_800cfb14;
-import static legend.game.combat.Bttl_800c.FUN_800cffd8;
 import static legend.game.combat.Bttl_800c._800c6798;
 import static legend.game.combat.Bttl_800c._800c67c4;
 import static legend.game.combat.Bttl_800c._800c67d4;
 import static legend.game.combat.Bttl_800c._800c67d8;
 import static legend.game.combat.Bttl_800c._800c67e4;
 import static legend.game.combat.Bttl_800c._800c67e8;
-import static legend.game.combat.Bttl_800c._800c6912;
-import static legend.game.combat.Bttl_800c._800c6913;
-import static legend.game.combat.Bttl_800c._800c6d94;
-import static legend.game.combat.Bttl_800c._800c6dac;
 import static legend.game.combat.Bttl_800c._800fa76c;
 import static legend.game.combat.Bttl_800c._800faa90;
 import static legend.game.combat.Bttl_800c._800faa92;
@@ -142,17 +139,20 @@ import static legend.game.combat.Bttl_800c._800fac3c;
 import static legend.game.combat.Bttl_800c._800fac5c;
 import static legend.game.combat.Bttl_800c._800fac7c;
 import static legend.game.combat.Bttl_800c._800fac9c;
-import static legend.game.combat.Bttl_800c._800facbc;
-import static legend.game.combat.Bttl_800c._800fad1c;
-import static legend.game.combat.Bttl_800c._800fad7c;
-import static legend.game.combat.Bttl_800c._800fad9c;
+import static legend.game.combat.Bttl_800c.refpointComponentMethods_800fad7c;
+import static legend.game.combat.Bttl_800c.viewpointComponentMethods_800fad9c;
 import static legend.game.combat.Bttl_800c.additionNames_800fa8d4;
 import static legend.game.combat.Bttl_800c.additionStarburstRenderers_800c6dc4;
 import static legend.game.combat.Bttl_800c.asciiTable_800fa788;
+import static legend.game.combat.Bttl_800c.cameraRefpointMethods_800fad1c;
+import static legend.game.combat.Bttl_800c.cameraViewpointMethods_800facbc;
 import static legend.game.combat.Bttl_800c.camera_800c67f0;
 import static legend.game.combat.Bttl_800c.charWidthAdjustTable_800fa7cc;
+import static legend.game.combat.Bttl_800c.completedAdditionStarburstAngleModifiers_800c6dac;
+import static legend.game.combat.Bttl_800c.completedAdditionStarburstTranslationMagnitudes_800c6d94;
 import static legend.game.combat.Bttl_800c.currentAddition_800c6790;
 import static legend.game.combat.Bttl_800c.deffManager_800c693c;
+import static legend.game.combat.Bttl_800c.getModelObjectTranslation;
 import static legend.game.combat.Bttl_800c.radialGradientEffectRenderers_800fa758;
 import static legend.game.combat.Bttl_800c.screenOffsetX_800c67bc;
 import static legend.game.combat.Bttl_800c.screenOffsetY_800c67c0;
@@ -160,8 +160,8 @@ import static legend.game.combat.Bttl_800c.scriptGetScriptedObjectPos;
 import static legend.game.combat.Bttl_800c.seed_800fa754;
 import static legend.game.combat.Bttl_800c.spriteMetrics_800c6948;
 import static legend.game.combat.Bttl_800c.transformWorldspaceToScreenspace;
-import static legend.game.combat.Bttl_800e.FUN_800e7ea4;
 import static legend.game.combat.Bttl_800e.allocateEffectManager;
+import static legend.game.combat.Bttl_800e.renderGenericSpriteAtZOffset0;
 
 public final class Bttl_800d {
   private Bttl_800d() { }
@@ -170,15 +170,15 @@ public final class Bttl_800d {
   private static final Marker CAMERA = MarkerManager.getMarker("CAMERA");
 
   @Method(0x800d0094L)
-  public static void FUN_800d0094(final int scriptIndex, final int animIndex, final boolean clearBit) {
-    final BattleObject27c v1 = (BattleObject27c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
+  public static void setModelObjectVisibility(final int scriptIndex, final int objIndex, final boolean clearBit) {
+    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
 
     //LAB_800d00d4
     if(clearBit) {
-      v1.model_148.partInvisible_f4 &= ~(0x1L << animIndex);
+      bobj.model_148.partInvisible_f4 &= ~(0x1L << objIndex);
     } else {
       //LAB_800d0104
-      v1.model_148.partInvisible_f4 |= 0x1L << animIndex;
+      bobj.model_148.partInvisible_f4 |= 0x1L << objIndex;
     }
   }
 
@@ -204,28 +204,28 @@ public final class Bttl_800d {
     final ProjectileHitEffect14 effect = (ProjectileHitEffect14)data.effect_44;
 
     //LAB_800d01ec
-    for(int s7 = 0; s7 < effect.count_00.get(); s7++) {
-      final ProjectileHitEffect14Sub48 s4 = effect._08.deref().get(s7);
+    for(int s7 = 0; s7 < effect.count_00; s7++) {
+      final ProjectileHitEffect14Sub48 s4 = effect._08[s7];
 
-      if(s4.used_00.get()) {
-        s4._40.incr();
-        s4.frames_44.decr();
+      if(s4.used_00) {
+        s4._40++;
+        s4.frames_44--;
 
-        if(s4.frames_44.get() == 0) {
-          s4.used_00.set(false);
+        if(s4.frames_44 == 0) {
+          s4.used_00 = false;
         }
 
         //LAB_800d0220
-        s4.r_34.sub(s4.fadeR_3a.get());
-        s4.g_36.sub(s4.fadeG_3c.get());
-        s4.b_38.sub(s4.fadeB_3e.get());
+        s4.r_34 -= s4.fadeR_3a;
+        s4.g_36 -= s4.fadeG_3c;
+        s4.b_38 -= s4.fadeB_3e;
 
         //LAB_800d0254
         final ShortRef[] x = {new ShortRef(), new ShortRef()};
         final ShortRef[] y = {new ShortRef(), new ShortRef()};
         for(int s3 = 0; s3 < 2; s3++) {
-          final VECTOR s1 = s4._04.get(s3);
-          final SVECTOR a1 = s4._24.get(s3);
+          final VECTOR s1 = s4._04[s3];
+          final SVECTOR a1 = s4._24[s3];
           a0 = FUN_800cfb14(data, s1, x[s3], y[s3]);
           s1.add(a1);
           a1.y.add((short)25);
@@ -261,7 +261,7 @@ public final class Bttl_800d {
             GPU.queueCommand(s1_0 + a2_0 >> 2, new GpuCommandLine()
               .translucent(Translucency.B_PLUS_F)
               .monochrome(0, 0)
-              .rgb(1, s4.r_34.get() >>> 8, s4.g_36.get() >>> 8, s4.b_38.get() >>> 8)
+              .rgb(1, s4.r_34 >>> 8, s4.g_36 >>> 8, s4.b_38 >>> 8)
               .pos(0, x[0].get(), y[0].get())
               .pos(1, x[1].get(), y[1].get())
             );
@@ -275,57 +275,48 @@ public final class Bttl_800d {
     //LAB_800d0508
   }
 
-  @Method(0x800d0538L)
-  public static void deallocateProjectileHitEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
-    free(((ProjectileHitEffect14)manager.effect_44)._08.getPointer());
-  }
-
   @Method(0x800d0564L)
   public static FlowControl allocateProjectileHitEffect(final RunningScript<? extends BattleScriptDataBase> script) {
+    final int count = script.params_20[1].get();
+
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "ProjectileHitEffect14",
       script.scriptState_04,
-      0x14,
       null,
       Bttl_800d::renderProjectileHitEffect,
-      Bttl_800d::deallocateProjectileHitEffect,
-      ProjectileHitEffect14::new
+      null,
+      new ProjectileHitEffect14(count)
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
     final ProjectileHitEffect14 effect = (ProjectileHitEffect14)manager.effect_44;
 
-    final int count = script.params_20[1].get();
-    effect.count_00.set(count);
-    effect._04.set(0);
-    effect._08.setPointer(mallocTail(count * 0x48));
-
     //LAB_800d0634
     for(int i = 0; i < count; i++) {
-      final ProjectileHitEffect14Sub48 struct = effect._08.deref().get(i);
+      final ProjectileHitEffect14Sub48 struct = effect._08[i];
 
-      struct.used_00.set(true);
-      struct.r_34.set(script.params_20[2].get() << 8);
-      struct.g_36.set(script.params_20[3].get() << 8);
-      struct.b_38.set(script.params_20[4].get() << 8);
+      struct.used_00 = true;
+      struct.r_34 = script.params_20[2].get() << 8;
+      struct.g_36 = script.params_20[3].get() << 8;
+      struct.b_38 = script.params_20[4].get() << 8;
 
       final short x = (short)(seed_800fa754.advance().get() % 301 + 200);
       final short y = (short)(seed_800fa754.advance().get() % 401 - 300);
       final short z = (short)(seed_800fa754.advance().get() % 601 - 300);
-      struct._24.get(0).set(x, y, z);
-      struct._24.get(1).set(x, y, z);
+      struct._24[0].set(x, y, z);
+      struct._24[1].set(x, y, z);
 
-      struct._04.get(0).setX(0);
-      struct._04.get(0).setY((int)(seed_800fa754.advance().get() % 101 - 50));
-      struct._04.get(0).setZ((int)(seed_800fa754.advance().get() % 101 - 50));
-      struct.frames_44.set((int)(seed_800fa754.advance().get() % 9 + 7));
+      struct._04[0].setX(0);
+      struct._04[0].setY((int)(seed_800fa754.advance().get() % 101 - 50));
+      struct._04[0].setZ((int)(seed_800fa754.advance().get() % 101 - 50));
+      struct.frames_44 = (int)(seed_800fa754.advance().get() % 9 + 7);
 
-      struct._40.set(0);
-      struct._24.get(1).y.add((short)25);
-      struct._04.get(1).set(struct._04.get(0)).add(struct._24.get(0));
-      struct.fadeR_3a.set(struct.r_34.get() / struct.frames_44.get());
-      struct.fadeG_3c.set(struct.g_36.get() / struct.frames_44.get());
-      struct.fadeB_3e.set(struct.b_38.get() / struct.frames_44.get());
+      struct._40 = 0;
+      struct._24[1].y.add((short)25);
+      struct._04[1].set(struct._04[0]).add(struct._24[0]);
+      struct.fadeR_3a = struct.r_34 / struct.frames_44;
+      struct.fadeG_3c = struct.g_36 / struct.frames_44;
+      struct.fadeB_3e = struct.b_38 / struct.frames_44;
     }
 
     //LAB_800d0980
@@ -426,11 +417,10 @@ public final class Bttl_800d {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "AdditionSparksEffect08",
       script.scriptState_04,
-      0,
       null,
       Bttl_800d::renderAdditionSparks,
       null,
-      value -> new AdditionSparksEffect08(count)
+      new AdditionSparksEffect08(count)
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
@@ -466,157 +456,143 @@ public final class Bttl_800d {
     return FlowControl.CONTINUE;
   }
 
+  /** If a secondary script is specified, modifies the translations of the starburst rays by the secondary script's translation. */
   @Method(0x800d1194L)
-  public static void FUN_800d1194(final EffectManagerData6c a0, final AdditionStarburstEffect10 a1, final IntRef[] a2) {
-    if(a1.scriptIndex_00.get() == -1) {
-      a2[0].set(0);
-      a2[1].set(0);
+  public static void modifyAdditionStarburstTranslation(final EffectManagerData6c manager, final AdditionStarburstEffect10 starburstEffect, final IntRef[] outTranslations) {
+    if(starburstEffect.scriptIndex_00 == -1) {
+      outTranslations[0].set(0);
+      outTranslations[1].set(0);
     } else {
       //LAB_800d11c4
-      final VECTOR sp0x10 = new VECTOR();
-      scriptGetScriptedObjectPos(a1.scriptIndex_00.get(), sp0x10);
-      sp0x10.add(a0._10.trans_04);
-      transformWorldspaceToScreenspace(sp0x10, a2[0], a2[1]);
+      final VECTOR scriptTranslation = new VECTOR();
+      scriptGetScriptedObjectPos(starburstEffect.scriptIndex_00, scriptTranslation);
+      scriptTranslation.add(manager._10.trans_04);
+      transformWorldspaceToScreenspace(scriptTranslation, outTranslations[0], outTranslations[1]);
     }
 
     //LAB_800d120c
   }
 
   @Method(0x800d1220L)
-  public static void renderAdditionHitStarburst(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    final int[] sp0x48 = {-16, 16};
-    final AdditionStarburstEffect10 s7 = (AdditionStarburstEffect10)data.effect_44;
-    long s6 = s7._0c.get();
+  public static void renderAdditionHitStarburst(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+    final int[] baseAngle = {-16, 16};
+    final AdditionStarburstEffect10 starburstEffect = (AdditionStarburstEffect10)manager.effect_44;
+    final AdditionStarburstEffectRay10[] rayArray = starburstEffect.rayArray_0c;
 
     //LAB_800d128c
-    for(int fp = 0; fp < s7.count_04.get(); fp++) {
-      if(MEMORY.ref(1, s6).offset(0x0L).get() != 0) {
+    for(int rayNum = 0; rayNum < starburstEffect.rayCount_04; rayNum++) {
+      if(rayArray[rayNum].renderRay_00) {
         //LAB_800d12a4
-        for(int s5 = 0; s5 < 2; s5++) {
-          int s1 = sp0x48[s5] + (int)MEMORY.ref(2, s6).offset(0xaL).get();
-          int s0 = 30 + (int)MEMORY.ref(2, s6).offset(0x6L).get();
-          int sp18 = rcos(MEMORY.ref(2, s6).offset(0x2L).getSigned() + s1) * s0 >> 12;
-          int sp28 = rsin(MEMORY.ref(2, s6).offset(0x2L).getSigned() + s1) * s0 >> 12;
-          int sp20 = rcos(MEMORY.ref(2, s6).offset(0x2L).getSigned()) * s0 >> 12;
-          int sp30 = rsin(MEMORY.ref(2, s6).offset(0x2L).getSigned()) * s0 >> 12;
-          s1 = sp0x48[s5] + (int)MEMORY.ref(2, s6).offset(0xaL).get();
-          s0 = 210 + (int)MEMORY.ref(2, s6).offset(0x6L).get();
-          final int sp1c = rcos(MEMORY.ref(2, s6).offset(0x2L).getSigned() + s1) * s0 >> 12;
-          final int sp2c = rsin(MEMORY.ref(2, s6).offset(0x2L).getSigned() + s1) * s0 >> 12;
-          final int sp24 = rcos(MEMORY.ref(2, s6).offset(0x2L).getSigned()) * s0 >> 12;
-          final int sp34 = rsin(MEMORY.ref(2, s6).offset(0x2L).getSigned()) * s0 >> 12;
-          final IntRef[] sp0x50 = {new IntRef(), new IntRef()};
-          FUN_800d1194(data, s7, sp0x50);
-          sp18 = sp18 + sp0x50[0].get();
-          sp28 = sp28 + sp0x50[1].get();
-          sp20 = sp20 + sp0x50[0].get();
-          sp30 = sp30 + sp0x50[1].get();
+        for(int i = 0; i < 2; i++) {
+          int angleModifier = baseAngle[i] + (int)rayArray[rayNum].angleModifier_0a;
+          int translationScale = 30 + (int)rayArray[rayNum].endpointTranslationMagnitude_06;
+          int x2 = rcos(rayArray[rayNum].angle_02 + angleModifier) * translationScale >> 12;
+          int y2 = rsin(rayArray[rayNum].angle_02 + angleModifier) * translationScale >> 12;
+          int x3 = rcos(rayArray[rayNum].angle_02) * translationScale >> 12;
+          int y3 = rsin(rayArray[rayNum].angle_02) * translationScale >> 12;
+          angleModifier = baseAngle[i] + (int)rayArray[rayNum].angleModifier_0a;
+          translationScale = 210 + (int)rayArray[rayNum].endpointTranslationMagnitude_06;
+          final int x0 = rcos(rayArray[rayNum].angle_02 + angleModifier) * translationScale >> 12;
+          final int y0 = rsin(rayArray[rayNum].angle_02 + angleModifier) * translationScale >> 12;
+          final int x1 = rcos(rayArray[rayNum].angle_02) * translationScale >> 12;
+          final int y1 = rsin(rayArray[rayNum].angle_02) * translationScale >> 12;
+          final IntRef[] translationRefs = {new IntRef(), new IntRef()};
+          modifyAdditionStarburstTranslation(manager, starburstEffect, translationRefs);
+          x2 = x2 + translationRefs[0].get();
+          y2 = y2 + translationRefs[1].get();
+          x3 = x3 + translationRefs[0].get();
+          y3 = y3 + translationRefs[1].get();
 
           GPU.queueCommand(30, new GpuCommandPoly(4)
             .translucent(Translucency.B_PLUS_F)
             .monochrome(0, 0)
-            .rgb(1, data._10.colour_1c.getX(), data._10.colour_1c.getY(), data._10.colour_1c.getZ())
+            .rgb(1, manager._10.colour_1c.getX(), manager._10.colour_1c.getY(), manager._10.colour_1c.getZ())
             .monochrome(2, 0)
             .rgb(3, 0)
-            .pos(0, sp1c, sp2c)
-            .pos(1, sp24, sp34)
-            .pos(2, sp18, sp28)
-            .pos(3, sp20, sp30)
+            .pos(0, x0, y0)
+            .pos(1, x1, y1)
+            .pos(2, x2, y2)
+            .pos(3, x3, y3)
           );
         }
       }
-
       //LAB_800d1538
-      s6 = s6 + 0x10L;
     }
-
     //LAB_800d1558
   }
 
   @Method(0x800d15d8L)
-  public static void renderAdditionCompletedStarburst(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    final AdditionStarburstEffect10 sp80 = (AdditionStarburstEffect10)data.effect_44;
-    long sp84 = sp80._0c.get();
+  public static void renderAdditionCompletedStarburst(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+    final AdditionStarburstEffect10 starburstEffect = (AdditionStarburstEffect10)manager.effect_44;
+    final AdditionStarburstEffectRay10[] rayArray = starburstEffect.rayArray_0c;
 
-    final int[] sp0x18 = new int[3];
-    final int[] sp0x28 = new int[3];
+    final int[] xArray = new int[3];
+    final int[] yArray = new int[3];
 
     //LAB_800d16fc
-    for(int sp78 = 0; sp78 < sp80.count_04.get(); sp78++) {
-      if(MEMORY.ref(1, sp84).offset(0x0L).get() != 0) {
-        MEMORY.ref(2, sp84).offset(0x6L).addu(MEMORY.ref(2, sp84).offset(0x8L).get());
+    for(int rayNum = 0; rayNum < starburstEffect.rayCount_04; rayNum++) {
+      if(rayArray[rayNum].renderRay_00) {
+        rayArray[rayNum].endpointTranslationMagnitude_06 += rayArray[rayNum].endpointTranslationMagnitudeVelocity_08;
 
         //LAB_800d1728
-        for(int s7 = 0; s7 < 4; s7++) {
-          final IntRef[] sp0x38 = {new IntRef(), new IntRef()};
-          FUN_800d1194(data, sp80, sp0x38);
+        for(int i = 0; i < 4; i++) {
+          final IntRef[] translationRefs = {new IntRef(), new IntRef()};
+          modifyAdditionStarburstTranslation(manager, starburstEffect, translationRefs);
 
           //LAB_800d174c
-          for(int s4 = 0; s4 < 3; s4++) {
-            final int s0 = (int)Math.max(0, _800c6d94.offset(s7 * 0x6L).offset(s4 * 0x2L).get() - MEMORY.ref(2, sp84).offset(0x6L).get());
+          for(int j = 0; j < 3; j++) {
+            final int translationScale = Math.max(0, completedAdditionStarburstTranslationMagnitudes_800c6d94.get(i).get(j) - rayArray[rayNum].endpointTranslationMagnitude_06);
 
             //LAB_800d1784
-            final long s2 = _800c6dac.offset(s7 * 0x6L).offset(s4 * 0x2L).getAddress();
-            sp0x18[s4] = (rcos(MEMORY.ref(2, sp84).offset(0x2L).getSigned() + MEMORY.ref(2, s2).offset(0x0L).getSigned()) * s0 >> 12) + sp0x38[0].get();
-            sp0x28[s4] = (rsin(MEMORY.ref(2, sp84).offset(0x2L).getSigned() + MEMORY.ref(2, s2).offset(0x0L).getSigned()) * s0 >> 12) + sp0x38[1].get();
+            final int angleModifier = completedAdditionStarburstAngleModifiers_800c6dac.get(i).get(j);
+            xArray[j] = (rcos(rayArray[rayNum].angle_02 + angleModifier) * translationScale >> 12) + translationRefs[0].get();
+            yArray[j] = (rsin(rayArray[rayNum].angle_02 + angleModifier) * translationScale >> 12) + translationRefs[1].get();
           }
 
           GPU.queueCommand(30, new GpuCommandPoly(3)
             .translucent(Translucency.B_PLUS_F)
             .monochrome(0, 0)
             .monochrome(1, 0)
-            .rgb(2, data._10.colour_1c.getX(), data._10.colour_1c.getY(), data._10.colour_1c.getZ())
-            .pos(0, sp0x18[0], sp0x28[0])
-            .pos(1, sp0x18[1], sp0x28[1])
-            .pos(2, sp0x18[2], sp0x28[2])
+            .rgb(2, manager._10.colour_1c.getX(), manager._10.colour_1c.getY(), manager._10.colour_1c.getZ())
+            .pos(0, xArray[0], yArray[0])
+            .pos(1, xArray[1], yArray[1])
+            .pos(2, xArray[2], yArray[2])
           );
         }
       }
-
       //LAB_800d190c
-      sp84 = sp84 + 0x10L;
     }
-
     //LAB_800d1940
-  }
-
-  @Method(0x800d19c0L)
-  public static void deallocateAdditionStarburstEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    free(((AdditionStarburstEffect10)data.effect_44)._0c.get());
   }
 
   @Method(0x800d19ecL)
   public static FlowControl allocateAdditionStarburstEffect(final RunningScript<? extends BattleScriptDataBase> script) {
-    final int count = script.params_20[2].get();
+    final int rayCount = script.params_20[2].get();
 
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "AdditionStarburstEffect10",
       script.scriptState_04,
-      0x10,
       null,
       additionStarburstRenderers_800c6dc4[script.params_20[3].get()],
-      Bttl_800d::deallocateAdditionStarburstEffect,
-      AdditionStarburstEffect10::new
+      null,
+      new AdditionStarburstEffect10(rayCount)
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
     final AdditionStarburstEffect10 effect = (AdditionStarburstEffect10)manager.effect_44;
-    long t4 = mallocTail(count * 0x10L);
-    effect.scriptIndex_00.set(script.params_20[1].get());
-    effect.count_04.set(count);
-    effect._08.set(0);
-    effect._0c.set(t4);
+    effect.scriptIndex_00 = script.params_20[1].get();
+    effect.unused_08 = 0;
+    final AdditionStarburstEffectRay10[] rayArray = effect.rayArray_0c;
 
     //LAB_800d1ac4
-    for(int i = 0; i < count; i++) {
-      MEMORY.ref(1, t4).offset(0x0L).setu(0x1L);
-      MEMORY.ref(2, t4).offset(0x2L).setu(seed_800fa754.advance().get() % 4097);
-      MEMORY.ref(2, t4).offset(0x4L).setu(0x10L);
-      MEMORY.ref(2, t4).offset(0x6L).setu(seed_800fa754.advance().get() % 31);
-      MEMORY.ref(2, t4).offset(0x8L).setu(seed_800fa754.advance().get() % 21 + 10);
-      MEMORY.ref(2, t4).offset(0xaL).setu(seed_800fa754.advance().get() % 11 - 5);
-      MEMORY.ref(4, t4).offset(0xcL).setu(0);
-      t4 = t4 + 0x10L;
+    for(int rayNum = 0; rayNum < rayCount; rayNum++) {
+      rayArray[rayNum].renderRay_00 = true;
+      rayArray[rayNum].angle_02 = (short)(seed_800fa754.advance().get() % 4097);
+      rayArray[rayNum].unused_04 = 16;
+      rayArray[rayNum].endpointTranslationMagnitude_06 = (short)(seed_800fa754.advance().get() % 31);
+      rayArray[rayNum].endpointTranslationMagnitudeVelocity_08 = (short)(seed_800fa754.advance().get() % 21 + 10);
+      rayArray[rayNum].angleModifier_0a = (short)(seed_800fa754.advance().get() % 11 - 5);
+      rayArray[rayNum].unused_0c = 0;
     }
 
     //LAB_800d1c7c
@@ -626,13 +602,13 @@ public final class Bttl_800d {
 
   @Method(0x800d1cacL)
   public static FlowControl FUN_800d1cac(final RunningScript<? extends BattleScriptDataBase> script) {
-    script.params_20[0].set(allocateEffectManager("Unknown (FUN_800d1cac)", script.scriptState_04, 0, null, null, null, null).index);
+    script.params_20[0].set(allocateEffectManager("Unknown (FUN_800d1cac)", script.scriptState_04, null, null, null, null).index);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800d1cf4L)
   public static FlowControl FUN_800d1cf4(final RunningScript<? extends BattleScriptDataBase> script) {
-    script.params_20[0].set(allocateEffectManager("Unknown (FUN_800d1cf4)", script.scriptState_04, 0, null, null, null, null).index);
+    script.params_20[0].set(allocateEffectManager("Unknown (FUN_800d1cf4)", script.scriptState_04, null, null, null, null).index);
     return FlowControl.CONTINUE;
   }
 
@@ -640,11 +616,11 @@ public final class Bttl_800d {
   @Method(0x800d1d3cL)
   public static void renderDiscGradientEffect(final EffectManagerData6c manager, final int angle, final short[] vertices, final RadialGradientEffect14 effect, final Translucency translucency) {
     if(manager._10.flags_00 >= 0) {
-      GPU.queueCommand(effect.z_04.get() + manager._10.z_22 >> 2, new GpuCommandPoly(3)
+      GPU.queueCommand(effect.z_04 + manager._10.z_22 >> 2, new GpuCommandPoly(3)
         .translucent(translucency)
         .rgb(0, manager._10.colour_1c.getX(), manager._10.colour_1c.getY(), manager._10.colour_1c.getZ())
-        .rgb(1, effect.r_0c.get(), effect.g_0d.get(), effect.b_0e.get())
-        .rgb(2, effect.r_0c.get(), effect.g_0d.get(), effect.b_0e.get())
+        .rgb(1, effect.r_0c, effect.g_0d, effect.b_0e)
+        .rgb(2, effect.r_0c, effect.g_0d, effect.b_0e)
         .pos(0, vertices[0], vertices[1])
         .pos(1, vertices[2], vertices[3])
         .pos(2, vertices[4], vertices[5])
@@ -654,13 +630,18 @@ public final class Bttl_800d {
     //LAB_800d1e70
   }
 
+  @Method(0x800d1e80L)
+  public static void FUN_800d1e80(final EffectManagerData6c manager, final int angle, final short[] vertices, final RadialGradientEffect14 effect, final Translucency translucency) {
+    throw new RuntimeException("Not implemented");
+  }
+
   /** Renders things like the ring effect when using a healing potion */
   @Method(0x800d21b8L)
   public static void renderRingGradientEffect(final EffectManagerData6c manager, final int angle, final short[] vertices, final RadialGradientEffect14 effect, final Translucency translucency) {
     if(manager._10.flags_00 >= 0) {
       final VECTOR sp0x20 = new VECTOR().set(
-        rcos(angle) * (manager._10.scale_16.getX() / effect.scaleModifier_01.get() + manager._10._28) >> 12,
-        rsin(angle) * (manager._10.scale_16.getY() / effect.scaleModifier_01.get() + manager._10._28) >> 12, // X is correct
+        rcos(angle) * (manager._10.scale_16.getX() / effect.scaleModifier_01 + manager._10._28) >> 12,
+        rsin(angle) * (manager._10.scale_16.getY() / effect.scaleModifier_01 + manager._10._28) >> 12, // X is correct
         manager._10._2c
       );
 
@@ -669,8 +650,8 @@ public final class Bttl_800d {
       FUN_800cfb14(manager, sp0x20, sp0x10, sp0x14);
 
       final VECTOR sp0x30 = new VECTOR().set(
-        rcos(angle + effect.angleStep_08.get()) * (manager._10.scale_16.getX() / effect.scaleModifier_01.get() + manager._10._28) >> 12,
-        rsin(angle + effect.angleStep_08.get()) * (manager._10.scale_16.getY() / effect.scaleModifier_01.get() + manager._10._28) >> 12,
+        rcos(angle + effect.angleStep_08) * (manager._10.scale_16.getX() / effect.scaleModifier_01 + manager._10._28) >> 12,
+        rsin(angle + effect.angleStep_08) * (manager._10.scale_16.getY() / effect.scaleModifier_01 + manager._10._28) >> 12,
         manager._10._2c
       );
 
@@ -678,12 +659,12 @@ public final class Bttl_800d {
       final ShortRef sp0x1c = new ShortRef();
       FUN_800cfb14(manager, sp0x30, sp0x18, sp0x1c);
 
-      GPU.queueCommand(effect.z_04.get() + manager._10.z_22 >> 2, new GpuCommandPoly(4)
+      GPU.queueCommand(effect.z_04 + manager._10.z_22 >> 2, new GpuCommandPoly(4)
         .translucent(translucency)
         .rgb(0, manager._10.colour_1c.getX(), manager._10.colour_1c.getY(), manager._10.colour_1c.getZ())
         .rgb(1, manager._10.colour_1c.getX(), manager._10.colour_1c.getY(), manager._10.colour_1c.getZ())
-        .rgb(2, effect.r_0c.get(), effect.g_0d.get(), effect.b_0e.get())
-        .rgb(3, effect.r_0c.get(), effect.g_0d.get(), effect.b_0e.get())
+        .rgb(2, effect.r_0c, effect.g_0d, effect.b_0e)
+        .rgb(3, effect.r_0c, effect.g_0d, effect.b_0e)
         .pos(0, sp0x10.get(), sp0x14.get())
         .pos(1, sp0x18.get(), sp0x1c.get())
         .pos(2, vertices[2], vertices[3])
@@ -697,46 +678,46 @@ public final class Bttl_800d {
   @Method(0x800d247cL)
   public static void renderRadialGradientEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
     final RadialGradientEffect14 effect = (RadialGradientEffect14)manager.effect_44;
-    effect.angleStep_08.set(0x1000 / (0x4 << effect.circleSubdivisionModifier_00.get()));
+    effect.angleStep_08 = 0x1000 / (0x4 << effect.circleSubdivisionModifier_00);
 
-    final ShortRef sp0x48 = new ShortRef();
-    final ShortRef sp0x4c = new ShortRef();
-    effect.z_04.set(FUN_800cfb14(manager, new VECTOR(), sp0x48, sp0x4c) >> 2);
+    final ShortRef refX0 = new ShortRef();
+    final ShortRef refY0 = new ShortRef();
+    effect.z_04 = FUN_800cfb14(manager, new VECTOR(), refX0, refY0) >> 2;
 
-    final int z = effect.z_04.get() + manager._10.z_22;
+    final int z = effect.z_04 + manager._10.z_22;
     if(z >= 0xa0) {
       if(z >= 0xffe) {
-        effect.z_04.set(0xffe - manager._10.z_22);
+        effect.z_04 = 0xffe - manager._10.z_22;
       }
 
       //LAB_800d2510
       final VECTOR sp0x38 = new VECTOR().set(
-        rcos(0) * (manager._10.scale_16.getX() / effect.scaleModifier_01.get()) >> 12,
-        rsin(0) * (manager._10.scale_16.getY() / effect.scaleModifier_01.get()) >> 12,
+        rcos(0) * (manager._10.scale_16.getX() / effect.scaleModifier_01) >> 12,
+        rsin(0) * (manager._10.scale_16.getY() / effect.scaleModifier_01) >> 12,
         0
       );
 
-      final ShortRef sp0x58 = new ShortRef();
-      final ShortRef sp0x5c = new ShortRef();
-      FUN_800cfb14(manager, sp0x38, sp0x58, sp0x5c);
-      effect.r_0c.set(manager._10._24 >>> 16 & 0xff);
-      effect.g_0d.set(manager._10._24 >>>  8 & 0xff);
-      effect.b_0e.set(manager._10._24        & 0xff);
+      final ShortRef refX2 = new ShortRef();
+      final ShortRef refY2 = new ShortRef();
+      FUN_800cfb14(manager, sp0x38, refX2, refY2);
+      effect.r_0c = manager._10._24 >>> 16 & 0xff;
+      effect.g_0d = manager._10._24 >>>  8 & 0xff;
+      effect.b_0e = manager._10._24        & 0xff;
 
       //LAB_800d25b4
       for(int angle = 0; angle < 0x1000; ) {
-        final ShortRef sp0x50 = new ShortRef().set(sp0x58.get());
-        final ShortRef sp0x54 = new ShortRef().set(sp0x5c.get());
+        final ShortRef refX1 = new ShortRef().set(refX2.get());
+        final ShortRef refY1 = new ShortRef().set(refY2.get());
 
         sp0x38.set(
-          rcos(angle + effect.angleStep_08.get()) * (manager._10.scale_16.getX() / effect.scaleModifier_01.get()) >> 12,
-          rsin(angle + effect.angleStep_08.get()) * (manager._10.scale_16.getY() / effect.scaleModifier_01.get()) >> 12,
+          rcos(angle + effect.angleStep_08) * (manager._10.scale_16.getX() / effect.scaleModifier_01) >> 12,
+          rsin(angle + effect.angleStep_08) * (manager._10.scale_16.getY() / effect.scaleModifier_01) >> 12,
           0
         );
 
-        FUN_800cfb14(manager, sp0x38, sp0x58, sp0x5c);
-        effect.renderer_10.deref().run(manager, angle, new short[] {sp0x48.get(), sp0x4c.get(), sp0x50.get(), sp0x54.get(), sp0x58.get(), sp0x5c.get()}, effect, (manager._10.flags_00 & 0x1000_0000) != 0 ? Translucency.B_PLUS_F : Translucency.B_MINUS_F);
-        angle += effect.angleStep_08.get();
+        FUN_800cfb14(manager, sp0x38, refX2, refY2);
+        effect.renderer_10.accept(manager, angle, new short[] {refX0.get(), refY0.get(), refX1.get(), refY1.get(), refX2.get(), refY2.get()}, effect, (manager._10.flags_00 & 0x1000_0000) != 0 ? Translucency.B_PLUS_F : Translucency.B_MINUS_F);
+        angle += effect.angleStep_08;
       }
     }
 
@@ -745,17 +726,16 @@ public final class Bttl_800d {
 
   @Method(0x800d2734L)
   public static FlowControl allocateRadialGradientEffect(final RunningScript<? extends BattleScriptDataBase> script) {
-    final int s2 = script.params_20[1].get();
+    final int circleSubdivisionModifier = script.params_20[1].get();
     final int s1 = script.params_20[2].get();
 
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "RadialGradientEffect14",
       script.scriptState_04,
-      0x14,
       null,
       Bttl_800d::renderRadialGradientEffect,
       null,
-      RadialGradientEffect14::new
+      new RadialGradientEffect14()
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
@@ -764,9 +744,9 @@ public final class Bttl_800d {
     manager._10.scale_16.set((short)0x1000, (short)0x1000, (short)0x1000);
 
     final RadialGradientEffect14 effect = (RadialGradientEffect14)manager.effect_44;
-    effect.circleSubdivisionModifier_00.set(s2);
-    effect.scaleModifier_01.set((s1 - 3 & 0xffff_ffffL) >= 2 ? 4 : 1);
-    effect.renderer_10.set(radialGradientEffectRenderers_800fa758.get(s1).deref());
+    effect.circleSubdivisionModifier_00 = circleSubdivisionModifier;
+    effect.scaleModifier_01 = (s1 - 3 & 0xffff_ffffL) >= 2 ? 4 : 1;
+    effect.renderer_10 = radialGradientEffectRenderers_800fa758[s1];
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }
@@ -781,8 +761,8 @@ public final class Bttl_800d {
     Arrays.setAll(sp0x38, i -> new IntRef());
 
     final GuardEffect06 s7 = (GuardEffect06)data.effect_44;
-    s7._02.incr();
-    s7._04.add((short)0x400);
+    s7._02++;
+    s7._04 += 0x400;
 
     //LAB_800d2888
     int s3 = 0;
@@ -837,7 +817,7 @@ public final class Bttl_800d {
     //LAB_800d2cfc
     int s7_0 = 0;
     for(int i = 0; i < 4; i++) {
-      s6 = s6 + s7._04.get() / 4;
+      s6 = s6 + s7._04 / 4;
       s7_0 = s7_0 + data._10.scale_16.getX() / 4;
       sp78 = sp78 - sp80;
       sp7a = sp7a - sp82;
@@ -881,18 +861,17 @@ public final class Bttl_800d {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "GuardEffect06",
       script.scriptState_04,
-      0x6,
       null,
       Bttl_800d::renderGuardEffect,
       null,
-      GuardEffect06::new
+      new GuardEffect06()
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
     final GuardEffect06 effect = (GuardEffect06)manager.effect_44;
-    effect._00.set(1);
-    effect._02.set(0);
-    effect._04.set((short)0);
+    effect._00 = 1;
+    effect._02 = 0;
+    effect._04 = 0;
 
     // Hack to make shield color default if counter overlay color is default
     // Otherwise, just use the overlay color. Maybe we can make shields toggleable later.
@@ -937,138 +916,123 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d30c0L)
-  public static void monsterDeathEffectRenderer(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    final MonsterDeathEffect34 s1 = (MonsterDeathEffect34)data.effect_44;
-    long s2 = s1.ptr_30.get();
+  public static void monsterDeathEffectRenderer(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+    final MonsterDeathEffect34 deathEffect = (MonsterDeathEffect34)manager.effect_44;
+    final MonsterDeathEffectObjectDestructor30[] objArray = deathEffect.objectDestructorArray_30;
 
     //LAB_800d30fc
-    for(int animIndex = 0; animIndex < s1.animCount_04.get(); animIndex++) {
-      if(MEMORY.ref(1, s2).offset(0x0L).getSigned() == 0x1L) {
-        s1._0c.r_14.set((int)(MEMORY.ref(2, s2).offset(0x24L).get() >>> 8));
-        s1._0c.g_15.set((int)(MEMORY.ref(2, s2).offset(0x26L).get() >>> 8));
-        s1._0c.b_16.set((int)(MEMORY.ref(2, s2).offset(0x28L).get() >>> 8));
-        s1._0c.rotation_20.set((int)MEMORY.ref(4, s2).offset(0x0cL).get());
-        s1._0c.scaleX_1c.set((short)(data._10.scale_16.getX() + MEMORY.ref(2, s2).offset(0x04L).get()));
-        s1._0c.scaleY_1e.set((short)(data._10.scale_16.getY() + MEMORY.ref(2, s2).offset(0x04L).get()));
-        FUN_800e7ea4(s1._0c, MEMORY.ref(4, s2 + 0x14L, VECTOR::new));
+    for(int objIndex = 0; objIndex < deathEffect.modelObjectCount_04; objIndex++) {
+      if(objArray[objIndex].destructionState_00 == 1) {
+        deathEffect.sprite_0c.r_14 = objArray[objIndex].r_24 >>> 8;
+        deathEffect.sprite_0c.g_15 = objArray[objIndex].g_26 >>> 8;
+        deathEffect.sprite_0c.b_16 = objArray[objIndex].b_28 >>> 8;
+        deathEffect.sprite_0c.angle_20 = objArray[objIndex].angleModifier_0c;
+        deathEffect.sprite_0c.scaleX_1c = (short)(manager._10.scale_16.getX() + objArray[objIndex].scaleModifier_04);
+        deathEffect.sprite_0c.scaleY_1e = (short)(manager._10.scale_16.getY() + objArray[objIndex].scaleModifier_04);
+        renderGenericSpriteAtZOffset0(deathEffect.sprite_0c, objArray[objIndex].translation_14);
       }
-
       //LAB_800d3174
-      s2 = s2 + 0x30L;
     }
-
     //LAB_800d3190
   }
 
   @Method(0x800d31b0L)
-  public static void monsterDeathEffectTicker(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    final MonsterDeathEffect34 s1 = (MonsterDeathEffect34)data.effect_44;
+  public static void monsterDeathEffectTicker(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+    final MonsterDeathEffect34 deathEffect = (MonsterDeathEffect34)manager.effect_44;
 
-    s1._02.decr();
-    if(s1._02.get() == 0) {
+    deathEffect.remainingFrameLimit_02--;
+    if(deathEffect.remainingFrameLimit_02 == 0) {
       state.deallocateWithChildren();
     } else {
       //LAB_800d320c
-      long s2 = s1.ptr_30.get();
-      s1._00.add((short)2);
+      final MonsterDeathEffectObjectDestructor30[] objArray = deathEffect.objectDestructorArray_30;
+      deathEffect.destroyedPartsCutoffIndex_00 += 2;
 
       //LAB_800d322c
-      for(int animIndex = 0; animIndex < s1.animCount_04.get(); animIndex++) {
-        if(s1._00.get() >= animIndex + 1 && MEMORY.ref(1, s2).offset(0x0L).getSigned() == -1) {
-          MEMORY.ref(1, s2).offset(0x0L).setu(0x1L);
-          MEMORY.ref(1, s2).offset(0x1L).setu(0x8L);
-          MEMORY.ref(4, s2).offset(0x10L).setu(0);
-          MEMORY.ref(4, s2).offset(0x04L).setu(0);
-          MEMORY.ref(4, s2).offset(0x0cL).setu(seed_800fa754.advance().get() % 4097);
-          MEMORY.ref(4, s2).offset(0x08L).setu(seed_800fa754.advance().get() % 49 + 104);
-          MEMORY.ref(2, s2).offset(0x24L).setu(data._10.colour_1c.getX() << 8);
-          MEMORY.ref(2, s2).offset(0x26L).setu(data._10.colour_1c.getY() << 8);
-          MEMORY.ref(2, s2).offset(0x28L).setu(data._10.colour_1c.getZ() << 8);
-          MEMORY.ref(2, s2).offset(0x2aL).setu(MEMORY.ref(2, s2).offset(0x24L).get() / MEMORY.ref(1, s2).offset(0x01L).getSigned());
-          MEMORY.ref(2, s2).offset(0x2cL).setu(MEMORY.ref(2, s2).offset(0x26L).get() / MEMORY.ref(1, s2).offset(0x01L).getSigned());
-          MEMORY.ref(2, s2).offset(0x2eL).setu(MEMORY.ref(2, s2).offset(0x28L).get() / MEMORY.ref(1, s2).offset(0x01L).getSigned());
-          final VECTOR sp0x10 = new VECTOR();
-          FUN_800cffd8(s1.scriptIndex_08.get(), sp0x10, animIndex);
-          MEMORY.ref(4, s2).offset(0x14L).setu(sp0x10.getX());
-          MEMORY.ref(4, s2).offset(0x18L).setu(sp0x10.getY());
-          MEMORY.ref(4, s2).offset(0x1cL).setu(sp0x10.getZ());
-          FUN_800d0094(s1.scriptIndex_08.get(), animIndex, false);
+      for(int objIndex = 0; objIndex < deathEffect.modelObjectCount_04; objIndex++) {
+        if(deathEffect.destroyedPartsCutoffIndex_00 >= objIndex + 1 && objArray[objIndex].destructionState_00 == -1) {
+          objArray[objIndex].destructionState_00 = 1;
+          objArray[objIndex].stepCount_01 = 8;
+          objArray[objIndex].scaleModifier_04 = 0;
+          objArray[objIndex].scaleModifierVelocity_08 = (int)(seed_800fa754.advance().get() % 49 + 104);
+          objArray[objIndex].angleModifier_0c = (int)(seed_800fa754.advance().get() % 4097);
+          objArray[objIndex].angleModifierVelocity_10 = 0;
+          objArray[objIndex].r_24 = manager._10.colour_1c.getX() << 8;
+          objArray[objIndex].g_26 = manager._10.colour_1c.getY() << 8;
+          objArray[objIndex].b_28 = manager._10.colour_1c.getZ() << 8;
+          objArray[objIndex].stepR_2a = objArray[objIndex].r_24 / objArray[objIndex].stepCount_01;
+          objArray[objIndex].stepG_2c = objArray[objIndex].g_26 / objArray[objIndex].stepCount_01;
+          objArray[objIndex].stepB_2e = objArray[objIndex].b_28 / objArray[objIndex].stepCount_01;
+          final VECTOR translation = new VECTOR();
+          getModelObjectTranslation(deathEffect.scriptIndex_08, translation, objIndex);
+          objArray[objIndex].translation_14.set(translation);
+          setModelObjectVisibility(deathEffect.scriptIndex_08, objIndex, false);
         }
 
         //LAB_800d33d0
-        if(MEMORY.ref(1, s2).offset(0x00L).getSigned() > 0) {
-          MEMORY.ref(1, s2).offset(0x01L).subu(0x1L);
+        if(objArray[objIndex].destructionState_00 > 0) {
+          objArray[objIndex].stepCount_01--;
 
-          if(MEMORY.ref(1, s2).offset(0x01L).get() == 0) {
-            MEMORY.ref(1, s2).offset(0x00L).setu(0);
+          if(objArray[objIndex].stepCount_01 == 0) {
+            objArray[objIndex].destructionState_00 = 0;
           }
 
           //LAB_800d3400
-          MEMORY.ref(4, s2).offset(0x0cL).addu(MEMORY.ref(4, s2).offset(0x10L).get());
-          MEMORY.ref(2, s2).offset(0x24L).subu(MEMORY.ref(2, s2).offset(0x2aL).get());
-          MEMORY.ref(2, s2).offset(0x26L).subu(MEMORY.ref(2, s2).offset(0x2cL).get());
-          MEMORY.ref(2, s2).offset(0x28L).subu(MEMORY.ref(2, s2).offset(0x2eL).get());
-          MEMORY.ref(4, s2).offset(0x04L).addu(MEMORY.ref(4, s2).offset(0x08L).get());
+          objArray[objIndex].angleModifier_0c +=  objArray[objIndex].angleModifierVelocity_10;
+          objArray[objIndex].r_24 -= objArray[objIndex].stepR_2a;
+          objArray[objIndex].g_26 -= objArray[objIndex].stepG_2c;
+          objArray[objIndex].b_28 -= objArray[objIndex].stepB_2e;
+          objArray[objIndex].scaleModifier_04 +=  objArray[objIndex].scaleModifierVelocity_08;
         }
-
         //LAB_800d3450
-        s2 = s2 + 0x30L;
       }
     }
-
     //LAB_800d346c
-  }
-
-  @Method(0x800d3490L)
-  public static void deallocateMonsterDeathEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    free(((MonsterDeathEffect34)data.effect_44).ptr_30.get());
   }
 
   @Method(0x800d34bcL)
   public static FlowControl allocateMonsterDeathEffect(final RunningScript<? extends BattleScriptDataBase> script) {
+    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00;
+    final int modelObjectCount = bobj.model_148.partCount_98;
+
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "MonsterDeathEffect34",
       script.scriptState_04,
-      0x34,
       Bttl_800d::monsterDeathEffectTicker,
       Bttl_800d::monsterDeathEffectRenderer,
-      Bttl_800d::deallocateMonsterDeathEffect,
-      MonsterDeathEffect34::new
+      null,
+      new MonsterDeathEffect34(modelObjectCount)
     );
 
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00;
-    final int animCount = bobj.model_148.partCount_98;
     final EffectManagerData6c manager = state.innerStruct_00;
-    final MonsterDeathEffect34 effect = (MonsterDeathEffect34)manager.effect_44;
-    long s4 = mallocTail(animCount * 0x30L);
-    effect.ptr_30.set(s4); //TODO
-    effect._00.set((short)0);
-    effect._02.set(animCount + 8);
-    effect.animCount_04.set(animCount);
-    effect._06.set(0);
-    effect.scriptIndex_08.set(script.params_20[1].get());
+    final MonsterDeathEffect34 deathEffect = (MonsterDeathEffect34)manager.effect_44;
+
+    deathEffect.destroyedPartsCutoffIndex_00 = 0;
+    deathEffect.remainingFrameLimit_02 = modelObjectCount + 8;
+    deathEffect.unused_06 = 0;
+    deathEffect.scriptIndex_08 = script.params_20[1].get();
 
     //LAB_800d35a0
-    for(int animIndex = 0; animIndex < effect.animCount_04.get(); animIndex++) {
-      FUN_800d0094(effect.scriptIndex_08.get(), animIndex, true);
-      MEMORY.ref(1, s4).offset(0x0L).setu(-0x1L);
-      s4 = s4 + 0x30L;
+    final MonsterDeathEffectObjectDestructor30[] objArray = deathEffect.objectDestructorArray_30;
+    for(int objIndex = 0; objIndex < deathEffect.modelObjectCount_04; objIndex++) {
+      setModelObjectVisibility(deathEffect.scriptIndex_08, objIndex, true);
+      objArray[objIndex].destructionState_00 = -1;
     }
 
     //LAB_800d35cc
     final SpriteMetrics08 metrics = spriteMetrics_800c6948[script.params_20[2].get() & 0xff];
-    effect._0c.flags_00.set(manager._10.flags_00 & 0xffff_ffffL);
-    effect._0c.w_08.set(metrics.w_04.get());
-    effect._0c.h_0a.set(metrics.h_05.get());
-    effect._0c.x_04.set((short)(-effect._0c.w_08.get() >> 1));
-    effect._0c.y_06.set((short)(-effect._0c.h_0a.get() >> 1));
-    effect._0c.tpage_0c.set((metrics.v_02.get() & 0x100) >>> 4 | (metrics.u_00.get() & 0x3ff) >>> 6);
-    effect._0c.u_0e.set((metrics.u_00.get() & 0x3f) * 4);
-    effect._0c.v_0f.set(metrics.v_02.get());
-    effect._0c.clutX_10.set(metrics.clut_06.get() << 4 & 0x3ff);
-    effect._0c.clutY_12.set(metrics.clut_06.get() >>> 6 & 0x1ff);
-    effect._0c._18.set((short)0);
-    effect._0c._1a.set((short)0);
+    deathEffect.sprite_0c.flags_00 = manager._10.flags_00 & 0xffff_ffffL;
+    deathEffect.sprite_0c.w_08 = metrics.w_04;
+    deathEffect.sprite_0c.h_0a = metrics.h_05;
+    deathEffect.sprite_0c.x_04 = (short)(-deathEffect.sprite_0c.w_08 >> 1);
+    deathEffect.sprite_0c.y_06 = (short)(-deathEffect.sprite_0c.h_0a >> 1);
+    deathEffect.sprite_0c.tpage_0c = (metrics.v_02 & 0x100) >>> 4 | (metrics.u_00 & 0x3ff) >>> 6;
+    deathEffect.sprite_0c.u_0e = (metrics.u_00 & 0x3f) * 4;
+    deathEffect.sprite_0c.v_0f = metrics.v_02;
+    deathEffect.sprite_0c.clutX_10 = metrics.clut_06 << 4 & 0x3ff;
+    deathEffect.sprite_0c.clutY_12 = metrics.clut_06 >>> 6 & 0x1ff;
+    deathEffect.sprite_0c.unused_18 = 0;
+    deathEffect.sprite_0c.unused_1a = 0;
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }
@@ -1127,7 +1091,7 @@ public final class Bttl_800d {
     } while(true);
 
     //LAB_800d3864
-    FUN_80018d60(displayX, displayY, charIdx % 21 * 12 & 0xfc, charIdx / 21 * 12 + 144 & 0xfc, 12, 12, 0xaL, Translucency.B_PLUS_F, new COLOUR().set(charAlpha, charAlpha, charAlpha), 0x1000L);
+    FUN_80018d60(displayX, displayY, charIdx % 21 * 12 & 0xfc, charIdx / 21 * 12 + 144 & 0xfc, 12, 12, 0xa, Translucency.B_PLUS_F, new COLOUR().set(charAlpha, charAlpha, charAlpha), 0x1000L);
   }
 
   /**
@@ -1168,12 +1132,12 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d3a20L)
-  public static void renderAdditionNameChar(final AdditionScriptData1c additionStruct, final AdditionCharEffectData0c charStruct, final long charAlpha, final long charIdx) {
+  public static void renderAdditionNameChar(final AdditionNameTextEffect1c additionStruct, final AdditionCharEffectData0c charStruct, final long charAlpha, final long charIdx) {
     renderAdditionNameChar((short)charStruct.position_04, (short)charStruct.offsetY_06, (short)additionStruct.addition_02, (short)charIdx, (int)charAlpha);
   }
 
   @Method(0x800d3a64L)
-  public static void FUN_800d3a64(final AdditionScriptData1c a0, final AdditionCharEffectData0c a1, final long charAlpha, final long a3) {
+  public static void FUN_800d3a64(final AdditionNameTextEffect1c a0, final AdditionCharEffectData0c a1, final long charAlpha, final long a3) {
     final String sp0x18 = String.valueOf(a0._10);
 
     long s4;
@@ -1205,7 +1169,7 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d3bb8L)
-  public static void FUN_800d3bb8(final ScriptState<AdditionScriptData1c> state, final AdditionScriptData1c additionStruct) {
+  public static void FUN_800d3bb8(final ScriptState<AdditionNameTextEffect1c> state, final AdditionNameTextEffect1c additionStruct) {
     additionStruct._04++;
 
     if(_800faa9d.get() == 0) {
@@ -1258,7 +1222,7 @@ public final class Bttl_800d {
     } else {
       //LAB_800d3dc0
       final int addition = gameState_800babc8.charData_32c[script.params_20[0].get()].selectedAddition_19;
-      final ScriptState<AdditionScriptData1c> state = SCRIPTS.allocateScriptState("AdditionScriptData1c", new AdditionScriptData1c());
+      final ScriptState<AdditionNameTextEffect1c> state = SCRIPTS.allocateScriptState("AdditionNameTextEffect1c", new AdditionNameTextEffect1c());
       state.loadScriptFile(doNothingScript_8004f650);
       state.setTicker(Bttl_800d::FUN_800d3bb8);
       final CString additionName = getAdditionName(0, addition);
@@ -1270,7 +1234,7 @@ public final class Bttl_800d {
       }
 
       //LAB_800d3e7c
-      final AdditionScriptData1c additionStruct = state.innerStruct_00;
+      final AdditionNameTextEffect1c additionStruct = state.innerStruct_00;
       additionStruct._00 = 0;
       additionStruct.addition_02 = addition;
       additionStruct._04 = 0;
@@ -1310,20 +1274,7 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d4018L)
-  public static void FUN_800d4018(final ScriptState<BttlScriptData40> state, final BttlScriptData40 s3) {
-    long v0;
-    long v1;
-    long t0;
-    long s2;
-    long s4;
-    long s5;
-    long s6;
-    long fp;
-    final long sp20;
-    long sp30;
-    final long sp28;
-    final long sp2c;
-
+  public static void FUN_800d4018(final ScriptState<SpTextEffect40> state, final SpTextEffect40 s3) {
     if(_800faa94.get() == 0 && s3._00 == 0) {
       if(s3._02 == 0) {
         state.deallocateWithChildren();
@@ -1352,75 +1303,52 @@ public final class Bttl_800d {
     }
 
     //LAB_800d4108
-    v0 = s3.ptr_3c;
-    s6 = 0x1L;
-    s4 = v0 + 0x70L;
-    v1 = v0 + 0x74L;
+    final SpTextEffectTrail10[] charArray = s3.charArray_3c;
 
     //LAB_800d4118
-    do {
-      MEMORY.ref(4, s4).offset(0x0L).setu(MEMORY.ref(4, v1).offset(-0x14L).get());
-      MEMORY.ref(4, v1).offset(0x0L).setu(MEMORY.ref(4, v1).offset(-0x10L).get());
-      s4 = s4 - 0x10L;
-      v1 = v1 - 0x10L;
-      s6 = s6 + 0x1L;
-    } while((int)s6 < 0x8L);
+    int i;
+    for (i = 7; i > 0; i--) {
+      charArray[i]._00 = charArray[i - 1]._00;
+      charArray[i]._04 = charArray[i - 1]._04;
+    }
 
-    MEMORY.ref(4, s4).offset(0x0L).setu(s3._0c);
-    MEMORY.ref(4, s4).offset(0x4L).setu(s3._10);
-    s6 = 0;
+    charArray[0]._00 = s3._0c;
+    charArray[0]._04 = s3._10;
     final String sp0x18 = Integer.toString(s3._08);
-    fp = s3._02;
-    s4 = s3.ptr_3c;
-    v1 = fp & 0xffL;
-    v0 = s3._01 + 0x21L;
-    v1 = v1 >>> 3;
-    v0 = v0 & 0xffL;
-    t0 = v0;
-    sp2c = t0;
-    t0 = s4 + 0x4L;
-    sp20 = v1;
-    sp28 = v0;
+    int fp = s3._02;
+    final int sp20 = (fp & 0xff) >>> 3;
+    final int sp2c = (s3._01 + 0x21 & 0xff);
 
     //LAB_800d419c
-    do {
-      sp30 = t0;
+    short s2;
+    short s5;
+    for (i = 0; i < 8; i++) {
       fp = fp - sp20;
 
-      if(s6 == 0 || MEMORY.ref(4, s4).offset(0x0L).get() != s3._0c || MEMORY.ref(4, sp30).offset(0x0L).get() != s3._10) {
+      if(i == 0 || charArray[i]._00 != s3._0c || charArray[i]._04 != s3._10) {
         //LAB_800d41d8
-        s2 = (int)MEMORY.ref(4, s4).offset(0x0L).get() >> 8;
-        s5 = (int)MEMORY.ref(4, sp30).offset(0x0L).get() >> 8;
+        s2 = (short)(charArray[i]._00 >> 8);
+        s5 = (short)(charArray[i]._04 >> 8);
 
         if(s3._01 != 0) {
-          FUN_800d3f98((short)s2, (short)s5, 10, (short)sp28, (int)(fp & 0xff));
-          s2 = s2 + 0x8L;
+          FUN_800d3f98(s2, s5, 10, (short)sp2c, fp & 0xff);
+          s2 += 8;
         }
 
         //LAB_800d4224
         //LAB_800d423c
-        for(int i = 0; i < sp0x18.length(); i++) {
-          FUN_800d3f98((short)s2, (short)s5, sp0x18.charAt(i) - 0x30, (short)sp28, (int)(fp & 0xff));
-          s2 = s2 + 0x8L;
+        for(int j = 0; j < sp0x18.length(); j++) {
+          FUN_800d3f98(s2, s5, sp0x18.charAt(j) - 0x30, (short)sp2c, fp & 0xff);
+          s2 += 8;
         }
 
         //LAB_800d4274
-        FUN_800d3f98((short)(s2 - 0x2L), (short)s5, 11, (short)sp2c, (int)(fp & 0xff));
-        FUN_800d3f98((short)(s2 + 0x4L), (short)s5, 12, (short)sp2c, (int)(fp & 0xff));
+        FUN_800d3f98((short)(s2 - 2), s5, 11, (short)sp2c, fp & 0xff);
+        FUN_800d3f98((short)(s2 + 4), s5, 12, (short)sp2c, fp & 0xff);
       }
-
       //LAB_800d42c0
-      s6 = s6 + 0x1L;
-      s4 = s4 + 0x10L;
-      t0 = sp30 + 0x10L;
-    } while((int)s6 < 0x8L);
-
+    }
     //LAB_800d42dc
-  }
-
-  @Method(0x800d430cL)
-  public static void FUN_800d430c(final ScriptState<BttlScriptData40> state, final BttlScriptData40 data) {
-    free(state.innerStruct_00.ptr_3c);
   }
 
   @Method(0x800d4338L)
@@ -1430,15 +1358,13 @@ public final class Bttl_800d {
 
     if(s2 == -1) {
       _800faa94.setu(0);
-      script.params_20[1].set(0);
     } else {
       //LAB_800d4388
-      final ScriptState<BttlScriptData40> state = SCRIPTS.allocateScriptState("BttlScriptData40", new BttlScriptData40());
+      final ScriptState<SpTextEffect40> state = SCRIPTS.allocateScriptState("SpTextEffect40", new SpTextEffect40());
       state.loadScriptFile(doNothingScript_8004f650);
       state.setTicker(Bttl_800d::FUN_800d4018);
-      state.setDestructor(Bttl_800d::FUN_800d430c);
 
-      final BttlScriptData40 s1 = state.innerStruct_00;
+      final SpTextEffect40 s1 = state.innerStruct_00;
       s1._00 = 1;
       s1._02 = 0x80;
       s1._04 = 0;
@@ -1447,7 +1373,6 @@ public final class Bttl_800d {
       s1._10 = 30;
       s1._1c = (int)(_800faa90.getSigned() << 8);
       s1._20 = 0x5000;
-      s1.ptr_3c = mallocTail(0x80);
 
       if(s3 == 1) {
         _800faa92.setu(0);
@@ -1468,11 +1393,9 @@ public final class Bttl_800d {
       _800faa98.addu(s2);
 
       //LAB_800d44dc
-      long a2 = s1.ptr_3c;
-      for(long a3 = 0; a3 < 8; a3++) {
-        MEMORY.ref(4, a2).offset(0x0L).setu(s1._0c);
-        MEMORY.ref(4, a2).offset(0x4L).setu(s1._10);
-        a2 = a2 + 0x10L;
+      for(int i = 0; i < 8; i++) {
+        s1.charArray_3c[i]._00 = s1._0c;
+        s1.charArray_3c[i]._04 = s1._10;
       }
 
       final int strLen = String.valueOf(s1._08).length();
@@ -1486,8 +1409,9 @@ public final class Bttl_800d {
 
       //LAB_800d453c
       _800faa90.setu((s1._1c >> 8) + v1 * 8 - 3);
-      script.params_20[1].set(0);
     }
+
+    script.params_20[1].set(0);
 
     //LAB_800d4560
     return FlowControl.CONTINUE;
@@ -1497,10 +1421,10 @@ public final class Bttl_800d {
   public static FlowControl FUN_800d4580(final RunningScript<?> script) {
     final int s2 = script.params_20[0].get();
     if(s2 != -1) {
-      final ScriptState<AdditionScriptData1c> state = SCRIPTS.allocateScriptState("AdditionScriptData1c", new AdditionScriptData1c());
+      final ScriptState<AdditionNameTextEffect1c> state = SCRIPTS.allocateScriptState("AdditionScriptData1c", new AdditionNameTextEffect1c());
       state.loadScriptFile(doNothingScript_8004f650);
       state.setTicker(Bttl_800d::FUN_800d3bb8);
-      final AdditionScriptData1c s0 = state.innerStruct_00;
+      final AdditionNameTextEffect1c s0 = state.innerStruct_00;
       s0.ptr_18 = new AdditionCharEffectData0c[] {new AdditionCharEffectData0c()};
       _800faa9c.setu(0x1L);
       s0._0c = 40;
@@ -1533,10 +1457,10 @@ public final class Bttl_800d {
     final COLOUR colour = new COLOUR().set(script.params_20[4].get(), script.params_20[4].get(), script.params_20[4].get());
 
     if(MEMORY.ref(1, v1).offset(0x0L).get() == 0) {
-      FUN_80018d60(script.params_20[1].get(), script.params_20[2].get(), (int)MEMORY.ref(1, v1).offset(0x1L).get(), (int)MEMORY.ref(1, v1).offset(0x2L).get(), (int)MEMORY.ref(1, v1).offset(0x3L).get(), (int)MEMORY.ref(1, v1).offset(0x4L).get(), MEMORY.ref(1, v1).offset(0x5L).get(), Translucency.of(script.params_20[3].get()), colour, 0x1000L);
+      FUN_80018d60(script.params_20[1].get(), script.params_20[2].get(), (int)MEMORY.ref(1, v1).offset(0x1L).get(), (int)MEMORY.ref(1, v1).offset(0x2L).get(), (int)MEMORY.ref(1, v1).offset(0x3L).get(), (int)MEMORY.ref(1, v1).offset(0x4L).get(), (int)MEMORY.ref(1, v1).offset(0x5L).get(), Translucency.of(script.params_20[3].get()), colour, 0x1000L);
     } else {
       //LAB_800d4784
-      FUN_80018a5c(script.params_20[1].get(), script.params_20[2].get(), (int)MEMORY.ref(1, v1).offset(0x1L).get(), (int)MEMORY.ref(1, v1).offset(0x2L).get(), (int)MEMORY.ref(1, v1).offset(0x3L).get(), (int)MEMORY.ref(1, v1).offset(0x4L).get(), MEMORY.ref(1, v1).offset(0x5L).get(), Translucency.of(script.params_20[3].get()), colour, 0x1000L, 0x1000L);
+      FUN_80018a5c(script.params_20[1].get(), script.params_20[2].get(), (int)MEMORY.ref(1, v1).offset(0x1L).get(), (int)MEMORY.ref(1, v1).offset(0x2L).get(), (int)MEMORY.ref(1, v1).offset(0x3L).get(), (int)MEMORY.ref(1, v1).offset(0x4L).get(), (int)MEMORY.ref(1, v1).offset(0x5L).get(), Translucency.of(script.params_20[3].get()), colour, 0x1000L, 0x1000L);
     }
 
     //LAB_800d47cc
@@ -1544,16 +1468,16 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d47dcL)
-  public static void FUN_800d47dc(final int a0, final int a1, final int a2, final int a3, final int a4, final int a5, final int scriptIndex) {
+  public static void FUN_800d47dc(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
     cam.vec_94.set(cam.rview2_00.viewpoint_00).mul(0x100);
 
     if(a5 == 0) {
       //LAB_800d4854
       cam._d0 = a3;
-      cam._b0 = (a0 - cam.vec_94.getX()) / a3;
-      cam._bc = (a1 - cam.vec_94.getY()) / a3;
-      cam._c8 = (a2 - cam.vec_94.getZ()) / a3;
+      cam._b0 = (x - cam.vec_94.getX()) / a3;
+      cam._bc = (y - cam.vec_94.getY()) / a3;
+      cam._c8 = (z - cam.vec_94.getZ()) / a3;
     } else assert a5 != 1 : "Undefined t0/t1";
 
     //LAB_800d492c
@@ -1563,7 +1487,7 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d496cL)
-  public static void FUN_800d496c(final int a0, final int a1, final int a2, final int a3, final int a4, final int a5, final int scriptIndex) {
+  public static void FUN_800d496c(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
 
     cam._ac = FUN_800dc384(0, 1, 0, 0) << 8;
@@ -1573,18 +1497,18 @@ public final class Bttl_800d {
     if(a5 == 0) {
       //LAB_800d4a24
       cam._d0 = a3;
-      cam._b0 = FUN_800dcf10(0, cam._ac, a0, a3, a4 & 3);
-      cam._bc = FUN_800dcf10(1, cam._b8, a1, a3, a4 >> 2 & 3);
-      cam._c8 = FUN_800dcf10(2, cam._a0, a2, a3, 0);
+      cam._b0 = FUN_800dcf10(0, cam._ac, x, a3, a4 & 3);
+      cam._bc = FUN_800dcf10(1, cam._b8, y, a3, a4 >> 2 & 3);
+      cam._c8 = FUN_800dcf10(2, cam._a0, z, a3, 0);
     } else if(a5 == 1) {
       //LAB_800d4a7c
-      final int s1 = FUN_800dcfb8(0, cam._ac, a0, a4 & 3);
-      final int s0 = FUN_800dcfb8(1, cam._b8, a1, a4 >> 2 & 3);
-      final int v0 = FUN_800dcfb8(2, cam._a0, a2, 0);
+      final int s1 = FUN_800dcfb8(0, cam._ac, x, a4 & 3);
+      final int s0 = FUN_800dcfb8(1, cam._b8, y, a4 >> 2 & 3);
+      final int v0 = FUN_800dcfb8(2, cam._a0, z, 0);
       cam._d0 = SquareRoot0(s1 * s1 + s0 * s0 + v0 * v0) / a3;
-      cam._b0 = FUN_800dcf10(0, cam._ac, a0, cam._d0, a4 & 3);
-      cam._bc = FUN_800dcf10(1, cam._b8, a1, cam._d0, a4 >> 2 & 3);
-      cam._c8 = FUN_800dcf10(2, cam._a0, a2, cam._d0, 0);
+      cam._b0 = FUN_800dcf10(0, cam._ac, x, cam._d0, a4 & 3);
+      cam._bc = FUN_800dcf10(1, cam._b8, y, cam._d0, a4 >> 2 & 3);
+      cam._c8 = FUN_800dcf10(2, cam._a0, z, cam._d0, 0);
     }
 
     //LAB_800d4b68
@@ -1593,18 +1517,18 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d4bacL)
-  public static void FUN_800d4bac(final int a0, final int a1, final int a2, final int a3, final int a4, final int a5, final int scriptIndex) {
+  public static void FUN_800d4bac(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
-    cam.vec_94.setX(FUN_800dc384(0, 0x4L, 0, 0) << 8);
-    cam.vec_94.setY(FUN_800dc384(0, 0x4L, 1, 0) << 8);
-    cam.vec_94.setZ(FUN_800dc384(0, 0x4L, 2, 0) << 8);
+    cam.vec_94.setX(FUN_800dc384(0, 4, 0, 0) << 8);
+    cam.vec_94.setY(FUN_800dc384(0, 4, 1, 0) << 8);
+    cam.vec_94.setZ(FUN_800dc384(0, 4, 2, 0) << 8);
 
     if(a5 == 0) {
       //LAB_800d4c5c
       cam._d0 = a3;
-      cam._b0 = (a0 - cam.vec_94.getX()) / a3;
-      cam._bc = (a1 - cam.vec_94.getY()) / a3;
-      cam._c8 = (a2 - cam.vec_94.getZ()) / a3;
+      cam._b0 = (x - cam.vec_94.getX()) / a3;
+      cam._bc = (y - cam.vec_94.getY()) / a3;
+      cam._c8 = (z - cam.vec_94.getZ()) / a3;
     } else assert a5 != 1 : "Undefined s3/s5";
 
     //LAB_800d4d34
@@ -1614,28 +1538,28 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d4d7cL)
-  public static void FUN_800d4d7c(final int a0, final int a1, final int a2, final int a3, final int a4, final int a5, final int scriptIndex) {
+  public static void FUN_800d4d7c(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
 
-    cam._ac = FUN_800dc384(0, 0x5L, 0, 0) << 8;
-    cam._b8 = FUN_800dc384(0, 0x5L, 1, 0) << 8;
-    cam._a0 = FUN_800dc384(0, 0x5L, 2, 0) << 8;
+    cam._ac = FUN_800dc384(0, 5, 0, 0) << 8;
+    cam._b8 = FUN_800dc384(0, 5, 1, 0) << 8;
+    cam._a0 = FUN_800dc384(0, 5, 2, 0) << 8;
 
     if(a5 == 0) {
       //LAB_800d4e34
       cam._d0 = a3;
-      cam._b0 = FUN_800dcf10(0, cam._ac, a0, a3, a4 & 3);
-      cam._bc = FUN_800dcf10(1, cam._b8, a1, a3, a4 >> 2 & 3);
-      cam._c8 = FUN_800dcf10(2, cam._a0, a2, a3, 0);
+      cam._b0 = FUN_800dcf10(0, cam._ac, x, a3, a4 & 3);
+      cam._bc = FUN_800dcf10(1, cam._b8, y, a3, a4 >> 2 & 3);
+      cam._c8 = FUN_800dcf10(2, cam._a0, z, a3, 0);
     } else if(a5 == 1) {
       //LAB_800d4e8c
-      final int s1 = FUN_800dcfb8(0, cam._ac, a0, a4 & 3);
-      final int s0 = FUN_800dcfb8(1, cam._b8, a1, a4 >> 2 & 3);
-      final int v0 = FUN_800dcfb8(2, cam._a0, a2, 0);
+      final int s1 = FUN_800dcfb8(0, cam._ac, x, a4 & 3);
+      final int s0 = FUN_800dcfb8(1, cam._b8, y, a4 >> 2 & 3);
+      final int v0 = FUN_800dcfb8(2, cam._a0, z, 0);
       cam._d0 = SquareRoot0(s1 * s1 + s0 * s0 + v0 * v0) / a3;
-      cam._b0 = FUN_800dcf10(0, cam._ac, a0, cam._d0, a4 & 3);
-      cam._bc = FUN_800dcf10(1, cam._b8, a1, cam._d0, a4 >> 2 & 3);
-      cam._c8 = FUN_800dcf10(2, cam._a0, a2, cam._d0, 0);
+      cam._b0 = FUN_800dcf10(0, cam._ac, x, cam._d0, a4 & 3);
+      cam._bc = FUN_800dcf10(1, cam._b8, y, cam._d0, a4 >> 2 & 3);
+      cam._c8 = FUN_800dcf10(2, cam._a0, z, cam._d0, 0);
     }
 
     //LAB_800d4f78
@@ -1644,21 +1568,21 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d4fbcL)
-  public static void FUN_800d4fbc(final int a0, final int a1, final int a2, final int a3, final int a4, final int a5, final int scriptIndex) {
+  public static void FUN_800d4fbc(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
     cam.bobjIndex_f4 = scriptIndex;
-    cam.vec_94.setX(FUN_800dc384(0, 0x6L, 0, scriptIndex) << 8);
-    cam.vec_94.setY(FUN_800dc384(0, 0x6L, 1, scriptIndex) << 8);
-    cam.vec_94.setZ(FUN_800dc384(0, 0x6L, 2, scriptIndex) << 8);
+    cam.vec_94.setX(FUN_800dc384(0, 6, 0, scriptIndex) << 8);
+    cam.vec_94.setY(FUN_800dc384(0, 6, 1, scriptIndex) << 8);
+    cam.vec_94.setZ(FUN_800dc384(0, 6, 2, scriptIndex) << 8);
 
     if(a5 == 0) {
       //LAB_800d5078
       cam._d0 = a3;
 
       if(a3 != 0) {
-        cam._b0 = (a0 - cam.vec_94.getX()) / a3;
-        cam._bc = (a1 - cam.vec_94.getY()) / a3;
-        cam._c8 = (a2 - cam.vec_94.getZ()) / a3;
+        cam._b0 = (x - cam.vec_94.getX()) / a3;
+        cam._bc = (y - cam.vec_94.getY()) / a3;
+        cam._c8 = (z - cam.vec_94.getZ()) / a3;
       } else {
         cam._b0 = -1;
         cam._bc = -1;
@@ -1666,16 +1590,16 @@ public final class Bttl_800d {
       }
     } else if(a5 == 1) {
       //LAB_800d50c4
-      final int x = a0 - cam.vec_94.getX();
-      final int y = a1 - cam.vec_94.getY();
-      final int z = a2 - cam.vec_94.getZ();
-      final int v0 = SquareRoot0(z * z + y * y + x * x) / a3;
+      final int x2 = x - cam.vec_94.getX();
+      final int y2 = y - cam.vec_94.getY();
+      final int z2 = z - cam.vec_94.getZ();
+      final int v0 = SquareRoot0(z2 * z2 + y2 * y2 + x2 * x2) / a3;
       cam._d0 = v0;
 
       if(v0 != 0) {
-        cam._b0 = (a0 - cam.vec_94.getX()) / v0;
-        cam._bc = (a1 - cam.vec_94.getY()) / v0;
-        cam._c8 = (a2 - cam.vec_94.getZ()) / v0;
+        cam._b0 = (x - cam.vec_94.getX()) / v0;
+        cam._bc = (y - cam.vec_94.getY()) / v0;
+        cam._c8 = (z - cam.vec_94.getZ()) / v0;
       } else {
         cam._b0 = -1;
         cam._bc = -1;
@@ -1690,28 +1614,28 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d519cL)
-  public static void FUN_800d519c(final int a0, final int a1, final int a2, final int a3, final int a4, final int a5, final int scriptIndex) {
+  public static void FUN_800d519c(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int scriptIndex) {
     final BattleCamera s4 = camera_800c67f0;
     s4.bobjIndex_f4 = scriptIndex;
-    s4._ac = FUN_800dc384(0, 0x7L, 0, scriptIndex) << 8;
-    s4._b8 = FUN_800dc384(0, 0x7L, 1, scriptIndex) << 8;
-    s4._a0 = FUN_800dc384(0, 0x7L, 2, scriptIndex) << 8;
+    s4._ac = FUN_800dc384(0, 7, 0, scriptIndex) << 8;
+    s4._b8 = FUN_800dc384(0, 7, 1, scriptIndex) << 8;
+    s4._a0 = FUN_800dc384(0, 7, 2, scriptIndex) << 8;
 
     if(a5 == 0) {
       //LAB_800d525c
       s4._d0 = a3;
-      s4._b0 = FUN_800dcf10(0, s4._ac, a0, a3, a4 & 3);
-      s4._bc = FUN_800dcf10(1, s4._b8, a1, a3, a4 >> 2 & 3);
-      s4._c8 = FUN_800dcf10(2, s4._a0, a2, a3, 0);
+      s4._b0 = FUN_800dcf10(0, s4._ac, x, a3, a4 & 3);
+      s4._bc = FUN_800dcf10(1, s4._b8, y, a3, a4 >> 2 & 3);
+      s4._c8 = FUN_800dcf10(2, s4._a0, z, a3, 0);
     } else if(a5 == 1) {
       //LAB_800d52b4
-      final long s1 = FUN_800dcfb8(0, s4._ac, a0, a4 & 3);
-      final long s0 = FUN_800dcfb8(1, s4._b8, a1, a4 >> 2 & 3);
-      final long v0 = FUN_800dcfb8(2, s4._a0, a2, 0);
+      final long s1 = FUN_800dcfb8(0, s4._ac, x, a4 & 3);
+      final long s0 = FUN_800dcfb8(1, s4._b8, y, a4 >> 2 & 3);
+      final long v0 = FUN_800dcfb8(2, s4._a0, z, 0);
       s4._d0 = SquareRoot0(s1 * s1 + s0 * s0 + v0 * v0) / a3;
-      s4._b0 = FUN_800dcf10(0, s4._ac, a0, s4._d0, a4 & 3);
-      s4._bc = FUN_800dcf10(1, s4._b8, a1, s4._d0, a4 >> 2 & 3);
-      s4._c8 = FUN_800dcf10(2, s4._a0, a2, s4._d0, 0);
+      s4._b0 = FUN_800dcf10(0, s4._ac, x, s4._d0, a4 & 3);
+      s4._bc = FUN_800dcf10(1, s4._b8, y, s4._d0, a4 >> 2 & 3);
+      s4._c8 = FUN_800dcf10(2, s4._a0, z, s4._d0, 0);
     }
 
     //LAB_800d53a0
@@ -1720,12 +1644,12 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d53e4L)
-  public static void FUN_800d53e4(final int a0, final int a1, final int a2, final int a3, final int a4, final int a5, final int a6) {
+  public static void FUN_800d53e4(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int a6) {
     final BattleCamera cam = camera_800c67f0;
 
-    final int s5 = (a0 >> 8) - camera_800c67f0.rview2_00.viewpoint_00.getX();
-    final int s6 = (a1 >> 8) - camera_800c67f0.rview2_00.viewpoint_00.getY();
-    final int s2 = (a2 >> 8) - camera_800c67f0.rview2_00.viewpoint_00.getZ();
+    final int s5 = (x >> 8) - camera_800c67f0.rview2_00.viewpoint_00.getX();
+    final int s6 = (y >> 8) - camera_800c67f0.rview2_00.viewpoint_00.getY();
+    final int s2 = (z >> 8) - camera_800c67f0.rview2_00.viewpoint_00.getZ();
     final int s3 = s5 / 2;
     final int v0 = s6 / 2;
     final int s0 = s2 / 2;
@@ -1735,9 +1659,9 @@ public final class Bttl_800d {
     final int s4 = (a4 - a3) / a0_0;
     cam._d8 = (ratan2(s6, SquareRoot0(s3 * s3 + s0 * s0) * 2) & 0xfff) << 8;
     cam._a4 = a3;
-    cam._e8 = a0;
-    cam._ec = a1;
-    cam._f0 = a2;
+    cam._e8 = x;
+    cam._ec = y;
+    cam._f0 = z;
     cam._11c |= 0x1;
     cam._120 = 16;
     cam._d0 = a0_0;
@@ -1745,11 +1669,11 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d5ec8L)
-  public static void FUN_800d5ec8(final int a0, final int a1, final int a2, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
+  public static void FUN_800d5ec8(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
-    final int s3 = (a0 >> 8) - cam.rview2_00.viewpoint_00.getX();
-    final int s4 = (a1 >> 8) - cam.rview2_00.viewpoint_00.getY();
-    final int s1 = (a2 >> 8) - cam.rview2_00.viewpoint_00.getZ();
+    final int s3 = (x >> 8) - cam.rview2_00.viewpoint_00.getX();
+    final int s4 = (y >> 8) - cam.rview2_00.viewpoint_00.getY();
+    final int s1 = (z >> 8) - cam.rview2_00.viewpoint_00.getZ();
     final int s2 = s3 / 2;
     final int v0 = s4 / 2;
     final int s0 = s1 / 2;
@@ -1776,22 +1700,22 @@ public final class Bttl_800d {
     //LAB_800d6038
     cam._a4 = s6;
     cam._b4 = (s7 - s6) / cam._d0;
-    cam._e8 = a0;
-    cam._ec = a1;
-    cam._f0 = a2;
+    cam._e8 = x;
+    cam._ec = y;
+    cam._f0 = z;
     cam._11c |= 0x1;
     cam._120 = 16;
   }
 
   @Method(0x800d60b0L)
-  public static void FUN_800d60b0(final int a0, final int a1, final int a2, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
+  public static void FUN_800d60b0(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
     cam._ac = FUN_800dc384(0, 1, 0, 0) << 8;
     cam._b8 = FUN_800dc384(0, 1, 1, 0) << 8;
     cam._a0 = FUN_800dc384(0, 1, 2, 0) << 8;
-    final int s1 = FUN_800dcfb8(0, cam._ac, a0, a6 & 3) >> 8;
-    final int s0 = FUN_800dcfb8(1, cam._b8, a1, a6 >> 2 & 3) >> 8;
-    FUN_800dcfb8(2, cam._a0, a2, 0);
+    final int s1 = FUN_800dcfb8(0, cam._ac, x, a6 & 3) >> 8;
+    final int s0 = FUN_800dcfb8(1, cam._b8, y, a6 >> 2 & 3) >> 8;
+    FUN_800dcfb8(2, cam._a0, z, 0);
     cam._d0 = a3;
     cam._d4 = (ratan2(s0, s1) & 0xfff) << 8;
     cam._d8 = 0;
@@ -1814,25 +1738,25 @@ public final class Bttl_800d {
     //LAB_800d6238
     //LAB_800d6240
     cam._e0 = s3;
-    cam._e8 = a0;
-    cam._ec = a1;
-    cam._f0 = a2;
+    cam._e8 = x;
+    cam._ec = y;
+    cam._f0 = z;
     cam._e4 = (s4 - s3) / cam._d0;
-    cam._a4 = FUN_800dcfb8(2, cam._a0, a2, 0) / cam._d0;
+    cam._a4 = FUN_800dcfb8(2, cam._a0, z, 0) / cam._d0;
     cam._11c |= 0x1;
     cam._120 = 17;
   }
 
   @Method(0x800d62d8L)
-  public static void FUN_800d62d8(final int a0, final int a1, final int a2, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
+  public static void FUN_800d62d8(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
-    cam.vec_94.setX(FUN_800dc384(0, 0x4L, 0, 0) << 8);
-    cam.vec_94.setY(FUN_800dc384(0, 0x4L, 1, 0) << 8);
-    cam.vec_94.setZ(FUN_800dc384(0, 0x4L, 2, 0) << 8);
+    cam.vec_94.setX(FUN_800dc384(0, 4, 0, 0) << 8);
+    cam.vec_94.setY(FUN_800dc384(0, 4, 1, 0) << 8);
+    cam.vec_94.setZ(FUN_800dc384(0, 4, 2, 0) << 8);
     _800c67d8.set(cam.vec_94);
-    final int s4 = a0 - cam.vec_94.getX() >> 8;
-    final int s5 = a1 - cam.vec_94.getY() >> 8;
-    final int s3 = a2 - cam.vec_94.getZ() >> 8;
+    final int s4 = x - cam.vec_94.getX() >> 8;
+    final int s5 = y - cam.vec_94.getY() >> 8;
+    final int s3 = z - cam.vec_94.getZ() >> 8;
     final int s1 = s4 / 2;
     final int v1 = s5 / 2;
     final int s0 = s3 / 2;
@@ -1843,9 +1767,9 @@ public final class Bttl_800d {
     final IntRef sp0x18 = new IntRef();
     final IntRef sp0x1c = new IntRef();
     FUN_800dcebc(a4, a5, cam._dc, a3, sp0x18, sp0x1c);
-    cam._e8 = a0;
-    cam._ec = a1;
-    cam._f0 = a2;
+    cam._e8 = x;
+    cam._ec = y;
+    cam._f0 = z;
     cam._a4 = sp0x18.get();
     cam._b4 = (sp0x1c.get() - sp0x18.get()) / cam._d0;
     cam._11c |= 0x1;
@@ -1853,14 +1777,14 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d64e4L)
-  public static void FUN_800d64e4(final int a0, final int a1, final int a2, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
+  public static void FUN_800d64e4(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
-    cam._ac = FUN_800dc384(0, 0x5L, 0, 0) << 8;
-    cam._b8 = FUN_800dc384(0, 0x5L, 1, 0) << 8;
-    cam._a0 = FUN_800dc384(0, 0x5L, 2, 0) << 8;
-    final int s1 = FUN_800dcfb8(0, cam._ac, a0, a6 & 3) >> 8;
-    final int s0 = FUN_800dcfb8(1, cam._b8, a1, a6 >> 2 & 3) >> 8;
-    FUN_800dcfb8(2, cam._a0, a2, 0);
+    cam._ac = FUN_800dc384(0, 5, 0, 0) << 8;
+    cam._b8 = FUN_800dc384(0, 5, 1, 0) << 8;
+    cam._a0 = FUN_800dc384(0, 5, 2, 0) << 8;
+    final int s1 = FUN_800dcfb8(0, cam._ac, x, a6 & 3) >> 8;
+    final int s0 = FUN_800dcfb8(1, cam._b8, y, a6 >> 2 & 3) >> 8;
+    FUN_800dcfb8(2, cam._a0, z, 0);
     cam._dc = SquareRoot0(s1 * s1 + s0 * s0) << 8;
     cam._d4 = (ratan2(s0, s1) & 0xfff) << 8;
     cam._d8 = 0;
@@ -1883,25 +1807,25 @@ public final class Bttl_800d {
     //LAB_800d666c
     //LAB_800d6674
     cam._e0 = s3;
-    cam._e8 = a0;
-    cam._ec = a1;
-    cam._f0 = a2;
+    cam._e8 = x;
+    cam._ec = y;
+    cam._f0 = z;
     cam._e4 = (s4 - s3) / cam._d0;
-    cam._a4 = FUN_800dcfb8(2, cam._a0, a2, 0) / cam._d0;
+    cam._a4 = FUN_800dcfb8(2, cam._a0, z, 0) / cam._d0;
     cam._11c |= 0x1;
     cam._120 = 21;
   }
 
   @Method(0x800d670cL)
-  public static void FUN_800d670c(final int a0, final int a1, final int a2, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
+  public static void FUN_800d670c(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
     cam.bobjIndex_f4 = scriptIndex;
-    cam.vec_94.setX(FUN_800dc384(0, 0x6L, 0, scriptIndex) << 8);
-    cam.vec_94.setY(FUN_800dc384(0, 0x6L, 1, scriptIndex) << 8);
-    cam.vec_94.setZ(FUN_800dc384(0, 0x6L, 2, scriptIndex) << 8);
-    final int s3 = a0 - cam.vec_94.getX() >> 8;
-    final int s4 = a1 - cam.vec_94.getY() >> 8;
-    final int s2 = a2 - cam.vec_94.getZ() >> 8;
+    cam.vec_94.setX(FUN_800dc384(0, 6, 0, scriptIndex) << 8);
+    cam.vec_94.setY(FUN_800dc384(0, 6, 1, scriptIndex) << 8);
+    cam.vec_94.setZ(FUN_800dc384(0, 6, 2, scriptIndex) << 8);
+    final int s3 = x - cam.vec_94.getX() >> 8;
+    final int s4 = y - cam.vec_94.getY() >> 8;
+    final int s2 = z - cam.vec_94.getZ() >> 8;
     final int s1 = s3 / 2;
     final int v1 = s4 / 2;
     final int s0 = s2 / 2;
@@ -1927,24 +1851,24 @@ public final class Bttl_800d {
     //LAB_800d68e0
     //LAB_800d68e8
     cam._a4 = s6;
-    cam._e8 = a0;
-    cam._ec = a1;
-    cam._f0 = a2;
+    cam._e8 = x;
+    cam._ec = y;
+    cam._f0 = z;
     cam._b4 = (s7 - s6) / cam._d0;
     cam._11c |= 0x1;
     cam._120 = 22;
   }
 
   @Method(0x800d6960L)
-  public static void FUN_800d6960(final int a0, final int a1, final int a2, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
+  public static void FUN_800d6960(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
     cam.bobjIndex_f4 = scriptIndex;
-    cam._ac = FUN_800dc384(0, 0x7L, 0, scriptIndex) << 8;
-    cam._b8 = FUN_800dc384(0, 0x7L, 1, scriptIndex) << 8;
-    cam._a0 = FUN_800dc384(0, 0x7L, 2, scriptIndex) << 8;
-    final int s1 = FUN_800dcfb8(0, cam._ac, a0, a6 & 3) >> 8;
-    final int s0 = FUN_800dcfb8(1, cam._b8, a1, a6 >> 2 & 3) >> 8;
-    FUN_800dcfb8(2, cam._a0, a2, 0); //TODO this method just returns a value, should it be used in the same way as the two calls above?
+    cam._ac = FUN_800dc384(0, 7, 0, scriptIndex) << 8;
+    cam._b8 = FUN_800dc384(0, 7, 1, scriptIndex) << 8;
+    cam._a0 = FUN_800dc384(0, 7, 2, scriptIndex) << 8;
+    final int s1 = FUN_800dcfb8(0, cam._ac, x, a6 & 3) >> 8;
+    final int s0 = FUN_800dcfb8(1, cam._b8, y, a6 >> 2 & 3) >> 8;
+    FUN_800dcfb8(2, cam._a0, z, 0); //TODO this method just returns a value, should it be used in the same way as the two calls above?
     cam._d0 = a3;
     cam._d4 = ratan2(s0, s1) & 0xfff << 8;
     cam._d8 = 0;
@@ -1966,17 +1890,17 @@ public final class Bttl_800d {
     //LAB_800d6af0
     //LAB_800d6af8
     cam._e0 = s3;
-    cam._e8 = a0;
-    cam._ec = a1;
-    cam._f0 = a2;
+    cam._e8 = x;
+    cam._ec = y;
+    cam._f0 = z;
     cam._e4 = (s4 - s3) / cam._d0;
-    cam._a4 = FUN_800dcfb8(2, cam._a0, a2, 0) / cam._d0;
+    cam._a4 = FUN_800dcfb8(2, cam._a0, z, 0) / cam._d0;
     cam._11c |= 0x1;
     cam._120 = 23;
   }
 
   @Method(0x800d6b90L)
-  public static void FUN_800d6b90(final int a0, final int a1, final int a2, final int a3, final int a4, final int a5, final int scriptIndex) {
+  public static void FUN_800d6b90(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
     cam.vec_20.set(cam.rview2_00.refpoint_0c).mul(0x100);
 
@@ -1986,9 +1910,9 @@ public final class Bttl_800d {
 
       // Retail bug: divide by 0 is possible here - the processor sets LO to -1 in this case
       if(a3 != 0) {
-        cam._3c = (a0 - cam.vec_20.getX()) / a3;
-        cam._48 = (a1 - cam.vec_20.getY()) / a3;
-        cam._54 = (a2 - cam.vec_20.getZ()) / a3;
+        cam._3c = (x - cam.vec_20.getX()) / a3;
+        cam._48 = (y - cam.vec_20.getY()) / a3;
+        cam._54 = (z - cam.vec_20.getZ()) / a3;
       } else {
         cam._3c = -1;
         cam._48 = -1;
@@ -2005,7 +1929,7 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d6d18L)
-  public static void FUN_800d6d18(final int a0, final int a1, final int a2, final int a3, final int a4, final int a5, final int scriptIndex) {
+  public static void FUN_800d6d18(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
     cam._38 = FUN_800dc384(1, 1, 0, 0) << 8;
     cam._44 = FUN_800dc384(1, 1, 1, 0) << 8;
@@ -2014,18 +1938,18 @@ public final class Bttl_800d {
     if(a5 == 0) {
       //LAB_800d6dd0
       cam._5c = a3;
-      cam._3c = FUN_800dcf10(0, cam._38, a0, a3, a4 & 3);
-      cam._48 = FUN_800dcf10(1, cam._44, a1, a3, a4 >> 2 & 3);
-      cam._54 = FUN_800dcf10(2, cam._2c, a2, a3, 0);
+      cam._3c = FUN_800dcf10(0, cam._38, x, a3, a4 & 3);
+      cam._48 = FUN_800dcf10(1, cam._44, y, a3, a4 >> 2 & 3);
+      cam._54 = FUN_800dcf10(2, cam._2c, z, a3, 0);
     } else if(a5 == 1) {
       //LAB_800d6e28
-      final int s1 = FUN_800dcfb8(0, cam._38, a0, a4 & 3);
-      final int s0 = FUN_800dcfb8(1, cam._44, a1, a4 >> 2 & 3);
-      final int v0 = FUN_800dcfb8(2, cam._2c, a2, 0);
+      final int s1 = FUN_800dcfb8(0, cam._38, x, a4 & 3);
+      final int s0 = FUN_800dcfb8(1, cam._44, y, a4 >> 2 & 3);
+      final int v0 = FUN_800dcfb8(2, cam._2c, z, 0);
       cam._5c = SquareRoot0(s1 * s1 + s0 * s0 + v0 * v0) / a3;
-      cam._3c = FUN_800dcf10(0, cam._38, a0, cam._5c, a4 & 3);
-      cam._48 = FUN_800dcf10(1, cam._44, a1, cam._5c, a4 >> 2 & 3);
-      cam._54 = FUN_800dcf10(2, cam._2c, a2, cam._5c, 0);
+      cam._3c = FUN_800dcf10(0, cam._38, x, cam._5c, a4 & 3);
+      cam._48 = FUN_800dcf10(1, cam._44, y, cam._5c, a4 >> 2 & 3);
+      cam._54 = FUN_800dcf10(2, cam._2c, z, cam._5c, 0);
     }
 
     //LAB_800d6f14
@@ -2034,7 +1958,7 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d6f58L)
-  public static void FUN_800d6f58(final int a0, final int a1, final int a2, final int a3, final int a4, final int a5, final int scriptIndex) {
+  public static void FUN_800d6f58(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
 
     cam.vec_20.setX(FUN_800dc384(1, 2, 0, 0) << 8);
@@ -2044,9 +1968,9 @@ public final class Bttl_800d {
     if(a5 == 0) {
       //LAB_800d7008
       cam._5c = a3;
-      cam._3c = (a0 - cam.vec_20.getX()) / a3;
-      cam._48 = (a1 - cam.vec_20.getY()) / a3;
-      cam._54 = (a2 - cam.vec_20.getZ()) / a3;
+      cam._3c = (x - cam.vec_20.getX()) / a3;
+      cam._48 = (y - cam.vec_20.getY()) / a3;
+      cam._54 = (z - cam.vec_20.getZ()) / a3;
     } else if(a5 == 1) {
       throw new RuntimeException("Broken code");
     }
@@ -2058,7 +1982,7 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d7128L)
-  public static void FUN_800d7128(final int a0, final int a1, final int a2, final int a3, final int a4, final int a5, final int scriptIndex) {
+  public static void FUN_800d7128(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
 
     cam._38 = FUN_800dc384(1, 3, 0, 0) << 8;
@@ -2068,18 +1992,18 @@ public final class Bttl_800d {
     if(a5 == 0) {
       //LAB_800d71e0
       cam._5c = a3;
-      cam._3c = FUN_800dcf10(0, cam._38, a0, a3, a4 & 3);
-      cam._48 = FUN_800dcf10(1, cam._44, a1, a3, a4 >> 2 & 3);
-      cam._54 = FUN_800dcf10(2, cam._2c, a2, a3, 0);
+      cam._3c = FUN_800dcf10(0, cam._38, x, a3, a4 & 3);
+      cam._48 = FUN_800dcf10(1, cam._44, y, a3, a4 >> 2 & 3);
+      cam._54 = FUN_800dcf10(2, cam._2c, z, a3, 0);
     } else if(a5 == 1) {
       //LAB_800d7238
-      final int s1 = FUN_800dcfb8(0, cam._38, a0, a4 & 3);
-      final int s0 = FUN_800dcfb8(1, cam._44, a1, a4 >> 2 & 3);
-      final int v0 = FUN_800dcfb8(2, cam._2c, a2, 0);
+      final int s1 = FUN_800dcfb8(0, cam._38, x, a4 & 3);
+      final int s0 = FUN_800dcfb8(1, cam._44, y, a4 >> 2 & 3);
+      final int v0 = FUN_800dcfb8(2, cam._2c, z, 0);
       cam._5c = SquareRoot0(s1 * s1 + s0 * s0 + v0 * v0) / a3;
-      cam._3c = FUN_800dcf10(0, cam._38, a0, cam._5c, a4 & 3);
-      cam._48 = FUN_800dcf10(1, cam._44, a1, cam._5c, a4 >> 2 & 3);
-      cam._54 = FUN_800dcf10(2, cam._2c, a2, cam._5c, 0);
+      cam._3c = FUN_800dcf10(0, cam._38, x, cam._5c, a4 & 3);
+      cam._48 = FUN_800dcf10(1, cam._44, y, cam._5c, a4 >> 2 & 3);
+      cam._54 = FUN_800dcf10(2, cam._2c, z, cam._5c, 0);
     }
 
     //LAB_800d7324
@@ -2088,19 +2012,19 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d7368L)
-  public static void FUN_800d7368(final int a0, final int a1, final int a2, final int a3, final int a4, final int a5, final int scriptIndex) {
+  public static void FUN_800d7368(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
     cam.bobjIndex_80 = scriptIndex;
-    cam.vec_20.setX(FUN_800dc384(1, 0x6L, 0, scriptIndex) << 8);
-    cam.vec_20.setY(FUN_800dc384(1, 0x6L, 1, scriptIndex) << 8);
-    cam.vec_20.setZ(FUN_800dc384(1, 0x6L, 2, scriptIndex) << 8);
+    cam.vec_20.setX(FUN_800dc384(1, 6, 0, scriptIndex) << 8);
+    cam.vec_20.setY(FUN_800dc384(1, 6, 1, scriptIndex) << 8);
+    cam.vec_20.setZ(FUN_800dc384(1, 6, 2, scriptIndex) << 8);
 
     if(a5 == 0) {
       //LAB_800d7424
       cam._5c = a3;
-      cam._3c = MathHelper.safeDiv(a0 - cam.vec_20.getX(), a3);
-      cam._48 = MathHelper.safeDiv(a1 - cam.vec_20.getY(), a3);
-      cam._54 = MathHelper.safeDiv(a2 - cam.vec_20.getZ(), a3);
+      cam._3c = MathHelper.safeDiv(x - cam.vec_20.getX(), a3);
+      cam._48 = MathHelper.safeDiv(y - cam.vec_20.getY(), a3);
+      cam._54 = MathHelper.safeDiv(z - cam.vec_20.getZ(), a3);
     } else if(a5 == 1) {
       throw new RuntimeException("Undefined s5/s6");
     }
@@ -2112,7 +2036,7 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d7548L)
-  public static void FUN_800d7548(final int a0, final int a1, final int a2, final int a3, final int a4, final int a5, final int scriptIndex) {
+  public static void FUN_800d7548(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
 
     cam.bobjIndex_80 = scriptIndex;
@@ -2123,18 +2047,18 @@ public final class Bttl_800d {
     if(a5 == 0) {
       //LAB_800d7608
       cam._5c = a3;
-      cam._3c = FUN_800dcf10(0, cam._38, a0, a3, a4 & 3);
-      cam._48 = FUN_800dcf10(1, cam._44, a1, a3, a4 >> 2 & 3);
-      cam._54 = FUN_800dcf10(2, cam._2c, a2, a3, 0);
+      cam._3c = FUN_800dcf10(0, cam._38, x, a3, a4 & 3);
+      cam._48 = FUN_800dcf10(1, cam._44, y, a3, a4 >> 2 & 3);
+      cam._54 = FUN_800dcf10(2, cam._2c, z, a3, 0);
     } else if(a5 == 1) {
       //LAB_800d7660
-      final int s1 = FUN_800dcfb8(0, cam._38, a0, a4 & 3);
-      final int s0 = FUN_800dcfb8(1, cam._44, a1, a4 >> 2 & 3);
-      final int v0 = FUN_800dcfb8(2, cam._2c, a2, 0);
+      final int s1 = FUN_800dcfb8(0, cam._38, x, a4 & 3);
+      final int s0 = FUN_800dcfb8(1, cam._44, y, a4 >> 2 & 3);
+      final int v0 = FUN_800dcfb8(2, cam._2c, z, 0);
       cam._5c = SquareRoot0(s1 * s1 + s0 * s0 + v0 * v0) / a3;
-      cam._3c = FUN_800dcf10(0, cam._38, a0, cam._5c, a4 & 3);
-      cam._48 = FUN_800dcf10(1, cam._44, a1, cam._5c, a4 >> 2 & 3);
-      cam._54 = FUN_800dcf10(2, cam._2c, a2, cam._5c, 0);
+      cam._3c = FUN_800dcf10(0, cam._38, x, cam._5c, a4 & 3);
+      cam._48 = FUN_800dcf10(1, cam._44, y, cam._5c, a4 >> 2 & 3);
+      cam._54 = FUN_800dcf10(2, cam._2c, z, cam._5c, 0);
     }
 
     //LAB_800d774c
@@ -2250,11 +2174,11 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d8274L)
-  public static void FUN_800d8274(final int a0, final int a1, final int a2, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
+  public static void FUN_800d8274(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
-    final int s4 = (a0 >> 8) - cam.rview2_00.refpoint_0c.getX();
-    final int s5 = (a1 >> 8) - cam.rview2_00.refpoint_0c.getY();
-    final int s2 = (a2 >> 8) - cam.rview2_00.refpoint_0c.getZ();
+    final int s4 = (x >> 8) - cam.rview2_00.refpoint_0c.getX();
+    final int s5 = (y >> 8) - cam.rview2_00.refpoint_0c.getY();
+    final int s2 = (z >> 8) - cam.rview2_00.refpoint_0c.getZ();
     final int s3 = s4 / 2;
     final int v0 = s5 / 2;
     final int s0 = s2 / 2;
@@ -2267,23 +2191,23 @@ public final class Bttl_800d {
     FUN_800dcebc(a4, a5, cam.vec_60.getZ(), cam._5c, sp0x18, sp0x1c);
     cam._30 = sp0x18.get();
     cam._40 = (sp0x1c.get() - sp0x18.get()) / cam._5c;
-    cam.vec_74.setX(a0);
-    cam.vec_74.setY(a1);
-    cam.vec_74.setZ(a2);
+    cam.vec_74.setX(x);
+    cam.vec_74.setY(y);
+    cam.vec_74.setZ(z);
     cam._11c |= 0x2;
     cam._121 = 16;
   }
 
   @Method(0x800d8424L)
-  public static void FUN_800d8424(final int a0, final int a1, final int a2, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
+  public static void FUN_800d8424(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
 
     cam._38 = FUN_800dc384(1, 1, 0, 0) << 8;
     cam._44 = FUN_800dc384(1, 1, 1, 0) << 8;
     cam._2c = FUN_800dc384(1, 1, 2, 0) << 8;
-    final int s2 = FUN_800dcfb8(0, cam._38, a0, a6 & 3) >> 8;
-    final int s1 = FUN_800dcfb8(1, cam._44, a1, a6 >> 2 & 3) >> 8;
-    FUN_800dcfb8(2, cam._2c, a2, 0);
+    final int s2 = FUN_800dcfb8(0, cam._38, x, a6 & 3) >> 8;
+    final int s1 = FUN_800dcfb8(1, cam._44, y, a6 >> 2 & 3) >> 8;
+    FUN_800dcfb8(2, cam._2c, z, 0);
     cam._5c = a3;
     cam.vec_60.setX((ratan2(s1, s2) & 0xfff) << 8);
     cam.vec_60.setY(0);
@@ -2293,24 +2217,24 @@ public final class Bttl_800d {
     FUN_800dcebc(a4, a5, cam.vec_60.getZ(), a3, sp0x18, sp0x1c);
     cam._6c = sp0x18.get();
     cam._70 = (sp0x1c.get() - sp0x18.get()) / cam._5c;
-    cam.vec_74.set(a0, a1, a2);
+    cam.vec_74.set(x, y, z);
     cam._11c |= 0x2;
     cam._121 = 17;
-    cam._30 = FUN_800dcfb8(2, cam._2c, a2, 0) / cam._5c;
+    cam._30 = FUN_800dcfb8(2, cam._2c, z, 0) / cam._5c;
   }
 
   @Method(0x800d8614L)
-  public static void FUN_800d8614(final int a0, final int a1, final int a2, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
+  public static void FUN_800d8614(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
 
     cam.vec_20.setX(FUN_800dc384(1, 2, 0, 0) << 8);
     cam.vec_20.setY(FUN_800dc384(1, 2, 1, 0) << 8);
     cam.vec_20.setZ(FUN_800dc384(1, 2, 2, 0) << 8);
-    final int s4 = a0 - cam.vec_20.getX() >> 8;
+    final int s4 = x - cam.vec_20.getX() >> 8;
     final int s1 = s4 / 2;
-    final int s5 = a1 - cam.vec_20.getY() >> 8;
+    final int s5 = y - cam.vec_20.getY() >> 8;
     final int v1 = s5 / 2;
-    final int s3 = a2 - cam.vec_20.getZ() >> 8;
+    final int s3 = z - cam.vec_20.getZ() >> 8;
     final int s0 = s3 / 2;
     cam.vec_60.setX((ratan2(s3, s4) & 0xfff) << 8);
     cam.vec_60.setY((ratan2(s5, SquareRoot0(s1 * s1 + s0 * s0) * 2) & 0xfff) << 8);
@@ -2321,23 +2245,23 @@ public final class Bttl_800d {
     FUN_800dcebc(a4, a5, cam.vec_60.getZ(), a3, sp0x18, sp0x1c);
     cam._30 = sp0x18.get();
     cam._40 = (sp0x1c.get() - sp0x18.get()) / cam._5c;
-    cam.vec_74.setX(a0);
-    cam.vec_74.setY(a1);
-    cam.vec_74.setZ(a2);
+    cam.vec_74.setX(x);
+    cam.vec_74.setY(y);
+    cam.vec_74.setZ(z);
     cam._11c |= 0x2;
     cam._121 = 18;
   }
 
   @Method(0x800d8808L)
-  public static void FUN_800d8808(final int a0, final int a1, final int a2, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
+  public static void FUN_800d8808(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
 
     cam._38 = FUN_800dc384(1, 3, 0, 0) << 8;
     cam._44 = FUN_800dc384(1, 3, 1, 0) << 8;
     cam._2c = FUN_800dc384(1, 3, 2, 0) << 8;
-    final int s2 = FUN_800dcfb8(0, cam._38, a0, a6 & 3) >> 8;
-    final int s1 = FUN_800dcfb8(1, cam._44, a1, a6 >> 2 & 3) >> 8;
-    FUN_800dcfb8(2, cam._2c, a2, 0);
+    final int s2 = FUN_800dcfb8(0, cam._38, x, a6 & 3) >> 8;
+    final int s1 = FUN_800dcfb8(1, cam._44, y, a6 >> 2 & 3) >> 8;
+    FUN_800dcfb8(2, cam._2c, z, 0);
     cam.vec_60.setX((ratan2(s1, s2) & 0xfff) << 8);
     cam.vec_60.setY(0);
     cam.vec_60.setZ(SquareRoot0(s2 * s2 + s1 * s1) << 8);
@@ -2345,24 +2269,24 @@ public final class Bttl_800d {
     final IntRef sp0x18 = new IntRef();
     final IntRef sp0x1c = new IntRef();
     FUN_800dcebc(a4, a5, cam.vec_60.getZ(), a3, sp0x18, sp0x1c);
-    cam._30 = FUN_800dcfb8(2, cam._2c, a2, 0) / cam._5c;
+    cam._30 = FUN_800dcfb8(2, cam._2c, z, 0) / cam._5c;
     cam._6c = sp0x18.get();
     cam._70 = (sp0x1c.get() - sp0x18.get()) / cam._5c;
-    cam.vec_74.set(a0, a1, a2);
+    cam.vec_74.set(x, y, z);
     cam._11c |= 0x2;
     cam._121 = 19;
   }
 
   @Method(0x800d89f8L)
-  public static void FUN_800d89f8(final int a0, final int a1, final int a2, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
+  public static void FUN_800d89f8(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
     cam.bobjIndex_80 = scriptIndex;
     cam.vec_20.setX(FUN_800dc384(1, 6, 0, scriptIndex) << 8);
     cam.vec_20.setY(FUN_800dc384(1, 6, 1, scriptIndex) << 8);
     cam.vec_20.setZ(FUN_800dc384(1, 6, 2, scriptIndex) << 8);
-    final int s4 = a0 - cam.vec_20.getX() >> 8;
-    final int s5 = a1 - cam.vec_20.getY() >> 8;
-    final int s3 = a2 - cam.vec_20.getZ() >> 8;
+    final int s4 = x - cam.vec_20.getX() >> 8;
+    final int s5 = y - cam.vec_20.getY() >> 8;
+    final int s3 = z - cam.vec_20.getZ() >> 8;
     final int s1 = s4 / 2;
     final int v1 = s5 / 2;
     final int s0 = s3 / 2;
@@ -2373,9 +2297,9 @@ public final class Bttl_800d {
     final IntRef sp0x18 = new IntRef();
     final IntRef sp0x1c = new IntRef();
     FUN_800dcebc(a4, a5, cam.vec_60.getZ(), a3, sp0x18, sp0x1c);
-    cam.vec_74.setX(a0);
-    cam.vec_74.setY(a1);
-    cam.vec_74.setZ(a2);
+    cam.vec_74.setX(x);
+    cam.vec_74.setY(y);
+    cam.vec_74.setZ(z);
     cam._30 = sp0x18.get();
     cam._40 = (sp0x1c.get() - sp0x18.get()) / cam._5c;
     cam._11c |= 0x2;
@@ -2383,16 +2307,16 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d8bf4L)
-  public static void FUN_800d8bf4(final int a0, final int a1, final int a2, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
+  public static void FUN_800d8bf4(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
 
     cam.bobjIndex_80 = scriptIndex;
     cam._38 = FUN_800dc384(1, 7, 0, scriptIndex) << 8;
     cam._44 = FUN_800dc384(1, 7, 1, scriptIndex) << 8;
     cam._2c = FUN_800dc384(1, 7, 2, scriptIndex) << 8;
-    final int s2 = FUN_800dcfb8(0, cam._38, a0, a6 & 3) >> 8;
-    final int s0 = FUN_800dcfb8(1, cam._44, a1, a6 >> 2 & 3) >> 8;
-    FUN_800dcfb8(2, cam._2c, a2, 0);
+    final int s2 = FUN_800dcfb8(0, cam._38, x, a6 & 3) >> 8;
+    final int s0 = FUN_800dcfb8(1, cam._44, y, a6 >> 2 & 3) >> 8;
+    FUN_800dcfb8(2, cam._2c, z, 0);
     cam.vec_60.setX((ratan2(s0, s2) & 0xfff) << 8);
     cam.vec_60.setY(0);
     cam.vec_60.setZ(SquareRoot0(s2 * s2 + s0 * s0) << 8);
@@ -2400,8 +2324,8 @@ public final class Bttl_800d {
     final IntRef sp0x18 = new IntRef();
     final IntRef sp0x1c = new IntRef();
     FUN_800dcebc(a4, a5, cam.vec_60.getZ(), a3, sp0x18, sp0x1c);
-    cam._30 = FUN_800dcfb8(2, cam._2c, a2, 0) / cam._5c;
-    cam.vec_74.set(a0, a1, a2);
+    cam._30 = FUN_800dcfb8(2, cam._2c, z, 0) / cam._5c;
+    cam.vec_74.set(x, y, z);
     cam._6c = sp0x18.get();
     cam._70 = (sp0x1c.get() - sp0x18.get()) / cam._5c;
     cam._11c |= 0x2;
@@ -2453,13 +2377,13 @@ public final class Bttl_800d {
     if(cam._11c != 0) {
       if((cam._11c & 0x1) != 0) {
         LOGGER.info(CAMERA, "[CAMERA] Array=_800facbc, FUN index=%d", cam._120);
-        _800facbc.get(cam._120).deref().run();
+        cameraViewpointMethods_800facbc[cam._120].run();
       }
 
       //LAB_800d8f80
       if((cam._11c & 0x2) != 0) {
         LOGGER.info(CAMERA, "[CAMERA] Array=_800fad1c, FUN index=%d", cam._121);
-        _800fad1c.get(cam._121).deref().run();
+        cameraRefpointMethods_800fad1c[cam._121].run();
       }
     }
 
@@ -3218,7 +3142,7 @@ public final class Bttl_800d {
   @Method(0x800dac70L)
   public static void FUN_800dac70(final int index, final int x, final int y, final int z, final int scriptIndex) {
     LOGGER.info(CAMERA, "[CAMERA] Array=_800fabbc, FUN index=%d, x=%d, y=%d, z=%d, script index=%d", index, x, y, z, scriptIndex);
-    _800fabbc.get(index).deref().run(x, y, z, scriptIndex);
+    _800fabbc[index].accept(x, y, z, scriptIndex);
     camera_800c67f0.callbackIndex_fc = index;
   }
 
@@ -3337,7 +3261,7 @@ public final class Bttl_800d {
   @Method(0x800db084L)
   public static void FUN_800db084(final int index, final int x, final int y, final int z, final int scriptIndex) {
     LOGGER.info(CAMERA, "[CAMERA] Array=_800fabdc, FUN index=%d, x=%d, y=%d, z=%d, script index=%d", index, x, y, z, scriptIndex);
-    _800fabdc.get(index).deref().run(x, y, z, scriptIndex);
+    _800fabdc[index].accept(x, y, z, scriptIndex);
     camera_800c67f0.callbackIndex_88 = index;
   }
 
@@ -3446,7 +3370,7 @@ public final class Bttl_800d {
   @Method(0x800db4ecL)
   public static void FUN_800db4ec(final int callbackIndex, final int a1, final int a2, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
     LOGGER.info(CAMERA, "[CAMERA] Array=_800fabfc, FUN index=%d, a1=%d, a2=%d, a3=%d, a4=%d, a5=%d, a6=%d, script index=%d", callbackIndex, a1, a2, a3, a4, a5, a6, scriptIndex);
-    _800fabfc.offset(callbackIndex * 0x4L).deref(4).call(a1, a2, a3, a5, a6, a4, scriptIndex);
+    _800fabfc[callbackIndex].accept(a1, a2, a3, a5, a6, a4, scriptIndex);
     final BattleCamera cam = camera_800c67f0;
     cam.callbackIndex_fc = callbackIndex;
     cam._122 = 1;
@@ -3471,7 +3395,7 @@ public final class Bttl_800d {
   @Method(0x800db600L)
   public static void FUN_800db600(final int callbackIndex, final int a1, final int a2, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
     LOGGER.info(CAMERA, "[CAMERA] Array=_800fac5c, FUN index=%d, a1=%d, a2=%d, a3=%d, a5=%d, a6=%d, a4=%d, script index=%d", callbackIndex, a1, a2, a3, a5, a6, a4, scriptIndex);
-    _800fac5c.offset(callbackIndex * 0x4L).deref(4).call(a1, a2, a3, a5, a6, a4, scriptIndex);
+    _800fac5c[callbackIndex].accept(a1, a2, a3, a5, a6, a4, scriptIndex);
     final BattleCamera cam = camera_800c67f0;
     cam.callbackIndex_88 = callbackIndex;
     cam._123 = 1;
@@ -3496,7 +3420,7 @@ public final class Bttl_800d {
   @Method(0x800db714L)
   public static void FUN_800db714(final int callbackIndex, final int a1, final int a2, final int a3, final int a4, final int a5, final int a6, final int a7) {
     LOGGER.info(CAMERA, "[CAMERA] Array=_800fac1c, FUN index=%d, a1=%d, a2=%d, a3=%d, a4=%d, a5=%d, a6=%d, script index=%d", callbackIndex, a1, a2, a3, a4, a5, a6, a7);
-    _800fac1c.offset(callbackIndex * 0x4L).deref(4).call(a1, a2, a3, a4, a5, a6, a7);
+    _800fac1c[callbackIndex].accept(a1, a2, a3, a4, a5, a6, a7);
 
     final BattleCamera cam = camera_800c67f0;
     cam.callbackIndex_fc = callbackIndex;
@@ -3511,8 +3435,8 @@ public final class Bttl_800d {
 
   @Method(0x800db828L)
   public static void FUN_800db828(final int callbackIndex, final int x, final int y, final int z, final int a4, final int a5, final int a6, final int a7) {
-    LOGGER.info(CAMERA, "[CAMERA] Array=_800fac7c, FUN index=%d, x=%d, y=%d, z=%d, a4=%d, a5=%d, a6=%d, a7=%d, script index=%d", callbackIndex, x, y, z, a4, a5, a6, a7);
-    _800fac7c.offset(callbackIndex * 0x4L).deref(4).call(x, y, z, a4, a5, a6, a7);
+    LOGGER.info(CAMERA, "[CAMERA] Array=_800fac7c, FUN index=%d, x=%d, y=%d, z=%d, a4=%d, a5=%d, a6=%d, a7=%d", callbackIndex, x, y, z, a4, a5, a6, a7);
+    _800fac7c[callbackIndex].accept(x, y, z, a4, a5, a6, a7);
     final BattleCamera cam = camera_800c67f0;
     cam.callbackIndex_88 = callbackIndex;
     cam._123 = 1;
@@ -3527,7 +3451,7 @@ public final class Bttl_800d {
   @Method(0x800db950L)
   public static void FUN_800db950(final int callbackIndex, final int a1, final int a2, final int a3, final int a4, final int a5, final int a6, final int a7, final int scriptIndex) {
     LOGGER.info(CAMERA, "[CAMERA] Array=_800fac3c, FUN index=%d, a1=%d, a2=%d, a3=%d, a4=%d, a5=%d, a6=%d, a7=%d, script index=%d", callbackIndex, a1, a2, a3, a4, a5, a6, a7, scriptIndex);
-    _800fac3c.offset(callbackIndex * 0x4L).deref(4).call(a1, a2, a3, a4, a5, a6, a7, scriptIndex);
+    _800fac3c[callbackIndex].accept(a1, a2, a3, a4, a5, a6, a7, scriptIndex);
     final BattleCamera cam = camera_800c67f0;
     cam.callbackIndex_fc = callbackIndex;
     cam._122 = 1;
@@ -3552,7 +3476,7 @@ public final class Bttl_800d {
   @Method(0x800dba80L)
   public static void FUN_800dba80(final int callbackIndex, final int a1, final int a2, final int a3, final int a4, final int a5, final int a6, final int a7, final int scriptIndex) {
     LOGGER.info(CAMERA, "[CAMERA] Array=_800fac9c, FUN index=%d, a1=%d, a2=%d, a3=%d, a4=%d, a5=%d, a6=%d, a7=%d, script index=%d", callbackIndex, a1, a2, a3, a4, a5, a6, a7, scriptIndex);
-    _800fac9c.offset(callbackIndex * 0x4L).deref(4).call(a1, a2, a3, a4, a5, a6, a7, scriptIndex);
+    _800fac9c[callbackIndex].accept(a1, a2, a3, a4, a5, a6, a7, scriptIndex);
     final BattleCamera cam = camera_800c67f0;
     cam.callbackIndex_88 = callbackIndex;
     cam._123 = 1;
@@ -3570,14 +3494,15 @@ public final class Bttl_800d {
 
   @Method(0x800dbb10L)
   public static FlowControl FUN_800dbb10(final RunningScript<?> script) {
+    final BattleCamera cam = camera_800c67f0;
     final int v1 = script.params_20[0].get();
     final int a1;
     if(v1 == 0) {
       //LAB_800dbb3c
-      a1 = (int)_800c6912.get();
+      a1 = cam._122;
     } else if(v1 == 1) {
       //LAB_800dbb48
-      a1 = (int)_800c6913.get();
+      a1 = cam._123;
     } else {
       throw new RuntimeException("Undefined a1");
     }
@@ -3648,12 +3573,12 @@ public final class Bttl_800d {
 
   @Method(0x800dbe80L)
   public static void FUN_800dbe80() {
-    _800c6912.setu(0);
+    camera_800c67f0._122 = 0;
   }
 
   @Method(0x800dbe8cL)
   public static void FUN_800dbe8c() {
-    _800c6912.setu(0);
+    camera_800c67f0._122 = 0;
   }
 
   @Method(0x800dbe98L)
@@ -3822,48 +3747,48 @@ public final class Bttl_800d {
     final int x;
     final int y;
     final int z;
-    final long v1;
+    final ComponentFunction<Integer, Integer, Integer, Integer, Integer>[] v1;
     if(script.params_20[0].get() == 0) {
       x = cam.rview2_00.viewpoint_00.getX();
       y = cam.rview2_00.viewpoint_00.getY();
       z = cam.rview2_00.viewpoint_00.getZ();
-      v1 = _800fad7c.getAddress();
+      v1 = refpointComponentMethods_800fad7c;
     } else {
       //LAB_800dc32c
       x = cam.rview2_00.refpoint_0c.getX();
       y = cam.rview2_00.refpoint_0c.getY();
       z = cam.rview2_00.refpoint_0c.getZ();
-      v1 = _800fad9c.getAddress();
+      v1 = viewpointComponentMethods_800fad9c;
     }
 
     //LAB_800dc344
-    script.params_20[4].set((int)MEMORY.ref(4, v1).offset(script.params_20[1].get() * 0x4L).deref(4).call(script.params_20[2].get(), script.params_20[3].get(), x, y, z));
+    script.params_20[4].set(v1[script.params_20[1].get()].apply(script.params_20[2].get(), script.params_20[3].get(), x, y, z));
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800dc384L)
-  public static int FUN_800dc384(final long a0, final long callbackIndex, final int component, final int scriptIndex) {
+  public static int FUN_800dc384(final long a0, final int callbackIndex, final int component, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
 
     final int x;
     final int y;
     final int z;
-    final long v1;
+    final ComponentFunction<Integer, Integer, Integer, Integer, Integer>[] v1;
     if(a0 != 0) {
       x = cam.rview2_00.refpoint_0c.getX();
       y = cam.rview2_00.refpoint_0c.getY();
       z = cam.rview2_00.refpoint_0c.getZ();
-      v1 = _800fad9c.getAddress();
+      v1 = viewpointComponentMethods_800fad9c;
     } else {
       //LAB_800dc3bc
       x = cam.rview2_00.viewpoint_00.getX();
       y = cam.rview2_00.viewpoint_00.getY();
       z = cam.rview2_00.viewpoint_00.getZ();
-      v1 = _800fad7c.getAddress();
+      v1 = refpointComponentMethods_800fad7c;
     }
 
     //LAB_800dc3dc
-    return (int)MEMORY.ref(4, v1).offset(callbackIndex * 0x4L).deref(4).call(component, scriptIndex, x, y, z);
+    return v1[callbackIndex].apply(component, scriptIndex, x, y, z);
   }
 
   @Method(0x800dc408L)
@@ -4141,12 +4066,12 @@ public final class Bttl_800d {
       return x - vec.getX();
     }
 
-    if(component == 0x1L) {
+    if(component == 1) {
       //LAB_800dca34
       return y - vec.getY();
     }
 
-    if(component == 0x2L) {
+    if(component == 2) {
       //LAB_800dca40
       return z - vec.getZ();
     }
@@ -4320,7 +4245,7 @@ public final class Bttl_800d {
       throw new IllegalArgumentException("Invalid a0");
     }
 
-    if(a0 < 0x2L) {
+    if(a0 < 2) {
       //LAB_800dcfdc
       if(a3 == 0) {
         return 0;
@@ -4344,9 +4269,7 @@ public final class Bttl_800d {
       }
 
       return a2 - (a1 + 0x10_0000);
-    }
-
-    if(a0 == 2) {
+    } else if(a0 == 2) {
       //LAB_800dd020
       //LAB_800dd024
       return a2 - a1;
@@ -4369,13 +4292,13 @@ public final class Bttl_800d {
   @Method(0x800dd0d4L)
   public static int FUN_800dd0d4() {
     final BattleCamera cam = camera_800c67f0;
-    return (int)_800fad7c.offset(5 * 0x4L).deref(4).call(1, 0, cam.rview2_00.viewpoint_00.getX(), cam.rview2_00.viewpoint_00.getY(), cam.rview2_00.viewpoint_00.getZ());
+    return refpointComponentMethods_800fad7c[5].apply(1, 0, cam.rview2_00.viewpoint_00.getX(), cam.rview2_00.viewpoint_00.getY(), cam.rview2_00.viewpoint_00.getZ());
   }
 
   @Method(0x800dd118L)
   public static int FUN_800dd118() {
     final BattleCamera cam = camera_800c67f0;
-    return (int)_800fad7c.offset(5 * 0x4L).deref(4).call(0, 0, cam.rview2_00.viewpoint_00.getX(), cam.rview2_00.viewpoint_00.getY(), cam.rview2_00.viewpoint_00.getZ());
+    return refpointComponentMethods_800fad7c[5].apply(0, 0, cam.rview2_00.viewpoint_00.getX(), cam.rview2_00.viewpoint_00.getY(), cam.rview2_00.viewpoint_00.getZ());
   }
 
   @Method(0x800dd15cL)
@@ -4888,11 +4811,9 @@ public final class Bttl_800d {
     //LAB_800de3e4
   }
 
-  /**
-   * used renderCtmd
-   */
+  /** used renderCtmd */
   @Method(0x800de3f4L)
-  public static void FUN_800de3f4(final TmdObjTable1c a0, final EffectManagerData6cInner a1, final MATRIX a2) {
+  public static void renderTmdSpriteEffect(final TmdObjTable1c a0, final EffectManagerData6cInner a1, final MATRIX a2) {
     final int s0 = deffManager_800c693c.flags_20 & 0x4;
 
     final MATRIX sp0x10 = new MATRIX();

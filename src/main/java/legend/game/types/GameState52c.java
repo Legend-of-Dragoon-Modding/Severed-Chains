@@ -38,10 +38,10 @@ public class GameState52c {
    *   <li>29 flag 0x800_0000 - died in arena fight</li>
    * </ul>
    */
-  public final int[] scriptFlags2_bc = new int[0x20];
-  public final int[] scriptFlags1_13c = new int[8];
-  public final int[] _15c = new int[8];
-  public final int[] _17c = new int[8];
+  public final Flags scriptFlags2_bc = new Flags(32);
+  public final Flags scriptFlags1_13c = new Flags(8);
+  public final Flags wmapFlags_15c = new Flags(8);
+  public final Flags _17c = new Flags(8);
   public final int[] goods_19c = new int[2];
   /** Not sure if this is actually 8 elements long, has at least 3. Related to submap music. */
   public final int[] _1a4 = new int[8];
@@ -53,7 +53,7 @@ public class GameState52c {
   public final IntList items_2e9 = new IntArrayList();
 
   public final CharacterData2c[] charData_32c = new CharacterData2c[9];
-  public final int[] _4b8 = new int[8];
+//  public final int[] _4b8 = new int[8];
 
   // World map stuff
   public int pathIndex_4d8;

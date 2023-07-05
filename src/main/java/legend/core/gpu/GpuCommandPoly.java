@@ -1,5 +1,6 @@
 package legend.core.gpu;
 
+import legend.core.gte.COLOUR;
 import legend.game.types.Translucency;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -107,6 +108,10 @@ public class GpuCommandPoly extends GpuCommand {
     return this;
   }
 
+  public GpuCommandPoly rgb(final int vertex, final COLOUR colour) {
+    return this.rgb(vertex, colour.getR(), colour.getG(), colour.getB());
+  }
+
   public GpuCommandPoly rgb(final int vertex, final int r, final int g, final int b) {
     if(r < 0) {
       LOGGER.warn("Negative R! %x", r);
@@ -155,7 +160,7 @@ public class GpuCommandPoly extends GpuCommand {
 
   public GpuCommandPoly clut(final int x, final int y) {
     if(y > 511) {
-      throw new IllegalArgumentException("Invalid y");
+      throw new IllegalArgumentException("Invalid y " + y);
     }
 
     this.clutX = x;

@@ -28,16 +28,16 @@ public class BattleCamera {
   public int callbackIndex_88;  // refpoint callback?
   public final SVECTOR svec_8c = new SVECTOR();
   public final VECTOR vec_94 = new VECTOR();  // related to viewpoint
-  public int _a0;
+  public int _a0; // something z
   public int _a4;
 
-  public int _ac;
-  public int _b0;
+  public int _ac; // something x
+  public int _b0; // something x
   public int _b4;
-  public int _b8;
-  public int _bc;
+  public int _b8; // something y
+  public int _bc; // something y
 
-  public int _c8;
+  public int _c8; // something z
 
   public int _d0;  // viewpoint step count?
   public int _d4;  // viewpoint X factor?

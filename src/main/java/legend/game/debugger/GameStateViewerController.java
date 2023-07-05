@@ -204,22 +204,6 @@ public class GameStateViewerController {
   @FXML
   public Label dataIV7;
   @FXML
-  public Label dataV0;
-  @FXML
-  public Label dataV1;
-  @FXML
-  public Label dataV2;
-  @FXML
-  public Label dataV3;
-  @FXML
-  public Label dataV4;
-  @FXML
-  public Label dataV5;
-  @FXML
-  public Label dataV6;
-  @FXML
-  public Label dataV7;
-  @FXML
   public Label dataI;
   @FXML
   public Label partyI;
@@ -278,154 +262,147 @@ public class GameStateViewerController {
 
 
   public void initialize() {
-    updateUI = new Timer();
-    updateUI.scheduleAtFixedRate(new TimerTask() {
+    this.updateUI = new Timer();
+    this.updateUI.scheduleAtFixedRate(new TimerTask() {
       @Override
       public void run() {
         Platform.runLater(() -> {
           if(gameState_800babc8 == null) {
             return;
           }
-          dataI.setText(String.valueOf(gameState_800babc8._04));
-          scriptData0.setText(String.valueOf(gameState_800babc8.scriptData_08[0]));
-          scriptData1.setText(String.valueOf(gameState_800babc8.scriptData_08[1]));
-          scriptData2.setText(String.valueOf(gameState_800babc8.scriptData_08[2]));
-          scriptData3.setText(String.valueOf(gameState_800babc8.scriptData_08[3]));
-          scriptData4.setText(String.valueOf(gameState_800babc8.scriptData_08[4]));
-          scriptData5.setText(String.valueOf(gameState_800babc8.scriptData_08[5]));
-          scriptData6.setText(String.valueOf(gameState_800babc8.scriptData_08[6]));
-          scriptData7.setText(String.valueOf(gameState_800babc8.scriptData_08[7]));
-          scriptData8.setText(String.valueOf(gameState_800babc8.scriptData_08[8]));
-          scriptData9.setText(String.valueOf(gameState_800babc8.scriptData_08[9]));
-          scriptData10.setText(String.valueOf(gameState_800babc8.scriptData_08[10]));
-          scriptData11.setText(String.valueOf(gameState_800babc8.scriptData_08[11]));
-          scriptData12.setText(String.valueOf(gameState_800babc8.scriptData_08[12]));
-          scriptData13.setText(String.valueOf(gameState_800babc8.scriptData_08[13]));
-          scriptData14.setText(String.valueOf(gameState_800babc8.scriptData_08[14]));
-          scriptData15.setText(String.valueOf(gameState_800babc8.scriptData_08[15]));
-          scriptData16.setText(String.valueOf(gameState_800babc8.scriptData_08[16]));
-          scriptData17.setText(String.valueOf(gameState_800babc8.scriptData_08[17]));
-          scriptData18.setText(String.valueOf(gameState_800babc8.scriptData_08[18]));
-          scriptData19.setText(String.valueOf(gameState_800babc8.scriptData_08[19]));
-          scriptData20.setText(String.valueOf(gameState_800babc8.scriptData_08[20]));
-          scriptData21.setText(String.valueOf(gameState_800babc8.scriptData_08[21]));
-          scriptData22.setText(String.valueOf(gameState_800babc8.scriptData_08[22]));
-          scriptData23.setText(String.valueOf(gameState_800babc8.scriptData_08[23]));
-          scriptData24.setText(String.valueOf(gameState_800babc8.scriptData_08[24]));
-          scriptData25.setText(String.valueOf(gameState_800babc8.scriptData_08[25]));
-          scriptData26.setText(String.valueOf(gameState_800babc8.scriptData_08[26]));
-          scriptData27.setText(String.valueOf(gameState_800babc8.scriptData_08[27]));
-          scriptData28.setText(String.valueOf(gameState_800babc8.scriptData_08[28]));
-          scriptData29.setText(String.valueOf(gameState_800babc8.scriptData_08[29]));
-          scriptData30.setText(String.valueOf(gameState_800babc8.scriptData_08[30]));
-          scriptData31.setText(String.valueOf(gameState_800babc8.scriptData_08[31]));
-          partyI.setText(String.valueOf(gameState_800babc8.charIds_88[0]));
-          partyII.setText(String.valueOf(gameState_800babc8.charIds_88[1]));
-          partyIII.setText(String.valueOf(gameState_800babc8.charIds_88[2]));
-          gold.setText(String.valueOf(gameState_800babc8.gold_94));
-          chapter.setText(String.valueOf(gameState_800babc8.chapterIndex_98));
-          stardust.setText(String.valueOf(gameState_800babc8.stardust_9c));
-          timestamp.setText(String.valueOf(gameState_800babc8.timestamp_a0));
-          submapScene.setText(String.valueOf(gameState_800babc8.submapScene_a4));
-          submapCut.setText(String.valueOf(gameState_800babc8.submapCut_a8));
-          scriptEngineValueI.setText(String.valueOf(gameState_800babc8._b0));
-          scriptEngineValueII.setText(String.valueOf(gameState_800babc8._b4));
-          scriptEngineValueIII.setText(String.valueOf(gameState_800babc8._b8));
-          scriptFlagsetI0.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc[0]));
-          scriptFlagsetI0.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc[0]));
-          scriptFlagsetI1.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc[1]));
-          scriptFlagsetI2.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc[2]));
-          scriptFlagsetI3.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc[3]));
-          scriptFlagsetI4.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc[4]));
-          scriptFlagsetI5.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc[5]));
-          scriptFlagsetI6.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc[6]));
-          scriptFlagsetI7.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc[7]));
-          scriptFlagsetI8.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc[8]));
-          scriptFlagsetI9.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc[9]));
-          scriptFlagsetI10.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc[10]));
-          scriptFlagsetI11.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc[11]));
-          scriptFlagsetI12.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc[12]));
-          scriptFlagsetI13.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc[13]));
-          scriptFlagsetI14.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc[14]));
-          scriptFlagsetI15.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc[15]));
-          scriptFlagsetI16.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc[16]));
-          scriptFlagsetI17.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc[17]));
-          scriptFlagsetI18.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc[18]));
-          scriptFlagsetI19.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc[19]));
-          scriptFlagsetI20.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc[20]));
-          scriptFlagsetI21.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc[21]));
-          scriptFlagsetI22.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc[22]));
-          scriptFlagsetI23.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc[23]));
-          scriptFlagsetI24.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc[24]));
-          scriptFlagsetI25.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc[25]));
-          scriptFlagsetI26.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc[26]));
-          scriptFlagsetI27.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc[27]));
-          scriptFlagsetI28.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc[28]));
-          scriptFlagsetI29.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc[29]));
-          scriptFlagsetI30.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc[30]));
-          scriptFlagsetI31.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc[31]));
-          scriptFlagsetII0.setText(String.valueOf(gameState_800babc8.scriptFlags1_13c[0]));
-          scriptFlagsetII1.setText(String.valueOf(gameState_800babc8.scriptFlags1_13c[1]));
-          scriptFlagsetII2.setText(String.valueOf(gameState_800babc8.scriptFlags1_13c[2]));
-          scriptFlagsetII3.setText(String.valueOf(gameState_800babc8.scriptFlags1_13c[3]));
-          scriptFlagsetII4.setText(String.valueOf(gameState_800babc8.scriptFlags1_13c[4]));
-          scriptFlagsetII5.setText(String.valueOf(gameState_800babc8.scriptFlags1_13c[5]));
-          scriptFlagsetII6.setText(String.valueOf(gameState_800babc8.scriptFlags1_13c[6]));
-          scriptFlagsetII7.setText(String.valueOf(gameState_800babc8.scriptFlags1_13c[7]));
-          dataII0.setText(String.valueOf(gameState_800babc8._15c[0]));
-          dataII1.setText(String.valueOf(gameState_800babc8._15c[1]));
-          dataII2.setText(String.valueOf(gameState_800babc8._15c[2]));
-          dataII3.setText(String.valueOf(gameState_800babc8._15c[3]));
-          dataII4.setText(String.valueOf(gameState_800babc8._15c[4]));
-          dataII5.setText(String.valueOf(gameState_800babc8._15c[5]));
-          dataII6.setText(String.valueOf(gameState_800babc8._15c[6]));
-          dataII7.setText(String.valueOf(gameState_800babc8._15c[7]));
-          dataIII0.setText(String.valueOf(gameState_800babc8._17c[0]));
-          dataIII1.setText(String.valueOf(gameState_800babc8._17c[1]));
-          dataIII2.setText(String.valueOf(gameState_800babc8._17c[2]));
-          dataIII3.setText(String.valueOf(gameState_800babc8._17c[3]));
-          dataIII4.setText(String.valueOf(gameState_800babc8._17c[4]));
-          dataIII5.setText(String.valueOf(gameState_800babc8._17c[5]));
-          dataIII6.setText(String.valueOf(gameState_800babc8._17c[6]));
-          dataIII7.setText(String.valueOf(gameState_800babc8._17c[7]));
-          goodsI.setText(String.valueOf(gameState_800babc8.goods_19c[0]));
-          goodsII.setText(String.valueOf(gameState_800babc8.goods_19c[1]));
-          dataIV0.setText(String.valueOf(gameState_800babc8._1a4[0]));
-          dataIV1.setText(String.valueOf(gameState_800babc8._1a4[1]));
-          dataIV2.setText(String.valueOf(gameState_800babc8._1a4[2]));
-          dataIV3.setText(String.valueOf(gameState_800babc8._1a4[3]));
-          dataIV4.setText(String.valueOf(gameState_800babc8._1a4[4]));
-          dataIV5.setText(String.valueOf(gameState_800babc8._1a4[5]));
-          dataIV6.setText(String.valueOf(gameState_800babc8._1a4[6]));
-          dataIV7.setText(String.valueOf(gameState_800babc8._1a4[7]));
-          chestFlags0.setText(String.valueOf(gameState_800babc8.chestFlags_1c4[0]));
-          chestFlags1.setText(String.valueOf(gameState_800babc8.chestFlags_1c4[1]));
-          chestFlags2.setText(String.valueOf(gameState_800babc8.chestFlags_1c4[2]));
-          chestFlags3.setText(String.valueOf(gameState_800babc8.chestFlags_1c4[3]));
-          chestFlags4.setText(String.valueOf(gameState_800babc8.chestFlags_1c4[4]));
-          chestFlags5.setText(String.valueOf(gameState_800babc8.chestFlags_1c4[5]));
-          chestFlags6.setText(String.valueOf(gameState_800babc8.chestFlags_1c4[6]));
-          chestFlags7.setText(String.valueOf(gameState_800babc8.chestFlags_1c4[7]));
-          dataV0.setText(String.valueOf(gameState_800babc8._4b8[0]));
-          dataV1.setText(String.valueOf(gameState_800babc8._4b8[1]));
-          dataV2.setText(String.valueOf(gameState_800babc8._4b8[2]));
-          dataV3.setText(String.valueOf(gameState_800babc8._4b8[3]));
-          dataV4.setText(String.valueOf(gameState_800babc8._4b8[4]));
-          dataV5.setText(String.valueOf(gameState_800babc8._4b8[5]));
-          dataV6.setText(String.valueOf(gameState_800babc8._4b8[6]));
-          dataV7.setText(String.valueOf(gameState_800babc8._4b8[7]));
-          pathIndex.setText(String.valueOf(gameState_800babc8.pathIndex_4d8));
-          dotIndex.setText(String.valueOf(gameState_800babc8.dotIndex_4da));
-          dotOffset.setText(String.valueOf(gameState_800babc8.dotOffset_4dc));
-          facing.setText(String.valueOf(gameState_800babc8.facing_4dd));
-          areaIndex.setText(String.valueOf(gameState_800babc8.areaIndex_4de));
+          GameStateViewerController.this.dataI.setText(String.valueOf(gameState_800babc8._04));
+          GameStateViewerController.this.scriptData0.setText(String.valueOf(gameState_800babc8.scriptData_08[0]));
+          GameStateViewerController.this.scriptData1.setText(String.valueOf(gameState_800babc8.scriptData_08[1]));
+          GameStateViewerController.this.scriptData2.setText(String.valueOf(gameState_800babc8.scriptData_08[2]));
+          GameStateViewerController.this.scriptData3.setText(String.valueOf(gameState_800babc8.scriptData_08[3]));
+          GameStateViewerController.this.scriptData4.setText(String.valueOf(gameState_800babc8.scriptData_08[4]));
+          GameStateViewerController.this.scriptData5.setText(String.valueOf(gameState_800babc8.scriptData_08[5]));
+          GameStateViewerController.this.scriptData6.setText(String.valueOf(gameState_800babc8.scriptData_08[6]));
+          GameStateViewerController.this.scriptData7.setText(String.valueOf(gameState_800babc8.scriptData_08[7]));
+          GameStateViewerController.this.scriptData8.setText(String.valueOf(gameState_800babc8.scriptData_08[8]));
+          GameStateViewerController.this.scriptData9.setText(String.valueOf(gameState_800babc8.scriptData_08[9]));
+          GameStateViewerController.this.scriptData10.setText(String.valueOf(gameState_800babc8.scriptData_08[10]));
+          GameStateViewerController.this.scriptData11.setText(String.valueOf(gameState_800babc8.scriptData_08[11]));
+          GameStateViewerController.this.scriptData12.setText(String.valueOf(gameState_800babc8.scriptData_08[12]));
+          GameStateViewerController.this.scriptData13.setText(String.valueOf(gameState_800babc8.scriptData_08[13]));
+          GameStateViewerController.this.scriptData14.setText(String.valueOf(gameState_800babc8.scriptData_08[14]));
+          GameStateViewerController.this.scriptData15.setText(String.valueOf(gameState_800babc8.scriptData_08[15]));
+          GameStateViewerController.this.scriptData16.setText(String.valueOf(gameState_800babc8.scriptData_08[16]));
+          GameStateViewerController.this.scriptData17.setText(String.valueOf(gameState_800babc8.scriptData_08[17]));
+          GameStateViewerController.this.scriptData18.setText(String.valueOf(gameState_800babc8.scriptData_08[18]));
+          GameStateViewerController.this.scriptData19.setText(String.valueOf(gameState_800babc8.scriptData_08[19]));
+          GameStateViewerController.this.scriptData20.setText(String.valueOf(gameState_800babc8.scriptData_08[20]));
+          GameStateViewerController.this.scriptData21.setText(String.valueOf(gameState_800babc8.scriptData_08[21]));
+          GameStateViewerController.this.scriptData22.setText(String.valueOf(gameState_800babc8.scriptData_08[22]));
+          GameStateViewerController.this.scriptData23.setText(String.valueOf(gameState_800babc8.scriptData_08[23]));
+          GameStateViewerController.this.scriptData24.setText(String.valueOf(gameState_800babc8.scriptData_08[24]));
+          GameStateViewerController.this.scriptData25.setText(String.valueOf(gameState_800babc8.scriptData_08[25]));
+          GameStateViewerController.this.scriptData26.setText(String.valueOf(gameState_800babc8.scriptData_08[26]));
+          GameStateViewerController.this.scriptData27.setText(String.valueOf(gameState_800babc8.scriptData_08[27]));
+          GameStateViewerController.this.scriptData28.setText(String.valueOf(gameState_800babc8.scriptData_08[28]));
+          GameStateViewerController.this.scriptData29.setText(String.valueOf(gameState_800babc8.scriptData_08[29]));
+          GameStateViewerController.this.scriptData30.setText(String.valueOf(gameState_800babc8.scriptData_08[30]));
+          GameStateViewerController.this.scriptData31.setText(String.valueOf(gameState_800babc8.scriptData_08[31]));
+          GameStateViewerController.this.partyI.setText(String.valueOf(gameState_800babc8.charIds_88[0]));
+          GameStateViewerController.this.partyII.setText(String.valueOf(gameState_800babc8.charIds_88[1]));
+          GameStateViewerController.this.partyIII.setText(String.valueOf(gameState_800babc8.charIds_88[2]));
+          GameStateViewerController.this.gold.setText(String.valueOf(gameState_800babc8.gold_94));
+          GameStateViewerController.this.chapter.setText(String.valueOf(gameState_800babc8.chapterIndex_98));
+          GameStateViewerController.this.stardust.setText(String.valueOf(gameState_800babc8.stardust_9c));
+          GameStateViewerController.this.timestamp.setText(String.valueOf(gameState_800babc8.timestamp_a0));
+          GameStateViewerController.this.submapScene.setText(String.valueOf(gameState_800babc8.submapScene_a4));
+          GameStateViewerController.this.submapCut.setText(String.valueOf(gameState_800babc8.submapCut_a8));
+          GameStateViewerController.this.scriptEngineValueI.setText(String.valueOf(gameState_800babc8._b0));
+          GameStateViewerController.this.scriptEngineValueII.setText(String.valueOf(gameState_800babc8._b4));
+          GameStateViewerController.this.scriptEngineValueIII.setText(String.valueOf(gameState_800babc8._b8));
+          GameStateViewerController.this.scriptFlagsetI0.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc.getRaw(0)));
+          GameStateViewerController.this.scriptFlagsetI0.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc.getRaw(0)));
+          GameStateViewerController.this.scriptFlagsetI1.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc.getRaw(1)));
+          GameStateViewerController.this.scriptFlagsetI2.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc.getRaw(2)));
+          GameStateViewerController.this.scriptFlagsetI3.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc.getRaw(3)));
+          GameStateViewerController.this.scriptFlagsetI4.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc.getRaw(4)));
+          GameStateViewerController.this.scriptFlagsetI5.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc.getRaw(5)));
+          GameStateViewerController.this.scriptFlagsetI6.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc.getRaw(6)));
+          GameStateViewerController.this.scriptFlagsetI7.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc.getRaw(7)));
+          GameStateViewerController.this.scriptFlagsetI8.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc.getRaw(8)));
+          GameStateViewerController.this.scriptFlagsetI9.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc.getRaw(9)));
+          GameStateViewerController.this.scriptFlagsetI10.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc.getRaw(10)));
+          GameStateViewerController.this.scriptFlagsetI11.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc.getRaw(11)));
+          GameStateViewerController.this.scriptFlagsetI12.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc.getRaw(12)));
+          GameStateViewerController.this.scriptFlagsetI13.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc.getRaw(13)));
+          GameStateViewerController.this.scriptFlagsetI14.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc.getRaw(14)));
+          GameStateViewerController.this.scriptFlagsetI15.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc.getRaw(15)));
+          GameStateViewerController.this.scriptFlagsetI16.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc.getRaw(16)));
+          GameStateViewerController.this.scriptFlagsetI17.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc.getRaw(17)));
+          GameStateViewerController.this.scriptFlagsetI18.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc.getRaw(18)));
+          GameStateViewerController.this.scriptFlagsetI19.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc.getRaw(19)));
+          GameStateViewerController.this.scriptFlagsetI20.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc.getRaw(20)));
+          GameStateViewerController.this.scriptFlagsetI21.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc.getRaw(21)));
+          GameStateViewerController.this.scriptFlagsetI22.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc.getRaw(22)));
+          GameStateViewerController.this.scriptFlagsetI23.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc.getRaw(23)));
+          GameStateViewerController.this.scriptFlagsetI24.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc.getRaw(24)));
+          GameStateViewerController.this.scriptFlagsetI25.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc.getRaw(25)));
+          GameStateViewerController.this.scriptFlagsetI26.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc.getRaw(26)));
+          GameStateViewerController.this.scriptFlagsetI27.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc.getRaw(27)));
+          GameStateViewerController.this.scriptFlagsetI28.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc.getRaw(28)));
+          GameStateViewerController.this.scriptFlagsetI29.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc.getRaw(29)));
+          GameStateViewerController.this.scriptFlagsetI30.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc.getRaw(30)));
+          GameStateViewerController.this.scriptFlagsetI31.setText(String.valueOf(gameState_800babc8.scriptFlags2_bc.getRaw(31)));
+          GameStateViewerController.this.scriptFlagsetII0.setText(String.valueOf(gameState_800babc8.scriptFlags1_13c.getRaw(0)));
+          GameStateViewerController.this.scriptFlagsetII1.setText(String.valueOf(gameState_800babc8.scriptFlags1_13c.getRaw(1)));
+          GameStateViewerController.this.scriptFlagsetII2.setText(String.valueOf(gameState_800babc8.scriptFlags1_13c.getRaw(2)));
+          GameStateViewerController.this.scriptFlagsetII3.setText(String.valueOf(gameState_800babc8.scriptFlags1_13c.getRaw(3)));
+          GameStateViewerController.this.scriptFlagsetII4.setText(String.valueOf(gameState_800babc8.scriptFlags1_13c.getRaw(4)));
+          GameStateViewerController.this.scriptFlagsetII5.setText(String.valueOf(gameState_800babc8.scriptFlags1_13c.getRaw(5)));
+          GameStateViewerController.this.scriptFlagsetII6.setText(String.valueOf(gameState_800babc8.scriptFlags1_13c.getRaw(6)));
+          GameStateViewerController.this.scriptFlagsetII7.setText(String.valueOf(gameState_800babc8.scriptFlags1_13c.getRaw(7)));
+          GameStateViewerController.this.dataII0.setText(String.valueOf(gameState_800babc8.wmapFlags_15c.getRaw(0)));
+          GameStateViewerController.this.dataII1.setText(String.valueOf(gameState_800babc8.wmapFlags_15c.getRaw(1)));
+          GameStateViewerController.this.dataII2.setText(String.valueOf(gameState_800babc8.wmapFlags_15c.getRaw(2)));
+          GameStateViewerController.this.dataII3.setText(String.valueOf(gameState_800babc8.wmapFlags_15c.getRaw(3)));
+          GameStateViewerController.this.dataII4.setText(String.valueOf(gameState_800babc8.wmapFlags_15c.getRaw(4)));
+          GameStateViewerController.this.dataII5.setText(String.valueOf(gameState_800babc8.wmapFlags_15c.getRaw(5)));
+          GameStateViewerController.this.dataII6.setText(String.valueOf(gameState_800babc8.wmapFlags_15c.getRaw(6)));
+          GameStateViewerController.this.dataII7.setText(String.valueOf(gameState_800babc8.wmapFlags_15c.getRaw(7)));
+          GameStateViewerController.this.dataIII0.setText(String.valueOf(gameState_800babc8._17c.getRaw(0)));
+          GameStateViewerController.this.dataIII1.setText(String.valueOf(gameState_800babc8._17c.getRaw(1)));
+          GameStateViewerController.this.dataIII2.setText(String.valueOf(gameState_800babc8._17c.getRaw(2)));
+          GameStateViewerController.this.dataIII3.setText(String.valueOf(gameState_800babc8._17c.getRaw(3)));
+          GameStateViewerController.this.dataIII4.setText(String.valueOf(gameState_800babc8._17c.getRaw(4)));
+          GameStateViewerController.this.dataIII5.setText(String.valueOf(gameState_800babc8._17c.getRaw(5)));
+          GameStateViewerController.this.dataIII6.setText(String.valueOf(gameState_800babc8._17c.getRaw(6)));
+          GameStateViewerController.this.dataIII7.setText(String.valueOf(gameState_800babc8._17c.getRaw(7)));
+          GameStateViewerController.this.goodsI.setText(String.valueOf(gameState_800babc8.goods_19c[0]));
+          GameStateViewerController.this.goodsII.setText(String.valueOf(gameState_800babc8.goods_19c[1]));
+          GameStateViewerController.this.dataIV0.setText(String.valueOf(gameState_800babc8._1a4[0]));
+          GameStateViewerController.this.dataIV1.setText(String.valueOf(gameState_800babc8._1a4[1]));
+          GameStateViewerController.this.dataIV2.setText(String.valueOf(gameState_800babc8._1a4[2]));
+          GameStateViewerController.this.dataIV3.setText(String.valueOf(gameState_800babc8._1a4[3]));
+          GameStateViewerController.this.dataIV4.setText(String.valueOf(gameState_800babc8._1a4[4]));
+          GameStateViewerController.this.dataIV5.setText(String.valueOf(gameState_800babc8._1a4[5]));
+          GameStateViewerController.this.dataIV6.setText(String.valueOf(gameState_800babc8._1a4[6]));
+          GameStateViewerController.this.dataIV7.setText(String.valueOf(gameState_800babc8._1a4[7]));
+          GameStateViewerController.this.chestFlags0.setText(String.valueOf(gameState_800babc8.chestFlags_1c4[0]));
+          GameStateViewerController.this.chestFlags1.setText(String.valueOf(gameState_800babc8.chestFlags_1c4[1]));
+          GameStateViewerController.this.chestFlags2.setText(String.valueOf(gameState_800babc8.chestFlags_1c4[2]));
+          GameStateViewerController.this.chestFlags3.setText(String.valueOf(gameState_800babc8.chestFlags_1c4[3]));
+          GameStateViewerController.this.chestFlags4.setText(String.valueOf(gameState_800babc8.chestFlags_1c4[4]));
+          GameStateViewerController.this.chestFlags5.setText(String.valueOf(gameState_800babc8.chestFlags_1c4[5]));
+          GameStateViewerController.this.chestFlags6.setText(String.valueOf(gameState_800babc8.chestFlags_1c4[6]));
+          GameStateViewerController.this.chestFlags7.setText(String.valueOf(gameState_800babc8.chestFlags_1c4[7]));
+          GameStateViewerController.this.pathIndex.setText(String.valueOf(gameState_800babc8.pathIndex_4d8));
+          GameStateViewerController.this.dotIndex.setText(String.valueOf(gameState_800babc8.dotIndex_4da));
+          GameStateViewerController.this.dotOffset.setText(String.valueOf(gameState_800babc8.dotOffset_4dc));
+          GameStateViewerController.this.facing.setText(String.valueOf(gameState_800babc8.facing_4dd));
+          GameStateViewerController.this.areaIndex.setText(String.valueOf(gameState_800babc8.areaIndex_4de));
         });
       }
     }, 0, 1000);
   }
 
-  public void finalize() {
-    updateUI.cancel();
+  @Override
+  protected void finalize() {
+    this.updateUI.cancel();
   }
 
 }

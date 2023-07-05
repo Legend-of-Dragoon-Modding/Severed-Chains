@@ -7,6 +7,7 @@ public class CharacterData2c {
    *   <li>0x1 - in party</li>
    *   <li>0x2 - can be put in main party (without this flag a char can only appear in secondary and can't be put into main)</li>
    *   <li>0x20 - can't remove (don't select, can't be taken out of main party)</li>
+   *   <li>0x40 - ultimate addition unlocked</li>
    * </ul>
    */
   public int partyFlags_04;

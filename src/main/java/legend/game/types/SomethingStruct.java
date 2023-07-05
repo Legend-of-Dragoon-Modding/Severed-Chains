@@ -13,9 +13,8 @@ public class SomethingStruct {
   public SVECTOR[] normals_08;
   public int count_0c;
   public TmdObjTable1c.Primitive[] primitives_10;
-  /** 0xc bytes each */
-  public UnboundedArrayRef<SomethingStructSub0c_1> ptr_14;
-  public UnboundedArrayRef<SomethingStructSub0c_2> ptr_18;
+  public SomethingStructSub0c_1[] ptr_14;
+  public SomethingStructSub0c_2[] ptr_18;
   public TmdWithId tmdPtr_1c;
   public GsDOBJ2 dobj2Ptr_20;
   public GsCOORDINATE2 coord2Ptr_24;

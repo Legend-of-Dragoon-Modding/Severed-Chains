@@ -4,7 +4,6 @@ import legend.core.gte.GsCOORD2PARAM;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.GsDOBJ2;
 import legend.game.types.McqHeader;
-import legend.game.types.MrgFile;
 
 import java.util.Arrays;
 
@@ -14,8 +13,8 @@ public class BattlePreloadedEntities_18cb0 {
   /** 3 slots for chars, 3 slots for dragoons */
   public final AdditionHits100[] additionHits_38 = new AdditionHits100[0x100];
   /** This reference is only valid while it's loading */
-  public MrgFile stageMrg_638;
-  public MrgFile stageTmdMrg_63c;
+//  public MrgFile stageMrg_638;
+//  public MrgFile stageTmdMrg_63c;
 
   public final BattleStage stage_963c = new BattleStage();
   public McqHeader stageMcq_9cb0;

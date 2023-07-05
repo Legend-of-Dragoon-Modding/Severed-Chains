@@ -17,13 +17,14 @@ import java.util.Arrays;
 import java.util.function.BiConsumer;
 
 import static legend.core.GameEngine.EVENTS;
+import static legend.game.Scus94491BpeSegment.rcos;
+import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.scriptFunctionDescriptions;
 import static legend.game.Scus94491BpeSegment.scriptLog;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
 import static legend.game.Scus94491BpeSegment_8004.scriptSubFunctions_8004e29c;
-import static legend.game.Scus94491BpeSegment_8005.sin_cos_80054d0c;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 
 /** Holds persistent data for scripts */
@@ -877,13 +878,13 @@ public class ScriptState<T> {
 
   @Method(0x80016c4cL)
   public FlowControl scriptSin() {
-    this.context.params_20[1].set((int)sin_cos_80054d0c.offset(2, (this.context.params_20[0].get() & 0xfff) * 0x4L).getSigned());
+    this.context.params_20[1].set(rsin(this.context.params_20[0].get()));
     return FlowControl.CONTINUE;
   }
 
   @Method(0x80016c80L)
   public FlowControl scriptCos() {
-    this.context.params_20[1].set((int)sin_cos_80054d0c.offset(2, (this.context.params_20[0].get() & 0xfff) * 0x4L).offset(0x2L).getSigned());
+    this.context.params_20[1].set(rcos(this.context.params_20[0].get()));
     return FlowControl.CONTINUE;
   }
 

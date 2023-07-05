@@ -2,7 +2,7 @@ package legend.game.combat.effects;
 
 import java.util.Arrays;
 
-public class AdditionSparksEffect08 implements BttlScriptData6cSubBase1 {
+public class AdditionSparksEffect08 implements Effect {
   /** ubyte */
   public final int count_00;
   public final AdditionSparksEffectInstance4c[] instances_04;

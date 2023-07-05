@@ -14,6 +14,7 @@ import java.util.Arrays;
 import static legend.core.IoHelper.pathToByteBuffer;
 import static org.lwjgl.stb.STBImage.stbi_failure_reason;
 import static org.lwjgl.stb.STBImage.stbi_load_from_memory;
+import static org.lwjgl.stb.STBImage.stbi_set_flip_vertically_on_load;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.memFree;
 
@@ -58,6 +59,7 @@ public final class VramTextureLoader {
       final IntBuffer h = stack.mallocInt(1);
       final IntBuffer comp = stack.mallocInt(1);
 
+      stbi_set_flip_vertically_on_load(false);
       final ByteBuffer data = stbi_load_from_memory(imageBuffer, w, h, comp, 4);
       if(data == null) {
         throw new RuntimeException("Failed to load image: " + stbi_failure_reason());
@@ -85,6 +87,7 @@ public final class VramTextureLoader {
       final IntBuffer h = stack.mallocInt(1);
       final IntBuffer comp = stack.mallocInt(1);
 
+      stbi_set_flip_vertically_on_load(false);
       final ByteBuffer data = stbi_load_from_memory(imageBuffer, w, h, comp, 4);
       if(data == null) {
         throw new RuntimeException("Failed to load image: " + stbi_failure_reason());

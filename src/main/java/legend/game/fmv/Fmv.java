@@ -1,12 +1,15 @@
 package legend.game.fmv;
 
-import legend.core.DebugHelper;
 import legend.core.MathHelper;
+import legend.core.ProjectionMode;
+import legend.core.opengl.Mesh;
+import legend.core.opengl.Shader;
+import legend.core.opengl.ShaderManager;
+import legend.core.opengl.Texture;
 import legend.core.opengl.Window;
 import legend.core.spu.XaAdpcm;
 import legend.game.input.Input;
 import legend.game.input.InputAction;
-import legend.game.types.FileEntry08;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
 import org.apache.logging.log4j.LogManager;
@@ -19,10 +22,9 @@ import javax.sound.sampled.SourceDataLine;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
-import static legend.core.GameEngine.GPU;
-import static legend.game.Scus94491BpeSegment.resizeDisplay;
+import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment_8002.sssqResetStuff;
-import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndexOnceLoaded_8004dd24;
+import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8005._80052d6c;
 import static legend.game.Scus94491BpeSegment_8005.diskFmvs_80052d7c;
 import static legend.game.Scus94491BpeSegment_800b.afterFmvLoadingStage_800bf0ec;
@@ -30,8 +32,11 @@ import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.fmvIndex_800bf0dc;
 import static legend.game.Scus94491BpeSegment_800b.fmvStage_800bf0d8;
 import static legend.game.Scus94491BpeSegment_800b.submapIndex_800bd808;
+import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
-public class Fmv {
+public final class Fmv {
+  private Fmv() { }
+
   private static final Logger LOGGER = LogManager.getFormatterLogger(Fmv.class);
 
   private static final ZeroRunLengthAc ESCAPE_CODE = new ZeroRunLengthAc(BitStreamCode._000001___________, true, false);
@@ -189,34 +194,26 @@ public class Fmv {
 
   private static Runnable oldRenderer;
   private static int oldFps;
-  private static int oldWidth;
-  private static int oldHeight;
-  private static int oldScale;
   private static int sector;
 
   private static SourceDataLine sound;
 
   private static Window.Events.Char charPress;
   private static Window.Events.Click click;
+  private static Window.Events.Resize onResize;
   private static boolean shouldStop;
+
+  private static Mesh fullScrenMesh;
+  private static Texture displayTexture;
 
   public static void playCurrentFmv() {
     sssqResetStuff();
 
-    final int width = switch((int)fmvIndex_800bf0dc.get()) {
-      case 0, 2, 3, 4, 6, 7, 8, 9, 14, 15, 16, 17 -> 320;
-      case 1, 5, 10, 11, 12, 13 -> 640;
-      default -> throw new RuntimeException("Bad FMV index");
-    };
-
-    resizeDisplay(width, 240);
-
     submapIndex_800bd808.set(-1);
 
-    final FileEntry08 file = diskFmvs_80052d7c.get(drgnBinIndex_800bc058.get()).deref().get((int)(fmvIndex_800bf0dc.get() - _80052d6c.get(drgnBinIndex_800bc058.get() - 1).get()));
-    Fmv.play(file.name_04.deref().get(), true);
+    Fmv.play(diskFmvs_80052d7c[drgnBinIndex_800bc058 - 1][fmvIndex_800bf0dc - _80052d6c.get(drgnBinIndex_800bc058 - 1).get()], true);
     fmvStage_800bf0d8.setu(0);
-    mainCallbackIndexOnceLoaded_8004dd24.set(afterFmvLoadingStage_800bf0ec.get());
+    engineStateOnceLoaded_8004dd24 = afterFmvLoadingStage_800bf0ec;
   }
 
   public static void play(final String file, final boolean doubleSpeed) {
@@ -234,17 +231,11 @@ public class Fmv {
     final FileData fileData = Unpacker.loadFile(file);
     sector = 0;
 
-    while(!GPU.isReady()) {
-      DebugHelper.sleep(1);
-    }
+    oldFps = RENDERER.window().getFpsLimit();
+    RENDERER.window().setFpsLimit(15);
 
-    oldScale = GPU.getScale();
-    oldRenderer = GPU.mainRenderer;
-    oldFps = GPU.window().getFpsLimit();
-    oldWidth = GPU.window().getWidth();
-    oldHeight = GPU.window().getHeight();
-    GPU.window().setFpsLimit(15);
-    GPU.rescaleNow(1);
+    final Shader simpleShader = ShaderManager.getShader("simple");
+    final Shader.UniformVec4 simpleShaderColour = simpleShader.new UniformVec4("recolour");
 
     try {
       sound = AudioSystem.getSourceDataLine(new AudioFormat(37800, 16, 2, true, false));
@@ -254,10 +245,12 @@ public class Fmv {
       LOGGER.error("Failed to start audio for FMV");
     }
 
-    charPress = GPU.window().events.onCharPress((window, codepoint) -> shouldStop = true);
-    click = GPU.window().events.onMouseRelease((window, x, y, button, mods) -> shouldStop = true);
+    charPress = RENDERER.events().onCharPress((window, codepoint) -> shouldStop = true);
+    click = RENDERER.events().onMouseRelease((window, x, y, button, mods) -> shouldStop = true);
+    onResize = RENDERER.events().onResize(Fmv::windowResize);
+    windowResize(RENDERER.window(), RENDERER.window().getWidth(), RENDERER.window().getHeight());
 
-    GPU.mainRenderer = () -> {
+    oldRenderer = RENDERER.setRenderCallback(() -> {
       if(Input.pressedThisFrame(InputAction.BUTTON_CENTER_2)
         || Input.pressedThisFrame(InputAction.BUTTON_NORTH) || Input.pressedThisFrame(InputAction.BUTTON_SOUTH)
         || Input.pressedThisFrame(InputAction.BUTTON_EAST) || Input.pressedThisFrame(InputAction.BUTTON_WEST)) {
@@ -446,35 +439,90 @@ public class Fmv {
       final int[] framePixels = new int[frameHeader.getWidth() * frameHeader.getHeight()];
       readDecodedRgb(chromaW, lumaW, cr, cb, luma, frameHeader.getWidth(), frameHeader.getHeight(), framePixels, 0, frameHeader.getWidth());
 
-      GPU.displaySize(frameHeader.getWidth(), frameHeader.getHeight());
-      GPU.displayTexture(framePixels);
-      GPU.drawMesh();
-    };
+      if(displayTexture == null || displayTexture.width != frameHeader.getWidth() || displayTexture.height != frameHeader.getHeight()) {
+        if(displayTexture != null) {
+          displayTexture.delete();
+        }
+
+        displayTexture = Texture.filteredEmpty(frameHeader.getWidth(), frameHeader.getHeight());
+      }
+
+      RENDERER.setProjectionMode(ProjectionMode._2D);
+
+      simpleShader.use();
+      simpleShaderColour.set(1.0f, 1.0f, 1.0f, 1.0f);
+      displayTexture.use();
+      displayTexture.data(0, 0, frameHeader.getWidth(), frameHeader.getHeight(), framePixels);
+      fullScrenMesh.draw();
+    });
   }
 
   public static void stop() {
-    GPU.mainRenderer = () -> {
+    RENDERER.setRenderCallback(() -> {
+      if(fullScrenMesh != null) {
+        fullScrenMesh.delete();
+        fullScrenMesh = null;
+      }
+
+      if(displayTexture != null) {
+        displayTexture.delete();
+        displayTexture = null;
+      }
+
       if(charPress != null) {
-        GPU.window().events.removeCharPress(charPress);
+        RENDERER.events().removeCharPress(charPress);
         charPress = null;
       }
 
       if(click != null) {
-        GPU.window().events.removeMouseRelease(click);
+        RENDERER.events().removeMouseRelease(click);
         click = null;
       }
 
-      GPU.mainRenderer = oldRenderer;
-      GPU.window().setFpsLimit(oldFps);
-      GPU.rescaleNow(oldScale);
-      GPU.displaySize(oldWidth, oldHeight);
+      if(onResize != null) {
+        RENDERER.events().removeOnResize(onResize);
+        onResize = null;
+      }
+
+      RENDERER.setRenderCallback(oldRenderer);
+      RENDERER.window().setFpsLimit(oldFps);
       oldRenderer = null;
 
       if(sound != null) {
         sound.close();
         sound = null;
       }
-    };
+    });
+  }
+
+  private static void windowResize(final Window window, final int width, final int height) {
+    if(fullScrenMesh != null) {
+      fullScrenMesh.delete();
+    }
+
+    final float aspect = 4.0f / 3.0f;
+
+    float w = width;
+    float h = w / aspect;
+
+    if(h > height) {
+      h = height;
+      w = h * aspect;
+    }
+
+    final float l = (width - w) / 2;
+    final float t = (height - h) / 2;
+    final float r = l + w;
+    final float b = t + h;
+
+    fullScrenMesh = new Mesh(GL_TRIANGLE_STRIP, new float[] {
+      l, t, 1.0f, 0, 0,
+      l, b, 1.0f, 0, 1,
+      r, t, 1.0f, 1, 0,
+      r, b, 1.0f, 1, 1,
+    }, 4);
+    fullScrenMesh.attribute(0, 0L, 3, 5);
+    fullScrenMesh.attribute(1, 3L, 2, 5);
   }
 
   private static boolean getNextVlc(final VariableLengthCode vlc, final ArrayBitReader bitReader) {
@@ -530,7 +578,7 @@ public class Fmv {
     }
   }
 
-  public static void readDecodedRgb(final int chromaW, final int lumaW, final int[] cr, final int[] cb, final int[] luma, final int destW, final int destH, final int[] dest, final int outStart, final int outStride) {
+  private static void readDecodedRgb(final int chromaW, final int lumaW, final int[] cr, final int[] cb, final int[] luma, final int destW, final int destH, final int[] dest, final int outStart, final int outStride) {
     final PsxYCbCr_int psxycc = new PsxYCbCr_int();
     final RGB rgb1 = new RGB(), rgb2 = new RGB(), rgb3 = new RGB(), rgb4 = new RGB();
 

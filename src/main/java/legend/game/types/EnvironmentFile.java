@@ -1,44 +1,29 @@
 package legend.game.types;
 
 import legend.core.gte.SVECTOR;
-import legend.core.memory.Value;
-import legend.core.memory.types.MemoryRef;
-import legend.core.memory.types.ShortRef;
-import legend.core.memory.types.UnboundedArrayRef;
-import legend.core.memory.types.UnsignedByteRef;
-import legend.core.memory.types.UnsignedShortRef;
+import legend.game.unpacker.FileData;
 
-public class EnvironmentFile implements MemoryRef {
-  private final Value ref;
+import java.util.Arrays;
 
+public class EnvironmentFile {
   public final SVECTOR viewpoint_00;
   public final SVECTOR refpoint_08;
-  public final UnsignedShortRef projectionDistance_10;
-  public final ShortRef rotation_12;
-  public final UnsignedByteRef count_14;
-  public final UnsignedByteRef ub_15;
-  public final UnsignedByteRef ub_16;
-  public final UnboundedArrayRef<EnvironmentStruct> environments_18;
+  public int projectionDistance_10;
+  public short rotation_12;
+  public int count_14;
+  public int ub_15;
+  public int ub_16;
+  public final EnvironmentStruct[] environments_18;
 
-  public EnvironmentFile(final Value ref) {
-    this.ref = ref;
-
-    this.viewpoint_00 = ref.offset(4, 0x00L).cast(SVECTOR::new);
-    this.refpoint_08 = ref.offset(4, 0x08L).cast(SVECTOR::new);
-    this.projectionDistance_10 = ref.offset(2, 0x10L).cast(UnsignedShortRef::new);
-    this.rotation_12 = ref.offset(2, 0x12L).cast(ShortRef::new);
-    this.count_14 = ref.offset(1, 0x14L).cast(UnsignedByteRef::new);
-    this.ub_15 = ref.offset(1, 0x15L).cast(UnsignedByteRef::new);
-    this.ub_16 = ref.offset(1, 0x16L).cast(UnsignedByteRef::new);
-    this.environments_18 = ref.offset(4, 0x18L).cast(UnboundedArrayRef.of(0x24, EnvironmentStruct::new, this::getCount));
-  }
-
-  private int getCount() {
-    return this.count_14.get();
-  }
-
-  @Override
-  public long getAddress() {
-    return this.ref.getAddress();
+  public EnvironmentFile(final FileData data) {
+    this.viewpoint_00 = data.readSvec3(0x0, new SVECTOR());
+    this.refpoint_08 = data.readSvec3(0x8, new SVECTOR());
+    this.projectionDistance_10 = data.readUShort(0x10);
+    this.rotation_12 = data.readShort(0x12);
+    this.count_14 = data.readUByte(0x14);
+    this.ub_15 = data.readUByte(0x15);
+    this.ub_16 = data.readUByte(0x16);
+    this.environments_18 = new EnvironmentStruct[this.count_14];
+    Arrays.setAll(this.environments_18, i -> new EnvironmentStruct(data.slice(0x18 + i * 0x24)));
   }
 }

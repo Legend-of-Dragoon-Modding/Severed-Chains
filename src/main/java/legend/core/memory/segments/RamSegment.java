@@ -30,7 +30,6 @@ public class RamSegment extends Segment {
 
   @Override
   public void set(final int offset, final byte value) {
-    this.removeFunction(offset & 0xffff_fffc);
     this.data[offset] = value;
   }
 
@@ -42,7 +41,6 @@ public class RamSegment extends Segment {
       return;
     }
 
-    this.removeFunction(offset & 0xffff_fffc);
     MathHelper.set(this.data, offset, size, value);
   }
 
@@ -60,25 +58,21 @@ public class RamSegment extends Segment {
 
   @Override
   public void setBytes(final int offset, final byte[] data) {
-    this.removeFunctions(offset, offset + data.length);
     System.arraycopy(data, 0, this.data, offset, data.length);
   }
 
   @Override
   public void setBytes(final int offset, final byte[] data, final int dataOffset, final int dataLength) {
-    this.removeFunctions(offset, offset + data.length);
     System.arraycopy(data, dataOffset, this.data, offset, dataLength);
   }
 
   @Override
   public void memcpy(final int dest, final int src, final int length) {
-    this.removeFunctions(dest, dest + length);
     System.arraycopy(this.data, src, this.data, dest, length);
   }
 
   @Override
   public void memfill(final int addr, final int length, final int value) {
-    this.removeFunctions(addr, addr + length);
     Arrays.fill(this.data, addr, addr + length, (byte)value);
   }
 }

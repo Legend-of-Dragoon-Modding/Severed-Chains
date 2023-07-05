@@ -31,22 +31,32 @@ public class Gte {
   };
 
   private static final class Matrix {
-    public ShortVector3 v1;
-    public ShortVector3 v2;
-    public ShortVector3 v3;
+    public short v00;
+    public short v01;
+    public short v02;
+    public short v10;
+    public short v11;
+    public short v12;
+    public short v20;
+    public short v21;
+    public short v22;
 
-    private Matrix() {
-      this(new ShortVector3(), new ShortVector3(), new ShortVector3());
-    }
+    private Matrix() { }
 
-    private Matrix(final ShortVector3 v1, final ShortVector3 v2, final ShortVector3 v3) {
-      this.v1 = v1;
-      this.v2 = v2;
-      this.v3 = v3;
+    private Matrix(final short v00, final short v01, final short v02, final short v10, final short v11, final short v12, final short v20, final short v21, final short v22) {
+      this.v00 = v00;
+      this.v01 = v01;
+      this.v02 = v02;
+      this.v10 = v10;
+      this.v11 = v11;
+      this.v12 = v12;
+      this.v20 = v20;
+      this.v21 = v21;
+      this.v22 = v22;
     }
 
     public Matrix copy() {
-      return new Matrix(this.v1.copy(), this.v2.copy(), this.v3.copy());
+      return new Matrix(this.v00, this.v01, this.v02, this.v10, this.v11, this.v12, this.v20, this.v21, this.v22);
     }
   }
 
@@ -182,9 +192,9 @@ public class Gte {
   private void CDP() {
     // [IR1, IR2, IR3] = [MAC1, MAC2, MAC3] = (BK * 1000h + LCM * IR) SAR(sf * 12)
     // WARNING each multiplication can trigger mac flags so the check is needed on each op! Somehow this only affects the color matrix and not the light one
-    this.MAC1 = (int)(this.setMAC(1, this.setMAC(1, this.setMAC(1, (long)this.RBK * 0x1000 + this.LRGB.v1.x * this.IR[1]) + (long)this.LRGB.v1.y * this.IR[2]) + (long)this.LRGB.v1.z * this.IR[3]) >> this.sf);
-    this.MAC2 = (int)(this.setMAC(2, this.setMAC(2, this.setMAC(2, (long)this.GBK * 0x1000 + this.LRGB.v2.x * this.IR[1]) + (long)this.LRGB.v2.y * this.IR[2]) + (long)this.LRGB.v2.z * this.IR[3]) >> this.sf);
-    this.MAC3 = (int)(this.setMAC(3, this.setMAC(3, this.setMAC(3, (long)this.BBK * 0x1000 + this.LRGB.v3.x * this.IR[1]) + (long)this.LRGB.v3.y * this.IR[2]) + (long)this.LRGB.v3.z * this.IR[3]) >> this.sf);
+    this.MAC1 = (int)(this.setMAC(1, this.setMAC(1, this.setMAC(1, (long)this.RBK * 0x1000 + this.LRGB.v00 * this.IR[1]) + (long)this.LRGB.v01 * this.IR[2]) + (long)this.LRGB.v02 * this.IR[3]) >> this.sf);
+    this.MAC2 = (int)(this.setMAC(2, this.setMAC(2, this.setMAC(2, (long)this.GBK * 0x1000 + this.LRGB.v10 * this.IR[1]) + (long)this.LRGB.v11 * this.IR[2]) + (long)this.LRGB.v12 * this.IR[3]) >> this.sf);
+    this.MAC3 = (int)(this.setMAC(3, this.setMAC(3, this.setMAC(3, (long)this.BBK * 0x1000 + this.LRGB.v20 * this.IR[1]) + (long)this.LRGB.v21 * this.IR[2]) + (long)this.LRGB.v22 * this.IR[3]) >> this.sf);
 
     this.IR[1] = this.setIR(1, this.MAC1, this.lm);
     this.IR[2] = this.setIR(2, this.MAC2, this.lm);
@@ -210,9 +220,9 @@ public class Gte {
   private void CC() {
     // [IR1, IR2, IR3] = [MAC1, MAC2, MAC3] = (BK * 1000h + LCM * IR) SAR(sf * 12)
     // WARNING each multiplication can trigger mac flags so the check is needed on each op! Somehow this only affects the color matrix and not the light one
-    this.MAC1 = (int)(this.setMAC(1, this.setMAC(1, this.setMAC(1, (long)this.RBK * 0x1000 + this.LRGB.v1.x * this.IR[1]) + (long)this.LRGB.v1.y * this.IR[2]) + (long)this.LRGB.v1.z * this.IR[3]) >> this.sf);
-    this.MAC2 = (int)(this.setMAC(2, this.setMAC(2, this.setMAC(2, (long)this.GBK * 0x1000 + this.LRGB.v2.x * this.IR[1]) + (long)this.LRGB.v2.y * this.IR[2]) + (long)this.LRGB.v2.z * this.IR[3]) >> this.sf);
-    this.MAC3 = (int)(this.setMAC(3, this.setMAC(3, this.setMAC(3, (long)this.BBK * 0x1000 + this.LRGB.v3.x * this.IR[1]) + (long)this.LRGB.v3.y * this.IR[2]) + (long)this.LRGB.v3.z * this.IR[3]) >> this.sf);
+    this.MAC1 = (int)(this.setMAC(1, this.setMAC(1, this.setMAC(1, (long)this.RBK * 0x1000 + this.LRGB.v00 * this.IR[1]) + (long)this.LRGB.v01 * this.IR[2]) + (long)this.LRGB.v02 * this.IR[3]) >> this.sf);
+    this.MAC2 = (int)(this.setMAC(2, this.setMAC(2, this.setMAC(2, (long)this.GBK * 0x1000 + this.LRGB.v10 * this.IR[1]) + (long)this.LRGB.v11 * this.IR[2]) + (long)this.LRGB.v12 * this.IR[3]) >> this.sf);
+    this.MAC3 = (int)(this.setMAC(3, this.setMAC(3, this.setMAC(3, (long)this.BBK * 0x1000 + this.LRGB.v20 * this.IR[1]) + (long)this.LRGB.v21 * this.IR[2]) + (long)this.LRGB.v22 * this.IR[3]) >> this.sf);
 
     this.IR[1] = this.setIR(1, this.MAC1, this.lm);
     this.IR[2] = this.setIR(2, this.MAC2, this.lm);
@@ -268,9 +278,9 @@ public class Gte {
 
   private void NCCS(final int r) {
     // [IR1, IR2, IR3] = [MAC1, MAC2, MAC3] = (LLM * V0) SAR(sf * 12)
-    this.MAC1 = (int)(this.setMAC(1, (long)this.LM.v1.x * this.V[r].x + this.LM.v1.y * this.V[r].y + this.LM.v1.z * this.V[r].z) >> this.sf);
-    this.MAC2 = (int)(this.setMAC(2, (long)this.LM.v2.x * this.V[r].x + this.LM.v2.y * this.V[r].y + this.LM.v2.z * this.V[r].z) >> this.sf);
-    this.MAC3 = (int)(this.setMAC(3, (long)this.LM.v3.x * this.V[r].x + this.LM.v3.y * this.V[r].y + this.LM.v3.z * this.V[r].z) >> this.sf);
+    this.MAC1 = (int)(this.setMAC(1, (long)this.LM.v00 * this.V[r].x + this.LM.v01 * this.V[r].y + this.LM.v02 * this.V[r].z) >> this.sf);
+    this.MAC2 = (int)(this.setMAC(2, (long)this.LM.v10 * this.V[r].x + this.LM.v11 * this.V[r].y + this.LM.v12 * this.V[r].z) >> this.sf);
+    this.MAC3 = (int)(this.setMAC(3, (long)this.LM.v20 * this.V[r].x + this.LM.v21 * this.V[r].y + this.LM.v22 * this.V[r].z) >> this.sf);
 
     this.IR[1] = this.setIR(1, this.MAC1, this.lm);
     this.IR[2] = this.setIR(2, this.MAC2, this.lm);
@@ -278,9 +288,9 @@ public class Gte {
 
     // [IR1, IR2, IR3] = [MAC1, MAC2, MAC3] = (BK * 1000h + LCM * IR) SAR(sf * 12)
     // WARNING each multiplication can trigger mac flags so the check is needed on each op! Somehow this only affects the color matrix and not the light one
-    this.MAC1 = (int)(this.setMAC(1, this.setMAC(1, this.setMAC(1, (long)this.RBK * 0x1000 + this.LRGB.v1.x * this.IR[1]) + (long)this.LRGB.v1.y * this.IR[2]) + (long)this.LRGB.v1.z * this.IR[3]) >> this.sf);
-    this.MAC2 = (int)(this.setMAC(2, this.setMAC(2, this.setMAC(2, (long)this.GBK * 0x1000 + this.LRGB.v2.x * this.IR[1]) + (long)this.LRGB.v2.y * this.IR[2]) + (long)this.LRGB.v2.z * this.IR[3]) >> this.sf);
-    this.MAC3 = (int)(this.setMAC(3, this.setMAC(3, this.setMAC(3, (long)this.BBK * 0x1000 + this.LRGB.v3.x * this.IR[1]) + (long)this.LRGB.v3.y * this.IR[2]) + (long)this.LRGB.v3.z * this.IR[3]) >> this.sf);
+    this.MAC1 = (int)(this.setMAC(1, this.setMAC(1, this.setMAC(1, (long)this.RBK * 0x1000 + this.LRGB.v00 * this.IR[1]) + (long)this.LRGB.v01 * this.IR[2]) + (long)this.LRGB.v02 * this.IR[3]) >> this.sf);
+    this.MAC2 = (int)(this.setMAC(2, this.setMAC(2, this.setMAC(2, (long)this.GBK * 0x1000 + this.LRGB.v10 * this.IR[1]) + (long)this.LRGB.v11 * this.IR[2]) + (long)this.LRGB.v12 * this.IR[3]) >> this.sf);
+    this.MAC3 = (int)(this.setMAC(3, this.setMAC(3, this.setMAC(3, (long)this.BBK * 0x1000 + this.LRGB.v20 * this.IR[1]) + (long)this.LRGB.v21 * this.IR[2]) + (long)this.LRGB.v22 * this.IR[3]) >> this.sf);
 
     this.IR[1] = this.setIR(1, this.MAC1, this.lm);
     this.IR[2] = this.setIR(2, this.MAC2, this.lm);
@@ -373,9 +383,9 @@ public class Gte {
     //BK = Background color, RGBC = Primary color / code, LLM = Light matrix, LCM = Color matrix, IR0 = Interpolation value.
 
     // [IR1, IR2, IR3] = [MAC1, MAC2, MAC3] = (LLM * V0) SAR(sf * 12)
-    this.MAC1 = (int)(this.setMAC(1, (long)this.LM.v1.x * this.V[r].x + this.LM.v1.y * this.V[r].y + this.LM.v1.z * this.V[r].z) >> this.sf);
-    this.MAC2 = (int)(this.setMAC(2, (long)this.LM.v2.x * this.V[r].x + this.LM.v2.y * this.V[r].y + this.LM.v2.z * this.V[r].z) >> this.sf);
-    this.MAC3 = (int)(this.setMAC(3, (long)this.LM.v3.x * this.V[r].x + this.LM.v3.y * this.V[r].y + this.LM.v3.z * this.V[r].z) >> this.sf);
+    this.MAC1 = (int)(this.setMAC(1, (long)this.LM.v00 * this.V[r].x + this.LM.v01 * this.V[r].y + this.LM.v02 * this.V[r].z) >> this.sf);
+    this.MAC2 = (int)(this.setMAC(2, (long)this.LM.v10 * this.V[r].x + this.LM.v11 * this.V[r].y + this.LM.v12 * this.V[r].z) >> this.sf);
+    this.MAC3 = (int)(this.setMAC(3, (long)this.LM.v20 * this.V[r].x + this.LM.v21 * this.V[r].y + this.LM.v22 * this.V[r].z) >> this.sf);
 
     this.IR[1] = this.setIR(1, this.MAC1, this.lm);
     this.IR[2] = this.setIR(2, this.MAC2, this.lm);
@@ -383,9 +393,9 @@ public class Gte {
 
     // [IR1, IR2, IR3] = [MAC1, MAC2, MAC3] = (BK * 1000h + LCM * IR) SAR(sf * 12)
     // WARNING each multiplication can trigger mac flags so the check is needed on each op! Somehow this only affects the color matrix and not the light one
-    this.MAC1 = (int)(this.setMAC(1, this.setMAC(1, this.setMAC(1, (long)this.RBK * 0x1000 + this.LRGB.v1.x * this.IR[1]) + (long)this.LRGB.v1.y * this.IR[2]) + (long)this.LRGB.v1.z * this.IR[3]) >> this.sf);
-    this.MAC2 = (int)(this.setMAC(2, this.setMAC(2, this.setMAC(2, (long)this.GBK * 0x1000 + this.LRGB.v2.x * this.IR[1]) + (long)this.LRGB.v2.y * this.IR[2]) + (long)this.LRGB.v2.z * this.IR[3]) >> this.sf);
-    this.MAC3 = (int)(this.setMAC(3, this.setMAC(3, this.setMAC(3, (long)this.BBK * 0x1000 + this.LRGB.v3.x * this.IR[1]) + (long)this.LRGB.v3.y * this.IR[2]) + (long)this.LRGB.v3.z * this.IR[3]) >> this.sf);
+    this.MAC1 = (int)(this.setMAC(1, this.setMAC(1, this.setMAC(1, (long)this.RBK * 0x1000 + this.LRGB.v00 * this.IR[1]) + (long)this.LRGB.v01 * this.IR[2]) + (long)this.LRGB.v02 * this.IR[3]) >> this.sf);
+    this.MAC2 = (int)(this.setMAC(2, this.setMAC(2, this.setMAC(2, (long)this.GBK * 0x1000 + this.LRGB.v10 * this.IR[1]) + (long)this.LRGB.v11 * this.IR[2]) + (long)this.LRGB.v12 * this.IR[3]) >> this.sf);
+    this.MAC3 = (int)(this.setMAC(3, this.setMAC(3, this.setMAC(3, (long)this.BBK * 0x1000 + this.LRGB.v20 * this.IR[1]) + (long)this.LRGB.v21 * this.IR[2]) + (long)this.LRGB.v22 * this.IR[3]) >> this.sf);
 
     this.IR[1] = this.setIR(1, this.MAC1, this.lm);
     this.IR[2] = this.setIR(2, this.MAC2, this.lm);
@@ -428,11 +438,11 @@ public class Gte {
       mx = this.LRGB.copy();
     } else {
       mx = new Matrix();
-      mx.v1.x = (short)-((this.RGBC.r & 0xff) << 4);
-      mx.v1.y = (short)((this.RGBC.r & 0xff) << 4);
-      mx.v1.z = this.IR[0];
-      mx.v2.x = mx.v2.y = mx.v2.z = this.RT.v1.z;
-      mx.v3.x = mx.v3.y = mx.v3.z = this.RT.v2.y;
+      mx.v00 = (short)-((this.RGBC.r & 0xff) << 4);
+      mx.v01 = (short)((this.RGBC.r & 0xff) << 4);
+      mx.v02 = this.IR[0];
+      mx.v10 = mx.v11 = mx.v12 = this.RT.v02;
+      mx.v20 = mx.v21 = mx.v22 = this.RT.v11;
     }
 
     if(mvIndex == 0) {
@@ -459,17 +469,17 @@ public class Gte {
       ty = this.GFC;
       tz = this.BFC;
 
-      long mac1 = this.setMAC(1, tx * 0x1000 + mx.v1.x * vx.x);
-      long mac2 = this.setMAC(2, ty * 0x1000 + mx.v2.x * vx.x);
-      long mac3 = this.setMAC(3, tz * 0x1000 + mx.v3.x * vx.x);
+      long mac1 = this.setMAC(1, tx * 0x1000 + mx.v00 * vx.x);
+      long mac2 = this.setMAC(2, ty * 0x1000 + mx.v10 * vx.x);
+      long mac3 = this.setMAC(3, tz * 0x1000 + mx.v20 * vx.x);
 
       this.setIR(1, (int)(mac1 >> this.sf), false);
       this.setIR(2, (int)(mac2 >> this.sf), false);
       this.setIR(3, (int)(mac3 >> this.sf), false);
 
-      mac1 = this.setMAC(1, this.setMAC(1, (long)mx.v1.y * vx.y) + (long)mx.v1.z * vx.z);
-      mac2 = this.setMAC(2, this.setMAC(2, (long)mx.v2.y * vx.y) + (long)mx.v2.z * vx.z);
-      mac3 = this.setMAC(3, this.setMAC(3, (long)mx.v3.y * vx.y) + (long)mx.v3.z * vx.z);
+      mac1 = this.setMAC(1, this.setMAC(1, (long)mx.v01 * vx.y) + (long)mx.v02 * vx.z);
+      mac2 = this.setMAC(2, this.setMAC(2, (long)mx.v11 * vx.y) + (long)mx.v12 * vx.z);
+      mac3 = this.setMAC(3, this.setMAC(3, (long)mx.v21 * vx.y) + (long)mx.v22 * vx.z);
 
       this.MAC1 = (int)(mac1 >> this.sf);
       this.MAC2 = (int)(mac2 >> this.sf);
@@ -489,9 +499,9 @@ public class Gte {
     //MAC3 = (Tx3 * 1000h + Mx31 * Vx1 + Mx32 * Vx2 + Mx33 * Vx3) SAR(sf * 12)
     //[IR1, IR2, IR3] = [MAC1, MAC2, MAC3]
 
-    this.MAC1 = (int)(this.setMAC(1, this.setMAC(1, this.setMAC(1, tx * 0x1000 + mx.v1.x * vx.x) + (long)mx.v1.y * vx.y) + (long)mx.v1.z * vx.z) >> this.sf);
-    this.MAC2 = (int)(this.setMAC(2, this.setMAC(2, this.setMAC(2, ty * 0x1000 + mx.v2.x * vx.x) + (long)mx.v2.y * vx.y) + (long)mx.v2.z * vx.z) >> this.sf);
-    this.MAC3 = (int)(this.setMAC(3, this.setMAC(3, this.setMAC(3, tz * 0x1000 + mx.v3.x * vx.x) + (long)mx.v3.y * vx.y) + (long)mx.v3.z * vx.z) >> this.sf);
+    this.MAC1 = (int)(this.setMAC(1, this.setMAC(1, this.setMAC(1, tx * 0x1000 + mx.v00 * vx.x) + (long)mx.v01 * vx.y) + (long)mx.v02 * vx.z) >> this.sf);
+    this.MAC2 = (int)(this.setMAC(2, this.setMAC(2, this.setMAC(2, ty * 0x1000 + mx.v10 * vx.x) + (long)mx.v11 * vx.y) + (long)mx.v12 * vx.z) >> this.sf);
+    this.MAC3 = (int)(this.setMAC(3, this.setMAC(3, this.setMAC(3, tz * 0x1000 + mx.v20 * vx.x) + (long)mx.v21 * vx.y) + (long)mx.v22 * vx.z) >> this.sf);
 
     this.IR[1] = this.setIR(1, this.MAC1, this.lm);
     this.IR[2] = this.setIR(2, this.MAC2, this.lm);
@@ -559,9 +569,9 @@ public class Gte {
     //Calculates the outer product of two signed 16bit vectors.
     //Note: D1,D2,D3 are meant to be the RT11,RT22,RT33 elements of the RT matrix "misused" as vector. lm should be usually zero.
 
-    final short d1 = this.RT.v1.x;
-    final short d2 = this.RT.v2.y;
-    final short d3 = this.RT.v3.z;
+    final short d1 = this.RT.v00;
+    final short d2 = this.RT.v11;
+    final short d3 = this.RT.v22;
 
     this.MAC1 = (int)this.setMAC(1, this.IR[3] * d2 - this.IR[2] * d3 >> this.sf);
     this.MAC2 = (int)this.setMAC(2, this.IR[1] * d3 - this.IR[3] * d1 >> this.sf);
@@ -604,9 +614,9 @@ public class Gte {
     //BK = Background color, RGBC = Primary color / code, LLM = Light matrix, LCM = Color matrix, IR0 = Interpolation value.
 
     // [IR1, IR2, IR3] = [MAC1, MAC2, MAC3] = (LLM * V0) SAR(sf * 12)
-    this.MAC1 = (int)(this.setMAC(1, (long)this.LM.v1.x * this.V[r].x + this.LM.v1.y * this.V[r].y + this.LM.v1.z * this.V[r].z) >> this.sf);
-    this.MAC2 = (int)(this.setMAC(2, (long)this.LM.v2.x * this.V[r].x + this.LM.v2.y * this.V[r].y + this.LM.v2.z * this.V[r].z) >> this.sf);
-    this.MAC3 = (int)(this.setMAC(3, (long)this.LM.v3.x * this.V[r].x + this.LM.v3.y * this.V[r].y + this.LM.v3.z * this.V[r].z) >> this.sf);
+    this.MAC1 = (int)(this.setMAC(1, (long)this.LM.v00 * this.V[r].x + this.LM.v01 * this.V[r].y + this.LM.v02 * this.V[r].z) >> this.sf);
+    this.MAC2 = (int)(this.setMAC(2, (long)this.LM.v10 * this.V[r].x + this.LM.v11 * this.V[r].y + this.LM.v12 * this.V[r].z) >> this.sf);
+    this.MAC3 = (int)(this.setMAC(3, (long)this.LM.v20 * this.V[r].x + this.LM.v21 * this.V[r].y + this.LM.v22 * this.V[r].z) >> this.sf);
 
     this.IR[1] = this.setIR(1, this.MAC1, this.lm);
     this.IR[2] = this.setIR(2, this.MAC2, this.lm);
@@ -614,9 +624,9 @@ public class Gte {
 
     // [IR1, IR2, IR3] = [MAC1, MAC2, MAC3] = (BK * 1000h + LCM * IR) SAR(sf * 12)
     // WARNING each multiplication can trigger mac flags so the check is needed on each op! Somehow this only affects the color matrix and not the light one
-    this.MAC1 = (int)(this.setMAC(1, this.setMAC(1, this.setMAC(1, (long)this.RBK * 0x1000 + this.LRGB.v1.x * this.IR[1]) + (long)this.LRGB.v1.y * this.IR[2]) + (long)this.LRGB.v1.z * this.IR[3]) >> this.sf);
-    this.MAC2 = (int)(this.setMAC(2, this.setMAC(2, this.setMAC(2, (long)this.GBK * 0x1000 + this.LRGB.v2.x * this.IR[1]) + (long)this.LRGB.v2.y * this.IR[2]) + (long)this.LRGB.v2.z * this.IR[3]) >> this.sf);
-    this.MAC3 = (int)(this.setMAC(3, this.setMAC(3, this.setMAC(3, (long)this.BBK * 0x1000 + this.LRGB.v3.x * this.IR[1]) + (long)this.LRGB.v3.y * this.IR[2]) + (long)this.LRGB.v3.z * this.IR[3]) >> this.sf);
+    this.MAC1 = (int)(this.setMAC(1, this.setMAC(1, this.setMAC(1, (long)this.RBK * 0x1000 + this.LRGB.v00 * this.IR[1]) + (long)this.LRGB.v01 * this.IR[2]) + (long)this.LRGB.v02 * this.IR[3]) >> this.sf);
+    this.MAC2 = (int)(this.setMAC(2, this.setMAC(2, this.setMAC(2, (long)this.GBK * 0x1000 + this.LRGB.v10 * this.IR[1]) + (long)this.LRGB.v11 * this.IR[2]) + (long)this.LRGB.v12 * this.IR[3]) >> this.sf);
+    this.MAC3 = (int)(this.setMAC(3, this.setMAC(3, this.setMAC(3, (long)this.BBK * 0x1000 + this.LRGB.v20 * this.IR[1]) + (long)this.LRGB.v21 * this.IR[2]) + (long)this.LRGB.v22 * this.IR[3]) >> this.sf);
 
     this.IR[1] = this.setIR(1, this.MAC1, this.lm);
     this.IR[2] = this.setIR(2, this.MAC2, this.lm);
@@ -681,9 +691,9 @@ public class Gte {
     //IR1 = MAC1 = (TRX*1000h + RT11*VX0 + RT12*VY0 + RT13*VZ0) SAR (sf*12)
     //IR2 = MAC2 = (TRY*1000h + RT21*VX0 + RT22*VY0 + RT23*VZ0) SAR (sf*12)
     //IR3 = MAC3 = (TRZ*1000h + RT31*VX0 + RT32*VY0 + RT33*VZ0) SAR (sf*12)
-    this.MAC1 = (int)(this.setMAC(1, this.setMAC(1, this.setMAC(1, (long)this.TRX * 0x1000 + this.RT.v1.x * this.V[r].x) + (long)this.RT.v1.y * this.V[r].y) + (long)this.RT.v1.z * this.V[r].z) >> this.sf);
-    this.MAC2 = (int)(this.setMAC(2, this.setMAC(2, this.setMAC(2, (long)this.TRY * 0x1000 + this.RT.v2.x * this.V[r].x) + (long)this.RT.v2.y * this.V[r].y) + (long)this.RT.v2.z * this.V[r].z) >> this.sf);
-    final long mac3 = this.setMAC(3, this.setMAC(3, this.setMAC(3, (long)this.TRZ * 0x1000 + this.RT.v3.x * this.V[r].x) + (long)this.RT.v3.y * this.V[r].y) + (long)this.RT.v3.z * this.V[r].z);
+    this.MAC1 = (int)(this.setMAC(1, this.setMAC(1, this.setMAC(1, (long)this.TRX * 0x1000 + this.RT.v00 * this.V[r].x) + (long)this.RT.v01 * this.V[r].y) + (long)this.RT.v02 * this.V[r].z) >> this.sf);
+    this.MAC2 = (int)(this.setMAC(2, this.setMAC(2, this.setMAC(2, (long)this.TRY * 0x1000 + this.RT.v10 * this.V[r].x) + (long)this.RT.v11 * this.V[r].y) + (long)this.RT.v12 * this.V[r].z) >> this.sf);
+    final long mac3 = this.setMAC(3, this.setMAC(3, this.setMAC(3, (long)this.TRZ * 0x1000 + this.RT.v20 * this.V[r].x) + (long)this.RT.v21 * this.V[r].y) + (long)this.RT.v22 * this.V[r].z);
     this.MAC3 = (int)(mac3 >> this.sf);
 
     this.IR[1] = this.setIR(1, this.MAC1, this.lm);
@@ -1012,27 +1022,27 @@ public class Gte {
 
   public long loadControl(final int fs) {
     return switch(fs) {
-      case  0 -> this.RT.v1.getXY();
-      case  1 -> (this.RT.v2.x & 0xffffL) << 16 | this.RT.v1.z & 0xffffL;
-      case  2 -> (this.RT.v2.z & 0xffffL) << 16 | this.RT.v2.y & 0xffffL;
-      case  3 -> this.RT.v3.getXY();
-      case  4 -> this.RT.v3.z;
+      case  0 -> (this.RT.v01 & 0xffffL) << 16 | this.RT.v00 & 0xffffL;
+      case  1 -> (this.RT.v10 & 0xffffL) << 16 | this.RT.v02 & 0xffffL;
+      case  2 -> (this.RT.v12 & 0xffffL) << 16 | this.RT.v11 & 0xffffL;
+      case  3 -> (this.RT.v21 & 0xffffL) << 16 | this.RT.v20 & 0xffffL;
+      case  4 -> this.RT.v22;
       case  5 -> this.TRX;
       case  6 -> this.TRY;
       case  7 -> this.TRZ;
-      case  8 -> this.LM.v1.getXY();
-      case  9 -> (this.LM.v2.x & 0xffffL) << 16 | this.LM.v1.z & 0xffffL;
-      case 10 -> (this.LM.v2.z & 0xffffL) << 16 | this.LM.v2.y & 0xffffL;
-      case 11 -> this.LM.v3.getXY();
-      case 12 -> this.LM.v3.z;
+      case  8 -> (this.LM.v01 & 0xffffL) << 16 | this.LM.v00 & 0xffffL;
+      case  9 -> (this.LM.v10 & 0xffffL) << 16 | this.LM.v02 & 0xffffL;
+      case 10 -> (this.LM.v12 & 0xffffL) << 16 | this.LM.v11 & 0xffffL;
+      case 11 -> (this.LM.v21 & 0xffffL) << 16 | this.LM.v20 & 0xffffL;
+      case 12 -> this.LM.v22;
       case 13 -> this.RBK;
       case 14 -> this.GBK;
       case 15 -> this.BBK;
-      case 16 -> this.LRGB.v1.getXY();
-      case 17 -> (this.LRGB.v2.x & 0xffffL) << 16 | this.LRGB.v1.z & 0xffffL;
-      case 18 -> (this.LRGB.v2.z & 0xffffL) << 16 | this.LRGB.v2.y & 0xffffL;
-      case 19 -> this.LRGB.v3.getXY();
-      case 20 -> this.LRGB.v3.z;
+      case 16 -> (this.LRGB.v01 & 0xffffL) << 16 | this.LRGB.v00 & 0xffffL;
+      case 17 -> (this.LRGB.v10 & 0xffffL) << 16 | this.LRGB.v02 & 0xffffL;
+      case 18 -> (this.LRGB.v12 & 0xffffL) << 16 | this.LRGB.v11 & 0xffffL;
+      case 19 -> (this.LRGB.v21 & 0xffffL) << 16 | this.LRGB.v20 & 0xffffL;
+      case 20 -> this.LRGB.v22;
       case 21 -> this.RFC;
       case 22 -> this.GFC;
       case 23 -> this.BFC;
@@ -1050,45 +1060,63 @@ public class Gte {
 
   public void writeControl(final int fs, final int v) {
     switch(fs) {
-      case 0 -> this.RT.v1.setXY(v);
+      case 0 -> {
+        this.RT.v00 = (short)v;
+        this.RT.v01 = (short)(v >>> 16);
+      }
       case 1 -> {
-        this.RT.v1.z = (short)v;
-        this.RT.v2.x = (short)(v >>> 16);
+        this.RT.v02 = (short)v;
+        this.RT.v10 = (short)(v >>> 16);
       }
       case 2 -> {
-        this.RT.v2.y = (short)v;
-        this.RT.v2.z = (short)(v >>> 16);
+        this.RT.v11 = (short)v;
+        this.RT.v12 = (short)(v >>> 16);
       }
-      case 3 -> this.RT.v3.setXY(v);
-      case 4 -> this.RT.v3.z = (short)v;
+      case 3 -> {
+        this.RT.v20 = (short)v;
+        this.RT.v21 = (short)(v >>> 16);
+      }
+      case 4 -> this.RT.v22 = (short)v;
       case 5 -> this.TRX = v;
       case 6 -> this.TRY = v;
       case 7 -> this.TRZ = v;
-      case 8 -> this.LM.v1.setXY(v);
+      case 8 -> {
+        this.LM.v00 = (short)v;
+        this.LM.v01 = (short)(v >>> 16);
+      }
       case 9 -> {
-        this.LM.v1.z = (short)v;
-        this.LM.v2.x = (short)(v >>> 16);
+        this.LM.v02 = (short)v;
+        this.LM.v10 = (short)(v >>> 16);
       }
       case 10 -> {
-        this.LM.v2.y = (short)v;
-        this.LM.v2.z = (short)(v >>> 16);
+        this.LM.v11 = (short)v;
+        this.LM.v12 = (short)(v >>> 16);
       }
-      case 11 -> this.LM.v3.setXY(v);
-      case 12 -> this.LM.v3.z = (short)v;
+      case 11 -> {
+        this.LM.v20 = (short)v;
+        this.LM.v21 = (short)(v >>> 16);
+      }
+      case 12 -> this.LM.v22 = (short)v;
       case 13 -> this.RBK = v;
       case 14 -> this.GBK = v;
       case 15 -> this.BBK = v;
-      case 16 -> this.LRGB.v1.setXY(v);
+      case 16 -> {
+        this.LRGB.v00 = (short)v;
+        this.LRGB.v01 = (short)(v >>> 16);
+      }
       case 17 -> {
-        this.LRGB.v1.z = (short)v;
-        this.LRGB.v2.x = (short)(v >>> 16);
+        this.LRGB.v02 = (short)v;
+        this.LRGB.v10 = (short)(v >>> 16);
       }
       case 18 -> {
-        this.LRGB.v2.y = (short)v;
-        this.LRGB.v2.z = (short)(v >>> 16);
+        this.LRGB.v11 = (short)v;
+        this.LRGB.v12 = (short)(v >>> 16);
       }
-      case 19 -> this.LRGB.v3.setXY(v);
-      case 20 -> this.LRGB.v3.z = (short)v;
+      case 19 -> {
+        this.LRGB.v20 = (short)v;
+        this.LRGB.v21 = (short)(v >>> 16);
+      }
+      case 20 -> this.LRGB.v22 = (short)v;
       case 21 -> this.RFC = v;
       case 22 -> this.GFC = v;
       case 23 -> this.BFC = v;

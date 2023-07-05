@@ -20,5 +20,5 @@ public class BigSubStruct {
   /** short */
   public int _38;
 
-  public long ptr_3c;
+  public Struct18 ptr_3c;
 }

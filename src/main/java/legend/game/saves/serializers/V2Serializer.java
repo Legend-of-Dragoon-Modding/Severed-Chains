@@ -69,23 +69,23 @@ public final class V2Serializer {
     state._b8 = data.readInt(offset);
     offset += 4;
 
-    for(int i = 0; i < state.scriptFlags2_bc.length; i++) {
-      state.scriptFlags2_bc[i] = data.readInt(offset);
+    for(int i = 0; i < state.scriptFlags2_bc.count(); i++) {
+      state.scriptFlags2_bc.setRaw(i, data.readInt(offset));
       offset += 4;
     }
 
-    for(int i = 0; i < state.scriptFlags1_13c.length; i++) {
-      state.scriptFlags1_13c[i] = data.readInt(offset);
+    for(int i = 0; i < state.scriptFlags1_13c.count(); i++) {
+      state.scriptFlags1_13c.setRaw(i, data.readInt(offset));
       offset += 4;
     }
 
-    for(int i = 0; i < state._15c.length; i++) {
-      state._15c[i] = data.readInt(offset);
+    for(int i = 0; i < state.wmapFlags_15c.count(); i++) {
+      state.wmapFlags_15c.setRaw(i, data.readInt(offset));
       offset += 4;
     }
 
-    for(int i = 0; i < state._17c.length; i++) {
-      state._17c[i] = data.readInt(i);
+    for(int i = 0; i < state._17c.count(); i++) {
+      state._17c.setRaw(i, data.readInt(i));
       offset += 4;
     }
 
@@ -161,8 +161,8 @@ public final class V2Serializer {
       }
     }
 
-    for(int i = 0; i < state._4b8.length; i++) {
-      state._4b8[i] = data.readInt(offset);
+    for(int i = 0; i < 8; i++) {
+//      state._4b8[i] = data.readInt(offset);
       offset += 4;
     }
 

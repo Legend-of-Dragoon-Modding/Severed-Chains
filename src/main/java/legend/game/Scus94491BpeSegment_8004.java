@@ -9,11 +9,7 @@ import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BoolRef;
-import legend.core.memory.types.IntRef;
-import legend.core.memory.types.Pointer;
-import legend.core.memory.types.RunnableRef;
 import legend.core.memory.types.ShortRef;
-import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.core.spu.Voice;
 import legend.game.combat.Bttl_800c;
@@ -34,13 +30,16 @@ import legend.game.sound.Sssq;
 import legend.game.sound.SssqReader;
 import legend.game.sound.Sssqish;
 import legend.game.sound.VolumeRamp;
+import legend.game.title.GameOver;
 import legend.game.title.Ttle;
 import legend.game.types.CallbackStruct;
-import legend.game.types.FileEntry08;
+import legend.game.types.EngineState;
 import legend.game.types.ItemStats0c;
 import legend.game.types.MoonMusic08;
+import legend.game.types.Struct10;
 import legend.game.types.SubmapMusic08;
 import legend.game.unpacker.FileData;
+import legend.game.wmap.WMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -55,9 +54,10 @@ import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SEQUENCER;
 import static legend.core.GameEngine.SPU;
-import static legend.game.Scus94491BpeSegment_8005.reverbConfigs_80059f7c;
+import static legend.game.Scus94491BpeSegment.cos;
+import static legend.game.Scus94491BpeSegment.sin;
 import static legend.game.Scus94491BpeSegment_8005.atanTable_80058d0c;
-import static legend.game.Scus94491BpeSegment_8005.sin_cos_80054d0c;
+import static legend.game.Scus94491BpeSegment_8005.reverbConfigs_80059f7c;
 import static legend.game.Scus94491BpeSegment_800c.patchList_800c4abc;
 import static legend.game.Scus94491BpeSegment_800c.playableSounds_800c43d0;
 import static legend.game.Scus94491BpeSegment_800c.playingNotes_800c3a40;
@@ -76,21 +76,27 @@ public final class Scus94491BpeSegment_8004 {
   private static final Logger LOGGER = LogManager.getFormatterLogger(Scus94491BpeSegment_8004.class);
   private static final Marker SEQUENCER_MARKER = MarkerManager.getMarker("SEQUENCER");
 
-  public static final UnboundedArrayRef<FileEntry08> overlays_8004db88 = MEMORY.ref(2, 0x8004db88L, UnboundedArrayRef.of(0x8, FileEntry08::new));
+  public static final String[] supportOverlays_8004db88 = {
+    "\\OVL\\S_INIT.OV_",
+    "\\OVL\\S_BTLD.OV_",
+    "\\OVL\\S_ITEM.OV_",
+    "\\OVL\\S_EFFE.OV_",
+    "\\OVL\\S_STRM.OV_",
+  };
 
   /**
    * <ol start="0">
    *   <li>{@link Scus94491BpeSegment_800e#preload()}</li>
-   *   <li>{@link Scus94491BpeSegment_800e#finalizePregameLoading()}</li>
+   *   <li>finalizePregameLoading</li>
    *   <li>{@link Ttle#executeTtleLoadingStage()}</li>
    *   <li>{@link Ttle#executeTtleUnloadingStage()}</li>
    *   <li>{@link SMap#theEnd}</li>
    *   <li>{@link SMap#executeSmapLoadingStage()} Sets up rendering and loads scene</li>
    *   <li>{@link Scus94491BpeSegment#FUN_80018658()}</li>
-   *   <li>{@link Ttle#gameOver()}</li>
+   *   <li>{@link GameOver#gameOver()}</li>
    *   <li>{@link WMap#FUN_800cc738()}</li>
    *   <li>{@link SMap#startFmvLoadingStage()}</li>
-   *   <li>{@link SMap#swapDiskLoadingStage()}</li>
+   *   <li>swapDiskLoadingStage</li>
    *   <li>{@link SMap#FUN_800d9e08()}</li>
    *   <li>0x800c6eb8 (TODO)</li>
    *   <li>0x800cab8c (TODO)</li>
@@ -102,15 +108,33 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>null</li>
    * </ol>
    */
-  public static final ArrayRef<CallbackStruct> gameStateCallbacks_8004dbc0 = MEMORY.ref(4, 0x8004dbc0L, ArrayRef.of(CallbackStruct.class, 20, 0x10, CallbackStruct::new));
+  public static final CallbackStruct[] gameStateCallbacks_8004dbc0 = new CallbackStruct[20];
+  static {
+    gameStateCallbacks_8004dbc0[0] = new CallbackStruct(Scus94491BpeSegment_800e::preload, null, 0, 0);
+//    gameStateCallbacks_8004dbc0[1] = new CallbackStruct(finalizePregameLoading);
+    gameStateCallbacks_8004dbc0[2] = new CallbackStruct(Ttle::executeTtleLoadingStage, "\\OVL\\TTLE.OV_", 0x800c6690L, 0xf0);
+    gameStateCallbacks_8004dbc0[3] = new CallbackStruct(Ttle::executeTtleUnloadingStage, "\\OVL\\TTLE.OV_", 0x800c6690L, 0xf0);
+    gameStateCallbacks_8004dbc0[4] = new CallbackStruct(SMap::theEnd, "\\OVL\\SMAP.OV_", 0x800c6690L, 0xf9f0);
+    gameStateCallbacks_8004dbc0[5] = new CallbackStruct(SMap::executeSmapLoadingStage, "\\OVL\\SMAP.OV_", 0x800c6690L, 0xf9f0);
+    gameStateCallbacks_8004dbc0[6] = new CallbackStruct(Scus94491BpeSegment::FUN_80018658, "\\OVL\\BTTL.OV_", 0x800c6690L, 0x668);
+    gameStateCallbacks_8004dbc0[7] = new CallbackStruct(GameOver::gameOver, "\\OVL\\TTLE.OV_", 0x800c6690L, 0xf0);
+    gameStateCallbacks_8004dbc0[8] = new CallbackStruct(WMap::FUN_800cc738, "\\OVL\\WMAP.OV_", 0x800c6690L, 0x2070);
+    gameStateCallbacks_8004dbc0[9] = new CallbackStruct(SMap::startFmvLoadingStage, "\\OVL\\SMAP.OV_", 0x800c6690L, 0xf9f0);
+//    gameStateCallbacks_8004dbc0[10] = new CallbackStruct(swapDiskLoadingStage);
+    gameStateCallbacks_8004dbc0[11] = new CallbackStruct(SMap::FUN_800d9e08, "\\OVL\\SMAP.OV_", 0x800c6690L, 0xf9f0);
+//    gameStateCallbacks_8004dbc0[12] = new CallbackStruct(0x800c6eb8);
+//    gameStateCallbacks_8004dbc0[13] = new CallbackStruct(0x800cab8c);
+//    gameStateCallbacks_8004dbc0[14] = new CallbackStruct(null);
+//    gameStateCallbacks_8004dbc0[15] = new CallbackStruct(0x800c6978);
+//    gameStateCallbacks_8004dbc0[16] = new CallbackStruct(null);
+//    gameStateCallbacks_8004dbc0[17] = new CallbackStruct(0x800cdcdc);
+//    gameStateCallbacks_8004dbc0[18] = new CallbackStruct(0x800cabd4);
+//    gameStateCallbacks_8004dbc0[19] = new CallbackStruct(null);
+  }
 
-  public static final IntRef _8004dd00 = MEMORY.ref(4, 0x8004dd00L, IntRef::new);
-  public static final Pointer<FileEntry08> currentlyLoadingFileEntry_8004dd04 = MEMORY.ref(4, 0x8004dd04L, Pointer.deferred(4, FileEntry08::new));
-  public static final Value loadingGameStateOverlay_8004dd08 = MEMORY.ref(4, 0x8004dd08L);
+  public static String currentlyLoadingFileEntry_8004dd04;
   public static final Value _8004dd0c = MEMORY.ref(4, 0x8004dd0cL);
   public static int loadedOverlayIndex_8004dd10;
-  public static int overlaysLoadedCount_8004dd1c;
-  public static boolean loadingOverlay_8004dd1e;
 
   /**
    * <ol>
@@ -122,11 +146,11 @@ public final class Scus94491BpeSegment_8004 {
    *   <li value="11">Credits?</li>
    * </ol>
    */
-  public static final IntRef mainCallbackIndex_8004dd20 = MEMORY.ref(4, 0x8004dd20L, IntRef::new);
+  public static EngineState engineState_8004dd20 = EngineState.PRELOAD_00;
   /** When the overlay finishes loading, switch to this */
-  public static final IntRef mainCallbackIndexOnceLoaded_8004dd24 = MEMORY.ref(4, 0x8004dd24L, IntRef::new);
-  /** The previous index before the file finished loading */
-  public static final IntRef previousMainCallbackIndex_8004dd28 = MEMORY.ref(4, 0x8004dd28L, IntRef::new);
+  public static EngineState engineStateOnceLoaded_8004dd24 = EngineState.PRELOAD_00;
+  /** The previous state before the file finished loading */
+  public static EngineState previousEngineState_8004dd28;
 
   public static int width_8004dd34 = 320;
   public static int height_8004dd34 = 240;
@@ -137,9 +161,6 @@ public final class Scus94491BpeSegment_8004 {
   public static Runnable swapDisplayBuffer_8004dd40;
   public static final Value simpleRandSeed_8004dd44 = MEMORY.ref(4, 0x8004dd44L);
   public static final Value _8004dd48 = MEMORY.ref(2, 0x8004dd48L);
-
-  /** The current disk number, 1-indexed */
-  public static final IntRef diskNum_8004ddc0 = MEMORY.ref(4, 0x8004ddc0L, IntRef::new);
 
   public static final BoolRef preloadingAudioAssets_8004ddcc = MEMORY.ref(1, 0x8004ddccL, BoolRef::new);
 
@@ -368,7 +389,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[313] = SMap::FUN_800e0a48;
     scriptSubFunctions_8004e29c[314] = SMap::FUN_800e0a94;
     scriptSubFunctions_8004e29c[315] = SMap::scriptCheckPlayerCollision;
-    scriptSubFunctions_8004e29c[316] = SMap::FUN_800e0af4;
+    scriptSubFunctions_8004e29c[316] = SMap::scriptGetPlayerMovement;
     scriptSubFunctions_8004e29c[317] = SMap::FUN_800e0b34;
     scriptSubFunctions_8004e29c[318] = SMap::FUN_800e0ba0;
     scriptSubFunctions_8004e29c[319] = SMap::FUN_800e0cb8;
@@ -430,7 +451,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[443] = Bttl_800e::FUN_800e596c;
     scriptSubFunctions_8004e29c[444] = Bttl_800e::FUN_800e59d8;
 
-//    scriptSubFunctions_8004e29c[445] = Temp::FUN_800ca734;
+    // scriptSubFunctions_8004e29c[445] = Temp::FUN_800ca734;
 
     scriptSubFunctions_8004e29c[480] = Bttl_800f::scriptCheckPhysicalHit;
     scriptSubFunctions_8004e29c[481] = Bttl_800f::scriptPhysicalAttack;
@@ -537,9 +558,9 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[598] = SEffe::FUN_80111cc4;
     scriptSubFunctions_8004e29c[599] = SEffe::FUN_80111ed4;
     scriptSubFunctions_8004e29c[600] = Bttl_800e::scriptAllocateEmptyEffectManagerChild;
-    scriptSubFunctions_8004e29c[601] = Bttl_800e::allocateAttackHitFlashEffect;
+    scriptSubFunctions_8004e29c[601] = Bttl_800e::allocateBillboardSpriteEffect;
     scriptSubFunctions_8004e29c[602] = Bttl_800e::FUN_800e9854;
-//    scriptSubFunctions_8004e29c[603] = Temp::FUN_800ca648;
+    // scriptSubFunctions_8004e29c[603] = Temp::FUN_800ca648;
 
     scriptSubFunctions_8004e29c[605] = SEffe::FUN_80117eb0;
     scriptSubFunctions_8004e29c[606] = SEffe::allocateDeffTmd;
@@ -554,12 +575,12 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[614] = Bttl_800e::FUN_800eb84c;
     scriptSubFunctions_8004e29c[615] = Bttl_800e::FUN_800eb188;
     scriptSubFunctions_8004e29c[616] = Bttl_800e::FUN_800eb01c;
-//    scriptSubFunctions_8004e29c[617] = Temp::FUN_800caae4;
+    // scriptSubFunctions_8004e29c[617] = Temp::FUN_800caae4;
     scriptSubFunctions_8004e29c[618] = SEffe::scriptLoadSameScriptAndJump;
     scriptSubFunctions_8004e29c[619] = SEffe::allocateShirleyTransformWipeEffect;
     scriptSubFunctions_8004e29c[620] = SEffe::FUN_80111a58;
     scriptSubFunctions_8004e29c[621] = Bttl_800e::FUN_800ea384;
-    scriptSubFunctions_8004e29c[622] = SEffe::FUN_80119484;
+    scriptSubFunctions_8004e29c[622] = SEffe::allocateSpriteWithTrailEffect;
     scriptSubFunctions_8004e29c[623] = Bttl_800e::scriptLoadDeff;
     scriptSubFunctions_8004e29c[624] = Bttl_800e::FUN_800e6db4;
     scriptSubFunctions_8004e29c[625] = Bttl_800e::FUN_800e7490;
@@ -697,12 +718,12 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[789] = SMap::FUN_800f25a8;
     scriptSubFunctions_8004e29c[790] = SMap::FUN_800f1274;
 
-    scriptSubFunctions_8004e29c[800] = SEffe::FUN_8010c378;
-    scriptSubFunctions_8004e29c[801] = SEffe::FUN_8010d1dc;
+    scriptSubFunctions_8004e29c[800] = SEffe::allocateLensFlareEffect;
+    scriptSubFunctions_8004e29c[801] = SEffe::allocateWsDragoonTransformationFeathersEffect;
     scriptSubFunctions_8004e29c[802] = SEffe::allocateGoldDragoonTransformEffect;
-    scriptSubFunctions_8004e29c[803] = SEffe::FUN_8010e04c;
-    scriptSubFunctions_8004e29c[804] = SEffe::FUN_8010edc8;
-    scriptSubFunctions_8004e29c[805] = SEffe::FUN_8010e89c;
+    scriptSubFunctions_8004e29c[803] = SEffe::allocateStarChildrenMeteorEffect;
+    scriptSubFunctions_8004e29c[804] = SEffe::allocateStarChildrenImpactEffect;
+    scriptSubFunctions_8004e29c[805] = SEffe::allocateMoonlightStarsEffect;
     scriptSubFunctions_8004e29c[806] = Scus94491BpeSegment::FUN_8001c5fc;
     scriptSubFunctions_8004e29c[807] = Scus94491BpeSegment::FUN_8001c604;
 
@@ -712,11 +733,11 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[835] = Bttl_800c::scriptGetBobjDimension;
     scriptSubFunctions_8004e29c[836] = SEffe::allocateRainEffect;
     scriptSubFunctions_8004e29c[837] = Bttl_800c::FUN_800ce9b0;
-    scriptSubFunctions_8004e29c[838] = SEffe::FUN_801052dc;
+    scriptSubFunctions_8004e29c[838] = SEffe::allocateElectricityEffect;
     scriptSubFunctions_8004e29c[839] = SEffe::FUN_80105604;
     scriptSubFunctions_8004e29c[840] = SEffe::allocateDragoonAdditionScript;
     scriptSubFunctions_8004e29c[841] = SEffe::FUN_80105c38;
-//    scriptSubFunctions_8004e29c[842] = Temp::FUN_800c6968;
+    // scriptSubFunctions_8004e29c[842] = Temp::FUN_800c6968;
     scriptSubFunctions_8004e29c[843] = SEffe::allocateScreenDistortionEffect;
     scriptSubFunctions_8004e29c[844] = SEffe::FUN_801089cc;
     scriptSubFunctions_8004e29c[845] = SEffe::FUN_801023f4;
@@ -734,7 +755,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[865] = Scus94491BpeSegment_8002::scriptTakeItem;
     scriptSubFunctions_8004e29c[866] = Scus94491BpeSegment_8002::scriptGiveGold;
 
-    scriptSubFunctions_8004e29c[896] = SEffe::FUN_8010a610;
+    scriptSubFunctions_8004e29c[896] = SEffe::allocateGradientRaysEffect;
     scriptSubFunctions_8004e29c[897] = SEffe::allocateScreenCaptureEffect;
   }
   // 8004f29c end of jump table
@@ -778,10 +799,43 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link Scus94491BpeSegment#FUN_800189b0}</li>
    * </ol>
    */
-  public static final ArrayRef<Pointer<RunnableRef>> _8004f5d4 = MEMORY.ref(4, 0x8004f5d4L, ArrayRef.of(Pointer.classFor(RunnableRef.class), 31, 4, Pointer.deferred(4, RunnableRef::new)));
+  public static final Runnable[] _8004f5d4 = new Runnable[31];
+  static {
+    _8004f5d4[0] = Scus94491BpeSegment::waitForFilesToLoad;
+    _8004f5d4[1] = Bttl_800c::FUN_800c7524;
+    _8004f5d4[2] = Scus94491BpeSegment::waitForFilesToLoad;
+    _8004f5d4[3] = Scus94491BpeSegment::waitForFilesToLoad;
+    _8004f5d4[4] = Bttl_800c::FUN_800c7648;
+    _8004f5d4[5] = Bttl_800c::FUN_800c76a0;
+    _8004f5d4[6] = Scus94491BpeSegment::FUN_80018998;
+    _8004f5d4[7] = Scus94491BpeSegment::waitForFilesToLoad;
+    _8004f5d4[8] = Scus94491BpeSegment::FUN_80018998;
+    _8004f5d4[9] = Bttl_800c::battleInitiateAndPreload_800c772c;
+    _8004f5d4[10] = Bttl_800c::deferAllocateEnemyBattleObjects;
+    _8004f5d4[11] = Scus94491BpeSegment::waitForFilesToLoad;
+    _8004f5d4[12] = Bttl_800c::deferAllocatePlayerBattleObjects;
+    _8004f5d4[13] = Scus94491BpeSegment::waitForFilesToLoad;
+    _8004f5d4[14] = Bttl_800c::deferLoadEncounterAssets;
+    _8004f5d4[15] = Scus94491BpeSegment::waitForFilesToLoad;
+    _8004f5d4[16] = Bttl_800c::FUN_800c7964;
+    _8004f5d4[17] = Scus94491BpeSegment::waitForFilesToLoad;
+    _8004f5d4[18] = Bttl_800c::FUN_800c79f0;
+    _8004f5d4[19] = Scus94491BpeSegment::waitForFilesToLoad;
+    _8004f5d4[20] = Bttl_800c::deferDoNothing;
+    _8004f5d4[21] = Scus94491BpeSegment::waitForFilesToLoad;
+    _8004f5d4[22] = Bttl_800c::FUN_800c7a80;
+    _8004f5d4[23] = Bttl_800c::battleTick;
+    _8004f5d4[24] = Scus94491BpeSegment::waitForFilesToLoad;
+    _8004f5d4[25] = Bttl_800c::performPostBattleAction;
+    _8004f5d4[26] = Bttl_800c::deallocateCombat;
+    _8004f5d4[27] = Scus94491BpeSegment::waitForFilesToLoad;
+    _8004f5d4[28] = Scus94491BpeSegment::FUN_80018998;
+    _8004f5d4[29] = Scus94491BpeSegment::FUN_80018508;
+    _8004f5d4[30] = Scus94491BpeSegment::FUN_800189b0;
+  }
 
   public static final ScriptFile doNothingScript_8004f650 = new ScriptFile("Do nothing", new int[] {0x4, 0x1});
-  public static final Value _8004f658 = MEMORY.ref(4, 0x8004f658L);
+  public static Struct10 _8004f658;
 
   public static final Value _8004f6e4 = MEMORY.ref(4, 0x8004f6e4L);
   public static final Value _8004f6e8 = MEMORY.ref(4, 0x8004f6e8L);
@@ -801,20 +855,8 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x800402a0L)
   public static void RotMatrixX(final int rotation, final MATRIX matrixOut) {
-    final int sinCos;
-    final short sin;
-
-    if(rotation < 0) {
-      //LAB_800402bc
-      sinCos = (int)sin_cos_80054d0c.offset((-rotation & 0xfff) * 4).get();
-      sin = (short)-(short)sinCos;
-    } else {
-      //LAB_800402e4
-      sinCos = (int)sin_cos_80054d0c.offset((rotation & 0xfff) * 4).get();
-      sin = (short)sinCos;
-    }
-
-    final short cos = (short)(sinCos >> 16);
+    final short sin = sin(rotation);
+    final short cos = cos(rotation);
 
     //LAB_80040304
     final long m10 = matrixOut.get(1, 0);
@@ -834,20 +876,8 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x80040440L)
   public static void RotMatrixY(final int rotation, final MATRIX matrixOut) {
-    final int sinCos;
-    final short sin;
-
-    if(rotation < 0) {
-      //LAB_8004045c
-      sinCos = (int)sin_cos_80054d0c.offset((-rotation & 0xfff) * 4).get();
-      sin = (short)sinCos;
-    } else {
-      //LAB_80040480
-      sinCos = (int)sin_cos_80054d0c.offset((rotation & 0xfff) * 4).get();
-      sin = (short)-(short)sinCos;
-    }
-
-    final short cos = (short)(sinCos >> 16);
+    final short sin = sin(rotation);
+    final short cos = cos(rotation);
 
     //LAB_800404a4
     final short m0 = matrixOut.get(0);
@@ -866,20 +896,8 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x800405e0L)
   public static void RotMatrixZ(final int rotation, final MATRIX matrixOut) {
-    final int sinCos;
-    final short sin;
-
-    if(rotation < 0) {
-      //LAB_800405fc
-      sinCos = (int)sin_cos_80054d0c.offset((-rotation & 0xfff) * 4).get();
-      sin = (short)-(short)sinCos;
-    } else {
-      //LAB_80040624
-      sinCos = (int)sin_cos_80054d0c.offset((rotation & 0xfff) * 4).get();
-      sin = (short)sinCos;
-    }
-
-    final short cos = (short)(sinCos >> 16);
+    final short sin = sin(rotation);
+    final short cos = cos(rotation);
 
     //LAB_80040644
     final long m00 = matrixOut.get(0, 0);
@@ -937,7 +955,7 @@ public final class Scus94491BpeSegment_8004 {
       }
 
       //LAB_80040c44
-      atan = (int)atanTable_80058d0c.offset(x * 0x2L).getSigned();
+      atan = atanTable_80058d0c.get(x).get();
     } else {
       //LAB_80040c58
       if((y & 0x7fe0_0000) == 0) {
@@ -950,7 +968,7 @@ public final class Scus94491BpeSegment_8004 {
       }
 
       //LAB_80040ccc
-      atan = 0x400 - (int)atanTable_80058d0c.offset(x * 0x2L).getSigned();
+      atan = 0x400 - atanTable_80058d0c.get(x).get();
     }
 
     //LAB_80040ce0
@@ -1098,12 +1116,12 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x80048828L)
   public static void setKeyOn(final SequenceData124 sequenceData, final long voiceIndex) {
-    sequenceData.keyOn_0de |= 1 << voiceIndex;
+    sequenceData.keyOn_0de |= 0x1L << voiceIndex;
   }
 
   @Method(0x800488d4L)
   public static void setKeyOff(final SequenceData124 sequenceData, final int voiceIndex) {
-    sequenceData.keyOff_0e2 |= 1 << voiceIndex;
+    sequenceData.keyOff_0e2 |= 0x1L << voiceIndex;
   }
 
   @Method(0x80048c38L)
@@ -1151,8 +1169,8 @@ public final class Scus94491BpeSegment_8004 {
       final SoundEnv44 soundEnv = soundEnv_800c6630;
 
       //LAB_80048dac
-      for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
-        final SequenceData124 sequenceData = sequenceData_800c4ac8[voiceIndex];
+      for(int loadedSequenceIndex = 0; loadedSequenceIndex < 24; loadedSequenceIndex++) {
+        final SequenceData124 sequenceData = sequenceData_800c4ac8[loadedSequenceIndex];
         if(!sequenceData.musicLoaded_027 && !sequenceData.soundLoaded_029) {
           sequenceData.musicLoaded_027 = false;
           sequenceData.musicPlaying_028 = false;
@@ -1189,7 +1207,7 @@ public final class Scus94491BpeSegment_8004 {
             soundEnv.pitchShiftVolRight_28 = 0;
           }
 
-          return voiceIndex;
+          return loadedSequenceIndex;
         }
 
         //LAB_80048e74
@@ -1285,21 +1303,16 @@ public final class Scus94491BpeSegment_8004 {
 
     //LAB_8004b9e8
     //LAB_8004ba58
-    for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
+    for(int voiceIndex = 0; voiceIndex < SPU.voices.length; voiceIndex++) {
       //LAB_8004ba74
       playingNotes_800c3a40[voiceIndex].clear();
     }
 
     //LAB_8004bab8
-    for(int soundIndex = 0; soundIndex < 127; soundIndex++) {
-      //LAB_8004bacc
-      playableSounds_800c43d0[soundIndex].used_00 = false;
-      playableSounds_800c43d0[soundIndex].sshdPtr_04 = null;
-      playableSounds_800c43d0[soundIndex].soundBufferPtr_08 = 0;
-    }
+    playableSounds_800c43d0.clear();
 
     //LAB_8004bb14
-    for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
+    for(int voiceIndex = 0; voiceIndex < SPU.voices.length; voiceIndex++) {
       playingNotes_800c3a40[voiceIndex].portamentoNote_4e = 120;
     }
   }
@@ -1318,29 +1331,26 @@ public final class Scus94491BpeSegment_8004 {
    * @return Index into {@link Scus94491BpeSegment_800c#playableSounds_800c43d0}, or -1 on error
    */
   @Method(0x8004bea4L)
-  public static PlayableSound0c loadSshdAndSoundbank(final FileData soundbank, final Sshd sshd, final int addressInSoundBuffer) {
+  public static PlayableSound0c loadSshdAndSoundbank(final String name, final FileData soundbank, final Sshd sshd, final int addressInSoundBuffer) {
     if(addressInSoundBuffer > 0x8_0000 || (addressInSoundBuffer & 0xf) != 0) {
       throw new IllegalArgumentException("Invalid sound buffer offset");
     }
 
-    for(short i = 0; i < 127; i++) {
-      final PlayableSound0c sound = playableSounds_800c43d0[i];
+    LOGGER.info(SEQUENCER_MARKER, "Loaded SShd into playableSound %s", name);
 
-      if(!sound.used_00) {
-        //LAB_8004bfc8
-        sound.used_00 = true;
-        sound.sshdPtr_04 = sshd;
-        sound.soundBufferPtr_08 = addressInSoundBuffer / 8;
+    //LAB_8004bfc8
+    final PlayableSound0c sound = new PlayableSound0c();
+    sound.name = name;
+    sound.used_00 = true;
+    sound.sshdPtr_04 = sshd;
+    sound.soundBufferPtr_08 = addressInSoundBuffer / 8;
 
-        if(sshd.soundBankSize_04 != 0) {
-          SPU.directWrite(addressInSoundBuffer, soundbank.getBytes());
-        }
-
-        return sound;
-      }
+    if(sshd.soundBankSize_04 != 0) {
+      SPU.directWrite(addressInSoundBuffer, soundbank.getBytes());
     }
 
-    throw new RuntimeException("Ran out of playable sounds");
+    playableSounds_800c43d0.add(sound);
+    return sound;
   }
 
   @Method(0x8004c114L)
@@ -1352,7 +1362,7 @@ public final class Scus94491BpeSegment_8004 {
     }
 
     //LAB_8004c160
-    for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
+    for(int voiceIndex = 0; voiceIndex < SPU.voices.length; voiceIndex++) {
       final PlayingNote66 playingNote = playingNotes_800c3a40[voiceIndex];
 
       if(playingNote.used_00 && playingNote.playableSound_22 == playableSound) {
@@ -1365,17 +1375,17 @@ public final class Scus94491BpeSegment_8004 {
       //LAB_8004c19c
     }
 
-    playableSound.used_00 = false;
-    playableSound.sshdPtr_04 = null;
-    playableSound.soundBufferPtr_08 = 0;
+    LOGGER.info("Unloading playableSound %s", playableSound.name);
+
+    playableSounds_800c43d0.remove(playableSound);
     return 0;
   }
 
   @Method(0x8004c1f8L)
   public static SequenceData124 loadSssq(final PlayableSound0c playableSound, final Sssq sssq) {
     //LAB_8004c258
-    for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
-      final SequenceData124 sequenceData = sequenceData_800c4ac8[voiceIndex];
+    for(int sequenceIndex = 0; sequenceIndex < 24; sequenceIndex++) {
+      final SequenceData124 sequenceData = sequenceData_800c4ac8[sequenceIndex];
 
       if(!sequenceData.musicLoaded_027 && !sequenceData.soundLoaded_029) {
         if(!playableSound.used_00) {
@@ -1438,7 +1448,7 @@ public final class Scus94491BpeSegment_8004 {
 
     //LAB_8004c420
     int playingSounds = 0;
-    for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
+    for(int voiceIndex = 0; voiceIndex < SPU.voices.length; voiceIndex++) {
       if(playingNotes_800c3a40[voiceIndex].isPolyphonicKeyPressure_1a) {
         playingSounds++;
       }
@@ -1465,8 +1475,7 @@ public final class Scus94491BpeSegment_8004 {
     if(type != 0) {
       SPU.setReverbMode(0);
       SPU.enableReverb();
-      SPU.setReverbWorkAreaAddress(reverbConfigs_80059f7c.get(type - 1).address_00.get());
-      SPU.reverb = reverbConfigs_80059f7c.get(type - 1).config_02;
+      SPU.setReverb(reverbConfigs_80059f7c.get(type - 1).config_02);
       return;
     }
 
@@ -1536,7 +1545,7 @@ public final class Scus94491BpeSegment_8004 {
     }
 
     //LAB_8004c9d8
-    for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
+    for(int voiceIndex = 0; voiceIndex < SPU.voices.length; voiceIndex++) {
       final PlayingNote66 playingNote = playingNotes_800c3a40[voiceIndex];
 
       if(playingNote.used_00 && playingNote.playableSound_22 == sequenceData.playableSound_020 && !playingNote.isPolyphonicKeyPressure_1a && playingNote.sequenceData_06 == sequenceData) {
@@ -1592,7 +1601,7 @@ public final class Scus94491BpeSegment_8004 {
     }
 
     //LAB_8004cc1c
-    for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
+    for(int voiceIndex = 0; voiceIndex < SPU.voices.length; voiceIndex++) {
       final PlayingNote66 playingNote = playingNotes_800c3a40[voiceIndex];
 
       if(playingNote.used_00 && playingNote.isPolyphonicKeyPressure_1a && playingNote.playableSound_22 == playableSound) {
@@ -1734,8 +1743,8 @@ public final class Scus94491BpeSegment_8004 {
             //LAB_8004d1c0
             //LAB_8004d1c4
             //LAB_8004d1d8
-            for(int i = 0; i < 24; i++) {
-              final PlayingNote66 playingNote = playingNotes_800c3a40[i];
+            for(int voiceIndex = 0; voiceIndex < SPU.voices.length; voiceIndex++) {
+              final PlayingNote66 playingNote = playingNotes_800c3a40[voiceIndex];
 
               if(playingNote.sequenceData_06 == sequenceData) {
                 if(!playingNote.isPolyphonicKeyPressure_1a) {
@@ -1744,10 +1753,10 @@ public final class Scus94491BpeSegment_8004 {
                   playingNote.pitchBend_38 = 0x40;
                   playingNote.modulationEnabled_14 = false;
                   playingNote.modulation_16 = 0;
-                  setKeyOff(sequenceData, i);
+                  setKeyOff(sequenceData, voiceIndex);
 
                   if(resetAdsr) {
-                    final Voice voice = SPU.voices[i];
+                    final Voice voice = SPU.voices[voiceIndex];
                     voice.adsr.lo = 0;
                     voice.adsr.hi = 0;
                   }
@@ -1918,7 +1927,7 @@ public final class Scus94491BpeSegment_8004 {
 
       //LAB_8004d824
       //LAB_8004d83c
-      for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
+      for(int voiceIndex = 0; voiceIndex < SPU.voices.length; voiceIndex++) {
         final PlayingNote66 playingNote = playingNotes_800c3a40[voiceIndex];
 
         if(playingNote.isPolyphonicKeyPressure_1a && playingNote.sequenceData_06 == sequenceData) {
@@ -1933,7 +1942,7 @@ public final class Scus94491BpeSegment_8004 {
           //LAB_8004d8a0
           playingNote.finished_08 = true;
 
-          SPU.keyOff(1 << voiceIndex);
+          SPU.keyOff(0x1L << voiceIndex);
         }
       }
 
@@ -1947,7 +1956,7 @@ public final class Scus94491BpeSegment_8004 {
   public static void FUN_8004d91c(final boolean resetVoice) {
     SEQUENCER.waitForLock(() -> {
       //LAB_8004d96c
-      for(int voiceIndex = 0; voiceIndex < 24; voiceIndex++) {
+      for(int voiceIndex = 0; voiceIndex < SPU.voices.length; voiceIndex++) {
         final PlayingNote66 playingNote = playingNotes_800c3a40[voiceIndex];
 
         if(playingNote.isPolyphonicKeyPressure_1a) {
@@ -1961,14 +1970,16 @@ public final class Scus94491BpeSegment_8004 {
           }
 
           //LAB_8004d9b8
-          SPU.keyOff(1 << voiceIndex);
+          SPU.keyOff(0x1L << voiceIndex);
 
           //LAB_8004d9e8
 //          wasteSomeCycles(0x2L);
         }
+      }
 
+      for(int sequenceIndex = 0; sequenceIndex < 24; sequenceIndex++) {
         //LAB_8004d9f0
-        final SequenceData124 sequenceData = sequenceData_800c4ac8[voiceIndex];
+        final SequenceData124 sequenceData = sequenceData_800c4ac8[sequenceIndex];
         if(sequenceData.soundLoaded_029) {
           sequenceData.deltaTime_118 = 0;
           sequenceData.soundLoaded_029 = false;

@@ -7,11 +7,12 @@ import legend.game.saves.ConfigStorageLocation;
 import legend.game.saves.SavedGame;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CharacterData2c;
+import legend.game.types.EngineState;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
 
 import static legend.core.GameEngine.CONFIG;
-import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
+import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment_800b.continentIndex_800bf0b0;
 import static legend.game.Scus94491BpeSegment_800b.submapIndex_800bd808;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
@@ -82,23 +83,23 @@ public final class V3Serializer {
     state._b8 = data.readInt(offset);
     offset += 4;
 
-    for(int i = 0; i < state.scriptFlags2_bc.length; i++) {
-      state.scriptFlags2_bc[i] = data.readInt(offset);
+    for(int i = 0; i < state.scriptFlags2_bc.count(); i++) {
+      state.scriptFlags2_bc.setRaw(i, data.readInt(offset));
       offset += 4;
     }
 
-    for(int i = 0; i < state.scriptFlags1_13c.length; i++) {
-      state.scriptFlags1_13c[i] = data.readInt(offset);
+    for(int i = 0; i < state.scriptFlags1_13c.count(); i++) {
+      state.scriptFlags1_13c.setRaw(i, data.readInt(offset));
       offset += 4;
     }
 
-    for(int i = 0; i < state._15c.length; i++) {
-      state._15c[i] = data.readInt(offset);
+    for(int i = 0; i < state.wmapFlags_15c.count(); i++) {
+      state.wmapFlags_15c.setRaw(i, data.readInt(offset));
       offset += 4;
     }
 
-    for(int i = 0; i < state._17c.length; i++) {
-      state._17c[i] = data.readInt(i);
+    for(int i = 0; i < state._17c.count(); i++) {
+      state._17c.setRaw(i, data.readInt(i));
       offset += 4;
     }
 
@@ -174,8 +175,8 @@ public final class V3Serializer {
       }
     }
 
-    for(int i = 0; i < state._4b8.length; i++) {
-      state._4b8[i] = data.readInt(offset);
+    for(int i = 0; i < 8; i++) {
+//      state._4b8[i] = data.readInt(offset);
       offset += 4;
     }
 
@@ -214,7 +215,7 @@ public final class V3Serializer {
   public static int toV3(final String name, final FileData data, final GameState52c state, final ActiveStatsa0[] activeStats) {
     final int locationType;
     final int locationIndex;
-    if(mainCallbackIndex_8004dd20.get() == 8) {
+    if(engineState_8004dd20 == EngineState.WORLD_MAP_08) {
       locationType = 1;
       locationIndex = continentIndex_800bf0b0.get();
       //LAB_80103c98
@@ -277,23 +278,23 @@ public final class V3Serializer {
     data.writeInt(offset, state._b8);
     offset += 4;
 
-    for(final int scriptFlags2 : state.scriptFlags2_bc) {
-      data.writeInt(offset, scriptFlags2);
+    for(int i = 0; i < state.scriptFlags2_bc.count(); i++) {
+      data.writeInt(offset, state.scriptFlags2_bc.getRaw(i));
       offset += 4;
     }
 
-    for(final int scriptFlags1 : state.scriptFlags1_13c) {
-      data.writeInt(offset, scriptFlags1);
+    for(int i = 0; i < state.scriptFlags1_13c.count(); i++) {
+      data.writeInt(offset, state.scriptFlags1_13c.getRaw(i));
       offset += 4;
     }
 
-    for(final int _15c : state._15c) {
-      data.writeInt(offset, _15c);
+    for(int i = 0; i < state.wmapFlags_15c.count(); i++) {
+      data.writeInt(offset, state.wmapFlags_15c.getRaw(i));
       offset += 4;
     }
 
-    for(final int _17c :  state._17c) {
-      data.writeInt(offset, _17c);
+    for(int i = 0; i < state._17c.count(); i++) {
+      data.writeInt(offset, state._17c.getRaw(i));
       offset += 4;
     }
 
@@ -369,8 +370,8 @@ public final class V3Serializer {
       }
     }
 
-    for(final int _4b8 : state._4b8) {
-      data.writeInt(offset, _4b8);
+    for(int i = 0; i < 8; i++) {
+//      data.writeInt(offset, _4b8);
       offset += 4;
     }
 

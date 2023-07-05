@@ -20,38 +20,36 @@ import legend.game.sound.VolumeRamp;
 import legend.game.sound.WaveformList;
 
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import static legend.core.GameEngine.MEMORY;
+import static legend.core.GameEngine.SPU;
 
 public final class Scus94491BpeSegment_800c {
   private Scus94491BpeSegment_800c() { }
-
-  public static final Value _800c3410 = MEMORY.ref(4, 0x800c3410L);
 
   public static final RECT displayRect_800c34c8 = MEMORY.ref(8, 0x800c34c8L, RECT::new);
   /** Incremented with each frame - overflows to 1 */
   public static int PSDCNT_800c34d0;
 
-  public static final MATRIX lightDirectionMatrix_800c34e8 = MEMORY.ref(4, 0x800c34e8L, MATRIX::new);
-  public static final MATRIX lightColourMatrix_800c3508 = MEMORY.ref(4, 0x800c3508L, MATRIX::new);
-  public static final MATRIX matrix_800c3528 = MEMORY.ref(4, 0x800c3528L, MATRIX::new);
-  public static final MATRIX worldToScreenMatrix_800c3548 = MEMORY.ref(4, 0x800c3548L, MATRIX::new);
-  public static final MATRIX identityMatrix_800c3568 = MEMORY.ref(4, 0x800c3568L, MATRIX::new);
+  public static final MATRIX lightDirectionMatrix_800c34e8 = new MATRIX();
+  public static final MATRIX lightColourMatrix_800c3508 = new MATRIX();
+  public static final MATRIX matrix_800c3528 = new MATRIX();
+  public static final MATRIX worldToScreenMatrix_800c3548 = new MATRIX();
+  public static final MATRIX identityMatrix_800c3568 = new MATRIX();
   /** Includes aspect scale */
-  public static final MATRIX identityAspectMatrix_800c3588 = MEMORY.ref(4, 0x800c3588L, MATRIX::new);
+  public static final MATRIX identityAspectMatrix_800c3588 = new MATRIX();
 
   public static final GsCOORDINATE2[] coord2s_800c35a8 = new GsCOORDINATE2[31];
 
   /** 0x990 bytes long, one per voice */
-  public static final PlayingNote66[] playingNotes_800c3a40 = new PlayingNote66[24];
+  public static final PlayingNote66[] playingNotes_800c3a40 = new PlayingNote66[SPU.voices.length];
   static {
     Arrays.setAll(playingNotes_800c3a40, i -> new PlayingNote66());
   }
   /** 0x5f4 bytes long */
-  public static final PlayableSound0c[] playableSounds_800c43d0 = new PlayableSound0c[127];
-  static {
-    Arrays.setAll(playableSounds_800c43d0, i -> new PlayableSound0c());
-  }
+  public static final Queue<PlayableSound0c> playableSounds_800c43d0 = new LinkedList<>();
 
   public static InstrumentsSubfile instruments_800c4aa8;
   public static Sssqish sssqish_800c4aa8;

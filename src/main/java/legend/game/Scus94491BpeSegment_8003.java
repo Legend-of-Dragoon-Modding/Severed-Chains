@@ -20,7 +20,6 @@ import legend.game.types.DR_TPAGE;
 import legend.game.types.GsF_LIGHT;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.Translucency;
-import legend.game.types.WeirdTimHeader;
 import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -52,7 +51,6 @@ import static legend.game.Scus94491BpeSegment_8005._80054870;
 import static legend.game.Scus94491BpeSegment_8005.matrixStackIndex_80054a08;
 import static legend.game.Scus94491BpeSegment_8005.matrixStack_80054a0c;
 import static legend.game.Scus94491BpeSegment_800c.PSDCNT_800c34d0;
-import static legend.game.Scus94491BpeSegment_800c._800c3410;
 import static legend.game.Scus94491BpeSegment_800c.coord2s_800c35a8;
 import static legend.game.Scus94491BpeSegment_800c.displayRect_800c34c8;
 import static legend.game.Scus94491BpeSegment_800c.identityAspectMatrix_800c3588;
@@ -66,11 +64,6 @@ public final class Scus94491BpeSegment_8003 {
   private Scus94491BpeSegment_8003() { }
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(Scus94491BpeSegment_8003.class);
-
-  @Method(0x800309f0L)
-  public static void bzero(final long address, final int size) {
-    MEMORY.memfill(address, size, 0);
-  }
 
   @Method(0x80038190L)
   public static void ResetGraph() {
@@ -99,22 +92,6 @@ public final class Scus94491BpeSegment_8003 {
     validateRect("LoadImage", rect);
 
     GPU.uploadData(rect, data);
-  }
-
-  @Method(0x80038818L)
-  public static long StoreImage(final RECT rect, final long address) {
-    validateRect("StoreImage", rect);
-
-    rect.w.set(MathHelper.clamp(rect.w.get(), (short)0, (short)_800546c0.get()));
-    rect.h.set(MathHelper.clamp(rect.h.get(), (short)0, (short)_800546c2.get()));
-
-    if(rect.w.get() <= 0 || rect.h.get() <= 0) {
-      throw new IllegalArgumentException("RECT width and height must be greater than 0");
-    }
-
-    GPU.commandC0CopyRectFromVramToCpu(rect, address);
-
-    return 0;
   }
 
   public static long StoreImage(final RECT rect, final FileData data) {
@@ -186,130 +163,6 @@ public final class Scus94491BpeSegment_8003 {
     }
   }
 
-  @Method(0x8003b4c0L)
-  public static void gpuLinkedListSetCommandTextureUnshaded(final long entryAddress, final boolean unshaded) {
-    if(unshaded) {
-      MEMORY.ref(1, entryAddress).offset(0x7L).oru(0x1L);
-    } else {
-      MEMORY.ref(1, entryAddress).offset(0x7L).and(0xfeL);
-    }
-  }
-
-  @Method(0x8003b4f0L)
-  public static void setGp0_20(final long a0) {
-    MEMORY.ref(1, a0).offset(0x3L).setu(0x4L);
-    MEMORY.ref(1, a0).offset(0x7L).setu(0x20L);
-  }
-
-  @Method(0x8003b510L)
-  public static void setGp0_24(final long a0) {
-    MEMORY.ref(1, a0).offset(0x3L).setu(0x7L);
-    MEMORY.ref(1, a0).offset(0x7L).setu(0x24L);
-  }
-
-  @Method(0x8003b530L)
-  public static void setGp0_30(final long a0) {
-    MEMORY.ref(1, a0).offset(0x3L).setu(0x6L);
-    MEMORY.ref(1, a0).offset(0x7L).setu(0x30L);
-  }
-
-  @Method(0x8003b550L)
-  public static void setGp0_34(final long a0) {
-    MEMORY.ref(1, a0).offset(0x3L).setu(0x9L);
-    MEMORY.ref(1, a0).offset(0x7L).setu(0x34L);
-  }
-
-  @Method(0x8003b570L)
-  public static void setGp0_28(final long a0) {
-    MEMORY.ref(1, a0).offset(0x3L).setu(0x5L);
-    MEMORY.ref(1, a0).offset(0x7L).setu(0x28L);
-  }
-
-  @Method(0x8003b590L)
-  public static void setGp0_2c(final long a0) {
-    MEMORY.ref(1, a0).offset(0x3L).setu(0x9L);
-    MEMORY.ref(1, a0).offset(0x7L).setu(0x2cL);
-  }
-
-  @Method(0x8003b5b0L)
-  public static void setGp0_38(final long a0) {
-    MEMORY.ref(1, a0).offset(0x3L).setu(0x8L);
-    MEMORY.ref(1, a0).offset(0x7L).setu(0x38L);
-  }
-
-  @Method(0x8003b5d0L)
-  public static void setGp0_3c(final long a0) {
-    MEMORY.ref(1, a0).offset(0x3L).setu(0xcL);
-    MEMORY.ref(1, a0).offset(0x7L).setu(0x3cL);
-  }
-
-  @Method(0x8003b5f0L)
-  public static void setGp0_74(final long a0) {
-    MEMORY.ref(1, a0).offset(0x3L).setu(0x3L);
-    MEMORY.ref(1, a0).offset(0x7L).setu(0x74L);
-  }
-
-  @Method(0x8003b610L)
-  public static void setGp0_7c(final long a0) {
-    MEMORY.ref(1, a0).offset(0x3L).setu(0x3L);
-    MEMORY.ref(1, a0).offset(0x7L).setu(0x7cL);
-  }
-
-  @Method(0x8003b630L)
-  public static void setGp0_64(final long a0) {
-    MEMORY.ref(1, a0).offset(0x3L).setu(0x4L);
-    MEMORY.ref(1, a0).offset(0x7L).setu(0x64L);
-  }
-
-  @Method(0x8003b650L)
-  public static void setGp0_60(final long a0) {
-    MEMORY.ref(1, a0).offset(0x3L).setu(0x3L);
-    MEMORY.ref(1, a0).offset(0x7L).setu(0x60L);
-  }
-
-  @Method(0x8003b670L)
-  public static void setGp0_40(final long a0) {
-    MEMORY.ref(1, a0).offset(0x3L).setu(0x3L);
-    MEMORY.ref(1, a0).offset(0x7L).setu(0x40L);
-  }
-
-  @Method(0x8003b690L)
-  public static void setGp0_50(final long a0) {
-    MEMORY.ref(1, a0).offset(0x3L).setu(0x4L);
-    MEMORY.ref(1, a0).offset(0x7L).setu(0x50L);
-  }
-
-  @Method(0x8003b6b0L)
-  public static void setGp0_48(final long a0) {
-    MEMORY.ref(1, a0).offset(0x03L).setu(0x5L);
-    MEMORY.ref(1, a0).offset(0x07L).setu(0x48L);
-    MEMORY.ref(4, a0).offset(0x14L).setu(0x5555_5555L);
-  }
-
-  @Method(0x8003b6d0L)
-  public static void setGp0_58(final long a0) {
-    MEMORY.ref(1, a0).offset(0x03L).setu(0x7L);
-    MEMORY.ref(1, a0).offset(0x07L).setu(0x58L);
-    MEMORY.ref(1, a0).offset(0x17L).setu(0x0L);
-    MEMORY.ref(4, a0).offset(0x1cL).setu(0x5555_5555L);
-  }
-
-  @Method(0x8003b700L)
-  public static void setGp0_4c(final long a0) {
-    MEMORY.ref(1, a0).offset(0x03L).setu(0x6L);
-    MEMORY.ref(1, a0).offset(0x07L).setu(0x4cL);
-    MEMORY.ref(4, a0).offset(0x18L).setu(0x5555_5555L);
-  }
-
-  @Method(0x8003b720L)
-  public static void setGp0_5c(final long a0) {
-    MEMORY.ref(1, a0).offset(0x03L).setu(0x9L);
-    MEMORY.ref(1, a0).offset(0x07L).setu(0x5cL);
-    MEMORY.ref(1, a0).offset(0x17L).setu(0x0L);
-    MEMORY.ref(1, a0).offset(0x1fL).setu(0x0L);
-    MEMORY.ref(4, a0).offset(0x24L).setu(0x5555_5555L);
-  }
-
   @Method(0x8003b750L)
   public static void SetDrawTPage(final DR_TPAGE p, final boolean allowDrawing, final boolean dither, final long tpage) {
     p.tag.and(0xff_ffffL).or(0x100_0000L);
@@ -349,66 +202,6 @@ public final class Scus94491BpeSegment_8003 {
     //LAB_8003b80c
     //LAB_8003b810
     return -0x1L;
-  }
-
-  @Method(0x8003b8f0L)
-  public static void FUN_8003b8f0(final long a0) {
-    _800c3410.setu(a0);
-  }
-
-  @Method(0x8003b900L)
-  public static WeirdTimHeader FUN_8003b900(final WeirdTimHeader timHeader) {
-    final long ret = FUN_8003b964(_800c3410.get(), timHeader);
-
-    if(ret == -0x1L) {
-      //LAB_8003b950
-      return null;
-    }
-
-    _800c3410.addu(ret * 0x4L);
-
-    //LAB_8003b954
-    return timHeader;
-  }
-
-  /**
-   * TODO figure out what this is doing - looks important... TIM loader? Why is this one different?
-   * Seems to be used for "The End", which isn't rendering correctly (no overlay on the text)
-   */
-  @Method(0x8003b964L)
-  public static long FUN_8003b964(final long a0, final WeirdTimHeader timHeader) {
-    if(MEMORY.ref(4, a0).get() != 0x10L) {
-      return -0x1L;
-    }
-
-    //LAB_8003b998
-    timHeader.flags = (int)MEMORY.ref(4, a0).offset(0x4L).get();
-
-    LOGGER.info("id  =%08x", 0x10L);
-    LOGGER.info("mode=%08x", timHeader.flags);
-    LOGGER.info("timaddr=%08x", a0 + 0x8L);
-
-    //LAB_8003ba04
-    final long a0_0;
-    if((timHeader.flags & 0b1000) != 0) {
-      timHeader.clutRect.set(MEMORY.ref(4, a0).offset(0xcL).cast(RECT::new));
-      timHeader.clutAddress = a0 + 0x14L;
-      a0_0 = MEMORY.ref(4, a0).offset(0x8L).get() / 0x4L;
-    } else {
-      //LAB_8003ba38
-      timHeader.clutRect.clear();
-      timHeader.clutAddress = 0;
-      a0_0 = 0;
-    }
-
-    final long s0 = a0 + a0_0 * 0x4L;
-
-    //LAB_8003ba44
-    timHeader.imageRect.set(MEMORY.ref(4, s0).offset(0xcL).cast(RECT::new));
-    timHeader.imageAddress = s0 + 0x14L;
-
-    //LAB_8003ba64
-    return MEMORY.ref(4, s0).offset(0x8L).get() / 0x4L + 0x2L + a0_0; // +8 CLUT data pointer / 4 + 2 (plus CLUT data pointer if CLUT present) ???
   }
 
   /**
@@ -611,14 +404,9 @@ public final class Scus94491BpeSegment_8003 {
     final int x = light.direction_00.getX();
     final int y = light.direction_00.getY();
     final int z = light.direction_00.getZ();
-    final int r = light.r_0c.get();
-    final int g = light.g_0d.get();
-    final int b = light.b_0e.get();
-
-    final MATRIX directionMatrix = new MATRIX().set(lightDirectionMatrix_800c34e8);
-    final MATRIX colourMatrix = new MATRIX();
-
-    getLightColour(colourMatrix);
+    final int r = light.r_0c;
+    final int g = light.g_0d;
+    final int b = light.b_0e;
 
     // Normalize vector - calculate magnitude
     final long mag = SquareRoot0(x * x + y * y + z * z);
@@ -627,53 +415,43 @@ public final class Scus94491BpeSegment_8003 {
       return -1;
     }
 
+    lightDirectionMatrix_800c34e8.set(lightDirectionMatrix_800c34e8);
+
     if(id == 0) {
       //LAB_8003c7ec
-      directionMatrix.set(0, (short)((-light.direction_00.getX() << 12) / mag));
-      directionMatrix.set(1, (short)((-light.direction_00.getY() << 12) / mag));
-      directionMatrix.set(2, (short)((-light.direction_00.getZ() << 12) / mag));
+      lightDirectionMatrix_800c34e8.set(0, (short)((-light.direction_00.getX() << 12) / mag));
+      lightDirectionMatrix_800c34e8.set(1, (short)((-light.direction_00.getY() << 12) / mag));
+      lightDirectionMatrix_800c34e8.set(2, (short)((-light.direction_00.getZ() << 12) / mag));
 
-      colourMatrix.set(0, (short)((r << 12) / 0xff));
-      colourMatrix.set(3, (short)((g << 12) / 0xff));
-      colourMatrix.set(6, (short)((b << 12) / 0xff));
+      lightColourMatrix_800c3508.set(0, (short)((r << 12) / 0xff));
+      lightColourMatrix_800c3508.set(3, (short)((g << 12) / 0xff));
+      lightColourMatrix_800c3508.set(6, (short)((b << 12) / 0xff));
     } else if(id == 1) {
       //LAB_8003c904
-      directionMatrix.set(3, (short)((-light.direction_00.getX() << 12) / mag));
-      directionMatrix.set(4, (short)((-light.direction_00.getY() << 12) / mag));
-      directionMatrix.set(5, (short)((-light.direction_00.getZ() << 12) / mag));
+      lightDirectionMatrix_800c34e8.set(3, (short)((-light.direction_00.getX() << 12) / mag));
+      lightDirectionMatrix_800c34e8.set(4, (short)((-light.direction_00.getY() << 12) / mag));
+      lightDirectionMatrix_800c34e8.set(5, (short)((-light.direction_00.getZ() << 12) / mag));
 
-      colourMatrix.set(1, (short)((r << 12) / 0xff));
-      colourMatrix.set(4, (short)((g << 12) / 0xff));
-      colourMatrix.set(7, (short)((b << 12) / 0xff));
+      lightColourMatrix_800c3508.set(1, (short)((r << 12) / 0xff));
+      lightColourMatrix_800c3508.set(4, (short)((g << 12) / 0xff));
+      lightColourMatrix_800c3508.set(7, (short)((b << 12) / 0xff));
       //LAB_8003c7dc
     } else if(id == 2) {
       //LAB_8003ca20
-      directionMatrix.set(6, (short)((-light.direction_00.getX() << 12) / mag));
-      directionMatrix.set(7, (short)((-light.direction_00.getY() << 12) / mag));
-      directionMatrix.set(8, (short)((-light.direction_00.getZ() << 12) / mag));
+      lightDirectionMatrix_800c34e8.set(6, (short)((-light.direction_00.getX() << 12) / mag));
+      lightDirectionMatrix_800c34e8.set(7, (short)((-light.direction_00.getY() << 12) / mag));
+      lightDirectionMatrix_800c34e8.set(8, (short)((-light.direction_00.getZ() << 12) / mag));
 
-      colourMatrix.set(2, (short)((r << 12) / 0xff));
-      colourMatrix.set(5, (short)((g << 12) / 0xff));
-      colourMatrix.set(8, (short)((b << 12) / 0xff));
+      lightColourMatrix_800c3508.set(2, (short)((r << 12) / 0xff));
+      lightColourMatrix_800c3508.set(5, (short)((g << 12) / 0xff));
+      lightColourMatrix_800c3508.set(8, (short)((b << 12) / 0xff));
     }
 
     //LAB_8003cb34
-    lightDirectionMatrix_800c34e8.set(directionMatrix);
-    setLightColour(colourMatrix);
+    SetColorMatrix(lightColourMatrix_800c3508);
 
     //LAB_8003cb88
     return 0;
-  }
-
-  @Method(0x8003cba8L)
-  public static void setLightColour(final MATRIX mat) {
-    lightColourMatrix_800c3508.set(mat);
-    SetColorMatrix(mat);
-  }
-
-  @Method(0x8003cc0cL)
-  public static void getLightColour(final MATRIX mat) {
-    mat.set(lightColourMatrix_800c3508);
   }
 
   @Method(0x8003cce0L)
@@ -699,7 +477,7 @@ public final class Scus94491BpeSegment_8003 {
   @Method(0x8003cdf0L)
   public static TimHeader parseTimHeader(final Value baseAddress) {
     final TimHeader header = new TimHeader();
-    header.flags.set(baseAddress.offset(4, 0x0L).get());
+    header.flags = (int)baseAddress.offset(4, 0x0L).get();
 
     if(baseAddress.get(0b1000L) == 0) { // No CLUT
       //LAB_8003ce94
@@ -840,7 +618,7 @@ public final class Scus94491BpeSegment_8003 {
     }
 
     //LAB_8003d230
-    worldToScreenMatrix_800c3548.transfer.set(ApplyMatrixLV(worldToScreenMatrix_800c3548, new VECTOR().set(struct.viewpoint_00).negate()));
+    ApplyMatrixLV(worldToScreenMatrix_800c3548, new VECTOR().set(struct.viewpoint_00).negate(), worldToScreenMatrix_800c3548.transfer);
 
     if(struct.super_1c != null) {
       final MATRIX lw = new MATRIX();
@@ -848,7 +626,7 @@ public final class Scus94491BpeSegment_8003 {
 
       final MATRIX transposedLw = new MATRIX();
       TransposeMatrix(lw, transposedLw);
-      transposedLw.transfer.set(ApplyMatrixLV(transposedLw, lw.transfer)).negate();
+      ApplyMatrixLV(transposedLw, lw.transfer, transposedLw.transfer).negate();
       GsMulCoord2(worldToScreenMatrix_800c3548, transposedLw);
       worldToScreenMatrix_800c3548.set(transposedLw);
     }
@@ -922,13 +700,13 @@ public final class Scus94491BpeSegment_8003 {
    */
   @Method(0x8003d550L)
   public static void GsMulCoord2(final MATRIX matrix1, final MATRIX matrix2) {
-    final VECTOR out = ApplyMatrixLV(matrix1, matrix2.transfer);
+    ApplyMatrixLV(matrix1, matrix2.transfer, matrix2.transfer);
     MulMatrix2(matrix1, matrix2);
-    matrix2.transfer.set(matrix1.transfer).add(out);
+    matrix2.transfer.add(matrix1.transfer);
   }
 
   @Method(0x8003d5d0L)
-  public static void FUN_8003d5d0(final MATRIX matrix, final long angle) {
+  public static void FUN_8003d5d0(final MATRIX matrix, final int angle) {
     if(angle != 0) {
       final short cos = rcos(angle / 360);
       final short sin = rsin(angle / 360);
@@ -1343,7 +1121,7 @@ public final class Scus94491BpeSegment_8003 {
     }
 
     //LAB_8003e474
-    worldToScreenMatrix_800c3548.transfer.set(ApplyMatrixLV(worldToScreenMatrix_800c3548, new VECTOR().set(s2.viewpoint_00).negate()));
+    ApplyMatrixLV(worldToScreenMatrix_800c3548, new VECTOR().set(s2.viewpoint_00).negate(), worldToScreenMatrix_800c3548.transfer);
 
     if(s2.super_1c != null) {
       final MATRIX lw = new MATRIX();
@@ -1351,7 +1129,7 @@ public final class Scus94491BpeSegment_8003 {
 
       final MATRIX transposedLw = new MATRIX();
       TransposeMatrix(lw, transposedLw);
-      transposedLw.transfer.set(ApplyMatrixLV(transposedLw, lw.transfer)).negate();
+      ApplyMatrixLV(transposedLw, lw.transfer, transposedLw.transfer).negate();
       GsMulCoord2(worldToScreenMatrix_800c3548, transposedLw);
       worldToScreenMatrix_800c3548.set(transposedLw);
     }
@@ -1679,53 +1457,55 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x8003ec90L)
-  public static MATRIX FUN_8003ec90(final MATRIX a0, final MATRIX a1, final MATRIX a2) {
-    CPU.CTC2(a0.getPacked(0), 0); //
-    CPU.CTC2(a0.getPacked(2), 1); //
-    CPU.CTC2(a0.getPacked(4), 2); // Rotation
-    CPU.CTC2(a0.getPacked(6), 3); //
-    CPU.CTC2(a0.getPacked(8), 4); //
+  public static MATRIX FUN_8003ec90(final MATRIX transformMatrix0, final MATRIX transformMatrix1, final MATRIX outMatrix) {
+    CPU.CTC2(transformMatrix0.getPacked(0), 0); //
+    CPU.CTC2(transformMatrix0.getPacked(2), 1); //
+    CPU.CTC2(transformMatrix0.getPacked(4), 2); // Rotation
+    CPU.CTC2(transformMatrix0.getPacked(6), 3); //
+    CPU.CTC2(transformMatrix0.getPacked(8), 4); //
 
-    CPU.MTC2((a1.get(3) & 0xffff) << 16 | a1.get(0) & 0xffff, 0); // VXY0
-    CPU.MTC2(a1.get(6), 1); // VZ0
+    CPU.MTC2((transformMatrix1.get(3) & 0xffff) << 16 | transformMatrix1.get(0) & 0xffff, 0); // VXY0
+    CPU.MTC2(transformMatrix1.get(6), 1); // VZ0
     CPU.COP2(0x486012L);
-    a2.set(0, (short)CPU.MFC2( 9)); // IR1
-    a2.set(3, (short)CPU.MFC2(10)); // IR2
-    a2.set(6, (short)CPU.MFC2(11)); // IR3
+    outMatrix.set(0, (short)CPU.MFC2( 9)); // IR1
+    outMatrix.set(3, (short)CPU.MFC2(10)); // IR2
+    outMatrix.set(6, (short)CPU.MFC2(11)); // IR3
 
-    CPU.MTC2((a1.get(4) & 0xffff) << 16 | a1.get(1) & 0xffff, 0); // VXY0
-    CPU.MTC2(a1.get(7), 1); // VZ0
+    CPU.MTC2((transformMatrix1.get(4) & 0xffff) << 16 | transformMatrix1.get(1) & 0xffff, 0); // VXY0
+    CPU.MTC2(transformMatrix1.get(7), 1); // VZ0
     CPU.COP2(0x486012L);
-    a2.set(1, (short)CPU.MFC2( 9)); // IR1
-    a2.set(4, (short)CPU.MFC2(10)); // IR2
-    a2.set(7, (short)CPU.MFC2(11)); // IR3
+    outMatrix.set(1, (short)CPU.MFC2( 9)); // IR1
+    outMatrix.set(4, (short)CPU.MFC2(10)); // IR2
+    outMatrix.set(7, (short)CPU.MFC2(11)); // IR3
 
-    CPU.MTC2((a1.get(5) & 0xffff) << 16 | a1.get(2) & 0xffff, 0); // VXY0
-    CPU.MTC2(a1.get(8), 1); // VZ0
+    CPU.MTC2((transformMatrix1.get(5) & 0xffff) << 16 | transformMatrix1.get(2) & 0xffff, 0); // VXY0
+    CPU.MTC2(transformMatrix1.get(8), 1); // VZ0
     CPU.COP2(0x486012L);
-    a2.set(2, (short)CPU.MFC2( 9)); // IR1
-    a2.set(5, (short)CPU.MFC2(10)); // IR2
-    a2.set(8, (short)CPU.MFC2(11)); // IR3
+    outMatrix.set(2, (short)CPU.MFC2( 9)); // IR1
+    outMatrix.set(5, (short)CPU.MFC2(10)); // IR2
+    outMatrix.set(8, (short)CPU.MFC2(11)); // IR3
 
-    CPU.MTC2((a1.transfer.getY() & 0xffff) << 16 | a1.transfer.getX(), 0); // VXY0
-    CPU.MTC2(a1.transfer.getZ(), 1); // VZ0
+    CPU.MTC2((transformMatrix1.transfer.getY() & 0xffff) << 16 | transformMatrix1.transfer.getX(), 0); // VXY0
+    CPU.MTC2(transformMatrix1.transfer.getZ(), 1); // VZ0
     CPU.COP2(0x486012L);
 
-    a2.transfer.set(a0.transfer);
-    a2.transfer.x.add((int)CPU.MFC2(25));
-    a2.transfer.y.add((int)CPU.MFC2(26));
-    a2.transfer.z.add((int)CPU.MFC2(27));
-    return a2;
+    outMatrix.transfer.set(transformMatrix0.transfer);
+    outMatrix.transfer.x.add((int)CPU.MFC2(25));
+    outMatrix.transfer.y.add((int)CPU.MFC2(26));
+    outMatrix.transfer.z.add((int)CPU.MFC2(27));
+    return outMatrix;
+  }
+
+  public static VECTOR ApplyMatrixLV(final MATRIX matrix, final VECTOR vector) {
+    return ApplyMatrixLV(matrix, vector, null);
   }
 
   /**
    * Multiplies matrix by vector beginning from the rightmost end. The result is saved in vector v1. It is a 16
    * x 32 bit multiplier which uses the GTE. It destroys the constant rotation matrix
-   *
-   * NOTE: a2 moved to return
    */
   @Method(0x8003edf0L)
-  public static VECTOR ApplyMatrixLV(final MATRIX matrix, final VECTOR vector) {
+  public static VECTOR ApplyMatrixLV(final MATRIX matrix, final VECTOR vector, @Nullable VECTOR out) {
     CPU.CTC2(matrix.getPacked(0), 0); //
     CPU.CTC2(matrix.getPacked(2), 1); //
     CPU.CTC2(matrix.getPacked(4), 2); // Rotation matrix
@@ -1784,7 +1564,11 @@ public final class Scus94491BpeSegment_8003 {
     final int y2 = (int)CPU.MFC2(26); // MAC2
     final int z2 = (int)CPU.MFC2(27); // MAC3
 
-    return new VECTOR().set(x2 + x1 * 8, y2 + y1 * 8, z2 + z1 * 8);
+    if(out == null) {
+      out = new VECTOR();
+    }
+
+    return out.set(x2 + x1 * 8, y2 + y1 * 8, z2 + z1 * 8);
   }
 
   /** Transforms vec using the matrix already loaded into the GTE */
@@ -1808,7 +1592,7 @@ public final class Scus94491BpeSegment_8003 {
     }
 
     //LAB_8003efc0
-    final MATRIX matrix = matrixStack_80054a0c.get(i / 32);
+    final MATRIX matrix = matrixStack_80054a0c[i / 32];
     matrix.setPacked(0, CPU.CFC2(0)); //
     matrix.setPacked(2, CPU.CFC2(1)); //
     matrix.setPacked(4, CPU.CFC2(2)); // Rotation matrix
@@ -1830,10 +1614,10 @@ public final class Scus94491BpeSegment_8003 {
     }
 
     //LAB_8003f060
-    i -= 0x20L;
+    i -= 0x20;
     matrixStackIndex_80054a08.subu(0x20L);
 
-    final MATRIX matrix = matrixStack_80054a0c.get(i / 32);
+    final MATRIX matrix = matrixStack_80054a0c[i / 32];
     CPU.CTC2(matrix.getPacked(0), 0); //
     CPU.CTC2(matrix.getPacked(2), 1); //
     CPU.CTC2(matrix.getPacked(4), 2); // Rotation matrix
@@ -2267,6 +2051,30 @@ public final class Scus94491BpeSegment_8003 {
       sz[i] = new UnsignedShortRef().set((int)CPU.MFC2(19)); // SZ3
       interpolation[i] = new UnsignedShortRef().set((int)CPU.MFC2( 8)); // IR0
       flag[i] = new UnsignedShortRef().set((int)(CPU.CFC2(31) >>> 12) & 0xffff); // Flag (see no$ "GTE Saturation")
+    }
+  }
+
+  public static void RotTransPers(final SVECTOR v0, @Nullable final DVECTOR sxy, @Nullable final UnsignedShortRef sz, @Nullable final UnsignedShortRef interpolation, @Nullable final UnsignedShortRef flag) {
+    //LAB_8003fa4c
+    CPU.MTC2(v0.getXY(), 0); // VXY0
+    CPU.MTC2(v0.getZ(), 1); // VZ0
+
+    CPU.COP2(0x18_0001L); // Perspective transform single
+
+    if(sxy != null) {
+      sxy.setXY(CPU.MFC2(14)); // SXY2
+    }
+
+    if(sz != null) {
+      sz.set((int)CPU.MFC2(19)); // SZ3
+    }
+
+    if(interpolation != null) {
+      interpolation.set((int)CPU.MFC2(8)); // IR0
+    }
+
+    if(flag != null) {
+      flag.set((int)(CPU.CFC2(31) >>> 12) & 0xffff); // Flag (see no$ "GTE Saturation")
     }
   }
 

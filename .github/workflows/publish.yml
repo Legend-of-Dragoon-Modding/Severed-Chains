@@ -31,6 +31,9 @@ jobs:
     - name: Build Windows x64 with Gradle
       run: ./gradlew build -Pos=windows -Parch=x86_64
 
+    - name: Write ISOs help file
+      run: mkdir ./build/libs/isos && echo "Place your ISOs or BINs in this folder" > ./build/libs/isos/help.txt
+
     - name: ZIP Windows x64 Build
       uses: thedoctor0/zip-release@main
       with:
@@ -38,6 +41,9 @@ jobs:
         filename: '../Severed_Chains_Windows.zip'
         directory: 'build/libs'
         exclusions: '*.zip* *.tar.gz*'
+
+    - name: Clean up Windows x64
+      run: 'rm build/libs/launch.bat'
 
     - name: Build Windows ARM64 with Gradle
       run: ./gradlew build -Pos=windows -Parch=aarch64
@@ -50,6 +56,9 @@ jobs:
         directory: 'build/libs'
         exclusions: '*.zip* *.tar.gz*'
 
+    - name: Clean up Windows ARM64
+      run: 'rm build/libs/launch.bat'
+
     - name: Build Steam Deck x64 with Gradle
       run: ./gradlew build -Pos=linux -Parch=x86_64 -Psteamdeck=true
 
@@ -60,6 +69,9 @@ jobs:
         filename: '../Severed_Chains_Steam_Deck.tar.gz'
         directory: 'build/libs'
         exclusions: '*.zip* *.tar.gz*'
+
+    - name: Clean up Steam Deck x64
+      run: 'rm build/libs/launch build/libs/download-java'
 
     - name: Build Linux x64 with Gradle
       run: ./gradlew build -Pos=linux -Parch=x86_64
@@ -72,6 +84,9 @@ jobs:
         directory: 'build/libs'
         exclusions: '*.zip* *.tar.gz*'
 
+    - name: Clean up Linux x64
+      run: 'rm build/libs/launch build/libs/download-java'
+
     - name: Build Linux ARM64 with Gradle
       run: ./gradlew build -Pos=linux -Parch=aarch64
 
@@ -82,6 +97,9 @@ jobs:
         filename: '../Severed_Chains_Linux_ARM64.tar.gz'
         directory: 'build/libs'
         exclusions: '*.zip* *.tar.gz*'
+
+    - name: Clean up Linux ARM64
+      run: 'rm build/libs/launch build/libs/download-java'
 
     - name: Build MacOS x64 with Gradle
       run: ./gradlew build -Pos=osx -Parch=x86_64
@@ -94,6 +112,9 @@ jobs:
         directory: 'build/libs'
         exclusions: '*.zip* *.tar.gz*'
 
+    - name: Clean up MacOS x64
+      run: 'rm build/libs/launch build/libs/download-java'
+
     - name: Build MacOS ARM64 with Gradle
       run: ./gradlew build -Pos=osx -Parch=aarch64
 
@@ -104,6 +125,9 @@ jobs:
         filename: '../Severed_Chains_MacOS_M1.tar.gz'
         directory: 'build/libs'
         exclusions: '*.zip* *.tar.gz*'
+
+    - name: Clean up MacOS ARM64 x64
+      run: 'rm build/libs/launch build/libs/download-java'
 
     - name: Delete Tag and Release
       uses: dev-drprasad/delete-tag-and-release@v0.2.1

@@ -1,99 +1,55 @@
 package legend.game.combat.ui;
 
-import legend.core.memory.Value;
-import legend.core.memory.types.IntRef;
-import legend.core.memory.types.MemoryRef;
-import legend.core.memory.types.ShortRef;
-import legend.core.memory.types.UnsignedShortRef;
-
 /** Used for rendering the spell menu, maybe other stuff? */
-public class CombatMenua4 implements MemoryRef {
-  private final Value ref;
-
-  public final ShortRef menuState_00;
-  public final UnsignedShortRef _02;
-  public final UnsignedShortRef x_04;
-  public final UnsignedShortRef y_06;
-  public final ShortRef charIndex_08;
+public class CombatMenua4 {
+  public short menuState_00;
+  /** ushort */
+  public int _02;
+  /** ushort */
+  public int x_04;
+  /** ushort */
+  public int y_06;
+  public short charIndex_08;
   /**
    * <ol start="0">
    *   <li>Items</li>
    *   <li>Spells</li>
    * </ol>
    */
-  public final ShortRef menuType_0a;
-  public final UnsignedShortRef _0c;
-  public final UnsignedShortRef _0e;
-  public final UnsignedShortRef _10;
-  public final UnsignedShortRef _12;
-  public final UnsignedShortRef _14;
-  public final UnsignedShortRef _16;
-  public final ShortRef textX_18;
-  public final ShortRef _1a;
-  public final ShortRef itemOrSpellId_1c;
-  public final ShortRef listIndex_1e;
-  public final ShortRef _20;
-  public final ShortRef count_22;
-  public final ShortRef listScroll_24;
-  public final ShortRef _26;
-  public final ShortRef _28;
-  public final ShortRef _2a;
-  public final IntRef _2c;
-  public final ShortRef _30;
+  public short menuType_0a;
+  /** ushort */
+  public int _0c;
+  /** ushort */
+  public int _0e;
+  /** ushort */
+  public int _10;
+  /** ushort */
+  public int _12;
+  /** ushort */
+  public int _14;
+  /** ushort */
+  public int _16;
+  public short textX_18;
+  public short _1a;
+  public short itemOrSpellId_1c;
+  public short listIndex_1e;
+  public short _20;
+  public short count_22;
+  public short listScroll_24;
+  public short _26;
+  public short _28;
+  public short _2a;
+  public int _2c;
+  public short _30;
 
-  public final IntRef _7c;
-  public final IntRef _80;
-  public final IntRef _84;
-  public final IntRef _88;
-  public final IntRef _8c;
-  public final IntRef _90;
-  public final IntRef _94;
-  public final IntRef _98;
-  public final IntRef _9c;
-  public final IntRef _a0;
-
-  public CombatMenua4(final Value ref) {
-    this.ref = ref;
-
-    this.menuState_00 = ref.offset(2, 0x00L).cast(ShortRef::new);
-    this._02 = ref.offset(2, 0x02L).cast(UnsignedShortRef::new);
-    this.x_04 = ref.offset(2, 0x04L).cast(UnsignedShortRef::new);
-    this.y_06 = ref.offset(2, 0x06L).cast(UnsignedShortRef::new);
-    this.charIndex_08 = ref.offset(2, 0x08L).cast(ShortRef::new);
-    this.menuType_0a = ref.offset(2, 0x0aL).cast(ShortRef::new);
-    this._0c = ref.offset(2, 0x0cL).cast(UnsignedShortRef::new);
-    this._0e = ref.offset(2, 0x0eL).cast(UnsignedShortRef::new);
-    this._10 = ref.offset(2, 0x10L).cast(UnsignedShortRef::new);
-    this._12 = ref.offset(2, 0x12L).cast(UnsignedShortRef::new);
-    this._14 = ref.offset(2, 0x14L).cast(UnsignedShortRef::new);
-    this._16 = ref.offset(2, 0x16L).cast(UnsignedShortRef::new);
-    this.textX_18 = ref.offset(2, 0x18L).cast(ShortRef::new);
-    this._1a = ref.offset(2, 0x1aL).cast(ShortRef::new);
-    this.itemOrSpellId_1c = ref.offset(2, 0x1cL).cast(ShortRef::new);
-    this.listIndex_1e = ref.offset(2, 0x1eL).cast(ShortRef::new);
-    this._20 = ref.offset(2, 0x20L).cast(ShortRef::new);
-    this.count_22 = ref.offset(2, 0x22L).cast(ShortRef::new);
-    this.listScroll_24 = ref.offset(2, 0x24L).cast(ShortRef::new);
-    this._26 = ref.offset(2, 0x26L).cast(ShortRef::new);
-    this._28 = ref.offset(2, 0x28L).cast(ShortRef::new);
-    this._2a = ref.offset(2, 0x2aL).cast(ShortRef::new);
-    this._2c = ref.offset(4, 0x2cL).cast(IntRef::new);
-    this._30 = ref.offset(2, 0x30L).cast(ShortRef::new);
-
-    this._7c = ref.offset(4, 0x7cL).cast(IntRef::new);
-    this._80 = ref.offset(4, 0x80L).cast(IntRef::new);
-    this._84 = ref.offset(4, 0x84L).cast(IntRef::new);
-    this._88 = ref.offset(4, 0x88L).cast(IntRef::new);
-    this._8c = ref.offset(4, 0x8cL).cast(IntRef::new);
-    this._90 = ref.offset(4, 0x90L).cast(IntRef::new);
-    this._94 = ref.offset(4, 0x94L).cast(IntRef::new);
-    this._98 = ref.offset(4, 0x98L).cast(IntRef::new);
-    this._9c = ref.offset(4, 0x9cL).cast(IntRef::new);
-    this._a0 = ref.offset(4, 0xa0L).cast(IntRef::new);
-  }
-
-  @Override
-  public long getAddress() {
-    return this.ref.getAddress();
-  }
+  public int _7c;
+  public int _80;
+  public int _84;
+  public int _88;
+  public int _8c;
+  public int _90;
+  public int _94;
+  public int _98;
+  public int _9c;
+  public int _a0;
 }

@@ -11,32 +11,28 @@ import javafx.scene.control.SpinnerValueFactory;
 import javafx.stage.Stage;
 import legend.core.Config;
 import legend.game.combat.AdditionMode;
-import legend.game.combat.Bttl_800c;
 import legend.game.combat.SEffe;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.EventListener;
 import legend.game.modding.events.config.ConfigLoadedEvent;
 import legend.game.modding.events.config.ConfigUpdatedEvent;
-import legend.game.types.WMapAreaData08;
+import legend.game.types.EngineState;
+import legend.game.wmap.AreaData08;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.game.SMap.FUN_800e5534;
 import static legend.game.SMap.encounterData_800f64c4;
 import static legend.game.SMap.smapLoadingStage_800cb430;
-import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
+import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
-import static legend.game.WMap.areaData_800f2248;
-import static legend.game.WMap.areaIndex_800c67aa;
-import static legend.game.WMap.dotIndex_800c67ae;
-import static legend.game.WMap.dotOffset_800c67b0;
-import static legend.game.WMap.facing_800c67b4;
-import static legend.game.WMap.pathIndex_800c67ac;
+import static legend.game.wmap.WMap.mapState_800c6798;
+import static legend.game.wmap.WMap.areaData_800f2248;
 
 public class DebuggerController {
   @FXML
@@ -314,15 +310,15 @@ public class DebuggerController {
   private void startEncounter(final ActionEvent event) {
     encounterId_800bb0f8.set(this.encounterId.getValue());
 
-    if(mainCallbackIndex_8004dd20.get() == 5) {
+    if(engineState_8004dd20 == EngineState.SUBMAP_05) {
       if(Config.combatStage()) {
         combatStage_800bb0f4.set(Config.getCombatStage());
       } else {
         combatStage_800bb0f4.set(encounterData_800f64c4.get(submapCut_80052c30.get()).stage_03.get());
       }
       FUN_800e5534(-1, 0);
-    } else if(mainCallbackIndex_8004dd20.get() == 8) {
-      final WMapAreaData08 area = areaData_800f2248.get(areaIndex_800c67aa.get());
+    } else if(engineState_8004dd20 == EngineState.WORLD_MAP_08) {
+      final AreaData08 area = areaData_800f2248.get(mapState_800c6798.areaIndex_12);
 
       if(Config.combatStage()) {
         combatStage_800bb0f4.set(Config.getCombatStage());
@@ -334,11 +330,11 @@ public class DebuggerController {
         }
       }
 
-      gameState_800babc8.areaIndex_4de = areaIndex_800c67aa.get();
-      gameState_800babc8.pathIndex_4d8 = pathIndex_800c67ac.get();
-      gameState_800babc8.dotIndex_4da = dotIndex_800c67ae.get();
-      gameState_800babc8.dotOffset_4dc = dotOffset_800c67b0.get();
-      gameState_800babc8.facing_4dd = facing_800c67b4.get();
+      gameState_800babc8.areaIndex_4de = mapState_800c6798.areaIndex_12;
+      gameState_800babc8.pathIndex_4d8 = mapState_800c6798.pathIndex_14;
+      gameState_800babc8.dotIndex_4da = mapState_800c6798.dotIndex_16;
+      gameState_800babc8.dotOffset_4dc = mapState_800c6798.dotOffset_18;
+      gameState_800babc8.facing_4dd = mapState_800c6798.facing_1c;
       pregameLoadingStage_800bb10c.set(8);
     }
   }
@@ -356,12 +352,12 @@ public class DebuggerController {
 
   @FXML
   private void getVsyncMode(final ActionEvent event) {
-    this.vsyncMode.getValueFactory().setValue(vsyncMode_8007a3b8.get());
+    this.vsyncMode.getValueFactory().setValue(vsyncMode_8007a3b8);
   }
 
   @FXML
   private void setVsyncMode(final ActionEvent event) {
-    vsyncMode_8007a3b8.set(this.vsyncMode.getValue());
+    vsyncMode_8007a3b8 = this.vsyncMode.getValue();
   }
 
   @FXML
@@ -412,14 +408,12 @@ public class DebuggerController {
       this.additionOverlayR.getValueFactory().getValue().byteValue(),
       this.additionOverlayG.getValueFactory().getValue().byteValue(),
       this.additionOverlayB.getValueFactory().getValue().byteValue(),
-      (byte)0x00,
     };
 
     final int rgb =
-      (0xff & rgbArray[3]) << 24 |
-        (0xff & rgbArray[2]) << 16 |
-        (0xff & rgbArray[1]) << 8 |
-        0xff & rgbArray[0];
+      (0xff & rgbArray[2]) << 16 |
+      (0xff & rgbArray[1]) << 8 |
+      0xff & rgbArray[0];
 
     Config.setAdditionOverlayRgb(rgb);
     SEffe.additionBorderColours_800fb7f0.get(9).set(rgbArray[0] & 0xff);
@@ -441,14 +435,12 @@ public class DebuggerController {
       this.counterOverlayR.getValueFactory().getValue().byteValue(),
       this.counterOverlayG.getValueFactory().getValue().byteValue(),
       this.counterOverlayB.getValueFactory().getValue().byteValue(),
-      (byte)0x00,
     };
 
     final int rgb =
-      (0xff & rgbArray[3]) << 24 |
-        (0xff & rgbArray[2]) << 16 |
-        (0xff & rgbArray[1]) << 8 |
-        0xff & rgbArray[0];
+      (0xff & rgbArray[2]) << 16 |
+      (0xff & rgbArray[1]) << 8 |
+      0xff & rgbArray[0];
 
     Config.setCounterOverlayRgb(rgb);
     SEffe.additionBorderColours_800fb7f0.get(6).set(rgbArray[0] & 0xff);

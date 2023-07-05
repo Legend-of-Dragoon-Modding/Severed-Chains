@@ -1,6 +1,7 @@
 package legend.game.types;
 
 import legend.game.characters.Element;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.unpacker.FileData;
 
 public class SpellStats0c {
@@ -47,6 +48,23 @@ public class SpellStats0c {
     return new SpellStats0c(name, combatDescription, targetType_00, flags_01, specialEffect_02, damage_03, multi_04, accuracy_05, mp_06, statusChance_07, element_08, statusType_09, buffType_0a, _0b);
   }
 
+  public SpellStats0c() {
+    this.name = "";
+    this.combatDescription = "";
+    this.targetType_00 = 0;
+    this.flags_01 = 0;
+    this.specialEffect_02 = 0;
+    this.damageMultiplier_03 = 0;
+    this.multi_04 = 0;
+    this.accuracy_05 = 0;
+    this.mp_06 = 0;
+    this.statusChance_07 = 0;
+    this.element_08 = CoreMod.NO_ELEMENT.get();
+    this.statusType_09 = 0;
+    this.buffType_0a = 0;
+    this._0b = 0;
+  }
+  
   public SpellStats0c(final String name, final String combatDescription, final int targetType, final int flags, final int specialEffect, final int damage, final int multi, final int accuracy, final int mp, final int statusChance, final Element element, final int statusType, final int buffType, final int _0b) {
     this.name = name;
     this.combatDescription = combatDescription;

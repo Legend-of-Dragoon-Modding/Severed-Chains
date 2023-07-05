@@ -2,26 +2,17 @@ package legend.core.memory;
 
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
-import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
-import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import legend.core.MathHelper;
-import legend.core.memory.types.QuadConsumer;
-import legend.core.memory.types.QuintConsumer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.annotation.Nullable;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class Memory {
-  private static final Logger LOGGER = LogManager.getFormatterLogger(Memory.class);
+  private static final Logger LOGGER = LogManager.getFormatterLogger();
 
   private static final int[] REGION_MASK = {
     0xffff_ffff, 0xffff_ffff, 0xffff_ffff, 0xffff_ffff, // KUSEG: 2048MB
@@ -33,8 +24,6 @@ public class Memory {
   private final Object lock = new Object();
 
   private final List<Segment> segments = new ArrayList<>();
-
-  private boolean alignmentChecks = true;
 
   public static final IntSet watches = new IntOpenHashSet();
 
@@ -58,19 +47,7 @@ public class Memory {
     }
   }
 
-  public void disableAlignmentChecks() {
-    this.alignmentChecks = false;
-  }
-
-  public void enableAlignmentChecks() {
-    this.alignmentChecks = true;
-  }
-
   private void checkAlignment(final long address, final int size) {
-    if(!this.alignmentChecks) {
-      return;
-    }
-
     // Don't check alignment for large or odd types
     if(size > 4 || (size & 1) != 0) {
       return;
@@ -110,7 +87,8 @@ public class Memory {
       final byte val = segment.get((int)(this.maskAddress(address) - segment.getAddress()));
 
       if(watches.contains((int)address & 0xffffff)) {
-        LOGGER.error(Long.toHexString(address) + " read " + Long.toHexString(val), new Throwable());
+        LOGGER.error("%08x read %x", address, val);
+        LOGGER.error(new Throwable());
       }
 
       return val;
@@ -125,7 +103,8 @@ public class Memory {
       final long val = segment.get((int)(this.maskAddress(address) - segment.getAddress()), size);
 
       if(watches.contains((int)address & 0xffffff)) {
-        LOGGER.error(Long.toHexString(address) + " read " + Long.toHexString(val), new Throwable());
+        LOGGER.error("%08x read %x", address, val);
+        LOGGER.error(new Throwable());
       }
 
       return val;
@@ -139,7 +118,8 @@ public class Memory {
     }
 
     if(watches.contains((int)address & 0xffffff)) {
-      LOGGER.error(Long.toHexString(address) + " set to " + Long.toHexString(data), new Throwable());
+      LOGGER.error("%08x set to %x", address, data);
+      LOGGER.error(new Throwable());
     }
   }
 
@@ -149,12 +129,12 @@ public class Memory {
     synchronized(this.lock) {
       final Segment segment = this.getSegment(address);
       final int addr = (int)(this.maskAddress(address) - segment.getAddress());
-      segment.removeFunction(addr);
       segment.set(addr, size, data);
     }
 
     if(watches.contains((int)address & 0xffffff)) {
-      LOGGER.error(Long.toHexString(address) + " set to " + Long.toHexString(data), new Throwable());
+      LOGGER.error("%08x set to %x", address, data);
+      LOGGER.error(new Throwable());
     }
   }
 
@@ -167,7 +147,8 @@ public class Memory {
 
   public void getBytes(final long address, final byte[] dest, final int offset, final int size) {
     if(watches.contains((int)address & 0xffffff)) {
-      LOGGER.error(Long.toHexString(address) + " read", new Throwable());
+      LOGGER.error("%08x read", address);
+      LOGGER.error(new Throwable());
     }
 
     synchronized(this.lock) {
@@ -188,7 +169,8 @@ public class Memory {
 
     for(final int watch : watches) {
       if(watch >= (address & 0xffffff) && watch < (address & 0xffffff) + size) {
-        LOGGER.error(Long.toHexString(address & 0xff00_0000L | watch) + " set to " + Long.toHexString(this.get(address & 0xff00_0000L | watch, 4)), new Throwable());
+        LOGGER.error("%08x set to %x", address & 0xff00_0000L | watch, this.get(address & 0xff00_0000L | watch, 4));
+        LOGGER.error(new Throwable());
       }
     }
   }
@@ -221,7 +203,8 @@ public class Memory {
 
       for(final int watch : watches) {
         if(watch >= (dest & 0xffffff) && watch < (dest & 0xffffff) + length) {
-          LOGGER.error(Long.toHexString(dest & 0xff00_0000L | watch) + " set to " + Long.toHexString(this.get(dest & 0xff00_0000L | watch, 4)), new Throwable());
+          LOGGER.error("%08x set to %x", dest & 0xff00_0000L | watch, this.get(dest & 0xff00_0000L | watch, 4));
+          LOGGER.error(new Throwable());
         }
       }
     }
@@ -238,7 +221,8 @@ public class Memory {
 
       for(final int watch : watches) {
         if(watch >= (addr & 0xffffff) && watch < (addr & 0xffffff) + length) {
-          LOGGER.error(Long.toHexString(addr & 0xff00_0000L | watch) + " set to " + Long.toHexString(value), new Throwable());
+          LOGGER.error("%08x set to %x", addr & 0xff00_0000L | watch, value);
+          LOGGER.error(new Throwable());
         }
       }
     }
@@ -257,58 +241,6 @@ public class Memory {
     return constructor.apply(this.ref(byteSize, address));
   }
 
-  private record MethodInfo(java.lang.reflect.Method method, boolean ignoreExtraParams) { }
-
-  public void addFunctions(final Class<?> cls) {
-    LOGGER.info("Adding function references from %s", cls);
-
-    final Long2ObjectMap<MethodInfo> methods = new Long2ObjectOpenHashMap<>();
-
-    for(final java.lang.reflect.Method method : cls.getMethods()) {
-      if(method.isAnnotationPresent(Method.class)) {
-        final Method address = method.getAnnotation(Method.class);
-        final long addr = this.maskAddress(address.value());
-
-        if(methods.containsKey(addr)) {
-          throw new RuntimeException(cls + " contains two methods at address " + Long.toHexString(addr));
-        }
-
-        methods.put(addr, new MethodInfo(method, address.ignoreExtraParams()));
-      }
-    }
-
-    if(methods.isEmpty()) {
-      throw new RuntimeException(cls + " contained no methods with Method annotations");
-    }
-
-    synchronized(this.lock) {
-      for(final Long2ObjectMap.Entry<MethodInfo> entry : methods.long2ObjectEntrySet()) {
-        this.setFunction(entry.getLongKey(), entry.getValue().method, null, entry.getValue().ignoreExtraParams);
-      }
-    }
-  }
-
-  private void setFunction(final long address, final java.lang.reflect.Method function, @Nullable final Object instance, final boolean ignoreExtraParams) {
-    this.checkAlignment(address, 4);
-
-    final Segment segment = this.getSegment(address);
-    segment.setFunction((int)(this.maskAddress(address) - segment.getAddress()), function, instance, ignoreExtraParams);
-  }
-
-  private MethodBinding getFunction(final long address) {
-    this.checkAlignment(address, 4);
-
-    final Segment segment = this.getSegment(address);
-    return segment.getFunction((int)(this.maskAddress(address) - segment.getAddress()));
-  }
-
-  private boolean isFunction(final long address) {
-    this.checkAlignment(address, 4);
-
-    final Segment segment = this.getSegment(address);
-    return segment.isFunction((int)(this.maskAddress(address) - segment.getAddress()));
-  }
-
   public class MemoryValue extends Value {
     private final long address;
     private Segment segment;
@@ -317,11 +249,6 @@ public class Memory {
     public MemoryValue(final int byteSize, final long address) {
       super(byteSize);
       this.address = address;
-    }
-
-    private MemoryValue(final int byteSize, final long address, final long value) {
-      this(byteSize, address);
-      this.setu(value);
     }
 
     private Segment getSegment() {
@@ -357,10 +284,6 @@ public class Memory {
         throw new UnsupportedOperationException("Can only dereference 4-byte values %s".formatted(this));
       }
 
-      if(Memory.this.isFunction(this.address)) {
-        throw new UnsupportedOperationException("Can't dereference callback %s".formatted(this));
-      }
-
       try {
         return Memory.this.ref(size, this.get());
       } catch(final MisalignedAccessException e) {
@@ -386,7 +309,8 @@ public class Memory {
         final long val = this.getSegment().get(this.segmentOffset, this.getSize());
 
         if(watches.contains((int)this.address & 0xffffff)) {
-          LOGGER.error(Long.toHexString(this.address) + " read " + Long.toHexString(val), new Throwable());
+          LOGGER.error("%08x read %x", this.address, val);
+          LOGGER.error(new Throwable());
         }
 
         return val;
@@ -399,52 +323,14 @@ public class Memory {
     }
 
     @Override
-    public Object call(final Object... params) {
-      try {
-        final MethodBinding binding = this.getSegment().getFunction(this.segmentOffset);
-        final java.lang.reflect.Method method = binding.method();
-        final Object[] finalParams;
-
-        if(method.getParameterCount() < params.length && binding.ignoreExtraParams()) {
-          finalParams = new Object[method.getParameterCount()];
-          System.arraycopy(params, 0, finalParams, 0, finalParams.length);
-        } else {
-          finalParams = params;
-        }
-
-        return binding.method().invoke(binding.instance(), finalParams);
-      } catch(final IllegalArgumentException e) {
-        LOGGER.error("Bad dynamic method call to %08x", this.address);
-        LOGGER.error("Params:");
-
-        for(final Object param : params) {
-          LOGGER.error("%s: %s", param.getClass(), param);
-        }
-
-        throw e;
-      } catch(final IllegalAccessException e) {
-        throw new RuntimeException(e);
-      } catch(final InvocationTargetException e) {
-        if(e.getTargetException() instanceof RuntimeException) {
-          throw (RuntimeException)e.getTargetException();
-        }
-
-        if(e.getTargetException() instanceof Error) {
-          throw (Error)e.getTargetException();
-        }
-
-        throw new RuntimeException(e.getTargetException());
-      }
-    }
-
-    @Override
     public Value set(final long value) {
       synchronized(Memory.this.lock) {
         this.getSegment().set(this.segmentOffset, this.getSize(), value);
       }
 
       if(watches.contains((int)this.address & 0xffffff)) {
-        LOGGER.error(Long.toHexString(this.address) + " set to " + Long.toHexString(value), new Throwable());
+        LOGGER.error("%08x set to %x", this.address, value);
+        LOGGER.error(new Throwable());
       }
 
       return this;
@@ -455,106 +341,6 @@ public class Memory {
       value &= (0b1L << this.getSize() * 8) - 1;
       this.validateUnsigned(value);
       this.set(value);
-      return this;
-    }
-
-    @Override
-    public Value set(final Runnable function) {
-      try {
-        this.getSegment().setFunction(this.segmentOffset, function.getClass().getMethod("run"), function, false);
-      } catch(final NoSuchMethodException e) {
-        throw new RuntimeException(e);
-      }
-      return this;
-    }
-
-    @Override
-    public <T> Value set(final Consumer<T> function) {
-      try {
-        this.getSegment().setFunction(this.segmentOffset, function.getClass().getMethod("accept", Object.class), function, false);
-      } catch(final NoSuchMethodException e) {
-        throw new RuntimeException(e);
-      }
-      return this;
-    }
-
-    @Override
-    public <T, U> Value set(final BiConsumer<T, U> function) {
-      try {
-        this.getSegment().setFunction(this.segmentOffset, function.getClass().getMethod("accept", Object.class, Object.class), function, false);
-      } catch(final NoSuchMethodException e) {
-        throw new RuntimeException(e);
-      }
-      return this;
-    }
-
-    @Override
-    public <T, U, V, W> Value set(final QuadConsumer<T, U, V, W> function) {
-      try {
-        this.getSegment().setFunction(this.segmentOffset, function.getClass().getMethod("accept", Object.class, Object.class, Object.class, Object.class), function, false);
-      } catch(final NoSuchMethodException e) {
-        throw new RuntimeException(e);
-      }
-      return this;
-    }
-
-    @Override
-    public <T, U, V, W, X> Value set(final QuintConsumer<T, U, V, W, X> function) {
-      try {
-        this.getSegment().setFunction(this.segmentOffset, function.getClass().getMethod("accept", Object.class, Object.class, Object.class, Object.class, Object.class), function, false);
-      } catch(final NoSuchMethodException e) {
-        throw new RuntimeException(e);
-      }
-      return this;
-    }
-
-    @Override
-    public Value set(final Function<?, ?> function) {
-      try {
-        this.getSegment().setFunction(this.segmentOffset, function.getClass().getMethod("apply", Object.class), function, false);
-      } catch(final NoSuchMethodException e) {
-        throw new RuntimeException(e);
-      }
-      return this;
-    }
-
-    @Override
-    public Value set(final BiFunction<?, ?, ?> function) {
-      try {
-        this.getSegment().setFunction(this.segmentOffset, function.getClass().getMethod("apply", Object.class, Object.class), function, false);
-      } catch(final NoSuchMethodException e) {
-        throw new RuntimeException(e);
-      }
-      return this;
-    }
-
-    @Override
-    public Value set(final TriFunction<?, ?, ?, ?> function) {
-      try {
-        this.getSegment().setFunction(this.segmentOffset, function.getClass().getMethod("apply", Object.class, Object.class, Object.class), function, false);
-      } catch(final NoSuchMethodException e) {
-        throw new RuntimeException(e);
-      }
-      return this;
-    }
-
-    @Override
-    public Value set(final QuadFunction<?, ?, ?, ?, ?> function) {
-      try {
-        this.getSegment().setFunction(this.segmentOffset, function.getClass().getMethod("apply", Object.class, Object.class, Object.class, Object.class), function, false);
-      } catch(final NoSuchMethodException e) {
-        throw new RuntimeException(e);
-      }
-      return this;
-    }
-
-    @Override
-    public <T> Value set(final Supplier<T> function) {
-      try {
-        this.getSegment().setFunction(this.segmentOffset, function.getClass().getMethod("get"), function, false);
-      } catch(final NoSuchMethodException e) {
-        throw new RuntimeException(e);
-      }
       return this;
     }
   }

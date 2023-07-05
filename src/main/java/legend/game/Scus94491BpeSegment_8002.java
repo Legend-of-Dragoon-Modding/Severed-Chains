@@ -47,6 +47,7 @@ import legend.game.tmd.Renderer;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CContainer;
 import legend.game.types.CharacterData2c;
+import legend.game.types.EngineState;
 import legend.game.types.InventoryMenuState;
 import legend.game.types.ItemStats0c;
 import legend.game.types.LodString;
@@ -56,9 +57,11 @@ import legend.game.types.Model124;
 import legend.game.types.ModelPartTransforms0c;
 import legend.game.types.Renderable58;
 import legend.game.types.RenderableMetrics14;
-import legend.game.types.Struct84;
+import legend.game.types.SubmapStruct80;
 import legend.game.types.Textbox4c;
 import legend.game.types.TextboxArrow0c;
+import legend.game.types.TextboxChar08;
+import legend.game.types.TextboxText84;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
 import legend.game.types.UiPart;
@@ -73,6 +76,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Queue;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -102,15 +106,15 @@ import static legend.game.SMap.FUN_800e4e5c;
 import static legend.game.SMap.FUN_800e4f8c;
 import static legend.game.SMap.FUN_800e519c;
 import static legend.game.SMap.FUN_800e5534;
-import static legend.game.SMap.FUN_800e6730;
 import static legend.game.SMap.FUN_800e828c;
 import static legend.game.SMap.FUN_800e8e50;
 import static legend.game.SMap.FUN_800ea4c8;
+import static legend.game.SMap._800c68e8;
 import static legend.game.SMap._800f7e54;
 import static legend.game.SMap.adjustSmapUvs;
 import static legend.game.SMap.encounterAccumulator_800c6ae8;
+import static legend.game.SMap.getCollisionAndTransitionInfo;
 import static legend.game.SMap.handleEncounters;
-import static legend.game.SMap.playerPos_800c68e8;
 import static legend.game.SMap.renderSmapModel;
 import static legend.game.SMap.unloadSmap;
 import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
@@ -121,14 +125,11 @@ import static legend.game.Scus94491BpeSegment._80010868;
 import static legend.game.Scus94491BpeSegment._800108b0;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
-import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
-import static legend.game.Scus94491BpeSegment.free;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
-import static legend.game.Scus94491BpeSegment.mallocHead;
 import static legend.game.Scus94491BpeSegment.rectArray28_80010770;
 import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
@@ -137,20 +138,16 @@ import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
-import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Yxz;
 import static legend.game.Scus94491BpeSegment_8003.ScaleMatrix;
 import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
 import static legend.game.Scus94491BpeSegment_8003.TransMatrix;
-import static legend.game.Scus94491BpeSegment_8003.TransposeMatrix;
-import static legend.game.Scus94491BpeSegment_8003.bzero;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixX;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixY;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixZ;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrix_Zyx;
+import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment_8004.freeSequence;
 import static legend.game.Scus94491BpeSegment_8004.itemStats_8004f2ac;
-import static legend.game.Scus94491BpeSegment_8004.loadingGameStateOverlay_8004dd08;
-import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
 import static legend.game.Scus94491BpeSegment_8004.stopMusicSequence;
 import static legend.game.Scus94491BpeSegment_8005._8005027c;
 import static legend.game.Scus94491BpeSegment_8005._8005039c;
@@ -169,43 +166,37 @@ import static legend.game.Scus94491BpeSegment_8005._80052c40;
 import static legend.game.Scus94491BpeSegment_8005._80052c44;
 import static legend.game.Scus94491BpeSegment_8005._8005a1d8;
 import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
-import static legend.game.Scus94491BpeSegment_8005.lodXa00Xa_80052c74;
-import static legend.game.Scus94491BpeSegment_8005.lodXa00Xa_80052c94;
 import static legend.game.Scus94491BpeSegment_8005.monsterSoundFileIndices_800500e8;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c3c;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
 import static legend.game.Scus94491BpeSegment_8005.textboxVramX_80052bc8;
 import static legend.game.Scus94491BpeSegment_8005.textboxVramY_80052bf4;
-import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
-import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
-import static legend.game.Scus94491BpeSegment_8007.joypadRepeat_8007a3a0;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800bd7ac;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b0;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b4;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b8;
-import static legend.game.Scus94491BpeSegment_800b._800bd80c;
 import static legend.game.Scus94491BpeSegment_800b._800bdb88;
 import static legend.game.Scus94491BpeSegment_800b._800bdc58;
 import static legend.game.Scus94491BpeSegment_800b._800bdf04;
 import static legend.game.Scus94491BpeSegment_800b._800bdf08;
 import static legend.game.Scus94491BpeSegment_800b._800bdf10;
 import static legend.game.Scus94491BpeSegment_800b._800bdf18;
-import static legend.game.Scus94491BpeSegment_800b._800bdf38;
 import static legend.game.Scus94491BpeSegment_800b._800be5d0;
-import static legend.game.Scus94491BpeSegment_800b._800beb98;
 import static legend.game.Scus94491BpeSegment_800b._800bed28;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
-import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.encounterSoundEffects_800bd610;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.hasNoEncounters_800bed58;
+import static legend.game.Scus94491BpeSegment_800b.input_800bee90;
 import static legend.game.Scus94491BpeSegment_800b.inventoryMenuState_800bdc28;
 import static legend.game.Scus94491BpeSegment_800b.loadedDrgnFiles_800bcf78;
+import static legend.game.Scus94491BpeSegment_800b.press_800bee94;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba4;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba8;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
+import static legend.game.Scus94491BpeSegment_800b.repeat_800bee98;
 import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
 import static legend.game.Scus94491BpeSegment_800b.soundFiles_800bcf80;
@@ -214,16 +205,17 @@ import static legend.game.Scus94491BpeSegment_800b.textU_800be5c0;
 import static legend.game.Scus94491BpeSegment_800b.textV_800be5c8;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static legend.game.Scus94491BpeSegment_800b.textboxArrows_800bdea0;
+import static legend.game.Scus94491BpeSegment_800b.textboxText_800bdf38;
 import static legend.game.Scus94491BpeSegment_800b.textboxes_800be358;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800e.main;
-import static legend.game.WMap.FUN_800c8d90;
-import static legend.game.WMap.adjustWmapUvs;
-import static legend.game.WMap.renderWmapModel;
 import static legend.game.combat.Bttl_800e.FUN_800ec258;
 import static legend.game.combat.Bttl_800e.renderBttlModel;
+import static legend.game.wmap.WMap.FUN_800c8d90;
+import static legend.game.wmap.WMap.adjustWmapUvs;
+import static legend.game.wmap.WMap.renderWmapModel;
 
 public final class Scus94491BpeSegment_8002 {
   private Scus94491BpeSegment_8002() { }
@@ -296,20 +288,16 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80020360L)
-  public static void copyPlayingSounds(final QueuedSound28[] sources, final QueuedSound28[] dests) {
+  public static void copyPlayingSounds(final Queue<QueuedSound28> sources, final Queue<QueuedSound28> dests) {
     //LAB_8002036c
-    for(int playingSoundIndex = 0; playingSoundIndex < 32; playingSoundIndex++) {
-      final QueuedSound28 source = sources[playingSoundIndex];
-      final QueuedSound28 dest = dests[playingSoundIndex];
+    dests.clear();
 
-      //LAB_80020378
-      dest.set(source);
+    for(final QueuedSound28 queuedSound : sources) {
+      dests.add(queuedSound);
 
-      if(dest.type_00 == 4 && dest._1c != 0) {
-        dest.type_00 = 3;
+      if(queuedSound.type_00 == 4 && queuedSound._1c != 0) {
+        queuedSound.type_00 = 3;
       }
-
-      //LAB_800203d8
     }
   }
 
@@ -373,7 +361,7 @@ public final class Scus94491BpeSegment_8002 {
     model.tmd_8c = tmd;
     model.tmdNobj_ca = tmd.header.nobj;
 
-    if(mainCallbackIndex_8004dd20.get() == 5) { // SMAP
+    if(engineState_8004dd20 == EngineState.SUBMAP_05) {
       FUN_800de004(model, cContainer);
     }
 
@@ -440,7 +428,7 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80020b98L)
   public static void animateModel(final Model124 model) {
-    if(mainCallbackIndex_8004dd20.get() == 5) { // SMAP
+    if(engineState_8004dd20 == EngineState.SUBMAP_05) {
       FUN_800da114(model);
       return;
     }
@@ -540,42 +528,39 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80020ed8L)
   public static void FUN_80020ed8() {
-    if(_800bdb88.get() == 5) {
-      if(loadingGameStateOverlay_8004dd08.get() == 0) {
-        if(_800bd7b4.get() == 0x1L) {
-          FUN_800e4708();
-        }
-
-        //LAB_80020f20
-        FUN_8002aae8();
-        FUN_800e4018();
+    if(_800bdb88 == EngineState.SUBMAP_05) {
+      if(_800bd7b4.get() == 0x1L) {
+        FUN_800e4708();
       }
+
+      //LAB_80020f20
+      FUN_8002aae8();
+      FUN_800e4018();
     }
 
     //LAB_80020f30
     //LAB_80020f34
-    final int a0 = _800bdb88.get();
+    final EngineState a0 = _800bdb88;
     _800bd7b4.setu(0);
-    if(a0 != mainCallbackIndex_8004dd20.get()) {
-      _800bd80c.setu(a0);
-      _800bdb88.set(mainCallbackIndex_8004dd20.get());
+    if(a0 != engineState_8004dd20) {
+      _800bdb88 = engineState_8004dd20;
 
-      if(mainCallbackIndex_8004dd20.get() == 5) {
+      if(engineState_8004dd20 == EngineState.SUBMAP_05) {
         _800bd7b0.set(2);
         _800bd7b8.setu(0);
 
-        if(a0 == 0x2L) {
+        if(a0 == EngineState.TITLE_02) {
           _800bd7b0.set(9);
         }
 
         //LAB_80020f84
-        if(a0 == 0x6L) {
+        if(a0 == EngineState.COMBAT_06) {
           _800bd7b0.set(-4);
           _800bd7b8.setu(0x1L);
         }
 
         //LAB_80020fa4
-        if(a0 == 0x8L) {
+        if(a0 == EngineState.WORLD_MAP_08) {
           _800bd7b0.set(3);
         }
       }
@@ -583,7 +568,7 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_80020fb4
     //LAB_80020fb8
-    if(_800bdb88.get() == 2) {
+    if(_800bdb88 == EngineState.TITLE_02) {
       _800bd7ac.setu(0x1L);
     }
 
@@ -632,13 +617,13 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x800211d8L)
   public static void renderModel(final Model124 model) {
-    if(mainCallbackIndex_8004dd20.get() == 5) {
+    if(engineState_8004dd20 == EngineState.SUBMAP_05) {
       //LAB_80021230
       renderSmapModel(model);
-    } else if(mainCallbackIndex_8004dd20.get() == 6) {
+    } else if(engineState_8004dd20 == EngineState.COMBAT_06) {
       //LAB_80021220
       renderBttlModel(model);
-    } else if(mainCallbackIndex_8004dd20.get() == 8) {
+    } else if(engineState_8004dd20 == EngineState.WORLD_MAP_08) {
       //LAB_8002120c
       //LAB_80021240
       renderWmapModel(model);
@@ -649,20 +634,20 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80021258L)
   public static void renderDobj2(final GsDOBJ2 dobj2) {
-    if(mainCallbackIndex_8004dd20.get() == 5) {
+    if(engineState_8004dd20 == EngineState.SUBMAP_05) {
       //LAB_800212b0
       Renderer.renderDobj2(dobj2, false, 0);
       return;
     }
 
-    if(mainCallbackIndex_8004dd20.get() == 6) {
+    if(engineState_8004dd20 == EngineState.COMBAT_06) {
       //LAB_800212a0
       Renderer.renderDobj2(dobj2, true, 0);
       return;
     }
 
     //LAB_8002128c
-    if(mainCallbackIndex_8004dd20.get() == 8) {
+    if(engineState_8004dd20 == EngineState.WORLD_MAP_08) {
       //LAB_800212c0
       Renderer.renderDobj2(dobj2, false, 0);
     }
@@ -760,11 +745,11 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80021628L)
   public static void adjustModelUvs(final Model124 model) {
-    if(mainCallbackIndex_8004dd20.get() == 5) { // SMAP
+    if(engineState_8004dd20 == EngineState.SUBMAP_05) {
       for(int i = 0; i < model.ObjTable_0c.nobj; i++) {
         adjustSmapUvs(model.ObjTable_0c.top[i], model.colourMap_9d);
       }
-    } else if(mainCallbackIndex_8004dd20.get() == 8) { // WMAP
+    } else if(engineState_8004dd20 == EngineState.WORLD_MAP_08) {
       for(int i = 0; i < model.ObjTable_0c.nobj; i++) {
         adjustWmapUvs(model.ObjTable_0c.top[i], model.colourMap_9d);
       }
@@ -777,15 +762,15 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80021724L)
   public static void FUN_80021724(final Model124 model) {
-    final int v1 = mainCallbackIndex_8004dd20.get();
-    if(v1 == 5) {
+    final EngineState state = engineState_8004dd20;
+    if(state == EngineState.SUBMAP_05) {
       //LAB_8002177c
       FUN_800da524(model);
       //LAB_80021758
-    } else if(v1 == 6) {
+    } else if(state == EngineState.COMBAT_06) {
       //LAB_8002176c
       FUN_800ec258(model);
-    } else if(v1 == 8) {
+    } else if(state == EngineState.WORLD_MAP_08) {
       //LAB_8002178c
       FUN_800c8d90(model);
     }
@@ -795,19 +780,8 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x800217a4L)
   public static void FUN_800217a4(final Model124 model) {
-    if(model.coord2Param_64.rotate.pad.get() == -1) {
-      final MATRIX mat = new MATRIX();
-      RotMatrix_Yxz(model.coord2Param_64.rotate, mat);
-      TransposeMatrix(mat, model.coord2_14.coord);
-      model.coord2Param_64.rotate.x.set((short)0);
-      model.coord2Param_64.rotate.y.set((short)0);
-      model.coord2Param_64.rotate.z.set((short)0);
-      model.coord2Param_64.rotate.pad.set((short)0);
-    } else {
-      model.coord2Param_64.rotate.y.set(FUN_800ea4c8(model.coord2Param_64.rotate.y.get()));
-      RotMatrix_Xyz(model.coord2Param_64.rotate, model.coord2_14.coord);
-    }
-
+    model.coord2Param_64.rotate.y.set(FUN_800ea4c8(model.coord2Param_64.rotate.y.get()));
+    RotMatrix_Xyz(model.coord2Param_64.rotate, model.coord2_14.coord);
     ScaleMatrix(model.coord2_14.coord, model.scaleVector_fc);
     model.coord2_14.flg = 0;
   }
@@ -1302,7 +1276,6 @@ public final class Scus94491BpeSegment_8002 {
 
       case UNLOAD_CAMPAIGN_SELECTION_MENU, UNLOAD_SAVE_GAME_MENU_20, UNLOAD_CHAR_SWAP_MENU_25, UNLOAD_NEW_CAMPAIGN_MENU, UNLOAD_OPTIONS_MENU -> {
         menuStack.popScreen();
-        decrementOverlayCount();
 
         if(whichMenu_800bdc38 != WhichMenu.UNLOAD_SAVE_GAME_MENU_20) {
           FUN_8001e010(-1);
@@ -1316,7 +1289,7 @@ public final class Scus94491BpeSegment_8002 {
 
         scriptStartEffect(2, 10);
 
-        if(mainCallbackIndex_8004dd20.get() == 5 && loadingGameStateOverlay_8004dd08.get() == 0) {
+        if(engineState_8004dd20 == EngineState.SUBMAP_05) {
           FUN_800e3fac();
         }
 
@@ -1324,14 +1297,12 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       case UNLOAD_INVENTORY_MENU_5, UNLOAD_SHOP_MENU_10, UNLOAD_TOO_MANY_ITEMS_MENU_35 -> {
-        decrementOverlayCount();
         FUN_8001e010(-1);
         SCRIPTS.start();
         whichMenu_800bdc38 = WhichMenu.NONE_0;
       }
 
       case UNLOAD_POST_COMBAT_REPORT_30 -> {
-        decrementOverlayCount();
         SCRIPTS.start();
         whichMenu_800bdc38 = WhichMenu.NONE_0;
       }
@@ -1551,7 +1522,7 @@ public final class Scus94491BpeSegment_8002 {
     response._00 = 1;
 
     if(itemId == 0xdf) { // Charm potion
-      if(mainCallbackIndex_8004dd20.get() == 8 || hasNoEncounters_800bed58.get() == 0) {
+      if(engineState_8004dd20 == EngineState.WORLD_MAP_08 || hasNoEncounters_800bed58.get() == 0) {
         //LAB_80022e40
         response._00 = 8;
         encounterAccumulator_800c6ae8.set(0);
@@ -1637,11 +1608,7 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80023264L)
   public static void checkForPsychBombX() {
-    if(gameState_800babc8.items_2e9.contains(0xfa)) { // Psych Bomb X
-      gameState_800babc8.scriptFlags2_bc[13] |= 0x4_0000;
-    } else {
-      gameState_800babc8.scriptFlags2_bc[13] &= 0xfffb_ffff;
-    }
+    gameState_800babc8.scriptFlags2_bc.set(13, 18, gameState_800babc8.items_2e9.contains(0xfa)); // Psych Bomb X
   }
 
   public static int takeItemId(final int itemId) {
@@ -1807,67 +1774,67 @@ public final class Scus94491BpeSegment_8002 {
    * Gets the highest priority button on the joypad that is currently pressed. "Priority" is likely arbitrary.
    */
   @Method(0x800238a4L)
-  public static long getJoypadInputByPriority() {
-    final long repeat = joypadRepeat_8007a3a0.get();
+  public static int getJoypadInputByPriority() {
+    final int repeat = repeat_800bee98.get();
 
-    if((repeat & 0x4L) != 0) {
-      return 0x4L;
+    if((repeat & 0x4) != 0) {
+      return 0x4;
     }
 
     //LAB_800238c4
-    if((repeat & 0x8L) != 0) {
-      return 0x8L;
+    if((repeat & 0x8) != 0) {
+      return 0x8;
     }
 
     //LAB_800238d4
-    if((repeat & 0x1L) != 0) {
-      return 0x1L;
+    if((repeat & 0x1) != 0) {
+      return 0x1;
     }
 
     //LAB_800238e4
-    if((repeat & 0x2L) != 0) {
-      return 0x2L;
+    if((repeat & 0x2) != 0) {
+      return 0x2;
     }
 
     //LAB_800238f4
-    if((repeat & 0x1000L) != 0) {
-      return 0x1000L;
+    if((repeat & 0x1000) != 0) {
+      return 0x1000;
     }
 
     //LAB_80023904
-    if((repeat & 0x4000L) != 0) {
-      return 0x4000L;
+    if((repeat & 0x4000) != 0) {
+      return 0x4000;
     }
 
     //LAB_80023914
-    if((repeat & 0x8000L) != 0) {
-      return 0x8000L;
+    if((repeat & 0x8000) != 0) {
+      return 0x8000;
     }
 
     //LAB_80023924
-    if((repeat & 0x2000L) != 0) {
-      return 0x2000L;
+    if((repeat & 0x2000) != 0) {
+      return 0x2000;
     }
 
     //LAB_80023934
-    final long press = joypadPress_8007a398.get();
+    final int press = press_800bee94.get();
 
-    if((press & 0x10L) != 0) {
-      return 0x10L;
+    if((press & 0x10) != 0) {
+      return 0x10;
     }
 
     //LAB_80023950
-    if((press & 0x40L) != 0) {
-      return 0x40L;
+    if((press & 0x40) != 0) {
+      return 0x40;
     }
 
     //LAB_80023960
-    if((press & 0x80L) != 0) {
-      return 0x80L;
+    if((press & 0x80) != 0) {
+      return 0x80;
     }
 
     //LAB_80023970
-    return press & 0x20L;
+    return press & 0x20;
   }
 
   @Method(0x800239e0L)
@@ -2187,7 +2154,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002437cL)
-  public static void deallocateRenderables(final long a0) {
+  public static void deallocateRenderables(final int a0) {
     Renderable58 s0 = renderablePtr_800bdc5c;
 
     if(s0 != null) {
@@ -2257,16 +2224,6 @@ public final class Scus94491BpeSegment_8002 {
     return FlowControl.CONTINUE;
   }
 
-  @Method(0x8002498cL)
-  public static void noop_8002498c() {
-    // empty
-  }
-
-  @Method(0x80024994L)
-  public static void FUN_80024994() {
-    // empty
-  }
-
   /**
    * Loads DRGN0 MRG @ 77382 (basic UI textures)
    * <ol start="0">
@@ -2331,7 +2288,6 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x8002504cL)
   public static void loadBasicUiTexturesAndSomethingElse() {
     loadDrgnDir(0, 6669, Scus94491BpeSegment_8002::basicUiTexturesLoaded);
-    noop_8002498c();
 
     textZ_800bdf00.set(13);
     _800bdf04.setu(0);
@@ -2344,8 +2300,8 @@ public final class Scus94491BpeSegment_8002 {
       textboxes_800be358[i] = new Textbox4c();
       textboxes_800be358[i]._00 = 0;
 
-      _800bdf38[i] = new Struct84();
-      _800bdf38[i]._00 = 0;
+      textboxText_800bdf38[i] = new TextboxText84();
+      textboxText_800bdf38[i]._00 = 0;
 
       textboxArrows_800bdea0[i] = new TextboxArrow0c();
 
@@ -2363,16 +2319,16 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80025158L)
   public static FlowControl FUN_80025158(final RunningScript<?> script) {
-    final int s1 = script.params_20[0].get();
-    FUN_800258a8(s1);
+    final int textboxIndex = script.params_20[0].get();
+    FUN_800258a8(textboxIndex);
 
-    final Struct84 struct84 = _800bdf38[s1];
-    struct84.type_04 = script.params_20[1].get();
-    struct84._08 |= 0x1000;
-    struct84.str_24 = LodString.fromParam(script.params_20[2]);
-    struct84.ptr_58 = mallocHead(struct84.chars_1c * (struct84.lines_1e + 1) * 8);
-    FUN_8002a2b4(s1);
-    FUN_80027d74(s1, struct84.x_14, struct84.y_16);
+    final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
+    textboxText.type_04 = script.params_20[1].get();
+    textboxText._08 |= 0x1000;
+    textboxText.str_24 = LodString.fromParam(script.params_20[2]);
+    textboxText.chars_58 = new TextboxChar08[textboxText.chars_1c * (textboxText.lines_1e + 1)];
+    Arrays.setAll(textboxText.chars_58, i -> new TextboxChar08());
+    FUN_80027d74(textboxIndex, textboxText.x_14, textboxText.y_16);
     return FlowControl.CONTINUE;
   }
 
@@ -2395,29 +2351,29 @@ public final class Scus94491BpeSegment_8002 {
     textbox.lines_1a = script.params_20[4].get() + 1;
     FUN_800258a8(textboxIndex);
 
-    final Struct84 struct84 = _800bdf38[textboxIndex];
-    struct84.type_04 = type;
-    struct84.str_24 = LodString.fromParam(script.params_20[5]);
+    final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
+    textboxText.type_04 = type;
+    textboxText.str_24 = LodString.fromParam(script.params_20[5]);
 
     if(type == 1 && (script.params_20[1].get() & 0x1000) > 0) {
-      struct84._08 |= 0x20;
+      textboxText._08 |= 0x20;
     }
 
     //LAB_80025370
     //LAB_80025374
     if(type == 3) {
-      struct84._6c = -1;
+      textboxText._6c = -1;
     }
 
     //LAB_800253a4
     if(type == 4) {
-      struct84._08 |= 0x200;
+      textboxText._08 |= 0x200;
     }
 
     //LAB_800253d4
-    struct84._08 |= 0x1000;
-    struct84.ptr_58 = mallocHead(struct84.chars_1c * (struct84.lines_1e + 1) * 0x8L);
-    FUN_8002a2b4(textboxIndex);
+    textboxText._08 |= 0x1000;
+    textboxText.chars_58 = new TextboxChar08[textboxText.chars_1c * (textboxText.lines_1e + 1)];
+    Arrays.setAll(textboxText.chars_58, i -> new TextboxChar08());
     positionSobjTextbox(textboxIndex, script.params_20[1].get());
 
     if(type == 2) {
@@ -2446,7 +2402,7 @@ public final class Scus94491BpeSegment_8002 {
       clearTextbox(textboxIndex);
 
       final Textbox4c struct4c = textboxes_800be358[textboxIndex];
-      final Struct84 struct84 = _800bdf38[textboxIndex];
+      final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
 
       struct4c._04 = s0;
       struct4c._06 = s1;
@@ -2454,36 +2410,36 @@ public final class Scus94491BpeSegment_8002 {
       struct4c.y_16 = a0.params_20[3].get();
       struct4c.chars_18 = a0.params_20[4].get() + 1;
       struct4c.lines_1a = a0.params_20[5].get() + 1;
-      struct84.type_04 = type;
-      struct84.str_24 = LodString.fromParam(a0.params_20[6]);
+      textboxText.type_04 = type;
+      textboxText.str_24 = LodString.fromParam(a0.params_20[6]);
 
       // This is a stupid hack to allow inns to display 99,999,999 gold without the G falling down to the next line (see GH#546)
-      if("?Funds ?G".equals(struct84.str_24.get())) {
+      if("?Funds ?G".equals(textboxText.str_24.get())) {
         struct4c.chars_18++;
       }
 
       FUN_800258a8(textboxIndex);
 
       if(type == 1 && (a2 & 0x1000) > 0) {
-        struct84._08 |= 0x20;
+        textboxText._08 |= 0x20;
       }
 
       //LAB_8002562c
       //LAB_80025630
       if(type == 3) {
-        struct84._6c = -1;
+        textboxText._6c = -1;
       }
 
       //LAB_80025660
       if(type == 4) {
-        struct84._08 |= 0x200;
+        textboxText._08 |= 0x200;
       }
 
       //LAB_80025690
-      struct84._08 |= 0x1000;
-      struct84.ptr_58 = mallocHead(struct84.chars_1c * (struct84.lines_1e + 1) * 0x8L);
-      FUN_8002a2b4(textboxIndex);
-      FUN_80027d74(textboxIndex, struct84.x_14, struct84.y_16);
+      textboxText._08 |= 0x1000;
+      textboxText.chars_58 = new TextboxChar08[textboxText.chars_1c * (textboxText.lines_1e + 1)];
+      Arrays.setAll(textboxText.chars_58, i -> new TextboxChar08());
+      FUN_80027d74(textboxIndex, textboxText.x_14, textboxText.y_16);
     }
 
     //LAB_800256f0
@@ -2492,29 +2448,29 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80025718L)
   public static FlowControl FUN_80025718(final RunningScript<?> a0) {
-    final Struct84 s0 = _800bdf38[a0.params_20[0].get()];
+    final TextboxText84 textboxText = textboxText_800bdf38[a0.params_20[0].get()];
 
-    s0._6c = -1;
-    s0._70 = a0.params_20[2].get();
-    s0._72 = a0.params_20[1].get();
+    textboxText._6c = -1;
+    textboxText._70 = a0.params_20[2].get();
+    textboxText._72 = a0.params_20[1].get();
 
-    if(s0._00 == 13) {
-      s0._00 = 23;
-      s0._64 = 10;
-      s0._78 = 22;
+    if(textboxText._00 == 13) {
+      textboxText._00 = 23;
+      textboxText._64 = 10;
+      textboxText._78 = 22;
       Scus94491BpeSegment.playSound(0, 4, 0, 0, (short)0, (short)0);
     }
 
     //LAB_800257bc
-    s0._08 |= 0x800;
+    textboxText._08 |= 0x800;
     return FlowControl.CONTINUE;
   }
 
   /** Deallocate textbox used in yellow-name textboxes and combat effect popups, maybe others */
   @Method(0x800257e0L)
   public static void clearTextbox(final int textboxIndex) {
-    if(_800bdf38[textboxIndex]._00 != 0) {
-      free(_800bdf38[textboxIndex].ptr_58);
+    if(textboxText_800bdf38[textboxIndex]._00 != 0) {
+      textboxText_800bdf38[textboxIndex].chars_58 = null;
     }
 
     //LAB_80025824
@@ -2543,52 +2499,52 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x800258a8L)
   public static void FUN_800258a8(final int a0) {
-    final Struct84 struct84 = _800bdf38[a0];
-    struct84._00 = 1;
-    struct84._08 = 0;
-    struct84.z_0c = 13;
-    struct84._10 = 0;
-    struct84._20 = 0x1000;
-    struct84._22 = 0x1000;
-    struct84._28 = 0;
-    struct84._2a = 2;
-    struct84._2c = 0;
-    struct84._30 = 0;
-    struct84.charX_34 = 0;
-    struct84.charY_36 = 0;
-    struct84._38 = 0;
-    struct84._3a = 0;
-    struct84._3c = 0;
-    struct84._3e = 1;
-    struct84._40 = 0;
-    struct84._42 = 0;
-    struct84._44 = 0;
+    final TextboxText84 textboxText = textboxText_800bdf38[a0];
+    textboxText._00 = 1;
+    textboxText._08 = 0;
+    textboxText.z_0c = 13;
+    textboxText._10 = 0;
+    textboxText._20 = 0x1000;
+    textboxText._22 = 0x1000;
+    textboxText._28 = 0;
+    textboxText._2a = 2;
+    textboxText._2c = 0;
+    textboxText._30 = 0;
+    textboxText.charX_34 = 0;
+    textboxText.charY_36 = 0;
+    textboxText._38 = 0;
+    textboxText._3a = 0;
+    textboxText._3c = 0;
+    textboxText._3e = 1;
+    textboxText._40 = 0;
+    textboxText._42 = 0;
+    textboxText._44 = 0;
 
     final Textbox4c struct4c = textboxes_800be358[a0];
-    struct84.x_14 = struct4c.x_14;
-    struct84.y_16 = struct4c.y_16;
-    struct84.chars_1c = struct4c.chars_18 - 1;
-    struct84.lines_1e = struct4c.lines_1a - 1;
-    struct84._18 = struct84.x_14 - struct84.chars_1c * 9 / 2;
-    struct84._1a = struct84.y_16 - struct84.lines_1e * 6;
+    textboxText.x_14 = struct4c.x_14;
+    textboxText.y_16 = struct4c.y_16;
+    textboxText.chars_1c = struct4c.chars_18 - 1;
+    textboxText.lines_1e = struct4c.lines_1a - 1;
+    textboxText._18 = textboxText.x_14 - textboxText.chars_1c * 9 / 2;
+    textboxText._1a = textboxText.y_16 - textboxText.lines_1e * 6;
 
     //LAB_800259b4
     for(int i = 0; i < 8; i++) {
-      struct84.digits_46[i] = 0;
+      textboxText.digits_46[i] = 0;
     }
 
     //LAB_800259e4
-    struct84._5c = 0;
-    struct84._60 = 0;
-    struct84._64 = 0;
-    struct84._68 = 0;
-    struct84._6c = 0;
-    struct84._70 = 0;
-    struct84._72 = 0;
-    struct84._74 = 0;
-    struct84._78 = 0;
-    struct84._7c = 0;
-    struct84._80 = 0;
+    textboxText._5c = 0;
+    textboxText._60 = 0;
+    textboxText._64 = 0;
+    textboxText._68 = 0;
+    textboxText._6c = 0;
+    textboxText._70 = 0;
+    textboxText._72 = 0;
+    textboxText._74 = 0;
+    textboxText._78 = 0;
+    textboxText._7c = 0;
+    textboxText._80 = 0;
   }
 
   @Method(0x80025a04L)
@@ -2608,7 +2564,7 @@ public final class Scus94491BpeSegment_8002 {
           textbox._00 = 2;
           textbox._08 |= 0x1;
           textbox._10 = 0;
-          textbox._24 = 60 / vsyncMode_8007a3b8.get() / 4;
+          textbox._24 = 60 / vsyncMode_8007a3b8 / 4;
 
           if((textbox._08 & 0x2) != 0) {
             textbox._30 = (textbox._28 - textbox._38) / textbox._24;
@@ -2698,12 +2654,12 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       case 4, 5 -> {
-        if(_800bdf38[textboxIndex]._00 == 0) {
+        if(textboxText_800bdf38[textboxIndex]._00 == 0) {
           if(textbox._04 == 2) {
             textbox._00 = 3;
             textbox._08 |= 0x1;
 
-            final int v0 = 60 / vsyncMode_8007a3b8.get() / 4;
+            final int v0 = 60 / vsyncMode_8007a3b8 / 4;
             textbox._10 = v0;
             textbox._24 = v0;
           } else {
@@ -2875,33 +2831,33 @@ public final class Scus94491BpeSegment_8002 {
     long s3;
 
     final Textbox4c struct4c = textboxes_800be358[textboxIndex];
-    final Struct84 struct84 = _800bdf38[textboxIndex];
+    final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
 
-    long v1 = struct84._00;
+    long v1 = textboxText._00;
     if(v1 == 1) {
       //LAB_8002663c
-      if((struct84._08 & 0x1) == 0) {
-        switch(struct84.type_04) {
+      if((textboxText._08 & 0x1) == 0) {
+        switch(textboxText.type_04) {
           case 0:
-            struct84._00 = 0xc;
+            textboxText._00 = 0xc;
             break;
 
           case 2:
-            struct84._00 = 10;
-            struct84._08 |= 0x1;
-            struct84._2a = 1;
-            struct84.charX_34 = 0;
-            struct84.charY_36 = struct84.lines_1e;
+            textboxText._00 = 10;
+            textboxText._08 |= 0x1;
+            textboxText._2a = 1;
+            textboxText.charX_34 = 0;
+            textboxText.charY_36 = textboxText.lines_1e;
             break;
 
           case 3:
-            struct84._00 = 23;
-            struct84._08 |= 0x1;
-            struct84._2a = 1;
-            struct84.charX_34 = 0;
-            struct84.charY_36 = 0;
-            struct84._64 = 10;
-            struct84._78 = 17;
+            textboxText._00 = 23;
+            textboxText._08 |= 0x1;
+            textboxText._2a = 1;
+            textboxText.charX_34 = 0;
+            textboxText.charY_36 = 0;
+            textboxText._64 = 10;
+            textboxText._78 = 17;
             Scus94491BpeSegment.playSound(0, 4, 0, 0, (short)0, (short)0);
             break;
 
@@ -2909,84 +2865,84 @@ public final class Scus94491BpeSegment_8002 {
             //LAB_80026780
             do {
               FUN_800274f0(textboxIndex);
-            } while((struct84._08 & 0x400) == 0);
+            } while((textboxText._08 & 0x400) == 0);
 
-            struct84._08 ^= 0x400;
+            textboxText._08 ^= 0x400;
             // Fall through
 
           default:
             //LAB_800267a0
-            struct84._00 = 4;
+            textboxText._00 = 4;
             break;
         }
       }
     } else if(v1 == 2) {
-      struct84._00 = 4;
+      textboxText._00 = 4;
       //LAB_80026538
     } else if(v1 == 4) {
       //LAB_800267c4
       FUN_800274f0(textboxIndex);
     } else if(v1 == 5) {
       //LAB_800267d4
-      if((struct84._08 & 0x1) != 0) {
+      if((textboxText._08 & 0x1) != 0) {
         //LAB_800267f4
-        if(struct84._3a >= struct84.lines_1e - ((struct84._08 & 0x200) == 0 ? 1 : 2)) {
-          struct84._08 ^= 0x1;
-          struct84._3a = 0;
+        if(textboxText._3a >= textboxText.lines_1e - ((textboxText._08 & 0x200) == 0 ? 1 : 2)) {
+          textboxText._08 ^= 0x1;
+          textboxText._3a = 0;
           setTextboxArrowPosition(textboxIndex, 1);
         } else {
           //LAB_80026828
-          struct84._00 = 9;
-          struct84._3a++;
+          textboxText._00 = 9;
+          textboxText._3a++;
           FUN_80028828(textboxIndex);
         }
       } else {
         //LAB_8002684c
-        if((struct84._08 & 0x20) != 0) {
-          struct84._00 = 9;
-          struct84._08 |= 0x1;
+        if((textboxText._08 & 0x20) != 0) {
+          textboxText._00 = 9;
+          textboxText._08 |= 0x1;
         } else {
           //LAB_8002686c
-          if((joypadPress_8007a398.get() & 0x20L) != 0 || CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get())) {
+          if((press_800bee94.get() & 0x20) != 0 || CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get())) {
             setTextboxArrowPosition(textboxIndex, 0);
 
-            v1 = struct84.type_04;
+            v1 = textboxText.type_04;
             if(v1 == 1 || v1 == 4) {
               //LAB_800268b4
-              struct84._00 = 9;
-              struct84._08 |= 0x1;
+              textboxText._00 = 9;
+              textboxText._08 |= 0x1;
             }
 
             if(v1 == 2) {
               //LAB_800268d0
-              struct84._00 = 10;
+              textboxText._00 = 10;
             }
           }
         }
       }
     } else if(v1 == 6) {
       //LAB_800268dc
-      if((joypadPress_8007a398.get() & 0x20) != 0 || CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get())) {
-        struct84._00 = 4;
+      if((press_800bee94.get() & 0x20) != 0 || CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get())) {
+        textboxText._00 = 4;
       }
     } else if(v1 == 7) {
       //LAB_800268fc
-      struct84._40++;
-      if(struct84._40 >= struct84._3e) {
-        struct84._40 = 0;
-        struct84._00 = 4;
+      textboxText._40++;
+      if(textboxText._40 >= textboxText._3e) {
+        textboxText._40 = 0;
+        textboxText._00 = 4;
       }
 
       //LAB_80026928
-      if((struct84._08 & 0x20) == 0) {
-        if((joypadInput_8007a39c.get() & 0x20) != 0 || CONFIG.getConfig(CoreMod.QUICK_TEXT_CONFIG.get())) {
+      if((textboxText._08 & 0x20) == 0) {
+        if((input_800bee90.get() & 0x20) != 0 || CONFIG.getConfig(CoreMod.QUICK_TEXT_CONFIG.get())) {
           s3 = 0;
 
           //LAB_80026954
           for(s1 = 0; s1 < 4; s1++) {
             FUN_800274f0(textboxIndex);
 
-            v1 = struct84._00;
+            v1 = textboxText._00;
             if(v1 < 7 || v1 == 15 || v1 == 11 || v1 == 13) {
               //LAB_8002698c
               s3 = 0x1L;
@@ -2998,19 +2954,19 @@ public final class Scus94491BpeSegment_8002 {
 
           //LAB_800269a0
           if(s3 == 0) {
-            struct84._40 = 0;
-            struct84._00 = 4;
+            textboxText._40 = 0;
+            textboxText._00 = 4;
           }
         }
       }
     } else if(v1 == 8) {
       //LAB_800269cc
-      if(struct84._44 > 0) {
+      if(textboxText._44 > 0) {
         //LAB_800269e8
-        struct84._44--;
+        textboxText._44--;
       } else {
         //LAB_800269e0
-        struct84._00 = 4;
+        textboxText._00 = 4;
       }
       //LAB_80026554
     } else if(v1 == 9) {
@@ -3021,123 +2977,123 @@ public final class Scus94491BpeSegment_8002 {
       //LAB_80026a00
       FUN_800288a4(textboxIndex);
 
-      if((struct84._08 & 0x4) != 0) {
-        struct84._08 ^= 0x4;
-        if((struct84._08 & 0x2) == 0) {
+      if((textboxText._08 & 0x4) != 0) {
+        textboxText._08 ^= 0x4;
+        if((textboxText._08 & 0x2) == 0) {
           //LAB_80026a5c
           do {
             FUN_800274f0(textboxIndex);
-            v1 = struct84._00;
+            v1 = textboxText._00;
             if(v1 == 0xf) {
-              struct84._3a = 0;
-              struct84._08 |= 0x2;
+              textboxText._3a = 0;
+              textboxText._08 |= 0x2;
             }
           } while(v1 != 0x5 && v1 != 0xf);
 
           //LAB_80026a8c
-          struct84._00 = 10;
+          textboxText._00 = 10;
         } else {
-          struct84._3a++;
+          textboxText._3a++;
 
-          if(struct84._3a >= struct84.lines_1e + 1) {
-            free(struct84.ptr_58);
-            struct84._00 = 0;
+          if(textboxText._3a >= textboxText.lines_1e + 1) {
+            textboxText.chars_58 = null;
+            textboxText._00 = 0;
           }
         }
       }
     } else if(v1 == 11) {
       //LAB_80026a98
-      if((joypadPress_8007a398.get() & 0x20L) != 0 || CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get())) {
+      if((press_800bee94.get() & 0x20) != 0 || CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get())) {
         setTextboxArrowPosition(textboxIndex, 0);
-        FUN_8002a2b4(textboxIndex);
+        clearTextboxChars(textboxIndex);
 
-        struct84._00 = 4;
-        struct84._08 ^= 0x1;
-        struct84.charX_34 = 0;
-        struct84.charY_36 = 0;
-        struct84._3a = 0;
+        textboxText._00 = 4;
+        textboxText._08 ^= 0x1;
+        textboxText.charX_34 = 0;
+        textboxText.charY_36 = 0;
+        textboxText._3a = 0;
 
-        if((struct84._08 & 0x8) != 0) {
-          struct84._00 = 13;
+        if((textboxText._08 & 0x8) != 0) {
+          textboxText._00 = 13;
         }
       }
     } else if(v1 == 12) {
       //LAB_80026af0
       if(struct4c._00 == 0) {
-        free(struct84.ptr_58);
-        struct84._00 = 0;
+        textboxText.chars_58 = null;
+        textboxText._00 = 0;
       }
     } else if(v1 == 13) {
       //LAB_80026b34
-      struct84._08 |= 0x8;
+      textboxText._08 |= 0x8;
       setTextboxArrowPosition(textboxIndex, 1);
 
       //LAB_80026b4c
       do {
         FUN_800274f0(textboxIndex);
-        v1 = struct84._00;
+        v1 = textboxText._00;
         if(v1 == 0x5) {
           //LAB_80026b28
-          struct84._00 = 11;
+          textboxText._00 = 11;
           break;
         }
       } while(v1 != 0xf);
 
       //LAB_80026b6c
-      if((struct84._08 & 0x20) != 0) {
+      if((textboxText._08 & 0x20) != 0) {
         setTextboxArrowPosition(textboxIndex, 0);
       }
 
       //LAB_80026ba0
-      if(struct84._3e != 0) {
+      if(textboxText._3e != 0) {
         setTextboxArrowPosition(textboxIndex, 0);
-        struct84._5c = struct84._00;
-        struct84._00 = 14;
+        textboxText._5c = textboxText._00;
+        textboxText._00 = 14;
       }
 
       //LAB_80026bc8
-      if((struct84._08 & 0x800) != 0) {
+      if((textboxText._08 & 0x800) != 0) {
         setTextboxArrowPosition(textboxIndex, 0);
-        struct84._00 = 23;
-        struct84._64 = 10;
-        struct84._78 = 22;
-        struct84._68 = struct84._72;
+        textboxText._00 = 23;
+        textboxText._64 = 10;
+        textboxText._78 = 22;
+        textboxText._68 = textboxText._72;
         Scus94491BpeSegment.playSound(0, 4, 0, 0, (short)0, (short)0);
       }
     } else if(v1 == 14) {
       //LAB_80026c18
-      if((struct84._08 & 0x40) == 0) {
-        struct84._40--;
+      if((textboxText._08 & 0x40) == 0) {
+        textboxText._40--;
 
-        if(struct84._40 <= 0) {
-          struct84._40 = struct84._3e;
+        if(textboxText._40 <= 0) {
+          textboxText._40 = textboxText._3e;
 
-          v1 = struct84._5c;
+          v1 = textboxText._5c;
           if(v1 == 11) {
             //LAB_80026c70
-            FUN_8002a2b4(textboxIndex);
-            struct84.charX_34 = 0;
-            struct84.charY_36 = 0;
-            struct84._3a = 0;
-            struct84._00 = 13;
-            struct84._08 ^= 0x1;
+            clearTextboxChars(textboxIndex);
+            textboxText.charX_34 = 0;
+            textboxText.charY_36 = 0;
+            textboxText._3a = 0;
+            textboxText._00 = 13;
+            textboxText._08 ^= 0x1;
           } else if(v1 == 15) {
             //LAB_80026c98
             //LAB_80026c9c
-            free(struct84.ptr_58);
-            struct84._00 = 0;
+            textboxText.chars_58 = null;
+            textboxText._00 = 0;
           }
         }
       }
     } else if(v1 == 15) {
       //LAB_80026cb0
-      if((struct84._08 & 0x20) != 0) {
-        struct84._00 = 16;
+      if((textboxText._08 & 0x20) != 0) {
+        textboxText._00 = 16;
       } else {
         //LAB_80026cd0
-        if((joypadPress_8007a398.get() & 0x20L) != 0 || CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get())) {
-          free(struct84.ptr_58);
-          struct84._00 = 0;
+        if((press_800bee94.get() & 0x20) != 0 || CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get())) {
+          textboxText.chars_58 = null;
+          textboxText._00 = 0;
           setTextboxArrowPosition(textboxIndex, 0);
         }
       }
@@ -3145,64 +3101,64 @@ public final class Scus94491BpeSegment_8002 {
     } else if(v1 == 16) {
       //LAB_80026cdc
       //LAB_80026ce8
-      if((struct84._08 & 0x40) != 0) {
-        free(struct84.ptr_58);
-        struct84._00 = 0;
+      if((textboxText._08 & 0x40) != 0) {
+        textboxText.chars_58 = null;
+        textboxText._00 = 0;
         setTextboxArrowPosition(textboxIndex, 0);
       }
     } else if(v1 == 17) {
       //LAB_80026d20
-      struct84.lines_1e++;
+      textboxText.lines_1e++;
 
       //LAB_80026d30
       do {
         FUN_800274f0(textboxIndex);
-        v1 = struct84._00;
+        v1 = textboxText._00;
         if(v1 == 5) {
           //LAB_80026d14
-          struct84._00 = 18;
+          textboxText._00 = 18;
           break;
         }
         if(v1 == 0xfL) {
-          struct84._00 = 18;
-          struct84._3a = 0;
-          struct84._08 |= 0x102;
+          textboxText._00 = 18;
+          textboxText._3a = 0;
+          textboxText._08 |= 0x102;
           break;
         }
       } while(true);
 
       //LAB_80026d64
-      struct84._6c = -1;
-      struct84.lines_1e--;
+      textboxText._6c = -1;
+      textboxText.lines_1e--;
       //LAB_8002659c
     } else if(v1 == 18) {
       //LAB_80026d94
-      renderTextboxSelection(textboxIndex, (short)struct84._60);
+      renderTextboxSelection(textboxIndex, (short)textboxText._60);
 
-      if((joypadPress_8007a398.get() & 0x20) != 0) {
+      if((press_800bee94.get() & 0x20) != 0) {
         Scus94491BpeSegment.playSound(0, 2, 0, 0, (short)0, (short)0);
-        free(struct84.ptr_58);
-        struct84._00 = 0;
-        struct84._6c = struct84._68;
+        textboxText.chars_58 = null;
+        textboxText._00 = 0;
+        textboxText._6c = textboxText._68;
       } else {
         //LAB_80026df0
-        if((joypadInput_8007a39c.get() & 0x4000L) == 0) {
+        if((input_800bee90.get() & 0x4000) == 0) {
           //LAB_80026ee8
           if(Input.getButtonState(InputAction.DPAD_UP) || Input.getButtonState(InputAction.JOYSTICK_LEFT_BUTTON_UP)) {
-            if((struct84._08 & 0x100) == 0 || struct84._68 != 0) {
+            if((textboxText._08 & 0x100) == 0 || textboxText._68 != 0) {
               //LAB_80026f38
               Scus94491BpeSegment.playSound(0, 1, 0, 0, (short)0, (short)0);
 
               s3 = 0x3L;
-              if(struct84._60 > 0) {
-                struct84._00 = 19;
-                struct84._60--;
-                struct84._64 = 4;
-                struct84._68--;
+              if(textboxText._60 > 0) {
+                textboxText._00 = 19;
+                textboxText._60--;
+                textboxText._64 = 4;
+                textboxText._68--;
               } else {
                 //LAB_80026f88
-                if((struct84._08 & 0x2) != 0) {
-                  v1 = struct84._3a;
+                if((textboxText._08 & 0x2) != 0) {
+                  v1 = textboxText._3a;
 
                   // TODO not sure about this block of code
                   if(v1 == 1) {
@@ -3214,87 +3170,87 @@ public final class Scus94491BpeSegment_8002 {
                     }
 
                     //LAB_80026fc0
-                    struct84._3a = 0;
-                    struct84._08 ^= 0x2;
+                    textboxText._3a = 0;
+                    textboxText._08 ^= 0x2;
                   }
 
                   //LAB_80026fe8
-                  struct84._3a--;
+                  textboxText._3a--;
                 }
 
                 //LAB_80027014
-                struct84._68--;
+                textboxText._68--;
 
-                if(struct84._68 < 0) {
-                  struct84._68 = 0;
+                if(textboxText._68 < 0) {
+                  textboxText._68 = 0;
                 } else {
                   //LAB_80027044
-                  struct84._2c = 12;
+                  textboxText._2c = 12;
                   FUN_800280d4(textboxIndex);
 
-                  final LodString str = struct84.str_24;
+                  final LodString str = textboxText.str_24;
 
                   //LAB_80027068
                   s1 = 0;
                   do {
-                    if(str.charAt(struct84._30 - 1) >>> 8 == 0xa1) {
+                    if(str.charAt(textboxText._30 - 1) >>> 8 == 0xa1) {
                       s1++;
                     }
 
                     //LAB_80027090
-                    if(s1 == struct84.lines_1e + s3) {
+                    if(s1 == textboxText.lines_1e + s3) {
                       break;
                     }
 
-                    struct84._30--;
-                  } while(struct84._30 > 0);
+                    textboxText._30--;
+                  } while(textboxText._30 > 0);
 
                   //LAB_800270b0
-                  struct84.charX_34 = 0;
-                  struct84.charY_36 = 0;
-                  struct84._08 |= 0x80;
+                  textboxText.charX_34 = 0;
+                  textboxText.charY_36 = 0;
+                  textboxText._08 |= 0x80;
 
                   //LAB_800270dc
                   do {
                     FUN_800274f0(textboxIndex);
-                  } while(struct84.charY_36 == 0 && struct84._00 != 5);
+                  } while(textboxText.charY_36 == 0 && textboxText._00 != 5);
 
                   //LAB_80027104
-                  struct84._00 = 21;
-                  struct84._08 ^= 0x80;
+                  textboxText._00 = 21;
+                  textboxText._08 ^= 0x80;
                 }
               }
             }
           }
         }
 
-        struct84._00 = 19;
-        struct84._60++;
-        struct84._64 = 4;
-        struct84._68++;
-        if((struct84._08 & 0x100) == 0 || struct84.charY_36 + 1 != struct84._68) {
+        textboxText._00 = 19;
+        textboxText._60++;
+        textboxText._64 = 4;
+        textboxText._68++;
+        if((textboxText._08 & 0x100) == 0 || textboxText.charY_36 + 1 != textboxText._68) {
           //LAB_80026e68
           //LAB_80026e6c
-          if(struct84._60 < struct84.lines_1e) {
+          if(textboxText._60 < textboxText.lines_1e) {
             //LAB_80026ed0
             Scus94491BpeSegment.playSound(0, 1, 0, 0, (short)0, (short)0);
 
             //LAB_80026ee8
             if(Input.getButtonState(InputAction.DPAD_UP) || Input.getButtonState(InputAction.JOYSTICK_LEFT_BUTTON_UP)) {
-              if((struct84._08 & 0x100) == 0 || struct84._68 != 0) {
+              if((textboxText._08 & 0x100) == 0 || textboxText._68 != 0) {
                 //LAB_80026f38
                 Scus94491BpeSegment.playSound(0, 1, 0, 0, (short)0, (short)0);
 
                 s3 = 0x3L;
-                if(struct84._60 > 0) {
-                  struct84._00 = 19;
-                  struct84._60--;
-                  struct84._64 = 4;
-                  struct84._68--;
+                if(textboxText._60 > 0) {
+                  textboxText._00 = 19;
+                  textboxText._60--;
+                  textboxText._64 = 4;
+                  textboxText._68--;
                 } else {
                   //LAB_80026f88
-                  if((struct84._08 & 0x2) != 0) {
-                    v1 = struct84._3a;
+                  if((textboxText._08 & 0x2) != 0) {
+                    v1 = textboxText._3a;
 
                     // TODO not sure about this block of code
                     if(v1 == 1) {
@@ -3306,149 +3262,149 @@ public final class Scus94491BpeSegment_8002 {
                       }
 
                       //LAB_80026fc0
-                      struct84._3a = 0;
-                      struct84._08 ^= 0x2;
+                      textboxText._3a = 0;
+                      textboxText._08 ^= 0x2;
                     }
 
                     //LAB_80026fe8
-                    struct84._3a--;
+                    textboxText._3a--;
                   }
 
                   //LAB_80027014
-                  struct84._68--;
+                  textboxText._68--;
 
-                  if(struct84._68 < 0) {
-                    struct84._68 = 0;
+                  if(textboxText._68 < 0) {
+                    textboxText._68 = 0;
                   } else {
                     //LAB_80027044
-                    struct84._2c = 12;
+                    textboxText._2c = 12;
                     FUN_800280d4(textboxIndex);
 
-                    final LodString str = struct84.str_24;
+                    final LodString str = textboxText.str_24;
 
                     //LAB_80027068
                     s1 = 0;
                     do {
-                      if(str.charAt(struct84._30 - 1) >>> 8 == 0xa1) {
+                      if(str.charAt(textboxText._30 - 1) >>> 8 == 0xa1) {
                         s1++;
                       }
 
                       //LAB_80027090
-                      if(s1 == struct84.lines_1e + s3) {
+                      if(s1 == textboxText.lines_1e + s3) {
                         break;
                       }
 
-                      struct84._30--;
-                    } while(struct84._30 > 0);
+                      textboxText._30--;
+                    } while(textboxText._30 > 0);
 
                     //LAB_800270b0
-                    struct84.charX_34 = 0;
-                    struct84.charY_36 = 0;
-                    struct84._08 |= 0x80;
+                    textboxText.charX_34 = 0;
+                    textboxText.charY_36 = 0;
+                    textboxText._08 |= 0x80;
 
                     //LAB_800270dc
                     do {
                       FUN_800274f0(textboxIndex);
-                    } while(struct84.charY_36 == 0 && struct84._00 != 5);
+                    } while(textboxText.charY_36 == 0 && textboxText._00 != 5);
 
                     //LAB_80027104
-                    struct84._00 = 21;
-                    struct84._08 ^= 0x80;
+                    textboxText._00 = 21;
+                    textboxText._08 ^= 0x80;
                   }
                 }
               }
             }
           } else {
-            struct84._60 = _800bdf38[textboxIndex].lines_1e - 1;
-            struct84._00 = 0x14;
-            struct84._2c = (short)0;
+            textboxText._60 = textboxText_800bdf38[textboxIndex].lines_1e - 1;
+            textboxText._00 = 0x14;
+            textboxText._2c = (short)0;
 
-            if(struct84._3a == 1) {
-              struct84._00 = 18;
-              struct84._68--;
+            if(textboxText._3a == 1) {
+              textboxText._00 = 18;
+              textboxText._68--;
             }
           }
         } else {
-          struct84._00 = 3;
-          struct84._60--;
-          struct84._68--;
+          textboxText._00 = 3;
+          textboxText._60--;
+          textboxText._68--;
         }
       }
     } else if(v1 == 19) {
       //LAB_8002711c
-      renderTextboxSelection(textboxIndex, (short)struct84._68);
-      struct84._64--;
+      renderTextboxSelection(textboxIndex, (short)textboxText._68);
+      textboxText._64--;
 
-      if(struct84._64 == 0) {
-        struct84._00 = 18;
+      if(textboxText._64 == 0) {
+        textboxText._00 = 18;
 
-        if((struct84._08 & 0x800) != 0) {
-          struct84._00 = 22;
+        if((textboxText._08 & 0x800) != 0) {
+          textboxText._00 = 22;
         }
       }
     } else if(v1 == 20) {
       //LAB_8002715c
-      struct84._2c += 4;
+      textboxText._2c += 4;
 
-      if(struct84._2c >= 12) {
+      if(textboxText._2c >= 12) {
         FUN_80027eb4(textboxIndex);
-        struct84._08 |= 0x4;
-        struct84._2c -= 12;
-        struct84.charY_36 = struct84.lines_1e;
+        textboxText._08 |= 0x4;
+        textboxText._2c -= 12;
+        textboxText.charY_36 = textboxText.lines_1e;
       }
 
       //LAB_800271a8
-      if((struct84._08 & 0x4) != 0) {
-        struct84._08 ^= 0x4;
+      if((textboxText._08 & 0x4) != 0) {
+        textboxText._08 ^= 0x4;
 
-        if((struct84._08 & 0x2) == 0) {
+        if((textboxText._08 & 0x2) == 0) {
           //LAB_8002720c
           //LAB_80027220
           do {
             FUN_800274f0(textboxIndex);
 
-            v1 = struct84._00;
+            v1 = textboxText._00;
             if(v1 == 0xf) {
-              struct84._3a = 0;
-              struct84._08 |= 0x2;
+              textboxText._3a = 0;
+              textboxText._08 |= 0x2;
               break;
             }
           } while(v1 != 5);
         } else {
-          struct84._3a++;
-          if(struct84._3a >= struct84.lines_1e + 1) {
-            free(struct84.ptr_58);
-            struct84._00 = 0;
+          textboxText._3a++;
+          if(textboxText._3a >= textboxText.lines_1e + 1) {
+            textboxText.chars_58 = null;
+            textboxText._00 = 0;
           }
         }
 
         //LAB_80027250
         //LAB_80027254
-        struct84._00 = 18;
+        textboxText._00 = 18;
       }
       //LAB_800265f4
     } else if(v1 == 21) {
       //LAB_8002727c
-      struct84._2c -= 4;
+      textboxText._2c -= 4;
 
-      if(struct84._2c <= 0) {
-        struct84.charY_36 = 0;
-        struct84._2c = 0;
-        struct84._00 = 18;
-        struct84._08 |= 0x4;
+      if(textboxText._2c <= 0) {
+        textboxText.charY_36 = 0;
+        textboxText._2c = 0;
+        textboxText._00 = 18;
+        textboxText._08 |= 0x4;
       }
 
       //LAB_800272b0
-      if((struct84._08 & 0x4) != 0) {
-        final LodString str = struct84.str_24;
+      if((textboxText._08 & 0x4) != 0) {
+        final LodString str = textboxText.str_24;
 
         //LAB_800272dc
         s1 = 0;
         do {
-          v0 = str.charAt(struct84._30 + 1) >>> 8;
+          v0 = str.charAt(textboxText._30 + 1) >>> 8;
           if(v0 == 0xa0L) {
             //LAB_80027274
-            struct84._30--;
+            textboxText._30--;
             break;
           }
 
@@ -3457,34 +3413,34 @@ public final class Scus94491BpeSegment_8002 {
           }
 
           //LAB_8002730c
-          struct84._30++;
-        } while(s1 != struct84.lines_1e);
+          textboxText._30++;
+        } while(s1 != textboxText.lines_1e);
 
         //LAB_80027320
-        struct84._00 = 18;
-        struct84._30 += 2;
-        struct84.charX_34 = 0;
-        struct84.charY_36 = struct84.lines_1e;
+        textboxText._00 = 18;
+        textboxText._30 += 2;
+        textboxText.charX_34 = 0;
+        textboxText.charY_36 = textboxText.lines_1e;
       }
     } else if(v1 == 0x16) {
       //LAB_80027354
-      renderTextboxSelection(textboxIndex, (short)struct84._68);
+      renderTextboxSelection(textboxIndex, (short)textboxText._68);
 
-      if((joypadPress_8007a398.get() & 0x20L) != 0) {
+      if((press_800bee94.get() & 0x20) != 0) {
         Scus94491BpeSegment.playSound(0, 2, 0, 0, (short)0, (short)0);
-        free(struct84.ptr_58);
-        struct84._00 = 0;
-        struct84._6c = struct84._68 - struct84._72;
+        textboxText.chars_58 = null;
+        textboxText._00 = 0;
+        textboxText._6c = textboxText._68 - textboxText._72;
       } else {
         //LAB_800273bc
         if(Input.getButtonState(InputAction.DPAD_UP) || Input.getButtonState(InputAction.JOYSTICK_LEFT_BUTTON_UP)) {
-          struct84._00 = 19;
-          struct84._64 = 4;
-          struct84._68--;
+          textboxText._00 = 19;
+          textboxText._64 = 4;
+          textboxText._68--;
 
-          if(struct84._68 < struct84._72) {
-            struct84._68 = struct84._72;
-            struct84._00 = 22;
+          if(textboxText._68 < textboxText._72) {
+            textboxText._68 = textboxText._72;
+            textboxText._00 = 22;
           } else {
             //LAB_80027404
             Scus94491BpeSegment.playSound(0, 1, 0, 0, (short)0, (short)0);
@@ -3493,27 +3449,27 @@ public final class Scus94491BpeSegment_8002 {
 
         //LAB_80027420
         if(Input.getButtonState(InputAction.DPAD_DOWN) || Input.getButtonState(InputAction.JOYSTICK_LEFT_BUTTON_DOWN)) {
-          struct84._00 = 19;
-          struct84._64 = 4;
-          struct84._68++;
+          textboxText._00 = 19;
+          textboxText._64 = 4;
+          textboxText._68++;
 
-          if(struct84._70 >= struct84._68) {
+          if(textboxText._70 >= textboxText._68) {
             //LAB_80027480
             //LAB_80027490
             Scus94491BpeSegment.playSound(0, 1, 0, 0, (short)0, (short)0);
           } else {
-            struct84._68 = struct84._70;
-            struct84._00 = 22;
+            textboxText._68 = textboxText._70;
+            textboxText._00 = 22;
           }
         }
       }
       //LAB_80026620
     } else if(v1 == 23) {
       //LAB_800274a4
-      struct84._64--;
-      if(struct84._64 == 0) {
-        struct84._64 = 4;
-        struct84._00 = struct84._78;
+      textboxText._64--;
+      if(textboxText._64 == 0) {
+        textboxText._64 = 4;
+        textboxText._00 = textboxText._78;
       }
     }
 
@@ -3523,119 +3479,117 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x800274f0L)
   public static void FUN_800274f0(final int textboxIndex) {
-    long v1;
+    int v1;
 
-    final Struct84 s0 = _800bdf38[textboxIndex];
-    final LodString str = s0.str_24;
+    final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
+    final LodString str = textboxText.str_24;
 
-    if((s0._08 & 0x10) != 0) {
-      final int s1 = (short)s0._80;
-      FUN_8002a180(textboxIndex, s0.charX_34, s0.charY_36, s0._28, s0.digits_46[s1]);
+    if((textboxText._08 & 0x10) != 0) {
+      final int s1 = (short)textboxText._80;
+      FUN_8002a180(textboxIndex, textboxText.charX_34, textboxText.charY_36, textboxText._28, textboxText.digits_46[s1]);
 
-      s0.charX_34++;
-      s0._3c++;
-      s0._80++;
+      textboxText.charX_34++;
+      textboxText._3c++;
+      textboxText._80++;
 
-      if(s0.charX_34 < s0.chars_1c) {
+      if(textboxText.charX_34 < textboxText.chars_1c) {
         //LAB_80027768
-        if(s0.digits_46[s1 + 1] == -1) {
-          s0._08 ^= 0x10;
+        if(textboxText.digits_46[s1 + 1] == -1) {
+          textboxText._08 ^= 0x10;
         }
-      } else if(s0.charY_36 >= s0.lines_1e - 1) {
-        if(s0.digits_46[s1 + 1] != -1) {
-          s0._00 = 5;
-          s0.charX_34 = 0;
-          s0.charY_36++;
+      } else if(textboxText.charY_36 >= textboxText.lines_1e - 1) {
+        if(textboxText.digits_46[s1 + 1] != -1) {
+          textboxText._00 = 5;
+          textboxText.charX_34 = 0;
+          textboxText.charY_36++;
           setTextboxArrowPosition(textboxIndex, 1);
           return;
         }
 
         //LAB_80027618
-        v1 = str.charAt(s0._30) >>> 8;
+        v1 = str.charAt(textboxText._30) >>> 8;
 
         if(v1 == 0xa0) {
           //LAB_800276f4
-          s0._00 = 15;
+          textboxText._00 = 15;
 
           //LAB_80027704
           setTextboxArrowPosition(textboxIndex, 1);
 
           //LAB_80027740
-          _800bdf38[textboxIndex]._08 ^= 0x10;
+          textboxText_800bdf38[textboxIndex]._08 ^= 0x10;
           return;
         }
 
         if(v1 == 0xa1) {
-          s0._30++;
+          textboxText._30++;
         }
 
         //LAB_8002764c
-        s0._00 = 5;
-        s0.charX_34 = 0;
-        s0.charY_36++;
+        textboxText._00 = 5;
+        textboxText.charX_34 = 0;
+        textboxText.charY_36++;
 
         //LAB_80027704
         setTextboxArrowPosition(textboxIndex, 1);
       } else {
         //LAB_80027688
-        s0.charX_34 = 0;
-        s0.charY_36++;
+        textboxText.charX_34 = 0;
+        textboxText.charY_36++;
 
-        if(s0.digits_46[s1 + 1] == -1) {
-          v1 = str.charAt(s0._30) >>> 8;
+        if(textboxText.digits_46[s1 + 1] == -1) {
+          v1 = str.charAt(textboxText._30) >>> 8;
           if(v1 == 0xa0) {
             //LAB_800276f4
-            s0._00 = 15;
+            textboxText._00 = 15;
 
             //LAB_80027704
             setTextboxArrowPosition(textboxIndex, 1);
           } else {
             if(v1 == 0xa1) {
               //LAB_80027714
-              s0._30++;
+              textboxText._30++;
             }
 
             //LAB_80027724
-            _800bdf38[textboxIndex]._00 = 7;
+            textboxText_800bdf38[textboxIndex]._00 = 7;
           }
 
           //LAB_80027740
-          _800bdf38[textboxIndex]._08 ^= 0x10;
+          textboxText_800bdf38[textboxIndex]._08 ^= 0x10;
           return;
         }
       }
 
       //LAB_8002779c
-      _800bdf38[textboxIndex]._00 = 7;
+      textboxText_800bdf38[textboxIndex]._00 = 7;
       return;
     }
 
     //LAB_800277bc
-    long s1 = 0x1L;
-    final long s7 = 0x1L;
-    final long fp = 0x1L;
+    int s1 = 1;
 
     //LAB_800277cc
     do {
-      final int a0_0 = str.charAt(s0._30);
+      final int a0_0 = str.charAt(textboxText._30);
 
       switch(a0_0 >>> 8) {
         case 0xa0 -> {
-          s0._00 = 15;
+          textboxText._00 = 15;
           setTextboxArrowPosition(textboxIndex, 1);
           s1 = 0;
         }
 
         case 0xa1 -> {
-          s0.charX_34 = 0;
-          s0.charY_36++;
-          s0._08 |= 0x400;
+          textboxText.charX_34 = 0;
+          textboxText.charY_36++;
+          textboxText._08 |= 0x400;
 
-          if(s0.charY_36 >= s0.lines_1e || (s0._08 & 0x80) != 0) {
+          if(textboxText.charY_36 >= textboxText.lines_1e || (textboxText._08 & 0x80) != 0) {
             //LAB_80027880
-            s0._00 = 5;
+            textboxText._00 = 5;
 
-            if((s0._08 & 0x1) == 0) {
+            if((textboxText._08 & 0x1) == 0) {
               setTextboxArrowPosition(textboxIndex, 1);
             }
 
@@ -3645,7 +3599,7 @@ public final class Scus94491BpeSegment_8002 {
 
         case 0xa2 -> {
           //LAB_80027d28
-          s0._00 = 6;
+          textboxText._00 = 6;
 
           //LAB_80027d2c
           s1 = 0;
@@ -3653,23 +3607,23 @@ public final class Scus94491BpeSegment_8002 {
 
         case 0xa3 -> {
           setTextboxArrowPosition(textboxIndex, 1);
-          s0._00 = 11;
+          textboxText._00 = 11;
 
-          if(str.charAt(s0._30 + 1) >>> 8 == 0xa1L) {
-            s0._30++;
+          if(str.charAt(textboxText._30 + 1) >>> 8 == 0xa1) {
+            textboxText._30++;
           }
 
           s1 = 0;
         }
 
         case 0xa5 -> {
-          s0._3e = a0_0 & 0xff;
-          s0._40 = 0;
+          textboxText._3e = a0_0 & 0xff;
+          textboxText._40 = 0;
         }
 
         case 0xa6 -> {
-          s0._00 = 8;
-          s0._44 = 60 / vsyncMode_8007a3b8.get() * (a0_0 & 0xff);
+          textboxText._00 = 8;
+          textboxText._44 = 60 / vsyncMode_8007a3b8 * (a0_0 & 0xff);
           s1 = 0;
         }
 
@@ -3677,49 +3631,43 @@ public final class Scus94491BpeSegment_8002 {
           final int a2 = a0_0 & 0xf;
 
           //LAB_80027950
-          s0._28 = a2 < 12 ? a2 : 0;
+          textboxText._28 = a2 < 12 ? a2 : 0;
         }
 
         case 0xa8 -> {
-          s0._08 |= 0x10;
+          textboxText._08 |= 0x10;
 
           //LAB_80027970
-          Arrays.fill(s0.digits_46, -1);
+          Arrays.fill(textboxText.digits_46, -1);
 
-          long a1 = _800bdf10.offset((a0_0 & 0xff) * 0x4L).get();
-          long a3 = 1_000_000_000L;
+          int a1 = (int)_800bdf10.offset((a0_0 & 0xff) * 0x4L).get();
+          int a3 = 1_000_000_000;
           final long[] sp0x18 = new long[10]; //TODO LodString
-          if(s7 != 0) {
-            //LAB_800279dc
-            for(int i = 0; i < sp0x18.length; i++) {
-              sp0x18[i] = _80052b40.get((int)(a1 / a3)).deref().charAt(0);
-              a1 = a1 % a3;
-              a3 = a3 / 10;
-            }
+          //LAB_800279dc
+          for(int i = 0; i < sp0x18.length; i++) {
+            sp0x18[i] = _80052b40.get(a1 / a3).deref().charAt(0);
+            a1 = a1 % a3;
+            a3 = a3 / 10;
           }
 
           //LAB_80027a34
-          if(fp != 0) {
-            v1 = _80052b40.get(0).deref().charAt(0);
+          v1 = _80052b40.get(0).deref().charAt(0);
 
-            //LAB_80027a54
-            for(s1 = 0; s1 < 9; s1++) {
-              if(sp0x18[(int)s1] != v1) {
-                break;
-              }
+          //LAB_80027a54
+          for(s1 = 0; s1 < 9; s1++) {
+            if(sp0x18[s1] != v1) {
+              break;
             }
-          } else {
-            s1 = 0;
           }
 
           //LAB_80027a84
           //LAB_80027a90
-          for(int i = 0; i < s0.digits_46.length && s1 < sp0x18.length; i++, s1++) {
-            s0.digits_46[i] = (int)sp0x18[(int)s1];
+          for(int i = 0; i < textboxText.digits_46.length && s1 < sp0x18.length; i++, s1++) {
+            textboxText.digits_46[i] = (int)sp0x18[s1];
           }
 
           //LAB_80027ae4
-          s0._80 = 0;
+          textboxText._80 = 0;
 
           //LAB_80027d2c
           s1 = 0;
@@ -3728,88 +3676,88 @@ public final class Scus94491BpeSegment_8002 {
         case 0xad -> {
           final int v1_0 = a0_0 & 0xff;
 
-          if(v1_0 >= s0.chars_1c) {
-            s0.charX_34 = s0.chars_1c - 1;
+          if(v1_0 >= textboxText.chars_1c) {
+            textboxText.charX_34 = textboxText.chars_1c - 1;
           } else {
             //LAB_80027b0c
-            s0.charX_34 = v1_0;
+            textboxText.charX_34 = v1_0;
           }
         }
 
         case 0xae ->
           //LAB_80027b38
-          s0.charY_36 = Math.min(a0_0 & 0xff, s0.lines_1e - 1);
+          textboxText.charY_36 = Math.min(a0_0 & 0xff, textboxText.lines_1e - 1);
 
         case 0xb0 -> {
-          s0._00 = 13;
+          textboxText._00 = 13;
 
-          final int v0 = 60 / vsyncMode_8007a3b8.get() * (a0_0 & 0xff);
-          s0._3e = v0;
-          s0._40 = v0;
+          final int v0 = 60 / vsyncMode_8007a3b8 * (a0_0 & 0xff);
+          textboxText._3e = v0;
+          textboxText._40 = v0;
 
-          if(str.charAt(s0._30 + 1) >>> 8 == 0xa1L) {
-            s0._30++;
+          if(str.charAt(textboxText._30 + 1) >>> 8 == 0xa1L) {
+            textboxText._30++;
           }
 
           s1 = 0;
         }
 
-        case 0xb1 -> s0._7c = a0_0 & 0xff;
+        case 0xb1 -> textboxText._7c = a0_0 & 0xff;
 
         case 0xb2 -> {
           if((a0_0 & 0x1L) == 0x1L) {
-            s0._08 |= 0x1000;
+            textboxText._08 |= 0x1000;
           } else {
             //LAB_80027bd0
-            s0._08 ^= 0x1000;
+            textboxText._08 ^= 0x1000;
           }
         }
 
         default -> {
           //LAB_80027be4
-          FUN_8002a180(textboxIndex, s0.charX_34, s0.charY_36, s0._28, (short)a0_0);
+          FUN_8002a180(textboxIndex, textboxText.charX_34, textboxText.charY_36, textboxText._28, (short)a0_0);
 
-          s0.charX_34++;
-          s0._3c++;
+          textboxText.charX_34++;
+          textboxText._3c++;
 
-          if(s0.charX_34 < s0.chars_1c) {
+          if(textboxText.charX_34 < textboxText.chars_1c) {
             //LAB_80027d28
-            s0._00 = 7;
-          } else if(s0.charY_36 >= s0.lines_1e - 1) {
-            v1 = str.charAt(s0._30 + 1) >>> 8;
+            textboxText._00 = 7;
+          } else if(textboxText.charY_36 >= textboxText.lines_1e - 1) {
+            v1 = str.charAt(textboxText._30 + 1) >>> 8;
 
             if(v1 == 0xa0) {
               //LAB_80027c7c
-              s0._00 = 15;
+              textboxText._00 = 15;
               setTextboxArrowPosition(textboxIndex, 1);
             } else {
               if(v1 == 0xa1) {
                 //LAB_80027c98
-                s0._30++;
+                textboxText._30++;
               }
 
               //LAB_80027c9c
-              s0._00 = 5;
-              s0._08 |= 0x400;
-              s0.charX_34 = 0;
-              s0.charY_36++;
+              textboxText._00 = 5;
+              textboxText._08 |= 0x400;
+              textboxText.charX_34 = 0;
+              textboxText.charY_36++;
 
-              if((s0._08 & 0x1) == 0) {
+              if((textboxText._08 & 0x1) == 0) {
                 setTextboxArrowPosition(textboxIndex, 1);
               }
             }
           } else {
             //LAB_80027ce0
-            s0._08 |= 0x400;
-            s0.charX_34 = 0;
-            s0.charY_36++;
+            textboxText._08 |= 0x400;
+            textboxText.charX_34 = 0;
+            textboxText.charY_36++;
 
-            if(str.charAt(s0._30 + 1) >>> 8 == 0xa1L) {
-              s0._30++;
+            if(str.charAt(textboxText._30 + 1) >>> 8 == 0xa1) {
+              textboxText._30++;
             }
 
             //LAB_80027d28
-            s0._00 = 7;
+            textboxText._00 = 7;
           }
 
           //LAB_80027d2c
@@ -3818,7 +3766,7 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       //LAB_80027d30
-      s0._30++;
+      textboxText._30++;
     } while(s1 != 0);
 
     //LAB_80027d44
@@ -3827,16 +3775,16 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x80027d74L)
   public static void FUN_80027d74(final int textboxIndex, final int x, final int y) {
     final int maxX;
-    if(mainCallbackIndex_8004dd20.get() == 5) {
+    if(engineState_8004dd20 == EngineState.SUBMAP_05) {
       maxX = 350;
     } else {
       maxX = 310;
     }
 
     //LAB_80027d9c
-    final Struct84 t0 = _800bdf38[textboxIndex];
-    final int width = t0.chars_1c * 9 / 2;
-    final int height = t0.lines_1e * 6;
+    final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
+    final int width = textboxText.chars_1c * 9 / 2;
+    final int height = textboxText.lines_1e * 6;
     final int v1 = x - width;
     final int t4 = y - height;
 
@@ -3864,39 +3812,38 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80027e40
     final Textbox4c v0 = textboxes_800be358[textboxIndex];
     v0.x_14 = t2;
-    t0.x_14 = t2;
+    textboxText.x_14 = t2;
     v0.y_16 = t3;
-    t0.y_16 = t3;
-    t0._18 = t2 - width;
-    t0._1a = t3 - height;
+    textboxText.y_16 = t3;
+    textboxText._18 = t2 - width;
+    textboxText._1a = t3 - height;
   }
 
   @Method(0x80027eb4L)
   public static void FUN_80027eb4(final int textboxIndex) {
-    final Struct84 a0 = _800bdf38[textboxIndex];
-    final long a2 = a0.ptr_58;
+    final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
 
     //LAB_80027efc
-    for(int i = (a0._08 & 0x200) > 0 ? 1 : 0; i < a0.lines_1e; i++) {
+    for(int i = (textboxText._08 & 0x200) > 0 ? 1 : 0; i < textboxText.lines_1e; i++) {
       //LAB_80027f18
-      for(int a1 = 0; a1 < a0.chars_1c; a1++) {
-        final long v0 = a2 + ((i + 1) * a0.chars_1c + a1) * 0x8L;
-        final long v1 = a2 + (i * a0.chars_1c + a1) * 0x8L;
-        MEMORY.ref(2, v1).offset(0x0L).setu(MEMORY.ref(2, v0).offset(0x0L).get());
-        MEMORY.ref(2, v1).offset(0x2L).setu(MEMORY.ref(2, v0).offset(0x2L).get() - 1);
-        MEMORY.ref(1, v1).offset(0x4L).setu(MEMORY.ref(1, v0).offset(0x4L).get());
-        MEMORY.ref(2, v1).offset(0x6L).setu(MEMORY.ref(2, v0).offset(0x6L).get());
+      for(int a1 = 0; a1 < textboxText.chars_1c; a1++) {
+        final TextboxChar08 v0 = textboxText.chars_58[(i + 1) * textboxText.chars_1c + a1];
+        final TextboxChar08 v1 = textboxText.chars_58[ i      * textboxText.chars_1c + a1];
+        v1.x_00 = v0.x_00;
+        v1.y_02 = v0.y_02 - 1;
+        v1._04 = v0._04;
+        v1.char_06 = v0.char_06;
       }
     }
 
     //LAB_8002804c
     //LAB_80028098
-    for(int i = a0.chars_1c * a0.lines_1e; i < a0.chars_1c * (a0.lines_1e + 1); i++) {
-      final long a0_0 = a2 + i * 0x8L;
-      MEMORY.ref(2, a0_0).offset(0x0L).setu(0);
-      MEMORY.ref(2, a0_0).offset(0x2L).setu(0);
-      MEMORY.ref(1, a0_0).offset(0x4L).setu(0);
-      MEMORY.ref(2, a0_0).offset(0x6L).setu(0);
+    for(int i = textboxText.chars_1c * textboxText.lines_1e; i < textboxText.chars_1c * (textboxText.lines_1e + 1); i++) {
+      final TextboxChar08 chr = textboxText.chars_58[i];
+      chr.x_00 = 0;
+      chr.y_02 = 0;
+      chr._04 = 0;
+      chr.char_06 = 0;
     }
 
     //LAB_800280cc
@@ -3904,30 +3851,29 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x800280d4L)
   public static void FUN_800280d4(final int textboxIndex) {
-    final Struct84 t4 = _800bdf38[textboxIndex];
-    final long a2 = t4.ptr_58;
+    final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
 
     //LAB_8002810c
-    for(int lineIndex = t4.lines_1e; lineIndex > 0; lineIndex--) {
+    for(int lineIndex = textboxText.lines_1e; lineIndex > 0; lineIndex--) {
       //LAB_80028128
-      for(int charIndex = 0; charIndex < t4.chars_1c; charIndex++) {
-        final long v0 = a2 + ((lineIndex - 1) * t4.chars_1c + charIndex) * 8;
-        final long v1 = a2 + (lineIndex * t4.chars_1c + charIndex) * 8;
-        MEMORY.ref(2, v1).offset(0x0L).setu(MEMORY.ref(2, v0).offset(0x0L).get());
-        MEMORY.ref(2, v1).offset(0x2L).setu(MEMORY.ref(2, v0).offset(0x2L).get() + 1);
-        MEMORY.ref(1, v1).offset(0x4L).setu(MEMORY.ref(1, v0).offset(0x4L).get());
-        MEMORY.ref(2, v1).offset(0x6L).setu(MEMORY.ref(2, v0).offset(0x6L).get());
+      for(int charIndex = 0; charIndex < textboxText.chars_1c; charIndex++) {
+        final TextboxChar08 v0 = textboxText.chars_58[(lineIndex - 1) * textboxText.chars_1c + charIndex];
+        final TextboxChar08 v1 = textboxText.chars_58[lineIndex * textboxText.chars_1c + charIndex];
+        v1.x_00 = v0.x_00;
+        v1.y_02 = v0.y_02 + 1;
+        v1._04 = v0._04;
+        v1.char_06 = v0.char_06;
       }
     }
 
     //LAB_80028254
     //LAB_80028280
-    for(int charIndex = 0; charIndex < t4.chars_1c; charIndex++) {
-      final long a0_0 = a2 + charIndex * 0x8L;
-      MEMORY.ref(2, a0_0).offset(0x0L).setu(0);
-      MEMORY.ref(2, a0_0).offset(0x2L).setu(0);
-      MEMORY.ref(1, a0_0).offset(0x4L).setu(0);
-      MEMORY.ref(2, a0_0).offset(0x6L).setu(0);
+    for(int charIndex = 0; charIndex < textboxText.chars_1c; charIndex++) {
+      final TextboxChar08 chr = textboxText.chars_58[charIndex];
+      chr.x_00 = 0;
+      chr.y_02 = 0;
+      chr._04 = 0;
+      chr.char_06 = 0;
     }
 
     //LAB_800282a4
@@ -3939,54 +3885,54 @@ public final class Scus94491BpeSegment_8002 {
     int s2;
     int s3;
 
-    final Struct84 s7 = _800bdf38[textboxIndex];
+    final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
 
     final int sp10;
     final int sp14;
-    if((s7._08 & 0x200) != 0) {
-      sp10 = s7.chars_1c;
-      sp14 = s7.chars_1c * 2;
+    if((textboxText._08 & 0x200) != 0) {
+      sp10 = textboxText.chars_1c;
+      sp14 = textboxText.chars_1c * 2;
     } else {
       sp10 = 0;
-      sp14 = s7.chars_1c;
+      sp14 = textboxText.chars_1c;
     }
 
     int sp38 = 0;
 
     //LAB_80028328
-    long fp = s7.ptr_58;
-
     //LAB_80028348
-    for(int i = 0; i < s7.chars_1c * (s7.lines_1e + 1); i++) {
-      if(MEMORY.ref(2, fp).offset(0x0L).getSigned() == 0) {
+    for(int i = 0; i < textboxText.chars_1c * (textboxText.lines_1e + 1); i++) {
+      final TextboxChar08 chr = textboxText.chars_58[i];
+
+      if(chr.x_00 == 0) {
         sp38 = 0;
       }
 
       //LAB_8002835c
-      if(MEMORY.ref(2, fp).offset(0x6L).getSigned() != 0) {
-        sp38 = sp38 - FUN_8002a25c(MEMORY.ref(2, fp).offset(0x6L).get());
+      if(chr.char_06 != 0) {
+        sp38 = sp38 - FUN_8002a25c(chr.char_06);
 
         s1 = 0;
         s2 = 0;
         s3 = 0;
-        if((s7._08 & 0x1) != 0) {
+        if((textboxText._08 & 0x1) != 0) {
           if(i >= sp10 && i < sp14) {
-            final int v1 = s7._2c;
+            final int v1 = textboxText._2c;
             s1 = -v1;
             s2 = -v1;
             s3 = v1;
           }
 
           //LAB_800283c4
-          if(i >= s7.chars_1c * s7.lines_1e && i < s7.chars_1c * (s7.lines_1e + 1)) {
+          if(i >= textboxText.chars_1c * textboxText.lines_1e && i < textboxText.chars_1c * (textboxText.lines_1e + 1)) {
             s1 = 0;
             s2 = 0;
-            s3 = 12 - s7._2c;
+            s3 = 12 - textboxText._2c;
           }
         }
 
         //LAB_8002840c
-        setCharMetrics((int)MEMORY.ref(2, fp).offset(0x6L).get());
+        setCharMetrics(chr.char_06);
         if((short)s3 < 13) {
           final int s4 = (int)textU_800be5c0.get() & 0xffff;
           final int sp20 = (int)textV_800be5c8.get() & 0xffff;
@@ -3994,13 +3940,13 @@ public final class Scus94491BpeSegment_8002 {
           final GpuCommandQuad cmd = new GpuCommandQuad()
             .monochrome(0x80);
 
-          final int x = s7._18 + (int)MEMORY.ref(2, fp).offset(0x0L).getSigned() * 9 - centreScreenX_1f8003dc.get() - sp38;
+          final int x = textboxText._18 + chr.x_00 * 9 - centreScreenX_1f8003dc.get() - sp38;
           final int y;
 
-          if((s7._08 & 0x200) != 0 && i < s7.chars_1c) {
-            y = s7._1a + (int)MEMORY.ref(2, fp).offset(0x2L).getSigned() * 12 - centreScreenY_1f8003de.get() - s1;
+          if((textboxText._08 & 0x200) != 0 && i < textboxText.chars_1c) {
+            y = textboxText._1a + chr.y_02 * 12 - centreScreenY_1f8003de.get() - s1;
           } else {
-            y = s7._1a + (int)MEMORY.ref(2, fp).offset(0x2L).getSigned() * 12 - centreScreenY_1f8003de.get() - s1 - s7._2c;
+            y = textboxText._1a + chr.y_02 * 12 - centreScreenY_1f8003de.get() - s1 - textboxText._2c;
           }
 
           //LAB_80028544
@@ -4009,15 +3955,15 @@ public final class Scus94491BpeSegment_8002 {
           final int v = sp20 * 12 - s2;
 
           cmd.uv(u, v);
-          cmd.clut(832 + (int)MEMORY.ref(1, fp).offset(0x4L).get() * 16, 480);
+          cmd.clut(832 + chr._04 * 16, 480);
 
           final int height = 12 - s3;
           cmd.pos(x, y, 8, height);
           cmd.bpp(Bpp.BITS_4);
           cmd.vramPos(textboxVramX_80052bc8.get(0).get(), textboxVramY_80052bf4.get(0).get() < 256 ? 0 : 256);
-          GPU.queueCommand(s7.z_0c, cmd);
+          GPU.queueCommand(textboxText.z_0c, cmd);
 
-          GPU.queueCommand(s7.z_0c + 1, new GpuCommandQuad()
+          GPU.queueCommand(textboxText.z_0c + 1, new GpuCommandQuad()
             .bpp(Bpp.BITS_4)
             .monochrome(0x80)
             .clut(976, 480)
@@ -4027,11 +3973,8 @@ public final class Scus94491BpeSegment_8002 {
           );
         }
 
-        sp38 = sp38 + FUN_8002a1fc(MEMORY.ref(2, fp).offset(0x6L).get());
+        sp38 = sp38 + FUN_8002a1fc(chr.char_06);
       }
-
-      //LAB_800287d4
-      fp = fp + 0x8L;
     }
 
     //LAB_800287f8
@@ -4039,15 +3982,15 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80028828L)
   public static void FUN_80028828(final int a0) {
-    final Struct84 s0 = _800bdf38[a0];
+    final TextboxText84 textboxText = textboxText_800bdf38[a0];
 
-    s0._2c += s0._2a;
+    textboxText._2c += textboxText._2a;
 
-    if(s0._2c >= 12) {
+    if(textboxText._2c >= 12) {
       FUN_80027eb4(a0);
-      s0._00 = 4;
-      s0._2c = 0;
-      s0.charY_36--;
+      textboxText._00 = 4;
+      textboxText._2c = 0;
+      textboxText.charY_36--;
     }
 
     //LAB_80028894
@@ -4056,15 +3999,15 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x800288a4L)
   public static void FUN_800288a4(final int textboxIndex) {
     if((tickCount_800bb0fc.get() & 0x1) == 0) {
-      final Struct84 s0 = _800bdf38[textboxIndex];
+      final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
 
-      s0._2c += s0._2a & 0x7;
+      textboxText._2c += textboxText._2a & 0x7;
 
-      if(s0._2c >= 12) {
+      if(textboxText._2c >= 12) {
         FUN_80027eb4(textboxIndex);
-        s0._08 |= 0x4;
-        s0._2c -= 12;
-        s0.charY_36 = s0.lines_1e;
+        textboxText._08 |= 0x4;
+        textboxText._2c -= 12;
+        textboxText.charY_36 = textboxText.lines_1e;
       }
     }
 
@@ -4075,28 +4018,28 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x80028938L)
   public static void positionSobjTextbox(final int textboxIndex, final int sobjIndex) {
     final Textbox4c textbox = textboxes_800be358[textboxIndex];
-    final Struct84 s0 = _800bdf38[textboxIndex];
+    final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
 
     FUN_800e2428(sobjIndex);
-    final long struct = playerPos_800c68e8.getAddress();
-    final int s4 = (int)MEMORY.ref(4, struct).offset(0x70L).get();
+    final SubmapStruct80 struct = _800c68e8;
+    final int s4 = struct.x2_70;
     textbox._28 = s4;
-    final int sp10 = ((int)MEMORY.ref(4, struct).offset(0x74L).getSigned() - (int)MEMORY.ref(4, struct).offset(0x7cL).getSigned()) / 2;
-    final int sp18 = (int)MEMORY.ref(4, struct).offset(0x74L).getSigned() - sp10;
+    final int sp10 = (struct.y2_74 - struct.y3_7c) / 2;
+    final int sp18 = struct.y2_74 - sp10;
     textbox._2c = sp18;
-    final int sp14 = textbox._28 - (int)MEMORY.ref(4, struct).offset(0x68L).get();
+    final int sp14 = textbox._28 - struct.x1_68;
     final int textWidth = textbox.chars_18 * 9 / 2;
     final int textHeight = textbox.lines_1a * 6;
 
     final int width;
-    if(mainCallbackIndex_8004dd20.get() != 5) {
+    if(engineState_8004dd20 != EngineState.SUBMAP_05) {
       width = 320;
     } else {
       width = 360;
     }
 
     //LAB_80028a20
-    if(s0.chars_1c >= 17) {
+    if(textboxText.chars_1c >= 17) {
       if(sp18 >= 121) {
         //LAB_80028acc
         final int x = width / 2;
@@ -4105,10 +4048,10 @@ public final class Scus94491BpeSegment_8002 {
         textbox.y_16 = y;
         textbox._48 = 8;
 
-        s0.x_14 = x;
-        s0.y_16 = y;
-        s0._18 = s0.x_14 - s0.chars_1c * 9 / 2;
-        s0._1a = s0.y_16 - s0.lines_1e * 6;
+        textboxText.x_14 = x;
+        textboxText.y_16 = y;
+        textboxText._18 = textboxText.x_14 - textboxText.chars_1c * 9 / 2;
+        textboxText._1a = textboxText.y_16 - textboxText.lines_1e * 6;
         return;
       }
 
@@ -4118,10 +4061,10 @@ public final class Scus94491BpeSegment_8002 {
       textbox.y_16 = y;
       textbox._48 = 7;
 
-      s0.x_14 = x;
-      s0.y_16 = y;
-      s0._18 = s0.x_14 - s0.chars_1c * 9 / 2;
-      s0._1a = s0.y_16 - s0.lines_1e * 6;
+      textboxText.x_14 = x;
+      textboxText.y_16 = y;
+      textboxText._18 = textboxText.x_14 - textboxText.chars_1c * 9 / 2;
+      textboxText._1a = textboxText.y_16 - textboxText.lines_1e * 6;
       return;
     }
 
@@ -4132,10 +4075,10 @@ public final class Scus94491BpeSegment_8002 {
       textbox.y_16 = y;
       textbox._48 = 0;
 
-      s0.x_14 = s4;
-      s0.y_16 = y;
-      s0._18 = s0.x_14 - s0.chars_1c * 9 / 2;
-      s0._1a = s0.y_16 - s0.lines_1e * 6;
+      textboxText.x_14 = s4;
+      textboxText.y_16 = y;
+      textboxText._18 = textboxText.x_14 - textboxText.chars_1c * 9 / 2;
+      textboxText._1a = textboxText.y_16 - textboxText.lines_1e * 6;
       return;
     }
 
@@ -4146,10 +4089,10 @@ public final class Scus94491BpeSegment_8002 {
       textbox.y_16 = y;
       textbox._48 = 1;
 
-      s0.x_14 = s4;
-      s0.y_16 = y;
-      s0._18 = s0.x_14 - s0.chars_1c * 9 / 2;
-      s0._1a = s0.y_16 - s0.lines_1e * 6;
+      textboxText.x_14 = s4;
+      textboxText.y_16 = y;
+      textboxText._18 = textboxText.x_14 - textboxText.chars_1c * 9 / 2;
+      textboxText._1a = textboxText.y_16 - textboxText.lines_1e * 6;
       return;
     }
 
@@ -4163,10 +4106,10 @@ public final class Scus94491BpeSegment_8002 {
         textbox.y_16 = y;
         textbox._48 = 4;
 
-        s0.x_14 = s2;
-        s0.y_16 = y;
-        s0._18 = s0.x_14 - s0.chars_1c * 9 / 2;
-        s0._1a = s0.y_16 - s0.lines_1e * 6;
+        textboxText.x_14 = s2;
+        textboxText.y_16 = y;
+        textboxText._18 = textboxText.x_14 - textboxText.chars_1c * 9 / 2;
+        textboxText._1a = textboxText.y_16 - textboxText.lines_1e * 6;
         return;
       }
 
@@ -4177,10 +4120,10 @@ public final class Scus94491BpeSegment_8002 {
         textbox.y_16 = y;
         textbox._48 = 5;
 
-        s0.x_14 = s2;
-        s0.y_16 = y;
-        s0._18 = s0.x_14 - s0.chars_1c * 9 / 2;
-        s0._1a = s0.y_16 - s0.lines_1e * 6;
+        textboxText.x_14 = s2;
+        textboxText.y_16 = y;
+        textboxText._18 = textboxText.x_14 - textboxText.chars_1c * 9 / 2;
+        textboxText._1a = textboxText.y_16 - textboxText.lines_1e * 6;
         return;
       }
     } else {
@@ -4191,10 +4134,10 @@ public final class Scus94491BpeSegment_8002 {
         textbox.y_16 = y;
         textbox._48 = 2;
 
-        s0.x_14 = s2;
-        s0.y_16 = y;
-        s0._18 = s0.x_14 - s0.chars_1c * 9 / 2;
-        s0._1a = s0.y_16 - s0.lines_1e * 6;
+        textboxText.x_14 = s2;
+        textboxText.y_16 = y;
+        textboxText._18 = textboxText.x_14 - textboxText.chars_1c * 9 / 2;
+        textboxText._1a = textboxText.y_16 - textboxText.lines_1e * 6;
         return;
       }
 
@@ -4205,10 +4148,10 @@ public final class Scus94491BpeSegment_8002 {
         textbox.y_16 = y;
         textbox._48 = 3;
 
-        s0.x_14 = s2;
-        s0.y_16 = y;
-        s0._18 = s0.x_14 - s0.chars_1c * 9 / 2;
-        s0._1a = s0.y_16 - s0.lines_1e * 6;
+        textboxText.x_14 = s2;
+        textboxText.y_16 = y;
+        textboxText._18 = textboxText.x_14 - textboxText.chars_1c * 9 / 2;
+        textboxText._1a = textboxText.y_16 - textboxText.lines_1e * 6;
         return;
       }
     }
@@ -4232,7 +4175,7 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x80028f20L)
   public static boolean textboxFits(final int textboxIndex, final int x, final int y) {
     final int maxX;
-    if(mainCallbackIndex_8004dd20.get() == 5) {
+    if(engineState_8004dd20 == EngineState.SUBMAP_05) {
       maxX = 350;
     } else {
       maxX = 310;
@@ -4263,24 +4206,16 @@ public final class Scus94491BpeSegment_8002 {
     struct4c.lines_1a = 8;
     FUN_800258a8(0);
 
-    final Struct84 struct84 = _800bdf38[0];
-    struct84.type_04 = (int)_80052baa.get();
-    struct84.str_24 = _80052c20;
-    struct84._08 |= 0x40;
+    final TextboxText84 textboxText = textboxText_800bdf38[0];
+    textboxText.type_04 = (int)_80052baa.get();
+    textboxText.str_24 = _80052c20;
+    textboxText._08 |= 0x40;
 
-    long addr = mallocHead(struct84.chars_1c * (struct84.lines_1e + 1) * 8);
-    struct84.ptr_58 = addr;
-    //LAB_800290cc
-    for(int i = 0; i < struct84.chars_1c * struct84.lines_1e + 1; i++) {
-      MEMORY.ref(2, addr).offset(0x0L).setu(0);
-      MEMORY.ref(2, addr).offset(0x2L).setu(0);
-      MEMORY.ref(1, addr).offset(0x4L).setu(0);
-      MEMORY.ref(2, addr).offset(0x6L).setu(0);
-      addr = addr + 0x8L;
-    }
+    textboxText.chars_58 = new TextboxChar08[textboxText.chars_1c * (textboxText.lines_1e + 1)];
+    Arrays.setAll(textboxText.chars_58, i -> new TextboxChar08());
 
     //LAB_80029100
-    FUN_80027d74(0, struct84.x_14, struct84.y_16);
+    FUN_80027d74(0, textboxText.x_14, textboxText.y_16);
     script.params_20[0].set(0);
     return FlowControl.CONTINUE;
   }
@@ -4422,8 +4357,8 @@ public final class Scus94491BpeSegment_8002 {
     final TextboxArrow0c arrow = textboxArrows_800bdea0[textboxIndex];
 
     if((arrow._00 & 0x1) != 0) {
-      final Struct84 s2 = _800bdf38[textboxIndex];
-      if((s2._08 & 0x1000) != 0) {
+      final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
+      if((textboxText._08 & 0x1000) != 0) {
         final int left = arrow.x_04 - centreScreenX_1f8003dc.get() - 8;
         final int right = arrow.x_04 - centreScreenX_1f8003dc.get() + 8;
         final int top = arrow.y_06 - centreScreenY_1f8003de.get() - 6;
@@ -4431,7 +4366,7 @@ public final class Scus94491BpeSegment_8002 {
         final int leftU = 64 + arrow.spriteIndex_08 * 16;
         final int rightU = 80 + arrow.spriteIndex_08 * 16;
 
-        GPU.queueCommand(s2.z_0c, new GpuCommandPoly(4)
+        GPU.queueCommand(textboxText.z_0c, new GpuCommandPoly(4)
           .bpp(Bpp.BITS_4)
           .translucent(Translucency.HALF_B_PLUS_HALF_F)
           .monochrome(0x80)
@@ -4456,7 +4391,7 @@ public final class Scus94491BpeSegment_8002 {
   public static FlowControl scriptGetFreeTextboxIndex(final RunningScript<?> script) {
     //LAB_80029b7c
     for(int i = 0; i < 8; i++) {
-      if(textboxes_800be358[i]._00 == 0 && _800bdf38[i]._00 == 0) {
+      if(textboxes_800be358[i]._00 == 0 && textboxText_800bdf38[i]._00 == 0) {
         script.params_20[0].set(i);
         return FlowControl.CONTINUE;
       }
@@ -4486,7 +4421,7 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x80029c98L)
   public static FlowControl FUN_80029c98(final RunningScript<?> script) {
     final int textboxIndex = script.params_20[0].get();
-    script.params_20[1].set(textboxes_800be358[textboxIndex]._00 | _800bdf38[textboxIndex]._00);
+    script.params_20[1].set(textboxes_800be358[textboxIndex]._00 | textboxText_800bdf38[textboxIndex]._00);
     return FlowControl.CONTINUE;
   }
 
@@ -4498,21 +4433,21 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80029d34L)
   public static FlowControl FUN_80029d34(final RunningScript<?> script) {
-    script.params_20[1].set(_800bdf38[script.params_20[0].get()]._00);
+    script.params_20[1].set(textboxText_800bdf38[script.params_20[0].get()]._00);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x80029d6cL)
   public static FlowControl FUN_80029d6c(final RunningScript<?> script) {
     final int s1 = script.params_20[0].get();
-    final Struct84 struct84 = _800bdf38[s1];
+    final TextboxText84 textboxText = textboxText_800bdf38[s1];
 
-    if(struct84._00 != 0) {
-      free(struct84.ptr_58);
+    if(textboxText._00 != 0) {
+      textboxText.chars_58 = null;
     }
 
     //LAB_80029db8
-    struct84._00 = 0;
+    textboxText._00 = 0;
     textboxes_800be358[s1]._00 = 0;
     setTextboxArrowPosition(s1, 0);
     return FlowControl.CONTINUE;
@@ -4523,14 +4458,14 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80029e2c
     for(int i = 0; i < 8; i++) {
       final Textbox4c s2 = textboxes_800be358[i];
-      final Struct84 s0 = _800bdf38[i];
+      final TextboxText84 textboxText = textboxText_800bdf38[i];
 
-      if(s0._00 != 0) {
-        free(s0.ptr_58);
+      if(textboxText._00 != 0) {
+        textboxText.chars_58 = null;
       }
 
       //LAB_80029e48
-      s0._00 = 0;
+      textboxText._00 = 0;
       s2._00 = 0;
       setTextboxArrowPosition(i, 0);
     }
@@ -4546,26 +4481,26 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80029eccL)
   public static FlowControl FUN_80029ecc(final RunningScript<?> script) {
-    final Struct84 v1 = _800bdf38[script.params_20[0].get()];
-    if(v1._00 == 16 && (v1._08 & 0x20) != 0) {
-      v1._08 ^= 0x20;
+    final TextboxText84 textboxText = textboxText_800bdf38[script.params_20[0].get()];
+    if(textboxText._00 == 16 && (textboxText._08 & 0x20) != 0) {
+      textboxText._08 ^= 0x20;
     }
 
     //LAB_80029f18
     //LAB_80029f1c
-    v1._08 |= 0x40;
+    textboxText._08 |= 0x40;
     return FlowControl.CONTINUE;
   }
 
   @Method(0x80029f48L)
   public static FlowControl FUN_80029f48(final RunningScript<?> script) {
-    script.params_20[1].set(_800bdf38[script.params_20[0].get()]._6c);
+    script.params_20[1].set(textboxText_800bdf38[script.params_20[0].get()]._6c);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x80029f80L)
   public static FlowControl FUN_80029f80(final RunningScript<?> script) {
-    script.params_20[1].set(_800bdf38[script.params_20[0].get()]._7c);
+    script.params_20[1].set(textboxText_800bdf38[script.params_20[0].get()]._7c);
     return FlowControl.CONTINUE;
   }
 
@@ -4578,12 +4513,10 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       //LAB_8002a098
-      if(_800bdf38[i]._00 != 0) {
+      if(textboxText_800bdf38[i]._00 != 0) {
         FUN_800264b0(i); // Animates the textbox arrow
       }
     }
-
-    FUN_80024994();
   }
 
   @Method(0x8002a0e4L)
@@ -4597,7 +4530,7 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       //LAB_8002a134
-      if(_800bdf38[i]._00 != 0) {
+      if(textboxText_800bdf38[i]._00 != 0) {
         renderTextboxText(i);
         renderTextboxArrow(i);
       }
@@ -4607,26 +4540,26 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002a180L)
-  public static void FUN_8002a180(final int textboxIndex, final long a1, final long a2, long a3, final long lodChar) {
-    final Struct84 v1 = _800bdf38[textboxIndex];
-    final int a0 = v1.charY_36 * v1.chars_1c + v1.charX_34;
-    final long v0 = v1.ptr_58 + a0 * 0x8L;
-    MEMORY.ref(2, v0).offset(0x0L).setu(a1);
-    MEMORY.ref(2, v0).offset(0x2L).setu(a2);
+  public static void FUN_8002a180(final int textboxIndex, final int charX, final int charY, int a3, final int lodChar) {
+    final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
+    final int charIndex = textboxText.charY_36 * textboxText.chars_1c + textboxText.charX_34;
+    final TextboxChar08 chr = textboxText.chars_58[charIndex];
+    chr.x_00 = charX;
+    chr.y_02 = charY;
 
-    if((v1._08 & 0x200) != 0 && (short)a2 == 0) {
-      a3 = 0x8L;
+    if((textboxText._08 & 0x200) != 0 && charY == 0) {
+      a3 = 8;
     }
 
     //LAB_8002a1e8
     //LAB_8002a1ec
-    MEMORY.ref(1, v0).offset(0x4L).setu(a3);
+    chr._04 = a3;
 
     // Hellena Prison has a retail bug (textbox name says Warden?iate)
     if(lodChar == 0x900 || lodChar == -1) {
-      MEMORY.ref(2, v0).offset(0x6L).setu(0);
+      chr.char_06 = 0;
     } else {
-      MEMORY.ref(2, v0).offset(0x6L).setu(lodChar);
+      chr.char_06 = lodChar;
     }
   }
 
@@ -4668,24 +4601,23 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002a2b4L)
-  public static void FUN_8002a2b4(final int textboxIndex) {
-    final Struct84 a2 = _800bdf38[textboxIndex];
-    long a0_0 = a2.ptr_58;
+  public static void clearTextboxChars(final int textboxIndex) {
+    final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
 
     //LAB_8002a2f0
-    for(int a1 = 0; a1 < a2.chars_1c * (a2.lines_1e + 1); a1++) {
-      MEMORY.ref(2, a0_0).offset(0x0L).setu(0);
-      MEMORY.ref(2, a0_0).offset(0x2L).setu(0);
-      MEMORY.ref(1, a0_0).offset(0x4L).setu(0);
-      MEMORY.ref(2, a0_0).offset(0x6L).setu(0);
-      a0_0 = a0_0 + 0x8L;
+    for(int charIndex = 0; charIndex < textboxText.chars_1c * (textboxText.lines_1e + 1); charIndex++) {
+      final TextboxChar08 chr = textboxText.chars_58[charIndex];
+      chr.x_00 = 0;
+      chr.y_02 = 0;
+      chr._04 = 0;
+      chr.char_06 = 0;
     }
 
     //LAB_8002a324
   }
 
   @Method(0x8002a32cL)
-  public static void FUN_8002a32c(final int textboxIndex, final int a1, final int x, final int y, final int chars, final int lines) {
+  public static void initTextbox(final int textboxIndex, final int a1, final int x, final int y, final int chars, final int lines) {
     clearTextbox(textboxIndex);
 
     final Textbox4c struct = textboxes_800be358[textboxIndex];
@@ -4703,7 +4635,7 @@ public final class Scus94491BpeSegment_8002 {
   public static void FUN_8002a3ec(final int textboxIndex, final long a1) {
     if((a1 & 0x1L) == 0) {
       //LAB_8002a40c
-      _800bdf38[textboxIndex]._00 = 0;
+      textboxText_800bdf38[textboxIndex]._00 = 0;
       textboxes_800be358[textboxIndex]._00 = 0;
     } else {
       //LAB_8002a458
@@ -4721,7 +4653,7 @@ public final class Scus94491BpeSegment_8002 {
     final TextboxArrow0c arrow = textboxArrows_800bdea0[textboxIndex];
 
     if((arrow._00 & 0x1) != 0) {
-      if((_800bdf38[textboxIndex]._08 & 0x1000) != 0) {
+      if((textboxText_800bdf38[textboxIndex]._08 & 0x1000) != 0) {
         if((tickCount_800bb0fc.get() & 0x1) == 0) {
           arrow.spriteIndex_08++;
         }
@@ -4892,7 +4824,6 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x8002aa04L)
   public static void FUN_8002aa04() {
-    MEMORY.memfill(_800beb98.getAddress(), 0x190, 0);
     _800bed28.setu(0);
   }
 
@@ -4944,9 +4875,9 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_8002abdc
     //LAB_8002abe0
-    final int a0 = FUN_800e6730(index_80052c38.get());
-    if((a0 & 0x10) != 0) {
-      FUN_800e5534(a0 >>> 22, a0 >>> 16 & 0x3f);
+    final int collisionAndTransitionInfo = getCollisionAndTransitionInfo(index_80052c38.get());
+    if((collisionAndTransitionInfo & 0x10) != 0) {
+      FUN_800e5534(collisionAndTransitionInfo >>> 22, collisionAndTransitionInfo >>> 16 & 0x3f);
     }
 
     //LAB_8002ac10
@@ -5001,16 +4932,7 @@ public final class Scus94491BpeSegment_8002 {
     if(xaLoadingStage == 3) {
       LOGGER.info("Playing XA archive %d file %d", xaArchiveIndex, xaFileIndex);
 
-      final long v1;
-      if(drgnBinIndex_800bc058.get() == 0x4L) {
-        v1 = lodXa00Xa_80052c94.getAddress();
-      } else {
-        //LAB_8002c438
-        v1 = lodXa00Xa_80052c74.getAddress();
-      }
-
       //LAB_8002c448
-      LOGGER.info("PLAY XA %d", MEMORY.ref(2, v1).offset(xaArchiveIndex * 0x8L).getSigned());
       //TODO don't do this.
       new Thread(() -> Fmv.playXa(xaArchiveIndex, xaFileIndex)).start();
 //      final CdlLOC pos = CdlFILE_800bb4c8.get((int)MEMORY.ref(2, v1).offset(xaArchiveIndex * 0x8L).getSigned()).pos;
@@ -5028,7 +4950,7 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x8002ced8L)
   public static void start() {
-    bzero(_8005a1d8.getAddress(), 0x6c4b0);
+    MEMORY.memfill(_8005a1d8.getAddress(), 0x6c4b0, 0);
     main();
   }
 

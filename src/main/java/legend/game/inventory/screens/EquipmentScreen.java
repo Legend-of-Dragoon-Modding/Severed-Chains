@@ -205,7 +205,7 @@ public class EquipmentScreen extends MenuScreen {
         this.itemHighlight.y_44 = this.FUN_800fc804(slot);
 
         final int itemIndex = this.selectedSlot + this.slotScroll;
-        if(itemIndex < gameState_800babc8.equipment_1e8.size()) {
+        if(itemIndex < this.menuItems.size()) {
           final int equipmentId = this.menuItems.get(itemIndex).itemId_00;
           if(equipmentId != 0xff) {
             final int previousEquipmentId = equipItem(equipmentId, characterIndices_800bdbb8.get(this.charSlot).get());
@@ -294,7 +294,7 @@ public class EquipmentScreen extends MenuScreen {
 
     final int itemIndex = this.selectedSlot + this.slotScroll;
 
-    if(itemIndex < gameState_800babc8.equipment_1e8.size()) {
+    if(itemIndex < this.menuItems.size()) {
       final int equipmentId = this.menuItems.get(itemIndex).itemId_00;
 
       if(equipmentId != 0xff) {

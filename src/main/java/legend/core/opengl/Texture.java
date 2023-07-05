@@ -1,5 +1,6 @@
 package legend.core.opengl;
 
+import legend.core.memory.types.TriConsumer;
 import org.lwjgl.system.MemoryStack;
 
 import javax.annotation.Nullable;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import static legend.core.IoHelper.pathToByteBuffer;
+import static org.lwjgl.opengl.GL11C.GL_LINEAR;
 import static org.lwjgl.opengl.GL11C.GL_NEAREST;
 import static org.lwjgl.opengl.GL11C.GL_NO_ERROR;
 import static org.lwjgl.opengl.GL11C.GL_REPEAT;
@@ -39,6 +41,7 @@ import static org.lwjgl.opengl.GL21C.GL_SRGB_ALPHA;
 import static org.lwjgl.opengl.GL30C.glGenerateMipmap;
 import static org.lwjgl.stb.STBImage.stbi_failure_reason;
 import static org.lwjgl.stb.STBImage.stbi_load_from_memory;
+import static org.lwjgl.stb.STBImage.stbi_set_flip_vertically_on_load;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.memFree;
 
@@ -61,12 +64,32 @@ public final class Texture {
     });
   }
 
+  public static Texture filteredEmpty(final int w, final int h) {
+    return Texture.create(builder -> {
+      builder.size(w, h);
+      builder.internalFormat(GL_RGBA);
+      builder.dataFormat(GL_RGBA);
+      builder.minFilter(GL_LINEAR);
+      builder.magFilter(GL_LINEAR);
+    });
+  }
+
   public static Texture png(final Path path) {
     return Texture.create(builder -> {
       builder.internalFormat(GL_RGBA);
       builder.dataFormat(GL_RGBA);
       builder.minFilter(GL_NEAREST);
       builder.magFilter(GL_NEAREST);
+      builder.png(path);
+    });
+  }
+
+  public static Texture filteredPng(final Path path) {
+    return Texture.create(builder -> {
+      builder.internalFormat(GL_RGBA);
+      builder.dataFormat(GL_RGBA);
+      builder.minFilter(GL_LINEAR);
+      builder.magFilter(GL_LINEAR);
       builder.png(path);
     });
   }
@@ -78,7 +101,7 @@ public final class Texture {
 
   private final int dataFormat;
 
-  private Texture(@Nullable final ByteBuffer data, @Nullable final FloatBuffer dataF, final int w, final int h, final int internalFormat, final int dataFormat, final int dataType, final int minFilter, final int magFilter, final int wrapS, final int wrapT, final boolean generateMipmaps, final List<MipmapBuilder> mipmaps) {
+  private Texture(@Nullable final TriConsumer<Integer, Integer, Integer> texImage2d, final int w, final int h, final int internalFormat, final int dataFormat, final int dataType, final int minFilter, final int magFilter, final int wrapS, final int wrapT, final boolean generateMipmaps, final List<MipmapBuilder> mipmaps) {
     this.id = glGenTextures();
     this.width = w;
     this.height = h;
@@ -90,10 +113,8 @@ public final class Texture {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapS);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapT);
 
-    if(dataF != null) {
-      glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, w, h, 0, dataFormat, dataType, dataF);
-    } else {
-      glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, w, h, 0, dataFormat, dataType, data);
+    if(texImage2d != null) {
+      texImage2d.accept(internalFormat, dataFormat, dataType);
     }
 
     final int error = glGetError();
@@ -145,10 +166,7 @@ public final class Texture {
   }
 
   public static class Builder {
-    @Nullable
-    private ByteBuffer data;
-    @Nullable
-    private FloatBuffer dataF;
+    private TriConsumer<Integer, Integer, Integer> texImage2d = (internalFormat, dataFormat, dataType) -> glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, this.w, this.h, 0, dataFormat, dataType, (ByteBuffer)null);
     private int w;
     private int h;
 
@@ -188,6 +206,7 @@ public final class Texture {
         final IntBuffer h = stack.mallocInt(1);
         final IntBuffer comp = stack.mallocInt(1);
 
+        stbi_set_flip_vertically_on_load(true);
         final ByteBuffer data = stbi_load_from_memory(imageBuffer, w, h, comp, 4);
         if(data == null) {
           throw new RuntimeException("Failed to load image: " + stbi_failure_reason());
@@ -204,13 +223,18 @@ public final class Texture {
       this.h = h;
     }
 
-    public void data(@Nullable final ByteBuffer data, final int w, final int h) {
-      this.data = data;
+    public void data(final ByteBuffer data, final int w, final int h) {
+      this.texImage2d = (internalFormat, dataFormat, dataType) -> glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, w, h, 0, dataFormat, dataType, data);
       this.size(w, h);
     }
 
-    public void data(@Nullable final FloatBuffer data, final int w, final int h) {
-      this.dataF = data;
+    public void data(final FloatBuffer data, final int w, final int h) {
+      this.texImage2d = (internalFormat, dataFormat, dataType) -> glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, w, h, 0, dataFormat, dataType, data);
+      this.size(w, h);
+    }
+
+    public void data(final int[] data, final int w, final int h) {
+      this.texImage2d = (internalFormat, dataFormat, dataType) -> glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, w, h, 0, dataFormat, dataType, data);
       this.size(w, h);
     }
 
@@ -254,7 +278,7 @@ public final class Texture {
     }
 
     Texture build() {
-      return new Texture(this.data, this.dataF, this.w, this.h, this.internalFormat, this.dataFormat, this.dataType, this.minFilter, this.magFilter, this.wrapS, this.wrapT, this.generateMipmaps, this.mipmaps);
+      return new Texture(this.texImage2d, this.w, this.h, this.internalFormat, this.dataFormat, this.dataType, this.minFilter, this.magFilter, this.wrapS, this.wrapT, this.generateMipmaps, this.mipmaps);
     }
   }
 

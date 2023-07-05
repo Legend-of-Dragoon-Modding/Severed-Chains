@@ -15,8 +15,8 @@ import javax.annotation.Nullable;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
-import static legend.core.GameEngine.GPU;
-import static legend.game.Scus94491BpeSegment.keyRepeat;
+import static legend.core.GameEngine.MODS;
+import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment_800b.analogAngle_800bee9c;
 import static legend.game.Scus94491BpeSegment_800b.analogInput_800beebc;
 import static legend.game.Scus94491BpeSegment_800b.analogMagnitude_800beeb4;
@@ -40,11 +40,11 @@ public final class Input {
   }
 
   public static void update() {
-    if(!CoreMod.RECEIVE_INPUT_ON_INACTIVE_WINDOW_CONFIG.isValid()) {
+    if(!MODS.isReady(CoreMod.MOD_ID)) {
       return;
     }
 
-    if(!GPU.window().hasFocus() && !CONFIG.getConfig(CoreMod.RECEIVE_INPUT_ON_INACTIVE_WINDOW_CONFIG.get()) || activeController == null) {
+    if(!RENDERER.window().hasFocus() && !CONFIG.getConfig(CoreMod.RECEIVE_INPUT_ON_INACTIVE_WINDOW_CONFIG.get()) || activeController == null) {
       return;
     }
 
@@ -59,18 +59,25 @@ public final class Input {
         }
       } else if(held.containsKey(binding)) {
         held.removeBoolean(binding);
-        keyRepeat.remove(binding.getInputAction().hexCode);
         EVENTS.postEvent(new InputReleasedEvent(binding.getInputAction()));
       }
     }
 
-    GPU.window().events.callInputEvents(activeController);
+    RENDERER.events().callInputEvents(activeController);
   }
 
   public static void updateLegacyInput() {
     input_800bee90.set(0);
     analogAngle_800bee9c.set(0);
     analogMagnitude_800beeb4.set(0);
+
+    if(!MODS.isReady(CoreMod.MOD_ID)) {
+      return;
+    }
+
+    if(!RENDERER.window().hasFocus() && !CONFIG.getConfig(CoreMod.RECEIVE_INPUT_ON_INACTIVE_WINDOW_CONFIG.get()) || activeController == null) {
+      return;
+    }
 
     for(final var entry : held.object2BooleanEntrySet()) {
       if(entry.getBooleanValue()) {
@@ -105,12 +112,10 @@ public final class Input {
           input_800bee90.or(hexCode);
           press_800bee94.or(hexCode);
           repeat_800bee98.or(hexCode);
-          keyRepeat.put(hexCode, 0);
         } else {
           input_800bee90.and(~hexCode);
           press_800bee94.and(~hexCode);
           repeat_800bee98.and(~hexCode);
-          keyRepeat.remove(hexCode);
         }
       }
     }
@@ -118,12 +123,15 @@ public final class Input {
 
   public static void clearLegacyInput() {
     pressedThisFrame.clear();
+
+    press_800bee94.set(0);
+    repeat_800bee98.set(0);
   }
 
   public static void init() {
-    GPU.window().events.onKeyPress(Input::keyPress);
-    GPU.window().events.onKeyRelease(Input::keyRelease);
-    GPU.window().events.onLostFocus(Input::lostFocus);
+    RENDERER.events().onKeyPress(Input::keyPress);
+    RENDERER.events().onKeyRelease(Input::keyRelease);
+    RENDERER.events().onLostFocus(Input::lostFocus);
 
     useController(null);
 

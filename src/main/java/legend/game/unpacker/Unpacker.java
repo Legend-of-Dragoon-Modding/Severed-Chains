@@ -267,6 +267,7 @@ public final class Unpacker {
     synchronized(IO_LOCK) {
       try {
         Files.createDirectories(ROOT);
+        Files.createDirectories(Path.of("./isos"));
 
         if(getUnpackVersion() != VERSION) {
           final long start = System.nanoTime();
@@ -352,6 +353,8 @@ public final class Unpacker {
         Files.writeString(ROOT.resolve("version"), Integer.toString(VERSION));
 
         LOGGER.info("Files unpacked in %d seconds", (System.nanoTime() - start) / 1_000_000_000L);
+      } catch(final UnpackerException e) {
+        throw e;
       } catch(final Throwable e) {
         throw new UnpackerException(e);
       }

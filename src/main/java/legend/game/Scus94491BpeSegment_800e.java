@@ -9,6 +9,7 @@ import legend.core.gte.GsDOBJ2;
 import legend.core.gte.Tmd;
 import legend.core.memory.Method;
 import legend.game.types.CContainer;
+import legend.game.types.EngineState;
 import legend.game.types.Model124;
 import legend.game.types.TexPageY;
 import legend.game.types.TmdAnimationFile;
@@ -20,10 +21,7 @@ import java.util.Arrays;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SCRIPTS;
-import static legend.game.Scus94491BpeSegment._1f8003fc;
-import static legend.game.Scus94491BpeSegment.allocateHeap;
 import static legend.game.Scus94491BpeSegment.extendedTmd_800103d0;
-import static legend.game.Scus94491BpeSegment.heap_8011e210;
 import static legend.game.Scus94491BpeSegment.initSound;
 import static legend.game.Scus94491BpeSegment.loadMenuSounds;
 import static legend.game.Scus94491BpeSegment.orderingTableBits_1f8003c0;
@@ -46,15 +44,12 @@ import static legend.game.Scus94491BpeSegment_8003.ResetGraph;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.setDrawOffset;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
-import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndexOnceLoaded_8004dd24;
+import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8007.clearRed_8007a3a8;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
-import static legend.game.Scus94491BpeSegment_800b._800bb228;
-import static legend.game.Scus94491BpeSegment_800b._800bb348;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
 import static legend.game.Scus94491BpeSegment_800b._800bf0d0;
 import static legend.game.Scus94491BpeSegment_800b.afterFmvLoadingStage_800bf0ec;
-import static legend.game.Scus94491BpeSegment_800b.array_800bb198;
 import static legend.game.Scus94491BpeSegment_800b.clearBlue_800babc0;
 import static legend.game.Scus94491BpeSegment_800b.clearGreen_800bb104;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
@@ -97,23 +92,17 @@ public final class Scus94491BpeSegment_800e {
     setProjectionPlaneDistance(640);
     initSound();
 
-    mainCallbackIndexOnceLoaded_8004dd24.set(0);
+    engineStateOnceLoaded_8004dd24 = EngineState.PRELOAD_00;
     pregameLoadingStage_800bb10c.set(0);
-    vsyncMode_8007a3b8.set(2);
+    vsyncMode_8007a3b8 = 2;
     tickCount_800bb0fc.set(0);
 
     precalculateTpages();
     loadSystemFont();
     SCRIPTS.clear();
-    allocateHeap(heap_8011e210.getAddress(), 0x7d_edf0);
     loadOvalBlobTexture();
     FUN_800e6d60();
     initFmvs();
-  }
-
-  @Method(0x800e5fc0L)
-  public static void finalizePregameLoading() {
-    throw new RuntimeException("No longer used");
   }
 
   @Method(0x800e60d8L)
@@ -128,18 +117,18 @@ public final class Scus94491BpeSegment_800e {
 
   @Method(0x800e6184L)
   public static void preload() {
-    drgnBinIndex_800bc058.set(1);
+    drgnBinIndex_800bc058 = 1;
 
     loadMenuSounds();
     resizeDisplay(320, 240);
-    vsyncMode_8007a3b8.set(2);
+    vsyncMode_8007a3b8 = 2;
 
     //LAB_800e600c
     loadBasicUiTexturesAndSomethingElse();
 
     //LAB_800e6040
-    fmvIndex_800bf0dc.setu(0);
-    afterFmvLoadingStage_800bf0ec.set(2);
+    fmvIndex_800bf0dc = 0;
+    afterFmvLoadingStage_800bf0ec = EngineState.TITLE_02;
   }
 
   @Method(0x800e6524L)
@@ -149,29 +138,9 @@ public final class Scus94491BpeSegment_800e {
     final RECT imageRect = new RECT((short)832, (short)424, (short)64, (short)56);
     LoadImage(imageRect, header.getImageAddress());
 
-    _800bb348.setu(texPages_800bb110.get(Bpp.BITS_4).get(Translucency.HALF_B_PLUS_HALF_F).get(TexPageY.Y_256).get()).oru(0xdL);
-
     if(header.hasClut()) {
       final RECT clutRect = new RECT((short)832, (short)422, (short)32, (short)1);
       LoadImage(clutRect, header.getClutAddress());
-    }
-
-    //LAB_800e65c4
-    _1f8003fc.setu(_800bb228.getAddress());
-
-    //LAB_800e65e8
-    for(int i = 2; i < 37; i++) {
-      long v1 = 0xffff_ffffL;
-      long a1 = 0x1L;
-
-      //LAB_800e65fc
-      while(v1 >= i) {
-        a1 *= i;
-        v1 /= i;
-      }
-
-      //LAB_800e6620
-      array_800bb198.get(i - 2).set(a1);
     }
   }
 

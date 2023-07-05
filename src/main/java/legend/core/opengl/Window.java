@@ -13,6 +13,8 @@ import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GLUtil;
 import org.lwjgl.system.MemoryStack;
 
 import java.io.IOException;
@@ -44,11 +46,11 @@ import static org.lwjgl.glfw.GLFW.GLFW_VISIBLE;
 import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
 import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
 import static org.lwjgl.glfw.GLFW.glfwGetClipboardString;
+import static org.lwjgl.glfw.GLFW.glfwGetFramebufferSize;
 import static org.lwjgl.glfw.GLFW.glfwGetKey;
 import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
 import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
 import static org.lwjgl.glfw.GLFW.glfwGetWindowContentScale;
-import static org.lwjgl.glfw.GLFW.glfwGetWindowSize;
 import static org.lwjgl.glfw.GLFW.glfwInit;
 import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
 import static org.lwjgl.glfw.GLFW.glfwSetCharCallback;
@@ -56,6 +58,7 @@ import static org.lwjgl.glfw.GLFW.glfwSetClipboardString;
 import static org.lwjgl.glfw.GLFW.glfwSetCursorPos;
 import static org.lwjgl.glfw.GLFW.glfwSetCursorPosCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetErrorCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetFramebufferSizeCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetInputMode;
 import static org.lwjgl.glfw.GLFW.glfwSetJoystickCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
@@ -65,7 +68,6 @@ import static org.lwjgl.glfw.GLFW.glfwSetWindowFocusCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowSize;
-import static org.lwjgl.glfw.GLFW.glfwSetWindowSizeCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowTitle;
 import static org.lwjgl.glfw.GLFW.glfwShowWindow;
 import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
@@ -73,6 +75,10 @@ import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.glfw.GLFW.glfwWindowHint;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
+import static org.lwjgl.opengl.GL11C.GL_VENDOR;
+import static org.lwjgl.opengl.GL11C.GL_VERSION;
+import static org.lwjgl.opengl.GL11C.glGetString;
+import static org.lwjgl.opengl.GL20C.GL_SHADING_LANGUAGE_VERSION;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
@@ -135,7 +141,7 @@ public class Window {
       throw new RuntimeException("Failed to create the GLFW window");
     }
 
-    glfwSetWindowSizeCallback(this.window, this.events::onResize);
+    glfwSetFramebufferSizeCallback(this.window, this.events::onResize);
     glfwSetWindowFocusCallback(this.window,this.events::onFocus);
     glfwSetKeyCallback(this.window, this.events::onKey);
     glfwSetCharCallback(this.window, this.events::onChar);
@@ -154,7 +160,7 @@ public class Window {
       final IntBuffer pWidth = stack.mallocInt(1);
       final IntBuffer pHeight = stack.mallocInt(1);
 
-      glfwGetWindowSize(this.window, pWidth, pHeight);
+      glfwGetFramebufferSize(this.window, pWidth, pHeight);
 
       final GLFWVidMode vidMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
@@ -168,6 +174,18 @@ public class Window {
         (vidMode.height() - pHeight.get(0)) / 2
       );
     }
+
+    this.makeContextCurrent();
+
+    GL.createCapabilities();
+
+    LOGGER.info("OpenGL version: {}", glGetString(GL_VERSION));
+    LOGGER.info("GLSL version: {}", glGetString(GL_SHADING_LANGUAGE_VERSION));
+    LOGGER.info("Device manufacturer: {}", glGetString(GL_VENDOR));
+
+    if("true".equals(System.getenv("opengl_debug"))) {
+      GLUtil.setupDebugMessageCallback(System.err);
+    }
   }
 
   public Action addAction(final Action action) {
@@ -175,7 +193,7 @@ public class Window {
     return action;
   }
 
-  void makeContextCurrent() {
+  private void makeContextCurrent() {
     glfwMakeContextCurrent(this.window);
     glfwSwapInterval(0);
   }
@@ -198,7 +216,7 @@ public class Window {
     try(final MemoryStack stack = MemoryStack.stackPush()) {
       final IntBuffer x = stack.mallocInt(1);
       final IntBuffer y = stack.mallocInt(1);
-      glfwGetWindowSize(this.window, x, y);
+      glfwGetFramebufferSize(this.window, x, y);
 
       this.events.onResize(this.window, x.get(0), y.get(0));
     }
@@ -250,11 +268,11 @@ public class Window {
   }
 
   public int getWidth() {
-    return (int)(this.width / this.scale);
+    return this.width;
   }
 
   public int getHeight() {
-    return (int)(this.height / this.scale);
+    return this.height;
   }
 
   public float getScale() {
@@ -328,9 +346,6 @@ public class Window {
 
     private void onResize(final long window, final int width, final int height) {
       synchronized(LOCK) {
-        this.window.width = width;
-        this.window.height = height;
-
         try(final MemoryStack stack = MemoryStack.stackPush()) {
           final FloatBuffer x = stack.mallocFloat(1);
           final FloatBuffer y = stack.mallocFloat(1);
@@ -338,7 +353,10 @@ public class Window {
           this.window.scale = x.get(0);
         }
 
-        this.resize.forEach(cb -> cb.resize(this.window, width, height));
+        this.window.width = (int)(width / this.window.scale);
+        this.window.height = (int)(height / this.window.scale);
+
+        this.resize.forEach(cb -> cb.resize(this.window, this.window.width, this.window.height));
       }
     }
 
