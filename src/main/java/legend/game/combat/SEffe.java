@@ -2253,7 +2253,7 @@ public final class SEffe {
   public static void initializeParticleInstance(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
     if((effectInner.particleInnerStuff_1c & 0xff) == 0) {
       effectInner.particleInnerStuff_1c &= 0xffff_ff00;
-      effectInner.particleInnerStuff_1c |= particleInnerStuffDefaultsArray_801197ec.get(effectInner.callbackIndex_20)._02.get();
+      effectInner.particleInnerStuff_1c |= particleInnerStuffDefaultsArray_801197ec.get(effectInner.callbackIndex_20).ticksRemaining_02.get();
     }
 
     //LAB_8010137c
@@ -2269,7 +2269,7 @@ public final class SEffe {
     }
 
     //LAB_80101400
-    effect.callback90Type_61 = particleInnerStuffDefaultsArray_801197ec.get(effectInner.callbackIndex_20).flag_03.get();
+    effect.callback90Type_61 = particleInnerStuffDefaultsArray_801197ec.get(effectInner.callbackIndex_20).callbackType_03.get();
     particle.unused_00 = 0x73;
     particle.unused_01 = 0x6d;
     particle.unused_02 = 0x6b;
