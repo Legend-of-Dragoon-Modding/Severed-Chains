@@ -3,6 +3,7 @@ package legend.core.spu;
 import legend.core.DebugHelper;
 import legend.core.MathHelper;
 import legend.game.Scus94491BpeSegment_8004;
+import legend.game.sound.ReverbConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -42,7 +43,7 @@ public class Spu implements Runnable {
   private boolean muted = true;
   private int noiseFrequencyShift;
   private int noiseFrequencyStep;
-  private ReverbConfig reverb;
+  private final Reverb reverb = new Reverb();
 
   private boolean running;
 
@@ -208,38 +209,38 @@ public class Spu implements Runnable {
   }
 
   public void processReverb(final int lInput, final int rInput) {
-    final int dAPF1 = this.reverb.dApf1.get() << 2;
-    final int dAPF2 = this.reverb.dApf2.get() << 2;
-    final float vIIR = this.reverb.vIir.get() / 32768.0f;
-    final float vCOMB1 = this.reverb.vComb1.get() / 32768.0f;
-    final float vCOMB2 = this.reverb.vComb2.get() / 32768.0f;
-    final float vCOMB3 = this.reverb.vComb3.get() / 32768.0f;
-    final float vCOMB4 = this.reverb.vComb4.get() / 32768.0f;
-    final float vWALL = this.reverb.vWall.get() / 32768.0f;
-    final float vAPF1 = this.reverb.vApf1.get() / 32768.0f;
-    final float vAPF2 = this.reverb.vApf2.get() / 32768.0f;
-    final int mLSAME = this.reverb.mLSame.get() << 2;
-    final int mRSAME = this.reverb.mRSame.get() << 2;
-    final int mLCOMB1 = this.reverb.mLComb1.get() << 2;
-    final int mRCOMB1 = this.reverb.mRComb1.get() << 2;
-    final int mLCOMB2 = this.reverb.mLComb2.get() << 2;
-    final int mRCOMB2 = this.reverb.mRComb2.get() << 2;
-    final int dLSAME = this.reverb.dLSame.get() << 2;
-    final int dRSAME = this.reverb.dRSame.get() << 2;
-    final int mLDIFF = this.reverb.mLDiff.get() << 2;
-    final int mRDIFF = this.reverb.mRDiff.get() << 2;
-    final int mLCOMB3 = this.reverb.mLComb3.get() << 2;
-    final int mRCOMB3 = this.reverb.mRComb3.get() << 2;
-    final int mLCOMB4 = this.reverb.mLComb4.get() << 2;
-    final int mRCOMB4 = this.reverb.mRComb4.get() << 2;
-    final int dLDIFF = this.reverb.dLDiff.get() << 2;
-    final int dRDIFF = this.reverb.dRDiff.get() << 2;
-    final int mLAPF1 = this.reverb.mLApf1.get() << 2;
-    final int mRAPF1 = this.reverb.mRApf1.get() << 2;
-    final int mLAPF2 = this.reverb.mLApf2.get() << 2;
-    final int mRAPF2 = this.reverb.mRApf2.get() << 2;
-    final float vLIN = this.reverb.vLIn.get() / 32768.0f;
-    final float vRIN = this.reverb.vRIn.get() / 32768.0f;
+    final int dAPF1 = this.reverb.dAPF1;
+    final int dAPF2 = this.reverb.dAPF2;
+    final float vIIR = this.reverb.vIIR;
+    final float vCOMB1 = this.reverb.vCOMB1;
+    final float vCOMB2 = this.reverb.vCOMB2;
+    final float vCOMB3 = this.reverb.vCOMB3;
+    final float vCOMB4 = this.reverb.vCOMB4;
+    final float vWALL = this.reverb.vWALL;
+    final float vAPF1 = this.reverb.vAPF1;
+    final float vAPF2 = this.reverb.vAPF2;
+    final int mLSAME = this.reverb.mLSAME;
+    final int mRSAME = this.reverb.mRSAME;
+    final int mLCOMB1 = this.reverb.mLCOMB1;
+    final int mRCOMB1 = this.reverb.mRCOMB1;
+    final int mLCOMB2 = this.reverb.mLCOMB2;
+    final int mRCOMB2 = this.reverb.mRCOMB2;
+    final int dLSAME = this.reverb.dLSAME;
+    final int dRSAME = this.reverb.dRSAME;
+    final int mLDIFF = this.reverb.mLDIFF;
+    final int mRDIFF = this.reverb.mRDIFF;
+    final int mLCOMB3 = this.reverb.mLCOMB3;
+    final int mRCOMB3 = this.reverb.mRCOMB3;
+    final int mLCOMB4 = this.reverb.mLCOMB4;
+    final int mRCOMB4 = this.reverb.mRCOMB4;
+    final int dLDIFF = this.reverb.dLDIFF;
+    final int dRDIFF = this.reverb.dRDIFF;
+    final int mLAPF1 = this.reverb.mLAPF1;
+    final int mRAPF1 = this.reverb.mRAPF1;
+    final int mLAPF2 = this.reverb.mLAPF2;
+    final int mRAPF2 = this.reverb.mRAPF2;
+    final float vLIN = this.reverb.vLIN;
+    final float vRIN = this.reverb.vRIN;
 
     // Input from mixer
     final float Lin = vLIN * (lInput / 32768.0f);
@@ -491,7 +492,7 @@ public class Spu implements Runnable {
 
   public void setReverb(final ReverbConfig reverb) {
     synchronized(Spu.class) {
-      this.reverb = reverb;
+      this.reverb.set(reverb);
     }
   }
 
