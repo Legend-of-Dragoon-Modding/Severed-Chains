@@ -3547,7 +3547,7 @@ public final class Bttl_800e {
 
   @Method(0x800ee610L)
   public static void FUN_800ee610() {
-    _800c6cf4.setu(0);
+    _800c6cf4.set(0);
     _800c6c38.set(1);
     combatMenu_800c6b60 = new CombatMenua4();
     battleMenu_800c6c34 = new BattleMenuStruct58();
@@ -3614,8 +3614,8 @@ public final class Bttl_800e {
       //LAB_800ee858
     }
 
-    _800c697e.setu(0);
-    _800c6980.setu(0);
+    _800c697e.set((short)0);
+    _800c6980.set((short)0);
     dragoonSpaceElement_800c6b64 = null;
 
     //LAB_800ee894
@@ -3661,7 +3661,7 @@ public final class Bttl_800e {
         sp0x30.w.set(_800c6e48.get(fileIndex).getX());
         sp0x30.h.set(_800c6e48.get(fileIndex).getY());
         GPU.uploadData(sp0x30, tim.getClutData());
-        _800c6cf4.addu(0x1L);
+        _800c6cf4.add(1);
       }
     }
 
@@ -3983,11 +3983,11 @@ public final class Bttl_800e {
       //LAB_800ef89c
       for(int a1 = 0; a1 < num.digits_24.length; a1++) {
         final FloatingNumberC4Sub20 v1 = num.digits_24[a1];
-        v1._00 = 0;
+        v1.flags_00 = 0;
         v1._04 = 0;
         v1._08 = 0;
         v1.digit_0c = -1;
-        v1._1c = 0;
+        v1.unused_1c = 0;
       }
     }
   }

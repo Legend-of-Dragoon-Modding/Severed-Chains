@@ -39,11 +39,11 @@ import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.combat.Bttl_800c._800c66b0;
-import static legend.game.combat.Bttl_800c._800c6718;
 import static legend.game.combat.Bttl_800c._800c6748;
 import static legend.game.combat.Bttl_800c._800c6780;
 import static legend.game.combat.Bttl_800c.addCombatant;
 import static legend.game.combat.Bttl_800c.allBobjCount_800c66d0;
+import static legend.game.combat.Bttl_800c.currentStageData_800c6718;
 import static legend.game.combat.Bttl_800c.deffManager_800c693c;
 import static legend.game.combat.Bttl_800c.getCombatant;
 import static legend.game.combat.Bttl_800c.getCombatantIndex;
@@ -76,17 +76,17 @@ public class SBtld {
   @Method(0x80109050L)
   public static void FUN_80109050() {
     final StageData10 stageData = stageData_80109a98.get(encounterId_800bb0f8.get());
-    _800c6718.offset(0x00L).setu(stageData._00.get());
-    _800c6718.offset(0x04L).setu(stageData.musicIndex_01.get());
-    _800c6718.offset(0x08L).setu(stageData._02.get());
-    _800c6718.offset(0x0cL).setu(stageData._03.get());
-    _800c6718.offset(0x10L).setu(stageData._04.get());
-    _800c6718.offset(0x14L).setu(stageData._05.get());
-    _800c6718.offset(0x18L).setu(stageData._06.get());
-    _800c6718.offset(0x1cL).setu(stageData._08.get());
-    _800c6718.offset(0x20L).setu(stageData._0a.get());
-    _800c6718.offset(0x24L).setu(stageData._0c.get());
-    _800c6718.offset(0x28L).setu(stageData._0e.get());
+    currentStageData_800c6718._00 = stageData._00.get();
+    currentStageData_800c6718.musicIndex_04 = stageData.musicIndex_01.get();
+    currentStageData_800c6718._08 = stageData._02.get();
+    currentStageData_800c6718.postCombatSubmapStage_0c = stageData.postCombatSubmapStage_03.get();
+    currentStageData_800c6718._10 = stageData._04.get();
+    currentStageData_800c6718._14 = stageData._05.get();
+    currentStageData_800c6718.cameraPosIndex0_18 = stageData.cameraPosIndex0_06.get();
+    currentStageData_800c6718.cameraPosIndex1_1c = stageData.cameraPosIndex1_08.get();
+    currentStageData_800c6718.cameraPosIndex2_20 = stageData.cameraPosIndex2_0a.get();
+    currentStageData_800c6718.cameraPosIndex3_24 = stageData.cameraPosIndex3_0c.get();
+    currentStageData_800c6718.postCombatSubmapCut_28 = stageData.postCombatSubmapCut_0e.get();
 
     script_800c66fc = new ScriptFile("player_combat_script", Unpacker.loadFile("player_combat_script").getBytes());
 
@@ -98,17 +98,17 @@ public class SBtld {
     scriptState_800c674c = SCRIPTS.allocateScriptState(5, "DRGN1.401", 0, null);
     scriptState_800c674c.loadScriptFile(new ScriptFile("DRGN1.401", file.getBytes()));
 
-    final long v1;
+    final int v1;
     if((simpleRand() & 0x8000L) == 0) {
-      v1 = 0x14L;
+      v1 = currentStageData_800c6718._14;
     } else {
-      v1 = 0x10L;
+      v1 = currentStageData_800c6718._10;
     }
 
     //LAB_801091dc
-    _800c6748.set((int)_800c6718.offset(v1).get() + 1);
+    _800c6748.set(v1 + 1);
     _800c66b0.set(simpleRand() & 3);
-    _800c6780.set((int)_800c6718.offset((_800c66b0.get() + 6) * 0x4L).get());
+    _800c6780.set(currentStageData_800c6718.get(_800c66b0.get() + 6));
     _800bc960.or(0x2);
   }
 

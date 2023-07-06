@@ -3071,7 +3071,7 @@ public final class Bttl_800d {
   public static void FUN_800daa80() {
     if(_800fabb8.get() == 0x1L) {
       if(_800c67d4.get() != 0) {
-        _800c67d4.subu(0x1L);
+        _800c67d4.sub(1);
         return;
       }
 
@@ -3081,29 +3081,29 @@ public final class Bttl_800d {
       final int a0 = tickCount_800bb0fc.get() & 0x3;
       if(a0 == 0) {
         //LAB_800dab04
-        x = (int)_800c67e4.get();
-        y = (int)_800c67e8.get() * 2;
+        x = _800c67e4.get();
+        y = _800c67e8.get() * 2;
       } else if(a0 == 0x1L) {
         //LAB_800dab1c
-        x = -(int)_800c67e4.get() * 2;
-        y = -(int)_800c67e8.get();
+        x = -_800c67e4.get() * 2;
+        y = -_800c67e8.get();
         //LAB_800daaec
       } else if(a0 == 0x2L) {
         //LAB_800dab3c
-        x = (int)_800c67e4.get() * 2;
-        y = (int)_800c67e8.get();
+        x = _800c67e4.get() * 2;
+        y = _800c67e8.get();
       } else {
         //LAB_800dab54
-        x = -(int)_800c67e4.get();
-        y = -(int)_800c67e8.get() * 2;
+        x = -_800c67e4.get();
+        y = -_800c67e8.get() * 2;
       }
 
       //LAB_800dab70
       //LAB_800dab78
       SetGeomOffset(screenOffsetX_800c67bc.get() + x, screenOffsetY_800c67c0.get() + y);
 
-      _800c67c4.subu(0x1L);
-      if(_800c67c4.getSigned() <= 0) {
+      _800c67c4.sub(1);
+      if(_800c67c4.get() <= 0) {
         _800fabb8.setu(0);
         SetGeomOffset(screenOffsetX_800c67bc.get(), screenOffsetY_800c67c0.get());
       }
@@ -4131,10 +4131,10 @@ public final class Bttl_800d {
 
   @Method(0x800dcbecL)
   public static FlowControl FUN_800dcbec(final RunningScript<?> script) {
-    _800c67c4.setu(script.params_20[0].get());
-    _800c67d4.setu(script.params_20[1].get());
-    _800c67e4.setu(script.params_20[2].get());
-    _800c67e8.setu(script.params_20[3].get());
+    _800c67c4.set(script.params_20[0].get());
+    _800c67d4.set(script.params_20[1].get());
+    _800c67e4.set(script.params_20[2].get());
+    _800c67e8.set(script.params_20[3].get());
     _800fabb8.setu(0x1L);
     getScreenOffset(screenOffsetX_800c67bc, screenOffsetY_800c67c0);
     return FlowControl.CONTINUE;
