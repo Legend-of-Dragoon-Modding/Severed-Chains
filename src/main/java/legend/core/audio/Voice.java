@@ -4,12 +4,12 @@ import legend.core.audio.assets.Channel;
 import legend.core.audio.assets.Instrument;
 import legend.core.audio.assets.InstrumentLayer;
 
+import javax.annotation.Nullable;
+
 final class Voice {
-  private static final short[] EMPTY = new short[] {0, 0, 0};
+  private static final short[] EMPTY = {0, 0, 0};
   private final int index;
   private final LookupTables lookupTables;
-
-  private final BufferedSound sound;
 
   private final VoiceCounter counter = new VoiceCounter();
   private final AdsrEnvelope adsrEnvelope = new AdsrEnvelope();
@@ -37,7 +37,7 @@ final class Voice {
   private int breathControlPosition;
 
   private boolean _18;
-  private boolean _0c;
+  private boolean highPriority;
 
   private double volumeLeft;
   private double volumeRight;
@@ -48,21 +48,19 @@ final class Voice {
   private final Voice previousVoice;
   private short latestSample;
 
+  private float outLeft;
+  private float outRight;
 
   Voice(final int index, final LookupTables lookupTables, final int bufferSize, final boolean stereo, final Voice previousVoice) {
     this.index = index;
     this.lookupTables = lookupTables;
-    this.sound = new BufferedSound(bufferSize, stereo);
     this.previousVoice = previousVoice;
   }
 
-  //TODO stereo probably shouldn't be passed here, doesn't sound too safe for changing
-  void tick(final boolean stereo) {
+  void tick() {
     if(!this.used) {
-      for(int channel = 0; channel < (stereo ? 2 : 1); channel++) {
-        this.sound.bufferSample((short)0);
-      }
-
+      this.outLeft = 0;
+      this.outRight = 0;
       return;
     }
 
@@ -76,11 +74,21 @@ final class Voice {
 
     this.latestSample = adsrApplied;
 
-    this.sound.bufferSample((short)(adsrApplied * this.volumeLeft));
+    this.outLeft = (float)(adsrApplied * this.volumeLeft / 0x8000);
+    this.outRight = (float)(adsrApplied * this.volumeRight / 0x8000);
+  }
 
-    if(stereo) {
-      this.sound.bufferSample((short)(adsrApplied * this.volumeRight));
-    }
+  public float getOutLeft() {
+    return this.outLeft;
+  }
+
+  public float getOutRight() {
+    return this.outRight;
+  }
+
+  @Nullable
+  public InstrumentLayer getLayer() {
+    return this.layer;
   }
 
   private short sampleVoice() {
@@ -203,13 +211,8 @@ final class Voice {
     this.breathControlPosition = 0;
     this.priorityOrder = playingVoices;
 
-    if(this.layer.isLowPriority()) {
-      this.lowPriority = false;
-      this._0c = true;
-    } else {
-      this.lowPriority = true;
-      this._0c = false;
-    }
+    this.highPriority = this.layer.isHighPriority();
+    this.lowPriority = !this.highPriority;
 
     if(this.layer.isModulation() && this.channel.getModulation() != 0) {
       this.breathControlIndex = this.layer.isBreathControlIndexFromInstrument() ? this.instrument.getBreathControlIndex() : this.layer.getBreathControlIndex();
@@ -244,7 +247,7 @@ final class Voice {
     System.out.printf("[VOICE] Voice %d Key Off%n", this.index);
     this.adsrEnvelope.keyOff();
 
-    if(!this._0c) {
+    if(!this.highPriority) {
       this.lowPriority = true;
       this._18 = false;
     } else if (!this._18) {
@@ -276,7 +279,7 @@ final class Voice {
     this.isPortamento = false;
     this.portamentoNote = 0;
 
-    this._0c = false;
+    this.highPriority = false;
     this._18 = false;
 
     this.latestSample = 0;
@@ -358,17 +361,5 @@ final class Voice {
 
   void setBreath(final int value) {
     this.breath = value;
-  }
-
-  void play() {
-    this.sound.play();
-  }
-
-  void destroy() {
-    this.sound.destroy();
-  }
-
-  void processBuffers() {
-    this.sound.processBuffers();
   }
 }

@@ -1476,6 +1476,7 @@ public final class Scus94491BpeSegment_8004 {
       SPU.setReverbMode(0);
       SPU.enableReverb();
       SPU.setReverb(reverbConfigs_80059f7c.get(type - 1).config_02);
+
       return;
     }
 

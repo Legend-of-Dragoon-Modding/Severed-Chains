@@ -18,7 +18,7 @@ public final class InstrumentLayer {
   private final int breathControlIndex;
 
   /** Flags */
-  private final boolean lowPrioriy;
+  private final boolean highPriority;
   private final boolean noise;
   private final boolean pitchBendMultiplierFromInstrument;
   private final boolean modulation;
@@ -40,7 +40,7 @@ public final class InstrumentLayer {
     this.breathControlIndex = data.readUByte(0x0E);
 
     final int flags = data.readUByte(0x0F);
-    this.lowPrioriy = (flags & 0x01) != 0;
+    this.highPriority = (flags & 0x01) != 0;
     this.noise = (flags & 0x02) != 0;
     this.pitchBendMultiplierFromInstrument = (flags & 0x10) != 0;
     this.modulation = (flags & 0x20) != 0;
@@ -88,8 +88,8 @@ public final class InstrumentLayer {
     return this.breathControlIndex;
   }
 
-  public boolean isLowPriority() {
-    return this.lowPrioriy;
+  public boolean isHighPriority() {
+    return this.highPriority;
   }
 
   public boolean isNoise() {

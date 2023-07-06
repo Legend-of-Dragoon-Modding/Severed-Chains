@@ -1,10 +1,12 @@
 package legend.core.audio;
 
 import legend.core.DebugHelper;
+import legend.core.MathHelper;
 import legend.core.audio.assets.Channel;
 import legend.core.audio.assets.Instrument;
 import legend.core.audio.assets.InstrumentLayer;
 import legend.core.audio.assets.SequencedAudio;
+import legend.game.sound.ReverbConfig;
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.ALC;
 import org.lwjgl.openal.ALCCapabilities;
@@ -35,7 +37,13 @@ public final class AudioThread implements Runnable {
   private boolean running;
   private boolean paused;
 
+  private final BufferedSound output;
+
   private final List<Sequence> sequences = new ArrayList<>();
+
+  private final Reverberizer reverb = new Reverberizer();
+  private float reverbVolumeLeft;
+  private float reverbVolumeRight;
 
   /**
    * @param frequency Amount of updates per second. Has to be a divisor of 1_000_000_000 and 44_100 (1, 2, 4, 5, 10, 20, 25, 50, 100).
@@ -79,6 +87,8 @@ public final class AudioThread implements Runnable {
     for(int voice = 1; voice < this.voices.length; voice++) {
       this.voices[voice] = new Voice(voice, lookupTables, this.samplesPerTick, stereo, this.voices[voice - 1]);
     }
+
+    this.output = new BufferedSound(this.samplesPerTick, stereo);
   }
 
   @Override
@@ -97,10 +107,7 @@ public final class AudioThread implements Runnable {
         }
       }
 
-      for(final Voice voice : this.voices) {
-        voice.processBuffers();
-      }
-
+      this.output.processBuffers();
       this.tick();
 
       final long interval = System.nanoTime() - this.time;
@@ -109,14 +116,10 @@ public final class AudioThread implements Runnable {
       this.time += this.nanosPerTick;
 
       //Restart playback if the audio thread ever lags behind
-      for(final Voice voice : this.voices) {
-        voice.play();
-      }
+      this.output.play();
     }
 
-    for(final Voice voice : this.voices) {
-      voice.destroy();
-    }
+    this.output.destroy();
 
     alcDestroyContext(this.audioContext);
     alcCloseDevice(this.audioDevice);
@@ -165,8 +168,33 @@ public final class AudioThread implements Runnable {
         System.out.printf("[SEQUENCER] Delta ms %.02f%n", sequence.samplesToProcess / 44.1d);
       }
 
+      float sumLeft = 0.0f;
+      float sumRight = 0.0f;
+
+      float sumReverbLeft = 0.0f;
+      float sumReverbRight = 0.0f;
+
       for(final Voice voice : this.voices) {
-        voice.tick(this.stereo);
+        voice.tick();
+
+        sumLeft += voice.getOutLeft();
+        sumRight += voice.getOutRight();
+
+        if(voice.getLayer() != null && voice.getLayer().isReverb()) {
+          sumReverbLeft += voice.getOutLeft();
+          sumReverbRight += voice.getOutRight();
+        }
+      }
+
+      this.reverb.processReverb(sumReverbLeft, sumReverbRight);
+
+      sumLeft += this.reverb.getOutputLeft() * this.reverbVolumeLeft;
+      sumRight += this.reverb.getOutputRight() * this.reverbVolumeRight;
+
+      this.output.bufferSample((short)(MathHelper.clamp(sumLeft * 0x8000, -0x8000, 0x7fff)));
+
+      if(this.stereo) {
+        this.output.bufferSample((short)(MathHelper.clamp(sumRight * 0x8000, -0x8000, 0x7fff)));
       }
     }
   }
@@ -474,5 +502,14 @@ public final class AudioThread implements Runnable {
   public void loadSequence(final SequencedAudio sequencedAudio, final int sequenceIndex) {
     final Sequence sequence = new Sequence(sequencedAudio, sequenceIndex);
     this.sequences.add(sequence);
+  }
+
+  public void setReverbConfig(final ReverbConfig config) {
+    this.reverb.setConfig(config);
+  }
+
+  public void setReverbVolume(final int reverbVolumeLeft, final int reverbVolumeRight) {
+    this.reverbVolumeLeft = (reverbVolumeLeft << 8) / 32768.0f;
+    this.reverbVolumeRight = (reverbVolumeRight << 8) / 32768.0f;
   }
 }
