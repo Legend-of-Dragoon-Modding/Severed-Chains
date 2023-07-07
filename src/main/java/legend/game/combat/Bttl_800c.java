@@ -55,7 +55,9 @@ import legend.game.combat.environment.BttlLightStruct84;
 import legend.game.combat.environment.CameraOctParamCallback;
 import legend.game.combat.environment.CameraQuadParamCallback;
 import legend.game.combat.environment.CameraSeptParamCallback;
-import legend.game.combat.environment.battleMenuBackgroundDisplayMetrics0c;
+import legend.game.combat.environment.BattleMenuBackgroundDisplayMetrics0c;
+import legend.game.combat.environment.BattleMenuIconMetrics08;
+import legend.game.combat.environment.BattleMenuTextMetrics08;
 import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.BattleStateEf4;
 import legend.game.combat.types.BttlStruct08;
@@ -323,7 +325,7 @@ public final class Bttl_800c {
   public static final ArrayRef<IntRef> monsterBobjs_800c6b78 = MEMORY.ref(4, 0x800c6b78L, ArrayRef.of(IntRef.class, 9, 4, IntRef::new));
   public static final IntRef monsterCount_800c6b9c = MEMORY.ref(4, 0x800c6b9cL, IntRef::new);
   public static final ByteRef cameraPositionIndicesIndex_800c6ba0 = MEMORY.ref(1, 0x800c6ba0L, ByteRef::new);
-  public static final ByteRef _800c6ba1 = MEMORY.ref(1, 0x800c6ba1L, ByteRef::new);
+  public static final ByteRef cameraPositionIndicesIndex_800c6ba1 = MEMORY.ref(1, 0x800c6ba1L, ByteRef::new);
 
   /** Uhh, contains the monsters that Melbu summons during his fight...? */
   public static final ArrayRef<LodString> melbuMonsterNames_800c6ba8 = MEMORY.ref(2, 0x800c6ba8L, ArrayRef.of(LodString.class, 3, 0x2c, LodString::new));
@@ -401,8 +403,8 @@ public final class Bttl_800c {
   public static final ArrayRef<ShortRef> _800c7194 = MEMORY.ref(2, 0x800c7194L, ArrayRef.of(ShortRef.class, 8, 2, ShortRef::new));
 
   public static final BattleMenuHighlightMetrics12 battleMenuHighlightMetrics_800c71bc = MEMORY.ref(2, 0x800c71bcL, BattleMenuHighlightMetrics12::new);
-  public static final ArrayRef<ShortRef> _800c71d0 = MEMORY.ref(2, 0x800c71d0L, ArrayRef.of(ShortRef.class, 10, 2, ShortRef::new));
-  public static final ArrayRef<ShortRef> _800c71e4 = MEMORY.ref(2, 0x800c71e4L, ArrayRef.of(ShortRef.class, 10, 2, ShortRef::new));
+  public static final ArrayRef<ShortRef> dragoonSpiritIcons_800c71d0 = MEMORY.ref(2, 0x800c71d0L, ArrayRef.of(ShortRef.class, 10, 2, ShortRef::new));
+  public static final ArrayRef<ShortRef> battleMenuIconStates_800c71e4 = MEMORY.ref(2, 0x800c71e4L, ArrayRef.of(ShortRef.class, 4, 2, ShortRef::new));
   public static final ArrayRef<ByteRef> _800c71ec = MEMORY.ref(1, 0x800c71ecL, ArrayRef.of(ByteRef.class, 3, 1, ByteRef::new));
 
   /** Different sets of bobjs for different target types (chars, monsters, all) */
@@ -444,7 +446,7 @@ public final class Bttl_800c {
   public static final QuintConsumer<EffectManagerData6c, Integer, short[], RadialGradientEffect14, Translucency>[] radialGradientEffectRenderers_800fa758 = new QuintConsumer[5];
   static {
     radialGradientEffectRenderers_800fa758[0] = Bttl_800d::renderDiscGradientEffect;
-    radialGradientEffectRenderers_800fa758[1] = Bttl_800d::FUN_800d1e80;
+    radialGradientEffectRenderers_800fa758[1] = Bttl_800d::FUN_800d1e80; // Not implemented
     radialGradientEffectRenderers_800fa758[2] = Bttl_800d::renderRingGradientEffect;
     radialGradientEffectRenderers_800fa758[3] = Bttl_800d::renderDiscGradientEffect;
     radialGradientEffectRenderers_800fa758[4] = Bttl_800d::renderRingGradientEffect;
@@ -901,15 +903,15 @@ public final class Bttl_800c {
 
   public static final ArrayRef<BattleItemMenuArrowUvMetrics06> battleMenuBackgroundMetrics_800fb5dc = MEMORY.ref(4, 0x800fb5dcL, ArrayRef.of(BattleItemMenuArrowUvMetrics06.class, 9, 6, BattleItemMenuArrowUvMetrics06::new));
 
-  public static final ArrayRef<battleMenuBackgroundDisplayMetrics0c> battleMenuBackgroundDisplayMetrics_800fb614 = MEMORY.ref(4, 0x800fb614L, ArrayRef.of(battleMenuBackgroundDisplayMetrics0c.class, 8, 12, battleMenuBackgroundDisplayMetrics0c::new));
+  public static final ArrayRef<BattleMenuBackgroundDisplayMetrics0c> battleMenuBackgroundDisplayMetrics_800fb614 = MEMORY.ref(4, 0x800fb614L, ArrayRef.of(BattleMenuBackgroundDisplayMetrics0c.class, 8, 12, BattleMenuBackgroundDisplayMetrics0c::new));
 
-  public static final Value _800fb674 = MEMORY.ref(4, 0x800fb674L);
+  public static final ArrayRef<BattleMenuIconMetrics08> battleMenuIconMetrics_800fb674 = MEMORY.ref(4, 0x800fb674L, ArrayRef.of(BattleMenuIconMetrics08.class, 12, 8, BattleMenuIconMetrics08::new));
 
-  public static final Value _800fb6bc = MEMORY.ref(2, 0x800fb6bcL);
+  public static final ArrayRef<ArrayRef<ShortRef>> battleMenuIconHeights_800fb6bc = MEMORY.ref(2, 0x800fb6bcL, ArrayRef.of(ArrayRef.classFor(ShortRef.class), 9, 6,  ArrayRef.of(ShortRef.class, 3, 2, ShortRef::new)));
 
-  public static final Value _800fb6f4 = MEMORY.ref(1, 0x800fb6f4L);
+  public static final ArrayRef<ArrayRef<ShortRef>> battleMenuIconVOffsets_800fb6f4 = MEMORY.ref(2, 0x800fb6f4L, ArrayRef.of(ArrayRef.classFor(ShortRef.class), 9, 6, ArrayRef.of(ShortRef.class, 3, 2, ShortRef::new)));
 
-  public static final Value _800fb72c = MEMORY.ref(4, 0x800fb72cL);
+  public static final ArrayRef<BattleMenuTextMetrics08> battleMenuTextMetrics_800fb72c = MEMORY.ref(4, 0x800fb72cL, ArrayRef.of(BattleMenuTextMetrics08.class, 12, 8, BattleMenuTextMetrics08::new));
 
   @Method(0x800c7304L)
   public static void cacheLivingBobjs() {
@@ -3173,7 +3175,7 @@ public final class Bttl_800c {
     }
 
     //LAB_800ccaec
-    FUN_800f8c38(0x1L);
+    FUN_800f8c38(1);
 
     final int s0 = FUN_800f6330();
     if(s0 == 0) {

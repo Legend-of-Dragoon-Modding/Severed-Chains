@@ -4340,7 +4340,7 @@ public final class Bttl_800e {
 
       // Targeting
       final BattleMenuStruct58 menu = battleMenu_800c6c34;
-      if(menu._4c) {
+      if(menu.displayTargetArrowAndName_4c) {
         drawTargetArrow(menu.targetType_50, menu.combatantIndex_54);
         final int targetCombatant = menu.combatantIndex_54;
         LodString str;

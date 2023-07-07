@@ -4,7 +4,7 @@ import legend.core.memory.Value;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.ShortRef;
 
-public class battleMenuBackgroundDisplayMetrics0c implements MemoryRef {
+public class BattleMenuBackgroundDisplayMetrics0c implements MemoryRef {
   public final Value ref;
 
   public final ShortRef vertexBaseOffsetIndex_00;
@@ -13,7 +13,7 @@ public class battleMenuBackgroundDisplayMetrics0c implements MemoryRef {
   public final ShortRef w_06;
   public final ShortRef h_08;
 
-  public battleMenuBackgroundDisplayMetrics0c(final Value ref) {
+  public BattleMenuBackgroundDisplayMetrics0c(final Value ref) {
     this.ref = ref;
 
     this.vertexBaseOffsetIndex_00 = ref.offset(2, 0x00).cast(ShortRef::new);
