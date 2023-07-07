@@ -72,24 +72,16 @@ import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.spGained_800bc950;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
-import static legend.game.combat.Bttl_800c.currentCameraPositionIndicesIndex_800c66b0;
 import static legend.game.combat.Bttl_800c._800c6748;
 import static legend.game.combat.Bttl_800c._800c697c;
 import static legend.game.combat.Bttl_800c._800c697e;
 import static legend.game.combat.Bttl_800c._800c6980;
-import static legend.game.combat.Bttl_800c.currentCameraPositionIndicesIndicesIndex_800c6ba1;
 import static legend.game.combat.Bttl_800c._800c6c40;
 import static legend.game.combat.Bttl_800c._800c6f4c;
 import static legend.game.combat.Bttl_800c._800c70e0;
 import static legend.game.combat.Bttl_800c._800c70f4;
 import static legend.game.combat.Bttl_800c._800c7194;
-import static legend.game.combat.Bttl_800c.uiTextureElementBrightness_800c71ec;
 import static legend.game.combat.Bttl_800c._800c723c;
-import static legend.game.combat.Bttl_800c._800d66b0;
-import static legend.game.combat.Bttl_800c.battleMenuIconMetrics_800fb674;
-import static legend.game.combat.Bttl_800c.battleMenuIconHeights_800fb6bc;
-import static legend.game.combat.Bttl_800c.battleMenuIconVOffsets_800fb6f4;
-import static legend.game.combat.Bttl_800c.battleMenuTextMetrics_800fb72c;
 import static legend.game.combat.Bttl_800c.aliveBobjCount_800c669c;
 import static legend.game.combat.Bttl_800c.aliveMonsterCount_800c6758;
 import static legend.game.combat.Bttl_800c.allText_800fb3c0;
@@ -97,14 +89,20 @@ import static legend.game.combat.Bttl_800c.battleItemMenuScrollArrowUvMetrics_80
 import static legend.game.combat.Bttl_800c.battleMenuBackgroundDisplayMetrics_800fb614;
 import static legend.game.combat.Bttl_800c.battleMenuBackgroundMetrics_800fb5dc;
 import static legend.game.combat.Bttl_800c.battleMenuHighlightMetrics_800c71bc;
+import static legend.game.combat.Bttl_800c.battleMenuIconHeights_800fb6bc;
+import static legend.game.combat.Bttl_800c.battleMenuIconMetrics_800fb674;
 import static legend.game.combat.Bttl_800c.battleMenuIconStates_800c71e4;
+import static legend.game.combat.Bttl_800c.battleMenuIconVOffsets_800fb6f4;
+import static legend.game.combat.Bttl_800c.battleMenuTextMetrics_800fb72c;
 import static legend.game.combat.Bttl_800c.battleMenu_800c6c34;
 import static legend.game.combat.Bttl_800c.battleUiElementClutVramXy_800c7114;
-import static legend.game.combat.Bttl_800c.countCameraPositionIndicesIndices_800c6ba0;
 import static legend.game.combat.Bttl_800c.cameraPositionIndicesIndices_800c6c30;
 import static legend.game.combat.Bttl_800c.charCount_800c677c;
 import static legend.game.combat.Bttl_800c.combatItems_800c6988;
 import static legend.game.combat.Bttl_800c.combatMenu_800c6b60;
+import static legend.game.combat.Bttl_800c.countCameraPositionIndicesIndices_800c6ba0;
+import static legend.game.combat.Bttl_800c.currentCameraPositionIndicesIndex_800c66b0;
+import static legend.game.combat.Bttl_800c.currentCameraPositionIndicesIndicesIndex_800c6ba1;
 import static legend.game.combat.Bttl_800c.currentStageData_800c6718;
 import static legend.game.combat.Bttl_800c.digitOffsetXy_800c7014;
 import static legend.game.combat.Bttl_800c.digitU_800c7028;
@@ -122,6 +120,7 @@ import static legend.game.combat.Bttl_800c.spellStats_800fa0b8;
 import static legend.game.combat.Bttl_800c.targetAllItemIds_800c7124;
 import static legend.game.combat.Bttl_800c.targetBobjs_800c71f0;
 import static legend.game.combat.Bttl_800c.textboxColours_800c6fec;
+import static legend.game.combat.Bttl_800c.uiTextureElementBrightness_800c71ec;
 import static legend.game.combat.Bttl_800e.FUN_800ef8d8;
 import static legend.game.combat.Bttl_800e.perspectiveTransformXyz;
 
@@ -2150,12 +2149,12 @@ public final class Bttl_800f {
         }
 
         //LAB_800f6458
-        int cameraPositionIndicesIndicesIndex;
+        int cameraPositionIndicesIndex;
         boolean addCameraPositionIndex;
         int cameraPositionIndex;
-        for(cameraPositionIndicesIndicesIndex = 0; cameraPositionIndicesIndicesIndex < 4; cameraPositionIndicesIndicesIndex++) {
+        for(cameraPositionIndicesIndex = 0; cameraPositionIndicesIndex < 4; cameraPositionIndicesIndex++) {
           addCameraPositionIndex = true;
-          cameraPositionIndex = currentStageData_800c6718.get(6 + cameraPositionIndicesIndicesIndex);
+          cameraPositionIndex = currentStageData_800c6718.get(6 + cameraPositionIndicesIndex);
 
           //LAB_800f646c
           for(int i = 0; i < 4; i++) { // don't add duplicate indices
@@ -2167,10 +2166,10 @@ public final class Bttl_800f {
           }
 
           if(addCameraPositionIndex) {
-            previousIndicesList[countCameraPositionIndicesIndices_800c6ba0.get()] = currentStageData_800c6718.get(6 + cameraPositionIndicesIndicesIndex);
-            cameraPositionIndicesIndices_800c6c30.get(countCameraPositionIndicesIndices_800c6ba0.get()).set(cameraPositionIndicesIndicesIndex);
+            previousIndicesList[countCameraPositionIndicesIndices_800c6ba0.get()] = currentStageData_800c6718.get(6 + cameraPositionIndicesIndex);
+            cameraPositionIndicesIndices_800c6c30.get(countCameraPositionIndicesIndices_800c6ba0.get()).set(cameraPositionIndicesIndex);
 
-            if(_800d66b0.get() == cameraPositionIndicesIndicesIndex) {
+            if(currentCameraPositionIndicesIndex_800c66b0.get() == cameraPositionIndicesIndex) {
               currentCameraPositionIndicesIndicesIndex_800c6ba1.set(countCameraPositionIndicesIndices_800c6ba0.get());
             }
 
