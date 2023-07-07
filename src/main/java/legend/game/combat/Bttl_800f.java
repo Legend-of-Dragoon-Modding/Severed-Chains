@@ -91,7 +91,6 @@ import static legend.game.combat.Bttl_800c._800c71d0;
 import static legend.game.combat.Bttl_800c._800c71e4;
 import static legend.game.combat.Bttl_800c._800c71ec;
 import static legend.game.combat.Bttl_800c._800c723c;
-import static legend.game.combat.Bttl_800c._800d66b0;
 import static legend.game.combat.Bttl_800c._800fb5dc;
 import static legend.game.combat.Bttl_800c._800fb614;
 import static legend.game.combat.Bttl_800c._800fb674;
@@ -2152,7 +2151,7 @@ public final class Bttl_800f {
             sp0x18[(int)cameraPositionIndicesIndex_800c6ba0.get()] = intRef_800c6718.get(6 + cameraPositionIndicesIndex).get();
             cameraPositionIndices_800c6c30.get((int)cameraPositionIndicesIndex_800c6ba0.get()).set(cameraPositionIndicesIndex);
 
-            if(_800d66b0.get() == cameraPositionIndicesIndex) {
+            if(_800c66b0.get() == cameraPositionIndicesIndex) {
               _800c6ba1.setu(cameraPositionIndicesIndex_800c6ba0.get());
             }
 

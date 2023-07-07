@@ -426,8 +426,6 @@ public final class Bttl_800c {
 
   public static final ArrayRef<UnsignedShortRef> protectedItems_800c72cc = MEMORY.ref(2, 0x800c72ccL, ArrayRef.of(UnsignedShortRef.class, 10, 2, UnsignedShortRef::new));
 
-  public static final Value _800d66b0 = MEMORY.ref(1, 0x800d66b0L);
-
   public static final SpellStats0c[] spellStats_800fa0b8 = new SpellStats0c[128];
   public static final Value _800fa6b8 = MEMORY.ref(2, 0x800fa6b8L);
 
