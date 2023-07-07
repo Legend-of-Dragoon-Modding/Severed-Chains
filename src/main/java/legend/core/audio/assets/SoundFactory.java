@@ -9,7 +9,7 @@ import legend.game.unpacker.UnpackerException;
 import java.util.List;
 
 public final class SoundFactory {
-  public static SequencedAudio backgroundMusic(final int fileIndex) {
+  public static BackgroundMusic backgroundMusic(final int fileIndex) {
     //TODO use Scus94491BpeSegment#loadDrgnDir
     final List<FileData> files = Unpacker.loadDirectory("SECT/DRGN0.BIN/" + fileIndex);
 
@@ -49,7 +49,7 @@ public final class SoundFactory {
       default -> throw new UnpackerException("Uknwonw Sequenced Audio type. File count: " + files.size());
     }
 
-    return new SequencedAudio(sssq, sshdParser.getBreathControls(), sshdParser.getVelocityRamp());
+    return new BackgroundMusic(sssq, sshdParser.getBreathControls(), sshdParser.getVelocityRamp());
   }
 
 

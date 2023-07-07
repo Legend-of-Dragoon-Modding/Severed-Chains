@@ -3,10 +3,17 @@ package legend.core.audio;
 import legend.core.audio.assets.Channel;
 import legend.core.audio.assets.Instrument;
 import legend.core.audio.assets.InstrumentLayer;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
 import javax.annotation.Nullable;
 
 final class Voice {
+  private static final Logger LOGGER = LogManager.getFormatterLogger();
+  private static final Marker VOICE_MARKER = MarkerManager.getMarker("VOICE");
+
   private static final short[] EMPTY = {0, 0, 0};
   private final int index;
   private final LookupTables lookupTables;
@@ -199,7 +206,8 @@ final class Voice {
   }
 
   void keyOn(final Channel channel, final Instrument instrument, final InstrumentLayer layer, final int note, final int velocity, final byte[][] breathControls, final int playingVoices) {
-    System.out.printf("[VOICE] Voice %d Key On%n", this.index);
+    LOGGER.info(VOICE_MARKER, "Voice %d Key On", this.index);
+
     this.channel = channel;
     this.instrument = instrument;
     this.layer = layer;
@@ -244,7 +252,8 @@ final class Voice {
   }
 
   void keyOff() {
-    System.out.printf("[VOICE] Voice %d Key Off%n", this.index);
+    LOGGER.info(VOICE_MARKER, "Voice %d Key Off", this.index);
+
     this.adsrEnvelope.keyOff();
 
     if(!this.highPriority) {
@@ -266,7 +275,7 @@ final class Voice {
   }
 
   void clear() {
-    System.out.printf("[VOICE] Clearing Voice %d%n", this.index);
+    LOGGER.info(VOICE_MARKER, "Clearing Voice %d%", this.index);
 
     this.used = false;
     this.note = 0;

@@ -48,6 +48,11 @@ public final class Channel {
     return this.volume;
   }
 
+  public void changeVolume(final int volume, final int sssqVolume) {
+    this.volume = volume;
+    this.adjustedVolume = (volume * sssqVolume) / 0x80;
+  }
+
   public void setVolume(final int value) {
     this.volume = value;
   }

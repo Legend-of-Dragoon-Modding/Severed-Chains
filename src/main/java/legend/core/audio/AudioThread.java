@@ -2,19 +2,21 @@ package legend.core.audio;
 
 import legend.core.DebugHelper;
 import legend.core.MathHelper;
+import legend.core.audio.assets.BackgroundMusic;
 import legend.core.audio.assets.Channel;
 import legend.core.audio.assets.Instrument;
 import legend.core.audio.assets.InstrumentLayer;
-import legend.core.audio.assets.SequencedAudio;
 import legend.game.sound.ReverbConfig;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.ALC;
 import org.lwjgl.openal.ALCCapabilities;
 import org.lwjgl.openal.ALCapabilities;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import static legend.game.Scus94491BpeSegment_8005.reverbConfigs_80059f7c;
 import static org.lwjgl.openal.ALC10.ALC_DEFAULT_DEVICE_SPECIFIER;
 import static org.lwjgl.openal.ALC10.alcCloseDevice;
 import static org.lwjgl.openal.ALC10.alcCreateContext;
@@ -24,6 +26,9 @@ import static org.lwjgl.openal.ALC10.alcMakeContextCurrent;
 import static org.lwjgl.openal.ALC10.alcOpenDevice;
 
 public final class AudioThread implements Runnable {
+  private static final Logger LOGGER = LogManager.getFormatterLogger();
+  private static final Marker SEQUENCER_MARKER = MarkerManager.getMarker("SEQUENCER");
+
   private final long audioContext;
   private final long audioDevice;
   private final int nanosPerTick;
@@ -39,7 +44,7 @@ public final class AudioThread implements Runnable {
 
   private final BufferedSound output;
 
-  private final List<Sequence> sequences = new ArrayList<>();
+  private BackgroundMusic backgroundMusic;
 
   private final Reverberizer reverb = new Reverberizer();
   private float reverbVolumeLeft;
@@ -89,6 +94,9 @@ public final class AudioThread implements Runnable {
     }
 
     this.output = new BufferedSound(this.samplesPerTick, stereo);
+
+    this.setReverbConfig(reverbConfigs_80059f7c.get(2).config_02);
+    this.setReverbVolume(0x30, 0x30);
   }
 
   @Override
@@ -127,46 +135,9 @@ public final class AudioThread implements Runnable {
 
   private void tick() {
     for(int sample = 0; sample < this.samplesPerTick; sample++) {
-      for(final Voice voice : this.voices) {
-        if(voice.isUsed() && voice.isFinished()) {
-          if(this.playingVoices > 0) {
-            this.playingVoices--;
-          }
+      this.clearVoices();
 
-          for(final Voice voice2 : this.voices) {
-            if(voice2.getPriorityOrder() > voice.getPriorityOrder()) {
-              voice2.setPriorityOrder(voice2.getPriorityOrder() - 1);
-            }
-          }
-          voice.clear();
-        }
-      }
-
-      for(final Sequence sequence : this.sequences) {
-        if(sequence.samplesToProcess > 0) {
-          sequence.samplesToProcess--;
-          continue;
-        }
-
-        while(sequence.samplesToProcess == 0) {
-          final Sequence.Command command = sequence.getNextCommand();
-
-          switch(command.getMidiCommand()) {
-            case KEY_ON -> this.keyOn(sequence.getSequencedAudio(), command.getChannel(), command.getValue1(), command.getValue2());
-            case KEY_OFF -> this.keyOff(sequence.getSequencedAudio(), command.getChannel(), command.getValue1());
-            case POLYPHONIC_KEY_PRESSURE -> this.polyphonicKeyPressure();
-            case CONTROL_CHANGE -> this.controlChange(sequence.getSequencedAudio(), command.getChannel(), command.getValue1(), command.getValue2());
-            case PROGRAM_CHANGE -> this.programChange(sequence.getSequencedAudio(), command.getChannel(), command.getValue1());
-            case PITCH_BEND -> this.pitchBend(sequence.getSequencedAudio(), command.getChannel(), command.getValue1());
-            case META -> this.meta(sequence.getSequencedAudio(), command.getValue1(), command.getValue2());
-            default -> System.err.println("Unhandled message " + command.getMidiCommand());
-          }
-
-          sequence.setSamplesToProcess(command.getDeltaTime());
-        }
-
-        System.out.printf("[SEQUENCER] Delta ms %.02f%n", sequence.samplesToProcess / 44.1d);
-      }
+      this.tickSequences();
 
       float sumLeft = 0.0f;
       float sumRight = 0.0f;
@@ -199,14 +170,65 @@ public final class AudioThread implements Runnable {
     }
   }
 
-  private void keyOn(final SequencedAudio sequencedAudio, final int channelIndex, final int note, final int velocity) {
-    System.out.printf("[SEQUENCER] Key On Channel: %d Note: %d Velocity: %d%n", channelIndex, note, velocity);
-    if(velocity == 0) {
-      this.keyOff(sequencedAudio, channelIndex, note);
+  private void clearVoices() {
+    for(final Voice voice : this.voices) {
+      if(voice.isUsed() && voice.isFinished()) {
+        if(this.playingVoices > 0) {
+          this.playingVoices--;
+        }
+
+        for(final Voice voice2 : this.voices) {
+          if(voice2.getPriorityOrder() > voice.getPriorityOrder()) {
+            voice2.setPriorityOrder(voice2.getPriorityOrder() - 1);
+          }
+        }
+        voice.clear();
+      }
+    }
+  }
+
+  private void tickSequences() {
+    this.backgroundMusicSequencer();
+  }
+
+  private void backgroundMusicSequencer() {
+    if(this.backgroundMusic == null) {
       return;
     }
 
-    final Channel channel = sequencedAudio.getChannel(channelIndex);
+    if(this.backgroundMusic.getSamplesToProcess() > 0) {
+      this.backgroundMusic.tickSequence();
+      return;
+    }
+
+    while(this.backgroundMusic.getSamplesToProcess() == 0) {
+      final BackgroundMusic.Command command = this.backgroundMusic.getNextCommand();
+
+      switch(command.getMidiCommand()) {
+        case KEY_OFF -> this.musicKeyOff(command.getChannel(), command.getValue1());
+        case KEY_ON -> this.musicKeyOn(command.getChannel(), command.getValue1(), command.getValue2());
+        case CONTROL_CHANGE -> this.musicControlChange(command.getChannel(), command.getValue1(), command.getValue2());
+        case PROGRAM_CHANGE -> this.musicProgramChange(command.getChannel(), command.getValue1());
+        case PITCH_BEND -> this.musicPitchBend(command.getChannel(), command.getValue1());
+        case META -> this.musicMeta(command.getValue1(), command.getValue2());
+        default -> LOGGER.warn(SEQUENCER_MARKER, "Unhandled command %s", command.getMidiCommand());
+      }
+
+      this.backgroundMusic.setSamplesToProcess(command.getDeltaTime());
+    }
+
+    LOGGER.info(SEQUENCER_MARKER, "Delta ms %.02f", this.backgroundMusic.getSamplesToProcess() / 44.1d);
+  }
+
+  private void musicKeyOn(final int channelIndex, final int note, final int velocity) {
+    LOGGER.info(SEQUENCER_MARKER, "Ken On Channel: %d, Note %d, Velocity: %d", channelIndex, note, velocity);
+
+    if(velocity == 0) {
+      this.musicKeyOff(channelIndex, note);
+      return;
+    }
+
+    final Channel channel = this.backgroundMusic.getChannel(channelIndex);
 
     if(channel.getVolume() == 0) {
       return;
@@ -221,7 +243,7 @@ public final class AudioThread implements Runnable {
     for(final InstrumentLayer layer : instrument.getLayers(note)) {
       final Voice voice = this.selectVoice();
 
-      voice.keyOn(channel, instrument, layer, note, sequencedAudio.getVelocity(velocity), sequencedAudio.getBreathControls(), this.playingVoices);
+      voice.keyOn(channel, instrument, layer, note, this.backgroundMusic.getVelocity(velocity), this.backgroundMusic.getBreathControls(), this.playingVoices);
     }
   }
 
@@ -279,9 +301,10 @@ public final class AudioThread implements Runnable {
     return this.voices[this.voiceIndex];
   }
 
-  private void keyOff(final SequencedAudio sequencedAudio, final int channelIndex, final int note) {
-    System.out.printf("[SEQUENCER] Key Off Channel: %d Note: %d%n", channelIndex, note);
-    final Channel channel = sequencedAudio.getChannel(channelIndex);
+  private void musicKeyOff(final int channelIndex, final int note) {
+    LOGGER.info(SEQUENCER_MARKER, "Key Off Channel: %d Note: %d", channelIndex, note);
+
+    final Channel channel = this.backgroundMusic.getChannel(channelIndex);
 
     for(final Voice voice : this.voices) {
       if(voice.isUsed() && voice.getChannel() == channel && voice.getNote() == note) {
@@ -290,42 +313,38 @@ public final class AudioThread implements Runnable {
     }
   }
 
-  private void polyphonicKeyPressure() {
-
-  }
-
-  private void controlChange(final SequencedAudio sequencedAudio, final int channelIndex, final int control, final int value) {
+  private void musicControlChange(final int channelIndex, final int control, final int value) {
     switch(control) {
-      case 0x01 -> this.modulation(sequencedAudio, channelIndex, value);
-      case 0x02 -> this.breathControl(sequencedAudio, channelIndex, value);
-      case 0x06 -> this.dataEntry(sequencedAudio, value);
-      case 0x07 -> this.volume(sequencedAudio, channelIndex, value);
-      case 0x0A -> this.pan(sequencedAudio, channelIndex, value);
-      case 0x62 -> this.dataEntryLsb(sequencedAudio, value);
-      case 0x63 -> this.dataEntryMsb(sequencedAudio, value);
-      default -> System.err.printf("[SEQUENCER] Bad Control Change Channel: %d Command: 0x%x Value: 0x%x%n", channelIndex, control, value);
+      case 0x01 -> this.musicModulation(channelIndex, value);
+      case 0x02 -> this.musicBreathControl(channelIndex, value);
+      case 0x06 -> this.musicDataEntry(value);
+      case 0x07 -> this.musicVolume(channelIndex, value);
+      case 0x0A -> this.musicPan(channelIndex, value);
+      case 0x62 -> this.musicDataEntryLsb(value);
+      case 0x63 -> this.musicDataEntryMsb(value);
+      default -> LOGGER.warn(SEQUENCER_MARKER, "Bad Control Change Channel: %d Command: 0x%x Value: 0x%x%n", channelIndex, control, value);
     }
   }
 
-  private void modulation(final SequencedAudio sequencedAudio, final int channelIndex, final int value) {
-    System.out.printf("[SEQUENCER] Control Change Channel: %d Modulation: %d%n", channelIndex, value);
+  private void musicModulation(final int channelIndex, final int modulation) {
+   LOGGER.info(SEQUENCER_MARKER, "Control Change Modulation Channel: %d Modulation: %d", channelIndex, modulation);
 
-    final Channel channel = sequencedAudio.getChannel(channelIndex);
-    channel.setModulation(value);
+    final Channel channel = this.backgroundMusic.getChannel(channelIndex);
+    channel.setModulation(modulation);
 
     for(final Voice voice : this.voices) {
       if(voice.isUsed() && voice.getChannel() == channel) {
-        voice.setModulation(value);
+        voice.setModulation(modulation);
       }
     }
   }
 
-  private void breathControl(final SequencedAudio sequencedAudio, final int channelIndex, final int value) {
-    System.out.printf("[SEQUENCER] Control Change Channel: %d Breath Control: %d%n", channelIndex, value);
+  private void musicBreathControl(final int channelIndex, final int value) {
+    LOGGER.info(SEQUENCER_MARKER, "Control Change Breath Control Channel: %d Breath: %d", channelIndex, value);
 
     final int breath = 240 / (60 - value * 58 / 127);
 
-    final Channel channel = sequencedAudio.getChannel(channelIndex);
+    final Channel channel = this.backgroundMusic.getChannel(channelIndex);
     channel.setBreath(breath);
 
     for(final Voice voice : this.voices) {
@@ -335,61 +354,58 @@ public final class AudioThread implements Runnable {
     }
   }
 
-  private void dataEntry(final SequencedAudio sequencedAudio, final int value) {
-    System.out.printf("[SEQUENCER] Data Entry NRPN: 0x%x Value: 0x%x%n", sequencedAudio.getNrpn(), value);
-    switch(sequencedAudio.getNrpn()) {
+  private void musicDataEntry(final int value) {
+    LOGGER.info(SEQUENCER_MARKER, "Data entry NRPN: %d Value: %d", this.backgroundMusic.getNrpn(), value);
+
+    switch(this.backgroundMusic.getNrpn()) {
       case 0x00 -> {
-        sequencedAudio.repeatCount = value;
+        this.backgroundMusic.setRepeatCount(value);
+        return;
       }
       case 0x04 -> {
-        //TODO attack linear
+        //TODO Attack (linear)
       }
       case 0x05 -> {
-        //TODO Attack exponential
+        //TODO Attack (exponential)
       }
       case 0x06 -> {
-        //TODO decay Shift
+        //TODO Decay Shift
       }
       case 0x07 -> {
-        //TODO sustain level
+        //TODO Sustain Level
       }
       case 0x08 -> {
-        //TODO sustain linear
+        //TODO Sustain (linear)
       }
       case 0x09 -> {
-        //TODO sustain exponential
+        //TODO Sustain (exponential)
       }
-      case 0x0A -> {
-        //TODO release linear
+      case 0x0a -> {
+        //TODO Release (linear)
       }
-      case 0x0B -> {
-        //TODO release exponential
+      case 0x0b -> {
+        //TODO Release (exponential)
       }
-      case 0x0C -> {
-        //TODO sustain direction
+      case 0x0c -> {
+        //TODO Sustain direction
       }
-      case 0x0F -> {
-        //TODO reverb type
+      case 0x0f -> {
+        this.setReverbConfig(reverbConfigs_80059f7c.get(value).config_02);
       }
       case 0x10 -> {
-        //TODO reverb volume
+        this.setReverbVolume(value, value);
       }
-      case 0x11 -> {
-        //TODO something??
+      case 0x11, 0x12, 0x13 -> {
+        assert false;
       }
-      case 0x12, 0x13 -> {
-        //TODO something??
-      }
-
     }
   }
 
-  private void volume(final SequencedAudio sequencedAudio, final int channelIndex, final int value) {
-    System.out.printf("[SEQUENCER] Control Change Channel: %d Volume: %d%n", channelIndex, value);
+  private void musicVolume(final int channelIndex, final int volume) {
+   LOGGER.info(SEQUENCER_MARKER, "Control Change Volume Channel: %d Volume: %d", channelIndex, volume);
 
-    final Channel channel = sequencedAudio.getChannel(channelIndex);
-    channel.setVolume(value);
-    channel.setAdjustedVolume((value * sequencedAudio.getVolume()) / 0x80);
+    final Channel channel = this.backgroundMusic.getChannel(channelIndex);
+    channel.changeVolume(volume, this.backgroundMusic.getVolume());
 
     for(final Voice voice : this.voices) {
       if(voice.isUsed() && voice.getChannel() == channel) {
@@ -398,17 +414,17 @@ public final class AudioThread implements Runnable {
     }
   }
 
-  private void pan(final SequencedAudio sequencedAudio, final int channelIndex, final int value) {
-    System.out.printf("[SEQUENCER] Control Change Channel: %d Pan: %d%n", channelIndex, value);
+  private void musicPan(final int channelIndex, final int pan) {
+    LOGGER.info(SEQUENCER_MARKER, "Control Change Pan Channel: %d Pan: %d", channelIndex, pan);
 
-    final Channel channel = sequencedAudio.getChannel(channelIndex);
+    final Channel channel = this.backgroundMusic.getChannel(channelIndex);
 
     if(!this.stereo) {
       channel.setPan(64);
       return;
     }
 
-    channel.setPan(value);
+    channel.setPan(pan);
 
     for(final Voice voice : this.voices) {
       if(voice.isUsed() && voice.getChannel() == channel) {
@@ -417,63 +433,33 @@ public final class AudioThread implements Runnable {
     }
   }
 
-  private void dataEntryLsb(final SequencedAudio sequencedAudio, final int value) {
-    System.out.printf("[SEQUENCER] Data Entry LSB Value: 0x%x%n", value);
-    final int type = sequencedAudio.getLsbType();
+  private void musicDataEntryLsb(final int value) {
+    LOGGER.info(SEQUENCER_MARKER, "Data Entry LSB Value: 0x%x%", value);
 
-    if(type == 0) {
-      sequencedAudio.setNrpn(0);
-      sequencedAudio.repeatCount = value;
-    } else if (type == 1 || type == 2) {
-      sequencedAudio.setNrpn(value);
-    }
+    this.backgroundMusic.dataEntryLsb(value);
   }
 
-  private void dataEntryMsb(final SequencedAudio sequencedAudio, final int command) {
-    System.out.printf("[SEQUENCER] Data Entry MSB Command: 0x%x%n", command);
-    if(command >= 0 && command < 0x10) {
-      sequencedAudio.setLsbType(0x10);
-      sequencedAudio.setDataInstrumentIndex(command);
-    } else if(command == 0x10) {
-      sequencedAudio.setLsbType(0x01);
-    } else if(command == 0x14) {
-      sequencedAudio.setLsbType(0x00);
-      sequencedAudio.setNrpn(0x00);
-      //TODO command
-      //TODO offset
-    } else if(command == 0x1E) {
-      sequencedAudio.setLsbType(0x00);
+  private void musicDataEntryMsb(final int command) {
+    LOGGER.info(SEQUENCER_MARKER, "Data Entry MSB Value: 0x%x%", command);
 
-      if(sequencedAudio.repeatCount == 0x7F) {
-        sequencedAudio.repeat = true;
-      } else if(sequencedAudio.repeatCounter < sequencedAudio.repeatCount) {
-        sequencedAudio.repeatCounter++;
-        sequencedAudio.repeat = true;
-      } else {
-        //TODO repeatOffset = 0;
-        sequencedAudio.repeatCounter = 0;
-        sequencedAudio.repeat = false;
-      }
-    } else if(command == 0x7F) {
-      sequencedAudio.setLsbType(0x02);
-      sequencedAudio.setDataInstrumentIndex(0xFF);
-    }
+    this.backgroundMusic.dataEntryMsb(command);
   }
 
-  private void programChange(final SequencedAudio sequencedAudio, final int channelIndex, final int value) {
-    System.out.printf("[SEQUENCER] Program Change Channel: %d, Value: %d%n", channelIndex, value);
+  private void musicProgramChange(final int channelIndex, final int instrumentIndex) {
+    LOGGER.info(SEQUENCER_MARKER, "Program Change Pan Channel: %d Instrument: %d", channelIndex, instrumentIndex);
 
     //TODO this should only happen, if sound isn't playing yet.
-    final Channel channel = sequencedAudio.getChannel(channelIndex);
-    channel.setInstrument(value);
+    final Channel channel = this.backgroundMusic.getChannel(channelIndex);
+    channel.setInstrument(instrumentIndex);
     channel.setPitchBend(0x40);
     channel.set_0b(0x40);
   }
 
-  private void pitchBend(final SequencedAudio sequencedAudio, final int channelIndex, final int value) {
-    System.out.printf("[SEQUENCER] Pitch Bend Channel: %d, Value: %d%n", channelIndex, value);
-    final Channel channel = sequencedAudio.getChannel(channelIndex);
-    channel.setPitchBend(value);
+  private void musicPitchBend(final int channelIndex, final int pitchBend) {
+    LOGGER.info(SEQUENCER_MARKER, "Pitch Bend Channel: %d, Pitch Bend: %d%", channelIndex, pitchBend);
+
+    final Channel channel = this.backgroundMusic.getChannel(channelIndex);
+    channel.setPitchBend(pitchBend);
 
     for(final Voice voice : this.voices) {
       if(voice.isUsed() && voice.getChannel() == channel) {
@@ -482,14 +468,14 @@ public final class AudioThread implements Runnable {
     }
   }
 
-  private void meta(final SequencedAudio sequencedAudio, final int command, final int value) {
-    System.out.printf("[SEQUENCER] Tempo change: %d%n", value);
-
+  private void musicMeta(final int command, final int value) {
     switch(command) {
       case 0x51 -> {
-        sequencedAudio.setTempo(value);
+        LOGGER.info(SEQUENCER_MARKER, "Tempo change: %d%", value);
+
+        this.backgroundMusic.setTempo(value);
       }
-      default -> System.err.printf("[SEQUENCER] Unhandled meta event %d value %d%n", command, value);
+      default -> LOGGER.warn(SEQUENCER_MARKER, "Unhandled meta event %d value %d", command, value);
     }
   }
 
@@ -499,16 +485,15 @@ public final class AudioThread implements Runnable {
   }
 
   //TODO this needs to be made thread safe
-  public void loadSequence(final SequencedAudio sequencedAudio, final int sequenceIndex) {
-    final Sequence sequence = new Sequence(sequencedAudio, sequenceIndex);
-    this.sequences.add(sequence);
+  public void loadBackgroundMusic(final BackgroundMusic backgroundMusic) {
+    this.backgroundMusic = backgroundMusic;
   }
 
-  public void setReverbConfig(final ReverbConfig config) {
+  private void setReverbConfig(final ReverbConfig config) {
     this.reverb.setConfig(config);
   }
 
-  public void setReverbVolume(final int reverbVolumeLeft, final int reverbVolumeRight) {
+  private void setReverbVolume(final int reverbVolumeLeft, final int reverbVolumeRight) {
     this.reverbVolumeLeft = (reverbVolumeLeft << 8) / 32768.0f;
     this.reverbVolumeRight = (reverbVolumeRight << 8) / 32768.0f;
   }
