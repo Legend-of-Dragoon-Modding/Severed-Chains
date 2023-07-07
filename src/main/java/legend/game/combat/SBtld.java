@@ -99,7 +99,7 @@ public class SBtld {
     scriptState_800c674c.loadScriptFile(new ScriptFile("DRGN1.401", file.getBytes()));
 
     final int v1;
-    if((simpleRand() & 0x8000L) == 0) {
+    if((simpleRand() & 0x8000L) != 0) {
       v1 = currentStageData_800c6718._14;
     } else {
       v1 = currentStageData_800c6718._10;

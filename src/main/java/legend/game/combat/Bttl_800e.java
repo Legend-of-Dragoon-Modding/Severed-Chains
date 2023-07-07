@@ -1947,9 +1947,9 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e9120L)
-  public static void FUN_800e9120() {
+  public static void deallocateLightingControllerAndDeffManager() {
     scriptStatePtrArr_800bc1c0[1].deallocateWithChildren();
-    FUN_800eab8c();
+    deallocateDeffManagerScriptsArray();
     deffManager_800c693c.scriptState_1c.deallocateWithChildren();
     deffManager_800c693c = null;
   }
@@ -1962,12 +1962,12 @@ public final class Bttl_800e {
     } else if(a0 == 2) {
       //LAB_800e91d8
       FUN_800e8d04(deffManager_800c693c.scriptState_1c.innerStruct_00, 10);
-      FUN_800eab8c();
+      deallocateDeffManagerScriptsArray();
     } else {
       // This seems to be destroying and the re-creating the DEFF manager script state? Must be for ending the DEFF or something?
 
       //LAB_800e9214
-      FUN_800eab8c();
+      deallocateDeffManagerScriptsArray();
       deffManager_800c693c.scriptState_1c.deallocateWithChildren();
       final ScriptState<EffectManagerData6c> manager = allocateEffectManager("DEFF manager (but different)", null, null, null, null, null);
       deffManager_800c693c.scriptState_1c = manager;
@@ -2592,7 +2592,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800eab8cL)
-  public static void FUN_800eab8c() {
+  public static void deallocateDeffManagerScriptsArray() {
     final DeffManager7cc struct7cc = deffManager_800c693c;
 
     //LAB_800eabf4
@@ -2600,7 +2600,6 @@ public final class Bttl_800e {
     if(struct7cc.scripts_2c != null) {
       struct7cc.scripts_2c = null;
     }
-
     //LAB_800eac48
   }
 

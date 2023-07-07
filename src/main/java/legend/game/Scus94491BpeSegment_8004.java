@@ -274,7 +274,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[157] = Bttl_800c::FUN_800cc698;
     scriptSubFunctions_8004e29c[158] = Bttl_800c::FUN_800cc784;
     scriptSubFunctions_8004e29c[159] = Bttl_800c::scriptLoadAttackAnimations;
-    scriptSubFunctions_8004e29c[160] = Bttl_800c::FUN_800cca34;
+    scriptSubFunctions_8004e29c[160] = Bttl_800c::scriptSetUpAndHandleCombatMenu;
     scriptSubFunctions_8004e29c[161] = Scus94491BpeSegment::scriptRewindAndPause2;
     scriptSubFunctions_8004e29c[162] = Scus94491BpeSegment::scriptRewindAndPause2;
     scriptSubFunctions_8004e29c[163] = Scus94491BpeSegment::scriptRewindAndPause2;

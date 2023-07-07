@@ -80,7 +80,6 @@ import static legend.game.combat.Bttl_800c._800c6c40;
 import static legend.game.combat.Bttl_800c._800c6f4c;
 import static legend.game.combat.Bttl_800c._800c70e0;
 import static legend.game.combat.Bttl_800c._800c70f4;
-import static legend.game.combat.Bttl_800c._800c7194;
 import static legend.game.combat.Bttl_800c._800c723c;
 import static legend.game.combat.Bttl_800c.aliveBobjCount_800c669c;
 import static legend.game.combat.Bttl_800c.aliveMonsterCount_800c6758;
@@ -109,8 +108,9 @@ import static legend.game.combat.Bttl_800c.digitU_800c7028;
 import static legend.game.combat.Bttl_800c.displayStats_800c6c2c;
 import static legend.game.combat.Bttl_800c.dragoonSpaceElement_800c6b64;
 import static legend.game.combat.Bttl_800c.dragoonSpells_800c6960;
-import static legend.game.combat.Bttl_800c.dragoonSpiritIcons_800c71d0;
+import static legend.game.combat.Bttl_800c.dragoonSpiritIconClutOffsets_800c71d0;
 import static legend.game.combat.Bttl_800c.floatingNumbers_800c6b5c;
+import static legend.game.combat.Bttl_800c.iconFlags_800c7194;
 import static legend.game.combat.Bttl_800c.itemTargetAll_800c69c8;
 import static legend.game.combat.Bttl_800c.itemTargetType_800c6b68;
 import static legend.game.combat.Bttl_800c.melbuMonsterNames_800c6ba8;
@@ -2051,7 +2051,7 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f6134L)
-  public static void FUN_800f6134(final ScriptState<? extends BattleObject27c> bobjState, final long a1, final long a2) {
+  public static void initializeCombatMenuIcons(final ScriptState<? extends BattleObject27c> bobjState, final int displayedIconsBitset, final int disabledIconsBitset) {
     final BattleMenuStruct58 menu = battleMenu_800c6c34;
     menu.state_00 = 1;
     menu.highlightState_02 = 2;
@@ -2096,21 +2096,29 @@ public final class Bttl_800f {
 
     //LAB_800f62a4
     for(int i = 0, used = 0; i < 8; i++) {
-      if((a1 & 1 << i) != 0) {
-        menu.iconFlags_10[used++] = _800c7194.get(i).get();
+      if((displayedIconsBitset & 0x1 << i) != 0) {
+        menu.iconFlags_10[used++] = iconFlags_800c7194.get(i).get();
         menu.iconCount_0e++;
       }
-
       //LAB_800f62d0
     }
 
     menu.unused_0c = 0;
     menu.xShiftOffset_0a = (short)((menu.iconCount_0e * 19 - 3) / 2);
-    FUN_800f8b74(a2);
+    setCombatMenuIconsDisabled(disabledIconsBitset);
   }
 
+  /** Handles the various combat menu actions and then renders the menu:
+   * <ol>
+   *   <li>0 -> Set up camera positions</li>
+   *   <li>1 -> Check for and handle input</li>
+   *   <li>2 -> Cycle selector to adjacent icons</li>
+   *   <li>3 -> Wrap selector to other end of menu</li>
+   *   <li>4 -> Count down camera movement ticks</li>
+   * </ol>
+   */
   @Method(0x800f6330L)
-  public static int FUN_800f6330() {
+  public static int handleCombatMenu() {
     final BattleMenuStruct58 menu = battleMenu_800c6c34;
 
     if(menu.state_00 == 0) {
@@ -2138,8 +2146,8 @@ public final class Bttl_800f {
         menu.combatantIndex_54 = 0;
 
         _800c697c.set((short)0);
-        currentCameraPositionIndicesIndicesIndex_800c6ba1.set(0); //current
-        countCameraPositionIndicesIndices_800c6ba0.set(0); //count
+        currentCameraPositionIndicesIndicesIndex_800c6ba1.set(0);
+        countCameraPositionIndicesIndices_800c6ba0.set(0);
 
         //LAB_800f6424
         final long[] previousIndicesList = new long[4];
@@ -2193,7 +2201,7 @@ public final class Bttl_800f {
           }
 
           //LAB_800f6560
-          _800c6748.set(0x21);
+          _800c6748.set(33);
           menu.state_00 = 5;
           currentCameraPositionIndicesIndex_800c66b0.set(cameraPositionIndicesIndices_800c6c30.get(currentCameraPositionIndicesIndicesIndex_800c6ba1.get()).get());
           menu.cameraPositionSwitchTicksRemaining_44 = 60 / vsyncMode_8007a3b8 + 2;
@@ -2418,13 +2426,13 @@ public final class Bttl_800f {
           //LAB_800f6e24
           iconClutOffset = battleMenuIconMetrics_800fb674.get(iconId).clutOffset_04.get();
         } else if(menu.charIndex_04 == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0) {
-          iconClutOffset = dragoonSpiritIcons_800c71d0.get(9).get();
+          iconClutOffset = dragoonSpiritIconClutOffsets_800c71d0.get(9).get();
           if(iconState != 0) {
             //LAB_800f6de0
             renderBattleMenuElement(menuElementBaseX + 4, menuElementBaseY, iconState != 1 ? 88 : 80, 112, 8, 16, 0x98, Translucency.B_PLUS_F);
           }
         } else {
-          iconClutOffset = dragoonSpiritIcons_800c71d0.get(menu.charIndex_04).get();
+          iconClutOffset = dragoonSpiritIconClutOffsets_800c71d0.get(menu.charIndex_04).get();
         }
 
         //LAB_800f6e34
@@ -3025,16 +3033,16 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f8b74L)
-  public static void FUN_800f8b74(final long a0) {
+  public static void setCombatMenuIconsDisabled(final int disabledIconBitset) {
     final BattleMenuStruct58 menu = battleMenu_800c6c34;
 
     //LAB_800f8bd8
-    for(int t1 = 0; t1 < 8; t1++) {
-      if((a0 & 0x1L << t1) != 0) {
+    for(int i = 0; i < 8; i++) {
+      if((disabledIconBitset & 0x1 << i) != 0) {
         //LAB_800f8bf4
-        for(int a3 = 0; a3 < 8; a3++) {
-          if((menu.iconFlags_10[a3] & 0xf) == _800c7194.get(t1).get()) {
-            menu.iconFlags_10[a3] |= 0x80;
+        for(int j = 0; j < 8; j++) {
+          if((menu.iconFlags_10[j] & 0xf) == iconFlags_800c7194.get(i).get()) {
+            menu.iconFlags_10[j] |= 0x80;
             break;
           }
         }
@@ -3452,7 +3460,7 @@ public final class Bttl_800f {
       if((t2 & 1 << t0) != 0) {
         //LAB_800f9d34
         for(int icon = 0; icon < 8; icon++) {
-          if((menu.iconFlags_10[icon] & 0xf) == _800c7194.get(t0).get()) {
+          if((menu.iconFlags_10[icon] & 0xf) == iconFlags_800c7194.get(t0).get()) {
             menu.iconFlags_10[icon] |= 0x80;
             break;
           }

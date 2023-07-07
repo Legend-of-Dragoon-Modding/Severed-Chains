@@ -182,7 +182,7 @@ import static legend.game.Scus94491BpeSegment_800b.melbuMusicLoaded_800bd781;
 import static legend.game.Scus94491BpeSegment_800b.melbuSoundsLoaded_800bd780;
 import static legend.game.Scus94491BpeSegment_800b.musicLoaded_800bd782;
 import static legend.game.Scus94491BpeSegment_800b.playingSoundsBackup_800bca78;
-import static legend.game.Scus94491BpeSegment_800b.postBattleAction_800bc974;
+import static legend.game.Scus94491BpeSegment_800b.postBattleActionIndex_800bc974;
 import static legend.game.Scus94491BpeSegment_800b.postCombatMainCallbackIndex_800bc91c;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.queuedSounds_800bd110;
@@ -1214,7 +1214,7 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_8001852c
-    if(postCombatMainCallbackIndex_800bc91c != EngineState.SUBMAP_05 || postBattleAction_800bc974.get() == 3) {
+    if(postCombatMainCallbackIndex_800bc91c != EngineState.SUBMAP_05 || postBattleActionIndex_800bc974.get() == 3) {
       //LAB_80018550
       if(whichMenu_800bdc38 == WhichMenu.NONE_0) {
         pregameLoadingStage_800bb10c.incr();
@@ -1336,7 +1336,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x800189b0L)
   public static void FUN_800189b0() {
-    if(postCombatMainCallbackIndex_800bc91c == EngineState.SUBMAP_05 && postBattleAction_800bc974.get() != 3) {
+    if(postCombatMainCallbackIndex_800bc91c == EngineState.SUBMAP_05 && postBattleActionIndex_800bc974.get() != 3) {
       FUN_800e5934();
     }
 
