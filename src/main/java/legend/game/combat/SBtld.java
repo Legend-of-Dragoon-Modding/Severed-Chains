@@ -38,7 +38,7 @@ import static legend.game.Scus94491BpeSegment_800b._800bc960;
 import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.combat.Bttl_800c._800c66b0;
+import static legend.game.combat.Bttl_800c.currentCameraPositionIndicesIndex_800c66b0;
 import static legend.game.combat.Bttl_800c._800c6748;
 import static legend.game.combat.Bttl_800c._800c6780;
 import static legend.game.combat.Bttl_800c.addCombatant;
@@ -107,8 +107,8 @@ public class SBtld {
 
     //LAB_801091dc
     _800c6748.set(v1 + 1);
-    _800c66b0.set(simpleRand() & 3);
-    _800c6780.set(currentStageData_800c6718.get(_800c66b0.get() + 6));
+    currentCameraPositionIndicesIndex_800c66b0.set(simpleRand() & 3);
+    _800c6780.set(currentStageData_800c6718.get(currentCameraPositionIndicesIndex_800c66b0.get() + 6));
     _800bc960.or(0x2);
   }
 

@@ -208,7 +208,7 @@ import static legend.game.combat.Bttl_800f.FUN_800f60ac;
 import static legend.game.combat.Bttl_800f.FUN_800f6134;
 import static legend.game.combat.Bttl_800f.FUN_800f6330;
 import static legend.game.combat.Bttl_800f.FUN_800f84c0;
-import static legend.game.combat.Bttl_800f.FUN_800f8c38;
+import static legend.game.combat.Bttl_800f.toggleBattleMenuSelectorRendering;
 import static legend.game.combat.Bttl_800f.addFloatingNumberForBobj;
 import static legend.game.combat.Bttl_800f.loadBattleHudTextures;
 
@@ -226,7 +226,7 @@ public final class Bttl_800c {
   public static final IntRef _800c66a8 = MEMORY.ref(4, 0x800c66a8L, IntRef::new);
   public static final ShortRef _800c66ac = MEMORY.ref(2, 0x800c66acL, ShortRef::new);
 
-  public static final IntRef _800c66b0 = MEMORY.ref(4, 0x800c66b0L, IntRef::new);
+  public static final IntRef currentCameraPositionIndicesIndex_800c66b0 = MEMORY.ref(4, 0x800c66b0L, IntRef::new);
 
   public static final IntRef _800c66b4 = MEMORY.ref(4, 0x800c66b4L, IntRef::new);
   public static final BoolRef stageHasModel_800c66b8 = MEMORY.ref(1, 0x800c66b8L, BoolRef::new);
@@ -324,8 +324,8 @@ public final class Bttl_800c {
 
   public static final ArrayRef<IntRef> monsterBobjs_800c6b78 = MEMORY.ref(4, 0x800c6b78L, ArrayRef.of(IntRef.class, 9, 4, IntRef::new));
   public static final IntRef monsterCount_800c6b9c = MEMORY.ref(4, 0x800c6b9cL, IntRef::new);
-  public static final ByteRef cameraPositionIndicesIndex_800c6ba0 = MEMORY.ref(1, 0x800c6ba0L, ByteRef::new);
-  public static final ByteRef cameraPositionIndicesIndex_800c6ba1 = MEMORY.ref(1, 0x800c6ba1L, ByteRef::new);
+  public static final ByteRef countCameraPositionIndicesIndices_800c6ba0 = MEMORY.ref(1, 0x800c6ba0L, ByteRef::new);
+  public static final ByteRef currentCameraPositionIndicesIndicesIndex_800c6ba1 = MEMORY.ref(1, 0x800c6ba1L, ByteRef::new);
 
   /** Uhh, contains the monsters that Melbu summons during his fight...? */
   public static final ArrayRef<LodString> melbuMonsterNames_800c6ba8 = MEMORY.ref(2, 0x800c6ba8L, ArrayRef.of(LodString.class, 3, 0x2c, LodString::new));
@@ -338,7 +338,7 @@ public final class Bttl_800c {
     Arrays.setAll(displayStats_800c6c2c, i -> new BattleDisplayStats144());
   }
 
-  public static final ArrayRef<UnsignedByteRef> cameraPositionIndices_800c6c30 = MEMORY.ref(4, 0x800c6c30L, ArrayRef.of(UnsignedByteRef.class, 4, 1, UnsignedByteRef::new));
+  public static final ArrayRef<UnsignedByteRef> cameraPositionIndicesIndices_800c6c30 = MEMORY.ref(4, 0x800c6c30L, ArrayRef.of(UnsignedByteRef.class, 4, 1, UnsignedByteRef::new));
 
   public static BattleMenuStruct58 battleMenu_800c6c34;
   public static final IntRef _800c6c38 = MEMORY.ref(4, 0x800c6c38L, IntRef::new);
@@ -405,7 +405,7 @@ public final class Bttl_800c {
   public static final BattleMenuHighlightMetrics12 battleMenuHighlightMetrics_800c71bc = MEMORY.ref(2, 0x800c71bcL, BattleMenuHighlightMetrics12::new);
   public static final ArrayRef<ShortRef> dragoonSpiritIcons_800c71d0 = MEMORY.ref(2, 0x800c71d0L, ArrayRef.of(ShortRef.class, 10, 2, ShortRef::new));
   public static final ArrayRef<ShortRef> battleMenuIconStates_800c71e4 = MEMORY.ref(2, 0x800c71e4L, ArrayRef.of(ShortRef.class, 4, 2, ShortRef::new));
-  public static final ArrayRef<ByteRef> _800c71ec = MEMORY.ref(1, 0x800c71ecL, ArrayRef.of(ByteRef.class, 3, 1, ByteRef::new));
+  public static final ArrayRef<ByteRef> uiTextureElementBrightness_800c71ec = MEMORY.ref(1, 0x800c71ecL, ArrayRef.of(ByteRef.class, 3, 1, ByteRef::new));
 
   /** Different sets of bobjs for different target types (chars, monsters, all) */
   public static ScriptState<BattleObject27c>[][] targetBobjs_800c71f0;
@@ -414,7 +414,7 @@ public final class Bttl_800c {
 
   public static final ArrayRef<UnsignedShortRef> protectedItems_800c72cc = MEMORY.ref(2, 0x800c72ccL, ArrayRef.of(UnsignedShortRef.class, 10, 2, UnsignedShortRef::new));
 
-  public static final Value _800d66b0 = MEMORY.ref(1, 0x800d66b0L);
+  public static final UnsignedByteRef _800d66b0 = MEMORY.ref(1, 0x800d66b0L, UnsignedByteRef::new);
 
   public static final SpellStats0c[] spellStats_800fa0b8 = new SpellStats0c[128];
   public static final Value _800fa6b8 = MEMORY.ref(2, 0x800fa6b8L);
@@ -3175,16 +3175,16 @@ public final class Bttl_800c {
     }
 
     //LAB_800ccaec
-    FUN_800f8c38(1);
+    toggleBattleMenuSelectorRendering(true);
 
-    final int s0 = FUN_800f6330();
-    if(s0 == 0) {
+    final int selectedAction = FUN_800f6330();
+    if(selectedAction == 0) {
       //LAB_800ccb24
       return FlowControl.PAUSE_AND_REWIND;
     }
 
-    FUN_800f8c38(0);
-    script.params_20[2].set(s0 - 1);
+    toggleBattleMenuSelectorRendering(false);
+    script.params_20[2].set(selectedAction - 1);
 
     //LAB_800ccb28
     return FlowControl.CONTINUE;
