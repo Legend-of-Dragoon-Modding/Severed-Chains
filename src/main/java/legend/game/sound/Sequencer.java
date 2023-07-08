@@ -591,7 +591,7 @@ public class Sequencer {
                 if(playingNote._1c == 0) {
                   final int _64ths = (playingNote.pitchBend_38 - 64) * playingNote.pitchBendMultiplier_3a; // 64ths of notes
                   note = note + _64ths / 64; // Add whole number of notes
-                  sixtyFourths = sixtyFourths + Math.floorMod(_64ths, 64);
+                  sixtyFourths += _64ths - (_64ths / 64) * 64;
                   pitchBendMultiplier = 1;
                 }
 
