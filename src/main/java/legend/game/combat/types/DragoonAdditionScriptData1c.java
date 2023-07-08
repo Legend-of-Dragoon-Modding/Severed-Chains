@@ -17,5 +17,5 @@ public class DragoonAdditionScriptData1c {
   public int _12;
   public int _13;
   public int _14;
-  public int _18;
+  public int charId_18;
 }

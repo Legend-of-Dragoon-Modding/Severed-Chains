@@ -727,7 +727,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[806] = Scus94491BpeSegment::FUN_8001c5fc;
     scriptSubFunctions_8004e29c[807] = Scus94491BpeSegment::FUN_8001c604;
 
-    scriptSubFunctions_8004e29c[832] = Bttl_800d::FUN_800d46d4;
+    scriptSubFunctions_8004e29c[832] = Bttl_800d::scriptRenderButtonPressHudElement;
     scriptSubFunctions_8004e29c[833] = SEffe::FUN_80108df8;
     scriptSubFunctions_8004e29c[834] = SEffe::FUN_80102610;
     scriptSubFunctions_8004e29c[835] = Bttl_800c::scriptGetBobjDimension;

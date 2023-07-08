@@ -35,6 +35,8 @@ import legend.game.combat.effects.BttlScriptData6cSub13c;
 import legend.game.combat.effects.EffectManagerData6c;
 import legend.game.combat.effects.EffectManagerData6cInner;
 import legend.game.combat.effects.GuardEffect06;
+import legend.game.combat.effects.GuardEffectMetrics04;
+import legend.game.combat.effects.ButtonPressHudMetrics06;
 import legend.game.combat.effects.MonsterDeathEffect34;
 import legend.game.combat.effects.MonsterDeathEffectObjectDestructor30;
 import legend.game.combat.effects.ProjectileHitEffect14;
@@ -66,8 +68,8 @@ import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SCRIPTS;
-import static legend.game.Scus94491BpeSegment.FUN_80018a5c;
-import static legend.game.Scus94491BpeSegment.FUN_80018d60;
+import static legend.game.Scus94491BpeSegment.renderButtonPressHudElement;
+import static legend.game.Scus94491BpeSegment.renderButtonPressHudTexturedRect;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
@@ -119,14 +121,14 @@ import static legend.game.combat.Bttl_800c._800c67d4;
 import static legend.game.combat.Bttl_800c._800c67d8;
 import static legend.game.combat.Bttl_800c._800c67e4;
 import static legend.game.combat.Bttl_800c._800c67e8;
-import static legend.game.combat.Bttl_800c._800fa76c;
+import static legend.game.combat.Bttl_800c.guardEffectMetrics_800fa76c;
 import static legend.game.combat.Bttl_800c._800faa90;
 import static legend.game.combat.Bttl_800c._800faa92;
 import static legend.game.combat.Bttl_800c._800faa94;
 import static legend.game.combat.Bttl_800c._800faa98;
 import static legend.game.combat.Bttl_800c._800faa9c;
 import static legend.game.combat.Bttl_800c._800faa9d;
-import static legend.game.combat.Bttl_800c._800faaa0;
+import static legend.game.combat.Bttl_800c.buttonPressHudMetrics_800faaa0;
 import static legend.game.combat.Bttl_800c._800fab98;
 import static legend.game.combat.Bttl_800c._800faba0;
 import static legend.game.combat.Bttl_800c._800faba8;
@@ -727,7 +729,7 @@ public final class Bttl_800d {
   @Method(0x800d2734L)
   public static FlowControl allocateRadialGradientEffect(final RunningScript<? extends BattleScriptDataBase> script) {
     final int circleSubdivisionModifier = script.params_20[1].get();
-    final int s1 = script.params_20[2].get();
+    final int rendererIndex = script.params_20[2].get();
 
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
       "RadialGradientEffect14",
@@ -745,109 +747,110 @@ public final class Bttl_800d {
 
     final RadialGradientEffect14 effect = (RadialGradientEffect14)manager.effect_44;
     effect.circleSubdivisionModifier_00 = circleSubdivisionModifier;
-    effect.scaleModifier_01 = (s1 - 3 & 0xffff_ffffL) >= 2 ? 4 : 1;
-    effect.renderer_10 = radialGradientEffectRenderers_800fa758[s1];
+    effect.scaleModifier_01 = (rendererIndex - 3 & 0xffff_ffffL) >= 2 ? 4 : 1;
+    effect.renderer_10 = radialGradientEffectRenderers_800fa758[rendererIndex];
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800d2810L)
-  public static void renderGuardEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
-    final VECTOR sp0x58 = new VECTOR();
-    final IntRef[] sp0x18 = new IntRef[7];
-    final IntRef[] sp0x38 = new IntRef[7];
+  public static void renderGuardEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+    final VECTOR translation = new VECTOR();
+    final IntRef[] refXArray = new IntRef[7];
+    final IntRef[] refYArray = new IntRef[7];
 
-    Arrays.setAll(sp0x18, i -> new IntRef());
-    Arrays.setAll(sp0x38, i -> new IntRef());
+    Arrays.setAll(refXArray, i -> new IntRef());
+    Arrays.setAll(refYArray, i -> new IntRef());
 
-    final GuardEffect06 s7 = (GuardEffect06)data.effect_44;
-    s7._02++;
-    s7._04 += 0x400;
+    final GuardEffect06 effect = (GuardEffect06)manager.effect_44;
+    effect._02++;
+    effect._04 += 0x400;
 
     //LAB_800d2888
-    int s3 = 0;
+    GuardEffectMetrics04 guardEffectMetrics;
+    int effectZ = 0;
     for(int i = 6; i >= 0; i--) {
       //LAB_800d289c
-      final long s1 = _800fa76c.offset(i * 0x4L).getAddress();
-      sp0x58.setX(data._10.trans_04.getX() + (i != 0 ? data._10.scale_16.getX() / 4 : 0));
-      sp0x58.setY((int)(data._10.trans_04.getY() + (MEMORY.ref(2, s1).offset(0x2L).getSigned() * data._10.scale_16.getY() >> 12)));
-      sp0x58.setZ((int)(data._10.trans_04.getZ() + (MEMORY.ref(2, s1).offset(0x0L).getSigned() * data._10.scale_16.getZ() >> 12)));
-      s3 = transformWorldspaceToScreenspace(sp0x58, sp0x18[i], sp0x38[i]);
+      guardEffectMetrics = guardEffectMetrics_800fa76c.get(i);
+      translation.setX(manager._10.trans_04.getX() + (i != 0 ? manager._10.scale_16.getX() / 4 : 0));
+      translation.setY(manager._10.trans_04.getY() + guardEffectMetrics.y_02.get() * manager._10.scale_16.getY() >> 12);
+      translation.setZ(manager._10.trans_04.getZ() + guardEffectMetrics.z_00.get() * manager._10.scale_16.getZ() >> 12);
+      effectZ = transformWorldspaceToScreenspace(translation, refXArray[i], refYArray[i]);
     }
 
-    s3 = s3 >> 2;
-    int sp78 = MathHelper.clamp(data._10.colour_1c.getX() - 1 << 8, 0, 0x8000) >>> 7;
-    int sp7a = MathHelper.clamp(data._10.colour_1c.getY() - 1 << 8, 0, 0x8000) >>> 7;
-    int sp7c = MathHelper.clamp(data._10.colour_1c.getZ() - 1 << 8, 0, 0x8000) >>> 7;
-    sp78 = Math.min((sp78 + sp7a + sp7c) / 3 * 2, 0xff);
+    effectZ = effectZ >> 2;
+    int r = MathHelper.clamp(manager._10.colour_1c.getX() - 1 << 8, 0, 0x8000) >>> 7;
+    int g = MathHelper.clamp(manager._10.colour_1c.getY() - 1 << 8, 0, 0x8000) >>> 7;
+    int b = MathHelper.clamp(manager._10.colour_1c.getZ() - 1 << 8, 0, 0x8000) >>> 7;
+    r = Math.min((r + g + b) / 3 * 2, 0xff);
 
     //LAB_800d2a80
     //LAB_800d2a9c
     for(int i = 0; i < 5; i++) {
-      int a0 = data._10.z_22;
-      final int v1 = s3 + a0;
-      if(v1 >= 0xa0) {
-        if(v1 >= 0xffe) {
-          a0 = 0xffe - s3;
+      int managerZ = manager._10.z_22;
+      final int totalZ = effectZ + managerZ;
+      if(totalZ >= 0xa0) {
+        if(totalZ >= 0xffe) {
+          managerZ = 0xffe - effectZ;
         }
 
         //LAB_800d2bc0
         // Main part of shield effect
-        GPU.queueCommand(s3 + a0 >> 2, new GpuCommandPoly(3)
+        GPU.queueCommand(effectZ + managerZ >> 2, new GpuCommandPoly(3)
           .translucent(Translucency.B_PLUS_F)
-          .pos(0, sp0x18[i + 1].get(), sp0x38[i + 1].get())
-          .pos(1, sp0x18[i + 2].get(), sp0x38[i + 2].get())
-          .pos(2, sp0x18[0    ].get(), sp0x38[0    ].get())
-          .rgb(0, data._10.colour_1c.getX(), data._10.colour_1c.getY(), data._10.colour_1c.getZ())
-          .rgb(1, data._10.colour_1c.getX(), data._10.colour_1c.getY(), data._10.colour_1c.getZ())
-          .monochrome(2, sp78)
+          .pos(0, refXArray[i + 1].get(), refYArray[i + 1].get())
+          .pos(1, refXArray[i + 2].get(), refYArray[i + 2].get())
+          .pos(2, refXArray[0    ].get(), refYArray[0    ].get())
+          .rgb(0, manager._10.colour_1c.getX(), manager._10.colour_1c.getY(), manager._10.colour_1c.getZ())
+          .rgb(1, manager._10.colour_1c.getX(), manager._10.colour_1c.getY(), manager._10.colour_1c.getZ())
+          .monochrome(2, r)
         );
       }
     }
 
     //LAB_800d2c78
     int s6 = 0x1000;
-    sp78 = data._10.colour_1c.getX();
-    sp7a = data._10.colour_1c.getY();
-    sp7c = data._10.colour_1c.getZ();
-    final int sp80 = sp78 >>> 2;
-    final int sp82 = sp7a >>> 2;
-    final int sp84 = sp7c >>> 2;
+    r = manager._10.colour_1c.getX();
+    g = manager._10.colour_1c.getY();
+    b = manager._10.colour_1c.getZ();
+    final int stepR = r >>> 2;
+    final int stepG = g >>> 2;
+    final int stepB = b >>> 2;
 
     //LAB_800d2cfc
-    int s7_0 = 0;
+    int baseX = 0;
     for(int i = 0; i < 4; i++) {
-      s6 = s6 + s7._04 / 4;
-      s7_0 = s7_0 + data._10.scale_16.getX() / 4;
-      sp78 = sp78 - sp80;
-      sp7a = sp7a - sp82;
-      sp7c = sp7c - sp84;
+      s6 = s6 + effect._04 / 4;
+      baseX = baseX + manager._10.scale_16.getX() / 4;
+      r = r - stepR;
+      g = g - stepG;
+      b = b - stepB;
 
       //LAB_800d2d4c
       for(int n = 1; n < 7; n++) {
-        final long s1 = _800fa76c.offset(n * 0x4L).getAddress();
-        sp0x58.setX(s7_0 + data._10.trans_04.getX());
-        sp0x58.setY((((int)MEMORY.ref(2, s1).offset(0x2L).getSigned() * data._10.scale_16.getY() >> 12) * s6 >> 12) + data._10.trans_04.getY());
-        sp0x58.setZ((((int)MEMORY.ref(2, s1).offset(0x0L).getSigned() * data._10.scale_16.getZ() >> 12) * s6 >> 12) + data._10.trans_04.getZ());
-        s3 = transformWorldspaceToScreenspace(sp0x58, sp0x18[n], sp0x38[n]) >> 2;
+        guardEffectMetrics = guardEffectMetrics_800fa76c.get(n);
+        translation.setX(baseX + manager._10.trans_04.getX());
+        translation.setY(((guardEffectMetrics.y_02.get() * manager._10.scale_16.getY() >> 12) * s6 >> 12) + manager._10.trans_04.getY());
+        translation.setZ(((guardEffectMetrics.z_00.get() * manager._10.scale_16.getZ() >> 12) * s6 >> 12) + manager._10.trans_04.getZ());
+        effectZ = transformWorldspaceToScreenspace(translation, refXArray[n], refYArray[n]) >> 2;
       }
 
       //LAB_800d2e20
       for(int n = 0; n < 5; n++) {
-        int a0 = data._10.z_22;
-        final int v1 = s3 + a0;
-        if(v1 >= 0xa0) {
-          if(v1 >= 0xffe) {
-            a0 = 0xffe - s3;
+        int managerZ = manager._10.z_22;
+        final int totalZ = effectZ + managerZ;
+        if(totalZ >= 0xa0) {
+          if(totalZ >= 0xffe) {
+            managerZ = 0xffe - effectZ;
           }
 
           //LAB_800d2ee8
           // Radiant lines of shield effect
-          GPU.queueCommand(s3 + a0 >> 2, new GpuCommandLine()
+          GPU.queueCommand(effectZ + managerZ >> 2, new GpuCommandLine()
             .translucent(Translucency.B_PLUS_F)
-            .pos(0, sp0x18[n + 1].get(), sp0x38[n + 1].get())
-            .pos(1, sp0x18[n + 2].get(), sp0x38[n + 2].get())
-            .rgb(sp78, sp7a, sp7c)
+            .pos(0, refXArray[n + 1].get(), refYArray[n + 1].get())
+            .pos(1, refXArray[n + 2].get(), refYArray[n + 2].get())
+            .rgb(r, g, b)
           );
         }
       }
@@ -1091,7 +1094,7 @@ public final class Bttl_800d {
     } while(true);
 
     //LAB_800d3864
-    FUN_80018d60(displayX, displayY, charIdx % 21 * 12 & 0xfc, charIdx / 21 * 12 + 144 & 0xfc, 12, 12, 0xa, Translucency.B_PLUS_F, new COLOUR().set(charAlpha, charAlpha, charAlpha), 0x1000L);
+    renderButtonPressHudTexturedRect(displayX, displayY, charIdx % 21 * 12 & 0xfc, charIdx / 21 * 12 + 144 & 0xfc, 12, 12, 0xa, Translucency.B_PLUS_F, new COLOUR().set(charAlpha, charAlpha, charAlpha), 0x1000);
   }
 
   /**
@@ -1218,7 +1221,7 @@ public final class Bttl_800d {
   @Method(0x800d3d74L)
   public static FlowControl scriptAllocateAdditionScript(final RunningScript<?> script) {
     if(script.params_20[1].get() == -1) {
-      _800faa9d.setu(0);
+      _800faa9d.set(0);
     } else {
       //LAB_800d3dc0
       final int addition = gameState_800babc8.charData_32c[script.params_20[0].get()].selectedAddition_19;
@@ -1243,7 +1246,7 @@ public final class Bttl_800d {
       additionStruct.renderer_14 = Bttl_800d::renderAdditionNameChar;
       additionStruct.ptr_18 = new AdditionCharEffectData0c[additionStruct.length_08];
       Arrays.setAll(additionStruct.ptr_18, i -> new AdditionCharEffectData0c());
-      _800faa9d.setu(0x1L);
+      _800faa9d.set(1);
 
       final int[] displayOffset = setAdditionNameDisplayCoords(0, addition);
       int charPosition = -160;
@@ -1270,7 +1273,7 @@ public final class Bttl_800d {
 
   @Method(0x800d3f98L)
   public static void FUN_800d3f98(final short x, final short y, final int a2, final short a3, final int colour) {
-    FUN_80018d60(x, y, a2 * 8 + 16 & 0xf8, 40, 8, 16, a3, Translucency.B_PLUS_F, new COLOUR().set(colour, colour, colour), 0x1000L);
+    renderButtonPressHudTexturedRect(x, y, a2 * 8 + 16 & 0xf8, 40, 8, 16, a3, Translucency.B_PLUS_F, new COLOUR().set(colour, colour, colour), 0x1000);
   }
 
   @Method(0x800d4018L)
@@ -1357,7 +1360,7 @@ public final class Bttl_800d {
     final int s3 = script.params_20[1].get();
 
     if(s2 == -1) {
-      _800faa94.setu(0);
+      _800faa94.set(0);
     } else {
       //LAB_800d4388
       final ScriptState<SpTextEffect40> state = SCRIPTS.allocateScriptState("SpTextEffect40", new SpTextEffect40());
@@ -1371,26 +1374,26 @@ public final class Bttl_800d {
       s1._08 = s2;
       s1._0c = 0;
       s1._10 = 30;
-      s1._1c = (int)(_800faa90.getSigned() << 8);
+      s1._1c = _800faa90.get() << 8;
       s1._20 = 0x5000;
 
       if(s3 == 1) {
-        _800faa92.setu(0);
-        _800faa94.setu(s3);
-        _800faa98.setu(0);
+        _800faa92.set((short)0);
+        _800faa94.set(s3);
+        _800faa98.set(0);
         s1._01 = 0;
         s1._1c = 0xffff6e00;
-        _800faa90.setu(-0x92L);
+        _800faa90.set((short)-0x92);
       } else {
         //LAB_800d4470
-        _800faa92.addu(0x1L);
+        _800faa92.add((short)1);
         s1._01 = (int)_800faa92.get();
       }
 
       //LAB_800d448c
       s1._2c = (s1._1c - s1._0c) / 14;
       s1._30 = -0x800;
-      _800faa98.addu(s2);
+      _800faa98.add(s2);
 
       //LAB_800d44dc
       for(int i = 0; i < 8; i++) {
@@ -1408,7 +1411,7 @@ public final class Bttl_800d {
       }
 
       //LAB_800d453c
-      _800faa90.setu((s1._1c >> 8) + v1 * 8 - 3);
+      _800faa90.set((short)((s1._1c >> 8) + v1 * 8 - 3));
     }
 
     script.params_20[1].set(0);
@@ -1426,7 +1429,7 @@ public final class Bttl_800d {
       state.setTicker(Bttl_800d::FUN_800d3bb8);
       final AdditionNameTextEffect1c s0 = state.innerStruct_00;
       s0.ptr_18 = new AdditionCharEffectData0c[] {new AdditionCharEffectData0c()};
-      _800faa9c.setu(0x1L);
+      _800faa9c.set(1);
       s0._0c = 40;
       s0.renderer_14 = Bttl_800d::FUN_800d3a64;
       s0._00 = 0;
@@ -1443,7 +1446,7 @@ public final class Bttl_800d {
       struct.offsetY_0a = 96;
     } else {
       //LAB_800d46b0
-      _800faa9c.setu(0);
+      _800faa9c.set(0);
     }
 
     //LAB_800d46bc
@@ -1451,16 +1454,16 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d46d4L)
-  public static FlowControl FUN_800d46d4(final RunningScript<?> script) {
-    final long v1 = _800faaa0.offset(1, script.params_20[0].get() * 0x6L).getAddress();
+  public static FlowControl scriptRenderButtonPressHudElement(final RunningScript<?> script) {
+    final ButtonPressHudMetrics06 metrics = buttonPressHudMetrics_800faaa0.get(script.params_20[0].get());
 
     final COLOUR colour = new COLOUR().set(script.params_20[4].get(), script.params_20[4].get(), script.params_20[4].get());
 
-    if(MEMORY.ref(1, v1).offset(0x0L).get() == 0) {
-      FUN_80018d60(script.params_20[1].get(), script.params_20[2].get(), (int)MEMORY.ref(1, v1).offset(0x1L).get(), (int)MEMORY.ref(1, v1).offset(0x2L).get(), (int)MEMORY.ref(1, v1).offset(0x3L).get(), (int)MEMORY.ref(1, v1).offset(0x4L).get(), (int)MEMORY.ref(1, v1).offset(0x5L).get(), Translucency.of(script.params_20[3].get()), colour, 0x1000L);
+    if(metrics.hudElementType_00.get() == 0) {
+      renderButtonPressHudTexturedRect(script.params_20[1].get(), script.params_20[2].get(), metrics.u_01.get(), metrics.v_02.get(), metrics.wOrRightU_03.get(), metrics.hOrBottomV_04.get(), metrics.clutOffset_05.get(), Translucency.of(script.params_20[3].get()), colour, 0x1000);
     } else {
       //LAB_800d4784
-      FUN_80018a5c(script.params_20[1].get(), script.params_20[2].get(), (int)MEMORY.ref(1, v1).offset(0x1L).get(), (int)MEMORY.ref(1, v1).offset(0x2L).get(), (int)MEMORY.ref(1, v1).offset(0x3L).get(), (int)MEMORY.ref(1, v1).offset(0x4L).get(), (int)MEMORY.ref(1, v1).offset(0x5L).get(), Translucency.of(script.params_20[3].get()), colour, 0x1000L, 0x1000L);
+      renderButtonPressHudElement(script.params_20[1].get(), script.params_20[2].get(), metrics.u_01.get(), metrics.v_02.get(), metrics.wOrRightU_03.get(), metrics.hOrBottomV_04.get(), metrics.clutOffset_05.get(), Translucency.of(script.params_20[3].get()), colour, 0x1000, 0x1000);
     }
 
     //LAB_800d47cc

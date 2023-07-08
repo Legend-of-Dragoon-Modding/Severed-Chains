@@ -38,6 +38,8 @@ import legend.game.combat.deff.DeffManager7cc;
 import legend.game.combat.effects.BttlScriptData6cSub13c;
 import legend.game.combat.effects.EffectManagerData6c;
 import legend.game.combat.effects.FullScreenOverlayEffect0e;
+import legend.game.combat.effects.GuardEffectMetrics04;
+import legend.game.combat.effects.ButtonPressHudMetrics06;
 import legend.game.combat.effects.RadialGradientEffect14;
 import legend.game.combat.effects.SpriteMetrics08;
 import legend.game.combat.effects.WeaponTrailEffect3c;
@@ -448,7 +450,7 @@ public final class Bttl_800c {
     radialGradientEffectRenderers_800fa758[4] = Bttl_800d::renderRingGradientEffect;
   }
 
-  public static final Value _800fa76c = MEMORY.ref(4, 0x800fa76cL);
+  public static final ArrayRef<GuardEffectMetrics04> guardEffectMetrics_800fa76c = MEMORY.ref(4, 0x800fa76cL, ArrayRef.of(GuardEffectMetrics04.class, 7, 4, GuardEffectMetrics04::new));
 
   /** ASCII chars - [0-9][A-Z][a-z]'-& <null> */
   public static final ArrayRef<ByteRef> asciiTable_800fa788 = MEMORY.ref(1, 0x800fa788L, ArrayRef.of(ByteRef.class, 0x66, 1, ByteRef::new));
@@ -456,15 +458,17 @@ public final class Bttl_800c {
 
   public static final CString additionNames_800fa8d4 = MEMORY.ref(4, 0x800fa8d4L, CString.maxLength(0x1bb));
 
-  public static final Value _800faa90 = MEMORY.ref(2, 0x800faa90L);
-  public static final Value _800faa92 = MEMORY.ref(2, 0x800faa92L);
-  public static final Value _800faa94 = MEMORY.ref(1, 0x800faa94L);
+  /** Next 4 globals are related to SpTextEffect40 */
+  public static final ShortRef _800faa90 = MEMORY.ref(2, 0x800faa90L, ShortRef::new);
+  public static final ShortRef _800faa92 = MEMORY.ref(2, 0x800faa92L, ShortRef::new);
+  public static final ByteRef _800faa94 = MEMORY.ref(1, 0x800faa94L, ByteRef::new);
 
-  public static final Value _800faa98 = MEMORY.ref(4, 0x800faa98L);
-  public static final Value _800faa9c = MEMORY.ref(1, 0x800faa9cL);
-  public static final Value _800faa9d = MEMORY.ref(1, 0x800faa9dL);
+  public static final IntRef _800faa98 = MEMORY.ref(4, 0x800faa98L, IntRef::new);
+  /** Next 2 globals are related to AdditionNameTextEffect1c */
+  public static final ByteRef _800faa9c = MEMORY.ref(1, 0x800faa9cL, ByteRef::new);
+  public static final ByteRef _800faa9d = MEMORY.ref(1, 0x800faa9dL, ByteRef::new);
 
-  public static final Value _800faaa0 = MEMORY.ref(4, 0x800faaa0L);
+  public static final ArrayRef<ButtonPressHudMetrics06> buttonPressHudMetrics_800faaa0 = MEMORY.ref(4, 0x800faaa0L, ArrayRef.of(ButtonPressHudMetrics06.class, 41, 6, ButtonPressHudMetrics06::new));
 
   public static final SVECTOR _800fab98 = new SVECTOR();
   public static final SVECTOR _800faba0 = new SVECTOR();
