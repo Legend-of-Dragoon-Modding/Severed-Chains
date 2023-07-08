@@ -168,11 +168,11 @@ import static legend.game.combat.Bttl_800c._800c6e60;
 import static legend.game.combat.Bttl_800c._800c6e9c;
 import static legend.game.combat.Bttl_800c._800c6ecc;
 import static legend.game.combat.Bttl_800c._800c6f04;
-import static legend.game.combat.Bttl_800c._800faec4;
+import static legend.game.combat.Bttl_800c.enemyDeffFileIndices_800faec4;
 import static legend.game.combat.Bttl_800c._800fafe8;
-import static legend.game.combat.Bttl_800c._800fafec;
-import static legend.game.combat.Bttl_800c._800fb06c;
-import static legend.game.combat.Bttl_800c._800fb188;
+import static legend.game.combat.Bttl_800c.dragoonDeffFlags_800fafec;
+import static legend.game.combat.Bttl_800c.modelColourMaps_800fb06c;
+import static legend.game.combat.Bttl_800c.targetArrowOffsetY_800fb188;
 import static legend.game.combat.Bttl_800c._800fb198;
 import static legend.game.combat.Bttl_800c._800fb444;
 import static legend.game.combat.Bttl_800c._800fb46c;
@@ -934,7 +934,7 @@ public final class Bttl_800e {
 
     struct7cc.deffPackage_5a8 = null;
 
-    _800fafe8.setu(0x4L);
+    _800fafe8.set(4);
 
     if((struct7cc.flags_20 & 0x4_0000) != 0) {
       loadDeffSounds(_800c6938.bobjState_04, 1);
@@ -1017,7 +1017,7 @@ public final class Bttl_800e {
     LOGGER.info(DEFF, "Loading dragoon DEFF (ID: %d, flags: %x)", index, script.params_20[0].get() & 0xffff_0000);
 
     final DeffManager7cc deffManager = deffManager_800c693c;
-    deffManager.flags_20 |= _800fafec.offset(index).get() << 16;
+    deffManager.flags_20 |= dragoonDeffFlags_800fafec.get(index).get() << 16;
     allocateDeffEffectManager(script);
 
     final BattleStruct24_2 battle24 = _800c6938;
@@ -1052,7 +1052,7 @@ public final class Bttl_800e {
       LOGGER.info(DEFF, "Loading DEFF script");
       _800c6938.script_14 = new ScriptFile(4140 + index * 2 + "/1", file.getBytes());
     });
-    _800fafe8.setu(0x1L);
+    _800fafe8.set(1);
   }
 
   @Method(0x800e6844L)
@@ -1078,7 +1078,7 @@ public final class Bttl_800e {
       LOGGER.info(DEFF, "Loading DEFF script");
       _800c6938.script_14 = new ScriptFile(4308 + s0 + "/1", file.getBytes());
     });
-    _800fafe8.setu(0x1L);
+    _800fafe8.set(1);
   }
 
   @Method(0x800e6920L)
@@ -1117,7 +1117,7 @@ public final class Bttl_800e {
     } else {
       //LAB_800e6a30
       final int a0_0 = monsterIndex >>> 4;
-      int fileIndex = (int)_800faec4.offset(2, (a0_0 - 0x100) * 0x2L).get() + (monsterIndex & 0xf);
+      int fileIndex = enemyDeffFileIndices_800faec4.get(a0_0 - 0x100).get() + (monsterIndex & 0xf);
       if(a0_0 >= 320) {
         fileIndex += 117;
       }
@@ -1134,7 +1134,7 @@ public final class Bttl_800e {
     }
 
     //LAB_800e6a9c
-    _800fafe8.setu(0x1L);
+    _800fafe8.set(1);
   }
 
   @Method(0x800e6aecL)
@@ -1174,7 +1174,7 @@ public final class Bttl_800e {
     });
 
     //LAB_800e6d7c
-    _800fafe8.setu(0x1L);
+    _800fafe8.set(1);
   }
 
   @Method(0x800e6db4L)
@@ -1220,7 +1220,7 @@ public final class Bttl_800e {
           struct24.managerState_18.loadScriptFile(struct24.script_14, struct24.scriptOffsetIndex_10);
           struct24.init_1c = false;
           struct24.frameCount_20 = 0;
-          _800fafe8.setu(0x3L);
+          _800fafe8.set(3);
           flow = FlowControl.CONTINUE;
         } else {
           throw new RuntimeException("undefined t0");
@@ -1236,7 +1236,7 @@ public final class Bttl_800e {
           flow = FlowControl.PAUSE_AND_REWIND;
         } else if(v1 == 0x4L) {
           //LAB_800e6f18
-          _800fafe8.setu(0);
+          _800fafe8.set(0);
           flow = FlowControl.CONTINUE;
         } else {
           throw new RuntimeException("undefined a3");
@@ -1260,7 +1260,7 @@ public final class Bttl_800e {
             _800c6938.managerState_18.deallocateWithChildren();
 
           case 4:
-            _800fafe8.setu(0);
+            _800fafe8.set(0);
             _800c6938.managerState_18 = null;
             flow = FlowControl.CONTINUE;
             break;
@@ -1300,7 +1300,7 @@ public final class Bttl_800e {
 
     if(v1 == 4) {
       //LAB_800e702c
-      _800fafe8.setu(0);
+      _800fafe8.set(0);
       _800c6938.managerState_18 = null;
       return FlowControl.CONTINUE;
     }
@@ -1362,7 +1362,7 @@ public final class Bttl_800e {
 
     if(v1 == 4) {
       //LAB_800e725c
-      _800fafe8.setu(0);
+      _800fafe8.set(0);
       _800c6938.managerState_18 = null;
       return FlowControl.CONTINUE;
     }
@@ -1388,7 +1388,7 @@ public final class Bttl_800e {
 
     if(v1 == 4) {
       //LAB_800e72f4
-      _800fafe8.setu(0);
+      _800fafe8.set(0);
       _800c6938.managerState_18 = null;
       return FlowControl.CONTINUE;
     }
@@ -1414,7 +1414,7 @@ public final class Bttl_800e {
 
     if(v1 == 4) {
       //LAB_800e738c
-      _800fafe8.setu(0);
+      _800fafe8.set(0);
       _800c6938.managerState_18 = null;
       return FlowControl.CONTINUE;
     }
@@ -1474,7 +1474,7 @@ public final class Bttl_800e {
       //LAB_800e7510
       if(struct24.init_1c && struct24.script_14 != null && ((deffManager_800c693c.flags_20 & 0x4_0000) == 0 || (getLoadedDrgnFiles() & 0x40) == 0)) {
         //LAB_800e756c
-        _800fafe8.setu(2);
+        _800fafe8.set(2);
       }
     } else if(v1 == 3) {
       //LAB_800e7574
@@ -2143,7 +2143,7 @@ public final class Bttl_800e {
     if(animatedTmdType.textureInfo_08 != null) {
       final DeffPart.TextureInfo textureInfo = animatedTmdType.textureInfo_08[0];
       final int tpage = GetTPage(Bpp.BITS_4, Translucency.HALF_B_PLUS_HALF_F, textureInfo.vramPos_00.x.get(), textureInfo.vramPos_00.y.get());
-      model.colourMap_9d = (int)_800fb06c.offset(tpage * 0x4L).get();
+      model.colourMap_9d = modelColourMaps_800fb06c.get(tpage).get();
     } else {
       model.colourMap_9d = 0;
     }
@@ -3410,7 +3410,7 @@ public final class Bttl_800e {
       .translucent(Translucency.HALF_B_PLUS_HALF_F)
       .vramPos(704, 256)
       .monochrome(0x80)
-      .pos(screenCoords.getX() - 8, screenCoords.getY() + (int)_800fb188.offset(2, (tickCount_800bb0fc.get() & 0x7) * 0x2L).getSigned(), 16, 24)
+      .pos(screenCoords.getX() - 8, screenCoords.getY() + targetArrowOffsetY_800fb188.get(tickCount_800bb0fc.get() & 0x7).get(), 16, 24)
       .uv(240, 0);
 
     if(textEffect == 0) {

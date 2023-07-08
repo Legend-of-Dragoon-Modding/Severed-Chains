@@ -1951,15 +1951,15 @@ public final class Scus94491BpeSegment_8003 {
     return (int)CPU.MFC2(19) >> 2;
   }
 
-  public static void RotTrans(final SVECTOR v0, final VECTOR out) {
-    RotTrans(v0, out, null);
+  public static void RotTrans(final SVECTOR in, final VECTOR out) {
+    RotTrans(in, out, null);
   }
 
   @Method(0x8003f990L)
-  public static void RotTrans(final SVECTOR v0, final VECTOR out, @Nullable final UnsignedIntRef flags) {
-    CPU.MTC2(v0.getXY(), 0); // VXY0
-    CPU.MTC2(v0.getZ(), 1); // VZ0
-    CPU.COP2(0x48_0012L); // MVMVA (translation=tr, mul vec=v0, mul mat=rot, 12-bit fraction)
+  public static void RotTrans(final SVECTOR in, final VECTOR out, @Nullable final UnsignedIntRef flags) {
+    CPU.MTC2(in.getXY(), 0); // VXY0
+    CPU.MTC2(in.getZ(), 1); // VZ0
+    CPU.COP2(0x48_0012L); // MVMVA (translation=tr, mul vec=in, mul mat=rot, 12-bit fraction)
     out.setX((int)CPU.MFC2(25)); // MAC1
     out.setY((int)CPU.MFC2(26)); // MAC2
     out.setZ((int)CPU.MFC2(27)); // MAC3

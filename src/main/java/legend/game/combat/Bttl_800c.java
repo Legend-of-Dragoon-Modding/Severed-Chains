@@ -13,7 +13,6 @@ import legend.core.gte.SVECTOR;
 import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
-import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BoolRef;
 import legend.core.memory.types.ByteRef;
@@ -36,20 +35,23 @@ import legend.game.combat.bobj.PlayerBattleObject;
 import legend.game.combat.deff.BattleStruct24_2;
 import legend.game.combat.deff.DeffManager7cc;
 import legend.game.combat.effects.BttlScriptData6cSub13c;
+import legend.game.combat.effects.ButtonPressHudMetrics06;
 import legend.game.combat.effects.EffectManagerData6c;
 import legend.game.combat.effects.FullScreenOverlayEffect0e;
 import legend.game.combat.effects.GuardEffectMetrics04;
-import legend.game.combat.effects.ButtonPressHudMetrics06;
 import legend.game.combat.effects.RadialGradientEffect14;
 import legend.game.combat.effects.SpriteMetrics08;
 import legend.game.combat.effects.WeaponTrailEffect3c;
 import legend.game.combat.effects.WeaponTrailEffectSegment2c;
 import legend.game.combat.environment.ActiveStageData2c;
 import legend.game.combat.environment.BattleCamera;
-import legend.game.combat.environment.BattleLightStruct64;
-import legend.game.combat.environment.BattleMenuBackgroundUvMetrics04;
 import legend.game.combat.environment.BattleItemMenuArrowUvMetrics06;
+import legend.game.combat.environment.BattleLightStruct64;
+import legend.game.combat.environment.BattleMenuBackgroundDisplayMetrics0c;
+import legend.game.combat.environment.BattleMenuBackgroundUvMetrics04;
 import legend.game.combat.environment.BattleMenuHighlightMetrics12;
+import legend.game.combat.environment.BattleMenuIconMetrics08;
+import legend.game.combat.environment.BattleMenuTextMetrics08;
 import legend.game.combat.environment.BattlePreloadedEntities_18cb0;
 import legend.game.combat.environment.BattleStage;
 import legend.game.combat.environment.BattleStageDarkening1800;
@@ -57,9 +59,6 @@ import legend.game.combat.environment.BttlLightStruct84;
 import legend.game.combat.environment.CameraOctParamCallback;
 import legend.game.combat.environment.CameraQuadParamCallback;
 import legend.game.combat.environment.CameraSeptParamCallback;
-import legend.game.combat.environment.BattleMenuBackgroundDisplayMetrics0c;
-import legend.game.combat.environment.BattleMenuIconMetrics08;
-import legend.game.combat.environment.BattleMenuTextMetrics08;
 import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.BattleStateEf4;
 import legend.game.combat.types.BttlStruct08;
@@ -190,7 +189,6 @@ import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.combat.Bttl_800d.FUN_800dabec;
 import static legend.game.combat.Bttl_800d.FUN_800dd0d4;
 import static legend.game.combat.Bttl_800d.FUN_800dd118;
-import static legend.game.combat.Bttl_800e.deallocateLightingControllerAndDeffManager;
 import static legend.game.combat.Bttl_800e.FUN_800ec51c;
 import static legend.game.combat.Bttl_800e.FUN_800ec744;
 import static legend.game.combat.Bttl_800e.FUN_800ee610;
@@ -199,6 +197,7 @@ import static legend.game.combat.Bttl_800e.allocateDeffManager;
 import static legend.game.combat.Bttl_800e.allocateEffectManager;
 import static legend.game.combat.Bttl_800e.allocateStageDarkeningStorage;
 import static legend.game.combat.Bttl_800e.backupStageClut;
+import static legend.game.combat.Bttl_800e.deallocateLightingControllerAndDeffManager;
 import static legend.game.combat.Bttl_800e.deallocateStageDarkeningStorage;
 import static legend.game.combat.Bttl_800e.drawUiElements;
 import static legend.game.combat.Bttl_800e.loadBattleHudDeff_;
@@ -207,12 +206,12 @@ import static legend.game.combat.Bttl_800e.updateGameStateAndDeallocateMenu;
 import static legend.game.combat.Bttl_800f.FUN_800f1a00;
 import static legend.game.combat.Bttl_800f.FUN_800f417c;
 import static legend.game.combat.Bttl_800f.FUN_800f60ac;
-import static legend.game.combat.Bttl_800f.initializeCombatMenuIcons;
-import static legend.game.combat.Bttl_800f.handleCombatMenu;
 import static legend.game.combat.Bttl_800f.FUN_800f84c0;
-import static legend.game.combat.Bttl_800f.toggleBattleMenuSelectorRendering;
 import static legend.game.combat.Bttl_800f.addFloatingNumberForBobj;
+import static legend.game.combat.Bttl_800f.handleCombatMenu;
+import static legend.game.combat.Bttl_800f.initializeCombatMenuIcons;
 import static legend.game.combat.Bttl_800f.loadBattleHudTextures;
+import static legend.game.combat.Bttl_800f.toggleBattleMenuSelectorRendering;
 
 public final class Bttl_800c {
   private Bttl_800c() { }
@@ -272,7 +271,7 @@ public final class Bttl_800c {
 
   public static final Pointer<CString> currentAddition_800c6790 = MEMORY.ref(4, 0x800c6790L, Pointer.deferred(1, CString.maxLength(30)));
 
-  public static final MATRIX _800c6798 = new MATRIX();
+  public static final MATRIX cameraTransformMatrix_800c6798 = new MATRIX();
   // public static final UnsignedIntRef flags_800c67b8 = MEMORY.ref(4, 0x800c67b8L, UnsignedIntRef::new);
   public static final IntRef screenOffsetX_800c67bc = MEMORY.ref(4, 0x800c67bcL, IntRef::new);
   public static final IntRef screenOffsetY_800c67c0 = MEMORY.ref(4, 0x800c67c0L, IntRef::new);
@@ -298,7 +297,7 @@ public final class Bttl_800c {
   public static BattleStruct24_2 _800c6938;
   public static DeffManager7cc deffManager_800c693c;
   /** Dunno what this is for, it's set to a pointer but unused. I removed the set for now. */
-  public static final Value _800c6940 = MEMORY.ref(4, 0x800c6940L);
+  public static final IntRef _800c6940 = MEMORY.ref(4, 0x800c6940L, IntRef::new);
   public static TmdObjTable1c[] tmds_800c6944;
   public static SpriteMetrics08[] spriteMetrics_800c6948;
 
@@ -470,11 +469,11 @@ public final class Bttl_800c {
 
   public static final ArrayRef<ButtonPressHudMetrics06> buttonPressHudMetrics_800faaa0 = MEMORY.ref(4, 0x800faaa0L, ArrayRef.of(ButtonPressHudMetrics06.class, 41, 6, ButtonPressHudMetrics06::new));
 
-  public static final SVECTOR _800fab98 = new SVECTOR();
+  public static final SVECTOR cameraRotationVector_800fab98 = new SVECTOR();
   public static final SVECTOR _800faba0 = new SVECTOR();
   public static final VECTOR _800faba8 = new VECTOR();
 
-  public static final Value _800fabb8 = MEMORY.ref(1, 0x800fabb8L);
+  public static final BoolRef _800fabb8 = MEMORY.ref(1, 0x800fabb8L, BoolRef::new);
 
   /**
    * <ol start="0">
@@ -817,10 +816,11 @@ public final class Bttl_800c {
     viewpointComponentMethods_800fad9c[7] = Bttl_800d::FUN_800dca68;
   }
 
-  public static final Value _800faec4 = MEMORY.ref(2, 0x800faec4L);
+  public static final ArrayRef<ShortRef> enemyDeffFileIndices_800faec4 = MEMORY.ref(2, 0x800faec4L, ArrayRef.of(ShortRef.class, 146, 2, ShortRef::new));
 
-  public static final Value _800fafe8 = MEMORY.ref(4, 0x800fafe8L);
-  public static final Value _800fafec = MEMORY.ref(1, 0x800fafecL);
+  /** Related to loading deffs */
+  public static final IntRef _800fafe8 = MEMORY.ref(4, 0x800fafe8L, IntRef::new);
+  public static final ArrayRef<ByteRef> dragoonDeffFlags_800fafec = MEMORY.ref(1, 0x800fafecL, ArrayRef.of(ByteRef.class, 84, 1, ByteRef::new));
   /**
    * <ol start="0">
    *   <li>0x4</li>
@@ -879,12 +879,11 @@ public final class Bttl_800c {
    * The rest are -1
    */
   public static final ArrayRef<ByteRef> melbuStageIndices_800fb064 = MEMORY.ref(1, 0x800fb064L, ArrayRef.of(ByteRef.class, 8, 1, ByteRef::new));
-  public static final Value _800fb06c = MEMORY.ref(1, 0x800fb06cL);
+  public static final ArrayRef<IntRef> modelColourMaps_800fb06c = MEMORY.ref(4, 0x800fb06cL, ArrayRef.of(IntRef.class, 32, 4, IntRef::new));
 
-  public static final Value _800fb0ec = MEMORY.ref(4, 0x800fb0ecL);
+  public static final ArrayRef<IntRef> colourMapUvs_800fb0ec = MEMORY.ref(4, 0x800fb0ecL, ArrayRef.of(IntRef.class, 39, 4, IntRef::new));
 
-  /** TODO array of unsigned shorts */
-  public static final Value _800fb188 = MEMORY.ref(2, 0x800fb188L);
+  public static final ArrayRef<ShortRef> targetArrowOffsetY_800fb188 = MEMORY.ref(2, 0x800fb188L, ArrayRef.of(ShortRef.class, 8, 2, ShortRef::new));
 
   public static final ArrayRef<ShortRef> _800fb198 = MEMORY.ref(2, 0x800fb198L, ArrayRef.of(ShortRef.class, 4, 2, ShortRef::new));
 

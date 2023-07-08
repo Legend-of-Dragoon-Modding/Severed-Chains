@@ -115,7 +115,7 @@ import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.combat.Bttl_800c.rotateAndTranslateEffect;
 import static legend.game.combat.Bttl_800c.FUN_800cf4f4;
 import static legend.game.combat.Bttl_800c.FUN_800cfb14;
-import static legend.game.combat.Bttl_800c._800c6798;
+import static legend.game.combat.Bttl_800c.cameraTransformMatrix_800c6798;
 import static legend.game.combat.Bttl_800c._800c67c4;
 import static legend.game.combat.Bttl_800c._800c67d4;
 import static legend.game.combat.Bttl_800c._800c67d8;
@@ -129,7 +129,7 @@ import static legend.game.combat.Bttl_800c._800faa98;
 import static legend.game.combat.Bttl_800c._800faa9c;
 import static legend.game.combat.Bttl_800c._800faa9d;
 import static legend.game.combat.Bttl_800c.buttonPressHudMetrics_800faaa0;
-import static legend.game.combat.Bttl_800c._800fab98;
+import static legend.game.combat.Bttl_800c.cameraRotationVector_800fab98;
 import static legend.game.combat.Bttl_800c._800faba0;
 import static legend.game.combat.Bttl_800c._800faba8;
 import static legend.game.combat.Bttl_800c._800fabb8;
@@ -2559,12 +2559,12 @@ public final class Bttl_800d {
   @Method(0x800d9518L)
   public static void FUN_800d9518() {
     final BattleCamera cam = camera_800c67f0;
-    _800fab98.setX((short)(cam._d4 >> 8));
-    _800fab98.setY((short)(cam._d8 >> 8));
-    _800fab98.setZ((short)0);
-    RotMatrix_Xyz(_800fab98, _800c6798);
-    SetRotMatrix(_800c6798);
-    SetTransMatrix(_800c6798);
+    cameraRotationVector_800fab98.setX((short)(cam._d4 >> 8));
+    cameraRotationVector_800fab98.setY((short)(cam._d8 >> 8));
+    cameraRotationVector_800fab98.setZ((short)0);
+    RotMatrix_Xyz(cameraRotationVector_800fab98, cameraTransformMatrix_800c6798);
+    SetRotMatrix(cameraTransformMatrix_800c6798);
+    SetTransMatrix(cameraTransformMatrix_800c6798);
     cam._a4 += cam._b4;
     cam._dc -= cam._a4;
     _800faba0.setX((short)0);
@@ -2614,12 +2614,12 @@ public final class Bttl_800d {
   @Method(0x800d9788L)
   public static void FUN_800d9788() {
     final BattleCamera cam = camera_800c67f0;
-    _800fab98.setX((short)(cam._d4 >> 8));
-    _800fab98.setY((short)(cam._d8 >> 8));
-    _800fab98.setZ((short)0);
-    RotMatrix_Xyz(_800fab98, _800c6798);
-    SetRotMatrix(_800c6798);
-    SetTransMatrix(_800c6798);
+    cameraRotationVector_800fab98.setX((short)(cam._d4 >> 8));
+    cameraRotationVector_800fab98.setY((short)(cam._d8 >> 8));
+    cameraRotationVector_800fab98.setZ((short)0);
+    RotMatrix_Xyz(cameraRotationVector_800fab98, cameraTransformMatrix_800c6798);
+    SetRotMatrix(cameraTransformMatrix_800c6798);
+    SetTransMatrix(cameraTransformMatrix_800c6798);
     _800faba0.setX((short)0);
     _800faba0.setY((short)0);
     cam._a4 += cam._b4;
@@ -2678,12 +2678,12 @@ public final class Bttl_800d {
   public static void FUN_800d9a68() {
     final BattleCamera cam = camera_800c67f0;
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[cam.bobjIndex_f4].innerStruct_00;
-    _800fab98.setX((short)(cam._d4 >> 8));
-    _800fab98.setY((short)(cam._d8 >> 8));
-    _800fab98.setZ((short)0);
-    RotMatrix_Xyz(_800fab98, _800c6798);
-    SetRotMatrix(_800c6798);
-    SetTransMatrix(_800c6798);
+    cameraRotationVector_800fab98.setX((short)(cam._d4 >> 8));
+    cameraRotationVector_800fab98.setY((short)(cam._d8 >> 8));
+    cameraRotationVector_800fab98.setZ((short)0);
+    RotMatrix_Xyz(cameraRotationVector_800fab98, cameraTransformMatrix_800c6798);
+    SetRotMatrix(cameraTransformMatrix_800c6798);
+    SetTransMatrix(cameraTransformMatrix_800c6798);
     _800faba0.setX((short)0);
     _800faba0.setY((short)0);
     cam._a4 += cam._b4;
@@ -2869,12 +2869,12 @@ public final class Bttl_800d {
   @Method(0x800da1f0L)
   public static void FUN_800da1f0() {
     final BattleCamera cam = camera_800c67f0;
-    _800fab98.setX((short)(cam.vec_60.getX() >> 8));
-    _800fab98.setY((short)(cam.vec_60.getY() >> 8));
-    _800fab98.setZ((short)0);
-    RotMatrix_Xyz(_800fab98, _800c6798);
-    SetRotMatrix(_800c6798);
-    SetTransMatrix(_800c6798);
+    cameraRotationVector_800fab98.setX((short)(cam.vec_60.getX() >> 8));
+    cameraRotationVector_800fab98.setY((short)(cam.vec_60.getY() >> 8));
+    cameraRotationVector_800fab98.setZ((short)0);
+    RotMatrix_Xyz(cameraRotationVector_800fab98, cameraTransformMatrix_800c6798);
+    SetRotMatrix(cameraTransformMatrix_800c6798);
+    SetTransMatrix(cameraTransformMatrix_800c6798);
     cam._30 += cam._40;
     cam.vec_60.z.sub(cam._30);
     _800faba0.setX((short)0);
@@ -2926,13 +2926,13 @@ public final class Bttl_800d {
   public static void FUN_800da460() {
     final BattleCamera cam = camera_800c67f0;
 
-    _800fab98.setX((short)(cam.vec_60.getX() >> 8));
-    _800fab98.setY((short)(cam.vec_60.getY() >> 8));
-    _800fab98.setZ((short)0);
+    cameraRotationVector_800fab98.setX((short)(cam.vec_60.getX() >> 8));
+    cameraRotationVector_800fab98.setY((short)(cam.vec_60.getY() >> 8));
+    cameraRotationVector_800fab98.setZ((short)0);
 
-    RotMatrix_Xyz(_800fab98, _800c6798);
-    SetRotMatrix(_800c6798);
-    SetTransMatrix(_800c6798);
+    RotMatrix_Xyz(cameraRotationVector_800fab98, cameraTransformMatrix_800c6798);
+    SetRotMatrix(cameraTransformMatrix_800c6798);
+    SetTransMatrix(cameraTransformMatrix_800c6798);
 
     cam._30 += cam._40;
     cam.vec_60.z.sub(cam._30);
@@ -2999,13 +2999,13 @@ public final class Bttl_800d {
     cam._30 += cam._40;
     cam.vec_60.z.sub(cam._30);
 
-    _800fab98.setX((short)(cam.vec_60.getX() >> 8));
-    _800fab98.setY((short)(cam.vec_60.getY() >> 8));
-    _800fab98.setZ((short)0);
+    cameraRotationVector_800fab98.setX((short)(cam.vec_60.getX() >> 8));
+    cameraRotationVector_800fab98.setY((short)(cam.vec_60.getY() >> 8));
+    cameraRotationVector_800fab98.setZ((short)0);
 
-    RotMatrix_Xyz(_800fab98, _800c6798);
-    SetRotMatrix(_800c6798);
-    SetTransMatrix(_800c6798);
+    RotMatrix_Xyz(cameraRotationVector_800fab98, cameraTransformMatrix_800c6798);
+    SetRotMatrix(cameraTransformMatrix_800c6798);
+    SetTransMatrix(cameraTransformMatrix_800c6798);
 
     _800faba0.setX((short)0);
     _800faba0.setY((short)0);
@@ -3072,7 +3072,7 @@ public final class Bttl_800d {
 
   @Method(0x800daa80L)
   public static void FUN_800daa80() {
-    if(_800fabb8.get() == 0x1L) {
+    if(_800fabb8.get()) {
       if(_800c67d4.get() != 0) {
         _800c67d4.sub(1);
         return;
@@ -3086,12 +3086,12 @@ public final class Bttl_800d {
         //LAB_800dab04
         x = _800c67e4.get();
         y = _800c67e8.get() * 2;
-      } else if(a0 == 0x1L) {
+      } else if(a0 == 1) {
         //LAB_800dab1c
         x = -_800c67e4.get() * 2;
         y = -_800c67e8.get();
         //LAB_800daaec
-      } else if(a0 == 0x2L) {
+      } else if(a0 == 2) {
         //LAB_800dab3c
         x = _800c67e4.get() * 2;
         y = _800c67e8.get();
@@ -3107,7 +3107,7 @@ public final class Bttl_800d {
 
       _800c67c4.sub(1);
       if(_800c67c4.get() <= 0) {
-        _800fabb8.setu(0);
+        _800fabb8.set(false);
         SetGeomOffset(screenOffsetX_800c67bc.get(), screenOffsetY_800c67c0.get());
       }
     }
@@ -4138,7 +4138,7 @@ public final class Bttl_800d {
     _800c67d4.set(script.params_20[1].get());
     _800c67e4.set(script.params_20[2].get());
     _800c67e8.set(script.params_20[3].get());
-    _800fabb8.setu(0x1L);
+    _800fabb8.set(true);
     getScreenOffset(screenOffsetX_800c67bc, screenOffsetY_800c67c0);
     return FlowControl.CONTINUE;
   }
@@ -4163,10 +4163,10 @@ public final class Bttl_800d {
 
   @Method(0x800dcc94L)
   public static void FUN_800dcc94(final int a0, final int a1, final int a2, final IntRef x, final IntRef y, final IntRef z) {
-    _800fab98.set((short)x.get(), (short)y.get(), (short)0);
-    RotMatrix_Xyz(_800fab98, _800c6798);
-    SetRotMatrix(_800c6798);
-    SetTransMatrix(_800c6798);
+    cameraRotationVector_800fab98.set((short)x.get(), (short)y.get(), (short)0);
+    RotMatrix_Xyz(cameraRotationVector_800fab98, cameraTransformMatrix_800c6798);
+    SetRotMatrix(cameraTransformMatrix_800c6798);
+    SetTransMatrix(cameraTransformMatrix_800c6798);
     _800faba0.set((short)0, (short)0, (short)z.get());
     RotTrans(_800faba0, _800faba8);
     x.set(a0 - _800faba8.getZ());

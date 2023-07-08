@@ -182,7 +182,7 @@ import static legend.game.combat.Bttl_800c.FUN_800cf4f4;
 import static legend.game.combat.Bttl_800c.FUN_800cf684;
 import static legend.game.combat.Bttl_800c.FUN_800cfb94;
 import static legend.game.combat.Bttl_800c.FUN_800cfc20;
-import static legend.game.combat.Bttl_800c._800fb0ec;
+import static legend.game.combat.Bttl_800c.colourMapUvs_800fb0ec;
 import static legend.game.combat.Bttl_800c.callScriptFunction;
 import static legend.game.combat.Bttl_800c.currentStage_800c66a4;
 import static legend.game.combat.Bttl_800c.deffManager_800c693c;
@@ -8517,7 +8517,7 @@ public final class SEffe {
       final long v0;
       if(!BattleScriptDataBase.EM__.equals(a0.magic_00)) {
         //LAB_8011604c
-        v0 = _800fb0ec.offset(((BattleObject27c)a0).model_148.colourMap_9d * 0x4L).get();
+        v0 = colourMapUvs_800fb0ec.get(((BattleObject27c)a0).model_148.colourMap_9d).get();
         u = (int)((v0 & 0xf) << 6);
         v = (int)((v0 & 0x10) << 4);
         w = 0x100;
@@ -8549,7 +8549,7 @@ public final class SEffe {
           }
         } else {
           //LAB_80115fd8
-          v0 = _800fb0ec.offset(((BttlScriptData6cSub13c)manager.effect_44).model_134.colourMap_9d * 0x4L).get();
+          v0 = colourMapUvs_800fb0ec.get(((BttlScriptData6cSub13c)manager.effect_44).model_134.colourMap_9d).get();
           u = (int)((v0 & 0xf) << 6);
           v = (int)((v0 & 0x10) << 4);
           w = 256;
