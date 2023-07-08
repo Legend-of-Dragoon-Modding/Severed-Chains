@@ -174,7 +174,7 @@ final class Voice {
               this.breathControlPosition = (this.breath & 0xfff) >>> 1;
             }
 
-            pitchBend = this.breathControls[this.breathControlIndex][this.breathControlPosition >>> 2];
+            pitchBend = this.breathControls[this.breathControlIndex][this.breathControlPosition >>> 2] & 0xff;
           }
 
           //Set the note to 120, unless portamento
@@ -184,7 +184,7 @@ final class Voice {
           //Pitch bend will be overwritten, so it has to be converted into note offset and cents
           final int _64ths = (this.channel.getPitchBend() - 64) * this.pitchBendMultiplier;
           note = note + _64ths / 64;
-          sixtyFourths = sixtyFourths + _64ths - (_64ths / 64) * 64;
+          sixtyFourths +=_64ths - (_64ths / 64) * 64;
           pitchBendMultiplier = 1;
 
 
