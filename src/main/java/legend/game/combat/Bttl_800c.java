@@ -259,7 +259,7 @@ public final class Bttl_800c {
   public static final IntRef aliveMonsterCount_800c6758 = MEMORY.ref(4, 0x800c6758L, IntRef::new);
   public static final IntRef currentDisplayableIconsBitset_800c675c = MEMORY.ref(4, 0x800c675cL, IntRef::new);
   public static final IntRef aliveCharCount_800c6760 = MEMORY.ref(4, 0x800c6760L, IntRef::new);
-  public static final IntRef _800c6764 = MEMORY.ref(4, 0x800c6764L, IntRef::new);
+  public static final IntRef shouldRenderMcq_800c6764 = MEMORY.ref(4, 0x800c6764L, IntRef::new);
   public static final IntRef monsterCount_800c6768 = MEMORY.ref(4, 0x800c6768L, IntRef::new);
   public static final IntRef _800c676c = MEMORY.ref(4, 0x800c676cL, IntRef::new);
   public static final IntRef _800c6770 = MEMORY.ref(4, 0x800c6770L, IntRef::new);
@@ -267,7 +267,8 @@ public final class Bttl_800c {
   public static final IntRef _800c6778 = MEMORY.ref(4, 0x800c6778L, IntRef::new);
   /** The number of player chars in combat (i.e. 1-3) */
   public static final IntRef charCount_800c677c = MEMORY.ref(4, 0x800c677cL, IntRef::new);
-  public static final IntRef _800c6780 = MEMORY.ref(4, 0x800c6780L, IntRef::new);
+  /** This may be unused. Only referenced by the script engine, but seems like there may be no real uses */
+  public static final IntRef currentCameraIndex_800c6780 = MEMORY.ref(4, 0x800c6780L, IntRef::new);
 
   public static final Pointer<CString> currentAddition_800c6790 = MEMORY.ref(4, 0x800c6790L, Pointer.deferred(1, CString.maxLength(30)));
 
@@ -1477,7 +1478,7 @@ public final class Bttl_800c {
 
   @Method(0x800c882cL)
   public static void FUN_800c882c() {
-    if(_800c6764.get() == 0 || !_800c66d4.get() || (_800bc960.get() & 0x80) == 0) {
+    if(shouldRenderMcq_800c6764.get() == 0 || !_800c66d4.get() || (_800bc960.get() & 0x80) == 0) {
       //LAB_800c8ad8
       //LAB_800c8adc
       clearBlue_800babc0.set(0);
@@ -1573,7 +1574,7 @@ public final class Bttl_800c {
     final long x;
     if((_800bc960.get() & 0x80) != 0) {
       x = 320;
-      _800c6764.set(1);
+      shouldRenderMcq_800c6764.set(1);
     } else {
       //LAB_800c8d98
       x = 512;
@@ -1594,10 +1595,9 @@ public final class Bttl_800c {
     if(_800c66d4.get() && (_800bc960.get() & 0x80) == 0) {
       final RECT sp0x10 = new RECT((short)512, (short)0, (short)battlePreloadedEntities_1f8003f4.stageMcq_9cb0.vramWidth_08, (short)256);
       MoveImage(sp0x10, 320, 0);
-      _800c6764.set(1);
+      shouldRenderMcq_800c6764.set(1);
       _800bc960.or(0x80);
     }
-
     //LAB_800c8ec8
   }
 

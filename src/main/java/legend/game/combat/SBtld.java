@@ -40,7 +40,7 @@ import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.combat.Bttl_800c.currentCameraPositionIndicesIndex_800c66b0;
 import static legend.game.combat.Bttl_800c._800c6748;
-import static legend.game.combat.Bttl_800c._800c6780;
+import static legend.game.combat.Bttl_800c.currentCameraIndex_800c6780;
 import static legend.game.combat.Bttl_800c.addCombatant;
 import static legend.game.combat.Bttl_800c.allBobjCount_800c66d0;
 import static legend.game.combat.Bttl_800c.currentStageData_800c6718;
@@ -99,7 +99,7 @@ public class SBtld {
     scriptState_800c674c.loadScriptFile(new ScriptFile("DRGN1.401", file.getBytes()));
 
     final int v1;
-    if((simpleRand() & 0x8000L) != 0) {
+    if((simpleRand() & 0x8000L) == 0) {
       v1 = currentStageData_800c6718._14;
     } else {
       v1 = currentStageData_800c6718._10;
@@ -108,7 +108,7 @@ public class SBtld {
     //LAB_801091dc
     _800c6748.set(v1 + 1);
     currentCameraPositionIndicesIndex_800c66b0.set(simpleRand() & 3);
-    _800c6780.set(currentStageData_800c6718.get(currentCameraPositionIndicesIndex_800c66b0.get() + 6));
+    currentCameraIndex_800c6780.set(currentStageData_800c6718.get(currentCameraPositionIndicesIndex_800c66b0.get() + 6));
     _800bc960.or(0x2);
   }
 

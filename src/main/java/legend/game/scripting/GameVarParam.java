@@ -109,7 +109,7 @@ public class GameVarParam extends Param {
       case 83 -> Bttl_800c._800c67cc.get();
       case 84 -> Bttl_800c._800c67d0.get();
       case 85 -> Bttl_800c._800c6710.get();
-      case 86 -> Bttl_800c._800c6780.get();
+      case 86 -> Bttl_800c.currentCameraIndex_800c6780.get();
       case 87 -> Bttl_800c._800c66a8.get();
       case 88 -> Bttl_800c._800c6700.get();
       case 89 -> Bttl_800c._800c6704.get();
@@ -118,7 +118,7 @@ public class GameVarParam extends Param {
       case 96 -> Bttl_800c._800c6754.get();
       case 97 -> Bttl_800c.currentStage_800c66a4.get();
 
-      case 104 -> Bttl_800c._800c6764.get();
+      case 104 -> Bttl_800c.shouldRenderMcq_800c6764.get();
       case 105 -> Bttl_800c._800c6774.get();
       case 106 -> Bttl_800c._800c6778.get();
       case 107 -> Bttl_800c._800c676c.get();
@@ -240,7 +240,7 @@ public class GameVarParam extends Param {
       case 83 -> Bttl_800c._800c67cc.set(val);
       case 84 -> Bttl_800c._800c67d0.set(val);
       case 85 -> Bttl_800c._800c6710.set(val);
-      case 86 -> Bttl_800c._800c6780.set(val);
+      case 86 -> Bttl_800c.currentCameraIndex_800c6780.set(val);
       case 87 -> Bttl_800c._800c66a8.set(val);
       case 88 -> Bttl_800c._800c6700.set(val);
       case 89 -> Bttl_800c._800c6704.set(val);
@@ -249,7 +249,7 @@ public class GameVarParam extends Param {
       case 96 -> Bttl_800c._800c6754.set(val);
       case 97 -> Bttl_800c.currentStage_800c66a4.set(val);
 
-      case 104 -> Bttl_800c._800c6764.set(val);
+      case 104 -> Bttl_800c.shouldRenderMcq_800c6764.set(val);
       case 105 -> Bttl_800c._800c6774.set(val);
       case 106 -> Bttl_800c._800c6778.set(val);
       case 107 -> Bttl_800c._800c676c.set(val);
