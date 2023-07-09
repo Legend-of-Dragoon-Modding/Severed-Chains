@@ -54,7 +54,7 @@ import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SEQUENCER;
 import static legend.core.GameEngine.SPU;
-import static legend.game.Scus94491BpeSegment.cos;
+import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.sin;
 import static legend.game.Scus94491BpeSegment_8005.atanTable_80058d0c;
 import static legend.game.Scus94491BpeSegment_8005.reverbConfigs_80059f7c;
@@ -856,7 +856,7 @@ public final class Scus94491BpeSegment_8004 {
   @Method(0x800402a0L)
   public static void RotMatrixX(final int rotation, final MATRIX matrixOut) {
     final short sin = sin(rotation);
-    final short cos = cos(rotation);
+    final short cos = rcos(Math.abs(rotation));
 
     //LAB_80040304
     final long m10 = matrixOut.get(1, 0);
@@ -876,8 +876,8 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x80040440L)
   public static void RotMatrixY(final int rotation, final MATRIX matrixOut) {
-    final short sin = sin(rotation);
-    final short cos = cos(rotation);
+    final short sin = (short)-sin(rotation);
+    final short cos = rcos(Math.abs(rotation));
 
     //LAB_800404a4
     final short m0 = matrixOut.get(0);
@@ -897,7 +897,7 @@ public final class Scus94491BpeSegment_8004 {
   @Method(0x800405e0L)
   public static void RotMatrixZ(final int rotation, final MATRIX matrixOut) {
     final short sin = sin(rotation);
-    final short cos = cos(rotation);
+    final short cos = rcos(Math.abs(rotation));
 
     //LAB_80040644
     final long m00 = matrixOut.get(0, 0);

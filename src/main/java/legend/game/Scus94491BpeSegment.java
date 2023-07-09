@@ -700,7 +700,7 @@ public final class Scus94491BpeSegment {
   @Method(0x800135b8L)
   public static short cos(final int theta) {
     if(theta < 0) {
-      return rcos(-theta);
+      return (short)-rcos(-theta);
     }
 
     return rcos(theta);
