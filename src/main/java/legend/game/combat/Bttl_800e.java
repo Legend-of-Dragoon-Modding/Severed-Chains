@@ -886,9 +886,9 @@ public final class Bttl_800e {
 
   @Method(0x800e6170L)
   public static void FUN_800e6170() {
-    final BattleLightStruct64 a0 = _800c6930;
-    a0._60 = a0._60 - 1 & 3;
-    a0.colour_00.set(a0._30[a0._60]);
+    final BattleLightStruct64 light = _800c6930;
+    light._60 = light._60 - 1 & 3;
+    light.colour_00.set(light._30[light._60]);
   }
 
   @Method(0x800e61e4L)
@@ -910,16 +910,16 @@ public final class Bttl_800e {
     GsSetFlatLight(2, light_800c6ddc);
     FUN_800e60e0(r, g, b);
 
-    final BattleLightStruct64 v0 = _800c6930;
-    GsSetAmbient(v0.colour_00.getX(), v0.colour_00.getY(), v0.colour_00.getZ());
+    final BattleLightStruct64 light = _800c6930;
+    GsSetAmbient(light.colour_00.getX(), light.colour_00.getY(), light.colour_00.getZ());
   }
 
   @Method(0x800e62a8L)
   public static void FUN_800e62a8() {
     FUN_800e6170();
 
-    final BattleLightStruct64 v0 = _800c6930;
-    GsSetAmbient(v0.colour_00.getX(), v0.colour_00.getY(), v0.colour_00.getZ());
+    final BattleLightStruct64 light = _800c6930;
+    GsSetAmbient(light.colour_00.getX(), light.colour_00.getY(), light.colour_00.getZ());
 
     for(int i = 0; i < 3; i++) {
       GsSetFlatLight(i, lights_800c692c[i].light_00);

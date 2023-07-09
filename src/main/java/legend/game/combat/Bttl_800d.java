@@ -110,7 +110,7 @@ import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
-import static legend.game.combat.Bttl_800c.FUN_800cf37c;
+import static legend.game.combat.Bttl_800c.rotateAndTranslateEffect;
 import static legend.game.combat.Bttl_800c.FUN_800cf4f4;
 import static legend.game.combat.Bttl_800c.FUN_800cfb14;
 import static legend.game.combat.Bttl_800c._800c6798;
@@ -332,7 +332,7 @@ public final class Bttl_800d {
   @Method(0x800d09c0L)
   public static void FUN_800d09c0(final EffectManagerData6c a0, final AdditionSparksEffectInstance4c inst) {
     FUN_800cf4f4(a0, null, inst.startPos_08, inst.startPos_08);
-    FUN_800cf37c(a0, null, inst.speed_28, inst.speed_28);
+    rotateAndTranslateEffect(a0, null, inst.speed_28, inst.speed_28);
     inst.endPos_18.set(inst.startPos_08);
   }
 
@@ -3773,22 +3773,22 @@ public final class Bttl_800d {
     final int x;
     final int y;
     final int z;
-    final ComponentFunction<Integer, Integer, Integer, Integer, Integer>[] v1;
+    final ComponentFunction<Integer, Integer, Integer, Integer, Integer>[] componentMethod;
     if(a0 != 0) {
       x = cam.rview2_00.refpoint_0c.getX();
       y = cam.rview2_00.refpoint_0c.getY();
       z = cam.rview2_00.refpoint_0c.getZ();
-      v1 = viewpointComponentMethods_800fad9c;
+      componentMethod = viewpointComponentMethods_800fad9c;
     } else {
       //LAB_800dc3bc
       x = cam.rview2_00.viewpoint_00.getX();
       y = cam.rview2_00.viewpoint_00.getY();
       z = cam.rview2_00.viewpoint_00.getZ();
-      v1 = refpointComponentMethods_800fad7c;
+      componentMethod = refpointComponentMethods_800fad7c;
     }
 
     //LAB_800dc3dc
-    return v1[callbackIndex].apply(component, scriptIndex, x, y, z);
+    return componentMethod[callbackIndex].apply(component, scriptIndex, x, y, z);
   }
 
   @Method(0x800dc408L)

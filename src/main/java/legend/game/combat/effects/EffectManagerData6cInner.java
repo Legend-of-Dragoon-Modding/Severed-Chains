@@ -14,6 +14,7 @@ public class EffectManagerData6cInner {
   /** TODO I dunno what's going on here, seems sometimes the end of this struct is different */
   public int _24;
   public int _28;
+  /** some kind of acceleration sometimes? */
   public int _2c;
   public int _30;
 

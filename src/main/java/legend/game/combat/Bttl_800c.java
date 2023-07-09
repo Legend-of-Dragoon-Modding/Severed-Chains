@@ -4148,38 +4148,34 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cf37cL)
-  public static void FUN_800cf37c(final EffectManagerData6c a0, @Nullable final SVECTOR a1, final VECTOR a2, final VECTOR out) {
-    final VECTOR sp0x10 = new VECTOR();
-    final SVECTOR sp0x20 = new SVECTOR();
-    final MATRIX sp0x28 = new MATRIX();
+  public static void rotateAndTranslateEffect(final EffectManagerData6c a0, @Nullable final SVECTOR extraRotation, final VECTOR vertex, final VECTOR out) {
+    final SVECTOR rotations = new SVECTOR().set(a0._10.rot_10);
 
-    sp0x20.set(a0._10.rot_10);
-
-    if(a1 != null) {
+    if(extraRotation != null) {
       //LAB_800cf3c4
-      sp0x20.add(a1);
+      rotations.add(extraRotation);
     }
 
     //LAB_800cf400
-    RotMatrix_Xyz(sp0x20, sp0x28);
-    TransMatrix(sp0x28, sp0x10);
-    CPU.CTC2(sp0x28.getPacked(0), 0);
-    CPU.CTC2(sp0x28.getPacked(2), 1);
-    CPU.CTC2(sp0x28.getPacked(4), 2);
-    CPU.CTC2(sp0x28.getPacked(6), 3);
-    CPU.CTC2(sp0x28.getPacked(8), 4);
-    CPU.CTC2(sp0x28.transfer.getX(), 5);
-    CPU.CTC2(sp0x28.transfer.getY(), 6);
-    CPU.CTC2(sp0x28.transfer.getZ(), 7);
+    final MATRIX transforms = new MATRIX();
+    RotMatrix_Xyz(rotations, transforms);
+    TransMatrix(transforms, new VECTOR()); // This probably isn't necessary
 
-    sp0x20.set(a2);
-    CPU.MTC2(sp0x20.getXY(), 0);
-    CPU.MTC2(sp0x20.getZ(),  1);
-    CPU.COP2(0x480012L);
-    sp0x10.setX((int)CPU.MFC2(25));
-    sp0x10.setY((int)CPU.MFC2(26));
-    sp0x10.setZ((int)CPU.MFC2(27));
-    out.set(sp0x10);
+    CPU.CTC2(transforms.getPacked(0), 0); //
+    CPU.CTC2(transforms.getPacked(2), 1); //
+    CPU.CTC2(transforms.getPacked(4), 2); // Rotation
+    CPU.CTC2(transforms.getPacked(6), 3); //
+    CPU.CTC2(transforms.getPacked(8), 4); //
+    CPU.CTC2(transforms.transfer.getX(), 5); //
+    CPU.CTC2(transforms.transfer.getY(), 6); // Translation
+    CPU.CTC2(transforms.transfer.getZ(), 7); //
+
+    final SVECTOR vert = new SVECTOR().set(vertex);
+    CPU.MTC2(vert.getXY(), 0); // VXY0
+    CPU.MTC2(vert.getZ(),  1); // VZ0
+    CPU.COP2(0x480012L); // MVMVA
+
+    out.set((int)CPU.MFC2(25), (int)CPU.MFC2(26), (int)CPU.MFC2(27)); // MAC1/2/3
   }
 
   @Method(0x800cf4f4L)
@@ -4218,7 +4214,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cf684L)
-  public static void FUN_800cf684(final SVECTOR a0, final VECTOR a1, final VECTOR a2, final VECTOR a3) {
+  public static void FUN_800cf684(final SVECTOR a0, final VECTOR a1, final VECTOR a2, final VECTOR out) {
     final SVECTOR sp0x20 = new SVECTOR().set(a0);
     final VECTOR sp0x10 = new VECTOR().set(a1);
     final MATRIX sp0x28 = new MATRIX();
@@ -4237,21 +4233,21 @@ public final class Bttl_800c {
     CPU.MTC2(sp0x20.getZ(),  1);
     CPU.COP2(0x480012L);
     sp0x10.set((int)CPU.MFC2(25), (int)CPU.MFC2(26), (int)CPU.MFC2(27));
-    a3.set(sp0x10);
+    out.set(sp0x10);
   }
 
   /** @return Z */
   @Method(0x800cf7d4L)
-  public static int FUN_800cf7d4(final SVECTOR a0, final VECTOR a1, final VECTOR a2, final ShortRef outX, final ShortRef outY) {
-    final SVECTOR sp0x30 = new SVECTOR().set(a1);
+  public static int FUN_800cf7d4(final SVECTOR rotation, final VECTOR translation1, final VECTOR translation2, final ShortRef outX, final ShortRef outY) {
+    final SVECTOR baseTranslation = new SVECTOR().set(translation1);
     CPU.CTC2(worldToScreenMatrix_800c3548.getPacked(0), 0);
     CPU.CTC2(worldToScreenMatrix_800c3548.getPacked(2), 1);
     CPU.CTC2(worldToScreenMatrix_800c3548.getPacked(4), 2);
     CPU.CTC2(worldToScreenMatrix_800c3548.getPacked(6), 3);
     CPU.CTC2(worldToScreenMatrix_800c3548.getPacked(8), 4);
-    CPU.MTC2(sp0x30.getXY(), 0);
-    CPU.MTC2(sp0x30.getZ(),  1);
-    final SVECTOR sp0x28 = new SVECTOR().set(a0);
+    CPU.MTC2(baseTranslation.getXY(), 0);
+    CPU.MTC2(baseTranslation.getZ(),  1);
+    final SVECTOR baseRotation = new SVECTOR().set(rotation);
     CPU.COP2(0x486012L);
     final VECTOR sp0x10 = new VECTOR();
     sp0x10.setX((int)CPU.MFC2(25));
@@ -4277,7 +4273,7 @@ public final class Bttl_800c {
     sp0x38.transfer.setZ((int)CPU.CFC2(7));
 
     final MATRIX sp0x58 = new MATRIX();
-    RotMatrix_Xyz(sp0x28, sp0x58);
+    RotMatrix_Xyz(baseRotation, sp0x58);
     CPU.CTC2(sp0x38.getPacked(0), 0); //
     CPU.CTC2(sp0x38.getPacked(2), 1); //
     CPU.CTC2(sp0x38.getPacked(4), 2); // Rotation matrix
@@ -4313,39 +4309,39 @@ public final class Bttl_800c {
     CPU.CTC2(sp0x38.transfer.getX(), 5);
     CPU.CTC2(sp0x38.transfer.getY(), 6);
     CPU.CTC2(sp0x38.transfer.getZ(), 7);
-    CPU.MTC2((a2.getY() & 0xffff) << 16 | a2.getX() & 0xffff, 0);
-    CPU.MTC2(a2.getZ(), 1);
+    CPU.MTC2((translation2.getY() & 0xffff) << 16 | translation2.getX() & 0xffff, 0);
+    CPU.MTC2(translation2.getZ(), 1);
     CPU.COP2(0x180001L);
 
-    final DVECTOR sp0x20 = new DVECTOR();
-    sp0x20.setXY(CPU.MFC2(14)); // SXY1
-    outX.set(sp0x20.getX());
-    outY.set(sp0x20.getY());
+    final DVECTOR outCoords = new DVECTOR();
+    outCoords.setXY(CPU.MFC2(14)); // SXY1
+    outX.set(outCoords.getX());
+    outY.set(outCoords.getY());
     return (int)CPU.MFC2(19); // SZ3
   }
 
   /** @return Z */
   @Method(0x800cfb14L)
-  public static int FUN_800cfb14(final EffectManagerData6c a0, final VECTOR a1, final ShortRef outX, final ShortRef outY) {
-    final SVECTOR sp0x18 = new SVECTOR().set(a0._10.rot_10);
-    final VECTOR sp0x20 = new VECTOR().set(a0._10.trans_04);
-    return FUN_800cf7d4(sp0x18, sp0x20, a1, outX, outY);
+  public static int FUN_800cfb14(final EffectManagerData6c manager, final VECTOR translation, final ShortRef outX, final ShortRef outY) {
+    final SVECTOR tempRotation = new SVECTOR().set(manager._10.rot_10);
+    final VECTOR tempTranslation = new VECTOR().set(manager._10.trans_04);
+    return FUN_800cf7d4(tempRotation, tempTranslation, translation, outX, outY);
   }
 
   /** @return Z */
   @Method(0x800cfb94L)
-  public static int FUN_800cfb94(final EffectManagerData6c manager, final SVECTOR rotation, final VECTOR a2, final ShortRef outX, final ShortRef outY) {
-    final SVECTOR sp0x18 = new SVECTOR().set(manager._10.rot_10).add(rotation);
-    final VECTOR sp0x20 = new VECTOR().set(manager._10.trans_04);
-    return FUN_800cf7d4(sp0x18, sp0x20, a2, outX, outY);
+  public static int FUN_800cfb94(final EffectManagerData6c manager, final SVECTOR rotation, final VECTOR translation, final ShortRef outX, final ShortRef outY) {
+    final SVECTOR tempRotation = new SVECTOR().set(manager._10.rot_10).add(rotation);
+    final VECTOR tempTranslation = new VECTOR().set(manager._10.trans_04);
+    return FUN_800cf7d4(tempRotation, tempTranslation, translation, outX, outY);
   }
 
   /** @return Z */
   @Method(0x800cfc20L)
-  public static int FUN_800cfc20(final SVECTOR a0, final VECTOR a1, final VECTOR a2, final ShortRef outX, final ShortRef outY) {
-    final SVECTOR sp0x18 = new SVECTOR().set(a0);
-    final VECTOR sp0x20 = new VECTOR().set(a1);
-    return FUN_800cf7d4(sp0x18, sp0x20, a2, outX, outY);
+  public static int FUN_800cfc20(final SVECTOR managerRotation, final VECTOR managerTranslation, final VECTOR translation, final ShortRef outX, final ShortRef outY) {
+    final SVECTOR tempRotation = new SVECTOR().set(managerRotation);
+    final VECTOR tempTranslation = new VECTOR().set(managerTranslation);
+    return FUN_800cf7d4(tempRotation, tempTranslation, translation, outX, outY);
   }
 
   @Method(0x800cfcccL)
