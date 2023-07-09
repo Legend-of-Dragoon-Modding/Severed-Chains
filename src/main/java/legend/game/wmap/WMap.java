@@ -122,6 +122,7 @@ import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.input_800bee90;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
+import static legend.game.Scus94491BpeSegment_800b.repeat_800bee98;
 import static legend.game.Scus94491BpeSegment_800b.savedGameSelected_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.soundFiles_800bcf80;
 import static legend.game.Scus94491BpeSegment_800b.texPages_800bb110;
@@ -3546,7 +3547,7 @@ public class WMap {
         struct258.models_0c[2].scaleVector_fc.setY(x);
         struct258.models_0c[2].scaleVector_fc.setZ(x);
 
-        renderCoolonMap(0x1L, 0x1L);
+        renderCoolonMap(true, 0x1L);
         break;
 
       case 5:
@@ -3559,7 +3560,7 @@ public class WMap {
         }
 
         //LAB_800db1d8
-        renderCoolonMap(0, 0);
+        renderCoolonMap(false, 0);
         break;
 
       case 6:
@@ -3568,7 +3569,7 @@ public class WMap {
         renderCenteredShadowedText(Move_800f00e8, 240, 41, TextColour.WHITE, 0);
         renderCenteredShadowedText(No_800effa4, 240, 57, TextColour.WHITE, 0);
         renderCenteredShadowedText(Yes_800effb0, 240, 73, TextColour.WHITE, 0);
-        renderCoolonMap(0, 0);
+        renderCoolonMap(false, 0);
 
         if(Input.pressedThisFrame(InputAction.BUTTON_EAST)) {
           playSound(0, 3, 0, 0, (short)0, (short)0);
@@ -3628,7 +3629,7 @@ public class WMap {
         struct258.models_0c[2].scaleVector_fc.setY(x);
         struct258.models_0c[2].scaleVector_fc.setZ(x);
 
-        renderCoolonMap(0, 0);
+        renderCoolonMap(false, 0);
         break;
 
       case 8:
@@ -3655,7 +3656,7 @@ public class WMap {
         //LAB_800dba98
 
         FUN_800e3fac(1);
-        renderCoolonMap(0, 0);
+        renderCoolonMap(false, 0);
         break;
 
       case 0xb:
@@ -3758,7 +3759,7 @@ public class WMap {
   }
 
   @Method(0x800dc178L)
-  public static void renderCoolonMap(final long a0, final long a1) {
+  public static void renderCoolonMap(final boolean enableInput, final long a1) {
     final WMapStruct258 struct = struct258_800c66a8;
 
     final CoolonWarpDestination20 warp1 = coolonWarpDest_800ef228.get(struct.coolonWarpIndex_221);
@@ -3770,9 +3771,8 @@ public class WMap {
     struct.rotation_a4.setY((short)(ratan2(y, x) + 0x400 & 0xfff));
     struct.models_0c[2].coord2Param_64.rotate.y.add((short)((struct.rotation_a4.getY() - struct.models_0c[2].coord2Param_64.rotate.getY()) / 8));
 
-    if(a0 != 0) {
-      if(Input.pressedWithRepeatPulse(InputAction.DPAD_RIGHT) || Input.pressedWithRepeatPulse(InputAction.DPAD_DOWN)
-        || Input.pressedWithRepeatPulse(InputAction.JOYSTICK_LEFT_BUTTON_RIGHT) || Input.pressedWithRepeatPulse(InputAction.JOYSTICK_LEFT_BUTTON_DOWN)) {
+    if(enableInput) {
+      if((repeat_800bee98.get() & 0x6000) != 0) {
         playSound(0, 1, 0, 0, (short)0, (short)0);
 
         if(struct.coolonWarpIndex_222 > 0) {
@@ -3783,8 +3783,7 @@ public class WMap {
       }
 
       //LAB_800dc384
-      if(Input.pressedWithRepeatPulse(InputAction.DPAD_LEFT) || Input.pressedWithRepeatPulse(InputAction.DPAD_UP)
-        || Input.pressedWithRepeatPulse(InputAction.JOYSTICK_LEFT_BUTTON_LEFT) || Input.pressedWithRepeatPulse(InputAction.JOYSTICK_LEFT_BUTTON_UP)) {
+      if((repeat_800bee98.get() & 0x9000) != 0) {
         playSound(0, 1, 0, 0, (short)0, (short)0);
 
         struct.coolonWarpIndex_222++;

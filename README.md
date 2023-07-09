@@ -1,4 +1,4 @@
-Like what you see? Send me a tip! You can also subscribe to our [YouTube channel](https://www.youtube.com/@legend-of-dragoon). We do livestreams every Friday at 9:00 Atlantic Time.
+Like what you see? Send me a tip! You can also subscribe to our [YouTube channel](https://www.youtube.com/@legend-of-dragoon). We do devstreams most Wednesdays at 8:00PM Atlantic Time.
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/W7W4HFVW9)
 
@@ -8,9 +8,8 @@ A project to reverse engineer Legend of Dragoon into a high-level language with 
 
 ### Current Progress
 
-- Game engine is fully functional with minor graphical glitches that don't negatively affect gameplay
+- Game engine is fully functional with a few minor glitches that don't negatively affect gameplay
 - Modding API is actively in development
-- No music support yet (sound effects work with some issues)
 - Game is fully playable with no known crashes
 
 ### Interested in playing?
@@ -33,9 +32,9 @@ Note: Java 17 is required. It is **strongly** recommended to run with assertions
 
 ### Controls ###
 
-Controls are currently hardcoded.
+Controllers and gamepads are fully supported. Keyboard controls may be changed in the in-game options menu.
 
-Ingame/combat:
+Default keyboard controls:
 - D-pad - arrow keys
 - Shape buttons - WASD
 - Start - enter
@@ -46,15 +45,16 @@ Ingame/combat:
 - R1 - E
 - R2 - 3
 - R3 - C
+- F11 - pause
 - F12 - open debug tools (developer features - can easily cause crashes)
+- DEL - kill sounds (rarely, a sound may get stuck playing)
+- Tab - VRAM viewer
 
-To set up a controller:
-1) Connect your controller (before or after starting the game)
-2) Press F9
-3) Press any button on the controller you want to use
+To set up a controller, simply connect it before or after starting the game,
+and select it from the controller dropdown in the in-game options menu.
 
 **NOTE**: There are known issues with using DS4windows, and possibly other controller emulators. Severed Chains supports 1800+ controllers out of the box so it's very likely you can just plug in your controller, set it up, and play. If you find a controller that isn't in our controller database, please contact us and we'll work with you to get it added. If you do use DS4windows, make sure your controller isn't hidden and close DS4windows.
 
 ### Copyright Information
 
-Even though it is not an emulator, Legend of Dragoon Java can not be played without the user providing the LoD ISOs. Assets are extracted from the ROMs at runtime. This codebase does not include any official Legend of Dragoon code or assets.
+Even though it is not an emulator, Legend of Dragoon Java can not be played without the user providing the LoD disk images. Assets are extracted from the ROMs at runtime. This codebase does not include any official Legend of Dragoon code or assets.

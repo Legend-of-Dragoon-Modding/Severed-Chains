@@ -110,7 +110,7 @@ public class Voice {
 
   public short processVolume(final Volume volume) {
     if(volume.isSweepMode()) {
-      return 0; //todo handle sweep mode volume envelope
+      return 0x7fff; //todo handle sweep mode volume envelope
     }
 
     return volume.fixedVolume();

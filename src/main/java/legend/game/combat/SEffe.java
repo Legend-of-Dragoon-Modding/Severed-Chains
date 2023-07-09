@@ -704,7 +704,7 @@ public final class SEffe {
     particle.particleVelocity_58.y.sub((short)2);
 
     if(particle._1a.getX() >= 8) {
-      particle._1a.y.sub((short)8);
+      particle._1a.x.sub((short)8);
     }
   }
 
