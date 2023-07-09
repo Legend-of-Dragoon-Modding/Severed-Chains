@@ -773,8 +773,8 @@ public final class Bttl_800d {
       //LAB_800d289c
       guardEffectMetrics = guardEffectMetrics_800fa76c.get(i);
       translation.setX(manager._10.trans_04.getX() + (i != 0 ? manager._10.scale_16.getX() / 4 : 0));
-      translation.setY(manager._10.trans_04.getY() + guardEffectMetrics.y_02.get() * manager._10.scale_16.getY() >> 12);
-      translation.setZ(manager._10.trans_04.getZ() + guardEffectMetrics.z_00.get() * manager._10.scale_16.getZ() >> 12);
+      translation.setY(manager._10.trans_04.getY() + (guardEffectMetrics.y_02.get() * manager._10.scale_16.getY() >> 12));
+      translation.setZ(manager._10.trans_04.getZ() + (guardEffectMetrics.z_00.get() * manager._10.scale_16.getZ() >> 12));
       effectZ = transformWorldspaceToScreenspace(translation, refXArray[i], refYArray[i]);
     }
 
