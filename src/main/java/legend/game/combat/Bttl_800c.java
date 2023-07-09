@@ -62,6 +62,7 @@ import legend.game.combat.environment.CameraQuadParamCallback;
 import legend.game.combat.environment.CameraSeptParamCallback;
 import legend.game.combat.environment.CombatPortraitBorderMetrics0c;
 import legend.game.combat.environment.NameAndPortraitDisplayMetrics0c;
+import legend.game.combat.environment.SpBarBorderMetrics04;
 import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.BattleStateEf4;
 import legend.game.combat.types.BttlStruct08;
@@ -396,14 +397,14 @@ public final class Bttl_800c {
   public static final ArrayRef<ArrayRef<UnsignedByteRef>> textboxColours_800c6fec = MEMORY.ref(1, 0x800c6fecL, ArrayRef.of(ArrayRef.classFor(UnsignedByteRef.class), 9, 3, ArrayRef.of(UnsignedByteRef.class, 3, 1, UnsignedByteRef::new)));
 
   public static final ArrayRef<ShortRef> digitOffsetXy_800c7014 = MEMORY.ref(2, 0x800c7014L, ArrayRef.of(ShortRef.class, 10, 2, ShortRef::new));
-  public static final ArrayRef<UnsignedShortRef> digitU_800c7028 = MEMORY.ref(2, 0x800c7028L, ArrayRef.of(UnsignedShortRef.class, 10, 2, UnsignedShortRef::new));
+  public static final ArrayRef<UnsignedShortRef> floatingTextType1DigitUs_800c7028 = MEMORY.ref(2, 0x800c7028L, ArrayRef.of(UnsignedShortRef.class, 10, 2, UnsignedShortRef::new));
 
   @SuppressWarnings("unchecked")
   public static final RegistryDelegate<Element>[] characterElements_800c706c = new RegistryDelegate[] {CoreMod.FIRE_ELEMENT, CoreMod.WIND_ELEMENT, CoreMod.LIGHT_ELEMENT, CoreMod.DARK_ELEMENT, CoreMod.THUNDER_ELEMENT, CoreMod.WIND_ELEMENT, CoreMod.WATER_ELEMENT, CoreMod.EARTH_ELEMENT, CoreMod.LIGHT_ELEMENT};
 
-  public static final ArrayRef<ShortRef> _800c70e0 = MEMORY.ref(2, 0x800c70e0L, ArrayRef.of(ShortRef.class, 20, 2, ShortRef::new));
+  public static final ArrayRef<ShortRef> floatingTextType3DigitUs_800c70e0 = MEMORY.ref(2, 0x800c70e0L, ArrayRef.of(ShortRef.class, 20, 2, ShortRef::new));
 
-  public static final ArrayRef<ShortRef> _800c70f4 = MEMORY.ref(2, 0x800c70f4L, ArrayRef.of(ShortRef.class, 30, 2, ShortRef::new));
+  public static final ArrayRef<ShortRef> floatingTextDigitClutOffsets_800c70f4 = MEMORY.ref(2, 0x800c70f4L, ArrayRef.of(ShortRef.class, 30, 2, ShortRef::new));
 
   public static final ArrayRef<Vec2> battleUiElementClutVramXy_800c7114 = MEMORY.ref(4, 0x800c7114L, ArrayRef.of(Vec2.class, 2, 8, Vec2::new));
 
@@ -420,7 +421,7 @@ public final class Bttl_800c {
   /** Different sets of bobjs for different target types (chars, monsters, all) */
   public static ScriptState<BattleObject27c>[][] targetBobjs_800c71f0;
 
-  public static final ArrayRef<IntRef> _800c723c = MEMORY.ref(4, 0x800c723cL, ArrayRef.of(IntRef.class, 4, 4, IntRef::new));
+  public static final ArrayRef<IntRef> buffDebuffStatIndices_800c723c = MEMORY.ref(4, 0x800c723cL, ArrayRef.of(IntRef.class, 4, 4, IntRef::new));
 
   public static final ArrayRef<UnsignedShortRef> protectedItems_800c72cc = MEMORY.ref(2, 0x800c72ccL, ArrayRef.of(UnsignedShortRef.class, 10, 2, UnsignedShortRef::new));
 
@@ -432,7 +433,7 @@ public final class Bttl_800c {
   public static final ArrayRef<ShortRef> postCombatActionFrames_800fa6d0 = MEMORY.ref(2, 0x800fa6d0L, ArrayRef.of(ShortRef.class, 6, 2, ShortRef::new));
 
   public static final IntRef mcqColour_800fa6dc = MEMORY.ref(4, 0x800fa6dcL, IntRef::new);
-  public static final UnboundedArrayRef<RECT> _800fa6e0 = MEMORY.ref(2, 0x800fa6e0L, UnboundedArrayRef.of(0x8, RECT::new));
+  public static final UnboundedArrayRef<RECT> combatantTimRects_800fa6e0 = MEMORY.ref(2, 0x800fa6e0L, UnboundedArrayRef.of(0x8, RECT::new));
 
   public static final ArrayRef<ShortRef> colourMaps_800fa730 = MEMORY.ref(2, 0x800fa730L, ArrayRef.of(ShortRef.class, 10, 2, ShortRef::new));
 
@@ -906,8 +907,8 @@ public final class Bttl_800c {
   public static final ArrayRef<Pointer<UnboundedArrayRef<Pointer<LodString>>>> allText_800fb3c0 = MEMORY.ref(4, 0x800fb3c0L, ArrayRef.of(Pointer.classFor(UnboundedArrayRef.classFor(Pointer.classFor(LodString.class))),  6, 4, Pointer.deferred(4, UnboundedArrayRef.of(4, Pointer.deferred(4, LodString::new)))));
 
   public static final ArrayRef<Pointer<NameAndPortraitDisplayMetrics0c>> hudNameAndPortraitMetrics_800fb444 = MEMORY.ref(4, 0x800fb444L, ArrayRef.of(Pointer.classFor(NameAndPortraitDisplayMetrics0c.class), 10, 4, Pointer.deferred(4, NameAndPortraitDisplayMetrics0c::new)));
-  public static final ArrayRef<ByteRef> _800fb46c = MEMORY.ref(1, 0x800fb46cL, ArrayRef.of(ByteRef.class, 0x10, 1, ByteRef::new));
-  public static final ArrayRef<ByteRef> _800fb47c = MEMORY.ref(1, 0x800fb47cL, ArrayRef.of(ByteRef.class, 0x10, 1, ByteRef::new));
+  public static final ArrayRef<SpBarBorderMetrics04> spBarBorderMetrics_800fb46c = MEMORY.ref(1, 0x800fb46cL, ArrayRef.of(SpBarBorderMetrics04.class, 4, 4, SpBarBorderMetrics04::new));
+  public static final ArrayRef<SpBarBorderMetrics04> spBarFlashingBorderMetrics_800fb47c = MEMORY.ref(1, 0x800fb47cL, ArrayRef.of(SpBarBorderMetrics04.class, 4, 4, SpBarBorderMetrics04::new));
 
   public static final ArrayRef<BattleItemMenuArrowUvMetrics06> battleMenuBackgroundMetrics_800fb5dc = MEMORY.ref(4, 0x800fb5dcL, ArrayRef.of(BattleItemMenuArrowUvMetrics06.class, 9, 6, BattleItemMenuArrowUvMetrics06::new));
 
@@ -2316,13 +2317,13 @@ public final class Bttl_800c {
 
     if(a0 != 0) {
       //LAB_800ca83c
-      final RECT s0 = _800fa6e0.get(a0);
-      LoadImage(s0, tim.getImageData());
+      final RECT combatantTimRect = combatantTimRects_800fa6e0.get(a0);
+      LoadImage(combatantTimRect, tim.getImageData());
 
       if(tim.hasClut()) {
         final RECT clutRect = tim.getClutRect();
-        clutRect.x.set(s0.x.get());
-        clutRect.y.set((short)(s0.y.get() + 240));
+        clutRect.x.set(combatantTimRect.x.get());
+        clutRect.y.set((short)(combatantTimRect.y.get() + 240));
 
         //LAB_800ca884
         LoadImage(clutRect, tim.getClutData());

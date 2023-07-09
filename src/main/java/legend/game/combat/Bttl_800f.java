@@ -79,9 +79,9 @@ import static legend.game.combat.Bttl_800c._800c697e;
 import static legend.game.combat.Bttl_800c._800c6980;
 import static legend.game.combat.Bttl_800c.activePartyBattleHudCharacterDisplays_800c6c40;
 import static legend.game.combat.Bttl_800c.battleHudBorderMetrics_800c6f4c;
-import static legend.game.combat.Bttl_800c._800c70e0;
-import static legend.game.combat.Bttl_800c._800c70f4;
-import static legend.game.combat.Bttl_800c._800c723c;
+import static legend.game.combat.Bttl_800c.floatingTextType3DigitUs_800c70e0;
+import static legend.game.combat.Bttl_800c.floatingTextDigitClutOffsets_800c70f4;
+import static legend.game.combat.Bttl_800c.buffDebuffStatIndices_800c723c;
 import static legend.game.combat.Bttl_800c.aliveBobjCount_800c669c;
 import static legend.game.combat.Bttl_800c.aliveMonsterCount_800c6758;
 import static legend.game.combat.Bttl_800c.allText_800fb3c0;
@@ -105,7 +105,7 @@ import static legend.game.combat.Bttl_800c.currentCameraPositionIndicesIndex_800
 import static legend.game.combat.Bttl_800c.currentCameraPositionIndicesIndicesIndex_800c6ba1;
 import static legend.game.combat.Bttl_800c.currentStageData_800c6718;
 import static legend.game.combat.Bttl_800c.digitOffsetXy_800c7014;
-import static legend.game.combat.Bttl_800c.digitU_800c7028;
+import static legend.game.combat.Bttl_800c.floatingTextType1DigitUs_800c7028;
 import static legend.game.combat.Bttl_800c.displayStats_800c6c2c;
 import static legend.game.combat.Bttl_800c.dragoonSpaceElement_800c6b64;
 import static legend.game.combat.Bttl_800c.dragoonSpells_800c6960;
@@ -285,7 +285,7 @@ public final class Bttl_800f {
 
       //LAB_800f1920
       struct.y_04 = digitOffsetXy_800c7014.get(a1 * 2 + 1).get();
-      struct.u_06 = digitU_800c7028.get(digits[i]).get();
+      struct.u_06 = floatingTextType1DigitUs_800c7028.get(digits[i]).get();
       struct.v_08 = 0x20;
       struct.w_0a = 0x8;
       struct.h_0c = 0x8;
@@ -739,7 +739,7 @@ public final class Bttl_800f {
       if(floatingTextType == 1) {
         //LAB_800f382c
         digitStruct.x_0e = displayPosX;
-        digitStruct.u_12 = digitU_800c7028.get(damageDigits[digitIdx]).get();
+        digitStruct.u_12 = floatingTextType1DigitUs_800c7028.get(damageDigits[digitIdx]).get();
         digitStruct.v_14 = 32;
         digitStruct.texW_16 = 8;
         digitStruct.texH_18 = 8;
@@ -755,7 +755,7 @@ public final class Bttl_800f {
       } else {
         //LAB_800f37f4
         digitStruct.x_0e = displayPosX;
-        digitStruct.u_12 = _800c70e0.get(damageDigits[digitIdx]).get();
+        digitStruct.u_12 = floatingTextType3DigitUs_800c70e0.get(damageDigits[digitIdx]).get();
         digitStruct.v_14 = 40;
         digitStruct.texW_16 = 8;
         digitStruct.texH_18 = 16;
@@ -764,7 +764,7 @@ public final class Bttl_800f {
 
       //LAB_800f3898
       digitStruct.digit_0c = damageDigits[digitIdx];
-      digitStruct.baseClutOffset_1a = _800c70f4.get(clutRow).get();
+      digitStruct.baseClutOffset_1a = floatingTextDigitClutOffsets_800c70f4.get(clutRow).get();
       digitStruct.unused_1c = 0x1000;
 
       digitIdx++;
@@ -3151,7 +3151,7 @@ public final class Bttl_800f {
         final int turnCount = attacker.charId_272 != defender.charId_272 ? 3 : 4;
         final int amount = i < 4 ? 50 : -50;
 
-        defender.setStat(_800c723c.get(i % 4).get(), turnCount << 8 | (amount & 0xff));
+        defender.setStat(buffDebuffStatIndices_800c723c.get(i % 4).get(), turnCount << 8 | (amount & 0xff));
       }
     }
   }

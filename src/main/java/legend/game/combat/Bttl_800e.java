@@ -162,8 +162,8 @@ import static legend.game.combat.Bttl_800c._800c6938;
 import static legend.game.combat.Bttl_800c._800c697e;
 import static legend.game.combat.Bttl_800c._800c6980;
 import static legend.game.combat.Bttl_800c._800fafe8;
-import static legend.game.combat.Bttl_800c._800fb46c;
-import static legend.game.combat.Bttl_800c._800fb47c;
+import static legend.game.combat.Bttl_800c.spBarFlashingBorderMetrics_800fb47c;
+import static legend.game.combat.Bttl_800c.spBarBorderMetrics_800fb46c;
 import static legend.game.combat.Bttl_800c.activePartyBattleHudCharacterDisplays_800c6c40;
 import static legend.game.combat.Bttl_800c.ailments_800fb3a0;
 import static legend.game.combat.Bttl_800c.aliveBobjCount_800c669c;
@@ -231,8 +231,8 @@ import static legend.game.combat.Bttl_800f.drawLine;
 import static legend.game.combat.Bttl_800f.drawUiTextureElement;
 import static legend.game.combat.Bttl_800f.getTargetEnemyName;
 import static legend.game.combat.Bttl_800f.prepareItemList;
-import static legend.game.combat.Bttl_800f.renderNumber;
 import static legend.game.combat.Bttl_800f.renderBattleHudBackground;
+import static legend.game.combat.Bttl_800f.renderNumber;
 import static legend.game.combat.Bttl_800f.resetCombatMenu;
 import static legend.game.combat.SBtld.monsterNames_80112068;
 import static legend.game.combat.SBtld.monsterStats_8010ba98;
@@ -4325,7 +4325,7 @@ public final class Bttl_800e {
             for(int i = 0; i < 4; i++) {
               final int offsetX = displayStats.x_00 - centreScreenX_1f8003dc.get();
               final int offsetY = displayStats.y_02 - centreScreenY_1f8003de.get();
-              drawLine((int)_800fb46c.get(i * 4).get() + offsetX, _800fb46c.get(i * 4 + 1).get() + offsetY, _800fb46c.get(i * 4 + 2).get() + offsetX, _800fb46c.get(i * 4 + 3).get() + offsetY, 0x60, 0x60, 0x60, false);
+              drawLine(spBarBorderMetrics_800fb46c.get(i).x1_00.get() + offsetX, spBarBorderMetrics_800fb46c.get(i).y1_01.get() + offsetY, spBarBorderMetrics_800fb46c.get(i).x2_02.get() + offsetX, spBarBorderMetrics_800fb46c.get(i).y2_03.get() + offsetY, 0x60, 0x60, 0x60, false);
             }
 
             //Full SP meter
@@ -4334,7 +4334,7 @@ public final class Bttl_800e {
               for(int i = 0; i < 4; i++) {
                 final int offsetX = displayStats.x_00 - centreScreenX_1f8003dc.get();
                 final int offsetY = displayStats.y_02 - centreScreenY_1f8003de.get();
-                drawLine((int)_800fb47c.get(i * 4).get() + offsetX, _800fb47c.get(i * 4 + 1).get() + offsetY, _800fb47c.get(i * 4 + 2).get() + offsetX, _800fb47c.get(i * 4 + 3).get() + offsetY, 0x80, 0, 0, false);
+                drawLine(spBarFlashingBorderMetrics_800fb47c.get(i).x1_00.get() + offsetX, spBarFlashingBorderMetrics_800fb47c.get(i).y1_01.get() + offsetY, spBarFlashingBorderMetrics_800fb47c.get(i).x2_02.get() + offsetX, spBarFlashingBorderMetrics_800fb47c.get(i).y2_03.get() + offsetY, 0x80, 0, 0, false);
               }
             }
           }
