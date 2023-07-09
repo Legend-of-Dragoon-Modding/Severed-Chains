@@ -116,11 +116,11 @@ import static legend.game.combat.Bttl_800c.rotateAndTranslateEffect;
 import static legend.game.combat.Bttl_800c.FUN_800cf4f4;
 import static legend.game.combat.Bttl_800c.FUN_800cfb14;
 import static legend.game.combat.Bttl_800c.cameraTransformMatrix_800c6798;
-import static legend.game.combat.Bttl_800c._800c67c4;
-import static legend.game.combat.Bttl_800c._800c67d4;
-import static legend.game.combat.Bttl_800c._800c67d8;
-import static legend.game.combat.Bttl_800c._800c67e4;
-import static legend.game.combat.Bttl_800c._800c67e8;
+import static legend.game.combat.Bttl_800c.wobbleFramesRemaining_800c67c4;
+import static legend.game.combat.Bttl_800c.framesUntilWobble_800c67d4;
+import static legend.game.combat.Bttl_800c.unused_800c67d8;
+import static legend.game.combat.Bttl_800c.cameraWobbleOffsetX_800c67e4;
+import static legend.game.combat.Bttl_800c.cameraWobbleOffsetY_800c67e8;
 import static legend.game.combat.Bttl_800c.guardEffectMetrics_800fa76c;
 import static legend.game.combat.Bttl_800c._800faa90;
 import static legend.game.combat.Bttl_800c._800faa92;
@@ -132,7 +132,7 @@ import static legend.game.combat.Bttl_800c.buttonPressHudMetrics_800faaa0;
 import static legend.game.combat.Bttl_800c.cameraRotationVector_800fab98;
 import static legend.game.combat.Bttl_800c._800faba0;
 import static legend.game.combat.Bttl_800c._800faba8;
-import static legend.game.combat.Bttl_800c._800fabb8;
+import static legend.game.combat.Bttl_800c.useCameraWobble_800fabb8;
 import static legend.game.combat.Bttl_800c._800fabbc;
 import static legend.game.combat.Bttl_800c._800fabdc;
 import static legend.game.combat.Bttl_800c._800fabfc;
@@ -1387,7 +1387,7 @@ public final class Bttl_800d {
       } else {
         //LAB_800d4470
         _800faa92.add((short)1);
-        s1._01 = (int)_800faa92.get();
+        s1._01 = _800faa92.get();
       }
 
       //LAB_800d448c
@@ -1756,7 +1756,7 @@ public final class Bttl_800d {
     cam.vec_94.setX(FUN_800dc384(0, 4, 0, 0) << 8);
     cam.vec_94.setY(FUN_800dc384(0, 4, 1, 0) << 8);
     cam.vec_94.setZ(FUN_800dc384(0, 4, 2, 0) << 8);
-    _800c67d8.set(cam.vec_94);
+    unused_800c67d8.set(cam.vec_94);
     final int s4 = x - cam.vec_94.getX() >> 8;
     final int s5 = y - cam.vec_94.getY() >> 8;
     final int s3 = z - cam.vec_94.getZ() >> 8;
@@ -2392,7 +2392,7 @@ public final class Bttl_800d {
 
     //LAB_800d8fb4
     GsSetRefView2(camera_800c67f0.rview2_00);
-    FUN_800daa80();
+    wobbleCamera();
     FUN_800d8fe0();
   }
 
@@ -3071,43 +3071,43 @@ public final class Bttl_800d {
   }
 
   @Method(0x800daa80L)
-  public static void FUN_800daa80() {
-    if(_800fabb8.get()) {
-      if(_800c67d4.get() != 0) {
-        _800c67d4.sub(1);
+  public static void wobbleCamera() {
+    if(useCameraWobble_800fabb8.get()) {
+      if(framesUntilWobble_800c67d4.get() != 0) {
+        framesUntilWobble_800c67d4.sub(1);
         return;
       }
 
       //LAB_800daabc
       final int x;
       final int y;
-      final int a0 = tickCount_800bb0fc.get() & 0x3;
-      if(a0 == 0) {
+      final int type = tickCount_800bb0fc.get() & 0x3;
+      if(type == 0) {
         //LAB_800dab04
-        x = _800c67e4.get();
-        y = _800c67e8.get() * 2;
-      } else if(a0 == 1) {
+        x = cameraWobbleOffsetX_800c67e4.get();
+        y = cameraWobbleOffsetY_800c67e8.get() * 2;
+      } else if(type == 1) {
         //LAB_800dab1c
-        x = -_800c67e4.get() * 2;
-        y = -_800c67e8.get();
+        x = -cameraWobbleOffsetX_800c67e4.get() * 2;
+        y = -cameraWobbleOffsetY_800c67e8.get();
         //LAB_800daaec
-      } else if(a0 == 2) {
+      } else if(type == 2) {
         //LAB_800dab3c
-        x = _800c67e4.get() * 2;
-        y = _800c67e8.get();
+        x = cameraWobbleOffsetX_800c67e4.get() * 2;
+        y = cameraWobbleOffsetY_800c67e8.get();
       } else {
         //LAB_800dab54
-        x = -_800c67e4.get();
-        y = -_800c67e8.get() * 2;
+        x = -cameraWobbleOffsetX_800c67e4.get();
+        y = -cameraWobbleOffsetY_800c67e8.get() * 2;
       }
 
       //LAB_800dab70
       //LAB_800dab78
       SetGeomOffset(screenOffsetX_800c67bc.get() + x, screenOffsetY_800c67c0.get() + y);
 
-      _800c67c4.sub(1);
-      if(_800c67c4.get() <= 0) {
-        _800fabb8.set(false);
+      wobbleFramesRemaining_800c67c4.sub(1);
+      if(wobbleFramesRemaining_800c67c4.get() <= 0) {
+        useCameraWobble_800fabb8.set(false);
         SetGeomOffset(screenOffsetX_800c67bc.get(), screenOffsetY_800c67c0.get());
       }
     }
@@ -4134,11 +4134,11 @@ public final class Bttl_800d {
 
   @Method(0x800dcbecL)
   public static FlowControl FUN_800dcbec(final RunningScript<?> script) {
-    _800c67c4.set(script.params_20[0].get());
-    _800c67d4.set(script.params_20[1].get());
-    _800c67e4.set(script.params_20[2].get());
-    _800c67e8.set(script.params_20[3].get());
-    _800fabb8.set(true);
+    wobbleFramesRemaining_800c67c4.set(script.params_20[0].get());
+    framesUntilWobble_800c67d4.set(script.params_20[1].get());
+    cameraWobbleOffsetX_800c67e4.set(script.params_20[2].get());
+    cameraWobbleOffsetY_800c67e8.set(script.params_20[3].get());
+    useCameraWobble_800fabb8.set(true);
     getScreenOffset(screenOffsetX_800c67bc, screenOffsetY_800c67c0);
     return FlowControl.CONTINUE;
   }

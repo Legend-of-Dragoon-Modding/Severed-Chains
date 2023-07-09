@@ -119,10 +119,10 @@ public class GameVarParam extends Param {
       case 97 -> Bttl_800c.currentStage_800c66a4.get();
 
       case 104 -> Bttl_800c.shouldRenderMcq_800c6764.get();
-      case 105 -> Bttl_800c._800c6774.get();
-      case 106 -> Bttl_800c._800c6778.get();
-      case 107 -> Bttl_800c._800c676c.get();
-      case 108 -> Bttl_800c._800c6770.get();
+      case 105 -> Bttl_800c.mcqOffsetX_800c6774.get();
+      case 106 -> Bttl_800c.mcqOffsetY_800c6778.get();
+      case 107 -> Bttl_800c.mcqStepX_800c676c.get();
+      case 108 -> Bttl_800c.mcqStepY_800c6770.get();
       case 109 -> Bttl_800c.mcqColour_800fa6dc.get();
 
       case 112 -> Scus94491BpeSegment_800b.gameState_800babc8.wmapFlags_15c.getRaw(0);
@@ -250,10 +250,10 @@ public class GameVarParam extends Param {
       case 97 -> Bttl_800c.currentStage_800c66a4.set(val);
 
       case 104 -> Bttl_800c.shouldRenderMcq_800c6764.set(val);
-      case 105 -> Bttl_800c._800c6774.set(val);
-      case 106 -> Bttl_800c._800c6778.set(val);
-      case 107 -> Bttl_800c._800c676c.set(val);
-      case 108 -> Bttl_800c._800c6770.set(val);
+      case 105 -> Bttl_800c.mcqOffsetX_800c6774.set(val);
+      case 106 -> Bttl_800c.mcqOffsetY_800c6778.set(val);
+      case 107 -> Bttl_800c.mcqStepX_800c676c.set(val);
+      case 108 -> Bttl_800c.mcqStepY_800c6770.set(val);
       case 109 -> Bttl_800c.mcqColour_800fa6dc.set(val);
 
       case 112 -> Scus94491BpeSegment_800b.gameState_800babc8.wmapFlags_15c.setRaw(0, val);

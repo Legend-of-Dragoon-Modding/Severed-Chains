@@ -5,7 +5,7 @@ import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedByteRef;
 
-public class UiMetrics0c implements MemoryRef {
+public class BattleHudStatLabelMetrics0c implements MemoryRef {
   private final Value ref;
 
   public final ShortRef x_00;
@@ -17,7 +17,7 @@ public class UiMetrics0c implements MemoryRef {
   public final ShortRef w_08;
   public final ShortRef h_0a;
 
-  public UiMetrics0c(final Value ref) {
+  public BattleHudStatLabelMetrics0c(final Value ref) {
     this.ref = ref;
 
     this.x_00 = ref.offset(2, 0x00L).cast(ShortRef::new);

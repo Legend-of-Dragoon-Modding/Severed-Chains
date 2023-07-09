@@ -22,9 +22,9 @@ import legend.game.combat.environment.BattleMenuIconMetrics08;
 import legend.game.combat.environment.BattleMenuTextMetrics08;
 import legend.game.combat.types.AttackType;
 import legend.game.combat.ui.BattleDisplayStats144;
-import legend.game.combat.ui.BattleDisplayStats144Sub10;
+import legend.game.combat.ui.BattleDisplayStatsDigit10;
 import legend.game.combat.ui.BattleMenuStruct58;
-import legend.game.combat.ui.BattleStruct3c;
+import legend.game.combat.ui.BattleHudCharacterDisplay3c;
 import legend.game.combat.ui.CombatItem02;
 import legend.game.combat.ui.CombatMenua4;
 import legend.game.combat.ui.FloatingNumberC4;
@@ -76,7 +76,7 @@ import static legend.game.combat.Bttl_800c._800c6748;
 import static legend.game.combat.Bttl_800c._800c697c;
 import static legend.game.combat.Bttl_800c._800c697e;
 import static legend.game.combat.Bttl_800c._800c6980;
-import static legend.game.combat.Bttl_800c._800c6c40;
+import static legend.game.combat.Bttl_800c.activePartyBattleHudCharacterDisplays_800c6c40;
 import static legend.game.combat.Bttl_800c._800c6f4c;
 import static legend.game.combat.Bttl_800c._800c70e0;
 import static legend.game.combat.Bttl_800c._800c70f4;
@@ -121,7 +121,7 @@ import static legend.game.combat.Bttl_800c.targetAllItemIds_800c7124;
 import static legend.game.combat.Bttl_800c.targetBobjs_800c71f0;
 import static legend.game.combat.Bttl_800c.textboxColours_800c6fec;
 import static legend.game.combat.Bttl_800c.uiTextureElementBrightness_800c71ec;
-import static legend.game.combat.Bttl_800e.FUN_800ef8d8;
+import static legend.game.combat.Bttl_800e.initializeBattleHudCharacterDisplay;
 import static legend.game.combat.Bttl_800e.perspectiveTransformXyz;
 
 public final class Bttl_800f {
@@ -271,7 +271,7 @@ public final class Bttl_800f {
     //LAB_800f184c
     //LAB_800f18cc
     for(int i = 0; i < digitCount; i++) {
-      final BattleDisplayStats144Sub10 struct = displayStats._04[a1][i];
+      final BattleDisplayStatsDigit10 struct = displayStats._04[a1][i];
 
       if(a1 == 1 || a1 == 3 || a1 == 4) {
         //LAB_800f18f0
@@ -302,7 +302,7 @@ public final class Bttl_800f {
       }
 
       //LAB_800f1998
-      struct._0e = v0;
+      struct.clutOffset_0e = v0;
 
       //LAB_800f199c
       struct.digitValue_00 = digits[i];
@@ -317,7 +317,7 @@ public final class Bttl_800f {
       //LAB_800f1a10
       //LAB_800f1a28
       for(int i = 0; i < 3; i++) {
-        final BattleStruct3c v1 = _800c6c40.get(i);
+        final BattleHudCharacterDisplay3c v1 = activePartyBattleHudCharacterDisplays_800c6c40.get(i);
 
         if(v1.charIndex_00.get() != -1) {
           v1._14.get(2).set(0);
@@ -333,7 +333,7 @@ public final class Bttl_800f {
     //LAB_800f1a64
     //LAB_800f1a70
     for(int i = 0; i < 3; i++) {
-      final BattleStruct3c v1 = _800c6c40.get(i);
+      final BattleHudCharacterDisplay3c v1 = activePartyBattleHudCharacterDisplays_800c6c40.get(i);
       if(v1.charIndex_00.get() != -1) {
         v1._14.get(2).set(0);
         v1.flags_06.or(0x3);
@@ -1016,10 +1016,10 @@ public final class Bttl_800f {
   public static void FUN_800f417c() {
     //LAB_800f41ac
     for(int i = 0; i < charCount_800c677c.get(); i++) {
-      final BattleStruct3c s1 = _800c6c40.get(i);
+      final BattleHudCharacterDisplay3c s1 = activePartyBattleHudCharacterDisplays_800c6c40.get(i);
 
       if(s1.charIndex_00.get() == -1 && _800be5d0.get() == 1) {
-        FUN_800ef8d8(i);
+        initializeBattleHudCharacterDisplay(i);
       }
 
       //LAB_800f41dc
@@ -1032,7 +1032,7 @@ public final class Bttl_800f {
     //LAB_800f4220
     for(int charSlot = 0; charSlot < 3; charSlot++) {
       final BattleDisplayStats144 displayStats = displayStats_800c6c2c[charSlot];
-      final BattleStruct3c v1 = _800c6c40.get(charSlot);
+      final BattleHudCharacterDisplay3c v1 = activePartyBattleHudCharacterDisplays_800c6c40.get(charSlot);
 
       if(v1.charIndex_00.get() != -1) {
         v1.x_08.set(x);
@@ -1105,9 +1105,9 @@ public final class Bttl_800f {
     }
 
     //LAB_800f456c
-    final BattleStruct3c a2 = _800c6c40.get(i);
-    a2._0c.set((short)0);
-    a2._0e.set((short)script.params_20[1].get());
+    final BattleHudCharacterDisplay3c charDisplay = activePartyBattleHudCharacterDisplays_800c6c40.get(i);
+    charDisplay.unused_0c.set((short)0);
+    charDisplay.unused_0e.set((short)script.params_20[1].get());
 
     final PlayerBattleObject player = (PlayerBattleObject)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final VitalsStat sp = player.stats.getStat(CoreMod.SP_STAT.get());
@@ -1115,7 +1115,7 @@ public final class Bttl_800f {
     sp.setCurrent(sp.getCurrent() - script.params_20[2].get());
 
     if(sp.getCurrent() == 0) {
-      a2.flags_06.and(0xfff3);
+      charDisplay.flags_06.and(0xfff3);
     }
 
     //LAB_800f45f8
@@ -2150,9 +2150,9 @@ public final class Bttl_800f {
         countCameraPositionIndicesIndices_800c6ba0.set(0);
 
         //LAB_800f6424
-        final long[] previousIndicesList = new long[4];
+        final int[] previousIndicesList = new int[4];
         for(int i = 0; i < 4; i++) {
-          previousIndicesList[i] = 0xffL;
+          previousIndicesList[i] = 0xff;
           cameraPositionIndicesIndices_800c6c30.get(i).set(0);
         }
 
@@ -2684,7 +2684,7 @@ public final class Bttl_800f {
     int v1;
     ScriptState<BattleObject27c> target = null;
     for(v1 = 0; v1 < count; v1++) {
-      target = targetBobjs_800c71f0[targetType][(int)_800c697c.get()];
+      target = targetBobjs_800c71f0[targetType][_800c697c.get()];
 
       if(target != null && (target.storage_44[7] & 0x4000) == 0) {
         break;
@@ -2706,14 +2706,14 @@ public final class Bttl_800f {
 
     //LAB_800f7960
     if(v1 == count) {
-      target = targetBobjs_800c71f0[targetType][(int)_800c697c.get()];
+      target = targetBobjs_800c71f0[targetType][_800c697c.get()];
       _800c697c.set((short)0);
     }
 
     //LAB_800f7998
     menu.targetType_50 = targetType;
     if(!targetAll) {
-      menu.combatantIndex_54 = (int)_800c697c.get();
+      menu.combatantIndex_54 = _800c697c.get();
     } else {
       //LAB_800f79b4
       menu.combatantIndex_54 = -1;
