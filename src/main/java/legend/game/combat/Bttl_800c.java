@@ -59,6 +59,8 @@ import legend.game.combat.environment.BttlLightStruct84;
 import legend.game.combat.environment.CameraOctParamCallback;
 import legend.game.combat.environment.CameraQuadParamCallback;
 import legend.game.combat.environment.CameraSeptParamCallback;
+import legend.game.combat.environment.CombatPortraitBorderMetrics0c;
+import legend.game.combat.environment.NameAndPortraitDisplayMetrics0c;
 import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.BattleStateEf4;
 import legend.game.combat.types.BttlStruct08;
@@ -383,7 +385,7 @@ public final class Bttl_800c {
 
   public static final ArrayRef<IntRef> melbuMonsterNameIndices = MEMORY.ref(4, 0x800c6e90L, ArrayRef.of(IntRef.class, 3, 4, IntRef::new));
 
-  public static final ArrayRef<ArrayRef<ByteRef>> combatPortraitBorderVertexCoords_800c6e9c = MEMORY.ref(2, 0x800c6e9cL, ArrayRef.of(ArrayRef.classFor(ByteRef.class), 4, 0xc, ArrayRef.of(ByteRef.class, 0xc, 1, ByteRef::new)));
+  public static final ArrayRef<CombatPortraitBorderMetrics0c> combatPortraitBorderVertexCoords_800c6e9c = MEMORY.ref(1, 0x800c6e9cL, ArrayRef.of(CombatPortraitBorderMetrics0c.class, 4, 0xc, CombatPortraitBorderMetrics0c::new));
   public static final ArrayRef<BattleHudStatLabelMetrics0c> battleHudStatLabelMetrics_800c6ecc = MEMORY.ref(1, 0x800c6eccL, ArrayRef.of(BattleHudStatLabelMetrics0c.class, 3, 0xc, BattleHudStatLabelMetrics0c::new));
 
   public static final ArrayRef<ArrayRef<UnsignedByteRef>> spBarColours_800c6f04 = MEMORY.ref(1, 0x800c6f04L, ArrayRef.of(ArrayRef.classFor(UnsignedByteRef.class), 7, 6, ArrayRef.of(UnsignedByteRef.class, 6, 1, UnsignedByteRef::new)));
@@ -902,7 +904,7 @@ public final class Bttl_800c {
   /** Player names, player names, item names, dragoon spells, item descriptions, spell descriptions */
   public static final ArrayRef<Pointer<UnboundedArrayRef<Pointer<LodString>>>> allText_800fb3c0 = MEMORY.ref(4, 0x800fb3c0L, ArrayRef.of(Pointer.classFor(UnboundedArrayRef.classFor(Pointer.classFor(LodString.class))),  6, 4, Pointer.deferred(4, UnboundedArrayRef.of(4, Pointer.deferred(4, LodString::new)))));
 
-  public static final ArrayRef<Pointer<ArrayRef<UnsignedByteRef>>> _800fb444 = MEMORY.ref(4, 0x800fb444L, ArrayRef.of(Pointer.classFor(ArrayRef.classFor(UnsignedByteRef.class)), 10, 4, Pointer.deferred(4, ArrayRef.of(UnsignedByteRef.class, 12, 1, UnsignedByteRef::new))));
+  public static final ArrayRef<Pointer<NameAndPortraitDisplayMetrics0c>> hudNameAndPortraitMetrics_800fb444 = MEMORY.ref(4, 0x800fb444L, ArrayRef.of(Pointer.classFor(NameAndPortraitDisplayMetrics0c.class), 10, 4, Pointer.deferred(4, NameAndPortraitDisplayMetrics0c::new)));
   public static final ArrayRef<ByteRef> _800fb46c = MEMORY.ref(1, 0x800fb46cL, ArrayRef.of(ByteRef.class, 0x10, 1, ByteRef::new));
   public static final ArrayRef<ByteRef> _800fb47c = MEMORY.ref(1, 0x800fb47cL, ArrayRef.of(ByteRef.class, 0x10, 1, ByteRef::new));
 

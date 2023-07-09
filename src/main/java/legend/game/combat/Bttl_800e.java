@@ -19,7 +19,6 @@ import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
 import legend.core.memory.Ref;
 import legend.core.memory.types.ArrayRef;
-import legend.core.memory.types.ByteRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.game.characters.Element;
@@ -48,16 +47,18 @@ import legend.game.combat.environment.BattleStageDarkening1800;
 import legend.game.combat.environment.BattleStruct14;
 import legend.game.combat.environment.BttlLightStruct84;
 import legend.game.combat.environment.BttlLightStruct84Sub38;
+import legend.game.combat.environment.CombatPortraitBorderMetrics0c;
+import legend.game.combat.environment.NameAndPortraitDisplayMetrics0c;
 import legend.game.combat.environment.StageAmbiance4c;
+import legend.game.combat.types.BattleHudStatLabelMetrics0c;
 import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.combat.types.MonsterStats1c;
 import legend.game.combat.types.Ptr;
-import legend.game.combat.types.BattleHudStatLabelMetrics0c;
 import legend.game.combat.ui.BattleDisplayStats144;
 import legend.game.combat.ui.BattleDisplayStatsDigit10;
-import legend.game.combat.ui.BattleMenuStruct58;
 import legend.game.combat.ui.BattleHudCharacterDisplay3c;
+import legend.game.combat.ui.BattleMenuStruct58;
 import legend.game.combat.ui.CombatMenua4;
 import legend.game.combat.ui.FloatingNumberC4;
 import legend.game.combat.ui.FloatingNumberC4Sub20;
@@ -160,27 +161,25 @@ import static legend.game.combat.Bttl_800c._800c6930;
 import static legend.game.combat.Bttl_800c._800c6938;
 import static legend.game.combat.Bttl_800c._800c697e;
 import static legend.game.combat.Bttl_800c._800c6980;
-import static legend.game.combat.Bttl_800c.battleHudYOffsetIndex_800c6c38;
-import static legend.game.combat.Bttl_800c.activePartyBattleHudCharacterDisplays_800c6c40;
-import static legend.game.combat.Bttl_800c.countCombatUiFilesLoaded_800c6cf4;
-import static legend.game.combat.Bttl_800c.combatUiElementRectDimensions_800c6e48;
-import static legend.game.combat.Bttl_800c.battleHudTextureVramXOffsets_800c6e60;
-import static legend.game.combat.Bttl_800c.combatPortraitBorderVertexCoords_800c6e9c;
-import static legend.game.combat.Bttl_800c.battleHudStatLabelMetrics_800c6ecc;
-import static legend.game.combat.Bttl_800c.spBarColours_800c6f04;
 import static legend.game.combat.Bttl_800c._800fafe8;
-import static legend.game.combat.Bttl_800c.battleHudYOffsets_800fb198;
-import static legend.game.combat.Bttl_800c._800fb444;
 import static legend.game.combat.Bttl_800c._800fb46c;
 import static legend.game.combat.Bttl_800c._800fb47c;
+import static legend.game.combat.Bttl_800c.activePartyBattleHudCharacterDisplays_800c6c40;
 import static legend.game.combat.Bttl_800c.ailments_800fb3a0;
 import static legend.game.combat.Bttl_800c.aliveBobjCount_800c669c;
 import static legend.game.combat.Bttl_800c.aliveMonsterCount_800c6758;
+import static legend.game.combat.Bttl_800c.battleHudStatLabelMetrics_800c6ecc;
+import static legend.game.combat.Bttl_800c.battleHudTextureVramXOffsets_800c6e60;
+import static legend.game.combat.Bttl_800c.battleHudYOffsetIndex_800c6c38;
+import static legend.game.combat.Bttl_800c.battleHudYOffsets_800fb198;
 import static legend.game.combat.Bttl_800c.battleMenu_800c6c34;
 import static legend.game.combat.Bttl_800c.charCount_800c677c;
 import static legend.game.combat.Bttl_800c.characterDragoonIndices_800c6e68;
 import static legend.game.combat.Bttl_800c.combatMenu_800c6b60;
+import static legend.game.combat.Bttl_800c.combatPortraitBorderVertexCoords_800c6e9c;
+import static legend.game.combat.Bttl_800c.combatUiElementRectDimensions_800c6e48;
 import static legend.game.combat.Bttl_800c.combatantCount_800c66a0;
+import static legend.game.combat.Bttl_800c.countCombatUiFilesLoaded_800c6cf4;
 import static legend.game.combat.Bttl_800c.currentEnemyNames_800c69d0;
 import static legend.game.combat.Bttl_800c.currentStage_800c66a4;
 import static legend.game.combat.Bttl_800c.currentTurnBobj_800c66c8;
@@ -194,6 +193,7 @@ import static legend.game.combat.Bttl_800c.dragoonSpells_800c6960;
 import static legend.game.combat.Bttl_800c.enemyDeffFileIndices_800faec4;
 import static legend.game.combat.Bttl_800c.floatingNumbers_800c6b5c;
 import static legend.game.combat.Bttl_800c.getCombatant;
+import static legend.game.combat.Bttl_800c.hudNameAndPortraitMetrics_800fb444;
 import static legend.game.combat.Bttl_800c.itemTargetAll_800c69c8;
 import static legend.game.combat.Bttl_800c.itemTargetType_800c6b68;
 import static legend.game.combat.Bttl_800c.lightTicks_800c6928;
@@ -208,6 +208,7 @@ import static legend.game.combat.Bttl_800c.monsterCount_800c6768;
 import static legend.game.combat.Bttl_800c.monsterCount_800c6b9c;
 import static legend.game.combat.Bttl_800c.playerNames_800fb378;
 import static legend.game.combat.Bttl_800c.repeatItemIds_800c6e34;
+import static legend.game.combat.Bttl_800c.spBarColours_800c6f04;
 import static legend.game.combat.Bttl_800c.spriteMetrics_800c6948;
 import static legend.game.combat.Bttl_800c.stageDarkeningClutWidth_800c695c;
 import static legend.game.combat.Bttl_800c.stageDarkening_800c6958;
@@ -4156,21 +4157,20 @@ public final class Bttl_800e {
                 charDisplay._14.get(2).get()
               );
             }
-
             //LAB_800f01e0
           }
 
           //LAB_800f01f0
-          final ArrayRef<UnsignedByteRef> s0 = _800fb444.get(player.charId_272).deref();
+          final NameAndPortraitDisplayMetrics0c namePortraitMetrics = hudNameAndPortraitMetrics_800fb444.get(player.charId_272).deref();
 
           // Names
           drawUiTextureElement(
             displayStats.x_00 - centreScreenX_1f8003dc.get() + 1,
             displayStats.y_02 - centreScreenY_1f8003de.get() - 25,
-            s0.get(0).get(),
-            s0.get(1).get(),
-            s0.get(2).get(),
-            s0.get(3).get(),
+            namePortraitMetrics.nameU_00.get(),
+            namePortraitMetrics.nameV_01.get(),
+            namePortraitMetrics.nameW_02.get(),
+            namePortraitMetrics.nameH_03.get(),
             0x2c,
             brightnessIndex0,
             charDisplay._14.get(2).get()
@@ -4180,41 +4180,41 @@ public final class Bttl_800e {
           drawUiTextureElement(
             displayStats.x_00 - centreScreenX_1f8003dc.get() - 44,
             displayStats.y_02 - centreScreenY_1f8003de.get() - 22,
-            s0.get(4).get(),
-            s0.get(5).get(),
-            s0.get(6).get(),
-            s0.get(7).get(),
-            s0.get(8).get(),
+            namePortraitMetrics.portraitU_04.get(),
+            namePortraitMetrics.portraitV_05.get(),
+            namePortraitMetrics.portraitW_06.get(),
+            namePortraitMetrics.portraitH_07.get(),
+            namePortraitMetrics.portraitClutOffset_08.get(),
             brightnessIndex1,
             charDisplay._14.get(2).get()
           );
 
           if(brightnessIndex0 != 0) {
             final int v1_0 = (6 - charDisplay._14.get(2).get()) * 8 + 100;
-            final int x = displayStats.x_00 - centreScreenX_1f8003dc.get() + s0.get(6).get() / 2 - 44;
-            final int y = displayStats.y_02 - centreScreenY_1f8003de.get() + s0.get(7).get() / 2 - 22;
-            int v1 = (s0.get(6).get() + 2) * v1_0 / 100 / 2;
-            final int x0 = x - v1;
-            final int x1 = x + v1 - 1;
+            final int x = displayStats.x_00 - centreScreenX_1f8003dc.get() + namePortraitMetrics.portraitW_06.get() / 2 - 44;
+            final int y = displayStats.y_02 - centreScreenY_1f8003de.get() + namePortraitMetrics.portraitH_07.get() / 2 - 22;
+            int dimVertexPositionModifier = (namePortraitMetrics.portraitW_06.get() + 2) * v1_0 / 100 / 2;
+            final int x0 = x - dimVertexPositionModifier;
+            final int x1 = x + dimVertexPositionModifier - 1;
 
             final short[] xs = {(short)x0, (short)x1, (short)x0, (short)x1};
 
-            v1 = (s0.get(7).get() + 2) * v1_0 / 100 / 2;
-            final int y0 = y - v1;
-            final int y1 = y + v1 - 1;
+            dimVertexPositionModifier = (namePortraitMetrics.portraitH_07.get() + 2) * v1_0 / 100 / 2;
+            final int y0 = y - dimVertexPositionModifier;
+            final int y1 = y + dimVertexPositionModifier - 1;
 
             final short[] ys = {(short)y0, (short)y0, (short)y1, (short)y1};
 
             //LAB_800f0438
             for(int i = 0; i < 8; i++) {
-              v1 = charDisplay._14.get(2).get();
+              dimVertexPositionModifier = charDisplay._14.get(2).get();
 
               final int r;
               final int g;
               final int b;
               final boolean translucent;
-              if(v1 < 6) {
-                r = v1 * 0x2a;
+              if(dimVertexPositionModifier < 6) {
+                r = dimVertexPositionModifier * 0x2a;
                 g = r;
                 b = r;
                 translucent = true;
@@ -4227,15 +4227,15 @@ public final class Bttl_800e {
 
               //LAB_800f0470
               //LAB_800f047c
-              final int t5 = i / 4;
-              final ArrayRef<ByteRef> t0 = combatPortraitBorderVertexCoords_800c6e9c.get(i % 4);
+              final int borderLayer = i / 4;
+              final CombatPortraitBorderMetrics0c borderMetrics = combatPortraitBorderVertexCoords_800c6e9c.get(i % 4);
 
               // Draw border around currently active character's portrait
               drawLine(
-                xs[t0.get(0).get()] + t0.get(4).get() + t0.get(8).get() * t5,
-                ys[t0.get(1).get()] + t0.get(5).get() + t0.get(9).get() * t5,
-                xs[t0.get(2).get()] + t0.get(6).get() + t0.get(10).get() * t5,
-                ys[t0.get(3).get()] + t0.get(7).get() + t0.get(11).get() * t5,
+                xs[borderMetrics.x1Index_00.get()] + borderMetrics.x1Offset_04.get() + borderMetrics._08.get() * borderLayer,
+                ys[borderMetrics.y1Index_01.get()] + borderMetrics.y1Offset_05.get() + borderMetrics._09.get() * borderLayer,
+                xs[borderMetrics.x2Index_02.get()] + borderMetrics.x2Offset_06.get() + borderMetrics._0a.get() * borderLayer,
+                ys[borderMetrics.y2Index_03.get()] + borderMetrics.y2Offset_07.get() + borderMetrics._0b.get() * borderLayer,
                 r,
                 g,
                 b,
@@ -4248,10 +4248,10 @@ public final class Bttl_800e {
           final boolean canTransform = (player.status_0e & 0x2000) != 0;
 
           //LAB_800f05f4
-          int s3 = 0;
+          int eraseSpHeight = 0;
           for(int i = 0; i < 3; i++) {
             if(i == 2 && !canTransform) {
-              s3 = -10;
+              eraseSpHeight = -10;
             }
 
             //LAB_800f060c
@@ -4265,7 +4265,7 @@ public final class Bttl_800e {
               labelMetrics.u_04.get(),
               labelMetrics.v_06.get(),
               labelMetrics.w_08.get(),
-              labelMetrics.h_0a.get() + s3,
+              labelMetrics.h_0a.get() + eraseSpHeight,
               0x2c,
               brightnessIndex0,
               charDisplay._14.get(2).get()
@@ -4279,9 +4279,9 @@ public final class Bttl_800e {
 
             //SP bars
             //LAB_800f0714
-            for(s3 = 0; s3 < 2; s3++) {
+            for(eraseSpHeight = 0; eraseSpHeight < 2; eraseSpHeight++) {
               int spBarW;
-              if(s3 == 0) {
+              if(eraseSpHeight == 0) {
                 spBarW = partialSp;
                 spBarIndex = fullLevels + 1;
                 //LAB_800f0728
