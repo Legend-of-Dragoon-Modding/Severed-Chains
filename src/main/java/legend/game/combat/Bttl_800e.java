@@ -232,7 +232,7 @@ import static legend.game.combat.Bttl_800f.drawUiTextureElement;
 import static legend.game.combat.Bttl_800f.getTargetEnemyName;
 import static legend.game.combat.Bttl_800f.prepareItemList;
 import static legend.game.combat.Bttl_800f.renderNumber;
-import static legend.game.combat.Bttl_800f.renderTextBoxBackground;
+import static legend.game.combat.Bttl_800f.renderBattleHudBackground;
 import static legend.game.combat.Bttl_800f.resetCombatMenu;
 import static legend.game.combat.SBtld.monsterNames_80112068;
 import static legend.game.combat.SBtld.monsterStats_8010ba98;
@@ -4344,7 +4344,7 @@ public final class Bttl_800e {
       //LAB_800f0ad4
       // Background
       if(activePartyBattleHudCharacterDisplays_800c6c40.get(0).charIndex_00.get() != -1 && (activePartyBattleHudCharacterDisplays_800c6c40.get(0).flags_06.get() & 0x1) != 0) {
-        renderTextBoxBackground(16, battleHudYOffsets_800fb198.get(battleHudYOffsetIndex_800c6c38.get()).get() - 26, 288, 40, Config.changeBattleRgb() ? Config.getBattleRgb() : 0x00299f);
+        renderBattleHudBackground(16, battleHudYOffsets_800fb198.get(battleHudYOffsetIndex_800c6c38.get()).get() - 26, 288, 40, Config.changeBattleRgb() ? Config.getBattleRgb() : 0x00299f);
       }
 
       //LAB_800f0b3c
@@ -4440,7 +4440,7 @@ public final class Bttl_800e {
 
         //LAB_800f0ed8
         //Character name
-        renderTextBoxBackground(44, 23, 232, 14, element.colour);
+        renderBattleHudBackground(44, 23, 232, 14, element.colour);
         renderText(str, 160 - textWidth(str) / 2, 24, TextColour.WHITE, 0);
       }
     }

@@ -15,6 +15,7 @@ import legend.game.combat.bobj.AttackEvent;
 import legend.game.combat.bobj.BattleObject27c;
 import legend.game.combat.bobj.MonsterBattleObject;
 import legend.game.combat.bobj.PlayerBattleObject;
+import legend.game.combat.environment.BattleHudBorderMetrics14;
 import legend.game.combat.environment.BattleMenuBackgroundDisplayMetrics0c;
 import legend.game.combat.environment.BattleMenuBackgroundUvMetrics04;
 import legend.game.combat.environment.BattleMenuHighlightMetrics12;
@@ -77,7 +78,7 @@ import static legend.game.combat.Bttl_800c._800c697c;
 import static legend.game.combat.Bttl_800c._800c697e;
 import static legend.game.combat.Bttl_800c._800c6980;
 import static legend.game.combat.Bttl_800c.activePartyBattleHudCharacterDisplays_800c6c40;
-import static legend.game.combat.Bttl_800c._800c6f4c;
+import static legend.game.combat.Bttl_800c.battleHudBorderMetrics_800c6f4c;
 import static legend.game.combat.Bttl_800c._800c70e0;
 import static legend.game.combat.Bttl_800c._800c70f4;
 import static legend.game.combat.Bttl_800c._800c723c;
@@ -130,53 +131,53 @@ public final class Bttl_800f {
   private static final Logger LOGGER = LogManager.getFormatterLogger(Bttl_800f.class);
 
   @Method(0x800f0f5cL)
-  public static void FUN_800f0f5c(final GpuCommandPoly parentCommand) {
+  public static void renderBattleHudBorder(final GpuCommandPoly parentCommand) {
     //LAB_800f0fe4
     //LAB_800f0fe8
-    final int[] sp0x20 = new int[80];
-    for(int i = 0; i < sp0x20.length; i++) {
-      sp0x20[i] = _800c6f4c.get(i).get();
+    final BattleHudBorderMetrics14[] borderMetrics = new BattleHudBorderMetrics14[8];
+    for(int i = 0; i < borderMetrics.length; i++) {
+      borderMetrics[i] = battleHudBorderMetrics_800c6f4c.get(i);
     }
 
     //LAB_800f1014
-    final int[] sp0x10 = new int[4];
-    final int[] sp0x18 = new int[4];
-    int v0 = parentCommand.getX(0) + 1;
-    sp0x10[0] = v0;
-    sp0x10[2] = v0;
-    v0 = parentCommand.getX(1) - 1;
-    sp0x10[1] = v0;
-    sp0x10[3] = v0;
-    v0 = parentCommand.getY(0);
-    sp0x18[0] = v0;
-    sp0x18[1] = v0;
-    v0 = parentCommand.getY(2);
-    sp0x18[2] = v0;
-    sp0x18[3] = v0;
+    final int[] xs = new int[4];
+    final int[] ys = new int[4];
+    int position = parentCommand.getX(0) + 1;
+    xs[0] = position;
+    xs[2] = position;
+    position = parentCommand.getX(1) - 1;
+    xs[1] = position;
+    xs[3] = position;
+    position = parentCommand.getY(0);
+    ys[0] = position;
+    ys[1] = position;
+    position = parentCommand.getY(2);
+    ys[2] = position;
+    ys[3] = position;
 
     //LAB_800f1060
     for(int i = 0; i < 8; i++) {
-      final int left;
-      final int right;
+      final int leftX;
+      final int rightX;
       final int leftU;
       final int rightU;
-      final int top = sp0x18[sp0x20[i * 10]] - sp0x20[i * 10 + 5];
-      final int bottom = sp0x18[sp0x20[i * 10 + 1]] + sp0x20[i * 10 + 5];
-      final int topV = sp0x20[i * 10 + 3];
-      final int bottomV = topV + sp0x20[i * 10 + 7];
+      final int topY = ys[borderMetrics[i].indexXy0_00.get()] - borderMetrics[i].offsetY_0a.get();
+      final int bottomY = ys[borderMetrics[i].indexXy1_02.get()] + borderMetrics[i].offsetY_0a.get();
+      final int topV = borderMetrics[i].v_06.get();
+      final int bottomV = topV + borderMetrics[i].h_0e.get();
 
       if(i == 5 || i == 7) {
         //LAB_800f10ac
-        left = sp0x10[sp0x20[i * 10 + 1]] + sp0x20[i * 10 + 4];
-        right = sp0x10[sp0x20[i * 10]] - sp0x20[i * 10 + 4];
-        rightU = sp0x20[i * 10 + 2];
-        leftU = rightU + sp0x20[i * 10 + 6] - 1;
+        leftX = xs[borderMetrics[i].indexXy1_02.get()] + borderMetrics[i].offsetX_08.get();
+        rightX = xs[borderMetrics[i].indexXy0_00.get()] - borderMetrics[i].offsetX_08.get();
+        rightU = borderMetrics[i].u0_04.get();
+        leftU = rightU + borderMetrics[i].u1_0c.get() - 1;
       } else {
         //LAB_800f1128
-        left = sp0x10[sp0x20[i * 10]] - sp0x20[i * 10 + 4];
-        right = sp0x10[sp0x20[i * 10 + 1]] + sp0x20[i * 10 + 4];
-        leftU = sp0x20[i * 10 + 2];
-        rightU = leftU + sp0x20[i * 10 + 6];
+        leftX = xs[borderMetrics[i].indexXy0_00.get()] - borderMetrics[i].offsetX_08.get();
+        rightX = xs[borderMetrics[i].indexXy1_02.get()] + borderMetrics[i].offsetX_08.get();
+        leftU = borderMetrics[i].u0_04.get();
+        rightU = leftU + borderMetrics[i].u1_0c.get();
       }
 
       final GpuCommandPoly cmd = new GpuCommandPoly(4)
@@ -184,10 +185,10 @@ public final class Bttl_800f {
         .clut(720, 497)
         .vramPos(704, 256)
         .monochrome(0x80)
-        .pos(0, left, top)
-        .pos(1, right, top)
-        .pos(2, left, bottom)
-        .pos(3, right, bottom)
+        .pos(0, leftX, topY)
+        .pos(1, rightX, topY)
+        .pos(2, leftX, bottomY)
+        .pos(3, rightX, bottomY)
         .uv(0, leftU, topV)
         .uv(1, rightU, topV)
         .uv(2, leftU, bottomV)
@@ -198,7 +199,7 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f1268L)
-  public static void renderTextBoxBackground(final int x, final int y, final int width, final int height, final int colour) {
+  public static void renderBattleHudBackground(final int x, final int y, final int width, final int height, final int colour) {
     //LAB_800f1340
     final int left = x - centreScreenX_1f8003dc.get();
     final int top = y - centreScreenY_1f8003de.get();
@@ -206,6 +207,7 @@ public final class Bttl_800f {
     final int g = colour >> 8 & 0xff;
     final int r = colour >> 16 & 0xff;
 
+    // Gradient
     final GpuCommandPoly cmd1 = new GpuCommandPoly(4)
       .translucent(Translucency.HALF_B_PLUS_HALF_F)
       .monochrome(0, 0)
@@ -217,10 +219,11 @@ public final class Bttl_800f {
       .pos(2, left, top + height)
       .pos(3, left + width, top + height);
 
-    FUN_800f0f5c(cmd1);
+    renderBattleHudBorder(cmd1);
 
     GPU.queueCommand(31, cmd1);
 
+    // Darkening overlay
     final GpuCommandPoly cmd2 = new GpuCommandPoly(4)
       .translucent(Translucency.HALF_B_PLUS_HALF_F)
       .monochrome(0)
@@ -1981,7 +1984,7 @@ public final class Bttl_800f {
         //Item menu
         final int a2 = structa4._10 + 6;
         final int a3 = structa4._12 + 17;
-        renderTextBoxBackground(structa4.x_04 - a2 / 2, structa4.y_06 - a3, a2, a3, Config.changeBattleRgb() ? Config.getBattleRgb() : 0x00299f);
+        renderBattleHudBackground(structa4.x_04 - a2 / 2, structa4.y_06 - a3, a2, a3, Config.changeBattleRgb() ? Config.getBattleRgb() : 0x00299f);
       }
 
       //LAB_800f5f50
@@ -1997,7 +2000,7 @@ public final class Bttl_800f {
             final BattleObject27c bobj = setActiveCharacterSpell(structa4.itemOrSpellId_1c);
             addFloatingNumber(0, 0x1L, 0, bobj.spell_94.mp_06, 280, 135, 0, structa4.menuType_0a);
             renderBattleMenuElement(236 - centreScreenX_1f8003dc.get(), 130 - centreScreenY_1f8003de.get(), 16, 128, 24, 16, 0x2c, null);
-            renderTextBoxBackground(236, 130, 64, 14, Config.changeBattleRgb() ? Config.getBattleRgb() : 0x00299f);
+            renderBattleHudBackground(236, 130, 64, 14, Config.changeBattleRgb() ? Config.getBattleRgb() : 0x00299f);
           }
         } else {
           throw new RuntimeException("Undefined s1");
@@ -2006,7 +2009,7 @@ public final class Bttl_800f {
         //LAB_800f604c
         //LAB_800f6050
         //Selected item description
-        renderTextBoxBackground(44, 156, 232, 14, Config.changeBattleRgb() ? Config.getBattleRgb() : 0x00299f);
+        renderBattleHudBackground(44, 156, 232, 14, Config.changeBattleRgb() ? Config.getBattleRgb() : 0x00299f);
         renderText(textType, structa4.itemOrSpellId_1c, 160, 163);
       }
     }
@@ -3439,7 +3442,7 @@ public final class Bttl_800f {
     final int b = textboxColours_800c6fec.get(colourIndex).get(2).get();
     final int colour = r << 16 | g << 8 | b;
 
-    renderTextBoxBackground(
+    renderBattleHudBackground(
       (short)script.params_20[0].get() - script.params_20[2].get() / 2,
       (short)script.params_20[1].get() - script.params_20[3].get() / 2,
       (short)script.params_20[2].get(),

@@ -45,6 +45,7 @@ import legend.game.combat.effects.WeaponTrailEffect3c;
 import legend.game.combat.effects.WeaponTrailEffectSegment2c;
 import legend.game.combat.environment.ActiveStageData2c;
 import legend.game.combat.environment.BattleCamera;
+import legend.game.combat.environment.BattleHudBorderMetrics14;
 import legend.game.combat.environment.BattleItemMenuArrowUvMetrics06;
 import legend.game.combat.environment.BattleLightStruct64;
 import legend.game.combat.environment.BattleMenuBackgroundDisplayMetrics0c;
@@ -391,7 +392,7 @@ public final class Bttl_800c {
   public static final ArrayRef<ArrayRef<UnsignedByteRef>> spBarColours_800c6f04 = MEMORY.ref(1, 0x800c6f04L, ArrayRef.of(ArrayRef.classFor(UnsignedByteRef.class), 7, 6, ArrayRef.of(UnsignedByteRef.class, 6, 1, UnsignedByteRef::new)));
 
   public static final ArrayRef<IntRef> melbuStageToMonsterNameIndices_800c6f30 = MEMORY.ref(4, 0x800c6f30L, ArrayRef.of(IntRef.class, 7, 4, IntRef::new));
-  public static final ArrayRef<UnsignedShortRef> _800c6f4c = MEMORY.ref(2, 0x800c6f4cL, ArrayRef.of(UnsignedShortRef.class, 80, 2, UnsignedShortRef::new));
+  public static final ArrayRef<BattleHudBorderMetrics14> battleHudBorderMetrics_800c6f4c = MEMORY.ref(2, 0x800c6f4cL, ArrayRef.of(BattleHudBorderMetrics14.class, 8, 20, BattleHudBorderMetrics14::new));
   public static final ArrayRef<ArrayRef<UnsignedByteRef>> textboxColours_800c6fec = MEMORY.ref(1, 0x800c6fecL, ArrayRef.of(ArrayRef.classFor(UnsignedByteRef.class), 9, 3, ArrayRef.of(UnsignedByteRef.class, 3, 1, UnsignedByteRef::new)));
 
   public static final ArrayRef<ShortRef> digitOffsetXy_800c7014 = MEMORY.ref(2, 0x800c7014L, ArrayRef.of(ShortRef.class, 10, 2, ShortRef::new));
