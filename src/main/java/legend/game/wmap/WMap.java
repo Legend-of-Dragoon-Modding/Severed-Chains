@@ -52,8 +52,8 @@ import java.util.Comparator;
 import java.util.List;
 
 import static legend.core.GameEngine.CONFIG;
-import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.MEMORY;
 import static legend.game.Scus94491BpeSegment.FUN_80019c80;
 import static legend.game.Scus94491BpeSegment.FUN_8001eea8;
@@ -455,14 +455,8 @@ public class WMap {
         final MATRIX lw = new MATRIX();
         GsGetLws(dobj2.coord2_04, lw, ls);
         GsSetLightMatrix(lw);
-        CPU.CTC2(ls.getPacked(0), 0);
-        CPU.CTC2(ls.getPacked(2), 1);
-        CPU.CTC2(ls.getPacked(4), 2);
-        CPU.CTC2(ls.getPacked(6), 3);
-        CPU.CTC2(ls.getPacked(8), 4);
-        CPU.CTC2(ls.transfer.getX(), 5);
-        CPU.CTC2(ls.transfer.getY(), 6);
-        CPU.CTC2(ls.transfer.getZ(), 7);
+        GTE.setRotationMatrix(ls);
+        GTE.setTranslationVector(ls.transfer);
         Renderer.renderDobj2(dobj2, false, 0);
       }
     }
@@ -2058,7 +2052,7 @@ public class WMap {
 
     final SVECTOR sp0x58 = new SVECTOR().set(struct258_800c66a8.coord2_34.coord.transfer);
     final DVECTOR sp0x60 = new DVECTOR(); // sxy2
-    perspectiveTransform(sp0x58, sp0x60, null, null);
+    perspectiveTransform(sp0x58, sp0x60);
 
     // Player arrow on map
     GPU.queueCommand(25, new GpuCommandQuad()
@@ -2782,14 +2776,8 @@ public class WMap {
 
   @Method(0x800d7a34L)
   public static void renderPath() {
-    final SVECTOR sp9c = new SVECTOR();
-    int spac = 0;
-    int spae = 0;
-
-    final MATRIX sp0x18 = new MATRIX();
-    final VECTOR sp0x40 = new VECTOR();
-    final SVECTOR sp0x70 = new SVECTOR();
-    final long[] sp0xb0 = new long[0xff];
+    int sx = 0;
+    int sy = 0;
 
     if(worldMapState_800c6698 < 4 || playerState_800c669c < 4) {
       return;
@@ -2818,6 +2806,9 @@ public class WMap {
       sp94 = 0; //TODO this was uninitialized in the code
     }
 
+    final MATRIX sp0x18 = new MATRIX();
+    final VECTOR sp0x40 = new VECTOR();
+
     //LAB_800d7b84
     final int sp98 = tickCount_800bb0fc.get() / 5 % 3;
 
@@ -2841,16 +2832,13 @@ public class WMap {
         //LAB_800d7db4
         if(mapState_800c6798.continentIndex_00 != 7 || i == 31 || i == 78) {
           //LAB_800d7df0
-          sp0x70.set(sp0x40);
+          GTE.perspectiveTransform(sp0x40);
 
-          CPU.MTC2(sp0x70.getXY(), 0);
-          CPU.MTC2(sp0x70.getZ(), 1);
-          CPU.COP2(0x18_0001L); // Perspective transform single
+          sx = GTE.getScreenX(2);
+          sy = GTE.getScreenY(2);
+          final int sz = GTE.getScreenZ(3) >> 2;
 
-          sp9c.setXY(CPU.MFC2(14));
-          final int screenZ = (int)CPU.MFC2(19) >> 2;
-
-          if(screenZ >= 4 && screenZ < orderingTableSize_1f8003c8.get()) {
+          if(sz >= 4 && sz < orderingTableSize_1f8003c8.get()) {
             final GpuCommandPoly cmd = new GpuCommandPoly(4)
               .bpp(Bpp.BITS_4)
               .translucent(Translucency.B_PLUS_F)
@@ -2858,9 +2846,9 @@ public class WMap {
               .vramPos(640, 256);
 
             if(struct258_800c66a8.zoomState_1f8 == 0) {
-              final int dx = x - sp0x70.getX();
-              final int dy = y - sp0x70.getY();
-              final int dz = z - sp0x70.getZ();
+              final int dx = x - sp0x40.getX();
+              final int dy = y - sp0x40.getY();
+              final int dz = z - sp0x40.getZ();
               final int sp90 = Math.max(0, 0x200 - SquareRoot0(dx * dx + dy * dy + dz * dz)) / 2;
               cmd.rgb(sp90 * 31 / 256, sp90 * 63 / 256, 0);
             } else {
@@ -2869,20 +2857,17 @@ public class WMap {
             }
 
             //LAB_800d806c
-            spac = sp9c.getX();
-            spae = sp9c.getY();
-
             cmd
               .uv(0, u, v)
               .uv(1, u + uw, v)
               .uv(2, u, v + vw)
               .uv(3, u + uw, v + vw)
-              .pos(0, spac - ((int)_800ef170.offset(sp98 * 4 + sp94 + 2).get() >>> 2), spae - ((int)_800ef170.offset(sp98 * 4 + sp94 + 3).get() >>> 2))
-              .pos(1, spac - ((int)_800ef170.offset(sp98 * 4 + sp94 + 2).get() >>> 2) + ((int)_800ef170.offset(sp98 * 4 + sp94 + 2).get() >>> 1), spae - ((int)_800ef170.offset(sp98 * 4 + sp94 + 3).get() >>> 2))
-              .pos(2, spac - ((int)_800ef170.offset(sp98 * 4 + sp94 + 2).get() >>> 2), spae - ((int)_800ef170.offset(sp98 * 4 + sp94 + 3).get() >>> 2) + ((int)_800ef170.offset(sp98 * 4 + sp94 + 2).get() >>> 1))
-              .pos(3, spac - ((int)_800ef170.offset(sp98 * 4 + sp94 + 2).get() >>> 2) + ((int)_800ef170.offset(sp98 * 4 + sp94 + 2).get() >>> 1), spae - ((int)_800ef170.offset(sp98 * 4 + sp94 + 3).get() >>> 2) + ((int)_800ef170.offset(sp98 * 4 + sp94 + 2).get() >>> 1));
+              .pos(0, sx - ((int)_800ef170.offset(sp98 * 4 + sp94 + 2).get() >>> 2), sy - ((int)_800ef170.offset(sp98 * 4 + sp94 + 3).get() >>> 2))
+              .pos(1, sx - ((int)_800ef170.offset(sp98 * 4 + sp94 + 2).get() >>> 2) + ((int)_800ef170.offset(sp98 * 4 + sp94 + 2).get() >>> 1), sy - ((int)_800ef170.offset(sp98 * 4 + sp94 + 3).get() >>> 2))
+              .pos(2, sx - ((int)_800ef170.offset(sp98 * 4 + sp94 + 2).get() >>> 2), sy - ((int)_800ef170.offset(sp98 * 4 + sp94 + 3).get() >>> 2) + ((int)_800ef170.offset(sp98 * 4 + sp94 + 2).get() >>> 1))
+              .pos(3, sx - ((int)_800ef170.offset(sp98 * 4 + sp94 + 2).get() >>> 2) + ((int)_800ef170.offset(sp98 * 4 + sp94 + 2).get() >>> 1), sy - ((int)_800ef170.offset(sp98 * 4 + sp94 + 3).get() >>> 2) + ((int)_800ef170.offset(sp98 * 4 + sp94 + 2).get() >>> 1));
 
-            GPU.queueCommand(10 + screenZ, cmd);
+            GPU.queueCommand(10 + sz, cmd);
           }
 
           //LAB_800d84b0
@@ -2892,12 +2877,7 @@ public class WMap {
       //LAB_800d84c0
     }
 
-    //LAB_800d84d8
-    //LAB_800d84e8
-    for(int i = 0; i < 0xff; i++) {
-      //LAB_800d8504
-      sp0xb0[i] = 0;
-    }
+    final boolean[] sp0xb0 = new boolean[0xff];
 
     //LAB_800d852c
     //LAB_800d8540
@@ -2910,9 +2890,9 @@ public class WMap {
           final int sp88 = areaData_800f2248.get(locations_800f0e34.get(i).areaIndex_00.get())._00.get();
           final int sp80 = Math.abs(sp88) - 1;
 
-          if(sp0xb0[sp80] == 0) {
+          if(!sp0xb0[sp80]) {
             //LAB_800d863c
-            sp0xb0[sp80] = 1;
+            sp0xb0[sp80] = true;
             final int pathPointCount = _800f5810.get(sp80).get() - 1;
 
             final UnboundedArrayRef<VECTOR> pathPoints = pathDotPosPtrArr_800f591c.get(sp80).deref();
@@ -2922,20 +2902,20 @@ public class WMap {
             //LAB_800d86d4
             for(int pathPointIndex = 0; pathPointIndex < pathPointCount; pathPointIndex++) {
               //LAB_800d86f4
+              final VECTOR sp0x70;
               if(sp88 > 0) {
-                sp0x70.set(pathPoints.get(pathPointIndexBase + pathPointIndex));
+                sp0x70 = pathPoints.get(pathPointIndexBase + pathPointIndex);
               } else {
                 //LAB_800d8784
-                sp0x70.set(pathPoints.get(pathPointIndexBase - pathPointIndex));
+                sp0x70 = pathPoints.get(pathPointIndexBase - pathPointIndex);
               }
 
               //LAB_800d87fc
-              CPU.MTC2(sp0x70.getXY(), 0);
-              CPU.MTC2(sp0x70.getZ(),  1);
-              CPU.COP2(0x18_0001L);
+              GTE.perspectiveTransform(sp0x70);
 
-              sp9c.setXY(CPU.MFC2(14));
-              final int screenZ = (int)CPU.MFC2(19) >> 2;
+              final int sx2 = GTE.getScreenX(2);
+              final int sy2 = GTE.getScreenY(2);
+              final int screenZ = GTE.getScreenZ(3) >> 2;
 
               if(screenZ >= 4 && screenZ < orderingTableSize_1f8003c8.get()) {
                 final GpuCommandPoly cmd = new GpuCommandPoly(4)
@@ -2952,10 +2932,10 @@ public class WMap {
 
                   cmd
                     .rgb(sp90 * 47 / 256, sp90 * 39 / 256, 0)
-                    .pos(0, spac - 2, spae - 2)
-                    .pos(1, spac + 2, spae - 2)
-                    .pos(2, spac - 2, spae + 2)
-                    .pos(3, spac + 2, spae + 2)
+                    .pos(0, sx - 2, sy - 2)
+                    .pos(1, sx + 2, sy - 2)
+                    .pos(2, sx - 2, sy + 2)
+                    .pos(3, sx + 2, sy + 2)
                     .uv(0, 48, 0)
                     .uv(1, 63, 0)
                     .uv(2, 48, 15)
@@ -2964,10 +2944,10 @@ public class WMap {
                   //LAB_800d8b40
                   cmd
                     .rgb(0x2f, 0x27, 0)
-                    .pos(0, spac - 1, spae - 1)
-                    .pos(1, spac + 2, spae - 2)
-                    .pos(2, spac - 1, spae + 2)
-                    .pos(3, spac + 2, spae + 2)
+                    .pos(0, sx - 1, sy - 1)
+                    .pos(1, sx + 2, sy - 2)
+                    .pos(2, sx - 1, sy + 2)
+                    .pos(3, sx + 2, sy + 2)
                     .uv(0, 16, 24)
                     .uv(1, 23, 24)
                     .uv(2, 16, 31)
@@ -2975,8 +2955,8 @@ public class WMap {
                 }
 
                 //LAB_800d8c64
-                spac = sp9c.getX();
-                spae = sp9c.getY();
+                sx = sx2;
+                sy = sy2;
 
                 GPU.queueCommand(10 + screenZ, cmd);
               }
@@ -3965,40 +3945,23 @@ public class WMap {
       final SVECTOR vert0 = vertices[IoHelper.readUShort(data, 0x20)];
       final SVECTOR vert1 = vertices[IoHelper.readUShort(data, 0x22)];
       final SVECTOR vert2 = vertices[IoHelper.readUShort(data, 0x24)];
-      CPU.MTC2(vert0.getXY(), 0);
-      CPU.MTC2(vert0.getZ(),  1);
-      CPU.MTC2(vert1.getXY(), 2);
-      CPU.MTC2(vert1.getZ(),  3);
-      CPU.MTC2(vert2.getXY(), 4);
-      CPU.MTC2(vert2.getZ(),  5);
-      CPU.COP2(0x28_0030L); // Perspective transform triple
+      GTE.perspectiveTransformTriangle(vert0, vert1, vert2);
 
-      if((int)CPU.CFC2(31) >= 0) { // No errors
+      if(!GTE.hasError()) {
         //LAB_800defac
-        CPU.COP2(0x140_0006L); // Normal clipping
-
-        if((int)CPU.MFC2(24) > 0) { // Is visible
+        if(GTE.normalClipping() > 0) { // Is visible
           //LAB_800defe8
-          final DVECTOR v0 = new DVECTOR().setXY(CPU.MFC2(12));
-          final DVECTOR v1 = new DVECTOR().setXY(CPU.MFC2(13));
-          final DVECTOR v2 = new DVECTOR().setXY(CPU.MFC2(14));
-
           cmd
-            .pos(0, v0.getX(), v0.getY())
-            .pos(1, v1.getX(), v1.getY())
-            .pos(2, v2.getX(), v2.getY());
+            .pos(0, GTE.getScreenX(0), GTE.getScreenY(0))
+            .pos(1, GTE.getScreenX(1), GTE.getScreenY(1))
+            .pos(2, GTE.getScreenX(2), GTE.getScreenY(2));
 
-          final SVECTOR vert3 = vertices[IoHelper.readUShort(data, 0x26)];
-          CPU.MTC2(vert3.getXY(), 0);
-          CPU.MTC2(vert3.getZ(),  1);
-          CPU.COP2(0x18_0001L); // Perspective transform single
+          GTE.perspectiveTransform(vertices[IoHelper.readUShort(data, 0x26)]);
 
-          if((int)CPU.CFC2(31) >= 0) { // No errors
+          if(!GTE.hasError()) { // No errors
             //LAB_800df0ac
-            final DVECTOR v3 = new DVECTOR().setXY(CPU.MFC2(14));
-
             cmd
-              .pos(3, v3.getX(), v3.getY())
+              .pos(3, GTE.getScreenX(2), GTE.getScreenY(2))
               .rgb(0, IoHelper.readInt(data, 0x10))
               .rgb(1, IoHelper.readInt(data, 0x14))
               .rgb(2, IoHelper.readInt(data, 0x18))
@@ -4358,7 +4321,7 @@ public class WMap {
       vert1.set((short)struct258_800c66a8._1c4[ i            * 2], (short)0, (short)struct258_800c66a8._1c4[ i            * 2 + 1]);
       vert2.set((short)struct258_800c66a8._1c4[(i + 1 & 0x7) * 2], (short)0, (short)struct258_800c66a8._1c4[(i + 1 & 0x7) * 2 + 1]);
 
-      final int z = perspectiveTransformTriple(vert0, vert1, vert2, sxy0, sxy1, sxy2, null, null);
+      final int z = perspectiveTransformTriple(vert0, vert1, vert2, sxy0, sxy1, sxy2);
 
       if(z >= 3 && z < orderingTableSize_1f8003c8.get()) {
         final GpuCommandPoly cmd = new GpuCommandPoly(3)
@@ -4458,7 +4421,7 @@ public class WMap {
       final SVECTOR sxyz2 = new SVECTOR();
       final SVECTOR sxyz3 = new SVECTOR();
 
-      int z = RotTransPers4(sp0x48, sp0x50, sp0x58, sp0x60, sxyz0, sxyz1, sxyz2, sxyz3, null, null);
+      int z = RotTransPers4(sp0x48, sp0x50, sp0x58, sp0x60, sxyz0, sxyz1, sxyz2, sxyz3);
 
       if(z >= 3 && z < orderingTableSize_1f8003c8.get()) {
         final GpuCommandPoly cmd = new GpuCommandPoly(4)
@@ -4489,7 +4452,7 @@ public class WMap {
       sp0x58.setX((short)(spe8 + sp0xa8.getX()));
       sp0x58.setY((short)(spec + sp0xa8.getY()));
       sp0x58.setZ((short)(spf0 + sp0xa8.getZ()));
-      z = RotTransPers4(sp0x48, sp0x50, sp0x58, sp0x60, sxyz0, sxyz1, sxyz2, sxyz3, null, null);
+      z = RotTransPers4(sp0x48, sp0x50, sp0x58, sp0x60, sxyz0, sxyz1, sxyz2, sxyz3);
 
       if(z >= 3 && z < orderingTableSize_1f8003c8.get()) {
         final GpuCommandPoly cmd = new GpuCommandPoly(4)
@@ -5495,10 +5458,6 @@ public class WMap {
 
   @Method(0x800e69e8L)
   public static void FUN_800e69e8() {
-    final SVECTOR sp0x30 = new SVECTOR();
-    final MATRIX sp0x38 = new MATRIX();
-    final SVECTOR sp58 = new SVECTOR();
-
     if(_800c6690.get() != 0) {
       return;
     }
@@ -5565,24 +5524,20 @@ public class WMap {
     final List<WMapStruct0c_2> structs = new ArrayList<>();
 
     //LAB_800e6c38
+    final MATRIX sp0x38 = new MATRIX();
     for(int i = 0; i < _800c86cc.get(); i++) {
       //LAB_800e6c5c
       if(!places_800f0234.get(locations_800f0e34.get(_800c84c8.get(i).get()).placeIndex_02.get()).name_00.isNull()) {
         //LAB_800e6ccc
-        sp0x30.set(_800c74b8.get(i));
-
         GsGetLs(struct258_800c66a8.tmdRendering_08.coord2s_04[0], sp0x38);
         setRotTransMatrix(sp0x38);
 
-        CPU.MTC2(sp0x30.getXY(), 0); // VXY0
-        CPU.MTC2(sp0x30.getZ(), 1); // VZ0
-        CPU.COP2(0x18_0001L); // Perspective transform single
-        sp58.setXY(CPU.MFC2(14)); // SXY2
-        final long sp60 = CPU.MFC2(8); // IR0
-        final long sp5c = CPU.CFC2(31); // FLAGS
-        final int z = (int)CPU.MFC2(19) >> 2; // SZ3
-        final short x = (short)(sp58.getX() + 160);
-        final short y = (short)(sp58.getY() + 104);
+        GTE.perspectiveTransform(_800c74b8.get(i));
+        final short sx = GTE.getScreenX(2);
+        final short sy = GTE.getScreenY(2);
+        final int z = GTE.getScreenZ(3) >> 2;
+        final short x = (short)(sx + 160);
+        final short y = (short)(sy + 104);
 
         //LAB_800e6e24
         if(x >= -32 && x < 353) {
@@ -5594,7 +5549,7 @@ public class WMap {
               final WMapStruct0c_2 struct = new WMapStruct0c_2();
               struct.z_00 = z;
               struct._04 = _800c84c8.get(i).get();
-              struct.xy_08.setXY(sp58.getXY());
+              struct.xy_08.set(sx, sy);
               structs.add(struct);
             }
           }
@@ -6820,13 +6775,8 @@ public class WMap {
   @Method(0x800ebfc0L)
   public static void FUN_800ebfc0() {
     final WMapStruct258 struct = struct258_800c66a8;
-
-    final SVECTOR sp0x60 = new SVECTOR();
-    final SVECTOR sp0x68 = new SVECTOR();
-    final SVECTOR sp0x70 = new SVECTOR();
-    final SVECTOR sp0x78 = new SVECTOR();
-
     final WMapStruct258Sub60 sp38_0 = struct._24[0];
+
     rotateCoord2(sp38_0.rotation_50, sp38_0.coord2_00);
 
     //LAB_800ec028
@@ -6888,42 +6838,35 @@ public class WMap {
         GsGetLs(sp38.coord2_00, sp0x10);
         clearLinearTransforms(sp0x10);
         setRotTransMatrix(sp0x10);
-        sp0x60.set((short)-sp38._58, (short)-sp38._5a, (short)0);
-        sp0x68.set((short) sp38._58, (short)-sp38._5a, (short)0);
-        sp0x70.set((short)-sp38._58, (short) sp38._5a, (short)0);
-        sp0x78.set((short) sp38._58, (short) sp38._5a, (short)0);
-        CPU.MTC2(sp0x60.getXY(), 0);
-        CPU.MTC2(sp0x60.getZ(),  1);
-        CPU.COP2(0x180001L);
-        final DVECTOR v0 = new DVECTOR().setXY(CPU.MFC2(14));
-        cmd.pos(0, v0.getX(), v0.getY());
-        int z = (int)CPU.MFC2(19) >> 2;
+        GTE.perspectiveTransform(-sp38._58, -sp38._5a, 0);
+        final short sx0 = GTE.getScreenX(2);
+        final short sy0 = GTE.getScreenY(2);
+        cmd.pos(0, sx0, sy0);
+        int z = GTE.getScreenZ(3) >> 2;
 
         if(z >= 5 && z < orderingTableSize_1f8003c8.get() - 3) {
           //LAB_800ec534
-          CPU.MTC2(sp0x68.getXY(), 0);
-          CPU.MTC2(sp0x68.getZ(),  1);
-          CPU.COP2(0x180001L);
-          final DVECTOR v1 = new DVECTOR().setXY(CPU.MFC2(14));
-          cmd.pos(1, v1.getX(), v1.getY());
-          z = (int)CPU.MFC2(19) >> 2;
+          GTE.perspectiveTransform(sp38._58, -sp38._5a, 0);
+          final short sx1 = GTE.getScreenX(2);
+          final short sy1 = GTE.getScreenY(2);
+          cmd.pos(1, sx1, sy1);
+          z = GTE.getScreenZ(3) >> 2;
 
           if(z >= 5 && z < orderingTableSize_1f8003c8.get() - 3) {
             //LAB_800ec5b8
-            if(v1.getX() - v0.getX() <= 0x400) {
+            if(sx1 - sx0 <= 0x400) {
               //LAB_800ec5ec
-              CPU.MTC2(sp0x70.getXY(), 0);
-              CPU.MTC2(sp0x70.getZ(),  1);
-              CPU.COP2(0x180001L);
-              final DVECTOR v2 = new DVECTOR().setXY(CPU.MFC2(14));
-              cmd.pos(2, v2.getX(), v2.getY());
-              z = (int)CPU.MFC2(19) >> 2;
+              GTE.perspectiveTransform(-sp38._58, sp38._5a, 0);
+              final short sx2 = GTE.getScreenX(2);
+              final short sy2 = GTE.getScreenY(2);
+              cmd.pos(2, sx2, sy2);
+              z = GTE.getScreenZ(3) >> 2;
 
               if(z >= 5 && z < orderingTableSize_1f8003c8.get() - 3) {
                 //LAB_800ec670
-                if(v2.getY() - v0.getY() <= 0x200) {
+                if(sy2 - sy0 <= 0x200) {
                   //LAB_800ec6a4
-                  if(v2.getY() > 0) {
+                  if(sy2 > 0) {
                     sp38._5c -= 0x20;
 
                     if(sp38._5c < 0) {
@@ -6950,18 +6893,17 @@ public class WMap {
                   //LAB_800ec798
                   if(sp38._5c != 0) {
                     //LAB_800ec7b8
-                    CPU.MTC2(sp0x78.getXY(), 0);
-                    CPU.MTC2(sp0x78.getZ(),  1);
-                    CPU.COP2(0x180001L);
-                    final DVECTOR v3 = new DVECTOR().setXY(CPU.MFC2(14));
-                    cmd.pos(3, v3.getX(), v3.getY());
-                    z = (int)CPU.MFC2(19) >> 2;
+                    GTE.perspectiveTransform(sp38._58, sp38._5a, 0);
+                    final short sx3 = GTE.getScreenX(2);
+                    final short sy3 = GTE.getScreenY(2);
+                    cmd.pos(3, sx3, sy3);
+                    z = GTE.getScreenZ(3) >> 2;
 
                     if(z >= 5 && orderingTableSize_1f8003c8.get() - 3 < z) {
                       //LAB_800ec83c
-                      if(v3.getX() - v2.getX() <= 0x400) {
+                      if(sx3 - sx2 <= 0x400) {
                         //LAB_800ec870
-                        if(v3.getY() - v1.getY() <= 0x200) {
+                        if(sy3 - sy1 <= 0x200) {
                           //LAB_800ec8a4
                           if(i < 12) {
                             cmd.monochrome(sp38._5c);
@@ -7016,10 +6958,6 @@ public class WMap {
   @Method(0x800ecd10L)
   public static void FUN_800ecd10() {
     final MATRIX sp0x10 = new MATRIX();
-    final SVECTOR sp0x60 = new SVECTOR().set((short)-2, (short)-2, (short)0);
-    final SVECTOR sp0x68 = new SVECTOR().set((short) 2, (short)-2, (short)0);
-    final SVECTOR sp0x70 = new SVECTOR().set((short)-2, (short) 2, (short)0);
-    final SVECTOR sp0x78 = new SVECTOR().set((short) 2, (short) 2, (short)0);
     final SVECTOR sp0x80 = new SVECTOR();
 
     //LAB_800ecdb4
@@ -7069,49 +7007,45 @@ public class WMap {
         GsGetLs(sp38.coord2_00, sp0x10);
         clearLinearTransforms(sp0x10);
         setRotTransMatrix(sp0x10);
-        CPU.MTC2(sp0x60.getXY(), 0);
-        CPU.MTC2(sp0x60.getZ(),  1);
-        CPU.COP2(0x180001L);
-        final DVECTOR v0 = new DVECTOR().setXY(CPU.MFC2(14));
+        GTE.perspectiveTransform(-2, -2, 0);
 
-        int z = (int)CPU.MFC2(19) >> 2;
+        final short sx0 = GTE.getScreenX(2);
+        final short sy0 = GTE.getScreenX(2);
+        int z = GTE.getScreenZ(3) >> 2;
 
         if(z >= 5 && z < orderingTableSize_1f8003c8.get() - 3) {
           //LAB_800ed37c
-          CPU.MTC2(sp0x68.getXY(), 0);
-          CPU.MTC2(sp0x68.getZ(),  1);
-          CPU.COP2(0x180001L);
-          final DVECTOR v1 = new DVECTOR().setXY(CPU.MFC2(14));
+          GTE.perspectiveTransform(2, -2, 0);
 
-          z = (int)CPU.MFC2(19) >> 2;
+          final short sx1 = GTE.getScreenX(2);
+          final short sy1 = GTE.getScreenY(2);
+          z = GTE.getScreenZ(3) >> 2;
 
           if(z >= 5 && z < orderingTableSize_1f8003c8.get() - 3) {
             //LAB_800ed400
-            if(v1.getX() - v0.getX() <= 0x400) {
+            if(sx1 - sx0 <= 0x400) {
               //LAB_800ed434
-              CPU.MTC2(sp0x70.getXY(), 0);
-              CPU.MTC2(sp0x70.getZ(),  1);
-              CPU.COP2(0x180001L);
-              final DVECTOR v2 = new DVECTOR().setXY(CPU.MFC2(14));
+              GTE.perspectiveTransform(-2, 2, 0);
 
-              z = (int)CPU.MFC2(19) >> 2;
+              final short sx2 = GTE.getScreenX(2);
+              final short sy2 = GTE.getScreenY(2);
+              z = GTE.getScreenZ(3) >> 2;
 
               if(z >= 5 && z < orderingTableSize_1f8003c8.get() - 3) {
                 //LAB_800ed4b8
-                if(v2.getY() - v0.getY() <= 0x200) {
+                if(sy2 - sy0 <= 0x200) {
                   //LAB_800ed4ec
-                  CPU.MTC2(sp0x78.getXY(), 0);
-                  CPU.MTC2(sp0x78.getZ(),  1);
-                  CPU.COP2(0x180001L);
-                  final DVECTOR v3 = new DVECTOR().setXY(CPU.MFC2(14));
+                  GTE.perspectiveTransform(2, 2, 0);
 
-                  z = (int)CPU.MFC2(19) >> 2;
+                  final short sx3 = GTE.getScreenX(2);
+                  final short sy3 = GTE.getScreenY(2);
+                  z = GTE.getScreenZ(3) >> 2;
 
                   if(z >= 5 && z < orderingTableSize_1f8003c8.get() - 3) {
                     //LAB_800ed570
-                    if(v3.getX() - v2.getX() <= 0x400) {
+                    if(sx3 - sx2 <= 0x400) {
                       //LAB_800ed5a4
-                      if(v3.getY() - v1.getY() <= 0x200) {
+                      if(sy3 - sy1 <= 0x200) {
                         //LAB_800ed5d8
                         sp38.rotation_50.setZ((short)((sp38.rotation_50.getZ() + 1) % 12));
                         final int index = sp38.rotation_50.getZ() / 2 * 2;
@@ -7125,10 +7059,10 @@ public class WMap {
                           .clut(640, 496)
                           .vramPos(640, 256)
                           .monochrome(sp38._5c)
-                          .pos(0, v0.getX(), v0.getY())
-                          .pos(1, v1.getX(), v1.getY())
-                          .pos(2, v2.getX(), v2.getY())
-                          .pos(3, v3.getX(), v3.getY())
+                          .pos(0, sx0, sy0)
+                          .pos(1, sx1, sy1)
+                          .pos(2, sx2, sy2)
+                          .pos(3, sx3, sy3)
                           .uv(0, u, v)
                           .uv(1, u + 8, v)
                           .uv(2, u, v + 8)
@@ -7208,10 +7142,6 @@ public class WMap {
 
   @Method(0x800edbc0L)
   public static void renderSmoke() {
-    final SVECTOR vert0 = new SVECTOR();
-    final SVECTOR vert1 = new SVECTOR();
-    final SVECTOR vert2 = new SVECTOR();
-    final SVECTOR vert3 = new SVECTOR();
     final SVECTOR rotation = new SVECTOR(); // Just (0, 0, 0)
     final MATRIX ls = new MATRIX();
 
@@ -7261,28 +7191,15 @@ public class WMap {
             //LAB_800ede1c
             for(int sp14 = 0; sp14 < 6; sp14++) {
               //LAB_800ede38
-              final long sp1c;
+              final int size;
               if(sp18 == 8) {
-                sp1c = struct._50 / 5;
+                size = struct._50 / 5;
               } else {
                 //LAB_800ede88
-                sp1c = struct._50 / 3;
+                size = struct._50 / 3;
               }
 
               //LAB_800edebc
-              vert0.setX((short)-sp1c);
-              vert0.setY((short)-sp1c);
-              vert0.setZ((short)0);
-              vert1.setX((short)sp1c);
-              vert1.setY((short)-sp1c);
-              vert1.setZ((short)0);
-              vert2.setX((short)-sp1c);
-              vert2.setY((short)sp1c);
-              vert2.setZ((short)0);
-              vert3.setX((short)sp1c);
-              vert3.setY((short)sp1c);
-              vert3.setZ((short)0);
-
               //LAB_800edf88
               struct.coord2_00.coord.transfer.setX(_800c74b8.get(i).getX() + struct.svec_54.getX() * struct._50 / 16);
               struct.coord2_00.coord.transfer.setY(_800c74b8.get(i).getY() + struct.svec_54.getY() * struct._50 / 4);
@@ -7329,53 +7246,53 @@ public class WMap {
                 .bpp(Bpp.BITS_4)
                 .vramPos(640, 256);
 
-              CPU.MTC2(vert0.getXY(), 0);
-              CPU.MTC2(vert0.getZ(), 1);
-              CPU.COP2(0x18_0001L); // Perspective transform single
-              final DVECTOR v0 = new DVECTOR().setXY(CPU.MFC2(14));
-              cmd.pos(0, v0.getX(), v0.getY());
-              int z = (int)CPU.MFC2(19) >> 2;
+              GTE.perspectiveTransform(-size, -size, 0);
+              final short sx0 = GTE.getScreenX(2);
+              final short sy0 = GTE.getScreenY(2);
+              int z = GTE.getScreenZ(3) >> 2;
+
+              cmd.pos(0, sx0, sy0);
 
               //LAB_800ee6cc
               if(z >= 5 || z < orderingTableSize_1f8003c8.get() - 3) {
                 //LAB_800ee6d4
-                CPU.MTC2(vert1.getXY(), 0);
-                CPU.MTC2(vert1.getZ(), 1);
-                CPU.COP2(0x18_0001L); // Perspective transform single
-                final DVECTOR v1 = new DVECTOR().setXY(CPU.MFC2(14));
-                cmd.pos(1, v1.getX(), v1.getY());
-                z = (int)CPU.MFC2(19) >> 2;
+                GTE.perspectiveTransform(size, -size, 0);
+                final short sx1 = GTE.getScreenX(2);
+                final short sy1 = GTE.getScreenY(2);
+                z = GTE.getScreenZ(3) >> 2;
+
+                cmd.pos(1, sx1, sy1);
 
                 //LAB_800ee750
                 if(z >= 5 || z < orderingTableSize_1f8003c8.get() - 3) {
                   //LAB_800ee758
-                  if(v1.getX() - v0.getX() <= 0x400) {
+                  if(sx1 - sx0 <= 0x400) {
                     //LAB_800ee78c
-                    CPU.MTC2(vert2.getXY(), 0);
-                    CPU.MTC2(vert2.getZ(), 1);
-                    CPU.COP2(0x18_0001L); // Perspective transform single
-                    final DVECTOR v2 = new DVECTOR().setXY(CPU.MFC2(14));
-                    cmd.pos(2, v2.getX(), v2.getY());
-                    z = (int)CPU.MFC2(19) >> 2;
+                    GTE.perspectiveTransform(-size, size, 0);
+                    final short sx2 = GTE.getScreenX(2);
+                    final short sy2 = GTE.getScreenY(2);
+                    z = GTE.getScreenZ(3) >> 2;
+
+                    cmd.pos(2, sx2, sy2);
 
                     //LAB_800ee808
                     if(z >= 5 && z < orderingTableSize_1f8003c8.get() - 3) {
                       //LAB_800ee810
-                      if(v2.getY() - v0.getY() <= 0x200) {
+                      if(sy2 - sy0 <= 0x200) {
                         //LAB_800ee844
-                        CPU.MTC2(vert3.getXY(), 0);
-                        CPU.MTC2(vert3.getZ(), 1);
-                        CPU.COP2(0x18_0001L); // Perspective transform single
-                        final DVECTOR v3 = new DVECTOR().setXY(CPU.MFC2(14));
-                        cmd.pos(3, v3.getX(), v3.getY());
-                        z = (int)CPU.MFC2(19) >> 2;
+                        GTE.perspectiveTransform(size, size, 0);
+                        final short sx3 = GTE.getScreenX(2);
+                        final short sy3 = GTE.getScreenY(2);
+                        z = GTE.getScreenZ(3) >> 2;
+
+                        cmd.pos(3, sx3, sy3);
 
                         //LAB_800ee8c0
                         if(z >= 5 && z < orderingTableSize_1f8003c8.get() - 3) {
                           //LAB_800ee8c8
-                          if(v3.getX() - v2.getX() <= 0x400) {
+                          if(sx3 - sx2 <= 0x400) {
                             //LAB_800ee8fc
-                            if(v3.getY() - v1.getY() <= 0x200) {
+                            if(sy3 - sy1 <= 0x200) {
                               //LAB_800ee930
                               if(z >= 6 && z < orderingTableSize_1f8003c8.get() - 1) {
                                 if(sp18 == 8) {

@@ -678,7 +678,7 @@ public class Gte {
 
   private void NCLIP() { //Normal clipping
     // MAC0 = SX0*SY1 + SX1*SY2 + SX2*SY0 - SX0*SY2 - SX1*SY0 - SX2*SY1
-    this.MAC0 = (int)this.setMAC0((long)this.SXY[0].x * this.SXY[1].y + this.SXY[1].x * this.SXY[2].y + this.SXY[2].x * this.SXY[0].y - this.SXY[0].x * this.SXY[2].y - this.SXY[1].x * this.SXY[0].y - this.SXY[2].x * this.SXY[1].y);
+    this.MAC0 = (int)this.setMAC0((long)this.SXY[0].x * (this.SXY[1].y - this.SXY[2].y) + this.SXY[1].x * (this.SXY[2].y - this.SXY[0].y) + this.SXY[2].x * (this.SXY[0].y - this.SXY[1].y));
   }
 
   private void RTPT() { //Perspective Transformation Triple
@@ -879,6 +879,220 @@ public class Gte {
     return leadingCount;
   }
 
+  /** Data register 0/1, 2/3, 4/5 */
+  public void setVertex(final int index, final int x, final int y, final int z) {
+    this.V[index].x = (short)x;
+    this.V[index].y = (short)y;
+    this.V[index].z = (short)z;
+  }
+
+  /** Data register 0/1, 2/3, 4/5 */
+  public void setVertex(final int index, final SVECTOR vert) {
+    this.setVertex(index, vert.getX(), vert.getY(), vert.getZ());
+  }
+
+  /** Data register 0/1, 2/3, 4/5 */
+  public void setVertex(final int index, final VECTOR vert) {
+    this.setVertex(index, vert.getX(), vert.getY(), vert.getZ());
+  }
+
+  /** Data register 6 RGBC */
+  public int getRgbc() {
+    return this.RGBC.val();
+  }
+
+  /** Data register 6 RGBC */
+  public void setRgbc(final int rgbc) {
+    this.RGBC.val(rgbc);
+  }
+
+  /** Data register 7 OTZ */
+  public short getAverageZ() {
+    return this.OTZ;
+  }
+
+  /** Data register 12, 13, 14, 15 */
+  public short getScreenX(final int index) {
+    return this.SXY[index].x;
+  }
+
+  /** Data register 12, 13, 14, 15 */
+  public short getScreenY(final int index) {
+    return this.SXY[index].y;
+  }
+
+  /** Data register 16, 17, 18, 19 */
+  public short getScreenZ(final int index) {
+    return this.SZ[index];
+  }
+
+  /** Data register 20, 21, 22 */
+  public int getRgb(final int index) {
+    return this.RGB[index].val();
+  }
+
+  /** Data register 24 */
+  public int getMac0() {
+    return this.MAC0;
+  }
+
+  /** Data register 25 */
+  public int getMac1() {
+    return this.MAC1;
+  }
+
+  /** Data register 26 */
+  public int getMac2() {
+    return this.MAC2;
+  }
+
+  /** Data register 27 */
+  public int getMac3() {
+    return this.MAC3;
+  }
+
+  /** Control register 0-4 */
+  public void setRotationMatrix(final MATRIX matrix) {
+    this.RT.v00 = matrix.get(0);
+    this.RT.v01 = matrix.get(1);
+    this.RT.v02 = matrix.get(2);
+    this.RT.v10 = matrix.get(3);
+    this.RT.v11 = matrix.get(4);
+    this.RT.v12 = matrix.get(5);
+    this.RT.v20 = matrix.get(6);
+    this.RT.v21 = matrix.get(7);
+    this.RT.v22 = matrix.get(8);
+  }
+
+  /** Control register 5-7 */
+  public void setTranslationVector(final VECTOR vector) {
+    this.TRX = vector.getX();
+    this.TRY = vector.getY();
+    this.TRZ = vector.getZ();
+  }
+
+  /** Control register 31 */
+  public int getFlags() {
+    return (int)this.FLAG;
+  }
+
+  /** Control register 31 bit 31 is set */
+  public boolean hasError() {
+    return this.getFlags() < 0;
+  }
+
+  /** 0x1 RTPS - perspective transform single, 12-bit fraction */
+  public void perspectiveTransform() {
+    this.sf = 12;
+    this.lm = false;
+    this.FLAG = 0;
+    this.RTPS(0, true);
+  }
+
+  /** 0x1 RTPS - perspective transform single, 12-bit fraction */
+  public void perspectiveTransform(final SVECTOR v0) {
+    this.perspectiveTransform(v0.getX(), v0.getY(), v0.getZ());
+  }
+
+  /** 0x1 RTPS - perspective transform single, 12-bit fraction */
+  public void perspectiveTransform(final VECTOR v0) {
+    this.perspectiveTransform(v0.getX(), v0.getY(), v0.getZ());
+  }
+
+  /** 0x1 RTPS - perspective transform single, 12-bit fraction */
+  public void perspectiveTransform(final int x, final int y, final int z) {
+    this.setVertex(0, x, y, z);
+
+    this.sf = 12;
+    this.lm = false;
+    this.FLAG = 0;
+    this.RTPS(0, true);
+  }
+
+  /**
+   * 0x6 NCLIP - normal clipping
+   *
+   * @return vertex winding
+   */
+  public int normalClipping() {
+    this.sf = 12;
+    this.lm = false;
+    this.FLAG = 0;
+    this.NCLIP();
+    return this.getMac0();
+  }
+
+  /**
+   * 0x1b NCCS - normal colour colour single vector, 12-bit fraction, saturate IR1/2/3
+   *
+   * @return colour
+   */
+  public int normalColour() {
+    this.sf = 12;
+    this.lm = true;
+    this.FLAG = 0;
+    this.NCCS(0);
+    return this.getRgb(2);
+  }
+
+  /**
+   * 0x2d AVSZ3 - average Z (triangle), 12-bit fraction
+   *
+   * @return average Z
+   */
+  public int averageZ3() {
+    this.sf = 12;
+    this.lm = false;
+    this.FLAG = 0;
+    this.AVSZ3();
+    return this.getAverageZ();
+  }
+
+  /**
+   * 0x2e AVSZ4 - average Z (quad), 12-bit fraction
+   *
+   * @return average Z
+   */
+  public int averageZ4() {
+    this.sf = 12;
+    this.lm = false;
+    this.FLAG = 0;
+    this.AVSZ4();
+    return this.getAverageZ();
+  }
+
+  /** 0x30 RTPT - perspective transform triple, 12-bit fraction */
+  public void perspectiveTransformTriangle() {
+    this.sf = 12;
+    this.lm = false;
+    this.FLAG = 0;
+    this.RTPT();
+  }
+
+  /** 0x30 RTPT - perspective transform triple, 12-bit fraction */
+  public void perspectiveTransformTriangle(final SVECTOR v0, final SVECTOR v1, final SVECTOR v2) {
+    this.setVertex(0, v0);
+    this.setVertex(1, v1);
+    this.setVertex(2, v2);
+
+    this.sf = 12;
+    this.lm = false;
+    this.FLAG = 0;
+    this.RTPT();
+  }
+
+  /** 0x30 RTPT - perspective transform triple, 12-bit fraction */
+  public void perspectiveTransformTriangle(final VECTOR v0, final VECTOR v1, final VECTOR v2) {
+    this.setVertex(0, v0);
+    this.setVertex(1, v1);
+    this.setVertex(2, v2);
+
+    this.sf = 12;
+    this.lm = false;
+    this.FLAG = 0;
+    this.RTPT();
+  }
+
   public int loadData(final int fs) {
     return switch(fs) {
       case 0 -> this.V[0].getXY();
@@ -917,106 +1131,50 @@ public class Gte {
 
   public void writeData(final int fs, final int v) {
     switch(fs) {
-      case 0:
-        this.V[0].setXY(v);
-        break;
-      case 1:
-        this.V[0].z = (short)v;
-        break;
-      case 2:
-        this.V[1].setXY(v);
-        break;
-      case 3:
-        this.V[1].z = (short)v;
-        break;
-      case 4:
-        this.V[2].setXY(v);
-        break;
-      case 5:
-        this.V[2].z = (short)v;
-        break;
-      case 6:
-        this.RGBC.val(v);
-        break;
-      case 7:
-        this.OTZ = (short)v;
-        break;
-      case 8:
-        this.IR[0] = (short)v;
-        break;
-      case 9:
-        this.IR[1] = (short)v;
-        break;
-      case 10:
-        this.IR[2] = (short)v;
-        break;
-      case 11:
-        this.IR[3] = (short)v;
-        break;
-      case 12:
-        this.SXY[0].val(v);
-        break;
-      case 13:
-        this.SXY[1].val(v);
-        break;
-      case 14:
-        this.SXY[2].val(v);
-        break;
-      case 15:
+      case 0 -> this.V[0].setXY(v);
+      case 1 -> this.V[0].z = (short)v;
+      case 2 -> this.V[1].setXY(v);
+      case 3 -> this.V[1].z = (short)v;
+      case 4 -> this.V[2].setXY(v);
+      case 5 -> this.V[2].z = (short)v;
+      case 6 -> this.RGBC.val(v);
+      case 7 -> this.OTZ = (short)v;
+      case 8 -> this.IR[0] = (short)v;
+      case 9 -> this.IR[1] = (short)v;
+      case 10 -> this.IR[2] = (short)v;
+      case 11 -> this.IR[3] = (short)v;
+      case 12 -> this.SXY[0].val(v);
+      case 13 -> this.SXY[1].val(v);
+      case 14 -> this.SXY[2].val(v);
+      case 15 -> {
         this.SXY[0].set(this.SXY[1]);
         this.SXY[1].set(this.SXY[2]);
         this.SXY[2].val(v);
-        break; //On load mirrors 0x14 on write cycles the fifo
-      case 16:
-        this.SZ[0] = (short)v;
-        break;
-      case 17:
-        this.SZ[1] = (short)v;
-        break;
-      case 18:
-        this.SZ[2] = (short)v;
-        break;
-      case 19:
-        this.SZ[3] = (short)v;
-        break;
-      case 20:
-        this.RGB[0].val(v);
-        break;
-      case 21:
-        this.RGB[1].val(v);
-        break;
-      case 22:
-        this.RGB[2].val(v);
-        break;
-      case 23:
-        this.RES1 = v;
-        break;
-      case 24:
-        this.MAC0 = v;
-        break;
-      case 25:
-        this.MAC1 = v;
-        break;
-      case 26:
-        this.MAC2 = v;
-        break;
-      case 27:
-        this.MAC3 = v;
-        break;
-      case 28:
+      } //On load mirrors 0x14, on write cycles the fifo
+      case 16 -> this.SZ[0] = (short)v;
+      case 17 -> this.SZ[1] = (short)v;
+      case 18 -> this.SZ[2] = (short)v;
+      case 19 -> this.SZ[3] = (short)v;
+      case 20 -> this.RGB[0].val(v);
+      case 21 -> this.RGB[1].val(v);
+      case 22 -> this.RGB[2].val(v);
+      case 23 -> this.RES1 = v;
+      case 24 -> this.MAC0 = v;
+      case 25 -> this.MAC1 = v;
+      case 26 -> this.MAC2 = v;
+      case 27 -> this.MAC3 = v;
+      case 28 -> {
         this.IRGB = (short)(v & 0x7fff);
         this.IR[1] = (short)((v & 0x1f) * 0x80);
         this.IR[2] = (short)((v >>> 5 & 0x1f) * 0x80);
         this.IR[3] = (short)((v >>> 10 & 0x1f) * 0x80);
-        break;
-      case 29: /*ORGB = (ushort)v;*/
-        break; //Only Read its set by IRGB
-      case 30:
+      }
+      case 29 -> throw new UnsupportedOperationException("ORGB read-only");
+      case 30 -> {
         this.LZCS = v;
         this.LZCR = leadingCount(v);
-        break;
-      case 31: /*LZCR = (int)v;*/
-        break; //Only Read its set by LZCS
+      }
+      case 31 -> throw new UnsupportedOperationException("LZCR read-only");
     }
   }
 
@@ -1134,25 +1292,5 @@ public class Gte {
         }
       }
     }
-  }
-
-  private void debug() {
-    final StringBuilder gteDebug = new StringBuilder("GTE CONTROL\n");
-    for(int i = 0; i < 32; i++) {
-      gteDebug.append(String.format(" %02d: %08x", i, this.loadControl(i)));
-      if((i + 1) % 4 == 0) {
-        gteDebug.append('\n');
-      }
-    }
-
-    gteDebug.append("GTE DATA\n");
-    for(int i = 0; i < 32; i++) {
-      gteDebug.append(String.format(" %02d: %08x", i, this.loadData(i)));
-      if((i + 1) % 4 == 0) {
-        gteDebug.append('\n');
-      }
-    }
-
-    LOGGER.info(gteDebug.toString());
   }
 }

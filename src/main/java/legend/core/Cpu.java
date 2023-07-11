@@ -3,7 +3,11 @@ package legend.core;
 import legend.core.gte.Gte;
 
 public class Cpu {
-  private final Gte gte = new Gte();
+  private final Gte gte;
+
+  public Cpu(final Gte gte) {
+    this.gte = gte;
+  }
 
   /**
    * Stores val in GTE control register

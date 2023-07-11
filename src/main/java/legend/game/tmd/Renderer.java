@@ -9,8 +9,8 @@ import legend.core.gte.TmdObjTable1c;
 import legend.game.combat.environment.BattleLightStruct64;
 import legend.game.types.Translucency;
 
-import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.GTE;
 import static legend.game.Scus94491BpeSegment.tmdGp0CommandId_1f8003ee;
 import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
@@ -129,18 +129,13 @@ public final class Renderer {
       }
 
       for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
-        final SVECTOR vert = vertices[poly.vertices[vertexIndex].vertexIndex];
-        CPU.MTC2(vert.getXY(), 0);
-        CPU.MTC2(vert.getZ(),  1);
-        CPU.COP2(0x18_0001L); // Perspective transform single
+        GTE.perspectiveTransform(vertices[poly.vertices[vertexIndex].vertexIndex]);
 
-        if((int)CPU.CFC2(31) < 0) { // Errors
+        if(GTE.hasError()) {
           continue outer;
         }
 
-        final long xy = CPU.MFC2(14);
-
-        cmd.pos(vertexIndex, (short)xy, (short)(xy >>> 16));
+        cmd.pos(vertexIndex, GTE.getScreenX(2), GTE.getScreenY(2));
 
         if(textured) {
           cmd.uv(vertexIndex, poly.vertices[vertexIndex].u, poly.vertices[vertexIndex].v);
@@ -152,8 +147,7 @@ public final class Renderer {
 
         // Back-face culling
         if(vertexIndex == 2) {
-          CPU.COP2(0x140_0006L); // Normal clipping
-          final long winding = CPU.MFC2(24);
+          final int winding = GTE.normalClipping();
 
           if(!translucent && winding <= 0 || translucent && winding == 0) {
             continue outer;
@@ -161,14 +155,8 @@ public final class Renderer {
         }
       }
 
-      // Average Z
-      if(quad) {
-        CPU.COP2(0x168_002eL);
-      } else {
-        CPU.COP2(0x168_002dL);
-      }
-
-      final int z = (int)Math.min(CPU.MFC2(7) + zOffset_1f8003e8.get() >> zShift_1f8003c4.get(), zMax_1f8003cc.get());
+      final int screenZ = quad ? GTE.averageZ4() : GTE.averageZ3();
+      final int z = Math.min(screenZ + zOffset_1f8003e8.get() >> zShift_1f8003c4.get(), zMax_1f8003cc.get());
 
       if(z < zMin) {
         continue;
@@ -190,19 +178,15 @@ public final class Renderer {
         }
       } else if(!textured || lit) {
         for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
-          CPU.MTC2(poly.vertices[vertexIndex].colour, 6);
+          GTE.setRgbc(poly.vertices[vertexIndex].colour);
 
-          final SVECTOR norm;
           if(poly.vertices[vertexIndex].normalIndex < normals.length) {
-            norm = normals[poly.vertices[vertexIndex].normalIndex];
+            GTE.setVertex(0, normals[poly.vertices[vertexIndex].normalIndex]);
           } else {
-            norm = new SVECTOR();
+            GTE.setVertex(0, 0, 0, 0);
           }
 
-          CPU.MTC2(norm.getXY(), 0);
-          CPU.MTC2(norm.getZ(), 1);
-          CPU.COP2(0x108_041bL); // Normal colour colour single vector
-          cmd.rgb(vertexIndex, (int)CPU.MFC2(22));
+          cmd.rgb(vertexIndex, GTE.normalColour());
         }
       } else {
         for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {

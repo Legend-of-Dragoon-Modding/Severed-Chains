@@ -1,6 +1,7 @@
 package legend.core;
 
 import legend.core.gpu.Gpu;
+import legend.core.gte.Gte;
 import legend.core.memory.Memory;
 import legend.core.memory.Value;
 import legend.core.memory.segments.RamSegment;
@@ -90,6 +91,7 @@ public final class GameEngine {
   public static final RenderEngine RENDERER = new RenderEngine();
   public static final ScreenStack SCREENS = new ScreenStack();
 
+  public static final Gte GTE;
   public static final Cpu CPU;
   public static final Gpu GPU;
   public static final Spu SPU;
@@ -115,7 +117,8 @@ public final class GameEngine {
     MEMORY.addSegment(new RamSegment(0x0001_0000L, 0x8f_0000));
     MEMORY.addSegment(new RamSegment(0x1f80_0000L, 0x400));
 
-    CPU = new Cpu();
+    GTE = new Gte();
+    CPU = new Cpu(GTE);
     GPU = new Gpu();
     SPU = new Spu();
 

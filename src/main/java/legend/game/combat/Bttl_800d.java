@@ -64,6 +64,7 @@ import java.util.Arrays;
 
 import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Scus94491BpeSegment.FUN_80018a5c;
@@ -4499,14 +4500,8 @@ public final class Bttl_800d {
 
           //LAB_800dd9d8
           GsSetLightMatrix(lw);
-          CPU.CTC2(ls.getPacked(0), 0);
-          CPU.CTC2(ls.getPacked(2), 1);
-          CPU.CTC2(ls.getPacked(4), 2);
-          CPU.CTC2(ls.getPacked(6), 3);
-          CPU.CTC2(ls.getPacked(8), 4);
-          CPU.CTC2(ls.transfer.getX(), 5);
-          CPU.CTC2(ls.transfer.getY(), 6);
-          CPU.CTC2(ls.transfer.getZ(), 7);
+          GTE.setRotationMatrix(ls);
+          GTE.setTranslationVector(ls.transfer);
 
           final int oldAttrib = s2.attribute_00;
           s2.attribute_00 = newAttribute;

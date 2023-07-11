@@ -11,11 +11,8 @@ import legend.core.gte.MATRIX;
 import legend.core.gte.SVECTOR;
 import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
-import legend.core.memory.Ref;
 import legend.core.memory.Value;
 import legend.core.memory.types.IntRef;
-import legend.core.memory.types.UnsignedIntRef;
-import legend.core.memory.types.UnsignedShortRef;
 import legend.game.types.DR_TPAGE;
 import legend.game.types.GsF_LIGHT;
 import legend.game.types.GsRVIEW2;
@@ -29,6 +26,7 @@ import javax.annotation.Nullable;
 
 import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.MEMORY;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
@@ -1458,11 +1456,7 @@ public final class Scus94491BpeSegment_8003 {
 
   @Method(0x8003ec90L)
   public static MATRIX FUN_8003ec90(final MATRIX transformMatrix0, final MATRIX transformMatrix1, final MATRIX outMatrix) {
-    CPU.CTC2(transformMatrix0.getPacked(0), 0); //
-    CPU.CTC2(transformMatrix0.getPacked(2), 1); //
-    CPU.CTC2(transformMatrix0.getPacked(4), 2); // Rotation
-    CPU.CTC2(transformMatrix0.getPacked(6), 3); //
-    CPU.CTC2(transformMatrix0.getPacked(8), 4); //
+    GTE.setRotationMatrix(transformMatrix0);
 
     CPU.MTC2((transformMatrix1.get(3) & 0xffff) << 16 | transformMatrix1.get(0) & 0xffff, 0); // VXY0
     CPU.MTC2(transformMatrix1.get(6), 1); // VZ0
@@ -1506,11 +1500,7 @@ public final class Scus94491BpeSegment_8003 {
    */
   @Method(0x8003edf0L)
   public static VECTOR ApplyMatrixLV(final MATRIX matrix, final VECTOR vector, @Nullable VECTOR out) {
-    CPU.CTC2(matrix.getPacked(0), 0); //
-    CPU.CTC2(matrix.getPacked(2), 1); //
-    CPU.CTC2(matrix.getPacked(4), 2); // Rotation matrix
-    CPU.CTC2(matrix.getPacked(6), 3); //
-    CPU.CTC2(matrix.getPacked(8), 4); //
+    GTE.setRotationMatrix(matrix);
 
     final int wholeX;
     final int fractX;
@@ -1618,15 +1608,8 @@ public final class Scus94491BpeSegment_8003 {
     matrixStackIndex_80054a08.subu(0x20L);
 
     final MATRIX matrix = matrixStack_80054a0c[i / 32];
-    CPU.CTC2(matrix.getPacked(0), 0); //
-    CPU.CTC2(matrix.getPacked(2), 1); //
-    CPU.CTC2(matrix.getPacked(4), 2); // Rotation matrix
-    CPU.CTC2(matrix.getPacked(6), 3); //
-    CPU.CTC2(matrix.getPacked(8), 4); //
-
-    CPU.CTC2(matrix.transfer.x.get(), 5); //
-    CPU.CTC2(matrix.transfer.y.get(), 6); // Translation vector
-    CPU.CTC2(matrix.transfer.z.get(), 7); //
+    GTE.setRotationMatrix(matrix);
+    GTE.setTranslationVector(matrix.transfer);
   }
 
   @Method(0x8003f0d0L)
@@ -1648,11 +1631,7 @@ public final class Scus94491BpeSegment_8003 {
     final long t0;
     final long t1;
     final long t2;
-    CPU.CTC2(a0.getPacked(0), 0);
-    CPU.CTC2(a0.getPacked(2), 1);
-    CPU.CTC2(a0.getPacked(4), 2);
-    CPU.CTC2(a0.getPacked(6), 3);
-    CPU.CTC2(a0.getPacked(8), 4);
+    GTE.setRotationMatrix(a0);
 
     CPU.MTC2((a1.get(3) & 0xffff) << 16 | a1.get(0) & 0xffff, 0);
     CPU.MTC2(                             a1.get(6) & 0xffff, 1);
@@ -1743,11 +1722,7 @@ public final class Scus94491BpeSegment_8003 {
    */
   @Method(0x8003f460L)
   public static MATRIX MulMatrix(final MATRIX m0, final MATRIX m1) {
-    CPU.CTC2(m0.getPacked(0), 0); //
-    CPU.CTC2(m0.getPacked(2), 1); //
-    CPU.CTC2(m0.getPacked(4), 2); // Rotation matrix (3x3)
-    CPU.CTC2(m0.getPacked(6), 3); //
-    CPU.CTC2(m0.getPacked(8), 4); //
+    GTE.setRotationMatrix(m0);
 
     CPU.MTC2((m1.get(3) & 0xffffL) << 16 | m1.get(0) & 0xffffL, 0); // VXY0
     CPU.MTC2(                              m1.get(6) & 0xffffL, 1); // VZ0
@@ -1783,11 +1758,7 @@ public final class Scus94491BpeSegment_8003 {
    */
   @Method(0x8003f570L)
   public static MATRIX MulMatrix2(final MATRIX m0, final MATRIX m1) {
-    CPU.CTC2(m0.getPacked(0), 0); //
-    CPU.CTC2(m0.getPacked(2), 1); //
-    CPU.CTC2(m0.getPacked(4), 2); // Rotation matrix
-    CPU.CTC2(m0.getPacked(6), 3); //
-    CPU.CTC2(m0.getPacked(8), 4); //
+    GTE.setRotationMatrix(m0);
 
     // First row
     CPU.MTC2((m1.get(3) & 0xffffL) << 16 | m1.get(0) & 0xffffL, 0); // VXY0
@@ -1818,11 +1789,7 @@ public final class Scus94491BpeSegment_8003 {
 
   @Method(0x8003f680L)
   public static VECTOR ApplyMatrix(final MATRIX a0, final SVECTOR a1, final VECTOR out) {
-    CPU.CTC2(a0.getPacked(0), 0);
-    CPU.CTC2(a0.getPacked(2), 1);
-    CPU.CTC2(a0.getPacked(4), 2);
-    CPU.CTC2(a0.getPacked(6), 3);
-    CPU.CTC2(a0.getPacked(8), 4);
+    GTE.setRotationMatrix(a0);
     CPU.MTC2(a1.getXY(), 0);
     CPU.MTC2(a1.getZ(),  1);
     CPU.COP2(0x48_6012L); // Multiply V0 by rotation matrix, 12-bit fraction
@@ -1834,11 +1801,7 @@ public final class Scus94491BpeSegment_8003 {
 
   @Method(0x8003f6d0L)
   public static SVECTOR ApplyMatrixSV(final MATRIX mat, final SVECTOR in, final SVECTOR out) {
-    CPU.CTC2(mat.getPacked(0), 0); //
-    CPU.CTC2(mat.getPacked(2), 1); //
-    CPU.CTC2(mat.getPacked(4), 2); // Rotation matrix
-    CPU.CTC2(mat.getPacked(6), 3); //
-    CPU.CTC2(mat.getPacked(8), 4); //
+    GTE.setRotationMatrix(mat);
     CPU.MTC2(in.getXY(), 0); // VXY0
     CPU.MTC2(in.getZ(),  1); // VZ0
 
@@ -1908,65 +1871,35 @@ public final class Scus94491BpeSegment_8003 {
 
   /** Returns Z */
   @Method(0x8003f900L)
-  public static int perspectiveTransform(final SVECTOR worldCoords, final DVECTOR screenCoords, @Nullable final Ref<Long> ir0, @Nullable final Ref<Long> flags) {
-    CPU.MTC2(worldCoords.getXY(), 0);
-    CPU.MTC2(worldCoords.getZ(),  1);
-    CPU.COP2(0x18_0001L); // Perspective transform single
-    screenCoords.setXY(CPU.MFC2(14)); // SXY2
-
-    if(ir0 != null) {
-      ir0.set(CPU.MFC2(8)); // IR0
-    }
-
-    if(flags != null) {
-      flags.set(CPU.CFC2(31)); // Flags
-    }
-
-    return (int)CPU.MFC2(19) >> 2; // SZ3
+  public static int perspectiveTransform(final SVECTOR worldCoords, final DVECTOR screenCoords) {
+    GTE.perspectiveTransform(worldCoords);
+    screenCoords.set(GTE.getScreenX(2), GTE.getScreenY(2));
+    return GTE.getScreenZ(3) >> 2;
   }
 
   @Method(0x8003f930L)
-  public static int perspectiveTransformTriple(final SVECTOR world0, final SVECTOR world1, final SVECTOR world2, final DVECTOR screen0, final DVECTOR screen1, final DVECTOR screen2, @Nullable final Ref<Long> ir0, @Nullable final Ref<Long> flags) {
-    CPU.MTC2(world0.getXY(), 0);
-    CPU.MTC2(world0.getZ(),  1);
-    CPU.MTC2(world1.getXY(), 2);
-    CPU.MTC2(world1.getZ(),  3);
-    CPU.MTC2(world2.getXY(), 4);
-    CPU.MTC2(world2.getZ(),  5);
+  public static int perspectiveTransformTriple(final SVECTOR world0, final SVECTOR world1, final SVECTOR world2, final DVECTOR screen0, final DVECTOR screen1, final DVECTOR screen2) {
+    GTE.setVertex(0, world0);
+    GTE.setVertex(1, world1);
+    GTE.setVertex(2, world2);
 
-    CPU.COP2(0x280030L);
+    GTE.perspectiveTransformTriangle();
 
-    screen0.setXY(CPU.MFC2(12));
-    screen1.setXY(CPU.MFC2(13));
-    screen2.setXY(CPU.MFC2(14));
+    screen0.set(GTE.getScreenX(0), GTE.getScreenY(0));
+    screen1.set(GTE.getScreenX(1), GTE.getScreenY(1));
+    screen2.set(GTE.getScreenX(2), GTE.getScreenY(2));
 
-    if(ir0 != null) {
-      ir0.set(CPU.MFC2(8));
-    }
-
-    if(flags != null) {
-      flags.set(CPU.CFC2(31));
-    }
-
-    return (int)CPU.MFC2(19) >> 2;
-  }
-
-  public static void RotTrans(final SVECTOR v0, final VECTOR out) {
-    RotTrans(v0, out, null);
+    return GTE.getScreenZ(3) >> 2;
   }
 
   @Method(0x8003f990L)
-  public static void RotTrans(final SVECTOR v0, final VECTOR out, @Nullable final UnsignedIntRef flags) {
+  public static void RotTrans(final SVECTOR v0, final VECTOR out) {
     CPU.MTC2(v0.getXY(), 0); // VXY0
     CPU.MTC2(v0.getZ(), 1); // VZ0
     CPU.COP2(0x48_0012L); // MVMVA (translation=tr, mul vec=v0, mul mat=rot, 12-bit fraction)
     out.setX((int)CPU.MFC2(25)); // MAC1
     out.setY((int)CPU.MFC2(26)); // MAC2
     out.setZ((int)CPU.MFC2(27)); // MAC3
-
-    if(flags != null) {
-      flags.set(CPU.CFC2(31)); // Flags
-    }
   }
 
   /**
@@ -1980,102 +1913,28 @@ public final class Scus94491BpeSegment_8003 {
    * @param v1 Vector 1
    * @param v2 Vector 2
    * @param v3 Vector 3
-   * @param sxyz0 Screen coords 0 (out)
-   * @param sxyz1 Screen coords 1 (out)
-   * @param sxyz2 Screen coords 2 (out)
-   * @param sxyz3 Screen coords 3 (out)
-   * @param ir0 Interpolated value for depth cueing (out)
-   * @param flags Flags (out)
+   * @param sxy0 Screen coords 0 (out)
+   * @param sxy1 Screen coords 1 (out)
+   * @param sxy2 Screen coords 2 (out)
+   * @param sxy3 Screen coords 3 (out)
    *
    * @return 1/4 of the Z component sz of the screen coordinates corresponding to v3.
    */
   @Method(0x8003f9c0L)
-  public static int RotTransPers4(final SVECTOR v0, final SVECTOR v1, final SVECTOR v2, final SVECTOR v3, final SVECTOR sxyz0, final SVECTOR sxyz1, final SVECTOR sxyz2, final SVECTOR sxyz3, @Nullable final Ref<Long> ir0, @Nullable final Ref<Long> flags) {
-    CPU.MTC2(v0.getXY(), 0); // VXY0
-    CPU.MTC2(v0.getZ(),  1); // VZ0
-    CPU.MTC2(v1.getXY(), 2); // VXY1
-    CPU.MTC2(v1.getZ(),  3); // VZ1
-    CPU.MTC2(v2.getXY(), 4); // VXY2
-    CPU.MTC2(v2.getZ(),  5); // VZ2
-    CPU.COP2(0x28_0030L); // Perspective transformation triple
-    sxyz0.setXY(CPU.MFC2(12)); // SXY0
-    sxyz1.setXY(CPU.MFC2(13)); // SXY1
-    sxyz2.setXY(CPU.MFC2(14)); // SXY2
-    final long flags1 = CPU.CFC2(31); // Flags
+  public static int RotTransPers4(final SVECTOR v0, final SVECTOR v1, final SVECTOR v2, final SVECTOR v3, final SVECTOR sxy0, final SVECTOR sxy1, final SVECTOR sxy2, final SVECTOR sxy3) {
+    GTE.setVertex(0, v0);
+    GTE.setVertex(1, v1);
+    GTE.setVertex(2, v2);
+    GTE.perspectiveTransformTriangle();
+    sxy0.set(GTE.getScreenX(0), GTE.getScreenY(0), (short)0);
+    sxy1.set(GTE.getScreenX(1), GTE.getScreenY(1), (short)0);
+    sxy2.set(GTE.getScreenX(2), GTE.getScreenY(2), (short)0);
 
-    CPU.MTC2(v3.getXY(), 0); // SXY0
-    CPU.MTC2(v3.getZ(),  1); // SZ0
-    CPU.COP2(0x18_0001L); // Perspective transformation single
-    sxyz3.setXY(CPU.MFC2(14)); // SXY2
+    GTE.setVertex(0, v3);
+    GTE.perspectiveTransform();
+    sxy3.set(GTE.getScreenX(2), GTE.getScreenY(2), (short)0);
 
-    if(ir0 != null) {
-      ir0.set(CPU.MFC2(8)); // IR0
-    }
-
-    if(flags != null) {
-      final long flags2 = CPU.CFC2(31); // Flags
-      flags.set(flags2 | flags1);
-    }
-
-    return (int)(CPU.MFC2(19) >> 2); // SZ3
-  }
-
-  /**
-   * Perform coordinate and perspective transformation.
-   * <p>
-   * Executes RotTransPers() for the number of vertices specified by n.<br>
-   * The arguments and internal data formats are as follows:<br>
-   * <pre>v0 -> vx, vy, vz : (1, 15, 0)</pre>
-   * <pre>v1 -> vx, vy : (1, 15, 0)</pre>
-   * <pre>sz : (0, 16, 0)</pre>
-   * <pre>flag : (0, 16, 0)</pre>
-   * The flag must normally be set between bits 27 and 12 of the 32-bit flag.
-   *
-   * @param v0 Pointer to vertex coordinate vector (input)
-   * @param v1 Pointer to vertex coordinate vector (output)
-   * @param sz Pointer to SZ value (output)
-   * @param interpolation Pointer to interpolation value (output)
-   * @param flag Pointer to flag (output)
-   * @param count Number of vertices (output)
-   */
-  @Method(0x8003fa40L)
-  public static void RotTransPersN(final SVECTOR[] v0, final DVECTOR[] v1, final UnsignedShortRef[] sz, final UnsignedShortRef[] interpolation, final UnsignedShortRef[] flag, final int count) {
-    //LAB_8003fa4c
-    for(int i = 0; i < count; i++) {
-      CPU.MTC2(v0[i].getXY(), 0); // VXY0
-      CPU.MTC2(v0[i].getZ(), 1); // VZ0
-
-      CPU.COP2(0x18_0001L); // Perspective transform single
-
-      v1[i] = new DVECTOR().setXY(CPU.MFC2(14)); // SXY2
-      sz[i] = new UnsignedShortRef().set((int)CPU.MFC2(19)); // SZ3
-      interpolation[i] = new UnsignedShortRef().set((int)CPU.MFC2( 8)); // IR0
-      flag[i] = new UnsignedShortRef().set((int)(CPU.CFC2(31) >>> 12) & 0xffff); // Flag (see no$ "GTE Saturation")
-    }
-  }
-
-  public static void RotTransPers(final SVECTOR v0, @Nullable final DVECTOR sxy, @Nullable final UnsignedShortRef sz, @Nullable final UnsignedShortRef interpolation, @Nullable final UnsignedShortRef flag) {
-    //LAB_8003fa4c
-    CPU.MTC2(v0.getXY(), 0); // VXY0
-    CPU.MTC2(v0.getZ(), 1); // VZ0
-
-    CPU.COP2(0x18_0001L); // Perspective transform single
-
-    if(sxy != null) {
-      sxy.setXY(CPU.MFC2(14)); // SXY2
-    }
-
-    if(sz != null) {
-      sz.set((int)CPU.MFC2(19)); // SZ3
-    }
-
-    if(interpolation != null) {
-      interpolation.set((int)CPU.MFC2(8)); // IR0
-    }
-
-    if(flag != null) {
-      flag.set((int)(CPU.CFC2(31) >>> 12) & 0xffff); // Flag (see no$ "GTE Saturation")
-    }
+    return GTE.getScreenZ(3) >> 2;
   }
 
   /**

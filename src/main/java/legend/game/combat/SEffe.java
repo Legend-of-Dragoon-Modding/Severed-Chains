@@ -119,6 +119,7 @@ import java.util.function.Consumer;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Scus94491BpeSegment.FUN_80018a5c;
@@ -5024,7 +5025,7 @@ public final class SEffe {
     }
 
     //LAB_8010ab34
-    final int z = RotTransPers4(sp0x38, sp0x40, sp0x48, sp0x50, xy0, xy1, xy2, xy3, null, null);
+    final int z = RotTransPers4(sp0x38, sp0x40, sp0x48, sp0x50, xy0, xy1, xy2, xy3);
     if(z >= effect.projectionPlaneDistanceDiv4_20) {
       final GpuCommandPoly cmd = new GpuCommandPoly(4)
         .translucent(Translucency.B_PLUS_F);
@@ -5219,7 +5220,7 @@ public final class SEffe {
 
     if((manager._10.flags_00 & 0x40) != 0) {
       final VECTOR sp0x70 = new VECTOR();
-      RotTrans(_800fb8d0, sp0x70, null);
+      RotTrans(_800fb8d0, sp0x70);
       FUN_80040df0(sp0x70, _800fb8cc, sp0x48);
     } else {
       //LAB_8010b6c8
@@ -5291,7 +5292,7 @@ public final class SEffe {
           }
 
           //LAB_8010b9a4
-          final int z = perspectiveTransformTriple(vert0, vert1, vert2, sxy0, sxy1, sxy2, null, null);
+          final int z = perspectiveTransformTriple(vert0, vert1, vert2, sxy0, sxy1, sxy2);
 
           if(effect.screenspaceW_10 == 0) {
             //LAB_8010b638
@@ -5338,7 +5339,7 @@ public final class SEffe {
           v0 = a1 * effect.screenspaceH_14 / 2;
           vert3.setY((short)v0);
           vert2.setY((short)v0);
-          final int z = RotTransPers4(vert0, vert1, vert2, vert3, sxy0, sxy1, sxy2, sxy3, null, null);
+          final int z = RotTransPers4(vert0, vert1, vert2, vert3, sxy0, sxy1, sxy2, sxy3);
 
           if(effect.screenspaceW_10 == 0) {
             //LAB_8010b664
@@ -5381,7 +5382,7 @@ public final class SEffe {
 
     if((manager._10.flags_00 & 0x40) != 0) {
       final VECTOR sp0x70 = new VECTOR();
-      RotTrans(_800fb8d0, sp0x70, null);
+      RotTrans(_800fb8d0, sp0x70);
       FUN_80040df0(sp0x70, _800fb8cc, rgb);
     } else {
       //LAB_8010bd6c
@@ -5426,7 +5427,7 @@ public final class SEffe {
       final SVECTOR sxy1 = new SVECTOR();
       final SVECTOR sxy2 = new SVECTOR();
       final SVECTOR sxy3 = new SVECTOR();
-      final int z = RotTransPers4(sp0x28, sp0x30, sp0x38, sp0x40, sxy0, sxy1, sxy2, sxy3, null, null);
+      final int z = RotTransPers4(sp0x28, sp0x30, sp0x38, sp0x40, sxy0, sxy1, sxy2, sxy3);
 
       if(effect.screenspaceW_10 == 0) {
         //LAB_8010bd08
@@ -5471,14 +5472,8 @@ public final class SEffe {
       final ScreenCaptureEffect1c effect = (ScreenCaptureEffect1c)manager.effect_44;
       FUN_800e8594(sp0x10, manager);
       MulMatrix0(worldToScreenMatrix_800c3548, sp0x10, sp0x30);
-      CPU.CTC2(sp0x30.getPacked(0), 0);
-      CPU.CTC2(sp0x30.getPacked(2), 1);
-      CPU.CTC2(sp0x30.getPacked(4), 2);
-      CPU.CTC2(sp0x30.getPacked(6), 3);
-      CPU.CTC2(sp0x30.getPacked(8), 4);
-      CPU.CTC2(sp0x30.transfer.getX(), 5);
-      CPU.CTC2(sp0x30.transfer.getY(), 6);
-      CPU.CTC2(sp0x30.transfer.getZ(), 7);
+      GTE.setRotationMatrix(sp0x30);
+      GTE.setTranslationVector(sp0x30.transfer);
       screenCaptureRenderers_80119fec[effect.rendererIndex_0c].accept(manager, effect);
     }
 
@@ -8668,7 +8663,7 @@ public final class SEffe {
       MulMatrix0(worldToScreenMatrix_800c3548, sp0x10, sp0x60);
       setRotTransMatrix(sp0x60);
 
-      final int z = perspectiveTransform(sp0x58, sp0x80, null, null);
+      final int z = perspectiveTransform(sp0x58, sp0x80);
       if(z >= 0x50) {
         //LAB_801163c4
         final int a1 = (projectionPlaneDistance_1f8003f8.get() * 2 << 12) / z * manager._10.scale_16.getZ() / 0x1000;
