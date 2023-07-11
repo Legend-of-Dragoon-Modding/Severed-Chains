@@ -402,9 +402,9 @@ public final class Bttl_800c {
   @SuppressWarnings("unchecked")
   public static final RegistryDelegate<Element>[] characterElements_800c706c = new RegistryDelegate[] {CoreMod.FIRE_ELEMENT, CoreMod.WIND_ELEMENT, CoreMod.LIGHT_ELEMENT, CoreMod.DARK_ELEMENT, CoreMod.THUNDER_ELEMENT, CoreMod.WIND_ELEMENT, CoreMod.WATER_ELEMENT, CoreMod.EARTH_ELEMENT, CoreMod.LIGHT_ELEMENT};
 
-  public static final ArrayRef<ShortRef> floatingTextType3DigitUs_800c70e0 = MEMORY.ref(2, 0x800c70e0L, ArrayRef.of(ShortRef.class, 20, 2, ShortRef::new));
+  public static final ArrayRef<ShortRef> floatingTextType3DigitUs_800c70e0 = MEMORY.ref(2, 0x800c70e0L, ArrayRef.of(ShortRef.class, 10, 2, ShortRef::new));
 
-  public static final ArrayRef<ShortRef> floatingTextDigitClutOffsets_800c70f4 = MEMORY.ref(2, 0x800c70f4L, ArrayRef.of(ShortRef.class, 30, 2, ShortRef::new));
+  public static final ArrayRef<ShortRef> floatingTextDigitClutOffsets_800c70f4 = MEMORY.ref(2, 0x800c70f4L, ArrayRef.of(ShortRef.class, 15, 2, ShortRef::new));
 
   public static final ArrayRef<Vec2> battleUiElementClutVramXy_800c7114 = MEMORY.ref(4, 0x800c7114L, ArrayRef.of(Vec2.class, 2, 8, Vec2::new));
 
