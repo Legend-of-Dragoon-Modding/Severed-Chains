@@ -149,9 +149,7 @@ public class Gte {
     //Console.WriteLine($"GTE EXECUTE {(command & 0x3F):x2}");
 
     this.currentCommand = command;
-    this.sf = ((command & 0x8_0000) >>> 19) * 12;
-    this.lm = (command >>> 10 & 0x1) != 0;
-    this.FLAG = 0;
+    this.startCommand((command & 0x8_0000) != 0, (command >>> 10 & 0x1) != 0);
 
     switch(command & 0x3F) {
       case 0x01 -> this.RTPS(0, true);
@@ -182,11 +180,7 @@ public class Gte {
       }
     }
 
-    if((this.FLAG & 0x7f87_e000L) != 0) {
-//      LOGGER.error("GTE error during command %02x (flags: %08x)", command, this.FLAG);
-//      LOGGER.error("Stack trace:", new Throwable());
-      this.FLAG |= 0x8000_0000L;
-    }
+    this.endCommand();
   }
 
   private void CDP() {
@@ -981,12 +975,25 @@ public class Gte {
     return this.getFlags() < 0;
   }
 
+  private void startCommand(final boolean fraction, final boolean saturate) {
+    this.sf = fraction ? 12 : 0;
+    this.lm = saturate;
+    this.FLAG = 0;
+  }
+
+  private void endCommand() {
+    if((this.FLAG & 0x7f87_e000L) != 0) {
+//      LOGGER.error("GTE error during command %02x (flags: %08x)", command, this.FLAG);
+//      LOGGER.error("Stack trace:", new Throwable());
+      this.FLAG |= 0x8000_0000L;
+    }
+  }
+
   /** 0x1 RTPS - perspective transform single, 12-bit fraction */
   public void perspectiveTransform() {
-    this.sf = 12;
-    this.lm = false;
-    this.FLAG = 0;
+    this.startCommand(true, false);
     this.RTPS(0, true);
+    this.endCommand();
   }
 
   /** 0x1 RTPS - perspective transform single, 12-bit fraction */
@@ -1002,11 +1009,7 @@ public class Gte {
   /** 0x1 RTPS - perspective transform single, 12-bit fraction */
   public void perspectiveTransform(final int x, final int y, final int z) {
     this.setVertex(0, x, y, z);
-
-    this.sf = 12;
-    this.lm = false;
-    this.FLAG = 0;
-    this.RTPS(0, true);
+    this.perspectiveTransform();
   }
 
   /**
@@ -1015,10 +1018,9 @@ public class Gte {
    * @return vertex winding
    */
   public int normalClipping() {
-    this.sf = 12;
-    this.lm = false;
-    this.FLAG = 0;
+    this.startCommand(true, false);
     this.NCLIP();
+    this.endCommand();
     return this.getMac0();
   }
 
@@ -1028,10 +1030,9 @@ public class Gte {
    * @return colour
    */
   public int normalColour() {
-    this.sf = 12;
-    this.lm = true;
-    this.FLAG = 0;
+    this.startCommand(true, true);
     this.NCCS(0);
+    this.endCommand();
     return this.getRgb(2);
   }
 
@@ -1041,10 +1042,9 @@ public class Gte {
    * @return average Z
    */
   public int averageZ3() {
-    this.sf = 12;
-    this.lm = false;
-    this.FLAG = 0;
+    this.startCommand(true, false);
     this.AVSZ3();
+    this.endCommand();
     return this.getAverageZ();
   }
 
@@ -1054,19 +1054,17 @@ public class Gte {
    * @return average Z
    */
   public int averageZ4() {
-    this.sf = 12;
-    this.lm = false;
-    this.FLAG = 0;
+    this.startCommand(true, false);
     this.AVSZ4();
+    this.endCommand();
     return this.getAverageZ();
   }
 
   /** 0x30 RTPT - perspective transform triple, 12-bit fraction */
   public void perspectiveTransformTriangle() {
-    this.sf = 12;
-    this.lm = false;
-    this.FLAG = 0;
+    this.startCommand(true, false);
     this.RTPT();
+    this.endCommand();
   }
 
   /** 0x30 RTPT - perspective transform triple, 12-bit fraction */
@@ -1075,10 +1073,9 @@ public class Gte {
     this.setVertex(1, v1);
     this.setVertex(2, v2);
 
-    this.sf = 12;
-    this.lm = false;
-    this.FLAG = 0;
+    this.startCommand(true, false);
     this.RTPT();
+    this.endCommand();
   }
 
   /** 0x30 RTPT - perspective transform triple, 12-bit fraction */
@@ -1087,10 +1084,9 @@ public class Gte {
     this.setVertex(1, v1);
     this.setVertex(2, v2);
 
-    this.sf = 12;
-    this.lm = false;
-    this.FLAG = 0;
+    this.startCommand(true, false);
     this.RTPT();
+    this.endCommand();
   }
 
   public int loadData(final int fs) {
