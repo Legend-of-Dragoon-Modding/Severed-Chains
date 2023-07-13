@@ -81,7 +81,7 @@ public final class Scus94491BpeSegment_800b {
    *   <li value="4">FMV</li>
    * </ol>
    */
-  public static final IntRef postBattleAction_800bc974 = MEMORY.ref(4, 0x800bc974L, IntRef::new);
+  public static final IntRef postBattleActionIndex_800bc974 = MEMORY.ref(4, 0x800bc974L, IntRef::new);
   public static final IntRef itemsDroppedByEnemiesCount_800bc978 = MEMORY.ref(4, 0x800bc978L, IntRef::new);
   public static final IntRef livingCharCount_800bc97c = MEMORY.ref(4, 0x800bc97cL, IntRef::new);
 

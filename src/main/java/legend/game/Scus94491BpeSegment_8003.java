@@ -1951,8 +1951,8 @@ public final class Scus94491BpeSegment_8003 {
     return (int)CPU.MFC2(19) >> 2;
   }
 
-  public static void RotTrans(final SVECTOR v0, final VECTOR out) {
-    RotTrans(v0, out, null);
+  public static void RotTrans(final SVECTOR in, final VECTOR out) {
+    RotTrans(in, out, null);
   }
 
   @Method(0x8003f990L)

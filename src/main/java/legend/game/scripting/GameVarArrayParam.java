@@ -35,7 +35,7 @@ public class GameVarArrayParam extends Param {
       case 41 -> Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928.get(this.arrIndex).get();
       case 45 -> this.readCombatVar(this.arrIndex);
       // Indices 6-9 are indices for the four camera positions in a battle
-      case 46 -> Bttl_800c.intRef_800c6718.get(this.arrIndex).get();
+      case 46 -> Bttl_800c.currentStageData_800c6718.get(this.arrIndex);
       case 48 -> Scus94491BpeSegment_8006.battleState_8006e398.aliveBobjs_e78[this.arrIndex] != null ? Scus94491BpeSegment_8006.battleState_8006e398.aliveBobjs_e78[this.arrIndex].index : -1;
       case 50 -> Scus94491BpeSegment_8006.battleState_8006e398.aliveCharBobjs_eac[this.arrIndex] != null ? Scus94491BpeSegment_8006.battleState_8006e398.aliveCharBobjs_eac[this.arrIndex].index : -1;
       case 52 -> Scus94491BpeSegment_8006.battleState_8006e398.aliveMonsterBobjs_ebc[this.arrIndex] != null ? Scus94491BpeSegment_8006.battleState_8006e398.aliveMonsterBobjs_ebc[this.arrIndex].index : -1;
@@ -71,7 +71,7 @@ public class GameVarArrayParam extends Param {
       case 36 -> Scus94491BpeSegment_8006.battleState_8006e398.monsterBobjs_e50[this.arrIndex] = (ScriptState<MonsterBattleObject>)scriptStatePtrArr_800bc1c0[val];
       case 41 -> Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928.get(this.arrIndex).set(val);
       case 45 -> this.writeCombatVar(this.arrIndex, val);
-      case 46 -> Bttl_800c.intRef_800c6718.get(this.arrIndex).set(val);
+      case 46 -> Bttl_800c.currentStageData_800c6718.set(this.arrIndex, val);
       case 48 -> Scus94491BpeSegment_8006.battleState_8006e398.aliveBobjs_e78[this.arrIndex] = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[val];
       case 50 -> Scus94491BpeSegment_8006.battleState_8006e398.aliveCharBobjs_eac[this.arrIndex] = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[val];
       case 52 -> Scus94491BpeSegment_8006.battleState_8006e398.aliveMonsterBobjs_ebc[this.arrIndex] = (ScriptState<MonsterBattleObject>)scriptStatePtrArr_800bc1c0[val];
