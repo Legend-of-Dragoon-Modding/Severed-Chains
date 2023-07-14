@@ -84,6 +84,7 @@ import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.SItem.cacheCharacterSlots;
@@ -976,11 +977,8 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80021de4L)
   public static void FUN_80021de4(final MATRIX a0, final MATRIX a1, final MATRIX a2) {
-    CPU.CTC2(a0.getPacked(0), 0);
-    CPU.CTC2(a0.getPacked(2), 1);
-    CPU.CTC2(a0.getPacked(4), 2);
-    CPU.CTC2(a0.getPacked(6), 3);
-    CPU.CTC2(a0.getPacked(8), 4);
+    GTE.setRotationMatrix(a0);
+
     CPU.MTC2(a1.get(0),  9);
     CPU.MTC2(a1.get(3), 10);
     CPU.MTC2(a1.get(6), 11);
@@ -1006,11 +1004,7 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80021edcL)
   public static void SetRotMatrix(final MATRIX m) {
-    CPU.CTC2(m.getPacked(0), 0); //
-    CPU.CTC2(m.getPacked(2), 1); //
-    CPU.CTC2(m.getPacked(4), 2); // Rotation matrix
-    CPU.CTC2(m.getPacked(6), 3); //
-    CPU.CTC2(m.getPacked(8), 4); //
+    GTE.setRotationMatrix(m);
   }
 
   @Method(0x80021f0cL)
@@ -1033,9 +1027,7 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80021f6cL)
   public static void SetTransMatrix(final MATRIX m) {
-    CPU.CTC2(m.transfer.getX(), 5); // Translation X
-    CPU.CTC2(m.transfer.getY(), 6); // Translation Y
-    CPU.CTC2(m.transfer.getZ(), 7); // Translation Z
+    GTE.setTranslationVector(m.transfer);
   }
 
   @Method(0x80021f8cL)

@@ -17,7 +17,6 @@ import legend.core.gte.SVECTOR;
 import legend.core.gte.TmdWithId;
 import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
-import legend.core.memory.Ref;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.UnsignedByteRef;
@@ -95,9 +94,9 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
-import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
@@ -1496,41 +1495,33 @@ public final class Bttl_800e {
 
     if(z >= 40) {
       //LAB_800e7610
-      CPU.CTC2(finalTransform.getPacked(0), 0);
-      CPU.CTC2(finalTransform.getPacked(2), 1);
-      CPU.CTC2(finalTransform.getPacked(4), 2);
-      CPU.CTC2(finalTransform.getPacked(6), 3);
-      CPU.CTC2(finalTransform.getPacked(8), 4);
-      CPU.CTC2(finalTransform.transfer.getX(), 5);
-      CPU.CTC2(finalTransform.transfer.getY(), 6);
-      CPU.CTC2(finalTransform.transfer.getZ(), 7);
-      final SVECTOR xyz0 = new SVECTOR().set((short)(spriteEffect.x_04 * 64), (short)(spriteEffect.y_06 * 64), (short)0);
-      final SVECTOR xyz1 = new SVECTOR().set((short)((spriteEffect.x_04 + spriteEffect.w_08) * 64), (short)(spriteEffect.y_06 * 64), (short)0);
-      final SVECTOR xyz2 = new SVECTOR().set((short)(spriteEffect.x_04 * 64), (short)((spriteEffect.y_06 + spriteEffect.h_0a) * 64), (short)0);
-      final SVECTOR xyz3 = new SVECTOR().set((short)((spriteEffect.x_04 + spriteEffect.w_08) * 64), (short)((spriteEffect.y_06 + spriteEffect.h_0a) * 64), (short)0);
-      CPU.MTC2(xyz0.getXY(), 0);
-      CPU.MTC2(xyz0.getZ(),  1);
-      CPU.MTC2(xyz1.getXY(), 2);
-      CPU.MTC2(xyz1.getZ(),  3);
-      CPU.MTC2(xyz2.getXY(), 4);
-      CPU.MTC2(xyz2.getZ(),  5);
-      CPU.COP2(0x280030L);
-      final DVECTOR sxy0 = new DVECTOR().setXY(CPU.MFC2(12));
-      final DVECTOR sxy1 = new DVECTOR().setXY(CPU.MFC2(13));
-      final DVECTOR sxy2 = new DVECTOR().setXY(CPU.MFC2(14));
-      CPU.MTC2(xyz3.getXY(), 0);
-      CPU.MTC2(xyz3.getZ(), 1);
-      CPU.COP2(0x180001L);
-      final DVECTOR sxy3 = new DVECTOR().setXY(CPU.MFC2(14));
+      GTE.setRotationMatrix(finalTransform);
+      GTE.setTranslationVector(finalTransform.transfer);
+
+      GTE.setVertex(0, spriteEffect.x_04 * 64, spriteEffect.y_06 * 64, 0);
+      GTE.setVertex(1, (spriteEffect.x_04 + spriteEffect.w_08) * 64, spriteEffect.y_06 * 64, 0);
+      GTE.setVertex(2, spriteEffect.x_04 * 64, (spriteEffect.y_06 + spriteEffect.h_0a) * 64, 0);
+      GTE.perspectiveTransformTriangle();
+      final short sx0 = GTE.getScreenX(0);
+      final short sy0 = GTE.getScreenY(0);
+      final short sx1 = GTE.getScreenX(1);
+      final short sy1 = GTE.getScreenY(1);
+      final short sx2 = GTE.getScreenX(2);
+      final short sy2 = GTE.getScreenY(2);
+
+      GTE.setVertex(0, (spriteEffect.x_04 + spriteEffect.w_08) * 64, (spriteEffect.y_06 + spriteEffect.h_0a) * 64, 0);
+      GTE.perspectiveTransform();
+      final short sx3 = GTE.getScreenX(2);
+      final short sy3 = GTE.getScreenY(2);
 
       final GpuCommandPoly cmd = new GpuCommandPoly(4)
         .clut(spriteEffect.clutX_10, spriteEffect.clutY_12)
         .vramPos((spriteEffect.tpage_0c & 0b1111) * 64, (spriteEffect.tpage_0c & 0b10000) != 0 ? 256 : 0)
         .rgb(spriteEffect.r_14, spriteEffect.g_15, spriteEffect.b_16)
-        .pos(0, sxy0.getX(), sxy0.getY())
-        .pos(1, sxy1.getX(), sxy1.getY())
-        .pos(2, sxy2.getX(), sxy2.getY())
-        .pos(3, sxy3.getX(), sxy3.getY())
+        .pos(0, sx0, sy0)
+        .pos(1, sx1, sy1)
+        .pos(2, sx2, sy2)
+        .pos(3, sx3, sy3)
         .uv(0, spriteEffect.u_0e, spriteEffect.v_0f)
         .uv(1, spriteEffect.u_0e + spriteEffect.w_08, spriteEffect.v_0f)
         .uv(2, spriteEffect.u_0e, spriteEffect.v_0f + spriteEffect.h_0a)
@@ -3102,14 +3093,8 @@ public final class Bttl_800e {
     final MATRIX sp0x10 = new MATRIX();
     GsGetLws(s2.ObjTable_0c.top[0].coord2_04, sp0x30, sp0x10);
     GsSetLightMatrix(sp0x30);
-    CPU.CTC2(sp0x10.getPacked(0), 0);
-    CPU.CTC2(sp0x10.getPacked(2), 1);
-    CPU.CTC2(sp0x10.getPacked(4), 2);
-    CPU.CTC2(sp0x10.getPacked(6), 3);
-    CPU.CTC2(sp0x10.getPacked(8), 4);
-    CPU.CTC2(sp0x10.transfer.getX(), 5);
-    CPU.CTC2(sp0x10.transfer.getY(), 6);
-    CPU.CTC2(sp0x10.transfer.getZ(), 7);
+    GTE.setRotationMatrix(sp0x10);
+    GTE.setTranslationVector(sp0x10.transfer);
     Renderer.renderDobj2(s2.ObjTable_0c.top[0], true, 0);
     s2.coord2ArrPtr_04[0].flg--;
   }
@@ -3147,14 +3132,8 @@ public final class Bttl_800e {
         final MATRIX lw = new MATRIX();
         GsGetLws(dobj2.coord2_04, lw, ls);
         GsSetLightMatrix(lw);
-        CPU.CTC2(ls.getPacked(0), 0);
-        CPU.CTC2(ls.getPacked(2), 1);
-        CPU.CTC2(ls.getPacked(4), 2);
-        CPU.CTC2(ls.getPacked(6), 3);
-        CPU.CTC2(ls.getPacked(8), 4);
-        CPU.CTC2(ls.transfer.getX(), 5);
-        CPU.CTC2(ls.transfer.getY(), 6);
-        CPU.CTC2(ls.transfer.getZ(), 7);
+        GTE.setRotationMatrix(ls);
+        GTE.setTranslationVector(ls.transfer);
         Renderer.renderDobj2(dobj2, true, 0);
       }
 
@@ -3210,7 +3189,7 @@ public final class Bttl_800e {
     setRotTransMatrix(ls);
 
     final DVECTOR screenCoords = new DVECTOR();
-    perspectiveTransform(new SVECTOR().set(x, y, z), screenCoords, new Ref<>(), new Ref<>());
+    perspectiveTransform(new SVECTOR().set(x, y, z), screenCoords);
     return screenCoords;
   }
 
@@ -3271,14 +3250,8 @@ public final class Bttl_800e {
         final MATRIX sp0x10 = new MATRIX();
         GsGetLws(s2.coord2_04, sp0x30, sp0x10);
         GsSetLightMatrix(sp0x30);
-        CPU.CTC2(sp0x10.getPacked(0), 0);
-        CPU.CTC2(sp0x10.getPacked(2), 1);
-        CPU.CTC2(sp0x10.getPacked(4), 2);
-        CPU.CTC2(sp0x10.getPacked(6), 3);
-        CPU.CTC2(sp0x10.getPacked(8), 4);
-        CPU.CTC2(sp0x10.transfer.getX(), 5);
-        CPU.CTC2(sp0x10.transfer.getY(), 6);
-        CPU.CTC2(sp0x10.transfer.getZ(), 7);
+        GTE.setRotationMatrix(sp0x10);
+        GTE.setTranslationVector(sp0x10.transfer);
         Renderer.renderDobj2(s2, true, 0);
       }
     }

@@ -5,8 +5,8 @@ import legend.game.types.Translucency;
 
 import javax.annotation.Nullable;
 
-import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.GTE;
 import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
 import static legend.game.Scus94491BpeSegment.zMin;
@@ -90,15 +90,14 @@ public record Mesh(Segment[] segments) {
 
         for(int vertexIndex = 0; vertexIndex < this.vertexCount; vertexIndex++) {
           final SVECTOR vert = poly.vertices()[vertexIndex].pos();
-          CPU.MTC2(vert.getXY(), 0);
-          CPU.MTC2(vert.getZ(), 1);
-          CPU.COP2(0x18_0001L); // Perspective transform single
+          GTE.setVertex(0, vert.getX(), vert.getY(), vert.getZ());
+          GTE.perspectiveTransform();
 
-          if((int)CPU.CFC2(31) < 0) { // Errors
+          if(GTE.hasError()) {
             continue outer;
           }
 
-          vertices[vertexIndex] = Vec2i.unpack((int)CPU.MFC2(14));
+          vertices[vertexIndex] = new Vec2i(GTE.getScreenX(2), GTE.getScreenY(2));
 
           if(this.textured) {
             uvs[vertexIndex] = new Vec2i(poly.vertices()[vertexIndex].u(), poly.vertices()[vertexIndex].v());
@@ -106,8 +105,7 @@ public record Mesh(Segment[] segments) {
 
           // Back-face culling
           if(vertexIndex == 2) {
-            CPU.COP2(0x140_0006L); // Normal clipping
-            final long winding = CPU.MFC2(24);
+            final int winding = GTE.normalClipping();
 
             if(!this.translucent && winding <= 0 || this.translucent && winding == 0) {
               continue outer;
@@ -116,13 +114,8 @@ public record Mesh(Segment[] segments) {
         }
 
         // Average Z
-        if(this.vertexCount == 4) {
-          CPU.COP2(0x168_002eL);
-        } else {
-          CPU.COP2(0x168_002dL);
-        }
-
-        final int z = (int)Math.min(CPU.MFC2(7) + zOffset_1f8003e8.get() >> zShift_1f8003c4.get(), zMax_1f8003cc.get());
+        final int averageZ = this.vertexCount == 3 ? GTE.averageZ3() : GTE.averageZ4();
+        final int z = Math.min(averageZ + zOffset_1f8003e8.get() >> zShift_1f8003c4.get(), zMax_1f8003cc.get());
 
         if(z < zMin) {
           continue;
@@ -134,13 +127,11 @@ public record Mesh(Segment[] segments) {
           }
         } else {
           for(int vertexIndex = 0; vertexIndex < this.vertexCount; vertexIndex++) {
-            CPU.MTC2(poly.vertices()[vertexIndex].colour(), 6);
+            GTE.setRgbc(poly.vertices()[vertexIndex].colour());
 
             final SVECTOR norm = poly.vertices()[vertexIndex].normals();
-            CPU.MTC2(norm.getXY(), 0);
-            CPU.MTC2(norm.getZ(), 1);
-            CPU.COP2(0x108_041bL); // Normal colour colour single vector
-            colours[vertexIndex] = (int)CPU.MFC2(22);
+            GTE.setVertex(0, norm.getX(), norm.getY(), norm.getZ());
+            colours[vertexIndex] = GTE.normalColour();
           }
         }
 

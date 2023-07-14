@@ -104,8 +104,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import static legend.core.GameEngine.CONFIG;
-import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.SItem.loadCharacterStats;
@@ -171,7 +171,6 @@ import static legend.game.Scus94491BpeSegment_8003.MargePrim;
 import static legend.game.Scus94491BpeSegment_8003.PopMatrix;
 import static legend.game.Scus94491BpeSegment_8003.PushMatrix;
 import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
-import static legend.game.Scus94491BpeSegment_8003.RotTransPers;
 import static legend.game.Scus94491BpeSegment_8003.RotTransPers4;
 import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
 import static legend.game.Scus94491BpeSegment_8003.SetDrawTPage;
@@ -819,14 +818,8 @@ public final class SMap {
     GsGetLws(model_800bda10.ObjTable_0c.top[0].coord2_04, lw, ls);
     GsSetLightMatrix(lw);
 
-    CPU.CTC2(ls.getPacked(0), 0);
-    CPU.CTC2(ls.getPacked(2), 1);
-    CPU.CTC2(ls.getPacked(4), 2);
-    CPU.CTC2(ls.getPacked(6), 3);
-    CPU.CTC2(ls.getPacked(8), 4);
-    CPU.CTC2(ls.transfer.getX(), 5);
-    CPU.CTC2(ls.transfer.getY(), 6);
-    CPU.CTC2(ls.transfer.getZ(), 7);
+    GTE.setRotationMatrix(ls);
+    GTE.setTranslationVector(ls.transfer);
 
     Renderer.renderDobj2(model_800bda10.ObjTable_0c.top[0], false, 0);
     model_800bda10.coord2ArrPtr_04[0].flg--;
@@ -923,14 +916,8 @@ public final class SMap {
 
         GsGetLws(dobj2.coord2_04, lw, ls);
         GsSetLightMatrix(lw);
-        CPU.CTC2(ls.getPacked(0), 0);
-        CPU.CTC2(ls.getPacked(2), 1);
-        CPU.CTC2(ls.getPacked(4), 2);
-        CPU.CTC2(ls.getPacked(6), 3);
-        CPU.CTC2(ls.getPacked(8), 4);
-        CPU.CTC2(ls.transfer.getX(), 5);
-        CPU.CTC2(ls.transfer.getY(), 6);
-        CPU.CTC2(ls.transfer.getZ(), 7);
+        GTE.setRotationMatrix(ls);
+        GTE.setTranslationVector(ls.transfer);
         Renderer.renderDobj2(dobj2, false, 0);
       }
     }
@@ -1085,25 +1072,19 @@ public final class SMap {
     final MATRIX lw = new MATRIX();
     final MATRIX ls = new MATRIX();
     GsGetLws(playerModel_800c6748.coord2_14, lw, ls);
-    CPU.CTC2(ls.getPacked(0), 0);
-    CPU.CTC2(ls.getPacked(2), 1);
-    CPU.CTC2(ls.getPacked(4), 2);
-    CPU.CTC2(ls.getPacked(6), 3);
-    CPU.CTC2(ls.getPacked(8), 4);
-    CPU.CTC2(ls.transfer.getX(), 5);
-    CPU.CTC2(ls.transfer.getY(), 6);
-    CPU.CTC2(ls.transfer.getZ(), 7);
-    CPU.MTC2(0, 0);
-    CPU.MTC2(0, 1);
-    CPU.COP2(0x180001L);
-    final DVECTOR screenXy = new DVECTOR().setXY(CPU.MFC2(14));
+    GTE.setRotationMatrix(ls);
+    GTE.setTranslationVector(ls.transfer);
+    GTE.setVertex(0, 0, 0, 0);
+    GTE.perspectiveTransform();
+    final short x = GTE.getScreenX(2);
+    final short y = GTE.getScreenY(2);
 
     //LAB_800de438
     final TriangleIndicator140 struct = _800c69fc;
     for(int i = 0; i < 20; i++) {
       if(struct._18[i] == -1) {
-        struct.x_40[i] = screenXy.getX();
-        struct.y_68[i] = screenXy.getY();
+        struct.x_40[i] = x;
+        struct.y_68[i] = y;
         struct._18[i] = (short)script.params_20[1].get();
         struct.screenOffsetX_90[i] = screenOffsetX_800cb568.get();
         struct.screenOffsetY_e0[i] = screenOffsetY_800cb56c.get();
@@ -1117,10 +1098,6 @@ public final class SMap {
 
   @Method(0x800de4b4L)
   public static FlowControl FUN_800de4b4(final RunningScript<?> script) {
-    long sp68;
-    long sp6c;
-    long sp70;
-
     final SVECTOR sp0x10 = new SVECTOR();
     final MATRIX sp0x28 = new MATRIX();
     final MATRIX sp0x48 = new MATRIX();
@@ -1136,29 +1113,20 @@ public final class SMap {
       playerModel_800c6748.coord2_14.coord.transfer.setZ(sp0x10.getZ());
 
       GsGetLws(playerModel_800c6748.coord2_14, sp0x48, sp0x28);
-      CPU.CTC2(sp0x28.getPacked(0), 0);
-      CPU.CTC2(sp0x28.getPacked(2), 1);
-      CPU.CTC2(sp0x28.getPacked(4), 2);
-      CPU.CTC2(sp0x28.getPacked(6), 3);
-      CPU.CTC2(sp0x28.getPacked(8), 4);
-      CPU.CTC2(sp0x28.transfer.getX(), 5);
-      CPU.CTC2(sp0x28.transfer.getY(), 6);
-      CPU.CTC2(sp0x28.transfer.getZ(), 7);
-      CPU.MTC2(0, 0);
-      CPU.MTC2(0, 1);
-      CPU.COP2(0x18_0001L);
-      final DVECTOR sp20 = new DVECTOR().setXY(CPU.MFC2(14));
-      sp68 = CPU.MFC2(8);
-      sp6c = CPU.CFC2(31);
-      sp70 = CPU.MFC2(19) >> 2;
+      GTE.setRotationMatrix(sp0x28);
+      GTE.setTranslationVector(sp0x28.transfer);
+      GTE.setVertex(0, 0, 0, 0);
+      GTE.perspectiveTransform();
+      final short x = GTE.getScreenX(2);
+      final short y = GTE.getScreenY(2);
 
       //LAB_800de5d4
       for(int i = 0; i < 20; i++) {
         final TriangleIndicator140 a1 = _800c69fc;
 
         if(a1._18[i] == -1) {
-          a1.x_40[i] = sp20.getX();
-          a1.y_68[i] = sp20.getY();
+          a1.x_40[i] = x;
+          a1.y_68[i] = y;
           a1._18[i] = (short)ints.array(s0).get();
           a1.screenOffsetX_90[i] = screenOffsetX_800cb568.get();
           a1.screenOffsetY_e0[i] = screenOffsetY_800cb56c.get();
@@ -1669,39 +1637,23 @@ public final class SMap {
 
   @Method(0x800df9a8L)
   public static FlowControl FUN_800df9a8(final RunningScript<?> script) {
-    final DVECTOR sp0x18 = new DVECTOR();
+    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+
     final MATRIX sp0x20 = new MATRIX();
     final MATRIX sp0x40 = new MATRIX();
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     GsGetLws(sobj.model_00.coord2_14, sp0x40, sp0x20);
-    CPU.CTC2(sp0x20.getPacked(0), 0);
-    CPU.CTC2(sp0x20.getPacked(2), 1);
-    CPU.CTC2(sp0x20.getPacked(4), 2);
-    CPU.CTC2(sp0x20.getPacked(6), 3);
-    CPU.CTC2(sp0x20.getPacked(8), 4);
-    CPU.CTC2(sp0x20.transfer.getX(), 5);
-    CPU.CTC2(sp0x20.transfer.getY(), 6);
-    CPU.CTC2(sp0x20.transfer.getZ(), 7);
-    // 0, 0, 0
-    CPU.MTC2(0, 0);
-    CPU.MTC2(0, 1);
-    CPU.COP2(0x180001L);
-    sp0x18.setXY(CPU.MFC2(14));
-    long sp60 = CPU.MFC2(8);
-    long sp64 = CPU.CFC2(31);
-    long sp68 = (int)CPU.MFC2(19) >> 2;
-    script.params_20[1].set(sp0x18.getX() + 192);
-    script.params_20[2].set(sp0x18.getY() + 128);
-    // 0, -130, 0
-    CPU.MTC2(-130 << 16, 0);
-    CPU.MTC2(0, 1);
-    CPU.COP2(0x180001L);
-    sp0x18.setXY(CPU.MFC2(14));
-    sp60 = CPU.MFC2(8);
-    sp64 = CPU.CFC2(31);
-    sp68 = (int)CPU.MFC2(19) >> 2;
-    script.params_20[3].set(sp0x18.getX() + 192);
-    script.params_20[4].set(sp0x18.getY() + 128);
+
+    GTE.setRotationMatrix(sp0x20);
+    GTE.setTranslationVector(sp0x20.transfer);
+    GTE.setVertex(0, 0, 0, 0);
+    GTE.perspectiveTransform();
+    script.params_20[1].set(GTE.getScreenX(2) + 192);
+    script.params_20[2].set(GTE.getScreenY(2) + 128);
+
+    GTE.setVertex(0, 0, -130, 0);
+    GTE.perspectiveTransform();
+    script.params_20[3].set(GTE.getScreenX(2) + 192);
+    script.params_20[4].set(GTE.getScreenY(2) + 128);
     return FlowControl.CONTINUE;
   }
 
@@ -3053,53 +3005,34 @@ public final class SMap {
 
   @Method(0x800e2428L)
   public static void FUN_800e2428(final int sobjIndex) {
-    final SVECTOR sp0x10 = new SVECTOR();
-    final SVECTOR sp0x18 = new SVECTOR();
     final MATRIX ls = new MATRIX();
     final MATRIX lw = new MATRIX();
 
-    GsGetLws(((SubmapObject210)scriptStatePtrArr_800bc1c0[sobjIndex].innerStruct_00).model_00.coord2_14, lw, ls);
-    CPU.CTC2(ls.getPacked(0), 0);
-    CPU.CTC2(ls.getPacked(2), 1);
-    CPU.CTC2(ls.getPacked(4), 2);
-    CPU.CTC2(ls.getPacked(6), 3);
-    CPU.CTC2(ls.getPacked(8), 4);
-    CPU.CTC2(ls.transfer.getX(), 5);
-    CPU.CTC2(ls.transfer.getY(), 6);
-    CPU.CTC2(ls.transfer.getZ(), 7);
-
-    sp0x10.set((short)0, (short)0, (short)0);
-    CPU.MTC2(sp0x10.getXY(), 0);
-    CPU.MTC2(sp0x10.getZ(),  1);
-    CPU.COP2(0x180001L);
-    sp0x18.setXY(CPU.MFC2(14));
-
     final SubmapStruct80 a0 = _800c68e8;
-    sp0x10.set((short)0, (short)-130, (short)0);
-    a0.x2_70 = sp0x18.getX() + 192;
-    a0.y2_74 = sp0x18.getY() + 128;
-    CPU.MTC2(sp0x10.getXY(), 0);
-    CPU.MTC2(sp0x10.getZ(),  1);
-    CPU.COP2(0x180001L);
-    sp0x18.setXY(CPU.MFC2(14));
-    a0.x3_78 = sp0x18.getX() + 192;
-    a0.y3_7c = sp0x18.getY() + 128;
 
-    sp0x10.set((short)-20, (short)0, (short)0);
-    CPU.MTC2(sp0x10.getXY(), 0);
-    CPU.MTC2(sp0x10.getZ(),  1);
-    CPU.COP2(0x180001L);
-    sp0x18.setXY(CPU.MFC2(14));
-    a0.x1_68 = sp0x18.getX() + 192;
-    a0.y1_6c = sp0x18.getY() + 128;
+    GsGetLws(((SubmapObject210)scriptStatePtrArr_800bc1c0[sobjIndex].innerStruct_00).model_00.coord2_14, lw, ls);
+    GTE.setRotationMatrix(ls);
+    GTE.setTranslationVector(ls.transfer);
 
-    sp0x10.set((short)20, (short)0, (short)0);
-    CPU.MTC2(sp0x10.getXY(), 0);
-    CPU.MTC2(sp0x10.getZ(),  1);
-    CPU.COP2(0x180001L);
-    sp0x18.setXY(CPU.MFC2(14));
-    a0.x0_60 = sp0x18.getX() + 192;
-    a0.y0_64 = sp0x18.getY() + 128;
+    GTE.setVertex(0, 0, 0, 0);
+    GTE.perspectiveTransform();
+    a0.x2_70 = GTE.getScreenX(2) + 192;
+    a0.y2_74 = GTE.getScreenY(2) + 128;
+
+    GTE.setVertex(0, 0, -130, 0);
+    GTE.perspectiveTransform();
+    a0.x3_78 = GTE.getScreenX(2) + 192;
+    a0.y3_7c = GTE.getScreenY(2) + 128;
+
+    GTE.setVertex(0, -20, 0, 0);
+    GTE.perspectiveTransform();
+    a0.x1_68 = GTE.getScreenX(2) + 192;
+    a0.y1_6c = GTE.getScreenY(2) + 128;
+
+    GTE.setVertex(0, 20, 0, 0);
+    GTE.perspectiveTransform();
+    a0.x0_60 = GTE.getScreenX(2) + 192;
+    a0.y0_64 = GTE.getScreenY(2) + 128;
   }
 
   @Method(0x800e2648L)
@@ -3646,19 +3579,12 @@ public final class SMap {
     final MATRIX ls = new MATRIX();
     final MATRIX lw = new MATRIX();
     GsGetLws(parent.coord2_14, lw, ls);
-    CPU.CTC2(ls.getPacked(0), 0);
-    CPU.CTC2(ls.getPacked(2), 1);
-    CPU.CTC2(ls.getPacked(4), 2);
-    CPU.CTC2(ls.getPacked(6), 3);
-    CPU.CTC2(ls.getPacked(8), 4);
-    CPU.CTC2(ls.transfer.getX(), 5);
-    CPU.CTC2(ls.transfer.getY(), 6);
-    CPU.CTC2(ls.transfer.getZ(), 7);
-    final SVECTOR sp0x10 = new SVECTOR().setY((short)(y - 64));
-    CPU.MTC2(sp0x10.getXY(), 0);
-    CPU.MTC2(sp0x10.getZ(),  1);
-    CPU.COP2(0x180001L);
-    final DVECTOR sp0x18 = new DVECTOR().setXY(CPU.MFC2(14));
+    GTE.setRotationMatrix(ls);
+    GTE.setTranslationVector(ls.transfer);
+    GTE.setVertex(0, 0, y - 64, 0);
+    GTE.perspectiveTransform();
+    final short sx = GTE.getScreenX(2);
+    final short sy = GTE.getScreenY(2);
 
     final GpuCommandPoly cmd = new GpuCommandPoly(4)
       .bpp(Bpp.BITS_4)
@@ -3666,10 +3592,10 @@ public final class SMap {
       .monochrome(0x80)
       .clut(976, 464)
       .vramPos(960, 256)
-      .pos(0, (int)_800f64b0.offset(0x0L).getSigned() + sp0x18.getX(), (int)_800f64b0.offset(0x4L).getSigned() + sp0x18.getY())
-      .pos(1, (int)_800f64b0.offset(0x2L).getSigned() + sp0x18.getX(), (int)_800f64b0.offset(0x4L).getSigned() + sp0x18.getY())
-      .pos(2, (int)_800f64b0.offset(0x0L).getSigned() + sp0x18.getX(), (int)_800f64b0.offset(0x6L).getSigned() + sp0x18.getY())
-      .pos(3, (int)_800f64b0.offset(0x2L).getSigned() + sp0x18.getX(), (int)_800f64b0.offset(0x6L).getSigned() + sp0x18.getY())
+      .pos(0, (int)_800f64b0.offset(0x0L).getSigned() + sx, (int)_800f64b0.offset(0x4L).getSigned() + sy)
+      .pos(1, (int)_800f64b0.offset(0x2L).getSigned() + sx, (int)_800f64b0.offset(0x4L).getSigned() + sy)
+      .pos(2, (int)_800f64b0.offset(0x0L).getSigned() + sx, (int)_800f64b0.offset(0x6L).getSigned() + sy)
+      .pos(3, (int)_800f64b0.offset(0x2L).getSigned() + sx, (int)_800f64b0.offset(0x6L).getSigned() + sy)
       .uv(0, (int)_800f64b0.offset(1, 0x8L).get(), (int)_800f64b0.offset(1, 0xcL).get())
       .uv(1, (int)_800f64b0.offset(1, 0xaL).get(), (int)_800f64b0.offset(1, 0xcL).get())
       .uv(2, (int)_800f64b0.offset(1, 0x8L).get(), (int)_800f64b0.offset(1, 0xeL).get())
@@ -5216,11 +5142,11 @@ public final class SMap {
   }
 
   @Method(0x800e7f00L)
-  public static void transformVertex(final IntRef x, final IntRef y, final SVECTOR v0) {
-    final DVECTOR sxy = new DVECTOR();
-    RotTransPers(v0, sxy, null, null, null);
-    x.set(sxy.getX());
-    y.set(sxy.getY());
+  public static void transformVertex(final IntRef outX, final IntRef outY, final SVECTOR v0) {
+    GTE.setVertex(0, v0);
+    GTE.perspectiveTransform();
+    outX.set(GTE.getScreenX(2));
+    outY.set(GTE.getScreenY(2));
   }
 
   @Method(0x800e7f68L)
@@ -7286,15 +7212,8 @@ public final class SMap {
       GsSetLightMatrix(lw);
 
       PushMatrix();
-      CPU.CTC2(matrix.getPacked(0), 0); //
-      CPU.CTC2(matrix.getPacked(2), 1); //
-      CPU.CTC2(matrix.getPacked(4), 2); // Rotation matrix
-      CPU.CTC2(matrix.getPacked(6), 3); //
-      CPU.CTC2(matrix.getPacked(8), 4); //
-
-      CPU.CTC2(matrix.transfer.getX(), 5); //
-      CPU.CTC2(matrix.transfer.getY(), 6); // Translation vector
-      CPU.CTC2(matrix.transfer.getZ(), 7); //
+      GTE.setRotationMatrix(matrix);
+      GTE.setTranslationVector(matrix.transfer);
       renderDobj2(model.ObjTable_0c.top[i]);
       PopMatrix();
     }
@@ -7404,27 +7323,21 @@ public final class SMap {
 
           final MATRIX ls = new MATRIX();
           GsGetLs(model.coord2_14, ls);
-          CPU.CTC2(ls.getPacked(0), 0);
-          CPU.CTC2(ls.getPacked(2), 1);
-          CPU.CTC2(ls.getPacked(4), 2);
-          CPU.CTC2(ls.getPacked(6), 3);
-          CPU.CTC2(ls.getPacked(8), 4);
-          CPU.CTC2(ls.transfer.getX(), 5);
-          CPU.CTC2(ls.transfer.getY(), 6);
-          CPU.CTC2(ls.transfer.getZ(), 7);
+          GTE.setRotationMatrix(ls);
+          GTE.setTranslationVector(ls.transfer);
 
           final int type = dust.textureIndex_02;
           if(type == 0) {
             //LAB_800ef4b4
-            dust.z_4c = RotTransPers4(_800d6b7c.get( 4), _800d6b7c.get( 5), _800d6b7c.get( 6), _800d6b7c.get( 7), dust.v0_20, dust.v1_28, dust.v2_30, dust.v3_38, null, null);
+            dust.z_4c = RotTransPers4(_800d6b7c.get( 4), _800d6b7c.get( 5), _800d6b7c.get( 6), _800d6b7c.get( 7), dust.v0_20, dust.v1_28, dust.v2_30, dust.v3_38);
           } else if(type == 1) {
             //LAB_800ef484
             //LAB_800ef4b4
-            dust.z_4c = RotTransPers4(_800d6b7c.get( 8), _800d6b7c.get( 9), _800d6b7c.get(10), _800d6b7c.get(11), dust.v0_20, dust.v1_28, dust.v2_30, dust.v3_38, null, null);
+            dust.z_4c = RotTransPers4(_800d6b7c.get( 8), _800d6b7c.get( 9), _800d6b7c.get(10), _800d6b7c.get(11), dust.v0_20, dust.v1_28, dust.v2_30, dust.v3_38);
           } else if(type == 3) {
             //LAB_800ef4a0
             //LAB_800ef4b4
-            dust.z_4c = RotTransPers4(_800d6b7c.get( 0), _800d6b7c.get( 1), _800d6b7c.get( 2), _800d6b7c.get( 3), dust.v0_20, dust.v1_28, dust.v2_30, dust.v3_38, null, null);
+            dust.z_4c = RotTransPers4(_800d6b7c.get( 0), _800d6b7c.get( 1), _800d6b7c.get( 2), _800d6b7c.get( 3), dust.v0_20, dust.v1_28, dust.v2_30, dust.v3_38);
           }
 
           //LAB_800ef4ec
@@ -7458,17 +7371,11 @@ public final class SMap {
 
           final MATRIX ls = new MATRIX();
           GsGetLs(model.coord2_14, ls);
-          CPU.CTC2(ls.getPacked(0), 0);
-          CPU.CTC2(ls.getPacked(2), 1);
-          CPU.CTC2(ls.getPacked(4), 2);
-          CPU.CTC2(ls.getPacked(6), 3);
-          CPU.CTC2(ls.getPacked(8), 4);
-          CPU.CTC2(ls.transfer.getX(), 5);
-          CPU.CTC2(ls.transfer.getY(), 6);
-          CPU.CTC2(ls.transfer.getZ(), 7);
+          GTE.setRotationMatrix(ls);
+          GTE.setTranslationVector(ls.transfer);
 
           //TODO The real code actually passes the same reference for sxyz 1 and 2, is that a bug?
-          dust.z_4c = RotTransPers4(vert0, vert1, vert2, vert3, dust.v0_20, dust.v1_28, dust.v2_30, dust.v3_38, null, null);
+          dust.z_4c = RotTransPers4(vert0, vert1, vert2, vert3, dust.v0_20, dust.v1_28, dust.v2_30, dust.v3_38);
 
           if(dust.z_4c < 41) {
             dust.z_4c = 41;
@@ -7892,9 +7799,6 @@ public final class SMap {
       final Struct18 s2 = a1.ptr_3c;
 
       if(s2._01 < s2._00) {
-        final SVECTOR sp0x10 = new SVECTOR().set(_800d6c18);
-        final SVECTOR sp0x18 = new SVECTOR().set(_800d6c20);
-
         final Struct34_2 s0 = _800d4f90;
         final Struct34_2 s3 = new Struct34_2();
         s3.next_30 = s0.next_30;
@@ -7905,35 +7809,23 @@ public final class SMap {
         s1.next_10 = s4.next_10;
         s4.next_10 = s1;
 
-        sp0x10.setX((short)-s2.width_08);
-        sp0x18.setX(s2.width_08);
-
         final MATRIX sp0x20 = new MATRIX();
         GsGetLs(model.coord2_14, sp0x20);
 
         PushMatrix();
-        CPU.CTC2(sp0x20.getPacked(0), 0);
-        CPU.CTC2(sp0x20.getPacked(2), 1);
-        CPU.CTC2(sp0x20.getPacked(4), 2);
-        CPU.CTC2(sp0x20.getPacked(6), 3);
-        CPU.CTC2(sp0x20.getPacked(8), 4);
-        CPU.CTC2(sp0x20.transfer.getX(), 5);
-        CPU.CTC2(sp0x20.transfer.getY(), 6);
-        CPU.CTC2(sp0x20.transfer.getZ(), 7);
-        CPU.MTC2(sp0x10.getXY(), 0);
-        CPU.MTC2(sp0x10.getZ(), 1);
-        CPU.COP2(0x180001L);
-        s1.vert0_00.setXY(CPU.MFC2(14));
-        long sp48 = CPU.MFC2(8);
-        long sp4c = CPU.CFC2(31);
-        s3.z_20 = (int)CPU.MFC2(19) >> 2;
-        CPU.MTC2(sp0x18.getXY(), 0);
-        CPU.MTC2(sp0x18.getZ(), 1);
-        CPU.COP2(0x180001L);
-        s1.vert1_08.setXY(CPU.MFC2(14));
-        sp48 = CPU.MFC2(8);
-        sp4c = CPU.CFC2(31);
-        s3.z_20 = (int)CPU.MFC2(19) >> 2;
+        GTE.setRotationMatrix(sp0x20);
+        GTE.setTranslationVector(sp0x20.transfer);
+        GTE.setVertex(0, -s2.width_08, _800d6c18.getY(), _800d6c18.getZ());
+        GTE.perspectiveTransform();
+        s1.vert0_00.setX(GTE.getScreenX(2));
+        s1.vert0_00.setY(GTE.getScreenY(2));
+        s3.z_20 = GTE.getScreenZ(3) >> 2;
+
+        GTE.setVertex(0, s2.width_08, _800d6c20.getY(), _800d6c20.getZ());
+        GTE.perspectiveTransform();
+        s1.vert1_08.setX(GTE.getScreenX(2));
+        s1.vert1_08.setY(GTE.getScreenY(2));
+        s3.z_20 = GTE.getScreenZ(3) >> 2;
         PopMatrix();
 
         s3._00 = 0;
@@ -8165,8 +8057,6 @@ public final class SMap {
       return FlowControl.CONTINUE;
     }
 
-    final SVECTOR sp0x10 = new SVECTOR();
-    final SVECTOR sp0x18 = new SVECTOR();
     final MATRIX sp0x20 = new MATRIX();
     final GsCOORDINATE2 sp0x40 = new GsCOORDINATE2();
 
@@ -8189,25 +8079,14 @@ public final class SMap {
       GsGetLs(sp0x40, sp0x20);
 
       PushMatrix();
-      CPU.CTC2(sp0x20.getPacked(0), 0);
-      CPU.CTC2(sp0x20.getPacked(2), 1);
-      CPU.CTC2(sp0x20.getPacked(4), 2);
-      CPU.CTC2(sp0x20.getPacked(6), 3);
-      CPU.CTC2(sp0x20.getPacked(8), 4);
-      CPU.CTC2(sp0x20.transfer.getX(), 5);
-      CPU.CTC2(sp0x20.transfer.getY(), 6);
-      CPU.CTC2(sp0x20.transfer.getZ(), 7);
-      sp0x10.set((short)0, (short)0, (short)0);
-      CPU.MTC2(sp0x10.getXY(), 0);
-      CPU.MTC2(sp0x10.getZ(), 1);
-      CPU.COP2(0x180001L);
-      sp0x18.setXY(CPU.MFC2(14));
+      GTE.setRotationMatrix(sp0x20);
+      GTE.setTranslationVector(sp0x20.transfer);
+      GTE.setVertex(0, 0, 0, 0);
+      GTE.perspectiveTransform();
+      final short sx = GTE.getScreenX(2);
+      final short sy = GTE.getScreenY(2);
 
-      // These were both writing to 0
-      //MEMORY.ref(4, s5).setu(CPU.MFC2(8));
-      //MEMORY.ref(4, s4).setu(CPU.CFC2(31));
-
-      struct.sz3_2c = (int)CPU.MFC2(19) >> 2; // SZ3
+      struct.sz3_2c = GTE.getScreenZ(3) >> 2;
       PopMatrix();
 
       struct._02 = 0;
@@ -8219,8 +8098,8 @@ public final class SMap {
       struct._10 = ints.array(s1++).get();
       struct._14 = ints.array(s1++).get();
       struct._18 = (short)ints.array(s1++).get();
-      struct.x_1c = sp0x18.getX();
-      struct.y_20 = sp0x18.getY();
+      struct.x_1c = sx;
+      struct.y_20 = sy;
       struct.screenOffsetX_24 = screenOffsetX_800cb568.get();
       struct.screenOffsetY_28 = screenOffsetY_800cb56c.get();
     }
@@ -8247,22 +8126,16 @@ public final class SMap {
     sp0x48.coord.transfer.set(script.params_20[3].get(), script.params_20[4].get(), script.params_20[5].get());
     final MATRIX sp0x28 = new MATRIX();
     GsGetLs(sp0x48, sp0x28);
-    PushMatrix();
-    CPU.CTC2(sp0x28.getPacked(0), 0);
-    CPU.CTC2(sp0x28.getPacked(2), 1);
-    CPU.CTC2(sp0x28.getPacked(4), 2);
-    CPU.CTC2(sp0x28.getPacked(6), 3);
-    CPU.CTC2(sp0x28.getPacked(8), 4);
-    CPU.CTC2(sp0x28.transfer.getX(), 5);
-    CPU.CTC2(sp0x28.transfer.getY(), 6);
-    CPU.CTC2(sp0x28.transfer.getZ(), 7);
-    CPU.MTC2(0, 0);
-    CPU.MTC2(0, 1);
-    CPU.COP2(0x180001L);
 
-    final DVECTOR sp0x10 = new DVECTOR();
-    sp0x10.setXY(CPU.MFC2(14));
-    final int spa8 = (int)CPU.MFC2(19) >> 2;
+    PushMatrix();
+    GTE.setRotationMatrix(sp0x28);
+    GTE.setTranslationVector(sp0x28.transfer);
+    GTE.setVertex(0, 0, 0, 0);
+    GTE.perspectiveTransform();
+
+    final short sx = GTE.getScreenX(2);
+    final short sy = GTE.getScreenY(2);
+    final int sz = GTE.getScreenZ(3) >> 2;
     PopMatrix();
 
     if(script.params_20[2].get() < script.params_20[1].get()) {
@@ -8279,11 +8152,11 @@ public final class SMap {
     s1._10 = script.params_20[8].get() << 16;
     s1._14 = (script.params_20[9].get() << 16) / script.params_20[1].get();
     s1._18 = (short)script.params_20[7].get();
-    s1.x_1c = sp0x10.getX();
-    s1.y_20 = sp0x10.getY();
+    s1.x_1c = sx;
+    s1.y_20 = sy;
     s1.screenOffsetX_24 = screenOffsetX_800cb568.get();
     s1.screenOffsetY_28 = screenOffsetY_800cb56c.get();
-    s1.sz3_2c = spa8;
+    s1.sz3_2c = sz;
 
     return FlowControl.CONTINUE;
   }
@@ -8379,24 +8252,18 @@ public final class SMap {
     GsGetLs(coord2, screenMatrix);
     PushMatrix();
 
-    CPU.CTC2(screenMatrix.getPacked(0), 0);
-    CPU.CTC2(screenMatrix.getPacked(2), 1);
-    CPU.CTC2(screenMatrix.getPacked(4), 2);
-    CPU.CTC2(screenMatrix.getPacked(6), 3);
-    CPU.CTC2(screenMatrix.getPacked(8), 4);
-    CPU.CTC2(screenMatrix.transfer.getX(), 5);
-    CPU.CTC2(screenMatrix.transfer.getY(), 6);
-    CPU.CTC2(screenMatrix.transfer.getZ(), 7);
+    GTE.setRotationMatrix(screenMatrix);
+    GTE.setTranslationVector(screenMatrix.transfer);
 
     //LAB_800f195c
     for(int s3 = 0; s3 < 2; s3++) {
       final SavePointRenderData44 struct = savePoint_800d5598[s3];
 
-      struct.z_40 = RotTransPers4(savePointV0_800d6c28, savePointV1_800d6c30, savePointV2_800d6c38, savePointV3_800d6c40, struct.vert0_00, struct.vert1_08, struct.vert2_10, struct.vert3_18, null, null);
+      struct.z_40 = RotTransPers4(savePointV0_800d6c28, savePointV1_800d6c30, savePointV2_800d6c38, savePointV3_800d6c40, struct.vert0_00, struct.vert1_08, struct.vert2_10, struct.vert3_18);
 
       if(s3 == 0) {
-        perspectiveTransform(_800d6c48, sp0x48, null, null);
-        perspectiveTransform(_800d6c50, sp0x50, null, null);
+        perspectiveTransform(_800d6c48, sp0x48);
+        perspectiveTransform(_800d6c50, sp0x50);
 
         sp0x48.setX((short)(sp0x50.getY() - sp0x48.getY()));
       }
@@ -8433,7 +8300,6 @@ public final class SMap {
   public static FlowControl FUN_800f1b64(final RunningScript<?> script) {
     final SVECTOR sp0x10 = new SVECTOR();
     final GsCOORDINATE2 sp0x18 = new GsCOORDINATE2();
-    final SVECTOR sp0x68 = new SVECTOR();
     final MATRIX sp0x70 = new MATRIX();
 
     GsInitCoordinate2(null, sp0x18);
@@ -8446,34 +8312,21 @@ public final class SMap {
     for(int i = 0; ints.array(s0).get() != -1; i++) {
       get3dAverageOfSomething(ints.array(s0++).get(), sp0x10);
 
-      sp0x18.coord.transfer.setX(sp0x10.getX());
-      sp0x18.coord.transfer.setY(sp0x10.getY());
-      sp0x18.coord.transfer.setZ(sp0x10.getZ());
+      sp0x18.coord.transfer.set(sp0x10);
       GsGetLs(sp0x18, sp0x70);
 
       PushMatrix();
-      CPU.CTC2(sp0x70.getPacked(0), 0);
-      CPU.CTC2(sp0x70.getPacked(2), 1);
-      CPU.CTC2(sp0x70.getPacked(4), 2);
-      CPU.CTC2(sp0x70.getPacked(6), 3);
-      CPU.CTC2(sp0x70.getPacked(8), 4);
-      CPU.CTC2(sp0x70.transfer.getX(), 5);
-      CPU.CTC2(sp0x70.transfer.getY(), 6);
-      CPU.CTC2(sp0x70.transfer.getZ(), 7);
-
-      sp0x10.set((short)0, (short)0, (short)0);
-      CPU.MTC2(sp0x10.getXY(), 0);
-      CPU.MTC2(sp0x10.getZ(), 1);
-
-      CPU.COP2(0x180001L);
-
-      sp0x68.setXY(CPU.MFC2(14)); // SXY2
-
+      GTE.setRotationMatrix(sp0x70);
+      GTE.setTranslationVector(sp0x70.transfer);
+      GTE.setVertex(0, 0, 0, 0);
+      GTE.perspectiveTransform();
+      final short sx = GTE.getScreenX(2);
+      final short sy = GTE.getScreenY(2);
       PopMatrix();
 
       a0._18[i] = (short)ints.array(s0++).get();
-      a0.x_40[i] = (short)(sp0x68.getX() + ints.array(s0++).get());
-      a0.y_68[i] = (short)(sp0x68.getY() + ints.array(s0++).get());
+      a0.x_40[i] = (short)(sx + ints.array(s0++).get());
+      a0.y_68[i] = (short)(sy + ints.array(s0++).get());
       a0.screenOffsetX_90[i] = screenOffsetX_800cb568.get();
       a0.screenOffsetY_e0[i] = screenOffsetY_800cb56c.get();
     }
@@ -8491,19 +8344,14 @@ public final class SMap {
     sp0x40.coord.transfer.set(sp0x10);
     final MATRIX sp0x20 = new MATRIX();
     GsGetLs(sp0x40, sp0x20);
+
     PushMatrix();
-    CPU.CTC2(sp0x20.getPacked(0), 0);
-    CPU.CTC2(sp0x20.getPacked(2), 1);
-    CPU.CTC2(sp0x20.getPacked(4), 2);
-    CPU.CTC2(sp0x20.getPacked(6), 3);
-    CPU.CTC2(sp0x20.getPacked(8), 4);
-    CPU.CTC2(sp0x20.transfer.getX(), 5);
-    CPU.CTC2(sp0x20.transfer.getY(), 6);
-    CPU.CTC2(sp0x20.transfer.getZ(), 7);
-    CPU.MTC2(0, 0);
-    CPU.MTC2(0, 1);
-    CPU.COP2(0x180001L);
-    final DVECTOR sp0x18 = new DVECTOR().setXY(CPU.MFC2(14));
+    GTE.setRotationMatrix(sp0x20);
+    GTE.setTranslationVector(sp0x20.transfer);
+    GTE.setVertex(0, 0, 0, 0);
+    GTE.perspectiveTransform();
+    final short sx = GTE.getScreenX(2);
+    final short sy = GTE.getScreenY(2);
     PopMatrix();
 
     //LAB_800f1e20
@@ -8512,8 +8360,8 @@ public final class SMap {
 
       if(a1._18[i] == -1) {
         a1._18[i] = (short)script.params_20[1].get();
-        a1.x_40[i] = (short)(sp0x18.getX() + script.params_20[2].get());
-        a1.y_68[i] = (short)(sp0x18.getY() + script.params_20[3].get());
+        a1.x_40[i] = (short)(sx + script.params_20[2].get());
+        a1.y_68[i] = (short)(sy + script.params_20[3].get());
         a1.screenOffsetX_90[i] = screenOffsetX_800cb568.get();
         a1.screenOffsetY_e0[i] = screenOffsetY_800cb56c.get();
         break;
@@ -9110,34 +8958,23 @@ public final class SMap {
     GsGetLs(sobjs_800c6880[0].innerStruct_00.model_00.coord2_14, ls);
 
     PushMatrix();
-    CPU.CTC2(ls.getPacked(0), 0); //
-    CPU.CTC2(ls.getPacked(2), 1); //
-    CPU.CTC2(ls.getPacked(4), 2); // Rotation matrix
-    CPU.CTC2(ls.getPacked(6), 3); //
-    CPU.CTC2(ls.getPacked(8), 4); //
-    CPU.CTC2(ls.transfer.getX(), 5); //
-    CPU.CTC2(ls.transfer.getY(), 6); // Translation vector
-    CPU.CTC2(ls.transfer.getZ(), 7); //
+    GTE.setRotationMatrix(ls);
+    GTE.setTranslationVector(ls.transfer);
 
-    CPU.MTC2(bottom_800d6cb8.getXY(), 0); // Vector XY 0
-    CPU.MTC2(bottom_800d6cb8.getZ(),  1); // Vector Z 0
-    CPU.COP2(0x180001L); // Perspective transform
-    final DVECTOR bottom = new DVECTOR().setXY(CPU.MFC2(14)); // Screen XY 2
+    GTE.setVertex(0, bottom_800d6cb8.getX(), bottom_800d6cb8.getY(), bottom_800d6cb8.getZ());
+    GTE.perspectiveTransform();
+    final short bottomY = GTE.getScreenY(2);
 
-    CPU.MTC2(top_800d6cc0.getXY(), 0); // Vector XY 0
-    CPU.MTC2(top_800d6cc0.getZ(),  1); // Vector Z 0
-    CPU.COP2(0x180001L); // Perspective transform
-    final DVECTOR top = new DVECTOR().setXY(CPU.MFC2(14)); // Screen XY 2
+    GTE.setVertex(0, top_800d6cc0.getX(), top_800d6cc0.getY(), top_800d6cc0.getZ());
+    GTE.perspectiveTransform();
+    final short topY = GTE.getScreenY(2);
 
-    final SVECTOR sp0x110 = new SVECTOR().setY((short)(-(top.getY() - bottom.getY()) - 48));
-    CPU.MTC2(sp0x110.getXY(), 0); // Vector XY 0
-    CPU.MTC2(sp0x110.getZ(),  1); // Vector Z 0
-    CPU.COP2(0x180001L); // Perspective transform
-    final DVECTOR sp118 = new DVECTOR().setXY(CPU.MFC2(14)); // Screen XY 2
+    GTE.setVertex(0, 0, -(topY - bottomY) - 48, 0);
+    GTE.perspectiveTransform();
+    _800c69fc.playerX_08 = GTE.getScreenX(2);
+    _800c69fc.playerY_0c = GTE.getScreenY(2);
+
     PopMatrix();
-
-    _800c69fc.playerX_08 = sp118.getX();
-    _800c69fc.playerY_0c = sp118.getY();
 
     if(CONFIG.getConfig(CoreMod.INDICATOR_MODE_CONFIG.get()) == IndicatorMode.MOMENTARY) {
       if(momentaryIndicatorTicks_800f9e9c.get() < 33) {
