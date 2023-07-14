@@ -12,14 +12,14 @@ public class StageData10 implements MemoryRef {
   public final UnsignedByteRef _00;
   public final UnsignedByteRef musicIndex_01;
   public final UnsignedByteRef _02;
-  public final UnsignedByteRef _03;
+  public final UnsignedByteRef postCombatSubmapStage_03;
   public final UnsignedByteRef _04;
   public final UnsignedByteRef _05;
-  public final ShortRef _06;
-  public final ShortRef _08;
-  public final ShortRef _0a;
-  public final ShortRef _0c;
-  public final UnsignedShortRef _0e;
+  public final ShortRef cameraPosIndex0_06;
+  public final ShortRef cameraPosIndex1_08;
+  public final ShortRef cameraPosIndex2_0a;
+  public final ShortRef cameraPosIndex3_0c;
+  public final UnsignedShortRef postCombatSubmapCut_0e;
 
   public StageData10(final Value ref) {
     this.ref = ref;
@@ -27,14 +27,14 @@ public class StageData10 implements MemoryRef {
     this._00 = ref.offset(1, 0x00L).cast(UnsignedByteRef::new);
     this.musicIndex_01 = ref.offset(1, 0x01L).cast(UnsignedByteRef::new);
     this._02 = ref.offset(1, 0x02L).cast(UnsignedByteRef::new);
-    this._03 = ref.offset(1, 0x03L).cast(UnsignedByteRef::new);
+    this.postCombatSubmapStage_03 = ref.offset(1, 0x03L).cast(UnsignedByteRef::new);
     this._04 = ref.offset(1, 0x04L).cast(UnsignedByteRef::new);
     this._05 = ref.offset(1, 0x05L).cast(UnsignedByteRef::new);
-    this._06 = ref.offset(2, 0x06L).cast(ShortRef::new);
-    this._08 = ref.offset(2, 0x08L).cast(ShortRef::new);
-    this._0a = ref.offset(2, 0x0aL).cast(ShortRef::new);
-    this._0c = ref.offset(2, 0x0cL).cast(ShortRef::new);
-    this._0e = ref.offset(2, 0x0eL).cast(UnsignedShortRef::new);
+    this.cameraPosIndex0_06 = ref.offset(2, 0x06L).cast(ShortRef::new);
+    this.cameraPosIndex1_08 = ref.offset(2, 0x08L).cast(ShortRef::new);
+    this.cameraPosIndex2_0a = ref.offset(2, 0x0aL).cast(ShortRef::new);
+    this.cameraPosIndex3_0c = ref.offset(2, 0x0cL).cast(ShortRef::new);
+    this.postCombatSubmapCut_0e = ref.offset(2, 0x0eL).cast(UnsignedShortRef::new);
   }
 
   @Override

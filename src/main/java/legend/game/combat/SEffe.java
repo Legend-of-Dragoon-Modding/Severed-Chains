@@ -122,9 +122,9 @@ import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SCRIPTS;
-import static legend.game.Scus94491BpeSegment.FUN_80018a5c;
-import static legend.game.Scus94491BpeSegment.FUN_80018d60;
-import static legend.game.Scus94491BpeSegment.FUN_80018dec;
+import static legend.game.Scus94491BpeSegment.renderButtonPressHudElement;
+import static legend.game.Scus94491BpeSegment.renderButtonPressHudTexturedRect;
+import static legend.game.Scus94491BpeSegment.renderDivineDragoonAdditionPressIris;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
 import static legend.game.Scus94491BpeSegment.displayHeight_1f8003e4;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
@@ -183,7 +183,7 @@ import static legend.game.combat.Bttl_800c.FUN_800cf4f4;
 import static legend.game.combat.Bttl_800c.FUN_800cf684;
 import static legend.game.combat.Bttl_800c.FUN_800cfb94;
 import static legend.game.combat.Bttl_800c.FUN_800cfc20;
-import static legend.game.combat.Bttl_800c._800fb0ec;
+import static legend.game.combat.Bttl_800c.colourMapUvs_800fb0ec;
 import static legend.game.combat.Bttl_800c.callScriptFunction;
 import static legend.game.combat.Bttl_800c.currentStage_800c66a4;
 import static legend.game.combat.Bttl_800c.deffManager_800c693c;
@@ -3479,7 +3479,7 @@ public final class SEffe {
   /** Runs callbacks to render correct button icon effects during addition */
   @Method(0x80106050L)
   public static void renderAdditionButton(final long a0, final boolean isCounter) {
-    final Consumer<RunningScript<?>> callback = Bttl_800d::FUN_800d46d4;
+    final Consumer<RunningScript<?>> callback = Bttl_800d::scriptRenderButtonPressHudElement;
 
     // Params: ?, x, y, translucency, colour
     final int offset = isCounter ? 1 : 0;
@@ -4168,7 +4168,7 @@ public final class SEffe {
     final int s3 = (int)_8011a020.get();
     final int fp = s4 + 16;
     final int s7 = s3 + 70;
-    final Consumer<RunningScript<?>> func = Bttl_800d::FUN_800d46d4;
+    final Consumer<RunningScript<?>> func = Bttl_800d::scriptRenderButtonPressHudElement;
 
     final int a2;
     if(FUN_80108460(a0, 0) != 0) {
@@ -4193,7 +4193,7 @@ public final class SEffe {
       final int colour = a0._11 * 0x40 - 1;
       final COLOUR rgb = new COLOUR().set(colour, colour, colour);
       callScriptFunction(func, 20, fp - 4, s7 - 4, 1, 128);
-      FUN_80018a5c((short)fp - 2, (short)s7 - 5, 232, 120, 255, 143, 0xc, Translucency.B_PLUS_F, rgb, a0._11 * 256 + 6404, a0._11 * 256 + 4096);
+      renderButtonPressHudElement((short)fp - 2, (short)s7 - 5, 232, 120, 255, 143, 0xc, Translucency.B_PLUS_F, rgb, a0._11 * 256 + 6404, a0._11 * 256 + 4096);
     }
 
     //LAB_80107bf0
@@ -4233,7 +4233,7 @@ public final class SEffe {
     }
 
     //LAB_80108048
-    FUN_80018d60((short)x, (short)y, 128, 64, 16, 16, 51, Translucency.B_PLUS_F, rgb, 0x1000);
+    renderButtonPressHudTexturedRect((short)x, (short)y, 128, 64, 16, 16, 51, Translucency.B_PLUS_F, rgb, 0x1000);
 
     rgb.set(0x80, 0x80, 0x80);
 
@@ -4244,7 +4244,7 @@ public final class SEffe {
       }
 
       //LAB_801080cc
-      FUN_80018d60((short)_8011a01c.get() + (short)_800fb804.offset(2, i * 0x4L).getSigned(), (short)_8011a020.get() + (short)_800fb804.offset(2, i * 0x4L).offset(0x2L).getSigned(), (int)_800fb818.offset(1, i * 0x4L).getSigned(), (int)_800fb818.offset(1, i * 0x4L).offset(0x2L).getSigned(), (short)_800fb82c.offset(2, i * 0x4L).getSigned(), (short)_800fb82c.offset(2, i * 0x4L).offset(0x2L).getSigned(), 53 + i, Translucency.B_PLUS_F, rgb, 0x1000);
+      renderButtonPressHudTexturedRect((short)_8011a01c.get() + (short)_800fb804.offset(2, i * 0x4L).getSigned(), (short)_8011a020.get() + (short)_800fb804.offset(2, i * 0x4L).offset(0x2L).getSigned(), (int)_800fb818.offset(1, i * 0x4L).getSigned(), (int)_800fb818.offset(1, i * 0x4L).offset(0x2L).getSigned(), (short)_800fb82c.offset(2, i * 0x4L).getSigned(), (short)_800fb82c.offset(2, i * 0x4L).offset(0x2L).getSigned(), 53 + i, Translucency.B_PLUS_F, rgb, 0x1000);
     }
 
     FUN_801079e8(a0);
@@ -4253,21 +4253,20 @@ public final class SEffe {
 
     //LAB_801081a8
     for(int i = 0; i < a0._0d; i++) {
-      FUN_80018d60((short)_8011a01c.get() + 18, (short)_8011a020.get() + 16, 224, 208, 31, 31, (int)_800fb84c.offset(1, a0._18).get(), Translucency.B_PLUS_F, rgb, 0x1000);
+      renderButtonPressHudTexturedRect((short)_8011a01c.get() + 18, (short)_8011a020.get() + 16, 224, 208, 31, 31, (int)_800fb84c.offset(1, a0.charId_18).get(), Translucency.B_PLUS_F, rgb, 0x1000);
 
-      if(a0._18 == 9) {
-        FUN_80018dec((int)_8011a01c.getSigned() + 23, (int)_8011a020.getSigned() + 21, 232, 120, 23, 23, 12, Translucency.B_PLUS_F, rgb, 0x800, 0x1800);
+      if(a0.charId_18 == 9) {
+        renderDivineDragoonAdditionPressIris((int)_8011a01c.getSigned() + 23, (int)_8011a020.getSigned() + 21, 232, 120, 23, 23, 12, Translucency.B_PLUS_F, rgb, 0x800, 0x1800);
       }
-
       //LAB_80108250
     }
 
     //LAB_80108268
-    FUN_80018d60((short)_8011a01c.get() + 32, (short)_8011a020.get() -  4, 152, 208,  8, 24, 50, Translucency.HALF_B_PLUS_HALF_F, rgb, 0x1000);
-    FUN_80018d60((short)_8011a01c.get() + 18, (short)_8011a020.get() + 16, 224, 208, 31, 31, (int)_800fb84c.offset(1, a0._18).getSigned(), Translucency.of((int)_800fb7fc.offset(1, a1 * 2).getSigned()), rgb, 0x1000);
-    FUN_80018d60((short)_8011a01c.get() + 17, (short)_8011a020.get() + 14, 112, 200, 40, 40, 52, Translucency.of((int)_800fb7fc.offset(1, a1 * 2).offset(0x1L).getSigned()), rgb, 0x1000);
-    FUN_80018d60((short)_8011a01c.get(),      (short)_8011a020.get(),      160, 192, 64, 48, (int)_800fb840.offset(1, a0._18).getSigned(), null, rgb, 0x1000);
-    FUN_80018d60((short)_8011a01c.get() +  8, (short)_8011a020.get() + 48, 200,  80, 42,  8, (int)_800fb840.offset(1, a0._18).getSigned(), null, rgb, 0x1000);
+    renderButtonPressHudTexturedRect((short)_8011a01c.get() + 32, (short)_8011a020.get() -  4, 152, 208,  8, 24, 50, Translucency.HALF_B_PLUS_HALF_F, rgb, 0x1000);
+    renderButtonPressHudTexturedRect((short)_8011a01c.get() + 18, (short)_8011a020.get() + 16, 224, 208, 31, 31, (int)_800fb84c.offset(1, a0.charId_18).getSigned(), Translucency.of((int)_800fb7fc.offset(1, a1 * 2).getSigned()), rgb, 0x1000);
+    renderButtonPressHudTexturedRect((short)_8011a01c.get() + 17, (short)_8011a020.get() + 14, 112, 200, 40, 40, 52, Translucency.of((int)_800fb7fc.offset(1, a1 * 2).offset(0x1L).getSigned()), rgb, 0x1000);
+    renderButtonPressHudTexturedRect((short)_8011a01c.get(),      (short)_8011a020.get(),      160, 192, 64, 48, (int)_800fb840.offset(1, a0.charId_18).getSigned(), null, rgb, 0x1000);
+    renderButtonPressHudTexturedRect((short)_8011a01c.get() +  8, (short)_8011a020.get() + 48, 200,  80, 42,  8, (int)_800fb840.offset(1, a0.charId_18).getSigned(), null, rgb, 0x1000);
     _80119fb4.setu(1 - _80119fb4.get());
   }
 
@@ -4438,7 +4437,7 @@ public final class SEffe {
     s1._11 = 0;
     s1._12 = script.params_20[2].get();
     s1._13 = s2 & 0xff;
-    s1._18 = s4;
+    s1.charId_18 = s4;
 
     if(s2 == 1) {
       s1._10 = s2 & 0xff;
@@ -4506,7 +4505,7 @@ public final class SEffe {
           rgb.g.sub(32);
           rgb.b.sub(32);
           s0++;
-          FUN_80018d60(struct._02 + s0 * 6, (short)_8011a020.get() + 16, (int)MEMORY.ref(1, fp).offset(0x0L).get(), (int)MEMORY.ref(1, s2).offset(0x0L).get(), 8, 16, 41, Translucency.B_PLUS_F, rgb, 0x1000);
+          renderButtonPressHudTexturedRect(struct._02 + s0 * 6, (short)_8011a020.get() + 16, (int)MEMORY.ref(1, fp).offset(0x0L).get(), (int)MEMORY.ref(1, s2).offset(0x0L).get(), 8, 16, 41, Translucency.B_PLUS_F, rgb, 0x1000);
         } while(s0 < 4);
       } else if(v1 == 1) {
         //LAB_80108b58
@@ -4530,10 +4529,10 @@ public final class SEffe {
       //LAB_80108be8
       //LAB_80108bec
       //LAB_80108bf0
-      FUN_80018d60(struct._02, (short)_8011a020.get() + 16, (int)MEMORY.ref(1, fp).offset(0x0L).get(), (int)MEMORY.ref(1, s2).offset(0x0L).get(), 8, 16, 41, Translucency.B_PLUS_F, rgb, 0x1000);
+      renderButtonPressHudTexturedRect(struct._02, (short)_8011a020.get() + 16, (int)MEMORY.ref(1, fp).offset(0x0L).get(), (int)MEMORY.ref(1, s2).offset(0x0L).get(), 8, 16, 41, Translucency.B_PLUS_F, rgb, 0x1000);
 
       if((struct._01 & 0x1) != 0) {
-        FUN_80018d60(struct._02, (short)_8011a020.get() + 16, (int)MEMORY.ref(1, fp).offset(0x0L).get(), (int)MEMORY.ref(1, s2).offset(0x0L).get(), 8, 16, 41, Translucency.B_PLUS_F, rgb, 0x1000);
+        renderButtonPressHudTexturedRect(struct._02, (short)_8011a020.get() + 16, (int)MEMORY.ref(1, fp).offset(0x0L).get(), (int)MEMORY.ref(1, s2).offset(0x0L).get(), 8, 16, 41, Translucency.B_PLUS_F, rgb, 0x1000);
       }
 
       //LAB_80108cb0
@@ -8513,7 +8512,7 @@ public final class SEffe {
       final long v0;
       if(!BattleScriptDataBase.EM__.equals(a0.magic_00)) {
         //LAB_8011604c
-        v0 = _800fb0ec.offset(((BattleObject27c)a0).model_148.colourMap_9d * 0x4L).get();
+        v0 = colourMapUvs_800fb0ec.get(((BattleObject27c)a0).model_148.colourMap_9d).get();
         u = (int)((v0 & 0xf) << 6);
         v = (int)((v0 & 0x10) << 4);
         w = 0x100;
@@ -8545,7 +8544,7 @@ public final class SEffe {
           }
         } else {
           //LAB_80115fd8
-          v0 = _800fb0ec.offset(((BttlScriptData6cSub13c)manager.effect_44).model_134.colourMap_9d * 0x4L).get();
+          v0 = colourMapUvs_800fb0ec.get(((BttlScriptData6cSub13c)manager.effect_44).model_134.colourMap_9d).get();
           u = (int)((v0 & 0xf) << 6);
           v = (int)((v0 & 0x10) << 4);
           w = 256;

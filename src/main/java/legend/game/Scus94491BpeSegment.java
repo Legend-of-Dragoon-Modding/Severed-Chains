@@ -182,7 +182,7 @@ import static legend.game.Scus94491BpeSegment_800b.melbuMusicLoaded_800bd781;
 import static legend.game.Scus94491BpeSegment_800b.melbuSoundsLoaded_800bd780;
 import static legend.game.Scus94491BpeSegment_800b.musicLoaded_800bd782;
 import static legend.game.Scus94491BpeSegment_800b.playingSoundsBackup_800bca78;
-import static legend.game.Scus94491BpeSegment_800b.postBattleAction_800bc974;
+import static legend.game.Scus94491BpeSegment_800b.postBattleActionIndex_800bc974;
 import static legend.game.Scus94491BpeSegment_800b.postCombatMainCallbackIndex_800bc91c;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.queuedSounds_800bd110;
@@ -1214,7 +1214,7 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_8001852c
-    if(postCombatMainCallbackIndex_800bc91c != EngineState.SUBMAP_05 || postBattleAction_800bc974.get() == 3) {
+    if(postCombatMainCallbackIndex_800bc91c != EngineState.SUBMAP_05 || postBattleActionIndex_800bc974.get() == 3) {
       //LAB_80018550
       if(whichMenu_800bdc38 == WhichMenu.NONE_0) {
         pregameLoadingStage_800bb10c.incr();
@@ -1336,7 +1336,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x800189b0L)
   public static void FUN_800189b0() {
-    if(postCombatMainCallbackIndex_800bc91c == EngineState.SUBMAP_05 && postBattleAction_800bc974.get() != 3) {
+    if(postCombatMainCallbackIndex_800bc91c == EngineState.SUBMAP_05 && postBattleActionIndex_800bc974.get() != 3) {
       FUN_800e5934();
     }
 
@@ -1351,7 +1351,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80018a5cL)
-  public static void FUN_80018a5c(final int x, final int y, final int leftU, final int topV, final int rightU, final int bottomV, final int clutButNotExactly, @Nullable final Translucency transMode, final COLOUR colour, final long a9, final long a10) {
+  public static void renderButtonPressHudElement(final int x, final int y, final int leftU, final int topV, final int rightU, final int bottomV, final int clutOffset, @Nullable final Translucency transMode, final COLOUR colour, final int a9, final int a10) {
     final int w = Math.abs(rightU - leftU);
     final int h = Math.abs(bottomV - topV);
 
@@ -1391,16 +1391,16 @@ public final class Scus94491BpeSegment {
       .uv(2, leftU, bottomV)
       .uv(3, rightU, bottomV);
 
-    final int a2 = clutButNotExactly / 16;
-    final int a1 = clutButNotExactly % 16;
+    final int clutOffsetX = clutOffset / 16;
+    final int clutOffsetY = clutOffset % 16;
     final int clutY;
     final int clutX;
-    if(a2 >= 4) {
-      clutX = a2 * 16 + 832;
-      clutY = a1 + 304;
+    if(clutOffsetX >= 4) {
+      clutX = clutOffsetX * 16 + 832;
+      clutY = clutOffsetY + 304;
     } else {
-      clutX = a2 * 16 + 704;
-      clutY = a1 + 496;
+      clutX = clutOffsetX * 16 + 704;
+      clutY = clutOffsetY + 496;
     }
 
     //LAB_80018cf0
@@ -1412,15 +1412,14 @@ public final class Scus94491BpeSegment {
     GPU.queueCommand(2, cmd);
   }
 
-  /** Some kind of intermediate rect render method **/
   @Method(0x80018d60L)
-  public static void FUN_80018d60(final int displayX, final int displayY, final int originU, final int originV, final int width, final int height, final int clutButNotExactly, @Nullable final Translucency transMode, final COLOUR colour, final long a9) {
-    FUN_80018a5c((short)displayX, (short)displayY, originU & 0xff, originV & 0xff, originU + width & 0xff, originV + height & 0xff, (short)clutButNotExactly, transMode, colour, (short)a9, (short)a9);
+  public static void renderButtonPressHudTexturedRect(final int x, final int y, final int u, final int v, final int width, final int height, final int clutOffset, @Nullable final Translucency transMode, final COLOUR colour, final int a9) {
+    renderButtonPressHudElement((short)x, (short)y, u & 0xff, v & 0xff, u + width & 0xff, v + height & 0xff, clutOffset, transMode, colour, a9, a9);
   }
 
   @Method(0x80018decL)
-  public static void FUN_80018dec(final int x, final int y, final int u, final int v, final int width, final int height, final int clutButNotExactly, @Nullable final Translucency transMode, final COLOUR colour, final long a9, final long a10) {
-    FUN_80018a5c(x, y, u, v, u + width, v + height, clutButNotExactly, transMode, colour, a9, a10);
+  public static void renderDivineDragoonAdditionPressIris(final int x, final int y, final int u, final int v, final int width, final int height, final int clutOffset, @Nullable final Translucency transMode, final COLOUR colour, final int a9, final int a10) {
+    renderButtonPressHudElement(x, y, u, v, u + width, v + height, clutOffset, transMode, colour, a9, a10);
   }
 
   @Method(0x80018e84L)
@@ -1532,7 +1531,7 @@ public final class Scus94491BpeSegment {
           }
 
           //LAB_80019208
-          FUN_80018a5c(
+          renderButtonPressHudElement(
             s0.x_00,
             s0.y_02,
             s0.u_0b,

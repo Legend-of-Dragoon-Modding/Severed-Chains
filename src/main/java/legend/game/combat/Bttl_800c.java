@@ -13,7 +13,6 @@ import legend.core.gte.SVECTOR;
 import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
-import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BoolRef;
 import legend.core.memory.types.ByteRef;
@@ -36,14 +35,24 @@ import legend.game.combat.bobj.PlayerBattleObject;
 import legend.game.combat.deff.BattleStruct24_2;
 import legend.game.combat.deff.DeffManager7cc;
 import legend.game.combat.effects.BttlScriptData6cSub13c;
+import legend.game.combat.effects.ButtonPressHudMetrics06;
 import legend.game.combat.effects.EffectManagerData6c;
 import legend.game.combat.effects.FullScreenOverlayEffect0e;
+import legend.game.combat.effects.GuardEffectMetrics04;
 import legend.game.combat.effects.RadialGradientEffect14;
 import legend.game.combat.effects.SpriteMetrics08;
 import legend.game.combat.effects.WeaponTrailEffect3c;
 import legend.game.combat.effects.WeaponTrailEffectSegment2c;
+import legend.game.combat.environment.ActiveStageData2c;
 import legend.game.combat.environment.BattleCamera;
+import legend.game.combat.environment.BattleHudBorderMetrics14;
+import legend.game.combat.environment.BattleItemMenuArrowUvMetrics06;
 import legend.game.combat.environment.BattleLightStruct64;
+import legend.game.combat.environment.BattleMenuBackgroundDisplayMetrics0c;
+import legend.game.combat.environment.BattleMenuBackgroundUvMetrics04;
+import legend.game.combat.environment.BattleMenuHighlightMetrics12;
+import legend.game.combat.environment.BattleMenuIconMetrics08;
+import legend.game.combat.environment.BattleMenuTextMetrics08;
 import legend.game.combat.environment.BattlePreloadedEntities_18cb0;
 import legend.game.combat.environment.BattleStage;
 import legend.game.combat.environment.BattleStageDarkening1800;
@@ -51,6 +60,9 @@ import legend.game.combat.environment.BttlLightStruct84;
 import legend.game.combat.environment.CameraOctParamCallback;
 import legend.game.combat.environment.CameraQuadParamCallback;
 import legend.game.combat.environment.CameraSeptParamCallback;
+import legend.game.combat.environment.CombatPortraitBorderMetrics0c;
+import legend.game.combat.environment.NameAndPortraitDisplayMetrics0c;
+import legend.game.combat.environment.SpBarBorderMetrics04;
 import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.BattleStateEf4;
 import legend.game.combat.types.BttlStruct08;
@@ -58,11 +70,11 @@ import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.combat.types.CombatantStruct1a8_c;
 import legend.game.combat.types.DragoonSpells09;
 import legend.game.combat.types.MersenneTwisterSeed;
-import legend.game.combat.types.UiMetrics0c;
+import legend.game.combat.types.BattleHudStatLabelMetrics0c;
 import legend.game.combat.types.Vec2;
 import legend.game.combat.ui.BattleDisplayStats144;
 import legend.game.combat.ui.BattleMenuStruct58;
-import legend.game.combat.ui.BattleStruct3c;
+import legend.game.combat.ui.BattleHudCharacterDisplay3c;
 import legend.game.combat.ui.CombatItem02;
 import legend.game.combat.ui.CombatMenua4;
 import legend.game.combat.ui.FloatingNumberC4;
@@ -169,7 +181,7 @@ import static legend.game.Scus94491BpeSegment_800b.itemsDroppedByEnemiesCount_80
 import static legend.game.Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928;
 import static legend.game.Scus94491BpeSegment_800b.livingCharCount_800bc97c;
 import static legend.game.Scus94491BpeSegment_800b.livingCharIds_800bc968;
-import static legend.game.Scus94491BpeSegment_800b.postBattleAction_800bc974;
+import static legend.game.Scus94491BpeSegment_800b.postBattleActionIndex_800bc974;
 import static legend.game.Scus94491BpeSegment_800b.postCombatMainCallbackIndex_800bc91c;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.press_800bee94;
@@ -182,7 +194,6 @@ import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.combat.Bttl_800d.FUN_800dabec;
 import static legend.game.combat.Bttl_800d.FUN_800dd0d4;
 import static legend.game.combat.Bttl_800d.FUN_800dd118;
-import static legend.game.combat.Bttl_800e.FUN_800e9120;
 import static legend.game.combat.Bttl_800e.FUN_800ec51c;
 import static legend.game.combat.Bttl_800e.FUN_800ec744;
 import static legend.game.combat.Bttl_800e.FUN_800ee610;
@@ -191,6 +202,7 @@ import static legend.game.combat.Bttl_800e.allocateDeffManager;
 import static legend.game.combat.Bttl_800e.allocateEffectManager;
 import static legend.game.combat.Bttl_800e.allocateStageDarkeningStorage;
 import static legend.game.combat.Bttl_800e.backupStageClut;
+import static legend.game.combat.Bttl_800e.deallocateLightingControllerAndDeffManager;
 import static legend.game.combat.Bttl_800e.deallocateStageDarkeningStorage;
 import static legend.game.combat.Bttl_800e.drawUiElements;
 import static legend.game.combat.Bttl_800e.loadBattleHudDeff_;
@@ -199,42 +211,44 @@ import static legend.game.combat.Bttl_800e.updateGameStateAndDeallocateMenu;
 import static legend.game.combat.Bttl_800f.FUN_800f1a00;
 import static legend.game.combat.Bttl_800f.FUN_800f417c;
 import static legend.game.combat.Bttl_800f.FUN_800f60ac;
-import static legend.game.combat.Bttl_800f.FUN_800f6134;
-import static legend.game.combat.Bttl_800f.FUN_800f6330;
 import static legend.game.combat.Bttl_800f.FUN_800f84c0;
-import static legend.game.combat.Bttl_800f.FUN_800f8c38;
 import static legend.game.combat.Bttl_800f.addFloatingNumberForBobj;
+import static legend.game.combat.Bttl_800f.handleCombatMenu;
+import static legend.game.combat.Bttl_800f.initializeCombatMenuIcons;
 import static legend.game.combat.Bttl_800f.loadBattleHudTextures;
+import static legend.game.combat.Bttl_800f.toggleBattleMenuSelectorRendering;
 
 public final class Bttl_800c {
   private Bttl_800c() { }
 
-  public static final UnsignedShortRef _800c6690 = MEMORY.ref(2, 0x800c6690L, UnsignedShortRef::new);
+  public static final UnsignedShortRef currentPostCombatActionFrame_800c6690 = MEMORY.ref(2, 0x800c6690L, UnsignedShortRef::new);
 
   public static final UnsignedByteRef uniqueMonsterCount_800c6698 = MEMORY.ref(1, 0x800c6698L).cast(UnsignedByteRef::new);
   public static final IntRef aliveBobjCount_800c669c = MEMORY.ref(4, 0x800c669cL, IntRef::new);
   /** The number of {@link Scus94491BpeSegment_8005#combatants_8005e398}s */
-  public static final Value combatantCount_800c66a0 = MEMORY.ref(4, 0x800c66a0L);
+  public static final IntRef combatantCount_800c66a0 = MEMORY.ref(4, 0x800c66a0L, IntRef::new);
   public static final IntRef currentStage_800c66a4 = MEMORY.ref(4, 0x800c66a4L, IntRef::new);
 
   public static final IntRef _800c66a8 = MEMORY.ref(4, 0x800c66a8L, IntRef::new);
   public static final ShortRef _800c66ac = MEMORY.ref(2, 0x800c66acL, ShortRef::new);
 
-  public static final IntRef _800c66b0 = MEMORY.ref(4, 0x800c66b0L, IntRef::new);
+  public static final IntRef currentCameraPositionIndicesIndex_800c66b0 = MEMORY.ref(4, 0x800c66b0L, IntRef::new);
 
-  public static final Value _800c66b4 = MEMORY.ref(4, 0x800c66b4L);
+  public static final IntRef _800c66b4 = MEMORY.ref(4, 0x800c66b4L, IntRef::new);
   public static final BoolRef stageHasModel_800c66b8 = MEMORY.ref(1, 0x800c66b8L, BoolRef::new);
-  public static final Value _800c66b9 = MEMORY.ref(1, 0x800c66b9L);
+  /** Character scripts deallocated? */
+  public static final BoolRef _800c66b9 = MEMORY.ref(1, 0x800c66b9L, BoolRef::new);
 
   public static ScriptState<? extends BattleObject27c> forcedTurnBobj_800c66bc;
-  public static final Value _800c66c0 = MEMORY.ref(1, 0x800c66c0L);
-  public static final Value _800c66c1 = MEMORY.ref(1, 0x800c66c1L);
+  /** These two bools are set but never used */
+  public static final BoolRef unused_800c66c0 = MEMORY.ref(1, 0x800c66c0L, BoolRef::new);
+  public static final BoolRef unused_800c66c1 = MEMORY.ref(1, 0x800c66c1L, BoolRef::new);
 
-  public static final Value _800c66c4 = MEMORY.ref(4, 0x800c66c4L);
+  public static final IntRef _800c66c4 = MEMORY.ref(4, 0x800c66c4L, IntRef::new);
   public static ScriptState<? extends BattleObject27c> currentTurnBobj_800c66c8;
-  public static final Value _800c66cc = MEMORY.ref(4, 0x800c66ccL);
+  public static final IntRef mcqBaseOffsetX_800c66cc = MEMORY.ref(4, 0x800c66ccL, IntRef::new);
   public static final IntRef allBobjCount_800c66d0 = MEMORY.ref(4, 0x800c66d0L, IntRef::new);
-  public static final Value _800c66d4 = MEMORY.ref(1, 0x800c66d4L);
+  public static final BoolRef shouldRenderMcq_800c66d4 = MEMORY.ref(1, 0x800c66d4L, BoolRef::new);
 
   public static ScriptFile script_800c66fc;
 
@@ -243,42 +257,42 @@ public final class Bttl_800c {
 
   public static final IntRef _800c6710 = MEMORY.ref(4, 0x800c6710L, IntRef::new);
 
-  /** TODO this is a struct, added the int ref temporarily since it's referenced by the script engine */
-  public static final ArrayRef<IntRef> intRef_800c6718 = MEMORY.ref(4, 0x800c6718L, ArrayRef.of(IntRef.class, 0x28 / 4, 4, IntRef::new));
   /** Struct for combat stage stuff */
-  public static final Value _800c6718 = MEMORY.ref(4, 0x800c6718L);
+  public static final ActiveStageData2c currentStageData_800c6718 = new ActiveStageData2c();
   public static final IntRef _800c6748 = MEMORY.ref(4, 0x800c6748L, IntRef::new);
   public static ScriptState<Void> scriptState_800c674c;
 
   public static final IntRef _800c6754 = MEMORY.ref(4, 0x800c6754L, IntRef::new);
   public static final IntRef aliveMonsterCount_800c6758 = MEMORY.ref(4, 0x800c6758L, IntRef::new);
-  public static final Value _800c675c = MEMORY.ref(4, 0x800c675cL);
+  public static final IntRef currentDisplayableIconsBitset_800c675c = MEMORY.ref(4, 0x800c675cL, IntRef::new);
   public static final IntRef aliveCharCount_800c6760 = MEMORY.ref(4, 0x800c6760L, IntRef::new);
-  public static final IntRef _800c6764 = MEMORY.ref(4, 0x800c6764L, IntRef::new);
+  public static final IntRef shouldRenderMcq_800c6764 = MEMORY.ref(4, 0x800c6764L, IntRef::new);
   public static final IntRef monsterCount_800c6768 = MEMORY.ref(4, 0x800c6768L, IntRef::new);
-  public static final IntRef _800c676c = MEMORY.ref(4, 0x800c676cL, IntRef::new);
-  public static final IntRef _800c6770 = MEMORY.ref(4, 0x800c6770L, IntRef::new);
-  public static final IntRef _800c6774 = MEMORY.ref(4, 0x800c6774L, IntRef::new);
-  public static final IntRef _800c6778 = MEMORY.ref(4, 0x800c6778L, IntRef::new);
+  public static final IntRef mcqStepX_800c676c = MEMORY.ref(4, 0x800c676cL, IntRef::new);
+  public static final IntRef mcqStepY_800c6770 = MEMORY.ref(4, 0x800c6770L, IntRef::new);
+  public static final IntRef mcqOffsetX_800c6774 = MEMORY.ref(4, 0x800c6774L, IntRef::new);
+  public static final IntRef mcqOffsetY_800c6778 = MEMORY.ref(4, 0x800c6778L, IntRef::new);
   /** The number of player chars in combat (i.e. 1-3) */
   public static final IntRef charCount_800c677c = MEMORY.ref(4, 0x800c677cL, IntRef::new);
-  public static final IntRef _800c6780 = MEMORY.ref(4, 0x800c6780L, IntRef::new);
+  /** This may be unused. Only referenced by the script engine, but seems like there may be no real uses */
+  public static final IntRef currentCameraIndex_800c6780 = MEMORY.ref(4, 0x800c6780L, IntRef::new);
 
   public static final Pointer<CString> currentAddition_800c6790 = MEMORY.ref(4, 0x800c6790L, Pointer.deferred(1, CString.maxLength(30)));
 
-  public static final MATRIX _800c6798 = new MATRIX();
-//  public static final UnsignedIntRef flags_800c67b8 = MEMORY.ref(4, 0x800c67b8L, UnsignedIntRef::new);
+  public static final MATRIX cameraTransformMatrix_800c6798 = new MATRIX();
+  // public static final UnsignedIntRef flags_800c67b8 = MEMORY.ref(4, 0x800c67b8L, UnsignedIntRef::new);
   public static final IntRef screenOffsetX_800c67bc = MEMORY.ref(4, 0x800c67bcL, IntRef::new);
   public static final IntRef screenOffsetY_800c67c0 = MEMORY.ref(4, 0x800c67c0L, IntRef::new);
-  public static final Value _800c67c4 = MEMORY.ref(4, 0x800c67c4L);
+  public static final IntRef wobbleFramesRemaining_800c67c4 = MEMORY.ref(4, 0x800c67c4L, IntRef::new);
   public static final IntRef _800c67c8 = MEMORY.ref(4, 0x800c67c8L, IntRef::new);
   public static final IntRef _800c67cc = MEMORY.ref(4, 0x800c67ccL, IntRef::new);
   public static final IntRef _800c67d0 = MEMORY.ref(4, 0x800c67d0L, IntRef::new);
 
-  public static final Value _800c67d4 = MEMORY.ref(4, 0x800c67d4L);
-  public static final VECTOR _800c67d8 = new VECTOR();
-  public static final Value _800c67e4 = MEMORY.ref(4, 0x800c67e4L);
-  public static final Value _800c67e8 = MEMORY.ref(4, 0x800c67e8L);
+  public static final IntRef framesUntilWobble_800c67d4 = MEMORY.ref(4, 0x800c67d4L, IntRef::new);
+  /** Set to vec_94 in one camera method, but never used */
+  public static final VECTOR unused_800c67d8 = new VECTOR();
+  public static final IntRef cameraWobbleOffsetX_800c67e4 = MEMORY.ref(4, 0x800c67e4L, IntRef::new);
+  public static final IntRef cameraWobbleOffsetY_800c67e8 = MEMORY.ref(4, 0x800c67e8L, IntRef::new);
 
   public static final BattleCamera camera_800c67f0 = new BattleCamera();
 
@@ -292,7 +306,7 @@ public final class Bttl_800c {
   public static BattleStruct24_2 _800c6938;
   public static DeffManager7cc deffManager_800c693c;
   /** Dunno what this is for, it's set to a pointer but unused. I removed the set for now. */
-  public static final Value _800c6940 = MEMORY.ref(4, 0x800c6940L);
+  public static final IntRef _800c6940 = MEMORY.ref(4, 0x800c6940L, IntRef::new);
   public static TmdObjTable1c[] tmds_800c6944;
   public static SpriteMetrics08[] spriteMetrics_800c6948;
 
@@ -301,9 +315,10 @@ public final class Bttl_800c {
 
   public static final ArrayRef<DragoonSpells09> dragoonSpells_800c6960 = MEMORY.ref(1, 0x800c6960L, ArrayRef.of(DragoonSpells09.class, 3, 9, DragoonSpells09::new));
 
-  public static final Value _800c697c = MEMORY.ref(2, 0x800c697cL);
-  public static final Value _800c697e = MEMORY.ref(2, 0x800c697eL);
-  public static final Value _800c6980 = MEMORY.ref(2, 0x800c6980L);
+  /** These three are related to targeting */
+  public static final ShortRef _800c697c = MEMORY.ref(2, 0x800c697cL, ShortRef::new);
+  public static final ShortRef _800c697e = MEMORY.ref(2, 0x800c697eL, ShortRef::new);
+  public static final ShortRef _800c6980 = MEMORY.ref(2, 0x800c6980L, ShortRef::new);
 
   public static final List<CombatItem02> combatItems_800c6988 = new ArrayList<>();
   public static final BoolRef itemTargetAll_800c69c8 = MEMORY.ref(4, 0x800c69c8L, BoolRef::new);
@@ -320,8 +335,8 @@ public final class Bttl_800c {
 
   public static final ArrayRef<IntRef> monsterBobjs_800c6b78 = MEMORY.ref(4, 0x800c6b78L, ArrayRef.of(IntRef.class, 9, 4, IntRef::new));
   public static final IntRef monsterCount_800c6b9c = MEMORY.ref(4, 0x800c6b9cL, IntRef::new);
-  public static final Value cameraPositionIndicesIndex_800c6ba0 = MEMORY.ref(1, 0x800c6ba0L);
-  public static final Value _800c6ba1 = MEMORY.ref(1, 0x800c6ba1L);
+  public static final ByteRef countCameraPositionIndicesIndices_800c6ba0 = MEMORY.ref(1, 0x800c6ba0L, ByteRef::new);
+  public static final ByteRef currentCameraPositionIndicesIndicesIndex_800c6ba1 = MEMORY.ref(1, 0x800c6ba1L, ByteRef::new);
 
   /** Uhh, contains the monsters that Melbu summons during his fight...? */
   public static final ArrayRef<LodString> melbuMonsterNames_800c6ba8 = MEMORY.ref(2, 0x800c6ba8L, ArrayRef.of(LodString.class, 3, 0x2c, LodString::new));
@@ -334,15 +349,16 @@ public final class Bttl_800c {
     Arrays.setAll(displayStats_800c6c2c, i -> new BattleDisplayStats144());
   }
 
-  public static final ArrayRef<UnsignedByteRef> cameraPositionIndices_800c6c30 = MEMORY.ref(4, 0x800c6c30L, ArrayRef.of(UnsignedByteRef.class, 4, 1, UnsignedByteRef::new));
+  public static final ArrayRef<UnsignedByteRef> cameraPositionIndicesIndices_800c6c30 = MEMORY.ref(4, 0x800c6c30L, ArrayRef.of(UnsignedByteRef.class, 4, 1, UnsignedByteRef::new));
 
   public static BattleMenuStruct58 battleMenu_800c6c34;
-  public static final IntRef _800c6c38 = MEMORY.ref(4, 0x800c6c38L, IntRef::new);
+  /** Only ever set to 1. 0 will set it to the top of the screen. */
+  public static final IntRef battleHudYOffsetIndex_800c6c38 = MEMORY.ref(4, 0x800c6c38L, IntRef::new);
   public static final IntList usedRepeatItems_800c6c3c = new IntArrayList();
 
-  public static final ArrayRef<BattleStruct3c> _800c6c40 = MEMORY.ref(2, 0x800c6c40L, ArrayRef.of(BattleStruct3c.class, 3, 0x3c, BattleStruct3c::new));
+  public static final ArrayRef<BattleHudCharacterDisplay3c> activePartyBattleHudCharacterDisplays_800c6c40 = MEMORY.ref(2, 0x800c6c40L, ArrayRef.of(BattleHudCharacterDisplay3c.class, 3, 0x3c, BattleHudCharacterDisplay3c::new));
 
-  public static final Value _800c6cf4 = MEMORY.ref(4, 0x800c6cf4L);
+  public static final IntRef countCombatUiFilesLoaded_800c6cf4 = MEMORY.ref(4, 0x800c6cf4L, IntRef::new);
 
   public static final ArrayRef<SVECTOR> completedAdditionStarburstTranslationMagnitudes_800c6d94 = MEMORY.ref(2, 0x800c6d94L, ArrayRef.of(SVECTOR.class, 4, 6, SVECTOR::new));
   public static final ArrayRef<SVECTOR> completedAdditionStarburstAngleModifiers_800c6dac = MEMORY.ref(2, 0x800c6dacL, ArrayRef.of(SVECTOR.class, 4, 6, SVECTOR::new));
@@ -365,67 +381,60 @@ public final class Bttl_800c {
 
   public static final ArrayRef<UnsignedShortRef> repeatItemIds_800c6e34 = MEMORY.ref(2, 0x800c6e34L, ArrayRef.of(UnsignedShortRef.class, 9, 2, UnsignedShortRef::new));
 
-  public static final ArrayRef<DVECTOR> _800c6e48 = MEMORY.ref(2, 0x800c6e48L, ArrayRef.of(DVECTOR.class, 6, 4, DVECTOR::new));
-  public static final ArrayRef<ShortRef> _800c6e60 = MEMORY.ref(2, 0x800c6e60L, ArrayRef.of(ShortRef.class, 4, 2, ShortRef::new));
+  public static final ArrayRef<DVECTOR> combatUiElementRectDimensions_800c6e48 = MEMORY.ref(2, 0x800c6e48L, ArrayRef.of(DVECTOR.class, 6, 4, DVECTOR::new));
+  public static final ArrayRef<ShortRef> battleHudTextureVramXOffsets_800c6e60 = MEMORY.ref(2, 0x800c6e60L, ArrayRef.of(ShortRef.class, 4, 2, ShortRef::new));
 
   public static final ArrayRef<UnsignedIntRef> characterDragoonIndices_800c6e68 = MEMORY.ref(4, 0x800c6e68L, ArrayRef.of(UnsignedIntRef.class, 10, 4, UnsignedIntRef::new));
 
   public static final ArrayRef<IntRef> melbuMonsterNameIndices = MEMORY.ref(4, 0x800c6e90L, ArrayRef.of(IntRef.class, 3, 4, IntRef::new));
 
-  public static final ArrayRef<ArrayRef<ByteRef>> _800c6e9c = MEMORY.ref(2, 0x800c6e9cL, ArrayRef.of(ArrayRef.classFor(ByteRef.class), 4, 0xc, ArrayRef.of(ByteRef.class, 0xc, 1, ByteRef::new)));
-  public static final ArrayRef<UiMetrics0c> _800c6ecc = MEMORY.ref(1, 0x800c6eccL, ArrayRef.of(UiMetrics0c.class, 3, 0xc, UiMetrics0c::new));
+  public static final ArrayRef<CombatPortraitBorderMetrics0c> combatPortraitBorderVertexCoords_800c6e9c = MEMORY.ref(1, 0x800c6e9cL, ArrayRef.of(CombatPortraitBorderMetrics0c.class, 4, 0xc, CombatPortraitBorderMetrics0c::new));
+  public static final ArrayRef<BattleHudStatLabelMetrics0c> battleHudStatLabelMetrics_800c6ecc = MEMORY.ref(1, 0x800c6eccL, ArrayRef.of(BattleHudStatLabelMetrics0c.class, 3, 0xc, BattleHudStatLabelMetrics0c::new));
 
-  public static final ArrayRef<ArrayRef<UnsignedByteRef>> _800c6f04 = MEMORY.ref(1, 0x800c6f04L, ArrayRef.of(ArrayRef.classFor(UnsignedByteRef.class), 7, 6, ArrayRef.of(UnsignedByteRef.class, 6, 1, UnsignedByteRef::new)));
+  public static final ArrayRef<ArrayRef<UnsignedByteRef>> spBarColours_800c6f04 = MEMORY.ref(1, 0x800c6f04L, ArrayRef.of(ArrayRef.classFor(UnsignedByteRef.class), 7, 6, ArrayRef.of(UnsignedByteRef.class, 6, 1, UnsignedByteRef::new)));
 
   public static final ArrayRef<IntRef> melbuStageToMonsterNameIndices_800c6f30 = MEMORY.ref(4, 0x800c6f30L, ArrayRef.of(IntRef.class, 7, 4, IntRef::new));
-  public static final ArrayRef<UnsignedShortRef> _800c6f4c = MEMORY.ref(2, 0x800c6f4cL, ArrayRef.of(UnsignedShortRef.class, 80, 2, UnsignedShortRef::new));
+  public static final ArrayRef<BattleHudBorderMetrics14> battleHudBorderMetrics_800c6f4c = MEMORY.ref(2, 0x800c6f4cL, ArrayRef.of(BattleHudBorderMetrics14.class, 8, 20, BattleHudBorderMetrics14::new));
   public static final ArrayRef<ArrayRef<UnsignedByteRef>> textboxColours_800c6fec = MEMORY.ref(1, 0x800c6fecL, ArrayRef.of(ArrayRef.classFor(UnsignedByteRef.class), 9, 3, ArrayRef.of(UnsignedByteRef.class, 3, 1, UnsignedByteRef::new)));
 
   public static final ArrayRef<ShortRef> digitOffsetXy_800c7014 = MEMORY.ref(2, 0x800c7014L, ArrayRef.of(ShortRef.class, 10, 2, ShortRef::new));
-  public static final ArrayRef<UnsignedShortRef> digitU_800c7028 = MEMORY.ref(2, 0x800c7028L, ArrayRef.of(UnsignedShortRef.class, 10, 2, UnsignedShortRef::new));
+  public static final ArrayRef<UnsignedShortRef> floatingTextType1DigitUs_800c7028 = MEMORY.ref(2, 0x800c7028L, ArrayRef.of(UnsignedShortRef.class, 10, 2, UnsignedShortRef::new));
 
   @SuppressWarnings("unchecked")
   public static final RegistryDelegate<Element>[] characterElements_800c706c = new RegistryDelegate[] {CoreMod.FIRE_ELEMENT, CoreMod.WIND_ELEMENT, CoreMod.LIGHT_ELEMENT, CoreMod.DARK_ELEMENT, CoreMod.THUNDER_ELEMENT, CoreMod.WIND_ELEMENT, CoreMod.WATER_ELEMENT, CoreMod.EARTH_ELEMENT, CoreMod.LIGHT_ELEMENT};
 
-  /** TODO array of shorts, 0x14 bytes total */
-  public static final Value _800c70e0 = MEMORY.ref(2, 0x800c70e0L);
+  public static final ArrayRef<ShortRef> floatingTextType3DigitUs_800c70e0 = MEMORY.ref(2, 0x800c70e0L, ArrayRef.of(ShortRef.class, 10, 2, ShortRef::new));
 
-  /** TODO array of shorts, 0x1e bytes total */
-  public static final Value _800c70f4 = MEMORY.ref(2, 0x800c70f4L);
+  public static final ArrayRef<ShortRef> floatingTextDigitClutOffsets_800c70f4 = MEMORY.ref(2, 0x800c70f4L, ArrayRef.of(ShortRef.class, 15, 2, ShortRef::new));
 
-  public static final ArrayRef<Vec2> _800c7114 = MEMORY.ref(4, 0x800c7114L, ArrayRef.of(Vec2.class, 2, 8, Vec2::new));
+  public static final ArrayRef<Vec2> battleUiElementClutVramXy_800c7114 = MEMORY.ref(4, 0x800c7114L, ArrayRef.of(Vec2.class, 2, 8, Vec2::new));
 
   public static final ArrayRef<UnsignedShortRef> targetAllItemIds_800c7124 = MEMORY.ref(2, 0x800c7124L, ArrayRef.of(UnsignedShortRef.class, 17, 2, UnsignedShortRef::new));
 
-  public static final Value _800c7190 = MEMORY.ref(1, 0x800c7190L);
+  public static final BattleMenuBackgroundUvMetrics04 battleItemMenuScrollArrowUvMetrics_800c7190 = MEMORY.ref(1, 0x800c7190L, BattleMenuBackgroundUvMetrics04::new);
+  public static final ArrayRef<ShortRef> iconFlags_800c7194 = MEMORY.ref(2, 0x800c7194L, ArrayRef.of(ShortRef.class, 8, 2, ShortRef::new));
 
-  public static final Value _800c7192 = MEMORY.ref(1, 0x800c7192L);
-  public static final Value _800c7193 = MEMORY.ref(1, 0x800c7193L);
-  public static final ArrayRef<ShortRef> _800c7194 = MEMORY.ref(2, 0x800c7194L, ArrayRef.of(ShortRef.class, 8, 2, ShortRef::new));
-
-  public static final ArrayRef<ShortRef> _800c71bc = MEMORY.ref(2, 0x800c71bcL, ArrayRef.of(ShortRef.class, 10, 2, ShortRef::new));
-  public static final ArrayRef<ShortRef> _800c71d0 = MEMORY.ref(2, 0x800c71d0L, ArrayRef.of(ShortRef.class, 10, 2, ShortRef::new));
-  public static final ArrayRef<ShortRef> _800c71e4 = MEMORY.ref(2, 0x800c71e4L, ArrayRef.of(ShortRef.class, 10, 2, ShortRef::new));
-  public static final ArrayRef<ByteRef> _800c71ec = MEMORY.ref(1, 0x800c71ecL, ArrayRef.of(ByteRef.class, 3, 1, ByteRef::new));
+  public static final BattleMenuHighlightMetrics12 battleMenuHighlightMetrics_800c71bc = MEMORY.ref(2, 0x800c71bcL, BattleMenuHighlightMetrics12::new);
+  public static final ArrayRef<ShortRef> dragoonSpiritIconClutOffsets_800c71d0 = MEMORY.ref(2, 0x800c71d0L, ArrayRef.of(ShortRef.class, 10, 2, ShortRef::new));
+  public static final ArrayRef<ShortRef> battleMenuIconStates_800c71e4 = MEMORY.ref(2, 0x800c71e4L, ArrayRef.of(ShortRef.class, 4, 2, ShortRef::new));
+  public static final ArrayRef<ByteRef> uiTextureElementBrightness_800c71ec = MEMORY.ref(1, 0x800c71ecL, ArrayRef.of(ByteRef.class, 3, 1, ByteRef::new));
 
   /** Different sets of bobjs for different target types (chars, monsters, all) */
   public static ScriptState<BattleObject27c>[][] targetBobjs_800c71f0;
 
-  public static final ArrayRef<IntRef> _800c723c = MEMORY.ref(4, 0x800c723cL, ArrayRef.of(IntRef.class, 4, 4, IntRef::new));
+  public static final ArrayRef<IntRef> buffDebuffStatIndices_800c723c = MEMORY.ref(4, 0x800c723cL, ArrayRef.of(IntRef.class, 4, 4, IntRef::new));
 
   public static final ArrayRef<UnsignedShortRef> protectedItems_800c72cc = MEMORY.ref(2, 0x800c72ccL, ArrayRef.of(UnsignedShortRef.class, 10, 2, UnsignedShortRef::new));
 
   public static final SpellStats0c[] spellStats_800fa0b8 = new SpellStats0c[128];
-  public static final Value _800fa6b8 = MEMORY.ref(2, 0x800fa6b8L);
+  public static final ArrayRef<ShortRef> postCombatActionTotalFrames_800fa6b8 = MEMORY.ref(2, 0x800fa6b8L, ArrayRef.of(ShortRef.class, 6, 2, ShortRef::new));
 
-  public static final Value _800fa6c4 = MEMORY.ref(2, 0x800fa6c4L);
+  public static final ArrayRef<ShortRef> postBattleActions_800fa6c4 = MEMORY.ref(2, 0x800fa6c4L, ArrayRef.of(ShortRef.class, 6, 2, ShortRef::new));
 
-  public static final Value _800fa6d0 = MEMORY.ref(2, 0x800fa6d0L);
-
-  public static final Value _800fa6d4 = MEMORY.ref(2, 0x800fa6d4L);
+  public static final ArrayRef<ShortRef> postCombatActionFrames_800fa6d0 = MEMORY.ref(2, 0x800fa6d0L, ArrayRef.of(ShortRef.class, 6, 2, ShortRef::new));
 
   public static final IntRef mcqColour_800fa6dc = MEMORY.ref(4, 0x800fa6dcL, IntRef::new);
-  public static final UnboundedArrayRef<RECT> _800fa6e0 = MEMORY.ref(2, 0x800fa6e0L, UnboundedArrayRef.of(0x8, RECT::new));
+  public static final UnboundedArrayRef<RECT> combatantTimRects_800fa6e0 = MEMORY.ref(2, 0x800fa6e0L, UnboundedArrayRef.of(0x8, RECT::new));
 
   public static final ArrayRef<ShortRef> colourMaps_800fa730 = MEMORY.ref(2, 0x800fa730L, ArrayRef.of(ShortRef.class, 10, 2, ShortRef::new));
 
@@ -445,13 +454,13 @@ public final class Bttl_800c {
   public static final QuintConsumer<EffectManagerData6c, Integer, short[], RadialGradientEffect14, Translucency>[] radialGradientEffectRenderers_800fa758 = new QuintConsumer[5];
   static {
     radialGradientEffectRenderers_800fa758[0] = Bttl_800d::renderDiscGradientEffect;
-    radialGradientEffectRenderers_800fa758[1] = Bttl_800d::FUN_800d1e80;
+    radialGradientEffectRenderers_800fa758[1] = Bttl_800d::FUN_800d1e80; // Not implemented
     radialGradientEffectRenderers_800fa758[2] = Bttl_800d::renderRingGradientEffect;
     radialGradientEffectRenderers_800fa758[3] = Bttl_800d::renderDiscGradientEffect;
     radialGradientEffectRenderers_800fa758[4] = Bttl_800d::renderRingGradientEffect;
   }
 
-  public static final Value _800fa76c = MEMORY.ref(4, 0x800fa76cL);
+  public static final ArrayRef<GuardEffectMetrics04> guardEffectMetrics_800fa76c = MEMORY.ref(4, 0x800fa76cL, ArrayRef.of(GuardEffectMetrics04.class, 7, 4, GuardEffectMetrics04::new));
 
   /** ASCII chars - [0-9][A-Z][a-z]'-& <null> */
   public static final ArrayRef<ByteRef> asciiTable_800fa788 = MEMORY.ref(1, 0x800fa788L, ArrayRef.of(ByteRef.class, 0x66, 1, ByteRef::new));
@@ -459,21 +468,23 @@ public final class Bttl_800c {
 
   public static final CString additionNames_800fa8d4 = MEMORY.ref(4, 0x800fa8d4L, CString.maxLength(0x1bb));
 
-  public static final Value _800faa90 = MEMORY.ref(2, 0x800faa90L);
-  public static final Value _800faa92 = MEMORY.ref(2, 0x800faa92L);
-  public static final Value _800faa94 = MEMORY.ref(1, 0x800faa94L);
+  /** Next 4 globals are related to SpTextEffect40 */
+  public static final ShortRef _800faa90 = MEMORY.ref(2, 0x800faa90L, ShortRef::new);
+  public static final ShortRef _800faa92 = MEMORY.ref(2, 0x800faa92L, ShortRef::new);
+  public static final ByteRef _800faa94 = MEMORY.ref(1, 0x800faa94L, ByteRef::new);
 
-  public static final Value _800faa98 = MEMORY.ref(4, 0x800faa98L);
-  public static final Value _800faa9c = MEMORY.ref(1, 0x800faa9cL);
-  public static final Value _800faa9d = MEMORY.ref(1, 0x800faa9dL);
+  public static final IntRef _800faa98 = MEMORY.ref(4, 0x800faa98L, IntRef::new);
+  /** Next 2 globals are related to AdditionNameTextEffect1c */
+  public static final ByteRef _800faa9c = MEMORY.ref(1, 0x800faa9cL, ByteRef::new);
+  public static final ByteRef _800faa9d = MEMORY.ref(1, 0x800faa9dL, ByteRef::new);
 
-  public static final Value _800faaa0 = MEMORY.ref(4, 0x800faaa0L);
+  public static final ArrayRef<ButtonPressHudMetrics06> buttonPressHudMetrics_800faaa0 = MEMORY.ref(4, 0x800faaa0L, ArrayRef.of(ButtonPressHudMetrics06.class, 41, 6, ButtonPressHudMetrics06::new));
 
-  public static final SVECTOR _800fab98 = new SVECTOR();
+  public static final SVECTOR cameraRotationVector_800fab98 = new SVECTOR();
   public static final SVECTOR _800faba0 = new SVECTOR();
   public static final VECTOR _800faba8 = new VECTOR();
 
-  public static final Value _800fabb8 = MEMORY.ref(1, 0x800fabb8L);
+  public static final BoolRef useCameraWobble_800fabb8 = MEMORY.ref(1, 0x800fabb8L, BoolRef::new);
 
   /**
    * <ol start="0">
@@ -816,10 +827,11 @@ public final class Bttl_800c {
     viewpointComponentMethods_800fad9c[7] = Bttl_800d::FUN_800dca68;
   }
 
-  public static final Value _800faec4 = MEMORY.ref(2, 0x800faec4L);
+  public static final ArrayRef<ShortRef> enemyDeffFileIndices_800faec4 = MEMORY.ref(2, 0x800faec4L, ArrayRef.of(ShortRef.class, 146, 2, ShortRef::new));
 
-  public static final Value _800fafe8 = MEMORY.ref(4, 0x800fafe8L);
-  public static final Value _800fafec = MEMORY.ref(1, 0x800fafecL);
+  /** Related to loading deffs */
+  public static final IntRef _800fafe8 = MEMORY.ref(4, 0x800fafe8L, IntRef::new);
+  public static final ArrayRef<ByteRef> dragoonDeffFlags_800fafec = MEMORY.ref(1, 0x800fafecL, ArrayRef.of(ByteRef.class, 84, 1, ByteRef::new));
   /**
    * <ol start="0">
    *   <li>0x4</li>
@@ -878,14 +890,13 @@ public final class Bttl_800c {
    * The rest are -1
    */
   public static final ArrayRef<ByteRef> melbuStageIndices_800fb064 = MEMORY.ref(1, 0x800fb064L, ArrayRef.of(ByteRef.class, 8, 1, ByteRef::new));
-  public static final Value _800fb06c = MEMORY.ref(1, 0x800fb06cL);
+  public static final ArrayRef<IntRef> modelColourMaps_800fb06c = MEMORY.ref(4, 0x800fb06cL, ArrayRef.of(IntRef.class, 32, 4, IntRef::new));
 
-  public static final Value _800fb0ec = MEMORY.ref(4, 0x800fb0ecL);
+  public static final ArrayRef<IntRef> colourMapUvs_800fb0ec = MEMORY.ref(4, 0x800fb0ecL, ArrayRef.of(IntRef.class, 39, 4, IntRef::new));
 
-  /** TODO array of unsigned shorts */
-  public static final Value _800fb188 = MEMORY.ref(2, 0x800fb188L);
+  public static final ArrayRef<ShortRef> targetArrowOffsetY_800fb188 = MEMORY.ref(2, 0x800fb188L, ArrayRef.of(ShortRef.class, 8, 2, ShortRef::new));
 
-  public static final ArrayRef<ShortRef> _800fb198 = MEMORY.ref(2, 0x800fb198L, ArrayRef.of(ShortRef.class, 4, 2, ShortRef::new));
+  public static final ArrayRef<ShortRef> battleHudYOffsets_800fb198 = MEMORY.ref(2, 0x800fb198L, ArrayRef.of(ShortRef.class, 4, 2, ShortRef::new));
 
   /** Targeting ("All allies", "All players", "All") */
   public static final ArrayRef<Pointer<LodString>> targeting_800fb36c = MEMORY.ref(4, 0x800fb36cL, ArrayRef.of(Pointer.classFor(LodString.class),  3, 4, Pointer.deferred(4, LodString::new)));
@@ -896,21 +907,21 @@ public final class Bttl_800c {
   /** Player names, player names, item names, dragoon spells, item descriptions, spell descriptions */
   public static final ArrayRef<Pointer<UnboundedArrayRef<Pointer<LodString>>>> allText_800fb3c0 = MEMORY.ref(4, 0x800fb3c0L, ArrayRef.of(Pointer.classFor(UnboundedArrayRef.classFor(Pointer.classFor(LodString.class))),  6, 4, Pointer.deferred(4, UnboundedArrayRef.of(4, Pointer.deferred(4, LodString::new)))));
 
-  public static final ArrayRef<Pointer<ArrayRef<UnsignedByteRef>>> _800fb444 = MEMORY.ref(4, 0x800fb444L, ArrayRef.of(Pointer.classFor(ArrayRef.classFor(UnsignedByteRef.class)), 10, 4, Pointer.deferred(4, ArrayRef.of(UnsignedByteRef.class, 12, 1, UnsignedByteRef::new))));
-  public static final ArrayRef<ByteRef> _800fb46c = MEMORY.ref(1, 0x800fb46cL, ArrayRef.of(ByteRef.class, 0x10, 1, ByteRef::new));
-  public static final ArrayRef<ByteRef> _800fb47c = MEMORY.ref(1, 0x800fb47cL, ArrayRef.of(ByteRef.class, 0x10, 1, ByteRef::new));
+  public static final ArrayRef<Pointer<NameAndPortraitDisplayMetrics0c>> hudNameAndPortraitMetrics_800fb444 = MEMORY.ref(4, 0x800fb444L, ArrayRef.of(Pointer.classFor(NameAndPortraitDisplayMetrics0c.class), 10, 4, Pointer.deferred(4, NameAndPortraitDisplayMetrics0c::new)));
+  public static final ArrayRef<SpBarBorderMetrics04> spBarBorderMetrics_800fb46c = MEMORY.ref(1, 0x800fb46cL, ArrayRef.of(SpBarBorderMetrics04.class, 4, 4, SpBarBorderMetrics04::new));
+  public static final ArrayRef<SpBarBorderMetrics04> spBarFlashingBorderMetrics_800fb47c = MEMORY.ref(1, 0x800fb47cL, ArrayRef.of(SpBarBorderMetrics04.class, 4, 4, SpBarBorderMetrics04::new));
 
-  public static final Value _800fb5dc = MEMORY.ref(4, 0x800fb5dcL);
+  public static final ArrayRef<BattleItemMenuArrowUvMetrics06> battleMenuBackgroundMetrics_800fb5dc = MEMORY.ref(4, 0x800fb5dcL, ArrayRef.of(BattleItemMenuArrowUvMetrics06.class, 9, 6, BattleItemMenuArrowUvMetrics06::new));
 
-  public static final Value _800fb614 = MEMORY.ref(4, 0x800fb614L);
+  public static final ArrayRef<BattleMenuBackgroundDisplayMetrics0c> battleMenuBackgroundDisplayMetrics_800fb614 = MEMORY.ref(4, 0x800fb614L, ArrayRef.of(BattleMenuBackgroundDisplayMetrics0c.class, 8, 12, BattleMenuBackgroundDisplayMetrics0c::new));
 
-  public static final Value _800fb674 = MEMORY.ref(4, 0x800fb674L);
+  public static final ArrayRef<BattleMenuIconMetrics08> battleMenuIconMetrics_800fb674 = MEMORY.ref(4, 0x800fb674L, ArrayRef.of(BattleMenuIconMetrics08.class, 12, 8, BattleMenuIconMetrics08::new));
 
-  public static final Value _800fb6bc = MEMORY.ref(2, 0x800fb6bcL);
+  public static final ArrayRef<ArrayRef<ShortRef>> battleMenuIconHeights_800fb6bc = MEMORY.ref(2, 0x800fb6bcL, ArrayRef.of(ArrayRef.classFor(ShortRef.class), 9, 6,  ArrayRef.of(ShortRef.class, 3, 2, ShortRef::new)));
 
-  public static final Value _800fb6f4 = MEMORY.ref(1, 0x800fb6f4L);
+  public static final ArrayRef<ArrayRef<ShortRef>> battleMenuIconVOffsets_800fb6f4 = MEMORY.ref(2, 0x800fb6f4L, ArrayRef.of(ArrayRef.classFor(ShortRef.class), 9, 6, ArrayRef.of(ShortRef.class, 3, 2, ShortRef::new)));
 
-  public static final Value _800fb72c = MEMORY.ref(4, 0x800fb72cL);
+  public static final ArrayRef<BattleMenuTextMetrics08> battleMenuTextMetrics_800fb72c = MEMORY.ref(4, 0x800fb72cL, ArrayRef.of(BattleMenuTextMetrics08.class, 12, 8, BattleMenuTextMetrics08::new));
 
   @Method(0x800c7304L)
   public static void cacheLivingBobjs() {
@@ -983,7 +994,7 @@ public final class Bttl_800c {
 
     totalXpFromCombat_800bc95c.set(0);
     _800bc960.set(0);
-    postBattleAction_800bc974.set(0);
+    postBattleActionIndex_800bc974.set(0);
     itemsDroppedByEnemiesCount_800bc978.set(0);
 
     int charIndex = gameState_800babc8.charIds_88[1];
@@ -1151,12 +1162,12 @@ public final class Bttl_800c {
     FUN_800ef9e4();
     drawUiElements();
 
-    if(postBattleAction_800bc974.get() != 0) {
+    if(postBattleActionIndex_800bc974.get() != 0) {
       pregameLoadingStage_800bb10c.incr();
       return;
     }
 
-    if(allBobjCount_800c66d0.get() > 0 && _800c66b9.get() == 0 && FUN_800c7da8()) {
+    if(allBobjCount_800c66d0.get() > 0 && !_800c66b9.get() && FUN_800c7da8()) {
       vsyncMode_8007a3b8 = 3;
       mcqColour_800fa6dc.set(0x80);
       currentTurnBobj_800c66c8.storage_44[7] &= 0xffff_efff;
@@ -1184,22 +1195,22 @@ public final class Bttl_800c {
             FUN_80020308();
 
             if(encounterId_800bb0f8.get() != 443) { // Standard victory
-              postBattleAction_800bc974.set(1);
+              postBattleActionIndex_800bc974.set(1);
               FUN_8001af00();
             } else { // Melbu Victory
               //LAB_800c7d30
-              postBattleAction_800bc974.set(4);
+              postBattleActionIndex_800bc974.set(4);
             }
           }
         }
       } else { // Game over
         loadMusicPackage(19, 0);
-        postBattleAction_800bc974.set(2);
+        postBattleActionIndex_800bc974.set(2);
       }
     }
 
     //LAB_800c7d78
-    if(postBattleAction_800bc974.get() != 0) {
+    if(postBattleActionIndex_800bc974.get() != 0) {
       //LAB_800c7d88
       pregameLoadingStage_800bb10c.incr();
     }
@@ -1289,13 +1300,13 @@ public final class Bttl_800c {
   public static void performPostBattleAction() {
     EVENTS.postEvent(new BattleEndedEvent());
 
-    final int postBattleAction = postBattleAction_800bc974.get();
+    final int postBattleActionIndex = postBattleActionIndex_800bc974.get();
 
-    if(_800c6690.get() == 0) {
-      final int a1 = (int)_800fa6c4.offset(postBattleAction * 0x2L).getSigned();
+    if(currentPostCombatActionFrame_800c6690.get() == 0) {
+      final int postBattleAction = postBattleActions_800fa6c4.get(postBattleActionIndex).get();
 
-      if(a1 >= 0) {
-        _800c6748.set(a1);
+      if(postBattleAction >= 0) {
+        _800c6748.set(postBattleAction);
         scriptState_800c6914 = currentTurnBobj_800c66c8;
       }
 
@@ -1309,7 +1320,7 @@ public final class Bttl_800c {
       }
 
       //LAB_800c8144
-      if(postBattleAction == 1) {
+      if(postBattleActionIndex == 1) {
         //LAB_800c8180
         for(int i = 0; i < charCount_800c677c.get(); i++) {
           battleState_8006e398.charBobjs_e40[i].storage_44[7] |= 0x8;
@@ -1319,27 +1330,26 @@ public final class Bttl_800c {
 
     //LAB_800c81bc
     //LAB_800c81c0
-    _800c6690.incr();
+    currentPostCombatActionFrame_800c6690.incr();
 
-    if(_800c6690.get() >= _800fa6b8.offset(postBattleAction * 0x2L).getSigned() || (press_800bee94.get() & 0xff) != 0 && _800c6690.get() >= 0x19L) {
+    if(currentPostCombatActionFrame_800c6690.get() >= postCombatActionTotalFrames_800fa6b8.get(postBattleActionIndex).get() || (press_800bee94.get() & 0xff) != 0 && currentPostCombatActionFrame_800c6690.get() >= 25) {
       //LAB_800c8214
-      FUN_800e9120();
+      deallocateLightingControllerAndDeffManager();
       loadSupportOverlay(2, () -> { });
 
       if(fullScreenEffect_800bb140.currentColour_28 == 0) {
-        scriptStartEffect(1, (int)_800fa6d0.offset(postBattleAction * 0x2L).getSigned());
+        scriptStartEffect(1, postCombatActionFrames_800fa6d0.get(postBattleActionIndex).get());
       }
 
       //LAB_800c8274
-      if(postBattleAction == 2) {
-        sssqFadeOut((short)(_800fa6d4.getSigned() - 2));
+      if(postBattleActionIndex == 2) {
+        sssqFadeOut((short)(postCombatActionFrames_800fa6d0.get(2).get() - 2));
       }
 
       //LAB_800c8290
-      _800c6690.set(0);
+      currentPostCombatActionFrame_800c6690.set(0);
       pregameLoadingStage_800bb10c.incr();
     }
-
     //LAB_800c82a8
   }
 
@@ -1396,7 +1406,7 @@ public final class Bttl_800c {
       }
 
       //LAB_800c84b4
-      switch(postBattleAction_800bc974.get()) {
+      switch(postBattleActionIndex_800bc974.get()) {
         case 2 -> {
           final int encounter = encounterId_800bb0f8.get();
           if(encounter == 391 || encounter >= 404 && encounter < 408) { // Arena fights in Lohan
@@ -1418,13 +1428,13 @@ public final class Bttl_800c {
       //LAB_800c8558
       postCombatMainCallbackIndex_800bc91c = postCombatMainCallbackIndex;
 
-      final int postCombatSubmapStage = (int)_800c6718.offset(0xcL).get();
+      final int postCombatSubmapStage = currentStageData_800c6718.postCombatSubmapStage_0c;
       if(postCombatSubmapStage != 0xff) {
         submapScene_80052c34.set(postCombatSubmapStage);
       }
 
       //LAB_800c8578
-      final int postCombatSubmapCut = (int)_800c6718.offset(0x28L).get();
+      final int postCombatSubmapCut = currentStageData_800c6718.postCombatSubmapCut_28;
       if(postCombatSubmapCut != 0xffff) {
         submapCut_80052c30.set(postCombatSubmapCut);
       }
@@ -1433,7 +1443,7 @@ public final class Bttl_800c {
       setDepthResolution(14);
       battleLoaded_800bc94c.set(false);
 
-      switch(postBattleAction_800bc974.get()) {
+      switch(postBattleActionIndex_800bc974.get()) {
         case 1, 3 -> whichMenu_800bdc38 = WhichMenu.INIT_POST_COMBAT_REPORT_26;
         case 2, 4, 5 -> whichMenu_800bdc38 = WhichMenu.NONE_0;
       }
@@ -1478,7 +1488,7 @@ public final class Bttl_800c {
 
   @Method(0x800c882cL)
   public static void FUN_800c882c() {
-    if(_800c6764.get() == 0 || _800c66d4.get() == 0 || (_800bc960.get() & 0x80) == 0) {
+    if(shouldRenderMcq_800c6764.get() == 0 || !shouldRenderMcq_800c66d4.get() || (_800bc960.get() & 0x80) == 0) {
       //LAB_800c8ad8
       //LAB_800c8adc
       clearBlue_800babc0.set(0);
@@ -1487,12 +1497,12 @@ public final class Bttl_800c {
     } else {
       final McqHeader mcq = battlePreloadedEntities_1f8003f4.stageMcq_9cb0;
 
-      _800c6774.add(_800c676c.get());
-      _800c6778.add(_800c6770.get());
-      final int x0 = ((int)_800c66cc.getSigned() * FUN_800dd118() / 0x1000 + _800c6774.get()) % mcq.screenWidth_14 - centreScreenX_1f8003dc.get();
+      mcqOffsetX_800c6774.add(mcqStepX_800c676c.get());
+      mcqOffsetY_800c6778.add(mcqStepY_800c6770.get());
+      final int x0 = (mcqBaseOffsetX_800c66cc.get() * FUN_800dd118() / 0x1000 + mcqOffsetX_800c6774.get()) % mcq.screenWidth_14 - centreScreenX_1f8003dc.get();
       final int x1 = x0 - mcq.screenWidth_14;
       final int x2 = x0 + mcq.screenWidth_14;
-      int y = _800c6778.get() - (FUN_800dd0d4() + 0x800 & 0xfff) + 0x760 - centreScreenY_1f8003de.get();
+      int y = mcqOffsetY_800c6778.get() - (FUN_800dd0d4() + 0x800 & 0xfff) + 0x760 - centreScreenY_1f8003de.get();
       renderMcq(mcq, 320, 0, x0, y, orderingTableSize_1f8003c8.get() - 2, mcqColour_800fa6dc.get());
       renderMcq(mcq, 320, 0, x1, y, orderingTableSize_1f8003c8.get() - 2, mcqColour_800fa6dc.get());
 
@@ -1574,7 +1584,7 @@ public final class Bttl_800c {
     final long x;
     if((_800bc960.get() & 0x80) != 0) {
       x = 320;
-      _800c6764.set(1);
+      shouldRenderMcq_800c6764.set(1);
     } else {
       //LAB_800c8d98
       x = 512;
@@ -1586,25 +1596,24 @@ public final class Bttl_800c {
     //LAB_800c8dc0
     battlePreloadedEntities_1f8003f4.stageMcq_9cb0 = mcq;
 
-    _800c66d4.setu(0x1L);
-    _800c66cc.setu((0x400 / mcq.screenWidth_14 + 1) * mcq.screenWidth_14);
+    shouldRenderMcq_800c66d4.set(true);
+    mcqBaseOffsetX_800c66cc.set((0x400 / mcq.screenWidth_14 + 1) * mcq.screenWidth_14);
   }
 
   @Method(0x800c8e48L)
   public static void FUN_800c8e48() {
-    if(_800c66d4.get() != 0 && (_800bc960.get() & 0x80) == 0) {
+    if(shouldRenderMcq_800c66d4.get() && (_800bc960.get() & 0x80) == 0) {
       final RECT sp0x10 = new RECT((short)512, (short)0, (short)battlePreloadedEntities_1f8003f4.stageMcq_9cb0.vramWidth_08, (short)256);
       MoveImage(sp0x10, 320, 0);
-      _800c6764.set(1);
+      shouldRenderMcq_800c6764.set(1);
       _800bc960.or(0x80);
     }
-
     //LAB_800c8ec8
   }
 
   @Method(0x800c8ed8L)
   public static void FUN_800c8ed8() {
-    _800c66d4.setu(0);
+    shouldRenderMcq_800c66d4.set(false);
   }
 
   @Method(0x800c8ee4L)
@@ -1613,12 +1622,12 @@ public final class Bttl_800c {
     //NOTE: zeroes 0x50 bytes after this array of structs ends
     Arrays.fill(combatants_8005e398, null);
 
-    _800c66c0.setu(0x1L);
+    unused_800c66c0.set(true);
   }
 
   @Method(0x800c8f18L)
   public static void FUN_800c8f18() {
-    _800c66c0.setu(0);
+    unused_800c66c0.set(false);
   }
 
   @Method(0x800c8f24L)
@@ -1647,7 +1656,7 @@ public final class Bttl_800c {
         combatant.charIndex_1a2 = a0;
         combatant._1a4 = -1;
         combatant._1a6 = -1;
-        combatantCount_800c66a0.addu(0x1L);
+        combatantCount_800c66a0.add(1);
         return combatantIndex;
       }
     }
@@ -1667,7 +1676,7 @@ public final class Bttl_800c {
     //LAB_800c902c
     combatants_8005e398[combatantIndex] = null;
 
-    combatantCount_800c66a0.subu(0x1L);
+    combatantCount_800c66a0.sub(1);
   }
 
   @Method(0x800c9060L)
@@ -2309,13 +2318,13 @@ public final class Bttl_800c {
 
     if(a0 != 0) {
       //LAB_800ca83c
-      final RECT s0 = _800fa6e0.get(a0);
-      LoadImage(s0, tim.getImageData());
+      final RECT combatantTimRect = combatantTimRects_800fa6e0.get(a0);
+      LoadImage(combatantTimRect, tim.getImageData());
 
       if(tim.hasClut()) {
         final RECT clutRect = tim.getClutRect();
-        clutRect.x.set(s0.x.get());
-        clutRect.y.set((short)(s0.y.get() + 240));
+        clutRect.x.set(combatantTimRect.x.get());
+        clutRect.y.set((short)(combatantTimRect.y.get() + 240));
 
         //LAB_800ca884
         LoadImage(clutRect, tim.getClutData());
@@ -2342,7 +2351,7 @@ public final class Bttl_800c {
       final int a0_0 = 0x1 << i;
 
       if((_800c66c4.get() & a0_0) == 0) {
-        _800c66c4.oru(a0_0);
+        _800c66c4.or(a0_0);
         return i;
       }
 
@@ -2355,12 +2364,12 @@ public final class Bttl_800c {
 
   @Method(0x800ca8fcL)
   public static void FUN_800ca8fc(final int shift) {
-    _800c66c4.oru(1L << shift);
+    _800c66c4.or(0x1 << shift);
   }
 
   @Method(0x800ca918L)
   public static void FUN_800ca918(final int shift) {
-    _800c66c4.and(~(1L << shift));
+    _800c66c4.and(~(0x1 << shift));
   }
 
   @Method(0x800ca938L)
@@ -2370,12 +2379,12 @@ public final class Bttl_800c {
 
   @Method(0x800ca980L)
   public static void FUN_800ca980() {
-    _800c66c1.setu(0x1L);
+    unused_800c66c1.set(true);
   }
 
   @Method(0x800ca9b4L)
   public static void FUN_800ca9b4() {
-    _800c66c1.setu(0);
+    unused_800c66c1.set(false);
 
     //LAB_800ca9d8
     for(int s1 = 0; s1 < 0x100; s1++) {
@@ -2388,19 +2397,19 @@ public final class Bttl_800c {
 
   @Method(0x800caa20L)
   public static int FUN_800caa20() {
-    _800c66b4.addu(0x1L);
-    if(_800c66b4.get() >= 0x100L) {
-      _800c66b4.setu(0);
+    _800c66b4.add(1);
+    if(_800c66b4.get() >= 0x100) {
+      _800c66b4.set(0);
     }
 
     //LAB_800caa44
     //LAB_800caa64
-    for(int i = (int)_800c66b4.get(); i < 0x100; i++) {
+    for(int i = _800c66b4.get(); i < 0x100; i++) {
       final BttlStruct08 a1 = battleState_8006e398._580[i];
 
       if(a1._04 == 0) {
         //LAB_800caacc
-        _800c66b4.setu(i);
+        _800c66b4.set(i);
         a1.data_00 = null;
         a1._04 = 1;
         return i;
@@ -2414,7 +2423,7 @@ public final class Bttl_800c {
 
       if(a1._04 == 0) {
         //LAB_800caacc
-        _800c66b4.setu(i);
+        _800c66b4.set(i);
         a1.data_00 = null;
         a1._04 = 1;
         return i;
@@ -2485,7 +2494,7 @@ public final class Bttl_800c {
 
   @Method(0x800cae44L)
   public static void FUN_800cae44() {
-    _800c675c.setu(0);
+    currentDisplayableIconsBitset_800c675c.set(0);
   }
 
   @Method(0x800cae50L)
@@ -3153,37 +3162,37 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cca34L)
-  public static FlowControl FUN_800cca34(final RunningScript<BattleObject27c> script) {
-    if(_800c675c.get() != script.params_20[0].get() || (script.scriptState_04.storage_44[7] & 0x1000) != 0) {
+  public static FlowControl scriptSetUpAndHandleCombatMenu(final RunningScript<BattleObject27c> script) {
+    if(currentDisplayableIconsBitset_800c675c.get() != script.params_20[0].get() || (script.scriptState_04.storage_44[7] & 0x1000) != 0) {
       //LAB_800cca7c
-      final int a1 = script.params_20[0].get();
-      final int a2;
+      final int displayableIconsBitset = script.params_20[0].get();
+      final int disabledIconsBitset;
 
       if(script.paramCount_14 == 2) {
-        a2 = 0;
+        disabledIconsBitset = 0;
       } else {
         //LAB_800ccaa0
-        a2 = script.params_20[1].get();
+        disabledIconsBitset = script.params_20[1].get();
       }
 
       //LAB_800ccab4
-      FUN_800f6134(script.scriptState_04, a1, a2);
+      initializeCombatMenuIcons(script.scriptState_04, displayableIconsBitset, disabledIconsBitset);
 
       script.scriptState_04.storage_44[7] &= 0xffff_efff;
-      _800c675c.setu(script.params_20[0].get());
+      currentDisplayableIconsBitset_800c675c.set(script.params_20[0].get());
     }
 
     //LAB_800ccaec
-    FUN_800f8c38(0x1L);
+    toggleBattleMenuSelectorRendering(true);
 
-    final int s0 = FUN_800f6330();
-    if(s0 == 0) {
+    final int selectedAction = handleCombatMenu();
+    if(selectedAction == 0) {
       //LAB_800ccb24
       return FlowControl.PAUSE_AND_REWIND;
     }
 
-    FUN_800f8c38(0);
-    script.params_20[2].set(s0 - 1);
+    toggleBattleMenuSelectorRendering(false);
+    script.params_20[2].set(selectedAction - 1);
 
     //LAB_800ccb28
     return FlowControl.CONTINUE;
@@ -3290,13 +3299,13 @@ public final class Bttl_800c {
 
   @Method(0x800ccef8L)
   public static FlowControl FUN_800ccef8(final RunningScript<?> script) {
-    postBattleAction_800bc974.set(3);
+    postBattleActionIndex_800bc974.set(3);
     return FlowControl.PAUSE_AND_REWIND;
   }
 
   @Method(0x800ccf0cL)
   public static FlowControl scriptSetPostBattleAction(final RunningScript<?> script) {
-    postBattleAction_800bc974.set(script.params_20[0].get());
+    postBattleActionIndex_800bc974.set(script.params_20[0].get());
     return FlowControl.PAUSE_AND_REWIND;
   }
 
@@ -3640,7 +3649,7 @@ public final class Bttl_800c {
 
   @Method(0x800cdb74L)
   public static FlowControl FUN_800cdb74(final RunningScript<?> script) {
-    _800c66b9.setu(0x1L);
+    _800c66b9.set(true);
 
     //LAB_800cdbb8
     for(int i = 0; i < charCount_800c677c.get(); i++) {

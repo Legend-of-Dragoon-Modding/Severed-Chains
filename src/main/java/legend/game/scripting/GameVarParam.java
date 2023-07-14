@@ -84,7 +84,7 @@ public class GameVarParam extends Param {
       case 54 -> Scus94491BpeSegment_8006.battleState_8006e398._ef0;
       case 55 -> Scus94491BpeSegment_800b.gameState_800babc8._b4;
       case 56 -> Scus94491BpeSegment_800b.gameState_800babc8._b8;
-      case 57 -> Scus94491BpeSegment_800b.postBattleAction_800bc974.get();
+      case 57 -> Scus94491BpeSegment_800b.postBattleActionIndex_800bc974.get();
       case 58 -> Scus94491BpeSegment_800b._800bc960.get();
       case 59 -> Bttl_800c.currentTurnBobj_800c66c8 != null ? Bttl_800c.currentTurnBobj_800c66c8.index : -1;
       case 60 -> Scus94491BpeSegment_800b.goldGainedFromCombat_800bc920.get();
@@ -109,20 +109,20 @@ public class GameVarParam extends Param {
       case 83 -> Bttl_800c._800c67cc.get();
       case 84 -> Bttl_800c._800c67d0.get();
       case 85 -> Bttl_800c._800c6710.get();
-      case 86 -> Bttl_800c._800c6780.get();
+      case 86 -> Bttl_800c.currentCameraIndex_800c6780.get();
       case 87 -> Bttl_800c._800c66a8.get();
       case 88 -> Bttl_800c._800c6700.get();
       case 89 -> Bttl_800c._800c6704.get();
-      case 90 -> Bttl_800c._800c66b0.get();
+      case 90 -> Bttl_800c.currentCameraPositionIndicesIndex_800c66b0.get();
 
       case 96 -> Bttl_800c._800c6754.get();
       case 97 -> Bttl_800c.currentStage_800c66a4.get();
 
-      case 104 -> Bttl_800c._800c6764.get();
-      case 105 -> Bttl_800c._800c6774.get();
-      case 106 -> Bttl_800c._800c6778.get();
-      case 107 -> Bttl_800c._800c676c.get();
-      case 108 -> Bttl_800c._800c6770.get();
+      case 104 -> Bttl_800c.shouldRenderMcq_800c6764.get();
+      case 105 -> Bttl_800c.mcqOffsetX_800c6774.get();
+      case 106 -> Bttl_800c.mcqOffsetY_800c6778.get();
+      case 107 -> Bttl_800c.mcqStepX_800c676c.get();
+      case 108 -> Bttl_800c.mcqStepY_800c6770.get();
       case 109 -> Bttl_800c.mcqColour_800fa6dc.get();
 
       case 112 -> Scus94491BpeSegment_800b.gameState_800babc8.wmapFlags_15c.getRaw(0);
@@ -215,7 +215,7 @@ public class GameVarParam extends Param {
       case 54 -> Scus94491BpeSegment_8006.battleState_8006e398._ef0 = val;
       case 55 -> Scus94491BpeSegment_800b.gameState_800babc8._b4 = val;
       case 56 -> Scus94491BpeSegment_800b.gameState_800babc8._b8 = val;
-      case 57 -> Scus94491BpeSegment_800b.postBattleAction_800bc974.set(val);
+      case 57 -> Scus94491BpeSegment_800b.postBattleActionIndex_800bc974.set(val);
       case 58 -> Scus94491BpeSegment_800b._800bc960.set(val);
       case 59 -> Bttl_800c.currentTurnBobj_800c66c8 = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[val];
       case 60 -> Scus94491BpeSegment_800b.goldGainedFromCombat_800bc920.set(val);
@@ -240,20 +240,20 @@ public class GameVarParam extends Param {
       case 83 -> Bttl_800c._800c67cc.set(val);
       case 84 -> Bttl_800c._800c67d0.set(val);
       case 85 -> Bttl_800c._800c6710.set(val);
-      case 86 -> Bttl_800c._800c6780.set(val);
+      case 86 -> Bttl_800c.currentCameraIndex_800c6780.set(val);
       case 87 -> Bttl_800c._800c66a8.set(val);
       case 88 -> Bttl_800c._800c6700.set(val);
       case 89 -> Bttl_800c._800c6704.set(val);
-      case 90 -> Bttl_800c._800c66b0.set(val);
+      case 90 -> Bttl_800c.currentCameraPositionIndicesIndex_800c66b0.set(val);
 
       case 96 -> Bttl_800c._800c6754.set(val);
       case 97 -> Bttl_800c.currentStage_800c66a4.set(val);
 
-      case 104 -> Bttl_800c._800c6764.set(val);
-      case 105 -> Bttl_800c._800c6774.set(val);
-      case 106 -> Bttl_800c._800c6778.set(val);
-      case 107 -> Bttl_800c._800c676c.set(val);
-      case 108 -> Bttl_800c._800c6770.set(val);
+      case 104 -> Bttl_800c.shouldRenderMcq_800c6764.set(val);
+      case 105 -> Bttl_800c.mcqOffsetX_800c6774.set(val);
+      case 106 -> Bttl_800c.mcqOffsetY_800c6778.set(val);
+      case 107 -> Bttl_800c.mcqStepX_800c676c.set(val);
+      case 108 -> Bttl_800c.mcqStepY_800c6770.set(val);
       case 109 -> Bttl_800c.mcqColour_800fa6dc.set(val);
 
       case 112 -> Scus94491BpeSegment_800b.gameState_800babc8.wmapFlags_15c.setRaw(0, val);

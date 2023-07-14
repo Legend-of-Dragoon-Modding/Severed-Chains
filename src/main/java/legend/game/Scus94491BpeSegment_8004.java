@@ -274,7 +274,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[157] = Bttl_800c::FUN_800cc698;
     scriptSubFunctions_8004e29c[158] = Bttl_800c::FUN_800cc784;
     scriptSubFunctions_8004e29c[159] = Bttl_800c::scriptLoadAttackAnimations;
-    scriptSubFunctions_8004e29c[160] = Bttl_800c::FUN_800cca34;
+    scriptSubFunctions_8004e29c[160] = Bttl_800c::scriptSetUpAndHandleCombatMenu;
     scriptSubFunctions_8004e29c[161] = Scus94491BpeSegment::scriptRewindAndPause2;
     scriptSubFunctions_8004e29c[162] = Scus94491BpeSegment::scriptRewindAndPause2;
     scriptSubFunctions_8004e29c[163] = Scus94491BpeSegment::scriptRewindAndPause2;
@@ -727,7 +727,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[806] = Scus94491BpeSegment::FUN_8001c5fc;
     scriptSubFunctions_8004e29c[807] = Scus94491BpeSegment::FUN_8001c604;
 
-    scriptSubFunctions_8004e29c[832] = Bttl_800d::FUN_800d46d4;
+    scriptSubFunctions_8004e29c[832] = Bttl_800d::scriptRenderButtonPressHudElement;
     scriptSubFunctions_8004e29c[833] = SEffe::FUN_80108df8;
     scriptSubFunctions_8004e29c[834] = SEffe::FUN_80102610;
     scriptSubFunctions_8004e29c[835] = Bttl_800c::scriptGetBobjDimension;
