@@ -159,6 +159,7 @@ import static legend.game.Scus94491BpeSegment_8003.RotTransPers4;
 import static legend.game.Scus94491BpeSegment_8003.ScaleMatrix;
 import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
 import static legend.game.Scus94491BpeSegment_8003.TransMatrix;
+import static legend.game.Scus94491BpeSegment_8003.getProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
 import static legend.game.Scus94491BpeSegment_8003.perspectiveTransformTriple;
 import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
@@ -4866,15 +4867,12 @@ public final class SEffe {
         final SVECTOR sp0x30 = new SVECTOR().set(effect.vertices_0c[sp76]);
         final VECTOR sp0x40 = new VECTOR().set(sp0x20).sub(sp0x18);
         final VECTOR sp0x50 = new VECTOR().set(sp0x28).sub(sp0x18);
-        CPU.CTC2(sp0x50.getX(),  0);
-        CPU.CTC2(sp0x50.getY(),  2);
-        CPU.CTC2(sp0x50.getZ(),  4);
-        CPU.MTC2(sp0x40.getX(),  9);
-        CPU.MTC2(sp0x40.getY(), 10);
-        CPU.MTC2(sp0x40.getZ(), 11);
+        GTE.setRotationMatrixValue(0, sp0x50.getX());
+        GTE.setRotationMatrixValue(4, sp0x50.getY());
+        GTE.setRotationMatrixValue(8, sp0x50.getZ());
+        GTE.setIr123(sp0x40);
         CPU.COP2(0x178000cL);
-        final VECTOR sp0x60 = new VECTOR().set((int)CPU.MFC2(25), (int)CPU.MFC2(26), (int)CPU.MFC2(27));
-        final SVECTOR sp0x38 = new SVECTOR().set(sp0x60);
+        final SVECTOR sp0x38 = new SVECTOR().set((short)GTE.getMac1(), (short)GTE.getMac2(), (short)GTE.getMac3());
 
         effect.normals_10[sp70].set(sp0x38);
         effect.normals_10[sp72].set(sp0x38);
@@ -4936,7 +4934,7 @@ public final class SEffe {
     effect._14 = script.params_20[5].get();
     effect.flags_18 = script.params_20[6].get();
     effect.type_1c = script.params_20[7].get();
-    effect.projectionPlaneDistanceDiv4_20 = (int)(CPU.CFC2(26) >> 2);
+    effect.projectionPlaneDistanceDiv4_20 = getProjectionPlaneDistance() >> 2;
 
     //LAB_8010a754
     for(int i = 0; i < effect.count_04; i++) {
@@ -5295,7 +5293,7 @@ public final class SEffe {
 
           if(effect.screenspaceW_10 == 0) {
             //LAB_8010b638
-            final int sp8c = (int)CPU.CFC2(26);
+            final int sp8c = getProjectionPlaneDistance();
             final long zShift = (z << 12) * 4; // Must be long or the calc will overflow
             effect.screenspaceW_10 = (int)(effect.captureW_04 * zShift / sp8c >>> 12);
             effect.screenspaceH_14 = (int)(effect.captureH_08 * zShift / sp8c >>> 12);
@@ -5342,7 +5340,7 @@ public final class SEffe {
 
           if(effect.screenspaceW_10 == 0) {
             //LAB_8010b664
-            final int sp90 = (int)CPU.CFC2(26);
+            final int sp90 = getProjectionPlaneDistance();
             a1 = (z << 12) * 4;
 
             //LAB_8010b688
@@ -5430,7 +5428,7 @@ public final class SEffe {
 
       if(effect.screenspaceW_10 == 0) {
         //LAB_8010bd08
-        final int sp8c = (int)CPU.CFC2(26);
+        final int sp8c = getProjectionPlaneDistance();
         final long zShift = z << 14; // Must be long or the calc will overflow
         effect.screenspaceW_10 = (int)(effect.captureW_04 * zShift / sp8c >>> 12);
         effect.screenspaceH_14 = (int)(effect.captureH_08 * zShift / sp8c >>> 12);

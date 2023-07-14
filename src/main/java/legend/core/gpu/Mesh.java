@@ -90,8 +90,7 @@ public record Mesh(Segment[] segments) {
 
         for(int vertexIndex = 0; vertexIndex < this.vertexCount; vertexIndex++) {
           final SVECTOR vert = poly.vertices()[vertexIndex].pos();
-          GTE.setVertex(0, vert.getX(), vert.getY(), vert.getZ());
-          GTE.perspectiveTransform();
+          GTE.perspectiveTransform(vert);
 
           if(GTE.hasError()) {
             continue outer;

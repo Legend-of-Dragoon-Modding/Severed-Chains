@@ -1074,8 +1074,7 @@ public final class SMap {
     GsGetLws(playerModel_800c6748.coord2_14, lw, ls);
     GTE.setRotationMatrix(ls);
     GTE.setTranslationVector(ls.transfer);
-    GTE.setVertex(0, 0, 0, 0);
-    GTE.perspectiveTransform();
+    GTE.perspectiveTransform(0, 0, 0);
     final short x = GTE.getScreenX(2);
     final short y = GTE.getScreenY(2);
 
@@ -1115,8 +1114,7 @@ public final class SMap {
       GsGetLws(playerModel_800c6748.coord2_14, sp0x48, sp0x28);
       GTE.setRotationMatrix(sp0x28);
       GTE.setTranslationVector(sp0x28.transfer);
-      GTE.setVertex(0, 0, 0, 0);
-      GTE.perspectiveTransform();
+      GTE.perspectiveTransform(0, 0, 0);
       final short x = GTE.getScreenX(2);
       final short y = GTE.getScreenY(2);
 
@@ -1645,13 +1643,11 @@ public final class SMap {
 
     GTE.setRotationMatrix(sp0x20);
     GTE.setTranslationVector(sp0x20.transfer);
-    GTE.setVertex(0, 0, 0, 0);
-    GTE.perspectiveTransform();
+    GTE.perspectiveTransform(0, 0, 0);
     script.params_20[1].set(GTE.getScreenX(2) + 192);
     script.params_20[2].set(GTE.getScreenY(2) + 128);
 
-    GTE.setVertex(0, 0, -130, 0);
-    GTE.perspectiveTransform();
+    GTE.perspectiveTransform(0, -130, 0);
     script.params_20[3].set(GTE.getScreenX(2) + 192);
     script.params_20[4].set(GTE.getScreenY(2) + 128);
     return FlowControl.CONTINUE;
@@ -3014,23 +3010,19 @@ public final class SMap {
     GTE.setRotationMatrix(ls);
     GTE.setTranslationVector(ls.transfer);
 
-    GTE.setVertex(0, 0, 0, 0);
-    GTE.perspectiveTransform();
+    GTE.perspectiveTransform(0, 0, 0);
     a0.x2_70 = GTE.getScreenX(2) + 192;
     a0.y2_74 = GTE.getScreenY(2) + 128;
 
-    GTE.setVertex(0, 0, -130, 0);
-    GTE.perspectiveTransform();
+    GTE.perspectiveTransform(0, -130, 0);
     a0.x3_78 = GTE.getScreenX(2) + 192;
     a0.y3_7c = GTE.getScreenY(2) + 128;
 
-    GTE.setVertex(0, -20, 0, 0);
-    GTE.perspectiveTransform();
+    GTE.perspectiveTransform(-20, 0, 0);
     a0.x1_68 = GTE.getScreenX(2) + 192;
     a0.y1_6c = GTE.getScreenY(2) + 128;
 
-    GTE.setVertex(0, 20, 0, 0);
-    GTE.perspectiveTransform();
+    GTE.perspectiveTransform(20, 0, 0);
     a0.x0_60 = GTE.getScreenX(2) + 192;
     a0.y0_64 = GTE.getScreenY(2) + 128;
   }
@@ -3581,8 +3573,7 @@ public final class SMap {
     GsGetLws(parent.coord2_14, lw, ls);
     GTE.setRotationMatrix(ls);
     GTE.setTranslationVector(ls.transfer);
-    GTE.setVertex(0, 0, y - 64, 0);
-    GTE.perspectiveTransform();
+    GTE.perspectiveTransform(0, y - 64, 0);
     final short sx = GTE.getScreenX(2);
     final short sy = GTE.getScreenY(2);
 
@@ -5143,8 +5134,7 @@ public final class SMap {
 
   @Method(0x800e7f00L)
   public static void transformVertex(final IntRef outX, final IntRef outY, final SVECTOR v0) {
-    GTE.setVertex(0, v0);
-    GTE.perspectiveTransform();
+    GTE.perspectiveTransform(v0);
     outX.set(GTE.getScreenX(2));
     outY.set(GTE.getScreenY(2));
   }
@@ -7815,14 +7805,12 @@ public final class SMap {
         PushMatrix();
         GTE.setRotationMatrix(sp0x20);
         GTE.setTranslationVector(sp0x20.transfer);
-        GTE.setVertex(0, -s2.width_08, _800d6c18.getY(), _800d6c18.getZ());
-        GTE.perspectiveTransform();
+        GTE.perspectiveTransform(-s2.width_08, _800d6c18.getY(), _800d6c18.getZ());
         s1.vert0_00.setX(GTE.getScreenX(2));
         s1.vert0_00.setY(GTE.getScreenY(2));
         s3.z_20 = GTE.getScreenZ(3) >> 2;
 
-        GTE.setVertex(0, s2.width_08, _800d6c20.getY(), _800d6c20.getZ());
-        GTE.perspectiveTransform();
+        GTE.perspectiveTransform(s2.width_08, _800d6c20.getY(), _800d6c20.getZ());
         s1.vert1_08.setX(GTE.getScreenX(2));
         s1.vert1_08.setY(GTE.getScreenY(2));
         s3.z_20 = GTE.getScreenZ(3) >> 2;
@@ -8081,8 +8069,7 @@ public final class SMap {
       PushMatrix();
       GTE.setRotationMatrix(sp0x20);
       GTE.setTranslationVector(sp0x20.transfer);
-      GTE.setVertex(0, 0, 0, 0);
-      GTE.perspectiveTransform();
+      GTE.perspectiveTransform(0, 0, 0);
       final short sx = GTE.getScreenX(2);
       final short sy = GTE.getScreenY(2);
 
@@ -8130,8 +8117,7 @@ public final class SMap {
     PushMatrix();
     GTE.setRotationMatrix(sp0x28);
     GTE.setTranslationVector(sp0x28.transfer);
-    GTE.setVertex(0, 0, 0, 0);
-    GTE.perspectiveTransform();
+    GTE.perspectiveTransform(0, 0, 0);
 
     final short sx = GTE.getScreenX(2);
     final short sy = GTE.getScreenY(2);
@@ -8243,9 +8229,7 @@ public final class SMap {
     hasSavePoint_800d5620 = script.params_20[0].get() != 0;
     GsInitCoordinate2(null, coord2);
 
-    coord2.coord.transfer.setX(script.params_20[1].get());
-    coord2.coord.transfer.setY(script.params_20[2].get());
-    coord2.coord.transfer.setZ(script.params_20[3].get());
+    coord2.coord.transfer.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
     savePointPos_800d5622.set(coord2.coord.transfer);
 
     final MATRIX screenMatrix = new MATRIX();
@@ -8269,8 +8253,8 @@ public final class SMap {
       }
 
       //LAB_800f1a34
-      final int a3 = (struct.vert3_18.getX() + struct.vert0_00.getX()) / 2;
-      final int t0 = (struct.vert3_18.getY() + struct.vert0_00.getY()) / 2;
+      final int a3 = (struct.vert0_00.getX() + struct.vert3_18.getX()) / 2;
+      final int t0 = (struct.vert0_00.getY() + struct.vert3_18.getY()) / 2;
       final int a2 = (struct.vert0_00.getX() - struct.vert3_18.getX()) / 2;
 
       final int x0 = a3 - a2;
@@ -8318,8 +8302,7 @@ public final class SMap {
       PushMatrix();
       GTE.setRotationMatrix(sp0x70);
       GTE.setTranslationVector(sp0x70.transfer);
-      GTE.setVertex(0, 0, 0, 0);
-      GTE.perspectiveTransform();
+      GTE.perspectiveTransform(0, 0, 0);
       final short sx = GTE.getScreenX(2);
       final short sy = GTE.getScreenY(2);
       PopMatrix();
@@ -8348,8 +8331,7 @@ public final class SMap {
     PushMatrix();
     GTE.setRotationMatrix(sp0x20);
     GTE.setTranslationVector(sp0x20.transfer);
-    GTE.setVertex(0, 0, 0, 0);
-    GTE.perspectiveTransform();
+    GTE.perspectiveTransform(0, 0, 0);
     final short sx = GTE.getScreenX(2);
     final short sy = GTE.getScreenY(2);
     PopMatrix();
@@ -8961,16 +8943,13 @@ public final class SMap {
     GTE.setRotationMatrix(ls);
     GTE.setTranslationVector(ls.transfer);
 
-    GTE.setVertex(0, bottom_800d6cb8.getX(), bottom_800d6cb8.getY(), bottom_800d6cb8.getZ());
-    GTE.perspectiveTransform();
+    GTE.perspectiveTransform(bottom_800d6cb8);
     final short bottomY = GTE.getScreenY(2);
 
-    GTE.setVertex(0, top_800d6cc0.getX(), top_800d6cc0.getY(), top_800d6cc0.getZ());
-    GTE.perspectiveTransform();
+    GTE.perspectiveTransform(top_800d6cc0);
     final short topY = GTE.getScreenY(2);
 
-    GTE.setVertex(0, 0, -(topY - bottomY) - 48, 0);
-    GTE.perspectiveTransform();
+    GTE.perspectiveTransform(0, -(topY - bottomY) - 48, 0);
     _800c69fc.playerX_08 = GTE.getScreenX(2);
     _800c69fc.playerY_0c = GTE.getScreenY(2);
 

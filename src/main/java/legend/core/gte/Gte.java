@@ -857,7 +857,7 @@ public class Gte {
     return (byte)value;
   }
 
-  private static int leadingCount(int v) {
+  public int leadingZeroCount(int v) {
     final int sign = v >>> 31;
     int leadingCount = 0;
 
@@ -871,6 +871,21 @@ public class Gte {
     }
 
     return leadingCount;
+  }
+
+  /** Data register 0/2/4 lower half VXY */
+  public short getVertexX(final int index) {
+    return this.V[index].x;
+  }
+
+  /** Data register 0/2/4 upper half VXY */
+  public short getVertexY(final int index) {
+    return this.V[index].y;
+  }
+
+  /** Data register 1/3/5 VZ */
+  public short getVertexZ(final int index) {
+    return this.V[index].z;
   }
 
   /** Data register 0/1, 2/3, 4/5 */
@@ -900,9 +915,56 @@ public class Gte {
     this.RGBC.val(rgbc);
   }
 
+  /** Data register 6 RGBC */
+  public void setRgbc(final COLOUR rgbc) {
+    this.RGBC.val((int)rgbc.pack());
+  }
+
   /** Data register 7 OTZ */
   public short getAverageZ() {
     return this.OTZ;
+  }
+
+  /** Data register 8 IR0 */
+  public short getIr0() {
+    return this.IR[0];
+  }
+
+  /** Data register 9 IR1 */
+  public short getIr1() {
+    return this.IR[1];
+  }
+
+  /** Data register 10 IR2 */
+  public short getIr2() {
+    return this.IR[2];
+  }
+
+  /** Data register 11 IR3 */
+  public short getIr3() {
+    return this.IR[3];
+  }
+
+  /** Data register 8 IR0 */
+  public void setIr0(final int value) {
+    this.IR[0] = (short)value;
+  }
+
+  /** Data register 9/10/11 IR123 */
+  public void setIr123(final int x, final int y, final int z) {
+    this.IR[1] = (short)x;
+    this.IR[2] = (short)y;
+    this.IR[3] = (short)z;
+  }
+
+  /** Data register 9/10/11 IR123 */
+  public void setIr123(final SVECTOR vert) {
+    this.setIr123(vert.getX(), vert.getY(), vert.getZ());
+  }
+
+  /** Data register 9/10/11 IR123 */
+  public void setIr123(final VECTOR vert) {
+    this.setIr123(vert.getX(), vert.getY(), vert.getZ());
   }
 
   /** Data register 12, 13, 14, 15 */
@@ -946,6 +1008,35 @@ public class Gte {
   }
 
   /** Control register 0-4 */
+  public void getRotationMatrix(final MATRIX matrix) {
+    matrix.set(0, this.RT.v00);
+    matrix.set(1, this.RT.v01);
+    matrix.set(2, this.RT.v02);
+    matrix.set(3, this.RT.v10);
+    matrix.set(4, this.RT.v11);
+    matrix.set(5, this.RT.v12);
+    matrix.set(6, this.RT.v20);
+    matrix.set(7, this.RT.v21);
+    matrix.set(8, this.RT.v22);
+  }
+
+  /** Control register 0-4 */
+  public short getRotationMatrixValue(final int matrixIndex) {
+    return switch(matrixIndex) {
+      case 0 -> this.RT.v00;
+      case 1 -> this.RT.v01;
+      case 2 -> this.RT.v02;
+      case 3 -> this.RT.v10;
+      case 4 -> this.RT.v11;
+      case 5 -> this.RT.v12;
+      case 6 -> this.RT.v20;
+      case 7 -> this.RT.v21;
+      case 8 -> this.RT.v22;
+      default -> throw new IllegalStateException("Unexpected value: " + matrixIndex);
+    };
+  }
+
+  /** Control register 0-4 */
   public void setRotationMatrix(final MATRIX matrix) {
     this.RT.v00 = matrix.get(0);
     this.RT.v01 = matrix.get(1);
@@ -958,11 +1049,80 @@ public class Gte {
     this.RT.v22 = matrix.get(8);
   }
 
+  /** Control register 0-4 */
+  public void setRotationMatrixValue(final short v00, final short v01, final short v02, final short v10, final short v11, final short v12, final short v20, final short v21, final short v22) {
+    this.RT.v00 = v00;
+    this.RT.v01 = v01;
+    this.RT.v02 = v02;
+    this.RT.v10 = v10;
+    this.RT.v11 = v11;
+    this.RT.v12 = v12;
+    this.RT.v20 = v20;
+    this.RT.v21 = v21;
+    this.RT.v22 = v22;
+  }
+
+  /** Control register 0-4 */
+  public void setRotationMatrixValue(final int matrixIndex, final int value) {
+    switch(matrixIndex) {
+      case 0 -> this.RT.v00 = (short)value;
+      case 1 -> this.RT.v01 = (short)value;
+      case 2 -> this.RT.v02 = (short)value;
+      case 3 -> this.RT.v10 = (short)value;
+      case 4 -> this.RT.v11 = (short)value;
+      case 5 -> this.RT.v12 = (short)value;
+      case 6 -> this.RT.v20 = (short)value;
+      case 7 -> this.RT.v21 = (short)value;
+      case 8 -> this.RT.v22 = (short)value;
+      default -> throw new IllegalStateException("Unexpected value: " + matrixIndex);
+    }
+  }
+
+  /** Control register 5-7 */
+  public void getTranslationVector(final VECTOR vector) {
+    vector.setX(this.TRX);
+    vector.setY(this.TRY);
+    vector.setZ(this.TRZ);
+  }
+
   /** Control register 5-7 */
   public void setTranslationVector(final VECTOR vector) {
     this.TRX = vector.getX();
     this.TRY = vector.getY();
     this.TRZ = vector.getZ();
+  }
+
+  /** Control register 8-12 light source/position matrix */
+  public void setLightSourceMatrix(final MATRIX matrix) {
+    this.LM.v00 = matrix.get(0);
+    this.LM.v01 = matrix.get(1);
+    this.LM.v02 = matrix.get(2);
+    this.LM.v10 = matrix.get(3);
+    this.LM.v11 = matrix.get(4);
+    this.LM.v12 = matrix.get(5);
+    this.LM.v20 = matrix.get(6);
+    this.LM.v21 = matrix.get(7);
+    this.LM.v22 = matrix.get(8);
+  }
+
+  /** Control register 13-15 background colour */
+  public void setBackgroundColour(final int r, final int g, final int b) {
+    this.RBK = r;
+    this.GBK = g;
+    this.BBK = b;
+  }
+
+  /** Control register 16-20 light colour matrix */
+  public void setLightColourMatrix(final MATRIX matrix) {
+    this.LRGB.v00 = matrix.get(0);
+    this.LRGB.v01 = matrix.get(1);
+    this.LRGB.v02 = matrix.get(2);
+    this.LRGB.v10 = matrix.get(3);
+    this.LRGB.v11 = matrix.get(4);
+    this.LRGB.v12 = matrix.get(5);
+    this.LRGB.v20 = matrix.get(6);
+    this.LRGB.v21 = matrix.get(7);
+    this.LRGB.v22 = matrix.get(8);
   }
 
   /** Control register 31 */
@@ -1168,7 +1328,7 @@ public class Gte {
       case 29 -> throw new UnsupportedOperationException("ORGB read-only");
       case 30 -> {
         this.LZCS = v;
-        this.LZCR = leadingCount(v);
+        this.LZCR = this.leadingZeroCount(v);
       }
       case 31 -> throw new UnsupportedOperationException("LZCR read-only");
     }

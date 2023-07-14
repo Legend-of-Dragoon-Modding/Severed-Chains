@@ -1509,8 +1509,7 @@ public final class Bttl_800e {
       final short sx2 = GTE.getScreenX(2);
       final short sy2 = GTE.getScreenY(2);
 
-      GTE.setVertex(0, (spriteEffect.x_04 + spriteEffect.w_08) * 64, (spriteEffect.y_06 + spriteEffect.h_0a) * 64, 0);
-      GTE.perspectiveTransform();
+      GTE.perspectiveTransform((spriteEffect.x_04 + spriteEffect.w_08) * 64, (spriteEffect.y_06 + spriteEffect.h_0a) * 64, 0);
       final short sx3 = GTE.getScreenX(2);
       final short sy3 = GTE.getScreenY(2);
 
