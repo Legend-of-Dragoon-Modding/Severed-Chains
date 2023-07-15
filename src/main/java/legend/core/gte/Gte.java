@@ -904,7 +904,7 @@ public class Gte {
 
   /** 0x12 MVMVA rotation * IR123 + TR, 12-bit fraction, no saturate */
   public void rotateTranslateVector(final int x, final int y, final int z) {
-    this.setIr123(x, y, z);
+    this.setVertex(0, x, y, z);
     this.currentCommand = 0x480012;
     this.startCommand(true, false);
     this.MVMVA();
@@ -940,24 +940,6 @@ public class Gte {
     this.NCCS(0);
     this.endCommand();
     return this.getRgb(2);
-  }
-
-  /** 0x28 square vector TR123, no fraction */
-  public void squareVector(final SVECTOR vector) {
-    this.squareVector(vector.getX(), vector.getY(), vector.getZ());
-  }
-
-  /** 0x28 square vector TR123, no fraction */
-  public void squareVector(final VECTOR vector) {
-    this.squareVector(vector.getX(), vector.getY(), vector.getZ());
-  }
-
-  /** 0x28 square vector TR123, no fraction */
-  public void squareVector(final int x, final int y, final int z) {
-    this.setIr123(x, y, z);
-    this.startCommand(false, false);
-    this.SQR();
-    this.endCommand();
   }
 
   /**
