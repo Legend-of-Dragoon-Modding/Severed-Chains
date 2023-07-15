@@ -1367,7 +1367,7 @@ public final class Scus94491BpeSegment_8003 {
     }
 
     GTE.setIr123(t0.get(), t1.get(), t2.get());
-    CPU.COP2(0xa00428L); // Square of vector IR123
+    CPU.COP2(0xa00428L); // Square of vector IR123, saturate IR123
     final int vectorLength = GTE.getMac1() + GTE.getMac2() + GTE.getMac3();
     final int lzc = GTE.leadingZeroCount(vectorLength) & 0xffff_fffe; // Leading zero count
     final int t6 = (31 - lzc) / 2;
@@ -1416,8 +1416,6 @@ public final class Scus94491BpeSegment_8003 {
     GTE.setRotationMatrixValue(4, oldRot22);
     GTE.setRotationMatrixValue(8, oldRot33);
 
-    GTE.setVertex(0, a0.get(3), a0.get(4), a0.get(5)); // transforms forward?
-
     final IntRef t0Ref = new IntRef().set(productX1);
     final IntRef t1Ref = new IntRef().set(productY1);
     final IntRef t2Ref = new IntRef().set(productZ1);
@@ -1426,9 +1424,9 @@ public final class Scus94491BpeSegment_8003 {
     a1.set(1, (short)t1Ref.get());
     a1.set(2, (short)t2Ref.get());
 
-    t0Ref.set((int)CPU.MFC2(0));
-    t1Ref.set((int)CPU.MFC2(1));
-    t2Ref.set((int)CPU.MFC2(2));
+    t0Ref.set(a0.get(3));
+    t1Ref.set(a0.get(4));
+    t2Ref.set(a0.get(5));
     FUN_8003eae0(t0Ref, t1Ref, t2Ref);
     a1.set(3, (short)t0Ref.get());
     a1.set(4, (short)t1Ref.get());
