@@ -992,13 +992,6 @@ public final class Scus94491BpeSegment_8004 {
     out.unpack(GTE.normalColour());
   }
 
-  @Method(0x80040e10L)
-  public static VECTOR squareVector(final VECTOR vector, final VECTOR out) {
-    GTE.squareVector(vector);
-    out.set(GTE.getMac1(), GTE.getMac2(), GTE.getMac3());
-    return out;
-  }
-
   @Method(0x80040e40L)
   public static void FUN_80040e40(final VECTOR a0, final VECTOR a1, final VECTOR out) {
     final short t5 = GTE.getRotationMatrixValue(0);

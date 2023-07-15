@@ -1345,18 +1345,17 @@ public final class Scus94491BpeSegment_8003 {
   @Method(0x8003ea80L)
   public static void FUN_8003ea80(final VECTOR a0, final VECTOR a1) {
     a1.set(a0);
-    FUN_8003eae0(a1.x, a1.y, a1.z);
+    FUN_8003eae0(a1);
   }
 
   @Method(0x8003eae0L)
-  public static void FUN_8003eae0(final IntRef t0, final IntRef t1, final IntRef t2) {
+  public static void FUN_8003eae0(final VECTOR t0) {
     // Fix retail bug where inputs can all be 0. Would result in negative array index.
-    if(t0.get() == 0 && t1.get() == 0 && t2.get() == 0) {
+    if(t0.getX() == 0 && t0.getY() == 0 && t0.getZ() == 0) {
       return;
     }
 
-    GTE.squareVector(t0.get(), t1.get(), t2.get());
-    final int vectorLength = GTE.getMac1() + GTE.getMac2() + GTE.getMac3();
+    final int vectorLength = (int)t0.lengthSquared();
     final int lzc = GTE.leadingZeroCount(vectorLength) & 0xffff_fffe; // Leading zero count
     final int t6 = (31 - lzc) / 2;
     final int t4;
@@ -1369,11 +1368,9 @@ public final class Scus94491BpeSegment_8003 {
 
     //LAB_8003eb4c
     GTE.setIr0(_80054870.get(t4 - 0x40).get());
-    GTE.setIr123(t0.get(), t1.get(), t2.get());
+    GTE.setIr123(t0);
     GTE.generalPurposeInterpolate(); // General purpose interpolation (MAC123 = IR123 * IR0 >> 12)
-    t0.set(GTE.getMac1() >> t6);
-    t1.set(GTE.getMac2() >> t6);
-    t2.set(GTE.getMac3() >> t6);
+    t0.set(GTE.getMac1() >> t6, GTE.getMac2() >> t6, GTE.getMac3() >> t6);
   }
 
   @Method(0x8003eba0L)
@@ -1404,29 +1401,23 @@ public final class Scus94491BpeSegment_8003 {
     GTE.setRotationMatrixValue(4, oldRot22);
     GTE.setRotationMatrixValue(8, oldRot33);
 
-    final IntRef t0Ref = new IntRef().set(productX1);
-    final IntRef t1Ref = new IntRef().set(productY1);
-    final IntRef t2Ref = new IntRef().set(productZ1);
-    FUN_8003eae0(t0Ref, t1Ref, t2Ref);
-    a1.set(0, (short)t0Ref.get());
-    a1.set(1, (short)t1Ref.get());
-    a1.set(2, (short)t2Ref.get());
+    final VECTOR t0 = new VECTOR().set(productX1, productY1, productZ1);
+    FUN_8003eae0(t0);
+    a1.set(0, (short)t0.getX());
+    a1.set(1, (short)t0.getY());
+    a1.set(2, (short)t0.getZ());
 
-    t0Ref.set(a0.get(3));
-    t1Ref.set(a0.get(4));
-    t2Ref.set(a0.get(5));
-    FUN_8003eae0(t0Ref, t1Ref, t2Ref);
-    a1.set(3, (short)t0Ref.get());
-    a1.set(4, (short)t1Ref.get());
-    a1.set(5, (short)t2Ref.get());
+    t0.set(a0.get(3), a0.get(4), a0.get(5));
+    FUN_8003eae0(t0);
+    a1.set(3, (short)t0.getX());
+    a1.set(4, (short)t0.getY());
+    a1.set(5, (short)t0.getZ());
 
-    t0Ref.set(productX0);
-    t1Ref.set(productY0);
-    t2Ref.set(productZ0);
-    FUN_8003eae0(t0Ref, t1Ref, t2Ref);
-    a1.set(6, (short)t0Ref.get());
-    a1.set(7, (short)t1Ref.get());
-    a1.set(8, (short)t2Ref.get());
+    t0.set(productX0, productY0, productZ0);
+    FUN_8003eae0(t0);
+    a1.set(6, (short)t0.getX());
+    a1.set(7, (short)t0.getY());
+    a1.set(8, (short)t0.getZ());
   }
 
   @Method(0x8003ec90L)

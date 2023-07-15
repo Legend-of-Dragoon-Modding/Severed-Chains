@@ -139,7 +139,6 @@ import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021de4;
 import static legend.game.Scus94491BpeSegment_8002.SetRotMatrix;
-import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
 import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.playXaAudio;
 import static legend.game.Scus94491BpeSegment_8002.rand;
@@ -170,7 +169,6 @@ import static legend.game.Scus94491BpeSegment_8004.RotMatrixZ;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrix_Zyx;
 import static legend.game.Scus94491BpeSegment_8004.doNothingScript_8004f650;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
-import static legend.game.Scus94491BpeSegment_8004.squareVector;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
 import static legend.game.Scus94491BpeSegment_800b.model_800bda10;
@@ -6891,10 +6889,7 @@ public final class SEffe {
       }
 
       //LAB_80110f38
-      final VECTOR squared = new VECTOR();
-      squareVector(sp0x18, squared);
-
-      s0.stepTicker_32 = (short)((SquareRoot0(squared.getX() + squared.getY() + squared.getZ()) << 8) / a3);
+      s0.stepTicker_32 = (short)((sp0x18.length() << 8) / a3);
       if(s0.stepTicker_32 == 0) {
         s0.stepTicker_32 = 1;
       }
