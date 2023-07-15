@@ -81,7 +81,6 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 import static legend.core.GameEngine.CONFIG;
-import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
@@ -979,18 +978,17 @@ public final class Scus94491BpeSegment_8002 {
   public static void FUN_80021de4(final MATRIX a0, final MATRIX a1, final MATRIX a2) {
     GTE.setRotationMatrix(a0);
 
-    GTE.setIr123(a1.get(0), a1.get(3), a1.get(6));
-    CPU.COP2(0x49e012L);
+    GTE.rotateVector(a1.get(0), a1.get(3), a1.get(6));
     a2.set(0, GTE.getIr1());
     a2.set(3, GTE.getIr2());
     a2.set(6, GTE.getIr3());
-    GTE.setIr123(a1.get(1), a1.get(4), a1.get(7));
-    CPU.COP2(0x49e012L);
+
+    GTE.rotateVector(a1.get(1), a1.get(4), a1.get(7));
     a2.set(1, GTE.getIr1());
     a2.set(4, GTE.getIr2());
     a2.set(7, GTE.getIr3());
-    GTE.setIr123(a1.get(2), a1.get(5), a1.get(8));
-    CPU.COP2(0x49e012L);
+
+    GTE.rotateVector(a1.get(2), a1.get(5), a1.get(8));
     a2.set(2, GTE.getIr1());
     a2.set(5, GTE.getIr2());
     a2.set(8, GTE.getIr3());
@@ -1018,10 +1016,7 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80021facL)
   public static void SetGeomOffset(final int x, final int y) {
-    // cop2r56, OFX - Screen offset X
-    CPU.CTC2(x << 16, 24);
-    // cop2r57, OFY - Screen offset Y
-    CPU.CTC2(y << 16, 25);
+    GTE.setScreenOffset(x << 16, y << 16);
   }
 
   @Method(0x80021fc4L)

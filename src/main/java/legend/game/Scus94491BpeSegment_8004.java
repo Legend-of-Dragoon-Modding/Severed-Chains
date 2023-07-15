@@ -50,7 +50,6 @@ import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SEQUENCER;
@@ -990,18 +989,14 @@ public final class Scus94491BpeSegment_8004 {
   public static void FUN_80040df0(final VECTOR a0, final COLOUR in, final COLOUR out) {
     GTE.setVertex(0, a0);
     GTE.setRgbc(in);
-    CPU.COP2(0x108_041bL);
-    out.unpack(CPU.MFC2(22)); // RGB FIFO
+    out.unpack(GTE.normalColour());
   }
 
   @Method(0x80040e10L)
-  public static VECTOR FUN_80040e10(final VECTOR a0, final VECTOR a1) {
-    GTE.setIr123(a0);
-    CPU.COP2(0xa00428L);
-    a1.setX(GTE.getMac1());
-    a1.setY(GTE.getMac2());
-    a1.setZ(GTE.getMac3());
-    return a1;
+  public static VECTOR squareVector(final VECTOR vector, final VECTOR out) {
+    GTE.squareVector(vector);
+    out.set(GTE.getMac1(), GTE.getMac2(), GTE.getMac3());
+    return out;
   }
 
   @Method(0x80040e40L)
@@ -1013,10 +1008,8 @@ public final class Scus94491BpeSegment_8004 {
     GTE.setRotationMatrixValue(4, a0.getY());
     GTE.setRotationMatrixValue(8, a0.getZ());
     GTE.setIr123(a1);
-    CPU.COP2(0x178000cL);
-    out.setX(GTE.getMac1());
-    out.setY(GTE.getMac2());
-    out.setZ(GTE.getMac3());
+    GTE.outerProduct();
+    out.set(GTE.getMac1(), GTE.getMac2(), GTE.getMac3());
     GTE.setRotationMatrixValue(0, t5);
     GTE.setRotationMatrixValue(4, t6);
     GTE.setRotationMatrixValue(8, t7);
@@ -1069,14 +1062,12 @@ public final class Scus94491BpeSegment_8004 {
     }
 
     //LAB_80040fac
-    GTE.setVertex(0, t3, t4, t5);
-    CPU.COP2(0x406012L);
+    GTE.rotateVector0(t3, t4, t5);
     t3 = GTE.getMac1();
     t4 = GTE.getMac2();
     t5 = GTE.getMac3();
 
-    GTE.setVertex(0, t0, t1, t2);
-    CPU.COP2(0x486012L);
+    GTE.rotateVector(t0, t1, t2);
     a2.setX(GTE.getMac1() + t3 * 8);
     a2.setY(GTE.getMac2() + t4 * 8);
     a2.setZ(GTE.getMac3() + t5 * 8);

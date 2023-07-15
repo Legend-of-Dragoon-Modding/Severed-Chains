@@ -92,7 +92,6 @@ public final class GameEngine {
   public static final ScreenStack SCREENS = new ScreenStack();
 
   public static final Gte GTE;
-  public static final Cpu CPU;
   public static final Gpu GPU;
   public static final Spu SPU;
 
@@ -118,7 +117,6 @@ public final class GameEngine {
     MEMORY.addSegment(new RamSegment(0x1f80_0000L, 0x400));
 
     GTE = new Gte();
-    CPU = new Cpu(GTE);
     GPU = new Gpu();
     SPU = new Spu();
 

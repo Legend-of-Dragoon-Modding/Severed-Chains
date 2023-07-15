@@ -117,20 +117,19 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import static legend.core.GameEngine.CONFIG;
-import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SCRIPTS;
-import static legend.game.Scus94491BpeSegment.renderButtonPressHudElement;
-import static legend.game.Scus94491BpeSegment.renderButtonPressHudTexturedRect;
-import static legend.game.Scus94491BpeSegment.renderDivineDragoonAdditionPressIris;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
 import static legend.game.Scus94491BpeSegment.displayHeight_1f8003e4;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
 import static legend.game.Scus94491BpeSegment.playSound;
 import static legend.game.Scus94491BpeSegment.projectionPlaneDistance_1f8003f8;
 import static legend.game.Scus94491BpeSegment.rcos;
+import static legend.game.Scus94491BpeSegment.renderButtonPressHudElement;
+import static legend.game.Scus94491BpeSegment.renderButtonPressHudTexturedRect;
+import static legend.game.Scus94491BpeSegment.renderDivineDragoonAdditionPressIris;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
@@ -165,13 +164,13 @@ import static legend.game.Scus94491BpeSegment_8003.perspectiveTransformTriple;
 import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
 import static legend.game.Scus94491BpeSegment_8004.ApplyTransposeMatrixLV;
 import static legend.game.Scus94491BpeSegment_8004.FUN_80040df0;
-import static legend.game.Scus94491BpeSegment_8004.FUN_80040e10;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixX;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixY;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixZ;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrix_Zyx;
 import static legend.game.Scus94491BpeSegment_8004.doNothingScript_8004f650;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
+import static legend.game.Scus94491BpeSegment_8004.squareVector;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
 import static legend.game.Scus94491BpeSegment_800b.model_800bda10;
@@ -184,8 +183,8 @@ import static legend.game.combat.Bttl_800c.FUN_800cf4f4;
 import static legend.game.combat.Bttl_800c.FUN_800cf684;
 import static legend.game.combat.Bttl_800c.FUN_800cfb94;
 import static legend.game.combat.Bttl_800c.FUN_800cfc20;
-import static legend.game.combat.Bttl_800c.colourMapUvs_800fb0ec;
 import static legend.game.combat.Bttl_800c.callScriptFunction;
+import static legend.game.combat.Bttl_800c.colourMapUvs_800fb0ec;
 import static legend.game.combat.Bttl_800c.currentStage_800c66a4;
 import static legend.game.combat.Bttl_800c.deffManager_800c693c;
 import static legend.game.combat.Bttl_800c.getModelObjectTranslation;
@@ -4871,7 +4870,7 @@ public final class SEffe {
         GTE.setRotationMatrixValue(4, sp0x50.getY());
         GTE.setRotationMatrixValue(8, sp0x50.getZ());
         GTE.setIr123(sp0x40);
-        CPU.COP2(0x178000cL);
+        GTE.outerProduct();
         final SVECTOR sp0x38 = new SVECTOR().set((short)GTE.getMac1(), (short)GTE.getMac2(), (short)GTE.getMac3());
 
         effect.normals_10[sp70].set(sp0x38);
@@ -6892,10 +6891,10 @@ public final class SEffe {
       }
 
       //LAB_80110f38
-      final VECTOR sp0x28 = new VECTOR();
-      FUN_80040e10(sp0x18, sp0x28);
+      final VECTOR squared = new VECTOR();
+      squareVector(sp0x18, squared);
 
-      s0.stepTicker_32 = (short)((SquareRoot0(sp0x28.getX() + sp0x28.getY() + sp0x28.getZ()) << 8) / a3);
+      s0.stepTicker_32 = (short)((SquareRoot0(squared.getX() + squared.getY() + squared.getZ()) << 8) / a3);
       if(s0.stepTicker_32 == 0) {
         s0.stepTicker_32 = 1;
       }

@@ -1,15 +1,8 @@
 package legend.core.gte;
 
-import legend.core.IoHelper;
 import legend.core.MathHelper;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.nio.ByteBuffer;
 
 public class Gte {
-  private static final Logger LOGGER = LogManager.getFormatterLogger(Gte.class);
-
   private static final byte[] unrTable = {
     (byte)0xFF, (byte)0xFD, (byte)0xFB, (byte)0xF9, (byte)0xF7, (byte)0xF5, (byte)0xF3, (byte)0xF1, (byte)0xEF, (byte)0xEE, (byte)0xEC, (byte)0xEA, (byte)0xE8, (byte)0xE6, (byte)0xE4, (byte)0xE3,
     (byte)0xE1, (byte)0xDF, (byte)0xDD, (byte)0xDC, (byte)0xDA, (byte)0xD8, (byte)0xD6, (byte)0xD5, (byte)0xD3, (byte)0xD1, (byte)0xD0, (byte)0xCE, (byte)0xCD, (byte)0xCB, (byte)0xC9, (byte)0xC8,
@@ -64,28 +57,9 @@ public class Gte {
     public short x;
     public short y;
 
-    public int val() {
-      return (this.y & 0xffff) << 16 | this.x & 0xffff;
-    }
-
-    public void val(final int val) {
-      this.x = (short)(val & 0xffff);
-      this.y = (short)(val >> 16 & 0xffff);
-    }
-
     public void set(final Vector2 other) {
       this.x = other.x;
       this.y = other.y;
-    }
-
-    public void dump(final ByteBuffer stream) {
-      IoHelper.write(stream, this.x);
-      IoHelper.write(stream, this.y);
-    }
-
-    public void load(final ByteBuffer stream) {
-      this.x = IoHelper.readShort(stream);
-      this.y = IoHelper.readShort(stream);
     }
   }
 
@@ -122,11 +96,8 @@ public class Gte {
   private final Vector2[] SXY = {new Vector2(), new Vector2(), new Vector2(), new Vector2()}; //R12-15 FIFO
   private final short[] SZ = new short[4];    //R16-19 FIFO
   private final Color[] RGB = {new Color(), new Color(), new Color()};     //R20-22 FIFO
-  private int RES1;                      //R23 prohibited
   private int MAC0;                       //R24
   private int MAC1, MAC2, MAC3;           //R25-27
-  private short IRGB;//, ORGB;           //R28-29 Orgb is readonly and read by irgb
-  private int LZCS, LZCR;                 //R30-31
 
   //Control Registers
   private final Matrix RT = new Matrix();        //R32-36 R40-44 R48-52
@@ -144,131 +115,6 @@ public class Gte {
   private int sf;                     //Shift fraction (0 or 12)
   private boolean lm;                    //Saturate IR1,IR2,IR3 result (0=To -8000h..+7FFFh, 1=To 0..+7FFFh)
   private int currentCommand;        //GTE current command temporary stored for MVMVA decoding
-
-  public void execute(final int command) {
-    //Console.WriteLine($"GTE EXECUTE {(command & 0x3F):x2}");
-
-    this.currentCommand = command;
-    this.startCommand((command & 0x8_0000) != 0, (command >>> 10 & 0x1) != 0);
-
-    switch(command & 0x3F) {
-      case 0x01 -> this.RTPS(0, true);
-      case 0x06 -> this.NCLIP();
-      case 0x0C -> this.OP();
-      case 0x10 -> this.DPCS(false);
-      case 0x11 -> this.INTPL();
-      case 0x12 -> this.MVMVA();
-      case 0x13 -> this.NCDS(0);
-      case 0x14 -> this.CDP();
-      case 0x16 -> this.NCDT();
-      case 0x1B -> this.NCCS(0);
-      case 0x1C -> this.CC();
-      case 0x1E -> this.NCS(0);
-      case 0x20 -> this.NCT();
-      case 0x28 -> this.SQR();
-      case 0x29 -> this.DCPL();
-      case 0x2A -> this.DCPT();
-      case 0x2D -> this.AVSZ3();
-      case 0x2E -> this.AVSZ4();
-      case 0x30 -> this.RTPT();
-      case 0x3D -> this.GPF();
-      case 0x3E -> this.GPL();
-      case 0x3F -> this.NCCT();
-      default -> {
-        LOGGER.warn("UNIMPLEMENTED GTE COMMAND %2x", command & 0x3f);
-        assert false : "Unimplemented GTE command " + Long.toHexString(command & 0x3f);
-      }
-    }
-
-    this.endCommand();
-  }
-
-  private void CDP() {
-    // [IR1, IR2, IR3] = [MAC1, MAC2, MAC3] = (BK * 1000h + LCM * IR) SAR(sf * 12)
-    // WARNING each multiplication can trigger mac flags so the check is needed on each op! Somehow this only affects the color matrix and not the light one
-    this.MAC1 = (int)(this.setMAC(1, this.setMAC(1, this.setMAC(1, (long)this.RBK * 0x1000 + this.LRGB.v00 * this.IR[1]) + (long)this.LRGB.v01 * this.IR[2]) + (long)this.LRGB.v02 * this.IR[3]) >> this.sf);
-    this.MAC2 = (int)(this.setMAC(2, this.setMAC(2, this.setMAC(2, (long)this.GBK * 0x1000 + this.LRGB.v10 * this.IR[1]) + (long)this.LRGB.v11 * this.IR[2]) + (long)this.LRGB.v12 * this.IR[3]) >> this.sf);
-    this.MAC3 = (int)(this.setMAC(3, this.setMAC(3, this.setMAC(3, (long)this.BBK * 0x1000 + this.LRGB.v20 * this.IR[1]) + (long)this.LRGB.v21 * this.IR[2]) + (long)this.LRGB.v22 * this.IR[3]) >> this.sf);
-
-    this.IR[1] = this.setIR(1, this.MAC1, this.lm);
-    this.IR[2] = this.setIR(2, this.MAC2, this.lm);
-    this.IR[3] = this.setIR(3, this.MAC3, this.lm);
-
-    // [MAC1, MAC2, MAC3] = [R * IR1, G * IR2, B * IR3] SHL 4;
-    this.MAC1 = (int)(this.setMAC(1, (long)(this.RGBC.r & 0xff) * this.IR[1]) << 4);
-    this.MAC2 = (int)(this.setMAC(2, (long)(this.RGBC.g & 0xff) * this.IR[2]) << 4);
-    this.MAC3 = (int)(this.setMAC(3, (long)(this.RGBC.b & 0xff) * this.IR[3]) << 4);
-
-    this.interpolateColor(this.MAC1, this.MAC2, this.MAC3);
-
-    // Color FIFO = [MAC1 / 16, MAC2 / 16, MAC3 / 16, CODE]
-    this.RGB[0].set(this.RGB[1]);
-    this.RGB[1].set(this.RGB[2]);
-
-    this.RGB[2].r = this.setRGB(1, this.MAC1 >> 4);
-    this.RGB[2].g = this.setRGB(2, this.MAC2 >> 4);
-    this.RGB[2].b = this.setRGB(3, this.MAC3 >> 4);
-    this.RGB[2].c = this.RGBC.c;
-  }
-
-  private void CC() {
-    // [IR1, IR2, IR3] = [MAC1, MAC2, MAC3] = (BK * 1000h + LCM * IR) SAR(sf * 12)
-    // WARNING each multiplication can trigger mac flags so the check is needed on each op! Somehow this only affects the color matrix and not the light one
-    this.MAC1 = (int)(this.setMAC(1, this.setMAC(1, this.setMAC(1, (long)this.RBK * 0x1000 + this.LRGB.v00 * this.IR[1]) + (long)this.LRGB.v01 * this.IR[2]) + (long)this.LRGB.v02 * this.IR[3]) >> this.sf);
-    this.MAC2 = (int)(this.setMAC(2, this.setMAC(2, this.setMAC(2, (long)this.GBK * 0x1000 + this.LRGB.v10 * this.IR[1]) + (long)this.LRGB.v11 * this.IR[2]) + (long)this.LRGB.v12 * this.IR[3]) >> this.sf);
-    this.MAC3 = (int)(this.setMAC(3, this.setMAC(3, this.setMAC(3, (long)this.BBK * 0x1000 + this.LRGB.v20 * this.IR[1]) + (long)this.LRGB.v21 * this.IR[2]) + (long)this.LRGB.v22 * this.IR[3]) >> this.sf);
-
-    this.IR[1] = this.setIR(1, this.MAC1, this.lm);
-    this.IR[2] = this.setIR(2, this.MAC2, this.lm);
-    this.IR[3] = this.setIR(3, this.MAC3, this.lm);
-
-    // [MAC1, MAC2, MAC3] = [R * IR1, G * IR2, B * IR3] SHL 4;
-    this.MAC1 = (int)(this.setMAC(1, (long)(this.RGBC.r & 0xff) * this.IR[1]) << 4);
-    this.MAC2 = (int)(this.setMAC(2, (long)(this.RGBC.g & 0xff) * this.IR[2]) << 4);
-    this.MAC3 = (int)(this.setMAC(3, (long)(this.RGBC.b & 0xff) * this.IR[3]) << 4);
-
-    // [MAC1, MAC2, MAC3] = [MAC1, MAC2, MAC3] SAR(sf * 12);< --- for NCDx / NCCx
-    this.MAC1 = (int)(this.setMAC(1, this.MAC1) >> this.sf);
-    this.MAC2 = (int)(this.setMAC(2, this.MAC2) >> this.sf);
-    this.MAC3 = (int)(this.setMAC(3, this.MAC3) >> this.sf);
-
-    // Color FIFO = [MAC1 / 16, MAC2 / 16, MAC3 / 16, CODE], [IR1, IR2, IR3] = [MAC1, MAC2, MAC3]
-    this.RGB[0].set(this.RGB[1]);
-    this.RGB[1].set(this.RGB[2]);
-
-    this.RGB[2].r = this.setRGB(1, this.MAC1 >> 4);
-    this.RGB[2].g = this.setRGB(2, this.MAC2 >> 4);
-    this.RGB[2].b = this.setRGB(3, this.MAC3 >> 4);
-    this.RGB[2].c = this.RGBC.c;
-
-    this.IR[1] = this.setIR(1, this.MAC1, this.lm);
-    this.IR[2] = this.setIR(2, this.MAC2, this.lm);
-    this.IR[3] = this.setIR(3, this.MAC3, this.lm);
-  }
-
-  private void DCPT() {
-    this.DPCS(true);
-    this.DPCS(true);
-    this.DPCS(true);
-  }
-
-  private void DCPL() {
-    //[MAC1, MAC2, MAC3] = [R*IR1, G*IR2, B*IR3] SHL 4          ;<--- for DCPL only
-    this.MAC1 = (int)(this.setMAC(1, (this.RGBC.r & 0xff) * this.IR[1]) << 4);
-    this.MAC2 = (int)(this.setMAC(2, (this.RGBC.g & 0xff) * this.IR[2]) << 4);
-    this.MAC3 = (int)(this.setMAC(3, (this.RGBC.b & 0xff) * this.IR[3]) << 4);
-
-    this.interpolateColor(this.MAC1, this.MAC2, this.MAC3);
-
-    // Color FIFO = [MAC1 / 16, MAC2 / 16, MAC3 / 16, CODE]
-    this.RGB[0].set(this.RGB[1]);
-    this.RGB[1].set(this.RGB[2]);
-
-    this.RGB[2].r = this.setRGB(1, this.MAC1 >> 4);
-    this.RGB[2].g = this.setRGB(2, this.MAC2 >> 4);
-    this.RGB[2].b = this.setRGB(3, this.MAC3 >> 4);
-    this.RGB[2].c = this.RGBC.c;
-  }
 
   private void NCCS(final int r) {
     // [IR1, IR2, IR3] = [MAC1, MAC2, MAC3] = (LLM * V0) SAR(sf * 12)
@@ -299,101 +145,6 @@ public class Gte {
     this.MAC1 = (int)this.setMAC(1, this.MAC1 >> this.sf);
     this.MAC2 = (int)this.setMAC(2, this.MAC2 >> this.sf);
     this.MAC3 = (int)this.setMAC(3, this.MAC3 >> this.sf);
-
-    // Color FIFO = [MAC1 / 16, MAC2 / 16, MAC3 / 16, CODE], [IR1, IR2, IR3] = [MAC1, MAC2, MAC3]
-    this.RGB[0].set(this.RGB[1]);
-    this.RGB[1].set(this.RGB[2]);
-
-    this.RGB[2].r = this.setRGB(1, this.MAC1 >> 4);
-    this.RGB[2].g = this.setRGB(2, this.MAC2 >> 4);
-    this.RGB[2].b = this.setRGB(3, this.MAC3 >> 4);
-    this.RGB[2].c = this.RGBC.c;
-
-    this.IR[1] = this.setIR(1, this.MAC1, this.lm);
-    this.IR[2] = this.setIR(2, this.MAC2, this.lm);
-    this.IR[3] = this.setIR(3, this.MAC3, this.lm);
-  }
-
-  private void NCCT() {
-    this.NCCS(0);
-    this.NCCS(1);
-    this.NCCS(2);
-  }
-
-  private void DPCS(final boolean dpct) {
-    byte r = this.RGBC.r;
-    byte g = this.RGBC.g;
-    byte b = this.RGBC.b;
-
-    // WHEN DCPT it uses RGB FIFO instead RGBC
-    if(dpct) {
-      r = this.RGB[0].r;
-      g = this.RGB[0].g;
-      b = this.RGB[0].b;
-    }
-    //[MAC1, MAC2, MAC3] = [R, G, B] SHL 16                     ;<--- for DPCS/DPCT
-    this.MAC1 = (int)(this.setMAC(1, r & 0xff) << 16);
-    this.MAC2 = (int)(this.setMAC(2, g & 0xff) << 16);
-    this.MAC3 = (int)(this.setMAC(3, b & 0xff) << 16);
-
-    this.interpolateColor(this.MAC1, this.MAC2, this.MAC3);
-
-    // Color FIFO = [MAC1 / 16, MAC2 / 16, MAC3 / 16, CODE]
-    this.RGB[0].set(this.RGB[1]);
-    this.RGB[1].set(this.RGB[2]);
-
-    this.RGB[2].r = this.setRGB(1, this.MAC1 >> 4);
-    this.RGB[2].g = this.setRGB(2, this.MAC2 >> 4);
-    this.RGB[2].b = this.setRGB(3, this.MAC3 >> 4);
-    this.RGB[2].c = this.RGBC.c;
-  }
-
-  private void INTPL() {
-    // [MAC1, MAC2, MAC3] = [IR1, IR2, IR3] SHL 12               ;<--- for INTPL only
-    this.MAC1 = (int)this.setMAC(1, (long)this.IR[1] << 12);
-    this.MAC2 = (int)this.setMAC(2, (long)this.IR[2] << 12);
-    this.MAC3 = (int)this.setMAC(3, (long)this.IR[3] << 12);
-
-    this.interpolateColor(this.MAC1, this.MAC2, this.MAC3);
-
-    // Color FIFO = [MAC1 / 16, MAC2 / 16, MAC3 / 16, CODE]
-    this.RGB[0].set(this.RGB[1]);
-    this.RGB[1].set(this.RGB[2]);
-
-    this.RGB[2].r = this.setRGB(1, this.MAC1 >> 4);
-    this.RGB[2].g = this.setRGB(2, this.MAC2 >> 4);
-    this.RGB[2].b = this.setRGB(3, this.MAC3 >> 4);
-    this.RGB[2].c = this.RGBC.c;
-  }
-
-  private void NCT() {
-    this.NCS(0);
-    this.NCS(1);
-    this.NCS(2);
-  }
-
-  private void NCS(final int r) {
-    //In: V0 = Normal vector(for triple variants repeated with V1 and V2),
-    //BK = Background color, RGBC = Primary color / code, LLM = Light matrix, LCM = Color matrix, IR0 = Interpolation value.
-
-    // [IR1, IR2, IR3] = [MAC1, MAC2, MAC3] = (LLM * V0) SAR(sf * 12)
-    this.MAC1 = (int)(this.setMAC(1, (long)this.LM.v00 * this.V[r].x + this.LM.v01 * this.V[r].y + this.LM.v02 * this.V[r].z) >> this.sf);
-    this.MAC2 = (int)(this.setMAC(2, (long)this.LM.v10 * this.V[r].x + this.LM.v11 * this.V[r].y + this.LM.v12 * this.V[r].z) >> this.sf);
-    this.MAC3 = (int)(this.setMAC(3, (long)this.LM.v20 * this.V[r].x + this.LM.v21 * this.V[r].y + this.LM.v22 * this.V[r].z) >> this.sf);
-
-    this.IR[1] = this.setIR(1, this.MAC1, this.lm);
-    this.IR[2] = this.setIR(2, this.MAC2, this.lm);
-    this.IR[3] = this.setIR(3, this.MAC3, this.lm);
-
-    // [IR1, IR2, IR3] = [MAC1, MAC2, MAC3] = (BK * 1000h + LCM * IR) SAR(sf * 12)
-    // WARNING each multiplication can trigger mac flags so the check is needed on each op! Somehow this only affects the color matrix and not the light one
-    this.MAC1 = (int)(this.setMAC(1, this.setMAC(1, this.setMAC(1, (long)this.RBK * 0x1000 + this.LRGB.v00 * this.IR[1]) + (long)this.LRGB.v01 * this.IR[2]) + (long)this.LRGB.v02 * this.IR[3]) >> this.sf);
-    this.MAC2 = (int)(this.setMAC(2, this.setMAC(2, this.setMAC(2, (long)this.GBK * 0x1000 + this.LRGB.v10 * this.IR[1]) + (long)this.LRGB.v11 * this.IR[2]) + (long)this.LRGB.v12 * this.IR[3]) >> this.sf);
-    this.MAC3 = (int)(this.setMAC(3, this.setMAC(3, this.setMAC(3, (long)this.BBK * 0x1000 + this.LRGB.v20 * this.IR[1]) + (long)this.LRGB.v21 * this.IR[2]) + (long)this.LRGB.v22 * this.IR[3]) >> this.sf);
-
-    this.IR[1] = this.setIR(1, this.MAC1, this.lm);
-    this.IR[2] = this.setIR(2, this.MAC2, this.lm);
-    this.IR[3] = this.setIR(3, this.MAC3, this.lm);
 
     // Color FIFO = [MAC1 / 16, MAC2 / 16, MAC3 / 16, CODE], [IR1, IR2, IR3] = [MAC1, MAC2, MAC3]
     this.RGB[0].set(this.RGB[1]);
@@ -502,33 +253,6 @@ public class Gte {
     this.IR[3] = this.setIR(3, this.MAC3, this.lm);
   }
 
-  private void GPL() {
-    //[MAC1, MAC2, MAC3] = [MAC1, MAC2, MAC3] SHL(sf*12);<--- for GPL only
-    //[MAC1, MAC2, MAC3] = (([IR1, IR2, IR3] * IR0) + [MAC1, MAC2, MAC3]) SAR(sf*12)
-    // Color FIFO = [MAC1 / 16, MAC2 / 16, MAC3 / 16, CODE], [IR1, IR2, IR3] = [MAC1, MAC2, MAC3]
-    //Note: Although the SHL in GPL is theoretically undone by the SAR, 44bit overflows can occur internally when sf=1.
-
-    final long mac1 = (long)this.MAC1 << this.sf;
-    final long mac2 = (long)this.MAC2 << this.sf;
-    final long mac3 = (long)this.MAC3 << this.sf;
-
-    this.MAC1 = (int)(this.setMAC(1, this.IR[1] * this.IR[0] + mac1) >> this.sf); // This is a good example of why setMac can't return int directly
-    this.MAC2 = (int)(this.setMAC(2, this.IR[2] * this.IR[0] + mac2) >> this.sf); // as you can't >>> before cause it doesn't trigger the flags and if
-    this.MAC3 = (int)(this.setMAC(3, this.IR[3] * this.IR[0] + mac3) >> this.sf); // you do it after you get wrong values
-
-    this.IR[1] = this.setIR(1, this.MAC1, this.lm);
-    this.IR[2] = this.setIR(2, this.MAC2, this.lm);
-    this.IR[3] = this.setIR(3, this.MAC3, this.lm);
-
-    this.RGB[0].set(this.RGB[1]);
-    this.RGB[1].set(this.RGB[2]);
-
-    this.RGB[2].r = this.setRGB(1, this.MAC1 >> 4);
-    this.RGB[2].g = this.setRGB(2, this.MAC2 >> 4);
-    this.RGB[2].b = this.setRGB(3, this.MAC3 >> 4);
-    this.RGB[2].c = this.RGBC.c;
-  }
-
   private void GPF() {
     //[MAC1, MAC2, MAC3] = [0,0,0]                            ;<--- for GPF only
     //[MAC1, MAC2, MAC3] = (([IR1, IR2, IR3] * IR0) + [MAC1, MAC2, MAC3]) SAR(sf*12)
@@ -549,12 +273,6 @@ public class Gte {
     this.RGB[2].g = this.setRGB(2, this.MAC2 >> 4);
     this.RGB[2].b = this.setRGB(3, this.MAC3 >> 4);
     this.RGB[2].c = this.RGBC.c;
-  }
-
-  private void NCDT() {
-    this.NCDS(0);
-    this.NCDS(1);
-    this.NCDS(2);
   }
 
   private void OP() {
@@ -600,74 +318,6 @@ public class Gte {
     final long avsz4 = (long)this.ZSF4 * ((this.SZ[0] & 0xffff) + (this.SZ[1] & 0xffff) + (this.SZ[2] & 0xffff) + (this.SZ[3] & 0xffff));
     this.MAC0 = (int)this.setMAC0(avsz4);
     this.OTZ = this.setSZ3(avsz4 >> 12);
-  }
-
-  private void NCDS(final int r) {
-    //Normal color depth cue (single vector) //329048 WIP FLAGS
-    //In: V0 = Normal vector(for triple variants repeated with V1 and V2),
-    //BK = Background color, RGBC = Primary color / code, LLM = Light matrix, LCM = Color matrix, IR0 = Interpolation value.
-
-    // [IR1, IR2, IR3] = [MAC1, MAC2, MAC3] = (LLM * V0) SAR(sf * 12)
-    this.MAC1 = (int)(this.setMAC(1, (long)this.LM.v00 * this.V[r].x + this.LM.v01 * this.V[r].y + this.LM.v02 * this.V[r].z) >> this.sf);
-    this.MAC2 = (int)(this.setMAC(2, (long)this.LM.v10 * this.V[r].x + this.LM.v11 * this.V[r].y + this.LM.v12 * this.V[r].z) >> this.sf);
-    this.MAC3 = (int)(this.setMAC(3, (long)this.LM.v20 * this.V[r].x + this.LM.v21 * this.V[r].y + this.LM.v22 * this.V[r].z) >> this.sf);
-
-    this.IR[1] = this.setIR(1, this.MAC1, this.lm);
-    this.IR[2] = this.setIR(2, this.MAC2, this.lm);
-    this.IR[3] = this.setIR(3, this.MAC3, this.lm);
-
-    // [IR1, IR2, IR3] = [MAC1, MAC2, MAC3] = (BK * 1000h + LCM * IR) SAR(sf * 12)
-    // WARNING each multiplication can trigger mac flags so the check is needed on each op! Somehow this only affects the color matrix and not the light one
-    this.MAC1 = (int)(this.setMAC(1, this.setMAC(1, this.setMAC(1, (long)this.RBK * 0x1000 + this.LRGB.v00 * this.IR[1]) + (long)this.LRGB.v01 * this.IR[2]) + (long)this.LRGB.v02 * this.IR[3]) >> this.sf);
-    this.MAC2 = (int)(this.setMAC(2, this.setMAC(2, this.setMAC(2, (long)this.GBK * 0x1000 + this.LRGB.v10 * this.IR[1]) + (long)this.LRGB.v11 * this.IR[2]) + (long)this.LRGB.v12 * this.IR[3]) >> this.sf);
-    this.MAC3 = (int)(this.setMAC(3, this.setMAC(3, this.setMAC(3, (long)this.BBK * 0x1000 + this.LRGB.v20 * this.IR[1]) + (long)this.LRGB.v21 * this.IR[2]) + (long)this.LRGB.v22 * this.IR[3]) >> this.sf);
-
-    this.IR[1] = this.setIR(1, this.MAC1, this.lm);
-    this.IR[2] = this.setIR(2, this.MAC2, this.lm);
-    this.IR[3] = this.setIR(3, this.MAC3, this.lm);
-
-    // [MAC1, MAC2, MAC3] = [R * IR1, G * IR2, B * IR3] SHL 4;< --- for NCDx / NCCx
-    this.MAC1 = (int)this.setMAC(1, (long)(this.RGBC.r & 0xff) * this.IR[1] << 4);
-    this.MAC2 = (int)this.setMAC(2, (long)(this.RGBC.g & 0xff) * this.IR[2] << 4);
-    this.MAC3 = (int)this.setMAC(3, (long)(this.RGBC.b & 0xff) * this.IR[3] << 4);
-
-    this.interpolateColor(this.MAC1, this.MAC2, this.MAC3);
-
-    // Color FIFO = [MAC1 / 16, MAC2 / 16, MAC3 / 16, CODE]
-    this.RGB[0].set(this.RGB[1]);
-    this.RGB[1].set(this.RGB[2]);
-
-    this.RGB[2].r = this.setRGB(1, this.MAC1 >> 4);
-    this.RGB[2].g = this.setRGB(2, this.MAC2 >> 4);
-    this.RGB[2].b = this.setRGB(3, this.MAC3 >> 4);
-    this.RGB[2].c = this.RGBC.c;
-  }
-
-  private void interpolateColor(final int mac1, final int mac2, final int mac3) {
-    // PSX SPX is very convoluted about this and it lacks some info
-    // [MAC1, MAC2, MAC3] = MAC + (FC - MAC) * IR0;< --- for NCDx only
-    // Note: Above "[IR1,IR2,IR3]=(FC-MAC)" is saturated to - 8000h..+7FFFh(ie. as if lm = 0)
-    // Details on "MAC+(FC-MAC)*IR0":
-    // [IR1, IR2, IR3] = (([RFC, GFC, BFC] SHL 12) - [MAC1, MAC2, MAC3]) SAR(sf * 12)
-    // [MAC1, MAC2, MAC3] = (([IR1, IR2, IR3] * IR0) + [MAC1, MAC2, MAC3])
-    // [MAC1, MAC2, MAC3] = [MAC1, MAC2, MAC3] SAR(sf * 12);< --- for NCDx / NCCx
-    // [IR1, IR2, IR3] = [MAC1, MAC2, MAC3]
-
-    this.MAC1 = (int)(this.setMAC(1, ((long)this.RFC << 12) - mac1) >> this.sf);
-    this.MAC2 = (int)(this.setMAC(2, ((long)this.GFC << 12) - mac2) >> this.sf);
-    this.MAC3 = (int)(this.setMAC(3, ((long)this.BFC << 12) - mac3) >> this.sf);
-
-    this.IR[1] = this.setIR(1, this.MAC1, false);
-    this.IR[2] = this.setIR(2, this.MAC2, false);
-    this.IR[3] = this.setIR(3, this.MAC3, false);
-
-    this.MAC1 = (int)(this.setMAC(1, (long)this.IR[1] * this.IR[0] + mac1) >> this.sf);
-    this.MAC2 = (int)(this.setMAC(2, (long)this.IR[2] * this.IR[0] + mac2) >> this.sf);
-    this.MAC3 = (int)(this.setMAC(3, (long)this.IR[3] * this.IR[0] + mac3) >> this.sf);
-
-    this.IR[1] = this.setIR(1, this.MAC1, this.lm);
-    this.IR[2] = this.setIR(2, this.MAC2, this.lm);
-    this.IR[3] = this.setIR(3, this.MAC3, this.lm);
   }
 
   private void NCLIP() { //Normal clipping
@@ -843,18 +493,6 @@ public class Gte {
     }
 
     return value << 20 >> 20;
-  }
-
-  private static byte saturateRGB(final int value) {
-    if(value < 0x00) {
-      return 0x00;
-    }
-
-    if(value > 0x1f) {
-      return 0x1f;
-    }
-
-    return (byte)value;
   }
 
   public int leadingZeroCount(int v) {
@@ -1125,6 +763,50 @@ public class Gte {
     this.LRGB.v22 = matrix.get(8);
   }
 
+  /** Control register 21-23 far colour */
+  public void setFarColour(final int r, final int g, final int b) {
+    this.RFC = r;
+    this.GFC = g;
+    this.BFC = b;
+  }
+
+  /** Control register 24 screen offset X */
+  public int getScreenOffsetX() {
+    return this.OFX;
+  }
+
+  /** Control register 25 screen offset Y */
+  public int getScreenOffsetY() {
+    return this.OFY;
+  }
+
+  /** Control register 24/25 screen offset */
+  public void setScreenOffset(final int x, final int y) {
+    this.OFX = x;
+    this.OFY = y;
+  }
+
+  /** Control register 26 projection plane distance (H) */
+  public short getProjectionPlaneDistance() {
+    return this.H;
+  }
+
+  /** Control register 26 projection plane distance (H) */
+  public void setProjectionPlaneDistance(final int distance) {
+    this.H = (short)distance;
+  }
+
+  /** Control register 27/28 depth queueing parameters (DQA/DQB) */
+  public void setDepthQueueingParameters(final int coefficient, final int offset) {
+    this.DQA = (short)coefficient;
+    this.DQB = offset;
+  }
+
+  public void setAverageZScaleFactors(final int zsf3, final int zsf4) {
+    this.ZSF3 = (short)zsf3;
+    this.ZSF4 = (short)zsf4;
+  }
+
   /** Control register 31 */
   public int getFlags() {
     return (int)this.FLAG;
@@ -1184,6 +866,70 @@ public class Gte {
     return this.getMac0();
   }
 
+  /** 0xc OP - vector outer product, 12-bit fraction, IR1/2/3 * RT11/22/33 */
+  public void outerProduct() {
+    this.startCommand(true, false);
+    this.OP();
+    this.endCommand();
+  }
+
+  /** 0x12 MVMVA rotation * IR123 + none, 12-bit fraction, no saturate */
+  public void rotateVector(final SVECTOR vector) {
+    this.rotateVector(vector.getX(), vector.getY(), vector.getZ());
+  }
+
+  /** 0x12 MVMVA rotation * IR123 + none, 12-bit fraction, no saturate */
+  public void rotateVector(final VECTOR vector) {
+    this.rotateVector(vector.getX(), vector.getY(), vector.getZ());
+  }
+
+  /** 0x12 MVMVA rotation * IR123 + none, 12-bit fraction, no saturate */
+  public void rotateVector(final int x, final int y, final int z) {
+    this.setIr123(x, y, z);
+    this.currentCommand = 0x49e012;
+    this.startCommand(true, false);
+    this.MVMVA();
+    this.endCommand();
+  }
+
+  /** 0x12 MVMVA rotation * IR123 + TR, 12-bit fraction, no saturate */
+  public void rotateTranslateVector(final SVECTOR vector) {
+    this.rotateTranslateVector(vector.getX(), vector.getY(), vector.getZ());
+  }
+
+  /** 0x12 MVMVA rotation * IR123 + TR, 12-bit fraction, no saturate */
+  public void rotateTranslateVector(final VECTOR vector) {
+    this.rotateTranslateVector(vector.getX(), vector.getY(), vector.getZ());
+  }
+
+  /** 0x12 MVMVA rotation * IR123 + TR, 12-bit fraction, no saturate */
+  public void rotateTranslateVector(final int x, final int y, final int z) {
+    this.setIr123(x, y, z);
+    this.currentCommand = 0x480012;
+    this.startCommand(true, false);
+    this.MVMVA();
+    this.endCommand();
+  }
+
+  /** 0x12 MVMVA rotation * IR123 + none, 12-bit fraction, no saturate */
+  public void rotateVector0(final SVECTOR vector) {
+    this.rotateVector(vector.getX(), vector.getY(), vector.getZ());
+  }
+
+  /** 0x12 MVMVA rotation * IR123 + none, 12-bit fraction, no saturate */
+  public void rotateVector0(final VECTOR vector) {
+    this.rotateVector(vector.getX(), vector.getY(), vector.getZ());
+  }
+
+  /** 0x12 MVMVA rotation * IR123 + none, 12-bit fraction, no saturate */
+  public void rotateVector0(final int x, final int y, final int z) {
+    this.setIr123(x, y, z);
+    this.currentCommand = 0x49e012;
+    this.startCommand(false, false);
+    this.MVMVA();
+    this.endCommand();
+  }
+
   /**
    * 0x1b NCCS - normal colour colour single vector, 12-bit fraction, saturate IR1/2/3
    *
@@ -1194,6 +940,24 @@ public class Gte {
     this.NCCS(0);
     this.endCommand();
     return this.getRgb(2);
+  }
+
+  /** 0x28 square vector TR123, no fraction */
+  public void squareVector(final SVECTOR vector) {
+    this.squareVector(vector.getX(), vector.getY(), vector.getZ());
+  }
+
+  /** 0x28 square vector TR123, no fraction */
+  public void squareVector(final VECTOR vector) {
+    this.squareVector(vector.getX(), vector.getY(), vector.getZ());
+  }
+
+  /** 0x28 square vector TR123, no fraction */
+  public void squareVector(final int x, final int y, final int z) {
+    this.setIr123(x, y, z);
+    this.startCommand(false, false);
+    this.SQR();
+    this.endCommand();
   }
 
   /**
@@ -1249,204 +1013,10 @@ public class Gte {
     this.endCommand();
   }
 
-  public int loadData(final int fs) {
-    return switch(fs) {
-      case 0 -> this.V[0].getXY();
-      case 1 -> this.V[0].z;
-      case 2 -> this.V[1].getXY();
-      case 3 -> this.V[1].z;
-      case 4 -> this.V[2].getXY();
-      case 5 -> this.V[2].z;
-      case 6 -> this.RGBC.val();
-      case 7 -> this.OTZ & 0xffff;
-      case 8 -> this.IR[0];
-      case 9 -> this.IR[1];
-      case 10 -> this.IR[2];
-      case 11 -> this.IR[3];
-      case 12 -> this.SXY[0].val();
-      case 13 -> this.SXY[1].val();
-      case 14, 15 -> this.SXY[2].val();
-      case 16 -> this.SZ[0] & 0xffff;
-      case 17 -> this.SZ[1] & 0xffff;
-      case 18 -> this.SZ[2] & 0xffff;
-      case 19 -> this.SZ[3] & 0xffff;
-      case 20 -> this.RGB[0].val();
-      case 21 -> this.RGB[1].val();
-      case 22 -> this.RGB[2].val();
-      case 23 -> this.RES1;
-      case 24 -> this.MAC0;
-      case 25 -> this.MAC1;
-      case 26 -> this.MAC2;
-      case 27 -> this.MAC3;
-      case 28, 29 -> this.IRGB = (short)(saturateRGB(this.IR[3] / 0x80) << 10 | saturateRGB(this.IR[2] / 0x80) << 5 | saturateRGB(this.IR[1] / 0x80));
-      case 30 -> this.LZCS;
-      case 31 -> this.LZCR;
-      default -> 0xffff_ffff;
-    };
-  }
-
-  public void writeData(final int fs, final int v) {
-    switch(fs) {
-      case 0 -> this.V[0].setXY(v);
-      case 1 -> this.V[0].z = (short)v;
-      case 2 -> this.V[1].setXY(v);
-      case 3 -> this.V[1].z = (short)v;
-      case 4 -> this.V[2].setXY(v);
-      case 5 -> this.V[2].z = (short)v;
-      case 6 -> this.RGBC.val(v);
-      case 7 -> this.OTZ = (short)v;
-      case 8 -> this.IR[0] = (short)v;
-      case 9 -> this.IR[1] = (short)v;
-      case 10 -> this.IR[2] = (short)v;
-      case 11 -> this.IR[3] = (short)v;
-      case 12 -> this.SXY[0].val(v);
-      case 13 -> this.SXY[1].val(v);
-      case 14 -> this.SXY[2].val(v);
-      case 15 -> {
-        this.SXY[0].set(this.SXY[1]);
-        this.SXY[1].set(this.SXY[2]);
-        this.SXY[2].val(v);
-      } //On load mirrors 0x14, on write cycles the fifo
-      case 16 -> this.SZ[0] = (short)v;
-      case 17 -> this.SZ[1] = (short)v;
-      case 18 -> this.SZ[2] = (short)v;
-      case 19 -> this.SZ[3] = (short)v;
-      case 20 -> this.RGB[0].val(v);
-      case 21 -> this.RGB[1].val(v);
-      case 22 -> this.RGB[2].val(v);
-      case 23 -> this.RES1 = v;
-      case 24 -> this.MAC0 = v;
-      case 25 -> this.MAC1 = v;
-      case 26 -> this.MAC2 = v;
-      case 27 -> this.MAC3 = v;
-      case 28 -> {
-        this.IRGB = (short)(v & 0x7fff);
-        this.IR[1] = (short)((v & 0x1f) * 0x80);
-        this.IR[2] = (short)((v >>> 5 & 0x1f) * 0x80);
-        this.IR[3] = (short)((v >>> 10 & 0x1f) * 0x80);
-      }
-      case 29 -> throw new UnsupportedOperationException("ORGB read-only");
-      case 30 -> {
-        this.LZCS = v;
-        this.LZCR = this.leadingZeroCount(v);
-      }
-      case 31 -> throw new UnsupportedOperationException("LZCR read-only");
-    }
-  }
-
-  public long loadControl(final int fs) {
-    return switch(fs) {
-      case  0 -> (this.RT.v01 & 0xffffL) << 16 | this.RT.v00 & 0xffffL;
-      case  1 -> (this.RT.v10 & 0xffffL) << 16 | this.RT.v02 & 0xffffL;
-      case  2 -> (this.RT.v12 & 0xffffL) << 16 | this.RT.v11 & 0xffffL;
-      case  3 -> (this.RT.v21 & 0xffffL) << 16 | this.RT.v20 & 0xffffL;
-      case  4 -> this.RT.v22;
-      case  5 -> this.TRX;
-      case  6 -> this.TRY;
-      case  7 -> this.TRZ;
-      case  8 -> (this.LM.v01 & 0xffffL) << 16 | this.LM.v00 & 0xffffL;
-      case  9 -> (this.LM.v10 & 0xffffL) << 16 | this.LM.v02 & 0xffffL;
-      case 10 -> (this.LM.v12 & 0xffffL) << 16 | this.LM.v11 & 0xffffL;
-      case 11 -> (this.LM.v21 & 0xffffL) << 16 | this.LM.v20 & 0xffffL;
-      case 12 -> this.LM.v22;
-      case 13 -> this.RBK;
-      case 14 -> this.GBK;
-      case 15 -> this.BBK;
-      case 16 -> (this.LRGB.v01 & 0xffffL) << 16 | this.LRGB.v00 & 0xffffL;
-      case 17 -> (this.LRGB.v10 & 0xffffL) << 16 | this.LRGB.v02 & 0xffffL;
-      case 18 -> (this.LRGB.v12 & 0xffffL) << 16 | this.LRGB.v11 & 0xffffL;
-      case 19 -> (this.LRGB.v21 & 0xffffL) << 16 | this.LRGB.v20 & 0xffffL;
-      case 20 -> this.LRGB.v22;
-      case 21 -> this.RFC;
-      case 22 -> this.GFC;
-      case 23 -> this.BFC;
-      case 24 -> this.OFX;
-      case 25 -> this.OFY;
-      case 26 -> this.H;
-      case 27 -> this.DQA;
-      case 28 -> this.DQB;
-      case 29 -> this.ZSF3;
-      case 30 -> this.ZSF4;
-      case 31 -> this.FLAG;
-      default -> 0xffff_ffffL;
-    };
-  }
-
-  public void writeControl(final int fs, final int v) {
-    switch(fs) {
-      case 0 -> {
-        this.RT.v00 = (short)v;
-        this.RT.v01 = (short)(v >>> 16);
-      }
-      case 1 -> {
-        this.RT.v02 = (short)v;
-        this.RT.v10 = (short)(v >>> 16);
-      }
-      case 2 -> {
-        this.RT.v11 = (short)v;
-        this.RT.v12 = (short)(v >>> 16);
-      }
-      case 3 -> {
-        this.RT.v20 = (short)v;
-        this.RT.v21 = (short)(v >>> 16);
-      }
-      case 4 -> this.RT.v22 = (short)v;
-      case 5 -> this.TRX = v;
-      case 6 -> this.TRY = v;
-      case 7 -> this.TRZ = v;
-      case 8 -> {
-        this.LM.v00 = (short)v;
-        this.LM.v01 = (short)(v >>> 16);
-      }
-      case 9 -> {
-        this.LM.v02 = (short)v;
-        this.LM.v10 = (short)(v >>> 16);
-      }
-      case 10 -> {
-        this.LM.v11 = (short)v;
-        this.LM.v12 = (short)(v >>> 16);
-      }
-      case 11 -> {
-        this.LM.v20 = (short)v;
-        this.LM.v21 = (short)(v >>> 16);
-      }
-      case 12 -> this.LM.v22 = (short)v;
-      case 13 -> this.RBK = v;
-      case 14 -> this.GBK = v;
-      case 15 -> this.BBK = v;
-      case 16 -> {
-        this.LRGB.v00 = (short)v;
-        this.LRGB.v01 = (short)(v >>> 16);
-      }
-      case 17 -> {
-        this.LRGB.v02 = (short)v;
-        this.LRGB.v10 = (short)(v >>> 16);
-      }
-      case 18 -> {
-        this.LRGB.v11 = (short)v;
-        this.LRGB.v12 = (short)(v >>> 16);
-      }
-      case 19 -> {
-        this.LRGB.v20 = (short)v;
-        this.LRGB.v21 = (short)(v >>> 16);
-      }
-      case 20 -> this.LRGB.v22 = (short)v;
-      case 21 -> this.RFC = v;
-      case 22 -> this.GFC = v;
-      case 23 -> this.BFC = v;
-      case 24 -> this.OFX = v;
-      case 25 -> this.OFY = v;
-      case 26 -> this.H = (short)v;
-      case 27 -> this.DQA = (short)v;
-      case 28 -> this.DQB = v;
-      case 29 -> this.ZSF3 = (short)v;
-      case 30 -> this.ZSF4 = (short)v;
-      case 31 -> { //flag is u20 with 31 Error Flag (Bit30..23, and 18..13 ORed together)
-        this.FLAG = v & 0x7fff_f000L;
-        if((this.FLAG & 0x7f87_e000L) != 0) {
-          this.FLAG |= 0x8000_0000L;
-        }
-      }
-    }
+  /** 0x3d GPF - general-purpose interpolation, (MAC123 = IR123 * IR0 >> 12) */
+  public void generalPurposeInterpolate() {
+    this.startCommand(false, false);
+    this.GPF();
+    this.endCommand();
   }
 }
