@@ -331,17 +331,18 @@ public class WMap {
     _800f65a4[2] = WMap::FUN_800eca3c;
   }
   /**
+   * These are probably effects that can be rendered over a place
    * <ol start="0">
    *   <li>{@link WMap#FUN_800ebb34}</li>
    *   <li>{@link WMap#FUN_800ebfc0}</li>
-   *   <li>{@link WMap#FUN_800ecd10}</li>
+   *   <li>{@link WMap#renderSnow}</li>
    * </ol>
    */
   private static final Runnable[] _800f65b0 = new Runnable[3];
   static {
     _800f65b0[0] = WMap::FUN_800ebb34;
     _800f65b0[1] = WMap::FUN_800ebfc0;
-    _800f65b0[2] = WMap::FUN_800ecd10;
+    _800f65b0[2] = WMap::renderSnow;
   }
   /**
    * <ol start="0">
@@ -6956,7 +6957,7 @@ public class WMap {
   }
 
   @Method(0x800ecd10L)
-  public static void FUN_800ecd10() {
+  public static void renderSnow() {
     final MATRIX sp0x10 = new MATRIX();
     final SVECTOR sp0x80 = new SVECTOR();
 
@@ -7010,7 +7011,7 @@ public class WMap {
         GTE.perspectiveTransform(-2, -2, 0);
 
         final short sx0 = GTE.getScreenX(2);
-        final short sy0 = GTE.getScreenX(2);
+        final short sy0 = GTE.getScreenY(2);
         int z = GTE.getScreenZ(3) >> 2;
 
         if(z >= 5 && z < orderingTableSize_1f8003c8.get() - 3) {
