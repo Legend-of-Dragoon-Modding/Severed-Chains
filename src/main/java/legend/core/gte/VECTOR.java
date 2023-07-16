@@ -282,6 +282,14 @@ public class VECTOR implements MemoryRef {
     return this;
   }
 
+  public int length() {
+    return (int)Math.sqrt(this.lengthSquared());
+  }
+
+  public long lengthSquared() {
+    return (long)this.getX() * this.getX() + this.getY() * this.getY() + this.getZ() * this.getZ();
+  }
+
   @Override
   public long getAddress() {
     if(this.ref == null) {

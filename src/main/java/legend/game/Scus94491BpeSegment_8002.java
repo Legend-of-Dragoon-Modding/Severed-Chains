@@ -81,7 +81,6 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 import static legend.core.GameEngine.CONFIG;
-import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
@@ -979,27 +978,20 @@ public final class Scus94491BpeSegment_8002 {
   public static void FUN_80021de4(final MATRIX a0, final MATRIX a1, final MATRIX a2) {
     GTE.setRotationMatrix(a0);
 
-    CPU.MTC2(a1.get(0),  9);
-    CPU.MTC2(a1.get(3), 10);
-    CPU.MTC2(a1.get(6), 11);
-    CPU.COP2(0x49e012L);
-    a2.set(0, (short)CPU.MFC2( 9));
-    a2.set(3, (short)CPU.MFC2(10));
-    a2.set(6, (short)CPU.MFC2(11));
-    CPU.MTC2(a1.get(1),  9);
-    CPU.MTC2(a1.get(4), 10);
-    CPU.MTC2(a1.get(7), 11);
-    CPU.COP2(0x49e012L);
-    a2.set(1, (short)CPU.MFC2( 9));
-    a2.set(4, (short)CPU.MFC2(10));
-    a2.set(7, (short)CPU.MFC2(11));
-    CPU.MTC2(a1.get(2),  9);
-    CPU.MTC2(a1.get(5), 10);
-    CPU.MTC2(a1.get(8), 11);
-    CPU.COP2(0x49e012L);
-    a2.set(2, (short)CPU.MFC2( 9));
-    a2.set(5, (short)CPU.MFC2(10));
-    a2.set(8, (short)CPU.MFC2(11));
+    GTE.rotateVector(a1.get(0), a1.get(3), a1.get(6));
+    a2.set(0, GTE.getIr1());
+    a2.set(3, GTE.getIr2());
+    a2.set(6, GTE.getIr3());
+
+    GTE.rotateVector(a1.get(1), a1.get(4), a1.get(7));
+    a2.set(1, GTE.getIr1());
+    a2.set(4, GTE.getIr2());
+    a2.set(7, GTE.getIr3());
+
+    GTE.rotateVector(a1.get(2), a1.get(5), a1.get(8));
+    a2.set(2, GTE.getIr1());
+    a2.set(5, GTE.getIr2());
+    a2.set(8, GTE.getIr3());
   }
 
   @Method(0x80021edcL)
@@ -1009,20 +1001,12 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80021f0cL)
   public static void SetLightMatrix(final MATRIX m) {
-    CPU.CTC2(m.getPacked(0),  8); //
-    CPU.CTC2(m.getPacked(2),  9); //
-    CPU.CTC2(m.getPacked(4), 10); // Light source matrix
-    CPU.CTC2(m.getPacked(6), 11); //
-    CPU.CTC2(m.getPacked(8), 12); //
+    GTE.setLightSourceMatrix(m);
   }
 
   @Method(0x80021f3cL)
   public static void SetColorMatrix(final MATRIX m) {
-    CPU.CTC2(m.getPacked(0), 16); //
-    CPU.CTC2(m.getPacked(2), 17); //
-    CPU.CTC2(m.getPacked(4), 18); // Light color matrix
-    CPU.CTC2(m.getPacked(6), 19); //
-    CPU.CTC2(m.getPacked(8), 20); //
+    GTE.setLightColourMatrix(m);
   }
 
   @Method(0x80021f6cL)
@@ -1030,31 +1014,9 @@ public final class Scus94491BpeSegment_8002 {
     GTE.setTranslationVector(m.transfer);
   }
 
-  @Method(0x80021f8cL)
-  public static void SetBackColor(final long r, final long g, final long b) {
-    if(r < 0) {
-      LOGGER.warn("Negative R! %x", r);
-    }
-
-    if(g < 0) {
-      LOGGER.warn("Negative G! %x", g);
-    }
-
-    if(b < 0) {
-      LOGGER.warn("Negative B! %x", b);
-    }
-
-    CPU.CTC2(r * 0x10L, 13); // Background colour R
-    CPU.CTC2(g * 0x10L, 14); // Background colour G
-    CPU.CTC2(b * 0x10L, 15); // Background colour B
-  }
-
   @Method(0x80021facL)
   public static void SetGeomOffset(final int x, final int y) {
-    // cop2r56, OFX - Screen offset X
-    CPU.CTC2(x << 16, 24);
-    // cop2r57, OFY - Screen offset Y
-    CPU.CTC2(y << 16, 25);
+    GTE.setScreenOffset(x << 16, y << 16);
   }
 
   @Method(0x80021fc4L)

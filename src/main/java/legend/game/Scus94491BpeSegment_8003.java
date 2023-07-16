@@ -24,7 +24,6 @@ import org.joml.Matrix4f;
 
 import javax.annotation.Nullable;
 
-import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.MEMORY;
@@ -35,14 +34,12 @@ import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.rsin;
-import static legend.game.Scus94491BpeSegment_8002.SetBackColor;
 import static legend.game.Scus94491BpeSegment_8002.SetColorMatrix;
 import static legend.game.Scus94491BpeSegment_8002.SetGeomOffset;
 import static legend.game.Scus94491BpeSegment_8002.SetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8002.SetRotMatrix;
 import static legend.game.Scus94491BpeSegment_8002.SetTransMatrix;
 import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
-import static legend.game.Scus94491BpeSegment_8004.Lzc;
 import static legend.game.Scus94491BpeSegment_8005._800546c0;
 import static legend.game.Scus94491BpeSegment_8005._800546c2;
 import static legend.game.Scus94491BpeSegment_8005._80054870;
@@ -454,7 +451,7 @@ public final class Scus94491BpeSegment_8003 {
 
   @Method(0x8003cce0L)
   public static void GsSetAmbient(final int r, final int g, final int b) {
-    SetBackColor(r >> 4, g >> 4, b >> 4);
+    GTE.setBackgroundColour(r, g, b);
   }
 
   /**
@@ -1004,7 +1001,7 @@ public final class Scus94491BpeSegment_8003 {
 
     v0 = s2.viewpoint_00.getY() - s2.refpoint_0c.getY();
     s1 = v0 * v0;
-    a1 = 12 - Lzc(s1);
+    a1 = 12 - GTE.leadingZeroCount(s1);
     if(a1 < 0) {
       //LAB_8003e0e4
       //LAB_8003e0fc
@@ -1036,7 +1033,7 @@ public final class Scus94491BpeSegment_8003 {
     v1 = v0 * v0;
 
     s1 = a0 + v1;
-    a1 = 12 - Lzc(s1);
+    a1 = 12 - GTE.leadingZeroCount(s1);
 
     if(a1 < 0) {
       //LAB_8003e1e8
@@ -1062,7 +1059,7 @@ public final class Scus94491BpeSegment_8003 {
       s0 = s1;
       v0 = s2.refpoint_0c.getX() - s2.viewpoint_00.getX();
       s1 = v0 * v0;
-      a1 = 12 - Lzc(s1);
+      a1 = 12 - GTE.leadingZeroCount(s1);
       if(a1 < 0) {
         //LAB_8003e2c8
         //LAB_8003e2e0
@@ -1089,7 +1086,7 @@ public final class Scus94491BpeSegment_8003 {
       //LAB_8003e358
       v0 = s2.refpoint_0c.getZ() - s2.viewpoint_00.getZ();
       s1 = v0 * v0;
-      a1 = 12 - Lzc(s1);
+      a1 = 12 - GTE.leadingZeroCount(s1);
       if(a1 < 0) {
         //LAB_8003e3b4
         //LAB_8003e3cc
@@ -1313,7 +1310,7 @@ public final class Scus94491BpeSegment_8003 {
     }
 
     //LAB_8003e8d4
-    int v0 = 8 - Lzc(a0);
+    int v0 = 8 - GTE.leadingZeroCount(a0);
     if(v0 >= 0) {
       s0 = v0 >> 1;
       a0 = a0 >> s0 * 2;
@@ -1339,154 +1336,112 @@ public final class Scus94491BpeSegment_8003 {
 
   @Method(0x8003e958L)
   public static void InitGeom() {
-    // cop2r61 = 0x155, 61 = ZSF3 - Z3 avg scale factor (normally 1/3)
-    CPU.CTC2(0x155, 29);
-    // cop2r62 = 0x100, 62 = ZSF4 - Z4 avg scale factor (normally 1/4)
-    CPU.CTC2(0x100, 30);
-    // cop2r58 = 0x3e8, 58 = H - Projection plane distance
-    CPU.CTC2(1000, 26);
-    // cop2r59 = 0xffffef9e, 59 = DQA - Depth queueing param A (coefficient)
-    CPU.CTC2(0xffffef9e, 27);
-    // cop2r60 = 0x1400000, 60 = DQB - Depth queueing param B (offset)
-    CPU.CTC2(0x1400000, 28);
-    // cop2r56 = 0, 56 = OFX - Screen offset X
-    CPU.CTC2(0, 24);
-    // cop2r57 = 0, 57 = OFY - Screen offset Y
-    CPU.CTC2(0, 25);
+    GTE.setAverageZScaleFactors(0x155, 0x100);
+    GTE.setProjectionPlaneDistance((short)1000);
+    GTE.setDepthQueueingParameters(-0x1062, 0x1400000);
+    GTE.setScreenOffset(0, 0);
   }
 
   @Method(0x8003ea80L)
   public static void FUN_8003ea80(final VECTOR a0, final VECTOR a1) {
     a1.set(a0);
-    FUN_8003eae0(a1.x, a1.y, a1.z);
+    FUN_8003eae0(a1);
   }
 
   @Method(0x8003eae0L)
-  public static void FUN_8003eae0(final IntRef t0, final IntRef t1, final IntRef t2) {
+  public static void FUN_8003eae0(final VECTOR t0) {
     // Fix retail bug where inputs can all be 0. Would result in negative array index.
-    if(t0.get() == 0 && t1.get() == 0 && t2.get() == 0) {
+    if(t0.getX() == 0 && t0.getY() == 0 && t0.getZ() == 0) {
       return;
     }
 
-    CPU.MTC2(t0.get(),  9); // IR1
-    CPU.MTC2(t1.get(), 10); // IR2
-    CPU.MTC2(t2.get(), 11); // IR3
-    CPU.COP2(0xa00428L); // Square of vector IR
-    final long vectorLength = CPU.MFC2(25) + CPU.MFC2(26) + CPU.MFC2(27); // MAC1/2/3
-    CPU.MTC2(vectorLength, 30); // Count leading zeroes
-    final long lzc = CPU.MFC2(31) & 0xffff_fffeL; // Leading zero count
-    final long t6 = (31 - lzc) / 2;
-    long t3 = lzc - 24;
-    long t4;
-    if(t3 >= 0) {
-      t4 = vectorLength << t3;
+    final int vectorLength = (int)t0.lengthSquared();
+    final int lzc = GTE.leadingZeroCount(vectorLength) & 0xffff_fffe; // Leading zero count
+    final int t6 = (31 - lzc) / 2;
+    final int t4;
+    if(lzc >= 24) {
+      t4 = vectorLength << (lzc - 24);
     } else {
       //LAB_8003eb40
-      t3 = 24 - lzc;
-      t4 = (int)vectorLength >> t3;
+      t4 = vectorLength >> (24 - lzc);
     }
 
     //LAB_8003eb4c
-    t4 = t4 - 0x40;
-    final int t5 = _80054870.get((int)t4).get();
-
-    CPU.MTC2(t5, 8); // IR0 (interpolate value)
-    CPU.MTC2(t0.get(),  9); // IR1
-    CPU.MTC2(t1.get(), 10); // IR2
-    CPU.MTC2(t2.get(), 11); // IR3
-    CPU.COP2(0x190003dL); // General purpose interpolation
-    t0.set((int)(CPU.MFC2(25) >> t6)); // MAC0
-    t1.set((int)(CPU.MFC2(26) >> t6)); // MAC1
-    t2.set((int)(CPU.MFC2(27) >> t6)); // MAC2
+    GTE.setIr0(_80054870.get(t4 - 0x40).get());
+    GTE.setIr123(t0);
+    GTE.generalPurposeInterpolate(); // General purpose interpolation (MAC123 = IR123 * IR0 >> 12)
+    t0.set(GTE.getMac1() >> t6, GTE.getMac2() >> t6, GTE.getMac3() >> t6);
   }
 
   @Method(0x8003eba0L)
   public static void FUN_8003eba0(final MATRIX a0, final MATRIX a1) {
-    final int t0 = a0.get(0);
-    final int t1 = a0.get(1);
-    final int t2 = a0.get(2);
-    final int t3 = a0.get(3);
-    final int t4 = a0.get(4);
-    final int t5 = a0.get(5);
-    final long v0 = CPU.CFC2(0);
-    final long v1 = CPU.CFC2(2);
-    final long a2 = CPU.CFC2(4);
-    CPU.CTC2(t0, 0);
-    CPU.CTC2(t1, 2);
-    CPU.CTC2(t2, 4);
-    CPU.MTC2(t3, 9);
-    CPU.MTC2(t4, 10);
-    CPU.MTC2(t5, 11);
-    CPU.COP2(0x178000cL);
-    final long t7 = CPU.MFC2(25);
-    final long t8 = CPU.MFC2(26);
-    final long t9 = CPU.MFC2(27);
-    CPU.CTC2(t3, 0);
-    CPU.CTC2(t4, 2);
-    CPU.CTC2(t5, 4);
-    CPU.COP2(0x178000cL);
-    CPU.MTC2(t3, 0);
-    CPU.MTC2(t4, 1);
-    CPU.MTC2(t5, 2);
-    final IntRef t0Ref = new IntRef().set((int)CPU.MFC2(25));
-    final IntRef t1Ref = new IntRef().set((int)CPU.MFC2(26));
-    final IntRef t2Ref = new IntRef().set((int)CPU.MFC2(27));
-    CPU.CTC2(v0, 0);
-    CPU.CTC2(v1, 2);
-    CPU.CTC2(a2, 4);
-    FUN_8003eae0(t0Ref, t1Ref, t2Ref);
-    a1.set(0, (short)t0Ref.get());
-    a1.set(1, (short)t1Ref.get());
-    a1.set(2, (short)t2Ref.get());
-    t0Ref.set((int)CPU.MFC2(0));
-    t1Ref.set((int)CPU.MFC2(1));
-    t2Ref.set((int)CPU.MFC2(2));
-    FUN_8003eae0(t0Ref, t1Ref, t2Ref);
-    a1.set(3, (short)t0Ref.get());
-    a1.set(4, (short)t1Ref.get());
-    a1.set(5, (short)t2Ref.get());
-    t0Ref.set((int)t7);
-    t1Ref.set((int)t8);
-    t2Ref.set((int)t9);
-    FUN_8003eae0(t0Ref, t1Ref, t2Ref);
-    a1.set(6, (short)t0Ref.get());
-    a1.set(7, (short)t1Ref.get());
-    a1.set(8, (short)t2Ref.get());
+    final short oldRot11 = GTE.getRotationMatrixValue(0);
+    final short oldRot22 = GTE.getRotationMatrixValue(4);
+    final short oldRot33 = GTE.getRotationMatrixValue(8);
+
+    GTE.setIr123(a0.get(3), a0.get(4), a0.get(5)); // transforms forward?
+
+    GTE.setRotationMatrixValue(0, a0.get(0)); // r11 // transforms right?
+    GTE.setRotationMatrixValue(4, a0.get(1)); // r22
+    GTE.setRotationMatrixValue(8, a0.get(2)); // r33
+    GTE.outerProduct(); // outer product of two vectors (sf 12), (IR3*R22-IR2*R33, IR1*R33-IR3*R11, IR2*R11-IR1*R22) >> 12
+    final int productX0 = GTE.getMac1();
+    final int productY0 = GTE.getMac2();
+    final int productZ0 = GTE.getMac3();
+
+    GTE.setRotationMatrixValue(0, a0.get(3)); // r11 // transforms forward?
+    GTE.setRotationMatrixValue(4, a0.get(4)); // r22
+    GTE.setRotationMatrixValue(8, a0.get(5)); // r33
+    GTE.outerProduct(); // outer product of two vectors (sf 12), (IR3*R22-IR2*R33, IR1*R33-IR3*R11, IR2*R11-IR1*R22) >> 12
+    final int productX1 = GTE.getMac1();
+    final int productY1 = GTE.getMac2();
+    final int productZ1 = GTE.getMac3();
+
+    GTE.setRotationMatrixValue(0, oldRot11);
+    GTE.setRotationMatrixValue(4, oldRot22);
+    GTE.setRotationMatrixValue(8, oldRot33);
+
+    final VECTOR t0 = new VECTOR().set(productX1, productY1, productZ1);
+    FUN_8003eae0(t0);
+    a1.set(0, (short)t0.getX());
+    a1.set(1, (short)t0.getY());
+    a1.set(2, (short)t0.getZ());
+
+    t0.set(a0.get(3), a0.get(4), a0.get(5));
+    FUN_8003eae0(t0);
+    a1.set(3, (short)t0.getX());
+    a1.set(4, (short)t0.getY());
+    a1.set(5, (short)t0.getZ());
+
+    t0.set(productX0, productY0, productZ0);
+    FUN_8003eae0(t0);
+    a1.set(6, (short)t0.getX());
+    a1.set(7, (short)t0.getY());
+    a1.set(8, (short)t0.getZ());
   }
 
   @Method(0x8003ec90L)
   public static MATRIX FUN_8003ec90(final MATRIX transformMatrix0, final MATRIX transformMatrix1, final MATRIX outMatrix) {
     GTE.setRotationMatrix(transformMatrix0);
 
-    CPU.MTC2((transformMatrix1.get(3) & 0xffff) << 16 | transformMatrix1.get(0) & 0xffff, 0); // VXY0
-    CPU.MTC2(transformMatrix1.get(6), 1); // VZ0
-    CPU.COP2(0x486012L);
-    outMatrix.set(0, (short)CPU.MFC2( 9)); // IR1
-    outMatrix.set(3, (short)CPU.MFC2(10)); // IR2
-    outMatrix.set(6, (short)CPU.MFC2(11)); // IR3
+    GTE.rotateVector(transformMatrix1.get(0), transformMatrix1.get(3), transformMatrix1.get(6));
+    outMatrix.set(0, GTE.getIr1());
+    outMatrix.set(3, GTE.getIr2());
+    outMatrix.set(6, GTE.getIr3());
 
-    CPU.MTC2((transformMatrix1.get(4) & 0xffff) << 16 | transformMatrix1.get(1) & 0xffff, 0); // VXY0
-    CPU.MTC2(transformMatrix1.get(7), 1); // VZ0
-    CPU.COP2(0x486012L);
-    outMatrix.set(1, (short)CPU.MFC2( 9)); // IR1
-    outMatrix.set(4, (short)CPU.MFC2(10)); // IR2
-    outMatrix.set(7, (short)CPU.MFC2(11)); // IR3
+    GTE.rotateVector(transformMatrix1.get(1), transformMatrix1.get(4), transformMatrix1.get(7));
+    outMatrix.set(1, GTE.getIr1());
+    outMatrix.set(4, GTE.getIr2());
+    outMatrix.set(7, GTE.getIr3());
 
-    CPU.MTC2((transformMatrix1.get(5) & 0xffff) << 16 | transformMatrix1.get(2) & 0xffff, 0); // VXY0
-    CPU.MTC2(transformMatrix1.get(8), 1); // VZ0
-    CPU.COP2(0x486012L);
-    outMatrix.set(2, (short)CPU.MFC2( 9)); // IR1
-    outMatrix.set(5, (short)CPU.MFC2(10)); // IR2
-    outMatrix.set(8, (short)CPU.MFC2(11)); // IR3
+    GTE.rotateVector(transformMatrix1.get(2), transformMatrix1.get(5), transformMatrix1.get(8));
+    outMatrix.set(2, GTE.getIr1());
+    outMatrix.set(5, GTE.getIr2());
+    outMatrix.set(8, GTE.getIr3());
 
-    CPU.MTC2((transformMatrix1.transfer.getY() & 0xffff) << 16 | transformMatrix1.transfer.getX(), 0); // VXY0
-    CPU.MTC2(transformMatrix1.transfer.getZ(), 1); // VZ0
-    CPU.COP2(0x486012L);
+    GTE.rotateVector(transformMatrix1.transfer);
+    outMatrix.transfer.set(transformMatrix0.transfer).add(GTE.getMac1(), GTE.getMac2(), GTE.getMac3());
 
-    outMatrix.transfer.set(transformMatrix0.transfer);
-    outMatrix.transfer.x.add((int)CPU.MFC2(25));
-    outMatrix.transfer.y.add((int)CPU.MFC2(26));
-    outMatrix.transfer.z.add((int)CPU.MFC2(27));
     return outMatrix;
   }
 
@@ -1538,21 +1493,15 @@ public final class Scus94491BpeSegment_8003 {
     }
 
     //LAB_8003ee9c
-    CPU.MTC2(wholeX,  9); // IR1
-    CPU.MTC2(wholeY, 10); // IR2
-    CPU.MTC2(wholeZ, 11); // IR3
-    CPU.COP2(0x41_e012L); // Multiply IR by rotation, no fraction)
-    final int x1 = (int)CPU.MFC2(25); // MAC1
-    final int y1 = (int)CPU.MFC2(26); // MAC2
-    final int z1 = (int)CPU.MFC2(27); // MAC3
+    GTE.rotateVector0(wholeX, wholeY, wholeZ);
+    final int x1 = GTE.getMac1();
+    final int y1 = GTE.getMac2();
+    final int z1 = GTE.getMac3();
 
-    CPU.MTC2(fractX,  9); // IR1
-    CPU.MTC2(fractY, 10); // IR2
-    CPU.MTC2(fractZ, 11); // IR3
-    CPU.COP2(0x49_e012L); // Multiply IR by rotation, 12-bit fraction
-    final int x2 = (int)CPU.MFC2(25); // MAC1
-    final int y2 = (int)CPU.MFC2(26); // MAC2
-    final int z2 = (int)CPU.MFC2(27); // MAC3
+    GTE.rotateVector(fractX, fractY, fractZ);
+    final int x2 = GTE.getMac1();
+    final int y2 = GTE.getMac2();
+    final int z2 = GTE.getMac3();
 
     if(out == null) {
       out = new VECTOR();
@@ -1564,12 +1513,10 @@ public final class Scus94491BpeSegment_8003 {
   /** Transforms vec using the matrix already loaded into the GTE */
   @Method(0x8003ef50L)
   public static VECTOR ApplyRotMatrix(final SVECTOR vec, final VECTOR out) {
-    CPU.MTC2(vec.getXY(), 0); // VXY0
-    CPU.MTC2(vec.getZ(),  1); // VZ0
-    CPU.COP2(0x48_6012L);
-    out.setX((int)CPU.MFC2( 9)); // IR0
-    out.setY((int)CPU.MFC2(10)); // IR1
-    out.setZ((int)CPU.MFC2(11)); // IR2
+    GTE.rotateVector(vec);
+    out.setX(GTE.getIr1());
+    out.setY(GTE.getIr2());
+    out.setZ(GTE.getIr3());
     return out;
   }
 
@@ -1583,14 +1530,8 @@ public final class Scus94491BpeSegment_8003 {
 
     //LAB_8003efc0
     final MATRIX matrix = matrixStack_80054a0c[i / 32];
-    matrix.setPacked(0, CPU.CFC2(0)); //
-    matrix.setPacked(2, CPU.CFC2(1)); //
-    matrix.setPacked(4, CPU.CFC2(2)); // Rotation matrix
-    matrix.setPacked(6, CPU.CFC2(3)); //
-    matrix.setPacked(8, CPU.CFC2(4)); //
-    matrix.transfer.x.set((int)CPU.CFC2(5)); //
-    matrix.transfer.y.set((int)CPU.CFC2(6)); // Translation vector
-    matrix.transfer.z.set((int)CPU.CFC2(7)); //
+    GTE.getRotationMatrix(matrix);
+    GTE.getTranslationVector(matrix.transfer);
 
     matrixStackIndex_80054a08.addu(0x20L);
   }
@@ -1628,87 +1569,69 @@ public final class Scus94491BpeSegment_8003 {
 
   @Method(0x8003f210L)
   public static MATRIX MulMatrix0(final MATRIX a0, final MATRIX a1, final MATRIX out) {
-    final long t0;
-    final long t1;
-    final long t2;
     GTE.setRotationMatrix(a0);
 
-    CPU.MTC2((a1.get(3) & 0xffff) << 16 | a1.get(0) & 0xffff, 0);
-    CPU.MTC2(                             a1.get(6) & 0xffff, 1);
-    CPU.COP2(0x486012L);
-    out.set(0, (short)CPU.MFC2( 9));
-    out.set(3, (short)CPU.MFC2(10));
-    out.set(6, (short)CPU.MFC2(11));
+    GTE.rotateVector(a1.get(0), a1.get(3), a1.get(6));
+    out.set(0, GTE.getIr1());
+    out.set(3, GTE.getIr2());
+    out.set(6, GTE.getIr3());
 
-    CPU.MTC2((a1.get(4) & 0xffff) << 16 | a1.get(1) & 0xffff, 0);
-    CPU.MTC2(                             a1.get(7) & 0xffff, 1);
-    CPU.COP2(0x486012L);
-    out.set(1, (short)CPU.MFC2( 9));
-    out.set(4, (short)CPU.MFC2(10));
-    out.set(7, (short)CPU.MFC2(11));
+    GTE.rotateVector(a1.get(1), a1.get(4), a1.get(7));
+    out.set(1, GTE.getIr1());
+    out.set(4, GTE.getIr2());
+    out.set(7, GTE.getIr3());
 
-    CPU.MTC2((a1.get(5) & 0xffff) << 16 | a1.get(2) & 0xffff, 0);
-    CPU.MTC2(                             a1.get(8) & 0xffff, 1);
-    CPU.COP2(0x486012L);
-    out.set(2, (short)CPU.MFC2( 9));
-    out.set(5, (short)CPU.MFC2(10));
-    out.set(8, (short)CPU.MFC2(11));
+    GTE.rotateVector(a1.get(2), a1.get(5), a1.get(8));
+    out.set(2, GTE.getIr1());
+    out.set(5, GTE.getIr2());
+    out.set(8, GTE.getIr3());
 
-    final int transferX;
+    final int wholeX;
+    final int fractX;
     if(a1.transfer.getX() < 0) {
-      transferX = -(-a1.transfer.getX() >> 15);
-      t0 = -(-a1.transfer.getX() & 0x7fffL);
+      wholeX = -(-a1.transfer.getX() >> 15);
+      fractX = -(-a1.transfer.getX() & 0x7fff);
     } else {
       //LAB_8003f33c
-      transferX = a1.transfer.getX() >> 15;
-      t0 = a1.transfer.getX() & 0x7fffL;
+      wholeX = a1.transfer.getX() >> 15;
+      fractX = a1.transfer.getX() & 0x7fff;
     }
 
     //LAB_8003f344
-    final int transferY;
+    final int wholeY;
+    final int fractY;
     if(a1.transfer.getY() < 0) {
-      transferY = -(-a1.transfer.getY() >> 15);
-      t1 = -(-a1.transfer.getY() & 0x7fffL);
+      wholeY = -(-a1.transfer.getY() >> 15);
+      fractY = -(-a1.transfer.getY() & 0x7fff);
     } else {
       //LAB_8003f364
-      transferY = a1.transfer.getY() >> 15;
-      t1 = a1.transfer.getY() & 0x7fffL;
+      wholeY = a1.transfer.getY() >> 15;
+      fractY = a1.transfer.getY() & 0x7fff;
     }
 
     //LAB_8003f36c
-    final int transferZ;
+    final int wholeZ;
+    final int fractZ;
     if(a1.transfer.getZ() < 0) {
-      transferZ = -(-a1.transfer.getZ() >> 15);
-      t2 = -(-a1.transfer.getZ() & 0x7fffL);
+      wholeZ = -(-a1.transfer.getZ() >> 15);
+      fractZ = -(-a1.transfer.getZ() & 0x7fff);
     } else {
       //LAB_8003f38c
-      transferZ = a1.transfer.getZ() >> 15;
-      t2 = a1.transfer.getZ() & 0x7fffL;
+      wholeZ = a1.transfer.getZ() >> 15;
+      fractZ = a1.transfer.getZ() & 0x7fff;
     }
 
     //LAB_8003f394
-    CPU.MTC2(transferX,  9);
-    CPU.MTC2(transferY, 10);
-    CPU.MTC2(transferZ, 11);
-    CPU.COP2(0x41e012L);
-    final long t3 = CPU.MFC2(25);
-    final long t4 = CPU.MFC2(26);
-    final long t5 = CPU.MFC2(27);
+    GTE.rotateVector0(wholeX, wholeY, wholeZ);
+    final int t3 = GTE.getMac1();
+    final int t4 = GTE.getMac2();
+    final int t5 = GTE.getMac3();
 
-    CPU.MTC2(t0,  9);
-    CPU.MTC2(t1, 10);
-    CPU.MTC2(t2, 11);
-    CPU.COP2(0x49e012L);
+    GTE.rotateVector(fractX, fractY, fractZ);
 
-    //LAB_8003f3e0
-    //LAB_8003f3e4
-    //LAB_8003f3fc
-    //LAB_8003f400
-    //LAB_8003f418
-    //LAB_8003f41c
-    out.transfer.setX((int)((int)CPU.MFC2(25) + t3 * 8 + a0.transfer.getX()));
-    out.transfer.setY((int)((int)CPU.MFC2(26) + t4 * 8 + a0.transfer.getY()));
-    out.transfer.setZ((int)((int)CPU.MFC2(27) + t5 * 8 + a0.transfer.getZ()));
+    out.transfer.setX(GTE.getMac1() + t3 * 8 + a0.transfer.getX());
+    out.transfer.setY(GTE.getMac2() + t4 * 8 + a0.transfer.getY());
+    out.transfer.setZ(GTE.getMac3() + t5 * 8 + a0.transfer.getZ());
     return out;
   }
 
@@ -1724,26 +1647,20 @@ public final class Scus94491BpeSegment_8003 {
   public static MATRIX MulMatrix(final MATRIX m0, final MATRIX m1) {
     GTE.setRotationMatrix(m0);
 
-    CPU.MTC2((m1.get(3) & 0xffffL) << 16 | m1.get(0) & 0xffffL, 0); // VXY0
-    CPU.MTC2(                              m1.get(6) & 0xffffL, 1); // VZ0
-    CPU.COP2(0x48_6012L); // MVMVA - Multiply vector by matrix and add vector
-    m0.set(0, (short)CPU.MFC2( 9)); // IR1
-    m0.set(3, (short)CPU.MFC2(10)); // IR2
-    m0.set(6, (short)CPU.MFC2(11)); // IR3
+    GTE.rotateVector(m1.get(0), m1.get(3), m1.get(6));
+    m0.set(0, GTE.getIr1());
+    m0.set(3, GTE.getIr2());
+    m0.set(6, GTE.getIr3());
 
-    CPU.MTC2((m1.get(4) & 0xffffL) << 16 | m1.get(1) & 0xffffL, 0); // VXY0
-    CPU.MTC2(                              m1.get(7) & 0xffffL, 1); // VZ0
-    CPU.COP2(0x486012L); // MVMVA - Multiply vector by matrix and add vector
-    m0.set(1, (short)CPU.MFC2( 9)); // IR1
-    m0.set(4, (short)CPU.MFC2(10)); // IR2
-    m0.set(7, (short)CPU.MFC2(11)); // IR3
+    GTE.rotateVector(m1.get(1), m1.get(4), m1.get(7));
+    m0.set(1, GTE.getIr1());
+    m0.set(4, GTE.getIr2());
+    m0.set(7, GTE.getIr3());
 
-    CPU.MTC2((m1.get(5) & 0xffffL) << 16 | m1.get(2) & 0xffffL, 0); // VXY0
-    CPU.MTC2(                              m1.get(8) & 0xffffL, 1); // VZ0
-    CPU.COP2(0x486012L); // MVMVA - Multiply vector by matrix and add vector
-    m0.set(2, (short)CPU.MFC2( 9)); // IR1
-    m0.set(5, (short)CPU.MFC2(10)); // IR2
-    m0.set(8, (short)CPU.MFC2(11)); // IR3
+    GTE.rotateVector(m1.get(2), m1.get(5), m1.get(8));
+    m0.set(2, GTE.getIr1());
+    m0.set(5, GTE.getIr2());
+    m0.set(8, GTE.getIr3());
 
     return m0;
   }
@@ -1761,28 +1678,22 @@ public final class Scus94491BpeSegment_8003 {
     GTE.setRotationMatrix(m0);
 
     // First row
-    CPU.MTC2((m1.get(3) & 0xffffL) << 16 | m1.get(0) & 0xffffL, 0); // VXY0
-    CPU.MTC2(                              m1.get(6) & 0xffffL, 1); // VZ0
-    CPU.COP2(0x48_6012L); // Multiply vector by matrix and add vector
-    m1.set(0, (short)CPU.MFC2( 9)); // IR1
-    m1.set(3, (short)CPU.MFC2(10)); // IR2
-    m1.set(6, (short)CPU.MFC2(11)); // IR3
+    GTE.rotateVector(m1.get(0), m1.get(3), m1.get(6));
+    m1.set(0, GTE.getIr1());
+    m1.set(3, GTE.getIr2());
+    m1.set(6, GTE.getIr3());
 
     // Second row
-    CPU.MTC2((m1.get(4) & 0xffffL) << 16 | m1.get(1) & 0xffffL, 0); // VXY0
-    CPU.MTC2(                              m1.get(7) & 0xffffL, 1); // VZ0
-    CPU.COP2(0x48_6012L); // Multiply vector by matrix and add vector
-    m1.set(1, (short)CPU.MFC2( 9)); // IR1
-    m1.set(4, (short)CPU.MFC2(10)); // IR2
-    m1.set(7, (short)CPU.MFC2(11)); // IR3
+    GTE.rotateVector(m1.get(1), m1.get(4), m1.get(7));
+    m1.set(1, GTE.getIr1());
+    m1.set(4, GTE.getIr2());
+    m1.set(7, GTE.getIr3());
 
     // Third row
-    CPU.MTC2((m1.get(5) & 0xffffL) << 16 | m1.get(2) & 0xffffL, 0); // VXY0
-    CPU.MTC2(                              m1.get(8) & 0xffffL, 1); // VZ0
-    CPU.COP2(0x48_6012L); // Multiply vector by matrix and add vector
-    m1.set(2, (short)CPU.MFC2( 9)); // IR1
-    m1.set(5, (short)CPU.MFC2(10)); // IR2
-    m1.set(8, (short)CPU.MFC2(11)); // IR3
+    GTE.rotateVector(m1.get(2), m1.get(5), m1.get(8));
+    m1.set(2, GTE.getIr1());
+    m1.set(5, GTE.getIr2());
+    m1.set(8, GTE.getIr3());
 
     return m1;
   }
@@ -1790,26 +1701,16 @@ public final class Scus94491BpeSegment_8003 {
   @Method(0x8003f680L)
   public static VECTOR ApplyMatrix(final MATRIX a0, final SVECTOR a1, final VECTOR out) {
     GTE.setRotationMatrix(a0);
-    CPU.MTC2(a1.getXY(), 0);
-    CPU.MTC2(a1.getZ(),  1);
-    CPU.COP2(0x48_6012L); // Multiply V0 by rotation matrix, 12-bit fraction
-    out.setX((int)CPU.MFC2(25)); // MAC0
-    out.setY((int)CPU.MFC2(26)); // MAC1
-    out.setZ((int)CPU.MFC2(27)); // MAC2
+    GTE.rotateVector(a1);
+    out.set(GTE.getMac1(), GTE.getMac2(), GTE.getMac3());
     return out;
   }
 
   @Method(0x8003f6d0L)
   public static SVECTOR ApplyMatrixSV(final MATRIX mat, final SVECTOR in, final SVECTOR out) {
     GTE.setRotationMatrix(mat);
-    CPU.MTC2(in.getXY(), 0); // VXY0
-    CPU.MTC2(in.getZ(),  1); // VZ0
-
-    CPU.COP2(0x48_6012L); // MVMVA - Multiply vector by matrix and add vector
-
-    out.setX((short)CPU.MFC2( 9)); // IR1
-    out.setY((short)CPU.MFC2(10)); // IR2
-    out.setZ((short)CPU.MFC2(11)); // IR3
+    GTE.rotateVector(in);
+    out.set(GTE.getIr1(), GTE.getIr2(), GTE.getIr3());
     return out;
   }
 
@@ -1848,25 +1749,23 @@ public final class Scus94491BpeSegment_8003 {
 
   @Method(0x8003f8a0L)
   public static void getScreenOffset(final IntRef screenOffsetX, final IntRef screenOffsetY) {
-    screenOffsetX.set((int)CPU.CFC2(24) >> 16);
-    screenOffsetY.set((int)CPU.CFC2(25) >> 16);
+    screenOffsetX.set(GTE.getScreenOffsetX() >> 16);
+    screenOffsetY.set(GTE.getScreenOffsetY() >> 16);
   }
 
   @Method(0x8003f8c0L)
   public static int getProjectionPlaneDistance() {
-    return (int)CPU.CFC2(26);
+    return GTE.getProjectionPlaneDistance();
   }
 
   @Method(0x8003f8d0L)
   public static void SetFarColour(final int r, final int g, final int b) {
-    CPU.CTC2(r << 4, 0x15);
-    CPU.CTC2(g << 4, 0x16);
-    CPU.CTC2(b << 4, 0x17);
+    GTE.setFarColour(r << 4, g << 4, b << 4);
   }
 
   @Method(0x8003f8f0L) //Also 0x8003c6d0
   public static void setProjectionPlaneDistance(final int distance) {
-    CPU.CTC2(distance, 26);
+    GTE.setProjectionPlaneDistance(distance);
   }
 
   /** Returns Z */
@@ -1879,11 +1778,7 @@ public final class Scus94491BpeSegment_8003 {
 
   @Method(0x8003f930L)
   public static int perspectiveTransformTriple(final SVECTOR world0, final SVECTOR world1, final SVECTOR world2, final DVECTOR screen0, final DVECTOR screen1, final DVECTOR screen2) {
-    GTE.setVertex(0, world0);
-    GTE.setVertex(1, world1);
-    GTE.setVertex(2, world2);
-
-    GTE.perspectiveTransformTriangle();
+    GTE.perspectiveTransformTriangle(world0, world1, world2);
 
     screen0.set(GTE.getScreenX(0), GTE.getScreenY(0));
     screen1.set(GTE.getScreenX(1), GTE.getScreenY(1));
@@ -1894,12 +1789,8 @@ public final class Scus94491BpeSegment_8003 {
 
   @Method(0x8003f990L)
   public static void RotTrans(final SVECTOR v0, final VECTOR out) {
-    CPU.MTC2(v0.getXY(), 0); // VXY0
-    CPU.MTC2(v0.getZ(), 1); // VZ0
-    CPU.COP2(0x48_0012L); // MVMVA (translation=tr, mul vec=v0, mul mat=rot, 12-bit fraction)
-    out.setX((int)CPU.MFC2(25)); // MAC1
-    out.setY((int)CPU.MFC2(26)); // MAC2
-    out.setZ((int)CPU.MFC2(27)); // MAC3
+    GTE.rotateTranslateVector(v0);
+    out.set(GTE.getMac1(), GTE.getMac2(), GTE.getMac3());
   }
 
   /**
@@ -1922,16 +1813,12 @@ public final class Scus94491BpeSegment_8003 {
    */
   @Method(0x8003f9c0L)
   public static int RotTransPers4(final SVECTOR v0, final SVECTOR v1, final SVECTOR v2, final SVECTOR v3, final SVECTOR sxy0, final SVECTOR sxy1, final SVECTOR sxy2, final SVECTOR sxy3) {
-    GTE.setVertex(0, v0);
-    GTE.setVertex(1, v1);
-    GTE.setVertex(2, v2);
-    GTE.perspectiveTransformTriangle();
+    GTE.perspectiveTransformTriangle(v0, v1, v2);
     sxy0.set(GTE.getScreenX(0), GTE.getScreenY(0), (short)0);
     sxy1.set(GTE.getScreenX(1), GTE.getScreenY(1), (short)0);
     sxy2.set(GTE.getScreenX(2), GTE.getScreenY(2), (short)0);
 
-    GTE.setVertex(0, v3);
-    GTE.perspectiveTransform();
+    GTE.perspectiveTransform(v3);
     sxy3.set(GTE.getScreenX(2), GTE.getScreenY(2), (short)0);
 
     return GTE.getScreenZ(3) >> 2;

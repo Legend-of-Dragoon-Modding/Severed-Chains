@@ -63,6 +63,7 @@ import legend.game.combat.environment.CameraSeptParamCallback;
 import legend.game.combat.environment.CombatPortraitBorderMetrics0c;
 import legend.game.combat.environment.NameAndPortraitDisplayMetrics0c;
 import legend.game.combat.environment.SpBarBorderMetrics04;
+import legend.game.combat.types.BattleHudStatLabelMetrics0c;
 import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.BattleStateEf4;
 import legend.game.combat.types.BttlStruct08;
@@ -70,11 +71,10 @@ import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.combat.types.CombatantStruct1a8_c;
 import legend.game.combat.types.DragoonSpells09;
 import legend.game.combat.types.MersenneTwisterSeed;
-import legend.game.combat.types.BattleHudStatLabelMetrics0c;
 import legend.game.combat.types.Vec2;
 import legend.game.combat.ui.BattleDisplayStats144;
-import legend.game.combat.ui.BattleMenuStruct58;
 import legend.game.combat.ui.BattleHudCharacterDisplay3c;
+import legend.game.combat.ui.BattleMenuStruct58;
 import legend.game.combat.ui.CombatItem02;
 import legend.game.combat.ui.CombatMenua4;
 import legend.game.combat.ui.FloatingNumberC4;
@@ -111,7 +111,6 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
@@ -4141,12 +4140,9 @@ public final class Bttl_800c {
   public static int transformWorldspaceToScreenspace(final VECTOR pos, final IntRef outX, final IntRef outY) {
     GTE.setRotationMatrix(worldToScreenMatrix_800c3548);
 
-    final SVECTOR a0s = new SVECTOR().set(pos);
-    CPU.MTC2(a0s.getXY(), 0); // VXY0
-    CPU.MTC2(a0s.getZ(),  1); // VZ0
-    CPU.COP2(0x48_6012L); // MVMVA - multiply V0 by rotation matrix and add nothing
+    GTE.rotateVector(pos);
 
-    final VECTOR sp0x10 = new VECTOR().set((int)CPU.MFC2(25), (int)CPU.MFC2(26), (int)CPU.MFC2(27));
+    final VECTOR sp0x10 = new VECTOR().set(GTE.getMac1(), GTE.getMac2(), GTE.getMac3());
     sp0x10.add(worldToScreenMatrix_800c3548.transfer);
     outX.set(MathHelper.safeDiv(getProjectionPlaneDistance() * sp0x10.getX(), sp0x10.getZ()));
     outY.set(MathHelper.safeDiv(getProjectionPlaneDistance() * sp0x10.getY(), sp0x10.getZ()));
@@ -4169,17 +4165,13 @@ public final class Bttl_800c {
     GTE.setRotationMatrix(transforms);
     GTE.setTranslationVector(transforms.transfer);
 
-    final SVECTOR vert = new SVECTOR().set(vertex);
-    CPU.MTC2(vert.getXY(), 0); // VXY0
-    CPU.MTC2(vert.getZ(),  1); // VZ0
-    CPU.COP2(0x480012L); // MVMVA
+    GTE.rotateTranslateVector(vertex);
 
-    out.set((int)CPU.MFC2(25), (int)CPU.MFC2(26), (int)CPU.MFC2(27)); // MAC1/2/3
+    out.set(GTE.getMac1(), GTE.getMac2(), GTE.getMac3());
   }
 
   @Method(0x800cf4f4L)
   public static void FUN_800cf4f4(final EffectManagerData6c a0, @Nullable final SVECTOR a1, final VECTOR a2, final VECTOR out) {
-    final VECTOR sp0x10 = new VECTOR();
     final SVECTOR sp0x20 = new SVECTOR();
     final MATRIX sp0x28 = new MATRIX();
 
@@ -4191,36 +4183,23 @@ public final class Bttl_800c {
     }
 
     //LAB_800cf578
-    sp0x10.set(a0._10.trans_04);
     RotMatrix_Xyz(sp0x20, sp0x28);
-    TransMatrix(sp0x28, sp0x10);
+    TransMatrix(sp0x28, a0._10.trans_04);
     GTE.setRotationMatrix(sp0x28);
     GTE.setTranslationVector(sp0x28.transfer);
-    sp0x20.set(a2);
-    CPU.MTC2(sp0x20.getXY(), 0);
-    CPU.MTC2(sp0x20.getZ(),  1);
-    CPU.COP2(0x480012L);
-    sp0x10.setX((int)CPU.MFC2(25));
-    sp0x10.setY((int)CPU.MFC2(26));
-    sp0x10.setZ((int)CPU.MFC2(27));
-    out.set(sp0x10);
+    GTE.rotateTranslateVector(a2);
+    out.set(GTE.getMac1(), GTE.getMac2(), GTE.getMac3());
   }
 
   @Method(0x800cf684L)
-  public static void FUN_800cf684(final SVECTOR a0, final VECTOR a1, final VECTOR a2, final VECTOR out) {
-    final SVECTOR sp0x20 = new SVECTOR().set(a0);
-    final VECTOR sp0x10 = new VECTOR().set(a1);
-    final MATRIX sp0x28 = new MATRIX();
-    RotMatrix_Xyz(sp0x20, sp0x28);
-    TransMatrix(sp0x28, sp0x10);
-    GTE.setRotationMatrix(sp0x28);
-    GTE.setTranslationVector(sp0x28.transfer);
-    sp0x20.set(a2);
-    CPU.MTC2(sp0x20.getXY(), 0);
-    CPU.MTC2(sp0x20.getZ(),  1);
-    CPU.COP2(0x480012L);
-    sp0x10.set((int)CPU.MFC2(25), (int)CPU.MFC2(26), (int)CPU.MFC2(27));
-    out.set(sp0x10);
+  public static void FUN_800cf684(final SVECTOR rotation, final VECTOR translation, final VECTOR vector, final VECTOR out) {
+    final MATRIX transforms = new MATRIX();
+    RotMatrix_Xyz(rotation, transforms);
+    TransMatrix(transforms, translation);
+    GTE.setRotationMatrix(transforms);
+    GTE.setTranslationVector(transforms.transfer);
+    GTE.rotateTranslateVector(vector);
+    out.set(GTE.getMac1(), GTE.getMac2(), GTE.getMac3());
   }
 
   /** @return Z */
@@ -4228,53 +4207,34 @@ public final class Bttl_800c {
   public static int FUN_800cf7d4(final SVECTOR rotation, final VECTOR translation1, final VECTOR translation2, final ShortRef outX, final ShortRef outY) {
     final SVECTOR baseTranslation = new SVECTOR().set(translation1);
     GTE.setRotationMatrix(worldToScreenMatrix_800c3548);
-    GTE.setVertex(0, baseTranslation);
-    final SVECTOR baseRotation = new SVECTOR().set(rotation);
-    CPU.COP2(0x486012L);
-    final VECTOR sp0x10 = new VECTOR();
-    sp0x10.setX((int)CPU.MFC2(25));
-    sp0x10.setY((int)CPU.MFC2(26));
-    sp0x10.setZ((int)CPU.MFC2(27));
+    GTE.rotateVector(baseTranslation);
+    final VECTOR sp0x10 = new VECTOR().set(GTE.getMac1(), GTE.getMac2(), GTE.getMac3());
 
     GTE.setRotationMatrix(worldToScreenMatrix_800c3548);
     GTE.setTranslationVector(worldToScreenMatrix_800c3548.transfer);
 
     final MATRIX sp0x38 = new MATRIX();
-    sp0x38.setPacked(0, CPU.CFC2(0));
-    sp0x38.setPacked(2, CPU.CFC2(1));
-    sp0x38.setPacked(4, CPU.CFC2(2));
-    sp0x38.setPacked(6, CPU.CFC2(3));
-    sp0x38.setPacked(8, CPU.CFC2(4));
-    sp0x38.transfer.setX((int)CPU.CFC2(5));
-    sp0x38.transfer.setY((int)CPU.CFC2(6));
-    sp0x38.transfer.setZ((int)CPU.CFC2(7));
+    GTE.getRotationMatrix(sp0x38);
+    GTE.getTranslationVector(sp0x38.transfer);
 
     final MATRIX sp0x58 = new MATRIX();
-    RotMatrix_Xyz(baseRotation, sp0x58);
+    RotMatrix_Xyz(new SVECTOR().set(rotation), sp0x58);
     GTE.setRotationMatrix(sp0x38);
-    CPU.MTC2(sp0x58.get(0),  9); // IR1
-    CPU.MTC2(sp0x58.get(3), 10); // IR2
-    CPU.MTC2(sp0x58.get(6), 11); // IR3
-    CPU.COP2(0x49e012L);
-    sp0x38.set(0, (short)CPU.MFC2( 9));
-    sp0x38.set(3, (short)CPU.MFC2(10));
-    sp0x38.set(6, (short)CPU.MFC2(11));
+    GTE.rotateVector(sp0x58.get(0), sp0x58.get(3), sp0x58.get(6));
+    sp0x38.set(0, GTE.getIr1());
+    sp0x38.set(3, GTE.getIr2());
+    sp0x38.set(6, GTE.getIr3());
 
-    CPU.MTC2(sp0x58.get(1),  9);
-    CPU.MTC2(sp0x58.get(4), 10);
-    CPU.MTC2(sp0x58.get(7), 11);
-    CPU.COP2(0x49e012L);
-    sp0x38.set(1, (short)CPU.MFC2( 9));
-    sp0x38.set(4, (short)CPU.MFC2(10));
-    sp0x38.set(7, (short)CPU.MFC2(11));
+    GTE.rotateVector(sp0x58.get(1), sp0x58.get(4), sp0x58.get(7));
+    sp0x38.set(1, GTE.getIr1());
+    sp0x38.set(4, GTE.getIr2());
+    sp0x38.set(7, GTE.getIr3());
 
-    CPU.MTC2(sp0x58.get(2),  9);
-    CPU.MTC2(sp0x58.get(5), 10);
-    CPU.MTC2(sp0x58.get(8), 11);
-    CPU.COP2(0x49e012L);
-    sp0x38.set(2, (short)CPU.MFC2( 9));
-    sp0x38.set(5, (short)CPU.MFC2(10));
-    sp0x38.set(8, (short)CPU.MFC2(11));
+    GTE.rotateVector(sp0x58.get(2), sp0x58.get(5), sp0x58.get(8));
+    sp0x38.set(2, GTE.getIr1());
+    sp0x38.set(5, GTE.getIr2());
+    sp0x38.set(8, GTE.getIr3());
+
     sp0x38.transfer.add(sp0x10);
     GTE.setRotationMatrix(sp0x38);
     GTE.setTranslationVector(sp0x38.transfer);
