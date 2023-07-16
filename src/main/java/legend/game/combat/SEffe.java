@@ -4823,7 +4823,7 @@ public final class SEffe {
 
   /**
    * Code deleted from LAB_8010a130. Condition variable was set from script, and value
-   * was hardcoded to 0 so that the code in the conditions was never run.
+   * was hardcoded to 0 so that the code in the condition was never run.
    */
   @Method(0x80109fc4L)
   public static void FUN_80109fc4(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
