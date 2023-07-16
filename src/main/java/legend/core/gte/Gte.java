@@ -294,16 +294,6 @@ public class Gte {
     this.IR[3] = this.setIR(3, this.MAC3, this.lm);
   }
 
-  private void SQR() {
-    this.MAC1 = (int)this.setMAC(1, this.IR[1] * this.IR[1] >> this.sf);
-    this.MAC2 = (int)this.setMAC(2, this.IR[2] * this.IR[2] >> this.sf);
-    this.MAC3 = (int)this.setMAC(3, this.IR[3] * this.IR[3] >> this.sf);
-
-    this.IR[1] = this.setIR(1, this.MAC1, this.lm);
-    this.IR[2] = this.setIR(2, this.MAC2, this.lm);
-    this.IR[3] = this.setIR(3, this.MAC3, this.lm);
-  }
-
   private void AVSZ3() {
     //MAC0 = ZSF3 * (SZ1 + SZ2 + SZ3); for AVSZ3
     //OTZ = MAC0 / 1000h;for both(saturated to 0..FFFFh)

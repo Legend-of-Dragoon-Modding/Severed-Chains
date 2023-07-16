@@ -90,7 +90,9 @@ public class Model124 {
   public final VECTOR scaleVector_fc = new VECTOR();
   /** Pretty sure this doesn't include VRAM X/Y */
   public int tpage_108;
+  /** Maybe initial rotation? */
   public final VECTOR vector_10c = new VECTOR();
+  /** Maybe initial translation? */
   public final VECTOR vector_118 = new VECTOR();
 
   public Model124(final String name) {
