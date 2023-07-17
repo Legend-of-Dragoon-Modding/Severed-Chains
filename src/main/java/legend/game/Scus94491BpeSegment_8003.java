@@ -52,7 +52,6 @@ import static legend.game.Scus94491BpeSegment_800c.identityAspectMatrix_800c3588
 import static legend.game.Scus94491BpeSegment_800c.identityMatrix_800c3568;
 import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
 import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
-import static legend.game.Scus94491BpeSegment_800c.matrix_800c3528;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 
 public final class Scus94491BpeSegment_8003 {
@@ -511,181 +510,26 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x8003cee0L)
-  public static void FUN_8003cee0(final MATRIX matrix, final long sin, final long cos, final long param_4) {
+  public static void FUN_8003cee0(final MATRIX matrix, final short sin, final short cos, final int type) {
     matrix.set(identityMatrix_800c3568);
 
     //TODO this is weird... these are the positions for rotation matrices, but if they were transposed
 
-    switch((byte)(param_4 - 0x58L)) {
-      case 0x0, 0x20 -> {
-        matrix.set(1, 1, (short)cos);
+    switch(type) {
+      case 0 -> {
+        matrix.set(1, 1, cos);
         matrix.set(1, 2, (short)-sin);
-        matrix.set(2, 1, (short)sin);
-        matrix.set(2, 2, (short)cos);
+        matrix.set(2, 1, sin);
+        matrix.set(2, 2, cos);
       }
 
-      case 0x1, 0x21 -> {
-        matrix.set(0, 0, (short)cos);
-        matrix.set(0, 2, (short)sin);
+      case 1 -> {
+        matrix.set(0, 0, cos);
+        matrix.set(0, 2, sin);
         matrix.set(2, 0, (short)-sin);
-        matrix.set(2, 2, (short)cos);
-      }
-
-      case 0x2, 0x22 -> {
-        matrix.set(0, 0, (short)cos);
-        matrix.set(0, 1, (short)-sin);
-        matrix.set(1, 0, (short)sin);
-        matrix.set(1, 1, (short)cos);
+        matrix.set(2, 2, cos);
       }
     }
-  }
-
-  /**
-   * <p>Calculates GsWSMATRIX using viewpoint information in pv. GsWSMATRIX doesn't change unless the
-   * viewpoint is moved, so this function should be called every frame only if the viewpoint is moved, in order for
-   * changes to be updated.</p>
-   *
-   * <p>It should also be called every frame if the GsRVIEW2 member super is set to anything other than WORLD,
-   * because even if the other parameters are not changed, if the parameters of the superior coordinate system
-   * are changed, the viewpoint will have moved.</p>
-   *
-   * @param struct Pointer to view information
-   *
-   * @return 0 on success; 2 on failure.
-   */
-  @Method(0x8003cfb0L)
-  public static long GsSetRefView2(final GsRVIEW2 struct) {
-    final long s0;
-    final long s1;
-    final long s2;
-    final long a1;
-    long a2;
-    long v0;
-
-    worldToScreenMatrix_800c3548.set(identityAspectMatrix_800c3588);
-
-    FUN_8003d5d0(worldToScreenMatrix_800c3548, -struct.viewpointTwist_18);
-    final VECTOR[] sp10 = {new VECTOR(), new VECTOR()};
-    FUN_8003d380(struct, sp10);
-
-    long a0;
-
-    v0 = sp10[1].getX() - sp10[0].getX();
-    a0 = v0 * v0;
-
-    v0 = sp10[1].getY() - sp10[0].getY();
-    a0 += v0 * v0;
-
-    v0 = sp10[1].getZ() - sp10[0].getZ();
-    a0 += v0 * v0;
-
-    s2 = SquareRoot0(a0);
-    if(s2 == 0) {
-      return 0x1L;
-    }
-
-    s0 = (sp10[0].getY() - sp10[1].getY()) << 12;
-
-    //LAB_8003d0dc
-    v0 = sp10[1].getX() - sp10[0].getX();
-    a0 = v0 * v0;
-
-    v0 = sp10[1].getZ() - sp10[0].getZ();
-    a0 += v0 * v0;
-
-    s1 = SquareRoot0(a0);
-    a2 = s1 << 12;
-
-    //LAB_8003d134
-    final MATRIX sp30 = new MATRIX();
-    FUN_8003cee0(sp30, -(short)(s0 / s2), (short)(a2 / s2), 0x78L);
-    MulMatrix(worldToScreenMatrix_800c3548, sp30);
-
-    if(s1 != 0) {
-      a1 = (sp10[1].getX() - sp10[0].getX()) << 12;
-
-      //LAB_8003d1c0
-      a2 = (sp10[1].getZ() - sp10[0].getZ()) << 12;
-
-      //LAB_8003d200
-      FUN_8003cee0(sp30, -(short)(a1 / s1), (short)(a2 / s1), 0x79L);
-      MulMatrix(worldToScreenMatrix_800c3548, sp30);
-    }
-
-    //LAB_8003d230
-    ApplyMatrixLV(worldToScreenMatrix_800c3548, new VECTOR().set(struct.viewpoint_00).negate(), worldToScreenMatrix_800c3548.transfer);
-
-    if(struct.super_1c != null) {
-      final MATRIX lw = new MATRIX();
-      GsGetLw(struct.super_1c, lw);
-
-      final MATRIX transposedLw = new MATRIX();
-      TransposeMatrix(lw, transposedLw);
-      ApplyMatrixLV(transposedLw, lw.transfer, transposedLw.transfer).negate();
-      GsMulCoord2(worldToScreenMatrix_800c3548, transposedLw);
-      worldToScreenMatrix_800c3548.set(transposedLw);
-    }
-
-    //LAB_8003d310
-    matrix_800c3528.set(worldToScreenMatrix_800c3548);
-
-    //LAB_8003d35c
-    return 0;
-  }
-
-  @Method(0x8003d380L)
-  public static void FUN_8003d380(final GsRVIEW2 a0, final VECTOR[] a1) {
-    int longestComponentBits = log2(getLongestComponent(a0));
-
-    if(longestComponentBits < 16) {
-      a1[0].set(a0.viewpoint_00);
-      a1[1].set(a0.refpoint_0c);
-    } else {
-      longestComponentBits -= 15;
-
-      a1[0].set(a0.viewpoint_00).shra(longestComponentBits);
-      a1[1].set(a0.refpoint_0c).shra(longestComponentBits);
-    }
-  }
-
-  @Method(0x8003d46cL)
-  public static long getLongestComponent(final GsRVIEW2 a0) {
-    long largest = Math.abs(a0.viewpoint_00.getX());
-    long other = Math.abs(a0.viewpoint_00.getY());
-    if(largest < other) {
-      largest = other;
-    }
-
-    other = Math.abs(a0.viewpoint_00.getZ());
-    if(largest < other) {
-      largest = other;
-    }
-
-    other = Math.abs(a0.refpoint_0c.getX());
-    if(largest < other) {
-      largest = other;
-    }
-
-    other = Math.abs(a0.refpoint_0c.getY());
-    if(largest < other) {
-      largest = other;
-    }
-
-    other = Math.abs(a0.refpoint_0c.getZ());
-    if(largest < other) {
-      largest = other;
-    }
-
-    return largest;
-  }
-
-  @Method(0x8003d534L)
-  public static int log2(final long a0) {
-    if(a0 == 0) {
-      return 0;
-    }
-
-    return 64 - Long.numberOfLeadingZeros(a0);
   }
 
   /**
@@ -973,145 +817,36 @@ public final class Scus94491BpeSegment_8003 {
    */
   @Method(0x8003dfc0L)
   public static long GsSetRefView2L(final GsRVIEW2 s2) {
-    int v0;
-    int v1;
-    int a0;
-    int a1;
-    final int a3;
-    int s0;
-    int s1;
-    int s3;
-
     worldToScreenMatrix_800c3548.set(identityAspectMatrix_800c3588);
     FUN_8003d5d0(worldToScreenMatrix_800c3548, -s2.viewpointTwist_18);
 
-    v0 = s2.refpoint_0c.getX() - s2.viewpoint_00.getX();
-    a3 = v0 * v0;
+    final int deltaX = s2.refpoint_0c.getX() - s2.viewpoint_00.getX();
+    final int deltaY = s2.refpoint_0c.getY() - s2.viewpoint_00.getY();
+    final int deltaZ = s2.refpoint_0c.getZ() - s2.viewpoint_00.getZ();
 
-    v0 = s2.refpoint_0c.getY() - s2.viewpoint_00.getY();
-    a0 = v0 * v0;
+    final int vectorLengthSquared = deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ;
 
-    v0 = s2.refpoint_0c.getZ() - s2.viewpoint_00.getZ();
-    v1 = v0 * v0;
-
-    s0 = a3 + a0 + v1;
-    if(s0 == 0) {
+    if(vectorLengthSquared == 0) {
       return 0x1L;
     }
 
-    v0 = s2.viewpoint_00.getY() - s2.refpoint_0c.getY();
-    s1 = v0 * v0;
-    a1 = 12 - GTE.leadingZeroCount(s1);
-    if(a1 < 0) {
-      //LAB_8003e0e4
-      //LAB_8003e0fc
-      s3 = (s2.viewpoint_00.getY() - s2.refpoint_0c.getY()) * -0x1000 / SquareRoot0(s0);
-      //LAB_8003e108
-    } else if(s2.viewpoint_00.getY() - s2.refpoint_0c.getY() >= 0) {
-      v0 = s0 >>> a1;
-      a0 = 12 - a1;
-      a0 = s1 << a0;
+    final int vectorLength = (int)Math.sqrt(vectorLengthSquared);
 
-      //LAB_8003e138
-      s3 = -FUN_8003e8b4((int)((a0 & 0xffff_ffffL) / v0));
-    } else {
-      v0 = s0 >>> a1;
+    final int normalizedY = deltaY * 0x1000 / vectorLength;
 
-      //LAB_8003e14c
-      a0 = 12 - a1;
-      a0 = s1 << a0;
-
-      //LAB_8003e164
-      s3 = FUN_8003e8b4((int)((a0 & 0xffff_ffffL) / v0));
-    }
-
-    //LAB_8003e174
-    v0 = s2.refpoint_0c.getX() - s2.viewpoint_00.getX();
-    a0 = v0 * v0;
-
-    v0 = s2.refpoint_0c.getZ() - s2.viewpoint_00.getZ();
-    v1 = v0 * v0;
-
-    s1 = a0 + v1;
-    a1 = 12 - GTE.leadingZeroCount(s1);
-
-    if(a1 < 0) {
-      //LAB_8003e1e8
-      //LAB_8003e200
-      v0 = SquareRoot0(s1) * 0x1000 / SquareRoot0(s0);
-    } else {
-      a0 = 12 - a1;
-
-      //LAB_8003e20c
-      a0 = s1 << a0;
-      v0 = s0 >>> a1;
-
-      //LAB_8003e224
-      v0 = FUN_8003e8b4((int)((a0 & 0xffff_ffffL) / v0));
-    }
+    final int horizontalLength = (int)Math.sqrt(deltaX * deltaX + deltaZ * deltaZ);
+    final int normalizedHypotenuse = horizontalLength * 0x1000 / vectorLength;
 
     //LAB_8003e230
     final MATRIX sp0x30 = new MATRIX();
-    FUN_8003cee0(sp0x30, (short)s3, (short)v0, 0x78L);
+    FUN_8003cee0(sp0x30, (short)normalizedY, (short)normalizedHypotenuse, 0);
     MulMatrix(worldToScreenMatrix_800c3548, sp0x30);
 
-    if(s1 != 0) {
-      s0 = s1;
-      v0 = s2.refpoint_0c.getX() - s2.viewpoint_00.getX();
-      s1 = v0 * v0;
-      a1 = 12 - GTE.leadingZeroCount(s1);
-      if(a1 < 0) {
-        //LAB_8003e2c8
-        //LAB_8003e2e0
-        s3 = (s2.refpoint_0c.getX() - s2.viewpoint_00.getX()) * -0x1000 / SquareRoot0(s0);
-        //LAB_8003e2ec
-      } else if(s2.refpoint_0c.getX() - s2.viewpoint_00.getX() >= 0) {
-        v0 = s0 >>> a1;
-        a0 = 12 - a1;
-        a0 = s1 << a0;
+    if(horizontalLength != 0) {
+      final int normalizedX = deltaX * -0x1000 / horizontalLength;
+      final int normalizedZ = deltaZ * 0x1000 / horizontalLength;
 
-        //LAB_8003e31c
-        s3 = -FUN_8003e8b4((int)((a0 & 0xffff_ffffL) / v0));
-      } else {
-        v0 = s0 >>> a1;
-
-        //LAB_8003e330
-        a0 = 12 - a1;
-        a0 = s1 << a0;
-
-        //LAB_8003e348
-        s3 = FUN_8003e8b4((int)((a0 & 0xffff_ffffL) / v0));
-      }
-
-      //LAB_8003e358
-      v0 = s2.refpoint_0c.getZ() - s2.viewpoint_00.getZ();
-      s1 = v0 * v0;
-      a1 = 12 - GTE.leadingZeroCount(s1);
-      if(a1 < 0) {
-        //LAB_8003e3b4
-        //LAB_8003e3cc
-        v0 = (s2.refpoint_0c.getZ() - s2.viewpoint_00.getZ()) * 0x1000 / SquareRoot0(s0);
-        //LAB_8003e3d8
-      } else if(s2.refpoint_0c.getZ() - s2.viewpoint_00.getZ() >= 0) {
-        v0 = s0 >>> a1;
-        a0 = 12 - a1;
-        a0 = s1 << a0;
-
-        //LAB_8003e408
-        v0 = FUN_8003e8b4((int)((a0 & 0xffff_ffffL) / v0));
-      } else {
-        v0 = s0 >>> a1;
-        //LAB_8003e41c
-        a0 = 12 - a1;
-        a0 = s1 << a0;
-
-        //LAB_8003e434
-        v0 = -FUN_8003e8b4((int)((a0 & 0xffff_ffffL) / v0));
-      }
-
-      //LAB_8003e444
-      //LAB_8003e448
-      FUN_8003cee0(sp0x30, (short)s3, (short)v0, 0x79L);
+      FUN_8003cee0(sp0x30, (short)normalizedX, (short)normalizedZ, 1);
       MulMatrix(worldToScreenMatrix_800c3548, sp0x30);
     }
 
@@ -1128,9 +863,6 @@ public final class Scus94491BpeSegment_8003 {
       GsMulCoord2(worldToScreenMatrix_800c3548, transposedLw);
       worldToScreenMatrix_800c3548.set(transposedLw);
     }
-
-    //LAB_8003e55c
-    matrix_800c3528.set(worldToScreenMatrix_800c3548);
 
     //LAB_8003e5a8
     return 0;
@@ -1249,89 +981,6 @@ public final class Scus94491BpeSegment_8003 {
 
     //LAB_8003e724
     primitives.writeShort(packetStartIndex, primitivesSinceLastChange);
-  }
-
-  @Method(0x8003e760L) //TODO using div instead of shifting means some of these values are slightly off, does this matter?
-  public static int FUN_8003e760(final int a0) {
-    final int[] sp0x04 = new int[7];
-    final int[] sp0x24 = new int[7];
-    sp0x04[0] = a0 + 0x5d_50ad;
-    sp0x24[0] = a0 - 0x5d_50ad;
-
-    //LAB_8003e790
-    for(int a3 = 1; a3 < 7; a3++) {
-      if(a3 != 4) {
-        final int v0 = sp0x04[a3 - 1] >> a3;
-
-        if(sp0x24[a3 - 1] < 0) {
-          //LAB_8003e7d0
-          sp0x04[a3] = sp0x04[a3 - 1] + (sp0x24[a3 - 1] >> a3);
-          sp0x24[a3] = sp0x24[a3 - 1] + v0;
-        } else {
-          sp0x04[a3] = sp0x04[a3 - 1] - (sp0x24[a3 - 1] >> a3);
-          sp0x24[a3] = sp0x24[a3 - 1] - v0;
-        }
-      } else {
-        //LAB_8003e7fc
-        //LAB_8003e87c
-        if(sp0x24[3] >= 0) {
-          sp0x24[3] -= sp0x04[3] >> 4;
-          sp0x04[3] -= sp0x24[3] >> 4;
-        } else {
-          //LAB_8003e844
-          sp0x24[3] += sp0x04[3] >> 4;
-          sp0x04[3] += sp0x24[3] >> 4;
-        }
-
-        if(sp0x24[3] < 0) {
-          //LAB_8003e87c
-          sp0x04[4] = sp0x04[3] + (sp0x24[3] >> 4);
-          sp0x24[4] = sp0x24[3] + (sp0x04[3] >> 4);
-        } else {
-          sp0x04[4] = sp0x04[3] - (sp0x24[3] >> 4);
-          sp0x24[4] = sp0x24[3] - (sp0x04[3] >> 4);
-        }
-
-        //LAB_8003e890
-      }
-
-      //LAB_8003e894
-    }
-
-    return sp0x04[6];
-  }
-
-  @Method(0x8003e8b4L)
-  public static int FUN_8003e8b4(int a0) {
-    int s0;
-
-    if(a0 == 0) {
-      return 0;
-    }
-
-    //LAB_8003e8d4
-    int v0 = 8 - GTE.leadingZeroCount(a0);
-    if(v0 >= 0) {
-      s0 = v0 >> 1;
-      a0 = a0 >> s0 * 2;
-    } else {
-      //LAB_8003e8f8
-      v0 = v0 >> 1;
-      s0 = v0 + 1;
-      a0 = a0 << -s0 * 2;
-    }
-
-    //LAB_8003e90c
-    s0 = s0 - 6;
-    if(s0 < 0) {
-      v0 = FUN_8003e760(a0) >> -s0;
-    } else {
-      //LAB_8003e92c
-      v0 = FUN_8003e760(a0) << s0;
-    }
-
-    //LAB_8003e938
-    return v0;
   }
 
   @Method(0x8003e958L)

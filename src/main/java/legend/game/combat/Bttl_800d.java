@@ -92,7 +92,7 @@ import static legend.game.Scus94491BpeSegment_8003.FUN_8003eba0;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
-import static legend.game.Scus94491BpeSegment_8003.GsSetRefView2;
+import static legend.game.Scus94491BpeSegment_8003.GsSetRefView2L;
 import static legend.game.Scus94491BpeSegment_8003.MulMatrix0;
 import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
 import static legend.game.Scus94491BpeSegment_8003.RotTrans;
@@ -2391,7 +2391,7 @@ public final class Bttl_800d {
     }
 
     //LAB_800d8fb4
-    GsSetRefView2(camera_800c67f0.rview2_00);
+    GsSetRefView2L(camera_800c67f0.rview2_00);
     wobbleCamera();
     FUN_800d8fe0();
   }
