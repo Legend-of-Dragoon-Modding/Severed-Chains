@@ -1,7 +1,6 @@
 package legend.game.combat;
 
 import legend.core.Config;
-import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.Gpu;
@@ -4822,6 +4821,10 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
+  /**
+   * Code deleted from LAB_8010a130. Condition variable was set from script, and value
+   * was hardcoded to 0 so that the code in the condition was never run.
+   */
   @Method(0x80109fc4L)
   public static void FUN_80109fc4(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
     final FrozenJetEffect28 effect = (FrozenJetEffect28)manager.effect_44;
@@ -4851,33 +4854,7 @@ public final class SEffe {
     }
 
     //LAB_8010a130
-    if((effect._24 & 0x1) != 0) {
-      //LAB_8010a15c
-      for(final TmdObjTable1c.Primitive primitive : effect.primitives_14) {
-        final int sp70 = IoHelper.readUShort(primitive.data()[0], 0x20);
-        final int sp72 = IoHelper.readUShort(primitive.data()[0], 0x22);
-        final int sp74 = IoHelper.readUShort(primitive.data()[0], 0x24);
-        final int sp76 = IoHelper.readUShort(primitive.data()[0], 0x26);
-        final SVECTOR sp0x18 = new SVECTOR().set(effect.vertices_0c[sp70]);
-        final SVECTOR sp0x20 = new SVECTOR().set(effect.vertices_0c[sp72]);
-        final SVECTOR sp0x28 = new SVECTOR().set(effect.vertices_0c[sp74]);
-        final SVECTOR sp0x30 = new SVECTOR().set(effect.vertices_0c[sp76]);
-        final VECTOR sp0x40 = new VECTOR().set(sp0x20).sub(sp0x18);
-        final VECTOR sp0x50 = new VECTOR().set(sp0x28).sub(sp0x18);
-        GTE.setRotationMatrixValue(0, sp0x50.getX());
-        GTE.setRotationMatrixValue(4, sp0x50.getY());
-        GTE.setRotationMatrixValue(8, sp0x50.getZ());
-        GTE.setIr123(sp0x40);
-        GTE.outerProduct();
-        final SVECTOR sp0x38 = new SVECTOR().set((short)GTE.getMac1(), (short)GTE.getMac2(), (short)GTE.getMac3());
-
-        effect.normals_10[sp70].set(sp0x38);
-        effect.normals_10[sp72].set(sp0x38);
-        effect.normals_10[sp74].set(sp0x38);
-        effect.normals_10[sp76].set(sp0x38);
-      }
-    }
-
+    //LAB_8010a15c
     //LAB_8010a374
     effect._1a += (short)(manager._10._24 << 7 >> 8);
   }
