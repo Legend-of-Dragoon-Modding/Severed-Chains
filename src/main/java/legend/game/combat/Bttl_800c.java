@@ -4138,11 +4138,8 @@ public final class Bttl_800c {
   /** @return Z */
   @Method(0x800cf244L)
   public static int transformWorldspaceToScreenspace(final VECTOR pos, final IntRef outX, final IntRef outY) {
-    GTE.setRotationMatrix(worldToScreenMatrix_800c3548);
-
-    GTE.rotateVector(pos);
-
-    final VECTOR sp0x10 = new VECTOR().set(GTE.getMac1(), GTE.getMac2(), GTE.getMac3());
+    final VECTOR sp0x10 = new VECTOR();
+    pos.mul(worldToScreenMatrix_800c3548, sp0x10);
     sp0x10.add(worldToScreenMatrix_800c3548.transfer);
     outX.set(MathHelper.safeDiv(getProjectionPlaneDistance() * sp0x10.getX(), sp0x10.getZ()));
     outY.set(MathHelper.safeDiv(getProjectionPlaneDistance() * sp0x10.getY(), sp0x10.getZ()));
@@ -4219,23 +4216,9 @@ public final class Bttl_800c {
 
     final MATRIX sp0x58 = new MATRIX();
     RotMatrix_Xyz(new SVECTOR().set(rotation), sp0x58);
-    GTE.setRotationMatrix(sp0x38);
-    GTE.rotateVector(sp0x58.get(0), sp0x58.get(3), sp0x58.get(6));
-    sp0x38.set(0, GTE.getIr1());
-    sp0x38.set(3, GTE.getIr2());
-    sp0x38.set(6, GTE.getIr3());
-
-    GTE.rotateVector(sp0x58.get(1), sp0x58.get(4), sp0x58.get(7));
-    sp0x38.set(1, GTE.getIr1());
-    sp0x38.set(4, GTE.getIr2());
-    sp0x38.set(7, GTE.getIr3());
-
-    GTE.rotateVector(sp0x58.get(2), sp0x58.get(5), sp0x58.get(8));
-    sp0x38.set(2, GTE.getIr1());
-    sp0x38.set(5, GTE.getIr2());
-    sp0x38.set(8, GTE.getIr3());
-
+    sp0x58.mul(sp0x38, sp0x38);
     sp0x38.transfer.add(sp0x10);
+
     GTE.setRotationMatrix(sp0x38);
     GTE.setTranslationVector(sp0x38.transfer);
     GTE.perspectiveTransform(translation2);

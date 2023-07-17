@@ -992,66 +992,6 @@ public final class Scus94491BpeSegment_8004 {
     out.unpack(GTE.normalColour());
   }
 
-  /**
-   * Transform vector a1 and store in vector a2. Matrix a0 is uploaded to GTE in transposed order.
-   */
-  @Method(0x80040ec0L)
-  public static VECTOR ApplyTransposeMatrixLV(final MATRIX a0, final VECTOR a1, final VECTOR a2) {
-    GTE.setRotationMatrixValue(
-      a0.get(0), a0.get(3), a0.get(6),
-      a0.get(1), a0.get(4), a0.get(7),
-      a0.get(2), a0.get(5), a0.get(8)
-    );
-
-    final int t0;
-    int t3;
-    if(a1.getX() < 0) {
-      t3 = -(-a1.getX() >> 15);
-      t0 = -(-a1.getX() & 0x7fff);
-    } else {
-      //LAB_80040f54
-      t3 = a1.getX() >> 15;
-      t0 = a1.getX() & 0x7fff;
-    }
-
-    //LAB_80040f5c
-    final int t1;
-    int t4;
-    if(a1.getY() < 0) {
-      t4 = -(-a1.getY() >> 15);
-      t1 = -(-a1.getY() & 0x7fff);
-    } else {
-      //LAB_80040f7c
-      t4 = a1.getY() >> 15;
-      t1 = a1.getY() & 0x7fff;
-    }
-
-    //LAB_80040f84
-    final int t2;
-    int t5;
-    if(a1.getZ() < 0) {
-      t5 = -(-a1.getZ() >> 15);
-      t2 = -(-a1.getZ() & 0x7fff);
-    } else {
-      //LAB_80040fa4
-      t5 = a1.getZ() >> 15;
-      t2 = a1.getZ() & 0x7fff;
-    }
-
-    //LAB_80040fac
-    GTE.rotateVector0(t3, t4, t5);
-    t3 = GTE.getMac1();
-    t4 = GTE.getMac2();
-    t5 = GTE.getMac3();
-
-    GTE.rotateVector(t0, t1, t2);
-    a2.setX(GTE.getMac1() + t3 * 8);
-    a2.setY(GTE.getMac2() + t4 * 8);
-    a2.setZ(GTE.getMac3() + t5 * 8);
-
-    return a2;
-  }
-
   // Start of SPU code
 
   @Method(0x80048828L)

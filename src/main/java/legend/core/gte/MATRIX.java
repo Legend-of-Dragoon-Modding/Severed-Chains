@@ -97,14 +97,37 @@ public class MATRIX {
     return this.normalize(this);
   }
 
+  public MATRIX transpose() {
+    final short m1 = this.data2[1];
+    final short m2 = this.data2[2];
+    final short m5 = this.data2[5];
+
+    this.data2[1] = this.data2[3];
+    this.data2[2] = this.data2[6];
+    this.data2[3] = m1;
+    this.data2[5] = this.data2[7];
+    this.data2[6] = m2;
+    this.data2[7] = m5;
+    return this;
+  }
+
   /** Rotate with parallel translation */
   public MATRIX compose(final MATRIX other, final MATRIX out) {
     final int vx = other.transfer.getX();
     final int vy = other.transfer.getY();
     final int vz = other.transfer.getZ();
-    this.transfer.rotate(other, out.transfer);
+    this.transfer.mul(other, out.transfer);
     out.transfer.add(vx, vy, vz);
 
+    return this.mul(other, out);
+  }
+
+  /** Rotate with parallel translation */
+  public MATRIX compose(final MATRIX rotation) {
+    return this.compose(rotation, this);
+  }
+
+  public MATRIX mul(final MATRIX other, final MATRIX out) {
     final int t0 = this.get(0);
     final int t1 = this.get(1);
     final int t2 = this.get(2);
@@ -137,8 +160,7 @@ public class MATRIX {
     return this;
   }
 
-  /** Rotate with parallel translation */
-  public MATRIX compose(final MATRIX rotation) {
-    return this.compose(rotation, this);
+  public MATRIX mul(final MATRIX rotation) {
+    return this.mul(rotation, this);
   }
 }

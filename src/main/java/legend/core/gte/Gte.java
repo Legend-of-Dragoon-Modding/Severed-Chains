@@ -827,11 +827,6 @@ public class Gte {
   }
 
   /** 0x12 MVMVA rotation * IR123 + none, 12-bit fraction, no saturate */
-  public void rotateVector(final VECTOR vector) {
-    this.rotateVector(vector.getX(), vector.getY(), vector.getZ());
-  }
-
-  /** 0x12 MVMVA rotation * IR123 + none, 12-bit fraction, no saturate */
   public void rotateVector(final int x, final int y, final int z) {
     this.setIr123(x, y, z);
     this.currentCommand = 0x49e012;
@@ -857,16 +852,6 @@ public class Gte {
     this.startCommand(true, false);
     this.MVMVA();
     this.endCommand();
-  }
-
-  /** 0x12 MVMVA rotation * IR123 + none, 12-bit fraction, no saturate */
-  public void rotateVector0(final SVECTOR vector) {
-    this.rotateVector(vector.getX(), vector.getY(), vector.getZ());
-  }
-
-  /** 0x12 MVMVA rotation * IR123 + none, 12-bit fraction, no saturate */
-  public void rotateVector0(final VECTOR vector) {
-    this.rotateVector(vector.getX(), vector.getY(), vector.getZ());
   }
 
   /** 0x12 MVMVA rotation * IR123 + none, 12-bit fraction, no saturate */

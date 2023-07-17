@@ -366,12 +366,8 @@ public final class Scus94491BpeSegment_8003 {
 
   @Method(0x8003c4a0L)
   public static void GsSetLightMatrix(final MATRIX mp) {
-    final MATRIX lightDirection = new MATRIX().set(lightDirectionMatrix_800c34e8);
-
-    PushMatrix();
-    MulMatrix(lightDirection, mp);
-    PopMatrix();
-
+    final MATRIX lightDirection = new MATRIX();
+    mp.mul(lightDirectionMatrix_800c34e8, lightDirection);
     SetLightMatrix(lightDirection);
   }
 
@@ -539,7 +535,7 @@ public final class Scus94491BpeSegment_8003 {
   @Method(0x8003d550L)
   public static void GsMulCoord2(final MATRIX matrix1, final MATRIX matrix2) {
     ApplyMatrixLV(matrix1, matrix2.transfer, matrix2.transfer);
-    MulMatrix2(matrix1, matrix2);
+    matrix2.mul(matrix1);
     matrix2.transfer.add(matrix1.transfer);
   }
 
@@ -559,7 +555,8 @@ public final class Scus94491BpeSegment_8003 {
       rot.set(2, 0, (short)0);
       rot.set(2, 1, (short)0);
       rot.set(2, 2, (short)0x1000);
-      MulMatrix(matrix, rot);
+
+      rot.mul(matrix, matrix);
     }
   }
 
@@ -640,14 +637,14 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   /**
-   * GsMulCoord3 multiplies the MATRIX m2 by the translation matrix m1and stores the result in m2.
+   * GsMulCoord3 multiplies the MATRIX m2 by the translation matrix m1 and stores the result in m2.
    * <p>
    * m1 = m1 x m2
    */
   @Method(0x8003d950L)
   public static void GsMulCoord3(final MATRIX m1, final MATRIX m2) {
     final VECTOR out = ApplyMatrixLV(m1, m2.transfer);
-    MulMatrix(m1, m2);
+    m2.mul(m1, m1);
     m1.transfer.add(out);
   }
 
@@ -839,14 +836,14 @@ public final class Scus94491BpeSegment_8003 {
     //LAB_8003e230
     final MATRIX sp0x30 = new MATRIX();
     FUN_8003cee0(sp0x30, (short)normalizedY, (short)normalizedHypotenuse, 0);
-    MulMatrix(worldToScreenMatrix_800c3548, sp0x30);
+    sp0x30.mul(worldToScreenMatrix_800c3548, worldToScreenMatrix_800c3548);
 
     if(horizontalLength != 0) {
       final int normalizedX = deltaX * -0x1000 / horizontalLength;
       final int normalizedZ = deltaZ * 0x1000 / horizontalLength;
 
       FUN_8003cee0(sp0x30, (short)normalizedX, (short)normalizedZ, 1);
-      MulMatrix(worldToScreenMatrix_800c3548, sp0x30);
+      sp0x30.mul(worldToScreenMatrix_800c3548, worldToScreenMatrix_800c3548);
     }
 
     //LAB_8003e474
@@ -1110,69 +1107,6 @@ public final class Scus94491BpeSegment_8003 {
     mat.set(7, (short)(mat.get(7) * vector.z.get() >> 12));
     mat.set(8, (short)(mat.get(8) * vector.z.get() >> 12));
     return mat;
-  }
-
-  /**
-   * Multiply two matrices. Multiplies m1 by m0. The result is stored in m0 and returned.
-   *
-   * @param m0 Matrix 0 - both modified and returned
-   * @param m1 Matrix 1
-   *
-   * @return m0
-   */
-  @Method(0x8003f460L)
-  public static MATRIX MulMatrix(final MATRIX m0, final MATRIX m1) {
-    GTE.setRotationMatrix(m0);
-
-    GTE.rotateVector(m1.get(0), m1.get(3), m1.get(6));
-    m0.set(0, GTE.getIr1());
-    m0.set(3, GTE.getIr2());
-    m0.set(6, GTE.getIr3());
-
-    GTE.rotateVector(m1.get(1), m1.get(4), m1.get(7));
-    m0.set(1, GTE.getIr1());
-    m0.set(4, GTE.getIr2());
-    m0.set(7, GTE.getIr3());
-
-    GTE.rotateVector(m1.get(2), m1.get(5), m1.get(8));
-    m0.set(2, GTE.getIr1());
-    m0.set(5, GTE.getIr2());
-    m0.set(8, GTE.getIr3());
-
-    return m0;
-  }
-
-  /**
-   * Multiply two matrices. Multiplies m1 by m0. m1 is both modified and returned.
-   *
-   * @param m0 Matrix 0
-   * @param m1 Matrix 1 - both modified and returned
-   *
-   * @return m1
-   */
-  @Method(0x8003f570L)
-  public static MATRIX MulMatrix2(final MATRIX m0, final MATRIX m1) {
-    GTE.setRotationMatrix(m0);
-
-    // First row
-    GTE.rotateVector(m1.get(0), m1.get(3), m1.get(6));
-    m1.set(0, GTE.getIr1());
-    m1.set(3, GTE.getIr2());
-    m1.set(6, GTE.getIr3());
-
-    // Second row
-    GTE.rotateVector(m1.get(1), m1.get(4), m1.get(7));
-    m1.set(1, GTE.getIr1());
-    m1.set(4, GTE.getIr2());
-    m1.set(7, GTE.getIr3());
-
-    // Third row
-    GTE.rotateVector(m1.get(2), m1.get(5), m1.get(8));
-    m1.set(2, GTE.getIr1());
-    m1.set(5, GTE.getIr2());
-    m1.set(8, GTE.getIr3());
-
-    return m1;
   }
 
   @Method(0x8003f680L)

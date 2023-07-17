@@ -313,18 +313,18 @@ public class VECTOR implements MemoryRef {
     return this.cross(right, this);
   }
 
-  public VECTOR rotate(final MATRIX rotation, final VECTOR out) {
+  public VECTOR mul(final MATRIX matrix, final VECTOR out) {
     out.set(
-      (int)((long)rotation.get(0, 0) * this.getX() + rotation.get(0, 1) * this.getY() + rotation.get(0, 2) * this.getZ() >> 12),
-      (int)((long)rotation.get(1, 0) * this.getX() + rotation.get(1, 1) * this.getY() + rotation.get(1, 2) * this.getZ() >> 12),
-      (int)((long)rotation.get(2, 0) * this.getX() + rotation.get(2, 1) * this.getY() + rotation.get(2, 2) * this.getZ() >> 12)
+      (int)((long)matrix.get(0, 0) * this.getX() + matrix.get(0, 1) * this.getY() + matrix.get(0, 2) * this.getZ() >> 12),
+      (int)((long)matrix.get(1, 0) * this.getX() + matrix.get(1, 1) * this.getY() + matrix.get(1, 2) * this.getZ() >> 12),
+      (int)((long)matrix.get(2, 0) * this.getX() + matrix.get(2, 1) * this.getY() + matrix.get(2, 2) * this.getZ() >> 12)
     );
 
     return this;
   }
 
-  public VECTOR rotate(final MATRIX rotation) {
-    return this.rotate(rotation, this);
+  public VECTOR mul(final MATRIX matrix) {
+    return this.mul(matrix, this);
   }
 
   @Override

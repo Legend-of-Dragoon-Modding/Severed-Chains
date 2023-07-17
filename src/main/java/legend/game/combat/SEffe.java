@@ -136,7 +136,6 @@ import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
 import static legend.game.Scus94491BpeSegment.zMin;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80021de4;
 import static legend.game.Scus94491BpeSegment_8002.SetRotMatrix;
 import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.playXaAudio;
@@ -158,7 +157,6 @@ import static legend.game.Scus94491BpeSegment_8003.getProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
 import static legend.game.Scus94491BpeSegment_8003.perspectiveTransformTriple;
 import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
-import static legend.game.Scus94491BpeSegment_8004.ApplyTransposeMatrixLV;
 import static legend.game.Scus94491BpeSegment_8004.FUN_80040df0;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixX;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrixY;
@@ -1000,16 +998,16 @@ public final class SEffe {
     }
 
     //LAB_800fc920
-    final MATRIX ws = worldToScreenMatrix_800c3548;
-    final VECTOR wsNegated = new VECTOR().set(ws.transfer).negate();
-    ApplyTransposeMatrixLV(ws, wsNegated, in);
+    final MATRIX wsTransposed = new MATRIX().set(worldToScreenMatrix_800c3548).transpose();
+    final VECTOR wsNegated = new VECTOR().set(wsTransposed.transfer).negate();
+    wsNegated.mul(wsTransposed, in);
 
     if(out != null) {
-      wsNegated.set(ws.transfer).negate();
+      wsNegated.set(wsTransposed.transfer).negate();
       wsNegated.z.add(0x1000);
 
       final VECTOR sp0x10 = new VECTOR();
-      ApplyTransposeMatrixLV(ws, wsNegated, sp0x10);
+      wsNegated.mul(wsTransposed, sp0x10);
       sp0x10.sub(in);
       final short angle = (short)ratan2(sp0x10.getX(), sp0x10.getZ());
       out.setY(angle);
@@ -6624,7 +6622,8 @@ public final class SEffe {
       RotMatrix_Xyz(rotation2.get(), sp0x38);
 
       final VECTOR sp0x28 = new VECTOR();
-      ApplyTransposeMatrixLV(sp0x38, translationDelta, sp0x28);
+      sp0x38.transpose();
+      translationDelta.mul(sp0x38, sp0x28);
       a2.set(sp0x28);
     }
 
@@ -6633,20 +6632,19 @@ public final class SEffe {
 
   @Method(0x80110488L)
   public static void FUN_80110488(final int scriptIndex1, final int scriptIndex2, final VECTOR s1) {
-    final MATRIX sp0x10 = new MATRIX();
-    FUN_800e8594(sp0x10, (EffectManagerData6c)scriptStatePtrArr_800bc1c0[scriptIndex1].innerStruct_00);
+    final MATRIX transforms1 = new MATRIX();
+    FUN_800e8594(transforms1, (EffectManagerData6c)scriptStatePtrArr_800bc1c0[scriptIndex1].innerStruct_00);
 
     if(scriptIndex2 == -1) {
-      s1.set(sp0x10.transfer);
+      s1.set(transforms1.transfer);
     } else {
       //LAB_80110500
-      final MATRIX sp0x30 = new MATRIX();
-      FUN_800e8594(sp0x30, (EffectManagerData6c)scriptStatePtrArr_800bc1c0[scriptIndex2].innerStruct_00);
-      sp0x10.transfer.sub(sp0x30.transfer);
+      final MATRIX transforms2 = new MATRIX();
+      FUN_800e8594(transforms2, (EffectManagerData6c)scriptStatePtrArr_800bc1c0[scriptIndex2].innerStruct_00);
+      transforms1.transfer.sub(transforms2.transfer);
 
-      final VECTOR sp0x50 = new VECTOR();
-      ApplyTransposeMatrixLV(sp0x30, sp0x10.transfer, sp0x50);
-      s1.set(sp0x50);
+      transforms2.transpose();
+      transforms1.transfer.mul(transforms2, s1);
     }
 
     //LAB_80110594
@@ -8299,7 +8297,7 @@ public final class SEffe {
 
       final VECTOR sp0xf0 = new VECTOR().set(0x100_0000, 0x100_0000, 0x100_0000).div(scale);
       ScaleMatrixL(transforms, sp0xf0);
-      FUN_80021de4(transforms, sp0x10, sp0x30);
+      sp0x10.mul(transforms, sp0x30);
 
       final VECTOR sp0x100 = new VECTOR().set(sp0x10.transfer).sub(transforms.transfer);
       ApplyMatrixLV(transforms, sp0x100, sp0x30.transfer);

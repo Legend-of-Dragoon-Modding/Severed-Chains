@@ -974,26 +974,6 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80021db4
   }
 
-  @Method(0x80021de4L)
-  public static void FUN_80021de4(final MATRIX a0, final MATRIX a1, final MATRIX a2) {
-    GTE.setRotationMatrix(a0);
-
-    GTE.rotateVector(a1.get(0), a1.get(3), a1.get(6));
-    a2.set(0, GTE.getIr1());
-    a2.set(3, GTE.getIr2());
-    a2.set(6, GTE.getIr3());
-
-    GTE.rotateVector(a1.get(1), a1.get(4), a1.get(7));
-    a2.set(1, GTE.getIr1());
-    a2.set(4, GTE.getIr2());
-    a2.set(7, GTE.getIr3());
-
-    GTE.rotateVector(a1.get(2), a1.get(5), a1.get(8));
-    a2.set(2, GTE.getIr1());
-    a2.set(5, GTE.getIr2());
-    a2.set(8, GTE.getIr3());
-  }
-
   @Method(0x80021edcL)
   public static void SetRotMatrix(final MATRIX m) {
     GTE.setRotationMatrix(m);
