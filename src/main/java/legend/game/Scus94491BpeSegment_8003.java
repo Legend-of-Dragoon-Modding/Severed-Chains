@@ -42,7 +42,6 @@ import static legend.game.Scus94491BpeSegment_8002.SetTransMatrix;
 import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
 import static legend.game.Scus94491BpeSegment_8005._800546c0;
 import static legend.game.Scus94491BpeSegment_8005._800546c2;
-import static legend.game.Scus94491BpeSegment_8005._80054870;
 import static legend.game.Scus94491BpeSegment_8005.matrixStackIndex_80054a08;
 import static legend.game.Scus94491BpeSegment_8005.matrixStack_80054a0c;
 import static legend.game.Scus94491BpeSegment_800c.PSDCNT_800c34d0;
@@ -991,84 +990,6 @@ public final class Scus94491BpeSegment_8003 {
     GTE.setScreenOffset(0, 0);
   }
 
-  @Method(0x8003ea80L)
-  public static void FUN_8003ea80(final VECTOR a0, final VECTOR a1) {
-    a1.set(a0);
-    FUN_8003eae0(a1);
-  }
-
-  @Method(0x8003eae0L)
-  public static void FUN_8003eae0(final VECTOR t0) {
-    // Fix retail bug where inputs can all be 0. Would result in negative array index.
-    if(t0.getX() == 0 && t0.getY() == 0 && t0.getZ() == 0) {
-      return;
-    }
-
-    final int vectorLength = (int)t0.lengthSquared();
-    final int lzc = GTE.leadingZeroCount(vectorLength) & 0xffff_fffe; // Leading zero count
-    final int t6 = (31 - lzc) / 2;
-    final int t4;
-    if(lzc >= 24) {
-      t4 = vectorLength << (lzc - 24);
-    } else {
-      //LAB_8003eb40
-      t4 = vectorLength >> (24 - lzc);
-    }
-
-    //LAB_8003eb4c
-    GTE.setIr0(_80054870.get(t4 - 0x40).get());
-    GTE.setIr123(t0);
-    GTE.generalPurposeInterpolate(); // General purpose interpolation (MAC123 = IR123 * IR0 >> 12)
-    t0.set(GTE.getMac1() >> t6, GTE.getMac2() >> t6, GTE.getMac3() >> t6);
-  }
-
-  @Method(0x8003eba0L)
-  public static void FUN_8003eba0(final MATRIX a0, final MATRIX a1) {
-    final short oldRot11 = GTE.getRotationMatrixValue(0);
-    final short oldRot22 = GTE.getRotationMatrixValue(4);
-    final short oldRot33 = GTE.getRotationMatrixValue(8);
-
-    GTE.setIr123(a0.get(3), a0.get(4), a0.get(5)); // transforms forward?
-
-    GTE.setRotationMatrixValue(0, a0.get(0)); // r11 // transforms right?
-    GTE.setRotationMatrixValue(4, a0.get(1)); // r22
-    GTE.setRotationMatrixValue(8, a0.get(2)); // r33
-    GTE.outerProduct(); // outer product of two vectors (sf 12), (IR3*R22-IR2*R33, IR1*R33-IR3*R11, IR2*R11-IR1*R22) >> 12
-    final int productX0 = GTE.getMac1();
-    final int productY0 = GTE.getMac2();
-    final int productZ0 = GTE.getMac3();
-
-    GTE.setRotationMatrixValue(0, a0.get(3)); // r11 // transforms forward?
-    GTE.setRotationMatrixValue(4, a0.get(4)); // r22
-    GTE.setRotationMatrixValue(8, a0.get(5)); // r33
-    GTE.outerProduct(); // outer product of two vectors (sf 12), (IR3*R22-IR2*R33, IR1*R33-IR3*R11, IR2*R11-IR1*R22) >> 12
-    final int productX1 = GTE.getMac1();
-    final int productY1 = GTE.getMac2();
-    final int productZ1 = GTE.getMac3();
-
-    GTE.setRotationMatrixValue(0, oldRot11);
-    GTE.setRotationMatrixValue(4, oldRot22);
-    GTE.setRotationMatrixValue(8, oldRot33);
-
-    final VECTOR t0 = new VECTOR().set(productX1, productY1, productZ1);
-    FUN_8003eae0(t0);
-    a1.set(0, (short)t0.getX());
-    a1.set(1, (short)t0.getY());
-    a1.set(2, (short)t0.getZ());
-
-    t0.set(a0.get(3), a0.get(4), a0.get(5));
-    FUN_8003eae0(t0);
-    a1.set(3, (short)t0.getX());
-    a1.set(4, (short)t0.getY());
-    a1.set(5, (short)t0.getZ());
-
-    t0.set(productX0, productY0, productZ0);
-    FUN_8003eae0(t0);
-    a1.set(6, (short)t0.getX());
-    a1.set(7, (short)t0.getY());
-    a1.set(8, (short)t0.getZ());
-  }
-
   @Method(0x8003ec90L)
   public static MATRIX FUN_8003ec90(final MATRIX transformMatrix0, final MATRIX transformMatrix1, final MATRIX outMatrix) {
     GTE.setRotationMatrix(transformMatrix0);
@@ -1217,7 +1138,7 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x8003f210L)
-  public static MATRIX MulMatrix0(final MATRIX a0, final MATRIX a1, final MATRIX out) {
+  public static MATRIX CompMatrixLV(final MATRIX a0, final MATRIX a1, final MATRIX out) {
     GTE.setRotationMatrix(a0);
 
     GTE.rotateVector(a1.get(0), a1.get(3), a1.get(6));

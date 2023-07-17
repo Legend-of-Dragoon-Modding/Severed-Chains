@@ -87,7 +87,6 @@ import static legend.game.Scus94491BpeSegment_8002.renderModel;
 import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8002.strcmp;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003ea80;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLs;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
@@ -103,7 +102,6 @@ import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
 import static legend.game.Scus94491BpeSegment_8003.perspectiveTransformTriple;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
-import static legend.game.Scus94491BpeSegment_8004.FUN_80040e40;
 import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8004.previousEngineState_8004dd28;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
@@ -4364,8 +4362,8 @@ public class WMap {
     sp0xb8.set(_800c87d8);
 
     sp0xa8.set(struct258_800c66a8.vec_84).sub(struct258_800c66a8.vec_94).shra(12);
-    FUN_8003ea80(sp0xa8, sp0xa8);
-    FUN_80040e40(sp0xa8, sp0xb8, sp0xc8);
+    sp0xa8.normalize();
+    sp0xa8.cross(sp0xb8, sp0xc8);
     sp0x88.set(struct258_800c66a8.vec_94).shra(12);
     FUN_800e2ae4(sp0xc8, sp0x88);
     rotateCoord2(struct258_800c66a8.tmdRendering_08.rotations_08[0], struct258_800c66a8.tmdRendering_08.coord2s_04[0]);

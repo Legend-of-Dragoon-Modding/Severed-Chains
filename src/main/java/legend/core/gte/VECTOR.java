@@ -290,6 +290,43 @@ public class VECTOR implements MemoryRef {
     return (long)this.getX() * this.getX() + this.getY() * this.getY() + this.getZ() * this.getZ();
   }
 
+  public VECTOR normalize() {
+    if(this.getX() == 0 && this.getY() == 0 && this.getZ() == 0) {
+      return this;
+    }
+
+    final int length = this.length();
+    return this.shl(12).div(length);
+  }
+
+  public VECTOR cross(final VECTOR right, final VECTOR out) {
+    out.set(
+      this.getZ() * right.getY() - this.getY() * right.getZ() >> 12,
+      this.getX() * right.getZ() - this.getZ() * right.getX() >> 12,
+      this.getY() * right.getX() - this.getX() * right.getY() >> 12
+    );
+
+    return this;
+  }
+
+  public VECTOR cross(final VECTOR right) {
+    return this.cross(right, this);
+  }
+
+  public VECTOR rotate(final MATRIX rotation, final VECTOR out) {
+    out.set(
+      (int)((long)rotation.get(0, 0) * this.getX() + rotation.get(0, 1) * this.getY() + rotation.get(0, 2) * this.getZ() >> 12),
+      (int)((long)rotation.get(1, 0) * this.getX() + rotation.get(1, 1) * this.getY() + rotation.get(1, 2) * this.getZ() >> 12),
+      (int)((long)rotation.get(2, 0) * this.getX() + rotation.get(2, 1) * this.getY() + rotation.get(2, 2) * this.getZ() >> 12)
+    );
+
+    return this;
+  }
+
+  public VECTOR rotate(final MATRIX rotation) {
+    return this.rotate(rotation, this);
+  }
+
   @Override
   public long getAddress() {
     if(this.ref == null) {

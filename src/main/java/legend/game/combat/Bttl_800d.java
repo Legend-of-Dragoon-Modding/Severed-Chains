@@ -88,12 +88,10 @@ import static legend.game.Scus94491BpeSegment_8002.applyInterpolationFrame;
 import static legend.game.Scus94491BpeSegment_8002.applyModelPartTransforms;
 import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003eba0;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8003.GsSetRefView2L;
-import static legend.game.Scus94491BpeSegment_8003.MulMatrix0;
 import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
 import static legend.game.Scus94491BpeSegment_8003.RotTrans;
 import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
@@ -4335,7 +4333,7 @@ public final class Bttl_800d {
         a0.transfer.setX(a0.transfer.getX() + a1.transfer.getX() >> 1);
         a0.transfer.setY(a0.transfer.getY() + a1.transfer.getY() >> 1);
         a0.transfer.setZ(a0.transfer.getZ() + a1.transfer.getZ() >> 1);
-        FUN_8003eba0(a0, a0);
+        a0.normalize();
       }
     }
 
@@ -4496,8 +4494,8 @@ public final class Bttl_800d {
 
         if((s6 & (ls.transfer.getZ() ^ tickCount_800bb0fc.get())) == 0 || ls.transfer.getZ() - ls.transfer.getX() >= -0x800 && ls.transfer.getZ() + ls.transfer.getX() >= -0x800 && ls.transfer.getZ() - ls.transfer.getY() >= -0x800 && ls.transfer.getZ() + ls.transfer.getY() >= -0x800) {
           //LAB_800dd9bc
-          if((newAttribute & 0x8L) != 0) {
-            FUN_8003eba0(lw, lw);
+          if((newAttribute & 0x8) != 0) {
+            lw.normalize();
           }
 
           //LAB_800dd9d8
@@ -4815,7 +4813,7 @@ public final class Bttl_800d {
 
     final MATRIX sp0x10 = new MATRIX();
     if((a1.flags_00 & 0x8) != 0) {
-      FUN_8003eba0(a2, sp0x10);
+      a2.normalize(sp0x10);
       GsSetLightMatrix(sp0x10);
     } else {
       //LAB_800de458
@@ -4823,7 +4821,8 @@ public final class Bttl_800d {
     }
 
     //LAB_800de45c
-    MulMatrix0(worldToScreenMatrix_800c3548, a2, sp0x10);
+    a2.compose(worldToScreenMatrix_800c3548, sp0x10);
+
     if((a1.flags_00 & 0x400_0000) == 0) {
       RotMatrix_Xyz(a1.rot_10, sp0x10);
       ScaleMatrixL_SVEC(sp0x10, a1.scale_16);

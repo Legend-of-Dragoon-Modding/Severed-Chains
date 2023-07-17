@@ -992,22 +992,6 @@ public final class Scus94491BpeSegment_8004 {
     out.unpack(GTE.normalColour());
   }
 
-  @Method(0x80040e40L)
-  public static void FUN_80040e40(final VECTOR a0, final VECTOR a1, final VECTOR out) {
-    final short t5 = GTE.getRotationMatrixValue(0);
-    final short t6 = GTE.getRotationMatrixValue(4);
-    final short t7 = GTE.getRotationMatrixValue(8);
-    GTE.setRotationMatrixValue(0, a0.getX());
-    GTE.setRotationMatrixValue(4, a0.getY());
-    GTE.setRotationMatrixValue(8, a0.getZ());
-    GTE.setIr123(a1);
-    GTE.outerProduct();
-    out.set(GTE.getMac1(), GTE.getMac2(), GTE.getMac3());
-    GTE.setRotationMatrixValue(0, t5);
-    GTE.setRotationMatrixValue(4, t6);
-    GTE.setRotationMatrixValue(8, t7);
-  }
-
   /**
    * Transform vector a1 and store in vector a2. Matrix a0 is uploaded to GTE in transposed order.
    */

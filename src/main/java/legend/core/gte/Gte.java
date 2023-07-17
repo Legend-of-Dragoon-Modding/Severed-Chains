@@ -275,25 +275,6 @@ public class Gte {
     this.RGB[2].c = this.RGBC.c;
   }
 
-  private void OP() {
-    //[MAC1, MAC2, MAC3] = [IR3*D2-IR2*D3, IR1*D3-IR3*D1, IR2*D1-IR1*D2] SAR(sf*12)
-    //[IR1, IR2, IR3]    = [MAC1, MAC2, MAC3]                        ;copy result
-    //Calculates the outer product of two signed 16bit vectors.
-    //Note: D1,D2,D3 are meant to be the RT11,RT22,RT33 elements of the RT matrix "misused" as vector. lm should be usually zero.
-
-    final short d1 = this.RT.v00;
-    final short d2 = this.RT.v11;
-    final short d3 = this.RT.v22;
-
-    this.MAC1 = (int)this.setMAC(1, this.IR[3] * d2 - this.IR[2] * d3 >> this.sf);
-    this.MAC2 = (int)this.setMAC(2, this.IR[1] * d3 - this.IR[3] * d1 >> this.sf);
-    this.MAC3 = (int)this.setMAC(3, this.IR[2] * d1 - this.IR[1] * d2 >> this.sf);
-
-    this.IR[1] = this.setIR(1, this.MAC1, this.lm);
-    this.IR[2] = this.setIR(2, this.MAC2, this.lm);
-    this.IR[3] = this.setIR(3, this.MAC3, this.lm);
-  }
-
   private void AVSZ3() {
     //MAC0 = ZSF3 * (SZ1 + SZ2 + SZ3); for AVSZ3
     //OTZ = MAC0 / 1000h;for both(saturated to 0..FFFFh)
@@ -483,22 +464,6 @@ public class Gte {
     }
 
     return value << 20 >> 20;
-  }
-
-  public int leadingZeroCount(int v) {
-    final int sign = v >>> 31;
-    int leadingCount = 0;
-
-    for(int i = 0; i < 32; i++) {
-      if(v >>> 31 != sign) {
-        break;
-      }
-
-      leadingCount++;
-      v <<= 1;
-    }
-
-    return leadingCount;
   }
 
   /** Data register 0/2/4 lower half VXY */
@@ -854,13 +819,6 @@ public class Gte {
     this.NCLIP();
     this.endCommand();
     return this.getMac0();
-  }
-
-  /** 0xc OP - vector outer product, 12-bit fraction, IR1/2/3 * RT11/22/33 */
-  public void outerProduct() {
-    this.startCommand(true, false);
-    this.OP();
-    this.endCommand();
   }
 
   /** 0x12 MVMVA rotation * IR123 + none, 12-bit fraction, no saturate */

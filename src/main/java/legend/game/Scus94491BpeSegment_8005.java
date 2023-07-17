@@ -92,8 +92,6 @@ public final class Scus94491BpeSegment_8005 {
    */
   public static final Value _800546c2 = MEMORY.ref(2, 0x800546c2L);
 
-  public static final ArrayRef<ShortRef> _80054870 = MEMORY.ref(2, 0x80054870L, ArrayRef.of(ShortRef.class, 192, 2, ShortRef::new));
-
   public static final Value matrixStackIndex_80054a08 = MEMORY.ref(4, 0x80054a08L);
   public static final MATRIX[] matrixStack_80054a0c = new MATRIX[20];
   static {

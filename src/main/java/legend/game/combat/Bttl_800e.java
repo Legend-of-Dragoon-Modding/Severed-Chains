@@ -124,7 +124,6 @@ import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.Scus94491BpeSegment_8003.ApplyMatrixLV;
 import static legend.game.Scus94491BpeSegment_8003.ApplyRotMatrix;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003ec90;
 import static legend.game.Scus94491BpeSegment_8003.GetTPage;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLs;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
@@ -133,7 +132,6 @@ import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.GsSetAmbient;
 import static legend.game.Scus94491BpeSegment_8003.GsSetFlatLight;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
-import static legend.game.Scus94491BpeSegment_8003.MulMatrix0;
 import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
 import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
 import static legend.game.Scus94491BpeSegment_8003.TransMatrix;
@@ -161,8 +159,6 @@ import static legend.game.combat.Bttl_800c._800c6938;
 import static legend.game.combat.Bttl_800c._800c697e;
 import static legend.game.combat.Bttl_800c._800c6980;
 import static legend.game.combat.Bttl_800c._800fafe8;
-import static legend.game.combat.Bttl_800c.spBarFlashingBorderMetrics_800fb47c;
-import static legend.game.combat.Bttl_800c.spBarBorderMetrics_800fb46c;
 import static legend.game.combat.Bttl_800c.activePartyBattleHudCharacterDisplays_800c6c40;
 import static legend.game.combat.Bttl_800c.ailments_800fb3a0;
 import static legend.game.combat.Bttl_800c.aliveBobjCount_800c669c;
@@ -207,7 +203,9 @@ import static legend.game.combat.Bttl_800c.monsterCount_800c6768;
 import static legend.game.combat.Bttl_800c.monsterCount_800c6b9c;
 import static legend.game.combat.Bttl_800c.playerNames_800fb378;
 import static legend.game.combat.Bttl_800c.repeatItemIds_800c6e34;
+import static legend.game.combat.Bttl_800c.spBarBorderMetrics_800fb46c;
 import static legend.game.combat.Bttl_800c.spBarColours_800c6f04;
+import static legend.game.combat.Bttl_800c.spBarFlashingBorderMetrics_800fb47c;
 import static legend.game.combat.Bttl_800c.spriteMetrics_800c6948;
 import static legend.game.combat.Bttl_800c.stageDarkeningClutWidth_800c695c;
 import static legend.game.combat.Bttl_800c.stageDarkening_800c6958;
@@ -1490,7 +1488,7 @@ public final class Bttl_800e {
   @Method(0x800e75acL)
   public static void FUN_800e75ac(final GenericSpriteEffect24 spriteEffect, final MATRIX transformMatrix) {
     final MATRIX finalTransform = new MATRIX();
-    FUN_8003ec90(worldToScreenMatrix_800c3548, transformMatrix, finalTransform);
+    transformMatrix.compose(worldToScreenMatrix_800c3548, finalTransform);
     final int z = Math.min(0x3ff8, zOffset_1f8003e8.get() + finalTransform.transfer.getZ() / 4);
 
     if(z >= 40) {
@@ -1756,11 +1754,11 @@ public final class Bttl_800e {
         ScaleMatrixL_SVEC(baseTransformMatrix, baseManager._10.scale_16);
         if(currentManager.coord2Index_0d != -1) {
           //LAB_800e866c
-          MulMatrix0(baseTransformMatrix, FUN_800ea0f4(baseManager, currentManager.coord2Index_0d).coord, baseTransformMatrix);
+          FUN_800ea0f4(baseManager, currentManager.coord2Index_0d).coord.compose(baseTransformMatrix, baseTransformMatrix);
         }
 
         //LAB_800e86ac
-        MulMatrix0(baseTransformMatrix, transformMatrix, transformMatrix);
+        transformMatrix.compose(baseTransformMatrix, transformMatrix);
         currentManager = baseManager;
         scriptIndex = currentManager.scriptIndex_0c;
         //LAB_800e86c8
@@ -1780,7 +1778,7 @@ public final class Bttl_800e {
         }
 
         //LAB_800e8774
-        MulMatrix0(sp0x10, transformMatrix, transformMatrix);
+        transformMatrix.compose(sp0x10, transformMatrix);
         currentManager = null;
         scriptIndex = -1;
       } else {
@@ -1800,7 +1798,7 @@ public final class Bttl_800e {
       TransposeMatrix(worldToScreenMatrix_800c3548, transposedWs);
       transposedTranslation.set(worldToScreenMatrix_800c3548.transfer).negate();
       ApplyMatrixLV(transposedWs, transposedTranslation, transposedWs.transfer);
-      MulMatrix0(transposedWs, transformMatrix, transformMatrix);
+      transformMatrix.compose(transposedWs, transformMatrix);
     }
     //LAB_800e8814
   }
