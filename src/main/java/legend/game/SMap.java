@@ -165,7 +165,7 @@ import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.GsSetAmbient;
 import static legend.game.Scus94491BpeSegment_8003.GsSetFlatLight;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
-import static legend.game.Scus94491BpeSegment_8003.GsSetRefView2;
+import static legend.game.Scus94491BpeSegment_8003.GsSetRefView2L;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.MargePrim;
 import static legend.game.Scus94491BpeSegment_8003.PopMatrix;
@@ -4826,7 +4826,7 @@ public final class SMap {
   @Method(0x800e7328L)
   public static void FUN_800e7328() {
     setProjectionPlaneDistance((int)projectionPlaneDistance_800bd810.get());
-    GsSetRefView2(rview2_800cbd10);
+    GsSetRefView2L(rview2_800cbd10);
     clearSmallValuesFromMatrix(worldToScreenMatrix_800c3548);
     matrix_800cbd68.set(worldToScreenMatrix_800c3548);
     TransposeMatrix(matrix_800cbd68, matrix_800cbd40);

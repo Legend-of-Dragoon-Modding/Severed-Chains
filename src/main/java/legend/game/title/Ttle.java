@@ -63,7 +63,7 @@ import static legend.game.Scus94491BpeSegment_8002.loadAndRenderMenus;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
-import static legend.game.Scus94491BpeSegment_8003.GsSetRefView2;
+import static legend.game.Scus94491BpeSegment_8003.GsSetRefView2L;
 import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
 import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
@@ -264,7 +264,7 @@ public final class Ttle {
     GsRVIEW2_800c6760.refpoint_0c.set(0, 0, -4000);
     GsRVIEW2_800c6760.viewpointTwist_18 = 0;
     GsRVIEW2_800c6760.super_1c = null;
-    GsSetRefView2(GsRVIEW2_800c6760);
+    GsSetRefView2L(GsRVIEW2_800c6760);
 
     vsyncMode_8007a3b8 = 2;
 
@@ -1031,7 +1031,7 @@ public final class Ttle {
     }
 
     //LAB_800cb7f0
-    GsSetRefView2(GsRVIEW2_800c6760);
+    GsSetRefView2L(GsRVIEW2_800c6760);
 
     final GsDOBJ2[] dobj2s = _800c66d0.dobj2s_00;
     final GsCOORDINATE2[] coord2s = _800c66d0.coord2s_04;
