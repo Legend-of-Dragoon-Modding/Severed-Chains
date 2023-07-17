@@ -4834,13 +4834,9 @@ public final class SMap {
   }
 
   @Method(0x800e7418L)
-  public static void updateRview2(final long xy0, final long z0, final long xy1, final long z1, final int rotation, final long projectionDistance) {
-    rview2_800cbd10.viewpoint_00.setX((short)xy0);
-    rview2_800cbd10.viewpoint_00.setY((short)(xy0 >>> 16));
-    rview2_800cbd10.viewpoint_00.setZ((short)z0);
-    rview2_800cbd10.refpoint_0c.setX((short)xy1);
-    rview2_800cbd10.refpoint_0c.setY((short)(xy1 >>> 16));
-    rview2_800cbd10.refpoint_0c.setZ((short)z1);
+  public static void updateRview2(final SVECTOR viewpoint, final SVECTOR refpoint, final int rotation, final long projectionDistance) {
+    rview2_800cbd10.viewpoint_00.set(viewpoint);
+    rview2_800cbd10.refpoint_0c.set(refpoint);
     rview2_800cbd10.viewpointTwist_18 = (short)rotation << 12;
     rview2_800cbd10.super_1c = null;
     projectionPlaneDistance_800bd810.setu(projectionDistance & 0xffffL);
@@ -4863,10 +4859,8 @@ public final class SMap {
     _800cb580.set(envFile.ub_16);
 
     updateRview2(
-      envFile.viewpoint_00.getXY(),
-      envFile.viewpoint_00.getZ(),
-      envFile.refpoint_08.getXY(),
-      envFile.refpoint_08.getZ(),
+      envFile.viewpoint_00,
+      envFile.refpoint_08,
       envFile.rotation_12,
       envFile.projectionDistance_10
     );
