@@ -990,31 +990,6 @@ public final class Scus94491BpeSegment_8003 {
     GTE.setScreenOffset(0, 0);
   }
 
-  @Method(0x8003ec90L)
-  public static MATRIX FUN_8003ec90(final MATRIX transformMatrix0, final MATRIX transformMatrix1, final MATRIX outMatrix) {
-    GTE.setRotationMatrix(transformMatrix0);
-
-    GTE.rotateVector(transformMatrix1.get(0), transformMatrix1.get(3), transformMatrix1.get(6));
-    outMatrix.set(0, GTE.getIr1());
-    outMatrix.set(3, GTE.getIr2());
-    outMatrix.set(6, GTE.getIr3());
-
-    GTE.rotateVector(transformMatrix1.get(1), transformMatrix1.get(4), transformMatrix1.get(7));
-    outMatrix.set(1, GTE.getIr1());
-    outMatrix.set(4, GTE.getIr2());
-    outMatrix.set(7, GTE.getIr3());
-
-    GTE.rotateVector(transformMatrix1.get(2), transformMatrix1.get(5), transformMatrix1.get(8));
-    outMatrix.set(2, GTE.getIr1());
-    outMatrix.set(5, GTE.getIr2());
-    outMatrix.set(8, GTE.getIr3());
-
-    GTE.rotateVector(transformMatrix1.transfer);
-    outMatrix.transfer.set(transformMatrix0.transfer).add(GTE.getMac1(), GTE.getMac2(), GTE.getMac3());
-
-    return outMatrix;
-  }
-
   public static VECTOR ApplyMatrixLV(final MATRIX matrix, final VECTOR vector) {
     return ApplyMatrixLV(matrix, vector, null);
   }
@@ -1135,74 +1110,6 @@ public final class Scus94491BpeSegment_8003 {
     mat.set(7, (short)(mat.get(7) * vector.z.get() >> 12));
     mat.set(8, (short)(mat.get(8) * vector.z.get() >> 12));
     return mat;
-  }
-
-  @Method(0x8003f210L)
-  public static MATRIX CompMatrixLV(final MATRIX a0, final MATRIX a1, final MATRIX out) {
-    GTE.setRotationMatrix(a0);
-
-    GTE.rotateVector(a1.get(0), a1.get(3), a1.get(6));
-    out.set(0, GTE.getIr1());
-    out.set(3, GTE.getIr2());
-    out.set(6, GTE.getIr3());
-
-    GTE.rotateVector(a1.get(1), a1.get(4), a1.get(7));
-    out.set(1, GTE.getIr1());
-    out.set(4, GTE.getIr2());
-    out.set(7, GTE.getIr3());
-
-    GTE.rotateVector(a1.get(2), a1.get(5), a1.get(8));
-    out.set(2, GTE.getIr1());
-    out.set(5, GTE.getIr2());
-    out.set(8, GTE.getIr3());
-
-    final int wholeX;
-    final int fractX;
-    if(a1.transfer.getX() < 0) {
-      wholeX = -(-a1.transfer.getX() >> 15);
-      fractX = -(-a1.transfer.getX() & 0x7fff);
-    } else {
-      //LAB_8003f33c
-      wholeX = a1.transfer.getX() >> 15;
-      fractX = a1.transfer.getX() & 0x7fff;
-    }
-
-    //LAB_8003f344
-    final int wholeY;
-    final int fractY;
-    if(a1.transfer.getY() < 0) {
-      wholeY = -(-a1.transfer.getY() >> 15);
-      fractY = -(-a1.transfer.getY() & 0x7fff);
-    } else {
-      //LAB_8003f364
-      wholeY = a1.transfer.getY() >> 15;
-      fractY = a1.transfer.getY() & 0x7fff;
-    }
-
-    //LAB_8003f36c
-    final int wholeZ;
-    final int fractZ;
-    if(a1.transfer.getZ() < 0) {
-      wholeZ = -(-a1.transfer.getZ() >> 15);
-      fractZ = -(-a1.transfer.getZ() & 0x7fff);
-    } else {
-      //LAB_8003f38c
-      wholeZ = a1.transfer.getZ() >> 15;
-      fractZ = a1.transfer.getZ() & 0x7fff;
-    }
-
-    //LAB_8003f394
-    GTE.rotateVector0(wholeX, wholeY, wholeZ);
-    final int t3 = GTE.getMac1();
-    final int t4 = GTE.getMac2();
-    final int t5 = GTE.getMac3();
-
-    GTE.rotateVector(fractX, fractY, fractZ);
-
-    out.transfer.setX(GTE.getMac1() + t3 * 8 + a0.transfer.getX());
-    out.transfer.setY(GTE.getMac2() + t4 * 8 + a0.transfer.getY());
-    out.transfer.setZ(GTE.getMac3() + t5 * 8 + a0.transfer.getZ());
-    return out;
   }
 
   /**

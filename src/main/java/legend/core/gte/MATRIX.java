@@ -99,6 +99,12 @@ public class MATRIX {
 
   /** Rotate with parallel translation */
   public MATRIX compose(final MATRIX other, final MATRIX out) {
+    final int vx = other.transfer.getX();
+    final int vy = other.transfer.getY();
+    final int vz = other.transfer.getZ();
+    this.transfer.rotate(other, out.transfer);
+    out.transfer.add(vx, vy, vz);
+
     final int t0 = this.get(0);
     final int t1 = this.get(1);
     final int t2 = this.get(2);
@@ -127,9 +133,6 @@ public class MATRIX {
     out.set(6, (short)(o6 * t0 + o7 * t3 + o8 * t6 >> 12));
     out.set(7, (short)(o6 * t1 + o7 * t4 + o8 * t7 >> 12));
     out.set(8, (short)(o6 * t2 + o7 * t5 + o8 * t8 >> 12));
-
-    this.transfer.rotate(other, out.transfer);
-    out.transfer.add(other.transfer);
 
     return this;
   }
