@@ -156,7 +156,6 @@ import static legend.game.Scus94491BpeSegment_8002.rand;
 import static legend.game.Scus94491BpeSegment_8002.renderDobj2;
 import static legend.game.Scus94491BpeSegment_8002.renderModel;
 import static legend.game.Scus94491BpeSegment_8002.srand;
-import static legend.game.Scus94491BpeSegment_8003.ApplyMatrixSV;
 import static legend.game.Scus94491BpeSegment_8003.GetTPage;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLs;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
@@ -176,7 +175,6 @@ import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
 import static legend.game.Scus94491BpeSegment_8003.SetDrawTPage;
 import static legend.game.Scus94491BpeSegment_8003.StoreImage;
 import static legend.game.Scus94491BpeSegment_8003.TransMatrix;
-import static legend.game.Scus94491BpeSegment_8003.TransposeMatrix;
 import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTransparency;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
@@ -4829,7 +4827,7 @@ public final class SMap {
     GsSetRefView2L(rview2_800cbd10);
     clearSmallValuesFromMatrix(worldToScreenMatrix_800c3548);
     matrix_800cbd68.set(worldToScreenMatrix_800c3548);
-    TransposeMatrix(matrix_800cbd68, matrix_800cbd40);
+    matrix_800cbd68.transpose(matrix_800cbd40);
     rview2_800bd7e8.set(rview2_800cbd10);
   }
 
@@ -5246,9 +5244,7 @@ public final class SMap {
       out.set(in);
     } else {
       //LAB_800e8318
-      PushMatrix();
-      ApplyMatrixSV(matrix_800cbd40, in, out);
-      PopMatrix();
+      in.mul(matrix_800cbd40, out);
     }
 
     //LAB_800e833c

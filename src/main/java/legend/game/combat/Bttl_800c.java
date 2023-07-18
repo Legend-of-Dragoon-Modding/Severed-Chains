@@ -146,7 +146,6 @@ import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.initModel;
 import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
 import static legend.game.Scus94491BpeSegment_8002.renderModel;
-import static legend.game.Scus94491BpeSegment_8003.ApplyMatrixLV;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.MoveImage;
@@ -3874,7 +3873,7 @@ public final class Bttl_800c {
     for(int i = 0; i < 2; i++) {
       final MATRIX perspectiveTransformMatrix = new MATRIX();
       GsGetLw(trail.parentModel_30.coord2ArrPtr_04[trail.dobjIndex_08], perspectiveTransformMatrix);
-      ApplyMatrixLV(perspectiveTransformMatrix, i == 0 ? trail.smallestVertex_20 : trail.largestVertex_10, segment.endpointCoords_04[i]);
+      (i == 0 ? trail.smallestVertex_20 : trail.largestVertex_10).mul(perspectiveTransformMatrix, segment.endpointCoords_04[i]); // Yes, I hate me for this syntax too
       segment.endpointCoords_04[i].add(perspectiveTransformMatrix.transfer);
     }
 
@@ -4158,13 +4157,9 @@ public final class Bttl_800c {
     //LAB_800cf400
     final MATRIX transforms = new MATRIX();
     RotMatrix_Xyz(rotations, transforms);
-    TransMatrix(transforms, new VECTOR()); // This probably isn't necessary
-    GTE.setRotationMatrix(transforms);
-    GTE.setTranslationVector(transforms.transfer);
 
-    GTE.rotateTranslateVector(vertex);
-
-    out.set(GTE.getMac1(), GTE.getMac2(), GTE.getMac3());
+    vertex.mul(transforms, out);
+    out.add(transforms.transfer);
   }
 
   @Method(0x800cf4f4L)
@@ -4182,30 +4177,25 @@ public final class Bttl_800c {
     //LAB_800cf578
     RotMatrix_Xyz(sp0x20, sp0x28);
     TransMatrix(sp0x28, a0._10.trans_04);
-    GTE.setRotationMatrix(sp0x28);
-    GTE.setTranslationVector(sp0x28.transfer);
-    GTE.rotateTranslateVector(a2);
-    out.set(GTE.getMac1(), GTE.getMac2(), GTE.getMac3());
+
+    a2.mul(sp0x28, out);
+    out.add(sp0x28.transfer);
   }
 
   @Method(0x800cf684L)
   public static void FUN_800cf684(final SVECTOR rotation, final VECTOR translation, final VECTOR vector, final VECTOR out) {
     final MATRIX transforms = new MATRIX();
     RotMatrix_Xyz(rotation, transforms);
-    TransMatrix(transforms, translation);
-    GTE.setRotationMatrix(transforms);
-    GTE.setTranslationVector(transforms.transfer);
-    GTE.rotateTranslateVector(vector);
-    out.set(GTE.getMac1(), GTE.getMac2(), GTE.getMac3());
+    transforms.transfer.set(translation);
+    vector.mul(transforms, out);
+    out.add(transforms.transfer);
   }
 
   /** @return Z */
   @Method(0x800cf7d4L)
   public static int FUN_800cf7d4(final SVECTOR rotation, final VECTOR translation1, final VECTOR translation2, final ShortRef outX, final ShortRef outY) {
-    final SVECTOR baseTranslation = new SVECTOR().set(translation1);
-    GTE.setRotationMatrix(worldToScreenMatrix_800c3548);
-    GTE.rotateVector(baseTranslation);
-    final VECTOR sp0x10 = new VECTOR().set(GTE.getMac1(), GTE.getMac2(), GTE.getMac3());
+    final VECTOR sp0x10 = new VECTOR();
+    translation1.mul(worldToScreenMatrix_800c3548, sp0x10);
 
     GTE.setRotationMatrix(worldToScreenMatrix_800c3548);
     GTE.setTranslationVector(worldToScreenMatrix_800c3548.transfer);
@@ -4268,8 +4258,8 @@ public final class Bttl_800c {
     //LAB_800cfd40
     final MATRIX sp0x10 = new MATRIX();
     GsGetLw(model.coord2ArrPtr_04[script.params_20[1].get()], sp0x10);
-    final VECTOR sp0x40 = ApplyMatrixLV(sp0x10, new VECTOR());
-    sp0x40.add(sp0x10.transfer);
+    // This was multiplying vector (0, 0, 0) so I removed it
+    final VECTOR sp0x40 = new VECTOR().set(sp0x10.transfer);
     script.params_20[2].set(sp0x40.getX());
     script.params_20[3].set(sp0x40.getY());
     script.params_20[4].set(sp0x40.getZ());
@@ -4343,7 +4333,7 @@ public final class Bttl_800c {
   public static void getModelObjectTranslation(final int scriptIndex, final VECTOR translation, final int objIndex) {
     final MATRIX transformMatrix = new MATRIX();
     GsGetLw(((BattleObject27c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00).model_148.coord2ArrPtr_04[objIndex], transformMatrix);
-    ApplyMatrixLV(transformMatrix, new VECTOR(), translation);
-    translation.add(transformMatrix.transfer);
+    // Does nothing? Changed line below to set //ApplyMatrixLV(transformMatrix, new VECTOR(), translation);
+    translation.set(transformMatrix.transfer);
   }
 }

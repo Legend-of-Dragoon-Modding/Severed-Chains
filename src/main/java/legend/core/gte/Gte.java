@@ -33,24 +33,6 @@ public class Gte {
     public short v20;
     public short v21;
     public short v22;
-
-    private Matrix() { }
-
-    private Matrix(final short v00, final short v01, final short v02, final short v10, final short v11, final short v12, final short v20, final short v21, final short v22) {
-      this.v00 = v00;
-      this.v01 = v01;
-      this.v02 = v02;
-      this.v10 = v10;
-      this.v11 = v11;
-      this.v12 = v12;
-      this.v20 = v20;
-      this.v21 = v21;
-      this.v22 = v22;
-    }
-
-    public Matrix copy() {
-      return new Matrix(this.v00, this.v01, this.v02, this.v10, this.v11, this.v12, this.v20, this.v21, this.v22);
-    }
   }
 
   private static class Vector2 {
@@ -105,7 +87,6 @@ public class Gte {
   private final Matrix LRGB = new Matrix();
   private int TRX, TRY, TRZ;          //R37-39
   private int RBK, GBK, BBK;          //R45-47
-  private int RFC, GFC, BFC;          //R53-55
   private int OFX, OFY, DQB;          //R56 57 60
   private short H;                   //R58
   private short ZSF3, ZSF4, DQA;      //R61 62 59
@@ -114,7 +95,7 @@ public class Gte {
   //Command decode
   private int sf;                     //Shift fraction (0 or 12)
   private boolean lm;                    //Saturate IR1,IR2,IR3 result (0=To -8000h..+7FFFh, 1=To 0..+7FFFh)
-  private int currentCommand;        //GTE current command temporary stored for MVMVA decoding
+  //GTE current command temporary stored for MVMVA decoding
 
   private void NCCS(final int r) {
     // [IR1, IR2, IR3] = [MAC1, MAC2, MAC3] = (LLM * V0) SAR(sf * 12)
@@ -158,121 +139,6 @@ public class Gte {
     this.IR[1] = this.setIR(1, this.MAC1, this.lm);
     this.IR[2] = this.setIR(2, this.MAC2, this.lm);
     this.IR[3] = this.setIR(3, this.MAC3, this.lm);
-  }
-
-  private void MVMVA() { //WIP
-    //Mx = matrix specified by mx; RT / LLM / LCM - Rotation, light or color matrix
-    //Vx = vector specified by v; V0, V1, V2, or[IR1, IR2, IR3]
-    //Tx = translation vector specified by cv; TR or BK or Bugged / FC, or None
-
-    final int mxIndex = this.currentCommand >>> 17 & 0x3; //MVMVA Multiply Matrix    (0=Rotation. 1=Light, 2=Color, 3=Reserved)
-    final int mvIndex = this.currentCommand >>> 15 & 0x3; //MVMVA Multiply Vector    (0=V0, 1=V1, 2=V2, 3=IR/long)
-    final int tvIndex = this.currentCommand >>> 13 & 0x3; //MVMVA Translation Vector (0=TR, 1=BK, 2=FC/Bugged, 3=None)
-
-    final Matrix mx;
-    final ShortVector3 vx;
-    final long tx;
-    final long ty;
-    final long tz;
-
-    if(mxIndex == 0) {
-      mx = this.RT.copy();
-    } else if(mxIndex == 1) {
-      mx = this.LM.copy();
-    } else if(mxIndex == 2) {
-      mx = this.LRGB.copy();
-    } else {
-      mx = new Matrix();
-      mx.v00 = (short)-((this.RGBC.r & 0xff) << 4);
-      mx.v01 = (short)((this.RGBC.r & 0xff) << 4);
-      mx.v02 = this.IR[0];
-      mx.v10 = mx.v11 = mx.v12 = this.RT.v02;
-      mx.v20 = mx.v21 = mx.v22 = this.RT.v11;
-    }
-
-    if(mvIndex == 0) {
-      vx = this.V[0].copy();
-    } else if(mvIndex == 1) {
-      vx = this.V[1].copy();
-    } else if(mvIndex == 2) {
-      vx = this.V[2].copy();
-    } else {
-      vx = new ShortVector3(this.IR[1], this.IR[2], this.IR[3]);
-    }
-
-    if(tvIndex == 0) {
-      tx = this.TRX;
-      ty = this.TRY;
-      tz = this.TRZ;
-    } else if(tvIndex == 1) {
-      tx = this.RBK;
-      ty = this.GBK;
-      tz = this.BBK;
-    } else if(tvIndex == 2) {
-      //This vector is not added correctly by the hardware
-      tx = this.RFC;
-      ty = this.GFC;
-      tz = this.BFC;
-
-      long mac1 = this.setMAC(1, tx * 0x1000 + mx.v00 * vx.x);
-      long mac2 = this.setMAC(2, ty * 0x1000 + mx.v10 * vx.x);
-      long mac3 = this.setMAC(3, tz * 0x1000 + mx.v20 * vx.x);
-
-      this.setIR(1, (int)(mac1 >> this.sf), false);
-      this.setIR(2, (int)(mac2 >> this.sf), false);
-      this.setIR(3, (int)(mac3 >> this.sf), false);
-
-      mac1 = this.setMAC(1, this.setMAC(1, (long)mx.v01 * vx.y) + (long)mx.v02 * vx.z);
-      mac2 = this.setMAC(2, this.setMAC(2, (long)mx.v11 * vx.y) + (long)mx.v12 * vx.z);
-      mac3 = this.setMAC(3, this.setMAC(3, (long)mx.v21 * vx.y) + (long)mx.v22 * vx.z);
-
-      this.MAC1 = (int)(mac1 >> this.sf);
-      this.MAC2 = (int)(mac2 >> this.sf);
-      this.MAC3 = (int)(mac3 >> this.sf);
-
-      this.IR[1] = this.setIR(1, this.MAC1, this.lm);
-      this.IR[2] = this.setIR(2, this.MAC2, this.lm);
-      this.IR[3] = this.setIR(3, this.MAC3, this.lm);
-
-      return;
-    } else {
-      tx = ty = tz = 0;
-    }
-
-    //MAC1 = (Tx1 * 1000h + Mx11 * Vx1 + Mx12 * Vx2 + Mx13 * Vx3) SAR(sf * 12)
-    //MAC2 = (Tx2 * 1000h + Mx21 * Vx1 + Mx22 * Vx2 + Mx23 * Vx3) SAR(sf * 12)
-    //MAC3 = (Tx3 * 1000h + Mx31 * Vx1 + Mx32 * Vx2 + Mx33 * Vx3) SAR(sf * 12)
-    //[IR1, IR2, IR3] = [MAC1, MAC2, MAC3]
-
-    this.MAC1 = (int)(this.setMAC(1, this.setMAC(1, this.setMAC(1, tx * 0x1000 + mx.v00 * vx.x) + (long)mx.v01 * vx.y) + (long)mx.v02 * vx.z) >> this.sf);
-    this.MAC2 = (int)(this.setMAC(2, this.setMAC(2, this.setMAC(2, ty * 0x1000 + mx.v10 * vx.x) + (long)mx.v11 * vx.y) + (long)mx.v12 * vx.z) >> this.sf);
-    this.MAC3 = (int)(this.setMAC(3, this.setMAC(3, this.setMAC(3, tz * 0x1000 + mx.v20 * vx.x) + (long)mx.v21 * vx.y) + (long)mx.v22 * vx.z) >> this.sf);
-
-    this.IR[1] = this.setIR(1, this.MAC1, this.lm);
-    this.IR[2] = this.setIR(2, this.MAC2, this.lm);
-    this.IR[3] = this.setIR(3, this.MAC3, this.lm);
-  }
-
-  private void GPF() {
-    //[MAC1, MAC2, MAC3] = [0,0,0]                            ;<--- for GPF only
-    //[MAC1, MAC2, MAC3] = (([IR1, IR2, IR3] * IR0) + [MAC1, MAC2, MAC3]) SAR(sf*12)
-    // Color FIFO = [MAC1 / 16, MAC2 / 16, MAC3 / 16, CODE], [IR1, IR2, IR3] = [MAC1, MAC2, MAC3]
-
-    this.MAC1 = (int)this.setMAC(1, this.IR[1] * this.IR[0]) >> this.sf;
-    this.MAC2 = (int)this.setMAC(2, this.IR[2] * this.IR[0]) >> this.sf;
-    this.MAC3 = (int)this.setMAC(3, this.IR[3] * this.IR[0]) >> this.sf;
-
-    this.IR[1] = this.setIR(1, this.MAC1, this.lm);
-    this.IR[2] = this.setIR(2, this.MAC2, this.lm);
-    this.IR[3] = this.setIR(3, this.MAC3, this.lm);
-
-    this.RGB[0].set(this.RGB[1]);
-    this.RGB[1].set(this.RGB[2]);
-
-    this.RGB[2].r = this.setRGB(1, this.MAC1 >> 4);
-    this.RGB[2].g = this.setRGB(2, this.MAC2 >> 4);
-    this.RGB[2].b = this.setRGB(3, this.MAC3 >> 4);
-    this.RGB[2].c = this.RGBC.c;
   }
 
   private void AVSZ3() {
@@ -466,21 +332,6 @@ public class Gte {
     return value << 20 >> 20;
   }
 
-  /** Data register 0/2/4 lower half VXY */
-  public short getVertexX(final int index) {
-    return this.V[index].x;
-  }
-
-  /** Data register 0/2/4 upper half VXY */
-  public short getVertexY(final int index) {
-    return this.V[index].y;
-  }
-
-  /** Data register 1/3/5 VZ */
-  public short getVertexZ(final int index) {
-    return this.V[index].z;
-  }
-
   /** Data register 0/1, 2/3, 4/5 */
   public void setVertex(final int index, final int x, final int y, final int z) {
     this.V[index].x = (short)x;
@@ -499,11 +350,6 @@ public class Gte {
   }
 
   /** Data register 6 RGBC */
-  public int getRgbc() {
-    return this.RGBC.val();
-  }
-
-  /** Data register 6 RGBC */
   public void setRgbc(final int rgbc) {
     this.RGBC.val(rgbc);
   }
@@ -516,48 +362,6 @@ public class Gte {
   /** Data register 7 OTZ */
   public short getAverageZ() {
     return this.OTZ;
-  }
-
-  /** Data register 8 IR0 */
-  public short getIr0() {
-    return this.IR[0];
-  }
-
-  /** Data register 9 IR1 */
-  public short getIr1() {
-    return this.IR[1];
-  }
-
-  /** Data register 10 IR2 */
-  public short getIr2() {
-    return this.IR[2];
-  }
-
-  /** Data register 11 IR3 */
-  public short getIr3() {
-    return this.IR[3];
-  }
-
-  /** Data register 8 IR0 */
-  public void setIr0(final int value) {
-    this.IR[0] = (short)value;
-  }
-
-  /** Data register 9/10/11 IR123 */
-  public void setIr123(final int x, final int y, final int z) {
-    this.IR[1] = (short)x;
-    this.IR[2] = (short)y;
-    this.IR[3] = (short)z;
-  }
-
-  /** Data register 9/10/11 IR123 */
-  public void setIr123(final SVECTOR vert) {
-    this.setIr123(vert.getX(), vert.getY(), vert.getZ());
-  }
-
-  /** Data register 9/10/11 IR123 */
-  public void setIr123(final VECTOR vert) {
-    this.setIr123(vert.getX(), vert.getY(), vert.getZ());
   }
 
   /** Data register 12, 13, 14, 15 */
@@ -585,21 +389,6 @@ public class Gte {
     return this.MAC0;
   }
 
-  /** Data register 25 */
-  public int getMac1() {
-    return this.MAC1;
-  }
-
-  /** Data register 26 */
-  public int getMac2() {
-    return this.MAC2;
-  }
-
-  /** Data register 27 */
-  public int getMac3() {
-    return this.MAC3;
-  }
-
   /** Control register 0-4 */
   public void getRotationMatrix(final MATRIX matrix) {
     matrix.set(0, this.RT.v00);
@@ -614,22 +403,6 @@ public class Gte {
   }
 
   /** Control register 0-4 */
-  public short getRotationMatrixValue(final int matrixIndex) {
-    return switch(matrixIndex) {
-      case 0 -> this.RT.v00;
-      case 1 -> this.RT.v01;
-      case 2 -> this.RT.v02;
-      case 3 -> this.RT.v10;
-      case 4 -> this.RT.v11;
-      case 5 -> this.RT.v12;
-      case 6 -> this.RT.v20;
-      case 7 -> this.RT.v21;
-      case 8 -> this.RT.v22;
-      default -> throw new IllegalStateException("Unexpected value: " + matrixIndex);
-    };
-  }
-
-  /** Control register 0-4 */
   public void setRotationMatrix(final MATRIX matrix) {
     this.RT.v00 = matrix.get(0);
     this.RT.v01 = matrix.get(1);
@@ -640,35 +413,6 @@ public class Gte {
     this.RT.v20 = matrix.get(6);
     this.RT.v21 = matrix.get(7);
     this.RT.v22 = matrix.get(8);
-  }
-
-  /** Control register 0-4 */
-  public void setRotationMatrixValue(final short v00, final short v01, final short v02, final short v10, final short v11, final short v12, final short v20, final short v21, final short v22) {
-    this.RT.v00 = v00;
-    this.RT.v01 = v01;
-    this.RT.v02 = v02;
-    this.RT.v10 = v10;
-    this.RT.v11 = v11;
-    this.RT.v12 = v12;
-    this.RT.v20 = v20;
-    this.RT.v21 = v21;
-    this.RT.v22 = v22;
-  }
-
-  /** Control register 0-4 */
-  public void setRotationMatrixValue(final int matrixIndex, final int value) {
-    switch(matrixIndex) {
-      case 0 -> this.RT.v00 = (short)value;
-      case 1 -> this.RT.v01 = (short)value;
-      case 2 -> this.RT.v02 = (short)value;
-      case 3 -> this.RT.v10 = (short)value;
-      case 4 -> this.RT.v11 = (short)value;
-      case 5 -> this.RT.v12 = (short)value;
-      case 6 -> this.RT.v20 = (short)value;
-      case 7 -> this.RT.v21 = (short)value;
-      case 8 -> this.RT.v22 = (short)value;
-      default -> throw new IllegalStateException("Unexpected value: " + matrixIndex);
-    }
   }
 
   /** Control register 5-7 */
@@ -718,13 +462,6 @@ public class Gte {
     this.LRGB.v22 = matrix.get(8);
   }
 
-  /** Control register 21-23 far colour */
-  public void setFarColour(final int r, final int g, final int b) {
-    this.RFC = r;
-    this.GFC = g;
-    this.BFC = b;
-  }
-
   /** Control register 24 screen offset X */
   public int getScreenOffsetX() {
     return this.OFX;
@@ -772,8 +509,8 @@ public class Gte {
     return this.getFlags() < 0;
   }
 
-  private void startCommand(final boolean fraction, final boolean saturate) {
-    this.sf = fraction ? 12 : 0;
+  private void startCommand(final boolean saturate) {
+    this.sf = 12;
     this.lm = saturate;
     this.FLAG = 0;
   }
@@ -788,7 +525,7 @@ public class Gte {
 
   /** 0x1 RTPS - perspective transform single, 12-bit fraction */
   public void perspectiveTransform() {
-    this.startCommand(true, false);
+    this.startCommand(false);
     this.RTPS(0, true);
     this.endCommand();
   }
@@ -815,52 +552,10 @@ public class Gte {
    * @return vertex winding
    */
   public int normalClipping() {
-    this.startCommand(true, false);
+    this.startCommand(false);
     this.NCLIP();
     this.endCommand();
     return this.getMac0();
-  }
-
-  /** 0x12 MVMVA rotation * IR123 + none, 12-bit fraction, no saturate */
-  public void rotateVector(final SVECTOR vector) {
-    this.rotateVector(vector.getX(), vector.getY(), vector.getZ());
-  }
-
-  /** 0x12 MVMVA rotation * IR123 + none, 12-bit fraction, no saturate */
-  public void rotateVector(final int x, final int y, final int z) {
-    this.setIr123(x, y, z);
-    this.currentCommand = 0x49e012;
-    this.startCommand(true, false);
-    this.MVMVA();
-    this.endCommand();
-  }
-
-  /** 0x12 MVMVA rotation * IR123 + TR, 12-bit fraction, no saturate */
-  public void rotateTranslateVector(final SVECTOR vector) {
-    this.rotateTranslateVector(vector.getX(), vector.getY(), vector.getZ());
-  }
-
-  /** 0x12 MVMVA rotation * IR123 + TR, 12-bit fraction, no saturate */
-  public void rotateTranslateVector(final VECTOR vector) {
-    this.rotateTranslateVector(vector.getX(), vector.getY(), vector.getZ());
-  }
-
-  /** 0x12 MVMVA rotation * IR123 + TR, 12-bit fraction, no saturate */
-  public void rotateTranslateVector(final int x, final int y, final int z) {
-    this.setVertex(0, x, y, z);
-    this.currentCommand = 0x480012;
-    this.startCommand(true, false);
-    this.MVMVA();
-    this.endCommand();
-  }
-
-  /** 0x12 MVMVA rotation * IR123 + none, 12-bit fraction, no saturate */
-  public void rotateVector0(final int x, final int y, final int z) {
-    this.setIr123(x, y, z);
-    this.currentCommand = 0x49e012;
-    this.startCommand(false, false);
-    this.MVMVA();
-    this.endCommand();
   }
 
   /**
@@ -869,7 +564,7 @@ public class Gte {
    * @return colour
    */
   public int normalColour() {
-    this.startCommand(true, true);
+    this.startCommand(true);
     this.NCCS(0);
     this.endCommand();
     return this.getRgb(2);
@@ -881,7 +576,7 @@ public class Gte {
    * @return average Z
    */
   public int averageZ3() {
-    this.startCommand(true, false);
+    this.startCommand(false);
     this.AVSZ3();
     this.endCommand();
     return this.getAverageZ();
@@ -893,7 +588,7 @@ public class Gte {
    * @return average Z
    */
   public int averageZ4() {
-    this.startCommand(true, false);
+    this.startCommand(false);
     this.AVSZ4();
     this.endCommand();
     return this.getAverageZ();
@@ -901,7 +596,7 @@ public class Gte {
 
   /** 0x30 RTPT - perspective transform triple, 12-bit fraction */
   public void perspectiveTransformTriangle() {
-    this.startCommand(true, false);
+    this.startCommand(false);
     this.RTPT();
     this.endCommand();
   }
@@ -912,26 +607,9 @@ public class Gte {
     this.setVertex(1, v1);
     this.setVertex(2, v2);
 
-    this.startCommand(true, false);
+    this.startCommand(false);
     this.RTPT();
     this.endCommand();
   }
 
-  /** 0x30 RTPT - perspective transform triple, 12-bit fraction */
-  public void perspectiveTransformTriangle(final VECTOR v0, final VECTOR v1, final VECTOR v2) {
-    this.setVertex(0, v0);
-    this.setVertex(1, v1);
-    this.setVertex(2, v2);
-
-    this.startCommand(true, false);
-    this.RTPT();
-    this.endCommand();
-  }
-
-  /** 0x3d GPF - general-purpose interpolation, (MAC123 = IR123 * IR0 >> 12) */
-  public void generalPurposeInterpolate() {
-    this.startCommand(false, false);
-    this.GPF();
-    this.endCommand();
-  }
 }

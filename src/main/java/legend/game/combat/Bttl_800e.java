@@ -113,7 +113,6 @@ import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80023a88;
-import static legend.game.Scus94491BpeSegment_8002.SetRotMatrix;
 import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.checkForPsychBombX;
 import static legend.game.Scus94491BpeSegment_8002.getUnlockedDragoonSpells;
@@ -122,8 +121,6 @@ import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.prepareObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
-import static legend.game.Scus94491BpeSegment_8003.ApplyMatrixLV;
-import static legend.game.Scus94491BpeSegment_8003.ApplyRotMatrix;
 import static legend.game.Scus94491BpeSegment_8003.GetTPage;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLs;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
@@ -135,7 +132,6 @@ import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
 import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
 import static legend.game.Scus94491BpeSegment_8003.TransMatrix;
-import static legend.game.Scus94491BpeSegment_8003.TransposeMatrix;
 import static legend.game.Scus94491BpeSegment_8003.getProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
 import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
@@ -255,8 +251,7 @@ public final class Bttl_800e {
   public static VECTOR FUN_800e4674(final VECTOR out, final SVECTOR rotation) {
     final MATRIX rotMatrix = new MATRIX();
     RotMatrix_Zyx(rotation, rotMatrix);
-    SetRotMatrix(rotMatrix);
-    ApplyRotMatrix(new SVECTOR().set((short)0, (short)0, (short)(1 << 12)), out);
+    out.set(0, 0, 1 << 12).mul(rotMatrix);
     return out;
   }
 
@@ -1540,7 +1535,8 @@ public final class Bttl_800e {
   @Method(0x800e7944L)
   public static void FUN_800e7944(final GenericSpriteEffect24 spriteEffect, final VECTOR translation, final int zMod) {
     if((int)spriteEffect.flags_00 >= 0) {
-      final VECTOR finalTranslation = ApplyMatrixLV(worldToScreenMatrix_800c3548, translation);
+      final VECTOR finalTranslation = new VECTOR();
+      translation.mul(worldToScreenMatrix_800c3548, finalTranslation);
       finalTranslation.add(worldToScreenMatrix_800c3548.transfer);
 
       final int x0 = MathHelper.safeDiv(finalTranslation.getX() * projectionPlaneDistance_1f8003f8.get(), finalTranslation.getZ());
@@ -1588,7 +1584,8 @@ public final class Bttl_800e {
 
   @Method(0x800e7dbcL)
   public static int FUN_800e7dbc(final DVECTOR out, final VECTOR translation) {
-    final VECTOR transformed = ApplyMatrixLV(worldToScreenMatrix_800c3548, translation);
+    final VECTOR transformed = new VECTOR();
+    translation.mul(worldToScreenMatrix_800c3548, transformed);
     transformed.add(worldToScreenMatrix_800c3548.transfer);
 
     if(transformed.getZ() >= 160) {
@@ -1795,9 +1792,9 @@ public final class Bttl_800e {
     if(scriptIndex == -2) {
       final MATRIX transposedWs = new MATRIX();
       final VECTOR transposedTranslation = new VECTOR();
-      TransposeMatrix(worldToScreenMatrix_800c3548, transposedWs);
+      worldToScreenMatrix_800c3548.transpose(transposedWs);
       transposedTranslation.set(worldToScreenMatrix_800c3548.transfer).negate();
-      ApplyMatrixLV(transposedWs, transposedTranslation, transposedWs.transfer);
+      transposedTranslation.mul(transposedWs, transposedWs.transfer);
       transformMatrix.compose(transposedWs, transformMatrix);
     }
     //LAB_800e8814

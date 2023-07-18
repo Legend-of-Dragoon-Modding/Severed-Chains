@@ -89,7 +89,6 @@ import legend.game.combat.effects.ThunderArrowEffect1c;
 import legend.game.combat.effects.ThunderArrowEffectBolt1e;
 import legend.game.combat.effects.TmdSpriteEffect10;
 import legend.game.combat.effects.TransformScalerEffect34;
-import legend.game.combat.effects.UnusedBuggedEffect24;
 import legend.game.combat.effects.WsDragoonTransformationFeatherInstance70;
 import legend.game.combat.effects.WsDragoonTransformationFeathersEffect14;
 import legend.game.combat.types.BattleScriptDataBase;
@@ -117,7 +116,6 @@ import java.util.function.Consumer;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GPU;
-import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
@@ -136,19 +134,15 @@ import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
 import static legend.game.Scus94491BpeSegment.zMin;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
-import static legend.game.Scus94491BpeSegment_8002.SetRotMatrix;
 import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.playXaAudio;
 import static legend.game.Scus94491BpeSegment_8002.rand;
 import static legend.game.Scus94491BpeSegment_8002.renderDobj2;
-import static legend.game.Scus94491BpeSegment_8003.ApplyMatrix;
-import static legend.game.Scus94491BpeSegment_8003.ApplyMatrixLV;
 import static legend.game.Scus94491BpeSegment_8003.GetClut;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
 import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Yxz;
-import static legend.game.Scus94491BpeSegment_8003.RotTrans;
 import static legend.game.Scus94491BpeSegment_8003.RotTransPers4;
 import static legend.game.Scus94491BpeSegment_8003.ScaleMatrix;
 import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
@@ -605,7 +599,7 @@ public final class SEffe {
    *   <li>{@link SEffe#renderScreenCapture}</li>
    * </ol>
    */
-  private static final BiConsumer<EffectManagerData6c, ScreenCaptureEffect1c>[] screenCaptureRenderers_80119fec = new BiConsumer[2];
+  private static final TriConsumer<EffectManagerData6c, ScreenCaptureEffect1c, MATRIX>[] screenCaptureRenderers_80119fec = new TriConsumer[2];
   static {
     screenCaptureRenderers_80119fec[0] = SEffe::FUN_8010b594;
     screenCaptureRenderers_80119fec[1] = SEffe::renderScreenCapture;
@@ -3453,7 +3447,6 @@ public final class SEffe {
   @Method(0x80105f98L)
   public static void getBobjTranslation(final int scriptIndex, final VECTOR out, final long coordType) {
     final MATRIX transformationMatrix = new MATRIX();
-    final VECTOR zeroVec = new VECTOR();
 
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
 
@@ -3467,7 +3460,8 @@ public final class SEffe {
 
     //LAB_80105fec
     GsGetLw(coord2, transformationMatrix);
-    ApplyMatrixLV(transformationMatrix, zeroVec, out).add(transformationMatrix.transfer);
+    // Does nothing? Changed line below to set //ApplyMatrixLV(transformationMatrix, zeroVec, out);
+    out.set(transformationMatrix.transfer);
   }
 
   /** Runs callbacks to render correct button icon effects during addition */
@@ -5178,7 +5172,7 @@ public final class SEffe {
    * TODO This is the second screen capture function, usage currently unknown
    */
   @Method(0x8010b594L)
-  public static void FUN_8010b594(final EffectManagerData6c manager, final ScreenCaptureEffect1c effect) {
+  public static void FUN_8010b594(final EffectManagerData6c manager, final ScreenCaptureEffect1c effect, final MATRIX transforms) {
     int v0;
     int v1;
     int a0;
@@ -5188,7 +5182,8 @@ public final class SEffe {
 
     if((manager._10.flags_00 & 0x40) != 0) {
       final VECTOR sp0x70 = new VECTOR();
-      RotTrans(_800fb8d0, sp0x70);
+      _800fb8d0.mul(transforms, sp0x70);
+      sp0x70.add(transforms.transfer);
       FUN_80040df0(sp0x70, _800fb8cc, sp0x48);
     } else {
       //LAB_8010b6c8
@@ -5345,12 +5340,13 @@ public final class SEffe {
   }
 
   @Method(0x8010bc60L)
-  public static void renderScreenCapture(final EffectManagerData6c manager, final ScreenCaptureEffect1c effect) {
+  public static void renderScreenCapture(final EffectManagerData6c manager, final ScreenCaptureEffect1c effect, final MATRIX transforms) {
     final COLOUR rgb = new COLOUR();
 
     if((manager._10.flags_00 & 0x40) != 0) {
       final VECTOR sp0x70 = new VECTOR();
-      RotTrans(_800fb8d0, sp0x70);
+      _800fb8d0.mul(transforms, sp0x70);
+      sp0x70.add(transforms.transfer);
       FUN_80040df0(sp0x70, _800fb8cc, rgb);
     } else {
       //LAB_8010bd6c
@@ -5434,15 +5430,13 @@ public final class SEffe {
   @Method(0x8010c114L)
   public static void renderScreenCaptureEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
     final MATRIX sp0x10 = new MATRIX().set(identityMatrix_800c3568);
-    final MATRIX sp0x30 = new MATRIX().set(identityMatrix_800c3568);
+    final MATRIX transforms = new MATRIX().set(identityMatrix_800c3568);
 
     if(manager._10.flags_00 >= 0) {
       final ScreenCaptureEffect1c effect = (ScreenCaptureEffect1c)manager.effect_44;
       FUN_800e8594(sp0x10, manager);
-      sp0x10.compose(worldToScreenMatrix_800c3548, sp0x30);
-      GTE.setRotationMatrix(sp0x30);
-      GTE.setTranslationVector(sp0x30.transfer);
-      screenCaptureRenderers_80119fec[effect.rendererIndex_0c].accept(manager, effect);
+      sp0x10.compose(worldToScreenMatrix_800c3548, transforms);
+      screenCaptureRenderers_80119fec[effect.rendererIndex_0c].accept(manager, effect, transforms);
     }
 
     //LAB_8010c278
@@ -6659,7 +6653,8 @@ public final class SEffe {
     final MATRIX rotMatrix = new MATRIX();
     RotMatrix_Xyz(rotation.get(), rotMatrix);
 
-    ApplyMatrixLV(rotMatrix, in, out).add(translation.get());
+    in.mul(rotMatrix, out);
+    out.add(translation.get());
   }
 
   /** Sets translation on script, from second script if one specified */
@@ -6705,7 +6700,8 @@ public final class SEffe {
       RotMatrix_Xyz(scriptRot.get(), rotMatrix);
 
       final VECTOR transScalerValue = new VECTOR().set(scaler.value_0c).shra(8);
-      ApplyMatrixLV(rotMatrix, transScalerValue, manager._10.trans_04).add(scriptTrans.get());
+      transScalerValue.mul(rotMatrix, manager._10.trans_04);
+      manager._10.trans_04.add(scriptTrans.get());
     }
 
     //LAB_801108bc
@@ -6746,12 +6742,12 @@ public final class SEffe {
       RotMatrix_Xyz(getScriptedObjectRotation(scriptIndex), rotation);
       final VECTOR sp0x38 = new VECTOR().set(x1, y1, z1);
       final VECTOR sp0x48 = new VECTOR();
-      sp0x48.set(ApplyMatrixLV(rotation, sp0x38));
+      sp0x38.mul(rotation, sp0x48);
       transformedX1 = sp0x48.getX();
       transformedY1 = sp0x48.getY();
       transformedZ1 = sp0x48.getZ();
       sp0x38.set(x2, y2, z2);
-      sp0x48.set(ApplyMatrixLV(rotation, sp0x38));
+      sp0x38.mul(rotation, sp0x48);
       transformedX2 = sp0x48.getX();
       transformedY2 = sp0x48.getY();
       transformedZ2 = sp0x48.getZ();
@@ -6900,143 +6896,9 @@ public final class SEffe {
     return effect;
   }
 
-  @Method(0x80111154L)
-  public static int FUN_80111154(final EffectManagerData6c manager, final UnusedBuggedEffect24 effect) {
-    final long a2 = 0;
-    final int t0 = 0;
-
-    if(true) throw new RuntimeException("ASM is bugged");
-
-    final SVECTOR sp0x10 = new SVECTOR();
-    int a1 = effect._10 / 2;
-    a1 = a1 % (int)MEMORY.ref(2, a2).offset(0xaL).getSigned();
-    int t1 = a1 + 1;
-    t1 = t1 % (int)MEMORY.ref(2, a2).offset(0xaL).getSigned();
-
-    if(t1 == 0) {
-      t1 = a1;
-      a1 = 0;
-    }
-
-    //LAB_801111b4
-    final DeffPart.LmbType lmbType = effect.lmb_14;
-    final LmbType1 lmb = (LmbType1)lmbType.lmb_08;
-    final LmbType1.Sub04[] a3 = lmb._0c;
-    if(a1 == 0) {
-      throw new RuntimeException("Bugged");
-//      v0 = t2 + t0 * 0x14L;
-//      sp10 = MEMORY.ref(2, v0).offset(0x6L).get();
-//      sp10 = MEMORY.ref(2, v0).offset(0x8L).get();
-//      sp10 = MEMORY.ref(2, v0).offset(0xaL).get();
-    } else {
-      //LAB_80111208
-      int a0 = a1 * lmb._08 / 2;
-
-      if((a3[t0]._00 & 0x8000) == 0) {
-        a0++;
-      }
-
-      //LAB_80111244
-      if((a3[t0]._00 & 0x4000) == 0) {
-        a0++;
-      }
-
-      //LAB_80111264
-      if((a3[t0]._00 & 0x2000) == 0) {
-        a0++;
-      }
-
-      //LAB_80111280
-      if((a3[t0]._00 & 0x200) == 0) {
-        sp0x10.setX(lmb._14[a0]);
-        a0++;
-      }
-
-      //LAB_801112ac
-      if((a3[t0]._00 & 0x100) == 0) {
-        sp0x10.setY(lmb._14[a0]);
-        a0++;
-      }
-
-      //LAB_801112d8
-      if((a3[t0]._00 & 0x80) == 0) {
-        sp0x10.setZ(lmb._14[a0]);
-      }
-    }
-
-    //LAB_801112fc
-    int a0 = t1 * lmb._08 / 2;
-
-    if((a3[t0]._00 & 0x8000) == 0) {
-      a0++;
-    }
-
-    //LAB_80111338
-    if((a3[t0]._00 & 0x4000) == 0) {
-      a0++;
-    }
-
-    //LAB_80111358
-    if((a3[t0]._00 & 0x2000) == 0) {
-      a0++;
-    }
-
-    //LAB_80111374
-    if((a3[t0]._00 & 0x200) == 0) {
-      a0++;
-    }
-
-    //LAB_801113b4
-    if((a3[t0]._00 & 0x100) == 0) {
-      sp0x10.setY((short)((lmb._14[a0] - sp0x10.getY()) / 2));
-      a0++;
-    }
-
-    //LAB_801113f4
-    if((a3[t0]._00 & 0x80) == 0) {
-      sp0x10.setZ((short)((lmb._14[a0] - sp0x10.getZ()) / 2));
-    }
-
-    //LAB_8011142c
-    final MATRIX sp0x28 = new MATRIX();
-    RotMatrix_Xyz(effect.rot_1c, sp0x28);
-    SetRotMatrix(sp0x28);
-
-    final VECTOR sp0x18 = new VECTOR();
-    ApplyMatrix(sp0x28, sp0x10, sp0x18);
-    manager._10.trans_04.add(sp0x18);
-    effect._10++;
-    return 1;
-  }
-
   @Method(0x801114b8L)
   public static FlowControl FUN_801114b8(final RunningScript<?> script) {
-    final int s2 = script.params_20[1].get();
-    final int s4 = script.params_20[2].get();
-    final int s3 = script.params_20[3].get();
-    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    if((manager.flags_04 & 0x2) != 0) {
-      FUN_800e8d04(manager, 1);
-    }
-
-    //LAB_80111540
-    final UnusedBuggedEffect24 s1 = FUN_800e8dd4(manager, 1, 1, SEffe::FUN_80111154, 0x24, new UnusedBuggedEffect24());
-
-    final MATRIX sp0x18 = new MATRIX();
-    FUN_800e8594(sp0x18, manager);
-    getRotationFromTransforms(s1.rot_1c, sp0x18);
-    s1._0c = s3;
-    s1._18 = s4;
-    if((s2 & 0xf_ff00) == 0xf_ff00) {
-      s1.lmb_14 = deffManager_800c693c.lmbs_390[s2 & 0xff];
-    } else {
-      //LAB_801115b4
-      s1.lmb_14 = (DeffPart.LmbType)getDeffPart(s2);
-    }
-
-    //LAB_801115c0
-    s1._10 = 1;
-    return FlowControl.CONTINUE;
+    throw new RuntimeException("Bugged effect allocator");
   }
 
   @Method(0x801115ecL)
@@ -7203,12 +7065,12 @@ public final class SEffe {
           final MATRIX sp0x20 = new MATRIX();
           RotMatrix_Xyz(getScriptedObjectRotation(s0), sp0x20);
 
-          VECTOR sp0x50 = ApplyMatrixLV(sp0x20, new VECTOR().set(s4, s6, s3));
+          VECTOR sp0x50 = new VECTOR().set(s4, s6, s3).mul(sp0x20);
           s4 = sp0x50.getX();
           s6 = sp0x50.getY();
           s3 = sp0x50.getZ();
 
-          sp0x50 = ApplyMatrixLV(sp0x20, new VECTOR().set(s5, s7, fp));
+          sp0x50 = new VECTOR().set(s5, s7, fp).mul(sp0x20);
           s5 = sp0x50.getX();
           s7 = sp0x50.getY();
           fp = sp0x50.getZ();
@@ -7262,7 +7124,8 @@ public final class SEffe {
           script.params_20[4].get()
         );
 
-        final VECTOR sp0x58 = ApplyMatrixLV(rotMatrix, inVec);
+        final VECTOR sp0x58 = new VECTOR();
+        inVec.mul(rotMatrix, sp0x58);
         s0++;
         s3.velocity_18.x.sub(sp0x58.getX() * s0 / 2);
         s3.velocity_18.y.sub(sp0x58.getY() * s0 / 2);
@@ -7464,7 +7327,7 @@ public final class SEffe {
 
       final MATRIX rotMatrix = new MATRIX();
       RotMatrix_Xyz(targetRotation.get(), rotMatrix);
-      ApplyMatrixLV(rotMatrix, translationFinal, translationFinal).add(targetTranslation.get());
+      translationFinal.mul(rotMatrix).add(targetTranslation.get());
     }
 
     //LAB_80112a80
@@ -8300,7 +8163,7 @@ public final class SEffe {
       sp0x10.mul(transforms, sp0x30);
 
       final VECTOR sp0x100 = new VECTOR().set(sp0x10.transfer).sub(transforms.transfer);
-      ApplyMatrixLV(transforms, sp0x100, sp0x30.transfer);
+      sp0x100.mul(transforms, sp0x30.transfer);
     }
 
     //LAB_801159cc

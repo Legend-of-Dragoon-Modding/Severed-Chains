@@ -459,7 +459,6 @@ public final class Scus94491BpeSegment_8003 {
   @Method(0x8003cda0L)
   public static void GsInit3D() {
     InitGeom();
-    SetFarColour(0, 0, 0);
     SetGeomOffset(0, 0);
   }
 
@@ -534,7 +533,7 @@ public final class Scus94491BpeSegment_8003 {
    */
   @Method(0x8003d550L)
   public static void GsMulCoord2(final MATRIX matrix1, final MATRIX matrix2) {
-    ApplyMatrixLV(matrix1, matrix2.transfer, matrix2.transfer);
+    matrix2.transfer.mul(matrix1);
     matrix2.mul(matrix1);
     matrix2.transfer.add(matrix1.transfer);
   }
@@ -643,7 +642,8 @@ public final class Scus94491BpeSegment_8003 {
    */
   @Method(0x8003d950L)
   public static void GsMulCoord3(final MATRIX m1, final MATRIX m2) {
-    final VECTOR out = ApplyMatrixLV(m1, m2.transfer);
+    final VECTOR out = new VECTOR();
+    m2.transfer.mul(m1, out);
     m2.mul(m1, m1);
     m1.transfer.add(out);
   }
@@ -847,15 +847,16 @@ public final class Scus94491BpeSegment_8003 {
     }
 
     //LAB_8003e474
-    ApplyMatrixLV(worldToScreenMatrix_800c3548, new VECTOR().set(s2.viewpoint_00).negate(), worldToScreenMatrix_800c3548.transfer);
+    new VECTOR().set(s2.viewpoint_00).negate().mul(worldToScreenMatrix_800c3548, worldToScreenMatrix_800c3548.transfer);
 
     if(s2.super_1c != null) {
       final MATRIX lw = new MATRIX();
       GsGetLw(s2.super_1c, lw);
 
       final MATRIX transposedLw = new MATRIX();
-      TransposeMatrix(lw, transposedLw);
-      ApplyMatrixLV(transposedLw, lw.transfer, transposedLw.transfer).negate();
+      lw.transpose(transposedLw);
+      lw.transfer.mul(transposedLw, transposedLw.transfer);
+      transposedLw.transfer.negate();
       GsMulCoord2(worldToScreenMatrix_800c3548, transposedLw);
       worldToScreenMatrix_800c3548.set(transposedLw);
     }
@@ -987,81 +988,6 @@ public final class Scus94491BpeSegment_8003 {
     GTE.setScreenOffset(0, 0);
   }
 
-  public static VECTOR ApplyMatrixLV(final MATRIX matrix, final VECTOR vector) {
-    return ApplyMatrixLV(matrix, vector, null);
-  }
-
-  /**
-   * Multiplies matrix by vector beginning from the rightmost end. The result is saved in vector v1. It is a 16
-   * x 32 bit multiplier which uses the GTE. It destroys the constant rotation matrix
-   */
-  @Method(0x8003edf0L)
-  public static VECTOR ApplyMatrixLV(final MATRIX matrix, final VECTOR vector, @Nullable VECTOR out) {
-    GTE.setRotationMatrix(matrix);
-
-    final int wholeX;
-    final int fractX;
-    if(vector.getX() < 0) {
-      wholeX = -(-vector.getX() / 8 >> 12);
-      fractX = -(-vector.getX() & 0x7fff);
-    } else {
-      //LAB_8003ee44
-      wholeX = vector.getX() / 8 >> 12;
-      fractX = vector.getX() & 0x7fff;
-    }
-
-    //LAB_8003ee4c
-    final int wholeY;
-    final int fractY;
-    if(vector.getY() < 0) {
-      wholeY = -(-vector.getY() / 8 >> 12);
-      fractY = -(-vector.getY() & 0x7fff);
-    } else {
-      //LAB_8003ee6c
-      wholeY = vector.getY() / 8 >> 12;
-      fractY = vector.getY() & 0x7fff;
-    }
-
-    //LAB_8003ee74
-    final int wholeZ;
-    final int fractZ;
-    if(vector.getZ() < 0) {
-      wholeZ = -(-vector.getZ() / 8 >> 12);
-      fractZ = -(-vector.getZ() & 0x7fff);
-    } else {
-      //LAB_8003ee94
-      wholeZ = vector.getZ() / 8 >> 12;
-      fractZ = vector.getZ() & 0x7fff;
-    }
-
-    //LAB_8003ee9c
-    GTE.rotateVector0(wholeX, wholeY, wholeZ);
-    final int x1 = GTE.getMac1();
-    final int y1 = GTE.getMac2();
-    final int z1 = GTE.getMac3();
-
-    GTE.rotateVector(fractX, fractY, fractZ);
-    final int x2 = GTE.getMac1();
-    final int y2 = GTE.getMac2();
-    final int z2 = GTE.getMac3();
-
-    if(out == null) {
-      out = new VECTOR();
-    }
-
-    return out.set(x2 + x1 * 8, y2 + y1 * 8, z2 + z1 * 8);
-  }
-
-  /** Transforms vec using the matrix already loaded into the GTE */
-  @Method(0x8003ef50L)
-  public static VECTOR ApplyRotMatrix(final SVECTOR vec, final VECTOR out) {
-    GTE.rotateVector(vec);
-    out.setX(GTE.getIr1());
-    out.setY(GTE.getIr2());
-    out.setZ(GTE.getIr3());
-    return out;
-  }
-
   @Method(0x8003ef80L)
   public static void PushMatrix() {
     final int i = (int)matrixStackIndex_80054a08.get();
@@ -1109,22 +1035,6 @@ public final class Scus94491BpeSegment_8003 {
     return mat;
   }
 
-  @Method(0x8003f680L)
-  public static VECTOR ApplyMatrix(final MATRIX a0, final SVECTOR a1, final VECTOR out) {
-    GTE.setRotationMatrix(a0);
-    GTE.rotateVector(a1);
-    out.set(GTE.getMac1(), GTE.getMac2(), GTE.getMac3());
-    return out;
-  }
-
-  @Method(0x8003f6d0L)
-  public static SVECTOR ApplyMatrixSV(final MATRIX mat, final SVECTOR in, final SVECTOR out) {
-    GTE.setRotationMatrix(mat);
-    GTE.rotateVector(in);
-    out.set(GTE.getIr1(), GTE.getIr2(), GTE.getIr3());
-    return out;
-  }
-
   /**
    * Gives an amount of parallel transfer expressed by v to the matrix m.
    *
@@ -1169,11 +1079,6 @@ public final class Scus94491BpeSegment_8003 {
     return GTE.getProjectionPlaneDistance();
   }
 
-  @Method(0x8003f8d0L)
-  public static void SetFarColour(final int r, final int g, final int b) {
-    GTE.setFarColour(r << 4, g << 4, b << 4);
-  }
-
   @Method(0x8003f8f0L) //Also 0x8003c6d0
   public static void setProjectionPlaneDistance(final int distance) {
     GTE.setProjectionPlaneDistance(distance);
@@ -1196,12 +1101,6 @@ public final class Scus94491BpeSegment_8003 {
     screen2.set(GTE.getScreenX(2), GTE.getScreenY(2));
 
     return GTE.getScreenZ(3) >> 2;
-  }
-
-  @Method(0x8003f990L)
-  public static void RotTrans(final SVECTOR v0, final VECTOR out) {
-    GTE.rotateTranslateVector(v0);
-    out.set(GTE.getMac1(), GTE.getMac2(), GTE.getMac3());
   }
 
   /**
@@ -1233,27 +1132,6 @@ public final class Scus94491BpeSegment_8003 {
     sxy3.set(GTE.getScreenX(2), GTE.getScreenY(2), (short)0);
 
     return GTE.getScreenZ(3) >> 2;
-  }
-
-  /**
-   * Transposes matrix m0 into m1.
-   *
-   * @param m0 Input
-   * @param m1 Output
-   * @return m1
-   */
-  @Method(0x8003fab0L)
-  public static MATRIX TransposeMatrix(final MATRIX m0, final MATRIX m1) {
-    m1.set(0, m0.get(0));
-    m1.set(1, m0.get(3));
-    m1.set(2, m0.get(6));
-    m1.set(3, m0.get(1));
-    m1.set(4, m0.get(4));
-    m1.set(5, m0.get(7));
-    m1.set(6, m0.get(2));
-    m1.set(7, m0.get(5));
-    m1.set(8, m0.get(8));
-    return m1;
   }
 
   @Method(0x8003faf0L)

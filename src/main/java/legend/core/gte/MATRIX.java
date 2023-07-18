@@ -111,6 +111,19 @@ public class MATRIX {
     return this;
   }
 
+  public MATRIX transpose(final MATRIX out) {
+    out.data2[0] = this.data2[0];
+    out.data2[1] = this.data2[3];
+    out.data2[2] = this.data2[6];
+    out.data2[3] = this.data2[1];
+    out.data2[4] = this.data2[4];
+    out.data2[5] = this.data2[7];
+    out.data2[6] = this.data2[2];
+    out.data2[7] = this.data2[5];
+    out.data2[8] = this.data2[8];
+    return this;
+  }
+
   /** Rotate with parallel translation */
   public MATRIX compose(final MATRIX other, final MATRIX out) {
     final int vx = other.transfer.getX();
