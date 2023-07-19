@@ -144,7 +144,7 @@ task copySupportFiles(type: Copy) {
           rename("-macos", "")
         }
         from('download-java') {
-          filter(ReplaceTokens, tokens: [os: 'macos', arch: isArm ? "aarch64" : "x64"])
+          filter(ReplaceTokens, tokens: [os: 'macosx', arch: isArm ? "aarch64" : "x64"])
         }
         break
 
