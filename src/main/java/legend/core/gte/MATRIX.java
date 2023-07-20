@@ -5,6 +5,9 @@ import org.joml.Matrix4fc;
 
 import java.util.Arrays;
 
+import static legend.game.Scus94491BpeSegment.rcos;
+import static legend.game.Scus94491BpeSegment.sin;
+
 public class MATRIX {
   // 0h-11h
   private final short[] data2 = new short[9];
@@ -62,6 +65,19 @@ public class MATRIX {
   public MATRIX clear() {
     Arrays.fill(this.data2, (short)0);
     this.transfer.set(0, 0, 0);
+    return this;
+  }
+
+  public MATRIX identity() {
+    this.set(0, (short)0x1000);
+    this.set(1, (short)0);
+    this.set(2, (short)0);
+    this.set(3, (short)0);
+    this.set(4, (short)0x1000);
+    this.set(5, (short)0);
+    this.set(6, (short)0);
+    this.set(7, (short)0);
+    this.set(8, (short)0x1000);
     return this;
   }
 
@@ -175,5 +191,122 @@ public class MATRIX {
 
   public MATRIX mul(final MATRIX rotation) {
     return this.mul(rotation, this);
+  }
+
+  public MATRIX rotateX(final int amount) {
+    final short sin = sin(amount);
+    final short cos = rcos(Math.abs(amount));
+
+    final short m10 = this.get(1, 0);
+    final short m11 = this.get(1, 1);
+    final short m12 = this.get(1, 2);
+    final short m20 = this.get(2, 0);
+    final short m21 = this.get(2, 1);
+    final short m22 = this.get(2, 2);
+
+    this.set(1, 0, (short)(cos * m10 - sin * m20 >> 12));
+    this.set(1, 1, (short)(cos * m11 - sin * m21 >> 12));
+    this.set(1, 2, (short)(cos * m12 - sin * m22 >> 12));
+    this.set(2, 0, (short)(sin * m10 + cos * m20 >> 12));
+    this.set(2, 1, (short)(sin * m11 + cos * m21 >> 12));
+    this.set(2, 2, (short)(sin * m12 + cos * m22 >> 12));
+
+    return this;
+  }
+
+  public MATRIX rotateY(final int amount) {
+    final short sin = (short)-sin(amount);
+    final short cos = rcos(Math.abs(amount));
+
+    final short m0 = this.get(0);
+    final short m1 = this.get(1);
+    final short m2 = this.get(2);
+    final short m6 = this.get(6);
+    final short m7 = this.get(7);
+    final short m8 = this.get(8);
+    this.set(0, (short)(cos * m0 - sin * m6 >> 12));
+    this.set(1, (short)(cos * m1 - sin * m7 >> 12));
+    this.set(2, (short)(cos * m2 - sin * m8 >> 12));
+    this.set(6, (short)(sin * m0 + cos * m6 >> 12));
+    this.set(7, (short)(sin * m1 + cos * m7 >> 12));
+    this.set(8, (short)(sin * m2 + cos * m8 >> 12));
+
+    return this;
+  }
+
+  public MATRIX rotateZ(final int amount) {
+    final short sin = sin(amount);
+    final short cos = rcos(Math.abs(amount));
+
+    final long m00 = this.get(0, 0);
+    final long m01 = this.get(0, 1);
+    final long m02 = this.get(0, 2);
+    final long m10 = this.get(1, 0);
+    final long m11 = this.get(1, 1);
+    final long m12 = this.get(1, 2);
+
+    this.set(0, 0, (short)(cos * m00 - sin * m10 >> 12));
+    this.set(0, 1, (short)(cos * m01 - sin * m11 >> 12));
+    this.set(0, 2, (short)(cos * m02 - sin * m12 >> 12));
+    this.set(1, 0, (short)(sin * m00 + cos * m10 >> 12));
+    this.set(1, 1, (short)(sin * m01 + cos * m11 >> 12));
+    this.set(1, 2, (short)(sin * m02 + cos * m12 >> 12));
+
+    return this;
+  }
+
+  public MATRIX scale(final VECTOR scale, final MATRIX out) {
+    out.set(0, (short)(this.get(0) * scale.getX() >> 12));
+    out.set(1, (short)(this.get(1) * scale.getX() >> 12));
+    out.set(2, (short)(this.get(2) * scale.getX() >> 12));
+    out.set(3, (short)(this.get(3) * scale.getY() >> 12));
+    out.set(4, (short)(this.get(4) * scale.getY() >> 12));
+    out.set(5, (short)(this.get(5) * scale.getY() >> 12));
+    out.set(6, (short)(this.get(6) * scale.getZ() >> 12));
+    out.set(7, (short)(this.get(7) * scale.getZ() >> 12));
+    out.set(8, (short)(this.get(8) * scale.getZ() >> 12));
+    return this;
+  }
+
+  public MATRIX scale(final VECTOR scale) {
+    return this.scale(scale, this);
+  }
+
+  /** Dunno what the L means, but it's scaled by XYZXYZXYZ instead of XXXYYYZZZ */
+  public MATRIX scaleL(final VECTOR scale, final MATRIX out) {
+    out.set(0, (short)(this.get(0) * scale.getX() >> 12));
+    out.set(1, (short)(this.get(1) * scale.getY() >> 12));
+    out.set(2, (short)(this.get(2) * scale.getZ() >> 12));
+    out.set(3, (short)(this.get(3) * scale.getX() >> 12));
+    out.set(4, (short)(this.get(4) * scale.getY() >> 12));
+    out.set(5, (short)(this.get(5) * scale.getZ() >> 12));
+    out.set(6, (short)(this.get(6) * scale.getX() >> 12));
+    out.set(7, (short)(this.get(7) * scale.getY() >> 12));
+    out.set(8, (short)(this.get(8) * scale.getZ() >> 12));
+    return this;
+  }
+
+  /** Dunno what the L means, but it's scaled by XYZXYZXYZ instead of XXXYYYZZZ */
+  public MATRIX scaleL(final VECTOR scale) {
+    return this.scaleL(scale, this);
+  }
+
+  /** Dunno what the L means, but it's scaled by XYZXYZXYZ instead of XXXYYYZZZ */
+  public MATRIX scaleL(final SVECTOR scale, final MATRIX out) {
+    out.set(0, (short)(this.get(0) * scale.getX() >> 12));
+    out.set(1, (short)(this.get(1) * scale.getY() >> 12));
+    out.set(2, (short)(this.get(2) * scale.getZ() >> 12));
+    out.set(3, (short)(this.get(3) * scale.getX() >> 12));
+    out.set(4, (short)(this.get(4) * scale.getY() >> 12));
+    out.set(5, (short)(this.get(5) * scale.getZ() >> 12));
+    out.set(6, (short)(this.get(6) * scale.getX() >> 12));
+    out.set(7, (short)(this.get(7) * scale.getY() >> 12));
+    out.set(8, (short)(this.get(8) * scale.getZ() >> 12));
+    return this;
+  }
+
+  /** Dunno what the L means, but it's scaled by XYZXYZXYZ instead of XXXYYYZZZ */
+  public MATRIX scaleL(final SVECTOR scale) {
+    return this.scaleL(scale, this);
   }
 }

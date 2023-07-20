@@ -130,8 +130,6 @@ import static legend.game.Scus94491BpeSegment_8003.GsSetAmbient;
 import static legend.game.Scus94491BpeSegment_8003.GsSetFlatLight;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
-import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
-import static legend.game.Scus94491BpeSegment_8003.TransMatrix;
 import static legend.game.Scus94491BpeSegment_8003.getProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
 import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
@@ -210,7 +208,6 @@ import static legend.game.combat.Bttl_800c.targeting_800fb36c;
 import static legend.game.combat.Bttl_800c.tmds_800c6944;
 import static legend.game.combat.Bttl_800c.usedRepeatItems_800c6c3c;
 import static legend.game.combat.Bttl_800d.FUN_800dd89c;
-import static legend.game.combat.Bttl_800d.ScaleMatrixL_SVEC;
 import static legend.game.combat.Bttl_800d.applyAnimation;
 import static legend.game.combat.Bttl_800d.loadModelAnim;
 import static legend.game.combat.Bttl_800d.loadModelTmd;
@@ -1726,8 +1723,8 @@ public final class Bttl_800e {
   @Method(0x800e8594L)
   public static void FUN_800e8594(final MATRIX transformMatrix, final EffectManagerData6c manager) {
     RotMatrix_Xyz(manager._10.rot_10, transformMatrix);
-    TransMatrix(transformMatrix, manager._10.trans_04);
-    ScaleMatrixL_SVEC(transformMatrix, manager._10.scale_16);
+    transformMatrix.transfer.set(manager._10.trans_04);
+    transformMatrix.scaleL(manager._10.scale_16);
 
     EffectManagerData6c currentManager = manager;
     int scriptIndex = manager.scriptIndex_0c;
@@ -1747,8 +1744,9 @@ public final class Bttl_800e {
         final EffectManagerData6c baseManager = (EffectManagerData6c)base;
         final MATRIX baseTransformMatrix = new MATRIX();
         RotMatrix_Xyz(baseManager._10.rot_10, baseTransformMatrix);
-        TransMatrix(baseTransformMatrix, baseManager._10.trans_04);
-        ScaleMatrixL_SVEC(baseTransformMatrix, baseManager._10.scale_16);
+        baseTransformMatrix.transfer.set(baseManager._10.trans_04);
+        baseTransformMatrix.scaleL(baseManager._10.scale_16);
+
         if(currentManager.coord2Index_0d != -1) {
           //LAB_800e866c
           FUN_800ea0f4(baseManager, currentManager.coord2Index_0d).coord.compose(baseTransformMatrix, baseTransformMatrix);
@@ -3073,15 +3071,14 @@ public final class Bttl_800e {
     s2.scaleVector_fc.setY(model.vector_10c.getY() / 4);
     s2.scaleVector_fc.setZ(model.vector_10c.getZ() / 4);
     RotMatrix_Xyz(s2.coord2Param_64.rotate, s2.coord2_14.coord);
-    final VECTOR scale = new VECTOR().set(s2.scaleVector_fc);
-    ScaleMatrixL(s2.coord2_14.coord, scale);
+    s2.coord2_14.coord.scaleL(s2.scaleVector_fc);
     s2.coord2_14.flg = 0;
     final GsCOORDINATE2 v0 = s2.dobj2ArrPtr_00[0].coord2_04;
     final GsCOORD2PARAM s0 = v0.param;
     s0.rotate.set((short)0, (short)0, (short)0);
     RotMatrix_Zyx(s0.rotate, v0.coord);
     s0.trans.set(0, 0, 0);
-    TransMatrix(v0.coord, s0.trans);
+    v0.coord.transfer.set(s0.trans);
 
     final MATRIX sp0x30 = new MATRIX();
     final MATRIX sp0x10 = new MATRIX();
@@ -3150,7 +3147,7 @@ public final class Bttl_800e {
       RotMatrix_Zyx(param.rotate, coord2.coord);
 
       param.trans.set(rotTrans.translate_06);
-      TransMatrix(coord2.coord, param.trans);
+      coord2.coord.transfer.set(param.trans);
     }
 
     //LAB_800ec710

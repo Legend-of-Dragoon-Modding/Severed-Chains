@@ -178,15 +178,11 @@ public final class Renderer {
         }
       } else if(!textured || lit) {
         for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
-          GTE.setRgbc(poly.vertices[vertexIndex].colour);
-
           if(poly.vertices[vertexIndex].normalIndex < normals.length) {
-            GTE.setVertex(0, normals[poly.vertices[vertexIndex].normalIndex]);
+            cmd.rgb(vertexIndex, GTE.normalColour(normals[poly.vertices[vertexIndex].normalIndex], poly.vertices[vertexIndex].colour));
           } else {
-            GTE.setVertex(0, 0, 0, 0);
+            cmd.rgb(vertexIndex, GTE.normalColour(0, 0, 0, poly.vertices[vertexIndex].colour));
           }
-
-          cmd.rgb(vertexIndex, GTE.normalColour());
         }
       } else {
         for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {

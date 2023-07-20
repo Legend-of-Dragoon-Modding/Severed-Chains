@@ -171,10 +171,8 @@ import static legend.game.Scus94491BpeSegment_8003.PopMatrix;
 import static legend.game.Scus94491BpeSegment_8003.PushMatrix;
 import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
 import static legend.game.Scus94491BpeSegment_8003.RotTransPers4;
-import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
 import static legend.game.Scus94491BpeSegment_8003.SetDrawTPage;
 import static legend.game.Scus94491BpeSegment_8003.StoreImage;
-import static legend.game.Scus94491BpeSegment_8003.TransMatrix;
 import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTransparency;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
@@ -794,10 +792,7 @@ public final class SMap {
 
     RotMatrix_Xyz(model_800bda10.coord2Param_64.rotate, model_800bda10.coord2_14.coord);
 
-    final VECTOR scale = new VECTOR();
-    scale.set(model_800bda10.scaleVector_fc);
-    ScaleMatrixL(model_800bda10.coord2_14.coord, scale);
-
+    model_800bda10.coord2_14.coord.scaleL(model_800bda10.scaleVector_fc);
     model_800bda10.coord2_14.flg = 0;
 
     final MATRIX matrix = model_800bda10.coord2ArrPtr_04[0].coord;
@@ -806,10 +801,8 @@ public final class SMap {
     params.rotate.set((short)0, (short)0, (short)0);
     RotMatrix_Zyx(params.rotate, matrix);
 
-    params.trans.setX(0);
-    params.trans.setY(0);
-    params.trans.setZ(0);
-    TransMatrix(matrix, params.trans);
+    params.trans.set(0, 0, 0);
+    matrix.transfer.set(params.trans);
 
     final MATRIX lw = new MATRIX();
     final MATRIX ls = new MATRIX();
@@ -893,7 +886,7 @@ public final class SMap {
         (params.trans.getZ() + transforms[0][i].translate_06.getZ()) / 2
       );
 
-      TransMatrix(matrix, params.trans);
+      matrix.transfer.set(params.trans);
     }
 
     //LAB_800daa0c

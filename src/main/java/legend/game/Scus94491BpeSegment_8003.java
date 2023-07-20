@@ -245,33 +245,14 @@ public final class Scus94491BpeSegment_8003 {
     displayWidth_1f8003e0.set(displayWidth);
     displayHeight_1f8003e4.set(displayHeight);
 
-    final int a0 = (displayHeight << 14) / displayWidth / 3;
+    final int aspect = (displayHeight << 14) / displayWidth / 3;
 
-    identityMatrix_800c3568.set(0, 0, (short)0x1000);
-    identityMatrix_800c3568.set(0, 1, (short)0);
-    identityMatrix_800c3568.set(0, 2, (short)0);
-    identityMatrix_800c3568.set(1, 0, (short)0);
-    identityMatrix_800c3568.set(1, 1, (short)0x1000);
-    identityMatrix_800c3568.set(1, 2, (short)0);
-    identityMatrix_800c3568.set(2, 0, (short)0);
-    identityMatrix_800c3568.set(2, 1, (short)0);
-    identityMatrix_800c3568.set(2, 2, (short)0x1000);
-    identityMatrix_800c3568.transfer.setX(0);
-    identityMatrix_800c3568.transfer.setY(0);
-    identityMatrix_800c3568.transfer.setZ(0);
+    identityMatrix_800c3568.identity();
+    identityMatrix_800c3568.transfer.set(0, 0, 0);
 
-    identityAspectMatrix_800c3588.set(0, 0, (short)0x1000);
-    identityAspectMatrix_800c3588.set(0, 1, (short)0);
-    identityAspectMatrix_800c3588.set(0, 2, (short)0);
-    identityAspectMatrix_800c3588.set(1, 0, (short)0);
-    identityAspectMatrix_800c3588.set(1, 1, (short)a0);
-    identityAspectMatrix_800c3588.set(1, 2, (short)0);
-    identityAspectMatrix_800c3588.set(2, 0, (short)0);
-    identityAspectMatrix_800c3588.set(2, 1, (short)0);
-    identityAspectMatrix_800c3588.set(2, 2, (short)0x1000);
-    identityAspectMatrix_800c3588.transfer.setX(0);
-    identityAspectMatrix_800c3588.transfer.setY(0);
-    identityAspectMatrix_800c3588.transfer.setZ(0);
+    identityAspectMatrix_800c3588.identity();
+    identityAspectMatrix_800c3588.set(1, 1, (short)aspect);
+    identityAspectMatrix_800c3588.transfer.set(0, 0, 0);
 
     lightDirectionMatrix_800c34e8.clear();
     lightColourMatrix_800c3508.clear();
@@ -636,7 +617,7 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   /**
-   * GsMulCoord3 multiplies the MATRIX m2 by the translation matrix m1 and stores the result in m2.
+   * GsMulCoord3 multiplies the MATRIX m2 by the translation matrix m1 and stores the result in m1.
    * <p>
    * m1 = m1 x m2
    */
@@ -1019,53 +1000,6 @@ public final class Scus94491BpeSegment_8003 {
     final MATRIX matrix = matrixStack_80054a0c[i / 32];
     GTE.setRotationMatrix(matrix);
     GTE.setTranslationVector(matrix.transfer);
-  }
-
-  @Method(0x8003f0d0L)
-  public static MATRIX ScaleMatrix(final MATRIX mat, final VECTOR vector) {
-    mat.set(0, (short)(mat.get(0) * vector.x.get() >> 12));
-    mat.set(1, (short)(mat.get(1) * vector.x.get() >> 12));
-    mat.set(2, (short)(mat.get(2) * vector.x.get() >> 12));
-    mat.set(3, (short)(mat.get(3) * vector.y.get() >> 12));
-    mat.set(4, (short)(mat.get(4) * vector.y.get() >> 12));
-    mat.set(5, (short)(mat.get(5) * vector.y.get() >> 12));
-    mat.set(6, (short)(mat.get(6) * vector.z.get() >> 12));
-    mat.set(7, (short)(mat.get(7) * vector.z.get() >> 12));
-    mat.set(8, (short)(mat.get(8) * vector.z.get() >> 12));
-    return mat;
-  }
-
-  /**
-   * Gives an amount of parallel transfer expressed by v to the matrix m.
-   *
-   * @param out Pointer to matrix (output)
-   * @param vector Pointer to transfer vector (input)
-   *
-   * @return matrix
-   */
-  @Method(0x8003f730L)
-  public static MATRIX TransMatrix(final MATRIX out, final VECTOR vector) {
-    out.transfer.set(vector);
-    return out;
-  }
-
-  @Method(0x8003f760L)
-  public static MATRIX ScaleMatrixL(final MATRIX out, final VECTOR vector) {
-    final int vx = vector.getX();
-    final int vy = vector.getY();
-    final int vz = vector.getZ();
-
-    out.set(0, (short)(out.get(0) * vx >> 12));
-    out.set(1, (short)(out.get(1) * vy >> 12));
-    out.set(2, (short)(out.get(2) * vz >> 12));
-    out.set(3, (short)(out.get(3) * vx >> 12));
-    out.set(4, (short)(out.get(4) * vy >> 12));
-    out.set(5, (short)(out.get(5) * vz >> 12));
-    out.set(6, (short)(out.get(6) * vx >> 12));
-    out.set(7, (short)(out.get(7) * vy >> 12));
-    out.set(8, (short)(out.get(8) * vz >> 12));
-
-    return out;
   }
 
   @Method(0x8003f8a0L)

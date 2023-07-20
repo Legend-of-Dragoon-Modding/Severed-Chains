@@ -126,11 +126,7 @@ public record Mesh(Segment[] segments) {
           }
         } else {
           for(int vertexIndex = 0; vertexIndex < this.vertexCount; vertexIndex++) {
-            GTE.setRgbc(poly.vertices()[vertexIndex].colour());
-
-            final SVECTOR norm = poly.vertices()[vertexIndex].normals();
-            GTE.setVertex(0, norm.getX(), norm.getY(), norm.getZ());
-            colours[vertexIndex] = GTE.normalColour();
+            colours[vertexIndex] = GTE.normalColour(poly.vertices()[vertexIndex].normals(), poly.vertices()[vertexIndex].colour());
           }
         }
 

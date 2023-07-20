@@ -61,13 +61,6 @@ public class Gte {
       this.b = (byte)(val >>> 16 & 0xff);
       this.c = (byte)(val >>> 24 & 0xff);
     }
-
-    public void set(final Color other) {
-      this.r = other.r;
-      this.g = other.g;
-      this.b = other.b;
-      this.c = other.c;
-    }
   }
 
   //Data Registers
@@ -77,9 +70,7 @@ public class Gte {
   private final short[] IR = new short[4];      //R8-11
   private final Vector2[] SXY = {new Vector2(), new Vector2(), new Vector2(), new Vector2()}; //R12-15 FIFO
   private final short[] SZ = new short[4];    //R16-19 FIFO
-  private final Color[] RGB = {new Color(), new Color(), new Color()};     //R20-22 FIFO
   private int MAC0;                       //R24
-  private int MAC1, MAC2, MAC3;           //R25-27
 
   //Control Registers
   private final Matrix RT = new Matrix();        //R32-36 R40-44 R48-52
@@ -91,55 +82,6 @@ public class Gte {
   private short H;                   //R58
   private short ZSF3, ZSF4, DQA;      //R61 62 59
   private long FLAG;                  //R63
-
-  //Command decode
-  private int sf;                     //Shift fraction (0 or 12)
-  private boolean lm;                    //Saturate IR1,IR2,IR3 result (0=To -8000h..+7FFFh, 1=To 0..+7FFFh)
-  //GTE current command temporary stored for MVMVA decoding
-
-  private void NCCS(final int r) {
-    // [IR1, IR2, IR3] = [MAC1, MAC2, MAC3] = (LLM * V0) SAR(sf * 12)
-    this.MAC1 = (int)(this.setMAC(1, (long)this.LM.v00 * this.V[r].x + this.LM.v01 * this.V[r].y + this.LM.v02 * this.V[r].z) >> this.sf);
-    this.MAC2 = (int)(this.setMAC(2, (long)this.LM.v10 * this.V[r].x + this.LM.v11 * this.V[r].y + this.LM.v12 * this.V[r].z) >> this.sf);
-    this.MAC3 = (int)(this.setMAC(3, (long)this.LM.v20 * this.V[r].x + this.LM.v21 * this.V[r].y + this.LM.v22 * this.V[r].z) >> this.sf);
-
-    this.IR[1] = this.setIR(1, this.MAC1, this.lm);
-    this.IR[2] = this.setIR(2, this.MAC2, this.lm);
-    this.IR[3] = this.setIR(3, this.MAC3, this.lm);
-
-    // [IR1, IR2, IR3] = [MAC1, MAC2, MAC3] = (BK * 1000h + LCM * IR) SAR(sf * 12)
-    // WARNING each multiplication can trigger mac flags so the check is needed on each op! Somehow this only affects the color matrix and not the light one
-    this.MAC1 = (int)(this.setMAC(1, this.setMAC(1, this.setMAC(1, (long)this.RBK * 0x1000 + this.LRGB.v00 * this.IR[1]) + (long)this.LRGB.v01 * this.IR[2]) + (long)this.LRGB.v02 * this.IR[3]) >> this.sf);
-    this.MAC2 = (int)(this.setMAC(2, this.setMAC(2, this.setMAC(2, (long)this.GBK * 0x1000 + this.LRGB.v10 * this.IR[1]) + (long)this.LRGB.v11 * this.IR[2]) + (long)this.LRGB.v12 * this.IR[3]) >> this.sf);
-    this.MAC3 = (int)(this.setMAC(3, this.setMAC(3, this.setMAC(3, (long)this.BBK * 0x1000 + this.LRGB.v20 * this.IR[1]) + (long)this.LRGB.v21 * this.IR[2]) + (long)this.LRGB.v22 * this.IR[3]) >> this.sf);
-
-    this.IR[1] = this.setIR(1, this.MAC1, this.lm);
-    this.IR[2] = this.setIR(2, this.MAC2, this.lm);
-    this.IR[3] = this.setIR(3, this.MAC3, this.lm);
-
-    // [MAC1, MAC2, MAC3] = [R * IR1, G * IR2, B * IR3] SHL 4;< --- for NCDx / NCCx
-    this.MAC1 = (int)this.setMAC(1, (this.RGBC.r & 0xff) * this.IR[1] << 4);
-    this.MAC2 = (int)this.setMAC(2, (this.RGBC.g & 0xff) * this.IR[2] << 4);
-    this.MAC3 = (int)this.setMAC(3, (this.RGBC.b & 0xff) * this.IR[3] << 4);
-
-    // [MAC1, MAC2, MAC3] = [MAC1, MAC2, MAC3] SAR(sf * 12);< --- for NCDx / NCCx
-    this.MAC1 = (int)this.setMAC(1, this.MAC1 >> this.sf);
-    this.MAC2 = (int)this.setMAC(2, this.MAC2 >> this.sf);
-    this.MAC3 = (int)this.setMAC(3, this.MAC3 >> this.sf);
-
-    // Color FIFO = [MAC1 / 16, MAC2 / 16, MAC3 / 16, CODE], [IR1, IR2, IR3] = [MAC1, MAC2, MAC3]
-    this.RGB[0].set(this.RGB[1]);
-    this.RGB[1].set(this.RGB[2]);
-
-    this.RGB[2].r = this.setRGB(1, this.MAC1 >> 4);
-    this.RGB[2].g = this.setRGB(2, this.MAC2 >> 4);
-    this.RGB[2].b = this.setRGB(3, this.MAC3 >> 4);
-    this.RGB[2].c = this.RGBC.c;
-
-    this.IR[1] = this.setIR(1, this.MAC1, this.lm);
-    this.IR[2] = this.setIR(2, this.MAC2, this.lm);
-    this.IR[3] = this.setIR(3, this.MAC3, this.lm);
-  }
 
   private void AVSZ3() {
     //MAC0 = ZSF3 * (SZ1 + SZ2 + SZ3); for AVSZ3
@@ -172,21 +114,19 @@ public class Gte {
     //IR1 = MAC1 = (TRX*1000h + RT11*VX0 + RT12*VY0 + RT13*VZ0) SAR (sf*12)
     //IR2 = MAC2 = (TRY*1000h + RT21*VX0 + RT22*VY0 + RT23*VZ0) SAR (sf*12)
     //IR3 = MAC3 = (TRZ*1000h + RT31*VX0 + RT32*VY0 + RT33*VZ0) SAR (sf*12)
-    this.MAC1 = (int)(this.setMAC(1, this.setMAC(1, this.setMAC(1, (long)this.TRX * 0x1000 + this.RT.v00 * this.V[r].x) + (long)this.RT.v01 * this.V[r].y) + (long)this.RT.v02 * this.V[r].z) >> this.sf);
-    this.MAC2 = (int)(this.setMAC(2, this.setMAC(2, this.setMAC(2, (long)this.TRY * 0x1000 + this.RT.v10 * this.V[r].x) + (long)this.RT.v11 * this.V[r].y) + (long)this.RT.v12 * this.V[r].z) >> this.sf);
-    final long mac3 = this.setMAC(3, this.setMAC(3, this.setMAC(3, (long)this.TRZ * 0x1000 + this.RT.v20 * this.V[r].x) + (long)this.RT.v21 * this.V[r].y) + (long)this.RT.v22 * this.V[r].z);
-    this.MAC3 = (int)(mac3 >> this.sf);
+    final int MAC1 = (int)(this.setMAC(1, this.setMAC(1, this.setMAC(1, (long)this.TRX * 0x1000 + this.RT.v00 * this.V[r].x) + (long)this.RT.v01 * this.V[r].y) + (long)this.RT.v02 * this.V[r].z) >> 12);
+    final int MAC2 = (int)(this.setMAC(2, this.setMAC(2, this.setMAC(2, (long)this.TRY * 0x1000 + this.RT.v10 * this.V[r].x) + (long)this.RT.v11 * this.V[r].y) + (long)this.RT.v12 * this.V[r].z) >> 12);
+    final int MAC3 = (int)(this.setMAC(3, this.setMAC(3, this.setMAC(3, (long)this.TRZ * 0x1000 + this.RT.v20 * this.V[r].x) + (long)this.RT.v21 * this.V[r].y) + (long)this.RT.v22 * this.V[r].z) >> 12);
 
-    this.IR[1] = this.setIR(1, this.MAC1, this.lm);
-    this.IR[2] = this.setIR(2, this.MAC2, this.lm);
-    this.setIR(3, (int)(mac3 >> 12), false);
-    this.IR[3] = (short)MathHelper.clamp(this.MAC3, this.lm ? 0 : -0x8000, 0x7FFF);
+    this.IR[1] = this.setIR(1, MAC1);
+    this.IR[2] = this.setIR(2, MAC2);
+    this.IR[3] = this.setIR(3, MAC3);
 
     //SZ3 = MAC3 SAR ((1-sf)*12)                           ;ScreenZ FIFO 0..+FFFFh
     this.SZ[0] = this.SZ[1];
     this.SZ[1] = this.SZ[2];
     this.SZ[2] = this.SZ[3];
-    this.SZ[3] = this.setSZ3(mac3 >> 12);
+    this.SZ[3] = this.setSZ3(MAC3);
 
     //NON UNR Div Version
     //long result;
@@ -279,27 +219,8 @@ public class Gte {
     return (short)value;
   }
 
-  private byte setRGB(final int i, final int value) {
-    if(value < 0) {
-      this.FLAG |= 0x20_0000L >>> i - 1;
-      return 0;
-    }
-
-    if(value > 0xff) {
-      this.FLAG |= 0x20_0000L >>> i - 1;
-      return (byte)0xff;
-    }
-
-    return (byte)value;
-  }
-
-  private short setIR(final int i, final int value, final boolean lm) {
-    if(lm && value < 0) {
-      this.FLAG |= 0x100_0000L >>> i - 1;
-      return 0;
-    }
-
-    if(!lm && value < -0x8000) {
+  private short setIR(final int i, final int value) {
+    if(value < -0x8000) {
       this.FLAG |= 0x100_0000L >>> i - 1;
       return -0x8000;
     }
@@ -344,21 +265,6 @@ public class Gte {
     this.setVertex(index, vert.getX(), vert.getY(), vert.getZ());
   }
 
-  /** Data register 0/1, 2/3, 4/5 */
-  public void setVertex(final int index, final VECTOR vert) {
-    this.setVertex(index, vert.getX(), vert.getY(), vert.getZ());
-  }
-
-  /** Data register 6 RGBC */
-  public void setRgbc(final int rgbc) {
-    this.RGBC.val(rgbc);
-  }
-
-  /** Data register 6 RGBC */
-  public void setRgbc(final COLOUR rgbc) {
-    this.RGBC.val((int)rgbc.pack());
-  }
-
   /** Data register 7 OTZ */
   public short getAverageZ() {
     return this.OTZ;
@@ -377,11 +283,6 @@ public class Gte {
   /** Data register 16, 17, 18, 19 */
   public short getScreenZ(final int index) {
     return this.SZ[index];
-  }
-
-  /** Data register 20, 21, 22 */
-  public int getRgb(final int index) {
-    return this.RGB[index].val();
   }
 
   /** Data register 24 */
@@ -509,9 +410,7 @@ public class Gte {
     return this.getFlags() < 0;
   }
 
-  private void startCommand(final boolean saturate) {
-    this.sf = 12;
-    this.lm = saturate;
+  private void startCommand() {
     this.FLAG = 0;
   }
 
@@ -525,7 +424,7 @@ public class Gte {
 
   /** 0x1 RTPS - perspective transform single, 12-bit fraction */
   public void perspectiveTransform() {
-    this.startCommand(false);
+    this.startCommand();
     this.RTPS(0, true);
     this.endCommand();
   }
@@ -552,7 +451,7 @@ public class Gte {
    * @return vertex winding
    */
   public int normalClipping() {
-    this.startCommand(false);
+    this.startCommand();
     this.NCLIP();
     this.endCommand();
     return this.getMac0();
@@ -563,11 +462,34 @@ public class Gte {
    *
    * @return colour
    */
-  public int normalColour() {
-    this.startCommand(true);
-    this.NCCS(0);
-    this.endCommand();
-    return this.getRgb(2);
+  public int normalColour(final int normalX, final int normalY, final int normalZ, final int colour) {
+    this.RGBC.val(colour);
+
+    // [IR1, IR2, IR3] = [MAC1, MAC2, MAC3] = (LLM * V0) SAR(sf * 12)
+    final int IR1 = (short)Math.max(0, (long)this.LM.v00 * normalX + this.LM.v01 * normalY + this.LM.v02 * normalZ >> 12);
+    final int IR2 = (short)Math.max(0, (long)this.LM.v10 * normalX + this.LM.v11 * normalY + this.LM.v12 * normalZ >> 12);
+    final int IR3 = (short)Math.max(0, (long)this.LM.v20 * normalX + this.LM.v21 * normalY + this.LM.v22 * normalZ >> 12);
+
+    // [IR1, IR2, IR3] = [MAC1, MAC2, MAC3] = (BK * 1000h + LCM * IR) SAR(sf * 12)
+    final int MAC1 = (int)Math.max(0, (long)this.RBK * 0x1000 + this.LRGB.v00 * IR1 + (long)this.LRGB.v01 * IR2 + (long)this.LRGB.v02 * IR3 >> 12);
+    final int MAC2 = (int)Math.max(0, (long)this.GBK * 0x1000 + this.LRGB.v10 * IR1 + (long)this.LRGB.v11 * IR2 + (long)this.LRGB.v12 * IR3 >> 12);
+    final int MAC3 = (int)Math.max(0, (long)this.BBK * 0x1000 + this.LRGB.v20 * IR1 + (long)this.LRGB.v21 * IR2 + (long)this.LRGB.v22 * IR3 >> 12);
+
+    // [MAC1, MAC2, MAC3] = [R * IR1, G * IR2, B * IR3] SHL 4 SAR(sf * 12)
+    this.RGBC.r = (byte)MathHelper.clamp((this.RGBC.r & 0xff) * MAC1 << 4 >> 12 >> 4, 0, 0xff);
+    this.RGBC.g = (byte)MathHelper.clamp((this.RGBC.g & 0xff) * MAC2 << 4 >> 12 >> 4, 0, 0xff);
+    this.RGBC.b = (byte)MathHelper.clamp((this.RGBC.b & 0xff) * MAC3 << 4 >> 12 >> 4, 0, 0xff);
+
+    return this.RGBC.val();
+  }
+
+  /**
+   * 0x1b NCCS - normal colour colour single vector, 12-bit fraction, saturate IR1/2/3
+   *
+   * @return colour
+   */
+  public int normalColour(final SVECTOR normal, final int colour) {
+    return this.normalColour(normal.getX(), normal.getY(), normal.getZ(), colour);
   }
 
   /**
@@ -576,7 +498,7 @@ public class Gte {
    * @return average Z
    */
   public int averageZ3() {
-    this.startCommand(false);
+    this.startCommand();
     this.AVSZ3();
     this.endCommand();
     return this.getAverageZ();
@@ -588,7 +510,7 @@ public class Gte {
    * @return average Z
    */
   public int averageZ4() {
-    this.startCommand(false);
+    this.startCommand();
     this.AVSZ4();
     this.endCommand();
     return this.getAverageZ();
@@ -596,7 +518,7 @@ public class Gte {
 
   /** 0x30 RTPT - perspective transform triple, 12-bit fraction */
   public void perspectiveTransformTriangle() {
-    this.startCommand(false);
+    this.startCommand();
     this.RTPT();
     this.endCommand();
   }
@@ -607,9 +529,8 @@ public class Gte {
     this.setVertex(1, v1);
     this.setVertex(2, v2);
 
-    this.startCommand(false);
+    this.startCommand();
     this.RTPT();
     this.endCommand();
   }
-
 }

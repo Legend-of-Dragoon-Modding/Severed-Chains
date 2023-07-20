@@ -138,12 +138,6 @@ import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
-import static legend.game.Scus94491BpeSegment_8003.ScaleMatrix;
-import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
-import static legend.game.Scus94491BpeSegment_8003.TransMatrix;
-import static legend.game.Scus94491BpeSegment_8004.RotMatrixX;
-import static legend.game.Scus94491BpeSegment_8004.RotMatrixY;
-import static legend.game.Scus94491BpeSegment_8004.RotMatrixZ;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrix_Zyx;
 import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment_8004.freeSequence;
@@ -480,7 +474,7 @@ public final class Scus94491BpeSegment_8002 {
             (params.trans.getY() + transforms[0][i].translate_06.getY()) / 2,
             (params.trans.getZ() + transforms[0][i].translate_06.getZ()) / 2
           );
-          TransMatrix(coord2.coord, params.trans);
+          coord2.coord.transfer.set(params.trans);
         }
 
         //LAB_80020d6c
@@ -495,7 +489,7 @@ public final class Scus94491BpeSegment_8002 {
           RotMatrix_Zyx(params.rotate, coord2.coord);
 
           params.trans.set(transforms[0][i].translate_06);
-          TransMatrix(coord2.coord, params.trans);
+          coord2.coord.transfer.set(params.trans);
         }
 
         //LAB_80020dfc
@@ -513,7 +507,7 @@ public final class Scus94491BpeSegment_8002 {
         RotMatrix_Zyx(params.rotate, coord2.coord);
 
         params.trans.set(transforms[0][i].translate_06);
-        TransMatrix(coord2.coord, params.trans);
+        coord2.coord.transfer.set(params.trans);
       }
 
       //LAB_80020e94
@@ -675,7 +669,7 @@ public final class Scus94491BpeSegment_8002 {
       RotMatrix_Zyx(params.rotate, matrix);
 
       params.trans.set(transforms[0][i].translate_06);
-      TransMatrix(matrix, params.trans);
+      matrix.transfer.set(params.trans);
     }
 
     //LAB_80021390
@@ -694,7 +688,7 @@ public final class Scus94491BpeSegment_8002 {
       params.trans.setX((params.trans.getX() + transforms.translate_06.getX()) / 2);
       params.trans.setY((params.trans.getY() + transforms.translate_06.getY()) / 2);
       params.trans.setZ((params.trans.getZ() + transforms.translate_06.getZ()) / 2);
-      TransMatrix(coord, params.trans);
+      coord.transfer.set(params.trans);
     }
 
     //LAB_80021490
@@ -704,7 +698,7 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x800214bcL)
   public static void applyModelRotationAndScale(final Model124 model) {
     RotMatrix_Xyz(model.coord2Param_64.rotate, model.coord2_14.coord);
-    ScaleMatrix(model.coord2_14.coord, model.scaleVector_fc);
+    model.coord2_14.coord.scale(model.scaleVector_fc);
     model.coord2_14.flg = 0;
   }
 
@@ -782,7 +776,7 @@ public final class Scus94491BpeSegment_8002 {
   public static void FUN_800217a4(final Model124 model) {
     model.coord2Param_64.rotate.y.set(FUN_800ea4c8(model.coord2Param_64.rotate.y.get()));
     RotMatrix_Xyz(model.coord2Param_64.rotate, model.coord2_14.coord);
-    ScaleMatrix(model.coord2_14.coord, model.scaleVector_fc);
+    model.coord2_14.coord.scale(model.scaleVector_fc);
     model.coord2_14.flg = 0;
   }
 
@@ -840,30 +834,16 @@ public final class Scus94491BpeSegment_8002 {
 
     if(s2 == 1) {
       //LAB_800219ec
+      dobj2.coord2_04.coord.identity();
+
       rotation.set((short)11, (short)11, (short)11);
-
-      dobj2.coord2_04.coord.set(0, (short)0x1000);
-      dobj2.coord2_04.coord.set(1, (short)0);
-      dobj2.coord2_04.coord.set(2, (short)0);
-      dobj2.coord2_04.coord.set(3, (short)0);
-      dobj2.coord2_04.coord.set(4, (short)0x1000);
-      dobj2.coord2_04.coord.set(5, (short)0);
-      dobj2.coord2_04.coord.set(6, (short)0);
-      dobj2.coord2_04.coord.set(7, (short)0);
-      dobj2.coord2_04.coord.set(8, (short)0x1000);
-
-      RotMatrixX(rotation.x.get(), coord);
-      RotMatrixY(rotation.y.get(), coord);
-      RotMatrixZ(rotation.z.get(), coord);
+      RotMatrix_Xyz(rotation, coord);
 
       scale.set(0x1000, 0x1000, 0x1000);
-
-      RotMatrix_Xyz(rotation, coord);
-      ScaleMatrixL(coord, scale);
+      coord.scaleL(scale);
 
       translation.set(1, 1, 1);
-
-      TransMatrix(coord, translation);
+      coord.transfer.set(translation);
     }
 
     //LAB_80021ad8

@@ -65,7 +65,6 @@ import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8003.GsSetRefView2L;
 import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
-import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
@@ -1045,7 +1044,7 @@ public final class Ttle {
       FUN_800cc26c(rotation, coord2s[i]);
       GsGetLws(dobj2s[i].coord2_04, sp10, sp30);
       GsSetLightMatrix(sp10);
-      ScaleMatrixL(sp30, scale);
+      sp30.scaleL(scale);
       setRotTransMatrix(sp30);
       zOffset_1f8003e8.set(100);
       fireRenderable[i]

@@ -116,6 +116,7 @@ import java.util.function.Consumer;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
@@ -144,17 +145,10 @@ import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
 import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Yxz;
 import static legend.game.Scus94491BpeSegment_8003.RotTransPers4;
-import static legend.game.Scus94491BpeSegment_8003.ScaleMatrix;
-import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
-import static legend.game.Scus94491BpeSegment_8003.TransMatrix;
 import static legend.game.Scus94491BpeSegment_8003.getProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
 import static legend.game.Scus94491BpeSegment_8003.perspectiveTransformTriple;
 import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
-import static legend.game.Scus94491BpeSegment_8004.FUN_80040df0;
-import static legend.game.Scus94491BpeSegment_8004.RotMatrixX;
-import static legend.game.Scus94491BpeSegment_8004.RotMatrixY;
-import static legend.game.Scus94491BpeSegment_8004.RotMatrixZ;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrix_Zyx;
 import static legend.game.Scus94491BpeSegment_8004.doNothingScript_8004f650;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
@@ -182,7 +176,6 @@ import static legend.game.combat.Bttl_800c.seed_800fa754;
 import static legend.game.combat.Bttl_800c.spriteMetrics_800c6948;
 import static legend.game.combat.Bttl_800c.tmds_800c6944;
 import static legend.game.combat.Bttl_800d.FUN_800dc408;
-import static legend.game.combat.Bttl_800d.ScaleMatrixL_SVEC;
 import static legend.game.combat.Bttl_800d.getRotationAndScaleFromTransforms;
 import static legend.game.combat.Bttl_800d.getRotationFromTransforms;
 import static legend.game.combat.Bttl_800d.loadModelAnim;
@@ -918,8 +911,8 @@ public final class SEffe {
   @Method(0x800fc4bcL)
   public static void FUN_800fc4bc(final MATRIX out, final EffectManagerData6c a1, final ParticleMetrics48 particleMetrics) {
     RotMatrix_Xyz(particleMetrics.rotation_38, out);
-    TransMatrix(out, particleMetrics.translation_18);
-    ScaleMatrixL(out, particleMetrics.scale_28);
+    out.transfer.set(particleMetrics.translation_18);
+    out.scaleL(particleMetrics.scale_28);
   }
 
   @Method(0x800fc528L)
@@ -1111,7 +1104,7 @@ public final class SEffe {
 
       if((particleMetrics.flags_00 & 0x400_0000) == 0) {
         RotMatrix_Xyz(manager._10.rot_10, transformMatrix);
-        ScaleMatrixL(transformMatrix, new VECTOR().set(manager._10.scale_16));
+        transformMatrix.scaleL(manager._10.scale_16);
       }
 
       //LAB_800fcff8
@@ -4967,10 +4960,10 @@ public final class SEffe {
     }
 
     //LAB_8010aa54
-    final VECTOR sp0x28 = new VECTOR().set(0, gradientRay._02 * effect._08, 0);
-    final SVECTOR sp0x78 = new SVECTOR().set(gradientRay._00, (short)0, (short)0);
-    RotMatrix_Xyz(sp0x78, sp0xa0);
-    TransMatrix(sp0x80, sp0x28);
+    final VECTOR translation = new VECTOR().set(0, gradientRay._02 * effect._08, 0);
+    final SVECTOR rotation = new SVECTOR().set(gradientRay._00, (short)0, (short)0);
+    RotMatrix_Xyz(rotation, sp0xa0);
+    sp0x80.transfer.set(translation);
     sp0x80.compose(sp0xa0, sp0xc0);
     FUN_800e8594(sp0x80, manager);
 
@@ -5181,10 +5174,10 @@ public final class SEffe {
     final COLOUR sp0x48 = new COLOUR();
 
     if((manager._10.flags_00 & 0x40) != 0) {
-      final VECTOR sp0x70 = new VECTOR();
-      _800fb8d0.mul(transforms, sp0x70);
-      sp0x70.add(transforms.transfer);
-      FUN_80040df0(sp0x70, _800fb8cc, sp0x48);
+      final SVECTOR normal = new SVECTOR();
+      _800fb8d0.mul(transforms, normal);
+      normal.add(transforms.transfer);
+      sp0x48.unpack(GTE.normalColour(normal, (int)_800fb8cc.pack()));
     } else {
       //LAB_8010b6c8
       sp0x48.set(0x80, 0x80, 0x80);
@@ -5344,10 +5337,10 @@ public final class SEffe {
     final COLOUR rgb = new COLOUR();
 
     if((manager._10.flags_00 & 0x40) != 0) {
-      final VECTOR sp0x70 = new VECTOR();
-      _800fb8d0.mul(transforms, sp0x70);
-      sp0x70.add(transforms.transfer);
-      FUN_80040df0(sp0x70, _800fb8cc, rgb);
+      final SVECTOR normal = new SVECTOR();
+      _800fb8d0.mul(transforms, normal);
+      normal.add(transforms.transfer);
+      rgb.unpack(GTE.normalColour(normal, (int)_800fb8cc.pack()));
     } else {
       //LAB_8010bd6c
       rgb.set(0x80, 0x80, 0x80);
@@ -5955,8 +5948,8 @@ public final class SEffe {
         scale.set(manager._10.scale_16);
 
         RotMatrix_Xyz(rot, transforms);
-        TransMatrix(transforms, trans);
-        ScaleMatrix(transforms, scale);
+        transforms.transfer.set(trans);
+        transforms.scale(scale);
 
         dobj2.tmd_08 = instance.tmd_70;
 
@@ -6372,11 +6365,9 @@ public final class SEffe {
           //LAB_8010f50c
           GsSetLightMatrix(transformMatrix0);
           RotMatrix_Xyz(rotation, transformMatrix1);
-          TransMatrix(transformMatrix1, translation);
-          scale.setX(scaleX);
-          scale.setY(scaleY);
-          scale.setZ(scaleZ);
-          ScaleMatrix(transformMatrix1, scale);
+          transformMatrix1.transfer.set(translation);
+          scale.set(scaleX, scaleY, scaleZ);
+          transformMatrix1.scale(scale);
           dobj.attribute_00 = manager._10.flags_00;
           transformMatrix1.compose(worldToScreenMatrix_800c3548, finalTransformMatrix1);
           setRotTransMatrix(finalTransformMatrix1);
@@ -6978,8 +6969,8 @@ public final class SEffe {
 
           //LAB_80111958
           RotMatrix_Zyx(rot, transforms);
-          TransMatrix(transforms, trans);
-          ScaleMatrixL(transforms, scale);
+          transforms.transfer.set(trans);
+          transforms.scaleL(scale);
           transforms.compose(sp0x10, a0);
         }
       }
@@ -8158,8 +8149,7 @@ public final class SEffe {
       rot.negate();
       RotMatrix_Zyx(rot, transforms);
 
-      final VECTOR sp0xf0 = new VECTOR().set(0x100_0000, 0x100_0000, 0x100_0000).div(scale);
-      ScaleMatrixL(transforms, sp0xf0);
+      transforms.scaleL(new VECTOR().set(0x100_0000, 0x100_0000, 0x100_0000).div(scale));
       sp0x10.mul(transforms, sp0x30);
 
       final VECTOR sp0x100 = new VECTOR().set(sp0x10.transfer).sub(transforms.transfer);
@@ -8432,15 +8422,14 @@ public final class SEffe {
   public static void FUN_8011619c(final EffectManagerData6c manager, final BttlScriptData6cSub5c effect, final int deffFlags, final MATRIX matrix) {
     final MATRIX sp0x10 = new MATRIX();
     RotMatrix_Zyx(manager._10.rot_10, sp0x10);
-    TransMatrix(sp0x10, manager._10.trans_04);
-    ScaleMatrixL_SVEC(sp0x10, manager._10.scale_16);
+    sp0x10.transfer.set(manager._10.trans_04);
+    sp0x10.scaleL(manager._10.scale_16);
     sp0x10.compose(matrix, sp0x10);
-    final int s0 = manager._10._28;
-    final VECTOR sp0x30 = new VECTOR().set(s0, s0, s0);
-    ScaleMatrixL(sp0x10, sp0x30);
-    manager._10.scale_16.setX((short)(manager._10.scale_16.getX() * s0 / 0x1000));
-    manager._10.scale_16.setY((short)(manager._10.scale_16.getY() * s0 / 0x1000));
-    manager._10.scale_16.setZ((short)(manager._10.scale_16.getZ() * s0 / 0x1000));
+    final int scale = manager._10._28;
+    sp0x10.scaleL(new VECTOR().set(scale, scale, scale));
+    manager._10.scale_16.setX((short)(manager._10.scale_16.getX() * scale / 0x1000));
+    manager._10.scale_16.setY((short)(manager._10.scale_16.getY() * scale / 0x1000));
+    manager._10.scale_16.setZ((short)(manager._10.scale_16.getZ() * scale / 0x1000));
 
     final int type = deffFlags & 0xff00_0000;
     if(type == 0x300_0000) {
@@ -9456,12 +9445,10 @@ public final class SEffe {
       manager._10.trans_04.setY(y);
 
       final short rotY = (short)ratan2(-sp0x10.get(6), sp0x10.get(0));
-      RotMatrixY(-rotY, sp0x10);
-      final short rotZ = (short)ratan2(sp0x10.get(3), sp0x10.get(0));
-      RotMatrixZ(-rotZ, sp0x10);
-      final short rotX = (short)ratan2(-sp0x10.get(5), sp0x10.get(8));
-      RotMatrixX(-rotX, sp0x10);
-      RotMatrixY(rotY, sp0x10);
+      sp0x10.rotateY(-rotY);
+      sp0x10.rotateZ(-ratan2(sp0x10.get(3), sp0x10.get(0)));
+      sp0x10.rotateX(-ratan2(-sp0x10.get(5), sp0x10.get(8)));
+      sp0x10.rotateY(rotY);
       sp0x10.set(3, (short)0);
       sp0x10.set(4, (short)0);
       sp0x10.set(5, (short)0);
@@ -9720,8 +9707,8 @@ public final class SEffe {
             //LAB_80119360
             //LAB_80119378
             transformMatrix.transfer.set(x >> 12, y >> 12, z >> 12);
+            transformMatrix.scaleL(managerInner.scale_16);
 
-            ScaleMatrixL_SVEC(transformMatrix, managerInner.scale_16);
             if(type == 0x300_0000) {
               //LAB_801193f0
               final TmdSpriteEffect10 subEffect = (TmdSpriteEffect10)effect.subEffect_1c;

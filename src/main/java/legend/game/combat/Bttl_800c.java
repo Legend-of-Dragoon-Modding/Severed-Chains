@@ -150,7 +150,6 @@ import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.MoveImage;
 import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
-import static legend.game.Scus94491BpeSegment_8003.TransMatrix;
 import static legend.game.Scus94491BpeSegment_8003.getProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
@@ -4176,7 +4175,7 @@ public final class Bttl_800c {
 
     //LAB_800cf578
     RotMatrix_Xyz(sp0x20, sp0x28);
-    TransMatrix(sp0x28, a0._10.trans_04);
+    sp0x28.transfer.set(a0._10.trans_04);
 
     a2.mul(sp0x28, out);
     out.add(sp0x28.transfer);

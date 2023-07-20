@@ -54,8 +54,6 @@ import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SEQUENCER;
 import static legend.core.GameEngine.SPU;
-import static legend.game.Scus94491BpeSegment.rcos;
-import static legend.game.Scus94491BpeSegment.sin;
 import static legend.game.Scus94491BpeSegment_8005.atanTable_80058d0c;
 import static legend.game.Scus94491BpeSegment_8005.reverbConfigs_80059f7c;
 import static legend.game.Scus94491BpeSegment_800c.patchList_800c4abc;
@@ -853,68 +851,6 @@ public final class Scus94491BpeSegment_8004 {
       .rotateX(MathHelper.psxDegToRad(rotation.getX())));
   }
 
-  @Method(0x800402a0L)
-  public static void RotMatrixX(final int rotation, final MATRIX matrixOut) {
-    final short sin = sin(rotation);
-    final short cos = rcos(Math.abs(rotation));
-
-    //LAB_80040304
-    final long m10 = matrixOut.get(1, 0);
-    final long m11 = matrixOut.get(1, 1);
-    final long m12 = matrixOut.get(1, 2);
-    final long m20 = matrixOut.get(2, 0);
-    final long m21 = matrixOut.get(2, 1);
-    final long m22 = matrixOut.get(2, 2);
-
-    matrixOut.set(1, 0, (short)(cos * m10 - sin * m20 >> 12));
-    matrixOut.set(1, 1, (short)(cos * m11 - sin * m21 >> 12));
-    matrixOut.set(1, 2, (short)(cos * m12 - sin * m22 >> 12));
-    matrixOut.set(2, 0, (short)(sin * m10 + cos * m20 >> 12));
-    matrixOut.set(2, 1, (short)(sin * m11 + cos * m21 >> 12));
-    matrixOut.set(2, 2, (short)(sin * m12 + cos * m22 >> 12));
-  }
-
-  @Method(0x80040440L)
-  public static void RotMatrixY(final int rotation, final MATRIX matrixOut) {
-    final short sin = (short)-sin(rotation);
-    final short cos = rcos(Math.abs(rotation));
-
-    //LAB_800404a4
-    final short m0 = matrixOut.get(0);
-    final short m1 = matrixOut.get(1);
-    final short m2 = matrixOut.get(2);
-    final short m6 = matrixOut.get(6);
-    final short m7 = matrixOut.get(7);
-    final short m8 = matrixOut.get(8);
-    matrixOut.set(0, (short)(cos * m0 - sin * m6 >> 12));
-    matrixOut.set(1, (short)(cos * m1 - sin * m7 >> 12));
-    matrixOut.set(2, (short)(cos * m2 - sin * m8 >> 12));
-    matrixOut.set(6, (short)(sin * m0 + cos * m6 >> 12));
-    matrixOut.set(7, (short)(sin * m1 + cos * m7 >> 12));
-    matrixOut.set(8, (short)(sin * m2 + cos * m8 >> 12));
-  }
-
-  @Method(0x800405e0L)
-  public static void RotMatrixZ(final int rotation, final MATRIX matrixOut) {
-    final short sin = sin(rotation);
-    final short cos = rcos(Math.abs(rotation));
-
-    //LAB_80040644
-    final long m00 = matrixOut.get(0, 0);
-    final long m01 = matrixOut.get(0, 1);
-    final long m02 = matrixOut.get(0, 2);
-    final long m10 = matrixOut.get(1, 0);
-    final long m11 = matrixOut.get(1, 1);
-    final long m12 = matrixOut.get(1, 2);
-
-    matrixOut.set(0, 0, (short)(cos * m00 - sin * m10 >> 12));
-    matrixOut.set(0, 1, (short)(cos * m01 - sin * m11 >> 12));
-    matrixOut.set(0, 2, (short)(cos * m02 - sin * m12 >> 12));
-    matrixOut.set(1, 0, (short)(sin * m00 + cos * m10 >> 12));
-    matrixOut.set(1, 1, (short)(sin * m01 + cos * m11 >> 12));
-    matrixOut.set(1, 2, (short)(sin * m02 + cos * m12 >> 12));
-  }
-
   /**
    * Uses PlayStation format (4096 = 360 degrees = 2pi) to finish the x/y arctan function (-180 degrees and +180 degrees, -pi...pi).
    *
@@ -983,13 +919,6 @@ public final class Scus94491BpeSegment_8004 {
 
     //LAB_80040cfc
     return atan;
-  }
-
-  @Method(0x80040df0L)
-  public static void FUN_80040df0(final VECTOR a0, final COLOUR in, final COLOUR out) {
-    GTE.setVertex(0, a0);
-    GTE.setRgbc(in);
-    out.unpack(GTE.normalColour());
   }
 
   // Start of SPU code

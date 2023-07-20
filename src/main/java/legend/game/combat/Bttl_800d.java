@@ -91,15 +91,10 @@ import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8003.GsSetRefView2L;
 import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
-import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
-import static legend.game.Scus94491BpeSegment_8003.TransMatrix;
 import static legend.game.Scus94491BpeSegment_8003.getProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.getScreenOffset;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
-import static legend.game.Scus94491BpeSegment_8004.RotMatrixX;
-import static legend.game.Scus94491BpeSegment_8004.RotMatrixY;
-import static legend.game.Scus94491BpeSegment_8004.RotMatrixZ;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrix_Zyx;
 import static legend.game.Scus94491BpeSegment_8004.doNothingScript_8004f650;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
@@ -4419,8 +4414,8 @@ public final class Bttl_800d {
 
       //LAB_800dd818
       RotMatrix_Zyx(rot, matrix);
-      TransMatrix(matrix, trans);
-      ScaleMatrixL(matrix, scale);
+      matrix.transfer.set(trans);
+      matrix.scaleL(scale);
     }
 
     //LAB_800dd84c
@@ -4795,7 +4790,7 @@ public final class Bttl_800d {
 
     if((a1.flags_00 & 0x400_0000) == 0) {
       RotMatrix_Xyz(a1.rot_10, sp0x10);
-      ScaleMatrixL_SVEC(sp0x10, a1.scale_16);
+      sp0x10.scaleL(a1.scale_16);
     }
 
     //LAB_800de4a8
@@ -4826,9 +4821,9 @@ public final class Bttl_800d {
   public static SVECTOR getRotationFromTransforms(final SVECTOR rotOut, final MATRIX transforms) {
     final MATRIX mat = new MATRIX().set(transforms);
     rotOut.setX((short)ratan2(-mat.get(5), mat.get(8)));
-    RotMatrixX(-rotOut.getX(), mat);
+    mat.rotateX(-rotOut.getX());
     rotOut.setY((short)ratan2(mat.get(2), mat.get(8)));
-    RotMatrixY(-rotOut.getY(), mat);
+    mat.rotateY(-rotOut.getY());
     rotOut.setZ((short)ratan2(mat.get(3), mat.get(0)));
     return rotOut;
   }
@@ -4837,17 +4832,12 @@ public final class Bttl_800d {
   public static void getRotationAndScaleFromTransforms(final SVECTOR rotOut, final SVECTOR scaleOut, final MATRIX transforms) {
     final MATRIX mat = new MATRIX().set(transforms);
     rotOut.setX((short)ratan2(-mat.get(5), mat.get(8)));
-    RotMatrixX(-(short)rotOut.getX(), mat);
+    mat.rotateX(-rotOut.getX());
     rotOut.setY((short)ratan2(mat.get(2), mat.get(8)));
-    RotMatrixY(-(short)rotOut.getY(), mat);
+    mat.rotateY(-rotOut.getY());
     rotOut.setZ((short)ratan2(mat.get(3), mat.get(0)));
-    RotMatrixZ(-(short)rotOut.getZ(), mat);
+    mat.rotateZ(-rotOut.getZ());
     scaleOut.set(mat.get(0), mat.get(4), mat.get(8));
-  }
-
-  @Method(0x800de72cL)
-  public static void ScaleMatrixL_SVEC(final MATRIX a0, final SVECTOR a1) {
-    ScaleMatrixL(a0, new VECTOR().set(a1));
   }
 
   @Method(0x800de76cL)
