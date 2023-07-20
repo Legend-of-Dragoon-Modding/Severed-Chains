@@ -1,5 +1,7 @@
 package legend.core;
 
+import org.joml.Vector3f;
+
 public final class MathHelper {
   private MathHelper() { }
 
@@ -17,6 +19,13 @@ public final class MathHelper {
 
   public static float clamp(final float value, final float min, final float max) {
     return Math.max(min, Math.min(value, max));
+  }
+
+  public static Vector3f clamp(final Vector3f value, final float min, final float max) {
+    value.x = clamp(value.x, min, max);
+    value.y = clamp(value.y, min, max);
+    value.z = clamp(value.z, min, max);
+    return value;
   }
 
   public static boolean inBox(final int x, final int y, final int left, final int top, final int width, final int height) {

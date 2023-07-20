@@ -18,6 +18,7 @@ import legend.game.sound.SssqReader;
 import legend.game.sound.Sssqish;
 import legend.game.sound.VolumeRamp;
 import legend.game.sound.WaveformList;
+import org.joml.Matrix3f;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -34,7 +35,7 @@ public final class Scus94491BpeSegment_800c {
   public static int PSDCNT_800c34d0;
 
   public static final MATRIX lightDirectionMatrix_800c34e8 = new MATRIX();
-  public static final MATRIX lightColourMatrix_800c3508 = new MATRIX();
+  public static final Matrix3f lightColourMatrix_800c3508 = new Matrix3f();
 
   public static final MATRIX worldToScreenMatrix_800c3548 = new MATRIX();
   public static final MATRIX identityMatrix_800c3568 = new MATRIX();

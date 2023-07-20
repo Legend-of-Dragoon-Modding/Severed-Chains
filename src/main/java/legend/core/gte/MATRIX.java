@@ -1,5 +1,6 @@
 package legend.core.gte;
 
+import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
 
@@ -191,6 +192,41 @@ public class MATRIX {
 
   public MATRIX mul(final MATRIX rotation) {
     return this.mul(rotation, this);
+  }
+
+  public MATRIX mul(final MATRIX other, final Matrix3f out) {
+    final int t0 = this.get(0);
+    final int t1 = this.get(1);
+    final int t2 = this.get(2);
+    final int t3 = this.get(3);
+    final int t4 = this.get(4);
+    final int t5 = this.get(5);
+    final int t6 = this.get(6);
+    final int t7 = this.get(7);
+    final int t8 = this.get(8);
+    final int o0 = other.get(0);
+    final int o1 = other.get(1);
+    final int o2 = other.get(2);
+    final int o3 = other.get(3);
+    final int o4 = other.get(4);
+    final int o5 = other.get(5);
+    final int o6 = other.get(6);
+    final int o7 = other.get(7);
+    final int o8 = other.get(8);
+
+    out.set(
+      (o0 * t0 + o1 * t3 + o2 * t6 >> 12) / 4096.0f,
+      (o0 * t1 + o1 * t4 + o2 * t7 >> 12) / 4096.0f,
+      (o0 * t2 + o1 * t5 + o2 * t8 >> 12) / 4096.0f,
+      (o3 * t0 + o4 * t3 + o5 * t6 >> 12) / 4096.0f,
+      (o3 * t1 + o4 * t4 + o5 * t7 >> 12) / 4096.0f,
+      (o3 * t2 + o4 * t5 + o5 * t8 >> 12) / 4096.0f,
+      (o6 * t0 + o7 * t3 + o8 * t6 >> 12) / 4096.0f,
+      (o6 * t1 + o7 * t4 + o8 * t7 >> 12) / 4096.0f,
+      (o6 * t2 + o7 * t5 + o8 * t8 >> 12) / 4096.0f
+    );
+
+    return this;
   }
 
   public MATRIX rotateX(final int amount) {

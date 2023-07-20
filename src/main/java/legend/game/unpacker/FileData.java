@@ -6,6 +6,7 @@ import legend.core.gte.BVEC4;
 import legend.core.gte.COLOUR;
 import legend.core.gte.SVECTOR;
 import legend.game.modding.registries.RegistryId;
+import org.joml.Vector3f;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -153,6 +154,11 @@ public record FileData(byte[] data, int offset, int size, int virtualSize, int r
   public SVECTOR readSvec3(final int offset, final SVECTOR svec) {
     this.checkBounds(offset, 6);
     return svec.set(this.readShort(offset), this.readShort(offset + 0x2), this.readShort(offset + 0x4));
+  }
+
+  public Vector3f readVector3f(final int offset, final Vector3f svec) {
+    this.checkBounds(offset, 6);
+    return svec.set(this.readShort(offset) / 4096.0f, this.readShort(offset + 0x2) / 4096.0f, this.readShort(offset + 0x4) / 4096.0f);
   }
 
   public COLOUR readColour(final int offset, final COLOUR colour) {

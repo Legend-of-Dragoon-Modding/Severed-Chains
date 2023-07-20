@@ -5352,7 +5352,8 @@ public final class SMap {
   public static void FUN_800e8bd8(final SomethingStruct a0) {
     final TmdObjTable1c objTable = a0.objTableArrPtr_00[0];
     a0.verts_04 = objTable.vert_top_00;
-    a0.normals_08 = objTable.normal_top_08;
+    a0.normals_08 = new SVECTOR[objTable.normal_top_08.length];
+    Arrays.setAll(a0.normals_08, i -> new SVECTOR().set((short)(objTable.normal_top_08[i].x * 4096.0f), (short)(objTable.normal_top_08[i].y * 4096.0f), (short)(objTable.normal_top_08[i].z * 4096.0f)));
     a0.count_0c = objTable.n_primitive_14;
     a0.primitives_10 = objTable.primitives_10;
   }

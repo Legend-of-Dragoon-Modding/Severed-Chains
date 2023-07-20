@@ -108,6 +108,7 @@ import legend.game.types.Model124;
 import legend.game.types.Translucency;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -4857,7 +4858,7 @@ public final class SEffe {
       SEffe::FUN_80109fc4,
       null,
       null,
-      new FrozenJetEffect28(tmd.vert_top_00, tmd.normal_top_08, tmd.primitives_10, s4, sp18 & 0xff)
+      new FrozenJetEffect28(tmd.vert_top_00, tmd.primitives_10, s4, sp18 & 0xff)
     );
 
     final EffectManagerData6c manager = state.innerStruct_00;
@@ -5174,9 +5175,9 @@ public final class SEffe {
     final COLOUR sp0x48 = new COLOUR();
 
     if((manager._10.flags_00 & 0x40) != 0) {
-      final SVECTOR normal = new SVECTOR();
+      final Vector3f normal = new Vector3f();
       _800fb8d0.mul(transforms, normal);
-      normal.add(transforms.transfer);
+      normal.add(transforms.transfer.getX() / 4096.0f, transforms.transfer.getY() / 4096.0f, transforms.transfer.getZ() / 4096.0f);
       sp0x48.unpack(GTE.normalColour(normal, (int)_800fb8cc.pack()));
     } else {
       //LAB_8010b6c8
@@ -5337,9 +5338,9 @@ public final class SEffe {
     final COLOUR rgb = new COLOUR();
 
     if((manager._10.flags_00 & 0x40) != 0) {
-      final SVECTOR normal = new SVECTOR();
+      final Vector3f normal = new Vector3f();
       _800fb8d0.mul(transforms, normal);
-      normal.add(transforms.transfer);
+      normal.add(transforms.transfer.getX() / 4096.0f, transforms.transfer.getY() / 4096.0f, transforms.transfer.getZ() / 4096.0f);
       rgb.unpack(GTE.normalColour(normal, (int)_800fb8cc.pack()));
     } else {
       //LAB_8010bd6c

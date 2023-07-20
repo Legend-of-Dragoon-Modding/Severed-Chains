@@ -20,6 +20,7 @@ import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 
 import javax.annotation.Nullable;
@@ -255,7 +256,7 @@ public final class Scus94491BpeSegment_8003 {
     identityAspectMatrix_800c3588.transfer.set(0, 0, 0);
 
     lightDirectionMatrix_800c34e8.clear();
-    lightColourMatrix_800c3508.clear();
+    lightColourMatrix_800c3508.zero();
 
     centreScreenX_1f8003dc.set((short)0);
     centreScreenY_1f8003de.set((short)0);
@@ -347,7 +348,7 @@ public final class Scus94491BpeSegment_8003 {
 
   @Method(0x8003c4a0L)
   public static void GsSetLightMatrix(final MATRIX mp) {
-    final MATRIX lightDirection = new MATRIX();
+    final Matrix3f lightDirection = new Matrix3f();
     mp.mul(lightDirectionMatrix_800c34e8, lightDirection);
     SetLightMatrix(lightDirection);
   }
@@ -385,26 +386,24 @@ public final class Scus94491BpeSegment_8003 {
       return -1;
     }
 
-    lightDirectionMatrix_800c34e8.set(lightDirectionMatrix_800c34e8);
-
     if(id == 0) {
       //LAB_8003c7ec
       lightDirectionMatrix_800c34e8.set(0, (short)((-light.direction_00.getX() << 12) / mag));
       lightDirectionMatrix_800c34e8.set(1, (short)((-light.direction_00.getY() << 12) / mag));
       lightDirectionMatrix_800c34e8.set(2, (short)((-light.direction_00.getZ() << 12) / mag));
 
-      lightColourMatrix_800c3508.set(0, (short)((r << 12) / 0xff));
-      lightColourMatrix_800c3508.set(3, (short)((g << 12) / 0xff));
-      lightColourMatrix_800c3508.set(6, (short)((b << 12) / 0xff));
+      lightColourMatrix_800c3508.m00 = r / 255.0f;
+      lightColourMatrix_800c3508.m01 = g / 255.0f;
+      lightColourMatrix_800c3508.m02 = b / 255.0f;
     } else if(id == 1) {
       //LAB_8003c904
       lightDirectionMatrix_800c34e8.set(3, (short)((-light.direction_00.getX() << 12) / mag));
       lightDirectionMatrix_800c34e8.set(4, (short)((-light.direction_00.getY() << 12) / mag));
       lightDirectionMatrix_800c34e8.set(5, (short)((-light.direction_00.getZ() << 12) / mag));
 
-      lightColourMatrix_800c3508.set(1, (short)((r << 12) / 0xff));
-      lightColourMatrix_800c3508.set(4, (short)((g << 12) / 0xff));
-      lightColourMatrix_800c3508.set(7, (short)((b << 12) / 0xff));
+      lightColourMatrix_800c3508.m10 = r / 255.0f;
+      lightColourMatrix_800c3508.m11 = g / 255.0f;
+      lightColourMatrix_800c3508.m12 = b / 255.0f;
       //LAB_8003c7dc
     } else if(id == 2) {
       //LAB_8003ca20
@@ -412,9 +411,9 @@ public final class Scus94491BpeSegment_8003 {
       lightDirectionMatrix_800c34e8.set(7, (short)((-light.direction_00.getY() << 12) / mag));
       lightDirectionMatrix_800c34e8.set(8, (short)((-light.direction_00.getZ() << 12) / mag));
 
-      lightColourMatrix_800c3508.set(2, (short)((r << 12) / 0xff));
-      lightColourMatrix_800c3508.set(5, (short)((g << 12) / 0xff));
-      lightColourMatrix_800c3508.set(8, (short)((b << 12) / 0xff));
+      lightColourMatrix_800c3508.m20 = r / 255.0f;
+      lightColourMatrix_800c3508.m21 = g / 255.0f;
+      lightColourMatrix_800c3508.m22 = b / 255.0f;
     }
 
     //LAB_8003cb34
@@ -965,7 +964,6 @@ public final class Scus94491BpeSegment_8003 {
   public static void InitGeom() {
     GTE.setAverageZScaleFactors(0x155, 0x100);
     GTE.setProjectionPlaneDistance((short)1000);
-    GTE.setDepthQueueingParameters(-0x1062, 0x1400000);
     GTE.setScreenOffset(0, 0);
   }
 

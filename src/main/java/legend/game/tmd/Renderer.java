@@ -8,6 +8,7 @@ import legend.core.gte.SVECTOR;
 import legend.core.gte.TmdObjTable1c;
 import legend.game.combat.environment.BattleLightStruct64;
 import legend.game.types.Translucency;
+import org.joml.Vector3f;
 
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
@@ -28,7 +29,7 @@ public final class Renderer {
   public static void renderDobj2(final GsDOBJ2 dobj2, final boolean useSpecialTranslucency, final int ctmdFlag) {
     final TmdObjTable1c objTable = dobj2.tmd_08;
     final SVECTOR[] vertices = objTable.vert_top_00;
-    final SVECTOR[] normals = objTable.normal_top_08;
+    final Vector3f[] normals = objTable.normal_top_08;
 
     // CTMD flag and scripted "uniform lighting" + transparency flag for STMDs in DEFFs
     final int specialFlags = ctmdFlag | ((dobj2.attribute_00 & 0x4000_0000) != 0 ? 0x12 : 0x0);
@@ -39,7 +40,9 @@ public final class Renderer {
     }
   }
 
-  public static void renderTmdPrimitive(final TmdObjTable1c.Primitive primitive, final SVECTOR[] vertices, final SVECTOR[] normals, final boolean useSpecialTranslucency, final int specialFlags) {
+  private static final Vector3f ZERO = new Vector3f();
+
+  public static void renderTmdPrimitive(final TmdObjTable1c.Primitive primitive, final SVECTOR[] vertices, final Vector3f[] normals, final boolean useSpecialTranslucency, final int specialFlags) {
     // Read type info from command ---
     final int command = (primitive.header() | specialFlags) & 0xff04_0000;
     final int primitiveId = command >>> 24;
@@ -181,7 +184,7 @@ public final class Renderer {
           if(poly.vertices[vertexIndex].normalIndex < normals.length) {
             cmd.rgb(vertexIndex, GTE.normalColour(normals[poly.vertices[vertexIndex].normalIndex], poly.vertices[vertexIndex].colour));
           } else {
-            cmd.rgb(vertexIndex, GTE.normalColour(0, 0, 0, poly.vertices[vertexIndex].colour));
+            cmd.rgb(vertexIndex, GTE.normalColour(ZERO, poly.vertices[vertexIndex].colour));
           }
         }
       } else {

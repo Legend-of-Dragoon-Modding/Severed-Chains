@@ -2,6 +2,7 @@ package legend.core.gpu;
 
 import legend.core.gte.SVECTOR;
 import legend.game.types.Translucency;
+import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
 
@@ -140,7 +141,7 @@ public record Mesh(Segment[] segments) {
   }
 
   public record Poly3d(Vertex3d[] vertices, int paletteBase, int pageX, int pageY, @Nullable Translucency translucency) { }
-  public record Vertex3d(SVECTOR pos, SVECTOR normals, int u, int v, int colour) { }
+  public record Vertex3d(SVECTOR pos, Vector3f normals, int u, int v, int colour) { }
 
   public static final class Segment2d implements Segment {
     public final String name;

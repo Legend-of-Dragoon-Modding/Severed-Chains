@@ -70,6 +70,7 @@ import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.joml.Matrix3f;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -960,12 +961,12 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80021f0cL)
-  public static void SetLightMatrix(final MATRIX m) {
+  public static void SetLightMatrix(final Matrix3f m) {
     GTE.setLightSourceMatrix(m);
   }
 
   @Method(0x80021f3cL)
-  public static void SetColorMatrix(final MATRIX m) {
+  public static void SetColorMatrix(final Matrix3f m) {
     GTE.setLightColourMatrix(m);
   }
 
