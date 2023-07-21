@@ -10,7 +10,7 @@ if exist ".\jdk\" (
 )
 
 echo Downloading java...
-powershell -Command "$ProgressPreference = 'SilentlyContinue'; Invoke-WebRequest -Uri 'https://corretto.aws/downloads/latest/amazon-corretto-17-x64-windows-jdk.zip' -OutFile '.\jdk.zip'"
+powershell -Command "$ProgressPreference = 'SilentlyContinue'; Invoke-WebRequest -Uri 'https://corretto.aws/downloads/resources/17.0.7.7.1/amazon-corretto-17.0.7.7.1-windows-x64-jdk.zip' -OutFile '.\jdk.zip'"
 
 echo Extracting java...
 powershell Expand-Archive ".\jdk.zip" -DestinationPath "."
