@@ -977,7 +977,7 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80021facL)
   public static void SetGeomOffset(final int x, final int y) {
-    GTE.setScreenOffset(x << 16, y << 16);
+    GTE.setScreenOffset(x, y);
   }
 
   @Method(0x80021fc4L)

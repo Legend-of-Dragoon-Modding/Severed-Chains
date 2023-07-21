@@ -65,7 +65,7 @@ public class WMapStruct19c0 {
 
   public int _114;
   /** short */
-  public int _118;
+  public int projectionPlaneDistance_118;
   /** ubyte */
   public int _11a;
 

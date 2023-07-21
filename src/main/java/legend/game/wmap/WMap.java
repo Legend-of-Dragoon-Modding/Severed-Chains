@@ -1549,7 +1549,7 @@ public class WMap {
     FUN_800d1914();
 
     _800c66b0._114 = 0;
-    _800c66b0._118 = 1100;
+    _800c66b0.projectionPlaneDistance_118 = 1100;
     _800c66b0._11a = 0;
   }
 
@@ -2264,10 +2264,10 @@ public class WMap {
       struct._114++;
 
       //LAB_800d5424
-      struct._118 += Math.max(4, 64 - struct._114 * 2);
+      struct.projectionPlaneDistance_118 += Math.max(4, 64 - struct._114 * 2);
 
-      if(struct._118 >= 800) {
-        struct._118 = 800;
+      if(struct.projectionPlaneDistance_118 >= 800) {
+        struct.projectionPlaneDistance_118 = 800;
         struct._11a = 0;
       }
     } else if(v0 == 2) {
@@ -2275,10 +2275,10 @@ public class WMap {
       struct._114++;
 
       //LAB_800d5424
-      struct._118 += Math.max(4, 64 - struct._114 * 2);
+      struct.projectionPlaneDistance_118 += Math.max(4, 64 - struct._114 * 2);
 
-      if(struct._118 >= 800) {
-        struct._118 = 800;
+      if(struct.projectionPlaneDistance_118 >= 800) {
+        struct.projectionPlaneDistance_118 = 800;
         struct._11a = 0;
       }
     } else if(v0 == 3) {
@@ -2296,10 +2296,10 @@ public class WMap {
       struct._114++;
 
       //LAB_800d5558
-      struct._118 -= Math.max(4, 64 - struct._114 * 2);
+      struct.projectionPlaneDistance_118 -= Math.max(4, 64 - struct._114 * 2);
 
-      if(struct._118 <= 600) {
-        struct._118 = 600;
+      if(struct.projectionPlaneDistance_118 <= 600) {
+        struct.projectionPlaneDistance_118 = 600;
         struct._11a = 0;
       }
     } else if(v0 == 4) {
@@ -2307,15 +2307,15 @@ public class WMap {
       struct._114++;
 
       //LAB_800d5558
-      struct._118 -= Math.max(4, 64 - struct._114 * 2);
+      struct.projectionPlaneDistance_118 -= Math.max(4, 64 - struct._114 * 2);
 
-      if(struct._118 <= 600) {
-        struct._118 = 600;
+      if(struct.projectionPlaneDistance_118 <= 600) {
+        struct.projectionPlaneDistance_118 = 600;
         struct._11a = 0;
       }
     }
 
-    setProjectionPlaneDistance(struct._118);
+    setProjectionPlaneDistance(struct.projectionPlaneDistance_118);
   }
 
   @Method(0x800d55fcL)

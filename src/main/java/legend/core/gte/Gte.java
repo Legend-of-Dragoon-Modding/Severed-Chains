@@ -5,18 +5,6 @@ import org.joml.Matrix3f;
 import org.joml.Vector3f;
 
 public class Gte {
-  private static final class Matrix {
-    public short v00;
-    public short v01;
-    public short v02;
-    public short v10;
-    public short v11;
-    public short v12;
-    public short v20;
-    public short v21;
-    public short v22;
-  }
-
   private static class Vector2 {
     public short x;
     public short y;
@@ -46,29 +34,27 @@ public class Gte {
   }
 
   //Data Registers
-  private final ShortVector3[] V = {new ShortVector3(), new ShortVector3(), new ShortVector3()};   //R0-1 R2-3 R4-5 s16
+  private final Vector3f[] V = {new Vector3f(), new Vector3f(), new Vector3f()};   //R0-1 R2-3 R4-5 s16
   private final Color RGBC = new Color();                     //R6
   private short OTZ;                     //R7
-  private final short[] IR = new short[4];      //R8-11
   private final Vector2[] SXY = {new Vector2(), new Vector2(), new Vector2(), new Vector2()}; //R12-15 FIFO
-  private final short[] SZ = new short[4];    //R16-19 FIFO
+  private final int[] SZ = new int[4];    //R16-19 FIFO
   private int MAC0;                       //R24
 
   //Control Registers
-  private final Matrix RT = new Matrix();        //R32-36 R40-44 R48-52
+  private final Matrix3f RT = new Matrix3f();        //R32-36 R40-44 R48-52
   private final Matrix3f lightDirection = new Matrix3f();
   private final Matrix3f lightColour = new Matrix3f();
-  private int TRX, TRY, TRZ;          //R37-39
+  private final Vector3f translation = new Vector3f();          //R37-39
   private final Vector3f backgroundColour = new Vector3f();          //R45-47
   private int OFX, OFY;          //R56 57 60
-  private short H;                   //R58
-  private short ZSF3, ZSF4;      //R61 62 59
+  private float H;                   //R58
   private long FLAG;                  //R63
 
   private void AVSZ3() {
     //MAC0 = ZSF3 * (SZ1 + SZ2 + SZ3); for AVSZ3
     //OTZ = MAC0 / 1000h;for both(saturated to 0..FFFFh)
-    final long avsz3 = (long)this.ZSF3 * ((this.SZ[1] & 0xffff) + (this.SZ[2] & 0xffff) + (this.SZ[3] & 0xffff));
+    final long avsz3 = (long)0x155 * (this.SZ[1] + this.SZ[2] + this.SZ[3]); // 1/3
     this.MAC0 = (int)this.setMAC0(avsz3);
     this.OTZ = this.setSZ3(avsz3 >> 12);
   }
@@ -76,7 +62,7 @@ public class Gte {
   private void AVSZ4() {
     //MAC0 = ZSF4 * (SZ0 + SZ1 + SZ2 + SZ3);for AVSZ4
     //OTZ = MAC0 / 1000h;for both(saturated to 0..FFFFh)
-    final long avsz4 = (long)this.ZSF4 * ((this.SZ[0] & 0xffff) + (this.SZ[1] & 0xffff) + (this.SZ[2] & 0xffff) + (this.SZ[3] & 0xffff));
+    final long avsz4 = (long)0x100 * (this.SZ[0] + this.SZ[1] + this.SZ[2] + this.SZ[3]); // 1/4
     this.MAC0 = (int)this.setMAC0(avsz4);
     this.OTZ = this.setSZ3(avsz4 >> 12);
   }
@@ -92,44 +78,37 @@ public class Gte {
     this.RTPS(2);
   }
 
+  private final Vector3f positionTemp = new Vector3f();
+
   private void RTPS(final int r) {
     //IR1 = MAC1 = (TRX*1000h + RT11*VX0 + RT12*VY0 + RT13*VZ0) SAR (sf*12)
     //IR2 = MAC2 = (TRY*1000h + RT21*VX0 + RT22*VY0 + RT23*VZ0) SAR (sf*12)
     //IR3 = MAC3 = (TRZ*1000h + RT31*VX0 + RT32*VY0 + RT33*VZ0) SAR (sf*12)
-    final int MAC1 = (int)(this.setMAC(1, this.setMAC(1, this.setMAC(1, (long)this.TRX * 0x1000 + this.RT.v00 * this.V[r].x) + (long)this.RT.v01 * this.V[r].y) + (long)this.RT.v02 * this.V[r].z) >> 12);
-    final int MAC2 = (int)(this.setMAC(2, this.setMAC(2, this.setMAC(2, (long)this.TRY * 0x1000 + this.RT.v10 * this.V[r].x) + (long)this.RT.v11 * this.V[r].y) + (long)this.RT.v12 * this.V[r].z) >> 12);
-    final int MAC3 = (int)(this.setMAC(3, this.setMAC(3, this.setMAC(3, (long)this.TRZ * 0x1000 + this.RT.v20 * this.V[r].x) + (long)this.RT.v21 * this.V[r].y) + (long)this.RT.v22 * this.V[r].z) >> 12);
-
-    this.IR[1] = this.setIR(1, MAC1);
-    this.IR[2] = this.setIR(2, MAC2);
-    this.IR[3] = this.setIR(3, MAC3);
+    this.V[r]
+      .mulTranspose(this.RT, this.positionTemp)
+      .add(this.translation);
 
     //SZ3 = MAC3 SAR ((1-sf)*12)                           ;ScreenZ FIFO 0..+FFFFh
     this.SZ[0] = this.SZ[1];
     this.SZ[1] = this.SZ[2];
     this.SZ[2] = this.SZ[3];
-    this.SZ[3] = this.setSZ3(MAC3);
+    this.SZ[3] = MathHelper.clamp((int)(this.positionTemp.z * 4096.0f), 0, 0xffff);
+
+    this.positionTemp.z = this.SZ[3] / 4096.0f;
 
     //NON UNR Div Version
-    final long n;
+    final float n;
     if(this.SZ[3] == 0) {
-      n = 0x1ffff;
+      n = 1.0f;
     } else {
-      final long div = ((this.H & 0xffffL) * 0x20000 / (this.SZ[3] & 0xffff) + 1) / 2;
-
-      if(div > 0x1ffff) {
-        n = 0x1ffff;
-        this.FLAG |= 0x1 << 17;
-      } else {
-        n = div;
-      }
+      n = (this.H * 2.0f / this.positionTemp.z) / 2.0f;
     }
 
     //MAC0=(((H*20000h/SZ3)+1)/2)*IR1+OFX, SX2=MAC0/10000h ;ScrX FIFO -400h..+3FFh
     //MAC0=(((H*20000h/SZ3)+1)/2)*IR2+OFY, SY2=MAC0/10000h ;ScrY FIFO -400h..+3FFh
     //MAC0=(((H*20000h/SZ3)+1)/2)*DQA+DQB, IR0=MAC0/1000h  ;Depth cueing 0..+1000h
-    final int x = (int)(this.setMAC0(n * this.IR[1] + this.OFX) >> 16);
-    final int y = (int)(this.setMAC0(n * this.IR[2] + this.OFY) >> 16);
+    final int x = (int)(n * this.positionTemp.x * 0xffff + this.OFX);
+    final int y = (int)(n * this.positionTemp.y * 0xffff + this.OFY);
 
     this.SXY[0].set(this.SXY[1]);
     this.SXY[1].set(this.SXY[2]);
@@ -165,20 +144,6 @@ public class Gte {
     return (short)value;
   }
 
-  private short setIR(final int i, final int value) {
-    if(value < -0x8000) {
-      this.FLAG |= 0x100_0000L >>> i - 1;
-      return -0x8000;
-    }
-
-    if(value > 0x7fff) {
-      this.FLAG |= 0x100_0000L >>> i - 1;
-      return 0x7fff;
-    }
-
-    return (short)value;
-  }
-
   private long setMAC0(final long value) {
     if(value < -0x8000_0000) {
       this.FLAG |= 0x8000L;
@@ -189,21 +154,11 @@ public class Gte {
     return value;
   }
 
-  private long setMAC(final int i, final long value) {
-    if(value < -0x800_0000_0000L) {
-      this.FLAG |= 0x800_0000L >>> i - 1;
-    } else if(value > 0x7ff_ffff_ffffL) {
-      this.FLAG |= 0x4000_0000L >>> i - 1;
-    }
-
-    return value << 20 >> 20;
-  }
-
   /** Data register 0/1, 2/3, 4/5 */
   public void setVertex(final int index, final int x, final int y, final int z) {
-    this.V[index].x = (short)x;
-    this.V[index].y = (short)y;
-    this.V[index].z = (short)z;
+    this.V[index].x = x / 4096.0f;
+    this.V[index].y = y / 4096.0f;
+    this.V[index].z = z / 4096.0f;
   }
 
   /** Data register 0/1, 2/3, 4/5 */
@@ -227,7 +182,7 @@ public class Gte {
   }
 
   /** Data register 16, 17, 18, 19 */
-  public short getScreenZ(final int index) {
+  public int getScreenZ(final int index) {
     return this.SZ[index];
   }
 
@@ -238,42 +193,62 @@ public class Gte {
 
   /** Control register 0-4 */
   public void getRotationMatrix(final MATRIX matrix) {
-    matrix.set(0, this.RT.v00);
-    matrix.set(1, this.RT.v01);
-    matrix.set(2, this.RT.v02);
-    matrix.set(3, this.RT.v10);
-    matrix.set(4, this.RT.v11);
-    matrix.set(5, this.RT.v12);
-    matrix.set(6, this.RT.v20);
-    matrix.set(7, this.RT.v21);
-    matrix.set(8, this.RT.v22);
+    matrix.set(0, (short)(this.RT.m00 * 4096.0f));
+    matrix.set(1, (short)(this.RT.m01 * 4096.0f));
+    matrix.set(2, (short)(this.RT.m02 * 4096.0f));
+    matrix.set(3, (short)(this.RT.m10 * 4096.0f));
+    matrix.set(4, (short)(this.RT.m11 * 4096.0f));
+    matrix.set(5, (short)(this.RT.m12 * 4096.0f));
+    matrix.set(6, (short)(this.RT.m20 * 4096.0f));
+    matrix.set(7, (short)(this.RT.m21 * 4096.0f));
+    matrix.set(8, (short)(this.RT.m22 * 4096.0f));
+  }
+
+  /** Control register 0-4 */
+  public void getRotationMatrix(final Matrix3f matrix) {
+    matrix.set(this.RT);
   }
 
   /** Control register 0-4 */
   public void setRotationMatrix(final MATRIX matrix) {
-    this.RT.v00 = matrix.get(0);
-    this.RT.v01 = matrix.get(1);
-    this.RT.v02 = matrix.get(2);
-    this.RT.v10 = matrix.get(3);
-    this.RT.v11 = matrix.get(4);
-    this.RT.v12 = matrix.get(5);
-    this.RT.v20 = matrix.get(6);
-    this.RT.v21 = matrix.get(7);
-    this.RT.v22 = matrix.get(8);
+    this.RT.m00 = matrix.get(0) / 4096.0f;
+    this.RT.m01 = matrix.get(1) / 4096.0f;
+    this.RT.m02 = matrix.get(2) / 4096.0f;
+    this.RT.m10 = matrix.get(3) / 4096.0f;
+    this.RT.m11 = matrix.get(4) / 4096.0f;
+    this.RT.m12 = matrix.get(5) / 4096.0f;
+    this.RT.m20 = matrix.get(6) / 4096.0f;
+    this.RT.m21 = matrix.get(7) / 4096.0f;
+    this.RT.m22 = matrix.get(8) / 4096.0f;
+  }
+
+  /** Control register 0-4 */
+  public void setRotationMatrix(final Matrix3f matrix) {
+    this.RT.set(matrix);
   }
 
   /** Control register 5-7 */
   public void getTranslationVector(final VECTOR vector) {
-    vector.setX(this.TRX);
-    vector.setY(this.TRY);
-    vector.setZ(this.TRZ);
+    vector.setX((int)(this.translation.x * 4096.0f));
+    vector.setY((int)(this.translation.y * 4096.0f));
+    vector.setZ((int)(this.translation.z * 4096.0f));
+  }
+
+  /** Control register 5-7 */
+  public void getTranslationVector(final Vector3f vector) {
+    vector.set(this.translation);
   }
 
   /** Control register 5-7 */
   public void setTranslationVector(final VECTOR vector) {
-    this.TRX = vector.getX();
-    this.TRY = vector.getY();
-    this.TRZ = vector.getZ();
+    this.translation.x = vector.getX() / 4096.0f;
+    this.translation.y = vector.getY() / 4096.0f;
+    this.translation.z = vector.getZ() / 4096.0f;
+  }
+
+  /** Control register 5-7 */
+  public void setTranslationVector(final Vector3f vector) {
+    this.translation.set(vector);
   }
 
   /** Control register 8-12 light source/position matrix */
@@ -310,18 +285,13 @@ public class Gte {
   }
 
   /** Control register 26 projection plane distance (H) */
-  public short getProjectionPlaneDistance() {
-    return this.H;
+  public int getProjectionPlaneDistance() {
+    return (int)(this.H * 0xffff);
   }
 
   /** Control register 26 projection plane distance (H) */
   public void setProjectionPlaneDistance(final int distance) {
-    this.H = (short)distance;
-  }
-
-  public void setAverageZScaleFactors(final int zsf3, final int zsf4) {
-    this.ZSF3 = (short)zsf3;
-    this.ZSF4 = (short)zsf4;
+    this.H = distance / (float)0xffff;
   }
 
   /** Control register 31 */

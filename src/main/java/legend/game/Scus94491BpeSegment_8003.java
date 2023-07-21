@@ -41,8 +41,9 @@ import static legend.game.Scus94491BpeSegment_8002.SetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8002.SetRotMatrix;
 import static legend.game.Scus94491BpeSegment_8002.SetTransMatrix;
 import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
-import static legend.game.Scus94491BpeSegment_8005._800546c0;
-import static legend.game.Scus94491BpeSegment_8005._800546c2;
+import static legend.game.Scus94491BpeSegment_8005.vectorStack_80054a0c;
+import static legend.game.Scus94491BpeSegment_8005.vramWidth_800546c0;
+import static legend.game.Scus94491BpeSegment_8005.vramHeight_800546c2;
 import static legend.game.Scus94491BpeSegment_8005.matrixStackIndex_80054a08;
 import static legend.game.Scus94491BpeSegment_8005.matrixStack_80054a0c;
 import static legend.game.Scus94491BpeSegment_800c.PSDCNT_800c34d0;
@@ -62,14 +63,11 @@ public final class Scus94491BpeSegment_8003 {
   @Method(0x80038190L)
   public static void ResetGraph() {
     GPU.resetCommandBuffer();
-
-    _800546c0.setu(1024);
-    _800546c2.setu(512);
   }
 
   @Method(0x80038574L)
   private static void validateRect(final String text, final RECT rect) {
-    if(rect.w.get() > _800546c0.get() || rect.x.get() + rect.w.get() > _800546c0.get() || rect.y.get() > _800546c2.get() || rect.y.get() + rect.h.get() > _800546c2.get() || rect.w.get() < 0 || rect.x.get() < 0 || rect.y.get() < 0 || rect.h.get() < 0) {
+    if(rect.w.get() > vramWidth_800546c0 || rect.x.get() + rect.w.get() > vramWidth_800546c0 || rect.y.get() > vramHeight_800546c2 || rect.y.get() + rect.h.get() > vramHeight_800546c2 || rect.w.get() < 0 || rect.x.get() < 0 || rect.y.get() < 0 || rect.h.get() < 0) {
       LOGGER.warn("%s:bad RECT", text);
       LOGGER.warn("(%d,%d)-(%d,%d)", rect.x.get(), rect.y.get(), rect.w.get(), rect.h.get());
     }
@@ -91,8 +89,8 @@ public final class Scus94491BpeSegment_8003 {
   public static long StoreImage(final RECT rect, final FileData data) {
     validateRect("StoreImage", rect);
 
-    rect.w.set(MathHelper.clamp(rect.w.get(), (short)0, (short)_800546c0.get()));
-    rect.h.set(MathHelper.clamp(rect.h.get(), (short)0, (short)_800546c2.get()));
+    rect.w.set(MathHelper.clamp(rect.w.get(), (short)0, (short)vramWidth_800546c0));
+    rect.h.set(MathHelper.clamp(rect.h.get(), (short)0, (short)vramHeight_800546c2));
 
     if(rect.w.get() <= 0 || rect.h.get() <= 0) {
       throw new IllegalArgumentException("RECT width and height must be greater than 0");
@@ -962,42 +960,34 @@ public final class Scus94491BpeSegment_8003 {
 
   @Method(0x8003e958L)
   public static void InitGeom() {
-    GTE.setAverageZScaleFactors(0x155, 0x100);
-    GTE.setProjectionPlaneDistance((short)1000);
+    GTE.setProjectionPlaneDistance(1000);
     GTE.setScreenOffset(0, 0);
   }
 
   @Method(0x8003ef80L)
   public static void PushMatrix() {
-    final int i = (int)matrixStackIndex_80054a08.get();
-
-    if(i >= 640) {
+    if(matrixStackIndex_80054a08 >= 20) {
       throw new RuntimeException("Error: Can't push matrix, stack(max 20) is full!");
     }
 
     //LAB_8003efc0
-    final MATRIX matrix = matrixStack_80054a0c[i / 32];
-    GTE.getRotationMatrix(matrix);
-    GTE.getTranslationVector(matrix.transfer);
+    GTE.getRotationMatrix(matrixStack_80054a0c[matrixStackIndex_80054a08]);
+    GTE.getTranslationVector(vectorStack_80054a0c[matrixStackIndex_80054a08]);
 
-    matrixStackIndex_80054a08.addu(0x20L);
+    matrixStackIndex_80054a08++;
   }
 
   @Method(0x8003f024L)
   public static void PopMatrix() {
-    int i = (int)matrixStackIndex_80054a08.get();
-
-    if(i == 0) {
+    if(matrixStackIndex_80054a08 == 0) {
       throw new RuntimeException("Error: Can't pop matrix, stack is empty!");
     }
 
     //LAB_8003f060
-    i -= 0x20;
-    matrixStackIndex_80054a08.subu(0x20L);
+    matrixStackIndex_80054a08--;
 
-    final MATRIX matrix = matrixStack_80054a0c[i / 32];
-    GTE.setRotationMatrix(matrix);
-    GTE.setTranslationVector(matrix.transfer);
+    GTE.setRotationMatrix(matrixStack_80054a0c[matrixStackIndex_80054a08]);
+    GTE.setTranslationVector(vectorStack_80054a0c[matrixStackIndex_80054a08]);
   }
 
   @Method(0x8003f8a0L)
