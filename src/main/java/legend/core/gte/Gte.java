@@ -88,18 +88,18 @@ public class Gte {
       .mulTranspose(this.RT, this.positionTemp)
       .add(this.translation);
 
+    this.positionTemp.z = MathHelper.clamp(this.positionTemp.z, 0.0f, 16.0f);
+
     //SZ3 = MAC3 SAR ((1-sf)*12)                           ;ScreenZ FIFO 0..+FFFFh
     this.SZ[0] = this.SZ[1];
     this.SZ[1] = this.SZ[2];
     this.SZ[2] = this.SZ[3];
-    this.SZ[3] = MathHelper.clamp((int)(this.positionTemp.z * 4096.0f), 0, 0xffff);
+    this.SZ[3] = (int)(this.positionTemp.z * 4096.0f);
 
-    this.positionTemp.z = this.SZ[3] / 4096.0f;
-
-    //NON UNR Div Version
     final float n;
     if(this.SZ[3] == 0) {
       n = 1.0f;
+      this.FLAG |= 0x1 << 17;
     } else {
       n = (this.H * 2.0f / this.positionTemp.z) / 2.0f;
     }
@@ -112,18 +112,18 @@ public class Gte {
 
     this.SXY[0].set(this.SXY[1]);
     this.SXY[1].set(this.SXY[2]);
-    this.SXY[2].x = this.setSXY(1, x);
-    this.SXY[2].y = this.setSXY(2, y);
+    this.SXY[2].x = this.setSXY(x);
+    this.SXY[2].y = this.setSXY(y);
   }
 
-  private short setSXY(final int i, final int value) {
+  private short setSXY(final int value) {
     if(value < -0x400) {
-      this.FLAG |= 0x4000L >>> i - 1;
+      this.FLAG |= 0x4000L >>> 2 - 1;
       return -0x400;
     }
 
     if(value > 0x3ff) {
-      this.FLAG |= 0x4000L >>> i - 1;
+      this.FLAG |= 0x4000L >>> 2 - 1;
       return 0x3ff;
     }
 
