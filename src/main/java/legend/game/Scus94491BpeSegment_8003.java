@@ -790,7 +790,7 @@ public final class Scus94491BpeSegment_8003 {
    * insufficient precision is improved. However, its execution time is doubled
    */
   @Method(0x8003dfc0L)
-  public static long GsSetRefView2L(final GsRVIEW2 s2) {
+  public static void GsSetRefView2L(final GsRVIEW2 s2) {
     worldToScreenMatrix_800c3548.set(identityAspectMatrix_800c3588);
     FUN_8003d5d0(worldToScreenMatrix_800c3548, -s2.viewpointTwist_18);
 
@@ -801,10 +801,10 @@ public final class Scus94491BpeSegment_8003 {
     final int vectorLengthSquared = deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ;
 
     if(vectorLengthSquared == 0) {
-      return 0x1L;
+      return;
     }
 
-    final int vectorLength = (int)Math.sqrt(vectorLengthSquared);
+    final int vectorLength = Math.max(1, (int)Math.sqrt(vectorLengthSquared));
 
     final int normalizedY = deltaY * 0x1000 / vectorLength;
 
@@ -838,9 +838,6 @@ public final class Scus94491BpeSegment_8003 {
       GsMulCoord2(worldToScreenMatrix_800c3548, transposedLw);
       worldToScreenMatrix_800c3548.set(transposedLw);
     }
-
-    //LAB_8003e5a8
-    return 0;
   }
 
   /**
