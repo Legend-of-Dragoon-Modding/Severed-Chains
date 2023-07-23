@@ -1095,7 +1095,7 @@ public final class SEffe {
       final MATRIX lightMatrix = new MATRIX();
       FUN_800fc4bc(lightMatrix, manager, particleMetrics);
       if((particleMetrics.flags_00 & 0x40) == 0) {
-        FUN_800e61e4(particleMetrics.colour0_40.getR() << 5, particleMetrics.colour0_40.getG() << 5, particleMetrics.colour0_40.getB() << 5);
+        FUN_800e61e4(particleMetrics.colour0_40.getR() / 128.0f, particleMetrics.colour0_40.getG() / 128.0f, particleMetrics.colour0_40.getB() / 128.0f);
       }
 
       //LAB_800fcf94
@@ -6360,7 +6360,7 @@ public final class SEffe {
           final int b = impact.opacity_8c[stageNum].getB() * manager._10.colour_1c.getZ() >> 8;
 
           if((manager._10.flags_00 & 0x40) == 0) {
-            FUN_800e61e4(r << 5, g << 5, b << 5);
+            FUN_800e61e4(r / 128.0f, g / 128.0f, b / 128.0f);
           }
 
           //LAB_8010f50c
@@ -9035,7 +9035,7 @@ public final class SEffe {
       tmdGp0Tpage_1f8003ec.set(flags >>> 23 & 0x60);
       zOffset_1f8003e8.set(manager._10.z_22);
       if((manager._10.flags_00 & 0x40) == 0) {
-        FUN_800e61e4(manager._10.colour_1c.getX() << 5, manager._10.colour_1c.getY() << 5, manager._10.colour_1c.getZ() << 5);
+        FUN_800e61e4(manager._10.colour_1c.getX() / 128.0f, manager._10.colour_1c.getY() / 128.0f, manager._10.colour_1c.getZ() / 128.0f);
       }
 
       //LAB_80117ac0
@@ -9258,10 +9258,10 @@ public final class SEffe {
       //LAB_801182c8
       zOffset_1f8003e8.set(data._10.z_22);
       if((data._10.flags_00 & 0x40) == 0) {
-        FUN_800e61e4(data._10.colour_1c.getX() << 5, data._10.colour_1c.getY() << 5, data._10.colour_1c.getZ() << 5);
+        FUN_800e61e4(data._10.colour_1c.getX() / 128.0f, data._10.colour_1c.getY() / 128.0f, data._10.colour_1c.getZ() / 128.0f);
       } else {
         //LAB_80118304
-        FUN_800e60e0(0x1000, 0x1000, 0x1000);
+        FUN_800e60e0(1.0f, 1.0f, 1.0f);
       }
 
       //LAB_80118314
@@ -9455,7 +9455,7 @@ public final class SEffe {
       sp0x10.set(5, (short)0);
       tmdGp0Tpage_1f8003ec.set(manager._10.flags_00 >>> 23 & 0x60);
       zOffset_1f8003e8.set(manager._10.z_22);
-      FUN_800e60e0(manager._10.colour_1c.getX() << 5, manager._10.colour_1c.getY() << 5, manager._10.colour_1c.getZ() << 5);
+      FUN_800e60e0(manager._10.colour_1c.getX() / 128.0f, manager._10.colour_1c.getY() / 128.0f, manager._10.colour_1c.getZ() / 128.0f);
       renderTmdSpriteEffect(model_800bda10.dobj2ArrPtr_00[0].tmd_08, manager._10, sp0x10);
       FUN_800e6170();
     }
@@ -9617,7 +9617,7 @@ public final class SEffe {
         zOffset_1f8003e8.set(manager._10.z_22);
 
         if((manager._10.flags_00 & 0x40) == 0) {
-          FUN_800e61e4(manager._10.colour_1c.getX() << 5, manager._10.colour_1c.getY() << 5, manager._10.colour_1c.getZ() << 5);
+          FUN_800e61e4(manager._10.colour_1c.getX() / 128.0f, manager._10.colour_1c.getY() / 128.0f, manager._10.colour_1c.getZ() / 128.0f);
         }
 
         //LAB_80118f9c

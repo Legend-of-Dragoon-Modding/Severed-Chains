@@ -167,15 +167,12 @@ public final class Renderer {
 
       if(textured && translucent && !lit && (ctmd || uniformLit)) {
         final BattleLightStruct64 bkLight = _800c6930;
-        final int rbk = bkLight.colour_00.getX();
-        final int gbk = bkLight.colour_00.getY();
-        final int bbk = bkLight.colour_00.getZ();
 
         for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
           int rgb = poly.vertices[vertexIndex].colour;
-          final int r = (((rgb & 0xff) * rbk >> 12) & 0xff);
-          final int g = ((((rgb >>> 8) & 0xff) * gbk >> 12) & 0xff);
-          final int b = ((((rgb >>> 16) & 0xff) * bbk >> 12) & 0xff);
+          final int r = (int)((rgb        & 0xff) * bkLight.colour_00.x) & 0xff;
+          final int g = (int)((rgb >>>  8 & 0xff) * bkLight.colour_00.y) & 0xff;
+          final int b = (int)((rgb >>> 16 & 0xff) * bkLight.colour_00.z) & 0xff;
           rgb = b << 16 | g << 8 | r;
           cmd.rgb(vertexIndex, rgb);
         }

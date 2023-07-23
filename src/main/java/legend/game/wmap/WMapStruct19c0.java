@@ -6,6 +6,7 @@ import legend.core.gte.SVECTOR;
 import legend.core.gte.VECTOR;
 import legend.game.types.GsF_LIGHT;
 import legend.game.types.GsRVIEW2;
+import org.joml.Vector3f;
 
 import java.util.Arrays;
 
@@ -70,7 +71,7 @@ public class WMapStruct19c0 {
   public int _11a;
 
   public final GsF_LIGHT[] lights_11c = {new GsF_LIGHT(), new GsF_LIGHT(), new GsF_LIGHT()};
-  public final SVECTOR ambientLight_14c = new SVECTOR();
+  public final Vector3f ambientLight_14c = new Vector3f();
   public final WMapSubStruct18[] _154 = new WMapSubStruct18[0x101];
   public int _196c;
   public int _1970;

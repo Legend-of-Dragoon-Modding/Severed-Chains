@@ -263,6 +263,13 @@ public class Gte {
     this.backgroundColour.z = b / 4096.0f;
   }
 
+  /** Control register 13-15 background colour */
+  public void setBackgroundColour(final float r, final float g, final float b) {
+    this.backgroundColour.x = r;
+    this.backgroundColour.y = g;
+    this.backgroundColour.z = b;
+  }
+
   /** Control register 16-20 light colour matrix */
   public void setLightColourMatrix(final Matrix3f matrix) {
     this.lightColour.set(matrix);

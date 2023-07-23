@@ -90,7 +90,6 @@ import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLs;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
-import static legend.game.Scus94491BpeSegment_8003.GsSetAmbient;
 import static legend.game.Scus94491BpeSegment_8003.GsSetFlatLight;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8003.GsSetRefView2L;
@@ -1588,8 +1587,8 @@ public class WMap {
     }
 
     //LAB_800d1c88
-    v0.ambientLight_14c.set((short)0x600, (short)0x600, (short)0x600);
-    GsSetAmbient(v0.ambientLight_14c.getX(), v0.ambientLight_14c.getY(), v0.ambientLight_14c.getZ());
+    v0.ambientLight_14c.set(0.375f, 0.375f, 0.375f);
+    GTE.setBackgroundColour(v0.ambientLight_14c.x, v0.ambientLight_14c.y, v0.ambientLight_14c.z);
     v0._88 = 0;
   }
 
@@ -4074,13 +4073,12 @@ public class WMap {
     final int modelIndex = struct.modelIndex_1e4;
     if(modelIndex == 0) {
       //LAB_800e03a0
-      GsSetAmbient(0xc80, 0xc80, 0xc80);
+      GTE.setBackgroundColour(0.78125f, 0.78125f, 0.78125f);
 
       struct.models_0c[0].scaleVector_fc.set(0x800, 0x666, 0x800);
     } else if(modelIndex == 1) {
       //LAB_800e0404
-      GsSetAmbient(0x800, 0x800, 0x800);
-
+      GTE.setBackgroundColour(0.5f, 0.5f, 0.5f);
 
       if(mapState_800c6798.continentIndex_00 == 7) { // Teleporting
         struct.models_0c[1].scaleVector_fc.set(0x1000, 0x1000, 0x1000);
@@ -4092,16 +4090,16 @@ public class WMap {
       //LAB_800e0380
     } else if(modelIndex == 2) {
       //LAB_800e04c4
-      GsSetAmbient(0x800, 0x800, 0x800);
+      GTE.setBackgroundColour(0.5f, 0.5f, 0.5f);
     } else if(modelIndex == 3) {
       //LAB_800e04e0
-      GsSetAmbient(0x800, 0x800, 0x800);
+      GTE.setBackgroundColour(0.5f, 0.5f, 0.5f);
     }
 
     //LAB_800e04fc
     struct.models_0c[struct.modelIndex_1e4].zOffset_a0 = 78;
     renderModel(struct.models_0c[struct.modelIndex_1e4]);
-    GsSetAmbient(_800c66b0.ambientLight_14c.getX(), _800c66b0.ambientLight_14c.getY(), _800c66b0.ambientLight_14c.getZ());
+    GTE.setBackgroundColour(_800c66b0.ambientLight_14c.x, _800c66b0.ambientLight_14c.y, _800c66b0.ambientLight_14c.z);
     FUN_800e06d0();
     FUN_800e1364();
   }

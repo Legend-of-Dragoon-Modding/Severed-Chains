@@ -18,7 +18,6 @@ import legend.core.gte.TmdWithId;
 import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
 import legend.core.memory.types.ArrayRef;
-import legend.core.memory.types.IntRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.game.characters.Element;
 import legend.game.characters.VitalsStat;
@@ -87,6 +86,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -126,7 +126,6 @@ import static legend.game.Scus94491BpeSegment_8003.GsGetLs;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
-import static legend.game.Scus94491BpeSegment_8003.GsSetAmbient;
 import static legend.game.Scus94491BpeSegment_8003.GsSetFlatLight;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
@@ -403,11 +402,11 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e4cf8L)
-  public static void FUN_800e4cf8(final int r, final int g, final int b) {
+  public static void FUN_800e4cf8(final float r, final float g, final float b) {
     final BattleLightStruct64 v0 = _800c6930;
     v0.colour_00.set(r, g, b);
     v0._24 = 0;
-    GsSetAmbient(r, g, b);
+    GTE.setBackgroundColour(r, g, b);
   }
 
   /**
@@ -415,25 +414,23 @@ public final class Bttl_800e {
    */
   @Method(0x800e4d2cL)
   public static FlowControl FUN_800e4d2c(final RunningScript<?> script) {
-    FUN_800e4cf8(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get());
+    FUN_800e4cf8(script.params_20[0].get() / 4096.0f, script.params_20[1].get() / 4096.0f, script.params_20[2].get() / 4096.0f);
     _800c6930._24 = 0;
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e4d74L)
-  public static void getLightColour(final IntRef r, final IntRef g, final IntRef b) {
+  public static void getLightColour(final Vector3f colour) {
     final BattleLightStruct64 light = _800c6930;
-    r.set(light.colour_00.getX());
-    g.set(light.colour_00.getY());
-    b.set(light.colour_00.getZ());
+    colour.set(light.colour_00);
   }
 
   @Method(0x800e4db4L)
   public static FlowControl scriptGetLightColour(final RunningScript<?> script) {
     final BattleLightStruct64 v0 = _800c6930;
-    script.params_20[0].set(v0.colour_00.getX());
-    script.params_20[1].set(v0.colour_00.getY());
-    script.params_20[2].set(v0.colour_00.getZ());
+    script.params_20[0].set((int)(v0.colour_00.x * 0x1000));
+    script.params_20[1].set((int)(v0.colour_00.y * 0x1000));
+    script.params_20[2].set((int)(v0.colour_00.z * 0x1000));
     return FlowControl.CONTINUE;
   }
 
@@ -645,7 +642,7 @@ public final class Bttl_800e {
 
   @Method(0x800e5768L)
   public static void applyStageAmbiance(final StageAmbiance4c ambiance) {
-    FUN_800e4cf8(ambiance.ambientColour_00.getX(), ambiance.ambientColour_00.getY(), ambiance.ambientColour_00.getZ());
+    FUN_800e4cf8(ambiance.ambientColour_00.x, ambiance.ambientColour_00.y, ambiance.ambientColour_00.z);
 
     final BattleLightStruct64 v1 = _800c6930;
     if(ambiance._0e > 0) {
@@ -736,11 +733,11 @@ public final class Bttl_800e {
 
     if(light1._24 == 3) { // Dragoon space lighting is handled here, I think this is for flickering light
       final int angle = rcos(((lightTicks_800c6928.get() + light1._2c) % light1._2e << 12) / light1._2e);
-      final int minAngle = 0x1000 - angle;
-      final int maxAngle = 0x1000 + angle;
-      light1.colour_00.setX((light1.colour1_0c.getX() * maxAngle + light1.colour2_18.getX() * minAngle) / 0x2000);
-      light1.colour_00.setY((light1.colour1_0c.getY() * maxAngle + light1.colour2_18.getY() * minAngle) / 0x2000);
-      light1.colour_00.setZ((light1.colour1_0c.getZ() * maxAngle + light1.colour2_18.getZ() * minAngle) / 0x2000);
+      final float minAngle = (0x1000 - angle) / (float)0x1000;
+      final float maxAngle = (0x1000 + angle) / (float)0x1000;
+      light1.colour_00.x = (light1.colour1_0c.x * maxAngle + light1.colour2_18.x * minAngle) / 2.0f;
+      light1.colour_00.y = (light1.colour1_0c.y * maxAngle + light1.colour2_18.y * minAngle) / 2.0f;
+      light1.colour_00.z = (light1.colour1_0c.z * maxAngle + light1.colour2_18.z * minAngle) / 2.0f;
     }
 
     //LAB_800e5b98
@@ -837,7 +834,7 @@ public final class Bttl_800e {
     }
 
     final BattleLightStruct64 v0 = _800c6930;
-    GsSetAmbient(v0.colour_00.getX(), v0.colour_00.getY(), v0.colour_00.getZ());
+    GTE.setBackgroundColour(v0.colour_00.x, v0.colour_00.y, v0.colour_00.z);
     projectionPlaneDistance_1f8003f8.set(getProjectionPlaneDistance());
   }
 
@@ -847,52 +844,51 @@ public final class Bttl_800e {
     state.loadScriptFile(doNothingScript_8004f650);
     state.setTicker(Bttl_800e::tickLighting);
     state.setRenderer(Bttl_800e::deallocateLighting);
-    _800c6930._60 = 0;
+    _800c6930.colourIndex_60 = 0;
     resetLights();
   }
 
   @Method(0x800e60e0L)
-  public static void FUN_800e60e0(final int r, final int g, final int b) {
-    if(r < 0) {
-      LOGGER.warn("Negative R! %x", r);
+  public static void FUN_800e60e0(final float r, final float g, final float b) {
+    if(r < 0.0f) {
+      LOGGER.warn("Negative R! %f", r);
     }
 
-    if(g < 0) {
-      LOGGER.warn("Negative G! %x", g);
+    if(g < 0.0f) {
+      LOGGER.warn("Negative G! %f", g);
     }
 
-    if(b < 0) {
-      LOGGER.warn("Negative B! %x", b);
+    if(b < 0.0f) {
+      LOGGER.warn("Negative B! %f", b);
     }
 
-    final BattleLightStruct64 v1 = _800c6930;
-    final VECTOR s0 = v1._30[v1._60];
+    final BattleLightStruct64 light = _800c6930;
+    final Vector3f colour = light.colours_30[light.colourIndex_60];
+    getLightColour(colour);
 
-    getLightColour(s0.x, s0.y, s0.z);
-
-    v1.colour_00.set(r, g, b);
-    v1._60 = v1._60 + 1 & 3;
+    light.colour_00.set(r, g, b);
+    light.colourIndex_60 = light.colourIndex_60 + 1 & 3;
   }
 
   @Method(0x800e6170L)
   public static void FUN_800e6170() {
     final BattleLightStruct64 light = _800c6930;
-    light._60 = light._60 - 1 & 3;
-    light.colour_00.set(light._30[light._60]);
+    light.colourIndex_60 = light.colourIndex_60 - 1 & 3;
+    light.colour_00.set(light.colours_30[light.colourIndex_60]);
   }
 
   @Method(0x800e61e4L)
-  public static void FUN_800e61e4(final int r, final int g, final int b) {
-    if(r < 0) {
-      LOGGER.warn("Negative R! %x", r);
+  public static void FUN_800e61e4(final float r, final float g, final float b) {
+    if(r < 0.0f) {
+      LOGGER.warn("Negative R! %f", r);
     }
 
-    if(g < 0) {
-      LOGGER.warn("Negative G! %x", g);
+    if(g < 0.0f) {
+      LOGGER.warn("Negative G! %f", g);
     }
 
-    if(b < 0) {
-      LOGGER.warn("Negative B! %x", b);
+    if(b < 0.0f) {
+      LOGGER.warn("Negative B! %f", b);
     }
 
     GsSetFlatLight(0, light_800c6ddc);
@@ -901,7 +897,7 @@ public final class Bttl_800e {
     FUN_800e60e0(r, g, b);
 
     final BattleLightStruct64 light = _800c6930;
-    GsSetAmbient(light.colour_00.getX(), light.colour_00.getY(), light.colour_00.getZ());
+    GTE.setBackgroundColour(light.colour_00.x, light.colour_00.y, light.colour_00.z);
   }
 
   @Method(0x800e62a8L)
@@ -909,7 +905,7 @@ public final class Bttl_800e {
     FUN_800e6170();
 
     final BattleLightStruct64 light = _800c6930;
-    GsSetAmbient(light.colour_00.getX(), light.colour_00.getY(), light.colour_00.getZ());
+    GTE.setBackgroundColour(light.colour_00.x, light.colour_00.y, light.colour_00.z);
 
     for(int i = 0; i < 3; i++) {
       GsSetFlatLight(i, lights_800c692c[i].light_00);
@@ -2433,10 +2429,10 @@ public final class Bttl_800e {
     final BttlScriptData6cSub13c effect = (BttlScriptData6cSub13c)manager.effect_44;
     if(manager._10.flags_00 >= 0) {
       if((manager._10.flags_00 & 0x40) == 0) {
-        FUN_800e61e4(manager._10.colour_1c.getX() << 5, manager._10.colour_1c.getY() << 5, manager._10.colour_1c.getZ() << 5);
+        FUN_800e61e4(manager._10.colour_1c.getX() / 128.0f, manager._10.colour_1c.getY() / 128.0f, manager._10.colour_1c.getZ() / 128.0f);
       } else {
         //LAB_800ea564
-        FUN_800e60e0(0x1000, 0x1000, 0x1000);
+        FUN_800e60e0(1.0f, 1.0f, 1.0f);
       }
 
       //LAB_800ea574

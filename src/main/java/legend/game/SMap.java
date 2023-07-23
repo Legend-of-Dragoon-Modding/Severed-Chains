@@ -161,7 +161,6 @@ import static legend.game.Scus94491BpeSegment_8003.GsGetLs;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
-import static legend.game.Scus94491BpeSegment_8003.GsSetAmbient;
 import static legend.game.Scus94491BpeSegment_8003.GsSetFlatLight;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8003.GsSetRefView2L;
@@ -2025,18 +2024,18 @@ public final class SMap {
   public static FlowControl scriptSetAmbientColour(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     sobj.ambientColourEnabled_1c8 = true;
-    sobj.ambientRed_1ca = script.params_20[1].get() & 0xffff;
-    sobj.ambientGreen_1cc = script.params_20[2].get() & 0xffff;
-    sobj.ambientBlue_1ce = script.params_20[3].get() & 0xffff;
+    sobj.ambientColour_1ca.set(
+      (script.params_20[1].get() & 0xffff) / 4096.0f,
+      (script.params_20[2].get() & 0xffff) / 4096.0f,
+      (script.params_20[3].get() & 0xffff) / 4096.0f
+    );
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e09a0L)
   public static FlowControl scriptResetAmbientColour(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    sobj.ambientRed_1ca = 0x800;
-    sobj.ambientGreen_1cc = 0x800;
-    sobj.ambientBlue_1ce = 0x800;
+    sobj.ambientColour_1ca.set(0.5f, 0.5f, 0.5f);
     sobj.ambientColourEnabled_1c8 = false;
     return FlowControl.CONTINUE;
   }
@@ -2387,7 +2386,7 @@ public final class SMap {
 
       //LAB_800e1310
       if(sobj.ambientColourEnabled_1c8) {
-        GsSetAmbient(sobj.ambientRed_1ca, sobj.ambientGreen_1cc, sobj.ambientBlue_1ce);
+        GTE.setBackgroundColour(sobj.ambientColour_1ca.x, sobj.ambientColour_1ca.y, sobj.ambientColour_1ca.z);
       }
 
       //LAB_800e1334
@@ -2401,7 +2400,7 @@ public final class SMap {
 
       //LAB_800e1374
       if(sobj.ambientColourEnabled_1c8) {
-        GsSetAmbient(0x800, 0x800, 0x800);
+        GTE.setBackgroundColour(0.5f, 0.5f, 0.5f);
       }
 
       //LAB_800e1390
@@ -2445,7 +2444,7 @@ public final class SMap {
         GsF_LIGHT_2_800c66f8.b_0e = 0;
         GsSetFlatLight(2, GsF_LIGHT_2_800c66f8);
 
-        GsSetAmbient(0x800, 0x800, 0x800);
+        GTE.setBackgroundColour(0.5f, 0.5f, 0.5f);
         loadingStage_800c68e4.addu(0x1L);
       }
 
