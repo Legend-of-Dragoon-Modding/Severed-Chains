@@ -231,7 +231,15 @@ public final class V3Serializer {
     data.writeAscii(offset, name);
     offset += 3 + name.length();
 
-    final ActiveStatsa0 slot0Stats = activeStats[state.charIds_88[0]];
+    int mainCharId = 0;
+    for(int i = 0; i < state.charIds_88.length; i++) {
+      if(state.charIds_88[i] != -1) {
+        mainCharId = state.charIds_88[i];
+        break;
+      }
+    }
+
+    final ActiveStatsa0 slot0Stats = activeStats[mainCharId];
     data.writeInt(offset, slot0Stats.maxHp_66);
     offset += 4;
     data.writeInt(offset, slot0Stats.maxMp_6e);
