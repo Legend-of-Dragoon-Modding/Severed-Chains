@@ -1357,7 +1357,7 @@ public final class SEffe {
 
           //LAB_800fda58
           //LAB_800fda90
-          MathHelper.clamp(colour.add(colourMod), 0, 1.0f);
+          MathHelper.clamp(colour.add(colourMod), 0.0f, 0.5f);
 
           //LAB_800fdac8
           if((particle.flags_90 & 0x6) != 0) {
@@ -1512,7 +1512,7 @@ public final class SEffe {
         //LAB_800fe300
         final VECTOR translation = new VECTOR().set(particle.particlePosition_50);
 
-        MathHelper.clamp(colour.add(colourMod), 0.0f, 1.0f);
+        MathHelper.clamp(colour.add(colourMod), 0.0f, 0.5f);
 
         final GpuCommandPoly cmd1 = new GpuCommandPoly(4)
           .clut((effect.clut_5c & 0b111111) * 16, effect.clut_5c >>> 6)
