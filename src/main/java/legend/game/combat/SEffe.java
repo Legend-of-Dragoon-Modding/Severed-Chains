@@ -1071,8 +1071,8 @@ public final class SEffe {
     if(particleMetrics.flags_00 >= 0) {
       GPU.queueCommand(particleMetrics.z_04 + manager._10.z_22 >> 2, new GpuCommandLine()
         .translucent(Translucency.B_PLUS_F)
-        .rgb(0, particleMetrics.colour0_40.getR(), particleMetrics.colour0_40.getG(), particleMetrics.colour0_40.getB())
-        .rgb(1, particleMetrics.colour1_44.getR(), particleMetrics.colour1_44.getG(), particleMetrics.colour1_44.getB())
+        .rgb(0, (int)(particleMetrics.colour0_40.x * 0xff), (int)(particleMetrics.colour0_40.y * 0xff), (int)(particleMetrics.colour0_40.z * 0xff))
+        .rgb(1, (int)(particleMetrics.colour1_44.x * 0xff), (int)(particleMetrics.colour1_44.y * 0xff), (int)(particleMetrics.colour1_44.z * 0xff))
         .pos(0, particleMetrics.x0_08, particleMetrics.y0_10)
         .pos(1, particleMetrics.x1_0c, particleMetrics.y1_14)
       );
@@ -1095,7 +1095,7 @@ public final class SEffe {
       final MATRIX lightMatrix = new MATRIX();
       FUN_800fc4bc(lightMatrix, manager, particleMetrics);
       if((particleMetrics.flags_00 & 0x40) == 0) {
-        FUN_800e61e4(particleMetrics.colour0_40.getR() / 128.0f, particleMetrics.colour0_40.getG() / 128.0f, particleMetrics.colour0_40.getB() / 128.0f);
+        FUN_800e61e4(particleMetrics.colour0_40.x, particleMetrics.colour0_40.y, particleMetrics.colour0_40.z);
       }
 
       //LAB_800fcf94
@@ -1151,9 +1151,9 @@ public final class SEffe {
     }
 
     if((effect.effectInner_08.particleInnerStuff_1c & 0x400_0000) != 0) {
-      particle.r_84 = manager._10.colour_1c.getX() << 8;
-      particle.g_86 = manager._10.colour_1c.getY() << 8;
-      particle.b_88 = manager._10.colour_1c.getZ() << 8;
+      particle.r_84 = manager._10.colour_1c.getX() / (float)0xff;
+      particle.g_86 = manager._10.colour_1c.getY() / (float)0xff;
+      particle.b_88 = manager._10.colour_1c.getZ() / (float)0xff;
 
       if((manager._10._24 & 0x1) == 0) {
         particle.stepR_8a = 0;
@@ -1173,22 +1173,22 @@ public final class SEffe {
   }
 
   @Method(0x800fd1dcL)
-  public static void tickParticleAttributes(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final VECTOR colour) {
+  public static void tickParticleAttributes(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final Vector3f colour) {
     if((effect.effectInner_08.particleInnerStuff_1c & 0x800_0000) == 0 || (manager._10._24 & 0x1) != 0) {
       //LAB_800fd23c
       particle.r_84 -= particle.stepR_8a;
       particle.g_86 -= particle.stepG_8c;
       particle.b_88 -= particle.stepB_8e;
     } else {
-      particle.r_84 = manager._10.colour_1c.getX() << 8;
-      particle.g_86 = manager._10.colour_1c.getY() << 8;
-      particle.b_88 = manager._10.colour_1c.getZ() << 8;
+      particle.r_84 = manager._10.colour_1c.getX() / (float)0xff;
+      particle.g_86 = manager._10.colour_1c.getY() / (float)0xff;
+      particle.b_88 = manager._10.colour_1c.getZ() / (float)0xff;
     }
 
     //LAB_800fd26c
-    colour.setX(particle.r_84);
-    colour.setY(particle.g_86);
-    colour.setZ(particle.b_88);
+    colour.x = particle.r_84;
+    colour.y = particle.g_86;
+    colour.z = particle.b_88;
 
     particle.particlePosition_50.add(particle.particleVelocity_58);
     particle.particleVelocity_58.add(particle.particleAcceleration_60);
@@ -1292,7 +1292,7 @@ public final class SEffe {
       final ParticleEffectInstance94 particle = effect.particleArray_68[i];
       if(checkParticleShouldRender(state, manager, effect, particle)) {
         effect.prerenderCallback_84.accept(manager, effect, particle);
-        final VECTOR colour = new VECTOR();
+        final Vector3f colour = new Vector3f();
         tickParticleAttributes(manager, effect, particle, colour);
 
         final VECTOR rotatedAndTranslatedPosition = new VECTOR();
@@ -1305,7 +1305,7 @@ public final class SEffe {
         particleMetrics.scale_28.setY(manager._10.scale_16.getY() + particle.scaleVertical_08);
         particleMetrics.scale_28.setZ(manager._10.scale_16.getX() + particle.scaleHorizontal_06); // This is correct
         particleMetrics.rotation_38.set(particle.spriteRotation_70).add(particle.managerRotation_68);
-        particleMetrics.colour0_40.set(colour.getX() >> 8, colour.getY() >> 8, colour.getZ() >> 8);
+        particleMetrics.colour0_40.set(colour.x, colour.y, colour.z);
         particleMetrics.colour1_44.set(0, 0, 0);
         renderTmdParticle(manager, effect.tmd_30, particleMetrics, effect.tpage_56);
       }
@@ -1341,15 +1341,15 @@ public final class SEffe {
           particle.subParticlePositionsArray_44[0].set(particle.particlePosition_50);
           effect.prerenderCallback_84.accept(manager, effect, particle);
 
-          final VECTOR colour = new VECTOR();
+          final Vector3f colour = new Vector3f();
           tickParticleAttributes(manager, effect, particle, colour);
 
-          final VECTOR colourMod = new VECTOR();
+          final Vector3f colourMod = new Vector3f();
           if((effect.effectInner_08.particleInnerStuff_1c & 0x1000_0000) == 0 || (particle.flags_90 & 0x8) == 0) {
             //LAB_800fd9f4
             colourMod.set(0, 0, 0);
           } else {
-            colourMod.set(colour).negate().div(2);
+            colourMod.set(colour).negate().div(2.0f);
           }
 
           //LAB_800fda00
@@ -1357,9 +1357,7 @@ public final class SEffe {
 
           //LAB_800fda58
           //LAB_800fda90
-          colour.setX(MathHelper.clamp(colour.getX() + colourMod.getX(), 0, 0x8000));
-          colour.setY(MathHelper.clamp(colour.getY() + colourMod.getY(), 0, 0x8000));
-          colour.setZ(MathHelper.clamp(colour.getZ() + colourMod.getZ(), 0, 0x8000));
+          MathHelper.clamp(colour.add(colourMod), 0, 1.0f);
 
           //LAB_800fdac8
           if((particle.flags_90 & 0x6) != 0) {
@@ -1369,10 +1367,8 @@ public final class SEffe {
           }
 
           //LAB_800fdb14
-          final SVECTOR stepColour = new SVECTOR();
-          stepColour.setX((short)(colour.getX() / effect.countParticleSub_54));
-          stepColour.setY((short)(colour.getY() / effect.countParticleSub_54));
-          stepColour.setZ((short)(colour.getZ() / effect.countParticleSub_54));
+          final Vector3f stepColour = new Vector3f();
+          stepColour.set(colour).div(effect.countParticleSub_54);
 
           final VECTOR subTranslation = new VECTOR().set(particle.subParticlePositionsArray_44[0]);
           final ShortRef refX1 = new ShortRef();
@@ -1391,9 +1387,9 @@ public final class SEffe {
 
             //LAB_800fdbe4
             for(int k = 0; k < effect.countParticleSub_54 - 1; k++) {
-              particleMetrics.colour0_40.set(colour.getX() >> 8, colour.getY() >> 8, colour.getZ() >> 8);
+              particleMetrics.colour0_40.set(colour.x, colour.y, colour.z);
               colour.sub(stepColour);
-              particleMetrics.colour1_44.set(colour.getX() >> 8, colour.getY() >> 8, colour.getZ() >> 8);
+              particleMetrics.colour1_44.set(colour.x, colour.y, colour.z);
               subTranslation.set(particle.subParticlePositionsArray_44[k]);
 
               final ShortRef refX2 = new ShortRef();
@@ -1436,7 +1432,7 @@ public final class SEffe {
       if(checkParticleShouldRender(state, manager, effect, particle)) {
         effect.prerenderCallback_84.accept(manager, effect, particle);
 
-        final VECTOR colour = new VECTOR();
+        final Vector3f colour = new Vector3f();
         tickParticleAttributes(manager, effect, particle, colour);
 
         final VECTOR translation = new VECTOR().set(particle.particlePosition_50);
@@ -1453,7 +1449,7 @@ public final class SEffe {
           //LAB_800fdf44
           // gp0 command 68h, which is an opaque dot (1x1)
           GPU.queueCommand(z + manager._10.z_22 >> 2, new GpuCommandQuad()
-            .rgb(colour.getX() >> 8, colour.getY() >> 8, colour.getZ() >> 8)
+            .rgb((int)(colour.x * 0xff), (int)(colour.y * 0xff), (int)(colour.z * 0xff))
             .pos(refX.get(), refY.get(), 1, 1)
           );
         }
@@ -1475,9 +1471,9 @@ public final class SEffe {
 
     effect.countFramesRendered_52++;
 
-    final VECTOR colour = new VECTOR();
-    final VECTOR colourMod = new VECTOR();
-    final SVECTOR colourStep = new SVECTOR();
+    final Vector3f colour = new Vector3f();
+    final Vector3f colourMod = new Vector3f();
+    final Vector3f colourStep = new Vector3f();
 
     //LAB_800fe180
     for(int i = 0; i < effect.countParticleInstance_50; i++) {
@@ -1498,7 +1494,7 @@ public final class SEffe {
           //LAB_800fe280
           colourMod.set(0, 0, 0);
         } else {
-          colourMod.set(colour).negate().div(2);
+          colourMod.set(colour).negate().div(2.0f);
         }
 
         //LAB_800fe28c
@@ -1516,14 +1512,12 @@ public final class SEffe {
         //LAB_800fe300
         final VECTOR translation = new VECTOR().set(particle.particlePosition_50);
 
-        colour.setX(MathHelper.clamp(colour.getX() + colourMod.getX(), 0, 0x8000));
-        colour.setY(MathHelper.clamp(colour.getY() + colourMod.getY(), 0, 0x8000));
-        colour.setZ(MathHelper.clamp(colour.getZ() + colourMod.getZ(), 0, 0x8000));
+        MathHelper.clamp(colour.add(colourMod), 0.0f, 1.0f);
 
         final GpuCommandPoly cmd1 = new GpuCommandPoly(4)
           .clut((effect.clut_5c & 0b111111) * 16, effect.clut_5c >>> 6)
           .vramPos(effect.u_58 & 0x3c0, effect.v_5a < 256 ? 0 : 256)
-          .rgb(colour.getX() >> 8, colour.getY() >> 8, colour.getZ() >> 8)
+          .rgb((int)(colour.x * 0xff), (int)(colour.y * 0xff), (int)(colour.z * 0xff))
           .uv(0, (effect.u_58 & 0x3f) * 4, effect.v_5a)
           .uv(1, (effect.u_58 & 0x3f) * 4 + effect.w_5e - 1, effect.v_5a)
           .uv(2, (effect.u_58 & 0x3f) * 4, effect.v_5a + effect.h_5f - 1)
@@ -1555,9 +1549,7 @@ public final class SEffe {
           particleSub.y2_0a = cmd1.getY(2);
           particleSub.x3_0c = cmd1.getX(3);
           particleSub.y3_0e = cmd1.getY(3);
-          colourStep.setX((short)(colour.getX() / effect.countParticleSub_54));
-          colourStep.setY((short)(colour.getY() / effect.countParticleSub_54));
-          colourStep.setZ((short)(colour.getZ() / effect.countParticleSub_54));
+          colourStep.set(colour).div(effect.countParticleSub_54);
 
           final int count = Math.min(-particle.framesUntilRender_04, effect.countParticleSub_54);
 
@@ -1576,7 +1568,7 @@ public final class SEffe {
 
               //LAB_800fe644
               cmd2
-                .rgb(colour.getX() >> 8, colour.getY() >> 8, colour.getZ() >> 8)
+                .rgb((int)(colour.x * 0xff), (int)(colour.y * 0xff), (int)(colour.z * 0xff))
                 .pos(0, particleSub.x0_00, particleSub.y0_02)
                 .pos(1, particleSub.x1_04, particleSub.y1_06)
                 .pos(2, particleSub.x2_08, particleSub.y2_0a)
@@ -1657,7 +1649,7 @@ public final class SEffe {
     particle.particleVelocity_58.setY((short)-(seed_800fa754.get() % 91 + 10));
 
     seed_800fa754.advance();
-    final long colourStep = seed_800fa754.get() % 101 - 50 << 8;
+    final float colourStep = (seed_800fa754.get() % 101 - 50) / (float)0x80;
     particle.r_84 += colourStep;
     particle.g_86 += colourStep;
     particle.b_88 += colourStep;
@@ -1810,13 +1802,13 @@ public final class SEffe {
     particle._18 = (short)(a0 & 0x1);
     particle._1a.setX((short)(v1 * 8));
 
-    final int a1 = Math.max(0, (effectInner.particleInnerStuff_1c >>> 8 & 0xff) - a0 * 16);
+    final float colour = Math.max(0, (effectInner.particleInnerStuff_1c >>> 8 & 0xff) - a0 * 16) / (float)0x80;
 
     //LAB_800ff754
     particle.ticksRemaining_12 = -1;
-    particle.r_84 = a1 << 8;
-    particle.g_86 = a1 << 8;
-    particle.b_88 = a1 << 8;
+    particle.r_84 = colour;
+    particle.g_86 = colour;
+    particle.b_88 = colour;
   }
 
   @Method(0x800ff788L)
@@ -2140,9 +2132,9 @@ public final class SEffe {
   @Method(0x80100e4cL)
   public static void FUN_80100e4c(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
     if(particle.framesUntilRender_04 == 0) {
-      particle.stepR_8a = -0x8000 / particle.ticksRemaining_12;
-      particle.stepG_8c = -0x8000 / particle.ticksRemaining_12;
-      particle.stepB_8e = -0x8000 / particle.ticksRemaining_12;
+      particle.stepR_8a = -1.0f / particle.ticksRemaining_12;
+      particle.stepG_8c = -1.0f / particle.ticksRemaining_12;
+      particle.stepB_8e = -1.0f / particle.ticksRemaining_12;
     }
     //LAB_80100e98
   }
@@ -2270,10 +2262,10 @@ public final class SEffe {
     brokenT2For800ff5c4 = (long)callbackIndex;
     particle.framesUntilRender_04 = (short)(seed_800fa754.advance().get() % (effectInner._14 + 1) + 1);
     particle.ticksRemaining_12 = (short)((effectInner.particleInnerStuff_1c & 0xff_0000) >>> 16);
-    final int colour = (effectInner.particleInnerStuff_1c & 0xff00) >>> 8;
-    particle.r_84 = colour << 8;
-    particle.g_86 = colour << 8;
-    particle.b_88 = colour << 8;
+    final float colour = ((effectInner.particleInnerStuff_1c & 0xff00) >>> 8) / (float)0x80;
+    particle.r_84 = colour;
+    particle.g_86 = colour;
+    particle.b_88 = colour;
     particle.flags_90 |= 0x1;
     particle.angle_0e = (short)(seed_800fa754.advance().get() % 4097);
     particle.angleVelocity_10 = (short)(seed_800fa754.advance().get() % 513 - 256);

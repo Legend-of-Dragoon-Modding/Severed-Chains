@@ -42,12 +42,12 @@ public class ParticleEffectInstance94 {
   public final SVECTOR spriteRotation_70 = new SVECTOR();
   public final SVECTOR spriteRotationStep_78 = new SVECTOR();
   public ParticleEffectInstance94Sub10[] particleInstanceSubArray_80;
-  public int r_84;
-  public int g_86;
-  public int b_88;
-  public int stepR_8a;
-  public int stepG_8c;
-  public int stepB_8e;
+  public float r_84;
+  public float g_86;
+  public float b_88;
+  public float stepR_8a;
+  public float stepG_8c;
+  public float stepB_8e;
   public int flags_90;
 
   public ParticleEffectInstance94(final int index) {
