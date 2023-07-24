@@ -7842,7 +7842,7 @@ public final class SEffe {
   }
 
   @Method(0x80114f3cL)
-  public static void FUN_80114f3c(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.AnimType>> manager, final int propertyIndex, final int speed, final int accelleration) {
+  public static void FUN_80114f3c(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.AnimType>> manager, final int propertyIndex, final int speed, final int acceleration) {
     final EffectManagerData6c<EffectManagerData6cInner.AnimType> state = manager.innerStruct_00;
 
     if((1L << propertyIndex + 5 & state.flags_04) != 0) {
@@ -7854,7 +7854,7 @@ public final class SEffe {
 
     v0.accumulator_0c = state._10.get24(propertyIndex) << 8;
     v0.speed_10 = speed;
-    v0.acceleration_14 = accelleration;
+    v0.acceleration_14 = acceleration;
     v0._18 = -1;
     v0.ticksRemaining_1a = -1;
   }
