@@ -1,6 +1,7 @@
 package legend.game.combat.deff;
 
 import legend.core.gte.BVEC4;
+import legend.core.gte.VECTOR;
 import legend.game.types.TmdAnimationFile;
 import legend.game.unpacker.FileData;
 
@@ -36,18 +37,25 @@ public class Cmb extends TmdAnimationFile {
   }
 
   public static class SubTransforms08 {
-    /** ubyte */
-    public final int rotScale_00;
-    public final BVEC4 rot_01 = new BVEC4();
-    /** ubyte */
-    public final int transScale_04;
-    public final BVEC4 trans_05 = new BVEC4();
+//    /** ubyte */
+//    public final int rotScale_00;
+//    public final BVEC4 rot_01 = new BVEC4();
+//    /** ubyte */
+//    public final int transScale_04;
+//    public final BVEC4 trans_05 = new BVEC4();
+
+    public final VECTOR rot_01 = new VECTOR();
+    public final VECTOR trans_05 = new VECTOR();
 
     public SubTransforms08(final FileData data) {
-      this.rotScale_00 = data.readUByte(0);
-      data.readBvec3(1, this.rot_01);
-      this.transScale_04 = data.readUByte(4);
-      data.readBvec3(5, this.trans_05);
+      final int rotScale_00 = data.readUByte(0);
+      final BVEC4 rot = data.readBvec3(1, new BVEC4());
+
+      final int transScale_04 = data.readUByte(4);
+      final BVEC4 trans = data.readBvec3(5, new BVEC4());
+
+      this.rot_01.set(rot).shl(rotScale_00);
+      this.trans_05.set(trans).shl(transScale_04);
     }
   }
 }

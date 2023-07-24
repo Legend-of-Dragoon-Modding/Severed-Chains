@@ -4640,13 +4640,8 @@ public final class Bttl_800d {
         final Cmb.SubTransforms08 subTransforms = cmb.subTransforms[frameIndex][partIndex];
         final ModelPartTransforms0c modelTransforms = cmbAnim.transforms_08[partIndex];
 
-        modelTransforms.rotate_00.x.add((short)(subTransforms.rot_01.getX() << subTransforms.rotScale_00));
-        modelTransforms.rotate_00.y.add((short)(subTransforms.rot_01.getY() << subTransforms.rotScale_00));
-        modelTransforms.rotate_00.z.add((short)(subTransforms.rot_01.getZ() << subTransforms.rotScale_00));
-
-        modelTransforms.translate_06.x.add((short)(subTransforms.trans_05.getX() << subTransforms.transScale_04));
-        modelTransforms.translate_06.y.add((short)(subTransforms.trans_05.getY() << subTransforms.transScale_04));
-        modelTransforms.translate_06.z.add((short)(subTransforms.trans_05.getZ() << subTransforms.transScale_04));
+        modelTransforms.rotate_00.add(subTransforms.rot_01);
+        modelTransforms.translate_06.add(subTransforms.trans_05);
       }
 
       //LAB_800ddfd4
@@ -4665,15 +4660,11 @@ public final class Bttl_800d {
         modelPartMatrix.transfer.set(modelTransforms.translate_06);
 
         final SVECTOR rotation = new SVECTOR();
-        rotation.setX((short)(modelTransforms.rotate_00.getX() + (subTransforms.rot_01.getX() << subTransforms.rotScale_00)));
-        rotation.setY((short)(modelTransforms.rotate_00.getY() + (subTransforms.rot_01.getY() << subTransforms.rotScale_00)));
-        rotation.setZ((short)(modelTransforms.rotate_00.getZ() + (subTransforms.rot_01.getZ() << subTransforms.rotScale_00)));
+        rotation.set(modelTransforms.rotate_00).add(subTransforms.rot_01);
 
         final MATRIX translation = new MATRIX();
         RotMatrix_Zyx(rotation, translation);
-        translation.transfer.setX(modelTransforms.translate_06.getX() + (subTransforms.trans_05.getX() << subTransforms.transScale_04));
-        translation.transfer.setY(modelTransforms.translate_06.getY() + (subTransforms.trans_05.getY() << subTransforms.transScale_04));
-        translation.transfer.setZ(modelTransforms.translate_06.getZ() + (subTransforms.trans_05.getZ() << subTransforms.transScale_04));
+        translation.transfer.set(modelTransforms.translate_06).add(subTransforms.trans_05);
 
         FUN_800dd15c(modelPartMatrix, translation, 0x800);
       }
