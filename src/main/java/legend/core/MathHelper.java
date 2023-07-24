@@ -134,20 +134,51 @@ public final class MathHelper {
     return value & (1L << numberOfBytes * 8) - 1;
   }
 
-  public static long fromBcd(final long x) {
-    return (x >> 4L) * 10L + (x & 0xfL);
-  }
-
-  public static long toBcd(final long x) {
-    return x / 10L << 4L | x % 10L;
-  }
+  public static final float PI = (float)Math.PI;
+  public static final float TWO_PI = (float)(Math.PI * 2);
 
   private static final float PSX_DEG_TO_DEG = 360.0f / 4096.0f;
   private static final float DEG_TO_RAD = (float)(Math.PI / 180.0f);
   private static final float PSX_DEG_TO_RAD = PSX_DEG_TO_DEG * DEG_TO_RAD;
 
+  private static final float DEG_TO_PSX_DEG = 4096.0f / 360.0f;
+  private static final float RAD_TO_DEG = (float)(180.0f / Math.PI);
+  private static final float RAD_TO_PSX_DEG = RAD_TO_DEG * DEG_TO_PSX_DEG;
+
   public static float psxDegToRad(final int psxDeg) {
     return psxDeg * PSX_DEG_TO_RAD;
+  }
+
+  public static int radToPsxDeg(final float rads) {
+    return (int)(rads * RAD_TO_PSX_DEG);
+  }
+
+  /** LOD uses this a lot */
+  public static float positiveAtan2(final float y, final float x) {
+    // Cast to double to use joml's fast atan2
+    return floorMod(-(float)org.joml.Math.atan2((double)y, x) + 0.75f * MathHelper.TWO_PI, MathHelper.TWO_PI);
+  }
+
+  public static float atan2(final float y, final float x) {
+    return (float)org.joml.Math.atan2((double)y, x);
+  }
+
+  public static float sin(final float angle) {
+    return org.joml.Math.sin(angle);
+  }
+
+  public static float cos(final float angle) {
+    return org.joml.Math.cos(angle);
+  }
+
+  public static float floorMod(final float numerator, final float denominator) {
+    return (numerator - org.joml.Math.floor(numerator / denominator) * denominator);
+  }
+
+  public static void floorMod(final Vector3f numerator, final float denominator) {
+    numerator.x = floorMod(numerator.x, denominator);
+    numerator.y = floorMod(numerator.y, denominator);
+    numerator.z = floorMod(numerator.z, denominator);
   }
 
   public static int roundUp(final int val, final int step) {

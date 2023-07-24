@@ -1,10 +1,8 @@
 package legend.game;
 
 import legend.core.MathHelper;
-import legend.core.gte.COLOUR;
 import legend.core.gte.MATRIX;
 import legend.core.gte.SVECTOR;
-import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
@@ -45,12 +43,12 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SEQUENCER;
 import static legend.core.GameEngine.SPU;
@@ -849,6 +847,13 @@ public final class Scus94491BpeSegment_8004 {
       .rotateZ(MathHelper.psxDegToRad(rotation.getZ()))
       .rotateY(MathHelper.psxDegToRad(rotation.getY()))
       .rotateX(MathHelper.psxDegToRad(rotation.getX())));
+  }
+
+  public static void RotMatrix_Zyx(final Vector3f rotation, final MATRIX matrixOut) {
+    matrixOut.set(new Matrix4f()
+      .rotateZ(rotation.z)
+      .rotateY(rotation.y)
+      .rotateX(rotation.x));
   }
 
   /**

@@ -32,9 +32,9 @@ public class WsDragoonTransformationFeatherInstance70 {
   /** Magnitude of y component of translation vector around center of effect */
   public int translationMagnitudeY_50;
   public int yOrigin_54;
-  public int angle_58;
-  public int angleNoiseXz_5c;
-  public int angleStep_60;
+  public float angle_58;
+  public float angleNoiseXz_5c;
+  public float angleStep_60;
   /** short */
   public int countCallback0Frames_64;
   /** ushorts */
@@ -43,7 +43,7 @@ public class WsDragoonTransformationFeatherInstance70 {
   public int unused_6a;
   public int unused_6c;
   /** short */
-  public int spriteAngle_6e;
+  public float spriteAngle_6e;
 
   public WsDragoonTransformationFeatherInstance70(final int index) {
     this.index = index;

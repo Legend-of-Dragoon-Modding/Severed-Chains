@@ -1,6 +1,6 @@
 package legend.game.combat.effects;
 
-import legend.core.gte.SVECTOR;
+import org.joml.Vector3f;
 
 import java.util.Arrays;
 
@@ -11,8 +11,8 @@ public class LightningBoltEffect14 {
   public int unused_00;
 
   /** short */
-  public int angle_02;
-  public final SVECTOR rotation_04 = new SVECTOR();
+  public float angle_02;
+  public final Vector3f rotation_04 = new Vector3f();
   /** Average z-index */
   public int sz3_0c;
   public LightningBoltEffectSegment30[] boltSegments_10;

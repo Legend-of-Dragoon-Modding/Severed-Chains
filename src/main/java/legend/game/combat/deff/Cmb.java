@@ -1,9 +1,11 @@
 package legend.game.combat.deff;
 
+import legend.core.MathHelper;
 import legend.core.gte.BVEC4;
 import legend.core.gte.VECTOR;
 import legend.game.types.TmdAnimationFile;
 import legend.game.unpacker.FileData;
+import org.joml.Vector3f;
 
 public class Cmb extends TmdAnimationFile {
   public static final int MAGIC = 0x2042_4d43;
@@ -44,17 +46,22 @@ public class Cmb extends TmdAnimationFile {
 //    public final int transScale_04;
 //    public final BVEC4 trans_05 = new BVEC4();
 
-    public final VECTOR rot_01 = new VECTOR();
+    public final Vector3f rot_01 = new Vector3f();
     public final VECTOR trans_05 = new VECTOR();
 
     public SubTransforms08(final FileData data) {
-      final int rotScale_00 = data.readUByte(0);
+      final int rotScale_00 = 1 << data.readUByte(0);
       final BVEC4 rot = data.readBvec3(1, new BVEC4());
 
       final int transScale_04 = data.readUByte(4);
       final BVEC4 trans = data.readBvec3(5, new BVEC4());
 
-      this.rot_01.set(rot).shl(rotScale_00);
+      this.rot_01.set(
+        MathHelper.psxDegToRad(rot.getX() * rotScale_00),
+        MathHelper.psxDegToRad(rot.getY() * rotScale_00),
+        MathHelper.psxDegToRad(rot.getZ() * rotScale_00)
+      );
+
       this.trans_05.set(trans).shl(transScale_04);
     }
   }

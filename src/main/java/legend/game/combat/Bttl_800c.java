@@ -104,6 +104,7 @@ import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
+import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -156,7 +157,6 @@ import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 import static legend.game.Scus94491BpeSegment_8004.previousEngineState_8004dd28;
-import static legend.game.Scus94491BpeSegment_8004.ratan2;
 import static legend.game.Scus94491BpeSegment_8004.sssqFadeOut;
 import static legend.game.Scus94491BpeSegment_8005.combatants_8005e398;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
@@ -1478,7 +1478,7 @@ public final class Bttl_800c {
       final BattleStage stage = battlePreloadedEntities_1f8003f4.stage_963c;
       loadStageTmd(stage, new CContainer(modelName, files.get(0), 10), new TmdAnimationFile(files.get(1)));
       stage.coord2_558.coord.transfer.set(0, 0, 0);
-      stage.param_5a8.rotate.set((short)0, (short)0x400, (short)0);
+      stage.param_5a8.rotate.set(0.0f, MathHelper.TWO_PI / 4.0f, 0.0f);
     }
 
     //LAB_800c8818
@@ -2637,16 +2637,17 @@ public final class Bttl_800c {
   public static boolean FUN_800cb34c(final ScriptState<BattleObject27c> state, final BattleObject27c data) {
     final BattleObject27c bobj = state.scriptState_c8.innerStruct_00;
     final VECTOR vec = bobj.model_148.coord2_14.coord.transfer;
-    final int a0 = ratan2(vec.getX() - data.model_148.coord2_14.coord.transfer.getX(), vec.getZ() - data.model_148.coord2_14.coord.transfer.getZ()) + 0x800;
+    final float angle = MathHelper.atan2(vec.getX() - data.model_148.coord2_14.coord.transfer.getX(), vec.getZ() - data.model_148.coord2_14.coord.transfer.getZ()) + MathHelper.PI;
+
     state._cc--;
     if(state._cc > 0) {
       state._d0 -= state._d4;
-      data.model_148.coord2Param_64.rotate.setY((short)(a0 + state._d0));
+      data.model_148.coord2Param_64.rotate.y = angle + MathHelper.psxDegToRad(state._d0);
       return false;
     }
 
     //LAB_800cb3e0
-    data.model_148.coord2Param_64.rotate.setY((short)a0);
+    data.model_148.coord2Param_64.rotate.y = angle;
 
     //LAB_800cb3e8
     return true;
@@ -2673,25 +2674,25 @@ public final class Bttl_800c {
   @Method(0x800cb4c8L)
   public static FlowControl scriptSetBobjRotation(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    bobj.model_148.coord2Param_64.rotate.setX((short)script.params_20[1].get());
-    bobj.model_148.coord2Param_64.rotate.setY((short)script.params_20[2].get());
-    bobj.model_148.coord2Param_64.rotate.setZ((short)script.params_20[3].get());
+    bobj.model_148.coord2Param_64.rotate.x = MathHelper.psxDegToRad(script.params_20[1].get());
+    bobj.model_148.coord2Param_64.rotate.y = MathHelper.psxDegToRad(script.params_20[2].get());
+    bobj.model_148.coord2Param_64.rotate.z = MathHelper.psxDegToRad(script.params_20[3].get());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800cb534L)
   public static FlowControl scriptSetBobjRotationY(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    bobj.model_148.coord2Param_64.rotate.setY((short)script.params_20[1].get());
+    bobj.model_148.coord2Param_64.rotate.y = MathHelper.psxDegToRad(script.params_20[1].get());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800cb578L)
   public static FlowControl scriptGetBobjRotation(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    script.params_20[1].set(bobj.model_148.coord2Param_64.rotate.getX());
-    script.params_20[2].set(bobj.model_148.coord2Param_64.rotate.getY());
-    script.params_20[3].set(bobj.model_148.coord2Param_64.rotate.getZ());
+    script.params_20[1].set(MathHelper.radToPsxDeg(bobj.model_148.coord2Param_64.rotate.x));
+    script.params_20[2].set(MathHelper.radToPsxDeg(bobj.model_148.coord2Param_64.rotate.y));
+    script.params_20[3].set(MathHelper.radToPsxDeg(bobj.model_148.coord2Param_64.rotate.z));
     return FlowControl.CONTINUE;
   }
 
@@ -3063,7 +3064,7 @@ public final class Bttl_800c {
     final BattleObject27c s0 = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final BattleObject27c v0 = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00;
 
-    s0.model_148.coord2Param_64.rotate.setY((short)(ratan2(v0.model_148.coord2_14.coord.transfer.getX() - s0.model_148.coord2_14.coord.transfer.getX(), v0.model_148.coord2_14.coord.transfer.getZ() - s0.model_148.coord2_14.coord.transfer.getZ()) + 0x800));
+    s0.model_148.coord2Param_64.rotate.y = MathHelper.atan2(v0.model_148.coord2_14.coord.transfer.getX() - s0.model_148.coord2_14.coord.transfer.getX(), v0.model_148.coord2_14.coord.transfer.getZ() - s0.model_148.coord2_14.coord.transfer.getZ()) + MathHelper.PI;
     return FlowControl.CONTINUE;
   }
 
@@ -3076,13 +3077,11 @@ public final class Bttl_800c {
     final BattleObject27c bobj1 = state1.innerStruct_00;
     final BattleObject27c bobj2 = state2.innerStruct_00;
     final int s2 = script.params_20[2].get();
-    int v0 = ratan2(bobj2.model_148.coord2_14.coord.transfer.getX() - bobj1.model_148.coord2_14.coord.transfer.getX(), bobj2.model_148.coord2_14.coord.transfer.getZ() - bobj1.model_148.coord2_14.coord.transfer.getZ()) - bobj1.model_148.coord2Param_64.rotate.getY() + 0x1000;
-    v0 = v0 & 0xfff;
-    v0 = v0 - 0x800;
+    final float v0 = MathHelper.floorMod(MathHelper.atan2(bobj2.model_148.coord2_14.coord.transfer.getX() - bobj1.model_148.coord2_14.coord.transfer.getX(), bobj2.model_148.coord2_14.coord.transfer.getZ() - bobj1.model_148.coord2_14.coord.transfer.getZ()) - bobj1.model_148.coord2Param_64.rotate.y, MathHelper.TWO_PI) - MathHelper.PI;
     state1.scriptState_c8 = state2;
     state1._cc = s2;
-    state1._d0 = v0;
-    state1._d4 = v0 / s2;
+    state1._d0 = MathHelper.radToPsxDeg(v0);
+    state1._d4 = MathHelper.radToPsxDeg(v0 / s2);
     state1.setTempTicker(Bttl_800c::FUN_800cb34c);
     return FlowControl.CONTINUE;
   }
@@ -3502,7 +3501,7 @@ public final class Bttl_800c {
     bobj.charSlot_276 = monsterCount_800c6768.get();
     monsterCount_800c6768.incr();
     bobj.model_148.coord2_14.coord.transfer.set(0, 0, 0);
-    bobj.model_148.coord2Param_64.rotate.set((short)0, (short)0, (short)0);
+    bobj.model_148.coord2Param_64.rotate.zero();
     return FlowControl.CONTINUE;
   }
 
@@ -4147,8 +4146,8 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cf37cL)
-  public static void rotateAndTranslateEffect(final EffectManagerData6c a0, @Nullable final SVECTOR extraRotation, final VECTOR vertex, final VECTOR out) {
-    final SVECTOR rotations = new SVECTOR().set(a0._10.rot_10);
+  public static void rotateAndTranslateEffect(final EffectManagerData6c<?> manager, @Nullable final Vector3f extraRotation, final VECTOR vertex, final VECTOR out) {
+    final Vector3f rotations = new Vector3f(manager._10.rot_10);
 
     if(extraRotation != null) {
       //LAB_800cf3c4
@@ -4164,27 +4163,26 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cf4f4L)
-  public static void FUN_800cf4f4(final EffectManagerData6c a0, @Nullable final SVECTOR a1, final VECTOR a2, final VECTOR out) {
-    final SVECTOR sp0x20 = new SVECTOR();
+  public static void FUN_800cf4f4(final EffectManagerData6c<?> manager, @Nullable final Vector3f extraRotation, final VECTOR a2, final VECTOR out) {
     final MATRIX sp0x28 = new MATRIX();
 
-    sp0x20.set(a0._10.rot_10);
+    final Vector3f sp0x20 = new Vector3f(manager._10.rot_10);
 
-    if(a1 != null) {
+    if(extraRotation != null) {
       //LAB_800cf53c
-      sp0x20.add(a1);
+      sp0x20.add(extraRotation);
     }
 
     //LAB_800cf578
     RotMatrix_Xyz(sp0x20, sp0x28);
-    sp0x28.transfer.set(a0._10.trans_04);
+    sp0x28.transfer.set(manager._10.trans_04);
 
     a2.mul(sp0x28, out);
     out.add(sp0x28.transfer);
   }
 
   @Method(0x800cf684L)
-  public static void FUN_800cf684(final SVECTOR rotation, final VECTOR translation, final VECTOR vector, final VECTOR out) {
+  public static void FUN_800cf684(final Vector3f rotation, final VECTOR translation, final VECTOR vector, final VECTOR out) {
     final MATRIX transforms = new MATRIX();
     RotMatrix_Xyz(rotation, transforms);
     transforms.transfer.set(translation);
@@ -4194,7 +4192,7 @@ public final class Bttl_800c {
 
   /** @return Z */
   @Method(0x800cf7d4L)
-  public static int FUN_800cf7d4(final SVECTOR rotation, final VECTOR translation1, final VECTOR translation2, final ShortRef outX, final ShortRef outY) {
+  public static int FUN_800cf7d4(final Vector3f rotation, final VECTOR translation1, final VECTOR translation2, final ShortRef outX, final ShortRef outY) {
     final VECTOR sp0x10 = new VECTOR().set(translation1);
     sp0x10.mul(worldToScreenMatrix_800c3548);
 
@@ -4227,14 +4225,14 @@ public final class Bttl_800c {
 
   /** @return Z */
   @Method(0x800cfb94L)
-  public static int FUN_800cfb94(final EffectManagerData6c<?> manager, final SVECTOR rotation, final VECTOR translation, final ShortRef outX, final ShortRef outY) {
-    final SVECTOR tempRotation = new SVECTOR().set(manager._10.rot_10).add(rotation);
+  public static int FUN_800cfb94(final EffectManagerData6c<?> manager, final Vector3f rotation, final VECTOR translation, final ShortRef outX, final ShortRef outY) {
+    final Vector3f tempRotation = new Vector3f(manager._10.rot_10).add(rotation);
     return FUN_800cf7d4(tempRotation, manager._10.trans_04, translation, outX, outY);
   }
 
   /** @return Z */
   @Method(0x800cfc20L)
-  public static int FUN_800cfc20(final SVECTOR managerRotation, final VECTOR managerTranslation, final VECTOR translation, final ShortRef outX, final ShortRef outY) {
+  public static int FUN_800cfc20(final Vector3f managerRotation, final VECTOR managerTranslation, final VECTOR translation, final ShortRef outX, final ShortRef outY) {
     return FUN_800cf7d4(managerRotation, managerTranslation, translation, outX, outY);
   }
 

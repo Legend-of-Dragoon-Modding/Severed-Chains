@@ -22,6 +22,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
 
@@ -1058,8 +1059,16 @@ public final class Scus94491BpeSegment_8003 {
     matrixOut.set(new Matrix4f().rotateXYZ(MathHelper.psxDegToRad(rotation.getX()), MathHelper.psxDegToRad(rotation.getY()), MathHelper.psxDegToRad(rotation.getZ())));
   }
 
+  public static void RotMatrix_Xyz(final Vector3f rotation, final MATRIX matrixOut) {
+    matrixOut.set(new Matrix4f().rotateXYZ(rotation.x, rotation.y, rotation.z));
+  }
+
   @Method(0x8003fd80L)
   public static void RotMatrix_Yxz(final SVECTOR rotation, final MATRIX matrixOut) {
     matrixOut.set(new Matrix4f().rotateYXZ(MathHelper.psxDegToRad(rotation.getY()), MathHelper.psxDegToRad(rotation.getX()), MathHelper.psxDegToRad(rotation.getZ())));
+  }
+
+  public static void RotMatrix_Yxz(final Vector3f rotation, final MATRIX matrixOut) {
+    matrixOut.set(new Matrix4f().rotateYXZ(rotation.y, rotation.x, rotation.z));
   }
 }

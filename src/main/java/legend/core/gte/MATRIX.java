@@ -3,6 +3,7 @@ package legend.core.gte;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
+import org.joml.Vector3f;
 
 import java.util.Arrays;
 
@@ -324,6 +325,25 @@ public class MATRIX {
 
   /** Dunno what the L means, but it's scaled by XYZXYZXYZ instead of XXXYYYZZZ */
   public MATRIX scaleL(final VECTOR scale) {
+    return this.scaleL(scale, this);
+  }
+
+  /** Dunno what the L means, but it's scaled by XYZXYZXYZ instead of XXXYYYZZZ */
+  public MATRIX scaleL(final Vector3f scale, final MATRIX out) {
+    out.set(0, (short)(this.get(0) * scale.x));
+    out.set(1, (short)(this.get(1) * scale.y));
+    out.set(2, (short)(this.get(2) * scale.z));
+    out.set(3, (short)(this.get(3) * scale.x));
+    out.set(4, (short)(this.get(4) * scale.y));
+    out.set(5, (short)(this.get(5) * scale.z));
+    out.set(6, (short)(this.get(6) * scale.x));
+    out.set(7, (short)(this.get(7) * scale.y));
+    out.set(8, (short)(this.get(8) * scale.z));
+    return this;
+  }
+
+  /** Dunno what the L means, but it's scaled by XYZXYZXYZ instead of XXXYYYZZZ */
+  public MATRIX scaleL(final Vector3f scale) {
     return this.scaleL(scale, this);
   }
 

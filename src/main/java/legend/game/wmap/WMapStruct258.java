@@ -5,6 +5,7 @@ import legend.core.gte.SVECTOR;
 import legend.core.gte.VECTOR;
 import legend.game.types.Model124;
 import legend.game.unpacker.FileData;
+import org.joml.Vector3f;
 
 public class WMapStruct258 {
   public int _00;
@@ -26,7 +27,7 @@ public class WMapStruct258 {
   public final GsCOORDINATE2 coord2_34 = new GsCOORDINATE2();
   public final VECTOR vec_84 = new VECTOR();
   public final VECTOR vec_94 = new VECTOR();
-  public final SVECTOR rotation_a4 = new SVECTOR();
+  public final Vector3f rotation_a4 = new Vector3f();
   public int currentAnimIndex_ac;
   public int animIndex_b0;
   public final WMapStruct258Sub40[] _b4 = {new WMapStruct258Sub40(), new WMapStruct258Sub40(), new WMapStruct258Sub40(), new WMapStruct258Sub40()};
@@ -47,9 +48,9 @@ public class WMapStruct258 {
 
   public int _218;
   /** ushort */
-  public int _21c;
+  public float angle_21c;
   /** ushort */
-  public int _21e;
+  public float angle_21e;
   /** byte */
   public int _220;
   /** ubyte */

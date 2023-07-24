@@ -13,7 +13,6 @@ import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.GsDOBJ2;
 import legend.core.gte.GsOBJTABLE2;
 import legend.core.gte.MATRIX;
-import legend.core.gte.SVECTOR;
 import legend.core.gte.Tmd;
 import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.VECTOR;
@@ -71,6 +70,7 @@ import legend.game.unpacker.Unpacker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Matrix3f;
+import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -775,7 +775,7 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x800217a4L)
   public static void FUN_800217a4(final Model124 model) {
-    model.coord2Param_64.rotate.y.set(FUN_800ea4c8(model.coord2Param_64.rotate.y.get()));
+    model.coord2Param_64.rotate.y = MathHelper.psxDegToRad(FUN_800ea4c8(MathHelper.radToPsxDeg(model.coord2Param_64.rotate.y)));
     RotMatrix_Xyz(model.coord2Param_64.rotate, model.coord2_14.coord);
     model.coord2_14.coord.scale(model.scaleVector_fc);
     model.coord2_14.flg = 0;
@@ -797,15 +797,15 @@ public final class Scus94491BpeSegment_8002 {
     GsDOBJ2 dobj2 = getDObj2ById(table, dobj2Id);
 
     final MATRIX coord;
-    final VECTOR scale;
-    final SVECTOR rotation;
+    final Vector3f scale;
+    final Vector3f rotation;
     final VECTOR translation;
 
     if(dobj2 == null) {
       dobj2 = new GsDOBJ2(); //sp0x10;
       coord = new MATRIX(); //sp0x20;
-      scale = new VECTOR();
-      rotation = new SVECTOR(); //sp0x40;
+      scale = new Vector3f();
+      rotation = new Vector3f(); //sp0x40;
       translation = new VECTOR();
     } else {
       //LAB_80021984
@@ -837,10 +837,12 @@ public final class Scus94491BpeSegment_8002 {
       //LAB_800219ec
       dobj2.coord2_04.coord.identity();
 
-      rotation.set((short)11, (short)11, (short)11);
+      // Dunno why but models are initialized with a 1-degree rotation on all axes
+      final float oneDegree = (float)Math.toRadians(1.0);
+      rotation.set(oneDegree, oneDegree, oneDegree);
       RotMatrix_Xyz(rotation, coord);
 
-      scale.set(0x1000, 0x1000, 0x1000);
+      scale.set(1.0f, 1.0f, 1.0f);
       coord.scaleL(scale);
 
       translation.set(1, 1, 1);

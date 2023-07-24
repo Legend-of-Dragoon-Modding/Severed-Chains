@@ -161,7 +161,7 @@ public final class Scus94491BpeSegment_800e {
 
     FUN_800e6b3c(model_800bda10, container, animation);
 
-    model_800bda10.coord2Param_64.rotate.set((short)0, (short)0, (short)0);
+    model_800bda10.coord2Param_64.rotate.zero();
     model_800bda10.colourMap_9d = 0;
     model_800bda10.movementType_cc = 0;
   }

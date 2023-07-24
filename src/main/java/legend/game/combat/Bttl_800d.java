@@ -61,6 +61,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.joml.Math;
+import org.joml.Vector3f;
 
 import java.util.Arrays;
 
@@ -949,7 +950,7 @@ public final class Bttl_800d {
           objArray[objIndex].stepCount_01 = 8;
           objArray[objIndex].scaleModifier_04 = 0;
           objArray[objIndex].scaleModifierVelocity_08 = (int)(seed_800fa754.advance().get() % 49 + 104);
-          objArray[objIndex].angleModifier_0c = (int)(seed_800fa754.advance().get() % 4097);
+          objArray[objIndex].angleModifier_0c = MathHelper.psxDegToRad((int)(seed_800fa754.advance().get() % 4097));
           objArray[objIndex].angleModifierVelocity_10 = 0;
           objArray[objIndex].r_24 = manager._10.colour_1c.getX() << 8;
           objArray[objIndex].g_26 = manager._10.colour_1c.getY() << 8;
@@ -4390,10 +4391,8 @@ public final class Bttl_800d {
       final MATRIX matrix = model.dobj2ArrPtr_00[i].coord2_04.coord;
 
       final VECTOR trans = new VECTOR();
-      final SVECTOR rot = new SVECTOR();
       final VECTOR scale = new VECTOR();
       trans.set(transforms.trans_06);
-      rot.set(transforms.rot_0c);
       scale.set(transforms.scale_00);
 
       if(isInterpolationFrame != 0) { // Interpolation frame
@@ -4414,7 +4413,7 @@ public final class Bttl_800d {
       }
 
       //LAB_800dd818
-      RotMatrix_Zyx(rot, matrix);
+      RotMatrix_Zyx(transforms.rot_0c, matrix);
       matrix.transfer.set(trans);
       matrix.scaleL(scale);
     }
@@ -4659,7 +4658,7 @@ public final class Bttl_800d {
         RotMatrix_Zyx(modelTransforms.rotate_00, modelPartMatrix);
         modelPartMatrix.transfer.set(modelTransforms.translate_06);
 
-        final SVECTOR rotation = new SVECTOR();
+        final Vector3f rotation = new Vector3f();
         rotation.set(modelTransforms.rotate_00).add(subTransforms.rot_01);
 
         final MATRIX translation = new MATRIX();
@@ -4810,25 +4809,25 @@ public final class Bttl_800d {
   }
 
   @Method(0x800de544L)
-  public static SVECTOR getRotationFromTransforms(final SVECTOR rotOut, final MATRIX transforms) {
+  public static Vector3f getRotationFromTransforms(final Vector3f rotOut, final MATRIX transforms) {
     final MATRIX mat = new MATRIX().set(transforms);
-    rotOut.setX((short)ratan2(-mat.get(5), mat.get(8)));
-    mat.rotateX(-rotOut.getX());
-    rotOut.setY((short)ratan2(mat.get(2), mat.get(8)));
-    mat.rotateY(-rotOut.getY());
-    rotOut.setZ((short)ratan2(mat.get(3), mat.get(0)));
+    rotOut.x = MathHelper.atan2(-mat.get(5), mat.get(8));
+    mat.rotateX(-MathHelper.radToPsxDeg(rotOut.x));
+    rotOut.y = MathHelper.atan2(mat.get(2), mat.get(8));
+    mat.rotateY(-MathHelper.radToPsxDeg(rotOut.y));
+    rotOut.z = MathHelper.atan2(mat.get(3), mat.get(0));
     return rotOut;
   }
 
   @Method(0x800de618L)
-  public static void getRotationAndScaleFromTransforms(final SVECTOR rotOut, final SVECTOR scaleOut, final MATRIX transforms) {
+  public static void getRotationAndScaleFromTransforms(final Vector3f rotOut, final SVECTOR scaleOut, final MATRIX transforms) {
     final MATRIX mat = new MATRIX().set(transforms);
-    rotOut.setX((short)ratan2(-mat.get(5), mat.get(8)));
-    mat.rotateX(-rotOut.getX());
-    rotOut.setY((short)ratan2(mat.get(2), mat.get(8)));
-    mat.rotateY(-rotOut.getY());
-    rotOut.setZ((short)ratan2(mat.get(3), mat.get(0)));
-    mat.rotateZ(-rotOut.getZ());
+    rotOut.x = MathHelper.atan2(-mat.get(5), mat.get(8));
+    mat.rotateX(-MathHelper.radToPsxDeg(rotOut.x));
+    rotOut.y = MathHelper.atan2(mat.get(2), mat.get(8));
+    mat.rotateY(-MathHelper.radToPsxDeg(rotOut.y));
+    rotOut.z = MathHelper.atan2(mat.get(3), mat.get(0));
+    mat.rotateZ(-MathHelper.radToPsxDeg(rotOut.z));
     scaleOut.set(mat.get(0), mat.get(4), mat.get(8));
   }
 

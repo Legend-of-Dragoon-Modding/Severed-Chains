@@ -769,18 +769,18 @@ public final class SEffe {
 
   @Method(0x800fbd68L)
   public static void FUN_800fbd68(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
-    final SVECTOR sp0x38 = new SVECTOR();
+    final Vector3f sp0x38 = new Vector3f();
     if(particle._18 == 0) {
       FUN_800fb95c(particle);
       particle.particlePosition_50.setY((short)0);
       particle.particlePosition_50.z.shl(1);
-      sp0x38.set(particle._1a.getX(), (short)0, (short)0);
+      sp0x38.set(MathHelper.psxDegToRad(particle._1a.getX()), 0.0f, 0.0f);
     } else {
       //LAB_800fbdb8
       particle.particlePosition_50.setX((short)0);
       particle.particlePosition_50.setY((short)(rsin(particle._14) * particle._16 >> 11));
       particle.particlePosition_50.setZ((short)(rcos(particle._14) * particle._16 >> 12));
-      sp0x38.set((short)0, (short)0, particle._1a.getX());
+      sp0x38.set(0.0f, 0.0f, MathHelper.psxDegToRad(particle._1a.getX()));
     }
 
     //LAB_800fbe10
@@ -798,7 +798,7 @@ public final class SEffe {
     FUN_800fb95c(particle);
     particle.particlePosition_50.setY((short)0);
     particle.particlePosition_50.z.shl(1);
-    final SVECTOR sp0x38 = new SVECTOR().set(particle._18, (short)0, particle._1a.getX());
+    final Vector3f sp0x38 = new Vector3f(MathHelper.psxDegToRad(particle._18), 0.0f, MathHelper.psxDegToRad(particle._1a.getX()));
     particle._14 += 0x80;
     final VECTOR sp0x18 = new VECTOR().set(particle.particlePosition_50);
     final VECTOR sp0x28 = new VECTOR();
@@ -979,7 +979,7 @@ public final class SEffe {
   }
 
   @Method(0x800fc8f8L)
-  public static void FUN_800fc8f8(@Nullable VECTOR in, @Nullable final SVECTOR out) {
+  public static void FUN_800fc8f8(@Nullable VECTOR in, @Nullable final Vector3f out) {
     if(in == null) {
       in = new VECTOR();
     }
@@ -996,12 +996,13 @@ public final class SEffe {
       final VECTOR sp0x10 = new VECTOR();
       wsNegated.mul(wsTransposed, sp0x10);
       sp0x10.sub(in);
-      final short angle = (short)ratan2(sp0x10.getX(), sp0x10.getZ());
-      out.setY(angle);
+      final float angle = MathHelper.atan2(sp0x10.getX(), sp0x10.getZ());
+      out.y = angle;
 
       //LAB_800fca44
-      out.setX((short)ratan2(-sp0x10.getY(), (rcos(-angle) * sp0x10.getZ() - rsin(-angle) * sp0x10.getX()) / 0x1000));
-      out.setZ((short)0);
+      //TODO is this right?
+      out.x = MathHelper.atan2(-sp0x10.getY(), MathHelper.cos(-angle) * sp0x10.getZ() - MathHelper.sin(-angle) * sp0x10.getX());
+      out.z = 0.0f;
     }
     //LAB_800fca5c
   }
@@ -1017,20 +1018,20 @@ public final class SEffe {
       final int horizontalScale = zScale * (manager._10.scale_16.getX() + particle.scaleHorizontal_06) >> 12;
       final int verticalScale = zScale * (manager._10.scale_16.getY() + particle.scaleVertical_08) >> 12;
 
-      final int angle;
+      final float angle;
       if((manager._10.flags_24 & 0x2) != 0) {
         final VECTOR sp0x28 = new VECTOR();
-        final SVECTOR sp0x38 = new SVECTOR();
+        final Vector3f sp0x38 = new Vector3f();
         FUN_800fc8f8(sp0x28, sp0x38);
 
         //LAB_800fcb90
         //LAB_800fcbd4
-        final int sp18 = (particle.particlePositionCopy2_48.getZ() - translation.getZ()) * -Math.abs(rsin(sp0x38.getY() - manager._10.rot_10.getY())) / 0x1000 - (translation.getX() - particle.particlePositionCopy2_48.getX()) * -Math.abs(rcos(sp0x38.getY() + manager._10.rot_10.getY())) / 0x1000;
+        final int sp18 = (int)((particle.particlePositionCopy2_48.getZ() - translation.getZ()) * -Math.abs(MathHelper.sin(sp0x38.y - manager._10.rot_10.y)) - (translation.getX() - particle.particlePositionCopy2_48.getX()) * -Math.abs(MathHelper.cos(sp0x38.y + manager._10.rot_10.y)));
         final int sp1c = translation.getY() - particle.particlePositionCopy2_48.getY();
-        angle = -ratan2(sp1c, sp18) + 0x400;
+        angle = -MathHelper.atan2(sp1c, sp18) + MathHelper.TWO_PI / 4.0f;
         particle.particlePositionCopy2_48.set(translation);
       } else {
-        angle = particle.angle_0e + manager._10.rot_10.getX() - 0xa00;
+        angle = particle.angle_0e + manager._10.rot_10.x - MathHelper.TWO_PI / 1.6f;
       }
 
       //LAB_800fcc20
@@ -1040,18 +1041,18 @@ public final class SEffe {
       final int right = width >> 8;
       final int top = -height >> 8;
       final int bottom = height >> 8;
-      final int cos = rcos(angle);
-      final int sin = rsin(angle);
+      final float cos = MathHelper.cos(angle);
+      final float sin = MathHelper.sin(angle);
 
       // Rotate coords
-      final int rotX0 = (short)left * cos >> 12;
-      final int rotY0 = (short)left * sin >> 12;
-      final int rotX1 = (short)right * cos >> 12;
-      final int rotY1 = (short)right * sin >> 12;
-      final int rotX2 = (short)top * sin >> 12;
-      final int rotY2 = (short)top * cos >> 12;
-      final int rotX3 = (short)bottom * sin >> 12;
-      final int rotY3 = (short)bottom * cos >> 12;
+      final int rotX0 = (short)(left * cos);
+      final int rotY0 = (short)(left * sin);
+      final int rotX1 = (short)(right * cos);
+      final int rotY1 = (short)(right * sin);
+      final int rotX2 = (short)(top * sin);
+      final int rotY2 = (short)(top * cos);
+      final int rotX3 = (short)(bottom * sin);
+      final int rotY3 = (short)(bottom * cos);
 
       final short x = refX.get();
       final short y = refY.get();
@@ -1216,7 +1217,7 @@ public final class SEffe {
       particle.spriteRotation_70.add(particle.spriteRotationStep_78);
     } else {
       //LAB_800fd3e4
-      particle.angle_0e = (short)(manager._10.flags_24 >>> 12 & 0xff0);
+      particle.angle_0e = MathHelper.psxDegToRad((short)(manager._10.flags_24 >>> 12 & 0xff0));
     }
 
     //LAB_800fd3f8
@@ -1502,10 +1503,10 @@ public final class SEffe {
         if((manager._10.flags_00 & 0x400_0000) == 0) {
           // This is super bugged in retail and passes garbage as the last 3 params to both methods.
           // Hopefully this is fine with them all zeroed. This is used for the Glare's bewitching attack.
-          particle.managerRotation_68.setY((short)(ratan2(
+          particle.managerRotation_68.y = MathHelper.atan2(
             FUN_800dc408(0, 0, 0, 0, 0) - particle.particlePosition_50.getX(),
             FUN_800dc408(2, 0, 0, 0, 0) - particle.particlePosition_50.getZ()
-          ) + 0x400));
+          ) + MathHelper.TWO_PI / 4.0f;
         }
 
         //LAB_800fe300
@@ -1735,7 +1736,8 @@ public final class SEffe {
     FUN_800ff15c(manager, effect, particle, effectInner);
     particle.verticalPositionScale_20 = (short)0;
     particle.ticksUntilMovementModeChanges_22 = (short)(0x8000 / particle.ticksRemaining_12);
-    particle.angleAcceleration_24 = (short)((effectInner.particleInnerStuff_1c >>> 8 & 0xff) << 8);
+    //TODO should this still be << 8?
+    particle.angleAcceleration_24 = MathHelper.psxDegToRad((effectInner.particleInnerStuff_1c >>> 8 & 0xff) << 8);
   }
 
   @Method(0x800ff430L)
@@ -1746,7 +1748,7 @@ public final class SEffe {
     particle._1a.setY((short)50);
     particle.verticalPositionScale_20 = (short)100;
     particle.ticksUntilMovementModeChanges_22 = (short)0;
-    particle.angleAcceleration_24 = (short)(particle.angleVelocity_10 / particle.ticksRemaining_12);
+    particle.angleAcceleration_24 = particle.angleVelocity_10 / particle.ticksRemaining_12;
 
     particle.particleVelocity_58.setY((short)(seed_800fa754.advance().get() % 31 + 10));
     particle._1a.setZ((short)(seed_800fa754.advance().get() % 41 + 40));
@@ -1793,13 +1795,13 @@ public final class SEffe {
   @Method(0x800ff6fcL)
   public static void FUN_800ff6fc(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
     final int a0 = currentParticleIndex_8011a008.get();
-    particle.angleVelocity_10 = -0x80;
+    particle.angleVelocity_10 = MathHelper.TWO_PI / 32.0f;
     final int v1 = a0 >>> 1;
-    particle.angle_0e = (short)(v1 * 128);
-    particle._14 = (short)(v1 * 128);
+    particle.angle_0e = MathHelper.psxDegToRad(v1 << 7);
+    particle._14 = (short)(v1 << 7);
     particle._16 = effectInner._10;
     particle._18 = (short)(a0 & 0x1);
-    particle._1a.setX((short)(v1 * 8));
+    particle._1a.setX((short)(v1 << 3));
 
     final float colour = Math.max(0, (effectInner.particleInnerStuff_1c >>> 8 & 0xff) - a0 * 16) / (float)0x80;
 
@@ -2034,10 +2036,10 @@ public final class SEffe {
 
   @Method(0x801008f8L)
   public static void FUN_801008f8(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
-    particle.angle_0e = 0;
-    particle.angleVelocity_10 = 0;
-    particle.spriteRotation_70.set((short)0, (short)0, (short)0);
-    particle.spriteRotationStep_78.set((short)0, (short)0, (short)0);
+    particle.angle_0e = 0.0f;
+    particle.angleVelocity_10 = 0.0f;
+    particle.spriteRotation_70.zero();
+    particle.spriteRotationStep_78.zero();
     particle._18 = effectInner._18;
     particle._14 = 0x800;
     particle._16 = (short)(effectInner._10 << 4);
@@ -2266,14 +2268,14 @@ public final class SEffe {
     particle.g_86 = colour;
     particle.b_88 = colour;
     particle.flags_90 |= 0x1;
-    particle.angle_0e = (short)(seed_800fa754.advance().get() % 4097);
-    particle.angleVelocity_10 = (short)(seed_800fa754.advance().get() % 513 - 256);
-    particle.spriteRotation_70.setX((short)(seed_800fa754.advance().get() % 4097));
-    particle.spriteRotation_70.setY((short)(seed_800fa754.advance().get() % 4097));
-    particle.spriteRotation_70.setZ((short)(seed_800fa754.advance().get() % 4097));
-    particle.spriteRotationStep_78.setX((short)(seed_800fa754.advance().get() % 129 - 64));
-    particle.spriteRotationStep_78.setY((short)(seed_800fa754.advance().get() % 129 - 64));
-    particle.spriteRotationStep_78.setZ((short)0);
+    particle.angle_0e = MathHelper.psxDegToRad((short)(seed_800fa754.advance().get() % 4097));
+    particle.angleVelocity_10 = MathHelper.psxDegToRad((short)(seed_800fa754.advance().get() % 513 - 256));
+    particle.spriteRotation_70.x = MathHelper.psxDegToRad((short)(seed_800fa754.advance().get() % 4097));
+    particle.spriteRotation_70.y = MathHelper.psxDegToRad((short)(seed_800fa754.advance().get() % 4097));
+    particle.spriteRotation_70.z = MathHelper.psxDegToRad((short)(seed_800fa754.advance().get() % 4097));
+    particle.spriteRotationStep_78.x = MathHelper.psxDegToRad((short)(seed_800fa754.advance().get() % 129 - 64));
+    particle.spriteRotationStep_78.y = MathHelper.psxDegToRad((short)(seed_800fa754.advance().get() % 129 - 64));
+    particle.spriteRotationStep_78.z = 0.0f;
     particle.flags_90 = particle.flags_90 & 0xffff_fff1 | (seed_800fa754.advance().get() % 101 < 50 ? 0 : 0x8);
     final SomeParticleStruct10 s5 = _801198f0.get(callbackIndex);
     final int v1 = s5._00.get();
@@ -2402,7 +2404,7 @@ public final class SEffe {
 
     //LAB_80101f70
     if((flags & 0xf_ff00) == 0xf_ff00) {
-      final SpriteMetrics08 metrics = spriteMetrics_800c6948[(flags & 0xff)];
+      final SpriteMetrics08 metrics = spriteMetrics_800c6948[flags & 0xff];
       effect.u_58 = metrics.u_00;
       effect.v_5a = metrics.v_02;
       effect.w_5e = metrics.w_04;
@@ -2776,7 +2778,7 @@ public final class SEffe {
 
       //LAB_8010324c
       electricEffect.callback_2c.accept(manager, electricEffect, bolt, boltNum);
-      bolt.angle_02 -= electricEffect.boltAngleStep_10 << 7 >> 8;
+      bolt.angle_02 -= electricEffect.boltAngleStep_10 / 2.0f;
       segmentOrigin.set(bolt.boltSegments_10[0].origin_00);
       int zMod = FUN_800cfb94(manager, bolt.rotation_04, segmentOrigin, refOuterOriginXa, refOuterOriginYa) >> 2;
       segmentOrigin.set(bolt.boltSegments_10[electricEffect.boltSegmentCount_28 - 1].origin_00);
@@ -2803,7 +2805,7 @@ public final class SEffe {
         final LightningBoltEffectSegment30 segment = bolt.boltSegments_10[segmentNum];
         segment.innerColour_10.sub(segment.innerColourFadeStep_1c);
         segment.outerColour_16.sub(segment.outerColourFadeStep_22);
-        segment.unused_2a += electricEffect.boltAngleStep_10 << 8 >> 8;
+        segment.unused_2a += electricEffect.boltAngleStep_10 / 2.0f;
       }
 
       //LAB_80103538
@@ -2950,7 +2952,7 @@ public final class SEffe {
         //LAB_80103f6c
         electricEffect.callback_2c.accept(manager, electricEffect, bolt, i);
 
-        bolt.angle_02 -= electricEffect.boltAngleStep_10 << 7 >> 8;
+        bolt.angle_02 -= electricEffect.boltAngleStep_10 / 2.0f;
 
         //LAB_80103fc4
         int segmentNum;
@@ -2964,7 +2966,7 @@ public final class SEffe {
           segmentOrigin.y_04 = refY.get();
           segment.innerColour_10.sub(segment.innerColourFadeStep_1c);
           segment.outerColour_16.sub(segment.outerColourFadeStep_22);
-          segment.unused_2a += electricEffect.boltAngleStep_10 << 8 >> 8;
+          segment.unused_2a += electricEffect.boltAngleStep_10;
         }
 
         //LAB_801040d0
@@ -3099,28 +3101,28 @@ public final class SEffe {
 
   @Method(0x801049dcL)
   public static void FUN_801049dc(final EffectManagerData6c<EffectManagerData6cInner.ElectricityType> a0, final ElectricityEffect38 electricEffect, final LightningBoltEffect14 boltEffect, final int boltIndex) {
-    boltEffect.rotation_04.setY((short)(0x1000 / electricEffect.boltCount_00 * boltIndex));
-    boltEffect.rotation_04.setZ((short)(electricEffect.segmentOriginTranslationMagnitude_1e * 2));
+    boltEffect.rotation_04.y = MathHelper.TWO_PI / electricEffect.boltCount_00 * boltIndex;
+    boltEffect.rotation_04.z = MathHelper.psxDegToRad(electricEffect.segmentOriginTranslationMagnitude_1e * 2);
   }
 
   @Method(0x80104a14L)
   public static void FUN_80104a14(final EffectManagerData6c<EffectManagerData6cInner.ElectricityType> a0, final ElectricityEffect38 a1, final LightningBoltEffect14 bolt, final int a3) {
-    bolt.rotation_04.setX((short)(seed_800fa754.advance().get() % 4097));
-    bolt.rotation_04.setY((short)(seed_800fa754.advance().get() % 4097));
-    bolt.rotation_04.setZ((short)(seed_800fa754.advance().get() % 4097));
+    bolt.rotation_04.x = MathHelper.psxDegToRad((short)(seed_800fa754.advance().get() % 4097));
+    bolt.rotation_04.y = MathHelper.psxDegToRad((short)(seed_800fa754.advance().get() % 4097));
+    bolt.rotation_04.z = MathHelper.psxDegToRad((short)(seed_800fa754.advance().get() % 4097));
   }
 
   @Method(0x80104b10L)
   public static void FUN_80104b10(final EffectManagerData6c<EffectManagerData6cInner.ElectricityType> manager, final ElectricityEffect38 electricEffect, final LightningBoltEffect14 bolt, final int a3) {
-    final int angleStep = manager._10._28 << 8 >> 8;
-    int angle = bolt.angle_02;
+    final float angleStep = MathHelper.psxDegToRad(manager._10._28 << 8 >> 8);
+    float angle = bolt.angle_02;
 
     //LAB_80104b58
     for(int i = 0; i < electricEffect.boltSegmentCount_28; i++) {
       final LightningBoltEffectSegment30 segment = bolt.boltSegments_10[i];
-      segment.origin_00.x.add(rcos(angle) * electricEffect.segmentOriginTranslationMagnitude_1e >> 12);
-      segment.origin_00.z.add(rsin(angle) * electricEffect.segmentOriginTranslationMagnitude_1e >> 12);
-      angle = angle + angleStep;
+      segment.origin_00.x.add((int)(MathHelper.cos(angle) * electricEffect.segmentOriginTranslationMagnitude_1e));
+      segment.origin_00.z.add((int)(MathHelper.sin(angle) * electricEffect.segmentOriginTranslationMagnitude_1e));
+      angle += angleStep;
     }
 
     //LAB_80104bcc
@@ -3128,14 +3130,14 @@ public final class SEffe {
 
   @Method(0x80104becL)
   public static void FUN_80104bec(final EffectManagerData6c<EffectManagerData6cInner.ElectricityType> manager, final ElectricityEffect38 electricEffect, final LightningBoltEffect14 bolt, final int a3) {
-    final int angleStep = manager._10._28 << 8 >> 8;
-    int angle = bolt.angle_02;
+    final float angleStep = MathHelper.psxDegToRad(manager._10._28 << 8 >> 8);
+    float angle = bolt.angle_02;
 
     //LAB_80104c34
     for(int i = 0; i < electricEffect.boltSegmentCount_28; i++) {
       final LightningBoltEffectSegment30 segment = bolt.boltSegments_10[i];
-      segment.origin_00.z.add(rsin(angle) * electricEffect.segmentOriginTranslationMagnitude_1e >> 12);
-      angle = angle + angleStep;
+      segment.origin_00.z.add((int)(MathHelper.sin(angle) * electricEffect.segmentOriginTranslationMagnitude_1e));
+      angle += angleStep;
     }
 
     //LAB_80104c7c
@@ -3214,17 +3216,17 @@ public final class SEffe {
   @Method(0x801051acL)
   public static void FUN_801051ac(final EffectManagerData6c<EffectManagerData6cInner.ElectricityType> manager, final ElectricityEffect38 electricEffect, final LightningBoltEffect14 bolt, final int a3) {
     final int segmentCount = electricEffect.boltSegmentCount_28;
-    final int angleStepXZ = 0x1000 / (segmentCount - 1);
-    final int angleStepY = manager._10._28 << 8 >> 8;
-    int angleY = bolt.angle_02;
-    int angleXZ = 0;
+    final float angleStepXZ = MathHelper.TWO_PI / (segmentCount - 1);
+    final float angleStepY = MathHelper.psxDegToRad(manager._10._28 << 8 >> 8);
+    float angleY = bolt.angle_02;
+    float angleXZ = 0;
 
     //LAB_80105210
     for(int i = 0; i < segmentCount; i++) {
       final LightningBoltEffectSegment30 segment = bolt.boltSegments_10[i];
-      segment.origin_00.x.add(rsin(angleXZ) * electricEffect.segmentOriginTranslationMagnitude_1e >> 12);
-      segment.origin_00.y.set(rsin(angleY) * electricEffect.segmentOriginTranslationMagnitude_1e / 4 >> 12);
-      segment.origin_00.z.add(rcos(angleXZ) * electricEffect.segmentOriginTranslationMagnitude_1e >> 12);
+      segment.origin_00.x.add((int)(MathHelper.sin(angleXZ) * electricEffect.segmentOriginTranslationMagnitude_1e));
+      segment.origin_00.y.set((int)(MathHelper.sin(angleY) * electricEffect.segmentOriginTranslationMagnitude_1e / 4));
+      segment.origin_00.z.add((int)(MathHelper.cos(angleXZ) * electricEffect.segmentOriginTranslationMagnitude_1e));
       angleXZ = angleXZ + angleStepXZ;
       angleY = angleY + angleStepY;
     }
@@ -3252,7 +3254,7 @@ public final class SEffe {
     electricEffect.currentColourFadeStep_04 = 0;
     electricEffect.scriptIndex_08 = script.params_20[1].get();
     electricEffect.numColourFadeSteps_0c = effectFlag >> 16 & 0xff;
-    electricEffect.boltAngleStep_10 = script.params_20[5].get();
+    electricEffect.boltAngleStep_10 = MathHelper.psxDegToRad(script.params_20[5].get());
     electricEffect.addSuccessiveSegmentOriginTranslations_14 = (effectFlag >>> 24 & 0x8) == 0;
     electricEffect.type1RendererType_18 = (effectFlag >>> 24 & 0x10) == 0;
     electricEffect.boltAngleRangeCutoff_1c = script.params_20[2].get();
@@ -3275,8 +3277,8 @@ public final class SEffe {
     for(int i = 0; i < electricEffect.boltCount_00; i++) {
       final LightningBoltEffect14 boltEffect = electricEffect.bolts_34[i];
       boltEffect.unused_00 = 1;
-      boltEffect.angle_02 = (short)seed_800fa754.advance().get() % 4097;
-      boltEffect.rotation_04.set((short)0, (short)0, (short)0);
+      boltEffect.angle_02 = MathHelper.psxDegToRad((short)seed_800fa754.advance().get() % 4097);
+      boltEffect.rotation_04.zero();
       // Ran callback here from method array _80119ebc, which was filled with copies of the same no-op method FUN_801052d4
       initializeElectricityNodes(manager, electricEffect, boltEffect);
     }
@@ -3482,7 +3484,7 @@ public final class SEffe {
       hitPropertyValue = (int)_800fb7c0.offset(hitNum * 0x10L).offset(1, hitPropertyIndex).get();
     } else {
       //LAB_8010628c
-      hitPropertyValue = (Bttl_800c.getHitProperty(charSlot, hitNum, hitPropertyIndex) & 0xff);
+      hitPropertyValue = Bttl_800c.getHitProperty(charSlot, hitNum, hitPropertyIndex) & 0xff;
     }
 
     //LAB_80106298
@@ -3565,7 +3567,7 @@ public final class SEffe {
         borderOverlay.angleModifier_02 = (short)((0x10 - val) * 0x80 + 0x200);
         borderOverlay.countFramesVisible_0c = 5;
         borderOverlay.sideEffects_0d = 0;
-        borderOverlay.framesUntilRender_0a = (short)((hitOverlay.frameSuccessLowerBound_10 + (hitOverlay.numSuccessFrames_0e - 0x1) / 2 + val - 0x11));
+        borderOverlay.framesUntilRender_0a = (short)(hitOverlay.frameSuccessLowerBound_10 + (hitOverlay.numSuccessFrames_0e - 0x1) / 2 + val - 0x11);
         borderOverlay.r_04 = additionBorderColours_800fb7f0.get(hitOverlay.borderColoursArrayIndex_02 * 3).get()& 0xff;
         borderOverlay.g_05 = additionBorderColours_800fb7f0.get(hitOverlay.borderColoursArrayIndex_02 * 3 + 1).get() & 0xff;
         borderOverlay.b_06 = additionBorderColours_800fb7f0.get(hitOverlay.borderColoursArrayIndex_02 * 3 + 2).get() & 0xff;
@@ -4323,7 +4325,7 @@ public final class SEffe {
 
           //LAB_801086bc
           //LAB_801086e0
-          if(FUN_80108460(data, 0) != 0 && data._13 == 1 || (press_800bee94.get() >>> 4 & 0x2) != 0 && data._13 == 0 || (CONFIG.getConfig(CoreMod.AUTO_DRAGOON_ADDITION_CONFIG.get()) && FUN_80108460(data, 0) != 0)) {
+          if(FUN_80108460(data, 0) != 0 && data._13 == 1 || (press_800bee94.get() >>> 4 & 0x2) != 0 && data._13 == 0 || CONFIG.getConfig(CoreMod.AUTO_DRAGOON_ADDITION_CONFIG.get()) && FUN_80108460(data, 0) != 0) {
             //LAB_8010870c
             data._11 = 4;
             data._0d = 0;
@@ -4572,14 +4574,12 @@ public final class SEffe {
 
     //LAB_80109038
     for(int i = 0; i < effect.count_00; i++) {
-      int endpointShiftX = rsin(data._10.rot_10.getX()) << 5 >> 12;
-      int endpointShiftY = rcos(data._10.rot_10.getX()) << 5 >> 12;
-      endpointShiftX = endpointShiftX * data._10.scale_16.getX() * rainArray[i].angleModifier_0a >> 24;
-      endpointShiftY = endpointShiftY * data._10.scale_16.getX() * rainArray[i].angleModifier_0a >> 24;
+      final int endpointShiftX = (int)(MathHelper.sin(data._10.rot_10.x) * 32.0f * data._10.scale_16.getX() * rainArray[i].angleModifier_0a) >> 12;
+      final int endpointShiftY = (int)(MathHelper.cos(data._10.rot_10.x) * 32.0f * data._10.scale_16.getX() * rainArray[i].angleModifier_0a) >> 12;
       rainArray[i].x1_06 = rainArray[i].x0_02;
       rainArray[i].y1_08 = rainArray[i].y0_04;
-      rainArray[i].x0_02 = (rainArray[i].x0_02 + endpointShiftX) & 0x1ff;
-      rainArray[i].y0_04 = (rainArray[i].y0_04 + endpointShiftY) & 0xff;
+      rainArray[i].x0_02 = rainArray[i].x0_02 + endpointShiftX & 0x1ff;
+      rainArray[i].y0_04 = rainArray[i].y0_04 + endpointShiftY & 0xff;
     }
     //LAB_80109110
   }
@@ -4606,7 +4606,7 @@ public final class SEffe {
       rainArray[i]._00 = 1;
       rainArray[i].x0_02 = (short)(seed_800fa754.advance().get() % 513);
       rainArray[i].y0_04 = (short)(seed_800fa754.advance().get() % 257);
-      rainArray[i].angleModifier_0a = (short)(seed_800fa754.advance().get() % 3073 + 1024);
+      rainArray[i].angleModifier_0a = MathHelper.psxDegToRad((short)(seed_800fa754.advance().get() % 3073 + 1024));
     }
 
     //LAB_80109328
@@ -4747,8 +4747,8 @@ public final class SEffe {
 
     state.loadScriptFile(doNothingScript_8004f650);
     state.setTicker(SEffe::applyVertexDifferenceAnimation);
-    final DeffTmdRenderer14 source = ((DeffTmdRenderer14)sourceState.innerStruct_00.effect_44);
-    final DeffTmdRenderer14 diff = ((DeffTmdRenderer14)diffState.innerStruct_00.effect_44);
+    final DeffTmdRenderer14 source = (DeffTmdRenderer14)sourceState.innerStruct_00.effect_44;
+    final DeffTmdRenderer14 diff = (DeffTmdRenderer14)diffState.innerStruct_00.effect_44;
     final TmdObjTable1c sourceModel = source.tmd_08;
     final TmdObjTable1c diffModel = diff.tmd_08;
     final VertexDifferenceAnimation18 animation = state.innerStruct_00;
@@ -4807,7 +4807,7 @@ public final class SEffe {
         final SVECTOR sp0x10 = new SVECTOR().set(effect.verticesCopy_1c[s1]);
         sp0x10.y.add((short)(rsin(s4) * (manager._10._28 << 10 >> 8) >> 12));
         effect.vertices_0c[s1].set(sp0x10);
-        s4 += (0x1000 / effect._18 / manager._10._2c >> 8);
+        s4 += 0x1000 / effect._18 / manager._10._2c >> 8;
         s1++;
       }
 
@@ -5690,13 +5690,13 @@ public final class SEffe {
       }
 
       //LAB_8010d3cc
-      feather.angleStep_60 = angleStep;
+      feather.angleStep_60 = MathHelper.psxDegToRad(angleStep) / 0x100;
       feather.translationMagnitudeY_50 = rand() % 0x178 << 8;
       simpleRand();
-      feather.spriteAngle_6e = rand() % 0x1000;
+      feather.spriteAngle_6e = MathHelper.psxDegToRad(rand() % 0x1000);
       feather.translationMagnitudeXz_3c = 0;
       feather.angle_58 = 0;
-      feather.angleNoiseXz_5c = rand() % 0x1000 << 8;
+      feather.angleNoiseXz_5c = MathHelper.psxDegToRad(rand() % 0x1000);
       feather.r_38 = 0x7f;
       feather.g_39 = 0x7f;
       feather.b_3a = 0x7f;
@@ -6059,8 +6059,8 @@ public final class SEffe {
     final StarChildrenMeteorEffectInstance10[] meteorArray = meteorEffect.meteorArray_0c;
     for(int i = 0; i < meteorEffect.count_00; i++) {
       final StarChildrenMeteorEffectInstance10 meteor = meteorArray[i];
-      meteor.centerOffsetX_02 += (short)((rsin(manager._10.rot_10.getX()) * 32 >> 12) * manager._10.scale_16.getX() * meteor.scale_0a >> 24);
-      meteor.centerOffsetY_04 += (short)((rcos(manager._10.rot_10.getX()) * 32 >> 12) * manager._10.scale_16.getX() * meteor.scale_0a >> 24);
+      meteor.centerOffsetX_02 += (short)((int)(MathHelper.sin(manager._10.rot_10.x) * 32) * manager._10.scale_16.getX() * meteor.scale_0a >> 24);
+      meteor.centerOffsetY_04 += (short)((int)(MathHelper.cos(manager._10.rot_10.x) * 32) * manager._10.scale_16.getX() * meteor.scale_0a >> 24);
 
       if(meteor.scale_0a * 120 + 50 >> 12 < meteor.centerOffsetY_04) {
         meteor.centerOffsetY_04 = -120;
@@ -6173,7 +6173,7 @@ public final class SEffe {
       spriteEffect.b_16 = manager._10.colour_1c.getZ();
       spriteEffect.scaleX_1c = manager._10.scale_16.getX();
       spriteEffect.scaleY_1e = manager._10.scale_16.getY();
-      spriteEffect.angle_20 = manager._10.rot_10.getX();
+      spriteEffect.angle_20 = manager._10.rot_10.x;
       translation.set(manager._10.trans_04).add(star.translation_04);
       renderGenericSpriteAtZOffset0(spriteEffect, translation);
     }
@@ -6414,11 +6414,15 @@ public final class SEffe {
   @Method(0x8010fa88L)
   public static void expandWsDragoonTransformationEffect(final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager, final WsDragoonTransformationFeatherInstance70 feather) {
     feather.angle_58 += feather.angleStep_60;
+    feather.angle_58 %= MathHelper.TWO_PI;
+
     feather.velocityTranslationMagnitudeXz_40 += feather.accelerationTranslationMagnitudeXz_44;
     feather.translationMagnitudeXz_3c += feather.velocityTranslationMagnitudeXz_40;
-    final int x = (rcos(feather.angle_58 + feather.angleNoiseXz_5c >> 8) - rsin(feather.angle_58 + feather.angleNoiseXz_5c >> 8)) * (feather.translationMagnitudeXz_3c >> 8) >> 4;
-    final int y = feather.yOrigin_54 + (feather.translationMagnitudeY_50 * rsin(feather.angle_58 >> 8 & 0xfff) >> 12);
-    final int z = (rcos(feather.angle_58 + feather.angleNoiseXz_5c >> 8) + rsin(feather.angle_58 + feather.angleNoiseXz_5c >> 8)) * (feather.translationMagnitudeXz_3c >> 8) >> 4;
+
+    // These might be wrong
+    final int x = (int)((MathHelper.cos(feather.angle_58 + feather.angleNoiseXz_5c) - MathHelper.sin(feather.angle_58 + feather.angleNoiseXz_5c)) * feather.translationMagnitudeXz_3c) >> 4;
+    final int y = (int)(feather.yOrigin_54 + feather.translationMagnitudeY_50 * MathHelper.sin(feather.angle_58));
+    final int z = (int)((MathHelper.cos(feather.angle_58 + feather.angleNoiseXz_5c) + MathHelper.sin(feather.angle_58 + feather.angleNoiseXz_5c)) * feather.translationMagnitudeXz_3c) >> 4;
     feather.translation_08.set(x, y, z);
 
     feather.currentFrame_04++;
@@ -6432,9 +6436,12 @@ public final class SEffe {
   @Method(0x8010fbd4L)
   public static void spinWsDragoonTransformationEffect(final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager, final WsDragoonTransformationFeatherInstance70 feather) {
     feather.angle_58 += feather.angleStep_60;
-    final int x = (rcos(feather.angle_58 + feather.angleNoiseXz_5c >> 8) - rsin(feather.angle_58 + feather.angleNoiseXz_5c >> 8)) * (feather.translationMagnitudeXz_3c >> 8) >> 4;
-    final int y = feather.yOrigin_54 + (feather.translationMagnitudeY_50 * rsin(feather.angle_58 >> 8 & 0xfff) >> 12);
-    final int z = (rcos(feather.angle_58 + feather.angleNoiseXz_5c >> 8) + rsin(feather.angle_58 + feather.angleNoiseXz_5c >> 8)) * (feather.translationMagnitudeXz_3c >> 8) >> 4;
+    feather.angle_58 %= MathHelper.TWO_PI;
+
+    // These might be wrong
+    final int x = (int)((MathHelper.cos(feather.angle_58 + feather.angleNoiseXz_5c) - MathHelper.sin(feather.angle_58 + feather.angleNoiseXz_5c)) * (feather.translationMagnitudeXz_3c >> 8)) >> 4;
+    final int y = (int)(feather.yOrigin_54 + feather.translationMagnitudeY_50 * MathHelper.sin(feather.angle_58));
+    final int z = (int)((MathHelper.cos(feather.angle_58 + feather.angleNoiseXz_5c) + MathHelper.sin(feather.angle_58 + feather.angleNoiseXz_5c)) * (feather.translationMagnitudeXz_3c >> 8)) >> 4;
     feather.translation_08.set(x, y, z);
 
     feather.currentFrame_04++;
@@ -6450,10 +6457,13 @@ public final class SEffe {
   @Method(0x8010fd34L)
   public static void contractWsDragoonTransformationEffect(final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager, final WsDragoonTransformationFeatherInstance70 feather) {
     feather.angle_58 += feather.angleStep_60;
+    feather.angle_58 %= MathHelper.TWO_PI;
     feather.translationMagnitudeXz_3c += feather.velocityTranslationMagnitudeXz_40;
-    final int x = (rcos(feather.angle_58 + feather.angleNoiseXz_5c >> 8) - rsin(feather.angle_58 + feather.angleNoiseXz_5c >> 8)) * (feather.translationMagnitudeXz_3c >> 8) >> 4;
-    final int y = feather.yOrigin_54 + (feather.translationMagnitudeY_50 * rsin(feather.angle_58 >> 8 & 0xfff) >> 12);
-    final int z = (rcos(feather.angle_58 + feather.angleNoiseXz_5c >> 8) + rsin(feather.angle_58 + feather.angleNoiseXz_5c >> 8)) * (feather.translationMagnitudeXz_3c >> 8) >> 4;
+
+    // These might be wrong
+    final int x = (int)((MathHelper.cos(feather.angle_58 + feather.angleNoiseXz_5c) - MathHelper.sin(feather.angle_58 + feather.angleNoiseXz_5c)) * (feather.translationMagnitudeXz_3c >> 8)) >> 4;
+    final int y = (int)(feather.yOrigin_54 + feather.translationMagnitudeY_50 * MathHelper.sin(feather.angle_58));
+    final int z = (int)((MathHelper.cos(feather.angle_58 + feather.angleNoiseXz_5c) + MathHelper.sin(feather.angle_58 + feather.angleNoiseXz_5c)) * (feather.translationMagnitudeXz_3c >> 8)) >> 4;
     feather.translation_08.set(x, y, z);
     feather.translationMagnitudeY_50 += feather.velocityTranslationMagnitudeY_1c;
 
@@ -6507,13 +6517,13 @@ public final class SEffe {
   }
 
   @Method(0x80110074L)
-  public static SVECTOR getScriptedObjectRotation(final int scriptIndex) {
+  public static Vector3f getScriptedObjectRotation(final int scriptIndex) {
     final BattleScriptDataBase data = (BattleScriptDataBase)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
     return BattleScriptDataBase.EM__.equals(data.magic_00) ? ((EffectManagerData6c<?>)data)._10.rot_10 : ((BattleObject27c)data).model_148.coord2Param_64.rotate;
   }
 
   @Method(0x801100b8L)
-  public static void getScriptedObjectRotationAndTranslation(final int scriptIndex, final Ref<SVECTOR> rotation, final Ref<VECTOR> translation) {
+  public static void getScriptedObjectRotationAndTranslation(final int scriptIndex, final Ref<Vector3f> rotation, final Ref<VECTOR> translation) {
     final ScriptState<?> state = scriptStatePtrArr_800bc1c0[scriptIndex];
     final BattleScriptDataBase obj = (BattleScriptDataBase)state.innerStruct_00;
 
@@ -6549,7 +6559,7 @@ public final class SEffe {
 
   /** Transform rotation vector of script using rotation and translation of second */
   @Method(0x80110228L)
-  public static SVECTOR FUN_80110228(final SVECTOR rotation, @Nullable VECTOR translation1, final VECTOR translation2) {
+  public static Vector3f FUN_80110228(final Vector3f rotation, @Nullable VECTOR translation1, final VECTOR translation2) {
     if(translation1 == null) {
       translation1 = new VECTOR();
     }
@@ -6577,7 +6587,7 @@ public final class SEffe {
       a2.set(translation1);
     } else {
       //LAB_801103b8
-      final Ref<SVECTOR> rotation2 = new Ref<>();
+      final Ref<Vector3f> rotation2 = new Ref<>();
       final Ref<VECTOR> translation2 = new Ref<>();
       getScriptedObjectRotationAndTranslation(scriptIndex2, rotation2, translation2);
 
@@ -6616,7 +6626,7 @@ public final class SEffe {
 
   @Method(0x801105ccL)
   public static void getTranslationWithRotation(final VECTOR out, final int scriptIndex, final VECTOR in) {
-    final Ref<SVECTOR> rotation = new Ref<>();
+    final Ref<Vector3f> rotation = new Ref<>();
     final Ref<VECTOR> translation = new Ref<>();
     getScriptedObjectRotationAndTranslation(scriptIndex, rotation, translation);
 
@@ -6662,7 +6672,7 @@ public final class SEffe {
       manager._10.trans_04.set(scaler.value_0c).shra(8);
     } else {
       //LAB_80110814
-      final Ref<SVECTOR> scriptRot = new Ref<>();
+      final Ref<Vector3f> scriptRot = new Ref<>();
       final Ref<VECTOR> scriptTrans = new Ref<>();
       getScriptedObjectRotationAndTranslation(scaler.scriptIndex_30, scriptRot, scriptTrans);
 
@@ -6895,7 +6905,6 @@ public final class SEffe {
   public static MATRIX FUN_801116c4(final MATRIX a0, final int scriptIndex, final int a2) {
     final VECTOR trans = new VECTOR();
     final VECTOR scale = new VECTOR();
-    final SVECTOR rot = new SVECTOR();
     final MATRIX transforms = new MATRIX();
     final BattleScriptDataBase s0 = (BattleScriptDataBase)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
     if(BattleScriptDataBase.EM__.equals(s0.magic_00)) {
@@ -6931,7 +6940,6 @@ public final class SEffe {
           final LmbTransforms14 lmbTransforms = lmb._08[a2]._08[a1_0];
           scale.set(lmbTransforms.scale_00);
           trans.set(lmbTransforms.trans_06);
-          rot.set(lmbTransforms.rot_0c);
 
           if((a0_0 & 0x1) != 0) {
             int v1 = a1_0 + 1;
@@ -6947,7 +6955,7 @@ public final class SEffe {
           }
 
           //LAB_80111958
-          RotMatrix_Zyx(rot, transforms);
+          RotMatrix_Zyx(lmbTransforms.rot_0c, transforms);
           transforms.transfer.set(trans);
           transforms.scaleL(scale);
           transforms.compose(sp0x10, a0);
@@ -7159,14 +7167,14 @@ public final class SEffe {
   }
 
   @Method(0x80112474L)
-  public static void getRotationDifference(final int scriptIndex1, final int scriptIndex2, final SVECTOR outRotation) {
-    final SVECTOR rotation = getScriptedObjectRotation(scriptIndex1);
+  public static void getRotationDifference(final int scriptIndex1, final int scriptIndex2, final Vector3f outRotation) {
+    final Vector3f rotation = getScriptedObjectRotation(scriptIndex1);
 
     if(scriptIndex2 == -1) {
       outRotation.set(rotation);
     } else {
       //LAB_801124c8
-      outRotation.set(rotation).sub(getScriptedObjectRotation(scriptIndex2)).and(0xfff);
+      MathHelper.floorMod(outRotation.set(rotation).sub(getScriptedObjectRotation(scriptIndex2)), MathHelper.TWO_PI);
     }
 
     //LAB_80112518
@@ -7174,7 +7182,7 @@ public final class SEffe {
 
   /** Sets rotation on script from given vector, adding from second script if one is specified */
   @Method(0x80112530L)
-  public static int setRelativeRotation(final int scriptIndex1, final int scriptIndex2, final SVECTOR inVec) {
+  public static int setRelativeRotation(final int scriptIndex1, final int scriptIndex2, final Vector3f rotation) {
     final EffectManagerData6c<?> data = (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[scriptIndex1].innerStruct_00;
 
     if(BattleScriptDataBase.EM__.equals(data.magic_00) && (data.flags_04 & 0x4) != 0) {
@@ -7183,14 +7191,14 @@ public final class SEffe {
 
     // scriptIndex1Rotation cannot be factored out of condition because scriptIndex 1 and 2 can
     // refer to the same script. In this scenario, setting the rotation of scriptIndex1 outside
-    // the condition will cause the script to always be set to 2 * inVec instead of rotation + inVec.
+    // the condition will cause the script to always be set to 2 * rotation instead of rotation + rotation.
     //LAB_8011259c
-    final SVECTOR scriptIndex1Rotation = getScriptedObjectRotation(scriptIndex1);
+    final Vector3f scriptIndex1Rotation = getScriptedObjectRotation(scriptIndex1);
     if(scriptIndex2 == -1) {
-      scriptIndex1Rotation.set(inVec);
+      scriptIndex1Rotation.set(rotation);
     } else {
       //LAB_801125d8
-      scriptIndex1Rotation.set(getScriptedObjectRotation(scriptIndex2)).add(inVec);
+      scriptIndex1Rotation.set(getScriptedObjectRotation(scriptIndex2)).add(rotation);
     }
 
     //LAB_8011261c
@@ -7202,7 +7210,11 @@ public final class SEffe {
   public static int tickRotationScaler(final EffectManagerData6c<?> manager, final TransformScalerEffect34 scaler) {
     scaler.velocity_18.add(scaler.acceleration_24);
     scaler.value_0c.add(scaler.velocity_18);
-    manager._10.rot_10.set(scaler.value_0c);
+    manager._10.rot_10.set(
+      MathHelper.psxDegToRad(scaler.value_0c.getX()),
+      MathHelper.psxDegToRad(scaler.value_0c.getY()),
+      MathHelper.psxDegToRad(scaler.value_0c.getZ())
+    );
     if(scaler.stepTicker_32 != -1) {
       scaler.stepTicker_32--;
 
@@ -7218,11 +7230,11 @@ public final class SEffe {
 
   @Method(0x80112704L)
   public static FlowControl scriptGetRotationDifference(final RunningScript<?> script) {
-    final SVECTOR sp0x10 = new SVECTOR();
+    final Vector3f sp0x10 = new Vector3f();
     getRotationDifference(script.params_20[0].get(), script.params_20[1].get(), sp0x10);
-    script.params_20[2].set(sp0x10.getX());
-    script.params_20[3].set(sp0x10.getY());
-    script.params_20[4].set(sp0x10.getZ());
+    script.params_20[2].set(MathHelper.radToPsxDeg(sp0x10.x));
+    script.params_20[3].set(MathHelper.radToPsxDeg(sp0x10.y));
+    script.params_20[4].set(MathHelper.radToPsxDeg(sp0x10.z));
     return FlowControl.CONTINUE;
   }
 
@@ -7231,10 +7243,10 @@ public final class SEffe {
     setRelativeRotation(
       script.params_20[0].get(),
       script.params_20[1].get(),
-      new SVECTOR().set(
-        (short)script.params_20[2].get(),
-        (short)script.params_20[3].get(),
-        (short)script.params_20[4].get()
+      new Vector3f(
+        MathHelper.psxDegToRad((short)script.params_20[2].get()),
+        MathHelper.psxDegToRad((short)script.params_20[3].get()),
+        MathHelper.psxDegToRad((short)script.params_20[4].get())
       )
     );
 
@@ -7246,35 +7258,35 @@ public final class SEffe {
     final MATRIX transforms = new MATRIX();
     FUN_800e8594(transforms, (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00);
 
-    final SVECTOR rot = new SVECTOR();
+    final Vector3f rot = new Vector3f();
     getRotationFromTransforms(rot, transforms);
-    script.params_20[2].set(rot.getX());
-    script.params_20[3].set(rot.getY());
-    script.params_20[4].set(rot.getZ());
+    script.params_20[2].set(MathHelper.radToPsxDeg(rot.x));
+    script.params_20[3].set(MathHelper.radToPsxDeg(rot.y));
+    script.params_20[4].set(MathHelper.radToPsxDeg(rot.z));
     return FlowControl.CONTINUE;
   }
 
   @Method(0x8011287cL)
   public static FlowControl FUN_8011287c(final RunningScript<?> script) {
-    final SVECTOR rot = new SVECTOR();
+    final Vector3f rot = new Vector3f();
     final MATRIX transforms = new MATRIX();
     FUN_801116c4(transforms, script.params_20[0].get(), script.params_20[1].get());
     getRotationFromTransforms(rot, transforms);
-    script.params_20[2].set(rot.getX());
-    script.params_20[3].set(rot.getY());
-    script.params_20[4].set(rot.getZ());
+    script.params_20[2].set(MathHelper.radToPsxDeg(rot.x));
+    script.params_20[3].set(MathHelper.radToPsxDeg(rot.y));
+    script.params_20[4].set(MathHelper.radToPsxDeg(rot.z));
     return FlowControl.CONTINUE;
   }
 
   @Method(0x80112900L)
   public static FlowControl FUN_80112900(final RunningScript<?> script) {
-    final SVECTOR rot = new SVECTOR();
+    final Vector3f rot = new Vector3f();
     FUN_80110228(rot, getScriptedObjectTranslation(script.params_20[0].get()), getScriptedObjectTranslation(script.params_20[1].get()));
 
     // XZY is the correct order
-    script.params_20[2].set(rot.getX());
-    script.params_20[3].set(rot.getZ());
-    script.params_20[4].set(rot.getY());
+    script.params_20[2].set(MathHelper.radToPsxDeg(rot.x));
+    script.params_20[3].set(MathHelper.radToPsxDeg(rot.z));
+    script.params_20[4].set(MathHelper.radToPsxDeg(rot.y));
     return FlowControl.CONTINUE;
   }
 
@@ -7284,14 +7296,14 @@ public final class SEffe {
     final int targetScript = script.params_20[1].get();
 
     final VECTOR translationFinal = new VECTOR().set(script.params_20[2].get(), script.params_20[3].get(), script.params_20[4].get());
-    final Ref<SVECTOR> rotation = new Ref<>(new SVECTOR());
-    final Ref<VECTOR> translation1 = new Ref<>(new VECTOR());
+    final Ref<Vector3f> rotation = new Ref<>();
+    final Ref<VECTOR> translation1 = new Ref<>();
 
     getScriptedObjectRotationAndTranslation(script.params_20[0].get(), rotation, translation1);
 
     if(targetScript != -1) {
-      final Ref<SVECTOR> targetRotation = new Ref<>(new SVECTOR());
-      final Ref<VECTOR> targetTranslation = new Ref<>(new VECTOR());
+      final Ref<Vector3f> targetRotation = new Ref<>();
+      final Ref<VECTOR> targetTranslation = new Ref<>();
 
       getScriptedObjectRotationAndTranslation(targetScript, targetRotation, targetTranslation);
 
@@ -7317,7 +7329,11 @@ public final class SEffe {
     final TransformScalerEffect34 v0 = FUN_800e8dd4(s0, 2, 0, SEffe::tickRotationScaler, new TransformScalerEffect34());
     v0.scriptIndex_30 = -1;
     v0.stepTicker_32 = -1;
-    v0.value_0c.set(s0._10.rot_10);
+    v0.value_0c.set(
+      MathHelper.radToPsxDeg(s0._10.rot_10.x),
+      MathHelper.radToPsxDeg(s0._10.rot_10.y),
+      MathHelper.radToPsxDeg(s0._10.rot_10.z)
+    );
     v0.velocity_18.setX(script.params_20[2].get());
     v0.velocity_18.setY(script.params_20[3].get());
     v0.velocity_18.setZ(script.params_20[4].get());
@@ -7331,40 +7347,42 @@ public final class SEffe {
   public static FlowControl FUN_80112bf0(final RunningScript<?> script) {
     final int s0 = script.params_20[0].get();
     final int s4 = script.params_20[1].get();
-    final int s2 = script.params_20[2].get();
-    final int s5 = script.params_20[3].get();
-    final int s6 = script.params_20[4].get();
-    final int s7 = script.params_20[5].get();
+    final int step = script.params_20[2].get();
+    final float s5 = MathHelper.psxDegToRad(script.params_20[3].get());
+    final float s6 = MathHelper.psxDegToRad(script.params_20[4].get());
+    final float s7 = MathHelper.psxDegToRad(script.params_20[5].get());
 
-    if(s2 >= 0) {
+    if(step >= 0) {
       final EffectManagerData6c<?> manager = (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[s0].innerStruct_00;
       final TransformScalerEffect34 effect = FUN_800e8dd4(manager, 2, 0, SEffe::tickRotationScaler, new TransformScalerEffect34());
 
-      final SVECTOR v1 = getScriptedObjectRotation(s0);
-      final int sp18;
-      final int sp1c;
-      final int sp20;
+      final Vector3f v1 = getScriptedObjectRotation(s0);
+      final float sp18;
+      final float sp1c;
+      final float sp20;
       if(s4 == -1) {
-        sp18 = s5 - v1.getX();
-        sp1c = s6 - v1.getY();
-        sp20 = s7 - v1.getZ();
+        sp18 = s5 - v1.x;
+        sp1c = s6 - v1.y;
+        sp20 = s7 - v1.z;
       } else {
         //LAB_80112ce4
-        final SVECTOR v2 = getScriptedObjectRotation(s4);
-        sp18 = v2.getX() + s5 - v1.getX();
-        sp1c = v2.getY() + s6 - v1.getY();
-        sp20 = v2.getZ() + s7 - v1.getZ();
+        final Vector3f v2 = getScriptedObjectRotation(s4);
+        sp18 = v2.x + s5 - v1.x;
+        sp1c = v2.y + s6 - v1.y;
+        sp20 = v2.z + s7 - v1.z;
       }
 
       //LAB_80112d48
       effect.scriptIndex_30 = -1;
-      effect.stepTicker_32 = (short)s2;
-      effect.value_0c.set(manager._10.rot_10);
-      effect.value_0c.set(manager._10.rot_10);
-      effect.value_0c.set(manager._10.rot_10);
-      effect.velocity_18.setX(sp18 / s2);
-      effect.velocity_18.setY(sp1c / s2);
-      effect.velocity_18.setZ(sp20 / s2);
+      effect.stepTicker_32 = (short)step;
+      effect.value_0c.set(
+        MathHelper.radToPsxDeg(manager._10.rot_10.x),
+        MathHelper.radToPsxDeg(manager._10.rot_10.y),
+        MathHelper.radToPsxDeg(manager._10.rot_10.z)
+      );
+      effect.velocity_18.setX(MathHelper.radToPsxDeg(sp18 / step));
+      effect.velocity_18.setY(MathHelper.radToPsxDeg(sp1c / step));
+      effect.velocity_18.setZ(MathHelper.radToPsxDeg(sp20 / step));
       effect.acceleration_24.set(0, 0, 0);
     }
 
@@ -7389,13 +7407,17 @@ public final class SEffe {
 
   @Method(0x8011357cL)
   public static FlowControl FUN_8011357c(final RunningScript<?> script) {
-    final SVECTOR rot = new SVECTOR().set((short)script.params_20[1].get(), (short)script.params_20[2].get(), (short)script.params_20[3].get());
+    final Vector3f rot = new Vector3f(
+      MathHelper.psxDegToRad((short)script.params_20[1].get()),
+      MathHelper.psxDegToRad((short)script.params_20[2].get()),
+      MathHelper.psxDegToRad((short)script.params_20[3].get())
+    );
     final MATRIX transforms = new MATRIX();
     RotMatrix_Yxz(rot, transforms);
     getRotationFromTransforms(rot, transforms);
-    script.params_20[4].set(rot.getX());
-    script.params_20[5].set(rot.getY());
-    script.params_20[6].set(rot.getZ());
+    script.params_20[4].set(MathHelper.radToPsxDeg(rot.x));
+    script.params_20[5].set(MathHelper.radToPsxDeg(rot.y));
+    script.params_20[6].set(MathHelper.radToPsxDeg(rot.z));
     return FlowControl.CONTINUE;
   }
 
@@ -8074,7 +8096,7 @@ public final class SEffe {
       final EffectManagerData6c<EffectManagerData6cInner.VoidType> sp0x50 = new EffectManagerData6c<>("Temp", new EffectManagerData6cInner.VoidType());
 
       sp0x50._10.trans_04.set(0, 0, 0);
-      sp0x50._10.rot_10.set((short)0, (short)0, (short)0);
+      sp0x50._10.rot_10.zero();
       sp0x50._10.scale_16.set((short)0x1000, (short)0x1000, (short)0x1000);
 
       sp0x50.scriptIndex_0c = scriptIndex;
@@ -8083,7 +8105,7 @@ public final class SEffe {
       final MATRIX transforms = new MATRIX();
       FUN_800e8594(transforms, sp0x50);
 
-      final SVECTOR rot = new SVECTOR();
+      final Vector3f rot = new Vector3f();
       final SVECTOR scale = new SVECTOR();
       getRotationAndScaleFromTransforms(rot, scale, transforms);
       rot.negate();
@@ -8428,16 +8450,16 @@ public final class SEffe {
         final int r = w / 2 * a1 / 0x1000;
         final int t = -h / 2 * a1 / 0x1000;
         final int b = h / 2 * a1 / 0x1000;
-        final int sin = rsin(manager._10.rot_10.getZ());
-        final int cos = rcos(manager._10.rot_10.getZ());
-        final int sinL = l * sin / 0x1000;
-        final int cosL = l * cos / 0x1000;
-        final int sinR = r * sin / 0x1000;
-        final int cosR = r * cos / 0x1000;
-        final int sinT = t * sin / 0x1000;
-        final int cosT = t * cos / 0x1000;
-        final int sinB = b * sin / 0x1000;
-        final int cosB = b * cos / 0x1000;
+        final float sin = MathHelper.sin(manager._10.rot_10.z);
+        final float cos = MathHelper.cos(manager._10.rot_10.z);
+        final int sinL = (int)(l * sin);
+        final int cosL = (int)(l * cos);
+        final int sinR = (int)(r * sin);
+        final int cosR = (int)(r * cos);
+        final int sinT = (int)(t * sin);
+        final int cosT = (int)(t * cos);
+        final int sinB = (int)(b * sin);
+        final int cosB = (int)(b * cos);
 
         final GpuCommandPoly cmd = new GpuCommandPoly(4)
           .clut((clut & 0b111111) * 16, clut >>> 6)
@@ -8586,19 +8608,19 @@ public final class SEffe {
 
           //LAB_80116d40
           if((v1._00 & 0x200) == 0) {
-            transforms.rot_0c.setX(lmb._14[a0_0]);
+            transforms.rot_0c.x = MathHelper.psxDegToRad(lmb._14[a0_0]);
             a0_0++;
           }
 
           //LAB_80116d60
           if((v1._00 & 0x100) == 0) {
-            transforms.rot_0c.setY(lmb._14[a0_0]);
+            transforms.rot_0c.y = MathHelper.psxDegToRad(lmb._14[a0_0]);
             a0_0++;
           }
 
           //LAB_80116d80
           if((v1._00 & 0x80) == 0) {
-            transforms.rot_0c.setZ(lmb._14[a0_0]);
+            transforms.rot_0c.z = MathHelper.psxDegToRad(lmb._14[a0_0]);
             a0_0++;
           }
         }
@@ -8788,19 +8810,19 @@ public final class SEffe {
             a0_0++;
 
             if((flags & 0x200) == 0) {
-              transform.rot_0c.x.add((short)(MEMORY.ref(1, a0_0).offset(0x0L).getSigned() << shift));
+              transform.rot_0c.x += MathHelper.psxDegToRad((short)(MEMORY.ref(1, a0_0).offset(0x0L).getSigned() << shift));
               a0_0++;
             }
 
             //LAB_801173c8
             if((flags & 0x100) == 0) {
-              transform.rot_0c.y.add((short)(MEMORY.ref(1, a0_0).offset(0x0L).getSigned() << shift));
+              transform.rot_0c.y += MathHelper.psxDegToRad((short)(MEMORY.ref(1, a0_0).offset(0x0L).getSigned() << shift));
               a0_0++;
             }
 
             //LAB_801173f0
             if((flags & 0x80) == 0) {
-              transform.rot_0c.z.add((short)(MEMORY.ref(1, a0_0).offset(0x0L).getSigned() << shift));
+              transform.rot_0c.z += MathHelper.psxDegToRad((short)(MEMORY.ref(1, a0_0).offset(0x0L).getSigned() << shift));
               a0_0++;
             }
           }

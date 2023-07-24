@@ -17,7 +17,7 @@ public class LightningBoltEffectSegment30 {
   public int scaleMultiplier_28;
 
   /** short; Incremented while rendering, but never used for anything. */
-  public int unused_2a;
+  public float unused_2a;
   /** short */
   public int originTranslationMagnitude_2c;
   /** short */

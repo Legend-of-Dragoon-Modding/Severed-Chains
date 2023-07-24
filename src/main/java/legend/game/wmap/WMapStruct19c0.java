@@ -2,7 +2,6 @@ package legend.game.wmap;
 
 import legend.core.gte.COLOUR;
 import legend.core.gte.GsCOORDINATE2;
-import legend.core.gte.SVECTOR;
 import legend.core.gte.VECTOR;
 import legend.game.types.GsF_LIGHT;
 import legend.game.types.GsRVIEW2;
@@ -13,13 +12,13 @@ import java.util.Arrays;
 public class WMapStruct19c0 {
   public final GsRVIEW2 rview2_00 = new GsRVIEW2();
   public final GsCOORDINATE2 coord2_20 = new GsCOORDINATE2();
-  public final SVECTOR mapRotation_70 = new SVECTOR();
+  public final Vector3f mapRotation_70 = new Vector3f();
   /** short */
-  public int mapRotationStartAngle_78;
+  public float mapRotationStartAngle_78;
   /** short */
-  public int mapRotationEndAngle_7a;
+  public float mapRotationEndAngle_7a;
   /** short */
-  public int mapRotationStep_7c;
+  public float mapRotationStep_7c;
   /** short */
   public int mapRotationCounter_7e;
   /** ubyte */
@@ -29,11 +28,11 @@ public class WMapStruct19c0 {
   public int _88;
   public final COLOUR[] colour_8c = {new COLOUR(), new COLOUR(), new COLOUR()};
   /** short */
-  public int _98;
+  public float angle_98;
   /** short */
-  public int _9a;
+  public float angle_9a;
   /** short */
-  public int _9c;
+  public float angle_9c;
   /** short */
   public int _9e;
   /** short */
@@ -54,11 +53,11 @@ public class WMapStruct19c0 {
   public int refpointZ_fc;
 
   /** short */
-  public int _108;
+  public float angle_108;
   /** short */
-  public int _10a;
+  public float angle_10a;
   /** short */
-  public int _10c;
+  public float angle_10c;
   /** ushort */
   public int _10e;
   /** ubyte */

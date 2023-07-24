@@ -38,7 +38,7 @@ public class TmdObjTable1c {
     Arrays.setAll(this.vert_top_00, i -> verts.readSvec3(i * 0x8, new SVECTOR()));
 
     this.normal_top_08 = new Vector3f[this.n_normal_0c];
-    Arrays.setAll(this.normal_top_08, i -> normals.readVector3f(i * 0x8, new Vector3f()));
+    Arrays.setAll(this.normal_top_08, i -> normals.readSvec3(i * 0x8, new Vector3f()));
 
     final List<Primitive> primitivesList = new ArrayList<>();
     Scus94491BpeSegment_8003.updateTmdPacketIlen(primitives, this.n_primitive_14);

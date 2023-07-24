@@ -47,9 +47,9 @@ public class MapState100 {
   /** 800c6848 */
   public final VECTOR _b0 = new VECTOR();
   /** 800c6858 */
-  public int _c0;
+  public float angle_c0;
   /** 800c685a */
-  public short previousPlayerRotation_c2;
+  public float previousPlayerRotation_c2;
   /** 800c685c */
   public int submapCut_c4;
   /** 800c685e */

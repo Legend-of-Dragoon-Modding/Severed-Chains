@@ -11,7 +11,7 @@ public class RaindropEffect0c {
   public int y0_04;
   public int x1_06;
   public int y1_08;
-  public int angleModifier_0a;
+  public float angleModifier_0a;
 
   public RaindropEffect0c(final int index) {
     this.index = index;

@@ -28,7 +28,7 @@ public class SubmapObject210 {
   public int s_178;
 
   /** The amount to rotate this sobj by each frame for {@link SubmapObject210#rotationFrames_188} frames */
-  public final VECTOR rotationAmount_17c = new VECTOR();
+  public final Vector3f rotationAmount_17c = new Vector3f();
   /** Number of frames to apply rotation for */
   public int rotationFrames_188;
   public int ui_18c;
