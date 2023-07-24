@@ -37,6 +37,7 @@ import legend.game.combat.deff.DeffManager7cc;
 import legend.game.combat.effects.BttlScriptData6cSub13c;
 import legend.game.combat.effects.ButtonPressHudMetrics06;
 import legend.game.combat.effects.EffectManagerData6c;
+import legend.game.combat.effects.EffectManagerData6cInner;
 import legend.game.combat.effects.FullScreenOverlayEffect0e;
 import legend.game.combat.effects.GuardEffectMetrics04;
 import legend.game.combat.effects.RadialGradientEffect14;
@@ -367,7 +368,7 @@ public final class Bttl_800c {
    *   <li>{@link Bttl_800d#renderAdditionCompletedStarburst}</li>
    * </ol>
    */
-  public static final BiConsumer<ScriptState<EffectManagerData6c>, EffectManagerData6c>[] additionStarburstRenderers_800c6dc4 = new BiConsumer[3];
+  public static final BiConsumer<ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>>, EffectManagerData6c<EffectManagerData6cInner.VoidType>>[] additionStarburstRenderers_800c6dc4 = new BiConsumer[3];
   static {
     additionStarburstRenderers_800c6dc4[0] = Bttl_800d::renderAdditionHitStarburst;
     additionStarburstRenderers_800c6dc4[1] = Bttl_800d::renderAdditionCompletedStarburst;
@@ -448,7 +449,7 @@ public final class Bttl_800c {
    *   <li>{@link Bttl_800d#renderRingGradientEffect}</li>
    * </ol>
    */
-  public static final QuintConsumer<EffectManagerData6c, Integer, short[], RadialGradientEffect14, Translucency>[] radialGradientEffectRenderers_800fa758 = new QuintConsumer[5];
+  public static final QuintConsumer<EffectManagerData6c<EffectManagerData6cInner.RadialGradientType>, Integer, short[], RadialGradientEffect14, Translucency>[] radialGradientEffectRenderers_800fa758 = new QuintConsumer[5];
   static {
     radialGradientEffectRenderers_800fa758[0] = Bttl_800d::renderDiscGradientEffect;
     radialGradientEffectRenderers_800fa758[1] = Bttl_800d::FUN_800d1e80; // Not implemented
@@ -3689,7 +3690,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cdcecL)
-  public static void getVertexMinMaxByComponent(final Model124 model, final int dobjIndex, final VECTOR smallestVertRef, final VECTOR largestVertRef, final EffectManagerData6c manager, final IntRef smallestIndexRef, final IntRef largestIndexRef) {
+  public static void getVertexMinMaxByComponent(final Model124 model, final int dobjIndex, final VECTOR smallestVertRef, final VECTOR largestVertRef, final EffectManagerData6c<EffectManagerData6cInner.WeaponTrailType> manager, final IntRef smallestIndexRef, final IntRef largestIndexRef) {
     short largest = -1;
     short smallest = 0x7fff;
     int largestIndex = 0;
@@ -3699,7 +3700,7 @@ public final class Bttl_800c {
     //LAB_800cdd24
     for(int i = 0; i < tmd.n_vert_04; i++) {
       final SVECTOR vert = tmd.vert_top_00[i];
-      final ShortRef component = vert.component(manager._10._24);
+      final ShortRef component = vert.component(manager._10.vertexComponent_24);
       final short val = component.get();
 
       if(val >= largest) {
@@ -3760,7 +3761,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cde94L)
-  public static void renderWeaponTrailEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
+  public static void renderWeaponTrailEffect(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.WeaponTrailType>> state, final EffectManagerData6c<EffectManagerData6cInner.WeaponTrailType> data) {
     // Prevent garbage trails from rendering across the screen
     final int renderCoordThreshold = 5000;
     boolean renderCoordThresholdExceeded;
@@ -3840,7 +3841,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800ce254L)
-  public static void tickWeaponTrailEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
+  public static void tickWeaponTrailEffect(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.WeaponTrailType>> state, final EffectManagerData6c<EffectManagerData6cInner.WeaponTrailType> data) {
     final WeaponTrailEffect3c trail = (WeaponTrailEffect3c)data.effect_44;
     trail.currentSegmentIndex_00++;
     if(trail.currentSegmentIndex_00 == 0) {
@@ -3937,16 +3938,17 @@ public final class Bttl_800c {
 
   @Method(0x800ce6a8L)
   public static FlowControl allocateWeaponTrailEffect(final RunningScript<? extends BattleScriptDataBase> script) {
-    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+    final ScriptState<EffectManagerData6c<EffectManagerData6cInner.WeaponTrailType>> state = allocateEffectManager(
       "Weapon trail",
       script.scriptState_04,
       Bttl_800c::tickWeaponTrailEffect,
       Bttl_800c::renderWeaponTrailEffect,
       null,
-      new WeaponTrailEffect3c()
+      new WeaponTrailEffect3c(),
+      new EffectManagerData6cInner.WeaponTrailType()
     );
 
-    final EffectManagerData6c manager = state.innerStruct_00;
+    final EffectManagerData6c<EffectManagerData6cInner.WeaponTrailType> manager = state.innerStruct_00;
     final WeaponTrailEffect3c trail = (WeaponTrailEffect3c)manager.effect_44;
 
     //LAB_800ce75c
@@ -3969,7 +3971,7 @@ public final class Bttl_800c {
 
     final BattleScriptDataBase parent = (BattleScriptDataBase)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00;
     if(BattleScriptDataBase.EM__.equals(parent.magic_00)) {
-      trail.parentModel_30 = ((BttlScriptData6cSub13c)((EffectManagerData6c)parent).effect_44).model_10;
+      trail.parentModel_30 = ((BttlScriptData6cSub13c)((EffectManagerData6c<?>)parent).effect_44).model_10;
     } else {
       //LAB_800ce7f8
       trail.parentModel_30 = ((BattleObject27c)parent).model_148;
@@ -4018,7 +4020,7 @@ public final class Bttl_800c {
 
   @Method(0x800ce9b0L)
   public static FlowControl FUN_800ce9b0(final RunningScript<?> script) {
-    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final EffectManagerData6c<EffectManagerData6cInner.WeaponTrailType> manager = (EffectManagerData6c<EffectManagerData6cInner.WeaponTrailType>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final WeaponTrailEffect3c trail = (WeaponTrailEffect3c)manager.effect_44;
     FUN_800ce880(trail.largestVertex_10, trail.smallestVertex_20, script.params_20[2].get(), script.params_20[1].get());
     return FlowControl.CONTINUE;
@@ -4031,7 +4033,7 @@ public final class Bttl_800c {
     final VECTOR pos;
     if(BattleScriptDataBase.EM__.equals(data.magic_00)) {
       //LAB_800cea78
-      pos = ((EffectManagerData6c)data)._10.trans_04;
+      pos = ((EffectManagerData6c<?>)data)._10.trans_04;
     } else {
       pos = ((BattleObject27c)data).model_148.coord2_14.coord.transfer;
     }
@@ -4043,7 +4045,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cea9cL)
-  public static void tickFullScreenOverlay(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void tickFullScreenOverlay(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager) {
     final FullScreenOverlayEffect0e effect = (FullScreenOverlayEffect0e)manager.effect_44;
 
     if(effect.ticksRemaining_0c != 0) {
@@ -4057,7 +4059,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800ceb28L)
-  public static void renderFullScreenOverlay(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void renderFullScreenOverlay(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager) {
     final FullScreenOverlayEffect0e a0 = (FullScreenOverlayEffect0e)manager.effect_44;
 
     GPU.queueCommand(30, new GpuCommandQuad()
@@ -4078,7 +4080,7 @@ public final class Bttl_800c {
     final int fullB = (script.params_20[6].get() << 8) & 0xffff; //
     final int ticks = script.params_20[7].get() & 0xffff;
 
-    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+    final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state = allocateEffectManager(
       "Full screen overlay rgb(%x, %x, %x) -> rgb(%x, %x, %x)".formatted(r, g, b, fullR, fullG, fullB),
       script.scriptState_04,
       Bttl_800c::tickFullScreenOverlay,
@@ -4087,7 +4089,7 @@ public final class Bttl_800c {
       new FullScreenOverlayEffect0e()
     );
 
-    final EffectManagerData6c manager = state.innerStruct_00;
+    final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager = state.innerStruct_00;
     manager._10.flags_00 = 0x5000_0000;
 
     final FullScreenOverlayEffect0e effect = (FullScreenOverlayEffect0e)manager.effect_44;
@@ -4193,8 +4195,8 @@ public final class Bttl_800c {
   /** @return Z */
   @Method(0x800cf7d4L)
   public static int FUN_800cf7d4(final SVECTOR rotation, final VECTOR translation1, final VECTOR translation2, final ShortRef outX, final ShortRef outY) {
-    final VECTOR sp0x10 = new VECTOR();
-    translation1.mul(worldToScreenMatrix_800c3548, sp0x10);
+    final VECTOR sp0x10 = new VECTOR().set(translation1);
+    sp0x10.mul(worldToScreenMatrix_800c3548);
 
     GTE.setRotationMatrix(worldToScreenMatrix_800c3548);
     GTE.setTranslationVector(worldToScreenMatrix_800c3548.transfer);
@@ -4204,7 +4206,7 @@ public final class Bttl_800c {
     GTE.getTranslationVector(sp0x38.transfer);
 
     final MATRIX sp0x58 = new MATRIX();
-    RotMatrix_Xyz(new SVECTOR().set(rotation), sp0x58);
+    RotMatrix_Xyz(rotation, sp0x58);
     sp0x58.mul(sp0x38, sp0x38);
     sp0x38.transfer.add(sp0x10);
 
@@ -4219,26 +4221,21 @@ public final class Bttl_800c {
 
   /** @return Z */
   @Method(0x800cfb14L)
-  public static int FUN_800cfb14(final EffectManagerData6c manager, final VECTOR translation, final ShortRef outX, final ShortRef outY) {
-    final SVECTOR tempRotation = new SVECTOR().set(manager._10.rot_10);
-    final VECTOR tempTranslation = new VECTOR().set(manager._10.trans_04);
-    return FUN_800cf7d4(tempRotation, tempTranslation, translation, outX, outY);
+  public static int FUN_800cfb14(final EffectManagerData6c<?> manager, final VECTOR translation, final ShortRef outX, final ShortRef outY) {
+    return FUN_800cf7d4(manager._10.rot_10, manager._10.trans_04, translation, outX, outY);
   }
 
   /** @return Z */
   @Method(0x800cfb94L)
-  public static int FUN_800cfb94(final EffectManagerData6c manager, final SVECTOR rotation, final VECTOR translation, final ShortRef outX, final ShortRef outY) {
+  public static int FUN_800cfb94(final EffectManagerData6c<?> manager, final SVECTOR rotation, final VECTOR translation, final ShortRef outX, final ShortRef outY) {
     final SVECTOR tempRotation = new SVECTOR().set(manager._10.rot_10).add(rotation);
-    final VECTOR tempTranslation = new VECTOR().set(manager._10.trans_04);
-    return FUN_800cf7d4(tempRotation, tempTranslation, translation, outX, outY);
+    return FUN_800cf7d4(tempRotation, manager._10.trans_04, translation, outX, outY);
   }
 
   /** @return Z */
   @Method(0x800cfc20L)
   public static int FUN_800cfc20(final SVECTOR managerRotation, final VECTOR managerTranslation, final VECTOR translation, final ShortRef outX, final ShortRef outY) {
-    final SVECTOR tempRotation = new SVECTOR().set(managerRotation);
-    final VECTOR tempTranslation = new VECTOR().set(managerTranslation);
-    return FUN_800cf7d4(tempRotation, tempTranslation, translation, outX, outY);
+    return FUN_800cf7d4(managerRotation, managerTranslation, translation, outX, outY);
   }
 
   @Method(0x800cfcccL)
@@ -4248,7 +4245,7 @@ public final class Bttl_800c {
 
     final Model124 model;
     if(BattleScriptDataBase.EM__.equals(a0.magic_00)) {
-      model = ((BttlScriptData6cSub13c)((EffectManagerData6c)a0).effect_44).model_10;
+      model = ((BttlScriptData6cSub13c)((EffectManagerData6c<?>)a0).effect_44).model_10;
     } else {
       //LAB_800cfd34
       model = ((BattleObject27c)a0).model_148;

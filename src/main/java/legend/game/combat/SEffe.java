@@ -29,7 +29,6 @@ import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.ByteRef;
 import legend.core.memory.types.IntRef;
-import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.QuadConsumer;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.TriConsumer;
@@ -243,7 +242,7 @@ public final class SEffe {
    *   <li>{@link SEffe#FUN_800fcf18}</li>
    * </ol>
    */
-  private static final BiConsumer<EffectManagerData6c, ParticleMetrics48>[] lineParticleRenderers_801197c0 = new BiConsumer[3];
+  private static final BiConsumer<EffectManagerData6c<EffectManagerData6cInner.ParticleType>, ParticleMetrics48>[] lineParticleRenderers_801197c0 = new BiConsumer[3];
   static {
     lineParticleRenderers_801197c0[0] = SEffe::renderLineParticles;
     lineParticleRenderers_801197c0[1] = null;
@@ -265,7 +264,7 @@ public final class SEffe {
    *   <li>{@link SEffe#renderNoParticlesWhatsoever}</li>
    * </ol>
    */
-  private static final BiConsumer<ScriptState<EffectManagerData6c>, EffectManagerData6c>[] particleEffectRenderers_80119b7c = new BiConsumer[6];
+  private static final BiConsumer<ScriptState<EffectManagerData6c<EffectManagerData6cInner.ParticleType>>, EffectManagerData6c<EffectManagerData6cInner.ParticleType>>[] particleEffectRenderers_80119b7c = new BiConsumer[6];
   static {
     particleEffectRenderers_80119b7c[0] = SEffe::renderQuadParticleEffect;
     particleEffectRenderers_80119b7c[1] = SEffe::renderTmdParticleEffect;
@@ -295,7 +294,7 @@ public final class SEffe {
     subParticleInitializers_80119b94[5] = SEffe::FUN_80101c74;
   }
 
-  private static final TriConsumer<EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94>[] prerenderCallbacks_80119bac = new TriConsumer[65];
+  private static final TriConsumer<EffectManagerData6c<EffectManagerData6cInner.ParticleType>, ParticleEffectData98, ParticleEffectInstance94>[] prerenderCallbacks_80119bac = new TriConsumer[65];
 
   static {
     prerenderCallbacks_80119bac[0] = SEffe::FUN_800fb9c0; // no-op
@@ -364,7 +363,7 @@ public final class SEffe {
     prerenderCallbacks_80119bac[63] = SEffe::FUN_800fb9c0; // no-op
     prerenderCallbacks_80119bac[64] = SEffe::FUN_800fb9c0; // no-op
   }
-  private static final QuadConsumer<ScriptState<EffectManagerData6c>, EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94>[] _80119cb0 = new QuadConsumer[65];
+  private static final QuadConsumer<ScriptState<EffectManagerData6c<EffectManagerData6cInner.ParticleType>>, EffectManagerData6c<EffectManagerData6cInner.ParticleType>, ParticleEffectData98, ParticleEffectInstance94>[] _80119cb0 = new QuadConsumer[65];
   static {
     _80119cb0[0] = SEffe::FUN_80100d58; // no-op
     _80119cb0[1] = SEffe::FUN_80100d58; // no-op
@@ -432,7 +431,7 @@ public final class SEffe {
     _80119cb0[63] = SEffe::FUN_80100d58; // no-op
     _80119cb0[64] = SEffe::FUN_80100d58; // no-op
   }
-  private static final QuadConsumer<EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94, ParticleEffectData98Inner24>[] initializerCallbacks_80119db4 = new QuadConsumer[65];
+  private static final QuadConsumer<EffectManagerData6c<EffectManagerData6cInner.ParticleType>, ParticleEffectData98, ParticleEffectInstance94, ParticleEffectData98Inner24>[] initializerCallbacks_80119db4 = new QuadConsumer[65];
   static {
     initializerCallbacks_80119db4[0] = SEffe::FUN_800fea70;
     initializerCallbacks_80119db4[1] = SEffe::FUN_800fec3c;
@@ -516,7 +515,7 @@ public final class SEffe {
    *   <li>{@link SEffe#FUN_801049d4}</li>
    * </ol>
    */
-  private static final QuadConsumer<EffectManagerData6c, ElectricityEffect38, LightningBoltEffect14, Integer>[] electricityEffectCallbacks_80119ee8 = new QuadConsumer[11];
+  private static final QuadConsumer<EffectManagerData6c<EffectManagerData6cInner.ElectricityType>, ElectricityEffect38, LightningBoltEffect14, Integer>[] electricityEffectCallbacks_80119ee8 = new QuadConsumer[11];
   static {
     electricityEffectCallbacks_80119ee8[0] = SEffe::FUN_801049d4;
     electricityEffectCallbacks_80119ee8[1] = SEffe::FUN_801049dc;
@@ -545,7 +544,7 @@ public final class SEffe {
    *   <li>{@link SEffe#renderElectricEffectType1}</li>
    * </ol>
    */
-  private static final BiConsumer<ScriptState<EffectManagerData6c>, EffectManagerData6c>[] electricityEffectRenderers_80119f14 = new BiConsumer[11];
+  private static final BiConsumer<ScriptState<EffectManagerData6c<EffectManagerData6cInner.ElectricityType>>, EffectManagerData6c<EffectManagerData6cInner.ElectricityType>>[] electricityEffectRenderers_80119f14 = new BiConsumer[11];
   static {
     electricityEffectRenderers_80119f14[0] = SEffe::renderElectricEffectType0;
     electricityEffectRenderers_80119f14[1] = SEffe::renderElectricEffectType0;
@@ -567,7 +566,7 @@ public final class SEffe {
    *   <li>{@link SEffe#renderScreenDistortionBlurEffect}</li>
    * </ol>
    */
-  private static final BiConsumer<ScriptState<EffectManagerData6c>, EffectManagerData6c>[] screenDistortionEffectRenderers_80119fd4 = new BiConsumer[3];
+  private static final BiConsumer<ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>>, EffectManagerData6c<EffectManagerData6cInner.VoidType>>[] screenDistortionEffectRenderers_80119fd4 = new BiConsumer[3];
   static {
     screenDistortionEffectRenderers_80119fd4[0] = SEffe::FUN_80109358;
     screenDistortionEffectRenderers_80119fd4[1] = SEffe::FUN_80109358;
@@ -580,7 +579,7 @@ public final class SEffe {
    *   <li>{@link SEffe#tickScreenDistortionBlurEffect}</li>
    * </ol>
    */
-  private static final BiConsumer<ScriptState<EffectManagerData6c>, EffectManagerData6c>[] screenDistortionEffectTickers_80119fe0 = new BiConsumer[3];
+  private static final BiConsumer<ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>>, EffectManagerData6c<EffectManagerData6cInner.VoidType>>[] screenDistortionEffectTickers_80119fe0 = new BiConsumer[3];
   static {
     screenDistortionEffectTickers_80119fe0[0] = SEffe::FUN_80109a4c;
     screenDistortionEffectTickers_80119fe0[1] = SEffe::FUN_80109a4c;
@@ -593,7 +592,7 @@ public final class SEffe {
    *   <li>{@link SEffe#renderScreenCapture}</li>
    * </ol>
    */
-  private static final TriConsumer<EffectManagerData6c, ScreenCaptureEffect1c, MATRIX>[] screenCaptureRenderers_80119fec = new TriConsumer[2];
+  private static final TriConsumer<EffectManagerData6c<EffectManagerData6cInner.VoidType>, ScreenCaptureEffect1c, MATRIX>[] screenCaptureRenderers_80119fec = new TriConsumer[2];
   static {
     screenCaptureRenderers_80119fec[0] = SEffe::FUN_8010b594;
     screenCaptureRenderers_80119fec[1] = SEffe::renderScreenCapture;
@@ -635,7 +634,7 @@ public final class SEffe {
    *   <li>{@link SEffe#WsDragoonTransformationCallback4}</li>
    * </ol>
    */
-  private static final BiConsumer<EffectManagerData6c, WsDragoonTransformationFeatherInstance70>[] WsDragoonTransformationFeatherCallbacks_80119ff4 = new BiConsumer[5];
+  private static final BiConsumer<EffectManagerData6c<EffectManagerData6cInner.VoidType>, WsDragoonTransformationFeatherInstance70>[] WsDragoonTransformationFeatherCallbacks_80119ff4 = new BiConsumer[5];
   static {
     WsDragoonTransformationFeatherCallbacks_80119ff4[0] = SEffe::initializeWsDragoonTransformationEffect;
     WsDragoonTransformationFeatherCallbacks_80119ff4[1] = SEffe::expandWsDragoonTransformationEffect;
@@ -667,18 +666,18 @@ public final class SEffe {
   }
 
   @Method(0x800fb9c0L)
-  public static void FUN_800fb9c0(final EffectManagerData6c a0, final ParticleEffectData98 a1, final ParticleEffectInstance94 a2) {
+  public static void FUN_800fb9c0(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> a0, final ParticleEffectData98 a1, final ParticleEffectInstance94 a2) {
     // no-op
   }
 
   @Method(0x800fb9c8L)
-  public static void FUN_800fb9c8(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  public static void FUN_800fb9c8(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
     particle.particleVelocity_58.x.sub(particle._16);
     particle.particleVelocity_58.y.add(particle._14);
   }
 
   @Method(0x800fb9ecL)
-  public static void FUN_800fb9ec(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  public static void FUN_800fb9ec(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
     FUN_800fb95c(particle);
 
     particle._14 += particle._18;
@@ -691,7 +690,7 @@ public final class SEffe {
   }
 
   @Method(0x800fba58L)
-  public static void FUN_800fba58(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  public static void FUN_800fba58(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
     FUN_800fb95c(particle);
 
     particle.particlePosition_50.x.add((short)(rcos(particle._1a.getX()) * particle._1a.getY() / 0x1000));
@@ -707,7 +706,7 @@ public final class SEffe {
   }
 
   @Method(0x800fbb14L)
-  public static void FUN_800fbb14(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  public static void FUN_800fbb14(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
     FUN_800fb95c(particle);
 
     particle.particlePosition_50.x.add((short)(rcos(particle._1a.getX()) * particle._1a.getY() >> 12));
@@ -726,7 +725,7 @@ public final class SEffe {
   }
 
   @Method(0x800fbbe0L)
-  public static void FUN_800fbbe0(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  public static void FUN_800fbbe0(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
     FUN_800fb95c(particle);
     particle._16 += particle._1a.getY();
     particle.particleVelocity_58.y.add((short)20);
@@ -756,7 +755,7 @@ public final class SEffe {
   }
 
   @Method(0x800fbd04L)
-  public static void FUN_800fbd04(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  public static void FUN_800fbd04(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
     FUN_800fb95c(particle);
 
     particle._16 += particle._18;
@@ -769,7 +768,7 @@ public final class SEffe {
   }
 
   @Method(0x800fbd68L)
-  public static void FUN_800fbd68(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  public static void FUN_800fbd68(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
     final SVECTOR sp0x38 = new SVECTOR();
     if(particle._18 == 0) {
       FUN_800fb95c(particle);
@@ -795,7 +794,7 @@ public final class SEffe {
   }
 
   @Method(0x800fbe94L)
-  public static void FUN_800fbe94(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  public static void FUN_800fbe94(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
     FUN_800fb95c(particle);
     particle.particlePosition_50.setY((short)0);
     particle.particlePosition_50.z.shl(1);
@@ -808,7 +807,7 @@ public final class SEffe {
   }
 
   @Method(0x800fbf50L)
-  public static void FUN_800fbf50(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  public static void FUN_800fbf50(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
     FUN_800fb95c(particle);
 
     particle._16 = (short)(particle._16 * particle._18 >> 8);
@@ -823,7 +822,7 @@ public final class SEffe {
   }
 
   @Method(0x800fbfd0L)
-  public static void FUN_800fbfd0(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  public static void FUN_800fbfd0(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
     particle.particlePosition_50.setY((short)(rsin(particle._14) * particle._16 >> 12));
     particle.particlePosition_50.setZ((short)(rcos(particle._14) * particle._16 >> 12));
     particle._16 += particle._18;
@@ -836,19 +835,19 @@ public final class SEffe {
   }
 
   @Method(0x800fc068L)
-  public static void FUN_800fc068(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  public static void FUN_800fc068(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
     FUN_800fb95c(particle);
 
     particle._16 += particle._18;
 
-    if(particle.particlePosition_50.getY() + particle.managerTranslation_2c.getY() >= manager._10._30) {
+    if(particle.particlePosition_50.getY() + particle.managerTranslation_2c.getY() >= manager._10.y_30) {
       particle.ticksRemaining_12 = 1;
     }
     //LAB_800fc0bc
   }
 
   @Method(0x800fc0d0L)
-  public static void FUN_800fc0d0(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  public static void FUN_800fc0d0(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
     if(particle.particlePosition_50.getY() + particle.managerTranslation_2c.getY() >= -400 && particle._14 == 0) {
       particle._14 = 1;
       particle.particleAcceleration_60.setY((short)-8);
@@ -867,19 +866,19 @@ public final class SEffe {
   }
 
   @Method(0x800fc1fcL)
-  public static void FUN_800fc1fc(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  public static void FUN_800fc1fc(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
     FUN_800fb95c(particle);
 
     particle._16 += particle._18;
-    if(particle.particlePosition_50.getY() + particle.managerTranslation_2c.getY() >= manager._10._30) {
-      particle.particlePosition_50.setY((short)(manager._10._30 - particle.managerTranslation_2c.getY()));
+    if(particle.particlePosition_50.getY() + particle.managerTranslation_2c.getY() >= manager._10.y_30) {
+      particle.particlePosition_50.setY((short)(manager._10.y_30 - particle.managerTranslation_2c.getY()));
       particle.particleVelocity_58.y.neg().shra(1);
     }
     //LAB_800fc26c
   }
 
   @Method(0x800fc280L)
-  public static void FUN_800fc280(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  public static void FUN_800fc280(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
     particle.particlePosition_50.setZ((short)(rcos(particle._14) * 2 * particle._1a.getY() >> 12));
     particle.particlePosition_50.setX((short)(rsin(particle._1a.getZ()) * particle._1a.getY() >> 12));
     particle._14 += particle._16;
@@ -889,7 +888,7 @@ public final class SEffe {
   }
 
   @Method(0x800fc348L)
-  public static void FUN_800fc348(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  public static void FUN_800fc348(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
     particle.particlePosition_50.setX((short)((rcos(particle._14) * particle._1a.getX() >> 12) * rsin(particle._18) >> 12));
     particle.particlePosition_50.setY((short)(particle._18 * 2 - 0x800));
     particle.particlePosition_50.setZ((short)((rsin(particle._14) * particle._1a.getX() >> 12) * rsin(particle._18) >> 12));
@@ -897,12 +896,12 @@ public final class SEffe {
   }
 
   @Method(0x800fc410L)
-  public static void FUN_800fc410(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  public static void FUN_800fc410(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
     particle.particleVelocity_58.y.add((short)(particle._14 / 0x100));
   }
 
   @Method(0x800fc42cL)
-  public static void FUN_800fc42c(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  public static void FUN_800fc42c(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
     particle.particlePosition_50.setX((short)(particle._14 + (rcos(particle._1a.getX()) * particle._1a.getZ() >> 12)));
     particle.particlePosition_50.setZ((short)(particle._18 + (rsin(particle._1a.getX()) * particle._1a.getZ() >> 12)));
     particle._1a.z.add((short)16);
@@ -910,28 +909,28 @@ public final class SEffe {
   }
 
   @Method(0x800fc4bcL)
-  public static void FUN_800fc4bc(final MATRIX out, final EffectManagerData6c a1, final ParticleMetrics48 particleMetrics) {
+  public static void FUN_800fc4bc(final MATRIX out, final EffectManagerData6c<EffectManagerData6cInner.ParticleType> a1, final ParticleMetrics48 particleMetrics) {
     RotMatrix_Xyz(particleMetrics.rotation_38, out);
     out.transfer.set(particleMetrics.translation_18);
     out.scaleL(particleMetrics.scale_28);
   }
 
   @Method(0x800fc528L)
-  public static void FUN_800fc528(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  public static void FUN_800fc528(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
     particle.particlePosition_50.setX((short)(rsin(particle._14) * (particle._18 >> 1) >> 12));
     particle.particlePosition_50.setZ((short)(rcos(particle._14) * particle._18 >> 12));
     particle._14 += particle._16;
   }
 
   @Method(0x800fc5a8L)
-  public static void FUN_800fc5a8(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  public static void FUN_800fc5a8(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
     particle.particlePosition_50.setX((short)(rsin(particle._14) * particle._18 >> 12));
     particle.particlePosition_50.setZ((short)(rcos(particle._14) * particle._18 >> 12));
     particle._18 = (short)(particle._18 * 7 / 8);
   }
 
   @Method(0x800fc61cL)
-  public static void FUN_800fc61c(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  public static void FUN_800fc61c(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
     particle.scaleVertical_08 = (short)(rcos(particle._14) * particle._16 >> 12);
     particle._14 -= particle._18;
     particle.scaleVertical_08 = (short)(particle.scaleVertical_08 * manager._10.scale_16.getY() >> 12);
@@ -944,7 +943,7 @@ public final class SEffe {
   }
 
   @Method(0x800fc6bcL)
-  public static void FUN_800fc6bc(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  public static void FUN_800fc6bc(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
     particle.particlePosition_50.setX((short)(rsin(particle._14) * particle._16 >> 12));
     particle.particlePosition_50.setZ((short)(rcos(particle._14) * particle._16 >> 12));
     particle.particlePosition_50.x.add((short)(rsin(particle._18) << 8 >> 12));
@@ -953,7 +952,7 @@ public final class SEffe {
   }
 
   @Method(0x800fc768L)
-  public static void FUN_800fc768(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  public static void FUN_800fc768(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
     particle._1a.x.add(particle._14);
     particle._1a.y.add(particle._16);
     particle._1a.z.add(particle._18);
@@ -963,9 +962,9 @@ public final class SEffe {
   }
 
   @Method(0x800fc7c8L)
-  public static void FUN_800fc7c8(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
-    if(particle.particlePosition_50.getY() + particle.managerTranslation_2c.getY() >= manager._10._30) {
-      particle.particlePosition_50.setY((short)(manager._10._30 - particle.managerTranslation_2c.getY()));
+  public static void FUN_800fc7c8(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+    if(particle.particlePosition_50.getY() + particle.managerTranslation_2c.getY() >= manager._10.y_30) {
+      particle.particlePosition_50.setY((short)(manager._10.y_30 - particle.managerTranslation_2c.getY()));
       particle.particleVelocity_58.y.neg().shra(1);
       if(particle._14 == 0) {
         final int angle = (int)(seed_800fa754.advance().get() % 0x1001);
@@ -1009,7 +1008,7 @@ public final class SEffe {
 
   /** Returns Z */
   @Method(0x800fca78L)
-  public static int FUN_800fca78(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final VECTOR translation, final GpuCommandPoly cmd) {
+  public static int FUN_800fca78(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final VECTOR translation, final GpuCommandPoly cmd) {
     final ShortRef refX = new ShortRef();
     final ShortRef refY = new ShortRef();
     final int z = FUN_800cfc20(particle.managerRotation_68, particle.managerTranslation_2c, translation, refX, refY);
@@ -1019,7 +1018,7 @@ public final class SEffe {
       final int verticalScale = zScale * (manager._10.scale_16.getY() + particle.scaleVertical_08) >> 12;
 
       final int angle;
-      if((manager._10._24 & 0x2) != 0) {
+      if((manager._10.flags_24 & 0x2) != 0) {
         final VECTOR sp0x28 = new VECTOR();
         final SVECTOR sp0x38 = new SVECTOR();
         FUN_800fc8f8(sp0x28, sp0x38);
@@ -1067,7 +1066,7 @@ public final class SEffe {
   }
 
   @Method(0x800fce10L)
-  public static void renderLineParticles(final EffectManagerData6c manager, final ParticleMetrics48 particleMetrics) {
+  public static void renderLineParticles(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleMetrics48 particleMetrics) {
     if(particleMetrics.flags_00 >= 0) {
       GPU.queueCommand(particleMetrics.z_04 + manager._10.z_22 >> 2, new GpuCommandLine()
         .translucent(Translucency.B_PLUS_F)
@@ -1081,7 +1080,7 @@ public final class SEffe {
   }
 
   @Method(0x800fcf18L)
-  public static void FUN_800fcf18(final EffectManagerData6c a0, final ParticleMetrics48 a1) {
+  public static void FUN_800fcf18(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> a0, final ParticleMetrics48 a1) {
     // no-op
   }
 
@@ -1090,7 +1089,7 @@ public final class SEffe {
    * Seems to involve lit TMDs.
    */
   @Method(0x800fcf20L)
-  public static void renderTmdParticle(final EffectManagerData6c manager, final TmdObjTable1c tmd, final ParticleMetrics48 particleMetrics, final int tpage) {
+  public static void renderTmdParticle(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final TmdObjTable1c tmd, final ParticleMetrics48 particleMetrics, final int tpage) {
     if(particleMetrics.flags_00 >= 0) {
       final MATRIX lightMatrix = new MATRIX();
       FUN_800fc4bc(lightMatrix, manager, particleMetrics);
@@ -1142,7 +1141,7 @@ public final class SEffe {
   }
 
   @Method(0x800fd084L)
-  public static void FUN_800fd084(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  public static void FUN_800fd084(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
     particle.managerTranslation_2c.set(manager._10.trans_04);
     particle.managerRotation_68.set(manager._10.rot_10);
 
@@ -1155,7 +1154,7 @@ public final class SEffe {
       particle.g_86 = manager._10.colour_1c.getY() / (float)0xff;
       particle.b_88 = manager._10.colour_1c.getZ() / (float)0xff;
 
-      if((manager._10._24 & 0x1) == 0) {
+      if((manager._10.flags_24 & 0x1) == 0) {
         particle.stepR_8a = 0;
         particle.stepG_8c = 0;
         particle.stepB_8e = 0;
@@ -1173,8 +1172,8 @@ public final class SEffe {
   }
 
   @Method(0x800fd1dcL)
-  public static void tickParticleAttributes(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final Vector3f colour) {
-    if((effect.effectInner_08.particleInnerStuff_1c & 0x800_0000) == 0 || (manager._10._24 & 0x1) != 0) {
+  public static void tickParticleAttributes(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final Vector3f colour) {
+    if((effect.effectInner_08.particleInnerStuff_1c & 0x800_0000) == 0 || (manager._10.flags_24 & 0x1) != 0) {
       //LAB_800fd23c
       particle.r_84 -= particle.stepR_8a;
       particle.g_86 -= particle.stepG_8c;
@@ -1193,14 +1192,14 @@ public final class SEffe {
     particle.particlePosition_50.add(particle.particleVelocity_58);
     particle.particleVelocity_58.add(particle.particleAcceleration_60);
 
-    if(particle.particlePosition_50.getY() + particle.managerTranslation_2c.getY() >= manager._10._30) {
-      if((manager._10._24 & 0x20) != 0) {
+    if(particle.particlePosition_50.getY() + particle.managerTranslation_2c.getY() >= manager._10.y_30) {
+      if((manager._10.flags_24 & 0x20) != 0) {
         particle.ticksRemaining_12 = 1;
       }
 
       //LAB_800fd324
-      if((manager._10._24 & 0x8) != 0) {
-        particle.particlePosition_50.setY((short)(manager._10._30 - particle.managerTranslation_2c.getY()));
+      if((manager._10.flags_24 & 0x8) != 0) {
+        particle.particlePosition_50.setY((short)(manager._10.y_30 - particle.managerTranslation_2c.getY()));
         particle.particleVelocity_58.setY((short)(-particle.particleVelocity_58.getY() / 2));
       }
     }
@@ -1217,7 +1216,7 @@ public final class SEffe {
       particle.spriteRotation_70.add(particle.spriteRotationStep_78);
     } else {
       //LAB_800fd3e4
-      particle.angle_0e = (short)(manager._10._24 >>> 12 & 0xff0);
+      particle.angle_0e = (short)(manager._10.flags_24 >>> 12 & 0xff0);
     }
 
     //LAB_800fd3f8
@@ -1230,7 +1229,7 @@ public final class SEffe {
   }
 
   @Method(0x800fd460L)
-  public static boolean checkParticleShouldRender(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  public static boolean checkParticleShouldRender(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.ParticleType>> state, final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
     particle.framesUntilRender_04--;
 
     final short framesUntilRender = particle.framesUntilRender_04;
@@ -1242,7 +1241,7 @@ public final class SEffe {
       }
       FUN_800fd084(manager, effect, particle);
 
-      if((manager._10._24 & 0x10) != 0) {
+      if((manager._10.flags_24 & 0x10) != 0) {
         particle.particlePosition_50.setY((short)0);
 
         if(effect.subParticleType_60 == 2 || effect.subParticleType_60 == 5) {
@@ -1255,7 +1254,7 @@ public final class SEffe {
       }
 
       //LAB_800fd520
-      if((manager._10._24 & 0x40) != 0) {
+      if((manager._10.flags_24 & 0x40) != 0) {
         particle.particleVelocity_58.setY((short)0);
       }
     }
@@ -1272,7 +1271,7 @@ public final class SEffe {
     }
 
     //LAB_800fd58c
-    if(particle.ticksRemaining_12 == 0 && (manager._10._24 & 0x80) == 0) {
+    if(particle.ticksRemaining_12 == 0 && (manager._10.flags_24 & 0x80) == 0) {
       particle.flags_90 &= 0xffff_fffe;
       effect.callback_90.accept(state, manager, effect, particle);
       return false;
@@ -1283,7 +1282,7 @@ public final class SEffe {
   }
 
   @Method(0x800fd600L)
-  public static void renderTmdParticleEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void renderTmdParticleEffect(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.ParticleType>> state, final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager) {
     final ParticleEffectData98 effect = (ParticleEffectData98)manager.effect_44;
     effect.countFramesRendered_52++;
 
@@ -1320,7 +1319,7 @@ public final class SEffe {
   }
 
   @Method(0x800fd87cL)
-  public static void renderLineParticleEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void renderLineParticleEffect(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.ParticleType>> state, final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager) {
     final ParticleEffectData98 effect = (ParticleEffectData98)manager.effect_44;
     effect.countFramesRendered_52++;
 
@@ -1416,12 +1415,12 @@ public final class SEffe {
   }
 
   @Method(0x800fddd0L)
-  public static void renderNoParticlesWhatsoever(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void renderNoParticlesWhatsoever(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.ParticleType>> state, final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager) {
     // no-op
   }
 
   @Method(0x800fddd8L)
-  public static void renderPixelParticleEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void renderPixelParticleEffect(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.ParticleType>> state, final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager) {
     final ParticleEffectData98 effect = (ParticleEffectData98)manager.effect_44;
     effect.countFramesRendered_52++;
 
@@ -1466,7 +1465,7 @@ public final class SEffe {
 
   /** Has some kind of sub-particles */
   @Method(0x800fe120L)
-  public static void renderQuadParticleEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void renderQuadParticleEffect(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.ParticleType>> state, final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager) {
     final ParticleEffectData98 effect = (ParticleEffectData98)manager.effect_44;
 
     effect.countFramesRendered_52++;
@@ -1614,7 +1613,7 @@ public final class SEffe {
   }
 
   @Method(0x800fe8b8L)
-  public static void particleEffectDestructor(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void particleEffectDestructor(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.ParticleType>> state, final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager) {
     final ParticleEffectData98 effect = (ParticleEffectData98)manager.effect_44;
     final ParticleEffectData98 effectParent = findParticleParent(effect);
 
@@ -1634,12 +1633,12 @@ public final class SEffe {
   }
 
   @Method(0x800fea68L)
-  public static void FUN_800fea68(final EffectManagerData6c a0, final ParticleEffectData98 a1, final ParticleEffectInstance94 a2, final ParticleEffectData98Inner24 a3) {
+  public static void FUN_800fea68(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> a0, final ParticleEffectData98 a1, final ParticleEffectInstance94 a2, final ParticleEffectData98Inner24 a3) {
     // no-op
   }
 
   @Method(0x800fea70L)
-  public static long FUN_800fea70(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  public static long FUN_800fea70(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
     seed_800fa754.advance();
     final int angle = (int)(seed_800fa754.get() % 4097);
     particle.particleVelocity_58.setX((short)(rcos(angle) >> 8));
@@ -1658,7 +1657,7 @@ public final class SEffe {
   }
 
   @Method(0x800fec3cL)
-  public static void FUN_800fec3c(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  public static void FUN_800fec3c(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
     final int s0 = (short)FUN_800fea70(manager, effect, particle, effectInner);
     seed_800fa754.advance();
     particle.particleVelocity_58.setX((short)(rcos(s0) >> 6));
@@ -1667,7 +1666,7 @@ public final class SEffe {
   }
 
   @Method(0x800fecccL)
-  public static void FUN_800feccc(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  public static void FUN_800feccc(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
     seed_800fa754.advance();
     final int angle = (int)(seed_800fa754.get() % 4097);
     particle.particleVelocity_58.setX((short)(rcos(angle) >> 10));
@@ -1682,7 +1681,7 @@ public final class SEffe {
   }
 
   @Method(0x800fee9cL)
-  public static void FUN_800fee9c(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  public static void FUN_800fee9c(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
     seed_800fa754.advance();
     final int angle = (int)(seed_800fa754.get() % 4097);
     particle.particleVelocity_58.setX((short)(rcos(angle) / 0x80));
@@ -1694,7 +1693,7 @@ public final class SEffe {
   }
 
   @Method(0x800fefe4L)
-  public static void FUN_800fefe4(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  public static void FUN_800fefe4(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
     FUN_800fee9c(manager, effect, particle, effectInner);
     particle._14 = (short)(seed_800fa754.advance().get() % 4097);
     particle._16 = effectInner._10;
@@ -1706,7 +1705,7 @@ public final class SEffe {
   }
 
   @Method(0x800ff15cL)
-  public static void FUN_800ff15c(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  public static void FUN_800ff15c(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
     seed_800fa754.advance();
     particle.particleVelocity_58.setY((short)-(seed_800fa754.get() % 61 + 60));
 
@@ -1732,7 +1731,7 @@ public final class SEffe {
   }
 
   @Method(0x800ff3e0L)
-  public static void FUN_800ff3e0(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  public static void FUN_800ff3e0(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
     FUN_800ff15c(manager, effect, particle, effectInner);
     particle.verticalPositionScale_20 = (short)0;
     particle.ticksUntilMovementModeChanges_22 = (short)(0x8000 / particle.ticksRemaining_12);
@@ -1740,7 +1739,7 @@ public final class SEffe {
   }
 
   @Method(0x800ff430L)
-  public static void FUN_800ff430(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  public static void FUN_800ff430(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
     particle._16 = effectInner._10;
     particle._18 = (short)0;
     particle._1a.setX((short)0);
@@ -1755,7 +1754,7 @@ public final class SEffe {
   }
 
   @Method(0x800ff590L)
-  public static void FUN_800ff590(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  public static void FUN_800ff590(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
     FUN_800ff430(manager, effect, particle, effectInner);
     particle.ticksUntilMovementModeChanges_22 = 20;
     particle.verticalPositionScale_20 = 10;
@@ -1767,7 +1766,7 @@ public final class SEffe {
   private static Long brokenT2For800ff5c4;
 
   @Method(0x800ff5c4L)
-  public static void FUN_800ff5c4(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  public static void FUN_800ff5c4(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
     if(brokenT2For800ff5c4 == null) {
       throw new RuntimeException("t2 was not set");
     }
@@ -1786,13 +1785,13 @@ public final class SEffe {
   }
 
   @Method(0x800ff6d4L)
-  public static void FUN_800ff6d4(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  public static void FUN_800ff6d4(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
     FUN_800ff5c4(manager, effect, particle, effectInner);
     particle._18 = 0;
   }
 
   @Method(0x800ff6fcL)
-  public static void FUN_800ff6fc(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  public static void FUN_800ff6fc(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
     final int a0 = currentParticleIndex_8011a008.get();
     particle.angleVelocity_10 = -0x80;
     final int v1 = a0 >>> 1;
@@ -1812,7 +1811,7 @@ public final class SEffe {
   }
 
   @Method(0x800ff788L)
-  public static void FUN_800ff788(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  public static void FUN_800ff788(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
     particle.ticksRemaining_12 = -1;
     particle._14 = (short)(seed_800fa754.advance().get() % 4097);
     particle._16 = effectInner._10;
@@ -1821,7 +1820,7 @@ public final class SEffe {
   }
 
   @Method(0x800ff890L)
-  public static void FUN_800ff890(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  public static void FUN_800ff890(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
     seed_800fa754.advance();
     seed_800fa754.advance();
     final int angle1 = (int)(seed_800fa754.get() % 4097);
@@ -1843,7 +1842,7 @@ public final class SEffe {
   }
 
   @Method(0x800ffa80L)
-  public static void FUN_800ffa80(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  public static void FUN_800ffa80(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
     FUN_800ff5c4(manager, effect, particle, effectInner);
     final short s2 = effectInner._10;
     particle._16 = s2;
@@ -1852,7 +1851,7 @@ public final class SEffe {
   }
 
   @Method(0x800ffadcL)
-  public static void FUN_800ffadc(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  public static void FUN_800ffadc(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
     particle._14 = (short)(seed_800fa754.advance().get() % 4097);
     final int v0 = -effectInner._10 >> 5;
     final int a0 = effectInner._18;
@@ -1865,7 +1864,7 @@ public final class SEffe {
   }
 
   @Method(0x800ffb80L)
-  public static void FUN_800ffb80(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  public static void FUN_800ffb80(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
     final long v0;
     long a0;
     particle.particleAcceleration_60.setY((short)8);
@@ -1881,7 +1880,7 @@ public final class SEffe {
   }
 
   @Method(0x800ffbd8L)
-  public static void FUN_800ffbd8(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  public static void FUN_800ffbd8(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
     final int t6 = effectInner._18;
     particle._14 = 0;
     particle._18 = (short)(seed_800fa754.advance().get() % 21 - 10);
@@ -1895,7 +1894,7 @@ public final class SEffe {
   }
 
   @Method(0x800ffe80L)
-  public static void FUN_800ffe80(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  public static void FUN_800ffe80(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
     particle._16 = effectInner._10;
     particle._18 = (short)(effectInner._18 >>> 3);
     particle.particleAcceleration_60.setY((short)(effectInner._18 >>> 7));
@@ -1905,12 +1904,12 @@ public final class SEffe {
   }
 
   @Method(0x800ffefcL)
-  public static void FUN_800ffefc(final EffectManagerData6c a0, final ParticleEffectData98 a1, final ParticleEffectInstance94 a2, final ParticleEffectData98Inner24 a3) {
+  public static void FUN_800ffefc(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> a0, final ParticleEffectData98 a1, final ParticleEffectInstance94 a2, final ParticleEffectData98Inner24 a3) {
     // no-op
   }
 
   @Method(0x800fff04L)
-  public static void FUN_800fff04(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  public static void FUN_800fff04(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
     particle._14 = 0;
     particle._18 = 0;
     particle._1a.setZ((short)0);
@@ -1921,12 +1920,12 @@ public final class SEffe {
   }
 
   @Method(0x800fff30L)
-  public static void FUN_800fff30(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  public static void FUN_800fff30(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
     particle.particleVelocity_58.setX((short)(seed_800fa754.advance().get() % 769 + 256));
   }
 
   @Method(0x800fffa0L)
-  public static void FUN_800fffa0(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  public static void FUN_800fffa0(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
     particle._1a.setX(effectInner._10);
     particle._14 = (short)(seed_800fa754.advance().get() % 4097);
     particle._16 = (short)((seed_800fa754.advance().get() % 123 + 64) * effectInner._18 >> 8);
@@ -1934,20 +1933,20 @@ public final class SEffe {
   }
 
   @Method(0x801000b8L)
-  public static void FUN_801000b8(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  public static void FUN_801000b8(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
     particle.particleVelocity_58.setX((short)(-particle.particlePosition_50.getX() / 32));
     particle.particleVelocity_58.setZ((short)(-particle.particlePosition_50.getZ() / 32));
   }
 
   @Method(0x801000f8L)
-  public static void FUN_801000f8(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  public static void FUN_801000f8(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
     FUN_800ff890(manager, effect, particle, effectInner);
     particle.particleVelocity_58.setY((short)-Math.abs(particle.particleVelocity_58.getY()));
     particle._14 = (short)(effectInner._18 * 0x300 / 0x100);
   }
 
   @Method(0x80100150L)
-  public static void FUN_80100150(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  public static void FUN_80100150(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
     seed_800fa754.advance();
     particle._1a.setX((short)(seed_800fa754.get() % 4097));
     particle._14 = particle.particlePosition_50.getX();
@@ -1960,7 +1959,7 @@ public final class SEffe {
   }
 
   @Method(0x8010025cL)
-  public static void FUN_8010025c(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  public static void FUN_8010025c(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
     particle.particleVelocity_58.setY((short)64);
     final int angle = (int)(seed_800fa754.advance().get() % 4097);
     if(effectInner.callbackIndex_20 == 0x2a) {
@@ -1975,7 +1974,7 @@ public final class SEffe {
   }
 
   @Method(0x801003e8L)
-  public static void FUN_801003e8(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  public static void FUN_801003e8(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
     final int s4 = effectInner._10; //TODO read with lw here but as a short everywhere else? Is this a bug?
     FUN_800ff890(manager, effect, particle, effectInner);
 
@@ -1991,7 +1990,7 @@ public final class SEffe {
   }
 
   @Method(0x80100364L)
-  public static void FUN_80100364(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 particleEffect) {
+  public static void FUN_80100364(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 particleEffect) {
     FUN_800ff890(manager, effect, particle, particleEffect);
     particle._14 = 0;
     particle.particleVelocity_58.setY((short)-Math.abs(particle.particleVelocity_58.getY()));
@@ -1999,7 +1998,7 @@ public final class SEffe {
   }
 
   @Method(0x801005b8L)
-  public static void FUN_801005b8(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  public static void FUN_801005b8(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
     final int s2 = effectInner._10;
     final int s4 = effectInner._18;
     FUN_800ff890(manager, effect, particle, effectInner);
@@ -2014,19 +2013,19 @@ public final class SEffe {
   }
 
   @Method(0x801007b4L)
-  public static void FUN_801007b4(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  public static void FUN_801007b4(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
     particle.particleVelocity_58.set(particle.particlePosition_50).negate().div(particle.ticksRemaining_12);
   }
 
   @Method(0x80100800L)
-  public static void FUN_80100800(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  public static void FUN_80100800(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
     particle._16 = (short)(effectInner._18 >>> 2);
     particle._18 = effectInner._10;
     particle._14 = (short)(seed_800fa754.advance().get() % 4097);
   }
 
   @Method(0x80100878L)
-  public static void FUN_80100878(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  public static void FUN_80100878(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
     particle.particleVelocity_58.setY((short)-0x40);
     particle._18 = effectInner._10;
     particle._16 = (short)(effectInner._18 * 0x20);
@@ -2034,7 +2033,7 @@ public final class SEffe {
   }
 
   @Method(0x801008f8L)
-  public static void FUN_801008f8(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  public static void FUN_801008f8(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
     particle.angle_0e = 0;
     particle.angleVelocity_10 = 0;
     particle.spriteRotation_70.set((short)0, (short)0, (short)0);
@@ -2047,7 +2046,7 @@ public final class SEffe {
   }
 
   @Method(0x80100978L)
-  public static void FUN_80100978(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  public static void FUN_80100978(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
     particle._14 = (short)(seed_800fa754.advance().get() % 4097);
     particle._16 = (short)(seed_800fa754.advance().get() % ((effectInner._10 & 0xffff) + 1));
     particle._18 = (short)(seed_800fa754.advance().get() % 4097);
@@ -2056,7 +2055,7 @@ public final class SEffe {
   }
 
   @Method(0x80100af4L)
-  public static void FUN_80100af4(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  public static void FUN_80100af4(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
     FUN_800ff890(manager, effect, particle, effectInner);
     particle.particleVelocity_58.setX((short)(particle.particleVelocity_58.getX() * effectInner._18 >> 8));
     particle.particleVelocity_58.setY((short)(particle.particleVelocity_58.getY() * effectInner._18 >> 8));
@@ -2065,12 +2064,12 @@ public final class SEffe {
   }
 
   @Method(0x80100bb4L)
-  public static void FUN_80100bb4(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  public static void FUN_80100bb4(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
     particle.particleVelocity_58.setY((short)(seed_800fa754.advance().get() % 33 + 16));
   }
 
   @Method(0x80100c18L)
-  public static void FUN_80100c18(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  public static void FUN_80100c18(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
     final int v1 = effectInner._18;
     particle._14 = (short)((-particle.particlePosition_50.getX() >> 1) * v1 >> 8);
     particle._16 = (short)((-particle.particlePosition_50.getY() >> 1) * v1 >> 8);
@@ -2079,7 +2078,7 @@ public final class SEffe {
   }
 
   @Method(0x80100cacL)
-  public static void FUN_80100cac(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  public static void FUN_80100cac(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
     FUN_800ff890(manager, effect, particle, effectInner);
     particle.particleVelocity_58.setY((short)-Math.abs(particle.particleVelocity_58.getY()));
     particle.particleVelocity_58.setX((short)0);
@@ -2087,25 +2086,25 @@ public final class SEffe {
   }
 
   @Method(0x80100cecL)
-  public static void FUN_80100cec(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  public static void FUN_80100cec(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
     particle._14 = 0;
     particle.particleAcceleration_60.setY((short)(effectInner._18 >>> 7));
   }
 
   @Method(0x80100d00L)
-  public static void FUN_80100d00(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  public static void FUN_80100d00(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
     final VECTOR translation = new VECTOR();
     getModelObjectTranslation(effectInner.parentScriptIndex_04, translation, currentParticleIndex_8011a008.get());
     particle.particlePosition_50.set(translation);
   }
 
   @Method(0x80100d58L)
-  public static void FUN_80100d58(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c a1, final ParticleEffectData98 a2, final ParticleEffectInstance94 a3) {
+  public static void FUN_80100d58(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.ParticleType>> state, final EffectManagerData6c<EffectManagerData6cInner.ParticleType> a1, final ParticleEffectData98 a2, final ParticleEffectInstance94 a3) {
     // no-op
   }
 
   @Method(0x80100d60L)
-  public static void FUN_80100d60(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  public static void FUN_80100d60(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.ParticleType>> state, final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
     if(particle.framesUntilRender_04 == 0 && effect.parentScriptIndex_04 != -1) {
       final VECTOR translation = new VECTOR();
       scriptGetScriptedObjectPos(state.index, translation);
@@ -2120,7 +2119,7 @@ public final class SEffe {
   }
 
   @Method(0x80100e28L)
-  public static void FUN_80100e28(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  public static void FUN_80100e28(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.ParticleType>> state, final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
     if(particle.framesUntilRender_04 == 0) {
       particle.stepR_8a = 0;
       particle.stepG_8c = 0;
@@ -2130,7 +2129,7 @@ public final class SEffe {
   }
 
   @Method(0x80100e4cL)
-  public static void FUN_80100e4c(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  public static void FUN_80100e4c(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.ParticleType>> state, final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
     if(particle.framesUntilRender_04 == 0) {
       particle.stepR_8a = -1.0f / particle.ticksRemaining_12;
       particle.stepG_8c = -1.0f / particle.ticksRemaining_12;
@@ -2140,7 +2139,7 @@ public final class SEffe {
   }
 
   @Method(0x80100ea0L)
-  public static void FUN_80100ea0(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  public static void FUN_80100ea0(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.ParticleType>> state, final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
     final int s2 = effect.effectInner_08._18;
     final int s1 = effect.effectInner_08._10 & 0xffff;
 
@@ -2168,7 +2167,7 @@ public final class SEffe {
   }
 
   @Method(0x801010a0L)
-  public static void FUN_801010a0(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  public static void FUN_801010a0(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.ParticleType>> state, final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
     // Calculate the index of this array element
     currentParticleIndex_8011a008.set(particle.index);
 
@@ -2209,23 +2208,23 @@ public final class SEffe {
   }
 
   @Method(0x801012a0L)
-  public static void FUN_801012a0(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
-    if((manager._10._24 & 0x4) != 0) {
+  public static void FUN_801012a0(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.ParticleType>> state, final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+    if((manager._10.flags_24 & 0x4) != 0) {
       FUN_801010a0(state, manager, effect, particle);
     }
     //LAB_801012c4
   }
 
   @Method(0x801012d4L)
-  public static void FUN_801012d4(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
-    if((manager._10._24 & 0x4) == 0) {
+  public static void FUN_801012d4(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.ParticleType>> state, final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+    if((manager._10.flags_24 & 0x4) == 0) {
       FUN_801010a0(state, manager, effect, particle);
     }
     //LAB_801012f8
   }
 
   @Method(0x80101308L)
-  public static void initializeParticleInstance(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
+  public static void initializeParticleInstance(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
     if((effectInner.particleInnerStuff_1c & 0xff) == 0) {
       effectInner.particleInnerStuff_1c &= 0xffff_ff00;
       effectInner.particleInnerStuff_1c |= particleInnerStuffDefaultsArray_801197ec.get(effectInner.callbackIndex_20).ticksRemaining_02.get();
@@ -2429,16 +2428,17 @@ public final class SEffe {
   public static FlowControl allocateParticleEffect(final RunningScript<? extends BattleScriptDataBase> script) {
     final int particleCount = script.params_20[3].get();
 
-    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+    final ScriptState<EffectManagerData6c<EffectManagerData6cInner.ParticleType>> state = allocateEffectManager(
       "Particle effect %x".formatted(script.params_20[2].get()),
       script.scriptState_04,
       null,
       particleEffectRenderers_80119b7c[script.params_20[2].get() >> 20],
       SEffe::particleEffectDestructor,
-      new ParticleEffectData98(particleCount)
+      new ParticleEffectData98(particleCount),
+      new EffectManagerData6cInner.ParticleType()
     );
 
-    final EffectManagerData6c manager = state.innerStruct_00;
+    final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager = state.innerStruct_00;
     final ParticleEffectData98 effect = (ParticleEffectData98)manager.effect_44;
 
     if(firstParticle_8011a00c == null) {
@@ -2504,7 +2504,7 @@ public final class SEffe {
 
   @Method(0x80102364L)
   public static FlowControl FUN_80102364(final RunningScript<?> script) {
-    final ParticleEffectData98 effect = (ParticleEffectData98)((EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00).effect_44;
+    final ParticleEffectData98 effect = (ParticleEffectData98)((EffectManagerData6c<EffectManagerData6cInner.ParticleType>)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00).effect_44;
 
     final int a2 = script.params_20[0].get();
     if(a2 == 0) {
@@ -2531,7 +2531,7 @@ public final class SEffe {
 
   @Method(0x801023fcL)
   public static FlowControl FUN_801023fc(final RunningScript<?> script) {
-    final ParticleEffectData98 effect = (ParticleEffectData98)((EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00).effect_44;
+    final ParticleEffectData98 effect = (ParticleEffectData98)((EffectManagerData6c<EffectManagerData6cInner.ParticleType>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00).effect_44;
 
     //LAB_8010243c
     for(int i = 0; i < effect.countParticleInstance_50; i++) {
@@ -2545,7 +2545,7 @@ public final class SEffe {
 
   @Method(0x8010246cL)
   public static FlowControl FUN_8010246c(final RunningScript<?> script) {
-    final ParticleEffectData98 effect = (ParticleEffectData98)((EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00).effect_44;
+    final ParticleEffectData98 effect = (ParticleEffectData98)((EffectManagerData6c<EffectManagerData6cInner.ParticleType>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00).effect_44;
     final ParticleEffectInstance94 particle = effect.particleArray_68[script.params_20[1].get()];
 
     final VECTOR sp0x20 = new VECTOR();
@@ -2567,7 +2567,7 @@ public final class SEffe {
   }
 
   @Method(0x80102618L)
-  public static void modifyLightningSegmentOriginsBySecondaryScriptTranslation(final EffectManagerData6c manager, final ElectricityEffect38 electricEffect, final LightningBoltEffect14 boltEffect) {
+  public static void modifyLightningSegmentOriginsBySecondaryScriptTranslation(final EffectManagerData6c<EffectManagerData6cInner.ElectricityType> manager, final ElectricityEffect38 electricEffect, final LightningBoltEffect14 boltEffect) {
     if(electricEffect.scriptIndex_08 != -1) {
       final VECTOR secondaryScriptTranslation = new VECTOR();
       final VECTOR newOrigin = new VECTOR();
@@ -2588,7 +2588,7 @@ public final class SEffe {
   }
 
   @Method(0x80102860L)
-  public static void initializeRadialElectricityBoltColour(final EffectManagerData6c manager, final ElectricityEffect38 electricEffect) {
+  public static void initializeRadialElectricityBoltColour(final EffectManagerData6c<EffectManagerData6cInner.ElectricityType> manager, final ElectricityEffect38 electricEffect) {
     int innerColourR;
     int innerColourG;
     int innerColourB;
@@ -2669,7 +2669,7 @@ public final class SEffe {
   }
 
   @Method(0x80102bfcL)
-  public static void initializeElectricityNodes(final EffectManagerData6c manager, final ElectricityEffect38 electricEffect, final LightningBoltEffect14 bolt) {
+  public static void initializeElectricityNodes(final EffectManagerData6c<EffectManagerData6cInner.ElectricityType> manager, final ElectricityEffect38 electricEffect, final LightningBoltEffect14 bolt) {
     short segmentOriginX = 0;
     final int segmentOriginY = -(short)(electricEffect.boltAngleRangeCutoff_1c / electricEffect.boltSegmentCount_28);
     short segmentOriginZ = 0;
@@ -2728,7 +2728,7 @@ public final class SEffe {
    * Used by allocator 0x801052dc
    */
   @Method(0x801030d8L)
-  public static void renderElectricEffectType0(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void renderElectricEffectType0(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.ElectricityType>> state, final EffectManagerData6c<EffectManagerData6cInner.ElectricityType> manager) {
     final ElectricityEffect38 electricEffect = (ElectricityEffect38)manager.effect_44;
 
     if(electricEffect.currentColourFadeStep_04 + 1 == electricEffect.numColourFadeSteps_0c) {
@@ -2752,7 +2752,7 @@ public final class SEffe {
     //LAB_801031cc
     electricEffect.frameNum_2a = electricEffect.frameNum_2a + 1 & 0x1f;
 
-    final boolean effectShouldRender = (manager._10._24 >> electricEffect.frameNum_2a & 0x1) == 0;
+    final boolean effectShouldRender = (manager._10.shouldRenderFrameBits_24 >> electricEffect.frameNum_2a & 0x1) == 0;
 
     final DVECTOR[] vertexArray = new DVECTOR[4];
     Arrays.setAll(vertexArray, i -> new DVECTOR());
@@ -2872,10 +2872,10 @@ public final class SEffe {
             vertexArray[2].setY(refOuterOriginYa.get());
             renderSegmentGradient(currentSegment.outerColour_16, nextSegment.outerColour_16, vertexArray, zMod, manager._10.z_22, translucency);
 
-            vertexArray[0].setX((short)((vertexArray[0].getX() - vertexArray[1].getX()) / manager._10._30 + vertexArray[1].getX()));
-            vertexArray[0].setY((short)((vertexArray[0].getY() - vertexArray[1].getY()) / manager._10._30 + vertexArray[1].getY()));
-            vertexArray[2].setX((short)((vertexArray[2].getX() - vertexArray[3].getX()) / manager._10._30 + vertexArray[3].getX()));
-            vertexArray[2].setY((short)((vertexArray[2].getY() - vertexArray[3].getY()) / manager._10._30 + vertexArray[3].getY()));
+            vertexArray[0].setX((short)((vertexArray[0].getX() - vertexArray[1].getX()) / manager._10.sizeDivisor_30 + vertexArray[1].getX()));
+            vertexArray[0].setY((short)((vertexArray[0].getY() - vertexArray[1].getY()) / manager._10.sizeDivisor_30 + vertexArray[1].getY()));
+            vertexArray[2].setX((short)((vertexArray[2].getX() - vertexArray[3].getX()) / manager._10.sizeDivisor_30 + vertexArray[3].getX()));
+            vertexArray[2].setY((short)((vertexArray[2].getY() - vertexArray[3].getY()) / manager._10.sizeDivisor_30 + vertexArray[3].getY()));
             renderSegmentGradient(currentSegment.innerColour_10, nextSegment.innerColour_10, vertexArray, zMod, manager._10.z_22, translucency);
 
             vertexArray[0].setX((short)outerEndpointXb);
@@ -2884,10 +2884,10 @@ public final class SEffe {
             vertexArray[2].setY(refOuterOriginYb.get());
             renderSegmentGradient(currentSegment.outerColour_16, nextSegment.outerColour_16, vertexArray, zMod, manager._10.z_22, translucency);
 
-            vertexArray[0].setX((short)((vertexArray[0].getX() - vertexArray[1].getX()) / manager._10._30 + vertexArray[1].getX()));
-            vertexArray[0].setY((short)((vertexArray[0].getY() - vertexArray[1].getY()) / manager._10._30 + vertexArray[1].getY()));
-            vertexArray[2].setX((short)((vertexArray[2].getX() - vertexArray[3].getX()) / manager._10._30 + vertexArray[3].getX()));
-            vertexArray[2].setY((short)((vertexArray[2].getY() - vertexArray[3].getY()) / manager._10._30 + vertexArray[3].getY()));
+            vertexArray[0].setX((short)((vertexArray[0].getX() - vertexArray[1].getX()) / manager._10.sizeDivisor_30 + vertexArray[1].getX()));
+            vertexArray[0].setY((short)((vertexArray[0].getY() - vertexArray[1].getY()) / manager._10.sizeDivisor_30 + vertexArray[1].getY()));
+            vertexArray[2].setX((short)((vertexArray[2].getX() - vertexArray[3].getX()) / manager._10.sizeDivisor_30 + vertexArray[3].getX()));
+            vertexArray[2].setY((short)((vertexArray[2].getY() - vertexArray[3].getY()) / manager._10.sizeDivisor_30 + vertexArray[3].getY()));
             renderSegmentGradient(currentSegment.innerColour_10, nextSegment.innerColour_10, vertexArray, zMod, manager._10.z_22, translucency);
 
             refOuterOriginXa.set((short)outerEndpointXa);
@@ -2911,7 +2911,7 @@ public final class SEffe {
    * Used by allocator 0x801052dc
    */
   @Method(0x80103db0L)
-  public static void renderElectricEffectType1(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void renderElectricEffectType1(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.ElectricityType>> state, final EffectManagerData6c<EffectManagerData6cInner.ElectricityType> manager) {
     final ElectricityEffect38 electricEffect = (ElectricityEffect38)manager.effect_44;
 
     if(electricEffect.currentColourFadeStep_04 + 1 == electricEffect.numColourFadeSteps_0c) {
@@ -2936,7 +2936,7 @@ public final class SEffe {
 
       //LAB_80103ee4
       electricEffect.frameNum_2a = electricEffect.frameNum_2a + 1 & 0x1f;
-      final boolean effectShouldRender = (manager._10._24 >> electricEffect.frameNum_2a & 0x1) == 0;
+      final boolean effectShouldRender = (manager._10.shouldRenderFrameBits_24 >> electricEffect.frameNum_2a & 0x1) == 0;
 
       //LAB_80103f18
       //LAB_80103f44
@@ -3016,10 +3016,10 @@ public final class SEffe {
                 vertexArray[2].setY((short)outerOriginYa);
                 renderSegmentGradient(currentSegment.outerColour_16, nextSegment.outerColour_16, vertexArray, bolt.sz3_0c, manager._10.z_22, translucency);
 
-                vertexArray[0].setX((short)((vertexArray[0].getX() - vertexArray[1].getX()) / manager._10._30 + vertexArray[1].getX()));
-                vertexArray[0].setY((short)((vertexArray[0].getY() - vertexArray[1].getY()) / manager._10._30 + vertexArray[1].getY()));
-                vertexArray[2].setX((short)((vertexArray[2].getX() - vertexArray[3].getX()) / manager._10._30 + vertexArray[3].getX()));
-                vertexArray[2].setY((short)((vertexArray[2].getY() - vertexArray[3].getY()) / manager._10._30 + vertexArray[3].getY()));
+                vertexArray[0].setX((short)((vertexArray[0].getX() - vertexArray[1].getX()) / manager._10.sizeDivisor_30 + vertexArray[1].getX()));
+                vertexArray[0].setY((short)((vertexArray[0].getY() - vertexArray[1].getY()) / manager._10.sizeDivisor_30 + vertexArray[1].getY()));
+                vertexArray[2].setX((short)((vertexArray[2].getX() - vertexArray[3].getX()) / manager._10.sizeDivisor_30 + vertexArray[3].getX()));
+                vertexArray[2].setY((short)((vertexArray[2].getY() - vertexArray[3].getY()) / manager._10.sizeDivisor_30 + vertexArray[3].getY()));
                 renderSegmentGradient(currentSegment.innerColour_10, nextSegment.innerColour_10, vertexArray, bolt.sz3_0c, manager._10.z_22, translucency);
 
                 vertexArray[0].setX((short)outerEndpointXb);
@@ -3028,10 +3028,10 @@ public final class SEffe {
                 vertexArray[2].setY((short)outerOriginYb);
                 renderSegmentGradient(currentSegment.outerColour_16, nextSegment.outerColour_16, vertexArray, bolt.sz3_0c, manager._10.z_22, translucency);
 
-                vertexArray[0].setX((short)((vertexArray[0].getX() - vertexArray[1].getX()) / manager._10._30 + vertexArray[1].getX()));
-                vertexArray[0].setY((short)((vertexArray[0].getY() - vertexArray[1].getY()) / manager._10._30 + vertexArray[1].getY()));
-                vertexArray[2].setX((short)((vertexArray[2].getX() - vertexArray[3].getX()) / manager._10._30 + vertexArray[3].getX()));
-                vertexArray[2].setY((short)((vertexArray[2].getY() - vertexArray[3].getY()) / manager._10._30 + vertexArray[3].getY()));
+                vertexArray[0].setX((short)((vertexArray[0].getX() - vertexArray[1].getX()) / manager._10.sizeDivisor_30 + vertexArray[1].getX()));
+                vertexArray[0].setY((short)((vertexArray[0].getY() - vertexArray[1].getY()) / manager._10.sizeDivisor_30 + vertexArray[1].getY()));
+                vertexArray[2].setX((short)((vertexArray[2].getX() - vertexArray[3].getX()) / manager._10.sizeDivisor_30 + vertexArray[3].getX()));
+                vertexArray[2].setY((short)((vertexArray[2].getY() - vertexArray[3].getY()) / manager._10.sizeDivisor_30 + vertexArray[3].getY()));
                 renderSegmentGradient(currentSegment.innerColour_10, nextSegment.innerColour_10, vertexArray, bolt.sz3_0c, manager._10.z_22, translucency);
 
                 outerOriginXa = outerEndpointXa;
@@ -3093,25 +3093,25 @@ public final class SEffe {
   }
 
   @Method(0x801049d4L)
-  public static void FUN_801049d4(final EffectManagerData6c a0, final ElectricityEffect38 a1, final LightningBoltEffect14 a2, final int a3) {
+  public static void FUN_801049d4(final EffectManagerData6c<EffectManagerData6cInner.ElectricityType> a0, final ElectricityEffect38 a1, final LightningBoltEffect14 a2, final int a3) {
     // no-op
   }
 
   @Method(0x801049dcL)
-  public static void FUN_801049dc(final EffectManagerData6c a0, final ElectricityEffect38 electricEffect, final LightningBoltEffect14 boltEffect, final int boltIndex) {
+  public static void FUN_801049dc(final EffectManagerData6c<EffectManagerData6cInner.ElectricityType> a0, final ElectricityEffect38 electricEffect, final LightningBoltEffect14 boltEffect, final int boltIndex) {
     boltEffect.rotation_04.setY((short)(0x1000 / electricEffect.boltCount_00 * boltIndex));
     boltEffect.rotation_04.setZ((short)(electricEffect.segmentOriginTranslationMagnitude_1e * 2));
   }
 
   @Method(0x80104a14L)
-  public static void FUN_80104a14(final EffectManagerData6c a0, final ElectricityEffect38 a1, final LightningBoltEffect14 bolt, final int a3) {
+  public static void FUN_80104a14(final EffectManagerData6c<EffectManagerData6cInner.ElectricityType> a0, final ElectricityEffect38 a1, final LightningBoltEffect14 bolt, final int a3) {
     bolt.rotation_04.setX((short)(seed_800fa754.advance().get() % 4097));
     bolt.rotation_04.setY((short)(seed_800fa754.advance().get() % 4097));
     bolt.rotation_04.setZ((short)(seed_800fa754.advance().get() % 4097));
   }
 
   @Method(0x80104b10L)
-  public static void FUN_80104b10(final EffectManagerData6c manager, final ElectricityEffect38 electricEffect, final LightningBoltEffect14 bolt, final int a3) {
+  public static void FUN_80104b10(final EffectManagerData6c<EffectManagerData6cInner.ElectricityType> manager, final ElectricityEffect38 electricEffect, final LightningBoltEffect14 bolt, final int a3) {
     final int angleStep = manager._10._28 << 8 >> 8;
     int angle = bolt.angle_02;
 
@@ -3127,7 +3127,7 @@ public final class SEffe {
   }
 
   @Method(0x80104becL)
-  public static void FUN_80104bec(final EffectManagerData6c manager, final ElectricityEffect38 electricEffect, final LightningBoltEffect14 bolt, final int a3) {
+  public static void FUN_80104bec(final EffectManagerData6c<EffectManagerData6cInner.ElectricityType> manager, final ElectricityEffect38 electricEffect, final LightningBoltEffect14 bolt, final int a3) {
     final int angleStep = manager._10._28 << 8 >> 8;
     int angle = bolt.angle_02;
 
@@ -3142,7 +3142,7 @@ public final class SEffe {
   }
 
   @Method(0x80104c9cL)
-  public static void FUN_80104c9c(final EffectManagerData6c manager, final ElectricityEffect38 electricEffect, final LightningBoltEffect14 bolt, final int a3) {
+  public static void FUN_80104c9c(final EffectManagerData6c<EffectManagerData6cInner.ElectricityType> manager, final ElectricityEffect38 electricEffect, final LightningBoltEffect14 bolt, final int a3) {
     int translationMagnitudeModifier = 0;
     int segmentIndex = (electricEffect.boltSegmentCount_28 - 2) / 2;
     final int angle0 = (manager._10._28 & 0xff) << 4;
@@ -3163,7 +3163,7 @@ public final class SEffe {
   }
 
   @Method(0x80104e40L)
-  public static void FUN_80104e40(final EffectManagerData6c manager, final ElectricityEffect38 electricEffect, final LightningBoltEffect14 bolt, final int a3) {
+  public static void FUN_80104e40(final EffectManagerData6c<EffectManagerData6cInner.ElectricityType> manager, final ElectricityEffect38 electricEffect, final LightningBoltEffect14 bolt, final int a3) {
     final int translationMagnitude = electricEffect.segmentOriginTranslationMagnitude_1e / electricEffect.boltCount_00 & 0xffff;
     final int angle = 0x1000 / electricEffect.boltCount_00 * a3;
 
@@ -3180,7 +3180,7 @@ public final class SEffe {
   }
 
   @Method(0x80104f70L)
-  public static void FUN_80104f70(final EffectManagerData6c manager, final ElectricityEffect38 effect, final LightningBoltEffect14 bolt, final int a3) {
+  public static void FUN_80104f70(final EffectManagerData6c<EffectManagerData6cInner.ElectricityType> manager, final ElectricityEffect38 effect, final LightningBoltEffect14 bolt, final int a3) {
     final int angleStep = 0x1000 / (effect.boltSegmentCount_28 - 1);
     int angle = 0;
 
@@ -3195,7 +3195,7 @@ public final class SEffe {
   }
 
   @Method(0x80105050L)
-  public static void FUN_80105050(final EffectManagerData6c manager, final ElectricityEffect38 electricEffect, final LightningBoltEffect14 bolt, final int boltAngleModifier) {
+  public static void FUN_80105050(final EffectManagerData6c<EffectManagerData6cInner.ElectricityType> manager, final ElectricityEffect38 electricEffect, final LightningBoltEffect14 bolt, final int boltAngleModifier) {
     final int segmentCount = electricEffect.boltSegmentCount_28;
     final int angleStep = 0x800 / (segmentCount - 1);
     final int boltAngleZ = 0x1000 / electricEffect.boltCount_00 * boltAngleModifier;
@@ -3212,7 +3212,7 @@ public final class SEffe {
   }
 
   @Method(0x801051acL)
-  public static void FUN_801051ac(final EffectManagerData6c manager, final ElectricityEffect38 electricEffect, final LightningBoltEffect14 bolt, final int a3) {
+  public static void FUN_801051ac(final EffectManagerData6c<EffectManagerData6cInner.ElectricityType> manager, final ElectricityEffect38 electricEffect, final LightningBoltEffect14 bolt, final int a3) {
     final int segmentCount = electricEffect.boltSegmentCount_28;
     final int angleStepXZ = 0x1000 / (segmentCount - 1);
     final int angleStepY = manager._10._28 << 8 >> 8;
@@ -3237,16 +3237,17 @@ public final class SEffe {
     final int boltCount = script.params_20[3].get();
     final int boltSegmentCount = effectFlag >> 8 & 0xff;
 
-    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+    final ScriptState<EffectManagerData6c<EffectManagerData6cInner.ElectricityType>> state = allocateEffectManager(
       "ElectricityEffect38",
       script.scriptState_04,
       null,
       electricityEffectRenderers_80119f14[callbackIndex],
       null,
-      new ElectricityEffect38(boltCount, boltSegmentCount)
+      new ElectricityEffect38(boltCount, boltSegmentCount),
+      new EffectManagerData6cInner.ElectricityType()
     );
 
-    final EffectManagerData6c manager = state.innerStruct_00;
+    final EffectManagerData6c<EffectManagerData6cInner.ElectricityType> manager = state.innerStruct_00;
     final ElectricityEffect38 electricEffect = (ElectricityEffect38)manager.effect_44;
     electricEffect.currentColourFadeStep_04 = 0;
     electricEffect.scriptIndex_08 = script.params_20[1].get();
@@ -3284,7 +3285,7 @@ public final class SEffe {
     manager._10.flags_00 |= 0x5000_0000;
     manager._10.colour_1c.set(0, 0, 0xff);
     manager._10._28 = 0x100;
-    manager._10._30 = 3;
+    manager._10.sizeDivisor_30 = 3;
 
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
@@ -3292,7 +3293,7 @@ public final class SEffe {
 
   @Method(0x80105604L)
   public static FlowControl FUN_80105604(final RunningScript<?> script) {
-    final EffectManagerData6c a0 = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final EffectManagerData6c<EffectManagerData6cInner.ElectricityType> a0 = (EffectManagerData6c<EffectManagerData6cInner.ElectricityType>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final LightningBoltEffect14 a1 = ((ElectricityEffect38)a0.effect_44).bolts_34[script.params_20[1].get()];
     final LightningBoltEffectSegment30 v0 = a1.boltSegments_10[script.params_20[2].get()];
 
@@ -3373,7 +3374,7 @@ public final class SEffe {
 
     final int scriptIndex = script.params_20[0].get();
     final int s3 = script.params_20[1].get();
-    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
+    final EffectManagerData6c<EffectManagerData6cInner.ElectricityType> manager = (EffectManagerData6c<EffectManagerData6cInner.ElectricityType>)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
     final ElectricityEffect38 s1 = (ElectricityEffect38)manager.effect_44;
     final ScriptState<ThunderArrowEffect1c> state = SCRIPTS.allocateScriptState("ThunderArrowEffect1c", new ThunderArrowEffect1c());
     state.loadScriptFile(doNothingScript_8004f650);
@@ -3648,7 +3649,7 @@ public final class SEffe {
   }
 
   @Method(0x80106808L)
-  public static void renderAdditionCentreSolidSquare(final Effect a0, final AdditionOverlaysHit20 hitOverlay, final int completionState, final ScriptState<EffectManagerData6c> a3, final EffectManagerData6c effect) {
+  public static void renderAdditionCentreSolidSquare(final Effect a0, final AdditionOverlaysHit20 hitOverlay, final int completionState, final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> a3, final EffectManagerData6c effect) {
     if(effect._10.flags_00 >= 0) {
       final AdditionOverlaysBorder0e[] targetBorderArray = hitOverlay.borderArray_18;
 
@@ -3726,7 +3727,7 @@ public final class SEffe {
   }
 
   @Method(0x80106cccL)
-  public static void renderAdditionBorders(final int a0, final int hitNum, final AdditionOverlaysEffect44 effect, final AdditionOverlaysHit20[] hitArray, final ScriptState<EffectManagerData6c> state) {
+  public static void renderAdditionBorders(final int a0, final int hitNum, final AdditionOverlaysEffect44 effect, final AdditionOverlaysHit20[] hitArray, final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state) {
     final AdditionOverlaysBorder0e[] borderArray = hitArray[hitNum].borderArray_18;
     final byte currentHitCompletionState = additionHitCompletionState_8011a014[hitNum];
 
@@ -3800,7 +3801,7 @@ public final class SEffe {
   }
 
   @Method(0x80107088L)
-  public static long tickBorderDisplay(final int a0, final int hitNum, final AdditionOverlaysEffect44 effect, final AdditionOverlaysHit20[] hitArray) {
+  public static int tickBorderDisplay(final int a0, final int hitNum, final AdditionOverlaysEffect44 effect, final AdditionOverlaysHit20[] hitArray) {
     // Darken shadow color of innermost border of current hit
     final AdditionOverlaysHit20 hitOverlay = hitArray[hitNum];
     if(effect.currentFrame_34 >= hitOverlay.frameSuccessLowerBound_10 - 0x11) {
@@ -3885,7 +3886,7 @@ public final class SEffe {
   }
 
   @Method(0x8010726cL)
-  public static void renderAdditionOverlaysEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
+  public static void renderAdditionOverlaysEffect(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> data) {
     final AdditionOverlaysEffect44 effect = (AdditionOverlaysEffect44)data.effect_44;
 
     if(effect.pauseTickerAndRenderer_31 != 1) {
@@ -3928,7 +3929,7 @@ public final class SEffe {
   }
 
   @Method(0x801073d4L)
-  public static void tickAdditionOverlaysEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
+  public static void tickAdditionOverlaysEffect(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> data) {
     final AdditionOverlaysEffect44 effect = (AdditionOverlaysEffect44)data.effect_44;
 
     if(effect.pauseTickerAndRenderer_31 == 0) {
@@ -4068,7 +4069,7 @@ public final class SEffe {
 
   @Method(0x801077e8L)
   public static FlowControl allocateAdditionOverlaysEffect(final RunningScript<? extends BattleScriptDataBase> script) {
-    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+    final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state = allocateEffectManager(
       "Addition overlays",
       script.scriptState_04,
       SEffe::tickAdditionOverlaysEffect,
@@ -4090,7 +4091,7 @@ public final class SEffe {
    */
   @Method(0x801078c0L)
   public static FlowControl scriptAlterAdditionContinuationState(final RunningScript<?> script) {
-    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager = (EffectManagerData6c<EffectManagerData6cInner.VoidType>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final AdditionOverlaysEffect44 effect = (AdditionOverlaysEffect44)manager.effect_44;
     final int additionContinuationState = script.params_20[1].get();
 
@@ -4375,18 +4376,6 @@ public final class SEffe {
     //LAB_801087dc
   }
 
-  @Method(0x801087f0L)
-  public static void doNothingScriptDestructor(final int index, final ScriptState<MemoryRef> state, final MemoryRef data) {
-    // no-op
-  }
-
-  /**
-   * Pretty sure this is the script allocation for dragoon additions
-   *
-   * {@link SEffe#FUN_80108514}
-   * {@link SEffe#FUN_80108574}
-   * {@link SEffe#doNothingScriptDestructor}
-   */
   @Method(0x801087f8L)
   public static FlowControl allocateDragoonAdditionScript(final RunningScript<?> script) {
     final int s4 = script.params_20[1].get();
@@ -4515,10 +4504,6 @@ public final class SEffe {
     //LAB_80108cc4
   }
 
-  /**
-   * {@link SEffe#FUN_801089e8}
-   * {@link SEffe#doNothingScriptDestructor}
-   */
   @Method(0x80108cf4L)
   public static void FUN_80108cf4() {
     playSound(0, 50, 0, 0, (short)0, (short)0);
@@ -4560,7 +4545,7 @@ public final class SEffe {
   }
 
   @Method(0x80108e40L)
-  public static void renderRainEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
+  public static void renderRainEffect(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> data) {
     final RainEffect08 effect = (RainEffect08)data.effect_44;
     final RaindropEffect0c[] rainArray = effect.raindropArray_04;
 
@@ -4581,7 +4566,7 @@ public final class SEffe {
   }
 
   @Method(0x80109000L)
-  public static void tickRainEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
+  public static void tickRainEffect(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> data) {
     final RainEffect08 effect = (RainEffect08)data.effect_44;
     final RaindropEffect0c[] rainArray = effect.raindropArray_04;
 
@@ -4602,7 +4587,7 @@ public final class SEffe {
   @Method(0x80109158L)
   public static FlowControl allocateRainEffect(final RunningScript<? extends BattleScriptDataBase> script) {
     final int count = script.params_20[1].get();
-    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+    final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state = allocateEffectManager(
       "RainEffect08",
       script.scriptState_04,
       SEffe::tickRainEffect,
@@ -4611,7 +4596,7 @@ public final class SEffe {
       new RainEffect08(count)
     );
 
-    final EffectManagerData6c manager = state.innerStruct_00;
+    final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager = state.innerStruct_00;
     final RainEffect08 effect = (RainEffect08)manager.effect_44;
     manager._10.flags_00 = 0x5000_0000;
 
@@ -4630,7 +4615,7 @@ public final class SEffe {
   }
 
   @Method(0x80109358L)
-  public static void FUN_80109358(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
+  public static void FUN_80109358(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> data) {
     final ScreenDistortionEffectData08 sp48 = (ScreenDistortionEffectData08)data.effect_44;
     final int sp30 = data._10.scale_16.getX() >> 8;
     final int sp2c = data._10.scale_16.getY() >> 11;
@@ -4680,7 +4665,7 @@ public final class SEffe {
   }
 
   @Method(0x801097e0L)
-  public static void renderScreenDistortionBlurEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
+  public static void renderScreenDistortionBlurEffect(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> data) {
     GPU.queueCommand(30, new GpuCommandQuad()
       .bpp(Bpp.BITS_15)
       .translucent(Translucency.of(data._10.flags_00 >>> 28 & 3))
@@ -4691,19 +4676,19 @@ public final class SEffe {
   }
 
   @Method(0x80109a4cL)
-  public static void FUN_80109a4c(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
+  public static void FUN_80109a4c(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> data) {
     final ScreenDistortionEffectData08 effect = (ScreenDistortionEffectData08)data.effect_44;
     effect.angle_00 += effect.angleStep_04;
   }
 
   @Method(0x80109a6cL)
-  public static void tickScreenDistortionBlurEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
+  public static void tickScreenDistortionBlurEffect(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> data) {
     // no-op
   }
 
   @Method(0x80109a7cL)
   public static FlowControl allocateScreenDistortionEffect(final RunningScript<? extends BattleScriptDataBase> script) {
-    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+    final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state = allocateEffectManager(
       "Screen distortion",
       script.scriptState_04,
       // Ticker and renderer are swapped for some reason
@@ -4713,7 +4698,7 @@ public final class SEffe {
       new ScreenDistortionEffectData08()
     );
 
-    final EffectManagerData6c manager = state.innerStruct_00;
+    final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager = state.innerStruct_00;
     final ScreenDistortionEffectData08 effect = (ScreenDistortionEffectData08)manager.effect_44;
     effect.angle_00 = 0x800;
     effect.angleStep_04 = script.params_20[1].get();
@@ -4755,8 +4740,8 @@ public final class SEffe {
     final int ticksRemaining = script.params_20[2].get();
     final int embiggener = script.params_20[3].get();
 
-    final ScriptState<EffectManagerData6c> sourceState = (ScriptState<EffectManagerData6c>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
-    final ScriptState<EffectManagerData6c> diffState = (ScriptState<EffectManagerData6c>)scriptStatePtrArr_800bc1c0[script.params_20[1].get()];
+    final ScriptState<EffectManagerData6c<?>> sourceState = (ScriptState<EffectManagerData6c<?>>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
+    final ScriptState<EffectManagerData6c<?>> diffState = (ScriptState<EffectManagerData6c<?>>)scriptStatePtrArr_800bc1c0[script.params_20[1].get()];
 
     final ScriptState<VertexDifferenceAnimation18> state = SCRIPTS.allocateScriptState("Vertex difference animation source %d (%s), diff %d (%s)".formatted(sourceState.index, sourceState.name, diffState.index, diffState.name), new VertexDifferenceAnimation18());
 
@@ -4803,7 +4788,7 @@ public final class SEffe {
    * was hardcoded to 0 so that the code in the condition was never run.
    */
   @Method(0x80109fc4L)
-  public static void FUN_80109fc4(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void FUN_80109fc4(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.FrozenJetType>> state, final EffectManagerData6c<EffectManagerData6cInner.FrozenJetType> manager) {
     final FrozenJetEffect28 effect = (FrozenJetEffect28)manager.effect_44;
     int s1 = effect._18;
 
@@ -4820,7 +4805,7 @@ public final class SEffe {
         }
 
         final SVECTOR sp0x10 = new SVECTOR().set(effect.verticesCopy_1c[s1]);
-        sp0x10.y.add((short)(rsin(s4) * (manager._10._28 << 10 >> 8) >> 12)); // 2b
+        sp0x10.y.add((short)(rsin(s4) * (manager._10._28 << 10 >> 8) >> 12));
         effect.vertices_0c[s1].set(sp0x10);
         s4 += (0x1000 / effect._18 / manager._10._2c >> 8);
         s1++;
@@ -4841,19 +4826,20 @@ public final class SEffe {
     final int s4 = script.params_20[2].get();
     final int sp18 = script.params_20[3].get();
 
-    final DeffTmdRenderer14 v1 = (DeffTmdRenderer14)((EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00).effect_44;
+    final DeffTmdRenderer14 v1 = (DeffTmdRenderer14)((EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00).effect_44;
     final TmdObjTable1c tmd = v1.tmd_08;
 
-    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+    final ScriptState<EffectManagerData6c<EffectManagerData6cInner.FrozenJetType>> state = allocateEffectManager(
       "FrozenJetEffect28",
       script.scriptState_04,
       SEffe::FUN_80109fc4,
       null,
       null,
-      new FrozenJetEffect28(tmd.vert_top_00, tmd.primitives_10, s4, sp18 & 0xff)
+      new FrozenJetEffect28(tmd.vert_top_00, tmd.primitives_10, s4, sp18 & 0xff),
+      new EffectManagerData6cInner.FrozenJetType()
     );
 
-    final EffectManagerData6c manager = state.innerStruct_00;
+    final EffectManagerData6c<EffectManagerData6cInner.FrozenJetType> manager = state.innerStruct_00;
     manager._10._24 = 0x100;
     manager._10._28 = 0x100;
     manager._10._2c = 0x100;
@@ -4868,7 +4854,7 @@ public final class SEffe {
   public static FlowControl allocateGradientRaysEffect(final RunningScript<? extends BattleScriptDataBase> script) {
     final int count = script.params_20[1].get();
 
-    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+    final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state = allocateEffectManager(
       "GradientRaysEffect24",
       script.scriptState_04,
       SEffe::gradientRaysEffectTicker,
@@ -4877,7 +4863,7 @@ public final class SEffe {
       new GradientRaysEffect24(count)
     );
 
-    final EffectManagerData6c manager = state.innerStruct_00;
+    final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager = state.innerStruct_00;
     final GradientRaysEffect24 effect = (GradientRaysEffect24)manager.effect_44;
     effect._08 = script.params_20[2].get();
     effect._0c = script.params_20[3].get();
@@ -4918,7 +4904,7 @@ public final class SEffe {
 
   /** Used in Rose transform */
   @Method(0x8010a860L)
-  public static void renderGradientRay(final EffectManagerData6c manager, final GradientRaysEffectInstance04 gradientRay) {
+  public static void renderGradientRay(final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager, final GradientRaysEffectInstance04 gradientRay) {
     final SVECTOR sp0x38 = new SVECTOR();
     final SVECTOR sp0x40 = new SVECTOR();
     final SVECTOR sp0x48 = new SVECTOR();
@@ -5016,7 +5002,7 @@ public final class SEffe {
   }
 
   @Method(0x8010ae40L)
-  public static void gradientRaysEffectTicker(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
+  public static void gradientRaysEffectTicker(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> data) {
     final GradientRaysEffect24 rayEffect = (GradientRaysEffect24)data.effect_44;
 
     //LAB_8010ae80
@@ -5051,7 +5037,7 @@ public final class SEffe {
   }
 
   @Method(0x8010af6cL)
-  public static void gradientRaysEffectRenderer(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void gradientRaysEffectRenderer(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager) {
     if(manager._10.flags_00 >= 0) {
       final GradientRaysEffect24 rayEffect = (GradientRaysEffect24)manager.effect_44;
 
@@ -5100,7 +5086,7 @@ public final class SEffe {
    */
   @Method(0x8010b1d8L)
   public static FlowControl allocateScreenCaptureEffect(final RunningScript<? extends BattleScriptDataBase> script) {
-    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+    final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state = allocateEffectManager(
       "Screen capture",
       script.scriptState_04,
       null,
@@ -5109,7 +5095,7 @@ public final class SEffe {
       new ScreenCaptureEffect1c()
     );
 
-    final EffectManagerData6c manager = state.innerStruct_00;
+    final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager = state.innerStruct_00;
     final ScreenCaptureEffect1c effect = (ScreenCaptureEffect1c)manager.effect_44;
     effect.captureW_04 = script.params_20[4].get();
     effect.captureH_08 = script.params_20[5].get();
@@ -5158,7 +5144,7 @@ public final class SEffe {
    * TODO This is the second screen capture function, usage currently unknown
    */
   @Method(0x8010b594L)
-  public static void FUN_8010b594(final EffectManagerData6c manager, final ScreenCaptureEffect1c effect, final MATRIX transforms) {
+  public static void FUN_8010b594(final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager, final ScreenCaptureEffect1c effect, final MATRIX transforms) {
     int v0;
     int v1;
     int a0;
@@ -5326,7 +5312,7 @@ public final class SEffe {
   }
 
   @Method(0x8010bc60L)
-  public static void renderScreenCapture(final EffectManagerData6c manager, final ScreenCaptureEffect1c effect, final MATRIX transforms) {
+  public static void renderScreenCapture(final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager, final ScreenCaptureEffect1c effect, final MATRIX transforms) {
     final COLOUR rgb = new COLOUR();
 
     if((manager._10.flags_00 & 0x40) != 0) {
@@ -5414,7 +5400,7 @@ public final class SEffe {
   }
 
   @Method(0x8010c114L)
-  public static void renderScreenCaptureEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void renderScreenCaptureEffect(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager) {
     final MATRIX sp0x10 = new MATRIX().set(identityMatrix_800c3568);
     final MATRIX transforms = new MATRIX().set(identityMatrix_800c3568);
 
@@ -5448,7 +5434,7 @@ public final class SEffe {
     final int y = script.params_20[3].get();
     final int z = script.params_20[4].get();
 
-    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+    final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state = allocateEffectManager(
       "LensFlareEffect50",
       script.scriptState_04,
       SEffe::tickLensFlareEffect,
@@ -5457,7 +5443,7 @@ public final class SEffe {
       new LensFlareEffect50()
     );
 
-    final EffectManagerData6c manager = state.innerStruct_00;
+    final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager = state.innerStruct_00;
     final LensFlareEffect50 effect = (LensFlareEffect50)manager.effect_44;
     effect._00 = 5;
     effect._02 = 0;
@@ -5521,7 +5507,7 @@ public final class SEffe {
   }
 
   @Method(0x8010c69cL)
-  public static void tickLensFlareEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void tickLensFlareEffect(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager) {
     final LensFlareEffect50 effect = (LensFlareEffect50)manager.effect_44;
     effect.shouldRender_4a = (short)(rand() % 30);
 
@@ -5565,7 +5551,7 @@ public final class SEffe {
   }
 
   @Method(0x8010c8f8L)
-  public static void renderLensFlareEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void renderLensFlareEffect(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager) {
     final LensFlareEffect50 effect = (LensFlareEffect50)manager.effect_44;
 
     if(effect.shouldRender_4a != 0) {
@@ -5666,7 +5652,7 @@ public final class SEffe {
     final int featherCount = script.params_20[1].get();
     final int effectFlags = script.params_20[2].get();
 
-    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+    final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state = allocateEffectManager(
       "WsDragoonTransformationFeathersEffect14",
       script.scriptState_04,
       SEffe::tickWsDragoonTransformationFeathersEffect,
@@ -5675,7 +5661,7 @@ public final class SEffe {
       new WsDragoonTransformationFeathersEffect14(featherCount)
     );
 
-    final EffectManagerData6c manager = state.innerStruct_00;
+    final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager = state.innerStruct_00;
     final WsDragoonTransformationFeathersEffect14 featherEffect = (WsDragoonTransformationFeathersEffect14)manager.effect_44;
     featherEffect.unused_02 = 0;
 
@@ -5746,7 +5732,7 @@ public final class SEffe {
   }
 
   @Method(0x8010d5b4L)
-  public static void renderWsDragoonTransformationFeathersEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void renderWsDragoonTransformationFeathersEffect(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager) {
     final WsDragoonTransformationFeathersEffect14 effect = (WsDragoonTransformationFeathersEffect14)manager.effect_44;
     final GenericSpriteEffect24 spriteEffect = new GenericSpriteEffect24();
 
@@ -5802,7 +5788,7 @@ public final class SEffe {
     final int sp2c = script.params_20[7].get();
     final int sp30 = script.params_20[8].get();
 
-    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+    final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state = allocateEffectManager(
       "GoldDragoonTransformEffect20",
       script.scriptState_04,
       SEffe::goldDragoonTransformEffectTicker,
@@ -5865,7 +5851,7 @@ public final class SEffe {
   }
 
   @Method(0x8010dcd0L)
-  public static void goldDragoonTransformEffectTicker(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void goldDragoonTransformEffectTicker(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager) {
     final GoldDragoonTransformEffect20 effect = (GoldDragoonTransformEffect20)manager.effect_44;
     int unusedCount = 0;
 
@@ -5919,7 +5905,7 @@ public final class SEffe {
   }
 
   @Method(0x8010de7cL)
-  public static void goldDragoonTransformEffectRenderer(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void goldDragoonTransformEffectRenderer(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager) {
     final GoldDragoonTransformEffect20 effect = (GoldDragoonTransformEffect20)manager.effect_44;
     effect._04++;
 
@@ -5964,7 +5950,7 @@ public final class SEffe {
     final int meteorCount = script.params_20[2].get();
     final int effectFlag = script.params_20[1].get();
 
-    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+    final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state = allocateEffectManager(
       "StarChildrenMeteorEffect10",
       script.scriptState_04,
       SEffe::tickStarChildrenMeteorEffect,
@@ -5973,7 +5959,7 @@ public final class SEffe {
       new StarChildrenMeteorEffect10(meteorCount)
     );
 
-    final EffectManagerData6c manager = state.innerStruct_00;
+    final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager = state.innerStruct_00;
     manager._10.flags_00 = 0x5000_0000;
 
     final StarChildrenMeteorEffect10 meteorEffect = (StarChildrenMeteorEffect10)manager.effect_44;
@@ -6015,7 +6001,7 @@ public final class SEffe {
   }
 
   @Method(0x8010e2fcL)
-  public static void renderStarChildrenMeteorEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void renderStarChildrenMeteorEffect(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager) {
     final StarChildrenMeteorEffect10 meteorEffect = (StarChildrenMeteorEffect10)manager.effect_44;
     final int flags = manager._10.flags_00;
     final int tpage = (meteorEffect.metrics_04.v_02 & 0x100) >>> 4 | (meteorEffect.metrics_04.u_00 & 0x3ff) >>> 6;
@@ -6066,7 +6052,7 @@ public final class SEffe {
   }
 
   @Method(0x8010e6b0L)
-  public static void tickStarChildrenMeteorEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void tickStarChildrenMeteorEffect(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager) {
     final StarChildrenMeteorEffect10 meteorEffect = (StarChildrenMeteorEffect10)manager.effect_44;
 
     //LAB_8010e6ec
@@ -6102,7 +6088,7 @@ public final class SEffe {
     final int maxToggleFrameThreshold = script.params_20[2].get();
     final int maxScale = script.params_20[3].get();
 
-    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+    final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state = allocateEffectManager(
       "MoonlightStarsEffect18",
       script.scriptState_04,
       SEffe::tickMoonlightStarsEffect,
@@ -6111,7 +6097,7 @@ public final class SEffe {
       new MoonlightStarsEffect18(starCount)
     );
 
-    final EffectManagerData6c manager = state.innerStruct_00;
+    final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager = state.innerStruct_00;
     final MoonlightStarsEffect18 starEffect = (MoonlightStarsEffect18)manager.effect_44;
     manager._10.flags_00 = 0x5000_0000;
 
@@ -6154,7 +6140,7 @@ public final class SEffe {
   }
 
   @Method(0x8010ec08L)
-  public static void renderMoonlightStarsEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void renderMoonlightStarsEffect(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager) {
     final MoonlightStarsEffect18 starEffect = (MoonlightStarsEffect18)manager.effect_44;
 
     final GenericSpriteEffect24 spriteEffect = new GenericSpriteEffect24();
@@ -6201,7 +6187,7 @@ public final class SEffe {
     final int maxStartingFrame = script.params_20[2].get();
     final int maxTranslationMagnitude = script.params_20[3].get();
 
-    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+    final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state = allocateEffectManager(
       "StarChildrenImpactEffect20",
       script.scriptState_04,
       SEffe::tickStarChildrenImpactEffect,
@@ -6210,7 +6196,7 @@ public final class SEffe {
       new StarChildrenImpactEffect20(impactCount)
     );
 
-    final EffectManagerData6c manager = state.innerStruct_00;
+    final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager = state.innerStruct_00;
     final StarChildrenImpactEffect20 impactEffect = (StarChildrenImpactEffect20)manager.effect_44;
 
     //LAB_8010eecc
@@ -6249,7 +6235,7 @@ public final class SEffe {
   }
 
   @Method(0x8010f124L)
-  public static void tickStarChildrenImpactEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void tickStarChildrenImpactEffect(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager) {
     final StarChildrenImpactEffect20 impactEffect = (StarChildrenImpactEffect20)manager.effect_44;
 
     //LAB_8010f168
@@ -6319,7 +6305,7 @@ public final class SEffe {
 
   /** Used renderCtmd */
   @Method(0x8010f340L)
-  public static void renderStarChildrenImpactEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void renderStarChildrenImpactEffect(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager) {
     final StarChildrenImpactEffect20 impactEffect = (StarChildrenImpactEffect20)manager.effect_44;
     if(manager._10.flags_00 >= 0) {
       final VECTOR translation = new VECTOR();
@@ -6403,7 +6389,7 @@ public final class SEffe {
   }
 
   @Method(0x8010f978L)
-  public static void tickWsDragoonTransformationFeathersEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void tickWsDragoonTransformationFeathersEffect(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager) {
     final WsDragoonTransformationFeathersEffect14 effect = (WsDragoonTransformationFeathersEffect14)manager.effect_44;
 
     //LAB_8010f9c0
@@ -6415,7 +6401,7 @@ public final class SEffe {
   }
 
   @Method(0x8010fa4cL)
-  public static void initializeWsDragoonTransformationEffect(final EffectManagerData6c manager, final WsDragoonTransformationFeatherInstance70 feather) {
+  public static void initializeWsDragoonTransformationEffect(final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager, final WsDragoonTransformationFeatherInstance70 feather) {
     feather.currentFrame_04++;
 
     if(feather.currentFrame_04 >= feather.countCallback0Frames_64) {
@@ -6426,7 +6412,7 @@ public final class SEffe {
   }
 
   @Method(0x8010fa88L)
-  public static void expandWsDragoonTransformationEffect(final EffectManagerData6c manager, final WsDragoonTransformationFeatherInstance70 feather) {
+  public static void expandWsDragoonTransformationEffect(final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager, final WsDragoonTransformationFeatherInstance70 feather) {
     feather.angle_58 += feather.angleStep_60;
     feather.velocityTranslationMagnitudeXz_40 += feather.accelerationTranslationMagnitudeXz_44;
     feather.translationMagnitudeXz_3c += feather.velocityTranslationMagnitudeXz_40;
@@ -6444,7 +6430,7 @@ public final class SEffe {
   }
 
   @Method(0x8010fbd4L)
-  public static void spinWsDragoonTransformationEffect(final EffectManagerData6c manager, final WsDragoonTransformationFeatherInstance70 feather) {
+  public static void spinWsDragoonTransformationEffect(final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager, final WsDragoonTransformationFeatherInstance70 feather) {
     feather.angle_58 += feather.angleStep_60;
     final int x = (rcos(feather.angle_58 + feather.angleNoiseXz_5c >> 8) - rsin(feather.angle_58 + feather.angleNoiseXz_5c >> 8)) * (feather.translationMagnitudeXz_3c >> 8) >> 4;
     final int y = feather.yOrigin_54 + (feather.translationMagnitudeY_50 * rsin(feather.angle_58 >> 8 & 0xfff) >> 12);
@@ -6462,7 +6448,7 @@ public final class SEffe {
   }
 
   @Method(0x8010fd34L)
-  public static void contractWsDragoonTransformationEffect(final EffectManagerData6c manager, final WsDragoonTransformationFeatherInstance70 feather) {
+  public static void contractWsDragoonTransformationEffect(final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager, final WsDragoonTransformationFeatherInstance70 feather) {
     feather.angle_58 += feather.angleStep_60;
     feather.translationMagnitudeXz_3c += feather.velocityTranslationMagnitudeXz_40;
     final int x = (rcos(feather.angle_58 + feather.angleNoiseXz_5c >> 8) - rsin(feather.angle_58 + feather.angleNoiseXz_5c >> 8)) * (feather.translationMagnitudeXz_3c >> 8) >> 4;
@@ -6481,12 +6467,12 @@ public final class SEffe {
   }
 
   @Method(0x8010fe84L)
-  public static void WsDragoonTransformationCallback4(final EffectManagerData6c manager, final WsDragoonTransformationFeatherInstance70 a2) {
+  public static void WsDragoonTransformationCallback4(final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager, final WsDragoonTransformationFeatherInstance70 a2) {
     // no-op
   }
 
   @Method(0x8010ff10L)
-  public static void tickMoonlightStarsEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void tickMoonlightStarsEffect(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager) {
     final MoonlightStarsEffect18 starEffect = (MoonlightStarsEffect18)manager.effect_44;
 
     //LAB_8010ff34
@@ -6513,7 +6499,7 @@ public final class SEffe {
     final BattleScriptDataBase a0 = (BattleScriptDataBase)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
 
     if(BattleScriptDataBase.EM__.equals(a0.magic_00)) {
-      return ((EffectManagerData6c)a0)._10.trans_04;
+      return ((EffectManagerData6c<?>)a0)._10.trans_04;
     }
 
     //LAB_8011006c
@@ -6523,7 +6509,7 @@ public final class SEffe {
   @Method(0x80110074L)
   public static SVECTOR getScriptedObjectRotation(final int scriptIndex) {
     final BattleScriptDataBase data = (BattleScriptDataBase)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
-    return BattleScriptDataBase.EM__.equals(data.magic_00) ? ((EffectManagerData6c)data)._10.rot_10 : ((BattleObject27c)data).model_148.coord2Param_64.rotate;
+    return BattleScriptDataBase.EM__.equals(data.magic_00) ? ((EffectManagerData6c<?>)data)._10.rot_10 : ((BattleObject27c)data).model_148.coord2Param_64.rotate;
   }
 
   @Method(0x801100b8L)
@@ -6532,7 +6518,7 @@ public final class SEffe {
     final BattleScriptDataBase obj = (BattleScriptDataBase)state.innerStruct_00;
 
     if(BattleScriptDataBase.EM__.equals(obj.magic_00)) {
-      final EffectManagerData6c manager = (EffectManagerData6c)obj;
+      final EffectManagerData6c<?> manager = (EffectManagerData6c<?>)obj;
       translation.set(manager._10.trans_04);
       rotation.set(manager._10.rot_10);
       return;
@@ -6611,14 +6597,14 @@ public final class SEffe {
   @Method(0x80110488L)
   public static void FUN_80110488(final int scriptIndex1, final int scriptIndex2, final VECTOR s1) {
     final MATRIX transforms1 = new MATRIX();
-    FUN_800e8594(transforms1, (EffectManagerData6c)scriptStatePtrArr_800bc1c0[scriptIndex1].innerStruct_00);
+    FUN_800e8594(transforms1, (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[scriptIndex1].innerStruct_00);
 
     if(scriptIndex2 == -1) {
       s1.set(transforms1.transfer);
     } else {
       //LAB_80110500
       final MATRIX transforms2 = new MATRIX();
-      FUN_800e8594(transforms2, (EffectManagerData6c)scriptStatePtrArr_800bc1c0[scriptIndex2].innerStruct_00);
+      FUN_800e8594(transforms2, (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[scriptIndex2].innerStruct_00);
       transforms1.transfer.sub(transforms2.transfer);
 
       transforms2.transpose();
@@ -6646,8 +6632,8 @@ public final class SEffe {
   public static BattleScriptDataBase setRelativeTranslation(final int scriptIndex1, final int scriptIndex2, final VECTOR translation) {
     final BattleScriptDataBase obj = (BattleScriptDataBase)scriptStatePtrArr_800bc1c0[scriptIndex1].innerStruct_00;
 
-    if(BattleScriptDataBase.EM__.equals(obj.magic_00) && (((EffectManagerData6c)obj).flags_04 & 0x2) != 0) {
-      FUN_800e8d04((EffectManagerData6c)obj, 0x1L);
+    if(BattleScriptDataBase.EM__.equals(obj.magic_00) && (((EffectManagerData6c<?>)obj).flags_04 & 0x2) != 0) {
+      FUN_800e8d04((EffectManagerData6c<?>)obj, 0x1L);
     }
 
     //LAB_801106dc
@@ -6668,7 +6654,7 @@ public final class SEffe {
    * of a second effect if one specified in scaler
    */
   @Method(0x80110740L)
-  public static int tickTranslationScalerWithRotation(final EffectManagerData6c manager, final TransformScalerEffect34 scaler) {
+  public static int tickTranslationScalerWithRotation(final EffectManagerData6c<?> manager, final TransformScalerEffect34 scaler) {
     scaler.velocity_18.add(scaler.acceleration_24);
     scaler.value_0c.add(scaler.velocity_18);
 
@@ -6704,13 +6690,13 @@ public final class SEffe {
 
   @Method(0x801108fcL)
   public static TransformScalerEffect34 FUN_801108fc(final int a0, final int scriptIndex, final int x1, final int y1, final int z1, final int x2, final int y2, final int z2) {
-    final EffectManagerData6c s0 = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[a0].innerStruct_00;
+    final EffectManagerData6c<?> s0 = (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[a0].innerStruct_00;
     if((s0.flags_04 & 0x2) != 0) {
       FUN_800e8d04(s0, 0x1L);
     }
 
     //LAB_80110980
-    final TransformScalerEffect34 s2 = FUN_800e8dd4(s0, 1, 0, SEffe::tickTranslationScalerWithRotation, 0x34, new TransformScalerEffect34());
+    final TransformScalerEffect34 s2 = FUN_800e8dd4(s0, 1, 0, SEffe::tickTranslationScalerWithRotation, new TransformScalerEffect34());
     s2.value_0c.set(s0._10.trans_04.getX() << 8, s0._10.trans_04.getY() << 8, s0._10.trans_04.getZ() << 8);
     s2.scriptIndex_30 = -1;
     s2.stepTicker_32 = -1;
@@ -6758,7 +6744,7 @@ public final class SEffe {
     }
 
     //LAB_80110afc
-    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[scriptIndex1].innerStruct_00;
+    final EffectManagerData6c<?> manager = (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[scriptIndex1].innerStruct_00;
     if((manager.flags_04 & 0x2) != 0) {
       FUN_800e8d04(manager, 0x1L);
     }
@@ -6766,7 +6752,7 @@ public final class SEffe {
     final VECTOR translationVelocity = new VECTOR();
 
     //LAB_80110b38
-    final TransformScalerEffect34 translationScaler = FUN_800e8dd4(manager, 1, 0, SEffe::tickTranslationScalerWithRotation, 0x34, new TransformScalerEffect34());
+    final TransformScalerEffect34 translationScaler = FUN_800e8dd4(manager, 1, 0, SEffe::tickTranslationScalerWithRotation, new TransformScalerEffect34());
     if(scriptIndex2 == -1) {
       translationVelocity.set(x, y, z)
         .sub(getScriptedObjectTranslation(scriptIndex1));
@@ -6807,13 +6793,13 @@ public final class SEffe {
 
   @Method(0x80110d34L)
   public static TransformScalerEffect34 FUN_80110d34(final int a0, final int scriptIndex1, final int scriptIndex2, final int a3, final int x, final int y, final int z) {
-    final EffectManagerData6c s1 = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[scriptIndex1].innerStruct_00;
+    final EffectManagerData6c<?> s1 = (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[scriptIndex1].innerStruct_00;
     if((s1.flags_04 & 0x2) != 0) {
       FUN_800e8d04(s1, 1);
     }
 
     //LAB_80110db8
-    final TransformScalerEffect34 s0 = FUN_800e8dd4(s1, 1, 0, SEffe::tickTranslationScalerWithRotation, 0x34, new TransformScalerEffect34());
+    final TransformScalerEffect34 s0 = FUN_800e8dd4(s1, 1, 0, SEffe::tickTranslationScalerWithRotation, new TransformScalerEffect34());
     s0.value_0c.setX(s1._10.trans_04.getX() << 8);
     s0.value_0c.setY(s1._10.trans_04.getY() << 8);
     s0.value_0c.setZ(s1._10.trans_04.getZ() << 8);
@@ -6861,14 +6847,14 @@ public final class SEffe {
 
   @Method(0x8011102cL)
   public static TransformScalerEffect34 FUN_8011102c(final int scriptIndex1, final int scriptIndex2) {
-    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[scriptIndex1].innerStruct_00;
+    final EffectManagerData6c<?> manager = (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[scriptIndex1].innerStruct_00;
 
     if((manager.flags_04 & 0x2) != 0) {
       FUN_800e8d04(manager, 1);
     }
 
     //LAB_80111084
-    final TransformScalerEffect34 effect = FUN_800e8dd4(manager, 1, 0, SEffe::tickTranslationScalerWithRotation, 0x34, new TransformScalerEffect34());
+    final TransformScalerEffect34 effect = FUN_800e8dd4(manager, 1, 0, SEffe::tickTranslationScalerWithRotation, new TransformScalerEffect34());
     final VECTOR v1 = getScriptedObjectTranslation(scriptIndex1);
     final VECTOR v2 = getScriptedObjectTranslation(scriptIndex2);
     final VECTOR sp0x18 = new VECTOR().set(v1).sub(v2);
@@ -6913,7 +6899,7 @@ public final class SEffe {
     final MATRIX transforms = new MATRIX();
     final BattleScriptDataBase s0 = (BattleScriptDataBase)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
     if(BattleScriptDataBase.EM__.equals(s0.magic_00)) {
-      final EffectManagerData6c effects = (EffectManagerData6c)s0;
+      final EffectManagerData6c<EffectManagerData6cInner.AnimType> effects = (EffectManagerData6c<EffectManagerData6cInner.AnimType>)s0;
 
       //LAB_8011172c
       final MATRIX sp0x10 = new MATRIX();
@@ -6940,7 +6926,7 @@ public final class SEffe {
           final LmbType0 lmb = (LmbType0)a2_0.lmb_0c;
 
           //LAB_801117ac
-          final int a0_0 = Math.max(0, effects._10._24) % (a2_0._08 * 2);
+          final int a0_0 = Math.max(0, effects._10.ticks_24) % (a2_0._08 * 2);
           final int a1_0 = a0_0 / 2;
           final LmbTransforms14 lmbTransforms = lmb._08[a2]._08[a1_0];
           scale.set(lmbTransforms.scale_00);
@@ -7016,7 +7002,7 @@ public final class SEffe {
 
   @Method(0x80111be8L)
   public static FlowControl FUN_80111be8(final RunningScript<?> script) {
-    final EffectManagerData6c data = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final EffectManagerData6c<?> data = (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     return (data.flags_04 & 0x2) != 0 ? FlowControl.PAUSE_AND_REWIND : FlowControl.CONTINUE;
   }
 
@@ -7037,7 +7023,7 @@ public final class SEffe {
     int s7 = script.params_20[6].get();
     int fp = script.params_20[7].get();
 
-    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[a1].innerStruct_00;
+    final EffectManagerData6c<?> manager = (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[a1].innerStruct_00;
     if((manager.flags_04 & 0x2) == 0) {
       FUN_801108fc(a1, s0, s4, s6, s3, s5, s7, fp);
     } else {
@@ -7081,7 +7067,7 @@ public final class SEffe {
   @Method(0x80111ed4L)
   public static FlowControl FUN_80111ed4(final RunningScript<?> script) {
     final int scriptIndex = script.params_20[0].get();
-    final EffectManagerData6c data = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
+    final EffectManagerData6c<?> data = (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
 
     if((data.flags_04 & 0x2) != 0) {
       final TransformScalerEffect34 s3 = (TransformScalerEffect34)FUN_800e8c84(data, 1);
@@ -7154,7 +7140,7 @@ public final class SEffe {
 
   @Method(0x80112398L)
   public static FlowControl FUN_80112398(final RunningScript<?> script) {
-    final EffectManagerData6c a0 = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final EffectManagerData6c<?> a0 = (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final VECTOR sp0x10 = new VECTOR();
 
     if((a0.flags_04 & 0x2) != 0) {
@@ -7188,8 +7174,8 @@ public final class SEffe {
 
   /** Sets rotation on script from given vector, adding from second script if one is specified */
   @Method(0x80112530L)
-  public static long setRelativeRotation(final int scriptIndex1, final int scriptIndex2, final SVECTOR inVec) {
-    final EffectManagerData6c data = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[scriptIndex1].innerStruct_00;
+  public static int setRelativeRotation(final int scriptIndex1, final int scriptIndex2, final SVECTOR inVec) {
+    final EffectManagerData6c<?> data = (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[scriptIndex1].innerStruct_00;
 
     if(BattleScriptDataBase.EM__.equals(data.magic_00) && (data.flags_04 & 0x4) != 0) {
       FUN_800e8d04(data, 0x2L);
@@ -7213,7 +7199,7 @@ public final class SEffe {
 
   /** Scales rotation vector for altering effect orientation */
   @Method(0x80112638L)
-  public static int tickRotationScaler(final EffectManagerData6c manager, final TransformScalerEffect34 scaler) {
+  public static int tickRotationScaler(final EffectManagerData6c<?> manager, final TransformScalerEffect34 scaler) {
     scaler.velocity_18.add(scaler.acceleration_24);
     scaler.value_0c.add(scaler.velocity_18);
     manager._10.rot_10.set(scaler.value_0c);
@@ -7258,7 +7244,7 @@ public final class SEffe {
   @Method(0x801127e0L)
   public static FlowControl FUN_801127e0(final RunningScript<?> script) {
     final MATRIX transforms = new MATRIX();
-    FUN_800e8594(transforms, (EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00);
+    FUN_800e8594(transforms, (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00);
 
     final SVECTOR rot = new SVECTOR();
     getRotationFromTransforms(rot, transforms);
@@ -7322,13 +7308,13 @@ public final class SEffe {
   /** Set rotation value and rate of change factors */
   @Method(0x80112aa4L)
   public static FlowControl scriptSetRotationScaler(final RunningScript<?> script) {
-    final EffectManagerData6c s0 = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final EffectManagerData6c<?> s0 = (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     if((s0.flags_04 & 0x4) != 0) {
       FUN_800e8d04(s0, 0x2L);
     }
 
     //LAB_80112b58
-    final TransformScalerEffect34 v0 = FUN_800e8dd4(s0, 2, 0, SEffe::tickRotationScaler, 0x34, new TransformScalerEffect34());
+    final TransformScalerEffect34 v0 = FUN_800e8dd4(s0, 2, 0, SEffe::tickRotationScaler, new TransformScalerEffect34());
     v0.scriptIndex_30 = -1;
     v0.stepTicker_32 = -1;
     v0.value_0c.set(s0._10.rot_10);
@@ -7351,8 +7337,8 @@ public final class SEffe {
     final int s7 = script.params_20[5].get();
 
     if(s2 >= 0) {
-      final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[s0].innerStruct_00;
-      final TransformScalerEffect34 effect = FUN_800e8dd4(manager, 2, 0, SEffe::tickRotationScaler, 0x34, new TransformScalerEffect34());
+      final EffectManagerData6c<?> manager = (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[s0].innerStruct_00;
+      final TransformScalerEffect34 effect = FUN_800e8dd4(manager, 2, 0, SEffe::tickRotationScaler, new TransformScalerEffect34());
 
       final SVECTOR v1 = getScriptedObjectRotation(s0);
       final int sp18;
@@ -7424,7 +7410,7 @@ public final class SEffe {
 
     final SVECTOR t1;
     if(BattleScriptDataBase.EM__.equals(t0.magic_00)) {
-      t1 = ((EffectManagerData6c)t0)._10.scale_16;
+      t1 = ((EffectManagerData6c<?>)t0)._10.scale_16;
     } else {
       //LAB_80113660
       t1 = new SVECTOR().set(((BattleObject27c)t0).model_148.scaleVector_fc);
@@ -7440,7 +7426,7 @@ public final class SEffe {
 
       final SVECTOR svec;
       if(BattleScriptDataBase.EM__.equals(t0.magic_00)) {
-        svec = ((EffectManagerData6c)t0)._10.scale_16;
+        svec = ((EffectManagerData6c<?>)t0)._10.scale_16;
       } else {
         //LAB_80113708
         svec = new SVECTOR().set(((BattleObject27c)t0).model_148.scaleVector_fc);
@@ -7478,7 +7464,7 @@ public final class SEffe {
 
     final SVECTOR t0;
     if(BattleScriptDataBase.EM__.equals(a3.magic_00)) {
-      t0 = ((EffectManagerData6c)a3)._10.scale_16;
+      t0 = ((EffectManagerData6c<?>)a3)._10.scale_16;
     } else {
       //LAB_80113834
       t0 = new SVECTOR().set(((BattleObject27c)a3).model_148.scaleVector_fc);
@@ -7494,7 +7480,7 @@ public final class SEffe {
 
       final SVECTOR a0_1;
       if(BattleScriptDataBase.EM__.equals(a3.magic_00)) {
-        a0_1 = ((EffectManagerData6c)a3)._10.scale_16;
+        a0_1 = ((EffectManagerData6c<?>)a3)._10.scale_16;
       } else {
         //LAB_801138dc
         a0_1 = new SVECTOR().set(((BattleObject27c)a3).model_148.scaleVector_fc);
@@ -7536,7 +7522,7 @@ public final class SEffe {
 
       final SVECTOR v1;
       if(BattleScriptDataBase.EM__.equals(a1_0.magic_00)) {
-        v1 = ((EffectManagerData6c)a1_0)._10.scale_16;
+        v1 = ((EffectManagerData6c<?>)a1_0)._10.scale_16;
       } else {
         //LAB_80113a64
         v1 = new SVECTOR().set(((BattleObject27c)a1_0).model_148.scaleVector_fc);
@@ -7554,7 +7540,7 @@ public final class SEffe {
     final BattleScriptDataBase a0_0 = (BattleScriptDataBase)state.innerStruct_00;
 
     if(BattleScriptDataBase.EM__.equals(a0_0.magic_00)) {
-      ((EffectManagerData6c)a0_0)._10.scale_16.set(sp0x00);
+      ((EffectManagerData6c<?>)a0_0)._10.scale_16.set(sp0x00);
     } else {
       //LAB_80113b64
       ((BattleObject27c)a0_0).model_148.scaleVector_fc.set(sp0x00);
@@ -7566,7 +7552,7 @@ public final class SEffe {
 
   /** Scales scale vector for changing effect size */
   @Method(0x80113ba0L)
-  public static int tickScaleScaler(final EffectManagerData6c manager, final TransformScalerEffect34 scaler) {
+  public static int tickScaleScaler(final EffectManagerData6c<?> manager, final TransformScalerEffect34 scaler) {
     scaler.velocity_18.add(scaler.acceleration_24);
     scaler.value_0c.add(scaler.velocity_18);
     manager._10.scale_16.set(scaler.value_0c);
@@ -7586,14 +7572,14 @@ public final class SEffe {
   /** Set scale value and rate of change factors */
   @Method(0x80113c6cL)
   public static FlowControl scriptSetScaleVectorScaler(final RunningScript<?> script) {
-    final EffectManagerData6c scalerManager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final EffectManagerData6c<?> scalerManager = (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
 
     if((scalerManager.flags_04 & 0x8) != 0) {
       FUN_800e8d04(scalerManager, 0x3L);
     }
 
     //LAB_80113d20
-    final TransformScalerEffect34 scaleScaler = FUN_800e8dd4(scalerManager, 3, 0, SEffe::tickScaleScaler, 0x34, new TransformScalerEffect34());
+    final TransformScalerEffect34 scaleScaler = FUN_800e8dd4(scalerManager, 3, 0, SEffe::tickScaleScaler, new TransformScalerEffect34());
     scaleScaler.scriptIndex_30 = -1;
     scaleScaler.stepTicker_32 = (short)-1;
     scaleScaler.value_0c.set(scalerManager._10.scale_16);
@@ -7616,14 +7602,14 @@ public final class SEffe {
     final int s6 = script.params_20[5].get();
 
     if(s2 >= 0) {
-      final EffectManagerData6c s1 = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[s7].innerStruct_00;
+      final EffectManagerData6c<?> s1 = (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[s7].innerStruct_00;
 
       if((s1.flags_04 & 0x8) != 0) {
         FUN_800e8d04(s1, 0x3L);
       }
 
       //LAB_80113e70
-      final TransformScalerEffect34 s0 = FUN_800e8dd4(s1, 3, 0, SEffe::tickScaleScaler, 0x34, new TransformScalerEffect34());
+      final TransformScalerEffect34 s0 = FUN_800e8dd4(s1, 3, 0, SEffe::tickScaleScaler, new TransformScalerEffect34());
 
       final VECTOR sp0x18 = new VECTOR().set(s4, s5, s6);
       if(a0 == 0) {
@@ -7690,7 +7676,7 @@ public final class SEffe {
     final BattleScriptDataBase data1 = (BattleScriptDataBase)scriptStatePtrArr_800bc1c0[scriptIndex1].innerStruct_00;
     final USCOLOUR c;
     if(BattleScriptDataBase.EM__.equals(data1.magic_00)) {
-      c = ((EffectManagerData6c)data1)._10.colour_1c;
+      c = ((EffectManagerData6c<?>)data1)._10.colour_1c;
     } else {
       c = _800fb94c;
     }
@@ -7703,7 +7689,7 @@ public final class SEffe {
       final BattleScriptDataBase data2 = (BattleScriptDataBase)scriptStatePtrArr_800bc1c0[scriptIndex2].innerStruct_00;
       final USCOLOUR c2;
       if(BattleScriptDataBase.EM__.equals(data2.magic_00)) {
-        c2 = ((EffectManagerData6c)data2)._10.colour_1c;
+        c2 = ((EffectManagerData6c<?>)data2)._10.colour_1c;
       } else {
         c2 = _800fb94c;
       }
@@ -7732,7 +7718,7 @@ public final class SEffe {
 
     final USCOLOUR a3;
     if(BattleScriptDataBase.EM__.equals(a1.magic_00)) {
-      a3 = ((EffectManagerData6c)a1)._10.colour_1c;
+      a3 = ((EffectManagerData6c<?>)a1)._10.colour_1c;
     } else {
       a3 = new USCOLOUR().set(_800fb94c);
     }
@@ -7748,7 +7734,7 @@ public final class SEffe {
 
       final USCOLOUR a2;
       if(BattleScriptDataBase.EM__.equals(a1.magic_00)) {
-        a2 = ((EffectManagerData6c)a1)._10.colour_1c;
+        a2 = ((EffectManagerData6c<?>)a1)._10.colour_1c;
       } else {
         a2 = _800fb94c;
       }
@@ -7765,7 +7751,7 @@ public final class SEffe {
 
   /** Scales color vector for fading color in/out */
   @Method(0x801146fcL)
-  public static int tickColorScaler(final EffectManagerData6c manager, final TransformScalerEffect34 scaler) {
+  public static int tickColorScaler(final EffectManagerData6c<?> manager, final TransformScalerEffect34 scaler) {
     scaler.velocity_18.add(scaler.acceleration_24);
     scaler.value_0c.add(scaler.velocity_18);
     manager._10.colour_1c.setX(scaler.value_0c.getX() >> 8 & 0xff);
@@ -7803,13 +7789,13 @@ public final class SEffe {
     );
 
     if(scalerStepCount >= 0) {
-      final EffectManagerData6c scalerManager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[scriptIndex1].innerStruct_00;
+      final EffectManagerData6c<?> scalerManager = (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[scriptIndex1].innerStruct_00;
       if((scalerManager.flags_04 & 0x10) != 0) {
         FUN_800e8d04(scalerManager, 0x4L);
       }
 
       //LAB_801149d0
-      final TransformScalerEffect34 colorScaler = FUN_800e8dd4(scalerManager, 4, 0, SEffe::tickColorScaler, 0x34, new TransformScalerEffect34());
+      final TransformScalerEffect34 colorScaler = FUN_800e8dd4(scalerManager, 4, 0, SEffe::tickColorScaler, new TransformScalerEffect34());
       final USCOLOUR sp0x28 = new USCOLOUR();
       getColourDifference(scriptIndex1, scriptIndex2, sp0x28);
       colorScaler.scriptIndex_30 = -1;
@@ -7830,23 +7816,14 @@ public final class SEffe {
 
   @Method(0x80114e0cL)
   public static FlowControl FUN_80114e0c(final RunningScript<?> script) {
-    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-
-    final int val = switch(script.params_20[1].get()) {
-      case 0 -> manager._10._24;
-      case 1 -> manager._10._28;
-      case 2 -> manager._10._2c;
-      case 3 -> manager._10._30;
-      default -> throw new RuntimeException("Invalid value (I think) " + script.params_20[1].get());
-    };
-
-    script.params_20[2].set(val);
+    final EffectManagerData6c<?> manager = (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    script.params_20[2].set(manager._10.get24(script.params_20[1].get()));
     return FlowControl.CONTINUE;
   }
 
   @Method(0x80114eb4L)
   public static FlowControl FUN_80114eb4(final RunningScript<?> script) {
-    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final EffectManagerData6c<?> manager = (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final int a0 = script.params_20[1].get() + 5;
 
     if((1L << a0 & manager.flags_04) != 0) {
@@ -7859,58 +7836,36 @@ public final class SEffe {
 
   @Method(0x80114e60L)
   public static FlowControl FUN_80114e60(final RunningScript<?> script) {
-    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-
-    switch(script.params_20[1].get()) {
-      case 0 -> manager._10._24 = script.params_20[2].get();
-      case 1 -> manager._10._28 = script.params_20[2].get();
-      case 2 -> manager._10._2c = script.params_20[2].get();
-      case 3 -> manager._10._30 = script.params_20[2].get();
-      default -> throw new RuntimeException("Invalid value (I think) " + script.params_20[1].get());
-    }
-
+    final EffectManagerData6c<?> manager = (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    manager._10.set24(script.params_20[1].get(), script.params_20[2].get());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x80114f3cL)
-  public static void FUN_80114f3c(final ScriptState<EffectManagerData6c> manager, final int a1, final int a2, final int a3) {
-    final EffectManagerData6c state = manager.innerStruct_00;
+  public static void FUN_80114f3c(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.AnimType>> manager, final int propertyIndex, final int speed, final int accelleration) {
+    final EffectManagerData6c<EffectManagerData6cInner.AnimType> state = manager.innerStruct_00;
 
-    if((1L << a1 + 5 & state.flags_04) != 0) {
-      FUN_800e8d04(state, a1 + 5);
+    if((1L << propertyIndex + 5 & state.flags_04) != 0) {
+      FUN_800e8d04(state, propertyIndex + 5);
     }
 
     //LAB_80114fa8
-    final BttlScriptData6cSub1c_3 v0 = FUN_800e8dd4(state, a1 + 5, 0, SEffe::FUN_80114d98, 0x1c, new BttlScriptData6cSub1c_3());
+    final BttlScriptData6cSub1c_3 v0 = FUN_800e8dd4(state, propertyIndex + 5, 0, SEffe::FUN_80114d98, new BttlScriptData6cSub1c_3());
 
-    final int val = switch(a1) {
-      case 0 -> state._10._24;
-      case 1 -> state._10._28;
-      case 2 -> state._10._2c;
-      case 3 -> state._10._30;
-      default -> throw new RuntimeException("Invalid value (I think) " + a1);
-    };
-
-    v0.accumulator_0c = val << 8;
-    v0.speed_10 = a2;
-    v0.acceleration_14 = a3;
+    v0.accumulator_0c = state._10.get24(propertyIndex) << 8;
+    v0.speed_10 = speed;
+    v0.acceleration_14 = accelleration;
     v0._18 = -1;
     v0.ticksRemaining_1a = -1;
   }
 
   /** TODO this method advances animation frames */
   @Method(0x80114d98L)
-  public static int FUN_80114d98(final EffectManagerData6c a0, final BttlScriptData6cSub1c_3 a1) {
+  public static int FUN_80114d98(final EffectManagerData6c<EffectManagerData6cInner.AnimType> a0, final BttlScriptData6cSub1c_3 a1) {
     a1.speed_10 += a1.acceleration_14;
     a1.accumulator_0c += a1.speed_10;
 
-    switch(a1._05 - 5) {
-      case 0 -> a0._10._24 = a1.accumulator_0c >> 8;
-      case 1 -> a0._10._28 = a1.accumulator_0c >> 8;
-      case 2 -> a0._10._2c = a1.accumulator_0c >> 8;
-      case 3 -> a0._10._30 = a1.accumulator_0c >> 8;
-      default -> throw new RuntimeException("Invalid value (I think) " + (a1._05 - 5));
-    }
+    a0._10.set24(a1._05 - 5, a1.accumulator_0c >> 8);
 
     if(a1.ticksRemaining_1a == -1) {
       return 1;
@@ -7933,7 +7888,7 @@ public final class SEffe {
 
   @Method(0x80115014L)
   public static FlowControl FUN_80115014(final RunningScript<?> script) {
-    FUN_80114f3c((ScriptState<EffectManagerData6c>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()], script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
+    FUN_80114f3c((ScriptState<EffectManagerData6c<EffectManagerData6cInner.AnimType>>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()], script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
     return FlowControl.CONTINUE;
   }
 
@@ -7943,24 +7898,16 @@ public final class SEffe {
     final int s3 = script.params_20[2].get();
     final int s2 = script.params_20[3].get();
 
-    final EffectManagerData6c s0 = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final EffectManagerData6c<EffectManagerData6cInner.AnimType> s0 = (EffectManagerData6c<EffectManagerData6cInner.AnimType>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
 
     if((0x1L << s1 + 5 & s0.flags_04) != 0) {
       FUN_800e8d04(s0, s1 + 5);
     }
 
     //LAB_801150e8
-    final BttlScriptData6cSub1c_3 v0 = FUN_800e8dd4(s0, s1 + 5, 0, SEffe::FUN_80114d98, 0x1c, new BttlScriptData6cSub1c_3());
+    final BttlScriptData6cSub1c_3 v0 = FUN_800e8dd4(s0, s1 + 5, 0, SEffe::FUN_80114d98, new BttlScriptData6cSub1c_3());
 
-    final int val = switch(s1) {
-      case 0 -> s0._10._24;
-      case 1 -> s0._10._28;
-      case 2 -> s0._10._2c;
-      case 3 -> s0._10._30;
-      default -> throw new RuntimeException("Invalid value (I think) " + s1);
-    };
-
-    v0.accumulator_0c = val << 8;
+    v0.accumulator_0c = s0._10.get24(s1) << 8;
     v0.speed_10 = (s3 * 0x100 - v0.accumulator_0c) / s2;
     v0.acceleration_14 = 0;
     v0._18 = -1;
@@ -7975,7 +7922,7 @@ public final class SEffe {
   }
 
   @Method(0x80115288L)
-  public static int FUN_80115288(final EffectManagerData6c a0, final BttlScriptData6cSub1c_3 a1) {
+  public static int FUN_80115288(final EffectManagerData6c<?> a0, final BttlScriptData6cSub1c_3 a1) {
     a1.ticksRemaining_1a--;
 
     //LAB_801152a8
@@ -7984,62 +7931,62 @@ public final class SEffe {
 
   @Method(0x801152b0L)
   public static FlowControl scriptSetEffectTicksRemaining(final RunningScript<?> script) {
-    final BttlScriptData6cSub1c_3 v0 = FUN_800e8dd4((EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00, 0, 0, SEffe::FUN_80115288, 0x1c, new BttlScriptData6cSub1c_3());
+    final BttlScriptData6cSub1c_3 v0 = FUN_800e8dd4((EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00, 0, 0, SEffe::FUN_80115288, new BttlScriptData6cSub1c_3());
     v0.ticksRemaining_1a = (short)script.params_20[1].get();
     return FlowControl.CONTINUE;
   }
 
   @Method(0x80115324L)
   public static FlowControl FUN_80115324(final RunningScript<?> script) {
-    final EffectManagerData6c effects = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final EffectManagerData6c<?> effects = (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     effects._10.flags_00 = effects._10.flags_00 & 0x7fff_ffff | ((script.params_20[1].get() ^ 1) & 1) << 31;
     return FlowControl.CONTINUE;
   }
 
   @Method(0x80115388L)
   public static FlowControl FUN_80115388(final RunningScript<?> script) {
-    final EffectManagerData6c a1 = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final EffectManagerData6c<?> a1 = (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     a1._10.flags_00 = a1._10.flags_00 & 0xbfff_ffff | script.params_20[1].get() << 30;
     return FlowControl.CONTINUE;
   }
 
   @Method(0x801153e4L)
   public static FlowControl FUN_801153e4(final RunningScript<?> script) {
-    final EffectManagerData6c a1 = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final EffectManagerData6c<?> a1 = (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     a1._10.flags_00 = a1._10.flags_00 & 0xcfff_ffff | script.params_20[1].get() << 28;
     return FlowControl.CONTINUE;
   }
 
   @Method(0x80115440L)
   public static FlowControl FUN_80115440(final RunningScript<?> script) {
-    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final EffectManagerData6c<?> manager = (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     manager._10.flags_00 = manager._10.flags_00 & 0xfbff_ffff | script.params_20[1].get() << 26;
     return FlowControl.CONTINUE;
   }
 
   @Method(0x8011549cL)
   public static FlowControl FUN_8011549c(final RunningScript<?> script) {
-    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final EffectManagerData6c<?> manager = (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     manager._10.flags_00 = manager._10.flags_00 & 0xffff_ffbf | script.params_20[1].get() << 6;
     return FlowControl.CONTINUE;
   }
 
   @Method(0x801154f4L)
   public static FlowControl FUN_801154f4(final RunningScript<?> script) {
-    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final EffectManagerData6c<?> manager = (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     manager._10.flags_00 = manager._10.flags_00 & 0xffff_fff7 | script.params_20[1].get() << 3;
     return FlowControl.CONTINUE;
   }
 
   @Method(0x8011554cL)
   public static FlowControl FUN_8011554c(final RunningScript<?> script) {
-    FUN_800e8d04((EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00, (byte)script.params_20[1].get());
+    FUN_800e8d04((EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00, (byte)script.params_20[1].get());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x801155a0L)
   public static FlowControl FUN_801155a0(final RunningScript<?> script) {
-    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final EffectManagerData6c<?> manager = (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     script.params_20[1].set(1 << script.params_20[2].get() & manager.flags_04);
     return FlowControl.CONTINUE;
   }
@@ -8084,7 +8031,7 @@ public final class SEffe {
 
   @Method(0x801156f8L)
   public static FlowControl FUN_801156f8(final RunningScript<?> script) {
-    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final EffectManagerData6c<?> manager = (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     manager.scriptIndex_0c = script.params_20[1].get();
     manager.coord2Index_0d = script.params_20[2].get();
     return FlowControl.CONTINUE;
@@ -8092,13 +8039,13 @@ public final class SEffe {
 
   @Method(0x8011574cL)
   public static FlowControl scriptGetEffectZ(final RunningScript<?> script) {
-    script.params_20[1].set(((EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00)._10.z_22);
+    script.params_20[1].set(((EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00)._10.z_22);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x8011578cL)
   public static FlowControl scriptSetEffectZ(final RunningScript<?> script) {
-    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final EffectManagerData6c<?> manager = (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     manager._10.z_22 = script.params_20[1].get();
 
 //    if(manager._10.z_22 < 0) {
@@ -8114,7 +8061,7 @@ public final class SEffe {
     final int scriptIndex = script.params_20[1].get();
     final int coord2Index = script.params_20[2].get();
 
-    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final EffectManagerData6c<?> manager = (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
 
     final MATRIX sp0x10 = new MATRIX();
     final MATRIX sp0x30 = new MATRIX();
@@ -8124,7 +8071,7 @@ public final class SEffe {
       sp0x30.set(sp0x10);
     } else {
       //LAB_8011588c
-      final EffectManagerData6c sp0x50 = new EffectManagerData6c("Temp");
+      final EffectManagerData6c<EffectManagerData6cInner.VoidType> sp0x50 = new EffectManagerData6c<>("Temp", new EffectManagerData6cInner.VoidType());
 
       sp0x50._10.trans_04.set(0, 0, 0);
       sp0x50._10.rot_10.set((short)0, (short)0, (short)0);
@@ -8200,7 +8147,7 @@ public final class SEffe {
   }
 
   @Method(0x80115b2cL)
-  public static void screenDarkeningTicker(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
+  public static void screenDarkeningTicker(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> data) {
     final int currentVal = state.storage_44[8];
     final int targetVal = state.storage_44[9];
 
@@ -8223,13 +8170,13 @@ public final class SEffe {
   }
 
   @Method(0x80115bf0L)
-  public static void screenDarkeningDestructor(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
+  public static void screenDarkeningDestructor(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> data) {
     applyScreenDarkening(state.storage_44[9]);
   }
 
   @Method(0x80115c2cL)
   public static void allocateScreenDarkeningEffect(final int startVal, final int targetVal) {
-    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+    final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state = allocateEffectManager(
       "Screen darkening",
       deffManager_800c693c.scriptState_1c,
       SEffe::screenDarkeningTicker,
@@ -8330,7 +8277,7 @@ public final class SEffe {
         w = 0x100;
         h = 0x100;
       } else {
-        final EffectManagerData6c manager = (EffectManagerData6c)a0;
+        final EffectManagerData6c<?> manager = (EffectManagerData6c<?>)a0;
         final int v1 = manager.flags_04 & 0xff00_0000;
         if(v1 != 0x200_0000) {
           if(v1 == 0x300_0000) {
@@ -8412,13 +8359,13 @@ public final class SEffe {
    *   Uses CTMD render pipeline if type == 0x300_0000
    */
   @Method(0x8011619cL)
-  public static void FUN_8011619c(final EffectManagerData6c manager, final BttlScriptData6cSub5c effect, final int deffFlags, final MATRIX matrix) {
+  public static void FUN_8011619c(final EffectManagerData6c<EffectManagerData6cInner.AnimType> manager, final BttlScriptData6cSub5c effect, final int deffFlags, final MATRIX matrix) {
     final MATRIX sp0x10 = new MATRIX();
     RotMatrix_Zyx(manager._10.rot_10, sp0x10);
     sp0x10.transfer.set(manager._10.trans_04);
     sp0x10.scaleL(manager._10.scale_16);
     sp0x10.compose(matrix, sp0x10);
-    final int scale = manager._10._28;
+    final int scale = manager._10.scale_28;
     sp0x10.scaleL(new VECTOR().set(scale, scale, scale));
     manager._10.scale_16.setX((short)(manager._10.scale_16.getX() * scale / 0x1000));
     manager._10.scale_16.setY((short)(manager._10.scale_16.getY() * scale / 0x1000));
@@ -8513,8 +8460,8 @@ public final class SEffe {
       }
     } else {
       //LAB_80116790
-      final ScriptState<EffectManagerData6c> state = (ScriptState<EffectManagerData6c>)scriptStatePtrArr_800bc1c0[deffFlags];
-      final EffectManagerData6c manager2 = state.innerStruct_00;
+      final ScriptState<EffectManagerData6c<?>> state = (ScriptState<EffectManagerData6c<?>>)scriptStatePtrArr_800bc1c0[deffFlags];
+      final EffectManagerData6c<?> manager2 = state.innerStruct_00;
       manager._10.trans_04.set(sp0x10.transfer);
       getRotationAndScaleFromTransforms(manager._10.rot_10, manager._10.scale_16, sp0x10);
 
@@ -8541,7 +8488,7 @@ public final class SEffe {
   }
 
   @Method(0x801168e8L)
-  public static void processLmbType0(final EffectManagerData6c manager, final BttlScriptData6cSub5c effect, final int a2, final MATRIX matrix) {
+  public static void processLmbType0(final EffectManagerData6c<EffectManagerData6cInner.AnimType> manager, final BttlScriptData6cSub5c effect, final int a2, final MATRIX matrix) {
     final LmbType0 lmb = (LmbType0)effect.lmb_0c;
     final int s6 = a2 / 0x2000;
     final int v1 = s6 + 1;
@@ -8567,7 +8514,7 @@ public final class SEffe {
   }
 
   @Method(0x80116b7cL)
-  public static void processLmbType1(final EffectManagerData6c manager, final BttlScriptData6cSub5c effect, final int t0, final MATRIX matrix) {
+  public static void processLmbType1(final EffectManagerData6c<EffectManagerData6cInner.AnimType> manager, final BttlScriptData6cSub5c effect, final int t0, final MATRIX matrix) {
     final LmbType1 lmb = (LmbType1)effect.lmb_0c;
     int a0 = t0 >> 13;
     int s0 = t0 & 0x1fff;
@@ -8739,7 +8686,7 @@ public final class SEffe {
   }
 
   @Method(0x80117104L)
-  public static void processLmbType2(final EffectManagerData6c manager, final BttlScriptData6cSub5c effect, final int t5, final MATRIX matrix) {
+  public static void processLmbType2(final EffectManagerData6c<EffectManagerData6cInner.AnimType> manager, final BttlScriptData6cSub5c effect, final int t5, final MATRIX matrix) {
     final LmbType2 lmb = (LmbType2)effect.lmb_0c;
     final LmbTransforms14[] originalTransforms = lmb._10;
     final int s6 = t5 / 0x2000;
@@ -9019,11 +8966,11 @@ public final class SEffe {
   }
 
   @Method(0x801179f0L)
-  public static void FUN_801179f0(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void FUN_801179f0(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.AnimType>> state, final EffectManagerData6c<EffectManagerData6cInner.AnimType> manager) {
     final int flags = manager._10.flags_00;
     final BttlScriptData6cSub5c effect = (BttlScriptData6cSub5c)manager.effect_44;
     if(flags >= 0) {
-      int s1 = Math.max(0, manager._10._24) % (effect._08 * 2) << 12;
+      int s1 = Math.max(0, manager._10.ticks_24) % (effect._08 * 2) << 12;
       tmdGp0Tpage_1f8003ec.set(flags >>> 23 & 0x60);
       zOffset_1f8003e8.set(manager._10.z_22);
       if((manager._10.flags_00 & 0x40) == 0) {
@@ -9032,7 +8979,7 @@ public final class SEffe {
 
       //LAB_80117ac0
       //LAB_80117acc
-      final EffectManagerData6c sp0x10 = new EffectManagerData6c("Temp 2");
+      final EffectManagerData6c<EffectManagerData6cInner.AnimType> sp0x10 = new EffectManagerData6c<>("Temp 2", new EffectManagerData6cInner.AnimType());
       sp0x10.set(manager);
 
       final MATRIX sp0x80 = new MATRIX();
@@ -9083,8 +9030,8 @@ public final class SEffe {
         int spdc = 0;
         int spe0 = 0;
         if((effect._34 & 0x8) != 0) {
-          final int t4 = sp0x10._10._28 * (effect._40 - 0x1000);
-          spdc = sp0x10._10._28 << 12;
+          final int t4 = sp0x10._10.scale_28 * (effect._40 - 0x1000);
+          spdc = sp0x10._10.scale_28 << 12;
           spe0 = t4 / s4;
         }
 
@@ -9105,7 +9052,7 @@ public final class SEffe {
           //LAB_80117d1c
           if((effect._34 & 0x8) != 0) {
             spdc = spdc + spe0;
-            manager._10._28 = spdc >> 12;
+            manager._10.scale_28 = spdc >> 12;
           }
 
           //LAB_80117d54
@@ -9141,16 +9088,17 @@ public final class SEffe {
   @Method(0x80117eb0L)
   public static FlowControl FUN_80117eb0(final RunningScript<? extends BattleScriptDataBase> script) {
     final int param1 = script.params_20[1].get();
-    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+    final ScriptState<EffectManagerData6c<EffectManagerData6cInner.AnimType>> state = allocateEffectManager(
       "BttlScriptData6cSub5c",
       script.scriptState_04,
       null,
       SEffe::FUN_801179f0,
       null,
-      new BttlScriptData6cSub5c()
+      new BttlScriptData6cSub5c(),
+      new EffectManagerData6cInner.AnimType()
     );
 
-    final EffectManagerData6c manager = state.innerStruct_00;
+    final EffectManagerData6c<EffectManagerData6cInner.AnimType> manager = state.innerStruct_00;
     manager.flags_04 = 0;
 
     final DeffPart.LmbType lmbType;
@@ -9205,24 +9153,24 @@ public final class SEffe {
 
     //LAB_801180e0
     //LAB_801180e8
-    manager._10._24 = 0xffff_ffff;
+    manager._10.ticks_24 = -1;
     manager._10.flags_00 |= 0x5000_0000;
     FUN_80114f3c(state, 0, 0x100, 0);
-    manager._10._28 = 0x1000;
+    manager._10.scale_28 = 0x1000;
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x801181a8L)
   public static FlowControl FUN_801181a8(final RunningScript<?> script) {
-    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final EffectManagerData6c<?> manager = (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     ((BttlScriptData6cSub5c)manager.effect_44)._14[script.params_20[1].get()] = script.params_20[2].get();
     return FlowControl.CONTINUE;
   }
 
   @Method(0x801181f0L)
   public static FlowControl FUN_801181f0(final RunningScript<?> script) {
-    final BttlScriptData6cSub5c v0 = (BttlScriptData6cSub5c)((EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00).effect_44;
+    final BttlScriptData6cSub5c v0 = (BttlScriptData6cSub5c)((EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00).effect_44;
 
     final int v1 = script.params_20[3].get() + 1;
     v0._34 = script.params_20[1].get();
@@ -9234,7 +9182,7 @@ public final class SEffe {
 
   /** TODO renders other effects too? Burnout, more? Uses CTMD render pipeline */
   @Method(0x8011826cL)
-  public static void renderDeffTmd(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
+  public static void renderDeffTmd(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> data) {
     final DeffTmdRenderer14 s1 = (DeffTmdRenderer14)data.effect_44;
 
     if(data._10.flags_00 >= 0) {
@@ -9308,7 +9256,7 @@ public final class SEffe {
       name = tmdType.name;
     }
 
-    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+    final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state = allocateEffectManager(
       "DEFF TMD " + name,
       script.scriptState_04,
       null,
@@ -9317,7 +9265,7 @@ public final class SEffe {
       new DeffTmdRenderer14()
     );
 
-    final EffectManagerData6c manager = state.innerStruct_00;
+    final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager = state.innerStruct_00;
     manager.flags_04 = 0x300_0000;
 
     final DeffTmdRenderer14 effect = (DeffTmdRenderer14)manager.effect_44;
@@ -9368,7 +9316,7 @@ public final class SEffe {
       //LAB_80118634
       final BattleScriptDataBase a0_0 = (BattleScriptDataBase)scriptStatePtrArr_800bc1c0[flags].innerStruct_00;
       if(BattleScriptDataBase.EM__.equals(a0_0.magic_00)) {
-        final EffectManagerData6c effects = (EffectManagerData6c)a0_0;
+        final EffectManagerData6c<?> effects = (EffectManagerData6c<?>)a0_0;
         final int v1 = effects.flags_04 & 0xff00_0000;
         if(v1 == 0x100_0000 || v1 == 0x200_0000) {
           //LAB_8011867c
@@ -9383,7 +9331,7 @@ public final class SEffe {
       }
     }
 
-    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+    final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state = allocateEffectManager(
       objTable != null ? "Obj table renderer FUN_801184e4 " + objTable.name : "TMD renderer with no TMD? FUN_801184e4",
       script.scriptState_04,
       null,
@@ -9392,7 +9340,7 @@ public final class SEffe {
       new DeffTmdRenderer14()
     );
 
-    final EffectManagerData6c s4 = state.innerStruct_00;
+    final EffectManagerData6c<EffectManagerData6cInner.VoidType> s4 = state.innerStruct_00;
     s4.flags_04 = 0x300_0000;
 
     final DeffTmdRenderer14 s0 = (DeffTmdRenderer14)s4.effect_44;
@@ -9428,7 +9376,7 @@ public final class SEffe {
 
   /** TODO renders some kind of deff tmd maybe, uses ctmd render pipeline */
   @Method(0x80118790L)
-  public static void FUN_80118790(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void FUN_80118790(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager) {
     if(manager._10.flags_00 >= 0) {
       final int y = manager._10.trans_04.getY();
       manager._10.trans_04.setY(0);
@@ -9457,7 +9405,7 @@ public final class SEffe {
 
   @Method(0x801188ecL)
   public static FlowControl FUN_801188ec(final RunningScript<? extends BattleScriptDataBase> script) {
-    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+    final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state = allocateEffectManager(
       "Unknown (FUN_801188ec, %s)".formatted(model_800bda10.dobj2ArrPtr_00[0].tmd_08.name),
       script.scriptState_04,
       null,
@@ -9466,10 +9414,9 @@ public final class SEffe {
       null
     );
 
-    final EffectManagerData6c manager = state.innerStruct_00;
+    final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager = state.innerStruct_00;
     manager.flags_04 = 0x600_0000;
     manager._10.scale_16.set((short)0x400, (short)0x400, (short)0x400);
-    manager._10._24 = 0;
     manager._10.flags_00 = 0x6400_0040;
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
@@ -9478,8 +9425,8 @@ public final class SEffe {
   @Method(0x80118984L)
   public static FlowControl FUN_80118984(final RunningScript<?> script) {
     final int effectIndex = script.params_20[0].get();
-    final ScriptState<EffectManagerData6c> state = (ScriptState<EffectManagerData6c>)scriptStatePtrArr_800bc1c0[effectIndex];
-    final EffectManagerData6c manager = state.innerStruct_00;
+    final ScriptState<EffectManagerData6c<EffectManagerData6cInner.AnimType>> state = (ScriptState<EffectManagerData6c<EffectManagerData6cInner.AnimType>>)scriptStatePtrArr_800bc1c0[effectIndex];
+    final EffectManagerData6c<EffectManagerData6cInner.AnimType> manager = state.innerStruct_00;
     final BttlScriptData6cSub13c effect = (BttlScriptData6cSub13c)manager.effect_44;
 
     final DeffPart part = getDeffPart(script.params_20[1].get() | 0x500_0000);
@@ -9487,17 +9434,17 @@ public final class SEffe {
 
     effect.anim_0c = anim;
     loadModelAnim(effect.model_134, anim);
-    manager._10._24 = 0;
+    manager._10.ticks_24 = 0;
     FUN_80114f3c(state, 0, 0x100, 0);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x80118a24L)
-  public static void renderShirleyTransformWipeEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
-    final int x = manager._10.trans_04.getX() + 160 - manager._10._24 / 2;
-    final int y = manager._10.trans_04.getY() + 120 - manager._10._28 / 2;
-    final int minZ = manager._10.trans_04.getZ() - manager._10._2c / 2 >> 2;
-    final int maxZ = manager._10.trans_04.getZ() + manager._10._2c / 2 >> 2;
+  public static void renderShirleyTransformWipeEffect(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.ShirleyType>> state, final EffectManagerData6c<EffectManagerData6cInner.ShirleyType> manager) {
+    final int x = manager._10.trans_04.getX() + 160 - manager._10.width_24 / 2;
+    final int y = manager._10.trans_04.getY() + 120 - manager._10.height_28 / 2;
+    final int minZ = manager._10.trans_04.getZ() - manager._10.depth_2c / 2 >> 2;
+    final int maxZ = manager._10.trans_04.getZ() + manager._10.depth_2c / 2 >> 2;
     final int right = 320;
     final int bottom = 240;
 
@@ -9505,10 +9452,10 @@ public final class SEffe {
 
     //LAB_80118ba8
     for(int i = 0; i < 4; i++) {
-      buffPos.x.set((short)(x + manager._10._24 / 2 * (i & 1)));
-      buffPos.y.set((short)(y + manager._10._28 / 2 * (i >> 1)));
-      buffPos.w.set((short)(manager._10._24 / 2));
-      buffPos.h.set((short)(manager._10._28 / 2));
+      buffPos.x.set((short)(x + manager._10.width_24 / 2 * (i & 1)));
+      buffPos.y.set((short)(y + manager._10.height_28 / 2 * (i >> 1)));
+      buffPos.w.set((short)(manager._10.width_24 / 2));
+      buffPos.h.set((short)(manager._10.height_28 / 2));
 
       if(buffPos.x.get() < right) {
         if(buffPos.x.get() < 0) {
@@ -9567,27 +9514,28 @@ public final class SEffe {
    */
   @Method(0x80118df4L)
   public static FlowControl allocateShirleyTransformWipeEffect(final RunningScript<? extends BattleScriptDataBase> script) {
-    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+    final ScriptState<EffectManagerData6c<EffectManagerData6cInner.ShirleyType>> state = allocateEffectManager(
       "Shirley transform wipe effect",
       script.scriptState_04,
       null,
       SEffe::renderShirleyTransformWipeEffect,
       null,
-      null
+      null,
+      new EffectManagerData6cInner.ShirleyType()
     );
 
-    final EffectManagerData6c manager = state.innerStruct_00;
+    final EffectManagerData6c<EffectManagerData6cInner.ShirleyType> manager = state.innerStruct_00;
     manager._10.trans_04.setZ(256);
-    manager._10._24 = 0x80;
-    manager._10._28 = 0x80;
-    manager._10._2c = 0x100;
+    manager._10.width_24 = 0x80;
+    manager._10.height_28 = 0x80;
+    manager._10.depth_2c = 0x100;
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }
 
   /** Some effects use CTMD render pipeline if type == 0x300_0000 */
   @Method(0x80118e98L)
-  public static void renderSpriteWithTrailEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void renderSpriteWithTrailEffect(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.ColourType>> state, final EffectManagerData6c<EffectManagerData6cInner.ColourType> manager) {
     final SpriteWithTrailEffect30 effect = (SpriteWithTrailEffect30)manager.effect_44;
     if(manager._10.flags_00 >= 0) {
       final MATRIX transformMatrix = new MATRIX();
@@ -9621,7 +9569,7 @@ public final class SEffe {
 
       //LAB_80118fac
       if(effect.countCopies_08 != 0) {
-        final EffectManagerData6cInner managerInner = new EffectManagerData6cInner();
+        final EffectManagerData6cInner.ColourType managerInner = new EffectManagerData6cInner.ColourType();
         final VECTOR colour = new VECTOR();
         final VECTOR scale = new VECTOR();
         final VECTOR stepScale = new VECTOR();
@@ -9632,9 +9580,9 @@ public final class SEffe {
         final int combinedSteps = effect.countCopies_08 * (effect.countTransformSteps_0c + 1);
         if((effect.colourAndScaleFlags_00 & 0x4) != 0) {
           final int brightness = effect.colourAndScaleTransformModifier_10 - 0x1000;
-          managerInner._28 = managerInner.colour_1c.getX() << 12;
-          managerInner._2c = managerInner.colour_1c.getY() << 12;
-          managerInner._30 = managerInner.colour_1c.getZ() << 12;
+          managerInner.r_28 = managerInner.colour_1c.getX() << 12;
+          managerInner.g_2c = managerInner.colour_1c.getY() << 12;
+          managerInner.b_30 = managerInner.colour_1c.getZ() << 12;
           colour.setX(managerInner.colour_1c.getX() * brightness / combinedSteps);
           colour.setY(managerInner.colour_1c.getY() * brightness / combinedSteps);
           colour.setZ(managerInner.colour_1c.getZ() * brightness / combinedSteps);
@@ -9668,15 +9616,15 @@ public final class SEffe {
           //LAB_80119204
           for(int j = effect.countTransformSteps_0c; j >= 0; j--) {
             if((effect.colourAndScaleFlags_00 & 0x4) != 0) {
-              managerInner._28 += colour.getX();
-              managerInner._2c += colour.getY();
-              managerInner._30 += colour.getZ();
+              managerInner.r_28 += colour.getX();
+              managerInner.g_2c += colour.getY();
+              managerInner.b_30 += colour.getZ();
               //LAB_80119254
               //LAB_80119270
               //LAB_8011928c
-              managerInner.colour_1c.setX(managerInner._28 >> 12);
-              managerInner.colour_1c.setY(managerInner._2c >> 12);
-              managerInner.colour_1c.setZ(managerInner._30 >> 12);
+              managerInner.colour_1c.setX(managerInner.r_28 >> 12);
+              managerInner.colour_1c.setY(managerInner.g_2c >> 12);
+              managerInner.colour_1c.setZ(managerInner.b_30 >> 12);
             }
 
             //LAB_80119294
@@ -9734,16 +9682,17 @@ public final class SEffe {
   public static FlowControl allocateSpriteWithTrailEffect(final RunningScript<? extends BattleScriptDataBase> script) {
     final int effectFlag = script.params_20[1].get();
 
-    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+    final ScriptState<EffectManagerData6c<EffectManagerData6cInner.ColourType>> state = allocateEffectManager(
       "SpriteWithTrailEffect30",
       script.scriptState_04,
       SEffe::tickSpriteWithTrailEffect,
       SEffe::renderSpriteWithTrailEffect,
       null,
-      new SpriteWithTrailEffect30(script.params_20[3].get())
+      new SpriteWithTrailEffect30(script.params_20[3].get()),
+      new EffectManagerData6cInner.ColourType()
     );
 
-    final EffectManagerData6c manager = state.innerStruct_00;
+    final EffectManagerData6c<EffectManagerData6cInner.ColourType> manager = state.innerStruct_00;
 
     final SpriteWithTrailEffect30 effect = (SpriteWithTrailEffect30)manager.effect_44;
     effect.colourAndScaleFlags_00 = script.params_20[2].get();
@@ -9766,7 +9715,7 @@ public final class SEffe {
       manager._10.flags_00 = 0x1400_0000;
     } else if(effectType == 0) {
       //LAB_801195a8
-      throw new RuntimeException("The type is " + ((EffectManagerData6c)scriptStatePtrArr_800bc1c0[effectFlag].innerStruct_00).effect_44.getClass().getSimpleName());
+      throw new RuntimeException("The type is " + ((EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[effectFlag].innerStruct_00).effect_44.getClass().getSimpleName());
     }
 
     //LAB_8011967c
@@ -9775,7 +9724,7 @@ public final class SEffe {
   }
 
   @Method(0x801196bcL)
-  public static void tickSpriteWithTrailEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void tickSpriteWithTrailEffect(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.ColourType>> state, final EffectManagerData6c<EffectManagerData6cInner.ColourType> manager) {
     final SpriteWithTrailEffect30 effect = (SpriteWithTrailEffect30)manager.effect_44;
 
     if(effect.countCopies_08 != 0) {

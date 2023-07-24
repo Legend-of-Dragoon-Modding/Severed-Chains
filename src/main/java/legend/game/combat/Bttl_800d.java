@@ -180,7 +180,7 @@ public final class Bttl_800d {
     final BattleScriptDataBase data = (BattleScriptDataBase)state.innerStruct_00;
 
     if(BattleScriptDataBase.EM__.equals(data.magic_00)) {
-      script.params_20[1].set(((BttlScriptData6cSub13c)((EffectManagerData6c)data).effect_44).model_10.partCount_98);
+      script.params_20[1].set(((BttlScriptData6cSub13c)((EffectManagerData6c<?>)data).effect_44).model_10.partCount_98);
     } else {
       //LAB_800d017c
       script.params_20[1].set(((BattleObject27c)data).model_148.partCount_98);
@@ -191,7 +191,7 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d019cL)
-  public static void renderProjectileHitEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
+  public static void renderProjectileHitEffect(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> data) {
     int a0 = 0;
     final ProjectileHitEffect14 effect = (ProjectileHitEffect14)data.effect_44;
 
@@ -271,7 +271,7 @@ public final class Bttl_800d {
   public static FlowControl allocateProjectileHitEffect(final RunningScript<? extends BattleScriptDataBase> script) {
     final int count = script.params_20[1].get();
 
-    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+    final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state = allocateEffectManager(
       "ProjectileHitEffect14",
       script.scriptState_04,
       null,
@@ -280,7 +280,7 @@ public final class Bttl_800d {
       new ProjectileHitEffect14(count)
     );
 
-    final EffectManagerData6c manager = state.innerStruct_00;
+    final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager = state.innerStruct_00;
     final ProjectileHitEffect14 effect = (ProjectileHitEffect14)manager.effect_44;
 
     //LAB_800d0634
@@ -322,14 +322,14 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d09c0L)
-  public static void FUN_800d09c0(final EffectManagerData6c a0, final AdditionSparksEffectInstance4c inst) {
+  public static void FUN_800d09c0(final EffectManagerData6c<EffectManagerData6cInner.VoidType> a0, final AdditionSparksEffectInstance4c inst) {
     FUN_800cf4f4(a0, null, inst.startPos_08, inst.startPos_08);
     rotateAndTranslateEffect(a0, null, inst.speed_28, inst.speed_28);
     inst.endPos_18.set(inst.startPos_08);
   }
 
   @Method(0x800d0a30L)
-  public static void renderAdditionSparks(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
+  public static void renderAdditionSparks(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> data) {
     final AdditionSparksEffect08 s6 = (AdditionSparksEffect08)data.effect_44;
 
     //LAB_800d0a7c
@@ -406,7 +406,7 @@ public final class Bttl_800d {
     final int count = script.params_20[1].get();
     final int s4 = script.params_20[6].get();
 
-    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+    final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state = allocateEffectManager(
       "AdditionSparksEffect08",
       script.scriptState_04,
       null,
@@ -415,7 +415,7 @@ public final class Bttl_800d {
       new AdditionSparksEffect08(count)
     );
 
-    final EffectManagerData6c manager = state.innerStruct_00;
+    final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager = state.innerStruct_00;
     final AdditionSparksEffect08 effect = (AdditionSparksEffect08)manager.effect_44;
 
     final int s1 = script.params_20[5].get() / s4;
@@ -450,7 +450,7 @@ public final class Bttl_800d {
 
   /** If a secondary script is specified, modifies the translations of the starburst rays by the secondary script's translation. */
   @Method(0x800d1194L)
-  public static void modifyAdditionStarburstTranslation(final EffectManagerData6c manager, final AdditionStarburstEffect10 starburstEffect, final IntRef[] outTranslations) {
+  public static void modifyAdditionStarburstTranslation(final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager, final AdditionStarburstEffect10 starburstEffect, final IntRef[] outTranslations) {
     if(starburstEffect.scriptIndex_00 == -1) {
       outTranslations[0].set(0);
       outTranslations[1].set(0);
@@ -466,7 +466,7 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d1220L)
-  public static void renderAdditionHitStarburst(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void renderAdditionHitStarburst(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager) {
     final int[] baseAngle = {-16, 16};
     final AdditionStarburstEffect10 starburstEffect = (AdditionStarburstEffect10)manager.effect_44;
     final AdditionStarburstEffectRay10[] rayArray = starburstEffect.rayArray_0c;
@@ -514,7 +514,7 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d15d8L)
-  public static void renderAdditionCompletedStarburst(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void renderAdditionCompletedStarburst(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager) {
     final AdditionStarburstEffect10 starburstEffect = (AdditionStarburstEffect10)manager.effect_44;
     final AdditionStarburstEffectRay10[] rayArray = starburstEffect.rayArray_0c;
 
@@ -561,7 +561,7 @@ public final class Bttl_800d {
   public static FlowControl allocateAdditionStarburstEffect(final RunningScript<? extends BattleScriptDataBase> script) {
     final int rayCount = script.params_20[2].get();
 
-    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+    final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state = allocateEffectManager(
       "AdditionStarburstEffect10",
       script.scriptState_04,
       null,
@@ -570,7 +570,7 @@ public final class Bttl_800d {
       new AdditionStarburstEffect10(rayCount)
     );
 
-    final EffectManagerData6c manager = state.innerStruct_00;
+    final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager = state.innerStruct_00;
     final AdditionStarburstEffect10 effect = (AdditionStarburstEffect10)manager.effect_44;
     effect.scriptIndex_00 = script.params_20[1].get();
     effect.unused_08 = 0;
@@ -606,7 +606,7 @@ public final class Bttl_800d {
 
   /** Renders things like the two-tone disc at the start of Detonating Arrow */
   @Method(0x800d1d3cL)
-  public static void renderDiscGradientEffect(final EffectManagerData6c manager, final int angle, final short[] vertices, final RadialGradientEffect14 effect, final Translucency translucency) {
+  public static void renderDiscGradientEffect(final EffectManagerData6c<EffectManagerData6cInner.RadialGradientType> manager, final int angle, final short[] vertices, final RadialGradientEffect14 effect, final Translucency translucency) {
     if(manager._10.flags_00 >= 0) {
       GPU.queueCommand(effect.z_04 + manager._10.z_22 >> 2, new GpuCommandPoly(3)
         .translucent(translucency)
@@ -623,33 +623,33 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d1e80L)
-  public static void FUN_800d1e80(final EffectManagerData6c manager, final int angle, final short[] vertices, final RadialGradientEffect14 effect, final Translucency translucency) {
+  public static void FUN_800d1e80(final EffectManagerData6c<EffectManagerData6cInner.RadialGradientType> manager, final int angle, final short[] vertices, final RadialGradientEffect14 effect, final Translucency translucency) {
     throw new RuntimeException("Not implemented");
   }
 
   /** Renders things like the ring effect when using a healing potion */
   @Method(0x800d21b8L)
-  public static void renderRingGradientEffect(final EffectManagerData6c manager, final int angle, final short[] vertices, final RadialGradientEffect14 effect, final Translucency translucency) {
+  public static void renderRingGradientEffect(final EffectManagerData6c<EffectManagerData6cInner.RadialGradientType> manager, final int angle, final short[] vertices, final RadialGradientEffect14 effect, final Translucency translucency) {
     if(manager._10.flags_00 >= 0) {
       final VECTOR sp0x20 = new VECTOR().set(
-        rcos(angle) * (manager._10.scale_16.getX() / effect.scaleModifier_01 + manager._10._28) >> 12,
-        rsin(angle) * (manager._10.scale_16.getY() / effect.scaleModifier_01 + manager._10._28) >> 12, // X is correct
-        manager._10._2c
+        rcos(angle) * (manager._10.scale_16.getX() / effect.scaleModifier_01 + manager._10.size_28) >> 12,
+        rsin(angle) * (manager._10.scale_16.getY() / effect.scaleModifier_01 + manager._10.size_28) >> 12, // X is correct
+        manager._10.z_2c
       );
 
-      final ShortRef sp0x10 = new ShortRef();
-      final ShortRef sp0x14 = new ShortRef();
-      FUN_800cfb14(manager, sp0x20, sp0x10, sp0x14);
+      final ShortRef x0 = new ShortRef();
+      final ShortRef y0 = new ShortRef();
+      FUN_800cfb14(manager, sp0x20, x0, y0);
 
       final VECTOR sp0x30 = new VECTOR().set(
-        rcos(angle + effect.angleStep_08) * (manager._10.scale_16.getX() / effect.scaleModifier_01 + manager._10._28) >> 12,
-        rsin(angle + effect.angleStep_08) * (manager._10.scale_16.getY() / effect.scaleModifier_01 + manager._10._28) >> 12,
-        manager._10._2c
+        rcos(angle + effect.angleStep_08) * (manager._10.scale_16.getX() / effect.scaleModifier_01 + manager._10.size_28) >> 12,
+        rsin(angle + effect.angleStep_08) * (manager._10.scale_16.getY() / effect.scaleModifier_01 + manager._10.size_28) >> 12,
+        manager._10.z_2c
       );
 
-      final ShortRef sp0x18 = new ShortRef();
-      final ShortRef sp0x1c = new ShortRef();
-      FUN_800cfb14(manager, sp0x30, sp0x18, sp0x1c);
+      final ShortRef x1 = new ShortRef();
+      final ShortRef y1 = new ShortRef();
+      FUN_800cfb14(manager, sp0x30, x1, y1);
 
       GPU.queueCommand(effect.z_04 + manager._10.z_22 >> 2, new GpuCommandPoly(4)
         .translucent(translucency)
@@ -657,8 +657,8 @@ public final class Bttl_800d {
         .rgb(1, manager._10.colour_1c.getX(), manager._10.colour_1c.getY(), manager._10.colour_1c.getZ())
         .rgb(2, effect.r_0c, effect.g_0d, effect.b_0e)
         .rgb(3, effect.r_0c, effect.g_0d, effect.b_0e)
-        .pos(0, sp0x10.get(), sp0x14.get())
-        .pos(1, sp0x18.get(), sp0x1c.get())
+        .pos(0, x0.get(), y0.get())
+        .pos(1, x1.get(), y1.get())
         .pos(2, vertices[2], vertices[3])
         .pos(3, vertices[4], vertices[5])
       );
@@ -668,7 +668,7 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d247cL)
-  public static void renderRadialGradientEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void renderRadialGradientEffect(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.RadialGradientType>> state, final EffectManagerData6c<EffectManagerData6cInner.RadialGradientType> manager) {
     final RadialGradientEffect14 effect = (RadialGradientEffect14)manager.effect_44;
     effect.angleStep_08 = 0x1000 / (0x4 << effect.circleSubdivisionModifier_00);
 
@@ -692,9 +692,9 @@ public final class Bttl_800d {
       final ShortRef refX2 = new ShortRef();
       final ShortRef refY2 = new ShortRef();
       FUN_800cfb14(manager, sp0x38, refX2, refY2);
-      effect.r_0c = manager._10._24 >>> 16 & 0xff;
-      effect.g_0d = manager._10._24 >>>  8 & 0xff;
-      effect.b_0e = manager._10._24        & 0xff;
+      effect.r_0c = manager._10.colour_24 >>> 16 & 0xff;
+      effect.g_0d = manager._10.colour_24 >>>  8 & 0xff;
+      effect.b_0e = manager._10.colour_24 & 0xff;
 
       //LAB_800d25b4
       for(int angle = 0; angle < 0x1000; ) {
@@ -721,16 +721,17 @@ public final class Bttl_800d {
     final int circleSubdivisionModifier = script.params_20[1].get();
     final int rendererIndex = script.params_20[2].get();
 
-    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+    final ScriptState<EffectManagerData6c<EffectManagerData6cInner.RadialGradientType>> state = allocateEffectManager(
       "RadialGradientEffect14",
       script.scriptState_04,
       null,
       Bttl_800d::renderRadialGradientEffect,
       null,
-      new RadialGradientEffect14()
+      new RadialGradientEffect14(),
+      new EffectManagerData6cInner.RadialGradientType()
     );
 
-    final EffectManagerData6c manager = state.innerStruct_00;
+    final EffectManagerData6c<EffectManagerData6cInner.RadialGradientType> manager = state.innerStruct_00;
 
     //LAB_800d27b4
     manager._10.scale_16.set((short)0x1000, (short)0x1000, (short)0x1000);
@@ -744,7 +745,7 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d2810L)
-  public static void renderGuardEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void renderGuardEffect(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager) {
     final VECTOR translation = new VECTOR();
     final IntRef[] refXArray = new IntRef[7];
     final IntRef[] refYArray = new IntRef[7];
@@ -851,7 +852,7 @@ public final class Bttl_800d {
 
   @Method(0x800d2ff4L)
   public static FlowControl allocateGuardEffect(final RunningScript<? extends BattleScriptDataBase> script) {
-    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+    final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state = allocateEffectManager(
       "GuardEffect06",
       script.scriptState_04,
       null,
@@ -860,7 +861,7 @@ public final class Bttl_800d {
       new GuardEffect06()
     );
 
-    final EffectManagerData6c manager = state.innerStruct_00;
+    final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager = state.innerStruct_00;
     final GuardEffect06 effect = (GuardEffect06)manager.effect_44;
     effect._00 = 1;
     effect._02 = 0;
@@ -909,7 +910,7 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d30c0L)
-  public static void monsterDeathEffectRenderer(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void monsterDeathEffectRenderer(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager) {
     final MonsterDeathEffect34 deathEffect = (MonsterDeathEffect34)manager.effect_44;
     final MonsterDeathEffectObjectDestructor30[] objArray = deathEffect.objectDestructorArray_30;
 
@@ -930,7 +931,7 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d31b0L)
-  public static void monsterDeathEffectTicker(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void monsterDeathEffectTicker(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager) {
     final MonsterDeathEffect34 deathEffect = (MonsterDeathEffect34)manager.effect_44;
 
     deathEffect.remainingFrameLimit_02--;
@@ -988,7 +989,7 @@ public final class Bttl_800d {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00;
     final int modelObjectCount = bobj.model_148.partCount_98;
 
-    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+    final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state = allocateEffectManager(
       "MonsterDeathEffect34",
       script.scriptState_04,
       Bttl_800d::monsterDeathEffectTicker,
@@ -997,7 +998,7 @@ public final class Bttl_800d {
       new MonsterDeathEffect34(modelObjectCount)
     );
 
-    final EffectManagerData6c manager = state.innerStruct_00;
+    final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager = state.innerStruct_00;
     final MonsterDeathEffect34 deathEffect = (MonsterDeathEffect34)manager.effect_44;
 
     deathEffect.destroyedPartsCutoffIndex_00 = 0;
@@ -4249,7 +4250,7 @@ public final class Bttl_800d {
     final BattleScriptDataBase data = (BattleScriptDataBase)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
 
     if(BattleScriptDataBase.EM__.equals(data.magic_00)) {
-      return ((EffectManagerData6c)data)._10.trans_04;
+      return ((EffectManagerData6c<?>)data)._10.trans_04;
     }
 
     return ((BattleObject27c)data).model_148.coord2_14.coord.transfer;
@@ -4773,7 +4774,7 @@ public final class Bttl_800d {
 
   /** used renderCtmd */
   @Method(0x800de3f4L)
-  public static void renderTmdSpriteEffect(final TmdObjTable1c a0, final EffectManagerData6cInner a1, final MATRIX a2) {
+  public static void renderTmdSpriteEffect(final TmdObjTable1c a0, final EffectManagerData6cInner<?> a1, final MATRIX a2) {
     final int s0 = deffManager_800c693c.flags_20 & 0x4;
 
     final MATRIX sp0x10 = new MATRIX();
