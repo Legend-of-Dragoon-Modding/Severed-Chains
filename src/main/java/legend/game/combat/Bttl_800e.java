@@ -1598,7 +1598,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e7ec4L)
-  public static <T extends EffectManagerData6cInner> void effectManagerDestructor(final ScriptState<EffectManagerData6c<T>> state, final EffectManagerData6c<T> struct) {
+  public static <T extends EffectManagerData6cInner<T>> void effectManagerDestructor(final ScriptState<EffectManagerData6c<T>> state, final EffectManagerData6c<T> struct) {
     LOGGER.info(EFFECTS, "Deallocating effect manager %d", state.index);
 
     if(struct.parentScript_50 != null) {

@@ -5,7 +5,7 @@ import legend.game.scripting.ScriptState;
 
 import java.util.function.BiConsumer;
 
-public class EffectManagerData6c<T extends EffectManagerData6cInner> extends BattleScriptDataBase {
+public class EffectManagerData6c<T extends EffectManagerData6cInner<T>> extends BattleScriptDataBase {
   public final String name;
 
   public int flags_04;
