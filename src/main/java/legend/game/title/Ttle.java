@@ -76,7 +76,6 @@ import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.savedGameSelected_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
-import static legend.game.Scus94491BpeSegment_800c.identityMatrix_800c3568;
 
 public final class Ttle {
   private Ttle() { }
@@ -1157,8 +1156,7 @@ public final class Ttle {
 
   @Method(0x800cc26cL)
   public static void FUN_800cc26c(final Vector3f a0, final GsCOORDINATE2 a1) {
-    final MATRIX m = new MATRIX();
-    m.set(identityMatrix_800c3568);
+    final MATRIX m = new MATRIX().identity();
     m.transfer.set(a1.coord.transfer);
     RotMatrix_Xyz(a0, m);
     a1.coord.set(m);

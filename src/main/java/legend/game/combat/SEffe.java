@@ -158,7 +158,6 @@ import static legend.game.Scus94491BpeSegment_800b.model_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.press_800bee94;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.stage_800bda0c;
-import static legend.game.Scus94491BpeSegment_800c.identityMatrix_800c3568;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.combat.Bttl_800c.FUN_800cf4f4;
 import static legend.game.combat.Bttl_800c.FUN_800cf684;
@@ -186,13 +185,13 @@ import static legend.game.combat.Bttl_800e.FUN_800e6170;
 import static legend.game.combat.Bttl_800e.FUN_800e61e4;
 import static legend.game.combat.Bttl_800e.FUN_800e62a8;
 import static legend.game.combat.Bttl_800e.FUN_800e7dbc;
-import static legend.game.combat.Bttl_800e.FUN_800e8594;
 import static legend.game.combat.Bttl_800e.FUN_800e8c84;
 import static legend.game.combat.Bttl_800e.FUN_800e8d04;
 import static legend.game.combat.Bttl_800e.FUN_800e8dd4;
 import static legend.game.combat.Bttl_800e.FUN_800e9178;
 import static legend.game.combat.Bttl_800e.allocateEffectManager;
 import static legend.game.combat.Bttl_800e.applyScreenDarkening;
+import static legend.game.combat.Bttl_800e.calculateEffectTransforms;
 import static legend.game.combat.Bttl_800e.getDeffPart;
 import static legend.game.combat.Bttl_800e.getSpriteMetricsFromSource;
 import static legend.game.combat.Bttl_800e.perspectiveTransformXyz;
@@ -4914,9 +4913,9 @@ public final class SEffe {
     final SVECTOR xy2 = new SVECTOR();
     final SVECTOR xy3 = new SVECTOR();
 
-    final MATRIX sp0x80 = new MATRIX().set(identityMatrix_800c3568);
-    final MATRIX sp0xa0 = new MATRIX().set(identityMatrix_800c3568);
-    final MATRIX sp0xc0 = new MATRIX().set(identityMatrix_800c3568);
+    final MATRIX sp0x80 = new MATRIX().identity();
+    final MATRIX sp0xa0 = new MATRIX().identity();
+    final MATRIX sp0xc0 = new MATRIX().identity();
 
     final GradientRaysEffect24 effect = (GradientRaysEffect24)manager.effect_44;
 
@@ -4944,7 +4943,7 @@ public final class SEffe {
     RotMatrix_Xyz(rotation, sp0xa0);
     sp0x80.transfer.set(translation);
     sp0x80.compose(sp0xa0, sp0xc0);
-    FUN_800e8594(sp0x80, manager);
+    calculateEffectTransforms(sp0x80, manager);
 
     if((manager._10.flags_00 & 0x400_0000) == 0) {
       sp0x80.compose(worldToScreenMatrix_800c3548, sp0xa0);
@@ -5405,7 +5404,7 @@ public final class SEffe {
 
     if(manager._10.flags_00 >= 0) {
       final ScreenCaptureEffect1c effect = (ScreenCaptureEffect1c)manager.effect_44;
-      FUN_800e8594(transforms, manager);
+      calculateEffectTransforms(transforms, manager);
       transforms.compose(worldToScreenMatrix_800c3548);
       screenCaptureRenderers_80119fec[effect.rendererIndex_0c].accept(manager, effect, transforms);
     }
@@ -6318,7 +6317,7 @@ public final class SEffe {
         final StarChildrenImpactEffectInstancea8 impact = impactEffect.impactArray_08[i];
 
         if(impact.renderImpact_00) {
-          FUN_800e8594(transformMatrix0, manager);
+          calculateEffectTransforms(transformMatrix0, manager);
           final int stageNum = impact.animationFrame_a2 >= 10 ? 1 : 0;
           translation.setX(impact.translation_0c[stageNum].getX() + manager._10.trans_04.getX());
           translation.setY(impact.translation_0c[stageNum].getY() + manager._10.trans_04.getY());
@@ -6597,14 +6596,14 @@ public final class SEffe {
   @Method(0x80110488L)
   public static void FUN_80110488(final int scriptIndex1, final int scriptIndex2, final VECTOR s1) {
     final MATRIX transforms1 = new MATRIX();
-    FUN_800e8594(transforms1, (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[scriptIndex1].innerStruct_00);
+    calculateEffectTransforms(transforms1, (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[scriptIndex1].innerStruct_00);
 
     if(scriptIndex2 == -1) {
       s1.set(transforms1.transfer);
     } else {
       //LAB_80110500
       final MATRIX transforms2 = new MATRIX();
-      FUN_800e8594(transforms2, (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[scriptIndex2].innerStruct_00);
+      calculateEffectTransforms(transforms2, (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[scriptIndex2].innerStruct_00);
       transforms1.transfer.sub(transforms2.transfer);
 
       transforms2.transpose();
@@ -6902,7 +6901,7 @@ public final class SEffe {
 
       //LAB_8011172c
       final MATRIX sp0x10 = new MATRIX();
-      FUN_800e8594(sp0x10, effects);
+      calculateEffectTransforms(sp0x10, effects);
       final int type = effects.flags_04 & 0xff00_0000;
 
       //LAB_80111768
@@ -7246,7 +7245,7 @@ public final class SEffe {
   @Method(0x801127e0L)
   public static FlowControl FUN_801127e0(final RunningScript<?> script) {
     final MATRIX transforms = new MATRIX();
-    FUN_800e8594(transforms, (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00);
+    calculateEffectTransforms(transforms, (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00);
 
     final Vector3f rot = new Vector3f();
     getRotationFromTransforms(rot, transforms);
@@ -8077,7 +8076,7 @@ public final class SEffe {
 
     final MATRIX sp0x10 = new MATRIX();
     final MATRIX sp0x30 = new MATRIX();
-    FUN_800e8594(sp0x10, manager);
+    calculateEffectTransforms(sp0x10, manager);
 
     if(scriptIndex == -1) {
       sp0x30.set(sp0x10);
@@ -8093,7 +8092,7 @@ public final class SEffe {
       sp0x50.coord2Index_0d = coord2Index;
 
       final MATRIX transforms = new MATRIX();
-      FUN_800e8594(transforms, sp0x50);
+      calculateEffectTransforms(transforms, sp0x50);
 
       final Vector3f rot = new Vector3f();
       final SVECTOR scale = new SVECTOR();
@@ -8995,7 +8994,7 @@ public final class SEffe {
       sp0x10.set(manager);
 
       final MATRIX sp0x80 = new MATRIX();
-      FUN_800e8594(sp0x80, manager);
+      calculateEffectTransforms(sp0x80, manager);
 
       final int type = effect.lmbType_00 & 0x7;
       if(type == 0) {
@@ -9199,7 +9198,7 @@ public final class SEffe {
 
     if(data._10.flags_00 >= 0) {
       final MATRIX sp0x10 = new MATRIX();
-      FUN_800e8594(sp0x10, data);
+      calculateEffectTransforms(sp0x10, data);
       if((data._10.flags_00 & 0x4000_0000) != 0) {
         tmdGp0Tpage_1f8003ec.set(data._10.flags_00 >>> 23 & 0x60);
       } else {
@@ -9393,7 +9392,7 @@ public final class SEffe {
       final int y = manager._10.trans_04.getY();
       manager._10.trans_04.setY(0);
       final MATRIX sp0x10 = new MATRIX();
-      FUN_800e8594(sp0x10, manager);
+      calculateEffectTransforms(sp0x10, manager);
       sp0x10.transfer.setY(y);
       manager._10.trans_04.setY(y);
 
@@ -9551,7 +9550,7 @@ public final class SEffe {
     final SpriteWithTrailEffect30 effect = (SpriteWithTrailEffect30)manager.effect_44;
     if(manager._10.flags_00 >= 0) {
       final MATRIX transformMatrix = new MATRIX();
-      FUN_800e8594(transformMatrix, manager);
+      calculateEffectTransforms(transformMatrix, manager);
 
       final int type = effect.effectFlag_04 & 0xff00_0000;
       if(type == 0x300_0000) {
@@ -9741,7 +9740,7 @@ public final class SEffe {
 
     if(effect.countCopies_08 != 0) {
       final MATRIX transformMatrix = new MATRIX();
-      FUN_800e8594(transformMatrix, manager);
+      calculateEffectTransforms(transformMatrix, manager);
       effect.instanceTranslations_18[effect.translationIndexBase_14 % effect.countCopies_08].set(transformMatrix.transfer);
       effect.translationIndexBase_14++;
     }

@@ -38,7 +38,6 @@ public final class Scus94491BpeSegment_800c {
   public static final Matrix3f lightColourMatrix_800c3508 = new Matrix3f();
 
   public static final MATRIX worldToScreenMatrix_800c3548 = new MATRIX();
-  public static final MATRIX identityMatrix_800c3568 = new MATRIX();
   /** Includes aspect scale */
   public static final MATRIX identityAspectMatrix_800c3588 = new MATRIX();
 

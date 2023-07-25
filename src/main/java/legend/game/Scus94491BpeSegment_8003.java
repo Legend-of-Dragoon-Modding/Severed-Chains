@@ -42,16 +42,15 @@ import static legend.game.Scus94491BpeSegment_8002.SetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8002.SetRotMatrix;
 import static legend.game.Scus94491BpeSegment_8002.SetTransMatrix;
 import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
-import static legend.game.Scus94491BpeSegment_8005.vectorStack_80054a0c;
-import static legend.game.Scus94491BpeSegment_8005.vramWidth_800546c0;
-import static legend.game.Scus94491BpeSegment_8005.vramHeight_800546c2;
 import static legend.game.Scus94491BpeSegment_8005.matrixStackIndex_80054a08;
 import static legend.game.Scus94491BpeSegment_8005.matrixStack_80054a0c;
+import static legend.game.Scus94491BpeSegment_8005.vectorStack_80054a0c;
+import static legend.game.Scus94491BpeSegment_8005.vramHeight_800546c2;
+import static legend.game.Scus94491BpeSegment_8005.vramWidth_800546c0;
 import static legend.game.Scus94491BpeSegment_800c.PSDCNT_800c34d0;
 import static legend.game.Scus94491BpeSegment_800c.coord2s_800c35a8;
 import static legend.game.Scus94491BpeSegment_800c.displayRect_800c34c8;
 import static legend.game.Scus94491BpeSegment_800c.identityAspectMatrix_800c3588;
-import static legend.game.Scus94491BpeSegment_800c.identityMatrix_800c3568;
 import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
 import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
@@ -247,9 +246,6 @@ public final class Scus94491BpeSegment_8003 {
 
     final int aspect = (displayHeight << 14) / displayWidth / 3;
 
-    identityMatrix_800c3568.identity();
-    identityMatrix_800c3568.transfer.set(0, 0, 0);
-
     identityAspectMatrix_800c3588.identity();
     identityAspectMatrix_800c3588.set(1, 1, (short)aspect);
     identityAspectMatrix_800c3588.transfer.set(0, 0, 0);
@@ -329,7 +325,8 @@ public final class Scus94491BpeSegment_8003 {
   @Method(0x8003c400L)
   public static void GsInitCoordinate2(@Nullable final GsCOORDINATE2 superCoord, final GsCOORDINATE2 newCoord) {
     newCoord.flg = 0;
-    newCoord.coord.set(identityMatrix_800c3568);
+    newCoord.coord.identity();
+    newCoord.coord.transfer.set(0, 0, 0);
     newCoord.super_ = superCoord;
 
     if(superCoord != null) {
@@ -422,11 +419,6 @@ public final class Scus94491BpeSegment_8003 {
     return 0;
   }
 
-  @Method(0x8003cce0L)
-  public static void GsSetAmbient(final int r, final int g, final int b) {
-    GTE.setBackgroundColour(r, g, b);
-  }
-
   /**
    * Initializes the libgs three-dimensional graphics system. It must be called before using other 3D functions
    * such as GsSetRefView2(), GsInitCoordinate2(), and GsSortObject3(). It does the following:
@@ -484,7 +476,8 @@ public final class Scus94491BpeSegment_8003 {
 
   @Method(0x8003cee0L)
   public static void FUN_8003cee0(final MATRIX matrix, final short sin, final short cos, final int type) {
-    matrix.set(identityMatrix_800c3568);
+    matrix.identity();
+    matrix.transfer.set(0, 0, 0);
 
     //TODO this is weird... these are the positions for rotation matrices, but if they were transposed
 

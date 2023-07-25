@@ -128,7 +128,6 @@ import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static legend.game.Scus94491BpeSegment_800b.textboxes_800be358;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
-import static legend.game.Scus94491BpeSegment_800c.identityMatrix_800c3568;
 
 public class WMap {
   private static final Value _800c6690 = MEMORY.ref(4, 0x800c6690L);
@@ -3884,8 +3883,7 @@ public class WMap {
 
   @Method(0x800dce64L)
   public static void rotateCoord2(final SVECTOR rotation, final GsCOORDINATE2 coord2) {
-    final MATRIX mat = new MATRIX().set(identityMatrix_800c3568);
-
+    final MATRIX mat = new MATRIX().identity();
     mat.transfer.set(coord2.coord.transfer);
 
     RotMatrix_Xyz(rotation, mat);
@@ -3895,28 +3893,13 @@ public class WMap {
   }
 
   public static void rotateCoord2(final Vector3f rotation, final GsCOORDINATE2 coord2) {
-    final MATRIX mat = new MATRIX().set(identityMatrix_800c3568);
-
+    final MATRIX mat = new MATRIX().identity();
     mat.transfer.set(coord2.coord.transfer);
 
     RotMatrix_Xyz(rotation, mat);
 
     coord2.flg = 0;
     coord2.coord.set(mat);
-  }
-
-  /**
-   * Resets the matrix to identity but maintains transforms
-   */
-  @Method(0x800dcf80L)
-  public static void clearLinearTransforms(final MATRIX mat) {
-    final int x = mat.transfer.getX();
-    final int y = mat.transfer.getY();
-    final int z = mat.transfer.getZ();
-    mat.set(identityMatrix_800c3568);
-    mat.transfer.setX(x);
-    mat.transfer.setY(y);
-    mat.transfer.setZ(z);
   }
 
   /** Don't really know what makes it special. Seems to use a fixed Z value and doesn't check if the triangles are on screen. Used for water. */
@@ -6844,7 +6827,7 @@ public class WMap {
         //LAB_800ec3c8
         final MATRIX sp0x10 = new MATRIX();
         GsGetLs(sp38.coord2_00, sp0x10);
-        clearLinearTransforms(sp0x10);
+        sp0x10.identity(); // NOTE: does not clear translation
         setRotTransMatrix(sp0x10);
         GTE.perspectiveTransform(-sp38._58, -sp38._5a, 0);
         final short sx0 = GTE.getScreenX(2);
@@ -7013,7 +6996,7 @@ public class WMap {
         //LAB_800ed2bc
         rotateCoord2(sp0x80, sp38.coord2_00);
         GsGetLs(sp38.coord2_00, sp0x10);
-        clearLinearTransforms(sp0x10);
+        sp0x10.identity(); // NOTE: does not clear translation
         setRotTransMatrix(sp0x10);
         GTE.perspectiveTransform(-2, -2, 0);
 
@@ -7247,7 +7230,7 @@ public class WMap {
               //LAB_800ee5f0
               rotateCoord2(rotation, struct.coord2_00);
               GsGetLs(struct.coord2_00, ls);
-              clearLinearTransforms(ls);
+              ls.identity(); // NOTE: does not clear translation
               setRotTransMatrix(ls);
 
               final GpuCommandPoly cmd = new GpuCommandPoly(4)

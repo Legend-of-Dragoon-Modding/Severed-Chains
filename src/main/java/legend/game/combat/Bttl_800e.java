@@ -1732,8 +1732,9 @@ public final class Bttl_800e {
     return state;
   }
 
+  /** Considers all parents */
   @Method(0x800e8594L)
-  public static void FUN_800e8594(final MATRIX transformMatrix, final EffectManagerData6c<?> manager) {
+  public static void calculateEffectTransforms(final MATRIX transformMatrix, final EffectManagerData6c<?> manager) {
     RotMatrix_Xyz(manager._10.rot_10, transformMatrix);
     transformMatrix.transfer.set(manager._10.trans_04);
     transformMatrix.scaleL(manager._10.scale_16);
@@ -2028,7 +2029,7 @@ public final class Bttl_800e {
   @Method(0x800e9590L)
   public static void renderBillboardSpriteEffect(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager) {
     final MATRIX transformMatrix = new MATRIX();
-    FUN_800e8594(transformMatrix, manager);
+    calculateEffectTransforms(transformMatrix, manager);
     renderBillboardSpriteEffect_(((BillboardSpriteEffect0c)manager.effect_44).metrics_04, manager._10, transformMatrix);
   }
 
@@ -2425,7 +2426,7 @@ public final class Bttl_800e {
   @Method(0x800ea3f8L)
   public static void FUN_800ea3f8(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.AnimType>> state, final EffectManagerData6c<EffectManagerData6cInner.AnimType> manager) {
     final MATRIX sp0x10 = new MATRIX();
-    FUN_800e8594(sp0x10, manager);
+    calculateEffectTransforms(sp0x10, manager);
 
     final BttlScriptData6cSub13c effect = (BttlScriptData6cSub13c)manager.effect_44;
     final Model124 model = effect.model_134;
