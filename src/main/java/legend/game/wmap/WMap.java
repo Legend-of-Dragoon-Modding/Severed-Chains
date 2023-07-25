@@ -3697,7 +3697,7 @@ public class WMap {
         struct258.models_0c[2].scaleVector_fc.x.sub(16);
 
         if(struct258.models_0c[2].scaleVector_fc.getX() < 1024) {
-          struct258.models_0c[2].scaleVector_fc.setZ(1024);
+          struct258.models_0c[2].scaleVector_fc.setX(1024);
         }
 
         //LAB_800dbf28
