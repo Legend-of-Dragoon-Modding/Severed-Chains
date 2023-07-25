@@ -6116,7 +6116,7 @@ public class WMap {
     final int directionInput = (input_800bee90.get() & 0xffff) >>> 12;
 
     if(directionInput != 0) {
-      final int sp0 = MathHelper.radToPsxDeg(MathHelper.floorMod(_800c66b0.mapRotation_70.y - mapState_800c6798.previousPlayerRotation_c2 - 0.875f * MathHelper.TWO_PI, MathHelper.TWO_PI)) >> 9;
+      final int sp0 = MathHelper.radToPsxDeg(MathHelper.floorMod(_800c66b0.mapRotation_70.y - mapState_800c6798.previousPlayerRotation_c2 - 0.875f * MathHelper.PI, MathHelper.TWO_PI)) >> 9;
       final int sp8 = directionInput & _800f0204.get(sp0).get();
       final int spc = directionInput & _800f0210.get(sp0).get();
 
