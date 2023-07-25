@@ -10,7 +10,6 @@ import legend.core.gpu.VramTexture;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.GsDOBJ2;
 import legend.core.gte.MATRIX;
-import legend.core.gte.SVECTOR;
 import legend.core.gte.TmdWithId;
 import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
@@ -27,6 +26,7 @@ import legend.game.types.EngineState;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
+import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nullable;
@@ -1015,7 +1015,7 @@ public final class Ttle {
 
   @Method(0x800cb728L)
   public static void renderMenuLogoFire() {
-    final SVECTOR rotation = new SVECTOR().set((short)0, (short)-0x800, (short)0);
+    final Vector3f rotation = new Vector3f(0.0f, -MathHelper.TWO_PI / 2.0f, 0.0f);
     final VECTOR scale = new VECTOR().set(0xdac, 0x1000, 0x1000);
 
     if(!logoFireInitialized) {
@@ -1156,7 +1156,7 @@ public final class Ttle {
   }
 
   @Method(0x800cc26cL)
-  public static void FUN_800cc26c(final SVECTOR a0, final GsCOORDINATE2 a1) {
+  public static void FUN_800cc26c(final Vector3f a0, final GsCOORDINATE2 a1) {
     final MATRIX m = new MATRIX();
     m.set(identityMatrix_800c3568);
     m.transfer.set(a1.coord.transfer);

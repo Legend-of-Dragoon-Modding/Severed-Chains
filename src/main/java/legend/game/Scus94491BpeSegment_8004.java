@@ -2,7 +2,6 @@ package legend.game;
 
 import legend.core.MathHelper;
 import legend.core.gte.MATRIX;
-import legend.core.gte.SVECTOR;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
@@ -842,13 +841,6 @@ public final class Scus94491BpeSegment_8004 {
   public static final ArrayRef<MoonMusic08> moonMusic_8004ff10 = MEMORY.ref(4, 0x8004ff10L, ArrayRef.of(MoonMusic08.class, 43, 8, MoonMusic08::new));
 
   @Method(0x80040010L)
-  public static void RotMatrix_Zyx(final SVECTOR rotation, final MATRIX matrixOut) {
-    matrixOut.set(new Matrix4f()
-      .rotateZ(MathHelper.psxDegToRad(rotation.getZ()))
-      .rotateY(MathHelper.psxDegToRad(rotation.getY()))
-      .rotateX(MathHelper.psxDegToRad(rotation.getX())));
-  }
-
   public static void RotMatrix_Zyx(final Vector3f rotation, final MATRIX matrixOut) {
     matrixOut.set(new Matrix4f()
       .rotateZ(rotation.z)

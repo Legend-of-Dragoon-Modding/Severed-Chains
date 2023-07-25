@@ -4876,7 +4876,7 @@ public final class SEffe {
     //LAB_8010a754
     for(int i = 0; i < effect.count_04; i++) {
       //LAB_8010a770
-      effect.rays_00[i]._00 = (short)(rand() % 0x1000);
+      effect.rays_00[i].angle_00 = MathHelper.psxDegToRad((short)(rand() % 0x1000));
 
       final int v0;
       if((effect.flags_18 & 0x2) == 0) {
@@ -4940,7 +4940,7 @@ public final class SEffe {
 
     //LAB_8010aa54
     final VECTOR translation = new VECTOR().set(0, gradientRay._02 * effect._08, 0);
-    final SVECTOR rotation = new SVECTOR().set(gradientRay._00, (short)0, (short)0);
+    final Vector3f rotation = new Vector3f(gradientRay.angle_00, 0.0f, 0.0f);
     RotMatrix_Xyz(rotation, sp0xa0);
     sp0x80.transfer.set(translation);
     sp0x80.compose(sp0xa0, sp0xc0);
@@ -5813,12 +5813,12 @@ public final class SEffe {
       instance.transStep_28.setX(rcos(theta) * s2 >> 4);
       instance.transStep_28.setY(rand() % (sp28 - sp24 + 1) + sp24 << 8);
       instance.transStep_28.setZ(rsin(theta) * s2 >> 4);
-      instance.rot_38.setX(rand() % 4096);
-      instance.rot_38.setY(rand() % 4096);
-      instance.rot_38.setZ(rand() % 4096);
-      instance.rotStep_48.setX((simpleRand() & 1) != 0 ? rand() % 401 : -(rand() % 401));
-      instance.rotStep_48.setY((simpleRand() & 1) != 0 ? rand() % 401 : -(rand() % 401));
-      instance.rotStep_48.setZ((simpleRand() & 1) != 0 ? rand() % 401 : -(rand() % 401));
+      instance.rot_38.x = MathHelper.psxDegToRad(rand() % 4096);
+      instance.rot_38.y = MathHelper.psxDegToRad(rand() % 4096);
+      instance.rot_38.z = MathHelper.psxDegToRad(rand() % 4096);
+      instance.rotStep_48.x = MathHelper.psxDegToRad((simpleRand() & 1) != 0 ? rand() % 401 : -(rand() % 401));
+      instance.rotStep_48.y = MathHelper.psxDegToRad((simpleRand() & 1) != 0 ? rand() % 401 : -(rand() % 401));
+      instance.rotStep_48.z = MathHelper.psxDegToRad((simpleRand() & 1) != 0 ? rand() % 401 : -(rand() % 401));
 
       if(sp2c != 0) {
         //LAB_8010dbc4
@@ -5911,7 +5911,6 @@ public final class SEffe {
 
     final GsDOBJ2 dobj2 = new GsDOBJ2();
     final VECTOR trans = new VECTOR();
-    final SVECTOR rot = new SVECTOR();
     final MATRIX transforms = new MATRIX();
     final MATRIX sp0x98 = new MATRIX();
     final VECTOR scale = new VECTOR();
@@ -5923,10 +5922,9 @@ public final class SEffe {
         trans.setY((instance.trans_08.getY() >> 8) + manager._10.trans_04.getY());
         trans.setZ((instance.trans_08.getZ() >> 8) + manager._10.trans_04.getZ());
 
-        rot.set(instance.rot_38);
         scale.set(manager._10.scale_16);
 
-        RotMatrix_Xyz(rot, transforms);
+        RotMatrix_Xyz(instance.rot_38, transforms);
         transforms.transfer.set(trans);
         transforms.scale(scale);
 
@@ -6215,8 +6213,8 @@ public final class SEffe {
       impact.translation_0c[1].setX(impact.translation_0c[0].getX());
       impact.translation_0c[1].setY(impact.translation_0c[0].getY() - 0x100);
       impact.translation_0c[1].setZ(impact.translation_0c[0].getZ());
-      impact.rotation_2c[0].set(0, rand() % 4096, 0);
-      impact.rotation_2c[1].set(0, rand() % 4096, 0);
+      impact.rotation_2c[0].set(0.0f, MathHelper.psxDegToRad(rand() % 4096), 0.0f);
+      impact.rotation_2c[1].set(0.0f, MathHelper.psxDegToRad(rand() % 4096), 0.0f);
       impact.scale_6c[0].set(0, 0, 0);
       impact.scale_6c[1].set(0xc00, 0x400, 0xc00);
       impact.opacity_8c[0].set(0xff, 0xff, 0xff);
@@ -6224,7 +6222,7 @@ public final class SEffe {
       impact.explosionObjTable_94 = ((DeffPart.TmdType)getDeffPart(0x300_7100)).tmd_0c.tmdPtr_00.tmd.objTable[0];
       impact.shockwaveObjTable_98 = ((DeffPart.TmdType)getDeffPart(0x300_7101)).tmd_0c.tmdPtr_00.tmd.objTable[0];
       impact.plumeObjTable_9c = ((DeffPart.TmdType)getDeffPart(0x300_7103)).tmd_0c.tmdPtr_00.tmd.objTable[0];
-      impact.explosionHeightAngle_a0 = 0;
+      impact.explosionHeightAngle_a0 = 0.0f;
       impact.animationFrame_a2 = 0;
     }
 
@@ -6243,7 +6241,7 @@ public final class SEffe {
       final StarChildrenImpactEffectInstancea8 impact = impactEffect.impactArray_08[i];
 
       if(impactEffect.currentFrame_04 > impact.startingFrame_04) {
-        if(impact.explosionHeightAngle_a0 >= 0x1000) {
+        if(impact.explosionHeightAngle_a0 >= MathHelper.TWO_PI) {
           impact.renderImpact_00 = false;
         } else {
           //LAB_8010f19c
@@ -6254,12 +6252,12 @@ public final class SEffe {
             //LAB_8010f240
             impact.renderImpact_00 = true;
             impact.renderShockwave_01 = true;
-            impact.rotation_2c[0].y.add(0x80);
+            impact.rotation_2c[0].y += MathHelper.TWO_PI / 32.0f;
             impact.scale_6c[0].x.add(0x266);
             impact.scale_6c[0].z.add(0x266);
-            impact.explosionHeightAngle_a0 += 0xcc;
+            impact.explosionHeightAngle_a0 += MathHelper.TWO_PI / 20.0f;
 
-            final int explosionHeight = rsin(impact.explosionHeightAngle_a0) * 0x1600 >> 12;
+            final int explosionHeight = (int)(MathHelper.sin(impact.explosionHeightAngle_a0) * 0x1600);
             impact.scale_6c[0].setY(Math.max(explosionHeight, 0));
 
             //LAB_8010f2a8
@@ -6281,8 +6279,8 @@ public final class SEffe {
               }
 
               //LAB_8010f1f0
-              impact.rotation_2c[1].y.add(0x80);
-              impact.explosionHeightAngle_a0 += 0x200;
+              impact.rotation_2c[1].y += MathHelper.TWO_PI / 32.0f;
+              impact.explosionHeightAngle_a0 += MathHelper.TWO_PI / 8.0f;
               impact.scale_6c[1].x.sub(0x1c0);
               impact.scale_6c[1].y.add(0x600);
               impact.scale_6c[1].z.sub(0x1c0);
@@ -6309,7 +6307,6 @@ public final class SEffe {
     final StarChildrenImpactEffect20 impactEffect = (StarChildrenImpactEffect20)manager.effect_44;
     if(manager._10.flags_00 >= 0) {
       final VECTOR translation = new VECTOR();
-      final SVECTOR rotation = new SVECTOR();
       final MATRIX transformMatrix1 = new MATRIX();
       final MATRIX finalTransformMatrix1 = new MATRIX();
       final VECTOR scale = new VECTOR();
@@ -6327,9 +6324,6 @@ public final class SEffe {
           translation.setX(impact.translation_0c[stageNum].getX() + manager._10.trans_04.getX());
           translation.setY(impact.translation_0c[stageNum].getY() + manager._10.trans_04.getY());
           translation.setZ(impact.translation_0c[stageNum].getZ() + manager._10.trans_04.getZ());
-          rotation.setX((short)impact.rotation_2c[stageNum].getX());
-          rotation.setY((short)impact.rotation_2c[stageNum].getY());
-          rotation.setZ((short)impact.rotation_2c[stageNum].getZ());
           final short scaleX = (short)(impact.scale_6c[stageNum].getX() * manager._10.scale_16.getX() >> 12);
           final short scaleY = (short)(impact.scale_6c[stageNum].getY() * manager._10.scale_16.getY() >> 12);
           final short scaleZ = (short)(impact.scale_6c[stageNum].getZ() * manager._10.scale_16.getZ() >> 12);
@@ -6343,7 +6337,7 @@ public final class SEffe {
 
           //LAB_8010f50c
           GsSetLightMatrix(transformMatrix0);
-          RotMatrix_Xyz(rotation, transformMatrix1);
+          RotMatrix_Xyz(impact.rotation_2c[stageNum], transformMatrix1);
           transformMatrix1.transfer.set(translation);
           scale.set(scaleX, scaleY, scaleZ);
           transformMatrix1.scale(scale);
@@ -6539,18 +6533,18 @@ public final class SEffe {
 
   /** Used in the item throwing parabolic */
   @Method(0x80110120L)
-  public static SVECTOR FUN_80110120(final SVECTOR rotation, @Nullable VECTOR translation, final VECTOR in) {
+  public static Vector3f FUN_80110120(final Vector3f rotation, @Nullable VECTOR translation, final VECTOR in) {
     if(translation == null) {
       translation = new VECTOR();
     }
 
     //LAB_8011014c
     final VECTOR sp0x10 = new VECTOR().set(in).sub(translation);
-    rotation.setZ((short)0);
-    rotation.setY((short)ratan2(sp0x10.getX(), sp0x10.getZ()));
+    rotation.z = 0.0f;
+    rotation.y = MathHelper.atan2(sp0x10.getX(), sp0x10.getZ());
 
-    final int s1 = rcos(-rotation.getY()) * sp0x10.getZ() - rsin(-rotation.getY()) * sp0x10.getX();
-    rotation.setX((short)ratan2(-sp0x10.getY(), s1 / 0x1000));
+    final float s1 = MathHelper.cos(-rotation.y) * sp0x10.getZ() - MathHelper.sin(-rotation.y) * sp0x10.getX();
+    rotation.x = MathHelper.atan2(-sp0x10.getY(), s1);
     return rotation;
   }
 
@@ -6563,11 +6557,11 @@ public final class SEffe {
 
     //LAB_80110258
     final VECTOR sp0x10 = new VECTOR().set(translation2).sub(translation1).negate();
-    final SVECTOR sp0x30 = new SVECTOR();
-    sp0x30.setY((short)ratan2(sp0x10.getX(), sp0x10.getZ()));
+    final Vector3f sp0x30 = new Vector3f();
+    sp0x30.y = MathHelper.atan2(sp0x10.getX(), sp0x10.getZ());
 
-    final int s1 = rcos(-sp0x30.getY()) * sp0x10.getZ() - rsin(-sp0x30.getY()) * sp0x10.getX();
-    sp0x30.setX((short)ratan2(-sp0x10.getY(), s1 / 0x1000));
+    final float s1 = MathHelper.cos(-sp0x30.y) * sp0x10.getZ() - MathHelper.sin(-sp0x30.y) * sp0x10.getX();
+    sp0x30.x = MathHelper.atan2(-sp0x10.getY(), s1);
 
     final MATRIX transforms = new MATRIX();
     RotMatrix_Zyx(sp0x30, transforms);
@@ -7087,7 +7081,7 @@ public final class SEffe {
           (s0 * s3.acceleration_24.getZ() / 2 + s3.velocity_18.getZ()) * s0 + s3.value_0c.getZ() >> 8
         );
 
-        final SVECTOR rotation = new SVECTOR();
+        final Vector3f rotation = new Vector3f();
         FUN_80110120(rotation, translation, sp0x10);
 
         final MATRIX rotMatrix = new MATRIX();
