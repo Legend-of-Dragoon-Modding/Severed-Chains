@@ -5401,13 +5401,12 @@ public final class SEffe {
 
   @Method(0x8010c114L)
   public static void renderScreenCaptureEffect(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager) {
-    final MATRIX sp0x10 = new MATRIX().set(identityMatrix_800c3568);
-    final MATRIX transforms = new MATRIX().set(identityMatrix_800c3568);
+    final MATRIX transforms = new MATRIX().identity();
 
     if(manager._10.flags_00 >= 0) {
       final ScreenCaptureEffect1c effect = (ScreenCaptureEffect1c)manager.effect_44;
-      FUN_800e8594(sp0x10, manager);
-      sp0x10.compose(worldToScreenMatrix_800c3548, transforms);
+      FUN_800e8594(transforms, manager);
+      transforms.compose(worldToScreenMatrix_800c3548);
       screenCaptureRenderers_80119fec[effect.rendererIndex_0c].accept(manager, effect, transforms);
     }
 

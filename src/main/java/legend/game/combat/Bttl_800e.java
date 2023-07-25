@@ -1733,7 +1733,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e8594L)
-  public static void  FUN_800e8594(final MATRIX transformMatrix, final EffectManagerData6c<?> manager) {
+  public static void FUN_800e8594(final MATRIX transformMatrix, final EffectManagerData6c<?> manager) {
     RotMatrix_Xyz(manager._10.rot_10, transformMatrix);
     transformMatrix.transfer.set(manager._10.trans_04);
     transformMatrix.scaleL(manager._10.scale_16);
@@ -1765,7 +1765,7 @@ public final class Bttl_800e {
         }
 
         //LAB_800e86ac
-        transformMatrix.compose(baseTransformMatrix, transformMatrix);
+        transformMatrix.compose(baseTransformMatrix);
         currentManager = baseManager;
         scriptIndex = currentManager.scriptIndex_0c;
         //LAB_800e86c8
@@ -1785,7 +1785,7 @@ public final class Bttl_800e {
         }
 
         //LAB_800e8774
-        transformMatrix.compose(sp0x10, transformMatrix);
+        transformMatrix.compose(sp0x10);
         currentManager = null;
         scriptIndex = -1;
       } else {
@@ -1805,13 +1805,13 @@ public final class Bttl_800e {
       worldToScreenMatrix_800c3548.transpose(transposedWs);
       transposedTranslation.set(worldToScreenMatrix_800c3548.transfer).negate();
       transposedTranslation.mul(transposedWs, transposedWs.transfer);
-      transformMatrix.compose(transposedWs, transformMatrix);
+      transformMatrix.compose(transposedWs);
     }
     //LAB_800e8814
   }
 
   @Method(0x800e8c84L)
-  public static BttlScriptData6cSubBase2 FUN_800e8c84(final EffectManagerData6c a0, final long a1) {
+  public static BttlScriptData6cSubBase2 FUN_800e8c84(final EffectManagerData6c<?> a0, final long a1) {
     BttlScriptData6cSubBase2 v1 = a0._58;
 
     //LAB_800e8c98
