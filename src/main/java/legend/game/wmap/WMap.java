@@ -3353,7 +3353,7 @@ public class WMap {
     }
 
     //LAB_800da544
-    final int x;
+    final float x;
     switch(struct258._220 + 1) {
       case 1:
         playSound(0, 4, 0, 0, (short)0, (short)0);
@@ -3369,7 +3369,7 @@ public class WMap {
         struct258._223 = 0;
         struct258._220 = 1;
         struct258.models_0c[2].coord2Param_64.rotate.set(0.0f, struct258.rotation_a4.y, 0.0f);
-        struct258.models_0c[2].scaleVector_fc.setX(0x400);
+        struct258.models_0c[2].scaleVector_fc.x = 0.25f;
         struct258.coord2_34.coord.transfer.setX(struct258.vec_94.getX() >> 12);
         struct258.coord2_34.coord.transfer.setY(struct258.vec_94.getY() >> 12);
         struct258.coord2_34.coord.transfer.setZ(struct258.vec_94.getZ() >> 12);
@@ -3399,16 +3399,16 @@ public class WMap {
       case 2:
         renderWinglyTeleportScreenEffect();
 
-        struct258.models_0c[2].scaleVector_fc.y.add(0x40);
+        struct258.models_0c[2].scaleVector_fc.y += 0.015625f; // 1/64
 
-        if(struct258.models_0c[2].scaleVector_fc.getX() > 0x600) {
-          struct258.models_0c[2].scaleVector_fc.setX(0x600);
+        if(struct258.models_0c[2].scaleVector_fc.x > 0.375f) { // 24/64
+          struct258.models_0c[2].scaleVector_fc.x = 0.375f;
         }
 
         //LAB_800da9fc
-        x = struct258.models_0c[2].scaleVector_fc.getX();
-        struct258.models_0c[2].scaleVector_fc.setY(x);
-        struct258.models_0c[2].scaleVector_fc.setZ(x);
+        x = struct258.models_0c[2].scaleVector_fc.x;
+        struct258.models_0c[2].scaleVector_fc.y = x;
+        struct258.models_0c[2].scaleVector_fc.z = x;
         struct258.vec_94.y.sub(0x6_0000);
 
         _800c66b0.coord2_20.coord.transfer.y.sub(0x60);
@@ -3440,7 +3440,7 @@ public class WMap {
         break;
 
       case 3:
-        struct258.models_0c[2].scaleVector_fc.set(0, 0, 0);
+        struct258.models_0c[2].scaleVector_fc.set(0.0f, 0.0f, 0.0f);
         struct258.models_0c[2].coord2Param_64.rotate.set(MathHelper.TWO_PI / 4.0f, MathHelper.TWO_PI / 2.0f, 0.0f);
 
         _800c66b0.mapRotation_70.y = 0.0f;
@@ -3516,22 +3516,22 @@ public class WMap {
         }
 
         //LAB_800db07c
-        struct258.models_0c[2].scaleVector_fc.x.add(0x200);
+        struct258.models_0c[2].scaleVector_fc.x += 0.125f;
 
-        if(struct258.models_0c[2].scaleVector_fc.getX() > 0x800) {
-          struct258.models_0c[2].scaleVector_fc.setX(0x800);
+        if(struct258.models_0c[2].scaleVector_fc.x > 0.5f) {
+          struct258.models_0c[2].scaleVector_fc.x = 0.5f;
         }
 
         //LAB_800db0f0
-        x = struct258.models_0c[2].scaleVector_fc.getX();
-        struct258.models_0c[2].scaleVector_fc.setY(x);
-        struct258.models_0c[2].scaleVector_fc.setZ(x);
+        x = struct258.models_0c[2].scaleVector_fc.x;
+        struct258.models_0c[2].scaleVector_fc.y = x;
+        struct258.models_0c[2].scaleVector_fc.z = x;
 
         renderCoolonMap(true, 0x1L);
         break;
 
       case 5:
-        struct258.models_0c[2].scaleVector_fc.set(0x800, 0x800, 0x800);
+        struct258.models_0c[2].scaleVector_fc.set(0.5f, 0.5f, 0.5f);
 
         if(FUN_8002a488(6) != 0) {
           struct258._220 = 5;
@@ -3598,16 +3598,16 @@ public class WMap {
         //LAB_800db698
         FUN_800dcc20(struct258.vec_94, sp0x38, sp0x48, 12, struct258._218);
 
-        struct258.models_0c[2].scaleVector_fc.x.sub(170);
+        struct258.models_0c[2].scaleVector_fc.x -= 0.041503906f; // ~1/24
 
-        if(struct258.models_0c[2].scaleVector_fc.getX() < 0) {
-          struct258.models_0c[2].scaleVector_fc.setX(0);
+        if(struct258.models_0c[2].scaleVector_fc.x < 0.0f) {
+          struct258.models_0c[2].scaleVector_fc.x = 0.0f;
         }
 
         //LAB_800db74c
-        x = struct258.models_0c[2].scaleVector_fc.getX();
-        struct258.models_0c[2].scaleVector_fc.setY(x);
-        struct258.models_0c[2].scaleVector_fc.setZ(x);
+        x = struct258.models_0c[2].scaleVector_fc.x;
+        struct258.models_0c[2].scaleVector_fc.y = x;
+        struct258.models_0c[2].scaleVector_fc.z = x;
 
         renderCoolonMap(false, 0);
         break;
@@ -3649,7 +3649,7 @@ public class WMap {
         struct258.rotation_a4.y = struct258.angle_21c;
         _800c66b0.mapRotation_70.y = struct258.angle_21e;
         struct258.models_0c[2].coord2Param_64.rotate.set(0.0f, struct258.rotation_a4.y, 0.0f);
-        struct258.models_0c[2].scaleVector_fc.set(0x600, 0x600, 0x600);
+        struct258.models_0c[2].scaleVector_fc.set(0.375f, 0.375f, 0.375f);
         struct258._220 = 11;
 
         FUN_80019c80(soundFiles_800bcf80[12], 1, 1);
@@ -3694,16 +3694,16 @@ public class WMap {
         }
 
         //LAB_800dbeb4
-        struct258.models_0c[2].scaleVector_fc.x.sub(16);
+        struct258.models_0c[2].scaleVector_fc.x -= 0.00390625f; // 1/256
 
-        if(struct258.models_0c[2].scaleVector_fc.getX() < 1024) {
-          struct258.models_0c[2].scaleVector_fc.setX(1024);
+        if(struct258.models_0c[2].scaleVector_fc.x < 0.25f) { // 64/256
+          struct258.models_0c[2].scaleVector_fc.x = 0.25f;
         }
 
         //LAB_800dbf28
-        x = struct258.models_0c[2].scaleVector_fc.getX();
-        struct258.models_0c[2].scaleVector_fc.setY(x);
-        struct258.models_0c[2].scaleVector_fc.setZ(x);
+        x = struct258.models_0c[2].scaleVector_fc.x;
+        struct258.models_0c[2].scaleVector_fc.y = x;
+        struct258.models_0c[2].scaleVector_fc.z = x;
 
         _800ef1a4.subu(0x1L);
 
@@ -4003,7 +4003,7 @@ public class WMap {
 
       model.coord2_14.coord.transfer.set(struct258.coord2_34.coord.transfer);
       model.coord2Param_64.rotate.set(0.0f, struct258.rotation_a4.y, 0.0f);
-      model.scaleVector_fc.set(0, 0, 0);
+      model.scaleVector_fc.set(0.0f, 0.0f, 0.0f);
     }
 
     //LAB_800dff4c
@@ -4025,23 +4025,23 @@ public class WMap {
     final Model124 model = struct258.models_0c[modelIndex];
     if(modelIndex == 0) {
       //LAB_800e00c4
-      model.scaleVector_fc.set(0x800, 0x666, 0x800);
+      model.scaleVector_fc.set(0.5f, 0.4f, 0.5f);
     } else if(modelIndex == 1) {
       //LAB_800e0114
       if(mapState_800c6798.continentIndex_00 == 7) { // Teleporting
-        model.scaleVector_fc.set(0x1000, 0x1000, 0x1000);
+        model.scaleVector_fc.set(1.0f, 1.0f, 1.0f);
       } else {
-        model.scaleVector_fc.set(0x2000, 0x2000, 0x2000);
+        model.scaleVector_fc.set(2.0f, 2.0f, 2.0f);
       }
 
       //LAB_800e01b8
       //LAB_800e00a4
     } else if(modelIndex == 2) {
       //LAB_800e01c0
-      model.scaleVector_fc.set(0, 0, 0);
+      model.scaleVector_fc.set(0.0f, 0.0f, 0.0f);
     } else if(modelIndex == 3) {
       //LAB_800e0210
-      model.scaleVector_fc.set(0, 0, 0);
+      model.scaleVector_fc.set(0.0f, 0.0f, 0.0f);
     }
 
     //LAB_800e0260
@@ -4069,15 +4069,15 @@ public class WMap {
       //LAB_800e03a0
       GTE.setBackgroundColour(0.78125f, 0.78125f, 0.78125f);
 
-      struct.models_0c[0].scaleVector_fc.set(0x800, 0x666, 0x800);
+      struct.models_0c[0].scaleVector_fc.set(0.5f, 0.4f, 0.5f);
     } else if(modelIndex == 1) {
       //LAB_800e0404
       GTE.setBackgroundColour(0.5f, 0.5f, 0.5f);
 
       if(mapState_800c6798.continentIndex_00 == 7) { // Teleporting
-        struct.models_0c[1].scaleVector_fc.set(0x1000, 0x1000, 0x1000);
+        struct.models_0c[1].scaleVector_fc.set(1.0f, 1.0f, 1.0f);
       } else {
-        struct.models_0c[1].scaleVector_fc.set(0x2000, 0x2000, 0x2000);
+        struct.models_0c[1].scaleVector_fc.set(2.0f, 2.0f, 2.0f);
       }
 
       //LAB_800e04bc
@@ -4151,8 +4151,8 @@ public class WMap {
         }
 
         //LAB_800e0980
-        final int a0 = struct258_800c66a8._24c * 0x40 + (rsin(struct258_800c66a8._24c * 0x200) * 0x100 >> 12);
-        struct258_800c66a8.models_0c[3].scaleVector_fc.set(a0, a0, a0);
+        final float scale = struct258_800c66a8._24c * 0x40 + (rsin(struct258_800c66a8._24c * 0x200) * 0x100 >> 12) / (float)0x1000;
+        struct258_800c66a8.models_0c[3].scaleVector_fc.set(scale, scale, scale);
         struct258_800c66a8.models_0c[struct258_800c66a8.modelIndex_1e4].coord2Param_64.rotate.y = _800c66b0.mapRotation_70.y;
         struct258_800c66a8.rotation_a4.y = _800c66b0.mapRotation_70.y;
       } else if(struct258_800c66a8._248 == 2) {
@@ -4169,16 +4169,16 @@ public class WMap {
         struct258_800c66a8._248 = 3;
       } else if(struct258_800c66a8._248 == 3) {
         //LAB_800e0c00
-        struct258_800c66a8.models_0c[3].scaleVector_fc.x.sub(0x400);
+        struct258_800c66a8.models_0c[3].scaleVector_fc.x -= 0.25f;
 
-        if(struct258_800c66a8.models_0c[3].scaleVector_fc.getX() < 0) {
-          struct258_800c66a8.models_0c[3].scaleVector_fc.setX(0);
+        if(struct258_800c66a8.models_0c[3].scaleVector_fc.x < 0.0f) {
+          struct258_800c66a8.models_0c[3].scaleVector_fc.x = 0.0f;
         }
 
         //LAB_800e0c70
-        final int a0 = struct258_800c66a8.models_0c[3].scaleVector_fc.getX();
-        struct258_800c66a8.models_0c[3].scaleVector_fc.setY(a0);
-        struct258_800c66a8.models_0c[3].scaleVector_fc.setZ(a0);
+        final float a0 = struct258_800c66a8.models_0c[3].scaleVector_fc.x;
+        struct258_800c66a8.models_0c[3].scaleVector_fc.y = a0;
+        struct258_800c66a8.models_0c[3].scaleVector_fc.z = a0;
       }
 
       //LAB_800e0cbc

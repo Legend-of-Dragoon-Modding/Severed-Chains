@@ -401,7 +401,7 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_800209b0
     model.movementType_cc = 0;
     model.b_cd = -2;
-    model.scaleVector_fc.set(0x1000, 0x1000, 0x1000);
+    model.scaleVector_fc.set(1.0f, 1.0f, 1.0f);
     model.vector_10c.set(0x1000, 0x1000, 0x1000);
     model.vector_118.set(0, 0, 0);
   }

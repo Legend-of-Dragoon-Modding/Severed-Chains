@@ -633,8 +633,8 @@ public final class Bttl_800d {
   public static void renderRingGradientEffect(final EffectManagerData6c<EffectManagerData6cInner.RadialGradientType> manager, final int angle, final short[] vertices, final RadialGradientEffect14 effect, final Translucency translucency) {
     if(manager._10.flags_00 >= 0) {
       final VECTOR sp0x20 = new VECTOR().set(
-        rcos(angle) * (manager._10.scale_16.getX() / effect.scaleModifier_01 + manager._10.size_28) >> 12,
-        rsin(angle) * (manager._10.scale_16.getY() / effect.scaleModifier_01 + manager._10.size_28) >> 12, // X is correct
+        (int)(rcos(angle) * (manager._10.scale_16.x / effect.scaleModifier_01 + (manager._10.size_28 >> 12))),
+        (int)(rsin(angle) * (manager._10.scale_16.y / effect.scaleModifier_01 + (manager._10.size_28 >> 12))),
         manager._10.z_2c
       );
 
@@ -643,8 +643,8 @@ public final class Bttl_800d {
       FUN_800cfb14(manager, sp0x20, x0, y0);
 
       final VECTOR sp0x30 = new VECTOR().set(
-        rcos(angle + effect.angleStep_08) * (manager._10.scale_16.getX() / effect.scaleModifier_01 + manager._10.size_28) >> 12,
-        rsin(angle + effect.angleStep_08) * (manager._10.scale_16.getY() / effect.scaleModifier_01 + manager._10.size_28) >> 12,
+        (int)(rcos(angle + effect.angleStep_08) * (manager._10.scale_16.x / effect.scaleModifier_01 + (manager._10.size_28 >> 12))),
+        (int)(rsin(angle + effect.angleStep_08) * (manager._10.scale_16.y / effect.scaleModifier_01 + (manager._10.size_28 >> 12))),
         manager._10.z_2c
       );
 
@@ -685,8 +685,8 @@ public final class Bttl_800d {
 
       //LAB_800d2510
       final VECTOR sp0x38 = new VECTOR().set(
-        rcos(0) * (manager._10.scale_16.getX() / effect.scaleModifier_01) >> 12,
-        rsin(0) * (manager._10.scale_16.getY() / effect.scaleModifier_01) >> 12,
+        (int)(rcos(0) * (manager._10.scale_16.x / effect.scaleModifier_01)),
+        (int)(rsin(0) * (manager._10.scale_16.y / effect.scaleModifier_01)),
         0
       );
 
@@ -703,8 +703,8 @@ public final class Bttl_800d {
         final ShortRef refY1 = new ShortRef().set(refY2.get());
 
         sp0x38.set(
-          rcos(angle + effect.angleStep_08) * (manager._10.scale_16.getX() / effect.scaleModifier_01) >> 12,
-          rsin(angle + effect.angleStep_08) * (manager._10.scale_16.getY() / effect.scaleModifier_01) >> 12,
+          (int)(rcos(angle + effect.angleStep_08) * (manager._10.scale_16.x / effect.scaleModifier_01)),
+          (int)(rsin(angle + effect.angleStep_08) * (manager._10.scale_16.y / effect.scaleModifier_01)),
           0
         );
 
@@ -735,11 +735,11 @@ public final class Bttl_800d {
     final EffectManagerData6c<EffectManagerData6cInner.RadialGradientType> manager = state.innerStruct_00;
 
     //LAB_800d27b4
-    manager._10.scale_16.set((short)0x1000, (short)0x1000, (short)0x1000);
+    manager._10.scale_16.set(1.0f, 1.0f, 1.0f);
 
     final RadialGradientEffect14 effect = (RadialGradientEffect14)manager.effect_44;
     effect.circleSubdivisionModifier_00 = circleSubdivisionModifier;
-    effect.scaleModifier_01 = (rendererIndex - 3 & 0xffff_ffffL) >= 2 ? 4 : 1;
+    effect.scaleModifier_01 = (rendererIndex - 3 & 0xffff_ffffL) >= 2 ? 4.0f : 1.0f;
     effect.renderer_10 = radialGradientEffectRenderers_800fa758[rendererIndex];
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
@@ -764,9 +764,9 @@ public final class Bttl_800d {
     for(int i = 6; i >= 0; i--) {
       //LAB_800d289c
       guardEffectMetrics = guardEffectMetrics_800fa76c.get(i);
-      translation.setX(manager._10.trans_04.getX() + (i != 0 ? manager._10.scale_16.getX() / 4 : 0));
-      translation.setY(manager._10.trans_04.getY() + (guardEffectMetrics.y_02.get() * manager._10.scale_16.getY() >> 12));
-      translation.setZ(manager._10.trans_04.getZ() + (guardEffectMetrics.z_00.get() * manager._10.scale_16.getZ() >> 12));
+      translation.setX(manager._10.trans_04.getX() + (int)(i != 0 ? manager._10.scale_16.x * 0x1000 / 4 : 0));
+      translation.setY(manager._10.trans_04.getY() + (int)(guardEffectMetrics.y_02.get() * manager._10.scale_16.y));
+      translation.setZ(manager._10.trans_04.getZ() + (int)(guardEffectMetrics.z_00.get() * manager._10.scale_16.z));
       effectZ = transformWorldspaceToScreenspace(translation, refXArray[i], refYArray[i]);
     }
 
@@ -813,7 +813,7 @@ public final class Bttl_800d {
     int baseX = 0;
     for(int i = 0; i < 4; i++) {
       s6 = s6 + effect._04 / 4;
-      baseX = baseX + manager._10.scale_16.getX() / 4;
+      baseX = (int)(baseX + manager._10.scale_16.x * 0x1000 / 4);
       r = r - stepR;
       g = g - stepG;
       b = b - stepB;
@@ -822,8 +822,8 @@ public final class Bttl_800d {
       for(int n = 1; n < 7; n++) {
         guardEffectMetrics = guardEffectMetrics_800fa76c.get(n);
         translation.setX(baseX + manager._10.trans_04.getX());
-        translation.setY(((guardEffectMetrics.y_02.get() * manager._10.scale_16.getY() >> 12) * s6 >> 12) + manager._10.trans_04.getY());
-        translation.setZ(((guardEffectMetrics.z_00.get() * manager._10.scale_16.getZ() >> 12) * s6 >> 12) + manager._10.trans_04.getZ());
+        translation.setY(((int)((guardEffectMetrics.y_02.get() * manager._10.scale_16.y) * s6) >> 12) + manager._10.trans_04.getY());
+        translation.setZ(((int)((guardEffectMetrics.z_00.get() * manager._10.scale_16.z) * s6) >> 12) + manager._10.trans_04.getZ());
         effectZ = transformWorldspaceToScreenspace(translation, refXArray[n], refYArray[n]) >> 2;
       }
 
@@ -922,8 +922,8 @@ public final class Bttl_800d {
         deathEffect.sprite_0c.g_15 = objArray[objIndex].g_26 >>> 8;
         deathEffect.sprite_0c.b_16 = objArray[objIndex].b_28 >>> 8;
         deathEffect.sprite_0c.angle_20 = objArray[objIndex].angleModifier_0c;
-        deathEffect.sprite_0c.scaleX_1c = (short)(manager._10.scale_16.getX() + objArray[objIndex].scaleModifier_04);
-        deathEffect.sprite_0c.scaleY_1e = (short)(manager._10.scale_16.getY() + objArray[objIndex].scaleModifier_04);
+        deathEffect.sprite_0c.scaleX_1c = manager._10.scale_16.x + objArray[objIndex].scaleModifier_04;
+        deathEffect.sprite_0c.scaleY_1e = manager._10.scale_16.y + objArray[objIndex].scaleModifier_04;
         renderGenericSpriteAtZOffset0(deathEffect.sprite_0c, objArray[objIndex].translation_14);
       }
       //LAB_800d3174
@@ -949,7 +949,7 @@ public final class Bttl_800d {
           objArray[objIndex].destructionState_00 = 1;
           objArray[objIndex].stepCount_01 = 8;
           objArray[objIndex].scaleModifier_04 = 0;
-          objArray[objIndex].scaleModifierVelocity_08 = (int)(seed_800fa754.advance().get() % 49 + 104);
+          objArray[objIndex].scaleModifierVelocity_08 = (int)(seed_800fa754.advance().get() % 49 + 104) / (float)0x1000;
           objArray[objIndex].angleModifier_0c = MathHelper.psxDegToRad((int)(seed_800fa754.advance().get() % 4097));
           objArray[objIndex].angleModifierVelocity_10 = 0;
           objArray[objIndex].r_24 = manager._10.colour_1c.getX() << 8;
@@ -4391,9 +4391,7 @@ public final class Bttl_800d {
       final MATRIX matrix = model.dobj2ArrPtr_00[i].coord2_04.coord;
 
       final VECTOR trans = new VECTOR();
-      final VECTOR scale = new VECTOR();
       trans.set(transforms.trans_06);
-      scale.set(transforms.scale_00);
 
       if(isInterpolationFrame != 0) { // Interpolation frame
         final LmbTransforms14 nextFrame;
@@ -4415,7 +4413,7 @@ public final class Bttl_800d {
       //LAB_800dd818
       RotMatrix_Zyx(transforms.rot_0c, matrix);
       matrix.transfer.set(trans);
-      matrix.scaleL(scale);
+      matrix.scaleL(transforms.scale_00);
     }
 
     //LAB_800dd84c
@@ -4565,7 +4563,7 @@ public final class Bttl_800d {
     }
 
     //LAB_800ddce8
-    model.scaleVector_fc.set(0x1000, 0x1000, 0x1000);
+    model.scaleVector_fc.set(1.0f, 1.0f, 1.0f);
     model.movementType_cc = 0;
     model.vector_10c.set(0x1000, 0x1000, 0x1000);
     model.vector_118.set(0, 0, 0);
@@ -4820,7 +4818,7 @@ public final class Bttl_800d {
   }
 
   @Method(0x800de618L)
-  public static void getRotationAndScaleFromTransforms(final Vector3f rotOut, final SVECTOR scaleOut, final MATRIX transforms) {
+  public static void getRotationAndScaleFromTransforms(final Vector3f rotOut, final Vector3f scaleOut, final MATRIX transforms) {
     final MATRIX mat = new MATRIX().set(transforms);
     rotOut.x = MathHelper.atan2(-mat.get(5), mat.get(8));
     mat.rotateX(-MathHelper.radToPsxDeg(rotOut.x));
@@ -4828,7 +4826,7 @@ public final class Bttl_800d {
     mat.rotateY(-MathHelper.radToPsxDeg(rotOut.y));
     rotOut.z = MathHelper.atan2(mat.get(3), mat.get(0));
     mat.rotateZ(-MathHelper.radToPsxDeg(rotOut.z));
-    scaleOut.set(mat.get(0), mat.get(4), mat.get(8));
+    scaleOut.set(mat.get(0) / (float)0x1000, mat.get(4) / (float)0x1000, mat.get(8) / (float)0x1000);
   }
 
   @Method(0x800de76cL)

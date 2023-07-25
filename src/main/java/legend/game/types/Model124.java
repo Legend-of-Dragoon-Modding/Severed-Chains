@@ -8,6 +8,7 @@ import legend.core.gte.Tmd;
 import legend.core.gte.VECTOR;
 import legend.game.combat.deff.Cmb;
 import legend.game.combat.deff.Lmb;
+import org.joml.Vector3f;
 
 public class Model124 {
   public final String name;
@@ -87,10 +88,10 @@ public class Model124 {
 
   /** One bit per object in TMD object table */
   public long partInvisible_f4;
-  public final VECTOR scaleVector_fc = new VECTOR();
+  public final Vector3f scaleVector_fc = new Vector3f();
   /** Pretty sure this doesn't include VRAM X/Y */
   public int tpage_108;
-  /** Maybe initial rotation? */
+  /** Maybe initial scale? */
   public final VECTOR vector_10c = new VECTOR();
   /** Maybe initial translation? */
   public final VECTOR vector_118 = new VECTOR();

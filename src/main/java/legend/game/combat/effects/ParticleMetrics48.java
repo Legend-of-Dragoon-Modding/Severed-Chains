@@ -11,7 +11,7 @@ public class ParticleMetrics48 {
   public short y0_10;
   public short y1_14;
   public final VECTOR translation_18 = new VECTOR();
-  public final VECTOR scale_28 = new VECTOR();
+  public final Vector3f scale_28 = new Vector3f();
   public final Vector3f rotation_38 = new Vector3f();
   public final Vector3f colour0_40 = new Vector3f();
   public final Vector3f colour1_44 = new Vector3f();

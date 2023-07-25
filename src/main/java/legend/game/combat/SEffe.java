@@ -737,8 +737,8 @@ public final class SEffe {
       } else {
         particle.particlePosition_50.setY((short)((rsin(particle._1a.getX()) * particle.verticalPositionScale_20 >> 12) - (short)particle.managerTranslation_2c.getY()));
         particle._1a.x.add((short)0x7f);
-        particle.scaleHorizontalStep_0a = particle._1a.getZ();
-        particle.scaleVerticalStep_0c = particle._1a.getZ();
+        particle.scaleHorizontalStep_0a = MathHelper.psxDegToRad(particle._1a.getZ());
+        particle.scaleVerticalStep_0c = MathHelper.psxDegToRad(particle._1a.getZ());
         particle._1a.y.add((short)5);
         particle.verticalPositionScale_20 += 20;
       }
@@ -746,8 +746,8 @@ public final class SEffe {
     } else if(particle.managerTranslation_2c.getY() + particle.particlePosition_50.getY() >= -1000) {
       particle._1a.setY((short)0);
       particle._18 = 1;
-      particle.scaleHorizontalStep_0a = particle._1a.getZ();
-      particle.scaleVerticalStep_0c = particle._1a.getZ();
+      particle.scaleHorizontalStep_0a = MathHelper.psxDegToRad(particle._1a.getZ());
+      particle.scaleVerticalStep_0c = MathHelper.psxDegToRad(particle._1a.getZ());
     }
 
     //LAB_800fbcf4
@@ -930,9 +930,8 @@ public final class SEffe {
 
   @Method(0x800fc61cL)
   public static void FUN_800fc61c(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
-    particle.scaleVertical_08 = (short)(rcos(particle._14) * particle._16 >> 12);
+    particle.scaleVertical_08 = MathHelper.psxDegToRad((short)((rcos(particle._14) * particle._16 >> 12) * manager._10.scale_16.y));
     particle._14 -= particle._18;
-    particle.scaleVertical_08 = (short)(particle.scaleVertical_08 * manager._10.scale_16.getY() >> 12);
 
     if(particle._16 > 0) {
       particle._16 -= particle._1a.getX();
@@ -1013,9 +1012,9 @@ public final class SEffe {
     final ShortRef refY = new ShortRef();
     final int z = FUN_800cfc20(particle.managerRotation_68, particle.managerTranslation_2c, translation, refX, refY);
     if(z >= 40) {
-      final int zScale = 0x50_0000 / z;
-      final int horizontalScale = zScale * (manager._10.scale_16.getX() + particle.scaleHorizontal_06) >> 12;
-      final int verticalScale = zScale * (manager._10.scale_16.getY() + particle.scaleVertical_08) >> 12;
+      final float zScale = (float)0x5000 / z;
+      final float horizontalScale = zScale * (manager._10.scale_16.x + particle.scaleHorizontal_06);
+      final float verticalScale = zScale * (manager._10.scale_16.y + particle.scaleVertical_08);
 
       final float angle;
       if((manager._10.flags_24 & 0x2) != 0) {
@@ -1034,12 +1033,10 @@ public final class SEffe {
       }
 
       //LAB_800fcc20
-      final int width = effect.w_5e / 2 * horizontalScale;
-      final int height = effect.h_5f / 2 * verticalScale;
-      final int left = -width >> 8;
-      final int right = width >> 8;
-      final int top = -height >> 8;
-      final int bottom = height >> 8;
+      final int right = (int)(effect.w_5e / 2 * horizontalScale);
+      final int left = -right;
+      final int bottom = (int)(effect.h_5f / 2 * verticalScale);
+      final int top = -bottom;
       final float cos = MathHelper.cos(angle);
       final float sin = MathHelper.sin(angle);
 
@@ -1300,9 +1297,13 @@ public final class SEffe {
         final ParticleMetrics48 particleMetrics = new ParticleMetrics48();
         particleMetrics.flags_00 = manager._10.flags_00;
         particleMetrics.translation_18.set(particle.managerTranslation_2c).add(rotatedAndTranslatedPosition);
-        particleMetrics.scale_28.setX(manager._10.scale_16.getX() + particle.scaleHorizontal_06);
-        particleMetrics.scale_28.setY(manager._10.scale_16.getY() + particle.scaleVertical_08);
-        particleMetrics.scale_28.setZ(manager._10.scale_16.getX() + particle.scaleHorizontal_06); // This is correct
+
+        particleMetrics.scale_28.set(
+          manager._10.scale_16.x + particle.scaleHorizontal_06,
+          manager._10.scale_16.y + particle.scaleVertical_08,
+          manager._10.scale_16.x + particle.scaleHorizontal_06 // This is correct
+        );
+
         particleMetrics.rotation_38.set(particle.spriteRotation_70).add(particle.managerRotation_68);
         particleMetrics.colour0_40.set(colour.x, colour.y, colour.z);
         particleMetrics.colour1_44.set(0, 0, 0);
@@ -1709,12 +1710,12 @@ public final class SEffe {
     seed_800fa754.advance();
     particle.particleVelocity_58.setY((short)-(seed_800fa754.get() % 61 + 60));
 
-    final short scaleStep;
+    final float scaleStep;
     if(vsyncMode_8007a3b8 != 4) {
-      scaleStep = (short)-(seed_800fa754.advance().get() % 14 + 5);
+      scaleStep = (short)-(seed_800fa754.advance().get() % 14 + 5) / (float)0x1000;
     } else {
       //LAB_800ff248
-      scaleStep = (short)-(seed_800fa754.advance().get() % 21 + 10);
+      scaleStep = (short)-(seed_800fa754.advance().get() % 21 + 10) / (float)0x1000;
     }
 
     particle.scaleHorizontalStep_0a = scaleStep;
@@ -2250,10 +2251,10 @@ public final class SEffe {
     particle.unused_02 = 0x6b;
     particle.particlePosition_50.set((short)0, (short)0, (short)0);
     particle.particleVelocity_58.set((short)0, (short)0, (short)0);
-    particle.scaleHorizontal_06 = 0;
-    particle.scaleVertical_08 = 0;
-    particle.scaleHorizontalStep_0a = 0;
-    particle.scaleVerticalStep_0c = 0;
+    particle.scaleHorizontal_06 = 0.0f;
+    particle.scaleVertical_08 = 0.0f;
+    particle.scaleHorizontalStep_0a = 0.0f;
+    particle.scaleVerticalStep_0c = 0.0f;
     particle.particleAcceleration_60.set((short)0, (short)0, (short)0);
     particle.stepR_8a = 0;
     particle.stepG_8c = 0;
@@ -2317,7 +2318,7 @@ public final class SEffe {
 
     //LAB_80101ba4
     if(s5.hasScaleStep_07.get() == 1) {
-      final byte scaleStep = (byte)(seed_800fa754.advance().get() % (s5._09.get() - s5._08.get() + 1) + s5._08.get());
+      final float scaleStep = (byte)(seed_800fa754.advance().get() % (s5._09.get() - s5._08.get() + 1) + s5._08.get()) / (float)0x1000;
       particle.scaleHorizontalStep_0a = scaleStep;
       particle.scaleVerticalStep_0c = scaleStep;
     }
@@ -2790,10 +2791,10 @@ public final class SEffe {
       int centerLineOriginX = refOuterOriginXa.get() << 8;
       int previousOriginY = refOuterOriginYa.get() << 8;
       int centerLineOriginY = refOuterOriginYa.get() << 8;
-      final short firstSegmentScaleX = (short)(bolt.boltSegments_10[0].scaleMultiplier_28 * manager._10.scale_16.getX() >> 12);
-      final int angle = -ratan2(boltLengthX, boltLengthY);
-      final short outerXOffset = (short)(rcos(angle) * firstSegmentScaleX >> 12);
-      final short outerYOffset = (short)(rsin(angle) * firstSegmentScaleX >> 12);
+      final float firstSegmentScaleX = bolt.boltSegments_10[0].scaleMultiplier_28 * manager._10.scale_16.x;
+      final float angle = -MathHelper.atan2(boltLengthX, boltLengthY);
+      final short outerXOffset = (short)(MathHelper.cos(angle) * firstSegmentScaleX);
+      final short outerYOffset = (short)(MathHelper.sin(angle) * firstSegmentScaleX);
       refOuterOriginXb.set((short)(refOuterOriginXa.get() - outerXOffset));
       refOuterOriginYb.set((short)(refOuterOriginYa.get() - outerYOffset));
       refOuterOriginXa.add(outerXOffset);
@@ -2826,15 +2827,15 @@ public final class SEffe {
             int centerLineEndpointY = centerLineOriginY + segmentLengthY;
             final int currentSegmentEndpointX = centerLineOriginX + segmentLengthX;
             final int currentSegmentEndpointY = centerLineOriginY + segmentLengthY;
-            centerLineOriginX += rcos(angle) * currentSegment.originTranslationMagnitude_2c >> 12 << 8;
-            centerLineOriginY += rsin(angle) * currentSegment.originTranslationMagnitude_2c >> 12 << 8;
-            centerLineEndpointX += rcos(angle) * nextSegment.originTranslationMagnitude_2c >> 12 << 8;
-            centerLineEndpointY += rsin(angle) * nextSegment.originTranslationMagnitude_2c >> 12 << 8;
-            final int scale = currentSegment.scaleMultiplier_28 * manager._10.scale_16.getX() >> 12;
-            final int outerEndpointXa = (centerLineEndpointX >> 8) + (rcos(angle) * scale >> 12);
-            final int outerEndpointYa = (centerLineEndpointY >> 8) + (rsin(angle) * scale >> 12);
-            final int outerEndpointXb = (centerLineEndpointX >> 8) - (rcos(angle) * scale >> 12);
-            final int outerEndpointYb = (centerLineEndpointY >> 8) - (rsin(angle) * scale >> 12);
+            centerLineOriginX += (int)(MathHelper.cos(angle) * currentSegment.originTranslationMagnitude_2c) << 8;
+            centerLineOriginY += (int)(MathHelper.sin(angle) * currentSegment.originTranslationMagnitude_2c) << 8;
+            centerLineEndpointX += (int)(MathHelper.cos(angle) * nextSegment.originTranslationMagnitude_2c) << 8;
+            centerLineEndpointY += (int)(MathHelper.sin(angle) * nextSegment.originTranslationMagnitude_2c) << 8;
+            final float scale = currentSegment.scaleMultiplier_28 * manager._10.scale_16.x;
+            final int outerEndpointXa = (int)((centerLineEndpointX >> 8) + MathHelper.cos(angle) * scale);
+            final int outerEndpointYa = (int)((centerLineEndpointY >> 8) + MathHelper.sin(angle) * scale);
+            final int outerEndpointXb = (int)((centerLineEndpointX >> 8) - MathHelper.cos(angle) * scale);
+            final int outerEndpointYb = (int)((centerLineEndpointY >> 8) - MathHelper.sin(angle) * scale);
 
             if(electricEffect.hasMonochromeBase_29) {
               final int baseX0 = (previousOriginX - centerLineOriginX >> 8) * currentSegment.baseVertexTranslationScale_2e + centerLineOriginX;
@@ -2972,11 +2973,11 @@ public final class SEffe {
         final int boltLengthX = segmentArray[segmentNum - 1].x_00 - segmentArray[0].x_00;
         final int boltLengthY = segmentArray[segmentNum - 1].y_04 - segmentArray[0].y_04;
         final int angle = -ratan2(boltLengthX, boltLengthY);
-        int currentSegmentScale = bolt.boltSegments_10[0].scaleMultiplier_28 * manager._10.scale_16.getX() >> 12;
-        int outerOriginXa = segmentArray[0].x_00 + (rcos(angle) * currentSegmentScale >> 12);
-        int outerOriginYa = segmentArray[0].y_04 + (rsin(angle) * currentSegmentScale >> 12);
-        int outerOriginXb = segmentArray[0].x_00 - (rcos(angle) * currentSegmentScale >> 12);
-        int outerOriginYb = segmentArray[0].y_04 - (rsin(angle) * currentSegmentScale >> 12);
+        float currentSegmentScale = bolt.boltSegments_10[0].scaleMultiplier_28 * manager._10.scale_16.x;
+        int outerOriginXa = segmentArray[0].x_00 + ((int)(rcos(angle) * currentSegmentScale) >> 12);
+        int outerOriginYa = segmentArray[0].y_04 + ((int)(rsin(angle) * currentSegmentScale) >> 12);
+        int outerOriginXb = segmentArray[0].x_00 - ((int)(rcos(angle) * currentSegmentScale) >> 12);
+        int outerOriginYb = segmentArray[0].y_04 - ((int)(rsin(angle) * currentSegmentScale) >> 12);
 
         if(effectShouldRender) {
           final Translucency translucency = Translucency.of(manager._10.flags_00 >>> 28 & 3);
@@ -2992,16 +2993,16 @@ public final class SEffe {
             for(segmentNum = 0; segmentNum < electricEffect.boltSegmentCount_28 - 1; segmentNum++) {
               final LightningBoltEffectSegment30 currentSegment = bolt.boltSegments_10[segmentNum];
               final LightningBoltEffectSegment30 nextSegment = bolt.boltSegments_10[segmentNum + 1];
-              currentSegmentScale = currentSegment.scaleMultiplier_28 * manager._10.scale_16.getX() >> 12;
-              final int nextSegmentScale = nextSegment.scaleMultiplier_28 * manager._10.scale_16.getX() >> 12;
+              currentSegmentScale = currentSegment.scaleMultiplier_28 * manager._10.scale_16.x;
+              final float nextSegmentScale = nextSegment.scaleMultiplier_28 * manager._10.scale_16.x;
 
               if(electricEffect.type1RendererType_18) {
                 currentSegmentOrigin = segmentArray[segmentNum];
                 nextSegmentOrigin = segmentArray[segmentNum + 1];
-                final int outerEndpointXa = nextSegmentOrigin.x_00 + (rcos(angle) * currentSegmentScale >> 12);
-                final int outerEndpointYa = nextSegmentOrigin.y_04 + (rsin(angle) * currentSegmentScale >> 12);
-                final int outerEndpointXb = nextSegmentOrigin.x_00 - (rcos(angle) * currentSegmentScale >> 12);
-                final int outerEndpointYb = nextSegmentOrigin.y_04 - (rsin(angle) * currentSegmentScale >> 12);
+                final int outerEndpointXa = nextSegmentOrigin.x_00 + ((int)(rcos(angle) * currentSegmentScale) >> 12);
+                final int outerEndpointYa = nextSegmentOrigin.y_04 + ((int)(rsin(angle) * currentSegmentScale) >> 12);
+                final int outerEndpointXb = nextSegmentOrigin.x_00 - ((int)(rcos(angle) * currentSegmentScale) >> 12);
+                final int outerEndpointYb = nextSegmentOrigin.y_04 - ((int)(rsin(angle) * currentSegmentScale) >> 12);
 
                 final DVECTOR[] vertexArray = new DVECTOR[4];
                 Arrays.setAll(vertexArray, n -> new DVECTOR());
@@ -3048,8 +3049,8 @@ public final class SEffe {
                 int centerLineOriginX = currentSegmentOrigin.x_00;
                 int centerLineOriginY = currentSegmentOrigin.y_04;
                 int centerLineEndpointY = (nextSegmentOrigin.y_04 - currentSegmentOrigin.y_04) / 2 + currentSegmentOrigin.y_04;
-                final int nextSegmentQuarterScale = nextSegmentScale >> 2;
-                final int currentSegmentQuarterScale = currentSegmentScale >> 2;
+                final float nextSegmentQuarterScale = nextSegmentScale / 4.0f;
+                final float currentSegmentQuarterScale = currentSegmentScale / 4.0f;
 
                 //LAB_801046c4
                 for(int j = 2; j > 0; j--) {
@@ -3321,25 +3322,25 @@ public final class SEffe {
         final ThunderArrowEffectBolt1e s4_1 = data._18[s7][s6];
         final ThunderArrowEffectBolt1e s4_2 = data._18[s7][s6 + 1];
 
-        sp0x18[0].setX((short)(s4_2.x_00 - s4_2._1c));
+        sp0x18[0].setX((short)(s4_2.x_00 - s4_2.size_1c));
         sp0x18[0].setY(s4_2.y_02);
         sp0x18[1].setX((short)(s4_2.x_00 + 1));
         sp0x18[1].setY(s4_2.y_02);
-        sp0x18[2].setX((short)(s4_1.x_00 - s4_1._1c));
+        sp0x18[2].setX((short)(s4_1.x_00 - s4_1.size_1c));
         sp0x18[2].setY(s4_1.y_02);
         sp0x18[3].setX((short)(s4_1.x_00 + 1));
         sp0x18[3].setY(s4_1.y_02);
         renderSegmentGradient(s4_1.colour_0a, s4_2.colour_0a, sp0x18, data.z_14, data._08, translucency);
-        sp0x18[0].setX((short)(s4_2.x_00 - s4_2._1c / 3));
-        sp0x18[2].setX((short)(s4_1.x_00 - s4_1._1c / 3));
+        sp0x18[0].setX((short)(s4_2.x_00 - s4_2.size_1c / 3));
+        sp0x18[2].setX((short)(s4_1.x_00 - s4_1.size_1c / 3));
         renderSegmentGradient(s4_1.colour_04, s4_2.colour_04, sp0x18, data.z_14, data._08, translucency);
-        sp0x18[0].setX((short)(s4_2.x_00 + s4_2._1c));
+        sp0x18[0].setX((short)(s4_2.x_00 + s4_2.size_1c));
         sp0x18[1].setX(s4_2.x_00);
-        sp0x18[2].setX((short)(s4_1.x_00 + s4_1._1c));
+        sp0x18[2].setX((short)(s4_1.x_00 + s4_1.size_1c));
         sp0x18[3].setX(s4_1.x_00);
         renderSegmentGradient(s4_1.colour_0a, s4_2.colour_0a, sp0x18, data.z_14, data._08, translucency);
-        sp0x18[0].setX((short)(s4_2.x_00 + s4_2._1c / 3));
-        sp0x18[2].setX((short)(s4_1.x_00 + s4_1._1c / 3));
+        sp0x18[0].setX((short)(s4_2.x_00 + s4_2.size_1c / 3));
+        sp0x18[2].setX((short)(s4_1.x_00 + s4_1.size_1c / 3));
         renderSegmentGradient(s4_1.colour_04, s4_2.colour_04, sp0x18, data.z_14, data._08, translucency);
       }
     }
@@ -3399,7 +3400,7 @@ public final class SEffe {
         effect._18[s7][s4] = struct1e;
 
         final LightningBoltEffectSegment30 s0 = struct14.boltSegments_10[s4];
-        struct1e._1c = (byte)(s0.scaleMultiplier_28 * manager._10.scale_16.getX() >> 12);
+        struct1e.size_1c = (byte)(s0.scaleMultiplier_28 * manager._10.scale_16.x);
 
         sp0x18.set(s0.origin_00);
         final int z = FUN_800cfb94(manager, struct14.rotation_04, sp0x18, refX, refY) >> 2;
@@ -4573,8 +4574,8 @@ public final class SEffe {
 
     //LAB_80109038
     for(int i = 0; i < effect.count_00; i++) {
-      final int endpointShiftX = (int)(MathHelper.sin(data._10.rot_10.x) * 32.0f * data._10.scale_16.getX() * rainArray[i].angleModifier_0a) >> 12;
-      final int endpointShiftY = (int)(MathHelper.cos(data._10.rot_10.x) * 32.0f * data._10.scale_16.getX() * rainArray[i].angleModifier_0a) >> 12;
+      final int endpointShiftX = (int)(MathHelper.sin(data._10.rot_10.x) * 32.0f * data._10.scale_16.x * rainArray[i].angleModifier_0a);
+      final int endpointShiftY = (int)(MathHelper.cos(data._10.rot_10.x) * 32.0f * data._10.scale_16.x * rainArray[i].angleModifier_0a);
       rainArray[i].x1_06 = rainArray[i].x0_02;
       rainArray[i].y1_08 = rainArray[i].y0_04;
       rainArray[i].x0_02 = rainArray[i].x0_02 + endpointShiftX & 0x1ff;
@@ -4616,22 +4617,22 @@ public final class SEffe {
   @Method(0x80109358L)
   public static void FUN_80109358(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> data) {
     final ScreenDistortionEffectData08 sp48 = (ScreenDistortionEffectData08)data.effect_44;
-    final int sp30 = data._10.scale_16.getX() >> 8;
-    final int sp2c = data._10.scale_16.getY() >> 11;
-    final int sp38 = data._10.scale_16.getZ() * 15 >> 9;
+    final float sp30 = data._10.scale_16.x * 16.0f;
+    final float sp2c = data._10.scale_16.y * 2.0f;
+    final float sp38 = data._10.scale_16.z * 120.0f;
 
     //LAB_801093f0
     for(int s3 = 1; s3 >= -1; s3 -= 2) {
-      final int angle = sp48.angle_00;
-      int angle1 = angle;
-      int angle2 = angle;
-      int s5 = s3 == 1 ? 0 : -1;
+      final float angle = sp48.angle_00;
+      float angle1 = angle;
+      float angle2 = angle;
+      float s5 = s3 == 1 ? 0.0f : -1.0f;
       int sp40 = s3 == 1 ? 120 : 119;
 
       //LAB_80109430
       //LAB_8010944c
       while(s3 != 1 && s5 > -sp38 || s3 == 1 && s5 < sp38) {
-        int s2 = (rsin(angle1) * sp2c >> 12) + 1 + sp2c;
+        float s2 = MathHelper.sin(angle1) * sp2c + 1.0f + sp2c;
 
         if(s2 == 0) {
           s2 = 1;
@@ -4640,8 +4641,8 @@ public final class SEffe {
         //LAB_8010949c
         //LAB_801094b8
         for(int s6 = 0; s6 < s2; s6++) {
-          final int x = rsin(angle2) * sp30 >> 12;
-          final int y = s5 + s6 * s3;
+          final int x = (int)(MathHelper.sin(angle2) * sp30);
+          final int y = (int)(s5 + s6 * s3);
 
           GPU.queueCommand(30, new GpuCommandQuad()
             .bpp(Bpp.BITS_15)
@@ -4699,8 +4700,8 @@ public final class SEffe {
 
     final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager = state.innerStruct_00;
     final ScreenDistortionEffectData08 effect = (ScreenDistortionEffectData08)manager.effect_44;
-    effect.angle_00 = 0x800;
-    effect.angleStep_04 = script.params_20[1].get();
+    effect.angle_00 = MathHelper.PI;
+    effect.angleStep_04 = MathHelper.psxDegToRad(script.params_20[1].get());
     manager._10.flags_00 = 0x4000_0000;
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
@@ -5766,8 +5767,8 @@ public final class SEffe {
         }
 
         //LAB_8010d73c
-        spriteEffect.scaleX_1c = manager._10.scale_16.getX();
-        spriteEffect.scaleY_1e = manager._10.scale_16.getY();
+        spriteEffect.scaleX_1c = manager._10.scale_16.x;
+        spriteEffect.scaleY_1e = manager._10.scale_16.y;
         spriteEffect.angle_20 = feather.spriteAngle_6e;
         translation.set(feather.translation_08).shra(8).add(manager._10.trans_04);
         renderGenericSpriteAtZOffset0(spriteEffect, translation);
@@ -5911,7 +5912,6 @@ public final class SEffe {
     final VECTOR trans = new VECTOR();
     final MATRIX transforms = new MATRIX();
     final MATRIX sp0x98 = new MATRIX();
-    final VECTOR scale = new VECTOR();
 
     //LAB_8010ded8
     for(final GoldDragoonTransformEffectInstance84 instance : effect.parts_08) {
@@ -5920,11 +5920,9 @@ public final class SEffe {
         trans.setY((instance.trans_08.getY() >> 8) + manager._10.trans_04.getY());
         trans.setZ((instance.trans_08.getZ() >> 8) + manager._10.trans_04.getZ());
 
-        scale.set(manager._10.scale_16);
-
         RotMatrix_Xyz(instance.rot_38, transforms);
         transforms.transfer.set(trans);
-        transforms.scale(scale);
+        transforms.scale(manager._10.scale_16);
 
         dobj2.tmd_08 = instance.tmd_70;
 
@@ -5966,8 +5964,8 @@ public final class SEffe {
       final StarChildrenMeteorEffectInstance10 meteor = meteorArray[i];
       meteor.centerOffsetX_02 = rand() % 321 - 160;
       meteor.centerOffsetY_04 = rand() % 241 - 120;
-      final int sideScale = rand() % 1025 + 1024;
-      meteor.scale_0a = sideScale << 1;
+      final float sideScale = (rand() % 1025 + 1024) / (float)0x1000;
+      meteor.scale_0a = sideScale * 2.0f;
       meteor.scaleW_0c = sideScale;
       meteor.scaleH_0e = sideScale;
     }
@@ -6018,8 +6016,8 @@ public final class SEffe {
     for(int i = 0; i < meteorEffect.count_00; i++) {
       final StarChildrenMeteorEffectInstance10 meteor = meteorArray[i];
 
-      final int w = meteor.scaleW_0c * meteorEffect.metrics_04.w_04 >> 12;
-      final int h = meteor.scaleH_0e * meteorEffect.metrics_04.h_05 >> 12;
+      final int w = (int)(meteor.scaleW_0c * meteorEffect.metrics_04.w_04);
+      final int h = (int)(meteor.scaleH_0e * meteorEffect.metrics_04.h_05);
       final int x = meteor.centerOffsetX_02 - w / 2;
       final int y = meteor.centerOffsetY_04 - h / 2;
 
@@ -6055,10 +6053,10 @@ public final class SEffe {
     final StarChildrenMeteorEffectInstance10[] meteorArray = meteorEffect.meteorArray_0c;
     for(int i = 0; i < meteorEffect.count_00; i++) {
       final StarChildrenMeteorEffectInstance10 meteor = meteorArray[i];
-      meteor.centerOffsetX_02 += (short)((int)(MathHelper.sin(manager._10.rot_10.x) * 32 * manager._10.scale_16.getX() * meteor.scale_0a) >> 24);
-      meteor.centerOffsetY_04 += (short)((int)(MathHelper.cos(manager._10.rot_10.x) * 32 * manager._10.scale_16.getX() * meteor.scale_0a) >> 24);
+      meteor.centerOffsetX_02 += (short)(MathHelper.sin(manager._10.rot_10.x) * 32 * manager._10.scale_16.x * meteor.scale_0a);
+      meteor.centerOffsetY_04 += (short)(MathHelper.cos(manager._10.rot_10.x) * 32 * manager._10.scale_16.x * meteor.scale_0a);
 
-      if(meteor.scale_0a * 120 + 50 >> 12 < meteor.centerOffsetY_04) {
+      if(meteor.scale_0a * 120 + 50 < meteor.centerOffsetY_04) {
         meteor.centerOffsetY_04 = -120;
         meteor.centerOffsetX_02 = rand() % 321 - 160;
       }
@@ -6167,8 +6165,8 @@ public final class SEffe {
       spriteEffect.r_14 = manager._10.colour_1c.getX();
       spriteEffect.g_15 = manager._10.colour_1c.getY();
       spriteEffect.b_16 = manager._10.colour_1c.getZ();
-      spriteEffect.scaleX_1c = manager._10.scale_16.getX();
-      spriteEffect.scaleY_1e = manager._10.scale_16.getY();
+      spriteEffect.scaleX_1c = manager._10.scale_16.x;
+      spriteEffect.scaleY_1e = manager._10.scale_16.y;
       spriteEffect.angle_20 = manager._10.rot_10.x;
       translation.set(manager._10.trans_04).add(star.translation_04);
       renderGenericSpriteAtZOffset0(spriteEffect, translation);
@@ -6213,8 +6211,8 @@ public final class SEffe {
       impact.translation_0c[1].setZ(impact.translation_0c[0].getZ());
       impact.rotation_2c[0].set(0.0f, MathHelper.psxDegToRad(rand() % 4096), 0.0f);
       impact.rotation_2c[1].set(0.0f, MathHelper.psxDegToRad(rand() % 4096), 0.0f);
-      impact.scale_6c[0].set(0, 0, 0);
-      impact.scale_6c[1].set(0xc00, 0x400, 0xc00);
+      impact.scale_6c[0].zero();
+      impact.scale_6c[1].set(0.75f, 0.25f, 0.75f);
       impact.opacity_8c[0].set(0xff, 0xff, 0xff);
       impact.opacity_8c[1].set(0xff, 0xff, 0xff);
       impact.explosionObjTable_94 = ((DeffPart.TmdType)getDeffPart(0x300_7100)).tmd_0c.tmdPtr_00.tmd.objTable[0];
@@ -6251,12 +6249,12 @@ public final class SEffe {
             impact.renderImpact_00 = true;
             impact.renderShockwave_01 = true;
             impact.rotation_2c[0].y += MathHelper.TWO_PI / 32.0f;
-            impact.scale_6c[0].x.add(0x266);
-            impact.scale_6c[0].z.add(0x266);
+            impact.scale_6c[0].x += 0.15f;
+            impact.scale_6c[0].z += 0.15f;
             impact.explosionHeightAngle_a0 += MathHelper.TWO_PI / 20.0f;
 
-            final int explosionHeight = (int)(MathHelper.sin(impact.explosionHeightAngle_a0) * 0x1600);
-            impact.scale_6c[0].setY(Math.max(explosionHeight, 0));
+            final float explosionHeight = MathHelper.sin(impact.explosionHeightAngle_a0) * 1.375f;
+            impact.scale_6c[0].y = Math.max(explosionHeight, 0.0f);
 
             //LAB_8010f2a8
             impact.opacity_8c[0].r.sub(23);
@@ -6265,8 +6263,8 @@ public final class SEffe {
           } else { // Stage 1
             if(currentAnimFrame == 9) {
               impact.translation_0c[0].setY(-0x800);
-              impact.scale_6c[0].setX(0x6800);
-              impact.scale_6c[0].setZ(0x6800);
+              impact.scale_6c[0].x = 6.5f;
+              impact.scale_6c[0].z = 6.5f;
             }
 
             //LAB_8010f1dc
@@ -6279,9 +6277,9 @@ public final class SEffe {
               //LAB_8010f1f0
               impact.rotation_2c[1].y += MathHelper.TWO_PI / 32.0f;
               impact.explosionHeightAngle_a0 += MathHelper.TWO_PI / 8.0f;
-              impact.scale_6c[1].x.sub(0x1c0);
-              impact.scale_6c[1].y.add(0x600);
-              impact.scale_6c[1].z.sub(0x1c0);
+              impact.scale_6c[1].x -= 0.109375f;
+              impact.scale_6c[1].y += 0.375f;
+              impact.scale_6c[1].z -= 0.109375f;
             }
             //LAB_8010f22c
           }
@@ -6307,7 +6305,7 @@ public final class SEffe {
       final VECTOR translation = new VECTOR();
       final MATRIX transformMatrix1 = new MATRIX();
       final MATRIX finalTransformMatrix1 = new MATRIX();
-      final VECTOR scale = new VECTOR();
+      final Vector3f scale = new Vector3f();
       final MATRIX transformMatrix0 = new MATRIX();
 
       final GsDOBJ2 dobj = new GsDOBJ2();
@@ -6322,9 +6320,9 @@ public final class SEffe {
           translation.setX(impact.translation_0c[stageNum].getX() + manager._10.trans_04.getX());
           translation.setY(impact.translation_0c[stageNum].getY() + manager._10.trans_04.getY());
           translation.setZ(impact.translation_0c[stageNum].getZ() + manager._10.trans_04.getZ());
-          final short scaleX = (short)(impact.scale_6c[stageNum].getX() * manager._10.scale_16.getX() >> 12);
-          final short scaleY = (short)(impact.scale_6c[stageNum].getY() * manager._10.scale_16.getY() >> 12);
-          final short scaleZ = (short)(impact.scale_6c[stageNum].getZ() * manager._10.scale_16.getZ() >> 12);
+          final float scaleX = impact.scale_6c[stageNum].x * manager._10.scale_16.x;
+          final float scaleY = impact.scale_6c[stageNum].y * manager._10.scale_16.y;
+          final float scaleZ = impact.scale_6c[stageNum].z * manager._10.scale_16.z;
           final int r = impact.opacity_8c[stageNum].getR() * manager._10.colour_1c.getX() >> 8;
           final int g = impact.opacity_8c[stageNum].getG() * manager._10.colour_1c.getY() >> 8;
           final int b = impact.opacity_8c[stageNum].getB() * manager._10.colour_1c.getZ() >> 8;
@@ -6893,7 +6891,7 @@ public final class SEffe {
   @Method(0x801116c4L)
   public static MATRIX FUN_801116c4(final MATRIX a0, final int scriptIndex, final int a2) {
     final VECTOR trans = new VECTOR();
-    final VECTOR scale = new VECTOR();
+    final Vector3f scale = new Vector3f();
     final MATRIX transforms = new MATRIX();
     final BattleScriptDataBase s0 = (BattleScriptDataBase)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
     if(BattleScriptDataBase.EM__.equals(s0.magic_00)) {
@@ -7415,16 +7413,16 @@ public final class SEffe {
    * as it gets the ratio of script index 1 to itself.
    */
   @Method(0x80113624L)
-  public static SVECTOR getScaleRatio(final int scriptIndex1, final int scriptIndex2, final SVECTOR outScale) {
+  public static Vector3f getScaleRatio(final int scriptIndex1, final int scriptIndex2, final Vector3f outScale) {
     ScriptState<?> a3 = scriptStatePtrArr_800bc1c0[scriptIndex1];
     BattleScriptDataBase t0 = (BattleScriptDataBase)a3.innerStruct_00;
 
-    final SVECTOR t1;
+    final Vector3f t1;
     if(BattleScriptDataBase.EM__.equals(t0.magic_00)) {
       t1 = ((EffectManagerData6c<?>)t0)._10.scale_16;
     } else {
       //LAB_80113660
-      t1 = new SVECTOR().set(((BattleObject27c)t0).model_148.scaleVector_fc);
+      t1 = ((BattleObject27c)t0).model_148.scaleVector_fc;
     }
 
     //LAB_801136a0
@@ -7435,33 +7433,33 @@ public final class SEffe {
       a3 = scriptStatePtrArr_800bc1c0[scriptIndex1];
       t0 = (BattleScriptDataBase)a3.innerStruct_00;
 
-      final SVECTOR svec;
+      final Vector3f svec;
       if(BattleScriptDataBase.EM__.equals(t0.magic_00)) {
         svec = ((EffectManagerData6c<?>)t0)._10.scale_16;
       } else {
         //LAB_80113708
-        svec = new SVECTOR().set(((BattleObject27c)t0).model_148.scaleVector_fc);
+        svec = new Vector3f(((BattleObject27c)t0).model_148.scaleVector_fc);
       }
 
       //LAB_80113744
-      if(svec.getX() == 0) {
-        svec.setX((short)1);
+      if(svec.x == 0.0f) {
+        svec.x = Float.MIN_NORMAL;
       }
 
       //LAB_80113758
-      if(svec.getY() == 0) {
-        svec.setY((short)1);
+      if(svec.y == 0.0f) {
+        svec.y = Float.MIN_NORMAL;
       }
 
       //LAB_8011376c
-      if(svec.getZ() == 0) {
-        svec.setZ((short)1);
+      if(svec.z == 0.0f) {
+        svec.z = Float.MIN_NORMAL;
       }
 
       //LAB_80113780
-      outScale.setX((short)((t1.getX() << 12) / svec.getX()));
-      outScale.setY((short)((t1.getY() << 12) / svec.getY()));
-      outScale.setZ((short)((t1.getZ() << 12) / svec.getZ()));
+      outScale.x = t1.x / svec.x;
+      outScale.y = t1.y / svec.y;
+      outScale.z = t1.z / svec.z;
     }
 
     //LAB_801137ec
@@ -7469,49 +7467,49 @@ public final class SEffe {
   }
 
   @Method(0x801137f8L)
-  public static SVECTOR getScaleDifference(final int scriptIndex1, final int scriptIndex2, final SVECTOR a2) {
+  public static Vector3f getScaleDifference(final int scriptIndex1, final int scriptIndex2, final Vector3f out) {
     ScriptState<?> a0_0 = scriptStatePtrArr_800bc1c0[scriptIndex1];
     BattleScriptDataBase a3 = (BattleScriptDataBase)a0_0.innerStruct_00;
 
-    final SVECTOR t0;
+    final Vector3f t0;
     if(BattleScriptDataBase.EM__.equals(a3.magic_00)) {
       t0 = ((EffectManagerData6c<?>)a3)._10.scale_16;
     } else {
       //LAB_80113834
-      t0 = new SVECTOR().set(((BattleObject27c)a3).model_148.scaleVector_fc);
+      t0 = ((BattleObject27c)a3).model_148.scaleVector_fc;
     }
 
     //LAB_80113874
     if(scriptIndex2 == -1) {
-      a2.set(t0);
+      out.set(t0);
     } else {
       //LAB_801138a4
       a0_0 = scriptStatePtrArr_800bc1c0[scriptIndex2];
       a3 = (BattleScriptDataBase)a0_0.innerStruct_00;
 
-      final SVECTOR a0_1;
+      final Vector3f a0_1;
       if(BattleScriptDataBase.EM__.equals(a3.magic_00)) {
         a0_1 = ((EffectManagerData6c<?>)a3)._10.scale_16;
       } else {
         //LAB_801138dc
-        a0_1 = new SVECTOR().set(((BattleObject27c)a3).model_148.scaleVector_fc);
+        a0_1 = ((BattleObject27c)a3).model_148.scaleVector_fc;
       }
 
       //LAB_8011391c
-      a2.set(t0).sub(a0_1);
+      out.set(t0).sub(a0_1);
     }
 
     //LAB_80113958
-    return a2;
+    return out;
   }
 
   @Method(0x80113964L)
   public static FlowControl scriptGetScaleRatio(final RunningScript<?> script) {
-    final SVECTOR sp0x10 = new SVECTOR();
+    final Vector3f sp0x10 = new Vector3f();
     getScaleRatio(script.params_20[0].get(), script.params_20[1].get(), sp0x10);
-    script.params_20[2].set(sp0x10.getX());
-    script.params_20[3].set(sp0x10.getY());
-    script.params_20[4].set(sp0x10.getZ());
+    script.params_20[2].set((int)(sp0x10.x * 0x1000));
+    script.params_20[3].set((int)(sp0x10.y * 0x1000));
+    script.params_20[4].set((int)(sp0x10.z * 0x1000));
     return FlowControl.CONTINUE;
   }
 
@@ -7520,10 +7518,10 @@ public final class SEffe {
   public static FlowControl scriptSetRelativeScale(final RunningScript<?> script) {
     final int t1 = script.params_20[0].get();
     final int a1 = script.params_20[1].get();
-    final short x = (short)script.params_20[2].get();
-    final short y = (short)script.params_20[3].get();
-    final short z = (short)script.params_20[4].get();
-    final SVECTOR sp0x00 = new SVECTOR();
+    final float x = (short)script.params_20[2].get() / (float)0x1000;
+    final float y = (short)script.params_20[3].get() / (float)0x1000;
+    final float z = (short)script.params_20[4].get() / (float)0x1000;
+    final Vector3f sp0x00 = new Vector3f();
     if(a1 == -1) {
       sp0x00.set(x, y, z);
     } else {
@@ -7531,19 +7529,19 @@ public final class SEffe {
       final ScriptState<?> state = scriptStatePtrArr_800bc1c0[a1];
       final BattleScriptDataBase a1_0 = (BattleScriptDataBase)state.innerStruct_00;
 
-      final SVECTOR v1;
+      final Vector3f v1;
       if(BattleScriptDataBase.EM__.equals(a1_0.magic_00)) {
         v1 = ((EffectManagerData6c<?>)a1_0)._10.scale_16;
       } else {
         //LAB_80113a64
-        v1 = new SVECTOR().set(((BattleObject27c)a1_0).model_148.scaleVector_fc);
+        v1 = ((BattleObject27c)a1_0).model_148.scaleVector_fc;
       }
 
       //LAB_80113aa0
       //LAB_80113abc
       //LAB_80113ae0
       //LAB_80113b04
-      sp0x00.set((short)(x * v1.getX() >> 12), (short)(y * v1.getY() >> 12), (short)(z * v1.getZ() >> 12));
+      sp0x00.set(x * v1.x, y * v1.y, z * v1.z);
     }
 
     //LAB_80113b0c
@@ -7566,7 +7564,13 @@ public final class SEffe {
   public static int tickScaleScaler(final EffectManagerData6c<?> manager, final TransformScalerEffect34 scaler) {
     scaler.velocity_18.add(scaler.acceleration_24);
     scaler.value_0c.add(scaler.velocity_18);
-    manager._10.scale_16.set(scaler.value_0c);
+
+    manager._10.scale_16.set(
+      scaler.value_0c.getX() / (float)0x1000,
+      scaler.value_0c.getY() / (float)0x1000,
+      scaler.value_0c.getZ() / (float)0x1000
+    );
+
     if(scaler.stepTicker_32 != -1) {
       scaler.stepTicker_32--;
 
@@ -7593,7 +7597,13 @@ public final class SEffe {
     final TransformScalerEffect34 scaleScaler = FUN_800e8dd4(scalerManager, 3, 0, SEffe::tickScaleScaler, new TransformScalerEffect34());
     scaleScaler.scriptIndex_30 = -1;
     scaleScaler.stepTicker_32 = (short)-1;
-    scaleScaler.value_0c.set(scalerManager._10.scale_16);
+
+    scaleScaler.value_0c.set(
+      (int)(scalerManager._10.scale_16.x * 0x1000),
+      (int)(scalerManager._10.scale_16.y * 0x1000),
+      (int)(scalerManager._10.scale_16.z * 0x1000)
+    );
+
     scaleScaler.velocity_18.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
     scaleScaler.acceleration_24.set(script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get());
     return FlowControl.CONTINUE;
@@ -7605,15 +7615,15 @@ public final class SEffe {
    */
   @Method(0x80113db8L)
   public static FlowControl FUN_80113db8(final long a0, final RunningScript<?> script) {
-    final int s7 = script.params_20[0].get();
-    final int s3 = script.params_20[1].get();
+    final int scriptIndex1 = script.params_20[0].get();
+    final int scriptIndex2 = script.params_20[1].get();
     final int s2 = script.params_20[2].get();
-    final int s4 = script.params_20[3].get();
-    final int s5 = script.params_20[4].get();
-    final int s6 = script.params_20[5].get();
+    final float x = script.params_20[3].get() / (float)0x1000;
+    final float y = script.params_20[4].get() / (float)0x1000;
+    final float z = script.params_20[5].get() / (float)0x1000;
 
     if(s2 >= 0) {
-      final EffectManagerData6c<?> s1 = (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[s7].innerStruct_00;
+      final EffectManagerData6c<?> s1 = (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[scriptIndex1].innerStruct_00;
 
       if((s1.flags_04 & 0x8) != 0) {
         FUN_800e8d04(s1, 0x3L);
@@ -7622,23 +7632,23 @@ public final class SEffe {
       //LAB_80113e70
       final TransformScalerEffect34 s0 = FUN_800e8dd4(s1, 3, 0, SEffe::tickScaleScaler, new TransformScalerEffect34());
 
-      final VECTOR sp0x18 = new VECTOR().set(s4, s5, s6);
+      final Vector3f sp0x18 = new Vector3f(x, y, z);
       if(a0 == 0) {
         //LAB_80113eac
-        final SVECTOR sp0x28 = new SVECTOR();
-        getScaleDifference(s7, s3, sp0x28);
-        sp0x18.sub(sp0x28);
+        final Vector3f diff = new Vector3f();
+        getScaleDifference(scriptIndex1, scriptIndex2, diff);
+        sp0x18.sub(diff);
       } else if(a0 == 1) {
         //LAB_80113ee8
-        if(s3 != -1) {
+        if(scriptIndex2 != -1) {
           //LAB_80113f04
-          final SVECTOR sp0x28 = new SVECTOR();
-          getScaleRatio(s3, -1, sp0x28);
+          final Vector3f ratio = new Vector3f();
+          getScaleRatio(scriptIndex2, -1, ratio);
 
           //LAB_80113f2c
           //LAB_80113f50
           //LAB_80113f74
-          sp0x18.mul(sp0x28).div(0x1000);
+          sp0x18.mul(ratio);
         }
 
         //LAB_80113f7c
@@ -7651,10 +7661,18 @@ public final class SEffe {
       //LAB_80113fc0
       s0.scriptIndex_30 = -1;
       s0.stepTicker_32 = (short)s2;
-      s0.value_0c.set(s1._10.scale_16);
+      s0.value_0c.set(
+        (int)(s1._10.scale_16.x * 0x1000),
+        (int)(s1._10.scale_16.y * 0x1000),
+        (int)(s1._10.scale_16.z * 0x1000)
+      );
 
       if(s2 != 0) {
-        s0.velocity_18.set(sp0x18).div(s2);
+        s0.velocity_18.set(
+          (int)(sp0x18.x * 0x1000 / s2),
+          (int)(sp0x18.y * 0x1000 / s2),
+          (int)(sp0x18.z * 0x1000 / s2)
+        );
       } else {
         s0.velocity_18.set(-1, -1, -1);
       }
@@ -8086,7 +8104,7 @@ public final class SEffe {
 
       sp0x50._10.trans_04.set(0, 0, 0);
       sp0x50._10.rot_10.zero();
-      sp0x50._10.scale_16.set((short)0x1000, (short)0x1000, (short)0x1000);
+      sp0x50._10.scale_16.set(1.0f, 1.0f, 1.0f);
 
       sp0x50.scriptIndex_0c = scriptIndex;
       sp0x50.coord2Index_0d = coord2Index;
@@ -8095,12 +8113,12 @@ public final class SEffe {
       calculateEffectTransforms(transforms, sp0x50);
 
       final Vector3f rot = new Vector3f();
-      final SVECTOR scale = new SVECTOR();
+      final Vector3f scale = new Vector3f();
       getRotationAndScaleFromTransforms(rot, scale, transforms);
       rot.negate();
       RotMatrix_Zyx(rot, transforms);
 
-      transforms.scaleL(new VECTOR().set(0x100_0000, 0x100_0000, 0x100_0000).div(scale));
+      transforms.scaleL(new Vector3f(0x100, 0x100, 0x100).div(scale));
       sp0x10.mul(transforms, sp0x30);
 
       final VECTOR sp0x100 = new VECTOR().set(sp0x10.transfer).sub(transforms.transfer);
@@ -8378,9 +8396,7 @@ public final class SEffe {
     sp0x10.compose(matrix, sp0x10);
     final int scale = manager._10.scale_28;
     sp0x10.scaleL(new VECTOR().set(scale, scale, scale));
-    manager._10.scale_16.setX((short)(manager._10.scale_16.getX() * scale / 0x1000));
-    manager._10.scale_16.setY((short)(manager._10.scale_16.getY() * scale / 0x1000));
-    manager._10.scale_16.setZ((short)(manager._10.scale_16.getZ() * scale / 0x1000));
+    manager._10.scale_16.mul(scale / (float)0x1000);
 
     final int type = deffFlags & 0xff00_0000;
     if(type == 0x300_0000) {
@@ -8434,11 +8450,11 @@ public final class SEffe {
       final int z = perspectiveTransform(sp0x58, sp0x80);
       if(z >= 0x50) {
         //LAB_801163c4
-        final int a1 = (projectionPlaneDistance_1f8003f8.get() * 2 << 12) / z * manager._10.scale_16.getZ() / 0x1000;
-        final int l = -w / 2 * a1 / 0x1000;
-        final int r = w / 2 * a1 / 0x1000;
-        final int t = -h / 2 * a1 / 0x1000;
-        final int b = h / 2 * a1 / 0x1000;
+        final float a1 = projectionPlaneDistance_1f8003f8.get() * 2.0f / z * manager._10.scale_16.z;
+        final int l = (int)(-w / 2.0f * a1);
+        final int r = (int)(w / 2.0f * a1);
+        final int t = (int)(-h / 2.0f * a1);
+        final int b = (int)(h / 2.0f * a1);
         final float sin = MathHelper.sin(manager._10.rot_10.z);
         final float cos = MathHelper.cos(manager._10.rot_10.z);
         final int sinL = (int)(l * sin);
@@ -8516,9 +8532,9 @@ public final class SEffe {
         manager._10.trans_04.setX((a1.trans_06.getX() * s1 + a0.trans_06.getX() * s0) / 0x2000);
         manager._10.trans_04.setY((a1.trans_06.getY() * s1 + a0.trans_06.getY() * s0) / 0x2000);
         manager._10.trans_04.setZ((a1.trans_06.getZ() * s1 + a0.trans_06.getZ() * s0) / 0x2000);
-        manager._10.scale_16.setX((short)((a1.scale_00.getX() * s1 + a0.scale_00.getX() * s0) / 0x2000));
-        manager._10.scale_16.setY((short)((a1.scale_00.getY() * s1 + a0.scale_00.getY() * s0) / 0x2000));
-        manager._10.scale_16.setZ((short)((a1.scale_00.getZ() * s1 + a0.scale_00.getZ() * s0) / 0x2000));
+        manager._10.scale_16.x = (a1.scale_00.x * s1 + a0.scale_00.x * s0) / 0x2000;
+        manager._10.scale_16.y = (a1.scale_00.y * s1 + a0.scale_00.y * s0) / 0x2000;
+        manager._10.scale_16.z = (a1.scale_00.z * s1 + a0.scale_00.z * s0) / 0x2000;
         FUN_8011619c(manager, effect, effect._14[lmb._08[i]._00], matrix);
       }
     }
@@ -8561,19 +8577,19 @@ public final class SEffe {
           final LmbType1.Sub04 v1 = lmb._0c[i];
 
           if((v1._00 & 0x8000) == 0) {
-            transforms.scale_00.setX(lmb._14[a0_0]);
+            transforms.scale_00.x = lmb._14[a0_0];
             a0_0++;
           }
 
           //LAB_80116ca0
           if((v1._00 & 0x4000) == 0) {
-            transforms.scale_00.setY(lmb._14[a0_0]);
+            transforms.scale_00.y = lmb._14[a0_0];
             a0_0++;
           }
 
           //LAB_80116cc0
           if((v1._00 & 0x2000) == 0) {
-            transforms.scale_00.setZ(lmb._14[a0_0]);
+            transforms.scale_00.z = lmb._14[a0_0];
             a0_0++;
           }
 
@@ -8624,19 +8640,19 @@ public final class SEffe {
         final LmbType1.Sub04 a2 = lmb._0c[i];
 
         if((a2._00 & 0x8000) == 0) {
-          transforms.scale_00.setX((short)((transforms.scale_00.getX() * s1 + lmb._14[a0_0] * s0) / 0x2000));
+          transforms.scale_00.x = (transforms.scale_00.x * s1 + lmb._14[a0_0] * s0) / 0x2000;
           a0_0++;
         }
 
         //LAB_80116e34
         if((a2._00 & 0x4000) == 0) {
-          transforms.scale_00.setY((short)((transforms.scale_00.getY() * s1 + lmb._14[a0_0] * s0) / 0x2000));
+          transforms.scale_00.y = (transforms.scale_00.y * s1 + lmb._14[a0_0] * s0) / 0x2000;
           a0_0++;
         }
 
         //LAB_80116e80
         if((a2._00 & 0x2000) == 0) {
-          transforms.scale_00.setZ((short)((transforms.scale_00.getZ() * s1 + lmb._14[a0_0] * s0) / 0x2000));
+          transforms.scale_00.z = (transforms.scale_00.z * s1 + lmb._14[a0_0] * s0) / 0x2000;
           a0_0++;
         }
 
@@ -8751,19 +8767,19 @@ public final class SEffe {
             a0_0++;
 
             if((flags & 0x8000) == 0) {
-              transform.scale_00.x.add((short)(MEMORY.ref(1, a0_0).offset(0x0L).getSigned() << shift));
+              transform.scale_00.x += MEMORY.ref(1, a0_0).offset(0x0L).getSigned() << shift;
               a0_0++;
             }
 
             //LAB_801172c8
             if((flags & 0x4000) == 0) {
-              transform.scale_00.y.add((short)(MEMORY.ref(1, a0_0).offset(0x0L).getSigned() << shift));
+              transform.scale_00.y += MEMORY.ref(1, a0_0).offset(0x0L).getSigned() << shift;
               a0_0++;
             }
 
             //LAB_801172f0
             if((flags & 0x2000) == 0) {
-              transform.scale_00.z.add((short)(MEMORY.ref(1, a0_0).offset(0x0L).getSigned() << shift));
+              transform.scale_00.z += MEMORY.ref(1, a0_0).offset(0x0L).getSigned() << shift;
               a0_0++;
             }
           }
@@ -8830,17 +8846,17 @@ public final class SEffe {
           final int flags = lmb._0c[i];
 
           if((flags & 0x8000) == 0) {
-            transformHi.scale_00.setX((short)((transformLo.scale_00.getX() * s2 + originalTransform.scale_00.getX() * s0) / 0x2000));
+            transformHi.scale_00.x = (transformLo.scale_00.x * s2 + originalTransform.scale_00.x * s0) / 0x2000;
           }
 
           //LAB_80117730
           if((flags & 0x4000) == 0) {
-            transformHi.scale_00.setY((short)((transformLo.scale_00.getY() * s2 + originalTransform.scale_00.getY() * s0) / 0x2000));
+            transformHi.scale_00.y = (transformLo.scale_00.y * s2 + originalTransform.scale_00.y * s0) / 0x2000;
           }
 
           //LAB_80117774
           if((flags & 0x2000) == 0) {
-            transformHi.scale_00.setZ((short)((transformLo.scale_00.getZ() * s2 + originalTransform.scale_00.getZ() * s0) / 0x2000));
+            transformHi.scale_00.z = (transformLo.scale_00.z * s2 + originalTransform.scale_00.z * s0) / 0x2000;
           }
 
           //LAB_801177b8
@@ -8884,19 +8900,19 @@ public final class SEffe {
             a0_0++;
 
             if((flags & 0x8000) == 0) {
-              transformHi.scale_00.setX((short)(transformLo.scale_00.getX() + (MEMORY.ref(1, a0_0).offset(0x0L).getSigned() << shift) * s0 / 0x2000));
+              transformHi.scale_00.x = transformLo.scale_00.x + (MEMORY.ref(1, a0_0).offset(0x0L).getSigned() << shift) * s0 / (float)0x2000;
               a0_0++;
             }
 
             //LAB_80117524
             if((flags & 0x4000) == 0) {
-              transformHi.scale_00.setY((short)(transformLo.scale_00.getY() + (MEMORY.ref(1, a0_0).offset(0x0L).getSigned() << shift) * s0 / 0x2000));
+              transformHi.scale_00.y = transformLo.scale_00.y + (MEMORY.ref(1, a0_0).offset(0x0L).getSigned() << shift) * s0 / (float)0x2000;
               a0_0++;
             }
 
             //LAB_80117564
             if((flags & 0x2000) == 0) {
-              transformHi.scale_00.setZ((short)(transformLo.scale_00.getZ() + (MEMORY.ref(1, a0_0).offset(0x0L).getSigned() << shift) * s0 / 0x2000));
+              transformHi.scale_00.z = transformLo.scale_00.z + (MEMORY.ref(1, a0_0).offset(0x0L).getSigned() << shift) * s0 / (float)0x2000;
               a0_0++;
             }
           }
@@ -9427,7 +9443,7 @@ public final class SEffe {
 
     final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager = state.innerStruct_00;
     manager.flags_04 = 0x600_0000;
-    manager._10.scale_16.set((short)0x400, (short)0x400, (short)0x400);
+    manager._10.scale_16.set(0.25f, 0.25f, 0.25f);
     manager._10.flags_00 = 0x6400_0040;
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
@@ -9582,8 +9598,7 @@ public final class SEffe {
       if(effect.countCopies_08 != 0) {
         final EffectManagerData6cInner.ColourType managerInner = new EffectManagerData6cInner.ColourType();
         final VECTOR colour = new VECTOR();
-        final VECTOR scale = new VECTOR();
-        final VECTOR stepScale = new VECTOR();
+        final Vector3f stepScale = new Vector3f();
 
         //LAB_80118fc4
         managerInner.set(manager._10);
@@ -9602,12 +9617,9 @@ public final class SEffe {
         //LAB_801190a8
         if((effect.colourAndScaleFlags_00 & 0x8) != 0) {
           final int scaleModifier = effect.colourAndScaleTransformModifier_10 - 0x1000;
-          scale.setX(managerInner.scale_16.getX() << 12);
-          scale.setY(managerInner.scale_16.getY() << 12);
-          scale.setZ(managerInner.scale_16.getZ() << 12);
-          stepScale.setX(managerInner.scale_16.getX() * scaleModifier / combinedSteps);
-          stepScale.setY(managerInner.scale_16.getY() * scaleModifier / combinedSteps);
-          stepScale.setZ(managerInner.scale_16.getZ() * scaleModifier / combinedSteps);
+          stepScale.x = managerInner.scale_16.x * scaleModifier / combinedSteps;
+          stepScale.y = managerInner.scale_16.y * scaleModifier / combinedSteps;
+          stepScale.z = managerInner.scale_16.z * scaleModifier / combinedSteps;
         }
 
         //LAB_80119130
@@ -9640,14 +9652,10 @@ public final class SEffe {
 
             //LAB_80119294
             if((effect.colourAndScaleFlags_00 & 0x8) != 0) {
-              scale.add(stepScale);
-
               //LAB_801192e4
               //LAB_80119300
               //LAB_8011931c
-              managerInner.scale_16.setX((short)(scale.getX() >> 12));
-              managerInner.scale_16.setY((short)(scale.getY() >> 12));
-              managerInner.scale_16.setZ((short)(scale.getZ() >> 12));
+              managerInner.scale_16.add(stepScale);
             }
 
             //LAB_80119324

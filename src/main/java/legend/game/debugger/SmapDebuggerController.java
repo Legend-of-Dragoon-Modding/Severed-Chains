@@ -151,9 +151,9 @@ public class SmapDebuggerController {
     this.rotX.getValueFactory().setValue(MathHelper.radToPsxDeg(this.sobj.model_00.coord2Param_64.rotate.x));
     this.rotY.getValueFactory().setValue(MathHelper.radToPsxDeg(this.sobj.model_00.coord2Param_64.rotate.y));
     this.rotZ.getValueFactory().setValue(MathHelper.radToPsxDeg(this.sobj.model_00.coord2Param_64.rotate.z));
-    this.scaleX.getValueFactory().setValue(this.sobj.model_00.scaleVector_fc.getX());
-    this.scaleY.getValueFactory().setValue(this.sobj.model_00.scaleVector_fc.getY());
-    this.scaleZ.getValueFactory().setValue(this.sobj.model_00.scaleVector_fc.getZ());
+    this.scaleX.getValueFactory().setValue((int)(this.sobj.model_00.scaleVector_fc.x * 0x1000));
+    this.scaleY.getValueFactory().setValue((int)(this.sobj.model_00.scaleVector_fc.y * 0x1000));
+    this.scaleZ.getValueFactory().setValue((int)(this.sobj.model_00.scaleVector_fc.z * 0x1000));
 
     this.collideByPlayer.setSelected((this.sobj.flags_190 & 0x10_0000) != 0);
     this.collide20.setSelected((this.sobj.flags_190 & 0x20_0000) != 0);
@@ -201,9 +201,9 @@ public class SmapDebuggerController {
 
   public void updateScale(final ActionEvent event) {
     if(this.sobj != null) {
-      this.sobj.model_00.scaleVector_fc.setX(this.scaleX.getValueFactory().getValue());
-      this.sobj.model_00.scaleVector_fc.setY(this.scaleY.getValueFactory().getValue());
-      this.sobj.model_00.scaleVector_fc.setZ(this.scaleZ.getValueFactory().getValue());
+      this.sobj.model_00.scaleVector_fc.x = this.scaleX.getValueFactory().getValue() / (float)0x1000;
+      this.sobj.model_00.scaleVector_fc.y = this.scaleY.getValueFactory().getValue() / (float)0x1000;
+      this.sobj.model_00.scaleVector_fc.z = this.scaleZ.getValueFactory().getValue() / (float)0x1000;
     }
   }
 

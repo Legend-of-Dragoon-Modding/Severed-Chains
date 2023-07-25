@@ -14,7 +14,7 @@ public class LightningBoltEffectSegment30 {
   public final USCOLOUR innerColourFadeStep_1c = new USCOLOUR();
   public final USCOLOUR outerColourFadeStep_22 = new USCOLOUR();
   /** ubyte */
-  public int scaleMultiplier_28;
+  public float scaleMultiplier_28;
 
   /** short; Incremented while rendering, but never used for anything. */
   public float unused_2a;

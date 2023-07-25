@@ -309,6 +309,23 @@ public class MATRIX {
     return this.scale(scale, this);
   }
 
+  public MATRIX scale(final Vector3f scale, final MATRIX out) {
+    out.set(0, (short)(this.get(0) * scale.x));
+    out.set(1, (short)(this.get(1) * scale.x));
+    out.set(2, (short)(this.get(2) * scale.x));
+    out.set(3, (short)(this.get(3) * scale.y));
+    out.set(4, (short)(this.get(4) * scale.y));
+    out.set(5, (short)(this.get(5) * scale.y));
+    out.set(6, (short)(this.get(6) * scale.z));
+    out.set(7, (short)(this.get(7) * scale.z));
+    out.set(8, (short)(this.get(8) * scale.z));
+    return this;
+  }
+
+  public MATRIX scale(final Vector3f scale) {
+    return this.scale(scale, this);
+  }
+
   /** Dunno what the L means, but it's scaled by XYZXYZXYZ instead of XXXYYYZZZ */
   public MATRIX scaleL(final VECTOR scale, final MATRIX out) {
     out.set(0, (short)(this.get(0) * scale.getX() >> 12));

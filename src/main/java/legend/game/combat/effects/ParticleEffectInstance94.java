@@ -15,10 +15,10 @@ public class ParticleEffectInstance94 {
   public int unused_02;
 
   public short framesUntilRender_04;
-  public short scaleHorizontal_06;
-  public short scaleVertical_08;
-  public short scaleHorizontalStep_0a;
-  public short scaleVerticalStep_0c;
+  public float scaleHorizontal_06;
+  public float scaleVertical_08;
+  public float scaleHorizontalStep_0a;
+  public float scaleVerticalStep_0c;
   public float angle_0e;
   public float angleVelocity_10;
   public short ticksRemaining_12; // Scales colour, rotation, ... over time

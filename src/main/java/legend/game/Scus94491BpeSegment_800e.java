@@ -225,7 +225,7 @@ public final class Scus94491BpeSegment_800e {
 
     model.coord2_14.coord.transfer.set(x, y, z);
     model.movementType_cc = 0;
-    model.scaleVector_fc.set(0x1000, 0x1000, 0x1000);
+    model.scaleVector_fc.set(1.0f, 1.0f, 1.0f);
     model.vector_10c.set(0x1000, 0x1000, 0x1000);
     model.vector_118.set(0, 0, 0);
   }

@@ -10,8 +10,8 @@ public class MonsterDeathEffectObjectDestructor30 {
   /** byte */
   public int stepCount_01;
 
-  public int scaleModifier_04;
-  public int scaleModifierVelocity_08;
+  public float scaleModifier_04;
+  public float scaleModifierVelocity_08;
   public float angleModifier_0c;
   public float angleModifierVelocity_10;
   public final VECTOR translation_14 = new VECTOR();

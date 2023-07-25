@@ -786,9 +786,9 @@ public final class SMap {
     model_800bda10.coord2_14.coord.transfer.set(model.vector_118);
     model_800bda10.zOffset_a0 = model.zOffset_a0 + 16;
 
-    model_800bda10.scaleVector_fc.setX(model.vector_10c.x.get() >> 6);
-    model_800bda10.scaleVector_fc.setY(model.vector_10c.y.get() >> 6);
-    model_800bda10.scaleVector_fc.setZ(model.vector_10c.z.get() >> 6);
+    model_800bda10.scaleVector_fc.x = model.vector_10c.x.get() / 64.0f / (float)0x1000;
+    model_800bda10.scaleVector_fc.y = model.vector_10c.y.get() / 64.0f / (float)0x1000;
+    model_800bda10.scaleVector_fc.z = model.vector_10c.z.get() / 64.0f / (float)0x1000;
 
     RotMatrix_Xyz(model_800bda10.coord2Param_64.rotate, model_800bda10.coord2_14.coord);
 
@@ -1687,9 +1687,9 @@ public final class SMap {
     final Model124 model = sobj.model_00;
 
     model.scaleVector_fc.set(
-      script.params_20[1].get(),
-      script.params_20[2].get(),
-      script.params_20[3].get()
+      (script.params_20[1].get() / (float)0x1000),
+      (script.params_20[2].get() / (float)0x1000),
+      (script.params_20[3].get() / (float)0x1000)
     );
 
     return FlowControl.CONTINUE;
@@ -1700,9 +1700,9 @@ public final class SMap {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
 
-    model.scaleVector_fc.setX(script.params_20[1].get());
-    model.scaleVector_fc.setY(script.params_20[1].get());
-    model.scaleVector_fc.setZ(script.params_20[1].get());
+    model.scaleVector_fc.x = script.params_20[1].get() / (float)0x1000;
+    model.scaleVector_fc.y = script.params_20[1].get() / (float)0x1000;
+    model.scaleVector_fc.z = script.params_20[1].get() / (float)0x1000;
     return FlowControl.CONTINUE;
   }
 
@@ -2228,9 +2228,9 @@ public final class SMap {
     model.coord2_14.coord.transfer.setY(transferY);
     model.coord2_14.coord.transfer.setZ(transferZ);
 
-    model.scaleVector_fc.setX(0x1000);
-    model.scaleVector_fc.setY(0x1000);
-    model.scaleVector_fc.setZ(0x1000);
+    model.scaleVector_fc.x = 1.0f;
+    model.scaleVector_fc.y = 1.0f;
+    model.scaleVector_fc.z = 1.0f;
   }
 
   @Method(0x800e0ff0L)
@@ -7237,18 +7237,18 @@ public final class SMap {
           a0._00 = 0;
           a0._18 = (short)a1._38;
 
-          final int v0 = a1._28;
-          if(v0 < 0) {
-            a0.scale_08 = -v0 << 12;
-            a0._04 = -a0._04 / 20;
-          } else if(v0 > 0) {
+          final int size = a1.size_28;
+          if(size < 0) {
+            a0.scale_08 = -size;
+            a0.scaleStep_04 = -a0.scaleStep_04 / 20.0f;
+          } else if(size > 0) {
             //LAB_800ef1e0
-            a0.scale_08 = 0;
-            a0._04 = (v0 << 12) / 202;
+            a0.scale_08 = 0.0f;
+            a0.scaleStep_04 = size / 202.0f;
           } else {
             //LAB_800ef214
-            a0.scale_08 = 0;
-            a0._04 = 0;
+            a0.scale_08 = 0.0f;
+            a0.scaleStep_04 = 0.0f;
           }
 
           //LAB_800ef21c
@@ -7328,10 +7328,10 @@ public final class SMap {
           dust.x_18 = screenOffsetX_800cb568.get();
           dust.y_1c = screenOffsetY_800cb56c.get();
 
-          final SVECTOR vert0 = new SVECTOR().set((short)-a1._28, (short)0, (short)-a1._28);
-          final SVECTOR vert1 = new SVECTOR().set((short) a1._28, (short)0, (short)-a1._28);
-          final SVECTOR vert2 = new SVECTOR().set((short)-a1._28, (short)0, (short) a1._28);
-          final SVECTOR vert3 = new SVECTOR().set((short) a1._28, (short)0, (short) a1._28);
+          final SVECTOR vert0 = new SVECTOR().set((short)-a1.size_28, (short)0, (short)-a1.size_28);
+          final SVECTOR vert1 = new SVECTOR().set((short) a1.size_28, (short)0, (short)-a1.size_28);
+          final SVECTOR vert2 = new SVECTOR().set((short)-a1.size_28, (short)0, (short) a1.size_28);
+          final SVECTOR vert3 = new SVECTOR().set((short) a1.size_28, (short)0, (short) a1.size_28);
 
           dust._04 = 0;
           dust._06 = (short)a1._38;
@@ -7392,11 +7392,11 @@ public final class SMap {
 
         dustModel_800d4d40.coord2_14.coord.transfer.set(s0.transfer);
 
-        s0.scale_08 += s0._04;
+        s0.scale_08 += s0.scaleStep_04;
 
-        dustModel_800d4d40.scaleVector_fc.setX(s0.scale_08);
-        dustModel_800d4d40.scaleVector_fc.setY(s0.scale_08);
-        dustModel_800d4d40.scaleVector_fc.setZ(s0.scale_08);
+        dustModel_800d4d40.scaleVector_fc.x = s0.scale_08;
+        dustModel_800d4d40.scaleVector_fc.y = s0.scale_08;
+        dustModel_800d4d40.scaleVector_fc.z = s0.scale_08;
 
         applyModelRotationAndScale(dustModel_800d4d40);
         renderModel(dustModel_800d4d40);
@@ -7698,7 +7698,7 @@ public final class SMap {
     a0._18 = 0;
     a0._1c = 0;
     a0._1e.set((short)0, (short)0, (short)0);
-    a0._28 = 0;
+    a0.size_28 = 0;
     a0._2c = 0;
     a0._30 = 0;
     a0._34 = 0;
@@ -8340,7 +8340,7 @@ public final class SMap {
   public static FlowControl FUN_800f1f9c(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     sobj._1d0._04 = script.params_20[1].get();
-    sobj._1d0._28 = script.params_20[2].get();
+    sobj._1d0.size_28 = script.params_20[2].get();
     sobj._1d0._30 = script.params_20[3].get();
 
     if(script.params_20[4].get() == 0) {
@@ -8352,7 +8352,7 @@ public final class SMap {
     //LAB_800f2018
     if(sobj._1d0._04 != 1) {
       sobj._1d0._1e.set((short)0, (short)0, (short)0);
-      sobj._1d0._28 = 1;
+      sobj._1d0.size_28 = 1;
       sobj._1d0._30 = 0;
       sobj._1d0._38 = 0;
     }
@@ -8545,7 +8545,7 @@ public final class SMap {
     if(a2 == 1 || a2 == 3) {
       //LAB_800f2430
       a1._1d0._0c = 1;
-      a1._1d0._28 = script.params_20[1].get();
+      a1._1d0.size_28 = script.params_20[1].get();
       a1._1d0._30 = script.params_20[2].get();
       a1._1d0._38 = script.params_20[3].get();
 
@@ -8693,9 +8693,7 @@ public final class SMap {
     final int screenOffsetY = screenOffsetY_800cb56c.get();
 
     final Model124 model = savePointModel_800d5eb0;
-    model.scaleVector_fc.setX(0x1800);
-    model.scaleVector_fc.setY(0x3000);
-    model.scaleVector_fc.setZ(0x1800);
+    model.scaleVector_fc.set(1.5f, 3.0f, 1.5f);
     model.coord2_14.coord.transfer.set(savePointPos_800d5622);
 
     applyModelRotationAndScale(model);

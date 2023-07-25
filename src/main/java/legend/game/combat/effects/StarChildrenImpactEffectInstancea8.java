@@ -18,7 +18,7 @@ public class StarChildrenImpactEffectInstancea8 {
   public final VECTOR[] translation_0c = {new VECTOR(), new VECTOR()};
   public final Vector3f[] rotation_2c = {new Vector3f(), new Vector3f()};
 
-  public final VECTOR[] scale_6c = {new VECTOR(), new VECTOR()};
+  public final Vector3f[] scale_6c = {new Vector3f(), new Vector3f()};
   public final COLOUR[] opacity_8c = {new COLOUR(), new COLOUR()};
   public TmdObjTable1c explosionObjTable_94;
   public TmdObjTable1c shockwaveObjTable_98;

@@ -5,7 +5,7 @@ import legend.game.unpacker.FileData;
 import org.joml.Vector3f;
 
 public class LmbTransforms14 {
-  public final SVECTOR scale_00 = new SVECTOR();
+  public final Vector3f scale_00 = new Vector3f();
   public final SVECTOR trans_06 = new SVECTOR();
   public final Vector3f rot_0c = new Vector3f();
 

@@ -5,7 +5,7 @@ import legend.game.types.Translucency;
 
 public class RadialGradientEffect14 implements Effect {
   public int circleSubdivisionModifier_00;
-  public int scaleModifier_01;
+  public float scaleModifier_01;
 
   public int z_04;
   public int angleStep_08;

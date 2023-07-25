@@ -33,8 +33,8 @@ public class GenericSpriteEffect24 {
   /** short; Set to 0 but never used */
   public int unused_1a;
   /** short */
-  public int scaleX_1c;
+  public float scaleX_1c;
   /** short */
-  public int scaleY_1e;
+  public float scaleY_1e;
   public float angle_20;
 }

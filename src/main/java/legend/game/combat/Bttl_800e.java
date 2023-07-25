@@ -1568,10 +1568,10 @@ public final class Bttl_800e {
 
         //LAB_800e7a38
         final int zDepth = MathHelper.safeDiv(projectionPlaneDistance_1f8003f8.get() << 10, finalTranslation.getZ() >> 2);
-        final int x1 = spriteEffect.x_04 * spriteEffect.scaleX_1c / 8 * zDepth / 8 >> 12;
-        final int x2 = x1 + (spriteEffect.w_08 * spriteEffect.scaleX_1c / 8 * zDepth / 8 >> 12);
-        final int y1 = spriteEffect.y_06 * spriteEffect.scaleY_1e / 8 * zDepth / 8 >> 12;
-        final int y2 = y1 + (spriteEffect.h_0a * spriteEffect.scaleY_1e / 8 * zDepth / 8 >> 12);
+        final int x1 = (int)(spriteEffect.x_04 * spriteEffect.scaleX_1c / 8 * zDepth / 8);
+        final int x2 = x1 + (int)(spriteEffect.w_08 * spriteEffect.scaleX_1c / 8 * zDepth / 8);
+        final int y1 = (int)(spriteEffect.y_06 * spriteEffect.scaleY_1e / 8 * zDepth / 8);
+        final int y2 = y1 + (int)(spriteEffect.h_0a * spriteEffect.scaleY_1e / 8 * zDepth / 8);
         final float sin = MathHelper.sin(spriteEffect.angle_20);
         final float cos = MathHelper.cos(spriteEffect.angle_20);
 
@@ -1707,7 +1707,7 @@ public final class Bttl_800e {
     manager.coord2Index_0d = -1;
     manager.myScriptState_0e = state;
     manager._10.flags_00 = 0x5400_0000;
-    manager._10.scale_16.set((short)0x1000, (short)0x1000, (short)0x1000);
+    manager._10.scale_16.set(1.0f, 1.0f, 1.0f);
     manager._10.colour_1c.set(0x80, 0x80, 0x80);
     manager.ticker_48 = ticker;
     manager.destructor_4c = destructor;
@@ -2011,8 +2011,8 @@ public final class Bttl_800e {
       spriteEffect.r_14 = managerInner.colour_1c.getX() & 0xff;
       spriteEffect.g_15 = managerInner.colour_1c.getY() & 0xff;
       spriteEffect.b_16 = managerInner.colour_1c.getZ() & 0xff;
-      spriteEffect.scaleX_1c = managerInner.scale_16.getX();
-      spriteEffect.scaleY_1e = managerInner.scale_16.getY();
+      spriteEffect.scaleX_1c = managerInner.scale_16.x;
+      spriteEffect.scaleY_1e = managerInner.scale_16.y;
       spriteEffect.angle_20 = managerInner.rot_10.z;
 
       if((managerInner.flags_00 & 0x400_0000) != 0) {
@@ -2215,7 +2215,7 @@ public final class Bttl_800e {
     }
 
     model.partInvisible_f4 = a1._5e4;
-    model.scaleVector_fc.set(0x1000, 0x1000, 0x1000);
+    model.scaleVector_fc.set(1.0f, 1.0f, 1.0f);
     model.tpage_108 = 0;
     model.vector_10c.set(0x1000, 0x1000, 0x1000);
     model.vector_118.set(0, 0, 0);
@@ -3064,7 +3064,7 @@ public final class Bttl_800e {
     if(model.movementType_cc == 3) {
       //LAB_800ec2ec
       s2.coord2_14.coord.transfer.setX(model.vector_118.getX() + model.coord2ArrPtr_04[model.b_cd].coord.transfer.getX());
-      s2.coord2_14.coord.transfer.setY(model.vector_118.getY() - MathHelper.safeDiv(model.coord2_14.coord.transfer.getY() << 12, model.scaleVector_fc.getY()));
+      s2.coord2_14.coord.transfer.setY(model.vector_118.getY() - MathHelper.safeDiv(model.coord2_14.coord.transfer.getY(), model.scaleVector_fc.y));
       s2.coord2_14.coord.transfer.setZ(model.vector_118.getZ() + model.coord2ArrPtr_04[model.b_cd].coord.transfer.getZ());
     } else {
       s2.coord2_14.coord.transfer.setX(model.vector_118.getX());
@@ -3073,7 +3073,7 @@ public final class Bttl_800e {
         s2.coord2_14.coord.transfer.setY(model.vector_118.getY());
       } else {
         //LAB_800ec2bc
-        s2.coord2_14.coord.transfer.setY(model.vector_118.getY() - MathHelper.safeDiv(model.coord2_14.coord.transfer.getY() << 12, model.scaleVector_fc.getY()));
+        s2.coord2_14.coord.transfer.setY(model.vector_118.getY() - MathHelper.safeDiv(model.coord2_14.coord.transfer.getY(), model.scaleVector_fc.y));
       }
 
       //LAB_800ec2e0
@@ -3082,9 +3082,9 @@ public final class Bttl_800e {
 
     //LAB_800ec370
     s2.zOffset_a0 = model.zOffset_a0 + 16;
-    s2.scaleVector_fc.setX(model.vector_10c.getX() / 4);
-    s2.scaleVector_fc.setY(model.vector_10c.getY() / 4);
-    s2.scaleVector_fc.setZ(model.vector_10c.getZ() / 4);
+    s2.scaleVector_fc.x = model.vector_10c.getX() / 4.0f / (float)0x1000;
+    s2.scaleVector_fc.y = model.vector_10c.getY() / 4.0f / (float)0x1000;
+    s2.scaleVector_fc.z = model.vector_10c.getZ() / 4.0f / (float)0x1000;
     RotMatrix_Xyz(s2.coord2Param_64.rotate, s2.coord2_14.coord);
     s2.coord2_14.coord.scaleL(s2.scaleVector_fc);
     s2.coord2_14.flg = 0;
@@ -3426,7 +3426,7 @@ public final class Bttl_800e {
   @Method(0x800ee2e4L)
   public static FlowControl scriptSetBobjScaleUniform(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    final int scale = script.params_20[1].get();
+    final float scale = script.params_20[1].get() / (float)0x1000;
     bobj.model_148.scaleVector_fc.set(scale, scale, scale);
     return FlowControl.CONTINUE;
   }
@@ -3434,7 +3434,7 @@ public final class Bttl_800e {
   @Method(0x800ee324L)
   public static FlowControl scriptSetBobjScale(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    bobj.model_148.scaleVector_fc.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
+    bobj.model_148.scaleVector_fc.set(script.params_20[1].get() / (float)0x1000, script.params_20[2].get() / (float)0x1000, script.params_20[3].get() / (float)0x1000);
     return FlowControl.CONTINUE;
   }
 
