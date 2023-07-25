@@ -6059,8 +6059,8 @@ public final class SEffe {
     final StarChildrenMeteorEffectInstance10[] meteorArray = meteorEffect.meteorArray_0c;
     for(int i = 0; i < meteorEffect.count_00; i++) {
       final StarChildrenMeteorEffectInstance10 meteor = meteorArray[i];
-      meteor.centerOffsetX_02 += (short)((int)(MathHelper.sin(manager._10.rot_10.x) * 32) * manager._10.scale_16.getX() * meteor.scale_0a >> 24);
-      meteor.centerOffsetY_04 += (short)((int)(MathHelper.cos(manager._10.rot_10.x) * 32) * manager._10.scale_16.getX() * meteor.scale_0a >> 24);
+      meteor.centerOffsetX_02 += (short)((int)(MathHelper.sin(manager._10.rot_10.x) * 32 * manager._10.scale_16.getX() * meteor.scale_0a) >> 24);
+      meteor.centerOffsetY_04 += (short)((int)(MathHelper.cos(manager._10.rot_10.x) * 32 * manager._10.scale_16.getX() * meteor.scale_0a) >> 24);
 
       if(meteor.scale_0a * 120 + 50 >> 12 < meteor.centerOffsetY_04) {
         meteor.centerOffsetY_04 = -120;
@@ -6420,9 +6420,9 @@ public final class SEffe {
     feather.translationMagnitudeXz_3c += feather.velocityTranslationMagnitudeXz_40;
 
     // These might be wrong
-    final int x = (int)((MathHelper.cos(feather.angle_58 + feather.angleNoiseXz_5c) - MathHelper.sin(feather.angle_58 + feather.angleNoiseXz_5c)) * feather.translationMagnitudeXz_3c) >> 4;
+    final int x = (int)((MathHelper.cos(feather.angle_58 + feather.angleNoiseXz_5c) - MathHelper.sin(feather.angle_58 + feather.angleNoiseXz_5c)) * (feather.translationMagnitudeXz_3c >> 8)) << 8;
     final int y = (int)(feather.yOrigin_54 + feather.translationMagnitudeY_50 * MathHelper.sin(feather.angle_58));
-    final int z = (int)((MathHelper.cos(feather.angle_58 + feather.angleNoiseXz_5c) + MathHelper.sin(feather.angle_58 + feather.angleNoiseXz_5c)) * feather.translationMagnitudeXz_3c) >> 4;
+    final int z = (int)((MathHelper.cos(feather.angle_58 + feather.angleNoiseXz_5c) + MathHelper.sin(feather.angle_58 + feather.angleNoiseXz_5c)) * (feather.translationMagnitudeXz_3c >> 8)) << 8;
     feather.translation_08.set(x, y, z);
 
     feather.currentFrame_04++;
@@ -6439,9 +6439,9 @@ public final class SEffe {
     feather.angle_58 %= MathHelper.TWO_PI;
 
     // These might be wrong
-    final int x = (int)((MathHelper.cos(feather.angle_58 + feather.angleNoiseXz_5c) - MathHelper.sin(feather.angle_58 + feather.angleNoiseXz_5c)) * (feather.translationMagnitudeXz_3c >> 8)) >> 4;
+    final int x = (int)((MathHelper.cos(feather.angle_58 + feather.angleNoiseXz_5c) - MathHelper.sin(feather.angle_58 + feather.angleNoiseXz_5c)) * (feather.translationMagnitudeXz_3c >> 8)) << 8;
     final int y = (int)(feather.yOrigin_54 + feather.translationMagnitudeY_50 * MathHelper.sin(feather.angle_58));
-    final int z = (int)((MathHelper.cos(feather.angle_58 + feather.angleNoiseXz_5c) + MathHelper.sin(feather.angle_58 + feather.angleNoiseXz_5c)) * (feather.translationMagnitudeXz_3c >> 8)) >> 4;
+    final int z = (int)((MathHelper.cos(feather.angle_58 + feather.angleNoiseXz_5c) + MathHelper.sin(feather.angle_58 + feather.angleNoiseXz_5c)) * (feather.translationMagnitudeXz_3c >> 8)) << 8;
     feather.translation_08.set(x, y, z);
 
     feather.currentFrame_04++;
@@ -6461,9 +6461,9 @@ public final class SEffe {
     feather.translationMagnitudeXz_3c += feather.velocityTranslationMagnitudeXz_40;
 
     // These might be wrong
-    final int x = (int)((MathHelper.cos(feather.angle_58 + feather.angleNoiseXz_5c) - MathHelper.sin(feather.angle_58 + feather.angleNoiseXz_5c)) * (feather.translationMagnitudeXz_3c >> 8)) >> 4;
+    final int x = (int)((MathHelper.cos(feather.angle_58 + feather.angleNoiseXz_5c) - MathHelper.sin(feather.angle_58 + feather.angleNoiseXz_5c)) * (feather.translationMagnitudeXz_3c >> 8)) << 8;
     final int y = (int)(feather.yOrigin_54 + feather.translationMagnitudeY_50 * MathHelper.sin(feather.angle_58));
-    final int z = (int)((MathHelper.cos(feather.angle_58 + feather.angleNoiseXz_5c) + MathHelper.sin(feather.angle_58 + feather.angleNoiseXz_5c)) * (feather.translationMagnitudeXz_3c >> 8)) >> 4;
+    final int z = (int)((MathHelper.cos(feather.angle_58 + feather.angleNoiseXz_5c) + MathHelper.sin(feather.angle_58 + feather.angleNoiseXz_5c)) * (feather.translationMagnitudeXz_3c >> 8)) << 8;
     feather.translation_08.set(x, y, z);
     feather.translationMagnitudeY_50 += feather.velocityTranslationMagnitudeY_1c;
 
