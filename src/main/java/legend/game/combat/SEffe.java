@@ -4617,6 +4617,8 @@ public final class SEffe {
   @Method(0x80109358L)
   public static void FUN_80109358(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> data) {
     final ScreenDistortionEffectData08 sp48 = (ScreenDistortionEffectData08)data.effect_44;
+
+    // Dunno why these actually need to be truncated instead of fractions, but it breaks the effect otherwise
     final float sp30 = (int)(data._10.scale_16.x * 0x1000) >> 8;
     final float sp2c = (int)(data._10.scale_16.y * 0x1000) >> 11;
     final float sp38 = (int)(data._10.scale_16.z * 0x1000) * 15 >> 9;
