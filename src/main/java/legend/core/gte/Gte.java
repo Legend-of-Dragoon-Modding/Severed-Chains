@@ -101,14 +101,14 @@ public class Gte {
       n = 1.0f;
       this.FLAG |= 0x1 << 17;
     } else {
-      n = (this.H * 2.0f / this.positionTemp.z) / 2.0f;
+      n = this.H / this.positionTemp.z;
     }
 
     //MAC0=(((H*20000h/SZ3)+1)/2)*IR1+OFX, SX2=MAC0/10000h ;ScrX FIFO -400h..+3FFh
     //MAC0=(((H*20000h/SZ3)+1)/2)*IR2+OFY, SY2=MAC0/10000h ;ScrY FIFO -400h..+3FFh
     //MAC0=(((H*20000h/SZ3)+1)/2)*DQA+DQB, IR0=MAC0/1000h  ;Depth cueing 0..+1000h
-    final int x = (int)(n * this.positionTemp.x * 0xffff + this.OFX);
-    final int y = (int)(n * this.positionTemp.y * 0xffff + this.OFY);
+    final int x = (int)(n * this.positionTemp.x * 0x1_0000 + this.OFX);
+    final int y = (int)(n * this.positionTemp.y * 0x1_0000 + this.OFY);
 
     this.SXY[0].set(this.SXY[1]);
     this.SXY[1].set(this.SXY[2]);
