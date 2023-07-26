@@ -402,7 +402,7 @@ public final class Scus94491BpeSegment_8002 {
     model.movementType_cc = 0;
     model.b_cd = -2;
     model.scaleVector_fc.set(1.0f, 1.0f, 1.0f);
-    model.vector_10c.set(0x1000, 0x1000, 0x1000);
+    model.vector_10c.set(1.0f, 1.0f, 1.0f);
     model.vector_118.set(0, 0, 0);
   }
 
@@ -711,8 +711,8 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x8002155cL)
   public static void FUN_8002155c(final Model124 model, final long a1) {
-    final int v0 = (int)_8005039c.offset(2, a1 * 0x2L).getSigned();
-    model.vector_10c.set(v0, v0, v0);
+    final float scale = (int)_8005039c.offset(2, a1 * 0x2L).getSigned() / (float)0x1000;
+    model.vector_10c.set(scale, scale, scale);
   }
 
   @Method(0x80021584L)

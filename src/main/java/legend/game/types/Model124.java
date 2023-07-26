@@ -92,7 +92,7 @@ public class Model124 {
   /** Pretty sure this doesn't include VRAM X/Y */
   public int tpage_108;
   /** Maybe initial scale? */
-  public final VECTOR vector_10c = new VECTOR();
+  public final Vector3f vector_10c = new Vector3f();
   /** Maybe initial translation? */
   public final VECTOR vector_118 = new VECTOR();
 

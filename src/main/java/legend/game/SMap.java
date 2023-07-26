@@ -786,9 +786,7 @@ public final class SMap {
     model_800bda10.coord2_14.coord.transfer.set(model.vector_118);
     model_800bda10.zOffset_a0 = model.zOffset_a0 + 16;
 
-    model_800bda10.scaleVector_fc.x = model.vector_10c.x.get() / 64.0f / (float)0x1000;
-    model_800bda10.scaleVector_fc.y = model.vector_10c.y.get() / 64.0f / (float)0x1000;
-    model_800bda10.scaleVector_fc.z = model.vector_10c.z.get() / 64.0f / (float)0x1000;
+    model_800bda10.scaleVector_fc.set(model.vector_10c).div(64.0f);
 
     RotMatrix_Xyz(model_800bda10.coord2Param_64.rotate, model_800bda10.coord2_14.coord);
 
@@ -2063,8 +2061,8 @@ public final class SMap {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
 
-    model.vector_10c.setX(script.params_20[1].get());
-    model.vector_10c.setZ(script.params_20[2].get());
+    model.vector_10c.x = script.params_20[1].get() / (float)0x1000;
+    model.vector_10c.z = script.params_20[2].get() / (float)0x1000;
     return FlowControl.CONTINUE;
   }
 

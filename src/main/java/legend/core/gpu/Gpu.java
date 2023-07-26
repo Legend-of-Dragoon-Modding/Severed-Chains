@@ -880,31 +880,9 @@ public class Gpu {
   }
 
   public int getTexel(final int x, final int y, final int clutX, final int clutY, final int textureBaseX, final int textureBaseY, final Bpp depth) {
-    if(depth == Bpp.BITS_4) {
-      return this.get4bppTexel(x, y, clutX, clutY, textureBaseX, textureBaseY);
-    }
-
-    if(depth == Bpp.BITS_8) {
-      return this.get8bppTexel(x, y, clutX, clutY, textureBaseX, textureBaseY);
-    }
-
-    return this.get16bppTexel(x, y, textureBaseX, textureBaseY);
-  }
-
-  private int get4bppTexel(final int x, final int y, final int clutX, final int clutY, final int textureBaseX, final int textureBaseY) {
-    final int index = this.getPixel15(x / 4 + textureBaseX, y + textureBaseY);
-    final int p = index >> (x & 3) * 4 & 0xf;
+    final int index = this.getPixel15(x / depth.widthDivisor + textureBaseX, y + textureBaseY);
+    final int p = index >> ((x & depth.widthMask) << depth.indexShift) & depth.indexMask;
     return this.getPixel(clutX + p, clutY);
-  }
-
-  private int get8bppTexel(final int x, final int y, final int clutX, final int clutY, final int textureBaseX, final int textureBaseY) {
-    final int index = this.getPixel15(x / 2 + textureBaseX, y + textureBaseY);
-    final int p = index >> (x & 1) * 8 & 0xff;
-    return this.getPixel(clutX + p, clutY);
-  }
-
-  private int get16bppTexel(final int x, final int y, final int textureBaseX, final int textureBaseY) {
-    return this.getPixel(x + textureBaseX, y + textureBaseY);
   }
 
   /**

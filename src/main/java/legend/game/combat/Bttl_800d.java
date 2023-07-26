@@ -4565,7 +4565,7 @@ public final class Bttl_800d {
     //LAB_800ddce8
     model.scaleVector_fc.set(1.0f, 1.0f, 1.0f);
     model.movementType_cc = 0;
-    model.vector_10c.set(0x1000, 0x1000, 0x1000);
+    model.vector_10c.set(1.0f, 1.0f, 1.0f);
     model.vector_118.set(0, 0, 0);
   }
 
@@ -4810,9 +4810,9 @@ public final class Bttl_800d {
   public static Vector3f getRotationFromTransforms(final Vector3f rotOut, final MATRIX transforms) {
     final MATRIX mat = new MATRIX().set(transforms);
     rotOut.x = MathHelper.atan2(-mat.get(5), mat.get(8));
-    mat.rotateX(-MathHelper.radToPsxDeg(rotOut.x));
+    mat.rotateX(-rotOut.x);
     rotOut.y = MathHelper.atan2(mat.get(2), mat.get(8));
-    mat.rotateY(-MathHelper.radToPsxDeg(rotOut.y));
+    mat.rotateY(-rotOut.y);
     rotOut.z = MathHelper.atan2(mat.get(3), mat.get(0));
     return rotOut;
   }
@@ -4821,11 +4821,11 @@ public final class Bttl_800d {
   public static void getRotationAndScaleFromTransforms(final Vector3f rotOut, final Vector3f scaleOut, final MATRIX transforms) {
     final MATRIX mat = new MATRIX().set(transforms);
     rotOut.x = MathHelper.atan2(-mat.get(5), mat.get(8));
-    mat.rotateX(-MathHelper.radToPsxDeg(rotOut.x));
+    mat.rotateX(-rotOut.x);
     rotOut.y = MathHelper.atan2(mat.get(2), mat.get(8));
-    mat.rotateY(-MathHelper.radToPsxDeg(rotOut.y));
+    mat.rotateY(-rotOut.y);
     rotOut.z = MathHelper.atan2(mat.get(3), mat.get(0));
-    mat.rotateZ(-MathHelper.radToPsxDeg(rotOut.z));
+    mat.rotateZ(-rotOut.z);
     scaleOut.set(mat.get(0) / (float)0x1000, mat.get(4) / (float)0x1000, mat.get(8) / (float)0x1000);
   }
 

@@ -4617,9 +4617,9 @@ public final class SEffe {
   @Method(0x80109358L)
   public static void FUN_80109358(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> data) {
     final ScreenDistortionEffectData08 sp48 = (ScreenDistortionEffectData08)data.effect_44;
-    final float sp30 = data._10.scale_16.x * 16.0f;
-    final float sp2c = data._10.scale_16.y * 2.0f;
-    final float sp38 = data._10.scale_16.z * 120.0f;
+    final float sp30 = (int)(data._10.scale_16.x * 0x1000) >> 8;
+    final float sp2c = (int)(data._10.scale_16.y * 0x1000) >> 11;
+    final float sp38 = (int)(data._10.scale_16.z * 0x1000) * 15 >> 9;
 
     //LAB_801093f0
     for(int s3 = 1; s3 >= -1; s3 -= 2) {
@@ -4631,16 +4631,16 @@ public final class SEffe {
 
       //LAB_80109430
       //LAB_8010944c
-      while(s3 != 1 && s5 > -sp38 || s3 == 1 && s5 < sp38) {
+      while(s3 == -1 && s5 > -sp38 || s3 == 1 && s5 < sp38) {
         float s2 = MathHelper.sin(angle1) * sp2c + 1.0f + sp2c;
 
-        if(s2 == 0) {
-          s2 = 1;
+        if((int)s2 == 0.0f) {
+          s2 = 1.0f;
         }
 
         //LAB_8010949c
         //LAB_801094b8
-        for(int s6 = 0; s6 < s2; s6++) {
+        for(int s6 = 0; s6 < (int)s2; s6++) {
           final int x = (int)(MathHelper.sin(angle2) * sp30);
           final int y = (int)(s5 + s6 * s3);
 
@@ -4653,11 +4653,11 @@ public final class SEffe {
             .texture(GPU.getDisplayBuffer())
           );
 
-          angle2 += s3 * 32;
+          angle2 += s3 * 0.05f;
         }
 
         //LAB_80109678
-        angle1 += s2 * 32;
+        angle1 += s2 * 0.05f;
         sp40 += s3;
         s5 += s2 * s3;
       }
@@ -9412,10 +9412,10 @@ public final class SEffe {
       sp0x10.transfer.setY(y);
       manager._10.trans_04.setY(y);
 
-      final short rotY = (short)ratan2(-sp0x10.get(6), sp0x10.get(0));
+      final float rotY = MathHelper.atan2(-sp0x10.get(6), sp0x10.get(0));
       sp0x10.rotateY(-rotY);
-      sp0x10.rotateZ(-ratan2(sp0x10.get(3), sp0x10.get(0)));
-      sp0x10.rotateX(-ratan2(-sp0x10.get(5), sp0x10.get(8)));
+      sp0x10.rotateZ(-MathHelper.atan2(sp0x10.get(3), sp0x10.get(0)));
+      sp0x10.rotateX(-MathHelper.atan2(-sp0x10.get(5), sp0x10.get(8)));
       sp0x10.rotateY(rotY);
       sp0x10.set(3, (short)0);
       sp0x10.set(4, (short)0);

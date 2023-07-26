@@ -3046,7 +3046,7 @@ public class WMap {
     for(int i = 0; i < struct258_800c66a8.tmdRendering_08.count_0c; i++) {
       final GsDOBJ2 dobj2 = struct258_800c66a8.tmdRendering_08.dobj2s_00[i];
       final GsCOORDINATE2 coord2 = struct258_800c66a8.tmdRendering_08.coord2s_04[i];
-      final SVECTOR rotation = struct258_800c66a8.tmdRendering_08.rotations_08[i];
+      final Vector3f rotation = struct258_800c66a8.tmdRendering_08.rotations_08[i];
 
       //LAB_800d9180
       if(mapState_800c6798.continentIndex_00 != 7) {
@@ -4681,12 +4681,12 @@ public class WMap {
     final int nobj = tmd.tmd.header.nobj;
     a0.dobj2s_00 = new GsDOBJ2[nobj];
     a0.coord2s_04 = new GsCOORDINATE2[nobj];
-    a0.rotations_08 = new SVECTOR[nobj];
+    a0.rotations_08 = new Vector3f[nobj];
     a0._10 = new int[nobj];
 
     Arrays.setAll(a0.dobj2s_00, i -> new GsDOBJ2());
     Arrays.setAll(a0.coord2s_04, i -> new GsCOORDINATE2());
-    Arrays.setAll(a0.rotations_08, i -> new SVECTOR());
+    Arrays.setAll(a0.rotations_08, i -> new Vector3f());
 
     //LAB_800e3d24
     for(int i = 0; i < nobj; i++) {
@@ -4705,14 +4705,14 @@ public class WMap {
     for(int i = 0; i < a0.count_0c; i++) {
       final GsDOBJ2 dobj2 = a0.dobj2s_00[i];
       final GsCOORDINATE2 coord2 = a0.coord2s_04[i];
-      final SVECTOR rotation = a0.rotations_08[i];
+      final Vector3f rotation = a0.rotations_08[i];
 
       //LAB_800e3e20
       GsInitCoordinate2(superCoord, coord2);
 
       dobj2.coord2_04 = coord2;
       coord2.coord.transfer.set(0, 0, 0);
-      rotation.set((short)0, (short)0, (short)0);
+      rotation.set(0.0f, 0.0f, 0.0f);
     }
 
     //LAB_800e3ee8
@@ -6949,7 +6949,7 @@ public class WMap {
   @Method(0x800ecd10L)
   public static void renderSnow() {
     final MATRIX sp0x10 = new MATRIX();
-    final SVECTOR sp0x80 = new SVECTOR();
+    final Vector3f sp0x80 = new Vector3f();
 
     //LAB_800ecdb4
     for(int i = 0; i < 64; i++) {
@@ -7133,7 +7133,7 @@ public class WMap {
 
   @Method(0x800edbc0L)
   public static void renderSmoke() {
-    final SVECTOR rotation = new SVECTOR(); // Just (0, 0, 0)
+    final Vector3f rotation = new Vector3f(); // Just (0, 0, 0)
     final MATRIX ls = new MATRIX();
 
     if((filesLoadedFlags_800c66b8.get() & 0x1000L) == 0) {

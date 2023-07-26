@@ -1,14 +1,12 @@
 package legend.core.gte;
 
+import legend.core.MathHelper;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
 import org.joml.Vector3f;
 
 import java.util.Arrays;
-
-import static legend.game.Scus94491BpeSegment.rcos;
-import static legend.game.Scus94491BpeSegment.sin;
 
 public class MATRIX {
   // 0h-11h
@@ -37,11 +35,7 @@ public class MATRIX {
 
   public MATRIX set(final MATRIX other) {
     System.arraycopy(other.data2, 0, this.data2, 0, this.data2.length);
-
-    for(int i = 0; i < 3; i++) {
-      this.transfer.set(other.transfer);
-    }
-
+    this.transfer.set(other.transfer);
     return this;
   }
 
@@ -230,9 +224,9 @@ public class MATRIX {
     return this;
   }
 
-  public MATRIX rotateX(final int amount) {
-    final short sin = sin(amount);
-    final short cos = rcos(Math.abs(amount));
+  public MATRIX rotateX(final float amount) {
+    final float sin = MathHelper.sin(amount);
+    final float cos = MathHelper.cosFromSin(sin, Math.abs(amount));
 
     final short m10 = this.get(1, 0);
     final short m11 = this.get(1, 1);
@@ -241,19 +235,19 @@ public class MATRIX {
     final short m21 = this.get(2, 1);
     final short m22 = this.get(2, 2);
 
-    this.set(1, 0, (short)(cos * m10 - sin * m20 >> 12));
-    this.set(1, 1, (short)(cos * m11 - sin * m21 >> 12));
-    this.set(1, 2, (short)(cos * m12 - sin * m22 >> 12));
-    this.set(2, 0, (short)(sin * m10 + cos * m20 >> 12));
-    this.set(2, 1, (short)(sin * m11 + cos * m21 >> 12));
-    this.set(2, 2, (short)(sin * m12 + cos * m22 >> 12));
+    this.set(1, 0, (short)(cos * m10 - sin * m20));
+    this.set(1, 1, (short)(cos * m11 - sin * m21));
+    this.set(1, 2, (short)(cos * m12 - sin * m22));
+    this.set(2, 0, (short)(sin * m10 + cos * m20));
+    this.set(2, 1, (short)(sin * m11 + cos * m21));
+    this.set(2, 2, (short)(sin * m12 + cos * m22));
 
     return this;
   }
 
-  public MATRIX rotateY(final int amount) {
-    final short sin = (short)-sin(amount);
-    final short cos = rcos(Math.abs(amount));
+  public MATRIX rotateY(final float amount) {
+    final float sin = -MathHelper.sin(amount);
+    final float cos = MathHelper.cosFromSin(sin, Math.abs(amount));
 
     final short m0 = this.get(0);
     final short m1 = this.get(1);
@@ -261,19 +255,19 @@ public class MATRIX {
     final short m6 = this.get(6);
     final short m7 = this.get(7);
     final short m8 = this.get(8);
-    this.set(0, (short)(cos * m0 - sin * m6 >> 12));
-    this.set(1, (short)(cos * m1 - sin * m7 >> 12));
-    this.set(2, (short)(cos * m2 - sin * m8 >> 12));
-    this.set(6, (short)(sin * m0 + cos * m6 >> 12));
-    this.set(7, (short)(sin * m1 + cos * m7 >> 12));
-    this.set(8, (short)(sin * m2 + cos * m8 >> 12));
+    this.set(0, (short)(cos * m0 - sin * m6));
+    this.set(1, (short)(cos * m1 - sin * m7));
+    this.set(2, (short)(cos * m2 - sin * m8));
+    this.set(6, (short)(sin * m0 + cos * m6));
+    this.set(7, (short)(sin * m1 + cos * m7));
+    this.set(8, (short)(sin * m2 + cos * m8));
 
     return this;
   }
 
-  public MATRIX rotateZ(final int amount) {
-    final short sin = sin(amount);
-    final short cos = rcos(Math.abs(amount));
+  public MATRIX rotateZ(final float amount) {
+    final float sin = MathHelper.sin(amount);
+    final float cos = MathHelper.cosFromSin(sin, Math.abs(amount));
 
     final long m00 = this.get(0, 0);
     final long m01 = this.get(0, 1);
@@ -282,12 +276,12 @@ public class MATRIX {
     final long m11 = this.get(1, 1);
     final long m12 = this.get(1, 2);
 
-    this.set(0, 0, (short)(cos * m00 - sin * m10 >> 12));
-    this.set(0, 1, (short)(cos * m01 - sin * m11 >> 12));
-    this.set(0, 2, (short)(cos * m02 - sin * m12 >> 12));
-    this.set(1, 0, (short)(sin * m00 + cos * m10 >> 12));
-    this.set(1, 1, (short)(sin * m01 + cos * m11 >> 12));
-    this.set(1, 2, (short)(sin * m02 + cos * m12 >> 12));
+    this.set(0, 0, (short)(cos * m00 - sin * m10));
+    this.set(0, 1, (short)(cos * m01 - sin * m11));
+    this.set(0, 2, (short)(cos * m02 - sin * m12));
+    this.set(1, 0, (short)(sin * m00 + cos * m10));
+    this.set(1, 1, (short)(sin * m01 + cos * m11));
+    this.set(1, 2, (short)(sin * m02 + cos * m12));
 
     return this;
   }

@@ -2217,7 +2217,7 @@ public final class Bttl_800e {
     model.partInvisible_f4 = a1._5e4;
     model.scaleVector_fc.set(1.0f, 1.0f, 1.0f);
     model.tpage_108 = 0;
-    model.vector_10c.set(0x1000, 0x1000, 0x1000);
+    model.vector_10c.set(1.0f, 1.0f, 1.0f);
     model.vector_118.set(0, 0, 0);
     model.movementType_cc = 0;
     model.b_cd = 0;
@@ -2378,15 +2378,15 @@ public final class Bttl_800e {
 
     final Model124 model;
     if(BattleScriptDataBase.EM__.equals(a2.magic_00)) {
-      model = ((BttlScriptData6cSub13c)((EffectManagerData6c)a2).effect_44).model_134;
+      model = ((BttlScriptData6cSub13c)((EffectManagerData6c<?>)a2).effect_44).model_134;
     } else {
       //LAB_800ea2f8
       model = ((BattleObject27c)a2).model_148;
     }
 
     //LAB_800ea300
-    model.vector_10c.setX(script.params_20[1].get());
-    model.vector_10c.setZ(script.params_20[2].get());
+    model.vector_10c.x = script.params_20[1].get() / (float)0x1000;
+    model.vector_10c.z = script.params_20[2].get() / (float)0x1000;
     return FlowControl.CONTINUE;
   }
 
@@ -2396,7 +2396,7 @@ public final class Bttl_800e {
 
     final Model124 model;
     if(BattleScriptDataBase.EM__.equals(a3.magic_00)) {
-      model = ((BttlScriptData6cSub13c)((EffectManagerData6c)a3).effect_44).model_134;
+      model = ((BttlScriptData6cSub13c)((EffectManagerData6c<?>)a3).effect_44).model_134;
     } else {
       //LAB_800ea36c
       model = ((BattleObject27c)a3).model_148;
@@ -3082,9 +3082,7 @@ public final class Bttl_800e {
 
     //LAB_800ec370
     s2.zOffset_a0 = model.zOffset_a0 + 16;
-    s2.scaleVector_fc.x = model.vector_10c.getX() / 4.0f / (float)0x1000;
-    s2.scaleVector_fc.y = model.vector_10c.getY() / 4.0f / (float)0x1000;
-    s2.scaleVector_fc.z = model.vector_10c.getZ() / 4.0f / (float)0x1000;
+    s2.scaleVector_fc.set(model.vector_10c.x).div(4.0f);
     RotMatrix_Xyz(s2.coord2Param_64.rotate, s2.coord2_14.coord);
     s2.coord2_14.coord.scaleL(s2.scaleVector_fc);
     s2.coord2_14.flg = 0;
@@ -3482,8 +3480,8 @@ public final class Bttl_800e {
   @Method(0x800ee49cL)
   public static FlowControl FUN_800ee49c(final RunningScript<?> script) {
     final BattleObject27c a1 = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    a1.model_148.vector_10c.setX(script.params_20[1].get());
-    a1.model_148.vector_10c.setZ(script.params_20[2].get());
+    a1.model_148.vector_10c.x = script.params_20[1].get() / (float)0x1000;
+    a1.model_148.vector_10c.z = script.params_20[2].get() / (float)0x1000;
     return FlowControl.CONTINUE;
   }
 

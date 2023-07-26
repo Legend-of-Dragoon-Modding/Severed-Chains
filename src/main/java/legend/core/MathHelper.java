@@ -171,6 +171,10 @@ public final class MathHelper {
     return org.joml.Math.cos(angle);
   }
 
+  public static float cosFromSin(final float sin, final float angle) {
+    return org.joml.Math.cosFromSin(sin, angle);
+  }
+
   public static float floorMod(final float numerator, final float denominator) {
     return (numerator - org.joml.Math.floor(numerator / denominator) * denominator);
   }
