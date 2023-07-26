@@ -3,8 +3,8 @@ package legend.game.combat.types;
 /** Dragoon addition data? */
 public class DragoonAdditionScriptData1c {
   public int _00;
-  public int _02;
-  public int _04;
+  public int baseAngle_02;
+  public int currentTick_04;
   public int _05;
   public int _06;
   public int _07;
@@ -16,6 +16,6 @@ public class DragoonAdditionScriptData1c {
   public int _11;
   public int _12;
   public int _13;
-  public int _14;
+  public int totalPresses_14;
   public int charId_18;
 }

@@ -30,6 +30,7 @@ import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.ByteRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
+import legend.core.memory.types.Pointer;
 import legend.core.memory.types.QuadConsumer;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.TriConsumer;
@@ -92,6 +93,7 @@ import legend.game.combat.effects.TransformScalerEffect34;
 import legend.game.combat.effects.UnusedBuggedEffect24;
 import legend.game.combat.effects.WsDragoonTransformationFeatherInstance70;
 import legend.game.combat.effects.WsDragoonTransformationFeathersEffect14;
+import legend.game.combat.types.AdditionHitProperties10;
 import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.DragoonAdditionScriptData1c;
 import legend.game.combat.types.EffeScriptData30;
@@ -221,27 +223,27 @@ public final class SEffe {
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(SEffe.class);
 
-  private static final Value _800fb794 = MEMORY.ref(2, 0x800fb794L);
+  private static final ArrayRef<ShortRef> particleSubCounts_800fb794 = MEMORY.ref(2, 0x800fb794L, ArrayRef.of(ShortRef.class, 20, 2, ShortRef::new));
 
-  private static final Value _800fb7bc = MEMORY.ref(1, 0x800fb7bcL);
+  private static final ArrayRef<ByteRef> additionButtonRenderCallbackIndices_800fb7bc = MEMORY.ref(1, 0x800fb7bcL, ArrayRef.of(ByteRef.class, 4, 1, ByteRef::new));
 
-  /** Some kind of mysterious global 2-hit addition array */
-  private static final Value _800fb7c0 = MEMORY.ref(1, 0x800fb7c0L);
+  /** Some kind of mysterious global 2-hit addition array. Should probably be yeeted, but need to be sure. */
+  private static final ArrayRef<AdditionHitProperties10> staticTestAdditionHitProperties_800fb7c0 = MEMORY.ref(1, 0x800fb7c0L, ArrayRef.of(AdditionHitProperties10.class, 3, 16, AdditionHitProperties10::new));
 
   /** Four sets of color values used for addition overlay borders; only last actually used */
   public static final ArrayRef<UnsignedByteRef> additionBorderColours_800fb7f0 = MEMORY.ref(1, 0x800fb7f0L, ArrayRef.of(UnsignedByteRef.class, 0xc, 0x1, UnsignedByteRef::new));
 
-  private static final Value _800fb7fc = MEMORY.ref(1, 0x800fb7fcL);
+  private static final ArrayRef<ArrayRef<ByteRef>> daddyHudEyeTranslucencyModes_800fb7fc = MEMORY.ref(1, 0x800fb7fcL, ArrayRef.of(ArrayRef.classFor(ByteRef.class), 4, 2, ArrayRef.of(ByteRef.class, 2, 1, ByteRef::new)));
 
-  private static final Value _800fb804 = MEMORY.ref(1, 0x800fb804L);
+  private static final ArrayRef<ArrayRef<ShortRef>> daddyHudMeterOffsets_800fb804 = MEMORY.ref(1, 0x800fb804L, ArrayRef.of(ArrayRef.classFor(ShortRef.class), 5, 4, ArrayRef.of(ShortRef.class, 2, 2, ShortRef::new)));
 
-  private static final Value _800fb818 = MEMORY.ref(1, 0x800fb818L);
+  private static final ArrayRef<ArrayRef<ShortRef>> daddyHudMeterUvs_800fb818 = MEMORY.ref(1, 0x800fb818L, ArrayRef.of(ArrayRef.classFor(ShortRef.class), 5, 4, ArrayRef.of(ShortRef.class, 2, 2, ShortRef::new)));
 
-  private static final Value _800fb82c = MEMORY.ref(1, 0x800fb82cL);
+  private static final ArrayRef<ArrayRef<ShortRef>> daddyHudMeterDimensions_800fb82c = MEMORY.ref(1, 0x800fb82cL, ArrayRef.of(ArrayRef.classFor(ShortRef.class), 5, 4, ArrayRef.of(ShortRef.class, 2, 2, ShortRef::new)));
 
-  private static final Value _800fb840 = MEMORY.ref(1, 0x800fb840L);
+  private static final ArrayRef<ByteRef> daddyHudFrameClutOffsets_800fb840 = MEMORY.ref(1, 0x800fb840L, ArrayRef.of(ByteRef.class, 12, 1, ByteRef::new));
 
-  private static final Value _800fb84c = MEMORY.ref(1, 0x800fb84cL);
+  private static final ArrayRef<ByteRef> daddyHudEyeClutOffsets_800fb84c = MEMORY.ref(1, 0x800fb84cL, ArrayRef.of(ByteRef.class, 16, 1, ByteRef::new));
 
   private static final COLOUR _800fb8cc = MEMORY.ref(2, 0x800fb8ccL, COLOUR::new);
   private static final SVECTOR _800fb8d0 = MEMORY.ref(2, 0x800fb8d0L, SVECTOR::new);
@@ -615,29 +617,25 @@ public final class SEffe {
     screenCaptureRenderers_80119fec[1] = SEffe::renderScreenCapture;
   }
 
-  private static final Value _80119f40 = MEMORY.ref(1, 0x80119f40L);
+  private static final ByteRef _80119f40 = MEMORY.ref(1, 0x80119f40L, ByteRef::new);
   private static byte additionOverlayActive_80119f41;
   /** Active when spinning */
   private static byte daddyOverlayActive_80119f42;
 
+  /** Array of daddy spinner step counts */
+  private static final ArrayRef<IntRef> daddyHudSpinnerStepCounts_80119f44 = MEMORY.ref(4, 0x80119f44L, ArrayRef.of(IntRef.class, 7, 4, IntRef::new));
   /**
    * Struct or something, 0x1c bytes
    */
-  private static final Value _80119f44 = MEMORY.ref(1, 0x80119f44L);
+  private static final ArrayRef<IntRef> _80119f60 = MEMORY.ref(4, 0x80119f60L, ArrayRef.of(IntRef.class, 7, 4, IntRef::new));
+  /** Array of daddy spinner step counts for special boi Kongol */
+  private static final ArrayRef<IntRef> kongolDaddyHudSpinnerStepCounts_80119f7c = MEMORY.ref(4, 0x80119f7cL, ArrayRef.of(IntRef.class, 7, 4, IntRef::new));
   /**
    * Struct or something, 0x1c bytes
    */
-  private static final Value _80119f60 = MEMORY.ref(1, 0x80119f60L);
-  /**
-   * Struct or something, 0x1c bytes
-   */
-  private static final Value _80119f7c = MEMORY.ref(1, 0x80119f7cL);
-  /**
-   * Struct or something, 0x1c bytes
-   */
-  private static final Value _80119f98 = MEMORY.ref(1, 0x80119f98L);
+  private static final ArrayRef<IntRef> _80119f98 = MEMORY.ref(4, 0x80119f98L, ArrayRef.of(IntRef.class, 7, 4, IntRef::new));
 
-  private static final Value _80119fb4 = MEMORY.ref(1, 0x80119fb4L);
+  private static final ByteRef daddySpinnerBrightnessFactor_80119fb4 = MEMORY.ref(1, 0x80119fb4L, ByteRef::new);
 
   private static final ArrayRef<UnsignedByteRef> _80119fbc = MEMORY.ref(1, 0x80119fbcL, ArrayRef.of(UnsignedByteRef.class, 8, 1, UnsignedByteRef::new));
   private static final ArrayRef<UnsignedByteRef> _80119fc4 = MEMORY.ref(1, 0x80119fc4L, ArrayRef.of(UnsignedByteRef.class, 8, 1, UnsignedByteRef::new));
@@ -666,13 +664,12 @@ public final class SEffe {
   /** Success values for each addition hit: 0 = not attempted, 1 = success, -1 = too early, -2 = too late, -3 = wrong button */
   private static final byte[] additionHitCompletionState_8011a014 = new byte[8];
 
-  private static final Value _8011a01c = MEMORY.ref(4, 0x8011a01cL);
-  private static final Value _8011a020 = MEMORY.ref(4, 0x8011a020L);
-  private static final Value _8011a024 = MEMORY.ref(4, 0x8011a024L);
-  private static final Value _8011a028 = MEMORY.ref(4, 0x8011a028L);
-  private static final Value _8011a02c = MEMORY.ref(4, 0x8011a02cL);
-
-  private static final Value _8011a030 = MEMORY.ref(1, 0x8011a030L);
+  private static final IntRef daddyHudOffsetX_8011a01c = MEMORY.ref(4, 0x8011a01cL, IntRef::new);
+  private static final IntRef daddyHudOffsetY_8011a020 = MEMORY.ref(4, 0x8011a020L, IntRef::new);
+  /** Unused */
+  private static final IntRef daddyScriptIndex_8011a024 = MEMORY.ref(4, 0x8011a024L, IntRef::new);
+  private static final Pointer<ArrayRef<IntRef>> daddyHudSpinnerStepCountsPointer_8011a028 = MEMORY.ref(4, 0x8011a028L, Pointer.deferred(4, ArrayRef.of(IntRef.class, 7, 4, IntRef::new)));
+  private static final Pointer<ArrayRef<IntRef>> _8011a02c = MEMORY.ref(4, 0x8011a02cL, Pointer.deferred(4, ArrayRef.of(IntRef.class, 7, 4, IntRef::new)));
 
   private static final Value _8011a048 = MEMORY.ref(1, 0x8011a048L);
 
@@ -2391,7 +2388,7 @@ public final class SEffe {
 
     //LAB_80101dd8
     if((effect.effectInner_08.particleInnerStuff_1c & 0x6000_0000L) != 0) {
-      effect.countParticleSub_54 = (int)_800fb794.offset((effect.effectInner_08.particleInnerStuff_1c & 0x6000_0000L) >>> 27).get();
+      effect.countParticleSub_54 = particleSubCounts_800fb794.get((int)((effect.effectInner_08.particleInnerStuff_1c & 0x6000_0000L) >>> 28)).get();
 
       //LAB_80101e3c
       for(int i = 0; i < effect.countParticleInstance_50; i++) {
@@ -2408,8 +2405,8 @@ public final class SEffe {
     effect.countParticleSub_54 = 0;
 
     if((effect.effectInner_08.particleInnerStuff_1c & 0x6000_0000) != 0) {
-      final long v0 = (effect.effectInner_08.particleInnerStuff_1c & 0x6000_0000) >>> 27;
-      effect.countParticleSub_54 = (int)_800fb794.offset(2, v0).get();
+      final int index = (effect.effectInner_08.particleInnerStuff_1c & 0x6000_0000) >>> 28;
+      effect.countParticleSub_54 = particleSubCounts_800fb794.get(index).get();
 
       //LAB_80101f2c
       for(int i = 0; i < effect.countParticleInstance_50; i++) {
@@ -3480,13 +3477,13 @@ public final class SEffe {
 
     // Params: ?, x, y, translucency, colour
     final int offset = isCounter ? 1 : 0;
-    if(Math.abs((byte)a0) >= 2) {
+    if(Math.abs((byte)a0) >= 2) {  // Button up position
       callScriptFunction(callback, 0x24, 119, 43, Translucency.B_PLUS_F.ordinal(), 0x80);
-      callScriptFunction(callback, (int)_800fb7bc.offset(1, 0x0L).offset(offset).get(), 115, 48, 0x1, 0x80);
-    } else {
+      callScriptFunction(callback, additionButtonRenderCallbackIndices_800fb7bc.get(offset).get(), 115, 48, 0x1, 0x80);
+    } else {  // Button down position
       //LAB_80106114
       callScriptFunction(callback, 0x24, 119, 51, Translucency.B_PLUS_F.ordinal(), 0x80);
-      callScriptFunction(callback, (int)_800fb7bc.offset(1, 0x2L).offset(offset).get(), 115, 48, Translucency.B_PLUS_F.ordinal(), 0x80);
+      callScriptFunction(callback, additionButtonRenderCallbackIndices_800fb7bc.get(offset + 2).get(), 115, 48, Translucency.B_PLUS_F.ordinal(), 0x80);
       callScriptFunction(callback, 0x25, 115, 50, Translucency.B_PLUS_F.ordinal(), 0x80);
     }
   }
@@ -3501,7 +3498,7 @@ public final class SEffe {
     final int hitPropertyValue;
     if(autoCompleteType == 1 || autoCompleteType == 3) {
       //LAB_80106274
-      hitPropertyValue = (int)_800fb7c0.offset(hitNum * 0x10L).offset(1, hitPropertyIndex).get();
+      hitPropertyValue = staticTestAdditionHitProperties_800fb7c0.get(hitNum).get(hitPropertyIndex);
     } else {
       //LAB_8010628c
       hitPropertyValue = (Bttl_800c.getHitProperty(charSlot, hitNum, hitPropertyIndex) & 0xff);
@@ -4160,146 +4157,243 @@ public final class SEffe {
   }
 
   @Method(0x801079e8L)
-  public static void FUN_801079e8(final DragoonAdditionScriptData1c a0) {
-    final int s4 = (int)_8011a01c.get();
-    final int s3 = (int)_8011a020.get();
-    final int fp = s4 + 16;
-    final int s7 = s3 + 70;
+  public static void FUN_801079e8(final DragoonAdditionScriptData1c daddy) {
+    final int x0 = daddyHudOffsetX_8011a01c.get();
+    final int y0 = daddyHudOffsetY_8011a020.get();
+    final int x1 = x0 + 16;
+    final int y1 = y0 + 70;
     final Consumer<RunningScript<?>> func = Bttl_800d::scriptRenderButtonPressHudElement;
 
-    final int a2;
-    if(FUN_80108460(a0, 0) != 0) {
-      callScriptFunction(func, 36, fp, s3 + 64, 1, 128);
-      a2 = 33;
+    final int buttonHudMetricsIndex;
+    // Button arrow placement
+    if(FUN_80108460(daddy, 0) != 0) {
+      callScriptFunction(func, 36, x1, y0 + 64, 1, 128);
+      buttonHudMetricsIndex = 33;
     } else {
       //LAB_80107a80
-      if(FUN_80108460(a0, 2) != 0) {
-        callScriptFunction(func, 36, fp, s3 + 60, 1, 128);
-        a2 = 33;
+      if(FUN_80108460(daddy, 2) != 0) {
+        callScriptFunction(func, 36, x1, y0 + 60, 1, 128);
+        buttonHudMetricsIndex = 33;
       } else {
         //LAB_80107ad4
-        callScriptFunction(func, 36, fp, s3 + 56, 1, 128);
-        a2 = 35;
+        callScriptFunction(func, 36, x1, y0 + 56, 1, 128);
+        buttonHudMetricsIndex = 35;
       }
     }
 
     //LAB_80107b10
-    callScriptFunction(func, a2, s4 + 12, s3 + 66, 1, 128);
+    // Button
+    callScriptFunction(func, buttonHudMetricsIndex, x0 + 12, y0 + 66, 1, 128);
 
-    if(a0._11 != 0) {
-      final int colour = a0._11 * 0x40 - 1;
+    if(daddy._11 != 0) {
+      final int colour = daddy._11 * 0x40 - 1;
       final COLOUR rgb = new COLOUR().set(colour, colour, colour);
-      callScriptFunction(func, 20, fp - 4, s7 - 4, 1, 128);
-      renderButtonPressHudElement((short)fp - 2, (short)s7 - 5, 232, 120, 255, 143, 0xc, Translucency.B_PLUS_F, rgb, a0._11 * 256 + 6404, a0._11 * 256 + 4096);
+      callScriptFunction(func, 20, x1 - 4, y1 - 4, 1, 128);
+      renderButtonPressHudElement((short)x1 - 2, (short)y1 - 5, 232, 120, 255, 143, 0xc, Translucency.B_PLUS_F, rgb, daddy._11 * 256 + 6404, daddy._11 * 256 + 4096);
     }
 
     //LAB_80107bf0
 
-    final int s1 = Math.min(4, a0._07);
+    final int s1 = Math.min(4, daddy._07);
 
     //LAB_80107c08
-    callScriptFunction(func, s1 + 4, fp + 36, s7,      1, 128);
-    callScriptFunction(func, 24,     fp -  4, s7,      1, 128);
-    callScriptFunction(func, 26,     fp -  4, s7 + 12, 1, 128);
-    callScriptFunction(func, 30,     fp -  4, s7 +  4, 1, 128);
-    callScriptFunction(func, 31,     fp + 48, s7 +  4, 1, 128);
+    callScriptFunction(func, s1 + 4, x1 + 36, y1,      1, 128);
+    callScriptFunction(func, 24,     x1 -  4, y1,      1, 128);
+    callScriptFunction(func, 26,     x1 -  4, y1 + 12, 1, 128);
+    callScriptFunction(func, 30,     x1 -  4, y1 +  4, 1, 128);
+    callScriptFunction(func, 31,     x1 + 48, y1 +  4, 1, 128);
 
     //LAB_80107cd4
     for(int i = 0; i < 48; i += 8) {
-      callScriptFunction(func, 28, fp + i, s7,      1, 128);
-      callScriptFunction(func, 29, fp + i, s7 + 12, 1, 128);
-      callScriptFunction(func, 32, fp + i, s7 -  4, 1, 128);
+      callScriptFunction(func, 28, x1 + i, y1,      1, 128);
+      callScriptFunction(func, 29, x1 + i, y1 + 12, 1, 128);
+      callScriptFunction(func, 32, x1 + i, y1 -  4, 1, 128);
     }
 
-    callScriptFunction(func, 25, fp + 48, s7     , 1, 128);
-    callScriptFunction(func, 27, fp + 48, s7 + 12, 1, 128);
+    callScriptFunction(func, 25, x1 + 48, y1     , 1, 128);
+    callScriptFunction(func, 27, x1 + 48, y1 + 12, 1, 128);
   }
 
   @Method(0x80107dc4L)
-  public static void FUN_80107dc4(final DragoonAdditionScriptData1c a0, final int a1, final int angle) {
-    final int colour = (int)((_80119fb4.get() + 1) * 0x40);
+  public static void renderDragoonAdditionHud(final DragoonAdditionScriptData1c daddy, final int transModesIndex, final int angle) {
+    final int colour = (daddySpinnerBrightnessFactor_80119fb4.get() + 1) * 0x40;
     final COLOUR rgb = new COLOUR().set(colour, colour, colour);
 
-    final int y = (short)_8011a020.get() + (rsin(angle) * 17 >> 12) + 24;
+    final int y = daddyHudOffsetY_8011a020.get() + (rsin(angle) * 17 >> 12) + 24;
 
     final int x;
-    if(_8011a028.deref(4).offset(a0._06 * 0x4L).get() >= 2) {
-      x = (short)_8011a01c.get() + (rcos(angle) * 17 >> 12) + 28;
+    if(daddyHudSpinnerStepCountsPointer_8011a028.deref().get(daddy._06).get() >= 2) {
+      x = daddyHudOffsetX_8011a01c.get() + (rcos(angle) * 17 >> 12) + 28;
     } else {
-      x = (short)_8011a01c.get() + 28;
+      x = daddyHudOffsetX_8011a01c.get() + 28;
     }
 
     //LAB_80108048
-    renderButtonPressHudTexturedRect((short)x, (short)y, 128, 64, 16, 16, 51, Translucency.B_PLUS_F, rgb, 0x1000);
+    // Spinner star
+    renderButtonPressHudTexturedRect(x, y, 128, 64, 16, 16, 51, Translucency.B_PLUS_F, rgb, 0x1000);
 
     rgb.set(0x80, 0x80, 0x80);
 
     //LAB_801080ac
     for(int i = 0; i < 5; i++) {
-      if(a0._07 < i) {
+      if(daddy._07 < i) {
         rgb.set(0x10, 0x10, 0x10);
       }
 
       //LAB_801080cc
-      renderButtonPressHudTexturedRect((short)_8011a01c.get() + (short)_800fb804.offset(2, i * 0x4L).getSigned(), (short)_8011a020.get() + (short)_800fb804.offset(2, i * 0x4L).offset(0x2L).getSigned(), (int)_800fb818.offset(1, i * 0x4L).getSigned(), (int)_800fb818.offset(1, i * 0x4L).offset(0x2L).getSigned(), (short)_800fb82c.offset(2, i * 0x4L).getSigned(), (short)_800fb82c.offset(2, i * 0x4L).offset(0x2L).getSigned(), 53 + i, Translucency.B_PLUS_F, rgb, 0x1000);
+      // Meter
+      renderButtonPressHudTexturedRect(
+        daddyHudOffsetX_8011a01c.get() + daddyHudMeterOffsets_800fb804.get(i).get(0).get(),
+        daddyHudOffsetY_8011a020.get() + daddyHudMeterOffsets_800fb804.get(i).get(1).get(),
+        daddyHudMeterUvs_800fb818.get(i).get(0).get(),
+        daddyHudMeterUvs_800fb818.get(i).get(1).get(),
+        daddyHudMeterDimensions_800fb82c.get(i).get(0).get(),
+        daddyHudMeterDimensions_800fb82c.get(i).get(1).get(),
+        53 + i,
+        Translucency.B_PLUS_F,
+        rgb,
+        0x1000
+      );
     }
 
-    FUN_801079e8(a0);
+    // Button press textures
+    FUN_801079e8(daddy);
 
     rgb.set(0x80, 0x80, 0x80);
 
     //LAB_801081a8
-    for(int i = 0; i < a0._0d; i++) {
-      renderButtonPressHudTexturedRect((short)_8011a01c.get() + 18, (short)_8011a020.get() + 16, 224, 208, 31, 31, (int)_800fb84c.offset(1, a0.charId_18).get(), Translucency.B_PLUS_F, rgb, 0x1000);
+    for(int i = 0; i < daddy._0d; i++) {
+      // Eye flash
+      renderButtonPressHudTexturedRect(
+        daddyHudOffsetX_8011a01c.get() + 18,
+        daddyHudOffsetY_8011a020.get() + 16,
+        224,
+        208,
+        31,
+        31,
+        daddyHudEyeClutOffsets_800fb84c.get(daddy.charId_18).get(),
+        Translucency.B_PLUS_F,
+        rgb,
+        0x1000
+      );
 
-      if(a0.charId_18 == 9) {
-        renderDivineDragoonAdditionPressIris((int)_8011a01c.getSigned() + 23, (int)_8011a020.getSigned() + 21, 232, 120, 23, 23, 12, Translucency.B_PLUS_F, rgb, 0x800, 0x1800);
+      if(daddy.charId_18 == 9) {
+        renderDivineDragoonAdditionPressIris(
+          daddyHudOffsetX_8011a01c.get() + 23,
+          daddyHudOffsetY_8011a020.get() + 21,
+          232,
+          120,
+          23,
+          23,
+          12,
+          Translucency.B_PLUS_F,
+          rgb,
+          0x800,
+          0x1800
+        );
       }
       //LAB_80108250
     }
 
     //LAB_80108268
-    renderButtonPressHudTexturedRect((short)_8011a01c.get() + 32, (short)_8011a020.get() -  4, 152, 208,  8, 24, 50, Translucency.HALF_B_PLUS_HALF_F, rgb, 0x1000);
-    renderButtonPressHudTexturedRect((short)_8011a01c.get() + 18, (short)_8011a020.get() + 16, 224, 208, 31, 31, (int)_800fb84c.offset(1, a0.charId_18).getSigned(), Translucency.of((int)_800fb7fc.offset(1, a1 * 2).getSigned()), rgb, 0x1000);
-    renderButtonPressHudTexturedRect((short)_8011a01c.get() + 17, (short)_8011a020.get() + 14, 112, 200, 40, 40, 52, Translucency.of((int)_800fb7fc.offset(1, a1 * 2).offset(0x1L).getSigned()), rgb, 0x1000);
-    renderButtonPressHudTexturedRect((short)_8011a01c.get(),      (short)_8011a020.get(),      160, 192, 64, 48, (int)_800fb840.offset(1, a0.charId_18).getSigned(), null, rgb, 0x1000);
-    renderButtonPressHudTexturedRect((short)_8011a01c.get() +  8, (short)_8011a020.get() + 48, 200,  80, 42,  8, (int)_800fb840.offset(1, a0.charId_18).getSigned(), null, rgb, 0x1000);
-    _80119fb4.setu(1 - _80119fb4.get());
+    // Daddy spinner
+    // Arrow/ tick mark
+    renderButtonPressHudTexturedRect(
+      daddyHudOffsetX_8011a01c.get() + 32,
+      daddyHudOffsetY_8011a020.get() -  4,
+      152,
+      208,
+      8,
+      24,
+      50,
+      Translucency.HALF_B_PLUS_HALF_F,
+      rgb,
+      0x1000
+    );
+    // Dark eye overlay
+    renderButtonPressHudTexturedRect(
+      daddyHudOffsetX_8011a01c.get() + 18,
+      daddyHudOffsetY_8011a020.get() + 16,
+      224,
+      208,
+      31,
+      31,
+      daddyHudEyeClutOffsets_800fb84c.get(daddy.charId_18).get(),
+      Translucency.of(daddyHudEyeTranslucencyModes_800fb7fc.get(transModesIndex).get(0).get()),
+      rgb,
+      0x1000
+    );
+    // Flat center overlay
+    renderButtonPressHudTexturedRect(
+      daddyHudOffsetX_8011a01c.get() + 17,
+      daddyHudOffsetY_8011a020.get() + 14,
+      112,
+      200,
+      40,
+      40,
+      52,
+      Translucency.of(daddyHudEyeTranslucencyModes_800fb7fc.get(transModesIndex).get(1).get()),
+      rgb,
+      0x1000
+    );
+    // Frame top portion
+    renderButtonPressHudTexturedRect(
+      daddyHudOffsetX_8011a01c.get(),
+      daddyHudOffsetY_8011a020.get(), 160,
+      192,
+      64,
+      48,
+      daddyHudFrameClutOffsets_800fb840.get(daddy.charId_18).get(),
+      null,
+      rgb,
+      0x1000
+    );
+    // Frame bottom portion
+    renderButtonPressHudTexturedRect(
+      daddyHudOffsetX_8011a01c.get() +  8,
+      daddyHudOffsetY_8011a020.get() + 48,
+      200,
+      80,
+      42,
+      8,
+      daddyHudFrameClutOffsets_800fb840.get(daddy.charId_18).get(),
+      null,
+      rgb,
+      0x1000
+    );
+    daddySpinnerBrightnessFactor_80119fb4.set(1 - daddySpinnerBrightnessFactor_80119fb4.get());
   }
 
   @Method(0x80108460L)
-  public static int FUN_80108460(final DragoonAdditionScriptData1c a0, final int a1) {
+  public static int FUN_80108460(final DragoonAdditionScriptData1c daddy, final int tickThresholdModifier) {
     int t4 = 0;
-    int t1 = 0;
-    long t0 = _8011a02c.get();
-    long t2 = _8011a028.get();
-    final int t3 = a0._04 - 1;
+    int totalSteps = 0;
+    final ArrayRef<IntRef> t0 = _8011a02c.deref();
+    final ArrayRef<IntRef> stepCounts = daddyHudSpinnerStepCountsPointer_8011a028.deref();
+    final int previousTick = daddy.currentTick_04 - 1;
 
     //LAB_80108484
     for(int i = 0; i < 5; i++) {
-      t1 += MEMORY.ref(4, t2).offset(0x0L).get();
-      final int v1 = t1 - a1 - ((int)MEMORY.ref(4, t0).offset(0x0L).get() >> 1);
+      totalSteps += stepCounts.get(i).get();
+      final int tickThreshold = totalSteps - tickThresholdModifier - (t0.get(i).get() >> 1);
       //LAB_801084c4
-      if((i & 0x1L) == 0 && t3 >= v1 + 1 || (i & 0x1L) != 0 && t3 >= v1) {
+      if((i & 1) == 0 && previousTick >= tickThreshold + 1 || (i & 1) != 0 && previousTick >= tickThreshold) {
         //LAB_801084cc
-        final int a2 = (int)MEMORY.ref(4, t0).offset(0x0L).get();
-        if(a2 != 0 && t1 + (a2 >> 1) >= a0._04 - 1) {
+        final int successWindow = t0.get(i).get();
+        if(successWindow != 0 && totalSteps + (successWindow >> 1) >= previousTick) {
           t4 = i + 1;
         }
       }
-
       //LAB_801084f8
       //LAB_801084fc
-      t0 = t0 + 0x4L;
-      t2 = t2 + 0x4L;
     }
 
     return t4;
   }
 
   @Method(0x80108514L)
-  public static void FUN_80108514(final ScriptState<DragoonAdditionScriptData1c> state, final DragoonAdditionScriptData1c data) {
-    FUN_80107dc4(data, 0, data._02 - 0x400);
+  public static void scriptRenderDragoonAdditionHud(final ScriptState<DragoonAdditionScriptData1c> state, final DragoonAdditionScriptData1c data) {
+    renderDragoonAdditionHud(data, 0, data.baseAngle_02 - 0x400);
   }
 
   @Method(0x80108574L)
@@ -4331,10 +4425,10 @@ public final class SEffe {
           }
         } else {
           //LAB_8010864c
-          data._04++;
-          data._02 += 0x1000 / (int)_8011a028.deref(4).offset(data._06 * 0x4L).get();
+          data.currentTick_04++;
+          data.baseAngle_02 += 0x1000 / daddyHudSpinnerStepCountsPointer_8011a028.deref().get(data._06).get();
 
-          if(data._06 + 1 << 12 < data._02) {
+          if(data._06 + 1 << 12 < data.baseAngle_02) {
             data._06++;
           }
 
@@ -4354,14 +4448,14 @@ public final class SEffe {
             if(v0 != 0 || CONFIG.getConfig(CoreMod.AUTO_DRAGOON_ADDITION_CONFIG.get())) {
               data._07 = v0;
               data._0d = 4;
-              _80119f40.setu(0);
+              _80119f40.set(0);
             } else {
               //LAB_8010873c
               if(data._07 == 0) {
-                _80119f40.setu(-1);
+                _80119f40.set(-1);
               } else {
                 //LAB_8010875c
-                _80119f40.setu(data._07);
+                _80119f40.set(data._07);
               }
 
               //LAB_80108760
@@ -4370,19 +4464,19 @@ public final class SEffe {
           }
 
           //LAB_80108768
-          if(data._07 < data._02 - 0x400 >> 12) {
+          if(data._07 < data.baseAngle_02 - 0x400 >> 12) {
             data._0d = 0;
 
             if(data._07 == 0) {
-              _80119f40.setu(-1);
+              _80119f40.set(-1);
             } else {
               //LAB_801087a4
-              if(data._07 == data._14) {
+              if(data._07 == data.totalPresses_14) {
                 FUN_80108cf4();
               }
 
               //LAB_801087bc
-              _80119f40.setu(data._07);
+              _80119f40.set(data._07);
             }
 
             //LAB_801087c8
@@ -4390,11 +4484,10 @@ public final class SEffe {
           }
 
           //LAB_801087d0
-          data._05 = data._02 & 0xff;
+          data._05 = data.baseAngle_02 & 0xff;
         }
       }
     }
-
     //LAB_801087dc
   }
 
@@ -4406,7 +4499,7 @@ public final class SEffe {
   /**
    * Pretty sure this is the script allocation for dragoon additions
    *
-   * {@link SEffe#FUN_80108514}
+   * {@link SEffe#scriptRenderDragoonAdditionHud}
    * {@link SEffe#FUN_80108574}
    * {@link SEffe#doNothingScriptDestructor}
    */
@@ -4418,12 +4511,12 @@ public final class SEffe {
     final ScriptState<DragoonAdditionScriptData1c> state = SCRIPTS.allocateScriptState("Dragoon addition", new DragoonAdditionScriptData1c());
     state.loadScriptFile(doNothingScript_8004f650);
     state.setTicker(SEffe::FUN_80108574);
-    state.setRenderer(SEffe::FUN_80108514);
+    state.setRenderer(SEffe::scriptRenderDragoonAdditionHud);
 
     final DragoonAdditionScriptData1c s1 = state.innerStruct_00;
     s1._00 = 1;
-    s1._02 = 0;
-    s1._04 = 0;
+    s1.baseAngle_02 = 0;
+    s1.currentTick_04 = 0;
     s1._05 = 0;
     s1._06 = 0;
     s1._07 = 0;
@@ -4441,8 +4534,8 @@ public final class SEffe {
     }
 
     //LAB_80108910
-    _8011a01c.setu(script.params_20[3].get());
-    _8011a020.setu(script.params_20[4].get());
+    daddyHudOffsetX_8011a01c.set(script.params_20[3].get());
+    daddyHudOffsetY_8011a020.set(script.params_20[4].get());
 
     //LAB_80108924
     for(int i = 0; i < 5; i++) {
@@ -4450,26 +4543,26 @@ public final class SEffe {
     }
 
     if(s4 == 7) {
-      _8011a028.setu(_80119f7c.getAddress());
-      _8011a02c.setu(_80119f98.getAddress());
-      s1._14 = 3;
+      daddyHudSpinnerStepCountsPointer_8011a028.set(kongolDaddyHudSpinnerStepCounts_80119f7c);
+      _8011a02c.set(_80119f98);
+      s1.totalPresses_14 = 3;
     } else {
       //LAB_80108964
-      _8011a028.setu(_80119f44.getAddress());
-      _8011a02c.setu(_80119f60.getAddress());
-      s1._14 = 4;
+      daddyHudSpinnerStepCountsPointer_8011a028.set(daddyHudSpinnerStepCounts_80119f44);
+      _8011a02c.set(_80119f60);
+      s1.totalPresses_14 = 4;
     }
 
     //LAB_80108984
-    _80119f40.setu(0);
+    _80119f40.set(0);
     daddyOverlayActive_80119f42 = 0;
-    _8011a024.setu(state.index);
+    daddyScriptIndex_8011a024.set(state.index);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x801089ccL)
   public static FlowControl FUN_801089cc(final RunningScript<?> script) {
-    script.params_20[1].set((byte)_80119f40.getSigned());
+    script.params_20[1].set(_80119f40.get());
     return FlowControl.CONTINUE;
   }
 
@@ -4502,7 +4595,7 @@ public final class SEffe {
           rgb.g.sub(32);
           rgb.b.sub(32);
           s0++;
-          renderButtonPressHudTexturedRect(struct._02 + s0 * 6, (short)_8011a020.get() + 16, (int)MEMORY.ref(1, fp).offset(0x0L).get(), (int)MEMORY.ref(1, s2).offset(0x0L).get(), 8, 16, 41, Translucency.B_PLUS_F, rgb, 0x1000);
+          renderButtonPressHudTexturedRect(struct._02 + s0 * 6, (short)daddyHudOffsetY_8011a020.get() + 16, (int)MEMORY.ref(1, fp).offset(0x0L).get(), (int)MEMORY.ref(1, s2).offset(0x0L).get(), 8, 16, 41, Translucency.B_PLUS_F, rgb, 0x1000);
         } while(s0 < 4);
       } else if(v1 == 1) {
         //LAB_80108b58
@@ -4526,10 +4619,10 @@ public final class SEffe {
       //LAB_80108be8
       //LAB_80108bec
       //LAB_80108bf0
-      renderButtonPressHudTexturedRect(struct._02, (short)_8011a020.get() + 16, (int)MEMORY.ref(1, fp).offset(0x0L).get(), (int)MEMORY.ref(1, s2).offset(0x0L).get(), 8, 16, 41, Translucency.B_PLUS_F, rgb, 0x1000);
+      renderButtonPressHudTexturedRect(struct._02, (short)daddyHudOffsetY_8011a020.get() + 16, (int)MEMORY.ref(1, fp).offset(0x0L).get(), (int)MEMORY.ref(1, s2).offset(0x0L).get(), 8, 16, 41, Translucency.B_PLUS_F, rgb, 0x1000);
 
       if((struct._01 & 0x1) != 0) {
-        renderButtonPressHudTexturedRect(struct._02, (short)_8011a020.get() + 16, (int)MEMORY.ref(1, fp).offset(0x0L).get(), (int)MEMORY.ref(1, s2).offset(0x0L).get(), 8, 16, 41, Translucency.B_PLUS_F, rgb, 0x1000);
+        renderButtonPressHudTexturedRect(struct._02, (short)daddyHudOffsetY_8011a020.get() + 16, (int)MEMORY.ref(1, fp).offset(0x0L).get(), (int)MEMORY.ref(1, s2).offset(0x0L).get(), 8, 16, 41, Translucency.B_PLUS_F, rgb, 0x1000);
       }
 
       //LAB_80108cb0
@@ -4552,7 +4645,7 @@ public final class SEffe {
     final EffeScriptData30 data = state.innerStruct_00;
 
     //LAB_80108d9c
-    int s2 = (int)_8011a01c.get();
+    int s2 = (int)daddyHudOffsetX_8011a01c.get();
     int s3 = 130;
     for(int i = 0; i < 8; i++) {
       final EffeScriptData30Sub06 s1 = data._00[i];
@@ -4798,7 +4891,7 @@ public final class SEffe {
     animation.previousState_14 = new VECTOR[sourceModel.n_vert_04];
     Arrays.setAll(animation.currentState_10, i -> new VECTOR());
     Arrays.setAll(animation.previousState_14, i -> new VECTOR());
-    _8011a030.setu(0x1L);
+    // Set unused static _8011a030 to 1
 
     //LAB_80109e78
     for(int i = 0; i < sourceModel.n_vert_04; i++) {
