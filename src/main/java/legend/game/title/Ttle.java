@@ -11,7 +11,6 @@ import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.GsDOBJ2;
 import legend.core.gte.MATRIX;
 import legend.core.gte.TmdWithId;
-import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
 import legend.core.opengl.Window;
 import legend.game.fmv.Fmv;
@@ -1015,7 +1014,7 @@ public final class Ttle {
   @Method(0x800cb728L)
   public static void renderMenuLogoFire() {
     final Vector3f rotation = new Vector3f(0.0f, -MathHelper.TWO_PI / 2.0f, 0.0f);
-    final VECTOR scale = new VECTOR().set(0xdac, 0x1000, 0x1000);
+    final Vector3f scale = new Vector3f(0.8544922f, 1.0f, 1.0f);
 
     if(!logoFireInitialized) {
       logoFireInitialized = true;

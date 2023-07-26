@@ -8394,9 +8394,9 @@ public final class SEffe {
     sp0x10.transfer.set(manager._10.trans_04);
     sp0x10.scaleL(manager._10.scale_16);
     sp0x10.compose(matrix, sp0x10);
-    final int scale = manager._10.scale_28;
-    sp0x10.scaleL(new VECTOR().set(scale, scale, scale));
-    manager._10.scale_16.mul(scale / (float)0x1000);
+    final float scale = manager._10.scale_28 / (float)0x1000;
+    sp0x10.scaleL(new Vector3f(scale, scale, scale));
+    manager._10.scale_16.mul(scale);
 
     final int type = deffFlags & 0xff00_0000;
     if(type == 0x300_0000) {

@@ -8657,12 +8657,11 @@ public final class SMap {
   @Method(0x800f2788L)
   public static void initSavePoint() {
     initModel(savePointModel_800d5eb0, new CContainer("Save point", new FileData(MEMORY.getBytes(mrg_800d6d1c.getFile(2), mrg_800d6d1c.entries.get(2).size.get()))), new TmdAnimationFile(new FileData(MEMORY.getBytes(mrg_800d6d1c.getFile(3), mrg_800d6d1c.entries.get(3).size.get()))));
-    savePoint_800d5598[0].rotation_28 = 0;
-    savePoint_800d5598[0].colour_34 = 0x50;
-    savePoint_800d5598[1].rotation_28 = 0;
-    savePoint_800d5598[1].fadeAmount_2c = 0x1_f800;
-    savePoint_800d5598[1].fadeAccumulator_30 = 0;
-    savePoint_800d5598[1].colour_34 = 0;
+    savePoint_800d5598[0].rotation_28 = 0.0f;
+    savePoint_800d5598[0].colour_34 = 0.3125f;
+    savePoint_800d5598[1].rotation_28 = 0.0f;
+    savePoint_800d5598[1].fadeAmount_2c = 0.0077f;
+    savePoint_800d5598[1].colour_34 = 0.0f;
     savePoint_800d5598[1].fadeState_38 = 0;
 
     //LAB_800f285c
@@ -8671,14 +8670,13 @@ public final class SMap {
       final SavePointRenderData44 struct1 = savePoint_800d5630[i * 4 + 1];
       final SavePointRenderData44 struct2 = savePoint_800d5630[i * 4 + 2];
       final SavePointRenderData44 struct3 = savePoint_800d5630[i * 4 + 3];
-      struct0.colour_34 = 0x80;
-      struct0.fadeAmount_2c = 0x1_fc00;
-      struct0.fadeAccumulator_30 = 0;
+      struct0.colour_34 = 0.5f;
+      struct0.fadeAmount_2c = 0.0078f;
       struct0.fadeState_38 = 0;
-      struct0.rotation_28 = _800d6c58.get(i).get();
-      struct1.colour_34 = 0x60;
-      struct2.colour_34 = struct0.colour_34 - 0x40;
-      struct3.colour_34 = struct0.colour_34 - 0x60;
+      struct0.rotation_28 = MathHelper.psxDegToRad(_800d6c58.get(i).get());
+      struct1.colour_34 = 0.375f;
+      struct2.colour_34 = struct0.colour_34 - 0.25f;
+      struct3.colour_34 = struct0.colour_34 - 0.375f;
     }
   }
 
@@ -8733,21 +8731,17 @@ public final class SMap {
       if(i == 1) {
         if(s0.fadeState_38 == 0) {
           //LAB_800f2b44
-          s0.fadeAccumulator_30 += s0.fadeAmount_2c;
-          s0.colour_34 = s0.fadeAccumulator_30 >> 16;
+          s0.colour_34 += s0.fadeAmount_2c;
 
-          if(s0.colour_34 > 0x7f) {
-            s0.fadeAccumulator_30 = 0x7f_0000;
-            s0.colour_34 = 0x7f;
+          if(s0.colour_34 > 0.5f) {
+            s0.colour_34 = 0.5f;
             s0.fadeState_38 = 1;
           }
         } else {
-          s0.fadeAccumulator_30 -= s0.fadeAmount_2c;
-          s0.colour_34 = s0.fadeAccumulator_30 >> 16;
+          s0.colour_34 -= s0.fadeAmount_2c;
 
-          if(s0.colour_34 < 0) {
-            s0.fadeAccumulator_30 = 0;
-            s0.colour_34 = 0;
+          if(s0.colour_34 < 0.0f) {
+            s0.colour_34 = 0.0f;
             s0.fadeState_38 = 0;
           }
         }
@@ -8761,7 +8755,7 @@ public final class SMap {
       GPU.queueCommand(s0.z_40, new GpuCommandPoly(4)
         .bpp(Bpp.of(texPages_800d6050.get(5).get() >>> 7 * 0b11))
         .translucent(Translucency.B_PLUS_F)
-        .monochrome(s0.colour_34)
+        .monochrome((int)(s0.colour_34 * 255.0f))
         .clut((cluts_800d6068.get(5).get() & 0b111111) * 16, cluts_800d6068.get(5).get() >>> 6)
         .vramPos((texPages_800d6050.get(5).get() & 0b1111) * 64, (texPages_800d6050.get(5).get() & 0b10000) != 0 ? 256 : 0)
         .pos(0, x0, y0)
@@ -8792,26 +8786,22 @@ public final class SMap {
       struct2.vert0_00.setY(struct1.vert0_00.getY());
       struct1.vert0_00.setX(struct0.vert0_00.getX());
       struct1.vert0_00.setY(struct0.vert0_00.getY());
-      struct0.vert0_00.setX((short)(sp68 + ((sp80 + _800d6c78.get(fp).get()) * rsin(struct0.rotation_28) >> 12)));
-      struct0.vert0_00.setY((short)(sp6a + ((sp78 + _800d6c78.get(fp).get()) * rcos(struct0.rotation_28) >> 12)));
+      struct0.vert0_00.setX((short)(sp68 + (sp80 + _800d6c78.get(fp).get()) * MathHelper.sin(struct0.rotation_28)));
+      struct0.vert0_00.setY((short)(sp6a + (sp78 + _800d6c78.get(fp).get()) * MathHelper.cos(struct0.rotation_28)));
 
       if(struct0.fadeState_38 != 0) {
-        struct0.fadeAccumulator_30 -= struct0.fadeAmount_2c;
-        struct0.colour_34 = struct0.fadeAccumulator_30 >> 16;
+        struct0.colour_34 -= struct0.fadeAmount_2c;
 
-        if(struct0.colour_34 < 0) {
-          struct0.fadeAccumulator_30 = 0;
-          struct0.colour_34 = 0;
+        if(struct0.colour_34 < 0.0f) {
+          struct0.colour_34 = 0.0f;
           struct0.fadeState_38 = 0;
         }
       } else {
         //LAB_800f2f0c
-        struct0.fadeAccumulator_30 += struct0.fadeAmount_2c;
-        struct0.colour_34 = struct0.fadeAccumulator_30 >> 16;
+        struct0.colour_34 += struct0.fadeAmount_2c;
 
-        if(struct0.colour_34 > 0x7f) {
-          struct0.fadeAccumulator_30 = 0x7f_0000;
-          struct0.colour_34 = 0x7f;
+        if(struct0.colour_34 > 0.5f) {
+          struct0.colour_34 = 0.5f;
           struct0.fadeState_38 = 1;
         }
       }
@@ -8825,7 +8815,7 @@ public final class SMap {
         final GpuCommandPoly cmd = new GpuCommandPoly(4)
           .bpp(Bpp.of(texPages_800d6050.get(4).get() >>> 7 * 0b11))
           .translucent(Translucency.B_PLUS_F)
-          .monochrome(struct.colour_34)
+          .monochrome((int)(struct.colour_34 * 255.0f))
           .clut((cluts_800d6068.get(4).get() & 0b111111) * 16, cluts_800d6068.get(4).get() >>> 6)
           .vramPos((texPages_800d6050.get(4).get() & 0b1111) * 64, (texPages_800d6050.get(4).get() & 0b10000) != 0 ? 256 : 0)
           .pos(0, struct.vert0_00.getX(), struct.vert0_00.getY())
@@ -8851,8 +8841,8 @@ public final class SMap {
         GPU.queueCommand(41, cmd);
       }
 
-      struct0.rotation_28 += savePointFloatiesRotations_800d6c88.get(fp).get();
-      struct0.rotation_28 &= 0xfff;
+      struct0.rotation_28 += MathHelper.psxDegToRad(savePointFloatiesRotations_800d6c88.get(fp).get());
+      struct0.rotation_28 %= MathHelper.TWO_PI;
     }
 
     _800f9ea4.incr();
