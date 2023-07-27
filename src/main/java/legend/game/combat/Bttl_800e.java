@@ -3090,7 +3090,7 @@ public final class Bttl_800e {
     final GsCOORD2PARAM s0 = v0.param;
     s0.rotate.zero();
     RotMatrix_Zyx(s0.rotate, v0.coord);
-    s0.trans.set(0, 0, 0);
+    s0.trans.zero();
     v0.coord.transfer.set(s0.trans);
 
     final MATRIX sp0x30 = new MATRIX();

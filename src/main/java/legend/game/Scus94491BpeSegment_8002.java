@@ -471,9 +471,9 @@ public final class Scus94491BpeSegment_8002 {
           final GsCOORD2PARAM params = coord2.param;
           RotMatrix_Zyx(params.rotate, coord2.coord);
           params.trans.set(
-            (params.trans.getX() + transforms[0][i].translate_06.getX()) / 2,
-            (params.trans.getY() + transforms[0][i].translate_06.getY()) / 2,
-            (params.trans.getZ() + transforms[0][i].translate_06.getZ()) / 2
+            (params.trans.x + transforms[0][i].translate_06.x) / 2.0f,
+            (params.trans.y + transforms[0][i].translate_06.y) / 2.0f,
+            (params.trans.z + transforms[0][i].translate_06.z) / 2.0f
           );
           coord2.coord.transfer.set(params.trans);
         }
@@ -686,9 +686,9 @@ public final class Scus94491BpeSegment_8002 {
       final MATRIX coord = coord2.coord;
       final GsCOORD2PARAM params = coord2.param;
       RotMatrix_Zyx(params.rotate, coord);
-      params.trans.setX((params.trans.getX() + transforms.translate_06.getX()) / 2);
-      params.trans.setY((params.trans.getY() + transforms.translate_06.getY()) / 2);
-      params.trans.setZ((params.trans.getZ() + transforms.translate_06.getZ()) / 2);
+      params.trans.x = (params.trans.x + transforms.translate_06.x) / 2.0f;
+      params.trans.y = (params.trans.y + transforms.translate_06.y) / 2.0f;
+      params.trans.z = (params.trans.z + transforms.translate_06.z) / 2.0f;
       coord.transfer.set(params.trans);
     }
 
@@ -799,14 +799,14 @@ public final class Scus94491BpeSegment_8002 {
     final MATRIX coord;
     final Vector3f scale;
     final Vector3f rotation;
-    final VECTOR translation;
+    final Vector3f translation;
 
     if(dobj2 == null) {
       dobj2 = new GsDOBJ2(); //sp0x10;
       coord = new MATRIX(); //sp0x20;
       scale = new Vector3f();
       rotation = new Vector3f(); //sp0x40;
-      translation = new VECTOR();
+      translation = new Vector3f();
     } else {
       //LAB_80021984
       dobj2.coord2_04.flg = 0;
@@ -845,7 +845,7 @@ public final class Scus94491BpeSegment_8002 {
       scale.set(1.0f, 1.0f, 1.0f);
       coord.scaleL(scale);
 
-      translation.set(1, 1, 1);
+      translation.set(1.0f, 1.0f, 1.0f);
       coord.transfer.set(translation);
     }
 

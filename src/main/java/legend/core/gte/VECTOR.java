@@ -3,6 +3,7 @@ package legend.core.gte;
 import legend.core.memory.Value;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
+import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
 
@@ -31,6 +32,14 @@ public class VECTOR implements MemoryRef {
     this.x = new IntRef(ref.offset(4, 0x0L));
     this.y = new IntRef(ref.offset(4, 0x4L));
     this.z = new IntRef(ref.offset(4, 0x8L));
+  }
+
+  /** NOTE: does NOT set pad */
+  public VECTOR set(final Vector3f other) {
+    this.setX((int)other.x);
+    this.setY((int)other.y);
+    this.setZ((int)other.z);
+    return this;
   }
 
   /** NOTE: does NOT set pad */

@@ -12,7 +12,7 @@ public class LmbTransforms14 {
   public LmbTransforms14() { }
 
   public LmbTransforms14(final FileData data) {
-    data.readSvec3(0x0, this.scale_00);
+    data.readSvec3_12(0x0, this.scale_00);
     data.readSvec3(0x6, this.trans_06);
     data.readSvec3Rotation(0xc, this.rot_0c);
   }

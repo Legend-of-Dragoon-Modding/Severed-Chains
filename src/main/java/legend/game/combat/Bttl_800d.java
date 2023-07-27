@@ -4661,7 +4661,11 @@ public final class Bttl_800d {
 
         final MATRIX translation = new MATRIX();
         RotMatrix_Zyx(rotation, translation);
-        translation.transfer.set(modelTransforms.translate_06).add(subTransforms.trans_05);
+        translation.transfer.set(
+          (int)(modelTransforms.translate_06.x + subTransforms.trans_05.x),
+          (int)(modelTransforms.translate_06.y + subTransforms.trans_05.y),
+          (int)(modelTransforms.translate_06.z + subTransforms.trans_05.z)
+        );
 
         FUN_800dd15c(modelPartMatrix, translation, 0x800);
       }

@@ -799,7 +799,7 @@ public final class SMap {
     params.rotate.zero();
     RotMatrix_Zyx(params.rotate, matrix);
 
-    params.trans.set(0, 0, 0);
+    params.trans.zero();
     matrix.transfer.set(params.trans);
 
     final MATRIX lw = new MATRIX();
@@ -879,9 +879,9 @@ public final class SMap {
       RotMatrix_Zyx(params.rotate, matrix);
 
       params.trans.set(
-        (params.trans.getX() + transforms[0][i].translate_06.getX()) / 2,
-        (params.trans.getY() + transforms[0][i].translate_06.getY()) / 2,
-        (params.trans.getZ() + transforms[0][i].translate_06.getZ()) / 2
+        (params.trans.x + transforms[0][i].translate_06.x) / 2.0f,
+        (params.trans.y + transforms[0][i].translate_06.y) / 2.0f,
+        (params.trans.z + transforms[0][i].translate_06.z) / 2.0f
       );
 
       matrix.transfer.set(params.trans);
