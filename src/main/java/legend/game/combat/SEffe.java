@@ -72,6 +72,7 @@ import legend.game.combat.effects.ParticleEffectData98;
 import legend.game.combat.effects.ParticleEffectData98Inner24;
 import legend.game.combat.effects.ParticleEffectInstance94;
 import legend.game.combat.effects.ParticleEffectInstance94Sub10;
+import legend.game.combat.effects.ParticleInitialTransformationMetrics10;
 import legend.game.combat.effects.ParticleInnerStuff04;
 import legend.game.combat.effects.ParticleMetrics48;
 import legend.game.combat.effects.RainEffect08;
@@ -79,7 +80,6 @@ import legend.game.combat.effects.RaindropEffect0c;
 import legend.game.combat.effects.ScreenCaptureEffect1c;
 import legend.game.combat.effects.ScreenCaptureEffectMetrics8;
 import legend.game.combat.effects.ScreenDistortionEffectData08;
-import legend.game.combat.effects.ParticleInitialTransformationMetrics10;
 import legend.game.combat.effects.SpriteMetrics08;
 import legend.game.combat.effects.SpriteWithTrailEffect30;
 import legend.game.combat.effects.StarChildrenImpactEffect20;
@@ -96,8 +96,8 @@ import legend.game.combat.effects.WsDragoonTransformationFeathersEffect14;
 import legend.game.combat.types.AdditionHitProperties10;
 import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.DragoonAdditionScriptData1c;
-import legend.game.combat.types.EffeScriptData30;
-import legend.game.combat.types.EffeScriptData30Sub06;
+import legend.game.combat.types.PerfectDragoonAdditionEffect30;
+import legend.game.combat.types.PerfectDragoonAdditionEffectGlyph06;
 import legend.game.combat.types.VertexDifferenceAnimation18;
 import legend.game.combat.ui.AdditionOverlayMode;
 import legend.game.modding.coremod.CoreMod;
@@ -637,8 +637,8 @@ public final class SEffe {
 
   private static final ByteRef daddySpinnerBrightnessFactor_80119fb4 = MEMORY.ref(1, 0x80119fb4L, ByteRef::new);
 
-  private static final ArrayRef<UnsignedByteRef> _80119fbc = MEMORY.ref(1, 0x80119fbcL, ArrayRef.of(UnsignedByteRef.class, 8, 1, UnsignedByteRef::new));
-  private static final ArrayRef<UnsignedByteRef> _80119fc4 = MEMORY.ref(1, 0x80119fc4L, ArrayRef.of(UnsignedByteRef.class, 8, 1, UnsignedByteRef::new));
+  private static final ArrayRef<UnsignedByteRef> perfectDaddyGlyphUs_80119fbc = MEMORY.ref(1, 0x80119fbcL, ArrayRef.of(UnsignedByteRef.class, 8, 1, UnsignedByteRef::new));
+  private static final ArrayRef<UnsignedByteRef> perfectDaddyGlyphVs_80119fc4 = MEMORY.ref(1, 0x80119fc4L, ArrayRef.of(UnsignedByteRef.class, 8, 1, UnsignedByteRef::new));
 
   /**
    * <ol start="0">
@@ -4472,7 +4472,7 @@ public final class SEffe {
             } else {
               //LAB_801087a4
               if(data._07 == data.totalPresses_14) {
-                FUN_80108cf4();
+                allocatePerfectDragoonAdditionEffect();
               }
 
               //LAB_801087bc
@@ -4567,50 +4567,59 @@ public final class SEffe {
   }
 
   @Method(0x801089e8L)
-  public static void FUN_801089e8(final ScriptState<EffeScriptData30> state, final EffeScriptData30 data) {
+  public static void tickPerfectDragoonAdditionEffect(final ScriptState<PerfectDragoonAdditionEffect30> state, final PerfectDragoonAdditionEffect30 effect) {
     //LAB_80108a38
     for(int i = 7; i >= 0; i--) {
       final COLOUR rgb = new COLOUR().set(0x80, 0x80, 0x80);
 
-      final long fp = _80119fbc.get(i).getAddress();
-      final long s2 = _80119fc4.get(i).getAddress();
+      final int u = perfectDaddyGlyphUs_80119fbc.get(i).get();
+      final int v = perfectDaddyGlyphVs_80119fc4.get(i).get();
 
-      final EffeScriptData30Sub06 struct = data._00[i];
+      final PerfectDragoonAdditionEffectGlyph06 glyph = effect.glyphs_00[i];
 
-      final int v1 = struct._00;
-      if(v1 == 0) {
+      final int renderStage = glyph.renderStage_00;
+      if(renderStage == 0) {
         //LAB_80108a78
-        struct._02 -= 0x10;
+        glyph.currentXPosition_02 -= 0x10;
 
-        if(struct._02 < struct._04) {
-          struct._02 = struct._04;
-          struct._00++;
+        if(glyph.currentXPosition_02 < glyph.finalXPosition_04) {
+          glyph.currentXPosition_02 = glyph.finalXPosition_04;
+          glyph.renderStage_00++;
         }
 
         //LAB_80108aac
         //LAB_80108ac4
-        int s0 = 0;
-        do {
+        for(int j = 0; j < 4; j++) {
           rgb.r.sub(32);
           rgb.g.sub(32);
           rgb.b.sub(32);
-          s0++;
-          renderButtonPressHudTexturedRect(struct._02 + s0 * 6, (short)daddyHudOffsetY_8011a020.get() + 16, (int)MEMORY.ref(1, fp).offset(0x0L).get(), (int)MEMORY.ref(1, s2).offset(0x0L).get(), 8, 16, 41, Translucency.B_PLUS_F, rgb, 0x1000);
-        } while(s0 < 4);
-      } else if(v1 == 1) {
+          renderButtonPressHudTexturedRect(
+            glyph.currentXPosition_02 + j * 6,
+            daddyHudOffsetY_8011a020.get() + 16,
+            u,
+            v,
+            8,
+            16,
+            41,
+            Translucency.B_PLUS_F,
+            rgb,
+            0x1000
+          );
+        }
+      } else if(renderStage == 1) {
         //LAB_80108b58
-        if(data._00[7]._00 == 1) {
-          struct._00 = 2;
+        if(effect.glyphs_00[7].renderStage_00 == 1) {
+          glyph.renderStage_00 = 2;
         }
         //LAB_80108a60
-      } else if(v1 == 2) {
+      } else if(renderStage == 2) {
         //LAB_80108b84
-        struct._01++;
+        glyph.currentStaticRenderTick_01++;
 
-        if(struct._01 >= 12 && i == 0) {
-          data._00[7]._00++;
+        if(glyph.currentStaticRenderTick_01 >= 12 && i == 0) {
+          effect.glyphs_00[7].renderStage_00++;
         }
-      } else if(v1 == 3) {
+      } else if(renderStage == 3) {
         //LAB_80108bd0
         state.deallocateWithChildren();
         return;
@@ -4619,43 +4628,63 @@ public final class SEffe {
       //LAB_80108be8
       //LAB_80108bec
       //LAB_80108bf0
-      renderButtonPressHudTexturedRect(struct._02, (short)daddyHudOffsetY_8011a020.get() + 16, (int)MEMORY.ref(1, fp).offset(0x0L).get(), (int)MEMORY.ref(1, s2).offset(0x0L).get(), 8, 16, 41, Translucency.B_PLUS_F, rgb, 0x1000);
+      renderButtonPressHudTexturedRect(
+        glyph.currentXPosition_02,
+        daddyHudOffsetY_8011a020.get() + 16,
+        u,
+        v,
+        8,
+        16,
+        41,
+        Translucency.B_PLUS_F,
+        rgb,
+        0x1000
+      );
 
-      if((struct._01 & 0x1) != 0) {
-        renderButtonPressHudTexturedRect(struct._02, (short)daddyHudOffsetY_8011a020.get() + 16, (int)MEMORY.ref(1, fp).offset(0x0L).get(), (int)MEMORY.ref(1, s2).offset(0x0L).get(), 8, 16, 41, Translucency.B_PLUS_F, rgb, 0x1000);
+      if((glyph.currentStaticRenderTick_01 & 0x1) != 0) {
+        renderButtonPressHudTexturedRect(
+          glyph.currentXPosition_02,
+          daddyHudOffsetY_8011a020.get() + 16,
+          u,
+          v,
+          8,
+          16,
+          41,
+          Translucency.B_PLUS_F,
+          rgb,
+          0x1000
+        );
       }
-
       //LAB_80108cb0
     }
-
     //LAB_80108cc4
   }
 
   /**
-   * {@link SEffe#FUN_801089e8}
+   * {@link SEffe#tickPerfectDragoonAdditionEffect}
    * {@link SEffe#doNothingScriptDestructor}
    */
   @Method(0x80108cf4L)
-  public static void FUN_80108cf4() {
+  public static void allocatePerfectDragoonAdditionEffect() {
     playSound(0, 50, 0, 0, (short)0, (short)0);
 
-    final ScriptState<EffeScriptData30> state = SCRIPTS.allocateScriptState("EffeScriptData30", new EffeScriptData30());
+    final ScriptState<PerfectDragoonAdditionEffect30> state = SCRIPTS.allocateScriptState("PerfectDragoonAdditionEffect30", new PerfectDragoonAdditionEffect30());
     state.loadScriptFile(doNothingScript_8004f650);
-    state.setTicker(SEffe::FUN_801089e8);
-    final EffeScriptData30 data = state.innerStruct_00;
+    state.setTicker(SEffe::tickPerfectDragoonAdditionEffect);
+    final PerfectDragoonAdditionEffect30 effect = state.innerStruct_00;
 
     //LAB_80108d9c
-    int s2 = (int)daddyHudOffsetX_8011a01c.get();
-    int s3 = 130;
+    int finalXPosition = daddyHudOffsetX_8011a01c.get();
+    int initialXPosition = 130;
     for(int i = 0; i < 8; i++) {
-      final EffeScriptData30Sub06 s1 = data._00[i];
+      final PerfectDragoonAdditionEffectGlyph06 glyph = effect.glyphs_00[i];
 
-      s2 = s2 + 8;
-      s1._00 = 0;
-      s1._01 = 0;
-      s1._02 = s3;
-      s1._04 = s2;
-      s3 = s3 + 32;
+      finalXPosition = finalXPosition + 8;
+      glyph.renderStage_00 = 0;
+      glyph.currentStaticRenderTick_01 = 0;
+      glyph.currentXPosition_02 = initialXPosition;
+      glyph.finalXPosition_04 = finalXPosition;
+      initialXPosition = initialXPosition + 32;
     }
   }
 
