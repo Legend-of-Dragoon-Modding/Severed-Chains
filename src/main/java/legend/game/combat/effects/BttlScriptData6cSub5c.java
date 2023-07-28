@@ -10,7 +10,7 @@ public class BttlScriptData6cSub5c implements Effect {
   public int _08;
   public Lmb lmb_0c;
   /** May have two copies of the LMB table for some reason */
-  public LmbTransforms14[] ptr_10;
+  public LmbTransforms14[] lmbTransforms_10;
   public final int[] _14 = new int[8];
   public int _34;
   public int _38;

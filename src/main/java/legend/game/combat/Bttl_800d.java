@@ -4796,7 +4796,7 @@ public final class Bttl_800d {
       model.lmbAnim_08.lmb_00 = lmb;
       model.animType_90 = 1;
       model.lmbUnknown_94 = 0;
-      model.partCount_98 = lmb.count_04;
+      model.partCount_98 = lmb.objectCount_04;
       model.totalFrames_9a = lmb._08[0].count_04 * 2;
       model.animationState_9c = 1;
       model.remainingFrames_9e = lmb._08[0].count_04 * 2;
