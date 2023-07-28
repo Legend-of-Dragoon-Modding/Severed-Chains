@@ -788,22 +788,22 @@ public final class Scus94491BpeSegment_8003 {
     worldToScreenMatrix_800c3548.set(identityAspectMatrix_800c3588);
     FUN_8003d5d0(worldToScreenMatrix_800c3548, -s2.viewpointTwist_18);
 
-    final int deltaX = s2.refpoint_0c.getX() - s2.viewpoint_00.getX();
-    final int deltaY = s2.refpoint_0c.getY() - s2.viewpoint_00.getY();
-    final int deltaZ = s2.refpoint_0c.getZ() - s2.viewpoint_00.getZ();
+    final float deltaX = s2.refpoint_0c.x - s2.viewpoint_00.x;
+    final float deltaY = s2.refpoint_0c.y - s2.viewpoint_00.y;
+    final float deltaZ = s2.refpoint_0c.z - s2.viewpoint_00.z;
 
-    final int vectorLengthSquared = deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ;
+    final float vectorLengthSquared = deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ;
 
-    if(vectorLengthSquared == 0) {
+    if(vectorLengthSquared == 0.0f) {
       return;
     }
 
-    final int vectorLength = Math.max(1, (int)Math.sqrt(vectorLengthSquared));
+    final float vectorLength = Math.max(1.0f, (float)Math.sqrt(vectorLengthSquared));
 
-    final int normalizedY = deltaY * 0x1000 / vectorLength;
+    final float normalizedY = deltaY * 0x1000 / vectorLength;
 
-    final int horizontalLength = (int)Math.sqrt(deltaX * deltaX + deltaZ * deltaZ);
-    final int normalizedHypotenuse = horizontalLength * 0x1000 / vectorLength;
+    final float horizontalLength = (float)Math.sqrt(deltaX * deltaX + deltaZ * deltaZ);
+    final float normalizedHypotenuse = horizontalLength * 0x1000 / vectorLength;
 
     //LAB_8003e230
     final MATRIX sp0x30 = new MATRIX();
@@ -811,8 +811,8 @@ public final class Scus94491BpeSegment_8003 {
     sp0x30.mul(worldToScreenMatrix_800c3548, worldToScreenMatrix_800c3548);
 
     if(horizontalLength != 0) {
-      final int normalizedX = deltaX * -0x1000 / horizontalLength;
-      final int normalizedZ = deltaZ * 0x1000 / horizontalLength;
+      final float normalizedX = deltaX * -0x1000 / horizontalLength;
+      final float normalizedZ = deltaZ * 0x1000 / horizontalLength;
 
       FUN_8003cee0(sp0x30, (short)normalizedX, (short)normalizedZ, 1);
       sp0x30.mul(worldToScreenMatrix_800c3548, worldToScreenMatrix_800c3548);

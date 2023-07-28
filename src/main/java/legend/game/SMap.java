@@ -100,6 +100,7 @@ import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Math;
+import org.joml.Vector3f;
 
 import java.util.Arrays;
 import java.util.List;
@@ -283,7 +284,7 @@ public final class SMap {
   /** TODO array, flags for submap objects - 0x80 means the model is the same as the previous one */
   public static final Value submapObjectFlags_800c6a50 = MEMORY.ref(4, 0x800c6a50L);
 
-  public static final VECTOR cameraPos_800c6aa0 = new VECTOR();
+  public static final Vector3f cameraPos_800c6aa0 = new Vector3f();
   public static final Value _800c6aac = MEMORY.ref(2, 0x800c6aacL);
   public static final VECTOR prevPlayerPos_800c6ab0 = new VECTOR();
   public static float encounterMultiplier_800c6abc;
@@ -1936,7 +1937,7 @@ public final class SMap {
   @Method(0x800e04b4L)
   public static FlowControl scriptFaceCamera(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    sobj.model_00.coord2Param_64.rotate.y = MathHelper.positiveAtan2(cameraPos_800c6aa0.getZ(), cameraPos_800c6aa0.getX());
+    sobj.model_00.coord2Param_64.rotate.y = MathHelper.positiveAtan2(cameraPos_800c6aa0.z, cameraPos_800c6aa0.x);
     sobj.rotationFrames_188 = 0;
     return FlowControl.CONTINUE;
   }
@@ -4826,7 +4827,7 @@ public final class SMap {
   }
 
   @Method(0x800e7418L)
-  public static void updateRview2(final SVECTOR viewpoint, final SVECTOR refpoint, final int rotation, final long projectionDistance) {
+  public static void updateRview2(final Vector3f viewpoint, final Vector3f refpoint, final int rotation, final long projectionDistance) {
     rview2_800cbd10.viewpoint_00.set(viewpoint);
     rview2_800cbd10.refpoint_0c.set(refpoint);
     rview2_800cbd10.viewpointTwist_18 = (short)rotation << 12;

@@ -1539,8 +1539,8 @@ public class WMap {
 
     _800c66b0.coord2_20.coord.transfer.set(0, 0, 0);
     _800c66b0.mapRotation_70.zero();
-    _800c66b0.rview2_00.viewpoint_00.set(0, -300, -900);
-    _800c66b0.rview2_00.refpoint_0c.set(0, 300, 900);
+    _800c66b0.rview2_00.viewpoint_00.set(0.0f, -300.0f, -900.0f);
+    _800c66b0.rview2_00.refpoint_0c.set(0.0f, 300.0f, 900.0f);
     _800c66b0.rview2_00.viewpointTwist_18 = 0;
     _800c66b0.rview2_00.super_1c = _800c66b0.coord2_20;
 
@@ -1826,10 +1826,10 @@ public class WMap {
       _800c66b0._110 = 2;
     } else if(v0 == 3) {
       //LAB_800d3434
-      _800c66b0.rview2_00.viewpoint_00.setY(_800c66b0.rview2_c8.viewpoint_00.getY() + _800c66b0.viewpointY_ec * _800c66b0._10e);
-      _800c66b0.rview2_00.viewpoint_00.setZ(_800c66b0.rview2_c8.viewpoint_00.getZ() + _800c66b0.viewpointZ_f0 * _800c66b0._10e);
-      _800c66b0.rview2_00.refpoint_0c.setY(_800c66b0.rview2_c8.refpoint_0c.getY() + _800c66b0.refpointY_f8 * _800c66b0._10e);
-      _800c66b0.rview2_00.refpoint_0c.setZ(_800c66b0.rview2_c8.refpoint_0c.getZ() + _800c66b0.refpointZ_fc * _800c66b0._10e);
+      _800c66b0.rview2_00.viewpoint_00.y = _800c66b0.rview2_c8.viewpoint_00.y + _800c66b0.viewpointY_ec * _800c66b0._10e;
+      _800c66b0.rview2_00.viewpoint_00.z = _800c66b0.rview2_c8.viewpoint_00.z + _800c66b0.viewpointZ_f0 * _800c66b0._10e;
+      _800c66b0.rview2_00.refpoint_0c.y = _800c66b0.rview2_c8.refpoint_0c.y + _800c66b0.refpointY_f8 * _800c66b0._10e;
+      _800c66b0.rview2_00.refpoint_0c.z = _800c66b0.rview2_c8.refpoint_0c.z + _800c66b0.refpointZ_fc * _800c66b0._10e;
       _800c66b0.mapRotation_70.y = _800c66b0.angle_10a + _800c66b0.angle_10c * _800c66b0._10e;
 
       if(_800c66b0._10e > 0) {
@@ -1848,10 +1848,10 @@ public class WMap {
 
     //LAB_800d3228
     //LAB_800d3268
-    _800c66b0.rview2_00.viewpoint_00.setY(_800c66b0.rview2_c8.viewpoint_00.getY() + _800c66b0.viewpointY_ec * _800c66b0._10e);
-    _800c66b0.rview2_00.viewpoint_00.setZ(_800c66b0.rview2_c8.viewpoint_00.getZ() + _800c66b0.viewpointZ_f0 * _800c66b0._10e);
-    _800c66b0.rview2_00.refpoint_0c.setY(_800c66b0.rview2_c8.refpoint_0c.getY() + _800c66b0.refpointY_f8 * _800c66b0._10e);
-    _800c66b0.rview2_00.refpoint_0c.setZ(_800c66b0.rview2_c8.refpoint_0c.getZ() + _800c66b0.refpointZ_fc * _800c66b0._10e);
+    _800c66b0.rview2_00.viewpoint_00.y = _800c66b0.rview2_c8.viewpoint_00.y + _800c66b0.viewpointY_ec * _800c66b0._10e;
+    _800c66b0.rview2_00.viewpoint_00.z = _800c66b0.rview2_c8.viewpoint_00.z + _800c66b0.viewpointZ_f0 * _800c66b0._10e;
+    _800c66b0.rview2_00.refpoint_0c.y = _800c66b0.rview2_c8.refpoint_0c.y + _800c66b0.refpointY_f8 * _800c66b0._10e;
+    _800c66b0.rview2_00.refpoint_0c.z = _800c66b0.rview2_c8.refpoint_0c.z + _800c66b0.refpointZ_fc * _800c66b0._10e;
     _800c66b0.mapRotation_70.y = _800c66b0.angle_10a + _800c66b0.angle_10c * _800c66b0._10e;
 
     _800c66b0._10e++;
@@ -1913,8 +1913,8 @@ public class WMap {
       }
     } else if(v0 == 1) {
       //LAB_800d38dc
-      _800c66b0.rview2_00.viewpoint_00.y.sub(1450);
-      _800c66b0.rview2_00.refpoint_0c.y.add(1450);
+      _800c66b0.rview2_00.viewpoint_00.y -= 1450.0f;
+      _800c66b0.rview2_00.refpoint_0c.y += 1450.0f;
       _800c66b0.mapRotation_70.y = _800c66b0.angle_9a + _800c66b0.angle_9c * _800c66b0._a0;
       _800c66b0.vec_b4.add(_800c66b0.vec_a4);
       _800c66b0.coord2_20.coord.transfer.setX(struct258_800c66a8.coord2_34.coord.transfer.getX() - _800c66b0.vec_b4.getX() / 0x100);
@@ -1923,8 +1923,8 @@ public class WMap {
       _800c66b0._a0++;
 
       if(_800c66b0._a0 >= 6) {
-        _800c66b0.rview2_00.viewpoint_00.y.set(_800c66b0._9e);
-        _800c66b0.rview2_00.refpoint_0c.y.set(-_800c66b0._9e);
+        _800c66b0.rview2_00.viewpoint_00.y = _800c66b0._9e;
+        _800c66b0.rview2_00.refpoint_0c.y = -_800c66b0._9e;
         _800c66b0.mapRotation_70.y = _800c66b0.angle_98;
         _800c66b0.coord2_20.coord.transfer.set(0, 0, 0);
         _800c66b0._c5 = 0;
@@ -1933,12 +1933,12 @@ public class WMap {
     } else if(v0 == 2) {
       //LAB_800d3bd8
       if(struct258_800c66a8._05 == 0) {
-        _800c66b0.rview2_00.viewpoint_00.y.add(1450);
-        _800c66b0.rview2_00.refpoint_0c.y.sub(1450);
+        _800c66b0.rview2_00.viewpoint_00.y += 1450.0f;
+        _800c66b0.rview2_00.refpoint_0c.y -= 1450.0f;
       } else {
         //LAB_800d3c44
-        _800c66b0.rview2_00.viewpoint_00.y.add(290);
-        _800c66b0.rview2_00.refpoint_0c.y.sub(290);
+        _800c66b0.rview2_00.viewpoint_00.y += 290.0f;
+        _800c66b0.rview2_00.refpoint_0c.y -= 290.0f;
       }
 
       //LAB_800d3c8c
@@ -1963,8 +1963,8 @@ public class WMap {
 
       //LAB_800d3ea8
       if(sp18) {
-        _800c66b0.rview2_00.viewpoint_00.setY(_800c66b0._9e);
-        _800c66b0.rview2_00.refpoint_0c.setY(-_800c66b0._9e);
+        _800c66b0.rview2_00.viewpoint_00.y = _800c66b0._9e;
+        _800c66b0.rview2_00.refpoint_0c.y = -_800c66b0._9e;
         _800c66b0.mapRotation_70.y = _800c66b0.angle_98;
         _800c66b0.coord2_20.coord.transfer.set(struct258_800c66a8.coord2_34.coord.transfer);
         _800c66b0._c5 = 0;
@@ -2221,10 +2221,10 @@ public class WMap {
     struct.rview2_c8.refpoint_0c.set(struct.rview2_00.refpoint_0c);
     struct.rview2_c8.viewpointTwist_18 = struct.rview2_00.viewpointTwist_18;
     struct.rview2_c8.super_1c = struct.rview2_00.super_1c;
-    struct.viewpointY_ec = (-100 - struct.rview2_c8.viewpoint_00.getY()) / 16;
-    struct.viewpointZ_f0 = (-600 - struct.rview2_c8.viewpoint_00.getZ()) / 16;
-    struct.refpointY_f8 = ( -90 - struct.rview2_c8.refpoint_0c.getY()) / 16;
-    struct.refpointZ_fc = -struct.rview2_c8.refpoint_0c.getZ() / 16;
+    struct.viewpointY_ec = (-100.0f - struct.rview2_c8.viewpoint_00.y) / 16.0f;
+    struct.viewpointZ_f0 = (-600.0f - struct.rview2_c8.viewpoint_00.z) / 16.0f;
+    struct.refpointY_f8 = ( -90.0f - struct.rview2_c8.refpoint_0c.y) / 16.0f;
+    struct.refpointZ_fc = -struct.rview2_c8.refpoint_0c.z / 16.0f;
     struct.angle_10a = struct.mapRotation_70.y;
 
     final float angle = struct258_800c66a8.rotation_a4.y + MathHelper.PI;
@@ -4834,8 +4834,8 @@ public class WMap {
         //LAB_800e4144
         scriptStartEffect(2, 15);
 
-        _800c66b0.rview2_00.viewpoint_00.setY(-9000);
-        _800c66b0.rview2_00.refpoint_0c.setY(9000);
+        _800c66b0.rview2_00.viewpoint_00.y = -9000.0f;
+        _800c66b0.rview2_00.refpoint_0c.y = 9000.0f;
         _800c66b0._11a = 1;
         _800c66b0.coord2_20.coord.transfer.set(0, 0, 0);
         _800c66b0._9e = -300;

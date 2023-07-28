@@ -321,4 +321,14 @@ public class MATRIX {
   public MATRIX scaleL(final Vector3f scale) {
     return this.scaleL(scale, this);
   }
+
+  public static Vector3f mul(final Vector3f left, final MATRIX right, final Vector3f out) {
+    out.set(
+      (right.get(0, 0) * left.x + right.get(0, 1) * left.y + right.get(0, 2) * left.z) / 0x1000,
+      (right.get(1, 0) * left.x + right.get(1, 1) * left.y + right.get(1, 2) * left.z) / 0x1000,
+      (right.get(2, 0) * left.x + right.get(2, 1) * left.y + right.get(2, 2) * left.z) / 0x1000
+    );
+
+    return out;
+  }
 }

@@ -1,80 +1,100 @@
 package legend.game.combat.environment;
 
-import legend.core.gte.SVECTOR;
-import legend.core.gte.VECTOR;
 import legend.game.types.GsRVIEW2;
+import org.joml.Vector3f;
 
 public class BattleCamera {
+  public static final int UPDATE_VIEWPOINT = 0x1;
+  public static final int UPDATE_REFPOINT = 0x2;
+
   public final GsRVIEW2 rview2_00 = new GsRVIEW2();
-  public final VECTOR vec_20 = new VECTOR();  // related to refpoint
-  public int _2c;
-  public int _30;
+  /** 8-bit fixed-point */
+  public final Vector3f vec_20 = new Vector3f();  // related to refpoint
+  /** 8-bit fixed-point */
+  public float z_2c;
+  /** For vec_60, 8-bit fixed-point */
+  public float stepZ_30;
 
-  public int _38;
-  public int _3c;  // refpoint X factor?
-  public int _40;
-  public int _44;
-  public int _48;  // refpoint Y factor?
+  /** 8-bit fixed-point */
+  public float x_38;
+  /** For vec_20, 8-bit fixed-point */
+  public float stepX_3c;  // refpoint X factor?
+  /** For vec_20/stepZ_30, 8-bit fixed-point */
+  public float stepZAcceleration_40;
+  /** 8-bit fixed-point */
+  public float y_44;
+  /** For vec_20, 8-bit fixed-point */
+  public float stepY_48;  // refpoint Y factor?
 
-  public int _54;  // refpoint Z factor?
+  /** For vec_20, 8-bit fixed-point */
+  public float stepZ_54;  // refpoint Z factor?
 
-  public int _5c;  // refpoint step count?
-  public final VECTOR vec_60 = new VECTOR();
-  public int _6c;
-  public int _70;
-  public final VECTOR vec_74 = new VECTOR();
+  /** TODO should this be a float? */
+  public int refpointTicksRemaining_5c;  // refpoint step count?
+  /** 8-bit fixed-point */
+  public final Vector3f vec_60 = new Vector3f();
+  public float stepZ_6c;
+  public float stepZAcceleration;
+  public final Vector3f vec_74 = new Vector3f();
   public int bobjIndex_80;  // refpoint bobj index?
 
   public int callbackIndex_88;  // refpoint callback?
-  public final SVECTOR svec_8c = new SVECTOR();
-  public final VECTOR vec_94 = new VECTOR();  // related to viewpoint
-  public int _a0; // something z
-  public int _a4;
 
-  public int _ac; // something x
-  public int _b0; // something x
-  public int _b4;
-  public int _b8; // something y
-  public int _bc; // something y
+  /** 8-bit fixed-point */
+  public final Vector3f vec_94 = new Vector3f();  // related to viewpoint
+  public float z_a0; // something z
+  /** For z_a0, 8-bit fixed-point */
+  public float stepZ_a4; // camera rotation Z step?
 
-  public int _c8; // something z
+  /** 8-bit fixed-point */
+  public float x_ac; // something x
+  /** For vec_94, 8-bit fixed-point */
+  public float stepX_b0; // something x
+  /** For zStep_a4, 8-bit fixed-point */
+  public float stepZAcceleration_b4; // camera rotation Z step acceleration?
+  /** 8-bit fixed-point */
+  public float y_b8; // something y
+  /** For vec_94, 8-bit fixed-point */
+  public float stepY_bc; // something y
 
-  public int _d0;  // viewpoint step count?
-  public int _d4;  // viewpoint X factor?
-  public int _d8;  // viewpoint Y factor?
-  public int _dc;  // viewpoint Z factor?
-  public int _e0;
-  public int _e4;
-  public int _e8;  // viewpoint X factor?
-  public int _ec;  // viewpoint Y factor?
-  public int _f0;  // viewpoint Z factor?
+  /** For vec_94, 8-bit fixed-point */
+  public float stepZ_c8; // something z
+
+  /** TODO should this be a float? */
+  public int viewpointTicksRemaining_d0;  // viewpoint step count?
+  /** 8-bit fixed-point */
+  public final Vector3f _d4 = new Vector3f();  // camera rotation?
+  /** For _d4, 8-bit fixed-point */
+  public float stepZ_e0;
+  /** For _d4, 8-bit fixed-point */
+  public float stepZAcceleration_e4;
+  /** 8-bit fixed-point */
+  public final Vector3f _e8 = new Vector3f();  // viewpoint factor?
   public int bobjIndex_f4;  // viewpoint bobj index?
 
   public int callbackIndex_fc;  // viewpoint callback?
-  public int _100;
-  public int _104;
-  public int _108;
-  public int _10c;
-  public int _110;
-  public int _114;
-  /**
-   * ubyte
-   */
-  public int _118;
+  public float projectionPlaneDistance_100;
+  public float newProjectionPlaneDistance_104;
+  public int projectionPlaneChangeFrames_108;
+  public float projectionPlaneDistanceStep_10c;
+  public float projectionPlaneDistanceStepAcceleration_110;
+  public int projectionPlaneMovementDirection_114;
+  /** ubyte*/
+  public boolean projectionPlaneChanging_118;
 
-  public int _11c;
   /**
-   * ubyte
+   * <ul>
+   *   <li>0x1 - {@link BattleCamera#UPDATE_VIEWPOINT}</li>
+   *   <li>0x2 - {@link BattleCamera#UPDATE_REFPOINT}</li>
+   * </ul>
    */
-  public int _120;  // viewpoint callback
-  /**
-   * ubyte
-   */
-  public int _121;  // refpoint callback
-  /**
-   * ubyte
-   */
-  public int _122;
+  public int flags_11c;
+  /** ubyte*/
+  public int viewpointCallbackIndex_120;
+  /** ubyte*/
+  public int refpointCallbackIndex_121;
+  /** ubyte*/
+  public boolean viewpointMoving_122;
   /** ubyte */
-  public int _123;
+  public boolean refpointMoving_123;
 }

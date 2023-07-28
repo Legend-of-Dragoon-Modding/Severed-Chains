@@ -46,11 +46,11 @@ public class WMapStruct19c0 {
 
   public final GsRVIEW2 rview2_c8 = new GsRVIEW2();
 
-  public int viewpointY_ec;
-  public int viewpointZ_f0;
+  public float viewpointY_ec;
+  public float viewpointZ_f0;
 
-  public int refpointY_f8;
-  public int refpointZ_fc;
+  public float refpointY_f8;
+  public float refpointZ_fc;
 
   /** short */
   public float angle_108;

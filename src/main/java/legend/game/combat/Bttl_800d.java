@@ -17,6 +17,7 @@ import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
 import legend.core.memory.types.CString;
 import legend.core.memory.types.ComponentFunction;
+import legend.core.memory.types.FloatRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.ShortRef;
 import legend.game.combat.bobj.BattleObject27c;
@@ -80,7 +81,6 @@ import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021724;
 import static legend.game.Scus94491BpeSegment_8002.SetGeomOffset;
-import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
 import static legend.game.Scus94491BpeSegment_8002.adjustModelUvs;
 import static legend.game.Scus94491BpeSegment_8002.animateModelTextures;
 import static legend.game.Scus94491BpeSegment_8002.applyInterpolationFrame;
@@ -98,13 +98,13 @@ import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrix_Zyx;
 import static legend.game.Scus94491BpeSegment_8004.doNothingScript_8004f650;
-import static legend.game.Scus94491BpeSegment_8004.ratan2;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.combat.Bttl_800c.FUN_800cf4f4;
 import static legend.game.combat.Bttl_800c.FUN_800cfb14;
+import static legend.game.combat.Bttl_800c.ZERO;
 import static legend.game.combat.Bttl_800c._800faa90;
 import static legend.game.combat.Bttl_800c._800faa92;
 import static legend.game.combat.Bttl_800c._800faa94;
@@ -155,6 +155,9 @@ import static legend.game.combat.Bttl_800c.viewpointComponentMethods_800fad9c;
 import static legend.game.combat.Bttl_800c.wobbleFramesRemaining_800c67c4;
 import static legend.game.combat.Bttl_800e.allocateEffectManager;
 import static legend.game.combat.Bttl_800e.renderGenericSpriteAtZOffset0;
+import static legend.game.combat.SEffe.getScriptedObjectTranslation;
+import static legend.game.combat.environment.BattleCamera.UPDATE_REFPOINT;
+import static legend.game.combat.environment.BattleCamera.UPDATE_VIEWPOINT;
 
 public final class Bttl_800d {
   private Bttl_800d() { }
@@ -822,8 +825,8 @@ public final class Bttl_800d {
       for(int n = 1; n < 7; n++) {
         guardEffectMetrics = guardEffectMetrics_800fa76c.get(n);
         translation.setX(baseX + manager._10.trans_04.getX());
-        translation.setY(((int)((guardEffectMetrics.y_02.get() * manager._10.scale_16.y) * s6) >> 12) + manager._10.trans_04.getY());
-        translation.setZ(((int)((guardEffectMetrics.z_00.get() * manager._10.scale_16.z) * s6) >> 12) + manager._10.trans_04.getZ());
+        translation.setY(((int)(guardEffectMetrics.y_02.get() * manager._10.scale_16.y * s6) >> 12) + manager._10.trans_04.getY());
+        translation.setZ(((int)(guardEffectMetrics.z_00.get() * manager._10.scale_16.z * s6) >> 12) + manager._10.trans_04.getZ());
         effectZ = transformWorldspaceToScreenspace(translation, refXArray[n], refYArray[n]) >> 2;
       }
 
@@ -1312,7 +1315,7 @@ public final class Bttl_800d {
     final String sp0x18 = Integer.toString(s3._08);
     int fp = s3._02;
     final int sp20 = (fp & 0xff) >>> 3;
-    final int sp2c = (s3._01 + 0x21 & 0xff);
+    final int sp2c = s3._01 + 0x21 & 0xff;
 
     //LAB_800d419c
     short s2;
@@ -1462,269 +1465,303 @@ public final class Bttl_800d {
     return FlowControl.CONTINUE;
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800d47dcL)
-  public static void FUN_800d47dc(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int scriptIndex) {
+  public static void FUN_800d47dc(final float x, final float y, final float z, final int ticks, final int a4, final int a5, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
-    cam.vec_94.set(cam.rview2_00.viewpoint_00).mul(0x100);
+    cam.vec_94.set(cam.rview2_00.viewpoint_00);
 
     if(a5 == 0) {
       //LAB_800d4854
-      cam._d0 = a3;
-      cam._b0 = (x - cam.vec_94.getX()) / a3;
-      cam._bc = (y - cam.vec_94.getY()) / a3;
-      cam._c8 = (z - cam.vec_94.getZ()) / a3;
+      cam.viewpointTicksRemaining_d0 = ticks;
+      cam.stepX_b0 = (x - cam.vec_94.x) / ticks;
+      cam.stepY_bc = (y - cam.vec_94.y) / ticks;
+      cam.stepZ_c8 = (z - cam.vec_94.z) / ticks;
     } else assert a5 != 1 : "Undefined t0/t1";
 
     //LAB_800d492c
     //LAB_800d4934
-    cam._11c |= 0x1;
-    cam._120 = 8;
+    cam.flags_11c |= UPDATE_VIEWPOINT;
+    cam.viewpointCallbackIndex_120 = 8;
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800d496cL)
-  public static void FUN_800d496c(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int scriptIndex) {
+  public static void FUN_800d496c(final float x, final float y, final float z, final int ticks, final int a4, final int a5, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
 
-    cam._ac = FUN_800dc384(0, 1, 0, 0) << 8;
-    cam._b8 = FUN_800dc384(0, 1, 1, 0) << 8;
-    cam._a0 = FUN_800dc384(0, 1, 2, 0) << 8;
+    cam.x_ac = FUN_800dc384(false, 1, 0, 0);
+    cam.y_b8 = FUN_800dc384(false, 1, 1, 0);
+    cam.z_a0 = FUN_800dc384(false, 1, 2, 0);
 
     if(a5 == 0) {
       //LAB_800d4a24
-      cam._d0 = a3;
-      cam._b0 = FUN_800dcf10(0, cam._ac, x, a3, a4 & 3);
-      cam._bc = FUN_800dcf10(1, cam._b8, y, a3, a4 >> 2 & 3);
-      cam._c8 = FUN_800dcf10(2, cam._a0, z, a3, 0);
+      cam.viewpointTicksRemaining_d0 = ticks;
+      cam.stepX_b0 = FUN_800dcf10(0, cam.x_ac, x, ticks, a4 & 3);
+      cam.stepY_bc = FUN_800dcf10(1, cam.y_b8, y, ticks, a4 >> 2 & 3);
+      cam.stepZ_c8 = FUN_800dcf10(2, cam.z_a0, z, ticks, 0);
     } else if(a5 == 1) {
       //LAB_800d4a7c
-      final int s1 = FUN_800dcfb8(0, cam._ac, x, a4 & 3);
-      final int s0 = FUN_800dcfb8(1, cam._b8, y, a4 >> 2 & 3);
-      final int v0 = FUN_800dcfb8(2, cam._a0, z, 0);
-      cam._d0 = SquareRoot0(s1 * s1 + s0 * s0 + v0 * v0) / a3;
-      cam._b0 = FUN_800dcf10(0, cam._ac, x, cam._d0, a4 & 3);
-      cam._bc = FUN_800dcf10(1, cam._b8, y, cam._d0, a4 >> 2 & 3);
-      cam._c8 = FUN_800dcf10(2, cam._a0, z, cam._d0, 0);
+      final float x2 = FUN_800dcfb8(0, cam.x_ac, x, a4 & 3);
+      final float y2 = FUN_800dcfb8(1, cam.y_b8, y, a4 >> 2 & 3);
+      final float z2 = FUN_800dcfb8(2, cam.z_a0, z, 0);
+      cam.viewpointTicksRemaining_d0 = (int)(Math.sqrt(x2 * x2 + y2 * y2 + z2 * z2) / ticks);
+      cam.stepX_b0 = FUN_800dcf10(0, cam.x_ac, x, cam.viewpointTicksRemaining_d0, a4 & 3);
+      cam.stepY_bc = FUN_800dcf10(1, cam.y_b8, y, cam.viewpointTicksRemaining_d0, a4 >> 2 & 3);
+      cam.stepZ_c8 = FUN_800dcf10(2, cam.z_a0, z, cam.viewpointTicksRemaining_d0, 0);
     }
 
     //LAB_800d4b68
-    cam._11c |= 0x1;
-    cam._120 = 9;
+    cam.flags_11c |= UPDATE_VIEWPOINT;
+    cam.viewpointCallbackIndex_120 = 9;
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800d4bacL)
-  public static void FUN_800d4bac(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int scriptIndex) {
+  public static void FUN_800d4bac(final float x, final float y, final float z, final int ticks, final int a4, final int a5, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
-    cam.vec_94.setX(FUN_800dc384(0, 4, 0, 0) << 8);
-    cam.vec_94.setY(FUN_800dc384(0, 4, 1, 0) << 8);
-    cam.vec_94.setZ(FUN_800dc384(0, 4, 2, 0) << 8);
+    cam.vec_94.x = FUN_800dc384(false, 4, 0, 0);
+    cam.vec_94.y = FUN_800dc384(false, 4, 1, 0);
+    cam.vec_94.z = FUN_800dc384(false, 4, 2, 0);
 
     if(a5 == 0) {
       //LAB_800d4c5c
-      cam._d0 = a3;
-      cam._b0 = (x - cam.vec_94.getX()) / a3;
-      cam._bc = (y - cam.vec_94.getY()) / a3;
-      cam._c8 = (z - cam.vec_94.getZ()) / a3;
+      cam.viewpointTicksRemaining_d0 = ticks;
+      cam.stepX_b0 = (x - cam.vec_94.x) / ticks;
+      cam.stepY_bc = (y - cam.vec_94.y) / ticks;
+      cam.stepZ_c8 = (z - cam.vec_94.z) / ticks;
     } else assert a5 != 1 : "Undefined s3/s5";
 
     //LAB_800d4d34
     //LAB_800d4d3c
-    cam._11c |= 0x1;
-    cam._120 = 12;
+    cam.flags_11c |= UPDATE_VIEWPOINT;
+    cam.viewpointCallbackIndex_120 = 12;
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800d4d7cL)
-  public static void FUN_800d4d7c(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int scriptIndex) {
+  public static void FUN_800d4d7c(final float x, final float y, final float z, final int ticks, final int a4, final int a5, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
 
-    cam._ac = FUN_800dc384(0, 5, 0, 0) << 8;
-    cam._b8 = FUN_800dc384(0, 5, 1, 0) << 8;
-    cam._a0 = FUN_800dc384(0, 5, 2, 0) << 8;
+    cam.x_ac = FUN_800dc384(false, 5, 0, 0);
+    cam.y_b8 = FUN_800dc384(false, 5, 1, 0);
+    cam.z_a0 = FUN_800dc384(false, 5, 2, 0);
 
     if(a5 == 0) {
       //LAB_800d4e34
-      cam._d0 = a3;
-      cam._b0 = FUN_800dcf10(0, cam._ac, x, a3, a4 & 3);
-      cam._bc = FUN_800dcf10(1, cam._b8, y, a3, a4 >> 2 & 3);
-      cam._c8 = FUN_800dcf10(2, cam._a0, z, a3, 0);
+      cam.viewpointTicksRemaining_d0 = ticks;
+      cam.stepX_b0 = FUN_800dcf10(0, cam.x_ac, x, ticks, a4 & 3);
+      cam.stepY_bc = FUN_800dcf10(1, cam.y_b8, y, ticks, a4 >> 2 & 3);
+      cam.stepZ_c8 = FUN_800dcf10(2, cam.z_a0, z, ticks, 0);
     } else if(a5 == 1) {
       //LAB_800d4e8c
-      final int s1 = FUN_800dcfb8(0, cam._ac, x, a4 & 3);
-      final int s0 = FUN_800dcfb8(1, cam._b8, y, a4 >> 2 & 3);
-      final int v0 = FUN_800dcfb8(2, cam._a0, z, 0);
-      cam._d0 = SquareRoot0(s1 * s1 + s0 * s0 + v0 * v0) / a3;
-      cam._b0 = FUN_800dcf10(0, cam._ac, x, cam._d0, a4 & 3);
-      cam._bc = FUN_800dcf10(1, cam._b8, y, cam._d0, a4 >> 2 & 3);
-      cam._c8 = FUN_800dcf10(2, cam._a0, z, cam._d0, 0);
+      final float x2 = FUN_800dcfb8(0, cam.x_ac, x, a4 & 3);
+      final float y2 = FUN_800dcfb8(1, cam.y_b8, y, a4 >> 2 & 3);
+      final float z2 = FUN_800dcfb8(2, cam.z_a0, z, 0);
+      cam.viewpointTicksRemaining_d0 = (int)(Math.sqrt(x2 * x2 + y2 * y2 + z2 * z2) / ticks);
+      cam.stepX_b0 = FUN_800dcf10(0, cam.x_ac, x, cam.viewpointTicksRemaining_d0, a4 & 3);
+      cam.stepY_bc = FUN_800dcf10(1, cam.y_b8, y, cam.viewpointTicksRemaining_d0, a4 >> 2 & 3);
+      cam.stepZ_c8 = FUN_800dcf10(2, cam.z_a0, z, cam.viewpointTicksRemaining_d0, 0);
     }
 
     //LAB_800d4f78
-    cam._11c |= 0x1;
-    cam._120 = 13;
+    cam.flags_11c |= UPDATE_VIEWPOINT;
+    cam.viewpointCallbackIndex_120 = 13;
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800d4fbcL)
-  public static void FUN_800d4fbc(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int scriptIndex) {
+  public static void FUN_800d4fbc(final float x, final float y, final float z, final int ticks, final int a4, final int a5, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
     cam.bobjIndex_f4 = scriptIndex;
-    cam.vec_94.setX(FUN_800dc384(0, 6, 0, scriptIndex) << 8);
-    cam.vec_94.setY(FUN_800dc384(0, 6, 1, scriptIndex) << 8);
-    cam.vec_94.setZ(FUN_800dc384(0, 6, 2, scriptIndex) << 8);
+    cam.vec_94.x = FUN_800dc384(false, 6, 0, scriptIndex);
+    cam.vec_94.y = FUN_800dc384(false, 6, 1, scriptIndex);
+    cam.vec_94.z = FUN_800dc384(false, 6, 2, scriptIndex);
 
     if(a5 == 0) {
       //LAB_800d5078
-      cam._d0 = a3;
+      cam.viewpointTicksRemaining_d0 = ticks;
 
-      if(a3 != 0) {
-        cam._b0 = (x - cam.vec_94.getX()) / a3;
-        cam._bc = (y - cam.vec_94.getY()) / a3;
-        cam._c8 = (z - cam.vec_94.getZ()) / a3;
+      if(ticks != 0) {
+        cam.stepX_b0 = (x - cam.vec_94.x) / ticks;
+        cam.stepY_bc = (y - cam.vec_94.y) / ticks;
+        cam.stepZ_c8 = (z - cam.vec_94.z) / ticks;
       } else {
-        cam._b0 = -1;
-        cam._bc = -1;
-        cam._c8 = -1;
+        cam.stepX_b0 = -1;
+        cam.stepY_bc = -1;
+        cam.stepZ_c8 = -1;
       }
     } else if(a5 == 1) {
       //LAB_800d50c4
-      final int x2 = x - cam.vec_94.getX();
-      final int y2 = y - cam.vec_94.getY();
-      final int z2 = z - cam.vec_94.getZ();
-      final int v0 = SquareRoot0(z2 * z2 + y2 * y2 + x2 * x2) / a3;
-      cam._d0 = v0;
+      final float x2 = x - cam.vec_94.x;
+      final float y2 = y - cam.vec_94.y;
+      final float z2 = z - cam.vec_94.z;
+      final float v0 = Math.sqrt(z2 * z2 + y2 * y2 + x2 * x2) / ticks;
+      cam.viewpointTicksRemaining_d0 = (int)v0;
 
       if(v0 != 0) {
-        cam._b0 = (x - cam.vec_94.getX()) / v0;
-        cam._bc = (y - cam.vec_94.getY()) / v0;
-        cam._c8 = (z - cam.vec_94.getZ()) / v0;
+        cam.stepX_b0 = (x - cam.vec_94.x) / v0;
+        cam.stepY_bc = (y - cam.vec_94.y) / v0;
+        cam.stepZ_c8 = (z - cam.vec_94.z) / v0;
       } else {
-        cam._b0 = -1;
-        cam._bc = -1;
-        cam._c8 = -1;
+        cam.stepX_b0 = -1;
+        cam.stepY_bc = -1;
+        cam.stepZ_c8 = -1;
       }
     }
 
     //LAB_800d5150
     //LAB_800d5158
-    cam._11c |= 0x1;
-    cam._120 = 14;
+    cam.flags_11c |= UPDATE_VIEWPOINT;
+    cam.viewpointCallbackIndex_120 = 14;
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800d519cL)
-  public static void FUN_800d519c(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int scriptIndex) {
-    final BattleCamera s4 = camera_800c67f0;
-    s4.bobjIndex_f4 = scriptIndex;
-    s4._ac = FUN_800dc384(0, 7, 0, scriptIndex) << 8;
-    s4._b8 = FUN_800dc384(0, 7, 1, scriptIndex) << 8;
-    s4._a0 = FUN_800dc384(0, 7, 2, scriptIndex) << 8;
+  public static void FUN_800d519c(final float x, final float y, final float z, final int ticks, final int a4, final int a5, final int scriptIndex) {
+    final BattleCamera cam = camera_800c67f0;
+    cam.bobjIndex_f4 = scriptIndex;
+    cam.x_ac = FUN_800dc384(false, 7, 0, scriptIndex);
+    cam.y_b8 = FUN_800dc384(false, 7, 1, scriptIndex);
+    cam.z_a0 = FUN_800dc384(false, 7, 2, scriptIndex);
 
     if(a5 == 0) {
       //LAB_800d525c
-      s4._d0 = a3;
-      s4._b0 = FUN_800dcf10(0, s4._ac, x, a3, a4 & 3);
-      s4._bc = FUN_800dcf10(1, s4._b8, y, a3, a4 >> 2 & 3);
-      s4._c8 = FUN_800dcf10(2, s4._a0, z, a3, 0);
+      cam.viewpointTicksRemaining_d0 = ticks;
+      cam.stepX_b0 = FUN_800dcf10(0, cam.x_ac, x, ticks, a4 & 3);
+      cam.stepY_bc = FUN_800dcf10(1, cam.y_b8, y, ticks, a4 >> 2 & 3);
+      cam.stepZ_c8 = FUN_800dcf10(2, cam.z_a0, z, ticks, 0);
     } else if(a5 == 1) {
       //LAB_800d52b4
-      final long s1 = FUN_800dcfb8(0, s4._ac, x, a4 & 3);
-      final long s0 = FUN_800dcfb8(1, s4._b8, y, a4 >> 2 & 3);
-      final long v0 = FUN_800dcfb8(2, s4._a0, z, 0);
-      s4._d0 = SquareRoot0(s1 * s1 + s0 * s0 + v0 * v0) / a3;
-      s4._b0 = FUN_800dcf10(0, s4._ac, x, s4._d0, a4 & 3);
-      s4._bc = FUN_800dcf10(1, s4._b8, y, s4._d0, a4 >> 2 & 3);
-      s4._c8 = FUN_800dcf10(2, s4._a0, z, s4._d0, 0);
+      final float x2 = FUN_800dcfb8(0, cam.x_ac, x, a4 & 3);
+      final float y2 = FUN_800dcfb8(1, cam.y_b8, y, a4 >> 2 & 3);
+      final float z2 = FUN_800dcfb8(2, cam.z_a0, z, 0);
+      cam.viewpointTicksRemaining_d0 = (int)(Math.sqrt(x2 * x2 + y2 * y2 + z2 * z2) / ticks);
+      cam.stepX_b0 = FUN_800dcf10(0, cam.x_ac, x, cam.viewpointTicksRemaining_d0, a4 & 3);
+      cam.stepY_bc = FUN_800dcf10(1, cam.y_b8, y, cam.viewpointTicksRemaining_d0, a4 >> 2 & 3);
+      cam.stepZ_c8 = FUN_800dcf10(2, cam.z_a0, z, cam.viewpointTicksRemaining_d0, 0);
     }
 
     //LAB_800d53a0
-    s4._11c |= 0x1;
-    s4._120 = 15;
+    cam.flags_11c |= UPDATE_VIEWPOINT;
+    cam.viewpointCallbackIndex_120 = 15;
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800d53e4L)
-  public static void FUN_800d53e4(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int a6) {
+  public static void FUN_800d53e4(final float x, final float y, final float z, final int stepZ, final int a4, final int a5, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
 
-    final int s5 = (x >> 8) - camera_800c67f0.rview2_00.viewpoint_00.getX();
-    final int s6 = (y >> 8) - camera_800c67f0.rview2_00.viewpoint_00.getY();
-    final int s2 = (z >> 8) - camera_800c67f0.rview2_00.viewpoint_00.getZ();
-    final int s3 = s5 / 2;
-    final int v0 = s6 / 2;
-    final int s0 = s2 / 2;
-    cam._dc = SquareRoot0(s3 * s3 + v0 * v0 + s0 * s0) << 9;
-    cam._d4 = (ratan2(s2, s5) & 0xfff) << 8;
-    final int a0_0 = cam._dc * 2 / (a3 + a4);
-    final int s4 = (a4 - a3) / a0_0;
-    cam._d8 = (ratan2(s6, SquareRoot0(s3 * s3 + s0 * s0) * 2) & 0xfff) << 8;
-    cam._a4 = a3;
-    cam._e8 = x;
-    cam._ec = y;
-    cam._f0 = z;
-    cam._11c |= 0x1;
-    cam._120 = 16;
-    cam._d0 = a0_0;
-    cam._b4 = s4;
+    final float dx = x - camera_800c67f0.rview2_00.viewpoint_00.x;
+    final float dy = y - camera_800c67f0.rview2_00.viewpoint_00.y;
+    final float dz = z - camera_800c67f0.rview2_00.viewpoint_00.z;
+    cam._d4.z = Math.sqrt(dx * dx + dy * dy + dz * dz);
+    cam._d4.x = MathHelper.floorMod(MathHelper.atan2(dz, dx), MathHelper.TWO_PI);
+    final float ticks = cam._d4.z * 2.0f / (a4 + stepZ);
+    final float zAccel = (a4 - stepZ) / ticks;
+    cam._d4.y = MathHelper.floorMod(MathHelper.atan2(dy, Math.sqrt(dx * dx + dz * dz)), MathHelper.TWO_PI);
+    cam.stepZ_a4 = stepZ;
+    cam._e8.set(x, y, z);
+    cam.flags_11c |= UPDATE_VIEWPOINT;
+    cam.viewpointCallbackIndex_120 = 16;
+    cam.viewpointTicksRemaining_d0 = (int)ticks;
+    cam.stepZAcceleration_b4 = zAccel;
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800d5ec8L)
-  public static void FUN_800d5ec8(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
+  public static void FUN_800d5ec8(final float x, final float y, final float z, final int ticks, final int a4, final int a5, final int a6, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
-    final int s3 = (x >> 8) - cam.rview2_00.viewpoint_00.getX();
-    final int s4 = (y >> 8) - cam.rview2_00.viewpoint_00.getY();
-    final int s1 = (z >> 8) - cam.rview2_00.viewpoint_00.getZ();
-    final int s2 = s3 / 2;
-    final int v0 = s4 / 2;
-    final int s0 = s1 / 2;
-    cam._d0 = a3;
-    cam._d4 = (ratan2(s1, s3) & 0xfff) << 8;
-    cam._d8 = (ratan2(s4, SquareRoot0(s2 * s2 + s0 * s0) * 2) & 0xfff) << 8;
-    cam._dc = SquareRoot0(s2 * s2 + v0 * v0 + s0 * s0) << 9;
+    final float dx = x - cam.rview2_00.viewpoint_00.x;
+    final float dy = y - cam.rview2_00.viewpoint_00.y;
+    final float dz = z - cam.rview2_00.viewpoint_00.z;
+    cam.viewpointTicksRemaining_d0 = ticks;
+    cam._d4.x = MathHelper.floorMod(MathHelper.atan2(dz, dx), MathHelper.TWO_PI);
+    cam._d4.y = MathHelper.floorMod(MathHelper.atan2(dy, Math.sqrt(dx * dx + dz * dz)), MathHelper.TWO_PI);
+    cam._d4.z = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
-    final int s6;
-    final int s7;
+    final float zStep;
+    final float zAccel;
     if(a4 == 0) {
       //LAB_800d5ff0
-      s6 = a5;
-      s7 = cam._dc * 2 / a3 - a5;
+      zStep = a5;
+      zAccel = cam._d4.z * 2.0f / ticks - a5;
     } else if(a4 == 1) {
       //LAB_800d6010
-      s6 = cam._dc * 2 / a3 - a5;
-      s7 = a5;
+      zStep = cam._d4.z * 2.0f / ticks - a5;
+      zAccel = a5;
     } else {
       throw new RuntimeException("Undefined s6/s7");
     }
 
     //LAB_800d6030
     //LAB_800d6038
-    cam._a4 = s6;
-    cam._b4 = (s7 - s6) / cam._d0;
-    cam._e8 = x;
-    cam._ec = y;
-    cam._f0 = z;
-    cam._11c |= 0x1;
-    cam._120 = 16;
+    cam.stepZ_a4 = zStep;
+    cam.stepZAcceleration_b4 = (zAccel - zStep) / cam.viewpointTicksRemaining_d0;
+    cam._e8.set(x, y, z);
+    cam.flags_11c |= UPDATE_VIEWPOINT;
+    cam.viewpointCallbackIndex_120 = 16;
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800d60b0L)
-  public static void FUN_800d60b0(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
+  public static void FUN_800d60b0(final float x, final float y, final float z, final int ticks, final int a4, final int a5, final int a6, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
-    cam._ac = FUN_800dc384(0, 1, 0, 0) << 8;
-    cam._b8 = FUN_800dc384(0, 1, 1, 0) << 8;
-    cam._a0 = FUN_800dc384(0, 1, 2, 0) << 8;
-    final int s1 = FUN_800dcfb8(0, cam._ac, x, a6 & 3) >> 8;
-    final int s0 = FUN_800dcfb8(1, cam._b8, y, a6 >> 2 & 3) >> 8;
-    FUN_800dcfb8(2, cam._a0, z, 0);
-    cam._d0 = a3;
-    cam._d4 = (ratan2(s0, s1) & 0xfff) << 8;
-    cam._d8 = 0;
-    cam._dc = SquareRoot0(s1 * s1 + s0 * s0) << 8;
+    cam.x_ac = FUN_800dc384(false, 1, 0, 0);
+    cam.y_b8 = FUN_800dc384(false, 1, 1, 0);
+    cam.z_a0 = FUN_800dc384(false, 1, 2, 0);
+    final float s1 = FUN_800dcfb8(0, cam.x_ac, x, a6 & 3);
+    final float s0 = FUN_800dcfb8(1, cam.y_b8, y, a6 >> 2 & 3);
+    cam.viewpointTicksRemaining_d0 = ticks;
+    cam._d4.x = MathHelper.floorMod(MathHelper.atan2(s0, s1), MathHelper.TWO_PI);
+    cam._d4.y = 0.0f;
+    cam._d4.z = Math.sqrt(s1 * s1 + s0 * s0);
 
-    final int s4;
-    final int s3;
+    final float s4;
+    final float zStep;
     if(a4 == 0) {
       //LAB_800d61fc
-      s3 = a5;
-      s4 = cam._dc * 2 / a3 - a5;
+      zStep = a5;
+      s4 = cam._d4.z * 2.0f / ticks - a5;
     } else if(a4 == 1) {
       //LAB_800d621c
-      s3 = cam._dc * 2 / a3 - a5;
+      zStep = cam._d4.z * 2.0f / ticks - a5;
       s4 = a5;
     } else {
       throw new IllegalArgumentException("a4 must be 0 or 1");
@@ -1732,68 +1769,70 @@ public final class Bttl_800d {
 
     //LAB_800d6238
     //LAB_800d6240
-    cam._e0 = s3;
-    cam._e8 = x;
-    cam._ec = y;
-    cam._f0 = z;
-    cam._e4 = (s4 - s3) / cam._d0;
-    cam._a4 = FUN_800dcfb8(2, cam._a0, z, 0) / cam._d0;
-    cam._11c |= 0x1;
-    cam._120 = 17;
+    cam.stepZ_e0 = zStep;
+    cam._e8.set(x, y, z);
+    cam.stepZAcceleration_e4 = (s4 - zStep) / cam.viewpointTicksRemaining_d0;
+    cam.stepZ_a4 = FUN_800dcfb8(2, cam.z_a0, z, 0) / cam.viewpointTicksRemaining_d0;
+    cam.flags_11c |= UPDATE_VIEWPOINT;
+    cam.viewpointCallbackIndex_120 = 17;
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800d62d8L)
-  public static void FUN_800d62d8(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
+  public static void FUN_800d62d8(final float x, final float y, final float z, final int ticks, final int a4, final int a5, final int a6, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
-    cam.vec_94.setX(FUN_800dc384(0, 4, 0, 0) << 8);
-    cam.vec_94.setY(FUN_800dc384(0, 4, 1, 0) << 8);
-    cam.vec_94.setZ(FUN_800dc384(0, 4, 2, 0) << 8);
+    cam.vec_94.x = FUN_800dc384(false, 4, 0, 0);
+    cam.vec_94.y = FUN_800dc384(false, 4, 1, 0);
+    cam.vec_94.z = FUN_800dc384(false, 4, 2, 0);
     unused_800c67d8.set(cam.vec_94);
-    final int s4 = x - cam.vec_94.getX() >> 8;
-    final int s5 = y - cam.vec_94.getY() >> 8;
-    final int s3 = z - cam.vec_94.getZ() >> 8;
-    final int s1 = s4 / 2;
-    final int v1 = s5 / 2;
-    final int s0 = s3 / 2;
-    cam._d0 = a3;
-    cam._d4 = (ratan2(s3, s4) & 0xfff) << 8;
-    cam._d8 = (ratan2(s5, SquareRoot0(s1 * s1 + s0 * s0) * 2) & 0xfff) << 8;
-    cam._dc = SquareRoot0(s1 * s1 + v1 * v1 + s0 * s0) << 9;
-    final IntRef sp0x18 = new IntRef();
-    final IntRef sp0x1c = new IntRef();
-    FUN_800dcebc(a4, a5, cam._dc, a3, sp0x18, sp0x1c);
-    cam._e8 = x;
-    cam._ec = y;
-    cam._f0 = z;
-    cam._a4 = sp0x18.get();
-    cam._b4 = (sp0x1c.get() - sp0x18.get()) / cam._d0;
-    cam._11c |= 0x1;
-    cam._120 = 20;
+    final float dx = x - cam.vec_94.x;
+    final float dy = y - cam.vec_94.y;
+    final float dz = z - cam.vec_94.z;
+    cam.viewpointTicksRemaining_d0 = ticks;
+    cam._d4.x = MathHelper.floorMod(MathHelper.atan2(dz, dx), MathHelper.TWO_PI);
+    cam._d4.y = MathHelper.floorMod(MathHelper.atan2(dy, Math.sqrt(dx * dx + dz * dz)), MathHelper.TWO_PI);
+    cam._d4.z = Math.sqrt(dx * dx + dy * dy + dz * dz);
+    final FloatRef sp0x18 = new FloatRef();
+    final FloatRef sp0x1c = new FloatRef();
+    FUN_800dcebc(a4, a5, cam._d4.z, ticks, sp0x18, sp0x1c);
+    cam._e8.set(x, y, z);
+    cam.stepZ_a4 = sp0x18.get();
+    cam.stepZAcceleration_b4 = (sp0x1c.get() - sp0x18.get()) / cam.viewpointTicksRemaining_d0;
+    cam.flags_11c |= UPDATE_VIEWPOINT;
+    cam.viewpointCallbackIndex_120 = 20;
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800d64e4L)
-  public static void FUN_800d64e4(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
+  public static void FUN_800d64e4(final float x, final float y, final float z, final int ticks, final int a4, final int a5, final int a6, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
-    cam._ac = FUN_800dc384(0, 5, 0, 0) << 8;
-    cam._b8 = FUN_800dc384(0, 5, 1, 0) << 8;
-    cam._a0 = FUN_800dc384(0, 5, 2, 0) << 8;
-    final int s1 = FUN_800dcfb8(0, cam._ac, x, a6 & 3) >> 8;
-    final int s0 = FUN_800dcfb8(1, cam._b8, y, a6 >> 2 & 3) >> 8;
-    FUN_800dcfb8(2, cam._a0, z, 0);
-    cam._dc = SquareRoot0(s1 * s1 + s0 * s0) << 8;
-    cam._d4 = (ratan2(s0, s1) & 0xfff) << 8;
-    cam._d8 = 0;
-    cam._d0 = a3;
+    cam.x_ac = FUN_800dc384(false, 5, 0, 0);
+    cam.y_b8 = FUN_800dc384(false, 5, 1, 0);
+    cam.z_a0 = FUN_800dc384(false, 5, 2, 0);
+    final float s1 = FUN_800dcfb8(0, cam.x_ac, x, a6 & 3);
+    final float s0 = FUN_800dcfb8(1, cam.y_b8, y, a6 >> 2 & 3);
+    cam.viewpointTicksRemaining_d0 = ticks;
+    cam._d4.x = MathHelper.floorMod(MathHelper.atan2(s0, s1), MathHelper.TWO_PI);
+    cam._d4.y = 0.0f;
+    cam._d4.z = Math.sqrt(s1 * s1 + s0 * s0);
 
-    final int s3;
-    final int s4;
+    final float zStep;
+    final float s4;
     if(a4 == 0) {
       //LAB_800d6630
-      s3 = a5;
-      s4 = cam._dc * 2 / a3 - a5;
+      zStep = a5;
+      s4 = cam._d4.z * 2.0f / ticks - a5;
     } else if(a4 == 1) {
       //LAB_800d6650
-      s3 = cam._dc * 2 / a3 - a5;
+      zStep = cam._d4.z * 2.0f / ticks - a5;
       s4 = a5;
     } else {
       throw new RuntimeException("Undefined s3");
@@ -1801,43 +1840,43 @@ public final class Bttl_800d {
 
     //LAB_800d666c
     //LAB_800d6674
-    cam._e0 = s3;
-    cam._e8 = x;
-    cam._ec = y;
-    cam._f0 = z;
-    cam._e4 = (s4 - s3) / cam._d0;
-    cam._a4 = FUN_800dcfb8(2, cam._a0, z, 0) / cam._d0;
-    cam._11c |= 0x1;
-    cam._120 = 21;
+    cam.stepZ_e0 = zStep;
+    cam._e8.set(x, y, z);
+    cam.stepZAcceleration_e4 = (s4 - zStep) / cam.viewpointTicksRemaining_d0;
+    cam.stepZ_a4 = FUN_800dcfb8(2, cam.z_a0, z, 0) / cam.viewpointTicksRemaining_d0;
+    cam.flags_11c |= UPDATE_VIEWPOINT;
+    cam.viewpointCallbackIndex_120 = 21;
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800d670cL)
-  public static void FUN_800d670c(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
+  public static void FUN_800d670c(final float x, final float y, final float z, final int ticks, final int a4, final int a5, final int a6, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
     cam.bobjIndex_f4 = scriptIndex;
-    cam.vec_94.setX(FUN_800dc384(0, 6, 0, scriptIndex) << 8);
-    cam.vec_94.setY(FUN_800dc384(0, 6, 1, scriptIndex) << 8);
-    cam.vec_94.setZ(FUN_800dc384(0, 6, 2, scriptIndex) << 8);
-    final int s3 = x - cam.vec_94.getX() >> 8;
-    final int s4 = y - cam.vec_94.getY() >> 8;
-    final int s2 = z - cam.vec_94.getZ() >> 8;
-    final int s1 = s3 / 2;
-    final int v1 = s4 / 2;
-    final int s0 = s2 / 2;
-    cam._d0 = a3;
-    cam._d4 = (ratan2(s2, s3) & 0xfff) << 8;
-    cam._d8 = (ratan2(s4, SquareRoot0(s1 * s1 + s0 * s0) * 2) & 0xfff) << 8;
-    cam._dc = SquareRoot0(s1 * s1 + v1 * v1 + s0 * s0) << 9;
+    cam.vec_94.x = FUN_800dc384(false, 6, 0, scriptIndex);
+    cam.vec_94.y = FUN_800dc384(false, 6, 1, scriptIndex);
+    cam.vec_94.z = FUN_800dc384(false, 6, 2, scriptIndex);
+    final float dx = x - cam.vec_94.x;
+    final float dy = y - cam.vec_94.y;
+    final float dz = z - cam.vec_94.z;
+    cam.viewpointTicksRemaining_d0 = ticks;
+    cam._d4.x = MathHelper.floorMod(MathHelper.atan2(dz, dx), MathHelper.TWO_PI);
+    cam._d4.y = MathHelper.floorMod(MathHelper.atan2(dy, Math.sqrt(dx * dx + dz * dz)), MathHelper.TWO_PI);
+    cam._d4.z = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
-    final int s6;
-    final int s7;
+    final float zStep;
+    final float s7;
     if(a4 == 0) {
       //LAB_800d68a0
-      s6 = a5;
-      s7 = cam._dc * 2 / a3 - a5;
+      zStep = a5;
+      s7 = cam._d4.z * 2.0f / ticks - a5;
     } else if(a4 == 1) {
       //LAB_800d68c0
-      s6 = cam._dc * 2 / a3 - a5;
+      zStep = cam._d4.z * 2.0f / ticks - a5;
       s7 = a5;
     } else {
       throw new RuntimeException("Undefined s6/s7");
@@ -1845,38 +1884,40 @@ public final class Bttl_800d {
 
     //LAB_800d68e0
     //LAB_800d68e8
-    cam._a4 = s6;
-    cam._e8 = x;
-    cam._ec = y;
-    cam._f0 = z;
-    cam._b4 = (s7 - s6) / cam._d0;
-    cam._11c |= 0x1;
-    cam._120 = 22;
+    cam.stepZ_a4 = zStep;
+    cam._e8.set(x, y, z);
+    cam.stepZAcceleration_b4 = (s7 - zStep) / cam.viewpointTicksRemaining_d0;
+    cam.flags_11c |= UPDATE_VIEWPOINT;
+    cam.viewpointCallbackIndex_120 = 22;
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800d6960L)
-  public static void FUN_800d6960(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
+  public static void FUN_800d6960(final float x, final float y, final float z, final int ticks, final int a4, final int a5, final int a6, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
     cam.bobjIndex_f4 = scriptIndex;
-    cam._ac = FUN_800dc384(0, 7, 0, scriptIndex) << 8;
-    cam._b8 = FUN_800dc384(0, 7, 1, scriptIndex) << 8;
-    cam._a0 = FUN_800dc384(0, 7, 2, scriptIndex) << 8;
-    final int s1 = FUN_800dcfb8(0, cam._ac, x, a6 & 3) >> 8;
-    final int s0 = FUN_800dcfb8(1, cam._b8, y, a6 >> 2 & 3) >> 8;
-    FUN_800dcfb8(2, cam._a0, z, 0); //TODO this method just returns a value, should it be used in the same way as the two calls above?
-    cam._d0 = a3;
-    cam._d4 = ratan2(s0, s1) & 0xfff << 8;
-    cam._d8 = 0;
-    cam._dc = SquareRoot0(s1 * s1 + s0 * s0) << 8;
-    final int s3;
-    final int s4;
+    cam.x_ac = FUN_800dc384(false, 7, 0, scriptIndex);
+    cam.y_b8 = FUN_800dc384(false, 7, 1, scriptIndex);
+    cam.z_a0 = FUN_800dc384(false, 7, 2, scriptIndex);
+    final float s1 = FUN_800dcfb8(0, cam.x_ac, x, a6 & 3);
+    final float s0 = FUN_800dcfb8(1, cam.y_b8, y, a6 >> 2 & 3);
+    cam.viewpointTicksRemaining_d0 = ticks;
+    cam._d4.x = MathHelper.floorMod(MathHelper.atan2(s0, s1), MathHelper.TWO_PI);
+    cam._d4.y = 0.0f;
+    cam._d4.z = Math.sqrt(s1 * s1 + s0 * s0);
+    final float stepZ;
+    final float s4;
     if(a4 == 0) {
       //LAB_800d6ab4
-      s3 = a5;
-      s4 = cam._dc * 2 / a3 - a5;
+      stepZ = a5;
+      s4 = cam._d4.z * 2.0f / ticks - a5;
     } else if(a4 == 1) {
       //LAB_800d6ad4
-      s3 = cam._dc * 2 / a3 - a5;
+      stepZ = cam._d4.z * 2.0f / ticks - a5;
       s4 = a5;
     } else {
       throw new RuntimeException("s3/s4 undefined");
@@ -1884,34 +1925,37 @@ public final class Bttl_800d {
 
     //LAB_800d6af0
     //LAB_800d6af8
-    cam._e0 = s3;
-    cam._e8 = x;
-    cam._ec = y;
-    cam._f0 = z;
-    cam._e4 = (s4 - s3) / cam._d0;
-    cam._a4 = FUN_800dcfb8(2, cam._a0, z, 0) / cam._d0;
-    cam._11c |= 0x1;
-    cam._120 = 23;
+    cam.stepZ_e0 = stepZ;
+    cam._e8.set(x, y, z);
+    cam.stepZAcceleration_e4 = (s4 - stepZ) / cam.viewpointTicksRemaining_d0;
+    cam.stepZ_a4 = FUN_800dcfb8(2, cam.z_a0, z, 0) / cam.viewpointTicksRemaining_d0;
+    cam.flags_11c |= UPDATE_VIEWPOINT;
+    cam.viewpointCallbackIndex_120 = 23;
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800d6b90L)
-  public static void FUN_800d6b90(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int scriptIndex) {
+  public static void FUN_800d6b90(final float x, final float y, final float z, final int ticks, final int a4, final int a5, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
-    cam.vec_20.set(cam.rview2_00.refpoint_0c).mul(0x100);
+    cam.vec_20.set(cam.rview2_00.refpoint_0c);
 
     if(a5 == 0) {
       //LAB_800d6c04
-      cam._5c = a3;
+      cam.refpointTicksRemaining_5c = ticks;
 
       // Retail bug: divide by 0 is possible here - the processor sets LO to -1 in this case
-      if(a3 != 0) {
-        cam._3c = (x - cam.vec_20.getX()) / a3;
-        cam._48 = (y - cam.vec_20.getY()) / a3;
-        cam._54 = (z - cam.vec_20.getZ()) / a3;
+      if(ticks != 0) {
+        cam.stepX_3c = (x - cam.vec_20.x) / ticks;
+        cam.stepY_48 = (y - cam.vec_20.y) / ticks;
+        cam.stepZ_54 = (z - cam.vec_20.z) / ticks;
       } else {
-        cam._3c = -1;
-        cam._48 = -1;
-        cam._54 = -1;
+        cam.stepX_3c = -1;
+        cam.stepY_48 = -1;
+        cam.stepZ_54 = -1;
       }
     } else if(a5 == 1) {
       throw new RuntimeException("t0/t1 undefined");
@@ -1919,446 +1963,495 @@ public final class Bttl_800d {
 
     //LAB_800d6cdc
     //LAB_800d6ce4
-    cam._11c |= 0x2;
-    cam._121 = 8;
+    cam.flags_11c |= UPDATE_REFPOINT;
+    cam.refpointCallbackIndex_121 = 8;
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800d6d18L)
-  public static void FUN_800d6d18(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int scriptIndex) {
+  public static void FUN_800d6d18(final float x, final float y, final float z, final int ticks, final int a4, final int a5, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
-    cam._38 = FUN_800dc384(1, 1, 0, 0) << 8;
-    cam._44 = FUN_800dc384(1, 1, 1, 0) << 8;
-    cam._2c = FUN_800dc384(1, 1, 2, 0) << 8;
+    cam.x_38 = FUN_800dc384(true, 1, 0, 0);
+    cam.y_44 = FUN_800dc384(true, 1, 1, 0);
+    cam.z_2c = FUN_800dc384(true, 1, 2, 0);
 
     if(a5 == 0) {
       //LAB_800d6dd0
-      cam._5c = a3;
-      cam._3c = FUN_800dcf10(0, cam._38, x, a3, a4 & 3);
-      cam._48 = FUN_800dcf10(1, cam._44, y, a3, a4 >> 2 & 3);
-      cam._54 = FUN_800dcf10(2, cam._2c, z, a3, 0);
+      cam.refpointTicksRemaining_5c = ticks;
+      cam.stepX_3c = FUN_800dcf10(0, cam.x_38, x, ticks, a4 & 3);
+      cam.stepY_48 = FUN_800dcf10(1, cam.y_44, y, ticks, a4 >> 2 & 3);
+      cam.stepZ_54 = FUN_800dcf10(2, cam.z_2c, z, ticks, 0);
     } else if(a5 == 1) {
       //LAB_800d6e28
-      final int s1 = FUN_800dcfb8(0, cam._38, x, a4 & 3);
-      final int s0 = FUN_800dcfb8(1, cam._44, y, a4 >> 2 & 3);
-      final int v0 = FUN_800dcfb8(2, cam._2c, z, 0);
-      cam._5c = SquareRoot0(s1 * s1 + s0 * s0 + v0 * v0) / a3;
-      cam._3c = FUN_800dcf10(0, cam._38, x, cam._5c, a4 & 3);
-      cam._48 = FUN_800dcf10(1, cam._44, y, cam._5c, a4 >> 2 & 3);
-      cam._54 = FUN_800dcf10(2, cam._2c, z, cam._5c, 0);
+      final float x2 = FUN_800dcfb8(0, cam.x_38, x, a4 & 3);
+      final float y2 = FUN_800dcfb8(1, cam.y_44, y, a4 >> 2 & 3);
+      final float z2 = FUN_800dcfb8(2, cam.z_2c, z, 0);
+      cam.refpointTicksRemaining_5c = (int)(Math.sqrt(x2 * x2 + y2 * y2 + z2 * z2) / ticks);
+      cam.stepX_3c = FUN_800dcf10(0, cam.x_38, x, cam.refpointTicksRemaining_5c, a4 & 3);
+      cam.stepY_48 = FUN_800dcf10(1, cam.y_44, y, cam.refpointTicksRemaining_5c, a4 >> 2 & 3);
+      cam.stepZ_54 = FUN_800dcf10(2, cam.z_2c, z, cam.refpointTicksRemaining_5c, 0);
     }
 
     //LAB_800d6f14
-    cam._11c |= 0x2;
-    cam._121 = 9;
+    cam.flags_11c |= UPDATE_REFPOINT;
+    cam.refpointCallbackIndex_121 = 9;
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800d6f58L)
-  public static void FUN_800d6f58(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int scriptIndex) {
+  public static void FUN_800d6f58(final float x, final float y, final float z, final int ticks, final int a4, final int a5, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
 
-    cam.vec_20.setX(FUN_800dc384(1, 2, 0, 0) << 8);
-    cam.vec_20.setY(FUN_800dc384(1, 2, 1, 0) << 8);
-    cam.vec_20.setZ(FUN_800dc384(1, 2, 2, 0) << 8);
+    cam.vec_20.x = FUN_800dc384(true, 2, 0, 0);
+    cam.vec_20.y = FUN_800dc384(true, 2, 1, 0);
+    cam.vec_20.z = FUN_800dc384(true, 2, 2, 0);
 
     if(a5 == 0) {
       //LAB_800d7008
-      cam._5c = a3;
-      cam._3c = (x - cam.vec_20.getX()) / a3;
-      cam._48 = (y - cam.vec_20.getY()) / a3;
-      cam._54 = (z - cam.vec_20.getZ()) / a3;
+      cam.refpointTicksRemaining_5c = ticks;
+      cam.stepX_3c = (x - cam.vec_20.x) / ticks;
+      cam.stepY_48 = (y - cam.vec_20.y) / ticks;
+      cam.stepZ_54 = (z - cam.vec_20.z) / ticks;
     } else if(a5 == 1) {
       throw new RuntimeException("Broken code");
     }
 
     //LAB_800d70e0
     //LAB_800d70e8
-    cam._11c |= 0x2;
-    cam._121 = 10;
+    cam.flags_11c |= UPDATE_REFPOINT;
+    cam.refpointCallbackIndex_121 = 10;
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800d7128L)
-  public static void FUN_800d7128(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int scriptIndex) {
+  public static void FUN_800d7128(final float x, final float y, final float z, final int ticks, final int a4, final int a5, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
 
-    cam._38 = FUN_800dc384(1, 3, 0, 0) << 8;
-    cam._44 = FUN_800dc384(1, 3, 1, 0) << 8;
-    cam._2c = FUN_800dc384(1, 3, 2, 0) << 8;
+    cam.x_38 = FUN_800dc384(true, 3, 0, 0);
+    cam.y_44 = FUN_800dc384(true, 3, 1, 0);
+    cam.z_2c = FUN_800dc384(true, 3, 2, 0);
 
     if(a5 == 0) {
       //LAB_800d71e0
-      cam._5c = a3;
-      cam._3c = FUN_800dcf10(0, cam._38, x, a3, a4 & 3);
-      cam._48 = FUN_800dcf10(1, cam._44, y, a3, a4 >> 2 & 3);
-      cam._54 = FUN_800dcf10(2, cam._2c, z, a3, 0);
+      cam.refpointTicksRemaining_5c = ticks;
+      cam.stepX_3c = FUN_800dcf10(0, cam.x_38, x, ticks, a4 & 3);
+      cam.stepY_48 = FUN_800dcf10(1, cam.y_44, y, ticks, a4 >> 2 & 3);
+      cam.stepZ_54 = FUN_800dcf10(2, cam.z_2c, z, ticks, 0);
     } else if(a5 == 1) {
       //LAB_800d7238
-      final int s1 = FUN_800dcfb8(0, cam._38, x, a4 & 3);
-      final int s0 = FUN_800dcfb8(1, cam._44, y, a4 >> 2 & 3);
-      final int v0 = FUN_800dcfb8(2, cam._2c, z, 0);
-      cam._5c = SquareRoot0(s1 * s1 + s0 * s0 + v0 * v0) / a3;
-      cam._3c = FUN_800dcf10(0, cam._38, x, cam._5c, a4 & 3);
-      cam._48 = FUN_800dcf10(1, cam._44, y, cam._5c, a4 >> 2 & 3);
-      cam._54 = FUN_800dcf10(2, cam._2c, z, cam._5c, 0);
+      final float x2 = FUN_800dcfb8(0, cam.x_38, x, a4 & 3);
+      final float y2 = FUN_800dcfb8(1, cam.y_44, y, a4 >> 2 & 3);
+      final float z2 = FUN_800dcfb8(2, cam.z_2c, z, 0);
+      cam.refpointTicksRemaining_5c = (int)(Math.sqrt(x2 * x2 + y2 * y2 + z2 * z2) / ticks);
+      cam.stepX_3c = FUN_800dcf10(0, cam.x_38, x, cam.refpointTicksRemaining_5c, a4 & 3);
+      cam.stepY_48 = FUN_800dcf10(1, cam.y_44, y, cam.refpointTicksRemaining_5c, a4 >> 2 & 3);
+      cam.stepZ_54 = FUN_800dcf10(2, cam.z_2c, z, cam.refpointTicksRemaining_5c, 0);
     }
 
     //LAB_800d7324
-    cam._11c |= 0x2;
-    cam._121 = 11;
+    cam.flags_11c |= UPDATE_REFPOINT;
+    cam.refpointCallbackIndex_121 = 11;
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800d7368L)
-  public static void FUN_800d7368(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int scriptIndex) {
+  public static void FUN_800d7368(final float x, final float y, final float z, final int ticks, final int a4, final int a5, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
     cam.bobjIndex_80 = scriptIndex;
-    cam.vec_20.setX(FUN_800dc384(1, 6, 0, scriptIndex) << 8);
-    cam.vec_20.setY(FUN_800dc384(1, 6, 1, scriptIndex) << 8);
-    cam.vec_20.setZ(FUN_800dc384(1, 6, 2, scriptIndex) << 8);
+    cam.vec_20.x = FUN_800dc384(true, 6, 0, scriptIndex);
+    cam.vec_20.y = FUN_800dc384(true, 6, 1, scriptIndex);
+    cam.vec_20.z = FUN_800dc384(true, 6, 2, scriptIndex);
 
     if(a5 == 0) {
       //LAB_800d7424
-      cam._5c = a3;
-      cam._3c = MathHelper.safeDiv(x - cam.vec_20.getX(), a3);
-      cam._48 = MathHelper.safeDiv(y - cam.vec_20.getY(), a3);
-      cam._54 = MathHelper.safeDiv(z - cam.vec_20.getZ(), a3);
+      cam.refpointTicksRemaining_5c = ticks;
+      cam.stepX_3c = MathHelper.safeDiv(x - cam.vec_20.x, ticks);
+      cam.stepY_48 = MathHelper.safeDiv(y - cam.vec_20.y, ticks);
+      cam.stepZ_54 = MathHelper.safeDiv(z - cam.vec_20.z, ticks);
     } else if(a5 == 1) {
       throw new RuntimeException("Undefined s5/s6");
     }
 
     //LAB_800d74fc
     //LAB_800d7504
-    cam._11c |= 0x2;
-    cam._121 = 14;
+    cam.flags_11c |= UPDATE_REFPOINT;
+    cam.refpointCallbackIndex_121 = 14;
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800d7548L)
-  public static void FUN_800d7548(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int scriptIndex) {
+  public static void FUN_800d7548(final float x, final float y, final float z, final int ticks, final int a4, final int a5, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
 
     cam.bobjIndex_80 = scriptIndex;
-    cam._38 = FUN_800dc384(1, 7, 0, scriptIndex) << 8;
-    cam._44 = FUN_800dc384(1, 7, 1, scriptIndex) << 8;
-    cam._2c = FUN_800dc384(1, 7, 2, scriptIndex) << 8;
+    cam.x_38 = FUN_800dc384(true, 7, 0, scriptIndex);
+    cam.y_44 = FUN_800dc384(true, 7, 1, scriptIndex);
+    cam.z_2c = FUN_800dc384(true, 7, 2, scriptIndex);
 
     if(a5 == 0) {
       //LAB_800d7608
-      cam._5c = a3;
-      cam._3c = FUN_800dcf10(0, cam._38, x, a3, a4 & 3);
-      cam._48 = FUN_800dcf10(1, cam._44, y, a3, a4 >> 2 & 3);
-      cam._54 = FUN_800dcf10(2, cam._2c, z, a3, 0);
+      cam.refpointTicksRemaining_5c = ticks;
+      cam.stepX_3c = FUN_800dcf10(0, cam.x_38, x, ticks, a4 & 3);
+      cam.stepY_48 = FUN_800dcf10(1, cam.y_44, y, ticks, a4 >> 2 & 3);
+      cam.stepZ_54 = FUN_800dcf10(2, cam.z_2c, z, ticks, 0);
     } else if(a5 == 1) {
       //LAB_800d7660
-      final int s1 = FUN_800dcfb8(0, cam._38, x, a4 & 3);
-      final int s0 = FUN_800dcfb8(1, cam._44, y, a4 >> 2 & 3);
-      final int v0 = FUN_800dcfb8(2, cam._2c, z, 0);
-      cam._5c = SquareRoot0(s1 * s1 + s0 * s0 + v0 * v0) / a3;
-      cam._3c = FUN_800dcf10(0, cam._38, x, cam._5c, a4 & 3);
-      cam._48 = FUN_800dcf10(1, cam._44, y, cam._5c, a4 >> 2 & 3);
-      cam._54 = FUN_800dcf10(2, cam._2c, z, cam._5c, 0);
+      final float x2 = FUN_800dcfb8(0, cam.x_38, x, a4 & 3);
+      final float y2 = FUN_800dcfb8(1, cam.y_44, y, a4 >> 2 & 3);
+      final float z2 = FUN_800dcfb8(2, cam.z_2c, z, 0);
+      cam.refpointTicksRemaining_5c = (int)(Math.sqrt(x2 * x2 + y2 * y2 + z2 * z2) / ticks);
+      cam.stepX_3c = FUN_800dcf10(0, cam.x_38, x, cam.refpointTicksRemaining_5c, a4 & 3);
+      cam.stepY_48 = FUN_800dcf10(1, cam.y_44, y, cam.refpointTicksRemaining_5c, a4 >> 2 & 3);
+      cam.stepZ_54 = FUN_800dcf10(2, cam.z_2c, z, cam.refpointTicksRemaining_5c, 0);
     }
 
     //LAB_800d774c
-    cam._11c |= 0x2;
-    cam._121 = 15;
+    cam.flags_11c |= UPDATE_REFPOINT;
+    cam.refpointCallbackIndex_121 = 15;
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800d7790L)
-  public static void FUN_800d7790(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int a6) {
+  public static void FUN_800d7790(final float x, final float y, final float z, final int stepZ, final int a4, final int a5, final int a6) {
     final BattleCamera cam = camera_800c67f0;
-    final int dx = (x >> 8) - cam.rview2_00.refpoint_0c.getX();
-    final int dy = (y >> 8) - cam.rview2_00.refpoint_0c.getY();
-    final int dz = (z >> 8) - cam.rview2_00.refpoint_0c.getZ();
-    final int hdx = dx / 2;
-    final int hdy = dy / 2;
-    final int hdz = dz / 2;
-    cam.vec_60.setX((ratan2(dz, dx) & 0xfff) << 8);
-    cam.vec_60.setY((ratan2(dy, SquareRoot0(hdx * hdx + hdz * hdz) * 2) & 0xfff) << 8);
-    cam.vec_60.setZ(SquareRoot0(hdx * hdx + hdy * hdy + hdz * hdz) << 9);
-    cam._30 = a3;
+    final float dx = x - cam.rview2_00.refpoint_0c.x;
+    final float dy = y - cam.rview2_00.refpoint_0c.y;
+    final float dz = z - cam.rview2_00.refpoint_0c.z;
+    cam.vec_60.x = MathHelper.floorMod(MathHelper.atan2(dz, dx), MathHelper.TWO_PI);
+    cam.vec_60.y = MathHelper.floorMod(MathHelper.atan2(dy, Math.sqrt(dx * dx + dz * dz)), MathHelper.TWO_PI);
+    cam.vec_60.z = Math.sqrt(dx * dx + dy * dy + dz * dz);
+    cam.stepZ_30 = stepZ;
     cam.vec_74.set(x, y, z);
-    cam._11c |= 0x2;
-    cam._121 = 16;
-    cam._5c = cam.vec_60.getZ() * 2 / (a4 + a3);
+    cam.flags_11c |= UPDATE_REFPOINT;
+    cam.refpointCallbackIndex_121 = 16;
+    cam.refpointTicksRemaining_5c = (int)(cam.vec_60.z * 2.0f / (a4 + stepZ));
 
-    if(cam._5c > 0) {
-      cam._40 = (a4 - a3) / cam._5c;
+    if(cam.refpointTicksRemaining_5c > 0) {
+      cam.stepZAcceleration_40 = (a4 - stepZ) / (float)cam.refpointTicksRemaining_5c;
     } else {
-      cam._40 = -1;
+      cam.stepZAcceleration_40 = -1;
     }
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800d7920L)
-  public static void FUN_800d7920(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int a6) {
+  public static void FUN_800d7920(final float x, final float y, final float z, final int stepZ, final int a4, final int a5, final int a6) {
     final BattleCamera cam = camera_800c67f0;
-    cam._38 = FUN_800dc384(1, 1, 0, 0) << 8;
-    cam._44 = FUN_800dc384(1, 1, 1, 0) << 8;
-    cam._2c = FUN_800dc384(1, 1, 2, 0) << 8;
-    final int s2 = FUN_800dcfb8(0, cam._38, x, a5 & 3) >> 8;
-    final int s1 = FUN_800dcfb8(1, cam._44, y, a5 >> 2 & 3) >> 8;
-    FUN_800dcfb8(2, cam._2c, z, 0);
-    cam.vec_60.setX((ratan2(s1, s2) & 0xfff) << 8);
-    cam.vec_60.setY(0);
-    cam.vec_60.setZ(SquareRoot0(s2 * s2 + s1 * s1) << 8);
-    cam._6c = a3;
+    cam.x_38 = FUN_800dc384(true, 1, 0, 0);
+    cam.y_44 = FUN_800dc384(true, 1, 1, 0);
+    cam.z_2c = FUN_800dc384(true, 1, 2, 0);
+    final float s2 = FUN_800dcfb8(0, cam.x_38, x, a5 & 3);
+    final float s1 = FUN_800dcfb8(1, cam.y_44, y, a5 >> 2 & 3);
+    cam.vec_60.x = MathHelper.floorMod(MathHelper.atan2(s1, s2), MathHelper.TWO_PI);
+    cam.vec_60.y = 0.0f;
+    cam.vec_60.z = Math.sqrt(s2 * s2 + s1 * s1);
+    cam.stepZ_6c = stepZ;
     cam.vec_74.set(x, y, z);
-    cam._5c = cam.vec_60.getZ() * 2 / (a3 + a4);
-    cam._121 = 17;
-    cam._11c |= 0x2;
+    cam.refpointTicksRemaining_5c = (int)(cam.vec_60.z * 2.0f / (a4 + stepZ));
+    cam.refpointCallbackIndex_121 = 17;
+    cam.flags_11c |= UPDATE_REFPOINT;
 
-    if(cam._5c > 0) {
-      cam._30 = FUN_800dcfb8(2, cam._2c, z, 0) / cam._5c;
-      cam._70 = (a4 - a3) / cam._5c;
+    if(cam.refpointTicksRemaining_5c > 0) {
+      cam.stepZ_30 = FUN_800dcfb8(2, cam.z_2c, z, 0) / cam.refpointTicksRemaining_5c;
+      cam.stepZAcceleration = (a4 - stepZ) / (float)cam.refpointTicksRemaining_5c;
     } else {
-      cam._30 = -1;
-      cam._70 = -1;
+      cam.stepZ_30 = -1;
+      cam.stepZAcceleration = -1;
     }
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800d7aecL)
-  public static void FUN_800d7aec(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int a6) {
+  public static void FUN_800d7aec(final float x, final float y, final float z, final int stepZ, final int a4, final int a5, final int a6) {
     final BattleCamera cam = camera_800c67f0;
-    cam.vec_20.setX(FUN_800dc384(1, 2, 0, 0) << 8);
-    cam.vec_20.setY(FUN_800dc384(1, 2, 1, 0) << 8);
-    cam.vec_20.setZ(FUN_800dc384(1, 2, 2, 0) << 8);
-    final int dx = x - cam.vec_20.getX() >> 8;
-    final int dy = y - cam.vec_20.getY() >> 8;
-    final int dz = z - cam.vec_20.getZ() >> 8;
-    final int hdx = dx / 2;
-    final int hdy = dy / 2;
-    final int hdz = dz / 2;
-    cam.vec_60.setX((ratan2(dz, dx) & 0xfff) << 8);
-    cam.vec_60.setY((ratan2(dy, SquareRoot0(hdx * hdx + hdz * hdz) * 2) & 0xfff) << 8);
-    cam.vec_60.setZ(SquareRoot0(hdx * hdx + hdy * hdy + hdz * hdz) << 9);
-    cam._30 = a3;
+    cam.vec_20.x = FUN_800dc384(true, 2, 0, 0);
+    cam.vec_20.y = FUN_800dc384(true, 2, 1, 0);
+    cam.vec_20.z = FUN_800dc384(true, 2, 2, 0);
+    final float dx = x - cam.vec_20.x;
+    final float dy = y - cam.vec_20.y;
+    final float dz = z - cam.vec_20.z;
+    cam.vec_60.x = MathHelper.floorMod(MathHelper.atan2(dz, dx), MathHelper.TWO_PI);
+    cam.vec_60.y = MathHelper.floorMod(MathHelper.atan2(dy, Math.sqrt(dx * dx + dz * dz)), MathHelper.TWO_PI);
+    cam.vec_60.z = Math.sqrt(dx * dx + dy * dy + dz * dz);
+    cam.stepZ_30 = stepZ;
     cam.vec_74.set(x, y, z);
-    cam._11c |= 0x2;
-    cam._121 = 18;
-    cam._5c = cam.vec_60.getZ() * 2 / (a3 + a4);
+    cam.flags_11c |= UPDATE_REFPOINT;
+    cam.refpointCallbackIndex_121 = 18;
+    cam.refpointTicksRemaining_5c = (int)(cam.vec_60.z * 2.0f / (a4 + stepZ));
 
-    if(cam._5c > 0) {
-      cam._40 = (a4 - a3) / cam._5c;
+    if(cam.refpointTicksRemaining_5c > 0) {
+      cam.stepZAcceleration_40 = (a4 - stepZ) / (float)cam.refpointTicksRemaining_5c;
     } else {
-      cam._40 = -1;
+      cam.stepZAcceleration_40 = -1;
     }
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800d7cdcL)
-  public static void FUN_800d7cdc(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int a6) {
+  public static void FUN_800d7cdc(final float x, final float y, final float z, final int stepZ, final int a4, final int a5, final int a6) {
     final BattleCamera cam = camera_800c67f0;
-    cam._38 = FUN_800dc384(1, 3, 0, 0) << 8;
-    cam._44 = FUN_800dc384(1, 3, 1, 0) << 8;
-    cam._2c = FUN_800dc384(1, 3, 2, 0) << 8;
-    final int s2 = FUN_800dcfb8(0, cam._38, x, a5 & 0x3) >> 8;
-    final int s1 = FUN_800dcfb8(1, cam._44, y, a5 >> 2 & 0x3) >> 8;
-    FUN_800dcfb8(2, cam._2c, z, 0);
-    cam.vec_60.setX((ratan2(s1, s2) & 0xfff) << 8);
-    cam.vec_60.setY(0);
-    cam.vec_60.setZ(SquareRoot0(s2 * s2 + s1 * s1) << 8);
-    cam._5c = cam.vec_60.getZ() * 2 / (a3 + a4);
-    cam._6c = a3;
+    cam.x_38 = FUN_800dc384(true, 3, 0, 0);
+    cam.y_44 = FUN_800dc384(true, 3, 1, 0);
+    cam.z_2c = FUN_800dc384(true, 3, 2, 0);
+    final float s2 = FUN_800dcfb8(0, cam.x_38, x, a5 & 0x3);
+    final float s1 = FUN_800dcfb8(1, cam.y_44, y, a5 >> 2 & 0x3);
+    cam.vec_60.x = MathHelper.floorMod(MathHelper.atan2(s1, s2), MathHelper.TWO_PI);
+    cam.vec_60.y = 0.0f;
+    cam.vec_60.z = Math.sqrt(s2 * s2 + s1 * s1);
+    cam.refpointTicksRemaining_5c = (int)(cam.vec_60.z * 2.0f / (a4 + stepZ));
+    cam.stepZ_6c = stepZ;
     cam.vec_74.set(x, y, z);
-    cam._11c |= 0x2;
-    cam._121 = 19;
+    cam.flags_11c |= UPDATE_REFPOINT;
+    cam.refpointCallbackIndex_121 = 19;
 
-    if(cam._5c > 0) {
-      cam._30 = FUN_800dcfb8(2, cam._2c, z, 0) / cam._5c;
-      cam._70 = (a4 - a3) / cam._5c;
+    if(cam.refpointTicksRemaining_5c > 0) {
+      cam.stepZ_30 = FUN_800dcfb8(2, cam.z_2c, z, 0) / cam.refpointTicksRemaining_5c;
+      cam.stepZAcceleration = (a4 - stepZ) / (float)cam.refpointTicksRemaining_5c;
     } else {
-      cam._30 = -1;
-      cam._70 = -1;
+      cam.stepZ_30 = -1;
+      cam.stepZAcceleration = -1;
     }
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800d8274L)
-  public static void FUN_800d8274(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
+  public static void FUN_800d8274(final float x, final float y, final float z, final int ticks, final int a4, final int a5, final int a6, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
-    final int s4 = (x >> 8) - cam.rview2_00.refpoint_0c.getX();
-    final int s5 = (y >> 8) - cam.rview2_00.refpoint_0c.getY();
-    final int s2 = (z >> 8) - cam.rview2_00.refpoint_0c.getZ();
-    final int s3 = s4 / 2;
-    final int v0 = s5 / 2;
-    final int s0 = s2 / 2;
-    cam._5c = a3;
-    cam.vec_60.setX((ratan2(s2, s4) & 0xfff) << 8);
-    cam.vec_60.setY((ratan2(s5, SquareRoot0(s3 * s3 + s0 * s0) * 2) & 0xfff) << 8);
-    cam.vec_60.setZ(SquareRoot0(s3 * s3 + v0 * v0 + s0 * s0) << 9);
-    final IntRef sp0x18 = new IntRef();
-    final IntRef sp0x1c = new IntRef();
-    FUN_800dcebc(a4, a5, cam.vec_60.getZ(), cam._5c, sp0x18, sp0x1c);
-    cam._30 = sp0x18.get();
-    cam._40 = (sp0x1c.get() - sp0x18.get()) / cam._5c;
-    cam.vec_74.setX(x);
-    cam.vec_74.setY(y);
-    cam.vec_74.setZ(z);
-    cam._11c |= 0x2;
-    cam._121 = 16;
+    final float dx = x - cam.rview2_00.refpoint_0c.x;
+    final float dy = y - cam.rview2_00.refpoint_0c.y;
+    final float dz = z - cam.rview2_00.refpoint_0c.z;
+    cam.refpointTicksRemaining_5c = ticks;
+    cam.vec_60.x = MathHelper.floorMod(MathHelper.atan2(dz, dx), MathHelper.TWO_PI);
+    cam.vec_60.y = MathHelper.floorMod(MathHelper.atan2(dy, Math.sqrt(dx * dx + dz * dz)), MathHelper.TWO_PI);
+    cam.vec_60.z = Math.sqrt(dx * dx + dy * dy + dz * dz);
+    final FloatRef sp0x18 = new FloatRef();
+    final FloatRef sp0x1c = new FloatRef();
+    FUN_800dcebc(a4, a5, cam.vec_60.z, cam.refpointTicksRemaining_5c, sp0x18, sp0x1c);
+    cam.stepZ_30 = sp0x18.get();
+    cam.stepZAcceleration_40 = (sp0x1c.get() - sp0x18.get()) / cam.refpointTicksRemaining_5c;
+    cam.vec_74.set(x, y, z);
+    cam.flags_11c |= UPDATE_REFPOINT;
+    cam.refpointCallbackIndex_121 = 16;
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800d8424L)
-  public static void FUN_800d8424(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
+  public static void FUN_800d8424(final float x, final float y, final float z, final int ticks, final int a4, final int a5, final int a6, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
 
-    cam._38 = FUN_800dc384(1, 1, 0, 0) << 8;
-    cam._44 = FUN_800dc384(1, 1, 1, 0) << 8;
-    cam._2c = FUN_800dc384(1, 1, 2, 0) << 8;
-    final int s2 = FUN_800dcfb8(0, cam._38, x, a6 & 3) >> 8;
-    final int s1 = FUN_800dcfb8(1, cam._44, y, a6 >> 2 & 3) >> 8;
-    FUN_800dcfb8(2, cam._2c, z, 0);
-    cam._5c = a3;
-    cam.vec_60.setX((ratan2(s1, s2) & 0xfff) << 8);
-    cam.vec_60.setY(0);
-    cam.vec_60.setZ(SquareRoot0(s2 * s2 + s1 * s1) << 8);
-    final IntRef sp0x18 = new IntRef();
-    final IntRef sp0x1c = new IntRef();
-    FUN_800dcebc(a4, a5, cam.vec_60.getZ(), a3, sp0x18, sp0x1c);
-    cam._6c = sp0x18.get();
-    cam._70 = (sp0x1c.get() - sp0x18.get()) / cam._5c;
+    cam.x_38 = FUN_800dc384(true, 1, 0, 0);
+    cam.y_44 = FUN_800dc384(true, 1, 1, 0);
+    cam.z_2c = FUN_800dc384(true, 1, 2, 0);
+    final float s2 = FUN_800dcfb8(0, cam.x_38, x, a6 & 3);
+    final float s1 = FUN_800dcfb8(1, cam.y_44, y, a6 >> 2 & 3);
+    cam.refpointTicksRemaining_5c = ticks;
+    cam.vec_60.x = MathHelper.floorMod(MathHelper.atan2(s1, s2), MathHelper.TWO_PI);
+    cam.vec_60.y = 0.0f;
+    cam.vec_60.z = Math.sqrt(s2 * s2 + s1 * s1);
+    final FloatRef sp0x18 = new FloatRef();
+    final FloatRef sp0x1c = new FloatRef();
+    FUN_800dcebc(a4, a5, cam.vec_60.z, ticks, sp0x18, sp0x1c);
+    cam.stepZ_6c = sp0x18.get();
+    cam.stepZAcceleration = (sp0x1c.get() - sp0x18.get()) / cam.refpointTicksRemaining_5c;
     cam.vec_74.set(x, y, z);
-    cam._11c |= 0x2;
-    cam._121 = 17;
-    cam._30 = FUN_800dcfb8(2, cam._2c, z, 0) / cam._5c;
+    cam.flags_11c |= UPDATE_REFPOINT;
+    cam.refpointCallbackIndex_121 = 17;
+    cam.stepZ_30 = FUN_800dcfb8(2, cam.z_2c, z, 0) / cam.refpointTicksRemaining_5c;
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800d8614L)
-  public static void FUN_800d8614(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
+  public static void FUN_800d8614(final float x, final float y, final float z, final int ticks, final int a4, final int a5, final int a6, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
 
-    cam.vec_20.setX(FUN_800dc384(1, 2, 0, 0) << 8);
-    cam.vec_20.setY(FUN_800dc384(1, 2, 1, 0) << 8);
-    cam.vec_20.setZ(FUN_800dc384(1, 2, 2, 0) << 8);
-    final int s4 = x - cam.vec_20.getX() >> 8;
-    final int s1 = s4 / 2;
-    final int s5 = y - cam.vec_20.getY() >> 8;
-    final int v1 = s5 / 2;
-    final int s3 = z - cam.vec_20.getZ() >> 8;
-    final int s0 = s3 / 2;
-    cam.vec_60.setX((ratan2(s3, s4) & 0xfff) << 8);
-    cam.vec_60.setY((ratan2(s5, SquareRoot0(s1 * s1 + s0 * s0) * 2) & 0xfff) << 8);
-    cam.vec_60.setZ(SquareRoot0(s1 * s1 + v1 * v1 + s0 * s0) << 9);
-    cam._5c = a3;
-    final IntRef sp0x18 = new IntRef();
-    final IntRef sp0x1c = new IntRef();
-    FUN_800dcebc(a4, a5, cam.vec_60.getZ(), a3, sp0x18, sp0x1c);
-    cam._30 = sp0x18.get();
-    cam._40 = (sp0x1c.get() - sp0x18.get()) / cam._5c;
-    cam.vec_74.setX(x);
-    cam.vec_74.setY(y);
-    cam.vec_74.setZ(z);
-    cam._11c |= 0x2;
-    cam._121 = 18;
+    cam.vec_20.x = FUN_800dc384(true, 2, 0, 0);
+    cam.vec_20.y = FUN_800dc384(true, 2, 1, 0);
+    cam.vec_20.z = FUN_800dc384(true, 2, 2, 0);
+    final float dx = x - cam.vec_20.x;
+    final float dy = y - cam.vec_20.y;
+    final float dz = z - cam.vec_20.z;
+    cam.vec_60.x = MathHelper.floorMod(MathHelper.atan2(dz, dx), MathHelper.TWO_PI);
+    cam.vec_60.y = MathHelper.floorMod(MathHelper.atan2(dy, Math.sqrt(dx * dx + dz * dz)), MathHelper.TWO_PI);
+    cam.vec_60.z = Math.sqrt(dx * dx + dy * dy + dz * dz);
+    cam.refpointTicksRemaining_5c = ticks;
+    final FloatRef sp0x18 = new FloatRef();
+    final FloatRef sp0x1c = new FloatRef();
+    FUN_800dcebc(a4, a5, cam.vec_60.z, ticks, sp0x18, sp0x1c);
+    cam.stepZ_30 = sp0x18.get();
+    cam.stepZAcceleration_40 = (sp0x1c.get() - sp0x18.get()) / cam.refpointTicksRemaining_5c;
+    cam.vec_74.set(x, y, z);
+    cam.flags_11c |= UPDATE_REFPOINT;
+    cam.refpointCallbackIndex_121 = 18;
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800d8808L)
-  public static void FUN_800d8808(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
+  public static void FUN_800d8808(final float x, final float y, final float z, final int ticks, final int a4, final int a5, final int a6, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
 
-    cam._38 = FUN_800dc384(1, 3, 0, 0) << 8;
-    cam._44 = FUN_800dc384(1, 3, 1, 0) << 8;
-    cam._2c = FUN_800dc384(1, 3, 2, 0) << 8;
-    final int s2 = FUN_800dcfb8(0, cam._38, x, a6 & 3) >> 8;
-    final int s1 = FUN_800dcfb8(1, cam._44, y, a6 >> 2 & 3) >> 8;
-    FUN_800dcfb8(2, cam._2c, z, 0);
-    cam.vec_60.setX((ratan2(s1, s2) & 0xfff) << 8);
-    cam.vec_60.setY(0);
-    cam.vec_60.setZ(SquareRoot0(s2 * s2 + s1 * s1) << 8);
-    cam._5c = a3;
-    final IntRef sp0x18 = new IntRef();
-    final IntRef sp0x1c = new IntRef();
-    FUN_800dcebc(a4, a5, cam.vec_60.getZ(), a3, sp0x18, sp0x1c);
-    cam._30 = FUN_800dcfb8(2, cam._2c, z, 0) / cam._5c;
-    cam._6c = sp0x18.get();
-    cam._70 = (sp0x1c.get() - sp0x18.get()) / cam._5c;
+    cam.x_38 = FUN_800dc384(true, 3, 0, 0);
+    cam.y_44 = FUN_800dc384(true, 3, 1, 0);
+    cam.z_2c = FUN_800dc384(true, 3, 2, 0);
+    final float s2 = FUN_800dcfb8(0, cam.x_38, x, a6 & 3);
+    final float s1 = FUN_800dcfb8(1, cam.y_44, y, a6 >> 2 & 3);
+    cam.vec_60.x = MathHelper.floorMod(MathHelper.atan2(s1, s2), MathHelper.TWO_PI);
+    cam.vec_60.y = 0.0f;
+    cam.vec_60.z = Math.sqrt(s2 * s2 + s1 * s1);
+    cam.refpointTicksRemaining_5c = ticks;
+    final FloatRef sp0x18 = new FloatRef();
+    final FloatRef sp0x1c = new FloatRef();
+    FUN_800dcebc(a4, a5, cam.vec_60.z, ticks, sp0x18, sp0x1c);
+    cam.stepZ_30 = FUN_800dcfb8(2, cam.z_2c, z, 0) / cam.refpointTicksRemaining_5c;
+    cam.stepZ_6c = sp0x18.get();
+    cam.stepZAcceleration = (sp0x1c.get() - sp0x18.get()) / cam.refpointTicksRemaining_5c;
     cam.vec_74.set(x, y, z);
-    cam._11c |= 0x2;
-    cam._121 = 19;
+    cam.flags_11c |= UPDATE_REFPOINT;
+    cam.refpointCallbackIndex_121 = 19;
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800d89f8L)
-  public static void FUN_800d89f8(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
+  public static void FUN_800d89f8(final float x, final float y, final float z, final int ticks, final int a4, final int a5, final int a6, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
     cam.bobjIndex_80 = scriptIndex;
-    cam.vec_20.setX(FUN_800dc384(1, 6, 0, scriptIndex) << 8);
-    cam.vec_20.setY(FUN_800dc384(1, 6, 1, scriptIndex) << 8);
-    cam.vec_20.setZ(FUN_800dc384(1, 6, 2, scriptIndex) << 8);
-    final int s4 = x - cam.vec_20.getX() >> 8;
-    final int s5 = y - cam.vec_20.getY() >> 8;
-    final int s3 = z - cam.vec_20.getZ() >> 8;
-    final int s1 = s4 / 2;
-    final int v1 = s5 / 2;
-    final int s0 = s3 / 2;
-    cam._5c = a3;
-    cam.vec_60.setX((ratan2(s3, s4) & 0xfff) << 8);
-    cam.vec_60.setY((ratan2(s5, SquareRoot0(s1 * s1 + s0 * s0) * 2) & 0xfff) << 8);
-    cam.vec_60.setZ(SquareRoot0(s1 * s1 + v1 * v1 + s0 * s0) << 9);
-    final IntRef sp0x18 = new IntRef();
-    final IntRef sp0x1c = new IntRef();
-    FUN_800dcebc(a4, a5, cam.vec_60.getZ(), a3, sp0x18, sp0x1c);
-    cam.vec_74.setX(x);
-    cam.vec_74.setY(y);
-    cam.vec_74.setZ(z);
-    cam._30 = sp0x18.get();
-    cam._40 = (sp0x1c.get() - sp0x18.get()) / cam._5c;
-    cam._11c |= 0x2;
-    cam._121 = 22;
+    cam.vec_20.x = FUN_800dc384(true, 6, 0, scriptIndex);
+    cam.vec_20.y = FUN_800dc384(true, 6, 1, scriptIndex);
+    cam.vec_20.z = FUN_800dc384(true, 6, 2, scriptIndex);
+    final float dx = x - cam.vec_20.x;
+    final float dy = y - cam.vec_20.y;
+    final float dz = z - cam.vec_20.z;
+    cam.refpointTicksRemaining_5c = ticks;
+    cam.vec_60.x = MathHelper.floorMod(MathHelper.atan2(dz, dx), MathHelper.TWO_PI);
+    cam.vec_60.y = MathHelper.floorMod(MathHelper.atan2(dy, Math.sqrt(dx * dx + dz * dz)), MathHelper.TWO_PI);
+    cam.vec_60.z = Math.sqrt(dx * dx + dy * dy + dz * dz);
+    final FloatRef sp0x18 = new FloatRef();
+    final FloatRef sp0x1c = new FloatRef();
+    FUN_800dcebc(a4, a5, cam.vec_60.z, ticks, sp0x18, sp0x1c);
+    cam.vec_74.set(x, y, z);
+    cam.stepZ_30 = sp0x18.get();
+    cam.stepZAcceleration_40 = (sp0x1c.get() - sp0x18.get()) / cam.refpointTicksRemaining_5c;
+    cam.flags_11c |= UPDATE_REFPOINT;
+    cam.refpointCallbackIndex_121 = 22;
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800d8bf4L)
-  public static void FUN_800d8bf4(final int x, final int y, final int z, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
+  public static void FUN_800d8bf4(final float x, final float y, final float z, final int ticks, final int a4, final int a5, final int a6, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
 
     cam.bobjIndex_80 = scriptIndex;
-    cam._38 = FUN_800dc384(1, 7, 0, scriptIndex) << 8;
-    cam._44 = FUN_800dc384(1, 7, 1, scriptIndex) << 8;
-    cam._2c = FUN_800dc384(1, 7, 2, scriptIndex) << 8;
-    final int s2 = FUN_800dcfb8(0, cam._38, x, a6 & 3) >> 8;
-    final int s0 = FUN_800dcfb8(1, cam._44, y, a6 >> 2 & 3) >> 8;
-    FUN_800dcfb8(2, cam._2c, z, 0);
-    cam.vec_60.setX((ratan2(s0, s2) & 0xfff) << 8);
-    cam.vec_60.setY(0);
-    cam.vec_60.setZ(SquareRoot0(s2 * s2 + s0 * s0) << 8);
-    cam._5c = a3;
-    final IntRef sp0x18 = new IntRef();
-    final IntRef sp0x1c = new IntRef();
-    FUN_800dcebc(a4, a5, cam.vec_60.getZ(), a3, sp0x18, sp0x1c);
-    cam._30 = FUN_800dcfb8(2, cam._2c, z, 0) / cam._5c;
+    cam.x_38 = FUN_800dc384(true, 7, 0, scriptIndex);
+    cam.y_44 = FUN_800dc384(true, 7, 1, scriptIndex);
+    cam.z_2c = FUN_800dc384(true, 7, 2, scriptIndex);
+    final float s2 = FUN_800dcfb8(0, cam.x_38, x, a6 & 3);
+    final float s0 = FUN_800dcfb8(1, cam.y_44, y, a6 >> 2 & 3);
+    cam.vec_60.x = MathHelper.floorMod(MathHelper.atan2(s0, s2), MathHelper.TWO_PI);
+    cam.vec_60.y = 0.0f;
+    cam.vec_60.z = Math.sqrt(s2 * s2 + s0 * s0);
+    cam.refpointTicksRemaining_5c = ticks;
+    final FloatRef sp0x18 = new FloatRef();
+    final FloatRef sp0x1c = new FloatRef();
+    FUN_800dcebc(a4, a5, cam.vec_60.z, ticks, sp0x18, sp0x1c);
+    cam.stepZ_30 = FUN_800dcfb8(2, cam.z_2c, z, 0) / cam.refpointTicksRemaining_5c;
     cam.vec_74.set(x, y, z);
-    cam._6c = sp0x18.get();
-    cam._70 = (sp0x1c.get() - sp0x18.get()) / cam._5c;
-    cam._11c |= 0x2;
-    cam._121 = 23;
+    cam.stepZ_6c = sp0x18.get();
+    cam.stepZAcceleration = (sp0x1c.get() - sp0x18.get()) / cam.refpointTicksRemaining_5c;
+    cam.flags_11c |= UPDATE_REFPOINT;
+    cam.refpointCallbackIndex_121 = 23;
   }
 
   @Method(0x800d8decL)
   public static FlowControl FUN_800d8dec(final RunningScript<?> script) {
     final int s3 = script.params_20[0].get();
-    final int s0 = script.params_20[1].get();
-    final int s1 = script.params_20[2].get();
+    final float newProjectionPlaneDistance = script.params_20[1].get();
+    final int projectionPlaneChangeFrames = script.params_20[2].get();
     final int s4 = script.params_20[3].get();
 
     final BattleCamera cam = camera_800c67f0;
-    cam._100 = getProjectionPlaneDistance() << 16;
-    cam._104 = s0 << 16;
-    cam._118 = 1;
+    cam.projectionPlaneDistance_100 = getProjectionPlaneDistance();
+    cam.newProjectionPlaneDistance_104 = newProjectionPlaneDistance;
+    cam.projectionPlaneChanging_118 = true;
 
-    if(s0 < getProjectionPlaneDistance()) {
+    if(newProjectionPlaneDistance < getProjectionPlaneDistance()) {
       //LAB_800d8e64
-      cam._114 = 1;
+      cam.projectionPlaneMovementDirection_114 = 1;
     } else {
-      cam._114 = 0;
+      cam.projectionPlaneMovementDirection_114 = 0;
     }
 
     //LAB_800d8e68
-    final int a2 = Math.abs(s0 - getProjectionPlaneDistance()) << 16;
-    cam._108 = s1;
+    final float projectionPlaneDelta = Math.abs(newProjectionPlaneDistance - getProjectionPlaneDistance());
+    cam.projectionPlaneChangeFrames_108 = projectionPlaneChangeFrames;
     if(s3 == 0) {
-      cam._10c = a2 / s1;
-      cam._110 = 0;
+      cam.projectionPlaneDistanceStep_10c = projectionPlaneDelta / projectionPlaneChangeFrames;
+      cam.projectionPlaneDistanceStepAcceleration_110 = 0.0f;
     } else {
       //LAB_800d8ea0
-      final IntRef sp0x18 = new IntRef();
-      final IntRef sp0x1c = new IntRef();
-      FUN_800dcebc(s3 - 1, s4 << 8, a2, s1, sp0x18, sp0x1c);
-      cam._10c = sp0x18.get();
-      cam._110 = (sp0x1c.get() - sp0x18.get()) / s1;
+      final FloatRef step = new FloatRef();
+      final FloatRef acceleration = new FloatRef();
+      FUN_800dcebc(s3 - 1, s4, projectionPlaneDelta, projectionPlaneChangeFrames, step, acceleration);
+      cam.projectionPlaneDistanceStep_10c = step.get();
+      cam.projectionPlaneDistanceStepAcceleration_110 = (acceleration.get() - step.get()) / projectionPlaneChangeFrames;
     }
 
     //LAB_800d8eec
@@ -2369,20 +2462,16 @@ public final class Bttl_800d {
   public static void FUN_800d8f10() {
     final BattleCamera cam = camera_800c67f0;
 
-    if(cam._11c != 0) {
-      if((cam._11c & 0x1) != 0) {
-        LOGGER.info(CAMERA, "[CAMERA] Array=_800facbc, FUN index=%d", cam._120);
-        cameraViewpointMethods_800facbc[cam._120].run();
-      }
-
-      //LAB_800d8f80
-      if((cam._11c & 0x2) != 0) {
-        LOGGER.info(CAMERA, "[CAMERA] Array=_800fad1c, FUN index=%d", cam._121);
-        cameraRefpointMethods_800fad1c[cam._121].run();
-      }
+    if((cam.flags_11c & UPDATE_VIEWPOINT) != 0) {
+      LOGGER.info(CAMERA, "[CAMERA] Array=_800facbc, FUN index=%d", cam.viewpointCallbackIndex_120);
+      cameraViewpointMethods_800facbc[cam.viewpointCallbackIndex_120].run();
     }
 
-    //LAB_800d8fb4
+    if((cam.flags_11c & UPDATE_REFPOINT) != 0) {
+      LOGGER.info(CAMERA, "[CAMERA] Array=_800fad1c, FUN index=%d", cam.refpointCallbackIndex_121);
+      cameraRefpointMethods_800fad1c[cam.refpointCallbackIndex_121].run();
+    }
+
     GsSetRefView2L(camera_800c67f0.rview2_00);
     wobbleCamera();
     FUN_800d8fe0();
@@ -2392,27 +2481,27 @@ public final class Bttl_800d {
   public static void FUN_800d8fe0() {
     final BattleCamera cam = camera_800c67f0;
 
-    if(cam._118 != 0 && cam._108 == 0) {
-      setProjectionPlaneDistance(cam._100 >> 16);
-      cam._118 = 0;
+    if(cam.projectionPlaneChanging_118 && cam.projectionPlaneChangeFrames_108 == 0) {
+      setProjectionPlaneDistance((int)cam.projectionPlaneDistance_100);
+      cam.projectionPlaneChanging_118 = false;
     }
 
     //LAB_800d9028
-    if(cam._118 != 0 && cam._108 != 0) {
-      if(cam._114 == 0) {
-        cam._100 += cam._10c;
+    if(cam.projectionPlaneChanging_118 && cam.projectionPlaneChangeFrames_108 != 0) {
+      if(cam.projectionPlaneMovementDirection_114 == 0) {
+        cam.projectionPlaneDistance_100 += cam.projectionPlaneDistanceStep_10c;
       } else {
         //LAB_800d906c
-        cam._100 -= cam._10c;
+        cam.projectionPlaneDistance_100 -= cam.projectionPlaneDistanceStep_10c;
       }
 
       //LAB_800d907c
-      cam._10c += cam._110;
-      setProjectionPlaneDistance(cam._100 >> 16);
+      cam.projectionPlaneDistanceStep_10c += cam.projectionPlaneDistanceStepAcceleration_110;
+      setProjectionPlaneDistance((int)cam.projectionPlaneDistance_100);
 
-      cam._108--;
-      if(cam._108 == 0) {
-        cam._118 = 0;
+      cam.projectionPlaneChangeFrames_108--;
+      if(cam.projectionPlaneChangeFrames_108 == 0) {
+        cam.projectionPlaneChanging_118 = false;
       }
     }
 
@@ -2422,15 +2511,15 @@ public final class Bttl_800d {
   @Method(0x800d90c8L)
   public static void FUN_800d90c8() {
     final BattleCamera cam = camera_800c67f0;
-    cam.vec_94.x.add(cam._b0);
-    cam.vec_94.y.add(cam._bc);
-    cam.vec_94.z.add(cam._c8);
-    setViewpoint(cam.vec_94.getX() >> 8, cam.vec_94.getY() >> 8, cam.vec_94.getZ() >> 8);
+    cam.vec_94.x += cam.stepX_b0;
+    cam.vec_94.y += cam.stepY_bc;
+    cam.vec_94.z += cam.stepZ_c8;
+    setViewpoint(cam.vec_94.x, cam.vec_94.y, cam.vec_94.z);
 
-    cam._d0--;
-    if(cam._d0 <= 0) {
-      cam._11c &= 0xffff_fffe;
-      cam._122 = 0;
+    cam.viewpointTicksRemaining_d0--;
+    if(cam.viewpointTicksRemaining_d0 <= 0) {
+      cam.flags_11c &= ~UPDATE_VIEWPOINT;
+      cam.viewpointMoving_122 = false;
     }
 
     //LAB_800d9144
@@ -2439,19 +2528,17 @@ public final class Bttl_800d {
   @Method(0x800d9154L)
   public static void FUN_800d9154() {
     final BattleCamera cam = camera_800c67f0;
-    cam._ac += cam._b0;
-    cam._b8 += cam._bc;
-    cam._a0 += cam._c8;
-    final IntRef sp0x18 = new IntRef().set(cam._ac >> 8);
-    final IntRef sp0x1c = new IntRef().set(cam._b8 >> 8);
-    final IntRef sp0x20 = new IntRef().set(cam._a0 >> 8);
-    FUN_800dcc94(0, 0, 0, sp0x18, sp0x1c, sp0x20);
-    setViewpoint(sp0x18.get(), sp0x1c.get(), sp0x20.get());
+    cam.x_ac += cam.stepX_b0;
+    cam.y_b8 += cam.stepY_bc;
+    cam.z_a0 += cam.stepZ_c8;
+    final Vector3f v1 = new Vector3f(cam.x_ac, cam.y_b8, cam.z_a0);
+    FUN_800dcc94(ZERO, v1);
+    setViewpoint(v1.x, v1.y, v1.z);
 
-    cam._d0--;
-    if(cam._d0 <= 0) {
-      cam._11c &= 0xffff_fffe;
-      cam._122 = 0;
+    cam.viewpointTicksRemaining_d0--;
+    if(cam.viewpointTicksRemaining_d0 <= 0) {
+      cam.flags_11c &= ~UPDATE_VIEWPOINT;
+      cam.viewpointMoving_122 = false;
     }
 
     //LAB_800d9210
@@ -2460,20 +2547,20 @@ public final class Bttl_800d {
   @Method(0x800d9220L)
   public static void FUN_800d9220() {
     final BattleCamera cam = camera_800c67f0;
-    cam.vec_94.x.add(cam._b0);
-    cam.vec_94.y.add(cam._bc);
-    cam.vec_94.z.add(cam._c8);
+    cam.vec_94.x += cam.stepX_b0;
+    cam.vec_94.y += cam.stepY_bc;
+    cam.vec_94.z += cam.stepZ_c8;
 
     setViewpoint(
-      cam.rview2_00.refpoint_0c.getX() + (cam.vec_94.getX() >> 8),
-      cam.rview2_00.refpoint_0c.getY() + (cam.vec_94.getY() >> 8),
-      cam.rview2_00.refpoint_0c.getZ() + (cam.vec_94.getZ() >> 8)
+      cam.rview2_00.refpoint_0c.x + cam.vec_94.x,
+      cam.rview2_00.refpoint_0c.y + cam.vec_94.y,
+      cam.rview2_00.refpoint_0c.z + cam.vec_94.z
     );
 
-    cam._d0--;
-    if(cam._d0 <= 0) {
-      cam._120 = 4;
-      cam._122 = 0;
+    cam.viewpointTicksRemaining_d0--;
+    if(cam.viewpointTicksRemaining_d0 <= 0) {
+      cam.viewpointCallbackIndex_120 = 4;
+      cam.viewpointMoving_122 = false;
     }
 
     //LAB_800d92ac
@@ -2482,20 +2569,18 @@ public final class Bttl_800d {
   @Method(0x800d92bcL)
   public static void FUN_800d92bc() {
     final BattleCamera cam = camera_800c67f0;
-    cam._a0 += cam._c8;
-    cam._ac += cam._b0;
-    cam._b8 += cam._bc;
+    cam.z_a0 += cam.stepZ_c8;
+    cam.x_ac += cam.stepX_b0;
+    cam.y_b8 += cam.stepY_bc;
 
-    final IntRef refX = new IntRef().set(cam._ac >> 8);
-    final IntRef refY = new IntRef().set(cam._b8 >> 8);
-    final IntRef refZ = new IntRef().set(cam._a0 >> 8);
-    FUN_800dcc94(cam.rview2_00.refpoint_0c.getX(), cam.rview2_00.refpoint_0c.getY(), cam.rview2_00.refpoint_0c.getZ(), refX, refY, refZ);
-    setViewpoint(refX.get(), refY.get(), refZ.get());
+    final Vector3f v1 = new Vector3f(cam.x_ac, cam.y_b8, cam.z_a0);
+    FUN_800dcc94(cam.rview2_00.refpoint_0c, v1);
+    setViewpoint(v1.x, v1.y, v1.z);
 
-    cam._d0--;
-    if(cam._d0 <= 0) {
-      cam._120 = 5;
-      cam._122 = 0;
+    cam.viewpointTicksRemaining_d0--;
+    if(cam.viewpointTicksRemaining_d0 <= 0) {
+      cam.viewpointCallbackIndex_120 = 5;
+      cam.viewpointMoving_122 = false;
     }
 
     //LAB_800d9370
@@ -2505,22 +2590,22 @@ public final class Bttl_800d {
   public static void FUN_800d9380() {
     final BattleCamera cam = camera_800c67f0;
 
-    cam.vec_94.x.add(cam._b0);
-    cam.vec_94.y.add(cam._bc);
-    cam.vec_94.z.add(cam._c8);
+    cam.vec_94.x += cam.stepX_b0;
+    cam.vec_94.y += cam.stepY_bc;
+    cam.vec_94.z += cam.stepZ_c8;
 
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[cam.bobjIndex_f4].innerStruct_00;
 
     setViewpoint(
-      bobj.model_148.coord2_14.coord.transfer.getX() + (cam.vec_94.getX() >> 8),
-      bobj.model_148.coord2_14.coord.transfer.getY() + (cam.vec_94.getY() >> 8),
-      bobj.model_148.coord2_14.coord.transfer.getZ() + (cam.vec_94.getZ() >> 8)
+      bobj.model_148.coord2_14.coord.transfer.getX() + cam.vec_94.x,
+      bobj.model_148.coord2_14.coord.transfer.getY() + cam.vec_94.y,
+      bobj.model_148.coord2_14.coord.transfer.getZ() + cam.vec_94.z
     );
 
-    cam._d0--;
-    if(cam._d0 <= 0) {
-      cam._120 = 6;
-      cam._122 = 0;
+    cam.viewpointTicksRemaining_d0--;
+    if(cam.viewpointTicksRemaining_d0 <= 0) {
+      cam.viewpointCallbackIndex_120 = 6;
+      cam.viewpointMoving_122 = false;
     }
 
     //LAB_800d9428
@@ -2529,20 +2614,18 @@ public final class Bttl_800d {
   @Method(0x800d9438L)
   public static void FUN_800d9438() {
     final BattleCamera cam = camera_800c67f0;
-    cam._ac += cam._b0;
-    cam._b8 += cam._bc;
-    cam._a0 += cam._c8;
-    final IntRef sp0x18 = new IntRef().set(cam._ac >> 8);
-    final IntRef sp0x1c = new IntRef().set(cam._b8 >> 8);
-    final IntRef sp0x20 = new IntRef().set(cam._a0 >> 8);
+    cam.x_ac += cam.stepX_b0;
+    cam.y_b8 += cam.stepY_bc;
+    cam.z_a0 += cam.stepZ_c8;
+    final Vector3f v1 = new Vector3f(cam.x_ac, cam.y_b8, cam.z_a0);
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[cam.bobjIndex_f4].innerStruct_00;
-    FUN_800dcc94(bobj.model_148.coord2_14.coord.transfer.getX(), bobj.model_148.coord2_14.coord.transfer.getY(), bobj.model_148.coord2_14.coord.transfer.getZ(), sp0x18, sp0x1c, sp0x20);
-    setViewpoint(sp0x18.get(), sp0x1c.get(), sp0x20.get());
+    FUN_800dcc94(bobj.model_148.coord2_14.coord.transfer, v1);
+    setViewpoint(v1.x, v1.y, v1.z);
 
-    cam._d0--;
-    if(cam._d0 <= 0) {
-      cam._120 = 7;
-      cam._122 = 0;
+    cam.viewpointTicksRemaining_d0--;
+    if(cam.viewpointTicksRemaining_d0 <= 0) {
+      cam.viewpointCallbackIndex_120 = 7;
+      cam.viewpointMoving_122 = false;
     }
 
     //LAB_800d9508
@@ -2551,24 +2634,28 @@ public final class Bttl_800d {
   @Method(0x800d9518L)
   public static void FUN_800d9518() {
     final BattleCamera cam = camera_800c67f0;
-    cameraRotationVector_800fab98.setX((short)(cam._d4 >> 8));
-    cameraRotationVector_800fab98.setY((short)(cam._d8 >> 8));
-    cameraRotationVector_800fab98.setZ((short)0);
+    cameraRotationVector_800fab98.x = cam._d4.x;
+    cameraRotationVector_800fab98.y = cam._d4.y;
+    cameraRotationVector_800fab98.z = 0.0f;
     RotMatrix_Xyz(cameraRotationVector_800fab98, cameraTransformMatrix_800c6798);
-    cam._a4 += cam._b4;
-    cam._dc -= cam._a4;
-    _800faba0.set((short)0, (short)0, (short)(cam._dc >> 8)).mul(cameraTransformMatrix_800c6798, _800faba8);
-    _800faba8.add(cameraTransformMatrix_800c6798.transfer);
-    cam.vec_94.setX(cam._e8 - (_800faba8.getZ() << 8));
-    cam.vec_94.setY(cam._ec - (_800faba8.getX() << 8));
-    cam.vec_94.setZ(cam._f0 + (_800faba8.getY() << 8));
+    cam.stepZ_a4 += cam.stepZAcceleration_b4;
+    cam._d4.z -= cam.stepZ_a4;
+    MATRIX.mul(_800faba0.set(0.0f, 0.0f, cam._d4.z), cameraTransformMatrix_800c6798, _800faba8);
+    _800faba8.add(
+      cameraTransformMatrix_800c6798.transfer.getX(),
+      cameraTransformMatrix_800c6798.transfer.getY(),
+      cameraTransformMatrix_800c6798.transfer.getZ()
+    );
+    cam.vec_94.x = cam._e8.x - _800faba8.z;
+    cam.vec_94.y = cam._e8.y - _800faba8.x;
+    cam.vec_94.z = cam._e8.z + _800faba8.y;
 
-    setViewpoint(cam.vec_94.getX() >> 8, cam.vec_94.getY() >> 8, cam.vec_94.getZ() >> 8);
+    setViewpoint(cam.vec_94.x, cam.vec_94.y, cam.vec_94.z);
 
-    cam._d0--;
-    if(cam._d0 <= 0) {
-      cam._11c &= 0xffff_fffe;
-      cam._122 = 0;
+    cam.viewpointTicksRemaining_d0--;
+    if(cam.viewpointTicksRemaining_d0 <= 0) {
+      cam.flags_11c &= ~UPDATE_VIEWPOINT;
+      cam.viewpointMoving_122 = false;
     }
 
     //LAB_800d9638
@@ -2576,24 +2663,22 @@ public final class Bttl_800d {
 
   @Method(0x800d9650L)
   public static void FUN_800d9650() {
-    final BattleCamera s3 = camera_800c67f0;
-    final IntRef sp0x18 = new IntRef().set(s3._d4 >> 8);
-    final IntRef sp0x1c = new IntRef().set(s3._d8 >> 8);
-    final IntRef sp0x20 = new IntRef().set(s3._dc >> 8);
-    FUN_800dcc94(0, 0, 0, sp0x18, sp0x1c, sp0x20);
-    sp0x18.add(s3._e8 >> 8);
-    sp0x1c.set(sp0x20.get()).add(s3._ec >> 8);
-    s3._a0 += s3._a4;
-    sp0x20.set(s3._a0 >> 8);
-    FUN_800dcc94(0, 0, 0, sp0x18, sp0x1c, sp0x20);
-    setViewpoint(sp0x18.get(), sp0x1c.get(), sp0x20.get());
-    s3._e0 += s3._e4;
-    s3._dc -= s3._e0;
+    final BattleCamera cam = camera_800c67f0;
+    final Vector3f v1 = new Vector3f(cam._d4);
+    FUN_800dcc94(ZERO, v1);
+    v1.x += cam._e8.x;
+    v1.y = v1.z + cam._e8.y;
+    cam.z_a0 += cam.stepZ_a4;
+    v1.z = cam.z_a0;
+    FUN_800dcc94(ZERO, v1);
+    setViewpoint(v1.x, v1.y, v1.z);
+    cam.stepZ_e0 += cam.stepZAcceleration_e4;
+    cam._d4.z -= cam.stepZ_e0;
 
-    s3._d0--;
-    if(s3._d0 <= 0) {
-      s3._11c &= 0xffff_fffe;
-      s3._122 = 0;
+    cam.viewpointTicksRemaining_d0--;
+    if(cam.viewpointTicksRemaining_d0 <= 0) {
+      cam.flags_11c &= ~UPDATE_VIEWPOINT;
+      cam.viewpointMoving_122 = false;
     }
 
     //LAB_800d976c
@@ -2602,29 +2687,33 @@ public final class Bttl_800d {
   @Method(0x800d9788L)
   public static void FUN_800d9788() {
     final BattleCamera cam = camera_800c67f0;
-    cameraRotationVector_800fab98.setX((short)(cam._d4 >> 8));
-    cameraRotationVector_800fab98.setY((short)(cam._d8 >> 8));
-    cameraRotationVector_800fab98.setZ((short)0);
+    cameraRotationVector_800fab98.x = cam._d4.x;
+    cameraRotationVector_800fab98.y = cam._d4.y;
+    cameraRotationVector_800fab98.z = 0.0f;
     RotMatrix_Xyz(cameraRotationVector_800fab98, cameraTransformMatrix_800c6798);
-    cam._a4 += cam._b4;
-    cam._dc -= cam._a4;
-    _800faba0.set((short)0, (short)0, (short)(cam._dc >> 8)).mul(cameraTransformMatrix_800c6798, _800faba8);
-    _800faba8.add(cameraTransformMatrix_800c6798.transfer);
-
-    cam.vec_94.setX(cam._e8 - (_800faba8.getZ() << 8));
-    cam.vec_94.setY(cam._ec - (_800faba8.getX() << 8));
-    cam.vec_94.setZ(cam._f0 + (_800faba8.getY() << 8));
-
-    setViewpoint(
-      cam.rview2_00.refpoint_0c.getX() + (cam.vec_94.getX() >> 8),
-      cam.rview2_00.refpoint_0c.getY() + (cam.vec_94.getY() >> 8),
-      cam.rview2_00.refpoint_0c.getZ() + (cam.vec_94.getZ() >> 8)
+    cam.stepZ_a4 += cam.stepZAcceleration_b4;
+    cam._d4.z -= cam.stepZ_a4;
+    MATRIX.mul(_800faba0.set(0.0f, 0.0f, cam._d4.z), cameraTransformMatrix_800c6798, _800faba8);
+    _800faba8.add(
+      cameraTransformMatrix_800c6798.transfer.getX(),
+      cameraTransformMatrix_800c6798.transfer.getY(),
+      cameraTransformMatrix_800c6798.transfer.getZ()
     );
 
-    cam._d0--;
-    if(cam._d0 <= 0) {
-      cam._120 = 4;
-      cam._122 = 0;
+    cam.vec_94.x = cam._e8.x - _800faba8.z;
+    cam.vec_94.y = cam._e8.y - _800faba8.x;
+    cam.vec_94.z = cam._e8.z + _800faba8.y;
+
+    setViewpoint(
+      cam.rview2_00.refpoint_0c.x + cam.vec_94.x,
+      cam.rview2_00.refpoint_0c.y + cam.vec_94.y,
+      cam.rview2_00.refpoint_0c.z + cam.vec_94.z
+    );
+
+    cam.viewpointTicksRemaining_d0--;
+    if(cam.viewpointTicksRemaining_d0 <= 0) {
+      cam.viewpointCallbackIndex_120 = 4;
+      cam.viewpointMoving_122 = false;
     }
 
     //LAB_800d98b8
@@ -2633,26 +2722,24 @@ public final class Bttl_800d {
   @Method(0x800d98d0L)
   public static void FUN_800d98d0() {
     final BattleCamera cam = camera_800c67f0;
-    final IntRef refX = new IntRef().set(cam._d4 >> 8);
-    final IntRef refY = new IntRef().set(cam._d8 >> 8);
-    final IntRef refZ = new IntRef().set(cam._dc >> 8);
-    FUN_800dcc94(0, 0, 0, refX, refY, refZ);
-    cam._a0 += cam._a4;
-    refX.add(cam._e8 >> 8);
-    refY.set(refZ.get()).add(cam._ec >> 8);
-    refZ.set(cam._a0 >> 8);
-    FUN_800dcc94(0, 0, 0, refX, refY, refZ);
-    setViewpoint(cam.rview2_00.refpoint_0c.getX() + refX.get(), cam.rview2_00.refpoint_0c.getY() + refY.get(), cam.rview2_00.refpoint_0c.getZ() + refZ.get());
-    cam._e0 += cam._e4;
-    cam._dc -= cam._e0;
+    final Vector3f v1 = new Vector3f(cam._d4);
+    FUN_800dcc94(ZERO, v1);
+    cam.z_a0 += cam.stepZ_a4;
+    v1.x += cam._e8.x;
+    v1.y = v1.z + cam._e8.y;
+    v1.z = cam.z_a0;
+    FUN_800dcc94(ZERO, v1);
+    setViewpoint(cam.rview2_00.refpoint_0c.x + v1.x, cam.rview2_00.refpoint_0c.y + v1.y, cam.rview2_00.refpoint_0c.z + v1.z);
+    cam.stepZ_e0 += cam.stepZAcceleration_e4;
+    cam._d4.x -= cam.stepZ_e0;
 
-    cam._d0--;
-    if(cam._d0 <= 0) {
-      cam._ac = FUN_800dc384(0, 5, 0, 0) << 8;
-      cam._b8 = FUN_800dc384(0, 5, 1, 0) << 8;
-      cam._a0 = FUN_800dc384(0, 5, 2, 0) << 8;
-      cam._120 = 5;
-      cam._122 = 0;
+    cam.viewpointTicksRemaining_d0--;
+    if(cam.viewpointTicksRemaining_d0 <= 0) {
+      cam.x_ac = FUN_800dc384(false, 5, 0, 0);
+      cam.y_b8 = FUN_800dc384(false, 5, 1, 0);
+      cam.z_a0 = FUN_800dc384(false, 5, 2, 0);
+      cam.viewpointCallbackIndex_120 = 5;
+      cam.viewpointMoving_122 = false;
     }
 
     //LAB_800d9a4c
@@ -2662,23 +2749,27 @@ public final class Bttl_800d {
   public static void FUN_800d9a68() {
     final BattleCamera cam = camera_800c67f0;
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[cam.bobjIndex_f4].innerStruct_00;
-    cameraRotationVector_800fab98.setX((short)(cam._d4 >> 8));
-    cameraRotationVector_800fab98.setY((short)(cam._d8 >> 8));
-    cameraRotationVector_800fab98.setZ((short)0);
+    cameraRotationVector_800fab98.x = cam._d4.x;
+    cameraRotationVector_800fab98.y = cam._d4.y;
+    cameraRotationVector_800fab98.z = 0.0f;
     RotMatrix_Xyz(cameraRotationVector_800fab98, cameraTransformMatrix_800c6798);
-    cam._a4 += cam._b4;
-    cam._dc -= cam._a4;
-    _800faba0.set((short)0, (short)0, (short)(cam._dc >> 8)).mul(cameraTransformMatrix_800c6798, _800faba8);
-    _800faba8.add(cameraTransformMatrix_800c6798.transfer);
-    cam.vec_94.setX(cam._e8 - (_800faba8.getZ() << 8));
-    cam.vec_94.setY(cam._ec - (_800faba8.getX() << 8));
-    cam.vec_94.setZ(cam._f0 + (_800faba8.getY() << 8));
-    setViewpoint(bobj.model_148.coord2_14.coord.transfer.getX() + (cam.vec_94.getX() >> 8), bobj.model_148.coord2_14.coord.transfer.getY() + (cam.vec_94.getY() >> 8), bobj.model_148.coord2_14.coord.transfer.getZ() + (cam.vec_94.getZ() >> 8));
+    cam.stepZ_a4 += cam.stepZAcceleration_b4;
+    cam._d4.z -= cam.stepZ_a4;
+    MATRIX.mul(_800faba0.set(0.0f, 0.0f, cam._d4.z), cameraTransformMatrix_800c6798, _800faba8);
+    _800faba8.add(
+      cameraTransformMatrix_800c6798.transfer.getX(),
+      cameraTransformMatrix_800c6798.transfer.getY(),
+      cameraTransformMatrix_800c6798.transfer.getZ()
+    );
+    cam.vec_94.x = cam._e8.x - _800faba8.z;
+    cam.vec_94.y = cam._e8.y - _800faba8.x;
+    cam.vec_94.z = cam._e8.z + _800faba8.y;
+    setViewpoint(bobj.model_148.coord2_14.coord.transfer.getX() + cam.vec_94.x, bobj.model_148.coord2_14.coord.transfer.getY() + cam.vec_94.y, bobj.model_148.coord2_14.coord.transfer.getZ() + cam.vec_94.z);
 
-    cam._d0--;
-    if(cam._d0 <= 0) {
-      cam._120 = 6;
-      cam._122 = 0;
+    cam.viewpointTicksRemaining_d0--;
+    if(cam.viewpointTicksRemaining_d0 <= 0) {
+      cam.viewpointCallbackIndex_120 = 6;
+      cam.viewpointMoving_122 = false;
     }
 
     //LAB_800d9bb8
@@ -2688,31 +2779,27 @@ public final class Bttl_800d {
   @Method(0x800d9bd4L)
   public static void FUN_800d9bd4() {
     final BattleCamera cam = camera_800c67f0;
-    final IntRef refX = new IntRef().set(cam._d4 >> 8);
-    final IntRef refY = new IntRef().set(cam._d8 >> 8);
-    final IntRef refZ = new IntRef().set(cam._dc >> 8);
-    FUN_800dcc94(0, 0, 0, refX, refY, refZ);
-    cam._a0 += cam._a4;
-    refX.add(cam._e8 >> 8);
-    refY.set(refZ.get()).add(cam._ec >> 8);
-    refZ.set(cam._a0 >> 8);
-    FUN_800dcc94(0, 0, 0, refX, refY, refZ);
+    final Vector3f ref = new Vector3f(cam._d4);
+    FUN_800dcc94(ZERO, ref);
+    cam.z_a0 += cam.stepZ_a4;
+    ref.x += cam._e8.x;
+    ref.y = ref.z + cam._e8.y;
+    ref.z = cam.z_a0;
+    FUN_800dcc94(ZERO, ref);
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[cam.bobjIndex_f4].innerStruct_00;
-    setViewpoint(bobj.model_148.coord2_14.coord.transfer.getX() + refX.get(), bobj.model_148.coord2_14.coord.transfer.getY() + refY.get(), bobj.model_148.coord2_14.coord.transfer.getZ() + refZ.get());
-    cam._e0 += cam._e4;
-    cam._dc -= cam._e0;
+    setViewpoint(bobj.model_148.coord2_14.coord.transfer.getX() + ref.x, bobj.model_148.coord2_14.coord.transfer.getY() + ref.y, bobj.model_148.coord2_14.coord.transfer.getZ() + ref.z);
+    cam.stepZ_e0 += cam.stepZAcceleration_e4;
+    cam._d4.z -= cam.stepZ_e0;
 
-    cam._d0--;
-    if(cam._d0 <= 0) {
-      refX.set(cam.rview2_00.viewpoint_00.getX());
-      refY.set(cam.rview2_00.viewpoint_00.getY());
-      refZ.set(cam.rview2_00.viewpoint_00.getZ());
-      FUN_800dcd9c(bobj.model_148.coord2_14.coord.transfer.getX(), bobj.model_148.coord2_14.coord.transfer.getY(), bobj.model_148.coord2_14.coord.transfer.getZ(), refX, refY, refZ);
-      cam._ac = refX.get() << 8;
-      cam._b8 = refY.get() << 8;
-      cam._a0 = refZ.get() << 8;
-      cam._120 = 7;
-      cam._122 = 0;
+    cam.viewpointTicksRemaining_d0--;
+    if(cam.viewpointTicksRemaining_d0 <= 0) {
+      ref.set(cam.rview2_00.viewpoint_00);
+      calculate3dAngle(bobj.model_148.coord2_14.coord.transfer, ref);
+      cam.x_ac = ref.x;
+      cam.y_b8 = ref.y;
+      cam.z_a0 = ref.z;
+      cam.viewpointCallbackIndex_120 = 7;
+      cam.viewpointMoving_122 = false;
     }
 
     //LAB_800d9d7c
@@ -2721,15 +2808,15 @@ public final class Bttl_800d {
   @Method(0x800d9da0L)
   public static void FUN_800d9da0() {
     final BattleCamera cam = camera_800c67f0;
-    cam.vec_20.x.add(cam._3c);
-    cam.vec_20.y.add(cam._48);
-    cam.vec_20.z.add(cam._54);
-    setRefpoint(cam.vec_20.getX() >> 8, cam.vec_20.getY() >> 8, cam.vec_20.getZ() >> 8);
+    cam.vec_20.x += cam.stepX_3c;
+    cam.vec_20.y += cam.stepY_48;
+    cam.vec_20.z += cam.stepZ_54;
+    setRefpoint(cam.vec_20.x, cam.vec_20.y, cam.vec_20.z);
 
-    cam._5c--;
-    if(cam._5c <= 0) {
-      cam._11c &= 0xffff_fffd;
-      cam._123 = 0;
+    cam.refpointTicksRemaining_5c--;
+    if(cam.refpointTicksRemaining_5c <= 0) {
+      cam.flags_11c &= ~UPDATE_REFPOINT;
+      cam.refpointMoving_123 = false;
     }
 
     //LAB_800d9e1c
@@ -2739,20 +2826,18 @@ public final class Bttl_800d {
   public static void FUN_800d9e2c() {
     final BattleCamera cam = camera_800c67f0;
 
-    cam._38 += cam._3c;
-    cam._44 += cam._48;
-    cam._2c += cam._54;
+    cam.x_38 += cam.stepX_3c;
+    cam.y_44 += cam.stepY_48;
+    cam.z_2c += cam.stepZ_54;
 
-    final IntRef sp0x18 = new IntRef().set(cam._38 >> 8);
-    final IntRef sp0x1c = new IntRef().set(cam._44 >> 8);
-    final IntRef sp0x20 = new IntRef().set(cam._2c >> 8);
-    FUN_800dcc94(0, 0, 0, sp0x18, sp0x1c, sp0x20);
-    setRefpoint(sp0x18.get(), sp0x1c.get(), sp0x20.get());
+    final Vector3f v1 = new Vector3f(cam.x_38, cam.y_44, cam.z_2c);
+    FUN_800dcc94(ZERO, v1);
+    setRefpoint(v1.x, v1.y, v1.z);
 
-    cam._5c--;
-    if(cam._5c <= 0) {
-      cam._11c &= 0xffff_fffd;
-      cam._123 = 0;
+    cam.refpointTicksRemaining_5c--;
+    if(cam.refpointTicksRemaining_5c <= 0) {
+      cam.flags_11c &= ~UPDATE_REFPOINT;
+      cam.refpointMoving_123 = false;
     }
 
     //LAB_800d9ee8
@@ -2762,20 +2847,20 @@ public final class Bttl_800d {
   public static void FUN_800d9ef8() {
     final BattleCamera cam = camera_800c67f0;
 
-    cam.vec_20.x.add(cam._3c);
-    cam.vec_20.y.add(cam._48);
-    cam.vec_20.z.add(cam._54);
+    cam.vec_20.x += cam.stepX_3c;
+    cam.vec_20.y += cam.stepY_48;
+    cam.vec_20.z += cam.stepZ_54;
 
     setRefpoint(
-      cam.rview2_00.viewpoint_00.getX() + (cam.vec_20.getX() >> 8),
-      cam.rview2_00.viewpoint_00.getY() + (cam.vec_20.getY() >> 8),
-      cam.rview2_00.viewpoint_00.getZ() + (cam.vec_20.getZ() >> 8)
+      cam.rview2_00.viewpoint_00.x + cam.vec_20.x,
+      cam.rview2_00.viewpoint_00.y + cam.vec_20.y,
+      cam.rview2_00.viewpoint_00.z + cam.vec_20.z
     );
 
-    cam._5c--;
-    if(cam._5c <= 0) {
-      cam._121 = 2;
-      cam._123 = 0;
+    cam.refpointTicksRemaining_5c--;
+    if(cam.refpointTicksRemaining_5c <= 0) {
+      cam.refpointCallbackIndex_121 = 2;
+      cam.refpointMoving_123 = false;
     }
 
     //LAB_800d9f84
@@ -2784,19 +2869,17 @@ public final class Bttl_800d {
   @Method(0x800d9f94L)
   public static void FUN_800d9f94() {
     final BattleCamera cam = camera_800c67f0;
-    cam._38 += cam._3c;
-    cam._2c += cam._54;
-    cam._44 += cam._48;
-    final IntRef sp0x18 = new IntRef().set(cam._38 >> 8);
-    final IntRef sp0x1c = new IntRef().set(cam._44 >> 8);
-    final IntRef sp0x20 = new IntRef().set(cam._2c >> 8);
-    FUN_800dcc94(cam.rview2_00.viewpoint_00.getX(), cam.rview2_00.viewpoint_00.getY(), cam.rview2_00.viewpoint_00.getZ(), sp0x18, sp0x1c, sp0x20);
-    setRefpoint(sp0x18.get(), sp0x1c.get(), sp0x20.get());
+    cam.x_38 += cam.stepX_3c;
+    cam.z_2c += cam.stepZ_54;
+    cam.y_44 += cam.stepY_48;
+    final Vector3f v1 = new Vector3f(cam.x_38, cam.y_44, cam.z_2c);
+    FUN_800dcc94(cam.rview2_00.viewpoint_00, v1);
+    setRefpoint(v1.x, v1.y, v1.z);
 
-    cam._5c--;
-    if(cam._5c <= 0) {
-      cam._121 = 3;
-      cam._123 = 0;
+    cam.refpointTicksRemaining_5c--;
+    if(cam.refpointTicksRemaining_5c <= 0) {
+      cam.refpointCallbackIndex_121 = 3;
+      cam.refpointMoving_123 = false;
     }
 
     //LAB_800da048
@@ -2806,17 +2889,17 @@ public final class Bttl_800d {
   public static void FUN_800da058() {
     final BattleCamera cam = camera_800c67f0;
 
-    cam.vec_20.x.add(cam._3c);
-    cam.vec_20.y.add(cam._48);
-    cam.vec_20.z.add(cam._54);
+    cam.vec_20.x += cam.stepX_3c;
+    cam.vec_20.y += cam.stepY_48;
+    cam.vec_20.z += cam.stepZ_54;
 
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[cam.bobjIndex_80].innerStruct_00;
-    setRefpoint(bobj.model_148.coord2_14.coord.transfer.getX() + (cam.vec_20.getX() >> 8), bobj.model_148.coord2_14.coord.transfer.getY() + (cam.vec_20.getY() >> 8), bobj.model_148.coord2_14.coord.transfer.getZ() + (cam.vec_20.getZ() >> 8));
+    setRefpoint(bobj.model_148.coord2_14.coord.transfer.getX() + cam.vec_20.x, bobj.model_148.coord2_14.coord.transfer.getY() + cam.vec_20.y, bobj.model_148.coord2_14.coord.transfer.getZ() + cam.vec_20.z);
 
-    cam._5c--;
-    if(cam._5c <= 0) {
-      cam._121 = 6;
-      cam._123 = 0;
+    cam.refpointTicksRemaining_5c--;
+    if(cam.refpointTicksRemaining_5c <= 0) {
+      cam.refpointCallbackIndex_121 = 6;
+      cam.refpointMoving_123 = false;
     }
 
     //LAB_800da100
@@ -2826,21 +2909,19 @@ public final class Bttl_800d {
   public static void FUN_800da110() {
     final BattleCamera cam = camera_800c67f0;
 
-    cam._38 += cam._3c;
-    cam._44 += cam._48;
-    cam._2c += cam._54;
+    cam.x_38 += cam.stepX_3c;
+    cam.y_44 += cam.stepY_48;
+    cam.z_2c += cam.stepZ_54;
 
-    final IntRef sp0x18 = new IntRef().set(cam._38 >> 8);
-    final IntRef sp0x1c = new IntRef().set(cam._44 >> 8);
-    final IntRef sp0x20 = new IntRef().set(cam._2c >> 8);
+    final Vector3f v1 = new Vector3f(cam.x_38, cam.y_44, cam.z_2c);
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[cam.bobjIndex_80].innerStruct_00;
-    FUN_800dcc94(bobj.model_148.coord2_14.coord.transfer.getX(), bobj.model_148.coord2_14.coord.transfer.getY(), bobj.model_148.coord2_14.coord.transfer.getZ(), sp0x18, sp0x1c, sp0x20);
-    setRefpoint(sp0x18.get(), sp0x1c.get(), sp0x20.get());
+    FUN_800dcc94(bobj.model_148.coord2_14.coord.transfer, v1);
+    setRefpoint(v1.x, v1.y, v1.z);
 
-    cam._5c--;
-    if(cam._5c <= 0) {
-      cam._121 = 7;
-      cam._123 = 0;
+    cam.refpointTicksRemaining_5c--;
+    if(cam.refpointTicksRemaining_5c <= 0) {
+      cam.refpointCallbackIndex_121 = 7;
+      cam.refpointMoving_123 = false;
     }
 
     //LAB_800da1e0
@@ -2849,23 +2930,27 @@ public final class Bttl_800d {
   @Method(0x800da1f0L)
   public static void FUN_800da1f0() {
     final BattleCamera cam = camera_800c67f0;
-    cameraRotationVector_800fab98.setX((short)(cam.vec_60.getX() >> 8));
-    cameraRotationVector_800fab98.setY((short)(cam.vec_60.getY() >> 8));
-    cameraRotationVector_800fab98.setZ((short)0);
+    cameraRotationVector_800fab98.x = cam.vec_60.x;
+    cameraRotationVector_800fab98.y = cam.vec_60.y;
+    cameraRotationVector_800fab98.z = 0.0f;
     RotMatrix_Xyz(cameraRotationVector_800fab98, cameraTransformMatrix_800c6798);
-    cam._30 += cam._40;
-    cam.vec_60.z.sub(cam._30);
-    _800faba0.set((short)0, (short)0, (short)(cam.vec_60.getZ() >> 8)).mul(cameraTransformMatrix_800c6798, _800faba8);
-    _800faba8.add(cameraTransformMatrix_800c6798.transfer);
-    cam.vec_20.setX(cam.vec_74.getX() - (_800faba8.getZ() << 8));
-    cam.vec_20.setY(cam.vec_74.getY() - (_800faba8.getX() << 8));
-    cam.vec_20.setZ(cam.vec_74.getZ() + (_800faba8.getY() << 8));
-    setRefpoint(cam.vec_20.getX() >> 8, cam.vec_20.getY() >> 8, cam.vec_20.getZ() >> 8);
+    cam.stepZ_30 += cam.stepZAcceleration_40;
+    cam.vec_60.z -= cam.stepZ_30;
+    MATRIX.mul(_800faba0.set(0.0f, 0.0f, cam.vec_60.z), cameraTransformMatrix_800c6798, _800faba8);
+    _800faba8.add(
+      cameraTransformMatrix_800c6798.transfer.getX(),
+      cameraTransformMatrix_800c6798.transfer.getY(),
+      cameraTransformMatrix_800c6798.transfer.getZ()
+    );
+    cam.vec_20.x = cam.vec_74.x - _800faba8.z;
+    cam.vec_20.y = cam.vec_74.y - _800faba8.x;
+    cam.vec_20.z = cam.vec_74.z + _800faba8.y;
+    setRefpoint(cam.vec_20.x, cam.vec_20.y, cam.vec_20.z);
 
-    cam._5c--;
-    if(cam._5c <= 0) {
-      cam._11c &= 0xffff_fffd;
-      cam._123 = 0;
+    cam.refpointTicksRemaining_5c--;
+    if(cam.refpointTicksRemaining_5c <= 0) {
+      cam.flags_11c &= ~UPDATE_REFPOINT;
+      cam.refpointMoving_123 = false;
     }
 
     //LAB_800da310
@@ -2875,24 +2960,22 @@ public final class Bttl_800d {
   public static void FUN_800da328() {
     final BattleCamera cam = camera_800c67f0;
 
-    final IntRef sp0x18 = new IntRef().set(cam.vec_60.getX() >> 8);
-    final IntRef sp0x1c = new IntRef().set(cam.vec_60.getY() >> 8);
-    final IntRef sp0x20 = new IntRef().set(cam.vec_60.getZ() >> 8);
-    FUN_800dcc94(0, 0, 0, sp0x18, sp0x1c, sp0x20);
+    final Vector3f v1 = new Vector3f(cam.vec_60);
+    FUN_800dcc94(ZERO, v1);
 
-    cam._2c += cam._30;
-    sp0x18.add(cam.vec_74.getX() >> 8);
-    sp0x1c.set(sp0x20.get()).add(cam.vec_74.getY() >> 8);
-    sp0x20.set(cam._2c >> 8);
-    FUN_800dcc94(0, 0, 0, sp0x18, sp0x1c, sp0x20);
-    setRefpoint(sp0x18.get(), sp0x1c.get(), sp0x20.get());
+    cam.z_2c += cam.stepZ_30;
+    v1.x += cam.vec_74.x;
+    v1.y = v1.z + cam.vec_74.y;
+    v1.z = cam.z_2c;
+    FUN_800dcc94(ZERO, v1);
+    setRefpoint(v1.x, v1.y, v1.z);
 
-    cam._6c += cam._70;
-    cam.vec_60.z.sub(cam._6c);
-    cam._5c--;
-    if(cam._5c <= 0) {
-      cam._11c &= 0xffff_fffd;
-      cam._123 = 0;
+    cam.stepZ_6c += cam.stepZAcceleration;
+    cam.vec_60.z -= cam.stepZ_6c;
+    cam.refpointTicksRemaining_5c--;
+    if(cam.refpointTicksRemaining_5c <= 0) {
+      cam.flags_11c &= ~UPDATE_REFPOINT;
+      cam.refpointMoving_123 = false;
     }
 
     //LAB_800da444
@@ -2902,31 +2985,35 @@ public final class Bttl_800d {
   public static void FUN_800da460() {
     final BattleCamera cam = camera_800c67f0;
 
-    cameraRotationVector_800fab98.setX((short)(cam.vec_60.getX() >> 8));
-    cameraRotationVector_800fab98.setY((short)(cam.vec_60.getY() >> 8));
-    cameraRotationVector_800fab98.setZ((short)0);
+    cameraRotationVector_800fab98.x = cam.vec_60.x;
+    cameraRotationVector_800fab98.y = cam.vec_60.y;
+    cameraRotationVector_800fab98.z = 0.0f;
 
     RotMatrix_Xyz(cameraRotationVector_800fab98, cameraTransformMatrix_800c6798);
 
-    cam._30 += cam._40;
-    cam.vec_60.z.sub(cam._30);
-    _800faba0.set((short)0, (short)0, (short)(cam.vec_60.getZ() >> 8)).mul(cameraTransformMatrix_800c6798, _800faba8);
-    _800faba8.add(cameraTransformMatrix_800c6798.transfer);
-
-    cam.vec_20.setX(cam.vec_74.getX() - (_800faba8.getZ() << 8));
-    cam.vec_20.setY(cam.vec_74.getY() - (_800faba8.getX() << 8));
-    cam.vec_20.setZ(cam.vec_74.getZ() + (_800faba8.getY() << 8));
-
-    setRefpoint(
-      cam.rview2_00.viewpoint_00.getX() + (cam.vec_20.getX() >> 8),
-      cam.rview2_00.viewpoint_00.getY() + (cam.vec_20.getY() >> 8),
-      cam.rview2_00.viewpoint_00.getZ() + (cam.vec_20.getZ() >> 8)
+    cam.stepZ_30 += cam.stepZAcceleration_40;
+    cam.vec_60.z -= cam.stepZ_30;
+    MATRIX.mul(_800faba0.set(0.0f, 0.0f, cam.vec_60.z), cameraTransformMatrix_800c6798, _800faba8);
+    _800faba8.add(
+      cameraTransformMatrix_800c6798.transfer.getX(),
+      cameraTransformMatrix_800c6798.transfer.getY(),
+      cameraTransformMatrix_800c6798.transfer.getZ()
     );
 
-    cam._5c--;
-    if(cam._5c <= 0) {
-      cam._121 = 2;
-      cam._123 = 0;
+    cam.vec_20.x = cam.vec_74.x - _800faba8.z;
+    cam.vec_20.y = cam.vec_74.y - _800faba8.x;
+    cam.vec_20.z = cam.vec_74.z + _800faba8.y;
+
+    setRefpoint(
+      cam.rview2_00.viewpoint_00.x + cam.vec_20.x,
+      cam.rview2_00.viewpoint_00.y + cam.vec_20.y,
+      cam.rview2_00.viewpoint_00.z + cam.vec_20.z
+    );
+
+    cam.refpointTicksRemaining_5c--;
+    if(cam.refpointTicksRemaining_5c <= 0) {
+      cam.refpointCallbackIndex_121 = 2;
+      cam.refpointMoving_123 = false;
     }
 
     //LAB_800da594
@@ -2936,28 +3023,26 @@ public final class Bttl_800d {
   public static void FUN_800da5b0() {
     final BattleCamera cam = camera_800c67f0;
 
-    final IntRef sp0x18 = new IntRef().set(cam.vec_60.getX() >> 8);
-    final IntRef sp0x1c = new IntRef().set(cam.vec_60.getY() >> 8);
-    final IntRef sp0x20 = new IntRef().set(cam.vec_60.getZ() >> 8);
-    FUN_800dcc94(0, 0, 0, sp0x18, sp0x1c, sp0x20);
+    final Vector3f v1 = new Vector3f(cam.vec_60);
+    FUN_800dcc94(ZERO, v1);
 
-    cam._2c += cam._30;
-    sp0x18.add(cam.vec_74.getX() >> 8);
-    sp0x1c.set(sp0x20.get()).add(cam.vec_74.getY() >> 8);
-    sp0x20.set(cam._2c >> 8);
-    FUN_800dcc94(0, 0, 0, sp0x18, sp0x1c, sp0x20);
-    setRefpoint(cam.rview2_00.viewpoint_00.getX() + sp0x18.get(), cam.rview2_00.viewpoint_00.getY() + sp0x1c.get(), cam.rview2_00.viewpoint_00.getZ() + sp0x20.get());
+    cam.z_2c += cam.stepZ_30;
+    v1.x += cam.vec_74.x;
+    v1.y = v1.z + cam.vec_74.y;
+    v1.z = cam.z_2c;
+    FUN_800dcc94(ZERO, v1);
+    setRefpoint(cam.rview2_00.viewpoint_00.x + v1.x, cam.rview2_00.viewpoint_00.y + v1.y, cam.rview2_00.viewpoint_00.z + v1.z);
 
-    cam._6c += cam._70;
-    cam.vec_60.z.sub(cam._6c);
+    cam.stepZ_6c += cam.stepZAcceleration;
+    cam.vec_60.z -= cam.stepZ_6c;
 
-    cam._5c--;
-    if(cam._5c <= 0) {
-      cam._38 = FUN_800dc384(1, 3, 0, 0) << 8;
-      cam._44 = FUN_800dc384(1, 3, 1, 0) << 8;
-      cam._2c = FUN_800dc384(1, 3, 2, 0) << 8;
-      cam._121 = 3;
-      cam._123 = 0;
+    cam.refpointTicksRemaining_5c--;
+    if(cam.refpointTicksRemaining_5c <= 0) {
+      cam.x_38 = FUN_800dc384(true, 3, 0, 0);
+      cam.y_44 = FUN_800dc384(true, 3, 1, 0);
+      cam.z_2c = FUN_800dc384(true, 3, 2, 0);
+      cam.refpointCallbackIndex_121 = 3;
+      cam.refpointMoving_123 = false;
     }
 
     //LAB_800da730
@@ -2968,32 +3053,36 @@ public final class Bttl_800d {
     final BattleCamera cam = camera_800c67f0;
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[cam.bobjIndex_80].innerStruct_00;
 
-    cam._30 += cam._40;
-    cam.vec_60.z.sub(cam._30);
+    cam.stepZ_30 += cam.stepZAcceleration_40;
+    cam.vec_60.z -= cam.stepZ_30;
 
-    cameraRotationVector_800fab98.setX((short)(cam.vec_60.getX() >> 8));
-    cameraRotationVector_800fab98.setY((short)(cam.vec_60.getY() >> 8));
-    cameraRotationVector_800fab98.setZ((short)0);
+    cameraRotationVector_800fab98.x = cam.vec_60.x;
+    cameraRotationVector_800fab98.y = cam.vec_60.y;
+    cameraRotationVector_800fab98.z = 0.0f;
 
     RotMatrix_Xyz(cameraRotationVector_800fab98, cameraTransformMatrix_800c6798);
 
-    _800faba0.set((short)0, (short)0, (short)(cam.vec_60.getZ() >> 8)).mul(cameraTransformMatrix_800c6798, _800faba8);
-    _800faba8.add(cameraTransformMatrix_800c6798.transfer);
-
-    cam.vec_20.setX(cam.vec_74.getX() - (_800faba8.getZ() << 8));
-    cam.vec_20.setY(cam.vec_74.getY() - (_800faba8.getX() << 8));
-    cam.vec_20.setZ(cam.vec_74.getZ() + (_800faba8.getY() << 8));
-
-    setRefpoint(
-      bobj.model_148.coord2_14.coord.transfer.getX() + (cam.vec_20.getX() >> 8),
-      bobj.model_148.coord2_14.coord.transfer.getY() + (cam.vec_20.getY() >> 8),
-      bobj.model_148.coord2_14.coord.transfer.getZ() + (cam.vec_20.getZ() >> 8)
+    MATRIX.mul(_800faba0.set(0.0f, 0.0f, cam.vec_60.z), cameraTransformMatrix_800c6798, _800faba8);
+    _800faba8.add(
+      cameraTransformMatrix_800c6798.transfer.getX(),
+      cameraTransformMatrix_800c6798.transfer.getY(),
+      cameraTransformMatrix_800c6798.transfer.getZ()
     );
 
-    cam._5c--;
-    if(cam._5c <= 0) {
-      cam._121 = 6;
-      cam._123 = 0;
+    cam.vec_20.x = cam.vec_74.x - _800faba8.z;
+    cam.vec_20.y = cam.vec_74.y - _800faba8.x;
+    cam.vec_20.z = cam.vec_74.z + _800faba8.y;
+
+    setRefpoint(
+      bobj.model_148.coord2_14.coord.transfer.getX() + cam.vec_20.x,
+      bobj.model_148.coord2_14.coord.transfer.getY() + cam.vec_20.y,
+      bobj.model_148.coord2_14.coord.transfer.getZ() + cam.vec_20.z
+    );
+
+    cam.refpointTicksRemaining_5c--;
+    if(cam.refpointTicksRemaining_5c <= 0) {
+      cam.refpointCallbackIndex_121 = 6;
+      cam.refpointMoving_123 = false;
     }
 
     //LAB_800da8a0
@@ -3004,34 +3093,30 @@ public final class Bttl_800d {
     final BattleCamera cam = camera_800c67f0;
     final ScriptState<?> state = scriptStatePtrArr_800bc1c0[cam.bobjIndex_80];
 
-    final IntRef sp0x18 = new IntRef().set(cam.vec_60.getX() >> 8);
-    final IntRef sp0x1c = new IntRef().set(cam.vec_60.getY() >> 8);
-    final IntRef sp0x20 = new IntRef().set(cam.vec_60.getZ() >> 8);
-    FUN_800dcc94(0, 0, 0, sp0x18, sp0x1c, sp0x20);
+    final Vector3f ref = new Vector3f().set(cam.vec_60);
+    FUN_800dcc94(ZERO, ref);
 
-    cam._2c += cam._30;
-    sp0x18.add(cam.vec_74.getX() >> 8);
-    sp0x1c.set(sp0x20.get()).add(cam.vec_74.getY() >> 8);
-    sp0x20.set(cam._2c >> 8);
-    FUN_800dcc94(0, 0, 0, sp0x18, sp0x1c, sp0x20);
+    cam.z_2c += cam.stepZ_30;
+    ref.x += cam.vec_74.x;
+    ref.y = ref.z + cam.vec_74.y;
+    ref.z = cam.z_2c;
+    FUN_800dcc94(ZERO, ref);
 
     final BattleObject27c bobj = (BattleObject27c)state.innerStruct_00;
-    setRefpoint(bobj.model_148.coord2_14.coord.transfer.getX() + sp0x18.get(), bobj.model_148.coord2_14.coord.transfer.getY() + sp0x1c.get(), bobj.model_148.coord2_14.coord.transfer.getZ() + sp0x20.get());
+    setRefpoint(bobj.model_148.coord2_14.coord.transfer.getX() + ref.x, bobj.model_148.coord2_14.coord.transfer.getY() + ref.y, bobj.model_148.coord2_14.coord.transfer.getZ() + ref.z);
 
-    cam._6c += cam._70;
-    cam.vec_60.z.sub(cam._6c);
+    cam.stepZ_6c += cam.stepZAcceleration;
+    cam.vec_60.z -= cam.stepZ_6c;
 
-    cam._5c--;
-    if(cam._5c <= 0) {
-      sp0x18.set(cam.rview2_00.refpoint_0c.getX());
-      sp0x1c.set(cam.rview2_00.refpoint_0c.getY());
-      sp0x20.set(cam.rview2_00.refpoint_0c.getZ());
-      FUN_800dcd9c(bobj.model_148.coord2_14.coord.transfer.getX(), bobj.model_148.coord2_14.coord.transfer.getY(), bobj.model_148.coord2_14.coord.transfer.getZ(), sp0x18, sp0x1c, sp0x20);
-      cam._38 = sp0x18.get() << 8;
-      cam._44 = sp0x1c.get() << 8;
-      cam._2c = sp0x20.get() << 8;
-      cam._121 = 7;
-      cam._123 = 0;
+    cam.refpointTicksRemaining_5c--;
+    if(cam.refpointTicksRemaining_5c <= 0) {
+      ref.set(cam.rview2_00.refpoint_0c);
+      calculate3dAngle(bobj.model_148.coord2_14.coord.transfer, ref);
+      cam.x_38 = ref.x;
+      cam.y_44 = ref.y;
+      cam.z_2c = ref.z;
+      cam.refpointCallbackIndex_121 = 7;
+      cam.refpointMoving_123 = false;
     }
 
     //LAB_800daa60
@@ -3091,374 +3176,494 @@ public final class Bttl_800d {
   @Method(0x800dabecL)
   public static void FUN_800dabec() {
     final BattleCamera cam = camera_800c67f0;
-    cam.svec_8c.setX((short)0);
-    cam.svec_8c.setY((short)0);
-    cam.svec_8c.setZ((short)0);
-    cam._108 = 0;
-    cam._118 = 0;
-    cam._11c = 0;
-    cam._120 = 0;
-    cam._121 = 0;
-    cam._122 = 0;
-    cam._123 = 0;
+    cam.projectionPlaneChangeFrames_108 = 0;
+    cam.projectionPlaneChanging_118 = false;
+    cam.flags_11c = 0;
+    cam.viewpointCallbackIndex_120 = 0;
+    cam.refpointCallbackIndex_121 = 0;
+    cam.viewpointMoving_122 = false;
+    cam.refpointMoving_123 = false;
   }
 
   @Method(0x800dac20L)
   public static FlowControl FUN_800dac20(final RunningScript<?> script) {
-    FUN_800dac70(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get(), script.params_20[4].get());
+    FUN_800dac70(script.params_20[0].get(), script.params_20[1].get() / (float)0x100, script.params_20[2].get() / (float)0x100, script.params_20[3].get() / (float)0x100, script.params_20[4].get());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800dac70L)
-  public static void FUN_800dac70(final int index, final int x, final int y, final int z, final int scriptIndex) {
-    LOGGER.info(CAMERA, "[CAMERA] Array=_800fabbc, FUN index=%d, x=%d, y=%d, z=%d, script index=%d", index, x, y, z, scriptIndex);
+  public static void FUN_800dac70(final int index, final float x, final float y, final float z, final int scriptIndex) {
+    LOGGER.info(CAMERA, "[CAMERA] Array=_800fabbc, FUN index=%d, x=%f, y=%f, z=%f, script index=%d", index, x, y, z, scriptIndex);
     _800fabbc[index].accept(x, y, z, scriptIndex);
     camera_800c67f0.callbackIndex_fc = index;
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800dacc4L)
-  public static void FUN_800dacc4(final int x, final int y, final int z, final int scriptIndex) {
+  public static void FUN_800dacc4(final float x, final float y, final float z, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
-    cam.vec_94.setX(x);
-    cam.vec_94.setY(y);
-    cam.vec_94.setZ(z);
-    setViewpoint(x >> 8, y >> 8, z >> 8);
-    cam._11c |= 0x1;
-    cam._120 = 0;
+    cam.vec_94.set(x, y, z);
+    setViewpoint(x, y, z);
+    cam.flags_11c |= UPDATE_VIEWPOINT;
+    cam.viewpointCallbackIndex_120 = 0;
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800dad14L)
-  public static void FUN_800dad14(final int x, final int y, final int z, final int scriptIndex) {
-    final IntRef refX = new IntRef().set(x);
-    final IntRef refY = new IntRef().set(y);
-    final IntRef refZ = new IntRef().set(z);
+  public static void FUN_800dad14(final float x, final float y, final float z, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
-    cam._a0 = z;
-    cam._ac = x;
-    cam._b8 = y;
-    FUN_800dcc94(0, 0, 0, refX, refY, refZ);
-    setViewpoint(refX.get() >> 8, refY.get() >> 8, refZ.get() >> 8);
+    cam.z_a0 = z;
+    cam.x_ac = x;
+    cam.y_b8 = y;
+    final Vector3f v1 = new Vector3f(x, y, z);
+    FUN_800dcc94(ZERO, v1);
+    setViewpoint(v1.x, v1.y, v1.z);
 
-    cam._11c |= 0x1;
-    cam._120 = 1;
+    cam.flags_11c |= UPDATE_VIEWPOINT;
+    cam.viewpointCallbackIndex_120 = 1;
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800dadc0L)
-  public static void FUN_800dadc0(final int x, final int y, final int z, final int scriptIndex) {
+  public static void FUN_800dadc0(final float x, final float y, final float z, final int scriptIndex) {
     // no-op
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800dadc8L)
-  public static void FUN_800dadc8(final int x, final int y, final int z, final int scriptIndex) {
+  public static void FUN_800dadc8(final float x, final float y, final float z, final int scriptIndex) {
     // no-op
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800dadd0L)
-  public static void FUN_800dadd0(final int x, final int y, final int z, final int scriptIndex) {
+  public static void FUN_800dadd0(final float x, final float y, final float z, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
-    cam.vec_94.setX(x);
-    cam.vec_94.setY(y);
-    cam.vec_94.setZ(z);
+    cam.vec_94.set(x, y, z);
 
     setViewpoint(
-      cam.rview2_00.refpoint_0c.getX() + (x >> 8),
-      cam.rview2_00.refpoint_0c.getY() + (y >> 8),
-      cam.rview2_00.refpoint_0c.getZ() + (z >> 8)
+      cam.rview2_00.refpoint_0c.x + x,
+      cam.rview2_00.refpoint_0c.y + y,
+      cam.rview2_00.refpoint_0c.z + z
     );
 
-    cam._11c |= 0x1;
-    cam._120 = 4;
+    cam.flags_11c |= UPDATE_VIEWPOINT;
+    cam.viewpointCallbackIndex_120 = 4;
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800dae3cL)
-  public static void FUN_800dae3c(final int x, final int y, final int z, final int scriptIndex) {
+  public static void FUN_800dae3c(final float x, final float y, final float z, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
-    cam._a0 = z;
-    cam._ac = x;
-    cam._b8 = y;
-    final IntRef refX = new IntRef().set(cam._ac >> 8);
-    final IntRef refY = new IntRef().set(cam._b8 >> 8);
-    final IntRef refZ = new IntRef().set(cam._a0 >> 8);
-    FUN_800dcc94(cam.rview2_00.refpoint_0c.getX(), cam.rview2_00.refpoint_0c.getY(), cam.rview2_00.refpoint_0c.getZ(), refX, refY, refZ);
-    setViewpoint(refX.get(), refY.get(), refZ.get());
-    cam._11c |= 0x1;
-    cam._120 = 5;
+    cam.z_a0 = z;
+    cam.x_ac = x;
+    cam.y_b8 = y;
+    final Vector3f v1 = new Vector3f(x, y, z);
+    FUN_800dcc94(cam.rview2_00.refpoint_0c, v1);
+    setViewpoint(v1.x, v1.y, v1.z);
+    cam.flags_11c |= UPDATE_VIEWPOINT;
+    cam.viewpointCallbackIndex_120 = 5;
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800daedcL)
-  public static void FUN_800daedc(final int x, final int y, final int z, final int scriptIndex) {
+  public static void FUN_800daedc(final float x, final float y, final float z, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
-    cam.vec_94.setX(x);
-    cam.vec_94.setY(y);
-    cam.vec_94.setZ(z);
+    cam.vec_94.set(x, y, z);
 
-    final VECTOR v0 = FUN_800dd02c(scriptIndex);
+    final VECTOR v0 = getScriptedObjectTranslation(scriptIndex);
 
     setViewpoint(
-      v0.getX() + (cam.vec_94.getX() >> 8),
-      v0.getY() + (cam.vec_94.getY() >> 8),
-      v0.getZ() + (cam.vec_94.getZ() >> 8)
+      v0.getX() + cam.vec_94.x,
+      v0.getY() + cam.vec_94.y,
+      v0.getZ() + cam.vec_94.z
     );
 
     cam.bobjIndex_f4 = scriptIndex;
-    cam._11c |= 0x1;
-    cam._120 = 6;
+    cam.flags_11c |= UPDATE_VIEWPOINT;
+    cam.viewpointCallbackIndex_120 = 6;
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800daf6cL)
-  public static void FUN_800daf6c(final int x, final int y, final int z, final int scriptIndex) {
+  public static void FUN_800daf6c(final float x, final float y, final float z, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
-    cam._a0 = z;
-    cam._ac = x;
-    cam._b8 = y;
-    final IntRef refX = new IntRef().set(x >> 8);
-    final IntRef refY = new IntRef().set(y >> 8);
-    final IntRef refZ = new IntRef().set(z >> 8);
+    cam.z_a0 = z;
+    cam.x_ac = x;
+    cam.y_b8 = y;
+    final Vector3f v1 = new Vector3f(x, y, z);
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
-    FUN_800dcc94(bobj.model_148.coord2_14.coord.transfer.getX(), bobj.model_148.coord2_14.coord.transfer.getY(), bobj.model_148.coord2_14.coord.transfer.getZ(), refX, refY, refZ);
-    setViewpoint(refX.get(), refY.get(), refZ.get());
+    FUN_800dcc94(bobj.model_148.coord2_14.coord.transfer, v1);
+    setViewpoint(v1.x, v1.y, v1.z);
     cam.bobjIndex_f4 = scriptIndex;
-    cam._11c |= 0x1;
-    cam._120 = 7;
+    cam.flags_11c |= UPDATE_VIEWPOINT;
+    cam.viewpointCallbackIndex_120 = 7;
   }
 
   @Method(0x800db034L)
   public static FlowControl FUN_800db034(final RunningScript<?> script) {
-    FUN_800db084(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get(), script.params_20[4].get());
+    FUN_800db084(script.params_20[0].get(), script.params_20[1].get() / (float)0x100, script.params_20[2].get() / (float)0x100, script.params_20[3].get() / (float)0x100, script.params_20[4].get());
     return FlowControl.CONTINUE;
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800db084L)
-  public static void FUN_800db084(final int index, final int x, final int y, final int z, final int scriptIndex) {
-    LOGGER.info(CAMERA, "[CAMERA] Array=_800fabdc, FUN index=%d, x=%d, y=%d, z=%d, script index=%d", index, x, y, z, scriptIndex);
+  public static void FUN_800db084(final int index, final float x, final float y, final float z, final int scriptIndex) {
+    LOGGER.info(CAMERA, "[CAMERA] Array=_800fabdc, FUN index=%d, x=%f, y=%f, z=%f, script index=%d", index, x, y, z, scriptIndex);
     _800fabdc[index].accept(x, y, z, scriptIndex);
     camera_800c67f0.callbackIndex_88 = index;
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800db0d8L)
-  public static void FUN_800db0d8(final int x, final int y, final int z, final int scriptIndex) {
-    final BattleCamera cam = camera_800c67f0;
-    cam.vec_20.setX(x);
-    cam.vec_20.setY(y);
-    cam.vec_20.setZ(z);
-    setRefpoint(x >> 8, y >> 8, z >> 8);
-    cam._11c |= 0x2;
-    cam._121 = 0;
-  }
-
-  @Method(0x800db128L)
-  public static void FUN_800db128(final int x, final int y, final int z, final int scriptIndex) {
-    final BattleCamera cam = camera_800c67f0;
-    cam._2c = z;
-    cam._38 = x;
-    cam._44 = y;
-    final IntRef refX = new IntRef().set(x >> 8);
-    final IntRef refY = new IntRef().set(y >> 8);
-    final IntRef refZ = new IntRef().set(z >> 8);
-    FUN_800dcc94(0, 0, 0, refX, refY, refZ);
-    setRefpoint(refX.get(), refY.get(), refZ.get());
-    cam._11c |= 0x2;
-    cam._121 = 1;
-  }
-
-  @Method(0x800db1d4L)
-  public static void FUN_800db1d4(final int x, final int y, final int z, final int scriptIndex) {
+  public static void FUN_800db0d8(final float x, final float y, final float z, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
     cam.vec_20.set(x, y, z);
-    setRefpoint(cam.rview2_00.viewpoint_00.getX() + (cam.vec_20.getX() >> 8), cam.rview2_00.viewpoint_00.getY() + (cam.vec_20.getY() >> 8), cam.rview2_00.viewpoint_00.getZ() + (cam.vec_20.getZ() >> 8));
-    cam._11c |= 0x2;
-    cam._121 = 2;
+    setRefpoint(x, y, z);
+    cam.flags_11c |= UPDATE_REFPOINT;
+    cam.refpointCallbackIndex_121 = 0;
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
+  @Method(0x800db128L)
+  public static void FUN_800db128(final float x, final float y, final float z, final int scriptIndex) {
+    final BattleCamera cam = camera_800c67f0;
+    cam.z_2c = z;
+    cam.x_38 = x;
+    cam.y_44 = y;
+    final Vector3f v1 = new Vector3f(x, y, z);
+    FUN_800dcc94(ZERO, v1);
+    setRefpoint(v1.x, v1.y, v1.z);
+    cam.flags_11c |= UPDATE_REFPOINT;
+    cam.refpointCallbackIndex_121 = 1;
+  }
+
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
+  @Method(0x800db1d4L)
+  public static void FUN_800db1d4(final float x, final float y, final float z, final int scriptIndex) {
+    final BattleCamera cam = camera_800c67f0;
+    cam.vec_20.set(x, y, z);
+    setRefpoint(cam.rview2_00.viewpoint_00.x + cam.vec_20.x, cam.rview2_00.viewpoint_00.y + cam.vec_20.y, cam.rview2_00.viewpoint_00.z + cam.vec_20.z);
+    cam.flags_11c |= UPDATE_REFPOINT;
+    cam.refpointCallbackIndex_121 = 2;
+  }
+
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800db240L)
-  public static void FUN_800db240(final int x, final int y, final int z, final int scriptIndex) {
+  public static void FUN_800db240(final float x, final float y, final float z, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
-    cam._38 = x;
-    cam._44 = y;
-    cam._2c = z;
-    final IntRef refX = new IntRef().set(cam._38 >> 8);
-    final IntRef refY = new IntRef().set(cam._44 >> 8);
-    final IntRef refZ = new IntRef().set(cam._2c >> 8);
-    FUN_800dcc94(cam.rview2_00.viewpoint_00.getX(), cam.rview2_00.viewpoint_00.getY(), cam.rview2_00.viewpoint_00.getZ(), refX, refY, refZ);
-    setRefpoint(refX.get(), refY.get(), refZ.get());
-    cam._11c |= 0x2;
-    cam._121 = 3;
+    cam.x_38 = x;
+    cam.y_44 = y;
+    cam.z_2c = z;
+    final Vector3f v1 = new Vector3f(cam.x_38, cam.y_44, cam.z_2c);
+    FUN_800dcc94(cam.rview2_00.viewpoint_00, v1);
+    setRefpoint(v1.x, v1.y, v1.z);
+    cam.flags_11c |= UPDATE_REFPOINT;
+    cam.refpointCallbackIndex_121 = 3;
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800db2e0L)
-  public static void FUN_800db2e0(final int x, final int y, final int z, final int scriptIndex) {
+  public static void FUN_800db2e0(final float x, final float y, final float z, final int scriptIndex) {
     // no-op
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800db2e8L)
-  public static void FUN_800db2e8(final int x, final int y, final int z, final int scriptIndex) {
+  public static void FUN_800db2e8(final float x, final float y, final float z, final int scriptIndex) {
     // no-op
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800db2f0L)
-  public static void FUN_800db2f0(final int x, final int y, final int z, final int scriptIndex) {
+  public static void FUN_800db2f0(final float x, final float y, final float z, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
-    cam.vec_20.setX(x);
-    cam.vec_20.setY(y);
-    cam.vec_20.setZ(z);
+    cam.vec_20.set(x, y, z);
 
-    final VECTOR v0 = FUN_800dd02c(scriptIndex);
+    final VECTOR v0 = getScriptedObjectTranslation(scriptIndex);
     setRefpoint(
-      v0.getX() + (x >> 8),
-      v0.getY() + (y >> 8),
-      v0.getZ() + (z >> 8)
+      v0.getX() + x,
+      v0.getY() + y,
+      v0.getZ() + z
     );
 
     cam.bobjIndex_80 = scriptIndex;
-    cam._11c |= 0x2;
-    cam._121 = 6;
+    cam.flags_11c |= UPDATE_REFPOINT;
+    cam.refpointCallbackIndex_121 = 6;
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800db398L)
-  public static void FUN_800db398(final int x, final int y, final int z, final int scriptIndex) {
+  public static void FUN_800db398(final float x, final float y, final float z, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
-    cam._38 = x;
-    cam._44 = y;
-    cam._2c = z;
-    final IntRef refX = new IntRef().set(x >> 8);
-    final IntRef refY = new IntRef().set(y >> 8);
-    final IntRef refZ = new IntRef().set(z >> 8);
+    cam.x_38 = x;
+    cam.y_44 = y;
+    cam.z_2c = z;
+    final Vector3f v1 = new Vector3f(x, y, z);
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
-    FUN_800dcc94(bobj.model_148.coord2_14.coord.transfer.getX(), bobj.model_148.coord2_14.coord.transfer.getY(), bobj.model_148.coord2_14.coord.transfer.getZ(), refX, refY, refZ);
-    setRefpoint(refX.get(), refY.get(), refZ.get());
+    FUN_800dcc94(bobj.model_148.coord2_14.coord.transfer, v1);
+    setRefpoint(v1.x, v1.y, v1.z);
     cam.bobjIndex_80 = scriptIndex;
-    cam._11c |= 0x2;
-    cam._121 = 7;
+    cam.flags_11c |= UPDATE_REFPOINT;
+    cam.refpointCallbackIndex_121 = 7;
   }
 
   @Method(0x800db460L)
   public static FlowControl FUN_800db460(final RunningScript<?> script) {
-    FUN_800db4ec(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get(), script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get(), script.params_20[7].get());
+    FUN_800db4ec(script.params_20[0].get(), script.params_20[1].get() / (float)0x100, script.params_20[2].get() / (float)0x100, script.params_20[3].get() / (float)0x100, script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get(), script.params_20[7].get());
     return FlowControl.CONTINUE;
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800db4ecL)
-  public static void FUN_800db4ec(final int callbackIndex, final int a1, final int a2, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
-    LOGGER.info(CAMERA, "[CAMERA] Array=_800fabfc, FUN index=%d, a1=%d, a2=%d, a3=%d, a4=%d, a5=%d, a6=%d, script index=%d", callbackIndex, a1, a2, a3, a4, a5, a6, scriptIndex);
-    _800fabfc[callbackIndex].accept(a1, a2, a3, a5, a6, a4, scriptIndex);
+  public static void FUN_800db4ec(final int callbackIndex, final float x, final float y, final float z, final int a4, final int ticks, final int a6, final int scriptIndex) {
+    LOGGER.info(CAMERA, "[CAMERA] Array=_800fabfc, FUN index=%d, x=%f, y=%f, z=%f, a4=%d, ticks=%d, a6=%d, script index=%d", callbackIndex, x, y, z, a4, ticks, a6, scriptIndex);
+    _800fabfc[callbackIndex].accept(x, y, z, ticks, a6, a4, scriptIndex);
     final BattleCamera cam = camera_800c67f0;
     cam.callbackIndex_fc = callbackIndex;
-    cam._122 = 1;
+    cam.viewpointMoving_122 = true;
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800db564L)
-  public static void FUN_800db564(final int a0, final int a1, final int a2, final int a3, final int a4, final int a5, final int scriptIndex) {
+  public static void FUN_800db564(final float x, final float y, final float z, final int ticks, final int a4, final int a5, final int scriptIndex) {
     // no-op
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800db56cL)
-  public static void FUN_800db56c(final int a0, final int a1, final int a2, final int a3, final int a4, final int a5, final int scriptIndex) {
+  public static void FUN_800db56c(final float x, final float y, final float z, final int ticks, final int a4, final int a5, final int scriptIndex) {
     // no-op
   }
 
   @Method(0x800db574L)
   public static FlowControl FUN_800db574(final RunningScript<?> script) {
-    FUN_800db600(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get(), script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get(), script.params_20[7].get());
+    FUN_800db600(script.params_20[0].get(), script.params_20[1].get() / (float)0x100, script.params_20[2].get() / (float)0x100, script.params_20[3].get() / (float)0x100, script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get(), script.params_20[7].get());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800db600L)
-  public static void FUN_800db600(final int callbackIndex, final int a1, final int a2, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
-    LOGGER.info(CAMERA, "[CAMERA] Array=_800fac5c, FUN index=%d, a1=%d, a2=%d, a3=%d, a5=%d, a6=%d, a4=%d, script index=%d", callbackIndex, a1, a2, a3, a5, a6, a4, scriptIndex);
-    _800fac5c[callbackIndex].accept(a1, a2, a3, a5, a6, a4, scriptIndex);
+  public static void FUN_800db600(final int callbackIndex, final float x, final float y, final float z, final int a4, final int ticks, final int a6, final int scriptIndex) {
+    LOGGER.info(CAMERA, "[CAMERA] Array=_800fac5c, FUN index=%d, x=%f, y=%f, z=%f, ticks=%d, a6=%d, a4=%d, script index=%d", callbackIndex, x, y, z, ticks, a6, a4, scriptIndex);
+    _800fac5c[callbackIndex].accept(x, y, z, ticks, a6, a4, scriptIndex);
     final BattleCamera cam = camera_800c67f0;
     cam.callbackIndex_88 = callbackIndex;
-    cam._123 = 1;
+    cam.refpointMoving_123 = true;
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800db678L)
-  public static void FUN_800db678(final int a0, final int a1, final int a2, final int a3, final int a4, final int a5, final int scriptIndex) {
+  public static void FUN_800db678(final float x, final float y, final float z, final int ticks, final int a4, final int a5, final int scriptIndex) {
     // no-op
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800db680L)
-  public static void FUN_800db680(final int a0, final int a1, final int a2, final int a3, final int a4, final int a5, final int scriptIndex) {
+  public static void FUN_800db680(final float x, final float y, final float z, final int ticks, final int a4, final int a5, final int scriptIndex) {
     // no-op
   }
 
   @Method(0x800db688L)
   public static FlowControl FUN_800db688(final RunningScript<?> script) {
-    FUN_800db714(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get(), script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get(), script.params_20[7].get());
+    FUN_800db714(script.params_20[0].get(), script.params_20[1].get() / (float)0x100, script.params_20[2].get() / (float)0x100, script.params_20[3].get() / (float)0x100, script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get(), script.params_20[7].get());
     return FlowControl.CONTINUE;
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800db714L)
-  public static void FUN_800db714(final int callbackIndex, final int a1, final int a2, final int a3, final int a4, final int a5, final int a6, final int a7) {
-    LOGGER.info(CAMERA, "[CAMERA] Array=_800fac1c, FUN index=%d, a1=%d, a2=%d, a3=%d, a4=%d, a5=%d, a6=%d, script index=%d", callbackIndex, a1, a2, a3, a4, a5, a6, a7);
-    _800fac1c[callbackIndex].accept(a1, a2, a3, a4, a5, a6, a7);
+  public static void FUN_800db714(final int callbackIndex, final float x, final float y, final float z, final int a4, final int a5, final int a6, final int scriptIndex) {
+    LOGGER.info(CAMERA, "[CAMERA] Array=_800fac1c, FUN index=%d, x=%f, y=%f, z=%f, a4=%d, a5=%d, a6=%d, script index=%d", callbackIndex, x, y, z, a4, a5, a6, scriptIndex);
+    _800fac1c[callbackIndex].accept(x, y, z, a4, a5, a6, scriptIndex);
 
     final BattleCamera cam = camera_800c67f0;
     cam.callbackIndex_fc = callbackIndex;
-    cam._122 = 1;
+    cam.viewpointMoving_122 = true;
   }
 
   @Method(0x800db79cL)
   public static FlowControl FUN_800db79c(final RunningScript<?> script) {
-    FUN_800db828(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get(), script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get(), script.params_20[7].get());
+    FUN_800db828(script.params_20[0].get(), script.params_20[1].get() / (float)0x100, script.params_20[2].get() / (float)0x100, script.params_20[3].get() / (float)0x100, script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get(), script.params_20[7].get());
     return FlowControl.CONTINUE;
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800db828L)
-  public static void FUN_800db828(final int callbackIndex, final int x, final int y, final int z, final int a4, final int a5, final int a6, final int a7) {
-    LOGGER.info(CAMERA, "[CAMERA] Array=_800fac7c, FUN index=%d, x=%d, y=%d, z=%d, a4=%d, a5=%d, a6=%d, a7=%d", callbackIndex, x, y, z, a4, a5, a6, a7);
+  public static void FUN_800db828(final int callbackIndex, final float x, final float y, final float z, final int a4, final int a5, final int a6, final int a7) {
+    LOGGER.info(CAMERA, "[CAMERA] Array=_800fac7c, FUN index=%d, x=%f, y=%f, z=%f, a4=%d, a5=%d, a6=%d, a7=%d", callbackIndex, x, y, z, a4, a5, a6, a7);
     _800fac7c[callbackIndex].accept(x, y, z, a4, a5, a6, a7);
     final BattleCamera cam = camera_800c67f0;
     cam.callbackIndex_88 = callbackIndex;
-    cam._123 = 1;
+    cam.refpointMoving_123 = true;
   }
 
   @Method(0x800db8b0L)
   public static FlowControl FUN_800db8b0(final RunningScript<?> a0) {
-    FUN_800db950(a0.params_20[0].get(), a0.params_20[1].get(), a0.params_20[2].get(), a0.params_20[3].get(), a0.params_20[4].get(), a0.params_20[5].get(), a0.params_20[6].get(), a0.params_20[7].get(), a0.params_20[8].get());
+    FUN_800db950(a0.params_20[0].get(), a0.params_20[1].get() / (float)0x100, a0.params_20[2].get() / (float)0x100, a0.params_20[3].get() / (float)0x100, a0.params_20[4].get(), a0.params_20[5].get(), a0.params_20[6].get(), a0.params_20[7].get(), a0.params_20[8].get());
     return FlowControl.CONTINUE;
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800db950L)
-  public static void FUN_800db950(final int callbackIndex, final int a1, final int a2, final int a3, final int a4, final int a5, final int a6, final int a7, final int scriptIndex) {
-    LOGGER.info(CAMERA, "[CAMERA] Array=_800fac3c, FUN index=%d, a1=%d, a2=%d, a3=%d, a4=%d, a5=%d, a6=%d, a7=%d, script index=%d", callbackIndex, a1, a2, a3, a4, a5, a6, a7, scriptIndex);
-    _800fac3c[callbackIndex].accept(a1, a2, a3, a4, a5, a6, a7, scriptIndex);
+  public static void FUN_800db950(final int callbackIndex, final float x, final float y, final float z, final int ticks, final int a5, final int a6, final int a7, final int scriptIndex) {
+    LOGGER.info(CAMERA, "[CAMERA] Array=_800fac3c, FUN index=%d, x=%f, y=%f, z=%f, ticks=%d, a5=%d, a6=%d, a7=%d, script index=%d", callbackIndex, x, y, z, ticks, a5, a6, a7, scriptIndex);
+    _800fac3c[callbackIndex].accept(x, y, z, ticks, a5, a6, a7, scriptIndex);
     final BattleCamera cam = camera_800c67f0;
     cam.callbackIndex_fc = callbackIndex;
-    cam._122 = 1;
+    cam.viewpointMoving_122 = true;
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800db9d0L)
-  public static void FUN_800db9d0(final int a0, final int a1, final int a2, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
+  public static void FUN_800db9d0(final float x, final float y, final float z, final int ticks, final int a4, final int a5, final int a6, final int scriptIndex) {
     // no-op
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800db9d8L)
-  public static void FUN_800db9d8(final int a0, final int a1, final int a2, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
+  public static void FUN_800db9d8(final float x, final float y, final float z, final int ticks, final int a4, final int a5, final int a6, final int scriptIndex) {
     // no-op
   }
 
   @Method(0x800db9e0L)
   public static FlowControl FUN_800db9e0(final RunningScript<?> script) {
-    FUN_800dba80(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get(), script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get(), script.params_20[7].get(), script.params_20[8].get());
+    FUN_800dba80(script.params_20[0].get(), script.params_20[1].get() / (float)0x100, script.params_20[2].get() / (float)0x100, script.params_20[3].get() / (float)0x100, script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get(), script.params_20[7].get(), script.params_20[8].get());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800dba80L)
-  public static void FUN_800dba80(final int callbackIndex, final int a1, final int a2, final int a3, final int a4, final int a5, final int a6, final int a7, final int scriptIndex) {
-    LOGGER.info(CAMERA, "[CAMERA] Array=_800fac9c, FUN index=%d, a1=%d, a2=%d, a3=%d, a4=%d, a5=%d, a6=%d, a7=%d, script index=%d", callbackIndex, a1, a2, a3, a4, a5, a6, a7, scriptIndex);
-    _800fac9c[callbackIndex].accept(a1, a2, a3, a4, a5, a6, a7, scriptIndex);
+  public static void FUN_800dba80(final int callbackIndex, final float x, final float y, final float z, final int ticks, final int a5, final int a6, final int a7, final int scriptIndex) {
+    LOGGER.info(CAMERA, "[CAMERA] Array=_800fac9c, FUN index=%d, x=%f, y=%f, z=%f, ticks=%d, a5=%d, a6=%d, a7=%d, script index=%d", callbackIndex, x, y, z, ticks, a5, a6, a7, scriptIndex);
+    _800fac9c[callbackIndex].accept(x, y, z, ticks, a5, a6, a7, scriptIndex);
     final BattleCamera cam = camera_800c67f0;
     cam.callbackIndex_88 = callbackIndex;
-    cam._123 = 1;
+    cam.refpointMoving_123 = true;
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800dbb00L)
-  public static void FUN_800dbb00(final int a0, final int a1, final int a2, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
+  public static void FUN_800dbb00(final float x, final float y, final float z, final int ticks, final int a4, final int a5, final int a6, final int scriptIndex) {
     // no-op
   }
 
+  /**
+   * @param x 8-bit fixed-point
+   * @param y 8-bit fixed-point
+   * @param z 8-bit fixed-point
+   */
   @Method(0x800dbb08L)
-  public static void FUN_800dbb08(final int a0, final int a1, final int a2, final int a3, final int a4, final int a5, final int a6, final int scriptIndex) {
+  public static void FUN_800dbb08(final float x, final float y, final float z, final int ticks, final int a4, final int a5, final int a6, final int scriptIndex) {
     // no-op
   }
 
@@ -3466,19 +3671,19 @@ public final class Bttl_800d {
   public static FlowControl FUN_800dbb10(final RunningScript<?> script) {
     final BattleCamera cam = camera_800c67f0;
     final int v1 = script.params_20[0].get();
-    final int a1;
+    final boolean a1;
     if(v1 == 0) {
       //LAB_800dbb3c
-      a1 = cam._122;
+      a1 = cam.viewpointMoving_122;
     } else if(v1 == 1) {
       //LAB_800dbb48
-      a1 = cam._123;
+      a1 = cam.refpointMoving_123;
     } else {
       throw new RuntimeException("Undefined a1");
     }
 
     //LAB_800dbb50
-    script.params_20[1].set(a1);
+    script.params_20[1].set(a1 ? 1 : 0);
     return FlowControl.CONTINUE;
   }
 
@@ -3498,14 +3703,14 @@ public final class Bttl_800d {
     final int v1 = script.params_20[0].get();
 
     if((v1 & 0x1) != 0) {
-      camera_800c67f0._e4 = 0;
-      camera_800c67f0._b4 = 0;
+      camera_800c67f0.stepZAcceleration_e4 = 0.0f;
+      camera_800c67f0.stepZAcceleration_b4 = 0.0f;
     }
 
     //LAB_800dbca8
     if((v1 & 0x2) != 0) {
-      camera_800c67f0._70 = 0;
-      camera_800c67f0._40 = 0;
+      camera_800c67f0.stepZAcceleration = 0;
+      camera_800c67f0.stepZAcceleration_40 = 0;
     }
 
     //LAB_800dbcc0
@@ -3515,9 +3720,9 @@ public final class Bttl_800d {
   @Method(0x800dbcc8L)
   public static FlowControl FUN_800dbcc8(final RunningScript<?> script) {
     final BattleCamera cam = camera_800c67f0;
-    cam._100 = script.params_20[0].get() << 16;
-    cam._108 = 0;
-    cam._118 = 1;
+    cam.projectionPlaneDistance_100 = script.params_20[0].get();
+    cam.projectionPlaneChangeFrames_108 = 0;
+    cam.projectionPlaneChanging_118 = true;
     return FlowControl.CONTINUE;
   }
 
@@ -3530,70 +3735,66 @@ public final class Bttl_800d {
   @Method(0x800dbe40L)
   public static void FUN_800dbe40() {
     final BattleCamera cam = camera_800c67f0;
-    cam._11c &= 0xffff_fffe;
-    cam._122 = 0;
+    cam.flags_11c &= ~UPDATE_VIEWPOINT;
+    cam.viewpointMoving_122 = false;
   }
 
   @Method(0x800dbe60L)
   public static void FUN_800dbe60() {
     final BattleCamera cam = camera_800c67f0;
-    cam._11c &= 0xffff_fffe;
-    cam._122 = 0;
+    cam.flags_11c &= ~UPDATE_VIEWPOINT;
+    cam.viewpointMoving_122 = false;
   }
 
   @Method(0x800dbe80L)
   public static void FUN_800dbe80() {
-    camera_800c67f0._122 = 0;
+    camera_800c67f0.viewpointMoving_122 = false;
   }
 
   @Method(0x800dbe8cL)
   public static void FUN_800dbe8c() {
-    camera_800c67f0._122 = 0;
+    camera_800c67f0.viewpointMoving_122 = false;
   }
 
   @Method(0x800dbe98L)
   public static void FUN_800dbe98() {
     final BattleCamera cam = camera_800c67f0;
-    cam._122 = 0;
+    cam.viewpointMoving_122 = false;
 
     setViewpoint(
-      cam.rview2_00.refpoint_0c.getX() + (cam.vec_94.getX() >> 8),
-      cam.rview2_00.refpoint_0c.getY() + (cam.vec_94.getY() >> 8),
-      cam.rview2_00.refpoint_0c.getZ() + (cam.vec_94.getZ() >> 8)
+      cam.rview2_00.refpoint_0c.x + cam.vec_94.x,
+      cam.rview2_00.refpoint_0c.y + cam.vec_94.y,
+      cam.rview2_00.refpoint_0c.z + cam.vec_94.z
     );
   }
 
   @Method(0x800dbef0L)
   public static void FUN_800dbef0() {
     final BattleCamera cam = camera_800c67f0;
-    cam._122 = 0;
-    final IntRef refX = new IntRef().set(cam._ac >> 8);
-    final IntRef refY = new IntRef().set(cam._b8 >> 8);
-    final IntRef refZ = new IntRef().set(cam._a0 >> 8);
-    FUN_800dcc94(cam.rview2_00.refpoint_0c.getX(), cam.rview2_00.refpoint_0c.getY(), cam.rview2_00.refpoint_0c.getZ(), refX, refY, refZ);
-    setViewpoint(refX.get(), refY.get(), refZ.get());
+    cam.viewpointMoving_122 = false;
+    final Vector3f v1 = new Vector3f(cam.x_ac, cam.y_b8, cam.z_a0);
+    FUN_800dcc94(cam.rview2_00.refpoint_0c, v1);
+    setViewpoint(v1.x, v1.y, v1.z);
   }
 
   @Method(0x800dbf70L)
   public static void FUN_800dbf70() {
     final BattleCamera cam = camera_800c67f0;
-    cam._122 = 0;
+    cam.viewpointMoving_122 = false;
 
-    final VECTOR v0 = FUN_800dd02c(cam.bobjIndex_f4);
-    setViewpoint(v0.getX() + (cam.vec_94.getX() >> 8), v0.getY() + (cam.vec_94.getY() >> 8), v0.getZ() + (cam.vec_94.getZ() >> 8));
+    final VECTOR v0 = getScriptedObjectTranslation(cam.bobjIndex_f4);
+    setViewpoint(v0.getX() + cam.vec_94.x, v0.getY() + cam.vec_94.y, v0.getZ() + cam.vec_94.z);
   }
 
   @Method(0x800dbfd4L)
   public static void FUN_800dbfd4() {
     final BattleCamera cam = camera_800c67f0;
-    cam._122 = 0;
+    cam.viewpointMoving_122 = false;
 
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[cam.bobjIndex_f4].innerStruct_00;
-    final IntRef refX = new IntRef().set(cam._ac >> 8);
-    final IntRef refY = new IntRef().set(cam._b8 >> 8);
-    final IntRef refZ = new IntRef().set(cam._a0 >> 8);
-    FUN_800dcc94(bobj.model_148.coord2_14.coord.transfer.getX(), bobj.model_148.coord2_14.coord.transfer.getY(), bobj.model_148.coord2_14.coord.transfer.getZ(), refX, refY, refZ);
-    setViewpoint(refX.get(), refY.get(), refZ.get());
+    final Vector3f v1 = new Vector3f(cam.x_ac, cam.y_b8, cam.z_a0);
+    FUN_800dcc94(bobj.model_148.coord2_14.coord.transfer, v1);
+    setViewpoint(v1.x, v1.y, v1.z);
   }
 
   @Method(0x800dc070L)
@@ -3619,39 +3820,37 @@ public final class Bttl_800d {
   @Method(0x800dc090L)
   public static void FUN_800dc090() {
     final BattleCamera cam = camera_800c67f0;
-    cam._11c &= 0xffff_fffd;
-    cam._123 = 0;
+    cam.flags_11c &= ~UPDATE_REFPOINT;
+    cam.refpointMoving_123 = false;
   }
 
   @Method(0x800dc0b0L)
   public static void FUN_800dc0b0() {
     final BattleCamera cam = camera_800c67f0;
-    cam._11c &= 0xffff_fffd;
-    cam._123 = 0;
+    cam.flags_11c &= ~UPDATE_REFPOINT;
+    cam.refpointMoving_123 = false;
   }
 
   @Method(0x800dc0d0L)
   public static void FUN_800dc0d0() {
     final BattleCamera cam = camera_800c67f0;
-    cam._123 = 0;
+    cam.refpointMoving_123 = false;
 
     setRefpoint(
-      cam.rview2_00.viewpoint_00.getX() + (cam.vec_20.getX() >> 8),
-      cam.rview2_00.viewpoint_00.getY() + (cam.vec_20.getY() >> 8),
-      cam.rview2_00.viewpoint_00.getZ() + (cam.vec_20.getZ() >> 8)
+      cam.rview2_00.viewpoint_00.x + cam.vec_20.x,
+      cam.rview2_00.viewpoint_00.y + cam.vec_20.y,
+      cam.rview2_00.viewpoint_00.z + cam.vec_20.z
     );
   }
 
   @Method(0x800dc128L)
   public static void FUN_800dc128() {
     final BattleCamera cam = camera_800c67f0;
-    cam._123 = 0;
+    cam.refpointMoving_123 = false;
 
-    final IntRef sp0x18 = new IntRef().set(cam._38 >> 8);
-    final IntRef sp0x1c = new IntRef().set(cam._44 >> 8);
-    final IntRef sp0x20 = new IntRef().set(cam._2c >> 8);
-    FUN_800dcc94(cam.rview2_00.viewpoint_00.getX(), cam.rview2_00.viewpoint_00.getY(), cam.rview2_00.viewpoint_00.getZ(), sp0x18, sp0x1c, sp0x20);
-    setRefpoint(sp0x18.get(), sp0x1c.get(), sp0x20.get());
+    final Vector3f v1 = new Vector3f(cam.x_38, cam.y_44, cam.z_2c);
+    FUN_800dcc94(cam.rview2_00.viewpoint_00, v1);
+    setRefpoint(v1.x, v1.y, v1.z);
   }
 
   @Method(0x800dc1a8L)
@@ -3667,27 +3866,25 @@ public final class Bttl_800d {
   @Method(0x800dc1b8L)
   public static void FUN_800dc1b8() {
     final BattleCamera cam = camera_800c67f0;
-    cam._123 = 0;
+    cam.refpointMoving_123 = false;
 
-    final VECTOR v0 = FUN_800dd02c(cam.bobjIndex_80);
+    final VECTOR v0 = getScriptedObjectTranslation(cam.bobjIndex_80);
     setRefpoint(
-      v0.getX() + (cam.vec_20.getX() >> 8),
-      v0.getY() + (cam.vec_20.getY() >> 8),
-      v0.getZ() + (cam.vec_20.getZ() >> 8)
+      v0.getX() + cam.vec_20.x,
+      v0.getY() + cam.vec_20.y,
+      v0.getZ() + cam.vec_20.z
     );
   }
 
   @Method(0x800dc21cL)
   public static void FUN_800dc21c() {
     final BattleCamera cam = camera_800c67f0;
-    cam._123 = 0;
+    cam.refpointMoving_123 = false;
 
-    final IntRef sp0x18 = new IntRef().set(cam._38 >> 8);
-    final IntRef sp0x1c = new IntRef().set(cam._44 >> 8);
-    final IntRef sp0x20 = new IntRef().set(cam._2c >> 8);
+    final Vector3f v1 = new Vector3f(cam.x_38, cam.y_44, cam.z_2c);
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[cam.bobjIndex_80].innerStruct_00;
-    FUN_800dcc94(bobj.model_148.coord2_14.coord.transfer.getX(), bobj.model_148.coord2_14.coord.transfer.getY(), bobj.model_148.coord2_14.coord.transfer.getZ(), sp0x18, sp0x1c, sp0x20);
-    setRefpoint(sp0x18.get(), sp0x1c.get(), sp0x20.get());
+    FUN_800dcc94(bobj.model_148.coord2_14.coord.transfer, v1);
+    setRefpoint(v1.x, v1.y, v1.z);
   }
 
   @Method(0x800dc2b8L)
@@ -3714,46 +3911,46 @@ public final class Bttl_800d {
   public static FlowControl FUN_800dc2d8(final RunningScript<?> script) {
     final BattleCamera cam = camera_800c67f0;
 
-    final int x;
-    final int y;
-    final int z;
-    final ComponentFunction<Integer, Integer, Integer, Integer, Integer>[] v1;
+    final float x;
+    final float y;
+    final float z;
+    final ComponentFunction[] v1;
     if(script.params_20[0].get() == 0) {
-      x = cam.rview2_00.viewpoint_00.getX();
-      y = cam.rview2_00.viewpoint_00.getY();
-      z = cam.rview2_00.viewpoint_00.getZ();
+      x = cam.rview2_00.viewpoint_00.x;
+      y = cam.rview2_00.viewpoint_00.y;
+      z = cam.rview2_00.viewpoint_00.z;
       v1 = refpointComponentMethods_800fad7c;
     } else {
       //LAB_800dc32c
-      x = cam.rview2_00.refpoint_0c.getX();
-      y = cam.rview2_00.refpoint_0c.getY();
-      z = cam.rview2_00.refpoint_0c.getZ();
+      x = cam.rview2_00.refpoint_0c.x;
+      y = cam.rview2_00.refpoint_0c.y;
+      z = cam.rview2_00.refpoint_0c.z;
       v1 = viewpointComponentMethods_800fad9c;
     }
 
     //LAB_800dc344
-    script.params_20[4].set(v1[script.params_20[1].get()].apply(script.params_20[2].get(), script.params_20[3].get(), x, y, z));
+    script.params_20[4].set((int)v1[script.params_20[1].get()].apply(script.params_20[2].get(), script.params_20[3].get(), x, y, z));
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800dc384L)
-  public static int FUN_800dc384(final long a0, final int callbackIndex, final int component, final int scriptIndex) {
+  public static float FUN_800dc384(final boolean useRefpoint, final int callbackIndex, final int component, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
 
-    final int x;
-    final int y;
-    final int z;
-    final ComponentFunction<Integer, Integer, Integer, Integer, Integer>[] componentMethod;
-    if(a0 != 0) {
-      x = cam.rview2_00.refpoint_0c.getX();
-      y = cam.rview2_00.refpoint_0c.getY();
-      z = cam.rview2_00.refpoint_0c.getZ();
+    final float x;
+    final float y;
+    final float z;
+    final ComponentFunction[] componentMethod;
+    if(useRefpoint) {
+      x = cam.rview2_00.refpoint_0c.x;
+      y = cam.rview2_00.refpoint_0c.y;
+      z = cam.rview2_00.refpoint_0c.z;
       componentMethod = viewpointComponentMethods_800fad9c;
     } else {
       //LAB_800dc3bc
-      x = cam.rview2_00.viewpoint_00.getX();
-      y = cam.rview2_00.viewpoint_00.getY();
-      z = cam.rview2_00.viewpoint_00.getZ();
+      x = cam.rview2_00.viewpoint_00.x;
+      y = cam.rview2_00.viewpoint_00.y;
+      z = cam.rview2_00.viewpoint_00.z;
       componentMethod = refpointComponentMethods_800fad7c;
     }
 
@@ -3762,7 +3959,7 @@ public final class Bttl_800d {
   }
 
   @Method(0x800dc408L)
-  public static int FUN_800dc408(final int component, final int scriptIndex, final int x, final int y, final int z) {
+  public static float FUN_800dc408(final int component, final int scriptIndex, final float x, final float y, final float z) {
     if(component == 0) {
       //LAB_800dc440
       return x;
@@ -3783,96 +3980,90 @@ public final class Bttl_800d {
   }
 
   @Method(0x800dc45cL)
-  public static int FUN_800dc45c(final int component, final int scriptIndex, final int x, final int y, final int z) {
-    final IntRef refX = new IntRef().set(x);
-    final IntRef refY = new IntRef().set(y);
-    final IntRef refZ = new IntRef().set(z);
-    FUN_800dcd9c(0, 0, 0, refX, refY, refZ);
+  public static float FUN_800dc45c(final int component, final int scriptIndex, final float x, final float y, final float z) {
+    final Vector3f ref = new Vector3f(x, y, z);
+    calculate3dAngle(ZERO, ref);
 
     if(component == 0) {
       //LAB_800dc4d8
-      return refX.get();
+      return ref.x;
     }
 
     if(component == 1) {
       //LAB_800dc4e4
-      return refY.get();
+      return ref.y;
     }
 
     //LAB_800dc4c4
     if(component == 2) {
       //LAB_800dc4f0
-      return refZ.get();
+      return ref.z;
     }
 
     throw new IllegalArgumentException("Illegal component " + component);
   }
 
   @Method(0x800dc504L)
-  public static int FUN_800dc504(final int component, final int scriptIndex, final int x, final int y, final int z) {
+  public static float FUN_800dc504(final int component, final int scriptIndex, final float x, final float y, final float z) {
     // no-op
     return 0;
   }
 
   @Method(0x800dc50cL)
-  public static int FUN_800dc50c(final int component, final int scriptIndex, final int x, final int y, final int z) {
+  public static float FUN_800dc50c(final int component, final int scriptIndex, final float x, final float y, final float z) {
     // no-op
     return 0;
   }
 
   @Method(0x800dc514L)
-  public static int FUN_800dc514(final int component, final int scriptIndex, final int x, final int y, final int z) {
+  public static float FUN_800dc514(final int component, final int scriptIndex, final float x, final float y, final float z) {
     final BattleCamera cam = camera_800c67f0;
 
     if(component == 0) {
       //LAB_800dc550
-      return x - cam.rview2_00.refpoint_0c.getX();
+      return x - cam.rview2_00.refpoint_0c.x;
     }
 
     if(component == 1) {
       //LAB_800dc560
-      return y - cam.rview2_00.refpoint_0c.getY();
+      return y - cam.rview2_00.refpoint_0c.y;
     }
 
     //LAB_800dc53c
     if(component == 2) {
       //LAB_800dc56c
-      return z - cam.rview2_00.refpoint_0c.getZ();
+      return z - cam.rview2_00.refpoint_0c.z;
     }
 
     throw new IllegalArgumentException("Illegal component " + component);
   }
 
   @Method(0x800dc580L)
-  public static int FUN_800dc580(final int component, final int scriptIndex, final int x, final int y, final int z) {
-    final BattleCamera cam = camera_800c67f0;
-
-    final IntRef refX = new IntRef().set(x);
-    final IntRef refY = new IntRef().set(y);
-    final IntRef refZ = new IntRef().set(z);
-    FUN_800dcd9c(cam.rview2_00.refpoint_0c.getX(), cam.rview2_00.refpoint_0c.getY(), cam.rview2_00.refpoint_0c.getZ(), refX, refY, refZ);
+  public static float FUN_800dc580(final int component, final int scriptIndex, final float x, final float y, final float z) {
+    final Vector3f ref = new Vector3f(x, y, z);
+    calculate3dAngle(camera_800c67f0.rview2_00.refpoint_0c, ref);
 
     if(component == 0) {
       //LAB_800dc604
-      return refX.get();
+      return ref.x;
     }
 
     if(component == 1) {
       //LAB_800dc610
-      return refY.get();
+      return ref.y;
     }
 
     if(component == 2) {
       //LAB_800dc61c
-      return refZ.get();
+      return ref.z;
     }
 
     throw new IllegalArgumentException("Illegal component " + component);
   }
 
   @Method(0x800dc630L)
-  public static int FUN_800dc630(final int component, final int scriptIndex, final int x, final int y, final int z) {
-    final VECTOR vec = FUN_800dd02c(scriptIndex);
+  public static float FUN_800dc630(final int component, final int scriptIndex, final float x, final float y, final float z) {
+    final VECTOR vec = getScriptedObjectTranslation(scriptIndex);
 
     if(component == 0) {
       //LAB_800dc698
@@ -3893,34 +4084,32 @@ public final class Bttl_800d {
   }
 
   @Method(0x800dc6d8L)
-  public static int FUN_800dc6d8(final int component, final int scriptIndex, final int x, final int y, final int z) {
-    final IntRef refX = new IntRef().set(x);
-    final IntRef refY = new IntRef().set(y);
-    final IntRef refZ = new IntRef().set(z);
+  public static float FUN_800dc6d8(final int component, final int scriptIndex, final float x, final float y, final float z) {
+    final Vector3f ref = new Vector3f(x, y, z);
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
-    FUN_800dcd9c(bobj.model_148.coord2_14.coord.transfer.getX(), bobj.model_148.coord2_14.coord.transfer.getY(), bobj.model_148.coord2_14.coord.transfer.getZ(), refX, refY, refZ);
+    calculate3dAngle(bobj.model_148.coord2_14.coord.transfer, ref);
 
     if(component == 0) {
       //LAB_800dc76c
-      return refX.get();
+      return ref.x;
     }
 
     if(component == 1) {
       //LAB_800dc778
-      return refY.get();
+      return ref.y;
       //LAB_800dc758
     }
 
     if(component == 2) {
       //LAB_800dc784
-      return refZ.get();
+      return ref.z;
     }
 
     throw new IllegalArgumentException("Illegal component " + component);
   }
 
   @Method(0x800dc798L)
-  public static int FUN_800dc798(final int component, final int scriptIndex, final int x, final int y, final int z) {
+  public static float FUN_800dc798(final int component, final int scriptIndex, final float x, final float y, final float z) {
     if(component == 0) {
       //LAB_800dc7d0
       return x;
@@ -3941,74 +4130,68 @@ public final class Bttl_800d {
   }
 
   @Method(0x800dc7ecL)
-  public static int FUN_800dc7ec(final int component, final int scriptIndex, final int x, final int y, final int z) {
-    final IntRef refX = new IntRef().set(x);
-    final IntRef refY = new IntRef().set(y);
-    final IntRef refZ = new IntRef().set(z);
-    FUN_800dcd9c(0, 0, 0, refX, refY, refZ);
+  public static float FUN_800dc7ec(final int component, final int scriptIndex, final float x, final float y, final float z) {
+    final Vector3f ref = new Vector3f(x, y, z);
+    calculate3dAngle(ZERO, ref);
 
     if(component == 0) {
       //LAB_800dc868
-      return refX.get();
+      return ref.x;
     }
 
     if(component == 1) {
       //LAB_800dc874
-      return refY.get();
+      return ref.y;
     }
 
     if(component == 2) {
       //LAB_800dc880
-      return refZ.get();
+      return ref.z;
     }
 
     throw new IllegalArgumentException("Illegal component " + component);
   }
 
   @Method(0x800dc894L)
-  public static int FUN_800dc894(final int component, final int scriptIndex, final int x, final int y, final int z) {
+  public static float FUN_800dc894(final int component, final int scriptIndex, final float x, final float y, final float z) {
     if(component == 0) {
       //LAB_800dc8d0
-      return x - camera_800c67f0.rview2_00.viewpoint_00.getX();
+      return x - camera_800c67f0.rview2_00.viewpoint_00.x;
     }
 
     if(component == 1) {
       //LAB_800dc8e0
-      return y - camera_800c67f0.rview2_00.viewpoint_00.getY();
+      return y - camera_800c67f0.rview2_00.viewpoint_00.y;
     }
 
     //LAB_800dc8bc
     if(component == 2) {
       //LAB_800dc8ec
-      return z - camera_800c67f0.rview2_00.viewpoint_00.getZ();
+      return z - camera_800c67f0.rview2_00.viewpoint_00.z;
     }
 
     throw new IllegalArgumentException("Illegal component " + component);
   }
 
   @Method(0x800dc900L)
-  public static int FUN_800dc900(final int component, final int scriptIndex, final int x, final int y, final int z) {
-    final BattleCamera cam = camera_800c67f0;
-
-    final IntRef sp0x18 = new IntRef().set(x);
-    final IntRef sp0x1c = new IntRef().set(y);
-    final IntRef sp0x20 = new IntRef().set(z);
-    FUN_800dcd9c(cam.rview2_00.viewpoint_00.getX(), cam.rview2_00.viewpoint_00.getY(), cam.rview2_00.viewpoint_00.getZ(), sp0x18, sp0x1c, sp0x20);
+  public static float FUN_800dc900(final int component, final int scriptIndex, final float x, final float y, final float z) {
+    final Vector3f ref = new Vector3f(x, y, z);
+    calculate3dAngle(camera_800c67f0.rview2_00.viewpoint_00, ref);
 
     if(component == 0) {
       //LAB_800dc984
-      return sp0x18.get();
+      return ref.x;
     }
 
     if(component == 1) {
       //LAB_800dc990
-      return sp0x1c.get();
+      return ref.y;
     }
 
     //LAB_800dc970
     if(component == 2) {
       //LAB_800dc99c
-      return sp0x20.get();
+      return ref.z;
     }
 
     //LAB_800dc9a0
@@ -4016,61 +4199,59 @@ public final class Bttl_800d {
   }
 
   @Method(0x800dc9b0L)
-  public static int FUN_800dc9b0(final int component, final int scriptIndex, final int x, final int y, final int z) {
+  public static float FUN_800dc9b0(final int component, final int scriptIndex, final float x, final float y, final float z) {
     // no-op
     return 0;
   }
 
   @Method(0x800dc9b8L)
-  public static int FUN_800dc9b8(final int component, final int scriptIndex, final int x, final int y, final int z) {
+  public static float FUN_800dc9b8(final int component, final int scriptIndex, final float x, final float y, final float z) {
     // no-op
     return 0;
   }
 
   @Method(0x800dc9c0L)
-  public static int FUN_800dc9c0(final int component, final int scriptIndex, final int x, final int y, final int z) {
-    final VECTOR vec = FUN_800dd02c(scriptIndex);
+  public static float FUN_800dc9c0(final int component, final int scriptIndex, final float x, final float y, final float z) {
+    final VECTOR objPos = getScriptedObjectTranslation(scriptIndex);
 
     if(component == 0) {
       //LAB_800dca28
-      return x - vec.getX();
+      return x - objPos.getX();
     }
 
     if(component == 1) {
       //LAB_800dca34
-      return y - vec.getY();
+      return y - objPos.getY();
     }
 
     if(component == 2) {
       //LAB_800dca40
-      return z - vec.getZ();
+      return z - objPos.getZ();
     }
 
     throw new IllegalArgumentException("Illegal component " + component);
   }
 
   @Method(0x800dca68L)
-  public static int FUN_800dca68(final int component, final int scriptIndex, final int x, final int y, final int z) {
-    final IntRef sp0x18 = new IntRef().set(x);
-    final IntRef sp0x1c = new IntRef().set(y);
-    final IntRef sp0x20 = new IntRef().set(z);
+  public static float FUN_800dca68(final int component, final int scriptIndex, final float x, final float y, final float z) {
+    final Vector3f ref = new Vector3f(x, y, z);
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
-    FUN_800dcd9c(bobj.model_148.coord2_14.coord.transfer.getX(), bobj.model_148.coord2_14.coord.transfer.getY(), bobj.model_148.coord2_14.coord.transfer.getZ(), sp0x18, sp0x1c, sp0x20);
+    calculate3dAngle(bobj.model_148.coord2_14.coord.transfer, ref);
 
     if(component == 0) {
       //LAB_800dcafc
-      return sp0x18.get();
+      return ref.x;
     }
 
     if(component == 1) {
       //LAB_800dcb08
-      return sp0x1c.get();
+      return ref.y;
     }
 
     //LAB_800dcae8
     if(component == 2) {
       //LAB_800dcb14
-      return sp0x20.get();
+      return ref.z;
     }
 
     //LAB_800dcb18
@@ -4082,17 +4263,17 @@ public final class Bttl_800d {
     final BattleCamera cam = camera_800c67f0;
     final int a1 = script.params_20[0].get();
 
-    if((a1 & 0x1) != 0) {
-      cam._120 = 0;
-      cam._122 = 0;
-      cam._11c &= 0xffff_fffe;
+    if((a1 & UPDATE_VIEWPOINT) != 0) {
+      cam.viewpointCallbackIndex_120 = 0;
+      cam.viewpointMoving_122 = false;
+      cam.flags_11c &= ~UPDATE_VIEWPOINT;
     }
 
     //LAB_800dcbbc
-    if((a1 & 0x2) != 0) {
-      cam._121 = 0;
-      cam._123 = 0;
-      cam._11c &= 0xffff_fffd;
+    if((a1 & UPDATE_REFPOINT) != 0) {
+      cam.refpointCallbackIndex_121 = 0;
+      cam.refpointMoving_123 = false;
+      cam.flags_11c &= ~UPDATE_REFPOINT;
     }
 
     //LAB_800dcbe4
@@ -4111,162 +4292,156 @@ public final class Bttl_800d {
   }
 
   @Method(0x800dcc64L)
-  public static void setViewpoint(final int x, final int y, final int z) {
-    final BattleCamera cam = camera_800c67f0;
-
-    cam.rview2_00.viewpoint_00.setX(x);
-    cam.rview2_00.viewpoint_00.setY(y);
-    cam.rview2_00.viewpoint_00.setZ(z);
+  public static void setViewpoint(final float x, final float y, final float z) {
+    camera_800c67f0.rview2_00.viewpoint_00.set(x, y, z);
   }
 
   @Method(0x800dcc7cL)
-  public static void setRefpoint(final int x, final int y, final int z) {
-    final BattleCamera cam = camera_800c67f0;
-
-    cam.rview2_00.refpoint_0c.setX(x);
-    cam.rview2_00.refpoint_0c.setY(y);
-    cam.rview2_00.refpoint_0c.setZ(z);
+  public static void setRefpoint(final float x, final float y, final float z) {
+    camera_800c67f0.rview2_00.refpoint_0c.set(x, y, z);
   }
 
   @Method(0x800dcc94L)
-  public static void FUN_800dcc94(final int a0, final int a1, final int a2, final IntRef x, final IntRef y, final IntRef z) {
-    cameraRotationVector_800fab98.set((short)x.get(), (short)y.get(), (short)0);
+  public static void FUN_800dcc94(final Vector3f v0, final Vector3f v1) {
+    cameraRotationVector_800fab98.set(v1.x, v1.y, 0.0f);
     RotMatrix_Xyz(cameraRotationVector_800fab98, cameraTransformMatrix_800c6798);
-    _800faba0.set((short)0, (short)0, (short)z.get()).mul(cameraTransformMatrix_800c6798, _800faba8);
-    _800faba8.add(cameraTransformMatrix_800c6798.transfer);
-    x.set(a0 - _800faba8.getZ());
-    y.set(a1 - _800faba8.getX());
-    z.set(a2 + _800faba8.getY());
+    MATRIX.mul(_800faba0.set(0.0f, 0.0f, v1.z), cameraTransformMatrix_800c6798, _800faba8);
+    _800faba8.add(
+      cameraTransformMatrix_800c6798.transfer.getX(),
+      cameraTransformMatrix_800c6798.transfer.getY(),
+      cameraTransformMatrix_800c6798.transfer.getZ()
+    );
+    v1.x = v0.x - _800faba8.z;
+    v1.y = v0.y - _800faba8.x;
+    v1.z = v0.z + _800faba8.y;
+  }
+
+  public static void FUN_800dcc94(final VECTOR v0, final Vector3f v1) {
+    cameraRotationVector_800fab98.set(v1.x, v1.y, 0.0f);
+    RotMatrix_Xyz(cameraRotationVector_800fab98, cameraTransformMatrix_800c6798);
+    MATRIX.mul(_800faba0.set(0.0f, 0.0f, v1.z), cameraTransformMatrix_800c6798, _800faba8);
+    _800faba8.add(
+      cameraTransformMatrix_800c6798.transfer.getX(),
+      cameraTransformMatrix_800c6798.transfer.getY(),
+      cameraTransformMatrix_800c6798.transfer.getZ()
+    );
+    v1.x = v0.x.get() - _800faba8.z;
+    v1.y = v0.y.get() - _800faba8.x;
+    v1.z = v0.z.get() + _800faba8.y;
   }
 
   @Method(0x800dcd9cL)
-  public static void FUN_800dcd9c(final int a0, final int a1, final int a2, final IntRef x, final IntRef y, final IntRef z) {
-    final int dx = a0 - x.get();
-    final int dy = a1 - y.get();
-    final int dz = a2 - z.get();
+  public static void calculate3dAngle(final Vector3f pos0, final Vector3f pos1Out) {
+    final float dx = pos0.x - pos1Out.x;
+    final float dy = pos0.y - pos1Out.y;
+    final float dz = pos0.z - pos1Out.z;
+    final float horizontalHypotenuse = Math.sqrt(dx * dx + dz * dz);
 
-    final int halfDx = dx / 2;
-    final int halfDy = dy / 2;
-    final int halfDz = dz / 2;
+    pos1Out.x = MathHelper.floorMod(MathHelper.atan2(dz, dx), MathHelper.TWO_PI); // Angle between vector and +X axis
+    pos1Out.y = MathHelper.floorMod(MathHelper.atan2(dy, horizontalHypotenuse), MathHelper.TWO_PI); // Angle between vector and +Y axis
+    pos1Out.z = Math.sqrt(dx * dx + dy * dy + dz * dz); // Angle between vector and +Z axis?
+  }
 
-    x.set(ratan2(dz, dx) & 0xfff);
-    y.set(ratan2(dy, SquareRoot0(halfDx * halfDx + halfDz * halfDz) * 2) & 0xfff);
-    z.set(SquareRoot0(halfDx * halfDx + halfDy * halfDy + halfDz * halfDz) * 2);
+  public static void calculate3dAngle(final VECTOR pos0, final Vector3f pos1Out) {
+    final float dx = pos0.x.get() - pos1Out.x;
+    final float dy = pos0.y.get() - pos1Out.y;
+    final float dz = pos0.z.get() - pos1Out.z;
+    final float horizontalHypotenuse = Math.sqrt(dx * dx + dz * dz);
+
+    pos1Out.x = MathHelper.floorMod(MathHelper.atan2(dz, dx), MathHelper.TWO_PI); // Angle between vector and +X axis
+    pos1Out.y = MathHelper.floorMod(MathHelper.atan2(dy, horizontalHypotenuse), MathHelper.TWO_PI); // Angle between vector and +Y axis
+    pos1Out.z = Math.sqrt(dx * dx + dy * dy + dz * dz); // Angle between vector and +Z axis?
   }
 
   @Method(0x800dcebcL)
-  public static void FUN_800dcebc(final int a0, final int a1, final int a2, final int a3, final IntRef a4, final IntRef a5) {
+  public static void FUN_800dcebc(final int a0, final int a1, final float a2, final int a3, final FloatRef step, final FloatRef acceleration) {
     if(a0 == 0) {
       //LAB_800dcedc
-      a4.set(a1);
-      a5.set(a2 * 2 / a3 - a1);
+      step.set(a1);
+      acceleration.set(a2 * 2.0f / a3 - a1);
     } else if(a0 == 1) {
       //LAB_800dcef8
-      a4.set(a2 * 2 / a3 - a1);
-      a5.set(a1);
+      step.set(a2 * 2.0f / a3 - a1);
+      acceleration.set(a1);
     }
   }
 
   @Method(0x800dcf10L)
-  public static int FUN_800dcf10(final int a0, final int a1, final int a2, final int a3, final int a4) {
-    if(a0 < 0) {
-      throw new RuntimeException("Undefined v0");
-    }
-
-    if(a0 < 2) {
-      //LAB_800dcf38
-      if(a4 == 0) {
-        return 0;
-      }
-
-      //LAB_800dcf48
-      if(a4 == 0x1L) {
-        if(a2 < a1) {
-          //LAB_800dcf6c
-          return (a2 - a1 + 0x10_0000) / a3;
-        }
-
-        return (a2 - a1) / a3;
-      }
-
-      //LAB_800dcf84
-      if(a2 < a1) {
-        //LAB_800dcf58
-        return (a2 - a1) / a3;
-      }
-
-      return -(a1 + 0x10_0000 - a2) / a3;
-    }
-
-    if(a0 == 2) {
+  public static float FUN_800dcf10(final int component, final float val1, final float val2, final int divisor, final int a4) {
+    if(component == 2) {
       //LAB_800dcfa4
       //LAB_800dcfb0
-      return (a2 - a1) / a3;
+      return (val2 - val1) / divisor;
     }
 
-    throw new IllegalArgumentException("Invalid a0");
+    //LAB_800dcf38
+    if(a4 == 0) {
+      return 0;
+    }
+
+    //LAB_800dcf48
+    if(a4 == 1) {
+      if(val2 < val1) {
+        //LAB_800dcf6c
+        return (val2 - val1 + 0x10_0000) / divisor;
+      }
+
+      return (val2 - val1) / divisor;
+    }
+
+    //LAB_800dcf84
+    if(val2 >= val1) {
+      return (val2 - val1 - 0x10_0000) / divisor;
+    }
+
+    //LAB_800dcf58
+    return (val2 - val1) / divisor;
   }
 
+  /** @return 8-bit fixed-point */
   @Method(0x800dcfb8L)
-  public static int FUN_800dcfb8(final int a0, final int a1, final int a2, final int a3) {
-    if(a0 < 0) {
-      throw new IllegalArgumentException("Invalid a0");
-    }
-
-    if(a0 < 2) {
-      //LAB_800dcfdc
-      if(a3 == 0) {
-        return 0;
-      }
-
-      //LAB_800dcfec
-      if(a3 == 1) {
-        if(a2 >= a1) {
-          //LAB_800dcffc
-          return a2 - a1;
-        }
-
-        //LAB_800dd004
-        //LAB_800dd008
-        return a2 - a1 + 0x10_0000;
-      }
-
-      //LAB_800dd010
-      if(a2 < a1) {
-        return a2 - a1;
-      }
-
-      return a2 - (a1 + 0x10_0000);
-    } else if(a0 == 2) {
+  public static float FUN_800dcfb8(final int component, final float val1, final float val2, final int a3) {
+    if(component == 2) {
       //LAB_800dd020
       //LAB_800dd024
-      return a2 - a1;
+      return val2 - val1;
     }
 
-    throw new IllegalArgumentException("Invalid a0");
-  }
-
-  @Method(0x800dd02cL)
-  public static VECTOR FUN_800dd02c(final int scriptIndex) {
-    final BattleScriptDataBase data = (BattleScriptDataBase)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
-
-    if(BattleScriptDataBase.EM__.equals(data.magic_00)) {
-      return ((EffectManagerData6c<?>)data)._10.trans_04;
+    //LAB_800dcfdc
+    if(a3 == 0) {
+      return 0;
     }
 
-    return ((BattleObject27c)data).model_148.coord2_14.coord.transfer;
+    //LAB_800dcfec
+    if(a3 == 1) {
+      if(val2 >= val1) {
+        //LAB_800dcffc
+        return val2 - val1;
+      }
+
+      //LAB_800dd004
+      //LAB_800dd008
+      return val2 - val1 + 0x10_0000;
+    }
+
+    //LAB_800dd010
+    if(val2 < val1) {
+      return val2 - val1;
+    }
+
+    return val2 - (val1 + 0x10_0000);
   }
 
   @Method(0x800dd0d4L)
-  public static int FUN_800dd0d4() {
+  public static float FUN_800dd0d4() {
     final BattleCamera cam = camera_800c67f0;
-    return refpointComponentMethods_800fad7c[5].apply(1, 0, cam.rview2_00.viewpoint_00.getX(), cam.rview2_00.viewpoint_00.getY(), cam.rview2_00.viewpoint_00.getZ());
+    return refpointComponentMethods_800fad7c[5].apply(1, 0, cam.rview2_00.viewpoint_00.x, cam.rview2_00.viewpoint_00.y, cam.rview2_00.viewpoint_00.z);
   }
 
   @Method(0x800dd118L)
-  public static int FUN_800dd118() {
+  public static float FUN_800dd118() {
     final BattleCamera cam = camera_800c67f0;
-    return refpointComponentMethods_800fad7c[5].apply(0, 0, cam.rview2_00.viewpoint_00.getX(), cam.rview2_00.viewpoint_00.getY(), cam.rview2_00.viewpoint_00.getZ());
+    return refpointComponentMethods_800fad7c[5].apply(0, 0, cam.rview2_00.viewpoint_00.x, cam.rview2_00.viewpoint_00.y, cam.rview2_00.viewpoint_00.z);
   }
 
   @Method(0x800dd15cL)

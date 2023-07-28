@@ -257,8 +257,8 @@ public final class Ttle {
 
     resizeDisplay(384, 240);
     setProjectionPlaneDistance(320);
-    GsRVIEW2_800c6760.viewpoint_00.set(0, 0, 2000);
-    GsRVIEW2_800c6760.refpoint_0c.set(0, 0, -4000);
+    GsRVIEW2_800c6760.viewpoint_00.set(0.0f, 0.0f, 2000.0f);
+    GsRVIEW2_800c6760.refpoint_0c.set(0.0f, 0.0f, -4000.0f);
     GsRVIEW2_800c6760.viewpointTwist_18 = 0;
     GsRVIEW2_800c6760.super_1c = null;
     GsSetRefView2L(GsRVIEW2_800c6760);

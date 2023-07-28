@@ -223,6 +223,14 @@ public final class MathHelper {
     return (int)(num / div);
   }
 
+  public static float safeDiv(final float num, final float div) {
+    if(div == 0.0f) {
+      return Float.compare(0, num);
+    }
+
+    return num / div;
+  }
+
   public static long shrRound(final long val, final int shr) {
     if(shr == 0 || val == 0) {
       return val;

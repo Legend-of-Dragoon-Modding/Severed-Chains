@@ -219,6 +219,8 @@ import static legend.game.combat.Bttl_800f.toggleBattleMenuSelectorRendering;
 public final class Bttl_800c {
   private Bttl_800c() { }
 
+  public static final Vector3f ZERO = new Vector3f();
+
   public static final UnsignedShortRef currentPostCombatActionFrame_800c6690 = MEMORY.ref(2, 0x800c6690L, UnsignedShortRef::new);
 
   public static final UnsignedByteRef uniqueMonsterCount_800c6698 = MEMORY.ref(1, 0x800c6698L).cast(UnsignedByteRef::new);
@@ -478,9 +480,9 @@ public final class Bttl_800c {
 
   public static final ArrayRef<ButtonPressHudMetrics06> buttonPressHudMetrics_800faaa0 = MEMORY.ref(4, 0x800faaa0L, ArrayRef.of(ButtonPressHudMetrics06.class, 41, 6, ButtonPressHudMetrics06::new));
 
-  public static final SVECTOR cameraRotationVector_800fab98 = new SVECTOR();
-  public static final SVECTOR _800faba0 = new SVECTOR();
-  public static final VECTOR _800faba8 = new VECTOR();
+  public static final Vector3f cameraRotationVector_800fab98 = new Vector3f();
+  public static final Vector3f _800faba0 = new Vector3f();
+  public static final Vector3f _800faba8 = new Vector3f();
 
   public static final BoolRef useCameraWobble_800fabb8 = MEMORY.ref(1, 0x800fabb8L, BoolRef::new);
 
@@ -790,7 +792,7 @@ public final class Bttl_800c {
    *   <li>{@link Bttl_800d#FUN_800dc6d8}</li>
    * </ol>
    */
-  public static final ComponentFunction<Integer, Integer, Integer, Integer, Integer>[] refpointComponentMethods_800fad7c = new ComponentFunction[8];
+  public static final ComponentFunction[] refpointComponentMethods_800fad7c = new ComponentFunction[8];
   static {
     refpointComponentMethods_800fad7c[0] = Bttl_800d::FUN_800dc408;
     refpointComponentMethods_800fad7c[1] = Bttl_800d::FUN_800dc45c;
@@ -813,7 +815,7 @@ public final class Bttl_800c {
    *   <li>{@link Bttl_800d#FUN_800dca68}</li>
    * </ol>
    */
-  public static final ComponentFunction<Integer, Integer, Integer, Integer, Integer>[] viewpointComponentMethods_800fad9c = new ComponentFunction[8];
+  public static final ComponentFunction[] viewpointComponentMethods_800fad9c = new ComponentFunction[8];
   static {
     viewpointComponentMethods_800fad9c[0] = Bttl_800d::FUN_800dc798;
     viewpointComponentMethods_800fad9c[1] = Bttl_800d::FUN_800dc7ec;
@@ -1497,10 +1499,10 @@ public final class Bttl_800c {
 
       mcqOffsetX_800c6774.add(mcqStepX_800c676c.get());
       mcqOffsetY_800c6778.add(mcqStepY_800c6770.get());
-      final int x0 = (mcqBaseOffsetX_800c66cc.get() * FUN_800dd118() / 0x1000 + mcqOffsetX_800c6774.get()) % mcq.screenWidth_14 - centreScreenX_1f8003dc.get();
+      final int x0 = (int)((mcqBaseOffsetX_800c66cc.get() * FUN_800dd118() / 0x1000 + mcqOffsetX_800c6774.get()) % mcq.screenWidth_14 - centreScreenX_1f8003dc.get());
       final int x1 = x0 - mcq.screenWidth_14;
       final int x2 = x0 + mcq.screenWidth_14;
-      int y = mcqOffsetY_800c6778.get() - (FUN_800dd0d4() + 0x800 & 0xfff) + 0x760 - centreScreenY_1f8003de.get();
+      int y = (int)(mcqOffsetY_800c6778.get() - MathHelper.floorMod(FUN_800dd0d4() + MathHelper.PI, MathHelper.TWO_PI) + 0x760 - centreScreenY_1f8003de.get());
       renderMcq(mcq, 320, 0, x0, y, orderingTableSize_1f8003c8.get() - 2, mcqColour_800fa6dc.get());
       renderMcq(mcq, 320, 0, x1, y, orderingTableSize_1f8003c8.get() - 2, mcqColour_800fa6dc.get());
 
