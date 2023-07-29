@@ -2385,8 +2385,8 @@ public final class SEffe {
     }
 
     //LAB_80101dd8
-    if((effect.effectInner_08.particleInnerStuff_1c & 0x6000_0000L) != 0) {
-      effect.countParticleSub_54 = particleSubCounts_800fb794.get((int)((effect.effectInner_08.particleInnerStuff_1c & 0x6000_0000L) >>> 28)).get();
+    if((effect.effectInner_08.particleInnerStuff_1c & 0x6000_0000) != 0) {
+      effect.countParticleSub_54 = particleSubCounts_800fb794.get((effect.effectInner_08.particleInnerStuff_1c & 0x6000_0000) >>> 28).get();
 
       //LAB_80101e3c
       for(int i = 0; i < effect.countParticleInstance_50; i++) {
