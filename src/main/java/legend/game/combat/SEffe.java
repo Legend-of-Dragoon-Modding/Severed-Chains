@@ -625,15 +625,11 @@ public final class SEffe {
 
   /** Array of daddy spinner step counts */
   private static final ArrayRef<IntRef> daddyHudSpinnerStepCounts_80119f44 = MEMORY.ref(4, 0x80119f44L, ArrayRef.of(IntRef.class, 7, 4, IntRef::new));
-  /**
-   * Struct or something, 0x1c bytes
-   */
+  /** Array of daddy spinner successful press frame windows */
   private static final ArrayRef<IntRef> daddyHitSuccessWindows_80119f60 = MEMORY.ref(4, 0x80119f60L, ArrayRef.of(IntRef.class, 7, 4, IntRef::new));
   /** Array of daddy spinner step counts for special boi Kongol */
   private static final ArrayRef<IntRef> kongolDaddyHudSpinnerStepCounts_80119f7c = MEMORY.ref(4, 0x80119f7cL, ArrayRef.of(IntRef.class, 7, 4, IntRef::new));
-  /**
-   * Struct or something, 0x1c bytes
-   */
+  /** Array of daddy spinner successful press frame windows for special boi Kongol */
   private static final ArrayRef<IntRef> kongolDaddyHitSuccessWindows_80119f98 = MEMORY.ref(4, 0x80119f98L, ArrayRef.of(IntRef.class, 7, 4, IntRef::new));
 
   private static final ByteRef daddySpinnerBrightnessFactor_80119fb4 = MEMORY.ref(1, 0x80119fb4L, ByteRef::new);
