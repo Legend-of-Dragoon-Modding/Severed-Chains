@@ -193,14 +193,14 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[38] = Bttl_800d::FUN_800db79c;
     scriptSubFunctions_8004e29c[39] = Bttl_800d::FUN_800db8b0;
     scriptSubFunctions_8004e29c[40] = Bttl_800d::FUN_800db9e0;
-    scriptSubFunctions_8004e29c[41] = Bttl_800d::FUN_800dbb10;
-    scriptSubFunctions_8004e29c[42] = Bttl_800d::FUN_800dc2d8;
+    scriptSubFunctions_8004e29c[41] = Bttl_800d::scriptIsCameraMoving;
+    scriptSubFunctions_8004e29c[42] = Bttl_800d::scriptCalculateCameraValue;
     scriptSubFunctions_8004e29c[43] = Bttl_800d::FUN_800dbb9c;
     scriptSubFunctions_8004e29c[44] = Bttl_800d::FUN_800dcbec;
     scriptSubFunctions_8004e29c[45] = Bttl_800d::FUN_800dcb84;
     scriptSubFunctions_8004e29c[46] = Bttl_800d::scriptSetViewportTwist;
     scriptSubFunctions_8004e29c[47] = Bttl_800d::FUN_800dbc80;
-    scriptSubFunctions_8004e29c[48] = Bttl_800d::FUN_800dbcc8;
+    scriptSubFunctions_8004e29c[48] = Bttl_800d::scriptSetCameraProjectionPlaneDistance;
     scriptSubFunctions_8004e29c[49] = Bttl_800d::scriptGetProjectionPlaneDistance;
     scriptSubFunctions_8004e29c[50] = Bttl_800d::FUN_800d8dec;
 

@@ -163,6 +163,7 @@ import static legend.game.combat.Bttl_800c.FUN_800cf4f4;
 import static legend.game.combat.Bttl_800c.FUN_800cf684;
 import static legend.game.combat.Bttl_800c.FUN_800cfb94;
 import static legend.game.combat.Bttl_800c.FUN_800cfc20;
+import static legend.game.combat.Bttl_800c.ZERO;
 import static legend.game.combat.Bttl_800c.callScriptFunction;
 import static legend.game.combat.Bttl_800c.colourMapUvs_800fb0ec;
 import static legend.game.combat.Bttl_800c.currentStage_800c66a4;
@@ -174,7 +175,7 @@ import static legend.game.combat.Bttl_800c.scriptGetScriptedObjectPos;
 import static legend.game.combat.Bttl_800c.seed_800fa754;
 import static legend.game.combat.Bttl_800c.spriteMetrics_800c6948;
 import static legend.game.combat.Bttl_800c.tmds_800c6944;
-import static legend.game.combat.Bttl_800d.FUN_800dc408;
+import static legend.game.combat.Bttl_800d.refpointRawComponent;
 import static legend.game.combat.Bttl_800d.getRotationAndScaleFromTransforms;
 import static legend.game.combat.Bttl_800d.getRotationFromTransforms;
 import static legend.game.combat.Bttl_800d.loadModelAnim;
@@ -1504,8 +1505,8 @@ public final class SEffe {
           // This is super bugged in retail and passes garbage as the last 3 params to both methods.
           // Hopefully this is fine with them all zeroed. This is used for the Glare's bewitching attack.
           particle.managerRotation_68.y = MathHelper.atan2(
-            FUN_800dc408(0, 0, 0, 0, 0) - particle.particlePosition_50.getX(),
-            FUN_800dc408(2, 0, 0, 0, 0) - particle.particlePosition_50.getZ()
+            refpointRawComponent(0, 0, ZERO) - particle.particlePosition_50.getX(),
+            refpointRawComponent(2, 0, ZERO) - particle.particlePosition_50.getZ()
           ) + MathHelper.TWO_PI / 4.0f;
         }
 

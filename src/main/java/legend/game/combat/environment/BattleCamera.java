@@ -34,7 +34,7 @@ public class BattleCamera {
   /** 8-bit fixed-point */
   public final Vector3f vec_60 = new Vector3f();
   public float stepZ_6c;
-  public float stepZAcceleration;
+  public float stepZAcceleration_70;
   public final Vector3f vec_74 = new Vector3f();
   public int bobjIndex_80;  // refpoint bobj index?
 

@@ -782,49 +782,49 @@ public final class Bttl_800c {
   }
   /**
    * <ol start="0">
-   *   <li>{@link Bttl_800d#FUN_800dc408}</li>
-   *   <li>{@link Bttl_800d#FUN_800dc45c}</li>
-   *   <li>{@link Bttl_800d#FUN_800dc504}</li>
-   *   <li>{@link Bttl_800d#FUN_800dc50c}</li>
-   *   <li>{@link Bttl_800d#FUN_800dc514}</li>
-   *   <li>{@link Bttl_800d#FUN_800dc580}</li>
-   *   <li>{@link Bttl_800d#FUN_800dc630}</li>
-   *   <li>{@link Bttl_800d#FUN_800dc6d8}</li>
+   *   <li>{@link Bttl_800d#refpointRawComponent}</li>
+   *   <li>{@link Bttl_800d#refpointAngleFrom0ToComponent}</li>
+   *   <li>{@link Bttl_800d#refpointNoop1}</li>
+   *   <li>{@link Bttl_800d#refpointNoop2}</li>
+   *   <li>{@link Bttl_800d#refpointDeltaFromRefpointToComponent}</li>
+   *   <li>{@link Bttl_800d#refpointAngleFromRefpointToComponent}</li>
+   *   <li>{@link Bttl_800d#refpointDeltaFromScriptedObjToComponent}</li>
+   *   <li>{@link Bttl_800d#refpointAngleFromScriptedObjToComponent}</li>
    * </ol>
    */
   public static final ComponentFunction[] refpointComponentMethods_800fad7c = new ComponentFunction[8];
   static {
-    refpointComponentMethods_800fad7c[0] = Bttl_800d::FUN_800dc408;
-    refpointComponentMethods_800fad7c[1] = Bttl_800d::FUN_800dc45c;
-    refpointComponentMethods_800fad7c[2] = Bttl_800d::FUN_800dc504;
-    refpointComponentMethods_800fad7c[3] = Bttl_800d::FUN_800dc50c;
-    refpointComponentMethods_800fad7c[4] = Bttl_800d::FUN_800dc514;
-    refpointComponentMethods_800fad7c[5] = Bttl_800d::FUN_800dc580;
-    refpointComponentMethods_800fad7c[6] = Bttl_800d::FUN_800dc630;
-    refpointComponentMethods_800fad7c[7] = Bttl_800d::FUN_800dc6d8;
+    refpointComponentMethods_800fad7c[0] = Bttl_800d::refpointRawComponent;
+    refpointComponentMethods_800fad7c[1] = Bttl_800d::refpointAngleFrom0ToComponent;
+    refpointComponentMethods_800fad7c[2] = Bttl_800d::refpointNoop1;
+    refpointComponentMethods_800fad7c[3] = Bttl_800d::refpointNoop2;
+    refpointComponentMethods_800fad7c[4] = Bttl_800d::refpointDeltaFromRefpointToComponent;
+    refpointComponentMethods_800fad7c[5] = Bttl_800d::refpointAngleFromRefpointToComponent;
+    refpointComponentMethods_800fad7c[6] = Bttl_800d::refpointDeltaFromScriptedObjToComponent;
+    refpointComponentMethods_800fad7c[7] = Bttl_800d::refpointAngleFromScriptedObjToComponent;
   }
   /**
    * <ol start="0">
-   *   <li>{@link Bttl_800d#FUN_800dc798}</li>
-   *   <li>{@link Bttl_800d#FUN_800dc7ec}</li>
-   *   <li>{@link Bttl_800d#FUN_800dc894}</li>
-   *   <li>{@link Bttl_800d#FUN_800dc900}</li>
-   *   <li>{@link Bttl_800d#FUN_800dc9b0}</li>
-   *   <li>{@link Bttl_800d#FUN_800dc9b8}</li>
-   *   <li>{@link Bttl_800d#FUN_800dc9c0}</li>
-   *   <li>{@link Bttl_800d#FUN_800dca68}</li>
+   *   <li>{@link Bttl_800d#viewpointRawComponent}</li>
+   *   <li>{@link Bttl_800d#viewpointAngleFrom0ToComponent}</li>
+   *   <li>{@link Bttl_800d#viewpointDeltaFromViewpointToComponent}</li>
+   *   <li>{@link Bttl_800d#viewpointAngleFromViewpointToComponent}</li>
+   *   <li>{@link Bttl_800d#viewpointNoop1}</li>
+   *   <li>{@link Bttl_800d#viewpointNoop2}</li>
+   *   <li>{@link Bttl_800d#viewpointDeltaFromScriptedObjToComponent}</li>
+   *   <li>{@link Bttl_800d#viewpointAngleFromScriptedObjToComponent}</li>
    * </ol>
    */
   public static final ComponentFunction[] viewpointComponentMethods_800fad9c = new ComponentFunction[8];
   static {
-    viewpointComponentMethods_800fad9c[0] = Bttl_800d::FUN_800dc798;
-    viewpointComponentMethods_800fad9c[1] = Bttl_800d::FUN_800dc7ec;
-    viewpointComponentMethods_800fad9c[2] = Bttl_800d::FUN_800dc894;
-    viewpointComponentMethods_800fad9c[3] = Bttl_800d::FUN_800dc900;
-    viewpointComponentMethods_800fad9c[4] = Bttl_800d::FUN_800dc9b0;
-    viewpointComponentMethods_800fad9c[5] = Bttl_800d::FUN_800dc9b8;
-    viewpointComponentMethods_800fad9c[6] = Bttl_800d::FUN_800dc9c0;
-    viewpointComponentMethods_800fad9c[7] = Bttl_800d::FUN_800dca68;
+    viewpointComponentMethods_800fad9c[0] = Bttl_800d::viewpointRawComponent;
+    viewpointComponentMethods_800fad9c[1] = Bttl_800d::viewpointAngleFrom0ToComponent;
+    viewpointComponentMethods_800fad9c[2] = Bttl_800d::viewpointDeltaFromViewpointToComponent;
+    viewpointComponentMethods_800fad9c[3] = Bttl_800d::viewpointAngleFromViewpointToComponent;
+    viewpointComponentMethods_800fad9c[4] = Bttl_800d::viewpointNoop1;
+    viewpointComponentMethods_800fad9c[5] = Bttl_800d::viewpointNoop2;
+    viewpointComponentMethods_800fad9c[6] = Bttl_800d::viewpointDeltaFromScriptedObjToComponent;
+    viewpointComponentMethods_800fad9c[7] = Bttl_800d::viewpointAngleFromScriptedObjToComponent;
   }
 
   public static final ArrayRef<ShortRef> enemyDeffFileIndices_800faec4 = MEMORY.ref(2, 0x800faec4L, ArrayRef.of(ShortRef.class, 146, 2, ShortRef::new));
