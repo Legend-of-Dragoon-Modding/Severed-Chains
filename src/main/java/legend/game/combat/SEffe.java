@@ -249,10 +249,10 @@ public final class SEffe {
   private static final SVECTOR _800fb8d0 = MEMORY.ref(2, 0x800fb8d0L, SVECTOR::new);
 
   private static final ArrayRef<IntRef> lensFlareGlowScales_800fb8fc = MEMORY.ref(4, 0x800fb8fcL, ArrayRef.of(IntRef.class, 5, 4, IntRef::new));
-  private static final ArrayRef<ArrayRef<IntRef>> _800fb910 = MEMORY.ref(4, 0x800fb910L, ArrayRef.of(ArrayRef.classFor(IntRef.class), 4, 8, ArrayRef.of(IntRef.class, 2, 4, IntRef::new)));
-  private static final ArrayRef<ArrayRef<ByteRef>> _800fb930 = MEMORY.ref(1, 0x800fb930L, ArrayRef.of(ArrayRef.classFor(ByteRef.class), 4, 4, ArrayRef.of(ByteRef.class, 4, 1, ByteRef::new)));
+  private static final ArrayRef<ArrayRef<IntRef>> lensFlareTranslationMagnitudeFactors_800fb910 = MEMORY.ref(4, 0x800fb910L, ArrayRef.of(ArrayRef.classFor(IntRef.class), 4, 8, ArrayRef.of(IntRef.class, 2, 4, IntRef::new)));
+  private static final ArrayRef<ArrayRef<ByteRef>> lensFlareVertexIndices_800fb930 = MEMORY.ref(1, 0x800fb930L, ArrayRef.of(ArrayRef.classFor(ByteRef.class), 4, 4, ArrayRef.of(ByteRef.class, 4, 1, ByteRef::new)));
 
-  private static final USCOLOUR _800fb94c = MEMORY.ref(2, 0x800fb94cL, USCOLOUR::new);
+  private static final USCOLOUR defaultEffectColour_800fb94c = MEMORY.ref(2, 0x800fb94cL, USCOLOUR::new);
 
   /**
    * <ol start="0">
@@ -382,73 +382,73 @@ public final class SEffe {
     prerenderCallbacks_80119bac[63] = SEffe::FUN_800fb9c0; // no-op
     prerenderCallbacks_80119bac[64] = SEffe::FUN_800fb9c0; // no-op
   }
-  private static final QuadConsumer<ScriptState<EffectManagerData6c>, EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94>[] _80119cb0 = new QuadConsumer[65];
+  private static final QuadConsumer<ScriptState<EffectManagerData6c>, EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94>[] renderCheckCallbacks_80119cb0 = new QuadConsumer[65];
   static {
-    _80119cb0[0] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[1] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[2] = SEffe::FUN_80100d60;
-    _80119cb0[3] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[4] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[5] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[6] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[7] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[8] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[9] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[10] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[11] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[12] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[13] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[14] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[15] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[16] = SEffe::FUN_80100e28;
-    _80119cb0[17] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[18] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[19] = SEffe::FUN_80100e28;
-    _80119cb0[20] = SEffe::FUN_80100e28;
-    _80119cb0[21] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[22] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[23] = SEffe::FUN_80100e4c;
-    _80119cb0[24] = SEffe::FUN_80100e28;
-    _80119cb0[25] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[26] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[27] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[28] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[29] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[30] = SEffe::FUN_80100ea0;
-    _80119cb0[31] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[32] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[33] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[34] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[35] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[36] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[37] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[38] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[39] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[40] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[41] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[42] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[43] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[44] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[45] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[46] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[47] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[48] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[49] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[50] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[51] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[52] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[53] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[54] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[55] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[56] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[57] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[58] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[59] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[60] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[61] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[62] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[63] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[64] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[0] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[1] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[2] = SEffe::FUN_80100d60;
+    renderCheckCallbacks_80119cb0[3] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[4] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[5] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[6] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[7] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[8] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[9] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[10] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[11] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[12] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[13] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[14] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[15] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[16] = SEffe::FUN_80100e28;
+    renderCheckCallbacks_80119cb0[17] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[18] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[19] = SEffe::FUN_80100e28;
+    renderCheckCallbacks_80119cb0[20] = SEffe::FUN_80100e28;
+    renderCheckCallbacks_80119cb0[21] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[22] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[23] = SEffe::FUN_80100e4c;
+    renderCheckCallbacks_80119cb0[24] = SEffe::FUN_80100e28;
+    renderCheckCallbacks_80119cb0[25] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[26] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[27] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[28] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[29] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[30] = SEffe::FUN_80100ea0;
+    renderCheckCallbacks_80119cb0[31] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[32] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[33] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[34] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[35] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[36] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[37] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[38] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[39] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[40] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[41] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[42] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[43] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[44] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[45] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[46] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[47] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[48] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[49] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[50] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[51] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[52] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[53] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[54] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[55] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[56] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[57] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[58] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[59] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[60] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[61] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[62] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[63] = SEffe::FUN_80100d58; // no-op
+    renderCheckCallbacks_80119cb0[64] = SEffe::FUN_80100d58; // no-op
   }
   private static final QuadConsumer<EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94, ParticleEffectData98Inner24>[] initializerCallbacks_80119db4 = new QuadConsumer[65];
   static {
@@ -1275,7 +1275,7 @@ public final class SEffe {
     }
 
     //LAB_800fd54c
-    effect.callback_88.accept(state, manager, effect, particle);
+    effect.renderCheckCallback_88.accept(state, manager, effect, particle);
 
     if((particle.flags_90 & 0x1) == 0) {
       return false;
@@ -2478,7 +2478,7 @@ public final class SEffe {
     effect.myState_00 = state;
     effect.parentScriptIndex_04 = script.params_20[1].get();
     effect.prerenderCallback_84 = prerenderCallbacks_80119bac[script.params_20[8].get()];
-    effect.callback_88 = _80119cb0[script.params_20[8].get()];
+    effect.renderCheckCallback_88 = renderCheckCallbacks_80119cb0[script.params_20[8].get()];
     effect.countFramesRendered_52 = 0;
     effect.halfW_34 = 0;
     effect.halfH_36 = 0;
@@ -5743,8 +5743,8 @@ public final class SEffe {
 
           if(i == 0) {
             for(int j = 0; j < 4; j++) {
-              final int x = (inst.widthScale_2e * w >> 12) * _800fb910.get(j).get(0).get();
-              final int y = (inst.heightScale_30 * h >> 12) * _800fb910.get(j).get(1).get();
+              final int x = (inst.widthScale_2e * w >> 12) * lensFlareTranslationMagnitudeFactors_800fb910.get(j).get(0).get();
+              final int y = (inst.heightScale_30 * h >> 12) * lensFlareTranslationMagnitudeFactors_800fb910.get(j).get(1).get();
               final int halfW = displayWidth_1f8003e0.get() / 2;
               final int halfH = displayHeight_1f8003e4.get() / 2;
               final int[][] sp0x48 = new int[4][2];
@@ -5762,10 +5762,10 @@ public final class SEffe {
                 .clut(clutX, clutY)
                 .vramPos((tpage & 0b1111) * 64, (tpage & 0b10000) != 0 ? 256 : 0)
                 .rgb(r, g, b)
-                .pos(0, sp0x48[_800fb930.get(j).get(0).get()][0], sp0x48[_800fb930.get(j).get(0).get()][1])
-                .pos(1, sp0x48[_800fb930.get(j).get(1).get()][0], sp0x48[_800fb930.get(j).get(1).get()][1])
-                .pos(2, sp0x48[_800fb930.get(j).get(2).get()][0], sp0x48[_800fb930.get(j).get(2).get()][1])
-                .pos(3, sp0x48[_800fb930.get(j).get(3).get()][0], sp0x48[_800fb930.get(j).get(3).get()][1])
+                .pos(0, sp0x48[lensFlareVertexIndices_800fb930.get(j).get(0).get()][0], sp0x48[lensFlareVertexIndices_800fb930.get(j).get(0).get()][1])
+                .pos(1, sp0x48[lensFlareVertexIndices_800fb930.get(j).get(1).get()][0], sp0x48[lensFlareVertexIndices_800fb930.get(j).get(1).get()][1])
+                .pos(2, sp0x48[lensFlareVertexIndices_800fb930.get(j).get(2).get()][0], sp0x48[lensFlareVertexIndices_800fb930.get(j).get(2).get()][1])
+                .pos(3, sp0x48[lensFlareVertexIndices_800fb930.get(j).get(3).get()][0], sp0x48[lensFlareVertexIndices_800fb930.get(j).get(3).get()][1])
                 .uv(0, u, v)
                 .uv(1, u + w - 1, v)
                 .uv(2, u, v + h - 1)
@@ -7978,7 +7978,7 @@ public final class SEffe {
     if(BattleScriptDataBase.EM__.equals(data1.magic_00)) {
       c = ((EffectManagerData6c)data1)._10.colour_1c;
     } else {
-      c = _800fb94c;
+      c = defaultEffectColour_800fb94c;
     }
 
     //LAB_80114480
@@ -7991,7 +7991,7 @@ public final class SEffe {
       if(BattleScriptDataBase.EM__.equals(data2.magic_00)) {
         c2 = ((EffectManagerData6c)data2)._10.colour_1c;
       } else {
-        c2 = _800fb94c;
+        c2 = defaultEffectColour_800fb94c;
       }
 
       //LAB_801144e4
@@ -8020,7 +8020,7 @@ public final class SEffe {
     if(BattleScriptDataBase.EM__.equals(a1.magic_00)) {
       a3 = ((EffectManagerData6c)a1)._10.colour_1c;
     } else {
-      a3 = new USCOLOUR().set(_800fb94c);
+      a3 = new USCOLOUR().set(defaultEffectColour_800fb94c);
     }
 
     //LAB_80114614
@@ -8036,7 +8036,7 @@ public final class SEffe {
       if(BattleScriptDataBase.EM__.equals(a1.magic_00)) {
         a2 = ((EffectManagerData6c)a1)._10.colour_1c;
       } else {
-        a2 = _800fb94c;
+        a2 = defaultEffectColour_800fb94c;
       }
 
       //LAB_8011469c
