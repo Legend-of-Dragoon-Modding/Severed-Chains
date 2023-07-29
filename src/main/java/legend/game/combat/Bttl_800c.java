@@ -190,8 +190,8 @@ import static legend.game.Scus94491BpeSegment_800b.unlockedUltimateAddition_800b
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.combat.Bttl_800d.FUN_800dabec;
-import static legend.game.combat.Bttl_800d.FUN_800dd0d4;
-import static legend.game.combat.Bttl_800d.FUN_800dd118;
+import static legend.game.combat.Bttl_800d.calculateYAngleFromRefpointToViewpoint;
+import static legend.game.combat.Bttl_800d.calculateXAngleFromRefpointToViewpoint;
 import static legend.game.combat.Bttl_800e.FUN_800ec51c;
 import static legend.game.combat.Bttl_800e.FUN_800ec744;
 import static legend.game.combat.Bttl_800e.FUN_800ee610;
@@ -1499,10 +1499,10 @@ public final class Bttl_800c {
 
       mcqOffsetX_800c6774.add(mcqStepX_800c676c.get());
       mcqOffsetY_800c6778.add(mcqStepY_800c6770.get());
-      final int x0 = (int)((mcqBaseOffsetX_800c66cc.get() * FUN_800dd118() / 0x1000 + mcqOffsetX_800c6774.get()) % mcq.screenWidth_14 - centreScreenX_1f8003dc.get());
+      final int x0 = (mcqBaseOffsetX_800c66cc.get() * MathHelper.radToPsxDeg(calculateXAngleFromRefpointToViewpoint()) / 0x1000 + mcqOffsetX_800c6774.get()) % mcq.screenWidth_14 - centreScreenX_1f8003dc.get();
       final int x1 = x0 - mcq.screenWidth_14;
       final int x2 = x0 + mcq.screenWidth_14;
-      int y = (int)(mcqOffsetY_800c6778.get() - MathHelper.floorMod(FUN_800dd0d4() + MathHelper.PI, MathHelper.TWO_PI) + 0x760 - centreScreenY_1f8003de.get());
+      int y = mcqOffsetY_800c6778.get() - MathHelper.radToPsxDeg(MathHelper.floorMod(calculateYAngleFromRefpointToViewpoint() + MathHelper.PI, MathHelper.TWO_PI)) + 0x760 - centreScreenY_1f8003de.get();
       renderMcq(mcq, 320, 0, x0, y, orderingTableSize_1f8003c8.get() - 2, mcqColour_800fa6dc.get());
       renderMcq(mcq, 320, 0, x1, y, orderingTableSize_1f8003c8.get() - 2, mcqColour_800fa6dc.get());
 

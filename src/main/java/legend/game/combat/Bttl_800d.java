@@ -4294,12 +4294,12 @@ public final class Bttl_800d {
   }
 
   @Method(0x800dd0d4L)
-  public static float FUN_800dd0d4() {
+  public static float calculateYAngleFromRefpointToViewpoint() {
     return refpointComponentMethods_800fad7c[5].apply(1, 0, camera_800c67f0.rview2_00.viewpoint_00);
   }
 
   @Method(0x800dd118L)
-  public static float FUN_800dd118() {
+  public static float calculateXAngleFromRefpointToViewpoint() {
     return refpointComponentMethods_800fad7c[5].apply(0, 0, camera_800c67f0.rview2_00.viewpoint_00);
   }
 
