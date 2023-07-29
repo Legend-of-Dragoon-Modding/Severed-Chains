@@ -189,7 +189,7 @@ import static legend.game.Scus94491BpeSegment_800b.totalXpFromCombat_800bc95c;
 import static legend.game.Scus94491BpeSegment_800b.unlockedUltimateAddition_800bc910;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
-import static legend.game.combat.Bttl_800d.FUN_800dabec;
+import static legend.game.combat.Bttl_800d.resetCameraMovement;
 import static legend.game.combat.Bttl_800d.calculateYAngleFromRefpointToViewpoint;
 import static legend.game.combat.Bttl_800d.calculateXAngleFromRefpointToViewpoint;
 import static legend.game.combat.Bttl_800e.FUN_800ec51c;
@@ -1039,7 +1039,7 @@ public final class Bttl_800c {
       vsyncMode_8007a3b8 = 3;
       _800bc960.or(0x40);
       setProjectionPlaneDistance(320);
-      FUN_800dabec();
+      resetCameraMovement();
       pregameLoadingStage_800bb10c.incr();
     }
 

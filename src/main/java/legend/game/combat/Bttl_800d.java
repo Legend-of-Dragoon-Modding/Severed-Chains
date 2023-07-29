@@ -2421,7 +2421,7 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d8decL)
-  public static FlowControl FUN_800d8dec(final RunningScript<?> script) {
+  public static FlowControl scriptMoveCameraProjectionPlane(final RunningScript<?> script) {
     final int s3 = script.params_20[0].get();
     final float newProjectionPlaneDistance = script.params_20[1].get();
     final int projectionPlaneChangeFrames = script.params_20[2].get();
@@ -3166,13 +3166,13 @@ public final class Bttl_800d {
   }
 
   @Method(0x800dabccL)
-  public static FlowControl FUN_800dabcc(final RunningScript<?> script) {
-    FUN_800dabec();
+  public static FlowControl scriptResetCameraMovement(final RunningScript<?> script) {
+    resetCameraMovement();
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800dabecL)
-  public static void FUN_800dabec() {
+  public static void resetCameraMovement() {
     final BattleCamera cam = camera_800c67f0;
     cam.projectionPlaneChangeFrames_108 = 0;
     cam.projectionPlaneChanging_118 = false;
@@ -3698,17 +3698,17 @@ public final class Bttl_800d {
 
   @Method(0x800dbc80L)
   public static FlowControl FUN_800dbc80(final RunningScript<?> script) {
-    final int v1 = script.params_20[0].get();
+    final int type = script.params_20[0].get();
 
-    if((v1 & 0x1) != 0) {
+    if((type & UPDATE_VIEWPOINT) != 0) {
       camera_800c67f0.stepZAcceleration_e4 = 0.0f;
       camera_800c67f0.stepZAcceleration_b4 = 0.0f;
     }
 
     //LAB_800dbca8
-    if((v1 & 0x2) != 0) {
-      camera_800c67f0.stepZAcceleration_70 = 0;
-      camera_800c67f0.stepZAcceleration_40 = 0;
+    if((type & UPDATE_REFPOINT) != 0) {
+      camera_800c67f0.stepZAcceleration_70 = 0.0f;
+      camera_800c67f0.stepZAcceleration_40 = 0.0f;
     }
 
     //LAB_800dbcc0
@@ -4103,18 +4103,18 @@ public final class Bttl_800d {
   }
 
   @Method(0x800dcb84L)
-  public static FlowControl FUN_800dcb84(final RunningScript<?> script) {
+  public static FlowControl scriptStopCameraMovement(final RunningScript<?> script) {
     final BattleCamera cam = camera_800c67f0;
-    final int a1 = script.params_20[0].get();
+    final int type = script.params_20[0].get();
 
-    if((a1 & UPDATE_VIEWPOINT) != 0) {
+    if((type & UPDATE_VIEWPOINT) != 0) {
       cam.viewpointCallbackIndex_120 = 0;
       cam.viewpointMoving_122 = false;
       cam.flags_11c &= ~UPDATE_VIEWPOINT;
     }
 
     //LAB_800dcbbc
-    if((a1 & UPDATE_REFPOINT) != 0) {
+    if((type & UPDATE_REFPOINT) != 0) {
       cam.refpointCallbackIndex_121 = 0;
       cam.refpointMoving_123 = false;
       cam.flags_11c &= ~UPDATE_REFPOINT;
@@ -4125,7 +4125,7 @@ public final class Bttl_800d {
   }
 
   @Method(0x800dcbecL)
-  public static FlowControl FUN_800dcbec(final RunningScript<?> script) {
+  public static FlowControl scriptWobbleCamera(final RunningScript<?> script) {
     wobbleFramesRemaining_800c67c4.set(script.params_20[0].get());
     framesUntilWobble_800c67d4.set(script.params_20[1].get());
     cameraWobbleOffsetX_800c67e4.set(script.params_20[2].get());
