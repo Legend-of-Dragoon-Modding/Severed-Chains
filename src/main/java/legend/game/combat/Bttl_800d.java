@@ -2594,12 +2594,12 @@ public final class Bttl_800d {
     cam.vec_94.y += cam.stepY_bc;
     cam.vec_94.z += cam.stepZ_c8;
 
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[cam.bobjIndex_f4].innerStruct_00;
+    final VECTOR pos = getScriptedObjectTranslation(cam.bobjIndex_f4);
 
     setViewpoint(
-      bobj.model_148.coord2_14.coord.transfer.getX() + cam.vec_94.x,
-      bobj.model_148.coord2_14.coord.transfer.getY() + cam.vec_94.y,
-      bobj.model_148.coord2_14.coord.transfer.getZ() + cam.vec_94.z
+      pos.getX() + cam.vec_94.x,
+      pos.getY() + cam.vec_94.y,
+      pos.getZ() + cam.vec_94.z
     );
 
     cam.viewpointTicksRemaining_d0--;
@@ -2618,8 +2618,7 @@ public final class Bttl_800d {
     cam.angleY_b8 += cam.stepY_bc;
     cam.angleZ_a0 += cam.stepZ_c8;
     final Vector3f v1 = new Vector3f(cam.angleX_ac, cam.angleY_b8, cam.angleZ_a0);
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[cam.bobjIndex_f4].innerStruct_00;
-    FUN_800dcc94(bobj.model_148.coord2_14.coord.transfer, v1);
+    FUN_800dcc94(getScriptedObjectTranslation(cam.bobjIndex_f4), v1);
     setViewpoint(v1.x, v1.y, v1.z);
 
     cam.viewpointTicksRemaining_d0--;
@@ -2748,7 +2747,6 @@ public final class Bttl_800d {
   @Method(0x800d9a68L)
   public static void FUN_800d9a68() {
     final BattleCamera cam = camera_800c67f0;
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[cam.bobjIndex_f4].innerStruct_00;
     cameraRotationVector_800fab98.x = cam._d4.x;
     cameraRotationVector_800fab98.y = cam._d4.y;
     cameraRotationVector_800fab98.z = 0.0f;
@@ -2764,7 +2762,9 @@ public final class Bttl_800d {
     cam.vec_94.x = cam._e8.x - temp2_800faba8.z;
     cam.vec_94.y = cam._e8.y - temp2_800faba8.x;
     cam.vec_94.z = cam._e8.z + temp2_800faba8.y;
-    setViewpoint(bobj.model_148.coord2_14.coord.transfer.getX() + cam.vec_94.x, bobj.model_148.coord2_14.coord.transfer.getY() + cam.vec_94.y, bobj.model_148.coord2_14.coord.transfer.getZ() + cam.vec_94.z);
+
+    final VECTOR pos = getScriptedObjectTranslation(cam.bobjIndex_f4);
+    setViewpoint(pos.getX() + cam.vec_94.x, pos.getY() + cam.vec_94.y, pos.getZ() + cam.vec_94.z);
 
     cam.viewpointTicksRemaining_d0--;
     if(cam.viewpointTicksRemaining_d0 <= 0) {
@@ -3185,13 +3185,12 @@ public final class Bttl_800d {
   public static FlowControl FUN_800dac20(final RunningScript<?> script) {
     float x = script.params_20[1].get() / (float)0x100;
     float y = script.params_20[2].get() / (float)0x100;
-    float z = script.params_20[3].get() / (float)0x100;
+    final float z = script.params_20[3].get() / (float)0x100;
 
     // Odd funcs operate on angles
     if((script.params_20[0].get() & 1) != 0) {
       x = MathHelper.psxDegToRad(x);
       y = MathHelper.psxDegToRad(y);
-      z = MathHelper.psxDegToRad(z);
     }
 
     FUN_800dac70(script.params_20[0].get(), x, y, z, script.params_20[4].get());
@@ -3342,13 +3341,12 @@ public final class Bttl_800d {
   public static FlowControl FUN_800db034(final RunningScript<?> script) {
     float x = script.params_20[1].get() / (float)0x100;
     float y = script.params_20[2].get() / (float)0x100;
-    float z = script.params_20[3].get() / (float)0x100;
+    final float z = script.params_20[3].get() / (float)0x100;
 
     // Odd funcs operate on angles
     if((script.params_20[0].get() & 1) != 0) {
       x = MathHelper.psxDegToRad(x);
       y = MathHelper.psxDegToRad(y);
-      z = MathHelper.psxDegToRad(z);
     }
 
     FUN_800db084(script.params_20[0].get(), x, y, z, script.params_20[4].get());
@@ -3497,13 +3495,12 @@ public final class Bttl_800d {
   public static FlowControl FUN_800db460(final RunningScript<?> script) {
     float x = script.params_20[1].get() / (float)0x100;
     float y = script.params_20[2].get() / (float)0x100;
-    float z = script.params_20[3].get() / (float)0x100;
+    final float z = script.params_20[3].get() / (float)0x100;
 
     // Odd funcs operate on angles
     if((script.params_20[0].get() & 1) != 0) {
       x = MathHelper.psxDegToRad(x);
       y = MathHelper.psxDegToRad(y);
-      z = MathHelper.psxDegToRad(z);
     }
 
     FUN_800db4ec(script.params_20[0].get(), x, y, z, script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get(), script.params_20[7].get());
@@ -3548,13 +3545,12 @@ public final class Bttl_800d {
   public static FlowControl FUN_800db574(final RunningScript<?> script) {
     float x = script.params_20[1].get() / (float)0x100;
     float y = script.params_20[2].get() / (float)0x100;
-    float z = script.params_20[3].get() / (float)0x100;
+    final float z = script.params_20[3].get() / (float)0x100;
 
     // Odd funcs operate on angles
     if((script.params_20[0].get() & 1) != 0) {
       x = MathHelper.psxDegToRad(x);
       y = MathHelper.psxDegToRad(y);
-      z = MathHelper.psxDegToRad(z);
     }
 
     FUN_800db600(script.params_20[0].get(), x, y, z, script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get(), script.params_20[7].get());
@@ -3594,13 +3590,12 @@ public final class Bttl_800d {
   public static FlowControl FUN_800db688(final RunningScript<?> script) {
     float x = script.params_20[1].get() / (float)0x100;
     float y = script.params_20[2].get() / (float)0x100;
-    float z = script.params_20[3].get() / (float)0x100;
+    final float z = script.params_20[3].get() / (float)0x100;
 
     // Odd funcs operate on angles
     if((script.params_20[0].get() & 1) != 0) {
       x = MathHelper.psxDegToRad(x);
       y = MathHelper.psxDegToRad(y);
-      z = MathHelper.psxDegToRad(z);
     }
 
     FUN_800db714(script.params_20[0].get(), x, y, z, script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get(), script.params_20[7].get());
@@ -3626,13 +3621,12 @@ public final class Bttl_800d {
   public static FlowControl FUN_800db79c(final RunningScript<?> script) {
     float x = script.params_20[1].get() / (float)0x100;
     float y = script.params_20[2].get() / (float)0x100;
-    float z = script.params_20[3].get() / (float)0x100;
+    final float z = script.params_20[3].get() / (float)0x100;
 
     // Odd funcs operate on angles
     if((script.params_20[0].get() & 1) != 0) {
       x = MathHelper.psxDegToRad(x);
       y = MathHelper.psxDegToRad(y);
-      z = MathHelper.psxDegToRad(z);
     }
 
     FUN_800db828(script.params_20[0].get(), x, y, z, script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get(), script.params_20[7].get());
@@ -3657,13 +3651,12 @@ public final class Bttl_800d {
   public static FlowControl FUN_800db8b0(final RunningScript<?> script) {
     float x = script.params_20[1].get() / (float)0x100;
     float y = script.params_20[2].get() / (float)0x100;
-    float z = script.params_20[3].get() / (float)0x100;
+    final float z = script.params_20[3].get() / (float)0x100;
 
     // Odd funcs operate on angles
     if((script.params_20[0].get() & 1) != 0) {
       x = MathHelper.psxDegToRad(x);
       y = MathHelper.psxDegToRad(y);
-      z = MathHelper.psxDegToRad(z);
     }
 
     FUN_800db950(script.params_20[0].get(), x, y, z, script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get(), script.params_20[7].get(), script.params_20[8].get());
@@ -3708,13 +3701,12 @@ public final class Bttl_800d {
   public static FlowControl FUN_800db9e0(final RunningScript<?> script) {
     float x = script.params_20[1].get() / (float)0x100;
     float y = script.params_20[2].get() / (float)0x100;
-    float z = script.params_20[3].get() / (float)0x100;
+    final float z = script.params_20[3].get() / (float)0x100;
 
     // Odd funcs operate on angles
     if((script.params_20[0].get() & 1) != 0) {
       x = MathHelper.psxDegToRad(x);
       y = MathHelper.psxDegToRad(y);
-      z = MathHelper.psxDegToRad(z);
     }
 
     FUN_800dba80(script.params_20[0].get(), x, y, z, script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get(), script.params_20[7].get(), script.params_20[8].get());
@@ -3991,6 +3983,8 @@ public final class Bttl_800d {
 
   @Method(0x800dc2d8L)
   public static FlowControl scriptCalculateCameraValue(final RunningScript<?> script) {
+    LOGGER.info(CAMERA, "[CAMERA] Calc val: use refpoint=%b, FUN index=%d, component=%d, script index=%d", script.params_20[0].get() != 0, script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
+
     float value = calculateCameraValue(script.params_20[0].get() != 0, script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
 
     // Odd funcs operate on angles
