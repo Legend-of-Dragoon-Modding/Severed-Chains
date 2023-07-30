@@ -4339,7 +4339,7 @@ public final class Bttl_800d {
     if(a4 == 1) {
       if(val2 < val1) {
         //LAB_800dcf6c
-        return (val2 - val1 + 0x1000) / divisor;
+        return (val2 - val1 + MathHelper.TWO_PI) / divisor;
       }
 
       return (val2 - val1) / divisor;
@@ -4347,7 +4347,7 @@ public final class Bttl_800d {
 
     //LAB_800dcf84
     if(val2 >= val1) {
-      return (val2 - val1 - 0x1000) / divisor;
+      return (val2 - val1 - MathHelper.TWO_PI) / divisor;
     }
 
     //LAB_800dcf58
@@ -4377,7 +4377,7 @@ public final class Bttl_800d {
 
       //LAB_800dd004
       //LAB_800dd008
-      return val2 - val1 + 0x1000;
+      return val2 - val1 + MathHelper.TWO_PI;
     }
 
     //LAB_800dd010
@@ -4385,7 +4385,7 @@ public final class Bttl_800d {
       return val2 - val1;
     }
 
-    return val2 - (val1 + 0x1000);
+    return val2 - (val1 + MathHelper.TWO_PI);
   }
 
   @Method(0x800dd0d4L)
