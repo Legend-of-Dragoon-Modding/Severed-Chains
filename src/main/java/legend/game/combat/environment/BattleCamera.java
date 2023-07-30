@@ -31,7 +31,7 @@ public class BattleCamera {
 
   /** TODO should this be a float? */
   public int refpointTicksRemaining_5c;  // refpoint step count?
-  /** 8-bit fixed-point */
+  /** XY rotation, Z magnitude, 8-bit fixed-point */
   public final Vector3f vec_60 = new Vector3f();
   public float stepZ_6c;
   public float stepZAcceleration_70;
@@ -62,7 +62,7 @@ public class BattleCamera {
 
   /** TODO should this be a float? */
   public int viewpointTicksRemaining_d0;  // viewpoint step count?
-  /** 8-bit fixed-point */
+  /** XY rotation, Z magnitude, 8-bit fixed-point */
   public final Vector3f _d4 = new Vector3f();  // camera rotation?
   /** For _d4, 8-bit fixed-point */
   public float stepZ_e0;
