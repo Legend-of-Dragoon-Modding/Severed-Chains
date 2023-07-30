@@ -481,8 +481,8 @@ public final class Bttl_800c {
   public static final ArrayRef<ButtonPressHudMetrics06> buttonPressHudMetrics_800faaa0 = MEMORY.ref(4, 0x800faaa0L, ArrayRef.of(ButtonPressHudMetrics06.class, 41, 6, ButtonPressHudMetrics06::new));
 
   public static final Vector3f cameraRotationVector_800fab98 = new Vector3f();
-  public static final Vector3f _800faba0 = new Vector3f();
-  public static final Vector3f _800faba8 = new Vector3f();
+  public static final Vector3f temp1_800faba0 = new Vector3f();
+  public static final Vector3f temp2_800faba8 = new Vector3f();
 
   public static final BoolRef useCameraWobble_800fabb8 = MEMORY.ref(1, 0x800fabb8L, BoolRef::new);
 

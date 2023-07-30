@@ -149,6 +149,10 @@ public final class MathHelper {
     return psxDeg * PSX_DEG_TO_RAD;
   }
 
+  public static float psxDegToRad(final float psxDeg) {
+    return psxDeg * PSX_DEG_TO_RAD;
+  }
+
   public static int radToPsxDeg(final float rads) {
     return (int)(rads * RAD_TO_PSX_DEG);
   }

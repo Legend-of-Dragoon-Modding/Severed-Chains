@@ -11,18 +11,18 @@ public class BattleCamera {
   /** 8-bit fixed-point */
   public final Vector3f vec_20 = new Vector3f();  // related to refpoint
   /** 8-bit fixed-point */
-  public float z_2c;
+  public float angleZ_2c;
   /** For vec_60, 8-bit fixed-point */
   public float stepZ_30;
 
   /** 8-bit fixed-point */
-  public float x_38;
+  public float angleX_38;
   /** For vec_20, 8-bit fixed-point */
   public float stepX_3c;  // refpoint X factor?
   /** For vec_20/stepZ_30, 8-bit fixed-point */
   public float stepZAcceleration_40;
   /** 8-bit fixed-point */
-  public float y_44;
+  public float angleY_44;
   /** For vec_20, 8-bit fixed-point */
   public float stepY_48;  // refpoint Y factor?
 
@@ -42,18 +42,18 @@ public class BattleCamera {
 
   /** 8-bit fixed-point */
   public final Vector3f vec_94 = new Vector3f();  // related to viewpoint
-  public float z_a0; // something z
+  public float angleZ_a0; // something z
   /** For z_a0, 8-bit fixed-point */
   public float stepZ_a4; // camera rotation Z step?
 
   /** 8-bit fixed-point */
-  public float x_ac; // something x
+  public float angleX_ac; // something x
   /** For vec_94, 8-bit fixed-point */
   public float stepX_b0; // something x
   /** For zStep_a4, 8-bit fixed-point */
   public float stepZAcceleration_b4; // camera rotation Z step acceleration?
   /** 8-bit fixed-point */
-  public float y_b8; // something y
+  public float angleY_b8; // something y
   /** For vec_94, 8-bit fixed-point */
   public float stepY_bc; // something y
 
