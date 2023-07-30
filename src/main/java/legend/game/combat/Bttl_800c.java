@@ -488,49 +488,49 @@ public final class Bttl_800c {
 
   /**
    * <ol start="0">
-   *   <li>{@link Bttl_800d#FUN_800dacc4}</li>
-   *   <li>{@link Bttl_800d#FUN_800dad14}</li>
-   *   <li>{@link Bttl_800d#FUN_800dadc0}</li>
-   *   <li>{@link Bttl_800d#FUN_800dadc8}</li>
-   *   <li>{@link Bttl_800d#FUN_800dadd0}</li>
-   *   <li>{@link Bttl_800d#FUN_800dae3c}</li>
-   *   <li>{@link Bttl_800d#FUN_800daedc}</li>
-   *   <li>{@link Bttl_800d#FUN_800daf6c}</li>
+   *   <li>{@link Bttl_800d#setViewpointFromScriptTranslation}</li>
+   *   <li>{@link Bttl_800d#setViewpointFromScriptAngle}</li>
+   *   <li>{@link Bttl_800d#setViewpointFromScriptTranslationNoOp}</li>
+   *   <li>{@link Bttl_800d#setViewpointFromScriptAngleNoOp}</li>
+   *   <li>{@link Bttl_800d#setViewpointFromScriptTranslationRelativeToRefpoint}</li>
+   *   <li>{@link Bttl_800d#setViewpointFromScriptAngleRelativeToRefpoint}</li>
+   *   <li>{@link Bttl_800d#setViewpointFromScriptTranslationRelativeToObject}</li>
+   *   <li>{@link Bttl_800d#setViewpointFromScriptAngleRelativeToObject}</li>
    * </ol>
    */
-  public static final CameraQuadParamCallback[] _800fabbc = new CameraQuadParamCallback[8];
+  public static final CameraQuadParamCallback[] viewpointSetFromScriptMethods_800fabbc = new CameraQuadParamCallback[8];
   static {
-    _800fabbc[0] = Bttl_800d::FUN_800dacc4;
-    _800fabbc[1] = Bttl_800d::FUN_800dad14;
-    _800fabbc[2] = Bttl_800d::FUN_800dadc0;
-    _800fabbc[3] = Bttl_800d::FUN_800dadc8;
-    _800fabbc[4] = Bttl_800d::FUN_800dadd0;
-    _800fabbc[5] = Bttl_800d::FUN_800dae3c;
-    _800fabbc[6] = Bttl_800d::FUN_800daedc;
-    _800fabbc[7] = Bttl_800d::FUN_800daf6c;
+    viewpointSetFromScriptMethods_800fabbc[0] = Bttl_800d::setViewpointFromScriptTranslation;
+    viewpointSetFromScriptMethods_800fabbc[1] = Bttl_800d::setViewpointFromScriptAngle;
+    viewpointSetFromScriptMethods_800fabbc[2] = Bttl_800d::setViewpointFromScriptTranslationNoOp;
+    viewpointSetFromScriptMethods_800fabbc[3] = Bttl_800d::setViewpointFromScriptAngleNoOp;
+    viewpointSetFromScriptMethods_800fabbc[4] = Bttl_800d::setViewpointFromScriptTranslationRelativeToRefpoint;
+    viewpointSetFromScriptMethods_800fabbc[5] = Bttl_800d::setViewpointFromScriptAngleRelativeToRefpoint;
+    viewpointSetFromScriptMethods_800fabbc[6] = Bttl_800d::setViewpointFromScriptTranslationRelativeToObject;
+    viewpointSetFromScriptMethods_800fabbc[7] = Bttl_800d::setViewpointFromScriptAngleRelativeToObject;
   }
   /**
    * <ol start="0">
-   *   <li>{@link Bttl_800d#FUN_800db0d8}</li>
-   *   <li>{@link Bttl_800d#FUN_800db128}</li>
-   *   <li>{@link Bttl_800d#FUN_800db1d4}</li>
-   *   <li>{@link Bttl_800d#FUN_800db240}</li>
-   *   <li>{@link Bttl_800d#FUN_800db2e0}</li>
-   *   <li>{@link Bttl_800d#FUN_800db2e8}</li>
-   *   <li>{@link Bttl_800d#FUN_800db2f0}</li>
-   *   <li>{@link Bttl_800d#FUN_800db398}</li>
+   *   <li>{@link Bttl_800d#setRefpointFromScriptTranslation}</li>
+   *   <li>{@link Bttl_800d#setRefpointFromScriptAngle}</li>
+   *   <li>{@link Bttl_800d#setRefpointFromScriptTranslationRelativeToViewpoint}</li>
+   *   <li>{@link Bttl_800d#setRefpointFromScriptAngleRelativeToViewpoint}</li>
+   *   <li>{@link Bttl_800d#setRefpointFromScriptTranslationNoOp}</li>
+   *   <li>{@link Bttl_800d#setRefpointFromScriptAngleNoOp}</li>
+   *   <li>{@link Bttl_800d#setRefpointFromScriptTranslationRelativeToObject}</li>
+   *   <li>{@link Bttl_800d#setRefpointFromScriptAngleRelativeToObject}</li>
    * </ol>
    */
-  public static final CameraQuadParamCallback[] _800fabdc = new CameraQuadParamCallback[8];
+  public static final CameraQuadParamCallback[] refpointSetFromScriptMethods_800fabdc = new CameraQuadParamCallback[8];
   static {
-    _800fabdc[0] = Bttl_800d::FUN_800db0d8;
-    _800fabdc[1] = Bttl_800d::FUN_800db128;
-    _800fabdc[2] = Bttl_800d::FUN_800db1d4;
-    _800fabdc[3] = Bttl_800d::FUN_800db240;
-    _800fabdc[4] = Bttl_800d::FUN_800db2e0;
-    _800fabdc[5] = Bttl_800d::FUN_800db2e8;
-    _800fabdc[6] = Bttl_800d::FUN_800db2f0;
-    _800fabdc[7] = Bttl_800d::FUN_800db398;
+    refpointSetFromScriptMethods_800fabdc[0] = Bttl_800d::setRefpointFromScriptTranslation;
+    refpointSetFromScriptMethods_800fabdc[1] = Bttl_800d::setRefpointFromScriptAngle;
+    refpointSetFromScriptMethods_800fabdc[2] = Bttl_800d::setRefpointFromScriptTranslationRelativeToViewpoint;
+    refpointSetFromScriptMethods_800fabdc[3] = Bttl_800d::setRefpointFromScriptAngleRelativeToViewpoint;
+    refpointSetFromScriptMethods_800fabdc[4] = Bttl_800d::setRefpointFromScriptTranslationNoOp;
+    refpointSetFromScriptMethods_800fabdc[5] = Bttl_800d::setRefpointFromScriptAngleNoOp;
+    refpointSetFromScriptMethods_800fabdc[6] = Bttl_800d::setRefpointFromScriptTranslationRelativeToObject;
+    refpointSetFromScriptMethods_800fabdc[7] = Bttl_800d::setRefpointFromScriptAngleRelativeToObject;
   }
   /**
    * <ol start="0">

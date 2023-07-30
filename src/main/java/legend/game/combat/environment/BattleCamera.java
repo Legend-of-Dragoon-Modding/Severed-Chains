@@ -9,20 +9,20 @@ public class BattleCamera {
 
   public final GsRVIEW2 rview2_00 = new GsRVIEW2();
   /** 8-bit fixed-point */
-  public final Vector3f vec_20 = new Vector3f();  // related to refpoint
+  public final Vector3f refpointBaseTranslation_20 = new Vector3f();  // related to refpoint
   /** 8-bit fixed-point */
-  public float angleZ_2c;
+  public float refpointAngleZ_2c;
   /** For vec_60, 8-bit fixed-point */
   public float stepZ_30;
 
   /** 8-bit fixed-point */
-  public float angleX_38;
+  public float refpointAngleX_38;
   /** For vec_20, 8-bit fixed-point */
   public float stepX_3c;  // refpoint X factor?
   /** For vec_20/stepZ_30, 8-bit fixed-point */
   public float stepZAcceleration_40;
   /** 8-bit fixed-point */
-  public float angleY_44;
+  public float refpointAngleY_44;
   /** For vec_20, 8-bit fixed-point */
   public float stepY_48;  // refpoint Y factor?
 
@@ -41,19 +41,19 @@ public class BattleCamera {
   public int callbackIndex_88;  // refpoint callback?
 
   /** 8-bit fixed-point */
-  public final Vector3f vec_94 = new Vector3f();  // related to viewpoint
-  public float angleZ_a0; // something z
+  public final Vector3f viewpointBaseTranslation_94 = new Vector3f();  // related to viewpoint
+  public float viewpointAngleZ_a0; // something z
   /** For z_a0, 8-bit fixed-point */
   public float stepZ_a4; // camera rotation Z step?
 
   /** 8-bit fixed-point */
-  public float angleX_ac; // something x
+  public float viewpointAngleX_ac; // something x
   /** For vec_94, 8-bit fixed-point */
   public float stepX_b0; // something x
   /** For zStep_a4, 8-bit fixed-point */
   public float stepZAcceleration_b4; // camera rotation Z step acceleration?
   /** 8-bit fixed-point */
-  public float angleY_b8; // something y
+  public float viewpointAngleY_b8; // something y
   /** For vec_94, 8-bit fixed-point */
   public float stepY_bc; // something y
 
