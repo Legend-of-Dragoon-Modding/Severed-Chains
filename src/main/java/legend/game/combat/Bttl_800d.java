@@ -2786,14 +2786,14 @@ public final class Bttl_800d {
     ref.y = ref.z + cam._e8.y;
     ref.z = cam.angleZ_a0;
     FUN_800dcc94(ZERO, ref);
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[cam.bobjIndex_f4].innerStruct_00;
-    setViewpoint(bobj.model_148.coord2_14.coord.transfer.getX() + ref.x, bobj.model_148.coord2_14.coord.transfer.getY() + ref.y, bobj.model_148.coord2_14.coord.transfer.getZ() + ref.z);
+    final VECTOR pos = getScriptedObjectTranslation(cam.bobjIndex_f4);
+    setViewpoint(pos.getX() + ref.x, pos.getY() + ref.y, pos.getZ() + ref.z);
     cam.stepZ_e0 += cam.stepZAcceleration_e4;
     cam._d4.z -= cam.stepZ_e0;
 
     cam.viewpointTicksRemaining_d0--;
     if(cam.viewpointTicksRemaining_d0 <= 0) {
-      calculate3dAngle(bobj.model_148.coord2_14.coord.transfer, cam.rview2_00.viewpoint_00, ref);
+      calculate3dAngle(pos, cam.rview2_00.viewpoint_00, ref);
       cam.angleX_ac = ref.x;
       cam.angleY_b8 = ref.y;
       cam.angleZ_a0 = ref.z;
@@ -2869,8 +2869,8 @@ public final class Bttl_800d {
   public static void FUN_800d9f94() {
     final BattleCamera cam = camera_800c67f0;
     cam.angleX_38 += cam.stepX_3c;
-    cam.angleZ_2c += cam.stepZ_54;
     cam.angleY_44 += cam.stepY_48;
+    cam.angleZ_2c += cam.stepZ_54;
     final Vector3f v1 = new Vector3f(cam.angleX_38, cam.angleY_44, cam.angleZ_2c);
     FUN_800dcc94(cam.rview2_00.viewpoint_00, v1);
     setRefpoint(v1.x, v1.y, v1.z);
@@ -2892,8 +2892,8 @@ public final class Bttl_800d {
     cam.vec_20.y += cam.stepY_48;
     cam.vec_20.z += cam.stepZ_54;
 
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[cam.bobjIndex_80].innerStruct_00;
-    setRefpoint(bobj.model_148.coord2_14.coord.transfer.getX() + cam.vec_20.x, bobj.model_148.coord2_14.coord.transfer.getY() + cam.vec_20.y, bobj.model_148.coord2_14.coord.transfer.getZ() + cam.vec_20.z);
+    final VECTOR pos = getScriptedObjectTranslation(cam.bobjIndex_80);
+    setRefpoint(pos.getX() + cam.vec_20.x, pos.getY() + cam.vec_20.y, pos.getZ() + cam.vec_20.z);
 
     cam.refpointTicksRemaining_5c--;
     if(cam.refpointTicksRemaining_5c <= 0) {
@@ -2913,8 +2913,7 @@ public final class Bttl_800d {
     cam.angleZ_2c += cam.stepZ_54;
 
     final Vector3f v1 = new Vector3f(cam.angleX_38, cam.angleY_44, cam.angleZ_2c);
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[cam.bobjIndex_80].innerStruct_00;
-    FUN_800dcc94(bobj.model_148.coord2_14.coord.transfer, v1);
+    FUN_800dcc94(getScriptedObjectTranslation(cam.bobjIndex_80), v1);
     setRefpoint(v1.x, v1.y, v1.z);
 
     cam.refpointTicksRemaining_5c--;
@@ -3050,7 +3049,6 @@ public final class Bttl_800d {
   @Method(0x800da750L)
   public static void FUN_800da750() {
     final BattleCamera cam = camera_800c67f0;
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[cam.bobjIndex_80].innerStruct_00;
 
     cam.stepZ_30 += cam.stepZAcceleration_40;
     cam.vec_60.z -= cam.stepZ_30;
@@ -3072,10 +3070,11 @@ public final class Bttl_800d {
     cam.vec_20.y = cam.vec_74.y - temp2_800faba8.x;
     cam.vec_20.z = cam.vec_74.z + temp2_800faba8.y;
 
+    final VECTOR pos = getScriptedObjectTranslation(cam.bobjIndex_80);
     setRefpoint(
-      bobj.model_148.coord2_14.coord.transfer.getX() + cam.vec_20.x,
-      bobj.model_148.coord2_14.coord.transfer.getY() + cam.vec_20.y,
-      bobj.model_148.coord2_14.coord.transfer.getZ() + cam.vec_20.z
+      pos.getX() + cam.vec_20.x,
+      pos.getY() + cam.vec_20.y,
+      pos.getZ() + cam.vec_20.z
     );
 
     cam.refpointTicksRemaining_5c--;
@@ -3090,7 +3089,6 @@ public final class Bttl_800d {
   @Method(0x800da8bcL)
   public static void FUN_800da8bc() {
     final BattleCamera cam = camera_800c67f0;
-    final ScriptState<?> state = scriptStatePtrArr_800bc1c0[cam.bobjIndex_80];
 
     final Vector3f ref = new Vector3f().set(cam.vec_60);
     FUN_800dcc94(ZERO, ref);
@@ -3101,15 +3099,15 @@ public final class Bttl_800d {
     ref.z = cam.angleZ_2c;
     FUN_800dcc94(ZERO, ref);
 
-    final BattleObject27c bobj = (BattleObject27c)state.innerStruct_00;
-    setRefpoint(bobj.model_148.coord2_14.coord.transfer.getX() + ref.x, bobj.model_148.coord2_14.coord.transfer.getY() + ref.y, bobj.model_148.coord2_14.coord.transfer.getZ() + ref.z);
+    final VECTOR pos = getScriptedObjectTranslation(cam.bobjIndex_80);
+    setRefpoint(pos.getX() + ref.x, pos.getY() + ref.y, pos.getZ() + ref.z);
 
     cam.stepZ_6c += cam.stepZAcceleration_70;
     cam.vec_60.z -= cam.stepZ_6c;
 
     cam.refpointTicksRemaining_5c--;
     if(cam.refpointTicksRemaining_5c <= 0) {
-      calculate3dAngle(bobj.model_148.coord2_14.coord.transfer, cam.rview2_00.refpoint_0c, ref);
+      calculate3dAngle(pos, cam.rview2_00.refpoint_0c, ref);
       cam.angleX_38 = ref.x;
       cam.angleY_44 = ref.y;
       cam.angleZ_2c = ref.z;
@@ -3329,12 +3327,11 @@ public final class Bttl_800d {
   @Method(0x800daf6cL)
   public static void FUN_800daf6c(final float x, final float y, final float z, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
-    cam.angleZ_a0 = z;
     cam.angleX_ac = x;
     cam.angleY_b8 = y;
+    cam.angleZ_a0 = z;
     final Vector3f v1 = new Vector3f(x, y, z);
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
-    FUN_800dcc94(bobj.model_148.coord2_14.coord.transfer, v1);
+    FUN_800dcc94(getScriptedObjectTranslation(scriptIndex), v1);
     setViewpoint(v1.x, v1.y, v1.z);
     cam.bobjIndex_f4 = scriptIndex;
     cam.flags_11c |= UPDATE_VIEWPOINT;
@@ -3968,8 +3965,7 @@ public final class Bttl_800d {
     cam.refpointMoving_123 = false;
 
     final Vector3f v1 = new Vector3f(cam.angleX_38, cam.angleY_44, cam.angleZ_2c);
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[cam.bobjIndex_80].innerStruct_00;
-    FUN_800dcc94(bobj.model_148.coord2_14.coord.transfer, v1);
+    FUN_800dcc94(getScriptedObjectTranslation(cam.bobjIndex_80), v1);
     setRefpoint(v1.x, v1.y, v1.z);
   }
 
