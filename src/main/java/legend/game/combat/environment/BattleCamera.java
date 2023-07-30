@@ -11,7 +11,7 @@ public class BattleCamera {
   /** 8-bit fixed-point */
   public final Vector3f refpointBaseTranslation_20 = new Vector3f();  // related to refpoint
   /** 8-bit fixed-point */
-  public float refpointAngleZ_2c;
+  public float refpointDeltaMagnitude_2c;
   /** For vec_60, 8-bit fixed-point */
   public float stepZ_30;
 
@@ -42,7 +42,7 @@ public class BattleCamera {
 
   /** 8-bit fixed-point */
   public final Vector3f viewpointBaseTranslation_94 = new Vector3f();  // related to viewpoint
-  public float viewpointAngleZ_a0; // something z
+  public float viewpointDeltaMagnitude_a0; // something z
   /** For z_a0, 8-bit fixed-point */
   public float stepZ_a4; // camera rotation Z step?
 
