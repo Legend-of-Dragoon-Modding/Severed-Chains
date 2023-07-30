@@ -1712,24 +1712,24 @@ public final class Bttl_800d {
     cam._d4.y = MathHelper.floorMod(MathHelper.atan2(dy, Math.sqrt(dx * dx + dz * dz)), MathHelper.TWO_PI);
     cam._d4.z = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
-    final float zStep;
-    final float zAccel;
+    final float stepZ;
+    final float accelZ;
     if(a4 == 0) {
       //LAB_800d5ff0
-      zStep = a5;
-      zAccel = cam._d4.z * 2.0f / ticks - a5;
+      stepZ = a5;
+      accelZ = cam._d4.z * 2.0f / ticks - a5;
     } else if(a4 == 1) {
       //LAB_800d6010
-      zStep = cam._d4.z * 2.0f / ticks - a5;
-      zAccel = a5;
+      stepZ = cam._d4.z * 2.0f / ticks - a5;
+      accelZ = a5;
     } else {
       throw new RuntimeException("Undefined s6/s7");
     }
 
     //LAB_800d6030
     //LAB_800d6038
-    cam.stepZ_a4 = zStep;
-    cam.stepZAcceleration_b4 = (zAccel - zStep) / cam.viewpointTicksRemaining_d0;
+    cam.stepZ_a4 = stepZ;
+    cam.stepZAcceleration_b4 = (accelZ - stepZ) / cam.viewpointTicksRemaining_d0;
     cam._e8.set(x, y, z);
     cam.flags_11c |= UPDATE_VIEWPOINT;
     cam.viewpointCallbackIndex_120 = 16;
@@ -1868,15 +1868,15 @@ public final class Bttl_800d {
     cam._d4.y = MathHelper.floorMod(MathHelper.atan2(dy, Math.sqrt(dx * dx + dz * dz)), MathHelper.TWO_PI);
     cam._d4.z = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
-    final float zStep;
+    final float stepZ;
     final float s7;
     if(a4 == 0) {
       //LAB_800d68a0
-      zStep = a5;
+      stepZ = a5;
       s7 = cam._d4.z * 2.0f / ticks - a5;
     } else if(a4 == 1) {
       //LAB_800d68c0
-      zStep = cam._d4.z * 2.0f / ticks - a5;
+      stepZ = cam._d4.z * 2.0f / ticks - a5;
       s7 = a5;
     } else {
       throw new RuntimeException("Undefined s6/s7");
@@ -1884,9 +1884,9 @@ public final class Bttl_800d {
 
     //LAB_800d68e0
     //LAB_800d68e8
-    cam.stepZ_a4 = zStep;
+    cam.stepZ_a4 = stepZ;
     cam._e8.set(x, y, z);
-    cam.stepZAcceleration_b4 = (s7 - zStep) / cam.viewpointTicksRemaining_d0;
+    cam.stepZAcceleration_b4 = (s7 - stepZ) / cam.viewpointTicksRemaining_d0;
     cam.flags_11c |= UPDATE_VIEWPOINT;
     cam.viewpointCallbackIndex_120 = 22;
   }
@@ -4312,14 +4312,14 @@ public final class Bttl_800d {
   }
 
   @Method(0x800dcebcL)
-  public static void FUN_800dcebc(final int a0, final int a1, final float a2, final int a3, final FloatRef step, final FloatRef acceleration) {
-    if(a0 == 0) {
+  public static void FUN_800dcebc(final int mode, final int a1, final float value, final int divisor, final FloatRef step, final FloatRef acceleration) {
+    if(mode == 0) {
       //LAB_800dcedc
       step.set(a1);
-      acceleration.set(a2 * 2.0f / a3 - a1);
-    } else if(a0 == 1) {
+      acceleration.set(value * 2.0f / divisor - a1);
+    } else if(mode == 1) {
       //LAB_800dcef8
-      step.set(a2 * 2.0f / a3 - a1);
+      step.set(value * 2.0f / divisor - a1);
       acceleration.set(a1);
     }
   }
