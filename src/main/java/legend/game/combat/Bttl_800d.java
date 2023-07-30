@@ -2793,7 +2793,7 @@ public final class Bttl_800d {
 
     cam.viewpointTicksRemaining_d0--;
     if(cam.viewpointTicksRemaining_d0 <= 0) {
-      calculate3dAngle(pos, cam.rview2_00.viewpoint_00, ref);
+      calculate3dAngleOrMagnitude(pos, cam.rview2_00.viewpoint_00, ref);
       cam.viewpointAngleX_ac = ref.x;
       cam.viewpointAngleY_b8 = ref.y;
       cam.viewpointAngleZ_a0 = ref.z;
@@ -3107,7 +3107,7 @@ public final class Bttl_800d {
 
     cam.refpointTicksRemaining_5c--;
     if(cam.refpointTicksRemaining_5c <= 0) {
-      calculate3dAngle(pos, cam.rview2_00.refpoint_0c, ref);
+      calculate3dAngleOrMagnitude(pos, cam.rview2_00.refpoint_0c, ref);
       cam.refpointAngleX_38 = ref.x;
       cam.refpointAngleY_44 = ref.y;
       cam.refpointAngleZ_2c = ref.z;
@@ -3990,8 +3990,8 @@ public final class Bttl_800d {
 
     float value = calculateCameraValue(script.params_20[0].get() != 0, script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
 
-    // Odd funcs operate on angles
-    if((script.params_20[1].get() & 1) != 0) {
+    // Odd funcs operate on angles, but Z values in these methods are delta vector mag, not angles
+    if((script.params_20[1].get() & 1) != 0 && script.params_20[2].get() != 2) {
       value = MathHelper.radToPsxDeg(value);
     }
 
@@ -4047,7 +4047,7 @@ public final class Bttl_800d {
 
   @Method(0x800dc45cL)
   public static float refpointAngleFrom0ToComponent(final int component, final int scriptIndex, final Vector3f point) {
-    return calculate3dAngle(ZERO, point, component);
+    return calculate3dAngleOrMagnitude(ZERO, point, component);
   }
 
   @Method(0x800dc504L)
@@ -4083,7 +4083,7 @@ public final class Bttl_800d {
 
   @Method(0x800dc580L)
   public static float refpointAngleFromRefpointToComponent(final int component, final int scriptIndex, final Vector3f point) {
-    return calculate3dAngle(camera_800c67f0.rview2_00.refpoint_0c, point, component);
+    return calculate3dAngleOrMagnitude(camera_800c67f0.rview2_00.refpoint_0c, point, component);
   }
 
   @Method(0x800dc630L)
@@ -4107,7 +4107,7 @@ public final class Bttl_800d {
 
   @Method(0x800dc6d8L)
   public static float refpointAngleFromScriptedObjToComponent(final int component, final int scriptIndex, final Vector3f point) {
-    return calculate3dAngle(getScriptedObjectTranslation(scriptIndex), point, component);
+    return calculate3dAngleOrMagnitude(getScriptedObjectTranslation(scriptIndex), point, component);
   }
 
   @Method(0x800dc798L)
@@ -4129,7 +4129,7 @@ public final class Bttl_800d {
 
   @Method(0x800dc7ecL)
   public static float viewpointAngleFrom0ToComponent(final int component, final int scriptIndex, final Vector3f point) {
-    return calculate3dAngle(ZERO, point, component);
+    return calculate3dAngleOrMagnitude(ZERO, point, component);
   }
 
   @Method(0x800dc894L)
@@ -4151,7 +4151,7 @@ public final class Bttl_800d {
 
   @Method(0x800dc900L)
   public static float viewpointAngleFromViewpointToComponent(final int component, final int scriptIndex, final Vector3f point) {
-    return calculate3dAngle(camera_800c67f0.rview2_00.viewpoint_00, point, component);
+    return calculate3dAngleOrMagnitude(camera_800c67f0.rview2_00.viewpoint_00, point, component);
   }
 
   @Method(0x800dc9b0L)
@@ -4187,7 +4187,7 @@ public final class Bttl_800d {
 
   @Method(0x800dca68L)
   public static float viewpointAngleFromScriptedObjToComponent(final int component, final int scriptIndex, final Vector3f point) {
-    return calculate3dAngle(getScriptedObjectTranslation(scriptIndex), point, component);
+    return calculate3dAngleOrMagnitude(getScriptedObjectTranslation(scriptIndex), point, component);
   }
 
   @Method(0x800dcb84L)
@@ -4262,8 +4262,11 @@ public final class Bttl_800d {
     v1.z = v0.z.get() + temp2_800faba8.y;
   }
 
+  /**
+   * @return Component 0/1 are angles, 2 is the magnitude of the delta vector
+   */
   @Method(0x800dcd9cL)
-  public static float calculate3dAngle(final Vector3f pos0, final Vector3f pos1, final int component) {
+  public static float calculate3dAngleOrMagnitude(final Vector3f pos0, final Vector3f pos1, final int component) {
     final float dx = pos0.x - pos1.x;
     final float dy = pos0.y - pos1.y;
     final float dz = pos0.z - pos1.z;
@@ -4277,7 +4280,10 @@ public final class Bttl_800d {
     };
   }
 
-  public static float calculate3dAngle(final VECTOR pos0, final Vector3f pos1, final int component) {
+  /**
+   * @return Component 0/1 are angles, 2 is the magnitude of the delta vector
+   */
+  public static float calculate3dAngleOrMagnitude(final VECTOR pos0, final Vector3f pos1, final int component) {
     final float dx = pos0.x.get() - pos1.x;
     final float dy = pos0.y.get() - pos1.y;
     final float dz = pos0.z.get() - pos1.z;
@@ -4291,7 +4297,10 @@ public final class Bttl_800d {
     };
   }
 
-  public static void calculate3dAngle(final VECTOR pos0, final Vector3f pos1, final Vector3f out) {
+  /**
+   * @return Component 0/1 are angles, 2 is the magnitude of the delta vector
+   */
+  public static void calculate3dAngleOrMagnitude(final VECTOR pos0, final Vector3f pos1, final Vector3f out) {
     final float dx = pos0.x.get() - pos1.x;
     final float dy = pos0.y.get() - pos1.y;
     final float dz = pos0.z.get() - pos1.z;
