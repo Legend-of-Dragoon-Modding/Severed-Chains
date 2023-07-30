@@ -8,6 +8,8 @@ public class BattleCamera {
   public static final int UPDATE_REFPOINT = 0x2;
 
   public final GsRVIEW2 rview2_00 = new GsRVIEW2();
+
+  // Refpoint stuff
   /** 8-bit fixed-point */
   public final Vector3f refpointBaseTranslation_20 = new Vector3f();  // related to refpoint
   /** 8-bit fixed-point */
@@ -39,7 +41,9 @@ public class BattleCamera {
   public int bobjIndex_80;  // refpoint bobj index?
 
   public int callbackIndex_88;  // refpoint callback?
+  //
 
+  // Viewpoint stuff
   /** 8-bit fixed-point */
   public final Vector3f viewpointBaseTranslation_94 = new Vector3f();  // related to viewpoint
   public float viewpointDeltaMagnitude_a0; // something z
@@ -73,6 +77,8 @@ public class BattleCamera {
   public int bobjIndex_f4;  // viewpoint bobj index?
 
   public int callbackIndex_fc;  // viewpoint callback?
+  //
+
   public float projectionPlaneDistance_100;
   public float newProjectionPlaneDistance_104;
   public int projectionPlaneChangeFrames_108;

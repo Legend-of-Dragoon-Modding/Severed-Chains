@@ -4298,7 +4298,7 @@ public final class Bttl_800d {
   }
 
   /**
-   * @return Component 0/1 are angles, 2 is the magnitude of the delta vector
+   * @param pos1 Returned x/y are angles, z is the magnitude of the delta vector
    */
   public static void calculate3dAngleOrMagnitude(final VECTOR pos0, final Vector3f pos1, final Vector3f out) {
     final float dx = pos0.x.get() - pos1.x;
@@ -4369,7 +4369,7 @@ public final class Bttl_800d {
    *                   <li>1 - positive step</li>
    *                   <li>other - negative step</li>
    *                 </ol>
-
+   *
    * @return 8-bit fixed-point
    */
   @Method(0x800dcfb8L)
