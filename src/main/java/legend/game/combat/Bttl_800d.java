@@ -1702,7 +1702,7 @@ public final class Bttl_800d {
    * @param z 8-bit fixed-point
    */
   @Method(0x800d5ec8L)
-  public static void FUN_800d5ec8(final float x, final float y, final float z, final int ticks, final int a4, final int a5, final int stepType, final int scriptIndex) {
+  public static void FUN_800d5ec8(final float x, final float y, final float z, final int ticks, final int a4, final float a5, final int stepType, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
     final float dx = x - cam.rview2_00.viewpoint_00.x;
     final float dy = y - cam.rview2_00.viewpoint_00.y;
@@ -1741,7 +1741,7 @@ public final class Bttl_800d {
    * @param z 8-bit fixed-point
    */
   @Method(0x800d60b0L)
-  public static void FUN_800d60b0(final float x, final float y, final float z, final int ticks, final int a4, final int a5, final int stepType, final int scriptIndex) {
+  public static void FUN_800d60b0(final float x, final float y, final float z, final int ticks, final int a4, final float a5, final int stepType, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
     cam.viewpointAngleX_ac = calculateCameraValue(false, 1, 0, 0);
     cam.viewpointAngleY_b8 = calculateCameraValue(false, 1, 1, 0);
@@ -1783,7 +1783,7 @@ public final class Bttl_800d {
    * @param z 8-bit fixed-point
    */
   @Method(0x800d62d8L)
-  public static void FUN_800d62d8(final float x, final float y, final float z, final int ticks, final int a4, final int a5, final int stepType, final int scriptIndex) {
+  public static void FUN_800d62d8(final float x, final float y, final float z, final int ticks, final int a4, final float a5, final int stepType, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
     cam.viewpointBaseTranslation_94.x = calculateCameraValue(false, 4, 0, 0);
     cam.viewpointBaseTranslation_94.y = calculateCameraValue(false, 4, 1, 0);
@@ -1812,7 +1812,7 @@ public final class Bttl_800d {
    * @param z 8-bit fixed-point
    */
   @Method(0x800d64e4L)
-  public static void FUN_800d64e4(final float x, final float y, final float z, final int ticks, final int a4, final int a5, final int stepType, final int scriptIndex) {
+  public static void FUN_800d64e4(final float x, final float y, final float z, final int ticks, final int a4, final float a5, final int stepType, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
     cam.viewpointAngleX_ac = calculateCameraValue(false, 5, 0, 0);
     cam.viewpointAngleY_b8 = calculateCameraValue(false, 5, 1, 0);
@@ -1854,7 +1854,7 @@ public final class Bttl_800d {
    * @param z 8-bit fixed-point
    */
   @Method(0x800d670cL)
-  public static void FUN_800d670c(final float x, final float y, final float z, final int ticks, final int a4, final int a5, final int stepType, final int scriptIndex) {
+  public static void FUN_800d670c(final float x, final float y, final float z, final int ticks, final int a4, final float a5, final int stepType, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
     cam.bobjIndex_f4 = scriptIndex;
     cam.viewpointBaseTranslation_94.x = calculateCameraValue(false, 6, 0, scriptIndex);
@@ -1897,7 +1897,7 @@ public final class Bttl_800d {
    * @param z 8-bit fixed-point
    */
   @Method(0x800d6960L)
-  public static void FUN_800d6960(final float x, final float y, final float z, final int ticks, final int a4, final int a5, final int stepType, final int scriptIndex) {
+  public static void FUN_800d6960(final float x, final float y, final float z, final int ticks, final int a4, final float a5, final int stepType, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
     cam.bobjIndex_f4 = scriptIndex;
     cam.viewpointAngleX_ac = calculateCameraValue(false, 7, 0, scriptIndex);
@@ -2255,7 +2255,7 @@ public final class Bttl_800d {
    * @param z 8-bit fixed-point
    */
   @Method(0x800d8274L)
-  public static void FUN_800d8274(final float x, final float y, final float z, final int ticks, final int a4, final int a5, final int stepType, final int scriptIndex) {
+  public static void FUN_800d8274(final float x, final float y, final float z, final int ticks, final int a4, final float a5, final int stepType, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
     final float dx = x - cam.rview2_00.refpoint_0c.x;
     final float dy = y - cam.rview2_00.refpoint_0c.y;
@@ -2280,7 +2280,7 @@ public final class Bttl_800d {
    * @param z 8-bit fixed-point
    */
   @Method(0x800d8424L)
-  public static void FUN_800d8424(final float x, final float y, final float z, final int ticks, final int a4, final int a5, final int stepType, final int scriptIndex) {
+  public static void FUN_800d8424(final float x, final float y, final float z, final int ticks, final int a4, final float a5, final int stepType, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
 
     cam.refpointAngleX_38 = calculateCameraValue(true, 1, 0, 0);
@@ -2309,7 +2309,7 @@ public final class Bttl_800d {
    * @param z 8-bit fixed-point
    */
   @Method(0x800d8614L)
-  public static void FUN_800d8614(final float x, final float y, final float z, final int ticks, final int a4, final int a5, final int stepType, final int scriptIndex) {
+  public static void FUN_800d8614(final float x, final float y, final float z, final int ticks, final int a4, final float a5, final int stepType, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
 
     cam.refpointBaseTranslation_20.x = calculateCameraValue(true, 2, 0, 0);
@@ -2338,17 +2338,17 @@ public final class Bttl_800d {
    * @param z 8-bit fixed-point
    */
   @Method(0x800d8808L)
-  public static void FUN_800d8808(final float x, final float y, final float z, final int ticks, final int a4, final int a5, final int stepType, final int scriptIndex) {
+  public static void FUN_800d8808(final float x, final float y, final float z, final int ticks, final int a4, final float a5, final int stepType, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
 
     cam.refpointAngleX_38 = calculateCameraValue(true, 3, 0, 0);
     cam.refpointAngleY_44 = calculateCameraValue(true, 3, 1, 0);
     cam.refpointDeltaMagnitude_2c = calculateCameraValue(true, 3, 2, 0);
-    final float s2 = calculateDifference(0, cam.refpointAngleX_38, x, stepType & 3);
-    final float s1 = calculateDifference(1, cam.refpointAngleY_44, y, stepType >> 2 & 3);
-    cam.vec_60.x = MathHelper.floorMod(MathHelper.atan2(s1, s2), MathHelper.TWO_PI);
+    final float deltaX = calculateDifference(0, cam.refpointAngleX_38, x, stepType & 3);
+    final float deltaY = calculateDifference(1, cam.refpointAngleY_44, y, stepType >> 2 & 3);
+    cam.vec_60.x = MathHelper.floorMod(MathHelper.atan2(deltaY, deltaX), MathHelper.TWO_PI);
     cam.vec_60.y = 0.0f;
-    cam.vec_60.z = Math.sqrt(s2 * s2 + s1 * s1);
+    cam.vec_60.z = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
     cam.refpointTicksRemaining_5c = ticks;
     final FloatRef sp0x18 = new FloatRef();
     final FloatRef sp0x1c = new FloatRef();
@@ -2367,7 +2367,7 @@ public final class Bttl_800d {
    * @param z 8-bit fixed-point
    */
   @Method(0x800d89f8L)
-  public static void FUN_800d89f8(final float x, final float y, final float z, final int ticks, final int a4, final int a5, final int stepType, final int scriptIndex) {
+  public static void FUN_800d89f8(final float x, final float y, final float z, final int ticks, final int a4, final float a5, final int stepType, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
     cam.bobjIndex_80 = scriptIndex;
     cam.refpointBaseTranslation_20.x = calculateCameraValue(true, 6, 0, scriptIndex);
@@ -2396,7 +2396,7 @@ public final class Bttl_800d {
    * @param z 8-bit fixed-point
    */
   @Method(0x800d8bf4L)
-  public static void FUN_800d8bf4(final float x, final float y, final float z, final int ticks, final int a4, final int a5, final int stepType, final int scriptIndex) {
+  public static void FUN_800d8bf4(final float x, final float y, final float z, final int ticks, final int a4, final float a5, final int stepType, final int scriptIndex) {
     final BattleCamera cam = camera_800c67f0;
 
     cam.bobjIndex_80 = scriptIndex;
@@ -2426,6 +2426,8 @@ public final class Bttl_800d {
     final float newProjectionPlaneDistance = script.params_20[1].get();
     final int projectionPlaneChangeFrames = script.params_20[2].get();
     final int s4 = script.params_20[3].get();
+
+    LOGGER.info(CAMERA, "[CAMERA] scriptMoveCameraProjectionPlane s3=%d, new=%d, frames=%d, s4=%d", s3, newProjectionPlaneDistance, projectionPlaneChangeFrames, s4);
 
     final BattleCamera cam = camera_800c67f0;
     cam.projectionPlaneDistance_100 = getProjectionPlaneDistance();
@@ -3662,7 +3664,7 @@ public final class Bttl_800d {
       y = MathHelper.psxDegToRad(y);
     }
 
-    FUN_800db950(script.params_20[0].get(), x, y, z, script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get(), script.params_20[7].get(), script.params_20[8].get());
+    FUN_800db950(script.params_20[0].get(), x, y, z, script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get() / (float)0x100, script.params_20[7].get(), script.params_20[8].get());
     return FlowControl.CONTINUE;
   }
 
@@ -3672,7 +3674,7 @@ public final class Bttl_800d {
    * @param z 8-bit fixed-point
    */
   @Method(0x800db950L)
-  public static void FUN_800db950(final int callbackIndex, final float x, final float y, final float z, final int ticks, final int a5, final int a6, final int stepType, final int scriptIndex) {
+  public static void FUN_800db950(final int callbackIndex, final float x, final float y, final float z, final int ticks, final int a5, final float a6, final int stepType, final int scriptIndex) {
     LOGGER.info(CAMERA, "[CAMERA] Array=_800fac3c, FUN index=%d, x=%f, y=%f, z=%f, ticks=%d, a5=%d, a6=%d, stepType=%d, script index=%d", callbackIndex, x, y, z, ticks, a5, a6, stepType, scriptIndex);
     _800fac3c[callbackIndex].accept(x, y, z, ticks, a5, a6, stepType, scriptIndex);
     final BattleCamera cam = camera_800c67f0;
@@ -3686,7 +3688,7 @@ public final class Bttl_800d {
    * @param z 8-bit fixed-point
    */
   @Method(0x800db9d0L)
-  public static void FUN_800db9d0(final float x, final float y, final float z, final int ticks, final int a4, final int a5, final int stepType, final int scriptIndex) {
+  public static void FUN_800db9d0(final float x, final float y, final float z, final int ticks, final int a4, final float a5, final int stepType, final int scriptIndex) {
     // no-op
   }
 
@@ -3696,7 +3698,7 @@ public final class Bttl_800d {
    * @param z 8-bit fixed-point
    */
   @Method(0x800db9d8L)
-  public static void FUN_800db9d8(final float x, final float y, final float z, final int ticks, final int a4, final int a5, final int stepType, final int scriptIndex) {
+  public static void FUN_800db9d8(final float x, final float y, final float z, final int ticks, final int a4, final float a5, final int stepType, final int scriptIndex) {
     // no-op
   }
 
@@ -3731,7 +3733,7 @@ public final class Bttl_800d {
    * @param z 8-bit fixed-point
    */
   @Method(0x800dbb00L)
-  public static void FUN_800dbb00(final float x, final float y, final float z, final int ticks, final int a4, final int a5, final int stepType, final int scriptIndex) {
+  public static void FUN_800dbb00(final float x, final float y, final float z, final int ticks, final int a4, final float a5, final int stepType, final int scriptIndex) {
     // no-op
   }
 
@@ -3741,7 +3743,7 @@ public final class Bttl_800d {
    * @param z 8-bit fixed-point
    */
   @Method(0x800dbb08L)
-  public static void FUN_800dbb08(final float x, final float y, final float z, final int ticks, final int a4, final int a5, final int stepType, final int scriptIndex) {
+  public static void FUN_800dbb08(final float x, final float y, final float z, final int ticks, final int a4, final float a5, final int stepType, final int scriptIndex) {
     // no-op
   }
 
@@ -3797,6 +3799,8 @@ public final class Bttl_800d {
 
   @Method(0x800dbcc8L)
   public static FlowControl scriptSetCameraProjectionPlaneDistance(final RunningScript<?> script) {
+    LOGGER.info(CAMERA, "[CAMERA] scriptSetCameraProjectionPlaneDistance distance=%d", script.params_20[0].get());
+
     final BattleCamera cam = camera_800c67f0;
     cam.projectionPlaneDistance_100 = script.params_20[0].get();
     cam.projectionPlaneChangeFrames_108 = 0;
@@ -4195,6 +4199,8 @@ public final class Bttl_800d {
     final BattleCamera cam = camera_800c67f0;
     final int type = script.params_20[0].get();
 
+    LOGGER.info(CAMERA, "[CAMERA] type=%d", type);
+
     if((type & UPDATE_VIEWPOINT) != 0) {
       cam.viewpointCallbackIndex_120 = 0;
       cam.viewpointMoving_122 = false;
@@ -4312,7 +4318,7 @@ public final class Bttl_800d {
   }
 
   @Method(0x800dcebcL)
-  public static void FUN_800dcebc(final int mode, final int a1, final float value, final int divisor, final FloatRef step, final FloatRef acceleration) {
+  public static void FUN_800dcebc(final int mode, final float a1, final float value, final int divisor, final FloatRef step, final FloatRef acceleration) {
     if(mode == 0) {
       //LAB_800dcedc
       step.set(a1);
