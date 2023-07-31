@@ -9619,7 +9619,7 @@ public final class SEffe {
 
         //LAB_801190a8
         if((effect.colourAndScaleFlags_00 & 0x8) != 0) {
-          final int scaleModifier = effect.colourAndScaleTransformModifier_10 - 0x1000;
+          final float scaleModifier = (effect.colourAndScaleTransformModifier_10 - 0x1000) / (float)0x1000;
           stepScale.x = managerInner.scale_16.x * scaleModifier / combinedSteps;
           stepScale.y = managerInner.scale_16.y * scaleModifier / combinedSteps;
           stepScale.z = managerInner.scale_16.z * scaleModifier / combinedSteps;
