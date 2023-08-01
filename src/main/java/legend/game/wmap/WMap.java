@@ -44,6 +44,7 @@ import legend.game.types.TexPageY;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
+import org.joml.Math;
 import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
@@ -183,7 +184,7 @@ public class WMap {
   private static final COLOUR _800c8778 = MEMORY.ref(4, 0x800c8778L, COLOUR::new);
   private static final RECT _800c877c = MEMORY.ref(4, 0x800c877cL, RECT::new);
 
-  private static final VECTOR _800c87d8 = new VECTOR(0, 0x1000, 0);
+  private static final Vector3f _800c87d8 = new Vector3f(0.0f, 1.0f, 0.0f);
   private static final COLOUR _800c87e8 = MEMORY.ref(4, 0x800c87e8L, COLOUR::new);
   private static final RECT _800c87ec = MEMORY.ref(4, 0x800c87ecL, RECT::new);
   private static final COLOUR _800c87f4 = MEMORY.ref(4, 0x800c87f4L, COLOUR::new);
@@ -1624,12 +1625,12 @@ public class WMap {
         //LAB_800d1e90
         if(FUN_800eb09c(i, 1, _800c66b0._154[count].vec_08) == 0) {
           //LAB_800d1ee0
-          final long dx = x - _800c66b0._154[count].vec_08.getX();
-          final long dy = y - _800c66b0._154[count].vec_08.getY();
-          final long dz = z - _800c66b0._154[count].vec_08.getZ();
+          final float dx = x - _800c66b0._154[count].vec_08.x;
+          final float dy = y - _800c66b0._154[count].vec_08.y;
+          final float dz = z - _800c66b0._154[count].vec_08.z;
 
           _800c66b0._154[count].index_00 = i;
-          _800c66b0._154[count].vecLength_04 = SquareRoot0(dx * dx + dy * dy + dz * dz);
+          _800c66b0._154[count].vecLength_04 = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
           count++;
         }
@@ -1640,7 +1641,7 @@ public class WMap {
 
     //LAB_800d2088
     _800c66b0._154[count].index_00 = -1;
-    Arrays.sort(_800c66b0._154, Comparator.comparingInt(a -> a.vecLength_04));
+    Arrays.sort(_800c66b0._154, Comparator.comparingDouble(a -> a.vecLength_04));
   }
 
   @Method(0x800d219cL)
@@ -2247,7 +2248,7 @@ public class WMap {
     final int v0 = struct._11a;
 
     if(v0 == 0) {
-      if(struct._154[0].vecLength_04 < 90) {
+      if(struct._154[0].vecLength_04 < 90.0f) {
         struct._11a = 1;
         //LAB_800d52e8
       } else if(struct258_800c66a8._05 == 0 || struct._c5 != 2) {
@@ -2807,7 +2808,7 @@ public class WMap {
     }
 
     final MATRIX sp0x18 = new MATRIX();
-    final VECTOR sp0x40 = new VECTOR();
+    final Vector3f sp0x40 = new Vector3f();
 
     //LAB_800d7b84
     final int sp98 = tickCount_800bb0fc.get() / 5 % 3;
@@ -2846,11 +2847,11 @@ public class WMap {
               .vramPos(640, 256);
 
             if(struct258_800c66a8.zoomState_1f8 == 0) {
-              final int dx = x - sp0x40.getX();
-              final int dy = y - sp0x40.getY();
-              final int dz = z - sp0x40.getZ();
-              final int sp90 = Math.max(0, 0x200 - SquareRoot0(dx * dx + dy * dy + dz * dz)) / 2;
-              cmd.rgb(sp90 * 31 / 256, sp90 * 63 / 256, 0);
+              final float dx = x - sp0x40.x;
+              final float dy = y - sp0x40.y;
+              final float dz = z - sp0x40.z;
+              final float sp90 = Math.max(0, 0x200 - Math.sqrt(dx * dx + dy * dy + dz * dz)) / 2;
+              cmd.rgb((int)(sp90 * 31 / 256), (int)(sp90 * 63 / 256), 0);
             } else {
               //LAB_800d8048
               cmd.rgb(31, 63, 0);
@@ -3276,9 +3277,6 @@ public class WMap {
    */
   @Method(0x800da248L)
   public static void FUN_800da248() {
-    final VECTOR sp0x38 = new VECTOR();
-    final VECTOR sp0x48 = new VECTOR();
-
     if(mapState_800c6798._fc == 1) {
       return;
     }
@@ -3360,9 +3358,9 @@ public class WMap {
 
         struct258.svec_200.set(_800c66b0.coord2_20.coord.transfer);
 
-        struct258.svec_208.setX((short)(struct258.vec_94.getX() >> 12));
-        struct258.svec_208.setY((short)(struct258.vec_94.getY() >> 12));
-        struct258.svec_208.setZ((short)(struct258.vec_94.getZ() >> 12));
+        struct258.svec_208.setX((short)struct258.vec_94.x);
+        struct258.svec_208.setY((short)struct258.vec_94.y);
+        struct258.svec_208.setZ((short)struct258.vec_94.z);
 
         struct258.angle_21c = struct258.rotation_a4.y;
         struct258.angle_21e = _800c66b0.mapRotation_70.y;
@@ -3370,9 +3368,9 @@ public class WMap {
         struct258._220 = 1;
         struct258.models_0c[2].coord2Param_64.rotate.set(0.0f, struct258.rotation_a4.y, 0.0f);
         struct258.models_0c[2].scaleVector_fc.x = 0.25f;
-        struct258.coord2_34.coord.transfer.setX(struct258.vec_94.getX() >> 12);
-        struct258.coord2_34.coord.transfer.setY(struct258.vec_94.getY() >> 12);
-        struct258.coord2_34.coord.transfer.setZ(struct258.vec_94.getZ() >> 12);
+        struct258.coord2_34.coord.transfer.setX((int)struct258.vec_94.x);
+        struct258.coord2_34.coord.transfer.setY((int)struct258.vec_94.y);
+        struct258.coord2_34.coord.transfer.setZ((int)struct258.vec_94.z);
         struct258.models_0c[2].coord2_14.coord.transfer.set(struct258.coord2_34.coord.transfer);
 
         //LAB_800da8a0
@@ -3409,7 +3407,7 @@ public class WMap {
         x = struct258.models_0c[2].scaleVector_fc.x;
         struct258.models_0c[2].scaleVector_fc.y = x;
         struct258.models_0c[2].scaleVector_fc.z = x;
-        struct258.vec_94.y.sub(0x6_0000);
+        struct258.vec_94.y -= 96.0f;
 
         _800c66b0.coord2_20.coord.transfer.y.sub(0x60);
 
@@ -3418,12 +3416,12 @@ public class WMap {
         }
 
         //LAB_800daab8
-        if(struct258.vec_94.getY() < -2512) {
-          struct258.vec_94.setY(-2500);
+        if(struct258.vec_94.y < -2500.0f) {
+          struct258.vec_94.y = -2500.0f;
         }
 
         //LAB_800daaf0
-        if(struct258.vec_94.getY() <= -2500) {
+        if(struct258.vec_94.y <= -2500.0f) {
           if(_800c66b0.coord2_20.coord.transfer.getY() <= -1500) {
             struct258._220 = 2;
           }
@@ -3467,7 +3465,7 @@ public class WMap {
 
         //LAB_800dad4c
         if(mapState_800c6798.continentIndex_00 == 4) { // Mille Seseau
-          if(struct258.vec_94.getZ() >> 12 < -400) {
+          if(struct258.vec_94.z < -400.0f) {
             struct258.coolonWarpIndex_221 = 5;
           } else {
             //LAB_800dad9c
@@ -3478,7 +3476,7 @@ public class WMap {
         //LAB_800dadac
         struct258.coolonWarpIndex_222 = coolonWarpDest_800ef228.get(struct258.coolonWarpIndex_221)._14.get();
         struct258._220 = 3;
-        struct258.vec_94.set(coolonWarpDest_800ef228.get(struct258.coolonWarpIndex_221).vec_00);
+        coolonWarpDest_800ef228.get(struct258.coolonWarpIndex_221).vec_00.get(struct258.vec_94);
         break;
 
       case 4:
@@ -3585,9 +3583,6 @@ public class WMap {
         break;
 
       case 7:
-        sp0x38.set(coolonWarpDest_800ef228.get(struct258.coolonWarpIndex_221).vec_00).shra(12);
-        sp0x48.set(coolonWarpDest_800ef228.get(struct258.coolonWarpIndex_222).vec_00).shra(12);
-
         struct258._218++;
 
         if(struct258._218 > 12) {
@@ -3596,7 +3591,7 @@ public class WMap {
         }
 
         //LAB_800db698
-        FUN_800dcc20(struct258.vec_94, sp0x38, sp0x48, 12, struct258._218);
+        lerp(struct258.vec_94, coolonWarpDest_800ef228.get(struct258.coolonWarpIndex_221).vec_00.toVec3().div(4096.0f), coolonWarpDest_800ef228.get(struct258.coolonWarpIndex_222).vec_00.toVec3().div(4096.0f), 12.0f / struct258._218);
 
         struct258.models_0c[2].scaleVector_fc.x -= 0.041503906f; // ~1/24
 
@@ -3642,10 +3637,10 @@ public class WMap {
       case 0xb:
         _800c66b0.coord2_20.coord.transfer.set(struct258.svec_200);
         _800c66b0.coord2_20.coord.transfer.setY(-1500);
-        struct258.vec_94.setX(struct258.svec_208.getX() << 12);
-        struct258.vec_94.setY(struct258.svec_208.getY() << 12);
-        struct258.vec_94.setZ(struct258.svec_208.getZ() << 12);
-        struct258.vec_94.setY(-5000 << 12);
+        struct258.vec_94.x = struct258.svec_208.getX();
+        struct258.vec_94.y = struct258.svec_208.getY();
+        struct258.vec_94.z = struct258.svec_208.getZ();
+        struct258.vec_94.y = -5000.0f;
         struct258.rotation_a4.y = struct258.angle_21c;
         _800c66b0.mapRotation_70.y = struct258.angle_21e;
         struct258.models_0c[2].coord2Param_64.rotate.set(0.0f, struct258.rotation_a4.y, 0.0f);
@@ -3668,7 +3663,7 @@ public class WMap {
         //LAB_800dbd6c
         if(_800c66b0.coord2_20.coord.transfer.getY() >= struct258.svec_200.getY()) {
           struct258._220 = 12;
-          struct258.vec_94.setY(-400);
+          struct258.vec_94.y = -0.09765625f; // 100/1024
         }
 
         //LAB_800dbdb8
@@ -3682,14 +3677,14 @@ public class WMap {
         break;
 
       case 0xd:
-        struct258.vec_94.y.add(0x1_0000);
+        struct258.vec_94.y += 16.0f;
 
-        if(struct258.svec_208.getY() << 12 < struct258.vec_94.getY()) {
-          struct258.vec_94.setY(struct258.svec_208.getY() << 12);
+        if(struct258.svec_208.getY() < struct258.vec_94.y) {
+          struct258.vec_94.y = struct258.svec_208.getY();
         }
 
         //LAB_800dbe70
-        if(struct258.svec_208.getY() << 12 <= struct258.vec_94.getY()) {
+        if(struct258.svec_208.getY() <= struct258.vec_94.y) {
           struct258._220 = -1;
         }
 
@@ -3719,7 +3714,12 @@ public class WMap {
 
         _800c66b0.coord2_20.coord.transfer.set(struct258.svec_200);
 
-        struct258.vec_94.set(struct258.svec_208).shl(12);
+        struct258.vec_94.set(
+          struct258.svec_208.getX(),
+          struct258.svec_208.getY(),
+          struct258.svec_208.getZ()
+        );
+
         struct258.rotation_a4.y = struct258.angle_21c;
 
         _800c66b0.mapRotation_70.y = struct258.angle_21e;
@@ -3863,14 +3863,16 @@ public class WMap {
   }
 
   @Method(0x800dcc20L)
-  public static void FUN_800dcc20(final VECTOR a0, final VECTOR a1, final VECTOR a2, final int a3, final int a4) {
-    if(a3 == a4) {
-      a0.set(a2).shl(12);
+  public static void lerp(final Vector3f out, final Vector3f a, final Vector3f b, final float ratio) {
+    if(ratio == 0.0f) {
+      out.set(a);
+    } else if(ratio == 1.0f) {
+      out.set(b);
     } else {
       //LAB_800dcca4
-      a0.setX(((a2.getX() - a1.getX() << 12) / a3 * a4 >> 12) + a1.getX() << 12);
-      a0.setY(((a2.getY() - a1.getY() << 12) / a3 * a4 >> 12) + a1.getY() << 12);
-      a0.setZ(((a2.getZ() - a1.getZ() << 12) / a3 * a4 >> 12) + a1.getZ() << 12);
+      out.x = (b.x - a.x) * ratio + a.x;
+      out.y = (b.y - a.y) * ratio + a.y;
+      out.z = (b.z - a.z) * ratio + a.z;
     }
 
     //LAB_800dcddc
@@ -3988,9 +3990,9 @@ public class WMap {
   @Method(0x800dfbd8L)
   public static void FUN_800dfbd8() {
     final WMapStruct258 struct258 = struct258_800c66a8;
-    struct258.vec_94.setX(struct258.coord2_34.coord.transfer.getX() << 12);
-    struct258.vec_94.setY(struct258.coord2_34.coord.transfer.getY() << 12);
-    struct258.vec_94.setZ(struct258.coord2_34.coord.transfer.getZ() << 12);
+    struct258.vec_94.x = struct258.coord2_34.coord.transfer.getX();
+    struct258.vec_94.y = struct258.coord2_34.coord.transfer.getY();
+    struct258.vec_94.z = struct258.coord2_34.coord.transfer.getZ();
     struct258.vec_84.set(struct258.vec_94);
 
     //LAB_800dfca4
@@ -4117,20 +4119,20 @@ public class WMap {
     } else if(struct258_800c66a8._250 == 1) {
       //LAB_800e0770
       //LAB_800e0774
-      int sp3c = 0;
+      int locationIndex = 0;
       for(int i = 0; i < 6; i++) {
         //LAB_800e0790
         if(mapState_800c6798.locationIndex_10 == _800ef698.get(i).locationIndex_00.get()) {
-          sp3c = _800ef698.get(i)._04.get();
+          locationIndex = _800ef698.get(i).locationIndex2_04.get();
           break;
         }
       }
 
       //LAB_800e0810
-      final SVECTOR sp0x18 = new SVECTOR();
-      final SVECTOR sp0x20 = new SVECTOR();
+      final Vector3f sp0x18 = new Vector3f();
+      final Vector3f sp0x20 = new Vector3f();
       FUN_800e0d70(mapState_800c6798.locationIndex_10, sp0x18);
-      FUN_800e0d70(sp3c, sp0x20);
+      FUN_800e0d70(locationIndex, sp0x20);
 
       //LAB_800e0878
       if(struct258_800c66a8._248 == 0 || struct258_800c66a8._248 == 1) {
@@ -4143,7 +4145,7 @@ public class WMap {
         //LAB_800e08b8
         renderWinglyTeleportScreenEffect();
 
-        FUN_800e0e4c(struct258_800c66a8.vec_94, sp0x18, sp0x20, 0x20, struct258_800c66a8._24c);
+        lerpish(struct258_800c66a8.vec_94, sp0x18, sp0x20, 32.0f / struct258_800c66a8._24c);
 
         struct258_800c66a8._24c++;
         if(struct258_800c66a8._24c > 32) {
@@ -4157,11 +4159,11 @@ public class WMap {
         struct258_800c66a8.rotation_a4.y = _800c66b0.mapRotation_70.y;
       } else if(struct258_800c66a8._248 == 2) {
         //LAB_800e0a6c
-        gameState_800babc8._17c.set(sp3c, true);
+        gameState_800babc8._17c.set(locationIndex, true);
 
         //LAB_800e0b64
-        mapState_800c6798.submapCut_c8 = locations_800f0e34.get(sp3c).submapCut_08.get();
-        mapState_800c6798.submapScene_ca = locations_800f0e34.get(sp3c).submapScene_0a.get();
+        mapState_800c6798.submapCut_c8 = locations_800f0e34.get(locationIndex).submapCut_08.get();
+        mapState_800c6798.submapScene_ca = locations_800f0e34.get(locationIndex).submapScene_0a.get();
         submapCut_80052c30.set(mapState_800c6798.submapCut_c8);
         submapScene_80052c34.set(mapState_800c6798.submapScene_ca);
 
@@ -4193,12 +4195,16 @@ public class WMap {
   }
 
   @Method(0x800e0d70L)
-  public static void FUN_800e0d70(final int locationIndex, final SVECTOR a1) {
+  public static void FUN_800e0d70(final int locationIndex, final Vector3f a1) {
     //LAB_800e0d84
     for(int i = 0; i < 6; i++) {
       //LAB_800e0da0
       if(locationIndex == _800ef6c8.get(i).locationIndex_00.get()) {
-        a1.set(_800ef6c8.get(i)._04);
+        a1.set(
+          _800ef6c8.get(i)._04.getX(),
+          _800ef6c8.get(i)._04.getY(),
+          _800ef6c8.get(i)._04.getZ()
+        );
         break;
       }
     }
@@ -4206,15 +4212,18 @@ public class WMap {
     //LAB_800e0e3c
   }
 
+  /** lerp, but I think it decreases Y more the lower the ratio */
   @Method(0x800e0e4cL)
-  public static void FUN_800e0e4c(final VECTOR out, final SVECTOR a1, final SVECTOR a2, final int a3, final int a4) {
-    if(a3 == a4) {
-      out.set(a2).shl(12);
+  public static void lerpish(final Vector3f out, final Vector3f a1, final Vector3f a2, final float ratio) {
+    if(ratio == 0.0f) {
+      out.set(a1);
+    } else if(ratio == 1.0f) {
+      out.set(a2);
     } else {
       //LAB_800e0ed8
-      out.setX( a1.getX() + ((a2.getX() - a1.getX() << 12) / a3 * a4 >> 12) << 12);
-      out.setY((a1.getY() + ((a2.getY() - a1.getY() << 12) / a3 * a4 >> 12) << 12) + rsin(0x800 / a3 * a4) * -200);
-      out.setZ( a1.getZ() + ((a2.getZ() - a1.getZ() << 12) / a3 * a4 >> 12) << 12);
+      out.x = a1.x + (a2.x - a1.x) * ratio;
+      out.y = a1.y + (a2.y - a1.y) * ratio + MathHelper.sin(MathHelper.PI * ratio) * -200;
+      out.z = a1.z + (a2.z - a1.z) * ratio;
     }
 
     //LAB_800e108c
@@ -4226,7 +4235,7 @@ public class WMap {
 
     struct.currentAnimIndex_ac = struct.animIndex_b0;
 
-    if(struct.vec_84.getX() != struct.vec_94.getX() || struct.vec_84.getY() != struct.vec_94.getY() || struct.vec_84.getZ() != struct.vec_94.getZ()) {
+    if(struct.vec_84.x != struct.vec_94.x || struct.vec_84.y != struct.vec_94.y || struct.vec_84.z != struct.vec_94.z) {
       final EncounterRateMode mode = CONFIG.getConfig(CoreMod.ENCOUNTER_RATE_CONFIG.get());
 
       //LAB_800e117c
@@ -4272,7 +4281,7 @@ public class WMap {
     renderPlayerShadow();
 
     final WMapStruct258 struct = struct258_800c66a8;
-    struct.coord2_34.coord.transfer.set(struct.vec_94).shra(12);
+    struct.coord2_34.coord.transfer.set(struct.vec_94);
     struct.models_0c[struct.modelIndex_1e4].coord2_14.coord.transfer.set(struct.coord2_34.coord.transfer);
 
     if(struct._250 == 0) {
@@ -4345,19 +4354,15 @@ public class WMap {
     final IntRef sp0x70 = new IntRef();
     final IntRef sp0x74 = new IntRef();
 
-    final VECTOR sp0x88 = new VECTOR();
-    final VECTOR sp0x98 = new VECTOR();
-    final VECTOR sp0xa8 = new VECTOR();
-    final VECTOR sp0xb8 = new VECTOR();
-    final VECTOR sp0xc8 = new VECTOR();
+    final Vector3f sp0x88 = new Vector3f();
+    final Vector3f sp0x98 = new Vector3f();
+    final Vector3f sp0xa8 = new Vector3f();
 
-    sp0xb8.set(_800c87d8);
-
-    sp0xa8.set(struct258_800c66a8.vec_84).sub(struct258_800c66a8.vec_94).shra(12);
-    sp0xa8.normalize();
-    sp0xa8.cross(sp0xb8, sp0xc8);
-    sp0x88.set(struct258_800c66a8.vec_94).shra(12);
-    FUN_800e2ae4(sp0xc8, sp0x88);
+    final Vector3f delta = new Vector3f(struct258_800c66a8.vec_84)
+      .sub(struct258_800c66a8.vec_94)
+      .normalize()
+      .cross(_800c87d8);
+    FUN_800e2ae4(delta, struct258_800c66a8.vec_94);
     rotateCoord2(struct258_800c66a8.tmdRendering_08.rotations_08[0], struct258_800c66a8.tmdRendering_08.coord2s_04[0]);
     GsGetLs(struct258_800c66a8.tmdRendering_08.coord2s_04[0], sp0x28);
     setRotTransMatrix(sp0x28);
@@ -4366,29 +4371,29 @@ public class WMap {
     for(int i = 0; i < 39; i++) {
       //LAB_800e1ce8
       FUN_800e2e1c(i, sp0x88, sp0x98, sp0x74, sp0x70);
-      int spc8 = sp0x88.getX() * sp0x70.get() >> 12;
-      int spcc = sp0x88.getY() * sp0x70.get() >> 12;
-      int spd0 = sp0x88.getZ() * sp0x70.get() >> 12;
-      final int spd8 = -spc8;
-      final int spdc = -spcc;
-      final int spe0 = -spd0;
-      sp0x48.setX((short)(spc8 + sp0x98.getX()));
-      sp0x48.setY((short)(spcc + sp0x98.getY()));
-      sp0x48.setZ((short)(spd0 + sp0x98.getZ()));
-      sp0x50.setX((short)sp0x98.getX());
-      sp0x50.setY((short)sp0x98.getY());
-      sp0x50.setZ((short)sp0x98.getZ());
+      float spc8 = sp0x88.x * sp0x70.get();
+      float spcc = sp0x88.y * sp0x70.get();
+      float spd0 = sp0x88.z * sp0x70.get();
+      final float spd8 = -spc8;
+      final float spdc = -spcc;
+      final float spe0 = -spd0;
+      sp0x48.setX((short)(spc8 + sp0x98.x));
+      sp0x48.setY((short)(spcc + sp0x98.y));
+      sp0x48.setZ((short)(spd0 + sp0x98.z));
+      sp0x50.setX((short)sp0x98.x);
+      sp0x50.setY((short)sp0x98.y);
+      sp0x50.setZ((short)sp0x98.z);
 
       FUN_800e2e1c(i + 1, sp0x88, sp0xa8, sp0x74, sp0x70);
-      spc8 = sp0x88.getX() * sp0x70.get() >> 12;
-      spcc = sp0x88.getY() * sp0x70.get() >> 12;
-      spd0 = sp0x88.getZ() * sp0x70.get() >> 12;
-      final int spe8 = -spc8;
-      final int spec = -spcc;
-      final int spf0 = -spd0;
-      sp0x58.setX((short)(spc8 + sp0xa8.getX()));
-      sp0x58.setY((short)(spcc + sp0xa8.getY()));
-      sp0x58.setZ((short)(spd0 + sp0xa8.getZ()));
+      spc8 = sp0x88.x * sp0x70.get();
+      spcc = sp0x88.y * sp0x70.get();
+      spd0 = sp0x88.z * sp0x70.get();
+      final float spe8 = -spc8;
+      final float spec = -spcc;
+      final float spf0 = -spd0;
+      sp0x58.setX((short)(spc8 + sp0xa8.x));
+      sp0x58.setY((short)(spcc + sp0xa8.y));
+      sp0x58.setZ((short)(spd0 + sp0xa8.z));
       sp0x60.set(sp0xa8);
 
       int sp78 = 256 - sp0x74.get() * 256 / 40;
@@ -4437,12 +4442,12 @@ public class WMap {
       }
 
       //LAB_800e2440
-      sp0x48.setX((short)(spd8 + sp0x98.getX()));
-      sp0x48.setY((short)(spdc + sp0x98.getY()));
-      sp0x48.setZ((short)(spe0 + sp0x98.getZ()));
-      sp0x58.setX((short)(spe8 + sp0xa8.getX()));
-      sp0x58.setY((short)(spec + sp0xa8.getY()));
-      sp0x58.setZ((short)(spf0 + sp0xa8.getZ()));
+      sp0x48.setX((short)(spd8 + sp0x98.x));
+      sp0x48.setY((short)(spdc + sp0x98.y));
+      sp0x48.setZ((short)(spe0 + sp0x98.z));
+      sp0x58.setX((short)(spe8 + sp0xa8.x));
+      sp0x58.setY((short)(spec + sp0xa8.y));
+      sp0x58.setZ((short)(spf0 + sp0xa8.z));
       z = RotTransPers4(sp0x48, sp0x50, sp0x58, sp0x60, sxyz0, sxyz1, sxyz2, sxyz3);
 
       if(z >= 3 && z < orderingTableSize_1f8003c8.get()) {
@@ -4479,7 +4484,7 @@ public class WMap {
       }
 
       //LAB_800e2808
-      struct258_800c66a8.ptr_22c[sp6c]++;
+      struct258_800c66a8._22c[sp6c]++;
     }
 
     //LAB_800e289c
@@ -4490,24 +4495,24 @@ public class WMap {
   public static void FUN_800e28dc(final int a0, final int a1) {
     final int count = a0 * a1;
 
-    struct258_800c66a8.vecs_224 = new VECTOR[count];
-    struct258_800c66a8.vecs_228 = new VECTOR[count];
+    struct258_800c66a8.vecs_224 = new Vector3f[count];
+    struct258_800c66a8.vecs_228 = new Vector3f[count];
 
-    struct258_800c66a8.ptr_22c = new int[count];
+    struct258_800c66a8._22c = new int[count];
     struct258_800c66a8._230 = 0;
     struct258_800c66a8._234 = count - 1;
     struct258_800c66a8._238 = count;
     struct258_800c66a8._23c = a1;
 
     //NOTE: there's a bug in the original code, it just sets the first vector in the array over and over again
-    Arrays.setAll(struct258_800c66a8.vecs_224, i -> new VECTOR());
-    Arrays.setAll(struct258_800c66a8.vecs_228, i -> new VECTOR());
+    Arrays.setAll(struct258_800c66a8.vecs_224, i -> new Vector3f());
+    Arrays.setAll(struct258_800c66a8.vecs_228, i -> new Vector3f());
 
     struct258_800c66a8._244 = 0;
   }
 
   @Method(0x800e2ae4L)
-  public static void FUN_800e2ae4(final VECTOR a0, final VECTOR a1) {
+  public static void FUN_800e2ae4(final Vector3f a0, final Vector3f a1) {
     final WMapStruct258 struct258 = struct258_800c66a8;
 
     if(struct258._244 == 0) {
@@ -4527,20 +4532,20 @@ public class WMap {
     struct258.vecs_224[struct258._230].set(a0);
     struct258.vecs_228[struct258._230].set(a1);
 
-    struct258.ptr_22c[struct258._230] = 0;
+    struct258._22c[struct258._230] = 0;
 
     struct258._234 = struct258._230;
     struct258._230 = (struct258._230 + 1) % struct258._238;
   }
 
   @Method(0x800e2e1cL)
-  public static void FUN_800e2e1c(final int a0, final VECTOR a1, final VECTOR a2, final IntRef a3, final IntRef a4) {
+  public static void FUN_800e2e1c(final int a0, final Vector3f a1, final Vector3f a2, final IntRef a3, final IntRef a4) {
     if(a0 == 0) {
       a1.set(struct258_800c66a8.vecs_224[struct258_800c66a8._234]);
       a2.set(struct258_800c66a8.vecs_228[struct258_800c66a8._234]);
-      a3.set(struct258_800c66a8.ptr_22c[struct258_800c66a8._234]);
-      final int v0 = struct258_800c66a8.ptr_22c[struct258_800c66a8._234] - struct258_800c66a8._240;
-      a4.set(struct258_800c66a8.ptr_22c[struct258_800c66a8._234] + (rsin(v0 << 8 & 0x7ff) * struct258_800c66a8.ptr_22c[struct258_800c66a8._234] >> 12));
+      a3.set(struct258_800c66a8._22c[struct258_800c66a8._234]);
+      final int v0 = struct258_800c66a8._22c[struct258_800c66a8._234] - struct258_800c66a8._240;
+      a4.set(struct258_800c66a8._22c[struct258_800c66a8._234] + (rsin(v0 << 8 & 0x7ff) * struct258_800c66a8._22c[struct258_800c66a8._234] >> 12));
     } else {
       //LAB_800e3024
       int sp10 = struct258_800c66a8._230 - a0 * struct258_800c66a8._23c;
@@ -4552,9 +4557,9 @@ public class WMap {
       //LAB_800e3090
       a1.set(struct258_800c66a8.vecs_224[sp10]);
       a2.set(struct258_800c66a8.vecs_228[sp10]);
-      a3.set(struct258_800c66a8.ptr_22c[sp10]);
-      final int v0 = struct258_800c66a8.ptr_22c[sp10] - struct258_800c66a8._240;
-      a4.set(struct258_800c66a8.ptr_22c[sp10] + (rsin(v0 << 8 & 0x7ff) * struct258_800c66a8.ptr_22c[sp10] >> 12));
+      a3.set(struct258_800c66a8._22c[sp10]);
+      final int v0 = struct258_800c66a8._22c[sp10] - struct258_800c66a8._240;
+      a4.set(struct258_800c66a8._22c[sp10] + (rsin(v0 << 8 & 0x7ff) * struct258_800c66a8._22c[sp10] >> 12));
     }
 
     //LAB_800e321c
@@ -5845,14 +5850,14 @@ public class WMap {
     mapState_800c6798.submapCut_c8 = locations_800f0e34.get(locationIndex).submapCut_08.get();
     mapState_800c6798.submapScene_ca = locations_800f0e34.get(locationIndex).submapScene_0a.get();
 
-    final VECTOR avg = new VECTOR();
-    final VECTOR playerPos = new VECTOR();
-    final VECTOR nextPathPos = new VECTOR();
+    final Vector3f avg = new Vector3f();
+    final Vector3f playerPos = new Vector3f();
+    final Vector3f nextPathPos = new Vector3f();
 
     getPathPositions(playerPos, nextPathPos);
     weightedAvg(4 - mapState_800c6798.dotOffset_18, mapState_800c6798.dotOffset_18, avg, playerPos, nextPathPos);
 
-    struct258_800c66a8.coord2_34.coord.transfer.set(avg).div(0x1000);
+    struct258_800c66a8.coord2_34.coord.transfer.set(avg);
     struct258_800c66a8.coord2_34.coord.transfer.y.sub(2);
 
     if(mapState_800c6798.submapCut_c4 == 242 && mapState_800c6798.submapScene_c6 == 3) { // Donau
@@ -6157,17 +6162,17 @@ public class WMap {
   }
 
   @Method(0x800e9418L)
-  public static void getPathPositions(final VECTOR playerPos, final VECTOR nextPathPos) {
+  public static void getPathPositions(final Vector3f playerPos, final Vector3f nextPathPos) {
     final UnboundedArrayRef<VECTOR> dots = pathDotPosPtrArr_800f591c.get(mapState_800c6798.pathIndex_14).deref();
-    playerPos.set(dots.get(mapState_800c6798.dotIndex_16));
-    nextPathPos.set(dots.get(mapState_800c6798.dotIndex_16 + 1));
+    dots.get(mapState_800c6798.dotIndex_16).get(playerPos);
+    dots.get(mapState_800c6798.dotIndex_16 + 1).get(nextPathPos);
   }
 
   @Method(0x800e94f0L)
-  public static void weightedAvg(final int weight1, final int weight2, final VECTOR out, final VECTOR vec1, final VECTOR vec2) {
-    out.setX((weight1 * vec1.getX() + weight2 * vec2.getX()) / (weight1 + weight2) * 0x1000);
-    out.setY((weight1 * vec1.getY() + weight2 * vec2.getY()) / (weight1 + weight2) * 0x1000);
-    out.setZ((weight1 * vec1.getZ() + weight2 * vec2.getZ()) / (weight1 + weight2) * 0x1000);
+  public static void weightedAvg(final int weight1, final int weight2, final Vector3f out, final Vector3f vec1, final Vector3f vec2) {
+    out.x = (weight1 * vec1.x + weight2 * vec2.x) / (weight1 + weight2);
+    out.y = (weight1 * vec1.y + weight2 * vec2.y) / (weight1 + weight2);
+    out.z = (weight1 * vec1.z + weight2 * vec2.z) / (weight1 + weight2);
   }
 
   @Method(0x800e9648L)
@@ -6191,18 +6196,18 @@ public class WMap {
       mapState_800c6798._dc[i] = -1;
     }
 
-    final VECTOR sp0x10 = new VECTOR();
-    final VECTOR sp0x20 = new VECTOR();
-    final VECTOR sp0x30 = new VECTOR();
+    final Vector3f playerPos = new Vector3f();
+    final Vector3f nextPathPos = new Vector3f();
+    final Vector3f pos = new Vector3f();
 
     //LAB_800e97dc
-    getPathPositions(sp0x10, sp0x20);
+    getPathPositions(playerPos, nextPathPos);
 
     if(mapState_800c6798._f8 == 1) {
-      sp0x30.set(sp0x10);
+      pos.set(playerPos);
     } else {
       //LAB_800e9834
-      sp0x30.set(sp0x20);
+      pos.set(nextPathPos);
     }
 
     //LAB_800e985c
@@ -6225,15 +6230,15 @@ public class WMap {
               final int pathIndex = Math.abs(sp50) - 1;
               final int dotIndex = _800f5810.get(pathIndex).get();
               final UnboundedArrayRef<VECTOR> dots = pathDotPosPtrArr_800f591c.get(pathIndex).deref();
-              sp0x10.set(dots.get(dotIndex - 1));
-              sp0x20.set(dots.get(0));
+              dots.get(dotIndex - 1).get(playerPos);
+              dots.get(0).get(nextPathPos);
 
-              if(sp0x30.getX() == sp0x10.getX() && sp0x30.getY() == sp0x10.getY() && sp0x30.getZ() == sp0x10.getZ()) {
+              if(pos.x == playerPos.x && pos.y == playerPos.y && pos.z == playerPos.z) {
                 mapState_800c6798._40[sp4c].set(dots.get(dotIndex - 2));
                 mapState_800c6798._dc[sp4c] = sp54;
                 sp4c++;
                 //LAB_800e9bd8
-              } else if(sp0x30.getX() == sp0x20.getX() && sp0x30.getY() == sp0x20.getY() && sp0x30.getZ() == sp0x20.getZ()) {
+              } else if(pos.x == nextPathPos.x && pos.y == nextPathPos.y && pos.z == nextPathPos.z) {
                 mapState_800c6798._40[sp4c].set(dots.get(1));
                 mapState_800c6798._dc[sp4c] = sp54;
                 sp4c++;
@@ -6247,7 +6252,7 @@ public class WMap {
     }
 
     //LAB_800e9cf8
-    mapState_800c6798._b0.set(sp0x30);
+    mapState_800c6798._b0.set(pos);
     mapState_800c6798._f8 = 0;
 
     if(sp4c == 1) {
@@ -6302,7 +6307,7 @@ public class WMap {
       }
 
       //LAB_800e9edc
-      sp0xb0.set(struct258_800c66a8.vec_94).shra(12).sub(mapState_800c6798._40[i]);
+      sp0xb0.set(struct258_800c66a8.vec_94).sub(mapState_800c6798._40[i]);
 
       sp0xc8[i] = (short)(MathHelper.radToPsxDeg(_800c66b0.mapRotation_70.y) - ratan2(sp0xb0.getX(), sp0xb0.getZ()) + 0x800 & 0xfff);
 
@@ -6372,12 +6377,12 @@ public class WMap {
 
   @Method(0x800ea3d8L)
   public static void updatePlayer() {
-    final VECTOR playerPos = new VECTOR();
-    final VECTOR nextDotPos = new VECTOR();
+    final Vector3f playerPos = new Vector3f();
+    final Vector3f nextDotPos = new Vector3f();
 
     getPathPositions(playerPos, nextDotPos);
     weightedAvg(4 - mapState_800c6798.dotOffset_18, mapState_800c6798.dotOffset_18, struct258_800c66a8.vec_94, playerPos, nextDotPos);
-    struct258_800c66a8.vec_94.y.sub(0x2000);
+    struct258_800c66a8.vec_94.y -= 2.0f;
     mapState_800c6798.playerPos_20.set(playerPos);
     mapState_800c6798.nextDotPos_30.set(nextDotPos);
 
@@ -6533,7 +6538,7 @@ public class WMap {
    * a1 used to be either 0, -1, or a VECTOR. If passing a VECTOR, pass it as vec and set a1 to 1
    */
   @Method(0x800eb09cL)
-  public static int FUN_800eb09c(final int locationIndex, final int a1, @Nullable final VECTOR vec) {
+  public static int FUN_800eb09c(final int locationIndex, final int a1, @Nullable final Vector3f vec) {
     if(locations_800f0e34.get(locationIndex).areaIndex_00.get() == -1) {
       return -1;
     }
@@ -6568,10 +6573,10 @@ public class WMap {
     final UnboundedArrayRef<VECTOR> v1 = pathDotPosPtrArr_800f591c.get(sp18).deref();
 
     if(sp14 > 0) {
-      vec.set(v1.get(0));
+      v1.get(0).get(vec);
     } else {
       //LAB_800eb2fc
-      vec.set(v1.get(_800f5810.get(sp18).get() - 1));
+      v1.get(_800f5810.get(sp18).get() - 1).get(vec);
     }
 
     //LAB_800eb3a8
@@ -6584,13 +6589,13 @@ public class WMap {
     final boolean[] sp0xd0 = new boolean[0x101];
     int sp24 = 0;
 
-    final VECTOR sp0x30 = new VECTOR();
-    final VECTOR sp0x40 = new VECTOR();
-    final VECTOR sp0x50 = new VECTOR();
-    final VECTOR[] sp0x60 = new VECTOR[0x101];
+    final Vector3f sp0x30 = new Vector3f();
+    final Vector3f sp0x40 = new Vector3f();
+    final Vector3f sp0x50 = new Vector3f();
+    final Vector3f[] sp0x60 = new Vector3f[0x101];
 
     for(int i = 0; i < sp0x60.length; i++) {
-      sp0x60[i] = new VECTOR();
+      sp0x60[i] = new Vector3f();
     }
 
     //LAB_800eb420
@@ -6645,11 +6650,11 @@ public class WMap {
               //LAB_800eb778
               sp0x40.set(sp0x60[sp1c + 1]);
               weightedAvg(1, 1, sp0x50, sp0x30, sp0x40);
-              sp0x30.set(sp0x50).div(0x1000);
+              sp0x30.set(sp0x50);
             }
 
             //LAB_800eb828
-            _800c74b8.get(sp24).set(sp0x50).shra(12);
+            _800c74b8.get(sp24).set(sp0x50);
           }
 
           //LAB_800eb8ac

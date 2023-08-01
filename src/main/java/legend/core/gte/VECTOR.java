@@ -27,6 +27,11 @@ public class VECTOR implements MemoryRef {
     this.set(x, y, z);
   }
 
+  public VECTOR(final Vector3f other) {
+    this();
+    this.set(other);
+  }
+
   public VECTOR(final Value ref) {
     this.ref = ref;
     this.x = new IntRef(ref.offset(4, 0x0L));
@@ -89,6 +94,10 @@ public class VECTOR implements MemoryRef {
       case 2 -> this.getZ();
       default -> throw new IllegalArgumentException("Invalid element");
     };
+  }
+
+  public void get(final Vector3f dest) {
+    dest.set(this.getX(), this.getY(), this.getZ());
   }
 
   public IntRef component(final int element) {
@@ -342,6 +351,10 @@ public class VECTOR implements MemoryRef {
 
   public VECTOR mul(final MATRIX matrix) {
     return this.mul(matrix, this);
+  }
+
+  public Vector3f toVec3() {
+    return new Vector3f(this.getX(), this.getY(), this.getZ());
   }
 
   @Override

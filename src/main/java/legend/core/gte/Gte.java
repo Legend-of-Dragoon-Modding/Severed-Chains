@@ -162,6 +162,13 @@ public class Gte {
   }
 
   /** Data register 0/1, 2/3, 4/5 */
+  public void setVertex(final int index, final float x, final float y, final float z) {
+    this.V[index].x = x / 4096.0f;
+    this.V[index].y = y / 4096.0f;
+    this.V[index].z = z / 4096.0f;
+  }
+
+  /** Data register 0/1, 2/3, 4/5 */
   public void setVertex(final int index, final SVECTOR vert) {
     this.setVertex(index, vert.getX(), vert.getY(), vert.getZ());
   }
@@ -341,7 +348,18 @@ public class Gte {
   }
 
   /** 0x1 RTPS - perspective transform single, 12-bit fraction */
+  public void perspectiveTransform(final Vector3f v0) {
+    this.perspectiveTransform(v0.x, v0.y, v0.z);
+  }
+
+  /** 0x1 RTPS - perspective transform single, 12-bit fraction */
   public void perspectiveTransform(final int x, final int y, final int z) {
+    this.setVertex(0, x, y, z);
+    this.perspectiveTransform();
+  }
+
+  /** 0x1 RTPS - perspective transform single, 12-bit fraction */
+  public void perspectiveTransform(final float x, final float y, final float z) {
     this.setVertex(0, x, y, z);
     this.perspectiveTransform();
   }

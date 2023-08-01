@@ -2,7 +2,6 @@ package legend.game.wmap;
 
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.SVECTOR;
-import legend.core.gte.VECTOR;
 import legend.game.types.Model124;
 import legend.game.unpacker.FileData;
 import org.joml.Vector3f;
@@ -25,8 +24,8 @@ public class WMapStruct258 {
   public FileData imageData_2c;
   public FileData imageData_30;
   public final GsCOORDINATE2 coord2_34 = new GsCOORDINATE2();
-  public final VECTOR vec_84 = new VECTOR();
-  public final VECTOR vec_94 = new VECTOR();
+  public final Vector3f vec_84 = new Vector3f();
+  public final Vector3f vec_94 = new Vector3f();
   public final Vector3f rotation_a4 = new Vector3f();
   public int currentAnimIndex_ac;
   public int animIndex_b0;
@@ -59,9 +58,9 @@ public class WMapStruct258 {
   public int coolonWarpIndex_222;
   /** ubyte */
   public int _223;
-  public VECTOR[] vecs_224;
-  public VECTOR[] vecs_228;
-  public int[] ptr_22c;
+  public Vector3f[] vecs_224;
+  public Vector3f[] vecs_228;
+  public int[] _22c;
   public int _230;
   public int _234;
   public int _238;
