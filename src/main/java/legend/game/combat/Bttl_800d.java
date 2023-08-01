@@ -3675,7 +3675,7 @@ public final class Bttl_800d {
    */
   @Method(0x800db950L)
   public static void FUN_800db950(final int callbackIndex, final float x, final float y, final float z, final int ticks, final int a5, final float a6, final int stepType, final int scriptIndex) {
-    LOGGER.info(CAMERA, "[CAMERA] Array=_800fac3c, FUN index=%d, x=%f, y=%f, z=%f, ticks=%d, a5=%d, a6=%d, stepType=%d, script index=%d", callbackIndex, x, y, z, ticks, a5, a6, stepType, scriptIndex);
+    LOGGER.info(CAMERA, "[CAMERA] Array=_800fac3c, FUN index=%d, x=%f, y=%f, z=%f, ticks=%d, a5=%d, a6=%f, stepType=%d, script index=%d", callbackIndex, x, y, z, ticks, a5, a6, stepType, scriptIndex);
     _800fac3c[callbackIndex].accept(x, y, z, ticks, a5, a6, stepType, scriptIndex);
     final BattleCamera cam = camera_800c67f0;
     cam.callbackIndex_fc = callbackIndex;
@@ -3714,13 +3714,13 @@ public final class Bttl_800d {
       y = MathHelper.psxDegToRad(y);
     }
 
-    FUN_800dba80(script.params_20[0].get(), x, y, z, script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get(), script.params_20[7].get(), script.params_20[8].get());
+    FUN_800dba80(script.params_20[0].get(), x, y, z, script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get() / (float)0x100, script.params_20[7].get(), script.params_20[8].get());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800dba80L)
-  public static void FUN_800dba80(final int callbackIndex, final float x, final float y, final float z, final int ticks, final int a5, final int a6, final int stepType, final int scriptIndex) {
-    LOGGER.info(CAMERA, "[CAMERA] Array=_800fac9c, FUN index=%d, x=%f, y=%f, z=%f, ticks=%d, a5=%d, a6=%d, stepType=%d, script index=%d", callbackIndex, x, y, z, ticks, a5, a6, stepType, scriptIndex);
+  public static void FUN_800dba80(final int callbackIndex, final float x, final float y, final float z, final int ticks, final int a5, final float a6, final int stepType, final int scriptIndex) {
+    LOGGER.info(CAMERA, "[CAMERA] Array=_800fac9c, FUN index=%d, x=%f, y=%f, z=%f, ticks=%d, a5=%d, a6=%f, stepType=%d, script index=%d", callbackIndex, x, y, z, ticks, a5, a6, stepType, scriptIndex);
     _800fac9c[callbackIndex].accept(x, y, z, ticks, a5, a6, stepType, scriptIndex);
     final BattleCamera cam = camera_800c67f0;
     cam.callbackIndex_88 = callbackIndex;
