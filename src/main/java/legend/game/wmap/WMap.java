@@ -6178,7 +6178,7 @@ public class WMap {
   @Method(0x800e9648L)
   public static void updatePlayerRotation() {
     final WMapStruct258 struct258 = struct258_800c66a8;
-    struct258.rotation_a4.set(0.0f, MathHelper.atan2(mapState_800c6798.playerPos_20.getX() - mapState_800c6798.nextDotPos_30.getX(), mapState_800c6798.playerPos_20.getZ() - mapState_800c6798.nextDotPos_30.getZ()), 0.0f);
+    struct258.rotation_a4.set(0.0f, MathHelper.atan2(mapState_800c6798.playerPos_20.x - mapState_800c6798.nextDotPos_30.x, mapState_800c6798.playerPos_20.z - mapState_800c6798.nextDotPos_30.z), 0.0f);
     mapState_800c6798.previousPlayerRotation_c2 = struct258.rotation_a4.y;
     struct258.rotation_a4.y += mapState_800c6798.angle_c0;
   }
@@ -6348,15 +6348,16 @@ public class WMap {
     //LAB_800ea1dc
     final UnboundedArrayRef<VECTOR> dots = pathDotPosPtrArr_800f591c.get(mapState_800c6798.pathIndex_14).deref();
 
+    final VECTOR dot;
     if(area._00.get() >= 0) {
-      sp0xb0.set(dots.get(0));
+      dot = dots.get(0);
     } else {
       //LAB_800ea248
-      sp0xb0.set(dots.get(_800f5810.get(mapState_800c6798.pathIndex_14).get() - 1));
+      dot = dots.get(_800f5810.get(mapState_800c6798.pathIndex_14).get() - 1);
     }
 
     //LAB_800ea2a8
-    if(mapState_800c6798._b0.getX() != sp0xb0.getX() || mapState_800c6798._b0.getY() != sp0xb0.getY() || mapState_800c6798._b0.getZ() != sp0xb0.getZ()) {
+    if(mapState_800c6798._b0.x != dot.getX() || mapState_800c6798._b0.y != dot.getY() || mapState_800c6798._b0.z != dot.getZ()) {
       //LAB_800ea2f8
       if(area._00.get() >= 0) {
         mapState_800c6798.dotIndex_16 = (short)(_800f5810.get(Math.abs(area._00.get()) - 1).get() - 2);

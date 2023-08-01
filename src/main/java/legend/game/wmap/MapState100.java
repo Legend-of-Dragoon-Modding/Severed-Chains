@@ -1,6 +1,7 @@
 package legend.game.wmap;
 
 import legend.core.gte.VECTOR;
+import org.joml.Vector3f;
 
 import java.util.Arrays;
 
@@ -39,13 +40,13 @@ public class MapState100 {
   /** +1 - left, -1 - right (800c67b4) */
   public int facing_1c;
   /** Not the canonical player pos, just a copy (for animation purposes?) (800c67b8) */
-  public final VECTOR playerPos_20 = new VECTOR();
+  public final Vector3f playerPos_20 = new Vector3f();
   /** 800c67c8 */
-  public final VECTOR nextDotPos_30 = new VECTOR();
+  public final Vector3f nextDotPos_30 = new Vector3f();
   /** 800c67d8 */
   public final VECTOR[] _40 = new VECTOR[7];
   /** 800c6848 */
-  public final VECTOR _b0 = new VECTOR();
+  public final Vector3f _b0 = new Vector3f();
   /** 800c6858 */
   public float angle_c0;
   /** 800c685a */
