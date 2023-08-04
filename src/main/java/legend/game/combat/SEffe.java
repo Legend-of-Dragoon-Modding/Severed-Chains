@@ -313,142 +313,142 @@ public final class SEffe {
     subParticleInitializers_80119b94[5] = SEffe::FUN_80101c74;
   }
 
-  private static final TriConsumer<EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94>[] prerenderCallbacks_80119bac = new TriConsumer[65];
+  private static final TriConsumer<EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94>[] particleInstancePrerenderCallbacks_80119bac = new TriConsumer[65];
 
   static {
-    prerenderCallbacks_80119bac[0] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[1] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[2] = SEffe::FUN_800fb9c8;
-    prerenderCallbacks_80119bac[3] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[4] = SEffe::FUN_800fb9ec;
-    prerenderCallbacks_80119bac[5] = SEffe::FUN_800fba58;
-    prerenderCallbacks_80119bac[6] = SEffe::FUN_800fbb14;
-    prerenderCallbacks_80119bac[7] = SEffe::FUN_800fbb14;
-    prerenderCallbacks_80119bac[8] = SEffe::FUN_800fbbe0;
-    prerenderCallbacks_80119bac[9] = SEffe::FUN_800fbbe0;
-    prerenderCallbacks_80119bac[10] = SEffe::FUN_800fbd04;
-    prerenderCallbacks_80119bac[11] = SEffe::FUN_800fbd04;
-    prerenderCallbacks_80119bac[12] = SEffe::FUN_800fba58;
-    prerenderCallbacks_80119bac[13] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[14] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[15] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[16] = SEffe::FUN_800fbd68;
-    prerenderCallbacks_80119bac[17] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[18] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[19] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[20] = SEffe::FUN_800fbe94;
-    prerenderCallbacks_80119bac[21] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[22] = SEffe::FUN_800fbf50;
-    prerenderCallbacks_80119bac[23] = SEffe::FUN_800fbfd0;
-    prerenderCallbacks_80119bac[24] = SEffe::FUN_800fc068;
-    prerenderCallbacks_80119bac[25] = SEffe::FUN_800fc0d0;
-    prerenderCallbacks_80119bac[26] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[27] = SEffe::FUN_800fc1fc;
-    prerenderCallbacks_80119bac[28] = SEffe::FUN_800fc068;
-    prerenderCallbacks_80119bac[29] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[30] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[31] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[32] = SEffe::FUN_800fc280;
-    prerenderCallbacks_80119bac[33] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[34] = SEffe::FUN_800fc348;
-    prerenderCallbacks_80119bac[35] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[36] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[37] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[38] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[39] = SEffe::FUN_800fc410;
-    prerenderCallbacks_80119bac[40] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[41] = SEffe::FUN_800fc42c;
-    prerenderCallbacks_80119bac[42] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[43] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[44] = SEffe::FUN_800fc410;
-    prerenderCallbacks_80119bac[45] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[46] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[47] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[48] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[49] = SEffe::FUN_800fc528;
-    prerenderCallbacks_80119bac[50] = SEffe::FUN_800fc5a8;
-    prerenderCallbacks_80119bac[51] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[52] = SEffe::FUN_800fc61c;
-    prerenderCallbacks_80119bac[53] = SEffe::FUN_800fc6bc;
-    prerenderCallbacks_80119bac[54] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[55] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[56] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[57] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[58] = SEffe::FUN_800fc768;
-    prerenderCallbacks_80119bac[59] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[60] = SEffe::FUN_800fc7c8;
-    prerenderCallbacks_80119bac[61] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[62] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[63] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[64] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[0] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[1] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[2] = SEffe::FUN_800fb9c8;
+    particleInstancePrerenderCallbacks_80119bac[3] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[4] = SEffe::FUN_800fb9ec;
+    particleInstancePrerenderCallbacks_80119bac[5] = SEffe::FUN_800fba58;
+    particleInstancePrerenderCallbacks_80119bac[6] = SEffe::FUN_800fbb14;
+    particleInstancePrerenderCallbacks_80119bac[7] = SEffe::FUN_800fbb14;
+    particleInstancePrerenderCallbacks_80119bac[8] = SEffe::FUN_800fbbe0;
+    particleInstancePrerenderCallbacks_80119bac[9] = SEffe::FUN_800fbbe0;
+    particleInstancePrerenderCallbacks_80119bac[10] = SEffe::FUN_800fbd04;
+    particleInstancePrerenderCallbacks_80119bac[11] = SEffe::FUN_800fbd04;
+    particleInstancePrerenderCallbacks_80119bac[12] = SEffe::FUN_800fba58;
+    particleInstancePrerenderCallbacks_80119bac[13] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[14] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[15] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[16] = SEffe::FUN_800fbd68;
+    particleInstancePrerenderCallbacks_80119bac[17] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[18] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[19] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[20] = SEffe::FUN_800fbe94;
+    particleInstancePrerenderCallbacks_80119bac[21] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[22] = SEffe::FUN_800fbf50;
+    particleInstancePrerenderCallbacks_80119bac[23] = SEffe::FUN_800fbfd0;
+    particleInstancePrerenderCallbacks_80119bac[24] = SEffe::FUN_800fc068;
+    particleInstancePrerenderCallbacks_80119bac[25] = SEffe::FUN_800fc0d0;
+    particleInstancePrerenderCallbacks_80119bac[26] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[27] = SEffe::FUN_800fc1fc;
+    particleInstancePrerenderCallbacks_80119bac[28] = SEffe::FUN_800fc068;
+    particleInstancePrerenderCallbacks_80119bac[29] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[30] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[31] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[32] = SEffe::FUN_800fc280;
+    particleInstancePrerenderCallbacks_80119bac[33] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[34] = SEffe::FUN_800fc348;
+    particleInstancePrerenderCallbacks_80119bac[35] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[36] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[37] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[38] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[39] = SEffe::FUN_800fc410;
+    particleInstancePrerenderCallbacks_80119bac[40] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[41] = SEffe::FUN_800fc42c;
+    particleInstancePrerenderCallbacks_80119bac[42] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[43] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[44] = SEffe::FUN_800fc410;
+    particleInstancePrerenderCallbacks_80119bac[45] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[46] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[47] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[48] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[49] = SEffe::FUN_800fc528;
+    particleInstancePrerenderCallbacks_80119bac[50] = SEffe::FUN_800fc5a8;
+    particleInstancePrerenderCallbacks_80119bac[51] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[52] = SEffe::FUN_800fc61c;
+    particleInstancePrerenderCallbacks_80119bac[53] = SEffe::FUN_800fc6bc;
+    particleInstancePrerenderCallbacks_80119bac[54] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[55] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[56] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[57] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[58] = SEffe::FUN_800fc768;
+    particleInstancePrerenderCallbacks_80119bac[59] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[60] = SEffe::FUN_800fc7c8;
+    particleInstancePrerenderCallbacks_80119bac[61] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[62] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[63] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[64] = SEffe::FUN_800fb9c0; // no-op
   }
-  private static final QuadConsumer<ScriptState<EffectManagerData6c>, EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94>[] renderCheckCallbacks_80119cb0 = new QuadConsumer[65];
+  private static final QuadConsumer<ScriptState<EffectManagerData6c>, EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94>[] particleInstanceTickCallbacks_80119cb0 = new QuadConsumer[65];
   static {
-    renderCheckCallbacks_80119cb0[0] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[1] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[2] = SEffe::FUN_80100d60;
-    renderCheckCallbacks_80119cb0[3] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[4] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[5] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[6] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[7] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[8] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[9] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[10] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[11] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[12] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[13] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[14] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[15] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[16] = SEffe::FUN_80100e28;
-    renderCheckCallbacks_80119cb0[17] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[18] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[19] = SEffe::FUN_80100e28;
-    renderCheckCallbacks_80119cb0[20] = SEffe::FUN_80100e28;
-    renderCheckCallbacks_80119cb0[21] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[22] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[23] = SEffe::FUN_80100e4c;
-    renderCheckCallbacks_80119cb0[24] = SEffe::FUN_80100e28;
-    renderCheckCallbacks_80119cb0[25] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[26] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[27] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[28] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[29] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[30] = SEffe::FUN_80100ea0;
-    renderCheckCallbacks_80119cb0[31] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[32] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[33] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[34] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[35] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[36] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[37] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[38] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[39] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[40] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[41] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[42] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[43] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[44] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[45] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[46] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[47] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[48] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[49] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[50] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[51] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[52] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[53] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[54] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[55] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[56] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[57] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[58] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[59] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[60] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[61] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[62] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[63] = SEffe::FUN_80100d58; // no-op
-    renderCheckCallbacks_80119cb0[64] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[0] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[1] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[2] = SEffe::FUN_80100d60;
+    particleInstanceTickCallbacks_80119cb0[3] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[4] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[5] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[6] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[7] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[8] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[9] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[10] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[11] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[12] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[13] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[14] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[15] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[16] = SEffe::FUN_80100e28;
+    particleInstanceTickCallbacks_80119cb0[17] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[18] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[19] = SEffe::FUN_80100e28;
+    particleInstanceTickCallbacks_80119cb0[20] = SEffe::FUN_80100e28;
+    particleInstanceTickCallbacks_80119cb0[21] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[22] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[23] = SEffe::FUN_80100e4c;
+    particleInstanceTickCallbacks_80119cb0[24] = SEffe::FUN_80100e28;
+    particleInstanceTickCallbacks_80119cb0[25] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[26] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[27] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[28] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[29] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[30] = SEffe::FUN_80100ea0;
+    particleInstanceTickCallbacks_80119cb0[31] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[32] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[33] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[34] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[35] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[36] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[37] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[38] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[39] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[40] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[41] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[42] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[43] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[44] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[45] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[46] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[47] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[48] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[49] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[50] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[51] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[52] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[53] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[54] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[55] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[56] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[57] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[58] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[59] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[60] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[61] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[62] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[63] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[64] = SEffe::FUN_80100d58; // no-op
   }
   private static final QuadConsumer<EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94, ParticleEffectData98Inner24>[] initializerCallbacks_80119db4 = new QuadConsumer[65];
   static {
@@ -1152,7 +1152,7 @@ public final class SEffe {
   }
 
   @Method(0x800fd084L)
-  public static void FUN_800fd084(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  public static void updateParticleRotationTranslationColour(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
     particle.managerTranslation_2c.set(manager._10.trans_04);
     particle.managerRotation_68.set(manager._10.rot_10);
 
@@ -1240,7 +1240,7 @@ public final class SEffe {
   }
 
   @Method(0x800fd460L)
-  public static boolean checkParticleShouldRender(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  public static boolean tickParticleInstance(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
     particle.framesUntilRender_04--;
 
     final short framesUntilRender = particle.framesUntilRender_04;
@@ -1250,7 +1250,7 @@ public final class SEffe {
       if(framesUntilRender != 0) {
         return false;
       }
-      FUN_800fd084(manager, effect, particle);
+      updateParticleRotationTranslationColour(manager, effect, particle);
 
       if((manager._10._24 & 0x10) != 0) {
         particle.particlePosition_50.setY((short)0);
@@ -1271,7 +1271,7 @@ public final class SEffe {
     }
 
     //LAB_800fd54c
-    effect.renderCheckCallback_88.accept(state, manager, effect, particle);
+    effect.particleInstanceTickCallback_88.accept(state, manager, effect, particle);
 
     if((particle.flags_90 & 0x1) == 0) {
       return false;
@@ -1284,7 +1284,7 @@ public final class SEffe {
     //LAB_800fd58c
     if(particle.ticksRemaining_12 == 0 && (manager._10._24 & 0x80) == 0) {
       particle.flags_90 &= 0xffff_fffe;
-      effect.callback_90.accept(state, manager, effect, particle);
+      effect.particleInstanceReconstructorCallback_90.accept(state, manager, effect, particle);
       return false;
     }
 
@@ -1300,8 +1300,8 @@ public final class SEffe {
     //LAB_800fd660
     for(int i = 0; i < effect.countParticleInstance_50; i++) {
       final ParticleEffectInstance94 particle = effect.particleArray_68[i];
-      if(checkParticleShouldRender(state, manager, effect, particle)) {
-        effect.prerenderCallback_84.accept(manager, effect, particle);
+      if(tickParticleInstance(state, manager, effect, particle)) {
+        effect.particleInstancePrerenderCallback_84.accept(manager, effect, particle);
         final VECTOR colour = new VECTOR();
         tickParticleAttributes(manager, effect, particle, colour);
 
@@ -1341,7 +1341,7 @@ public final class SEffe {
       for(int i = 0; i < effect.countParticleInstance_50; i++) {
         final ParticleEffectInstance94 particle = effect.particleArray_68[i];
 
-        if(checkParticleShouldRender(state, manager, effect, particle)) {
+        if(tickParticleInstance(state, manager, effect, particle)) {
           //LAB_800fd918
           for(int j = effect.countParticleSub_54 - 1; j > 0; j--) {
             particle.subParticlePositionsArray_44[j].set(particle.subParticlePositionsArray_44[j - 1]);
@@ -1349,7 +1349,7 @@ public final class SEffe {
 
           //LAB_800fd950
           particle.subParticlePositionsArray_44[0].set(particle.particlePosition_50);
-          effect.prerenderCallback_84.accept(manager, effect, particle);
+          effect.particleInstancePrerenderCallback_84.accept(manager, effect, particle);
 
           final VECTOR colour = new VECTOR();
           tickParticleAttributes(manager, effect, particle, colour);
@@ -1443,8 +1443,8 @@ public final class SEffe {
     for(int i = 0; i < effect.countParticleInstance_50; i++) {
       final ParticleEffectInstance94 particle = effect.particleArray_68[i];
 
-      if(checkParticleShouldRender(state, manager, effect, particle)) {
-        effect.prerenderCallback_84.accept(manager, effect, particle);
+      if(tickParticleInstance(state, manager, effect, particle)) {
+        effect.particleInstancePrerenderCallback_84.accept(manager, effect, particle);
 
         final VECTOR colour = new VECTOR();
         tickParticleAttributes(manager, effect, particle, colour);
@@ -1493,14 +1493,14 @@ public final class SEffe {
     for(int i = 0; i < effect.countParticleInstance_50; i++) {
       final ParticleEffectInstance94 particle = effect.particleArray_68[i];
 
-      if(checkParticleShouldRender(state, manager, effect, particle)) {
+      if(tickParticleInstance(state, manager, effect, particle)) {
         //LAB_800fe1bc
         for(int j = effect.countParticleSub_54 - 1; j > 0; j--) {
           particle.particleInstanceSubArray_80[j].copy(particle.particleInstanceSubArray_80[j - 1]);
         }
 
         //LAB_800fe1fc
-        effect.prerenderCallback_84.accept(manager, effect, particle);
+        effect.particleInstancePrerenderCallback_84.accept(manager, effect, particle);
 
         tickParticleAttributes(manager, effect, particle, colour);
 
@@ -2473,8 +2473,8 @@ public final class SEffe {
     //LAB_801021c0
     effect.myState_00 = state;
     effect.parentScriptIndex_04 = script.params_20[1].get();
-    effect.prerenderCallback_84 = prerenderCallbacks_80119bac[script.params_20[8].get()];
-    effect.renderCheckCallback_88 = renderCheckCallbacks_80119cb0[script.params_20[8].get()];
+    effect.particleInstancePrerenderCallback_84 = particleInstancePrerenderCallbacks_80119bac[script.params_20[8].get()];
+    effect.particleInstanceTickCallback_88 = particleInstanceTickCallbacks_80119cb0[script.params_20[8].get()];
     effect.countFramesRendered_52 = 0;
     effect.halfW_34 = 0;
     effect.halfH_36 = 0;
@@ -2506,10 +2506,10 @@ public final class SEffe {
 
     //LAB_801022b4
     if(effect.callback90Type_61 != 0) {
-      effect.callback_90 = SEffe::FUN_801012d4;
+      effect.particleInstanceReconstructorCallback_90 = SEffe::FUN_801012d4;
     } else {
       //LAB_801022cc
-      effect.callback_90 = SEffe::FUN_801012a0;
+      effect.particleInstanceReconstructorCallback_90 = SEffe::FUN_801012a0;
     }
 
     //LAB_801022d4
