@@ -11,72 +11,75 @@ public class BattleCamera {
 
   // Refpoint stuff
   /** 8-bit fixed-point */
-  public final Vector3f refpointBaseTranslation_20 = new Vector3f();  // related to refpoint
+  public final Vector3f refpointBaseTranslation_20 = new Vector3f();
   /** 8-bit fixed-point */
   public float refpointDeltaMagnitude_2c;
-  /** For vec_60, 8-bit fixed-point */
+  /** For vec_60/refpointDeltaMagnitude_2c, 8-bit fixed-point */
   public float stepZ_30;
 
   /** 8-bit fixed-point */
   public float refpointAngleX_38;
-  /** For vec_20, 8-bit fixed-point */
-  public float stepX_3c;  // refpoint X factor?
-  /** For vec_20/stepZ_30, 8-bit fixed-point */
+  /** For refpointBaseTranslation_20/refpointAngleX_38, 8-bit fixed-point */
+  public float stepX_3c;
+  /** For vec_60/stepZ_30, 8-bit fixed-point */
   public float stepZAcceleration_40;
   /** 8-bit fixed-point */
   public float refpointAngleY_44;
-  /** For vec_20, 8-bit fixed-point */
-  public float stepY_48;  // refpoint Y factor?
+  /** For refpointBaseTranslation_20/refpointAngleY_44, 8-bit fixed-point */
+  public float stepY_48;
 
-  /** For vec_20, 8-bit fixed-point */
-  public float stepZ_54;  // refpoint Z factor?
+  /** For refpointBaseTranslation_20/refpointDeltaMagnitude_2c, 8-bit fixed-point */
+  public float stepZ_54;
 
   /** TODO should this be a float? */
-  public int refpointTicksRemaining_5c;  // refpoint step count?
+  public int refpointTicksRemaining_5c;
   /** XY rotation, Z magnitude, 8-bit fixed-point */
   public final Vector3f vec_60 = new Vector3f();
+  /** For vec_60 */
   public float stepZ_6c;
+  /** for vec_60/stepZ_6c */
   public float stepZAcceleration_70;
-  public final Vector3f vec_74 = new Vector3f();
-  public int bobjIndex_80;  // refpoint bobj index?
+  public final Vector3f refpointTargetTranslation_74 = new Vector3f();
+  public int refpointBobjIndex_80;
 
-  public int callbackIndex_88;  // refpoint callback?
+  public int refpointCallbackIndex_88;
   //
 
   // Viewpoint stuff
   /** 8-bit fixed-point */
-  public final Vector3f viewpointBaseTranslation_94 = new Vector3f();  // related to viewpoint
-  public float viewpointDeltaMagnitude_a0; // something z
-  /** For z_a0, 8-bit fixed-point */
+  public final Vector3f viewpointBaseTranslation_94 = new Vector3f();
+  /** 8-bit fixed-point */
+  public float viewpointDeltaMagnitude_a0;
+  /** For vec_d4/viewpointDeltaMagnitude_a0, 8-bit fixed-point */
   public float stepZ_a4; // camera rotation Z step?
 
   /** 8-bit fixed-point */
-  public float viewpointAngleX_ac; // something x
-  /** For vec_94, 8-bit fixed-point */
-  public float stepX_b0; // something x
-  /** For zStep_a4, 8-bit fixed-point */
+  public float viewpointAngleX_ac;
+  /** For viewpointBaseTranslation_94/viewpointAngleX_ac, 8-bit fixed-point */
+  public float stepX_b0;
+  /** For vec_d4/stepZ_a4, 8-bit fixed-point */
   public float stepZAcceleration_b4; // camera rotation Z step acceleration?
   /** 8-bit fixed-point */
-  public float viewpointAngleY_b8; // something y
-  /** For vec_94, 8-bit fixed-point */
-  public float stepY_bc; // something y
+  public float viewpointAngleY_b8;
+  /** For viewpointBaseTranslation_94/viewpointAngleY_b8, 8-bit fixed-point */
+  public float stepY_bc;
 
-  /** For vec_94, 8-bit fixed-point */
-  public float stepZ_c8; // something z
+  /** For viewpointBaseTranslation_94/viewpointDeltaMagnitude_a0, 8-bit fixed-point */
+  public float stepZ_c8;
 
   /** TODO should this be a float? */
-  public int viewpointTicksRemaining_d0;  // viewpoint step count?
+  public int viewpointTicksRemaining_d0;
   /** XY rotation, Z magnitude, 8-bit fixed-point */
-  public final Vector3f _d4 = new Vector3f();  // camera rotation?
-  /** For _d4, 8-bit fixed-point */
+  public final Vector3f vec_d4 = new Vector3f();  // camera rotation?
+  /** For vec_d4, 8-bit fixed-point */
   public float stepZ_e0;
-  /** For _d4, 8-bit fixed-point */
+  /** For vec_d4/stepZ_e0, 8-bit fixed-point */
   public float stepZAcceleration_e4;
   /** 8-bit fixed-point */
-  public final Vector3f _e8 = new Vector3f();  // viewpoint factor?
-  public int bobjIndex_f4;  // viewpoint bobj index?
+  public final Vector3f viewpointTargetTranslation_e8 = new Vector3f();
+  public int viewpointBobjIndex_f4;
 
-  public int callbackIndex_fc;  // viewpoint callback?
+  public int viewpointCallbackIndex_fc;
   //
 
   public float projectionPlaneDistance_100;
