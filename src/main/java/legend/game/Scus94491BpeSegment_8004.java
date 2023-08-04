@@ -734,7 +734,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[841] = SEffe::FUN_80105c38;
     // scriptSubFunctions_8004e29c[842] = Temp::FUN_800c6968;
     scriptSubFunctions_8004e29c[843] = SEffe::allocateScreenDistortionEffect;
-    scriptSubFunctions_8004e29c[844] = SEffe::FUN_801089cc;
+    scriptSubFunctions_8004e29c[844] = SEffe::scriptGetDragoonAdditionHitsCompleted;
     scriptSubFunctions_8004e29c[845] = SEffe::FUN_801023f4;
     scriptSubFunctions_8004e29c[846] = Bttl_800c::FUN_800cfec8;
     scriptSubFunctions_8004e29c[847] = SEffe::FUN_801023fc;
