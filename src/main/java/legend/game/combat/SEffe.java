@@ -25,14 +25,15 @@ import legend.core.gte.USCOLOUR;
 import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
 import legend.core.memory.Ref;
-import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.ByteRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
+import legend.core.memory.types.Pointer;
 import legend.core.memory.types.QuadConsumer;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.TriConsumer;
+import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.game.combat.bobj.BattleObject27c;
 import legend.game.combat.deff.Anim;
@@ -71,6 +72,7 @@ import legend.game.combat.effects.ParticleEffectData98;
 import legend.game.combat.effects.ParticleEffectData98Inner24;
 import legend.game.combat.effects.ParticleEffectInstance94;
 import legend.game.combat.effects.ParticleEffectInstance94Sub10;
+import legend.game.combat.effects.ParticleInitialTransformationMetrics10;
 import legend.game.combat.effects.ParticleInnerStuff04;
 import legend.game.combat.effects.ParticleMetrics48;
 import legend.game.combat.effects.RainEffect08;
@@ -78,7 +80,6 @@ import legend.game.combat.effects.RaindropEffect0c;
 import legend.game.combat.effects.ScreenCaptureEffect1c;
 import legend.game.combat.effects.ScreenCaptureEffectMetrics8;
 import legend.game.combat.effects.ScreenDistortionEffectData08;
-import legend.game.combat.effects.SomeParticleStruct10;
 import legend.game.combat.effects.SpriteMetrics08;
 import legend.game.combat.effects.SpriteWithTrailEffect30;
 import legend.game.combat.effects.StarChildrenImpactEffect20;
@@ -92,10 +93,11 @@ import legend.game.combat.effects.TransformScalerEffect34;
 import legend.game.combat.effects.UnusedBuggedEffect24;
 import legend.game.combat.effects.WsDragoonTransformationFeatherInstance70;
 import legend.game.combat.effects.WsDragoonTransformationFeathersEffect14;
+import legend.game.combat.types.AdditionHitProperties10;
 import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.combat.types.DragoonAdditionScriptData1c;
-import legend.game.combat.types.EffeScriptData30;
-import legend.game.combat.types.EffeScriptData30Sub06;
+import legend.game.combat.types.PerfectDragoonAdditionEffect30;
+import legend.game.combat.types.PerfectDragoonAdditionEffectGlyph06;
 import legend.game.combat.types.VertexDifferenceAnimation18;
 import legend.game.combat.ui.AdditionOverlayMode;
 import legend.game.modding.coremod.CoreMod;
@@ -221,36 +223,36 @@ public final class SEffe {
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(SEffe.class);
 
-  private static final Value _800fb794 = MEMORY.ref(2, 0x800fb794L);
+  private static final ArrayRef<ShortRef> particleSubCounts_800fb794 = MEMORY.ref(2, 0x800fb794L, ArrayRef.of(ShortRef.class, 20, 2, ShortRef::new));
 
-  private static final Value _800fb7bc = MEMORY.ref(1, 0x800fb7bcL);
+  private static final ArrayRef<ByteRef> additionButtonRenderCallbackIndices_800fb7bc = MEMORY.ref(1, 0x800fb7bcL, ArrayRef.of(ByteRef.class, 4, 1, ByteRef::new));
 
-  /** Some kind of mysterious global 2-hit addition array */
-  private static final Value _800fb7c0 = MEMORY.ref(1, 0x800fb7c0L);
+  /** Some kind of mysterious global 2-hit addition array. Should probably be yeeted, but need to be sure. */
+  private static final ArrayRef<AdditionHitProperties10> staticTestAdditionHitProperties_800fb7c0 = MEMORY.ref(1, 0x800fb7c0L, ArrayRef.of(AdditionHitProperties10.class, 3, 16, AdditionHitProperties10::new));
 
   /** Four sets of color values used for addition overlay borders; only last actually used */
   public static final ArrayRef<UnsignedByteRef> additionBorderColours_800fb7f0 = MEMORY.ref(1, 0x800fb7f0L, ArrayRef.of(UnsignedByteRef.class, 0xc, 0x1, UnsignedByteRef::new));
 
-  private static final Value _800fb7fc = MEMORY.ref(1, 0x800fb7fcL);
+  private static final ArrayRef<ArrayRef<ByteRef>> daddyHudEyeTranslucencyModes_800fb7fc = MEMORY.ref(1, 0x800fb7fcL, ArrayRef.of(ArrayRef.classFor(ByteRef.class), 4, 2, ArrayRef.of(ByteRef.class, 2, 1, ByteRef::new)));
 
-  private static final Value _800fb804 = MEMORY.ref(1, 0x800fb804L);
+  private static final ArrayRef<ArrayRef<ShortRef>> daddyHudMeterOffsets_800fb804 = MEMORY.ref(1, 0x800fb804L, ArrayRef.of(ArrayRef.classFor(ShortRef.class), 5, 4, ArrayRef.of(ShortRef.class, 2, 2, ShortRef::new)));
 
-  private static final Value _800fb818 = MEMORY.ref(1, 0x800fb818L);
+  private static final ArrayRef<ArrayRef<ShortRef>> daddyHudMeterUvs_800fb818 = MEMORY.ref(1, 0x800fb818L, ArrayRef.of(ArrayRef.classFor(ShortRef.class), 5, 4, ArrayRef.of(ShortRef.class, 2, 2, ShortRef::new)));
 
-  private static final Value _800fb82c = MEMORY.ref(1, 0x800fb82cL);
+  private static final ArrayRef<ArrayRef<ShortRef>> daddyHudMeterDimensions_800fb82c = MEMORY.ref(1, 0x800fb82cL, ArrayRef.of(ArrayRef.classFor(ShortRef.class), 5, 4, ArrayRef.of(ShortRef.class, 2, 2, ShortRef::new)));
 
-  private static final Value _800fb840 = MEMORY.ref(1, 0x800fb840L);
+  private static final ArrayRef<ByteRef> daddyHudFrameClutOffsets_800fb840 = MEMORY.ref(1, 0x800fb840L, ArrayRef.of(ByteRef.class, 12, 1, ByteRef::new));
 
-  private static final Value _800fb84c = MEMORY.ref(1, 0x800fb84cL);
+  private static final ArrayRef<ByteRef> daddyHudEyeClutOffsets_800fb84c = MEMORY.ref(1, 0x800fb84cL, ArrayRef.of(ByteRef.class, 16, 1, ByteRef::new));
 
   private static final COLOUR _800fb8cc = MEMORY.ref(2, 0x800fb8ccL, COLOUR::new);
   private static final SVECTOR _800fb8d0 = MEMORY.ref(2, 0x800fb8d0L, SVECTOR::new);
 
-  private static final Value _800fb8fc = MEMORY.ref(4, 0x800fb8fcL);
-  private static final ArrayRef<ArrayRef<IntRef>> _800fb910 = MEMORY.ref(4, 0x800fb910L, ArrayRef.of(ArrayRef.classFor(IntRef.class), 4, 8, ArrayRef.of(IntRef.class, 2, 4, IntRef::new)));
-  private static final ArrayRef<ArrayRef<ByteRef>> _800fb930 = MEMORY.ref(1, 0x800fb930L, ArrayRef.of(ArrayRef.classFor(ByteRef.class), 4, 4, ArrayRef.of(ByteRef.class, 4, 1, ByteRef::new)));
+  private static final ArrayRef<IntRef> lensFlareGlowScales_800fb8fc = MEMORY.ref(4, 0x800fb8fcL, ArrayRef.of(IntRef.class, 5, 4, IntRef::new));
+  private static final ArrayRef<ArrayRef<IntRef>> lensFlareTranslationMagnitudeFactors_800fb910 = MEMORY.ref(4, 0x800fb910L, ArrayRef.of(ArrayRef.classFor(IntRef.class), 4, 8, ArrayRef.of(IntRef.class, 2, 4, IntRef::new)));
+  private static final ArrayRef<ArrayRef<ByteRef>> lensFlareVertexIndices_800fb930 = MEMORY.ref(1, 0x800fb930L, ArrayRef.of(ArrayRef.classFor(ByteRef.class), 4, 4, ArrayRef.of(ByteRef.class, 4, 1, ByteRef::new)));
 
-  private static final USCOLOUR _800fb94c = MEMORY.ref(2, 0x800fb94cL, USCOLOUR::new);
+  private static final USCOLOUR defaultEffectColour_800fb94c = MEMORY.ref(2, 0x800fb94cL, USCOLOUR::new);
 
   /**
    * <ol start="0">
@@ -268,7 +270,7 @@ public final class SEffe {
 
   private static final ArrayRef<ParticleInnerStuff04> particleInnerStuffDefaultsArray_801197ec = MEMORY.ref(4, 0x801197ecL, ArrayRef.of(ParticleInnerStuff04.class, 65, 0x4, ParticleInnerStuff04::new));
 
-  private static final ArrayRef<SomeParticleStruct10> _801198f0 = MEMORY.ref(4, 0x801198f0L, ArrayRef.of(SomeParticleStruct10.class, 65, 0xa, SomeParticleStruct10::new));
+  private static final ArrayRef<ParticleInitialTransformationMetrics10> particleInitialTransformationMetrics_801198f0 = MEMORY.ref(4, 0x801198f0L, ArrayRef.of(ParticleInitialTransformationMetrics10.class, 65, 0xa, ParticleInitialTransformationMetrics10::new));
 
   /**
    * Particle effect renderers
@@ -311,142 +313,142 @@ public final class SEffe {
     subParticleInitializers_80119b94[5] = SEffe::FUN_80101c74;
   }
 
-  private static final TriConsumer<EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94>[] prerenderCallbacks_80119bac = new TriConsumer[65];
+  private static final TriConsumer<EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94>[] particleInstancePrerenderCallbacks_80119bac = new TriConsumer[65];
 
   static {
-    prerenderCallbacks_80119bac[0] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[1] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[2] = SEffe::FUN_800fb9c8;
-    prerenderCallbacks_80119bac[3] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[4] = SEffe::FUN_800fb9ec;
-    prerenderCallbacks_80119bac[5] = SEffe::FUN_800fba58;
-    prerenderCallbacks_80119bac[6] = SEffe::FUN_800fbb14;
-    prerenderCallbacks_80119bac[7] = SEffe::FUN_800fbb14;
-    prerenderCallbacks_80119bac[8] = SEffe::FUN_800fbbe0;
-    prerenderCallbacks_80119bac[9] = SEffe::FUN_800fbbe0;
-    prerenderCallbacks_80119bac[10] = SEffe::FUN_800fbd04;
-    prerenderCallbacks_80119bac[11] = SEffe::FUN_800fbd04;
-    prerenderCallbacks_80119bac[12] = SEffe::FUN_800fba58;
-    prerenderCallbacks_80119bac[13] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[14] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[15] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[16] = SEffe::FUN_800fbd68;
-    prerenderCallbacks_80119bac[17] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[18] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[19] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[20] = SEffe::FUN_800fbe94;
-    prerenderCallbacks_80119bac[21] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[22] = SEffe::FUN_800fbf50;
-    prerenderCallbacks_80119bac[23] = SEffe::FUN_800fbfd0;
-    prerenderCallbacks_80119bac[24] = SEffe::FUN_800fc068;
-    prerenderCallbacks_80119bac[25] = SEffe::FUN_800fc0d0;
-    prerenderCallbacks_80119bac[26] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[27] = SEffe::FUN_800fc1fc;
-    prerenderCallbacks_80119bac[28] = SEffe::FUN_800fc068;
-    prerenderCallbacks_80119bac[29] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[30] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[31] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[32] = SEffe::FUN_800fc280;
-    prerenderCallbacks_80119bac[33] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[34] = SEffe::FUN_800fc348;
-    prerenderCallbacks_80119bac[35] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[36] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[37] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[38] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[39] = SEffe::FUN_800fc410;
-    prerenderCallbacks_80119bac[40] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[41] = SEffe::FUN_800fc42c;
-    prerenderCallbacks_80119bac[42] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[43] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[44] = SEffe::FUN_800fc410;
-    prerenderCallbacks_80119bac[45] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[46] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[47] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[48] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[49] = SEffe::FUN_800fc528;
-    prerenderCallbacks_80119bac[50] = SEffe::FUN_800fc5a8;
-    prerenderCallbacks_80119bac[51] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[52] = SEffe::FUN_800fc61c;
-    prerenderCallbacks_80119bac[53] = SEffe::FUN_800fc6bc;
-    prerenderCallbacks_80119bac[54] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[55] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[56] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[57] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[58] = SEffe::FUN_800fc768;
-    prerenderCallbacks_80119bac[59] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[60] = SEffe::FUN_800fc7c8;
-    prerenderCallbacks_80119bac[61] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[62] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[63] = SEffe::FUN_800fb9c0; // no-op
-    prerenderCallbacks_80119bac[64] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[0] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[1] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[2] = SEffe::FUN_800fb9c8;
+    particleInstancePrerenderCallbacks_80119bac[3] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[4] = SEffe::FUN_800fb9ec;
+    particleInstancePrerenderCallbacks_80119bac[5] = SEffe::FUN_800fba58;
+    particleInstancePrerenderCallbacks_80119bac[6] = SEffe::FUN_800fbb14;
+    particleInstancePrerenderCallbacks_80119bac[7] = SEffe::FUN_800fbb14;
+    particleInstancePrerenderCallbacks_80119bac[8] = SEffe::FUN_800fbbe0;
+    particleInstancePrerenderCallbacks_80119bac[9] = SEffe::FUN_800fbbe0;
+    particleInstancePrerenderCallbacks_80119bac[10] = SEffe::FUN_800fbd04;
+    particleInstancePrerenderCallbacks_80119bac[11] = SEffe::FUN_800fbd04;
+    particleInstancePrerenderCallbacks_80119bac[12] = SEffe::FUN_800fba58;
+    particleInstancePrerenderCallbacks_80119bac[13] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[14] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[15] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[16] = SEffe::FUN_800fbd68;
+    particleInstancePrerenderCallbacks_80119bac[17] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[18] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[19] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[20] = SEffe::FUN_800fbe94;
+    particleInstancePrerenderCallbacks_80119bac[21] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[22] = SEffe::FUN_800fbf50;
+    particleInstancePrerenderCallbacks_80119bac[23] = SEffe::FUN_800fbfd0;
+    particleInstancePrerenderCallbacks_80119bac[24] = SEffe::FUN_800fc068;
+    particleInstancePrerenderCallbacks_80119bac[25] = SEffe::FUN_800fc0d0;
+    particleInstancePrerenderCallbacks_80119bac[26] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[27] = SEffe::FUN_800fc1fc;
+    particleInstancePrerenderCallbacks_80119bac[28] = SEffe::FUN_800fc068;
+    particleInstancePrerenderCallbacks_80119bac[29] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[30] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[31] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[32] = SEffe::FUN_800fc280;
+    particleInstancePrerenderCallbacks_80119bac[33] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[34] = SEffe::FUN_800fc348;
+    particleInstancePrerenderCallbacks_80119bac[35] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[36] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[37] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[38] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[39] = SEffe::FUN_800fc410;
+    particleInstancePrerenderCallbacks_80119bac[40] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[41] = SEffe::FUN_800fc42c;
+    particleInstancePrerenderCallbacks_80119bac[42] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[43] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[44] = SEffe::FUN_800fc410;
+    particleInstancePrerenderCallbacks_80119bac[45] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[46] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[47] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[48] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[49] = SEffe::FUN_800fc528;
+    particleInstancePrerenderCallbacks_80119bac[50] = SEffe::FUN_800fc5a8;
+    particleInstancePrerenderCallbacks_80119bac[51] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[52] = SEffe::FUN_800fc61c;
+    particleInstancePrerenderCallbacks_80119bac[53] = SEffe::FUN_800fc6bc;
+    particleInstancePrerenderCallbacks_80119bac[54] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[55] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[56] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[57] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[58] = SEffe::FUN_800fc768;
+    particleInstancePrerenderCallbacks_80119bac[59] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[60] = SEffe::FUN_800fc7c8;
+    particleInstancePrerenderCallbacks_80119bac[61] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[62] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[63] = SEffe::FUN_800fb9c0; // no-op
+    particleInstancePrerenderCallbacks_80119bac[64] = SEffe::FUN_800fb9c0; // no-op
   }
-  private static final QuadConsumer<ScriptState<EffectManagerData6c>, EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94>[] _80119cb0 = new QuadConsumer[65];
+  private static final QuadConsumer<ScriptState<EffectManagerData6c>, EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94>[] particleInstanceTickCallbacks_80119cb0 = new QuadConsumer[65];
   static {
-    _80119cb0[0] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[1] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[2] = SEffe::FUN_80100d60;
-    _80119cb0[3] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[4] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[5] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[6] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[7] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[8] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[9] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[10] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[11] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[12] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[13] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[14] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[15] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[16] = SEffe::FUN_80100e28;
-    _80119cb0[17] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[18] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[19] = SEffe::FUN_80100e28;
-    _80119cb0[20] = SEffe::FUN_80100e28;
-    _80119cb0[21] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[22] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[23] = SEffe::FUN_80100e4c;
-    _80119cb0[24] = SEffe::FUN_80100e28;
-    _80119cb0[25] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[26] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[27] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[28] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[29] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[30] = SEffe::FUN_80100ea0;
-    _80119cb0[31] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[32] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[33] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[34] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[35] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[36] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[37] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[38] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[39] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[40] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[41] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[42] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[43] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[44] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[45] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[46] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[47] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[48] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[49] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[50] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[51] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[52] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[53] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[54] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[55] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[56] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[57] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[58] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[59] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[60] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[61] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[62] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[63] = SEffe::FUN_80100d58; // no-op
-    _80119cb0[64] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[0] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[1] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[2] = SEffe::FUN_80100d60;
+    particleInstanceTickCallbacks_80119cb0[3] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[4] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[5] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[6] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[7] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[8] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[9] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[10] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[11] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[12] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[13] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[14] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[15] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[16] = SEffe::FUN_80100e28;
+    particleInstanceTickCallbacks_80119cb0[17] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[18] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[19] = SEffe::FUN_80100e28;
+    particleInstanceTickCallbacks_80119cb0[20] = SEffe::FUN_80100e28;
+    particleInstanceTickCallbacks_80119cb0[21] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[22] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[23] = SEffe::FUN_80100e4c;
+    particleInstanceTickCallbacks_80119cb0[24] = SEffe::FUN_80100e28;
+    particleInstanceTickCallbacks_80119cb0[25] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[26] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[27] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[28] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[29] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[30] = SEffe::FUN_80100ea0;
+    particleInstanceTickCallbacks_80119cb0[31] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[32] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[33] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[34] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[35] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[36] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[37] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[38] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[39] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[40] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[41] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[42] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[43] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[44] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[45] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[46] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[47] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[48] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[49] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[50] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[51] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[52] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[53] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[54] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[55] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[56] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[57] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[58] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[59] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[60] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[61] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[62] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[63] = SEffe::FUN_80100d58; // no-op
+    particleInstanceTickCallbacks_80119cb0[64] = SEffe::FUN_80100d58; // no-op
   }
   private static final QuadConsumer<EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94, ParticleEffectData98Inner24>[] initializerCallbacks_80119db4 = new QuadConsumer[65];
   static {
@@ -615,32 +617,25 @@ public final class SEffe {
     screenCaptureRenderers_80119fec[1] = SEffe::renderScreenCapture;
   }
 
-  private static final Value _80119f40 = MEMORY.ref(1, 0x80119f40L);
+  /** -1 = failed with no successful presses, 0 = continue, 1-4 = number successful presses */
+  private static final ByteRef daddyHitsCompleted_80119f40 = MEMORY.ref(1, 0x80119f40L, ByteRef::new);
   private static byte additionOverlayActive_80119f41;
   /** Active when spinning */
-  private static byte daddyOverlayActive_80119f42;
+  private static byte daddyMeterSpinning_80119f42;
 
-  /**
-   * Struct or something, 0x1c bytes
-   */
-  private static final Value _80119f44 = MEMORY.ref(1, 0x80119f44L);
-  /**
-   * Struct or something, 0x1c bytes
-   */
-  private static final Value _80119f60 = MEMORY.ref(1, 0x80119f60L);
-  /**
-   * Struct or something, 0x1c bytes
-   */
-  private static final Value _80119f7c = MEMORY.ref(1, 0x80119f7cL);
-  /**
-   * Struct or something, 0x1c bytes
-   */
-  private static final Value _80119f98 = MEMORY.ref(1, 0x80119f98L);
+  /** Array of daddy spinner step counts */
+  private static final ArrayRef<IntRef> daddyHudSpinnerStepCounts_80119f44 = MEMORY.ref(4, 0x80119f44L, ArrayRef.of(IntRef.class, 7, 4, IntRef::new));
+  /** Array of daddy spinner successful press frame windows */
+  private static final ArrayRef<IntRef> daddyHitSuccessWindows_80119f60 = MEMORY.ref(4, 0x80119f60L, ArrayRef.of(IntRef.class, 7, 4, IntRef::new));
+  /** Array of daddy spinner step counts for special boi Kongol */
+  private static final ArrayRef<IntRef> kongolDaddyHudSpinnerStepCounts_80119f7c = MEMORY.ref(4, 0x80119f7cL, ArrayRef.of(IntRef.class, 7, 4, IntRef::new));
+  /** Array of daddy spinner successful press frame windows for special boi Kongol */
+  private static final ArrayRef<IntRef> kongolDaddyHitSuccessWindows_80119f98 = MEMORY.ref(4, 0x80119f98L, ArrayRef.of(IntRef.class, 7, 4, IntRef::new));
 
-  private static final Value _80119fb4 = MEMORY.ref(1, 0x80119fb4L);
+  private static final ByteRef daddySpinnerBrightnessFactor_80119fb4 = MEMORY.ref(1, 0x80119fb4L, ByteRef::new);
 
-  private static final ArrayRef<UnsignedByteRef> _80119fbc = MEMORY.ref(1, 0x80119fbcL, ArrayRef.of(UnsignedByteRef.class, 8, 1, UnsignedByteRef::new));
-  private static final ArrayRef<UnsignedByteRef> _80119fc4 = MEMORY.ref(1, 0x80119fc4L, ArrayRef.of(UnsignedByteRef.class, 8, 1, UnsignedByteRef::new));
+  private static final ArrayRef<UnsignedByteRef> perfectDaddyGlyphUs_80119fbc = MEMORY.ref(1, 0x80119fbcL, ArrayRef.of(UnsignedByteRef.class, 8, 1, UnsignedByteRef::new));
+  private static final ArrayRef<UnsignedByteRef> perfectDaddyGlyphVs_80119fc4 = MEMORY.ref(1, 0x80119fc4L, ArrayRef.of(UnsignedByteRef.class, 8, 1, UnsignedByteRef::new));
 
   /**
    * <ol start="0">
@@ -666,15 +661,15 @@ public final class SEffe {
   /** Success values for each addition hit: 0 = not attempted, 1 = success, -1 = too early, -2 = too late, -3 = wrong button */
   private static final byte[] additionHitCompletionState_8011a014 = new byte[8];
 
-  private static final Value _8011a01c = MEMORY.ref(4, 0x8011a01cL);
-  private static final Value _8011a020 = MEMORY.ref(4, 0x8011a020L);
-  private static final Value _8011a024 = MEMORY.ref(4, 0x8011a024L);
-  private static final Value _8011a028 = MEMORY.ref(4, 0x8011a028L);
-  private static final Value _8011a02c = MEMORY.ref(4, 0x8011a02cL);
+  private static final IntRef daddyHudOffsetX_8011a01c = MEMORY.ref(4, 0x8011a01cL, IntRef::new);
+  private static final IntRef daddyHudOffsetY_8011a020 = MEMORY.ref(4, 0x8011a020L, IntRef::new);
+  /** Unused */
+  private static final IntRef daddyScriptIndex_8011a024 = MEMORY.ref(4, 0x8011a024L, IntRef::new);
+  private static final Pointer<ArrayRef<IntRef>> daddyHudSpinnerStepCountsPointer_8011a028 = MEMORY.ref(4, 0x8011a028L, Pointer.deferred(4, ArrayRef.of(IntRef.class, 7, 4, IntRef::new)));
+  private static final Pointer<ArrayRef<IntRef>> daddyHitSuccessWindowsPointer_8011a02c = MEMORY.ref(4, 0x8011a02cL, Pointer.deferred(4, ArrayRef.of(IntRef.class, 7, 4, IntRef::new)));
 
-  private static final Value _8011a030 = MEMORY.ref(1, 0x8011a030L);
-
-  private static final Value _8011a048 = MEMORY.ref(1, 0x8011a048L);
+  /** Related to processing type 2 LMBs */
+  private static final UnboundedArrayRef<ByteRef> lmbType2TransformationData_8011a048 = MEMORY.ref(1, 0x8011a048L, UnboundedArrayRef.of(1, ByteRef::new));
 
   @Method(0x800fb95cL)
   public static void FUN_800fb95c(final ParticleEffectInstance94 particle) {
@@ -1157,7 +1152,7 @@ public final class SEffe {
   }
 
   @Method(0x800fd084L)
-  public static void FUN_800fd084(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  public static void updateParticleRotationTranslationColour(final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
     particle.managerTranslation_2c.set(manager._10.trans_04);
     particle.managerRotation_68.set(manager._10.rot_10);
 
@@ -1245,7 +1240,7 @@ public final class SEffe {
   }
 
   @Method(0x800fd460L)
-  public static boolean checkParticleShouldRender(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
+  public static boolean tickParticleInstance(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
     particle.framesUntilRender_04--;
 
     final short framesUntilRender = particle.framesUntilRender_04;
@@ -1255,7 +1250,7 @@ public final class SEffe {
       if(framesUntilRender != 0) {
         return false;
       }
-      FUN_800fd084(manager, effect, particle);
+      updateParticleRotationTranslationColour(manager, effect, particle);
 
       if((manager._10._24 & 0x10) != 0) {
         particle.particlePosition_50.setY((short)0);
@@ -1276,7 +1271,7 @@ public final class SEffe {
     }
 
     //LAB_800fd54c
-    effect.callback_88.accept(state, manager, effect, particle);
+    effect.particleInstanceTickCallback_88.accept(state, manager, effect, particle);
 
     if((particle.flags_90 & 0x1) == 0) {
       return false;
@@ -1289,7 +1284,7 @@ public final class SEffe {
     //LAB_800fd58c
     if(particle.ticksRemaining_12 == 0 && (manager._10._24 & 0x80) == 0) {
       particle.flags_90 &= 0xffff_fffe;
-      effect.callback_90.accept(state, manager, effect, particle);
+      effect.particleInstanceReconstructorCallback_90.accept(state, manager, effect, particle);
       return false;
     }
 
@@ -1305,8 +1300,8 @@ public final class SEffe {
     //LAB_800fd660
     for(int i = 0; i < effect.countParticleInstance_50; i++) {
       final ParticleEffectInstance94 particle = effect.particleArray_68[i];
-      if(checkParticleShouldRender(state, manager, effect, particle)) {
-        effect.prerenderCallback_84.accept(manager, effect, particle);
+      if(tickParticleInstance(state, manager, effect, particle)) {
+        effect.particleInstancePrerenderCallback_84.accept(manager, effect, particle);
         final VECTOR colour = new VECTOR();
         tickParticleAttributes(manager, effect, particle, colour);
 
@@ -1346,7 +1341,7 @@ public final class SEffe {
       for(int i = 0; i < effect.countParticleInstance_50; i++) {
         final ParticleEffectInstance94 particle = effect.particleArray_68[i];
 
-        if(checkParticleShouldRender(state, manager, effect, particle)) {
+        if(tickParticleInstance(state, manager, effect, particle)) {
           //LAB_800fd918
           for(int j = effect.countParticleSub_54 - 1; j > 0; j--) {
             particle.subParticlePositionsArray_44[j].set(particle.subParticlePositionsArray_44[j - 1]);
@@ -1354,7 +1349,7 @@ public final class SEffe {
 
           //LAB_800fd950
           particle.subParticlePositionsArray_44[0].set(particle.particlePosition_50);
-          effect.prerenderCallback_84.accept(manager, effect, particle);
+          effect.particleInstancePrerenderCallback_84.accept(manager, effect, particle);
 
           final VECTOR colour = new VECTOR();
           tickParticleAttributes(manager, effect, particle, colour);
@@ -1448,8 +1443,8 @@ public final class SEffe {
     for(int i = 0; i < effect.countParticleInstance_50; i++) {
       final ParticleEffectInstance94 particle = effect.particleArray_68[i];
 
-      if(checkParticleShouldRender(state, manager, effect, particle)) {
-        effect.prerenderCallback_84.accept(manager, effect, particle);
+      if(tickParticleInstance(state, manager, effect, particle)) {
+        effect.particleInstancePrerenderCallback_84.accept(manager, effect, particle);
 
         final VECTOR colour = new VECTOR();
         tickParticleAttributes(manager, effect, particle, colour);
@@ -1498,14 +1493,14 @@ public final class SEffe {
     for(int i = 0; i < effect.countParticleInstance_50; i++) {
       final ParticleEffectInstance94 particle = effect.particleArray_68[i];
 
-      if(checkParticleShouldRender(state, manager, effect, particle)) {
+      if(tickParticleInstance(state, manager, effect, particle)) {
         //LAB_800fe1bc
         for(int j = effect.countParticleSub_54 - 1; j > 0; j--) {
           particle.particleInstanceSubArray_80[j].copy(particle.particleInstanceSubArray_80[j - 1]);
         }
 
         //LAB_800fe1fc
-        effect.prerenderCallback_84.accept(manager, effect, particle);
+        effect.particleInstancePrerenderCallback_84.accept(manager, effect, particle);
 
         tickParticleAttributes(manager, effect, particle, colour);
 
@@ -2299,48 +2294,48 @@ public final class SEffe {
     particle.spriteRotationStep_78.setY((short)(seed_800fa754.advance().get() % 129 - 64));
     particle.spriteRotationStep_78.setZ((short)0);
     particle.flags_90 = particle.flags_90 & 0xffff_fff1 | (seed_800fa754.advance().get() % 101 < 50 ? 0 : 0x8);
-    final SomeParticleStruct10 s5 = _801198f0.get(callbackIndex);
-    final int v1 = s5._00.get();
-    if(v1 == 1) {
+    final ParticleInitialTransformationMetrics10 metrics = particleInitialTransformationMetrics_801198f0.get(callbackIndex);
+    final int initialPositionMode = metrics.initialPositionMode_00.get();
+    if(initialPositionMode == 1) {
       //LAB_80101840
       final int angle = (int)(seed_800fa754.advance().get() % 4097);
       final short baseTranslationMagnitude = effectInner._10;
-      particle.particlePosition_50.setX((short)(rcos(angle) * (int)baseTranslationMagnitude >> s5.initialTranslationMagnitudeReduction_02.get()));
+      particle.particlePosition_50.setX((short)(rcos(angle) * (int)baseTranslationMagnitude >> metrics.initialTranslationMagnitudeReductionFactor1_02.get()));
       particle.particlePosition_50.setY((short)0);
-      particle.particlePosition_50.setZ((short)(rsin(angle) * (int)baseTranslationMagnitude >> s5.initialTranslationMagnitudeReduction_02.get()));
+      particle.particlePosition_50.setZ((short)(rsin(angle) * (int)baseTranslationMagnitude >> metrics.initialTranslationMagnitudeReductionFactor1_02.get()));
       //LAB_80101824
-    } else if(v1 == 2) {
+    } else if(initialPositionMode == 2) {
       //LAB_801018c8
       final int angle = (int)(seed_800fa754.advance().get() % 4097);
       final int baseTranslationMagnitude = (int)(seed_800fa754.advance().get() % (effectInner._10 + 1));
-      particle.particlePosition_50.setX((short)(rcos(angle) * baseTranslationMagnitude >> s5.initialTranslationMagnitudeReduction_02.get()));
+      particle.particlePosition_50.setX((short)(rcos(angle) * baseTranslationMagnitude >> metrics.initialTranslationMagnitudeReductionFactor1_02.get()));
       particle.particlePosition_50.setY((short)0);
-      particle.particlePosition_50.setZ((short)(rsin(angle) * baseTranslationMagnitude >> s5.initialTranslationMagnitudeReduction_02.get()));
-    } else if(v1 == 3) {
+      particle.particlePosition_50.setZ((short)(rsin(angle) * baseTranslationMagnitude >> metrics.initialTranslationMagnitudeReductionFactor1_02.get()));
+    } else if(initialPositionMode == 3) {
       //LAB_80101990
-      particle.particlePosition_50.setY((short)(seed_800fa754.advance().get() % (s5._04.get() - s5.initialTranslationMagnitudeReduction_02.get() + 1) + s5.initialTranslationMagnitudeReduction_02.get()));
-    } else if(v1 == 4) {
+      particle.particlePosition_50.setY((short)(seed_800fa754.advance().get() % (metrics.initialTranslationMagnitudeReductionFactor2_04.get() - metrics.initialTranslationMagnitudeReductionFactor1_02.get() + 1) + metrics.initialTranslationMagnitudeReductionFactor1_02.get()));
+    } else if(initialPositionMode == 4) {
       //LAB_801019e4
       final int angle1 = (int)(seed_800fa754.advance().get() % 4097);
       final int angle2 = (int)(seed_800fa754.advance().get() % 2049);
-      particle.particlePosition_50.setX((short)((rcos(angle1) * rsin(angle2) >> s5.initialTranslationMagnitudeReduction_02.get()) * effectInner._10 >> s5._04.get()));
-      particle.particlePosition_50.setY((short)(rcos(angle2) * effectInner._10 >> s5._04.get()));
-      particle.particlePosition_50.setZ((short)((rsin(angle1) * rsin(angle2) >> s5.initialTranslationMagnitudeReduction_02.get()) * effectInner._10 >> s5._04.get()));
+      particle.particlePosition_50.setX((short)((rcos(angle1) * rsin(angle2) >> metrics.initialTranslationMagnitudeReductionFactor1_02.get()) * effectInner._10 >> metrics.initialTranslationMagnitudeReductionFactor2_04.get()));
+      particle.particlePosition_50.setY((short)(rcos(angle2) * effectInner._10 >> metrics.initialTranslationMagnitudeReductionFactor2_04.get()));
+      particle.particlePosition_50.setZ((short)((rsin(angle1) * rsin(angle2) >> metrics.initialTranslationMagnitudeReductionFactor1_02.get()) * effectInner._10 >> metrics.initialTranslationMagnitudeReductionFactor2_04.get()));
     }
 
     //LAB_80101b10
     //LAB_80101b18
     effect.initializerCallback_8c.accept(manager, effect, particle, effectInner);
 
-    if(s5.hasVelocity_06.get() == 1) {
+    if(metrics.hasSpecialAccelerationHandling_06.get() == 1) {
       particle.particleVelocity_58.setX((short)(particle.particleVelocity_58.getX() * effectInner._18 >> 8));
       particle.particleVelocity_58.setY((short)(particle.particleVelocity_58.getY() * effectInner._18 >> 8));
       particle.particleVelocity_58.setZ((short)(particle.particleVelocity_58.getZ() * effectInner._18 >> 8));
     }
 
     //LAB_80101ba4
-    if(s5.hasScaleStep_07.get() == 1) {
-      final byte scaleStep = (byte)(seed_800fa754.advance().get() % (s5._09.get() - s5._08.get() + 1) + s5._08.get());
+    if(metrics.hasSpecialScaleStepHandling_07.get() == 1) {
+      final byte scaleStep = (byte)(seed_800fa754.advance().get() % (metrics.scaleStepUpperBound_09.get() - metrics.scaleStepLowerBound_08.get() + 1) + metrics.scaleStepLowerBound_08.get());
       particle.scaleHorizontalStep_0a = scaleStep;
       particle.scaleVerticalStep_0c = scaleStep;
     }
@@ -2390,8 +2385,8 @@ public final class SEffe {
     }
 
     //LAB_80101dd8
-    if((effect.effectInner_08.particleInnerStuff_1c & 0x6000_0000L) != 0) {
-      effect.countParticleSub_54 = (int)_800fb794.offset((effect.effectInner_08.particleInnerStuff_1c & 0x6000_0000L) >>> 27).get();
+    if((effect.effectInner_08.particleInnerStuff_1c & 0x6000_0000) != 0) {
+      effect.countParticleSub_54 = particleSubCounts_800fb794.get((effect.effectInner_08.particleInnerStuff_1c & 0x6000_0000) >>> 28).get();
 
       //LAB_80101e3c
       for(int i = 0; i < effect.countParticleInstance_50; i++) {
@@ -2408,8 +2403,8 @@ public final class SEffe {
     effect.countParticleSub_54 = 0;
 
     if((effect.effectInner_08.particleInnerStuff_1c & 0x6000_0000) != 0) {
-      final long v0 = (effect.effectInner_08.particleInnerStuff_1c & 0x6000_0000) >>> 27;
-      effect.countParticleSub_54 = (int)_800fb794.offset(2, v0).get();
+      final int index = (effect.effectInner_08.particleInnerStuff_1c & 0x6000_0000) >>> 28;
+      effect.countParticleSub_54 = particleSubCounts_800fb794.get(index).get();
 
       //LAB_80101f2c
       for(int i = 0; i < effect.countParticleInstance_50; i++) {
@@ -2478,8 +2473,8 @@ public final class SEffe {
     //LAB_801021c0
     effect.myState_00 = state;
     effect.parentScriptIndex_04 = script.params_20[1].get();
-    effect.prerenderCallback_84 = prerenderCallbacks_80119bac[script.params_20[8].get()];
-    effect.callback_88 = _80119cb0[script.params_20[8].get()];
+    effect.particleInstancePrerenderCallback_84 = particleInstancePrerenderCallbacks_80119bac[script.params_20[8].get()];
+    effect.particleInstanceTickCallback_88 = particleInstanceTickCallbacks_80119cb0[script.params_20[8].get()];
     effect.countFramesRendered_52 = 0;
     effect.halfW_34 = 0;
     effect.halfH_36 = 0;
@@ -2511,10 +2506,10 @@ public final class SEffe {
 
     //LAB_801022b4
     if(effect.callback90Type_61 != 0) {
-      effect.callback_90 = SEffe::FUN_801012d4;
+      effect.particleInstanceReconstructorCallback_90 = SEffe::FUN_801012d4;
     } else {
       //LAB_801022cc
-      effect.callback_90 = SEffe::FUN_801012a0;
+      effect.particleInstanceReconstructorCallback_90 = SEffe::FUN_801012a0;
     }
 
     //LAB_801022d4
@@ -3480,13 +3475,13 @@ public final class SEffe {
 
     // Params: ?, x, y, translucency, colour
     final int offset = isCounter ? 1 : 0;
-    if(Math.abs((byte)a0) >= 2) {
+    if(Math.abs((byte)a0) >= 2) {  // Button up position
       callScriptFunction(callback, 0x24, 119, 43, Translucency.B_PLUS_F.ordinal(), 0x80);
-      callScriptFunction(callback, (int)_800fb7bc.offset(1, 0x0L).offset(offset).get(), 115, 48, 0x1, 0x80);
-    } else {
+      callScriptFunction(callback, additionButtonRenderCallbackIndices_800fb7bc.get(offset).get(), 115, 48, 0x1, 0x80);
+    } else {  // Button down position
       //LAB_80106114
       callScriptFunction(callback, 0x24, 119, 51, Translucency.B_PLUS_F.ordinal(), 0x80);
-      callScriptFunction(callback, (int)_800fb7bc.offset(1, 0x2L).offset(offset).get(), 115, 48, Translucency.B_PLUS_F.ordinal(), 0x80);
+      callScriptFunction(callback, additionButtonRenderCallbackIndices_800fb7bc.get(offset + 2).get(), 115, 48, Translucency.B_PLUS_F.ordinal(), 0x80);
       callScriptFunction(callback, 0x25, 115, 50, Translucency.B_PLUS_F.ordinal(), 0x80);
     }
   }
@@ -3501,7 +3496,7 @@ public final class SEffe {
     final int hitPropertyValue;
     if(autoCompleteType == 1 || autoCompleteType == 3) {
       //LAB_80106274
-      hitPropertyValue = (int)_800fb7c0.offset(hitNum * 0x10L).offset(1, hitPropertyIndex).get();
+      hitPropertyValue = staticTestAdditionHitProperties_800fb7c0.get(hitNum).get(hitPropertyIndex);
     } else {
       //LAB_8010628c
       hitPropertyValue = (Bttl_800c.getHitProperty(charSlot, hitNum, hitPropertyIndex) & 0xff);
@@ -4152,7 +4147,7 @@ public final class SEffe {
       script.params_20[1].set(additionOverlayActive_80119f41);
     } else {
       //LAB_801079d0
-      script.params_20[1].set(daddyOverlayActive_80119f42);
+      script.params_20[1].set(daddyMeterSpinning_80119f42);
     }
 
     //LAB_801079e0
@@ -4160,241 +4155,353 @@ public final class SEffe {
   }
 
   @Method(0x801079e8L)
-  public static void FUN_801079e8(final DragoonAdditionScriptData1c a0) {
-    final int s4 = (int)_8011a01c.get();
-    final int s3 = (int)_8011a020.get();
-    final int fp = s4 + 16;
-    final int s7 = s3 + 70;
+  public static void renderDragoonAdditionButtonPressTextures(final DragoonAdditionScriptData1c daddy) {
+    final int x0 = daddyHudOffsetX_8011a01c.get();
+    final int y0 = daddyHudOffsetY_8011a020.get();
+    final int x1 = x0 + 16;
+    final int y1 = y0 + 70;
     final Consumer<RunningScript<?>> func = Bttl_800d::scriptRenderButtonPressHudElement;
 
-    final int a2;
-    if(FUN_80108460(a0, 0) != 0) {
-      callScriptFunction(func, 36, fp, s3 + 64, 1, 128);
-      a2 = 33;
+    final int buttonHudMetricsIndex;
+    // Button arrow placement
+    if(getCurrentDragoonAdditionPressNumber(daddy, 0) != 0) {
+      callScriptFunction(func, 36, x1, y0 + 64, 1, 128);
+      buttonHudMetricsIndex = 33;
     } else {
       //LAB_80107a80
-      if(FUN_80108460(a0, 2) != 0) {
-        callScriptFunction(func, 36, fp, s3 + 60, 1, 128);
-        a2 = 33;
+      if(getCurrentDragoonAdditionPressNumber(daddy, 2) != 0) {
+        callScriptFunction(func, 36, x1, y0 + 60, 1, 128);
+        buttonHudMetricsIndex = 33;
       } else {
         //LAB_80107ad4
-        callScriptFunction(func, 36, fp, s3 + 56, 1, 128);
-        a2 = 35;
+        callScriptFunction(func, 36, x1, y0 + 56, 1, 128);
+        buttonHudMetricsIndex = 35;
       }
     }
 
     //LAB_80107b10
-    callScriptFunction(func, a2, s4 + 12, s3 + 66, 1, 128);
+    // Button
+    callScriptFunction(func, buttonHudMetricsIndex, x0 + 12, y0 + 66, 1, 128);
 
-    if(a0._11 != 0) {
-      final int colour = a0._11 * 0x40 - 1;
+    // Button press red glow
+    if(daddy.buttonPressGlowBrightnessFactor_11 != 0) {
+      final int colour = daddy.buttonPressGlowBrightnessFactor_11 * 0x40 - 1;
       final COLOUR rgb = new COLOUR().set(colour, colour, colour);
-      callScriptFunction(func, 20, fp - 4, s7 - 4, 1, 128);
-      renderButtonPressHudElement((short)fp - 2, (short)s7 - 5, 232, 120, 255, 143, 0xc, Translucency.B_PLUS_F, rgb, a0._11 * 256 + 6404, a0._11 * 256 + 4096);
+      callScriptFunction(func, 20, x1 - 4, y1 - 4, 1, 128);
+      renderButtonPressHudElement(
+        (short)x1 - 2,
+        (short)y1 - 5,
+        232,
+        120,
+        255,
+        143,
+        0xc,
+        Translucency.B_PLUS_F,
+        rgb,
+        daddy.buttonPressGlowBrightnessFactor_11 * 256 + 6404,
+        daddy.buttonPressGlowBrightnessFactor_11 * 256 + 4096
+      );
     }
 
     //LAB_80107bf0
-
-    final int s1 = Math.min(4, a0._07);
+    final int hudMetricsIndexOffset = Math.min(4, daddy.currentPressNumber_07);
 
     //LAB_80107c08
-    callScriptFunction(func, s1 + 4, fp + 36, s7,      1, 128);
-    callScriptFunction(func, 24,     fp -  4, s7,      1, 128);
-    callScriptFunction(func, 26,     fp -  4, s7 + 12, 1, 128);
-    callScriptFunction(func, 30,     fp -  4, s7 +  4, 1, 128);
-    callScriptFunction(func, 31,     fp + 48, s7 +  4, 1, 128);
+    // Press number
+    callScriptFunction(func, hudMetricsIndexOffset + 4, x1 + 36, y1, 1, 128);
+    // Button count background left edge
+    callScriptFunction(func, 24,     x1 -  4, y1,      1, 128);
+    callScriptFunction(func, 26,     x1 -  4, y1 + 12, 1, 128);
+    callScriptFunction(func, 30,     x1 -  4, y1 +  4, 1, 128);
 
     //LAB_80107cd4
+    // Button count background main
     for(int i = 0; i < 48; i += 8) {
-      callScriptFunction(func, 28, fp + i, s7,      1, 128);
-      callScriptFunction(func, 29, fp + i, s7 + 12, 1, 128);
-      callScriptFunction(func, 32, fp + i, s7 -  4, 1, 128);
+      callScriptFunction(func, 28, x1 + i, y1,      1, 128);
+      callScriptFunction(func, 29, x1 + i, y1 + 12, 1, 128);
+      callScriptFunction(func, 32, x1 + i, y1 +  4, 1, 128);
     }
 
-    callScriptFunction(func, 25, fp + 48, s7     , 1, 128);
-    callScriptFunction(func, 27, fp + 48, s7 + 12, 1, 128);
+    // Button count background right edge
+    callScriptFunction(func, 25, x1 + 48, y1     , 1, 128);
+    callScriptFunction(func, 27, x1 + 48, y1 + 12, 1, 128);
+    callScriptFunction(func, 31, x1 + 48, y1 +  4, 1, 128);
   }
 
   @Method(0x80107dc4L)
-  public static void FUN_80107dc4(final DragoonAdditionScriptData1c a0, final int a1, final int angle) {
-    final int colour = (int)((_80119fb4.get() + 1) * 0x40);
+  public static void renderDragoonAdditionHud_(final DragoonAdditionScriptData1c daddy, final int transModesIndex, final int angle) {
+    final int colour = (daddySpinnerBrightnessFactor_80119fb4.get() + 1) * 0x40;
     final COLOUR rgb = new COLOUR().set(colour, colour, colour);
 
-    final int y = (short)_8011a020.get() + (rsin(angle) * 17 >> 12) + 24;
+    final int y = daddyHudOffsetY_8011a020.get() + (rsin(angle) * 17 >> 12) + 24;
 
     final int x;
-    if(_8011a028.deref(4).offset(a0._06 * 0x4L).get() >= 2) {
-      x = (short)_8011a01c.get() + (rcos(angle) * 17 >> 12) + 28;
+    if(daddyHudSpinnerStepCountsPointer_8011a028.deref().get(daddy.stepCountIndex_06).get() >= 2) {
+      x = daddyHudOffsetX_8011a01c.get() + (rcos(angle) * 17 >> 12) + 28;
     } else {
-      x = (short)_8011a01c.get() + 28;
+      x = daddyHudOffsetX_8011a01c.get() + 28;
     }
 
     //LAB_80108048
-    renderButtonPressHudTexturedRect((short)x, (short)y, 128, 64, 16, 16, 51, Translucency.B_PLUS_F, rgb, 0x1000);
+    // Spinner star
+    renderButtonPressHudTexturedRect(x, y, 128, 64, 16, 16, 51, Translucency.B_PLUS_F, rgb, 0x1000);
 
     rgb.set(0x80, 0x80, 0x80);
 
     //LAB_801080ac
     for(int i = 0; i < 5; i++) {
-      if(a0._07 < i) {
+      if(daddy.currentPressNumber_07 < i) {
         rgb.set(0x10, 0x10, 0x10);
       }
 
       //LAB_801080cc
-      renderButtonPressHudTexturedRect((short)_8011a01c.get() + (short)_800fb804.offset(2, i * 0x4L).getSigned(), (short)_8011a020.get() + (short)_800fb804.offset(2, i * 0x4L).offset(0x2L).getSigned(), (int)_800fb818.offset(1, i * 0x4L).getSigned(), (int)_800fb818.offset(1, i * 0x4L).offset(0x2L).getSigned(), (short)_800fb82c.offset(2, i * 0x4L).getSigned(), (short)_800fb82c.offset(2, i * 0x4L).offset(0x2L).getSigned(), 53 + i, Translucency.B_PLUS_F, rgb, 0x1000);
+      // Meter
+      renderButtonPressHudTexturedRect(
+        daddyHudOffsetX_8011a01c.get() + daddyHudMeterOffsets_800fb804.get(i).get(0).get(),
+        daddyHudOffsetY_8011a020.get() + daddyHudMeterOffsets_800fb804.get(i).get(1).get(),
+        daddyHudMeterUvs_800fb818.get(i).get(0).get(),
+        daddyHudMeterUvs_800fb818.get(i).get(1).get(),
+        daddyHudMeterDimensions_800fb82c.get(i).get(0).get(),
+        daddyHudMeterDimensions_800fb82c.get(i).get(1).get(),
+        53 + i,
+        Translucency.B_PLUS_F,
+        rgb,
+        0x1000
+      );
     }
 
-    FUN_801079e8(a0);
+    // Button press textures
+    renderDragoonAdditionButtonPressTextures(daddy);
 
     rgb.set(0x80, 0x80, 0x80);
 
     //LAB_801081a8
-    for(int i = 0; i < a0._0d; i++) {
-      renderButtonPressHudTexturedRect((short)_8011a01c.get() + 18, (short)_8011a020.get() + 16, 224, 208, 31, 31, (int)_800fb84c.offset(1, a0.charId_18).get(), Translucency.B_PLUS_F, rgb, 0x1000);
+    for(int i = 0; i < daddy.countEyeFlashTicks_0d; i++) {
+      // Eye flash
+      renderButtonPressHudTexturedRect(
+        daddyHudOffsetX_8011a01c.get() + 18,
+        daddyHudOffsetY_8011a020.get() + 16,
+        224,
+        208,
+        31,
+        31,
+        daddyHudEyeClutOffsets_800fb84c.get(daddy.charId_18).get(),
+        Translucency.B_PLUS_F,
+        rgb,
+        0x1000
+      );
 
-      if(a0.charId_18 == 9) {
-        renderDivineDragoonAdditionPressIris((int)_8011a01c.getSigned() + 23, (int)_8011a020.getSigned() + 21, 232, 120, 23, 23, 12, Translucency.B_PLUS_F, rgb, 0x800, 0x1800);
+      if(daddy.charId_18 == 9) {
+        renderDivineDragoonAdditionPressIris(
+          daddyHudOffsetX_8011a01c.get() + 23,
+          daddyHudOffsetY_8011a020.get() + 21,
+          232,
+          120,
+          23,
+          23,
+          12,
+          Translucency.B_PLUS_F,
+          rgb,
+          0x800,
+          0x1800
+        );
       }
       //LAB_80108250
     }
 
     //LAB_80108268
-    renderButtonPressHudTexturedRect((short)_8011a01c.get() + 32, (short)_8011a020.get() -  4, 152, 208,  8, 24, 50, Translucency.HALF_B_PLUS_HALF_F, rgb, 0x1000);
-    renderButtonPressHudTexturedRect((short)_8011a01c.get() + 18, (short)_8011a020.get() + 16, 224, 208, 31, 31, (int)_800fb84c.offset(1, a0.charId_18).getSigned(), Translucency.of((int)_800fb7fc.offset(1, a1 * 2).getSigned()), rgb, 0x1000);
-    renderButtonPressHudTexturedRect((short)_8011a01c.get() + 17, (short)_8011a020.get() + 14, 112, 200, 40, 40, 52, Translucency.of((int)_800fb7fc.offset(1, a1 * 2).offset(0x1L).getSigned()), rgb, 0x1000);
-    renderButtonPressHudTexturedRect((short)_8011a01c.get(),      (short)_8011a020.get(),      160, 192, 64, 48, (int)_800fb840.offset(1, a0.charId_18).getSigned(), null, rgb, 0x1000);
-    renderButtonPressHudTexturedRect((short)_8011a01c.get() +  8, (short)_8011a020.get() + 48, 200,  80, 42,  8, (int)_800fb840.offset(1, a0.charId_18).getSigned(), null, rgb, 0x1000);
-    _80119fb4.setu(1 - _80119fb4.get());
+    // Daddy spinner
+    // Arrow/ tick mark
+    renderButtonPressHudTexturedRect(
+      daddyHudOffsetX_8011a01c.get() + 32,
+      daddyHudOffsetY_8011a020.get() -  4,
+      152,
+      208,
+      8,
+      24,
+      50,
+      Translucency.HALF_B_PLUS_HALF_F,
+      rgb,
+      0x1000
+    );
+    // Dark eye overlay
+    renderButtonPressHudTexturedRect(
+      daddyHudOffsetX_8011a01c.get() + 18,
+      daddyHudOffsetY_8011a020.get() + 16,
+      224,
+      208,
+      31,
+      31,
+      daddyHudEyeClutOffsets_800fb84c.get(daddy.charId_18).get(),
+      Translucency.of(daddyHudEyeTranslucencyModes_800fb7fc.get(transModesIndex).get(0).get()),
+      rgb,
+      0x1000
+    );
+    // Flat center overlay
+    renderButtonPressHudTexturedRect(
+      daddyHudOffsetX_8011a01c.get() + 17,
+      daddyHudOffsetY_8011a020.get() + 14,
+      112,
+      200,
+      40,
+      40,
+      52,
+      Translucency.of(daddyHudEyeTranslucencyModes_800fb7fc.get(transModesIndex).get(1).get()),
+      rgb,
+      0x1000
+    );
+    // Frame top portion
+    renderButtonPressHudTexturedRect(
+      daddyHudOffsetX_8011a01c.get(),
+      daddyHudOffsetY_8011a020.get(), 160,
+      192,
+      64,
+      48,
+      daddyHudFrameClutOffsets_800fb840.get(daddy.charId_18).get(),
+      null,
+      rgb,
+      0x1000
+    );
+    // Frame bottom portion
+    renderButtonPressHudTexturedRect(
+      daddyHudOffsetX_8011a01c.get() +  8,
+      daddyHudOffsetY_8011a020.get() + 48,
+      200,
+      80,
+      42,
+      8,
+      daddyHudFrameClutOffsets_800fb840.get(daddy.charId_18).get(),
+      null,
+      rgb,
+      0x1000
+    );
+    daddySpinnerBrightnessFactor_80119fb4.set(1 - daddySpinnerBrightnessFactor_80119fb4.get());
   }
 
   @Method(0x80108460L)
-  public static int FUN_80108460(final DragoonAdditionScriptData1c a0, final int a1) {
-    int t4 = 0;
-    int t1 = 0;
-    long t0 = _8011a02c.get();
-    long t2 = _8011a028.get();
-    final int t3 = a0._04 - 1;
+  public static int getCurrentDragoonAdditionPressNumber(final DragoonAdditionScriptData1c daddy, final int tickThresholdModifier) {
+    int currentPressNumber = 0;
+    int totalSteps = 0;
+    final ArrayRef<IntRef> successWindowArray = daddyHitSuccessWindowsPointer_8011a02c.deref();
+    final ArrayRef<IntRef> stepCounts = daddyHudSpinnerStepCountsPointer_8011a028.deref();
+    final int previousTick = daddy.currentTick_04 - 1;
 
     //LAB_80108484
     for(int i = 0; i < 5; i++) {
-      t1 += MEMORY.ref(4, t2).offset(0x0L).get();
-      final int v1 = t1 - a1 - ((int)MEMORY.ref(4, t0).offset(0x0L).get() >> 1);
+      totalSteps += stepCounts.get(i).get();
+      final int tickThreshold = totalSteps - tickThresholdModifier - (successWindowArray.get(i).get() >> 1);
       //LAB_801084c4
-      if((i & 0x1L) == 0 && t3 >= v1 + 1 || (i & 0x1L) != 0 && t3 >= v1) {
+      if((i & 1) == 0 && previousTick >= tickThreshold + 1 || (i & 1) != 0 && previousTick >= tickThreshold) {
         //LAB_801084cc
-        final int a2 = (int)MEMORY.ref(4, t0).offset(0x0L).get();
-        if(a2 != 0 && t1 + (a2 >> 1) >= a0._04 - 1) {
-          t4 = i + 1;
+        final int successWindow = successWindowArray.get(i).get();
+        if(successWindow != 0 && totalSteps + (successWindow >> 1) >= previousTick) {
+          currentPressNumber = i + 1;
         }
       }
-
       //LAB_801084f8
       //LAB_801084fc
-      t0 = t0 + 0x4L;
-      t2 = t2 + 0x4L;
     }
 
-    return t4;
+    return currentPressNumber;
   }
 
   @Method(0x80108514L)
-  public static void FUN_80108514(final ScriptState<DragoonAdditionScriptData1c> state, final DragoonAdditionScriptData1c data) {
-    FUN_80107dc4(data, 0, data._02 - 0x400);
+  public static void renderDragoonAdditionHud(final ScriptState<DragoonAdditionScriptData1c> state, final DragoonAdditionScriptData1c daddy) {
+    renderDragoonAdditionHud_(daddy, 0, daddy.baseAngle_02 - 0x400);
   }
 
   @Method(0x80108574L)
-  public static void FUN_80108574(final ScriptState<DragoonAdditionScriptData1c> state, final DragoonAdditionScriptData1c data) {
-    if(data._0f == 0) {
-      if(data._10 == 0) {
-        data._12--;
-        if(data._12 == 0) {
+  public static void tickDragoonAdditionHud(final ScriptState<DragoonAdditionScriptData1c> state, final DragoonAdditionScriptData1c daddy) {
+    if(daddy.tickEffect_0f == 0) {
+      if(daddy.meterSpinning_10 == 0) {
+        daddy.ticksRemainingToBeginAddition_12--;
+        if(daddy.ticksRemainingToBeginAddition_12 == 0) {
           state.deallocateWithChildren();
-        } else if((press_800bee94.get() >>> 4 & 0x2) != 0 && data._13 != 2) {
-          data._10 = 1;
-          daddyOverlayActive_80119f42 = 1;
+        } else if((((press_800bee94.get() >>> 4 & 0x2) != 0) || CONFIG.getConfig(CoreMod.AUTO_DRAGOON_ADDITION_CONFIG.get())) && daddy.inputMode_13 != 2) {
+          daddy.meterSpinning_10 = 1;
+          daddyMeterSpinning_80119f42 = 1;
         }
       } else {
         //LAB_80108600
-        if(data._11 != 0) {
-          data._11--;
+        if(daddy.buttonPressGlowBrightnessFactor_11 != 0) {
+          daddy.buttonPressGlowBrightnessFactor_11--;
         }
 
         //LAB_80108614
-        if(data._0e != 0) {
-          data._0e--;
+        if(daddy.ticksUntilDeallocationAfterCompletion_0e != 0) {
+          daddy.ticksUntilDeallocationAfterCompletion_0e--;
 
-          if(data._0e == 0) {
-            daddyOverlayActive_80119f42 = 0;
+          if(daddy.ticksUntilDeallocationAfterCompletion_0e == 0) {
+            daddyMeterSpinning_80119f42 = 0;
 
             //LAB_80108638
             state.deallocateWithChildren();
           }
         } else {
           //LAB_8010864c
-          data._04++;
-          data._02 += 0x1000 / (int)_8011a028.deref(4).offset(data._06 * 0x4L).get();
+          daddy.currentTick_04++;
+          daddy.baseAngle_02 += 0x1000 / daddyHudSpinnerStepCountsPointer_8011a028.deref().get(daddy.stepCountIndex_06).get();
 
-          if(data._06 + 1 << 12 < data._02) {
-            data._06++;
+          if(daddy.stepCountIndex_06 + 1 << 12 < daddy.baseAngle_02) {
+            daddy.stepCountIndex_06++;
           }
 
           //LAB_801086a8
-          if(data._0d != 0) {
-            data._0d--;
+          if(daddy.countEyeFlashTicks_0d != 0) {
+            daddy.countEyeFlashTicks_0d--;
           }
 
           //LAB_801086bc
           //LAB_801086e0
-          if(FUN_80108460(data, 0) != 0 && data._13 == 1 || (press_800bee94.get() >>> 4 & 0x2) != 0 && data._13 == 0 || (CONFIG.getConfig(CoreMod.AUTO_DRAGOON_ADDITION_CONFIG.get()) && FUN_80108460(data, 0) != 0)) {
+          if(getCurrentDragoonAdditionPressNumber(daddy, 0) != 0 && daddy.inputMode_13 == 1 || (press_800bee94.get() >>> 4 & 0x2) != 0 && daddy.inputMode_13 == 0) {
             //LAB_8010870c
-            data._11 = 4;
-            data._0d = 0;
+            daddy.buttonPressGlowBrightnessFactor_11 = 4;
+            daddy.countEyeFlashTicks_0d = 0;
 
-            final int v0 = FUN_80108460(data, 0);
-            if(v0 != 0 || CONFIG.getConfig(CoreMod.AUTO_DRAGOON_ADDITION_CONFIG.get())) {
-              data._07 = v0;
-              data._0d = 4;
-              _80119f40.setu(0);
+            final int currentPressNumber = getCurrentDragoonAdditionPressNumber(daddy, 0);
+            if(currentPressNumber != 0) {
+              daddy.currentPressNumber_07 = currentPressNumber;
+              daddy.countEyeFlashTicks_0d = 4;
+              daddyHitsCompleted_80119f40.set(0);
             } else {
               //LAB_8010873c
-              if(data._07 == 0) {
-                _80119f40.setu(-1);
+              if(daddy.currentPressNumber_07 == 0) {
+                daddyHitsCompleted_80119f40.set(-1);
               } else {
                 //LAB_8010875c
-                _80119f40.setu(data._07);
+                daddyHitsCompleted_80119f40.set(daddy.currentPressNumber_07);
               }
 
               //LAB_80108760
-              data._0e = 1;
+              daddy.ticksUntilDeallocationAfterCompletion_0e = 1;
             }
           }
 
           //LAB_80108768
-          if(data._07 < data._02 - 0x400 >> 12) {
-            data._0d = 0;
+          if(daddy.currentPressNumber_07 < daddy.baseAngle_02 - 0x400 >> 12) {
+            daddy.countEyeFlashTicks_0d = 0;
 
-            if(data._07 == 0) {
-              _80119f40.setu(-1);
+            if(daddy.currentPressNumber_07 == 0) {
+              daddyHitsCompleted_80119f40.set(-1);
             } else {
               //LAB_801087a4
-              if(data._07 == data._14) {
-                FUN_80108cf4();
+              if(daddy.currentPressNumber_07 == daddy.totalPressCount_14) {
+                allocatePerfectDragoonAdditionEffect();
               }
 
               //LAB_801087bc
-              _80119f40.setu(data._07);
+              daddyHitsCompleted_80119f40.set(daddy.currentPressNumber_07);
             }
 
             //LAB_801087c8
-            data._0e = 4;
+            daddy.ticksUntilDeallocationAfterCompletion_0e = 4;
           }
 
           //LAB_801087d0
-          data._05 = data._02 & 0xff;
+          daddy.unused_05 = daddy.baseAngle_02 & 0xff;
         }
       }
     }
-
     //LAB_801087dc
   }
 
@@ -4406,118 +4513,119 @@ public final class SEffe {
   /**
    * Pretty sure this is the script allocation for dragoon additions
    *
-   * {@link SEffe#FUN_80108514}
-   * {@link SEffe#FUN_80108574}
+   * {@link SEffe#renderDragoonAdditionHud}
+   * {@link SEffe#tickDragoonAdditionHud}
    * {@link SEffe#doNothingScriptDestructor}
    */
   @Method(0x801087f8L)
   public static FlowControl allocateDragoonAdditionScript(final RunningScript<?> script) {
-    final int s4 = script.params_20[1].get();
-    final int s2 = script.params_20[0].get();
+    final int charId = script.params_20[1].get();
+    final int flag = script.params_20[0].get();
 
     final ScriptState<DragoonAdditionScriptData1c> state = SCRIPTS.allocateScriptState("Dragoon addition", new DragoonAdditionScriptData1c());
     state.loadScriptFile(doNothingScript_8004f650);
-    state.setTicker(SEffe::FUN_80108574);
-    state.setRenderer(SEffe::FUN_80108514);
+    state.setTicker(SEffe::tickDragoonAdditionHud);
+    state.setRenderer(SEffe::renderDragoonAdditionHud);
 
-    final DragoonAdditionScriptData1c s1 = state.innerStruct_00;
-    s1._00 = 1;
-    s1._02 = 0;
-    s1._04 = 0;
-    s1._05 = 0;
-    s1._06 = 0;
-    s1._07 = 0;
-    s1._0d = 0;
-    s1._0e = 0;
-    s1._0f = s2 == 3 ? 1 : 0;
-    s1._10 = 0;
-    s1._11 = 0;
-    s1._12 = script.params_20[2].get();
-    s1._13 = s2 & 0xff;
-    s1.charId_18 = s4;
-
-    if(s2 == 1) {
-      s1._10 = s2 & 0xff;
-    }
+    final DragoonAdditionScriptData1c daddy = state.innerStruct_00;
+    daddy.unused_00 = 1;
+    daddy.baseAngle_02 = 0;
+    daddy.currentTick_04 = 0;
+    daddy.unused_05 = 0;
+    daddy.stepCountIndex_06 = 0;
+    daddy.currentPressNumber_07 = 0;
+    daddy.countEyeFlashTicks_0d = 0;
+    daddy.ticksUntilDeallocationAfterCompletion_0e = 0;
+    daddy.tickEffect_0f = flag == 3 ? 1 : 0;
+    daddy.meterSpinning_10 = flag == 1 ? 1 : 0;
+    daddy.buttonPressGlowBrightnessFactor_11 = 0;
+    daddy.ticksRemainingToBeginAddition_12 = script.params_20[2].get();
+    daddy.inputMode_13 = CONFIG.getConfig(CoreMod.AUTO_DRAGOON_ADDITION_CONFIG.get()) ? 1 : flag & 0xff;
+    daddy.charId_18 = charId;
 
     //LAB_80108910
-    _8011a01c.setu(script.params_20[3].get());
-    _8011a020.setu(script.params_20[4].get());
+    daddyHudOffsetX_8011a01c.set(script.params_20[3].get());
+    daddyHudOffsetY_8011a020.set(script.params_20[4].get());
 
     //LAB_80108924
-    for(int i = 0; i < 5; i++) {
-      s1._08[i] = 0;
-    }
-
-    if(s4 == 7) {
-      _8011a028.setu(_80119f7c.getAddress());
-      _8011a02c.setu(_80119f98.getAddress());
-      s1._14 = 3;
+    if(charId == 7) {
+      daddyHudSpinnerStepCountsPointer_8011a028.set(kongolDaddyHudSpinnerStepCounts_80119f7c);
+      daddyHitSuccessWindowsPointer_8011a02c.set(kongolDaddyHitSuccessWindows_80119f98);
+      daddy.totalPressCount_14 = 3;
     } else {
       //LAB_80108964
-      _8011a028.setu(_80119f44.getAddress());
-      _8011a02c.setu(_80119f60.getAddress());
-      s1._14 = 4;
+      daddyHudSpinnerStepCountsPointer_8011a028.set(daddyHudSpinnerStepCounts_80119f44);
+      daddyHitSuccessWindowsPointer_8011a02c.set(daddyHitSuccessWindows_80119f60);
+      daddy.totalPressCount_14 = 4;
     }
 
     //LAB_80108984
-    _80119f40.setu(0);
-    daddyOverlayActive_80119f42 = 0;
-    _8011a024.setu(state.index);
+    daddyHitsCompleted_80119f40.set(0);
+    daddyMeterSpinning_80119f42 = 0;
+    daddyScriptIndex_8011a024.set(state.index);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x801089ccL)
-  public static FlowControl FUN_801089cc(final RunningScript<?> script) {
-    script.params_20[1].set((byte)_80119f40.getSigned());
+  public static FlowControl scriptGetDragoonAdditionHitsCompleted(final RunningScript<?> script) {
+    script.params_20[1].set(daddyHitsCompleted_80119f40.get());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x801089e8L)
-  public static void FUN_801089e8(final ScriptState<EffeScriptData30> state, final EffeScriptData30 data) {
+  public static void tickPerfectDragoonAdditionEffect(final ScriptState<PerfectDragoonAdditionEffect30> state, final PerfectDragoonAdditionEffect30 effect) {
     //LAB_80108a38
     for(int i = 7; i >= 0; i--) {
       final COLOUR rgb = new COLOUR().set(0x80, 0x80, 0x80);
 
-      final long fp = _80119fbc.get(i).getAddress();
-      final long s2 = _80119fc4.get(i).getAddress();
+      final int u = perfectDaddyGlyphUs_80119fbc.get(i).get();
+      final int v = perfectDaddyGlyphVs_80119fc4.get(i).get();
 
-      final EffeScriptData30Sub06 struct = data._00[i];
+      final PerfectDragoonAdditionEffectGlyph06 glyph = effect.glyphs_00[i];
 
-      final int v1 = struct._00;
-      if(v1 == 0) {
+      final int renderStage = glyph.renderStage_00;
+      if(renderStage == 0) {
         //LAB_80108a78
-        struct._02 -= 0x10;
+        glyph.currentXPosition_02 -= 0x10;
 
-        if(struct._02 < struct._04) {
-          struct._02 = struct._04;
-          struct._00++;
+        if(glyph.currentXPosition_02 < glyph.finalXPosition_04) {
+          glyph.currentXPosition_02 = glyph.finalXPosition_04;
+          glyph.renderStage_00++;
         }
 
         //LAB_80108aac
         //LAB_80108ac4
-        int s0 = 0;
-        do {
+        for(int j = 0; j < 4; j++) {
           rgb.r.sub(32);
           rgb.g.sub(32);
           rgb.b.sub(32);
-          s0++;
-          renderButtonPressHudTexturedRect(struct._02 + s0 * 6, (short)_8011a020.get() + 16, (int)MEMORY.ref(1, fp).offset(0x0L).get(), (int)MEMORY.ref(1, s2).offset(0x0L).get(), 8, 16, 41, Translucency.B_PLUS_F, rgb, 0x1000);
-        } while(s0 < 4);
-      } else if(v1 == 1) {
+          renderButtonPressHudTexturedRect(
+            glyph.currentXPosition_02 + j * 6,
+            daddyHudOffsetY_8011a020.get() + 16,
+            u,
+            v,
+            8,
+            16,
+            41,
+            Translucency.B_PLUS_F,
+            rgb,
+            0x1000
+          );
+        }
+      } else if(renderStage == 1) {
         //LAB_80108b58
-        if(data._00[7]._00 == 1) {
-          struct._00 = 2;
+        if(effect.glyphs_00[7].renderStage_00 == 1) {
+          glyph.renderStage_00 = 2;
         }
         //LAB_80108a60
-      } else if(v1 == 2) {
+      } else if(renderStage == 2) {
         //LAB_80108b84
-        struct._01++;
+        glyph.currentStaticRenderTick_01++;
 
-        if(struct._01 >= 12 && i == 0) {
-          data._00[7]._00++;
+        if(glyph.currentStaticRenderTick_01 >= 12 && i == 0) {
+          effect.glyphs_00[7].renderStage_00++;
         }
-      } else if(v1 == 3) {
+      } else if(renderStage == 3) {
         //LAB_80108bd0
         state.deallocateWithChildren();
         return;
@@ -4526,43 +4634,63 @@ public final class SEffe {
       //LAB_80108be8
       //LAB_80108bec
       //LAB_80108bf0
-      renderButtonPressHudTexturedRect(struct._02, (short)_8011a020.get() + 16, (int)MEMORY.ref(1, fp).offset(0x0L).get(), (int)MEMORY.ref(1, s2).offset(0x0L).get(), 8, 16, 41, Translucency.B_PLUS_F, rgb, 0x1000);
+      renderButtonPressHudTexturedRect(
+        glyph.currentXPosition_02,
+        daddyHudOffsetY_8011a020.get() + 16,
+        u,
+        v,
+        8,
+        16,
+        41,
+        Translucency.B_PLUS_F,
+        rgb,
+        0x1000
+      );
 
-      if((struct._01 & 0x1) != 0) {
-        renderButtonPressHudTexturedRect(struct._02, (short)_8011a020.get() + 16, (int)MEMORY.ref(1, fp).offset(0x0L).get(), (int)MEMORY.ref(1, s2).offset(0x0L).get(), 8, 16, 41, Translucency.B_PLUS_F, rgb, 0x1000);
+      if((glyph.currentStaticRenderTick_01 & 0x1) != 0) {
+        renderButtonPressHudTexturedRect(
+          glyph.currentXPosition_02,
+          daddyHudOffsetY_8011a020.get() + 16,
+          u,
+          v,
+          8,
+          16,
+          41,
+          Translucency.B_PLUS_F,
+          rgb,
+          0x1000
+        );
       }
-
       //LAB_80108cb0
     }
-
     //LAB_80108cc4
   }
 
   /**
-   * {@link SEffe#FUN_801089e8}
+   * {@link SEffe#tickPerfectDragoonAdditionEffect}
    * {@link SEffe#doNothingScriptDestructor}
    */
   @Method(0x80108cf4L)
-  public static void FUN_80108cf4() {
+  public static void allocatePerfectDragoonAdditionEffect() {
     playSound(0, 50, 0, 0, (short)0, (short)0);
 
-    final ScriptState<EffeScriptData30> state = SCRIPTS.allocateScriptState("EffeScriptData30", new EffeScriptData30());
+    final ScriptState<PerfectDragoonAdditionEffect30> state = SCRIPTS.allocateScriptState("PerfectDragoonAdditionEffect30", new PerfectDragoonAdditionEffect30());
     state.loadScriptFile(doNothingScript_8004f650);
-    state.setTicker(SEffe::FUN_801089e8);
-    final EffeScriptData30 data = state.innerStruct_00;
+    state.setTicker(SEffe::tickPerfectDragoonAdditionEffect);
+    final PerfectDragoonAdditionEffect30 effect = state.innerStruct_00;
 
     //LAB_80108d9c
-    int s2 = (int)_8011a01c.get();
-    int s3 = 130;
+    int finalXPosition = daddyHudOffsetX_8011a01c.get();
+    int initialXPosition = 130;
     for(int i = 0; i < 8; i++) {
-      final EffeScriptData30Sub06 s1 = data._00[i];
+      final PerfectDragoonAdditionEffectGlyph06 glyph = effect.glyphs_00[i];
 
-      s2 = s2 + 8;
-      s1._00 = 0;
-      s1._01 = 0;
-      s1._02 = s3;
-      s1._04 = s2;
-      s3 = s3 + 32;
+      finalXPosition = finalXPosition + 8;
+      glyph.renderStage_00 = 0;
+      glyph.currentStaticRenderTick_01 = 0;
+      glyph.currentXPosition_02 = initialXPosition;
+      glyph.finalXPosition_04 = finalXPosition;
+      initialXPosition = initialXPosition + 32;
     }
   }
 
@@ -4798,7 +4926,7 @@ public final class SEffe {
     animation.previousState_14 = new VECTOR[sourceModel.n_vert_04];
     Arrays.setAll(animation.currentState_10, i -> new VECTOR());
     Arrays.setAll(animation.previousState_14, i -> new VECTOR());
-    _8011a030.setu(0x1L);
+    // Set unused static _8011a030 to 1
 
     //LAB_80109e78
     for(int i = 0; i < sourceModel.n_vert_04; i++) {
@@ -5177,9 +5305,7 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
-  /**
-   * TODO This is the second screen capture function, usage currently unknown
-   */
+  /** TODO This is the second screen capture function, usage currently unknown */
   @Method(0x8010b594L)
   public static void FUN_8010b594(final EffectManagerData6c manager, final ScreenCaptureEffect1c effect) {
     int v0;
@@ -5187,26 +5313,26 @@ public final class SEffe {
     int a0;
     int a1;
 
-    final COLOUR sp0x48 = new COLOUR();
+    final COLOUR rgb = new COLOUR();
 
     if((manager._10.flags_00 & 0x40) != 0) {
       final VECTOR sp0x70 = new VECTOR();
       RotTrans(_800fb8d0, sp0x70);
-      FUN_80040df0(sp0x70, _800fb8cc, sp0x48);
+      FUN_80040df0(sp0x70, _800fb8cc, rgb);
     } else {
       //LAB_8010b6c8
-      sp0x48.set(0x80, 0x80, 0x80);
+      rgb.set(0x80, 0x80, 0x80);
     }
 
     //LAB_8010b6d8
-    sp0x48.setR(sp0x48.getR() * manager._10.colour_1c.getX() / 128);
-    sp0x48.setG(sp0x48.getG() * manager._10.colour_1c.getY() / 128);
-    sp0x48.setB(sp0x48.getB() * manager._10.colour_1c.getZ() / 128);
+    rgb.setR(rgb.getR() * manager._10.colour_1c.getX() / 128);
+    rgb.setG(rgb.getG() * manager._10.colour_1c.getY() / 128);
+    rgb.setB(rgb.getB() * manager._10.colour_1c.getZ() / 128);
 
     //LAB_8010b764
     for(int i = 0; i < 8; i++) {
       final GpuCommandPoly cmd = new GpuCommandPoly(3)
-        .rgb(sp0x48.getR(), sp0x48.getG(), sp0x48.getB());
+        .rgb(rgb.getR(), rgb.getG(), rgb.getB());
 
       switch(i) {
         case 1, 2, 4, 7 -> {
@@ -5330,7 +5456,7 @@ public final class SEffe {
           GPU.queueCommand(z >> 2, new GpuCommandPoly(4)
             .bpp(Bpp.BITS_15)
             .vramPos(metrics.u_00 & 0x3c0, (metrics.v_02 & 0x1) != 0 ? 256 : 0)
-            .rgb(sp0x48.getR(), sp0x48.getG(), sp0x48.getB())
+            .rgb(rgb.getR(), rgb.getG(), rgb.getB())
             .pos(0, sxy0.getX(), sxy0.getY())
             .pos(1, sxy1.getX(), sxy1.getY())
             .pos(2, sxy2.getX(), sxy2.getY())
@@ -5564,7 +5690,7 @@ public final class SEffe {
         if(inst.x_04 > 0 && inst.x_04 < dispW && inst.y_06 > 0 && inst.y_06 < dispH) {
           inst.onScreen_03 = true;
 
-          final int scale = (int)_800fb8fc.offset(i * 0x4L).get();
+          final int scale = lensFlareGlowScales_800fb8fc.get(i).get();
           inst.x_04 += (short)(x * scale >> 8);
           inst.y_06 += (short)(y * scale >> 8);
         } else {
@@ -5613,8 +5739,8 @@ public final class SEffe {
 
           if(i == 0) {
             for(int j = 0; j < 4; j++) {
-              final int x = (inst.widthScale_2e * w >> 12) * _800fb910.get(j).get(0).get();
-              final int y = (inst.heightScale_30 * h >> 12) * _800fb910.get(j).get(1).get();
+              final int x = (inst.widthScale_2e * w >> 12) * lensFlareTranslationMagnitudeFactors_800fb910.get(j).get(0).get();
+              final int y = (inst.heightScale_30 * h >> 12) * lensFlareTranslationMagnitudeFactors_800fb910.get(j).get(1).get();
               final int halfW = displayWidth_1f8003e0.get() / 2;
               final int halfH = displayHeight_1f8003e4.get() / 2;
               final int[][] sp0x48 = new int[4][2];
@@ -5632,10 +5758,10 @@ public final class SEffe {
                 .clut(clutX, clutY)
                 .vramPos((tpage & 0b1111) * 64, (tpage & 0b10000) != 0 ? 256 : 0)
                 .rgb(r, g, b)
-                .pos(0, sp0x48[_800fb930.get(j).get(0).get()][0], sp0x48[_800fb930.get(j).get(0).get()][1])
-                .pos(1, sp0x48[_800fb930.get(j).get(1).get()][0], sp0x48[_800fb930.get(j).get(1).get()][1])
-                .pos(2, sp0x48[_800fb930.get(j).get(2).get()][0], sp0x48[_800fb930.get(j).get(2).get()][1])
-                .pos(3, sp0x48[_800fb930.get(j).get(3).get()][0], sp0x48[_800fb930.get(j).get(3).get()][1])
+                .pos(0, sp0x48[lensFlareVertexIndices_800fb930.get(j).get(0).get()][0], sp0x48[lensFlareVertexIndices_800fb930.get(j).get(0).get()][1])
+                .pos(1, sp0x48[lensFlareVertexIndices_800fb930.get(j).get(1).get()][0], sp0x48[lensFlareVertexIndices_800fb930.get(j).get(1).get()][1])
+                .pos(2, sp0x48[lensFlareVertexIndices_800fb930.get(j).get(2).get()][0], sp0x48[lensFlareVertexIndices_800fb930.get(j).get(2).get()][1])
+                .pos(3, sp0x48[lensFlareVertexIndices_800fb930.get(j).get(3).get()][0], sp0x48[lensFlareVertexIndices_800fb930.get(j).get(3).get()][1])
                 .uv(0, u, v)
                 .uv(1, u + w - 1, v)
                 .uv(2, u, v + h - 1)
@@ -7760,7 +7886,7 @@ public final class SEffe {
 
   /**
    * Initializes scale vector scaler for expansion of guard-type effects.
-   * has two types, not sure if both are for guard effects.
+   * has two types, not sure if both are for guard effects. (Also used during dragoon addition)
    */
   @Method(0x80113db8L)
   public static FlowControl FUN_80113db8(final long a0, final RunningScript<?> script) {
@@ -7848,7 +7974,7 @@ public final class SEffe {
     if(BattleScriptDataBase.EM__.equals(data1.magic_00)) {
       c = ((EffectManagerData6c)data1)._10.colour_1c;
     } else {
-      c = _800fb94c;
+      c = defaultEffectColour_800fb94c;
     }
 
     //LAB_80114480
@@ -7861,7 +7987,7 @@ public final class SEffe {
       if(BattleScriptDataBase.EM__.equals(data2.magic_00)) {
         c2 = ((EffectManagerData6c)data2)._10.colour_1c;
       } else {
-        c2 = _800fb94c;
+        c2 = defaultEffectColour_800fb94c;
       }
 
       //LAB_801144e4
@@ -7890,7 +8016,7 @@ public final class SEffe {
     if(BattleScriptDataBase.EM__.equals(a1.magic_00)) {
       a3 = ((EffectManagerData6c)a1)._10.colour_1c;
     } else {
-      a3 = new USCOLOUR().set(_800fb94c);
+      a3 = new USCOLOUR().set(defaultEffectColour_800fb94c);
     }
 
     //LAB_80114614
@@ -7906,7 +8032,7 @@ public final class SEffe {
       if(BattleScriptDataBase.EM__.equals(a1.magic_00)) {
         a2 = ((EffectManagerData6c)a1)._10.colour_1c;
       } else {
-        a2 = _800fb94c;
+        a2 = defaultEffectColour_800fb94c;
       }
 
       //LAB_8011469c
@@ -8708,7 +8834,7 @@ public final class SEffe {
     final int fp = v1 % lmb._08[0].count_04;
 
     //LAB_80116960
-    for(int i = 0; i < lmb.count_04; i++) {
+    for(int i = 0; i < lmb.objectCount_04; i++) {
       if(effect._14[lmb._08[i]._00] != 0) {
         final LmbTransforms14 a1 = lmb._08[i]._08[s6];
         final LmbTransforms14 a0 = lmb._08[i]._08[fp];
@@ -8730,7 +8856,7 @@ public final class SEffe {
     int a0 = t0 >> 13;
     int s0 = t0 & 0x1fff;
     int s5 = (a0 + 1) % lmb._0a;
-    final LmbTransforms14[] s7 = effect.ptr_10;
+    final LmbTransforms14[] s7 = effect.lmbTransforms_10;
     int s1;
     if(effect._04 != t0) {
       s1 = 0x2000 - s0;
@@ -8748,7 +8874,7 @@ public final class SEffe {
 
       //LAB_80116c20
       if(a0 == 0) {
-        for(int i = 0; i < lmb.count_04; i++) {
+        for(int i = 0; i < lmb.objectCount_04; i++) {
           s7[i].set(lmb._10[i]);
         }
       } else {
@@ -8756,7 +8882,7 @@ public final class SEffe {
         int a0_0 = (a0 - 1) * lmb._08 / 2;
 
         //LAB_80116c80
-        for(int i = 0; i < lmb.count_04; i++) {
+        for(int i = 0; i < lmb.objectCount_04; i++) {
           final LmbTransforms14 transforms = s7[i];
           final LmbType1.Sub04 v1 = lmb._0c[i];
 
@@ -8819,7 +8945,7 @@ public final class SEffe {
       int a0_0 = (s5 - 1) * lmb._08 / 2;
 
       //LAB_80116de8
-      for(int i = 0; i < lmb.count_04; i++) {
+      for(int i = 0; i < lmb.objectCount_04; i++) {
         final LmbTransforms14 transforms = s7[i];
         final LmbType1.Sub04 a2 = lmb._0c[i];
 
@@ -8880,7 +9006,7 @@ public final class SEffe {
 
     //LAB_80116ffc
     //LAB_80117014
-    for(int i = 0; i < lmb.count_04; i++) {
+    for(int i = 0; i < lmb.objectCount_04; i++) {
       final LmbTransforms14 transforms = s7[i];
 
       final int deffFlags = effect._14[lmb._0c[i]._03];
@@ -8899,12 +9025,12 @@ public final class SEffe {
   @Method(0x80117104L)
   public static void processLmbType2(final EffectManagerData6c manager, final BttlScriptData6cSub5c effect, final int t5, final MATRIX matrix) {
     final LmbType2 lmb = (LmbType2)effect.lmb_0c;
-    final LmbTransforms14[] originalTransforms = lmb._10;
+    final LmbTransforms14[] originalTransforms = lmb.initialTransforms_10;
     final int s6 = t5 / 0x2000;
     final int s0 = t5 & 0x1fff;
     final int s2 = 0x2000 - s0;
-    final LmbTransforms14[] transformsLo = effect.ptr_10;
-    final LmbTransforms14[] transformsHi = Arrays.copyOfRange(transformsLo, lmb.count_04, transformsLo.length);
+    final LmbTransforms14[] transformsLo = effect.lmbTransforms_10;
+    final LmbTransforms14[] transformsHi = Arrays.copyOfRange(transformsLo, lmb.objectCount_04, transformsLo.length);
     final int fp = (s6 + 1) % lmb._0a;
     if(effect._04 != t5) {
       int s1 = effect._04 / 0x2000;
@@ -8917,7 +9043,7 @@ public final class SEffe {
       if(s6 < s1) {
         s1 = 0;
 
-        for(int i = 0; i < lmb.count_04; i++) {
+        for(int i = 0; i < lmb.objectCount_04; i++) {
           transformsLo[i].scale_00.set(originalTransforms[i].scale_00);
           transformsLo[i].trans_06.set(originalTransforms[i].trans_06);
           transformsLo[i].rot_0c.set(originalTransforms[i].rot_0c);
@@ -8927,92 +9053,78 @@ public final class SEffe {
       //LAB_801171f8
       //LAB_8011720c
       for(; s1 < s6; s1++) {
-        int a0 = s1 * lmb._08;
+        int a0 = s1 * lmb.transformDataPairCount_08;
 
         //LAB_80117234
-        for(int i = 0; i < lmb._08 * 2; i += 2) {
-          final long v1_0 = _8011a048.offset(i).getAddress();
-          MEMORY.ref(1, v1_0).offset(0x0L).setu(lmb._14[a0] >> 4);
-          MEMORY.ref(1, v1_0).offset(0x1L).setu(lmb._14[a0] << 28 >> 28);
+        for(int i = 0; i < lmb.transformDataPairCount_08 * 2; i += 2) {
+          lmbType2TransformationData_8011a048.get(i).set(lmb._14[a0] >> 4);
+          lmbType2TransformationData_8011a048.get(i + 1).set(lmb._14[a0] << 28 >> 28);
           a0++;
         }
 
         //LAB_80117270
-        long a0_0 = _8011a048.getAddress();
-
         //LAB_8011728c
-        for(int i = 0; i < lmb.count_04; i++) {
+        int index = 0;
+        for(int i = 0; i < lmb.objectCount_04; i++) {
           final LmbTransforms14 transform = transformsLo[i];
 
-          final int flags = lmb._0c[i];
+          final int flags = lmb.flags_0c[i];
 
           if((flags & 0xe000) != 0xe000) {
-            final int shift = (int)MEMORY.ref(1, a0_0).offset(0x0L).getSigned() & 0xf;
-            a0_0++;
+            final int shift = lmbType2TransformationData_8011a048.get(index++).get() & 0xf;
 
             if((flags & 0x8000) == 0) {
-              transform.scale_00.x.add((short)(MEMORY.ref(1, a0_0).offset(0x0L).getSigned() << shift));
-              a0_0++;
+              transform.scale_00.x.add((short)(lmbType2TransformationData_8011a048.get(index++).get() << shift));
             }
 
             //LAB_801172c8
             if((flags & 0x4000) == 0) {
-              transform.scale_00.y.add((short)(MEMORY.ref(1, a0_0).offset(0x0L).getSigned() << shift));
-              a0_0++;
+              transform.scale_00.y.add((short)(lmbType2TransformationData_8011a048.get(index++).get() << shift));
             }
 
             //LAB_801172f0
             if((flags & 0x2000) == 0) {
-              transform.scale_00.z.add((short)(MEMORY.ref(1, a0_0).offset(0x0L).getSigned() << shift));
-              a0_0++;
+              transform.scale_00.z.add((short)(lmbType2TransformationData_8011a048.get(index++).get() << shift));
             }
           }
 
           //LAB_80117310
           //LAB_80117314
           if((flags & 0x1c00) != 0x1c00) {
-            final int shift = (int)MEMORY.ref(1, a0_0).offset(0x0L).getSigned() & 0xf;
-            a0_0++;
+            final int shift = lmbType2TransformationData_8011a048.get(index++).get() & 0xf;
 
             if((flags & 0x1000) == 0) {
-              transform.trans_06.x.add((short)(MEMORY.ref(1, a0_0).offset(0x0L).getSigned() << shift));
-              a0_0++;
+              transform.trans_06.x.add((short)(lmbType2TransformationData_8011a048.get(index++).get() << shift));
             }
 
             //LAB_80117348
             if((flags & 0x800) == 0) {
-              transform.trans_06.y.add((short)(MEMORY.ref(1, a0_0).offset(0x0L).getSigned() << shift));
-              a0_0++;
+              transform.trans_06.y.add((short)(lmbType2TransformationData_8011a048.get(index++).get() << shift));
             }
 
             //LAB_80117370
             if((flags & 0x400) == 0) {
-              transform.trans_06.z.add((short)(MEMORY.ref(1, a0_0).offset(0x0L).getSigned() << shift));
-              a0_0++;
+              transform.trans_06.z.add((short)(lmbType2TransformationData_8011a048.get(index++).get() << shift));
             }
           }
 
           //LAB_80117390
           //LAB_80117394
           if((flags & 0x380) != 0x380) {
-            final int shift = (int)MEMORY.ref(1, a0_0).offset(0x0L).getSigned() & 0xf;
-            a0_0++;
+            final int shift = lmbType2TransformationData_8011a048.get(index++).get() & 0xf;
 
             if((flags & 0x200) == 0) {
-              transform.rot_0c.x.add((short)(MEMORY.ref(1, a0_0).offset(0x0L).getSigned() << shift));
-              a0_0++;
+              transform.rot_0c.x.add((short)(lmbType2TransformationData_8011a048.get(index++).get() << shift));
             }
 
             //LAB_801173c8
             if((flags & 0x100) == 0) {
-              transform.rot_0c.y.add((short)(MEMORY.ref(1, a0_0).offset(0x0L).getSigned() << shift));
-              a0_0++;
+              transform.rot_0c.y.add((short)(lmbType2TransformationData_8011a048.get(index++).get() << shift));
             }
 
             //LAB_801173f0
             if((flags & 0x80) == 0) {
-              transform.rot_0c.z.add((short)(MEMORY.ref(1, a0_0).offset(0x0L).getSigned() << shift));
-              a0_0++;
+              transform.rot_0c.z.add((short)(lmbType2TransformationData_8011a048.get(index++).get() << shift));
             }
           }
         }
@@ -9022,12 +9134,12 @@ public final class SEffe {
       if(fp == 0) {
         //LAB_801176c0
         //LAB_801176e0
-        for(int i = 0; i < lmb.count_04; i++) {
+        for(int i = 0; i < lmb.objectCount_04; i++) {
           final LmbTransforms14 originalTransform = originalTransforms[i];
           final LmbTransforms14 transformLo = transformsLo[i];
           final LmbTransforms14 transformHi = transformsHi[i];
 
-          final int flags = lmb._0c[i];
+          final int flags = lmb.flags_0c[i];
 
           if((flags & 0x8000) == 0) {
             transformHi.scale_00.setX((short)((transformLo.scale_00.getX() * s2 + originalTransform.scale_00.getX() * s0) / 0x2000));
@@ -9059,89 +9171,79 @@ public final class SEffe {
           }
         }
       } else {
-        int a0 = (fp - 1) * lmb._08;
+        int a0 = (fp - 1) * lmb.transformDataPairCount_08;
 
         //LAB_80117470
-        for(int i = 0; i < lmb._08 * 2; i += 2) {
-          final long v1_1 = _8011a048.offset(i).getAddress();
-          MEMORY.ref(1, v1_1).offset(0x0L).setu(lmb._14[a0] >> 4);
-          MEMORY.ref(1, v1_1).offset(0x1L).setu(lmb._14[a0] << 28 >> 28);
+        for(int i = 0; i < lmb.transformDataPairCount_08 * 2; i += 2) {
+          lmbType2TransformationData_8011a048.get(i).set(lmb._14[a0] >> 4);
+          lmbType2TransformationData_8011a048.get(i + 1).set(lmb._14[a0] << 28 >> 28);
           a0++;
         }
 
         //LAB_801174ac
-        long a0_0 = _8011a048.getAddress();
-
         //LAB_801174d0
-        for(int i = 0; i < lmb.count_04; i++) {
+        int index = 0;
+        for(int i = 0; i < lmb.objectCount_04; i++) {
           final LmbTransforms14 transformLo = transformsLo[i];
           final LmbTransforms14 transformHi = transformsHi[i];
 
-          final int flags = lmb._0c[i];
+          final int flags = lmb.flags_0c[i];
 
           if((flags & 0xe000) != 0xe000) {
-            final int shift = (int)MEMORY.ref(1, a0_0).offset(0x0L).getSigned() & 0xf;
-            a0_0++;
+            final int shift = lmbType2TransformationData_8011a048.get(index++).get() & 0xf;
 
             if((flags & 0x8000) == 0) {
-              transformHi.scale_00.setX((short)(transformLo.scale_00.getX() + (MEMORY.ref(1, a0_0).offset(0x0L).getSigned() << shift) * s0 / 0x2000));
-              a0_0++;
+              transformHi.scale_00.setX((short)(transformLo.scale_00.getX() + (lmbType2TransformationData_8011a048.get(index++).get() << shift) * s0 / 0x2000));
             }
 
             //LAB_80117524
             if((flags & 0x4000) == 0) {
-              transformHi.scale_00.setY((short)(transformLo.scale_00.getY() + (MEMORY.ref(1, a0_0).offset(0x0L).getSigned() << shift) * s0 / 0x2000));
-              a0_0++;
+              transformHi.scale_00.setY((short)(transformLo.scale_00.getY() + (lmbType2TransformationData_8011a048.get(index++).get() << shift) * s0 / 0x2000));
             }
 
             //LAB_80117564
             if((flags & 0x2000) == 0) {
-              transformHi.scale_00.setZ((short)(transformLo.scale_00.getZ() + (MEMORY.ref(1, a0_0).offset(0x0L).getSigned() << shift) * s0 / 0x2000));
-              a0_0++;
+              transformHi.scale_00.setZ((short)(transformLo.scale_00.getZ() + (lmbType2TransformationData_8011a048.get(index++).get() << shift) * s0 / 0x2000));
             }
           }
 
           //LAB_8011759c
           //LAB_801175a0
           if((flags & 0x1c00) != 0x1c00) {
-            final int shift = (int)MEMORY.ref(1, a0_0).offset(0x0L).getSigned() & 0xf;
-            a0_0++;
+            final int shift = lmbType2TransformationData_8011a048.get(index++).get() & 0xf;
 
             if((flags & 0x1000) == 0) {
-              transformHi.trans_06.setX((short)(transformLo.trans_06.getX() + (MEMORY.ref(1, a0_0).offset(0x0L).getSigned() << shift) * s0 / 0x2000));
-              a0_0++;
+              transformHi.trans_06.setX((short)(transformLo.trans_06.getX() + (lmbType2TransformationData_8011a048.get(index++).get() << shift) * s0 / 0x2000));
             }
 
             //LAB_801175ec
             if((flags & 0x800) == 0) {
-              transformHi.trans_06.setY((short)(transformLo.trans_06.getY() + (MEMORY.ref(1, a0_0).offset(0x0L).getSigned() << shift) * s0 / 0x2000));
-              a0_0++;
+              transformHi.trans_06.setY((short)(transformLo.trans_06.getY() + (lmbType2TransformationData_8011a048.get(index++).get() << shift) * s0 / 0x2000));
             }
 
             //LAB_8011762c
             if((flags & 0x400) == 0) {
-              transformHi.trans_06.setZ((short)(transformLo.trans_06.getZ() + (MEMORY.ref(1, a0_0).offset(0x0L).getSigned() << shift) * s0 / 0x2000));
-              a0_0++;
+              transformHi.trans_06.setZ((short)(transformLo.trans_06.getZ() + (lmbType2TransformationData_8011a048.get(index++).get() << shift) * s0 / 0x2000));
             }
           }
 
           //LAB_80117664
           //LAB_80117668
           if((flags & 0x380) != 0x380) {
-            a0_0++;
+            index++;
 
             if((flags & 0x200) == 0) {
-              a0_0++;
+              index++;
             }
 
             //LAB_80117680
             if((flags & 0x100) == 0) {
-              a0_0++;
+              index++;
             }
 
             //LAB_80117690
             if((flags & 0x80) == 0) {
-              a0_0++;
+              index++;
             }
           }
         }
@@ -9153,10 +9255,10 @@ public final class SEffe {
 
     //LAB_801178a4
     //LAB_801178c0
-    for(int i = 0; i < lmb.count_04; i++) {
+    for(int i = 0; i < lmb.objectCount_04; i++) {
       final LmbTransforms14 transformLo = transformsLo[i];
       final LmbTransforms14 transformHi = transformsHi[i];
-      final int flags = lmb._0c[i];
+      final int flags = lmb.flags_0c[i];
 
       if(effect._14[flags >>> 24] != 0) {
         if(manager._10._2c != 0) {
@@ -9172,7 +9274,6 @@ public final class SEffe {
         FUN_8011619c(manager, effect, effect._14[flags >>> 24], matrix);
       }
     }
-
     //LAB_801179c0
   }
 
@@ -9324,7 +9425,7 @@ public final class SEffe {
     effect.lmbType_00 = lmbType.type_04;
     effect._04 = 0;
     effect.lmb_0c = lmbType.lmb_08;
-    effect.ptr_10 = null;
+    effect.lmbTransforms_10 = null;
     effect._38 = 1;
     effect._3c = 0x1000;
     effect.deffTmdFlags_48 = -1;
@@ -9344,20 +9445,20 @@ public final class SEffe {
       //LAB_80118018
       final LmbType1 lmb = (LmbType1)effect.lmb_0c;
       effect._08 = lmb._0a;
-      effect.ptr_10 = new LmbTransforms14[lmb.count_04];
+      effect.lmbTransforms_10 = new LmbTransforms14[lmb.objectCount_04];
 
-      for(int i = 0; i < lmb.count_04; i++) {
-        effect.ptr_10[i] = new LmbTransforms14().set(lmb._10[i]);
+      for(int i = 0; i < lmb.objectCount_04; i++) {
+        effect.lmbTransforms_10[i] = new LmbTransforms14().set(lmb._10[i]);
       }
     } else if(type == 2) {
       //LAB_80118068
       final LmbType2 lmb = (LmbType2)effect.lmb_0c;
       effect._08 = lmb._0a;
-      effect.ptr_10 = new LmbTransforms14[lmb.count_04 * 2];
+      effect.lmbTransforms_10 = new LmbTransforms14[lmb.objectCount_04 * 2];
 
-      for(int i = 0; i < lmb.count_04; i++) {
-        effect.ptr_10[i] = new LmbTransforms14().set(lmb._10[i]);
-        effect.ptr_10[i + lmb.count_04] = new LmbTransforms14().set(lmb._10[i]);
+      for(int i = 0; i < lmb.objectCount_04; i++) {
+        effect.lmbTransforms_10[i] = new LmbTransforms14().set(lmb.initialTransforms_10[i]);
+        effect.lmbTransforms_10[i + lmb.objectCount_04] = new LmbTransforms14().set(lmb.initialTransforms_10[i]);
       }
     }
 

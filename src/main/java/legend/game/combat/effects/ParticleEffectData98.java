@@ -50,10 +50,10 @@ public class ParticleEffectData98 implements Effect {
 
   public final VECTOR effectAcceleration_70 = new VECTOR();
   public int scaleParticleAcceleration_80;
-  public TriConsumer<EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94> prerenderCallback_84;
-  public QuadConsumer<ScriptState<EffectManagerData6c>, EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94> callback_88;
+  public TriConsumer<EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94> particleInstancePrerenderCallback_84;
+  public QuadConsumer<ScriptState<EffectManagerData6c>, EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94> particleInstanceTickCallback_88;
   public QuadConsumer<EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94, ParticleEffectData98Inner24> initializerCallback_8c;
-  public QuadConsumer<ScriptState<EffectManagerData6c>, EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94> callback_90;
+  public QuadConsumer<ScriptState<EffectManagerData6c>, EffectManagerData6c, ParticleEffectData98, ParticleEffectInstance94> particleInstanceReconstructorCallback_90;
   public ParticleEffectData98 next_94;
 
   public ParticleEffectData98(final int count) {

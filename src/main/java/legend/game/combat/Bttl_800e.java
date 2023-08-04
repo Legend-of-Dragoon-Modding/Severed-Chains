@@ -2051,7 +2051,6 @@ public final class Bttl_800e {
     //LAB_800e96bc
   }
 
-  /** TODO This is probably just a billboard sprite, not specifically this one effect */
   @Method(0x800e96ccL)
   public static FlowControl allocateBillboardSpriteEffect(final RunningScript<? extends BattleScriptDataBase> script) {
     final ScriptState<EffectManagerData6c> state = allocateEffectManager(
