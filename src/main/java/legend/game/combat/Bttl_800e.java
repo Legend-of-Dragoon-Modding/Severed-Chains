@@ -63,6 +63,7 @@ import legend.game.combat.ui.FloatingNumberC4;
 import legend.game.combat.ui.FloatingNumberC4Sub20;
 import legend.game.inventory.screens.TextColour;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.events.battle.DragoonDEFFLoadedEvent;
 import legend.game.modding.events.battle.MonsterStatsEvent;
 import legend.game.modding.events.battle.StatDisplayEvent;
 import legend.game.modding.events.inventory.RepeatItemReturnEvent;
@@ -1051,6 +1052,7 @@ public final class Bttl_800e {
     loadDrgnFile(0, 4140 + index * 2 + "/1", file -> {
       LOGGER.info(DEFF, "Loading DEFF script");
       _800c6938.script_14 = new ScriptFile(4140 + index * 2 + "/1", file.getBytes());
+      EVENTS.postEvent(new DragoonDEFFLoadedEvent(4140 + index * 2));
     });
     _800fafe8.set(1);
   }

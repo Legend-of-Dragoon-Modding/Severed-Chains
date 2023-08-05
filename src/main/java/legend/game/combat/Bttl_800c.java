@@ -3389,16 +3389,16 @@ public final class Bttl_800c {
       }
 
       //LAB_800cd208
-      final int additionXp = Math.min(99, charData.additionXp_22[additionIndex] + 1);
+      final int additionXp = Math.min(999, charData.additionXp_22[additionIndex] + 1);
 
       //LAB_800cd240
       //LAB_800cd288
-      while(charData.additionLevels_1a[additionIndex] < 5 && additionXp >= additionNextLevelXp_800fa744.get(charData.additionLevels_1a[additionIndex]).get()) {
+      while(charData.additionLevels_1a[additionIndex] < CoreMod.MAX_ADDITION_LEVEL && additionXp >= (charData.additionLevels_1a[additionIndex]) * CoreMod.ADDITIONS_PER_LEVEL) {
         charData.additionLevels_1a[additionIndex]++;
       }
 
       //LAB_800cd2ac
-      int nonMaxedAdditions = additionCounts_8004f5c0.get(charIndex).get();
+      int nonMaxedAdditions = CoreMod.CHARACTER_DATA[charIndex].getNonMaxedAdditions(charIndex);
       int lastNonMaxAdditionIndex = -1;
 
       // Find the first addition that isn't already maxed out

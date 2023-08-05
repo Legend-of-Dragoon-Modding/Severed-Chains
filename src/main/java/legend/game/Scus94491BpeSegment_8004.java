@@ -17,6 +17,8 @@ import legend.game.combat.Bttl_800d;
 import legend.game.combat.Bttl_800e;
 import legend.game.combat.Bttl_800f;
 import legend.game.combat.SEffe;
+import legend.game.combat.bobj.PlayerBattleObject;
+import legend.game.modding.events.battle.AttackSpGainEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptFile;
@@ -50,6 +52,7 @@ import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.function.Function;
 
+import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SEQUENCER;
@@ -757,6 +760,25 @@ public final class Scus94491BpeSegment_8004 {
 
     scriptSubFunctions_8004e29c[896] = SEffe::allocateGradientRaysEffect;
     scriptSubFunctions_8004e29c[897] = SEffe::allocateScreenCaptureEffect;
+
+    // Get SP for Shiranda
+    //TODO move this somewhere
+    scriptSubFunctions_8004e29c[900] = script -> {
+      final PlayerBattleObject bobj = (PlayerBattleObject)script.scriptState_04.innerStruct_00;
+
+      final int sp = switch(bobj.dlevel_06) {
+        case 1 -> 30;
+        case 2 -> 50;
+        case 3 -> 70;
+        case 4 -> 100;
+        case 5 -> 150;
+        default -> 0;
+      };
+
+      script.params_20[0].set(EVENTS.postEvent(new AttackSpGainEvent(bobj, sp)).sp);
+
+      return FlowControl.CONTINUE;
+    };
   }
   // 8004f29c end of jump table
 

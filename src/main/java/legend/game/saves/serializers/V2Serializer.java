@@ -1,5 +1,6 @@
 package legend.game.saves.serializers;
 
+import legend.game.modding.coremod.CoreMod;
 import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
@@ -7,9 +8,6 @@ import legend.game.saves.SavedGame;
 import legend.game.types.CharacterData2c;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
-
-import static legend.game.SItem.levelStuff_800fbd30;
-import static legend.game.SItem.magicStuff_800fbd54;
 
 public final class V2Serializer {
   private V2Serializer() { }
@@ -196,8 +194,8 @@ public final class V2Serializer {
     ConfigStorage.loadConfig(config, ConfigStorageLocation.SAVE, data.slice(offset));
 
     final CharacterData2c charData = state.charData_32c[state.charIds_88[0]];
-    final int maxHp = levelStuff_800fbd30.get(state.charIds_88[0]).deref().get(charData.level_12).hp_00.get();
-    final int maxMp = magicStuff_800fbd54.get(state.charIds_88[0]).deref().get(charData.dlevel_13).mp_00.get();
+    final int maxHp = CoreMod.CHARACTER_DATA[state.charIds_88[0]].statsTable[charData.level_12].hp_00;
+    final int maxMp = CoreMod.CHARACTER_DATA[state.charIds_88[0]].dragoonStatsTable[charData.dlevel_13].mp_00;
     return new SavedGame(name, name, locationType, locationIndex, state, config, maxHp, maxMp);
   }
 }

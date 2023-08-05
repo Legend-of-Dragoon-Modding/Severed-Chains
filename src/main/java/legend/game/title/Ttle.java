@@ -19,6 +19,7 @@ import legend.game.fmv.Fmv;
 import legend.game.input.Input;
 import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.tim.Tim;
@@ -46,9 +47,6 @@ import static legend.core.gpu.VramTextureLoader.stitchHorizontal;
 import static legend.core.gpu.VramTextureLoader.stitchVertical;
 import static legend.core.gpu.VramTextureLoader.textureFromPngOneChannelBlue;
 import static legend.core.gpu.VramTextureLoader.textureFromTim;
-import static legend.game.SItem.levelStuff_80111cfc;
-import static legend.game.SItem.magicStuff_80111d20;
-import static legend.game.SItem.xpTables;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
@@ -164,9 +162,9 @@ public final class Ttle {
     for(int charIndex = 0; charIndex < 9; charIndex++) {
       final CharacterData2c charData = gameState_800babc8.charData_32c[charIndex];
       final int level = characterStartingLevels[charIndex];
-      charData.xp_00 = xpTables[charIndex][level];
-      charData.hp_08 = levelStuff_80111cfc.get(charIndex).deref().get(level).hp_00.get();
-      charData.mp_0a = magicStuff_80111d20.get(charIndex).deref().get(1).mp_00.get();
+      charData.xp_00 = CoreMod.CHARACTER_DATA[charIndex].xpTable[level];
+      charData.hp_08 = CoreMod.CHARACTER_DATA[charIndex].statsTable[level].hp_00;
+      charData.mp_0a = CoreMod.CHARACTER_DATA[charIndex].dragoonStatsTable[1].mp_00;
       charData.sp_0c = 0;
       charData.dlevelXp_0e = 0;
       charData.status_10 = 0;
@@ -182,14 +180,8 @@ public final class Ttle {
       charData.additionLevels_1a[0] = 1;
 
       //LAB_800c72d4
-      for(int i = 1; i < level; i++) {
-        final int index = levelStuff_80111cfc.get(charIndex).deref().get(i).addition_02.get();
-
-        if(index != -1) {
-          final int offset = additionOffsets_8004f5ac.get(charIndex).get();
-          charData.additionLevels_1a[index - offset] = 1;
-        }
-
+      for(int i = 0; i < 8; i++) {
+        charData.additionLevels_1a[i] = 1;
         //LAB_800c72fc
       }
 

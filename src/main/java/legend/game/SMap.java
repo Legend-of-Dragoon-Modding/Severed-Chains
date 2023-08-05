@@ -35,6 +35,7 @@ import legend.game.input.Input;
 import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.events.characters.DivineDragoonEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.Param;
 import legend.game.scripting.RunningScript;
@@ -104,6 +105,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.MEMORY;
@@ -663,12 +665,16 @@ public final class SMap {
   /** Called when Dart is given Divine Dragon spirit */
   @Method(0x800d9d60L)
   public static FlowControl FUN_800d9d60(final RunningScript<?> script) {
-    if(gameState_800babc8.charData_32c[0].dlevelXp_0e < 63901) {
-      gameState_800babc8.charData_32c[0].dlevelXp_0e = 63901;
-    }
+    DivineDragoonEvent divineEvent = EVENTS.postEvent(new DivineDragoonEvent());
 
-    //LAB_800d9d90
-    gameState_800babc8.charData_32c[0].dlevel_13 = 5;
+    if(!divineEvent.bypassOverride) {
+      if(gameState_800babc8.charData_32c[0].dlevelXp_0e < 63901) {
+        gameState_800babc8.charData_32c[0].dlevelXp_0e = 63901;
+      }
+
+      //LAB_800d9d90
+      gameState_800babc8.charData_32c[0].dlevel_13 = 5;
+    }
 
     loadSupportOverlay(2, () -> SMap.FUN_800d9dc0(0));
     return FlowControl.CONTINUE;

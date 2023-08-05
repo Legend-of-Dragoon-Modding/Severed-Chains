@@ -1,10 +1,10 @@
 package legend.game.inventory.screens;
 
 import legend.game.input.InputAction;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.types.LodString;
 
 import static legend.game.SItem.FUN_801034cc;
-import static legend.game.SItem._80114290;
 import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.characterCount_8011d7c4;
 import static legend.game.SItem.characterStatusGlyphs_801141a4;
@@ -19,7 +19,6 @@ import static legend.game.SItem.renderThreeDigitNumber;
 import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.getUnlockedDragoonSpells;
-import static legend.game.Scus94491BpeSegment_8002.getUnlockedSpellCount;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -108,20 +107,18 @@ public class StatusScreen extends MenuScreen {
     if(hasDragoon(gameState_800babc8.goods_19c[0], charIndex)) {
       final byte[] spellIndices = new byte[8];
       getUnlockedDragoonSpells(spellIndices, charIndex);
-      final int unlockedSpellCount = getUnlockedSpellCount(charIndex);
+      for(int i = 0; i < 7; i++) {
+        renderCharacter(200, 127 + i * 14, i + 1);
+      }
 
-      for(int i = 0; i < 4; i++) {
-        if(allocate && i < unlockedSpellCount) {
-          renderCharacter(200, 127 + i * 14, i + 1);
-        }
-
+      for(int i = 0; i < CoreMod.CHARACTER_DATA[charIndex].dragoonStatsTable.length; i++) {
         //LAB_80109370
-        final byte spellIndex = spellIndices[i];
+        final int spellIndex = spellIndices[i];
         if(spellIndex != -1) {
           renderText(new LodString(spellStats_800fa0b8[spellIndex].name), 210, 125 + i * 14, TextColour.BROWN);
 
           if(allocate) {
-            renderThreeDigitNumber(342, 128 + i * 14, (int)_80114290.offset(spellIndex).get());
+            renderThreeDigitNumber(342, 128 + i * 14, spellStats_800fa0b8[spellIndex].mp_06);
           }
         }
       }

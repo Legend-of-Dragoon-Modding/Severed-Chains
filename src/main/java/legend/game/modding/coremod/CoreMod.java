@@ -9,10 +9,12 @@ import legend.game.characters.UnaryStat;
 import legend.game.characters.VitalsStat;
 import legend.game.combat.bobj.BattleObjectType;
 import legend.game.combat.bobj.BattleObjectTypeRegistryEvent;
+import legend.game.combat.environment.BattlePreloadedEntities_18cb0;
 import legend.game.combat.formula.Formula;
 import legend.game.combat.formula.PhysicalDamageFormula;
 import legend.game.input.InputAction;
 import legend.game.modding.Mod;
+import legend.game.modding.coremod.character.CharacterData;
 import legend.game.modding.coremod.config.AdditionModeConfigEntry;
 import legend.game.modding.coremod.config.AdditionOverlayConfigEntry;
 import legend.game.modding.coremod.config.ControllerConfigEntry;
@@ -44,7 +46,13 @@ import legend.game.saves.BoolConfigEntry;
 import legend.game.saves.ConfigEntry;
 import legend.game.saves.ConfigRegistryEvent;
 import legend.game.saves.ConfigStorageLocation;
+import legend.game.types.LevelStuff08;
+import legend.game.types.MagicStuff08;
+import legend.game.unpacker.FileData;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -78,6 +86,11 @@ public class CoreMod {
   public static final RegistryDelegate<StatType<VitalsStat>> HP_STAT = STAT_REGISTRAR.register("hp", () -> new StatType<>(VitalsStat::new));
   public static final RegistryDelegate<StatType<VitalsStat>> MP_STAT = STAT_REGISTRAR.register("mp", () -> new StatType<>(VitalsStat::new));
   public static final RegistryDelegate<StatType<VitalsStat>> SP_STAT = STAT_REGISTRAR.register("sp", () -> new StatType<>(VitalsStat::new));
+  public static int MAX_CHARACTER_LEVEL = 60;
+  public static int MAX_DRAGOON_LEVEL = 5;
+  public static int MAX_ADDITION_LEVEL = 5;
+  public static int ADDITIONS_PER_LEVEL = 20;
+  public static CharacterData[] CHARACTER_DATA = new CharacterData[9];
 
   public static final RegistryDelegate<StatType<UnaryStat>> SPEED_STAT = STAT_REGISTRAR.register("speed", () -> new StatType<>(UnaryStat::new));
 
@@ -193,6 +206,87 @@ public class CoreMod {
   public static void configLoaded(final ConfigLoadedEvent event) {
     if(event.storageLocation == ConfigStorageLocation.GLOBAL) {
       GPU.rescale(CONFIG.getConfig(RENDER_SCALE_CONFIG.get()));
+    }
+  }
+
+  public static void loadCharacterXp(int charIndex, String charName) throws IOException {
+    final FileData file = new FileData(Files.readAllBytes(Paths.get("./files/characters/" + charName + "/xp")));
+    for(int i = 0; i < CoreMod.CHARACTER_DATA[charIndex].xpTable.length; i++) {
+      CoreMod.CHARACTER_DATA[charIndex].xpTable[i] = file.readInt(i * 4);
+    }
+  }
+
+  public static void loadCharacterStats(int charIndex, String charName) throws IOException {
+    final FileData file = new FileData(Files.readAllBytes(Paths.get("./files/characters/" + charName + "/stats")));
+    for(int i = 0; i < CoreMod.CHARACTER_DATA[charIndex].statsTable.length; i++) {
+      CoreMod.CHARACTER_DATA[charIndex].statsTable[i] = new LevelStuff08(file.readUShort(i * 8), file.readByte(i * 8 + 2), file.readUByte(i * 8 + 3), file.readUByte(i * 8 + 4), file.readUByte(i * 8 + 5), file.readUByte(i * 8 + 6), file.readUByte(i * 8 + 7));
+    }
+  }
+
+  public static void loadCharacterDragoonXp(int charIndex, String charName) throws IOException {
+    final FileData file = new FileData(Files.readAllBytes(Paths.get("./files/characters/" + charName + "/dxp")));
+    for(int i = 0; i < CoreMod.CHARACTER_DATA[charIndex].dxpTable.length; i++) {
+      CoreMod.CHARACTER_DATA[charIndex].dxpTable[i] = file.readUShort(i * 2);
+    }
+  }
+
+  public static void loadCharacterDragoonStats(int charIndex, String charName) throws IOException {
+    final FileData file = new FileData(Files.readAllBytes(Paths.get("./files/characters/" + charName + "/dstats")));
+    for(int i = 0; i < CoreMod.CHARACTER_DATA[charIndex].dragoonStatsTable.length; i++) {
+      CoreMod.CHARACTER_DATA[charIndex].dragoonStatsTable[i] = new MagicStuff08(file.readUShort(i * 8), file.readByte(i * 8 + 2), file.readUByte(i * 8 + 3), file.readUByte(i * 8 + 4), file.readUByte(i * 8 + 5), file.readUByte(i * 8 + 6), file.readUByte(i * 8 + 7));
+    }
+  }
+
+  public static void loadCharacterAdditions(int charIndex, String charName, int additions) throws IOException {
+    FileData hit = new FileData(Files.readAllBytes(Paths.get("./files/characters/" + charName +"/additionhit")));
+    FileData multiplier = new FileData(Files.readAllBytes(Paths.get("./files/characters/" + charName + "/additionmultipler")));
+
+    for(int i = 0; i < additions; i++) {
+      CoreMod.CHARACTER_DATA[charIndex].additions.add(new CharacterData.SingleAddition());
+      CharacterData.SingleAddition addition = CoreMod.CHARACTER_DATA[charIndex].additions.get(i);
+      for(int x = 0; x < 8; x++) {
+        addition.hits[x] = new BattlePreloadedEntities_18cb0.AdditionHitProperties20();
+        for(int y = 0; y < 16; y++) {
+          addition.hits[x].set(y, (short) hit.readUByte((i * 128) + (x * 16) + y));
+        }
+      }
+    }
+
+    for(int x = 0; x < additions; x++) {
+      CoreMod.CHARACTER_DATA[charIndex].additionsMultiplier.add(new CharacterData.AdditionMultiplier());
+      for(int y = 0; y < 6; y++) {
+        CoreMod.CHARACTER_DATA[charIndex].additionsMultiplier.get(x).levelMultiplier.add(new CharacterData.AdditionMultiplierLevel());
+        CharacterData.AdditionMultiplierLevel levelData = CoreMod.CHARACTER_DATA[charIndex].additionsMultiplier.get(x).levelMultiplier.get(y);
+        levelData._00 = multiplier.readUByte((x * 24) + (y * 4));
+        levelData._01 = multiplier.readUByte((x * 24) + (y * 4) + 1);
+        levelData.spMultiplier_02 = multiplier.readUByte((x * 24) + (y * 4) + 2);
+        levelData.dmgMultiplier_03 = multiplier.readUByte((x * 24) + (y * 4) + 3);
+      }
+    }
+
+    CoreMod.CHARACTER_DATA[charIndex].dragoonAddition.add(new CharacterData.SingleAddition());
+    for(int x = 0; x < 8; x++) {
+      CoreMod.CHARACTER_DATA[charIndex].dragoonAddition.get(0).hits[x] = new BattlePreloadedEntities_18cb0.AdditionHitProperties20();
+      for(int y = 0; y < 16; y++) {
+        if(charIndex == 2 || charIndex == 8) {
+          break;
+        }
+        CoreMod.CHARACTER_DATA[charIndex].dragoonAddition.get(0).hits[x].set(y, hit.readByte((additions * 128) + (x * 16) + y));
+      }
+    }
+
+    if (charIndex == 0) {
+      CoreMod.CHARACTER_DATA[charIndex].dragoonAddition.add(new CharacterData.SingleAddition());
+      for(int x = 0; x < 8; x++) {
+        CoreMod.CHARACTER_DATA[charIndex].dragoonAddition.get(1).hits[x] = new BattlePreloadedEntities_18cb0.AdditionHitProperties20();
+        for(int y = 0; y < 16; y++) {
+          if(charIndex == 2 || charIndex == 8) {
+            break;
+          }
+          CoreMod.CHARACTER_DATA[charIndex].dragoonAddition.get(1).hits[x].set(y, hit.readByte((additions * 128) + (x * 16) + y));
+        }
+        CoreMod.CHARACTER_DATA[charIndex].dragoonAddition.get(1).hits[x].set(4, (short) (CoreMod.CHARACTER_DATA[charIndex].dragoonAddition.get(0).hits[x].damageMultiplier_08 * 2));
+      }
     }
   }
 }

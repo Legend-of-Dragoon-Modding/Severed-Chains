@@ -84,7 +84,7 @@ public final class Unpacker {
 
     // Item, equipment, spells, XP
     transformers.put(Unpacker::itemTableDiscriminator, Unpacker::itemTableExtractor);
-    transformers.put(Unpacker::equipmentAndXpDiscriminator, Unpacker::equipmentAndXpExtractor);
+    transformers.put(Unpacker::sitemDataDescriminator, Unpacker::sitemExtractor);
     transformers.put(Unpacker::spellsDiscriminator, Unpacker::spellsExtractor);
 
     // Give Dart his hand back during oof
@@ -672,11 +672,11 @@ public final class Unpacker {
     return files;
   }
 
-  private static boolean equipmentAndXpDiscriminator(final String name, final FileData data, final Set<String> flags) {
+  private static boolean sitemDataDescriminator(final String name, final FileData data, final Set<String> flags) {
     return "OVL/S_ITEM.OV_".equals(name) && !flags.contains("S_ITEM");
   }
 
-  private static Map<String, FileData> equipmentAndXpExtractor(final String name, final FileData data, final Set<String> flags) {
+  private static Map<String, FileData> sitemExtractor(final String name, final FileData data, final Set<String> flags) {
     flags.add("S_ITEM");
 
     final Map<String, FileData> files = new HashMap<>();
@@ -690,6 +690,42 @@ public final class Unpacker {
     files.put("characters/rose/xp", new FileData(data.data(), 0x1823c, 61 * 4));
     files.put("characters/shana/xp", new FileData(data.data(), 0x18330, 61 * 4));
     files.put("characters/miranda/xp", new FileData(data.data(), 0x18330, 61 * 4));
+    files.put("characters/kongol/dxp", new FileData(data.data(), 0x18426, 6 * 2));
+    files.put("characters/dart/dxp", new FileData(data.data(), 0x18432, 6 * 2));
+    files.put("characters/haschel/dxp", new FileData(data.data(), 0x1843e, 6 * 2));
+    files.put("characters/meru/dxp", new FileData(data.data(), 0x1844a, 6 * 2));
+    files.put("characters/lavitz/dxp", new FileData(data.data(), 0x18456, 6 * 2));
+    files.put("characters/albert/dxp", new FileData(data.data(), 0x18456, 6 * 2));
+    files.put("characters/rose/dxp", new FileData(data.data(), 0x18462, 6 * 2));
+    files.put("characters/shana/dxp", new FileData(data.data(), 0x1846e, 6 * 2));
+    files.put("characters/miranda/dxp", new FileData(data.data(), 0x1846e, 6 * 2));
+    files.put("characters/kongol/stats", new FileData(data.data(), 0x1567c, 61 * 8));
+    files.put("characters/dart/stats", new FileData(data.data(), 0x15864, 61 * 8));
+    files.put("characters/haschel/stats", new FileData(data.data(), 0x15a4c, 61 * 8));
+    files.put("characters/meru/stats", new FileData(data.data(), 0x15c34, 61 * 8));
+    files.put("characters/lavitz/stats", new FileData(data.data(), 0x15e1c, 61 * 8));
+    files.put("characters/albert/stats", new FileData(data.data(), 0x15e1c, 61 * 8));
+    files.put("characters/rose/stats", new FileData(data.data(), 0x16004, 61 * 8));
+    files.put("characters/shana/stats", new FileData(data.data(), 0x161ec, 61 * 8));
+    files.put("characters/miranda/stats", new FileData(data.data(), 0x161ec, 61 * 8));
+    files.put("characters/kongol/dstats", new FileData(data.data(), 0x16404, 6 * 8));
+    files.put("characters/dart/dstats", new FileData(data.data(), 0x16434, 6 * 8));
+    files.put("characters/haschel/dstats", new FileData(data.data(), 0x16464, 6 * 8));
+    files.put("characters/meru/dstats", new FileData(data.data(), 0x16494, 6 * 8));
+    files.put("characters/lavitz/dstats", new FileData(data.data(), 0x164f4, 6 * 8));
+    files.put("characters/albert/dstats", new FileData(data.data(), 0x163d4, 6 * 8));
+    files.put("characters/rose/dstats", new FileData(data.data(), 0x16524, 6 * 8));
+    files.put("characters/shana/dstats", new FileData(data.data(), 0x164c4, 6 * 8));
+    files.put("characters/miranda/dstats", new FileData(data.data(), 0x164c4, 6 * 8));
+    files.put("characters/dart/additionmultipler", new FileData(data.data(), 0x18478, 24 * 7));
+    files.put("characters/lavitz/additionmultipler", new FileData(data.data(), 0x18538, 24 * 5));
+    files.put("characters/shana/additionmultipler", new FileData(data.data(), 0x185b0, 24 * 1));
+    files.put("characters/rose/additionmultipler", new FileData(data.data(), 0x185c8, 24 * 4));
+    files.put("characters/haschel/additionmultipler", new FileData(data.data(), 0x18730, 24 * 6));
+    files.put("characters/albert/additionmultipler", new FileData(data.data(), 0x187d8, 24 * 5));
+    files.put("characters/meru/additionmultipler", new FileData(data.data(), 0x186a0, 24 * 5));
+    files.put("characters/kongol/additionmultipler", new FileData(data.data(), 0x18640, 24 * 3));
+    files.put("characters/miranda/additionmultipler", new FileData(data.data(), 0x185b0, 24 * 1));
 
     for(int i = 0; i < 192; i++) {
       files.put("equipment/%d.deqp".formatted(i), data.slice(0x16878 + i * 0x1c, 0x1c));
@@ -1000,6 +1036,16 @@ public final class Unpacker {
     files.put(name, data);
     files.put("encounters", data.slice(0x68d8, 0x7000));
     files.put("player_combat_script", data.slice(0x4, 0x68d4));
+    files.put("characters/dart/additionhit", new FileData(data.data(), 0x12ee0, 16 * 8 * 8));
+    files.put("characters/lavitz/additionhit", new FileData(data.data(), 0x132e0, 16 * 8 * 6));
+    files.put("characters/rose/additionhit", new FileData(data.data(), 0x135e0, 16 * 8 * 5));
+    files.put("characters/kongol/additionhit", new FileData(data.data(), 0x13860, 16 * 8 * 4));
+    files.put("characters/meru/additionhit", new FileData(data.data(), 0x13a60, 16 * 8 * 6));
+    files.put("characters/haschel/additionhit", new FileData(data.data(), 0x13d60, 16 * 8 * 7));
+    files.put("characters/albert/additionhit", new FileData(data.data(), 0x140e0, 16 * 8 * 6));
+    files.put("characters/shana/additionhit", new FileData(data.data(), 0x175fe, 16 * 8 * 1));
+    files.put("characters/miranda/additionhit", new FileData(data.data(), 0x175fe, 16 * 8 * 1));
+
     return files;
   }
 

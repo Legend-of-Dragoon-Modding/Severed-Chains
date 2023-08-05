@@ -158,25 +158,9 @@ public final class SItem {
   public static final Value _800fbca8 = MEMORY.ref(1, 0x800fbca8L);
 
   public static final ArrayRef<UnsignedIntRef> _800fbd08 = MEMORY.ref(4, 0x800fbd08L, ArrayRef.of(UnsignedIntRef.class, 10, 4, UnsignedIntRef::new));
-  public static final ArrayRef<Pointer<ArrayRef<LevelStuff08>>> levelStuff_800fbd30 = MEMORY.ref(4, 0x800fbd30L, ArrayRef.of(Pointer.classFor(ArrayRef.classFor(LevelStuff08.class)), 9, 4, Pointer.deferred(4, ArrayRef.of(LevelStuff08.class, 61, 8, LevelStuff08::new))));
-  public static final ArrayRef<Pointer<ArrayRef<MagicStuff08>>> magicStuff_800fbd54 = MEMORY.ref(4, 0x800fbd54L, ArrayRef.of(Pointer.classFor(ArrayRef.classFor(MagicStuff08.class)), 9, 4, Pointer.deferred(4, ArrayRef.of(MagicStuff08.class, 6, 8, MagicStuff08::new))));
-
-  public static final ArrayRef<Pointer<ArrayRef<LevelStuff08>>> levelStuff_80111cfc = MEMORY.ref(4, 0x80111cfcL, ArrayRef.of(Pointer.classFor(ArrayRef.classFor(LevelStuff08.class)), 9, 4, Pointer.deferred(4, ArrayRef.of(LevelStuff08.class, 61, 8, LevelStuff08::new))));
-  public static final ArrayRef<Pointer<ArrayRef<MagicStuff08>>> magicStuff_80111d20 = MEMORY.ref(4, 0x80111d20L, ArrayRef.of(Pointer.classFor(ArrayRef.classFor(MagicStuff08.class)), 9, 4, Pointer.deferred(4, ArrayRef.of(MagicStuff08.class, 6, 8, MagicStuff08::new))));
-
   public static final Value _80111d38 = MEMORY.ref(4, 0x80111d38L);
 
   public static final EquipmentStats1c[] equipmentStats_80111ff0 = new EquipmentStats1c[192];
-  public static final int[] kongolXpTable_801134f0 = new int[61];
-  public static final int[] dartXpTable_801135e4 = new int[61];
-  public static final int[] haschelXpTable_801136d8 = new int[61];
-  public static final int[] meruXpTable_801137cc = new int[61];
-  public static final int[] lavitzXpTable_801138c0 = new int[61];
-  public static final int[] albertXpTable_801138c0 = new int[61];
-  public static final int[] roseXpTable_801139b4 = new int[61];
-  public static final int[] shanaXpTable_80113aa8 = new int[61];
-  public static final int[] mirandaXpTable_80113aa8 = new int[61];
-  public static final int[][] xpTables = {dartXpTable_801135e4, lavitzXpTable_801138c0, shanaXpTable_80113aa8, roseXpTable_801139b4, haschelXpTable_801136d8, albertXpTable_801138c0, meruXpTable_801137cc, kongolXpTable_801134f0, mirandaXpTable_80113aa8};
 
   public static final Value ptrTable_80114070 = MEMORY.ref(4, 0x80114070L);
 
@@ -437,11 +421,11 @@ public final class SItem {
     //LAB_800fc6ac
     final int level = gameState_800babc8.charData_32c[charIndex].level_12;
 
-    if(level >= 60) {
+    if(level >= CoreMod.MAX_CHARACTER_LEVEL) {
       return 0; // Max level
     }
 
-    final XpToLevelEvent event = EVENTS.postEvent(new XpToLevelEvent(charIndex, level, xpTables[charIndex][level + 1]));
+    final XpToLevelEvent event = EVENTS.postEvent(new XpToLevelEvent(charIndex, level, CoreMod.CHARACTER_DATA[charIndex].xpTable[level + 1]));
 
     //LAB_800fc70c
     return event.xp;
@@ -1799,13 +1783,11 @@ public final class SItem {
     if(charIndex != -1) {
       gameState_800babc8.charData_32c[charIndex].dlevelXp_0e += spGained_800bc950.get(charSlot).get();
 
-      if(gameState_800babc8.charData_32c[charIndex].dlevelXp_0e > 32000) {
-        gameState_800babc8.charData_32c[charIndex].dlevelXp_0e = 32000;
-      }
-
       //LAB_8010ceb0
       //LAB_8010cecc
-      while(gameState_800babc8.charData_32c[charIndex].dlevelXp_0e >= _800fbbf0.offset(charIndex * 0x4L).deref(2).offset(gameState_800babc8.charData_32c[charIndex].dlevel_13 * 0x2L).offset(0x2L).get() && gameState_800babc8.charData_32c[charIndex].dlevel_13 < 5) {
+      //Level 0 has 0 by default, but so does level 5 so neither of these would level up normally
+      while(gameState_800babc8.charData_32c[charIndex].dlevelXp_0e >= CoreMod.CHARACTER_DATA[charIndex].dxpTable[gameState_800babc8.charData_32c[charIndex].dlevel_13] && CoreMod.CHARACTER_DATA[charIndex].dxpTable[gameState_800babc8.charData_32c[charIndex].dlevel_13] > 0) {
+
         loadCharacterStats();
         final byte[] spellIndices = new byte[8];
         final int spellCount = getUnlockedDragoonSpells(spellIndices, charIndex);
@@ -1817,7 +1799,6 @@ public final class SItem {
         if(spellCount != getUnlockedDragoonSpells(spellIndices, charIndex)) {
           spellsUnlocked_8011e1a8.get(charSlot).set(spellIndices[spellCount] + 1);
         }
-
         //LAB_8010cf70
       }
     }
@@ -2511,7 +2492,7 @@ public final class SItem {
       FUN_8010e630(x + 84, y + 40, xp);
 
 
-      final int dxp = (int) _800fbbf0.offset(charIndex * 0x4L).deref(2).offset(gameState_800babc8.charData_32c[charIndex].dlevel_13 * 0x2L).offset(0x2L).get();
+      final int dxp = CoreMod.CHARACTER_DATA[charIndex].dxpTable[gameState_800babc8.charData_32c[charIndex].dlevel_13];
       FUN_8010e340(x + 76 - getXpWidth(dxp), y + 52, gameState_800babc8.charData_32c[charIndex].dlevelXp_0e);
       FUN_8010cfa0(0x22, 0x22, x - (getXpWidth(dxp) - 114), y + 52, 736, 497).flags_00 |= 0x8;
       FUN_8010e630(x + 84, y + 52, dxp);
@@ -2785,10 +2766,10 @@ public final class SItem {
       stats.bodyDefence_6c = statsEvent.bodyDefence;
       stats.bodyMagicDefence_6d = statsEvent.bodyMagicDefence;
 
-      final MagicStuff08 magicStuff = magicStuff_800fbd54.get(charId).deref().get(stats.dlevel_0f);
+      final MagicStuff08 magicStuff = CoreMod.CHARACTER_DATA[charId].dragoonStatsTable[stats.dlevel_0f];
       stats.maxMp_6e = statsEvent.maxMp;
       stats.spellId_70 = statsEvent.spellId;
-      stats._71 = magicStuff._03.get();
+      stats._71 = magicStuff._03;
       stats.dragoonAttack_72 = statsEvent.dragoonAttack;
       stats.dragoonMagicAttack_73 = statsEvent.dragoonMagicAttack;
       stats.dragoonDefence_74 = statsEvent.dragoonDefence;
@@ -2848,7 +2829,7 @@ public final class SItem {
           } else {
             //LAB_80110590
             stats.mp_06 = charData.mp_0a;
-            stats.maxMp_6e = magicStuff.mp_00.get();
+            stats.maxMp_6e = charData.mp_0a;
           }
         }
       }
