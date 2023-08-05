@@ -164,7 +164,7 @@ public final class Ttle {
       final int level = characterStartingLevels[charIndex];
       charData.xp_00 = CoreMod.CHARACTER_DATA[charIndex].xpTable[level];
       charData.hp_08 = CoreMod.CHARACTER_DATA[charIndex].statsTable[level].hp_00;
-      charData.mp_0a = CoreMod.CHARACTER_DATA[charIndex].dragoonStatsTable[1].mp_00;
+      charData.mp_0a = CoreMod.CHARACTER_DATA[charIndex].dragoonStatsTable[0].mp_00;
       charData.sp_0c = 0;
       charData.dlevelXp_0e = 0;
       charData.status_10 = 0;
