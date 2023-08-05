@@ -37,6 +37,7 @@ import legend.game.combat.deff.DeffManager7cc;
 import legend.game.combat.effects.BttlScriptData6cSub13c;
 import legend.game.combat.effects.ButtonPressHudMetrics06;
 import legend.game.combat.effects.EffectManagerData6c;
+import legend.game.combat.effects.EffectManagerData6cInner;
 import legend.game.combat.effects.FullScreenOverlayEffect0e;
 import legend.game.combat.effects.GuardEffectMetrics04;
 import legend.game.combat.effects.RadialGradientEffect14;
@@ -103,6 +104,7 @@ import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
+import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -146,18 +148,15 @@ import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.initModel;
 import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
 import static legend.game.Scus94491BpeSegment_8002.renderModel;
-import static legend.game.Scus94491BpeSegment_8003.ApplyMatrixLV;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.MoveImage;
 import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
-import static legend.game.Scus94491BpeSegment_8003.TransMatrix;
 import static legend.game.Scus94491BpeSegment_8003.getProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 import static legend.game.Scus94491BpeSegment_8004.previousEngineState_8004dd28;
-import static legend.game.Scus94491BpeSegment_8004.ratan2;
 import static legend.game.Scus94491BpeSegment_8004.sssqFadeOut;
 import static legend.game.Scus94491BpeSegment_8005.combatants_8005e398;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
@@ -190,9 +189,9 @@ import static legend.game.Scus94491BpeSegment_800b.totalXpFromCombat_800bc95c;
 import static legend.game.Scus94491BpeSegment_800b.unlockedUltimateAddition_800bc910;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
-import static legend.game.combat.Bttl_800d.FUN_800dabec;
-import static legend.game.combat.Bttl_800d.FUN_800dd0d4;
-import static legend.game.combat.Bttl_800d.FUN_800dd118;
+import static legend.game.combat.Bttl_800d.resetCameraMovement;
+import static legend.game.combat.Bttl_800d.calculateYAngleFromRefpointToViewpoint;
+import static legend.game.combat.Bttl_800d.calculateXAngleFromRefpointToViewpoint;
 import static legend.game.combat.Bttl_800e.FUN_800ec51c;
 import static legend.game.combat.Bttl_800e.FUN_800ec744;
 import static legend.game.combat.Bttl_800e.FUN_800ee610;
@@ -219,6 +218,8 @@ import static legend.game.combat.Bttl_800f.toggleBattleMenuSelectorRendering;
 
 public final class Bttl_800c {
   private Bttl_800c() { }
+
+  public static final Vector3f ZERO = new Vector3f();
 
   public static final UnsignedShortRef currentPostCombatActionFrame_800c6690 = MEMORY.ref(2, 0x800c6690L, UnsignedShortRef::new);
 
@@ -369,7 +370,7 @@ public final class Bttl_800c {
    *   <li>{@link Bttl_800d#renderAdditionCompletedStarburst}</li>
    * </ol>
    */
-  public static final BiConsumer<ScriptState<EffectManagerData6c>, EffectManagerData6c>[] additionStarburstRenderers_800c6dc4 = new BiConsumer[3];
+  public static final BiConsumer<ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>>, EffectManagerData6c<EffectManagerData6cInner.VoidType>>[] additionStarburstRenderers_800c6dc4 = new BiConsumer[3];
   static {
     additionStarburstRenderers_800c6dc4[0] = Bttl_800d::renderAdditionHitStarburst;
     additionStarburstRenderers_800c6dc4[1] = Bttl_800d::renderAdditionCompletedStarburst;
@@ -450,7 +451,7 @@ public final class Bttl_800c {
    *   <li>{@link Bttl_800d#renderRingGradientEffect}</li>
    * </ol>
    */
-  public static final QuintConsumer<EffectManagerData6c, Integer, short[], RadialGradientEffect14, Translucency>[] radialGradientEffectRenderers_800fa758 = new QuintConsumer[5];
+  public static final QuintConsumer<EffectManagerData6c<EffectManagerData6cInner.RadialGradientType>, Integer, short[], RadialGradientEffect14, Translucency>[] radialGradientEffectRenderers_800fa758 = new QuintConsumer[5];
   static {
     radialGradientEffectRenderers_800fa758[0] = Bttl_800d::renderDiscGradientEffect;
     radialGradientEffectRenderers_800fa758[1] = Bttl_800d::FUN_800d1e80; // Not implemented
@@ -479,57 +480,57 @@ public final class Bttl_800c {
 
   public static final ArrayRef<ButtonPressHudMetrics06> buttonPressHudMetrics_800faaa0 = MEMORY.ref(4, 0x800faaa0L, ArrayRef.of(ButtonPressHudMetrics06.class, 41, 6, ButtonPressHudMetrics06::new));
 
-  public static final SVECTOR cameraRotationVector_800fab98 = new SVECTOR();
-  public static final SVECTOR _800faba0 = new SVECTOR();
-  public static final VECTOR _800faba8 = new VECTOR();
+  public static final Vector3f cameraRotationVector_800fab98 = new Vector3f();
+  public static final Vector3f temp1_800faba0 = new Vector3f();
+  public static final Vector3f temp2_800faba8 = new Vector3f();
 
   public static final BoolRef useCameraWobble_800fabb8 = MEMORY.ref(1, 0x800fabb8L, BoolRef::new);
 
   /**
    * <ol start="0">
-   *   <li>{@link Bttl_800d#FUN_800dacc4}</li>
-   *   <li>{@link Bttl_800d#FUN_800dad14}</li>
-   *   <li>{@link Bttl_800d#FUN_800dadc0}</li>
-   *   <li>{@link Bttl_800d#FUN_800dadc8}</li>
-   *   <li>{@link Bttl_800d#FUN_800dadd0}</li>
-   *   <li>{@link Bttl_800d#FUN_800dae3c}</li>
-   *   <li>{@link Bttl_800d#FUN_800daedc}</li>
-   *   <li>{@link Bttl_800d#FUN_800daf6c}</li>
+   *   <li>{@link Bttl_800d#setViewpointFromScriptTranslation}</li>
+   *   <li>{@link Bttl_800d#setViewpointFromScriptAngle}</li>
+   *   <li>{@link Bttl_800d#setViewpointFromScriptTranslationNoOp}</li>
+   *   <li>{@link Bttl_800d#setViewpointFromScriptAngleNoOp}</li>
+   *   <li>{@link Bttl_800d#setViewpointFromScriptTranslationRelativeToRefpoint}</li>
+   *   <li>{@link Bttl_800d#setViewpointFromScriptAngleRelativeToRefpoint}</li>
+   *   <li>{@link Bttl_800d#setViewpointFromScriptTranslationRelativeToObject}</li>
+   *   <li>{@link Bttl_800d#setViewpointFromScriptAngleRelativeToObject}</li>
    * </ol>
    */
-  public static final CameraQuadParamCallback[] _800fabbc = new CameraQuadParamCallback[8];
+  public static final CameraQuadParamCallback[] viewpointSetFromScriptMethods_800fabbc = new CameraQuadParamCallback[8];
   static {
-    _800fabbc[0] = Bttl_800d::FUN_800dacc4;
-    _800fabbc[1] = Bttl_800d::FUN_800dad14;
-    _800fabbc[2] = Bttl_800d::FUN_800dadc0;
-    _800fabbc[3] = Bttl_800d::FUN_800dadc8;
-    _800fabbc[4] = Bttl_800d::FUN_800dadd0;
-    _800fabbc[5] = Bttl_800d::FUN_800dae3c;
-    _800fabbc[6] = Bttl_800d::FUN_800daedc;
-    _800fabbc[7] = Bttl_800d::FUN_800daf6c;
+    viewpointSetFromScriptMethods_800fabbc[0] = Bttl_800d::setViewpointFromScriptTranslation;
+    viewpointSetFromScriptMethods_800fabbc[1] = Bttl_800d::setViewpointFromScriptAngle;
+    viewpointSetFromScriptMethods_800fabbc[2] = Bttl_800d::setViewpointFromScriptTranslationNoOp;
+    viewpointSetFromScriptMethods_800fabbc[3] = Bttl_800d::setViewpointFromScriptAngleNoOp;
+    viewpointSetFromScriptMethods_800fabbc[4] = Bttl_800d::setViewpointFromScriptTranslationRelativeToRefpoint;
+    viewpointSetFromScriptMethods_800fabbc[5] = Bttl_800d::setViewpointFromScriptAngleRelativeToRefpoint;
+    viewpointSetFromScriptMethods_800fabbc[6] = Bttl_800d::setViewpointFromScriptTranslationRelativeToObject;
+    viewpointSetFromScriptMethods_800fabbc[7] = Bttl_800d::setViewpointFromScriptAngleRelativeToObject;
   }
   /**
    * <ol start="0">
-   *   <li>{@link Bttl_800d#FUN_800db0d8}</li>
-   *   <li>{@link Bttl_800d#FUN_800db128}</li>
-   *   <li>{@link Bttl_800d#FUN_800db1d4}</li>
-   *   <li>{@link Bttl_800d#FUN_800db240}</li>
-   *   <li>{@link Bttl_800d#FUN_800db2e0}</li>
-   *   <li>{@link Bttl_800d#FUN_800db2e8}</li>
-   *   <li>{@link Bttl_800d#FUN_800db2f0}</li>
-   *   <li>{@link Bttl_800d#FUN_800db398}</li>
+   *   <li>{@link Bttl_800d#setRefpointFromScriptTranslation}</li>
+   *   <li>{@link Bttl_800d#setRefpointFromScriptAngle}</li>
+   *   <li>{@link Bttl_800d#setRefpointFromScriptTranslationRelativeToViewpoint}</li>
+   *   <li>{@link Bttl_800d#setRefpointFromScriptAngleRelativeToViewpoint}</li>
+   *   <li>{@link Bttl_800d#setRefpointFromScriptTranslationNoOp}</li>
+   *   <li>{@link Bttl_800d#setRefpointFromScriptAngleNoOp}</li>
+   *   <li>{@link Bttl_800d#setRefpointFromScriptTranslationRelativeToObject}</li>
+   *   <li>{@link Bttl_800d#setRefpointFromScriptAngleRelativeToObject}</li>
    * </ol>
    */
-  public static final CameraQuadParamCallback[] _800fabdc = new CameraQuadParamCallback[8];
+  public static final CameraQuadParamCallback[] refpointSetFromScriptMethods_800fabdc = new CameraQuadParamCallback[8];
   static {
-    _800fabdc[0] = Bttl_800d::FUN_800db0d8;
-    _800fabdc[1] = Bttl_800d::FUN_800db128;
-    _800fabdc[2] = Bttl_800d::FUN_800db1d4;
-    _800fabdc[3] = Bttl_800d::FUN_800db240;
-    _800fabdc[4] = Bttl_800d::FUN_800db2e0;
-    _800fabdc[5] = Bttl_800d::FUN_800db2e8;
-    _800fabdc[6] = Bttl_800d::FUN_800db2f0;
-    _800fabdc[7] = Bttl_800d::FUN_800db398;
+    refpointSetFromScriptMethods_800fabdc[0] = Bttl_800d::setRefpointFromScriptTranslation;
+    refpointSetFromScriptMethods_800fabdc[1] = Bttl_800d::setRefpointFromScriptAngle;
+    refpointSetFromScriptMethods_800fabdc[2] = Bttl_800d::setRefpointFromScriptTranslationRelativeToViewpoint;
+    refpointSetFromScriptMethods_800fabdc[3] = Bttl_800d::setRefpointFromScriptAngleRelativeToViewpoint;
+    refpointSetFromScriptMethods_800fabdc[4] = Bttl_800d::setRefpointFromScriptTranslationNoOp;
+    refpointSetFromScriptMethods_800fabdc[5] = Bttl_800d::setRefpointFromScriptAngleNoOp;
+    refpointSetFromScriptMethods_800fabdc[6] = Bttl_800d::setRefpointFromScriptTranslationRelativeToObject;
+    refpointSetFromScriptMethods_800fabdc[7] = Bttl_800d::setRefpointFromScriptAngleRelativeToObject;
   }
   /**
    * <ol start="0">
@@ -781,49 +782,49 @@ public final class Bttl_800c {
   }
   /**
    * <ol start="0">
-   *   <li>{@link Bttl_800d#FUN_800dc408}</li>
-   *   <li>{@link Bttl_800d#FUN_800dc45c}</li>
-   *   <li>{@link Bttl_800d#FUN_800dc504}</li>
-   *   <li>{@link Bttl_800d#FUN_800dc50c}</li>
-   *   <li>{@link Bttl_800d#FUN_800dc514}</li>
-   *   <li>{@link Bttl_800d#FUN_800dc580}</li>
-   *   <li>{@link Bttl_800d#FUN_800dc630}</li>
-   *   <li>{@link Bttl_800d#FUN_800dc6d8}</li>
+   *   <li>{@link Bttl_800d#refpointRawComponent}</li>
+   *   <li>{@link Bttl_800d#refpointAngleFrom0ToComponent}</li>
+   *   <li>{@link Bttl_800d#refpointNoop1}</li>
+   *   <li>{@link Bttl_800d#refpointNoop2}</li>
+   *   <li>{@link Bttl_800d#refpointDeltaFromRefpointToComponent}</li>
+   *   <li>{@link Bttl_800d#refpointAngleFromRefpointToComponent}</li>
+   *   <li>{@link Bttl_800d#refpointDeltaFromScriptedObjToComponent}</li>
+   *   <li>{@link Bttl_800d#refpointAngleFromScriptedObjToComponent}</li>
    * </ol>
    */
-  public static final ComponentFunction<Integer, Integer, Integer, Integer, Integer>[] refpointComponentMethods_800fad7c = new ComponentFunction[8];
+  public static final ComponentFunction[] refpointComponentMethods_800fad7c = new ComponentFunction[8];
   static {
-    refpointComponentMethods_800fad7c[0] = Bttl_800d::FUN_800dc408;
-    refpointComponentMethods_800fad7c[1] = Bttl_800d::FUN_800dc45c;
-    refpointComponentMethods_800fad7c[2] = Bttl_800d::FUN_800dc504;
-    refpointComponentMethods_800fad7c[3] = Bttl_800d::FUN_800dc50c;
-    refpointComponentMethods_800fad7c[4] = Bttl_800d::FUN_800dc514;
-    refpointComponentMethods_800fad7c[5] = Bttl_800d::FUN_800dc580;
-    refpointComponentMethods_800fad7c[6] = Bttl_800d::FUN_800dc630;
-    refpointComponentMethods_800fad7c[7] = Bttl_800d::FUN_800dc6d8;
+    refpointComponentMethods_800fad7c[0] = Bttl_800d::refpointRawComponent;
+    refpointComponentMethods_800fad7c[1] = Bttl_800d::refpointAngleFrom0ToComponent;
+    refpointComponentMethods_800fad7c[2] = Bttl_800d::refpointNoop1;
+    refpointComponentMethods_800fad7c[3] = Bttl_800d::refpointNoop2;
+    refpointComponentMethods_800fad7c[4] = Bttl_800d::refpointDeltaFromRefpointToComponent;
+    refpointComponentMethods_800fad7c[5] = Bttl_800d::refpointAngleFromRefpointToComponent;
+    refpointComponentMethods_800fad7c[6] = Bttl_800d::refpointDeltaFromScriptedObjToComponent;
+    refpointComponentMethods_800fad7c[7] = Bttl_800d::refpointAngleFromScriptedObjToComponent;
   }
   /**
    * <ol start="0">
-   *   <li>{@link Bttl_800d#FUN_800dc798}</li>
-   *   <li>{@link Bttl_800d#FUN_800dc7ec}</li>
-   *   <li>{@link Bttl_800d#FUN_800dc894}</li>
-   *   <li>{@link Bttl_800d#FUN_800dc900}</li>
-   *   <li>{@link Bttl_800d#FUN_800dc9b0}</li>
-   *   <li>{@link Bttl_800d#FUN_800dc9b8}</li>
-   *   <li>{@link Bttl_800d#FUN_800dc9c0}</li>
-   *   <li>{@link Bttl_800d#FUN_800dca68}</li>
+   *   <li>{@link Bttl_800d#viewpointRawComponent}</li>
+   *   <li>{@link Bttl_800d#viewpointAngleFrom0ToComponent}</li>
+   *   <li>{@link Bttl_800d#viewpointDeltaFromViewpointToComponent}</li>
+   *   <li>{@link Bttl_800d#viewpointAngleFromViewpointToComponent}</li>
+   *   <li>{@link Bttl_800d#viewpointNoop1}</li>
+   *   <li>{@link Bttl_800d#viewpointNoop2}</li>
+   *   <li>{@link Bttl_800d#viewpointDeltaFromScriptedObjToComponent}</li>
+   *   <li>{@link Bttl_800d#viewpointAngleFromScriptedObjToComponent}</li>
    * </ol>
    */
-  public static final ComponentFunction<Integer, Integer, Integer, Integer, Integer>[] viewpointComponentMethods_800fad9c = new ComponentFunction[8];
+  public static final ComponentFunction[] viewpointComponentMethods_800fad9c = new ComponentFunction[8];
   static {
-    viewpointComponentMethods_800fad9c[0] = Bttl_800d::FUN_800dc798;
-    viewpointComponentMethods_800fad9c[1] = Bttl_800d::FUN_800dc7ec;
-    viewpointComponentMethods_800fad9c[2] = Bttl_800d::FUN_800dc894;
-    viewpointComponentMethods_800fad9c[3] = Bttl_800d::FUN_800dc900;
-    viewpointComponentMethods_800fad9c[4] = Bttl_800d::FUN_800dc9b0;
-    viewpointComponentMethods_800fad9c[5] = Bttl_800d::FUN_800dc9b8;
-    viewpointComponentMethods_800fad9c[6] = Bttl_800d::FUN_800dc9c0;
-    viewpointComponentMethods_800fad9c[7] = Bttl_800d::FUN_800dca68;
+    viewpointComponentMethods_800fad9c[0] = Bttl_800d::viewpointRawComponent;
+    viewpointComponentMethods_800fad9c[1] = Bttl_800d::viewpointAngleFrom0ToComponent;
+    viewpointComponentMethods_800fad9c[2] = Bttl_800d::viewpointDeltaFromViewpointToComponent;
+    viewpointComponentMethods_800fad9c[3] = Bttl_800d::viewpointAngleFromViewpointToComponent;
+    viewpointComponentMethods_800fad9c[4] = Bttl_800d::viewpointNoop1;
+    viewpointComponentMethods_800fad9c[5] = Bttl_800d::viewpointNoop2;
+    viewpointComponentMethods_800fad9c[6] = Bttl_800d::viewpointDeltaFromScriptedObjToComponent;
+    viewpointComponentMethods_800fad9c[7] = Bttl_800d::viewpointAngleFromScriptedObjToComponent;
   }
 
   public static final ArrayRef<ShortRef> enemyDeffFileIndices_800faec4 = MEMORY.ref(2, 0x800faec4L, ArrayRef.of(ShortRef.class, 146, 2, ShortRef::new));
@@ -1038,7 +1039,7 @@ public final class Bttl_800c {
       vsyncMode_8007a3b8 = 3;
       _800bc960.or(0x40);
       setProjectionPlaneDistance(320);
-      FUN_800dabec();
+      resetCameraMovement();
       pregameLoadingStage_800bb10c.incr();
     }
 
@@ -1479,7 +1480,7 @@ public final class Bttl_800c {
       final BattleStage stage = battlePreloadedEntities_1f8003f4.stage_963c;
       loadStageTmd(stage, new CContainer(modelName, files.get(0), 10), new TmdAnimationFile(files.get(1)));
       stage.coord2_558.coord.transfer.set(0, 0, 0);
-      stage.param_5a8.rotate.set((short)0, (short)0x400, (short)0);
+      stage.param_5a8.rotate.set(0.0f, MathHelper.TWO_PI / 4.0f, 0.0f);
     }
 
     //LAB_800c8818
@@ -1498,10 +1499,10 @@ public final class Bttl_800c {
 
       mcqOffsetX_800c6774.add(mcqStepX_800c676c.get());
       mcqOffsetY_800c6778.add(mcqStepY_800c6770.get());
-      final int x0 = (mcqBaseOffsetX_800c66cc.get() * FUN_800dd118() / 0x1000 + mcqOffsetX_800c6774.get()) % mcq.screenWidth_14 - centreScreenX_1f8003dc.get();
+      final int x0 = (mcqBaseOffsetX_800c66cc.get() * MathHelper.radToPsxDeg(calculateXAngleFromRefpointToViewpoint()) / 0x1000 + mcqOffsetX_800c6774.get()) % mcq.screenWidth_14 - centreScreenX_1f8003dc.get();
       final int x1 = x0 - mcq.screenWidth_14;
       final int x2 = x0 + mcq.screenWidth_14;
-      int y = mcqOffsetY_800c6778.get() - (FUN_800dd0d4() + 0x800 & 0xfff) + 0x760 - centreScreenY_1f8003de.get();
+      int y = mcqOffsetY_800c6778.get() - MathHelper.radToPsxDeg(MathHelper.floorMod(calculateYAngleFromRefpointToViewpoint() + MathHelper.PI, MathHelper.TWO_PI)) + 0x760 - centreScreenY_1f8003de.get();
       renderMcq(mcq, 320, 0, x0, y, orderingTableSize_1f8003c8.get() - 2, mcqColour_800fa6dc.get());
       renderMcq(mcq, 320, 0, x1, y, orderingTableSize_1f8003c8.get() - 2, mcqColour_800fa6dc.get());
 
@@ -2638,16 +2639,17 @@ public final class Bttl_800c {
   public static boolean FUN_800cb34c(final ScriptState<BattleObject27c> state, final BattleObject27c data) {
     final BattleObject27c bobj = state.scriptState_c8.innerStruct_00;
     final VECTOR vec = bobj.model_148.coord2_14.coord.transfer;
-    final int a0 = ratan2(vec.getX() - data.model_148.coord2_14.coord.transfer.getX(), vec.getZ() - data.model_148.coord2_14.coord.transfer.getZ()) + 0x800;
+    final float angle = MathHelper.atan2(vec.getX() - data.model_148.coord2_14.coord.transfer.getX(), vec.getZ() - data.model_148.coord2_14.coord.transfer.getZ()) + MathHelper.PI;
+
     state._cc--;
     if(state._cc > 0) {
       state._d0 -= state._d4;
-      data.model_148.coord2Param_64.rotate.setY((short)(a0 + state._d0));
+      data.model_148.coord2Param_64.rotate.y = angle + MathHelper.psxDegToRad(state._d0);
       return false;
     }
 
     //LAB_800cb3e0
-    data.model_148.coord2Param_64.rotate.setY((short)a0);
+    data.model_148.coord2Param_64.rotate.y = angle;
 
     //LAB_800cb3e8
     return true;
@@ -2674,25 +2676,25 @@ public final class Bttl_800c {
   @Method(0x800cb4c8L)
   public static FlowControl scriptSetBobjRotation(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    bobj.model_148.coord2Param_64.rotate.setX((short)script.params_20[1].get());
-    bobj.model_148.coord2Param_64.rotate.setY((short)script.params_20[2].get());
-    bobj.model_148.coord2Param_64.rotate.setZ((short)script.params_20[3].get());
+    bobj.model_148.coord2Param_64.rotate.x = MathHelper.psxDegToRad(script.params_20[1].get());
+    bobj.model_148.coord2Param_64.rotate.y = MathHelper.psxDegToRad(script.params_20[2].get());
+    bobj.model_148.coord2Param_64.rotate.z = MathHelper.psxDegToRad(script.params_20[3].get());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800cb534L)
   public static FlowControl scriptSetBobjRotationY(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    bobj.model_148.coord2Param_64.rotate.setY((short)script.params_20[1].get());
+    bobj.model_148.coord2Param_64.rotate.y = MathHelper.psxDegToRad(script.params_20[1].get());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800cb578L)
   public static FlowControl scriptGetBobjRotation(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    script.params_20[1].set(bobj.model_148.coord2Param_64.rotate.getX());
-    script.params_20[2].set(bobj.model_148.coord2Param_64.rotate.getY());
-    script.params_20[3].set(bobj.model_148.coord2Param_64.rotate.getZ());
+    script.params_20[1].set(MathHelper.radToPsxDeg(bobj.model_148.coord2Param_64.rotate.x));
+    script.params_20[2].set(MathHelper.radToPsxDeg(bobj.model_148.coord2Param_64.rotate.y));
+    script.params_20[3].set(MathHelper.radToPsxDeg(bobj.model_148.coord2Param_64.rotate.z));
     return FlowControl.CONTINUE;
   }
 
@@ -3064,7 +3066,7 @@ public final class Bttl_800c {
     final BattleObject27c s0 = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final BattleObject27c v0 = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00;
 
-    s0.model_148.coord2Param_64.rotate.setY((short)(ratan2(v0.model_148.coord2_14.coord.transfer.getX() - s0.model_148.coord2_14.coord.transfer.getX(), v0.model_148.coord2_14.coord.transfer.getZ() - s0.model_148.coord2_14.coord.transfer.getZ()) + 0x800));
+    s0.model_148.coord2Param_64.rotate.y = MathHelper.atan2(v0.model_148.coord2_14.coord.transfer.getX() - s0.model_148.coord2_14.coord.transfer.getX(), v0.model_148.coord2_14.coord.transfer.getZ() - s0.model_148.coord2_14.coord.transfer.getZ()) + MathHelper.PI;
     return FlowControl.CONTINUE;
   }
 
@@ -3077,13 +3079,11 @@ public final class Bttl_800c {
     final BattleObject27c bobj1 = state1.innerStruct_00;
     final BattleObject27c bobj2 = state2.innerStruct_00;
     final int s2 = script.params_20[2].get();
-    int v0 = ratan2(bobj2.model_148.coord2_14.coord.transfer.getX() - bobj1.model_148.coord2_14.coord.transfer.getX(), bobj2.model_148.coord2_14.coord.transfer.getZ() - bobj1.model_148.coord2_14.coord.transfer.getZ()) - bobj1.model_148.coord2Param_64.rotate.getY() + 0x1000;
-    v0 = v0 & 0xfff;
-    v0 = v0 - 0x800;
+    final float v0 = MathHelper.floorMod(MathHelper.atan2(bobj2.model_148.coord2_14.coord.transfer.getX() - bobj1.model_148.coord2_14.coord.transfer.getX(), bobj2.model_148.coord2_14.coord.transfer.getZ() - bobj1.model_148.coord2_14.coord.transfer.getZ()) - bobj1.model_148.coord2Param_64.rotate.y, MathHelper.TWO_PI) - MathHelper.PI;
     state1.scriptState_c8 = state2;
     state1._cc = s2;
-    state1._d0 = v0;
-    state1._d4 = v0 / s2;
+    state1._d0 = MathHelper.radToPsxDeg(v0);
+    state1._d4 = MathHelper.radToPsxDeg(v0 / s2);
     state1.setTempTicker(Bttl_800c::FUN_800cb34c);
     return FlowControl.CONTINUE;
   }
@@ -3503,7 +3503,7 @@ public final class Bttl_800c {
     bobj.charSlot_276 = monsterCount_800c6768.get();
     monsterCount_800c6768.incr();
     bobj.model_148.coord2_14.coord.transfer.set(0, 0, 0);
-    bobj.model_148.coord2Param_64.rotate.set((short)0, (short)0, (short)0);
+    bobj.model_148.coord2Param_64.rotate.zero();
     return FlowControl.CONTINUE;
   }
 
@@ -3691,7 +3691,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cdcecL)
-  public static void getVertexMinMaxByComponent(final Model124 model, final int dobjIndex, final VECTOR smallestVertRef, final VECTOR largestVertRef, final EffectManagerData6c manager, final IntRef smallestIndexRef, final IntRef largestIndexRef) {
+  public static void getVertexMinMaxByComponent(final Model124 model, final int dobjIndex, final VECTOR smallestVertRef, final VECTOR largestVertRef, final EffectManagerData6c<EffectManagerData6cInner.WeaponTrailType> manager, final IntRef smallestIndexRef, final IntRef largestIndexRef) {
     short largest = -1;
     short smallest = 0x7fff;
     int largestIndex = 0;
@@ -3701,7 +3701,7 @@ public final class Bttl_800c {
     //LAB_800cdd24
     for(int i = 0; i < tmd.n_vert_04; i++) {
       final SVECTOR vert = tmd.vert_top_00[i];
-      final ShortRef component = vert.component(manager._10._24);
+      final ShortRef component = vert.component(manager._10.vertexComponent_24);
       final short val = component.get();
 
       if(val >= largest) {
@@ -3762,7 +3762,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cde94L)
-  public static void renderWeaponTrailEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
+  public static void renderWeaponTrailEffect(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.WeaponTrailType>> state, final EffectManagerData6c<EffectManagerData6cInner.WeaponTrailType> data) {
     // Prevent garbage trails from rendering across the screen
     final int renderCoordThreshold = 5000;
     boolean renderCoordThresholdExceeded;
@@ -3842,7 +3842,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800ce254L)
-  public static void tickWeaponTrailEffect(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c data) {
+  public static void tickWeaponTrailEffect(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.WeaponTrailType>> state, final EffectManagerData6c<EffectManagerData6cInner.WeaponTrailType> data) {
     final WeaponTrailEffect3c trail = (WeaponTrailEffect3c)data.effect_44;
     trail.currentSegmentIndex_00++;
     if(trail.currentSegmentIndex_00 == 0) {
@@ -3874,7 +3874,7 @@ public final class Bttl_800c {
     for(int i = 0; i < 2; i++) {
       final MATRIX perspectiveTransformMatrix = new MATRIX();
       GsGetLw(trail.parentModel_30.coord2ArrPtr_04[trail.dobjIndex_08], perspectiveTransformMatrix);
-      ApplyMatrixLV(perspectiveTransformMatrix, i == 0 ? trail.smallestVertex_20 : trail.largestVertex_10, segment.endpointCoords_04[i]);
+      (i == 0 ? trail.smallestVertex_20 : trail.largestVertex_10).mul(perspectiveTransformMatrix, segment.endpointCoords_04[i]); // Yes, I hate me for this syntax too
       segment.endpointCoords_04[i].add(perspectiveTransformMatrix.transfer);
     }
 
@@ -3939,16 +3939,17 @@ public final class Bttl_800c {
 
   @Method(0x800ce6a8L)
   public static FlowControl allocateWeaponTrailEffect(final RunningScript<? extends BattleScriptDataBase> script) {
-    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+    final ScriptState<EffectManagerData6c<EffectManagerData6cInner.WeaponTrailType>> state = allocateEffectManager(
       "Weapon trail",
       script.scriptState_04,
       Bttl_800c::tickWeaponTrailEffect,
       Bttl_800c::renderWeaponTrailEffect,
       null,
-      new WeaponTrailEffect3c()
+      new WeaponTrailEffect3c(),
+      new EffectManagerData6cInner.WeaponTrailType()
     );
 
-    final EffectManagerData6c manager = state.innerStruct_00;
+    final EffectManagerData6c<EffectManagerData6cInner.WeaponTrailType> manager = state.innerStruct_00;
     final WeaponTrailEffect3c trail = (WeaponTrailEffect3c)manager.effect_44;
 
     //LAB_800ce75c
@@ -3971,7 +3972,7 @@ public final class Bttl_800c {
 
     final BattleScriptDataBase parent = (BattleScriptDataBase)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00;
     if(BattleScriptDataBase.EM__.equals(parent.magic_00)) {
-      trail.parentModel_30 = ((BttlScriptData6cSub13c)((EffectManagerData6c)parent).effect_44).model_10;
+      trail.parentModel_30 = ((BttlScriptData6cSub13c)((EffectManagerData6c<?>)parent).effect_44).model_10;
     } else {
       //LAB_800ce7f8
       trail.parentModel_30 = ((BattleObject27c)parent).model_148;
@@ -4020,7 +4021,7 @@ public final class Bttl_800c {
 
   @Method(0x800ce9b0L)
   public static FlowControl FUN_800ce9b0(final RunningScript<?> script) {
-    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final EffectManagerData6c<EffectManagerData6cInner.WeaponTrailType> manager = (EffectManagerData6c<EffectManagerData6cInner.WeaponTrailType>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final WeaponTrailEffect3c trail = (WeaponTrailEffect3c)manager.effect_44;
     FUN_800ce880(trail.largestVertex_10, trail.smallestVertex_20, script.params_20[2].get(), script.params_20[1].get());
     return FlowControl.CONTINUE;
@@ -4033,7 +4034,7 @@ public final class Bttl_800c {
     final VECTOR pos;
     if(BattleScriptDataBase.EM__.equals(data.magic_00)) {
       //LAB_800cea78
-      pos = ((EffectManagerData6c)data)._10.trans_04;
+      pos = ((EffectManagerData6c<?>)data)._10.trans_04;
     } else {
       pos = ((BattleObject27c)data).model_148.coord2_14.coord.transfer;
     }
@@ -4045,7 +4046,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cea9cL)
-  public static void tickFullScreenOverlay(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void tickFullScreenOverlay(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager) {
     final FullScreenOverlayEffect0e effect = (FullScreenOverlayEffect0e)manager.effect_44;
 
     if(effect.ticksRemaining_0c != 0) {
@@ -4059,7 +4060,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800ceb28L)
-  public static void renderFullScreenOverlay(final ScriptState<EffectManagerData6c> state, final EffectManagerData6c manager) {
+  public static void renderFullScreenOverlay(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager) {
     final FullScreenOverlayEffect0e a0 = (FullScreenOverlayEffect0e)manager.effect_44;
 
     GPU.queueCommand(30, new GpuCommandQuad()
@@ -4080,7 +4081,7 @@ public final class Bttl_800c {
     final int fullB = (script.params_20[6].get() << 8) & 0xffff; //
     final int ticks = script.params_20[7].get() & 0xffff;
 
-    final ScriptState<EffectManagerData6c> state = allocateEffectManager(
+    final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state = allocateEffectManager(
       "Full screen overlay rgb(%x, %x, %x) -> rgb(%x, %x, %x)".formatted(r, g, b, fullR, fullG, fullB),
       script.scriptState_04,
       Bttl_800c::tickFullScreenOverlay,
@@ -4089,7 +4090,7 @@ public final class Bttl_800c {
       new FullScreenOverlayEffect0e()
     );
 
-    final EffectManagerData6c manager = state.innerStruct_00;
+    final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager = state.innerStruct_00;
     manager._10.flags_00 = 0x5000_0000;
 
     final FullScreenOverlayEffect0e effect = (FullScreenOverlayEffect0e)manager.effect_44;
@@ -4138,11 +4139,8 @@ public final class Bttl_800c {
   /** @return Z */
   @Method(0x800cf244L)
   public static int transformWorldspaceToScreenspace(final VECTOR pos, final IntRef outX, final IntRef outY) {
-    GTE.setRotationMatrix(worldToScreenMatrix_800c3548);
-
-    GTE.rotateVector(pos);
-
-    final VECTOR sp0x10 = new VECTOR().set(GTE.getMac1(), GTE.getMac2(), GTE.getMac3());
+    final VECTOR sp0x10 = new VECTOR();
+    pos.mul(worldToScreenMatrix_800c3548, sp0x10);
     sp0x10.add(worldToScreenMatrix_800c3548.transfer);
     outX.set(MathHelper.safeDiv(getProjectionPlaneDistance() * sp0x10.getX(), sp0x10.getZ()));
     outY.set(MathHelper.safeDiv(getProjectionPlaneDistance() * sp0x10.getY(), sp0x10.getZ()));
@@ -4150,8 +4148,8 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cf37cL)
-  public static void rotateAndTranslateEffect(final EffectManagerData6c a0, @Nullable final SVECTOR extraRotation, final VECTOR vertex, final VECTOR out) {
-    final SVECTOR rotations = new SVECTOR().set(a0._10.rot_10);
+  public static void rotateAndTranslateEffect(final EffectManagerData6c<?> manager, @Nullable final Vector3f extraRotation, final VECTOR vertex, final VECTOR out) {
+    final Vector3f rotations = new Vector3f(manager._10.rot_10);
 
     if(extraRotation != null) {
       //LAB_800cf3c4
@@ -4161,54 +4159,44 @@ public final class Bttl_800c {
     //LAB_800cf400
     final MATRIX transforms = new MATRIX();
     RotMatrix_Xyz(rotations, transforms);
-    TransMatrix(transforms, new VECTOR()); // This probably isn't necessary
-    GTE.setRotationMatrix(transforms);
-    GTE.setTranslationVector(transforms.transfer);
 
-    GTE.rotateTranslateVector(vertex);
-
-    out.set(GTE.getMac1(), GTE.getMac2(), GTE.getMac3());
+    vertex.mul(transforms, out);
+    out.add(transforms.transfer);
   }
 
   @Method(0x800cf4f4L)
-  public static void FUN_800cf4f4(final EffectManagerData6c a0, @Nullable final SVECTOR a1, final VECTOR a2, final VECTOR out) {
-    final SVECTOR sp0x20 = new SVECTOR();
+  public static void FUN_800cf4f4(final EffectManagerData6c<?> manager, @Nullable final Vector3f extraRotation, final VECTOR a2, final VECTOR out) {
     final MATRIX sp0x28 = new MATRIX();
 
-    sp0x20.set(a0._10.rot_10);
+    final Vector3f sp0x20 = new Vector3f(manager._10.rot_10);
 
-    if(a1 != null) {
+    if(extraRotation != null) {
       //LAB_800cf53c
-      sp0x20.add(a1);
+      sp0x20.add(extraRotation);
     }
 
     //LAB_800cf578
     RotMatrix_Xyz(sp0x20, sp0x28);
-    TransMatrix(sp0x28, a0._10.trans_04);
-    GTE.setRotationMatrix(sp0x28);
-    GTE.setTranslationVector(sp0x28.transfer);
-    GTE.rotateTranslateVector(a2);
-    out.set(GTE.getMac1(), GTE.getMac2(), GTE.getMac3());
+    sp0x28.transfer.set(manager._10.trans_04);
+
+    a2.mul(sp0x28, out);
+    out.add(sp0x28.transfer);
   }
 
   @Method(0x800cf684L)
-  public static void FUN_800cf684(final SVECTOR rotation, final VECTOR translation, final VECTOR vector, final VECTOR out) {
+  public static void FUN_800cf684(final Vector3f rotation, final VECTOR translation, final VECTOR vector, final VECTOR out) {
     final MATRIX transforms = new MATRIX();
     RotMatrix_Xyz(rotation, transforms);
-    TransMatrix(transforms, translation);
-    GTE.setRotationMatrix(transforms);
-    GTE.setTranslationVector(transforms.transfer);
-    GTE.rotateTranslateVector(vector);
-    out.set(GTE.getMac1(), GTE.getMac2(), GTE.getMac3());
+    transforms.transfer.set(translation);
+    vector.mul(transforms, out);
+    out.add(transforms.transfer);
   }
 
   /** @return Z */
   @Method(0x800cf7d4L)
-  public static int FUN_800cf7d4(final SVECTOR rotation, final VECTOR translation1, final VECTOR translation2, final ShortRef outX, final ShortRef outY) {
-    final SVECTOR baseTranslation = new SVECTOR().set(translation1);
-    GTE.setRotationMatrix(worldToScreenMatrix_800c3548);
-    GTE.rotateVector(baseTranslation);
-    final VECTOR sp0x10 = new VECTOR().set(GTE.getMac1(), GTE.getMac2(), GTE.getMac3());
+  public static int FUN_800cf7d4(final Vector3f rotation, final VECTOR translation1, final VECTOR translation2, final ShortRef outX, final ShortRef outY) {
+    final VECTOR sp0x10 = new VECTOR().set(translation1);
+    sp0x10.mul(worldToScreenMatrix_800c3548);
 
     GTE.setRotationMatrix(worldToScreenMatrix_800c3548);
     GTE.setTranslationVector(worldToScreenMatrix_800c3548.transfer);
@@ -4218,24 +4206,10 @@ public final class Bttl_800c {
     GTE.getTranslationVector(sp0x38.transfer);
 
     final MATRIX sp0x58 = new MATRIX();
-    RotMatrix_Xyz(new SVECTOR().set(rotation), sp0x58);
-    GTE.setRotationMatrix(sp0x38);
-    GTE.rotateVector(sp0x58.get(0), sp0x58.get(3), sp0x58.get(6));
-    sp0x38.set(0, GTE.getIr1());
-    sp0x38.set(3, GTE.getIr2());
-    sp0x38.set(6, GTE.getIr3());
-
-    GTE.rotateVector(sp0x58.get(1), sp0x58.get(4), sp0x58.get(7));
-    sp0x38.set(1, GTE.getIr1());
-    sp0x38.set(4, GTE.getIr2());
-    sp0x38.set(7, GTE.getIr3());
-
-    GTE.rotateVector(sp0x58.get(2), sp0x58.get(5), sp0x58.get(8));
-    sp0x38.set(2, GTE.getIr1());
-    sp0x38.set(5, GTE.getIr2());
-    sp0x38.set(8, GTE.getIr3());
-
+    RotMatrix_Xyz(rotation, sp0x58);
+    sp0x58.mul(sp0x38, sp0x38);
     sp0x38.transfer.add(sp0x10);
+
     GTE.setRotationMatrix(sp0x38);
     GTE.setTranslationVector(sp0x38.transfer);
     GTE.perspectiveTransform(translation2);
@@ -4247,26 +4221,21 @@ public final class Bttl_800c {
 
   /** @return Z */
   @Method(0x800cfb14L)
-  public static int FUN_800cfb14(final EffectManagerData6c manager, final VECTOR translation, final ShortRef outX, final ShortRef outY) {
-    final SVECTOR tempRotation = new SVECTOR().set(manager._10.rot_10);
-    final VECTOR tempTranslation = new VECTOR().set(manager._10.trans_04);
-    return FUN_800cf7d4(tempRotation, tempTranslation, translation, outX, outY);
+  public static int FUN_800cfb14(final EffectManagerData6c<?> manager, final VECTOR translation, final ShortRef outX, final ShortRef outY) {
+    return FUN_800cf7d4(manager._10.rot_10, manager._10.trans_04, translation, outX, outY);
   }
 
   /** @return Z */
   @Method(0x800cfb94L)
-  public static int FUN_800cfb94(final EffectManagerData6c manager, final SVECTOR rotation, final VECTOR translation, final ShortRef outX, final ShortRef outY) {
-    final SVECTOR tempRotation = new SVECTOR().set(manager._10.rot_10).add(rotation);
-    final VECTOR tempTranslation = new VECTOR().set(manager._10.trans_04);
-    return FUN_800cf7d4(tempRotation, tempTranslation, translation, outX, outY);
+  public static int FUN_800cfb94(final EffectManagerData6c<?> manager, final Vector3f rotation, final VECTOR translation, final ShortRef outX, final ShortRef outY) {
+    final Vector3f tempRotation = new Vector3f(manager._10.rot_10).add(rotation);
+    return FUN_800cf7d4(tempRotation, manager._10.trans_04, translation, outX, outY);
   }
 
   /** @return Z */
   @Method(0x800cfc20L)
-  public static int FUN_800cfc20(final SVECTOR managerRotation, final VECTOR managerTranslation, final VECTOR translation, final ShortRef outX, final ShortRef outY) {
-    final SVECTOR tempRotation = new SVECTOR().set(managerRotation);
-    final VECTOR tempTranslation = new VECTOR().set(managerTranslation);
-    return FUN_800cf7d4(tempRotation, tempTranslation, translation, outX, outY);
+  public static int FUN_800cfc20(final Vector3f managerRotation, final VECTOR managerTranslation, final VECTOR translation, final ShortRef outX, final ShortRef outY) {
+    return FUN_800cf7d4(managerRotation, managerTranslation, translation, outX, outY);
   }
 
   @Method(0x800cfcccL)
@@ -4276,7 +4245,7 @@ public final class Bttl_800c {
 
     final Model124 model;
     if(BattleScriptDataBase.EM__.equals(a0.magic_00)) {
-      model = ((BttlScriptData6cSub13c)((EffectManagerData6c)a0).effect_44).model_10;
+      model = ((BttlScriptData6cSub13c)((EffectManagerData6c<?>)a0).effect_44).model_10;
     } else {
       //LAB_800cfd34
       model = ((BattleObject27c)a0).model_148;
@@ -4285,8 +4254,8 @@ public final class Bttl_800c {
     //LAB_800cfd40
     final MATRIX sp0x10 = new MATRIX();
     GsGetLw(model.coord2ArrPtr_04[script.params_20[1].get()], sp0x10);
-    final VECTOR sp0x40 = ApplyMatrixLV(sp0x10, new VECTOR());
-    sp0x40.add(sp0x10.transfer);
+    // This was multiplying vector (0, 0, 0) so I removed it
+    final VECTOR sp0x40 = new VECTOR().set(sp0x10.transfer);
     script.params_20[2].set(sp0x40.getX());
     script.params_20[3].set(sp0x40.getY());
     script.params_20[4].set(sp0x40.getZ());
@@ -4360,7 +4329,7 @@ public final class Bttl_800c {
   public static void getModelObjectTranslation(final int scriptIndex, final VECTOR translation, final int objIndex) {
     final MATRIX transformMatrix = new MATRIX();
     GsGetLw(((BattleObject27c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00).model_148.coord2ArrPtr_04[objIndex], transformMatrix);
-    ApplyMatrixLV(transformMatrix, new VECTOR(), translation);
-    translation.add(transformMatrix.transfer);
+    // Does nothing? Changed line below to set //ApplyMatrixLV(transformMatrix, new VECTOR(), translation);
+    translation.set(transformMatrix.transfer);
   }
 }

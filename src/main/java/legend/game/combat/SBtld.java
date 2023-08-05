@@ -1,5 +1,6 @@
 package legend.game.combat;
 
+import legend.core.MathHelper;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
@@ -209,7 +210,7 @@ public class SBtld {
       data.combatant_144 = getCombatant(combatantIndex);
       data.combatantIndex_26c = combatantIndex;
       data.model_148.coord2_14.coord.transfer.set(s5.pos_02);
-      data.model_148.coord2Param_64.rotate.set((short)0, (short)0xc01, (short)0);
+      data.model_148.coord2Param_64.rotate.set(0.0f, MathHelper.TWO_PI * 0.75f, 0.0f);
       state.storage_44[7] |= 0x4;
       allBobjCount_800c66d0.incr();
       monsterCount_800c6768.incr();

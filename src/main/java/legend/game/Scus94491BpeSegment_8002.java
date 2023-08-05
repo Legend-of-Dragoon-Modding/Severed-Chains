@@ -13,7 +13,6 @@ import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.GsDOBJ2;
 import legend.core.gte.GsOBJTABLE2;
 import legend.core.gte.MATRIX;
-import legend.core.gte.SVECTOR;
 import legend.core.gte.Tmd;
 import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.VECTOR;
@@ -70,6 +69,8 @@ import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.joml.Matrix3f;
+import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -138,12 +139,6 @@ import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
-import static legend.game.Scus94491BpeSegment_8003.ScaleMatrix;
-import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
-import static legend.game.Scus94491BpeSegment_8003.TransMatrix;
-import static legend.game.Scus94491BpeSegment_8004.RotMatrixX;
-import static legend.game.Scus94491BpeSegment_8004.RotMatrixY;
-import static legend.game.Scus94491BpeSegment_8004.RotMatrixZ;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrix_Zyx;
 import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment_8004.freeSequence;
@@ -406,8 +401,8 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_800209b0
     model.movementType_cc = 0;
     model.b_cd = -2;
-    model.scaleVector_fc.set(0x1000, 0x1000, 0x1000);
-    model.vector_10c.set(0x1000, 0x1000, 0x1000);
+    model.scaleVector_fc.set(1.0f, 1.0f, 1.0f);
+    model.vector_10c.set(1.0f, 1.0f, 1.0f);
     model.vector_118.set(0, 0, 0);
   }
 
@@ -476,11 +471,11 @@ public final class Scus94491BpeSegment_8002 {
           final GsCOORD2PARAM params = coord2.param;
           RotMatrix_Zyx(params.rotate, coord2.coord);
           params.trans.set(
-            (params.trans.getX() + transforms[0][i].translate_06.getX()) / 2,
-            (params.trans.getY() + transforms[0][i].translate_06.getY()) / 2,
-            (params.trans.getZ() + transforms[0][i].translate_06.getZ()) / 2
+            (params.trans.x + transforms[0][i].translate_06.x) / 2.0f,
+            (params.trans.y + transforms[0][i].translate_06.y) / 2.0f,
+            (params.trans.z + transforms[0][i].translate_06.z) / 2.0f
           );
-          TransMatrix(coord2.coord, params.trans);
+          coord2.coord.transfer.set(params.trans);
         }
 
         //LAB_80020d6c
@@ -495,7 +490,7 @@ public final class Scus94491BpeSegment_8002 {
           RotMatrix_Zyx(params.rotate, coord2.coord);
 
           params.trans.set(transforms[0][i].translate_06);
-          TransMatrix(coord2.coord, params.trans);
+          coord2.coord.transfer.set(params.trans);
         }
 
         //LAB_80020dfc
@@ -513,7 +508,7 @@ public final class Scus94491BpeSegment_8002 {
         RotMatrix_Zyx(params.rotate, coord2.coord);
 
         params.trans.set(transforms[0][i].translate_06);
-        TransMatrix(coord2.coord, params.trans);
+        coord2.coord.transfer.set(params.trans);
       }
 
       //LAB_80020e94
@@ -675,7 +670,7 @@ public final class Scus94491BpeSegment_8002 {
       RotMatrix_Zyx(params.rotate, matrix);
 
       params.trans.set(transforms[0][i].translate_06);
-      TransMatrix(matrix, params.trans);
+      matrix.transfer.set(params.trans);
     }
 
     //LAB_80021390
@@ -691,10 +686,10 @@ public final class Scus94491BpeSegment_8002 {
       final MATRIX coord = coord2.coord;
       final GsCOORD2PARAM params = coord2.param;
       RotMatrix_Zyx(params.rotate, coord);
-      params.trans.setX((params.trans.getX() + transforms.translate_06.getX()) / 2);
-      params.trans.setY((params.trans.getY() + transforms.translate_06.getY()) / 2);
-      params.trans.setZ((params.trans.getZ() + transforms.translate_06.getZ()) / 2);
-      TransMatrix(coord, params.trans);
+      params.trans.x = (params.trans.x + transforms.translate_06.x) / 2.0f;
+      params.trans.y = (params.trans.y + transforms.translate_06.y) / 2.0f;
+      params.trans.z = (params.trans.z + transforms.translate_06.z) / 2.0f;
+      coord.transfer.set(params.trans);
     }
 
     //LAB_80021490
@@ -704,7 +699,7 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x800214bcL)
   public static void applyModelRotationAndScale(final Model124 model) {
     RotMatrix_Xyz(model.coord2Param_64.rotate, model.coord2_14.coord);
-    ScaleMatrix(model.coord2_14.coord, model.scaleVector_fc);
+    model.coord2_14.coord.scale(model.scaleVector_fc);
     model.coord2_14.flg = 0;
   }
 
@@ -716,8 +711,8 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x8002155cL)
   public static void FUN_8002155c(final Model124 model, final long a1) {
-    final int v0 = (int)_8005039c.offset(2, a1 * 0x2L).getSigned();
-    model.vector_10c.set(v0, v0, v0);
+    final float scale = (int)_8005039c.offset(2, a1 * 0x2L).getSigned() / (float)0x1000;
+    model.vector_10c.set(scale, scale, scale);
   }
 
   @Method(0x80021584L)
@@ -780,9 +775,9 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x800217a4L)
   public static void FUN_800217a4(final Model124 model) {
-    model.coord2Param_64.rotate.y.set(FUN_800ea4c8(model.coord2Param_64.rotate.y.get()));
+    model.coord2Param_64.rotate.y = MathHelper.psxDegToRad(FUN_800ea4c8(MathHelper.radToPsxDeg(model.coord2Param_64.rotate.y)));
     RotMatrix_Xyz(model.coord2Param_64.rotate, model.coord2_14.coord);
-    ScaleMatrix(model.coord2_14.coord, model.scaleVector_fc);
+    model.coord2_14.coord.scale(model.scaleVector_fc);
     model.coord2_14.flg = 0;
   }
 
@@ -802,16 +797,16 @@ public final class Scus94491BpeSegment_8002 {
     GsDOBJ2 dobj2 = getDObj2ById(table, dobj2Id);
 
     final MATRIX coord;
-    final VECTOR scale;
-    final SVECTOR rotation;
-    final VECTOR translation;
+    final Vector3f scale;
+    final Vector3f rotation;
+    final Vector3f translation;
 
     if(dobj2 == null) {
       dobj2 = new GsDOBJ2(); //sp0x10;
       coord = new MATRIX(); //sp0x20;
-      scale = new VECTOR();
-      rotation = new SVECTOR(); //sp0x40;
-      translation = new VECTOR();
+      scale = new Vector3f();
+      rotation = new Vector3f(); //sp0x40;
+      translation = new Vector3f();
     } else {
       //LAB_80021984
       dobj2.coord2_04.flg = 0;
@@ -840,30 +835,18 @@ public final class Scus94491BpeSegment_8002 {
 
     if(s2 == 1) {
       //LAB_800219ec
-      rotation.set((short)11, (short)11, (short)11);
+      dobj2.coord2_04.coord.identity();
 
-      dobj2.coord2_04.coord.set(0, (short)0x1000);
-      dobj2.coord2_04.coord.set(1, (short)0);
-      dobj2.coord2_04.coord.set(2, (short)0);
-      dobj2.coord2_04.coord.set(3, (short)0);
-      dobj2.coord2_04.coord.set(4, (short)0x1000);
-      dobj2.coord2_04.coord.set(5, (short)0);
-      dobj2.coord2_04.coord.set(6, (short)0);
-      dobj2.coord2_04.coord.set(7, (short)0);
-      dobj2.coord2_04.coord.set(8, (short)0x1000);
-
-      RotMatrixX(rotation.x.get(), coord);
-      RotMatrixY(rotation.y.get(), coord);
-      RotMatrixZ(rotation.z.get(), coord);
-
-      scale.set(0x1000, 0x1000, 0x1000);
-
+      // Dunno why but models are initialized with a 1-degree rotation on all axes
+      final float oneDegree = (float)Math.toRadians(1.0);
+      rotation.set(oneDegree, oneDegree, oneDegree);
       RotMatrix_Xyz(rotation, coord);
-      ScaleMatrixL(coord, scale);
 
-      translation.set(1, 1, 1);
+      scale.set(1.0f, 1.0f, 1.0f);
+      coord.scaleL(scale);
 
-      TransMatrix(coord, translation);
+      translation.set(1.0f, 1.0f, 1.0f);
+      coord.transfer.set(translation);
     }
 
     //LAB_80021ad8
@@ -974,38 +957,18 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80021db4
   }
 
-  @Method(0x80021de4L)
-  public static void FUN_80021de4(final MATRIX a0, final MATRIX a1, final MATRIX a2) {
-    GTE.setRotationMatrix(a0);
-
-    GTE.rotateVector(a1.get(0), a1.get(3), a1.get(6));
-    a2.set(0, GTE.getIr1());
-    a2.set(3, GTE.getIr2());
-    a2.set(6, GTE.getIr3());
-
-    GTE.rotateVector(a1.get(1), a1.get(4), a1.get(7));
-    a2.set(1, GTE.getIr1());
-    a2.set(4, GTE.getIr2());
-    a2.set(7, GTE.getIr3());
-
-    GTE.rotateVector(a1.get(2), a1.get(5), a1.get(8));
-    a2.set(2, GTE.getIr1());
-    a2.set(5, GTE.getIr2());
-    a2.set(8, GTE.getIr3());
-  }
-
   @Method(0x80021edcL)
   public static void SetRotMatrix(final MATRIX m) {
     GTE.setRotationMatrix(m);
   }
 
   @Method(0x80021f0cL)
-  public static void SetLightMatrix(final MATRIX m) {
+  public static void SetLightMatrix(final Matrix3f m) {
     GTE.setLightSourceMatrix(m);
   }
 
   @Method(0x80021f3cL)
-  public static void SetColorMatrix(final MATRIX m) {
+  public static void SetColorMatrix(final Matrix3f m) {
     GTE.setLightColourMatrix(m);
   }
 
@@ -1016,7 +979,7 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80021facL)
   public static void SetGeomOffset(final int x, final int y) {
-    GTE.setScreenOffset(x << 16, y << 16);
+    GTE.setScreenOffset(x, y);
   }
 
   @Method(0x80021fc4L)

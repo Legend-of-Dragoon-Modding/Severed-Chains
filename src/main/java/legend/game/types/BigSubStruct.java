@@ -13,7 +13,7 @@ public class BigSubStruct {
   public int _1c;
   public final SVECTOR _1e = new SVECTOR();
 
-  public int _28;
+  public int size_28;
   public int _2c;
   public int _30;
   public int _34;

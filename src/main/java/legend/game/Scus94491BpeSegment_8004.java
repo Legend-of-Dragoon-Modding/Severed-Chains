@@ -1,10 +1,7 @@
 package legend.game;
 
 import legend.core.MathHelper;
-import legend.core.gte.COLOUR;
 import legend.core.gte.MATRIX;
-import legend.core.gte.SVECTOR;
-import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
@@ -45,17 +42,15 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SEQUENCER;
 import static legend.core.GameEngine.SPU;
-import static legend.game.Scus94491BpeSegment.rcos;
-import static legend.game.Scus94491BpeSegment.sin;
 import static legend.game.Scus94491BpeSegment_8005.atanTable_80058d0c;
 import static legend.game.Scus94491BpeSegment_8005.reverbConfigs_80059f7c;
 import static legend.game.Scus94491BpeSegment_800c.patchList_800c4abc;
@@ -189,7 +184,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[18] = SMap::scriptGetCharAddition;
     scriptSubFunctions_8004e29c[19] = SMap::FUN_800d9d60;
 
-    scriptSubFunctions_8004e29c[32] = Bttl_800d::FUN_800dabcc;
+    scriptSubFunctions_8004e29c[32] = Bttl_800d::scriptResetCameraMovement;
     scriptSubFunctions_8004e29c[33] = Bttl_800d::FUN_800dac20;
     scriptSubFunctions_8004e29c[34] = Bttl_800d::FUN_800db034;
     scriptSubFunctions_8004e29c[35] = Bttl_800d::FUN_800db460;
@@ -198,16 +193,16 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[38] = Bttl_800d::FUN_800db79c;
     scriptSubFunctions_8004e29c[39] = Bttl_800d::FUN_800db8b0;
     scriptSubFunctions_8004e29c[40] = Bttl_800d::FUN_800db9e0;
-    scriptSubFunctions_8004e29c[41] = Bttl_800d::FUN_800dbb10;
-    scriptSubFunctions_8004e29c[42] = Bttl_800d::FUN_800dc2d8;
+    scriptSubFunctions_8004e29c[41] = Bttl_800d::scriptIsCameraMoving;
+    scriptSubFunctions_8004e29c[42] = Bttl_800d::scriptCalculateCameraValue;
     scriptSubFunctions_8004e29c[43] = Bttl_800d::FUN_800dbb9c;
-    scriptSubFunctions_8004e29c[44] = Bttl_800d::FUN_800dcbec;
-    scriptSubFunctions_8004e29c[45] = Bttl_800d::FUN_800dcb84;
+    scriptSubFunctions_8004e29c[44] = Bttl_800d::scriptWobbleCamera;
+    scriptSubFunctions_8004e29c[45] = Bttl_800d::scriptStopCameraMovement;
     scriptSubFunctions_8004e29c[46] = Bttl_800d::scriptSetViewportTwist;
     scriptSubFunctions_8004e29c[47] = Bttl_800d::FUN_800dbc80;
-    scriptSubFunctions_8004e29c[48] = Bttl_800d::FUN_800dbcc8;
+    scriptSubFunctions_8004e29c[48] = Bttl_800d::scriptSetCameraProjectionPlaneDistance;
     scriptSubFunctions_8004e29c[49] = Bttl_800d::scriptGetProjectionPlaneDistance;
-    scriptSubFunctions_8004e29c[50] = Bttl_800d::FUN_800d8dec;
+    scriptSubFunctions_8004e29c[50] = Bttl_800d::scriptMoveCameraProjectionPlane;
 
     scriptSubFunctions_8004e29c[96] = SMap::FUN_800df168;
     scriptSubFunctions_8004e29c[97] = SMap::FUN_800df198;
@@ -846,73 +841,11 @@ public final class Scus94491BpeSegment_8004 {
   public static final ArrayRef<MoonMusic08> moonMusic_8004ff10 = MEMORY.ref(4, 0x8004ff10L, ArrayRef.of(MoonMusic08.class, 43, 8, MoonMusic08::new));
 
   @Method(0x80040010L)
-  public static void RotMatrix_Zyx(final SVECTOR rotation, final MATRIX matrixOut) {
+  public static void RotMatrix_Zyx(final Vector3f rotation, final MATRIX matrixOut) {
     matrixOut.set(new Matrix4f()
-      .rotateZ(MathHelper.psxDegToRad(rotation.getZ()))
-      .rotateY(MathHelper.psxDegToRad(rotation.getY()))
-      .rotateX(MathHelper.psxDegToRad(rotation.getX())));
-  }
-
-  @Method(0x800402a0L)
-  public static void RotMatrixX(final int rotation, final MATRIX matrixOut) {
-    final short sin = sin(rotation);
-    final short cos = rcos(Math.abs(rotation));
-
-    //LAB_80040304
-    final long m10 = matrixOut.get(1, 0);
-    final long m11 = matrixOut.get(1, 1);
-    final long m12 = matrixOut.get(1, 2);
-    final long m20 = matrixOut.get(2, 0);
-    final long m21 = matrixOut.get(2, 1);
-    final long m22 = matrixOut.get(2, 2);
-
-    matrixOut.set(1, 0, (short)(cos * m10 - sin * m20 >> 12));
-    matrixOut.set(1, 1, (short)(cos * m11 - sin * m21 >> 12));
-    matrixOut.set(1, 2, (short)(cos * m12 - sin * m22 >> 12));
-    matrixOut.set(2, 0, (short)(sin * m10 + cos * m20 >> 12));
-    matrixOut.set(2, 1, (short)(sin * m11 + cos * m21 >> 12));
-    matrixOut.set(2, 2, (short)(sin * m12 + cos * m22 >> 12));
-  }
-
-  @Method(0x80040440L)
-  public static void RotMatrixY(final int rotation, final MATRIX matrixOut) {
-    final short sin = (short)-sin(rotation);
-    final short cos = rcos(Math.abs(rotation));
-
-    //LAB_800404a4
-    final short m0 = matrixOut.get(0);
-    final short m1 = matrixOut.get(1);
-    final short m2 = matrixOut.get(2);
-    final short m6 = matrixOut.get(6);
-    final short m7 = matrixOut.get(7);
-    final short m8 = matrixOut.get(8);
-    matrixOut.set(0, (short)(cos * m0 - sin * m6 >> 12));
-    matrixOut.set(1, (short)(cos * m1 - sin * m7 >> 12));
-    matrixOut.set(2, (short)(cos * m2 - sin * m8 >> 12));
-    matrixOut.set(6, (short)(sin * m0 + cos * m6 >> 12));
-    matrixOut.set(7, (short)(sin * m1 + cos * m7 >> 12));
-    matrixOut.set(8, (short)(sin * m2 + cos * m8 >> 12));
-  }
-
-  @Method(0x800405e0L)
-  public static void RotMatrixZ(final int rotation, final MATRIX matrixOut) {
-    final short sin = sin(rotation);
-    final short cos = rcos(Math.abs(rotation));
-
-    //LAB_80040644
-    final long m00 = matrixOut.get(0, 0);
-    final long m01 = matrixOut.get(0, 1);
-    final long m02 = matrixOut.get(0, 2);
-    final long m10 = matrixOut.get(1, 0);
-    final long m11 = matrixOut.get(1, 1);
-    final long m12 = matrixOut.get(1, 2);
-
-    matrixOut.set(0, 0, (short)(cos * m00 - sin * m10 >> 12));
-    matrixOut.set(0, 1, (short)(cos * m01 - sin * m11 >> 12));
-    matrixOut.set(0, 2, (short)(cos * m02 - sin * m12 >> 12));
-    matrixOut.set(1, 0, (short)(sin * m00 + cos * m10 >> 12));
-    matrixOut.set(1, 1, (short)(sin * m01 + cos * m11 >> 12));
-    matrixOut.set(1, 2, (short)(sin * m02 + cos * m12 >> 12));
+      .rotateZ(rotation.z)
+      .rotateY(rotation.y)
+      .rotateX(rotation.x));
   }
 
   /**
@@ -983,89 +916,6 @@ public final class Scus94491BpeSegment_8004 {
 
     //LAB_80040cfc
     return atan;
-  }
-
-  @Method(0x80040df0L)
-  public static void FUN_80040df0(final VECTOR a0, final COLOUR in, final COLOUR out) {
-    GTE.setVertex(0, a0);
-    GTE.setRgbc(in);
-    out.unpack(GTE.normalColour());
-  }
-
-  @Method(0x80040e40L)
-  public static void FUN_80040e40(final VECTOR a0, final VECTOR a1, final VECTOR out) {
-    final short t5 = GTE.getRotationMatrixValue(0);
-    final short t6 = GTE.getRotationMatrixValue(4);
-    final short t7 = GTE.getRotationMatrixValue(8);
-    GTE.setRotationMatrixValue(0, a0.getX());
-    GTE.setRotationMatrixValue(4, a0.getY());
-    GTE.setRotationMatrixValue(8, a0.getZ());
-    GTE.setIr123(a1);
-    GTE.outerProduct();
-    out.set(GTE.getMac1(), GTE.getMac2(), GTE.getMac3());
-    GTE.setRotationMatrixValue(0, t5);
-    GTE.setRotationMatrixValue(4, t6);
-    GTE.setRotationMatrixValue(8, t7);
-  }
-
-  /**
-   * Transform vector a1 and store in vector a2. Matrix a0 is uploaded to GTE in transposed order.
-   */
-  @Method(0x80040ec0L)
-  public static VECTOR ApplyTransposeMatrixLV(final MATRIX a0, final VECTOR a1, final VECTOR a2) {
-    GTE.setRotationMatrixValue(
-      a0.get(0), a0.get(3), a0.get(6),
-      a0.get(1), a0.get(4), a0.get(7),
-      a0.get(2), a0.get(5), a0.get(8)
-    );
-
-    final int t0;
-    int t3;
-    if(a1.getX() < 0) {
-      t3 = -(-a1.getX() >> 15);
-      t0 = -(-a1.getX() & 0x7fff);
-    } else {
-      //LAB_80040f54
-      t3 = a1.getX() >> 15;
-      t0 = a1.getX() & 0x7fff;
-    }
-
-    //LAB_80040f5c
-    final int t1;
-    int t4;
-    if(a1.getY() < 0) {
-      t4 = -(-a1.getY() >> 15);
-      t1 = -(-a1.getY() & 0x7fff);
-    } else {
-      //LAB_80040f7c
-      t4 = a1.getY() >> 15;
-      t1 = a1.getY() & 0x7fff;
-    }
-
-    //LAB_80040f84
-    final int t2;
-    int t5;
-    if(a1.getZ() < 0) {
-      t5 = -(-a1.getZ() >> 15);
-      t2 = -(-a1.getZ() & 0x7fff);
-    } else {
-      //LAB_80040fa4
-      t5 = a1.getZ() >> 15;
-      t2 = a1.getZ() & 0x7fff;
-    }
-
-    //LAB_80040fac
-    GTE.rotateVector0(t3, t4, t5);
-    t3 = GTE.getMac1();
-    t4 = GTE.getMac2();
-    t5 = GTE.getMac3();
-
-    GTE.rotateVector(t0, t1, t2);
-    a2.setX(GTE.getMac1() + t3 * 8);
-    a2.setY(GTE.getMac2() + t4 * 8);
-    a2.setZ(GTE.getMac3() + t5 * 8);
-
-    return a2;
   }
 
   // Start of SPU code

@@ -1,6 +1,5 @@
 package legend.game;
 
-import legend.core.gte.MATRIX;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BoolRef;
@@ -13,6 +12,8 @@ import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.sound.ReverbConfigAndLocation;
 import legend.game.types.AdditionData0e;
 import legend.game.types.LodString;
+import org.joml.Matrix3f;
+import org.joml.Vector3f;
 
 import java.util.Arrays;
 
@@ -83,21 +84,15 @@ public final class Scus94491BpeSegment_8005 {
     {"\\STR\\MOONH.IKI", "\\STR\\ENDING1H.IKI", "\\STR\\ENDING2H.IKI"}
   };
 
-  /**
-   * Max RECT width?
-   */
-  public static final Value _800546c0 = MEMORY.ref(2, 0x800546c0L);
-  /**
-   * Max RECT height?
-   */
-  public static final Value _800546c2 = MEMORY.ref(2, 0x800546c2L);
+  public static final int vramWidth_800546c0 = 1024;
+  public static final int vramHeight_800546c2 = 512;
 
-  public static final ArrayRef<ShortRef> _80054870 = MEMORY.ref(2, 0x80054870L, ArrayRef.of(ShortRef.class, 192, 2, ShortRef::new));
-
-  public static final Value matrixStackIndex_80054a08 = MEMORY.ref(4, 0x80054a08L);
-  public static final MATRIX[] matrixStack_80054a0c = new MATRIX[20];
+  public static int matrixStackIndex_80054a08;
+  public static final Matrix3f[] matrixStack_80054a0c = new Matrix3f[20];
+  public static final Vector3f[] vectorStack_80054a0c = new Vector3f[20];
   static {
-    Arrays.setAll(matrixStack_80054a0c, i -> new MATRIX());
+    Arrays.setAll(matrixStack_80054a0c, i -> new Matrix3f());
+    Arrays.setAll(vectorStack_80054a0c, i -> new Vector3f());
   }
 
   /** Precomputed sin/cos table */

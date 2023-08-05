@@ -11,7 +11,7 @@ public class ElectricityEffect38 implements Effect {
   public int currentColourFadeStep_04;
   public int scriptIndex_08;
   public int numColourFadeSteps_0c;
-  public int boltAngleStep_10;
+  public float boltAngleStep_10;
   /** ushort; If true, add origin translation of current segment to that of previous segment */
   public boolean addSuccessiveSegmentOriginTranslations_14;
   /** int; Related to which rendering branch to use in 80103db0 */
@@ -38,7 +38,7 @@ public class ElectricityEffect38 implements Effect {
   /** ubyte; Effect is only meant to send new render commands every other frame if manager._10._24 != 0 */
   public int frameNum_2a;
 
-  public QuadConsumer<EffectManagerData6c, ElectricityEffect38, LightningBoltEffect14, Integer> callback_2c;
+  public QuadConsumer<EffectManagerData6c<EffectManagerData6cInner.ElectricityType>, ElectricityEffect38, LightningBoltEffect14, Integer> callback_2c;
 
   public LightningBoltEffect14[] bolts_34;
 

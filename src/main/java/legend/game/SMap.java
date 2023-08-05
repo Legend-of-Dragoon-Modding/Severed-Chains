@@ -99,6 +99,8 @@ import legend.game.types.UnknownStruct2;
 import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.joml.Math;
+import org.joml.Vector3f;
 
 import java.util.Arrays;
 import java.util.List;
@@ -156,13 +158,11 @@ import static legend.game.Scus94491BpeSegment_8002.rand;
 import static legend.game.Scus94491BpeSegment_8002.renderDobj2;
 import static legend.game.Scus94491BpeSegment_8002.renderModel;
 import static legend.game.Scus94491BpeSegment_8002.srand;
-import static legend.game.Scus94491BpeSegment_8003.ApplyMatrixSV;
 import static legend.game.Scus94491BpeSegment_8003.GetTPage;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLs;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
-import static legend.game.Scus94491BpeSegment_8003.GsSetAmbient;
 import static legend.game.Scus94491BpeSegment_8003.GsSetFlatLight;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8003.GsSetRefView2L;
@@ -172,11 +172,8 @@ import static legend.game.Scus94491BpeSegment_8003.PopMatrix;
 import static legend.game.Scus94491BpeSegment_8003.PushMatrix;
 import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
 import static legend.game.Scus94491BpeSegment_8003.RotTransPers4;
-import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
 import static legend.game.Scus94491BpeSegment_8003.SetDrawTPage;
 import static legend.game.Scus94491BpeSegment_8003.StoreImage;
-import static legend.game.Scus94491BpeSegment_8003.TransMatrix;
-import static legend.game.Scus94491BpeSegment_8003.TransposeMatrix;
 import static legend.game.Scus94491BpeSegment_8003.gpuLinkedListSetCommandTransparency;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
@@ -287,7 +284,7 @@ public final class SMap {
   /** TODO array, flags for submap objects - 0x80 means the model is the same as the previous one */
   public static final Value submapObjectFlags_800c6a50 = MEMORY.ref(4, 0x800c6a50L);
 
-  public static final VECTOR cameraPos_800c6aa0 = new VECTOR();
+  public static final Vector3f cameraPos_800c6aa0 = new Vector3f();
   public static final Value _800c6aac = MEMORY.ref(2, 0x800c6aacL);
   public static final VECTOR prevPlayerPos_800c6ab0 = new VECTOR();
   public static float encounterMultiplier_800c6abc;
@@ -790,28 +787,21 @@ public final class SMap {
     model_800bda10.coord2_14.coord.transfer.set(model.vector_118);
     model_800bda10.zOffset_a0 = model.zOffset_a0 + 16;
 
-    model_800bda10.scaleVector_fc.setX(model.vector_10c.x.get() >> 6);
-    model_800bda10.scaleVector_fc.setY(model.vector_10c.y.get() >> 6);
-    model_800bda10.scaleVector_fc.setZ(model.vector_10c.z.get() >> 6);
+    model_800bda10.scaleVector_fc.set(model.vector_10c).div(64.0f);
 
     RotMatrix_Xyz(model_800bda10.coord2Param_64.rotate, model_800bda10.coord2_14.coord);
 
-    final VECTOR scale = new VECTOR();
-    scale.set(model_800bda10.scaleVector_fc);
-    ScaleMatrixL(model_800bda10.coord2_14.coord, scale);
-
+    model_800bda10.coord2_14.coord.scaleL(model_800bda10.scaleVector_fc);
     model_800bda10.coord2_14.flg = 0;
 
     final MATRIX matrix = model_800bda10.coord2ArrPtr_04[0].coord;
     final GsCOORD2PARAM params = model_800bda10.coord2ArrPtr_04[0].param;
 
-    params.rotate.set((short)0, (short)0, (short)0);
+    params.rotate.zero();
     RotMatrix_Zyx(params.rotate, matrix);
 
-    params.trans.setX(0);
-    params.trans.setY(0);
-    params.trans.setZ(0);
-    TransMatrix(matrix, params.trans);
+    params.trans.zero();
+    matrix.transfer.set(params.trans);
 
     final MATRIX lw = new MATRIX();
     final MATRIX ls = new MATRIX();
@@ -890,12 +880,12 @@ public final class SMap {
       RotMatrix_Zyx(params.rotate, matrix);
 
       params.trans.set(
-        (params.trans.getX() + transforms[0][i].translate_06.getX()) / 2,
-        (params.trans.getY() + transforms[0][i].translate_06.getY()) / 2,
-        (params.trans.getZ() + transforms[0][i].translate_06.getZ()) / 2
+        (params.trans.x + transforms[0][i].translate_06.x) / 2.0f,
+        (params.trans.y + transforms[0][i].translate_06.y) / 2.0f,
+        (params.trans.z + transforms[0][i].translate_06.z) / 2.0f
       );
 
-      TransMatrix(matrix, params.trans);
+      matrix.transfer.set(params.trans);
     }
 
     //LAB_800daa0c
@@ -1323,7 +1313,7 @@ public final class SMap {
     final short deltaY = (short)script.params_20[1].get();
     final short deltaZ = (short)script.params_20[2].get();
 
-    final int angle;
+    final float angle;
     if(deltaX != 0 || deltaY != 0 || deltaZ != 0) {
       //LAB_800dee98
       //LAB_800dee9c
@@ -1339,16 +1329,16 @@ public final class SMap {
       }
 
       //LAB_800def08
-      angle = -ratan2(movement.getZ(), movement.getX()) + 0xc01 & 0xfff; // Z, X is correct
+      angle = MathHelper.positiveAtan2(movement.getZ(), movement.getX());
     } else {
       movement.set((short)0, (short)model.coord2_14.coord.transfer.getY(), (short)0);
-      angle = model.coord2Param_64.rotate.getY();
+      angle = model.coord2Param_64.rotate.y;
     }
 
     //LAB_800def28
     _800c68e8.playerMovement_0c.set(movement).add(model.coord2_14.coord.transfer);
-    final int reachX = rsin(angle) * -sobj.playerCollisionReach_1c0 >> 12;
-    final int reachZ = rcos(angle) * -sobj.playerCollisionReach_1c0 >> 12;
+    final int reachX = (int)(MathHelper.sin(angle) * -sobj.playerCollisionReach_1c0 / MathHelper.TWO_PI);
+    final int reachZ = (int)(MathHelper.cos(angle) * -sobj.playerCollisionReach_1c0 / MathHelper.TWO_PI);
     final int colliderMinY = movement.getY() - sobj.playerCollisionSizeVertical_1bc;
     final int colliderMaxY = movement.getY() + sobj.playerCollisionSizeVertical_1bc;
 
@@ -1444,9 +1434,7 @@ public final class SMap {
   public static FlowControl scriptSetModelRotate(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
-    model.coord2Param_64.rotate.x.set((short)script.params_20[1].get());
-    model.coord2Param_64.rotate.y.set((short)script.params_20[2].get());
-    model.coord2Param_64.rotate.z.set((short)script.params_20[3].get());
+    model.coord2Param_64.rotate.set(MathHelper.psxDegToRad(script.params_20[1].get()), MathHelper.psxDegToRad(script.params_20[2].get()), MathHelper.psxDegToRad(script.params_20[3].get()));
     sobj.rotationFrames_188 = 0;
     return FlowControl.CONTINUE;
   }
@@ -1455,9 +1443,9 @@ public final class SMap {
   public static FlowControl scriptReadModelRotate(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
-    script.params_20[1].set(model.coord2Param_64.rotate.getX());
-    script.params_20[2].set(model.coord2Param_64.rotate.getY());
-    script.params_20[3].set(model.coord2Param_64.rotate.getZ());
+    script.params_20[1].set(MathHelper.radToPsxDeg(model.coord2Param_64.rotate.x));
+    script.params_20[2].set(MathHelper.radToPsxDeg(model.coord2Param_64.rotate.y));
+    script.params_20[3].set(MathHelper.radToPsxDeg(model.coord2Param_64.rotate.z));
     return FlowControl.CONTINUE;
   }
 
@@ -1591,13 +1579,15 @@ public final class SMap {
 
     // Added this to fix a /0 error in the retail code
     if(frames == 0) {
-      sobj.rotationAmount_17c.set(-1, -1, -1);
+      sobj.rotationAmount_17c.zero();
       return FlowControl.CONTINUE;
     }
 
-    sobj.rotationAmount_17c.setX(script.params_20[1].get() / frames);
-    sobj.rotationAmount_17c.setY(script.params_20[2].get() / frames);
-    sobj.rotationAmount_17c.setZ(script.params_20[3].get() / frames);
+    sobj.rotationAmount_17c.set(
+      MathHelper.psxDegToRad(script.params_20[1].get()) / frames,
+      MathHelper.psxDegToRad(script.params_20[2].get()) / frames,
+      MathHelper.psxDegToRad(script.params_20[3].get()) / frames
+    );
 
     //LAB_800df888
     return FlowControl.CONTINUE;
@@ -1609,7 +1599,11 @@ public final class SMap {
   @Method(0x800df890L)
   public static FlowControl scriptRotateSobjAbsolute(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    sobj.rotationAmount_17c.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
+    sobj.rotationAmount_17c.set(
+      MathHelper.psxDegToRad(script.params_20[1].get()),
+      MathHelper.psxDegToRad(script.params_20[2].get()),
+      MathHelper.psxDegToRad(script.params_20[3].get())
+    );
     sobj.rotationFrames_188 = script.params_20[4].get();
     return FlowControl.CONTINUE;
   }
@@ -1628,7 +1622,7 @@ public final class SMap {
   @Method(0x800df954L)
   public static FlowControl scriptFacePlayer(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)script.scriptState_04.innerStruct_00;
-    sobj.model_00.coord2Param_64.rotate.setY((short)(-ratan2(_800c68e8.playerPos_00.getZ(), _800c68e8.playerPos_00.getX()) + 0xc01 & 0xfff));
+    sobj.model_00.coord2Param_64.rotate.y = MathHelper.positiveAtan2(_800c68e8.playerPos_00.getZ(), _800c68e8.playerPos_00.getX());
     sobj.rotationFrames_188 = 0;
     return FlowControl.CONTINUE;
   }
@@ -1692,9 +1686,9 @@ public final class SMap {
     final Model124 model = sobj.model_00;
 
     model.scaleVector_fc.set(
-      script.params_20[1].get(),
-      script.params_20[2].get(),
-      script.params_20[3].get()
+      (script.params_20[1].get() / (float)0x1000),
+      (script.params_20[2].get() / (float)0x1000),
+      (script.params_20[3].get() / (float)0x1000)
     );
 
     return FlowControl.CONTINUE;
@@ -1705,9 +1699,9 @@ public final class SMap {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
 
-    model.scaleVector_fc.setX(script.params_20[1].get());
-    model.scaleVector_fc.setY(script.params_20[1].get());
-    model.scaleVector_fc.setZ(script.params_20[1].get());
+    model.scaleVector_fc.x = script.params_20[1].get() / (float)0x1000;
+    model.scaleVector_fc.y = script.params_20[1].get() / (float)0x1000;
+    model.scaleVector_fc.z = script.params_20[1].get() / (float)0x1000;
     return FlowControl.CONTINUE;
   }
 
@@ -1811,8 +1805,7 @@ public final class SMap {
   public static FlowControl scriptFacePoint(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
-    final int angle = 0xc01 - ratan2(script.params_20[3].get() - model.coord2_14.coord.transfer.getZ(), script.params_20[1].get() - model.coord2_14.coord.transfer.getX()) & 0xfff;
-    model.coord2Param_64.rotate.y.set((short)angle);
+    model.coord2Param_64.rotate.y = MathHelper.positiveAtan2(script.params_20[3].get() - model.coord2_14.coord.transfer.getZ(), script.params_20[1].get() - model.coord2_14.coord.transfer.getX());
     sobj.rotationFrames_188 = 0;
     return FlowControl.CONTINUE;
   }
@@ -1944,7 +1937,7 @@ public final class SMap {
   @Method(0x800e04b4L)
   public static FlowControl scriptFaceCamera(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    sobj.model_00.coord2Param_64.rotate.setY((short)(-ratan2(cameraPos_800c6aa0.getZ(), cameraPos_800c6aa0.getX()) + 0xc01 & 0xfff));
+    sobj.model_00.coord2Param_64.rotate.y = MathHelper.positiveAtan2(cameraPos_800c6aa0.z, cameraPos_800c6aa0.x);
     sobj.rotationFrames_188 = 0;
     return FlowControl.CONTINUE;
   }
@@ -2034,18 +2027,18 @@ public final class SMap {
   public static FlowControl scriptSetAmbientColour(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     sobj.ambientColourEnabled_1c8 = true;
-    sobj.ambientRed_1ca = script.params_20[1].get() & 0xffff;
-    sobj.ambientGreen_1cc = script.params_20[2].get() & 0xffff;
-    sobj.ambientBlue_1ce = script.params_20[3].get() & 0xffff;
+    sobj.ambientColour_1ca.set(
+      (script.params_20[1].get() & 0xffff) / 4096.0f,
+      (script.params_20[2].get() & 0xffff) / 4096.0f,
+      (script.params_20[3].get() & 0xffff) / 4096.0f
+    );
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e09a0L)
   public static FlowControl scriptResetAmbientColour(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    sobj.ambientRed_1ca = 0x800;
-    sobj.ambientGreen_1cc = 0x800;
-    sobj.ambientBlue_1ce = 0x800;
+    sobj.ambientColour_1ca.set(0.5f, 0.5f, 0.5f);
     sobj.ambientColourEnabled_1c8 = false;
     return FlowControl.CONTINUE;
   }
@@ -2069,8 +2062,8 @@ public final class SMap {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
 
-    model.vector_10c.setX(script.params_20[1].get());
-    model.vector_10c.setZ(script.params_20[2].get());
+    model.vector_10c.x = script.params_20[1].get() / (float)0x1000;
+    model.vector_10c.z = script.params_20[2].get() / (float)0x1000;
     return FlowControl.CONTINUE;
   }
 
@@ -2234,9 +2227,9 @@ public final class SMap {
     model.coord2_14.coord.transfer.setY(transferY);
     model.coord2_14.coord.transfer.setZ(transferZ);
 
-    model.scaleVector_fc.setX(0x1000);
-    model.scaleVector_fc.setY(0x1000);
-    model.scaleVector_fc.setZ(0x1000);
+    model.scaleVector_fc.x = 1.0f;
+    model.scaleVector_fc.y = 1.0f;
+    model.scaleVector_fc.z = 1.0f;
   }
 
   @Method(0x800e0ff0L)
@@ -2340,8 +2333,8 @@ public final class SMap {
     final int reachX;
     final int reachZ;
     if(reach != 0) {
-      reachX = rsin(model.coord2Param_64.rotate.getY()) * -reach >> 12;
-      reachZ = rcos(model.coord2Param_64.rotate.getY()) * -reach >> 12;
+      reachX = (int)(MathHelper.sin(model.coord2Param_64.rotate.y) * -reach);
+      reachZ = (int)(MathHelper.cos(model.coord2Param_64.rotate.y) * -reach);
     } else {
       reachX = 0;
       reachZ = 0;
@@ -2396,7 +2389,7 @@ public final class SMap {
 
       //LAB_800e1310
       if(sobj.ambientColourEnabled_1c8) {
-        GsSetAmbient(sobj.ambientRed_1ca, sobj.ambientGreen_1cc, sobj.ambientBlue_1ce);
+        GTE.setBackgroundColour(sobj.ambientColour_1ca.x, sobj.ambientColour_1ca.y, sobj.ambientColour_1ca.z);
       }
 
       //LAB_800e1334
@@ -2410,7 +2403,7 @@ public final class SMap {
 
       //LAB_800e1374
       if(sobj.ambientColourEnabled_1c8) {
-        GsSetAmbient(0x800, 0x800, 0x800);
+        GTE.setBackgroundColour(0.5f, 0.5f, 0.5f);
       }
 
       //LAB_800e1390
@@ -2454,7 +2447,7 @@ public final class SMap {
         GsF_LIGHT_2_800c66f8.b_0e = 0;
         GsSetFlatLight(2, GsF_LIGHT_2_800c66f8);
 
-        GsSetAmbient(0x800, 0x800, 0x800);
+        GTE.setBackgroundColour(0.5f, 0.5f, 0.5f);
         loadingStage_800c68e4.addu(0x1L);
       }
 
@@ -2735,7 +2728,7 @@ public final class SMap {
           if(i == 0) { // Player
             FUN_800e0d18(playerModel_800c6748, tmd, anim);
             playerModel_800c6748.coord2_14.coord.transfer.set(0, 0, 0);
-            playerModel_800c6748.coord2Param_64.rotate.set((short)0, (short)0, (short)0);
+            playerModel_800c6748.coord2Param_64.rotate.zero();
           }
 
           //LAB_800e1c50
@@ -2977,7 +2970,7 @@ public final class SMap {
       } else {
         //LAB_800e231c
         pos.pos_00.set(0, 0, 0);
-        pos.rot_0c.set((short)0, (short)0, (short)0);
+        pos.rot_0c.zero();
       }
     }
 
@@ -3520,8 +3513,8 @@ public final class SMap {
 
     sobj.collidedWithSobjIndex_1a8 = -1;
 
-    final int reachX = rsin(model.coord2Param_64.rotate.getY()) * -sobj.collisionReach_1b4 >> 12;
-    final int reachZ = rcos(model.coord2Param_64.rotate.getY()) * -sobj.collisionReach_1b4 >> 12;
+    final int reachX = (int)(MathHelper.sin(model.coord2Param_64.rotate.y) * -sobj.collisionReach_1b4);
+    final int reachZ = (int)(MathHelper.cos(model.coord2Param_64.rotate.y) * -sobj.collisionReach_1b4);
     final int colliderMinY = model.coord2_14.coord.transfer.getY() - sobj.collisionSizeVertical_1b0;
     final int colliderMaxY = model.coord2_14.coord.transfer.getY() + sobj.collisionSizeVertical_1b0;
 
@@ -4829,12 +4822,12 @@ public final class SMap {
     GsSetRefView2L(rview2_800cbd10);
     clearSmallValuesFromMatrix(worldToScreenMatrix_800c3548);
     matrix_800cbd68.set(worldToScreenMatrix_800c3548);
-    TransposeMatrix(matrix_800cbd68, matrix_800cbd40);
+    matrix_800cbd68.transpose(matrix_800cbd40);
     rview2_800bd7e8.set(rview2_800cbd10);
   }
 
   @Method(0x800e7418L)
-  public static void updateRview2(final SVECTOR viewpoint, final SVECTOR refpoint, final int rotation, final long projectionDistance) {
+  public static void updateRview2(final Vector3f viewpoint, final Vector3f refpoint, final int rotation, final long projectionDistance) {
     rview2_800cbd10.viewpoint_00.set(viewpoint);
     rview2_800cbd10.refpoint_0c.set(refpoint);
     rview2_800cbd10.viewpointTwist_18 = (short)rotation << 12;
@@ -5246,9 +5239,7 @@ public final class SMap {
       out.set(in);
     } else {
       //LAB_800e8318
-      PushMatrix();
-      ApplyMatrixSV(matrix_800cbd40, in, out);
-      PopMatrix();
+      in.mul(matrix_800cbd40, out);
     }
 
     //LAB_800e833c
@@ -5363,7 +5354,8 @@ public final class SMap {
   public static void FUN_800e8bd8(final SomethingStruct a0) {
     final TmdObjTable1c objTable = a0.objTableArrPtr_00[0];
     a0.verts_04 = objTable.vert_top_00;
-    a0.normals_08 = objTable.normal_top_08;
+    a0.normals_08 = new SVECTOR[objTable.normal_top_08.length];
+    Arrays.setAll(a0.normals_08, i -> new SVECTOR().set((short)(objTable.normal_top_08[i].x * 4096.0f), (short)(objTable.normal_top_08[i].y * 4096.0f), (short)(objTable.normal_top_08[i].z * 4096.0f)));
     a0.count_0c = objTable.n_primitive_14;
     a0.primitives_10 = objTable.primitives_10;
   }
@@ -6017,9 +6009,7 @@ public final class SMap {
   }
 
   @Method(0x800ea4c8L)
-  public static short FUN_800ea4c8(final short a0) {
-    long v0;
-
+  public static short FUN_800ea4c8(final int a0) {
     _800d1a78.subu(0x1L);
 
     if((int)_800d1a78.get() > 0) {
@@ -6032,52 +6022,46 @@ public final class SMap {
 
     //LAB_800ea534
     //LAB_800ea538
+    final boolean bool;
     if((int)_800c6ae0.get() <= 0x400) {
-      v0 = 0x1L;
+      bool = true;
     } else if(_800d1a8c._00) {
-      v0 = 0;
+      bool = false;
     } else {
-      v0 = 0x1L;
+      bool = true;
       _800d1a8c._00 = true;
     }
 
     //LAB_800ea570
-    if(v0 != 0 || _800d1a7c.get() != 0) {
+    if(bool || _800d1a7c.get() != 0) {
       //LAB_800ea6d0
       //LAB_800ea6d4
       _800d1a7c.setu(0);
-      return a0;
+      return (short)a0;
     }
 
-    final long s1 = (_800c6ae0.get() - 1) % 4;
-    final long s2 = _800c6ae0.get() % 4;
-    long s0 = _800f7f6c.offset(s1 * 0x2L).getSigned() - _800d1a84.get();
+    final int s1 = (int)((_800c6ae0.get() - 1) % 4);
+    final int s2 = (int)(_800c6ae0.get() % 4);
+    int s0 = (int)(_800f7f6c.offset(s1 * 0x2L).getSigned() - _800d1a84.get());
 
-    if((int)Math.abs(s0) > 0x800) {
-      _800cbda4.setu((int)s0 > 0 ? 1 : 0);
+    if(Math.abs(s0) > 0x800) {
+      _800cbda4.setu(s0 > 0 ? 1 : 0);
       s0 = 0x1000 - Math.abs(s0);
     } else {
       //LAB_800ea628
-      _800cbda4.setu((int)s0 < 0x1L ? 1 : 0);
+      _800cbda4.setu(s0 < 1 ? 1 : 0);
       s0 = Math.abs(s0);
     }
 
     //LAB_800ea63c
-    if((int)s0 > 0x200 || (int)_800d1a78.get() > 0) {
-      //LAB_800ea658
-      if((int)s0 < 0) {
-        v0 = s0 + 0x3L;
-      } else {
-        v0 = s0;
-      }
-
-      //LAB_800ea664
-      s0 = (int)v0 >> 2;
+    if(s0 > 0x200 || (int)_800d1a78.get() > 0) {
+      s0 = s0 / 4;
     }
 
     //LAB_800ea66c
-    final long v1 = _800f7f6c.offset(s1 * 0x2L).getSigned();
+    final int v1 = (int)_800f7f6c.offset(s1 * 0x2L).getSigned();
 
+    final int v0;
     if(_800cbda4.get() == 0) {
       v0 = v1 - s0;
     } else {
@@ -7151,9 +7135,7 @@ public final class SMap {
     submapModel_800d4bf8.coord2_14.coord.transfer.setY(0);
     submapModel_800d4bf8.coord2_14.coord.transfer.setZ(0);
 
-    submapModel_800d4bf8.coord2Param_64.rotate.setX((short)0);
-    submapModel_800d4bf8.coord2Param_64.rotate.setY((short)0);
-    submapModel_800d4bf8.coord2Param_64.rotate.setZ((short)0);
+    submapModel_800d4bf8.coord2Param_64.rotate.zero();
 
     applyModelRotationAndScale(submapModel_800d4bf8);
     animateModel(submapModel_800d4bf8);
@@ -7254,18 +7236,18 @@ public final class SMap {
           a0._00 = 0;
           a0._18 = (short)a1._38;
 
-          final int v0 = a1._28;
-          if(v0 < 0) {
-            a0.scale_08 = -v0 << 12;
-            a0._04 = -a0._04 / 20;
-          } else if(v0 > 0) {
+          final int size = a1.size_28;
+          if(size < 0) {
+            a0.scale_08 = -size;
+            a0.scaleStep_04 = -a0.scaleStep_04 / 20.0f;
+          } else if(size > 0) {
             //LAB_800ef1e0
-            a0.scale_08 = 0;
-            a0._04 = (v0 << 12) / 202;
+            a0.scale_08 = 0.0f;
+            a0.scaleStep_04 = size / 202.0f;
           } else {
             //LAB_800ef214
-            a0.scale_08 = 0;
-            a0._04 = 0;
+            a0.scale_08 = 0.0f;
+            a0.scaleStep_04 = 0.0f;
           }
 
           //LAB_800ef21c
@@ -7345,10 +7327,10 @@ public final class SMap {
           dust.x_18 = screenOffsetX_800cb568.get();
           dust.y_1c = screenOffsetY_800cb56c.get();
 
-          final SVECTOR vert0 = new SVECTOR().set((short)-a1._28, (short)0, (short)-a1._28);
-          final SVECTOR vert1 = new SVECTOR().set((short) a1._28, (short)0, (short)-a1._28);
-          final SVECTOR vert2 = new SVECTOR().set((short)-a1._28, (short)0, (short) a1._28);
-          final SVECTOR vert3 = new SVECTOR().set((short) a1._28, (short)0, (short) a1._28);
+          final SVECTOR vert0 = new SVECTOR().set((short)-a1.size_28, (short)0, (short)-a1.size_28);
+          final SVECTOR vert1 = new SVECTOR().set((short) a1.size_28, (short)0, (short)-a1.size_28);
+          final SVECTOR vert2 = new SVECTOR().set((short)-a1.size_28, (short)0, (short) a1.size_28);
+          final SVECTOR vert3 = new SVECTOR().set((short) a1.size_28, (short)0, (short) a1.size_28);
 
           dust._04 = 0;
           dust._06 = (short)a1._38;
@@ -7409,11 +7391,11 @@ public final class SMap {
 
         dustModel_800d4d40.coord2_14.coord.transfer.set(s0.transfer);
 
-        s0.scale_08 += s0._04;
+        s0.scale_08 += s0.scaleStep_04;
 
-        dustModel_800d4d40.scaleVector_fc.setX(s0.scale_08);
-        dustModel_800d4d40.scaleVector_fc.setY(s0.scale_08);
-        dustModel_800d4d40.scaleVector_fc.setZ(s0.scale_08);
+        dustModel_800d4d40.scaleVector_fc.x = s0.scale_08;
+        dustModel_800d4d40.scaleVector_fc.y = s0.scale_08;
+        dustModel_800d4d40.scaleVector_fc.z = s0.scale_08;
 
         applyModelRotationAndScale(dustModel_800d4d40);
         renderModel(dustModel_800d4d40);
@@ -7715,7 +7697,7 @@ public final class SMap {
     a0._18 = 0;
     a0._1c = 0;
     a0._1e.set((short)0, (short)0, (short)0);
-    a0._28 = 0;
+    a0.size_28 = 0;
     a0._2c = 0;
     a0._30 = 0;
     a0._34 = 0;
@@ -8357,7 +8339,7 @@ public final class SMap {
   public static FlowControl FUN_800f1f9c(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     sobj._1d0._04 = script.params_20[1].get();
-    sobj._1d0._28 = script.params_20[2].get();
+    sobj._1d0.size_28 = script.params_20[2].get();
     sobj._1d0._30 = script.params_20[3].get();
 
     if(script.params_20[4].get() == 0) {
@@ -8369,7 +8351,7 @@ public final class SMap {
     //LAB_800f2018
     if(sobj._1d0._04 != 1) {
       sobj._1d0._1e.set((short)0, (short)0, (short)0);
-      sobj._1d0._28 = 1;
+      sobj._1d0.size_28 = 1;
       sobj._1d0._30 = 0;
       sobj._1d0._38 = 0;
     }
@@ -8562,7 +8544,7 @@ public final class SMap {
     if(a2 == 1 || a2 == 3) {
       //LAB_800f2430
       a1._1d0._0c = 1;
-      a1._1d0._28 = script.params_20[1].get();
+      a1._1d0.size_28 = script.params_20[1].get();
       a1._1d0._30 = script.params_20[2].get();
       a1._1d0._38 = script.params_20[3].get();
 
@@ -8674,12 +8656,11 @@ public final class SMap {
   @Method(0x800f2788L)
   public static void initSavePoint() {
     initModel(savePointModel_800d5eb0, new CContainer("Save point", new FileData(MEMORY.getBytes(mrg_800d6d1c.getFile(2), mrg_800d6d1c.entries.get(2).size.get()))), new TmdAnimationFile(new FileData(MEMORY.getBytes(mrg_800d6d1c.getFile(3), mrg_800d6d1c.entries.get(3).size.get()))));
-    savePoint_800d5598[0].rotation_28 = 0;
-    savePoint_800d5598[0].colour_34 = 0x50;
-    savePoint_800d5598[1].rotation_28 = 0;
-    savePoint_800d5598[1].fadeAmount_2c = 0x1_f800;
-    savePoint_800d5598[1].fadeAccumulator_30 = 0;
-    savePoint_800d5598[1].colour_34 = 0;
+    savePoint_800d5598[0].rotation_28 = 0.0f;
+    savePoint_800d5598[0].colour_34 = 0.3125f;
+    savePoint_800d5598[1].rotation_28 = 0.0f;
+    savePoint_800d5598[1].fadeAmount_2c = 0.0077f;
+    savePoint_800d5598[1].colour_34 = 0.0f;
     savePoint_800d5598[1].fadeState_38 = 0;
 
     //LAB_800f285c
@@ -8688,14 +8669,13 @@ public final class SMap {
       final SavePointRenderData44 struct1 = savePoint_800d5630[i * 4 + 1];
       final SavePointRenderData44 struct2 = savePoint_800d5630[i * 4 + 2];
       final SavePointRenderData44 struct3 = savePoint_800d5630[i * 4 + 3];
-      struct0.colour_34 = 0x80;
-      struct0.fadeAmount_2c = 0x1_fc00;
-      struct0.fadeAccumulator_30 = 0;
+      struct0.colour_34 = 0.5f;
+      struct0.fadeAmount_2c = 0.0078f;
       struct0.fadeState_38 = 0;
-      struct0.rotation_28 = _800d6c58.get(i).get();
-      struct1.colour_34 = 0x60;
-      struct2.colour_34 = struct0.colour_34 - 0x40;
-      struct3.colour_34 = struct0.colour_34 - 0x60;
+      struct0.rotation_28 = MathHelper.psxDegToRad(_800d6c58.get(i).get());
+      struct1.colour_34 = 0.375f;
+      struct2.colour_34 = struct0.colour_34 - 0.25f;
+      struct3.colour_34 = struct0.colour_34 - 0.375f;
     }
   }
 
@@ -8710,9 +8690,7 @@ public final class SMap {
     final int screenOffsetY = screenOffsetY_800cb56c.get();
 
     final Model124 model = savePointModel_800d5eb0;
-    model.scaleVector_fc.setX(0x1800);
-    model.scaleVector_fc.setY(0x3000);
-    model.scaleVector_fc.setZ(0x1800);
+    model.scaleVector_fc.set(1.5f, 3.0f, 1.5f);
     model.coord2_14.coord.transfer.set(savePointPos_800d5622);
 
     applyModelRotationAndScale(model);
@@ -8752,21 +8730,17 @@ public final class SMap {
       if(i == 1) {
         if(s0.fadeState_38 == 0) {
           //LAB_800f2b44
-          s0.fadeAccumulator_30 += s0.fadeAmount_2c;
-          s0.colour_34 = s0.fadeAccumulator_30 >> 16;
+          s0.colour_34 += s0.fadeAmount_2c;
 
-          if(s0.colour_34 > 0x7f) {
-            s0.fadeAccumulator_30 = 0x7f_0000;
-            s0.colour_34 = 0x7f;
+          if(s0.colour_34 > 0.5f) {
+            s0.colour_34 = 0.5f;
             s0.fadeState_38 = 1;
           }
         } else {
-          s0.fadeAccumulator_30 -= s0.fadeAmount_2c;
-          s0.colour_34 = s0.fadeAccumulator_30 >> 16;
+          s0.colour_34 -= s0.fadeAmount_2c;
 
-          if(s0.colour_34 < 0) {
-            s0.fadeAccumulator_30 = 0;
-            s0.colour_34 = 0;
+          if(s0.colour_34 < 0.0f) {
+            s0.colour_34 = 0.0f;
             s0.fadeState_38 = 0;
           }
         }
@@ -8780,7 +8754,7 @@ public final class SMap {
       GPU.queueCommand(s0.z_40, new GpuCommandPoly(4)
         .bpp(Bpp.of(texPages_800d6050.get(5).get() >>> 7 * 0b11))
         .translucent(Translucency.B_PLUS_F)
-        .monochrome(s0.colour_34)
+        .monochrome((int)(s0.colour_34 * 255.0f))
         .clut((cluts_800d6068.get(5).get() & 0b111111) * 16, cluts_800d6068.get(5).get() >>> 6)
         .vramPos((texPages_800d6050.get(5).get() & 0b1111) * 64, (texPages_800d6050.get(5).get() & 0b10000) != 0 ? 256 : 0)
         .pos(0, x0, y0)
@@ -8811,26 +8785,22 @@ public final class SMap {
       struct2.vert0_00.setY(struct1.vert0_00.getY());
       struct1.vert0_00.setX(struct0.vert0_00.getX());
       struct1.vert0_00.setY(struct0.vert0_00.getY());
-      struct0.vert0_00.setX((short)(sp68 + ((sp80 + _800d6c78.get(fp).get()) * rsin(struct0.rotation_28) >> 12)));
-      struct0.vert0_00.setY((short)(sp6a + ((sp78 + _800d6c78.get(fp).get()) * rcos(struct0.rotation_28) >> 12)));
+      struct0.vert0_00.setX((short)(sp68 + (sp80 + _800d6c78.get(fp).get()) * MathHelper.sin(struct0.rotation_28)));
+      struct0.vert0_00.setY((short)(sp6a + (sp78 + _800d6c78.get(fp).get()) * MathHelper.cos(struct0.rotation_28)));
 
       if(struct0.fadeState_38 != 0) {
-        struct0.fadeAccumulator_30 -= struct0.fadeAmount_2c;
-        struct0.colour_34 = struct0.fadeAccumulator_30 >> 16;
+        struct0.colour_34 -= struct0.fadeAmount_2c;
 
-        if(struct0.colour_34 < 0) {
-          struct0.fadeAccumulator_30 = 0;
-          struct0.colour_34 = 0;
+        if(struct0.colour_34 < 0.0f) {
+          struct0.colour_34 = 0.0f;
           struct0.fadeState_38 = 0;
         }
       } else {
         //LAB_800f2f0c
-        struct0.fadeAccumulator_30 += struct0.fadeAmount_2c;
-        struct0.colour_34 = struct0.fadeAccumulator_30 >> 16;
+        struct0.colour_34 += struct0.fadeAmount_2c;
 
-        if(struct0.colour_34 > 0x7f) {
-          struct0.fadeAccumulator_30 = 0x7f_0000;
-          struct0.colour_34 = 0x7f;
+        if(struct0.colour_34 > 0.5f) {
+          struct0.colour_34 = 0.5f;
           struct0.fadeState_38 = 1;
         }
       }
@@ -8844,7 +8814,7 @@ public final class SMap {
         final GpuCommandPoly cmd = new GpuCommandPoly(4)
           .bpp(Bpp.of(texPages_800d6050.get(4).get() >>> 7 * 0b11))
           .translucent(Translucency.B_PLUS_F)
-          .monochrome(struct.colour_34)
+          .monochrome((int)(struct.colour_34 * 255.0f))
           .clut((cluts_800d6068.get(4).get() & 0b111111) * 16, cluts_800d6068.get(4).get() >>> 6)
           .vramPos((texPages_800d6050.get(4).get() & 0b1111) * 64, (texPages_800d6050.get(4).get() & 0b10000) != 0 ? 256 : 0)
           .pos(0, struct.vert0_00.getX(), struct.vert0_00.getY())
@@ -8870,8 +8840,8 @@ public final class SMap {
         GPU.queueCommand(41, cmd);
       }
 
-      struct0.rotation_28 += savePointFloatiesRotations_800d6c88.get(fp).get();
-      struct0.rotation_28 &= 0xfff;
+      struct0.rotation_28 += MathHelper.psxDegToRad(savePointFloatiesRotations_800d6c88.get(fp).get());
+      struct0.rotation_28 %= MathHelper.TWO_PI;
     }
 
     _800f9ea4.incr();

@@ -4,6 +4,7 @@ import legend.core.IoHelper;
 import legend.core.gte.SVECTOR;
 import legend.core.gte.TmdObjTable1c;
 import legend.game.types.Translucency;
+import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -61,7 +62,7 @@ public class ModelLoader {
 
       final Mesh.Poly3d[] polys = new Mesh.Poly3d[primitive.data().length];
       final SVECTOR[] positions = new SVECTOR[vertexCount];
-      final SVECTOR[] normals = new SVECTOR[vertexCount];
+      final Vector3f[] normals = new Vector3f[vertexCount];
       final int[] us = new int[vertexCount];
       final int[] vs = new int[vertexCount];
       final int[] colours = new int[vertexCount];

@@ -1,12 +1,12 @@
 package legend.game.types;
 
 import legend.core.gte.GsCOORDINATE2;
-import legend.core.gte.VECTOR;
+import org.joml.Vector3f;
 
 /** 0x20 long */
 public class GsRVIEW2 {
-  public final VECTOR viewpoint_00 = new VECTOR();
-  public final VECTOR refpoint_0c = new VECTOR();
+  public final Vector3f viewpoint_00 = new Vector3f();
+  public final Vector3f refpoint_0c = new Vector3f();
   public int viewpointTwist_18;
   public GsCOORDINATE2 super_1c;
 

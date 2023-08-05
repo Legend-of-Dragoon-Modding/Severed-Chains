@@ -21,7 +21,7 @@ public class VramTextureSingle extends VramTexture {
 
   @Override
   public int getTexel(final int pageX, final int x, final int y) {
-    final int textureOffset = (this.rect.x() - pageX) * this.bpp.widthScale;
+    final int textureOffset = (this.rect.x() - pageX) * this.bpp.widthDivisor;
     final int textureX = x - textureOffset;
 
 //    this.checkBounds(textureX, y);

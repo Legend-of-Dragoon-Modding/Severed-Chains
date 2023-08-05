@@ -1,9 +1,9 @@
 package legend.game.wmap;
 
-import legend.core.gte.VECTOR;
+import org.joml.Vector3f;
 
 public class WMapSubStruct18 {
   public int index_00;
-  public int vecLength_04;
-  public final VECTOR vec_08 = new VECTOR();
+  public float vecLength_04;
+  public final Vector3f vec_08 = new Vector3f();
 }

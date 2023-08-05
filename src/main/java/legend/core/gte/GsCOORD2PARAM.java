@@ -1,9 +1,11 @@
 package legend.core.gte;
 
+import org.joml.Vector3f;
+
 public class GsCOORD2PARAM {
-  public final VECTOR scale = new VECTOR();
-  public final SVECTOR rotate = new SVECTOR();
-  public final VECTOR trans = new VECTOR();
+  public final Vector3f scale = new Vector3f();
+  public final Vector3f rotate = new Vector3f();
+  public final Vector3f trans = new Vector3f();
 
   public GsCOORD2PARAM set(final GsCOORD2PARAM other) {
     this.scale.set(other.scale);
