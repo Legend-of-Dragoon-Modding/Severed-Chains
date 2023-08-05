@@ -1762,7 +1762,7 @@ public final class SItem {
     pendingXp_8011e180.get(charIndex).sub(cappedPendingXp);
 
     //LAB_8010cd30
-    while(gameState_800babc8.charData_32c[charIndex].xp_00 >= getXpToNextLevel(charIndex) && gameState_800babc8.charData_32c[charIndex].level_12 < 60) {
+    while(gameState_800babc8.charData_32c[charIndex].xp_00 >= getXpToNextLevel(charIndex) && gameState_800babc8.charData_32c[charIndex].level_12 < CoreMod.MAX_CHARACTER_LEVEL) {
       gameState_800babc8.charData_32c[charIndex].level_12++;
 
       _8011e1c8.offset(charSlot).addu(0x1L);
